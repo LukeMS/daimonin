@@ -108,6 +108,10 @@ typedef enum _client_sound_id
     SOUND_BOOK,
     SOUND_PAGE,
     SOUND_HEARTBEAT,
+    SOUND_COINS1,
+    SOUND_COINS2,
+    SOUND_COINS3,
+    SOUND_COINS4,
     SOUND_MAX
 }
 _client_sound_id;

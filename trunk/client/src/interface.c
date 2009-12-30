@@ -1,8 +1,6 @@
-/*
-    Daimonin SDL client, a client program for the Daimonin MMORPG.
+/* Daimonin SDL client, a client program for the Daimonin MMORPG.
 
-
-  Copyright (C) 2003 Michael Toennies
+    Copyright (C) 2003 Michael Toennies
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -20,2191 +18,3873 @@
 
     The author can be reached via e-mail to info@daimonin.net
 */
-#include <include.h>
-
-#define INTERFACE_CMD_NO          0
-#define INTERFACE_CMD_HEAD        1
-#define INTERFACE_CMD_MESSAGE     2
-#define INTERFACE_CMD_REWARD      4
-#define INTERFACE_CMD_ICON        8
-#define INTERFACE_CMD_ACCEPT     16
-#define INTERFACE_CMD_DECLINE    32
-#define INTERFACE_CMD_LINK       64
-#define INTERFACE_CMD_TEXTFIELD 128
-#define INTERFACE_CMD_BUTTON    256
-#define INTERFACE_CMD_WHO       512
-#define INTERFACE_CMD_XTENDED  1024
-
-
-static int interface_cmd_head(_gui_interface_head *head, char *data, int *pos)
-{
-    char *buf, c;
-    int tmp;
-    memset(head, 0, sizeof(_gui_interface_head));
-
-    (*pos)++;
-    while ((c= *(data+*pos)) != '\0' && c  != 0)
-    {
-        /* c is legal string part - check it is '<' */
-        if (c == '>')
-        {
-            if (*(data+(*pos)+1) != '>') /* no double >>? then we return */
-            {
-                (*pos)--;
-                return 0;
-            }
-        }
-
-        (*pos)++;
-        if (c<=' ')
-            continue;
-
-        /* c is part of the head command inside the '<' - lets handle it
-         * It must be a command. If it is unknown, return NULL
-         */
-        switch (c)
-        {
-            case 'f': /* face for this head */
-                if (!(buf = get_parameter_string(data, pos, 128)))
-                    return -1;
-                strcpy(head->name, buf);
-                break;
-
-            case 'b': /* test body */
-                if (!(buf = get_parameter_string(data, pos, 128)))
-                    return -1;
-                strcpy(head->body_text, buf);
-                if (StringWidthOffset(&font_medium, head->body_text, &tmp, 260))
-                {
-#ifdef DEVELOPMENT
-                    draw_info_format(COLOR_RED,"Script-Warning: Too long header title:\n%s\nHeader-Title will be truncated!\n",head->body_text);
-#endif
-                    head->body_text[tmp-2]='\0';
-                    strcat(head->body_text,"...");
-                }
-                break;
-
-            default:
-                return -1; /* error */
-        }
-    }
-    return -1;
-}
-
-static int interface_cmd_link(_gui_interface_link *head, char *data, int *pos)
-{
-    char *buf, c;
-    int tmp;
-    memset(head, 0, sizeof(_gui_interface_link));
-
-    (*pos)++;
-    while ((c= *(data+*pos)) != '\0' && c  != 0)
-    {
-        /* c is legal string part - check it is '<' */
-        if (c == '>')
-        {
-            if (*(data+(*pos)+1) != '>') /* no double >>? then we return */
-            {
-                (*pos)--;
-                return 0;
-            }
-        }
-
-        (*pos)++;
-        if (c<=' ')
-            continue;
-
-        /* c is part of the head command inside the '<' - lets handle it
-         * It must be a command. If it is unknown, return NULL
-         */
-        switch (c)
-        {
-            case 't': /* link title/text */
-                if (!(buf = get_parameter_string(data, pos, 128)))
-                    return -1;
-                strcpy(head->link, buf);
-                if (StringWidthOffset(&font_medium, head->link, &tmp, 295))
-                {
-#ifdef DEVELOPMENT
-                    draw_info_format(COLOR_RED,"Script-Warning: Too long Link-Title:\n%s\nLink-Title will be truncated!\n",head->link);
-#endif
-                    head->link[tmp-2]='\0';
-                    strcat(head->link,"...");
-                }
-                break;
-
-            case 'c': /* link command */
-                if (!(buf = get_parameter_string(data, pos, 128)))
-                    return -1;
-                head->cmd[0]=0;
-                if (buf[0] != '/')
-                    strcpy(head->cmd, "/talk ");
-                strncat(head->cmd, buf, 121);
-                break;
-
-            default:
-                return -1; /* error */
-        }
-    }
-    return -1;
-}
-
-/* internal server string - the client use it as hint to use /tx instead of /talk */
-static int interface_cmd_who(_gui_interface_who *head, char *data, int *pos)
-{
-    char *buf, c;
-    memset(head, 0, sizeof(_gui_interface_who));
-
-    (*pos)++;
-    while ((c= *(data+*pos)) != '\0' && c  != 0)
-    {
-        /* c is legal string part - check it is '<' */
-        if (c == '>')
-        {
-            if (*(data+(*pos)+1) != '>') /* no double >>? then we return */
-            {
-                (*pos)--;
-                return 0;
-            }
-        }
-
-        (*pos)++;
-        if (c<=' ')
-            continue;
-
-        /* c is part of the head command inside the '<' - lets handle it
-        * It must be a command. If it is unknown, return NULL
-        */
-        switch (c)
-        {
-            case 'b': /* link title/text */
-                if (!(buf = get_parameter_string(data, pos, 128)))
-                    return -1;
-                strcpy(head->body, buf);
-                break;
-
-            default:
-                return -1; /* error */
-        }
-    }
-    return -1;
-}
-
-
-static int interface_cmd_reward(_gui_interface_reward *head, char *data, int *pos)
-{
-    char *buf, c;
-    int tmp;
-    memset(head, 0, sizeof(_gui_interface_reward));
-
-    (*pos)++;
-    while ((c= *(data+*pos)) != '\0' && c  != 0)
-    {
-        /* c is legal string part - check it is '<' */
-        if (c == '>')
-        {
-            if (*(data+(*pos)+1) != '>') /* no double >>? then we return */
-            {
-                (*pos)--;
-                return 0;
-            }
-        }
-
-        (*pos)++;
-        if (c<=' ')
-            continue;
-
-        switch (c)
-        {
-
-            case 't': /* title of the reward */
-                if (!(buf = get_parameter_string(data, pos, 128)))
-                    return -1;
-                strcpy(head->title, buf);
-                if (StringWidthOffset(&font_big_out, head->title, &tmp, 295))
-                {
-#ifdef DEVELOPMENT
-                    draw_info_format(COLOR_RED,"Script-Warning: Too long Reward-Title:\n%s\nReward-Title will be truncated!\n",head->title);
-#endif
-                    head->title[tmp-2]='\0';
-                    strcat(head->title,"...");
-
-                }
-                break;
-
-            case 'b': /* reward body */
-                if (!(buf = get_parameter_string(data, pos, 4096)))
-                    return -1;
-                strcpy(head->body_text, buf);
-                break;
-
-            case 'c': /* copper cash */
-                if (!(buf = get_parameter_string(data, pos, 0)))
-                    return -1;
-                head->copper =atoi(buf);
-                break;
-
-            case 's': /* silver cash */
-                if (!(buf = get_parameter_string(data, pos, 0)))
-                    return -1;
-                head->silver =atoi(buf);
-                break;
-
-            case 'g': /* gold cash */
-                if (!(buf = get_parameter_string(data, pos, 0)))
-                    return -1;
-                head->gold =atoi(buf);
-                break;
-
-            case 'm': /* mithril cash */
-                if (!(buf = get_parameter_string(data, pos, 0)))
-                    return -1;
-                head->mithril =atoi(buf);
-                break;
-
-            default:
-                return -1; /* error */
-        }
-    }
-    return -1;
-}
-
-static int interface_cmd_message(_gui_interface_message *msg, char *data, int *pos)
-{
-    char *buf, c;
-    int tmp;
-    memset(msg, 0, sizeof(_gui_interface_message));
-
-    (*pos)++;
-    while ((c= *(data+*pos)) != '\0' && c  != 0)
-    {
-        /* c is legal string part - check it is '<' */
-        if (c == '>')
-        {
-            if (*(data+(*pos)+1) != '>') /* no double >>? then we return */
-            {
-                (*pos)--;
-                return 0;
-            }
-        }
-
-        (*pos)++;
-        if (c<=' ')
-            continue;
-
-        switch (c)
-        {
-            case 't': /* title of the message */
-                if (!(buf = get_parameter_string(data, pos, 128)))
-                    return -1;
-                strcpy(msg->title, buf);
-                if (StringWidthOffset(&font_big_out, msg->title, &tmp, 295))
-                {
-#ifdef DEVELOPMENT
-                    draw_info_format(COLOR_RED,"Script-Warning: Too long Message-Title:\n%s\nMessage-Title will be truncated!\n",msg->title);
-#endif
-                    msg->title[tmp-2]='\0';
-                    strcat(msg->title,"...");
-                }
-                break;
-
-            case 'b': /* message body */
-                if (!(buf = get_parameter_string(data, pos, 4096)))
-                    return -1;
-                strcpy(msg->body_text, buf);
-                break;
-
-            default:
-                return -1; /* error */
-        }
-    }
-    return -1;
-}
-
-static int interface_cmd_xtended(_gui_interface_xtended *msg, char *data, int *pos)
-{
-    char *buf, c;
-    memset(msg, 0, sizeof(_gui_interface_xtended));
-
-    (*pos)++;
-    while ((c= *(data+*pos)) != '\0' && c  != 0)
-    {
-        /* c is legal string part - check it is '<' */
-        if (c == '>')
-        {
-            if (*(data+(*pos)+1) != '>') /* no double >>? then we return */
-            {
-                (*pos)--;
-                return 0;
-            }
-        }
-
-        (*pos)++;
-        if (c<=' ')
-            continue;
-
-        switch (c)
-        {
-            case 't': /* title of the message */
-                if (!(buf = get_parameter_string(data, pos, 128)))
-                    return -1;
-                strcpy(msg->title, buf);
-                break;
-
-            case 'b': /* message body */
-                if (!(buf = get_parameter_string(data, pos, 4096)))
-                    return -1;
-                strcpy(msg->body_text, buf);
-                break;
-
-            default:
-                return -1; /* error */
-        }
-    }
-    return -1;
-}
-
-static int interface_cmd_icon(_gui_interface_icon *head, char *data, int *pos)
-{
-    char *buf, c;
-    memset(head, 0, sizeof(_gui_interface_icon));
-
-    (*pos)++;
-    while ((c= *(data+*pos)) != '\0' && c  != 0)
-    {
-        /* c is legal string part - check it is '<' */
-        if (c == '>')
-        {
-            if (*(data+(*pos)+1) != '>') /* no double >>? then we return */
-            {
-                (*pos)--;
-                return 0;
-            }
-        }
-
-        (*pos)++;
-        if (c<=' ')
-            continue;
-        switch (c)
-        {
-            case 'f': /* face for this icon */
-                if (!(buf = get_parameter_string(data, pos, 128)))
-                    return -1;
-                strcpy(head->name, buf);
-                break;
-
-            case 't': /* title of the icon */
-                if (!(buf = get_parameter_string(data, pos, 128)))
-                    return -1;
-                strcpy(head->title, buf);
-                break;
-
-            case 'm': /* mode for this icon */
-                if (!(buf = get_parameter_string(data, pos,0)))
-                    return -1;
-                head->mode = buf[0];
-                break;
-
-            case 'b': /* test body */
-                if (!(buf = get_parameter_string(data, pos, 128)))
-                    return -1;
-                strcpy(head->body_text, buf);
-                break;
-
-            case 'r': /* remove flag */
-                if (!(buf = get_parameter_string(data, pos, 0)))
-                    return -1;
-                head->remove = buf[0];
-                break;
-
-            default:
-                return -1; /* error */
-        }
-    }
-    return -1;
-}
-
-static int interface_cmd_button(_gui_interface_button *head, char *data, int *pos)
-{
-    char *buf, c;
-    int tmp;
-    memset(head, 0, sizeof(_gui_interface_button));
-
-    (*pos)++;
-    while ((c= *(data+*pos)) != '\0' && c  != 0)
-    {
-        /* c is legal string part - check it is '<' */
-        if (c == '>')
-        {
-            if (*(data+(*pos)+1) != '>') /* no double >>? then we return */
-            {
-                (*pos)--;
-                return 0;
-            }
-        }
-
-        (*pos)++;
-        if (c<=' ')
-            continue;
-
-        /* c is part of the head command inside the '<' - lets handle it
-         * It must be a command. If it is unknown, return NULL
-         */
-        switch (c)
-        {
-            case 't': /* button title */
-                if (!(buf = get_parameter_string(data, pos, 64)))
-                    return -1;
-                strcpy(head->title, buf);
-                if (StringWidthOffset(&font_small, head->title, &tmp, 55))
-                {
-#ifdef DEVELOPMENT
-                    draw_info_format(COLOR_RED,"Script-Warning: Too long Button-Title:\n%s\nButton-Title will be truncated!\n",head->title);
-#endif
-                    head->title[tmp-2]='\0';
-                    strcat(head->title,"...");
-                }
-                break;
-
-            case 'c': /* button command */
-                if (!(buf = get_parameter_string(data, pos, 128)))
-                    return -1;
-
-                head->command[0]=0;
-                if (buf[0] != '/' && buf[0] != '\0')
-                    strcpy(head->command, "/talk ");
-                strncat(head->command, buf, 121);
-                break;
-
-            default:
-                return -1; /* error */
-        }
-    }
-    return -1;
-}
-
-/* Parse a <t b=""> textfield command */
-static int interface_cmd_textfield(_gui_interface_textfield *textfield, char *data, int *pos)
-{
-    char *buf, c;
-    memset(textfield, 0, sizeof(_gui_interface_textfield));
-
-    (*pos)++;
-    while ((c= *(data+*pos)) != '\0' && c  != 0)
-    {
-        /* c is legal string part - check it is '<' */
-        if (c == '>')
-        {
-            if (*(data+(*pos)+1) != '>') /* no double >>? then we return */
-            {
-                (*pos)--;
-                return 0;
-            }
-        }
-
-        (*pos)++;
-        if (c<=' ')
-            continue;
-
-        /* c is part of the head command inside the '<' - lets handle it
-         * It must be a command. If it is unknown, return NULL
-         */
-        switch (c)
-        {
-            case 'b': /* Textfield text */
-                if (!(buf = get_parameter_string(data, pos, 128)))
-                    return -1;
-                strcpy(textfield->text, buf);
-                break;
-
-            default:
-                return -1; /* error */
-        }
-    }
-    return -1;
-}
-
-/* clear & reset the gui interface */
-/* Alderan 2007-12-03: 'free'ing a sprite won't free all stuff, we need to free also the surfaces
- * with the function sprite_free_sprite
- */
-void reset_gui_interface(void)
-{
-    map_udate_flag = 2;
-    interface_mode = INTERFACE_MODE_NO;
-    if (gui_interface_npc)
-    {
-        int s;
-        for (s=0;s<gui_interface_npc->icon_count;s++)
-            sprite_free_sprite(gui_interface_npc->icon[s].picture);
-        if ((gui_interface_npc->head.face==-1) && (gui_interface_npc->head.picture))
-            sprite_free_sprite(gui_interface_npc->head.picture);
-        free(gui_interface_npc);
-    }
-    reset_keys();
-    cpl.input_mode = INPUT_MODE_NO;
-    gui_interface_npc = NULL;
-    if (cpl.menustatus == MENU_NPC)
-        cpl.menustatus = MENU_NO;
-
-}
-
-static _gui_interface_struct *format_gui_interface(_gui_interface_struct *gui_int)
-{
-    int s;
-	char tempbuf[INTERFACE_MAX_CHAR+1];
-
-    interface_mode = INTERFACE_MODE_NPC;
-    if (gui_int->used_flag&GUI_INTERFACE_WHO)
-    {
-        if (*gui_int->who.body == 'Q')
-            interface_mode = INTERFACE_MODE_QLIST;
-    }
-
-    if (gui_int->used_flag&GUI_INTERFACE_ICON)
-    {
-        char *tmp;
-
-        for (s=0;s<gui_int->icon_count;s++)
-        {
-            gui_int->icon[s].second_line = NULL;
-            tmp = strchr(gui_int->icon[s].body_text, '\n');
-            if (tmp)
-            {
-                gui_int->icon[s].second_line = tmp+1;
-                *tmp = 0;
-            }
-        }
-    }
-
-    if (gui_int->used_flag&GUI_INTERFACE_HEAD)
-    {
-        gui_int->head.face = get_bmap_id(gui_int->head.name);
-
-        if (gui_int->head.face==-1)
-        {
-            char line[256];
-            sprintf(line, "%s%s.png", GetIconDirectory(), gui_int->head.name);
-            gui_int->head.picture = sprite_load_file(line, SURFACE_FLAG_DISPLAYFORMAT);
-        }
-
-        if (gui_int->head.body_text[0]=='\0')
-            strcpy(gui_int->head.body_text, cpl.target_name?cpl.target_name:"");
-    }
-
-    /* overrule/extend the message block */
-    if (gui_int->used_flag&GUI_INTERFACE_XTENDED)
-    {
-        strcpy(gui_int->message.title, gui_int->xtended.title);
-        strcat(gui_int->message.body_text, gui_int->xtended.body_text);
-        gui_int->used_flag&=~GUI_INTERFACE_XTENDED;
-    }
-
-    /* sort out the message text body to sigle lines */
-    if (gui_int->used_flag&GUI_INTERFACE_MESSAGE)
-    {
-        int i, len, c=0;
-
-        gui_int->message.line_count=0;
-        for (i=0;;i++)
-        {
-            if (gui_int->message.body_text[i]==0x0d)
-                continue;
-            if (gui_int->message.body_text[i]==0x0a || gui_int->message.body_text[i]=='\0')
-            {
-                gui_int->message.lines[gui_int->message.line_count][c]='\0';
-                // draw_info(gui_int->message.lines[gui_int->message.line_count], COLOR_YELLOW);
-                gui_int->message.line_count++;
-                if (gui_int->message.body_text[i]=='\0')
-                    break;
-                c=0;
-            }
-            else
-            {
-                /* lets do automatic line breaks */
-                gui_int->message.lines[gui_int->message.line_count][c]=gui_int->message.body_text[i];
-
-                if (StringWidthOffset(&font_medium, gui_int->message.lines[gui_int->message.line_count], &len, 270))
-                {
-                    char tmp_line[INTERFACE_MAX_CHAR];
-                    int ii;
-
-                    strcpy(tmp_line, gui_int->message.lines[gui_int->message.line_count]); /* safe the line */
-                    gui_int->message.lines[gui_int->message.line_count][len]=0;
-                    for (ii=len;ii>=0;ii--)
-                    {
-                        if (gui_int->message.lines[gui_int->message.line_count][ii] == ' ')
-                        {
-                            gui_int->message.lines[gui_int->message.line_count][ii]=0;
-                            break;
-                        }
-                    }
-                    if (ii<0) /* we have not find any usable whitespace */
-                        ii = len;
-
-                    /* we don't eliminate leading whitespaces because we can't know its a format issue or not
-                     * better to live with this little glitch as to destroy perhaps the text format.
-                                    */
-                    strcpy(gui_int->message.lines[++gui_int->message.line_count], &tmp_line[ii+1]);
-                    c = strlen(gui_int->message.lines[gui_int->message.line_count]);
-                }
-                else
-                    c++;
-            }
-
-            if (gui_int->message.line_count>=INTERFACE_MAX_LINE || c>=INTERFACE_MAX_CHAR )
-            {
-                LOG(LOG_ERROR, "ERROR: interface call out of borders: %s\n", gui_int->message.body_text);
-                break;
-            }
-        }
-
-        for (i=0;i<gui_int->message.line_count;i++)
-        {
-            if (strchr(gui_int->message.lines[i],'|')==strrchr(gui_int->message.lines[i],'|')
-                && strchr(gui_int->message.lines[i],'|'))
-            {
-                strcat(gui_int->message.lines[i],"|");
-                strcpy(tempbuf,"|");
-                strcat(tempbuf,gui_int->message.lines[i+1]);
-                strcpy(gui_int->message.lines[i+1],tempbuf);
-            }
-            if (strchr(gui_int->message.lines[i],'°')==strrchr(gui_int->message.lines[i],'°')
-                && strchr(gui_int->message.lines[i],'°'))
-            {
-                strcat(gui_int->message.lines[i],"°");
-                strcpy(tempbuf,"°");
-                strcat(tempbuf,gui_int->message.lines[i+1]);
-                strcpy(gui_int->message.lines[i+1],tempbuf);
-            }
-        }
-
-        /* lets sort out the keywords */
-        gui_int->keyword_count=0;
-        gui_int->keyword_selected=0;
-        c=0;                        /* i misuse c as keyword flag */
-        for (i=0;gui_int->message.body_text[i]!='\0';i++)
-        {
-            if (gui_int->message.body_text[i] == (unsigned char)'^')
-            {
-                if (c)
-                {
-                    gui_int->keywords[gui_int->keyword_count++][len]='\0';
-                    c = 0;
-                }
-                else
-                {
-                    len=0;
-                    c = 1;
-                }
-                continue;
-            }
-            if (c)
-                gui_int->keywords[gui_int->keyword_count][len++]=gui_int->message.body_text[i];
-        }
-
-    }
-
-    if (gui_int->used_flag&GUI_INTERFACE_REWARD)
-    {
-        int i, len, c=0;
-
-        gui_int->reward.line_count=0;
-        for (i=0;;i++)
-        {
-            if (gui_int->reward.body_text[i]==0x0d)
-                continue;
-            if (gui_int->reward.body_text[i]==0x0a || gui_int->reward.body_text[i]=='\0')
-            {
-                gui_int->reward.lines[gui_int->reward.line_count][c]='\0';
-                // draw_info(gui_int->reward.lines[gui_int->message.line_count], COLOR_YELLOW);
-                gui_int->reward.line_count++;
-                if (gui_int->reward.body_text[i]=='\0')
-                    break;
-                c=0;
-            }
-            else
-            {
-                /* lets do automatic line breaks */
-                gui_int->reward.lines[gui_int->reward.line_count][c]=gui_int->reward.body_text[i];
-
-                if (StringWidthOffset(&font_medium, gui_int->reward.lines[gui_int->reward.line_count], &len, 270))
-                {
-                    char tmp_line[INTERFACE_MAX_CHAR];
-                    int ii;
-
-                    strcpy(tmp_line, gui_int->reward.lines[gui_int->reward.line_count]); /* safe the line */
-                    gui_int->reward.lines[gui_int->reward.line_count][len]=0;
-                    for (ii=len;ii>=0;ii--)
-                    {
-                        if (gui_int->reward.lines[gui_int->reward.line_count][ii] == ' ')
-                        {
-                            gui_int->reward.lines[gui_int->reward.line_count][ii]=0;
-                            break;
-                        }
-                    }
-                    if (ii<0) /* we have not find any usable whitespace */
-                        ii = len;
-
-                    /* we don't eliminate leading whitespaces because we can't know its a format issue or not
-                    * better to live with this little glitch as to destroy perhaps the text format.
-                    */
-                    strcpy(gui_int->reward.lines[++gui_int->reward.line_count], &tmp_line[ii+1]);
-                    c = strlen(gui_int->reward.lines[gui_int->reward.line_count]);
-                }
-                else
-                    c++;
-            }
-
-            if (gui_int->reward.line_count>=INTERFACE_MAX_REWARD_LINE || c>=INTERFACE_MAX_CHAR )
-            {
-                LOG(LOG_ERROR, "ERROR: interface call out of borders: %s\n", gui_int->reward.body_text);
-                break;
-            }
-        }
-
-        for (i=0;i<gui_int->reward.line_count;i++)
-        {
-            if (strchr(gui_int->reward.lines[i],'|')==strrchr(gui_int->reward.lines[i],'|')
-                && strchr(gui_int->reward.lines[i],'|'))
-            {
-                strcat(gui_int->reward.lines[i],"|");
-                strcpy(tempbuf,"|");
-                strcat(tempbuf,gui_int->reward.lines[i+1]);
-                strcpy(gui_int->reward.lines[i+1],tempbuf);
-            }
-            if (strchr(gui_int->reward.lines[i],'°')==strrchr(gui_int->reward.lines[i],'°')
-                && strchr(gui_int->reward.lines[i],'°'))
-            {
-                strcat(gui_int->reward.lines[i],"°");
-                strcpy(tempbuf,"°");
-                strcat(tempbuf,gui_int->reward.lines[i+1]);
-                strcpy(gui_int->reward.lines[i+1],tempbuf);
-            }
-        }
-    }
-
-    /* icons */
-    /* search for the bmap num id's and load/request them if possible */
-    for (s=0;s<gui_int->icon_count;s++)
-    {
-
-        if (gui_int->icon[s].mode == 'S')
-            gui_int->icon_select = TRUE;
-        gui_int->icon[s].element.face = get_bmap_id(gui_int->icon[s].name);
-        if (gui_int->icon[s].element.face==-1)
-        {
-            char line[256];
-            sprintf(line, "%s%s.png", GetIconDirectory(), gui_int->icon[s].name);
-            gui_int->icon[s].picture = sprite_load_file(line, SURFACE_FLAG_DISPLAYFORMAT);
-        }
-    }
-
-    if (gui_int->used_flag&GUI_INTERFACE_DECLINE && !(gui_int->used_flag&GUI_INTERFACE_ACCEPT))
-    {
-        if (gui_int->decline.title[0] != '\0')
-        {
-            gui_int->decline.title[0] = toupper(gui_int->decline.title[0]);
-            sprintf(gui_int->decline.title2,"~%c~%s", gui_int->decline.title[0],gui_int->decline.title+1);
-        }
-        else
-        {
-            strcpy(gui_int->decline.title,"Decline");
-            strcpy(gui_int->decline.title2,"~D~ecline");
-        }
-
-        gui_int->used_flag |=GUI_INTERFACE_ACCEPT;
-        gui_int->accept.command[0]='\0';
-        strcpy(gui_int->accept.title,"Accept");
-        strcpy(gui_int->accept.title2,"~A~ccept");
-    }
-    else if (gui_int->used_flag&GUI_INTERFACE_ACCEPT)
-    {
-        if (gui_int->accept.title[0] != '\0')
-        {
-            gui_int->accept.title[0] = toupper(gui_int->accept.title[0]);
-            sprintf(gui_int->accept.title2,"~%c~%s", gui_int->accept.title[0],gui_int->accept.title+1);
-        }
-        else
-        {
-            strcpy(gui_int->accept.title,"Accept");
-            strcpy(gui_int->accept.title2,"~A~ccept");
-        }
-
-        /* prepare the buttons (titles) */
-        if (gui_int->used_flag&GUI_INTERFACE_DECLINE)
-        {
-            if (gui_int->decline.title[0] != '\0')
-            {
-                gui_int->decline.title[0] = toupper(gui_int->decline.title[0]);
-                sprintf(gui_int->decline.title2,"~%c~%s", gui_int->decline.title[0],gui_int->decline.title+1);
-            }
-            else
-            {
-                strcpy(gui_int->decline.title,"Decline");
-                strcpy(gui_int->decline.title2,"~D~ecline");
-            }
-        }
-        else /* if we have a accept button but no decline one - we set it without command = close gui */
-        {
-            gui_int->used_flag |=GUI_INTERFACE_DECLINE;
-            gui_int->decline.command[0]='\0';
-            strcpy(gui_int->decline.title,"Decline");
-            strcpy(gui_int->decline.title2,"~D~ecline");
-        }
-    }
-    else if (gui_int->used_flag&GUI_INTERFACE_BUTTON) /* means: single button */
-    {
-        gui_int->used_flag |=GUI_INTERFACE_ACCEPT; /* yes, thats right! we fake the accept button */
-        if (gui_int->accept.title[0] != '\0')
-        {
-            gui_int->accept.title[0] = toupper(gui_int->accept.title[0]);
-            sprintf(gui_int->accept.title2,"~%c~%s", gui_int->accept.title[0],gui_int->accept.title+1);
-        }
-        else
-        {
-            strcpy(gui_int->accept.title,"Bye");
-            strcpy(gui_int->accept.title2,"~B~ye");
-        }
-    }
-    else /* no accept/decline and no button? set it to 'Bye' default button */
-    {
-        gui_int->used_flag |=GUI_INTERFACE_ACCEPT; /* yes, thats right! we fake the accept button */
-        gui_int->accept.command[0]='\0';
-        strcpy(gui_int->accept.title,"Bye");
-        strcpy(gui_int->accept.title2,"~B~ye");
-    }
-
-    return gui_int;
-}
+#include "include.h"
+#include <limits.h> // TODO:Put in include.h
+
+_gui_npc *gui_npc;
+
+static void BadInterfaceString(char *data, uint16 pos);
+static uint8 ParseTag(_gui_npc_element *element, char *data, int *pos);
+static char *StripCodes(char *s, const char *ct);
+static void FormatBody(_font *font, uint16 width, uint8 lines, _gui_npc_element *element);
+static void FineTuneButtons(void);
+static uint16 PrecalcGUI(void);
+static void ShowGUIBackground(uint16 x, uint16 y);
+static void ShowGUIPanel(uint16 x, uint16 y);
+static void ShowGUIFurniture(uint16 x, uint16 y);
+static void ShowGUIContents(uint16 x, uint16 y);
+static void ShowIcon(_gui_npc_element *this);
+static _gui_npc_element *GetElement(int mx, int my);
+static void SelectKeyword(_gui_npc_element *element);
+static void SelectIcon(_gui_npc_element *element);
+static void ChooseLink(uint8 n);
+static void SelectLink(_gui_npc_element *element);
+static void ChooseButton(char c);
+static void SelectButton(_gui_npc_element *element);
+static void SendCommand(void);
+static uint8 ScrollGUI(sint16 dist);
 
 /* called from commands.c after we got a interface command */
-_gui_interface_struct *load_gui_interface(int mode, char *data, int len, int pos)
+_gui_npc *gui_npc_create(int mode, char *data, int len, int pos)
 {
-    int flag_start=0, flag_end=0;
+    int  flag_start,
+         flag_end;
     char c;
-    /*buf[256];*/
-    _gui_interface_head      head_tmp;
-    _gui_interface_message   message_tmp;
-    _gui_interface_reward    reward_tmp;
-    _gui_interface_who   who_tmp;
-    _gui_interface_xtended   xtended_tmp;
-    _gui_interface_link      link_tmp;
-    _gui_interface_icon      icon_tmp;
-    _gui_interface_button    button_tmp;
-    _gui_interface_textfield textfield_tmp;
-    int cmd = INTERFACE_CMD_NO;      /* we have a open '<' and a command is active */
-    int cmd_mode = INTERFACE_CMD_NO; /* when we collect outside a cmd tag strings,
-                                              * the string is related to this cmd
-                                              */
 
-    _gui_interface_struct *gui_int = malloc(sizeof(_gui_interface_struct));
-    memset(gui_int,0,sizeof(_gui_interface_struct));
+#ifdef DEVELOPMENT
+    LOG(LOG_DEBUG, "Interface command: mode=%d len=%d, %s\n",
+        mode, len, (char *)(data + pos));
+#else
+    LOG(LOG_DEBUG, "got gui-interface-cmd\n");
+#endif
+    MALLOC(gui_npc, sizeof *gui_npc);
 
-    for (;len>pos;pos++)
+    if (!gui_npc)
+    {
+        return NULL;
+    }
+
+    interface_mode = mode;
+
+    for (flag_start = 0, flag_end = 0; len > pos; pos++)
     {
         c = *(data+pos);
 
         if (c == '<')
         {
-            if (flag_end==1)
+            if (flag_end == 1)
             {
                 if (flag_end == 2) /* bug */
                 {
-                    /*draw_info("ERROR: bad interface string (flag end error)", COLOR_RED);*/
-                    LOG(LOG_ERROR, "ERROR: bad interface string (flag end error): %s\n", data);
-                    free(gui_int);
+                    BadInterfaceString(data, pos);
+
                     return NULL;
                 }
 
                 /* our char before this was a '>' - now we get a '<' */
-                flag_start=0;
-                flag_end=0;
-                cmd_mode = cmd;
-                cmd = INTERFACE_CMD_NO;
+                flag_start = 0;
+                flag_end = 0;
             }
 
             if (flag_start) /* double << ?*/
             {
-                if (flag_start == 2) /* bug */
-                {
-                    /*draw_info("ERROR: bad interface string (flag start error)", COLOR_RED);*/
-                    LOG(LOG_ERROR, "ERROR: bad interface string (flag start error): %s\n", data);
-                    free(gui_int);
-                    return NULL;
-                }
+                BadInterfaceString(data, pos);
 
-                flag_start=0;
-                goto normal_char;
+                return NULL;
             }
             else
-                flag_start=1;
-
+            {
+                flag_start = 1;
+            }
         }
         else if (c == '>')
         {
             if (flag_end)
             {
-                flag_end=0;
-                goto normal_char;
+                BadInterfaceString(data, pos);
+
+                return NULL;
             }
             else
-                flag_end=1;
+            {
+                flag_end = 1;
+            }
         }
         else
         {
             /* we have a single '<' or '>'? */
-            if (flag_start==1)
+            if (flag_start == 1)
             {
-                flag_start=2;
+                _gui_npc_element *element;
+
+                flag_start = 2;
+
                 /* This char is a command marker */
-                /*
-                sprintf(buf, "found cmd: %c", c);
-                draw_info(buf, COLOR_GREEN);
-                */
-
-                cmd_mode = INTERFACE_CMD_NO;
-
                 switch (c)
                 {
                     case 'h': /* head with picture & name this interface comes from */
-                        cmd = INTERFACE_CMD_HEAD;
-                        if (interface_cmd_head(&head_tmp, data, &pos))
+                        if (!gui_npc->head)
                         {
-                            free(gui_int);
-                            return NULL;
-                        }
-                        memcpy(&gui_int->head, &head_tmp,sizeof(_gui_interface_head));
-                        gui_int->used_flag |=GUI_INTERFACE_HEAD;
-                        break;
+                            MALLOC(gui_npc->head, sizeof *gui_npc->head);
 
-                    case 'm': /* title & text - what he has to say */
-                        cmd = INTERFACE_CMD_MESSAGE;
-                        if (interface_cmd_message(&message_tmp, data, &pos))
-                        {
-                            free(gui_int);
-                            return NULL;
-                        }
-                        memcpy(&gui_int->message, &message_tmp,sizeof(_gui_interface_message));
-                        gui_int->used_flag |=GUI_INTERFACE_MESSAGE;
-                        break;
-
-                    case 'r': /* reward info */
-                        cmd = INTERFACE_CMD_REWARD;
-                        if (interface_cmd_reward(&reward_tmp, data, &pos))
-                        {
-                            free(gui_int);
-                            return NULL;
-                        }
-                        memcpy(&gui_int->reward, &reward_tmp,sizeof(_gui_interface_reward));
-                        gui_int->used_flag |=GUI_INTERFACE_REWARD;
-                        break;
-
-                    case 'w': /* who info */
-                        cmd = INTERFACE_CMD_WHO;
-                        if (interface_cmd_who(&who_tmp, data, &pos))
-                        {
-                            free(gui_int);
-                            return NULL;
-                        }
-                        memcpy(&gui_int->who, &who_tmp,sizeof(_gui_interface_who));
-                        gui_int->used_flag |=GUI_INTERFACE_WHO;
-                        break;
-
-                    case 'x': /* xtended info */
-                        cmd = INTERFACE_CMD_XTENDED;
-                        if (interface_cmd_xtended(&xtended_tmp, data, &pos))
-                        {
-                            free(gui_int);
-                            return NULL;
-                        }
-                        memcpy(&gui_int->xtended, &xtended_tmp,sizeof(_gui_interface_xtended));
-                        gui_int->used_flag |=GUI_INTERFACE_XTENDED;
-                        break;
-
-                    case 'l': /* define a "link" string line */
-                        cmd = INTERFACE_CMD_LINK;
-                        if (interface_cmd_link(&link_tmp, data, &pos))
-                        {
-                            free(gui_int);
-                            return NULL;
-                        }
-                        memcpy(&gui_int->link[gui_int->link_count++], &link_tmp,sizeof(_gui_interface_link));
-                        break;
-
-
-                    case 'i': /* define a "icon" - graphical presentation of reward or message part */
-                        cmd = INTERFACE_CMD_ICON;
-                        if (interface_cmd_icon(&icon_tmp, data, &pos))
-                        {
-                            free(gui_int);
-                            return NULL;
-                        }
-                        memcpy(&gui_int->icon[gui_int->icon_count++], &icon_tmp,sizeof(_gui_interface_icon));
-                        break;
-
-                    case 'a': /* define accept button */
-                        cmd = INTERFACE_CMD_ACCEPT;
-                        if (interface_cmd_button(&button_tmp, data, &pos))
-                        {
-                            free(gui_int);
-                            return NULL;
-                        }
-                        memcpy(&gui_int->accept, &button_tmp,sizeof(_gui_interface_button));
-                        gui_int->used_flag |=GUI_INTERFACE_ACCEPT;
-                        break;
-
-                    case 'b': /* define single button */
-                        cmd = INTERFACE_CMD_BUTTON;
-                        if (interface_cmd_button(&button_tmp, data, &pos))
-                        {
-                            free(gui_int);
-                            return NULL;
-                        }
-                        /* we use the accept button struct for single buttons too */
-                        memcpy(&gui_int->accept, &button_tmp,sizeof(_gui_interface_button));
-                        gui_int->used_flag |=GUI_INTERFACE_BUTTON;
-                        break;
-
-                    case 'd': /* define decline button */
-                        cmd = INTERFACE_CMD_DECLINE;
-                        if (interface_cmd_button(&button_tmp, data, &pos))
-                        {
-                            free(gui_int);
-                            return NULL;
-                        }
-                        memcpy(&gui_int->decline, &button_tmp,sizeof(_gui_interface_button));
-                        gui_int->used_flag |=GUI_INTERFACE_DECLINE;
-                        break;
-
-                    case 't': /* textfield contents */
-                        cmd = INTERFACE_CMD_TEXTFIELD;
-                        if (interface_cmd_textfield(&textfield_tmp, data, &pos))
-                        {
-                            free(gui_int);
-                            return NULL;
-                        }
-                        memcpy(&gui_int->textfield, &textfield_tmp,sizeof(_gui_interface_textfield));
-                        gui_int->used_flag |=GUI_INTERFACE_TEXTFIELD;
-                        break;
-
-                    default:
-
-                        draw_info("ERROR: bad interface string (flag start error)", COLOR_RED);
-                        LOG(LOG_ERROR, "ERROR: bad command tag: %s\n", data);
-                        return FALSE;
-                        break;
-                }
-            }
-            else if (flag_end==1)
-            {
-                flag_end=0;
-                flag_start=0;
-                cmd_mode = cmd;
-                cmd = INTERFACE_CMD_NO;
-                /* close this command - perhaps we stay string collect mode for it */
-                /*
-                sprintf(buf, "close cmd");
-                draw_info(buf, COLOR_GREEN);
-                */
-            }
-normal_char:;
-            /* we don't have "text" between the tags (<> <>) atm */
-        }
-    }
-
-    /* if we are here, we have a legal gui_int structure.
-     * Now lets create a legal formular and preprocess some structures.
-     */
-
-    gui_int = format_gui_interface(gui_int);
-    return gui_int;
-}
-
-
-/* send a command from the gui to server.
- * if mode is 1, its a real command.
- * mode 0 or 2 means to add /talk first.
- * mode 2 means manual input / add to history
- */
-void gui_interface_send_command(int mode, char *cmd)
-{
-    char msg[1024];
-
-    if (gui_interface_npc->status == GUI_INTERFACE_STATUS_WAIT)
-        return;
-
-    if (gui_interface_npc->used_flag & GUI_INTERFACE_WHO)
-    {
-        if (!strncmp(cmd,"/talk ",6))
-            cmd +=6;
-        client_send_tell_extended(gui_interface_npc->who.body, cmd);
-    }
-    else
-    {
-        if (mode == 1)
-        {
-            send_game_command(cmd);
-            /* if(strncmp(cmd, "/talk ", 6) == 0)
-             textwin_addhistory(cmd); */
-        }
-        else
-        {
-            char buf[1024];
-            sprintf(buf,"/talk %s", cmd);
-            send_game_command(buf);
-            sprintf(msg,"Talking about: %s", cmd);
-            draw_info(msg,COLOR_WHITE);
-            if (mode == 2)
-                textwin_addhistory(buf);
-        }
-    }
-    reset_keys();
-    reset_input_mode();
-    cpl.input_mode = INPUT_MODE_NO;
-    gui_interface_npc->status = GUI_INTERFACE_STATUS_WAIT;
-}
-
-
-/* if we click on something in a gui interface, this functions
- * returns us the element and/or keyword.
- * we return in *element the gui element (message, body, icon)
- * and in *index what element. If there is a keyword or command,
- * we have a pointer to it in keyword. The pointer is to a static
- * buffer here in get_interface_line or to a buffer in gui_interface.
- * return: TRUE = we hit something.
- */
-int get_interface_line(int *element, int *index, char **keyword, int x, int y, int mx, int my)
-{
-    static char key[256]; /* used to get keyword string parts for keyword and save it statically */
-    int i,yoff = y+85+gui_interface_npc->yoff;
-
-    if (my <= y+85 || my >= y+85+INTERFACE_WINLEN_NPC)
-        return FALSE;
-
-    if (gui_interface_npc->used_flag&GUI_INTERFACE_MESSAGE)
-    {
-        yoff+=25;
-
-        for (i=0;i<gui_interface_npc->message.line_count;i++)
-        {
-            if (!strcmp(gui_interface_npc->message.lines[i], "\0"))
-                yoff += 5;
-            else
-            {
-                if (my >= yoff && my <=yoff+15)
-                {
-                    int st=0, xt, xs=x+40, s, flag=FALSE;
-
-                    xt=xs;
-                    for (s=0;s<(int)strlen(gui_interface_npc->message.lines[i]);s++)
-                    {
-                        if (gui_interface_npc->message.lines[i][s]=='^')
-                        {
-                            flag?(flag=FALSE):(flag=TRUE);
-                            xs = xt;
-                            st =s+1;
+                            if (gui_npc->head)
+                            {
+                                gui_npc->head->type = GUI_NPC_HEAD;
+                                gui_npc->head->last = gui_npc->head;
+                            }
                         }
                         else
                         {
-                            if (gui_interface_npc->message.lines[i][s] != '~' &&
-                                    gui_interface_npc->message.lines[i][s] != '°' && gui_interface_npc->message.lines[i][s] != '|')
-                                xt += font_medium.c[(unsigned char)gui_interface_npc->message.lines[i][s]].w + font_medium.char_offset;
-
-                            if (flag && mx>=xs && mx <=xt) /* only when we have a active keyword part */
-                            {
-                                char *ptr = strchr(&gui_interface_npc->message.lines[i][s], '^');
-
-                                *element = GUI_INTERFACE_MESSAGE;
-                                *index = i;
-                                if (!ptr)
-                                    strcpy(key, &gui_interface_npc->message.lines[i][st]);
-                                else
-                                {
-                                    /* eat that, mueslifresser ;)= */
-                                    strncpy(key, &gui_interface_npc->message.lines[i][st],ptr-&gui_interface_npc->message.lines[i][st]);
-                                    key[ptr-&gui_interface_npc->message.lines[i][st]]='\0';
-                                }
-                                *keyword = key;
-                                return TRUE;
-                            }
+                            gui_npc->head->last = NULL;
                         }
 
-                    }
-                    return FALSE;
-                }
-                yoff += 15;
-            }
-    }
-        yoff += 15;
-    }
-
-    /* reward is also used as "objective" */
-    if (gui_interface_npc->used_flag&GUI_INTERFACE_REWARD)
-    {
-        if (gui_interface_npc->reward.body_text[0] != '\0')
-        {
-            yoff +=25;
-            for (i = 0; i < gui_interface_npc->reward.line_count; i++)
-            {
-                if (!strcmp(gui_interface_npc->reward.lines[i], "\0"))
-                    yoff += 5;
-                else
-                {
-                    if (my >= yoff && my <=yoff+15)
-                    {
-                        int st=0, xt, xs=x+40, s, flag=FALSE;
-
-                        xt=xs;
-                        for (s=0;s<(int)strlen(gui_interface_npc->reward.lines[i]);s++)
+                        if (!gui_npc->head ||
+                            !gui_npc->head->last ||
+                            !ParseTag(gui_npc->head, data, &pos))
                         {
-                            if (gui_interface_npc->reward.lines[i][s]=='^')
+                            gui_npc_reset();
+
+                            return NULL;
+                        }
+
+                        break;
+
+                    case 'm': /* title & text - what he has to say */
+                        if (!gui_npc->message)
+                        {
+                            MALLOC(gui_npc->message, sizeof *gui_npc->message);
+
+                            if (gui_npc->message)
                             {
-                                flag?(flag=FALSE):(flag=TRUE);
-                                xs = xt;
-                                st =s+1;
+                                gui_npc->message->type = GUI_NPC_MESSAGE;
+                                gui_npc->message->last = gui_npc->message;
+                            }
+                        }
+                        else
+                        {
+                            gui_npc->message->last = NULL;
+                        }
+
+                        if (!gui_npc->message ||
+                            !gui_npc->message->last ||
+                            !ParseTag(gui_npc->message, data, &pos))
+                        {
+                            gui_npc_reset();
+
+                            return NULL;
+                        }
+
+                        break;
+
+                    case 'r': /* reward info */
+                        if (!gui_npc->reward)
+                        {
+                            MALLOC(gui_npc->reward, sizeof *gui_npc->reward);
+
+                            if (gui_npc->reward)
+                            {
+                                gui_npc->reward->type = GUI_NPC_REWARD;
+                                gui_npc->reward->last = gui_npc->reward;
+                            }
+                        }
+                        else
+                        {
+                            gui_npc->reward->last = NULL;
+                        }
+
+                        if (!gui_npc->reward ||
+                            !gui_npc->reward->last ||
+                            !ParseTag(gui_npc->reward, data, &pos))
+                        {
+                            gui_npc_reset();
+
+                            return NULL;
+                        }
+
+                        break;
+
+                    case 'i': /* define a "icon" - graphical presentation of reward or message part */
+                        MALLOC(element, sizeof *element);
+
+                        if (element)
+                        {
+                            if (!gui_npc->icon)
+                            {
+                                gui_npc->icon = element;
                             }
                             else
                             {
-                                if (gui_interface_npc->reward.lines[i][s] != '~' &&
-                                        gui_interface_npc->reward.lines[i][s] != '°' && gui_interface_npc->reward.lines[i][s] != '|')
-                                    xt += font_medium.c[(unsigned char)gui_interface_npc->reward.lines[i][s]].w + font_medium.char_offset;
-
-                                if (flag && mx>=xs && mx <=xt) /* only when we have a active keyword part */
-                                {
-                                    char *ptr = strchr(&gui_interface_npc->reward.lines[i][s], '^');
-
-                                    *element = GUI_INTERFACE_REWARD;
-                                    *index = i;
-                                    if (!ptr)
-                                        strcpy(key, &gui_interface_npc->reward.lines[i][st]);
-                                    else
-                                    {
-                                        /* eat that, mueslifresser ;)= */
-                                        strncpy(key, &gui_interface_npc->reward.lines[i][st],ptr-&gui_interface_npc->reward.lines[i][st]);
-                                        key[ptr-&gui_interface_npc->reward.lines[i][st]]='\0';
-                                    }
-                                    *keyword = key;
-                                    return TRUE;
-                                }
+                                element->prev = gui_npc->icon->last;
+                                element->prev->next = element;
                             }
 
+                            element->type = GUI_NPC_ICON;
+                            gui_npc->icon->last = element;
                         }
-                        return FALSE;
-                    }
-                    yoff += 15;
+
+                        if (!element ||
+                            !ParseTag(element, data, &pos))
+                        {
+                            gui_npc_reset();
+
+                            return NULL;
+                        }
+
+                        break;
+
+                    case 'l': /* define a "link" string line */
+                        MALLOC(element, sizeof *element);
+
+                        if (element)
+                        {
+                            if (!gui_npc->link)
+                            {
+                                gui_npc->link = element;
+                            }
+                            else
+                            {
+                                element->prev = gui_npc->link->last;
+                                element->prev->next = element;
+                            }
+
+                            element->type = GUI_NPC_LINK;
+                            gui_npc->link->last = element;
+                        }
+
+                        if (!element ||
+                            !ParseTag(element, data, &pos))
+                        {
+                            gui_npc_reset();
+
+                            return NULL;
+                        }
+
+                        break;
+
+                    case 'u': /* update (intended for qlist) */
+                        MALLOC(element, sizeof *element);
+
+                        if (element)
+                        {
+                            if (!gui_npc->update)
+                            {
+                                gui_npc->update = element;
+                            }
+                            else
+                            {
+                                element->prev = gui_npc->update->last;
+                                element->prev->next = element;
+                            }
+
+                            element->type = GUI_NPC_UPDATE;
+                            gui_npc->update->last = element;
+                        }
+
+                        if (!element ||
+                            !ParseTag(element, data, &pos))
+                        {
+                            gui_npc_reset();
+
+                            return NULL;
+                        }
+
+                        break;
+
+                    case 'a': /* define lhsbutton button */
+                        if (!gui_npc->lhsbutton)
+                        {
+                            MALLOC(gui_npc->lhsbutton, sizeof *gui_npc->lhsbutton);
+
+                            if (gui_npc->lhsbutton)
+                            {
+                                gui_npc->lhsbutton->type = GUI_NPC_BUTTON;
+                                gui_npc->lhsbutton->last = gui_npc->lhsbutton;
+                            }
+                        }
+                        else
+                        {
+                            gui_npc->lhsbutton->last = NULL;
+                        }
+
+                        if (!gui_npc->lhsbutton ||
+                            !gui_npc->lhsbutton->last ||
+                            !ParseTag(gui_npc->lhsbutton, data, &pos))
+                        {
+                            gui_npc_reset();
+
+                            return NULL;
+                        }
+
+                        break;
+
+                    case 'd': /* define rhsbutton button */
+                        if (!gui_npc->rhsbutton)
+                        {
+                            MALLOC(gui_npc->rhsbutton, sizeof *gui_npc->rhsbutton);
+
+                            if (gui_npc->rhsbutton)
+                            {
+                                gui_npc->rhsbutton->type = GUI_NPC_BUTTON;
+                                gui_npc->rhsbutton->last = gui_npc->rhsbutton;
+                            }
+                        }
+                        else
+                        {
+                            gui_npc->rhsbutton->last = NULL;
+                        }
+
+                        if (!gui_npc->rhsbutton ||
+                            !gui_npc->rhsbutton->last ||
+                            !ParseTag(gui_npc->rhsbutton, data, &pos))
+                        {
+                            gui_npc_reset();
+
+                            return NULL;
+                        }
+
+                        break;
+
+                    case 't': /* textfield contents */
+                        if (!gui_npc->textfield)
+                        {
+                            MALLOC(gui_npc->textfield, sizeof *gui_npc->textfield);
+
+                            if (gui_npc->textfield)
+                            {
+                                gui_npc->textfield->type = GUI_NPC_TEXTFIELD;
+                                gui_npc->textfield->last = gui_npc->textfield;
+                            }
+                        }
+                        else
+                        {
+                            gui_npc->textfield->last = NULL;
+                        }
+
+                        if (!gui_npc->textfield ||
+                            !gui_npc->textfield->last ||
+                            !ParseTag(gui_npc->textfield, data, &pos))
+                        {
+                            gui_npc_reset();
+
+                            return NULL;
+                        }
+
+                        break;
+
+                    default:
+                        BadInterfaceString(data, pos);
+
+                        return NULL;
                 }
             }
-        }
-        else if (gui_interface_npc->reward.title[0] != '\0')
-            yoff += 25;
-        if (gui_interface_npc->reward.copper || gui_interface_npc->reward.gold ||
-                gui_interface_npc->reward.silver || gui_interface_npc->reward.mithril ||
-                gui_interface_npc->icon_count)
-        {
-            if (gui_interface_npc->reward.line_count)
-                yoff+=5;
-            yoff+=30;
-        }
-        yoff+=15;
-    }
-
-    if (gui_interface_npc->icon_count)
-    {
-        int flag_s=FALSE;
-        for (i=0;i<gui_interface_npc->icon_count;i++)
-        {
-            if (gui_interface_npc->icon[i].mode == 's' )
-                flag_s=TRUE;
-            else if (gui_interface_npc->icon[i].mode == 'G' )
-                yoff+=44;
-        }
-
-        if (flag_s)
-        {
-            yoff+=20;
-            for (i=0;i<gui_interface_npc->icon_count;i++)
+            else if (flag_end == 1)
             {
-                if (gui_interface_npc->icon[i].mode == 's' )
-                    yoff+=44;
+                flag_start = 0;
+                flag_end = 0;
             }
         }
-        if (gui_interface_npc->icon_select)
+    }
+
+    /* if we are here, we have a legal gui_npc structure.
+     * Now lets create a legal formula and preprocess some structures.
+     */
+    if (gui_npc->head)
+    {
+        gui_npc->head->image.face = get_bmap_id(gui_npc->head->image.name);
+
+        /* If the image is not in FaceList, load it from the local icons
+         * dir. */
+        if (gui_npc->head->image.face == -1)
         {
-            int t;
+            char buf[MEDIUM_BUF];
 
-            yoff+=20;
-            for (t=1,i=0;i<gui_interface_npc->icon_count;i++)
+            sprintf(buf, "%s%s.png",
+                    GetIconDirectory(), gui_npc->head->image.name);
+            gui_npc->head->image.sprite = sprite_load_file(buf,
+                                                           SURFACE_FLAG_DISPLAYFORMAT);
+        }
+        else
+        {
+            gui_npc->head->image.sprite = FaceList[gui_npc->head->image.face].sprite;
+        }
+
+        /* If the interface string specifies no explicit title, default to the
+         * name of the target (ie, who you are talking to). */
+        if (!gui_npc->head->title &&
+            cpl.target_name)
+        {
+            MALLOC2(gui_npc->head->title, cpl.target_name);
+        }
+    }
+
+    if (gui_npc->message)
+    {
+        FormatBody(&font_medium, GUI_NPC_WIDTH, GUI_NPC_MESSAGE_MAX_LINE,
+                   gui_npc->message);
+    }
+
+    if (gui_npc->reward)
+    {
+        FormatBody(&font_medium, GUI_NPC_WIDTH, GUI_NPC_REWARD_MAX_LINE,
+                   gui_npc->reward);
+    }
+
+    if (gui_npc->icon)
+    {
+        _gui_npc_element *this;
+
+        for (this = gui_npc->icon; this; this = this->next)
+        {
+            /* First split body_text into lines. */
+            if (gui_npc->shop)
             {
+                FormatBody(&font_small, GUI_NPC_WIDTH, GUI_NPC_ICON_MAX_LINE,
+                           this);
+            }
+            else
+            {
+                FormatBody(&font_tiny_out,
+                           GUI_NPC_WIDTH - GUI_NPC_ICONSIZE - 5,
+                           GUI_NPC_ICON_MAX_LINE, this);
+            }
 
-                if (gui_interface_npc->icon[i].mode == 'S' )
+            /* search for the bmap num id's and load/request them if possible */
+            this->image.face = get_bmap_id(this->image.name);
+
+            /* If the image is not in FaceList, load it from the local icons
+             * dir. */
+            if (this->image.face == -1)
+            {
+                char buf[MEDIUM_BUF];
+
+                sprintf(buf, "%s%s.png", GetIconDirectory(), this->image.name);
+                this->image.sprite = sprite_load_file(buf,
+                                                      SURFACE_FLAG_DISPLAYFORMAT);
+            }
+            else
+            {
+                this->image.sprite = FaceList[this->image.face].sprite;
+            }
+
+            /* if we have already come across a selectable icon and now find a
+             * non-selectable one, reorder them */
+            if (gui_npc->first_selectable)
+            {
+                if (this->mode == 'G' ||
+                    this->mode == 'g')
                 {
-                    if (my >= yoff && my <=yoff+32 && mx >=x+40 && mx<=x+72)
+                    if ((this->prev->next = this->next))
                     {
-                        *element = GUI_INTERFACE_ICON;
-                        *index = t;
-                        *keyword = gui_interface_npc->icon[i].title;
-                        return TRUE;
+                        this->next->prev = this->prev;
                     }
-                    yoff+=44;
+                    else
+                    {
+                       gui_npc->icon->last = this->prev;
+                    }
 
+                    this->prev = gui_npc->first_selectable->prev;
+                    this->next = gui_npc->first_selectable;
+                    gui_npc->first_selectable->prev->next = this;
+                    gui_npc->first_selectable->prev = this;
+                    this = this->next;
                 }
-                t++;
+            }
+            /* do we have a selectable icon? */
+            else if ((this->mode == 'S' ||
+                      this->mode == 's'))
+            {
+                gui_npc->first_selectable = this;
             }
         }
-        yoff+=15;
     }
 
-    if (gui_interface_npc->link_count)
+    if (gui_npc->update)
     {
-        for (i=0;i<gui_interface_npc->link_count;i++,yoff+=15)
-            if (my >= yoff && my <=yoff+15)
-            {
-                int len =  get_string_pixel_length(gui_interface_npc->link[i].link, &font_medium);
+        _gui_npc_element *this;
 
-                if (mx>=x+40 && mx<=x+40+len)
-                {
-                    *element = GUI_INTERFACE_LINK;
-                    *index = i;
-                    if (gui_interface_npc->link[i].cmd)
-                        *keyword = gui_interface_npc->link[i].cmd;
-                    else
-                        *keyword = gui_interface_npc->link[i].link;
-                    return TRUE;
-                }
-                return FALSE;
-            }
+        for (this = gui_npc->update; this; this = this->next)
+        {
+            FormatBody(&font_medium, GUI_NPC_WIDTH, GUI_NPC_UPDATE_MAX_LINE,
+                       this);
+        }
     }
 
-    return FALSE;
+    FineTuneButtons();
+
+    /* Prefilled (and focused) textfield */
+    if (gui_npc->textfield)
+    {
+        gui_npc->input_flag = 1;
+        reset_keys();
+        open_input_mode(240);
+        textwin_putstring(gui_npc->textfield->command);
+        cpl.input_mode = INPUT_MODE_NPCDIALOG;
+        HistoryPos = 0;
+    }
+
+    /* Turn any music playing down to 25% volume (relative). */
+    if (music.data)
+    {
+        sound_play_music(music.name, music.vol / 4, music.fade, music.loop, 1,
+                         0);
+    }
+
+    gui_npc->height = PrecalcGUI();
+    cpl.menustatus = MENU_NPC;
+    gui_npc->startx = (Screensize.x / 2) - (Bitmaps[BITMAP_GUI_NPC_TOP]->bitmap->w / 2);
+    gui_npc->starty = (Screensize.y - 600) / 2 + 50;
+    mb_clicked = 0;
+
+    return gui_npc;
 }
 
-int precalc_interface_npc(void)
+static void BadInterfaceString(char *data, uint16 pos)
 {
-    int yoff, i;
+    draw_info("ERROR: bad interface string (flag start error)",
+              COLOR_RED);
+    LOG(LOG_ERROR, "ERROR: bad command tag: %s\n",
+        data + pos);
+    gui_npc_reset();
+}
 
-    yoff = 5;
-    if (gui_interface_npc->used_flag&GUI_INTERFACE_MESSAGE)
+static uint8 ParseTag(_gui_npc_element *element, char *data, int *pos)
+{
+    char  *cp,
+           buf[HUGE_BUF],
+           c;
+
+    (*pos)++;
+
+    while ((c = *(data + *pos)) != '\0' &&
+           c)
     {
-        yoff += 25;
-        for (i = 0; i < gui_interface_npc->message.line_count; i++)
-            if (!strcmp(gui_interface_npc->message.lines[i], "\0"))
-                yoff += 5;
-            else
-                yoff += 15;
-        yoff += 15;
+        /* c is legal string part - check it is '>' */
+        if (c == '>')
+        {
+            if (*(data + (*pos) + 1) != '>') /* no double >>? then we return */
+            {
+                (*pos)--;
+
+                return 1;
+            }
+        }
+
+        (*pos)++;
+
+        if (c <= ' ')
+        {
+            continue;
+        }
+
+        /* c is part of the head command inside the '<' - lets handle it
+         * It must be a command. If it is unknown, return NULL
+         */
+        switch (c)
+        {
+            case 'b': /* body_text */
+                if (element->type == GUI_NPC_HEAD ||
+                    element->type == GUI_NPC_LINK ||
+                    element->type == GUI_NPC_BUTTON ||
+                    element->type == GUI_NPC_TEXTFIELD)
+                {
+                    return 0;
+                }
+
+                if (!(cp = get_parameter_string(data, pos, 0)))
+                {
+                    return 0;
+                }
+
+                MALLOC2(element->body.text, cp);
+
+                break;
+
+            case 'c': /* command */
+                if (element->type == GUI_NPC_HEAD ||
+                    element->type == GUI_NPC_MESSAGE ||
+                    element->type == GUI_NPC_REWARD ||
+                    element->type == GUI_NPC_UPDATE)
+                {
+                    return 0;
+                }
+
+                if (!(cp = get_parameter_string(data, pos, 0)))
+                {
+                    return 0;
+                }
+
+                MALLOC2(element->command, StripCodes(buf, cp));
+
+                break;
+
+            case 'f': /* face */
+                if (element->type == GUI_NPC_MESSAGE ||
+                    element->type == GUI_NPC_REWARD ||
+                    element->type == GUI_NPC_UPDATE ||
+                    element->type == GUI_NPC_LINK ||
+                    element->type == GUI_NPC_BUTTON ||
+                    element->type == GUI_NPC_TEXTFIELD)
+                {
+                    return 0;
+                }
+
+                if (!(cp = get_parameter_string(data, pos, 0)))
+                {
+                    return 0;
+                }
+
+                MALLOC2(element->image.name, cp);
+
+                break;
+
+            case 'm': /* mode */
+                if (element->type != GUI_NPC_ICON)
+                {
+                    return 0;
+                }
+
+                if (!(cp = get_parameter_string(data, pos, 0)))
+                {
+                    return 0;
+                }
+
+                element->mode = *cp;
+
+                break;
+
+            case 'q': /* quantity */
+                if (element->type != GUI_NPC_ICON)
+                {
+                    return 0;
+                }
+
+                if (!(cp = get_parameter_string(data, pos, 0)))
+                {
+                    return 0;
+                }
+
+                element->quantity = atoi(cp);
+
+                break;
+
+            case 's': /* sound */
+                if (element->type != GUI_NPC_HEAD)
+                {
+                    return 0;
+                }
+
+                if (!(cp = get_parameter_string(data, pos, 0)))
+                {
+                    return 0;
+                }
+
+                gui_npc->sound = atoi(cp);
+
+                break;
+
+            case 't': /* title */
+                if (element->type == GUI_NPC_TEXTFIELD)
+                {
+                    return 0;
+                }
+
+                if (!(cp = get_parameter_string(data, pos, 0)))
+                {
+                    return 0;
+                }
+
+                MALLOC2(element->title, StripCodes(buf, cp));
+
+                break;
+
+            case '1': /* copper cash */
+                if (element->type != GUI_NPC_REWARD)
+                {
+                    return 0;
+                }
+
+                if (!(cp = get_parameter_string(data, pos, 0)))
+                {
+                    return 0;
+                }
+
+                element->copper = atoi(cp);
+                gui_npc->total_coins += ABS(element->copper);
+
+                break;
+
+            case '2': /* silver cash */
+                if (element->type != GUI_NPC_REWARD)
+                {
+                    return 0;
+                }
+
+                if (!(cp = get_parameter_string(data, pos, 0)))
+                {
+                    return 0;
+                }
+
+                element->silver = atoi(cp);
+                gui_npc->total_coins += ABS(element->silver);
+
+                break;
+
+            case '3': /* gold cash */
+                if (element->type != GUI_NPC_REWARD)
+                {
+                    return 0;
+                }
+
+                if (!(cp = get_parameter_string(data, pos, 0)))
+                {
+                    return 0;
+                }
+
+                element->gold = atoi(cp);
+                gui_npc->total_coins += ABS(element->gold);
+
+                break;
+
+            case '4': /* mithril cash */
+                if (element->type != GUI_NPC_REWARD)
+                {
+                    return 0;
+                }
+
+                if (!(cp = get_parameter_string(data, pos, 0)))
+                {
+                    return 0;
+                }
+
+                element->mithril = atoi(cp);
+                gui_npc->total_coins += ABS(element->mithril);
+
+                break;
+
+            case '$': /* shop */
+                if (element->type != GUI_NPC_HEAD)
+                {
+                    return 0;
+                }
+
+                if (!(cp = get_parameter_string(data, pos, 0)))
+                {
+                    return 0;
+                }
+
+                gui_npc->shop = atoi(cp);
+
+                break;
+
+            default:
+                return 0;
+        }
     }
 
+    return 0;
+}
 
-    /* reward is also used as "objective" */
-    if (gui_interface_npc->used_flag&GUI_INTERFACE_REWARD)
+/* strip out embedded character codes */
+static char *StripCodes(char *s, const char *ct)
+{
+    uint16 i,
+           j;
+
+    for (i = 0, j = 0; *(ct + i); i++)
     {
-        if (gui_interface_npc->reward.body_text[0] != '\0')
+        if (*(ct + i) != '~' && /* emphasis */
+            *(ct + i) != '|' && /* strong */
+            *(ct + i) != '`' && /* intertitle */
+            *(ct + i) != '^') /* clickable keyword */
         {
-            yoff +=25;
-            for (i = 0; i < gui_interface_npc->reward.line_count; i++)
-            {
-                if (gui_interface_npc->reward.lines[i][0] != '\0')
-                    yoff += 15;
+            s[j++] = *(ct + i);
+        }
+    }
+
+    s[j] = '\0';
+
+    return s;
+}
+
+static void FormatBody(_font *font, uint16 width, uint8 lines, _gui_npc_element *element)
+{
+    uint8  intertitle = 0,
+           strong = 0,
+           emphasis = 0,
+           hyper = 0,
+           endline = 0;
+    uint16 yoff = element->box.y,
+           bc = 0,
+           lc = 0;
+    char   buf[MEDIUM_BUF] = "";
+
+    /* Sanity check */
+    if (!element->body.text)
+    {
+        return;
+    }
+
+    /* Here we adjust yoff according to the element type. For message, reward,
+     * and update blocks, account for the title, and for icons in a shop
+     * interface, set to 0. */
+    if ((element->type == GUI_NPC_MESSAGE ||
+         element->type == GUI_NPC_REWARD ||
+         element->type == GUI_NPC_UPDATE) &&
+        element->title)
+    {
+        yoff += font_big_out.line_height + FONT_BLANKLINE;
+    }
+    else if (element->type == GUI_NPC_ICON &&
+             gui_npc->shop)
+    {
+        yoff = USHRT_MAX;
+    }
+
+    /* Loop through body.text char-by-char. */
+    for (; lc < sizeof(buf); bc++)
+    {
+        int len;
+
+        switch (element->body.text[bc])
+        {
+            /* End of body_text? */
+            case '\0':
+                endline = 1;
+                buf[lc] = '\0';
+
+                break;
+
+            /* Newline? */
+            case '\n':
+                endline = 1;
+                buf[lc] = '\0';
+
+                break;
+
+            /* Carriage return? Ignore these. */
+            case '\r':
+                break;
+
+            /* Intertitle (gold text) markup tag? Toggle intertitle and append
+             * a tag to line. If intertitle has been switched on, force a line break. */
+            case '`':
+                intertitle = !intertitle;
+
+                if (intertitle)
+                {
+                    buf[lc++] = '`';
+
+                    if (strong)
+                    {
+                        strong = 0;
+                        buf[lc++] = '|';
+                    }
+
+                    if (emphasis)
+                    {
+                        emphasis = 0;
+                        buf[lc++] = '~';
+                    }
+                }
                 else
-                    yoff += 5;
+                {
+                    buf[lc++] = '`';
+
+                    if (element->body.text[bc + 1] == '\n' ||
+                        element->body.text[bc + 1] == '\0')
+                    {
+                        bc++;
+                    }
+
+                    endline = 1;
+                    buf[lc] = '\0';
+               }
+
+                break;
+
+            /* Strong (yellow text) markup tag? Toggle strong and append a tag
+             * to line. */
+            case '|':
+                if (!intertitle)
+                {
+                    strong = !strong;
+                    buf[lc++] = '|';
+                }
+
+                break;
+
+            /* Emphasis (green text) markup tag? Toggle emphasis and append a
+             * tag to line. */
+            case '~':
+                if (!intertitle)
+                {
+                    emphasis = !emphasis;
+                    buf[lc++] = '~';
+                }
+
+                break;
+
+            /* Hypertext (keyword) markup tag? Toggle hyper and, if this is the
+             * opening tag, get the keyword. */
+            case '^':
+                hyper = !hyper;
+
+                if (hyper)
+                {
+                    int  bcc,
+                         kc;
+                    char kbuf[MEDIUM_BUF];
+
+                    for (bcc = bc + 1, kc = 0; ; bcc++)
+                    {
+                        if (element->body.text[bcc] == '\0' ||
+                            element->body.text[bcc] == '\n' ||
+                            element->body.text[bcc] == '^')
+                        {
+                            _gui_npc_element *this;
+
+                            MALLOC(this, sizeof *this);
+
+                            if (this)
+                            {
+                                if (!gui_npc->hypertext)
+                                {
+                                    gui_npc->hypertext = this;
+                                }
+                                else
+                                {
+                                    this->prev = gui_npc->hypertext->last;
+                                    this->prev->next = this;
+                                }
+
+                                this->type = GUI_NPC_HYPERTEXT;
+                                this->box.x = 0;
+                                this->box.y = yoff;
+                                this->box.w = 0;
+                                this->box.h = font->line_height;
+                                gui_npc->hypertext->last = this;
+                                kbuf[kc] = '\0';
+                                MALLOC2(this->keyword, kbuf);
+                            }
+
+                            break;
+                        }
+
+                        switch (element->body.text[bcc])
+                        {
+                            case '\r':
+                            case '`':
+                            case '|':
+                            case '~':
+                                break;
+
+                            default:
+                                kbuf[kc++] = tolower(element->body.text[bcc]);
+                        }
+                    }
+                }
+
+                break;
+
+            /* Any other character? Append it to line and check if line wants
+             * to overflow the specified width. */
+            default:
+                /* If we're at the beginning of line and
+                 * intertitle/strong/emphasis are on (ie, they were turned on
+                 * in the previous line) append a tag to line. */
+                if (lc == 0)
+                {
+                    if (intertitle)
+                    {
+                        buf[lc++] = '`';
+                    }
+
+                    if (strong)
+                    {
+                        buf[lc++] = '|';
+                    }
+
+                    if (emphasis)
+                    {
+                        buf[lc++] = '~'; 
+                    }
+                }
+
+                /* Append the character to line. */
+                buf[lc++] = element->body.text[bc];
+                buf[lc] = '\0';
+
+                /* Check if line wants to overflow the specified width. */
+                if (StringWidthOffset(font, buf, &len, width))
+                {
+                    int lcc;
+
+                    /* Here we loop backwards through line, looking for a nice
+                     * space at which to break the line. */
+                    for (lcc = len; lcc >= 0; lcc--)
+                    {
+                        if (buf[lcc] == ' ')
+                        {
+                            break;
+                        }
+                        else if (buf[lcc] == '`')
+                        {
+                            intertitle = !intertitle;
+                        }
+                        else if (buf[lcc] == '|')
+                        {
+                            strong = !strong;
+                        }
+                        else if (buf[lcc] == '~')
+                        {
+                            emphasis = !emphasis;
+                        }
+                        else if (buf[lcc] == '^')
+                        {
+                            hyper = !hyper;
+                        }
+                    }
+
+                    /* Must mean we couldn't find a space, so the line breaks
+                     * at its end. */
+                    if (lcc < 0)
+                    {
+                        lcc = len;
+                    }
+
+                    bc -= lc - lcc - 1;
+                    lc = lcc;
+
+                    /* If intertitle/strong/emphasis are on append a closing
+                     * tag to line, but do NOT turn them off (we need the info
+                     * for the next line). */
+                    if (intertitle)
+                    {
+                        buf[lc++] = '`';
+                    }
+
+                    if (strong)
+                    {
+                        buf[lc++] = '|';
+                    }
+
+                    if (emphasis)
+                    {
+                        buf[lc++] = '~';
+                    }
+
+                    endline = 1;
+                }
+
+                buf[lc] = '\0';
+        }
+
+        if (endline)
+        {
+            MALLOC2(element->body.line[element->body.line_count], buf);
+
+            if (++element->body.line_count == lines ||
+                !element->body.text[bc])
+            {
+                return;
+            }
+
+            yoff += (element->body.text[bc + 1] == '\n') ? FONT_BLANKLINE :
+                    font->line_height;
+            lc = 0;
+            endline = 0;
+        }
+    }
+}
+
+/* Fiddles the buttons to guarantee a sensible layout. */
+static void FineTuneButtons(void)
+{
+    if (interface_mode == GUI_NPC_MODE_NPC)
+    {
+        /* If there is no LHS button, make one. */
+        if (!gui_npc->lhsbutton)
+        {
+            MALLOC(gui_npc->lhsbutton, sizeof *gui_npc->lhsbutton);
+
+            if (gui_npc->lhsbutton)
+            {
+                gui_npc->lhsbutton->type = GUI_NPC_BUTTON;
+                gui_npc->lhsbutton->last = gui_npc->lhsbutton;
+            }
+            else
+            {
+                gui_npc_reset();
+
+                return;
             }
         }
-        else if (gui_interface_npc->reward.title[0] != '\0')
-            yoff += 25;
-        if (gui_interface_npc->reward.copper || gui_interface_npc->reward.gold ||
-                gui_interface_npc->reward.silver || gui_interface_npc->reward.mithril ||
-                gui_interface_npc->icon_count)
+
+        /* If there is no RHS button, make one. */
+        if (!gui_npc->rhsbutton)
         {
-            if (gui_interface_npc->reward.line_count)
-                yoff += 5;
-            yoff += 30;
+            MALLOC(gui_npc->rhsbutton, sizeof *gui_npc->rhsbutton);
+
+            if (gui_npc->rhsbutton)
+            {
+                gui_npc->rhsbutton->type = GUI_NPC_BUTTON;
+                gui_npc->rhsbutton->last = gui_npc->rhsbutton;
+            }
+            else
+            {
+                gui_npc_reset();
+
+                return;
+            }
         }
-        yoff += 15;
+
+        /* If the LHS button has no command or title, it defaults to a hello
+         * button. */
+        if (!gui_npc->lhsbutton->command &&
+            !gui_npc->lhsbutton->title)
+        {
+            MALLOC2(gui_npc->lhsbutton->command, "hello");
+            MALLOC2(gui_npc->lhsbutton->title, "Hello");
+        }
+
+        /* If the RHS button has no command or title, it defaults to a goodbye
+         * button. */
+        if (!gui_npc->rhsbutton->command &&
+            !gui_npc->rhsbutton->title)
+        {
+            if (gui_npc->lhsbutton->title &&
+                (*gui_npc->lhsbutton->title == 'G' ||
+                 *gui_npc->lhsbutton->title == 'g'))
+            {
+                MALLOC2(gui_npc->rhsbutton->title, "Bye");
+            }
+            else
+            {
+                MALLOC2(gui_npc->rhsbutton->title, "Goodbye");
+            }
+        }
+
+        /* If the LHS button has no title, copy the command as title. */
+        if (!gui_npc->lhsbutton->title &&
+            gui_npc->lhsbutton->command)
+        {
+            if (*gui_npc->lhsbutton->command == '#')
+            {
+                MALLOC2(gui_npc->lhsbutton->title, gui_npc->lhsbutton->command + 1);
+            }
+            else
+            {
+                MALLOC2(gui_npc->lhsbutton->title, gui_npc->lhsbutton->command);
+            }
+        }
+
+        /* If the RHS button has no title, copy the command as title. */
+        if (!gui_npc->rhsbutton->title &&
+            gui_npc->rhsbutton->command)
+        {
+            if (*gui_npc->rhsbutton->command == '#')
+            {
+                MALLOC2(gui_npc->rhsbutton->title, gui_npc->rhsbutton->command + 1);
+            }
+            else
+            {
+                MALLOC2(gui_npc->rhsbutton->title, gui_npc->rhsbutton->command);
+            }
+        }
     }
 
-    if (gui_interface_npc->icon_count)
+    /* Highlight the LHS hotkey if necessary. */
+    if (gui_npc->lhsbutton)
     {
-        int flag_s=FALSE;
-        for (i=0;i<gui_interface_npc->icon_count;i++)
+        if (isalpha(*gui_npc->lhsbutton->title))
         {
-            if (gui_interface_npc->icon[i].mode == 's' )
-                flag_s=TRUE;
-            else if (gui_interface_npc->icon[i].mode == 'G' )
-                yoff+=44;
-        }
+            *gui_npc->lhsbutton->title = toupper(*gui_npc->lhsbutton->title);
 
-        if (flag_s)
-        {
-            yoff+=10;
-            for (i=0;i<gui_interface_npc->icon_count;i++)
+            /* use MALLOC and sprintf rather than MALLOC2 here because we
+             * insert extra characters. */
+            MALLOC(gui_npc->lhsbutton->title2,
+                   strlen(gui_npc->lhsbutton->title) + 2 + 1);
+
+            if (gui_npc->lhsbutton->title2)
             {
-                if (gui_interface_npc->icon[i].mode == 's' )
-                    yoff+=44;
+                sprintf(gui_npc->lhsbutton->title2, "~%c~%s",
+                        *gui_npc->lhsbutton->title,
+                        gui_npc->lhsbutton->title + 1);
             }
         }
-        if (gui_interface_npc->icon_select)
+        else
         {
-            yoff+=10;
-            for (i=0;i<gui_interface_npc->icon_count;i++)
-            {
-
-                if (gui_interface_npc->icon[i].mode == 'S' )
-                    yoff+=44;
-            }
+            MALLOC2(gui_npc->lhsbutton->title2, gui_npc->lhsbutton->title);
         }
-        yoff+=15;
     }
 
-    if (gui_interface_npc->link_count)
+    /* Highlight the RHS hotkey if necessary. */
+    if (gui_npc->rhsbutton)
     {
-        for (i=0;i<gui_interface_npc->link_count;i++)
-            yoff+=15;
+        if (isalpha(*gui_npc->rhsbutton->title))
+        {
+            *gui_npc->rhsbutton->title = toupper(*gui_npc->rhsbutton->title);
+
+            /* use MALLOC and sprintf rather than MALLOC2 here because we
+             * insert extra characters. */
+            MALLOC(gui_npc->rhsbutton->title2,
+                   strlen(gui_npc->rhsbutton->title) + 2 + 1);
+
+            if (gui_npc->rhsbutton->title2)
+            {
+                sprintf(gui_npc->rhsbutton->title2, "~%c~%s",
+                        *gui_npc->rhsbutton->title,
+                        gui_npc->rhsbutton->title + 1);
+            }
+        }
+        else
+        {
+            MALLOC2(gui_npc->rhsbutton->title2, gui_npc->rhsbutton->title);
+        }
+    }
+}
+
+/* clear & reset the gui interface */
+/* Alderan 2007-11-08: 'free'ing a sprite won't free all stuff, we need to free also the surfaces
+ * with the function sprite_free_sprite
+ */
+void gui_npc_reset(void)
+{
+    map_udate_flag = 2;
+    interface_mode = GUI_NPC_MODE_NO;
+
+    if (gui_npc)
+    {
+        /* Hypertext. */
+        if (gui_npc->hypertext)
+        {
+             _gui_npc_element *this = gui_npc->hypertext->last,
+                              *prev;
+
+            for (; this; this = prev)
+            {
+                prev = this->prev;
+                FREE(this->keyword);
+                FREE(this);
+            }
+        }
+
+        /* Head. */
+        if (gui_npc->head)
+        {
+            FREE(gui_npc->head->title);
+            FREE(gui_npc->head->image.name);
+
+            if (gui_npc->head->image.sprite)
+            {
+                /* Don't free a sprite from FaceList! */
+                if (gui_npc->head->image.face == -1)
+                {
+                    sprite_free_sprite(gui_npc->head->image.sprite);
+                }
+
+                gui_npc->head->image.sprite = NULL;
+            }
+
+            FREE(gui_npc->head);
+        }
+
+        /* Message. */
+        if (gui_npc->message)
+        {
+            FREE(gui_npc->message->title);
+
+            while (gui_npc->message->body.line_count)
+            {
+                FREE(gui_npc->message->body.line[gui_npc->message->body.line_count]);
+                gui_npc->message->body.line_count--;
+            }
+
+            FREE(gui_npc->message);
+        }
+
+        /* Reward. */
+        if (gui_npc->reward)
+        {
+            FREE(gui_npc->reward->title);
+
+            while (gui_npc->reward->body.line_count)
+            {
+                FREE(gui_npc->reward->body.line[gui_npc->reward->body.line_count]);
+                gui_npc->reward->body.line_count--;
+            }
+
+            FREE(gui_npc->reward);
+        }
+
+        /* Icons. */
+        if (gui_npc->icon)
+        {
+            _gui_npc_element *this = gui_npc->icon,
+                             *next;
+
+            for (; this; this = next)
+            {
+                next = this->next;
+                FREE(this->title);
+                FREE(this->command);
+
+                while (this->body.line_count)
+                {
+                    FREE(this->body.line[this->body.line_count]);
+                    this->body.line_count--;
+                }
+
+                if (this->image.sprite)
+                {
+                    /* Don't free a sprite from FaceList! */
+                    if (this->image.face == -1)
+                    {
+                        sprite_free_sprite(this->image.sprite);
+                    }
+
+                    this->image.sprite = NULL;
+                }
+
+                FREE(this);
+            }
+        }
+
+        /* Links. */
+        if (gui_npc->link)
+        {
+            _gui_npc_element *this = gui_npc->link,
+                             *next;
+
+            for (; this; this = next)
+            {
+                next = this->next;
+                FREE(this->title);
+                FREE(this->command);
+                FREE(this);
+            }
+        }
+
+        /* Updates. */
+        if (gui_npc->update)
+        {
+            _gui_npc_element *this = gui_npc->update,
+                             *next;
+
+            for (; this; this = next)
+            {
+                next = this->next;
+                FREE(this->title);
+
+                while (this->body.line_count)
+                {
+                    FREE(this->body.line[this->body.line_count]);
+                    this->body.line_count--;
+                }
+
+                FREE(this);
+            }
+        }
+
+        /* LHS Button. */
+        if (gui_npc->lhsbutton)
+        {
+            FREE(gui_npc->lhsbutton->title);
+            FREE(gui_npc->lhsbutton->title2);
+            FREE(gui_npc->lhsbutton->command);
+            FREE(gui_npc->lhsbutton);
+        }
+
+        /* RHS Button. */
+        if (gui_npc->rhsbutton)
+        {
+            FREE(gui_npc->rhsbutton->title);
+            FREE(gui_npc->rhsbutton->title2);
+            FREE(gui_npc->rhsbutton->command);
+            FREE(gui_npc->rhsbutton);
+        }
+
+        /* Textfield. */
+        if (gui_npc->textfield)
+        {
+            FREE(gui_npc->textfield->command);
+            FREE(gui_npc->textfield);
+        }
+
+        FREE(gui_npc);
+    }
+
+    reset_keys();
+    cpl.input_mode = INPUT_MODE_NO;
+
+    if (cpl.menustatus == MENU_NPC)
+    {
+        cpl.menustatus = MENU_NO;
+    }
+
+    /* Restore any music playing to full volume (according to options). */
+    if (music.data)
+    {
+        sound_play_music(music.name, options.music_volume, music.fade,
+                         music.loop, 1, 0);
+    }
+}
+
+static uint16 PrecalcGUI(void)
+{
+    uint16 xoff = 0,
+           yoff = 0;
+    uint8  i;
+
+    if (gui_npc->message)
+    {
+        gui_npc->message->box.x = 0;
+        gui_npc->message->box.y = yoff;
+
+        if (gui_npc->message->title)
+        {
+            yoff += font_big_out.line_height + FONT_BLANKLINE;
+        }
+
+        for (i = 0; i < gui_npc->message->body.line_count; i++)
+        {
+            yoff += (*gui_npc->message->body.line[i]) ?
+                    font_medium.line_height : FONT_BLANKLINE;
+        }
+
+        gui_npc->message->box.w = GUI_NPC_WIDTH;
+        gui_npc->message->box.h = yoff - gui_npc->message->box.y;
+        yoff += FONT_BLANKLINE * 2;
+    }
+
+    if (gui_npc->reward)
+    {
+        gui_npc->reward->box.x = 0;
+        gui_npc->reward->box.y = yoff;
+
+        yoff += font_big_out.line_height + FONT_BLANKLINE;
+
+        for (i = 0; i < gui_npc->reward->body.line_count; i++)
+        {
+            yoff += (*gui_npc->reward->body.line[i]) ?
+                    font_medium.line_height : FONT_BLANKLINE;
+        }
+
+        if (gui_npc->reward->copper ||
+            gui_npc->reward->gold ||
+            gui_npc->reward->silver ||
+            gui_npc->reward->mithril)
+        {
+            if (gui_npc->reward->body.line_count)
+            {
+                yoff += FONT_BLANKLINE;
+            }
+
+            yoff += GUI_NPC_ICONSIZE;
+        }
+
+        gui_npc->reward->box.w = GUI_NPC_WIDTH;
+        gui_npc->reward->box.h = yoff - gui_npc->reward->box.y;
+        yoff += FONT_BLANKLINE * 2;
+    }
+
+    if (gui_npc->icon)
+    {
+        _gui_npc_element *this = gui_npc->icon;
+
+        for (; this && (this->mode == 'g' || this->mode == 'G');
+             this = this->next)
+        {
+            this->box.x = 0;
+            this->box.y = yoff;
+            this->box.w = GUI_NPC_ICONSIZE;
+            this->box.h = GUI_NPC_ICONSIZE;
+            yoff += GUI_NPC_ICONSIZE + FONT_BLANKLINE;
+        }
+
+        if (this)
+        {
+            yoff += font_tiny_out.line_height + FONT_BLANKLINE;
+
+            for (i = 0; this; this = this->next,
+                 i += (gui_npc->shop) ? 1 : GUI_NPC_ICONSHOP)
+            {
+                if (i)
+                {
+                    if (i % GUI_NPC_ICONSHOP == 0)
+                    {
+                        xoff = 0;
+                        yoff += GUI_NPC_ICONSIZE + FONT_BLANKLINE;
+                    }
+                    else
+                    {
+                        xoff += GUI_NPC_ICONSIZE + 6;
+                    }
+                }
+
+                this->box.x = xoff;
+                this->box.y = yoff;
+                this->box.w = GUI_NPC_ICONSIZE;
+                this->box.h = GUI_NPC_ICONSIZE;
+            }
+
+            yoff += font_tiny_out.line_height + GUI_NPC_ICONSIZE +
+                    FONT_BLANKLINE;
+        }
+
+        yoff += FONT_BLANKLINE * 2;
+    }
+
+    if (gui_npc->link)
+    {
+        _gui_npc_element *this = gui_npc->link;
+
+        for (; this; this = this->next)
+        {
+            this->box.x = 0;
+            this->box.y = yoff;
+            this->box.w = MIN(GUI_NPC_WIDTH, StringWidth(&font_medium,
+                                                         this->title));
+            this->box.h = font_medium.line_height;
+            yoff += font_medium.line_height + FONT_BLANKLINE;
+        }
+
+        yoff += FONT_BLANKLINE * 2;
+    }
+
+    if (gui_npc->update)
+    {
+        _gui_npc_element *this = gui_npc->update;
+
+        for (; this; this = this->next)
+        {
+            this->box.x = 0;
+            this->box.y = yoff;
+
+            if (this->title)
+            {
+                yoff += font_big_out.line_height + FONT_BLANKLINE;
+            }
+
+            for (i = 0; i < this->body.line_count; i++)
+            {
+                yoff += (*this->body.line[i]) ?
+                        font_medium.line_height : FONT_BLANKLINE;
+            }
+
+            this->box.w = GUI_NPC_WIDTH;
+            this->box.h = yoff - this->box.y;
+            yoff += FONT_BLANKLINE * 2;
+        }
     }
 
     return yoff;
 }
 
 /* show npc interface. ATM its included in the menu system, but
- * we need to crate a lower layer level for it.
- */
-void show_interface_npc(int mark)
+ * we need to crate a lower layer level for it. */
+void gui_npc_show(int mark)
 {
-    SDL_Rect    box;
-    int x=gui_interface_npc->startx, y=gui_interface_npc->starty, numButton=0,yoff, i;
+    ShowGUIBackground(gui_npc->startx, gui_npc->starty);
 
-    sprite_blt(Bitmaps[BITMAP_NPC_INTERFACE], x, y, NULL, NULL);
-    add_close_button(x-113, y+4, MENU_NPC, FALSE);
-
-    if (gui_interface_npc->used_flag&GUI_INTERFACE_HEAD)
+    if (gui_npc->hypertext)
     {
-        /* print head */
-        /*sprintf(xxbuf, "%s (%d,%d)", keyword?keyword:"--", mx, my);
-        StringBlt(ScreenSurface,&font_medium , xxbuf, x+75, y+48, COLOR_WHITE, NULL, NULL);
-        */
-        StringBlt(ScreenSurface,&font_medium , gui_interface_npc->head.body_text, x+80, y+50, COLOR_WHITE, NULL, NULL);
+        uint16 w = Bitmaps[BITMAP_GUI_NPC_PANEL]->bitmap->w;
 
-        if (gui_interface_npc->head.face>=0 && FaceList[gui_interface_npc->head.face].sprite != NULL)
+        if (options.keyword_panel == 1) /* left */
         {
-            int xp, yp;
-
-            box.x=x+4;
-            box.y=y+4;
-            box.w=54;
-            box.h=54;
-
-            SDL_SetClipRect(ScreenSurface, &box);
-            xp = box.x+(box.w/2)-((FaceList[gui_interface_npc->head.face].sprite->bitmap->w-FaceList[gui_interface_npc->head.face].sprite->border_left)/2);
-            yp = box.y+(box.h/2)-((FaceList[gui_interface_npc->head.face].sprite->bitmap->h-FaceList[gui_interface_npc->head.face].sprite->border_down)/2);
-            sprite_blt(FaceList[gui_interface_npc->head.face].sprite, xp-FaceList[gui_interface_npc->head.face].sprite->border_left,yp, NULL, NULL);
-            SDL_SetClipRect(ScreenSurface, NULL);
+            ShowGUIPanel(gui_npc->startx - w + 23,
+                         gui_npc->starty + GUI_NPC_TOPMARGIN - 6);
         }
-        else if (gui_interface_npc->head.picture)
+        else if (options.keyword_panel == 2) /* right */
         {
-            int xp, yp;
-
-            box.x=x+4;
-            box.y=y+4;
-            box.w=54;
-            box.h=54;
-
-            SDL_SetClipRect(ScreenSurface, &box);
-            xp = box.x+(box.w/2)-(gui_interface_npc->head.picture->bitmap->w/2);
-            yp = box.y+(box.h/2)-(gui_interface_npc->head.picture->bitmap->h/2);
-            sprite_blt(gui_interface_npc->head.picture, xp, yp, NULL, NULL);
-            SDL_SetClipRect(ScreenSurface, NULL);
-
+            ShowGUIPanel(gui_npc->startx + w - 5,
+                         gui_npc->starty +  GUI_NPC_TOPMARGIN - 6);
         }
     }
 
-    yoff = 79;
+    ShowGUIFurniture(gui_npc->startx, gui_npc->starty);
+    ShowGUIContents(gui_npc->startx + GUI_NPC_LEFTMARGIN,
+                    gui_npc->starty + GUI_NPC_TOPMARGIN);
+}
 
-    box.x=x+35;
-    box.y=y+yoff;
-    box.w=295;
-    box.h=INTERFACE_WINLEN_NPC;
+static void ShowGUIBackground(uint16 x, uint16 y)
+{
+    sprite_blt(Bitmaps[BITMAP_GUI_NPC_TOP], x, y, NULL, NULL);
+    y += Bitmaps[BITMAP_GUI_NPC_TOP]->bitmap->h;
 
-    blt_window_slider(Bitmaps[BITMAP_NPC_INT_SLIDER], gui_interface_npc->win_length, INTERFACE_WINLEN_NPC,
-                      gui_interface_npc->yoff*-1, -1, x + 340, y + 90);
+    if (gui_npc->shop)
+    {
+        sprite_blt(Bitmaps[BITMAP_GUI_NPC_MIDDLE], x, y, NULL, NULL);
+        y += Bitmaps[BITMAP_GUI_NPC_MIDDLE]->bitmap->h;
+    }
 
+    sprite_blt(Bitmaps[BITMAP_GUI_NPC_BOTTOM], x, y, NULL, NULL);
+}
+
+static void ShowGUIPanel(uint16 x, uint16 y)
+{
+    _gui_npc_element *this = gui_npc->hypertext;
+    uint8             i = 0;
+
+    sprite_blt(Bitmaps[BITMAP_GUI_NPC_PANEL], x, y, NULL, NULL);
+
+    for (; this; this = this->next, i++)
+    {
+        uint16 ch = font_medium.line_height,
+               cw = 16;
+
+        if (gui_npc->keyword_selected == this)
+        {
+            StringBlt(ScreenSurface, &font_medium, this->keyword, x + cw / 2,
+                      y + ch / 2 + ch * i, COLOR_DK_NAVY, NULL, NULL);
+        }
+        else
+        {
+            StringBlt(ScreenSurface, &font_medium, this->keyword, x + cw / 2,
+                      y + ch / 2 + ch * i, COLOR_TURQUOISE, NULL, NULL);
+        }
+    }
+}
+
+static void ShowGUIFurniture(uint16 x, uint16 y)
+{
+    SDL_Rect box;
+    char     buf[SMALL_BUF];
+    int      len;
+    uint16   xoff,
+             yoff;
+
+    add_close_button(x - 116, y + 5, MENU_NPC, skindef.newclosebutton);
+
+    if (gui_npc->head)
+    {
+        if (gui_npc->head->title)
+        {
+            sprintf(buf, "%s", gui_npc->head->title);
+
+            if (StringWidthOffset(&font_medium, buf, &len, 260))
+            {
+                buf[len - 2] = '\0';
+                strcat(buf, "...");
+            }
+
+            StringBlt(ScreenSurface, &font_medium, buf, x + 80, y + 50,
+                      COLOR_WHITE, NULL, NULL);
+        }
+
+        if (gui_npc->head->image.sprite)
+        {
+            _Sprite  *sprite;
+
+            box.x = x + 5;
+            box.y = y + 5;
+            box.w = 54;
+            box.h = 54;
+//            SDL_SetClipRect(ScreenSurface, &box);
+            sprite = gui_npc->head->image.sprite;
+            xoff = box.x + box.w / 2 -
+                   (sprite->bitmap->w - sprite->border_left) / 2 -
+                   sprite->border_left;
+            yoff = box.y + box.h / 2 -
+                   (sprite->bitmap->h - sprite->border_down) / 2;
+            sprite_blt(sprite, xoff, yoff, NULL, NULL);
+//            SDL_SetClipRect(ScreenSurface, NULL);
+        }
+    }
+
+    blt_window_slider(Bitmaps[BITMAP_NPC_INT_SLIDER], gui_npc->height,
+                      GUI_NPC_HEIGHT, gui_npc->yoff, -1, x + 341, y + 90);
+    xoff = x + GUI_NPC_LEFTMARGIN;
+    yoff = y + Bitmaps[BITMAP_GUI_NPC_TOP]->bitmap->h + ((gui_npc->shop) ?
+           Bitmaps[BITMAP_GUI_NPC_MIDDLE]->bitmap->h : 0) - 1;
+
+    if (gui_npc->lhsbutton)
+    {
+        /* Button title. */
+        sprintf(buf, "%s", gui_npc->lhsbutton->title);
+
+        if (StringWidthOffset(&font_small, buf, &len, GUI_NPC_BUTTONTEXT))
+        {
+            buf[len - 2] = '\0';
+            strcat(buf, "...");
+        }
+
+        /* Button bg. */
+        if (gui_npc->lhsbutton->command &&
+            *gui_npc->lhsbutton->command == '#')
+        {
+            (void)add_button(xoff + 4, yoff + 4, 0,
+                             BITMAP_DIALOG_BUTTON_UP_PREFIX, buf,
+                             gui_npc->lhsbutton->title2);
+        }
+        else
+        {
+            (void)add_button(xoff + 4, yoff + 4, 0, BITMAP_DIALOG_BUTTON_UP,
+                             buf, gui_npc->lhsbutton->title2);
+        }
+
+        /* Button fg (frame if selected). */
+        if (gui_npc->button_selected == gui_npc->lhsbutton)
+        {
+            sprite_blt(Bitmaps[BITMAP_DIALOG_BUTTON_SELECTED], xoff, yoff,
+                       NULL, NULL);
+        }
+    }
+
+    xoff += GUI_NPC_BUTTONWIDTH;
+    box.x = xoff + 4;
+    box.y = yoff - 2 + font_small.line_height;
+    box.h = font_medium.line_height;
+    box.w = GUI_NPC_TEXTFIELDWIDTH;
+
+    if (gui_npc->input_flag)
+    {
+        sprintf(buf, "~RETURN~ to send, ~ESCAPE~ to cancel");
+        StringBlt(ScreenSurface, &font_small, buf,
+                  xoff + 4 + (GUI_NPC_TEXTFIELDWIDTH -
+                              StringWidth(&font_small, buf)) / 2,
+                  yoff - 2, COLOR_WHITE, NULL, NULL);
+        SDL_FillRect(ScreenSurface, &box, 0);
+        StringBlt(ScreenSurface, &font_medium,
+                  show_input_string(InputString, &font_medium, box.w - 1),
+                  box.x, box.y, COLOR_WHITE, NULL, NULL);
+    }
+    else if (interface_mode != GUI_NPC_MODE_QUEST &&
+             !gui_npc->keyword_selected &&
+             !gui_npc->icon_selected &&
+             !gui_npc->link_selected &&
+             !gui_npc->button_selected)
+    {
+        sprintf(buf, "~BACKSPACE~ to talk");
+        StringBlt(ScreenSurface, &font_small, buf,
+                  xoff + 4 + (GUI_NPC_TEXTFIELDWIDTH -
+                              StringWidth(&font_small, buf)) / 2,
+                  yoff - 2, COLOR_WHITE, NULL, NULL);
+    }
+    else
+    {
+        int len;
+
+        if (interface_mode == GUI_NPC_MODE_QUEST)
+        {
+            sprintf(buf, "~RETURN~ to send");
+            StringBlt(ScreenSurface, &font_small, buf,
+                      xoff + 4 + (GUI_NPC_TEXTFIELDWIDTH -
+                                  StringWidth(&font_small, buf)) / 2,
+                      yoff - 2, COLOR_WHITE, NULL, NULL);
+        }
+        else
+        {
+            sprintf(buf, "~RETURN~ to send, ~BACKSPACE~ to overwrite");
+            StringBlt(ScreenSurface, &font_small, buf,
+                      xoff + 4 + (GUI_NPC_TEXTFIELDWIDTH -
+                                  StringWidth(&font_small, buf)) / 2,
+                      yoff - 2, COLOR_WHITE, NULL, NULL);
+        }
+
+        /* TODO: the rest of this function is in severe need of tidying! */
+        /* A selected keyword overrides everything else. */
+        if (gui_npc->keyword_selected)
+        {
+            char buf[SMALL_BUF];
+            int  c;
+ 
+            sprintf(buf, "%s", gui_npc->keyword_selected->keyword);
+            strcpy(buf, normalize_string(buf));
+ 
+            for (c = 0; *(buf + c); c++)
+            {
+                *(buf + c) = tolower(*(buf + c));
+            }
+ 
+            if (StringWidthOffset(&font_medium, buf, &len,
+                                  GUI_NPC_TEXTFIELDWIDTH))
+            {
+                char buf_tmp[SMALL_BUF];
+ 
+                strncpy(buf_tmp, buf, len - 2);
+                buf_tmp[len - 2] = '\0';
+                strcat(buf_tmp, "...");
+                StringBlt(ScreenSurface, &font_medium, buf_tmp, box.x, box.y,
+                          COLOR_DK_NAVY, &box, NULL);
+            }
+            else
+            {
+                StringBlt(ScreenSurface, &font_medium, buf, box.x, box.y,
+                          COLOR_DK_NAVY, &box, NULL);
+            }
+        }
+        else
+        {
+            char  cmd[SMALL_BUF] = "",
+                  btn[SMALL_BUF] = "";
+            int   c;
+            _gui_npc_element *button = NULL;
+ 
+            /* Check for a selected icon or link-> */
+            if (gui_npc->icon_selected)
+            {
+                if (gui_npc->icon_selected->command)
+                {
+                    int off;
+ 
+                    switch (*gui_npc->icon_selected->command)
+                    {
+                        case '<': /* default to LHS button */
+                            if (!gui_npc->button_selected)
+                            {
+                                if (gui_npc->lhsbutton &&
+                                    gui_npc->lhsbutton->command &&
+                                    *gui_npc->lhsbutton->command == '#')
+                                {
+                                    button = gui_npc->lhsbutton;
+                                }
+                                else if (gui_npc->rhsbutton &&
+                                         gui_npc->rhsbutton->command &&
+                                         *gui_npc->rhsbutton->command == '#')
+                                {
+                                    button = gui_npc->rhsbutton;
+                                }
+                            }
+ 
+                            off = 1;
+ 
+                            break;
+ 
+                        case '-': /* default to no button */
+                            off = 1;
+ 
+                            break;
+ 
+                        default: /* default to RHS button */
+                            if (!gui_npc->button_selected)
+                            {
+                                if (gui_npc->rhsbutton &&
+                                    gui_npc->rhsbutton->command &&
+                                    *gui_npc->rhsbutton->command == '#')
+                                {
+                                    button = gui_npc->rhsbutton;
+                                }
+                                else if (gui_npc->lhsbutton &&
+                                         gui_npc->lhsbutton->command &&
+                                         *gui_npc->lhsbutton->command == '#')
+                                {
+                                    button = gui_npc->lhsbutton;
+                                }
+                            }
+ 
+                            off = (gui_npc->icon_selected->command &&
+                                   *gui_npc->icon_selected->command == '>') ?
+                                  1 : 0;
+                    }
+ 
+                    sprintf(cmd, "%s", gui_npc->icon_selected->command + off);
+                }
+                else
+                {
+                    _gui_npc_element *this = gui_npc->icon;
+                    uint8             i = 1;
+ 
+                    if (!gui_npc->button_selected)
+                    {
+                        if (gui_npc->rhsbutton &&
+                            gui_npc->rhsbutton->command &&
+                            *gui_npc->rhsbutton->command == '#')
+                        {
+                            button = gui_npc->rhsbutton;
+                        }
+                        else if (gui_npc->lhsbutton &&
+                                 gui_npc->lhsbutton->command &&
+                                 *gui_npc->lhsbutton->command == '#')
+                        {
+                            button = gui_npc->lhsbutton;
+                        }
+                    }
+ 
+                    for (; this && this != gui_npc->icon_selected;
+                         this = this->next, i++)
+                    {
+                        ;
+                    }
+ 
+                    if (this == gui_npc->icon_selected)
+                    {
+                        sprintf(cmd, "#%d", i);
+                    }
+                    else
+                    {
+                        // TODO
+                    }
+                }
+            }
+            else if (gui_npc->link_selected)
+            {
+                int off;
+ 
+                switch (*gui_npc->link_selected->command)
+                {
+                    case '<': /* default to LHS button */
+                        if (!gui_npc->button_selected)
+                        {
+                            if (gui_npc->lhsbutton &&
+                                gui_npc->lhsbutton->command &&
+                                *gui_npc->lhsbutton->command == '#')
+                            {
+                                button = gui_npc->lhsbutton;
+                            }
+                            else if (gui_npc->rhsbutton &&
+                                     gui_npc->rhsbutton->command &&
+                                     *gui_npc->rhsbutton->command == '#')
+                            {
+                                button = gui_npc->rhsbutton;
+                            }
+                        }
+ 
+                        off = 1;
+ 
+                        break;
+ 
+                    case '-': /* default to no button */
+                        off = 1;
+ 
+                        break;
+ 
+                    default: /* default to RHS button */
+                        if (!gui_npc->button_selected)
+                        {
+                            if (gui_npc->rhsbutton &&
+                                gui_npc->rhsbutton->command &&
+                                *gui_npc->rhsbutton->command == '#')
+                            {
+                                button = gui_npc->rhsbutton;
+                            }
+                            else if (gui_npc->lhsbutton &&
+                                     gui_npc->lhsbutton->command &&
+                                     *gui_npc->lhsbutton->command == '#')
+                            {
+                                button = gui_npc->lhsbutton;
+                            }
+                        }
+ 
+                        off = (gui_npc->link_selected &&
+                               gui_npc->link_selected->command &&
+                               *gui_npc->link_selected->command == '>') ?
+                              1 : 0;
+                }
+ 
+                sprintf(cmd, "%s", gui_npc->link_selected->command);
+            }
+ 
+            /* Check for a selected button. */
+            if (gui_npc->rhsbutton &&
+                (gui_npc->button_selected == gui_npc->rhsbutton ||
+                 button == gui_npc->rhsbutton))
+            {
+                if (!gui_npc->rhsbutton->command)
+                {
+                    sprintf(btn, "%s", gui_npc->rhsbutton->title);
+                }
+                else
+                {
+                    int off;
+ 
+                    off = (*gui_npc->rhsbutton->command == '#') ? 1 : 0;
+ 
+                    sprintf(btn, "%s", gui_npc->rhsbutton->command + off);
+                }
+            }
+            else if (gui_npc->lhsbutton &&
+                     (gui_npc->button_selected == gui_npc->lhsbutton ||
+                      button == gui_npc->lhsbutton))
+            {
+                if (!gui_npc->lhsbutton->command)
+                {
+                    sprintf(btn, "%s", gui_npc->lhsbutton->title);
+                }
+                else
+                {
+                    int off;
+ 
+                    off = (*gui_npc->lhsbutton->command == '#') ? 1 : 0;
+ 
+                    sprintf(btn, "%s", gui_npc->lhsbutton->command + off);
+                }
+            }
+ 
+            strcpy(btn, normalize_string(btn));
+ 
+            for (c = 0; *(btn + c); c++)
+            {
+                *(btn + c) = tolower(*(btn + c));
+            }
+ 
+            if (StringWidthOffset(&font_medium, btn, &len,
+                                  GUI_NPC_TEXTFIELDWIDTH))
+            {
+                char buf_tmp[SMALL_BUF];
+ 
+                strncpy(buf_tmp, btn, len - 2);
+                buf_tmp[len - 2] = '\0';
+                strcat(buf_tmp, "...");
+ 
+                if (!gui_npc->button_selected &&
+                    button)
+                {
+                    StringBlt(ScreenSurface, &font_medium, buf_tmp, box.x,
+                              box.y, COLOR_GREY, &box, NULL);
+                }
+                else if (gui_npc->button_selected ||
+                         button)
+                {
+                    StringBlt(ScreenSurface, &font_medium, buf_tmp, box.x,
+                              box.y, COLOR_DK_NAVY, &box, NULL);
+                }
+            }
+            else
+            {
+                uint16 xoff2;
+ 
+                xoff2 = StringWidth(&font_medium, btn) +
+                        StringWidth(&font_medium, " ");
+ 
+                if (!gui_npc->button_selected &&
+                    button)
+                {
+                    StringBlt(ScreenSurface, &font_medium, btn, box.x, box.y,
+                              COLOR_GREY, &box, NULL);
+                }
+                else if (gui_npc->button_selected ||
+                         button)
+                {
+                    StringBlt(ScreenSurface, &font_medium, btn, box.x, box.y,
+                              COLOR_DK_NAVY, &box, NULL);
+                }
+ 
+                if (cmd[0])
+                {
+                    strcpy(cmd, normalize_string(cmd));
+ 
+                    for (c = 0; *(cmd + c); c++)
+                    {
+                        *(cmd + c) = tolower(*(cmd + c));
+                    }
+ 
+                    if (StringWidthOffset(&font_medium, cmd, &len, box.w - xoff2))
+                    {
+                        char buf_tmp[SMALL_BUF];
+ 
+                        strncpy(buf_tmp, cmd, len - 2);
+                        buf_tmp[len - 2] = '\0';
+                        strcat(buf_tmp, "...");
+                        StringBlt(ScreenSurface, &font_medium, buf_tmp,
+                                  box.x + xoff2, box.y, COLOR_DK_NAVY,
+                                  &box, NULL);
+                    }
+                    else
+                    {
+                        StringBlt(ScreenSurface, &font_medium, cmd,
+                                  box.x + xoff2, box.y, COLOR_DK_NAVY,
+                                  &box, NULL);
+                    }
+                }
+            }
+        }
+    }
+
+    if (gui_npc->rhsbutton)
+    {
+        xoff = xoff - GUI_NPC_BUTTONWIDTH + GUI_NPC_WIDTH - GUI_NPC_BUTTONWIDTH;
+
+        /* Button title. */
+        sprintf(buf, "%s", gui_npc->rhsbutton->title);
+
+        if (StringWidthOffset(&font_small, buf, &len, GUI_NPC_BUTTONTEXT))
+        {
+            buf[len - 2] = '\0';
+            strcat(buf, "...");
+        }
+
+        /* Button bg. */
+        if (gui_npc->rhsbutton->command &&
+            *gui_npc->rhsbutton->command == '#')
+        {
+            (void)add_button(xoff + 4, yoff + 4, 0,
+                             BITMAP_DIALOG_BUTTON_UP_PREFIX, buf,
+                             gui_npc->rhsbutton->title2);
+        }
+        else
+        {
+            (void)add_button(xoff + 4, yoff + 4, 0, BITMAP_DIALOG_BUTTON_UP,
+                             buf, gui_npc->rhsbutton->title2);
+        }
+
+        /* Button fg (frame if selected). */
+        if (gui_npc->button_selected == gui_npc->rhsbutton)
+        {
+            sprite_blt(Bitmaps[BITMAP_DIALOG_BUTTON_SELECTED], xoff, yoff,
+                       NULL, NULL);
+        }
+    }
+}
+
+static void ShowGUIContents(uint16 x, uint16 y)
+{
+    SDL_Rect box;
+    uint16   guitop = gui_npc->yoff,
+             guibot = guitop + GUI_NPC_HEIGHT,
+             xoff,
+             yoff;
+    char     buf[SMALL_BUF];
+    int      len;
+
+    box.x = x;
+    box.y = y;
+    box.w = GUI_NPC_WIDTH;
+    box.h = GUI_NPC_HEIGHT;
     SDL_SetClipRect(ScreenSurface, &box);
-    /*SDL_FillRect(ScreenSurface, &box, 3);*/
 
-    yoff+=gui_interface_npc->yoff;
-    yoff+=5;
-
-
-    if (gui_interface_npc->used_flag&GUI_INTERFACE_MESSAGE)
+    if (gui_npc->message)
     {
-        /*len =  get_string_pixel_length(gui_interface_npc->message.title, &font_big_out);
-        StringBlt(ScreenSurface, &font_big_out, gui_interface_npc->message.title, x+width2-len/2, y+yoff, COLOR_WHITE, NULL, NULL);
-        */
-        StringBlt(ScreenSurface, &font_big_out, gui_interface_npc->message.title, x+40, y+yoff, COLOR_HGOLD, NULL, NULL);
-        yoff+=25;
-
-    for (i=0;i<gui_interface_npc->message.line_count;i++)
+        if (gui_npc->message->box.y <= guibot &&
+            gui_npc->message->box.y + gui_npc->message->box.h >= guitop)
         {
-            if (!strcmp(gui_interface_npc->message.lines[i], "\0"))
-                yoff += 5;
-            else
+            uint8  i;
+
+            xoff = x + gui_npc->message->box.x;
+            yoff = y + gui_npc->message->box.y - guitop;
+
+            if (gui_npc->message->title)
             {
-                StringBlt(ScreenSurface, &font_medium, gui_interface_npc->message.lines[i], x+40, y+yoff, COLOR_WHITE, NULL, NULL);
-                yoff += 15;
+                sprintf(buf, "%s", gui_npc->message->title);
+
+                if (StringWidthOffset(&font_big_out, buf, &len, GUI_NPC_WIDTH))
+                {
+                    buf[len - 2] = '\0';
+                    strcat(buf, "...");
+                }
+
+                StringBlt(ScreenSurface, &font_big_out, buf, xoff, yoff,
+                          COLOR_HGOLD, NULL, NULL);
+                yoff += font_big_out.line_height + FONT_BLANKLINE;
+            }
+
+            for (i = 0; i < gui_npc->message->body.line_count; i++)
+            {
+                if (!*gui_npc->message->body.line[i])
+                {
+                    yoff += FONT_BLANKLINE;
+                }
+                else
+                {
+                    StringBlt(ScreenSurface, &font_medium,
+                              gui_npc->message->body.line[i], xoff, yoff,
+                              COLOR_WHITE, NULL, NULL);
+                    yoff += font_medium.line_height;
+                }
             }
         }
-
-    yoff+=15;
     }
 
-    /* reward is also used as "objective" */
-    if (gui_interface_npc->used_flag&GUI_INTERFACE_REWARD)
+    if (gui_npc->reward)
     {
-        if (gui_interface_npc->reward.body_text[0] != '\0')
+        if (gui_npc->reward->box.y <= guibot &&
+            gui_npc->reward->box.y + gui_npc->reward->box.h >= guitop)
         {
-            /*char xbuf[256];
-            sprintf(xbuf, "len: %d yoff: %d (%d)", gui_interface_npc->win_length,gui_interface_npc->yoff,INTERFACE_WINLEN_NPC-gui_interface_npc->win_length);
-            */
-            char buf[64];
-            if (gui_interface_npc->reward.title[0] != '\0')
-                strcpy(buf, gui_interface_npc->reward.title);
+            xoff = x + gui_npc->reward->box.x;
+            yoff = y + gui_npc->reward->box.y - guitop;
+
+            if (!gui_npc->reward->title)
+            {
+                sprintf(buf, "Description"); /* default title */
+            }
             else
-                strcpy(buf, "Description"); /* default title */
-            StringBlt(ScreenSurface, &font_big_out, buf, x + 40, y + yoff, COLOR_HGOLD, NULL, NULL);
-            /*StringBlt(ScreenSurface, &font_big_out, xbuf, x+40, y+yoff, COLOR_WHITE, NULL, NULL);*/
-            yoff += 25;
-            for (i=0;i<gui_interface_npc->reward.line_count;i++)
             {
-                if (gui_interface_npc->reward.lines[i][0] != '\0')
+                sprintf(buf, "%s", gui_npc->reward->title);
+            }
+
+            if (StringWidthOffset(&font_big_out, buf, &len, GUI_NPC_WIDTH))
+            {
+                buf[len - 2] = '\0';
+                strcat(buf, "...");
+            }
+
+            StringBlt(ScreenSurface, &font_big_out, buf, xoff, yoff,
+                      COLOR_HGOLD, NULL, NULL);
+            yoff += font_big_out.line_height + FONT_BLANKLINE;
+
+            if (gui_npc->reward->body.text)
+            {
+                uint8 i;
+
+                for (i = 0; i < gui_npc->reward->body.line_count; i++)
                 {
-                    StringBlt(ScreenSurface, &font_medium, gui_interface_npc->reward.lines[i], x+40, y+yoff, COLOR_WHITE, NULL, NULL);
-                    yoff += 15;
+                    if (!*gui_npc->reward->body.line[i])
+                    {
+                        yoff += FONT_BLANKLINE;
+                    }
+                    else
+                    {
+                        StringBlt(ScreenSurface, &font_medium,
+                                  gui_npc->reward->body.line[i], xoff, yoff,
+                                  COLOR_WHITE, NULL, NULL);
+                        yoff += font_medium.line_height;
+                    }
                 }
-                else
-                    yoff += 5;
+            }
+
+            if (gui_npc->reward->copper ||
+                gui_npc->reward->gold ||
+                gui_npc->reward->silver ||
+                gui_npc->reward->mithril)
+            {
+                uint8 i;
+                int   bitmaps[] =
+                {
+                    BITMAP_COIN_COPPER,
+                    BITMAP_COIN_SILVER,
+                    BITMAP_COIN_GOLD,
+                    BITMAP_COIN_MITHRIL,
+                    0
+                };
+                int   coins;
+
+                if (gui_npc->reward->body.line_count)
+                {
+                    yoff += FONT_BLANKLINE;
+                }
+
+                for (i = 0; bitmaps[i]; i++)
+                {
+                    if ((bitmaps[i] == BITMAP_COIN_COPPER &&
+                         (coins = gui_npc->reward->copper)) ||
+                        (bitmaps[i] == BITMAP_COIN_SILVER &&
+                         (coins = gui_npc->reward->silver)) ||
+                        (bitmaps[i] == BITMAP_COIN_GOLD &&
+                         (coins = gui_npc->reward->gold)) ||
+                        (bitmaps[i] == BITMAP_COIN_MITHRIL &&
+                         (coins = gui_npc->reward->mithril)))
+                    {
+                        uint16 w;
+
+                        xoff = x + gui_npc->reward->box.x +
+                               (GUI_NPC_WIDTH / 4) * i;
+                        sprite_blt(Bitmaps[bitmaps[i]], xoff, yoff + 9, NULL,
+                                   NULL);
+
+                        if (gui_npc->shop)
+                        {
+                            if (coins > 9999 ||
+                                coins < -9999)
+                            {
+                                sprintf(buf, "many");
+                            }
+                            else
+                            {
+                                sprintf(buf, "%d", coins);
+                            }
+                        }
+                        else
+                        {
+                            if (coins > 9999)
+                            {
+                                sprintf(buf, "+many");
+                            }
+                            else if (coins < -9999)
+                            {
+                                sprintf(buf, "-many");
+                            }
+                            else
+                            {
+                                sprintf(buf, "%+d", coins);
+                            }
+                        }
+
+                        w = StringWidth(&font_small_out, buf);
+
+                        if (coins < 0)
+                        {
+                            StringBlt(ScreenSurface, &font_small_out, buf,
+                                      xoff + 28 - w / 2, yoff + 18, COLOR_RED, NULL,
+                                      NULL);
+                        }
+                        else
+                        {
+                            StringBlt(ScreenSurface, &font_small_out, buf,
+                                      xoff + 28 - w / 2, yoff + 18, COLOR_GREEN, NULL,
+                                      NULL);
+                        }
+                    }
+
+                    /* Play a coins sound depending on gui_npc->total_coins.
+                     * Reset head->sound to 0 afterwards to prevent a constant
+                     * loop (this function is called repeatedly as long as the
+                     * interface remains open. */
+                    if (gui_npc->sound)
+                    {
+                        if (gui_npc->total_coins > 500)
+                        {
+                            sound_play_effect(SOUNDTYPE_CLIENT, SOUND_COINS4, 0, 0,
+                                              MENU_SOUND_VOL);
+                        }
+                        else if (gui_npc->total_coins > 100)
+                        {
+                            sound_play_effect(SOUNDTYPE_CLIENT, SOUND_COINS3, 0, 0,
+                                              MENU_SOUND_VOL);
+                        }
+                        else if (gui_npc->total_coins > 50)
+                        {
+                            sound_play_effect(SOUNDTYPE_CLIENT, SOUND_COINS2, 0, 0,
+                                              MENU_SOUND_VOL);
+                        }
+                        else if (gui_npc->total_coins > 0)
+                        {
+                            sound_play_effect(SOUNDTYPE_CLIENT, SOUND_COINS1, 0, 0,
+                                              MENU_SOUND_VOL);
+                        }
+     
+                        gui_npc->sound = 0;
+                    }
+                }
             }
         }
-        else if (gui_interface_npc->reward.title[0] != '\0')
-        {
-            StringBlt(ScreenSurface, &font_big_out, gui_interface_npc->reward.title, x + 40, y + yoff, COLOR_HGOLD, NULL, NULL);
-            yoff += 25;
-        }
-
-        if (gui_interface_npc->reward.copper || gui_interface_npc->reward.gold ||
-                gui_interface_npc->reward.silver || gui_interface_npc->reward.mithril ||
-                gui_interface_npc->icon_count)
-    {
-            char buf[64];
-
-            if (gui_interface_npc->reward.line_count)
-                yoff+=5;
-
-            if (gui_interface_npc->reward.mithril)
-            {
-                sprite_blt(Bitmaps[BITMAP_COIN_MITHRIL], x + 50, y + yoff+9, NULL, NULL);
-                if (gui_interface_npc->reward.mithril < 0)
-                {
-                    sprintf(buf, "%d", gui_interface_npc->reward.mithril);
-                    StringBlt(ScreenSurface, &font_small_out, buf, x+65, y+yoff+18, COLOR_RED, NULL, NULL);
-                }
-                else
-                {
-                    sprintf(buf, "+%d", gui_interface_npc->reward.mithril);
-                    StringBlt(ScreenSurface, &font_small_out, buf, x+65, y+yoff+18, COLOR_GREEN, NULL, NULL);
-                }
-            }
-            if (gui_interface_npc->reward.gold)
-            {
-                sprite_blt(Bitmaps[BITMAP_COIN_GOLD], x + 110, y + yoff+6, NULL, NULL);
-                if (gui_interface_npc->reward.gold < 0)
-                {
-                    sprintf(buf, "%d", gui_interface_npc->reward.gold);
-                    StringBlt(ScreenSurface, &font_small_out, buf, x+125, y+yoff+18, COLOR_RED, NULL, NULL);
-                }
-                else
-                {
-                    sprintf(buf, "+%d", gui_interface_npc->reward.gold);
-                    StringBlt(ScreenSurface, &font_small_out, buf, x+125, y+yoff+18, COLOR_GREEN, NULL, NULL);
-                }
-            }
-            if (gui_interface_npc->reward.silver)
-            {
-                sprite_blt(Bitmaps[BITMAP_COIN_SILVER], x + 170, y + yoff+6, NULL, NULL);
-                if (gui_interface_npc->reward.silver < 0)
-                {
-                    sprintf(buf, "%d", gui_interface_npc->reward.silver);
-                    StringBlt(ScreenSurface, &font_small_out, buf, x+185, y+yoff+18, COLOR_RED, NULL, NULL);
-                }
-                else
-                {
-                    sprintf(buf, "+%d", gui_interface_npc->reward.silver);
-                    StringBlt(ScreenSurface, &font_small_out, buf, x+185, y+yoff+18, COLOR_GREEN, NULL, NULL);
-                }
-            }
-            if (gui_interface_npc->reward.copper)
-            {
-                sprite_blt(Bitmaps[BITMAP_COIN_COPPER], x + 230, y + yoff+6, NULL, NULL);
-                if (gui_interface_npc->reward.copper < 0)
-                {
-                    sprintf(buf, "%d", gui_interface_npc->reward.copper);
-                    StringBlt(ScreenSurface, &font_small_out, buf, x+245, y+yoff+18, COLOR_RED, NULL, NULL);
-                }
-                else
-                {
-                    sprintf(buf, "+%d", gui_interface_npc->reward.copper);
-                    StringBlt(ScreenSurface, &font_small_out, buf, x+245, y+yoff+18, COLOR_GREEN, NULL, NULL);
-                }
-            }
-            yoff+=30;
-        }
-        yoff+=15;
     }
 
-    /* present now the icons for rewards or whats searched */
-    if (gui_interface_npc->icon_count)
+    if (gui_npc->icon)
     {
-        int flag_s = FALSE;
+        _gui_npc_element *this = gui_npc->icon;
 
-        for (i=0;i<gui_interface_npc->icon_count;i++)
+        for (; this && (this->mode == 'g' || this->mode == 'G');
+             this = this->next)
         {
-            /* we have a 's' to announce a 'S' selection for real rewards? */
-            if (gui_interface_npc->icon[i].mode == 's' )
+            if (this->box.y > guibot ||
+                this->box.y + this->box.h < guitop)
             {
-                flag_s = TRUE;
                 continue;
             }
 
-            if (gui_interface_npc->icon[i].mode == 'G' )
-            {
-                box.x = x + 38;
-                box.y = y + yoff - 2;
-                box.w = 36;
-                box.h = 36;
-                if (gui_interface_npc->icon[i].remove == 'R')
-                    SDL_FillRect(ScreenSurface, &box, sdl_dred);
-                else
-                    SDL_FillRect(ScreenSurface, &box, sdl_dgreen);
-                sprite_blt(Bitmaps[BITMAP_INVSLOT], x + 40, y + yoff, NULL, NULL);
-
-                if (gui_interface_npc->icon[i].element.face>0)
-                    blt_inv_item_centered(&gui_interface_npc->icon[i].element, x + 40, y + yoff);
-                else if (gui_interface_npc->icon[i].picture)
-                    sprite_blt(gui_interface_npc->icon[i].picture, x + 40, y + yoff, NULL, NULL);
-
-                StringBlt(ScreenSurface, &font_medium, gui_interface_npc->icon[i].title, x+80, y+yoff-3, COLOR_WHITE, NULL, NULL);
-                yoff+=10;
-                StringBlt(ScreenSurface, &font_small, gui_interface_npc->icon[i].body_text, x+80, y+yoff, COLOR_WHITE, NULL, NULL);
-                yoff+=10;
-                if (gui_interface_npc->icon[i].second_line)
-                    StringBlt(ScreenSurface, &font_small, gui_interface_npc->icon[i].second_line, x+80, y+yoff+1, COLOR_WHITE, NULL, NULL);
-                yoff+=24;
-            }
+            ShowIcon(this);
         }
 
-        if (flag_s)
+        if (this)
         {
-/*
- *            StringBlt(ScreenSurface, &font_medium, "And one of these:", x+40, y+yoff, COLOR_WHITE, NULL, NULL);
- *            yoff+=20;
- */
-            yoff += 15;
-            for (i=0;i<gui_interface_npc->icon_count;i++)
+            sprintf(buf, "--- Select an item below ---");
+            xoff = x + StringWidth(&font_tiny_out, buf);
+            yoff = y + this->box.y - guitop - font_tiny_out.line_height -
+                   FONT_BLANKLINE;
+            StringBlt(ScreenSurface, &font_tiny_out, buf, xoff, yoff,
+                      COLOR_GREEN, NULL, NULL);
+
+            for (; this; this = this->next)
             {
-                if (gui_interface_npc->icon[i].mode == 's' )
+                if (this->box.y > guibot ||
+                    this->box.y + this->box.h < guitop)
                 {
-                    box.x = x + 38;
-                    box.y = y + yoff - 2;
-                    box.w = 36;
-                    box.h = 36;
-                    SDL_FillRect(ScreenSurface, &box, sdl_gray2);
-                    sprite_blt(Bitmaps[BITMAP_INVSLOT], x + 40, y + yoff, NULL, NULL);
-
-                    if (gui_interface_npc->icon[i].element.face>0)
-                        blt_inv_item_centered(&gui_interface_npc->icon[i].element, x + 40, y + yoff);
-                    else if (gui_interface_npc->icon[i].picture)
-                        sprite_blt(gui_interface_npc->icon[i].picture, x + 40, y + yoff, NULL, NULL);
-
-                    StringBlt(ScreenSurface, &font_medium, gui_interface_npc->icon[i].title, x+80, y+yoff-3, COLOR_WHITE, NULL, NULL);
-                    yoff+=10;
-                    StringBlt(ScreenSurface, &font_small, gui_interface_npc->icon[i].body_text, x+80, y+yoff, COLOR_WHITE, NULL, NULL);
-                    yoff+=10;
-                    if (gui_interface_npc->icon[i].second_line)
-                        StringBlt(ScreenSurface, &font_small, gui_interface_npc->icon[i].second_line, x+80, y+yoff+1, COLOR_WHITE, NULL, NULL);
-                    yoff+=24;
+                    continue;
                 }
+
+                ShowIcon(this);
             }
+
+            sprintf(buf, "--- Select an item above ---");
+            xoff = x + StringWidth(&font_tiny_out, buf);
+            yoff = y + gui_npc->icon->last->box.y - guitop + GUI_NPC_ICONSIZE +
+                   FONT_BLANKLINE;
+            StringBlt(ScreenSurface, &font_tiny_out, buf, xoff, yoff,
+                      COLOR_GREEN, NULL, NULL);
         }
-
-        if (gui_interface_npc->icon_select)
-        {
-/*
- *             StringBlt(ScreenSurface, &font_medium, "And one of these (select one):", x+40, y+yoff, COLOR_WHITE, NULL, NULL);
- *             yoff+=20;
- */
-            StringBlt(ScreenSurface, &font_tiny_out, "--- Select an item below ---", x + 120, y + yoff - 5, COLOR_GREEN, NULL, NULL);
-            yoff += 15;
-            for (i=0;i<gui_interface_npc->icon_count;i++)
-            {
-                if (gui_interface_npc->icon[i].mode == 'S' )
-                {
-                    if (gui_interface_npc->selected == i+1)
-                    {
-                        box.x=x+38;
-                        box.y=y+yoff-2;
-                        box.w=36;
-                        box.h=36;
-                        if (gui_interface_npc->icon[i].remove == 'R')
-                            SDL_FillRect(ScreenSurface, &box, sdl_dred);
-                        else
-                            SDL_FillRect(ScreenSurface, &box, sdl_dgreen);
-                    }
-
-                    sprite_blt(Bitmaps[BITMAP_INVSLOT], x + 40, y + yoff, NULL, NULL);
-
-                    if (gui_interface_npc->icon[i].element.face>0)
-                        blt_inv_item_centered(&gui_interface_npc->icon[i].element, x + 40, y + yoff);
-                    else if (gui_interface_npc->icon[i].picture)
-                        sprite_blt(gui_interface_npc->icon[i].picture, x + 40, y + yoff, NULL, NULL);
-
-                    StringBlt(ScreenSurface, &font_medium, gui_interface_npc->icon[i].title, x+80, y+yoff-3, COLOR_WHITE, NULL, NULL);
-                    yoff+=10;
-                    StringBlt(ScreenSurface, &font_small, gui_interface_npc->icon[i].body_text, x+78, y+yoff-1, COLOR_WHITE, NULL, NULL);
-                    yoff+=10;
-                    if (gui_interface_npc->icon[i].second_line)
-                        StringBlt(ScreenSurface, &font_small, gui_interface_npc->icon[i].second_line, x+78, y+yoff, COLOR_WHITE, NULL, NULL);
-                    yoff+=24;
-                }
-            }
-            StringBlt(ScreenSurface, &font_tiny_out, "--- Select an item above ---", x + 120, y + yoff - 5, COLOR_GREEN, NULL, NULL);
-        }
-    yoff+=15;
     }
 
-    if (gui_interface_npc->link_count)
+    if (gui_npc->link)
     {
-        for (i=0;i<gui_interface_npc->link_count;i++,yoff+=15)
+        _gui_npc_element *this = gui_npc->link;
+
+        for (; this; this = this->next)
         {
-            if (gui_interface_npc->link_selected == i+1)
-                StringBlt(ScreenSurface, &font_medium, gui_interface_npc->link[i].link, x+40, y+yoff, COLOR_DK_NAVY, NULL, NULL);
+            if (this->box.y > guibot ||
+                this->box.y + this->box.h < guitop)
+            {
+                continue;
+            }
+
+            xoff = x + this->box.x;
+            yoff = y + this->box.y - guitop;
+            sprintf(buf, "%s", this->title);
+
+            if (StringWidthOffset(&font_medium, buf, &len, GUI_NPC_WIDTH))
+            {
+                buf[len - 2] = '\0';
+                strcat(buf, "...");
+            }
+
+            if (gui_npc->link_selected == this &&
+                !gui_npc->keyword_selected)
+            {
+                StringBlt(ScreenSurface, &font_medium, buf, xoff, yoff,
+                          COLOR_DK_NAVY, NULL, NULL);
+            }
             else
-                StringBlt(ScreenSurface, &font_medium, gui_interface_npc->link[i].link, x+40, y+yoff, COLOR_TURQUOISE, NULL, NULL);
+            {
+                StringBlt(ScreenSurface, &font_medium, buf, xoff, yoff,
+                          COLOR_TURQUOISE, NULL, NULL);
+            }
+
+            yoff += font_medium.line_height + FONT_BLANKLINE;
+        }
+
+        yoff += FONT_BLANKLINE * 2;
+    }
+
+    if (gui_npc->update)
+    {
+        _gui_npc_element *this = gui_npc->update;
+
+        for (; this; this = this->next)
+        {
+            uint8 i;
+
+            if (this->box.y > guibot ||
+                this->box.y + this->box.h < guitop)
+            {
+                continue;
+            }
+
+            xoff = x + this->box.x;
+            yoff = y + this->box.y - guitop;
+            sprintf(buf, "%s", this->title);
+
+            if (StringWidthOffset(&font_big_out, buf, &len, GUI_NPC_WIDTH))
+            {
+                buf[len - 2] = '\0';
+                strcat(buf, "...");
+            }
+
+            StringBlt(ScreenSurface, &font_big_out, buf, xoff, yoff,
+                      COLOR_HGOLD, NULL, NULL);
+            yoff += font_big_out.line_height + FONT_BLANKLINE;
+
+            for (i = 0; i < this->body.line_count; i++)
+            {
+                if (!*this->body.line[i])
+                {
+                    yoff += FONT_BLANKLINE;
+                }
+                else
+                {
+                    StringBlt(ScreenSurface, &font_medium, this->body.line[i],
+                              xoff, yoff, COLOR_WHITE, NULL, NULL);
+                    yoff += font_medium.line_height;
+                }
+            }
+
+            yoff += FONT_BLANKLINE * 2;
         }
     }
 
     SDL_SetClipRect(ScreenSurface, NULL);
 
-    if (gui_interface_npc->status == GUI_INTERFACE_STATUS_WAIT)
-        return;
+//    if (gui_npc->status == GUI_NPC_STATUS_WAIT)
+//    {
+//        return;
+//    }
+} 
 
-    if (gui_interface_npc->used_flag&GUI_INTERFACE_ACCEPT)
+static void ShowIcon(_gui_npc_element *this)
+{
+    const uint16 xoff = gui_npc->startx + GUI_NPC_LEFTMARGIN + this->box.x,
+                 yoff = gui_npc->starty + GUI_NPC_TOPMARGIN + this->box.y -
+                        gui_npc->yoff;
+    char         buf[SMALL_BUF];
+    int          len;
+    uint8        i;
+
+    /* Icon box bg. */
+    if (this->mode == 's' ||
+        this->mode == 'g')
     {
-
-        if (add_button(x + 35, y + 443, numButton++, BITMAP_DIALOG_BUTTON_UP,
-                       gui_interface_npc->accept.title, gui_interface_npc->accept.title2))
-        {
-            int ekey=-1;
-
-            if (gui_interface_npc->icon_select && !gui_interface_npc->selected)
-            {
-                draw_info("select a item first.", COLOR_GREEN);
-                sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICKFAIL, 0, 0, 100);
-                return;
-
-            }
-
-            switch (gui_interface_npc->accept.title[0])
-            {
-                case 'A':
-                    ekey = SDLK_a;
-                    break;
-                case 'B':
-                    ekey = SDLK_b;
-                    break;
-                case 'C':
-                    ekey = SDLK_c;
-                    break;
-                case 'D':
-                    ekey = SDLK_d;
-                    break;
-                case 'E':
-                    ekey = SDLK_e;
-                    break;
-                case 'F':
-                    ekey = SDLK_f;
-                    break;
-                case 'G':
-                    ekey = SDLK_g;
-                    break;
-                case 'H':
-                    ekey = SDLK_h;
-                    break;
-                case 'I':
-                    ekey = SDLK_i;
-                    break;
-                case 'J':
-                    ekey = SDLK_j;
-                    break;
-                case 'K':
-                    ekey = SDLK_k;
-                    break;
-                case 'L':
-                    ekey = SDLK_l;
-                    break;
-                case 'M':
-                    ekey = SDLK_m;
-                    break;
-                case 'N':
-                    ekey = SDLK_n;
-                    break;
-                case 'O':
-                    ekey = SDLK_o;
-                    break;
-                case 'P':
-                    ekey = SDLK_p;
-                    break;
-                case 'Q':
-                    ekey = SDLK_q;
-                    break;
-                case 'R':
-                    ekey = SDLK_r;
-                    break;
-                case 'S':
-                    ekey = SDLK_s;
-                    break;
-                case 'T':
-                    ekey = SDLK_t;
-                    break;
-                case 'U':
-                    ekey = SDLK_u;
-                    break;
-                case 'V':
-                    ekey = SDLK_v;
-                    break;
-                case 'W':
-                    ekey = SDLK_w;
-                    break;
-                case 'X':
-                    ekey = SDLK_x;
-                    break;
-                case 'Y':
-                    ekey = SDLK_y;
-                    break;
-                case 'Z':
-                    ekey = SDLK_z;
-                    break;
-            }
-            if (ekey != -1)
-                check_menu_keys(MENU_NPC, ekey);
-
-            return;
-        }
-
-        if (gui_interface_npc->used_flag&GUI_INTERFACE_DECLINE)
-        {
-            if (add_button(x + 285, y + 443, numButton++, BITMAP_DIALOG_BUTTON_UP,
-                           gui_interface_npc->decline.title, gui_interface_npc->decline.title2))
-            {
-                int ekey=-1;
-                switch (gui_interface_npc->decline.title[0])
-                {
-                    case 'A':
-                        ekey = SDLK_a;
-                        break;
-                    case 'B':
-                        ekey = SDLK_b;
-                        break;
-                    case 'C':
-                        ekey = SDLK_c;
-                        break;
-                    case 'D':
-                        ekey = SDLK_d;
-                        break;
-                    case 'E':
-                        ekey = SDLK_e;
-                        break;
-                    case 'F':
-                        ekey = SDLK_f;
-                        break;
-                    case 'G':
-                        ekey = SDLK_g;
-                        break;
-                    case 'H':
-                        ekey = SDLK_h;
-                        break;
-                    case 'I':
-                        ekey = SDLK_i;
-                        break;
-                    case 'J':
-                        ekey = SDLK_j;
-                        break;
-                    case 'K':
-                        ekey = SDLK_k;
-                        break;
-                    case 'L':
-                        ekey = SDLK_l;
-                        break;
-                    case 'M':
-                        ekey = SDLK_m;
-                        break;
-                    case 'N':
-                        ekey = SDLK_n;
-                        break;
-                    case 'O':
-                        ekey = SDLK_o;
-                        break;
-                    case 'P':
-                        ekey = SDLK_p;
-                        break;
-                    case 'Q':
-                        ekey = SDLK_q;
-                        break;
-                    case 'R':
-                        ekey = SDLK_r;
-                        break;
-                    case 'S':
-                        ekey = SDLK_s;
-                        break;
-                    case 'T':
-                        ekey = SDLK_t;
-                        break;
-                    case 'U':
-                        ekey = SDLK_u;
-                        break;
-                    case 'V':
-                        ekey = SDLK_v;
-                        break;
-                    case 'W':
-                        ekey = SDLK_w;
-                        break;
-                    case 'X':
-                        ekey = SDLK_x;
-                        break;
-                    case 'Y':
-                        ekey = SDLK_y;
-                        break;
-                    case 'Z':
-                        ekey = SDLK_z;
-                        break;
-                }
-                if (ekey != -1)
-                    check_menu_keys(MENU_NPC, ekey);
-
-                //check_menu_keys(MENU_NPC, SDLK_d);
-                return;
-            }
-        }
+        sprite_blt(Bitmaps[BITMAP_DIALOG_ICON_BG_INACTIVE], xoff + 3, yoff + 3,
+                   NULL, NULL);
     }
-
-    if (gui_interface_npc->who.body[0] != 'Q')
+    else if (this->mode == 'S' ||
+             this->mode == 'G')
     {
-        box.x = x + 95;
-        box.y = y+449;
-        box.h = 12;
-        box.w = 180;
-        if (gui_interface_npc->input_flag)
+        if (this->quantity >= 0)
         {
-            StringBlt(ScreenSurface, &font_small, "~Return~ to send, ~ESC~ to cancel", x+130, y+437, COLOR_WHITE, NULL, NULL);
-            SDL_FillRect(ScreenSurface, &box, 0);
-            StringBlt(ScreenSurface, &font_medium, show_input_string(InputString, &font_medium,box.w-10),box.x+5 ,box.y, COLOR_WHITE, NULL, NULL);
+            sprite_blt(Bitmaps[BITMAP_DIALOG_ICON_BG_POSITIVE], xoff + 3,
+                       yoff + 3, NULL, NULL);
+        }
+        else if (this->quantity < 0)
+        {
+            sprite_blt(Bitmaps[BITMAP_DIALOG_ICON_BG_NEGATIVE], xoff + 3,
+                       yoff + 3, NULL, NULL);
         }
         else
         {
-            StringBlt(ScreenSurface, &font_small, "~Return~ to talk", x+155, y+437, COLOR_WHITE, NULL, NULL);
+            sprite_blt(Bitmaps[BITMAP_DIALOG_ICON_BG_ACTIVE], xoff + 3,
+                       yoff + 3, NULL, NULL);
+        }
+    }
 
-            if (gui_interface_npc->link_selected)
+    /* Icon face. */
+    if (this->image.sprite)
+    {
+        SDL_Rect  box;
+        _Sprite  *sprite = this->image.sprite;
+        _BLTFX    bltfx;
+
+        box.x = xoff;
+        box.y = yoff;
+        box.w = GUI_NPC_ICONSIZE;
+        box.h = GUI_NPC_ICONSIZE;
+        memset(&bltfx, 0, sizeof(_BLTFX));
+
+        if (this->mode == 'g' ||
+            this->mode == 's')
+        {
+            bltfx.flags |= BLTFX_FLAG_GREY;
+        }
+
+//        SDL_SetClipRect(ScreenSurface, &box);
+        sprite_blt(sprite, box.x + box.w / 2 - (sprite->bitmap->w -
+                   sprite->border_left) / 2 - sprite->border_left,
+                   box.y + box.h / 2 - (sprite->bitmap->h -
+                   sprite->border_down) / 2, NULL, &bltfx);
+//        SDL_SetClipRect(ScreenSurface, &box);
+    }
+
+    /* Icon box fg. */
+    if (this->mode == 's' ||
+        this->mode == 'g')
+    {
+        sprite_blt(Bitmaps[BITMAP_DIALOG_ICON_FG_INACTIVE], xoff, yoff, NULL,
+                   NULL);
+    }
+    else if (gui_npc->icon_selected == this &&
+             !gui_npc->keyword_selected)
+    {
+        sprite_blt(Bitmaps[BITMAP_DIALOG_ICON_FG_SELECTED], xoff, yoff, NULL,
+                   NULL);
+    }
+    else
+    {
+        sprite_blt(Bitmaps[BITMAP_DIALOG_ICON_FG_ACTIVE], xoff, yoff, NULL,
+                   NULL);
+    }
+
+    /* Icon quantity. */
+    if (this->quantity > 9999 ||
+        this->quantity < -9999)
+    {
+        sprintf(buf, "many");
+    }
+    else
+    {
+        sprintf(buf, "%d", this->quantity);
+    }
+
+    if (this->quantity > 0)
+    {
+        uint8 w = StringWidth(&font_tiny_out, buf);
+
+        StringBlt(ScreenSurface, &font_tiny_out, buf, xoff + 28 - w / 2,
+                  yoff + 18, COLOR_GREEN, NULL, NULL);
+    }
+    else if (this->quantity < 0)
+    {
+        uint8 w = StringWidth(&font_tiny_out, buf);
+
+        StringBlt(ScreenSurface, &font_tiny_out, buf, xoff + 28 - w / 2,
+                  yoff + 18, COLOR_RED, NULL, NULL);
+    }
+
+    if (gui_npc->shop)
+    {
+        uint16 xoff2 = xoff,
+               yoff2 = gui_npc->starty + Bitmaps[BITMAP_GUI_NPC_TOP]->bitmap->h;
+
+        if (gui_npc->icon_selected == this)
+        {
+            /* Icon title. */
+            sprintf(buf, "%s", this->title);
+
+            if (StringWidthOffset(&font_medium, buf, &len, GUI_NPC_WIDTH))
             {
-                int cmdoff = 0;
-                char cmd_tmp[128];
-                int tmp;
-                if (!strncmp(gui_interface_npc->link[gui_interface_npc->link_selected-1].cmd, "/talk ", 6))
-                    cmdoff = 6;
-                box.w=175;
-                if (StringWidthOffset(&font_medium, (gui_interface_npc->link[gui_interface_npc->link_selected-1].cmd)+cmdoff, &tmp, 175))
-                {
-                    strncpy(cmd_tmp,(gui_interface_npc->link[gui_interface_npc->link_selected-1].cmd)+cmdoff,tmp-2);
-                    cmd_tmp[tmp-2]='\0';
-                    strcat(cmd_tmp,"...");
-                    StringBlt(ScreenSurface, &font_medium, cmd_tmp, box.x+3, box.y-1, COLOR_DK_NAVY, &box, NULL);
-                }
-                else
-                    StringBlt(ScreenSurface, &font_medium, (gui_interface_npc->link[gui_interface_npc->link_selected-1].cmd)+cmdoff, box.x+3, box.y-1, COLOR_DK_NAVY, &box, NULL);
+                buf[len - 2] = '\0';
+                strcat(buf, "...");
             }
-            if (gui_interface_npc->keyword_selected)
+
+            StringBlt(ScreenSurface, &font_small, buf, xoff2, yoff2, COLOR_HGOLD,
+                      NULL, NULL);
+            yoff2 += font_small.line_height;
+
+            /* Icon body text. */
+            for (i = 0; i < this->body.line_count; i++)
             {
-                char cmd_tmp[128];
-                int tmp;
-                box.w=175;
-                if (StringWidthOffset(&font_medium, gui_interface_npc->keywords[gui_interface_npc->keyword_selected-1], &tmp, 175))
-                {
-                    strncpy(cmd_tmp,gui_interface_npc->keywords[gui_interface_npc->keyword_selected-1],tmp-2);
-                    cmd_tmp[tmp-2]='\0';
-                    strcat(cmd_tmp,"...");
-                    StringBlt(ScreenSurface, &font_medium, cmd_tmp, box.x+3, box.y-1, COLOR_DK_NAVY, &box, NULL);
-                }
-                else
-                    StringBlt(ScreenSurface, &font_medium, gui_interface_npc->keywords[gui_interface_npc->keyword_selected-1], box.x+3, box.y-1, COLOR_DK_NAVY, &box, NULL);
+                StringBlt(ScreenSurface, &font_small, this->body.line[i], xoff2,
+                          yoff2, COLOR_WHITE, NULL, NULL);
+                yoff2 += font_small.line_height;
             }
+        }
+    }
+    else
+    {
+        /* Icon title. */
+        uint16 xoff2 = xoff + GUI_NPC_ICONSIZE,
+               yoff2 = yoff;
+
+        sprintf(buf, "%s", this->title);
+
+        if (StringWidthOffset(&font_small, buf, &len,
+                              GUI_NPC_WIDTH - GUI_NPC_ICONSIZE - 5))
+        {
+            buf[len - 2] = '\0';
+            strcat(buf, "...");
+        }
+
+        StringBlt(ScreenSurface, &font_small, buf, xoff2, yoff2, COLOR_HGOLD,
+                  NULL, NULL);
+        yoff2 += font_small.line_height;
+
+        /* Icon body text. */
+        for (i = 0; i < this->body.line_count; i++)
+        {
+            StringBlt(ScreenSurface, &font_tiny_out, this->body.line[i], xoff2,
+                      yoff2, COLOR_WHITE, NULL, NULL);
+            yoff2 += font_small.line_height;
         }
     }
 }
 
+/* Returns the element under the pointer. */
+static _gui_npc_element *GetElement(int mx, int my)
+{
+    uint16      x = gui_npc->startx,
+                y = gui_npc->starty,
+                xoff,
+                yoff;
+    uint8       i;
 
-/* we have a left click inside the interface-
- * check it
- * (argh, these button stuff in the draw function... )
+    /* Keyword panel. */
+    if (options.keyword_panel &&
+        gui_npc->hypertext)
+    {
+        _gui_npc_element *this = gui_npc->hypertext;
+        uint8 cw = 16,
+              ch = font_medium.line_height;
+
+        xoff = (options.keyword_panel == 1) ? /* left */
+               x - Bitmaps[BITMAP_GUI_NPC_PANEL]->bitmap->w + 23 +
+               cw / 2 :
+               x + Bitmaps[BITMAP_GUI_NPC_TOP]->bitmap->w - 5 + cw / 2;
+
+        for (i = 1; this; this = this->next, i++)
+        {
+            uint16 kw = StringWidth(&font_medium, this->keyword);
+
+            yoff = y + 73 + ch / 2 + ch * (i - 1);
+
+            if (mx >= xoff &&
+                mx <= xoff + kw &&
+                my >= yoff &&
+                my <= yoff + ch)
+            {
+                return this;
+            }
+        }
+    }
+
+    /* Buttons. */
+    xoff = x + GUI_NPC_LEFTMARGIN;
+    yoff = y + Bitmaps[BITMAP_GUI_NPC_TOP]->bitmap->h + ((gui_npc->shop) ?
+           Bitmaps[BITMAP_GUI_NPC_MIDDLE]->bitmap->h : 0) - 1;
+    if (gui_npc->lhsbutton &&
+        mx >= xoff &&
+        mx <= xoff + GUI_NPC_BUTTONWIDTH &&
+        my >= yoff &&
+        my <= yoff + Bitmaps[BITMAP_GUI_NPC_BOTTOM]->bitmap->h)
+    {
+        return gui_npc->lhsbutton;
+    }
+
+    xoff = x + GUI_NPC_LEFTMARGIN + GUI_NPC_WIDTH - GUI_NPC_BUTTONWIDTH;
+    if (gui_npc->rhsbutton &&
+        mx >= xoff &&
+        mx <= xoff + GUI_NPC_BUTTONWIDTH &&
+        my >= yoff &&
+        my <= yoff + Bitmaps[BITMAP_GUI_NPC_BOTTOM]->bitmap->h)
+    {
+        return gui_npc->rhsbutton;
+    }
+
+    /* Now constrain ourselves to just the visible window contents. */
+    xoff = x + GUI_NPC_LEFTMARGIN;
+    yoff = y + GUI_NPC_TOPMARGIN;
+
+    if (mx < xoff ||
+        mx > xoff + GUI_NPC_WIDTH ||
+        my < yoff ||
+        ((!gui_npc->shop &&
+          my > yoff + GUI_NPC_HEIGHT) ||
+         (gui_npc->shop &&
+          my > y + Bitmaps[BITMAP_GUI_NPC_TOP]->bitmap->h +
+          Bitmaps[BITMAP_GUI_NPC_MIDDLE]->bitmap->h)))
+    {
+        return NULL;
+    }
+
+    /* Selectable icons. */
+    if (gui_npc->first_selectable)
+    {
+        _gui_npc_element *this = gui_npc->first_selectable;
+
+        for (; this; this = this->next)
+        {
+            xoff = x + GUI_NPC_LEFTMARGIN + this->box.x;
+            yoff = y + GUI_NPC_TOPMARGIN + this->box.y - gui_npc->yoff;
+
+            if (this->mode == 'S' &&
+                mx >= xoff &&
+                mx <= xoff + this->box.w &&
+                my >= yoff &&
+                my <= yoff + this->box.h)
+            {
+                return this;
+            }
+        }
+    }
+
+    /* Links. */
+    if (gui_npc->link)
+    {
+        _gui_npc_element *this = gui_npc->link;
+
+        for (; this; this = this->next)
+        {
+            yoff = y + GUI_NPC_TOPMARGIN + this->box.y - gui_npc->yoff;
+
+            if (my >= yoff &&
+                my <= yoff + this->box.h)
+            {
+                xoff = x + GUI_NPC_LEFTMARGIN + this->box.x;
+
+                if (mx >= xoff &&
+                    mx <= xoff + this->box.w)
+                {
+                   return this;
+                }
+            }
+        }
+    }
+
+    return NULL;
+}
+
+/* Select the specified keyword. */
+static void SelectKeyword(_gui_npc_element *element)
+{
+    /* Only click when a new keyword is selected. */
+    if (element != gui_npc->keyword_selected)
+    {
+        sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICK, 0, 0,
+                          MENU_SOUND_VOL);
+    }
+
+    /* Reposition the window on the GUI so the keyword is near the top of the
+     * visible window (plus a bit for context). USHRT_MAX means do not
+     * reposition the window. */
+    if (element &&
+        element->box.y != USHRT_MAX &&
+        gui_npc->height > GUI_NPC_HEIGHT)
+    {
+        gui_npc->yoff = MIN(element->box.y - element->box.h,
+                            gui_npc->height - GUI_NPC_HEIGHT);
+    }
+
+    gui_npc->keyword_selected = element;
+    gui_npc->link_selected = NULL;
+    gui_npc->icon_selected = NULL;
+    gui_npc->button_selected = NULL;
+}
+
+/* Select the specified icon. */
+static void SelectIcon(_gui_npc_element *element)
+{
+    /* Only click when a new icon is selected. */
+    if (element != gui_npc->icon_selected)
+    {
+        sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICK, 0, 0,
+                          MENU_SOUND_VOL);
+    }
+
+    if (element &&
+        element->mode != 'S')
+    {
+        if ((!gui_npc->icon_selected &&
+             element == gui_npc->first_selectable) ||
+            (gui_npc->icon_selected &&
+             element == gui_npc->icon_selected->next))
+        {
+            _gui_npc_element *this = element;
+
+            for (; this; this = this->next)
+            {
+                if (this->mode == 'S')
+                {
+                    element = this;
+
+                    break;
+                }
+            }
+
+            if (!this)
+            {
+                element = NULL;
+            }
+        }
+        else
+        {
+            _gui_npc_element *this = element;
+
+            for (; this; this = this->prev)
+            {
+                if (this->mode == 'S')
+                {
+                    element = this;
+
+                    break;
+                }
+                else if (this == gui_npc->first_selectable)
+                {
+                    element = NULL;
+
+                    break;
+                }
+            }
+        }
+    }
+
+    /* Reposition the window on the GUI so the element is visible. */
+    if (element &&
+        gui_npc->height > GUI_NPC_HEIGHT)
+    {
+        /* If the element is above the currently visible GUI, reposition so
+         * that it is at the top. */
+        if (element->box.y < gui_npc->yoff)
+        {
+            gui_npc->yoff = element->box.y;
+        }
+        /* If the element is (even partially) below the currently visible
+         * GUI, reposition so that it is at the bottom. */
+        else if (element->box.y + element->box.h + FONT_BLANKLINE >
+                 gui_npc->yoff + GUI_NPC_HEIGHT)
+        {
+            gui_npc->yoff = MAX(0, MIN(element->box.y + element->box.h +
+                                       FONT_BLANKLINE - GUI_NPC_HEIGHT,
+                                       gui_npc->height - GUI_NPC_HEIGHT));
+        }
+    }
+
+    gui_npc->keyword_selected = NULL;
+    gui_npc->icon_selected = element;
+    gui_npc->link_selected = NULL;
+    gui_npc->button_selected = NULL;
+}
+
+/* Select and execute link #n. */
+static void ChooseLink(uint8 n)
+{
+    _gui_npc_element *this = gui_npc->link;
+
+    for (; this; this = this->next)
+    {
+        if (!--n)
+        {
+            SelectLink(this);
+            SendCommand();
+
+            break;
+        }
+    }
+}
+
+/* Select the specified link. */
+static void SelectLink(_gui_npc_element *element)
+{
+    /* Only click when a new link is selected. */
+    if (element != gui_npc->link_selected)
+    {
+        sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICK, 0, 0,
+                          MENU_SOUND_VOL);
+    }
+
+    /* Reposition the window on the GUI so the element is visible. */
+    if (element &&
+        gui_npc->height > GUI_NPC_HEIGHT)
+    {
+        /* If the element is above the currently visible GUI, reposition so
+         * that it is at the top. */
+        if (element->box.y < gui_npc->yoff)
+        {
+            gui_npc->yoff = element->box.y;
+        }
+        /* If the element is (even partially) below the currently visible
+         * GUI, reposition so that it is at the bottom. */
+        else if (element->box.y + element->box.h > gui_npc->yoff +
+                                                   GUI_NPC_HEIGHT)
+        {
+            gui_npc->yoff = MAX(0, MIN(element->box.y + element->box.h -
+                                       GUI_NPC_HEIGHT,
+                                       gui_npc->height - GUI_NPC_HEIGHT));
+        }
+    }
+
+    gui_npc->keyword_selected = NULL;
+    gui_npc->icon_selected = NULL;
+    gui_npc->link_selected = element;
+    gui_npc->button_selected = NULL;
+}
+
+/* Select and execute the button whose hotkey is c. */
+static void ChooseButton(char c)
+{
+    _gui_npc_element *this = NULL;
+
+    if (gui_npc->lhsbutton &&
+        *gui_npc->lhsbutton->title == c)
+    {
+        this = gui_npc->lhsbutton;
+    }
+    else if (gui_npc->rhsbutton &&
+             *gui_npc->rhsbutton->title == c)
+    {
+        this = gui_npc->rhsbutton;
+    }
+
+    if (this)
+    {
+        SelectButton(this);
+        SendCommand();
+    }
+}
+
+/* Select the specified button. */
+static void SelectButton(_gui_npc_element *element)
+{
+    if ((!gui_npc->lhsbutton ||
+         element != gui_npc->lhsbutton) &&
+        (!gui_npc->rhsbutton ||
+         element != gui_npc->rhsbutton))
+    {
+        sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICKFAIL, 0, 0,
+                          MENU_SOUND_VOL);
+    }
+
+    if (gui_npc->button_selected != element)
+    {
+        sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICK, 0, 0,
+                          MENU_SOUND_VOL);
+    }
+
+    gui_npc->keyword_selected = NULL;
+
+    if (!element->command ||
+        *element->command != '#')
+    {
+        gui_npc->link_selected = NULL;
+        gui_npc->icon_selected = NULL;
+    }
+
+    gui_npc->button_selected = element;
+}
+
+/* Mouse moves are used to select keywords, icons, links, and buttons.
  */
-void gui_interface_mouse(SDL_Event *e)
+void gui_npc_mousemove(SDL_Event *e)
 {
-    int mx, my, mxr=e->motion.x,myr=e->motion.y;
+    _gui_npc_element *element = GetElement(e->motion.x, e->motion.y);
 
-    if (!gui_interface_npc)
-        return;
-
-    if (e->button.button == 4 || e->button.button == 5) /* mousewheel up/down */
+    if (element)
     {
-        if (e->button.button == 4)
-            gui_interface_npc->yoff +=6;
-        else
-            gui_interface_npc->yoff -=6;
-
-        if (gui_interface_npc->yoff < INTERFACE_WINLEN_NPC-gui_interface_npc->win_length)
+        switch (element->type)
         {
-            gui_interface_npc->yoff = INTERFACE_WINLEN_NPC-gui_interface_npc->win_length;
-        }
-        if (gui_interface_npc->yoff >0)
-        {
-            gui_interface_npc->yoff=0;
-        }
+            case GUI_NPC_HYPERTEXT:
+                SelectKeyword(element);
 
-        return;
+                break;
+
+            case GUI_NPC_ICON:
+                SelectIcon(element);
+
+                break;
+
+            case GUI_NPC_LINK:
+                SelectLink(element);
+
+                break;
+
+            case GUI_NPC_BUTTON:
+                SelectButton(element);
+
+                break;
+
+            default:
+                LOG(LOG_ERROR, "ERROR:: %s/gui_npc_mousemove(): Unexpected NPC GUI element: %d!\n!",
+                    __FILE__, element->type);
+        }
     }
+}
 
-    mx = mxr-gui_interface_npc->startx;
-    my = myr-gui_interface_npc->starty;
+static void SendCommand(void)
+{
+    _gui_npc_element *keyword = gui_npc->keyword_selected,
+                     *icon = gui_npc->icon_selected,
+                     *link = gui_npc->link_selected,
+                     *button = gui_npc->button_selected;
+    char              buf[MEDIUM_BUF] = "";
 
-    if (mx >= 345 && mx <= 354 && my >=32 && my <= 41) // close button
+    /* This function should never be called when nothing is selected. */
+    if (!keyword &&
+        !icon &&
+        !link &&
+        !button)
     {
-        sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICK, 0, 0, 100);
-        reset_gui_interface();
-    }
-    else if (mx >= 339 && mx <= 350) // scroll buttons
-    {
-        if (my >=73 && my <= 84) // scroll up
-        {
-            gui_interface_npc->yoff +=12;
-            if (gui_interface_npc->yoff < INTERFACE_WINLEN_NPC-gui_interface_npc->win_length)
-            {
-                gui_interface_npc->yoff = INTERFACE_WINLEN_NPC-gui_interface_npc->win_length;
-            }
-            if (gui_interface_npc->yoff >0)
-            {
-                gui_interface_npc->yoff=0;
-            }
-        }
-        else if (my >=428 && my <= 437) // scroll down
-        {
-            gui_interface_npc->yoff -=12;
-            if (gui_interface_npc->yoff < INTERFACE_WINLEN_NPC-gui_interface_npc->win_length)
-            {
-                gui_interface_npc->yoff = INTERFACE_WINLEN_NPC-gui_interface_npc->win_length;
-            }
-            if (gui_interface_npc->yoff >0)
-            {
-                gui_interface_npc->yoff=0;
-            }
-        }
+        sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
+
         return;
     }
-    else if (mx >= 95 && mx <= 275 && my >= 449 && my <= 461) // textfield
+
+    /* A selected keyword overrides everything else. */
+    if (keyword)
     {
-        if (!gui_interface_npc->input_flag)
-            check_menu_keys(MENU_NPC, SDLK_RETURN);
+        sprintf(buf, "%s", keyword->keyword);
     }
     else
     {
-        int element, index;
-        char *keyword=NULL;
+        char cmd[SMALL_BUF];
 
-        if (get_interface_line(&element, &index, &keyword, gui_interface_npc->startx, gui_interface_npc->starty, mxr, myr))
+        cmd[0] = '\0';
+
+        /* Check for a selected icon or link-> */
+        if (icon)
         {
-            LOG(-1,"%s\n",keyword);
-            if (element == GUI_INTERFACE_ICON)
+            if (icon->command)
             {
-                sound_play_effect(SOUNDTYPE_CLIENT, SOUND_GET, 0, 0, 100);
-                gui_interface_npc->selected = index;
+                int off;
+
+                switch (*icon->command)
+                {
+                    case '<': /* default to LHS button */
+                        if (!button)
+                        {
+                            if (gui_npc->lhsbutton &&
+                                gui_npc->lhsbutton->command &&
+                                *gui_npc->lhsbutton->command == '#')
+                            {
+                                button = gui_npc->lhsbutton;
+                            }
+                            else if (gui_npc->rhsbutton &&
+                                     gui_npc->rhsbutton->command &&
+                                     *gui_npc->rhsbutton->command == '#')
+                            {
+                                button = gui_npc->rhsbutton;
+                            }
+                        }
+
+                        off = 1;
+
+                        break;
+                    case '-': /* default to no button */
+                        off = 1;
+
+                        break;
+
+                    default: /* default to RHS button */
+                        if (!button)
+                        {
+                            if (gui_npc->rhsbutton &&
+                                gui_npc->rhsbutton->command &&
+                                *gui_npc->rhsbutton->command == '#')
+                            {
+                                button = gui_npc->rhsbutton;
+                            }
+                            else if (gui_npc->lhsbutton &&
+                                     gui_npc->lhsbutton->command &&
+                                     *gui_npc->lhsbutton->command == '#')
+                            {
+                                button = gui_npc->lhsbutton;
+                            }
+                        }
+
+                        off = (icon->command &&
+                               *icon->command == '>') ? 1 : 0;
+                }
+
+                if (icon->command)
+                {
+                    sprintf(cmd, "%s", icon->command + off);
+                }
             }
-            else if (element == GUI_INTERFACE_MESSAGE)
+            else
             {
-                sound_play_effect(SOUNDTYPE_CLIENT, SOUND_GET, 0, 0, 100);
-                gui_interface_send_command(0, keyword);
+                _gui_npc_element *this = gui_npc->icon;
+                uint8             i = 1;
+
+                if (!button)
+                {
+                    if (gui_npc->rhsbutton &&
+                        gui_npc->rhsbutton->command &&
+                        *gui_npc->rhsbutton->command == '#')
+                    {
+                        button = gui_npc->rhsbutton;
+                    }
+                    else if (gui_npc->lhsbutton &&
+                             gui_npc->lhsbutton->command &&
+                             *gui_npc->lhsbutton->command == '#')
+                    {
+                        button = gui_npc->lhsbutton;
+                    }
+                }
+
+                for (; this; this = this->next, i++)
+                {
+                    if (this == icon)
+                    {
+                        sprintf(cmd, "#%d", i);
+
+                        break;
+                    }
+                }
             }
-            else if (element == GUI_INTERFACE_REWARD)
+        }
+        else if (link)
+        {
+            int off;
+
+            switch (*link->command)
             {
-                sound_play_effect(SOUNDTYPE_CLIENT, SOUND_GET, 0, 0, 100);
-                gui_interface_send_command(0, keyword);
+                case '<': /* default to LHS button */
+                    if (!button)
+                    {
+                        if (gui_npc->lhsbutton &&
+                            gui_npc->lhsbutton->command &&
+                            *gui_npc->lhsbutton->command == '#')
+                        {
+                            button = gui_npc->lhsbutton;
+                        }
+                        else if (gui_npc->rhsbutton &&
+                                 gui_npc->rhsbutton->command &&
+                                 *gui_npc->rhsbutton->command == '#')
+                        {
+                            button = gui_npc->rhsbutton;
+                        }
+                    }
+
+                    off = 1;
+
+                    break;
+
+                case '-': /* default to no button */
+                    off = 1;
+
+                    break;
+
+                default: /* default to RHS button */
+                    if (!button)
+                    {
+                        if (gui_npc->rhsbutton &&
+                            gui_npc->rhsbutton->command &&
+                            *gui_npc->rhsbutton->command == '#')
+                        {
+                            button = gui_npc->rhsbutton;
+                        }
+                        else if (gui_npc->lhsbutton &&
+                                 gui_npc->lhsbutton->command &&
+                                 *gui_npc->lhsbutton->command == '#')
+                        {
+                            button = gui_npc->lhsbutton;
+                        }
+                    }
+
+                    off = (link->command &&
+                           *link->command == '>') ? 1 : 0;
             }
-            else if (element == GUI_INTERFACE_LINK)
+
+            if (link->command)
             {
-                sound_play_effect(SOUNDTYPE_CLIENT, SOUND_GET, 0, 0, 100);
-                if (keyword[0]!='/')
-                    gui_interface_send_command(0, keyword);
+                sprintf(cmd, "%s", link->command);
+            }
+        }
+
+        /* Check for a selected button. */
+        if (gui_npc->rhsbutton &&
+            button == gui_npc->rhsbutton)
+        {
+            if (gui_npc->rhsbutton->command)
+            {
+                if (cmd[0])
+                {
+                    sprintf(buf, "%s %s",
+                            (*gui_npc->rhsbutton->command == '#') ?
+                            gui_npc->rhsbutton->command + 1 :
+                            gui_npc->rhsbutton->command, cmd);
+                }
                 else
-                    gui_interface_send_command(1, keyword);
+                {
+                    sprintf(buf, "%s",
+                            (*gui_npc->rhsbutton->command == '#') ?
+                            gui_npc->rhsbutton->command + 1 :
+                            gui_npc->rhsbutton->command);
+                }
             }
+        }
+        else if (gui_npc->lhsbutton &&
+                 button == gui_npc->lhsbutton)
+        {
+            if (gui_npc->lhsbutton->command)
+            {
+                if (cmd[0])
+                {
+                    sprintf(buf, "%s %s",
+                            (*gui_npc->lhsbutton->command == '#') ?
+                            gui_npc->lhsbutton->command + 1 :
+                            gui_npc->lhsbutton->command, cmd);
+                }
+                else
+                {
+                    sprintf(buf, "%s",
+                            (*gui_npc->lhsbutton->command == '#') ?
+                            gui_npc->lhsbutton->command + 1 :
+                            gui_npc->lhsbutton->command);
+                }
+            }
+        }
+        else
+        {
+            sprintf(buf, "%s", cmd);
+        }
+    }
+
+    /* Send the compound command that is in buf and tidy up. */
+    sound_play_effect(SOUNDTYPE_CLIENT, SOUND_GET, 0, 0, MENU_SOUND_VOL);
+
+    if (!buf[0])
+    {
+        gui_npc_reset();
+    }
+    else
+    {
+        if (gui_npc->status != GUI_NPC_STATUS_WAIT)
+        {
+            send_talk_command(interface_mode, buf);
+            textwin_addhistory(buf);
+            reset_keys();
+            reset_input_mode();
+            cpl.input_mode = INPUT_MODE_NO;
+            gui_npc->status = GUI_NPC_STATUS_WAIT;
         }
     }
 }
-void gui_interface_mousemove(SDL_Event *e)
+
+/* Mouse clicks are used to scroll the interface or
+ * execute keywords, icon, links, and buttons.
+ */
+void gui_npc_mouseclick(SDL_Event *e)
 {
-    int element, index;
-    char *keyword=NULL;
-    int mx, my, mxr=e->motion.x,myr=e->motion.y;
-    int i;
+    int mx = e->motion.x - gui_npc->startx,
+        my = e->motion.y - gui_npc->starty;
 
-    if (!gui_interface_npc)
-        return;
-    mx = mxr-gui_interface_npc->startx;
-    my = myr-gui_interface_npc->starty;
-
-
-    if (get_interface_line(&element, &index, &keyword, gui_interface_npc->startx, gui_interface_npc->starty, mxr, myr))
+    if (e->button.button == 4) /* mousewheel up */
     {
-//        if (element == GUI_INTERFACE_ICON)
-//        {
-//            sound_play_effect(SOUNDTYPE_CLIENT, SOUND_GET, 0, 0, 100);
-//            gui_interface_npc->selected = index;
-//        }
-        if (element == GUI_INTERFACE_MESSAGE)
+        if (!ScrollGUI(-GUI_NPC_SCROLL))
         {
-            for (i=0;i<gui_interface_npc->keyword_count;i++)
+            sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICKFAIL, 0, 0,
+                              MENU_SOUND_VOL);
+        }
+
+        return;
+    }
+    else if (e->button.button == 5) /* mousewheel down */
+    {
+        if (!ScrollGUI(GUI_NPC_SCROLL))
+        {
+            sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICKFAIL, 0, 0,
+                              MENU_SOUND_VOL);
+        }
+
+        return;
+    }
+
+    if (mx >= 349 &&
+        mx <= 358 &&
+        my >= 36 &&
+        my <= 45) // close button
+    {
+        sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICK, 0, 0, MENU_SOUND_VOL);
+        gui_npc_reset();
+    }
+
+    if (mx >= 341 &&
+        mx <= 352) // scroll buttons
+    {
+        if (my >= 79 &&
+            my <= 89) // scroll up
+        {
+            if (!ScrollGUI(-GUI_NPC_SCROLL))
             {
-                if (!strcmp(gui_interface_npc->keywords[i],keyword))
-                {
-                        gui_interface_npc->keyword_selected=i+1;
-                        gui_interface_npc->link_selected=0;
-                }
+                sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICKFAIL, 0, 0,
+                                  MENU_SOUND_VOL);
             }
         }
-        if (element == GUI_INTERFACE_REWARD)
+        else if (my >= 432 &&
+                 my <= 441) // scroll down
         {
-            for (i=0;i<gui_interface_npc->keyword_count;i++)
+            if (!ScrollGUI(GUI_NPC_SCROLL))
             {
-                if (!strcmp(gui_interface_npc->keywords[i],keyword))
-                {
-                        gui_interface_npc->keyword_selected=i+1;
-                        gui_interface_npc->link_selected=0;
-                }
+                sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICKFAIL, 0, 0,
+                                  MENU_SOUND_VOL);
             }
         }
-        else if (element == GUI_INTERFACE_LINK)
+
+        return;
+    }
+    else if (mx >= 95 &&
+             mx <= 275 &&
+             my >= 453 &&
+             my <= 465) // textfield
+    {
+        if (!gui_npc->input_flag)
         {
-            gui_interface_npc->link_selected=index+1;
-            gui_interface_npc->keyword_selected=0;
+            if (gui_npc->keyword_selected ||
+                gui_npc->icon_selected ||
+                gui_npc->link_selected ||
+                gui_npc->button_selected)
+            {
+                check_menu_keys(MENU_NPC, SDLK_RETURN);
+            }
+            else
+            {
+                check_menu_keys(MENU_NPC, SDLK_BACKSPACE);
+            }
         }
     }
     else
     {
-        gui_interface_npc->link_selected=0;
-        gui_interface_npc->keyword_selected=0;
+        _gui_npc_element *element = GetElement(e->motion.x, e->motion.y);
+
+        if (element)
+        {
+            switch (element->type)
+            {
+                case GUI_NPC_HYPERTEXT:
+                case GUI_NPC_ICON:
+                case GUI_NPC_LINK:
+                case GUI_NPC_BUTTON:
+                    SendCommand();
+
+                    break;
+
+                default:
+                    LOG(LOG_ERROR, "ERROR:: %s/gui_npc_mouseclick(): Unexpected NPC GUI element: %d!\n!",
+                        __FILE__, element->type);
+            }
+        }
     }
 }
 
+/* Keypresses perform a variety of tasks, depending on the key (see below),
+ * including: selecting and/or executing keywords, icons, links, and buttons;
+ * manipulating the textfield; and scrolling the interface.
+ */
+void gui_npc_keypress(int key)
+{
+    if (gui_npc->status == GUI_NPC_STATUS_WAIT)
+    {
+        return;
+    }
+
+    switch (key)
+    {
+        /* Selecting previous/next keyword. */
+        case SDLK_KP_DIVIDE:
+        case SDLK_KP_MULTIPLY:
+        case SDLK_TAB:
+            if (key == SDLK_KP_DIVIDE ||
+                (key == SDLK_TAB &&
+                 (SDL_GetModState() & KMOD_SHIFT)))
+            {
+                if (gui_npc->keyword_selected)
+                {
+                    SelectKeyword(gui_npc->keyword_selected->prev);
+                }
+                else if (gui_npc->hypertext)
+                {
+                    SelectKeyword(gui_npc->hypertext->last);
+                }
+            }
+            else
+            {
+                if (gui_npc->keyword_selected)
+                {
+                    SelectKeyword(gui_npc->keyword_selected->next);
+                }
+                else if (gui_npc->hypertext)
+                {
+                    SelectKeyword(gui_npc->hypertext);
+                }
+            }
+
+            break;
+
+        /* Selecting previous/next selectable icon and/or link. */
+        case SDLK_UP:
+        case SDLK_LEFT:
+        case SDLK_KP_MINUS:
+            if (!gui_npc->first_selectable &&
+                !gui_npc->link)
+            {
+                sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICKFAIL, 0, 0,
+                                  MENU_SOUND_VOL);
+
+                break;
+            }
+
+            if (!gui_npc->icon_selected &&
+                !gui_npc->link_selected)
+            {
+                if (gui_npc->link)
+                {
+                    SelectLink(gui_npc->link->last);
+                }
+                else
+                {
+                    SelectIcon(gui_npc->icon->last);
+                }
+            }
+            else if (gui_npc->icon_selected)
+            {
+                SelectIcon(gui_npc->icon_selected->prev);
+            }
+            else if (gui_npc->link_selected)
+            {
+                SelectLink(gui_npc->link_selected->prev);
+
+                if (!gui_npc->link_selected &&
+                    gui_npc->first_selectable)
+                {
+                    SelectIcon(gui_npc->icon->last);
+                }
+            }
+
+            sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICK, 0, 0, MENU_SOUND_VOL);
+
+            break;
+
+        case SDLK_DOWN:
+        case SDLK_RIGHT:
+        case SDLK_KP_PLUS:
+            if (!gui_npc->first_selectable &&
+                !gui_npc->link)
+            {
+                sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICKFAIL, 0, 0,
+                                  MENU_SOUND_VOL);
+
+                break;
+            }
+
+            if (!gui_npc->icon_selected &&
+                !gui_npc->link_selected)
+            {
+                if (gui_npc->first_selectable)
+                {
+                    SelectIcon(gui_npc->first_selectable);
+                }
+                else
+                {
+                    SelectLink(gui_npc->link);
+                }
+            }
+            else if (gui_npc->icon_selected)
+            {
+                SelectIcon(gui_npc->icon_selected->next);
+
+                if (!gui_npc->icon_selected)
+                {
+                    if (gui_npc->link)
+                    {
+                        SelectLink(gui_npc->link);
+                    }
+                }
+            }
+            else if (gui_npc->link_selected)
+            {
+                SelectLink(gui_npc->link_selected->next);
+            }
+
+            sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICK, 0, 0, MENU_SOUND_VOL);
+
+            break;
+
+        /* Selecting and executing one of the first 9 links. */
+        case SDLK_1:
+        case SDLK_KP1:
+            ChooseLink(1);
+
+            break;
+
+        case SDLK_2:
+        case SDLK_KP2:
+            ChooseLink(2);
+
+            break;
+
+        case SDLK_3:
+        case SDLK_KP3:
+            ChooseLink(3);
+
+            break;
+
+        case SDLK_4:
+        case SDLK_KP4:
+            ChooseLink(4);
+
+            break;
+
+        case SDLK_5:
+        case SDLK_KP5:
+            ChooseLink(5);
+
+            break;
+
+        case SDLK_6:
+        case SDLK_KP6:
+            ChooseLink(6);
+
+            break;
+
+        case SDLK_7:
+        case SDLK_KP7:
+            ChooseLink(7);
+
+            break;
+
+        case SDLK_8:
+        case SDLK_KP8:
+            ChooseLink(8);
+
+            break;
+
+        case SDLK_9:
+        case SDLK_KP9:
+            ChooseLink(9);
+
+            break;
+
+        /* Selecting and executing the LHS or RHS buttons. */
+        case SDLK_MINUS:
+        case SDLK_KP0:
+            if (gui_npc->lhsbutton)
+            {
+                SelectButton(gui_npc->lhsbutton);
+                SendCommand();
+            }
+
+            break;
+
+        case SDLK_EQUALS:
+        case SDLK_KP_PERIOD:
+            if (gui_npc->rhsbutton)
+            {
+                SelectButton(gui_npc->rhsbutton);
+                SendCommand();
+            }
+
+            break;
+
+        /* Selecting and executing either button according to its hot key. */
+        case SDLK_a:
+            ChooseButton('A');
+
+            break;
+
+        case SDLK_b:
+            ChooseButton('B');
+
+            break;
+
+        case SDLK_c:
+            ChooseButton('C');
+
+            break;
+
+        case SDLK_d:
+            ChooseButton('D');
+
+            break;
+
+        case SDLK_e:
+            ChooseButton('E');
+
+            break;
+
+        case SDLK_f:
+            ChooseButton('F');
+
+            break;
+
+        case SDLK_g:
+            ChooseButton('G');
+
+            break;
+
+        case SDLK_h:
+            ChooseButton('H');
+
+            break;
+
+        case SDLK_i:
+            ChooseButton('I');
+
+            break;
+
+        case SDLK_j:
+            ChooseButton('J');
+
+            break;
+
+        case SDLK_k:
+            ChooseButton('K');
+
+            break;
+
+        case SDLK_l:
+            ChooseButton('L');
+
+            break;
+
+        case SDLK_m:
+            ChooseButton('M');
+
+            break;
+
+        case SDLK_n:
+            ChooseButton('N');
+
+            break;
+
+        case SDLK_o:
+            ChooseButton('O');
+
+            break;
+
+        case SDLK_p:
+            ChooseButton('P');
+
+            break;
+
+        case SDLK_q:
+            ChooseButton('Q');
+
+            break;
+
+        case SDLK_r:
+            ChooseButton('R');
+
+            break;
+
+        case SDLK_s:
+            ChooseButton('S');
+
+            break;
+
+        case SDLK_t:
+            ChooseButton('T');
+
+            break;
+
+        case SDLK_u:
+            ChooseButton('U');
+
+            break;
+
+        case SDLK_v:
+            ChooseButton('V');
+
+            break;
+
+        case SDLK_w:
+            ChooseButton('W');
+
+            break;
+
+        case SDLK_x:
+            ChooseButton('X');
+
+            break;
+
+        case SDLK_y:
+            ChooseButton('Y');
+
+            break;
+
+        case SDLK_z:
+            ChooseButton('Z');
+
+            break;
+
+        /* Sending commands. */
+        case SDLK_RETURN:
+        case SDLK_KP_ENTER:
+            SendCommand();
+
+            break;
+
+        /* Overwriting commands in the textfield-> */
+        case SDLK_BACKSPACE:
+            sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICK, 0, 0, MENU_SOUND_VOL);
+            reset_keys();
+            reset_input_mode();
+            open_input_mode(240);
+            textwin_putstring("");
+            cpl.input_mode = INPUT_MODE_NPCDIALOG;
+            gui_npc->input_flag = 1;
+            HistoryPos = 0;
+
+            break;
+
+        /* Scrolling the visible window. */
+        case SDLK_INSERT:
+            if (!ScrollGUI(-GUI_NPC_SCROLL))
+            {
+                sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICKFAIL, 0, 0,
+                                  MENU_SOUND_VOL);
+            }
+
+            break;
+
+        case SDLK_DELETE:
+            if (!ScrollGUI(GUI_NPC_SCROLL))
+            {
+                sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICKFAIL, 0, 0,
+                                  MENU_SOUND_VOL);
+            }
+
+            break;
+
+        case SDLK_HOME:
+            if (!ScrollGUI(0))
+            {
+                sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICKFAIL, 0, 0,
+                                  MENU_SOUND_VOL);
+            }
+
+            break;
+
+        case SDLK_END:
+            if (!ScrollGUI(gui_npc->height))
+            {
+                sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICKFAIL, 0, 0,
+                                  MENU_SOUND_VOL);
+            }
+
+            break;
+
+        case SDLK_PAGEUP:
+            if (!ScrollGUI(-GUI_NPC_HEIGHT))
+            {
+                sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICKFAIL, 0, 0,
+                                  MENU_SOUND_VOL);
+            }
+
+            break;
+
+        case SDLK_PAGEDOWN:
+            if (!ScrollGUI(GUI_NPC_HEIGHT))
+            {
+                sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICKFAIL, 0, 0,
+                                  MENU_SOUND_VOL);
+            }
+
+            break;
+    }
+}
+
+/* Scroll the visible window. 'Scroll' is not really right -- we don't scroll,
+ * we reposition. Maybe in future we can do real scrolling? */
+static uint8 ScrollGUI(sint16 dist)
+{
+    /* No scrolling small windows. */
+    if (gui_npc->height <= GUI_NPC_HEIGHT)
+    {
+        return 0;
+    }
+
+    /* Scroll to top. */
+    if (dist == 0)
+    {
+        /* Not if we're already at the top. */
+        if (gui_npc->yoff == 0)
+        {
+            return 0;
+        }
+
+        gui_npc->yoff = 0;
+
+        return 1;
+    }
+    /* Scroll to bottom. */
+    else if (dist >= gui_npc->height)
+    {
+        /* Not if we're already at the bottom. */
+        if (gui_npc->yoff == gui_npc->height - GUI_NPC_HEIGHT)
+        {
+            return 0;
+        }
+
+        gui_npc->yoff = gui_npc->height - GUI_NPC_HEIGHT;
+
+        return 1;
+    }
+    /* Scroll up. */
+    if (dist < 0)
+    {
+        /* Not if we're already at the top. */
+        if (gui_npc->yoff == 0)
+        {
+            return 0;
+        }
+
+        if (gui_npc->yoff > ABS(dist))
+        {
+            gui_npc->yoff += dist;
+        }
+        else
+        {
+            gui_npc->yoff = 0;
+        }
+
+        return 1;
+    }
+    /* Scroll down. */
+    else if (dist > 0)
+    {
+        /* Not if we're already at the bottom. */
+        if (gui_npc->yoff == gui_npc->height - GUI_NPC_HEIGHT)
+        {
+            return 0;
+        }
+
+        if (gui_npc->yoff < gui_npc->height - GUI_NPC_HEIGHT - dist)
+        {
+            gui_npc->yoff += dist;
+        }
+        else
+        {
+            gui_npc->yoff = gui_npc->height - GUI_NPC_HEIGHT;
+        }
+
+        return 1;
+    }
+
+    /* I don't think it is possible to reach here, but JIC... */
+    return 0;
+}

@@ -48,10 +48,6 @@ extern uint16   endian_int16;   /* thats the 0x0201 short endian */
 
 #define MAXHASHSTRING 20 /* for hash table (bmap, ...) */
 
-#define INTERFACE_MODE_NO 0
-#define INTERFACE_MODE_NPC    1
-#define INTERFACE_MODE_QLIST    2
-
 /* Login step definition for input mask */
 typedef enum _login_step {
     LOGIN_STEP_NOTHING,
@@ -99,13 +95,18 @@ typedef struct _server
 }
 _server;
 
-typedef struct vimmsg {
-    char    msg[128];
-    uint32  starttick;
-    Boolean active;
-} _vimmsg;
+typedef struct _vimmsg
+{
+    char    *msg;
+    uint32   color;
+    uint32   starttick;
+    uint8    active;
+}
+_vimmsg;
 
-extern struct vimmsg vim;
+#define MAX_NROF_VIM 32
+
+extern _vimmsg vim[MAX_NROF_VIM];
 
 typedef struct  _bmaptype_table
 {
@@ -183,8 +184,6 @@ extern _skindef     skindef;
 
 #define MAXMETAWINDOW 14        /* count max. shown server in meta window*/
 
-#define MAX_HELP_SCREEN 2
-
 #define MAXFACES 4
 
 /* IMPORTANT: datatype it must also be changed in dialog.c */
@@ -239,6 +238,7 @@ typedef struct _options
 #ifdef WIDGET_SNAP
     int                     widget_snap;
 #endif
+    int                     keyword_panel;
 
     /* Debug */
     Boolean                 force_redraw;
@@ -487,8 +487,6 @@ extern uint32       LastTick;           /* system time counter in ms since prg s
 extern char         ServerName[];   /* name of the server we want connect */
 extern int          ServerPort;         /* port addr */
 
-extern int          show_help_screen;
-extern int          show_help_screen_new;
 extern int          InputFirstKeyPress;
 
 extern int          map_udate_flag, map_transfer_flag, map_redraw_flag;
@@ -521,7 +519,6 @@ enum
 #define SURFACE_FLAG_PALETTE 1      /* surface must stay in palette mode, not in vid mode*/
 #define SURFACE_FLAG_COLKEY_16M 2   /* use this when you want a colkey in a true color picture - color should be 0 */
 #define SURFACE_FLAG_DISPLAYFORMAT 4 /* with the new code images are NOT per default converted to vid mod, for gui stuff set this */
-
 
 typedef enum _bitmap_index
 {
@@ -597,7 +594,6 @@ typedef enum _bitmap_index
     BITMAP_EXP_BUBBLE2,
     BITMAP_BELOW,
     BITMAP_FLINE,
-    BITMAP_HELP_START,
     BITMAP_TARGET_ATTACK,
     BITMAP_TARGET_TALK,
     BITMAP_TARGET_NORMAL,
@@ -614,6 +610,16 @@ typedef enum _bitmap_index
     BITMAP_DIALOG_TITLE_SPELL,
     BITMAP_DIALOG_TITLE_CREATION,
     BITMAP_DIALOG_TITLE_LOGIN,
+    BITMAP_DIALOG_ICON_BG_ACTIVE,
+    BITMAP_DIALOG_ICON_BG_INACTIVE,
+    BITMAP_DIALOG_ICON_BG_NEGATIVE,
+    BITMAP_DIALOG_ICON_BG_POSITIVE,
+    BITMAP_DIALOG_ICON_FG_ACTIVE,
+    BITMAP_DIALOG_ICON_FG_INACTIVE,
+    BITMAP_DIALOG_ICON_FG_SELECTED,
+    BITMAP_DIALOG_BUTTON_SELECTED,
+    BITMAP_DIALOG_BUTTON_UP_PREFIX,
+    BITMAP_DIALOG_BUTTON_DOWN_PREFIX,
     BITMAP_DIALOG_BUTTON_UP,
     BITMAP_DIALOG_BUTTON_DOWN,
     BITMAP_DIALOG_TAB_START,
@@ -657,7 +663,10 @@ typedef enum _bitmap_index
     BITMAP_GROUP_MANA,
     BITMAP_GROUP_GRACE,
     BITMAP_GROUP_HP,
-    BITMAP_NPC_INTERFACE,
+    BITMAP_GUI_NPC_TOP,
+    BITMAP_GUI_NPC_MIDDLE,
+    BITMAP_GUI_NPC_BOTTOM,
+    BITMAP_GUI_NPC_PANEL,
     BITMAP_COIN_COPPER,
     BITMAP_COIN_SILVER,
     BITMAP_COIN_GOLD,
@@ -710,7 +719,6 @@ extern int                    interface_mode;
 extern struct _Sprite      *Bitmaps[];
 
 extern struct gui_book_struct    *gui_interface_book;
-extern struct gui_interface_struct *gui_interface_npc;
 
 extern _face_struct         FaceList[MAX_FACE_TILES];   /* face data */
 

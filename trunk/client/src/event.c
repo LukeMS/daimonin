@@ -556,7 +556,7 @@ int Event_PollInputDevice(void)
             {
                 if (event.button.button ==0)
                 {
-                    gui_interface_mousemove(&event);
+                    gui_npc_mousemove(&event);
                     break;
                 }
 
@@ -565,33 +565,56 @@ int Event_PollInputDevice(void)
 //            textwin_event(TW_CHECK_MOVE, &event);
 
             /* scrollbar-sliders We have to have it before the widgets cause of the menu*/
-            if (event.button.button == SDL_BUTTON_LEFT && !draggingInvItem(DRAG_GET_STATUS))
+            if (event.button.button == SDL_BUTTON_LEFT &&
+                !draggingInvItem(DRAG_GET_STATUS))
             {
                 /* NPC_GUI Slider */
-                if (active_scrollbar == 2 || (cpl.menustatus == MENU_NPC && y >= 136+Screensize.yoff && y <=474+Screensize.yoff && x>=561 && x <= 568))
+                if (active_scrollbar == 2 ||
+                    (cpl.menustatus == MENU_NPC &&
+                     y >= 136 + Screensize.yoff &&
+                     y <= 474 + Screensize.yoff &&
+                     x >= 561 &&
+                     x <= 568))
                 {
                     active_scrollbar = 2;
 
                     if (old_mouse_y - y > 0)
                     {
-                        gui_interface_npc->yoff +=12;
-                        if (gui_interface_npc->yoff >0)
-                            gui_interface_npc->yoff=0;
-                        if (gui_interface_npc->yoff < INTERFACE_WINLEN_NPC-gui_interface_npc->win_length)
-                            gui_interface_npc->yoff = INTERFACE_WINLEN_NPC-gui_interface_npc->win_length;
-                        if (gui_interface_npc->yoff >0)
-                            gui_interface_npc->yoff=0;
+                        gui_npc->yoff += 12;
+
+                        if (gui_npc->yoff > 0)
+                        {
+                            gui_npc->yoff = 0;
+                        }
+
+                        if (gui_npc->yoff < GUI_NPC_HEIGHT - gui_npc->height)
+                        {
+                            gui_npc->yoff = GUI_NPC_HEIGHT - gui_npc->height;
+                        }
+
+                        if (gui_npc->yoff > 0)
+                        {
+                            gui_npc->yoff = 0;
+                        }
                     }
                     else if (old_mouse_y - y < 0)
                     {
-                        gui_interface_npc->yoff -= 12;
+                        gui_npc->yoff -= 12;
 
-                        if (gui_interface_npc->yoff < INTERFACE_WINLEN_NPC-gui_interface_npc->win_length)
-                            gui_interface_npc->yoff = INTERFACE_WINLEN_NPC-gui_interface_npc->win_length;
-                        if (gui_interface_npc->yoff < INTERFACE_WINLEN_NPC-gui_interface_npc->win_length)
-                            gui_interface_npc->yoff = INTERFACE_WINLEN_NPC-gui_interface_npc->win_length;
-                        if (gui_interface_npc->yoff >0)
-                            gui_interface_npc->yoff=0;
+                        if (gui_npc->yoff < GUI_NPC_HEIGHT - gui_npc->height)
+                        {
+                            gui_npc->yoff = GUI_NPC_HEIGHT - gui_npc->height;
+                        }
+
+                        if (gui_npc->yoff < GUI_NPC_HEIGHT - gui_npc->height)
+                        {
+                            gui_npc->yoff = GUI_NPC_HEIGHT - gui_npc->height;
+                        }
+
+                        if (gui_npc->yoff > 0)
+                        {
+                            gui_npc->yoff = 0;
+                        }
                     }
                     break;
                 }
@@ -652,11 +675,9 @@ int Event_PollInputDevice(void)
 
             if (cpl.menustatus == MENU_NPC)
             {
-                if (y >= 51 && y <= 74) /* quest list */
-                    cpl.menustatus = MENU_NO;
                 if (event.button.button ==4 || event.button.button ==5 || event.button.button == SDL_BUTTON_LEFT)
                 {
-                    gui_interface_mouse(&event);
+                    gui_npc_mouseclick(&event);
                     break;
                 }
 
@@ -894,6 +915,12 @@ static void key_string_event(SDL_KeyboardEvent *key)
             break;
 
         case SDLK_KP_ENTER:
+            if (cpl.input_mode == INPUT_MODE_NPCDIALOG)
+            {
+                check_menu_keys(MENU_NPC, SDLK_KP_ENTER);
+                break;
+            }
+
         case SDLK_RETURN:
         case SDLK_TAB:
             if (key->keysym.sym != SDLK_TAB || GameStatus < GAME_STATUS_WAITFORPLAY)
@@ -1017,8 +1044,8 @@ static void key_string_event(SDL_KeyboardEvent *key)
                 InputCount =CurrentCursorPos = strlen(InputString);
                 InputStringFlag = TRUE;
 
-                box.x = gui_interface_npc->startx + 95;
-                box.y = gui_interface_npc->starty + 449;
+                box.x = gui_npc->startx + 95;
+                box.y = gui_npc->starty + 449;
                 box.h = 12;
                 box.w = 180;
 
@@ -1054,8 +1081,8 @@ static void key_string_event(SDL_KeyboardEvent *key)
                 strcpy(InputString, InputHistory[HistoryPos] + 6);
                 InputCount =CurrentCursorPos = strlen(InputString);
                 InputStringFlag = TRUE;
-                box.x = gui_interface_npc->startx + 95;
-                box.y = gui_interface_npc->starty + 449;
+                box.x = gui_npc->startx + 95;
+                box.y = gui_npc->starty + 449;
                 box.h = 12;
                 box.w = 180;
                 SDL_FillRect(ScreenSurface, &box, 0);
@@ -1094,6 +1121,30 @@ static void key_string_event(SDL_KeyboardEvent *key)
             CurrentCursorPos = InputCount;
             break;
 
+        case SDLK_PAGEUP:
+        case SDLK_PAGEDOWN:
+        case SDLK_KP_DIVIDE:
+        case SDLK_KP_MULTIPLY:
+        case SDLK_KP_MINUS:
+        case SDLK_KP_PLUS:
+        case SDLK_KP1:
+        case SDLK_KP2:
+        case SDLK_KP3:
+        case SDLK_KP4:
+        case SDLK_KP5:
+        case SDLK_KP6:
+        case SDLK_KP7:
+        case SDLK_KP8:
+        case SDLK_KP9:
+        case SDLK_KP0:
+        case SDLK_KP_PERIOD:
+            if (cpl.input_mode == INPUT_MODE_NPCDIALOG)
+            {
+                check_menu_keys(MENU_NPC, key->keysym.sym);
+                break;
+            }
+            /* else drop through to default behaviour */
+
         default:
             /* if we are in number console mode, use GET as quick enter
              * mode - this is a very handy shortcut
@@ -1121,7 +1172,7 @@ static void key_string_event(SDL_KeyboardEvent *key)
                     c = toupper(c);
 
                 /* These chars are never allowed. */
-                if (c < 32 || c == '^' || c == '~' || c == '°' || c == '|' || c == '§')
+                if (c < 32 || c == '^' || c == '~' || c == '|' || c == '`')
                     c = 0;
                 else
                 {
@@ -1334,22 +1385,6 @@ int key_event(SDL_KeyboardEvent *key)
 
                 break;
             case SDLK_ESCAPE:
-                if (show_help_screen)
-                    show_help_screen = 0;
-                if (show_help_screen_new)
-                {
-                    show_help_screen_new = FALSE;
-                    draw_info("QUICK HELP REMINDER", COLOR_GREEN);
-                    draw_info("- move with the NUMPAD keys", COLOR_GREEN);
-                    draw_info("- target NPC's with the 'S' key", COLOR_GREEN);
-                    draw_info("- speak to NPC's with the 'T' key", COLOR_GREEN);
-                    draw_info("- hold SHIFT pressed for your INVENTORY", COLOR_GREEN);
-                    draw_info("- select an item with use cursor keys", COLOR_GREEN);
-                    draw_info("- apply (use) an item with the 'A' key", COLOR_GREEN);
-                    draw_info("- examine an item with the 'E' key", COLOR_GREEN);
-                    draw_info("- visit the daimonin website: |www.daimonin.net|", COLOR_GREEN);
-                    break;
-                }
                 if (esc_menu_flag == FALSE)
                 {
                     map_udate_flag = 1;
@@ -1382,7 +1417,6 @@ Boolean check_menu_macros(char *text)
         map_udate_flag = 2;
         if (cpl.menustatus != MENU_SPELL)
         {
-            show_help_screen = 0;
             cpl.menustatus = MENU_SPELL;
         }
         else
@@ -1402,7 +1436,6 @@ Boolean check_menu_macros(char *text)
         map_udate_flag = 2;
         if (cpl.menustatus != MENU_SKILL)
         {
-            show_help_screen = 0;
             cpl.menustatus = MENU_SKILL;
         }
         else
@@ -1416,7 +1449,6 @@ Boolean check_menu_macros(char *text)
         map_udate_flag = 2;
         if (cpl.menustatus != MENU_KEYBIND)
         {
-            show_help_screen = 0;
             keybind_status = KEYBIND_STATUS_NO;
             cpl.menustatus = MENU_KEYBIND;
         }
@@ -1437,7 +1469,6 @@ Boolean check_menu_macros(char *text)
         map_udate_flag = 2;
         if (cpl.menustatus != MENU_STATUS)
         {
-            show_help_screen = 0;
             cpl.menustatus = MENU_STATUS;
         }
         else
@@ -1492,8 +1523,7 @@ void check_keys(int key)
                     draw_info(bindkey_list[j].entry[i].text, COLOR_DGOLD);
 #endif
                     strcpy(buf, bindkey_list[j].entry[i].text);
-                    if (!client_command_check(buf))
-                        send_game_command(buf);
+                    send_game_command(buf);
                 }
                 return;
             }
@@ -1632,7 +1662,6 @@ Boolean process_macro_keys(int id, int value)
         break;
 
     case KEYFUNC_CONSOLE:
-        show_help_screen = 0;
         sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CONSOLE, 0, 0, 100);
         reset_keys();
         if (cpl.input_mode == INPUT_MODE_NO)
@@ -1890,22 +1919,10 @@ Boolean process_macro_keys(int id, int value)
 
         cpl.menustatus = MENU_NO;
         sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICK, 0, 0, 100);
-        if (show_help_screen_new)
-            show_help_screen_new = FALSE;
-        else
-            show_help_screen_new = TRUE;
-
 
         /*
                 cpl.menustatus = MENU_NO;
                 sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICK, 0, 0, 100);
-                if (show_help_screen)
-                {
-                    if (++show_help_screen > MAX_HELP_SCREEN)
-                        show_help_screen = 1;
-                }
-                else
-                    show_help_screen = 1;
         */
         return FALSE;
         break;
@@ -2152,12 +2169,6 @@ static void move_keys(int num)
     char    msg[256];
 #endif
 
-    if (show_help_screen_new)
-    {
-        draw_info("First close the QUICK HELP with ESC key.", COLOR_WHITE);
-        return;
-    }
-
     if (cpl.menustatus != MENU_NO)
         reset_menu_status();
 
@@ -2300,8 +2311,7 @@ static void key_repeat(void)
                             if (check_macro_keys(bindkey_list[j].entry[i].text)) /* if no key macro, submit the text as cmd*/
                             {
                                 strcpy(buf, bindkey_list[j].entry[i].text);
-                                if (!client_command_check(buf))
-                                    send_game_command(buf);
+                                send_game_command(buf);
 #ifdef DEBUG_TEXT
                                 draw_info(bindkey_list[j].entry[i].text, COLOR_DGOLD);
 #endif
@@ -2428,13 +2438,11 @@ static void check_esc_menu_keys(int key)
     case SDLK_RETURN:
         if (esc_menu_index == ESC_MENU_KEYS)
         {
-            show_help_screen = 0;
             keybind_status = KEYBIND_STATUS_NO;
             cpl.menustatus = MENU_KEYBIND;
         }
         else if (esc_menu_index == ESC_MENU_SETTINGS)
         {
-            show_help_screen = 0;
             keybind_status = KEYBIND_STATUS_NO;
             if (cpl.menustatus == MENU_KEYBIND)
                 save_keybind_file(KEYBIND_FILE);
@@ -2470,13 +2478,15 @@ static void check_esc_menu_keys(int key)
 ******************************************************************/
 void check_menu_keys(int menu, int key)
 {
-    int gui_npc_decline = FALSE, gui_npc_accept = FALSE;
     int shiftPressed    = SDL_GetModState() & KMOD_SHIFT;
 
     if (cpl.menustatus == MENU_NO)
         return;
 
-    /* close menue */
+/* close menu -- methinks this should probably be handled via the switch below,
+ * meaning each menu type (ie, MENU_NPC) could handle the event within its own
+ * module (ie, interface.c). But for now lets go with what's here.
+ * -- Smacky 20071124 */
     if (key == SDLK_ESCAPE)
     {
         if (GameStatus == GAME_STATUS_ACCOUNT_CHAR_CREATE || GameStatus == GAME_STATUS_ACCOUNT_CHAR_DEL)
@@ -2491,6 +2501,8 @@ void check_menu_keys(int menu, int key)
         if (cpl.menustatus == MENU_KEYBIND)
             save_keybind_file(KEYBIND_FILE);
 
+        if (cpl.menustatus == MENU_NPC)
+            gui_npc_reset();
         cpl.menustatus = MENU_NO;
         map_udate_flag = 2;
         reset_keys();
@@ -2535,386 +2547,9 @@ void check_menu_keys(int menu, int key)
         break;
 
     case MENU_NPC:
+        gui_npc_keypress(key);
 
-        if (gui_interface_npc->status == GUI_INTERFACE_STATUS_WAIT)
-            return;
-
-        switch (key)
-        {
-        case SDLK_RETURN:
-        case SDLK_KP_ENTER:
-            if (gui_interface_npc->link_selected)
-            {
-                gui_interface_send_command(1, gui_interface_npc->link[gui_interface_npc->link_selected-1].cmd);
-                /*
-                send_command(gui_interface_npc->link[gui_interface_npc->link_selected-1].cmd);
-                draw_info_format(COLOR_WHITE, "Talking about: %s", gui_interface_npc->link[gui_interface_npc->link_selected-1].link);
-                */
-                gui_interface_npc->link_selected=0;
-                sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICK, 0, 0, MENU_SOUND_VOL);
-                reset_input_mode();
-                break;
-            }
-            if (gui_interface_npc->keyword_selected)
-            {
-                gui_interface_send_command(0, gui_interface_npc->keywords[gui_interface_npc->keyword_selected-1]);
-                /*
-                send_command(gui_interface_npc->link[gui_interface_npc->link_selected-1].cmd);
-                draw_info_format(COLOR_WHITE, "Talking about: %s", gui_interface_npc->link[gui_interface_npc->link_selected-1].link);
-                */
-                gui_interface_npc->keyword_selected=0;
-                sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICK, 0, 0, MENU_SOUND_VOL);
-                reset_input_mode();
-                break;
-            }
-            /* disable quest tag (ugly code...) */
-            if (gui_interface_npc->who.body[0] == 'Q')
-                break;
-
-            reset_keys();
-            reset_input_mode();
-            open_input_mode(240);
-            textwin_putstring("");
-            cpl.input_mode = INPUT_MODE_NPCDIALOG;
-            gui_interface_npc->input_flag = TRUE;
-            sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICK, 0, 0, MENU_SOUND_VOL);
-            HistoryPos = 0;
-            break;
-
-        case SDLK_a:
-            if (gui_interface_npc->used_flag&GUI_INTERFACE_DECLINE && gui_interface_npc->decline.title[0]=='A')
-                gui_npc_decline = TRUE;
-            else if (gui_interface_npc->used_flag&GUI_INTERFACE_ACCEPT && gui_interface_npc->accept.title[0]=='A')
-                gui_npc_accept = TRUE;
-            break;
-        case SDLK_b:
-            if (gui_interface_npc->used_flag&GUI_INTERFACE_DECLINE && gui_interface_npc->decline.title[0]=='B')
-                gui_npc_decline = TRUE;
-            else if (gui_interface_npc->used_flag&GUI_INTERFACE_ACCEPT && gui_interface_npc->accept.title[0]=='B')
-                gui_npc_accept = TRUE;
-            break;
-        case SDLK_c:
-            if (gui_interface_npc->used_flag&GUI_INTERFACE_DECLINE && gui_interface_npc->decline.title[0]=='C')
-                gui_npc_decline = TRUE;
-            else if (gui_interface_npc->used_flag&GUI_INTERFACE_ACCEPT && gui_interface_npc->accept.title[0]=='C')
-                gui_npc_accept = TRUE;
-            break;
-        case SDLK_d:
-            if (gui_interface_npc->used_flag&GUI_INTERFACE_DECLINE && gui_interface_npc->decline.title[0]=='D')
-                gui_npc_decline = TRUE;
-            else if (gui_interface_npc->used_flag&GUI_INTERFACE_ACCEPT && gui_interface_npc->accept.title[0]=='D')
-                gui_npc_accept = TRUE;
-            break;
-        case SDLK_e:
-            if (gui_interface_npc->used_flag&GUI_INTERFACE_DECLINE && gui_interface_npc->decline.title[0]=='E')
-                gui_npc_decline = TRUE;
-            else if (gui_interface_npc->used_flag&GUI_INTERFACE_ACCEPT && gui_interface_npc->accept.title[0]=='E')
-                gui_npc_accept = TRUE;
-            break;
-        case SDLK_f:
-            if (gui_interface_npc->used_flag&GUI_INTERFACE_DECLINE && gui_interface_npc->decline.title[0]=='F')
-                gui_npc_decline = TRUE;
-            else if (gui_interface_npc->used_flag&GUI_INTERFACE_ACCEPT && gui_interface_npc->accept.title[0]=='F')
-                gui_npc_accept = TRUE;
-            break;
-        case SDLK_g:
-            if (gui_interface_npc->used_flag&GUI_INTERFACE_DECLINE && gui_interface_npc->decline.title[0]=='G')
-                gui_npc_decline = TRUE;
-            else if (gui_interface_npc->used_flag&GUI_INTERFACE_ACCEPT && gui_interface_npc->accept.title[0]=='G')
-                gui_npc_accept = TRUE;
-            break;
-        case SDLK_h:
-            if (gui_interface_npc->used_flag&GUI_INTERFACE_DECLINE && gui_interface_npc->decline.title[0]=='H')
-                gui_npc_decline = TRUE;
-            else if (gui_interface_npc->used_flag&GUI_INTERFACE_ACCEPT && gui_interface_npc->accept.title[0]=='H')
-                gui_npc_accept = TRUE;
-            break;
-        case SDLK_i:
-            if (gui_interface_npc->used_flag&GUI_INTERFACE_DECLINE && gui_interface_npc->decline.title[0]=='I')
-                gui_npc_decline = TRUE;
-            else if (gui_interface_npc->used_flag&GUI_INTERFACE_ACCEPT && gui_interface_npc->accept.title[0]=='I')
-                gui_npc_accept = TRUE;
-            break;
-        case SDLK_j:
-            if (gui_interface_npc->used_flag&GUI_INTERFACE_DECLINE && gui_interface_npc->decline.title[0]=='J')
-                gui_npc_decline = TRUE;
-            else if (gui_interface_npc->used_flag&GUI_INTERFACE_ACCEPT && gui_interface_npc->accept.title[0]=='J')
-                gui_npc_accept = TRUE;
-            break;
-        case SDLK_k:
-            if (gui_interface_npc->used_flag&GUI_INTERFACE_DECLINE && gui_interface_npc->decline.title[0]=='K')
-                gui_npc_decline = TRUE;
-            else if (gui_interface_npc->used_flag&GUI_INTERFACE_ACCEPT && gui_interface_npc->accept.title[0]=='K')
-                gui_npc_accept = TRUE;
-            break;
-        case SDLK_l:
-            if (gui_interface_npc->used_flag&GUI_INTERFACE_DECLINE && gui_interface_npc->decline.title[0]=='L')
-                gui_npc_decline = TRUE;
-            else if (gui_interface_npc->used_flag&GUI_INTERFACE_ACCEPT && gui_interface_npc->accept.title[0]=='L')
-                gui_npc_accept = TRUE;
-            break;
-        case SDLK_m:
-            if (gui_interface_npc->used_flag&GUI_INTERFACE_DECLINE && gui_interface_npc->decline.title[0]=='M')
-                gui_npc_decline = TRUE;
-            else if (gui_interface_npc->used_flag&GUI_INTERFACE_ACCEPT && gui_interface_npc->accept.title[0]=='M')
-                gui_npc_accept = TRUE;
-            break;
-        case SDLK_n:
-            if (gui_interface_npc->used_flag&GUI_INTERFACE_DECLINE && gui_interface_npc->decline.title[0]=='N')
-                gui_npc_decline = TRUE;
-            else if (gui_interface_npc->used_flag&GUI_INTERFACE_ACCEPT && gui_interface_npc->accept.title[0]=='N')
-                gui_npc_accept = TRUE;
-            break;
-        case SDLK_o:
-            if (gui_interface_npc->used_flag&GUI_INTERFACE_DECLINE && gui_interface_npc->decline.title[0]=='O')
-                gui_npc_decline = TRUE;
-            else if (gui_interface_npc->used_flag&GUI_INTERFACE_ACCEPT && gui_interface_npc->accept.title[0]=='O')
-                gui_npc_accept = TRUE;
-            break;
-        case SDLK_p:
-            if (gui_interface_npc->used_flag&GUI_INTERFACE_DECLINE && gui_interface_npc->decline.title[0]=='P')
-                gui_npc_decline = TRUE;
-            else if (gui_interface_npc->used_flag&GUI_INTERFACE_ACCEPT && gui_interface_npc->accept.title[0]=='P')
-                gui_npc_accept = TRUE;
-            break;
-        case SDLK_q:
-            if (gui_interface_npc->used_flag&GUI_INTERFACE_DECLINE && gui_interface_npc->decline.title[0]=='Q')
-                gui_npc_decline = TRUE;
-            else if (gui_interface_npc->used_flag&GUI_INTERFACE_ACCEPT && gui_interface_npc->accept.title[0]=='Q')
-                gui_npc_accept = TRUE;
-            break;
-        case SDLK_r:
-            if (gui_interface_npc->used_flag&GUI_INTERFACE_DECLINE && gui_interface_npc->decline.title[0]=='R')
-                gui_npc_decline = TRUE;
-            else if (gui_interface_npc->used_flag&GUI_INTERFACE_ACCEPT && gui_interface_npc->accept.title[0]=='R')
-                gui_npc_accept = TRUE;
-            break;
-        case SDLK_s:
-            if (gui_interface_npc->used_flag&GUI_INTERFACE_DECLINE && gui_interface_npc->decline.title[0]=='S')
-                gui_npc_decline = TRUE;
-            else if (gui_interface_npc->used_flag&GUI_INTERFACE_ACCEPT && gui_interface_npc->accept.title[0]=='S')
-                gui_npc_accept = TRUE;
-            break;
-        case SDLK_t:
-            if (gui_interface_npc->used_flag&GUI_INTERFACE_DECLINE && gui_interface_npc->decline.title[0]=='T')
-                gui_npc_decline = TRUE;
-            else if (gui_interface_npc->used_flag&GUI_INTERFACE_ACCEPT && gui_interface_npc->accept.title[0]=='T')
-                gui_npc_accept = TRUE;
-            break;
-        case SDLK_u:
-            if (gui_interface_npc->used_flag&GUI_INTERFACE_DECLINE && gui_interface_npc->decline.title[0]=='U')
-                gui_npc_decline = TRUE;
-            else if (gui_interface_npc->used_flag&GUI_INTERFACE_ACCEPT && gui_interface_npc->accept.title[0]=='U')
-                gui_npc_accept = TRUE;
-            break;
-        case SDLK_v:
-            if (gui_interface_npc->used_flag&GUI_INTERFACE_DECLINE && gui_interface_npc->decline.title[0]=='V')
-                gui_npc_decline = TRUE;
-            else if (gui_interface_npc->used_flag&GUI_INTERFACE_ACCEPT && gui_interface_npc->accept.title[0]=='V')
-                gui_npc_accept = TRUE;
-            break;
-        case SDLK_w:
-            if (gui_interface_npc->used_flag&GUI_INTERFACE_DECLINE && gui_interface_npc->decline.title[0]=='W')
-                gui_npc_decline = TRUE;
-            else if (gui_interface_npc->used_flag&GUI_INTERFACE_ACCEPT && gui_interface_npc->accept.title[0]=='W')
-                gui_npc_accept = TRUE;
-            break;
-        case SDLK_x:
-            if (gui_interface_npc->used_flag&GUI_INTERFACE_DECLINE && gui_interface_npc->decline.title[0]=='X')
-                gui_npc_decline = TRUE;
-            else if (gui_interface_npc->used_flag&GUI_INTERFACE_ACCEPT && gui_interface_npc->accept.title[0]=='X')
-                gui_npc_accept = TRUE;
-            break;
-        case SDLK_y:
-            if (gui_interface_npc->used_flag&GUI_INTERFACE_DECLINE && gui_interface_npc->decline.title[0]=='Y')
-                gui_npc_decline = TRUE;
-            else if (gui_interface_npc->used_flag&GUI_INTERFACE_ACCEPT && gui_interface_npc->accept.title[0]=='Y')
-                gui_npc_accept = TRUE;
-            break;
-        case SDLK_z:
-            if (gui_interface_npc->used_flag&GUI_INTERFACE_DECLINE && gui_interface_npc->decline.title[0]=='Z')
-                gui_npc_decline = TRUE;
-            else if (gui_interface_npc->used_flag&GUI_INTERFACE_ACCEPT && gui_interface_npc->accept.title[0]=='Z')
-                gui_npc_accept = TRUE;
-            break;
-
-        case SDLK_TAB:
-            if ((gui_interface_npc->link_count) || (gui_interface_npc->keyword_count))
-            {
-                if (shiftPressed)
-                {
-                    if (!gui_interface_npc->link_selected && !gui_interface_npc->keyword_selected)
-                    {
-                        if (!(gui_interface_npc->link_selected=gui_interface_npc->link_count))
-                            gui_interface_npc->keyword_selected=gui_interface_npc->keyword_count;
-                    }
-                    else if(gui_interface_npc->link_selected)
-                    {
-                        if (!(--gui_interface_npc->link_selected))
-                            gui_interface_npc->keyword_selected=gui_interface_npc->keyword_count;
-                    }
-                    else
-                    {
-                        if (--gui_interface_npc->keyword_selected<0)
-                            gui_interface_npc->link_selected=gui_interface_npc->link_count;
-                    }
-                }
-                else
-                {
-                    if (!gui_interface_npc->link_selected && !gui_interface_npc->keyword_selected)
-                    {
-                        if (!(gui_interface_npc->keyword_count))
-                            gui_interface_npc->link_selected++;
-                        else
-                            gui_interface_npc->keyword_selected++;
-                    }
-                    else if(gui_interface_npc->keyword_selected)
-                    {
-                        if(++gui_interface_npc->keyword_selected>gui_interface_npc->keyword_count)
-                        {
-                            gui_interface_npc->keyword_selected=0;
-                            if (gui_interface_npc->link_count)
-                                gui_interface_npc->link_selected=1;
-                        }
-                    }
-                    else
-                    {
-                        if (++gui_interface_npc->link_selected>gui_interface_npc->link_count)
-                            gui_interface_npc->link_selected=0;
-                    }
-                }
-                sound_play_effect(SOUNDTYPE_CLIENT, SOUND_GET, 0, 0, 100);
-            }
-            else
-                sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
-            break;
-            /* select prize */
-        case SDLK_DOWN:
-            if (gui_interface_npc->icon_count > 1)
-            {
-                int i = gui_interface_npc->selected;
-                do
-                {
-                    if (++i >gui_interface_npc->icon_count)
-                    {
-                        i = 1;
-                    }
-                    if (gui_interface_npc->icon[i-1].mode == 'S' )
-                    {
-                        gui_interface_npc->selected = i;
-                        sound_play_effect(SOUNDTYPE_CLIENT, SOUND_GET, 0, 0, 100);
-                        break;
-                    }
-                }
-                while ((i!=gui_interface_npc->selected) && (i!=gui_interface_npc->icon_count));
-            }
-            break;
-
-        case SDLK_UP:
-            if (gui_interface_npc->icon_count > 1)
-            {
-                int i = gui_interface_npc->selected;
-                do
-                {
-                    if (--i < 1)
-                        i = gui_interface_npc->icon_count;
-                    if (gui_interface_npc->icon[i-1].mode == 'S' )
-                    {
-                        gui_interface_npc->selected = i;
-                        sound_play_effect(SOUNDTYPE_CLIENT, SOUND_GET, 0, 0, MENU_SOUND_VOL);
-                        break;
-                    }
-                }
-                while ((i!=gui_interface_npc->selected) && (i!=gui_interface_npc->icon_count));
-            }
-            break;
-
-            /* key scroll up/down */
-        case SDLK_PAGEUP:
-            gui_interface_npc->yoff +=12;
-            if (gui_interface_npc->yoff >0)
-            {
-                gui_interface_npc->yoff=0;
-                if (menuRepeatKey != SDLK_PAGEUP)
-                    sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
-            }
-            menuRepeatKey = SDLK_PAGEUP;
-            if (gui_interface_npc->yoff < INTERFACE_WINLEN_NPC-gui_interface_npc->win_length)
-            {
-                gui_interface_npc->yoff = INTERFACE_WINLEN_NPC-gui_interface_npc->win_length;
-            }
-            if (gui_interface_npc->yoff >0)
-            {
-                gui_interface_npc->yoff=0;
-            }
-            break;
-        case SDLK_PAGEDOWN:
-            gui_interface_npc->yoff -= 12;
-
-            if (gui_interface_npc->yoff < INTERFACE_WINLEN_NPC-gui_interface_npc->win_length)
-            {
-                gui_interface_npc->yoff = INTERFACE_WINLEN_NPC-gui_interface_npc->win_length;
-                if (menuRepeatKey != SDLK_PAGEDOWN)
-                    sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
-            }
-            menuRepeatKey = SDLK_PAGEDOWN;
-            if (gui_interface_npc->yoff < INTERFACE_WINLEN_NPC-gui_interface_npc->win_length)
-            {
-                gui_interface_npc->yoff = INTERFACE_WINLEN_NPC-gui_interface_npc->win_length;
-            }
-            if (gui_interface_npc->yoff >0)
-            {
-                gui_interface_npc->yoff=0;
-            }
-            break;
-
-        }
-
-        /* lets check we have a named button pressed or clicked inside the npc gui */
-        if (gui_npc_accept)
-        {
-            sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICK, 0, 0, 100);
-            if (gui_interface_npc->accept.command[0]!='\0')
-            {
-                char cmd[1024];
-                /* check selected for possible slot selection */
-                if (gui_interface_npc->icon_select)
-                {
-                    if (gui_interface_npc->accept.command[6] == '#')
-                        sprintf(cmd, "/talk %s #%d", gui_interface_npc->accept.command + 7, gui_interface_npc->selected);
-                    else
-                        sprintf(cmd, "%s #%d", gui_interface_npc->accept.command, gui_interface_npc->selected);
-                }
-                else
-                {
-                    strcpy(cmd, gui_interface_npc->accept.command);
-                    if (gui_interface_npc->accept.command[6] == '#')
-                        sprintf(cmd, "/talk %s", gui_interface_npc->accept.command + 7);
-                    else
-                        sprintf(cmd, "%s", gui_interface_npc->accept.command);
-                }
-                gui_interface_send_command(1, cmd);
-            }
-            else
-                reset_gui_interface();
-        }
-        else if (gui_npc_decline)
-        {
-            sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICK, 0, 0, 100);
-            if (gui_interface_npc->decline.command[0]!='\0')
-            {
-                char cmd[1024];
-                /* check selected for possible slot selection */
-                if (gui_interface_npc->icon_select && gui_interface_npc->decline.command[6] == '#')
-                    sprintf(cmd, "/talk %s #%d", gui_interface_npc->decline.command + 7, gui_interface_npc->selected);
-                else
-                    strcpy(cmd, gui_interface_npc->decline.command);
-                gui_interface_send_command(1, cmd);
-            }
-            else
-                reset_gui_interface();
-        }
-    break;
+        break;
 
     case MENU_OPTION:
         switch (key)

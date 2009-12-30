@@ -613,13 +613,71 @@ void DrawInfoCmd2(char *data, int len)
         if (tmp)
             *tmp = 0;
     }
-    if (flags & NDI_VIM)
+
+    /* Do we have a VIM? Put it into a non-active vimmsg. */
+    /* TODO: This should be moved to the anim functions, but for that we have
+     * to rewrite the anim stuff to handle strings, and different speeds, and
+     * so on... */
+    if ((flags & NDI_VIM))
     {
-        strncpy(vim.msg,buf,128);
-        vim.msg[127]='\0';
-        vim.starttick = LastTick;
-        vim.active = TRUE;
+        char *vimbuf;
+
+        MALLOC2(vimbuf, buf);
+
+        if (vimbuf)
+        {
+            char *p;
+
+            for (p = strrchr(vimbuf, '\n'); ;
+                 p = strrchr(vimbuf, '\n'))
+            {
+                uint8 i;
+
+                if (p)
+                {
+                    *(p++) = '\0';
+                }
+                else
+                {
+                    p = vimbuf;
+                }
+
+                for (i = 0; i < MAX_NROF_VIM; i++)
+                {
+                    if (vim[i].active)
+                    {
+                        continue;
+                    }
+
+                    MALLOC2(vim[i].msg, p);
+
+                    if (vim[i].msg)
+                    {
+                        vim[i].color = flags & 0xff;
+                        vim[i].starttick = LastTick;
+                        vim[i].active = 1;
+                    }
+
+                    break;
+                }
+
+                if (i == MAX_NROF_VIM)
+                {
+                    LOG(LOG_DEBUG, "DEBUG:: Not enough VIM space, please report!\n");
+
+                    break;
+                }
+
+                if (p == vimbuf)
+                {
+                    break;
+                }
+            }
+
+            FREE(vimbuf);
+        }
     }
+
     /* we log even before we ignore, or cfilter */
     if (options.msglog>0)
     {
@@ -1273,72 +1331,31 @@ void BookCmd(char *data, int len)
 
 void InterfaceCmd(char *data, int len)
 {
+    uint8 mode;
 
     map_udate_flag = 2;
-    if ((gui_interface_npc && gui_interface_npc->status != GUI_INTERFACE_STATUS_WAIT) &&
-            ((!len && cpl.menustatus == MENU_NPC) || (len && cpl.menustatus != MENU_NPC)))
-    {
-        sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICK, 0, 0, 100);
-    }
+
+//    if (gui_npc &&
+//        gui_npc->status != GUI_NPC_STATUS_WAIT &&
+//        ((!len &&
+//          cpl.menustatus == MENU_NPC) ||
+//         (len &&
+//          cpl.menustatus != MENU_NPC)))
+//    {
+//        sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICK, 0, 0, 100);
+//    }
+
+    mode = *((uint8 *)data++);
+    len--;
     reset_keys();
     cpl.input_mode = INPUT_MODE_NO;
-    reset_gui_interface();
+    gui_npc_reset();
+
     if (len)
     {
-        int mode, pos = 0;
-
-        mode = *data;
-        pos ++;
-
-#ifdef DEVELOPMENT
-        LOG(LOG_DEBUG, "Interface command: %s\n", (char*)(data+pos));
-#endif
-        gui_interface_npc = load_gui_interface(mode, (char*)data, len, pos);
-        if (!gui_interface_npc)
-            draw_info("INVALID GUI CMD", COLOR_RED);
-        else
+        if (!gui_npc_create(mode, data, len, 0))
         {
-            gui_interface_npc->win_length = precalc_interface_npc();
-            interface_mode = mode;
-            cpl.menustatus = MENU_NPC;
-            gui_interface_npc->startx = (Screensize.x/2)-(Bitmaps[BITMAP_NPC_INTERFACE]->bitmap->w / 2);
-            gui_interface_npc->starty = (Screensize.y-600)/2+50;
-            if (gui_interface_npc->icon_count > 0)
-            {
-                int i;
-                for (i = 0; i <= gui_interface_npc->icon_count; i++)
-                {
-                    if (gui_interface_npc->icon[i].mode == 'S')
-                    {
-                        gui_interface_npc->selected = i+1;
-                        break;
-                    }
-                }
-            }
-            if (gui_interface_npc->icon_count > 0)
-            {
-                int i;
-                for (i = 0; i <= gui_interface_npc->icon_count; i++)
-                {
-                    if (gui_interface_npc->icon[i].mode == 'S')
-                    {
-                        gui_interface_npc->selected = i+1;
-                        break;
-                    }
-                }
-            }
-            mb_clicked=0;
-            /* Prefilled (and focused) textfield */
-            if (gui_interface_npc->used_flag&GUI_INTERFACE_TEXTFIELD)
-            {
-                gui_interface_npc->input_flag = TRUE;
-
-                reset_keys();
-                open_input_mode(240);
-                textwin_putstring(gui_interface_npc->textfield.text);
-                cpl.input_mode = INPUT_MODE_NPCDIALOG;
-                HistoryPos = 0;
-            }
+            draw_info("INVALID GUI CMD", COLOR_RED);
         }
     }
 }

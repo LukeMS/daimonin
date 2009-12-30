@@ -44,6 +44,37 @@
 #define strnicmp(_s1_,_s2_,_nrof_) strncasecmp(_s1_,_s2_,_nrof_)
 #endif
 
+/* mallocs _P_ to size _S_, logging OOM or initialising to 0. */
+#define MALLOC(_P_, _S_) \
+if (!((_P_) = malloc((_S_)))) \
+{ \
+    LOG(LOG_DEBUG, "%s %d: Out of memory!\n", __FILE__, __LINE__); \
+} \
+else \
+{ \
+    memset((_P_), 0, (_S_)); \
+}
+
+/* mallocs _P_ to size strlen(_S_) + 1, logging OOM or initialising to
+ * sprintf(_P_, "%s", _S_). */
+#define MALLOC2(_P_, _S_) \
+if (!((_P_) = malloc(strlen(_S_) + 1))) \
+{ \
+    LOG(LOG_DEBUG, "%s %d: Out of memory!\n", __FILE__, __LINE__); \
+} \
+else \
+{ \
+    sprintf((_P_), "%s", (_S_)); \
+}
+
+/* frees _P_ and sets it to NULL. */
+#define FREE(_P_) \
+do \
+{ \
+    free((_P_)); \
+    (_P_) = NULL; \
+} \
+while (0)
 
 #define MAX_METASTRING_BUFFER 128*2013
 

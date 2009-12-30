@@ -36,11 +36,10 @@ setmetatable(TopicList, { __call = TopicList.New })
 -------------------
 function TopicList:CheckMessage(ev, quiet)
     assert(type(ev) == "Event" or
-           ev == nil,
-          "Arg #1 must be Event or nil!")
+           ev == nil, "Arg #1 must be Event or nil!")
     assert(type(quiet) == "boolean" or
-           quiet == nil,
-           "Arg #2 must be boolean or nil!")
+           quiet == nil, "Arg #2 must be boolean or nil!")
+
     if ev == nil then
         ev = event
     end
@@ -58,6 +57,7 @@ function TopicList:CheckMessage(ev, quiet)
                 if r then
                     r = true
                 end
+
                 if r ~= nil then
                     return r
                 end
@@ -138,6 +138,7 @@ function TopicList:SetDefault(...)
             table.insert(action, arg[i])
         end
     end 
+
     self.default = action
 end
 
@@ -155,11 +156,12 @@ function TopicList:AddTopics(trigger, ...)
             trigger
         }
     end
+
     for i, v in ipairs(trigger) do
         assert(type(v) == "string" or
-               v == nil,
-               "Arg #1 must be string, table of strings, or nil!")
+               v == nil, "Arg #1 must be string, table of strings, or nil!")
     end
+
     for i = 1, arg.n do
         if type(arg[i]) == "table" then
             for j in ipairs(arg[i]) do
@@ -240,9 +242,9 @@ function TopicList:AddQuest(trigger, ...)
 end
 
 -------------------
--- tl:AddRumors() adds the 'rumours' standard topic.
+-- tl:AddRumours() adds the 'rumours' standard topic.
 -------------------
-function TopicList:AddRumors(trigger, ...)
+function TopicList:AddRumours(trigger, ...)
     local action = {
         unpack(arg, 1, arg.n)
     }
@@ -256,6 +258,10 @@ function TopicList:AddRumors(trigger, ...)
     table.insert(trigger, "rumours?")
     table.insert(trigger, "rumors?")
     self:AddTopics(trigger, action)
+end
+
+function TopicList:AddRumors(...)
+    self:AddRumours(unpack(arg))
 end
 
 -------------------

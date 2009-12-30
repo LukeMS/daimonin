@@ -182,17 +182,6 @@ void send_target_command(player *pl)
     Write_String_To_Socket(&pl->socket, BINARY_CMD_TARGET, tmp, strlen(tmp+3)+3);
 }
 
-/* send quest list */
-int command_questlist(object *op, char *params)
-{
-    if (!op || op->type != PLAYER || !CONTR(op))
-        return 0;
-
-    send_quest_list(op);
-
-    return 0;
-}
-
 int command_combat(object *op, char *params)
 {
     if (!op || !op->map || op->type != PLAYER || !CONTR(op))

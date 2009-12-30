@@ -330,7 +330,6 @@ static struct constant_decl preset_game_constants[] =
     {"TYPE_AGGRO_HISTORY",    TYPE_AGGRO_HISTORY},
     {"TYPE_DAMAGE_INFO",      TYPE_DAMAGE_INFO},
     {"TYPE_SKILLSCROLL",      SKILLSCROLL},
-    {"TYPE_QUEST_OBJECT",     TYPE_QUEST_OBJECT},
     {"TYPE_TIMER",            TYPE_TIMER},
     {"TYPE_ENV_SENSOR",       TYPE_ENV_SENSOR},
     {"TYPE_CONN_SENSOR",      TYPE_CONN_SENSOR},
@@ -355,6 +354,8 @@ static struct constant_decl preset_game_constants[] =
     {"TYPE_QUEST_INFO",       TYPE_QUEST_INFO},
     {"TYPE_BEACON",           TYPE_BEACON},
     {"TYPE_GUILD_FORCE",      TYPE_GUILD_FORCE},
+    {"TYPE_QUEST_UPDATE",     TYPE_QUEST_UPDATE},
+    {"TYPE_SHOP_CONTAINER",   TYPE_SHOP_CONTAINER},
 
     /* logging modes (logger.h) */
     {"LOG_MAPBUG",  llevMapbug},
@@ -493,10 +494,10 @@ static struct constant_decl preset_game_constants[] =
     {"FNO_MODE_CONTAINERS", FNO_MODE_CONTAINERS},
     {"FNO_MODE_ALL",        FNO_MODE_ALL},
 
-    /* NPC interface modes (global.h) */
-    {"NPC_INTERFACE_MODE_NO",    NPC_INTERFACE_MODE_NO},
-    {"NPC_INTERFACE_MODE_NPC",   NPC_INTERFACE_MODE_NPC},
-    {"NPC_INTERFACE_MODE_QLIST", NPC_INTERFACE_MODE_QLIST},
+    /* NPC interface modes (protocol.h) */
+    {"GUI_NPC_MODE_NO",    GUI_NPC_MODE_NO},
+    {"GUI_NPC_MODE_NPC",   GUI_NPC_MODE_NPC},
+    {"GUI_NPC_MODE_QUEST", GUI_NPC_MODE_QUEST},
 
     /* Target modes (commands.h) */
     {"TARGET_ENEMY",  TARGET_ENEMY},

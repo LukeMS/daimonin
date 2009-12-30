@@ -84,18 +84,669 @@ static inline void SockList_AddString(SockList *const sl, const char *const buf)
 static char *BreakMulticommand(const char *command)
 {
     char *c = NULL;
-    /* Only look for a multicommand if the command is not one of these:
-    */
-    if (!(!strnicmp(command, "/tell", 5) || !strnicmp(command, "/say", 4) || !strnicmp(command, "/reply", 6) || !strnicmp(command, "/gsay", 5) || !strnicmp(command, "/shout", 6) || !strnicmp(command, "/talk", 5)
+
+    /* Only look for a multicommand if the command is not one of these: */
+    if (strnicmp(command, "/create ", 8) &&
 #ifdef USE_CHANNELS
-        || (*command == '-') || !strnicmp(command, "/channel", 8)
+        *command != '-' &&
+        strnicmp(command, "/channel ", 9) &&
 #endif
-        || !strnicmp(command, "/create", 7)))
+        strnicmp(command, "/gsay ", 6) &&
+        strnicmp(command, "/qlist ", 7) &&
+        strnicmp(command, "/reply ", 7) &&
+        strnicmp(command, "/say ", 5) &&
+        strnicmp(command, "/shout ", 7) &&
+        strnicmp(command, "/talk ", 6) &&
+        strnicmp(command, "/tell ", 6))
     {
         if ((c = strchr(command, '#'))) /* multicommand separator '#' */
+        {
             *c = '\0';
+        }
     }
+
     return c;
+}
+
+/* Analyze /<cmd> type commands the player has typed in the console
+ * or bound to a key. Sort out the "client intern" commands and
+ * expand or pre process them for the server.
+ * Return 0 and update cmd and params as necessary to send the command to the
+ * server, or  1 not to (ie, command has been fully handled client-side). */
+static uint8 CommandCheck(char *cmd, char *params)
+{
+#ifdef USE_CHANNELS
+    /* i know hardcoding is most of the time bad, but the channel system will
+     * be used really often. Also we can type directly the '-' in the
+     * textwin. */
+    if (*cmd == '-')
+    {
+        /* Only send if there is something to send! */
+        if (*params)
+        {
+            char tmpbuf[MEDIUM_BUF];
+
+            sprintf(tmpbuf, "/channel %s", cmd + 1);
+            sprintf(cmd, "%s", tmpbuf);
+
+            return 0;
+        }
+
+        return 1;
+    }
+#endif
+
+    /* Commands which require preprocessing before (and to determine if) they
+     * are sent to the server, */
+    /* This is for /apply commands where the item is specified as a string (eg,
+     * /apply lamp) as opposed to ?M_APPLY commands where the item is
+     * always what is under the cursor.
+     *
+     * So with /apply you can bind the apply command to a key for example to always
+     * apply a lamp if it's in your inv or at your feet.
+     *
+     * For some unknown reason '/apply' on its own is bound to SPACE by default
+     * (?M_APPLY is A). Obviously this will never specify an item.
+     *
+     * In these circumstances (no item is specified) we act as if ?M_APPLY was
+     * issued and use the item under the cursor.
+     * -- Smacky 20090730 */
+    if (!strcmp(cmd, "/apply"))
+    {
+        int   tag;
+        item *obj;
+
+        if (*params)
+        {
+            tag = locate_item_tag_from_name(params);
+        }
+        else
+        {
+            if (cpl.inventory_win == IWIN_BELOW)
+            {
+                tag = cpl.win_below_tag;
+            }
+            else
+            {
+                tag = cpl.win_inv_tag;
+            }
+        }
+
+        if (tag == -1 ||
+            !(obj = locate_item(tag)))
+        {
+//            if (*params)
+//            {
+//                draw_info_format(COLOR_DGOLD, "%s %s", cmd, params);
+//            }
+
+            draw_info_format(COLOR_DEFAULT, "No %sitem could be found!",
+                             (*params) ? "such " : "");
+        }
+        else
+        {
+            draw_info_format(COLOR_DGOLD, "%s %s", cmd, obj->s_name);
+            client_send_apply(tag);
+        }
+
+        return 1;
+    }
+    else if (!strcmp(cmd, "/qlist"))
+    {
+        send_talk_command(GUI_NPC_MODE_QUEST, params);
+
+        return 1;
+    }
+    else if (!strcmp(cmd, "/reply"))
+    {
+//        if (!*params)
+//        {
+//            draw_info("usage: /reply <message>", COLOR_WHITE);
+//        }
+
+        if (!cpl.player_reply[0])
+        {
+            draw_info("There is no one to whom you can /reply!", COLOR_WHITE);
+
+            return 1;
+        }
+
+        sprintf(cmd, "/tell %s", cpl.player_reply);
+
+        return 0;
+    }
+    else if (!strcmp(cmd, "/talk"))
+    {
+        if (*params)
+        {
+            send_talk_command(GUI_NPC_MODE_NPC, params);
+        }
+
+        return 1;
+    }
+    else if (!strcmp(cmd, "/target"))
+    {
+        if (!stricmp(params, "enemy"))
+        {
+            sprintf(params, "0");
+        }
+        else if (!stricmp(params, "friend"))
+        {
+            sprintf(params, "1");
+        }
+        else if (!stricmp(params, "self"))
+        {
+            sprintf(params, "2");
+        }
+
+        return 0;
+    }
+
+    /* Client-side only commands, */
+    if (!strcmp(cmd, "/buddy"))
+    {
+        buddy_command(params);
+
+        return 1;
+    }
+    else if (!strcmp(cmd, "/cfilter"))
+    {
+        chatfilter_command(params);
+
+        return 1;
+    }
+    else if (!strcmp(cmd, "/changeskin"))
+    {
+        char    tmpbuf[LARGE_BUF];
+        Boolean newskin = FALSE;
+
+//        if (!*params)
+//        {
+//            draw_info("usage: /changeskin <skin>", COLOR_GREEN);
+//        }
+
+        if (!stricmp(options.skin, params))
+        {
+            draw_info("You are already using that skin", COLOR_WHITE);
+        }
+
+        sprintf(tmpbuf, "skins/%s.zip", params);
+
+        if (PHYSFS_exists(tmpbuf))
+        {
+            if (!PHYSFS_addToSearchPath(tmpbuf, 0))
+            {
+                LOG(LOG_MSG, "PHYSFS_addPath (%s) failed: %s\n",
+                    tmpbuf, PHYSFS_getLastError());
+            }
+            else
+            {
+                newskin = TRUE;
+            }
+        }
+
+        sprintf(tmpbuf, "skins/%s", params);
+
+        if (PHYSFS_isDirectory(tmpbuf))
+        {
+            if (!PHYSFS_addToSearchPath(tmpbuf, 0))
+            {
+                LOG(LOG_MSG, "PHYSFS_addPath (%s) failed: %s\n",
+                    tmpbuf, PHYSFS_getLastError());
+            }
+            else
+            {
+                newskin = TRUE;
+            }
+        }
+
+        if (!newskin)
+        {
+            draw_info_format(COLOR_RED, "Skin '%s' not found, using old one.",
+                             params);
+        }
+        else
+        {
+            if (strnicmp(options.skin, "subred", 6))
+            {
+                sprintf(tmpbuf, "skins/%s.zip", options.skin);
+
+                if (!PHYSFS_removeFromSearchPath(tmpbuf))
+                {
+                    LOG(LOG_MSG, "PHYSFS_removePath (%s) failed: %s\n",
+                        tmpbuf, PHYSFS_getLastError());
+                }
+
+                sprintf(tmpbuf, "skins/%s", options.skin);
+
+                if (!PHYSFS_removeFromSearchPath(tmpbuf))
+                {
+                    LOG(LOG_MSG, "PHYSFS_removePath (%s) failed: %s\n",
+                        tmpbuf, PHYSFS_getLastError());
+                }
+            }
+
+            strncpy(options.skin, params, 63);
+            save_options_dat();
+            reload_skin();
+            reload_icons();
+        }
+
+        return 1;
+    }
+    else if (!strcmp(cmd, "/f1"))
+    {
+        quickslot_key(NULL, 0);
+
+        return 1;
+    }
+    else if (!strcmp(cmd, "/f2"))
+    {
+        quickslot_key(NULL, 1);
+
+        return 1;
+    }
+    else if (!strcmp(cmd, "/f3"))
+    {
+        quickslot_key(NULL, 2);
+
+        return 1;
+    }
+    else if (!strcmp(cmd, "/f4"))
+    {
+        quickslot_key(NULL, 3);
+
+        return 1;
+    }
+    else if (!strcmp(cmd, "/f5"))
+    {
+        quickslot_key(NULL, 4);
+
+        return 1;
+    }
+    else if (!strcmp(cmd, "/f6"))
+    {
+        quickslot_key(NULL, 5);
+
+        return 1;
+    }
+    else if (!strcmp(cmd, "/f7"))
+    {
+        quickslot_key(NULL, 6);
+
+        return 1;
+    }
+    else if (!strcmp(cmd, "/f8"))
+    {
+        quickslot_key(NULL, 7);
+
+        return 1;
+    }
+#ifdef DEVELOPMENT
+    else if (!strcmp(cmd, "/grid"))
+    {
+        options.grid = !options.grid;
+
+        return 1;
+    }
+#endif
+    else if (!strcmp(cmd, "/ignore"))
+    {
+        ignore_command(params);
+
+        return 1;
+    }
+    else if (!strcmp(cmd, "/imagestats"))
+    {
+        draw_info_format(COLOR_WHITE, "IMAGE-LOADING-STATISTICS");
+        draw_info_format(COLOR_WHITE, "==========================================");
+        draw_info_format(COLOR_WHITE, "Sprites in Memory: %d",
+                         ImageStats.loadedsprites);
+        draw_info_format(COLOR_WHITE, "TrueColors: %d",
+                         ImageStats.truecolors);
+        draw_info_format(COLOR_WHITE, "Greyscales in Memory: %d",
+                         ImageStats.greyscales);
+        draw_info_format(COLOR_WHITE, "Redscales in Memory: %d",
+                         ImageStats.redscales);
+        draw_info_format(COLOR_WHITE, "Fowscales in Memory: %d",
+                         ImageStats.fowscales);
+
+        return 1;
+    }
+    else if (!strcmp(cmd, "/keybind"))
+    {
+        map_udate_flag = 2;
+
+        if (cpl.menustatus != MENU_KEYBIND)
+        {
+            keybind_status = KEYBIND_STATUS_NO;
+            cpl.menustatus = MENU_KEYBIND;
+        }
+        else
+        {
+            save_keybind_file(KEYBIND_FILE);
+            cpl.menustatus = MENU_NO;
+        }
+
+        sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICK, 0, 0, MENU_SOUND_VOL);
+        reset_keys();
+
+        return 1;
+    }
+    else if (!strcmp(cmd, "/kills"))
+    {
+        kill_command(params);
+
+        return 1;
+    }
+    else if (!strcmp(cmd, "/markdmbuster"))
+    {
+        markdmbuster();
+
+        return 1;
+    }
+    else if (!strcmp(cmd, "/ready_spell"))
+    {
+        uint8 i;
+
+//        if (!*params)
+//        {
+//            draw_info("usage: /ready_spell <spell name>", COLOR_WHITE);
+//        }
+
+        for (i = 0; i < SPELL_LIST_MAX; i++)
+        {
+            uint8 j;
+
+            for (j = 0; j < DIALOG_LIST_ENTRY; j++)
+            {
+                if (spell_list[i].entry[0][j].flag >= LIST_ENTRY_USED)
+                {
+                    if (!strcmp(spell_list[i].entry[0][j].name, params))
+                    {
+                        if (spell_list[i].entry[0][j].flag == LIST_ENTRY_KNOWN)
+                        {
+                            fire_mode_tab[FIRE_MODE_SPELL].spell = &spell_list[i].entry[0][j];
+                            RangeFireMode = FIRE_MODE_SPELL;
+                            sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICK, 0,
+                                              0, MENU_SOUND_VOL);
+                            draw_info("Spell readied", COLOR_LBLUE);
+
+                            return 1;
+                        }
+                    }
+                }
+
+                if (spell_list[i].entry[1][j].flag >= LIST_ENTRY_USED)
+                {
+                    if (!strcmp(spell_list[i].entry[1][j].name, cmd))
+                    {
+                        if (spell_list[i].entry[1][j].flag == LIST_ENTRY_KNOWN)
+                        {
+                            fire_mode_tab[FIRE_MODE_SPELL].spell = &spell_list[i].entry[1][j];
+                            RangeFireMode = FIRE_MODE_SPELL;
+                            sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICK, 0,
+                                              0, MENU_SOUND_VOL);
+                            draw_info("Prayer readied", COLOR_LBLUE);
+
+                            return 1;
+                        }
+                    }
+                }
+            }
+        }
+
+        draw_info("Unknown spell.", COLOR_LBLUE);
+
+        return 1;
+    }
+    else if (!strcmp(cmd, "/reloadskinnow"))
+    {
+        draw_info_format(COLOR_GREEN, "Reloading skin. This function is only for skin creating, and may be removed anytime!");
+        reload_skin();
+        reload_icons();
+    }
+    else if (!strcmp(cmd, "/reset"))
+    {
+        if (!stricmp(params, "buddy"))
+        {
+            draw_info("Resetting buddy list!", COLOR_WHITE);
+            buddy_list_clear();
+            buddy_list_save();
+        }
+        else if (!stricmp(params, "ignore"))
+        {
+            draw_info("Resetting ignore list!", COLOR_WHITE);
+            ignore_list_clear();
+            ignore_list_save();
+        }
+        else if (!stricmp(params, "chatfilter") ||
+                 !stricmp(params, "cfilter"))
+        {
+            draw_info("Resetting chatfilter list!", COLOR_WHITE);
+            chatfilter_list_clear();
+            chatfilter_list_save();
+        }
+        else if (!stricmp(params, "kills"))
+        {
+            draw_info("Resetting kill list!", COLOR_WHITE);
+            kill_list_clear();
+            kill_list_save();
+        }
+        else if (!stricmp(params, "stats"))
+        {
+            draw_info("Resetting stat-o-meter!", COLOR_WHITE);
+            statometer.exp = 0;
+            statometer.kills = 0;
+            statometer.starttime = LastTick - 1;
+            statometer.lastupdate = LastTick;
+            statometer.exphour = 0.0f;
+            statometer.killhour = 0.0f;
+        }
+        else if (!stricmp(params, "widgetstatus"))
+        {
+            int nID;
+            draw_info("Resetting widgetstatus!", COLOR_WHITE);
+            for (nID = 0; nID < TOTAL_WIDGETS; nID++)
+            {
+                switch (nID)
+                {
+                    case 10: // MIXWIN
+                        break;
+                    case 12: // PLAYERDOLL, actually this shouldn't be necessary as we can't override the option with mouse-hiding, but JIC
+                        if (options.playerdoll)
+                            cur_widget[nID].show = TRUE;
+                        break;
+                    case 17: // MAININV
+                    case 19: // CONSOLE
+                    case 20: // NUMBER
+                        break;
+                    case 21: // STATOMETER, actually this shouldn't be necessary as we can't override the option with mouse-hiding, but JIC
+                        if (options.statsupdate)
+                            cur_widget[nID].show = TRUE;
+                        break;
+                    default:
+                        cur_widget[nID].show = TRUE;
+                }
+            }
+        }
+        else if (!stricmp(params, "widgets"))
+        {
+            draw_info("Resetting widgets!", COLOR_WHITE);
+            init_widgets_fromDefault();
+        }
+//        else
+//        {
+//            draw_info("Usage: ~/reset buddy~ to reset the buddylist,\n~/reset ignore~ to reset the ignorelist,\n~/reset chatfilter~ to reset the chatfilter list,\n~/reset kills~ to reset the kill list,\n~/reset stats~ to reset the stat-o-meter,\n~/reset widgets~ to reset the widgets, or\n~/reset widgetstatus~ to show any previously hidden widgets.", COLOR_WHITE);
+//        }
+
+        return 1;
+    }
+#ifdef DEVELOPMENT
+    else if (!strcmp(cmd, "/searchpath"))
+    {
+        char **i,
+             **j;
+
+        for (i = j = PHYSFS_getSearchPath(); *i; i++)
+        {
+            draw_info_format(COLOR_WHITE, "[%s] is in the search path.", *i);
+        }
+
+        PHYSFS_freeList(j);
+
+        return 1;
+    }
+#endif
+    else if (!strcmp(cmd, "/setwin"))
+    {
+        int msg,
+            chat;
+
+        if (!*params ||
+            sscanf(params, "%d %d", &msg, &chat) != 2 ||
+            msg < 2 ||
+            msg + chat > 38)
+        {
+            draw_info("Parameters out of bounds.", COLOR_WHITE);
+//            draw_info("Usage: '/setwin <Msg> <Chat>'\nExample:\n/setwin 9 5", COLOR_WHITE);
+        }
+
+        draw_info_format(COLOR_WHITE, "Set textwin to %d rows.", msg);
+        options.use_TextwinSplit = 0;
+        txtwin[TW_MIX].size = msg - 1;
+
+        return 1;
+    }
+    else if (!strcmp(cmd, "/setwinalpha"))
+    {
+        if (!strnicmp(params, "on", 2))
+        {
+            int alpha;
+
+            if (sscanf(params, "%*s %d", &alpha) == 1)
+            {
+                options.textwin_alpha = alpha;
+            }
+
+            options.use_TextwinAlpha = 1;
+            draw_info_format(COLOR_WHITE, "Set textwin alpha ~on~ (alpha=%d).",
+                             options.textwin_alpha);
+        }
+        else if (!strnicmp(params, "off", 3))
+        {
+            options.use_TextwinAlpha = 0;
+            draw_info("Set textwin alpha mode ~off~.", COLOR_WHITE);
+        }
+//        else
+//        {
+//            draw_info("Usage: '/setwinalpha on|off [<alpha>]'\nExample:\n/setwinalpha ON 172\n/setwinalpha OFF",
+//                      COLOR_WHITE);
+//        }
+
+        return 1;
+    }
+    else if (!strcmp(cmd, "/shout_off"))
+    {
+        options.shoutoff = 1;
+        draw_info_format(COLOR_WHITE, "Shout disabled");
+
+        return 1;
+    }
+    else if (!strcmp(cmd, "/shout_on"))
+    {
+        options.shoutoff = 0;
+        draw_info_format(COLOR_WHITE,"Shout enabled");
+
+        return 1;
+    }
+    else if (!strnicmp(cmd, "/sleeptimer", strlen("/sleeptimer")))
+    {
+        sint32     hour,
+                   min;
+        struct tm *tmptime;
+
+        if (!*params ||
+            sscanf(params, "%d:%d", &hour, &min) != 2 ||
+            hour < 0 ||
+            hour > 23 ||
+            min < 0 ||
+            min > 59)
+        {
+//                draw_info_format(COLOR_WHITE, "Sleeptimer OFF\nUsage: /sleeptimer HH:MM");
+                options.sleepcounter = 0;
+        }
+
+        options.sleepcounter = 1;
+
+        if (time(&sleeptime) == -1)
+        {
+             LOG(LOG_ERROR, "ERROR:: Calendar time not available!\n");
+        }
+
+        tmptime = localtime(&sleeptime);
+
+        if (hour < tmptime->tm_hour)
+        {
+            tmptime->tm_mday += 1;
+        }
+
+        tmptime->tm_hour = hour;
+        tmptime->tm_min = min;
+
+        if ((sleeptime = mktime(tmptime)) != -1)
+        {
+           char tmpbuf[MEDIUM_BUF];
+
+           strftime(tmpbuf, sizeof tmpbuf, "%d-%m-%y %H:%M:%S",
+                    localtime(&sleeptime));
+           draw_info_format(COLOR_WHITE, "Sleeptime set to %s", tmpbuf);
+        }
+
+        return 1;
+    }
+    else if (!strcmp(cmd, "/statreset"))
+    {
+        statometer.exp = 0;
+        statometer.kills = 0;
+        statometer.starttime = LastTick - 1;
+        statometer.lastupdate = LastTick;
+        statometer.exphour = 0.0f;
+        statometer.killhour = 0.0f;
+
+        return 1;
+    }
+#ifdef DEVELOPMENT
+    else if (!strcmp(cmd, "/teststretch"))
+    {
+        uint8 i,
+              h[5][5] =
+        {
+            {1, 1, 1, 1, 1},
+            {1, 3, 5, 3, 1},
+            {1, 5, 10, 5, 1},
+            {1, 3, 5, 3, 1},
+            {1, 1, 1, 1, 1}
+        };
+
+        for (i = 6; i < 11; i++)
+        {
+            uint8 j;
+
+            for (j = 6; j < 11; j++)
+            {
+                set_map_height(i, j, h[i - 6][j - 6]);
+            }
+        }
+
+        map_udate_flag = 1;
+        map_redraw_flag = 1;
+
+        return 1;
+    }
+#endif
+
+    return 0;
 }
 
 /* send_game_command() will send a higher level game command like /tell, /say or
@@ -110,58 +761,75 @@ static char *BreakMulticommand(const char *command)
  */
 void send_game_command(const char *command)
 {
-    SockList    sl;
-    char *token, cmd[LARGE_BUF];
+    char  buf[LARGE_BUF],
+         *token,
+         *end;
 
     /* Copy a normalized (leading, trailing, and excess inline whitespace-
-    * stripped) command to cmd:
-    */
-    strcpy(cmd, normalize_string(command));
+     * stripped) command to buf: */
+    sprintf(buf, "%s", normalize_string(command));
 
-    /* Now go through cmd, possibly separating multicommands.
-    * Each command (before separation) is pointed to by token:
-    */
-    token = cmd;
-    while (token != NULL && *token)
+    /* Now go through buf, possibly separating multicommands.
+     * Each command (before separation) is pointed to by token: */
+    for (token = buf; token && *token; token = (end) ? end + 1 : NULL)
     {
-        char *end;
+        char  *p,
+               cmd[MEDIUM_BUF],
+               params[MEDIUM_BUF];
+        uint8  c;
 
-    #ifdef USE_CHANNELS
-        if (*token != '/' && *token != '-') /* if not a command ... its chat  (- is for channel system)*/
-    #else
+#ifdef USE_CHANNELS
+        if (*token != '/' &&
+            *token != '-') /* if not a command ... its chat  (- is for channel system)*/
+#else
         if (*token != '/')
-    #endif
+#endif
         {
-            char buf[MAX_BUF];
+            char tmpbuf[LARGE_BUF];
 
-            sprintf(buf, "/say %s", token);
-            strcpy(token, buf);
+            sprintf(tmpbuf, "/say %s", token);
+            sprintf(token, "%s", tmpbuf);
         }
 
         end = BreakMulticommand(token);
-        if (!client_command_check(token))
-        {
-            /* Nasty hack. Treat /talk as a special case: lowercase it and
-            * print it to the message window as Topic: foo. -- Smacky 20071210
-            */
-            if (!strnicmp(token, "/talk", 5))
-            {
-                int c;
-                for (c = 0; *(token + c) != '\0'; c++)
-                    *(token + c) = tolower(*(token + c));
-                draw_info_format(COLOR_DGOLD, "Topic: %s", token + 6);
-            }
 
-            /* put the slash command inside the protocol command GENERIC */
+        /* Now we copy token to cmd... */
+        sprintf(cmd, "%s", token);
+
+        /* And separate the params too. */
+        *params = '\0';
+
+        if ((p = strchr(cmd, ' ')))
+        {
+            *(p++) = '\0';
+
+            if (p)
+            {
+                sprintf(params, "%s", p);
+            }
+        }
+
+        /* Lowercase cmd. */
+        for (c = 0; *(cmd + c); c++)
+        {
+            *(cmd + c) = tolower(*(cmd + c));
+        }
+
+#if 0
+        LOG(LOG_DEBUG,">>>%s<<<\n>>>%s<<<\n", cmd, params);
+#endif
+
+        if (!CommandCheck(cmd, params))
+        {
+            char     tmpbuf[LARGE_BUF];
+            SockList sl;
+
+            sprintf(tmpbuf, "%s%s%s", cmd + 1, (*params) ? " " : "", params);
             SockList_INIT(&sl, NULL);
             SockList_COMMAND(&sl, CLIENT_CMD_GENERIC, SEND_CMD_FLAG_STRING);
-            SockList_AddBuffer(&sl, token+1, strlen(token+1)); /* with +1 we remove the leading '/' */
-            send_socklist_binary(&sl); /* and kick it in send queue */
+            SockList_AddBuffer(&sl, tmpbuf, strlen(tmpbuf));
+            send_socklist_binary(&sl);
         }
-        if (end != NULL)
-            token = end + 1;
-        else
-            token = NULL;
     }
 }
 
@@ -618,16 +1286,21 @@ void send_inv_move(int loc, int tag, int nrof)
     send_socklist_binary(&sl);
 }
 
-void client_send_tell_extended(char *body, char *tail)
+void send_talk_command(sint8 mode, char *topic)
 {
-    SockList    sl;
-    char    buf[MAX_BUF];
+    uint16   c;
+    SockList sl;
 
-    sprintf(buf, "%s %s", body, tail);
+    for (c = 0; *(topic + c); c++)
+    {
+        *(topic + c) = tolower(*(topic + c));
+    }
 
+    draw_info_format(COLOR_DGOLD, "Topic: %s", topic);
     SockList_INIT(&sl, NULL);
-    SockList_COMMAND(&sl, CLIENT_CMD_GUITALK, SEND_CMD_FLAG_STRING);
-    SockList_AddBuffer(&sl, buf, strlen(buf));
+    SockList_COMMAND(&sl, CLIENT_CMD_GUITALK, SEND_CMD_FLAG_DYNAMIC);
+    SockList_AddChar(&sl, mode);
+    SockList_AddBuffer(&sl, topic, strlen(topic));
     send_socklist_binary(&sl);
 }
 

@@ -118,6 +118,10 @@
         <sound id="17"  name="page"             file="page.wav" />
         <sound id="18"  name="heartbeat"        file="heartbeat.wav" />
         <!-- Add new client sounds below this line -->
+        <sound id="19"  name="coins1"           file="coins1.wav" />
+        <sound id="20"  name="coins2"           file="coins2.wav" />
+        <sound id="21"  name="coins3"           file="coins3.wav" />
+        <sound id="22"  name="coins4"           file="coins4.wav" />
         <!-- Add new client sounds above this line -->
     </soundtype>
 </sounds>

@@ -92,10 +92,10 @@ struct plugin_hooklist  hooklist    =
     get_tad,
     get_word_from_string,
     give_artifact_abilities,
-    gui_interface,
     guild_get,
     guild_join,
     guild_leave,
+    gui_npc,
     /* H */
     hashtable_clear,
     hashtable_delete,
@@ -179,6 +179,7 @@ struct plugin_hooklist  hooklist    =
     turn_on_light,
     /* U */
     update_npc_knowledge,
+    update_quest,
     update_object,
     /* V */
     /* W */

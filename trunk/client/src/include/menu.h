@@ -160,7 +160,6 @@ extern void     update_quickslots(int del_item);
 extern void     load_quickslots_entrys();
 extern void     save_quickslots_entrys();
 
-extern int      client_command_check(char *cmd);
 extern void     widget_event_target(int x, int y, SDL_Event event);
 extern void     widget_show_target(int x, int y);
 extern void     reload_icons(void);

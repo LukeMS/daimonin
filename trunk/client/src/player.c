@@ -205,9 +205,7 @@ void widget_player_data_event(int x, int y)
 
     if (mx>=184 && mx <= 210 && my >=5 && my<=35)
     {
-        if (!client_command_check("/rest"))
-            send_game_command("/rest");
-
+        send_game_command("/rest");
     }
 }
 
@@ -451,19 +449,7 @@ void        widget_menubuttons_event(int x, int y, int MEvent)
     dy=y-cur_widget[MENU_B_ID].y1;
     if (dx >= 3 && dx <= 44)
     {
-        if (show_help_screen)
-        {
-            if (dy >= 1 && dy <= 49) /* next help page */
-            {
-                process_macro_keys(KEYFUNC_HELP, 0);
-            }
-            else if (dy >= 51 && dy <= 74) /* close online help  */
-            {
-                sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICK, 0, 0, 100);
-                show_help_screen = 0;
-            }
-        }
-        else if (dy >= 1 && dy <= 24) /* spell list */
+        if (dy >= 1 && dy <= 24) /* spell list */
             check_menu_macros("?M_SPELL_LIST");
         else if (dy >= 26 && dy <= 49) /* skill list */
             check_menu_macros("?M_SKILL_LIST");

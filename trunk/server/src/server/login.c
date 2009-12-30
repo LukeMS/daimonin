@@ -69,6 +69,8 @@ int player_save(object *op)
     if((tmp = (pl->state&~(ST_PLAYING|ST_ZOMBIE|ST_DEAD))))
         fprintf(fp, "state %d\n",  tmp);
 
+    fprintf(fp, "SENTInce %d\n", pl->SENTInce);
+
     if(pl->gmaster_mode != GMASTER_MODE_NO)
     {
         if(pl->gmaster_mode == GMASTER_MODE_MW)
@@ -486,6 +488,8 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
         sscanf(bufall, "%s %d\n", buf, &value);
         if (!strcmp(buf, "endplst"))
             break;
+        else if (!strcmp(buf, "SENTInce"))
+            pl->SENTInce = value;
         else if (!strcmp(buf, "dm_MW"))
             pl->gmaster_mode = GMASTER_MODE_MW;
         else if (!strcmp(buf, "dm_VOL"))
@@ -740,6 +744,33 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
     CLEAR_FLAG(op, FLAG_NO_FIX_PLAYER);
     FIX_PLAYER(op ,"check login - first fix");
 
+    /* A little hack to skip all active quests that were started pre-SENTInce.
+     * This is because they won't work with a SENTince-aware quest list. This
+     * potentially calls fix_player twice, which is a big overhead, but as it's
+     * only ever called once per player and is temporary, we won't worry. This
+     * code and pl->SENTInce should be removed when we have a player wipe. */
+    if (!pl->SENTInce)
+    {
+        if (pl->quests_type_normal)
+        {
+            remove_ob(pl->quests_type_normal);
+            pl->quests_type_normal = NULL;
+            pl->quests_type_normal_count = 0;
+        }
+
+        if (pl->quests_type_kill)
+        {
+            remove_ob(pl->quests_type_kill);
+            pl->quests_type_kill = NULL;
+            pl->quests_type_kill_count = 0;
+        }
+
+        add_quest_containers(pl->ob);
+        pl->SENTInce = 1;
+        LOG(llevInfo, "INFO:: %s/player_load(): All active quests removed and player file made SENTInce-aware for %s.\n",
+            __FILE__, STRING_OBJ_NAME(op));
+    }
+
 #ifdef AUTOSAVE
     pl->last_save_tick = ROUND_TAG;
 #endif
@@ -978,6 +1009,8 @@ addme_login_msg player_create(NewSocket *ns, player **pl_ret, char *name, int ra
     CLEAR_FLAG(op, FLAG_NO_FIX_PLAYER);
     /* this is more or less a fake flagging - ensure you delete it before object release */
     SET_FLAG(pl->ob, FLAG_FRIENDLY);
+
+    pl->SENTInce = 1;
 
  return ADDME_MSG_OK;
 }

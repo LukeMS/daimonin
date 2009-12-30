@@ -4,19 +4,6 @@
 -- Simplified API for SENTInce-compliant GUIs (fully backwards-compatible --
 -- which should not be read as an excuse to write bad talk scripts --
 -- use SENTInce ;)).
---
--- NOTE: During development there are two special flags that can be set
--- (to true) in a script before it requires ib:
---
--- SENTInce_AWARE means certain CLIENT backwards incompatible features will be
--- used. The resulting GUI will *not* work on SENTInce-unaware clients.
---
--- SENTInce_FULL means certain CLIENT backwards incompatible features will be
--- used. The resulting GUI will *not* work on SENTInce-unaware clients.
---
--- All SENTInce-aware clients can cope whether either flag is set or not,
--- but a client compiled with the SENTInce_FULL flag *will not* work without
--- the SENTInce_FULL flag set in script or old ib.
 -------------------------------------------------------------------------------
 InterfaceBuilder = {}
 
@@ -28,12 +15,11 @@ InterfaceBuilder = {}
 -------------------
 function InterfaceBuilder:New()
     local ib = {
-        header,
+        head,
         message,
         description,
-        activecoins = false,
         icons,
-        activeicons = true,
+        activeicons,
         links,
         lhsbutton,
         rhsbutton,
@@ -61,25 +47,27 @@ function InterfaceBuilder:Build()
     local interface = ''
 
     ---------
-    -- Build the header (h) tag.
+    -- Build the head (h) tag.
     ---------
-    if type(self.header) == 'table' then
-        local v = self.header
+    if type(self.head) == 'table' then
+        local v = self.head
 
         interface = interface .. '<h'
+
+        if v.shop ~= nil then
+            interface = interface .. '$="1"'
+        end
+
+        if v.sound ~= nil then
+            interface = interface .. 's="1"'
+        end
 
         if v.face  ~= nil then
             interface = interface .. 'f="' .. tostring(v.face) .. '"'
         end
 
-        if SENTInce_FULL then
-            if v.title ~= nil then
-                interface = interface .. 't="' .. tostring(v.title) .. '"'
-            end
-        else
-            if v.title ~= nil then
-                interface = interface .. 'b="' .. tostring(v.title) .. '"'
-            end
+        if v.title ~= nil then
+            interface = interface .. 't="' .. tostring(v.title) .. '"'
         end
 
         interface = interface .. '>'
@@ -128,16 +116,6 @@ function InterfaceBuilder:Build()
 
         interface = interface .. '<r'
 
-        if SENTInce_FULL then
-            if self.activecoins == true then
-                interface = interface .. 'm="1"'
-            end
-        elseif SENTInce_AWARE then
-            if self.activecoins == true then
-                interface = interface .. '1="1"'
-            end
-        end
-
         if v.title ~= nil then
             interface = interface .. 't="' .. tostring(v.title) .. '"'
         end
@@ -146,38 +124,20 @@ function InterfaceBuilder:Build()
             interface = interface .. 'b="' .. tostring(v.body).. '"'
         end
 
-        if SENTInce_FULL then
-            if v.copper ~= 0 then
-                interface = interface .. '1="' .. tostring(v.copper) .. '"'
-            end
+        if v.copper ~= 0 then
+            interface = interface .. '1="' .. tostring(v.copper) .. '"'
+        end
 
-            if v.silver ~= 0 then
-                interface = interface .. '2="' .. tostring(v.silver) .. '"'
-            end
+        if v.silver ~= 0 then
+            interface = interface .. '2="' .. tostring(v.silver) .. '"'
+        end
 
-            if v.gold ~= 0 then
-                interface = interface .. '3="' .. tostring(v.gold) .. '"'
-            end
+        if v.gold ~= 0 then
+            interface = interface .. '3="' .. tostring(v.gold) .. '"'
+        end
 
-            if v.mithril ~= 0 then
-                interface = interface .. '4="' .. tostring(v.mithril) .. '"'
-            end
-        else
-            if v.copper ~= 0 then
-                interface = interface .. 'c="' .. tostring(v.copper) .. '"'
-            end
-
-            if v.silver ~= 0 then
-                interface = interface .. 's="' .. tostring(v.silver) .. '"'
-            end
-
-            if v.gold ~= 0 then
-                interface = interface .. 'g="' .. tostring(v.gold) .. '"'
-            end
-
-            if v.mithril ~= 0 then
-                interface = interface .. 'm="' .. tostring(v.mithril) .. '"'
-            end
+        if v.mithril ~= 0 then
+            interface = interface .. '4="' .. tostring(v.mithril) .. '"'
         end
 
         interface = interface .. '>'
@@ -188,7 +148,7 @@ function InterfaceBuilder:Build()
     ---------
     if type(self.icons) == 'table' then
         for i, v in self.icons do
-            local mode = 'G' -- default failsafe
+            local mode
 
             if tonumber(v.quantity) == nil then
                 v.quantity = 1
@@ -197,18 +157,22 @@ function InterfaceBuilder:Build()
             interface = interface .. '<i'
 
             if v.type == 'normal' then
-                if SENTInce_FULL or SENTInce_AWARE then
-                    if self.activeicons == true then
-                        mode = 'G'
-                    else
-                        mode = 'g'
-                    end
+                if self.activeicons == nil and
+                   v.mode ~= nil then
+                    mode = v.mode
+                elseif self.activeicons == false then
+                    mode = 'g'
+                else
+                    mode = 'G'
                 end
             elseif v.type == 'selectable' then
-                if self.activeicons == true then
-                    mode = 'S'
-                else
+                if self.activeicons == nil and
+                   v.mode ~= nil then
+                    mode = v.mode
+                elseif self.activeicons == false then
                     mode = 's'
+                else
+                    mode = 'S'
                 end
             end
             interface = interface .. 'm="' .. mode .. '"'
@@ -221,24 +185,17 @@ function InterfaceBuilder:Build()
                 interface = interface .. 't="' .. tostring(v.title) .. '"'
             end
 
-            if SENTInce_FULL or SENTInce_AWARE then
-                if v.command ~= nil then
-                    interface = interface .. 'c="' .. tostring(v.command) .. '"'
-                end
+            if v.command ~= nil then
+                interface = interface .. 'c="' .. tostring(v.command) .. '"'
             end
 
-            if v.body ~= nil then
+            if v.body ~= nil and
+               v.body ~= "" then
                 interface = interface .. 'b="' .. tostring(v.body) .. '"'
             end
 
-            if SENTInce_FULL then
-                if v.quantity ~= nil then
-                    interface = interface .. 'q="' .. tostring(v.quantity) .. '"'
-                end
-            else
-                if v.quantity ~= nil then
-                    interface = interface .. 'r="' .. tostring(v.quantity) .. '"'
-                end
+            if v.quantity ~= nil then
+                interface = interface .. 'q="' .. tostring(v.quantity) .. '"'
             end
 
             interface = interface .. '>'
@@ -270,14 +227,7 @@ function InterfaceBuilder:Build()
     if type(self.lhsbutton) == 'table' then
         local v = self.lhsbutton
 
-        ---------
-        -- Temp hack to force the old 'single button' behaviour.
-        ---------
-        if type(self.rhsbutton) ~= "table" then
-            interface = interface .. '<b'
-        else
-            interface = interface .. '<a'
-        end
+        interface = interface .. '<a'
 
         if v.title ~= nil then
             interface = interface .. 't="' .. tostring(v.title) .. '"'
@@ -317,14 +267,8 @@ function InterfaceBuilder:Build()
 
         interface = interface .. '<t'
 
-        if SENTInce_FULL then
-            if v.body ~= nil then
-                interface = interface .. 'c="' .. tostring(v.body) .. '"'
-            end
-        else
-            if v.body ~= nil then
-                interface = interface .. 'b="' .. tostring(v.body) .. '"'
-            end
+        if v.command ~= nil then
+            interface = interface .. 'c="' .. tostring(v.command) .. '"'
         end
 
         interface = interface .. '>'
@@ -344,24 +288,29 @@ function InterfaceBuilder:Unbuild(interface)
     local _, tag
 
     ---------
-    -- Unbuild the header (h) tag.
+    -- Unbuild the head (h) tag.
     ---------
     _, _, tag = string.find(interface, '<%s*h([^>]*)>')
 
     if tag == nil then
-        ib.header = nil
+        ib.head = nil
     else
-        local face, title
+        local sound, face, title
+
+        _, _, sound = string.find(tag, 's%s*=%s*"([^"]*)"')
+
+        if tonumber(sound) == 1 then
+            sound = true
+        else
+            sound = nil
+        end
 
         _, _, face = string.find(tag, 'f%s*=%s*"([^"]*)"')
 
-        if SENTInce_FULL then
-            _, _, title = string.find(tag, 't%s*=%s*"([^"]*)"')
-        else
-            _, _, title = string.find(tag, 'b%s*=%s*"([^"]*)"')
-        end
+        _, _, title = string.find(tag, 't%s*=%s*"([^"]*)"')
 
-        self.header = {
+        self.head = {
+            sound = sound,
             face = face,
             title = title
         }
@@ -394,34 +343,15 @@ function InterfaceBuilder:Unbuild(interface)
     if tag == nil then
         ib.description = nil
     else
-        local mode, title, body, copper, silver, gold, mithril
-
-        if SENTInce_FULL then
-            _, _, mode = string.find(tag, 'm%s*=%s*"([^"]*)"')
-        elseif SENTInce_AWARE then
-            _, _, mode = string.find(tag, '1%s*=%s*"([^"]*)"')
-        end
-
-        if mode ~= nil and tonumber(mode) ~= 0 then
-            self.activecoins = true
-        else
-            self.activecoins = false
-        end
+        local title, body, copper, silver, gold, mithril
 
         _, _, title = string.find(tag, 't%s*=%s*"([^"]*)"')
         _, _, body = string.find(tag, 'b%s*=%s*"([^"]*)"')
 
-        if SENTInce_FULL then
-            _, _, copper = string.find(tag, '1%s*=%s*"([^"]*)"')
-            _, _, silver = string.find(tag, '2%s*=%s*"([^"]*)"')
-            _, _, gold = string.find(tag, '3%s*=%s*"([^"]*)"')
-            _, _, mithril = string.find(tag, '4%s*=%s*"([^"]*)"')
-        else
-            _, _, copper = string.find(tag, 'c%s*=%s*"([^"]*)"')
-            _, _, silver = string.find(tag, 's%s*=%s*"([^"]*)"')
-            _, _, gold = string.find(tag, 'g%s*=%s*"([^"]*)"')
-            _, _, mithril = string.find(tag, 'm%s*=%s*"([^"]*)"')
-        end
+        _, _, copper = string.find(tag, '1%s*=%s*"([^"]*)"')
+        _, _, silver = string.find(tag, '2%s*=%s*"([^"]*)"')
+        _, _, gold = string.find(tag, '3%s*=%s*"([^"]*)"')
+        _, _, mithril = string.find(tag, '4%s*=%s*"([^"]*)"')
 
         self.description = {
             title = title,
@@ -449,16 +379,12 @@ function InterfaceBuilder:Unbuild(interface)
 
         if mode == 'G' then
             mode = 'normal'
-            self.activeicons = true
         elseif mode == 'g' then
             mode = 'normal'
-            self.activeicons = false
         elseif mode == 'S' then
             mode = 'selectable'
-            self.activeicons = true
         elseif mode == 's' then
             mode = 'selectable'
-            self.activeicons = false
         end
 
         _, _, face = string.find(tag, 'f%s*=%s*"([^"]*)"')
@@ -466,11 +392,7 @@ function InterfaceBuilder:Unbuild(interface)
         _, _, command = string.find(tag, 'c%s*=%s*"([^"]*)"')
         _, _, body = string.find(tag, 'b%s*=%s*"([^"]*)"')
 
-        if SENTInce_FULL then
-            _, _, quantity = string.find(tag, 'q%s*=%s*"([^"]*)"')
-        else
-            _, _, quantity = string.find(tag, 'r%s*=%s*"([^"]*)"')
-        end
+        _, _, quantity = string.find(tag, 'q%s*=%s*"([^"]*)"')
 
         table.insert(self.icons, { type = mode,
                                    face = face,
@@ -543,16 +465,12 @@ function InterfaceBuilder:Unbuild(interface)
     _, _, tag = string.find(interface, '<%s*t([^>]*)>')
 
     if tag ~= nil then
-        local body
+        local command
 
-        if SENTInce_FULL then
-            _, _, body = string.find(tag, 'c%s*=%s*"([^"]*)"')
-        else
-            _, _, body = string.find(tag, 'b%s*=%s*"([^"]*)"')
-        end
+        _, _, command = string.find(tag, 'c%s*=%s*"([^"]*)"')
 
         self.textfield = {
-            body = body
+            command = command
         }
     end
 end
@@ -565,18 +483,19 @@ function InterfaceBuilder:ShowSENTInce(ev, data)
            type(ev) == "string" or
            type(ev) == "table" or
            type(ev) == "Event" or
-           ev == nil,
-           "Arg #1 must be boolean, string, table, Event, or nil!")
+           ev == nil, "Arg #1 must be boolean, string, table, Event, or nil!")
     assert(type(data) == "boolean" or
            type(data) == "string" or
-           data == nil,
-           "Arg #2 must be boolean, string, or nil!")
+           data == nil, "Arg #2 must be boolean, string, or nil!")
+
     if type(ev) == "table" then
         assert(type(ev.activator) == "GameObject",
                "Arg #1.activator must be GameObject!")
         assert(type (ev.message) == "string",
                "Arg #1.message must be string!")
-    elseif type(ev) == "string" or type(ev) == "boolean" or ev == nil then
+    elseif type(ev) == "string" or
+           type(ev) == "boolean" or
+           ev == nil then
         data = ev
         ev = event
     end
@@ -593,14 +512,15 @@ function InterfaceBuilder:ShowSENTInce(ev, data)
         ---------
         -- Who are you talking to?
         ---------
-        if type(self.header) ~= "table" then
+        if type(self.head) ~= "table" then
             self:SetHeader(ev.me)
         end
 
         ---------
         -- What are you talking about?
         ---------
-        if type(self.message) ~= "table" or self.message.title == nil then
+        if type(self.message) ~= "table" or
+           self.message.title == nil then
             --local msg = string.lower(table.concat(string.split(ev.message)))
             self:SetTitle("Topic: " .. ev.message, " ")
         end
@@ -617,33 +537,127 @@ function InterfaceBuilder:ShowSENTInce(ev, data)
 end
 
 ---------------------------------------
--- The header block.
+-- Special flags and modes.
 ---------------------------------------
 -------------------
--- ib:SetHeader() sets the face and title of the header block.
+-- ib:SelectOn() and ib:SelectOff() activate and deactivate icons. They are
+-- preserved for backwards compatibility only and their use is deprecated. They
+-- will be removed entirely in a future revision.
+-------------------
+function InterfaceBuilder:SelectOn()
+    self.activeicons = true
+end
+
+function InterfaceBuilder:SelectOff()
+    self.activeicons = false
+end
+
+-------------------
+-- ib:ActiveIcons() queries, activates, or deactivates ALL icons depending on
+-- the value of mode.
+-------------------
+function InterfaceBuilder:ActiveIcons(mode)
+    assert(type(mode) == "boolean" or
+           mode == nil, "Arg #1 must be boolean or nil!")
+
+    if mode == true or
+       mode == false then
+        self.activeicons = mode
+    end
+
+    return mode
+end
+
+-------------------
+-- ib:Sound() queries, enables, or disables the client playing special
+-- interface sounds depending on the value of mode. The default state is
+-- disabled.
+-- Currently the sounds are:
+--     * a 'coin pouring' sound according to the number of coins shown in the
+--       coins pseudo-block.
+-------------------
+function InterfaceBuilder:Sound(mode)
+    assert(type(mode) == "boolean" or
+           mode == nil, "Arg #1 must be boolean or nil!")
+
+    if mode == true or
+       mode == false then
+        if type(self.head) ~= "table" then
+            self.head = {
+                sound = mode
+            }
+        else
+            self.head.sound = mode
+        end
+    else
+        if type(self.head) ~= "table" then
+            return nil
+        end
+    end
+
+    return self.head.sound
+end
+
+-------------------
+-- ib:ShopInterface() queries, enables, or disqble the GUI to be rendered as a
+-- shop interfacedepending on the value of mode. The default state is disabled.
+-------------------
+function InterfaceBuilder:ShopInterface(mode)
+    assert(type(mode) == "boolean" or
+           mode == nil, "Arg #1 must be boolean or nil!")
+
+    if mode == true or
+       mode == false then
+        if type(self.head) ~= "table" then
+            self.head = {
+                shop = mode
+            }
+        else
+            self.head.shop = mode
+        end
+    else
+        if type(self.head) ~= "table" then
+            return nil
+        end
+    end
+
+    return self.head.shop
+end
+
+---------------------------------------
+-- The head block.
+---------------------------------------
+-------------------
+-- ib:SetHeader() sets the face and title of the head block.
 -------------------
 function InterfaceBuilder:SetHeader(face, title)
     assert(type(face) == "GameObject" or
-           type(face)  == "string",
-           "Arg #1 must be GameObject or string!")
+           type(face) == "string", "Arg #1 must be GameObject or string!")
     assert(type(title) == "GameObject" or
            type(title) == "string" or
-           title == nil,
-           "Arg #2 must be GameObject or string or nil!")
+           title == nil, "Arg #2 must be GameObject or string or nil!")
+
     if title == nil then
         title = face
     end
+
     if type(face) == "GameObject" then
         face  = face:GetFace()
     end
+
     if type(title) == "GameObject" then
         title = title:GetName()
     end
 
-    self.header = {
-        face = face,
-        title = title 
-    }
+    if type(self.head) ~= "table" then
+        self.head = {
+            face = face,
+            title = title 
+        }
+    else
+        self.head.face = face
+        self.head.title = title
+    end
 end
 
 ---------------------------------------
@@ -653,8 +667,7 @@ end
 -- ib:SetTitle() sets the title of the message block.
 -------------------
 function InterfaceBuilder:SetTitle(title)
-    assert(type(title) == "string",
-           "Arg #1 must be string!")
+    assert(type(title) == "string", "Arg #1 must be string!")
 
     if type(self.message) == "table" then
         self.message.title = title
@@ -669,8 +682,7 @@ end
 -- ib:SetMsg() replaces the body of the message block.
 -------------------
 function InterfaceBuilder:SetMsg(body)
-    assert(type(body) == "string",
-           "Arg #1 must be string!")
+    assert(type(body) == "string", "Arg #1 must be string!")
 
     if type(self.message) == "table" then
         self.message.body = body
@@ -685,8 +697,7 @@ end
 -- ib:AddMsg() appends to the body of the message block.
 -------------------
 function InterfaceBuilder:AddMsg(body)
-    assert(type(body) == "string",
-           "Arg #1 must be string!")
+    assert(type(body) == "string", "Arg #1 must be string!")
 
     if type(self.message) == "table" then
         if self.message.body ~= nil then
@@ -701,6 +712,29 @@ function InterfaceBuilder:AddMsg(body)
     end
 end
 
+-------------------
+-- ib:AddQuestChecklist() writes a quest status list to the message block.
+-------------------
+function InterfaceBuilder:AddQuestChecklist(qb, nr)
+    if not QuestBuilder then
+        require("quest_builder")
+    end
+
+    assert(getmetatable(qb) == QuestBuilder or
+           getmetatable(qb) == QuestManager,
+           "Arg #1 must be QuestBuilder or QuestManager!")
+
+    if getmetatable(qb) == QuestBuilder then
+        assert(type(nr) == "number", "Arg #2 must be number!")
+    end
+
+    if getmetatable(qb) == QuestBuilder then
+        return qb:AddItemList(nr, self)
+    else
+        return qb:AddItemList(self) -- qb is really a qm
+    end
+end
+
 ---------------------------------------
 -- The description block.
 ---------------------------------------
@@ -708,8 +742,7 @@ end
 -- ib:SetSubtitle() sets the title of the description block.
 -------------------
 function InterfaceBuilder:SetSubtitle(title)
-    assert(type(title) == "string",
-           "Arg #1 must be string!")
+    assert(type(title) == "string", "Arg #1 must be string!")
 
     if type(self.description) == "table" then
         self.description.title = title
@@ -724,40 +757,57 @@ end
 -- ib:SetDesc() replaces the body of the description block.
 -------------------
 function InterfaceBuilder:SetDesc(body, copper, silver, gold, mithril, title)
-    assert(type(body) == "string",
-           "Arg #1 must be string!")
+    assert(type(body) == "string", "Arg #1 must be string!")
     assert(type(copper) == "number" or
-            copper == nil,
-           "Arg #2 must be number or nil!")
+            copper == nil, "Arg #2 must be number or nil!")
     assert(type(silver) == "number" or
-           silver == nil,
-           "Arg #3 must be number or nil!")
+           silver == nil, "Arg #3 must be number or nil!")
     assert(type(gold) == "number" or
-           gold == nil,
-           "Arg #4 must be number or nil!")
+           gold == nil, "Arg #4 must be number or nil!")
     assert(type(mithril) == "number" or
-           mithril == nil,
-           "Arg #5 must be number or nil!")
+           mithril == nil, "Arg #5 must be number or nil!")
     assert(type(title) == "string" or
-           title  == nil,
-           "Arg #6 must be string ot nil!")
+           title  == nil, "Arg #6 must be string ot nil!")
 
-    self.description = {
-        title = title,
-        body = body,
-        copper = copper,
-        silver = silver,
-        gold = gold,
-        mithril = mithril
-    }
+    if type(self.description) == "table" then
+        self.description.body = body
+
+        if copper ~= nil then
+            self.description.copper = copper
+        end
+
+        if silver ~= nil then
+            self.description.silver = silver
+        end
+
+        if gold ~= nil then
+            self.description.gold = gold
+        end
+
+        if mithril ~= nil then
+            self.description.mithril = mithril
+        end
+
+        if title ~= nil then
+            self.description.title = title
+        end
+    else
+        self.description = {
+            title = title,
+            body = body,
+            copper = copper,
+            silver = silver,
+            gold = gold,
+            mithril = mithril
+        }
+    end
 end
 
 -------------------
 -- ib:AddDesc() appends to the body of the description block.
 -------------------
 function InterfaceBuilder:AddDesc(body)
-    assert(type(body) == "string",
-           "Arg #1 must be string!")
+    assert(type(body) == "string", "Arg #1 must be string!")
 
     if type(self.description) == "table" then
         if self.description.body ~= nil then
@@ -777,17 +827,13 @@ end
 -------------------
 function InterfaceBuilder:SetCoins(copper, silver, gold, mithril)
     assert(type(copper) == "number" or
-           copper == nil,
-           "Arg #1 must be number or nil!")
+           copper == nil, "Arg #1 must be number or nil!")
     assert(type(silver) == "number" or
-           silver == nil,
-           "Arg #2 must be number or nil!")
+           silver == nil, "Arg #2 must be number or nil!")
     assert(type(gold) == "number" or
-           gold == nil,
-           "Arg #3 must be number or nil!")
+           gold == nil, "Arg #3 must be number or nil!")
     assert(type(mithril) == "number" or
-           mithril == nil,
-           "Arg #4 must be number or nil!")
+           mithril == nil, "Arg #4 must be number or nil!")
 
     if type(self.description) == "table" then
         self.description.copper = copper
@@ -804,32 +850,17 @@ function InterfaceBuilder:SetCoins(copper, silver, gold, mithril)
     end
 end
 
--------------------
--- ib:DeactivateCoins() disables the client playing a sound when the coins
--- pseudo-block is shown. This is the default state.
--------------------
-function InterfaceBuilder:DeactivateCoins()
-    self.activecoins = false
-end
-
--------------------
--- ib:ActivateCoins() enables the client to play a sound when the coins
--- pseudo-block is shown.
--------------------
-function InterfaceBuilder:ActivateCoins()
-    self.activecoins = true
-end
-
 ---------------------------------------
 -- The icons block.
 ---------------------------------------
 -------------------
 -- ib:_AddIcon() (internal function) does a
 -- table.insert(self.icons, { type = type, title = title, command = command,
---              face = face, body = body, quantity = quantity })
+--              face = face, body = body, quantity = quantity, mode = mode })
 -------------------
-function InterfaceBuilder:_AddIcon(itype, title, command, face, body, quantity)
-    if quantity == nil then
+function InterfaceBuilder:_AddIcon(itype, title, command, face, body, quantity, mode)
+    if quantity == nil and
+       mode == nil then
         if type(body) == "number" then
             quantity = body
             body = face
@@ -841,21 +872,19 @@ function InterfaceBuilder:_AddIcon(itype, title, command, face, body, quantity)
             command = nil
         end
     end
-    assert(type(itype) == "string",
-           "Arg #1 must be string!")
-    assert(type(title) == "string",
-           "Arg #2 must be string!")
+
+    assert(type(itype) == "string", "Arg #1 must be string!")
+    assert(type(title) == "string", "Arg #2 must be string!")
     assert(type(command) == "string" or
-           command == nil,
-           "Arg #3 must be string or nil!")
+           command == nil, "Arg #3 must be string or nil!")
     assert(type(face) == "string" or
-           type(face) == "GameObject",
-           "Arg #4 must be string or GameObject!")
-    assert(type(body) == "string",
-           "Arg #5 must be string!")
+           type(face) == "GameObject", "Arg #4 must be string or GameObject!")
+    assert(type(body) == "string", "Arg #5 must be string!")
     assert(type(quantity) == "number" or
-           quantity == nil,
-           "Arg #6 must be number or nil!")
+           quantity == nil, "Arg #6 must be number or nil!")
+    assert(type(mode) == "string" or
+           mode == nil, "Arg #7 must be string or nil!")
+
     if type(face) == "GameObject" then
         face = face:GetFace()
     end
@@ -863,85 +892,68 @@ function InterfaceBuilder:_AddIcon(itype, title, command, face, body, quantity)
     if type(self.icons) ~= "table" then
         self.icons = { }
     end
+
     table.insert(self.icons, { type = itype,
                                title = title,
                                command = command,
                                face = face,
                                body = body,
-                               quantity = quantity })
+                               quantity = quantity,
+                               mode = mode })
 end
 
 -------------------
 -- ib:AddIcon() adds a normal icon.
 -------------------
-function InterfaceBuilder:AddIcon(title, command, face, body, quantity)
-    assert(type(title) == "string",
-           "Arg #1 must be string!")
+function InterfaceBuilder:AddIcon(title, command, face, body, quantity, mode)
+    assert(type(title) == "string", "Arg #1 must be string!")
     assert(type(command) == "string" or
            type(command) == "GameObject" or
-           command  == nil,
-           "Arg #2 must be string, GameObject, or nil!")
+           command  == nil, "Arg #2 must be string, GameObject, or nil!")
     assert(type(face) == "string" or
-           type(face) == "GameObject",
-           "Arg #3 must be string or GameObject!")
+           type(face) == "GameObject", "Arg #3 must be string or GameObject!")
     assert(type(body) == "string" or
            type(body) == "number" or
-           body == nil,
-           "Arg #4 must be string, number, or nil!")
+           body == nil, "Arg #4 must be string, number, or nil!")
     assert(type(quantity) == "number" or
-           quantity == nil,
-           "Arg #5 must be number or nil!")
+           quantity == nil, "Arg #5 must be number or nil!")
+    assert(type(mode) == "string" or
+           mode == nil, "Arg #6 must be string or nil!")
 
-    self:_AddIcon("normal", title, command, face, body, quantity)
+    if mode ~= "g" and
+       mode ~= "G" and
+       mode ~= nil then
+        mode = nil
+    end
+
+    self:_AddIcon("normal", title, command, face, body, quantity, mode)
 end
 
 -------------------
 -- ib:AddSelect() adds a selectable icon.
 -------------------
-function InterfaceBuilder:AddSelect(title, command, face, body, quantity)
-    assert(type(title) == "string",
-           "Arg #1 must be string!")
+function InterfaceBuilder:AddSelect(title, command, face, body, quantity, mode)
+    assert(type(title) == "string", "Arg #1 must be string!")
     assert(type(command) == "string" or
            type(command) == "GameObject" or
-           command  == nil,
-           "Arg #2 must be string, GameObject, or nil!")
+           command  == nil, "Arg #2 must be string, GameObject, or nil!")
     assert(type(face) == "string" or
-           type(face) == "GameObject",
-           "Arg #3 must be string or GameObject!")
+           type(face) == "GameObject", "Arg #3 must be string or GameObject!")
     assert(type(body) == "string" or
            type(body) == "number" or
-           body == nil,
-           "Arg #4 must be string, number, or nil!")
+           body == nil, "Arg #4 must be string, number, or nil!")
     assert(type(quantity) == "number" or
-           quantity == nil,
-           "Arg #5 must be number or nil!")
+           quantity == nil, "Arg #5 must be number or nil!")
+    assert(type(mode) == "string" or
+           mode == nil, "Arg #6 must be string or nil!")
 
-    self:_AddIcon("selectable", title, command, face, body, quantity)
-end
+    if mode ~= "s" and
+       mode ~= "S" and
+       mode ~= nil then
+        mode = nil
+    end
 
--------------------
--- ib:DeactivateIcons() and ib:SelectOff() deactivate icons. The latter is
--- preserved for backwards compatibility only. Its use is deprecated.
--------------------
-function InterfaceBuilder:DeactivateIcons()
-    self.activeicons = false
-end
-
-function InterfaceBuilder:SelectOff()
-    self:DeactivateIcons()
-end
-
--------------------
--- ib:ActivateIcons() and ib:SelectOn() activate icons. This is the default
--- state. The latter is preserved for backwards compatibility only. Its use is
--- deprecated.
--------------------
-function InterfaceBuilder:ActivateIcons()
-    self.activeicons = true
-end
-
-function InterfaceBuilder:SelectOn()
-    self:ActivateIcons()
+    self:_AddIcon("selectable", title, command, face, body, quantity, mode)
 end
 
 ---------------------------------------
@@ -951,14 +963,12 @@ end
 -- ib:AddLink() adds a link line.
 -------------------
 function InterfaceBuilder:AddLink(title, command, quantity)
-    assert(type(title) == "string",
-           "Arg #1 must be string!")
+    assert(type(title) == "string", "Arg #1 must be string!")
     assert(type(command) == "string" or
-           command == nil,
-           "Arg #2 must be string or nil!")
+           command == nil, "Arg #2 must be string or nil!")
     assert(type(quantity) == "number" or
-           quantity == nil,
-           "Arg #3 must be number or nil!")
+           quantity == nil, "Arg #3 must be number or nil!")
+
     if command == nil then
         command = title
     end
@@ -966,9 +976,11 @@ function InterfaceBuilder:AddLink(title, command, quantity)
     if quantity ~= 0 and quantity ~= nil then
         command = command .. " [" .. quantity .. "]"
     end
+
     if type(self.links) ~= "table" then
         self.links = { }
     end
+
     table.insert(self.links, { title = title,
                                command = command })
 end
@@ -982,13 +994,11 @@ end
 -------------------
 function InterfaceBuilder:_SetButton(title, command, element)
     assert(type(title) == "string" or
-           title == nil,
-           "Arg #1 must be string or nil!")
+           title == nil, "Arg #1 must be string or nil!")
     assert(type(command) == "string" or
-           command == nil,
-           "Arg #2 must be string or nil!")
-    assert(type(element) == "string",
-           "Arg #3 must be string!")
+           command == nil, "Arg #2 must be string or nil!")
+    assert(type(element) == "string", "Arg #3 must be string!")
+
     if command == nil then
         command = title
     end
@@ -997,10 +1007,12 @@ function InterfaceBuilder:_SetButton(title, command, element)
         if string.sub(title, 1, 1) == "#" then
             title = string.sub(title, 2)
         end
+
         if command == "#" then
             command = "#" .. title
         end
     end
+
     self[element] = {
         title = title,
         command = command
@@ -1012,11 +1024,9 @@ end
 -------------------
 function InterfaceBuilder:SetLHSButton(title, command)
     assert(type(title) == "string" or
-           title == nil,
-           "Arg #1 must be string or nil!")
+           title == nil, "Arg #1 must be string or nil!")
     assert(type(command) == "string" or
-           command == nil,
-           "Arg #2 must be string or nil!")
+           command == nil, "Arg #2 must be string or nil!")
 
     self:_SetButton(title, command, "lhsbutton")
 end
@@ -1026,11 +1036,9 @@ end
 -------------------
 function InterfaceBuilder:SetRHSButton(title, command)
     assert(type(title) == "string" or
-           title == nil,
-           "Arg #1 must be string or nil!")
+           title == nil, "Arg #1 must be string or nil!")
     assert(type(command) == "string" or
-            command == nil,
-            "Arg #2 must be string or nil!")
+            command == nil, "Arg #2 must be string or nil!")
 
     self:_SetButton(title, command, "rhsbutton")
 end
@@ -1040,11 +1048,9 @@ end
 -------------------
 function InterfaceBuilder:SetButton(title, command)
     assert(type(title) == "string" or
-           title == nil,
-           "Arg #1 must be string or nil!")
+           title == nil, "Arg #1 must be string or nil!")
     assert(type(command) == "string" or
-           command == nil,
-           "Arg #2 must be string or nil!")
+           command == nil, "Arg #2 must be string or nil!")
 
     self:_SetButton(title, command, "lhsbutton")
     self.rhsbutton = nil
@@ -1056,18 +1062,19 @@ end
 -------------------
 function InterfaceBuilder:SetAccept(title, command)
     assert(type(title) == "string" or
-           title == nil,
-           "Arg #1 must be string or nil!")
+           title == nil, "Arg #1 must be string or nil!")
     assert(type(command) == "string" or
-           command == nil,
-           "Arg #2 must be string or nil!")
+           command == nil, "Arg #2 must be string or nil!")
+
     if command == nil then
         if title == nil then
             title = "Accept"
             command = "accept"
         else
             command = title
-            if title == "#" or string.find(string.lower(title), "accept") ~= nil then
+
+            if title == "#" or
+               string.find(string.lower(title), "accept") ~= nil then
                 title = "Accept"
             end
         end
@@ -1076,11 +1083,14 @@ function InterfaceBuilder:SetAccept(title, command)
     end
 
     self:_SetButton(title, command, "lhsbutton")
+
     if type(self.rhsbutton) ~= "table" then
         command = string.gsub(string.lower(command), "^accept", "decline", 1)
+
         if command == "decline" then
             command = ""
         end
+
         self:_SetButton("Decline", command, "rhsbutton")
     end
 end
@@ -1091,17 +1101,17 @@ end
 -------------------
 function InterfaceBuilder:SetDecline(title, command)
     assert(type(title) == "string" or
-           title == nil,
-           "Arg #1 must be string or nil!")
+           title == nil, "Arg #1 must be string or nil!")
     assert(type(command) == "string" or
-           command == nil,
-           "Arg #2 must be string or nil!")
+           command == nil, "Arg #2 must be string or nil!")
+
     if command == nil then
         if title == nil then
             title = "Decline"
             command = "decline"
         else
             command = title
+
             if title == "#" or string.find(string.lower(title), "decline") ~= nil then
                 title = "Decline"
             end
@@ -1111,11 +1121,14 @@ function InterfaceBuilder:SetDecline(title, command)
     end
 
     self:_SetButton(title, command, "rhsbutton")
+
     if type(self.lhsbutton) ~= "table" then
         command = string.gsub(string.lower(command), "^decline", "accept", 1)
+
         if command == "" then
             command = "accept"
         end
+
         self:_SetButton("Accept", command, "lhsbutton")
     end
 end
@@ -1126,40 +1139,17 @@ end
 -------------------
 -- ib:SetTextfield() sets the body of the textfield.
 -------------------
-function InterfaceBuilder:SetTextfield(body)
-    assert(type(body) == "string",
-           "Arg #1 must be string!")
+function InterfaceBuilder:SetTextfield(command)
+    assert(type(command) == "string", "Arg #1 must be string!")
 
     self.textfield = {
-        body = body
+        command = command
     }
 end
 
 ---------------------------------------
 -- Special.
 ---------------------------------------
--------------------
--- ib:AddQuestChecklist() writes a quest status list to the message block.
--------------------
-function InterfaceBuilder:AddQuestChecklist(qb, nr)
-    if not QuestBuilder then
-        require("quest_builder")
-    end
-    assert(getmetatable(qb) == QuestBuilder or
-           getmetatable(qb) == QuestManager,
-           "Arg #1 must be QuestBuilder or QuestManager!")
-    if getmetatable(qb) == QuestBuilder then
-        assert(type(nr) == "number",
-               "Arg #2 must be number!")
-    end
-
-    if getmetatable(qb) == QuestBuilder then
-        return qb:AddItemList(nr, self)
-    else
-        return qb:AddItemList(self) -- qb is really a qm
-    end
-end
-
 -------------------
 -- ib:AddListItem() is unfinished.
 -------------------
@@ -1168,17 +1158,12 @@ function InterfaceBuilder:AddListItem(player, title, command, face, body, quanti
            (type(player) == "GameObject" and
             player.type == game.TYPE_PLAYER),
            "Arg #1 must be string or player object!")
-    assert(type(title) == "string",
-           "Arg #2 must be string!")
-    assert(type(command) == "string",
-           "Arg #3 must be string!")
-    assert(type(face) == "string",
-           "Arg #4 must be string!")
-    assert(type(body) == "string",
-           "Arg #5 must be string!")
+    assert(type(title) == "string", "Arg #2 must be string!")
+    assert(type(command) == "string", "Arg #3 must be string!")
+    assert(type(face) == "string", "Arg #4 must be string!")
+    assert(type(body) == "string", "Arg #5 must be string!")
     assert(type(quantity) == "number" or
-           quantity == nil,
-           "Arg #6 must be number ot nil!")
+           quantity == nil, "Arg #6 must be number ot nil!")
 
 --    local ds = DataStore("SENTInce_options", player)
 --    if ds:Get("use icons") then
