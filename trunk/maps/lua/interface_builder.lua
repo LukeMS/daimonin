@@ -599,8 +599,8 @@ function InterfaceBuilder:Sound(mode)
 end
 
 -------------------
--- ib:ShopInterface() queries, enables, or disqble the GUI to be rendered as a
--- shop interfacedepending on the value of mode. The default state is disabled.
+-- ib:ShopInterface() queries, enables, or disables the GUI to be rendered as a
+-- shop interface depending on the value of mode. The default state is disabled.
 -------------------
 function InterfaceBuilder:ShopInterface(mode)
     assert(type(mode) == "boolean" or
