@@ -565,7 +565,7 @@ function InterfaceBuilder:ActiveIcons(mode)
         self.activeicons = mode
     end
 
-    return mode
+    return self.activeicons
 end
 
 -------------------
