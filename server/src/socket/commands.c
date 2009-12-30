@@ -73,9 +73,7 @@ CommArray_s Commands[] =
     {"gsay",          command_gsay,           1.0f, 0, 0},
     {"shout",         command_shout,          1.0f, 0, 0},
     {"tell",          command_tell,           1.0f, 0, 0},
-    {"talk",          command_talk,           1.0f, 1, 0},
     {"who",           command_who,            0.0f, 1, 0},
-    {"qlist",         command_questlist,      0.0f, 0, 0},
     {"mapinfo",       command_mapinfo,        0.0f, 1, 0},
     {"motd",          command_motd,           0.0f, 0, 0},
     {"time",          command_time,           1.0f, 0, 0},
@@ -1067,30 +1065,42 @@ void cs_cmd_mark(char *data, int len, NewSocket *ns)
     SOCKBUF_REQUEST_FINISH(&pl->socket, BINARY_CMD_MARK, SOCKBUF_DYNAMIC);
 }
 
-/* The talk extended is used to "fake" a normal /talk command but use
-* extra parameter to talk to the server direct or non living items instead
-* of talking to a NPC.
-*/
 void cs_cmd_talk(char *data, int len, NewSocket *ns)
 {
-    player *pl = ns->pl;
+    player *pl;
+    sint8   mode;
 
-    if (!data || len<2 || !pl || !pl->ob || ns->status != Ns_Playing)
+    if (!data ||
+        !len ||
+        !(pl = ns->pl) ||
+        !pl->ob ||
+        ns->status != Ns_Playing)
     {
         ns->status = Ns_Dead;
+
         return;
     }
 
-    /* the talk ex command has the same command as the
-    * "normal" /talk, except a head part which are max. 2
-    * numbers: "<mode> <count>"
-    */
-    if(*data == 'Q' && *(data+1)==' ') /* quest list tag */
-        quest_list_command(pl->ob, data+2);
-    else
+    mode = GetChar_Buffer(data);
+
+    switch (mode)
     {
-        data[len]='\0'; /* sanity string end */
-        LOG(llevNoLog,"TX-CMD: unknown tag (len %d) from player %s: >%s<\n", len, query_name(pl->ob),data);
+        case GUI_NPC_MODE_NO:
+            break;
+
+        case GUI_NPC_MODE_NPC:
+            talk_to_npc(pl, data);
+
+            break;
+
+        case GUI_NPC_MODE_QUEST:
+            quest_list_command(pl->ob, data);
+
+            break;
+
+        default:
+            LOG(llevBug, "BUG:: %s/cs_cmd_talk(): Unknown mode (%d) from player %s: >%s<!\n",
+                __FILE__, mode, query_name(pl->ob), data);
     }
 }
 

@@ -21,7 +21,7 @@
     The author can be reached via e-mail to info@daimonin.net
 */
 
-#define PROTOCOL_VERSION 991029
+#define PROTOCOL_VERSION 991030
 
 /* min & max length of player & account names & password
 * important - for a login server this must snyced up with it too
@@ -260,6 +260,14 @@ enum
 
 /* maximum reachable level */
 #define MAXLEVEL 110
+
+typedef enum _gui_npc_mode
+{
+    GUI_NPC_MODE_NO,
+    GUI_NPC_MODE_NPC,
+    GUI_NPC_MODE_QUEST
+}
+_gui_npc_mode;
 
 extern int account_name_valid(char *cp);
 extern int account_char_valid(char c);

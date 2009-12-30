@@ -141,9 +141,7 @@ error - Your ANSI C compiler should be defining __STDC__;
  * flags
  * Also, if you add new entries, try and fill up the holes in this list.
  */
-
 /* type 0 will be undefined and shows a non valid type information */
-
 #define PLAYER                  1
 #define BULLET                  2
 #define ROD                     3
@@ -196,7 +194,6 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define THROWN_OBJ              48
 #define BLINDNESS               49
 #define GOD                     50
-
 /*  peterm:  detector is an object which notices the presense of
      another object and is triggered like buttons.  */
 #define DETECTOR                51
@@ -207,13 +204,11 @@ error - Your ANSI C compiler should be defining __STDC__;
                                    force into a player with a specified string. */
 #define HOLY_ALTAR              56
 #define PLAYER_CHANGER          57
-
 /* warning - don't use battleground! i will integrate this as map flag
  * bound to normal floor. The extended map flags of daimonin will allow
  * to remove this stuff.
  */
 #define BATTLEGROUND            58      /* battleground, by Andreas Vogl */
-
 #define PEACEMAKER              59  /* Object owned by a player which can convert
                                       a monster into a peaceful being incapable of attack.  */
 #define GEM                     60
@@ -233,20 +228,14 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define SHOP_FLOOR              68
 #define SHOP_MAT                69
 #define RING                    70
-
 #define FLOOR                   71 /* this is a floor tile -> native layer 0 */
-
 #define FLESH                   72  /* animal 'body parts' -b.t. */
 #define INORGANIC               73  /* metals and minerals */
-
 #define TYPE_LIGHT_APPLY        74  /* new light source for player */
-
 #define LIGHTER                 75
 #define TRAP_PART               76  /* Needed by set traps skill -b.t. */
-
 #define WALL                    77 /* this is a wall. put it always in layer 1 if not set is_floor */
 #define LIGHT_SOURCE            78 /* thats now light sources on the map (invisible lights) */
-
 #define MISC_OBJECT             79 /* misc. objects are for objects without a function
                                       in the engine. Like statues, clocks, chairs,...
                                       If perhaps we create a function where we can sit
@@ -255,7 +244,6 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define MONSTER                 80 /* yes, thats a real, living creature */
 #define SPAWN_POINT             81 /* a spawn point or monster generator object */
 #define TYPE_LIGHT_REFILL       82  /* refilling item for TYPE_LIGHT_APPLY */
-
 #define SPAWN_POINT_MOB         83 /* inactive default mob inside spawn point inv.
                                     * This object is somewhat special because its generated
                                     * ITS IS ONLY A COPY AND NOT A REAL MONSTER NOR A ACTIVE OBJECT.
@@ -264,13 +252,10 @@ error - Your ANSI C compiler should be defining __STDC__;
                                          * It is used to track back the mob to the spawn point.
                                          */
 #define SPELLBOOK               85
-
 #define ORGANIC                 86 /* body parts which can't be eaten - dragon scales for example */
-
 #define CLOAK                   87
 #define CONE                    88
 #define AURA                    89  /* aura spell object */
-
 #define SPINNER                 90
 #define GATE                    91
 #define BUTTON                  92
@@ -312,7 +297,6 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define CONTAINER               122
 #define ARMOUR_IMPROVER         123
 #define WEAPON_IMPROVER         124
-
 #define TYPE_WEALTH             125     /* this is a "raw" (abstract) wealth object. When generated
                                          * its tranformed in real money depending on the enviroment
                                          * where its generated. (most times by treasure list and
@@ -322,7 +306,6 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define TYPE_AI                 126     /* MOB AI definition object */
 #define TYPE_AGGRO_HISTORY      127        /* aggro history - core base object for aggro handling. */
 #define TYPE_DAMAGE_INFO        128        /* info object for aggro, group damage, exp sharing and DOT handling */
-
 #define TYPE_QUEST_TRIGGER      129        /* a quest trigger describes & interact with quests & other quest things */
 #define SKILLSCROLL             130        /* can add a skill to player's inventory -bt.*/
 #define TYPE_QUEST_OBJECT       131        /* a quest object - it will be set to what we need. Its better & cleaner to
@@ -334,29 +317,25 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define TYPE_PEARL              135        /* gem/jewel type pearl */
 #define TYPE_QUEST_INFO         136
 #define TYPE_BEACON             137     /* Beacons are used mostly to locate objects by scripts */
-
 #define DEEP_SWAMP              138
 #define IDENTIFY_ALTAR          139
 #define TYPE_GUILD_FORCE        140
 #define CANCELLATION            141
 #define SHOULDER                142     /* armour... */
 #define LEGS                    143     /* armour... */
-
 #define TYPE_FOOD_FORCE         144
 #define TYPE_FOOD_BUFF_FORCE    145
-
+#define TYPE_QUEST_UPDATE       146
+#define TYPE_SHOP_CONTAINER     147
 /* More free type values here =) */
 #define MENU                    150 /* Mark Wedel (mark@pyramid.com) Shop inventories */
 #define BALL_LIGHTNING          151 /* peterm:  ball lightning and color spray */
 #define SWARM_SPELL             153
 #define RUNE                    154
-
 #define POWER_CRYSTAL           156
 #define CORPSE                  157
-
 #define DISEASE                 158
 #define SYMPTOM                 159
-
 #define TYPE_VOID_CONTAINER     255 /* pure internal system object */
 /* END TYPE DEFINE */
 

@@ -71,7 +71,6 @@ int                         command_say(object *op, char *params);
 int                         command_gsay(object *op, char *params);
 int                         command_shout(object *op, char *params);
 int                         command_tell(object *op, char *params);
-int                         command_talk(object *op, char *params);
 int                         command_nod(object *op, char *params);
 int                         command_dance(object *op, char *params);
 int                         command_kiss(object *op, char *params);
@@ -178,7 +177,6 @@ int                         command_turn_left (object *op, char *params);
 int                         command_run(object *op, char *params);
 int                         command_run_stop(object *op, char *params);
 void                        send_target_command(player *pl);
-int                         command_questlist(object *op, char *params);
 int                         command_combat(object *op, char *params);
 int                         command_target(object *op, char *params);
 void                        command_face_request(char *params, int len, NewSocket *ns);
@@ -397,8 +395,8 @@ void                        MTRand_init(const uint32 seed);
 sint32                      MTRand_randComp(void);
 /* npc_communicate.c */
 void                        communicate(object *op, char *txt);
-void                        gui_interface(object *who, int mode, const char *text, const char *tail);
-void                        send_clear_interface(player *pl);
+void                        talk_to_npc(player *pl, char *topic);
+void                        gui_npc(object *who, uint8 mode, const char *text);
 /* spawn_point.c */
 void                        spawn_point(object *op);
 objectlink                 *add_linked_spawn(object *spawn);

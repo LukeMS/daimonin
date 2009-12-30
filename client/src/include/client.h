@@ -214,7 +214,7 @@ extern void     client_send_apply(int tag);
 extern void     send_move_command(int dir, int mode);
 extern void     client_send_examine(int tag);
 extern void     send_inv_move(int loc, int tag, int nrof);
-extern void     client_send_tell_extended(char* body, char *tail);
+extern void     send_talk_command(sint8 mode, char *cmd);
 extern void     send_lock_command(int mode, int tag);
 extern void     send_mark_command(int tag);
 extern void     send_fire_command(int num, int mode, char *tmp_name);

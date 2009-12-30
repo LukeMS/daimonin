@@ -50,7 +50,6 @@ int                     quickslots_pos[MAX_QUICK_SLOTS][2]  =
 
 void do_console(int x, int y)
 {
-    show_help_screen = 0;
     if (InputStringEscFlag == TRUE)
     {
         sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CONSOLE, 0, 0, 100);
@@ -68,11 +67,9 @@ void do_console(int x, int y)
             /*
                     sprintf(buf,":%s",InputString);
                     draw_info(buf,COLOR_DGOLD);*/
-            if (client_command_check(InputString))
-                goto no_send_cmd;
             send_game_command(InputString);
         }
-no_send_cmd:
+
         reset_keys();
         cpl.input_mode = INPUT_MODE_NO;
         map_udate_flag = 2;
@@ -80,557 +77,6 @@ no_send_cmd:
     }
     else
         cur_widget[IN_CONSOLE_ID].show = TRUE;
-}
-
-/* client_command_check()
- * Analyze /<cmd> type commands the player has typed in the console
- * or bound to a key. Sort out the "client intern" commands and
- * expand or pre process them for the server.
- * Return: TRUE=don't send command to server
- * FALSE: send command to server
- */
-int client_command_check(char *cmd)
-{
-    char    tmp[MEDIUM_BUF];
-    char    cpar1[MEDIUM_BUF];
-    int     par1, par2;
-
-    if (!strnicmp(cmd, "/ready_spell", strlen("/ready_spell")))
-    {
-        cmd = strchr(cmd, ' ');
-        if (!cmd || *++cmd == 0)
-        {
-            draw_info("usage: /ready_spell <spell name>", COLOR_GREEN);
-        }
-        else
-        {
-            int i, ii;
-
-            for (i = 0; i < SPELL_LIST_MAX; i++)
-            {
-                for (ii = 0; ii < DIALOG_LIST_ENTRY; ii++)
-                {
-                    if (spell_list[i].entry[0][ii].flag >= LIST_ENTRY_USED)
-                    {
-                        if (!strcmp(spell_list[i].entry[0][ii].name, cmd))
-                        {
-                            if (spell_list[i].entry[0][ii].flag == LIST_ENTRY_KNOWN)
-                            {
-                                fire_mode_tab[FIRE_MODE_SPELL].spell = &spell_list[i].entry[0][ii];
-                                RangeFireMode = FIRE_MODE_SPELL;
-                                sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICK, 0, 0, MENU_SOUND_VOL);
-                                draw_info("spell ready.", COLOR_GREEN);
-                                return TRUE;
-                            }
-                        }
-                    }
-                    if (spell_list[i].entry[1][ii].flag >= LIST_ENTRY_USED)
-                    {
-                        if (!strcmp(spell_list[i].entry[1][ii].name, cmd))
-                        {
-                            if (spell_list[i].entry[1][ii].flag == LIST_ENTRY_KNOWN)
-                            {
-                                fire_mode_tab[FIRE_MODE_SPELL].spell = &spell_list[i].entry[1][ii];
-                                RangeFireMode = FIRE_MODE_SPELL;
-                                sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICK, 0, 0, MENU_SOUND_VOL);
-                                draw_info("spell ready.", COLOR_GREEN);
-                                return TRUE;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        draw_info("unknown spell.", COLOR_GREEN);
-        return TRUE;
-    }
-#ifdef USE_CHANNELS
-    /* i know hardcoding is most of the time bad, but the channel system will be uses
-     * really often. Also we can type directly the '-' in the textwin.
-     */
-    else if (!strnicmp(cmd, "-", strlen("-")))
-    {
-        char channelbuf[1024];
-        sprintf(channelbuf,"/channel %s",cmd+1);
-        send_game_command(channelbuf);
-        return TRUE;
-    }
-#endif
-        /* lets try out some things to load some work from the server to the client */
-        /* This is for /apply commands where the item is specified as a string (eg,
-         * /apply lamp) as opposed to ?M_APPLY commands where the item is
-         * always what is under the cursor.
-         *
-         * So with /apply you can bind the apply command to a key for example to always
-         * apply a lamp if it's in your inv or at your feet.
-         *
-         * For some unknown reason '/apply' on its own is bound to SPACE by default
-         * (?M_APPLY is A). Obviously this will never specify an item.
-         *
-         * In these circumstances (no item is specified) we act as if ?M_APPLY was
-         * issued and use the item under the cursor.
-         * -- Smacky 20090730 */
-        else if (!strnicmp(cmd, "/apply", strlen("/apply")))
-        {
-            char *item;
-            int   tag;
-
-            item = cmd + 6;
-
-            while (isspace(*item))
-                item++;
-
-            if (*item)
-                tag = locate_item_tag_from_name(item);
-            else
-            {
-                if (cpl.inventory_win == IWIN_BELOW)
-                    tag = cpl.win_below_tag;
-                else
-                    tag = cpl.win_inv_tag;
-            }
-
-            if (tag == -1 || !locate_item(tag))
-            {
-                if (*item)
-                    draw_info_format(COLOR_DGOLD, "/apply %s", item);
-
-                draw_info_format(COLOR_DEFAULT, "No %sitem could be found!",
-                                 (*item) ? "such " : "");
-            }
-            else
-            {
-                draw_info_format(COLOR_DGOLD, "/apply %s", locate_item(tag)->s_name);
-                client_send_apply(tag);
-            }
-
-            return TRUE;
-        }
-        else if (!strnicmp(cmd, "/markdmbuster", strlen("makrdmbuster")))
-        {
-        markdmbuster();
-            return TRUE;
-        }
-        else if (!strnicmp(cmd, "/shout_off", strlen("/shout_off")))
-        {
-            options.shoutoff=TRUE;
-        draw_info_format(COLOR_RED,"Shout disabled");
-        return TRUE;
-        }
-        else if (!strnicmp(cmd, "/shout_on", strlen("/shout_on")))
-        {
-            options.shoutoff=FALSE;
-        draw_info_format(COLOR_GREEN,"Shout enabled");
-        return TRUE;
-        }
-        else if (!strnicmp(cmd, "/buddy", strlen("/buddy")))
-        {
-            buddy_command(cmd+6);
-            return TRUE;
-        }
-    else if (!strnicmp(cmd, "/ignore", strlen("/ignore")))
-    {
-        ignore_command(cmd+7);
-        return TRUE;
-    }
-    else if (!strnicmp(cmd, "/cfilter", strlen("/cfilter")))
-    {
-        chatfilter_command(cmd+8);
-        return TRUE;
-    }
-    else if (!strnicmp(cmd, "/kills", strlen("/kills")))
-    {
-         kill_command(cmd+6);
-         return TRUE;
-    }
-    else if (!strnicmp(cmd, "/f1", strlen("/f1")))
-    {
-         quickslot_key(NULL,0);
-         return TRUE;
-    }
-    else if (!strnicmp(cmd, "/f2", strlen("/f2")))
-    {
-         quickslot_key(NULL,1);
-         return TRUE;
-    }
-    else if (!strnicmp(cmd, "/f3", strlen("/f3")))
-    {
-         quickslot_key(NULL,2);
-         return TRUE;
-    }
-    else if (!strnicmp(cmd, "/f4", strlen("/f4")))
-    {
-         quickslot_key(NULL,3);
-         return TRUE;
-    }
-    else if (!strnicmp(cmd, "/f5", strlen("/f5")))
-    {
-         quickslot_key(NULL,4);
-         return TRUE;
-    }
-    else if (!strnicmp(cmd, "/f6", strlen("/f6")))
-    {
-         quickslot_key(NULL,5);
-         return TRUE;
-    }
-    else if (!strnicmp(cmd, "/f7", strlen("/f7")))
-    {
-         quickslot_key(NULL,6);
-         return TRUE;
-    }
-    else if (!strnicmp(cmd, "/f8", strlen("/f8")))
-    {
-         quickslot_key(NULL,7);
-         return TRUE;
-    }
-    else if (!strnicmp(cmd, "/imagestats", strlen("/imagestats")))
-    {
-        draw_info_format(COLOR_WHITE,"IMAGE-LOADING-STATISTICS\n==========================================");
-        draw_info_format(COLOR_WHITE,"Sprites in Memory: %d",ImageStats.loadedsprites);
-        draw_info_format(COLOR_WHITE,"TrueColors: %d",ImageStats.truecolors);
-        draw_info_format(COLOR_WHITE,"Greyscales in Memory: %d",ImageStats.greyscales);
-        draw_info_format(COLOR_WHITE,"Redscales in Memory: %d",ImageStats.redscales);
-        draw_info_format(COLOR_WHITE,"Fowscales in Memory: %d",ImageStats.fowscales);
-        return TRUE;
-    }
-#ifdef DEVELOPMENT
-    else if (!strnicmp(cmd, "/searchpath", strlen("/searchpath")))
-    {
-        char **i, **j;
-
-        for (j = i = PHYSFS_getSearchPath(); *i != NULL; i++)
-        {
-            draw_info_format(COLOR_WHITE,"[%s] is in the search path.", *i);
-        }
-
-        PHYSFS_freeList(j);
-        return TRUE;
-    }
-    else if (!strnicmp(cmd, "/teststretch", strlen("/teststretch")))
-    {
-        int h[5][5] =
-        {   {1,1,1,1,1},
-            {1,3,5,3,1},
-            {1,5,10,5,1},
-            {1,3,5,3,1},
-            {1,1,1,1,1}  };
-        int i, j;
-        for (i=6;i<11;i++)
-        {
-            for (j=6;j<11;j++)
-            {
-                set_map_height(i, j, h[i-6][j-6]);
-            }
-        }
-        map_udate_flag = TRUE;
-        map_redraw_flag = TRUE;
-        return TRUE;
-    }
-#endif
-    else if (!strnicmp(cmd, "/changeskin", strlen("/changeskin")))
-    {
-        cmd = strchr(cmd, ' ');
-        if (!cmd || *++cmd == 0)
-            draw_info("usage: /changeskin <skin>", COLOR_GREEN);
-        else
-        {
-            if (stricmp(options.skin,cmd)==0)
-            {
-                draw_info_format(COLOR_WHITE, "You are already using skin %s.",options.skin);
-            }
-            else
-            {
-                char buf[512];
-                Boolean newskin = FALSE;
-
-                sprintf(buf,"skins/%s.zip",cmd);
-                if (PHYSFS_exists(buf))
-                {
-                    if (PHYSFS_addToSearchPath(buf , 0)==0)
-                        LOG(LOG_MSG,"PHYSFS_addPath (%s) failed: %s\n",buf,PHYSFS_getLastError());
-                    else
-                        newskin=TRUE;
-                }
-                sprintf(buf,"skins/%s",cmd);
-                if (PHYSFS_isDirectory(buf))
-                {
-                    if (PHYSFS_addToSearchPath(buf , 0)==0)
-                        LOG(LOG_MSG,"PHYSFS_addPath (%s) failed: %s\n",buf,PHYSFS_getLastError());
-                    else
-                        newskin=TRUE;
-                }
-                if (newskin)
-                {
-                    if (strnicmp(options.skin, "subred", strlen("subred")))
-                    {
-                        sprintf(buf,"skins/%s.zip",options.skin);
-                        if (PHYSFS_removeFromSearchPath(buf)==0)
-                            LOG(LOG_MSG,"PHYSFS_removePath (%s) failed: %s\n",buf,PHYSFS_getLastError());
-                        sprintf(buf,"skins/%s",options.skin);
-                        if (PHYSFS_removeFromSearchPath(buf)==0)
-                            LOG(LOG_MSG,"PHYSFS_removePath (%s) failed: %s\n",buf,PHYSFS_getLastError());
-                    }
-                    strncpy(options.skin, cmd, 63);
-                    save_options_dat();
-                    reload_skin();
-                    reload_icons();
-                }
-                else
-                {
-                    draw_info_format(COLOR_RED,"Skin '%s' not found, using old one.",cmd);
-                }
-            }
-        }
-        return TRUE;
-    }
-    else if (!strnicmp(cmd, "/reloadskinnow", strlen("/reloadskinnow")))
-    {
-        draw_info_format(COLOR_GREEN,"Reloading skin. This function is only for skin creating, and may be removed anytime!");
-        reload_skin();
-        reload_icons();
-        return TRUE;
-    }
-    else if (!strnicmp(cmd, "/reply", strlen("/reply")))
-    {
-        cmd = strchr(cmd, ' ');
-        if (!cmd || *++cmd == 0)
-            draw_info("usage: /reply <message>", COLOR_GREEN);
-        else
-        {
-
-            if (!cpl.player_reply[0])
-            {
-                draw_info("There is no one you can /reply.", COLOR_GREEN);
-            }
-            else
-            {
-                char buf[2048];
-
-                sprintf(buf,"/tell %s %s", cpl.player_reply, cmd);
-                LOG(-1,"REPLY: %s\n", buf);
-                send_game_command(buf);
-            }
-        }
-        return TRUE;
-    }
-    else if (!strnicmp(cmd, "/statreset",strlen("/statreset")))
-    {
-        statometer.exp=0;
-        statometer.kills=0;
-        statometer.starttime=LastTick-1;
-        statometer.lastupdate=LastTick;
-        statometer.exphour=0.0f;
-        statometer.killhour=0.0f;
-
-        return TRUE;
-    }
-    else if (!strnicmp(cmd, "/sleeptimer", strlen("/sleeptimer")))
-    {
-        char    tmp[30];
-        int   stpar1 = -1, stpar2 = -1;
-        sscanf(cmd, "%s %d:%d",tmp,&stpar1,&stpar2);
-
-        if ((stpar1==-1) || (stpar2==-1))
-        {
-                draw_info_format(COLOR_WHITE,"Sleeptimer OFF\nUsage: /sleeptimer HH:MM");
-                options.sleepcounter = FALSE;
-        }
-        else
-        {
-            struct tm *temp;
-            char buft[512];
-
-            options.sleepcounter = TRUE;
-            time(&sleeptime);
-            temp = localtime(&sleeptime);
-            if (stpar1<temp->tm_hour)
-                temp->tm_mday+=1;
-            temp->tm_hour=stpar1;
-            temp->tm_min=stpar2;
-            sleeptime=mktime(temp);
-            strftime(buft, sizeof buft, "%d-%m-%y %H:%M:%S", localtime(&sleeptime));
-            draw_info_format(COLOR_WHITE,"Sleeptime set to %s", buft);
-        }
-        return TRUE;
-    }
-    else if (!strnicmp(cmd, "/setwinalpha", strlen("/setwinalpha")))
-    {
-        int wrong   = 0;
-        par2 = -1;
-        sscanf(cmd, "%s %s %d", tmp, cpar1, &par2);
-
-        if (!strnicmp(cpar1, "ON", strlen("ON")))
-        {
-            if (par2 != -1)
-            {
-                if (par2 <0 || par2>255)
-                    par2 = 128;
-                options.textwin_alpha = par2;
-            }
-            options.use_TextwinAlpha = 1;
-            sprintf(tmp, ">>set textwin alpha ON (alpha=%d).", options.textwin_alpha);
-            draw_info(tmp, COLOR_GREEN);
-        }
-        else if (!strnicmp(cpar1, "OFF", strlen("OFF")))
-        {
-            draw_info(">>set textwin alpha mode OFF.", COLOR_GREEN);
-            options.use_TextwinAlpha = 0;
-        }
-        else
-            wrong = 1;
-
-
-        if (wrong)
-            draw_info("Usage: '/setwinalpha on|off |<alpha>|'\nExample:\n/setwinalpha ON 172\n/setwinalpha OFF",
-                      COLOR_WHITE);
-        return TRUE;
-    }
-    else if (!strnicmp(cmd, "/setwin", strlen("/setwin")))
-    {
-        int wrong   = 0;
-        par1 = 9, par2 = -1;
-        sscanf(cmd, "%s %d %d", tmp, &par1, &par2);
-
-        if (par1<2 || par1>38)
-        {
-            wrong = 1;
-            draw_info("/setwin: parameters out of bounds.", COLOR_RED);
-        }
-        else
-        {
-            sprintf(tmp, ">>set textwin to %d rows.", par1);
-            draw_info(tmp, COLOR_GREEN);
-            options.use_TextwinSplit = 0;
-            txtwin[TW_MIX].size = par1 - 1;
-        }
-
-        if (wrong)
-            draw_info("Usage: '/setwin <Msg> <Chat>'\nExample:\n/setwin 9 5", COLOR_WHITE);
-        return TRUE;
-    }
-    else if (!strnicmp(cmd, "/keybind", strlen("/keybind")))
-    {
-        map_udate_flag = 2;
-        if (cpl.menustatus != MENU_KEYBIND)
-        {
-            keybind_status = KEYBIND_STATUS_NO;
-            cpl.menustatus = MENU_KEYBIND;
-        }
-        else
-        {
-            save_keybind_file(KEYBIND_FILE);
-            cpl.menustatus = MENU_NO;
-        }
-        sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICK, 0, 0, 100);
-        reset_keys();
-        return TRUE;
-    }
-    else if (!strncmp(cmd, "/target", strlen("/target")))
-    {
-        /* logic is: if first parameter char is a digit, is enemy,friend or self.
-             * if first char a character - then its a name of a living object.
-             */
-        if (!strncmp(cmd, "/target friend", strlen("/target friend")))
-            strcpy(cmd, "/target 1");
-        else if (!strncmp(cmd, "/target enemy", strlen("/target enemy")))
-            strcpy(cmd, "/target 0");
-        else if (!strncmp(cmd, "/target self", strlen("/target self")))
-            strcpy(cmd, "/target 2");
-    }
-#ifdef DEVELOPMENT
-    else if (!strnicmp(cmd, "/reset", strlen("/reset")))
-    {
-        if (!strnicmp(cmd, "/reset buddy", strlen("/reset buddy")))
-        {
-            draw_info("Resetting buddy list!", COLOR_HGOLD);
-            buddy_list_clear();
-            buddy_list_save();
-            return TRUE;
-        }
-        else if (!strnicmp(cmd, "/reset ignore", strlen("/reset ignore")))
-        {
-            draw_info("Resetting ignore list!", COLOR_HGOLD);
-            ignore_list_clear();
-            ignore_list_save();
-            return TRUE;
-        }
-        else if (!strnicmp(cmd, "/reset chatfilter", strlen("/reset chatfilter")) || !strnicmp(cmd, "/reset cfilter", strlen("/reset cfilter")))
-        {
-            draw_info("Resetting chatfilter list!", COLOR_HGOLD);
-            chatfilter_list_clear();
-            chatfilter_list_save();
-            return TRUE;
-        }
-        else if (!strnicmp(cmd, "/reset kills", strlen("/reset kills")))
-        {
-            draw_info("Resetting kill list!", COLOR_HGOLD);
-            kill_list_clear();
-            kill_list_save();
-            return TRUE;
-        }
-        else if (!strnicmp(cmd, "/reset stats", strlen("/reset stats")))
-        {
-            draw_info("Resetting stat-o-meter!", COLOR_HGOLD);
-            statometer.exp        = 0;
-            statometer.kills      = 0;
-            statometer.starttime  = LastTick - 1;
-            statometer.lastupdate = LastTick;
-            statometer.exphour    = 0.0f;
-            statometer.killhour   = 0.0f;
-            return TRUE;
-        }
-        else if (!strnicmp(cmd, "/reset widgetstatus", strlen("/reset widgetstatus")))
-        {
-            int nID;
-            draw_info("Resetting widgetstatus!", COLOR_HGOLD);
-            for (nID = 0; nID < TOTAL_WIDGETS; nID++)
-            {
-                switch (nID)
-                {
-                    case 10: // MIXWIN
-                        break;
-                    case 12: // PLAYERDOLL, actually this shouldn't be necessary as we can't override the option with mouse-hiding, but JIC
-                        if (options.playerdoll)
-                            cur_widget[nID].show = TRUE;
-                        break;
-                    case 17: // MAININV
-                    case 19: // CONSOLE
-                    case 20: // NUMBER
-                        break;
-                    case 21: // STATOMETER, actually this shouldn't be necessary as we can't override the option with mouse-hiding, but JIC
-                        if (options.statsupdate)
-                            cur_widget[nID].show = TRUE;
-                        break;
-                    default:
-                        cur_widget[nID].show = TRUE;
-                }
-            }
-            return TRUE;
-        }
-        else if (!strnicmp(cmd, "/reset widgets", strlen("/reset widgets")))
-        {
-            draw_info("Resetting widgets!", COLOR_HGOLD);
-            init_widgets_fromDefault();
-            return TRUE;
-        }
-        else if (!strnicmp(cmd, "/resetmap", strlen("/resetmap")))
-            return FALSE; /* DM command, handled by server */
-        else
-        {
-            draw_info("Usage: ~/reset buddy~ to reset the buddylist,\n~/reset ignore~ to reset the ignorelist,\n~/reset chatfilter~ to reset the chatfilter list,\n~/reset kills~ to reset the kill list,\n~/reset stats~ to reset the stat-o-meter,\n~/reset widgets~ to reset the widgets, or\n~/reset widgetstatus~ to show any previously hidden widgets.", COLOR_WHITE);
-            return TRUE;
-        }
-    }
-#endif
-#ifdef DEVELOPMENT
-    else if (!strnicmp(cmd, "/grid", strlen("/grid")))
-    {
-        options.grid =  (options.grid) ? FALSE : TRUE;
-        return TRUE;
-    }
-#endif
-
-    return FALSE;
 }
 
 void widget_show_console(int x, int y)
@@ -642,7 +88,6 @@ void widget_show_console(int x, int y)
 
 void do_number(int x, int y)
 {
-    show_help_screen = 0;
     if (InputStringEscFlag == TRUE)
     {
         reset_keys();
@@ -683,7 +128,6 @@ void do_number(int x, int y)
 
 void do_keybind_input(void)
 {
-    show_help_screen = 0;
     if (InputStringEscFlag == TRUE)
     {
         reset_keys();
@@ -716,14 +160,13 @@ void do_keybind_input(void)
 
 void do_npcdialog_input(void)
 {
-    show_help_screen = 0;
     if (InputStringEscFlag == TRUE)
     {
         reset_keys();
         sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICKFAIL, 0, 0, 100);
         cpl.input_mode = INPUT_MODE_NO;
         map_udate_flag = 2;
-        gui_interface_npc->input_flag = FALSE;
+        gui_npc->input_flag = FALSE;
     }
 
     /* if set, we got a finished input!*/
@@ -731,11 +174,15 @@ void do_npcdialog_input(void)
     {
         if (InputString[0])
         {
-            gui_interface_send_command(2,InputString);
+            send_talk_command(GUI_NPC_MODE_NPC, InputString);
+            textwin_addhistory(InputString);
+            reset_input_mode();
+            gui_npc->status = GUI_NPC_STATUS_WAIT;
         }
+
         reset_keys();
-        gui_interface_npc->input_flag = FALSE;
         cpl.input_mode = INPUT_MODE_NO;
+        gui_npc->input_flag = FALSE;
         map_udate_flag = 2;
     }
 }
@@ -1092,7 +539,7 @@ void show_menu(void)
     else if (cpl.menustatus == MENU_BOOK)
         show_book(400-Bitmaps[BITMAP_JOURNAL]->bitmap->w/2,300-Bitmaps[BITMAP_JOURNAL]->bitmap->h/2);
     else if (cpl.menustatus == MENU_NPC)
-        show_interface_npc(esc_menu_index);
+        gui_npc_show(esc_menu_index);
     else if (cpl.menustatus == MENU_STATUS)
         show_status();
     else if (cpl.menustatus == MENU_SPELL)
@@ -2647,7 +2094,9 @@ void widget_event_target(int x, int y, SDL_Event event)
         x < cur_widget[TARGET_ID].x1 + 259)
     {
         if (cpl.target_code)
-            send_game_command("/talk hello");
+        {
+            send_talk_command(GUI_NPC_MODE_NPC, "hello");
+        }
     }
 }
 

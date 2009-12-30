@@ -5940,6 +5940,47 @@ that food.]]>
   </attribute>
 </type>
 
+<!--####################################################################-->
+<type number="146" name="Quest Update">
+  <import_type name="default_flags" />
+  <description>
+    <![CDATA[
+    Quest Updates are added to Quest Triggers in player inventories when a
+    significant part of the quest is achieved.
+
+    This information is shown in the /qlist GUI.
+    ]]>
+  </description>
+  <use>
+    <![CDATA[
+    Quest Updates should not be added to a map file. They are added directly in
+    a player's inventory as needed at run time by scripts.
+    ]]>
+  </use>
+</type>
+
+<!--####################################################################-->
+<type number="147" name="Shop Container">
+  <import_type name="default_flags" />
+  <description>
+    <![CDATA[
+    Shop Containers are repositories for objects sold in an NPC's shop.
+    ]]>
+  </description>
+  <use>
+    <![CDATA[
+    The entire stock of the NPC's shop goes in a Shop Container which itself
+    goes directly in his inventory.
+
+    Coins can be put in a Shop Container, but these will be removed and their
+    value added to <value> prior to display.
+    ]]>
+  </use>
+  <attribute arch="value" editor="value" type="int" min="0">
+    The number of copper coins available in this shop.
+  </attribute>
+</type>
+
 <!-- The following types are moved here from typenumbers.xml.
   - This allows typenumbers.xml to be removed.
   -->
@@ -6004,6 +6045,8 @@ that food.]]>
 <type available="no" number="139" name="IDENTIFY_ALTAR"/>
 <type available="no" number="140" name="TYPE_GUILD_FORCE"/>
 <type available="no" number="141" name="CANCELLATION"/>
+<type available="no" number="146" name="TYPE_QUEST_UPDATE"/>
+<type available="no" number="147" name="TYPE_SHOP_CONTAINER"/>
 <type available="no" number="150" name="MENU"/>
 <type available="no" number="151" name="BALL_LIGHTNING"/>
 <type available="no" number="153" name="SWARM_SPELL"/>

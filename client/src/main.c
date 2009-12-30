@@ -42,10 +42,9 @@ Uint32              sdl_dgreen, sdl_dred, sdl_gray1, sdl_gray2, sdl_gray3, sdl_g
 _skindef            skindef;
 
 int                 music_global_fade   = FALSE;
-int                 show_help_screen;
-int                 show_help_screen_new;
 int                 mb_clicked          = 0;
 int        InputFirstKeyPress;
+static Boolean      newplayer = FALSE;
 
 int                    interface_mode;
 
@@ -90,7 +89,6 @@ uint16	endian_int16;   /* thats the 0x0201 short endian */
 
 
 struct gui_book_struct    *gui_interface_book;
-struct gui_interface_struct *gui_interface_npc;
 
 _bmaptype          *bmap_table[BMAPTABLE];
 
@@ -143,7 +141,7 @@ void    init_game_data(void);
 Boolean game_status_chain(void);
 Boolean load_bitmap(int index);
 
-struct vimmsg vim;
+_vimmsg vim[MAX_NROF_VIM];
 
 _server            *start_server, *end_server;
 int                 metaserver_start, metaserver_sel, metaserver_count;
@@ -164,73 +162,175 @@ _bitmap_name ;
 
 /* for loading, use BITMAP_xx in the other modules*/
 static _bitmap_name bitmap_name[BITMAP_INIT]    =
-    {
-        {"palette.png", PIC_TYPE_PALETTE}, {"font7x4.png", PIC_TYPE_PALETTE}, {"font6x3out.png", PIC_TYPE_PALETTE},
-        {"font_big.png", PIC_TYPE_PALETTE}, {"font7x4out.png", PIC_TYPE_PALETTE}, {"font11x15.png", PIC_TYPE_PALETTE},
-        {"font11x15out.png", PIC_TYPE_PALETTE}, {"intro.png", PIC_TYPE_DEFAULT},
-        {"progress.png", PIC_TYPE_DEFAULT}, {"progress_back.png", PIC_TYPE_DEFAULT},
-        {"black_tile.png", PIC_TYPE_DEFAULT}, {"grid.png", PIC_TYPE_DEFAULT},
-        {"textwin.png", PIC_TYPE_DEFAULT}, {"login_inp.png", PIC_TYPE_DEFAULT}, {"invslot.png", PIC_TYPE_TRANS},
-        {"hp.png", PIC_TYPE_TRANS}, {"sp.png", PIC_TYPE_TRANS}, {"grace.png", PIC_TYPE_TRANS}, {"food.png", PIC_TYPE_TRANS},
-        {"hp_back.png", PIC_TYPE_DEFAULT}, {"sp_back.png", PIC_TYPE_DEFAULT}, {"grace_back.png", PIC_TYPE_DEFAULT},
-        {"food_back.png", PIC_TYPE_DEFAULT}, {"apply.png", PIC_TYPE_DEFAULT},
-        {"food2.png", PIC_TYPE_TRANS},
-        {"unpaid.png", PIC_TYPE_DEFAULT}, {"cursed.png", PIC_TYPE_DEFAULT}, {"damned.png", PIC_TYPE_DEFAULT},
-        {"lock.png", PIC_TYPE_DEFAULT}, {"magic.png", PIC_TYPE_DEFAULT}, {"range.png", PIC_TYPE_TRANS},
-        {"range_marker.png", PIC_TYPE_TRANS}, {"range_ctrl.png", PIC_TYPE_TRANS}, {"range_ctrl_no.png", PIC_TYPE_TRANS},
-        {"range_skill.png", PIC_TYPE_TRANS}, {"range_skill_no.png", PIC_TYPE_TRANS}, {"range_throw.png", PIC_TYPE_TRANS},
-        {"range_throw_no.png", PIC_TYPE_TRANS}, {"range_tool.png", PIC_TYPE_TRANS}, {"range_tool_no.png", PIC_TYPE_TRANS},
-        {"range_wizard.png", PIC_TYPE_TRANS}, {"range_wizard_no.png", PIC_TYPE_TRANS}, {"range_priest.png", PIC_TYPE_TRANS},
-        {"range_priest_no.png", PIC_TYPE_TRANS}, {"cmark_start.png", PIC_TYPE_TRANS}, {"cmark_end.png", PIC_TYPE_TRANS},
-        {"cmark_middle.png", PIC_TYPE_TRANS}, {"textwin_scroll.png", PIC_TYPE_DEFAULT},
-        {"inv_scroll.png", PIC_TYPE_DEFAULT}, {"below_scroll.png", PIC_TYPE_DEFAULT}, {"number.png", PIC_TYPE_DEFAULT},
-        {"invslot_u.png", PIC_TYPE_TRANS}, {"death.png", PIC_TYPE_TRANS}, {"sleep.png", PIC_TYPE_TRANS},
-        {"confused.png", PIC_TYPE_TRANS}, {"paralyzed.png", PIC_TYPE_TRANS}, {"scared.png", PIC_TYPE_TRANS},
-        {"blind.png", PIC_TYPE_TRANS}, {"enemy1.png", PIC_TYPE_TRANS}, {"enemy2.png", PIC_TYPE_TRANS},
-        {"probe.png", PIC_TYPE_TRANS}, {"quickslots.png", PIC_TYPE_DEFAULT}, {"quickslotsv.png", PIC_TYPE_DEFAULT},
-        {"inventory.png", PIC_TYPE_DEFAULT},
-        {"group.png", PIC_TYPE_DEFAULT}, {"exp_border.png", PIC_TYPE_DEFAULT}, {"exp_line.png", PIC_TYPE_DEFAULT},
-        {"exp_bubble.png", PIC_TYPE_TRANS}, {"exp_bubble2.png", PIC_TYPE_TRANS},
-        {"below.png", PIC_TYPE_DEFAULT},
-        {"frame_line.png", PIC_TYPE_DEFAULT}, {"help_start.png", PIC_TYPE_DEFAULT}, {"target_attack.png", PIC_TYPE_TRANS},
-        {"target_talk.png", PIC_TYPE_TRANS}, {"target_normal.png", PIC_TYPE_TRANS}, {"loading.png", PIC_TYPE_TRANS},
-        {"warn_hp.png", PIC_TYPE_DEFAULT}, {"warn_food.png", PIC_TYPE_DEFAULT}, {"main_stats.png", PIC_TYPE_DEFAULT},
-        {"warn_weight.png", PIC_TYPE_DEFAULT},
-        {"logo270.png", PIC_TYPE_DEFAULT}, {"dialog_bg.png", PIC_TYPE_DEFAULT},
-        {"dialog_title_options.png", PIC_TYPE_DEFAULT}, {"dialog_title_keybind.png", PIC_TYPE_DEFAULT},
-        {"dialog_title_skill.png", PIC_TYPE_DEFAULT}, {"dialog_title_spell.png", PIC_TYPE_DEFAULT},
-        {"dialog_title_creation.png", PIC_TYPE_DEFAULT}, {"dialog_title_login.png", PIC_TYPE_DEFAULT},
-        {"dialog_button_up.png", PIC_TYPE_DEFAULT}, {"dialog_button_down.png", PIC_TYPE_DEFAULT},
-        {"dialog_tab_start.png", PIC_TYPE_DEFAULT}, {"dialog_tab.png", PIC_TYPE_DEFAULT},
-        {"dialog_tab_stop.png", PIC_TYPE_DEFAULT}, {"dialog_tab_sel.png", PIC_TYPE_DEFAULT},
-        {"dialog_checker.png", PIC_TYPE_DEFAULT}, {"dialog_range_off.png", PIC_TYPE_DEFAULT},
-        {"dialog_range_l.png", PIC_TYPE_DEFAULT}, {"dialog_range_r.png", PIC_TYPE_DEFAULT},
-        {"target_hp.png", PIC_TYPE_DEFAULT}, {"target_hp_b.png", PIC_TYPE_DEFAULT}, {"textwin_mask.png", PIC_TYPE_DEFAULT},
-        {"slider_up.png", PIC_TYPE_TRANS}, {"slider_down.png", PIC_TYPE_TRANS},
-        {"slider.png", PIC_TYPE_TRANS}, {"group_clear.png", PIC_TYPE_DEFAULT}, {"exp_skill_border.png", PIC_TYPE_DEFAULT},
-        {"exp_skill_line.png", PIC_TYPE_DEFAULT}, {"exp_skill_bubble.png", PIC_TYPE_TRANS},
-        {"options_head.png", PIC_TYPE_TRANS}, {"options_keys.png", PIC_TYPE_TRANS},
-        {"options_settings.png", PIC_TYPE_TRANS}, {"options_logout.png", PIC_TYPE_TRANS},
-        {"options_back.png", PIC_TYPE_TRANS}, {"options_mark_left.png", PIC_TYPE_TRANS},
-        {"options_mark_right.png", PIC_TYPE_TRANS}, {"options_alpha.png", PIC_TYPE_DEFAULT},
-        {"pentagram.png", PIC_TYPE_DEFAULT}, {"quad_button_up.png", PIC_TYPE_DEFAULT},
-        {"quad_button_down.png", PIC_TYPE_DEFAULT}, {"nchar_marker.png", PIC_TYPE_TRANS}, {"traped.png", PIC_TYPE_TRANS},
-        {"pray.png", PIC_TYPE_TRANS}, {"wand.png", PIC_TYPE_TRANS}, {"invite.png", PIC_TYPE_DEFAULT},
-        {"dialog_button_black_up.png", PIC_TYPE_DEFAULT},{"dialog_button_black_down.png", PIC_TYPE_DEFAULT},
-        {"button_small_up.png", PIC_TYPE_DEFAULT},{"button_small_down.png", PIC_TYPE_DEFAULT},
-        {"group_mana.png", PIC_TYPE_DEFAULT},{"group_grace.png", PIC_TYPE_DEFAULT},
-        {"group_hp.png", PIC_TYPE_DEFAULT}, {"npc_interface.png", PIC_TYPE_TRANS},{"coin_copper.png", PIC_TYPE_TRANS},
-        {"coin_silver.png", PIC_TYPE_TRANS},{"coin_gold.png", PIC_TYPE_TRANS},
-        {"coin_mithril.png", PIC_TYPE_TRANS},{"npc_int_slider.png", PIC_TYPE_DEFAULT},
-        {"journal.png", PIC_TYPE_TRANS}, {"invslot_marked.png", PIC_TYPE_TRANS},
-        {"mouse_cursor_move.png", PIC_TYPE_TRANS}, {"resist_bg.png", PIC_TYPE_DEFAULT},
-        {"main_level_bg.png",PIC_TYPE_DEFAULT}, {"skill_exp_bg.png",PIC_TYPE_DEFAULT},
-        {"regen_bg.png",PIC_TYPE_DEFAULT}, {"skill_lvl_bg.png",PIC_TYPE_DEFAULT},
-        {"menu_buttons.png",PIC_TYPE_DEFAULT}, {"group_bg2.png",PIC_TYPE_DEFAULT}, {"group_bg2_bottom.png",PIC_TYPE_DEFAULT},
-        {"player_doll_bg.png",PIC_TYPE_DEFAULT}, {"player_info_bg.png",PIC_TYPE_DEFAULT}, {"target_bg.png",PIC_TYPE_DEFAULT},
-        {"inventory_bg.png",PIC_TYPE_DEFAULT}, {"textinput.png",PIC_TYPE_DEFAULT}, {"stimer.png", PIC_TYPE_DEFAULT},
-        {"closeb.png", PIC_TYPE_DEFAULT},
-    };
+{
+    {"palette.png", PIC_TYPE_PALETTE},
+    {"font7x4.png", PIC_TYPE_PALETTE},
+    {"font6x3out.png", PIC_TYPE_PALETTE},
+    {"font_big.png", PIC_TYPE_PALETTE},
+    {"font7x4out.png", PIC_TYPE_PALETTE},
+    {"font11x15.png", PIC_TYPE_PALETTE},
+    {"font11x15out.png", PIC_TYPE_PALETTE},
+    {"intro.png", PIC_TYPE_DEFAULT},
+    {"progress.png", PIC_TYPE_DEFAULT},
+    {"progress_back.png", PIC_TYPE_DEFAULT},
+    {"black_tile.png", PIC_TYPE_DEFAULT},
+    {"grid.png", PIC_TYPE_DEFAULT},
+    {"textwin.png", PIC_TYPE_DEFAULT},
+    {"login_inp.png", PIC_TYPE_DEFAULT},
+    {"invslot.png", PIC_TYPE_TRANS},
+    {"hp.png", PIC_TYPE_TRANS},
+    {"sp.png", PIC_TYPE_TRANS},
+    {"grace.png", PIC_TYPE_TRANS},
+    {"food.png", PIC_TYPE_TRANS},
+    {"hp_back.png", PIC_TYPE_DEFAULT},
+    {"sp_back.png", PIC_TYPE_DEFAULT},
+    {"grace_back.png", PIC_TYPE_DEFAULT},
+    {"food_back.png", PIC_TYPE_DEFAULT},
+    {"apply.png", PIC_TYPE_DEFAULT},
+    {"food2.png", PIC_TYPE_TRANS},
+    {"unpaid.png", PIC_TYPE_DEFAULT},
+    {"cursed.png", PIC_TYPE_DEFAULT},
+    {"damned.png", PIC_TYPE_DEFAULT},
+    {"lock.png", PIC_TYPE_DEFAULT},
+    {"magic.png", PIC_TYPE_DEFAULT},
+    {"range.png", PIC_TYPE_TRANS},
+    {"range_marker.png", PIC_TYPE_TRANS},
+    {"range_ctrl.png", PIC_TYPE_TRANS},
+    {"range_ctrl_no.png", PIC_TYPE_TRANS},
+    {"range_skill.png", PIC_TYPE_TRANS},
+    {"range_skill_no.png", PIC_TYPE_TRANS},
+    {"range_throw.png", PIC_TYPE_TRANS},
+    {"range_throw_no.png", PIC_TYPE_TRANS},
+    {"range_tool.png", PIC_TYPE_TRANS},
+    {"range_tool_no.png", PIC_TYPE_TRANS},
+    {"range_wizard.png", PIC_TYPE_TRANS},
+    {"range_wizard_no.png", PIC_TYPE_TRANS},
+    {"range_priest.png", PIC_TYPE_TRANS},
+    {"range_priest_no.png", PIC_TYPE_TRANS},
+    {"cmark_start.png", PIC_TYPE_TRANS},
+    {"cmark_end.png", PIC_TYPE_TRANS},
+    {"cmark_middle.png", PIC_TYPE_TRANS},
+    {"textwin_scroll.png", PIC_TYPE_DEFAULT},
+    {"inv_scroll.png", PIC_TYPE_DEFAULT},
+    {"below_scroll.png", PIC_TYPE_DEFAULT},
+    {"number.png", PIC_TYPE_DEFAULT},
+    {"invslot_u.png", PIC_TYPE_TRANS},
+    {"death.png", PIC_TYPE_TRANS},
+    {"sleep.png", PIC_TYPE_TRANS},
+    {"confused.png", PIC_TYPE_TRANS},
+    {"paralyzed.png", PIC_TYPE_TRANS},
+    {"scared.png", PIC_TYPE_TRANS},
+    {"blind.png", PIC_TYPE_TRANS},
+    {"enemy1.png", PIC_TYPE_TRANS},
+    {"enemy2.png", PIC_TYPE_TRANS},
+    {"probe.png", PIC_TYPE_TRANS},
+    {"quickslots.png", PIC_TYPE_DEFAULT},
+    {"quickslotsv.png", PIC_TYPE_DEFAULT},
+    {"inventory.png", PIC_TYPE_DEFAULT},
+    {"group.png", PIC_TYPE_DEFAULT},
+    {"exp_border.png", PIC_TYPE_DEFAULT},
+    {"exp_line.png", PIC_TYPE_DEFAULT},
+    {"exp_bubble.png", PIC_TYPE_TRANS},
+    {"exp_bubble2.png", PIC_TYPE_TRANS},
+    {"below.png", PIC_TYPE_DEFAULT},
+    {"frame_line.png", PIC_TYPE_DEFAULT},
+    {"target_attack.png", PIC_TYPE_TRANS},
+    {"target_talk.png", PIC_TYPE_TRANS},
+    {"target_normal.png", PIC_TYPE_TRANS},
+    {"loading.png", PIC_TYPE_TRANS},
+    {"warn_hp.png", PIC_TYPE_DEFAULT},
+    {"warn_food.png", PIC_TYPE_DEFAULT},
+    {"main_stats.png", PIC_TYPE_DEFAULT},
+    {"warn_weight.png", PIC_TYPE_DEFAULT},
+    {"logo270.png", PIC_TYPE_DEFAULT},
+    {"dialog_bg.png", PIC_TYPE_DEFAULT},
+    {"dialog_title_options.png", PIC_TYPE_DEFAULT},
+    {"dialog_title_keybind.png", PIC_TYPE_DEFAULT},
+    {"dialog_title_skill.png", PIC_TYPE_DEFAULT},
+    {"dialog_title_spell.png", PIC_TYPE_DEFAULT},
+    {"dialog_title_creation.png", PIC_TYPE_DEFAULT},
+    {"dialog_title_login.png", PIC_TYPE_DEFAULT},
+    {"dialog_icon_bg_active.png", PIC_TYPE_DEFAULT},
+    {"dialog_icon_bg_inactive.png", PIC_TYPE_DEFAULT},
+    {"dialog_icon_bg_negative.png", PIC_TYPE_DEFAULT},
+    {"dialog_icon_bg_positive.png", PIC_TYPE_DEFAULT},
+    {"dialog_icon_fg_active.png", PIC_TYPE_TRANS},
+    {"dialog_icon_fg_inactive.png", PIC_TYPE_TRANS},
+    {"dialog_icon_fg_selected.png", PIC_TYPE_TRANS},
+    {"dialog_button_selected.png", PIC_TYPE_TRANS},
+    {"dialog_button_up_prefix.png", PIC_TYPE_DEFAULT},
+    {"dialog_button_down_prefix.png", PIC_TYPE_DEFAULT},
+    {"dialog_button_up.png", PIC_TYPE_DEFAULT},
+    {"dialog_button_down.png", PIC_TYPE_DEFAULT},
+    {"dialog_tab_start.png", PIC_TYPE_DEFAULT},
+    {"dialog_tab.png", PIC_TYPE_DEFAULT},
+    {"dialog_tab_stop.png", PIC_TYPE_DEFAULT},
+    {"dialog_tab_sel.png", PIC_TYPE_DEFAULT},
+    {"dialog_checker.png", PIC_TYPE_DEFAULT},
+    {"dialog_range_off.png", PIC_TYPE_DEFAULT},
+    {"dialog_range_l.png", PIC_TYPE_DEFAULT},
+    {"dialog_range_r.png", PIC_TYPE_DEFAULT},
+    {"target_hp.png", PIC_TYPE_DEFAULT},
+    {"target_hp_b.png", PIC_TYPE_DEFAULT},
+    {"textwin_mask.png", PIC_TYPE_DEFAULT},
+    {"slider_up.png", PIC_TYPE_TRANS},
+    {"slider_down.png", PIC_TYPE_TRANS},
+    {"slider.png", PIC_TYPE_TRANS},
+    {"group_clear.png", PIC_TYPE_DEFAULT},
+    {"exp_skill_border.png", PIC_TYPE_DEFAULT},
+    {"exp_skill_line.png", PIC_TYPE_DEFAULT},
+    {"exp_skill_bubble.png", PIC_TYPE_TRANS},
+    {"options_head.png", PIC_TYPE_TRANS},
+    {"options_keys.png", PIC_TYPE_TRANS},
+    {"options_settings.png", PIC_TYPE_TRANS},
+    {"options_logout.png", PIC_TYPE_TRANS},
+    {"options_back.png", PIC_TYPE_TRANS},
+    {"options_mark_left.png", PIC_TYPE_TRANS},
+    {"options_mark_right.png", PIC_TYPE_TRANS},
+    {"options_alpha.png", PIC_TYPE_DEFAULT},
+    {"pentagram.png", PIC_TYPE_DEFAULT},
+    {"quad_button_up.png", PIC_TYPE_DEFAULT},
+    {"quad_button_down.png", PIC_TYPE_DEFAULT},
+    {"nchar_marker.png", PIC_TYPE_TRANS},
+    {"traped.png", PIC_TYPE_TRANS},
+    {"pray.png", PIC_TYPE_TRANS},
+    {"wand.png", PIC_TYPE_TRANS},
+    {"invite.png", PIC_TYPE_DEFAULT},
+    {"dialog_button_black_up.png", PIC_TYPE_DEFAULT},
+    {"dialog_button_black_down.png", PIC_TYPE_DEFAULT},
+    {"button_small_up.png", PIC_TYPE_DEFAULT},
+    {"button_small_down.png", PIC_TYPE_DEFAULT},
+    {"group_mana.png", PIC_TYPE_DEFAULT},
+    {"group_grace.png", PIC_TYPE_DEFAULT},
+    {"group_hp.png", PIC_TYPE_DEFAULT},
+    {"npc_interface_top.png", PIC_TYPE_TRANS},
+    {"npc_interface_middle.png", PIC_TYPE_TRANS},
+    {"npc_interface_bottom.png", PIC_TYPE_TRANS},
+    {"npc_interface_panel.png", PIC_TYPE_TRANS},
+    {"coin_copper.png", PIC_TYPE_TRANS},
+    {"coin_silver.png", PIC_TYPE_TRANS},
+    {"coin_gold.png", PIC_TYPE_TRANS},
+    {"coin_mithril.png", PIC_TYPE_TRANS},
+    {"npc_int_slider.png", PIC_TYPE_DEFAULT},
+    {"journal.png", PIC_TYPE_TRANS},
+    {"invslot_marked.png", PIC_TYPE_TRANS},
+    {"mouse_cursor_move.png", PIC_TYPE_TRANS},
+    {"resist_bg.png", PIC_TYPE_DEFAULT},
+    {"main_level_bg.png",PIC_TYPE_DEFAULT},
+    {"skill_exp_bg.png",PIC_TYPE_DEFAULT},
+    {"regen_bg.png",PIC_TYPE_DEFAULT},
+    {"skill_lvl_bg.png",PIC_TYPE_DEFAULT},
+    {"menu_buttons.png",PIC_TYPE_DEFAULT},
+    {"group_bg2.png",PIC_TYPE_DEFAULT},
+    {"group_bg2_bottom.png",PIC_TYPE_DEFAULT},
+    {"player_doll_bg.png",PIC_TYPE_DEFAULT},
+    {"player_info_bg.png",PIC_TYPE_DEFAULT},
+    {"target_bg.png",PIC_TYPE_DEFAULT},
+    {"inventory_bg.png",PIC_TYPE_DEFAULT},
+    {"textinput.png",PIC_TYPE_DEFAULT},
+    {"stimer.png", PIC_TYPE_DEFAULT},
+    {"closeb.png", PIC_TYPE_DEFAULT},
+};
 
 #define BITMAP_MAX (int)(sizeof(bitmap_name)/sizeof(struct _bitmap_name))
 _Sprite            *Bitmaps[BITMAP_MAX];
@@ -367,13 +467,11 @@ void init_game_data(void)
     init_player_data();
     clear_metaserver_data();
     reset_input_mode();
-    show_help_screen = 0;
-    show_help_screen_new = FALSE;
 
     start_anim = NULL; /* anim queue of current active map */
 
     clear_group();
-    interface_mode = INTERFACE_MODE_NO;
+    interface_mode = GUI_NPC_MODE_NO;
     map_transfer_flag = 0;
     start_server = NULL;
     ServerName[0] = 0;
@@ -399,7 +497,7 @@ void init_game_data(void)
     InputStringEscFlag = FALSE;
     csocket.fd = SOCKET_NO;
     RangeFireMode = 0;
-    gui_interface_npc = NULL;
+    gui_npc = NULL;
     gui_interface_book = NULL;
     LoginInputStep = LOGIN_STEP_NAME;
 
@@ -648,7 +746,7 @@ Boolean game_status_chain(void)
         cpl.mark_count = -1;
         GameStatusSelect = GAME_STATUS_LOGIN_ACCOUNT;
         LoginInputStep = LOGIN_STEP_NOTHING;
-        interface_mode = INTERFACE_MODE_NO;
+        interface_mode = GUI_NPC_MODE_NO;
         clear_group();
         map_udate_flag = 2;
         delete_player_lists();
@@ -663,7 +761,7 @@ Boolean game_status_chain(void)
     /* connect to meta and get server data */
     else if (GameStatus == GAME_STATUS_META)
     {
-        interface_mode = INTERFACE_MODE_NO;
+        interface_mode = GUI_NPC_MODE_NO;
         clear_group();
         map_udate_flag = 2;
         if (argServerName[0] != 0)
@@ -716,7 +814,7 @@ Boolean game_status_chain(void)
     }
     else if (GameStatus == GAME_STATUS_START)
     {
-        interface_mode = INTERFACE_MODE_NO;
+        interface_mode = GUI_NPC_MODE_NO;
         clear_group();
         map_udate_flag = 2;
         clear_map();
@@ -1135,7 +1233,7 @@ Boolean game_status_chain(void)
          */
         reset_input_mode();
         dialog_new_char_warn = 0;
-        show_help_screen_new = TRUE;
+        newplayer = TRUE;
     }
     else if (GameStatus == GAME_STATUS_ACCOUNT_CHAR_NAME)
     {
@@ -1984,11 +2082,6 @@ int main(int argc, char *argv[])
         else if (GameStatus >= GAME_STATUS_ACCOUNT_CHAR_CREATE && GameStatus <= GAME_STATUS_ACCOUNT_CHAR_NAME_WAIT )
             cpl.menustatus = MENU_CREATE;
 
-        if (show_help_screen_new && GameStatus == GAME_STATUS_PLAY)
-        {
-            sprite_blt(Bitmaps[BITMAP_HELP_START] , 799-Bitmaps[BITMAP_HELP_START]->bitmap->w-5 , 0, NULL, NULL);
-        }
-
         /* show all kind of the small dialog windows */
         /* show_requester(); */
 
@@ -1999,6 +2092,17 @@ int main(int argc, char *argv[])
         /* we count always last frame*/
         FrameCount++;
         LastTick = SDL_GetTicks();
+
+        /* Seems a fairly hideous way of doing this but this mimics the show_help_screen_new -- Smacky 20070201 */
+        if (GameStatus == GAME_STATUS_PLAY && newplayer == TRUE)
+        {
+            newplayer = FALSE;
+            draw_info_format(COLOR_DEFAULT, "|Welcome to Daimonin, %s -- WHAT NOW?|\n", cpl.name);
+            draw_info("As this is your first time playing, you may be asking this question.\n", COLOR_DEFAULT);
+            draw_info("The character nearby is called ~Fanrir~. His job is to help new players get started in the game. You should talk to him.\n", COLOR_DEFAULT);
+            draw_info("Do this by pressing the ~T~ key. He will tell you how to do a lot of things and give you a lot of things to do, so pay attention to him and good luck! :)\n", COLOR_DEFAULT);
+            draw_info("Visit the Daimonin website, wiki, and forums for more information about the game: |www.daimonin.net|", COLOR_DEFAULT);
+        }
 
         if((GameStatus  >= GAME_STATUS_WAITFORPLAY) && options.sleepcounter )
         {
@@ -2051,30 +2155,53 @@ int main(int argc, char *argv[])
                 StringBlt(ScreenSurface, &font_small, buf, rec.x, rec.y, COLOR_DEFAULT, NULL, NULL);
             }
         }
+
         /* TODO: This should be moved to the anim functions, but for that we
-         * have to rewrite the anim stuff to handle strings, and different speeds, and so on...
-         */
-        if ((GameStatus == GAME_STATUS_PLAY) && vim.active)
+         * have to rewrite the anim stuff to handle strings, and different
+         * speeds, and so on... */
+        if (GameStatus == GAME_STATUS_PLAY)
         {
-            map_udate_flag = 2;
-            if ((LastTick-vim.starttick)<3000)
+            uint8 i;
+
+            for (i = 0; i < MAX_NROF_VIM; i++)
             {
-                _BLTFX      bmbltfx;
-                int bmoff = 0;
+                _BLTFX bmbltfx;
+                int    bmoff;
 
-                bmbltfx.alpha = 255;
+                if (!vim[i].active)
+                {
+                    continue;
+                }
+
+                if (LastTick - vim[i].starttick >= 3000)
+                {
+                    FREE(vim[i].msg);
+                    vim[i].active = 0;
+
+                    continue;
+                }
+
+                if (LastTick - vim[i].starttick <= 2000)
+                {
+                    bmbltfx.alpha = 255;
+                }
+                else
+                {
+                    bmbltfx.alpha -= (int)(255.0f * ((float)(LastTick -
+                                     vim[i].starttick - 2000) / 1000.0f));
+                }
+
                 bmbltfx.flags = BLTFX_FLAG_SRCALPHA;
-
-                bmoff = (int)((50.0f/3.0f)*((float)(LastTick-vim.starttick)/1000.0f)*((float)(LastTick-vim.starttick)/1000.0f)+((int)(150.0f*((float)(LastTick-vim.starttick)/3000.0f))));
-
-                if (LastTick-vim.starttick>2000)
-                    bmbltfx.alpha -= (int)(255.0f*((float)(LastTick-vim.starttick-2000)/1000.0f));
-
-                StringBlt(ScreenSurface, &font_big_out, vim.msg, 400-(StringWidth(&font_big_out,vim.msg)/2) , 300-bmoff, COLOR_BLACK, NULL, &bmbltfx);
-                StringBlt(ScreenSurface, &font_big_out, vim.msg, 400-(StringWidth(&font_big_out,vim.msg)/2)-2 , 300-2-bmoff, COLOR_GREEN, NULL, &bmbltfx);
+                bmoff = (font_big_out.line_height * i) + (int)((50.0f / 3.0f) *
+                        ((float)(LastTick - vim[i].starttick) / 1000.0f) *
+                        ((float)(LastTick - vim[i].starttick) / 1000.0f) +
+                        ((int)(150.0f * ((float)(LastTick - vim[i].starttick) /
+                        3000.0f))));
+                map_udate_flag = 2;
+                EMBOSS(ScreenSurface, &font_big_out, vim[i].msg,
+                       400 - (StringWidth(&font_big_out, vim[i].msg) / 2),
+                       300 - bmoff, vim[i].color, NULL, &bmbltfx);
             }
-            else
-                vim.active = FALSE;
         }
 
         flip_screen();
@@ -2129,7 +2256,7 @@ static void flip_screen(void)
     if (GameStatus < GAME_STATUS_WAITFORPLAY)
     {
         char    buf[128];
-        sprintf(buf, "v. %s%s",
+        sprintf(buf, "v. %s (SENTInce AWARE)%s",
                 GlobalClientVersion,
 #ifdef _DEBUG
                 " *DEBUG VERSION*"

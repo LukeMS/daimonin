@@ -290,11 +290,6 @@ typedef signed long long   sint64;
 #define MAP_INFO_NORMAL          12
 #define MAP_INFO_ALL           9999
 
-/* client interface communication */
-#define NPC_INTERFACE_MODE_NO    -1
-#define NPC_INTERFACE_MODE_NPC    1
-#define NPC_INTERFACE_MODE_QLIST  2
-
 /* number of connected maps from a tiled map */
 typedef enum
 {

@@ -253,8 +253,8 @@ int StringWidth(_font *font, char *text)
     {
         switch (text[i])
         {
-            case '°': // yellow (strong)
-            case '|': // -------"-------
+            case '`': // gold (intertitle)
+            case '|': // yellow (strong)
             case '~': // green (emphasis)
             case '^': // blue (clickable keyword)
                 break;
@@ -276,8 +276,8 @@ int StringWidthOffset(_font *font, char *text, int *line, int len)
     {
         switch (text[i])
         {
-            case '°': // yellow (strong)
-            case '|': // -------"-------
+            case '`': // gold (intertitle)
+            case '|': // yellow (strong)
             case '~': // green (emphasis)
             case '^': // blue (clickable keyword)
                 break;
@@ -302,110 +302,227 @@ int StringWidthOffset(_font *font, char *text, int *line, int len)
 
 void StringBlt(SDL_Surface *surf, _font *font, char *text, int x, int y, int col, SDL_Rect *area, _BLTFX *bltfx)
 {
-    register int i,tmp, line_clip = -1,line_count = 0;
-    register Boolean gflag;
-    int         colorToggle = 0;
-    SDL_Rect    src, dst, dst_tmp;
-    SDL_Color   color, color_g, color_s;
-    unsigned char actChar =0;
+    register int i,
+                 tmp,
+                 line_clip = -1,
+                 line_count = 0;
+    SDL_Rect     dst_tmp;
+    SDL_Color    real_color,
+                 color;
+    uint8        intertitle = 0,
+                 strong = 0,
+                 emphasis = 0,
+                 hyper = 0;
 
-    if(!text || !font || !surf) /* sanity check */
+    if (!text ||
+        !font ||
+        !surf) /* sanity check */
+    {
         return;
+    }
 
     if (area)
+    {
         line_clip = area->w;
+    }
 
     dst_tmp.x = x; /* .w/h are not used from BlitSurface to draw*/
     dst_tmp.y = y;
+    real_color.r = color.r = Bitmaps[BITMAP_PALETTE]->bitmap->format->palette->colors[col].r;
+    real_color.g = color.g = Bitmaps[BITMAP_PALETTE]->bitmap->format->palette->colors[col].g;
+    real_color.b = color.b = Bitmaps[BITMAP_PALETTE]->bitmap->format->palette->colors[col].b;
+    SDL_SetPalette(font->sprite->bitmap, SDL_LOGPAL | SDL_PHYSPAL, &real_color,
+                   1, 1);
 
-    color_g.r = 0;
-    color_g.g = 255;
-    color_g.b = 255;
-
-    color_s.r = 204; /* highlight color for selected keywords */
-    color_s.g = 102;
-    color_s.b = 255;
-
-
-    color.r = Bitmaps[BITMAP_PALETTE]->bitmap->format->palette->colors[col].r;
-    color.g = Bitmaps[BITMAP_PALETTE]->bitmap->format->palette->colors[col].g;
-    color.b = Bitmaps[BITMAP_PALETTE]->bitmap->format->palette->colors[col].b;
-
-    SDL_SetPalette(font->sprite->bitmap, SDL_LOGPAL | SDL_PHYSPAL, &color, 1, 1);
-
-    if (bltfx && bltfx->flags & BLTFX_FLAG_SRCALPHA)
-        SDL_SetAlpha(font->sprite->bitmap,SDL_SRCALPHA,bltfx->alpha);
-    else
-       SDL_SetAlpha(font->sprite->bitmap,SDL_RLEACCEL,255);
-
-    gflag = FALSE;
-    for (i = 0; text[i] != '\0'; i++)
+    if (bltfx &&
+        (bltfx->flags & BLTFX_FLAG_SRCALPHA))
     {
-        actChar = text[i];
-        dst.x=dst_tmp.x;
-        dst.y=dst_tmp.y;
-        if (actChar == (unsigned char)'°' || actChar == (unsigned char)'|' || actChar == (unsigned char)'~') /* change text color */
+        SDL_SetAlpha(font->sprite->bitmap, SDL_SRCALPHA, bltfx->alpha);
+    }
+    else
+    {
+        SDL_SetAlpha(font->sprite->bitmap, SDL_RLEACCEL, 255);
+    }
+
+    for (i = 0; text[i]; i++)
+    {
+        SDL_Rect dst;
+
+        dst.x = dst_tmp.x;
+        dst.y = dst_tmp.y;
+
+        if (text[i] == '`') /* intertitle */
         {
-            if (col == COLOR_BLACK)
-                continue; /* no highlighting in blak text */
-            if (colorToggle)
+            if (!hyper &&
+                col != COLOR_BLACK)
             {
-                color.r = Bitmaps[BITMAP_PALETTE]->bitmap->format->palette->colors[col].r;
-                color.g = Bitmaps[BITMAP_PALETTE]->bitmap->format->palette->colors[col].g;
-                color.b = Bitmaps[BITMAP_PALETTE]->bitmap->format->palette->colors[col].b;
-                SDL_SetPalette(font->sprite->bitmap, SDL_LOGPAL | SDL_PHYSPAL, &color, 1, 1);
+                intertitle = !intertitle;
+                strong = 0;
+                emphasis = 0;
+
+                if (intertitle)
+                {
+                    color.r = Bitmaps[BITMAP_PALETTE]->bitmap->format->palette->colors[COLOR_HGOLD].r;
+                    color.g = Bitmaps[BITMAP_PALETTE]->bitmap->format->palette->colors[COLOR_HGOLD].g;
+                    color.b = Bitmaps[BITMAP_PALETTE]->bitmap->format->palette->colors[COLOR_HGOLD].b;
+                }
+                else
+                {
+                    color.r = real_color.r;
+                    color.g = real_color.g;
+                    color.b = real_color.b;
+                }
+
+                SDL_SetPalette(font->sprite->bitmap,
+                               SDL_LOGPAL | SDL_PHYSPAL, &color, 1, 1);
             }
-            else
+        }
+        else if (text[i] == '|') /* strong */
+        {
+            if (!hyper &&
+                !intertitle &&
+                col != COLOR_BLACK)
             {
-                color.g = 0xff;
-                color.b = 0x00;
-                if (actChar == (unsigned char)'°' || actChar == (unsigned char)'|')
+                strong = !strong;
+
+                if (strong)
+                {
                     color.r = 0xff;
+                    color.g = 0xff;
+                    color.b = 0x00;
+                }
                 else
+                {
+                    if (emphasis)
+                    {
+                        color.r = 0x00;
+                        color.g = 0xff;
+                        color.b = 0x00;
+                    }
+                    else
+                    {
+                        color.r = real_color.r;
+                        color.g = real_color.g;
+                        color.b = real_color.b;
+                    }
+                }
+
+                SDL_SetPalette(font->sprite->bitmap,
+                               SDL_LOGPAL | SDL_PHYSPAL, &color, 1, 1);
+            }
+        }
+        else if (text[i] =='~') /* emphasis */
+        {
+            if (!hyper &&
+                !intertitle &&
+                col != COLOR_BLACK)
+            {
+                emphasis = !emphasis;
+
+                if (emphasis)
+                {
                     color.r = 0x00;
-                SDL_SetPalette(font->sprite->bitmap, SDL_LOGPAL | SDL_PHYSPAL, &color, 1, 1);
-            }
-            colorToggle = (colorToggle + 1) & 1;
-            continue;
-        }
-        if (actChar == (unsigned char)'^')
-        {
-            if (gflag)
-            {
-                SDL_SetPalette(font->sprite->bitmap, SDL_LOGPAL | SDL_PHYSPAL, &color, 1, 1);
-                gflag = FALSE;
-            }
-            else
-            {
-                if ((cpl.menustatus == MENU_NPC) && (gui_interface_npc->keyword_selected>0) && !strncmp(text+i+1,gui_interface_npc->keywords[gui_interface_npc->keyword_selected-1],strlen(gui_interface_npc->keywords[gui_interface_npc->keyword_selected-1])))
-                    SDL_SetPalette(font->sprite->bitmap, SDL_LOGPAL | SDL_PHYSPAL, &color_s, 1, 1);
+                    color.g = 0xff;
+                    color.b = 0x00;
+                }
                 else
-                    SDL_SetPalette(font->sprite->bitmap, SDL_LOGPAL | SDL_PHYSPAL, &color_g, 1, 1);
+                {
+                    if (strong)
+                    {
+                        color.r = 0xff;
+                        color.g = 0xff;
+                        color.b = 0x00;
+                    }
+                    else
+                    {
+                        color.r = real_color.r;
+                        color.g = real_color.g;
+                        color.b = real_color.b;
+                    }
+                }
 
-                gflag = TRUE;
+                SDL_SetPalette(font->sprite->bitmap,
+                               SDL_LOGPAL | SDL_PHYSPAL, &color, 1, 1);
             }
-            continue;
         }
-
-        tmp = font->c[actChar].w + font->char_offset;
-
-        /* if set, we have a clipping line */
-        if (line_clip >= 0)
+        else if (text[i] == '^') /* hypertext */
         {
-            if ((line_count += tmp) > line_clip)
-                return;
-        }
+            /* Only allow in NPC GUI TODO: and book GUI. */
+            if (cpl.menustatus == MENU_NPC)
+            {
+                hyper = !hyper;
 
-        if (actChar != 32)
+                if (hyper)
+                {
+                    _gui_npc_element *k;
+
+                    if ((k = gui_npc->keyword_selected) &&
+                        !strnicmp(text + i + 1, k->keyword,
+                                  strlen(k->keyword)))
+                    {
+                        color.r = 0xcc;
+                        color.g = 0x66;
+                        color.b = 0xff;
+                    }
+                    else
+                    {
+                        color.r = 0x00;
+                        color.g = 0xff;
+                        color.b = 0xff;
+                    }
+                }
+                else
+                {
+                    if (strong)
+                    {
+                        color.r = 0xff;
+                        color.g = 0xff;
+                        color.b = 0x00;
+                    }
+                    else if (emphasis)
+                    {
+                        color.r = 0x00;
+                        color.g = 0xff;
+                        color.b = 0x00;
+                    }
+                    else
+                    {
+                        color.r = real_color.r;
+                        color.g = real_color.g;
+                        color.b = real_color.b;
+                    }
+                }
+
+                SDL_SetPalette(font->sprite->bitmap,
+                               SDL_LOGPAL | SDL_PHYSPAL, &color, 1, 1);
+            }
+        }
+        else
         {
-            src.x = font->c[actChar].x;
-            src.y = font->c[actChar].y;
-            src.w = font->c[actChar].w;
-            src.h = font->c[actChar].h;
-            SDL_BlitSurface(font->sprite->bitmap, &src, surf, &dst);
-        }
+            tmp = font->c[(unsigned char)text[i]].w + font->char_offset;
 
-        dst_tmp.x += tmp;
+            /* if set, we have a clipping line */
+            if (line_clip >= 0)
+            {
+                if ((line_count += tmp) > line_clip)
+                {
+                    return;
+                }
+            }
+
+            if (text[i] != ' ')
+            {
+                SDL_Rect src;
+
+                src.x = font->c[(unsigned char)text[i]].x;
+                src.y = font->c[(unsigned char)text[i]].y;
+                src.w = font->c[(unsigned char)text[i]].w;
+                src.h = font->c[(unsigned char)text[i]].h;
+                SDL_BlitSurface(font->sprite->bitmap, &src, surf, &dst);
+            }
+
+            dst_tmp.x += tmp;
+        }
     }
 }
 
@@ -544,34 +661,79 @@ int get_string_pixel_length(char *text, struct _font *font)
 
     return len;
 }
+
 /* Alderan 2007-11-03: i reworked that a bit:
  * we dont need for every blit check for all the map drawing stuff
- * so the mapdrawing gets its own function.
- * this function can only handle semi-trans in BLTFX
- */
+ * so the mapdrawing gets its own function. */
 void sprite_blt(_Sprite *sprite, int x, int y, SDL_Rect *box, _BLTFX *bltfx)
 {
     SDL_Rect        dst;
     SDL_Surface    *surface, *blt_sprite;
     Boolean         reset_trans = FALSE;
 
+    /* Sanity check. */
     if (!sprite)
+    {
         return;
+    }
 
-    blt_sprite = sprite->bitmap;
+    if (bltfx &&
+        (bltfx->flags & BLTFX_FLAG_FOW))
+    {
+        if (!sprite->fog_of_war)
+        {
+            fow_scale(sprite);
+        }
 
-    if (!blt_sprite)
-        return;
+        blt_sprite = sprite->fog_of_war;
+    }
+    else if (bltfx &&
+             (bltfx->flags & BLTFX_FLAG_RED))
+    {
+        if (!sprite->red)
+        {
+            red_scale(sprite);
+        }
 
-    if (bltfx && (bltfx->surface))
-        surface=bltfx->surface;
+        blt_sprite = sprite->red;
+    }
+    else if (bltfx &&
+             (bltfx->flags & BLTFX_FLAG_GREY))
+    {
+        if (!sprite->grey)
+        {
+            grey_scale(sprite);
+        }
+
+        blt_sprite = sprite->grey;
+    }
     else
+    {
+        blt_sprite = sprite->bitmap;
+    }
+
+    /* Sanity check. */
+    if (!blt_sprite)
+    {
+        return;
+    }
+
+    if (bltfx &&
+        bltfx->surface)
+    {
+        surface = bltfx->surface;
+    }
+    else
+    {
         surface = ScreenSurface;
+    }
 
     dst.x = x;
     dst.y = y;
 
-    if (bltfx && bltfx->flags & BLTFX_FLAG_SRCALPHA && !(ScreenSurface->flags & SDL_HWSURFACE))
+    if (bltfx &&
+        (bltfx->flags & BLTFX_FLAG_SRCALPHA) &&
+        !(ScreenSurface->flags & SDL_HWSURFACE))
     {
         SDL_SetAlpha(blt_sprite, SDL_SRCALPHA, bltfx->alpha);
         reset_trans = TRUE;
@@ -584,6 +746,7 @@ void sprite_blt(_Sprite *sprite, int x, int y, SDL_Rect *box, _BLTFX *bltfx)
         SDL_SetAlpha(blt_sprite, SDL_SRCALPHA, SDL_ALPHA_OPAQUE);
     }
 }
+
 /* This function supports the whole BLTFX flags, and is only used to blit the map! */
 void sprite_blt_map(_Sprite *sprite, int x, int y, SDL_Rect *box, _BLTFX *bltfx, Uint32 stretch)
 {

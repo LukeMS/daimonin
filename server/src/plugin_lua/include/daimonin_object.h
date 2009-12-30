@@ -139,6 +139,7 @@ static int  GameObject_ShowCost(lua_State *L);
 static int  GameObject_Sound(lua_State *L);
 static int  GameObject_StartNewInstance(lua_State *L);
 static int  GameObject_Take(lua_State *L);
+static int  GameObject_UpdateQuest(lua_State *L);
 static int  GameObject_Withdraw(lua_State *L);
 static int  GameObject_Write(lua_State *L);
 #if 0

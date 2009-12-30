@@ -147,33 +147,146 @@ void communicate(object *op, char *txt)
     new_info_map(flags, op->map, op->x, op->y, MAP_INFO_NORMAL, buf);
 }
 
-/* open a (npc) gui communication interface */
-void gui_interface(object *who, int mode, const char *text, const char *tail)
+/* Handle a player attempting to /talk.
+ *
+ * The way it all works is:
+ * 
+ * When a player gives a /talk command first the server checks if he has a
+ * marked inv item to talk to. If not, it checks his target. If he doesn't have
+ * one or it's a player or invalid, we do a normal target cycle but ignoring
+ * players (so both enemies and friends are fine),
+ * 
+ * If we still can't find a target, a message is given (There's no-one around
+ * to talk to!).
+ * 
+ * If we found, or already had, a target, try to talk to it. Here we query its
+ * sensing range (which is halved if the mob is asleep). If it's not in range
+ * (or is out of LOS) we say so.
+ * 
+ * If it is in range, we run the attached talk script, if any, as normal. After
+ * this is run we wake up the mob. This means the script can check me.f_sleep
+ * and respond accordingly if the player woke up the mob. ;) */
+void talk_to_npc(player *pl, char *topic)
 {
-	NewSocket *ns = &CONTR(who)->socket;
+    object *t_obj;
 
-	SOCKBUF_REQUEST_BUFFER(ns, SOCKET_SIZE_SMALL);
-
-    /* NPC_INTERFACE_MODE_NO will send a clear body = remove interface to the client */
-    if(mode != NPC_INTERFACE_MODE_NO)
+    /* this happens when whitespace only string was submited */
+//    if (!topic ||
+//        !(topic = cleanup_chat_string(topic)))
+    if (!topic)
     {
-        SockBuf_AddChar(ACTIVE_SOCKBUF(ns), (char)mode);
-		SockBuf_AddString(ACTIVE_SOCKBUF(ns), text, strlen(text));
-        if(tail)
-			SockBuf_AddString(ACTIVE_SOCKBUF(ns), tail, strlen(tail));
+        gui_npc(pl->ob, GUI_NPC_MODE_NO, NULL);
+
+        return;
     }
 
-	SOCKBUF_REQUEST_FINISH(ns, BINARY_CMD_INTERFACE, SOCKBUF_DYNAMIC);
+    /* If we have a marked, talkable object in the inventory, talk to it. */
+    if ((t_obj = find_marked_object(pl->ob)) &&
+       (t_obj->event_flags & EVENT_FLAG_TALK))
+    {
+        trigger_object_plugin_event(EVENT_TALK, t_obj, pl->ob, NULL, topic,
+                                    NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR);
+
+        return;
+    }
+
+    /* If we have no or an invalid target or a valid target which is a player
+     * (talk is player-mob only), look for a new one. */
+    if (!OBJECT_VALID(pl->target_object, pl->target_object_count) ||
+        pl->target_object->type == PLAYER)
+    {
+        pl->target_object = NULL;
+
+        command_target(pl->ob, "3");
+    }
+
+    /* If we now have a valid target and it's in LOS and within it's sensing
+     * range (modified if it is asleep), talk to it. */
+    if (OBJECT_VALID(pl->target_object, pl->target_object_count))
+    {
+        rv_vector rv;
+
+        t_obj = pl->target_object;
+
+        /* Is the target on this mapset and not too far away? */
+        if (get_rangevector(pl->ob, t_obj, &rv, 0))
+        {
+            unsigned int range = MAX(1, t_obj->stats.Wis);
+
+            if (QUERY_FLAG(t_obj, FLAG_SLEEP))
+            {
+                range = MAX(1, range / 2);
+            }
+
+            if (rv.distance <= range)
+            {
+                int x = pl->socket.mapx_2 + rv.distance_x,
+                    y = pl->socket.mapy_2 + rv.distance_y;
+
+                /* Is it visible to the player? */
+                if (pl->blocked_los[x][y] <= BLOCKED_LOS_BLOCKSVIEW)
+                {
+                    if (t_obj->event_flags & EVENT_FLAG_TALK)
+                    {
+                        trigger_object_plugin_event(EVENT_TALK, t_obj, pl->ob,
+                                                    NULL, topic, NULL, NULL,
+                                                    NULL, SCRIPT_FIX_ACTIVATOR);
+                    }
+                    else
+                    {
+                        gui_npc(pl->ob, GUI_NPC_MODE_NO, NULL);
+
+                        if(t_obj->msg)
+                        {
+                            new_draw_info(NDI_NAVY | NDI_UNIQUE, 0, pl->ob,
+                                          t_obj->msg);
+                        }
+                        else
+                        {
+                            new_draw_info_format(NDI_NAVY | NDI_UNIQUE, 0,
+                                                 pl->ob, "%s has nothing to say.",
+                                                 query_name(t_obj));
+                        }
+                    }
+
+                    /* Wake up target. Do it hear so the script can check
+                     * me.f_sleep to see if the player's yakking interrupted
+                     * the mob's snooze. */
+                    CLEAR_FLAG(t_obj, FLAG_SLEEP);
+
+                    return;
+                }
+            }
+        }
+    }
+
+    gui_npc(pl->ob, GUI_NPC_MODE_NO, NULL);
+
+    /* If we have a target, it must be out of range. */
+    if (t_obj)
+    {
+        new_draw_info(NDI_UNIQUE, 0, pl->ob, "Your talk target is not in range!");
+    }
+    else
+    {
+        new_draw_info(NDI_UNIQUE, 0, pl->ob, "There's no-one around to talk to!");
+    }
+
+    return;
 }
 
-/* Send a "remove NPC interface" command to the client.
-* For example if a player->npc communication stops because
-* the npc is gone (moved away, dead) or stops talking.
-* This is needed to end the asynchron communication way.
-*/
-void send_clear_interface(player *pl)
+/* open a (npc) gui communication interface */
+void gui_npc(object *who, uint8 mode, const char *text)
 {
-	SOCKBUF_REQUEST_BUFFER(&pl->socket, SOCKET_SIZE_SMALL);
-	SOCKBUF_REQUEST_FINISH(&pl->socket, BINARY_CMD_INTERFACE, SOCKBUF_DYNAMIC);
-}
+    NewSocket *ns = &CONTR(who)->socket;
 
+    SOCKBUF_REQUEST_BUFFER(ns, SOCKET_SIZE_SMALL);
+    SockBuf_AddChar(ACTIVE_SOCKBUF(ns), mode);
+
+    if (text)
+    {
+        SockBuf_AddString(ACTIVE_SOCKBUF(ns), text, strlen(text));
+    }
+
+    SOCKBUF_REQUEST_FINISH(ns, BINARY_CMD_INTERFACE, SOCKBUF_DYNAMIC);
+}

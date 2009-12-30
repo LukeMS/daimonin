@@ -320,10 +320,10 @@ struct plugin_hooklist
     void (*get_tad)(timeanddate_t *);
     char *(*get_word_from_string)(char *, int *);
     void (*give_artifact_abilities)(object *, artifact *);
-    void (*gui_interface)(object *, int, const char *, const char *);
     object *(*guild_get)(player *, char *);
     object *(*guild_join)(player *, char *, int, int, int, int, int, int);
     void (*guild_leave)(player *);
+    void (*gui_npc)(object *, uint8, const char *);
     /* H */
     void (*hashtable_clear)(hashtable *);
     void (*hashtable_delete)(hashtable *);
@@ -421,6 +421,7 @@ struct plugin_hooklist
     /* U */
     struct mob_known_obj *(*update_npc_knowledge)(object *, object *, int,
                                                   int);
+    int (*update_quest)(struct obj *, char *, char *);
     void (*update_object)(object *, int);
     /* V */
     /* W */

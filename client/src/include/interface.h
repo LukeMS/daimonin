@@ -24,155 +24,120 @@
 #if !defined(__INTERFACE_H)
 #define __INTERFACE_H
 
-#define INTERFACE_WINLEN_NPC 353
+#define GUI_NPC_WIDTH          296 /* Width of the scrollable window */
+#define GUI_NPC_HEIGHT         353 /* Height of the scrollable window */
+#define GUI_NPC_LEFTMARGIN     35  /* Width of the left margin */
+#define GUI_NPC_TOPMARGIN      79  /* Height of the top margin */
+#define GUI_NPC_SCROLL         20  /* Distance to scroll */
+#define GUI_NPC_ICONSIZE       36  /* Width/height (icons are always square) */
+#define GUI_NPC_ICONSHOP       7   /* Max number of icons per row in a shop */
+#define GUI_NPC_BUTTONWIDTH    62  /* Width of button frame */
+#define GUI_NPC_BUTTONTEXT     55  /* Width of button */
+#define GUI_NPC_TEXTFIELDWIDTH \
+    GUI_NPC_WIDTH - (GUI_NPC_BUTTONWIDTH + 4) * 2
 
-#define INTERFACE_MAX_LINE 100
-#define INTERFACE_MAX_CHAR 256
+#define GUI_NPC_MESSAGE_MAX_LINE 100
+#define GUI_NPC_REWARD_MAX_LINE  100
+#define GUI_NPC_ICON_MAX_LINE    3
+#define GUI_NPC_UPDATE_MAX_LINE  10
 
-#define INTERFACE_MAX_REWARD_LINE 100
-
-typedef struct gui_interface_head
+typedef enum _gui_npc_type
 {
-    int face;
-    char name[128];          /* face (picture name) */
-    _Sprite *picture;      /* the real picture */
-    char body_text[128]; /* head title */
+    GUI_NPC_NO,
+    GUI_NPC_HEAD,
+    GUI_NPC_HYPERTEXT,
+    GUI_NPC_MESSAGE,
+    GUI_NPC_REWARD,
+    GUI_NPC_ICON,
+    GUI_NPC_LINK,
+    GUI_NPC_UPDATE,
+    GUI_NPC_BUTTON,
+    GUI_NPC_TEXTFIELD
 }
-_gui_interface_head;
+_gui_npc_type;
 
-typedef struct gui_interface_link
+typedef enum _gui_npc_status
 {
-    char link[128];
-    char cmd[128];
+    GUI_NPC_STATUS_NORMAL,
+    GUI_NPC_STATUS_WAIT
 }
-_gui_interface_link;
+_gui_npc_status;
 
-typedef struct gui_interface_who
+typedef struct gui_internal_image
 {
-    char body[128];
+    char    *name;
+    int      face;
+    _Sprite *sprite;
 }
-_gui_interface_who;
+_gui_internal_image;
 
-typedef struct gui_interface_textfield
+typedef struct gui_internal_body
 {
-    char text[128];
+    char  *text;
+    uint8  line_count;
+    char  *line[GUI_NPC_MESSAGE_MAX_LINE];
 }
-_gui_interface_textfield;
+_gui_internal_body;
 
-typedef struct gui_interface_message
+typedef struct _gui_npc_element
 {
-    char title[128];
-    char body_text[4096];
-    int line_count;
-    char lines[INTERFACE_MAX_LINE][INTERFACE_MAX_CHAR];
+    struct _gui_npc_element *prev;
+    struct _gui_npc_element *next;
+    struct _gui_npc_element *last;
+    uint8                    type;
+    SDL_Rect                 box;
+    char                     mode;
+    _gui_internal_image      image;
+    char                    *keyword;
+    char                    *title;
+    char                    *title2;
+    char                    *command;
+    _gui_internal_body       body;
+    int                      quantity;
+    int                      copper;
+    int                      silver;
+    int                      gold;
+    int                      mithril;
 }
-_gui_interface_message;
+_gui_npc_element;
 
-typedef struct gui_interface_xtended
+typedef struct _gui_npc
 {
-    char title[128];
-    char body_text[4096];
-    int line_count;
+    uint16            startx;
+    uint16            starty;
+    uint16            yoff;
+    uint16            height;
+    int               status;
+    int               mode;
+    uint8             sound : 1;
+    uint8             shop : 1;
+    uint8             input_flag;
+    unsigned long     total_coins;
+    _gui_npc_element *first_selectable;
+    _gui_npc_element *keyword_selected;
+    _gui_npc_element *icon_selected;
+    _gui_npc_element *link_selected;
+    _gui_npc_element *button_selected;
+    _gui_npc_element *hypertext;
+    _gui_npc_element *head;
+    _gui_npc_element *message;
+    _gui_npc_element *reward;
+    _gui_npc_element *icon;
+    _gui_npc_element *link;
+    _gui_npc_element *update;
+    _gui_npc_element *lhsbutton;
+    _gui_npc_element *rhsbutton;
+    _gui_npc_element *textfield;
 }
-_gui_interface_xtended;
+_gui_npc;
 
-typedef struct gui_interface_reward
-{
-    int copper;
-    int silver;
-    int gold;
-    int mithril;
-    int line_count;
-    char title[128];
-    char body_text[4096];
-    char lines[INTERFACE_MAX_REWARD_LINE][INTERFACE_MAX_CHAR];
-}
-_gui_interface_reward;
+extern _gui_npc *gui_npc;
 
-typedef struct gui_interface_icon
-{
-    char mode;
-    int num;                /* real bmap number of the incon */
-    char title[128];
-    char name[128];          /* face (picture name) */
-    item element;
-    _Sprite *picture;      /* the real picture */
-    char *second_line;
-    char body_text[128]; /* head title */
-    char remove;
-}
-_gui_interface_icon;
-
-typedef struct gui_interface_button
-{
-    char title[64];
-    char title2[64];
-    char command[128];
-}
-_gui_interface_button;
-
-#define MAX_INTERFACE_KEYWORDS 25
-#define MAX_INTERFACE_ICON 15
-#define MAX_INTERFACE_LINKS 25
-
-/* which area of the static gui_interface struct is used* */
-#define GUI_INTERFACE_HEAD       0x01
-#define GUI_INTERFACE_MESSAGE    0x02
-#define GUI_INTERFACE_REWARD     0x04
-
-#define GUI_INTERFACE_ACCEPT     0x08
-#define GUI_INTERFACE_TEXTFIELD  0x10
-#define GUI_INTERFACE_DECLINE    0x20
-#define GUI_INTERFACE_BUTTON     0x40
-#define GUI_INTERFACE_WHO        0x80
-
-/* don't use, internal */
-#define GUI_INTERFACE_XTENDED     0x0100
-#define GUI_INTERFACE_ICON    0x0200
-#define GUI_INTERFACE_LINK    0x0400
-
-#define GUI_INTERFACE_STATUS_NORMAL 0
-#define GUI_INTERFACE_STATUS_WAIT 1
-
-typedef struct gui_interface_struct
-{
-    int mode;
-    int status;
-    uint32 used_flag;
-    int icon_count;
-    int link_count;
-    int win_length;
-    int input_flag;
-    int yoff;
-    int startx;
-    int starty;
-    int icon_select;
-    int selected;
-    int link_selected;
-    int keyword_selected;
-    int keyword_count;
-    char keywords[MAX_INTERFACE_KEYWORDS][128];
-    _gui_interface_head head;
-    _gui_interface_link link[MAX_INTERFACE_LINKS];
-    _gui_interface_message message;
-    _gui_interface_xtended xtended;
-    _gui_interface_reward reward;
-    _gui_interface_who who;
-    _gui_interface_icon icon[MAX_INTERFACE_ICON];
-    _gui_interface_button ok;
-    _gui_interface_button accept;
-    _gui_interface_button decline;
-    _gui_interface_textfield textfield;
-}
-_gui_interface_struct;
-
-extern void reset_gui_interface(void);
-extern _gui_interface_struct *load_gui_interface(int mode, char *data, int len, int pos);
-extern void gui_interface_send_command(int mode, char *cmd);
-extern int get_interface_line(int *element, int *index, char **keyword, int x, int y, int mx, int my);
-extern int precalc_interface_npc(void);
-extern void show_interface_npc(int mark);
-extern void gui_interface_mouse(SDL_Event *e);
-extern void gui_interface_mousemove(SDL_Event *e);
+extern void gui_npc_reset(void);
+extern _gui_npc *gui_npc_create(int mode, char *data, int len, int pos);
+extern void gui_npc_show(int mark);
+extern void gui_npc_mousemove(SDL_Event *e);
+extern void gui_npc_mouseclick(SDL_Event *e);
+extern void gui_npc_keypress(int key);
 
 #endif

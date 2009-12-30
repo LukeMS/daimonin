@@ -139,6 +139,7 @@ static struct method_decl GameObject_methods[] =
     {"Sound",                  (lua_CFunction) GameObject_Sound},
     {"StartNewInstance",       (lua_CFunction) GameObject_StartNewInstance},
     {"Take",                   (lua_CFunction) GameObject_Take},
+    {"UpdateQuest",            (lua_CFunction) GameObject_UpdateQuest},
     {"Withdraw",               (lua_CFunction) GameObject_Withdraw},
     {"Write",                  (lua_CFunction) GameObject_Write},
 
@@ -1115,7 +1116,7 @@ static int GameObject_Interface(lua_State *L)
 
     get_lua_args(L, "Oi|s", &self, &mode, &txt);
 
-    hooks->gui_interface(WHO, mode, txt, NULL);
+    hooks->gui_npc(WHO, mode, txt);
 
     return 0;
 }
@@ -2331,23 +2332,38 @@ static int GameObject_CreatePlayerForce(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : GameObject_AddQuest                                              */
-/* Lua    : object:AddQuest(q_name, mode, start, stop, level, skill, msg)    */
-/* Info   : Add a quest_trigger to a quest_container = give player a quest   */
+/* Lua    : object:AddQuest(name, mode, start, stop, level, skill, msg, reps)*/
+/* Info   : Only works for player objects. Other types generate an error.    */
+/*          Add a quest_trigger to a quest_container = give player a quest.  */
 /* Status : Tested/Stable                                                    */
 /*****************************************************************************/
 static int GameObject_AddQuest(lua_State *L)
 {
     char       *name, *msg;
-    int         mode, lev, skill_lev, step_start, step_end;
+    int         mode, lev, skill_lev, step_start, step_end, repeats = 0;
     object     *myob;
     lua_object *self;
 
-    get_lua_args(L, "Osiiiii|s", &self, &name, &mode, &step_start, &step_end, &lev, &skill_lev, &msg);
+    get_lua_args(L, "Osiiiii|si", &self, &name, &mode, &step_start, &step_end, &lev, &skill_lev, &msg, &repeats);
 
-    /* if we return NULL, the quest can't be given - if we are a player because we it max quests */
-    if(WHO->type != PLAYER || hooks->quest_count_pending(WHO) >= QUESTS_PENDING_MAX)
+    if (WHO->type != PLAYER || CONTR(WHO) == NULL)
+        return luaL_error(L, "object:AddQuest() can only be called on a player!");
+
+    /* Player already has quest? Abort but log this fact. */
+    if (hooks->quest_find_name(WHO, name))
     {
-        hooks->new_draw_info_format(NDI_UNIQUE | NDI_NAVY, 0, WHO, "You can't have more as %d open quests.\nRemove one first!", QUESTS_PENDING_MAX);
+        LOG(llevInfo, "LUA INFO:: object:AddQuest(): %s[%d] already has quest '%s'!\n",
+            WHO->name, WHO->count, name);
+
+        return 0;
+    }
+
+    /* Player has too many quests? Message player and abort. */
+    if(hooks->quest_count_pending(WHO) >= QUESTS_PENDING_MAX)
+    {
+        hooks->new_draw_info_format(NDI_UNIQUE | NDI_NAVY, 0, WHO, "You can't have more than %d open quests.\nRemove one first!",
+                                    QUESTS_PENDING_MAX);
+
         return 0;
     }
 
@@ -2358,14 +2374,18 @@ static int GameObject_AddQuest(lua_State *L)
 
     /* store name & arch name of the quest obj. so we can id it later */
     FREE_AND_COPY_HASH(myob->name, name);
+
     if(msg)
+    {
         FREE_AND_COPY_HASH(myob->msg, msg);
+    }
 
     myob->sub_type1 = (uint8)mode;
     myob->last_heal = (sint16)step_start;
     myob->state = step_end;
     myob->item_skill = skill_lev;
     myob->item_level = lev;
+    myob->last_eat = myob->stats.food = 0; //MAX(0, repeats);
 
     hooks->add_quest_trigger(WHO, myob);
 
@@ -2434,19 +2454,25 @@ static int GameObject_CheckQuestLevel(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : GameObject_AddQuestTarget                                        */
-/* Lua    : object:AddQuestTarget(chance, nrof, k_arch, k_name, k_title)     */
-/* Info   : define a kill mob. Careful: if all are "" then ALL mobs are part */
+/* Lua    : object:AddQuestTarget(chance, nrof, arch, name, race, title, lev)*/
+/* Info   : define a kill mob. Careful: if all are nil then ALL mobs are part*/
 /*          of this quest. If only arch set, all mobs using that base arch   */
-/* Status : Tested/Stable                                                    */
+/* Status : Untested/Stable                                                  */
+/* TODO   : Improve docs.                                                    */
 /*****************************************************************************/
 static int GameObject_AddQuestTarget(lua_State *L)
 {
-    char       *kill_arch, *kill_name=NULL, *kill_sym_name1=NULL, *kill_sym_name2=NULL;
-    int         nrof, chance;
-    object     *myob;
     lua_object *self;
+    int         nrof,
+                chance;
+    char       *arch = NULL,
+               *name = NULL,
+               *race = NULL,
+               *title = NULL;
+    int         level = 0;
+    object     *myob;
 
-    get_lua_args(L, "Oiis|s|s|s", &self, &chance, &nrof, &kill_arch, &kill_name, &kill_sym_name1, &kill_sym_name2);
+    get_lua_args(L, "Oii|ssssi", &self, &chance, &nrof, &arch, &name, &race, &title, &level);
 
     myob = hooks->arch_to_object(hooks->find_archetype("quest_info"));
 
@@ -2456,47 +2482,47 @@ static int GameObject_AddQuestTarget(lua_State *L)
     myob->last_grace = chance;
     myob->last_sp = nrof; /* can be overruled by ->inv objects */
 
-    /* to be sure we get the right mob we use the arch object name */
-    if(*kill_arch!='\0')
+    if(arch && *arch!='\0')
     {
-        FREE_AND_COPY_HASH(myob->race, kill_arch);
+        FREE_AND_COPY_HASH(myob->race, arch);
     }
     else
     {
         FREE_ONLY_HASH(myob->race);
     }
 
-    /* this is the "base" name of the kill mob */
-    if(kill_name && *kill_name!='\0')
+    if(name && *name!='\0')
     {
-        FREE_AND_COPY_HASH(myob->name, kill_name);
+        FREE_AND_COPY_HASH(myob->name, name);
     }
     else
     {
         FREE_ONLY_HASH(myob->name);
     }
 
-    /* perhaps name is "giant spiders" - now we have at the spot
-     * "large spiders" and "huge spiders" too. With the sym
-     * names we can add a bit "fuzzy" to our kill quests and
-     * allow kills of them too. A bit like "kill quest mob group".
-     */
-    if(kill_sym_name1 && *kill_sym_name1!='\0')
+    if(race && *race!='\0')
     {
-        FREE_AND_COPY_HASH(myob->slaying, kill_sym_name1);
+        FREE_AND_COPY_HASH(myob->slaying, race);
     }
     else
     {
         FREE_ONLY_HASH(myob->slaying);
     }
-    if(kill_sym_name2 && *&kill_sym_name2!='\0')
+
+    if(title && *&title!='\0')
     {
-        FREE_AND_COPY_HASH(myob->title, kill_sym_name2);
+        FREE_AND_COPY_HASH(myob->title, title);
     }
     else
     {
         FREE_ONLY_HASH(myob->title);
     }
+
+    /* Only mobs >= level count as targets. This is a useful final check to
+     * prevent players from going to a source of low level mobs to easily
+     * complete a quest. We use weight_limit as level is already used for quest
+     * objects. */
+    myob->weight_limit = level;
 
     /* finally add it to the quest_trigger object */
     hooks->insert_ob_in_ob(myob, self->data.object);
@@ -2655,6 +2681,10 @@ static int remove_quest_items(const object *inv, const object *myob, int nrof)
 /*          NOTE: the function tries to remove given objects even when there,*/
 /*          are not enough! count them before calling this function.         */
 /* Status : Tested/Stable                                                    */
+/* TODO   : I am very unhappy with this function. It does not work well and  */
+/*          in fact I am not clear why it is not done automatically when a   */
+/*          quest is finished or skipped anyway; AFAICS there is never a need*/
+/*          to call it explicitly anyway. Will be addressed in SEQSy.        */
 /*****************************************************************************/
 static int GameObject_RemoveQuestItem(lua_State *L)
 {
@@ -4199,6 +4229,39 @@ static int GameObject_SetPersonalLight(lua_State *L)
 
     hooks->set_personal_light(CONTR(WHO), value);
     lua_pushnumber(L, CONTR(WHO)->personal_light);
+
+    return 1;
+}
+
+/*****************************************************************************/
+/* Name   : GameObject_UpdateQuest                                           */
+/* Lua    : object:UpdateQuest(name, text)                                   */
+/* Info   : Only works for player objects. Other types generate an error.    */
+/*          Updates name quest for player object with text string.           */
+/* Return : nil if the named quest has not been undertaken by player, or true*/
+/*          or false otherwise to indicate whether the update was successful.*/
+/* Status : Untested/Stable                                                  */
+/*****************************************************************************/
+static int GameObject_UpdateQuest(lua_State *L)
+{
+    lua_object *self;
+    char       *name,
+               *text;
+    object     *quest;
+
+    get_lua_args(L, "Oss", &self, &name, &text);
+
+    /* Only players can have quests. */
+    if (WHO->type != PLAYER || CONTR(WHO) == NULL)
+        return luaL_error(L, "UpdateQuest() can only be called on a player!");
+
+    /* Find the actual named quest in the player's quest_containers. If we
+     * can't, return nil. */
+    if (!(quest = hooks->quest_find_name(WHO, name)))
+        lua_pushnil(L);
+    /* Update quest, returning true or false to indicate success. */
+    else
+        lua_pushboolean(L, hooks->update_quest(quest, text, NULL));
 
     return 1;
 }

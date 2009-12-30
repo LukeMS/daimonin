@@ -85,7 +85,7 @@
 +44|WALL|magic_wall.wav
 +45|WALL2|magic_walls.wav
 +46|WOUND|magic_wound.wav
-*2|CLIENT|SOUND_|19
+*2|CLIENT|SOUND_|23
 +0|STEP1|step1.wav
 +1|STEP2|step2.wav
 +2|PRAY|pray.wav
@@ -105,4 +105,8 @@
 +16|BOOK|book.wav
 +17|PAGE|page.wav
 +18|HEARTBEAT|heartbeat.wav
++19|COINS1|coins1.wav
++20|COINS2|coins2.wav
++21|COINS3|coins3.wav
++22|COINS4|coins4.wav
 *end

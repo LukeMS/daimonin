@@ -115,6 +115,7 @@ _option             opt[]                           =
         {"Textwindows use alpha:", "Whether the textwindows are transparent.","","WARNING: Don't check this if you have a VERY slow computer!", "",SEL_CHECKBOX,0,1,1,1, &options.use_TextwinAlpha,VAL_INT},
         {"Textwindows alpha value:", "Transparency value of textwindows.","A higher value means a darker textwindow.","Only has meaning if 'Textwindows use alpha' is checked.", "",SEL_RANGE,0,255,5,110, &options.textwin_alpha,VAL_INT},
         {"Enable chatfilter:", "Whether to filter incoming messages for 'bad' words.","See '/cfilter ?' for more details on this.","", "",SEL_CHECKBOX,0,1,1,0, &options.chatfilter,VAL_BOOL},
+        {"NPC GUI keyword panel:", "Whether/where to show a list of clickable keywords.", "", "", "Off#Left#Right", SEL_RANGE, 0, 2, 1, 1, &options.keyword_panel, VAL_INT},
         {"#", "","","", "",0,0,0,0,0, NULL,0},
         /* End of Page */
 
