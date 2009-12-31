@@ -193,7 +193,7 @@ void UpdateMapName(char *name)
     if (name == NULL)
         return;
 
-    cur_widget[MAPNAME_ID].wd = get_string_pixel_length(name, &font_big_out);
+    cur_widget[MAPNAME_ID].wd = StringWidth(&font_big_out, name);
     cur_widget[MAPNAME_ID].ht = font_big_out.c[0].h;
     strcpy(MapData.name, name);
 }

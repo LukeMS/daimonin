@@ -119,7 +119,7 @@ static void show_inventory_item_stats(item *tmp, int x, int y)
     {
         StringBlt(ScreenSurface, &font_small, "con: ", x + 23, y - 14, COLOR_HGOLD, NULL, NULL);
         sprintf(buf, "%d", tmp->item_qua);
-        StringBlt(ScreenSurface, &font_small, buf, x + 57 - get_string_pixel_length(buf, &font_small), y - 14,
+        StringBlt(ScreenSurface, &font_small, buf, x + 57 - StringWidth(&font_small, buf), y - 14,
                   COLOR_HGOLD, NULL, NULL);
         sprintf(buf, "(%d)", tmp->item_con);
         StringBlt(ScreenSurface, &font_small, buf, x + 60, y - 14, COLOR_HGOLD, NULL, NULL);
@@ -689,7 +689,7 @@ void blt_inv_item(item *tmp, int x, int y)
         else
             sprintf(buf, "%d", tmp->nrof);
         StringBlt(ScreenSurface, &font_tiny_out, buf,
-                  x + (ICONDEFLEN / 2) - (get_string_pixel_length(buf, &font_tiny_out) / 2), y + 18, COLOR_WHITE, NULL,
+                  x + (ICONDEFLEN / 2) - (StringWidth(&font_tiny_out, buf) / 2), y + 18, COLOR_WHITE, NULL,
                   NULL);
     }
 
