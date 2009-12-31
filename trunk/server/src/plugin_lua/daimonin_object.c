@@ -1104,17 +1104,22 @@ static int GameObject_Sound(lua_State *L)
 /* Name   : GameObject_Interface                                             */
 /* Lua    : object:Interface(mode, message)                                  */
 /* Info   : This function opens a NPC gui interface on the client            */
-/*          A mode of -1 means to close explicit a open interface at client  */
+/*          A mode of 0 means to close explicit a open interface at client   */
 /* Status : Tested/Stable                                                    */
 /*****************************************************************************/
 
 static int GameObject_Interface(lua_State *L)
 {
     lua_object *self;
-    char       *txt;
+    char       *txt = NULL;
     int         mode;
 
     get_lua_args(L, "Oi|s", &self, &mode, &txt);
+
+    if (mode >= GUI_NPC_MODE_END)
+    {
+        mode = GUI_NPC_MODE_NO;
+    }
 
     hooks->gui_npc(WHO, mode, txt);
 

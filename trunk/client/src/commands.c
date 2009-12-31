@@ -1351,7 +1351,9 @@ void InterfaceCmd(char *data, int len)
     cpl.input_mode = INPUT_MODE_NO;
     gui_npc_reset();
 
-    if (len)
+    if (mode > GUI_NPC_MODE_NO &&
+        mode < GUI_NPC_MODE_END &&
+        len)
     {
         if (!gui_npc_create(mode, data, len, 0))
         {
