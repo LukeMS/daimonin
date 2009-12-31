@@ -2032,7 +2032,7 @@ int main(int argc, char *argv[])
         }
 
         if (map_transfer_flag)
-                StringBlt(ScreenSurface, &font_small, "Transfer Character to Map...", 300, 300, COLOR_DEFAULT, NULL, NULL);
+                string_blt(ScreenSurface, &font_small, "Transfer Character to Map...", 300, 300, COLOR_DEFAULT, NULL, NULL);
 
         /* show the current dragged item */
         if (cpl.menustatus == MENU_NO && (drag = draggingInvItem(DRAG_GET_STATUS)))
@@ -2151,7 +2151,7 @@ int main(int argc, char *argv[])
                 rec.y = 122;
                 rec.h = 14;
                 rec.w = 225;
-                StringBlt(ScreenSurface, &font_small, buf, rec.x, rec.y, COLOR_DEFAULT, NULL, NULL);
+                string_blt(ScreenSurface, &font_small, buf, rec.x, rec.y, COLOR_DEFAULT, NULL, NULL);
             }
         }
 
@@ -2198,7 +2198,7 @@ int main(int argc, char *argv[])
                         3000.0f))));
                 map_udate_flag = 2;
                 EMBOSS(ScreenSurface, &font_big_out, vim[i].msg,
-                       400 - (StringWidth(&font_big_out, vim[i].msg) / 2),
+                       400 - (string_width(&font_big_out, vim[i].msg) / 2),
                        300 - bmoff, vim[i].color, NULL, &bmbltfx);
             }
         }
@@ -2242,9 +2242,9 @@ static void show_intro(char *text, int progress)
     sprite_blt(Bitmaps[BITMAP_PROGRESS], x + 310, y + 588, &box, NULL);
 
     if (text)
-        StringBlt(ScreenSurface, &font_small, text, x+370, y+585, COLOR_DEFAULT, NULL, NULL);
+        string_blt(ScreenSurface, &font_small, text, x+370, y+585, COLOR_DEFAULT, NULL, NULL);
     else
-        StringBlt(ScreenSurface, &font_small, "** Press Key **", x+375, y+585, COLOR_DEFAULT, NULL, NULL);
+        string_blt(ScreenSurface, &font_small, "** Press Key **", x+375, y+585, COLOR_DEFAULT, NULL, NULL);
 
     flip_screen();
 }
@@ -2263,7 +2263,7 @@ static void flip_screen(void)
                 ""
 #endif
                 );
-        StringBlt(ScreenSurface, &font_small, buf, (Screensize.xoff/2)+10, (Screensize.yoff/2)+585, COLOR_DEFAULT, NULL, NULL);
+        string_blt(ScreenSurface, &font_small, buf, (Screensize.xoff/2)+10, (Screensize.yoff/2)+585, COLOR_DEFAULT, NULL, NULL);
     }
 
 #ifdef INSTALL_OPENGL
