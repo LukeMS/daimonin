@@ -1651,7 +1651,7 @@ void show_login_server(void)
     else
         sprintf(buf, "%s", ServerName);
 
-    t -= get_string_pixel_length(buf, &font_big_out) / 2;
+    t -= StringWidth(&font_big_out, buf) / 2;
     StringBlt(ScreenSurface, &font_big_out, buf, t + 1, y - 21, COLOR_BLACK, NULL, NULL);
     StringBlt(ScreenSurface, &font_big_out, buf, t, y - 22, COLOR_HGOLD, NULL, NULL);
 

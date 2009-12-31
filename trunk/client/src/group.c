@@ -73,7 +73,7 @@ void widget_show_group(int x, int y)
     {
         sprite_blt(Bitmaps[BITMAP_GROUP_INVITE], x + 10, y +32, NULL, NULL);
         StringBlt(ScreenSurface, &font_small, "GROUP INVITE", x+30, y+13,COLOR_GREEN, NULL, NULL);
-        len =  get_string_pixel_length(group_invite, &font_small);
+        len =  StringWidth(&font_small, group_invite);
         StringBlt(ScreenSurface, &font_small, group_invite, x + 60-len/2, y + 45, COLOR_HGOLD, NULL, NULL);
         StringBlt(ScreenSurface, &font_small, "has invited you", x + 28, y +65, COLOR_DEFAULT, NULL, NULL);
         StringBlt(ScreenSurface, &font_small, "to join a group.", x + 28, y +78, COLOR_DEFAULT, NULL, NULL);
@@ -207,7 +207,7 @@ void show_group(int x, int y)
     {
         sprite_blt(Bitmaps[BITMAP_GROUP_INVITE], x + group_pos[0][0] + 2, y + group_pos[0][1] + 1, NULL, NULL);
         StringBlt(ScreenSurface, &font_small, "GROUP INVITE", x + group_pos[0][0] + 76, y + group_pos[0][1] + 5,COLOR_GREEN, NULL, NULL);
-        len =  get_string_pixel_length(group_invite, &font_small);
+        len =  StringWidth(&font_small, group_invite);
         StringBlt(ScreenSurface, &font_small, group_invite, x + group_pos[0][0]+107-len/2, y + group_pos[0][1] + 19,COLOR_HGOLD, NULL, NULL);
         StringBlt(ScreenSurface, &font_small, " has invited you to join a group.", x + group_pos[0][0] + 40, y + group_pos[0][1] + 31,COLOR_DEFAULT, NULL, NULL);
 

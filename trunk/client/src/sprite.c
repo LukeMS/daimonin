@@ -651,17 +651,6 @@ Uint32 GetSurfacePixel(SDL_Surface *Surface, Sint32 X, Sint32 Y)
     return -1;
 }
 
-
-int get_string_pixel_length(char *text, struct _font *font)
-{
-    register int i, len = 0;
-
-    for (i = 0; text[i] != 0; i++)
-        len += font->c[(int) text[i]].w + font->char_offset;
-
-    return len;
-}
-
 /* Alderan 2007-11-03: i reworked that a bit:
  * we dont need for every blit check for all the map drawing stuff
  * so the mapdrawing gets its own function. */

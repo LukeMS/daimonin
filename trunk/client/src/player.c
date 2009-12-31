@@ -289,20 +289,20 @@ void widget_player_stats(int x, int y)
 
         StringBlt(widgetSF[STATS_ID], &font_small, "HP", 58, 10, COLOR_WHITE, NULL, NULL);
         sprintf(buf, "%d (%d)", cpl.stats.hp, cpl.stats.maxhp);
-        StringBlt(widgetSF[STATS_ID], &font_small, buf, 160 - get_string_pixel_length(buf, &font_small), 10,
+        StringBlt(widgetSF[STATS_ID], &font_small, buf, 160 - StringWidth(&font_small, buf), 10,
                   COLOR_GREEN, NULL, NULL);
         sprite_blt(Bitmaps[BITMAP_HP_BACK], 57, 23, NULL, &bltfx);
 
 
         StringBlt(widgetSF[STATS_ID], &font_small, "Mana", 58, 34, COLOR_WHITE, NULL, NULL);
         sprintf(buf, "%d (%d)", cpl.stats.sp, cpl.stats.maxsp);
-        StringBlt(widgetSF[STATS_ID], &font_small, buf, 160 - get_string_pixel_length(buf, &font_small), 34,
+        StringBlt(widgetSF[STATS_ID], &font_small, buf, 160 - StringWidth(&font_small, buf), 34,
                   COLOR_GREEN, NULL, NULL);
         sprite_blt(Bitmaps[BITMAP_SP_BACK], 57, 47, NULL, &bltfx);
 
         StringBlt(widgetSF[STATS_ID], &font_small, "Grace", 58, 58, COLOR_WHITE, NULL, NULL);
         sprintf(buf, "%d (%d)", cpl.stats.grace, cpl.stats.maxgrace);
-        StringBlt(widgetSF[STATS_ID], &font_small, buf, 160 - get_string_pixel_length(buf, &font_small), 58,
+        StringBlt(widgetSF[STATS_ID], &font_small, buf, 160 - StringWidth(&font_small, buf), 58,
                   COLOR_GREEN, NULL, NULL);
         sprite_blt(Bitmaps[BITMAP_GRACE_BACK], 57, 71, NULL, &bltfx);
 
@@ -483,27 +483,27 @@ void widget_skillgroups(int x, int y)
         StringBlt(widgetSF[SKILL_LVL_ID], &font_tiny_out, "name / level", 3, 13, COLOR_HGOLD, NULL, NULL);
         sprintf(buf, " %d", cpl.stats.skill_level[0]);
         StringBlt(widgetSF[SKILL_LVL_ID], &font_small, "Ag:", 6, 26, COLOR_HGOLD, NULL, NULL);
-        StringBlt(widgetSF[SKILL_LVL_ID], &font_small, buf, 44 - get_string_pixel_length(buf, &font_small), 26, COLOR_WHITE,
+        StringBlt(widgetSF[SKILL_LVL_ID], &font_small, buf, 44 - StringWidth(&font_small, buf), 26, COLOR_WHITE,
                   NULL, NULL);
         sprintf(buf, " %d", cpl.stats.skill_level[2]);
         StringBlt(widgetSF[SKILL_LVL_ID], &font_small, "Me:", 6, 38, COLOR_HGOLD, NULL, NULL);
-        StringBlt(widgetSF[SKILL_LVL_ID], &font_small, buf, 44 - get_string_pixel_length(buf, &font_small), 38, COLOR_WHITE,
+        StringBlt(widgetSF[SKILL_LVL_ID], &font_small, buf, 44 - StringWidth(&font_small, buf), 38, COLOR_WHITE,
                   NULL, NULL);
         sprintf(buf, " %d", cpl.stats.skill_level[4]);
         StringBlt(widgetSF[SKILL_LVL_ID], &font_small, "Ma:", 6, 49, COLOR_HGOLD, NULL, NULL);
-        StringBlt(widgetSF[SKILL_LVL_ID], &font_small, buf, 44 - get_string_pixel_length(buf, &font_small), 49, COLOR_WHITE,
+        StringBlt(widgetSF[SKILL_LVL_ID], &font_small, buf, 44 - StringWidth(&font_small, buf), 49, COLOR_WHITE,
                   NULL, NULL);
         sprintf(buf, " %d", cpl.stats.skill_level[1]);
         StringBlt(widgetSF[SKILL_LVL_ID], &font_small, "Pe:", 6, 62, COLOR_HGOLD, NULL, NULL);
-        StringBlt(widgetSF[SKILL_LVL_ID], &font_small, buf, 44 - get_string_pixel_length(buf, &font_small), 62, COLOR_WHITE,
+        StringBlt(widgetSF[SKILL_LVL_ID], &font_small, buf, 44 - StringWidth(&font_small, buf), 62, COLOR_WHITE,
                   NULL, NULL);
         sprintf(buf, " %d", cpl.stats.skill_level[3]);
         StringBlt(widgetSF[SKILL_LVL_ID], &font_small, "Ph:", 6, 74, COLOR_HGOLD, NULL, NULL);
-        StringBlt(widgetSF[SKILL_LVL_ID], &font_small, buf, 44 - get_string_pixel_length(buf, &font_small), 74, COLOR_WHITE,
+        StringBlt(widgetSF[SKILL_LVL_ID], &font_small, buf, 44 - StringWidth(&font_small, buf), 74, COLOR_WHITE,
                   NULL, NULL);
         sprintf(buf, " %d", cpl.stats.skill_level[5]);
         StringBlt(widgetSF[SKILL_LVL_ID], &font_small, "Wi:", 6, 86, COLOR_HGOLD, NULL, NULL);
-        StringBlt(widgetSF[SKILL_LVL_ID], &font_small, buf, 44 - get_string_pixel_length(buf, &font_small), 86, COLOR_WHITE,
+        StringBlt(widgetSF[SKILL_LVL_ID], &font_small, buf, 44 - StringWidth(&font_small, buf), 86, COLOR_WHITE,
                   NULL, NULL);
     }
     box.x=x;
@@ -695,11 +695,11 @@ void widget_show_main_lvl(int x, int y)
         StringBlt(widgetSF[MAIN_LVL_ID], &font_tiny_out, "Level / Exp", 4, 1, COLOR_HGOLD, NULL, NULL);
         sprintf(buf, "%d", cpl.stats.level);
         if (cpl.stats.exp_level != cpl.stats.level)
-            StringBlt(widgetSF[MAIN_LVL_ID], &font_big_out, buf, 91 - get_string_pixel_length(buf, &font_big_out), 4, COLOR_RED, NULL, NULL);
+            StringBlt(widgetSF[MAIN_LVL_ID], &font_big_out, buf, 91 - StringWidth(&font_big_out, buf), 4, COLOR_RED, NULL, NULL);
         else if (cpl.stats.level == MAXLEVEL)
-            StringBlt(widgetSF[MAIN_LVL_ID], &font_big_out, buf, 91 - get_string_pixel_length(buf, &font_big_out), 4, COLOR_HGOLD, NULL, NULL);
+            StringBlt(widgetSF[MAIN_LVL_ID], &font_big_out, buf, 91 - StringWidth(&font_big_out, buf), 4, COLOR_HGOLD, NULL, NULL);
         else
-            StringBlt(widgetSF[MAIN_LVL_ID], &font_big_out, buf, 91 - get_string_pixel_length(buf, &font_big_out), 4, COLOR_WHITE, NULL, NULL);
+            StringBlt(widgetSF[MAIN_LVL_ID], &font_big_out, buf, 91 - StringWidth(&font_big_out, buf), 4, COLOR_WHITE, NULL, NULL);
         sprintf(buf, "%d", cpl.stats.exp);
         StringBlt(widgetSF[MAIN_LVL_ID], &font_small, buf, 5, 20, COLOR_WHITE, NULL, NULL);
 
