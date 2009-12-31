@@ -143,9 +143,9 @@ extern void             sprite_blt(_Sprite *sprite, int x, int y, SDL_Rect *box,
 extern void             sprite_blt_map(_Sprite *sprite, int x, int y, SDL_Rect *box, _BLTFX *bltfx, Uint32 stretch);
 
 extern Uint32           GetSurfacePixel(SDL_Surface *Surface, Sint32 X, Sint32 Y);
-extern int              StringWidth(_font *font, char *text);
-extern int              StringWidthOffset(_font *font, char *text, int *line, int len);
-extern void             StringBlt(SDL_Surface *surf, _font *font, char *text, int x, int y, int col, SDL_Rect *area,
+extern int              string_width(_font *font, char *text);
+extern int              string_width_offset(_font *font, char *text, int *line, int len);
+extern void             string_blt(SDL_Surface *surf, _font *font, char *text, int x, int y, int col, SDL_Rect *area,
                                       _BLTFX *bltfx);
 extern int              sprite_collision(int x1, int y1, int x2, int y2, _Sprite *sprite1, _Sprite *sprite2);
 extern Uint32           getpixel(SDL_Surface *surface, int x, int y);
@@ -181,11 +181,11 @@ int zoomSurfaceY(SDL_Surface * src, SDL_Surface * dst, int flipx, int flipy);
  * slightly 3d 'shadow' effect. */
 /* EMBOSS prints the string with the shadow on the bottom and right. */
 #define EMBOSS(surf, font, text, x, y, col, area, bltfx) \
-        StringBlt((surf), (font), (text), (x) + 1, (y) + 1, COLOR_BLACK, (area), (bltfx)); \
-        StringBlt((surf), (font), (text), (x), (y), (col), (area), (bltfx));
+        string_blt((surf), (font), (text), (x) + 1, (y) + 1, COLOR_BLACK, (area), (bltfx)); \
+        string_blt((surf), (font), (text), (x), (y), (col), (area), (bltfx));
 /* ENGRAVE prints the string with the shadow on the top and left. */
 #define ENGRAVE(surf, font, text, x, y, col, area, bltfx) \
-        StringBlt((surf), (font), (text), (x), (y), COLOR_BLACK, (area), (bltfx)); \
-        StringBlt((surf), (font), (text), (x) + 1, (y) + 1, (col), (area), (bltfx));
+        string_blt((surf), (font), (text), (x), (y), COLOR_BLACK, (area), (bltfx)); \
+        string_blt((surf), (font), (text), (x) + 1, (y) + 1, (col), (area), (bltfx));
 
 #endif

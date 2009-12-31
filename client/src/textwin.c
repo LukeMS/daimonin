@@ -429,7 +429,7 @@ static void show_window(int actWin, int x, int y, _BLTFX *bltfx)
             if (temp < 0)
                 temp = TEXT_WIN_MAX + temp;
         }
-        StringBlt(bltfx->surface, &font_small, &txtwin[actWin].text[temp].buf[0], x + 2,
+        string_blt(bltfx->surface, &font_small, &txtwin[actWin].text[temp].buf[0], x + 2,
                   (y + 1 + i * 10) | txtwin[actWin].text[temp].key_clipped, txtwin[actWin].text[temp].color, NULL, NULL);
     }
 
