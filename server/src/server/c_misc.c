@@ -294,7 +294,7 @@ int command_who(object *op, char *params)
 
                 if (pl->privacy)
                 {
-                    new_draw_info(NDI_UNIQUE, 0, op, "    (~privacy mode~)");
+                    new_draw_info(NDI_UNIQUE, 0, op, "    ~Privacy mode~");
                 }
 
                 if ((len = strlen(pl->ob->map->path)) >= 16)
@@ -302,10 +302,12 @@ int command_who(object *op, char *params)
                 else
                     off = 0;
 
-                new_draw_info_format(NDI_UNIQUE, 0, op, "    (~MAP~: %s%s %d,%d) (~IP~:%s)",
+                new_draw_info_format(NDI_UNIQUE, 0, op, "    ~Map~: %s%s %d,%d",
                                      (off) ? "..." : "",
                                      pl->ob->map->path + off, pl->ob->x,
-                                     pl->ob->y, pl->socket.ip_host);
+                                     pl->ob->y);
+                new_draw_info_format(NDI_UNIQUE, 0, op, "    ~IP~: %s",
+                                     pl->socket.ip_host);
             }
         }
     }
