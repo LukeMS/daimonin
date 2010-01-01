@@ -556,7 +556,7 @@ int Event_PollInputDevice(void)
             {
                 if (event.button.button ==0)
                 {
-                    gui_npc_mousemove(&event);
+                    gui_npc_mousemove(event.motion.x, event.motion.y);
                     break;
                 }
 

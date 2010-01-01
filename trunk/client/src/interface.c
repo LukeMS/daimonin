@@ -2999,9 +2999,9 @@ static void SelectButton(_gui_npc_element *element)
 
 /* Mouse moves are used to select keywords, icons, links, and buttons.
  */
-void gui_npc_mousemove(SDL_Event *e)
+void gui_npc_mousemove(uint16 x, uint16 y)
 {
-    _gui_npc_element *element = GetElement(e->motion.x, e->motion.y);
+    _gui_npc_element *element = GetElement(x, y);
 
     if (element)
     {
