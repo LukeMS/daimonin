@@ -281,11 +281,20 @@ void gui_npc(object *who, uint8 mode, const char *text)
     NewSocket *ns = &CONTR(who)->socket;
 
     SOCKBUF_REQUEST_BUFFER(ns, SOCKET_SIZE_SMALL);
-    SockBuf_AddChar(ACTIVE_SOCKBUF(ns), mode);
 
-    if (text)
+    if (mode == GUI_NPC_MODE_NO ||
+        mode >= GUI_NPC_MODE_END)
     {
-        SockBuf_AddString(ACTIVE_SOCKBUF(ns), text, strlen(text));
+        SockBuf_AddChar(ACTIVE_SOCKBUF(ns), GUI_NPC_MODE_NO);
+    }
+    else
+    {
+        SockBuf_AddChar(ACTIVE_SOCKBUF(ns), mode);
+
+        if (text)
+        {
+            SockBuf_AddString(ACTIVE_SOCKBUF(ns), text, strlen(text));
+        }
     }
 
     SOCKBUF_REQUEST_FINISH(ns, BINARY_CMD_INTERFACE, SOCKBUF_DYNAMIC);
