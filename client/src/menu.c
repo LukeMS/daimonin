@@ -539,7 +539,17 @@ void show_menu(void)
     else if (cpl.menustatus == MENU_BOOK)
         show_book(400-Bitmaps[BITMAP_JOURNAL]->bitmap->w/2,300-Bitmaps[BITMAP_JOURNAL]->bitmap->h/2);
     else if (cpl.menustatus == MENU_NPC)
+    {
+        int x,
+            y;
+
         gui_npc_show(esc_menu_index);
+
+        /* Force selection of element under pointer. */
+        SDL_PumpEvents();
+        SDL_GetMouseState(&x, &y);
+        gui_npc_mousemove(x, y);
+    }
     else if (cpl.menustatus == MENU_STATUS)
         show_status();
     else if (cpl.menustatus == MENU_SPELL)
