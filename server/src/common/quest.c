@@ -186,9 +186,12 @@ void insert_quest_item(struct obj *quest_trigger, struct obj *target)
     {
         object *tmp, *quest;
 
-        if((quest = find_quest_trigger(target, quest_trigger)))
+        if ((quest = find_quest_trigger(target, quest_trigger)) &&
+            quest->magic != (sint8)quest_trigger->last_heal)
         {
             char buf[MAX_BUF] = "";
+
+            quest->magic = (sint8)quest_trigger->last_heal;
 
             if(quest_trigger->msg)
                 new_draw_info(NDI_UNIQUE | NDI_ORANGE, 0, target, quest_trigger->msg);
@@ -202,10 +205,9 @@ void insert_quest_item(struct obj *quest_trigger, struct obj *target)
                             query_short_name(tmp, target));
                 }
             }
-
-            if (quest->magic != (sint8)quest_trigger->last_heal)
+            
+            if (quest->magic == quest->state)
             {
-                quest->magic = (sint8)quest_trigger->last_heal;
                 sprintf(strchr(buf, '\0'), "Quest completed!");
             }
 
