@@ -1,5 +1,5 @@
 Object key_blue
-name strange key
+name key
 layer 3
 race keys
 item_quality 100
@@ -11,6 +11,9 @@ value 100
 weight 100
 startequip 1
 nrof 1
+identified 1
+known_cursed 1
+known_magical 1
 end
 Object key_wintersevent
 name Journan's Key
@@ -25,4 +28,7 @@ value 100
 weight 100
 startequip 1
 nrof 1
+identified 1
+known_cursed 1
+known_magical 1
 end
