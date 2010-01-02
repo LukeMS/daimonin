@@ -495,9 +495,10 @@ static struct constant_decl preset_game_constants[] =
     {"FNO_MODE_ALL",        FNO_MODE_ALL},
 
     /* NPC interface modes (protocol.h) */
-    {"GUI_NPC_MODE_NO",    GUI_NPC_MODE_NO},
-    {"GUI_NPC_MODE_NPC",   GUI_NPC_MODE_NPC},
-    {"GUI_NPC_MODE_QUEST", GUI_NPC_MODE_QUEST},
+    {"GUI_NPC_MODE_NO",         GUI_NPC_MODE_NO},
+    {"GUI_NPC_MODE_NPC",        GUI_NPC_MODE_NPC},
+    {"GUI_NPC_MODE_RHETORICAL", GUI_NPC_MODE_RHETORICAL},
+    {"GUI_NPC_MODE_QUEST",      GUI_NPC_MODE_QUEST},
 
     /* Target modes (commands.h) */
     {"TARGET_ENEMY",  TARGET_ENEMY},

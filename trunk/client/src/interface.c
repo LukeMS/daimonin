@@ -1100,97 +1100,105 @@ static void FormatBody(_font *font, uint16 width, uint8 lines, _gui_npc_element 
 /* Fiddles the buttons to guarantee a sensible layout. */
 static void FineTuneButtons(void)
 {
-    if (interface_mode == GUI_NPC_MODE_NPC)
+    switch (interface_mode)
     {
-        /* If there is no LHS button, make one. */
-        if (!gui_npc->lhsbutton)
-        {
-            MALLOC(gui_npc->lhsbutton, sizeof *gui_npc->lhsbutton);
+        case GUI_NPC_MODE_NPC:
+            /* If there is no LHS button, make one. */
+            if (!gui_npc->lhsbutton)
+            {
+                MALLOC(gui_npc->lhsbutton, sizeof *gui_npc->lhsbutton);
 
-            if (gui_npc->lhsbutton)
-            {
-                gui_npc->lhsbutton->type = GUI_NPC_BUTTON;
-                gui_npc->lhsbutton->last = gui_npc->lhsbutton;
-            }
-            else
-            {
-                gui_npc_reset();
+                if (gui_npc->lhsbutton)
+                {
+                    gui_npc->lhsbutton->type = GUI_NPC_BUTTON;
+                    gui_npc->lhsbutton->last = gui_npc->lhsbutton;
+                }
+                else
+                {
+                    gui_npc_reset();
 
-                return;
+                    return;
+                }
             }
-        }
 
-        /* If there is no RHS button, make one. */
-        if (!gui_npc->rhsbutton)
-        {
-            MALLOC(gui_npc->rhsbutton, sizeof *gui_npc->rhsbutton);
+            /* If the LHS button has no command or title, it defaults to a hello
+             * button. */
+            if (!gui_npc->lhsbutton->command &&
+                !gui_npc->lhsbutton->title)
+            {
+                MALLOC2(gui_npc->lhsbutton->command, "hello");
+                MALLOC2(gui_npc->lhsbutton->title, "Hello");
+            }
 
-            if (gui_npc->rhsbutton)
+            /* If the LHS button has no title, copy the command as title. */
+            if (!gui_npc->lhsbutton->title &&
+                gui_npc->lhsbutton->command)
             {
-                gui_npc->rhsbutton->type = GUI_NPC_BUTTON;
-                gui_npc->rhsbutton->last = gui_npc->rhsbutton;
+                if (*gui_npc->lhsbutton->command == '#')
+                {
+                    MALLOC2(gui_npc->lhsbutton->title, gui_npc->lhsbutton->command + 1);
+                }
+                else
+                {
+                    MALLOC2(gui_npc->lhsbutton->title, gui_npc->lhsbutton->command);
+                }
             }
-            else
-            {
-                gui_npc_reset();
 
-                return;
-            }
-        }
+        case GUI_NPC_MODE_RHETORICAL:
+            /* If there is no RHS button, make one. */
+            if (!gui_npc->rhsbutton)
+            {
+                MALLOC(gui_npc->rhsbutton, sizeof *gui_npc->rhsbutton);
 
-        /* If the LHS button has no command or title, it defaults to a hello
-         * button. */
-        if (!gui_npc->lhsbutton->command &&
-            !gui_npc->lhsbutton->title)
-        {
-            MALLOC2(gui_npc->lhsbutton->command, "hello");
-            MALLOC2(gui_npc->lhsbutton->title, "Hello");
-        }
+                if (gui_npc->rhsbutton)
+                {
+                    gui_npc->rhsbutton->type = GUI_NPC_BUTTON;
+                    gui_npc->rhsbutton->last = gui_npc->rhsbutton;
+                }
+                else
+                {
+                    gui_npc_reset();
 
-        /* If the RHS button has no command or title, it defaults to a goodbye
-         * button. */
-        if (!gui_npc->rhsbutton->command &&
-            !gui_npc->rhsbutton->title)
-        {
-            if (gui_npc->lhsbutton->title &&
-                (*gui_npc->lhsbutton->title == 'G' ||
-                 *gui_npc->lhsbutton->title == 'g'))
-            {
-                MALLOC2(gui_npc->rhsbutton->title, "Bye");
+                    return;
+                }
             }
-            else
-            {
-                MALLOC2(gui_npc->rhsbutton->title, "Goodbye");
-            }
-        }
 
-        /* If the LHS button has no title, copy the command as title. */
-        if (!gui_npc->lhsbutton->title &&
-            gui_npc->lhsbutton->command)
-        {
-            if (*gui_npc->lhsbutton->command == '#')
+            /* If the RHS button has no command or title, it defaults to a goodbye
+             * button. */
+            if (!gui_npc->rhsbutton->command &&
+                !gui_npc->rhsbutton->title)
             {
-                MALLOC2(gui_npc->lhsbutton->title, gui_npc->lhsbutton->command + 1);
+                if (gui_npc->lhsbutton &&
+                    gui_npc->lhsbutton->title &&
+                    (*gui_npc->lhsbutton->title == 'G' ||
+                     *gui_npc->lhsbutton->title == 'g'))
+                {
+                    MALLOC2(gui_npc->rhsbutton->title, "Bye");
+                }
+                else
+                {
+                    MALLOC2(gui_npc->rhsbutton->title, "Goodbye");
+                }
             }
-            else
-            {
-                MALLOC2(gui_npc->lhsbutton->title, gui_npc->lhsbutton->command);
-            }
-        }
 
-        /* If the RHS button has no title, copy the command as title. */
-        if (!gui_npc->rhsbutton->title &&
-            gui_npc->rhsbutton->command)
-        {
-            if (*gui_npc->rhsbutton->command == '#')
+            /* If the RHS button has no title, copy the command as title. */
+            if (!gui_npc->rhsbutton->title &&
+                gui_npc->rhsbutton->command)
             {
-                MALLOC2(gui_npc->rhsbutton->title, gui_npc->rhsbutton->command + 1);
+                if (*gui_npc->rhsbutton->command == '#')
+                {
+                    MALLOC2(gui_npc->rhsbutton->title, gui_npc->rhsbutton->command + 1);
+                }
+                else
+                {
+                    MALLOC2(gui_npc->rhsbutton->title, gui_npc->rhsbutton->command);
+                }
             }
-            else
-            {
-                MALLOC2(gui_npc->rhsbutton->title, gui_npc->rhsbutton->command);
-            }
-        }
+
+            break;
+
+        default:
+            break;
     }
 
     /* Highlight the LHS hotkey if necessary. */
@@ -1695,12 +1703,13 @@ static void ShowGUIFurniture(uint16 x, uint16 y)
 
     blt_window_slider(Bitmaps[BITMAP_NPC_INT_SLIDER], gui_npc->height,
                       GUI_NPC_HEIGHT, gui_npc->yoff, -1, x + 341, y + 90);
-    xoff = x + GUI_NPC_LEFTMARGIN;
-    yoff = y + Bitmaps[BITMAP_GUI_NPC_TOP]->bitmap->h + ((gui_npc->shop) ?
-           Bitmaps[BITMAP_GUI_NPC_MIDDLE]->bitmap->h : 0) - 1;
 
     if (gui_npc->lhsbutton)
     {
+        xoff = x + GUI_NPC_LEFTMARGIN;
+        yoff = y + Bitmaps[BITMAP_GUI_NPC_TOP]->bitmap->h + ((gui_npc->shop) ?
+               Bitmaps[BITMAP_GUI_NPC_MIDDLE]->bitmap->h : 0) - 1;
+
         /* Button title. */
         sprintf(buf, "%s", gui_npc->lhsbutton->title);
 
@@ -1732,369 +1741,11 @@ static void ShowGUIFurniture(uint16 x, uint16 y)
         }
     }
 
-    xoff += GUI_NPC_BUTTONWIDTH;
-    box.x = xoff + 4;
-    box.y = yoff - 2 + font_small.line_height;
-    box.h = font_medium.line_height;
-    box.w = GUI_NPC_TEXTFIELDWIDTH;
-
-    if (gui_npc->input_flag)
-    {
-        sprintf(buf, "~RETURN~ to send, ~ESCAPE~ to cancel");
-        string_blt(ScreenSurface, &font_small, buf,
-                  xoff + 4 + (GUI_NPC_TEXTFIELDWIDTH -
-                              string_width(&font_small, buf)) / 2,
-                  yoff - 2, COLOR_WHITE, NULL, NULL);
-        SDL_FillRect(ScreenSurface, &box, 0);
-        string_blt(ScreenSurface, &font_medium,
-                  show_input_string(InputString, &font_medium, box.w - 1),
-                  box.x, box.y, COLOR_WHITE, NULL, NULL);
-    }
-    else if (interface_mode != GUI_NPC_MODE_QUEST &&
-             !gui_npc->keyword_selected &&
-             !gui_npc->icon_selected &&
-             !gui_npc->link_selected &&
-             !gui_npc->button_selected)
-    {
-        sprintf(buf, "~BACKSPACE~ to talk");
-        string_blt(ScreenSurface, &font_small, buf,
-                  xoff + 4 + (GUI_NPC_TEXTFIELDWIDTH -
-                              string_width(&font_small, buf)) / 2,
-                  yoff - 2, COLOR_WHITE, NULL, NULL);
-    }
-    else
-    {
-        int len;
-
-        if (interface_mode == GUI_NPC_MODE_QUEST)
-        {
-            sprintf(buf, "~RETURN~ to send");
-            string_blt(ScreenSurface, &font_small, buf,
-                      xoff + 4 + (GUI_NPC_TEXTFIELDWIDTH -
-                                  string_width(&font_small, buf)) / 2,
-                      yoff - 2, COLOR_WHITE, NULL, NULL);
-        }
-        else
-        {
-            sprintf(buf, "~RETURN~ to send, ~BACKSPACE~ to overwrite");
-            string_blt(ScreenSurface, &font_small, buf,
-                      xoff + 4 + (GUI_NPC_TEXTFIELDWIDTH -
-                                  string_width(&font_small, buf)) / 2,
-                      yoff - 2, COLOR_WHITE, NULL, NULL);
-        }
-
-        /* TODO: the rest of this function is in severe need of tidying! */
-        /* A selected keyword overrides everything else. */
-        if (gui_npc->keyword_selected)
-        {
-            char buf[SMALL_BUF];
-            int  c;
- 
-            sprintf(buf, "%s", gui_npc->keyword_selected->keyword);
-            strcpy(buf, normalize_string(buf));
- 
-            for (c = 0; *(buf + c); c++)
-            {
-                *(buf + c) = tolower(*(buf + c));
-            }
- 
-            if (string_width_offset(&font_medium, buf, &len,
-                                  GUI_NPC_TEXTFIELDWIDTH))
-            {
-                char buf_tmp[SMALL_BUF];
- 
-                strncpy(buf_tmp, buf, len - 2);
-                buf_tmp[len - 2] = '\0';
-                strcat(buf_tmp, "...");
-                string_blt(ScreenSurface, &font_medium, buf_tmp, box.x, box.y,
-                          COLOR_DK_NAVY, &box, NULL);
-            }
-            else
-            {
-                string_blt(ScreenSurface, &font_medium, buf, box.x, box.y,
-                          COLOR_DK_NAVY, &box, NULL);
-            }
-        }
-        else
-        {
-            char  cmd[SMALL_BUF] = "",
-                  btn[SMALL_BUF] = "";
-            int   c;
-            _gui_npc_element *button = NULL;
- 
-            /* Check for a selected icon or link-> */
-            if (gui_npc->icon_selected)
-            {
-                if (gui_npc->icon_selected->command)
-                {
-                    int off;
- 
-                    switch (*gui_npc->icon_selected->command)
-                    {
-                        case '<': /* default to LHS button */
-                            if (!gui_npc->button_selected)
-                            {
-                                if (gui_npc->lhsbutton &&
-                                    gui_npc->lhsbutton->command &&
-                                    *gui_npc->lhsbutton->command == '#')
-                                {
-                                    button = gui_npc->lhsbutton;
-                                }
-                                else if (gui_npc->rhsbutton &&
-                                         gui_npc->rhsbutton->command &&
-                                         *gui_npc->rhsbutton->command == '#')
-                                {
-                                    button = gui_npc->rhsbutton;
-                                }
-                            }
- 
-                            off = 1;
- 
-                            break;
- 
-                        case '-': /* default to no button */
-                            off = 1;
- 
-                            break;
- 
-                        default: /* default to RHS button */
-                            if (!gui_npc->button_selected)
-                            {
-                                if (gui_npc->rhsbutton &&
-                                    gui_npc->rhsbutton->command &&
-                                    *gui_npc->rhsbutton->command == '#')
-                                {
-                                    button = gui_npc->rhsbutton;
-                                }
-                                else if (gui_npc->lhsbutton &&
-                                         gui_npc->lhsbutton->command &&
-                                         *gui_npc->lhsbutton->command == '#')
-                                {
-                                    button = gui_npc->lhsbutton;
-                                }
-                            }
- 
-                            off = (gui_npc->icon_selected->command &&
-                                   *gui_npc->icon_selected->command == '>') ?
-                                  1 : 0;
-                    }
- 
-                    sprintf(cmd, "%s", gui_npc->icon_selected->command + off);
-                }
-                else
-                {
-                    _gui_npc_element *this = gui_npc->icon;
-                    uint8             i = 1;
- 
-                    if (!gui_npc->button_selected)
-                    {
-                        if (gui_npc->rhsbutton &&
-                            gui_npc->rhsbutton->command &&
-                            *gui_npc->rhsbutton->command == '#')
-                        {
-                            button = gui_npc->rhsbutton;
-                        }
-                        else if (gui_npc->lhsbutton &&
-                                 gui_npc->lhsbutton->command &&
-                                 *gui_npc->lhsbutton->command == '#')
-                        {
-                            button = gui_npc->lhsbutton;
-                        }
-                    }
- 
-                    for (; this && this != gui_npc->icon_selected;
-                         this = this->next, i++)
-                    {
-                        ;
-                    }
- 
-                    if (this == gui_npc->icon_selected)
-                    {
-                        sprintf(cmd, "#%d", i);
-                    }
-                    else
-                    {
-                        // TODO
-                    }
-                }
-            }
-            else if (gui_npc->link_selected)
-            {
-                int off;
- 
-                switch (*gui_npc->link_selected->command)
-                {
-                    case '<': /* default to LHS button */
-                        if (!gui_npc->button_selected)
-                        {
-                            if (gui_npc->lhsbutton &&
-                                gui_npc->lhsbutton->command &&
-                                *gui_npc->lhsbutton->command == '#')
-                            {
-                                button = gui_npc->lhsbutton;
-                            }
-                            else if (gui_npc->rhsbutton &&
-                                     gui_npc->rhsbutton->command &&
-                                     *gui_npc->rhsbutton->command == '#')
-                            {
-                                button = gui_npc->rhsbutton;
-                            }
-                        }
- 
-                        off = 1;
- 
-                        break;
- 
-                    case '-': /* default to no button */
-                        off = 1;
- 
-                        break;
- 
-                    default: /* default to RHS button */
-                        if (!gui_npc->button_selected)
-                        {
-                            if (gui_npc->rhsbutton &&
-                                gui_npc->rhsbutton->command &&
-                                *gui_npc->rhsbutton->command == '#')
-                            {
-                                button = gui_npc->rhsbutton;
-                            }
-                            else if (gui_npc->lhsbutton &&
-                                     gui_npc->lhsbutton->command &&
-                                     *gui_npc->lhsbutton->command == '#')
-                            {
-                                button = gui_npc->lhsbutton;
-                            }
-                        }
- 
-                        off = (gui_npc->link_selected &&
-                               gui_npc->link_selected->command &&
-                               *gui_npc->link_selected->command == '>') ?
-                              1 : 0;
-                }
- 
-                sprintf(cmd, "%s", gui_npc->link_selected->command);
-            }
- 
-            /* Check for a selected button. */
-            if (gui_npc->rhsbutton &&
-                (gui_npc->button_selected == gui_npc->rhsbutton ||
-                 button == gui_npc->rhsbutton))
-            {
-                if (!gui_npc->rhsbutton->command)
-                {
-                    sprintf(btn, "%s", gui_npc->rhsbutton->title);
-                }
-                else
-                {
-                    int off;
- 
-                    off = (*gui_npc->rhsbutton->command == '#') ? 1 : 0;
- 
-                    sprintf(btn, "%s", gui_npc->rhsbutton->command + off);
-                }
-            }
-            else if (gui_npc->lhsbutton &&
-                     (gui_npc->button_selected == gui_npc->lhsbutton ||
-                      button == gui_npc->lhsbutton))
-            {
-                if (!gui_npc->lhsbutton->command)
-                {
-                    sprintf(btn, "%s", gui_npc->lhsbutton->title);
-                }
-                else
-                {
-                    int off;
- 
-                    off = (*gui_npc->lhsbutton->command == '#') ? 1 : 0;
- 
-                    sprintf(btn, "%s", gui_npc->lhsbutton->command + off);
-                }
-            }
- 
-            strcpy(btn, normalize_string(btn));
- 
-            for (c = 0; *(btn + c); c++)
-            {
-                *(btn + c) = tolower(*(btn + c));
-            }
- 
-            if (string_width_offset(&font_medium, btn, &len,
-                                  GUI_NPC_TEXTFIELDWIDTH))
-            {
-                char buf_tmp[SMALL_BUF];
- 
-                strncpy(buf_tmp, btn, len - 2);
-                buf_tmp[len - 2] = '\0';
-                strcat(buf_tmp, "...");
- 
-                if (!gui_npc->button_selected &&
-                    button)
-                {
-                    string_blt(ScreenSurface, &font_medium, buf_tmp, box.x,
-                              box.y, COLOR_GREY, &box, NULL);
-                }
-                else if (gui_npc->button_selected ||
-                         button)
-                {
-                    string_blt(ScreenSurface, &font_medium, buf_tmp, box.x,
-                              box.y, COLOR_DK_NAVY, &box, NULL);
-                }
-            }
-            else
-            {
-                uint16 xoff2;
- 
-                xoff2 = string_width(&font_medium, btn) +
-                        string_width(&font_medium, " ");
- 
-                if (!gui_npc->button_selected &&
-                    button)
-                {
-                    string_blt(ScreenSurface, &font_medium, btn, box.x, box.y,
-                              COLOR_GREY, &box, NULL);
-                }
-                else if (gui_npc->button_selected ||
-                         button)
-                {
-                    string_blt(ScreenSurface, &font_medium, btn, box.x, box.y,
-                              COLOR_DK_NAVY, &box, NULL);
-                }
- 
-                if (cmd[0])
-                {
-                    strcpy(cmd, normalize_string(cmd));
- 
-                    for (c = 0; *(cmd + c); c++)
-                    {
-                        *(cmd + c) = tolower(*(cmd + c));
-                    }
- 
-                    if (string_width_offset(&font_medium, cmd, &len, box.w - xoff2))
-                    {
-                        char buf_tmp[SMALL_BUF];
- 
-                        strncpy(buf_tmp, cmd, len - 2);
-                        buf_tmp[len - 2] = '\0';
-                        strcat(buf_tmp, "...");
-                        string_blt(ScreenSurface, &font_medium, buf_tmp,
-                                  box.x + xoff2, box.y, COLOR_DK_NAVY,
-                                  &box, NULL);
-                    }
-                    else
-                    {
-                        string_blt(ScreenSurface, &font_medium, cmd,
-                                  box.x + xoff2, box.y, COLOR_DK_NAVY,
-                                  &box, NULL);
-                    }
-                }
-            }
-        }
-    }
-
     if (gui_npc->rhsbutton)
     {
-        xoff = xoff - GUI_NPC_BUTTONWIDTH + GUI_NPC_WIDTH - GUI_NPC_BUTTONWIDTH;
+        xoff = x + GUI_NPC_LEFTMARGIN + GUI_NPC_WIDTH - GUI_NPC_BUTTONWIDTH;
+        yoff = y + Bitmaps[BITMAP_GUI_NPC_TOP]->bitmap->h + ((gui_npc->shop) ?
+               Bitmaps[BITMAP_GUI_NPC_MIDDLE]->bitmap->h : 0) - 1;
 
         /* Button title. */
         sprintf(buf, "%s", gui_npc->rhsbutton->title);
@@ -2124,6 +1775,371 @@ static void ShowGUIFurniture(uint16 x, uint16 y)
         {
             sprite_blt(Bitmaps[BITMAP_DIALOG_BUTTON_SELECTED], xoff, yoff,
                        NULL, NULL);
+        }
+    }
+
+    if (interface_mode != GUI_NPC_MODE_RHETORICAL)
+    {
+        xoff = x + GUI_NPC_LEFTMARGIN + GUI_NPC_BUTTONWIDTH;
+        yoff = y + Bitmaps[BITMAP_GUI_NPC_TOP]->bitmap->h + ((gui_npc->shop) ?
+                   Bitmaps[BITMAP_GUI_NPC_MIDDLE]->bitmap->h : 0) - 1;
+        box.x = xoff + 4;
+        box.y = yoff - 2 + font_small.line_height;
+        box.h = font_medium.line_height;
+        box.w = GUI_NPC_TEXTFIELDWIDTH;
+
+        if (gui_npc->input_flag)
+        {
+            sprintf(buf, "~RETURN~ to send, ~ESCAPE~ to cancel");
+            string_blt(ScreenSurface, &font_small, buf,
+                      xoff + 4 + (GUI_NPC_TEXTFIELDWIDTH -
+                                  string_width(&font_small, buf)) / 2,
+                      yoff - 2, COLOR_WHITE, NULL, NULL);
+            SDL_FillRect(ScreenSurface, &box, 0);
+            string_blt(ScreenSurface, &font_medium,
+                      show_input_string(InputString, &font_medium, box.w - 1),
+                      box.x, box.y, COLOR_WHITE, NULL, NULL);
+        }
+        else if (interface_mode == GUI_NPC_MODE_NPC &&
+                 !gui_npc->keyword_selected &&
+                 !gui_npc->icon_selected &&
+                 !gui_npc->link_selected &&
+                 !gui_npc->button_selected)
+        {
+            sprintf(buf, "~BACKSPACE~ to talk");
+            string_blt(ScreenSurface, &font_small, buf,
+                      xoff + 4 + (GUI_NPC_TEXTFIELDWIDTH -
+                                  string_width(&font_small, buf)) / 2,
+                      yoff - 2, COLOR_WHITE, NULL, NULL);
+        }
+        else
+        {
+            int len;
+
+            if (interface_mode == GUI_NPC_MODE_QUEST)
+            {
+                sprintf(buf, "~RETURN~ to send");
+                string_blt(ScreenSurface, &font_small, buf,
+                          xoff + 4 + (GUI_NPC_TEXTFIELDWIDTH -
+                                      string_width(&font_small, buf)) / 2,
+                          yoff - 2, COLOR_WHITE, NULL, NULL);
+            }
+            else
+            {
+                sprintf(buf, "~RETURN~ to send, ~BACKSPACE~ to overwrite");
+                string_blt(ScreenSurface, &font_small, buf,
+                          xoff + 4 + (GUI_NPC_TEXTFIELDWIDTH -
+                                      string_width(&font_small, buf)) / 2,
+                          yoff - 2, COLOR_WHITE, NULL, NULL);
+            }
+
+            /* TODO: the rest of this function is in severe need of tidying! */
+            /* A selected keyword overrides everything else. */
+            if (gui_npc->keyword_selected)
+            {
+                char buf[SMALL_BUF];
+                int  c;
+
+                sprintf(buf, "%s", gui_npc->keyword_selected->keyword);
+                strcpy(buf, normalize_string(buf));
+
+                for (c = 0; *(buf + c); c++)
+                {
+                    *(buf + c) = tolower(*(buf + c));
+                }
+
+                if (string_width_offset(&font_medium, buf, &len,
+                                      GUI_NPC_TEXTFIELDWIDTH))
+                {
+                    char buf_tmp[SMALL_BUF];
+
+                    strncpy(buf_tmp, buf, len - 2);
+                    buf_tmp[len - 2] = '\0';
+                    strcat(buf_tmp, "...");
+                    string_blt(ScreenSurface, &font_medium, buf_tmp, box.x,
+                               box.y, COLOR_DK_NAVY, &box, NULL);
+                }
+                else
+                {
+                    string_blt(ScreenSurface, &font_medium, buf, box.x, box.y,
+                               COLOR_DK_NAVY, &box, NULL);
+                }
+            }
+            else
+            {
+                char  cmd[SMALL_BUF] = "",
+                      btn[SMALL_BUF] = "";
+                int   c;
+                _gui_npc_element *button = NULL;
+
+                /* Check for a selected icon or link-> */
+                if (gui_npc->icon_selected)
+                {
+                    if (gui_npc->icon_selected->command)
+                    {
+                        int off;
+
+                        switch (*gui_npc->icon_selected->command)
+                        {
+                            case '<': /* default to LHS button */
+                                if (!gui_npc->button_selected)
+                                {
+                                    if (gui_npc->lhsbutton &&
+                                        gui_npc->lhsbutton->command &&
+                                        *gui_npc->lhsbutton->command == '#')
+                                    {
+                                        button = gui_npc->lhsbutton;
+                                    }
+                                    else if (gui_npc->rhsbutton &&
+                                             gui_npc->rhsbutton->command &&
+                                             *gui_npc->rhsbutton->command == '#')
+                                    {
+                                        button = gui_npc->rhsbutton;
+                                    }
+                                }
+
+                                off = 1;
+
+                                break;
+
+                            case '-': /* default to no button */
+                                off = 1;
+
+                                break;
+
+                            default: /* default to RHS button */
+                                if (!gui_npc->button_selected)
+                                {
+                                    if (gui_npc->rhsbutton &&
+                                        gui_npc->rhsbutton->command &&
+                                        *gui_npc->rhsbutton->command == '#')
+                                    {
+                                        button = gui_npc->rhsbutton;
+                                    }
+                                    else if (gui_npc->lhsbutton &&
+                                             gui_npc->lhsbutton->command &&
+                                             *gui_npc->lhsbutton->command == '#')
+                                    {
+                                        button = gui_npc->lhsbutton;
+                                    }
+                                }
+
+                                off = (gui_npc->icon_selected->command &&
+                                       *gui_npc->icon_selected->command == '>') ?
+                                      1 : 0;
+                        }
+
+                        sprintf(cmd, "%s", gui_npc->icon_selected->command + off);
+                    }
+                    else
+                    {
+                        _gui_npc_element *this = gui_npc->icon;
+                        uint8             i = 1;
+
+                        if (!gui_npc->button_selected)
+                        {
+                            if (gui_npc->rhsbutton &&
+                                gui_npc->rhsbutton->command &&
+                                *gui_npc->rhsbutton->command == '#')
+                            {
+                                button = gui_npc->rhsbutton;
+                            }
+                            else if (gui_npc->lhsbutton &&
+                                     gui_npc->lhsbutton->command &&
+                                     *gui_npc->lhsbutton->command == '#')
+                            {
+                                button = gui_npc->lhsbutton;
+                            }
+                        }
+
+                        for (; this && this != gui_npc->icon_selected;
+                             this = this->next, i++)
+                        {
+                            ;
+                        }
+
+                        if (this == gui_npc->icon_selected)
+                        {
+                            sprintf(cmd, "#%d", i);
+                        }
+                        else
+                        {
+                            // TODO
+                        }
+                    }
+                }
+                else if (gui_npc->link_selected)
+                {
+                    int off;
+
+                    switch (*gui_npc->link_selected->command)
+                    {
+                        case '<': /* default to LHS button */
+                            if (!gui_npc->button_selected)
+                            {
+                                if (gui_npc->lhsbutton &&
+                                    gui_npc->lhsbutton->command &&
+                                    *gui_npc->lhsbutton->command == '#')
+                                {
+                                    button = gui_npc->lhsbutton;
+                                }
+                                else if (gui_npc->rhsbutton &&
+                                         gui_npc->rhsbutton->command &&
+                                         *gui_npc->rhsbutton->command == '#')
+                                {
+                                    button = gui_npc->rhsbutton;
+                                }
+                            }
+
+                            off = 1;
+
+                            break;
+
+                        case '-': /* default to no button */
+                            off = 1;
+
+                            break;
+
+                        default: /* default to RHS button */
+                            if (!gui_npc->button_selected)
+                            {
+                                if (gui_npc->rhsbutton &&
+                                    gui_npc->rhsbutton->command &&
+                                    *gui_npc->rhsbutton->command == '#')
+                                {
+                                    button = gui_npc->rhsbutton;
+                                }
+                                else if (gui_npc->lhsbutton &&
+                                         gui_npc->lhsbutton->command &&
+                                         *gui_npc->lhsbutton->command == '#')
+                                {
+                                    button = gui_npc->lhsbutton;
+                                }
+                            }
+
+                            off = (gui_npc->link_selected &&
+                                   gui_npc->link_selected->command &&
+                                   *gui_npc->link_selected->command == '>') ?
+                                  1 : 0;
+                    }
+
+                    sprintf(cmd, "%s", gui_npc->link_selected->command);
+                }
+
+                /* Check for a selected button. */
+                if (gui_npc->rhsbutton &&
+                    (gui_npc->button_selected == gui_npc->rhsbutton ||
+                     button == gui_npc->rhsbutton))
+                {
+                    if (!gui_npc->rhsbutton->command)
+                    {
+                        sprintf(btn, "%s", gui_npc->rhsbutton->title);
+                    }
+                    else
+                    {
+                        int off;
+
+                        off = (*gui_npc->rhsbutton->command == '#') ? 1 : 0;
+
+                        sprintf(btn, "%s", gui_npc->rhsbutton->command + off);
+                    }
+                }
+                else if (gui_npc->lhsbutton &&
+                         (gui_npc->button_selected == gui_npc->lhsbutton ||
+                          button == gui_npc->lhsbutton))
+                {
+                    if (!gui_npc->lhsbutton->command)
+                    {
+                        sprintf(btn, "%s", gui_npc->lhsbutton->title);
+                    }
+                    else
+                    {
+                        int off;
+
+                        off = (*gui_npc->lhsbutton->command == '#') ? 1 : 0;
+
+                        sprintf(btn, "%s", gui_npc->lhsbutton->command + off);
+                    }
+                }
+
+                strcpy(btn, normalize_string(btn));
+
+                for (c = 0; *(btn + c); c++)
+                {
+                    *(btn + c) = tolower(*(btn + c));
+                }
+
+                if (string_width_offset(&font_medium, btn, &len,
+                                      GUI_NPC_TEXTFIELDWIDTH))
+                {
+                    char buf_tmp[SMALL_BUF];
+
+                    strncpy(buf_tmp, btn, len - 2);
+                    buf_tmp[len - 2] = '\0';
+                    strcat(buf_tmp, "...");
+
+                    if (!gui_npc->button_selected &&
+                        button)
+                    {
+                        string_blt(ScreenSurface, &font_medium, buf_tmp, box.x,
+                                  box.y, COLOR_GREY, &box, NULL);
+                    }
+                    else if (gui_npc->button_selected ||
+                             button)
+                    {
+                        string_blt(ScreenSurface, &font_medium, buf_tmp, box.x,
+                                  box.y, COLOR_DK_NAVY, &box, NULL);
+                    }
+                }
+                else
+                {
+                    uint16 xoff2;
+
+                    xoff2 = string_width(&font_medium, btn) +
+                            string_width(&font_medium, " ");
+
+                    if (!gui_npc->button_selected &&
+                        button)
+                    {
+                        string_blt(ScreenSurface, &font_medium, btn, box.x, box.y,
+                                  COLOR_GREY, &box, NULL);
+                    }
+                    else if (gui_npc->button_selected ||
+                             button)
+                    {
+                        string_blt(ScreenSurface, &font_medium, btn, box.x, box.y,
+                                  COLOR_DK_NAVY, &box, NULL);
+                    }
+
+                    if (cmd[0])
+                    {
+                        strcpy(cmd, normalize_string(cmd));
+
+                        for (c = 0; *(cmd + c); c++)
+                        {
+                            *(cmd + c) = tolower(*(cmd + c));
+                        }
+
+                        if (string_width_offset(&font_medium, cmd, &len, box.w - xoff2))
+                        {
+                            char buf_tmp[SMALL_BUF];
+
+                            strncpy(buf_tmp, cmd, len - 2);
+                            buf_tmp[len - 2] = '\0';
+                            strcat(buf_tmp, "...");
+                            string_blt(ScreenSurface, &font_medium, buf_tmp,
+                                      box.x + xoff2, box.y, COLOR_DK_NAVY,
+                                      &box, NULL);
+                        }
+                        else
+                        {
+                            string_blt(ScreenSurface, &font_medium, cmd,
+                                      box.x + xoff2, box.y, COLOR_DK_NAVY,
+                                      &box, NULL);
+                        }
+                    }
+                }
+            }
         }
     }
 }
@@ -2342,7 +2358,7 @@ static void ShowGUIContents(uint16 x, uint16 y)
                             sound_play_effect(SOUNDTYPE_CLIENT, SOUND_COINS1, 0, 0,
                                               MENU_SOUND_VOL);
                         }
-     
+
                         gui_npc->sound = 0;
                     }
                 }
@@ -3772,14 +3788,18 @@ void gui_npc_keypress(int key)
 
         /* Overwriting commands in the textfield-> */
         case SDLK_BACKSPACE:
-            sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICK, 0, 0, MENU_SOUND_VOL);
-            reset_keys();
-            reset_input_mode();
-            open_input_mode(240);
-            textwin_putstring("");
-            cpl.input_mode = INPUT_MODE_NPCDIALOG;
-            gui_npc->input_flag = 1;
-            HistoryPos = 0;
+            if (interface_mode == GUI_NPC_MODE_NPC)
+            {
+                sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICK, 0, 0,
+                                  MENU_SOUND_VOL);
+                reset_keys();
+                reset_input_mode();
+                open_input_mode(240);
+                textwin_putstring("");
+                cpl.input_mode = INPUT_MODE_NPCDIALOG;
+                gui_npc->input_flag = 1;
+                HistoryPos = 0;
+            }
 
             break;
 

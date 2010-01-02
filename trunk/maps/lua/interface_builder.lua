@@ -478,21 +478,22 @@ end
 -------------------
 -- ib:ShowSENTInce() shows an appropriate NPC GUI layout for SENTInce.
 -------------------
-function InterfaceBuilder:ShowSENTInce(ev, data)
+function InterfaceBuilder:ShowSENTInce(mode, ev, data)
+    assert(type(mode) == "number", "Arg #1 must be number!")
     assert(type(ev) == "boolean" or
            type(ev) == "string" or
            type(ev) == "table" or
            type(ev) == "Event" or
-           ev == nil, "Arg #1 must be boolean, string, table, Event, or nil!")
+           ev == nil, "Arg #2 must be boolean, string, table, Event, or nil!")
     assert(type(data) == "boolean" or
            type(data) == "string" or
-           data == nil, "Arg #2 must be boolean, string, or nil!")
+           data == nil, "Arg #3 must be boolean, string, or nil!")
 
     if type(ev) == "table" then
         assert(type(ev.activator) == "GameObject",
-               "Arg #1.activator must be GameObject!")
+               "Arg #2.activator must be GameObject!")
         assert(type (ev.message) == "string",
-               "Arg #1.message must be string!")
+               "Arg #2.message must be string!")
     elseif type(ev) == "string" or
            type(ev) == "boolean" or
            ev == nil then
@@ -501,9 +502,10 @@ function InterfaceBuilder:ShowSENTInce(ev, data)
     end
 
     ---------
-    -- If data is true, close the GUI.
+    -- If mode is 0 or data is true, close the GUI.
     ---------
-    if data == true then
+    if mode == game.GUI_NPC_MODE_NO or
+       data == true then
         ev.activator:Interface(game.GUI_NPC_MODE_NO)
     ---------
     -- Otherwise open a new GUI according to self.
@@ -532,7 +534,7 @@ function InterfaceBuilder:ShowSENTInce(ev, data)
             self:SetMsg(data)
         end
 
-        ev.activator:Interface(game.GUI_NPC_MODE_NPC, self:Build())
+        ev.activator:Interface(mode, self:Build())
     end
 end
 

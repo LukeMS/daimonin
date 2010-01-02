@@ -265,6 +265,7 @@ typedef enum _gui_npc_mode
 {
     GUI_NPC_MODE_NO,
     GUI_NPC_MODE_NPC,
+    GUI_NPC_MODE_RHETORICAL,
     GUI_NPC_MODE_QUEST,
     GUI_NPC_MODE_END
 }
