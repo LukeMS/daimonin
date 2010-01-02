@@ -3462,7 +3462,23 @@ void gui_npc_keypress(int key)
             }
             else if (gui_npc->icon_selected)
             {
-                SelectIcon(gui_npc->icon_selected->prev);
+                if (gui_npc->shop &&
+                    key == SDLK_UP)
+                {
+                    _gui_npc_element *this = gui_npc->icon_selected;
+                    uint8             i = 0;
+
+                    for (; this && i < GUI_NPC_ICONSHOP; i++)
+                    {
+                        this = this->prev;
+                    }
+
+                    SelectIcon(this);
+                }
+                else
+                {
+                    SelectIcon(gui_npc->icon_selected->prev);
+                }
             }
             else if (gui_npc->link_selected)
             {
@@ -3505,7 +3521,23 @@ void gui_npc_keypress(int key)
             }
             else if (gui_npc->icon_selected)
             {
-                SelectIcon(gui_npc->icon_selected->next);
+                if (gui_npc->shop &&
+                    key == SDLK_DOWN)
+                {
+                    _gui_npc_element *this = gui_npc->icon_selected;
+                    uint8             i = 0;
+
+                    for (; this && i < GUI_NPC_ICONSHOP; i++)
+                    {
+                        this = this->next;
+                    }
+
+                    SelectIcon(this);
+                }
+                else
+                {
+                    SelectIcon(gui_npc->icon_selected->next);
+                }
 
                 if (!gui_npc->icon_selected)
                 {
