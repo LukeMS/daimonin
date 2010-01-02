@@ -11,7 +11,7 @@ ib:SetHeader(me, me.name)
 local function topicDefault()
     ib:SetTitle("Add Skills to Player")
     ib:AddMsg("I am the Spellgiver.\nSay ^learn <spellname>^ or ^unlearn <spellname>^")
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 tl = TopicList()

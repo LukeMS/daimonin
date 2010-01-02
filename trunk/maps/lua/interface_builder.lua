@@ -504,7 +504,7 @@ function InterfaceBuilder:ShowSENTInce(ev, data)
     -- If data is true, close the GUI.
     ---------
     if data == true then
-        ev.activator:Interface(-1)
+        ev.activator:Interface(game.GUI_NPC_MODE_NO)
     ---------
     -- Otherwise open a new GUI according to self.
     ---------
@@ -532,7 +532,7 @@ function InterfaceBuilder:ShowSENTInce(ev, data)
             self:SetMsg(data)
         end
 
-        ev.activator:Interface(1, self:Build())
+        ev.activator:Interface(game.GUI_NPC_MODE_NPC, self:Build())
     end
 end
 

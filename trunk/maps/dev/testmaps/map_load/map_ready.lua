@@ -18,12 +18,12 @@ local function topicDefault()
         ib:AddLink("Neutralize (delete) your instance", "remInstance")			
     end
     ib:AddLink("Load & jump to instance", "jmpinstance")
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 local function jmpInstance()
     pl:SetPosition(pl:StartNewInstance(instance_path), 1, 1)
-    pl:Interface(-1, "")
+    pl:Interface(game.GUI_NPC_MODE_NO)
 end
 
 local function remInstance()

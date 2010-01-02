@@ -31,10 +31,10 @@ ib:AddLink("Yup, here it is", "checkq1")
 end
 else
 pl:Write(me.name .." has nothing to say.", game.COLOR_NAVY)
-pl:Interface(-1, "") 
+pl:Interface(game.GUI_NPC_MODE_NO) 
 return
 end
-pl:Interface(1, ib:Build())
+pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 -- quest body (added to player quest obj for quest list)
@@ -55,7 +55,7 @@ ib:SetTitle(q_name_1)
 quest_body1()
 ib:SetAccept(nil, "acceptq1") 
 ib:SetDecline(nil, "hi") 
-pl:Interface(1, ib:Build())
+pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 end
 
@@ -91,7 +91,7 @@ ib:SetDesc("'Ere, ave yer coin.", 0, 4, 0, 0)
 ib:SetAccept(nil, "finishq1") 
 ib:SetDecline(nil, "hi") 
 end
-pl:Interface(1, ib:Build())
+pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 end
 
@@ -108,7 +108,7 @@ pl:AddMoneyEx(0,4,0,0)
 ib:SetTitle("Lost Booze")
 ib:SetMsg("Yeh ave yerself uh day o goodun!")
 ib:SetButton("Ok", "hi") 
-pl:Interface(1, ib:Build())
+pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 end
 

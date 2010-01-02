@@ -32,7 +32,7 @@ level=13
 -- Look up goods name
 local pet_info = goods[what]
 if pet_info == nil then
-activator:Interface(1,
+activator:Interface(game.GUI_NPC_MODE_NPC,
 [[        
 <h f="peasant.151"> 
 <m t="Pet Shop" b="Sorry, but I didn't quite get that.">
@@ -44,7 +44,7 @@ end
 
 -- check money
 if activator:GetMoney() < pet_info.price then
-activator:Interface(1,
+activator:Interface(game.GUI_NPC_MODE_NPC,
 [[        
 <h f="peasant.151"> 
 <m t="Pet Shop" b="Sorry, but you can't afford that pet.">
@@ -59,7 +59,7 @@ local pet = me.map:CreateObject(pet_info.arch, 8, 20)
 pet.name = pet_info.name
 pet.level = pet_info.level
 if not pet:MakePet(activator) then
-activator:Interface(1,
+activator:Interface(game.GUI_NPC_MODE_NPC,
 [[        
 <h f="peasant.151"> 
 <m t="Pet Shop" b="Sorry, but you can't have any more pets.">
@@ -89,10 +89,10 @@ end
 waypoint.f_cursed = true
 
 -- Finish off
-activator:Interface(-1)
+activator:Interface(game.GUI_NPC_MODE_NO)
 end
 
-tl:SetDefault( function() activator:Interface(1,
+tl:SetDefault( function() activator:Interface(game.GUI_NPC_MODE_NPC,
 [[
 <h f="peasant.151"> 
 <m t="Pet Shop" b="Welcome to my humble shop. 
@@ -106,7 +106,7 @@ I can also offer you some general ^advice^ on pet handling.
 ) end
 )
 
-tl:AddTopics( {"doggie", "dog"}, function() activator:Interface(1,
+tl:AddTopics( {"doggie", "dog"}, function() activator:Interface(game.GUI_NPC_MODE_NPC,
 [[
 <h f="peasant.151"> 
 <m t="Doggie" b="
@@ -124,7 +124,7 @@ Do you want to buy this cute li'l doggie?
 ) end
 )
 
-tl:AddTopics( {"red", "red ant"}, function() activator:Interface(1,
+tl:AddTopics( {"red", "red ant"}, function() activator:Interface(game.GUI_NPC_MODE_NPC,
 [[
 <h f="peasant.151"> 
 <m t="Red Ant" b="
@@ -141,7 +141,7 @@ Do you want to buy this?
 ) end
 )
 
-tl:AddTopics( {"black", "black ant"}, function() activator:Interface(1,
+tl:AddTopics( {"black", "black ant"}, function() activator:Interface(game.GUI_NPC_MODE_NPC,
 [[
 <h f="peasant.151"> 
 <m t="Black Ant" b="
@@ -158,7 +158,7 @@ Would you like to buy this?
 ) end
 )
 
-tl:AddTopics( {"advice", "pets"}, function() activator:Interface(1,
+tl:AddTopics( {"advice", "pets"}, function() activator:Interface(game.GUI_NPC_MODE_NPC,
 [[
 <h f="peasant.151"> 
 <m t="About Pets" b="
@@ -178,6 +178,6 @@ Make sure to take care of your pet and heal it when needed.">
 
 tl:AddTopics("buy (.*)", buyfunc)
 
-tl:AddTopics("leave", function() activator:Interface(-1) end)
+tl:AddTopics("leave", function() activator:Interface(game.GUI_NPC_MODE_NO) end)
 
 tl:CheckMessage(event)

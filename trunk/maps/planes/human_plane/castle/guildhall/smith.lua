@@ -56,7 +56,7 @@ function topicDefault(force)
     ib:AddMsg("\nWhat would you like to do?")
     ib:AddLink("Repair my Equipment", "repair")
     ib:AddLink("Identify Items", "identify")
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 function topicRepair()
@@ -79,7 +79,7 @@ function topicRepair()
         ib:AddMsg("\n\n~Your equipment doesn't need any repair~")
     end
     ib:SetButton("Back", "hi") 
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 function topicItemFix(what)
@@ -104,7 +104,7 @@ function topicItemFix(what)
             ib:SetMsg("The item doesn't need any repair.")
             ib:SetButton("Back", "repair") 
         end
-        pl:Interface(1, ib:Build())
+        pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
     end
 end
 
@@ -143,7 +143,7 @@ function topicFix(what)
         ib:AddIcon(tmp:GetName(), tmp:GetFace(), 'Condition: ~'.. tmp.item_condition .. '~    Quality: ~' .. tmp.item_quality .. '~')
     end
     ib:SetButton("Back", "repair") 
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 function topicIdentify()
@@ -163,7 +163,7 @@ function topicIdentify()
     ib:AddLink("Detect magic for 50 copper", "detect magic")
     ib:AddLink("Detect curse for 50 copper", "detect curse")
     ib:SetButton("Back", "hi") 
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 function topicDetect(what)
@@ -180,7 +180,7 @@ function topicDetect(what)
     ib:AddMsg(" coins.\n\nYou have " .. pl:ShowCost(pl:GetMoney()) .. ".\n\nYou want me to do it now?")
     ib:SetAccept(nil, "cast " .. what) 
     ib:SetDecline(nil, "identify") 
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 function topicCast(what)
@@ -214,7 +214,7 @@ function topicCast(what)
         ib:SetMsg("You don't have enough money!")
     end
     ib:SetButton("Back", "identify") 
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 -- The player asks about available quests
@@ -230,7 +230,7 @@ function topicQuest()
         topicGreeting()
         return
     end
-    pl:Interface(1,ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC,ib:Build())
 end
 
 -- The player wants to accept a quest. Activate the next accessible one.
@@ -247,7 +247,7 @@ function topicAccept()
         topicGreeting()
         return
     end
-    pl:Interface(-1)
+    pl:Interface(game.GUI_NPC_MODE_NO)
 end
 
 -- The player claims to have completed a quest. Double check and
@@ -352,7 +352,7 @@ function topicQuestComplete(reward)
         topicGreeting()
         return
     end
-    pl:Interface(1,ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC,ib:Build())
 end
 
 local function topicChereth()
@@ -360,7 +360,7 @@ local function topicChereth()
     ib:SetMsg("\n\nChereth was the guild's master archer until she unfortunately lost her sight in battle.")
     ib:AddMsg("\n\nNowadays she usually hangs out downstairs in the guild.")
     ib:SetButton("Back", "hi")
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 tl = TopicList()

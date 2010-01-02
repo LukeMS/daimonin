@@ -46,7 +46,7 @@ function topicDefault()
         ib:AddQuestChecklist(q_mgr_1)
     end
 
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 -- The player asks about available quests
@@ -62,7 +62,7 @@ function topicQuest()
         topicGreeting()
         return
     end
-    pl:Interface(1,ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC,ib:Build())
 end
 
 -- The player wants to accept a quest. Activate the next accessible one.
@@ -78,7 +78,7 @@ function topicAccept()
         topicGreeting()
         return
     end
-    pl:Interface(-1)
+    pl:Interface(game.GUI_NPC_MODE_NO)
 end
 
 -- The player claims to have completed a quest. Double check and
@@ -102,7 +102,7 @@ function topicQuestComplete(reward)
         topicGreeting()
         return
     end
-    pl:Interface(1,ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC,ib:Build())
 end
 
 --
@@ -117,7 +117,7 @@ local function topicShop()
     ib:AddMsg("\n\nIf you find something you like, just pick it up and exit through the teleporter on the other side. If you have enough money, you will be let through back automatically.")
     ib:AddMsg("\n\nIn case that you have something to sell, just drop it on the floor inside the fenced off area.")
     ib:SetButton("Back", "hi")
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 local function topicJahrlen()
@@ -125,7 +125,7 @@ local function topicJahrlen()
     ib:SetMsg("\n\nDon't you know him? He's the head mage of the mercenary guild. I guess he's better at offensive spells than he is at warding spells, otherwise I'd still have all of my inventory left.")
     ib:AddMsg("\n\nAnyhow, if you want to see him, I guess he is down in the guild.")
     ib:SetButton("Back", "hi")
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 tl = TopicList()

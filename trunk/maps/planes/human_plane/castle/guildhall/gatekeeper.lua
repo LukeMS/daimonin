@@ -78,7 +78,7 @@ local function topicDefault()
             end
         end
     end
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 -- check if this is a pedestal

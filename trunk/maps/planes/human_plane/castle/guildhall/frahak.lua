@@ -28,7 +28,7 @@ local function topicDefault()
         ib:AddMsg("\nAshahk! Yo want me teaching yo more ^find traps^?\nWill teach for money.\n")
         ib:AddLink("Buy More Find Trap Skill", "find traps")
     end
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 -- quest body (added to player quest obj for quest list)
@@ -52,7 +52,7 @@ local function topStartQ1()
     quest_icons1()
     ib:SetAccept(nil, "acceptq1") 
     ib:SetDecline(nil, "hi") 
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 -- accepted: start the quest
@@ -68,7 +68,7 @@ local function topAcceptQ1()
         pl:Sound(0, 0, 2, 0)
         pl:Write("You take the quest '".. q_mgr_1.name .."'.", game.COLOR_NAVY)
     end
-    pl:Interface(-1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 -- try to finish: check the quest
@@ -91,7 +91,7 @@ local function topCheckQ1()
         ib:SetAccept(nil, "finishq1") 
         ib:SetDecline(nil, "hi") 
     end
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 -- done: finish quest and give reward
@@ -108,7 +108,7 @@ local function topFinishQ1()
     ib:SetTitle("Quest Completed")
     ib:SetMsg("Frah'ak teach an ancient skill.")
     ib:SetButton("Ok", "hi") 
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 local function topFindtraps()
@@ -121,12 +121,12 @@ local function topFindtraps()
         ib:AddMsg("\nFind traps lvl "..slevel.." will cost you \n" .. pl:ShowCost( slevel * slevel * (50+slevel) * 3).." .")
         ib:AddLink("Pay For More Find Trap Skill", "teach traps")
         ib:SetButton("Ok", "hi") 
-        pl:Interface(1, ib:Build())
+        pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
     else
         ib:SetTitle("Find Traps Skill Cost")
         ib:SetMsg("Ho, yo agility to low to teach!!" )
         ib:SetButton("Ok", "hi") 
-        pl:Interface(1, ib:Build())
+        pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
     end
 end
 
@@ -150,14 +150,14 @@ local function topTeachtraps()
         end
     end
     ib:SetButton("Ok", "hi") 
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 local function topWarrior()
     ib:SetTitle("Warrior")
     ib:AddMsg("\nMe big chief. Me ogre destroy you.\nStomp on. Dragon kakka." )
     ib:SetButton("Back", "Hi") 
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 local function topKobolds()
@@ -165,7 +165,7 @@ local function topKobolds()
     ib:AddMsg("\nKobolds traitors!\nGive gold for note, kobolds don't bring note to ogres.\nMe tell you: Kill kobold chief!\nMe will teach you find traps skill!\nShow me note i will teach you.\nKobolds in hole next room. Secret entry in wall." )
     ib:AddLink("Start the Ogre Chief Frah'aks Letter Quest", "startq1")
     ib:SetButton("Back", "Hi")
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 tl = TopicList()

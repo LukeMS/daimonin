@@ -52,7 +52,7 @@ local function topicDefault()
         end
         ib:AddMsg("\n\nThen of course there is my dear friend ^Jahrlen^, across the room there.")
     end
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 local function topCashin()
@@ -64,7 +64,7 @@ local function topCashin()
         ib:AddMsg("He will probably let you rejoin our guild if you ask him.")
     end
     ib:SetButton("Back", "hi")
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 local function topTaleus()
@@ -74,7 +74,7 @@ local function topTaleus()
     ib:AddMsg("\n\nHe is usually practicing on our archery ranges outside, but if he has ")
     ib:AddMsg("gone off for more supplies someone at the range will surely know where you can find him.") 
     ib:SetButton("Back", "hi")
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 local function topJahrlen()
@@ -84,7 +84,7 @@ local function topJahrlen()
     ib:AddMsg("came down the stairs.")
     ib:AddMsg("\n\nHe is our resident mage, and will probably be able to teach you some useful magic if you talk to him.")
     ib:SetButton("Back", "hi")
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 local tl = TopicList()

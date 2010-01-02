@@ -44,7 +44,7 @@ local function topicDefault()
     end
     ib:AddMsg("\n\n[DEVMSG] The guild status is: ".. guild_stat .."\n")
     ib:AddMsg("[DEVMSG] The quest status is: ".. q_mgr_1:GetStatus())
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 -- quest body (added to player quest obj for quest list)
@@ -66,7 +66,7 @@ local function topStartQ1()
         quest_icons1()
         ib:SetAccept(nil, "acceptq1") 
         ib:SetDecline(nil, "hi") 
-        pl:Interface(1, ib:Build())
+        pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
     end
 end
 
@@ -83,7 +83,7 @@ local function topAcceptQ1()
         pl:Sound(0, 0, 2, 0)
         pl:Write("You take the quest '".. q_mgr_1.name .."'.", game.COLOR_NAVY)
     end
-    pl:Interface(-1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 -- try to finish: check the quest
@@ -106,7 +106,7 @@ local function topCheckQ1()
         ib:SetAccept(nil, "finishq1") 
         ib:SetDecline(nil, "hi") 
     end
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 -- done: finish quest and give reward
@@ -123,7 +123,7 @@ local function topFinishQ1()
     ib:SetTitle("QUEST END: Test Guild 1 Quest")
     ib:SetMsg("Very well done! You are now a member of...!")
     ib:SetButton("Ok", "hi") 
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 local function topAskjoinG1()
@@ -135,7 +135,7 @@ local function topAskjoinG1()
     ib:SetMsg("You really want rejoin our guild?\n\nWe would be proud to have you back in our ranks!")
     ib:SetAccept(nil, "rejoing1") 
     ib:SetDecline(nil, "hi") 
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 local function topRejoinG1()
@@ -150,7 +150,7 @@ local function topRejoinG1()
     ib:SetTitle("Welcome Back!")
     ib:SetMsg("Welcome back to our guild!")
     ib:SetButton("Ok", "hi") 
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 tl = TopicList()

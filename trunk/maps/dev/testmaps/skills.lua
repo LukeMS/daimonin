@@ -11,7 +11,7 @@ ib:SetHeader(me, me.name)
 local function topicDefault()
     ib:SetTitle("Add Skills to Player")
     ib:AddMsg("I am the Skillgiver.\nType ^learn <skillname>^ or ^unlearn <skillname>^ (Note: unlearn skills is not implemented atm - the ideas of the daimonin skill system is to collect the skills - and don't lose them).")
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 tl = TopicList()

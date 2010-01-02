@@ -26,7 +26,7 @@ local function topicDefault()
         ib:AddLink("Buy 10 "..data.title.. " for "..pl:ShowCost(data.price*10), "buy 10 "..data.title)
         ib:AddLink("Buy 25 "..data.title.. " for "..pl:ShowCost(data.price*25), "buy 25 "..data.title)
     end
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 local function topicBuy(nrof, what)
@@ -52,7 +52,7 @@ local function topicBuy(nrof, what)
             ib:SetMsg("Sorry but we aren't a wholesale, you can only buy small amounts.\n\n")
         end
     end
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 local function topicConfirm(nrof, what)
@@ -78,7 +78,7 @@ local function topicConfirm(nrof, what)
         ib:SetMsg("You don't have enough money!")
     end
     ib:SetButton("Back", "Hi") 
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 tl = TopicList()

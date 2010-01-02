@@ -32,7 +32,7 @@ function topicGreeting()
     ib:AddMsg("Welcome to the apartment house.\n")
     ib:AddMsg("I can sell you an ^apartment^.\n")
     ib:AddMsg("I have ^cheap^, ^normal^, ^expensive^ or ^luxurious^ ones.")
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 function create_info(id, path, x, y)
@@ -65,7 +65,7 @@ function updateAp(ap_old, ap_new, pid, x, y)
         ib:AddMsg("\nDone! Your new apartment is ready.\n")
         ib:AddMsg("\nMake sure that you use the SaveBed in your new apartment or death is liable to take you back to the dock.\n")
     end
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 function reset()
@@ -84,7 +84,7 @@ function topicApartment()
     ib:AddMsg("You can have only one apartment at once in the city,\n")
     ib:AddMsg("but you can ^upgrade^ it.")
     ib:SetButton("Back", "hi")
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
     reset()
 end
 
@@ -97,7 +97,7 @@ function topicCheap()
     ib:AddMsg("Say ^sell me a cheap apartment^ to buy it!\n")
     ib:AddMsg("Choose wisely!")
     ib:SetButton("Back", "hi")
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
     reset()
 end
 
@@ -110,7 +110,7 @@ function topicNormal()
     ib:AddMsg("Say ^sell me a normal apartment^ to buy it!\n")
     ib:AddMsg("Choose wisely!")
     ib:SetButton("Back", "hi")
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
     reset()
 end
 
@@ -123,7 +123,7 @@ function topicExpensive()
     ib:AddMsg("Say ^sell me an expensive apartment^ to buy it!\n")
     ib:AddMsg("Choose wisely!")
     ib:SetButton("Back", "hi")
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
     reset()
 end
 
@@ -136,7 +136,7 @@ function topicLux()
     ib:AddMsg("Say ^sell me an luxurious apartment^ to buy it!\n")
     ib:AddMsg("Choose wisely!")
     ib:SetButton("Back", "hi")
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
     reset()
 end
 
@@ -145,7 +145,7 @@ function topicDimension()
     ib:AddMsg("A pocket dimension is a magical mini dimension")
     ib:AddMsg("in an outer plane. They are very safe and no thief will ever be able to enter.")
     ib:SetButton("Back", "hi")
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
     reset()
 end
 
@@ -165,7 +165,7 @@ function topicUpgrade()
         ib:AddMsg("Go to upgrade ^procedure^ when you want upgrade now.\n")
     end
     ib:SetButton("Back", "hi")
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 function topicProcedure()
@@ -202,7 +202,7 @@ function topicProcedure()
         end
     end
     ib:SetButton("Back", "upgrade")
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 function topicConfirm()
@@ -226,7 +226,7 @@ Choose ~Decline~ to cancel it.
     ib:SetAccept(nil, "upgrade_confirmation2")
     ib:SetDecline(nil, "hi")
 
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 function topicConfirmAgain()
@@ -274,7 +274,7 @@ function topicConfirmAgain()
         end
         pinfo.last_heal = -1
     end
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 local function sellMessages()
@@ -301,7 +301,7 @@ function topicSellCheap()
         ib:AddMsg("You can ^upgrade^ it.\n")
     end
     ib:SetButton("Back", "hi")
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 function topicSellNormal()
@@ -320,7 +320,7 @@ function topicSellNormal()
         ib:AddMsg("You can ^upgrade^ it.\n")
     end
     ib:SetButton("Back", "hi")
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 function topicSellExpensive()
@@ -339,7 +339,7 @@ function topicSellExpensive()
         ib:AddMsg("You can ^upgrade^ it.\n")
     end
     ib:SetButton("Back", "hi")
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 function topicSellLuxurious()
@@ -358,7 +358,7 @@ function topicSellLuxurious()
         ib:AddMsg("You can ^upgrade^ it.\n")
     end
     ib:SetButton("Back", "hi")
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 function topicUpgradeToCheap()
@@ -385,7 +385,7 @@ Choose ~Decline~ to cancel it.
         ib:SetDecline(nil, "hi")
         end
     end
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 function topicUpgradeToNormal()
@@ -412,7 +412,7 @@ Choose ~Decline~ to cancel it.
             ib:SetDecline(nil, "hi")
         end
     end
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 function topicUpgradeToExpensive()
@@ -439,7 +439,7 @@ Choose ~Decline~ to cancel it.
             ib:SetDecline(nil, "hi")
         end
     end
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 function topicUpgradeToLuxurious()
@@ -466,7 +466,7 @@ Choose ~Decline~ to cancel it.
             ib:SetDecline(nil, "hi")
         end
     end
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 

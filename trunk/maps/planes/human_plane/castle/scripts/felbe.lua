@@ -33,10 +33,10 @@ ib:AddLink("Finish Item Test Quest", "checkq1")
 end
 else
 pl:Write(me.name .." has nothing to say.", game.COLOR_NAVY)
-pl:Interface(-1, "") 
+pl:Interface(game.GUI_NPC_MODE_NO) 
 return
 end
-pl:Interface(1, ib:Build())
+pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 -- quest body (added to player quest obj for quest list)
@@ -58,7 +58,7 @@ quest_body1()
 quest_icons1()
 ib:SetAccept(nil, "acceptq1") 
 ib:SetDecline(nil, "hi") 
-pl:Interface(1, ib:Build())
+pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 end
 
@@ -99,7 +99,7 @@ Q_List(q_obj_1, ib)
 ib:SetAccept(nil, "finishq1") 
 ib:SetDecline(nil, "hi") 
 end
-pl:Interface(1, ib:Build())
+pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 end
 
@@ -117,7 +117,7 @@ pl:AddMoneyEx(1,2,0,0)
 ib:SetTitle("QUEST END: Item Test Quest")
 ib:SetMsg("Very well done! Here is your reward!")
 ib:SetButton("Ok", "hi") 
-pl:Interface(1, ib:Build())
+pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 end
 
