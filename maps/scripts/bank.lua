@@ -33,7 +33,7 @@ function topicDefault()
     ib:AddMsg("Would you like to ")
     if balance > 0 then ib:AddLink("make a withdrawal?", "withdrawal") end
     if onhand > 0 then ib:AddLink("make a deposit?", "deposit") end
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 function topicDepositDialog()
@@ -54,7 +54,7 @@ or simply ~deposit all~ to deposit all your money.
         ib:AddMsg("You have no money to deposit.\n\n")
     end
     ib:SetButton("Back", "hi")
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 -- The actual deposit handler
@@ -75,7 +75,7 @@ function topicDeposit(what)
         ib:SetButton("Back", "deposit")
     end
     ib:AddMsg("You have on hand " .. pl:ShowCost(pl:GetMoney()) .. ".\n")
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 function topicWithdrawDialog()
@@ -97,7 +97,7 @@ simply ~withdraw all~ to withdraw all your money.
         ib:AddMsg("There is no money to withdraw.\n\n")
     end
     ib:SetButton("Back", "hi")
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 -- The actual withdraw handler
@@ -121,7 +121,7 @@ function topicWithdraw(what)
         end
     end
     ib:AddMsg("You have on hand " .. pl:ShowCost(pl:GetMoney()) .. ".\n")
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 tl = TopicList()

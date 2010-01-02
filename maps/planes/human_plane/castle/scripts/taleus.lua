@@ -64,10 +64,10 @@ function topicDefault()
         quest_reminder()
     else
         pl:Write(me.name .." has nothing to say.", game.COLOR_NAVY)
-        pl:Interface(-1, "") 
+        pl:Interface(game.GUI_NPC_MODE_NO) 
         return
     end
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 -- Player asks for quests
@@ -84,7 +84,7 @@ function topQuest()
         return
     end
 
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 -- accepted: start the quest
@@ -101,7 +101,7 @@ function topAccept()
         topicDefault()
         return
     end
-    pl:Interface(-1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 -- try to finish: check the quest
@@ -118,7 +118,7 @@ function topQuestComplete()
         ib:SetAccept(nil, "reward") 
         ib:SetDecline(nil, "hi") 
 	end
-	pl:Interface(1, ib:Build())
+	pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 -- done: finish quest and give reward
@@ -143,7 +143,7 @@ function topQuestReward(reward)
     pl:Sound(0, 0, 2, 0)
     ib:SetMsg("Very well done! Here is your reward!")
     ib:SetButton("Ok", "hi") 
-    pl:Interface(-1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 --
@@ -154,7 +154,7 @@ local function topChereth()
     ib:SetTitle("Chereth")
     ib:SetMsg("\n\nYes, Chereth lost her eyes in a major battle. When you find her, she can tell you more.")
     ib:SetButton("Back", "hi")
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 local function topArchery()
@@ -173,7 +173,7 @@ local function topArchery()
         ib:AddLink("Could you tell me what this 'quest' is?", "explain quest")
     end
     ib:SetButton("Back", "hi")
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 tl = TopicList()

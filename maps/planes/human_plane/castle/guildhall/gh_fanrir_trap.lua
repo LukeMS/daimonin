@@ -30,4 +30,4 @@ ib:AddMsg("\n|Hints|\n")
 ib:AddMsg("\nTo pick up the food move the cursor over it and press the '~G~' key.\n")
 ib:AddMsg("\nNow eat the food by applying it in the same way that you open containers or use stairs.")
 
-event.activator:Interface(1, ib:Build())
+event.activator:Interface(game.GUI_NPC_MODE_NPC, ib:Build())

@@ -17,7 +17,7 @@ function topicDefault()
     ib:SetMsg("Hello! I'm just training here.\n\n")
     ib:AddMsg("I guess you are looking for ^Taleus^.\n\n")
 
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 --
@@ -29,7 +29,7 @@ local function topicTaleus()
     ib:AddMsg("\n\nTaleus is the one you want to see for archery training.")
     ib:AddMsg("\n\nHe's not here for the moment, though. He went to ^Stonehaven^ to get some supplies. If you really must see him, he is probably in the shop in Stonehaven.")
     ib:SetButton("Back", "hi")
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 local function topicStonehaven()
@@ -38,7 +38,7 @@ local function topicStonehaven()
     ib:AddMsg("\n\nTo get there exit the guildhall compound through the western gates and follow the road until the first major intersection. There you turn north and keep going until you reach the Stonehaven gates.")
     ib:AddMsg("\n\nIt can be a bit rough for an inexperienced traveler, though. There are still some wild animals in the area, and the occasional ogre raiding party.")
     ib:SetButton("Back", "hi")
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 tl = TopicList()

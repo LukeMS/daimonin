@@ -61,10 +61,10 @@ local function topicDefault()
     -- If we don't have any quest at all, we remain silent.
     if q_mgr_1:GetStatus() >= game.QSTAT_DONE and q_mgr_2:GetStatus() >= game.QSTAT_DONE and q_mgr_3:GetStatus() >= game.QSTAT_DONE then
         pl:Write(me.name .." has nothing to say.", game.COLOR_NAVY)
-        pl:Interface(-1, "") 
+        pl:Interface(game.GUI_NPC_MODE_NO) 
         return
     end
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 -- Quest 1 parts
@@ -89,7 +89,7 @@ local function topStartQ1()
     quest_icons1()
     ib:SetAccept(nil, "acceptq1") 
     ib:SetDecline(nil, "hi") 
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 -- accepted: start the quest
@@ -106,7 +106,7 @@ local function topAcceptQ1()
         pl:Sound(0, 0, 2, 0)
         pl:Write("You take the quest '".. q_mgr_1.name .."'.", game.COLOR_NAVY)
     end
-    pl:Interface(-1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 -- try to finish: check the quest
@@ -129,7 +129,7 @@ local function topCheckQ1()
         ib:SetAccept(nil, "finishq1") 
         ib:SetDecline(nil, "hi") 
     end
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 -- done: finish quest and give reward
@@ -146,7 +146,7 @@ local function topFinishQ1()
     ib:SetTitle("QUEST END: Item Test Quest Multi 1")
     ib:SetMsg("Very well done! Here is your reward!")
     ib:SetButton("Ok", "hi") 
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 -- Quest 2 parts
@@ -170,7 +170,7 @@ local function topStartQ2()
     quest_icons2()
     ib:SetAccept(nil, "acceptq2") 
     ib:SetDecline(nil, "hi") 
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 -- accepted: start the quest
@@ -186,7 +186,7 @@ local function topAcceptQ2()
         pl:Sound(0, 0, 2, 0)
         pl:Write("You take the quest '".. q_mgr_2.name .."'.", game.COLOR_NAVY)
     end
-    pl:Interface(-1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 -- try to finish: check the quest
@@ -209,7 +209,7 @@ local function topCheckQ2()
         ib:SetAccept(nil, "finishq2") 
         ib:SetDecline(nil, "hi") 
     end
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 -- done: finish quest and give reward
@@ -226,7 +226,7 @@ local function topFinishQ2()
     ib:SetTitle("QUEST END: Item Test Quest Multi 2")
     ib:SetMsg("Very well done! Here is your reward!")
     ib:SetButton("Ok", "hi") 
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 -- Quest 3 parts
@@ -250,7 +250,7 @@ local function topStartQ3()
     quest_icons3()
     ib:SetAccept(nil, "acceptq3") 
     ib:SetDecline(nil, "hi") 
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 -- accepted: start the quest
@@ -266,7 +266,7 @@ local function topAcceptQ3()
         pl:Sound(0, 0, 2, 0)
         pl:Write("You take the quest '".. q_mgr_3.name .."'.", game.COLOR_NAVY)
     end
-    pl:Interface(-1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 -- try to finish: check the quest
@@ -289,7 +289,7 @@ local function topCheckQ3()
         ib:SetAccept(nil, "finishq3") 
         ib:SetDecline(nil, "hi") 
     end
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 -- done: finish quest and give reward
@@ -306,7 +306,7 @@ local function topFinishQ3()
     ib:SetTitle("QUEST END: Item Test Quest Multi 3")
     ib:SetMsg("Very well done! Here is your reward!")
     ib:SetButton("Ok", "hi") 
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 tl = TopicList()

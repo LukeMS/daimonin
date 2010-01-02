@@ -24,7 +24,7 @@ local function topicDefault()
     ib:AddLink("Cure Poison", "cast poison")
     ib:AddLink("Remove Curse from items", "cast curse")
     ib:AddLink("Remove Damnation from items", "cast damn")
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 local function topicExplain()
@@ -32,7 +32,7 @@ local function topicExplain()
     ib:AddMsg("I can cure various things by casting the named spells on you when you pay me the money.\n\n")
     ib:AddMsg("Deathsick is a stronger form of depletion.\nEverytime you die stats are depleted by death sickness.")
     ib:SetButton("Back", "hi")
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 local function topicCast(what)
@@ -54,7 +54,7 @@ local function topicCast(what)
     ib:AddMsg(".\n\nYou have " .. pl:ShowCost(pl:GetMoney()) .. ".\n\nDo you want me to do it now?") 
     ib:SetAccept(nil, "docast " .. what) 
     ib:SetDecline(nil, "hi")
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 local function topicDoCast(what)
@@ -88,7 +88,7 @@ local function topicDoCast(what)
         ib:SetMsg("You don't have enough money!")
     end
     ib:SetButton("Back", "Hi") 
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 tl = TopicList()

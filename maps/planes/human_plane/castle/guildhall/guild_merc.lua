@@ -47,7 +47,7 @@ local function topicDefault()
         end
         ib:AddMsg("Good to see you back. How are you?\n\nIt's nice that you have joined our ^troops^.")
     end
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 -- quest body (added to player quest obj for quest list)
@@ -84,7 +84,7 @@ local function topStartQ1()
     quest_icons1()
     ib:SetAccept(nil, "acceptq1") 
     ib:SetDecline(nil, "hi") 
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
     end
 end
 
@@ -101,7 +101,7 @@ local function topAcceptQ1()
         pl:Sound(0, 0, 2, 0)
         pl:Write("You take the quest '".. q_mgr_1.name .."'.", game.COLOR_NAVY)
     end
-    pl:Interface(-1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 -- try to finish: check the quest
 local function topCheckQ1()
@@ -125,7 +125,7 @@ local function topCheckQ1()
         ib:SetAccept(nil, "finishq1") 
         ib:SetDecline(nil, "hi") 
     end
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 -- done: finish quest and give reward
 local function topFinishQ1()
@@ -145,7 +145,7 @@ local function topFinishQ1()
         ib:SetMsg("Very well done!\n")
         ib:AddMsg("\nYou are now a member of the Mercenary Guild!")
         ib:SetButton("Ok", "hi") 
-        pl:Interface(1, ib:Build())
+        pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
     end
 end
 
@@ -159,7 +159,7 @@ local function topAskjoinG1()
     ib:AddMsg("\nWe would be proud to have you back in our ranks!")
     ib:SetAccept(nil, "rejoing1") 
     ib:SetDecline(nil, "hi") 
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 local function topRejoinG1()
@@ -173,7 +173,7 @@ local function topRejoinG1()
     ib:SetTitle("Welcome Back!")
     ib:SetMsg("\nWelcome back to our guild!")
     ib:SetButton("Ok", "hi") 
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 local function topTroops()
@@ -186,7 +186,7 @@ local function topTroops()
     ib:AddMsg("\n\nYou should also talk to our senior members, like ^Chereth^ downstairs; ")
     ib:AddMsg("they can provide valuable assistance to you.\n")
     ib:SetButton("Ok", "hi") 
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 local function topJahrlen()
@@ -198,7 +198,7 @@ local function topJahrlen()
     ib:AddMsg("\nHe is in our guild rooms, or maybe in one of our branch guildhalls.\n")
     ib:AddMsg("\nTalk to him when you meet him! He often has tasks and quests for newbies.\n")
     ib:SetButton("Ok", "hi") 
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 local function topChereth()
@@ -206,7 +206,7 @@ local function topChereth()
     ib:SetMsg("\nFormer Achery Commander Chereth is our Supply Chief.\n")
     ib:AddMsg("\nAlthough she was seriously wounded in battle, she is still a great expert in archery.\n")
     ib:SetButton("Ok", "hi") 
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 tl = TopicList()

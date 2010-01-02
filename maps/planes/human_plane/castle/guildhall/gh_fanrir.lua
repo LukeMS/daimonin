@@ -94,7 +94,7 @@ local function topicGreeting()
     
     ib:SetHeader(me)
     ib:SetTitle("Hello")
-    pl:Interface(1,ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC,ib:Build())
 end
 
 local function figureOutWeapon()
@@ -165,7 +165,7 @@ local function topicQuest()
         return
     end
     ib:SetHeader(me)
-    pl:Interface(1,ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC,ib:Build())
 end
 
 -- The player wants to accept a quest. Activate the next accessible one.
@@ -212,7 +212,7 @@ local function topicAccept()
         topicGreeting()
         return
     end
-    pl:Interface(-1)
+    pl:Interface(game.GUI_NPC_MODE_NO)
 end
 
 -- The player claims to have completed a quest. Double check and
@@ -257,7 +257,7 @@ local function topicQuestComplete()
         return
     end
     ib:SetHeader(me)
-    pl:Interface(1,ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC,ib:Build())
 end
 
 tl = TopicList()

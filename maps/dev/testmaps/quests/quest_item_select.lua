@@ -26,10 +26,10 @@ local function topicDefault()
         end
     else
         pl:Write(me.name .." has nothing to say.", game.COLOR_NAVY)
-        pl:Interface(-1, "") 
+        pl:Interface(game.GUI_NPC_MODE_NO) 
         return
     end
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 -- quest body (added to player quest obj for quest list)
@@ -56,7 +56,7 @@ local function topStartQ1()
     ib:SelectOff()
     ib:SetAccept(nil, "acceptq1") 
     ib:SetDecline(nil, "hi") 
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 -- accepted: start the quest
@@ -73,7 +73,7 @@ local function topAcceptQ1()
         pl:Sound(0, 0, 2, 0)
         pl:Write("You take the quest '".. q_mgr_1.name .."'.", game.COLOR_NAVY)
     end
-    pl:Interface(-1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 -- try to finish: check the quest
@@ -96,7 +96,7 @@ local function topCheckQ1()
         ib:SetAccept(nil, "#finishq1") 
         ib:SetDecline(nil, "hi") 
 	end
-	pl:Interface(1, ib:Build())
+	pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 -- done: finish quest and give reward
@@ -120,7 +120,7 @@ local function topFinishQ1()
     ib:SetTitle("QUEST END: Item Select Test Quest")
     ib:SetMsg("Very well done! Here is your reward!")
     ib:SetButton("Ok", "hi") 
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 tl = TopicList()

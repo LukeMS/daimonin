@@ -119,7 +119,7 @@ function topicGreeting()
     end
     
     ib:SetTitle("Greetings!")
-    pl:Interface(1,ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC,ib:Build())
 end
 
 -- The player asks about available quests
@@ -136,7 +136,7 @@ function topicQuest()
         topicGreeting()
         return
     end
-    pl:Interface(1,ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC,ib:Build())
 end
 
 -- The player wants to accept a quest. Activate the next accessible one.
@@ -161,7 +161,7 @@ function topicAccept()
         topicGreeting()
         return
     end
-    pl:Interface(-1)
+    pl:Interface(game.GUI_NPC_MODE_NO)
 end
 
 -- The player claims to have completed a quest. Double check and
@@ -190,7 +190,7 @@ function topicQuestComplete()
         topicGreeting()
         return
     end
-    pl:Interface(1,ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC,ib:Build())
 end
 
 --
@@ -205,7 +205,7 @@ local function topChrono()
     ib:AddMsg("Hmm... If you ever meet ^Rangaron^ in your travels, tell him that Jahrlen has sent you.\n\n")
     ib:AddMsg("Don't ask me more now.")
     ib:SetButton("Back", "hi")
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 local function topRangaron()
@@ -213,7 +213,7 @@ local function topRangaron()
     ib:SetMsg("\n\nI said 'Don't ask me more now'! You have problems with your ears??\n\n")
     ib:AddMsg("If you meet Rangaron, and I'm sure you will, then tell him what I told you.")
     ib:SetButton("Back", "hi")
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 local function topProbe()
@@ -224,7 +224,7 @@ local function topProbe()
     ib:AddMsg("The spell itself is very safe. Creatures will not notice that they were probed. ")
     ib:AddMsg("They will not get angry or attack.")
     ib:SetButton("Back", "hi")
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 local function topMagicBullet()
@@ -237,7 +237,7 @@ local function topMagicBullet()
     ib:AddMsg("be it a wall or a monster that could be beyond your range of vision. Be assured that ")
     ib:AddMsg("a monster you disturb like this will hunt you down!")
     ib:SetButton("Back", "hi")
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 local function topMahch()
@@ -247,7 +247,7 @@ local function topMahch()
     ib:AddMsg("We have tried to see where his bolt hole is, and we think it might be somewhere ")
     ib:AddMsg("close to some boxes outside.")
     ib:SetButton("Back", "hi")
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 tl = TopicList()

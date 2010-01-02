@@ -28,7 +28,7 @@ local function topicDefault()
     ib:AddMsg("\n\n[DEVMSG] The guild status is: ".. guild_stat .."\n")
     ib:AddLink("LEAVE current guild!", "leaveg1")
     ib:AddLink("JOIN / REJOIN the Test Guild Special 1", "joing1")
-    pl:Interface(1, ib:Build())
+    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 local function topJoinG1()
