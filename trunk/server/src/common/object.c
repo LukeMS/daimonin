@@ -1318,6 +1318,8 @@ void update_object(object *op, int action)
                     newflags |= P_CHECK_INV;
                 else if (op->type == MAGIC_EAR)
                     newflags |= P_MAGIC_EAR;
+                else if (op->type == GRAVESTONE)
+                    newflags |= P_PLAYER_GRAVE;
 
                 if (QUERY_FLAG(op, FLAG_ALIVE))
                 {
@@ -1386,7 +1388,8 @@ void update_object(object *op, int action)
              || QUERY_FLAG(op, FLAG_CAN_REFL_SPELL)
              || QUERY_FLAG(op, FLAG_CAN_REFL_MISSILE)
              || op->type == CHECK_INV
-             || op->type == MAGIC_EAR)
+             || op->type == MAGIC_EAR
+             || op->type == GRAVESTONE)
                 newflags |= P_FLAGS_UPDATE; /* force flags rebuild */
             break;
         case UP_OBJ_FLAGS:

@@ -136,6 +136,11 @@ void update_position(mapstruct *m, MapSpace *mspace, int x, int y)
                 }
             }
 
+            if (tmp->type == GRAVESTONE)
+            {
+                flags |= P_PLAYER_GRAVE;
+            }
+
             /* This is set by the floor to node code now
             if (QUERY_FLAG(tmp, FLAG_IS_FLOOR))
             move_flags |= tmp->terrain_type;
@@ -296,7 +301,7 @@ int blocks_cleric(mapstruct *m, int x, int y)
 {
     if (!(m = out_of_map(m, &x, &y)))
         return (P_BLOCKSVIEW | P_NO_PASS | P_NO_CLERIC | P_OUT_OF_MAP);
-    return (GET_MAP_FLAGS(m, x, y) & P_NO_CLERIC);
+    return (GET_MAP_FLAGS(m, x, y) & (P_NO_CLERIC | P_PLAYER_GRAVE));
 }
 
 /* I total reworked the blocked functions. There was several bugs, glitches
