@@ -28,6 +28,8 @@
 #include <pwd.h>
 #endif
 
+static char *CreateGravestone(object *op, mapstruct *m, int x, int y);
+
 /* find a player name for a NORMAL string.
  * we use the hash table system.
  */
@@ -596,38 +598,56 @@ void do_some_living(object *op)
     }
 }
 
-/* Returns pointer to a static string containing gravestone text. */
-static char *gravestone_text(object *op)
+/* Creates a gravestone for the player (op) and inserts it on the spot where he
+ * died. */
+static char *CreateGravestone(object *op, mapstruct *m, int x, int y)
 {
-    timeanddate_t tad;
+    static archetype *at = NULL;
+    object           *gravestone;
+    char              buf[MAX_BUF];
+    timeanddate_t     tad;
 
+    if (!at)
+    {
+        if (!(at = find_archetype("gravestone")))
+        {
+            LOG(llevBug, "BUG:: %s/CreateGravestone(): archetype 'gravestone' not found!\n",
+                         __FILE__);
+
+            return;
+        }
+    }
+
+    gravestone = arch_to_object(at);
+
+    if (op->level >= 1)
+    {
+        gravestone->level = op->level;
+    }
+
+    sprintf(buf, "%s's gravestone", STRING_OBJ_NAME(op));
+    FREE_AND_COPY_HASH(gravestone->name, buf);
     /* name */
-    sprintf(errmsg, "R.I.P.\n\n%s", STRING_OBJ_NAME(op));
-
-    /* title */
-    if (op->title)
-        sprintf(strchr(errmsg, '\0'), " %s", STRING_OBJ_TITLE(op));
-
+    sprintf(buf, "R.I.P.\n\n%s", query_name(op));
     /* race, level */
-    sprintf(strchr(errmsg, '\0'), " the %s\nwho was level %d\nwhen ",
+    sprintf(strchr(buf, '\0'), " the %s\nwho was level %d\nwhen ",
             STRING_OBJ_RACE(op), (int)op->level);
-
     /* gender */
-    sprintf(strchr(errmsg, '\0'), "%s",
+    sprintf(strchr(buf, '\0'), "%s",
             (QUERY_FLAG(op, FLAG_IS_MALE)) ?
             ((QUERY_FLAG(op, FLAG_IS_FEMALE)) ? "they were" : "he was") :
             ((QUERY_FLAG(op, FLAG_IS_FEMALE)) ? "she was" : "it was"));
-
     /* cause of death */
-    sprintf(strchr(errmsg, '\0'), " killed by %s.\n\n",
+    sprintf(strchr(buf, '\0'), " killed by %s.\n\n",
             (CONTR(op)->killer) ? CONTR(op)->killer : "bad luck");
-
     /* date */
     get_tad(&tad);
-    sprintf(strchr(errmsg, '\0'), "On %s\n",
+    sprintf(strchr(buf, '\0'), "On %s\n",
             print_tad(&tad, TAD_SHOWDATE | TAD_LONGFORM));
-
-    return errmsg;
+    FREE_AND_COPY_HASH(gravestone->msg, buf);
+    gravestone->x = x;
+    gravestone->y = y;
+    insert_ob_in_map(gravestone, m, NULL, INS_NO_WALK_ON);
 }
 
 /* If the player should die (lack of hp, food, etc), we call this.
@@ -825,6 +845,9 @@ void kill_player(object *op)
         }
     }
     /* If no stat lost, tell the player. */
+    /* FIXME: These messages need a rewrite -- one would assume holy protection
+     * is from death itself, not just stat loss.
+     * -- Smacky 20100103 */
     if (!lost_a_stat)
     {
         /* determine_god() seems to not work sometimes... why is this?
@@ -837,22 +860,10 @@ void kill_player(object *op)
             new_draw_info(NDI_UNIQUE, 0, op, "For a brief moment you feel a holy presence\nprotecting you.");
     }
 
-    /* Put a gravestone up where the character 'almost' died.  List the
-     * exp loss on the stone.
-     */
-    tmp = arch_to_object(find_archetype("gravestone"));
-    sprintf(buf, "%s's gravestone", op->name);
-    FREE_AND_COPY_HASH(tmp->name, buf);
-#if 0
-    sprintf(buf, "RIP\nHere rests the hero %s the %s,\n"
-                 "who was killed\n"
-                 "by %s.\n", op->name, op->title?op->title:op->race,
-            pl->killer?pl->killer:"bad luck");
+#ifdef USE_GRAVESTONES
+    /* Put a gravestone up where the character died. */
+    CreateGravestone(op, map, x, y);
 #endif
-    strcpy(buf, gravestone_text(op));
-    FREE_AND_COPY_HASH(tmp->msg, buf);
-    tmp->x = op->x,tmp->y = op->y;
-    insert_ob_in_map(tmp, op->map, NULL, 0);
 
     /**************************************/
     /*                                    */

@@ -13,4 +13,8 @@ material 64
 weight 200000
 value 40
 nrof 1
+walk_on 1
+level 1
+attack_godpower 100
+dam 1
 end

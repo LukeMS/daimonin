@@ -1528,6 +1528,19 @@ void move_apply(object *const trap_obj, object *const victim, object *const orig
               spring_trap(trap, victim);
           goto leave;
 
+        case GRAVESTONE:
+          if (!(flags & MOVE_APPLY_VANISHED) &&
+              victim->type == PLAYER &&
+              trap->level >= 1 &&
+              trap->stats.dam >= 1 &&
+              random_roll(0, victim->stats.Wis))
+          {
+              damage_ob(victim, trap->stats.dam, trap, ENV_ATTACK_CHECK);
+              new_draw_info(NDI_UNIQUE, 0, victim, "Your passage disturbs holy ground and you are punished by the gods!");
+          }
+
+          goto leave;
+
           /* we don't have this atm.
           case DEEP_SWAMP:
             if(!(flags&MOVE_APPLY_VANISHED))
