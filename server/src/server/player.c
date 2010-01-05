@@ -861,8 +861,12 @@ void kill_player(object *op)
     }
 
 #ifdef USE_GRAVESTONES
-    /* Put a gravestone up where the character died. */
-    CreateGravestone(op, map, x, y);
+    /* Put a gravestone up where the character died if there isn't already one
+     * there. */
+    if (!(GET_MAP_FLAGS(map, x, y) & P_PLAYER_GRAVE))
+    {
+        CreateGravestone(op, map, x, y);
+    }
 #endif
 
     /**************************************/
