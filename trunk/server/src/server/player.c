@@ -604,6 +604,7 @@ static char *CreateGravestone(object *op, mapstruct *m, int x, int y)
 {
     static archetype *at = NULL;
     object           *gravestone;
+    int               i;
     char              buf[MAX_BUF];
     timeanddate_t     tad;
 
@@ -618,7 +619,12 @@ static char *CreateGravestone(object *op, mapstruct *m, int x, int y)
         }
     }
 
-    gravestone = arch_to_object(at);
+    if (!(gravestone = arch_to_object(at)) ||
+        (i = check_insertion_allowed(gravestone, m, x, y, 1,
+                                    INS_NO_FORCE | INS_WITHIN_LOS)) == -1)
+    {
+        return;
+    }
 
     if (op->level >= 1)
     {
@@ -645,6 +651,15 @@ static char *CreateGravestone(object *op, mapstruct *m, int x, int y)
     sprintf(strchr(buf, '\0'), "On %s\n",
             print_tad(&tad, TAD_SHOWDATE | TAD_LONGFORM));
     FREE_AND_COPY_HASH(gravestone->msg, buf);
+
+    x += freearr_x[i];
+    y += freearr_y[i];
+
+    if (!(m = out_of_map(m, &x, &y)))
+    {
+        return;
+    }
+
     gravestone->x = x;
     gravestone->y = y;
     insert_ob_in_map(gravestone, m, NULL, INS_NO_WALK_ON);
@@ -861,12 +876,9 @@ void kill_player(object *op)
     }
 
 #ifdef USE_GRAVESTONES
-    /* Put a gravestone up where the character died if there isn't already one
-     * there. */
-    if (!(GET_MAP_FLAGS(map, x, y) & P_PLAYER_GRAVE))
-    {
-        CreateGravestone(op, map, x, y);
-    }
+    /* Put a gravestone up where or near to where the character died if there
+     * is a free spot and isn't already one there. */
+    CreateGravestone(op, map, x, y);
 #endif
 
     /**************************************/
