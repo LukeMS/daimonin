@@ -1532,11 +1532,19 @@ void move_apply(object *const trap_obj, object *const victim, object *const orig
           if (!(flags & MOVE_APPLY_VANISHED) &&
               victim->type == PLAYER &&
               trap->level >= 1 &&
-              trap->stats.dam >= 1 &&
-              random_roll(0, victim->stats.Wis))
+              trap->stats.dam >= 1)
           {
-              damage_ob(victim, trap->stats.dam, trap, ENV_ATTACK_CHECK);
-              new_draw_info(NDI_UNIQUE, 0, victim, "Your passage disturbs holy ground and you are punished by the gods!");
+              int wis = victim->stats.Wis;
+
+              if ((wis >= 30 &&
+                   random_roll(0, 99)) ||
+                  (wis <= 29 &&
+                   wis >= 16 &&
+                   random_roll(0, 99) < (wis + (wis - 16) * 5)))
+              {
+                  damage_ob(victim, trap->stats.dam, trap, ENV_ATTACK_CHECK);
+                  new_draw_info(NDI_UNIQUE, 0, victim, "Your passage disturbs holy ground and you are punished by the gods!");
+              }
           }
 
           goto leave;
