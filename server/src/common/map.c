@@ -549,7 +549,7 @@ void dump_msp(mapstruct *m, int x, int y, player *pl)
         sprintf(strchr(buf, '\0'), "%c", '_');
 
     if ((flags & P_PLAYER_GRAVE))
-        sprintf(strchr(buf, '\0'), "%c", '^');
+        sprintf(strchr(buf, '\0'), "%c", '%');
 
     NDI_LOG(llevSystem, NDI_UNIQUE, 0, ob, "~Flags~: %s", buf);
 
