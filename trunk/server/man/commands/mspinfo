@@ -2,4 +2,4 @@
 
 ~Syntax~: /mspinfo
 ~Purpose~: Shows detailed technical info about the map square you are on. Only available to MWs and MMs.
-~Notes~: For brevity the flags are shown as semi-roguelike ASCII characters, as detailed here: '@' = P_IS_PLAYER, '#' = P_OUT_OF_MAP, 'O' = P_PLAYER_ONLY, '!' = P_IS_PVP, '*' = P_IS_ALIVE, 'd' = P_IS_PLAYER_PET, 'x' = P_BLOCKSVIEW, 'X' = P_NO_PASS, '-' = P_PASS_THRU, '=' = P_PASS_ETHEREAL, '+' = P_DOOR_CLOSED, '\' = P_NO_MAGIC, '/' = P_NO_CLERIC, '>' = P_WALK_ON, '<' = P_WALK_OFF, '}' = P_FLY_ON, '{' = P_FLY_OFF, ')' = P_REFL_MISSILE, '(' = P_REFL_SPELLS, '?' = P_MAGIC_EAR, '_' = P_CHECK_INV
+~Notes~: For brevity the flags are shown as semi-roguelike ASCII characters, as detailed here: '@' = P_IS_PLAYER, '#' = P_OUT_OF_MAP, 'O' = P_PLAYER_ONLY, '!' = P_IS_PVP, '*' = P_IS_ALIVE, 'd' = P_IS_PLAYER_PET, 'x' = P_BLOCKSVIEW, 'X' = P_NO_PASS, '-' = P_PASS_THRU, '=' = P_PASS_ETHEREAL, '+' = P_DOOR_CLOSED, '\' = P_NO_MAGIC, '/' = P_NO_CLERIC, '>' = P_WALK_ON, '<' = P_WALK_OFF, '}' = P_FLY_ON, '{' = P_FLY_OFF, ')' = P_REFL_MISSILE, '(' = P_REFL_SPELLS, '?' = P_MAGIC_EAR, '_' = P_CHECK_INV, '%' = P_PLAYER_GRAVE
