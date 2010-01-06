@@ -431,9 +431,23 @@ int blocked(object *op, mapstruct *m, int x, int y, int terrain)
 
     if (op) /* we have a object ptr - do some last checks */
     {
+        /* player only space and not a player... */
+        if (((flags & P_PLAYER_ONLY) &&
+             op->type != PLAYER))
+        {
+           /* tell them: no pass and possible checker here */
+           return (flags & (P_DOOR_CLOSED | P_NO_PASS | P_CHECK_INV |
+                            P_PLAYER_ONLY));
+        }
 
-        if (flags & P_PLAYER_ONLY && op->type != PLAYER) /* player only space and not a player... */
-            return (flags & (P_DOOR_CLOSED | P_NO_PASS | P_CHECK_INV|P_PLAYER_ONLY)); /* tell them: no pass and possible checker here */
+        /* already a gravestone here and try to insert another */
+        if (((flags & P_PLAYER_GRAVE) &&
+             op->type == GRAVESTONE))
+        {
+           /* tell them: no pass and possible checker here */
+           return (flags & (P_DOOR_CLOSED | P_NO_PASS | P_CHECK_INV |
+                            P_PLAYER_GRAVE));
+        }
 
         /* and here is our CHECK_INV ...
         * blocked_tile() is now only and exclusive called from here.
