@@ -5,6 +5,8 @@ race lich
 randomitems spells_wizard;loot;wealth_normal&D65;loot_base&D17;loot_magic&d11;loot_melee&d37
 type 80
 layer 6
+identified 1
+is_named 1
 direction 5
 item_race 255
 item_level 255
