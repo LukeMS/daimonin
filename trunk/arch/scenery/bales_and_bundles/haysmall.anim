@@ -1,14 +1,14 @@
-anim haybailsmall
+anim haybalesmall
 facings 9
 dummy.111
-haybailsmall.111
-haybailsmall.121
-haybailsmall.131
-haybailsmall.141
-haybailsmall.111
-haybailsmall.161
-haybailsmall.131
-haybailsmall.181
+haybalesmall.111
+haybalesmall.121
+haybalesmall.131
+haybalesmall.141
+haybalesmall.111
+haybalesmall.161
+haybalesmall.131
+haybalesmall.181
 mina
 anim haypilesmall
 facings 9

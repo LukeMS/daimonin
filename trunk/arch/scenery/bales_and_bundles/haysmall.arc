@@ -1,7 +1,7 @@
-Object haybailsmall
-name small hay bail
-face haybailsmall.111
-animation haybailsmall
+Object haybalesmall
+name small hay bale
+face haybalesmall.111
+animation haybalesmall
 is_turnable 1
 direction 1
 no_pick 1
