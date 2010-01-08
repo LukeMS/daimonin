@@ -961,12 +961,8 @@ int esrv_apply_container(object *op, object *sack)
     {
         if (sack->sub_type1 == ST1_CONTAINER_NORMAL)
         {
-            tmp = find_key(op, sack);
-            if (tmp)
-                new_draw_info_format(NDI_UNIQUE, 0, op, "You unlock %s with %s.", query_name(sack), query_name(tmp));
-            else
+            if (!unlock_door(op, sack))
             {
-                new_draw_info_format(NDI_UNIQUE, 0, op, "You don't have the key to unlock %s.", query_name(sack));
                 return 0;
             }
         }

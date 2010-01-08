@@ -30,11 +30,14 @@
 
 #include <global.h>
 
+static object *FindKey(const object *op, const object *door);
+static object *FindForce(const object *op, const object *door);
+
 /* search op for the needed key to open door.
  * This function does really not more give back a useable key ptr
  * or NULL - it don't open, delete or doing any other action.
  */
-object * find_key(object *op, object *door)
+static object *FindKey(const object *op, const object *door)
 {
     object *tmp, *key;
 
@@ -47,7 +50,7 @@ object * find_key(object *op, object *door)
         /* we brute force us through every CONTAINER inventory.*/
         if (tmp->type == CONTAINER && tmp->inv)
         {
-            if ((key = find_key(tmp, door)) != NULL)
+            if ((key = FindKey(tmp, door)) != NULL)
                 return key;
         }
     }
@@ -57,10 +60,10 @@ object * find_key(object *op, object *door)
 /* Grommit 31-Jul-2007
  * Function to look for marker force with slaying field the same as
  * the locked door. A mark should allow the player to open the door.
- * I don't want to mess with find_key.
+ * I don't want to mess with FindKey.
  * We only need to look in the top level inventory.
  */
-object * find_force(object *op, object *door)
+static object *FindForce(const object *op, const object *door)
 {
 	object *tmp;
 
@@ -70,6 +73,32 @@ object * find_force(object *op, object *door)
             return tmp;
     }
     return NULL;
+}
+
+/* Searches op's inventory for key (or force) which unlocks door (which needn't
+ * be an actual door, eg, container's can be locked too), serving up an
+ * appropriate message. Returns key (NULL if none found). */
+object *unlock_door(object *op, object *door)
+{
+    object *key = FindKey(op, door);
+
+    if (key)
+    {
+        new_draw_info_format(NDI_UNIQUE, 0, op, "You unlock %s with %s.",
+                             query_name(door), query_name(key));
+    }
+    else if ((key = FindForce(op, door)))
+    {
+        new_draw_info_format(NDI_UNIQUE, 0, op, "You unlock %s.",
+                             query_name(door));
+    }
+    else
+    {
+        new_draw_info_format(NDI_UNIQUE, 0, op, "%s is locked.",
+                             query_name(door));
+    }
+
+    return key;
 }
 
 /* this is our main open_door() function. It is used for doors
@@ -94,14 +123,10 @@ int open_door(object *op, mapstruct *m, int x, int y, int mode)
     {
         if (tmp->type == LOCKED_DOOR)
         {
-            if (tmp->slaying) /* door needs a key? */
+            if (tmp->slaying && /* door needs a key? */
+                !unlock_door(op, tmp))
             {
-                if (!(key = find_key(op, tmp)) && !(force = find_force(op, tmp)))
-                {
-                    if (op->type == PLAYER && mode)
-                        new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, op, tmp->msg);
-                    return 0; /* we can't open it! */
-                }
+                return 0; /* we can't open it! */
             }
 
             /* are we here, the door can be opened 100% */
