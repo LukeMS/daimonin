@@ -202,7 +202,7 @@ int command_dropall(object *op, char *params)
             if (!QUERY_FLAG(curinv, FLAG_INV_LOCKED)
              && curinv->type != MONEY
              && curinv->type != FOOD
-             && curinv->type != KEY
+/*             && curinv->type != KEY*/
              && curinv->type != SPECIAL_KEY
              && (curinv->type != TYPE_PEARL && curinv->type != GEM && curinv->type != TYPE_JEWEL && curinv->type != TYPE_NUGGET)
              && !IS_SYS_INVISIBLE(curinv)
