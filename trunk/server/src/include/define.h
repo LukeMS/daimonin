@@ -165,7 +165,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define SPECIAL_KEY             21
 #define MAP                     22
 #define DOOR                    23
-#define KEY                     24
+/*#define KEY                     24*/
 #define MMISSILE                25
 #define TIMED_GATE              26
 #define TRIGGER                 27 /* triggered when applied, resets after interval */

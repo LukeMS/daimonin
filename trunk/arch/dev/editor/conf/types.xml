@@ -5991,7 +5991,6 @@ that food.]]>
 <type available="no" number="12" name="LIGHTNING"/>
 <type available="no" number="22" name="MAP"/>
 <type available="no" number="23" name="DOOR"/>
-<type available="no" number="24" name="KEY"/>
 <type available="no" number="25" name="MMISSILE"/>
 <type available="yes" number="28" name="FLOORMASK"/>
 <type available="no" number="37" name="CLASS"/>
