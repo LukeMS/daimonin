@@ -711,7 +711,7 @@ void                        flush_old_maps(void);
 void                        set_map_timeout(mapstruct *oldmap);
 void                        set_map_reset_time(mapstruct *map);
 /* time.c */
-object *                    unlock_door(object *op, object *door);
+object                     *find_key(object *op, object *door);
 int                         open_door(object *op, mapstruct *m, int x, int y, int mode);
 void                        remove_door(object *op);
 void                        remove_door2(object *op, object *opener);
