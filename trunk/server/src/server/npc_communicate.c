@@ -55,7 +55,6 @@ void communicate(object *op, char *txt)
     object     *npc;
     mapstruct  *m;
     int         flags, i, xt, yt;
-
     char        buf[HUGE_BUF];
 
     if (!txt)
@@ -71,12 +70,7 @@ void communicate(object *op, char *txt)
         char           *cp  = NULL;
 
         /* remove the command from the parameters */
-        strncpy(buf, txt, HUGE_BUF - 1);
-        buf[HUGE_BUF - 1] = '\0';
-
-        cp = strchr(buf, ' ');
-
-        if (cp)
+        if ((cp = strchr(++txt, ' ')))
         {
             *(cp++) = '\0';
             cp = cleanup_string(cp);
@@ -84,7 +78,7 @@ void communicate(object *op, char *txt)
                 cp = NULL;
         }
 
-        if ((csp = find_command_element(buf, EmoteCommands, EmoteCommandsSize)))
+        if ((csp = find_command_element(txt, EmoteCommands, EmoteCommandsSize)))
         {
             csp->func(op, cp);
 
