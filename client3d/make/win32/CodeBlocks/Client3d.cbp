@@ -74,6 +74,7 @@
 		<Linker>
 			<Add option="-Wl,--enable-auto-image-base" />
 			<Add option="-Wl,--add-stdcall-alias" />
+			<Add option="-Wl,--enable-auto-import" />
 			<Add library="ws2_32" />
 			<Add library="fmodex" />
 			<Add library="SDL" />
@@ -171,6 +172,8 @@
 		<Unit filename="ReadMe.txt">
 			<Option target="Release" />
 		</Unit>
+		<Unit filename="..\..\..\media\materials\NPC.cg" />
+		<Unit filename="..\..\..\media\materials\NPC.material" />
 		<Unit filename="..\..\..\media\materials\Terrain.cg" />
 		<Unit filename="..\..\..\media\materials\Terrain.material" />
 		<Unit filename="..\..\..\media\xml\GUI_ImageSet.xml">
