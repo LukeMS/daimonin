@@ -23,7 +23,6 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 
 #include <Ogre.h>
 #include "logger.h"
-//#include "define.h"
 #include "events.h"
 #include "option.h"
 
@@ -175,6 +174,9 @@ int main(int argc, char **argv)
             }
         }
     }
+#if OGRE_COMPILER == OGRE_COMPILER_MSVC
+    SetCurrentDirectory("..\\..\\..\\");
+#endif
     Root *root =0;
     RenderWindow *window=0;
     try

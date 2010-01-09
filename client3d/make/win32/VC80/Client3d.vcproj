@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="windows-1250"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8,00"
+	Version="9,00"
 	Name="Client3d"
+	ProjectGUID="{EBF97828-EAF7-4B61-BAB3-DA1769936136}"
 	RootNamespace="Client3d"
 	Keyword="Win32Proj"
+	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
 		<Platform
@@ -47,10 +49,8 @@
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				EnableFunctionLevelLinking="true"
-				FloatingPointModel="2"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="4"
 			/>
 			<Tool
@@ -73,6 +73,8 @@
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(OutDir)/Client3d.pdb"
 				SubSystem="1"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -92,9 +94,6 @@
 			/>
 			<Tool
 				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
@@ -129,15 +128,18 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				InlineFunctionExpansion="1"
+				EnableIntrinsicFunctions="true"
+				FavorSizeOrSpeed="1"
 				OmitFramePointers="true"
 				AdditionalIncludeDirectories=".\ogre_inc;.\ogre_inc\OIS;..\..\..\include;..\..\..\include\gui;..\..\..\source;..\..\..\source\gui;..\..\..\3rdParty\fmod;..\..\..\3rdParty\zlib;..\..\..\3rdParty\tinyxml;..\..\..\3rdParty\SDL"
 				PreprocessorDefinitions="WIN32;TIXML_USE_STL;_CONSOLE;_CRT_SECURE_NO_DEPRECATE"
 				StringPooling="true"
+				MinimalRebuild="true"
 				RuntimeLibrary="2"
+				BufferSecurityCheck="false"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="3"
 			/>
 			<Tool
@@ -160,6 +162,8 @@
 				SubSystem="1"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -179,9 +183,6 @@
 			/>
 			<Tool
 				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
@@ -298,6 +299,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\source\tile_chunk.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\tile_decal.cpp"
 				>
 			</File>
 			<File
@@ -471,6 +476,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\include\tile_chunk.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\include\tile_decal.h"
 				>
 			</File>
 			<File
