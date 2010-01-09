@@ -1,23 +1,23 @@
 arch map
 name Guild Hall
-background_music ColeForeverPiano.ogg
 msg
 Creator: Daimonin Map Editor
 Date:    7/16/2004
-Modified: 2009-04-01 smacky
+Modified: 2010-01-09 smacky
 endmsg
 width 24
 height 24
 difficulty 1
+darkness -1
 outdoor 1
 no_harm 1
-darkness -1
 tile_path_1 castle_0400
 tile_path_2 castle_050a
 tile_path_4 castle_030a
 tile_path_5 castle_0500
 tile_path_7 castle_030b
 tile_path_8 castle_0300
+background_music ColeForeverPiano.ogg
 end
 arch water_still_deep
 end
@@ -245,6 +245,10 @@ arch beer_barrel.101
 x 1
 y 17
 end
+arch light2
+x 1
+y 17
+end
 arch floor_ostone10
 x 1
 y 18
@@ -257,12 +261,12 @@ arch floor_ostone10
 x 1
 y 19
 end
-arch stairs_wood_down
-direction 5
+arch light1
 x 1
 y 19
 end
-arch light1
+arch stairs_wood_down
+direction 5
 x 1
 y 19
 end
@@ -389,8 +393,10 @@ arch spawn_point
 x 2
 y 15
 arch bartender
-name Bartender Harmot
+name Rhodri
 type 83
+title the Barkeep
+level 7
 speed -0.02
 direction 3
 arch waypoint
@@ -409,7 +415,6 @@ sp 15
 cursed 1
 end
 arch event_obj
-name Lua
 sub_type 13
 race /scripts/tavern.lua
 slaying the Happy Noob
@@ -536,7 +541,6 @@ x 3
 y 10
 end
 arch lantern_magic.131
-direction 3
 x 3
 y 10
 end
@@ -572,7 +576,7 @@ arch floor_ostone10
 x 3
 y 15
 end
-arch light1
+arch light2
 x 3
 y 15
 end
@@ -716,10 +720,6 @@ identified 1
 x 4
 y 7
 end
-arch light2
-x 4
-y 7
-end
 arch shop_floor
 face floor_wood3c.101
 x 4
@@ -826,7 +826,6 @@ x 4
 y 20
 end
 arch candlelight4.101
-
 x 4
 y 20
 end
@@ -1023,10 +1022,6 @@ arch table_round1
 x 5
 y 18
 end
-arch light2
-x 5
-y 18
-end
 arch floor_ostone10
 x 5
 y 19
@@ -1133,10 +1128,6 @@ value 5
 x 6
 y 6
 end
-arch light2
-x 6
-y 6
-end
 arch shop_floor
 face floor_wood3c.101
 x 6
@@ -1146,10 +1137,6 @@ arch sack
 no_pick 1
 unpaid 1
 identified 1
-x 6
-y 7
-end
-arch light2
 x 6
 y 7
 end
@@ -1171,11 +1158,11 @@ x 6
 y 10
 end
 arch sign_generic
-name sign
 msg
 --------Guild Hall Supplies--------
 *General Store - Basic Supplies *
 endmsg
+name sign
 direction 5
 x 6
 y 10
@@ -1316,6 +1303,10 @@ x 7
 y 4
 end
 arch floor_wood3e
+x 7
+y 5
+end
+arch light1
 x 7
 y 5
 end
@@ -1538,17 +1529,122 @@ y 7
 arch tailor
 name Karamor
 type 83
+title the Shopkeeper
 level 10
 arch event_obj
-name Lua
 sub_type 13
-race /planes/human_plane/castle/guildhall/karamor.lua
+race guildhall/karamor.lua
+end
+arch shop_container
+arch torch
+name cheap torch
+nrof 10000
+value 5
+maxhp 200
+food 200
+identified 1
+known_cursed 1
+known_magical 1
+unpaid 1
+end
+arch lamp
+identified 1
+known_cursed 1
+known_magical 1
+unpaid 1
+nrof 1000
+end
+arch oil_lamp
+identified 1
+known_cursed 1
+known_magical 1
+unpaid 1
+nrof 10000
+end
+arch sack
+identified 1
+unpaid 1
+end
+arch axe_small
+identified 1
+known_cursed 1
+known_magical 1
+unpaid 1
+nrof 10000
+end
+arch club
+identified 1
+known_cursed 1
+known_magical 1
+unpaid 1
+nrof 1000
+end
+arch dagger_small
+identified 1
+known_cursed 1
+known_magical 1
+unpaid 1
+nrof 1000
+end
+arch shortsword
+identified 1
+known_cursed 1
+known_magical 1
+unpaid 1
+nrof 1000
+end
+arch athame
+identified 1
+known_cursed 1
+known_magical 1
+unpaid 1
+nrof 1000
+end
+arch sword
+identified 1
+known_cursed 1
+known_magical 1
+unpaid 1
+nrof 1000
+end
+arch axe
+identified 1
+known_cursed 1
+known_magical 1
+unpaid 1
+nrof 1000
+end
+arch club_big
+identified 1
+known_cursed 1
+known_magical 1
+unpaid 1
+nrof 1000
+end
+arch food_generic
+identified 1
+known_cursed 1
+known_magical 1
+unpaid 1
+nrof 10000
+end
+arch drink_generic
+identified 1
+known_cursed 1
+known_magical 1
+unpaid 1
+nrof 10000
+end
+arch buckler
+identified 1
+unpaid 1
+end
+arch leather_armour
+identified 1
+unpaid 1
 end
 end
 end
-arch light1
-x 8
-y 7
 end
 arch floor_wood3d
 x 8
@@ -1559,6 +1655,10 @@ x 8
 y 9
 end
 arch door_wood4
+x 8
+y 9
+end
+arch light1
 x 8
 y 9
 end
@@ -1614,6 +1714,10 @@ arch chair1_111
 x 8
 y 15
 end
+arch light2
+x 8
+y 15
+end
 arch floor_ostone10
 x 8
 y 16
@@ -1623,10 +1727,6 @@ x 8
 y 16
 end
 arch table_round1
-x 8
-y 16
-end
-arch light2
 x 8
 y 16
 end
@@ -1647,10 +1747,6 @@ x 8
 y 18
 end
 arch table_round1
-x 8
-y 18
-end
-arch light2
 x 8
 y 18
 end
@@ -1729,6 +1825,10 @@ arch floor_wood3c
 x 9
 y 5
 end
+arch light1
+x 9
+y 5
+end
 arch shop_mat
 x 9
 y 5
@@ -1743,10 +1843,6 @@ y 7
 end
 arch bar1
 direction 3
-x 9
-y 7
-end
-arch light2
 x 9
 y 7
 end
@@ -1997,11 +2093,7 @@ direction 3
 x 10
 y 17
 end
-arch magic_mouth
-msg
-Welcome to the Happy Noob!
-endmsg
-direction 8
+arch light1
 x 10
 y 17
 end
@@ -2009,15 +2101,8 @@ arch magic_mouth
 msg
 Welcome to the Happy Noob!
 endmsg
+splitting 1
 direction 7
-x 10
-y 17
-end
-arch magic_mouth
-msg
-Welcome to the Happy Noob!
-endmsg
-direction 6
 x 10
 y 17
 end
@@ -2103,11 +2188,15 @@ arch box1.101
 x 11
 y 5
 end
-arch light1
+arch light2
 x 11
 y 5
 end
 arch floor_wood3c
+x 11
+y 6
+end
+arch light2
 x 11
 y 6
 end
@@ -2127,7 +2216,7 @@ arch pottery5.101
 x 11
 y 8
 end
-arch light1
+arch light2
 x 11
 y 8
 end
@@ -2172,11 +2261,11 @@ x 11
 y 15
 end
 arch sign_generic
-name sign
 msg
 -------The Happy Noob---------
 *Come in and sample our fine ales*
 endmsg
+name sign
 animation sign_pub
 direction 3
 face sign_pub.111
@@ -2604,6 +2693,7 @@ x 14
 y 13
 end
 arch lantern_magic.131
+direction 7
 x 14
 y 13
 end

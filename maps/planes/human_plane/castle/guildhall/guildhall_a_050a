@@ -2,19 +2,15 @@ arch map
 name Cave
 background_music thonkdonk.ogg
 msg
-Created:  2007-01-10 Sammy Broock
-Modified: 2009-03-29 smacky
+Creator: Sammy Broock
+Date:    2007-01-10
+Modified: 2008-09-24 Grommit
 endmsg
 width 24
 height 24
 difficulty 1
 darkness 1
 end
-arch blocked
-end
-arch blocked
-y 1
-end
 arch floor_grey6
 y 2
 end
@@ -32,18 +28,6 @@ y 4
 end
 arch cave_wall_sw1
 y 4
-end
-arch blocked
-y 5
-end
-arch blocked
-y 6
-end
-arch blocked
-y 7
-end
-arch blocked
-y 8
 end
 arch floor_grey6
 y 9
@@ -68,46 +52,6 @@ y 12
 end
 arch cave_wall_sw1
 y 12
-end
-arch blocked
-y 13
-end
-arch blocked
-y 14
-end
-arch blocked
-y 15
-end
-arch blocked
-y 16
-end
-arch blocked
-y 17
-end
-arch blocked
-y 18
-end
-arch blocked
-y 19
-end
-arch blocked
-y 20
-end
-arch blocked
-y 21
-end
-arch blocked
-y 22
-end
-arch blocked
-y 23
-end
-arch blocked
-x 1
-end
-arch blocked
-x 1
-y 1
 end
 arch floor_grey6
 x 1
@@ -147,18 +91,6 @@ end
 arch cave_wall_sw1
 x 1
 y 5
-end
-arch blocked
-x 1
-y 6
-end
-arch blocked
-x 1
-y 7
-end
-arch blocked
-x 1
-y 8
 end
 arch floor_grey6
 x 1
@@ -200,53 +132,6 @@ arch cave_wall_sw1
 x 1
 y 13
 end
-arch blocked
-x 1
-y 14
-end
-arch blocked
-x 1
-y 15
-end
-arch blocked
-x 1
-y 16
-end
-arch blocked
-x 1
-y 17
-end
-arch blocked
-x 1
-y 18
-end
-arch blocked
-x 1
-y 19
-end
-arch blocked
-x 1
-y 20
-end
-arch blocked
-x 1
-y 21
-end
-arch blocked
-x 1
-y 22
-end
-arch blocked
-x 1
-y 23
-end
-arch blocked
-x 2
-end
-arch blocked
-x 2
-y 1
-end
 arch floor_grey6
 x 2
 y 2
@@ -274,22 +159,6 @@ end
 arch cave_wall_s1
 x 2
 y 5
-end
-arch blocked
-x 2
-y 6
-end
-arch blocked
-x 2
-y 7
-end
-arch blocked
-x 2
-y 8
-end
-arch floor_grey6
-x 2
-y 9
 end
 arch cave_wall_n2
 x 2
@@ -345,49 +214,6 @@ arch cave_wall_sw1
 x 2
 y 14
 end
-arch blocked
-x 2
-y 15
-end
-arch blocked
-x 2
-y 16
-end
-arch blocked
-x 2
-y 17
-end
-arch blocked
-x 2
-y 18
-end
-arch blocked
-x 2
-y 19
-end
-arch blocked
-x 2
-y 20
-end
-arch blocked
-x 2
-y 21
-end
-arch blocked
-x 2
-y 22
-end
-arch blocked
-x 2
-y 23
-end
-arch blocked
-x 3
-end
-arch blocked
-x 3
-y 1
-end
 arch floor_grey6
 x 3
 y 2
@@ -415,22 +241,6 @@ end
 arch cave_wall_se1
 x 3
 y 5
-end
-arch blocked
-x 3
-y 6
-end
-arch blocked
-x 3
-y 7
-end
-arch blocked
-x 3
-y 8
-end
-arch floor_grey6
-x 3
-y 9
 end
 arch cave_wall_ne1
 x 3
@@ -484,41 +294,6 @@ arch cave_wall_sw1
 x 3
 y 16
 end
-arch blocked
-x 3
-y 17
-end
-arch blocked
-x 3
-y 18
-end
-arch blocked
-x 3
-y 19
-end
-arch blocked
-x 3
-y 20
-end
-arch blocked
-x 3
-y 21
-end
-arch blocked
-x 3
-y 22
-end
-arch blocked
-x 3
-y 23
-end
-arch blocked
-x 4
-end
-arch blocked
-x 4
-y 1
-end
 arch floor_grey6
 x 4
 y 2
@@ -542,30 +317,6 @@ end
 arch cave_wall_s1
 x 4
 y 4
-end
-arch blocked
-x 4
-y 5
-end
-arch blocked
-x 4
-y 6
-end
-arch blocked
-x 4
-y 7
-end
-arch blocked
-x 4
-y 8
-end
-arch blocked
-x 4
-y 9
-end
-arch blocked
-x 4
-y 10
 end
 arch floor_grey6
 x 4
@@ -634,33 +385,6 @@ arch cave_wall_sw1
 x 4
 y 18
 end
-arch blocked
-x 4
-y 19
-end
-arch blocked
-x 4
-y 20
-end
-arch blocked
-x 4
-y 21
-end
-arch blocked
-x 4
-y 22
-end
-arch blocked
-x 4
-y 23
-end
-arch blocked
-x 5
-end
-arch blocked
-x 5
-y 1
-end
 arch floor_grey6
 x 5
 y 2
@@ -688,30 +412,6 @@ end
 arch cave_wall_sw1
 x 5
 y 5
-end
-arch blocked
-x 5
-y 6
-end
-arch blocked
-x 5
-y 7
-end
-arch blocked
-x 5
-y 8
-end
-arch blocked
-x 5
-y 9
-end
-arch blocked
-x 5
-y 10
-end
-arch blocked
-x 5
-y 11
 end
 arch floor_grey6
 x 5
@@ -769,29 +469,6 @@ arch cave_wall_sw1
 x 5
 y 19
 end
-arch blocked
-x 5
-y 20
-end
-arch blocked
-x 5
-y 21
-end
-arch blocked
-x 5
-y 22
-end
-arch blocked
-x 5
-y 23
-end
-arch blocked
-x 6
-end
-arch blocked
-x 6
-y 1
-end
 arch floor_grey6
 x 6
 y 2
@@ -821,7 +498,6 @@ msg
 From the eastern corridor you can hear muffled grunts. Maybe they are some kind of wierd laughs.
 In the southern corridor you just catch something large and furry scurrying away from the light of your torch.
 endmsg
-direction 4
 x 6
 y 4
 end
@@ -872,18 +548,6 @@ end
 arch cave_wall_sw1
 x 6
 y 10
-end
-arch blocked
-x 6
-y 11
-end
-arch blocked
-x 6
-y 12
-end
-arch blocked
-x 6
-y 13
 end
 arch floor_grey6
 x 6
@@ -932,25 +596,6 @@ end
 arch cave_wall_sw1
 x 6
 y 20
-end
-arch blocked
-x 6
-y 21
-end
-arch blocked
-x 6
-y 22
-end
-arch blocked
-x 6
-y 23
-end
-arch blocked
-x 7
-end
-arch blocked
-x 7
-y 1
 end
 arch floor_grey6
 x 7
@@ -1020,18 +665,6 @@ arch cave_wall_sw1
 x 7
 y 12
 end
-arch blocked
-x 7
-y 13
-end
-arch blocked
-x 7
-y 14
-end
-arch blocked
-x 7
-y 15
-end
 arch floor_grey6
 x 7
 y 16
@@ -1063,25 +696,6 @@ end
 arch cave_wall_s1
 x 7
 y 20
-end
-arch blocked
-x 7
-y 21
-end
-arch blocked
-x 7
-y 22
-end
-arch blocked
-x 7
-y 23
-end
-arch blocked
-x 8
-end
-arch blocked
-x 8
-y 1
 end
 arch floor_grey6
 x 8
@@ -1171,22 +785,6 @@ arch cave_wall_s1
 x 8
 y 12
 end
-arch blocked
-x 8
-y 13
-end
-arch blocked
-x 8
-y 14
-end
-arch blocked
-x 8
-y 15
-end
-arch blocked
-x 8
-y 16
-end
 arch floor_grey6
 x 8
 y 17
@@ -1214,25 +812,6 @@ end
 arch cave_wall_s2
 x 8
 y 20
-end
-arch blocked
-x 8
-y 21
-end
-arch blocked
-x 8
-y 22
-end
-arch blocked
-x 8
-y 23
-end
-arch blocked
-x 9
-end
-arch blocked
-x 9
-y 1
 end
 arch floor_grey6
 x 9
@@ -1269,14 +848,6 @@ end
 arch cave_wall_s2
 x 9
 y 5
-end
-arch blocked
-x 9
-y 6
-end
-arch blocked
-x 9
-y 7
 end
 arch floor_grey6
 x 9
@@ -1322,22 +893,6 @@ arch cave_wall_sw1
 x 9
 y 13
 end
-arch blocked
-x 9
-y 14
-end
-arch blocked
-x 9
-y 15
-end
-arch blocked
-x 9
-y 16
-end
-arch blocked
-x 9
-y 17
-end
 arch floor_grey6
 x 9
 y 18
@@ -1357,25 +912,6 @@ end
 arch cave_wall_s1
 x 9
 y 20
-end
-arch blocked
-x 9
-y 21
-end
-arch blocked
-x 9
-y 22
-end
-arch blocked
-x 9
-y 23
-end
-arch blocked
-x 10
-end
-arch blocked
-x 10
-y 1
 end
 arch floor_grey6
 x 10
@@ -1413,18 +949,6 @@ arch cave_wall_sw1
 x 10
 y 6
 end
-arch blocked
-x 10
-y 7
-end
-arch blocked
-x 10
-y 8
-end
-arch blocked
-x 10
-y 9
-end
 arch floor_grey6
 x 10
 y 10
@@ -1461,18 +985,6 @@ arch cave_wall_sw1
 x 10
 y 14
 end
-arch blocked
-x 10
-y 15
-end
-arch blocked
-x 10
-y 16
-end
-arch blocked
-x 10
-y 17
-end
 arch floor_grey6
 x 10
 y 18
@@ -1492,25 +1004,6 @@ end
 arch cave_wall_s1
 x 10
 y 20
-end
-arch blocked
-x 10
-y 21
-end
-arch blocked
-x 10
-y 22
-end
-arch blocked
-x 10
-y 23
-end
-arch blocked
-x 11
-end
-arch blocked
-x 11
-y 1
 end
 arch floor_grey6
 x 11
@@ -1543,22 +1036,6 @@ end
 arch cave_wall_s1
 x 11
 y 6
-end
-arch blocked
-x 11
-y 7
-end
-arch blocked
-x 11
-y 8
-end
-arch blocked
-x 11
-y 9
-end
-arch blocked
-x 11
-y 10
 end
 arch floor_grey6
 x 11
@@ -1632,25 +1109,6 @@ arch cave_wall_s2
 x 11
 y 20
 end
-arch blocked
-x 11
-y 21
-end
-arch blocked
-x 11
-y 22
-end
-arch blocked
-x 11
-y 23
-end
-arch blocked
-x 12
-end
-arch blocked
-x 12
-y 1
-end
 arch floor_grey6
 x 12
 y 2
@@ -1686,26 +1144,6 @@ end
 arch cave_wall_s2
 x 12
 y 6
-end
-arch blocked
-x 12
-y 7
-end
-arch blocked
-x 12
-y 8
-end
-arch blocked
-x 12
-y 9
-end
-arch blocked
-x 12
-y 10
-end
-arch blocked
-x 12
-y 11
 end
 arch floor_grey6
 x 12
@@ -1767,25 +1205,6 @@ arch cave_wall_s2
 x 12
 y 20
 end
-arch blocked
-x 12
-y 21
-end
-arch blocked
-x 12
-y 22
-end
-arch blocked
-x 12
-y 23
-end
-arch blocked
-x 13
-end
-arch blocked
-x 13
-y 1
-end
 arch floor_grey6
 x 13
 y 2
@@ -1821,30 +1240,6 @@ end
 arch cave_wall_s2
 x 13
 y 6
-end
-arch blocked
-x 13
-y 7
-end
-arch blocked
-x 13
-y 8
-end
-arch blocked
-x 13
-y 9
-end
-arch blocked
-x 13
-y 10
-end
-arch blocked
-x 13
-y 11
-end
-arch blocked
-x 13
-y 12
 end
 arch floor_grey6
 x 13
@@ -1902,25 +1297,6 @@ arch cave_wall_s1
 x 13
 y 20
 end
-arch blocked
-x 13
-y 21
-end
-arch blocked
-x 13
-y 22
-end
-arch blocked
-x 13
-y 23
-end
-arch blocked
-x 14
-end
-arch blocked
-x 14
-y 1
-end
 arch floor_grey6
 x 14
 y 2
@@ -1963,34 +1339,6 @@ arch cave_wall_s1
 x 14
 y 6
 end
-arch blocked
-x 14
-y 7
-end
-arch blocked
-x 14
-y 8
-end
-arch blocked
-x 14
-y 9
-end
-arch blocked
-x 14
-y 10
-end
-arch blocked
-x 14
-y 11
-end
-arch blocked
-x 14
-y 12
-end
-arch blocked
-x 14
-y 13
-end
 arch floor_grey6
 x 14
 y 14
@@ -2026,25 +1374,6 @@ end
 arch cave_wall_s2
 x 14
 y 20
-end
-arch blocked
-x 14
-y 21
-end
-arch blocked
-x 14
-y 22
-end
-arch blocked
-x 14
-y 23
-end
-arch blocked
-x 15
-end
-arch blocked
-x 15
-y 1
 end
 arch floor_grey6
 x 15
@@ -2102,10 +1431,6 @@ arch cave_wall_s1
 x 15
 y 6
 end
-arch blocked
-x 15
-y 7
-end
 arch floor_grey6
 x 15
 y 8
@@ -2145,10 +1470,6 @@ end
 arch cave_wall_sw1
 x 15
 y 12
-end
-arch blocked
-x 15
-y 13
 end
 arch floor_grey6
 x 15
@@ -2205,21 +1526,6 @@ end
 arch cave_wall_sw1
 x 15
 y 21
-end
-arch blocked
-x 15
-y 22
-end
-arch blocked
-x 15
-y 23
-end
-arch blocked
-x 16
-end
-arch blocked
-x 16
-y 1
 end
 arch floor_grey6
 x 16
@@ -2328,18 +1634,6 @@ arch cave_wall_sw1
 x 16
 y 13
 end
-arch blocked
-x 16
-y 14
-end
-arch blocked
-x 16
-y 15
-end
-arch blocked
-x 16
-y 16
-end
 arch floor_grey6
 x 16
 y 17
@@ -2371,25 +1665,6 @@ end
 arch cave_wall_s1
 x 16
 y 21
-end
-arch blocked
-x 16
-y 22
-end
-arch blocked
-x 16
-y 23
-end
-arch blocked
-x 17
-end
-arch blocked
-x 17
-y 1
-end
-arch blocked
-x 17
-y 2
 end
 arch floor_grey6
 x 17
@@ -2447,22 +1722,6 @@ arch cave_wall_s1
 x 17
 y 13
 end
-arch blocked
-x 17
-y 14
-end
-arch blocked
-x 17
-y 15
-end
-arch blocked
-x 17
-y 16
-end
-arch blocked
-x 17
-y 17
-end
 arch floor_grey6
 x 17
 y 18
@@ -2490,29 +1749,6 @@ end
 arch cave_wall_s1
 x 17
 y 21
-end
-arch blocked
-x 17
-y 22
-end
-arch blocked
-x 17
-y 23
-end
-arch blocked
-x 18
-end
-arch blocked
-x 18
-y 1
-end
-arch blocked
-x 18
-y 2
-end
-arch blocked
-x 18
-y 3
 end
 arch floor_grey6
 x 18
@@ -2591,18 +1827,6 @@ arch cave_wall_sw1
 x 18
 y 15
 end
-arch blocked
-x 18
-y 16
-end
-arch blocked
-x 18
-y 17
-end
-arch blocked
-x 18
-y 18
-end
 arch floor_grey6
 x 18
 y 19
@@ -2622,33 +1846,6 @@ end
 arch cave_wall_s2
 x 18
 y 21
-end
-arch blocked
-x 18
-y 22
-end
-arch blocked
-x 18
-y 23
-end
-arch blocked
-x 19
-end
-arch blocked
-x 19
-y 1
-end
-arch blocked
-x 19
-y 2
-end
-arch blocked
-x 19
-y 3
-end
-arch blocked
-x 19
-y 4
 end
 arch floor_grey6
 x 19
@@ -2774,61 +1971,6 @@ arch cave_wall_s1
 x 19
 y 21
 end
-arch blocked
-x 19
-y 22
-end
-arch blocked
-x 19
-y 23
-end
-arch blocked
-x 20
-end
-arch blocked
-x 20
-y 1
-end
-arch blocked
-x 20
-y 2
-end
-arch blocked
-x 20
-y 3
-end
-arch blocked
-x 20
-y 4
-end
-arch blocked
-x 20
-y 5
-end
-arch blocked
-x 20
-y 6
-end
-arch blocked
-x 20
-y 7
-end
-arch blocked
-x 20
-y 8
-end
-arch blocked
-x 20
-y 9
-end
-arch blocked
-x 20
-y 10
-end
-arch blocked
-x 20
-y 11
-end
 arch floor_grey6
 x 20
 y 12
@@ -2880,65 +2022,6 @@ end
 arch cave_wall_s2
 x 20
 y 21
-end
-arch blocked
-x 20
-y 22
-end
-arch blocked
-x 20
-y 23
-end
-arch blocked
-x 21
-end
-arch blocked
-x 21
-y 1
-end
-arch blocked
-x 21
-y 2
-end
-arch blocked
-x 21
-y 3
-end
-arch blocked
-x 21
-y 4
-end
-arch blocked
-x 21
-y 5
-end
-arch blocked
-x 21
-y 6
-end
-arch blocked
-x 21
-y 7
-end
-arch blocked
-x 21
-y 8
-end
-arch blocked
-x 21
-y 9
-end
-arch blocked
-x 21
-y 10
-end
-arch blocked
-x 21
-y 11
-end
-arch blocked
-x 21
-y 12
 end
 arch floor_grey6
 x 21
@@ -2996,73 +2079,6 @@ arch cave_wall_se1
 x 21
 y 21
 end
-arch blocked
-x 21
-y 22
-end
-arch blocked
-x 21
-y 23
-end
-arch blocked
-x 22
-end
-arch blocked
-x 22
-y 1
-end
-arch blocked
-x 22
-y 2
-end
-arch blocked
-x 22
-y 3
-end
-arch blocked
-x 22
-y 4
-end
-arch blocked
-x 22
-y 5
-end
-arch blocked
-x 22
-y 6
-end
-arch blocked
-x 22
-y 7
-end
-arch blocked
-x 22
-y 8
-end
-arch blocked
-x 22
-y 9
-end
-arch blocked
-x 22
-y 10
-end
-arch blocked
-x 22
-y 11
-end
-arch blocked
-x 22
-y 12
-end
-arch blocked
-x 22
-y 13
-end
-arch blocked
-x 22
-y 14
-end
 arch floor_grey6
 x 22
 y 15
@@ -3110,111 +2126,4 @@ end
 arch cave_wall_se1
 x 22
 y 20
-end
-arch blocked
-x 22
-y 21
-end
-arch blocked
-x 22
-y 22
-end
-arch blocked
-x 22
-y 23
-end
-arch blocked
-x 23
-end
-arch blocked
-x 23
-y 1
-end
-arch blocked
-x 23
-y 2
-end
-arch blocked
-x 23
-y 3
-end
-arch blocked
-x 23
-y 4
-end
-arch blocked
-x 23
-y 5
-end
-arch blocked
-x 23
-y 6
-end
-arch blocked
-x 23
-y 7
-end
-arch blocked
-x 23
-y 8
-end
-arch blocked
-x 23
-y 9
-end
-arch blocked
-x 23
-y 10
-end
-arch blocked
-x 23
-y 11
-end
-arch blocked
-x 23
-y 12
-end
-arch blocked
-x 23
-y 13
-end
-arch blocked
-x 23
-y 14
-end
-arch blocked
-x 23
-y 15
-end
-arch blocked
-x 23
-y 16
-end
-arch blocked
-x 23
-y 17
-end
-arch blocked
-x 23
-y 18
-end
-arch blocked
-x 23
-y 19
-end
-arch blocked
-x 23
-y 20
-end
-arch blocked
-x 23
-y 21
-end
-arch blocked
-x 23
-y 22
-end
-arch blocked
-x 23
-y 23
 end

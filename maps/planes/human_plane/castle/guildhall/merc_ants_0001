@@ -2,8 +2,9 @@ arch map
 name Guild Hall - Abandoned Cellar
 background_music spokyspace.ogg
 msg
-Created:  2007-07-11 Unislash
-Modified: 2009-03-30 smacky
+Creator: Unislash
+Date:    2007-07-11
+Modified: 2008-09-24 Grommit
 endmsg
 width 24
 height 24
@@ -32,42 +33,6 @@ y 3
 end
 arch fwall_rock1
 y 3
-end
-arch blocked
-y 4
-end
-arch blocked
-y 5
-end
-arch blocked
-y 6
-end
-arch blocked
-y 7
-end
-arch blocked
-y 8
-end
-arch blocked
-y 9
-end
-arch blocked
-y 10
-end
-arch blocked
-y 11
-end
-arch blocked
-y 12
-end
-arch blocked
-y 13
-end
-arch blocked
-y 14
-end
-arch blocked
-y 15
 end
 arch floor_earth1d
 y 16
@@ -104,12 +69,6 @@ y 21
 end
 arch fwall_rock2
 y 21
-end
-arch blocked
-y 22
-end
-arch blocked
-y 23
 end
 arch floor_earth1e
 x 1
@@ -173,26 +132,6 @@ end
 arch fwall_rock3
 x 1
 y 7
-end
-arch blocked
-x 1
-y 8
-end
-arch blocked
-x 1
-y 9
-end
-arch blocked
-x 1
-y 10
-end
-arch blocked
-x 1
-y 11
-end
-arch blocked
-x 1
-y 12
 end
 arch floor_earth1c
 x 1
@@ -291,14 +230,6 @@ arch fwall_rock3
 x 1
 y 21
 end
-arch blocked
-x 1
-y 22
-end
-arch blocked
-x 1
-y 23
-end
 arch floor_earth1d
 x 2
 end
@@ -374,22 +305,6 @@ end
 arch fwall_rock1
 x 2
 y 7
-end
-arch blocked
-x 2
-y 8
-end
-arch blocked
-x 2
-y 9
-end
-arch blocked
-x 2
-y 10
-end
-arch blocked
-x 2
-y 11
 end
 arch floor_earth1b
 x 2
@@ -473,14 +388,6 @@ arch fwall_rock1
 x 2
 y 21
 end
-arch blocked
-x 2
-y 22
-end
-arch blocked
-x 2
-y 23
-end
 arch floor_earth1b
 x 3
 end
@@ -534,22 +441,6 @@ end
 arch fwall_rock3
 x 3
 y 7
-end
-arch blocked
-x 3
-y 8
-end
-arch blocked
-x 3
-y 9
-end
-arch blocked
-x 3
-y 10
-end
-arch blocked
-x 3
-y 11
 end
 arch floor_earth1e
 x 3
@@ -666,13 +557,6 @@ arch fwall_rock2
 x 3
 y 23
 end
-arch blocked
-x 4
-end
-arch blocked
-x 4
-y 1
-end
 arch floor_earth1b
 x 4
 y 2
@@ -726,14 +610,6 @@ arch fwall_rock2
 x 4
 y 7
 end
-arch blocked
-x 4
-y 8
-end
-arch blocked
-x 4
-y 9
-end
 arch floor_earth1b
 x 4
 y 10
@@ -785,10 +661,6 @@ end
 arch fwall_rock1
 x 4
 y 15
-end
-arch blocked
-x 4
-y 16
 end
 arch floor_earth1a
 x 4
@@ -846,9 +718,6 @@ arch light1
 x 4
 y 23
 end
-arch blocked
-x 5
-end
 arch floor_earth1b
 x 5
 y 1
@@ -898,14 +767,6 @@ end
 arch fwall_rock1
 x 5
 y 6
-end
-arch blocked
-x 5
-y 7
-end
-arch blocked
-x 5
-y 8
 end
 arch floor_earth1b
 x 5
@@ -959,22 +820,6 @@ end
 arch fwall_rock3
 x 5
 y 15
-end
-arch blocked
-x 5
-y 16
-end
-arch blocked
-x 5
-y 17
-end
-arch blocked
-x 5
-y 18
-end
-arch blocked
-x 5
-y 19
 end
 arch floor_earth1e
 x 5
@@ -1184,10 +1029,6 @@ arch fwall_rock1
 x 6
 y 15
 end
-arch blocked
-x 6
-y 16
-end
 arch floor_earth1b
 x 6
 y 17
@@ -1351,10 +1192,6 @@ arch fwall_rock2
 x 7
 y 14
 end
-arch blocked
-x 7
-y 15
-end
 arch floor_earth1e
 x 7
 y 16
@@ -1510,10 +1347,6 @@ end
 arch fwall_rock2
 x 8
 y 14
-end
-arch blocked
-x 8
-y 15
 end
 arch floor_earth1a
 x 8
@@ -1755,10 +1588,6 @@ arch fwall_rock1
 x 10
 y 3
 end
-arch blocked
-x 10
-y 4
-end
 arch floor_earth1a
 x 10
 y 5
@@ -1872,22 +1701,6 @@ arch fwall_rock2
 x 10
 y 19
 end
-arch blocked
-x 10
-y 20
-end
-arch blocked
-x 10
-y 21
-end
-arch blocked
-x 10
-y 22
-end
-arch blocked
-x 10
-y 23
-end
 arch floor_earth1e
 x 11
 end
@@ -1909,10 +1722,6 @@ end
 arch fwall_rock1
 x 11
 y 3
-end
-arch blocked
-x 11
-y 4
 end
 arch floor_earth1a
 x 11
@@ -1994,26 +1803,6 @@ arch fwall_rock2
 x 11
 y 18
 end
-arch blocked
-x 11
-y 19
-end
-arch blocked
-x 11
-y 20
-end
-arch blocked
-x 11
-y 21
-end
-arch blocked
-x 11
-y 22
-end
-arch blocked
-x 11
-y 23
-end
 arch floor_earth1c
 x 12
 end
@@ -2039,10 +1828,6 @@ end
 arch fwall_rock2
 x 12
 y 3
-end
-arch blocked
-x 12
-y 4
 end
 arch floor_earth1c
 x 12
@@ -2160,26 +1945,6 @@ arch fwall_rock2
 x 12
 y 18
 end
-arch blocked
-x 12
-y 19
-end
-arch blocked
-x 12
-y 20
-end
-arch blocked
-x 12
-y 21
-end
-arch blocked
-x 12
-y 22
-end
-arch blocked
-x 12
-y 23
-end
 arch floor_earth1d
 x 13
 end
@@ -2212,10 +1977,6 @@ end
 arch fwall_rock1
 x 13
 y 3
-end
-arch blocked
-x 13
-y 4
 end
 arch floor_earth1d
 x 13
@@ -2313,26 +2074,6 @@ arch fwall_rock1
 x 13
 y 18
 end
-arch blocked
-x 13
-y 19
-end
-arch blocked
-x 13
-y 20
-end
-arch blocked
-x 13
-y 21
-end
-arch blocked
-x 13
-y 22
-end
-arch blocked
-x 13
-y 23
-end
 arch floor_earth1a
 x 14
 end
@@ -2354,10 +2095,6 @@ end
 arch fwall_rock2
 x 14
 y 3
-end
-arch blocked
-x 14
-y 4
 end
 arch floor_earth1a
 x 14
@@ -2458,22 +2195,6 @@ end
 arch fwall_rock1
 x 14
 y 19
-end
-arch blocked
-x 14
-y 20
-end
-arch blocked
-x 14
-y 21
-end
-arch blocked
-x 14
-y 22
-end
-arch blocked
-x 14
-y 23
 end
 arch floor_earth1d
 x 15
@@ -2651,17 +2372,6 @@ arch fwall_rock2
 x 15
 y 21
 end
-arch blocked
-x 15
-y 22
-end
-arch blocked
-x 15
-y 23
-end
-arch blocked
-x 16
-end
 arch floor_earth1e
 x 16
 y 1
@@ -2815,13 +2525,6 @@ arch fwall_rock1
 x 16
 y 22
 end
-arch blocked
-x 16
-y 23
-end
-arch blocked
-x 17
-end
 arch floor_earth1e
 x 17
 y 1
@@ -2958,13 +2661,6 @@ end
 arch fwall_rock1
 x 17
 y 22
-end
-arch blocked
-x 17
-y 23
-end
-arch blocked
-x 18
 end
 arch floor_earth1e
 x 18
@@ -3147,13 +2843,6 @@ arch fwall_rock1
 x 18
 y 22
 end
-arch blocked
-x 18
-y 23
-end
-arch blocked
-x 19
-end
 arch floor_earth1b
 x 19
 y 1
@@ -3310,10 +2999,6 @@ arch fwall_rock3
 x 19
 y 22
 end
-arch blocked
-x 19
-y 23
-end
 arch floor_earth1b
 x 20
 end
@@ -3440,10 +3125,6 @@ end
 arch fwall_rock3
 x 20
 y 22
-end
-arch blocked
-x 20
-y 23
 end
 arch floor_earth1b
 x 21
@@ -3632,10 +3313,6 @@ arch fwall_rock2
 x 21
 y 22
 end
-arch blocked
-x 21
-y 23
-end
 arch floor_earth1a
 x 22
 end
@@ -3673,42 +3350,6 @@ end
 arch fwall_rock2
 x 22
 y 6
-end
-arch blocked
-x 22
-y 7
-end
-arch blocked
-x 22
-y 8
-end
-arch blocked
-x 22
-y 9
-end
-arch blocked
-x 22
-y 10
-end
-arch blocked
-x 22
-y 11
-end
-arch blocked
-x 22
-y 12
-end
-arch blocked
-x 22
-y 13
-end
-arch blocked
-x 22
-y 14
-end
-arch blocked
-x 22
-y 15
 end
 arch floor_earth1b
 x 22
@@ -3758,14 +3399,6 @@ arch fwall_rock3
 x 22
 y 21
 end
-arch blocked
-x 22
-y 22
-end
-arch blocked
-x 22
-y 23
-end
 arch floor_earth1a
 x 23
 end
@@ -3811,76 +3444,4 @@ end
 arch fwall_rock3
 x 23
 y 5
-end
-arch blocked
-x 23
-y 6
-end
-arch blocked
-x 23
-y 7
-end
-arch blocked
-x 23
-y 8
-end
-arch blocked
-x 23
-y 9
-end
-arch blocked
-x 23
-y 10
-end
-arch blocked
-x 23
-y 11
-end
-arch blocked
-x 23
-y 12
-end
-arch blocked
-x 23
-y 13
-end
-arch blocked
-x 23
-y 14
-end
-arch blocked
-x 23
-y 15
-end
-arch blocked
-x 23
-y 16
-end
-arch blocked
-x 23
-y 17
-end
-arch blocked
-x 23
-y 18
-end
-arch blocked
-x 23
-y 19
-end
-arch blocked
-x 23
-y 20
-end
-arch blocked
-x 23
-y 21
-end
-arch blocked
-x 23
-y 22
-end
-arch blocked
-x 23
-y 23
 end

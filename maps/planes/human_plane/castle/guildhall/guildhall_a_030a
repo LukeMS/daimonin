@@ -2,104 +2,14 @@ arch map
 name Under Guild Hall
 background_music spokyspace.ogg
 msg
-Created:  2005-11-28 Unknown Combat Dummy
-Modified: 2009-03-30 smacky
+Creator: Unknown Combat Dummy
+Date:    2005-11-28
 endmsg
 width 24
 height 24
 difficulty 1
 darkness 1
 tile_path_2 guildhall_a_040a
-end
-arch blocked
-end
-arch blocked
-y 1
-end
-arch blocked
-y 2
-end
-arch blocked
-y 3
-end
-arch blocked
-y 4
-end
-arch blocked
-y 5
-end
-arch blocked
-y 6
-end
-arch blocked
-y 7
-end
-arch blocked
-y 8
-end
-arch blocked
-y 9
-end
-arch blocked
-y 10
-end
-arch blocked
-y 11
-end
-arch blocked
-y 12
-end
-arch blocked
-y 13
-end
-arch blocked
-y 14
-end
-arch blocked
-y 15
-end
-arch blocked
-y 16
-end
-arch blocked
-y 17
-end
-arch blocked
-y 18
-end
-arch blocked
-y 19
-end
-arch blocked
-y 20
-end
-arch blocked
-y 21
-end
-arch blocked
-y 22
-end
-arch blocked
-y 23
-end
-arch blocked
-x 1
-end
-arch blocked
-x 1
-y 1
-end
-arch blocked
-x 1
-y 2
-end
-arch blocked
-x 1
-y 3
-end
-arch blocked
-x 1
-y 4
 end
 arch floor_ostone4
 x 1
@@ -244,49 +154,6 @@ end
 arch wall_stone_3
 x 1
 y 17
-end
-arch blocked
-x 1
-y 18
-end
-arch blocked
-x 1
-y 19
-end
-arch blocked
-x 1
-y 20
-end
-arch blocked
-x 1
-y 21
-end
-arch blocked
-x 1
-y 22
-end
-arch blocked
-x 1
-y 23
-end
-arch blocked
-x 2
-end
-arch blocked
-x 2
-y 1
-end
-arch blocked
-x 2
-y 2
-end
-arch blocked
-x 2
-y 3
-end
-arch blocked
-x 2
-y 4
 end
 arch floor_ostone4
 x 2
@@ -447,25 +314,6 @@ arch fwall_rock2
 x 2
 y 23
 end
-arch blocked
-x 3
-end
-arch blocked
-x 3
-y 1
-end
-arch blocked
-x 3
-y 2
-end
-arch blocked
-x 3
-y 3
-end
-arch blocked
-x 3
-y 4
-end
 arch floor_ostone4
 x 3
 y 5
@@ -496,12 +344,13 @@ y 7
 arch mage_old
 name Jahrlen
 type 83
+title the War Chronomancer
 level 91
 direction 2
 arch event_obj
 name Lua
 sub_type 13
-race merc_jahrlen.lua
+race jahrlen.lua
 end
 end
 end
@@ -619,25 +468,6 @@ arch fwall_rock2
 x 3
 y 23
 end
-arch blocked
-x 4
-end
-arch blocked
-x 4
-y 1
-end
-arch blocked
-x 4
-y 2
-end
-arch blocked
-x 4
-y 3
-end
-arch blocked
-x 4
-y 4
-end
 arch floor_ostone4
 x 4
 y 5
@@ -651,6 +481,10 @@ x 4
 y 6
 end
 arch glower.101
+x 4
+y 6
+end
+arch light5
 x 4
 y 6
 end
@@ -670,6 +504,10 @@ arch glower.101
 x 4
 y 9
 end
+arch light5
+x 4
+y 9
+end
 arch floor_ostone4
 x 4
 y 10
@@ -684,7 +522,8 @@ y 11
 arch priest_green
 name Chereth
 type 83
-glow_radius 7
+is_blind 1
+title the Supply Chief
 level 31
 is_male 0
 is_female 1
@@ -692,7 +531,7 @@ direction 3
 arch event_obj
 name Lua
 sub_type 13
-race merc_chereth.lua
+race chereth.lua
 end
 end
 end
@@ -701,6 +540,10 @@ x 4
 y 12
 end
 arch glower.101
+x 4
+y 12
+end
+arch light3
 x 4
 y 12
 end
@@ -795,25 +638,6 @@ end
 arch fwall_rock3
 x 4
 y 23
-end
-arch blocked
-x 5
-end
-arch blocked
-x 5
-y 1
-end
-arch blocked
-x 5
-y 2
-end
-arch blocked
-x 5
-y 3
-end
-arch blocked
-x 5
-y 4
 end
 arch floor_ostone4
 x 5
@@ -955,25 +779,6 @@ arch fwall_rock1
 x 5
 y 23
 end
-arch blocked
-x 6
-end
-arch blocked
-x 6
-y 1
-end
-arch blocked
-x 6
-y 2
-end
-arch blocked
-x 6
-y 3
-end
-arch blocked
-x 6
-y 4
-end
 arch floor_ostone4
 x 6
 y 5
@@ -1109,25 +914,6 @@ end
 arch fwall_rock2
 x 6
 y 23
-end
-arch blocked
-x 7
-end
-arch blocked
-x 7
-y 1
-end
-arch blocked
-x 7
-y 2
-end
-arch blocked
-x 7
-y 3
-end
-arch blocked
-x 7
-y 4
 end
 arch floor_ostone4
 x 7
@@ -1626,12 +1412,12 @@ x 9
 y 13
 end
 arch stairs_stone_up
+face stairs_wood_up.131
 animation stairs_wood_up
 slaying ../castle_030a
 hp 9
 sp 13
 direction 7
-face stairs_wood_up.131
 x 9
 y 13
 end
@@ -2223,6 +2009,10 @@ arch small_stones
 x 12
 y 15
 end
+arch plant_mushroom3
+x 12
+y 15
+end
 arch earth_brown2
 x 12
 y 16
@@ -2242,6 +2032,10 @@ wis 3
 end
 end
 arch earth_brown2
+x 12
+y 17
+end
+arch small_stones
 x 12
 y 17
 end
@@ -2311,6 +2105,15 @@ end
 arch earth_brown2
 x 13
 y 2
+end
+arch spawn_point
+x 13
+y 2
+arch slug_giant
+type 83
+level 2
+unaggressive 1
+end
 end
 arch earth_brown3
 x 13
@@ -2478,18 +2281,9 @@ arch rock_big11
 x 14
 y 1
 end
-arch earth_brown2
+arch earth_brown3
 x 14
 y 2
-end
-arch spawn_point
-x 14
-y 2
-arch slug_giant
-type 83
-level 2
-unaggressive 1
-end
 end
 arch earth_brown2
 x 14
@@ -2678,6 +2472,10 @@ arch earth_brown3
 x 15
 y 3
 end
+arch small_stones
+x 15
+y 3
+end
 arch mushroom_giant1
 x 15
 y 3
@@ -2719,6 +2517,10 @@ x 15
 y 9
 end
 arch earth_brown3
+x 15
+y 10
+end
+arch small_stones
 x 15
 y 10
 end
@@ -3410,6 +3212,10 @@ x 19
 y 6
 end
 arch earth_brown2
+x 19
+y 7
+end
+arch small_stones
 x 19
 y 7
 end
