@@ -1,16 +1,16 @@
 arch map
 name Guild Hall
-background_music ColeForeverPiano.ogg
 msg
-Created:  2004-07-08 Daimonin Map Editor
-Modified: 2009-03-29 smacky
+Creator: Daimonin Map Editor
+Date:    7/8/2004
+Modified: 2010-01-09 smacky
 endmsg
 width 24
 height 24
 difficulty 1
+darkness -1
 outdoor 1
 no_harm 1
-darkness -1
 tile_path_1 castle_0200
 tile_path_2 castle_030a
 tile_path_4 ../mountain_0502
@@ -18,8 +18,11 @@ tile_path_5 castle_0300
 tile_path_6 castle_030b
 tile_path_7 ../forest_0702
 tile_path_8 castle_0100
+background_music ColeForeverPiano.ogg
 end
 arch grassd_2
+end
+arch event_obj
 end
 arch grassd_5
 y 1
@@ -1946,15 +1949,12 @@ x 14
 y 9
 end
 arch pedestal
-is_invisible 1
 direction 7
-layer 0
 x 14
 y 9
 arch event_obj
-name Lua
 sub_type 10
-race guildhall/gatekeeper.lua
+race guildhall/lothar.lua
 end
 end
 arch grassd_7
@@ -1987,14 +1987,12 @@ x 14
 y 12
 end
 arch pedestal
-is_invisible 1
 direction 7
-layer 0
 x 14
 y 12
 arch event_obj
 sub_type 10
-race guildhall/gatekeeper.lua
+race guildhall/lothar.lua
 end
 end
 arch grassd_8
@@ -2207,39 +2205,60 @@ arch wall_fstone_round.104
 x 15
 y 15
 end
-arch grassd_7
+arch grassd_4
 x 15
 y 16
 end
-arch grassd_4
+arch wall_flagstone1.181
+x 15
+y 16
+end
+arch grassd_2
 x 15
 y 17
 end
-arch grassd_5
+arch wall_flagstone1.131
+x 15
+y 17
+end
+arch grassd_7
 x 15
 y 18
 end
-arch grassd_8
+arch wall_flagstone1.131
+x 15
+y 18
+end
+arch grassd_5
 x 15
 y 19
 end
-arch grassd_4
+arch wall_flagstone1.131
+x 15
+y 19
+end
+arch ring_wall.151
+direction 7
+x 15
+y 19
+end
+arch grassd_3
 x 15
 y 20
 end
-arch grassd_1
+arch wall_flagstone1.131
+x 15
+y 20
+end
+arch grassd_8
 x 15
 y 21
 end
-arch tree_big3
+arch wall_flagstone1.131
 x 15
 y 21
 end
-arch grassd_6
-x 15
-y 22
-end
-arch fwall_fstone2a
+arch grassd_2
 x 15
 y 22
 end
@@ -2336,43 +2355,65 @@ arch grassd_4
 x 16
 y 13
 end
-arch grassd_1
+arch grassd_4
 x 16
 y 14
 end
-arch grassd_5
+arch grassd_8
 x 16
 y 15
 end
-arch grassd_3
+arch grassd_6
 x 16
 y 16
 end
-arch grassd_8
+arch wall_flagstone1.111
+x 16
+y 16
+end
+arch ring_wall.151
+x 16
+y 16
+end
+arch floor_sand_d3
 x 16
 y 17
 end
-arch plant_flower2
+arch dirt_floor3
 x 16
 y 17
 end
-arch grassd_3
+arch sticks2.101
+x 16
+y 17
+end
+arch floor_sand_d4
 x 16
 y 18
 end
-arch grassd_7
+arch rack.111
+direction 7
+x 16
+y 18
+end
+arch floor_sand_d4
 x 16
 y 19
 end
-arch tree_big3
-x 16
-y 19
-end
-arch grassd_7
+arch floor_sand_d2
 x 16
 y 20
 end
-arch grassd_5
+arch rack.111
+direction 7
+x 16
+y 20
+end
+arch floor_sand_d3
+x 16
+y 21
+end
+arch wall_flagstone1.111
 x 16
 y 21
 end
@@ -2466,14 +2507,14 @@ arch spawn_point
 x 17
 y 12
 arch guard_pole
-name Lothar the Gatekeeper
+name Lothar
 type 83
-level 60
+title the Gatekeeper
+level 10
 direction 7
 arch event_obj
-name Lua
 sub_type 13
-race guildhall/gatekeeper.lua
+race guildhall/lothar.lua
 end
 end
 end
@@ -2485,43 +2526,51 @@ arch grassd_6
 x 17
 y 14
 end
-arch plant9
-x 17
-y 14
-end
 arch grassd_6
 x 17
 y 15
 end
-arch grassd_7
+arch grassd_3
 x 17
 y 16
 end
-arch grassd_1
+arch wall_flagstone1.111
+x 17
+y 16
+end
+arch ring_wall.151
+x 17
+y 16
+end
+arch floor_sand_d4
 x 17
 y 17
 end
-arch grassd_8
+arch floor_sand_d1
 x 17
 y 18
 end
-arch grassd_6
+arch floor_sand_d1
 x 17
 y 19
 end
-arch grassd_1
+arch floor_sand_d1
 x 17
 y 20
 end
-arch grassd_8
+arch pile_floor2
+x 17
+y 20
+end
+arch floor_sand_d3
 x 17
 y 21
 end
-arch tree_big4b
+arch wall_flagstone1.111
 x 17
 y 21
 end
-arch grassd_4
+arch grassd_3
 x 17
 y 22
 end
@@ -2607,43 +2656,59 @@ arch grassd_8
 x 18
 y 13
 end
-arch grassd_2
-x 18
-y 14
-end
-arch plant_flower6
-x 18
-y 14
-end
-arch grassd_3
-x 18
-y 15
-end
 arch grassd_8
 x 18
-y 16
-end
-arch grassd_5
-x 18
-y 17
-end
-arch grassd_7
-x 18
-y 18
-end
-arch grassd_4
-x 18
-y 19
+y 14
 end
 arch grassd_6
 x 18
+y 15
+end
+arch grassd_3
+x 18
+y 16
+end
+arch wall_flagstone1.181
+x 18
+y 16
+end
+arch grassd_4
+x 18
+y 17
+end
+arch forge_111
+x 18
+y 17
+end
+arch light3
+x 18
+y 17
+end
+arch floor_sand_d1
+x 18
+y 18
+end
+arch pile_floor1
+x 18
+y 18
+end
+arch floor_sand_d1
+x 18
+y 19
+end
+arch floor_sand_d1
+x 18
 y 20
 end
-arch grassd_5
+arch floor_sand_d3
 x 18
 y 21
 end
-arch grassd_2
+arch wall_flagstone1.111
+x 18
+y 21
+end
+arch grassd_1
 x 18
 y 22
 end
@@ -2751,7 +2816,7 @@ x 19
 y 12
 end
 arch lantern_magic.131
-direction 7
+direction 1
 x 19
 y 12
 end
@@ -2771,39 +2836,55 @@ arch grassd_8
 x 19
 y 15
 end
-arch plant16
-x 19
-y 15
-end
-arch grassd_5
+arch grassd_1
 x 19
 y 16
 end
-arch grassd_2
+arch grassd_5
 x 19
 y 17
 end
-arch grassd_5
+arch forge_111
+x 19
+y 17
+end
+arch light3
+x 19
+y 17
+end
+arch floor_sand_d1
 x 19
 y 18
 end
-arch grassd_2
+arch bowl1_full.101
+x 19
+y 18
+end
+arch floor_sand_d1
 x 19
 y 19
 end
-arch plant_flower2
-x 19
-y 19
-end
-arch grassd_7
+arch floor_sand_d1
 x 19
 y 20
 end
-arch grassd_3
+arch anvil_big_111
+x 19
+y 20
+end
+arch floor_sand_d1
 x 19
 y 21
 end
-arch tree_big2
+arch grassd_m8
+x 19
+y 21
+end
+arch grave_fire.101
+x 19
+y 21
+end
+arch wall_flagstone1.111
 x 19
 y 21
 end
@@ -2846,22 +2927,6 @@ direction 5
 x 20
 y 3
 end
-arch switch_wall
-name cell 1 switch
-connected 1001
-layer 0
-sys_object 1
-x 20
-y 3
-arch beacon
-name guildhall jail cell 1 switch
-end
-end
-arch beacon
-name guildhall jail cell 1 floor 1
-x 20
-y 3
-end
 arch floor_sblack2
 x 20
 y 4
@@ -2870,8 +2935,7 @@ arch basket1.101
 x 20
 y 4
 end
-arch beacon
-name guildhall jail cell 1 floor 3
+arch light2
 x 20
 y 4
 end
@@ -2892,22 +2956,6 @@ direction 5
 x 20
 y 6
 end
-arch switch_wall
-name cell 2 switch
-connected 1002
-layer 0
-sys_object 1
-x 20
-y 6
-arch beacon
-name guildhall jail cell 2 switch
-end
-end
-arch beacon
-name guildhall jail cell 2 floor 1
-x 20
-y 6
-end
 arch floor_sblack2
 x 20
 y 7
@@ -2916,8 +2964,7 @@ arch basket1.101
 x 20
 y 7
 end
-arch beacon
-name guildhall jail cell 2 floor 3
+arch light2
 x 20
 y 7
 end
@@ -2957,11 +3004,11 @@ arch grassd_8
 x 20
 y 13
 end
-arch grassd_7
+arch grassd_4
 x 20
 y 14
 end
-arch grassd_1
+arch grassd_8
 x 20
 y 15
 end
@@ -2969,35 +3016,70 @@ arch grassd_4
 x 20
 y 16
 end
-arch grassd_8
+arch grassd_4
 x 20
 y 17
 end
-arch grassd_5
+arch broom.111
+direction 7
+x 20
+y 17
+end
+arch wood_pile.101
+layer 5
+x 20
+y 17
+end
+arch floor_sand_d1
 x 20
 y 18
 end
-arch grassd_8
+arch grassd_m6
+x 20
+y 18
+end
+arch floor_sand_d1
 x 20
 y 19
 end
-arch tree_big3
+arch grassd_m8
 x 20
 y 19
 end
-arch grassd_5
+arch floor_sand_d1
 x 20
 y 20
 end
-arch tree_branch1
+arch grassd_m5
 x 20
 y 20
 end
-arch grassd_8
+arch spawn_point
+x 20
+y 20
+arch smith
+name Gofannon
+type 83
+title the Smith
+face weapon_smith.141
+animation weapon_smith
+level 12
+arch event_obj
+sub_type 13
+name lua
+race guildhall/gofannon.lua
+end
+end
+end
+arch grassd_4
 x 20
 y 21
 end
-arch grassd_6
+arch anvil_111
+x 20
+y 21
+end
+arch grassd_4
 x 20
 y 22
 end
@@ -3032,21 +3114,11 @@ arch metal_bucket.101
 x 21
 y 3
 end
-arch beacon
-name guildhall jail cell 1 floor 2
+arch light2
 x 21
 y 3
 end
 arch floor_sblack2
-x 21
-y 4
-end
-arch beacon
-name guildhall jail cell 1 floor 4
-x 21
-y 4
-end
-arch light1
 x 21
 y 4
 end
@@ -3066,21 +3138,11 @@ arch metal_bucket.101
 x 21
 y 6
 end
-arch beacon
-name guildhall jail cell 2 floor 2
-x 21
-y 6
-end
 arch floor_sblack2
 x 21
 y 7
 end
-arch beacon
-name guildhall jail cell 2 floor 4
-x 21
-y 7
-end
-arch light1
+arch light2
 x 21
 y 7
 end
@@ -3120,55 +3182,39 @@ arch grassd_6
 x 21
 y 13
 end
-arch grassd_3
+arch grassd_8
 x 21
 y 14
 end
-arch plant_mushroom3
+arch grassd_5
 x 21
-y 14
+y 15
 end
 arch grassd_8
 x 21
-y 15
-end
-arch plant11
-x 21
-y 15
-end
-arch grassd_6
-x 21
 y 16
 end
-arch plant_flower5
-x 21
-y 16
-end
-arch grassd_3
+arch grassd_2
 x 21
 y 17
 end
-arch grassd_7
+arch grassd_1
 x 21
 y 18
 end
-arch grassd_1
+arch grassd_8
 x 21
 y 19
 end
-arch grassd_6
+arch grassd_1
 x 21
 y 20
 end
-arch grassd_1
+arch grassd_8
 x 21
 y 21
 end
-arch grassd_1
-x 21
-y 22
-end
-arch tree_big2
+arch grassd_8
 x 21
 y 22
 end
@@ -3203,19 +3249,19 @@ arch wall_flagstone1.131
 x 22
 y 3
 end
-arch floor_sblack2
+arch floor_sblack1
 x 22
 y 4
 end
-arch portcullisTrg_open
-connected 1001
-maxhp 2400
+arch grate_closed
 direction 3
+face grate_door1.131
 x 22
 y 4
-arch beacon
-name guildhall jail cell 1 door
 end
+arch light1
+x 22
+y 4
 end
 arch floor_sblack2
 x 22
@@ -3233,19 +3279,19 @@ arch wall_flagstone1.131
 x 22
 y 6
 end
-arch floor_sblack2
+arch floor_sblack1
 x 22
 y 7
 end
-arch portcullisTrg_open
-connected 1002
-maxhp 2400
+arch grate_closed
 direction 3
+face grate_door1.131
 x 22
 y 7
-arch beacon
-name guildhall jail cell 2 door
 end
+arch light1
+x 22
+y 7
 end
 arch floor_sblack2
 x 22
@@ -3303,11 +3349,11 @@ arch grassd_m3
 x 22
 y 14
 end
-arch grassd_2
+arch grassd_8
 x 22
 y 15
 end
-arch grassd_5
+arch grassd_4
 x 22
 y 16
 end
@@ -3315,31 +3361,23 @@ arch grassd_8
 x 22
 y 17
 end
-arch grassd_5
-x 22
-y 18
-end
-arch plant16
-x 22
-y 18
-end
 arch grassd_7
 x 22
-y 19
+y 18
 end
-arch tree_big3
+arch grassd_3
 x 22
 y 19
 end
-arch grassd_8
+arch grassd_3
 x 22
 y 20
 end
-arch grassd_1
+arch grassd_3
 x 22
 y 21
 end
-arch grassd_8
+arch grassd_4
 x 22
 y 22
 end
@@ -3390,13 +3428,17 @@ arch floor_sblack2
 x 23
 y 7
 end
+arch light2
+x 23
+y 7
+end
 arch spawn_point
 x 23
 y 7
 arch guard
 name Jail Guard Sahrel
 type 83
-level 25
+level 14
 unaggressive 1
 arch waypoint
 name check guildhall jail cell 3
@@ -3405,38 +3447,13 @@ race guildhall jail cell 3 door
 wc 4
 grace 1
 arch event_obj
-name Lua
 sub_type 10
 race guildhall/sahrel_taunt.lua
 end
 end
 arch waypoint
-name check guildhall jail cell 2
-title check guildhall jail cell 3
-race guildhall jail cell 2 door
-wc 4
-grace 1
-arch event_obj
-name Lua
-sub_type 10
-race /dmbuster/jailer_taunt.lua
-end
-end
-arch waypoint
-name check guildhall jail cell 1
-title check guildhall jail cell 2
-race guildhall jail cell 1 door
-wc 4
-grace 1
-arch event_obj
-name Lua
-sub_type 10
-race /dmbuster/jailer_taunt.lua
-end
-end
-arch waypoint
 name castle_020a-21-10
-title check guildhall jail cell 1
+title check guildhall jail cell 3
 slaying castle_020a
 hp 23
 sp 3
@@ -3477,7 +3494,6 @@ spell_attack_enemy
 endmsg
 end
 arch event_obj
-name Lua
 sub_type 13
 race /dmbuster/jailer_talk.lua
 end
@@ -3539,48 +3555,31 @@ arch grassd_m7
 x 23
 y 14
 end
-arch grassd_7
-x 23
-y 15
-end
-arch plant_flower2
-x 23
-y 15
-end
-arch grassd_7
-x 23
-y 16
-end
-arch lantern_magic.131
-direction 7
-x 23
-y 16
-end
 arch grassd_1
 x 23
-y 17
-end
-arch plant9
-x 23
-y 17
-end
-arch grassd_8
-x 23
-y 18
+y 15
 end
 arch grassd_2
 x 23
+y 16
+end
+arch grassd_3
+x 23
+y 17
+end
+arch grassd_6
+x 23
+y 18
+end
+arch grassd_8
+x 23
 y 19
 end
-arch grassd_4
+arch grassd_1
 x 23
 y 20
 end
 arch grassd_7
-x 23
-y 21
-end
-arch tree_big2
 x 23
 y 21
 end

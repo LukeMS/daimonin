@@ -1,15 +1,16 @@
 arch map
 name Guild Hall
 msg
-Created:  2004-07-16 Daimonin Map Editor
-Modified: 2009-08-18 smacky
+Creator: Daimonin Map Editor
+Date:    7/16/2004
+Modified: 2010-01-09 smacky
 endmsg
 width 24
 height 24
 difficulty 1
+darkness -1
 outdoor 1
 no_harm 1
-darkness -1
 tile_path_1 castle_0300
 tile_path_2 castle_040a
 tile_path_3 castle_030b
@@ -63,14 +64,11 @@ arch grassd_2
 y 9
 end
 arch wmask_wanted
-name proclamation
 msg
 Cell 1 -- VACANCY
 endmsg
+name proclamation
 y 9
-arch beacon
-name guildhall jail cell 1 proclamation
-end
 end
 arch floor_flagm1
 y 10
@@ -163,6 +161,10 @@ arch floor_sblack2
 x 1
 y 3
 end
+arch light1
+x 1
+y 3
+end
 arch floor_sblack2
 x 1
 y 4
@@ -183,10 +185,6 @@ arch floor_sblack2
 x 1
 y 7
 end
-arch light1
-x 1
-y 7
-end
 arch floor_sblack2
 x 1
 y 8
@@ -200,15 +198,12 @@ x 1
 y 9
 end
 arch wmask_wanted
-name proclamation
 msg
 Cell 2 -- VACANCY
 endmsg
+name proclamation
 x 1
 y 9
-arch beacon
-name guildhall jail cell 2 proclamation
-end
 end
 arch floor_flagm1
 x 1
@@ -325,10 +320,6 @@ arch floor_sblack2
 x 2
 y 4
 end
-arch light3
-x 2
-y 4
-end
 arch floor_sblack2
 x 2
 y 5
@@ -401,28 +392,6 @@ arch grassd_5
 x 2
 y 17
 end
-arch spawn_point
-last_heal 1
-x 2
-y 17
-arch golem
-name Dummy
-type 83
-is_animated 0
-glow_radius 1
-no_pass 1
-level 50
-speed 100.0
-no_attack 1
-dam 0
-maxhp 10000
-con 99
-reg_f 1
-unaggressive 1
-stand_still 1
-face scarecrow.131
-end
-end
 arch grassd_6
 x 2
 y 18
@@ -488,6 +457,10 @@ face grate_door1.131
 x 3
 y 4
 end
+arch light1
+x 3
+y 4
+end
 arch floor_sblack1
 x 3
 y 5
@@ -517,6 +490,10 @@ arch beacon
 name guildhall jail cell 3 door
 end
 end
+arch light1
+x 3
+y 7
+end
 arch floor_sblack1
 x 3
 y 8
@@ -534,10 +511,10 @@ x 3
 y 9
 end
 arch wmask_wanted
-name proclamation
 msg
 Cell 3 -- OUT OF ORDER
 endmsg
+name proclamation
 x 3
 y 9
 end
@@ -645,10 +622,6 @@ arch floor_sblack1
 x 4
 y 4
 end
-arch light3
-x 4
-y 4
-end
 arch floor_sblack1
 x 4
 y 5
@@ -675,29 +648,18 @@ y 7
 arch ogre
 name Frah'ak
 type 83
+title the Ogre Clan Leader
 randomitems none
+level 8
 surrendered 1
 stand_still 1
-level 4
 arch event_obj
 sub_type 6
-race guildhall/frahak_say.lua
+race guildhall/frahak_spits.lua
 end
 arch event_obj
 sub_type 13
 race guildhall/frahak.lua
-end
-arch shoulder_leather
-name Ogre Shoulders
-str 1
-cha -1
-material_real 198
-item_quality 85
-item_condition 85
-resist_impact 8
-identified 1
-known_magical 1
-is_magical 1
 end
 end
 end
@@ -714,22 +676,22 @@ x 4
 y 9
 end
 arch sign_generic
-name sign
 msg
 -----------Guild Hall Jail------------
 *Don't fret; they're under lock and key*
 endmsg
+name sign
 direction 5
 x 4
 y 9
 end
 arch wmask_wanted
-name proclamation
 msg
 Cell 4 -- NO VACANCY
 Fra'hak, the notorious ogre rogue clan leader from Cloud Mountains, has been caught and jailed.
 Report ogre activity near the city to the guards.
 endmsg
+name proclamation
 x 4
 y 9
 end
@@ -783,6 +745,11 @@ x 4
 y 17
 end
 arch grassd_2
+x 4
+y 18
+end
+arch lantern_magic.131
+direction 3
 x 4
 y 18
 end
@@ -845,11 +812,14 @@ player_only 1
 x 5
 y 3
 end
+arch light2
+x 5
+y 3
+end
 arch hole
 msg
 You see the bottom of the hole only a few feet down, so you jump unwittingly onto some stairs and nearly twist your ankle. What would live down here?
 endmsg
-slaying guildhall/kobold_den_0000
 hp 10
 sp 10
 x 5
@@ -860,6 +830,10 @@ x 5
 y 4
 end
 arch metal_bucket.101
+x 5
+y 4
+end
+arch light2
 x 5
 y 4
 end
@@ -880,6 +854,10 @@ x 5
 y 6
 end
 arch floor_sblack1
+x 5
+y 7
+end
+arch light2
 x 5
 y 7
 end
@@ -1338,6 +1316,10 @@ arch wall_stone_8
 x 8
 y 5
 end
+arch light2
+x 8
+y 5
+end
 arch grassd_2
 x 8
 y 6
@@ -1348,6 +1330,10 @@ y 6
 end
 arch wmask_bflag_fire1_1
 direction 7
+x 8
+y 6
+end
+arch light2
 x 8
 y 6
 end
@@ -1554,11 +1540,19 @@ name stool
 x 9
 y 7
 end
+arch light2
+x 9
+y 7
+end
 arch floor_wood2_l1
 x 9
 y 8
 end
 arch floor_wood2_l1
+x 9
+y 9
+end
+arch light1
 x 9
 y 9
 end
@@ -1582,6 +1576,10 @@ direction 7
 x 9
 y 11
 end
+arch light2
+x 9
+y 11
+end
 arch floor_wood2_l1
 x 9
 y 12
@@ -1591,6 +1589,10 @@ x 9
 y 12
 end
 arch floor_wood2_l1
+x 9
+y 13
+end
+arch light1
 x 9
 y 13
 end
@@ -1797,6 +1799,10 @@ arch floor_wood2_l1
 x 10
 y 14
 end
+arch light2
+x 10
+y 14
+end
 arch floor_wood2_l1
 x 10
 y 15
@@ -1904,6 +1910,10 @@ arch floor_wood2_l1
 x 11
 y 6
 end
+arch light2
+x 11
+y 6
+end
 arch floor_wood2_l1
 x 11
 y 7
@@ -1925,18 +1935,17 @@ x 11
 y 10
 end
 arch spawn_point
-name Mercenary Master Cashin
 x 11
 y 10
 arch ranger
-name Mercenary Master Cashin
+name Guildmaster Cashin
 type 83
-glow_radius 7
-level 35
+title of the Mercenary Guild
+level 100
 arch event_obj
-name lua
 sub_type 13
-race guildhall/guild_merc.lua
+name lua
+race guildhall/cashin.lua
 end
 end
 end
@@ -2065,6 +2074,10 @@ arch floor_ruin1
 x 12
 y 3
 end
+arch light1
+x 12
+y 3
+end
 arch stairs_stone_down
 msg
 "warning: mouse traps"
@@ -2142,6 +2155,10 @@ x 12
 y 14
 end
 arch carpet1
+x 12
+y 14
+end
+arch light2
 x 12
 y 14
 end
@@ -2261,6 +2278,10 @@ arch table_lab2.111
 x 13
 y 6
 end
+arch light2
+x 13
+y 6
+end
 arch floor_wood2_l1
 x 13
 y 7
@@ -2269,11 +2290,19 @@ arch candlelight4.101
 x 13
 y 7
 end
+arch light2
+x 13
+y 7
+end
 arch floor_wood2_l1
 x 13
 y 8
 end
 arch floor_wood2_l1
+x 13
+y 9
+end
+arch light2
 x 13
 y 9
 end
@@ -2297,7 +2326,7 @@ arch carpet1.171
 x 13
 y 13
 end
-arch light3
+arch light2
 x 13
 y 13
 end
@@ -2472,6 +2501,10 @@ direction 3
 x 14
 y 11
 end
+arch light1
+x 14
+y 11
+end
 arch floor_wood2_l1
 x 14
 y 12
@@ -2577,12 +2610,11 @@ y 2
 arch monk
 name Advisor Fanrir
 type 83
-glow_radius 7
 level 15
 arch event_obj
-name lua
 sub_type 13
-race guildhall/gh_fanrir.lua
+name lua
+race guildhall/fanrir.lua
 end
 end
 end
@@ -2627,11 +2659,11 @@ x 15
 y 8
 end
 arch sign_generic
-name sign
 msg
 ---------Mercenary Guild of Guild Hall----------
 *We fight for protection, for valor, and for glory!*
 endmsg
+name sign
 direction 3
 x 15
 y 8
@@ -2734,17 +2766,17 @@ arch grassd_8
 x 15
 y 23
 end
-arch fwall_fstone2
-x 15
-y 23
-end
 arch water_still
 x 16
 end
 arch earth_m11
 x 16
 end
-arch grassd_1
+arch grassd_2
+x 16
+y 1
+end
+arch lantern_magic.131
 x 16
 y 1
 end
@@ -2912,10 +2944,6 @@ arch grassd_8
 x 16
 y 23
 end
-arch fwall_fstone2
-x 16
-y 23
-end
 arch water_still
 x 17
 end
@@ -2935,10 +2963,6 @@ arch bridge_wood_EW.171
 x 17
 y 2
 end
-arch light2
-x 17
-y 2
-end
 arch floor_flagm1
 x 17
 y 3
@@ -2960,10 +2984,6 @@ x 17
 y 5
 end
 arch grassd_m8
-x 17
-y 5
-end
-arch light3
 x 17
 y 5
 end
@@ -3134,6 +3154,11 @@ arch plant_flower7
 x 18
 y 5
 end
+arch lantern_magic.131
+direction 7
+x 18
+y 5
+end
 arch grassd_7
 x 18
 y 6
@@ -3155,12 +3180,11 @@ x 18
 y 8
 end
 arch ladder_down
-name boxes
 msg
 You move the boxes aside and slip through the hole, unnoticed.
 endmsg
+name boxes
 is_turnable 0
-slaying guildhall/guildhall_a_030a
 hp 18
 sp 8
 face box2.101
@@ -3235,7 +3259,12 @@ sub_type 12
 race guildhall/boxes_examine.lua
 end
 end
-arch grassd_3
+arch grassd_2
+x 18
+y 15
+end
+arch lantern_magic.131
+direction 7
 x 18
 y 15
 end
@@ -3392,31 +3421,19 @@ arch plant_flower1
 x 19
 y 4
 end
-arch grassd_4
+arch grassd_7
 x 19
 y 5
 end
-arch floor_sand_d1
+arch grassd_2
 x 19
 y 6
 end
-arch grassd_m4
-x 19
-y 6
-end
-arch floor_sand_d1
+arch grassd_7
 x 19
 y 7
 end
-arch grassd_m9
-x 19
-y 7
-end
-arch floor_sand_d1
-x 19
-y 8
-end
-arch grassd_m3
+arch grassd_8
 x 19
 y 8
 end
@@ -3465,7 +3482,7 @@ arch grassd_2
 x 19
 y 14
 end
-arch grassd_5
+arch grassd_2
 x 19
 y 15
 end
@@ -3559,31 +3576,19 @@ arch grassd_2
 x 20
 y 4
 end
-arch grassd_4
+arch grassd_5
 x 20
 y 5
 end
-arch forge_111
-x 20
-y 5
-end
-arch light3
-x 20
-y 5
-end
-arch floor_sand_d1
+arch grassd_2
 x 20
 y 6
 end
-arch floor_sand_d1
+arch grassd_3
 x 20
 y 7
 end
-arch floor_sand_d1
-x 20
-y 8
-end
-arch grassd_m7
+arch grassd_4
 x 20
 y 8
 end
@@ -3723,39 +3728,19 @@ arch plant17
 x 21
 y 4
 end
+arch grassd_6
+x 21
+y 5
+end
 arch grassd_5
 x 21
-y 5
-end
-arch forge_111
-x 21
-y 5
-end
-arch light3
-x 21
-y 5
-end
-arch floor_sand_d1
-x 21
 y 6
 end
-arch bowl1_full.101
-x 21
-y 6
-end
-arch floor_sand_d1
+arch grassd_2
 x 21
 y 7
 end
-arch floor_sand_d1
-x 21
-y 8
-end
-arch anvil_big_111
-x 21
-y 8
-end
-arch grassd_m7
+arch grassd_7
 x 21
 y 8
 end
@@ -3898,53 +3883,21 @@ arch grassd_3
 x 22
 y 4
 end
-arch grassd_4
+arch grassd_8
 x 22
 y 5
 end
-arch anvil_111
-x 22
-y 5
-end
-arch floor_sand_d1
+arch grassd_1
 x 22
 y 6
 end
-arch grassd_m6
-x 22
-y 6
-end
-arch floor_sand_d1
+arch grassd_2
 x 22
 y 7
 end
-arch grassd_m8
-x 22
-y 7
-end
-arch floor_sand_d1
+arch grassd_1
 x 22
 y 8
-end
-arch grassd_m5
-x 22
-y 8
-end
-arch spawn_point
-x 22
-y 8
-arch smith
-type 83
-animation weapon_smith
-glow_radius 7
-level 25
-face weapon_smith.141
-arch event_obj
-name lua
-sub_type 13
-race /planes/human_plane/castle/guildhall/smith.lua
-end
-end
 end
 arch grassd_5
 x 22
@@ -3974,7 +3927,12 @@ arch grassd_m7
 x 22
 y 12
 end
-arch grassd_3
+arch grassd_2
+x 22
+y 13
+end
+arch lantern_magic.131
+direction 1
 x 22
 y 13
 end
@@ -4006,10 +3964,10 @@ arch spawn_point
 x 22
 y 17
 arch ranger
+name Gaffrey
 type 83
-glow_radius 7
-level 20
-reg_f 1
+title the Archer
+level 6
 arch ai_caster
 msg
 # This is a generic Spellcaster AI that can be used for most mobs
@@ -4038,7 +3996,7 @@ endmsg
 end
 arch event_obj
 sub_type 13
-race guildhall/training_ranger.lua
+race guildhall/gaffrey.lua
 end
 end
 end
@@ -4046,7 +4004,12 @@ arch grassd_4
 x 22
 y 18
 end
-arch plant_flower6
+arch grave_fire.101
+msg
+Gaffrey slaps your hand away.
+
+'Oi! Leave that.'
+endmsg
 x 22
 y 18
 end

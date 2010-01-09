@@ -1,17 +1,19 @@
 arch map
 name Wilderness near Stonehaven
-background_music jungle1.ogg
 msg
-Created:  2004-07-18 Daimonin Map Editor
+Creator: Daimonin Map Editor
+Date:    7/18/2004
+Modified: 2010-01-05 smacky
 endmsg
 width 24
 height 24
 difficulty 1
-outdoor 1
 darkness -1
+outdoor 1
 tile_path_1 castle_0500
 tile_path_4 castle_040a
 tile_path_8 castle_0400
+background_music jungle1.ogg
 end
 arch grassd_2
 end
@@ -3002,6 +3004,10 @@ x 22
 y 1
 end
 arch grass_leafm13
+x 22
+y 1
+end
+arch light1
 x 22
 y 1
 end

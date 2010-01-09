@@ -21,7 +21,7 @@ local ib = null
 local tl = null
 
 local req_level = 5         -- required level
-local quest_list = {"Mouse Hunt", "The Mercenary Guild Quest", "Rusty rod"}
+local quest_list = {"Mouse Hunt", "The Mercenary Guild Quest", "Rusty Rod Retrieval"}
 local quest_who  = {"Fanrir", "Cashin", "Jahrlen"}
 local quest_max  = 3;
 
