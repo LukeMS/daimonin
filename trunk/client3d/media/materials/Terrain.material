@@ -120,6 +120,51 @@ material Terrain/Water
 
 
 //================================================================================================
+// Sprite: Vertex Program (Lod 0).
+//================================================================================================
+vertex_program VP_Srite cg
+{
+    source Terrain.cg
+    entry_point MainVP_Sprite
+    profiles arbvp1 vs_1_1
+}
+
+//================================================================================================
+// Sprite: Pixel shader (Lod 0).
+//================================================================================================
+fragment_program FP_Sprite cg
+{
+    source Terrain.cg
+    entry_point MainFP_Sprite
+    profiles arbfp1 fp20 ps_1_3
+}
+
+//================================================================================================
+// Sprite: Material.
+//================================================================================================
+material Terrain/Sprite
+{
+    technique
+    {
+        pass
+        {
+            alpha_rejection greater_equal 128
+            vertex_program_ref VP_Srite
+            {
+                param_named_auto worldMatrix    world_matrix
+                param_named_auto viewProjMatrix viewproj_matrix
+            }
+            fragment_program_ref FP_Sprite {}
+            texture_unit
+            {
+                texture grass.png
+            }
+        }
+    }
+}
+
+
+//================================================================================================
 // Vertexselection: Vertex Program (Lod 0).
 //================================================================================================
 vertex_program VP_VSelection cg

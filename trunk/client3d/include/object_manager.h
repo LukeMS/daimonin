@@ -101,6 +101,8 @@ public:
     {
         static ObjectManager Singleton; return Singleton;
     }
+    /** Sync the y-pos of the hero to terrain. Needed after loading a new level. **/
+    void syncHeroPosition();
     void freeRecources();
     void init();
     void addMobileObject(ObjectStatic::sObject &obj);

@@ -410,22 +410,19 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
 
         case OIS::KC_6:
         {
-            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::EVT_SKINCOLOR, 0, 0xff0000);
-            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::EVT_SKINCOLOR, 1, 0x00ff00);
+            static int idx = 0;
+            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::EVT_SKINCOLOR, 0, idx);
+            //ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::EVT_SKINCOLOR, 1, ++idx);
             break;
         }
 
         case OIS::KC_7:
         {
-            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::EVT_SKINCOLOR, 0, 0x00ff00);
-            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::EVT_SKINCOLOR, 1, 0x0000ff);
             break;
         }
 
         case OIS::KC_8:
         {
-            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::EVT_SKINCOLOR, 0, 0x0000ff);
-            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::EVT_SKINCOLOR, 1, 0xff0000);
             //ObjectManager::getSingleton().toggleMesh(OBJECT_PLAYER, BONE_HEAD, 1);
             break;
         }
@@ -548,9 +545,8 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
             TileManager::getSingleton().setMap(12,  5, 30, 6, 48, 200);
             TileManager::getSingleton().setMap(13,  5, 30, 6, 48, 200);
             */
-
             TileManager::getSingleton().updateChunks();
-            //ObjectManager::getSingleton().toggleMesh(OBJECT_PLAYER, BONE_BODY, 1);
+            ObjectManager::getSingleton().syncHeroPosition();
         }
         break;
 

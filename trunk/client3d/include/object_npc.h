@@ -84,9 +84,10 @@ public:
         return mAutoMoving;
     }
     /** Set the shader parameters for the skincolor.
-     ** @param color The rgb-value (24bit) for the new skin color.
+     ** @param colorPosUV Sets the skincolor from a vertical colorline on the
+     **                   left side of the texture. (Range: 0...31)
      *****************************************************************************/
-    void setSkinColor(int color);
+    void setSkinColor(int colorPosUV);
     void setDamage(int hp);
     void attackShortRange(ObjectNPC *mEnemyObject);
     void attackLongRange(ObjectNPC *mEnemyObject);
