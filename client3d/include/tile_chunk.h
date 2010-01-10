@@ -37,11 +37,18 @@ public:
     // ////////////////////////////////////////////////////////////////////
     TileChunk()  {}
     ~TileChunk() {}
+    /** Init the tilechunk.
+     ** @param queryMaskLand  The query mask for land entity.
+     ** @param queryMaskWater The query mask for water entity.
+     ** @param SceneManager   The ogre SceneManager.
+     *****************************************************************************/
     void init(int queryMaskLand, int queryMaskWater, Ogre::SceneManager *SceneManager);
+    /** Update the whole chunk. */
     void update()
     {
         updateLand();
         updateWater();
+        updateSprites();
     }
     /** Set the shader parameters for the waves on the water.
      ** @param alpha     The alpha value for the water.
@@ -53,10 +60,11 @@ public:
     void setGrid(bool visible);
     /** Set the shader parameter for the ambient light. */
     void setLight(Ogre::Real brightness);
-    void setCameraRotation(Ogre::Real angle);
     /** Set a new atlastexture for the terrain. */
     void setMaterial(int groupNr, int texSize);
-
+    /** Set the camera rotation.
+     ** Used to avoid rendering tiles outside the field of view. */
+    void setCameraRotation(Ogre::Real angle);
 private:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
@@ -64,8 +72,8 @@ private:
     bool mGrid;
     unsigned int mCameraRotation;
     Ogre::SubMesh *mSubMeshLand, *mSubMeshWater;
-    Ogre::Real mDaylight;
     Ogre::Vector3 mWaveParam;
+    Ogre::Real mDaylight;
     Ogre::Real *mPosVBuf;
     Ogre::Real mTexPosInAtlas[6];
     // ////////////////////////////////////////////////////////////////////
@@ -73,6 +81,7 @@ private:
     // ////////////////////////////////////////////////////////////////////
     void updateLand();
     void updateWater();
+    void updateSprites();
     void setVertex(Ogre::Vector3 &pos, int maskNr, Ogre::Real offsetU, Ogre::Real offsetV, Ogre::Vector4 &params);
     void setTriangle(int x, int z, Ogre::Vector3 v1, Ogre::Vector3 v2, Ogre::Vector3 v3, int maskNr);
     int  getMask(int gfxVertex0, int gfxVertex1, int gfxVertex2);

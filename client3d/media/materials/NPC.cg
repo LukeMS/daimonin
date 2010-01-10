@@ -12,7 +12,7 @@ void MainVP_NPC(
 {
     outUV  = inUV;
     outPos = mul(worldViewProj, inPos);
-    outSkinIdx = float2(skinColor.r, skinColor.g);
+    outSkinIdx = skinColor.xy;
 }
 
 //================================================================================================

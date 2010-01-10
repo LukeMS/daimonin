@@ -411,8 +411,7 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
         case OIS::KC_6:
         {
             static int idx = 0;
-            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::EVT_SKINCOLOR, 0, idx);
-            //ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::EVT_SKINCOLOR, 1, ++idx);
+            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::EVT_SKINCOLOR, 0, idx++);
             break;
         }
 
