@@ -2105,7 +2105,9 @@ void widget_event_target(int x, int y, SDL_Event event)
     {
         if (cpl.target_code)
         {
-            send_talk_command(GUI_NPC_MODE_NPC, "hello");
+            char buf[6] = "hello";
+
+            send_talk_command(GUI_NPC_MODE_NPC, buf);
         }
     }
 }
