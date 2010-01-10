@@ -127,7 +127,7 @@ ObjectNPC::ObjectNPC(sObject &obj, bool spawn):ObjectStatic(obj)
     blob->setRenderQueueGroup(RENDER_QUEUE_6); // see OgreRenderQueue.h
     mNode->attachObject(blob);
 
-    setSkinColor(0x925c19); // Typical RGB color for a human in daimonin.
+    setSkinColor(0);
     mCursorTurning =0;
     mCursorWalking =0;
     mAutoTurning = TURN_NONE;
@@ -140,15 +140,14 @@ ObjectNPC::ObjectNPC(sObject &obj, bool spawn):ObjectStatic(obj)
 }
 
 //================================================================================================
-// Set the RGB value for the skin color.
+// Set set skincolor by choosing a color found in the texture (arranged in a vertical colorline).
 //================================================================================================
 void ObjectNPC::setSkinColor(int val)
 {
-    float b = (val & 0x000000ff) / 255.0; val >>= 8;
-    float g = (val & 0x000000ff) / 255.0; val >>= 8;
-    float r = (val & 0x000000ff) / 255.0;
-    for (size_t i= 0; i< mEntity->getNumSubEntities(); ++i)
-        mEntity->getSubEntity(i)->setCustomParameter(0, Vector4(r, g, b, 1.0));
+    const float OFFSET = 0.01; // Ignore the space of filtering between 2 colors.
+    float colorIndex = (val & 31) /32.0 + OFFSET;
+    for (unsigned int i= 0; i< mEntity->getNumSubEntities(); ++i)
+        mEntity->getSubEntity(i)->setCustomParameter(0, Vector4(OFFSET, colorIndex, 0.0, 0.0));
 }
 
 //================================================================================================

@@ -43,7 +43,9 @@ static const unsigned int MAX_LEN_LOGIN_NAME = 12;
 static const unsigned int MIN_LEN_LOGIN_PSWD =  6;
 static const unsigned int MAX_LEN_LOGIN_PSWD = 17;
 const Real CAMERA_POS_Y = TileManager::TILE_RENDER_SIZE * (TileManager::CHUNK_SIZE_Z+1);
-const Real CAMERA_POS_Z = TileManager::TILE_RENDER_SIZE * (TileManager::CHUNK_SIZE_Z-4)/2;
+const Real CAMERA_POS_Z = CAMERA_POS_Y + TileManager::TILE_RENDER_SIZE * (TileManager::CHUNK_SIZE_Z-4)/2;
+const int  CAMERA_TURN_DELAY = 50; // The speed of the camera turning.
+const int  CAMERA_TURN_MAX   = 45; // Maximum degree of camera turning by user.
 const char *GUI_LOADING_OVERLAY = "GUI_LOADING_OVERLAY";
 const char *GUI_LOADING_OVERLAY_ELEMENT = "GUI_LOADING_OVERLAY_ELEMENT";
 const unsigned long SERVER_TIMEOUT = 5000; // Server timeout in ms.
@@ -147,7 +149,7 @@ bool Events::frameStarted(const FrameEvent& evt)
             mCamera->setAspectRatio(Real(VP->getActualWidth()) / Real(VP->getActualHeight()));
             mCameraZoom = STD_CAMERA_ZOOM;
             mCamera->setFOVy(Degree(mCameraZoom));
-            mCamera->setPosition(0, CAMERA_POS_Y, CAMERA_POS_Y+CAMERA_POS_Z);
+            mCamera->setPosition(0, CAMERA_POS_Y, CAMERA_POS_Z);
             mCamera->pitch(Degree(-36));
             mWorld = mSceneManager->getRootSceneNode()->createChildSceneNode();
             // ////////////////////////////////////////////////////////////////////
@@ -184,10 +186,11 @@ bool Events::frameStarted(const FrameEvent& evt)
 
         case Option::GAME_STATUS_INIT_SOUND:
         {
-/*
+
             //////////////////////////////////////////////////////////////////////////////////////////////////////////
             //////////////////////// TESTING (Create the alpha values for a NPC texture) /////////////////////////////
             //////////////////////////////////////////////////////////////////////////////////////////////////////////
+/*
             Image img1, img2;
             img1.load("Smitty_DATA.png", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
             img2.load("Smitty_MASK.png", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
@@ -576,6 +579,7 @@ bool Events::frameStarted(const FrameEvent& evt)
                 GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Example of user defined chars: :( :) :D :P !key-spc");
                 GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "---------------------------------------------------");
                 GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Press ~9~ to load the mask demo!");
+                GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Press ~6~ for skin shader test");
                 GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "---------------------------------------------------");
                 // Can crash the client...
                 //ObjectManager::getSingleton().setNameNPC(ObjectNPC::HERO, strAccountName.c_str());
@@ -647,38 +651,36 @@ bool Events::frameEnded(const FrameEvent& evt)
     // ////////////////////////////////////////////////////////////////////
     if (mCameraRotating != NONE)
     {
-        static Real cameraAngle= 0;
-        const int CAMERA_TURN_DELAY = 50;
+        static Real cameraAngle = 0;
         Real step = CAMERA_TURN_DELAY * evt.timeSinceLastFrame;
-        Vector3 actPos = mCamera->getPosition();
         if (mCameraRotating == TURNBACK)
         {
-            if (cameraAngle >0) step*= -1;
             if (cameraAngle < -1 || cameraAngle > 1)
             {
+                if (cameraAngle >0) step*= -1;
                 cameraAngle+= step;
                 mCamera->yaw(Degree(step));
-                mCamera->setPosition(CAMERA_POS_Z*Math::Sin(Degree(cameraAngle)), actPos.y, CAMERA_POS_Z *Math::Cos(Degree(cameraAngle))+CAMERA_POS_Z);
+                mCamera->setPosition(CAMERA_POS_Z *Math::Sin(Degree(cameraAngle)), CAMERA_POS_Y, CAMERA_POS_Z *Math::Cos(Degree(cameraAngle))+0);
             }
             else
             {
                 mCamera->yaw(Degree(-cameraAngle));
-                mCamera->setPosition(0, actPos.y, CAMERA_POS_Z+CAMERA_POS_Z);
+                mCamera->setPosition(0, CAMERA_POS_Y, CAMERA_POS_Z);
                 mCameraRotating = NONE;
                 cameraAngle = 0;
             }
         }
-        else if (mCameraRotating == POSITIVE && cameraAngle < 45)
+        else if (mCameraRotating == POSITIVE && cameraAngle < CAMERA_TURN_MAX)
         {
             cameraAngle+= step;
             mCamera->yaw(Degree(step));
-            mCamera->setPosition(CAMERA_POS_Z*Math::Sin(Degree(cameraAngle)), actPos.y, CAMERA_POS_Z *Math::Cos(Degree(cameraAngle)));
+            mCamera->setPosition(CAMERA_POS_Z *Math::Sin(Degree(cameraAngle)), CAMERA_POS_Y, CAMERA_POS_Z *Math::Cos(Degree(cameraAngle))+0);
         }
-        else if (mCameraRotating == NEGATIVE && cameraAngle >-45)
+        else if (mCameraRotating == NEGATIVE && cameraAngle >-CAMERA_TURN_MAX)
         {
             cameraAngle-= step;
             mCamera->yaw(Degree(-step));
-            mCamera->setPosition(CAMERA_POS_Z*Math::Sin(Degree(cameraAngle)), actPos.y, CAMERA_POS_Z *Math::Cos(Degree(cameraAngle)));
+            mCamera->setPosition(CAMERA_POS_Z *Math::Sin(Degree(cameraAngle)), CAMERA_POS_Y, CAMERA_POS_Z *Math::Cos(Degree(cameraAngle))+0);
         }
         TileManager::getSingleton().rotateCamera(cameraAngle);
     }

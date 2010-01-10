@@ -113,6 +113,43 @@ float4 MainFP_Water_Lod0(
 
 
 //================================================================================================
+// Vertex Program (Sprite)
+// The sprite always faces the camera.
+// Important: Mesh positions must range from -1.0 to 1.0
+//================================================================================================
+void MainVP_Sprite(
+    float4 position : POSITION,
+    float2 uv       : TEXCOORD0,
+    out float4 oPosition: POSITION,
+    out float2 oUV      : TEXCOORD0,
+    uniform float4x4 worldMatrix,
+    uniform float4x4 viewProjMatrix)
+{
+    const float  SIZE = 32.0;
+    const float3 UP_VECTOR = normalize(float3(0,1,0));
+
+    float3 eyeVector = viewProjMatrix[2].xyz;
+    float3 sideVector= normalize(cross(eyeVector, UP_VECTOR));
+    float4 center = mul(worldMatrix, position);
+    center.xyz += (uv.x-0.5f)*sideVector * SIZE;
+    center.xyz += (0.5f-uv.y)*UP_VECTOR  * SIZE;
+
+    oPosition = mul(viewProjMatrix, center);
+    oUV= uv;
+}
+
+//================================================================================================
+// Fragment Program (Sprite)
+//================================================================================================
+float4 MainFP_Sprite(float2 tex0 : TEXCOORD0, uniform sampler2D texture0) : COLOR
+{
+    //return float4(1,1,0,1);
+    return tex2D(texture0, tex0);
+}
+
+
+
+//================================================================================================
 // Vertex Program (Vertexselection)
 //================================================================================================
 void MainVP_VSelection(

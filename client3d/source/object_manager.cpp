@@ -58,7 +58,7 @@ void ObjectManager::init()
 }
 
 //================================================================================================
-// Adds a independant object.
+// Adds an independant object.
 //================================================================================================
 void ObjectManager::addMobileObject(ObjectStatic::sObject &obj)
 {
@@ -106,6 +106,14 @@ void ObjectManager::synchToWorldPos(int deltaX, int deltaZ)
         if (!mvNPC[i]->movePosition(deltaX, deltaZ))
             deleteNPC(i);
     }
+}
+
+//================================================================================================
+// Sync the y-pos of the hero to terrain. Needed after loading a new level.
+//================================================================================================
+void ObjectManager::syncHeroPosition()
+{
+    mvNPC[0]->movePosition(0, 0);
 }
 
 //================================================================================================
