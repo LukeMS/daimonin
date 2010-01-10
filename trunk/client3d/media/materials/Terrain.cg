@@ -115,7 +115,6 @@ float4 MainFP_Water_Lod0(
 //================================================================================================
 // Vertex Program (Sprite)
 // The sprite always faces the camera.
-// Important: Mesh positions must range from -1.0 to 1.0
 //================================================================================================
 void MainVP_Sprite(
     float4 position : POSITION,

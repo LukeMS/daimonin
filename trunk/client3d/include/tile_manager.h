@@ -75,13 +75,13 @@ public:
     // ////////////////////////////////////////////////////////////////////
     /** Init the tileengine.
      ** @param SceneManager   The ogre scenemanager.
-     ** @param queryMaskLand  The query mask for land tiles.
-     ** @param queryMaskWater The query mask for water tiles.
-     ** @param pathGfxTiles   The directory path of the tile graphics.
+     ** @param queryMaskLand  The query mask for land entity.
+     ** @param queryMaskWater The query mask for water entity.
      ** @param lod            Level of detail for the atlastexture (0: 2048x2048 to 3: 256x256).
      ** @param createAtlas    Create the atlas texture(s).
      *****************************************************************************/
     void Init(Ogre::SceneManager *SceneManager, int queryMaskLand, int queryMaskWater, int lod = 1, bool createAtlas = true);
+    /** Must be called before the destructor. Frees all ogre resources. **/
     void freeRecources();
     static TileManager &getSingleton()
     {

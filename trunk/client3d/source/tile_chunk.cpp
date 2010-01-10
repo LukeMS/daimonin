@@ -30,7 +30,8 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include "logger.h"
 #include "tile_manager.h"
 
-#define FAKE_SHADOWS 1 // Use the normal vector to send a shadow value to the shader.
+#include <OgreManualObject.h> // delet me!!
+
 using namespace Ogre;
 
 const unsigned int SUM_CAMERA_POS  = 7;
@@ -179,12 +180,33 @@ void TileChunk::init(int queryMaskLand, int queryMaskWater, SceneManager *sceneM
     EntityWater->setQueryFlags(queryMaskWater);
     EntityWater->setRenderQueueGroup(RENDER_QUEUE_8); // See OgreRenderQueue.h
     // ////////////////////////////////////////////////////////////////////
+    // Build the sprites.
+    // ////////////////////////////////////////////////////////////////////
+
+    SceneManager *mSceneMgr =  TileManager::getSingleton().getSceneManager();
+    Real h = 132.0, w = 500.0, z = 1152;
+    String strMob   = "Mob01" + StringConverter::toString(2);
+    String meshName = "EMob01";
+    ManualObject* mob = static_cast<ManualObject*>(mSceneMgr->createMovableObject(strMob, ManualObjectFactory::FACTORY_TYPE_NAME));
+    mob->begin("Terrain/Sprite");
+    mob->position( w-1, h,   z); mob->textureCoord(0.0, 0.0);
+    mob->position( w,   h,   z); mob->textureCoord(1.0, 0.0);
+    mob->position( w-1, h-1, z); mob->textureCoord(0.0, 1.0);
+    mob->position( w,   h-1, z); mob->textureCoord(1.0, 1.0);
+    mob->triangle(0, 2, 1);
+    mob->triangle(1, 2, 3);
+    mob->end();
+    mob->convertToMesh(meshName);
+    Entity *EntitySprites = mSceneMgr->createEntity("Entity_Sprite", meshName);
+    EntitySprites->setQueryFlags(queryMaskWater);
+
+    // ////////////////////////////////////////////////////////////////////
     // Attach the tiles to a scenenode.
     // ////////////////////////////////////////////////////////////////////
     SceneNode *node= sceneManager->getRootSceneNode()->createChildSceneNode();
-    node->setPosition(0,0,0);
     node->attachObject(EntityLand);
     node->attachObject(EntityWater);
+    node->attachObject(EntitySprites);
 }
 
 //================================================================================================
@@ -566,4 +588,11 @@ void TileChunk::updateWater()
     vbuf->unlock();
     mSubMeshWater->indexData->indexCount = numVertices*2*3; // 2 tris/subtile * 3 vertices/triangle.
     mSubMeshWater->vertexData->vertexCount = numVertices*4; // 4 vertices/subtile.
+}
+
+//================================================================================================
+// Update hardware buffers for spries.
+//================================================================================================
+void TileChunk::updateSprites()
+{
 }
