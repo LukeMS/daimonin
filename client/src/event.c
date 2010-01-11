@@ -2548,6 +2548,7 @@ void check_menu_keys(int menu, int key)
 
     case MENU_NPC:
         gui_npc_keypress(key);
+        menuRepeatKey = key;
 
         break;
 
