@@ -1597,16 +1597,16 @@ void gui_npc_show(int mark)
 
     if (gui_npc->hypertext)
     {
-        uint16 w = Bitmaps[BITMAP_GUI_NPC_PANEL]->bitmap->w;
-
         if (options.keyword_panel == 1) /* left */
         {
-            ShowGUIPanel(gui_npc->startx - w + 23,
+            ShowGUIPanel(gui_npc->startx -
+                         Bitmaps[BITMAP_GUI_NPC_PANEL]->bitmap->w + 23,
                          gui_npc->starty + GUI_NPC_TOPMARGIN - 6);
         }
         else if (options.keyword_panel == 2) /* right */
         {
-            ShowGUIPanel(gui_npc->startx + w - 5,
+            ShowGUIPanel(gui_npc->startx +
+                         Bitmaps[BITMAP_GUI_NPC_TOP]->bitmap->w - 5,
                          gui_npc->starty +  GUI_NPC_TOPMARGIN - 6);
         }
     }
