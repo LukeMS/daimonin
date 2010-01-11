@@ -820,6 +820,7 @@ arch hole
 msg
 You see the bottom of the hole only a few feet down, so you jump unwittingly onto some stairs and nearly twist your ankle. What would live down here?
 endmsg
+slaying guildhall/kobold_den_0000
 hp 10
 sp 10
 x 5
