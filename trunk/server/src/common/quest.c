@@ -225,7 +225,8 @@ static inline void remove_quest_items(player *pl, object *op)
     while (nrof &&
            (tmp = find_quest_item(pl->ob, op)))
     {
-        int n = MAX(1, MIN(nrof, tmp->nrof));
+		int m = MIN(nrof, (int) tmp->nrof);
+        int n = MAX(1, m);
 
         decrease_ob_nr(tmp, n);
         nrof = MAX(0, nrof - n);
