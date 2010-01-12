@@ -699,54 +699,79 @@ void ai_sleep(object *op, struct mob_behaviour_param *params, move_response *res
 
 void ai_move_randomly(object *op, struct mob_behaviour_param *params, move_response *response)
 {
-    int     i, r;
-    int dirs[8] = {1,2,3,4,5,6,7,8};
+    int i, r;
+
+    int *pDirs;
+
+	static int aDirs[36] = {0,0,0,0,0,0,0,0,0,  /* no move are allowed */
+							0,1,5,1,5,1,5,1,5,  /* only moves on y axis are allowed */
+							0,3,7,3,7,3,7,3,7,  /* only moves on x axis are allowed */
+							0,1,2,3,4,5,6,7,8}; /* moves in all direction are allowed */
+	int nXRange;
+	int nYRange;
+	int iStartDirs;
+	int bNoLimit;
+	int nDirs;
+
     object *base;
     mapstruct *basemap = NULL;
     rv_vector rv;
 
-    if(op->owner)
-    {
+    if(op->owner){
         ai_move_towards_owner(op, NULL, response);
         return;
     }
 
     base = insert_base_info_object(op);
-    if ((params[AIPARAM_MOVE_RANDOMLY_XLIMIT].flags & AI_PARAM_PRESENT)
-            || (params[AIPARAM_MOVE_RANDOMLY_YLIMIT].flags & AI_PARAM_PRESENT))
-    {
-        if((basemap = ready_inherited_map(op->map, base->slaying, 0)))
-            if(!get_rangevector_full(NULL, basemap, base->x, base->y, op, op->map, op->x, op->y, &rv, RV_NO_DISTANCE))
-                basemap = NULL;
+
+	iStartDirs = 3; /* all directions */
+	bNoLimit = 1;
+	nXRange = 255; /* max range for x */
+	nYRange = 255; /* max range for y */
+
+	if(params[AIPARAM_MOVE_RANDOMLY_XLIMIT].flags & AI_PARAM_PRESENT){
+		if(!(nXRange = params[AIPARAM_MOVE_RANDOMLY_XLIMIT].intvalue)){
+			iStartDirs &= ~2; /* discard the dirs that will change x */
+		}
+		bNoLimit = 0;
+	}
+	
+	if(params[AIPARAM_MOVE_RANDOMLY_YLIMIT].flags & AI_PARAM_PRESENT){
+		if(!(nYRange = params[AIPARAM_MOVE_RANDOMLY_YLIMIT].intvalue)){
+			iStartDirs &= ~1; /* discard the dirs that will change y */
+		}
+		bNoLimit = 0;
+	}
+
+	if((basemap = ready_inherited_map(op->map, base->slaying, 0)) &&
+		!get_rangevector_full(NULL, basemap, base->x, base->y, op, op->map, op->x, op->y, &rv, RV_NO_DISTANCE)){ /* no limit */
+		iStartDirs = 3;
+		bNoLimit = 1;
     }
 
-    /* Give up to 8 chances for a monster to move randomly */
-    for (i = 0; i < 8; i++)
+	nDirs = (sizeof(aDirs)/sizeof(int)/4);
+	iStartDirs *= nDirs;
+
+	pDirs = &aDirs[iStartDirs];
+
+    /* Give up to nDirs chances for a monster to move randomly */
+    for (i = 0; i < nDirs; i++)
     {
-        int t = dirs[i];
+        int t = pDirs[i];
 
         /* Perform a single random shuffle of the remaining directions */
-        r = i+(RANDOM() % (8-i));
-        dirs[i] = dirs[r];
-        dirs[r] = t;
-
-        r = dirs[i];
+        int j = i+(RANDOM() % (nDirs-i));
+        pDirs[i] = r = pDirs[j];
+        pDirs[j] = t;
 
         /* check x and y direction of possible move against limit parameters*/
-        if(basemap)
-        {
-            if ((params[AIPARAM_MOVE_RANDOMLY_XLIMIT].flags & AI_PARAM_PRESENT)
-                    && SGN(rv.distance_x) == SGN(freearr_x[r])
-                    && abs(rv.distance_x + freearr_x[r]) > params[AIPARAM_MOVE_RANDOMLY_XLIMIT].intvalue)
-                continue;
-            if ((params[AIPARAM_MOVE_RANDOMLY_YLIMIT].flags & AI_PARAM_PRESENT)
-                    && SGN(rv.distance_y) == SGN(freearr_y[r])
-                    && abs(rv.distance_y + freearr_y[r]) > params[AIPARAM_MOVE_RANDOMLY_YLIMIT].intvalue)
-                continue;
-        }
+		if(	!bNoLimit &&
+			((abs(rv.distance_x + freearr_x[r]) > nXRange) ||
+			(abs(rv.distance_y + freearr_y[r]) > nYRange))){
+			continue;
+		}
 
-        if (!blocked_link(op, NULL, freearr_x[r], freearr_y[r]))
-        {
+		if (!blocked_link(op, NULL, freearr_x[r], freearr_y[r])){
             response->type = MOVE_RESPONSE_DIR;
             response->data.direction = r;
 //            LOG(llevDebug, "move_randomly(): i=%d, dirs={%d,%d,%d,%d,%d,%d,%d,%d}\n",
@@ -754,8 +779,9 @@ void ai_move_randomly(object *op, struct mob_behaviour_param *params, move_respo
             return;
         }
     }
-    response->type = MOVE_RESPONSE_DIR;
+	response->type = MOVE_RESPONSE_DIR;
     response->data.direction = 0;
+
 }
 
 /* This behaviour is also called from some terminal move behaviours to
