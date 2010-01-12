@@ -28,7 +28,7 @@
 #include <pwd.h>
 #endif
 
-static char *CreateGravestone(object *op, mapstruct *m, int x, int y);
+static const char *CreateGravestone(object *op, mapstruct *m, int x, int y);
 
 /* find a player name for a NORMAL string.
  * we use the hash table system.
@@ -600,7 +600,7 @@ void do_some_living(object *op)
 
 /* Creates a gravestone for the player (op) and inserts it on the spot where he
  * died. */
-static char *CreateGravestone(object *op, mapstruct *m, int x, int y)
+static const char *CreateGravestone(object *op, mapstruct *m, int x, int y)
 {
     static archetype *at = NULL;
     object           *gravestone;
@@ -615,7 +615,7 @@ static char *CreateGravestone(object *op, mapstruct *m, int x, int y)
             LOG(llevBug, "BUG:: %s/CreateGravestone(): archetype 'gravestone' not found!\n",
                          __FILE__);
 
-            return;
+            return NULL;
         }
     }
 
@@ -623,7 +623,7 @@ static char *CreateGravestone(object *op, mapstruct *m, int x, int y)
         (i = check_insertion_allowed(gravestone, m, x, y, 1,
                                     INS_NO_FORCE | INS_WITHIN_LOS)) == -1)
     {
-        return;
+        return NULL;
     }
 
     if (op->level >= 1)
@@ -657,12 +657,13 @@ static char *CreateGravestone(object *op, mapstruct *m, int x, int y)
 
     if (!(m = out_of_map(m, &x, &y)))
     {
-        return;
+        return NULL;
     }
 
     gravestone->x = x;
     gravestone->y = y;
     insert_ob_in_map(gravestone, m, NULL, INS_NO_WALK_ON);
+	return gravestone->msg;
 }
 
 /* If the player should die (lack of hp, food, etc), we call this.
