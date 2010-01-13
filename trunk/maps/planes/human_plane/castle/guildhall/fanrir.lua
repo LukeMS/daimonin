@@ -807,8 +807,6 @@ local function topic_services()
     ib:SetMsg("~TODO~")
 end
 
-ib:SetHeader(npc)
-
 ---------------------------------------
 -- Sort out all the tl stuff.
 ---------------------------------------
