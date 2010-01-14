@@ -256,31 +256,20 @@ static int luaFindFile(lua_State *L, const char *filename, const char **path)
 }
 
 /* Load 'file' */
-static int luaLoadFile(lua_State *L, const char *file)
-{
+static int luaLoadFile(lua_State *L, const char *file){
     const char *path = hooks->create_mapdir_pathname(file);
     int         res = 0;
-
     if ((res = luaFindFile(L, file, &path)) == 0)
     {
-        if ((res = load_file_cache(L, path)) == 0)
+		if ((res = load_file_cache(L, path)) == 0)
         {
-            lua_rawgeti(L, LUA_REGISTRYINDEX, cache_ref);
+			lua_rawgeti(L, LUA_REGISTRYINDEX, cache_ref);
             lua_pushstring(L, file);
-            lua_rawget(L, -2);
-
-            if (!lua_isfunction(L, -1))
-            {
-                lua_pop(L, 1);
-                lua_pushstring(L, file);
-                lua_pushstring(L, path);
-                lua_rawset(L, -3);
-            }
-
+            lua_pushstring(L, path);
+            lua_rawset(L, -3);
             lua_pop(L, 1);
-        }
-    }
-
+		}
+	}
     return res;
 }
 
