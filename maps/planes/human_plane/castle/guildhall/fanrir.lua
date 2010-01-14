@@ -101,43 +101,7 @@ local function questGoal(questnr)
         local target = qb:AddQuestTarget(3, 2, 2, "mouse", "Mouse")
 
         target:AddQuestItem(2, "quest_object", "tail_rat.101", "Mouse tail")
-
-        local ds = DataStore("fanrir", player)
-
-        if not ds:Get(qb:GetName(3) .. " weapon given") then
-            ds:Set(qb:GetName(3) .. " weapon given", true)
-            ds:WasChanged()
-
-            ---------
-            -- Create and auto-equip a weapon of the appropriate type
-            -- if player has 0 exp and no weapon equipped.
-            ---------
-            local weaponarch = {
-                [game:GetSkillNr("slash weapons") ] = "shortsword",
-                [game:GetSkillNr("impact weapons")] = "mstar_small",
-                [game:GetSkillNr("cleave weapons")] = "axe_small",
-                [game:GetSkillNr("pierce weapons")] = "dagger_large"
-            }
-
-            for k, v in pairs(weaponarch) do
-                skill = player:FindSkill(k) 
-
-                if skill and
-                   skill.experience == 0 and
-                   not player:GetEquipment(game.EQUIP_WEAPON1) then
-                    local weapon = player:CreateObjectInside(v, game.IDENTIFIED)
-
-                    assert(weapon, "Could not create weapon!")
-                    player:Apply(weapon, game.APPLY_ALWAYS)
-                    player:Write(npc.name .. " puts a " .. weapon:GetName() ..
-                                 " in your hands.")
-                    player:Write("He says: Here, take this weapon for the " ..
-                                 "task.")
-
-                    break
-                end
-            end
-        end
+        require("/scripts/first_weapon")
     end
 end
 
