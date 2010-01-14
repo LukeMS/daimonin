@@ -255,7 +255,7 @@ static int luaFindFile(lua_State *L, const char *filename, const char **path)
     return 0;
 }
 
-/* Load 'file' */
+/* Load 'file' - 2010-01-15 */
 static int luaLoadFile(lua_State *L, const char *file){
     const char *path = hooks->create_mapdir_pathname(file);
     int         res = 0;
