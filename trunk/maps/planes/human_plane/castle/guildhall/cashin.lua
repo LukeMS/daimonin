@@ -56,6 +56,7 @@ local function questGoal(questnr)
 
         target:AddQuestItem(1, "quest_object", "helm_leather.101",
                         "Cashin's helm")
+        require("/scripts/first_weapon")
     end
 end
 
