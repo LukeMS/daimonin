@@ -96,11 +96,11 @@ end
 -------------------
 -- qb:Build() builds up the qb table based on the entries passed to it
 -- previously by qb:AddQuest() so that qm can handle it, and returns
--- a positive number > 0 which is the current quest that the player is on OR
+-- a positive number which is the current quest that the player is on OR
 -- the quest which is on offer and for which the player is eligible
 -- (check qb:GetStatus(questnr)), or a negative number which indicates that
 -- qb[math.abs(questnr)] is currently disallowed for this player
--- (eg, because of a level requirement), or nil if the player has completed all
+-- (eg, because of a level requirement), or 0 if the player has completed all
 -- quests offered.
 -------------------
 function QuestBuilder:Build(player)
@@ -109,7 +109,7 @@ function QuestBuilder:Build(player)
            "Arg #1 must be player GameObject!")
     assert(table.getn(self) >= 1, "No quests in qb table!")
 
-    local questnr
+    local questnr = 0
 
     for i, v in ipairs(self) do
         table.insert(v, 1, player)
@@ -124,7 +124,7 @@ function QuestBuilder:Build(player)
 
         local qstat = v.qm:GetStatus()
 
-        if questnr == nil and
+        if questnr == 0 and
            qstat ~= game.QSTAT_DONE then
             if qstat == game.QSTAT_DISALLOW then
                 questnr = 0 - i
