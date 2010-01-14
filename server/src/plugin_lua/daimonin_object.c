@@ -1964,43 +1964,58 @@ static int GameObject_CheckGuild(lua_State *L)
 /*****************************************************************************/
 /* Name   : GameObject_JoinGuild                                             */
 /* Lua    : object:JoinGuild(name, skill1, v1, skill2, v2, skill3, v3)       */
-/* Info   :                                                                  */
+/* Info   : Only works for player objects. Other types generate an error.    */
+/*          Causes object to join named guild. The default or guild          */
+/*          skillgroups are set as indicated.                                */
 /* Status : Tested/Stable                                                    */
 /*****************************************************************************/
 static int GameObject_JoinGuild(lua_State *L)
 {
-    char *name;
-    int s1,s2,s3,sv1, sv2, sv3;
     lua_object *self;
-    object *force;
+    char       *name;
+    int         s[3] = {-1, -1, -1},
+                v[3] = {0, 0, 0};
+    player     *pl;
+    object     *force;
 
-    get_lua_args(L, "Os|iiiiii", &self, &name, &s1, &sv1, &s2, &sv2, &s3, &sv3);
+    get_lua_args(L, "Os|iiiiii", &self, &name, &s[0], &v[0], &s[1], &v[1],
+                 &s[2], &v[2]);
+
+    if (WHO->type != PLAYER ||
+        !(pl = CONTR(WHO)))
+    {
+        return luaL_error(L, "object:JoinGuild() can only be called on a player!");
+    }
 
     SET_FLAG(WHO, FLAG_FIX_PLAYER);
+    force = hooks->guild_join(pl, name, s[0], v[0], s[1], v[1], s[2], v[2]);
 
-    force = hooks->guild_join(CONTR(WHO), name, s1, sv1, s2, sv2, s3, sv3);
-    hooks->new_draw_info_format(NDI_UNIQUE | NDI_NAVY, 0, WHO, "you join %s Guild.", name);
-
-    if(force)
-        return push_object(L, &GameObject, force);
-    else
-        return 0;
+    return push_object(L, &GameObject, force);
 }
 
 /*****************************************************************************/
 /* Name   : GameObject_LeaveGuild                                            */
-/* Lua    : object:LeaveGuild(rank_string)                                   */
-/* Info   :                                                                  */
+/* Lua    : object:LeaveGuild()                                              */
+/* Info   : Only works for player objects. Other types generate an error.    */
+/*          Causes object to leave current guild.                            */
 /* Status : Tested/Stable                                                    */
 /*****************************************************************************/
 static int GameObject_LeaveGuild(lua_State *L)
 {
     lua_object *self;
+    player     *pl;
 
     get_lua_args(L, "O", &self);
 
+    if (WHO->type != PLAYER ||
+        !(pl = CONTR(WHO)))
+    {
+        return luaL_error(L, "object:LeaveGuild() can only be called on a player!");
+    }
+
     SET_FLAG(WHO, FLAG_FIX_PLAYER);
-    hooks->guild_leave(CONTR(WHO));
+    hooks->guild_leave(pl);
+
     return 0;
 }
 

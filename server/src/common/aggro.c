@@ -376,21 +376,27 @@ static inline int aggro_exp_single(object *victim, object *aggro, int base)
         LOG(llevNoLog,".. no skill dmg - use guild base dmg\n");
 #endif
         new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, hitter, "You didn't fight this time.\nYou trained your default guild skills.");
-        if((tmp = pl->highest_skill[pl->base_skill_group[0]]))
+        if (pl->base_skill_group[0] >= 0 &&
+            pl->base_skill_group[0] < NROFSKILLGROUPS &&
+            (tmp = pl->highest_skill[pl->base_skill_group[0]]))
         {
             e1 = calc_skill_exp(hitter, victim, 0.55f, tmp->level, &exp);
             if(pl->base_skill_group_exp[0] != 100)
                 e1 = (e1 * pl->base_skill_group_exp[0])/100;
             ret |=add_aggro_exp(hitter, e1, tmp->stats.sp);
         }
-        if((tmp = pl->highest_skill[pl->base_skill_group[1]]))
+        if (pl->base_skill_group[1] >= 0 &&
+            pl->base_skill_group[1] < NROFSKILLGROUPS &&
+            (tmp = pl->highest_skill[pl->base_skill_group[1]]))
         {
             e2 = calc_skill_exp(hitter, victim, 0.30f, tmp->level, &exp);
             if(pl->base_skill_group_exp[1] != 100)
                 e2 = (e2 * pl->base_skill_group_exp[1])/100;
             ret |=add_aggro_exp(hitter, e2, tmp->stats.sp);
         }
-        if((tmp = pl->highest_skill[pl->base_skill_group[2]]))
+        if (pl->base_skill_group[2] >= 0 &&
+            pl->base_skill_group[2] < NROFSKILLGROUPS &&
+            (tmp = pl->highest_skill[pl->base_skill_group[2]]))
         {
             e3 = calc_skill_exp(hitter, victim, 0.15f, tmp->level, &exp);
             if(pl->base_skill_group_exp[2] != 100)

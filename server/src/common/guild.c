@@ -141,11 +141,18 @@ void guild_leave(player *pl)
     old->sub_type1 = ST1_GUILD_OLD;
 
     /* neutralize the guild and update the infos */
+    /* FIXME: We should just read the guild_force arch defaults here. */
     FREE_AND_CLEAR_HASH(walk->slaying); /* no name, no guild */
     walk->sub_type1 = ST1_GUILD_IN; /* we are "in guild of nothing" - slaying is NULL and the tag */
+    /* As this is a default, only give 50% of the exp that you would actually
+     * get if you'd really trained those skills -- see aggro.c. Guild members
+     * get a better exchange rate (encourages guild membership).
+     * -- Smacky 20100113 */
     walk->last_eat = SKILLGROUP_PHYSIQUE; /* fix_player() should be called after this */
     walk->last_sp = SKILLGROUP_AGILITY;
     walk->last_heal = SKILLGROUP_WISDOM;
-    walk->last_grace = walk->magic = walk->state = 100;
+    walk->last_grace = 25;
+    walk->magic = 15;
+    walk->state = 10;
     pl->socket.ext_title_flag = 1;
 }

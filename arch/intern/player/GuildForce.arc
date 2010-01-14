@@ -11,9 +11,9 @@ sys_object 1
 last_eat 3
 last_sp 0
 last_heal 5
-last_grace 100
-magic 100
-state 100
+last_grace 25
+magic 15
+state 10
 layer 0
 type 140
 face force.101
