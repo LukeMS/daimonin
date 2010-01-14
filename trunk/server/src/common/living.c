@@ -950,10 +950,17 @@ void fix_player(object *op)
     pl->wc_bonus = pl->dam_bonus = pl->spell_fumble = pl->exp_bonus = pl->encumbrance = 0;
     pl->set_skill_weapon = pl->set_skill_archery = NO_SKILL_READY;
     /* the default skill groups for non guild players */
-    pl->base_skill_group[0]=SKILLGROUP_PHYSIQUE;
-    pl->base_skill_group[1]=SKILLGROUP_AGILITY;
-    pl->base_skill_group[2]=SKILLGROUP_WISDOM;
-    pl->base_skill_group_exp[0]=pl->base_skill_group_exp[1]=pl->base_skill_group_exp[2]=100;
+    /* FIXME: We should just read the guild_force arch defaults here. */
+    /* As this is a default, only give 50% of the exp that you would actually
+     * get if you'd really trained those skills -- see aggro.c. Guild members
+     * get a better exchange rate (encourages guild membership).
+     * -- Smacky 20100113 */
+    pl->base_skill_group[0] = SKILLGROUP_PHYSIQUE;
+    pl->base_skill_group[1] = SKILLGROUP_AGILITY;
+    pl->base_skill_group[2] = SKILLGROUP_WISDOM;
+    pl->base_skill_group_exp[0] = 25;
+    pl->base_skill_group_exp[1] = 15;
+    pl->base_skill_group_exp[2] = 10;
 
 
     /* for players, we adjust with the values */
@@ -1087,13 +1094,12 @@ void fix_player(object *op)
         else if(tmp->type == TYPE_GUILD_FORCE)
         {
             pl->guild_force = tmp;
-            pl->base_skill_group[0]=tmp->last_eat;
-            pl->base_skill_group[1]=tmp->last_sp;
-            pl->base_skill_group[2]=tmp->last_heal;
-
-            pl->base_skill_group_exp[0]=tmp->last_grace;
-            pl->base_skill_group_exp[1]=tmp->magic;
-            pl->base_skill_group_exp[2]=tmp->state;
+            pl->base_skill_group[0] = tmp->last_eat;
+            pl->base_skill_group[1] = tmp->last_sp;
+            pl->base_skill_group[2] = tmp->last_heal;
+            pl->base_skill_group_exp[0] = tmp->last_grace;
+            pl->base_skill_group_exp[1] = tmp->magic;
+            pl->base_skill_group_exp[2] = tmp->state;
         }
         else if(tmp->type == TYPE_QUEST_CONTAINER)
         {
