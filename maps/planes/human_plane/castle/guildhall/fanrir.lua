@@ -303,7 +303,7 @@ local function topic_greeting()
         ---------
         -- Player has not done all the quests.
         ---------
-        if questnr then
+        if questnr ~= 0 then
             if qb:GetStatus(questnr) == game.QSTAT_NO then
                 ib:AddMsg("\nJust let me know when you're ready for your " ..
                           "next ^quest^.")
@@ -355,7 +355,7 @@ local function topic_quest()
     ---------
     -- Player has completed all quests.
     ---------
-    if questnr == nil then
+    if questnr == 0 then
         ib:SetMsg("I am sorry, but I have no more to teach you.\n")
         ib:AddMsg("\nYour next step should be to go and talk to Cashin of " ..
                   "the Mercenary Guild.\n")
@@ -457,8 +457,7 @@ local function topic_questAccept()
     -- Player has completed all quests or next quest is disallowed (ie, player
     -- does not meet level/skill req).
     ---------
-    if questnr == nil or
-       questnr < 0 then
+    if questnr <= 0 then
         return topic_quest()
     end
 
@@ -595,8 +594,7 @@ local function topic_questDecline()
     -- Player has completed all quests or next quest is disallowed (ie, player
     -- does not meet level/skill req).
     ---------
-    if questnr == nil or
-       questnr < 0 then
+    if questnr <= 0 then
         return topic_quest()
     end
 
@@ -632,8 +630,7 @@ local function topic_questComplete()
     -- Player has completed all quests or next quest is disallowed (ie, player
     -- does not meet level/skill req).
     ---------
-    if questnr == nil or
-       questnr < 0 then
+    if questnr <= 0 then
         return topic_quest()
     end
 
@@ -726,7 +723,7 @@ local function topic_questComplete()
             qb:Finish(3, "10 copper coins")
         end
 
-        if questnr then
+        if questnr ~= 0 then
             if qb:GetQuestNr() > questnr and
                qb:GetStatus(questnr + 1) == game.QSTAT_NO then
                 ib:SetLHSButton("Quest")
@@ -750,8 +747,7 @@ local function topic_questIncomplete()
     -- Player has completed all quests or next quest is disallowed (ie, player
     -- does not meet level/skill req).
     ---------
-    if questnr == nil or
-       questnr < 0 then
+    if questnr <= 0 then
         return topic_quest()
     end
 
