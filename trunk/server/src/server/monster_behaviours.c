@@ -697,92 +697,258 @@ void ai_sleep(object *op, struct mob_behaviour_param *params, move_response *res
     }
 }
 
+
+#define dir_turn(dir, n) ((((dir) - 1 + (n)) & 7) + 1)
+
+int ai_only_keep_possible_dirs(int aDirWeight[9], object *op, struct mob_behaviour_param *params){
+object *base;
+mapstruct *basemap;
+rv_vector rv;
+int nXRange, nYRange;
+unsigned int nLimitXY;
+int nret;
+
+    base = insert_base_info_object(op);
+
+	nLimitXY = 0;
+
+	if(params[AIPARAM_MOVE_RANDOMLY_XLIMIT].flags & AI_PARAM_PRESENT){
+		nXRange = params[AIPARAM_MOVE_RANDOMLY_XLIMIT].intvalue;
+		nLimitXY = 2;
+	}
+	
+	if(params[AIPARAM_MOVE_RANDOMLY_YLIMIT].flags & AI_PARAM_PRESENT){
+		nYRange = params[AIPARAM_MOVE_RANDOMLY_YLIMIT].intvalue;
+		nLimitXY |= 1;
+	}
+
+	if((basemap = ready_inherited_map(op->map, base->slaying, 0)) &&
+		!get_rangevector_full(NULL, basemap, base->x, base->y, op, op->map, op->x, op->y, &rv, RV_NO_DISTANCE)){ /* the mob is not a controled map */
+			aDirWeight[0] = 0;
+			aDirWeight[1] = 0;
+			aDirWeight[2] = 0;
+			aDirWeight[3] = 0;
+			aDirWeight[4] = 0;
+			aDirWeight[5] = 0;
+			aDirWeight[6] = 0;
+			aDirWeight[7] = 0;
+			aDirWeight[8] = 0;
+
+			switch(op->direction){
+			case 0:
+				break;
+			case 1:
+				if(	op->map->tile_map[TILED_MAPS_SOUTH] &&
+					((op->map->tile_map[TILED_MAPS_SOUTH] == basemap->tile_map[TILED_MAPS_NORTH]) ||
+					(op->map->tile_map[TILED_MAPS_SOUTH] == basemap->tile_map[TILED_MAPS_NORTHEAST]) ||
+					(op->map->tile_map[TILED_MAPS_SOUTH] == basemap->tile_map[TILED_MAPS_NORTHWEST]))){
+					aDirWeight[dir_turn(op->direction, 4)] = 1;
+					return 1;
+				}
+				break;
+			case 2:
+				if(	op->map->tile_map[TILED_MAPS_SOUTHWEST] &&
+					((op->map->tile_map[TILED_MAPS_SOUTHWEST] == basemap->tile_map[TILED_MAPS_NORTH]) ||
+					(op->map->tile_map[TILED_MAPS_SOUTHWEST] == basemap->tile_map[TILED_MAPS_NORTHEAST]) ||
+					(op->map->tile_map[TILED_MAPS_SOUTHWEST] == basemap->tile_map[TILED_MAPS_NORTHWEST]) ||
+					(op->map->tile_map[TILED_MAPS_SOUTHWEST] == basemap->tile_map[TILED_MAPS_EAST]) ||
+					(op->map->tile_map[TILED_MAPS_SOUTHWEST] == basemap->tile_map[TILED_MAPS_SOUTHEAST]))){
+					aDirWeight[dir_turn(op->direction, 4)] = 1;
+					return 1;
+				}
+				break;
+			case 3:
+				if(	op->map->tile_map[TILED_MAPS_WEST] &&
+					((op->map->tile_map[TILED_MAPS_WEST] == basemap->tile_map[TILED_MAPS_EAST]) ||
+					(op->map->tile_map[TILED_MAPS_WEST] == basemap->tile_map[TILED_MAPS_NORTHEAST]) ||
+					(op->map->tile_map[TILED_MAPS_WEST] == basemap->tile_map[TILED_MAPS_SOUTHEAST]))){
+					aDirWeight[dir_turn(op->direction, 4)] = 1;
+					return 1;
+				}
+				break;
+			case 4:
+				if(	op->map->tile_map[TILED_MAPS_NORTHWEST] &&
+					((op->map->tile_map[TILED_MAPS_NORTHWEST] == basemap->tile_map[TILED_MAPS_SOUTH]) ||
+					(op->map->tile_map[TILED_MAPS_NORTHWEST] == basemap->tile_map[TILED_MAPS_NORTHEAST]) ||
+					(op->map->tile_map[TILED_MAPS_NORTHWEST] == basemap->tile_map[TILED_MAPS_SOUTHEAST]) ||
+					(op->map->tile_map[TILED_MAPS_NORTHWEST] == basemap->tile_map[TILED_MAPS_EAST]) ||
+					(op->map->tile_map[TILED_MAPS_NORTHWEST] == basemap->tile_map[TILED_MAPS_SOUTHWEST]))){
+					aDirWeight[dir_turn(op->direction, 4)] = 1;
+					return 1;
+				}
+				break;
+			case 5:
+				if(	op->map->tile_map[TILED_MAPS_NORTH] &&
+					((op->map->tile_map[TILED_MAPS_NORTH] == basemap->tile_map[TILED_MAPS_SOUTH]) ||
+					(op->map->tile_map[TILED_MAPS_NORTH] == basemap->tile_map[TILED_MAPS_SOUTHEAST]) ||
+					(op->map->tile_map[TILED_MAPS_NORTH] == basemap->tile_map[TILED_MAPS_SOUTHWEST]))){
+					aDirWeight[dir_turn(op->direction, 4)] = 1;
+					return 1;
+				}
+				break;
+			case 6:
+				if(	op->map->tile_map[TILED_MAPS_NORTHEAST] &&
+					((op->map->tile_map[TILED_MAPS_NORTHEAST] == basemap->tile_map[TILED_MAPS_SOUTH]) ||
+					(op->map->tile_map[TILED_MAPS_NORTHEAST] == basemap->tile_map[TILED_MAPS_NORTHWEST]) ||
+					(op->map->tile_map[TILED_MAPS_NORTHEAST] == basemap->tile_map[TILED_MAPS_SOUTHEAST]) ||
+					(op->map->tile_map[TILED_MAPS_NORTHEAST] == basemap->tile_map[TILED_MAPS_WEST]) ||
+					(op->map->tile_map[TILED_MAPS_NORTHEAST] == basemap->tile_map[TILED_MAPS_SOUTHWEST]))){
+					aDirWeight[dir_turn(op->direction, 4)] = 1;
+					return 1;
+				}
+				break;				
+			case 7:
+				if(	op->map->tile_map[TILED_MAPS_EAST] &&
+					((op->map->tile_map[TILED_MAPS_EAST] == basemap->tile_map[TILED_MAPS_WEST]) ||
+					(op->map->tile_map[TILED_MAPS_EAST] == basemap->tile_map[TILED_MAPS_NORTHWEST]) ||
+					(op->map->tile_map[TILED_MAPS_EAST] == basemap->tile_map[TILED_MAPS_SOUTHWEST]))){
+					aDirWeight[dir_turn(op->direction, 4)] = 1;
+					return 1;
+				}
+				break;
+			case 8:
+				if(	op->map->tile_map[TILED_MAPS_SOUTHEAST] &&
+					((op->map->tile_map[TILED_MAPS_SOUTHEAST] == basemap->tile_map[TILED_MAPS_NORTH]) ||
+					(op->map->tile_map[TILED_MAPS_SOUTHEAST] == basemap->tile_map[TILED_MAPS_NORTHEAST]) ||
+					(op->map->tile_map[TILED_MAPS_SOUTHEAST] == basemap->tile_map[TILED_MAPS_SOUTHWEST]) ||
+					(op->map->tile_map[TILED_MAPS_SOUTHEAST] == basemap->tile_map[TILED_MAPS_WEST]) ||
+					(op->map->tile_map[TILED_MAPS_SOUTHEAST] == basemap->tile_map[TILED_MAPS_NORTHWEST]))){
+					aDirWeight[dir_turn(op->direction, 4)] = 1;
+					return 1;
+				}
+				break;
+			}
+			nLimitXY = 0;
+    }
+
+	aDirWeight[0] = 1;
+	aDirWeight[1] = 1;
+	aDirWeight[2] = 1;
+	aDirWeight[3] = 1;
+	aDirWeight[4] = 1;
+	aDirWeight[5] = 1;
+	aDirWeight[6] = 1;
+	aDirWeight[7] = 1;
+	aDirWeight[8] = 1;
+
+	if(nLimitXY & 2){
+		if(rv.distance_x + 1 > nXRange){
+			aDirWeight[2] = 0;
+			aDirWeight[3] = 0;
+			aDirWeight[4] = 0;
+		}
+		if(rv.distance_x - 1 < -nXRange){
+			aDirWeight[6] = 0;
+			aDirWeight[7] = 0;
+			aDirWeight[8] = 0;
+		}
+	}
+
+	if(nLimitXY & 1){
+		if(rv.distance_y + 1 > nYRange){
+			aDirWeight[4] = 0;
+			aDirWeight[5] = 0;
+			aDirWeight[6] = 0;
+		}
+		if(rv.distance_y - 1 < -nYRange){
+			aDirWeight[1] = 0;
+			aDirWeight[2] = 0;
+			aDirWeight[8] = 0;
+		}
+	}
+	nret = aDirWeight[0] + aDirWeight[1] + aDirWeight[2] + aDirWeight[3] + aDirWeight[4];
+	nret += aDirWeight[5] + aDirWeight[6] + aDirWeight[7] +	aDirWeight[8];
+	return nret;
+}
+
+/*	fill aDirWeight[9] with possible directions 
+	returns the max random number + 1
+*/
+int ai_move_randomly_behaviour(int aDirWeight[9], object *op, struct mob_behaviour_param *params){
+int nStandStill = 246; /* todo: get this value from params */
+int nLastDir;
+int nret;
+
+	if(!(nLastDir = op->direction)){ /* Last move is stand still */
+		if((RANDOM() % 256) <= nStandStill){ /* stand still */
+			aDirWeight[0] = 1;
+			aDirWeight[1] = 0;
+			aDirWeight[2] = 0;
+			aDirWeight[3] = 0;
+			aDirWeight[4] = 0;
+			aDirWeight[5] = 0;
+			aDirWeight[6] = 0;
+			aDirWeight[7] = 0;
+			aDirWeight[8] = 0;
+			return 1;
+		}
+		if(nret = ai_only_keep_possible_dirs(aDirWeight, op, params) - 1){ /* evaluate moves in any direction */
+			aDirWeight[0] = 0;
+			return nret;
+		}
+		/* no movement possible, so don't move */
+		return 1;
+	} else { /* the mob was moving */
+		ai_only_keep_possible_dirs(aDirWeight, op, params); /* evaluate moves in any direction */
+
+		nret = aDirWeight[nLastDir] *= 128; /* same direction */
+
+		nret += aDirWeight[dir_turn(nLastDir, 1)] *= 32;  /* turn on the right once */
+
+		nret += aDirWeight[dir_turn(nLastDir, -1)] *= 32; /* turn on the left once */
+		
+		nret += aDirWeight[dir_turn(nLastDir, 2)] *= 4; /* turn on the right twice */
+
+		nret += aDirWeight[dir_turn(nLastDir, -2)] *= 4; /* turn on the left twice */
+
+		nret += aDirWeight[dir_turn(nLastDir, 3)] *= 1; /* turn on the right 3 times */
+
+		nret += aDirWeight[dir_turn(nLastDir, -3)] *= 1; /* turn on the left 3 times */
+
+		nret += aDirWeight[dir_turn(nLastDir, 4)] *= 1; /* turn on the right 4 times */
+
+		nret += aDirWeight[0] *= 4; /* don't move */
+		
+		return nret;
+	}
+}
+
+
 void ai_move_randomly(object *op, struct mob_behaviour_param *params, move_response *response)
 {
-    int i, r;
-
-    int *pDirs;
-
-	static int aDirs[36] = {0,0,0,0,0,0,0,0,0,  /* no move are allowed */
-							0,1,5,1,5,1,5,1,5,  /* only moves on y axis are allowed */
-							0,3,7,3,7,3,7,3,7,  /* only moves on x axis are allowed */
-							0,1,2,3,4,5,6,7,8}; /* moves in all direction are allowed */
-	int nXRange;
-	int nYRange;
-	int iStartDirs;
-	int bNoLimit;
-	int nDirs;
-
-    object *base;
-    mapstruct *basemap = NULL;
-    rv_vector rv;
+	int aDirWeight[9]; /* 8 directions + stand still */
+	int nMaxRand;
+	int n, i;
 
     if(op->owner){
         ai_move_towards_owner(op, NULL, response);
         return;
     }
 
-    base = insert_base_info_object(op);
+	nMaxRand = ai_move_randomly_behaviour(aDirWeight, op, params);
 
-	iStartDirs = 3; /* all directions */
-	bNoLimit = 1;
-	nXRange = 255; /* max range for x */
-	nYRange = 255; /* max range for y */
-
-	if(params[AIPARAM_MOVE_RANDOMLY_XLIMIT].flags & AI_PARAM_PRESENT){
-		if(!(nXRange = params[AIPARAM_MOVE_RANDOMLY_XLIMIT].intvalue)){
-			iStartDirs &= ~2; /* discard the dirs that will change x */
+	while(nMaxRand){
+		n = RANDOM() % nMaxRand;
+		for(i = 0;i < 9;i++){
+			if((n -= aDirWeight[i]) < 0){
+				if(!blocked_link(op, NULL, freearr_x[i], freearr_y[i])){
+					response->type = MOVE_RESPONSE_DIR;
+					response->data.direction = i;
+					/* LOG(llevDebug, "move_randomly(): name: %s, dir: %d\n", op->name, i);*/
+					//            LOG(llevDebug, "move_randomly(): i=%d, dirs={%d,%d,%d,%d,%d,%d,%d,%d}\n",
+					//                    i, dirs[0], dirs[1], dirs[2], dirs[3], dirs[4], dirs[5], dirs[6], dirs[7]);
+					return;
+				}
+				nMaxRand -= aDirWeight[i];
+				aDirWeight[i] = 0;
+				break;
+			}
 		}
-		bNoLimit = 0;
 	}
-	
-	if(params[AIPARAM_MOVE_RANDOMLY_YLIMIT].flags & AI_PARAM_PRESENT){
-		if(!(nYRange = params[AIPARAM_MOVE_RANDOMLY_YLIMIT].intvalue)){
-			iStartDirs &= ~1; /* discard the dirs that will change y */
-		}
-		bNoLimit = 0;
-	}
-
-	if((basemap = ready_inherited_map(op->map, base->slaying, 0)) &&
-		!get_rangevector_full(NULL, basemap, base->x, base->y, op, op->map, op->x, op->y, &rv, RV_NO_DISTANCE)){ /* no limit */
-		iStartDirs = 3;
-		bNoLimit = 1;
-    }
-
-	nDirs = (sizeof(aDirs)/sizeof(int)/4);
-	iStartDirs *= nDirs;
-
-	pDirs = &aDirs[iStartDirs];
-
-    /* Give up to nDirs chances for a monster to move randomly */
-    for (i = 0; i < nDirs; i++)
-    {
-        int t = pDirs[i];
-
-        /* Perform a single random shuffle of the remaining directions */
-        int j = i+(RANDOM() % (nDirs-i));
-        pDirs[i] = r = pDirs[j];
-        pDirs[j] = t;
-
-        /* check x and y direction of possible move against limit parameters*/
-		if(	!bNoLimit &&
-			((abs(rv.distance_x + freearr_x[r]) > nXRange) ||
-			(abs(rv.distance_y + freearr_y[r]) > nYRange))){
-			continue;
-		}
-
-		if (!blocked_link(op, NULL, freearr_x[r], freearr_y[r])){
-            response->type = MOVE_RESPONSE_DIR;
-            response->data.direction = r;
-//            LOG(llevDebug, "move_randomly(): i=%d, dirs={%d,%d,%d,%d,%d,%d,%d,%d}\n",
-//                    i, dirs[0], dirs[1], dirs[2], dirs[3], dirs[4], dirs[5], dirs[6], dirs[7]);
-            return;
-        }
-    }
 	response->type = MOVE_RESPONSE_DIR;
-    response->data.direction = 0;
-
+	response->data.direction = 0;
 }
+
 
 /* This behaviour is also called from some terminal move behaviours to
  * allow charming of normal monsters without changing their behaviours */
