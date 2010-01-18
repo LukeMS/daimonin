@@ -377,7 +377,12 @@ static int do_move_monster(object *op, int dir, uint16 forbidden)
      || (!(forbidden & (1 << absdir(dir - m * 2))) && move_object(op, absdir(dir - m * 2))))
         return TRUE;
 
-    /* Couldn't move at all... */
+	/* Do not move */
+	if (!(forbidden & 1) && move_object(op, 0)){ /* the monster manages to stand still */
+        return TRUE;
+	}
+
+    /* Couldn't move at all nor stand still... */
     return FALSE;
 }
 /*
@@ -624,18 +629,8 @@ int move_monster(object *op, int mode)
 
         /* Calculate direction from response needed and execute movement */
         dir = direction_from_response(op, &response);
-        if (dir > 0)
-        {
-            success = do_move_monster(op, dir, response.forbidden);
-            /* TODO: handle success=0 and precomputed paths/giving up */
-        }
-
-        /* Try to avoid standing still if we aren't allowed to */
-        if((dir == 0 || success == 0) && (response.forbidden & (1 << 0)) 
-                && !QUERY_FLAG(op, FLAG_REMOVED))
-        {
-            success = do_move_monster(op, (RANDOM()%8)+1, response.forbidden);
-        }
+        
+        success = do_move_monster(op, dir, response.forbidden);
 
         /* Moving may have killed the monster */
         if(QUERY_FLAG(op, FLAG_REMOVED))
@@ -645,9 +640,9 @@ int move_monster(object *op, int mode)
         }
 
         if(success) {
-            did_move = 1;
+            did_move = op->direction;
             if(response.success_callback != NULL)
-                response.success_callback(op, dir);
+                response.success_callback(op, op->direction);
         }
     }
 
