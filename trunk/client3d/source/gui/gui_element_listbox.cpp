@@ -76,9 +76,9 @@ GuiListbox::~GuiListbox()
 //================================================================================================
 // .
 //================================================================================================
-void GuiListbox::sendMsg(const int message, Ogre::String &text, Ogre::uint32 &color, const char *text2)
+void GuiListbox::sendMsg(const int msgID, Ogre::String &text, Ogre::uint32 &color, const char *text2)
 {
-    switch (message)
+    switch (msgID)
     {
         case GuiManager::MSG_ADD_ROW:
             addText(text.c_str(), color);
@@ -91,6 +91,19 @@ void GuiListbox::sendMsg(const int message, Ogre::String &text, Ogre::uint32 &co
             return;
         case GuiManager::MSG_GET_KEYWORD:
             text = mKeywordPressed;
+            return;
+        case GuiManager::MSG_SET_DEBUG_TEXT:
+        {
+            static long time = Root::getSingleton().getTimer()->getMilliseconds();
+            if (Root::getSingleton().getTimer()->getMilliseconds() - time >= 300)
+            {
+                addText(text.c_str(), GuiManager::COLOR_RED);
+                time = Root::getSingleton().getTimer()->getMilliseconds();
+            }
+        }
+        return;
+        default:
+            Logger::log().warning() << "GuiListbox::sendMsg() unknow msgID: " << msgID;
             return;
     }
 }

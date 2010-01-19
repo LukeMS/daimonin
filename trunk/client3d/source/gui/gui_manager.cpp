@@ -831,7 +831,7 @@ void GuiManager::drawTooltip()
         for (; x < w-2; ++x) *dest++ = 0;
     }
     y = (h-endY) * w;
-    for (;--y;) *dest++ = 0;
+    for (; --y;) *dest++ = 0;
     maxWidth-=BORDER*2;
     // ////////////////////////////////////////////////////////////////////
     // Draw the text.
@@ -866,4 +866,14 @@ void GuiManager::drawDragElement(const PixelBox &src)
     size = src.getWidth();
     mTexture->getBuffer()->blitFromMemory(src, Box(0, 0, size, size));
     mOverlay->show();
+}
+
+//================================================================================================
+//
+//================================================================================================
+void GuiManager::debugText(const char *text, Ogre::uint32 timeBeforeNextMsg)
+{
+    static String strText;
+    strText ="[Debug] "; strText+= text;
+    sendMsg(LIST_MSGWIN, MSG_SET_DEBUG_TEXT, strText.c_str(), timeBeforeNextMsg);
 }

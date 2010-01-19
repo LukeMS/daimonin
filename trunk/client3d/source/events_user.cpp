@@ -417,6 +417,9 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
 
         case OIS::KC_7:
         {
+            static bool opt = false;
+            TileManager::getSingleton().setRenderOptions(opt= !opt);
+            TileManager::getSingleton().updateChunks();
             break;
         }
 

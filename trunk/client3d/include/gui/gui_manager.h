@@ -128,26 +128,26 @@ public:
     static const int SUM_WIN_DIGITS; /**< Numbers of digits (For string format) **/
     enum
     {
-        EVENT_CHECK_DONE,
-        EVENT_CHECK_NEXT,
-        EVENT_USER_ACTION,
-        EVENT_DRAG_STRT,
-        EVENT_DRAG_DONE,
-        EVENT_OUTSIDE_WIN,
+        EVENT_CHECK_DONE,  //  0
+        EVENT_CHECK_NEXT,  //  1
+        EVENT_USER_ACTION, //  2
+        EVENT_DRAG_STRT,   //  3
+        EVENT_DRAG_DONE,   //  4
+        EVENT_OUTSIDE_WIN, //  5
         EVENT_SUM
     };
 
     /// Mouse Events
     enum
     {
-        MOUSE_MOVEMENT,
-        MOUSE_RESIZING,
-        BUTTON_PRESSED,
-        BUTTON_CLICKED,
-        BUTTON_RELEASED,
-        DRAGGING,
-        DRAG_ENTER,
-        DRAG_EXIT,
+        MOUSE_MOVEMENT,    //  0
+        MOUSE_RESIZING,    //  1
+        BUTTON_PRESSED,    //  2
+        BUTTON_CLICKED,    //  3
+        BUTTON_RELEASED,   //  4
+        DRAGGING,          //  5
+        DRAG_ENTER,        //  6
+        DRAG_EXIT,         //  7
     };
     typedef enum
     {
@@ -163,7 +163,8 @@ public:
         MSG_SET_TEXT,      //  9
         MSG_SET_VALUE,     // 10
         MSG_SET_VISIBLE,   // 11
-        MSG_GET_KEYWORD    // 12
+        MSG_GET_KEYWORD,   // 12
+        MSG_SET_DEBUG_TEXT // 13
     }Message;
 
     /// Actual state of the mouse cursor:
@@ -254,6 +255,12 @@ public:
         mTextInputUserAction = false;
         return true;
     }
+    /** Shortcut funtion to print a debug text into the message-window.
+     ** @param timeBeforeNextMsg All messages within this time will be IGNORED!
+     ** CAUTION: Because of the internal timer, this function should only be used
+     ** in a single place of the source code.
+     *****************************************************************************/
+    void debugText(const char *text, Ogre::uint32 timeBeforeNextMsg = 0);
     void cancelTextInput();
     int getElementPressed();
     const char *getTextInput() const { return mStrTextInput.c_str(); }
@@ -284,7 +291,6 @@ public:
     int print(int element, const char *text,
               Ogre::uint32 color = COLOR_WHITE)               { sendMsg(element, MSG_ADD_ROW, text, color); return mMsgRetInt;}
     const char *getKeyword(int element)                       { sendMsg(element, MSG_GET_KEYWORD); return mMsgRetStr.c_str();}
-
 
 private:
     // ////////////////////////////////////////////////////////////////////

@@ -155,7 +155,7 @@ void ObjectNPC::setSkinColor(int val)
 //================================================================================================
 void ObjectNPC::moveByCursor(Ogre::Real dTime)
 {
-    if (mIndex) return;
+    if (mIndex) return; // Only the hero can moved by cursor.
     static int oldX = (int)(mTilePos.x/TileManager::TILE_RENDER_SIZE/2);
     static int oldZ = (int)(mTilePos.z/TileManager::TILE_RENDER_SIZE/2);
     Real distance = WALK_SPEED * dTime;

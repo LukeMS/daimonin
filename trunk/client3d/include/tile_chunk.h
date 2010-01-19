@@ -65,13 +65,16 @@ public:
     /** Set the camera rotation.
      ** Used to avoid rendering tiles outside the field of view. */
     void setCameraRotation(Ogre::Real angle);
+    void setRenderOptions(bool drawGrass);
 private:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
     bool mGrid;
+    bool mOption_DrawSprites;
     unsigned int mCameraRotation;
-    Ogre::SubMesh *mSubMeshLand, *mSubMeshWater;
+    Ogre::SubMesh *mSubMeshLand, *mSubMeshWater, *mSubMeshSprites;
+    Ogre::Entity *mEntitySprites;
     Ogre::Vector3 mWaveParam;
     Ogre::Real mDaylight;
     Ogre::Real *mPosVBuf;
