@@ -365,9 +365,16 @@ static int do_move_monster(object *op, int dir, uint16 forbidden)
         forbidden = 0;
     }
 
-    /* NOTE: remember that the monster may die during move_object */
-    if (!(forbidden & (1 << dir)) && move_object(op, dir)) /* Can the monster move directly toward waypoint? */
+	
+	if(!dir && !(forbidden & 1)){ /* Do not move */
+		move_object(op, 0);
         return TRUE;
+	}
+
+    /* NOTE: remember that the monster may die during move_object */
+	if (!(forbidden & (1 << dir)) && move_object(op, dir)){ /* Can the monster move directly toward waypoint? */
+        return TRUE;
+	}
 
     m = (RANDOM() & 2) ? 1 : -1;          /* Try left or right first? */
     /* try different detours */
@@ -378,7 +385,8 @@ static int do_move_monster(object *op, int dir, uint16 forbidden)
         return TRUE;
 
 	/* Do not move */
-	if (!(forbidden & 1) && move_object(op, 0)){ /* the monster manages to stand still */
+	if(!(forbidden & 1)){ /* the monster manages to stand still */
+		move_object(op, 0);
         return TRUE;
 	}
 
