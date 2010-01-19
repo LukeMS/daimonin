@@ -78,14 +78,14 @@ static void chatfilter_list_show(void)
     struct chatfilter_list *node;
     int i=0;
 
-    draw_info("\nCHATFILTER LIST", COLOR_WHITE);
-    draw_info("--------------------------", COLOR_WHITE);
+    string_show(COLOR_WHITE, "\nCHATFILTER LIST");
+    string_show(COLOR_WHITE, "--------------------------");
     for (node = chatfilter_list_start;node;i++, node = node->next)
     {
-        draw_info(node->word, COLOR_WHITE);
+        string_show(COLOR_WHITE, "%s", node->word);
     }
-    draw_info_format(COLOR_WHITE, "\n%d word(s) ignored", i);
-    draw_info("HELP: see '/cfilter ?'",COLOR_WHITE);
+    string_show(COLOR_WHITE, "\n%d word(s) ignored\nHELP: see '/cfilter ?'",
+                     i);
 }
 
 /* clear the list, free all memory */
@@ -226,27 +226,28 @@ void chatfilter_command(char *cmd)
     else if (cmd[0]=='+')
     {
         options.chatfilter=TRUE;
-        draw_info("Chatfilter enabled.",COLOR_WHITE);
+        string_show(COLOR_WHITE, "Chatfilter enabled.");
         save_options_dat();
     }
     else if (cmd[0]=='-')
     {
         options.chatfilter=FALSE;
-        draw_info("Chatfilter disabled.",COLOR_WHITE);
+        string_show(COLOR_WHITE, "Chatfilter disabled.");
         save_options_dat();
     }
     else if (cmd[0]=='?')
     {
-        draw_info("HELP:",COLOR_WHITE);
-        draw_info("'/cfilter' - shows list of filtered words.",COLOR_WHITE);
-        draw_info("'/cfilter <word>' - adds word to list, or if its on list remove it from list.",COLOR_WHITE);
-        draw_info("'/cfilter [+|-]' - enables or disables chatfiltering.",COLOR_WHITE);
-        draw_info("'/cfilter !<char>' - sets replcement character.",COLOR_WHITE);
+        string_show(COLOR_WHITE,
+                         "HELP:\n"\
+                         "'/cfilter' - shows list of filtered words.\n"\
+                         "'/cfilter <word>' - adds word to list, or if its on list remove it from list.\n"\
+                         "'/cfilter [+|-]' - enables or disables chatfiltering.\n"\
+                         "'/cfilter !<char>' - sets replcement character.");
     }
     else if ((cmd[0]=='!') && (cmd[1]!=0))
     {
         replacechar=cmd[1];
-        draw_info_format(COLOR_WHITE,"Replacement character changed to '%c'.",replacechar);
+        string_show(COLOR_WHITE,"Replacement character changed to '%c'.",replacechar);
         chatfilter_list_save();
     }
     else
@@ -261,12 +262,12 @@ void chatfilter_command(char *cmd)
         if (chatfilter_check(cmd))
         {
             chatfilter_entry_remove(cmd);
-            draw_info_format(COLOR_WHITE, "Removed >%s< from chatfilter list.", cmd);
+            string_show(COLOR_WHITE, "Removed >%s< from chatfilter list.", cmd);
         }
         else
         {
             chatfilter_entry_add(cmd);
-            draw_info_format(COLOR_WHITE, "Added >%s< to chatfilter list.", cmd);
+            string_show(COLOR_WHITE, "Added >%s< to chatfilter list.", cmd);
         }
         chatfilter_list_save();
     }

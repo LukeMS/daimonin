@@ -713,26 +713,21 @@ void update_item(int tag, int loc, char *name, int weight, int face, int flags, 
  */
 void print_inventory(item *op)
 {
-    char        buf[MAX_BUF];
-    char        buf2[MAX_BUF];
     item       *tmp;
     static int  l   = 0;
     /*int info_width = 20;*/
 
     if (l == 0)
     {
-        sprintf(buf, "AA %s's inventory (%d):", op->d_name, op->tag);
-        sprintf(buf2, "BB %s%6.1f kg", buf, (float)op->weight);
-
-
-        draw_info(buf2, COLOR_DEFAULT);
+        string_show(COLOR_DEFAULT, "BB AA %s's inventory (%d): %6.1f kg",
+            op->d_name, op->tag, (float)op->weight);
     }
 
     l += 2;
     for (tmp = op->inv; tmp; tmp = tmp->next)
     {
-        sprintf(buf, "CC %*s- %d %s%s (%d)", l - 2, "", tmp->nrof, tmp->d_name, tmp->flags, tmp->tag);
-        draw_info(buf, COLOR_DEFAULT);
+        string_show(COLOR_DEFAULT, "CC %*s- %d %s%s (%d)",
+            l - 2, "", tmp->nrof, tmp->d_name, tmp->flags, tmp->tag);
         if (tmp->inv)
             print_inventory(tmp);
     }

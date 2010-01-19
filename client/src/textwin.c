@@ -171,74 +171,61 @@ void textwin_init()
     }
 }
 
-void draw_info_format(int flags,char *format,...)
-{
-    char    buf[LARGE_BUF];
-    va_list ap;
-
-    va_start(ap, format);
-
-    vsprintf(buf, format, ap);
-
-    va_end(ap);
-
-    draw_info(buf, flags);
-}
-
 /******************************************************************
  add string to the text-window (perform auto-clipping).
 ******************************************************************/
-void draw_info(char *str, int flags)
+void string_show(int flags, char *format, ...)
 {
+    va_list ap;
     static int  key_start   = 0;
     static int  key_count   = 0;
     int         i, len, a, color, mode;
     int         winlen      = 244;
-    char        buf[4096];
+    char        buf[HUGE_BUF];
     char       *text;
     int         actWin, z;
-/*    unsigned char    actChar; // unused
- */
-
     /* Hmm I'm not 100& sure, if this is the best place for that */
     char *buf2;
     char        *enemy1;
-    char        enemy2[256];
-    char        buf3[512];
+    char        enemy2[MEDIUM_BUF];
     int         newkill=0;
     struct kills_list *node=NULL;
     int tempexp;
     int tempexp2;
 
+    va_start(ap, format);
+    vsprintf(buf, format, ap);
+    va_end(ap);
+
     if (options.statsupdate)
     {
         tempexp=0;
         tempexp2=0;
-        if (sscanf(str,"You got %d exp in skill",&tempexp)!=EOF)
+        if (sscanf(buf,"You got %d exp in skill",&tempexp)!=EOF)
         {
             statometer.exp+=tempexp;
         }
-        else if (sscanf(str,"You got %d (+%d) exp in skill",&tempexp, &tempexp2)!=EOF)
+        else if (sscanf(buf,"You got %d (+%d) exp in skill",&tempexp, &tempexp2)!=EOF)
         {
             statometer.exp+=tempexp;
         }
     }
 
-    if (options.statsupdate && !strncmp(str,"You killed ",11))
+    if (options.statsupdate && !strncmp(buf,"You killed ",11))
         statometer.kills++;
 
     if (options.kerbholz)
     {
-        if (!strncmp(str,"You killed ",11))
+        if (!strncmp(buf,"You killed ",11))
         {
-            enemy1=strstr(str, " with ");
+            enemy1=strstr(buf, " with ");
             if (enemy1!=0)
             {
-                strncpy(enemy2,str+11,enemy1-(str+11));
-                enemy2[enemy1-(str+11)]=0;
+                strncpy(enemy2,buf+11,enemy1-(buf+11));
+                enemy2[enemy1-(buf+11)]=0;
             } else {
-                strncpy(enemy2,str+11,(strlen(str+11)-1));
-                enemy2[strlen(str+11)-1]=0;
+                strncpy(enemy2,buf+11,(strlen(buf+11)-1));
+                enemy2[strlen(buf+11)-1]=0;
             }
             newkill=addKill(enemy2);
 
@@ -246,19 +233,17 @@ void draw_info(char *str, int flags)
             {
                 if (newkill==1)
                 {
-                    strncpy(buf3,str,strlen(str)-1);
-                    buf3[strlen(str)-1]=0;
-                    str=strcat(buf3," for the first time!");
-                    flags=flags|COLOR_GREEN;
-
-                } else {
+                    strcat(buf, " for the first time!");
+                    flags=flags | COLOR_GREEN;
+                }
+                else
+                {
                     node=getKillEntry(enemy2);
+
                     if (node)
                     {
-                        strncpy(buf3,str,strlen(str)-1);
-                        buf3[strlen(str)-1]=0;
-                        sprintf(enemy2," %d/%d times.",node->session, node->kills);
-                        str=strcat(buf3,enemy2);
+                        sprintf(strchr(buf, '\0'), " %d/%d times.",
+                                node->session, node->kills);
                     }
                 }
 
@@ -266,13 +251,6 @@ void draw_info(char *str, int flags)
         }
     }
 
-    /* Create a modifiable version of str */
-    buf2 = malloc(strlen(str)+1);
-    strcpy(buf2, str);
-
-#ifdef DEVELOPMENT
-    LOG(LOG_MSG,"DRAW_INFO: >%s<\n", buf2);
-#endif
     color = flags & 0xff;
     mode = flags;
 
@@ -284,6 +262,10 @@ void draw_info(char *str, int flags)
     {
         color = COLOR_HGOLD;
     }
+
+    /* Create a modifiable version of buf */
+    /* FIXME: Basically unnecessary. */
+    MALLOC2(buf2, buf);
 
     /*
      * first: we set all white spaces (char<32) to 32 to remove really all odd stuff.
@@ -297,6 +279,10 @@ void draw_info(char *str, int flags)
             buf2[i] = 32;
         }
     }
+
+#ifdef DEVELOPMENT
+    LOG(LOG_MSG,"STRING_SHOW: >%s<\n", buf2);
+#endif
 
     /*
      * ok, here we must cut a string to make it fit in window
@@ -392,7 +378,7 @@ void draw_info(char *str, int flags)
         if (buf2[i] != 0x0a)
             buf[a++] = buf2[i];
     }
-    free(buf2);
+    FREE(buf2);
 }
 
 /******************************************************************

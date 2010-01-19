@@ -540,10 +540,8 @@ _gui_npc *gui_npc_create(int mode, char *data, int len, int pos)
 
 static void BadInterfaceString(char *data, uint16 pos)
 {
-    draw_info("ERROR: bad interface string (flag start error)",
-              COLOR_RED);
-    LOG(LOG_ERROR, "ERROR: bad command tag: %s\n",
-        data + pos);
+    string_show(COLOR_RED, "ERROR: bad interface string (flag start error)");
+    LOG(LOG_ERROR, "ERROR: bad command tag: %s\n", data + pos);
     gui_npc_reset();
 }
 

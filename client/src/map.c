@@ -640,8 +640,8 @@ void map_draw_map(void)
                                 xmpos = xpos - MultiArchs[mid].part[mnr].xoff;
                                 xl += xmpos;
 
-                                /*sprintf(buf,"ID:%d NR:%d yoff:%d yl:%d", mid,mnr,MultiArchs[mid].part[mnr].yoff, yl);
-                                draw_info(buf,COLOR_RED);*/
+//                                string_show(COLOR_RED, "ID:%d NR:%d yoff:%d yl:%d",
+//                                    mid, mnr, MultiArchs[mid].part[mnr].yoff, yl);
                             }
                             else /* single tile... */
                             {

@@ -500,7 +500,7 @@ static void sound_start_music(char *fname, int vol, int fade, int loop)
     if (!music.data)
     {
 #ifdef DEVELOPMENT
-        draw_info_format(COLOR_GREEN, "mix_loadmus() failed (%s).", buf);
+        string_show(COLOR_GREEN, "mix_loadmus() failed (%s).", buf);
 #endif
         return;
     }

@@ -113,40 +113,21 @@ void addNewKill(char *name, unsigned int kills, unsigned int session)
  */
 void kill_list_show(int type)
 {
-    struct kills_list *node;
-    int i=0;
-    char buf[256];
+    struct kills_list *node = kills_list_start;
+    int                i = 0;
     /* trim string - remove all white spaces */
 
-    switch (type)
-    {
-    case 1:
-        draw_info("\n       KILLS LIST SESSION", COLOR_WHITE);
-        draw_info("-------------------------------------------", COLOR_WHITE);
-        for(node = kills_list_start;node;i++, node = node->next)
-        {
-            if (node->session>0)
-            {
-                sprintf(buf, "%4d/%12d ... %s", node->session, node->kills,node->name);
-                draw_info(buf, COLOR_WHITE);
-            }
-            else
-                i--;
-        }
-        draw_info_format(COLOR_WHITE, "\n%d different monster this session killed.", i);
-    break;
+    string_show(COLOR_WHITE, "\n       KILLS LIST %s",
+        (type == 1) ? "SESSION" : "TOTAL");
+    string_show(COLOR_WHITE, "-------------------------------------------");
 
-    case 2:
-        draw_info("\n       KILLS LIST TOTAL", COLOR_WHITE);
-        draw_info("-------------------------------------------", COLOR_WHITE);
-        for(node = kills_list_start;node;i++, node = node->next)
-        {
-            sprintf(buf, "%4d/%12d ... %s", node->session, node->kills,node->name);
-            draw_info(buf, COLOR_WHITE);
-        }
-        draw_info_format(COLOR_WHITE, "\n%d different monster at all killed.", i);
-    break;
+    for (; node; i++, node = node->next)
+    {
+        string_show(COLOR_WHITE, "%4d/%12d ... %s",
+            node->session, node->kills, node->name);
     }
+
+    string_show(COLOR_WHITE, "\n%d different monsters killed.", i);
 }
 
 /* clear the list, free all memory */
