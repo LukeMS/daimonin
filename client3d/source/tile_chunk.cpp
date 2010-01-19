@@ -68,6 +68,7 @@ int CHUNK_X_LENGTH[TileManager::CHUNK_SIZE_Z];
 //================================================================================================
 void TileChunk::init(int queryMaskLand, int queryMaskWater, SceneManager *sceneManager)
 {
+    mOption_DrawSprites = true;
     AxisAlignedBox aab(AxisAlignedBox(-10000, -10000, -10000, 10000, 10000, 10000));
     mCameraRotation = 3; // 0° rotation of the camera in CHUNK_START_OFFSET[][] table.
     size_t sumIndices, sumVertices = 0;
@@ -182,31 +183,63 @@ void TileChunk::init(int queryMaskLand, int queryMaskWater, SceneManager *sceneM
     // ////////////////////////////////////////////////////////////////////
     // Build the sprites.
     // ////////////////////////////////////////////////////////////////////
-
-    SceneManager *mSceneMgr =  TileManager::getSingleton().getSceneManager();
-    Real h = 132.0, w = 500.0, z = 1152;
-    String strMob   = "Mob01" + StringConverter::toString(2);
-    String meshName = "EMob01";
-    ManualObject* mob = static_cast<ManualObject*>(mSceneMgr->createMovableObject(strMob, ManualObjectFactory::FACTORY_TYPE_NAME));
-    mob->begin("Terrain/Sprite");
-    mob->position( w-1, h,   z); mob->textureCoord(0.0, 0.0);
-    mob->position( w,   h,   z); mob->textureCoord(1.0, 0.0);
-    mob->position( w-1, h-1, z); mob->textureCoord(0.0, 1.0);
-    mob->position( w,   h-1, z); mob->textureCoord(1.0, 1.0);
-    mob->triangle(0, 2, 1);
-    mob->triangle(1, 2, 3);
-    mob->end();
-    mob->convertToMesh(meshName);
-    Entity *EntitySprites = mSceneMgr->createEntity("Entity_Sprite", meshName);
-    EntitySprites->setQueryFlags(queryMaskWater);
-
+    MeshPtr MeshSprites = MeshManager::getSingleton().createManual("Mesh_Sprites", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+    mSubMeshSprites = MeshSprites->createSubMesh();
+    mSubMeshSprites->operationType = RenderOperation::OT_TRIANGLE_LIST;
+    mSubMeshSprites->useSharedVertices = false;
+    vData = new VertexData(); // The 'delete' will be done by Ogre::Submesh.
+    sumVertices = 4*TileManager::CHUNK_SIZE_X*TileManager::CHUNK_SIZE_Z; // 4 Subtile/tile
+    vData->vertexCount = sumVertices;
+    vdec = vData->vertexDeclaration;
+    offset = 0;
+    vdec->addElement(0, offset, VET_FLOAT3, VES_POSITION);               offset+= VertexElement::getTypeSize(VET_FLOAT3);
+    vdec->addElement(0, offset, VET_FLOAT2, VES_TEXTURE_COORDINATES, 0); offset+= VertexElement::getTypeSize(VET_FLOAT2);
+    vbuf = HardwareBufferManager::getSingleton().createVertexBuffer(offset, sumVertices*4, HardwareBuffer::HBU_STATIC_WRITE_ONLY, false);
+    vData->vertexBufferBinding->setBinding(0, vbuf);
+    mSubMeshSprites->vertexData = vData;
+    if (sumVertices > 65526)
+    {
+        Logger::log().warning() << "You want to create a HardwareBuffer with " << sumVertices << " entries. Switching to 32bit index buffer. This can crash older gfx-cards!";
+        ibuf = HardwareBufferManager::getSingleton().createIndexBuffer(HardwareIndexBuffer::IT_32BIT, sumVertices*6, HardwareBuffer::HBU_STATIC_WRITE_ONLY, false);
+        unsigned int *pIdx = static_cast<unsigned int*>(ibuf->lock(HardwareBuffer::HBL_DISCARD));
+        for (unsigned int p=0; sumVertices; --sumVertices)
+        {
+            *pIdx++ = p+0; *pIdx++ = p+1; *pIdx++ = p+2;
+            *pIdx++ = p+2; *pIdx++ = p+3; *pIdx++ = p+0;
+            p+= 4;
+        }
+    }
+    else
+    {
+        ibuf = HardwareBufferManager::getSingleton().createIndexBuffer(HardwareIndexBuffer::IT_16BIT, sumVertices*6, HardwareBuffer::HBU_STATIC_WRITE_ONLY, false);
+        unsigned short *pIdx = static_cast<unsigned short*>(ibuf->lock(HardwareBuffer::HBL_DISCARD));
+        for (unsigned short p=0; sumVertices; --sumVertices)
+        {
+            *pIdx++ = p+0; *pIdx++ = p+1; *pIdx++ = p+2;
+            *pIdx++ = p+2; *pIdx++ = p+3; *pIdx++ = p+0;
+            p+= 4;
+        }
+    }
+    ibuf->unlock();
+    mSubMeshSprites->indexData->indexBuffer = ibuf;
+    mSubMeshSprites->indexData->indexStart  = 0;
+    mSubMeshSprites->indexData->indexCount  = 0;
+    mSubMeshSprites->vertexData->vertexCount = 0;
+    MeshSprites->_setBounds(aab);
+    //MeshSprites->_setBoundingSphereRadius(Real radius);
+    MeshSprites->load();
+    mEntitySprites = sceneManager->createEntity("Entity_Sprites", "Mesh_Sprites");
+    //mEntitySprites->setMaterialName(TileManager::MATERIAL_PREFIX + TileManager::SPRITES_PREFIX);
+    mEntitySprites->setMaterialName("Terrain/Sprite");
+    mEntitySprites->setQueryFlags(queryMaskWater);
+    mEntitySprites->setRenderQueueGroup(RENDER_QUEUE_8); // See OgreRenderQueue.h
     // ////////////////////////////////////////////////////////////////////
     // Attach the tiles to a scenenode.
     // ////////////////////////////////////////////////////////////////////
-    SceneNode *node= sceneManager->getRootSceneNode()->createChildSceneNode();
+    SceneNode *node= sceneManager->getRootSceneNode()->createChildSceneNode("snTileChunk");
     node->attachObject(EntityLand);
     node->attachObject(EntityWater);
-    node->attachObject(EntitySprites);
+    node->attachObject(mEntitySprites);
 }
 
 //================================================================================================
@@ -595,4 +628,61 @@ void TileChunk::updateWater()
 //================================================================================================
 void TileChunk::updateSprites()
 {
+    if (!mOption_DrawSprites) return;
+    HardwareVertexBufferSharedPtr vbuf = mSubMeshSprites->vertexData->vertexBufferBinding->getBuffer(0);
+    Real height;
+    Real *pReal = static_cast<Real*>(vbuf->lock(HardwareBuffer::HBL_DISCARD));
+    unsigned int numVertices = 0;
+    for (int z = 0; z < TileManager::CHUNK_SIZE_Z*2; ++z)
+    {
+        for (int x = 0; x < TileManager::CHUNK_SIZE_X*2; ++x)
+        {
+            height = TileManager::getSingleton().getMapHeight(x, z)+TileManager::TILE_RENDER_SIZE;
+            *pReal++ = TileManager::TILE_RENDER_SIZE * x -1;
+            *pReal++ = height;
+            *pReal++ = TileManager::TILE_RENDER_SIZE * z;
+            *pReal++ = 1.0;
+            *pReal++ = 0.0;
+
+            *pReal++ = TileManager::TILE_RENDER_SIZE * x;
+            *pReal++ = height;
+            *pReal++ = TileManager::TILE_RENDER_SIZE * z;
+            *pReal++ = 0.0;
+            *pReal++ = 0.0;
+
+            *pReal++ = TileManager::TILE_RENDER_SIZE * x;
+            *pReal++ = height-1;
+            *pReal++ = TileManager::TILE_RENDER_SIZE * z- 1;
+            *pReal++ = 0.0;
+            *pReal++ = 1.0;
+
+            *pReal++ = TileManager::TILE_RENDER_SIZE * x- 1;
+            *pReal++ = height-1;
+            *pReal++ = TileManager::TILE_RENDER_SIZE * z- 1;
+            *pReal++ = 1.0;
+            *pReal++ = 1.0;
+            ++numVertices;
+        }
+    }
+    vbuf->unlock();
+    mSubMeshSprites->indexData->indexCount = numVertices*2*3; // 2 tris/subtile * 3 vertices/triangle.
+    mSubMeshSprites->vertexData->vertexCount = numVertices*4; // 4 vertices/subtile.
+}
+
+//================================================================================================
+//
+//================================================================================================
+void TileChunk::setRenderOptions(bool drawSprites)
+{
+    if (drawSprites == mOption_DrawSprites) return;
+    if (!drawSprites)
+    {
+        mEntitySprites->getParentSceneNode()->detachObject(mEntitySprites);
+    }
+    else
+    {
+        SceneNode *sn = static_cast<SceneNode*> (TileManager::getSingleton().getSceneManager()->getRootSceneNode()->getChild("snTileChunk"));
+        sn->attachObject(mEntitySprites);
+    }
+    mOption_DrawSprites = drawSprites;
 }

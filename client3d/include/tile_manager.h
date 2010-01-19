@@ -145,6 +145,10 @@ public:
     {
         mMapchunk.setLight(brightness);
     }
+    void setRenderOptions(bool drawGrass)
+    {
+        mMapchunk.setRenderOptions(drawGrass);
+    }
     Ogre::SceneManager *getSceneManager()
     {
         return mSceneManager;

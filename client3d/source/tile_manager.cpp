@@ -134,12 +134,11 @@ void TileManager::Init(SceneManager *SceneMgr, int queryMaskLand, int queryMaskW
     Logger::log().info() << "Creating tile chunk...";
     mMapchunk.init(queryMaskLand, queryMaskWater, mSceneManager);
     setMapset(0, 0);
-
     //setLight(1.0f);
     setLight(0.6f);
-
     setWave(0.5, HEIGHT_STRETCH, 1.5);
     setGrid(false);
+    setRenderOptions(false);
     Logger::log().success(true);
 }
 

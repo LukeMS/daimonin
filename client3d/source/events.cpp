@@ -45,7 +45,8 @@ static const unsigned int MAX_LEN_LOGIN_PSWD = 17;
 const Real CAMERA_POS_Y = TileManager::TILE_RENDER_SIZE * (TileManager::CHUNK_SIZE_Z+1);
 const Real CAMERA_POS_Z = CAMERA_POS_Y + TileManager::TILE_RENDER_SIZE * (TileManager::CHUNK_SIZE_Z-4)/2;
 const int  CAMERA_TURN_DELAY = 50; // The speed of the camera turning.
-const int  CAMERA_TURN_MAX   = 45; // Maximum degree of camera turning by user.
+//const int  CAMERA_TURN_MAX   = 45; // Maximum degree of camera turning by user.
+const int  CAMERA_TURN_MAX   = 90; // Maximum degree of camera turning by user.
 const char *GUI_LOADING_OVERLAY = "GUI_LOADING_OVERLAY";
 const char *GUI_LOADING_OVERLAY_ELEMENT = "GUI_LOADING_OVERLAY_ELEMENT";
 const unsigned long SERVER_TIMEOUT = 5000; // Server timeout in ms.
@@ -580,6 +581,7 @@ bool Events::frameStarted(const FrameEvent& evt)
                 GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "---------------------------------------------------");
                 GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Press ~9~ to load the mask demo!");
                 GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Press ~6~ for skin shader test");
+                GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Press ~6~ for grass shader test");
                 GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "---------------------------------------------------");
                 // Can crash the client...
                 //ObjectManager::getSingleton().setNameNPC(ObjectNPC::HERO, strAccountName.c_str());
@@ -592,7 +594,7 @@ bool Events::frameStarted(const FrameEvent& evt)
 
         case Option::GAME_STATUS_GAME_LOOP:
         {
-            if ((mIdleTime += evt.timeSinceLastFrame) > 20.0)
+            if ((mIdleTime += evt.timeSinceLastFrame) > 45.0)
             {
                 mIdleTime = 0;
                 Sound::getSingleton().playStream(Sound::PLAYER_IDLE);
@@ -690,22 +692,12 @@ bool Events::frameEnded(const FrameEvent& evt)
     static int skipFrames =0;
     if (--skipFrames <= 0)
     {
-        const RenderTarget::FrameStats& stats = mWindow->getStatistics();
-        std::stringstream strBuf;
-        strBuf << std::fixed << std::setprecision(1) << stats.lastFPS;
-        GuiManager::getSingleton().setText(GuiManager::TEXTBOX_STAT_CUR_FPS, strBuf.str().c_str());
-        strBuf.rdbuf()->str(""); // delete stringstream buffer.
-        strBuf << std::fixed << std::setprecision(1) << stats.bestFPS;
-        GuiManager::getSingleton().setText(GuiManager::TEXTBOX_STAT_BEST_FPS, strBuf.str().c_str());
-        strBuf.rdbuf()->str(""); // delete stringstream buffer.
-        strBuf << std::fixed << std::setprecision(1) << stats.worstFPS;
-        GuiManager::getSingleton().setText(GuiManager::TEXTBOX_STAT_WORST_FPS, strBuf.str().c_str());
-        strBuf.rdbuf()->str(""); // delete stringstream buffer.
-        strBuf << std::fixed << std::setprecision(1) << stats.triangleCount;
-        GuiManager::getSingleton().setText(GuiManager::TEXTBOX_STAT_SUM_TRIS, strBuf.str().c_str());
-        strBuf.rdbuf()->str(""); // delete stringstream buffer.
-        strBuf << std::fixed << std::setprecision(1) << stats.batchCount;
-        GuiManager::getSingleton().setText(GuiManager::TEXTBOX_STAT_SUM_BATCH, strBuf.str().c_str());
+        const RenderTarget::FrameStats &stats = mWindow->getStatistics();
+        GuiManager::getSingleton().setText(GuiManager::TEXTBOX_STAT_CUR_FPS,   StringConverter::toString((int)stats.lastFPS).c_str());
+        GuiManager::getSingleton().setText(GuiManager::TEXTBOX_STAT_BEST_FPS,  StringConverter::toString((int)stats.bestFPS).c_str());
+        GuiManager::getSingleton().setText(GuiManager::TEXTBOX_STAT_WORST_FPS, StringConverter::toString((int)stats.worstFPS).c_str());
+        GuiManager::getSingleton().setText(GuiManager::TEXTBOX_STAT_SUM_BATCH, StringConverter::toString(stats.batchCount).c_str());
+        GuiManager::getSingleton().setText(GuiManager::TEXTBOX_STAT_SUM_TRIS,  StringConverter::toString(stats.triangleCount).c_str());
         skipFrames = (int)stats.lastFPS; // Refresh only once per second.
     }
     return true;
