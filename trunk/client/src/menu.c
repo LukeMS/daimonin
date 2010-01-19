@@ -64,9 +64,7 @@ void do_console(int x, int y)
         sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CONSOLE, 0, 0, 100);
         if (InputString[0])
         {
-            /*
-                    sprintf(buf,":%s",InputString);
-                    draw_info(buf,COLOR_DGOLD);*/
+//            string_show(COLOR_DGOLD, ":%s", InputString);
             send_game_command(InputString);
         }
 
@@ -101,19 +99,20 @@ void do_number(int x, int y)
         if (InputString[0])
         {
             int     tmp;
-            char    buf[300];
+
             tmp = atoi(InputString);
             if (tmp > 0 && tmp <= cpl.nrof)
             {
                 send_inv_move(cpl.loc, cpl.tag, tmp);
-                sprintf(buf, "%s %d from %d %s", cpl.nummode == NUM_MODE_GET ? "get" : "drop", tmp, cpl.nrof,
-                        cpl.num_text);
+
                 if (cpl.nummode == NUM_MODE_GET)
                     sound_play_effect(SOUNDTYPE_CLIENT, SOUND_GET, 0, 0, 100);
                 else
                     sound_play_effect(SOUNDTYPE_NORMAL, SOUND_DROP, 0, 0, 100);
 
-                draw_info(buf, COLOR_DGOLD);
+                string_show(COLOR_DGOLD, "%s %d from %d %s",
+                    (cpl.nummode == NUM_MODE_GET) ? "get" : "drop", tmp,
+                    cpl.nrof, cpl.num_text);
             }
         }
         reset_keys();
@@ -123,7 +122,6 @@ void do_number(int x, int y)
     }
     else
         cur_widget[IN_NUMBER_ID].show = TRUE;
-
 }
 
 void do_keybind_input(void)
@@ -1671,14 +1669,13 @@ void widget_quickslots_mouse_event(int x, int y, int MEvent)
                     if (!locate_item_from_inv(cpl.ob->inv, cpl.win_quick_tag))
                     {
                         sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICKFAIL, 0, 0, 100);
-                        draw_info("Only items from main inventory allowed in quickbar!", COLOR_WHITE);
+                        string_show(COLOR_WHITE, "Only items from main inventory allowed in quickbar!");
                     }
                     else
                     {
-                        char      buf[256];
                         sound_play_effect(SOUNDTYPE_CLIENT, SOUND_GET, 0, 0, 100); /* no bug - we 'get' it in quickslots */
-                        sprintf(buf, "set F%d to %s", ind + 1, locate_item(cpl.win_quick_tag)->s_name);
-                        draw_info(buf, COLOR_DGOLD);
+                        string_show(COLOR_DGOLD, "set F%d to %s",
+                            ind + 1, locate_item(cpl.win_quick_tag)->s_name);
                     }
                 }
             }

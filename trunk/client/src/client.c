@@ -177,15 +177,15 @@ static uint8 CommandCheck(char *cmd, char *params)
         {
 //            if (*params)
 //            {
-//                draw_info_format(COLOR_DGOLD, "%s %s", cmd, params);
+//                string_show(COLOR_DGOLD, "%s %s", cmd, params);
 //            }
 
-            draw_info_format(COLOR_DEFAULT, "No %sitem could be found!",
+            string_show(COLOR_DEFAULT, "No %sitem could be found!",
                              (*params) ? "such " : "");
         }
         else
         {
-            draw_info_format(COLOR_DGOLD, "%s %s", cmd, obj->s_name);
+            string_show(COLOR_DGOLD, "%s %s", cmd, obj->s_name);
             client_send_apply(tag);
         }
 
@@ -201,12 +201,12 @@ static uint8 CommandCheck(char *cmd, char *params)
     {
 //        if (!*params)
 //        {
-//            draw_info("usage: /reply <message>", COLOR_WHITE);
+//            string_show(COLOR_WHITE, "usage: /reply <message>");
 //        }
 
         if (!cpl.player_reply[0])
         {
-            draw_info("There is no one to whom you can /reply!", COLOR_WHITE);
+            string_show(COLOR_WHITE, "There is no one to whom you can /reply!");
 
             return 1;
         }
@@ -262,12 +262,12 @@ static uint8 CommandCheck(char *cmd, char *params)
 
 //        if (!*params)
 //        {
-//            draw_info("usage: /changeskin <skin>", COLOR_GREEN);
+//            string_show(COLOR_WHITE, "usage: /changeskin <skin>");
 //        }
 
         if (!stricmp(options.skin, params))
         {
-            draw_info("You are already using that skin", COLOR_WHITE);
+            string_show(COLOR_WHITE, "You are already using that skin");
         }
 
         sprintf(tmpbuf, "skins/%s.zip", params);
@@ -302,7 +302,7 @@ static uint8 CommandCheck(char *cmd, char *params)
 
         if (!newskin)
         {
-            draw_info_format(COLOR_RED, "Skin '%s' not found, using old one.",
+            string_show(COLOR_RED, "Skin '%s' not found, using old one.",
                              params);
         }
         else
@@ -398,17 +398,17 @@ static uint8 CommandCheck(char *cmd, char *params)
     }
     else if (!strcmp(cmd, "/imagestats"))
     {
-        draw_info_format(COLOR_WHITE, "IMAGE-LOADING-STATISTICS");
-        draw_info_format(COLOR_WHITE, "==========================================");
-        draw_info_format(COLOR_WHITE, "Sprites in Memory: %d",
+        string_show(COLOR_WHITE, "IMAGE-LOADING-STATISTICS");
+        string_show(COLOR_WHITE, "==========================================");
+        string_show(COLOR_WHITE, "Sprites in Memory: %d",
                          ImageStats.loadedsprites);
-        draw_info_format(COLOR_WHITE, "TrueColors: %d",
+        string_show(COLOR_WHITE, "TrueColors: %d",
                          ImageStats.truecolors);
-        draw_info_format(COLOR_WHITE, "Greyscales in Memory: %d",
+        string_show(COLOR_WHITE, "Greyscales in Memory: %d",
                          ImageStats.greyscales);
-        draw_info_format(COLOR_WHITE, "Redscales in Memory: %d",
+        string_show(COLOR_WHITE, "Redscales in Memory: %d",
                          ImageStats.redscales);
-        draw_info_format(COLOR_WHITE, "Fowscales in Memory: %d",
+        string_show(COLOR_WHITE, "Fowscales in Memory: %d",
                          ImageStats.fowscales);
 
         return 1;
@@ -451,7 +451,7 @@ static uint8 CommandCheck(char *cmd, char *params)
 
 //        if (!*params)
 //        {
-//            draw_info("usage: /ready_spell <spell name>", COLOR_WHITE);
+//            string_show(COLOR_WHITE, "usage: /ready_spell <spell name>");
 //        }
 
         for (i = 0; i < SPELL_LIST_MAX; i++)
@@ -470,7 +470,7 @@ static uint8 CommandCheck(char *cmd, char *params)
                             RangeFireMode = FIRE_MODE_SPELL;
                             sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICK, 0,
                                               0, MENU_SOUND_VOL);
-                            draw_info("Spell readied", COLOR_LBLUE);
+                            string_show(COLOR_WHITE, "Spell readied");
 
                             return 1;
                         }
@@ -487,7 +487,7 @@ static uint8 CommandCheck(char *cmd, char *params)
                             RangeFireMode = FIRE_MODE_SPELL;
                             sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICK, 0,
                                               0, MENU_SOUND_VOL);
-                            draw_info("Prayer readied", COLOR_LBLUE);
+                            string_show(COLOR_WHITE, "Prayer readied");
 
                             return 1;
                         }
@@ -496,13 +496,13 @@ static uint8 CommandCheck(char *cmd, char *params)
             }
         }
 
-        draw_info("Unknown spell.", COLOR_LBLUE);
+        string_show(COLOR_WHITE, "Unknown spell.");
 
         return 1;
     }
     else if (!strcmp(cmd, "/reloadskinnow"))
     {
-        draw_info_format(COLOR_GREEN, "Reloading skin. This function is only for skin creating, and may be removed anytime!");
+        string_show(COLOR_GREEN, "Reloading skin. This function is only for skin creating, and may be removed anytime!");
         reload_skin();
         reload_icons();
     }
@@ -510,32 +510,32 @@ static uint8 CommandCheck(char *cmd, char *params)
     {
         if (!stricmp(params, "buddy"))
         {
-            draw_info("Resetting buddy list!", COLOR_WHITE);
+            string_show(COLOR_WHITE, "Resetting buddy list!");
             buddy_list_clear();
             buddy_list_save();
         }
         else if (!stricmp(params, "ignore"))
         {
-            draw_info("Resetting ignore list!", COLOR_WHITE);
+            string_show(COLOR_WHITE, "Resetting ignore list!");
             ignore_list_clear();
             ignore_list_save();
         }
         else if (!stricmp(params, "chatfilter") ||
                  !stricmp(params, "cfilter"))
         {
-            draw_info("Resetting chatfilter list!", COLOR_WHITE);
+            string_show(COLOR_WHITE, "Resetting chatfilter list!");
             chatfilter_list_clear();
             chatfilter_list_save();
         }
         else if (!stricmp(params, "kills"))
         {
-            draw_info("Resetting kill list!", COLOR_WHITE);
+            string_show(COLOR_WHITE, "Resetting kill list!");
             kill_list_clear();
             kill_list_save();
         }
         else if (!stricmp(params, "stats"))
         {
-            draw_info("Resetting stat-o-meter!", COLOR_WHITE);
+            string_show(COLOR_WHITE, "Resetting stat-o-meter!");
             statometer.exp = 0;
             statometer.kills = 0;
             statometer.starttime = LastTick - 1;
@@ -546,7 +546,7 @@ static uint8 CommandCheck(char *cmd, char *params)
         else if (!stricmp(params, "widgetstatus"))
         {
             int nID;
-            draw_info("Resetting widgetstatus!", COLOR_WHITE);
+            string_show(COLOR_WHITE, "Resetting widgetstatus!");
             for (nID = 0; nID < TOTAL_WIDGETS; nID++)
             {
                 switch (nID)
@@ -572,13 +572,22 @@ static uint8 CommandCheck(char *cmd, char *params)
         }
         else if (!stricmp(params, "widgets"))
         {
-            draw_info("Resetting widgets!", COLOR_WHITE);
+            string_show(COLOR_WHITE, "Resetting widgets!");
             init_widgets_fromDefault();
         }
-//        else
-//        {
-//            draw_info("Usage: ~/reset buddy~ to reset the buddylist,\n~/reset ignore~ to reset the ignorelist,\n~/reset chatfilter~ to reset the chatfilter list,\n~/reset kills~ to reset the kill list,\n~/reset stats~ to reset the stat-o-meter,\n~/reset widgets~ to reset the widgets, or\n~/reset widgetstatus~ to show any previously hidden widgets.", COLOR_WHITE);
-//        }
+#if 0
+        else
+        {
+            string_show(COLOR_WHITE, "Usage: "\
+                "~/reset buddy~ to reset the buddylist,\n"\
+                "~/reset ignore~ to reset the ignorelist,\n"\
+                "~/reset chatfilter~ to reset the chatfilter list,\n"\
+                "~/reset kills~ to reset the kill list,\n"\
+                "~/reset stats~ to reset the stat-o-meter,\n"\
+                "~/reset widgets~ to reset the widgets, or\n"\
+                "~/reset widgetstatus~ to show any previously hidden widgets.");
+        }
+#endif
 
         return 1;
     }
@@ -590,7 +599,7 @@ static uint8 CommandCheck(char *cmd, char *params)
 
         for (i = j = PHYSFS_getSearchPath(); *i; i++)
         {
-            draw_info_format(COLOR_WHITE, "[%s] is in the search path.", *i);
+            string_show(COLOR_WHITE, "[%s] is in the search path.", *i);
         }
 
         PHYSFS_freeList(j);
@@ -608,11 +617,15 @@ static uint8 CommandCheck(char *cmd, char *params)
             msg < 2 ||
             msg + chat > 38)
         {
-            draw_info("Parameters out of bounds.", COLOR_WHITE);
-//            draw_info("Usage: '/setwin <Msg> <Chat>'\nExample:\n/setwin 9 5", COLOR_WHITE);
+            string_show(COLOR_WHITE, "Parameters out of bounds.");
+#if 0
+            string_show(COLOR_WHITE,
+                "Usage: '/setwin <Msg> <Chat>'\n"\
+                "Example: /setwin 9 5");
+#endif
         }
 
-        draw_info_format(COLOR_WHITE, "Set textwin to %d rows.", msg);
+        string_show(COLOR_WHITE, "Set textwin to %d rows.", msg);
         options.use_TextwinSplit = 0;
         txtwin[TW_MIX].size = msg - 1;
 
@@ -630,33 +643,36 @@ static uint8 CommandCheck(char *cmd, char *params)
             }
 
             options.use_TextwinAlpha = 1;
-            draw_info_format(COLOR_WHITE, "Set textwin alpha ~on~ (alpha=%d).",
+            string_show(COLOR_WHITE, "Set textwin alpha ~on~ (alpha=%d).",
                              options.textwin_alpha);
         }
         else if (!strnicmp(params, "off", 3))
         {
             options.use_TextwinAlpha = 0;
-            draw_info("Set textwin alpha mode ~off~.", COLOR_WHITE);
+            string_show(COLOR_WHITE, "Set textwin alpha mode ~off~.");
         }
-//        else
-//        {
-//            draw_info("Usage: '/setwinalpha on|off [<alpha>]'\nExample:\n/setwinalpha ON 172\n/setwinalpha OFF",
-//                      COLOR_WHITE);
-//        }
+#if 0
+        else
+        {
+            string_show(COLOR_WHITE,
+                "Usage: '/setwinalpha on|off [<alpha>]'\n"\
+                "Example:  /setwinalpha ON 172\n/setwinalpha OFF");
+        }
+#endif
 
         return 1;
     }
     else if (!strcmp(cmd, "/shout_off"))
     {
         options.shoutoff = 1;
-        draw_info_format(COLOR_WHITE, "Shout disabled");
+        string_show(COLOR_WHITE, "Shout disabled");
 
         return 1;
     }
     else if (!strcmp(cmd, "/shout_on"))
     {
         options.shoutoff = 0;
-        draw_info_format(COLOR_WHITE,"Shout enabled");
+        string_show(COLOR_WHITE,"Shout enabled");
 
         return 1;
     }
@@ -673,7 +689,7 @@ static uint8 CommandCheck(char *cmd, char *params)
             min < 0 ||
             min > 59)
         {
-//                draw_info_format(COLOR_WHITE, "Sleeptimer OFF\nUsage: /sleeptimer HH:MM");
+//                string_show(COLOR_WHITE, "Sleeptimer OFF\nUsage: /sleeptimer HH:MM");
                 options.sleepcounter = 0;
         }
 
@@ -700,7 +716,7 @@ static uint8 CommandCheck(char *cmd, char *params)
 
            strftime(tmpbuf, sizeof tmpbuf, "%d-%m-%y %H:%M:%S",
                     localtime(&sleeptime));
-           draw_info_format(COLOR_WHITE, "Sleeptime set to %s", tmpbuf);
+           string_show(COLOR_WHITE, "Sleeptime set to %s", tmpbuf);
         }
 
         return 1;
@@ -1296,7 +1312,7 @@ void send_talk_command(sint8 mode, char *topic)
         *(topic + c) = tolower(*(topic + c));
     }
 
-    draw_info_format(COLOR_DGOLD, "Topic: %s", topic);
+    string_show(COLOR_DGOLD, "Topic: %s", topic);
     SockList_INIT(&sl, NULL);
     SockList_COMMAND(&sl, CLIENT_CMD_GUITALK, SEND_CMD_FLAG_DYNAMIC);
     SockList_AddChar(&sl, mode);

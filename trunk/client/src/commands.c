@@ -152,7 +152,7 @@ void SetupCmd(char *buf, int len)
     /* setup the endian syncronization */
     if(!setup_endian_sync(buf))
     {
-        draw_info("Corrupt endian template!", COLOR_RED);
+        string_show(COLOR_RED, "Corrupt endian template!");
         LOG(LOG_ERROR, "Corrupt endian template!\n");
         SOCKET_CloseSocket(csocket.fd);
         GameStatus = GAME_STATUS_START;
@@ -193,7 +193,7 @@ void SetupCmd(char *buf, int len)
             {
                 char tmpbuf[TINY_BUF];
 
-                draw_info_format(COLOR_RED, "Mismatched protocol versions (server: %u, client: %u)",
+                string_show(COLOR_RED, "Mismatched protocol versions (server: %u, client: %u)",
                                  pv, PROTOCOL_VERSION);
 
                 if (pv < PROTOCOL_VERSION)
@@ -202,7 +202,7 @@ void SetupCmd(char *buf, int len)
                     sprintf(tmpbuf, "Your client is outdated!\nUpdate your client!");
 
                 LOG(LOG_ERROR, "%s\n", tmpbuf);
-                draw_info(tmpbuf, COLOR_RED);
+                string_show(COLOR_RED, tmpbuf);
                 SOCKET_CloseSocket(csocket.fd);
                 GameStatus = GAME_STATUS_START;
                 SDL_Delay(3250);
@@ -361,7 +361,7 @@ void SetupCmd(char *buf, int len)
         {
             LOG(LOG_ERROR, "Got setup for a command we don't understand: %s %s\n", cmd, param);
             sprintf(buf, "The server is outdated!\nSelect a different one!");
-            draw_info(buf, COLOR_RED);
+            string_show(COLOR_RED, buf);
             LOG(LOG_ERROR, "%s\n", buf);
             SOCKET_CloseSocket(csocket.fd);
             GameStatus = GAME_STATUS_START;
@@ -428,31 +428,31 @@ void AddMeFail(char *data, int len)
          /* something was going wrong when loading the file...
           * player should ask a GM/DM for help
           */
-         draw_info("***PLAYER LOGIN FAILED***", COLOR_ORANGE);
+         string_show(COLOR_ORANGE, "***PLAYER LOGIN FAILED***");
          if(msg == ADDME_MSG_OK || msg == ADDME_MSG_INTERNAL || msg == ADDME_MSG_CORRUPT)
          {
              sprintf(buf,"Can't load player file %s\n Error Code: %d\nCall a game master for help!\n", cpl.name, msg);
-             draw_info(buf, COLOR_ORANGE);
+             string_show(COLOR_ORANGE, buf);
          }
          else if(msg == ADDME_MSG_UNKNOWN)
          {
-             draw_info("Unknow player name!", COLOR_ORANGE);
+             string_show(COLOR_ORANGE, "Unknown player name!");
          }
          else if(msg == ADDME_MSG_TAKEN)
          {
-             draw_info("Name is already taken!\nChoose a different one.", COLOR_ORANGE);
+             string_show(COLOR_ORANGE, "Name is already taken!\nChoose a different one.");
          }
          else if(msg == ADDME_MSG_ACCOUNT)
          {
-             draw_info("Player owned by different account!", COLOR_ORANGE);
+             string_show(COLOR_ORANGE, "Player owned by different account!");
          }
          else if(msg == ADDME_MSG_BANNED)
          {
-             draw_info("Player is BANNED!", COLOR_ORANGE);
+             string_show(COLOR_ORANGE, "Player is BANNED!");
          }
          else
          {
-             draw_info("Player loading failed!", COLOR_ORANGE);
+             string_show(COLOR_ORANGE, "Player loading failed!");
          }
          SDL_Delay(1250);
          if(GameStatus == GAME_STATUS_ACCOUNT_CHAR_NAME_WAIT)
@@ -537,7 +537,7 @@ void ImageCmd(char *data, int len)
     FaceList[pnum].sprite = sprite_tryload_file(buf, 0, NULL);
     map_udate_flag = 2;
     map_redraw_flag = TRUE;
-//    draw_info_format(COLOR_GREEN,"map_draw_update: ImageCmd");
+//    string_show(COLOR_GREEN,"map_draw_update: ImageCmd");
 
 }
 
@@ -582,7 +582,7 @@ void DrawInfoCmd(char *data, int len)
     }
     else
         buf++;
-    draw_info(buf, color);
+    string_show(color, "%s", buf);
 }
 
 /* new draw command */
@@ -724,7 +724,7 @@ void DrawInfoCmd2(char *data, int len)
         if (options.smileys)
             smiley_convert(buf);
     }
-    draw_info(buf, flags);
+    string_show(flags, "%s", buf);
 }
 
 void TargetObject(char *data, int len)
@@ -739,11 +739,9 @@ void TargetObject(char *data, int len)
     strcpy(cpl.target_name, (const char *)data);
     map_udate_flag = 2;
     map_redraw_flag = TRUE;
-//    draw_info_format(COLOR_GREEN,"map_draw_update: TargetObject\n");
-
-
-    /*    sprintf(buf,"TO: %d %d >%s< (len: %d)\n",cpl.target_mode,cpl.target_code,cpl.target_name,len);
-        draw_info(buf,COLOR_GREEN);*/
+//    string_show(COLOR_GREEN, "map_draw_update: TargetObject");
+//    string_show(COLOR_GREEN, "TO: %d %d >%s< (len: %d)",
+//                     cpl.target_mode, cpl.target_code, cpl.target_name, len);
 
 }
 
@@ -1123,7 +1121,7 @@ void PlayerCmd(char *data, int len)
     map_transfer_flag = 1;
     map_udate_flag = 2;
     map_redraw_flag=TRUE;
-//    draw_info_format(COLOR_GREEN,"map_draw_update: PlayerCmd");
+//    string_show(COLOR_GREEN,"map_draw_update: PlayerCmd");
 
 
     ignore_list_load();
@@ -1251,8 +1249,7 @@ void GroupCmd(char *data, int len)
     clear_group();
     if (len)
     {
-        /*sprintf(buf, "GROUP CMD: %s (%d)", data, len);
-        draw_info(buf, COLOR_GREEN);*/
+//        string_show(COLOR_GREEN, "GROUP CMD: %s (%d)", data, len);
 
         global_group_status = GROUP_MEMBER;
         tmp = strchr((char *)data, '|');
@@ -1288,7 +1285,7 @@ void MarkCmd(char *data, int len)
 {
 
     cpl.mark_count = GetSINT32_String(data);
-    /* draw_info_format(COLOR_WHITE, "MARK: %d",cpl.mark_count); */
+    /* string_show(COLOR_WHITE, "MARK: %d",cpl.mark_count); */
 }
 
 void GroupUpdateCmd(char *data, int len)
@@ -1321,10 +1318,9 @@ void BookCmd(char *data, int len)
     mode = *((int*)data);
     data+=4;
 
-    /*LOG(-1,"BOOK (%d): %s\n", mode, data);
-    draw_info(data,COLOR_YELLOW);*/
+//    string_show(COLOR_GREEN, "%s", data);
+//    LOG(LOG_MSG, "BOOK (%d): %s\n", mode, data);
 
-    //gui_book_interface =
     gui_interface_book = load_book_interface(mode, (char *)data, len-4);
 
 }
@@ -1357,7 +1353,7 @@ void InterfaceCmd(char *data, int len)
     {
         if (!gui_npc_create(mode, data, len, 0))
         {
-            draw_info("INVALID GUI CMD", COLOR_RED);
+            string_show(COLOR_RED, "INVALID GUI CMD");
         }
     }
 }
@@ -1796,7 +1792,7 @@ void Map2Cmd(char *data, int len)
     } /* more tiles */
     map_udate_flag = 2;
     map_redraw_flag = TRUE;
-//    draw_info_format(COLOR_GREEN,"map_draw_update: Map2Cmd");
+//    string_show(COLOR_GREEN,"map_draw_update: Map2Cmd");
 
 }
 
@@ -1928,31 +1924,18 @@ next_name:;
 
 void GolemCmd(char *data, int len)
 {
-    int     mode, face;
-    char   *tmp, buf[256];
+    int   mode,
+          face;
+    char *tmp;
 
     /*LOG(LOG_DEBUG,"golem: <%s>\n", data);*/
     /* we grap our mode */
-    mode = atoi(data);
-    if (mode == GOLEM_CTR_RELEASE)
-    {
-        tmp = strchr(data, ' '); /* find start of a name */
-        face = atoi(tmp + 1);
-        request_face(face);
-        tmp = strchr(tmp + 1, ' '); /* find start of a name */
-        sprintf(buf, "You lose control of %s.", tmp + 1);
-        draw_info(buf, COLOR_WHITE);
-
-    }
-    else
-    {
-        tmp = strchr(data, ' '); /* find start of a name */
-        face = atoi(tmp + 1);
-        request_face(face);
-        tmp = strchr(tmp + 1, ' '); /* find start of a name */
-        sprintf(buf, "You get control of %s.", tmp + 1);
-        draw_info(buf, COLOR_WHITE);
-    }
+    tmp = strchr(data, ' '); /* find start of a name */
+    face = atoi(tmp + 1);
+    request_face(face);
+    tmp = strchr(tmp + 1, ' '); /* find start of a name */
+    string_show(COLOR_WHITE, "You %s control of %s.",
+        ((mode = atoi(data)) == GOLEM_CTR_RELEASE) ? "lose" : "gain", tmp + 1);
 }
 
 
@@ -2142,7 +2125,7 @@ static inline void break_string(char *text, char *prefix, Boolean one_prefix, ch
         break;
     }
 
-    /* lets do some codestealing from client's draw_info:) */
+    /* lets do some codestealing from client's string_show() :) */
     len = 0;
     for (a = i = 0; ; i++)
     {
@@ -2237,7 +2220,7 @@ void ChannelMsgCmd(char *data, int len)
     *(message++) = '\0';
     sscanf((char *)data,"%s %s",channelname, playername);
     if (ignore_check(playername, channelname)) return;
-//    draw_info_format(COLOR_WHITE,"chmsg: c: %s, p: %s, m: %s",channelname, playername, message);
+//    string_show(COLOR_WHITE,"chmsg: c: %s, p: %s, m: %s",channelname, playername, message);
     if (mode==1)
     {
         char message2[1024];
@@ -2251,7 +2234,7 @@ void ChannelMsgCmd(char *data, int len)
         break_string(message, prefix, FALSE, outstring);
     }
 
-    draw_info(outstring,(NDI_PLAYER|color));
+    string_show((NDI_PLAYER | color), "%s", outstring);
 
 }
 
@@ -2267,7 +2250,7 @@ void AccountCmd(char *data, int len)
     ac_status = GetSINT8_String(data+count++);
     if(ac_status) /* something is wrong when not ACCOUNT_STATUS_OK (0) */
     {
-        draw_info_format(COLOR_RED, "Unknown Account: %s", cpl.acc_name);
+        string_show(COLOR_RED, "Unknown Account: %s", cpl.acc_name);
         GameStatus = GAME_STATUS_LOGIN_ACCOUNT;
         LoginInputStep = LOGIN_STEP_NAME;
         dialog_login_warning_level = DIALOG_LOGIN_WARNING_ACCOUNT_UNKNOWN;

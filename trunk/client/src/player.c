@@ -526,7 +526,7 @@ void widget_show_player_doll_event(int x, int y, int MEvent)
     if (draggingInvItem(DRAG_GET_STATUS) == DRAG_IWIN_INV)
     {
         if ((locate_item(cpl.win_inv_tag))->applied)
-            draw_info("This is applied already!", COLOR_WHITE);
+            string_show(COLOR_WHITE, "This is applied already!");
         else
             process_macro_keys(KEYFUNC_APPLY, 0); /* drop to player-doll */
     }
