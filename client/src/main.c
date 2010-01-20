@@ -490,7 +490,7 @@ void init_game_data(void)
     MapStatusY = MAP_MAX_SIZE;
     map_udate_flag = 2;
     map_redraw_flag=TRUE;
-//        string_show(COLOR_GREEN,"map_draw_update: InitGameData");
+//        textwin_showstring(COLOR_GREEN,"map_draw_update: InitGameData");
 
     InputStringFlag = FALSE;    /* if true keyboard and game is in input str mode*/
     InputStringEndFlag = FALSE;
@@ -769,26 +769,27 @@ Boolean game_status_chain(void)
         /* skip of -nometa in command line or no metaserver set in options */
         if (options.no_meta || !options.metaserver[0])
         {
-            string_show(COLOR_GREEN, "Option '-nometa'.metaserver ignored.");
+            textwin_showstring(COLOR_GREEN, "Option '-nometa'.metaserver ignored.");
         }
         else
         {
             int meta_ret = FALSE;
             SOCKET fd = SOCKET_NO;
 
-            string_show(COLOR_GREEN,
-                "query metaserver...\n"\
-                "trying %s:%d",
-                options.metaserver, options.metaserver_port);
+            textwin_showstring(COLOR_GREEN,
+                               "query metaserver...\n"\
+                               "trying %s:%d",
+                               options.metaserver, options.metaserver_port);
+
             if (SOCKET_OpenSocket(&fd, options.metaserver, options.metaserver_port))
             {
                 meta_ret = read_metaserver_data(fd);
                 SOCKET_CloseSocket(fd);
-                string_show(COLOR_GREEN, "done.");
+                textwin_showstring(COLOR_GREEN, "done.");
             }
             else
             {
-                string_show(COLOR_GREEN, "metaserver failed! using default list.");
+                textwin_showstring(COLOR_GREEN, "metaserver failed! using default list.");
             }
 
             if(!meta_ret)
@@ -806,7 +807,7 @@ Boolean game_status_chain(void)
             add_metaserver_data("LOCAL SERVER", "127.0.0.1", argServerPort, -1, "LOCAL", "localhost. Start your server before you try to connect.");
 
         count_meta_server();
-        string_show(COLOR_GREEN, "select a server.");
+        textwin_showstring(COLOR_GREEN, "select a server.");
         GameStatus = GAME_STATUS_START;
     }
     else if (GameStatus == GAME_STATUS_START)
@@ -856,21 +857,21 @@ Boolean game_status_chain(void)
         FaceList[MAX_FACE_TILES - 1].sprite = sprite_tryload_file(sbuf, 0, NULL);
 
         map_udate_flag = 2;
-        string_show(COLOR_GREEN, "trying server %s:%d ...",
-            ServerName, ServerPort);
+        textwin_showstring(COLOR_GREEN, "trying server %s:%d ...",
+                           ServerName, ServerPort);
         GameStatus = GAME_STATUS_CONNECT;
     }
     else if (GameStatus == GAME_STATUS_CONNECT)
     {
         if (!SOCKET_OpenClientSocket(&csocket, ServerName, ServerPort))
         {
-            string_show(COLOR_RED, "connection failed!");
+            textwin_showstring(COLOR_RED, "connection failed!");
             GameStatus = GAME_STATUS_START;
         }
         else
         {
             socket_thread_start();
-            string_show(COLOR_GREEN, "connected. exchange version & setup info.");
+            textwin_showstring(COLOR_GREEN, "connected. exchange version & setup info.");
             GameStatus = GAME_STATUS_SETUP;
         }
     }
@@ -1893,10 +1894,10 @@ int main(int argc, char *argv[])
     }
     ; /* wait for keypress */
 
-    string_show(COLOR_HGOLD,
-        "Welcome to Daimonin v%s\n"\
-        "~init network...~",
-        GlobalClientVersion);
+    textwin_showstring(COLOR_HGOLD,
+                       "Welcome to Daimonin v%s\n"\
+                       "~init network...~",
+                       GlobalClientVersion);
 
     if (!SOCKET_InitSocket()) /* log in function*/
         exit(1);
@@ -2094,12 +2095,12 @@ int main(int argc, char *argv[])
         if (GameStatus == GAME_STATUS_PLAY && newplayer == TRUE)
         {
             newplayer = FALSE;
-            string_show(COLOR_DEFAULT,
-                "|Welcome to Daimonin, %s -- WHAT NOW?|\n"\
-                "As this is your first time playing, you may be asking this question.\n"\
-                "The character nearby is called ~Fanrir~. His job is to help new players get started in the game. You should talk to him. Do this by pressing the ~T key.\n"\
-                "He will tell you how to do a lot of things and give you a lot of things to do, so pay attention to him and good luck! :)",
-                cpl.name);
+            textwin_showstring(COLOR_DEFAULT,
+                               "|Welcome to Daimonin, %s -- WHAT NOW?|\n"\
+                               "As this is your first time playing, you may be asking this question.\n"\
+                               "The character nearby is called ~Fanrir~. His job is to help new players get started in the game. You should talk to him. Do this by pressing the ~T key.\n"\
+                               "He will tell you how to do a lot of things and give you a lot of things to do, so pay attention to him and good luck! :)",
+                               cpl.name);
         }
 
         if((GameStatus  >= GAME_STATUS_WAITFORPLAY) && options.sleepcounter )

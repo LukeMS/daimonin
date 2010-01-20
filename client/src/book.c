@@ -288,7 +288,7 @@ _gui_book_struct *load_book_interface(int mode, char *data, int len)
 
             if (!book_line)
             {
-                string_show(COLOR_RED, "~%s~\nERROR in book cmd!", data);
+                textwin_showstring(COLOR_RED, "~%s~\nERROR in book cmd!", data);
                 return NULL;
             }
 
@@ -362,7 +362,7 @@ title_repeat_jump:
 
         if (c == '>') /* should never happens */
         {
-            string_show(COLOR_RED, "~%s~\nERROR in book cmd!", data);
+            textwin_showstring(COLOR_RED, "~%s~\nERROR in book cmd!", data);
             return NULL;
         }
 

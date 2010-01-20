@@ -719,15 +719,17 @@ void print_inventory(item *op)
 
     if (l == 0)
     {
-        string_show(COLOR_DEFAULT, "BB AA %s's inventory (%d): %6.1f kg",
-            op->d_name, op->tag, (float)op->weight);
+        textwin_showstring(COLOR_DEFAULT, "BB AA %s's inventory (%d): %6.1f kg",
+                           op->d_name, op->tag, (float)op->weight);
     }
 
     l += 2;
     for (tmp = op->inv; tmp; tmp = tmp->next)
     {
-        string_show(COLOR_DEFAULT, "CC %*s- %d %s%s (%d)",
-            l - 2, "", tmp->nrof, tmp->d_name, tmp->flags, tmp->tag);
+        textwin_showstring(COLOR_DEFAULT, "CC %*s- %d %s%s (%d)",
+                           l - 2, "", tmp->nrof, tmp->d_name, tmp->flags,
+                           tmp->tag);
+
         if (tmp->inv)
             print_inventory(tmp);
     }

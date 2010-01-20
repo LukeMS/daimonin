@@ -210,7 +210,7 @@ char *get_parameter_string(char *data, int *pos, int maxlen)
     {
 #ifdef DEVELOPMENT
         if ((int)strlen(buf)>maxlen)
-            string_show(COLOR_RED,"FixMe: Interface parameter string out of bounds!");
+            textwin_showstring(COLOR_RED,"FixMe: Interface parameter string out of bounds!");
 #endif
         buf[maxlen-1]='\0';
     }
@@ -364,8 +364,9 @@ extern void     markdmbuster()
     send_mark_obj((it = locate_item(tag)));
     if (it)
     {
-        string_show(COLOR_DGOLD, "%s %s",
-            (cpl.mark_count == (int)it->tag) ? "unmark" : "mark", it->s_name);
+        textwin_showstring(COLOR_DGOLD, "%s %s",
+                           (cpl.mark_count == (int)it->tag) ? "unmark" : "mark",
+                           it->s_name);
     }
 
 
