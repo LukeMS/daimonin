@@ -739,10 +739,12 @@ void TargetObject(char *data, int len)
     strcpy(cpl.target_name, (const char *)data);
     map_udate_flag = 2;
     map_redraw_flag = TRUE;
-//    textwin_showstring(COLOR_GREEN,
-//                       "map_draw_update: TargetObject\n"\
-//                       "TO: %d %d >%s< (len: %d)",
-//                       cpl.target_mode, cpl.target_code, cpl.target_name, len);
+#if 0
+    textwin_showstring(COLOR_GREEN,
+                       "map_draw_update: TargetObject\n"\
+                       "TO: %d %d >%s< (len: %d)",
+                       cpl.target_mode, cpl.target_code, cpl.target_name, len);
+#endif
 }
 
 void StatsCmd(char *data, int len)
