@@ -25,7 +25,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #define NETWORK_H
 
 #include <vector>
-#include <Ogre.h>
+#include <OgreString.h>
 #include <SDL.h>
 #include <SDL_thread.h>
 #include <SDL_mutex.h>

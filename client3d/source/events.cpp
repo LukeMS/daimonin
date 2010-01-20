@@ -21,6 +21,7 @@ You should have received a copy of the GNU General Public License along with
 this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
 
+#include "define.h"
 #include "events.h"
 #include "sound.h"
 #include "option.h"
@@ -73,7 +74,7 @@ void Events::Init(RenderWindow* win, SceneManager *SceneMgr)
     mInputMouse->setEventCallback(this);
     const OIS::MouseState &ms = mInputMouse->getMouseState();
     ms.width = mWindow->getWidth();
-    ms.height = mWindow->getHeight();
+    ms.height= mWindow->getHeight();
     mMouse = Vector3::ZERO;
     mQuitGame = false;
     Option::getSingleton().setGameStatus(Option::GAME_STATUS_INIT_VIEWPORT);

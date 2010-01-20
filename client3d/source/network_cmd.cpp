@@ -25,7 +25,6 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include <stdio.h>
 #include "zlib.h"
 #include "logger.h"
-#include "define.h"
 #include "network.h"
 #include "option.h"
 #include "tile_map.h"

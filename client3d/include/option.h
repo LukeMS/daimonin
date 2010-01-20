@@ -24,7 +24,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #ifndef OPTION_H
 #define OPTION_H
 
-#include <Ogre.h>
+#include <OgreString.h>
 
 /**
  ** This singleton class handles all options the user and the engine can set.

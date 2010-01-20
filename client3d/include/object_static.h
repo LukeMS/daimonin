@@ -24,8 +24,8 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #ifndef OBJ_STATIC_H
 #define OBJ_STATIC_H
 
-#include <Ogre.h>
-#include "define.h"
+#include <OgreEntity.h>
+#include <OgreSceneNode.h>
 #include "object_animate.h"
 
 /**
@@ -41,22 +41,22 @@ public:
     // ////////////////////////////////////////////////////////////////////
     typedef struct
     {
-        int type;                   /**< Type: e.g. static, npc, ... **/
         Ogre::String nickName;      /**< Ingame-Name. **/
         Ogre::String meshName;      /**< Name of the ogre3d mesh. **/
-        int particleNr;             /**< Number of the particle effect. **/
-        unsigned int index;         /**< Unique number for this object. **/
         Ogre::Vector3 pos;          /**< Tile-pos. **/
         Ogre::uchar boundingRadius; /**< The radius of subtiles, the NPC stands on. **/
-        int level;                  /**< Floor-level. **/
-        char walkable[8];           /**< 8x8 bit for the walkable status of a tile. **/
         Ogre::Real facing;
+        unsigned int index;         /**< Unique number for this object. **/
+        int type;                   /**< Type: e.g. static, npc, ... **/
+        int particleNr;             /**< Number of the particle effect. **/
+        int level;                  /**< Floor-level. **/
         int friendly;
         int attack;
         int defend;
         int maxHP;
         int maxMana;
         int maxGrace;
+        //char walkable[8];           /**< 8x8 bit for the walkable status of a tile. **/
     }
     sObject;
 
@@ -119,15 +119,15 @@ protected:
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
     static Ogre::SceneManager *mSceneMgr;
-    Ogre::Vector3 mBoundingBox;
     ObjectAnimate *mAnim;
-    Ogre::Degree mFacing;
-    int mFriendly;
-    unsigned int mIndex;
     Ogre::SceneNode *mNode;
     Ogre::Entity *mEntity;
     Ogre::Vector3 mTilePos;   /**< the actual pos in the map. **/
     Ogre::String mNickName;
+    Ogre::Vector3 mBoundingBox;
+    Ogre::Degree mFacing;
+    unsigned int mIndex;
+    int mFriendly;
     int mFloor;
     bool mWaitForHero;
 

@@ -24,7 +24,6 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include <Ogre.h>
 #include "logger.h"
 #include "option.h"
-#include "define.h"
 #include "network.h"
 #include "tile_manager.h"
 #include "gui_manager.h"

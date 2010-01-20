@@ -24,7 +24,6 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #ifndef ObjectNPC_H
 #define ObjectNPC_H
 
-#include "define.h"
 #include "object_static.h"
 #include "object_animate.h"
 #include "object_equipment.h"
@@ -147,12 +146,11 @@ private:
     };
 
     Ogre::uchar mBoundingRadius; /**< The radius of subtiles, the NPC stands on. Used for pathfinding. **/
-    bool mAutoMoving;
-    bool mTalking;
-    void moveByCursor(Ogre::Real dTime);
     Ogre::Real mSpawnSize;
     Ogre::Real mCursorTurning, mCursorWalking;
     Ogre::Real mDeltaDegree, mDistance;
+    bool mAutoMoving;
+    bool mTalking;
     int mReadyWeaponStatus;
     int mType;
     int mAttack;
@@ -166,6 +164,7 @@ private:
     // Functions.
     // ////////////////////////////////////////////////////////////////////
     ObjectNPC(const ObjectNPC&); // disable copy-constructor.
+    void moveByCursor(Ogre::Real dTime);
 };
 
 #endif

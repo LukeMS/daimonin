@@ -50,7 +50,6 @@ public:
      ** @param text2   Additional text parameter.
      *****************************************************************************/
     virtual void sendMsg(const int message, Ogre::String &text, Ogre::uint32 &param, const char *text2) {}
-
     virtual int keyEvent(const int keyChar, const unsigned int key);
     virtual int mouseEvent(const int mouseAction, int mouseX, int mouseY, int mouseWheel);
 

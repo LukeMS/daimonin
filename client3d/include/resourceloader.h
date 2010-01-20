@@ -24,7 +24,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #ifndef RESOURCELOADER_H
 #define RESOURCELOADER_H
 
-#include <Ogre.h>
+//#include <Ogre.h>
 
 /**
  ** This singleton class provides the reloading of manual created resources.

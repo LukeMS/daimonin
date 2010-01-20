@@ -24,7 +24,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #define SPELL_MANAGER_H
 
 #include <vector>
-#include <Ogre.h>
+#include <OgreSceneNode.h>
 #include "spell_range.h"
 
 /**
@@ -53,7 +53,7 @@ public:
     struct _Spell
     {
         Ogre::SceneNode *node;
-        Ogre::ParticleSystem* particleSys;
+        Ogre::ParticleSystem *particleSys;
     }
     Spell;
 

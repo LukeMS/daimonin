@@ -24,7 +24,8 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #ifndef EVENTS_H
 #define EVENTS_H
 
-#include <Ogre.h>
+#include <OgreVector3.h>
+#include <OgreFrameListener.h>
 #include <OISMouse.h>
 #include <OISKeyboard.h>
 #include <OISInputManager.h>
@@ -88,11 +89,11 @@ private:
     OIS::Mouse        *mInputMouse;
     Ogre::Real mIdleTime;                  /**< Time without user interaction. **/
     Ogre::Vector3 mMouse;
-    Ogre::Camera* mCamera;
+    Ogre::Camera *mCamera;
     Ogre::Real mCameraZoom;
     Ogre::SceneNode *mWorld;
     Ogre::SceneManager *mSceneManager;
-    Ogre::RenderWindow* mWindow;
+    Ogre::RenderWindow *mWindow;
 
     // ////////////////////////////////////////////////////////////////////
     // Functions.

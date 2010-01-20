@@ -24,8 +24,6 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #ifndef ObjectEquipment_H
 #define ObjectEquipment_H
 
-#include <Ogre.h>
-
 /**
  ** This class handles all equipment of an object like weapon, armour, etc.
  ** Equipment supports particle-effects and color change of the bodyparts.

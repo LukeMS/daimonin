@@ -25,7 +25,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #define TILE_MAP_H
 
 // This is a wrapper class for the map that was send by the server. It will be deleted soon!
-#include <Ogre.h>
+#include <OgreString.h>
 
 class TileMap
 {

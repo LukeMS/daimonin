@@ -24,7 +24,8 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #ifndef OBJECT_VISUALS_H
 #define OBJECT_VISUALS_H
 
-#include <Ogre.h>
+#include <OgreImage.h>
+#include <OgreHardwarePixelBuffer.h>
 #include "object_npc.h"
 
 /**

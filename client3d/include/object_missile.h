@@ -24,9 +24,6 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #ifndef OBJ_NISSLE_H
 #define OBJ_NISSLE_H
 
-#include <Ogre.h>
-#include "define.h"
-
 /**
  ** This class handles all ranged weapon objects.
  *****************************************************************************/
@@ -80,14 +77,14 @@ private:
     // ////////////////////////////////////////////////////////////////////
     static Ogre::SceneManager *msSceneMgr;
     static unsigned int msUnique;
-    Ogre::Degree mFacing;
     unsigned int mIndex;
+    Ogre::Degree mFacing;
     Ogre::SceneNode *mNode;
     Ogre::Entity *mEntity;
-    int mType;
-    int mParticle;
     Ogre::Vector3 mDestPosition;
     Ogre::Vector3 mSpeed;
+    int mType;
+    int mParticle;
     bool mHasBallistic;
     bool mShow;
 

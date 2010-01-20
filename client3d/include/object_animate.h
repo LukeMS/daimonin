@@ -24,8 +24,6 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #ifndef OBJECT_ANIMATE_H
 #define OBJECT_ANIMATE_H
 
-#include <Ogre.h>
-
 /**
  ** This class handles object animation.
  ** @todo separate Upper/lower Body animation.
@@ -96,16 +94,13 @@ public:
     {
         return mAnimGroupEntries[animGroup];
     }
+    void pause(bool p);
     void update(const Ogre::FrameEvent& event);
     void toggleAnimation(int animGroup, int animNr, bool loop = false, bool force = false, bool random = false, bool freezeLastFrame = false);
     void toggleAnimation2(int animGroup, int animNr, bool loop = false, bool force = false, bool random = false);
     Ogre::Real getAnimSpeed()
     {
         return mAnimSpeed;
-    }
-    void pause(bool p)
-    {
-        mActState->setEnabled(!p);
     }
 
 private:

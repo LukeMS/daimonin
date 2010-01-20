@@ -122,7 +122,7 @@ void TileManager::Init(SceneManager *SceneMgr, int queryMaskLand, int queryMaskW
     mMapMaskZ = mMapSizeZ -1;
     mMapSPosX = 1; // Ringbuffer start pos x.
     mMapSPosZ = 1; // Ringbuffer start pos z.
-    Logger::log().info() << "Map size: " << mMapSizeX      << " * " << mMapSizeZ      << " Subtiles.";
+    Logger::log().info() << "Map size: " << mMapSizeX     << " * " << mMapSizeZ      << " Subtiles.";
     Logger::log().info() << "Visible: " << CHUNK_SIZE_X*2 << " * " << CHUNK_SIZE_Z*2 << " Subtiles.";
     mMap = new mapStruct[mMapSizeX*mMapSizeZ];
     mQueryMaskLand = queryMaskLand;
@@ -1121,5 +1121,3 @@ bool TileManager::loadImage(Image &image, const Ogre::String &strFilename, bool 
         Logger::log().error() << "Error on opening file " << strFile;
     return false;
 }
-
-

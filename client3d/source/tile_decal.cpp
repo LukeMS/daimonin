@@ -143,7 +143,6 @@ void TileDecal::setPosition(int posX, int posZ)
                 *pReal++ = startX-dU+deltaUV;
                 *pReal++ = startZ-dV;
             }
-
             else
             {
                 // 2: Bottom/Right
