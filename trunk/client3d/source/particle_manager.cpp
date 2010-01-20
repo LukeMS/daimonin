@@ -21,6 +21,9 @@ You should have received a copy of the GNU General Public License along with
 this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
 
+#include <OgreEntity.h>
+#include <OgreSceneManager.h>
+#include <OgreParticleEmitter.h>
 #include "particle_manager.h"
 #include "sound.h"
 #include "events.h"

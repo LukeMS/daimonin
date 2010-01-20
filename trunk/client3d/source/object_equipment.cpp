@@ -20,6 +20,10 @@ GNU GPL for 3d-Client and the licenses of the other code concerned.
 You should have received a copy of the GNU General Public License along with
 this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
+
+#include <OgreEntity.h>
+#include <OgreSceneManager.h>
+#include <OgreStringConverter.h>
 #include "object_manager.h"
 #include "object_equipment.h"
 #include "particle_manager.h"

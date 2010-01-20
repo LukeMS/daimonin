@@ -24,9 +24,6 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #ifndef NETWORK_CMD_INTERFACE_H
 #define NETWORK_CMD_INTERFACE_H
 
-#include <Ogre.h>
-#include "define.h"
-
 /**
  ** This class provides a graphical dialog window.
  *****************************************************************************/

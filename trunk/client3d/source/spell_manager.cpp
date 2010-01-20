@@ -21,7 +21,7 @@ You should have received a copy of the GNU General Public License along with
 this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
 
-#include "define.h"
+#include <OgreSceneManager.h>
 #include "spell_manager.h"
 #include "object_manager.h"
 #include "particle_manager.h"

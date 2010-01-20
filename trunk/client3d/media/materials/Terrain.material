@@ -151,6 +151,7 @@ material Terrain/Sprite
             alpha_rejection greater_equal 128
             vertex_program_ref VP_Srite
             {
+                //param_named_auto cameraPos      camera_position
                 param_named_auto worldMatrix    world_matrix
                 param_named_auto viewProjMatrix viewproj_matrix
             }

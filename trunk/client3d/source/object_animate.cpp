@@ -24,6 +24,11 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include "option.h"
 #include "logger.h"
 #include "object_animate.h"
+#include <OgreEntity.h>
+#include <OgreAnimation.h>
+#include <OgreFrameListener.h>
+#include <OgreStringConverter.h>
+#include <OgreSkeletonInstance.h>
 
 using namespace Ogre;
 
@@ -235,4 +240,12 @@ void ObjectAnimate::toggleAnimation2(int animGroup, int animNr, bool loop, bool 
 
     mActState2->setEnabled(true);
     mActState2->setLoop(loop);
+}
+
+//=================================================================================================
+// Pause an animation.
+//=================================================================================================
+void ObjectAnimate::pause(bool p)
+{
+    mActState->setEnabled(!p);
 }

@@ -21,6 +21,8 @@ You should have received a copy of the GNU General Public License along with
 this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
 
+#include <OgreSceneManager.h>
+#include <OgreStringConverter.h>
 #include "object_static.h"
 #include "object_manager.h"
 #include "tile_manager.h"

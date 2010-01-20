@@ -25,7 +25,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #define LIGHT_MANAGER_H
 
 #include <vector>
-#include <Ogre.h>
+#include <OgreLight.h>
 
 /**
  ** This singleton class handles all light related stuff.

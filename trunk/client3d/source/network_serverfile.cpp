@@ -21,6 +21,8 @@ You should have received a copy of the GNU General Public License along with
 this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
 
+#include <iterator>
+#include "define.h"
 #include "network_serverfile.h"
 #include "network.h"
 #include "logger.h"

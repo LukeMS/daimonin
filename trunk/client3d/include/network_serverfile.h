@@ -24,14 +24,11 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #ifndef SERVERFILES_H
 #define SERVERFILES_H
 
-#include "define.h"
-
 /**
  ** This singleton class handles files send by the server.
  *****************************************************************************/
 class ServerFile
 {
-
 public:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.

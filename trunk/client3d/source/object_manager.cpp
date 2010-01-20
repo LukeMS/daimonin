@@ -21,6 +21,12 @@ You should have received a copy of the GNU General Public License along with
 this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
 
+#include <OgreSubEntity.h>
+#include <OgreTechnique.h>
+#include <OgreSceneManager.h>
+#include <OgreRenderTexture.h>
+#include <OgreTextureManager.h>
+#include <OgreMaterialManager.h>
 #include "option.h"
 #include "logger.h"
 #include "events.h"

@@ -25,7 +25,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #define ITEM_H
 
 #include <list>
-#include <Ogre.h>
+#include <OgreString.h>
 
 /**
  ** This class keeps all information of what the client knows about items.
