@@ -64,7 +64,7 @@ void do_console(int x, int y)
         sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CONSOLE, 0, 0, 100);
         if (InputString[0])
         {
-//            string_show(COLOR_DGOLD, ":%s", InputString);
+//            textwin_showstring(COLOR_DGOLD, ":%s", InputString);
             send_game_command(InputString);
         }
 
@@ -110,9 +110,9 @@ void do_number(int x, int y)
                 else
                     sound_play_effect(SOUNDTYPE_NORMAL, SOUND_DROP, 0, 0, 100);
 
-                string_show(COLOR_DGOLD, "%s %d from %d %s",
-                    (cpl.nummode == NUM_MODE_GET) ? "get" : "drop", tmp,
-                    cpl.nrof, cpl.num_text);
+                textwin_showstring(COLOR_DGOLD, "%s %d from %d %s",
+                                   (cpl.nummode == NUM_MODE_GET) ? "get" :
+                                   "drop", tmp, cpl.nrof, cpl.num_text);
             }
         }
         reset_keys();
@@ -1669,13 +1669,14 @@ void widget_quickslots_mouse_event(int x, int y, int MEvent)
                     if (!locate_item_from_inv(cpl.ob->inv, cpl.win_quick_tag))
                     {
                         sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICKFAIL, 0, 0, 100);
-                        string_show(COLOR_WHITE, "Only items from main inventory allowed in quickbar!");
+                        textwin_showstring(COLOR_WHITE, "Only items from main inventory allowed in quickbar!");
                     }
                     else
                     {
                         sound_play_effect(SOUNDTYPE_CLIENT, SOUND_GET, 0, 0, 100); /* no bug - we 'get' it in quickslots */
-                        string_show(COLOR_DGOLD, "set F%d to %s",
-                            ind + 1, locate_item(cpl.win_quick_tag)->s_name);
+                        textwin_showstring(COLOR_DGOLD, "set F%d to %s",
+                                           ind + 1,
+                                           locate_item(cpl.win_quick_tag)->s_name);
                     }
                 }
             }

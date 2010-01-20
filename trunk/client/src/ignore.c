@@ -76,11 +76,11 @@ static void ignore_list_show(void)
     struct ignore_list *node;
     int i=0;
 
-    string_show(COLOR_WHITE, "\nIGNORE LIST");
-    string_show(COLOR_WHITE, "--------------------------");
+    textwin_showstring(COLOR_WHITE, "\nIGNORE LIST");
+    textwin_showstring(COLOR_WHITE, "--------------------------");
     for (node = ignore_list_start;node;i++, node = node->next)
     {
-        string_show(COLOR_WHITE, "%s.%s", (node->type) ? node->type : "*", node->name);
+        textwin_showstring(COLOR_WHITE, "%s.%s", (node->type) ? node->type : "*", node->name);
     }
 }
 
@@ -170,7 +170,7 @@ int ignore_check(char *name, char *type)
 
     for (node = ignore_list_start;node;node = node->next)
     {
-//        string_show(COLOR_WHITE, "compare >%s< with >%s< (%s with %s)", name, node->name,type, node->type);
+//        textwin_showstring(COLOR_WHITE, "compare >%s< with >%s< (%s with %s)", name, node->name,type, node->type);
         if (!stricmp(name, node->name) && ((!stricmp(type,node->type)) || (!node->type[0])))
             return TRUE;
     }
@@ -205,15 +205,15 @@ void ignore_command(char *cmd)
          */
         if (sscanf(cmd,"%s %s",name, type)==EOF)
         {
-            string_show(COLOR_WHITE,"Syntax: /ignore <name> <'channel'>");
-            string_show(COLOR_WHITE,"Syntax: /ignore <name> *  for all 'channels'");
-            string_show(COLOR_WHITE,"channel can be somthing like: 'say', 'shout', 'tell', 'emote'");
+            textwin_showstring(COLOR_WHITE,"Syntax: /ignore <name> <'channel'>");
+            textwin_showstring(COLOR_WHITE,"Syntax: /ignore <name> *  for all 'channels'");
+            textwin_showstring(COLOR_WHITE,"channel can be somthing like: 'say', 'shout', 'tell', 'emote'");
         }
         else if ((name[0]=='\0') || (type[0]=='\0'))
         {
-            string_show(COLOR_WHITE,"Syntax: /ignore <name> <'channel'>");
-            string_show(COLOR_WHITE,"Syntax: /ignore <name> *  for all 'channels'");
-            string_show(COLOR_WHITE,"channel can be somthing like: 'say', 'shout', 'tell', 'emote'");
+            textwin_showstring(COLOR_WHITE,"Syntax: /ignore <name> <'channel'>");
+            textwin_showstring(COLOR_WHITE,"Syntax: /ignore <name> *  for all 'channels'");
+            textwin_showstring(COLOR_WHITE,"channel can be somthing like: 'say', 'shout', 'tell', 'emote'");
 
         }
         else
@@ -237,12 +237,12 @@ void ignore_command(char *cmd)
             if (ignore_check(name, type) )
             {
                 ignore_entry_remove(name, type);
-                string_show(COLOR_WHITE, "removed %s (%s) from ignore list.", name, type);
+                textwin_showstring(COLOR_WHITE, "removed %s (%s) from ignore list.", name, type);
             }
             else
             {
                 ignore_entry_add(name, type);
-                string_show(COLOR_WHITE, "added %s (%s) to ignore list.", name, type);
+                textwin_showstring(COLOR_WHITE, "added %s (%s) to ignore list.", name, type);
             }
 
             ignore_list_save();

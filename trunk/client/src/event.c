@@ -633,8 +633,8 @@ int Event_PollInputDevice(void)
             {
             char tz[40];
             sprintf(tz,"x: %d , y: %d", x, y);
-            string_show(COLOR_BLUE | NDI_PLAYER, "%s", tz);
-            string_show(COLOR_BLUE, "%s", tz);
+            textwin_showstring(COLOR_BLUE | NDI_PLAYER, "%s", tz);
+            textwin_showstring(COLOR_BLUE, "%s", tz);
             }
             */
 
@@ -849,7 +849,7 @@ void key_connection_event(SDL_KeyboardEvent *key)
         {
         case SDLK_ESCAPE:
             SOCKET_CloseClientSocket(&csocket);
-            string_show(COLOR_RED, "connection closed. select new server.");
+            textwin_showstring(COLOR_RED, "connection closed. select new server.");
             break;
 
         default:
@@ -1271,7 +1271,7 @@ int key_event(SDL_KeyboardEvent *key)
     {
         if (KeyScanFlag)
         {
-            string_show(COLOR_RED, "Scancode: %d", key->keysym.sym);
+            textwin_showstring(COLOR_RED, "Scancode: %d", key->keysym.sym);
         }
 
         if (cpl.menustatus != MENU_NO)
@@ -1291,7 +1291,7 @@ int key_event(SDL_KeyboardEvent *key)
             case SDLK_RALT:
                 send_game_command("/run_stop");
 #ifdef DEBUG_TEXT
-                string_show(COLOR_DGOLD, "run_stop");
+                textwin_showstring(COLOR_DGOLD, "run_stop");
 #endif
                 cpl.run_on = FALSE;
                 break;
@@ -1517,7 +1517,7 @@ void check_keys(int key)
                 {
                     sprintf(buf, "%s", bindkey_list[j].entry[i].text);
 #ifdef DEBUG_TEXT
-                    string_show(COLOR_DGOLD, "%s", buf);
+                    textwin_showstring(COLOR_DGOLD, "%s", buf);
 #endif
                     send_game_command(buf);
                 }
@@ -1675,8 +1675,8 @@ Boolean process_macro_keys(int id, int value)
         if (!(cpl.runkey_on = cpl.runkey_on ? FALSE : TRUE))
             send_game_command("/run_stop");
 #ifdef DEBUG_TEXT
-        string_show(COLOR_DGOLD, "runmode %s",
-            (cpl.runkey_on) ? "on" : "off");
+        textwin_showstring(COLOR_DGOLD, "runmode %s",
+                           (cpl.runkey_on) ? "on" : "off");
 #endif
         break;
     case KEYFUNC_MOVE:
@@ -1717,7 +1717,7 @@ Boolean process_macro_keys(int id, int value)
         if (tag == -1 || !locate_item(tag))
             return FALSE;
 #ifdef DEBUG_TEXT
-        string_show(COLOR_DGOLD, "apply %s", locate_item(tag)->s_name);
+        textwin_showstring(COLOR_DGOLD, "apply %s", locate_item(tag)->s_name);
 #endif
         client_send_apply(tag);
         return FALSE;
@@ -1731,7 +1731,7 @@ Boolean process_macro_keys(int id, int value)
             return FALSE;
         client_send_examine(tag);
 #ifdef DEBUG_TEXT
-        string_show(COLOR_DGOLD, "examine %s", locate_item(tag)->s_name);
+        textwin_showstring(COLOR_DGOLD, "examine %s", locate_item(tag)->s_name);
 #endif
         return FALSE;
         break;
@@ -1745,9 +1745,9 @@ Boolean process_macro_keys(int id, int value)
         send_mark_obj((it = locate_item(tag)));
         if (it)
         {
-            string_show(COLOR_DGOLD, "%s %s",
-                (cpl.mark_count == (int)it->tag) ? "unmark" : "mark",
-                it->s_name);
+            textwin_showstring(COLOR_DGOLD, "%s %s",
+                               (cpl.mark_count == (int)it->tag) ? "unmark" :
+                               "mark", it->s_name);
         }
         return FALSE;
         break;
@@ -1761,8 +1761,8 @@ Boolean process_macro_keys(int id, int value)
         toggle_locked((it = locate_item(tag)));
         if (!it)
             return FALSE;
-        string_show(COLOR_DGOLD, "%s %s",
-            (it->locked) ? "unlock" : "lock", it->s_name);
+        textwin_showstring(COLOR_DGOLD, "%s %s",
+                           (it->locked) ? "unlock" : "lock", it->s_name);
         return FALSE;
         break;
     case KEYFUNC_GET:
@@ -1806,13 +1806,13 @@ Boolean process_macro_keys(int id, int value)
                             }
                         }
                         if (tag == -1)
-                            string_show(COLOR_DGOLD, "You already have it.");
+                            textwin_showstring(COLOR_DGOLD, "You already have it.");
                     }
                 }
             }
             else
             {
-                string_show(COLOR_DGOLD, "You have no open container to put it in.");
+                textwin_showstring(COLOR_DGOLD, "You have no open container to put it in.");
                 /*
                 tag = cpl.win_inv_tag;
                 loc = cpl.ob->tag;
@@ -1857,7 +1857,7 @@ Boolean process_macro_keys(int id, int value)
         /*collectAll:*/
         sound_play_effect(SOUNDTYPE_CLIENT, SOUND_GET, 0, 0, 100);
 #ifdef DEBUG_TEXT
-        string_show(COLOR_DGOLD, "get %s", it->s_name);
+        textwin_showstring(COLOR_DGOLD, "get %s", it->s_name);
 #endif
         send_inv_move(loc, tag, nrof);
         return FALSE;
@@ -1869,8 +1869,8 @@ Boolean process_macro_keys(int id, int value)
             debug_layer[0] = FALSE;
         else
             debug_layer[0] = TRUE;
-        string_show(COLOR_DGOLD, "debug: map layer 0 %s.",
-            (debug_layer[0]) ? "activated" : "deactivated");
+        textwin_showstring(COLOR_DGOLD, "debug: map layer 0 %s.",
+                           (debug_layer[0]) ? "activated" : "deactivated");
         return FALSE;
         break;
     case KEYFUNC_LAYER1:
@@ -1878,8 +1878,8 @@ Boolean process_macro_keys(int id, int value)
             debug_layer[1] = FALSE;
         else
             debug_layer[1] = TRUE;
-        string_show(COLOR_DGOLD, "debug: map layer 1 %s.",
-            (debug_layer[1]) ? "activated" : "deactivated");
+        textwin_showstring(COLOR_DGOLD, "debug: map layer 1 %s.",
+                           (debug_layer[1]) ? "activated" : "deactivated");
         return FALSE;
         break;
     case KEYFUNC_LAYER2:
@@ -1887,8 +1887,8 @@ Boolean process_macro_keys(int id, int value)
             debug_layer[2] = FALSE;
         else
             debug_layer[2] = TRUE;
-        string_show(COLOR_DGOLD, "debug: map layer 2 %s.",
-            (debug_layer[2]) ? "activated" : "deactivated");
+        textwin_showstring(COLOR_DGOLD, "debug: map layer 2 %s.",
+                           (debug_layer[2]) ? "activated" : "deactivated");
         return FALSE;
         break;
     case KEYFUNC_LAYER3:
@@ -1896,8 +1896,8 @@ Boolean process_macro_keys(int id, int value)
             debug_layer[3] = FALSE;
         else
             debug_layer[3] = TRUE;
-        string_show(COLOR_DGOLD, "debug: map layer 3 %s.",
-            (debug_layer[3]) ? "activated" : "deactivated");
+        textwin_showstring(COLOR_DGOLD, "debug: map layer 3 %s.",
+                           (debug_layer[3]) ? "activated" : "deactivated");
         return FALSE;
         break;
 
@@ -1936,7 +1936,7 @@ Boolean process_macro_keys(int id, int value)
         }
         else
         {
-            string_show(COLOR_DGOLD, "The item is already on the floor.");
+            textwin_showstring(COLOR_DGOLD, "The item is already on the floor.");
             return FALSE;
         }
         if (tag == -1 || !locate_item(tag))
@@ -1949,7 +1949,7 @@ Boolean process_macro_keys(int id, int value)
         if (it->locked)
         {
             sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICKFAIL, 0, 0, 100);
-            string_show(COLOR_DGOLD, "Unlock the item first!");
+            textwin_showstring(COLOR_DGOLD, "Unlock the item first!");
             return FALSE;
         }
 
@@ -1973,7 +1973,7 @@ Boolean process_macro_keys(int id, int value)
         }
         sound_play_effect(SOUNDTYPE_NORMAL, SOUND_DROP, 0, 0, 100);
 #ifdef DEBUG_TEXT
-        string_show(COLOR_DGOLD, "drop %s", it->s_name);
+        textwin_showstring(COLOR_DGOLD, "drop %s", it->s_name);
 #endif
         send_inv_move(loc, tag, nrof);
         return FALSE;
@@ -2083,7 +2083,7 @@ void quickslot_key(SDL_KeyboardEvent *key, int slot)
             {
                 quick_slots[slot].shared.is_spell = FALSE;
                 quick_slots[slot].shared.tag = -1;
-                string_show(COLOR_DGOLD, "unset F%d.", slot + 1);
+                textwin_showstring(COLOR_DGOLD, "unset F%d.", slot + 1);
             }
             else
             {
@@ -2091,9 +2091,9 @@ void quickslot_key(SDL_KeyboardEvent *key, int slot)
                 quick_slots[slot].spell.groupNr = spell_list_set.group_nr;
                 quick_slots[slot].spell.classNr = spell_list_set.class_nr;
                 quick_slots[slot].shared.tag = spell_list_set.entry_nr;
-                string_show(COLOR_DGOLD, "set F%d to %s",
-                    slot + 1,
-                    spell_list[spell_list_set.group_nr].entry[spell_list_set.class_nr][spell_list_set.entry_nr].name);
+                textwin_showstring(COLOR_DGOLD, "set F%d to %s",
+                                   slot + 1,
+                                   spell_list[spell_list_set.group_nr].entry[spell_list_set.class_nr][spell_list_set.entry_nr].name);
             }
         }
     }
@@ -2113,8 +2113,8 @@ void quickslot_key(SDL_KeyboardEvent *key, int slot)
         {
             quick_slots[slot].shared.tag = tag;
             quick_slots[slot].item.invSlot = cpl.win_inv_slot;
-            string_show(COLOR_DGOLD, "set F%d to %s",
-                slot + 1, locate_item(tag)->s_name);
+            textwin_showstring(COLOR_DGOLD, "set F%d to %s",
+                               slot + 1, locate_item(tag)->s_name);
         }
     }
     /* apply item or ready spell */
@@ -2134,15 +2134,15 @@ void quickslot_key(SDL_KeyboardEvent *key, int slot)
             if (locate_item(quick_slots[slot].shared.tag))
             {
 #ifdef DEBUG_TEXT
-                string_show(COLOR_DGOLD, "F%d quick apply %s",
-                    slot + 1,
-                    locate_item(quick_slots[slot].shared.tag)->s_name);
+                textwin_showstring(COLOR_DGOLD, "F%d quick apply %s",
+                                   slot + 1,
+                                   locate_item(quick_slots[slot].shared.tag)->s_name);
 #endif
                 client_send_apply(quick_slots[slot].shared.tag);
                 return;
             }
         }
-        string_show(COLOR_DGOLD, "F%d quick slot is empty", slot + 1);
+        textwin_showstring(COLOR_DGOLD, "F%d quick slot is empty", slot + 1);
     }
 }
 
@@ -2180,7 +2180,7 @@ static void move_keys(int num)
         {
             if (!fire_mode_tab[FIRE_MODE_SKILL].skill || fire_mode_tab[FIRE_MODE_SKILL].skill->flag == -1)
             {
-                string_show(COLOR_WHITE, "no skill selected.");
+                textwin_showstring(COLOR_WHITE, "no skill selected.");
                 return;
             }
             tmp_name = fire_mode_tab[RangeFireMode].skill->name;
@@ -2193,7 +2193,7 @@ static void move_keys(int num)
         {
             if (!fire_mode_tab[FIRE_MODE_SPELL].spell || fire_mode_tab[FIRE_MODE_SPELL].spell->flag == -1)
             {
-                string_show(COLOR_WHITE, "no spell selected.");
+                textwin_showstring(COLOR_WHITE, "no spell selected.");
                 return;
             }
             tmp_name = fire_mode_tab[RangeFireMode].spell->name;
@@ -2212,7 +2212,7 @@ static void move_keys(int num)
             {
                 if (fire_mode_tab[FIRE_MODE_BOW].item == FIRE_ITEM_NO)
                 {
-                    string_show(COLOR_WHITE, "no range weapon selected.");
+                    textwin_showstring(COLOR_WHITE, "no range weapon selected.");
                     return;
                 }
             }
@@ -2229,7 +2229,7 @@ static void move_keys(int num)
         else if (RangeFireMode == FIRE_MODE_BOW)
             sprintf(buf, "fire %s", directions_name[num]);
 
-        string_show(COLOR_DGOLD, "%s", buf);
+        textwin_showstring(COLOR_DGOLD, "%s", buf);
 #endif
         return;
     }
@@ -2239,7 +2239,7 @@ static void move_keys(int num)
         buf[0] = '\0';
     }
 #ifdef DEBUG_TEXT
-    string_show(COLOR_DGOLD, "%s", directions_name[num]);
+    textwin_showstring(COLOR_DGOLD, "%s", directions_name[num]);
 #endif
 }
 
@@ -2292,7 +2292,7 @@ static void key_repeat(void)
 
                                 sprintf(buf, "%s", bindkey_list[j].entry[i].text);
 #ifdef DEBUG_TEXT
-                                string_show(COLOR_DGOLD, "%s", buf);
+                                textwin_showstring(COLOR_DGOLD, "%s", buf);
 #endif
                                 send_game_command(buf);
                             }
@@ -2630,7 +2630,7 @@ void check_menu_keys(int menu, int key)
                     if ((ScreenSurface = SDL_SetVideoMode(Screensize.x, Screensize.y, options.used_video_bpp, videoflags)) == NULL)
                     {
                         int i;
-                        string_show(COLOR_RED, "Couldn't set %dx%dx%d video mode: %s\n", Screensize.x, Screensize.y, options.used_video_bpp, SDL_GetError());
+                        textwin_showstring(COLOR_RED, "Couldn't set %dx%dx%d video mode: %s\n", Screensize.x, Screensize.y, options.used_video_bpp, SDL_GetError());
                         LOG(LOG_ERROR, "Couldn't set %dx%dx%d video mode: %s\n", Screensize.x, Screensize.y, options.used_video_bpp, SDL_GetError());
                         Screensize=sz_tmp;
                         for (i=0;i<16;i++)
@@ -2639,21 +2639,21 @@ void check_menu_keys(int menu, int key)
                                 options.resolution = i;
                                 break;
                             }
-                        string_show(COLOR_RED, "Try to switch back to old setting...");
+                        textwin_showstring(COLOR_RED, "Try to switch back to old setting...");
                         LOG(LOG_ERROR, "Try to switch back to old setting...\n");
 
                         if ((ScreenSurface = SDL_SetVideoMode(Screensize.x, Screensize.y, options.used_video_bpp, videoflags)) == NULL)
                         {
-                            string_show(COLOR_RED, "Couldn't set %dx%dx%d video mode: %s\n", Screensize.x, Screensize.y, options.used_video_bpp, SDL_GetError());
+                            textwin_showstring(COLOR_RED, "Couldn't set %dx%dx%d video mode: %s\n", Screensize.x, Screensize.y, options.used_video_bpp, SDL_GetError());
                             LOG(LOG_ERROR, "Couldn't set %dx%dx%d video mode: %s\n", Screensize.x, Screensize.y, options.used_video_bpp, SDL_GetError());
                             Screensize=Screendefs[0];
                             options.resolution = 0;
-                            string_show(COLOR_RED, "Try to switch back to 800x600...");
+                            textwin_showstring(COLOR_RED, "Try to switch back to 800x600...");
                             LOG(LOG_ERROR, "Try to switch back to 800x600...\n");
                             if ((ScreenSurface = SDL_SetVideoMode(Screensize.x, Screensize.y, options.used_video_bpp, videoflags)) == NULL)
                             {
                                 /* now we have a problem */
-                                string_show(COLOR_RED, "Couldn't set %dx%dx%d video mode: %s\nFATAL ERROR - exit", Screensize.x, Screensize.y, options.used_video_bpp, SDL_GetError());
+                                textwin_showstring(COLOR_RED, "Couldn't set %dx%dx%d video mode: %s\nFATAL ERROR - exit", Screensize.x, Screensize.y, options.used_video_bpp, SDL_GetError());
                                 LOG(LOG_ERROR, "Couldn't set %dx%dx%d video mode: %s\nFATAL ERROR - exit", Screensize.x, Screensize.y, options.used_video_bpp, SDL_GetError());
                                 Screensize=sz_tmp;
                                 exit(2);

@@ -89,7 +89,7 @@ extern int          textwin_flags;
 extern void         textwin_event(int e, SDL_Event *event, int WidgetID);
 extern void         textwin_show(int x, int y);
 extern void         textwin_init();
-extern void         string_show(int flags, char *format, ...);
+extern void         textwin_showstring(int flags, char *format, ...);
 extern void         textwin_addhistory(char *text);
 extern void         textwin_clearhistory();
 extern void         textwin_putstring(char *text);

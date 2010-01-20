@@ -174,7 +174,7 @@ void textwin_init()
 /******************************************************************
  add string to the text-window (perform auto-clipping).
 ******************************************************************/
-void string_show(int flags, char *format, ...)
+void textwin_showstring(int flags, char *format, ...)
 {
     va_list ap;
     static int  key_start   = 0;
@@ -281,7 +281,7 @@ void string_show(int flags, char *format, ...)
     }
 
 #ifdef DEVELOPMENT
-    LOG(LOG_MSG,"STRING_SHOW: >%s<\n", buf2);
+    LOG(LOG_MSG,">%s<\n", buf2);
 #endif
 
     /*
