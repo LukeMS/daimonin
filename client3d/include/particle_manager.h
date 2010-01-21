@@ -82,7 +82,8 @@ private:
     // ////////////////////////////////////////////////////////////////////
     ParticleManager();
     ~ParticleManager();
-    ParticleManager(const ParticleManager&); // disable copy-constructor.
+    ParticleManager(const ParticleManager&);            /**< disable copy-constructor. **/
+    ParticleManager &operator=(const ParticleManager&); /**< disable assignment operator. **/
 };
 
 #endif

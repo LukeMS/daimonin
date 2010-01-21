@@ -223,7 +223,8 @@ private:
     // ////////////////////////////////////////////////////////////////////
     Network()  {}
     ~Network() {}
-    Network(const Network&); // disable copy-constructor.
+    Network(const Network&);            /**< disable copy-constructor. **/
+    Network &operator=(const Network&); /**< disable assignment operator. **/
     bool OpenSocket(const char *host, int port, int &socket);
     static Ogre::String &getError();
     static command_buffer *command_buffer_new(unsigned int len, Ogre::uchar *data);

@@ -82,6 +82,8 @@ private:
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
+    TileChunk(const TileChunk&);            /**< disable copy-constructor. **/
+    TileChunk &operator=(const TileChunk&); /**< disable assignment operator. **/
     void updateLand();
     void updateWater();
     void updateSprites();

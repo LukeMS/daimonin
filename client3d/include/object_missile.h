@@ -91,7 +91,8 @@ private:
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    ObjectMissile(const ObjectMissile&); // disable copy-constructor.
+    ObjectMissile(const ObjectMissile&);            /**< disable copy-constructor. **/
+    ObjectMissile &operator=(const ObjectMissile&); /**< disable assignment operator. **/
 };
 
 #endif

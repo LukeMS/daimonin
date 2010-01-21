@@ -21,6 +21,7 @@ You should have received a copy of the GNU General Public License along with
 this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
 
+#include <OgreMath.h>  // Without it VC reports an error in OgreMath.h.
 #include "define.h"
 #include "item.h"
 #include "logger.h"
@@ -34,7 +35,7 @@ using namespace Ogre;
 //#define D_DEBUG
 
 //================================================================================================
-// Init all static Elemnts.
+// Init all static Elements.
 //================================================================================================
 
 //================================================================================================
@@ -45,7 +46,7 @@ Item::Item()
     mActItemID[ITEMLIST_GROUND]    = 0; // Ground tile container ID is always 0.
     mActItemID[ITEMLIST_BACKPACK]  = CONTAINER_UNKNOWN;
     mActItemID[ITEMLIST_CONTAINER] = CONTAINER_UNKNOWN;
-    // Link the item lists to the gui-slots-elemnts where the items are displayed.
+    // Link the item lists to the gui-slots-elements where the items are displayed.
     mSlotID[ITEMLIST_GROUND]     = GuiManager::SLOT_EQUIPMENT;
     mSlotID[ITEMLIST_BACKPACK]   = GuiManager::SLOTGROUP_INVENTORY;
     mSlotID[ITEMLIST_CONTAINER]  = GuiManager::SLOT_CONTAINER;

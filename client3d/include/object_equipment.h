@@ -88,6 +88,7 @@ private:
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    ObjectEquipment(const ObjectEquipment&); // disable copy-constructor.
+    ObjectEquipment(const ObjectEquipment&);            /**< disable copy-constructor. **/
+    ObjectEquipment &operator=(const ObjectEquipment&); /**< disable assignment operator. **/
 };
 #endif

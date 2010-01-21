@@ -195,7 +195,8 @@ private:
     // ////////////////////////////////////////////////////////////////////
     ObjectManager() {}
     ~ObjectManager();
-    ObjectManager(const ObjectManager&); // disable copy-constructor.
+    ObjectManager(const ObjectManager&);            /**< disable copy-constructor. **/
+    ObjectManager &operator=(const ObjectManager&); /**< disable assignment operator. **/
     void extractObject(Ogre::MovableObject *mob);
 };
 

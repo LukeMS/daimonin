@@ -121,6 +121,8 @@ private:
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
+    ObjectAnimate(const ObjectAnimate&);            /**< disable copy-constructor. **/
+    ObjectAnimate &operator=(const ObjectAnimate&); /**< disable assignment operator. **/
 };
 
 #endif

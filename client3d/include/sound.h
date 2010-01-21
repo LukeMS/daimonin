@@ -83,9 +83,9 @@ private:
     // Functions.
     // ////////////////////////////////////////////////////////////////////
     Sound() { mInit = false; }
-    ~Sound()
-    {}
-    Sound( const Sound& ); // disable copy-constructor.
+    ~Sound() {}
+    Sound(const Sound&);            /**< disable copy-constructor. **/
+    Sound &operator=(const Sound&); /**< disable assignment operator. **/
 };
 
 #endif

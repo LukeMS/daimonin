@@ -202,17 +202,15 @@ private:
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    ObjectWrapper()
-    {}
-
+    ObjectWrapper() {}
     ~ObjectWrapper()
     {
         for (std::vector<bmpType*>::iterator i = mvBmpEntry.begin(); i < mvBmpEntry.end(); ++i)
             delete (*i);
         mvBmpEntry.clear();
     }
-
-    ObjectWrapper( const ObjectWrapper& ); // disable copy-constructor.
+    ObjectWrapper(const ObjectWrapper&);            /**< disable copy-constructor. **/
+    ObjectWrapper &operator=(const ObjectWrapper&); /**< disable assignment operator. **/
 
     void loadOrgBmp()
     {

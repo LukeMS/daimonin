@@ -84,10 +84,10 @@ private:
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    SpellManager()
-    {}
+    SpellManager() {}
     ~SpellManager();
-    SpellManager(const SpellManager&); // disable copy-constructor.
+    SpellManager(const SpellManager&);            /**< disable copy-constructor. **/
+    SpellManager &operator=(const SpellManager&); /**< disable assignment operator. **/
 };
 
 #endif

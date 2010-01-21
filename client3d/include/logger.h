@@ -88,6 +88,7 @@ private:
         ~LogEntry();
     private:
         std::ofstream mOut;
+        LogEntry &operator=(const LogEntry&); /**< disable assignment operator. **/
     };
 
 public:

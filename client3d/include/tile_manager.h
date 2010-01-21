@@ -193,7 +193,8 @@ private:
     // ////////////////////////////////////////////////////////////////////
     TileManager();
     ~TileManager();
-    TileManager(const TileManager&); /**< disable copy-constructor. **/
+    TileManager(const TileManager&);            /**< disable copy-constructor. **/
+    TileManager &operator=(const TileManager&); /**< disable assignment operator. **/
 
     /** Create the atlastexture in different resolutions.
      ** @param maxTextureSize The maximum size of the atlas to create.
