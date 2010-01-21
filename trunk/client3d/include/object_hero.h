@@ -274,9 +274,10 @@ private:
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    ObjectHero(const ObjectHero&); // disable copy-constructor.
     ObjectHero();
     ~ObjectHero() {}
+    ObjectHero(const ObjectHero&);            /**< disable copy-constructor. **/
+    ObjectHero &operator=(const ObjectHero&); /**< disable assignment operator. **/
 };
 
 #endif

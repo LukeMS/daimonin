@@ -92,7 +92,8 @@ private:
     // ////////////////////////////////////////////////////////////////////
     ObjectVisuals()  {}
     ~ObjectVisuals() {}
-    ObjectVisuals(const ObjectVisuals&); // disable copy-constructor.
+    ObjectVisuals(const ObjectVisuals&);            /**< disable copy-constructor. **/
+    ObjectVisuals &operator=(const ObjectVisuals&); /**< disable assignment operator. **/
     void buildEntity(int index, const char *meshName, const char *entityName);
 };
 

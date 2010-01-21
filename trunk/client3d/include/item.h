@@ -156,7 +156,8 @@ private:
     // ////////////////////////////////////////////////////////////////////
     Item();
     ~Item();
-    Item(const Item&); // disable copy-constructor.
+    Item(const Item&);            /**< disable copy-constructor. **/
+    Item &operator=(const Item&); /**< disable assignment operator. **/
 };
 
 #endif

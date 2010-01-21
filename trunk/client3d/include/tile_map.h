@@ -116,7 +116,8 @@ private:
     // ////////////////////////////////////////////////////////////////////
     TileMap();
     ~TileMap();
-    TileMap(const TileMap&); // disable copy-constructor.
+    TileMap(const TileMap&);            /**< disable copy-constructor. **/
+    TileMap &operator=(const TileMap&); /**< disable assignment operator. **/
 };
 
 #endif

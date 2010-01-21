@@ -100,7 +100,8 @@ private:
     // ////////////////////////////////////////////////////////////////////
     Events()  {}
     ~Events() {}
-    Events(const Events&); // disable copy-constructor.
+    Events(const Events&);            /**< disable copy-constructor. **/
+    Events &operator=(const Events&); /**< disable assignment operator. **/
     void elementClicked(int element);
     bool checkUsername(const char *name);
     bool frameStarted (const Ogre::FrameEvent &evt);

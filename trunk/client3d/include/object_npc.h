@@ -163,7 +163,8 @@ private:
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    ObjectNPC(const ObjectNPC&); // disable copy-constructor.
+    ObjectNPC(const ObjectNPC&);            /**< disable copy-constructor. **/
+    ObjectNPC &operator=(const ObjectNPC&); /**< disable assignment operator. **/
     void moveByCursor(Ogre::Real dTime);
 };
 

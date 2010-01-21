@@ -105,9 +105,9 @@ private:
     // Functions.
     // ////////////////////////////////////////////////////////////////////
     ServerFile();
-    ~ServerFile()
-    {}
-    ServerFile(const ServerFile&); // disable copy-constructor.
+    ~ServerFile() {}
+    ServerFile(const ServerFile&);            /**< disable copy-constructor. **/
+    ServerFile &operator=(const ServerFile&); /**< disable assignment operator. **/
 };
 
 #endif

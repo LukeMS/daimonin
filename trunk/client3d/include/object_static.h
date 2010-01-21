@@ -142,7 +142,8 @@ private:
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    ObjectStatic(const ObjectStatic&); // disable copy-constructor.
+    ObjectStatic(const ObjectStatic&);            /**< disable copy-constructor. **/
+    ObjectStatic &operator=(const ObjectStatic&); /**< disable assignment operator. **/
 };
 
 #endif

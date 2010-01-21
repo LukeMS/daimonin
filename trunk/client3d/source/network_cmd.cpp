@@ -21,6 +21,7 @@ You should have received a copy of the GNU General Public License along with
 this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
 
+#include <OgreMath.h>  // Without it VC reports an error in OgreMath.h.
 #include <fstream>
 #include <stdio.h>
 #include "zlib.h"

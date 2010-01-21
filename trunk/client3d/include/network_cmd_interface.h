@@ -196,7 +196,8 @@ private:
     // ////////////////////////////////////////////////////////////////////
     CmdInterface();
     ~CmdInterface();
-    CmdInterface(const CmdInterface&); // disable copy-constructor.
+    CmdInterface(const CmdInterface&);            /**< disable copy-constructor. **/
+    CmdInterface &operator=(const CmdInterface&); /**< disable assignment operator. **/
     bool cmd_head     (char *data, int &pos);
     bool cmd_link     (char *data, int &pos);
     bool cmd_who      (char *data, int &pos);

@@ -217,7 +217,8 @@ private:
     // ////////////////////////////////////////////////////////////////////
     Option();
     ~Option();
-    Option(const Option&); // disable copy-constructor.
+    Option(const Option&);            /**< disable copy-constructor. **/
+    Option &operator=(const Option&); /**< disable assignment operator. **/
 };
 
 #endif

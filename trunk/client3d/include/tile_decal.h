@@ -58,6 +58,8 @@ private:
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
+    TileDecal(const TileDecal&);            /**< disable copy-constructor. **/
+    TileDecal &operator=(const TileDecal&); /**< disable assignment operator. **/
 };
 
 #endif
