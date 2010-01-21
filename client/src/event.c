@@ -1936,7 +1936,7 @@ Boolean process_macro_keys(int id, int value)
         }
         else
         {
-            textwin_showstring(COLOR_DGOLD, "The item is already on the floor.");
+            textwin_showstring(COLOR_DGOLD, "Select something that can be dropped first!");
             return FALSE;
         }
         if (tag == -1 || !locate_item(tag))
