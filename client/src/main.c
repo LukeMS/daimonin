@@ -2151,6 +2151,7 @@ int main(int argc, char *argv[])
                 rec.y = 122;
                 rec.h = 14;
                 rec.w = 225;
+                SDL_FillRect(ScreenSurface, &rec, 0);
                 string_blt(ScreenSurface, &font_small, buf, rec.x, rec.y, COLOR_DEFAULT, NULL, NULL);
             }
         }
