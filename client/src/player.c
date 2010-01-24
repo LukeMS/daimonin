@@ -695,11 +695,11 @@ void widget_show_main_lvl(int x, int y)
         string_blt(widgetSF[MAIN_LVL_ID], &font_tiny_out, "Level / Exp", 4, 1, COLOR_HGOLD, NULL, NULL);
         sprintf(buf, "%d", cpl.stats.level);
         if (cpl.stats.exp_level != cpl.stats.level)
-            string_blt(widgetSF[MAIN_LVL_ID], &font_big_out, buf, 91 - string_width(&font_big_out, buf), 4, COLOR_RED, NULL, NULL);
+            string_blt(widgetSF[MAIN_LVL_ID], &font_large_out, buf, 91 - string_width(&font_large_out, buf), 4, COLOR_RED, NULL, NULL);
         else if (cpl.stats.level == MAXLEVEL)
-            string_blt(widgetSF[MAIN_LVL_ID], &font_big_out, buf, 91 - string_width(&font_big_out, buf), 4, COLOR_HGOLD, NULL, NULL);
+            string_blt(widgetSF[MAIN_LVL_ID], &font_large_out, buf, 91 - string_width(&font_large_out, buf), 4, COLOR_HGOLD, NULL, NULL);
         else
-            string_blt(widgetSF[MAIN_LVL_ID], &font_big_out, buf, 91 - string_width(&font_big_out, buf), 4, COLOR_WHITE, NULL, NULL);
+            string_blt(widgetSF[MAIN_LVL_ID], &font_large_out, buf, 91 - string_width(&font_large_out, buf), 4, COLOR_WHITE, NULL, NULL);
         sprintf(buf, "%d", cpl.stats.exp);
         string_blt(widgetSF[MAIN_LVL_ID], &font_small, buf, 5, 20, COLOR_WHITE, NULL, NULL);
 
@@ -987,7 +987,7 @@ void widget_show_statometer(int x, int y)
         return;
     }
 
-    string_blt(ScreenSurface, &font_big_out, "Stat-O-Meter:", x+2, y+2, COLOR_BLUE,NULL,NULL);
+    string_blt(ScreenSurface, &font_large_out, "Stat-O-Meter:", x+2, y+2, COLOR_BLUE,NULL,NULL);
     sprintf(statbuf,"EXP: %d",statometer.exp);
     string_blt(ScreenSurface, &font_small,statbuf,x+2,y+15,COLOR_WHITE,NULL,NULL);
     sprintf(statbuf,"(%.2f/hour)",statometer.exphour);

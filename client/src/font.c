@@ -28,7 +28,7 @@ _font font_small;
 _font font_small_out;
 _font font_medium;
 _font font_medium_out;
-_font font_big_out;
+_font font_large_out;
 
 static void CreateNewFont(_Sprite *sprite, _font *font, sint8 xlen, sint8 ylen,
                           sint8 off, uint8 line);
@@ -40,7 +40,7 @@ void font_init(void)
     CreateNewFont(Bitmaps[BITMAP_FONTSMALLOUT], &font_small_out, 16, 16, 1, 12);
     CreateNewFont(Bitmaps[BITMAP_FONTMEDIUM], &font_medium, 16, 16, 1, 15);
     CreateNewFont(Bitmaps[BITMAP_FONTMEDIUMOUT], &font_medium_out, 16, 16, 0, 16);
-    CreateNewFont(Bitmaps[BITMAP_FONTBIGOUT], &font_big_out, 11, 16, 1, 20);
+    CreateNewFont(Bitmaps[BITMAP_FONTBIGOUT], &font_large_out, 11, 16, 1, 20);
 }
 
 /* init this font structure with gfx data from sprite bitmap */

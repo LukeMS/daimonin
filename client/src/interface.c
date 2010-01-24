@@ -830,7 +830,7 @@ static void FormatBody(_font *font, uint16 width, uint8 lines, _gui_npc_element 
          element->type == GUI_NPC_UPDATE) &&
         element->title)
     {
-        yoff += font_big_out.line_height + FONT_BLANKLINE;
+        yoff += font_large_out.line_height + FONT_BLANKLINE;
     }
     else if (element->type == GUI_NPC_ICON &&
              gui_npc->shop)
@@ -1449,7 +1449,7 @@ static uint16 PrecalcGUI(void)
 
         if (gui_npc->message->title)
         {
-            yoff += font_big_out.line_height + FONT_BLANKLINE;
+            yoff += font_large_out.line_height + FONT_BLANKLINE;
         }
 
         for (i = 0; i < gui_npc->message->body.line_count; i++)
@@ -1468,7 +1468,7 @@ static uint16 PrecalcGUI(void)
         gui_npc->reward->box.x = 0;
         gui_npc->reward->box.y = yoff;
 
-        yoff += font_big_out.line_height + FONT_BLANKLINE;
+        yoff += font_large_out.line_height + FONT_BLANKLINE;
 
         for (i = 0; i < gui_npc->reward->body.line_count; i++)
         {
@@ -1569,7 +1569,7 @@ static uint16 PrecalcGUI(void)
 
             if (this->title)
             {
-                yoff += font_big_out.line_height + FONT_BLANKLINE;
+                yoff += font_large_out.line_height + FONT_BLANKLINE;
             }
 
             for (i = 0; i < this->body.line_count; i++)
@@ -2172,15 +2172,15 @@ static void ShowGUIContents(uint16 x, uint16 y)
             {
                 sprintf(buf, "%s", gui_npc->message->title);
 
-                if (string_width_offset(&font_big_out, buf, &len, GUI_NPC_WIDTH))
+                if (string_width_offset(&font_large_out, buf, &len, GUI_NPC_WIDTH))
                 {
                     buf[len - 2] = '\0';
                     strcat(buf, "...");
                 }
 
-                string_blt(ScreenSurface, &font_big_out, buf, xoff, yoff,
+                string_blt(ScreenSurface, &font_large_out, buf, xoff, yoff,
                           COLOR_HGOLD, NULL, NULL);
-                yoff += font_big_out.line_height + FONT_BLANKLINE;
+                yoff += font_large_out.line_height + FONT_BLANKLINE;
             }
 
             for (i = 0; i < gui_npc->message->body.line_count; i++)
@@ -2217,15 +2217,15 @@ static void ShowGUIContents(uint16 x, uint16 y)
                 sprintf(buf, "%s", gui_npc->reward->title);
             }
 
-            if (string_width_offset(&font_big_out, buf, &len, GUI_NPC_WIDTH))
+            if (string_width_offset(&font_large_out, buf, &len, GUI_NPC_WIDTH))
             {
                 buf[len - 2] = '\0';
                 strcat(buf, "...");
             }
 
-            string_blt(ScreenSurface, &font_big_out, buf, xoff, yoff,
+            string_blt(ScreenSurface, &font_large_out, buf, xoff, yoff,
                       COLOR_HGOLD, NULL, NULL);
-            yoff += font_big_out.line_height + FONT_BLANKLINE;
+            yoff += font_large_out.line_height + FONT_BLANKLINE;
 
             if (gui_npc->reward->body.text)
             {
@@ -2467,15 +2467,15 @@ static void ShowGUIContents(uint16 x, uint16 y)
             yoff = y + this->box.y - guitop;
             sprintf(buf, "%s", this->title);
 
-            if (string_width_offset(&font_big_out, buf, &len, GUI_NPC_WIDTH))
+            if (string_width_offset(&font_large_out, buf, &len, GUI_NPC_WIDTH))
             {
                 buf[len - 2] = '\0';
                 strcat(buf, "...");
             }
 
-            string_blt(ScreenSurface, &font_big_out, buf, xoff, yoff,
+            string_blt(ScreenSurface, &font_large_out, buf, xoff, yoff,
                       COLOR_HGOLD, NULL, NULL);
-            yoff += font_big_out.line_height + FONT_BLANKLINE;
+            yoff += font_large_out.line_height + FONT_BLANKLINE;
 
             for (i = 0; i < this->body.line_count; i++)
             {

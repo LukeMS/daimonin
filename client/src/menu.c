@@ -590,7 +590,7 @@ void show_media(int x, int y)
 
 void widget_show_mapname(int x, int y)
 {
-    string_blt(ScreenSurface, &font_big_out, MapData.name, x, y, COLOR_HGOLD, NULL, NULL);
+    string_blt(ScreenSurface, &font_large_out, MapData.name, x, y, COLOR_HGOLD, NULL, NULL);
 }
 
 
