@@ -1562,7 +1562,7 @@ void show_newplayer_server(void)
     {
         char namebuf[MAX_BUF];
 
-        string_blt(ScreenSurface, &font_big_out, "Try Character Name", x + 134, y + 323, COLOR_WHITE, NULL, NULL);
+        string_blt(ScreenSurface, &font_large_out, "Try Character Name", x + 134, y + 323, COLOR_WHITE, NULL, NULL);
 
         if(GameStatus == GAME_STATUS_ACCOUNT_CHAR_NAME)
         {
@@ -1651,9 +1651,9 @@ void show_login_server(void)
     else
         sprintf(buf, "%s", ServerName);
 
-    t -= string_width(&font_big_out, buf) / 2;
-    string_blt(ScreenSurface, &font_big_out, buf, t + 1, y - 21, COLOR_BLACK, NULL, NULL);
-    string_blt(ScreenSurface, &font_big_out, buf, t, y - 22, COLOR_HGOLD, NULL, NULL);
+    t -= string_width(&font_large_out, buf) / 2;
+    string_blt(ScreenSurface, &font_large_out, buf, t + 1, y - 21, COLOR_BLACK, NULL, NULL);
+    string_blt(ScreenSurface, &font_large_out, buf, t, y - 22, COLOR_HGOLD, NULL, NULL);
 
     SDL_FillRect(ScreenSurface, &box, skindef.rowcolor[0]);
     box.y = y + 15;
@@ -1721,17 +1721,17 @@ void show_login_server(void)
     {
         if (GameStatusSelect == GAME_STATUS_LOGIN_ACCOUNT)
         {
-            string_blt(ScreenSurface, &font_big_out, ">> Login <<", x+51, y+52, COLOR_BLACK, NULL, NULL);
-            string_blt(ScreenSurface, &font_big_out, ">> Login <<", x+49, y+50, COLOR_GREEN, NULL, NULL);
-            string_blt(ScreenSurface, &font_big_out, "Create Account", x+28, y+32, COLOR_BLACK, NULL, NULL);
-            string_blt(ScreenSurface, &font_big_out, "Create Account", x+26, y+30, COLOR_WHITE, NULL, NULL);
+            string_blt(ScreenSurface, &font_large_out, ">> Login <<", x+51, y+52, COLOR_BLACK, NULL, NULL);
+            string_blt(ScreenSurface, &font_large_out, ">> Login <<", x+49, y+50, COLOR_GREEN, NULL, NULL);
+            string_blt(ScreenSurface, &font_large_out, "Create Account", x+28, y+32, COLOR_BLACK, NULL, NULL);
+            string_blt(ScreenSurface, &font_large_out, "Create Account", x+26, y+30, COLOR_WHITE, NULL, NULL);
         }
         else
         {
-            string_blt(ScreenSurface, &font_big_out, "Login", x+72, y+52, COLOR_BLACK, NULL, NULL);
-            string_blt(ScreenSurface, &font_big_out, "Login", x+70, y+50, COLOR_WHITE, NULL, NULL);
-            string_blt(ScreenSurface, &font_big_out, ">> Create Account <<", x+7, y+32, COLOR_BLACK, NULL, NULL);
-            string_blt(ScreenSurface, &font_big_out, ">> Create Account <<", x+5, y+30, COLOR_GREEN, NULL, NULL);
+            string_blt(ScreenSurface, &font_large_out, "Login", x+72, y+52, COLOR_BLACK, NULL, NULL);
+            string_blt(ScreenSurface, &font_large_out, "Login", x+70, y+50, COLOR_WHITE, NULL, NULL);
+            string_blt(ScreenSurface, &font_large_out, ">> Create Account <<", x+7, y+32, COLOR_BLACK, NULL, NULL);
+            string_blt(ScreenSurface, &font_large_out, ">> Create Account <<", x+5, y+30, COLOR_GREEN, NULL, NULL);
         }
         y += 160;
         string_blt(ScreenSurface, &font_small,
@@ -1751,13 +1751,13 @@ void show_login_server(void)
 
     if (GameStatusSelect == GAME_STATUS_LOGIN_ACCOUNT)
     {
-        string_blt(ScreenSurface, &font_big_out, "Login", x+72, y+2, COLOR_BLACK, NULL, NULL);
-        string_blt(ScreenSurface, &font_big_out, "Login", x+70, y+0, COLOR_WHITE, NULL, NULL);
+        string_blt(ScreenSurface, &font_large_out, "Login", x+72, y+2, COLOR_BLACK, NULL, NULL);
+        string_blt(ScreenSurface, &font_large_out, "Login", x+70, y+0, COLOR_WHITE, NULL, NULL);
     }
     else
     {
-        string_blt(ScreenSurface, &font_big_out, "Create Account", x+18, y+2, COLOR_BLACK, NULL, NULL);
-        string_blt(ScreenSurface, &font_big_out, "Create Account", x+16, y+0, COLOR_WHITE, NULL, NULL);
+        string_blt(ScreenSurface, &font_large_out, "Create Account", x+18, y+2, COLOR_BLACK, NULL, NULL);
+        string_blt(ScreenSurface, &font_large_out, "Create Account", x+16, y+0, COLOR_WHITE, NULL, NULL);
     }
 
     if (GameStatusSelect == GAME_STATUS_LOGIN_ACCOUNT)
@@ -2014,10 +2014,10 @@ void show_account(void)
     sprite_blt(Bitmaps[BITMAP_LOGO270], x + 20, y + 85, NULL, NULL);
 
     string_blt(ScreenSurface, &font_small, "Welcome on Server Daimonin", x+200, y+20, COLOR_WHITE, NULL, NULL);
-    string_blt(ScreenSurface, &font_big_out, "Account Overview", x+180, y+35, COLOR_WHITE, NULL, NULL);
+    string_blt(ScreenSurface, &font_large_out, "Account Overview", x+180, y+35, COLOR_WHITE, NULL, NULL);
 
-    string_blt(ScreenSurface, &font_big_out, "Character List", x+120, y+70, COLOR_WHITE, NULL, NULL);
-    string_blt(ScreenSurface, &font_big_out, "_____________________________", x+120, y+80, COLOR_WHITE, NULL, NULL);
+    string_blt(ScreenSurface, &font_large_out, "Character List", x+120, y+70, COLOR_WHITE, NULL, NULL);
+    string_blt(ScreenSurface, &font_large_out, "_____________________________", x+120, y+80, COLOR_WHITE, NULL, NULL);
 
     if(account.count) /* show selected player */
     {
@@ -2030,11 +2030,11 @@ void show_account(void)
             char delbuf[MAX_BUF];
 
             sprintf(delbuf, "Delete Character %s", account.name[account.selected]);
-            string_blt(ScreenSurface, &font_big_out, delbuf, x+120, y+435, COLOR_HGOLD, NULL, NULL);
+            string_blt(ScreenSurface, &font_large_out, delbuf, x+120, y+435, COLOR_HGOLD, NULL, NULL);
 
             if (GameStatus == GAME_STATUS_ACCOUNT_CHAR_DEL )
             {
-                string_blt(ScreenSurface, &font_big_out, "Type 'delete':", x+120, y+455, COLOR_HGOLD, NULL, NULL);
+                string_blt(ScreenSurface, &font_large_out, "Type 'delete':", x+120, y+455, COLOR_HGOLD, NULL, NULL);
                 sprite_blt(Bitmaps[BITMAP_LOGIN_INP], x + 250, y + 455, NULL, NULL);
                 sprintf(delbuf, "%s%c", InputString, '_');
                 string_blt(ScreenSurface, &font_small, delbuf, x + 256, y + 457, COLOR_WHITE, NULL, NULL);
@@ -2055,8 +2055,8 @@ void show_account(void)
         }
         else
         {
-            string_blt(ScreenSurface, &font_big_out, "Press ~RETURN~ to play", x+120, y+435, COLOR_HGOLD, NULL, NULL);
-            string_blt(ScreenSurface, &font_big_out, "Press '~D~' to delete this Character", x+120, y+452, COLOR_HGOLD, NULL, NULL);
+            string_blt(ScreenSurface, &font_large_out, "Press ~RETURN~ to play", x+120, y+435, COLOR_HGOLD, NULL, NULL);
+            string_blt(ScreenSurface, &font_large_out, "Press '~D~' to delete this Character", x+120, y+452, COLOR_HGOLD, NULL, NULL);
             sprintf(buf, "Use ~%c%c~ cursor keys for selection", ASCII_UP, ASCII_DOWN);
             string_blt(ScreenSurface, &font_small, buf, x+120, y + 470, COLOR_WHITE, NULL, NULL);
         }
@@ -2067,7 +2067,7 @@ void show_account(void)
         if(account.name[i][0])
         {
             char_count++;
-            string_blt(ScreenSurface, &font_big_out, account.name[i], x+120, y+100+i*50, COLOR_WHITE, NULL, NULL);
+            string_blt(ScreenSurface, &font_large_out, account.name[i], x+120, y+100+i*50, COLOR_WHITE, NULL, NULL);
             sprintf(buf,"Level:%d Race:%d Gender:%d", account.level[i],account.race[i],account.gender[i]);
             string_blt(ScreenSurface, &font_small, buf, x+120, y+116+i*50, COLOR_WHITE, NULL, NULL);
         }
@@ -2075,7 +2075,7 @@ void show_account(void)
 
     if(char_count < ACCOUNT_MAX_PLAYER)
     {
-        string_blt(ScreenSurface, &font_big_out, "Press '~C~' for a new Character", x+120, y+100+char_count*50, COLOR_HGOLD, NULL, NULL);
+        string_blt(ScreenSurface, &font_large_out, "Press '~C~' for a new Character", x+120, y+100+char_count*50, COLOR_HGOLD, NULL, NULL);
     }
 }
 

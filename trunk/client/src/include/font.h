@@ -39,7 +39,7 @@ extern _font font_small;
 extern _font font_small_out;
 extern _font font_medium;
 extern _font font_medium_out;
-extern _font font_big_out;
+extern _font font_large_out;
 
 extern void font_init(void);
 
