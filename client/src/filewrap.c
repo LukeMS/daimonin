@@ -20,18 +20,13 @@
 
     The author can be reached via e-mail to info@daimonin.net
 */
-#include <include.h>
 
 #ifdef __WIN_32
+#include <direct.h>
+#include <stdlib.h>
+#endif
 
-char *file_path(const char *fname, const char *mode)
-{
-    static char tmp[256];
-    sprintf(tmp, "%s%s", SYSPATH, fname);
-    return tmp;
-}
-
-#else
+#include <include.h>
 
 /**
 * Create the directory @p path.  If it already exists as a directory
@@ -42,26 +37,113 @@ char *file_path(const char *fname, const char *mode)
 static int mkdir_recurse(const char *path)
 {
     char *copy, *p;
+	char cSlash;
+
+#ifdef __WIN_32
+	cSlash = '\\';
+#define F_OK	(0)
+#define R_OK	(4)
+#define W_OK	(2)
+#else
+	cSlash = '/';
+#endif
 
     p = copy = strdup(path);
-    do
-    {
-        p = strchr (p + 1, '/');
+
+    while(p){
+        p = strchr (p + 1, cSlash);
         if (p)
             *p = '\0';
-        if (access (copy, F_OK) == -1)
+        if(access (copy, F_OK) == -1)
         {
             if (mkdir (copy, 0755) == -1)
             {
+				free(copy);
                 return -1;
             }
         }
         if (p)
-            *p = '/';
+            *p = cSlash;
     }
-    while (p);
+	if(copy){
+		free(copy);
+	}
     return 0;
 }
+
+#ifdef __WIN_32
+void slash_to_backslash(char *s){
+int i, l;
+	l = strlen(s);
+
+	for(i=0;i < l;i++){
+		if(s[i] == '/'){
+			s[i] = '\\';
+		}
+	}
+}
+
+char *mygetenv(const char *sVarName){
+size_t nSize;
+char *sRetVal;
+
+	getenv_s(&nSize, NULL, 0, sVarName); /* retrieve size of var value */
+
+	if(!nSize){
+		return NULL;
+	}
+
+	if(!(sRetVal = (char *) malloc(nSize * sizeof(char)))){ /* out of memory problem */
+		return NULL;
+	}
+
+	// Get the value of the environment variable.
+	if(!getenv_s(&nSize, sRetVal, nSize, sVarName)){
+		return sRetVal;
+	}
+
+	free(sRetVal);
+	return NULL;
+}
+
+/* use the following prgma to disable warnings C4996 */
+#pragma warning(disable : 4996)
+
+
+int determine_best_dir(char *tmp, const char *fname){
+char *stmp;
+
+	stmp = mygetenv("APPDATA");
+	if(!stmp){ /* APPDATA not defined - win98 ??? */
+		if(stmp = mygetenv("WINDIR")){ /* WINDIR defined ? */
+			strcpy(tmp, stmp);
+			free(stmp);
+			if((tmp[strlen(tmp)-1] != '/') && (tmp[strlen(tmp)-1] != '\\')){
+				strcat(tmp, "\\");
+			}
+			strcat(tmp, "Application Data\\Daimonin\\");
+		} else { /* WINDIR not defined, let's leave */
+			return 0;
+		}
+		if(access(tmp, W_OK) == -1){
+			return 0;
+		}
+	} else { /* APPDATA defined */
+		strcpy(tmp, stmp);
+		free(stmp);
+		if((tmp[strlen(tmp)-1] != '/') && (tmp[strlen(tmp)-1] != '\\')){
+			strcat(tmp, "\\");
+		}
+		strcat(tmp, "Daimonin\\");
+	}
+	strcat(tmp, fname);
+	
+	slash_to_backslash(tmp);
+	return 1;
+}
+
+
+#endif
 
 char *file_path(const char *fname, const char *mode)
 {
@@ -69,11 +151,21 @@ char *file_path(const char *fname, const char *mode)
     char *stmp;
     char ctmp;
 
-    sprintf(tmp, "%s/.daimonin/%s", getenv("HOME"), fname);
+	char cslash = '/';
+
+#ifdef __WIN_32
+	if(!determine_best_dir(tmp, fname)){ /* no best dir, let's use the less worst dir */
+		sprintf(tmp, "%s%s", SYSPATH, fname);
+		return tmp;
+	}
+	cslash = '\\';
+#else
+	sprintf(tmp, "%s/.daimonin/%s", getenv("HOME"), fname);
+#endif
 
     if (strchr(mode, 'w'))
     { // overwrite (always use file in home dir)
-        if ((stmp=strrchr(tmp, '/')))
+        if ((stmp=strrchr(tmp, cslash)))
         {
             ctmp = stmp[0];
             stmp[0] = 0;
@@ -90,7 +182,7 @@ char *file_path(const char *fname, const char *mode)
             int  dummy; // purely to suppress GCC's warn_unused_result warning
 
             sprintf(otmp, "%s%s", SYSPATH, fname);
-            if ((stmp=strrchr(tmp, '/')))
+            if ((stmp=strrchr(tmp, cslash)))
             {
                 ctmp = stmp[0];
                 stmp[0] = 0;
@@ -99,7 +191,11 @@ char *file_path(const char *fname, const char *mode)
             }
 
             /* Copy base file to home directory */
+#ifdef __WIN_32
+            sprintf(shtmp, "copy %s %s", otmp, tmp);
+#else
             sprintf(shtmp, "cp %s %s", otmp, tmp);
+#endif
             dummy = system(shtmp);
         }
     }
@@ -113,7 +209,6 @@ char *file_path(const char *fname, const char *mode)
 
     return tmp;
 }
-#endif
 
 FILE *fopen_wrapper(const char *fname, const char *mode)
 {
