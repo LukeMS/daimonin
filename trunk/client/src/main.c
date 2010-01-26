@@ -1626,6 +1626,8 @@ int main(int argc, char *argv[])
     Boolean         newskin = FALSE;
     uint32          speeduptick = 0;
     uint32          new_anim_tick = 0;
+    uint16          BestFPS = 0,
+                    WorstFPS = 16000;
 
 #ifdef PROFILING
     Uint32   ts;
@@ -2121,38 +2123,64 @@ int main(int argc, char *argv[])
         if (!options.sleepcounter)
             showtimer = FALSE;
 
-
-        if((GameStatus  == GAME_STATUS_PLAY) && options.statsupdate )
+        if (GameStatus == GAME_STATUS_PLAY)
         {
-            cur_widget[STATOMETER_ID].show=TRUE;
-            if ((int)(LastTick-statometer.lastupdate)>(options.statsupdate*1000))
+            if (options.statsupdate)
             {
-                statometer.lastupdate=LastTick;
-                statometer.exphour=((statometer.exp/(float)(LastTick-statometer.starttime))*3600000);
-                statometer.killhour=((statometer.kills/(float)(LastTick-statometer.starttime))*3600000);
+                cur_widget[STATOMETER_ID].show = TRUE;
+
+                if ((int)(LastTick - statometer.lastupdate) >
+                    (options.statsupdate * 1000))
+                {
+                    statometer.lastupdate = LastTick;
+                    statometer.exphour = ((statometer.exp / (float)(LastTick -
+                                          statometer.starttime)) * 3600000);
+                    statometer.killhour = ((statometer.kills / (float)(LastTick -
+                                           statometer.starttime)) * 3600000);
+                }
             }
-        }
 
-        if (options.show_frame && cpl.menustatus == MENU_NO)
-        {
-            SDL_Rect    rec;
-            sprintf(buf, "fps %d (%d) (%d %d) %s%s%s%s%s%s%s%s%s%s %d %d",
-                    ((LastTick - tmpGameTick) / FrameCount) ? 1000 / ((LastTick - tmpGameTick) / FrameCount) : 0,
-                    (LastTick - tmpGameTick) / FrameCount, GameStatus, cpl.input_mode,
-                    ScreenSurface->flags & SDL_FULLSCREEN ? "F" : "", ScreenSurface->flags & SDL_HWSURFACE ? "H" : "S",
-                    ScreenSurface->flags & SDL_HWACCEL ? "A" : "", ScreenSurface->flags & SDL_DOUBLEBUF ? "D" : "",
-                    ScreenSurface->flags & SDL_ASYNCBLIT ? "a" : "", ScreenSurface->flags & SDL_ANYFORMAT ? "f" : "",
-                    ScreenSurface->flags & SDL_HWPALETTE ? "P" : "", options.rleaccel_flag ? "R" : "",
-                    options.force_redraw ? "r" : "", options.use_rect ? "u" : "", options.used_video_bpp,
-                    options.real_video_bpp);
-            if (GameStatus == GAME_STATUS_PLAY)
+            if (options.show_frame &&
+                cpl.menustatus == MENU_NO)
             {
+                uint16   fpt = (LastTick -tmpGameTick) / FrameCount,
+                         fps = (fpt) ? 1000 / fpt : 0;
+                SDL_Rect rec;
+
+                if (fps > 0)
+                {
+                    if (fps > BestFPS)
+                    {
+                        BestFPS = fps;
+                    }
+
+                    if (fps < WorstFPS)
+                    {
+                        WorstFPS = fps;
+                    }
+                }
+
+                sprintf(buf, "fps %d (%d) [%d/%d] %s%s%s%s%s%s%s%s%s%s (%d %d) %d %d",
+                        fps, fpt, BestFPS, WorstFPS,
+                        ((ScreenSurface->flags & SDL_FULLSCREEN)) ? "F" : "",
+                        ((ScreenSurface->flags & SDL_HWSURFACE)) ? "H" : "S",
+                        ((ScreenSurface->flags & SDL_HWACCEL)) ? "A" : "",
+                        ((ScreenSurface->flags & SDL_DOUBLEBUF)) ? "D" : "",
+                        ((ScreenSurface->flags & SDL_ASYNCBLIT)) ? "a" : "",
+                        ((ScreenSurface->flags & SDL_ANYFORMAT)) ? "f" : "",
+                        ((ScreenSurface->flags & SDL_HWPALETTE)) ? "P" : "",
+                        (options.rleaccel_flag) ? "R" : "",
+                        (options.force_redraw) ? "r" : "",
+                        (options.use_rect) ? "u" : "",
+                        GameStatus, cpl.input_mode,
+                        options.used_video_bpp, options.real_video_bpp);
                 rec.x = 228;
                 rec.y = 122;
-                rec.h = 14;
-                rec.w = 225;
+                rec.h = font_small.line_height;
+                rec.w = string_width(&font_small, buf);
                 SDL_FillRect(ScreenSurface, &rec, 0);
-                string_blt(ScreenSurface, &font_small, buf, rec.x, rec.y, COLOR_DEFAULT, NULL, NULL);
+                string_blt(ScreenSurface, &font_small, buf, rec.x, rec.y,
+                           COLOR_DEFAULT, NULL, NULL);
             }
         }
 
@@ -2220,6 +2248,12 @@ int main(int argc, char *argv[])
     sound_deinit();
     free_bitmaps();
     PHYSFS_deinit();
+
+    if (options.show_frame)
+    {
+        LOG(LOG_MSG, "FPS: Best (%d), Worst (%d)\n", BestFPS, WorstFPS);
+    }
+
     SYSTEM_End();
     return(0);
 }
