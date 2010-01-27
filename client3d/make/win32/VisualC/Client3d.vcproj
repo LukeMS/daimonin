@@ -103,7 +103,7 @@
 		<Configuration
 			Name="Release|Win32"
 			OutputDirectory="..\..\..\"
-			IntermediateDirectory="..\obj\$(ConfigurationName)"
+			IntermediateDirectory=".\obj\$(ConfigurationName)"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			CharacterSet="2"
@@ -282,10 +282,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\source\resourceloader.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\source\sound.cpp"
 				>
 			</File>
@@ -456,10 +452,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\include\particle_manager.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\include\resourceloader.h"
 				>
 			</File>
 			<File

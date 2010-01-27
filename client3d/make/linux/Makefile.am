@@ -54,7 +54,6 @@ client3d_SOURCES = \
 	../../source/events_user.cpp \
 	../../source/light_manager.cpp \
 	../../source/logger.cpp \
-	../../source/resourceloader.cpp \
 	../../source/main.cpp \
 	../../source/network.cpp \
 	../../source/network_cmd.cpp \
