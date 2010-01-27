@@ -39,7 +39,6 @@
 					<Add option="-DNDEBUG" />
 				</Compiler>
 				<Linker>
-					<Add option="-s" />
 					<Add library="OgreMain" />
 					<Add library="OIS" />
 					<Add directory="..\..\..\" />
@@ -157,7 +156,6 @@
 		<Unit filename="..\..\..\include\object_visuals.h" />
 		<Unit filename="..\..\..\include\option.h" />
 		<Unit filename="..\..\..\include\particle_manager.h" />
-		<Unit filename="..\..\..\include\resourceloader.h" />
 		<Unit filename="..\..\..\include\sound.h" />
 		<Unit filename="..\..\..\include\spell_manager.h" />
 		<Unit filename="..\..\..\include\spell_range.h" />
@@ -222,7 +220,6 @@
 		<Unit filename="..\..\..\source\option.cpp" />
 		<Unit filename="..\..\..\source\option_init.cpp" />
 		<Unit filename="..\..\..\source\particle_manager.cpp" />
-		<Unit filename="..\..\..\source\resourceloader.cpp" />
 		<Unit filename="..\..\..\source\sound.cpp" />
 		<Unit filename="..\..\..\source\spell_manager.cpp" />
 		<Unit filename="..\..\..\source\spell_range.cpp" />
@@ -234,6 +231,9 @@
 			<code_completion />
 			<envvars />
 			<debugger />
+			<wxsmith version="1">
+				<gui name="wxWidgets" src="" main="" init_handlers="necessary" language="CPP" />
+			</wxsmith>
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>

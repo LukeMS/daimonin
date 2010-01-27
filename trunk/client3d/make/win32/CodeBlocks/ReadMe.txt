@@ -3,7 +3,7 @@
 ///===================================================
 
 Install the latest nightly build of Code::Blocks.
-Install MinGW C++ Toolbox (Read the wiki pages on Ogre3d).
+Install the latest MinGW.
 
 ----
 0) Copy the client3d_build_cb.tgz (from the sourceforge download page) into client3d\make\win32\CodeBlocks\
