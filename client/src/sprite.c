@@ -327,9 +327,9 @@ void string_blt(SDL_Surface *surf, _font *font, char *text, int x, int y, int co
         line_clip = area->w;
     }
 
-    real_color.r = color.r = Bitmaps[BITMAP_PALETTE]->bitmap->format->palette->colors[col].r;
-    real_color.g = color.g = Bitmaps[BITMAP_PALETTE]->bitmap->format->palette->colors[col].g;
-    real_color.b = color.b = Bitmaps[BITMAP_PALETTE]->bitmap->format->palette->colors[col].b;
+    real_color.r = color.r = Bitmaps[BITMAP_PALETTE]->bitmap->format->palette->colors[col % 0x100].r;
+    real_color.g = color.g = Bitmaps[BITMAP_PALETTE]->bitmap->format->palette->colors[col % 0x100].g;
+    real_color.b = color.b = Bitmaps[BITMAP_PALETTE]->bitmap->format->palette->colors[col % 0x100].b;
     SDL_SetPalette(font->sprite->bitmap, SDL_LOGPAL | SDL_PHYSPAL, &real_color,
                    1, 1);
 
