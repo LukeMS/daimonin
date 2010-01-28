@@ -300,7 +300,7 @@ int string_width_offset(_font *font, char *text, int *line, int len)
     return flag;
 }
 
-void string_blt(SDL_Surface *surf, _font *font, char *text, int x, int y, int col, SDL_Rect *area, _BLTFX *bltfx)
+void string_blt(SDL_Surface *surf, _font *font, char *text, int x, int y, uint8 col, SDL_Rect *area, _BLTFX *bltfx)
 {
     register int w,
                  line_clip = -1,
@@ -327,9 +327,9 @@ void string_blt(SDL_Surface *surf, _font *font, char *text, int x, int y, int co
         line_clip = area->w;
     }
 
-    real_color.r = color.r = Bitmaps[BITMAP_PALETTE]->bitmap->format->palette->colors[col % 0x100].r;
-    real_color.g = color.g = Bitmaps[BITMAP_PALETTE]->bitmap->format->palette->colors[col % 0x100].g;
-    real_color.b = color.b = Bitmaps[BITMAP_PALETTE]->bitmap->format->palette->colors[col % 0x100].b;
+    real_color.r = color.r = Bitmaps[BITMAP_PALETTE]->bitmap->format->palette->colors[col].r;
+    real_color.g = color.g = Bitmaps[BITMAP_PALETTE]->bitmap->format->palette->colors[col].g;
+    real_color.b = color.b = Bitmaps[BITMAP_PALETTE]->bitmap->format->palette->colors[col].b;
     SDL_SetPalette(font->sprite->bitmap, SDL_LOGPAL | SDL_PHYSPAL, &real_color,
                    1, 1);
 
