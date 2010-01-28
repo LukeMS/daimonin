@@ -86,7 +86,7 @@ public:
         /// and the real special one here.
         ATNR_INTERNAL,
         SUM_ATTACKS
-    }_attacks;
+    } _attacks;
 
     typedef enum rangetype
     {

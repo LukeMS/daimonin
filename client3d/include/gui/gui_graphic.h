@@ -51,7 +51,8 @@ private:
     // ////////////////////////////////////////////////////////////////////
     GuiGraphic()  {}
     ~GuiGraphic() {}
-    GuiGraphic(const GuiGraphic&); // disable copy-constructor.
+    GuiGraphic(const GuiGraphic&);            /**< disable copy-constructor. **/
+    GuiGraphic &operator=(const GuiGraphic&); /**< disable assignment operator. **/
 };
 
 #endif

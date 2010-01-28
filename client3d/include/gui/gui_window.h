@@ -24,8 +24,8 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #ifndef GUI_WINDOW_H
 #define GUI_WINDOW_H
 
-#include <vector>
-#include <Ogre.h>
+#include <OgreOverlay.h>
+#include <OgreTexture.h>
 #include <tinyxml.h>
 
 /**
@@ -43,7 +43,6 @@ public:
     {
         mOverlay = 0;
     }
-    void loadResources();
     void freeRecources();
     bool isVisible()
     {
@@ -54,12 +53,30 @@ public:
     void update(Ogre::Real timeSinceLastFrame);
     const int keyEvent(const int keyChar, const unsigned int key);
     const int mouseEvent(const int mouseAction, Ogre::Vector3 &mouse);
-    const int getID() const              { return mWindowNr; }
-    const int getSumElements() const     { return (int)mvElement.size(); }
-    const Ogre::uint16 getWidth() const  { return mWidth; }
-    const Ogre::uint16 getHeight() const { return mHeight; }
-    Ogre::uint32  *getLayerBG() const { return mWinLayerBG; }
-    Ogre::Texture *getTexture() const { return mTexture.getPointer(); }
+    const int getID() const
+    {
+        return mWindowNr;
+    }
+    const int getSumElements() const
+    {
+        return (int)mvElement.size();
+    }
+    const Ogre::uint16 getWidth() const
+    {
+        return mWidth;
+    }
+    const Ogre::uint16 getHeight() const
+    {
+        return mHeight;
+    }
+    Ogre::uint32  *getLayerBG() const
+    {
+        return mWinLayerBG;
+    }
+    Ogre::Texture *getTexture() const
+    {
+        return mTexture.getPointer();
+    }
     const Ogre::uchar getZPos() const
     {
         return mOverlay?mOverlay->getZOrder():0;
@@ -102,7 +119,6 @@ private:
     int mLastMouseOverElement;  /**< The last element the mouse was over.  -1 for none. **/
     bool mLockSlots;            /**< Lock all slots, so no item can accidental be removed. **/
     short mPosX, mPosY;         /**< The position of the window within the screen. **/
-    Ogre::String mResourceName; /**< The unique name for all ogre resources (e.g. texture) used in this window. **/
     std::vector<class GuiElement*>mvElement;
     Ogre::uint16 mWidth, mHeight;
     Ogre::Overlay *mOverlay;
@@ -110,6 +126,11 @@ private:
     Ogre::TexturePtr mTexture;
     Ogre::uint32 *mWinLayerBG;  /**< Backup of the window texture to restore the background after a dynamic
                                      element has changed (e.g. button that changed to invisible) */
+    // ////////////////////////////////////////////////////////////////////
+    // Functions.
+    // ////////////////////////////////////////////////////////////////////
+    GuiWindow(const GuiWindow&);            /**< disable copy-constructor. **/
+    GuiWindow &operator=(const GuiWindow&); /**< disable assignment operator. **/
 };
 
 #endif

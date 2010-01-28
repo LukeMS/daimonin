@@ -28,23 +28,28 @@ Option::optionStruct Option::optStruct[SEPARATOR] =
     // ////////////////////////////////////////////////////////////////////
     // Sound settings.
     // ////////////////////////////////////////////////////////////////////
-    { SEL_INT_RANGE, "Sound volume:", "set sound volume for effects.","", "",
+    {
+        SEL_INT_RANGE, "Sound volume:", "set sound volume for effects.","", "",
         "_", 100, 0,100,5, false
     },
-    { SEL_INT_RANGE,"Music volume:", "set music volume for background.","Sub info","",
-      "_", 100, 0,100,5, false
+    {
+        SEL_INT_RANGE,"Music volume:", "set music volume for background.","Sub info","",
+        "_", 100, 0,100,5, false
     },
-    { SEL_INT_RANGE,"Voice volume:", "set voice volume.","Sub info","",
-      "_", 100, 0,100,5, true
+    {
+        SEL_INT_RANGE,"Voice volume:", "set voice volume.","Sub info","",
+        "_", 100, 0,100,5, true
     },
     // ////////////////////////////////////////////////////////////////////
     // Server settings.
     // ////////////////////////////////////////////////////////////////////
-    { SEL_TXT_RANGE,"MetaServer:", "gdfhdfhdfh.","Sub info","",
-      "damn.informatik.uni-bremen.de", 0, 0,100,5, false
+    {
+        SEL_TXT_RANGE,"MetaServer:", "gdfhdfhdfh.","Sub info","",
+        "damn.informatik.uni-bremen.de", 0, 0,100,5, false
     },
-    { SEL_INT_RANGE,"Metaserver port:", "","","",
-      "_", 13326, 0,100,5, true
+    {
+        SEL_INT_RANGE,"Metaserver port:", "","","",
+        "_", 13326, 0,100,5, true
     },
 };
 

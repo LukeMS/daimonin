@@ -27,7 +27,8 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include <OgreVector3.h>
 
 /**
- ** TileEngine class which handles the tiles in a chunk.
+ ** TileEngine class which handles the drawing of all tiles in a chunk.
+ ** This includes the tile itself, the water and the undergrowth.
  *****************************************************************************/
 class TileChunk
 {
@@ -48,7 +49,7 @@ public:
     {
         updateLand();
         updateWater();
-        updateSprites();
+        updateUndergrowth();
     }
     /** Set the shader parameters for the waves on the water.
      ** @param alpha     The alpha value for the water.
@@ -70,11 +71,11 @@ private:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
-    bool mGrid;
-    bool mOption_DrawSprites;
+    bool mGrid;         /**< Draw a grid over the tiles. **/
+    bool mUndergrowth;  /**< Draw the Undergrowth. **/
     unsigned int mCameraRotation;
-    Ogre::SubMesh *mSubMeshLand, *mSubMeshWater, *mSubMeshSprites;
-    Ogre::Entity *mEntitySprites;
+    Ogre::SubMesh *mSubMeshLand, *mSubMeshWater, *mSubMeshGrassFar, *mSubMeshGrassNear;
+    Ogre::Entity *mEntityGrassFar, *mEntityGrassNear;
     Ogre::Vector3 mWaveParam;
     Ogre::Real mDaylight;
     Ogre::Real *mPosVBuf;
@@ -86,7 +87,7 @@ private:
     TileChunk &operator=(const TileChunk&); /**< disable assignment operator. **/
     void updateLand();
     void updateWater();
-    void updateSprites();
+    void updateUndergrowth();
     void setVertex(Ogre::Vector3 &pos, int maskNr, Ogre::Real offsetU, Ogre::Real offsetV, Ogre::Vector4 &params);
     void setTriangle(int x, int z, Ogre::Vector3 v1, Ogre::Vector3 v2, Ogre::Vector3 v3, int maskNr);
     int  getMask(int gfxVertex0, int gfxVertex1, int gfxVertex2);

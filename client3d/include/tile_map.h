@@ -103,7 +103,8 @@ private:
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
     typedef struct
-    {   // we need this to parse the map and sort the multi tile monsters
+    {
+        // we need this to parse the map and sort the multi tile monsters
         int face;
         int x,y;
         struct _map_object_parse *next;

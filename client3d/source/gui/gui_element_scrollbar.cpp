@@ -21,6 +21,7 @@ You should have received a copy of the GNU General Public License along with
 this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
 
+#include <OgreHardwarePixelBuffer.h>
 #include "logger.h"
 #include "gui_element_scrollbar.h"
 
@@ -118,8 +119,7 @@ bool GuiElementScrollbar::mouseOverSlider(int x, int y)
 {
     if (mHorizontal)
         return false;
-    else
-        return !(x < mStartX || x > mStopX || y < mStartY + mSliderPos || y > mStartY + mSliderPos + mSliderSize);
+    return !(x < mStartX || x > mStopX || y < mStartY + mSliderPos || y > mStartY + mSliderPos + mSliderSize);
 }
 
 //================================================================================================
@@ -166,7 +166,7 @@ int GuiElementScrollbar::mouseEvent(const int mouseAction, int mouseX, int mouse
                 mLastScrollAmount = -1;
                 return ret;
             }
-         }
+        }
         if (mButScrollDown)
         {
             int ret = mButScrollDown->mouseEvent(mouseAction, mouseX, mouseY, mouseWheel);

@@ -164,6 +164,44 @@ material Terrain/Sprite
     }
 }
 
+//================================================================================================
+// Sprite: Material.
+//================================================================================================
+material Terrain/GrassNear
+{
+    technique
+    {
+        pass
+        {
+            cull_hardware none
+            cull_software none
+            alpha_rejection greater_equal 128
+            texture_unit
+            {
+                texture grass.png
+            }
+        }
+    }
+}
+
+
+material Terrain/test
+{
+    technique
+    {
+        pass
+        {
+            depth_write off
+            depth_check off
+            lighting off
+            alpha_rejection greater_equal 128
+            texture_unit
+            {
+                texture grass.png
+            }
+        }
+    }
+}
 
 //================================================================================================
 // Vertexselection: Vertex Program (Lod 0).

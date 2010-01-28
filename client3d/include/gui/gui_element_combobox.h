@@ -74,6 +74,9 @@ private:
     bool mDDButton;
     std::vector<Ogre::String> mvOption;
     std::vector<int> mvValue;
+
+    GuiElementCombobox(const GuiElementCombobox&);            /**< disable copy-constructor. **/
+    GuiElementCombobox &operator=(const GuiElementCombobox&); /**< disable assignment operator. **/
 };
 
 #endif

@@ -21,6 +21,7 @@ You should have received a copy of the GNU General Public License along with
 this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
 
+#include <OgreHardwarePixelBuffer.h>
 #include "gui_textout.h"
 #include "gui_element_button.h"
 

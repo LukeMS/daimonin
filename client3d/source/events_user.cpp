@@ -21,6 +21,12 @@ You should have received a copy of the GNU General Public License along with
 this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
 
+#include <OgreCamera.h>
+#include <OgreMeshManager.h>
+#include <OgreRenderWindow.h>
+#include <OgreSceneManager.h>
+#include <OgreTextureManager.h>
+#include <OgreStringConverter.h>
 #include "logger.h"
 #include "option.h"
 #include "item.h"
@@ -483,24 +489,24 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
             TileManager::getSingleton().setMap(x+2,  y+1, 0, 6, 40);
 
             // x,  z    h, gfx, h, shadow, hard edge, spot
-/*
-            TileManager::getSingleton().setMap(2, 17, 60, 1, 0, 255, 0, true);
-            TileManager::getSingleton().setMap(4, 17, 60, 1, 0, 255, 0, true);
-            TileManager::getSingleton().setMap(6, 17, 60, 1, 0, 255, 0, true);
+            /*
+                        TileManager::getSingleton().setMap(2, 17, 60, 1, 0, 255, 0, true);
+                        TileManager::getSingleton().setMap(4, 17, 60, 1, 0, 255, 0, true);
+                        TileManager::getSingleton().setMap(6, 17, 60, 1, 0, 255, 0, true);
 
-            TileManager::getSingleton().setMap(2, 19, 60, 1, 0, 255, 0, true);
-            TileManager::getSingleton().setMap(4, 19, 60, 1, 0, 255, 0, true);
-            TileManager::getSingleton().setMap(7, 19, 60, 1, 0, 255, 0, true);
+                        TileManager::getSingleton().setMap(2, 19, 60, 1, 0, 255, 0, true);
+                        TileManager::getSingleton().setMap(4, 19, 60, 1, 0, 255, 0, true);
+                        TileManager::getSingleton().setMap(7, 19, 60, 1, 0, 255, 0, true);
 
-            TileManager::getSingleton().setMap(1, 1, 60, 1, 0, 255, 0, true);
-            TileManager::getSingleton().setMap(2, 2, 60, 1, 0, 255, 0, true);
-            TileManager::getSingleton().setMap(1, 3, 60, 1, 0, 255, 0, true);
-*/
-/*
-            TileManager::getSingleton().setMap(3, 19, 60, 1, 0, 0, 0, true);
-            TileManager::getSingleton().setMap(5, 19, 60, 1, 0, 0, 0, true);
-            TileManager::getSingleton().setMap(7, 19, 60, 1, 0, 0, 0, true);
-*/
+                        TileManager::getSingleton().setMap(1, 1, 60, 1, 0, 255, 0, true);
+                        TileManager::getSingleton().setMap(2, 2, 60, 1, 0, 255, 0, true);
+                        TileManager::getSingleton().setMap(1, 3, 60, 1, 0, 255, 0, true);
+            */
+            /*
+                        TileManager::getSingleton().setMap(3, 19, 60, 1, 0, 0, 0, true);
+                        TileManager::getSingleton().setMap(5, 19, 60, 1, 0, 0, 0, true);
+                        TileManager::getSingleton().setMap(7, 19, 60, 1, 0, 0, 0, true);
+            */
             //TileManager::getSingleton().setMap(18,  9,  60,   2, 0, 0,      0, true);
 
             TileManager::getSingleton().setMap(2, 19, 60, 1, 0, 255, 0, true);

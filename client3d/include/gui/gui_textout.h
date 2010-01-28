@@ -65,19 +65,20 @@ public:
     // ////////////////////////////////////////////////////////////////////
     static GuiTextout &getSingleton()
     {
-        static GuiTextout Singleton; return Singleton;
+        static GuiTextout Singleton;
+        return Singleton;
     }
     /** Loads an internal raw format font.
      ** @param filename The filename of the font.
      *****************************************************************************/
-     void loadRawFont(const char *filename);
+    void loadRawFont(const char *filename);
 
-     /** Loads a TTFont and converts it to the internal format.
-      ** @param filename      The filename of the font.
-      ** @param size          The point size of the font.
-      ** @param resolution    The resolution (dpi) of the font.
-      ** @param createRawFont Save the font as internal raw format font.
-      *****************************************************************************/
+    /** Loads a TTFont and converts it to the internal format.
+     ** @param filename      The filename of the font.
+     ** @param size          The point size of the font.
+     ** @param resolution    The resolution (dpi) of the font.
+     ** @param createRawFont Save the font as internal raw format font.
+     *****************************************************************************/
     void loadTTFont (const char *filename, const char *size, const char *resolution, bool createRawFont);
 
     /** Replace the key-code of user defined chars by their "ascii"-code in a given text.
@@ -206,8 +207,8 @@ private:
     // ////////////////////////////////////////////////////////////////////
     GuiTextout();
     ~GuiTextout();
-    /// Disable copy-constructor.
-    GuiTextout(const GuiTextout&);
+    GuiTextout(const GuiTextout&);            /**< disable copy-constructor. **/
+    GuiTextout &operator=(const GuiTextout&); /**< disable assignment operator. **/
 
     /** Returns the pixel width of a char within a font.
      ** @param fontNr The number of the font.

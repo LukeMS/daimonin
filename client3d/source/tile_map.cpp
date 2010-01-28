@@ -190,9 +190,7 @@ void TileMap::set_map_face(int x, int y, int layer, int face, int pos, int ext, 
     if (layer == LAYER_TILES)
     {
         const char *strTile = ObjectWrapper::getSingleton().getMeshName(face & ~0x8000);
-
         //Logger::log().info() << x << " " << y << " " << (uchar)(strTile[ 8]-'0') << " " << (uchar)(strTile[10]-'0');
-
         // Undefined tile.
         if (!strTile || !strTile[0])
         {
@@ -208,7 +206,7 @@ void TileMap::set_map_face(int x, int y, int layer, int face, int pos, int ext, 
                                                gfx   , // Gfx
                                                20    , // Water lvl
                                                shadow // Shadow
-                                               );
+                                              );
             //Logger::log().error() << "Tile face: " << face << " pos: " << x << ", " << y << "  " << strTile << " height: " << ((uchar)strTile[ 8]-'0')*10;
         }
         mNeedsRedraw = true;
@@ -431,7 +429,6 @@ void TileMap::scroll(int dx, int dy)
 {
     if (dx || dy) mNeedsRedraw = true;
 }
-
 
 //================================================================================================
 // .

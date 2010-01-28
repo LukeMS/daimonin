@@ -69,15 +69,15 @@ public:
     };
     typedef struct sItem
     {
-bool magical    :1;          /**< Item is magical   **/
-bool cursed     :1;          /**< Item is cursed    **/
-bool damned     :1;          /**< Item is damned    **/
-bool unpaid     :1;          /**< Item is unpaid    **/
-bool locked     :1;          /**< Item is locked    **/
-bool traped     :1;          /**< Item is traped    **/
-bool applied    :1;          /**< Item is applied   **/
-bool open       :1;          /**< Container is open **/
-bool inv_updated:1;          /**< Container was updated **/
+        bool magical    :1;          /**< Item is magical   **/
+        bool cursed     :1;          /**< Item is cursed    **/
+        bool damned     :1;          /**< Item is damned    **/
+        bool unpaid     :1;          /**< Item is unpaid    **/
+        bool locked     :1;          /**< Item is locked    **/
+        bool traped     :1;          /**< Item is traped    **/
+        bool applied    :1;          /**< Item is applied   **/
+        bool open       :1;          /**< Container is open **/
+        bool inv_updated:1;          /**< Container was updated **/
         Ogre::String d_name;         /**< Item's full name w/o status information **/
         Ogre::String s_name;         /**< Item's singular name as sent to us **/
         Ogre::String p_name;         /**< Item's plural name as sent to us **/

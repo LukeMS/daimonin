@@ -71,6 +71,8 @@ private:
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
+    GuiListbox(const GuiListbox&);            /**< disable copy-constructor. **/
+    GuiListbox &operator=(const GuiListbox&); /**< disable assignment operator. **/
     int  addText(const char *text, Ogre::uint32 color);
     int  addItem(const int itemId, Ogre::uint32 color);
     void scrollTextVertical(int offset);

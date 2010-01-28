@@ -47,7 +47,8 @@ public:
     // ////////////////////////////////////////////////////////////////////
     static GuiTextinput &getSingleton()
     {
-        static GuiTextinput singleton; return singleton;
+        static GuiTextinput singleton;
+        return singleton;
     }
     void addString(const Ogre::String &addString)
     {
@@ -267,7 +268,8 @@ private:
     // ////////////////////////////////////////////////////////////////////
     GuiTextinput()  {}
     ~GuiTextinput() {}
-    GuiTextinput(const GuiTextinput&);
+    GuiTextinput(const GuiTextinput&);            /**< disable copy-constructor. **/
+    GuiTextinput &operator=(const GuiTextinput&); /**< disable assignment operator. **/
 };
 
 #endif

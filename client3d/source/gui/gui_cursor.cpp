@@ -21,12 +21,18 @@ You should have received a copy of the GNU General Public License along with
 this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
 
+#include <OgreTechnique.h>
+#include <OgreTextureManager.h>
+#include <OgreMaterialManager.h>
+#include <OgreStringConverter.h>
+#include <OgreOverlayManager.h>
+#include <OgreHardwarePixelBuffer.h>
 #include "gui_cursor.h"
 
 using namespace Ogre;
 
-const int MIN_CURSOR_SIZE =  4;
-const int MAX_CURSOR_SIZE = 64;
+const int MIN_CURSOR_SIZE = 1 << 4;
+const int MAX_CURSOR_SIZE = 1 << 7;
 
 //================================================================================================
 // Create an overlay for the mouse-cursor.
@@ -34,32 +40,20 @@ const int MAX_CURSOR_SIZE = 64;
 void GuiCursor::Init(const char *resourceName)
 {
     GuiImageset::gfxSrcMouse *srcEntry = GuiImageset::getSingleton().getStateGfxPosMouse();
-    mResourceName = resourceName;
-    mState = GuiManager::STATE_MOUSE_DEFAULT;
     mWidth = srcEntry->w;
-    mHeight= srcEntry->h;
-    if      (mWidth < MIN_CURSOR_SIZE) mWidth = MIN_CURSOR_SIZE;
-    else if (mWidth > MAX_CURSOR_SIZE) mWidth = MAX_CURSOR_SIZE;
-    if      (mHeight< MIN_CURSOR_SIZE) mHeight= MIN_CURSOR_SIZE;
-    else if (mHeight> MAX_CURSOR_SIZE) mHeight= MAX_CURSOR_SIZE;
-    String strTexture = resourceName; strTexture+= GuiManager::TEXTURE_RESOURCE_NAME;
-    mTexture = TextureManager::getSingleton().createManual(strTexture, ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
-               TEX_TYPE_2D, mWidth, mHeight, 0, PF_A8R8G8B8, TU_STATIC_WRITE_ONLY,
-               GuiManager::getSingleton().getLoader());
-    mTexture->load();
+    mHeight = srcEntry->h;
+    String resName = resourceName;
+    mState = GuiManager::STATE_MOUSE_DEFAULT;
+    int textureSize = MIN_CURSOR_SIZE;
+    int psize = (mWidth > mHeight)?mWidth:mHeight;
+    while (textureSize < psize && textureSize < MAX_CURSOR_SIZE) textureSize <<= 1; // Make the size a power of 2.
+    String strTexture = StringConverter::toString(textureSize) + "_" + resName + GuiManager::TEXTURE_RESOURCE_NAME;
+    Overlay *overlay;
+    mTexture = GuiManager::getSingleton().createTexture(strTexture);
+    mElement = GuiManager::getSingleton().createOverlay(resName, strTexture, overlay);
     mElement->setPosition(0, 0);
-}
-
-//================================================================================================
-// (Re)loads the material and texture or creates them if they dont exist.
-//================================================================================================
-void GuiCursor::loadResources()
-{
-    Overlay *overlay = GuiManager::getSingleton().loadResources(mWidth, mHeight, mResourceName);
     overlay->setZOrder(GuiManager::MAX_OVERLAY_ZPOS);
     overlay->show();
-    mElement = overlay->getChild(mResourceName + GuiManager::ELEMENT_RESOURCE_NAME);
-    draw();
 }
 
 //================================================================================================
@@ -87,9 +81,9 @@ void GuiCursor::draw()
 {
     GuiImageset::gfxSrcMouse *gfxSrcPos = GuiImageset::getSingleton().getStateGfxPosMouse();
     mTexture->getBuffer()->blitFromMemory(GuiImageset::getSingleton().getPixelBox().getSubVolume(
-                                              Box(gfxSrcPos->state[mState].x,
-                                                  gfxSrcPos->state[mState].y,
-                                                  gfxSrcPos->state[mState].x + mWidth,
-                                                  gfxSrcPos->state[mState].y + mHeight)),
+            Box(gfxSrcPos->state[mState].x,
+                gfxSrcPos->state[mState].y,
+                gfxSrcPos->state[mState].x + mWidth,
+                gfxSrcPos->state[mState].y + mHeight)),
                                           Box(0, 0, mWidth, mHeight));
 }

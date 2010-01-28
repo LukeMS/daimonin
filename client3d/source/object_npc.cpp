@@ -21,6 +21,9 @@ You should have received a copy of the GNU General Public License along with
 this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
 
+#include <OgreSubEntity.h>
+#include <OgreSceneManager.h>
+#include <OgreManualObject.h>
 #include "object_npc.h"
 #include "sound.h"
 #include "option.h"

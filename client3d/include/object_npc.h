@@ -133,7 +133,7 @@ private:
         TURN_NONE,
         TURN_RIGHT,
         TURN_LEFT
-    }mAutoTurning;
+    } mAutoTurning;
     enum
     {
         READY_WEAPON_PRIMARY_READY  = 1 << 0, /**< Primary weapom IS in hand. **/

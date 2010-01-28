@@ -21,6 +21,7 @@ You should have received a copy of the GNU General Public License along with
 this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
 
+#include <OgreHardwarePixelBuffer.h>
 #include "logger.h"
 #include "gui_graphic.h"
 #include "gui_element.h"
@@ -102,7 +103,8 @@ GuiElement::GuiElement(TiXmlElement *xmlElem, const void *parent)
     // ////////////////////////////////////////////////////////////////////
     // Parse the position.
     // ////////////////////////////////////////////////////////////////////
-    mPosX = 0; mPosY = 0;
+    mPosX = 0;
+    mPosY = 0;
     if ((xmlElement = xmlElem->FirstChildElement("Pos")))
     {
         if ((tmp = xmlElement->Attribute("x"))) mPosX = atoi(tmp);

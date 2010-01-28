@@ -75,6 +75,8 @@ private:
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
+    GuiTable(const GuiTable&);            /**< disable copy-constructor. **/
+    GuiTable &operator=(const GuiTable&); /**< disable assignment operator. **/
     inline int getUserBreak();
     inline int getSelectedRow();
     inline int getActivatedRow();

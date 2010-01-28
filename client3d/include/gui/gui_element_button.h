@@ -60,6 +60,8 @@ private:
         mLabelString = newText;
         draw();
     }
+    GuiElementButton(const GuiElementButton&);            /**< disable copy-constructor. **/
+    GuiElementButton &operator=(const GuiElementButton&); /**< disable assignment operator. **/
 };
 
 #endif

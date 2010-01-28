@@ -24,6 +24,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #ifndef GUI_CURSOR_H
 #define GUI_CURSOR_H
 
+#include <OgreOverlayElement.h>
 #include "gui_imageset.h"
 
 /**
@@ -44,6 +45,8 @@ public:
         mElement->setPosition(x, y);
     }
 
+    void draw(); /**< Draws the mouse-cursor into its texture. **/
+
     /** Set the state of the mouse cursor.
      ** @param state The state is the look of the mouse cursor.
      *****************************************************************************/
@@ -54,15 +57,13 @@ public:
      *****************************************************************************/
     void Init(const char *resourceName);
 
-    /// (Re)load all Ogre resources.
-    void loadResources();
-
     /// Free all Ogre resources. Must be called before the destructor.
     void freeRecources();
 
     static GuiCursor &getSingleton()
     {
-        static GuiCursor Singleton; return Singleton;
+        static GuiCursor Singleton;
+        return Singleton;
     }
 
 private:
@@ -73,17 +74,14 @@ private:
     Ogre::uint16 mWidth, mHeight;
     Ogre::OverlayElement *mElement;
     Ogre::TexturePtr mTexture;
-    Ogre::String mResourceName;
     GuiImageset::gfxSrcMouse gfxSrcPos;
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
     GuiCursor()  {}
     ~GuiCursor() {}
-    /// Disable copy-constructor.
-    GuiCursor(const GuiCursor&);
-    /// Draws the mouse-cursor into its texture.
-    void draw();
+    GuiCursor(const GuiCursor&);            /**< disable copy-constructor. **/
+    GuiCursor &operator=(const GuiCursor&); /**< disable assignment operator. **/
 };
 
 #endif

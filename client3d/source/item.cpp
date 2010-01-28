@@ -22,6 +22,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
 
 #include <OgreMath.h>  // Without it VC reports an error in OgreMath.h.
+#include <OgreStringConverter.h>
 #include "define.h"
 #include "item.h"
 #include "logger.h"
@@ -89,7 +90,8 @@ void Item::ItemXYCmd(uchar *data, int len, bool bflag)
     if (mode == MODE_TOGGLE_OPEN)
     {
         if (container == CONTAINER_UNKNOWN)
-        {   // Close container.
+        {
+            // Close container.
             clearContainer(mActItemID[ITEMLIST_CONTAINER]);
             mActItemID[ITEMLIST_CONTAINER] = CONTAINER_UNKNOWN;
             return;

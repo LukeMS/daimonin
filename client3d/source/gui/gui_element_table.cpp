@@ -21,6 +21,9 @@ You should have received a copy of the GNU General Public License along with
 this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
 
+#include <OgreRoot.h>
+#include <OgreTimer.h>
+#include <OgreHardwarePixelBuffer.h>
 #include <OISKeyboard.h>
 #include "logger.h"
 #include "gui_textout.h"
