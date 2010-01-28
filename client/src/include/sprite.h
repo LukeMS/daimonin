@@ -145,7 +145,7 @@ extern void             sprite_blt_map(_Sprite *sprite, int x, int y, SDL_Rect *
 extern Uint32           GetSurfacePixel(SDL_Surface *Surface, Sint32 X, Sint32 Y);
 extern int              string_width(_font *font, char *text);
 extern int              string_width_offset(_font *font, char *text, int *line, int len);
-extern void             string_blt(SDL_Surface *surf, _font *font, char *text, int x, int y, int col, SDL_Rect *area,
+extern void             string_blt(SDL_Surface *surf, _font *font, char *text, int x, int y, uint8 col, SDL_Rect *area,
                                       _BLTFX *bltfx);
 extern int              sprite_collision(int x1, int y1, int x2, int y2, _Sprite *sprite1, _Sprite *sprite2);
 extern Uint32           getpixel(SDL_Surface *surface, int x, int y);
