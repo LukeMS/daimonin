@@ -21,8 +21,12 @@ You should have received a copy of the GNU General Public License along with
 this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
 
-#include <Ogre.h>
+#include <OgreTechnique.h>
 #include <OgreFontManager.h>
+#include <OgreTextureManager.h>
+#include <OgreMaterialManager.h>
+#include <OgreStringConverter.h>
+#include <OgreHardwarePixelBuffer.h>
 #include "logger.h"
 #include "gui_textout.h"
 #include "gui_graphic.h"
@@ -241,7 +245,7 @@ void GuiTextout::loadTTFont(const char *filename, const char *size, const char *
         //if (mvSpecialChar[j]->h > fnt->height) fnt->height = mvSpecialChar[j]->h;
         ++j;
     }
-    for (;i < CHARS_IN_FONT; ++i)
+    for (; i < CHARS_IN_FONT; ++i)
     {
         fnt->charStart[i] = fnt->charStart[i-1] + fnt->charWidth[i-1];
         fnt->charWidth[i] = 2;
@@ -369,7 +373,7 @@ void GuiTextout::parseUserDefinedChars(String &txt)
 {
     size_t found;
     char replacement[] = {(char)(STANDARD_CHARS_IN_FONT+32),0};
-    for (unsigned int i=0; i < mvSpecialChar.size();++i)
+    for (unsigned int i=0; i < mvSpecialChar.size(); ++i)
     {
         while ((found = txt.find(mvSpecialChar[i]->strGfxCode))!= String::npos)
             txt.replace(found, mvSpecialChar[i]->strGfxCode.size(), replacement);

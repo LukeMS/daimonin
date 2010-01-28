@@ -21,6 +21,13 @@ You should have received a copy of the GNU General Public License along with
 this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
 
+#include <OgreRoot.h>
+#include <OgreRenderWindow.h>
+#include <OgreSceneManager.h>
+#include <OgreOverlayElement.h>
+#include <OgreOverlayManager.h>
+#include <OgreStringConverter.h>
+#include <OgreOverlayContainer.h>
 #include "define.h"
 #include "events.h"
 #include "sound.h"
@@ -192,28 +199,28 @@ bool Events::frameStarted(const FrameEvent& evt)
             //////////////////////////////////////////////////////////////////////////////////////////////////////////
             //////////////////////// TESTING (Create the alpha values for a NPC texture) /////////////////////////////
             //////////////////////////////////////////////////////////////////////////////////////////////////////////
-/*
-            Image img1, img2;
-            img1.load("Smitty_DATA.png", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
-            img2.load("Smitty_MASK.png", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
-            uchar *src = img1.getData();
-            uchar *dst = img2.getData();
-            for (size_t i = 0; i < img1.getWidth() * img1.getHeight(); ++i)
-            {
-                src+= 3;
-                *src++ = *dst++;
-                dst+= 3;
-            }
-            img1.save("c:/Smitty.png");
-            //
-            static SceneNode *mNode = mSceneManager->getRootSceneNode()->createChildSceneNode();
-            mNode->attachObject(mSceneManager->createEntity("Entity_Smitty", "Smitty.mesh"));
-            mNode->setPosition(830, 80, 1200);
-            mNode->scale(2, 2, 2);
-            //////////////////////////////////////////////////////////////////////////////////////////////////////////
-            //////////////////////////////////////////////////////////////////////////////////////////////////////////
-            //////////////////////////////////////////////////////////////////////////////////////////////////////////
-*/
+            /*
+                        Image img1, img2;
+                        img1.load("Smitty_DATA.png", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+                        img2.load("Smitty_MASK.png", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+                        uchar *src = img1.getData();
+                        uchar *dst = img2.getData();
+                        for (size_t i = 0; i < img1.getWidth() * img1.getHeight(); ++i)
+                        {
+                            src+= 3;
+                            *src++ = *dst++;
+                            dst+= 3;
+                        }
+                        img1.save("c:/Smitty.png");
+                        //
+                        static SceneNode *mNode = mSceneManager->getRootSceneNode()->createChildSceneNode();
+                        mNode->attachObject(mSceneManager->createEntity("Entity_Smitty", "Smitty.mesh"));
+                        mNode->setPosition(830, 80, 1200);
+                        mNode->scale(2, 2, 2);
+                        //////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        //////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        //////////////////////////////////////////////////////////////////////////////////////////////////////////
+            */
             // ////////////////////////////////////////////////////////////////////
             // Init the sound and play the background music.
             // ////////////////////////////////////////////////////////////////////
@@ -563,7 +570,7 @@ bool Events::frameStarted(const FrameEvent& evt)
                 ObjectManager::getSingleton().init();
                 ObjectVisuals::getSingleton().Init();
                 GuiManager::getSingleton().showWindow(GuiManager::WIN_STATISTICS, true);
-                GuiManager::getSingleton().showWindow(GuiManager::WIN_PLAYERINFO, true);
+                GuiManager::getSingleton().showWindow(GuiManager::WIN_PLAYERINFO, false);
                 mWindow->resetStatistics();
                 GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Client3d commands:");
                 GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Press ~1 ... 8~ to change cloth.");

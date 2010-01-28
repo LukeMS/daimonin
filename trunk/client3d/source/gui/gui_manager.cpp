@@ -21,6 +21,14 @@ You should have received a copy of the GNU General Public License along with
 this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
 
+#include <OgreRoot.h>
+#include <OgreTimer.h>
+#include <OgreTechnique.h>
+#include <OgreTextureManager.h>
+#include <OgreOverlayManager.h>
+#include <OgreMaterialManager.h>
+#include <OgreOverlayContainer.h>
+#include <OgreHardwarePixelBuffer.h>
 #include <OISKeyboard.h>
 #include "logger.h"
 #include "gui_manager.h"
@@ -30,19 +38,11 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 
 using namespace Ogre;
 
-class GuiManager::ResourceLoader GuiManager::mLoader;
 Overlay        *GuiManager::mOverlay = 0;
 OverlayElement *GuiManager::mElement = 0;
-bool GuiManager::mPrintInfo = false;
 
 const int   GuiManager::SUM_WIN_DIGITS = (int)log10((float)GuiManager::WIN_SUM) +1;
-const char *GuiManager::GUI_MATERIAL_NAME       = "GUI/Window";
-const char *GuiManager::OVERLAY_ELEMENT_TYPE    = "Panel"; // defined in Ogre::OverlayElementFactory.h
-const char *GuiManager::OVERLAY_RESOURCE_NAME   = "_Overlay";
-const char *GuiManager::ELEMENT_RESOURCE_NAME   = "_OverlayElement";
 const char *GuiManager::TEXTURE_RESOURCE_NAME   = "_Texture";
-const char *GuiManager::MATERIAL_RESOURCE_NAME  = "_Material";
-
 const char *GuiManager::FILE_TXT_WINDOWS  = "GUI_Windows.xml";
 const char *GuiManager::FILE_TXT_IMAGESET = "GUI_ImageSet.xml";
 const char *GuiManager::FILE_ITEM_ATLAS   = "Atlas_Gui_Items.png";
@@ -63,10 +63,9 @@ const int TOOLTIP_SIZE = 1 << 8;
 const unsigned long TOOLTIP_DELAY = 2000; // Wait x ms before showing the tooltip.
 const uint32 BORDER_COLOR = 0xff888888;
 const uint32 BACKGR_COLOR = 0xff444488;
-const char *RESOURCE_MCURSOR = "GUI_MCursor";
-const char *RESOURCE_TOOLTIP = "GUI_Tooltip";
-const char *RESOURCE_WINDOW  = "GUI_Window";
-const char *RESOURCE_TEMP    = "GUI_Temp";
+const char *RESOURCE_MCURSOR = "GUI-MCursor";
+const char *RESOURCE_TOOLTIP = "GUI-Tooltip";
+const char *RESOURCE_WINDOW  = "GUI-Window";
 const char *TOOLTIP_LINEBREAK_SIGN = "#";
 
 GuiManager::WindowID GuiManager::mWindowID[WIN_SUM]=
@@ -267,20 +266,112 @@ void GuiManager::Init(int w, int h, bool createMedia, bool printInfo, const char
     mPathDescription   = pathTxt;
     mPathTexturesFonts = pathFonts;
     mPathTexturesItems = pathItems;
-    String strTexture = RESOURCE_TOOLTIP; strTexture+= TEXTURE_RESOURCE_NAME;
-    mTexture = TextureManager::getSingleton().createManual(strTexture, ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
-               TEX_TYPE_2D, TOOLTIP_SIZE, TOOLTIP_SIZE, 0, PF_A8R8G8B8, TU_STATIC_WRITE_ONLY, getLoader());
-    mTexture->load();
-    resizeBuildBuffer(TOOLTIP_SIZE*TOOLTIP_SIZE);
+    // ////////////////////////////////////////////////////////////////////
+    // Create the tooltip (texure/overlay/material).
+    // ////////////////////////////////////////////////////////////////////
+    String strTexture = StringConverter::toString(TOOLTIP_SIZE)+"_";
+    strTexture+= RESOURCE_TOOLTIP;
+    strTexture+= "_Texture";
+    mTexture = createTexture(strTexture);
+    mElement = createOverlay(RESOURCE_TOOLTIP, strTexture, mOverlay);
     mElement->setPosition((mScreenWidth-mTexture->getWidth())/3*2, (mScreenHeight-mTexture->getHeight())/2);
+    resizeBuildBuffer(TOOLTIP_SIZE*TOOLTIP_SIZE);
+    // ////////////////////////////////////////////////////////////////////
     // If requested (by cmd-line) print all element names.
+    // ////////////////////////////////////////////////////////////////////
     if (mPrintInfo)
     {
         Logger::log().info() << "These elements are currently known and can be used in " << FILE_TXT_WINDOWS<< ":";
-        for (int i =0; i < ELEMENTS_SUM; ++i) Logger::log().warning() << mStateStruct[i].name;
+        for (int i =0; i < ELEMENTS_SUM; ++i) Logger::log().info() << "- "<< mStateStruct[i].name;
     }
     // Load the default font.
     GuiTextout::getSingleton().loadRawFont(FILE_SYSTEM_FONT);
+}
+
+//================================================================================================
+// Create an overlay and an overlay-elemrnt.
+//================================================================================================
+OverlayElement *GuiManager::createOverlay(String name, String strTexture, Overlay *&overlay)
+{
+    // ////////////////////////////////////////////////////////////////////
+    // Create the material.
+    // ////////////////////////////////////////////////////////////////////
+    const char *MATERIAL_RESOURCE_NAME = "_Material";
+    MaterialPtr material = MaterialManager::getSingleton().create(name + MATERIAL_RESOURCE_NAME, ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+    if (material.isNull())
+    {
+        Logger::log().error() << "Could not create material." << name + MATERIAL_RESOURCE_NAME;
+        return 0;
+    }
+    material->setLightingEnabled(false);
+    material->setDepthWriteEnabled(false);
+    material->setDepthCheckEnabled(false);
+    material->setSceneBlending(SBT_TRANSPARENT_ALPHA);
+    material->getTechnique(0)->getPass(0)->setAlphaRejectSettings(CMPF_GREATER, 128);
+    material->getTechnique(0)->getPass(0)->createTextureUnitState();
+    material->getTechnique(0)->getPass(0)->getTextureUnitState(0)->setTextureFiltering(TFO_NONE);
+    material->getTechnique(0)->getPass(0)->getTextureUnitState(0)->setTextureName(strTexture);
+    // ////////////////////////////////////////////////////////////////////
+    // Create the overlay and its child-element.
+    // ////////////////////////////////////////////////////////////////////
+    overlay = OverlayManager::getSingleton().create(name + "_Overlay");
+    OverlayElement *element = OverlayManager::getSingleton().createOverlayElement("Panel", name + "_OverlayElement");
+    if (!overlay || !element)
+    {
+        Logger::log().error() << "Could not create Overlay " << name;
+        return 0;
+    }
+    overlay->add2D(static_cast<OverlayContainer*>(element));
+    element->setMetricsMode(GMM_PIXELS);
+    int size = StringConverter::parseInt(strTexture.substr(0, strTexture.find("_")));
+    element->setDimensions(size, size);
+    element->setMaterialName(name + MATERIAL_RESOURCE_NAME);
+    return element;
+}
+
+//================================================================================================
+// Creates a texture manually.
+// texture name format: a_b_c_d
+// a: size of the texture (power of 2).
+// b: name of the resource.
+// c: number of the resource (if needed).
+// d: resource type (in this case texture).
+//================================================================================================
+TexturePtr GuiManager::createTexture(String strTexture)
+{
+    std::vector<String> vString = StringUtil::split(strTexture, "_", 3);
+    int s = atoi(vString[0].c_str());
+    // ////////////////////////////////////////////////////////////////////
+    // Create the texture.
+    // ////////////////////////////////////////////////////////////////////
+    TexturePtr texture = TextureManager::getSingleton().getByName(strTexture);
+    if (texture.isNull())
+    {
+        Logger::log().info() << "(Re)creating texture: " << vString[1] << " of size: " << s << "x" << s;
+        texture = TextureManager::getSingleton().createManual(strTexture, ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
+                  TEX_TYPE_2D, s, s, 0, PF_A8R8G8B8, TU_STATIC_WRITE_ONLY, &mManualLoader);
+        if (texture.isNull())
+            Logger::log().error() << "(Re)creating texture: " << vString[1]  << " of size: " << s << "x" << s << " failed!";
+        return texture;
+    }
+    // ////////////////////////////////////////////////////////////////////
+    // Clear the whole texture (textures have always 2^n size while our gfx can be smaller).
+    // ////////////////////////////////////////////////////////////////////
+    size_t size = texture->getWidth()*texture->getHeight()*sizeof(uint32);
+    memset(texture->getBuffer()->lock(0, size, HardwareBuffer::HBL_DISCARD), 0x00, size);
+    texture->getBuffer()->unlock();
+    // ////////////////////////////////////////////////////////////////////
+    // (Re)draw the pixeldata.
+    // ////////////////////////////////////////////////////////////////////
+    Logger::log().info() << "(Re)drawing texture: " << vString[1] << " of size: " << s << "x" << s;
+    if      (vString[1] == RESOURCE_TOOLTIP) drawTooltip();
+    else if (vString[1] == RESOURCE_MCURSOR) GuiCursor::getSingleton().draw();
+    else if (vString[1] == RESOURCE_WINDOW)
+    {
+        int window = StringConverter::parseInt(vString[2]);
+        guiWindow[window].update(1.0);
+    }
+    return texture;
 }
 
 //================================================================================================
@@ -295,117 +386,6 @@ void GuiManager::resizeBuildBuffer(size_t newSize)
         mBuildBuffer = new uint32[newSize];
         size = newSize;
     }
-}
-
-//================================================================================================
-// (Re)loads the material and texture or creates them if they dont exist.
-//================================================================================================
-Overlay *GuiManager::loadResources(int w, int h, String name)
-{
-    String strOverlay = name + OVERLAY_RESOURCE_NAME;
-    String strElement = name + ELEMENT_RESOURCE_NAME;
-    String strTexture = name + TEXTURE_RESOURCE_NAME;
-    String strMaterial= name + MATERIAL_RESOURCE_NAME;
-    Overlay *overlay = OverlayManager::getSingleton().getByName(strOverlay);
-    if (!overlay)
-    {
-        OverlayElement *element = OverlayManager::getSingleton().createOverlayElement(OVERLAY_ELEMENT_TYPE, strElement);
-        if (!element)
-        {
-            Logger::log().error() << "Could not create " << strElement;
-            return 0;
-        }
-        element->setMetricsMode(GMM_PIXELS);
-        overlay = OverlayManager::getSingleton().create(strOverlay);
-        if (!overlay)
-        {
-            Logger::log().error() << "Could not create " << strElement;
-            return 0;
-        }
-        overlay->add2D(static_cast<OverlayContainer*>(element));
-    }
-    OverlayElement *element = overlay->getChild(strElement);
-    MaterialPtr material = MaterialManager::getSingleton().getByName(strMaterial);
-    if (material.isNull())
-    {
-        material = MaterialManager::getSingleton().getByName(GUI_MATERIAL_NAME);
-        if (material.isNull())
-        {
-            Logger::log().info() << "Material definition '" << GUI_MATERIAL_NAME
-            << "' was not found in the default folders. Using a hardcoded material.";
-            material = MaterialManager::getSingleton().create(GUI_MATERIAL_NAME, ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
-            if (material.isNull())
-            {
-                Logger::log().error() << "Could not create default material " << GUI_MATERIAL_NAME;
-                return 0;
-            }
-            material->setLightingEnabled(false);
-            material->setDepthWriteEnabled(false);
-            material->setDepthCheckEnabled(false);
-            material->setSceneBlending(SBT_TRANSPARENT_ALPHA);
-            material->getTechnique(0)->getPass(0)->createTextureUnitState();
-            material->getTechnique(0)->getPass(0)->setAlphaRejectSettings(CMPF_GREATER, 128);
-            material->getTechnique(0)->getPass(0)->getTextureUnitState(0)->setTextureFiltering(TFO_NONE);
-        }
-        material = material->clone(strMaterial);
-        if (material.isNull())
-        {
-            Logger::log().error() << "Could not create " << strMaterial;
-            return 0;
-        }
-    }
-    TexturePtr texture = TextureManager::getSingleton().getByName(strTexture);
-    if (texture.isNull())
-    {
-        texture = TextureManager::getSingleton().createManual(strTexture, ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
-                  TEX_TYPE_2D, w, h, 0, PF_A8R8G8B8, TU_STATIC_WRITE_ONLY, getLoader());
-        if (texture.isNull())
-        {
-            Logger::log().error() << "Could not create " << strTexture;
-            return 0;
-        }
-    }
-    // We must clear the whole texture (textures have always 2^n size while our gfx can be smaller).
-    size_t size = texture->getWidth()*texture->getHeight()*sizeof(uint32);
-    memset(texture->getBuffer()->lock(0, size, HardwareBuffer::HBL_DISCARD), 0x00, size);
-    texture->getBuffer()->unlock();
-    material->getTechnique(0)->getPass(0)->getTextureUnitState(0)->setTextureName(strTexture);
-    element->setDimensions(texture->getWidth(), texture->getHeight());
-    element->setMaterialName(strMaterial);
-    return overlay;
-}
-
-//================================================================================================
-// Reload a manual resource.
-//================================================================================================
-void GuiManager::loadResources(Ogre::Resource *res)
-{
-    String name = res->getName();
-    if (mPrintInfo) Logger::log().info() << "(Re)loading resource " << name;
-    if (name.find(RESOURCE_MCURSOR) != std::string::npos)
-    {
-        GuiCursor::getSingleton().loadResources();
-        return;
-    }
-    if (name.find(RESOURCE_TOOLTIP) != std::string::npos)
-    {
-        mOverlay= loadResources(TOOLTIP_SIZE, TOOLTIP_SIZE, RESOURCE_TOOLTIP);
-        String strElement = RESOURCE_TOOLTIP; strElement+= ELEMENT_RESOURCE_NAME;
-        mElement= mOverlay->getChild(strElement);
-        return;
-    }
-    if (name.find(RESOURCE_WINDOW)  != std::string::npos)
-    {
-        int window = StringConverter::parseInt(name.substr(name.find_first_of("#")+1, SUM_WIN_DIGITS));
-        guiWindow[window].loadResources();
-        return;
-    }
-    if (name.find(RESOURCE_TEMP) != std::string::npos)
-    {
-        // No problem for a temporary resource to loose its content. Reloading will be ignored.
-        return;
-    }
-    Logger::log().error() << "Resource " << name << " could not be found!";
 }
 
 //================================================================================================
@@ -873,6 +853,8 @@ void GuiManager::drawDragElement(const PixelBox &src)
 void GuiManager::debugText(const char *text, Ogre::uint32 timeBeforeNextMsg)
 {
     static String strText;
-    strText ="[Debug] "; strText+= text;
+    strText ="[Debug] ";
+    strText+= text;
     sendMsg(LIST_MSGWIN, MSG_SET_DEBUG_TEXT, strText.c_str(), timeBeforeNextMsg);
 }
+

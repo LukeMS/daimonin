@@ -64,8 +64,14 @@ public:
      **                        multi layer graphics.
      *****************************************************************************/
     virtual void draw(bool uploadToTexture = true);
-    Ogre::uint16 getWidth()  const { return mWidth;  }
-    Ogre::uint16 getHeight() const { return mHeight; }
+    Ogre::uint16 getWidth()  const
+    {
+        return mWidth;
+    }
+    Ogre::uint16 getHeight() const
+    {
+        return mHeight;
+    }
 
     /** Set the state of the element.
      ** @param  state The state is the look of the element.
@@ -92,7 +98,10 @@ public:
         return !(!mVisible || x < mPosX || x > mPosX + mWidth || y < mPosY || y > mPosY + mHeight);
     }
     /// Returns the unique numer of this element.
-    int getIndex() const { return mIndex;  }
+    int getIndex() const
+    {
+        return mIndex;
+    }
 
 protected:
     // ////////////////////////////////////////////////////////////////////
@@ -114,8 +123,18 @@ protected:
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    bool isVisible() const { return mVisible; }
+    bool isVisible() const
+    {
+        return mVisible;
+    }
     void setVisible(bool visible);
+
+private:
+    // ////////////////////////////////////////////////////////////////////
+    // Functions.
+    // ////////////////////////////////////////////////////////////////////
+    GuiElement(const GuiElement&);            /**< disable copy-constructor. **/
+    GuiElement &operator=(const GuiElement&); /**< disable assignment operator. **/
 };
 
 #endif

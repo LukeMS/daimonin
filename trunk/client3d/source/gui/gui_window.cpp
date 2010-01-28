@@ -21,6 +21,8 @@ You should have received a copy of the GNU General Public License along with
 this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
 
+#include <OgreTextureManager.h>
+#include <OgreStringConverter.h>
 #include "logger.h"
 #include "gui_window.h"
 #include "gui_cursor.h"
@@ -39,6 +41,7 @@ int GuiWindow::mDragOffsetY = -1;
 int GuiWindow::mDragElement = -1;
 int GuiWindow::mDragWindowNr= -1;
 int GuiWindow::mElementClicked = -1;
+const int MAX_WINDOW_SIZE = 1 << 10;
 
 //================================================================================================
 // Destructor.
@@ -62,8 +65,6 @@ void GuiWindow::Init(TiXmlElement *xmlRoot, const char *resourceWin, int winNr, 
     mHeight = GuiElement::MIN_SIZE;
     mWidth  = GuiElement::MIN_SIZE;
     mWindowNr = winNr;
-    mResourceName = resourceWin;
-    mResourceName+= "#" + StringConverter::toString(mWindowNr, GuiManager::SUM_WIN_DIGITS, '0');
     TiXmlElement *xmlElem;
     int screenH = GuiManager::getSingleton().getScreenHeight();
     int screenW = GuiManager::getSingleton().getScreenWidth();
@@ -138,11 +139,13 @@ void GuiWindow::Init(TiXmlElement *xmlRoot, const char *resourceWin, int winNr, 
     {
         memset(mWinLayerBG, 0x00, mWidth * mHeight * sizeof(uint32));
     }
-    mTexture = TextureManager::getSingleton().createManual(mResourceName + GuiManager::TEXTURE_RESOURCE_NAME,
-               ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, TEX_TYPE_2D, mWidth, mHeight, 0, PF_A8R8G8B8,
-               TU_STATIC_WRITE_ONLY, GuiManager::getSingleton().getLoader());
-    mTexture->load();
-    mOverlay->hide();
+    int textureSize = GuiElement::MIN_SIZE;
+    int psize = (mWidth > mHeight)?mWidth:mHeight;
+    while (textureSize < psize && textureSize < MAX_WINDOW_SIZE) textureSize <<= 1; // Make the size a power of 2.
+    String strTexture = StringConverter::toString(textureSize) + "_";
+    strTexture+= resourceWin + StringConverter::toString(mWindowNr) +GuiManager::TEXTURE_RESOURCE_NAME;
+    mTexture = GuiManager::getSingleton().createTexture(strTexture);
+    mElement = GuiManager::getSingleton().createOverlay(resourceWin + StringConverter::toString(mWindowNr), strTexture, mOverlay);
     mElement->setPosition(mPosX, mPosY);
     setZPos(defaultZPos);
     // ////////////////////////////////////////////////////////////////////
@@ -193,18 +196,6 @@ void GuiWindow::Init(TiXmlElement *xmlRoot, const char *resourceWin, int winNr, 
         if (xmlElem->Attribute("name"))
             mvElement.push_back(new GuiStatusbar(xmlElem, this));
     }
-}
-
-//================================================================================================
-// (Re)loads the material and texture or creates them if they dont exist.
-//================================================================================================
-void GuiWindow::loadResources()
-{
-    mOverlay = GuiManager::getSingleton().loadResources(mWidth, mHeight, mResourceName);
-    if (mOverlay)
-        mElement = mOverlay->getChild(mResourceName + GuiManager::ELEMENT_RESOURCE_NAME);
-    else
-        Logger::log().error() << "Critical: Error on creating the overlay.";
 }
 
 //================================================================================================
@@ -342,7 +333,8 @@ void GuiWindow::mouseLeftWindow()
 void GuiWindow::setVisible(bool visible)
 {
     if (!mOverlay) return;
-    if (!visible) mOverlay->hide(); else mOverlay->show();
+    if (!visible) mOverlay->hide();
+    else mOverlay->show();
 }
 
 //================================================================================================

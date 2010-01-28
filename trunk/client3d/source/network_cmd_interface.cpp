@@ -810,7 +810,8 @@ void CmdInterface::sendCommand(int mode, char *cmd)
 void CmdInterface::show()
 {
     if (mUsed_flag & INTERFACE_HEAD)
-    {   // print head
+    {
+        // print head
         GuiManager::getSingleton().setText(GuiManager::TEXTBOX_NPC_HEADLINE, mHead.body_text.c_str());
     }
     if (mUsed_flag & INTERFACE_MESSAGE)

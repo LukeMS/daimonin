@@ -22,6 +22,11 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
 
 #include <tinyxml.h>
+#include <OgreTechnique.h>
+#include <OgreManualObject.h>
+#include <OgreSceneManager.h>
+#include <OgreTextureManager.h>
+#include <OgreMaterialManager.h>
 #include "define.h"
 #include "option.h"
 #include "logger.h"
@@ -132,7 +137,7 @@ void ObjectVisuals::buildEntity(int index, const char *meshName, const char *ent
     String strMob = "Mob"+ StringConverter::toString(index, 3, '0');
     ManualObject* mob = static_cast<ManualObject*>(Events::getSingleton().getSceneManager()->createMovableObject(strMob, ManualObjectFactory::FACTORY_TYPE_NAME));
     mob->begin(MATERIAL_NAME);
-    mob->position(-w, h, 0.0); mob->normal(0,0,1); mob->textureCoord(0.0, 0.0);
+    mob->position(-w,  h, 0.0); mob->normal(0,0,1); mob->textureCoord(0.0, 0.0);
     mob->position(-w, -h, 0.0); mob->normal(0,0,1); mob->textureCoord(0.0, 1.0);
     mob->position( w,  h, 0.0); mob->normal(0,0,1); mob->textureCoord(1.0, 0.0);
     mob->position( w, -h, 0.0); mob->normal(0,0,1); mob->textureCoord(1.0, 1.0);
@@ -140,7 +145,7 @@ void ObjectVisuals::buildEntity(int index, const char *meshName, const char *ent
     mob->triangle(3, 2, 1);
     mob->end();
     mob->convertToMesh(meshName);
-    mob->setQueryFlags(0);
+    //mob->setQueryFlags(0);
     //mob->setRenderQueueGroup(RENDER_QUEUE_8); // see OgreRenderQueue.h
     mEntity[index]=Events::getSingleton().getSceneManager()->createEntity(entityName, meshName);
     mEntity[index]->setQueryFlags(ObjectManager::QUERY_NPC_SELECT_MASK);
@@ -162,17 +167,20 @@ void ObjectVisuals::setLifebar(Real percent, int barWidth)
     if (barWidth > TEXTURE_SIZE) barWidth = TEXTURE_SIZE;
     uint32 color, dColor;
     if (percent > 0.5)
-    {   // green bar.
+    {
+        // green bar.
         color = 0xff005f00;
         dColor= 0x00001600;
     }
     else if (percent > 0.3)
-    {   // yellow bar.
+    {
+        // yellow bar.
         color = 0xff5f5f00;
         dColor= 0x00161600;
     }
     else
-    {   // red bar.
+    {
+        // red bar.
         color = 0xff5f0000;
         dColor= 0x00160000;
     }

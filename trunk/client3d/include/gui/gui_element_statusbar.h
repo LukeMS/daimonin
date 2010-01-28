@@ -59,6 +59,8 @@ private:
     void draw();
     void drawGfxBar(Ogre::uint32 *dst);
     void drawColorBar(Ogre::uint32 *dst);
+    GuiStatusbar(const GuiStatusbar&);            /**< disable copy-constructor. **/
+    GuiStatusbar &operator=(const GuiStatusbar&); /**< disable assignment operator. **/
 };
 
 #endif

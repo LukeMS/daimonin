@@ -60,24 +60,29 @@ const char *particleName[ObjectEquipment::PARTICLE_FX_SUM]=
 // Todo: use pointer to vector for this. and read meshnames from a xml-file.
 const char *meshName[][ObjectEquipment::ITEM_SUM]=
 {
-    {   // ITEM_WEAPON
+    {
+        // ITEM_WEAPON
         "Sword_Short_01.mesh",
         "Mace_Small_01.mesh",
         "Short_Bow.mesh",
     },
-    {   // ITEM_ARMOR_SHIELD
+    {
+        // ITEM_ARMOR_SHIELD
         "Shield_Round_01.mesh",
         "Shield_Round_02.mesh"
     },
-    {   // ITEM_ARMOR_HEAD
+    {
+        // ITEM_ARMOR_HEAD
         0,
         0
     },
-    {   // ITEM_ARMOR_BODY
+    {
+        // ITEM_ARMOR_BODY
         0,
         0
     },
-    {   // ITEM_ARMOR_LEGS
+    {
+        // ITEM_ARMOR_LEGS
         0,
         0
     }

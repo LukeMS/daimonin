@@ -24,7 +24,6 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #ifndef GUI_IMAGESET_H
 #define GUI_IMAGESET_H
 
-#include <vector>
 #include <tinyxml.h>
 #include "gui_manager.h"
 
@@ -92,7 +91,8 @@ public:
     // ////////////////////////////////////////////////////////////////////
     static GuiImageset &getSingleton()
     {
-        static GuiImageset singleton; return singleton;
+        static GuiImageset singleton;
+        return singleton;
     }
     void parseXML(const char *XML_imageset_file, bool createItemAtlas);
     ///  Returns the array of the gfx positions for the mouse-cursor.
@@ -123,7 +123,8 @@ private:
     // ////////////////////////////////////////////////////////////////////
     GuiImageset() {}
     ~GuiImageset();
-    GuiImageset(const GuiImageset&); // disable copy-constructor
+    GuiImageset(const GuiImageset&);            /**< disable copy-constructor. **/
+    GuiImageset &operator=(const GuiImageset&); /**< disable assignment operator. **/
 
     void parseItems(bool createItemAtlas);
     bool parseStates(TiXmlElement *xmlElem, gfxPos *Entry, int sum_state, bool mouseStates);

@@ -38,7 +38,8 @@ bool Option::openDescFile(const char *filename)
     mDescBuffer ="";
     String buf;
     while (getline(*mDescFile, buf))
-    { // skip comments.
+    {
+        // skip comments.
         if (buf.find("#") > 5)  mDescBuffer+= buf;
     }
     return true;

@@ -21,6 +21,8 @@ You should have received a copy of the GNU General Public License along with
 this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
 
+#include <OgreStringConverter.h>
+#include <OgreHardwarePixelBuffer.h>
 #include "logger.h"
 #include "gui_textout.h"
 #include "gui_graphic.h"

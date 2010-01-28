@@ -41,7 +41,11 @@ public:
     ~GuiElementScrollbar();
     int getScrollOffset();
     virtual int mouseEvent(const int mouseAction, int mouseX, int mouseY, int mouseWheel);
-    void stopDragging() { mDragging = false; mMouseButDown = false; }
+    void stopDragging()
+    {
+        mDragging = false;
+        mMouseButDown = false;
+    }
     void updateSliderSize(int actPos, int scrollOffset, int maxVisPos, int maxPos = -1);
     void draw();
 
@@ -61,6 +65,8 @@ private:
     // Functions.
     // ////////////////////////////////////////////////////////////////////
     bool mouseOverSlider(int x, int y);
+    GuiElementScrollbar(const GuiElementScrollbar&);            /**< disable copy-constructor. **/
+    GuiElementScrollbar &operator=(const GuiElementScrollbar&); /**< disable assignment operator. **/
 };
 
 #endif

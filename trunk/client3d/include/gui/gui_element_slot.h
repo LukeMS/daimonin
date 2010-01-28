@@ -79,6 +79,8 @@ private:
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
+    GuiElementSlot(const GuiElementSlot&);            /**< disable copy-constructor. **/
+    GuiElementSlot &operator=(const GuiElementSlot&); /**< disable assignment operator. **/
     int getTextureAtlasPos(const char *gfxName);
     void drawBusy(int busyTime);
 };
@@ -106,6 +108,11 @@ private:
     unsigned short mGroupNr;         /**< Unique number. **/
     unsigned short mSpaceX, mSpaceY; /**< Free space between the slots. **/
     std::vector<class GuiElementSlot*>mvSlot;
+    // ////////////////////////////////////////////////////////////////////
+    // Functions.
+    // ////////////////////////////////////////////////////////////////////
+    GuiElementSlotGroup(const GuiElementSlotGroup&);            /**< disable copy-constructor. **/
+    GuiElementSlotGroup &operator=(const GuiElementSlotGroup&); /**< disable assignment operator. **/
 };
 
 #endif

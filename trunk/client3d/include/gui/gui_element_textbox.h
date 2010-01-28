@@ -49,6 +49,8 @@ private:
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
+    GuiElementTextbox(const GuiElementTextbox&);            /**< disable copy-constructor. **/
+    GuiElementTextbox &operator=(const GuiElementTextbox&); /**< disable assignment operator. **/
     void draw();
     void setLabel(const char *newText)
     {

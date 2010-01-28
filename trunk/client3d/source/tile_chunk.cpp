@@ -35,6 +35,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 using namespace Ogre;
 
 const unsigned int SUM_CAMERA_POS  = 7;
+const int SUM_NEAR_GRASS_ROWS = 5;
 const Real HALF_TILE_SIZE  = 128.0          / (Real)TileManager::MAX_TEXTURE_SIZE; // Size of a subtile.
 const Real HALF_TILE_SPACE = (128.0 + 16.0) / (Real)TileManager::MAX_TEXTURE_SIZE; // Space between 2 subtiles.
 const Real FULL_TILE_SPACE = (256.0 + 16.0) / (Real)TileManager::MAX_TEXTURE_SIZE; // Space between 2 tiles.
@@ -68,7 +69,7 @@ int CHUNK_X_LENGTH[TileManager::CHUNK_SIZE_Z];
 //================================================================================================
 void TileChunk::init(int queryMaskLand, int queryMaskWater, SceneManager *sceneManager)
 {
-    mOption_DrawSprites = true;
+    mUndergrowth = true;
     AxisAlignedBox aab(AxisAlignedBox(-10000, -10000, -10000, 10000, 10000, 10000));
     mCameraRotation = 3; // 0° rotation of the camera in CHUNK_START_OFFSET[][] table.
     size_t sumIndices, sumVertices = 0;
@@ -92,12 +93,18 @@ void TileChunk::init(int queryMaskLand, int queryMaskWater, SceneManager *sceneM
     vData->vertexCount = 4*6*TileManager::CHUNK_SIZE_X*TileManager::CHUNK_SIZE_Z; // 4 Subtiles/tile, 6 vertices/subtile;
     VertexDeclaration *vdec = vData->vertexDeclaration;
     size_t offset = 0;
-    vdec->addElement(0, offset, VET_FLOAT3, VES_POSITION);               offset+= VertexElement::getTypeSize(VET_FLOAT3);
-    vdec->addElement(0, offset, VET_FLOAT4, VES_DIFFUSE);                offset+= VertexElement::getTypeSize(VET_FLOAT4);
-    vdec->addElement(0, offset, VET_FLOAT2, VES_TEXTURE_COORDINATES, 0); offset+= VertexElement::getTypeSize(VET_FLOAT2);
-    vdec->addElement(0, offset, VET_FLOAT2, VES_TEXTURE_COORDINATES, 1); offset+= VertexElement::getTypeSize(VET_FLOAT2);
-    vdec->addElement(0, offset, VET_FLOAT2, VES_TEXTURE_COORDINATES, 2); offset+= VertexElement::getTypeSize(VET_FLOAT2);
-    vdec->addElement(0, offset, VET_FLOAT2, VES_TEXTURE_COORDINATES, 3); offset+= VertexElement::getTypeSize(VET_FLOAT2);
+    vdec->addElement(0, offset, VET_FLOAT3, VES_POSITION);
+    offset+= VertexElement::getTypeSize(VET_FLOAT3);
+    vdec->addElement(0, offset, VET_FLOAT4, VES_DIFFUSE);
+    offset+= VertexElement::getTypeSize(VET_FLOAT4);
+    vdec->addElement(0, offset, VET_FLOAT2, VES_TEXTURE_COORDINATES, 0);
+    offset+= VertexElement::getTypeSize(VET_FLOAT2);
+    vdec->addElement(0, offset, VET_FLOAT2, VES_TEXTURE_COORDINATES, 1);
+    offset+= VertexElement::getTypeSize(VET_FLOAT2);
+    vdec->addElement(0, offset, VET_FLOAT2, VES_TEXTURE_COORDINATES, 2);
+    offset+= VertexElement::getTypeSize(VET_FLOAT2);
+    vdec->addElement(0, offset, VET_FLOAT2, VES_TEXTURE_COORDINATES, 3);
+    offset+= VertexElement::getTypeSize(VET_FLOAT2);
     HardwareVertexBufferSharedPtr vbuf = HardwareBufferManager::getSingleton().createVertexBuffer(offset, vData->vertexCount, HardwareBuffer::HBU_STATIC_WRITE_ONLY, false);
     vData->vertexBufferBinding->setBinding(0, vbuf);
     mSubMeshLand->vertexData = vData;
@@ -140,8 +147,10 @@ void TileChunk::init(int queryMaskLand, int queryMaskWater, SceneManager *sceneM
     vData->vertexCount = sumVertices;
     vdec = vData->vertexDeclaration;
     offset = 0;
-    vdec->addElement(0, offset, VET_FLOAT3, VES_POSITION);               offset+= VertexElement::getTypeSize(VET_FLOAT3);
-    vdec->addElement(0, offset, VET_FLOAT2, VES_TEXTURE_COORDINATES, 0); offset+= VertexElement::getTypeSize(VET_FLOAT2);
+    vdec->addElement(0, offset, VET_FLOAT3, VES_POSITION);
+    offset+= VertexElement::getTypeSize(VET_FLOAT3);
+    vdec->addElement(0, offset, VET_FLOAT2, VES_TEXTURE_COORDINATES, 0);
+    offset+= VertexElement::getTypeSize(VET_FLOAT2);
     vbuf = HardwareBufferManager::getSingleton().createVertexBuffer(offset, sumVertices*4, HardwareBuffer::HBU_STATIC_WRITE_ONLY, false);
     vData->vertexBufferBinding->setBinding(0, vbuf);
     mSubMeshWater->vertexData = vData;
@@ -152,8 +161,12 @@ void TileChunk::init(int queryMaskLand, int queryMaskWater, SceneManager *sceneM
         unsigned int *pIdx = static_cast<unsigned int*>(ibuf->lock(HardwareBuffer::HBL_DISCARD));
         for (unsigned int p=0; sumVertices; --sumVertices)
         {
-            *pIdx++ = p+0; *pIdx++ = p+1; *pIdx++ = p+2;
-            *pIdx++ = p+2; *pIdx++ = p+3; *pIdx++ = p+0;
+            *pIdx++ = p+0;
+            *pIdx++ = p+1;
+            *pIdx++ = p+2;
+            *pIdx++ = p+2;
+            *pIdx++ = p+3;
+            *pIdx++ = p+0;
             p+= 4;
         }
     }
@@ -163,8 +176,12 @@ void TileChunk::init(int queryMaskLand, int queryMaskWater, SceneManager *sceneM
         unsigned short *pIdx = static_cast<unsigned short*>(ibuf->lock(HardwareBuffer::HBL_DISCARD));
         for (unsigned short p=0; sumVertices; --sumVertices)
         {
-            *pIdx++ = p+0; *pIdx++ = p+1; *pIdx++ = p+2;
-            *pIdx++ = p+2; *pIdx++ = p+3; *pIdx++ = p+0;
+            *pIdx++ = p+0;
+            *pIdx++ = p+1;
+            *pIdx++ = p+2;
+            *pIdx++ = p+2;
+            *pIdx++ = p+3;
+            *pIdx++ = p+0;
             p+= 4;
         }
     }
@@ -181,22 +198,24 @@ void TileChunk::init(int queryMaskLand, int queryMaskWater, SceneManager *sceneM
     EntityWater->setQueryFlags(queryMaskWater);
     EntityWater->setRenderQueueGroup(RENDER_QUEUE_8); // See OgreRenderQueue.h
     // ////////////////////////////////////////////////////////////////////
-    // Build the sprites.
+    // Build the Undergrowth (Far).
     // ////////////////////////////////////////////////////////////////////
-    MeshPtr MeshSprites = MeshManager::getSingleton().createManual("Mesh_Sprites", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
-    mSubMeshSprites = MeshSprites->createSubMesh();
-    mSubMeshSprites->operationType = RenderOperation::OT_TRIANGLE_LIST;
-    mSubMeshSprites->useSharedVertices = false;
+    MeshPtr MeshGrassFar = MeshManager::getSingleton().createManual("Mesh_GrassFar", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+    mSubMeshGrassFar = MeshGrassFar->createSubMesh();
+    mSubMeshGrassFar->operationType = RenderOperation::OT_TRIANGLE_LIST;
+    mSubMeshGrassFar->useSharedVertices = false;
     vData = new VertexData(); // The 'delete' will be done by Ogre::Submesh.
     sumVertices = 4*TileManager::CHUNK_SIZE_X*TileManager::CHUNK_SIZE_Z; // 4 Subtile/tile
     vData->vertexCount = sumVertices;
     vdec = vData->vertexDeclaration;
     offset = 0;
-    vdec->addElement(0, offset, VET_FLOAT3, VES_POSITION);               offset+= VertexElement::getTypeSize(VET_FLOAT3);
-    vdec->addElement(0, offset, VET_FLOAT2, VES_TEXTURE_COORDINATES, 0); offset+= VertexElement::getTypeSize(VET_FLOAT2);
+    vdec->addElement(0, offset, VET_FLOAT3, VES_POSITION);
+    offset+= VertexElement::getTypeSize(VET_FLOAT3);
+    vdec->addElement(0, offset, VET_FLOAT2, VES_TEXTURE_COORDINATES, 0);
+    offset+= VertexElement::getTypeSize(VET_FLOAT2);
     vbuf = HardwareBufferManager::getSingleton().createVertexBuffer(offset, sumVertices*4, HardwareBuffer::HBU_STATIC_WRITE_ONLY, false);
     vData->vertexBufferBinding->setBinding(0, vbuf);
-    mSubMeshSprites->vertexData = vData;
+    mSubMeshGrassFar->vertexData = vData;
     if (sumVertices > 65526)
     {
         Logger::log().warning() << "You want to create a HardwareBuffer with " << sumVertices << " entries. Switching to 32bit index buffer. This can crash older gfx-cards!";
@@ -204,8 +223,12 @@ void TileChunk::init(int queryMaskLand, int queryMaskWater, SceneManager *sceneM
         unsigned int *pIdx = static_cast<unsigned int*>(ibuf->lock(HardwareBuffer::HBL_DISCARD));
         for (unsigned int p=0; sumVertices; --sumVertices)
         {
-            *pIdx++ = p+0; *pIdx++ = p+1; *pIdx++ = p+2;
-            *pIdx++ = p+2; *pIdx++ = p+3; *pIdx++ = p+0;
+            *pIdx++ = p+0;
+            *pIdx++ = p+1;
+            *pIdx++ = p+2;
+            *pIdx++ = p+2;
+            *pIdx++ = p+3;
+            *pIdx++ = p+0;
             p+= 4;
         }
     }
@@ -215,31 +238,99 @@ void TileChunk::init(int queryMaskLand, int queryMaskWater, SceneManager *sceneM
         unsigned short *pIdx = static_cast<unsigned short*>(ibuf->lock(HardwareBuffer::HBL_DISCARD));
         for (unsigned short p=0; sumVertices; --sumVertices)
         {
-            *pIdx++ = p+0; *pIdx++ = p+1; *pIdx++ = p+2;
-            *pIdx++ = p+2; *pIdx++ = p+3; *pIdx++ = p+0;
+            *pIdx++ = p+0;
+            *pIdx++ = p+1;
+            *pIdx++ = p+2;
+            *pIdx++ = p+2;
+            *pIdx++ = p+3;
+            *pIdx++ = p+0;
             p+= 4;
         }
     }
     ibuf->unlock();
-    mSubMeshSprites->indexData->indexBuffer = ibuf;
-    mSubMeshSprites->indexData->indexStart  = 0;
-    mSubMeshSprites->indexData->indexCount  = 0;
-    mSubMeshSprites->vertexData->vertexCount = 0;
-    MeshSprites->_setBounds(aab);
-    //MeshSprites->_setBoundingSphereRadius(Real radius);
-    MeshSprites->load();
-    mEntitySprites = sceneManager->createEntity("Entity_Sprites", "Mesh_Sprites");
-    //mEntitySprites->setMaterialName(TileManager::MATERIAL_PREFIX + TileManager::SPRITES_PREFIX);
-    mEntitySprites->setMaterialName("Terrain/Sprite");
-    mEntitySprites->setQueryFlags(queryMaskWater);
-    mEntitySprites->setRenderQueueGroup(RENDER_QUEUE_8); // See OgreRenderQueue.h
+    mSubMeshGrassFar->indexData->indexBuffer = ibuf;
+    mSubMeshGrassFar->indexData->indexStart  = 0;
+    mSubMeshGrassFar->indexData->indexCount  = 0;
+    mSubMeshGrassFar->vertexData->vertexCount = 0;
+    MeshGrassFar->_setBounds(aab);
+    //MeshGrassFar->_setBoundingSphereRadius(Real radius);
+    MeshGrassFar->load();
+    mEntityGrassFar = sceneManager->createEntity("Entity_GrassFar", "Mesh_GrassFar");
+    //mEntityGrassFar->setMaterialName(TileManager::MATERIAL_PREFIX + TileManager::GrassFar_PREFIX);
+    mEntityGrassFar->setMaterialName("Terrain/Sprite");
+    mEntityGrassFar->setQueryFlags(queryMaskWater);
+    mEntityGrassFar->setRenderQueueGroup(RENDER_QUEUE_8); // See OgreRenderQueue.h
+    // ////////////////////////////////////////////////////////////////////
+    // Build the Undergrowth (Near).
+    // ////////////////////////////////////////////////////////////////////
+    MeshPtr MeshGrassNear = MeshManager::getSingleton().createManual("Mesh_GrassNear", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+    mSubMeshGrassNear = MeshGrassNear->createSubMesh();
+    mSubMeshGrassNear->operationType = RenderOperation::OT_TRIANGLE_LIST;
+    mSubMeshGrassNear->useSharedVertices = false;
+    vData = new VertexData(); // The 'delete' will be done by Ogre::Submesh.
+    sumVertices = 4*TileManager::CHUNK_SIZE_X*TileManager::CHUNK_SIZE_Z; // 4 Subtile/tile
+    vData->vertexCount = sumVertices;
+    vdec = vData->vertexDeclaration;
+    offset = 0;
+    vdec->addElement(0, offset, VET_FLOAT3, VES_POSITION);
+    offset+= VertexElement::getTypeSize(VET_FLOAT3);
+    vdec->addElement(0, offset, VET_FLOAT2, VES_TEXTURE_COORDINATES, 0);
+    offset+= VertexElement::getTypeSize(VET_FLOAT2);
+    vbuf = HardwareBufferManager::getSingleton().createVertexBuffer(offset, sumVertices*4, HardwareBuffer::HBU_STATIC_WRITE_ONLY, false);
+    vData->vertexBufferBinding->setBinding(0, vbuf);
+    mSubMeshGrassNear->vertexData = vData;
+    if (sumVertices > 65526)
+    {
+        Logger::log().warning() << "You want to create a HardwareBuffer with " << sumVertices << " entries. Switching to 32bit index buffer. This can crash older gfx-cards!";
+        ibuf = HardwareBufferManager::getSingleton().createIndexBuffer(HardwareIndexBuffer::IT_32BIT, sumVertices*6, HardwareBuffer::HBU_STATIC_WRITE_ONLY, false);
+        unsigned int *pIdx = static_cast<unsigned int*>(ibuf->lock(HardwareBuffer::HBL_DISCARD));
+        for (unsigned int p=0; sumVertices; --sumVertices)
+        {
+            *pIdx++ = p+0;
+            *pIdx++ = p+1;
+            *pIdx++ = p+2;
+            *pIdx++ = p+2;
+            *pIdx++ = p+3;
+            *pIdx++ = p+0;
+            p+= 4;
+        }
+    }
+    else
+    {
+        ibuf = HardwareBufferManager::getSingleton().createIndexBuffer(HardwareIndexBuffer::IT_16BIT, sumVertices*6, HardwareBuffer::HBU_STATIC_WRITE_ONLY, false);
+        unsigned short *pIdx = static_cast<unsigned short*>(ibuf->lock(HardwareBuffer::HBL_DISCARD));
+        for (unsigned short p=0; sumVertices; --sumVertices)
+        {
+            *pIdx++ = p+0;
+            *pIdx++ = p+1;
+            *pIdx++ = p+2;
+            *pIdx++ = p+2;
+            *pIdx++ = p+3;
+            *pIdx++ = p+0;
+            p+= 4;
+        }
+    }
+    ibuf->unlock();
+    mSubMeshGrassNear->indexData->indexBuffer = ibuf;
+    mSubMeshGrassNear->indexData->indexStart  = 0;
+    mSubMeshGrassNear->indexData->indexCount  = 0;
+    mSubMeshGrassNear->vertexData->vertexCount = 0;
+    MeshGrassNear->_setBounds(aab);
+    //MeshGrassNear->_setBoundingSphereRadius(Real radius);
+    MeshGrassNear->load();
+    mEntityGrassNear = sceneManager->createEntity("Entity_GrassNear", "Mesh_GrassNear");
+    //mEntityGrassNear->setMaterialName(TileManager::MATERIAL_PREFIX + TileManager::GrassNear_PREFIX);
+    mEntityGrassNear->setMaterialName("Terrain/GrassNear");
+    mEntityGrassNear->setQueryFlags(queryMaskWater);
+    mEntityGrassNear->setRenderQueueGroup(RENDER_QUEUE_8); // See OgreRenderQueue.h
     // ////////////////////////////////////////////////////////////////////
     // Attach the tiles to a scenenode.
     // ////////////////////////////////////////////////////////////////////
     SceneNode *node= sceneManager->getRootSceneNode()->createChildSceneNode("snTileChunk");
     node->attachObject(EntityLand);
     node->attachObject(EntityWater);
-    node->attachObject(mEntitySprites);
+    node->attachObject(mEntityGrassFar);
+    node->attachObject(mEntityGrassNear);
 }
 
 //================================================================================================
@@ -586,7 +677,7 @@ void TileChunk::updateWater()
         Real offsetZ = (z&1)?FULL_TILE_SPACE:0.0;
         for (int x = 0; x < TileManager::CHUNK_SIZE_X*2; ++x)
         {
-            // Only draw a water if this or a neighbour-tile has water on it.
+            // Only draw water if this tile or a neighbour-tile has water on it.
             if (!(height = TileManager::getSingleton().getMapWater(x  , z  )))
                 if (!(height = TileManager::getSingleton().getMapWater(x+1, z  )))
                     if (!(height = TileManager::getSingleton().getMapWater(x  , z+1)))
@@ -624,20 +715,20 @@ void TileChunk::updateWater()
 }
 
 //================================================================================================
-// Update hardware buffers for spries.
+// Update hardware buffers for sprites.
 //================================================================================================
-void TileChunk::updateSprites()
+void TileChunk::updateUndergrowth()
 {
-    if (!mOption_DrawSprites) return;
-    HardwareVertexBufferSharedPtr vbuf = mSubMeshSprites->vertexData->vertexBufferBinding->getBuffer(0);
+    if (!mUndergrowth) return;
+    HardwareVertexBufferSharedPtr vbuf = mSubMeshGrassFar->vertexData->vertexBufferBinding->getBuffer(0);
     Real height;
     Real *pReal = static_cast<Real*>(vbuf->lock(HardwareBuffer::HBL_DISCARD));
     unsigned int numVertices = 0;
-    for (int z = 0; z < TileManager::CHUNK_SIZE_Z*2; ++z)
+    for (int z = 0; z < TileManager::CHUNK_SIZE_Z*2-SUM_NEAR_GRASS_ROWS; ++z)
     {
         for (int x = 0; x < TileManager::CHUNK_SIZE_X*2; ++x)
         {
-            height = TileManager::getSingleton().getMapHeight(x, z)+TileManager::TILE_RENDER_SIZE;
+            height = TileManager::getSingleton().getMapHeight(x, z)+TileManager::TILE_RENDER_SIZE/4;
             *pReal++ = TileManager::TILE_RENDER_SIZE * x -1;
             *pReal++ = height;
             *pReal++ = TileManager::TILE_RENDER_SIZE * z;
@@ -652,37 +743,194 @@ void TileChunk::updateSprites()
 
             *pReal++ = TileManager::TILE_RENDER_SIZE * x;
             *pReal++ = height-1;
-            *pReal++ = TileManager::TILE_RENDER_SIZE * z- 1;
+            *pReal++ = TileManager::TILE_RENDER_SIZE * z;
             *pReal++ = 0.0;
             *pReal++ = 1.0;
 
             *pReal++ = TileManager::TILE_RENDER_SIZE * x- 1;
             *pReal++ = height-1;
-            *pReal++ = TileManager::TILE_RENDER_SIZE * z- 1;
+            *pReal++ = TileManager::TILE_RENDER_SIZE * z;
             *pReal++ = 1.0;
             *pReal++ = 1.0;
             ++numVertices;
         }
     }
     vbuf->unlock();
-    mSubMeshSprites->indexData->indexCount = numVertices*2*3; // 2 tris/subtile * 3 vertices/triangle.
-    mSubMeshSprites->vertexData->vertexCount = numVertices*4; // 4 vertices/subtile.
+    mSubMeshGrassFar->indexData->indexCount = numVertices*2*3; // 2 tris/subtile * 3 vertices/triangle.
+    mSubMeshGrassFar->vertexData->vertexCount = numVertices*4; // 4 vertices/subtile.
+
+    vbuf = mSubMeshGrassNear->vertexData->vertexBufferBinding->getBuffer(0);
+    pReal = static_cast<Real*>(vbuf->lock(HardwareBuffer::HBL_DISCARD));
+    numVertices = 0;
+    const Real GRASS_SIZE = 70.0;
+    for (int z = TileManager::CHUNK_SIZE_Z*2-SUM_NEAR_GRASS_ROWS; z < TileManager::CHUNK_SIZE_Z*2; z+=2)
+    {
+        for (int x = 0; x < TileManager::CHUNK_SIZE_X*2; ++x)
+        {
+            height = TileManager::getSingleton().getMapHeight(x, z) + TileManager::TILE_RENDER_SIZE/2;
+//#define STYLE_1
+#ifdef STYLE_1
+            /*    \/    */
+            /*    /\    */
+            /*  _/__\_  */
+            /*  /    \  */
+            // Front
+            *pReal++ = TileManager::TILE_RENDER_SIZE * x + GRASS_SIZE/2;
+            *pReal++ = height;
+            *pReal++ = TileManager::TILE_RENDER_SIZE * z + GRASS_SIZE/2;
+            *pReal++ = 1.0;
+            *pReal++ = 0.0;
+            *pReal++ = TileManager::TILE_RENDER_SIZE * x - GRASS_SIZE/2;
+            *pReal++ = height;
+            *pReal++ = TileManager::TILE_RENDER_SIZE * z + GRASS_SIZE/2;
+            *pReal++ = 0.0;
+            *pReal++ = 0.0;
+            *pReal++ = TileManager::TILE_RENDER_SIZE * x - GRASS_SIZE/2;
+            *pReal++ = height-TileManager::TILE_RENDER_SIZE/2;
+            *pReal++ = TileManager::TILE_RENDER_SIZE * z + GRASS_SIZE/2;
+            *pReal++ = 0.0;
+            *pReal++ = 1.0;
+            *pReal++ = TileManager::TILE_RENDER_SIZE * x + GRASS_SIZE/2;
+            *pReal++ = height-TileManager::TILE_RENDER_SIZE/2;
+            *pReal++ = TileManager::TILE_RENDER_SIZE * z + GRASS_SIZE/2;
+            *pReal++ = 1.0;
+            *pReal++ = 1.0;
+            ++numVertices;
+            // Right
+            *pReal++ = TileManager::TILE_RENDER_SIZE * x + GRASS_SIZE/2;
+            *pReal++ = height;
+            *pReal++ = TileManager::TILE_RENDER_SIZE * z + GRASS_SIZE/1.5;
+            *pReal++ = 1.0;
+            *pReal++ = 0.0;
+            *pReal++ = TileManager::TILE_RENDER_SIZE * x - GRASS_SIZE/8;
+            *pReal++ = height;
+            *pReal++ = TileManager::TILE_RENDER_SIZE * z - GRASS_SIZE/4;
+            *pReal++ = 0.0;
+            *pReal++ = 0.0;
+            *pReal++ = TileManager::TILE_RENDER_SIZE * x - GRASS_SIZE/8;
+            *pReal++ = height-TileManager::TILE_RENDER_SIZE/2;
+            *pReal++ = TileManager::TILE_RENDER_SIZE * z - GRASS_SIZE/4;
+            *pReal++ = 0.0;
+            *pReal++ = 1.0;
+            *pReal++ = TileManager::TILE_RENDER_SIZE * x + GRASS_SIZE/2;
+            *pReal++ = height-TileManager::TILE_RENDER_SIZE/2;
+            *pReal++ = TileManager::TILE_RENDER_SIZE * z + GRASS_SIZE/1.5;
+            *pReal++ = 1.0;
+            *pReal++ = 1.0;
+            ++numVertices;
+            // Left
+            *pReal++ = TileManager::TILE_RENDER_SIZE * x + GRASS_SIZE/8;
+            *pReal++ = height;
+            *pReal++ = TileManager::TILE_RENDER_SIZE * z - GRASS_SIZE/4;
+            *pReal++ = 1.0;
+            *pReal++ = 0.0;
+            *pReal++ = TileManager::TILE_RENDER_SIZE * x - GRASS_SIZE/2;
+            *pReal++ = height;
+            *pReal++ = TileManager::TILE_RENDER_SIZE * z + GRASS_SIZE/1.5;
+            *pReal++ = 0.0;
+            *pReal++ = 0.0;
+            *pReal++ = TileManager::TILE_RENDER_SIZE * x - GRASS_SIZE/2;
+            *pReal++ = height-TileManager::TILE_RENDER_SIZE/2;
+            *pReal++ = TileManager::TILE_RENDER_SIZE * z + GRASS_SIZE/1.5;
+            *pReal++ = 0.0;
+            *pReal++ = 1.0;
+            *pReal++ = TileManager::TILE_RENDER_SIZE * x + GRASS_SIZE/8;
+            *pReal++ = height-TileManager::TILE_RENDER_SIZE/2;
+            *pReal++ = TileManager::TILE_RENDER_SIZE * z - GRASS_SIZE/4;
+            *pReal++ = 1.0;
+            *pReal++ = 1.0;
+            ++numVertices;
+#else
+            /*  _\/_  */
+            /*   /\   */
+            // Horizontal
+            *pReal++ = TileManager::TILE_RENDER_SIZE * x + GRASS_SIZE/2.5;
+            *pReal++ = height;
+            *pReal++ = TileManager::TILE_RENDER_SIZE *z;
+            *pReal++ = 1.0;
+            *pReal++ = 0.0;
+            *pReal++ = TileManager::TILE_RENDER_SIZE * x - GRASS_SIZE/2.5;
+            *pReal++ = height;
+            *pReal++ = TileManager::TILE_RENDER_SIZE *z;
+            *pReal++ = 0.0;
+            *pReal++ = 0.0;
+            *pReal++ = TileManager::TILE_RENDER_SIZE * x - GRASS_SIZE/2.5;
+            *pReal++ = height-TileManager::TILE_RENDER_SIZE/2;
+            *pReal++ = TileManager::TILE_RENDER_SIZE *z;
+            *pReal++ = 0.0;
+            *pReal++ = 1.0;
+            *pReal++ = TileManager::TILE_RENDER_SIZE * x + GRASS_SIZE/2.5;
+            *pReal++ = height-TileManager::TILE_RENDER_SIZE/2;
+            *pReal++ = TileManager::TILE_RENDER_SIZE *z;
+            *pReal++ = 1.0;
+            *pReal++ = 1.0;
+            ++numVertices;
+            // Vertical 1
+            *pReal++ = TileManager::TILE_RENDER_SIZE * x + GRASS_SIZE/4.5;
+            *pReal++ = height;
+            *pReal++ = TileManager::TILE_RENDER_SIZE * z + GRASS_SIZE/3;
+            *pReal++ = 1.0;
+            *pReal++ = 0.0;
+            *pReal++ = TileManager::TILE_RENDER_SIZE * x - GRASS_SIZE/4.5;
+            *pReal++ = height;
+            *pReal++ = TileManager::TILE_RENDER_SIZE * z - GRASS_SIZE/3;
+            *pReal++ = 0.0;
+            *pReal++ = 0.0;
+            *pReal++ = TileManager::TILE_RENDER_SIZE * x - GRASS_SIZE/4.5;
+            *pReal++ = height-TileManager::TILE_RENDER_SIZE/2;
+            *pReal++ = TileManager::TILE_RENDER_SIZE * z - GRASS_SIZE/3;
+            *pReal++ = 0.0;
+            *pReal++ = 1.0;
+            *pReal++ = TileManager::TILE_RENDER_SIZE * x + GRASS_SIZE/4.5;
+            *pReal++ = height-TileManager::TILE_RENDER_SIZE/2;
+            *pReal++ = TileManager::TILE_RENDER_SIZE * z + GRASS_SIZE/3;
+            *pReal++ = 1.0;
+            *pReal++ = 1.0;
+            ++numVertices;
+            // Vertical 2
+            *pReal++ = TileManager::TILE_RENDER_SIZE * x - GRASS_SIZE/4.5;
+            *pReal++ = height;
+            *pReal++ = TileManager::TILE_RENDER_SIZE * z + GRASS_SIZE/3;
+            *pReal++ = 1.0;
+            *pReal++ = 0.0;
+            *pReal++ = TileManager::TILE_RENDER_SIZE * x + GRASS_SIZE/4.5;
+            *pReal++ = height;
+            *pReal++ = TileManager::TILE_RENDER_SIZE * z - GRASS_SIZE/3;
+            *pReal++ = 0.0;
+            *pReal++ = 0.0;
+            *pReal++ = TileManager::TILE_RENDER_SIZE * x + GRASS_SIZE/4.5;
+            *pReal++ = height-TileManager::TILE_RENDER_SIZE/2;
+            *pReal++ = TileManager::TILE_RENDER_SIZE * z - GRASS_SIZE/3;
+            *pReal++ = 0.0;
+            *pReal++ = 1.0;
+            *pReal++ = TileManager::TILE_RENDER_SIZE * x - GRASS_SIZE/4.5;
+            *pReal++ = height-TileManager::TILE_RENDER_SIZE/2;
+            *pReal++ = TileManager::TILE_RENDER_SIZE * z + GRASS_SIZE/3;
+            *pReal++ = 1.0;
+            *pReal++ = 1.0;
+            ++numVertices;
+#endif
+        }
+    }
+    vbuf->unlock();
+    mSubMeshGrassNear->indexData->indexCount = numVertices*2*3; // 2 tris/subtile * 3 vertices/triangle.
+    mSubMeshGrassNear->vertexData->vertexCount = numVertices*4; // 4 vertices/subtile.
 }
 
 //================================================================================================
 //
 //================================================================================================
-void TileChunk::setRenderOptions(bool drawSprites)
+void TileChunk::setRenderOptions(bool drawUndergrowth)
 {
-    if (drawSprites == mOption_DrawSprites) return;
-    if (!drawSprites)
+    if (drawUndergrowth == mUndergrowth) return;
+    if (!drawUndergrowth)
     {
-        mEntitySprites->getParentSceneNode()->detachObject(mEntitySprites);
+        mEntityGrassFar->getParentSceneNode()->detachObject(mEntityGrassFar);
     }
     else
     {
         SceneNode *sn = static_cast<SceneNode*> (TileManager::getSingleton().getSceneManager()->getRootSceneNode()->getChild("snTileChunk"));
-        sn->attachObject(mEntitySprites);
+        sn->attachObject(mEntityGrassFar);
     }
-    mOption_DrawSprites = drawSprites;
+    mUndergrowth = drawUndergrowth;
 }

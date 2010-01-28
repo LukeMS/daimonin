@@ -34,7 +34,6 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include "network.h"
 #include "object_manager.h"
 #include "object_visuals.h"
-#include "resourceloader.h"
 
 using namespace Ogre;
 
@@ -141,7 +140,7 @@ void ObjectManager::Event(int obj_type, int action, int id, int val1, int val2)
             mvNPC[ObjectNPC::HERO]->moveToDistantTile(pos);
             */
         }
-      //else if (action == EVT_WALK)        mvNPC[id]->walking(val1);
+        //else if (action == EVT_WALK)        mvNPC[id]->walking(val1);
         else if (action == EVT_SKINCOLOR)   mvNPC[id]->setSkinColor(val1);
         else if (action == EVT_ANIMATION)   mvNPC[id]->toggleAnimation(val1, val2);
         else if (action == EVT_HIT)         mvNPC[id]->setDamage(val1);
@@ -229,6 +228,13 @@ void ObjectManager::highlightObject(MovableObject *mob, bool highlight)
         extractObject(mob);
         if  (mSelectedType >= OBJECT_NPC)
         {
+            // If it crashes here, then there is an object without setQueryFlags(0).
+            if (mSelectedObject < 0)
+            {
+                Logger::log().error() << "An object without a defined query flag was found!";
+                Logger::log().error() << "Use setQueryFlags(0) on all objects that needs no mouse picking.";
+                return;
+            }
             if (entity || mSelectedObject == ObjectNPC::HERO) return;
             entity = mvNPC[mSelectedObject]->getEntity();
             ObjectVisuals::getSingleton().highlight(false, mvNPC[mSelectedObject]->getFriendly(), true);
@@ -441,9 +447,8 @@ bool ObjectManager::createFlipBook(String meshName, int sumRotations)
 
     const int textureSize = 1024/sumRotations;
     TexturePtr texture = TextureManager::getSingleton().createManual(
-                             ManResourceLoader::TEMP_RESOURCE + "FlipBookTexture", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
-                             TEX_TYPE_2D, textureSize * sumRotations, textureSize, 0, PF_A8R8G8B8, TU_RENDERTARGET,
-                             ManResourceLoader::getSingleton().getLoader());
+                             "FlipBookTexture", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
+                             TEX_TYPE_2D, textureSize * sumRotations, textureSize, 0, PF_A8R8G8B8, TU_RENDERTARGET);
     RenderTexture *renderTarget = texture->getBuffer()->getRenderTarget();
     renderTarget->setAutoUpdated(false);
 
