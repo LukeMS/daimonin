@@ -28,6 +28,7 @@
 
 #include <include.h>
 
+
 /**
 * Create the directory @p path.  If it already exists as a directory
 * we succeed.
@@ -41,9 +42,18 @@ static int mkdir_recurse(const char *path)
 
 #ifdef __WIN_32
 	cSlash = '\\';
+#ifndef F_OK
 #define F_OK	(0)
+#endif
+
+#ifndef R_OK
 #define R_OK	(4)
+#endif
+
+#ifndef W_OK
 #define W_OK	(2)
+#endif
+
 #else
 	cSlash = '/';
 #endif
@@ -83,41 +93,20 @@ int i, l;
 	}
 }
 
-char *mygetenv(const char *sVarName){
-size_t nSize;
-char *sRetVal;
 
-	getenv_s(&nSize, NULL, 0, sVarName); /* retrieve size of var value */
 
-	if(!nSize){
-		return NULL;
-	}
 
-	if(!(sRetVal = (char *) malloc(nSize * sizeof(char)))){ /* out of memory problem */
-		return NULL;
-	}
-
-	// Get the value of the environment variable.
-	if(!getenv_s(&nSize, sRetVal, nSize, sVarName)){
-		return sRetVal;
-	}
-
-	free(sRetVal);
-	return NULL;
-}
-
-/* use the following prgma to disable warnings C4996 */
+/* use the following pragma to disable warnings C4996 */
 #pragma warning(disable : 4996)
 
 
-int determine_best_dir(char *tmp, const char *fname){
+int determine_best_dir(char *tmp){
 char *stmp;
 
-	stmp = mygetenv("APPDATA");
-	if(!stmp){ /* APPDATA not defined - win98 ??? */
-		if(stmp = mygetenv("WINDIR")){ /* WINDIR defined ? */
+	stmp = getenv("APPDATA");
+	if(!stmp || !*stmp){ /* APPDATA not defined - win98 ??? */
+		if((stmp = getenv("WINDIR")) && *stmp){ /* WINDIR defined ? */
 			strcpy(tmp, stmp);
-			free(stmp);
 			if((tmp[strlen(tmp)-1] != '/') && (tmp[strlen(tmp)-1] != '\\')){
 				strcat(tmp, "\\");
 			}
@@ -130,42 +119,85 @@ char *stmp;
 		}
 	} else { /* APPDATA defined */
 		strcpy(tmp, stmp);
-		free(stmp);
 		if((tmp[strlen(tmp)-1] != '/') && (tmp[strlen(tmp)-1] != '\\')){
 			strcat(tmp, "\\");
 		}
 		strcat(tmp, "Daimonin\\");
 	}
-	strcat(tmp, fname);
-	
 	slash_to_backslash(tmp);
+
 	return 1;
 }
 
 
 #endif
 
+#define VERSION_MAXSIZE (32)
+
+const char *getversion(void){
+FILE *pfi;
+static char sVersion[VERSION_MAXSIZE];
+char *sRet = NULL;
+int nRead, i;
+char sfile[256];
+
+		sprintf(sfile,"%s/update/version", SYSPATH);
+
+#ifdef __WIN_32
+	slash_to_backslash(sfile);
+#endif
+
+        if(pfi = fopen(sfile, "r")){
+                if((nRead = fread(sVersion, 1, VERSION_MAXSIZE - 1, pfi)) > 0){
+                        sVersion[nRead] = '\0';
+                        for(i=0;i < nRead;i++){
+                                if(sVersion[i] == ' '){
+                                        sVersion[i] = '\0';
+                                        break;
+                                }
+                        }
+                        sRet = sVersion;
+                }
+                fclose(pfi);
+        }
+        return sRet;
+}
+
+
+
 char *file_path(const char *fname, const char *mode)
 {
     static char tmp[256];
     char *stmp;
     char ctmp;
-
-	char cslash = '/';
+	const char *sVer;
 
 #ifdef __WIN_32
-	if(!determine_best_dir(tmp, fname)){ /* no best dir, let's use the less worst dir */
+	char *sslash = "\\";
+
+	if(!determine_best_dir(tmp)){ /* no best dir, let's use the less worst dir */
 		sprintf(tmp, "%s%s", SYSPATH, fname);
+		slash_to_backslash(tmp);
 		return tmp;
 	}
-	cslash = '\\';
 #else
-	sprintf(tmp, "%s/.daimonin/%s", getenv("HOME"), fname);
+	char *sslash = "/";
+	sprintf(tmp, "%s/.daimonin/", getenv("HOME"));
+#endif
+
+	if(sVer = getversion()){
+		strcat(tmp, sVer);
+		strcat(tmp, sslash);
+	}
+	strcat(tmp, fname);
+
+#ifdef __WIN_32
+    slash_to_backslash(tmp);
 #endif
 
     if (strchr(mode, 'w'))
     { // overwrite (always use file in home dir)
-        if ((stmp=strrchr(tmp, cslash)))
+        if ((stmp=strrchr(tmp, *sslash)))
         {
             ctmp = stmp[0];
             stmp[0] = 0;
@@ -182,7 +214,7 @@ char *file_path(const char *fname, const char *mode)
             int  dummy; // purely to suppress GCC's warn_unused_result warning
 
             sprintf(otmp, "%s%s", SYSPATH, fname);
-            if ((stmp=strrchr(tmp, cslash)))
+            if ((stmp=strrchr(tmp, *sslash)))
             {
                 ctmp = stmp[0];
                 stmp[0] = 0;
@@ -206,7 +238,9 @@ char *file_path(const char *fname, const char *mode)
     }
 
     //    printf("file_path: %s (%s) => %s\n", fname, mode, tmp);
-
+#ifdef __WIN_32
+    slash_to_backslash(tmp);
+#endif
     return tmp;
 }
 
