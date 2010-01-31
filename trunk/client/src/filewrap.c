@@ -24,24 +24,7 @@
 #ifdef __WIN_32
 #include <direct.h>
 #include <stdlib.h>
-#endif
 
-#include <include.h>
-
-
-/**
-* Create the directory @p path.  If it already exists as a directory
-* we succeed.
-* Recursive mkdir is from the Gal project's e_mkdir_hier() function.
-**/
-
-static int mkdir_recurse(const char *path)
-{
-    char *copy, *p;
-	char cSlash;
-
-#ifdef __WIN_32
-	cSlash = '\\';
 #ifndef F_OK
 #define F_OK	(0)
 #endif
@@ -54,26 +37,77 @@ static int mkdir_recurse(const char *path)
 #define W_OK	(2)
 #endif
 
+#define CSLASH  '\\'
+
+/* use the following pragma to disable warnings C4996 */
+#pragma warning(disable : 4996)
+
 #else
-	cSlash = '/';
+#define CSLASH  '/'
+
 #endif
+
+void char_to_anotherchar(char *s, char c1, char c2){
+int i, l;
+	l = strlen(s);
+
+	for(i=0;i < l;i++){
+		if(s[i] == c1){
+			s[i] = c2;
+		}
+	}
+}
+
+#define slash_to_backslash(s) char_to_anotherchar((s), '/', '\\')
+#define backslash_to_slash(s) char_to_anotherchar((s), '\\', '/')
+
+#include <include.h>
+
+
+/* concat two paths adding the necessary slash.
+(spath must be large enough to contain the result)
+*/
+void append_to_path(char *spath, const char *s){
+int l = strlen(spath);
+int bSlash;
+
+    if(l){
+        if(spath[l-1] != CSLASH){
+            spath[l] = CSLASH;
+            l++;
+        }
+    }
+    strcpy(&spath[l], s);
+
+#ifdef __WIN_32
+    slash_to_backslash(&spath[l]);
+#endif
+}
+
+/**
+* Create the directory @p path.  If it already exists as a directory
+* we succeed.
+* Recursive mkdir is from the Gal project's e_mkdir_hier() function.
+**/
+
+static int mkdir_recurse(const char *path)
+{
+    char *copy, *p;
 
     p = copy = strdup(path);
 
     while(p){
-        p = strchr (p + 1, cSlash);
+        p = strchr (p + 1, CSLASH);
         if (p)
             *p = '\0';
-        if(access (copy, F_OK) == -1)
-        {
-            if (mkdir (copy, 0755) == -1)
-            {
+        if(access(copy, F_OK) == -1){
+            if (mkdir (copy, 0755) == -1){
 				free(copy);
                 return -1;
             }
         }
-        if (p)
-            *p = cSlash;
+        if(p)
+            *p = CSLASH;
     }
 	if(copy){
 		free(copy);
@@ -81,56 +115,7 @@ static int mkdir_recurse(const char *path)
     return 0;
 }
 
-#ifdef __WIN_32
-void slash_to_backslash(char *s){
-int i, l;
-	l = strlen(s);
 
-	for(i=0;i < l;i++){
-		if(s[i] == '/'){
-			s[i] = '\\';
-		}
-	}
-}
-
-
-
-
-/* use the following pragma to disable warnings C4996 */
-#pragma warning(disable : 4996)
-
-
-int determine_best_dir(char *tmp){
-char *stmp;
-
-	stmp = getenv("APPDATA");
-	if(!stmp || !*stmp){ /* APPDATA not defined - win98 ??? */
-		if((stmp = getenv("WINDIR")) && *stmp){ /* WINDIR defined ? */
-			strcpy(tmp, stmp);
-			if((tmp[strlen(tmp)-1] != '/') && (tmp[strlen(tmp)-1] != '\\')){
-				strcat(tmp, "\\");
-			}
-			strcat(tmp, "Application Data\\Daimonin\\");
-		} else { /* WINDIR not defined, let's leave */
-			return 0;
-		}
-		if(access(tmp, W_OK) == -1){
-			return 0;
-		}
-	} else { /* APPDATA defined */
-		strcpy(tmp, stmp);
-		if((tmp[strlen(tmp)-1] != '/') && (tmp[strlen(tmp)-1] != '\\')){
-			strcat(tmp, "\\");
-		}
-		strcat(tmp, "Daimonin\\");
-	}
-	slash_to_backslash(tmp);
-
-	return 1;
-}
-
-
-#endif
 
 #define VERSION_MAXSIZE (32)
 
@@ -139,30 +124,62 @@ FILE *pfi;
 static char sVersion[VERSION_MAXSIZE];
 char *sRet = NULL;
 int nRead, i;
-char sfile[256];
+char sfile[256] = "";
 
-		sprintf(sfile,"%s/update/version", SYSPATH);
+    append_to_path(sfile, SYSPATH);
+    append_to_path(sfile, "update/version");
 
-#ifdef __WIN_32
-	slash_to_backslash(sfile);
-#endif
-
-        if(pfi = fopen(sfile, "r")){
-                if((nRead = fread(sVersion, 1, VERSION_MAXSIZE - 1, pfi)) > 0){
-                        sVersion[nRead] = '\0';
-                        for(i=0;i < nRead;i++){
-                                if(sVersion[i] == ' '){
-                                        sVersion[i] = '\0';
-                                        break;
-                                }
-                        }
-                        sRet = sVersion;
+    if(pfi = fopen(sfile, "r")){
+        if((nRead = fread(sVersion, 1, VERSION_MAXSIZE - 1, pfi)) > 0){
+            sVersion[nRead] = '\0';
+            for(i=0;i < nRead;i++){ /* only keep the major version information */
+                if(sVersion[i] == ' '){
+                    sVersion[i] = '\0';
+                    break;
                 }
-                fclose(pfi);
+            }
+            sRet = sVersion;
         }
-        return sRet;
+        fclose(pfi);
+    }
+    return sRet;
 }
 
+/*
+returns 0 if we failed to use a user dir location - in this case we use the SYSPATH location
+returns 1 if we maange to use a user dir location
+*/
+int determine_best_location(char *tmp, const char *fname){
+char *stmp;
+const char *sVer;
+
+*tmp = '\0';
+
+#ifdef __WIN_32
+	if((stmp = getenv("APPDATA")) && *stmp){ /* APPDATA defined */
+        append_to_path(tmp, stmp);
+		append_to_path(tmp, "Daimonin");
+	} else { /* Windows 98 ??? */
+		if((stmp = getenv("WINDIR")) && *stmp){ /* WINDIR defined ? */
+			append_to_path(tmp, stmp);
+			append_to_path(tmp, "Application Data\\Daimonin");
+		} else { /* WINDIR not defined, let's use the the daimonin path */
+			append_to_path(tmp, SYSPATH);
+			append_to_path(tmp, fname);
+			return 0;
+		}
+	}
+#else
+	append_to_path(tmp, getenv("HOME"));
+	append_to_path(tmp, ".daimonin");
+#endif
+
+	if(sVer = getversion()){ /* Append the short version */
+	    append_to_path(tmp, sVer);
+	}
+	append_to_path(tmp, fname);
+	return 1;
+}
 
 
 char *file_path(const char *fname, const char *mode)
@@ -170,35 +187,13 @@ char *file_path(const char *fname, const char *mode)
     static char tmp[256];
     char *stmp;
     char ctmp;
-	const char *sVer;
 
-#ifdef __WIN_32
-	char *sslash = "\\";
+    if(!determine_best_location(tmp, fname)){ /* let's use the file in the daimonin dir */
+        return tmp;
+    }
 
-	if(!determine_best_dir(tmp)){ /* no best dir, let's use the less worst dir */
-		sprintf(tmp, "%s%s", SYSPATH, fname);
-		slash_to_backslash(tmp);
-		return tmp;
-	}
-#else
-	char *sslash = "/";
-	sprintf(tmp, "%s/.daimonin/", getenv("HOME"));
-#endif
-
-	if(sVer = getversion()){
-		strcat(tmp, sVer);
-		strcat(tmp, sslash);
-	}
-	strcat(tmp, fname);
-
-#ifdef __WIN_32
-    slash_to_backslash(tmp);
-#endif
-
-    if (strchr(mode, 'w'))
-    { // overwrite (always use file in home dir)
-        if ((stmp=strrchr(tmp, *sslash)))
-        {
+    if(strchr(mode, 'w')){ // overwrite (always use file in home dir)
+        if((stmp=strrchr(tmp, CSLASH))){
             ctmp = stmp[0];
             stmp[0] = 0;
             mkdir_recurse(tmp);
@@ -213,14 +208,15 @@ char *file_path(const char *fname, const char *mode)
             char shtmp[517];
             int  dummy; // purely to suppress GCC's warn_unused_result warning
 
-            sprintf(otmp, "%s%s", SYSPATH, fname);
-            if ((stmp=strrchr(tmp, *sslash)))
-            {
+            if ((stmp=strrchr(tmp, CSLASH))){
                 ctmp = stmp[0];
                 stmp[0] = 0;
                 mkdir_recurse(tmp);
                 stmp[0] = ctmp;
             }
+
+            append_to_path(otmp, SYSPATH);
+            append_to_path(otmp, fname);
 
             /* Copy base file to home directory */
 #ifdef __WIN_32
@@ -233,14 +229,14 @@ char *file_path(const char *fname, const char *mode)
     }
     else
     { // just read (check home dir first, then system dir)
-        if (access(tmp, R_OK))
-            sprintf(tmp, "%s%s", SYSPATH, fname);
+        if (access(tmp, R_OK)){
+            *tmp = '\0';
+            append_to_path(tmp, SYSPATH);
+            append_to_path(tmp, fname);
+        }
     }
 
     //    printf("file_path: %s (%s) => %s\n", fname, mode, tmp);
-#ifdef __WIN_32
-    slash_to_backslash(tmp);
-#endif
     return tmp;
 }
 
