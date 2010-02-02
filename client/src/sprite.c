@@ -310,6 +310,13 @@ void string_blt(SDL_Surface *surf, _font *font, char *text, int x, int y, uint8 
     SDL_Color    real_color,
                  color;
     char        *c;
+    /* Strong (|), emphasis (~), and intertitle (`) can be used together.
+     * Intertitles simply underline text, except in GUIs where it also changes
+     * text colour and forces a linebreak (this last is handled in the specific
+     * modules).
+     * Hyper (^) only works as markup in GUIs. The actual hypertexting is
+     * handled in the specidic modules. In all other cases it is a normal
+     * character. */
     uint8        intertitle = 0,
                  strong = 0,
                  emphasis = 0,
@@ -345,16 +352,10 @@ void string_blt(SDL_Surface *surf, _font *font, char *text, int x, int y, uint8 
 
     for (c = text; *c; c++)
     {
-        SDL_Rect dst;
-
-        dst.x = x2;
-        dst.y = y2;
-
         switch (*c)
         {
             case '|': /* strong */
                 if (!hyper &&
-                    !intertitle &&
                     col != COLOR_BLACK)
                 {
                     strong = !strong;
@@ -373,6 +374,14 @@ void string_blt(SDL_Surface *surf, _font *font, char *text, int x, int y, uint8 
                             color.g = 0xff;
                             color.b = 0x00;
                         }
+                        else if (intertitle &&
+                                 (cpl.menustatus == MENU_NPC ||
+                                  cpl.menustatus == MENU_BOOK))
+                        {
+                            color.r = Bitmaps[BITMAP_PALETTE]->bitmap->format->palette->colors[COLOR_HGOLD].r;
+                            color.g = Bitmaps[BITMAP_PALETTE]->bitmap->format->palette->colors[COLOR_HGOLD].g;
+                            color.b = Bitmaps[BITMAP_PALETTE]->bitmap->format->palette->colors[COLOR_HGOLD].b;
+                        }
                         else
                         {
                             color.r = real_color.r;
@@ -385,11 +394,10 @@ void string_blt(SDL_Surface *surf, _font *font, char *text, int x, int y, uint8 
                                    SDL_LOGPAL | SDL_PHYSPAL, &color, 1, 1);
                 }
 
-                break;
+                continue;
 
             case '~': /* emphasis */
                 if (!hyper &&
-                    !intertitle &&
                     col != COLOR_BLACK)
                 {
                     emphasis = !emphasis;
@@ -408,6 +416,14 @@ void string_blt(SDL_Surface *surf, _font *font, char *text, int x, int y, uint8 
                             color.g = 0xff;
                             color.b = 0x00;
                         }
+                        else if (intertitle &&
+                                 (cpl.menustatus == MENU_NPC ||
+                                  cpl.menustatus == MENU_BOOK))
+                        {
+                            color.r = Bitmaps[BITMAP_PALETTE]->bitmap->format->palette->colors[COLOR_HGOLD].r;
+                            color.g = Bitmaps[BITMAP_PALETTE]->bitmap->format->palette->colors[COLOR_HGOLD].g;
+                            color.b = Bitmaps[BITMAP_PALETTE]->bitmap->format->palette->colors[COLOR_HGOLD].b;
+                        }
                         else
                         {
                             color.r = real_color.r;
@@ -420,17 +436,17 @@ void string_blt(SDL_Surface *surf, _font *font, char *text, int x, int y, uint8 
                                    SDL_LOGPAL | SDL_PHYSPAL, &color, 1, 1);
                 }
 
-                break;
+                continue;
 
             case '`': /* intertitle */
                 if (!hyper &&
                     col != COLOR_BLACK)
                 {
                     intertitle = !intertitle;
-                    strong = 0;
-                    emphasis = 0;
      
-                    if (intertitle)
+                    if (intertitle &&
+                        (cpl.menustatus == MENU_NPC ||
+                         cpl.menustatus == MENU_BOOK))
                     {
                         color.r = Bitmaps[BITMAP_PALETTE]->bitmap->format->palette->colors[COLOR_HGOLD].r;
                         color.g = Bitmaps[BITMAP_PALETTE]->bitmap->format->palette->colors[COLOR_HGOLD].g;
@@ -438,20 +454,36 @@ void string_blt(SDL_Surface *surf, _font *font, char *text, int x, int y, uint8 
                     }
                     else
                     {
-                        color.r = real_color.r;
-                        color.g = real_color.g;
-                        color.b = real_color.b;
+                        if (strong)
+                        {
+                            color.r = 0xff;
+                            color.g = 0xff;
+                            color.b = 0x00;
+                        }
+                        else if (emphasis)
+                        {
+                            color.r = 0x00;
+                            color.g = 0xff;
+                            color.b = 0x00;
+                        }
+                        else
+                        {
+                            color.r = real_color.r;
+                            color.g = real_color.g;
+                            color.b = real_color.b;
+                        }
                     }
      
                     SDL_SetPalette(font->sprite->bitmap,
                                    SDL_LOGPAL | SDL_PHYSPAL, &color, 1, 1);
                 }
 
-                break;
+                continue;
 
             case '^': /* hypertext */
-                /* Only allow in NPC GUI TODO: and book GUI. */
-                if (cpl.menustatus == MENU_NPC)
+                /* Only allow in NPC GUI and book GUI. */
+                if (cpl.menustatus == MENU_NPC ||
+                    cpl.menustatus == MENU_BOOK)
                 {
                     hyper = !hyper;
      
@@ -498,40 +530,59 @@ void string_blt(SDL_Surface *surf, _font *font, char *text, int x, int y, uint8 
                     SDL_SetPalette(font->sprite->bitmap,
                                    SDL_LOGPAL | SDL_PHYSPAL, &color, 1, 1);
 
-                    break;
+                    continue;
                 }
+
+               break;
 
             case '\n':
                 x2 = x;
                 y2 += font->line_height;
 
-                break;
-
-            default:
-                w = font->c[(unsigned char)(*c)].w + font->char_offset;
-     
-                /* if set, we have a clipping line */
-                if (line_clip >= 0)
-                {
-                    if ((line_count += w) > line_clip)
-                    {
-                        return;
-                    }
-                }
-     
-                if (*c != ' ')
-                {
-                    SDL_Rect src;
-     
-                    src.x = font->c[(unsigned char)(*c)].x;
-                    src.y = font->c[(unsigned char)(*c)].y;
-                    src.w = font->c[(unsigned char)(*c)].w;
-                    src.h = font->c[(unsigned char)(*c)].h;
-                    SDL_BlitSurface(font->sprite->bitmap, &src, surf, &dst);
-                }
-     
-                x2 += w;
+                continue;
         }
+
+        w = font->c[(unsigned char)(*c)].w + font->char_offset;
+
+        /* if set, we have a clipping line */
+        if (line_clip >= 0)
+        {
+            if ((line_count += w) > line_clip)
+            {
+                return;
+            }
+        }
+
+        if (*c != ' ')
+        {
+            SDL_Rect src,
+                     dst;
+
+            src.x = font->c[(unsigned char)(*c)].x;
+            src.y = font->c[(unsigned char)(*c)].y;
+            src.w = font->c[(unsigned char)(*c)].w;
+            src.h = font->c[(unsigned char)(*c)].h;
+            dst.x = x2;
+            dst.y = y2;
+            SDL_BlitSurface(font->sprite->bitmap, &src, surf, &dst);
+        }
+
+        if (intertitle)
+        {
+            SDL_Rect   box;
+            SDL_Color *clr = (cpl.menustatus == MENU_NPC ||
+                              cpl.menustatus == MENU_BOOK) ? &color :
+                             &real_color;
+
+            box.x = x2;
+            box.y = y2 + font->c[(unsigned char)(*c)].h;
+            box.w = font->c[(unsigned char)(*c)].w + font->char_offset;
+            box.h = 1;
+            SDL_FillRect(surf, &box,
+                         SDL_MapRGB(surf->format, clr->r, clr->g, clr->b));
+        }
+
+        x2 += w;
     }
 }
 
