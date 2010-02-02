@@ -21,6 +21,8 @@
     The author can be reached via e-mail to info@daimonin.net
 */
 
+#include <string.h>
+
 #ifdef __WIN_32
 #include <direct.h>
 #include <stdlib.h>
@@ -39,8 +41,10 @@
 
 #define CSLASH  '\\'
 
-/* use the following pragma to disable warnings C4996 */
+/* use the following pragma to disable warnings C4996 - this pragma is used by Visual Studio */
+#ifndef MINGW
 #pragma warning(disable : 4996)
+#endif
 
 #else
 #define CSLASH  '/'
@@ -69,7 +73,6 @@ int i, l;
 */
 void append_to_path(char *spath, const char *s){
 int l = strlen(spath);
-int bSlash;
 
     if(l){
         if(spath[l-1] != CSLASH){
@@ -115,7 +118,43 @@ static int mkdir_recurse(const char *path)
     return 0;
 }
 
+#define FILECOPY_BUFSIZE    (32 * 1024)
 
+int filecopy(char *sfilei, char *sfileo){
+FILE *pfi, *pfo;
+char s[FILECOPY_BUFSIZE];
+size_t nRead;
+int nRetVal = 0;
+
+    if((pfi = fopen(sfilei, "rb"))){
+        if((pfo = fopen(sfileo, "wb"))){
+            while(!nRetVal){
+                if((nRead = fread(s, 1, FILECOPY_BUFSIZE, pfi)) < FILECOPY_BUFSIZE){
+                    if(ferror(pfi)){
+                        fprintf(stderr, "Failed to read input file %s (%s).\n", sfilei, strerror(errno));
+                        break;
+                    }
+                    nRetVal = 1;
+                    if(nRead <= 0){
+                        break;
+                    }
+                }
+                if(fwrite(s, 1, nRead, pfo) != nRead){
+                    fprintf(stderr, "Failed to write output file %s (%s).\n", sfileo, strerror(errno));
+                    nRetVal = 0;
+                    break;
+                }
+            }
+            fclose(pfo);
+        } else {
+            fprintf(stderr, "Failed to open output file %s (%s).\n", sfileo, strerror(errno));
+        }
+        fclose(pfi);
+    } else {
+        fprintf(stderr, "Failed to open input file %s (%s).\n", sfilei, strerror(errno));
+    }
+    return nRetVal;
+}
 
 #define VERSION_MAXSIZE (32)
 
@@ -129,8 +168,8 @@ char sfile[256] = "";
     append_to_path(sfile, SYSPATH);
     append_to_path(sfile, "update/version");
 
-    if(pfi = fopen(sfile, "r")){
-        if((nRead = fread(sVersion, 1, VERSION_MAXSIZE - 1, pfi)) > 0){
+    if((pfi = fopen(sfile, "r"))){
+        if(((nRead = fread(sVersion, 1, VERSION_MAXSIZE - 1, pfi)) > 0)){
             sVersion[nRead] = '\0';
             for(i=0;i < nRead;i++){ /* only keep the major version information */
                 if(sVersion[i] == ' '){
@@ -174,7 +213,7 @@ const char *sVer;
 	append_to_path(tmp, ".daimonin");
 #endif
 
-	if(sVer = getversion()){ /* Append the short version */
+	if((sVer = getversion())){ /* Append the short version */
 	    append_to_path(tmp, sVer);
 	}
 	append_to_path(tmp, fname);
@@ -192,7 +231,7 @@ char *file_path(const char *fname, const char *mode)
         return tmp;
     }
 
-    if(strchr(mode, 'w')){ // overwrite (always use file in home dir)
+    if(strchr(mode, 'w')){ /* overwrite (always use file in home dir) */
         if((stmp=strrchr(tmp, CSLASH))){
             ctmp = stmp[0];
             stmp[0] = 0;
@@ -200,13 +239,9 @@ char *file_path(const char *fname, const char *mode)
             stmp[0] = ctmp;
         }
     }
-    else if (strchr(mode, '+') || strchr(mode, 'a'))
-    { // modify (copy base file to home dir if not exists)
-        if (access(tmp, W_OK))
-        {
-            char otmp[256];
-            char shtmp[517];
-            int  dummy; // purely to suppress GCC's warn_unused_result warning
+    else if (strchr(mode, '+') || strchr(mode, 'a')){ /* modify (copy base file to home dir if not exists) */
+        if(access(tmp, W_OK)){
+            char otmp[256] = "";
 
             if ((stmp=strrchr(tmp, CSLASH))){
                 ctmp = stmp[0];
@@ -219,16 +254,18 @@ char *file_path(const char *fname, const char *mode)
             append_to_path(otmp, fname);
 
             /* Copy base file to home directory */
-#ifdef __WIN_32
-            sprintf(shtmp, "copy %s %s", otmp, tmp);
-#else
-            sprintf(shtmp, "cp %s %s", otmp, tmp);
-#endif
-            dummy = system(shtmp);
+            if(!access(otmp, R_OK)){ /* if source file exists */
+                if(!filecopy(otmp,tmp)){ /* if we failed to copy file */
+                    *tmp = '\0';
+                    append_to_path(tmp, SYSPATH);
+                    append_to_path(tmp, fname);
+                    return tmp;
+                }
+            }
         }
     }
     else
-    { // just read (check home dir first, then system dir)
+    { /* just read (check home dir first, then system dir) */
         if (access(tmp, R_OK)){
             *tmp = '\0';
             append_to_path(tmp, SYSPATH);
@@ -236,7 +273,7 @@ char *file_path(const char *fname, const char *mode)
         }
     }
 
-    //    printf("file_path: %s (%s) => %s\n", fname, mode, tmp);
+    /*    printf("file_path: %s (%s) => %s\n", fname, mode, tmp); */
     return tmp;
 }
 
