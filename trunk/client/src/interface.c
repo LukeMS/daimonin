@@ -691,7 +691,9 @@ static uint8 ParseTag(_gui_npc_element *element, char *data, int *pos)
                     return 0;
                 }
 
-                MALLOC2(element->title, StripCodes(buf, cp));
+                sprintf(buf, "`");
+                sprintf(strchr(StripCodes(buf + 1, cp), '\0'), "`");
+                MALLOC2(element->title, buf);
 
                 break;
 
