@@ -691,9 +691,17 @@ static uint8 ParseTag(_gui_npc_element *element, char *data, int *pos)
                     return 0;
                 }
 
-                sprintf(buf, "`");
-                sprintf(strchr(StripCodes(buf + 1, cp), '\0'), "`");
-                MALLOC2(element->title, buf);
+                if (element->type == GUI_NPC_MESSAGE ||
+                    element->type == GUI_NPC_REWARD)
+                {
+                    sprintf(buf, "`");
+                    sprintf(strchr(StripCodes(buf + 1, cp), '\0'), "`");
+                    MALLOC2(element->title, buf);
+                }
+                else
+                {
+                    MALLOC2(element->title, StripCodes(buf, cp));
+                }
 
                 break;
 
