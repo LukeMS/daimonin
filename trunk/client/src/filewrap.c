@@ -189,7 +189,9 @@ returns 0 if we failed to use a user dir location - in this case we use the SYSP
 returns 1 if we maange to use a user dir location
 */
 int determine_best_location(char *tmp, const char *fname){
+#ifdef __WIN_32
 char *stmp;
+#endif
 const char *sVer;
 
 *tmp = '\0';
