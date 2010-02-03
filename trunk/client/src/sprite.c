@@ -575,8 +575,8 @@ void string_blt(SDL_Surface *surf, _font *font, char *text, int x, int y, uint8 
                              &real_color;
 
             box.x = x2;
-            box.y = y2 + font->c[(unsigned char)(*c)].h;
-            box.w = font->c[(unsigned char)(*c)].w + font->char_offset;
+            box.y = y2 + font->c[(unsigned char)(*c)].h - 2;
+            box.w = w;
             box.h = 1;
             SDL_FillRect(surf, &box,
                          SDL_MapRGB(surf->format, clr->r, clr->g, clr->b));
