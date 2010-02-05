@@ -2458,7 +2458,9 @@ static void check_esc_menu_keys(int key)
 ******************************************************************/
 void check_menu_keys(int menu, int key)
 {
-    int shiftPressed    = SDL_GetModState() & KMOD_SHIFT;
+    int   shiftPressed = (SDL_GetModState() & KMOD_SHIFT),
+          ctrlPressed = (SDL_GetModState() & KMOD_CTRL);
+    sint8 n;
 
     if (cpl.menustatus == MENU_NO)
         return;
@@ -2536,12 +2538,36 @@ void check_menu_keys(int menu, int key)
         switch (key)
         {
         case SDLK_LEFT:
-            option_list_set.key_change = -1;
+            n = -1;
+
+            if (shiftPressed)
+            {
+                n *= 2;
+            }
+
+            if (ctrlPressed)
+            {
+                n *= 4;
+            }
+
+            option_list_set.key_change = n;
             /*sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICK,0,0,MENU_SOUND_VOL);*/
             menuRepeatKey = SDLK_LEFT;
             break;
         case SDLK_RIGHT:
-            option_list_set.key_change = 1;
+            n = 1;
+
+            if (shiftPressed)
+            {
+                n *= 2;
+            }
+
+            if (ctrlPressed)
+            {
+                n *= 4;
+            }
+
+            option_list_set.key_change = n;
             /*sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICK,0,0,MENU_SOUND_VOL);*/
             menuRepeatKey = SDLK_RIGHT;
             break;
