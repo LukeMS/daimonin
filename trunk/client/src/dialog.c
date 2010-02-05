@@ -654,15 +654,10 @@ inline void optwin_draw_options(int x, int y)
                 /* keyboard event */
                 if (option_list_set.key_change && option_list_set.entry_nr == pos)
                 {
-                    sint8 n = option_list_set.key_change;
-
-                    if (n)
-                    {
-                        add_value(opt[i].value, opt[i].value_type,
-                                  opt[i].deltaRange * n, opt[i].minRange,
-                                  opt[i].maxRange);
-                        option_list_set.key_change = 0;
-                    }
+                    add_value(opt[i].value, opt[i].value_type,
+                              opt[i].deltaRange * option_list_set.key_change,
+                              opt[i].minRange, opt[i].maxRange);
+                    option_list_set.key_change = 0;
                 }
 
                 if (mx > x + LEN_NAME + LEN_VALUE && mx <x + LEN_NAME + LEN_VALUE + 14 && my> y && my < y + 18)
