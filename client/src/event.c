@@ -2452,7 +2452,6 @@ static void check_esc_menu_keys(int key)
     };
 }
 
-
 /******************************************************************
  Handle keystrokes in menue-dialog.
 ******************************************************************/
@@ -2461,38 +2460,13 @@ void check_menu_keys(int menu, int key)
     int   shiftPressed = (SDL_GetModState() & KMOD_SHIFT),
           ctrlPressed = (SDL_GetModState() & KMOD_CTRL);
     sint8 n;
+    Boolean res_change = FALSE;
 
-    if (cpl.menustatus == MENU_NO)
-        return;
-
-/* close menu -- methinks this should probably be handled via the switch below,
- * meaning each menu type (ie, MENU_NPC) could handle the event within its own
- * module (ie, interface.c). But for now lets go with what's here.
- * -- Smacky 20071124 */
-    if (key == SDLK_ESCAPE)
+    if (cpl.menustatus == MENU_NO ||
+        check_keys_menu_status(key))
     {
-        if (GameStatus == GAME_STATUS_ACCOUNT_CHAR_CREATE || GameStatus == GAME_STATUS_ACCOUNT_CHAR_DEL)
-        {
-            dialog_new_char_warn = 0;
-            reset_input_mode();
-            GameStatus = GAME_STATUS_ACCOUNT;
-            cpl.menustatus = MENU_NO;
-            return;
-        }
-
-        if (cpl.menustatus == MENU_KEYBIND)
-            save_keybind_file(KEYBIND_FILE);
-
-        if (cpl.menustatus == MENU_NPC)
-            gui_npc_reset();
-        cpl.menustatus = MENU_NO;
-        map_udate_flag = 2;
-        reset_keys();
         return;
     }
-
-    if (check_keys_menu_status(key))
-        return;
 
     switch (menu)
     {
@@ -2501,6 +2475,11 @@ void check_menu_keys(int menu, int key)
             return;
         switch (key)
         {
+        case SDLK_ESCAPE:
+            cpl.menustatus = MENU_NO;
+            map_udate_flag = 2;
+            reset_keys();
+            break;
         case SDLK_LEFT:
             gui_interface_book->page_show-=2;
             if (gui_interface_book->page_show<0)
@@ -2618,74 +2597,66 @@ void check_menu_keys(int menu, int key)
             menuRepeatKey = SDLK_DOWN;
             break;
         case SDLK_d:
+        case SDLK_ESCAPE:
             sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICK, 0, 0, MENU_SOUND_VOL);
-            map_udate_flag = 2;
-            if (cpl.menustatus == MENU_KEYBIND)
-                save_keybind_file(KEYBIND_FILE);
-            if (cpl.menustatus == MENU_OPTION)
-            {
-                Boolean res_change = FALSE;
-                save_options_dat();
-                Mix_VolumeMusic(options.music_volume);
-                if (options.playerdoll)
-                    cur_widget[PDOLL_ID].show = TRUE;
+            save_options_dat();
+            Mix_VolumeMusic(options.music_volume);
+            if (options.playerdoll)
+                cur_widget[PDOLL_ID].show = TRUE;
 
-                /* ToggleScreenFlag sets changes this option in the main loop
-                 * so we revert this setting, also if a resolution change occurs
-                 * we first change the resolution, without toggling, and after that
-                 * succeeds we use the specialized attempt_fullscreentoggle
-                 */
-                if (options.fullscreen_flag != options.fullscreen)
+            /* ToggleScreenFlag sets changes this option in the main loop
+             * so we revert this setting, also if a resolution change occurs
+             * we first change the resolution, without toggling, and after that
+             * succeeds we use the specialized attempt_fullscreentoggle
+             */
+            if (options.fullscreen_flag != options.fullscreen)
+            {
+                if (options.fullscreen)
+                    options.fullscreen = FALSE;
+                else
+                    options.fullscreen = TRUE;
+                ToggleScreenFlag = TRUE;
+            }
+            /* lets add on the fly resolution change for testing */
+            /* i know this part is heavy, but we want to make sure we try everything
+             * before we shut down the client
+             */
+            if (Screensize.x!=Screendefs[options.resolution].x || Screensize.y!=Screendefs[options.resolution].y)
+            {
+                Uint32 videoflags = get_video_flags();
+                _screensize sz_tmp = Screensize;
+                Screensize=Screendefs[options.resolution];
+
+                if ((ScreenSurface = SDL_SetVideoMode(Screensize.x, Screensize.y, options.used_video_bpp, videoflags)) == NULL)
                 {
-                    if (options.fullscreen)
-                        options.fullscreen = FALSE;
-                    else
-                        options.fullscreen = TRUE;
-                    ToggleScreenFlag = TRUE;
-                }
-                /* lets add on the fly resolution change for testing */
-                /* i know this part is heavy, but we want to make sure we try everything
-                 * before we shut down the client
-                 */
-                if (Screensize.x!=Screendefs[options.resolution].x || Screensize.y!=Screendefs[options.resolution].y)
-                {
-                    Uint32 videoflags = get_video_flags();
-                    _screensize sz_tmp = Screensize;
-                    Screensize=Screendefs[options.resolution];
+                    int i;
+                    textwin_showstring(COLOR_RED, "Couldn't set %dx%dx%d video mode: %s\n", Screensize.x, Screensize.y, options.used_video_bpp, SDL_GetError());
+                    LOG(LOG_ERROR, "Couldn't set %dx%dx%d video mode: %s\n", Screensize.x, Screensize.y, options.used_video_bpp, SDL_GetError());
+                    Screensize=sz_tmp;
+                    for (i=0;i<16;i++)
+                        if (Screensize.x==Screendefs[i].x && Screensize.y == Screendefs[i].y)
+                        {
+                            options.resolution = i;
+                            break;
+                        }
+                    textwin_showstring(COLOR_RED, "Try to switch back to old setting...");
+                    LOG(LOG_ERROR, "Try to switch back to old setting...\n");
 
                     if ((ScreenSurface = SDL_SetVideoMode(Screensize.x, Screensize.y, options.used_video_bpp, videoflags)) == NULL)
                     {
-                        int i;
                         textwin_showstring(COLOR_RED, "Couldn't set %dx%dx%d video mode: %s\n", Screensize.x, Screensize.y, options.used_video_bpp, SDL_GetError());
                         LOG(LOG_ERROR, "Couldn't set %dx%dx%d video mode: %s\n", Screensize.x, Screensize.y, options.used_video_bpp, SDL_GetError());
-                        Screensize=sz_tmp;
-                        for (i=0;i<16;i++)
-                            if (Screensize.x==Screendefs[i].x && Screensize.y == Screendefs[i].y)
-                            {
-                                options.resolution = i;
-                                break;
-                            }
-                        textwin_showstring(COLOR_RED, "Try to switch back to old setting...");
-                        LOG(LOG_ERROR, "Try to switch back to old setting...\n");
-
+                        Screensize=Screendefs[0];
+                        options.resolution = 0;
+                        textwin_showstring(COLOR_RED, "Try to switch back to 800x600...");
+                        LOG(LOG_ERROR, "Try to switch back to 800x600...\n");
                         if ((ScreenSurface = SDL_SetVideoMode(Screensize.x, Screensize.y, options.used_video_bpp, videoflags)) == NULL)
                         {
-                            textwin_showstring(COLOR_RED, "Couldn't set %dx%dx%d video mode: %s\n", Screensize.x, Screensize.y, options.used_video_bpp, SDL_GetError());
-                            LOG(LOG_ERROR, "Couldn't set %dx%dx%d video mode: %s\n", Screensize.x, Screensize.y, options.used_video_bpp, SDL_GetError());
-                            Screensize=Screendefs[0];
-                            options.resolution = 0;
-                            textwin_showstring(COLOR_RED, "Try to switch back to 800x600...");
-                            LOG(LOG_ERROR, "Try to switch back to 800x600...\n");
-                            if ((ScreenSurface = SDL_SetVideoMode(Screensize.x, Screensize.y, options.used_video_bpp, videoflags)) == NULL)
-                            {
-                                /* now we have a problem */
-                                textwin_showstring(COLOR_RED, "Couldn't set %dx%dx%d video mode: %s\nFATAL ERROR - exit", Screensize.x, Screensize.y, options.used_video_bpp, SDL_GetError());
-                                LOG(LOG_ERROR, "Couldn't set %dx%dx%d video mode: %s\nFATAL ERROR - exit", Screensize.x, Screensize.y, options.used_video_bpp, SDL_GetError());
-                                Screensize=sz_tmp;
-                                exit(2);
-                            }
-                            else
-                                res_change = TRUE;
+                            /* now we have a problem */
+                            textwin_showstring(COLOR_RED, "Couldn't set %dx%dx%d video mode: %s\nFATAL ERROR - exit", Screensize.x, Screensize.y, options.used_video_bpp, SDL_GetError());
+                            LOG(LOG_ERROR, "Couldn't set %dx%dx%d video mode: %s\nFATAL ERROR - exit", Screensize.x, Screensize.y, options.used_video_bpp, SDL_GetError());
+                            Screensize=sz_tmp;
+                            exit(2);
                         }
                         else
                             res_change = TRUE;
@@ -2693,17 +2664,19 @@ void check_menu_keys(int menu, int key)
                     else
                         res_change = TRUE;
                 }
-                if (res_change)
-                {
-                    const SDL_VideoInfo    *info    = NULL;
-                    info = SDL_GetVideoInfo();
-                    options.real_video_bpp = info->vfmt->BitsPerPixel;
+                else
+                    res_change = TRUE;
+            }
+            if (res_change)
+            {
+                const SDL_VideoInfo    *info    = NULL;
+                info = SDL_GetVideoInfo();
+                options.real_video_bpp = info->vfmt->BitsPerPixel;
 //                    SDL_FreeSurface(ScreenSurfaceMap);
 //                    ScreenSurfaceMap=SDL_CreateRGBSurface(ScreenSurface->flags, Screensize.x, Screensize.y, options.used_video_bpp, 0,0,0,0);
-
-                }
             }
             cpl.menustatus = MENU_NO;
+            map_udate_flag = 2;
             reset_keys();
             break;
         }
@@ -2721,8 +2694,9 @@ void check_menu_keys(int menu, int key)
             }
             else
                 sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
-            map_udate_flag = 2;
+        case SDLK_ESCAPE:
             cpl.menustatus = MENU_NO;
+            map_udate_flag = 2;
             reset_keys();
             break;
         case SDLK_UP:
@@ -2812,8 +2786,9 @@ void check_menu_keys(int menu, int key)
             }
             else
                 sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
-            map_udate_flag = 2;
+        case SDLK_ESCAPE:
             cpl.menustatus = MENU_NO;
+            map_udate_flag = 2;
             reset_keys();
             break;
         case SDLK_LEFT:
@@ -2936,10 +2911,10 @@ void check_menu_keys(int menu, int key)
         case SDLK_d:
             save_keybind_file(KEYBIND_FILE);
             sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICK, 0, 0, MENU_SOUND_VOL);
-            map_udate_flag = 2;
+        case SDLK_ESCAPE:
             cpl.menustatus = MENU_NO;
+            map_udate_flag = 2;
             reset_keys();
-            sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICK, 0, 0, MENU_SOUND_VOL);
             break;
         case SDLK_RETURN:
             sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICK, 0, 0, MENU_SOUND_VOL);
@@ -2966,7 +2941,12 @@ void check_menu_keys(int menu, int key)
         case SDLK_RETURN:
             break;
         case SDLK_ESCAPE:
-            /* is handled in main menu handler */
+            dialog_new_char_warn = 0;
+            reset_input_mode();
+            GameStatus = GAME_STATUS_ACCOUNT;
+            cpl.menustatus = MENU_NO;
+            map_udate_flag = 2;
+            reset_keys();
             break;
         case SDLK_n:
             if (new_character.skill_selected == -1)
@@ -3008,4 +2988,3 @@ void check_menu_keys(int menu, int key)
         break;
     }
 }
-
