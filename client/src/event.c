@@ -2861,6 +2861,15 @@ void check_menu_keys(int menu, int key)
     case MENU_KEYBIND:
         switch (key)
         {
+        case SDLK_DELETE:
+            if (bindkey_list[bindkey_list_set.group_nr].entry[bindkey_list_set.entry_nr].text[0])
+            {
+                sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICKFAIL, 0, 0,
+                                  MENU_SOUND_VOL);
+                memset(&bindkey_list[bindkey_list_set.group_nr].entry[bindkey_list_set.entry_nr],
+                       0, sizeof(_keymap));
+            }
+            break;
         case SDLK_UP:
             if (!shiftPressed)
             {
