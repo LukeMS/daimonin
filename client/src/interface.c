@@ -3865,6 +3865,11 @@ void gui_npc_keypress(int key)
             }
 
             break;
+
+        case SDLK_ESCAPE:
+            gui_npc_reset();
+
+            break;
     }
 }
 
