@@ -15,6 +15,6 @@ To install those, run this command (one line; without the prompt '>'):
 You also need the PhysicsFS and libcurl-dev
 To install this, run this command (one line):
 > apt-get install libphysfs-dev
-> apt-get install libcurl-dev
+> apt-get install libcurl4-gnutls--dev
 
 Please read the main README for general installation instructions.
