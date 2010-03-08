@@ -68,8 +68,8 @@ function _data_store._player_path(player)
     local munge = player
 
     -- Replace leading - with _
-    if string.find(player, "%-") == 1 then
-        munge = string.gsub(player, "%-", "_", 1)
+    if string.find(player, "%-") < 3 then
+        munge = string.gsub(player, "%-", "_", 2)
     end
 
     return "data/players/" .. string.lower(string.sub(munge, 1, 1) .. "/" ..
