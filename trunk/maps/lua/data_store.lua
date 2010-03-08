@@ -65,7 +65,15 @@ end
 
 -- Build a path to a player directory
 function _data_store._player_path(player)
-    return "data/players/" .. string.lower(string.sub(player,1,1) .. "/" .. string.sub(player, 1, 2)) .. "/" .. player
+    local munge = player
+
+    -- Replace leading - with _
+    if string.find(player, "%-") == 1 then
+        munge = string.gsub(player, "%-", "_", 1)
+    end
+
+    return "data/players/" .. string.lower(string.sub(munge, 1, 1) .. "/" ..
+           string.sub(munge, 1, 2)) .. "/" .. player
 end
 
 function _data_store._load(id, player)
