@@ -245,13 +245,15 @@ function QuestManager:AddItemList(ib)
     ---------
     elseif self.trigger.sub_type_1 == game.QUEST_KILL then
         for obj in obj_inventory(self.trigger) do
-            if obj.last_sp > obj.level then
-                body = body .. "\n  " .. obj.name .. ": ~" .. obj.level ..
-                       "~/~" .. obj.last_sp .. "~"
-                flag = false
-            else
-                body = body .. "\n  ~" .. obj.name .. ": ~" .. obj.level ..
-                       "~/~" .. obj.last_sp .. "~ (|complete|)"
+            if obj.type ~= game.TYPE_QUEST_UPDATE then
+                if obj.last_sp > obj.level then
+                    body = body .. "\n  " .. obj.name .. ": ~" .. obj.level ..
+                           "~/~" .. obj.last_sp .. "~"
+                    flag = false
+                else
+                    body = body .. "\n  " .. obj.name .. ": ~" .. obj.level ..
+                           "~/~" .. obj.last_sp .. "~ (|complete|)"
+                end
             end
         end
     ---------
@@ -261,13 +263,18 @@ function QuestManager:AddItemList(ib)
         for obj in obj_inventory(self.trigger) do
             local quantity = obj:NrofQuestItem()
 
-            if obj.inventory.quantity > quantity then
-                body = body .. "\n  " .. obj.inventory.name .. ": ~" ..
-                       quantity .. "~/~" .. obj.last_sp .. "~"
-                flag = false
-            else
-                body = body .. "\n  ~" .. obj.inventory.name .. ": ~" ..
-                       quantity .. "~/~" .. obj.last_sp .. "~ (|complete|)"
+            if obj.type == game.TYPE_QUEST_INFO and
+               obj.inventory then
+                local qobj = obj.inventory
+
+                if qobj.quantity > quantity then
+                    body = body .. "\n  " .. qobj.name .. ": ~" .. quantity ..
+                           "~/~" .. obj.last_sp .. "~"
+                    flag = false
+                else
+                    body = body .. "\n  " .. qobj.name .. ": ~" .. quantity ..
+                           "~/~" .. obj.last_sp .. "~ (|complete|)"
+                end
             end
         end
     ---------
@@ -277,13 +284,15 @@ function QuestManager:AddItemList(ib)
         for obj in obj_inventory(self.trigger) do
             local quantity = obj:NrofQuestItem()
 
-            if obj.quantity > quantity then
-                body = body .. "\n  " .. obj.name .. ": ~" .. quantity ..
-                       "~/~" .. obj.quantity .. "~"
-                flag = false
-            else
-                body = body .. "\n  ~" .. obj.name .. ": ~" .. quantity ..
-                "~/~" .. obj.quantity .. "~ (|complete|)"
+            if obj.type ~= game.TYPE_QUEST_UPDATE then
+                if obj.quantity > quantity then
+                    body = body .. "\n  " .. obj.name .. ": ~" .. quantity ..
+                           "~/~" .. obj.quantity .. "~"
+                    flag = false
+                else
+                    body = body .. "\n  " .. obj.name .. ": ~" .. quantity ..
+                    "~/~" .. obj.quantity .. "~ (|complete|)"
+                end
             end
         end
     end
