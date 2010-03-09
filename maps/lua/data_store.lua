@@ -65,12 +65,8 @@ end
 
 -- Build a path to a player directory
 function _data_store._player_path(player)
-    local munge = player
-
-    -- Replace leading - with _
-    if string.find(player, "%-") < 3 then
-        munge = string.gsub(player, "%-", "_", 2)
-    end
+    -- Replace up to 2 (we only care about the first 2 characters) - with _
+    local munge = string.gsub(player, "%-", "_", 2)
 
     return "data/players/" .. string.lower(string.sub(munge, 1, 1) .. "/" ..
            string.sub(munge, 1, 2)) .. "/" .. player
