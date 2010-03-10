@@ -89,6 +89,21 @@ static inline object *find_quest_trigger(object *target, object *obj)
     return NULL;
 }
 
+static inline object *add_quest_item(object *target, object *obj)
+{
+    object *q_tmp;
+
+    q_tmp = get_object();
+    copy_object(obj, q_tmp);
+    SET_FLAG(q_tmp, FLAG_KNOWN_CURSED);
+    SET_FLAG(q_tmp, FLAG_KNOWN_MAGICAL);
+    SET_FLAG(q_tmp, FLAG_IDENTIFIED);
+    insert_ob_in_ob(q_tmp, target); /* real object to player */
+    esrv_send_item(target, q_tmp);
+
+    return q_tmp;
+}
+
 /* we give a player a one drop item. This also
  * adds this item to the quest_container - instead to quest
  * items which will be added when the next quest step is triggered.
@@ -96,8 +111,7 @@ static inline object *find_quest_trigger(object *target, object *obj)
  */
 static inline object *add_one_drop_quest_item(object *target, object *obj)
 {
-    object *qt = NULL,
-           *q_tmp;
+    object *qt;
 
     /* only mark the item as "real" one drop if it has the flag */
     if(QUERY_FLAG(obj, FLAG_ONE_DROP))
@@ -125,24 +139,9 @@ static inline object *add_one_drop_quest_item(object *target, object *obj)
         SET_FLAG(obj, FLAG_IDENTIFIED);
     }
 
-    q_tmp = get_object();
-    copy_object(obj, q_tmp);
-    insert_ob_in_ob(q_tmp, target); /* real object to player */
-    esrv_send_item(target, q_tmp);
+    qt = add_quest_item(target, obj);
 
     return qt;
-}
-
-static inline object *add_quest_item(object *target, object *obj)
-{
-    object *q_tmp;
-
-    q_tmp = get_object();
-    copy_object(obj, q_tmp);
-    insert_ob_in_ob(q_tmp, target); /* real object to player */
-    esrv_send_item(target, q_tmp);
-
-    return q_tmp;
 }
 
 void insert_quest_item(struct obj *quest_trigger, struct obj *target)
@@ -169,15 +168,18 @@ void insert_quest_item(struct obj *quest_trigger, struct obj *target)
             {
                 if(!find_one_drop_quest_item(target, tmp))
                 {
-                    object *qt;
-                    char    buf[MAX_BUF];
+                    object *qt = add_one_drop_quest_item(target, tmp);
 
-                    SET_FLAG(tmp, FLAG_IDENTIFIED); /* be sure the one drop is IDed - nicer gaming experience */
-                    qt = add_one_drop_quest_item(target, tmp);
-                    sprintf(buf, "You found the %s drop %s!",
-                            (QUERY_FLAG(qt, FLAG_ONE_DROP)) ? "one" : "special",
-                            query_short_name(qt, target));
-                    update_quest(qt, NULL, buf);
+                    if (qt)
+                    {
+                        new_draw_info_format(NDI_UNIQUE | NDI_NAVY | NDI_VIM,
+                                             0, target, "You found the %s drop %s!",
+                                             (QUERY_FLAG(qt, FLAG_ONE_DROP)) ?
+                                             "one" : "special",
+                                             query_short_name(qt, target));
+                        play_sound_player_only(CONTR(target), SOUND_LEVEL_UP,
+                                               SOUND_NORMAL, 0, 0);
+                    }
                 }
             }
         }
