@@ -1745,6 +1745,26 @@ mapstruct *ready_inherited_map(mapstruct *orig_map, shstr *new_map_path, int fla
         return NULL;
     }
 
+#if 0
+/* This disabled code is the original and the alternative is a hopefully fixed
+ * version. The problem was that when new_map_path is an in memory
+ * instance/unique map the following still adds its munged path to
+ * orig_map->path, resulting in a non-existant path, causing eg:
+ *
+ * BUG: normalize_path(): Called with unique/instance dst: ./data/instance/1268315636/0/1/$planes$demon_plane$drows$mainmap_0100
+ * load_map: ./data/instance/1268315636/0/1/.$data$instance$1268315636$0$1$$planes$demon_plane$drows$mainmap_0100 (4)
+ * Debug: Can't open map file ./data/instance/1268315636/0/1/.$data$instance$1268315636$0$1$$planes$demon_plane$drows$mainmap_0100 (./data/instance/1268315636/0/1/$planes$demon_plane$drows$mainmap_0100)
+ * BUG: calc_direction_towards(): invalid destination map for 'Drow Captain'
+ *
+ * A,so, calling normalize_path() on an instance/unique is illegal (you should
+ * use normalize_path_direct()) but this will be done by the else branch below.
+ *
+ * The alternative code fixes these issues by queying orig_map->status first.
+ * However, I am no expert in this area which is why I have left the original
+ * code here and written this enormous comment. Perhaps someone who knows this
+ * code could take a look? BTW I also think new_path is an entirely unnecessary
+ * variable.
+ * -- Smacky 20100311 */
     /* Guesstimate whether the path was already normalized or not (for speed) */
     if(*new_map_path == '/')
         normalized_path = add_refcount(new_map_path);
@@ -1757,6 +1777,34 @@ mapstruct *ready_inherited_map(mapstruct *orig_map, shstr *new_map_path, int fla
         new_path = add_string(normalize_path_direct(orig_map->path,
                     path_to_name(normalized_path), tmp_path));
     }
+#else
+    if (orig_map->map_status & (MAP_STATUS_UNIQUE | MAP_STATUS_INSTANCE))
+    {
+        /* Guesstillmate whether the new map is already loaded */
+        if (*new_map_path == '.')
+        {
+            normalized_path = add_refcount(new_map_path);
+        }
+        else
+        {
+            normalized_path = add_string(normalize_path_direct(orig_map->path, path_to_name(new_map_path), tmp_path));
+        }
+    }
+    else
+    {
+        /* Guesstimate whether the path was already normalized or not (for speed) */
+        if (*new_map_path == '/')
+        {
+            normalized_path = add_refcount(new_map_path);
+        }
+        else
+        {
+            normalized_path = add_string(normalize_path(orig_map->path, new_map_path, tmp_path));
+        }
+    }
+#endif
+
+//     LOG(llevInfo,">>>>>>>>>>>>>>>> orig_map->path=%s\nnew_map_path=%s\nnormalized_path=%s\nnew_path=%s\n", orig_map->path,new_map_path,normalized_path,new_path);
 
     if(flags & 1)
     {
