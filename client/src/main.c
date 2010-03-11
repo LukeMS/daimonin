@@ -1769,6 +1769,8 @@ int main(int argc, char *argv[])
 
     if (PHYSFS_addToSearchPath("facepack.zip",0)==0)
         LOG(LOG_MSG,"PHYSFS_addPath facepack.zip failed: %s\n",PHYSFS_getLastError());
+#if 0
+/* This is just a temporary quick fix -- see FS#32.
 #ifdef __LINUX
     sprintf(buf, "%s/.daimonin", getenv("HOME"));
     if (PHYSFS_addToSearchPath(buf,1)==0)
@@ -1776,6 +1778,14 @@ int main(int argc, char *argv[])
     if (PHYSFS_addToSearchPath(SYSPATH"_widget",1)==0)
         LOG(LOG_MSG,"PHYSFS_addPath4 failed: %s\n",PHYSFS_getLastError());
 
+#endif
+#else
+    (void)determine_best_location(buf, "");
+    buf[strlen(buf) - 1] = '\0';
+    if (PHYSFS_addToSearchPath(buf,1)==0)
+        LOG(LOG_MSG,"PHYSFS_addPath4 failed: %s\n",PHYSFS_getLastError());
+    if (PHYSFS_addToSearchPath(SYSPATH"_widget",1)==0)
+        LOG(LOG_MSG,"PHYSFS_addPath4 failed: %s\n",PHYSFS_getLastError());
 #endif
     SYSTEM_Start(); /* start the system AFTER start SDL */
 
