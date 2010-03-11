@@ -24,12 +24,13 @@
 #if !defined(__FILEWRAP_H)
 #define __FILEWRAP_H
 
-FILE *fopen_wrapper(const char *fname, const char *mode);
-SDL_Surface *IMG_Load_wrapper (const char *file);
+extern FILE *fopen_wrapper(const char *fname, const char *mode);
+extern SDL_Surface *IMG_Load_wrapper (const char *file);
 #ifdef INSTALL_SOUND
-Mix_Chunk *Mix_LoadWAV_wrapper(const char *fname);
-Mix_Music *Mix_LoadMUS_wrapper(const char *file);
+extern Mix_Chunk *Mix_LoadWAV_wrapper(const char *fname);
+extern Mix_Music *Mix_LoadMUS_wrapper(const char *file);
 #endif
-char *file_path(const char *fname, const char *mode);
+extern char *file_path(const char *fname, const char *mode);
+extern int determine_best_location(char *tmp, const char *fname);
 
 #endif
