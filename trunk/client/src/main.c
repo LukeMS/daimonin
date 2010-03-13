@@ -1770,7 +1770,7 @@ int main(int argc, char *argv[])
     if (PHYSFS_addToSearchPath("facepack.zip",0)==0)
         LOG(LOG_MSG,"PHYSFS_addPath facepack.zip failed: %s\n",PHYSFS_getLastError());
 #if 0
-/* This is just a temporary quick fix -- see FS#32.
+/* This is just a temporary quick fix -- see FS#32. */
 #ifdef __LINUX
     sprintf(buf, "%s/.daimonin", getenv("HOME"));
     if (PHYSFS_addToSearchPath(buf,1)==0)
