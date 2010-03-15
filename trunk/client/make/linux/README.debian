@@ -6,11 +6,11 @@ Debian GNU/Linux SDL packages
 -----------------------------
 
 The required SDL packages under Debian (sarge and etch) are:
-libsdl1.2, libsdl1.2-dev, libsdl-mixer-1.2, libsdl-mixer-1.2-dev, 
-libsdl-image-1.2 and libsdl-image-1.2-dev 
+libsdl1.2, libsdl1.2-dev, libsdl-mixer1.2, libsdl-mixer1.2-dev, 
+libsdl-image1.2 and libsdl-image1.2-dev 
 
 To install those, run this command (one line; without the prompt '>'):
-> apt-get install libsdl1.2 libsdl1.2-dev libsdl-mixer-1.2 libsdl-mixer-1.2-dev libsdl-image-1.2 libsdl-image-1.2-dev
+> apt-get install libsdl1.2-dev libsdl-mixer1.2-dev libsdl-image1.2-dev
 
 You also need the PhysicsFS and libcurl-dev
 To install this, run this command (one line):
