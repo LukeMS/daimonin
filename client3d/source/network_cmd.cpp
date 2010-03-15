@@ -117,7 +117,6 @@ void Network::AccNameSuccess(uchar *data, int len)
     {
         LOG(LOG_MSG, "Server rejected your account action - closing socket.\n");
         SOCKET_CloseSocket(csocket.fd);
-        SDL_Delay(1250);
         GameStatus = GAME_STATUS_INIT;
     }
     else
@@ -194,8 +193,7 @@ void Network::DrawInfoCmd(uchar *data, int len)
 void Network::AddMeFail(uchar *data, int len)
 {
     Logger::log().error() << "addme_failed received.\n";
-    CloseSocket(mSocket);
-    SDL_Delay(1250);
+    CloseSocket();
     Option::getSingleton().setGameStatus(Option::GAME_STATUS_INIT_NET);
 }
 
@@ -1285,8 +1283,7 @@ void Network::SetupCmd(uchar *buf, int len)
             {
                 GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "~Your client is outdated!~");
                 Logger::log().error() << "Protocol version client/server doesn't match!";
-                CloseClientSocket();
-                SDL_Delay(3250);
+                CloseSocket();
                 return;
             }
             Logger::log().info() << "Protocol version confirmed";
@@ -1299,7 +1296,6 @@ void Network::SetupCmd(uchar *buf, int len)
             {
                 GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "~The server is outdated!\nSelect a different one!~");
                 CloseClientSocket();
-                SDL_Delay(3250);
                 return;
             }
             */
@@ -1353,8 +1349,7 @@ void Network::SetupCmd(uchar *buf, int len)
         }
         Logger::log().error() << "Got setup for a command we don't understand: " << cmd << " " << param;
         Option::getSingleton().setGameStatus(Option::GAME_STATUS_START);
-        CloseClientSocket();
-        SDL_Delay(3250);
+        CloseSocket();
         return;
     }
     Option::getSingleton().setGameStatus(Option::GAME_STATUS_REQUEST_FILES);

@@ -151,6 +151,19 @@ void LogException(Exception& e)
 //================================================================================================
 int main(int argc, char **argv)
 {
+    // ////////////////////////////////////////////////////////////////////
+    // Make the run button of visualC work.
+    // ////////////////////////////////////////////////////////////////////
+#if OGRE_COMPILER == OGRE_COMPILER_MSVC
+    TCHAR tchBuffer[MAX_PATH + 1];
+    if (GetCurrentDirectory(MAX_PATH, tchBuffer) >0)
+    {
+        String strPath = tchBuffer;
+        // If the client was started from within visualC, set the correct path.
+        if (StringUtil::endsWith(strPath, "visualc", true))
+            SetCurrentDirectory("..\\..\\..\\");
+    }
+#endif
     Logger::log().headline() << "Init Logfile";
     Option::getSingleton().setGameStatus(Option::GAME_STATUS_CHECK_HARDWARE);
     Logger::log().headline() << "Parse CmdLine";
@@ -174,9 +187,6 @@ int main(int argc, char **argv)
             }
         }
     }
-#if OGRE_COMPILER == OGRE_COMPILER_MSVC
-    SetCurrentDirectory("..\\..\\..\\");
-#endif
     Root *root =0;
     RenderWindow *window=0;
     try

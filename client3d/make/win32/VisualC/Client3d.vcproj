@@ -3,7 +3,6 @@
 	ProjectType="Visual C++"
 	Version="9,00"
 	Name="Client3d"
-	ProjectGUID="{EBF97828-EAF7-4B61-BAB3-DA1769936136}"
 	RootNamespace="Client3d"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"

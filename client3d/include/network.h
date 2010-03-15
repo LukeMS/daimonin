@@ -25,10 +25,8 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #define NETWORK_H
 
 #include <vector>
+#include <boost/thread/thread.hpp>
 #include <OgreString.h>
-#include <SDL.h>
-#include <SDL_thread.h>
-#include <SDL_mutex.h>
 #ifdef WIN32
 #include <winsock2.h>
 #else
@@ -129,10 +127,9 @@ public:
     }
     bool Init();
     bool OpenActiveServerSocket();
-    static void CloseSocket(int &socket);
-    static void CloseClientSocket();
+    static void CloseSocket(int socket = mSocket);
     static void send_game_command(const char *command);
-    static int  send_command_binary(Ogre::uchar cmd, std::stringstream &stream);
+    static void send_command_binary(Ogre::uchar cmd, std::stringstream &stream);
     static int  GetInt_String(Ogre::uchar *data);
     static short GetShort_String(Ogre::uchar *data);
     void clearMetaServerData();
@@ -209,14 +206,11 @@ private:
     static int mSocket;
     static bool mAbortThread;
     static bool mEndianConvert;
-    static SDL_Thread *mInputThread;
-    static SDL_Thread *mOutputThread;
-    static SDL_mutex  *mMutex;
-    static SDL_cond   *mOutputCond;
-    static SDL_cond   *mInputCond;
     static command_buffer *mInputQueueStart,  *mInputQueueEnd;
     static command_buffer *mOutputQueueStart, *mOutputQueueEnd;
-
+    static bool mThreadsActive;
+    static bool mReadyToSend; // We have work for the writer thread.
+    static bool mReadyToRead; // We have work from the reader thread.
     int mActServerNr;
     // ////////////////////////////////////////////////////////////////////
     // Functions.
@@ -226,6 +220,8 @@ private:
     Network(const Network&);            /**< disable copy-constructor. **/
     Network &operator=(const Network&); /**< disable assignment operator. **/
     bool OpenSocket(const char *host, int port, int &socket);
+    boost::thread mInputThread;
+    boost::thread mOutputThread;
     static Ogre::String &getError();
     static command_buffer *command_buffer_new(unsigned int len, Ogre::uchar *data);
     static command_buffer *command_buffer_dequeue(command_buffer **queue_start, command_buffer **queue_end);
@@ -236,8 +232,8 @@ private:
     static void command_buffer_enqueue(command_buffer *buf, command_buffer **queue_start, command_buffer **queue_end);
     static void checkFileStatus(const char *cmd, char *param, int fileNr);
     static void AddIntToString(Ogre::String &sl, int data, bool shortInt);
-    static int reader_thread_loop(void *);
-    static int writer_thread_loop(void *);
+    static void inputThread();
+    static void outputThread();
 };
 
 #endif
