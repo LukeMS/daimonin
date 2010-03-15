@@ -42,7 +42,7 @@ public:
      *****************************************************************************/
     void setPos(const int x, const int y)
     {
-        mElement->setPosition(x, y);
+        mElement->setPosition((float)x, (float)y);
     }
 
     void draw(); /**< Draws the mouse-cursor into its texture. **/

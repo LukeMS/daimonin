@@ -237,6 +237,6 @@ void ParticleManager::setEmitterSize(ParticleSystem *pSystem, float sizeZ, float
     {
         pSystem->getEmitter(i)->setParameter("height", StringConverter::toString(sizeZ));
         pSystem->getEmitter(i)->setParameter("width" , StringConverter::toString(sizeX));
-        if (adjustRate) pSystem->getEmitter(i)->setEmissionRate(sizeX *sizeZ * 3.0);
+        if (adjustRate) pSystem->getEmitter(i)->setEmissionRate(sizeX *sizeZ * 3.0f);
     }
 }

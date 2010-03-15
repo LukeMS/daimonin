@@ -39,6 +39,7 @@ const int SUM_NEAR_GRASS_ROWS = 5;
 const Real HALF_TILE_SIZE  = 128.0          / (Real)TileManager::MAX_TEXTURE_SIZE; // Size of a subtile.
 const Real HALF_TILE_SPACE = (128.0 + 16.0) / (Real)TileManager::MAX_TEXTURE_SIZE; // Space between 2 subtiles.
 const Real FULL_TILE_SPACE = (256.0 + 16.0) / (Real)TileManager::MAX_TEXTURE_SIZE; // Space between 2 tiles.
+const Real RENDER_SIZE = (Real)TileManager::TILE_RENDER_SIZE;
 
 //================================================================================================
 // Holds the x-offset for each row of tiles.
@@ -456,12 +457,12 @@ void TileChunk::setTriangle(int x, int z, Vector3 v1, Vector3 v2, Vector3 v3,int
         if (v2.y >= v3.y)
         {
             params.z = (v2.y == params.x)?0:(TileManager::getSingleton().getMapShadow((int)(x+v2.x), (int)(z+v2.z)) - params.y)/ (v2.y-params.x);
-            params.w = TileManager::getSingleton().getMapSpotLight((int)(x+v2.x), (int)(z+v2.z))?1:0;
+            params.w = TileManager::getSingleton().getMapSpotLight((int)(x+v2.x), (int)(z+v2.z))?1.0f:0.0f;
         }
         else
         {
             params.z = (v3.y == params.x)?0:(TileManager::getSingleton().getMapShadow((int)(x+v3.x), (int)(z+v3.z)) - params.y)/ (v3.y-params.x);
-            params.w = TileManager::getSingleton().getMapSpotLight((int)(x+v3.x), (int)(z+v3.z))?1:0;
+            params.w = TileManager::getSingleton().getMapSpotLight((int)(x+v3.x), (int)(z+v3.z))?1.0f:0.0f;
         }
     }
     else if ((v2.y <= v1.y) && (v2.y <= v3.y))
@@ -471,12 +472,12 @@ void TileChunk::setTriangle(int x, int z, Vector3 v1, Vector3 v2, Vector3 v3,int
         if (v1.y >= v3.y)
         {
             params.z = (v1.y == params.x)?0:(TileManager::getSingleton().getMapShadow((int)(x+v1.x), (int)(z+v1.z)) - params.y)/ (v1.y-params.x);
-            params.w = TileManager::getSingleton().getMapSpotLight((int)(x+v1.x), (int)(z+v1.z))?1:0;
+            params.w = TileManager::getSingleton().getMapSpotLight((int)(x+v1.x), (int)(z+v1.z))?1.0f:0.0f;
         }
         else
         {
             params.z = (v3.y == params.x)?0:(TileManager::getSingleton().getMapShadow((int)(x+v3.x), (int)(z+v3.z)) - params.y)/ (v3.y-params.x);
-            params.w = TileManager::getSingleton().getMapSpotLight((int)(x+v3.x), (int)(z+v3.z))?1:0;
+            params.w = TileManager::getSingleton().getMapSpotLight((int)(x+v3.x), (int)(z+v3.z))?1.0f:0.0f;
         }
     }
     else if ((v3.y <= v1.y) && (v3.y <= v2.y))
@@ -486,13 +487,13 @@ void TileChunk::setTriangle(int x, int z, Vector3 v1, Vector3 v2, Vector3 v3,int
         if (v1.y >= v2.y)
         {
             params.z = (v1.y == params.x)?0:(TileManager::getSingleton().getMapShadow((int)(x+v1.x), (int)(z+v1.z)) - params.y)/ (v1.y-params.x);
-            params.w = TileManager::getSingleton().getMapSpotLight((int)(x+v1.x), (int)(z+v1.z))?1:0;
+            params.w = TileManager::getSingleton().getMapSpotLight((int)(x+v1.x), (int)(z+v1.z))?1.0f:0.0f;
         }
         else
         {
             params.z = (v2.y == params.x)?0:(TileManager::getSingleton().getMapShadow((int)(x+v3.x), (int)(z+v2.z)) - params.y)/ (v2.y-params.x);
-            //params.w = TileManager::getSingleton().getMapSpotLight((int)(x+v3.x), (int)(z+v2.z))?1:0;
-            params.w = TileManager::getSingleton().getMapSpotLight((int)(x+v3.x), (int)(z+v3.z))?1:0;
+            //params.w = TileManager::getSingleton().getMapSpotLight((int)(x+v3.x), (int)(z+v2.z))?1.0f:0.0f;
+            params.w = TileManager::getSingleton().getMapSpotLight((int)(x+v3.x), (int)(z+v3.z))?1.0f:0.0f;
         }
     }
     v3.x = (x+v3.x) * TileManager::TILE_RENDER_SIZE;
@@ -513,12 +514,12 @@ int TileChunk::getMask(int gfxVertex0, int gfxVertex1, int gfxVertex2)
 {
     // Set the texture units with the default gfxNr.
     // After we have choosen the mask, they are sorted.
-    mTexPosInAtlas[0] = (gfxVertex0%6);
-    mTexPosInAtlas[1] = (gfxVertex0/6);
-    mTexPosInAtlas[2] = (gfxVertex1%6);
-    mTexPosInAtlas[3] = (gfxVertex1/6);
-    mTexPosInAtlas[4] = (gfxVertex2%6);
-    mTexPosInAtlas[5] = (gfxVertex2/6);
+    mTexPosInAtlas[0] = (Real)(gfxVertex0%6);
+    mTexPosInAtlas[1] = (Real)(gfxVertex0/6);
+    mTexPosInAtlas[2] = (Real)(gfxVertex1%6);
+    mTexPosInAtlas[3] = (Real)(gfxVertex1/6);
+    mTexPosInAtlas[4] = (Real)(gfxVertex2%6);
+    mTexPosInAtlas[5] = (Real)(gfxVertex2/6);
     // Calculate the needed mask.
     if (gfxVertex0 <= gfxVertex1)
     {
@@ -556,8 +557,8 @@ void TileChunk::updateLand()
             if (gfxNrNoBlending)
             {
                 // Indoor tile -> No blending with the neighbour tiles.
-                mTexPosInAtlas[0] = gfxNrNoBlending%6;
-                mTexPosInAtlas[1] = gfxNrNoBlending/6;
+                mTexPosInAtlas[0] = (Real)(gfxNrNoBlending%6);
+                mTexPosInAtlas[1] = (Real)(gfxNrNoBlending/6);
                 mTexPosInAtlas[2] = mTexPosInAtlas[0];
                 mTexPosInAtlas[3] = mTexPosInAtlas[1];
                 mTexPosInAtlas[4] = mTexPosInAtlas[0];
@@ -584,8 +585,8 @@ void TileChunk::updateLand()
             if (gfxNrNoBlending)
             {
                 // Indoor tile -> No blending with the neighbour tiles.
-                mTexPosInAtlas[0] = gfxNrNoBlending%6;
-                mTexPosInAtlas[1] = gfxNrNoBlending/6;
+                mTexPosInAtlas[0] = (Real)(gfxNrNoBlending%6);
+                mTexPosInAtlas[1] = (Real)(gfxNrNoBlending/6);
                 mTexPosInAtlas[2] = mTexPosInAtlas[0];
                 mTexPosInAtlas[3] = mTexPosInAtlas[1];
                 mTexPosInAtlas[4] = mTexPosInAtlas[0];
@@ -612,8 +613,8 @@ void TileChunk::updateLand()
             if (gfxNrNoBlending)
             {
                 // Indoor tile -> No blending with the neighbour tiles.
-                mTexPosInAtlas[0] = gfxNrNoBlending%6;
-                mTexPosInAtlas[1] = gfxNrNoBlending/6;
+                mTexPosInAtlas[0] = (Real)(gfxNrNoBlending%6);
+                mTexPosInAtlas[1] = (Real)(gfxNrNoBlending/6);
                 mTexPosInAtlas[2] = mTexPosInAtlas[0];
                 mTexPosInAtlas[3] = mTexPosInAtlas[1];
                 mTexPosInAtlas[4] = mTexPosInAtlas[0];
@@ -640,8 +641,8 @@ void TileChunk::updateLand()
             if (gfxNrNoBlending)
             {
                 // Indoor tile -> No blending with the neighbour tiles.
-                mTexPosInAtlas[0] = gfxNrNoBlending%6;
-                mTexPosInAtlas[1] = gfxNrNoBlending/6;
+                mTexPosInAtlas[0] = (Real)(gfxNrNoBlending%6);
+                mTexPosInAtlas[1] = (Real)(gfxNrNoBlending/6);
                 mTexPosInAtlas[2] = mTexPosInAtlas[0];
                 mTexPosInAtlas[3] = mTexPosInAtlas[1];
                 mTexPosInAtlas[4] = mTexPosInAtlas[0];
@@ -674,7 +675,7 @@ void TileChunk::updateWater()
     unsigned int numVertices = 0;
     for (int z = 0; z < TileManager::CHUNK_SIZE_Z*2; ++z)
     {
-        Real offsetZ = (z&1)?FULL_TILE_SPACE:0.0;
+        Real offsetZ = (z&1)?FULL_TILE_SPACE:0.0f;
         for (int x = 0; x < TileManager::CHUNK_SIZE_X*2; ++x)
         {
             // Only draw water if this tile or a neighbour-tile has water on it.
@@ -685,24 +686,24 @@ void TileChunk::updateWater()
                             continue;
             {
                 Real offsetX = (x&1)?offsetZ+HALF_TILE_SIZE:offsetZ;
-                *pReal++ = TileManager::TILE_RENDER_SIZE * x + TileManager::TILE_RENDER_SIZE;
+                *pReal++ = RENDER_SIZE * x + RENDER_SIZE;
                 *pReal++ = height;
-                *pReal++ = TileManager::TILE_RENDER_SIZE * z;
+                *pReal++ = RENDER_SIZE * z;
                 *pReal++ = offsetX+HALF_TILE_SIZE;
                 *pReal++ = START_Z;
-                *pReal++ = TileManager::TILE_RENDER_SIZE * x;
+                *pReal++ = RENDER_SIZE * x;
                 *pReal++ = height;
-                *pReal++ = TileManager::TILE_RENDER_SIZE * z;
+                *pReal++ = RENDER_SIZE * z;
                 *pReal++ = offsetX;
                 *pReal++ = START_Z;
-                *pReal++ = TileManager::TILE_RENDER_SIZE * x;
+                *pReal++ = RENDER_SIZE * x;
                 *pReal++ = height;
-                *pReal++ = TileManager::TILE_RENDER_SIZE * z+ TileManager::TILE_RENDER_SIZE;
+                *pReal++ = RENDER_SIZE * z + RENDER_SIZE;
                 *pReal++ = offsetX;
                 *pReal++ = START_Z+HALF_TILE_SIZE;
-                *pReal++ = TileManager::TILE_RENDER_SIZE * x+ TileManager::TILE_RENDER_SIZE;
+                *pReal++ = RENDER_SIZE * x + RENDER_SIZE;
                 *pReal++ = height;
-                *pReal++ = TileManager::TILE_RENDER_SIZE * z+ TileManager::TILE_RENDER_SIZE;
+                *pReal++ = RENDER_SIZE * z + RENDER_SIZE;
                 *pReal++ = offsetX+HALF_TILE_SIZE;
                 *pReal++ = START_Z+HALF_TILE_SIZE;
                 ++numVertices;
@@ -728,30 +729,30 @@ void TileChunk::updateUndergrowth()
     {
         for (int x = 0; x < TileManager::CHUNK_SIZE_X*2; ++x)
         {
-            height = TileManager::getSingleton().getMapHeight(x, z)+TileManager::TILE_RENDER_SIZE/4;
-            *pReal++ = TileManager::TILE_RENDER_SIZE * x -1;
+            height = TileManager::getSingleton().getMapHeight(x, z) + RENDER_SIZE;
+            *pReal++ = RENDER_SIZE * x- 1.0f;
             *pReal++ = height;
-            *pReal++ = TileManager::TILE_RENDER_SIZE * z;
-            *pReal++ = 1.0;
-            *pReal++ = 0.0;
+            *pReal++ = RENDER_SIZE * z;
+            *pReal++ = 1.0f;
+            *pReal++ = 0.0f;
 
-            *pReal++ = TileManager::TILE_RENDER_SIZE * x;
+            *pReal++ = RENDER_SIZE * x;
             *pReal++ = height;
-            *pReal++ = TileManager::TILE_RENDER_SIZE * z;
-            *pReal++ = 0.0;
-            *pReal++ = 0.0;
+            *pReal++ = RENDER_SIZE * z;
+            *pReal++ = 0.0f;
+            *pReal++ = 0.0f;
 
-            *pReal++ = TileManager::TILE_RENDER_SIZE * x;
-            *pReal++ = height-1;
-            *pReal++ = TileManager::TILE_RENDER_SIZE * z;
-            *pReal++ = 0.0;
-            *pReal++ = 1.0;
+            *pReal++ = RENDER_SIZE * x;
+            *pReal++ = height+1;
+            *pReal++ = RENDER_SIZE * z;
+            *pReal++ = 0.0f;
+            *pReal++ = 1.0f;
 
-            *pReal++ = TileManager::TILE_RENDER_SIZE * x- 1;
-            *pReal++ = height-1;
-            *pReal++ = TileManager::TILE_RENDER_SIZE * z;
-            *pReal++ = 1.0;
-            *pReal++ = 1.0;
+            *pReal++ = RENDER_SIZE * x- 1.0f;
+            *pReal++ = height+1;
+            *pReal++ = RENDER_SIZE * z;
+            *pReal++ = 1.0f;
+            *pReal++ = 1.0f;
             ++numVertices;
         }
     }
@@ -763,11 +764,12 @@ void TileChunk::updateUndergrowth()
     pReal = static_cast<Real*>(vbuf->lock(HardwareBuffer::HBL_DISCARD));
     numVertices = 0;
     const Real GRASS_SIZE = 70.0;
-    for (int z = TileManager::CHUNK_SIZE_Z*2-SUM_NEAR_GRASS_ROWS; z < TileManager::CHUNK_SIZE_Z*2; z+=2)
+    Real z = 0;
+    for (int zz = TileManager::CHUNK_SIZE_Z*2-SUM_NEAR_GRASS_ROWS; zz < TileManager::CHUNK_SIZE_Z*2; ++zz, ++z)
     {
         for (int x = 0; x < TileManager::CHUNK_SIZE_X*2; ++x)
         {
-            height = TileManager::getSingleton().getMapHeight(x, z) + TileManager::TILE_RENDER_SIZE/2;
+            height = TileManager::getSingleton().getMapHeight(x, zz) + TileManager::TILE_RENDER_SIZE/2.0f;
 //#define STYLE_1
 #ifdef STYLE_1
             /*    \/    */
@@ -844,68 +846,68 @@ void TileChunk::updateUndergrowth()
             /*  _\/_  */
             /*   /\   */
             // Horizontal
-            *pReal++ = TileManager::TILE_RENDER_SIZE * x + GRASS_SIZE/2.5;
+            *pReal++ = TileManager::TILE_RENDER_SIZE * x + GRASS_SIZE/2.5f;
             *pReal++ = height;
             *pReal++ = TileManager::TILE_RENDER_SIZE *z;
             *pReal++ = 1.0;
             *pReal++ = 0.0;
-            *pReal++ = TileManager::TILE_RENDER_SIZE * x - GRASS_SIZE/2.5;
+            *pReal++ = TileManager::TILE_RENDER_SIZE * x - GRASS_SIZE/2.5f;
             *pReal++ = height;
             *pReal++ = TileManager::TILE_RENDER_SIZE *z;
             *pReal++ = 0.0;
             *pReal++ = 0.0;
-            *pReal++ = TileManager::TILE_RENDER_SIZE * x - GRASS_SIZE/2.5;
+            *pReal++ = TileManager::TILE_RENDER_SIZE * x - GRASS_SIZE/2.5f;
             *pReal++ = height-TileManager::TILE_RENDER_SIZE/2;
             *pReal++ = TileManager::TILE_RENDER_SIZE *z;
             *pReal++ = 0.0;
             *pReal++ = 1.0;
-            *pReal++ = TileManager::TILE_RENDER_SIZE * x + GRASS_SIZE/2.5;
+            *pReal++ = TileManager::TILE_RENDER_SIZE * x + GRASS_SIZE/2.5f;
             *pReal++ = height-TileManager::TILE_RENDER_SIZE/2;
             *pReal++ = TileManager::TILE_RENDER_SIZE *z;
             *pReal++ = 1.0;
             *pReal++ = 1.0;
             ++numVertices;
             // Vertical 1
-            *pReal++ = TileManager::TILE_RENDER_SIZE * x + GRASS_SIZE/4.5;
+            *pReal++ = TileManager::TILE_RENDER_SIZE * x + GRASS_SIZE/4.5f;
             *pReal++ = height;
-            *pReal++ = TileManager::TILE_RENDER_SIZE * z + GRASS_SIZE/3;
+            *pReal++ = TileManager::TILE_RENDER_SIZE * z + GRASS_SIZE/3.0f;
             *pReal++ = 1.0;
             *pReal++ = 0.0;
-            *pReal++ = TileManager::TILE_RENDER_SIZE * x - GRASS_SIZE/4.5;
+            *pReal++ = TileManager::TILE_RENDER_SIZE * x - GRASS_SIZE/4.5f;
             *pReal++ = height;
-            *pReal++ = TileManager::TILE_RENDER_SIZE * z - GRASS_SIZE/3;
+            *pReal++ = TileManager::TILE_RENDER_SIZE * z - GRASS_SIZE/3.0f;
             *pReal++ = 0.0;
             *pReal++ = 0.0;
-            *pReal++ = TileManager::TILE_RENDER_SIZE * x - GRASS_SIZE/4.5;
+            *pReal++ = TileManager::TILE_RENDER_SIZE * x - GRASS_SIZE/4.5f;
             *pReal++ = height-TileManager::TILE_RENDER_SIZE/2;
-            *pReal++ = TileManager::TILE_RENDER_SIZE * z - GRASS_SIZE/3;
+            *pReal++ = TileManager::TILE_RENDER_SIZE * z - GRASS_SIZE/3.0f;
             *pReal++ = 0.0;
             *pReal++ = 1.0;
-            *pReal++ = TileManager::TILE_RENDER_SIZE * x + GRASS_SIZE/4.5;
+            *pReal++ = TileManager::TILE_RENDER_SIZE * x + GRASS_SIZE/4.5f;
             *pReal++ = height-TileManager::TILE_RENDER_SIZE/2;
-            *pReal++ = TileManager::TILE_RENDER_SIZE * z + GRASS_SIZE/3;
+            *pReal++ = TileManager::TILE_RENDER_SIZE * z + GRASS_SIZE/3.0f;
             *pReal++ = 1.0;
             *pReal++ = 1.0;
             ++numVertices;
             // Vertical 2
-            *pReal++ = TileManager::TILE_RENDER_SIZE * x - GRASS_SIZE/4.5;
+            *pReal++ = TileManager::TILE_RENDER_SIZE * x - GRASS_SIZE/4.5f;
             *pReal++ = height;
-            *pReal++ = TileManager::TILE_RENDER_SIZE * z + GRASS_SIZE/3;
+            *pReal++ = TileManager::TILE_RENDER_SIZE * z + GRASS_SIZE/3.0f;
             *pReal++ = 1.0;
             *pReal++ = 0.0;
-            *pReal++ = TileManager::TILE_RENDER_SIZE * x + GRASS_SIZE/4.5;
+            *pReal++ = TileManager::TILE_RENDER_SIZE * x + GRASS_SIZE/4.5f;
             *pReal++ = height;
-            *pReal++ = TileManager::TILE_RENDER_SIZE * z - GRASS_SIZE/3;
+            *pReal++ = TileManager::TILE_RENDER_SIZE * z - GRASS_SIZE/3.0f;
             *pReal++ = 0.0;
             *pReal++ = 0.0;
-            *pReal++ = TileManager::TILE_RENDER_SIZE * x + GRASS_SIZE/4.5;
+            *pReal++ = TileManager::TILE_RENDER_SIZE * x + GRASS_SIZE/4.5f;
             *pReal++ = height-TileManager::TILE_RENDER_SIZE/2;
-            *pReal++ = TileManager::TILE_RENDER_SIZE * z - GRASS_SIZE/3;
+            *pReal++ = TileManager::TILE_RENDER_SIZE * z - GRASS_SIZE/3.0f;
             *pReal++ = 0.0;
             *pReal++ = 1.0;
-            *pReal++ = TileManager::TILE_RENDER_SIZE * x - GRASS_SIZE/4.5;
+            *pReal++ = TileManager::TILE_RENDER_SIZE * x - GRASS_SIZE/4.5f;
             *pReal++ = height-TileManager::TILE_RENDER_SIZE/2;
-            *pReal++ = TileManager::TILE_RENDER_SIZE * z + GRASS_SIZE/3;
+            *pReal++ = TileManager::TILE_RENDER_SIZE * z + GRASS_SIZE/3.0f;
             *pReal++ = 1.0;
             *pReal++ = 1.0;
             ++numVertices;

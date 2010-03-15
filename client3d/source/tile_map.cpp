@@ -243,8 +243,8 @@ void TileMap::set_map_face(int x, int y, int layer, int face, int pos, int ext, 
                 obj.maxHP     = 50;
                 obj.maxMana   = 50;
                 obj.maxGrace  = 50;
-                obj.pos.x     = x * TileManager::TILE_RENDER_SIZE/2 + 3 * 8;
-                obj.pos.z     = y * TileManager::TILE_RENDER_SIZE/2 + 3 * 8;
+                obj.pos.x     = x * TileManager::TILE_RENDER_SIZE/2.0f + 3 * 8;
+                obj.pos.z     = y * TileManager::TILE_RENDER_SIZE/2.0f + 3 * 8;
                 obj.level     = 0;
                 obj.facing    = 30;
                 obj.particleNr=-1;
@@ -269,8 +269,8 @@ void TileMap::set_map_face(int x, int y, int layer, int face, int pos, int ext, 
                 obj.maxHP     = 50;
                 obj.maxMana   = 50;
                 obj.maxGrace  = 50;
-                obj.pos.x     = x * TileManager::TILE_RENDER_SIZE/2 + 3 * 8;
-                obj.pos.z     = y * TileManager::TILE_RENDER_SIZE/2 + 3 * 8;
+                obj.pos.x     = x * TileManager::TILE_RENDER_SIZE/2.0f + 3 * 8;
+                obj.pos.z     = y * TileManager::TILE_RENDER_SIZE/2.0f + 3 * 8;
                 obj.level     = 0;
                 obj.facing    = -60;
                 obj.particleNr=-1;
@@ -286,8 +286,8 @@ void TileMap::set_map_face(int x, int y, int layer, int face, int pos, int ext, 
                 obj.maxHP     = 50;
                 obj.maxMana   = 50;
                 obj.maxGrace  = 50;
-                obj.pos.x     = (x+1) * TileManager::TILE_RENDER_SIZE/2 + 3 * 8;
-                obj.pos.z     = (y+4) * TileManager::TILE_RENDER_SIZE/2 + 3 * 8;
+                obj.pos.x     = (x+1) * TileManager::TILE_RENDER_SIZE/2.0f + 3 * 8;
+                obj.pos.z     = (y+4) * TileManager::TILE_RENDER_SIZE/2.0f + 3 * 8;
                 obj.level     = 0;
                 obj.facing    = -60;
                 obj.particleNr=-1;
@@ -303,8 +303,8 @@ void TileMap::set_map_face(int x, int y, int layer, int face, int pos, int ext, 
                 obj.maxHP     = 50;
                 obj.maxMana   = 50;
                 obj.maxGrace  = 50;
-                obj.pos.x     = x * TileManager::TILE_RENDER_SIZE/2 + 3 * 8;
-                obj.pos.z     = (y+5) * TileManager::TILE_RENDER_SIZE/2 + 3 * 8;
+                obj.pos.x     = x * TileManager::TILE_RENDER_SIZE/2.0f + 3 * 8;
+                obj.pos.z     = (y+5) * TileManager::TILE_RENDER_SIZE/2.0f + 3 * 8;
                 obj.level     = 0;
                 obj.facing    = 120;
                 obj.particleNr=-1;
@@ -362,8 +362,8 @@ void TileMap::set_map_face(int x, int y, int layer, int face, int pos, int ext, 
                 obj.maxHP     = 50;
                 obj.maxMana   = 50;
                 obj.maxGrace  = 50;
-                obj.pos.x     = x * TileManager::TILE_RENDER_SIZE/2 + 3 * 8;
-                obj.pos.z     = y * TileManager::TILE_RENDER_SIZE/2 + 3 * 8;
+                obj.pos.x     = x * TileManager::TILE_RENDER_SIZE/2.0f + 3 * 8;
+                obj.pos.z     = y * TileManager::TILE_RENDER_SIZE/2.0f + 3 * 8;
                 obj.level     = 0;
                 obj.facing    = -60;
                 obj.particleNr=-1;
@@ -387,8 +387,8 @@ void TileMap::set_map_face(int x, int y, int layer, int face, int pos, int ext, 
                 obj.maxHP     = 50;
                 obj.maxMana   = 50;
                 obj.maxGrace  = 50;
-                obj.pos.x     = x * TileManager::TILE_RENDER_SIZE/2 + 3 * 8;
-                obj.pos.z     = y * TileManager::TILE_RENDER_SIZE/2 + 3 * 8;
+                obj.pos.x     = x * TileManager::TILE_RENDER_SIZE/2.0f + 3 * 8;
+                obj.pos.z     = y * TileManager::TILE_RENDER_SIZE/2.0f + 3 * 8;
                 obj.level     = 0;
                 obj.facing    = 35;
                 obj.particleNr=-1;
