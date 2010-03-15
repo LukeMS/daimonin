@@ -107,8 +107,8 @@ void GuiElementSlot::update(Real dTime)
 {
     if (!mBusyTimeExpired) return;
     mBusyTimeExpired += dTime;
-    int newVal = (int)((mBusyTimeExpired / mBusyTime)*360) ;
-    if (newVal > 360) mBusyTimeExpired = 0;
+    Real newVal = (mBusyTimeExpired / mBusyTime)*360.0f;
+    if (newVal > 360.0f) mBusyTimeExpired = 0.0f;
     if (mBusyOldVal != newVal)
     {
         mBusyOldVal = newVal;

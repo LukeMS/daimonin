@@ -274,7 +274,7 @@ void GuiManager::Init(int w, int h, bool createMedia, bool printInfo, const char
     strTexture+= "_Texture";
     mTexture = createTexture(strTexture);
     mElement = createOverlay(RESOURCE_TOOLTIP, strTexture, mOverlay);
-    mElement->setPosition((mScreenWidth-mTexture->getWidth())/3*2, (mScreenHeight-mTexture->getHeight())/2);
+    mElement->setPosition((mScreenWidth-mTexture->getWidth())/3.0f*2.0f, (mScreenHeight-mTexture->getHeight())/2.0f);
     resizeBuildBuffer(TOOLTIP_SIZE*TOOLTIP_SIZE);
     // ////////////////////////////////////////////////////////////////////
     // If requested (by cmd-line) print all element names.
@@ -323,7 +323,7 @@ OverlayElement *GuiManager::createOverlay(String name, String strTexture, Overla
     }
     overlay->add2D(static_cast<OverlayContainer*>(element));
     element->setMetricsMode(GMM_PIXELS);
-    int size = StringConverter::parseInt(strTexture.substr(0, strTexture.find("_")));
+    Real size = (Real)StringConverter::parseInt(strTexture.substr(0, strTexture.find("_")));
     element->setDimensions(size, size);
     element->setMaterialName(name + MATERIAL_RESOURCE_NAME);
     return element;
@@ -339,7 +339,7 @@ OverlayElement *GuiManager::createOverlay(String name, String strTexture, Overla
 //================================================================================================
 TexturePtr GuiManager::createTexture(String strTexture)
 {
-    std::vector<String> vString = StringUtil::split(strTexture, "_", 3);
+    StringVector vString = StringUtil::split(strTexture, "_", 3);
     int s = atoi(vString[0].c_str());
     // ////////////////////////////////////////////////////////////////////
     // Create the texture.
@@ -576,7 +576,7 @@ int GuiManager::mouseEvent(int mouseAction, Vector3 &mouse)
             mDragSrcWin = NO_ACTIVE_WINDOW;
             return GuiManager::EVENT_DRAG_DONE;
         }
-        mElement->setPosition((int)mMouse.x-24, (int)mMouse.y-24);
+        mElement->setPosition(mMouse.x-24.0f, mMouse.y-24.0f);
         return GuiManager::EVENT_CHECK_DONE;
     }
     // ////////////////////////////////////////////////////////////////////
@@ -601,7 +601,7 @@ int GuiManager::mouseEvent(int mouseAction, Vector3 &mouse)
         {
             mDragSrcWin = i;
             mDragSrcSlot= guiWindow[i].getDragSlot();
-            mElement->setPosition((int)mMouse.x-24, (int)mMouse.y-24);
+            mElement->setPosition(mMouse.x-24.0f, mMouse.y-24.0f);
             return GuiManager::EVENT_CHECK_DONE;
         }
     }
@@ -824,10 +824,10 @@ void GuiManager::drawTooltip()
     mTexture->getBuffer()->unlock();
     if (mTooltipDelay)
     {
-        x = (int)mMouse.x+40;
-        y = (int)mMouse.y+40;
-        if (x+ maxWidth > (int)mScreenWidth)  x = mScreenWidth - maxWidth-40;
-        if (y+ endY     > (int)mScreenHeight) y = mScreenHeight- endY-40;
+        Real x = mMouse.x+40.0f;
+        Real y = mMouse.y+40.0f;
+        if (x+ maxWidth > mScreenWidth)  x = mScreenWidth - maxWidth-40.0f;
+        if (y+ endY     > mScreenHeight) y = mScreenHeight- endY-40.0f;
         mElement->setPosition(x,y);
         mTooltipDelay = 0;
     }

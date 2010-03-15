@@ -21,7 +21,9 @@ You should have received a copy of the GNU General Public License along with
 this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
 
+#include <boost/thread/mutex.hpp>
 #include <Ogre.h>
+#include <OgreTimer.h>
 #include "logger.h"
 #include "option.h"
 #include "network.h"
@@ -37,6 +39,7 @@ struct CmdMapping
 {
     void (*serverCmd)(uchar *, int len);
 };
+
 struct CmdMapping commands[] =
 {
     // Don't change this sorting! Its hardcoded in the server.
@@ -73,10 +76,7 @@ struct CmdMapping commands[] =
 
 const int SUM_SERVER_COMMANDS = sizeof(commands) / sizeof(CmdMapping);
 
-SDL_Thread *Network::mInputThread =0;
-SDL_Thread *Network::mOutputThread=0;
-SDL_cond   *Network::mOutputCond =0;
-SDL_mutex  *Network::mMutex =0;
+boost::mutex mutex;
 
 // start is the first waiting item in queue, end is the most recent enqueued:
 Network::command_buffer *Network::mInputQueueStart = 0, *Network::mInputQueueEnd = 0;
@@ -88,8 +88,11 @@ const int MAXSOCKBUF = 128*1024; // Maximum size of any packet we expect.
 const int MAX_BUF    = 256;
 
 int Network::mSocket = NO_SOCKET;
-bool Network::mAbortThread  = true;
-bool Network::mEndianConvert= false;
+bool Network::mThreadsActive = false;
+bool Network::mReadyToSend   = false;
+bool Network::mReadyToRead   = false;
+bool Network::mAbortThread   = true;
+bool Network::mEndianConvert = false;
 uchar readbuf[MAXSOCKBUF+1];
 
 //================================================================================================
@@ -107,107 +110,19 @@ void Network::AddIntToString(String &sl, int data, bool shortInt)
 }
 
 //================================================================================================
-// Get the socket error number.
-//================================================================================================
-String &Network::getError()
-{
-    static String strError;
-#ifdef WIN32
-    strError = StringConverter::toString(WSAGetLastError());
-#else
-    strError = StringConverter::toString(errno);
-#if defined(HAVE_STRERROR)
-    strError+= ": " + strerror(errno);
-#endif
-#endif
-    return strError;
-}
-
-//================================================================================================
 //
 //================================================================================================
-void Network::freeRecources()
+int Network::strToInt(uchar *data, int bytes)
 {
-    mAbortThread = true;
-    CloseClientSocket();
-#ifdef WIN32
-    WSACleanup();
-#endif
-    if (!mMutex) return;
-    SDL_WaitThread(mInputThread, NULL);  // Stopping reader thread.
-    SDL_WaitThread(mOutputThread, NULL); // Stopping writer thread.
-    // Empty all queues.
-    while (mInputQueueStart)
-        command_buffer_free(command_buffer_dequeue(&mInputQueueStart, &mInputQueueEnd));
-    while (mOutputQueueStart)
-        command_buffer_free(command_buffer_dequeue(&mOutputQueueStart, &mOutputQueueEnd));
-    SDL_DestroyMutex(mMutex);
-    SDL_DestroyCond(mOutputCond);
-    clearMetaServerData();
-    mMutex = 0;
-}
-
-//================================================================================================
-//
-//================================================================================================
-bool Network::Init()
-{
-    Logger::log().headline() << "Starting Network";
-#ifdef WIN32
-    WSADATA w;
-    if (WSAStartup(MAKEWORD(2, 2), &w))
+    if (bytes == 2)
     {
-        if (WSAStartup(MAKEWORD(2, 0), &w))
-        {
-            int error = WSAStartup(MAKEWORD(1, 1), &w);
-            if (error)
-            {
-                Logger::log().error() << "Error init starting Winsock: "<< error;
-                return false;
-            }
-        }
+        if (mEndianConvert)
+            return (data[0] << 8) + data[1];
+        return (data[1] << 8) + data[0];
     }
-#endif
-    return true;
-}
-
-//================================================================================================
-//
-//================================================================================================
-void Network::socket_thread_start()
-{
-    if (mMutex) return;
-    mOutputCond = SDL_CreateCond();
-    mMutex = SDL_CreateMutex();
-    mAbortThread = false;
-    mInputThread = SDL_CreateThread(reader_thread_loop, NULL);
-    if (!mInputThread)  Logger::log().error() <<  "Unable to start input thread: " << SDL_GetError();
-    mOutputThread = SDL_CreateThread(writer_thread_loop, NULL);
-    if (!mOutputThread) Logger::log().error() <<  "Unable to start output thread: " << SDL_GetError();
-}
-
-//================================================================================================
-// Handle all enqueued commands.
-//================================================================================================
-void Network::update()
-{
-    if (!mAbortThread)
-    {
-        // Get a read command and remove it from queue.
-        SDL_LockMutex(mMutex);
-        command_buffer *cmd = command_buffer_dequeue(&mInputQueueStart, &mInputQueueEnd);
-        SDL_UnlockMutex(mMutex);
-        if (!cmd) return;
-        if (!cmd->data[0] || (cmd->data[0]&~0x80)-1 >= SUM_SERVER_COMMANDS)
-            Logger::log().error() << "Bad command from server " << (int)(cmd->data[0]&~0x80)-1;
-        else
-        {
-            int lenHeader = cmd->data[0]&0x80?5:3;
-            //Logger::log().error() << "Got server cmd " << (int)(cmd->data[0]&~0x80)-1 << " len (incl. Header) =" << cmd->len;
-            commands[(cmd->data[0]&~0x80) - 1].serverCmd(cmd->data+lenHeader, cmd->len-lenHeader);
-        }
-        command_buffer_free(cmd);
-    }
+    if (mEndianConvert)
+        return (data[0] << 24) + (data[1] << 16) + (data[2] << 8) + data[3];
+    return (data[3] << 24) + (data[2] << 16) + (data[1] << 8) + data[0];
 }
 
 //================================================================================================
@@ -263,6 +178,108 @@ void Network::command_buffer_free(command_buffer *buf)
     delete[] buf->data;
     delete buf;
 }
+
+//================================================================================================
+// Get the socket error number.
+//================================================================================================
+String &Network::getError()
+{
+    static String strError;
+#ifdef WIN32
+    strError = StringConverter::toString(WSAGetLastError());
+#else
+    strError = StringConverter::toString(errno);
+#if defined(HAVE_STRERROR)
+    strError+= ": " + strerror(errno);
+#endif
+#endif
+    return strError;
+}
+
+//================================================================================================
+//
+//================================================================================================
+void Network::freeRecources()
+{
+    mAbortThread = true;
+    mInputThread.join();    // Wait for the thread to end.
+    Logger::log().info() << "Reader thread stopped";
+    mOutputThread.join();   // Wait for the thread to end.
+    Logger::log().info() << "Writer thread stopped";
+    CloseSocket();
+#ifdef WIN32
+    WSACleanup();
+#endif
+    if (!mThreadsActive) return;
+    // Empty all queues.
+    while (mInputQueueStart)
+        command_buffer_free(command_buffer_dequeue(&mInputQueueStart, &mInputQueueEnd));
+    while (mOutputQueueStart)
+        command_buffer_free(command_buffer_dequeue(&mOutputQueueStart, &mOutputQueueEnd));
+    clearMetaServerData();
+    mThreadsActive = false;
+}
+
+//================================================================================================
+//
+//================================================================================================
+bool Network::Init()
+{
+    Logger::log().headline() << "Starting Network";
+#ifdef WIN32
+    WSADATA w;
+    if (WSAStartup(MAKEWORD(2, 2), &w)) return true; // Version 2.2
+    if (WSAStartup(MAKEWORD(2, 0), &w)) return true; // Version 2.0
+    int error = WSAStartup(MAKEWORD(1, 1), &w);      // Version 1.1
+    if (error)
+    {
+        Logger::log().error() << "Error init starting Winsock: "<< error;
+        return false;
+    }
+#endif
+    return true;
+}
+
+//================================================================================================
+//
+//================================================================================================
+void Network::socket_thread_start()
+{
+    if (mThreadsActive) return;
+    mAbortThread = false;
+    mReadyToSend = false;
+    mReadyToRead = false;
+    mInputThread = boost::thread(&inputThread);
+    mOutputThread= boost::thread(&outputThread);
+    mThreadsActive = true;
+}
+
+//================================================================================================
+// Handle all enqueued commands.
+//================================================================================================
+void Network::update()
+{
+    if (!mReadyToRead || mAbortThread) return;
+    // Get a read command and remove it from queue.
+    boost::mutex::scoped_lock // Mutex is locked for this block of code.
+    lock(mutex);
+    command_buffer *cmd = command_buffer_dequeue(&mInputQueueStart, &mInputQueueEnd);
+    if (!cmd)
+    {
+        mReadyToRead = false;
+        return;
+    }
+    if (!cmd->data[0] || (cmd->data[0]&~0x80)-1 >= SUM_SERVER_COMMANDS)
+        Logger::log().error() << "Bad command from server " << (int)(cmd->data[0]&~0x80)-1;
+    else
+    {
+        int lenHeader = cmd->data[0]&0x80?5:3;
+        //Logger::log().error() << "Got server cmd " << (int)(cmd->data[0]&~0x80)-1 << " len (incl. Header) =" << cmd->len;
+        commands[(cmd->data[0]&~0x80) - 1].serverCmd(cmd->data+lenHeader, cmd->len-lenHeader);
+    }
+    command_buffer_free(cmd);
+}
+
 
 
 /* High-level external interface */
@@ -375,9 +392,11 @@ void Network::send_game_command(const char *command)
 //================================================================================================
 //
 //================================================================================================
-int Network::send_command_binary(uchar cmd, std::stringstream &stream)
+void Network::send_command_binary(uchar cmd, std::stringstream &stream)
 {
     command_buffer *buf;
+    boost::mutex::scoped_lock // Mutex is locked for this block of code.
+    lock(mutex);
     if (stream.str().size() == 1) // Single byte command.
     {
         uchar full_cmd[2] = { cmd, (uchar) *stream.str().c_str() };
@@ -406,11 +425,8 @@ int Network::send_command_binary(uchar cmd, std::stringstream &stream)
         Logger::log().error() << str1.substr(0, str1.size()-1);
         Logger::log().error() << str2;
     */
-    SDL_LockMutex(mMutex);
     command_buffer_enqueue(buf, &mOutputQueueStart, &mOutputQueueEnd);
-    SDL_CondSignal(mOutputCond);
-    SDL_UnlockMutex(mMutex);
-    return 0;
+    mReadyToSend = true;
 }
 
 /*
@@ -420,23 +436,7 @@ int Network::send_command_binary(uchar cmd, std::stringstream &stream)
 //================================================================================================
 //
 //================================================================================================
-int Network::strToInt(uchar *data, int bytes)
-{
-    if (bytes == 2)
-    {
-        if (mEndianConvert)
-            return (data[0] << 8) + data[1];
-        return (data[1] << 8) + data[0];
-    }
-    if (mEndianConvert)
-        return (data[0] << 24) + (data[1] << 16) + (data[2] << 8) + data[3];
-    return (data[3] << 24) + (data[2] << 16) + (data[1] << 8) + data[0];
-}
-
-//================================================================================================
-//
-//================================================================================================
-int Network::reader_thread_loop(void *)
+void Network::inputThread()
 {
     Logger::log().info() << "Reader thread started ";
     int cmd_len, pos;
@@ -453,36 +453,32 @@ int Network::reader_thread_loop(void *)
             Logger::log().error() << "Network::reader_thread_loop: To much data from server.";
             break;
         }
-        while (cmd_len-pos >0)
-        {
-            if (mAbortThread) return 0;
+        while (cmd_len-pos >0 && !mAbortThread)
             pos+= recv(mSocket, (char*)readbuf+pos, cmd_len-pos, 0);
-        }
+        boost::mutex::scoped_lock // Mutex is locked for this block of code.
+        lock(mutex);
         command_buffer *buf = command_buffer_new(cmd_len, readbuf);
         buf->data[cmd_len] = 0; // We terminate the buffer for security and incoming raw strings.
-        SDL_LockMutex(mMutex);
         command_buffer_enqueue(buf, &mInputQueueStart, &mInputQueueEnd);
-        SDL_UnlockMutex(mMutex);
+        mReadyToRead = true;
     }
-    Logger::log().info() << "Reader thread stopped";
-    return 0;
 }
 
 //================================================================================================
 //
 //================================================================================================
-int Network::writer_thread_loop(void *)
+void Network::outputThread()
 {
     Logger::log().info() << "Writer thread started";
     int written, ret;
     command_buffer *buf;
     while (!mAbortThread)
     {
+        boost::mutex::scoped_lock // Mutex is locked for this block of code.
+        lock(mutex);
+        if (!mReadyToSend) continue;
         written = 0;
-        SDL_LockMutex(mMutex);
-        SDL_CondWait(mOutputCond, mMutex);
         buf = command_buffer_dequeue(&mOutputQueueStart, &mOutputQueueEnd);
-        SDL_UnlockMutex(mMutex);
         if (!buf) break; // Happens when this thread is stopped by the main thread.
         while (written < buf->len && !mAbortThread)
         {
@@ -500,17 +496,16 @@ int Network::writer_thread_loop(void *)
             written += ret;
         }
         command_buffer_free(buf);
+        mReadyToSend = false;
     }
-    Logger::log().info() << "Writer thread stopped";
-    return 0;
 }
 
 //================================================================================================
 //
 //================================================================================================
-void Network::CloseSocket(int &socket)
+void Network::CloseSocket(int socket)
 {
-    if (socket == NO_SOCKET) return;
+    if (mSocket == NO_SOCKET) return;
 #ifdef WIN32
     shutdown(socket, SD_BOTH); // Do we have to wait here for WSAAsyncSelect() to send a FD_CLOSE?
     closesocket(socket);
@@ -519,18 +514,6 @@ void Network::CloseSocket(int &socket)
     close(socket);
 #endif
     socket = NO_SOCKET;
-}
-
-//================================================================================================
-//
-//================================================================================================
-void Network::CloseClientSocket()
-{
-    if (!mMutex) return;
-    SDL_LockMutex(mMutex);
-    CloseSocket(mSocket);
-    SDL_CondSignal(mOutputCond);
-    SDL_UnlockMutex(mMutex);
 }
 
 //================================================================================================
@@ -587,11 +570,10 @@ bool Network::OpenSocket(const char *host, int port, int &sock)
     if (setsockopt(sock, SOL_SOCKET, SO_LINGER, (char *) &linger_opt, sizeof(struct linger)))
         Logger::log().error() << "BUG: Error on setsockopt LINGER";
     int error = 0;
-    uint32 timeout = SDL_GetTicks() + TIMEOUT_MS;
+    uint32 timeout =  Root::getSingleton().getTimer()->getMilliseconds() + TIMEOUT_MS;
     while (connect(sock, (struct sockaddr *) &insock, sizeof(insock)) == SOCKET_ERROR)
     {
-        SDL_Delay(30);
-        if (SDL_GetTicks() > timeout)
+        if (Root::getSingleton().getTimer()->getMilliseconds() > timeout)
         {
             sock = NO_SOCKET;
             return false;
@@ -679,11 +661,10 @@ bool Network::OpenSocket(const char *host, int port, int &sock)
         return false;
     }
     // Try to connect.
-    uint32 timeout = SDL_GetTicks() + TIMEOUT_MS;
+    uint32 timeout =  Root::getSingleton().getTimer()->getMilliseconds() + TIMEOUT_MS;
     while (connect(sock, (struct sockaddr *) &insock, sizeof(insock)) == -1)
     {
-        SDL_Delay(3);
-        if (SDL_GetTicks() > timeout)
+        if (Root::getSingleton().getTimer()->getMilliseconds() > timeout)
         {
             Logger::log().error() << "Can't connect to server";
             sock = NO_SOCKET;
@@ -730,11 +711,10 @@ bool Network::OpenSocket(const char *host, int port, int &sock)
             return false;
         }
         // Try to connect.
-        uint32 timeout = SDL_GetTicks() + TIMEOUT_MS;
+        uint32 timeout =  Root::getSingleton().getTimer()->getMilliseconds() + TIMEOUT_MS;
         while (connect(sock, ai->ai_addr, ai->ai_addrlen) != 0)
         {
-            SDL_Delay(3);
-            if (SDL_GetTicks() > timeout)
+            if (Root::getSingleton().getTimer()->getMilliseconds() > timeout)
             {
                 close(sock);
                 sock = NO_SOCKET;
@@ -814,11 +794,10 @@ void Network::read_metaserver_data(int &socket)
 {
     static String buf;
     buf = "";
-    int len;
     char *ptr = new char[MAXSOCKBUF];
     while (1)
     {
-        len = recv(socket, ptr, MAXSOCKBUF, 0);
+        int len = recv(socket, ptr, MAXSOCKBUF, 0);
         if (len == -1)
         {
 #ifdef WIN32

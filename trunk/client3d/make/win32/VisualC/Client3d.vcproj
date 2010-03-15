@@ -43,7 +43,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=".\ogre_inc\;.\ogre_inc\WIN32;.\ogre_inc\OIS;..\..\..\include;..\..\..\include\gui;..\..\..\source;..\..\..\source\gui;..\..\..\3rdParty\fmod;..\..\..\3rdParty\zlib;..\..\..\3rdParty\tinyxml;..\..\..\3rdParty\SDL"
+				AdditionalIncludeDirectories=".\OgreSDK\boost\;.\OgreSDK\include\Ogre\;.\OgreSDK\include\Ogre\WIN32;.\OgreSDK\include\OIS;..\..\..\include; ..\..\..\include\gui;..\..\..\source;..\..\..\source\gui;..\..\..\3rdParty\fmod;..\..\..\3rdParty\zlib;..\..\..\3rdParty\tinyxml"
 				PreprocessorDefinitions="WIN32;TIXML_USE_STL;_CONSOLE;_CRT_SECURE_NO_DEPRECATE;_DEBUG"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -64,11 +64,11 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="OgreMain_d.lib OIS_d.lib fmodex_vc.lib WS2_32.lib SDL.lib SDLmain.lib"
+				AdditionalDependencies="OgreMain_d.lib OIS_d.lib fmodex_vc.lib WS2_32.lib"
 				OutputFile="$(OutDir)/Client3d_d.exe"
 				Version="0.99"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories=".\sdl_lib;.\ogre_lib\;.\fmod_lib"
+				AdditionalLibraryDirectories=".\OgreSDK\lib\debug\;.\OgreSDK\boost\lib\;.\fmod_lib"
 				IgnoreAllDefaultLibraries="false"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(OutDir)/Client3d.pdb"
@@ -131,7 +131,7 @@
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				OmitFramePointers="true"
-				AdditionalIncludeDirectories=".\ogre_inc;.\ogre_inc\OIS;..\..\..\include;..\..\..\include\gui;..\..\..\source;..\..\..\source\gui;..\..\..\3rdParty\fmod;..\..\..\3rdParty\zlib;..\..\..\3rdParty\tinyxml;..\..\..\3rdParty\SDL"
+				AdditionalIncludeDirectories=".\OgreSDK\boost\;.\OgreSDK\include\Ogre\;.\OgreSDK\include\Ogre\WIN32;.\OgreSDK\include\OIS;..\..\..\include; ..\..\..\include\gui;..\..\..\source;..\..\..\source\gui;..\..\..\3rdParty\fmod;..\..\..\3rdParty\zlib;..\..\..\3rdParty\tinyxml"
 				PreprocessorDefinitions="WIN32;TIXML_USE_STL;_CONSOLE;_CRT_SECURE_NO_DEPRECATE"
 				StringPooling="true"
 				MinimalRebuild="true"
@@ -153,11 +153,11 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="OgreMain.lib OIS.lib fmodex_vc.lib WS2_32.Lib SDL.lib SDLmain.lib"
+				AdditionalDependencies="OgreMain.lib OIS.lib fmodex_vc.lib WS2_32.Lib"
 				OutputFile="$(OutDir)/Client3d.exe"
 				Version="0.99"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories=".\sdl_lib;.\ogre_lib\;.\fmod_lib"
+				AdditionalLibraryDirectories=".\OgreSDK\lib\release\;.\OgreSDK\boost\lib\;.\fmod_lib"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				OptimizeReferences="2"

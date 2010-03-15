@@ -147,8 +147,8 @@ ObjectNPC::ObjectNPC(sObject &obj, bool spawn):ObjectStatic(obj)
 //================================================================================================
 void ObjectNPC::setSkinColor(int val)
 {
-    const float OFFSET = 0.01; // Ignore the space of filtering between 2 colors.
-    float colorIndex = (val & 31) /32.0 + OFFSET;
+    const float OFFSET = 0.01f; // Ignore the space of filtering between 2 colors.
+    float colorIndex = (val & 31) /32.0f + OFFSET;
     for (unsigned int i= 0; i< mEntity->getNumSubEntities(); ++i)
         mEntity->getSubEntity(i)->setCustomParameter(0, Vector4(OFFSET, colorIndex, 0.0, 0.0));
 }
@@ -321,7 +321,7 @@ bool ObjectNPC::update(const FrameEvent& event)
     {
         if (mSpawnSize == 0.0)
         {
-            ParticleManager::getSingleton().addNodeObject(mNode, "Particle/JoinGame", 4.8);
+            ParticleManager::getSingleton().addNodeObject(mNode, "Particle/JoinGame", 4.8f);
             mAnim->toggleAnimation(ObjectAnimate::ANIM_GROUP_SPAWN, 0, false, true, false);
         }
         mSpawnSize+= event.timeSinceLastFrame;
@@ -492,7 +492,7 @@ bool ObjectNPC::update(const FrameEvent& event)
                         mob->setDamage(10);
                         //mob->mAnim->toggleAnimation(ObjectAnimate::ANIM_GROUP_HIT, 0);
                         Sound::getSingleton().playStream(Sound::TENTACLE_HIT);
-                        ParticleManager::getSingleton().addFreeObject(mob->getSceneNode()->getPosition(), "Particle/Hit", 0.8);
+                        ParticleManager::getSingleton().addFreeObject(mob->getSceneNode()->getPosition(), "Particle/Hit", 0.8f);
                     }
                 }
                 mAttacking = ATTACK_NONE;

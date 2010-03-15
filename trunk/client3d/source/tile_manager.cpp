@@ -213,7 +213,7 @@ uchar TileManager::getMapLayer1(unsigned int x, unsigned int z)
 //================================================================================================
 Real TileManager::getMapShadow(unsigned int x, unsigned int z)
 {
-    return Real(mMap[((mMapSPosZ + z)&mMapMaskZ)*mMapSizeX + ((mMapSPosX + x)&mMapMaskX)].shadow) / 255.0;
+    return Real(mMap[((mMapSPosZ + z)&mMapMaskZ)*mMapSizeX + ((mMapSPosX + x)&mMapMaskX)].shadow) / 255.0f;
 }
 
 //================================================================================================
@@ -267,28 +267,28 @@ void TileManager::tileClick(float mouseX, float mouseY)
                 // +-+
                 // |/
                 // +
-                mVertex[0].x = (x+0)*TILE_RENDER_SIZE;
+                mVertex[0].x = (x+0.0f)*TILE_RENDER_SIZE;
                 mVertex[0].y = getMapHeight(x, z);
-                mVertex[0].z = (z+0)*TILE_RENDER_SIZE;
-                mVertex[1].x = (x+0)*TILE_RENDER_SIZE;
+                mVertex[0].z = (z+0.0f)*TILE_RENDER_SIZE;
+                mVertex[1].x = (x+0.0f)*TILE_RENDER_SIZE;
                 mVertex[1].y = getMapHeight(x, z-1);
-                mVertex[1].z = (z+1)*TILE_RENDER_SIZE;
-                mVertex[2].x = (x+1)*TILE_RENDER_SIZE;
+                mVertex[1].z = (z+1.0f)*TILE_RENDER_SIZE;
+                mVertex[2].x = (x+1.0f)*TILE_RENDER_SIZE;
                 mVertex[2].y = getMapHeight(x-1, z);
-                mVertex[2].z = (z+0)*TILE_RENDER_SIZE;
+                mVertex[2].z = (z+0.0f)*TILE_RENDER_SIZE;
                 if (vertexPick(&mouseRay, x, z, 0)) return; // We got a hit.
                 //   +
                 //  /|
                 // +-+
-                mVertex[0].x = (x+1)*TILE_RENDER_SIZE;
+                mVertex[0].x = (x+1.0f)*TILE_RENDER_SIZE;
                 mVertex[0].y = getMapHeight(x+1, z);
-                mVertex[0].z = (z+0)*TILE_RENDER_SIZE;
-                mVertex[1].x = (x+0)*TILE_RENDER_SIZE;
+                mVertex[0].z = (z+0.0f)*TILE_RENDER_SIZE;
+                mVertex[1].x = (x+0.0f)*TILE_RENDER_SIZE;
                 mVertex[1].y = getMapHeight(x, z-1);
-                mVertex[1].z = (z+1)*TILE_RENDER_SIZE;
-                mVertex[2].x = (x+1)*TILE_RENDER_SIZE;
+                mVertex[1].z = (z+1.0f)*TILE_RENDER_SIZE;
+                mVertex[2].x = (x+1.0f)*TILE_RENDER_SIZE;
                 mVertex[2].y = getMapHeight(x+1, z-1);
-                mVertex[2].z = (z+1)*TILE_RENDER_SIZE;
+                mVertex[2].z = (z+1.0f)*TILE_RENDER_SIZE;
                 if (vertexPick(&mouseRay, x, z, 1)) return; // We got a hit.
             }
             else
@@ -297,28 +297,28 @@ void TileManager::tileClick(float mouseX, float mouseY)
                 //   +
                 //   |\.
                 //   +-+
-                mVertex[0].x = (x+0.0)*TILE_RENDER_SIZE;
+                mVertex[0].x = (x+0.0f)*TILE_RENDER_SIZE;
                 mVertex[0].y = getMapHeight(x, z);
-                mVertex[0].z = (z+0.0)*TILE_RENDER_SIZE;
-                mVertex[1].x = (x+0.0)*TILE_RENDER_SIZE;
+                mVertex[0].z = (z+0.0f)*TILE_RENDER_SIZE;
+                mVertex[1].x = (x+0.0f)*TILE_RENDER_SIZE;
                 mVertex[1].y = getMapHeight(x, z-1);
-                mVertex[1].z = (z+1.0)*TILE_RENDER_SIZE;
-                mVertex[2].x = (x+1.0)*TILE_RENDER_SIZE;
+                mVertex[1].z = (z+1.0f)*TILE_RENDER_SIZE;
+                mVertex[2].x = (x+1.0f)*TILE_RENDER_SIZE;
                 mVertex[2].y = getMapHeight(x+1, z-1);
-                mVertex[2].z = (z+1.0)*TILE_RENDER_SIZE;
+                mVertex[2].z = (z+1.0f)*TILE_RENDER_SIZE;
                 if (vertexPick(&mouseRay, x, z, 2)) return; // We got a hit.
                 // +-+
                 //  \|
                 //   +
-                mVertex[0].x = (x+1.0)*TILE_RENDER_SIZE;
+                mVertex[0].x = (x+1.0f)*TILE_RENDER_SIZE;
                 mVertex[0].y = getMapHeight(x+1, z-1);
-                mVertex[0].z = (z+1.0)*TILE_RENDER_SIZE;
-                mVertex[1].x = (x+1.0)*TILE_RENDER_SIZE;
+                mVertex[0].z = (z+1.0f)*TILE_RENDER_SIZE;
+                mVertex[1].x = (x+1.0f)*TILE_RENDER_SIZE;
                 mVertex[1].y = getMapHeight(x+1, z);
-                mVertex[1].z = (z+0.0)*TILE_RENDER_SIZE;
-                mVertex[2].x = (x+0.0)*TILE_RENDER_SIZE;
+                mVertex[1].z = (z+0.0f)*TILE_RENDER_SIZE;
+                mVertex[2].x = (x+0.0f)*TILE_RENDER_SIZE;
                 mVertex[2].y = getMapHeight(x, z);
-                mVertex[2].z = (z+0.0)*TILE_RENDER_SIZE;
+                mVertex[2].z = (z+0.0f)*TILE_RENDER_SIZE;
                 if (vertexPick(&mouseRay, x, z, 3))  return; // We got a hit.
             }
         }
@@ -387,20 +387,20 @@ void TileManager::highlightVertex(int x, int z)
         int size = TILE_RENDER_SIZE/6;
         ManualObject *mob = static_cast<ManualObject*>(mSceneManager->createMovableObject("VertexHighlight", ManualObjectFactory::FACTORY_TYPE_NAME));
         mob->begin("Terrain/VertexHighlight");
-        mob->position(-1.0*size, 1.5*size,-0.80*size);
-        mob->position( 0.0*size, 0.0*size, 0.00*size);
-        mob->position( 1.0*size, 1.5*size,-0.80*size);
-        mob->position( 0.0*size, 1.5*size, 0.94*size);
+        mob->position(-1.0f*size, 1.5f*size,-0.80f*size);
+        mob->position( 0.0f*size, 0.0f*size, 0.00f*size);
+        mob->position( 1.0f*size, 1.5f*size,-0.80f*size);
+        mob->position( 0.0f*size, 1.5f*size, 0.94f*size);
         mob->triangle( 0,  1,  2);
         mob->triangle( 2,  1,  3);
         mob->triangle( 3,  1,  0);
         mob->triangle( 0,  2,  3);
-        mob->position(-0.5*size, 1.5*size,-0.30*size);
-        mob->position( 0.5*size, 1.5*size,-0.30*size);
-        mob->position( 0.0*size, 1.5*size, 0.20*size);
-        mob->position(-0.5*size, 3.0*size,-0.30*size);
-        mob->position( 0.5*size, 3.0*size,-0.30*size);
-        mob->position( 0.0*size, 3.0*size, 0.20*size);
+        mob->position(-0.5f*size, 1.5f*size,-0.30f*size);
+        mob->position( 0.5f*size, 1.5f*size,-0.30f*size);
+        mob->position( 0.0f*size, 1.5f*size, 0.20f*size);
+        mob->position(-0.5f*size, 3.0f*size,-0.30f*size);
+        mob->position( 0.5f*size, 3.0f*size,-0.30f*size);
+        mob->position( 0.0f*size, 3.0f*size, 0.20f*size);
         mob->triangle( 7,  8,  9);
         mob->quad( 4,  7,  8,  5);
         mob->quad( 8,  5,  6,  9);
@@ -415,7 +415,7 @@ void TileManager::highlightVertex(int x, int z)
     mSelectedVertexZ = z;
     x*= TILE_RENDER_SIZE;
     z*= TILE_RENDER_SIZE;
-    tcNode->setPosition(x, getTileHeight(x, z), z);
+    tcNode->setPosition((Real)x, getTileHeight(x, z), (Real)z);
 }
 
 //================================================================================================
