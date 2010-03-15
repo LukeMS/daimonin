@@ -102,12 +102,12 @@ TileDecal::~TileDecal()
 //================================================================================================
 void TileDecal::setPosition(int posX, int posZ)
 {
-    const Real DELTA_HEIGHT = 0.5;
+    const Real DELTA_HEIGHT = 0.5f;
     int tileX = posX/TileManager::TILE_RENDER_SIZE;
     int tileZ = posZ/TileManager::TILE_RENDER_SIZE;
     HardwareVertexBufferSharedPtr vbuf = mSubMesh->vertexData->vertexBufferBinding->getBuffer(0);
     Real *pReal = static_cast<Real*>(vbuf->lock(HardwareBuffer::HBL_DISCARD));
-    Real deltaUV = 1.0/(mSize-1);
+    Real deltaUV = 1.0f/(mSize-1);
     Real dU = (Real)(posX-tileX*TileManager::TILE_RENDER_SIZE)/TileManager::TILE_RENDER_SIZE*deltaUV;
     Real dV = (Real)(posZ-tileZ*TileManager::TILE_RENDER_SIZE)/TileManager::TILE_RENDER_SIZE*deltaUV;
     Real startX, startZ = 0;
@@ -119,54 +119,54 @@ void TileDecal::setPosition(int posX, int posZ)
             if (((x+z)&1))
             {
                 // 0: Bottom/Left
-                *pReal++ = (x+0)*TileManager::TILE_RENDER_SIZE;
+                *pReal++ = (x+0.0f)*TileManager::TILE_RENDER_SIZE;
                 *pReal++ = TileManager::getSingleton().getMapHeight(x+0, z+1) + DELTA_HEIGHT;
-                *pReal++ = (z+1)*TileManager::TILE_RENDER_SIZE;
+                *pReal++ = (z+1.0f)*TileManager::TILE_RENDER_SIZE;
                 *pReal++ = startX-dU;
                 *pReal++ = startZ-dV+deltaUV;
                 // 1: Top/Left
-                *pReal++ = (x+0)*TileManager::TILE_RENDER_SIZE;
+                *pReal++ = (x+0.0f)*TileManager::TILE_RENDER_SIZE;
                 *pReal++ = TileManager::getSingleton().getMapHeight(x+0, z+0) + DELTA_HEIGHT;
-                *pReal++ = (z+0)*TileManager::TILE_RENDER_SIZE;
+                *pReal++ = (z+0.0f)*TileManager::TILE_RENDER_SIZE;
                 *pReal++ = startX-dU;
                 *pReal++ = startZ-dV;
                 // 2: Bottom/Right
-                *pReal++ = (x+1)*TileManager::TILE_RENDER_SIZE;
+                *pReal++ = (x+1.0f)*TileManager::TILE_RENDER_SIZE;
                 *pReal++ = TileManager::getSingleton().getMapHeight(x+1, z+1) + DELTA_HEIGHT;
-                *pReal++ = (z+1)*TileManager::TILE_RENDER_SIZE;
+                *pReal++ = (z+1.0f)*TileManager::TILE_RENDER_SIZE;
                 *pReal++ = startX-dU+deltaUV;
                 *pReal++ = startZ-dV+deltaUV;
                 // 3: Top/Right
-                *pReal++ = (x+1)*TileManager::TILE_RENDER_SIZE;
+                *pReal++ = (x+1.0f)*TileManager::TILE_RENDER_SIZE;
                 *pReal++ = TileManager::getSingleton().getMapHeight(x+1, z+0) + DELTA_HEIGHT;
-                *pReal++ = (z+0)*TileManager::TILE_RENDER_SIZE;
+                *pReal++ = (z+0.0f)*TileManager::TILE_RENDER_SIZE;
                 *pReal++ = startX-dU+deltaUV;
                 *pReal++ = startZ-dV;
             }
             else
             {
                 // 2: Bottom/Right
-                *pReal++ = (x+1)*TileManager::TILE_RENDER_SIZE;
+                *pReal++ = (x+1.0f)*TileManager::TILE_RENDER_SIZE;
                 *pReal++ = TileManager::getSingleton().getMapHeight(x+1, z+1) + DELTA_HEIGHT;
-                *pReal++ = (z+1)*TileManager::TILE_RENDER_SIZE;
+                *pReal++ = (z+1.0f)*TileManager::TILE_RENDER_SIZE;
                 *pReal++ = startX-dU+deltaUV;
                 *pReal++ = startZ-dV+deltaUV;
                 // 0: Bottom/Left
-                *pReal++ = (x+0)*TileManager::TILE_RENDER_SIZE;
+                *pReal++ = (x+0.0f)*TileManager::TILE_RENDER_SIZE;
                 *pReal++ = TileManager::getSingleton().getMapHeight(x+0, z+1) + DELTA_HEIGHT;
-                *pReal++ = (z+1)*TileManager::TILE_RENDER_SIZE;
+                *pReal++ = (z+1.0f)*TileManager::TILE_RENDER_SIZE;
                 *pReal++ = startX-dU;
                 *pReal++ = startZ-dV+deltaUV;
                 // 3: Top/Right
-                *pReal++ = (x+1)*TileManager::TILE_RENDER_SIZE;
+                *pReal++ = (x+1.0f)*TileManager::TILE_RENDER_SIZE;
                 *pReal++ = TileManager::getSingleton().getMapHeight(x+1, z+0) + DELTA_HEIGHT;
-                *pReal++ = (z+0)*TileManager::TILE_RENDER_SIZE;
+                *pReal++ = (z+0.0f)*TileManager::TILE_RENDER_SIZE;
                 *pReal++ = startX-dU+deltaUV;
                 *pReal++ = startZ-dV;
                 // 1: Top/Left
-                *pReal++ = (x+0)*TileManager::TILE_RENDER_SIZE;
+                *pReal++ = (x+0.0f)*TileManager::TILE_RENDER_SIZE;
                 *pReal++ = TileManager::getSingleton().getMapHeight(x+0, z+0) + DELTA_HEIGHT;
-                *pReal++ = (z+0)*TileManager::TILE_RENDER_SIZE;
+                *pReal++ = (z+0.0f)*TileManager::TILE_RENDER_SIZE;
                 *pReal++ = startX-dU;
                 *pReal++ = startZ-dV;
             }

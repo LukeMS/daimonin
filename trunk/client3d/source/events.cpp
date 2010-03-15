@@ -588,8 +588,8 @@ bool Events::frameStarted(const FrameEvent& evt)
                 GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Example of user defined chars: :( :) :D :P !key-spc");
                 GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "---------------------------------------------------");
                 GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Press ~9~ to load the mask demo!");
+                GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Press ~7~ for grass shader test");
                 GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Press ~6~ for skin shader test");
-                GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Press ~6~ for grass shader test");
                 GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "---------------------------------------------------");
                 // Can crash the client...
                 //ObjectManager::getSingleton().setNameNPC(ObjectNPC::HERO, strAccountName.c_str());

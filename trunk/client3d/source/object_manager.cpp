@@ -144,9 +144,9 @@ void ObjectManager::Event(int obj_type, int action, int id, int val1, int val2)
         else if (action == EVT_SKINCOLOR)   mvNPC[id]->setSkinColor(val1);
         else if (action == EVT_ANIMATION)   mvNPC[id]->toggleAnimation(val1, val2);
         else if (action == EVT_HIT)         mvNPC[id]->setDamage(val1);
-        else if (action == EVT_TURN)        mvNPC[id]->turning(val1, false);
-        else if (action == EVT_CURSOR_TURN) mvNPC[id]->turning(val1, true);
-        else if (action == EVT_CURSOR_WALK) mvNPC[id]->walking(val1, true);
+        else if (action == EVT_TURN)        mvNPC[id]->turning((Real)val1, false);
+        else if (action == EVT_CURSOR_TURN) mvNPC[id]->turning((Real)val1, true);
+        else if (action == EVT_CURSOR_WALK) mvNPC[id]->walking((Real)val1, true);
     }
 }
 

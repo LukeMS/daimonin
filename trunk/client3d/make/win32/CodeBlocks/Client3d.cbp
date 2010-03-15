@@ -20,7 +20,9 @@
 				<Linker>
 					<Add library="OgreMain_d" />
 					<Add library="OIS_d" />
-					<Add directory="..\..\..\debug\" />
+					<Add library="boost_thread_d" />
+					<Add directory="..\..\..\" />
+					<Add directory="OgreSDK\boost\lib\" />
 				</Linker>
 				<ExtraCommands>
 					<Add after=".\..\..\_Tools_\cp.exe plugins_d.cfg ..\..\..\debug\plugins.cfg" />
@@ -41,7 +43,9 @@
 				<Linker>
 					<Add library="OgreMain" />
 					<Add library="OIS" />
+					<Add library="boost_thread" />
 					<Add directory="..\..\..\" />
+					<Add directory="OgreSDK\boost\lib\" />
 				</Linker>
 				<ExtraCommands>
 					<Add after=".\..\..\_Tools_\cp.exe plugins.cfg  ..\..\..\plugins.cfg" />
@@ -59,8 +63,9 @@
 			<Add option="-fident" />
 			<Add option="-pipe" />
 			<Add option="-DWIN32" />
-			<Add directory="ogre_inc" />
-			<Add directory="ogre_inc\OIS" />
+			<Add directory="OgreSDK\boost\" />
+			<Add directory="OgreSDK\include\Ogre" />
+			<Add directory="OgreSDK\include\OIS" />
 			<Add directory="..\..\..\source" />
 			<Add directory="..\..\..\source\gui" />
 			<Add directory="..\..\..\include" />
@@ -68,7 +73,6 @@
 			<Add directory="..\..\..\3rdParty\tinyxml" />
 			<Add directory="..\..\..\3rdParty\zlib" />
 			<Add directory="..\..\..\3rdParty\fmod" />
-			<Add directory="..\..\..\3rdParty\sdl" />
 		</Compiler>
 		<Linker>
 			<Add option="-Wl,--enable-auto-image-base" />
@@ -76,7 +80,6 @@
 			<Add option="-Wl,--enable-auto-import" />
 			<Add library="ws2_32" />
 			<Add library="fmodex" />
-			<Add library="SDL" />
 			<Add directory="fmod_lib" />
 		</Linker>
 		<Unit filename="..\..\..\3rdParty\fmod\fmod.h" />

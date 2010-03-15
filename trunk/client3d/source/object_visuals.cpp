@@ -84,7 +84,7 @@ void ObjectVisuals::Init()
     if ((xmlElem = xmlRoot->FirstChildElement("Particle")) && ((strTemp = xmlElem->Attribute("name"))))
     {
         int i=-1;
-        float color[3] = {0.0, 0.0, 0.0};
+        Real color[3] = {0.0f, 0.0f, 0.0f};
         mPSystem = ParticleManager::getSingleton().addNodeObject(0, strTemp, -1);
         for (xmlColor = xmlElem->FirstChildElement("color"); xmlColor; xmlColor = xmlColor->NextSiblingElement("color"))
         {
@@ -93,9 +93,9 @@ void ObjectVisuals::Init()
                 Logger::log().error() << "XML-File '" << FILE_NPC_VISUALS << " Particle entries are broken.";
                 break;
             }
-            if ((strTemp = xmlColor->Attribute("red"  ))) color[0] = atof(strTemp);
-            if ((strTemp = xmlColor->Attribute("green"))) color[1] = atof(strTemp);
-            if ((strTemp = xmlColor->Attribute("blue" ))) color[2] = atof(strTemp);
+            if ((strTemp = xmlColor->Attribute("red"  ))) color[0] = (Real)atof(strTemp);
+            if ((strTemp = xmlColor->Attribute("green"))) color[1] = (Real)atof(strTemp);
+            if ((strTemp = xmlColor->Attribute("blue" ))) color[2] = (Real)atof(strTemp);
             particleColor[i] = ColourValue(color[0], color[1], color[2], 1.0f);
         }
     }
@@ -239,8 +239,8 @@ void ObjectVisuals::select(const AxisAlignedBox &AABB, SceneNode *node, int frie
     mPSystem->clear();
     ParticleManager::getSingleton().setColorRange(mPSystem, particleColor[index], particleColor[index+1]);
 
-    float sizeX = (AABB.getMaximum().x -AABB.getMinimum().x) * 1.8;
-    float sizeZ = (AABB.getMaximum().z -AABB.getMinimum().z) * 1.8;
+    float sizeX = (AABB.getMaximum().x -AABB.getMinimum().x) * 1.8f;
+    float sizeZ = (AABB.getMaximum().z -AABB.getMinimum().z) * 1.8f;
     if (sizeZ > sizeX) sizeX = sizeZ;
     ParticleManager::getSingleton().setEmitterSize(mPSystem, sizeX, sizeX, true);
     // ////////////////////////////////////////////////////////////////////
