@@ -31,7 +31,7 @@ using namespace Ogre;
 //================================================================================================
 //
 //================================================================================================
-void GuiElementTextbox::sendMsg(const int message, Ogre::String &text, Ogre::uint32 &param, const char *text2)
+void GuiElementTextbox::sendMsg(const int message, Ogre::String &text, Ogre::uint32 &param, const char * /*text2*/)
 {
     switch (message)
     {

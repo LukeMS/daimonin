@@ -51,21 +51,21 @@ public:
     void setVisible(bool visible);
     void Init(TiXmlElement *xmlElem, const char *resourceWin, int winNr, Ogre::uchar defaultZPos);
     void update(Ogre::Real timeSinceLastFrame);
-    const int keyEvent(const int keyChar, const unsigned int key);
-    const int mouseEvent(const int mouseAction, Ogre::Vector3 &mouse);
-    const int getID() const
+    int keyEvent(const int keyChar, const unsigned int key);
+    int mouseEvent(const int mouseAction, Ogre::Vector3 &mouse);
+    int getID() const
     {
         return mWindowNr;
     }
-    const int getSumElements() const
+    int getSumElements() const
     {
         return (int)mvElement.size();
     }
-    const Ogre::uint16 getWidth() const
+    Ogre::uint16 getWidth() const
     {
         return mWidth;
     }
-    const Ogre::uint16 getHeight() const
+    Ogre::uint16 getHeight() const
     {
         return mHeight;
     }
@@ -77,7 +77,7 @@ public:
     {
         return mTexture.getPointer();
     }
-    const Ogre::uchar getZPos() const
+    Ogre::uchar getZPos() const
     {
         return mOverlay?mOverlay->getZOrder():0;
     }

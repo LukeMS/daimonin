@@ -182,7 +182,7 @@ void ObjectNPC::moveByCursor(Ogre::Real dTime)
 //================================================================================================
 // .
 //================================================================================================
-void ObjectNPC::setPrimaryWeapon(int weapon)
+void ObjectNPC::setPrimaryWeapon(int /*weapon*/)
 {}
 
 //================================================================================================
@@ -596,7 +596,7 @@ void ObjectNPC::turning(Real facing, bool cursorTurn)
 //================================================================================================
 // Turn the Object until it faces the given tile.
 //================================================================================================
-void ObjectNPC::faceToTile(Vector3 pos)
+void ObjectNPC::faceToTile(Vector3 /*pos*/)
 {
     /*
     float deltaZ = (pos.z - mActTilePos.z) * TileManager::SUM_SUBTILES  +  (pos.subZ - mActTilePos.subZ);

@@ -79,7 +79,7 @@ GuiListbox::~GuiListbox()
 //================================================================================================
 // .
 //================================================================================================
-void GuiListbox::sendMsg(const int msgID, Ogre::String &text, Ogre::uint32 &color, const char *text2)
+void GuiListbox::sendMsg(const int msgID, Ogre::String &text, Ogre::uint32 &color, const char * /*text2*/)
 {
     switch (msgID)
     {
@@ -319,7 +319,7 @@ bool GuiListbox::extractKeyword(int mouseX, int mouseY)
 //================================================================================================
 //
 //================================================================================================
-void GuiListbox::update(Ogre::Real dTime)
+void GuiListbox::update(Ogre::Real /*dTime*/)
 {
     if (!mRowsToPrint) return;
     --mRowsToPrint;

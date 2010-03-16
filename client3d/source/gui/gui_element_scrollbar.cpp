@@ -38,7 +38,7 @@ const int SLIDER_INNER_OFFSET = 3;
 //================================================================================================
 // Constructor.
 //================================================================================================
-GuiElementScrollbar::GuiElementScrollbar(TiXmlElement *xmlElement, const void *parent, const void *parentElement):GuiElement(xmlElement, parent)
+GuiElementScrollbar::GuiElementScrollbar(TiXmlElement *xmlElement, const void *parent, const void * /*parentElement*/):GuiElement(xmlElement, parent)
 {
     mButScrollUp  = 0;
     mButScrollDown= 0;

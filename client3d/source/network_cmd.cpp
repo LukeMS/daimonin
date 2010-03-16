@@ -107,7 +107,7 @@ short Network::GetShort_String(uchar *data)
 //================================================================================================
 // .
 //================================================================================================
-void Network::AccNameSuccess(uchar *data, int len)
+void Network::AccNameSuccess(uchar * /*data*/, int /*len*/)
 {
     GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Account Success");
     Logger::log().error() << "AccNameSuccess";
@@ -171,7 +171,7 @@ void Network::AccountCmd(uchar *data, int len)
 //================================================================================================
 // .
 //================================================================================================
-void Network::DrawInfoCmd(uchar *data, int len)
+void Network::DrawInfoCmd(uchar *data, int /*len*/)
 {
     // int color   = atoi(data);
     // Todo: Convert indexed color into rgb and add it to the text.
@@ -190,7 +190,7 @@ void Network::DrawInfoCmd(uchar *data, int len)
 // Handles when the server says we can't be added.  In reality, we need to close the connection
 // and quit out, because the client is going to close us down anyways.
 //================================================================================================
-void Network::AddMeFail(uchar *data, int len)
+void Network::AddMeFail(uchar * /*data*/, int /*len*/)
 {
     Logger::log().error() << "addme_failed received.\n";
     CloseSocket();
@@ -646,7 +646,7 @@ void Network::SoundCmd(uchar *data, int len)
 //================================================================================================
 // .
 //================================================================================================
-void Network::TargetObject(uchar *data, int len)
+void Network::TargetObject(uchar *data, int /*len*/)
 {
     String strTmp = "[";
     strTmp += (char*)data+3;
@@ -671,7 +671,7 @@ void Network::TargetObject(uchar *data, int len)
 //================================================================================================
 // .
 //================================================================================================
-void Network::StatsCmd(uchar *data, int len)
+void Network::StatsCmd(uchar * /*data*/, int /*len*/)
 {
     /*
         int     i   = 0, x;
@@ -959,7 +959,7 @@ void Network::StatsCmd(uchar *data, int len)
 //================================================================================================
 // .
 //================================================================================================
-void Network::ImageCmd(uchar *data, int len)
+void Network::ImageCmd(uchar * /*data*/, int /*len*/)
 {
     /*
         int     pnum, plen;
@@ -990,7 +990,7 @@ void Network::ImageCmd(uchar *data, int len)
 //================================================================================================
 // .
 //================================================================================================
-void Network::Face1Cmd(uchar *data, int len)
+void Network::Face1Cmd(uchar * /*data*/, int /*len*/)
 {
     /*
     int pnum = GetShort_String(data);
@@ -1004,7 +1004,7 @@ void Network::Face1Cmd(uchar *data, int len)
 //================================================================================================
 // .
 //================================================================================================
-void Network::SkillRdyCmd(uchar *data, int len)
+void Network::SkillRdyCmd(uchar * /*data*/, int /*len*/)
 {
     /*
         strcpy(cpl.skill_name, data);
@@ -1087,7 +1087,7 @@ void Network::PlayerCmd(uchar *data, int len)
 //================================================================================================
 // .
 //================================================================================================
-void Network::SpelllistCmd(uchar *data, int len)
+void Network::SpelllistCmd(uchar * /*data*/, int /*len*/)
 {
     /*
         int     i, ii, mode;
@@ -1152,7 +1152,7 @@ void Network::SpelllistCmd(uchar *data, int len)
 //================================================================================================
 // .
 //================================================================================================
-void Network::SkilllistCmd(uchar *data, int len)
+void Network::SkilllistCmd(uchar * /*data*/, int /*len*/)
 {
     /*
         uchar *tmp, *tmp2, *tmp3, *tmp4;
@@ -1218,7 +1218,7 @@ void Network::SkilllistCmd(uchar *data, int len)
 //================================================================================================
 // .
 //================================================================================================
-void Network::GolemCmd(uchar *data, int len)
+void Network::GolemCmd(uchar * /*data*/, int /*len*/)
 {
     /*
         int     mode, face;
@@ -1413,7 +1413,7 @@ void Network::DataCmd(uchar *data, int len)
 //================================================================================================
 // .
 //================================================================================================
-void Network::GroupCmd(uchar *data, int len)
+void Network::GroupCmd(uchar * /*data*/, int /*len*/)
 {
     /*
         char    name[64], *tmp;
@@ -1442,7 +1442,7 @@ void Network::GroupCmd(uchar *data, int len)
 //================================================================================================
 // Someone want invite us to a group.
 //================================================================================================
-void Network::GroupInviteCmd(uchar *data, int len)
+void Network::GroupInviteCmd(uchar * /*data*/, int /*len*/)
 {
     /*
         if(global_group_status != GROUP_NO) // bug
@@ -1458,7 +1458,7 @@ void Network::GroupInviteCmd(uchar *data, int len)
 //================================================================================================
 // .
 //================================================================================================
-void Network::GroupUpdateCmd(uchar *data, int len)
+void Network::GroupUpdateCmd(uchar * /*data*/, int /*len*/)
 {
     /*
         if (!len) return;
@@ -1478,7 +1478,7 @@ void Network::GroupUpdateCmd(uchar *data, int len)
 //================================================================================================
 // .
 //================================================================================================
-void Network::BookCmd(uchar *data, int len)
+void Network::BookCmd(uchar * /*data*/, int /*len*/)
 {
     /*
         sound_play_effect(SOUND_BOOK, 0, 0, 100);
@@ -1493,7 +1493,7 @@ void Network::BookCmd(uchar *data, int len)
 //================================================================================================
 // .
 //================================================================================================
-void Network::MarkCmd(uchar *data, int len)
+void Network::MarkCmd(uchar * /*data*/, int /*len*/)
 {
     //cpl.mark_count = GetInt_String(data);
 }
@@ -1510,7 +1510,7 @@ void Network::CreatePlayerAccount()
 //================================================================================================
 // UpdateItemCmd updates some attributes of an item.
 //================================================================================================
-void Network::ItemUpdateCmd(uchar *data, int len)
+void Network::ItemUpdateCmd(uchar * /*data*/, int /*len*/)
 {
     /*
         int     weight, loc, tag, face, sendflags, flags, pos = 0, nlen, anim, nrof, quality=254, condition=254;
@@ -1662,7 +1662,7 @@ bool Network::console_command_check(String cmd)
 //================================================================================================
 //
 //================================================================================================
-void Network::do_console_cmd(String &stCmd, int cmd)
+void Network::do_console_cmd(String &/*stCmd*/, int /*cmd*/)
 {
     return;
 }

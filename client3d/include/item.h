@@ -135,7 +135,7 @@ public:
     void dropInventoryItemToFloor(int slotNr);
     void getInventoryItemFromFloor(int slotNr);
     bool update(sItem *tmpItem, int newContainerID, bool bflag);
-    const int  getContainerID(unsigned int ItemID);
+    int  getContainerID(unsigned int ItemID);
     const char *getItemGfxName(int itemFace);
     const sItem *locateItem(int container, unsigned int tag);
     void printAllItems();

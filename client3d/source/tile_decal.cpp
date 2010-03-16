@@ -47,7 +47,7 @@ TileDecal::TileDecal(unsigned int sizeInSubtiles, int posX, int posZ, const char
         Logger::log().error() << "TileManager must me initialized before you can use the TileDecal class!";
         return;
     }
-    mSize = (sizeInSubtiles >= MAX_SIZE)?MAX_SIZE:sizeInSubtiles+1;
+    mSize = (sizeInSubtiles >= MAX_SIZE)?(int)MAX_SIZE:sizeInSubtiles+1;
     ++mSumDecal;
     String strNumber = StringConverter::toString(++mMaxDecal);
     MeshPtr mesh = MeshManager::getSingleton().createManual("Mesh/Decal" + strNumber, ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);

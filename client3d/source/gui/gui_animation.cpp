@@ -26,7 +26,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 //================================================================================================
 // Constuctor.
 //================================================================================================
-GuiAnimation::GuiAnimation(TiXmlElement *xmlElem, const void *parent)
+GuiAnimation::GuiAnimation(TiXmlElement * /*xmlElem*/, const void * /*parent*/)
 {}
 
 //================================================================================================

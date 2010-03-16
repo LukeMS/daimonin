@@ -83,7 +83,7 @@ void Network::InterfaceCmd(uchar *data, int len)
 //================================================================================================
 // Find a face ID by name, request the face (find it, load it or request it) and return the ID.
 //================================================================================================
-int get_bmap_id(char *name)
+int get_bmap_id(char * /*name*/)
 {
     /*
     for (int = 0; i < bmaptype_table_size; i++)
@@ -571,7 +571,7 @@ void CmdInterface::reset()
 //================================================================================================
 // called from commands.c after we got a interface command
 //================================================================================================
-bool CmdInterface::load(int mode, char *data, int len, int pos)
+bool CmdInterface::load(int /*mode*/, char *data, int len, int pos)
 {
 
     int cmd      = INTERFACE_CMD_NO; // we have a open '<' and a command is active the string is related to this cmd.
@@ -971,7 +971,7 @@ void CmdInterface::show()
 //================================================================================================
 //
 //================================================================================================
-bool CmdInterface::keyEvent(const char keyChar, const uchar key)
+bool CmdInterface::keyEvent(const char /*keyChar*/, const uchar /*key*/)
 {
     return false;
 }

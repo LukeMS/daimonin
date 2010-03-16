@@ -43,7 +43,7 @@ public:
     TileDecal(unsigned int sizeInSubtiles, int posX, int posZ, const char *strMaterial = "Terrain/Decal");
     ~TileDecal();
     void setPosition(int x, int z);
-    static const int getSumDecals() { return mSumDecal; }
+    static int getSumDecals() { return mSumDecal; }
 private:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.

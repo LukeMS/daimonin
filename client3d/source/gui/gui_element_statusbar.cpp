@@ -27,12 +27,12 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 
 using namespace Ogre;
 
-const Real ANIMATION_SPEED = 1.2;
+const Real ANIMATION_SPEED = 1.2f;
 
 //================================================================================================
 // .
 //================================================================================================
-void GuiStatusbar::sendMsg(const int message, Ogre::String &text, Ogre::uint32 &param, const char *text2)
+void GuiStatusbar::sendMsg(const int message, Ogre::String &/*text*/, Ogre::uint32 &param, const char * /*text2*/)
 {
     if (message == GuiManager::MSG_SET_VALUE)
         setValue(param);
@@ -49,16 +49,16 @@ void GuiStatusbar::update(Ogre::Real dTime)
         if (mDrawn < mValue)
         {
             mDrawn += (dTime*mLength) / ANIMATION_SPEED;
-            if (mDrawn > mValue) mDrawn = mValue;
+            if (mDrawn > mValue) mDrawn = (Real)mValue;
         }
         else
         {
             mDrawn -= (dTime*mLength) / ANIMATION_SPEED;
-            if (mDrawn < mValue) mDrawn = mValue;
+            if (mDrawn < mValue) mDrawn = (Real)mValue;
         }
     }
     else
-        mDrawn = mValue;
+        mDrawn = (Real)mValue;
     draw();
 }
 
@@ -94,7 +94,8 @@ GuiStatusbar::GuiStatusbar(TiXmlElement *xmlElement, const void *parent):GuiElem
         mDiameter  = mWidth;
         mLength    = mHeight;
     }
-    mDrawn = mValue = mLength;
+    mValue = mLength;
+    mDrawn = (Real)mValue;
     draw();
 }
 
@@ -171,7 +172,7 @@ void GuiStatusbar::drawColorBar(uint32 *dst)
 //================================================================================================
 //
 //================================================================================================
-void GuiStatusbar::drawGfxBar(uint32 *dst)
+void GuiStatusbar::drawGfxBar(uint32 * /*dst*/)
 {
     // todo
 }

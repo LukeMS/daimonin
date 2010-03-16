@@ -151,7 +151,7 @@ void Item::ItemXYCmd(uchar *data, int len, bool bflag)
 //================================================================================================
 // Returns the container in which the item is located.
 //================================================================================================
-const int Item::getContainerID(unsigned int ItemID)
+int Item::getContainerID(unsigned int ItemID)
 {
     std::list<sItem*>::iterator iter;
     for (int i =0; i < ITEMLIST_SUM; ++i)
@@ -229,7 +229,7 @@ bool Item::addItem(sItem *tmpItem, int container)
 //================================================================================================
 // Update the item location.
 //================================================================================================
-bool Item::update(sItem *tmpItem, int newContainerID, bool bflag)
+bool Item::update(sItem *tmpItem, int newContainerID, bool /*bflag*/)
 {
     int actContainerID = getContainerID(tmpItem->tag);
     // The item doesn't has a container yet.
