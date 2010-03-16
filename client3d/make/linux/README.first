@@ -1,42 +1,11 @@
 //====================================================================
-// Client3d as build scripts project.
+// Client3d as cmake project.
 //====================================================================
-Later the build and install scripts for Linux will be here.
-You can try to compile using the test build stuff,
-but you won't get any support for this right now.
+1) Run cmake "cmake ." in the client3d root-folder.
+2) rum make  "make"
+3) start the binary
 
-1) ./bootstrap.sh
-2) make
-3) ./run_client3d
-
-//====================================================================
-// Ogre compiling tips (Ogre 1.0.6).
-//====================================================================
-On my system (adm64, geforce) i had to do this for compiling ogre3d:
-  LDFLAGS=' -lstdc++' ./configure --with-platform=GLX
-
-//====================================================================
-// Ogre compiling tips (Ogre 1.2rc2).
-//====================================================================
-You need libmng-1.0.8 to get ogre3d compiled.
-
-If "make install" cant find libOgreMain.lai then make a copy of libOgreMain.la in OgreMain/src/.libs.
-In libOgreMain.lai set installed=yes
-same for the other libs.
-
-//====================================================================
-// Ogre compiling tips (Ogre 1.4).
-//====================================================================
-Depencies: OIS 
-Its an Object Oriented Input System.
-Get the latest version from sourceforge.
-
-//====================================================================
-// Ogre compiling tips (Ogre 1.6.1).
-//====================================================================
-configure may complain:
-    checking for X11/extensions/xf86vmode.h... no
-    configure: error: "libxf86vm headers not found"
-
-This requires the package libxxf86vm-dev (notte the double-x!):
-    sudo apt-get install libxxf86vm-dev
+Hints
+* Leave out the " they are only there for optical reasons.
+* The root-folder of the client3d ist where the file 'ReadMe.first'
+  is located.
