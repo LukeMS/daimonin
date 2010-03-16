@@ -318,7 +318,7 @@ public:
     {
         sendMsg(element, MSG_ADD_ITEM,itemGfx, param, tooltip);
     }
-    void delItem(int element, const char *itemGfx)
+    void delItem(int element, const char * /*itemGfx*/)
     {
         sendMsg(element, MSG_DEL_ITEM);
     }

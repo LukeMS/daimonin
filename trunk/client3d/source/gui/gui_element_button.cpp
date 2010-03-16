@@ -45,7 +45,7 @@ GuiElementButton::GuiElementButton(TiXmlElement *xmlElement, const void *parent,
 //================================================================================================
 // Message handling.
 //================================================================================================
-void GuiElementButton::sendMsg(const int message, String &text, uint32 &param, const char *text2)
+void GuiElementButton::sendMsg(const int message, String &text, uint32 &param, const char * /*text2*/)
 {
     switch (message)
     {
@@ -61,7 +61,7 @@ void GuiElementButton::sendMsg(const int message, String &text, uint32 &param, c
 //================================================================================================
 // Returns true if the mouse event was on this gadget (so no need to check the other gadgets).
 //================================================================================================
-int GuiElementButton::mouseEvent(const int mouseAction, int mouseX, int mouseY, int mouseWheel)
+int GuiElementButton::mouseEvent(const int mouseAction, int mouseX, int mouseY, int /*mouseWheel*/)
 {
     if (!mouseWithin(mouseX, mouseY))
     {

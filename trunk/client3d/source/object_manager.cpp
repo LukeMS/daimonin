@@ -76,7 +76,7 @@ void ObjectManager::addMobileObject(ObjectStatic::sObject &obj)
 //================================================================================================
 // Update all objects.
 //================================================================================================
-void ObjectManager::update(int obj_type, const FrameEvent& evt)
+void ObjectManager::update(int /*obj_type*/, const FrameEvent& evt)
 {
     for (unsigned int i = 0; i < mvMissile.size(); ++i)
     {

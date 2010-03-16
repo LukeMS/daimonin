@@ -65,7 +65,7 @@ void TileMap::clear_map(void)
 //================================================================================================
 // TODO: do a real adjust... atm, we just clear the cache.
 //================================================================================================
-void TileMap::adjust_map_cache(int xpos, int ypos)
+void TileMap::adjust_map_cache(int /*xpos*/, int /*ypos*/)
 {
     memset(TheMapCache, 0, 9 * (mMapData.xlen * mMapData.ylen) * sizeof(MapCell));
 }

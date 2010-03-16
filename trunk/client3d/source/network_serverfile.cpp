@@ -50,7 +50,7 @@ ServerFile::ServerFile()
 //================================================================================================
 // .
 //================================================================================================
-void ServerFile::checkFileStatus(const char *cmd, char *param, int fileNr)
+void ServerFile::checkFileStatus(const char * /*cmd*/, char *param, int fileNr)
 {
     Logger::log().info() << "Server file status of ["<< fileNr<< "] " << srv_file[fileNr].filename << "...";
     if (!strcmp((const char*)param, "OK"))

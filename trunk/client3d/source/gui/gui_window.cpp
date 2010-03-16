@@ -222,7 +222,7 @@ void GuiWindow::centerWindowOnMouse(int x, int y)
 //================================================================================================
 // Key event.
 //================================================================================================
-const int GuiWindow::keyEvent(const int keyChar, const unsigned int key)
+int GuiWindow::keyEvent(const int keyChar, const unsigned int key)
 {
     if (!isVisible()) return GuiManager::EVENT_CHECK_NEXT;
     for (unsigned int i = 0; i < mvElement.size(); ++i)
@@ -236,7 +236,7 @@ const int GuiWindow::keyEvent(const int keyChar, const unsigned int key)
 //================================================================================================
 // Mouse Event.
 //================================================================================================
-const int GuiWindow::mouseEvent(const int mouseAction, Vector3 &mouse)
+int GuiWindow::mouseEvent(const int mouseAction, Vector3 &mouse)
 {
     // ////////////////////////////////////////////////////////////////////
     // User is moving the window.

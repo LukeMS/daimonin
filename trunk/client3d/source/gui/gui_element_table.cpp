@@ -103,7 +103,7 @@ GuiTable::~GuiTable()
 //================================================================================================
 //
 //================================================================================================
-void GuiTable::sendMsg(const int message, Ogre::String &text, Ogre::uint32 &param, const char *text2)
+void GuiTable::sendMsg(const int message, Ogre::String &text, Ogre::uint32 &param, const char * /*text2*/)
 {
     switch (message)
     {
@@ -138,7 +138,7 @@ int GuiTable::getUserBreak()
 //================================================================================================
 // Returns EVENT_CHECK_DONE if the key event happened here (so no need to check the other gadgets).
 //================================================================================================
-int GuiTable::keyEvent(const int keyChar, const unsigned int key)
+int GuiTable::keyEvent(const int /*keyChar*/, const unsigned int key)
 {
     if (key == OIS::KC_UP)
     {
@@ -174,7 +174,7 @@ int GuiTable::keyEvent(const int keyChar, const unsigned int key)
 //================================================================================================
 // Returns true if the mouse event was on this gadget (so no need to check the other gadgets).
 //================================================================================================
-int GuiTable::mouseEvent(const int mouseAction, int mouseX, int mouseY, int mouseWheel)
+int GuiTable::mouseEvent(const int mouseAction, int mouseX, int mouseY, int /*mouseWheel*/)
 {
     if (!mouseWithin(mouseX, mouseY))
         return GuiManager::EVENT_CHECK_NEXT;
@@ -208,7 +208,7 @@ int GuiTable::mouseEvent(const int mouseAction, int mouseX, int mouseY, int mous
 //================================================================================================
 // Change an existing row.
 //================================================================================================
-void GuiTable::setRow(const int row, const char *text)
+void GuiTable::setRow(const int row, const char * /*text*/)
 {
     drawRow(row, (row == mSelectedRow)?mColorSelect:mColorRowBG[row&1]);
 }

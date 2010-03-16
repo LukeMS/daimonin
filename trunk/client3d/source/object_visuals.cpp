@@ -154,7 +154,7 @@ void ObjectVisuals::buildEntity(int index, const char *meshName, const char *ent
 //===================================================
 // .
 //===================================================
-void ObjectVisuals::setPosLifebar(Vector3 pos)
+void ObjectVisuals::setPosLifebar(Vector3 /*pos*/)
 {}
 
 //===================================================

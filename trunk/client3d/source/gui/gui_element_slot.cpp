@@ -119,7 +119,7 @@ void GuiElementSlot::update(Real dTime)
 //================================================================================================
 // .
 //================================================================================================
-int GuiElementSlot::mouseEvent(const int mouseAction, int mouseX, int mouseY, int mouseWheel)
+int GuiElementSlot::mouseEvent(const int mouseAction, int mouseX, int mouseY, int /*mouseWheel*/)
 {
     if (mouseWithin(mouseX, mouseY))
     {

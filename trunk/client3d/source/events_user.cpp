@@ -825,7 +825,7 @@ bool Events::mousePressed(const OIS::MouseEvent &e, const OIS::MouseButtonID but
 //================================================================================================
 // .
 //================================================================================================
-bool Events::mouseReleased(const OIS::MouseEvent &e, const OIS::MouseButtonID id)
+bool Events::mouseReleased(const OIS::MouseEvent &/*e*/, const OIS::MouseButtonID /*id*/)
 {
     int ret = GuiManager::getSingleton().mouseEvent(GuiManager::BUTTON_RELEASED, mMouse);
     if (ret == GuiManager::EVENT_USER_ACTION)

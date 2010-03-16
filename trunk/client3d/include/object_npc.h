@@ -66,7 +66,7 @@ public:
     //void attackObjectOnTile(TilePosOLD pos);
     void addToMap();
     void setEnemy();
-    const Ogre::uchar getBoundingRadius() const
+    Ogre::uchar getBoundingRadius() const
     {
         return mBoundingRadius;
     }

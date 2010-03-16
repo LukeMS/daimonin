@@ -53,7 +53,7 @@ public:
     }
     void setBusy(bool busy)
     {
-        mBusyTimeExpired = busy?0.001:0.000;
+        mBusyTimeExpired = busy?0.001f:0.000f;
     }
     bool empty()
     {

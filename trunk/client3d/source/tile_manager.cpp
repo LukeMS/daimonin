@@ -237,7 +237,7 @@ void TileManager::scrollMap(int dx, int dz)
 //================================================================================================
 // Change Tile textures.
 //================================================================================================
-void TileManager::setMapset(int landGroup, int waterGroup)
+void TileManager::setMapset(int landGroup, int /*waterGroup*/)
 {
     mMapchunk.setMaterial(landGroup,  mTextureSize);
 }

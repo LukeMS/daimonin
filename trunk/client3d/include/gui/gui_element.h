@@ -49,14 +49,14 @@ public:
      ** @param param   parameter and/or return integer value.
      ** @param text2   Additional text parameter.
      *****************************************************************************/
-    virtual void sendMsg(const int message, Ogre::String &text, Ogre::uint32 &param, const char *text2) {}
+    virtual void sendMsg(const int /*message*/, Ogre::String &/*text*/, Ogre::uint32 &/*param*/, const char * /*text2*/) {}
     virtual int keyEvent(const int keyChar, const unsigned int key);
     virtual int mouseEvent(const int mouseAction, int mouseX, int mouseY, int mouseWheel);
 
     /** Update an element. Used for drag'n'drop, animations, etc.
      ** @param deltaTime The time since the last frame.
      *****************************************************************************/
-    virtual void update(Ogre::Real deltaTime) {}
+    virtual void update(Ogre::Real /*deltaTime*/) {}
 
     /** Draw an element into the parent window.
      ** @param uploadToTexture When false the gfx is not yet copied to the texture.

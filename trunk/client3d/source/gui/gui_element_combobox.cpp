@@ -34,7 +34,7 @@ using namespace Ogre;
 //================================================================================================
 //
 //================================================================================================
-int GuiElementCombobox::sendMsg(const int message, const char *text, uint32 param, const char *text2)
+int GuiElementCombobox::sendMsg(const int /*message*/, const char * /*text*/, uint32 /*param*/, const char * /*text2*/)
 {
     return 0;
 }
