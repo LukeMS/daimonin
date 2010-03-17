@@ -210,14 +210,15 @@ void Network::freeRecources()
 #ifdef WIN32
     WSACleanup();
 #endif
-    if (!mThreadsActive) return;
+    clearMetaServerData();
     // Empty all queues.
     while (mInputQueueStart)
         command_buffer_free(command_buffer_dequeue(&mInputQueueStart, &mInputQueueEnd));
     while (mOutputQueueStart)
         command_buffer_free(command_buffer_dequeue(&mOutputQueueStart, &mOutputQueueEnd));
-    clearMetaServerData();
     mThreadsActive = false;
+    mInputQueueStart = 0;
+    mOutputQueueStart= 0;
 }
 
 //================================================================================================
