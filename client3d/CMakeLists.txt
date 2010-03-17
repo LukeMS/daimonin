@@ -1,9 +1,10 @@
 ############################################################
 # Daimonin 3D client
 ############################################################
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 2.6)
 project(client3d CXX)
-add_definitions(-Wall -W)
+add_definitions(-Wall -W -g0)
+SET(CMAKE_EXE_LINKER_FLAGS -s)
 
 # Version number of the project.
 set (client3D_VERSION_MAJOR_VERSION 0)
