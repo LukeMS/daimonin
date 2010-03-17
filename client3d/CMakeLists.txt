@@ -10,7 +10,10 @@ set (client3D_VERSION_MAJOR_VERSION 0)
 set (client3D_VERSION_MINOR_VERSION 2)
 set (client3D_VERSION_PATCH_LEVEL   0)
 
-# Set the folder for cmake stuff.
+MESSAGE(STATUS "**** Create build files for Client3d Version " ${client3D_VERSION_MAJOR_VERSION} 
+               "." ${client3D_VERSION_MINOR_VERSION} "." ${client3D_VERSION_PATCH_LEVEL} " ****")
+
+# Set the folder for own cmake stuff.
 set(MY_CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/make/cmake)
 
 # Header file to pass some of the cmake settings
@@ -19,9 +22,11 @@ set(MY_CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/make/cmake)
 #  "${PROJECT_BINARY_DIR}/include/config.h"
 #)
 #include_directories("${PROJECT_BINARY_DIR}")
-############################################################
-# Add all external packages
-############################################################
+
+
+MESSAGE(STATUS "############################################################")
+MESSAGE(STATUS "# Looking for all external packages")
+MESSAGE(STATUS "############################################################")
 # Looking for package: Ogre.
 INCLUDE(${MY_CMAKE_MODULE_PATH}/FindOGRE.cmake)
 IF (NOT OGRE_FOUND)
@@ -51,6 +56,7 @@ ENDIF(NOT FMOD_FOUND)
 set(LIBS ${LIBS} ${FMOD_LIBRARY})
 
 link_libraries(${LIBS})
+MESSAGE(STATUS "-> done")
 
 ############################################################
 # define all header and source files
@@ -180,9 +186,9 @@ INCLUDE_DIRECTORIES(
 #Build the executeable
 add_executable(client3d ${SOURCE_FILES})
 
-############################################################
-# Create the plugins.cfg
-############################################################
+MESSAGE(STATUS "############################################################")
+MESSAGE(STATUS "# Create the file: plugins.cfg")
+MESSAGE(STATUS "############################################################")
 if (UNIX)
   set(PLUGIN_FOLDER ${OGRE_LIB_PATH})
 else(UNIX)
@@ -200,6 +206,8 @@ file(WRITE ./plugins.cfg
   "Plugin=Plugin_ParticleFX\n"
   "Plugin=Plugin_CgProgramManager\n"
 )
+MESSAGE(STATUS "-> done")
 
-
-
+MESSAGE(STATUS "############################################################")
+MESSAGE(STATUS "# You can compile the client whith the 'make' command now.")
+MESSAGE(STATUS "############################################################")

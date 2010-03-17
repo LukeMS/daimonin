@@ -268,7 +268,8 @@ void GuiTextout::loadTTFont(const char *filename, const char *size, const char *
     for (unsigned int i=1; i < STANDARD_CHARS_IN_FONT-1; ++i)
     {
         rect = pFont->getGlyphTexCoords(i+32);
-        x1 = (unsigned int)(rect.left * texW)-1;
+        x1 = (unsigned int)(rect.left * texW);
+        // if (x1) --x1;
         y1 = (unsigned int)(rect.top * texH);
         for (int x = 0; x <= fnt->charWidth[i]; ++x)
         {
