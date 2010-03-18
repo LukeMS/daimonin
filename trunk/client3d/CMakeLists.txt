@@ -2,6 +2,7 @@
 # Daimonin 3D client
 ############################################################
 cmake_minimum_required(VERSION 2.6)
+
 project(client3d CXX)
 add_definitions(-Wall -W -g0)
 SET(CMAKE_EXE_LINKER_FLAGS -s)
@@ -23,7 +24,6 @@ set(MY_CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/make/cmake)
 #  "${PROJECT_BINARY_DIR}/include/config.h"
 #)
 #include_directories("${PROJECT_BINARY_DIR}")
-
 
 MESSAGE(STATUS "############################################################")
 MESSAGE(STATUS "# Looking for all external packages")
