@@ -93,37 +93,6 @@ bool Network::mReadyToSend   = false;
 bool Network::mReadyToRead   = false;
 bool Network::mAbortThread   = true;
 bool Network::mEndianConvert = false;
-uchar readbuf[MAXSOCKBUF+1];
-
-//================================================================================================
-//
-//================================================================================================
-void Network::AddIntToString(String &sl, int data, bool shortInt)
-{
-    if (!shortInt)
-    {
-        sl += (data >> 24) & 0xff;
-        sl += (data >> 16) & 0xff;
-    }
-    sl += (data >>  8) & 0xff;
-    sl += (data) & 0xff;
-}
-
-//================================================================================================
-//
-//================================================================================================
-int Network::strToInt(uchar *data, int bytes)
-{
-    if (bytes == 2)
-    {
-        if (mEndianConvert)
-            return (data[0] << 8) + data[1];
-        return (data[1] << 8) + data[0];
-    }
-    if (mEndianConvert)
-        return (data[0] << 24) + (data[1] << 16) + (data[2] << 8) + data[3];
-    return (data[3] << 24) + (data[2] << 16) + (data[1] << 8) + data[0];
-}
 
 //================================================================================================
 // .
@@ -201,24 +170,27 @@ String &Network::getError()
 //================================================================================================
 void Network::freeRecources()
 {
-    mAbortThread = true;
-    mInputThread.join();    // Wait for the thread to end.
-    Logger::log().info() << "Reader thread stopped";
-    mOutputThread.join();   // Wait for the thread to end.
-    Logger::log().info() << "Writer thread stopped";
     CloseSocket();
 #ifdef WIN32
     WSACleanup();
 #endif
     clearMetaServerData();
+    if (mThreadsActive)
+    {
+        mAbortThread = true;
+        mInputThread.join();  // Wait for the thread to end.
+        Logger::log().info() << "Reader thread stopped";
+        mOutputThread.join(); // Wait for the thread to end.
+        Logger::log().info() << "Writer thread stopped";
+        mThreadsActive = false;
+    }
     // Empty all queues.
     while (mInputQueueStart)
         command_buffer_free(command_buffer_dequeue(&mInputQueueStart, &mInputQueueEnd));
     while (mOutputQueueStart)
         command_buffer_free(command_buffer_dequeue(&mOutputQueueStart, &mOutputQueueEnd));
-    mThreadsActive = false;
-    mInputQueueStart = 0;
-    mOutputQueueStart= 0;
+    mInputQueueStart = mInputQueueEnd = 0;
+    mOutputQueueStart= mOutputQueueEnd= 0;
 }
 
 //================================================================================================
@@ -256,7 +228,7 @@ void Network::socket_thread_start()
 }
 
 //================================================================================================
-// Handle all enqueued commands.
+// Handle one of the enqueued commands.
 //================================================================================================
 void Network::update()
 {
@@ -265,22 +237,17 @@ void Network::update()
     boost::mutex::scoped_lock // Mutex is locked for this block of code.
     lock(mutex);
     command_buffer *cmd = command_buffer_dequeue(&mInputQueueStart, &mInputQueueEnd);
-    if (!cmd)
+    if (!cmd) // The queue is empty.
     {
         mReadyToRead = false;
         return;
     }
-    if (!cmd->data[0] || (cmd->data[0]&~0x80)-1 >= SUM_SERVER_COMMANDS)
-        Logger::log().error() << "Bad command from server " << (int)(cmd->data[0]&~0x80)-1;
-    else
-    {
-        int lenHeader = cmd->data[0]&0x80?5:3;
-        //Logger::log().error() << "Got server cmd " << (int)(cmd->data[0]&~0x80)-1 << " len (incl. Header) =" << cmd->len;
-        commands[(cmd->data[0]&~0x80) - 1].serverCmd(cmd->data+lenHeader, cmd->len-lenHeader);
-    }
+    // Bit 7 holds the header length.
+    int lenHeader = cmd->data[0]&0x80?5:3;
+    //Logger::log().error() << "Got server cmd " << (int)(cmd->data[0]&~0x80)-1 << " len (incl. Header) =" << cmd->len;
+    commands[(cmd->data[0]&~0x80) - 1].serverCmd(cmd->data+lenHeader, cmd->len-lenHeader);
     command_buffer_free(cmd);
 }
-
 
 
 /* High-level external interface */
@@ -433,22 +400,51 @@ void Network::send_command_binary(uchar cmd, std::stringstream &stream)
 /*
  * Lowlevel socket IO
  */
-
 //================================================================================================
 //
 //================================================================================================
+int Network::getCmdLen(uchar *data, int bytes)
+{
+    if (bytes == 2)
+    {
+        if (mEndianConvert)
+            return (data[0] << 8) + data[1];
+        return (data[1] << 8) + data[0];
+    }
+    if (mEndianConvert)
+        return (data[0] << 24) + (data[1] << 16) + (data[2] << 8) + data[3];
+    return (data[3] << 24) + (data[2] << 16) + (data[1] << 8) + data[0];
+}
+
+//================================================================================================
+// The input thread is waiting for server commands.
+// If a valid command was received, mReadyToRead will be set to true.
+//================================================================================================
 void Network::inputThread()
 {
+    static uchar readbuf[MAXSOCKBUF+1];
     Logger::log().info() << "Reader thread started ";
-    int cmd_len, pos;
     while (!mAbortThread)
     {
         // Read the command byte.
-        if (!(pos = recv(mSocket, (char*)readbuf, 1, 0))) break;
-        int sizeOfLen = readbuf[0] & (1<<7)?4:2;
-        // If bit 7 is set in the cmd, sizeof(cmd_len) = 4 else sizeof(cmd_len) = 2.
-        if (!(pos+= recv(mSocket, (char*)readbuf+1, sizeOfLen, 0))) break;
-        cmd_len = strToInt(readbuf+1, sizeOfLen) + pos;
+        if (!recv(mSocket, (char*)readbuf, 1, 0)) break; // Read error!
+        // Is this a valid command?
+        if (!readbuf[0] || (readbuf[0]&~0x80)-1 >= SUM_SERVER_COMMANDS)
+        {
+            Logger::log().error() << "Bad command from server: Command number is " << (int)(readbuf[0]&~0x80)-1 << ").";
+            continue;
+        }
+        // Bit 7 of the command byte indicates the datatype (2 or 4 byte sized integer)
+        int sizeOfCmd = readbuf[0] & (1<<7)?4:2;
+        if (!sizeOfCmd)
+        {
+            Logger::log().error() << "Bad command from server: Command size is zero!";
+            continue;
+        }
+        int pos = 1;
+        if (!(pos+= recv(mSocket, (char*)readbuf+1, sizeOfCmd, 0))) break;
+        // The cmd_len variable holds the length of the command send by the server.
+        int cmd_len = getCmdLen(readbuf+1, sizeOfCmd) + pos;
         if (cmd_len >= MAXSOCKBUF)
         {
             Logger::log().error() << "Network::reader_thread_loop: To much data from server.";
@@ -466,24 +462,22 @@ void Network::inputThread()
 }
 
 //================================================================================================
-//
+// Send a command to the server.
 //================================================================================================
 void Network::outputThread()
 {
     Logger::log().info() << "Writer thread started";
-    int written, ret;
-    command_buffer *buf;
     while (!mAbortThread)
     {
+        if (!mReadyToSend) continue;
         boost::mutex::scoped_lock // Mutex is locked for this block of code.
         lock(mutex);
-        if (!mReadyToSend) continue;
-        written = 0;
-        buf = command_buffer_dequeue(&mOutputQueueStart, &mOutputQueueEnd);
+        int written = 0;
+        command_buffer *buf = command_buffer_dequeue(&mOutputQueueStart, &mOutputQueueEnd);
         if (!buf) break; // Happens when this thread is stopped by the main thread.
         while (written < buf->len && !mAbortThread)
         {
-            ret = send(mSocket, (char*)buf->data + written, buf->len - written, 0);
+            int ret = send(mSocket, (char*)buf->data + written, buf->len - written, 0);
             if (ret == 0)
             {
                 Logger::log().error() << "Writer got EOF";
@@ -518,7 +512,7 @@ void Network::CloseSocket(int socket)
 }
 
 //================================================================================================
-// Opens the socket
+// Opens the socket of the active server.
 //================================================================================================
 bool Network::OpenActiveServerSocket()
 {
@@ -527,7 +521,7 @@ bool Network::OpenActiveServerSocket()
     int tmp = 1;
     if (setsockopt(mSocket, IPPROTO_TCP, TCP_NODELAY, (char *) &tmp, sizeof(tmp)))
     {
-        Logger::log().error() << "setsockopt(TCP_NODELAY) failed";
+        Logger::log().error() << "Network::OpenActiveServerSocket(): setsockopt(TCP_NODELAY) failed";
         return false;
     }
     return true;
@@ -535,7 +529,7 @@ bool Network::OpenActiveServerSocket()
 
 #ifdef WIN32
 //================================================================================================
-//
+// Opens a socket.
 //================================================================================================
 bool Network::OpenSocket(const char *host, int port, int &sock)
 {
@@ -794,7 +788,7 @@ void Network::contactMetaserver()
 void Network::read_metaserver_data(int &socket)
 {
     static String buf;
-    buf = "";
+    buf.clear();
     char *ptr = new char[MAXSOCKBUF];
     while (1)
     {
