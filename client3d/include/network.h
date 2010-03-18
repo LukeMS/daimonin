@@ -132,18 +132,15 @@ public:
     static void send_command_binary(Ogre::uchar cmd, std::stringstream &stream);
     static int  GetInt_String(Ogre::uchar *data);
     static short GetShort_String(Ogre::uchar *data);
-    void clearMetaServerData();
     void socket_thread_start();
     void setActiveServer(int nr)
     {
         mActServerNr = nr;
     }
-    bool InitSocket();
-    void read_metaserver_data(int &socket);
     void freeRecources();
     void update();
     void contactMetaserver();
-    void add_metaserver_data(Ogre::String metaData);
+    void clearMetaServerData();
     // Commands
     static void DrawInfoCmd    (Ogre::uchar *data, int len);
     static void AddMeFail      (Ogre::uchar *data, int len);
@@ -175,8 +172,6 @@ public:
     static void AccountCmd     (Ogre::uchar *data, int len);
     // Commands helper.
     static void CreatePlayerAccount();
-    static void PreParseInfoStat(char *cmd);
-    const char *get_metaserver_info(int line, int infoLineNr);
 
 private:
     // ////////////////////////////////////////////////////////////////////
@@ -208,9 +203,9 @@ private:
     static bool mEndianConvert;
     static command_buffer *mInputQueueStart,  *mInputQueueEnd;
     static command_buffer *mOutputQueueStart, *mOutputQueueEnd;
-    static bool mThreadsActive;
-    static bool mReadyToSend; // We have work for the writer thread.
-    static bool mReadyToRead; // We have work from the reader thread.
+    static bool mThreadsActive; /**< Reader and writer threads are active. **/
+    static bool mReadyToSend; /**< A command was enqueued for the writer thread to send. **/
+    static bool mReadyToRead; /**< The reader thread has got a valid command enqueued. **/
     int mActServerNr;
     // ////////////////////////////////////////////////////////////////////
     // Functions.
@@ -220,18 +215,19 @@ private:
     Network(const Network&);            /**< disable copy-constructor. **/
     Network &operator=(const Network&); /**< disable assignment operator. **/
     bool OpenSocket(const char *host, int port, int &socket);
-    boost::thread mInputThread;
-    boost::thread mOutputThread;
+    boost::thread mInputThread, mOutputThread;
+    const char *get_metaserver_info(int line, int infoLineNr);
+    void read_metaserver_data(int &socket);
+    void add_metaserver_data(Ogre::String metaData);
     static Ogre::String &getError();
     static command_buffer *command_buffer_new(unsigned int len, Ogre::uchar *data);
     static command_buffer *command_buffer_dequeue(command_buffer **queue_start, command_buffer **queue_end);
-    static int strToInt(Ogre::uchar *buf, int bytes); /**< Must be private to make it thread safe **/
+    static int  getCmdLen(Ogre::uchar *buf, int bytes); /**< Must be private to make it thread safe **/
     static bool console_command_check(Ogre::String cmd);
     static void do_console_cmd(Ogre::String &stCmd, int cmd);
     static void command_buffer_free(command_buffer *buf);
     static void command_buffer_enqueue(command_buffer *buf, command_buffer **queue_start, command_buffer **queue_end);
     static void checkFileStatus(const char *cmd, char *param, int fileNr);
-    static void AddIntToString(Ogre::String &sl, int data, bool shortInt);
     static void inputThread();
     static void outputThread();
 };
