@@ -34,6 +34,7 @@ using namespace Ogre;
 
 const int DEFAULT_METASERVER_PORT = 13326;
 const char *DEFAULT_METASERVER = "www.daimonin.com";
+const int THREAD_SLEEPING_TIME = 50;
 
 struct CmdMapping
 {
@@ -89,8 +90,6 @@ const int MAX_BUF    = 256;
 
 int Network::mSocket = NO_SOCKET;
 bool Network::mThreadsActive = false;
-bool Network::mReadyToSend   = false;
-bool Network::mReadyToRead   = false;
 bool Network::mAbortThread   = true;
 bool Network::mEndianConvert = false;
 
@@ -220,8 +219,6 @@ void Network::socket_thread_start()
 {
     if (mThreadsActive) return;
     mAbortThread = false;
-    mReadyToSend = false;
-    mReadyToRead = false;
     mInputThread = boost::thread(&inputThread);
     mOutputThread= boost::thread(&outputThread);
     mThreadsActive = true;
@@ -230,18 +227,17 @@ void Network::socket_thread_start()
 //================================================================================================
 // Handle one of the enqueued commands.
 //================================================================================================
-void Network::update()
+void Network::update(Real timeSinceLastFrame)
 {
-    if (!mReadyToRead || mAbortThread) return;
+    static Real dTime = 0;
+    dTime += timeSinceLastFrame * 1000;
+    if ((dTime < THREAD_SLEEPING_TIME) ||  mAbortThread) return;
+    dTime = 0;
     // Get a read command and remove it from queue.
     boost::mutex::scoped_lock // Mutex is locked for this block of code.
     lock(mutex);
     command_buffer *cmd = command_buffer_dequeue(&mInputQueueStart, &mInputQueueEnd);
-    if (!cmd) // The queue is empty.
-    {
-        mReadyToRead = false;
-        return;
-    }
+    if (!cmd) return;// The queue is empty.
     // Bit 7 holds the header length.
     int lenHeader = cmd->data[0]&0x80?5:3;
     //Logger::log().error() << "Got server cmd " << (int)(cmd->data[0]&~0x80)-1 << " len (incl. Header) =" << cmd->len;
@@ -394,7 +390,6 @@ void Network::send_command_binary(uchar cmd, std::stringstream &stream)
         Logger::log().error() << str2;
     */
     command_buffer_enqueue(buf, &mOutputQueueStart, &mOutputQueueEnd);
-    mReadyToSend = true;
 }
 
 /*
@@ -418,7 +413,6 @@ int Network::getCmdLen(uchar *data, int bytes)
 
 //================================================================================================
 // The input thread is waiting for server commands.
-// If a valid command was received, mReadyToRead will be set to true.
 //================================================================================================
 void Network::inputThread()
 {
@@ -457,7 +451,6 @@ void Network::inputThread()
         command_buffer *buf = command_buffer_new(cmd_len, readbuf);
         buf->data[cmd_len] = 0; // We terminate the buffer for security and incoming raw strings.
         command_buffer_enqueue(buf, &mInputQueueStart, &mInputQueueEnd);
-        mReadyToRead = true;
     }
 }
 
@@ -469,12 +462,16 @@ void Network::outputThread()
     Logger::log().info() << "Writer thread started";
     while (!mAbortThread)
     {
-        if (!mReadyToSend) continue;
+#ifdef WIN32
+        Sleep(THREAD_SLEEPING_TIME);
+#else
+        usleep(THREAD_SLEEPING_TIME);
+#endif
         boost::mutex::scoped_lock // Mutex is locked for this block of code.
         lock(mutex);
-        int written = 0;
         command_buffer *buf = command_buffer_dequeue(&mOutputQueueStart, &mOutputQueueEnd);
-        if (!buf) break; // Happens when this thread is stopped by the main thread.
+        if (!buf) continue;
+        int written = 0;
         while (written < buf->len && !mAbortThread)
         {
             int ret = send(mSocket, (char*)buf->data + written, buf->len - written, 0);
@@ -491,7 +488,6 @@ void Network::outputThread()
             written += ret;
         }
         command_buffer_free(buf);
-        mReadyToSend = false;
     }
 }
 
@@ -749,6 +745,7 @@ bool Network::OpenSocket(const char *host, int port, int &sock)
             setsockopt(sock, SOL_SOCKET, SO_RCVBUF, (char *) &oldbufsize, sizeof(&oldbufsize));
         }
     }
+    Logger::log().info() <<  "Connected to "<< host << "  " <<  port;
     return true;
 }
 #endif
