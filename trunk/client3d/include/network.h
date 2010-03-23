@@ -138,7 +138,7 @@ public:
         mActServerNr = nr;
     }
     void freeRecources();
-    void update();
+    void update(Ogre::Real);
     void contactMetaserver();
     void clearMetaServerData();
     // Commands
@@ -204,8 +204,6 @@ private:
     static command_buffer *mInputQueueStart,  *mInputQueueEnd;
     static command_buffer *mOutputQueueStart, *mOutputQueueEnd;
     static bool mThreadsActive; /**< Reader and writer threads are active. **/
-    static bool mReadyToSend; /**< A command was enqueued for the writer thread to send. **/
-    static bool mReadyToRead; /**< The reader thread has got a valid command enqueued. **/
     int mActServerNr;
     // ////////////////////////////////////////////////////////////////////
     // Functions.

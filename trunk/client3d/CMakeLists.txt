@@ -3,17 +3,31 @@
 ############################################################
 cmake_minimum_required(VERSION 2.6)
 
+# Project info
 project(client3d CXX)
-add_definitions(-Wall -W -g0)
-SET(CMAKE_EXE_LINKER_FLAGS -s)
+set (client3D_MAJOR_VERSION 0)
+set (client3D_MINOR_VERSION 2)
+set (client3D_PATCH_VERSION 0)
 
-# Version number of the project.
-set (client3D_VERSION_MAJOR_VERSION 0)
-set (client3D_VERSION_MINOR_VERSION 2)
-set (client3D_VERSION_PATCH_LEVEL   0)
+# Build type can be set by "cmake -DCMAKE_BUILD_TYPE=<Debug|Release|RelWithDebInfo|MinSizeRel>"
+# If the build type is != "Release", "Debug" will be selected.
+IF("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
+  SET(CMAKE_CXX_FLAGS       "-O0 -W -Wall -g0 -DNDEBUG" CACHE STRING "Release build." FORCE)
+  # Linker flags work different from the compiler flags!
+  # CMAKE_EXE_LINKER_FLAGS is ALWAYS used and CMAKE_EXE_LINKER_FLAGS_DEBUG is ADDED on debug version.
+  SET(CMAKE_EXE_LINKER_FLAGS "-s")
+ELSE()
+  SET(CMAKE_BUILD_TYPE Debug CACHE STRING "Default build type is debug." FORCE)
+  SET(CMAKE_CXX_FLAGS_DEBUG "-O0 -W -Wall -g  -DDEBUG -D_DEBUG"  CACHE STRING "Debug build."   FORCE)
+  SET(CMAKE_EXE_LINKER_FLAGS "")
+ENDIF()
 
-MESSAGE(STATUS "**** Create build files for Client3d Version " ${client3D_VERSION_MAJOR_VERSION} 
-               "." ${client3D_VERSION_MINOR_VERSION} "." ${client3D_VERSION_PATCH_LEVEL} " ****")
+MESSAGE(STATUS "############################################################")
+MESSAGE(STATUS "# Client3d Version: " ${client3D_MAJOR_VERSION} "." ${client3D_MINOR_VERSION})
+MESSAGE(STATUS "############################################################")
+MESSAGE(STATUS "* " ${CMAKE_BUILD_TYPE} " version will be build." )
+MESSAGE(STATUS "* You can set the build type by:")
+MESSAGE(STATUS "  'cmake -DCMAKE_BUILD_TYPE=<Debug|Release>' .")
 
 # Set the folder for own cmake stuff.
 set(MY_CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/make/cmake)
@@ -28,32 +42,38 @@ set(MY_CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/make/cmake)
 MESSAGE(STATUS "############################################################")
 MESSAGE(STATUS "# Looking for all external packages")
 MESSAGE(STATUS "############################################################")
+# Looking for package: boost-thread.
+find_package(Boost 1.35 REQUIRED COMPONENTS thread)
+IF   (NOT Boost_FOUND)
+  MESSAGE(FATAL_ERROR "Boost-thread was not found.")
+ENDIF()
+# Smacky found out that client3d doesn't compile with version 1.37 on ubuntu.
+IF   (${Boost_MAJOR_VERSION} EQUAL "1" AND ${Boost_MINOR_VERSION} EQUAL "37")
+  MESSAGE(FATAL_ERROR "* Boost-thread version 1.37 was found.\nPlease install a boost-thread version >= 1.35 BUT NOT 1.37")
+ELSE ()
+  MESSAGE(STATUS "* Boost-thread was found.")
+ENDIF()
+set(LIBS ${LIBS} ${Boost_LIBRARY})
+
 # Looking for package: Ogre.
 INCLUDE(${MY_CMAKE_MODULE_PATH}/FindOGRE.cmake)
 IF (NOT OGRE_FOUND)
   MESSAGE(FATAL_ERROR "Ogre was not found.")
-ENDIF(NOT OGRE_FOUND)
+ENDIF()
 set(LIBS ${LIBS} ${OGRE_LIBRARY})
 
 # Looking for package: OIS.
 INCLUDE(${MY_CMAKE_MODULE_PATH}/FindOIS.cmake)
 IF (NOT OIS_FOUND)
   MESSAGE(FATAL_ERROR "OIS was not found.")
-ENDIF(NOT OIS_FOUND)
+ENDIF()
 set(LIBS ${LIBS} ${OIS_LIBRARY})
 
-# Looking for package: boost-thread.
-INCLUDE(${MY_CMAKE_MODULE_PATH}/FindBoostThread.cmake)
-IF (NOT BOOST_FOUND)
-  MESSAGE(FATAL_ERROR "Boost-thread was not found.")
-ENDIF(NOT BOOST_FOUND)
-set(LIBS ${LIBS} ${BOOST_THREAD_LIBRARY})
-
-# Looking for package: boost-thread.
+# Looking for package: fmod
 INCLUDE(${MY_CMAKE_MODULE_PATH}/FindFmod.cmake)
 IF (NOT FMOD_FOUND)
   MESSAGE(FATAL_ERROR "fmod was not found.")
-ENDIF(NOT FMOD_FOUND)
+ENDIF()
 set(LIBS ${LIBS} ${FMOD_LIBRARY})
 
 link_libraries(${LIBS})
@@ -185,19 +205,24 @@ INCLUDE_DIRECTORIES(
 )
 
 #Build the executeable
-add_executable(client3d ${SOURCE_FILES})
+IF("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
+  add_executable(client3d ${SOURCE_FILES})
+ELSE()
+  add_executable(client3d_d ${SOURCE_FILES})
+ENDIF()
 
 MESSAGE(STATUS "############################################################")
 MESSAGE(STATUS "# Create the file: plugins.cfg")
 MESSAGE(STATUS "############################################################")
-if (UNIX)
+IF (UNIX)
   set(PLUGIN_FOLDER ${OGRE_LIB_PATH})
-else(UNIX)
+ELSE()
   set(PLUGIN_FOLDER "./")
-endif(UNIX)
+ENDIF()
 
-file(WRITE ./plugins.cfg 
-  "# Defines plugins to load\n\n"
+file(WRITE ./plugins.cfg
+  "# Defines plugins to load\n"
+  "# Don't edit this file it will be overwritten by cmake!\n\n"
   "# Define plugin folder\n"
   "# Choose your Ogre library path:\n"
   "PluginFolder=${PLUGIN_FOLDER}\n"
@@ -212,3 +237,6 @@ MESSAGE(STATUS "-> done")
 MESSAGE(STATUS "############################################################")
 MESSAGE(STATUS "# You can compile the client whith the 'make' command now.")
 MESSAGE(STATUS "############################################################")
+
+MESSAGE(STATUS ${CMAKE_BUILD_TYPE})
+

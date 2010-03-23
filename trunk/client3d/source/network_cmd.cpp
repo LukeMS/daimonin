@@ -23,7 +23,6 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 
 #include <OgreMath.h>  // Without it VC reports an error in OgreMath.h.
 #include <fstream>
-#include <stdio.h>
 #include "zlib.h"
 #include "logger.h"
 #include "network.h"
@@ -1256,10 +1255,9 @@ void Network::GolemCmd(uchar * /*data*/, int /*len*/)
 //================================================================================================
 void Network::SetupCmd(uchar *buf, int len)
 {
-    buf+=6; // Skip the endian test - because its crap! Please use htonl()/htons() instead!
     uchar *cmd, *param;
     //scrolldy = scrolldx = 0;
-    int pos =0;
+    int pos = 6; // Skip the endian test.
     while (1)
     {
         // Get command.
@@ -1666,4 +1664,3 @@ void Network::do_console_cmd(String &/*stCmd*/, int /*cmd*/)
 {
     return;
 }
-

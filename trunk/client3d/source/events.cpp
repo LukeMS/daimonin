@@ -655,7 +655,7 @@ bool Events::frameEnded(const FrameEvent& evt)
     mInputKeyboard->capture();
     GuiManager::getSingleton().update(evt.timeSinceLastFrame);
     Sound::getSingleton().playStream(GuiManager::getSingleton().getNextSound());
-    Network::getSingleton().update();
+    Network::getSingleton().update(evt.timeSinceLastFrame);
     // ////////////////////////////////////////////////////////////////////
     // Update camera movement.
     // ////////////////////////////////////////////////////////////////////
