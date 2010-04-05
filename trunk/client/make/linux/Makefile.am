@@ -73,27 +73,28 @@ install-data-hook:
 #		exit 42; \
 #	fi;
 	$(MKDIR) -p $(d_datadir)/sfx
-	$(MKDIR) -p $(d_datadir)/man
+	$(MKDIR) -p $(d_datadir)/man/commands
 	$(MKDIR) -p $(d_datadir)/media
 	$(MKDIR) -p $(d_datadir)/cache
 	$(MKDIR) -p $(d_datadir)/logs
 	$(MKDIR) -p $(d_datadir)/gfx_user
 	$(MKDIR) -p $(d_datadir)/srv_files
 	$(MKDIR) -p $(d_datadir)/skins
+	$(MKDIR) -p $(d_datadir)/skins/subred
 	$(MKDIR) -p $(d_datadir)/settings
 	$(MKDIR) -p $(d_datadir)/update
-	$(CP) ../../sfx/*.* $(d_datadir)/sfx
-	$(CP) ../../man/* $(d_datadir)/man
-	$(CP) ../../media/*.* $(d_datadir)/media
-	$(CP) ../../cache/*.* $(d_datadir)/cache
-	$(CP) -R ../../skins/* $(d_datadir)/skins
-	$(CP) -R ../../settings/*.* $(d_datadir)/settings
-	$(CP) ../../srv_files/*.* $(d_datadir)/srv_files
-	$(CP) ../../update/version $(d_datadir)/update
-	$(CP) ../../gfx_user/*.* $(d_datadir)/gfx_user
-	$(CP) ../../daimonin.p0 $(d_datadir)
-	$(CP) ../../License $(d_datadir) || $(CP) ../../../License $(d_datadir)
-	$(CP) ../../archdef.dat $(d_datadir)
+	$(CP)    ../../sfx/*          $(d_datadir)/sfx
+	$(CP) -R ../../man/*          $(d_datadir)/man
+	$(CP)    ../../media/*        $(d_datadir)/media
+	$(CP)    ../../cache/*        $(d_datadir)/cache
+	$(CP) -R ../../skins/*        $(d_datadir)/skins
+	$(CP) -R ../../settings/*     $(d_datadir)/settings
+	$(CP)    ../../srv_files/*    $(d_datadir)/srv_files
+	$(CP)    ../../update/version $(d_datadir)/update
+	$(CP)    ../../gfx_user/*     $(d_datadir)/gfx_user
+	$(CP)    ../../daimonin.p0    $(d_datadir)
+	$(CP)    ../../License        $(d_datadir) || $(CP) ../../../License $(d_datadir)
+	$(CP)    ../../archdef.dat    $(d_datadir)
 	@echo "*** Daimonin client successful installed in $(daimonindir)!"
 	@echo "*** Enter your install folder and type ./daimonin"
 	@echo "*** to start the game!"
