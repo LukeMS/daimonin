@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="TST_Tileengine" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="..\..\..\TST_Tileengine_d.exe" prefix_auto="0" extension_auto="0" />
+				<Option working_dir="..\..\..\" />
+				<Option object_output=".\obj\Debug" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Option projectResourceIncludeDirsRelation="0" />
+				<Compiler>
+					<Add option="-Wall" />
+					<Add option="-g" />
+					<Add option="-D_DEBUG" />
+				</Compiler>
+				<Linker>
+					<Add library="OgreMain_d" />
+					<Add library="OIS_d" />
+					<Add library="boost_thread_d" />
+					<Add directory="..\..\..\" />
+					<Add directory="OgreSDK\boost\lib\" />
+				</Linker>
+				<ExtraCommands>
+					<Add after=".\..\..\_Tools_\cp.exe plugins_d.cfg ..\..\..\plugins.cfg" />
+					<Mode after="always" />
+				</ExtraCommands>
+			</Target>
+			<Target title="Release">
+				<Option output="..\..\..\TST_Tileengine.exe" prefix_auto="0" extension_auto="0" />
+				<Option working_dir="..\..\..\" />
+				<Option object_output=".\obj\Release" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Option projectResourceIncludeDirsRelation="0" />
+				<Compiler>
+					<Add option="-Wall" />
+					<Add option="-DNDEBUG" />
+				</Compiler>
+				<Linker>
+					<Add library="OgreMain" />
+					<Add library="OIS" />
+					<Add library="boost_thread" />
+					<Add directory="..\..\..\" />
+					<Add directory="OgreSDK\boost\lib\" />
+				</Linker>
+				<ExtraCommands>
+					<Add after=".\..\..\_Tools_\cp.exe plugins.cfg  ..\..\..\plugins.cfg" />
+					<Mode after="always" />
+				</ExtraCommands>
+			</Target>
+		</Build>
+		<VirtualTargets>
+			<Add alias="All" targets="Debug;Release;" />
+		</VirtualTargets>
+		<Compiler>
+			<Add option="-mthreads" />
+			<Add option="-fmessage-length=0" />
+			<Add option="-fexceptions" />
+			<Add option="-fident" />
+			<Add option="-pipe" />
+			<Add option="-DWIN32" />
+			<Add directory="OgreSDK\boost\" />
+			<Add directory="OgreSDK\include\" />
+			<Add directory="OgreSDK\include\Ogre" />
+			<Add directory="OgreSDK\include\OIS" />
+			<Add directory="..\..\..\source" />
+			<Add directory="..\..\..\source\gui" />
+			<Add directory="..\..\..\include" />
+			<Add directory="..\..\..\include\gui" />
+			<Add directory="..\..\..\3rdParty\tinyxml" />
+			<Add directory="..\..\..\3rdParty\zlib" />
+			<Add directory="..\..\..\3rdParty\fmod" />
+		</Compiler>
+		<Linker>
+			<Add option="-Wl,--enable-auto-image-base" />
+			<Add option="-Wl,--add-stdcall-alias" />
+			<Add option="-Wl,--enable-auto-import" />
+			<Add library="ws2_32" />
+			<Add library="fmodex" />
+			<Add directory="fmod_lib" />
+		</Linker>
+		<Unit filename="..\..\..\include\logger.h" />
+		<Unit filename="..\..\..\include\tile_chunk.h" />
+		<Unit filename="..\..\..\include\tile_decal.h" />
+		<Unit filename="..\..\..\include\tile_manager.h" />
+		<Unit filename="..\..\..\media\materials\Terrain.cg" />
+		<Unit filename="..\..\..\media\materials\Terrain.material" />
+		<Unit filename="..\..\..\source\TST_Tileengine.cpp" />
+		<Unit filename="..\..\..\source\logger.cpp" />
+		<Unit filename="..\..\..\source\tile_chunk.cpp" />
+		<Unit filename="..\..\..\source\tile_decal.cpp" />
+		<Unit filename="..\..\..\source\tile_manager.cpp" />
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+			<wxsmith version="1">
+				<gui name="wxWidgets" src="" main="" init_handlers="necessary" language="CPP" />
+			</wxsmith>
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
