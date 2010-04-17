@@ -24,10 +24,6 @@
 					<Add directory="..\..\..\" />
 					<Add directory="OgreSDK\boost\lib\" />
 				</Linker>
-				<ExtraCommands>
-					<Add after=".\..\..\_Tools_\cp.exe plugins_d.cfg ..\..\..\plugins.cfg" />
-					<Mode after="always" />
-				</ExtraCommands>
 			</Target>
 			<Target title="Release">
 				<Option output="..\..\..\client3d.exe" prefix_auto="0" extension_auto="0" />
@@ -41,16 +37,13 @@
 					<Add option="-DNDEBUG" />
 				</Compiler>
 				<Linker>
+					<Add option="-s" />
 					<Add library="OgreMain" />
 					<Add library="OIS" />
 					<Add library="boost_thread" />
 					<Add directory="..\..\..\" />
 					<Add directory="OgreSDK\boost\lib\" />
 				</Linker>
-				<ExtraCommands>
-					<Add after=".\..\..\_Tools_\cp.exe plugins.cfg  ..\..\..\plugins.cfg" />
-					<Mode after="always" />
-				</ExtraCommands>
 			</Target>
 		</Build>
 		<VirtualTargets>
@@ -66,13 +59,11 @@
 			<Add directory="OgreSDK\boost\" />
 			<Add directory="OgreSDK\include\Ogre" />
 			<Add directory="OgreSDK\include\OIS" />
-			<Add directory="..\..\..\source" />
-			<Add directory="..\..\..\source\gui" />
-			<Add directory="..\..\..\include" />
-			<Add directory="..\..\..\include\gui" />
 			<Add directory="..\..\..\3rdParty\tinyxml" />
 			<Add directory="..\..\..\3rdParty\zlib" />
 			<Add directory="..\..\..\3rdParty\fmod" />
+			<Add directory="..\..\..\source" />
+			<Add directory="..\..\..\include" />
 		</Compiler>
 		<Linker>
 			<Add option="-Wl,--enable-auto-image-base" />
@@ -162,11 +153,11 @@
 		<Unit filename="..\..\..\include\sound.h" />
 		<Unit filename="..\..\..\include\spell_manager.h" />
 		<Unit filename="..\..\..\include\spell_range.h" />
-		<Unit filename="..\..\..\include\tile_chunk.h" />
-		<Unit filename="..\..\..\include\tile_decal.h" />
-		<Unit filename="..\..\..\include\tile_manager.h" />
-		<Unit filename="..\..\..\include\tile_map.h" />
-		<Unit filename="..\..\..\include\tile_map_wrapper.h" />
+		<Unit filename="..\..\..\include\tile\tile_chunk.h" />
+		<Unit filename="..\..\..\include\tile\tile_decal.h" />
+		<Unit filename="..\..\..\include\tile\tile_manager.h" />
+		<Unit filename="..\..\..\include\tile\tile_map.h" />
+		<Unit filename="..\..\..\include\tile\tile_map_wrapper.h" />
 		<Unit filename="..\..\CodingStyle.txt">
 			<Option target="Release" />
 		</Unit>
@@ -226,10 +217,10 @@
 		<Unit filename="..\..\..\source\sound.cpp" />
 		<Unit filename="..\..\..\source\spell_manager.cpp" />
 		<Unit filename="..\..\..\source\spell_range.cpp" />
-		<Unit filename="..\..\..\source\tile_chunk.cpp" />
-		<Unit filename="..\..\..\source\tile_decal.cpp" />
-		<Unit filename="..\..\..\source\tile_manager.cpp" />
-		<Unit filename="..\..\..\source\tile_map.cpp" />
+		<Unit filename="..\..\..\source\tile\tile_chunk.cpp" />
+		<Unit filename="..\..\..\source\tile\tile_decal.cpp" />
+		<Unit filename="..\..\..\source\tile\tile_manager.cpp" />
+		<Unit filename="..\..\..\source\tile\tile_map.cpp" />
 		<Extensions>
 			<code_completion />
 			<envvars />

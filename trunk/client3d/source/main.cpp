@@ -191,7 +191,13 @@ int main(int argc, char **argv)
     RenderWindow *window=0;
     try
     {
-        root = new Root();
+#ifdef NDEBUG
+        root = OGRE_NEW Root("plugins.cfg", "ogre.cfg", "Ogre.log");
+#else
+        root = OGRE_NEW Root("plugins_d.cfg", "ogre.cfg", "Ogre.log");
+#endif
+        ConfigFile cf;
+        cf.load("resources.cfg");
         setupResources();
         // ////////////////////////////////////////////////////////////////////
         // Show the configuration dialog and initialise the system.
@@ -200,7 +206,7 @@ int main(int argc, char **argv)
         // ////////////////////////////////////////////////////////////////////
         if (!root->showConfigDialog())
         {
-            delete root;
+            OGRE_DELETE root;
             return 0;
         }
         window = root->initialise(true, "Daimonin Ogre3d Client");
@@ -208,7 +214,7 @@ int main(int argc, char **argv)
     catch (Exception &e)
     {
         LogException(e);
-        delete root;
+        OGRE_DELETE root;
         return 0;
     }
     // ////////////////////////////////////////////////////////////////////
@@ -283,7 +289,7 @@ int main(int argc, char **argv)
         // ////////////////////////////////////////////////////////////////////
         Logger::log().headline() << "Shutdown";
         Events::getSingleton().freeRecources();
-        delete root;
+        OGRE_DELETE root;
     }
     catch (Exception& e)
     {

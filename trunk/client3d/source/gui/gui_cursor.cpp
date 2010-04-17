@@ -27,7 +27,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include <OgreStringConverter.h>
 #include <OgreOverlayManager.h>
 #include <OgreHardwarePixelBuffer.h>
-#include "gui_cursor.h"
+#include "gui/gui_cursor.h"
 
 using namespace Ogre;
 

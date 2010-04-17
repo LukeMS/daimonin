@@ -23,7 +23,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 
 #include <OISKeyboard.h>
 #include "logger.h"
-#include "gui_manager.h"
+#include "gui/gui_manager.h"
 #include "network.h"
 #include "network_cmd_interface.h"
 #include "sound.h"

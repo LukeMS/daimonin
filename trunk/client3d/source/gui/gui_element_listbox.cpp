@@ -25,9 +25,9 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include <OgreTimer.h>
 #include <OgreHardwarePixelBuffer.h>
 #include "logger.h"
-#include "gui_textout.h"
-#include "gui_graphic.h"
-#include "gui_element_listbox.h"
+#include "gui/gui_textout.h"
+#include "gui/gui_graphic.h"
+#include "gui/gui_element_listbox.h"
 
 using namespace Ogre;
 

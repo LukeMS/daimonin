@@ -21,18 +21,21 @@ You should have received a copy of the GNU General Public License along with
 this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
 
+//************************************************************************************************
+// This file is Daimonin specific. Don't import this to your project!
+// This whole stuff will replaced soon.
+//************************************************************************************************
+
 #include <string>
 #include "logger.h"
 #include "sound.h"
-#include "tile_map.h"
-#include "tile_map_wrapper.h"
-#include "tile_manager.h"
+#include "tile/tile_map.h"
+#include "tile/tile_map_wrapper.h"
+#include "tile/tile_manager.h"
 #include "object_manager.h"
 #include "particle_manager.h"
 
 using namespace Ogre;
-
-// Will be replaced by TileManager.
 
 //================================================================================================
 // .

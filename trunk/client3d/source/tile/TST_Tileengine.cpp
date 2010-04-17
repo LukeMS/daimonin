@@ -1,6 +1,6 @@
 #include "ExampleApplication.h"
-#include "tile_manager.h"
-#include "tile_decal.h"
+#include "tile/tile_manager.h"
+#include "tile/tile_decal.h"
 #include "logger.h"
 
 class Demo : public ExampleApplication

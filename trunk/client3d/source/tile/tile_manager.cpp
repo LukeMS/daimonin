@@ -26,9 +26,9 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include <OgreConfigFile.h>
 #include <sys/stat.h>
 #include "logger.h"
-#include "tile_chunk.h"
-#include "tile_decal.h"
-#include "tile_manager.h"
+#include "tile/tile_chunk.h"
+#include "tile/tile_decal.h"
+#include "tile/tile_manager.h"
 
 using namespace Ogre;
 
@@ -247,6 +247,9 @@ void TileManager::setMapset(int landGroup, int /*waterGroup*/)
 //================================================================================================
 void TileManager::tileClick(float mouseX, float mouseY)
 {
+    Logger::log().error() << "mouse: " << mouseX;
+
+
     Ray mouseRay = mSceneManager->getCamera("PlayerCam")->getCameraToViewportRay(mouseX, mouseY);
     mRaySceneQuery->setRay(mouseRay);
     mRaySceneQuery->setQueryMask(mQueryMaskLand);
