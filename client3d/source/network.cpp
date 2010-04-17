@@ -27,8 +27,8 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include "logger.h"
 #include "option.h"
 #include "network.h"
-#include "tile_manager.h"
-#include "gui_manager.h"
+#include "tile/tile_manager.h"
+#include "gui/gui_manager.h"
 
 using namespace Ogre;
 

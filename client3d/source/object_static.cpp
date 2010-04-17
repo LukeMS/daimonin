@@ -25,7 +25,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include <OgreStringConverter.h>
 #include "object_static.h"
 #include "object_manager.h"
-#include "tile_manager.h"
+#include "tile/tile_manager.h"
 #include "option.h"
 #include "sound.h"
 #include "events.h"

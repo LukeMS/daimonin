@@ -26,8 +26,8 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include <OgreHardwarePixelBuffer.h>
 #include <OISKeyboard.h>
 #include "logger.h"
-#include "gui_textout.h"
-#include "gui_element_table.h"
+#include "gui/gui_textout.h"
+#include "gui/gui_element_table.h"
 
 using namespace Ogre;
 

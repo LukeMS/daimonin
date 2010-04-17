@@ -3,6 +3,7 @@ rem (c) 2005 by the Daimonin team.
 rem     www.daimonin.net
 rem ====================================
 
+del ..\..\..\ogre.cfg
 rem ====================================
 rem Copy the dll's to main folder.
 rem ====================================

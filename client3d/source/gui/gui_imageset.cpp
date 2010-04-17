@@ -29,7 +29,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include <dirent.h>
 #endif
 #include "logger.h"
-#include "gui_imageset.h"
+#include "gui/gui_imageset.h"
 
 using namespace Ogre;
 

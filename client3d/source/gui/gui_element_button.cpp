@@ -22,8 +22,8 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
 
 #include <OgreHardwarePixelBuffer.h>
-#include "gui_textout.h"
-#include "gui_element_button.h"
+#include "gui/gui_textout.h"
+#include "gui/gui_element_button.h"
 
 using namespace Ogre;
 

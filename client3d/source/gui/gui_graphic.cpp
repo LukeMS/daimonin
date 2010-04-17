@@ -23,7 +23,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 
 
 #include <OgreVector3.h>
-#include "gui_graphic.h"
+#include "gui/gui_graphic.h"
 
 using namespace Ogre;
 

@@ -27,9 +27,9 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include "item.h"
 #include "logger.h"
 #include "network.h"
-#include "gui_manager.h"
+#include "gui/gui_manager.h"
+#include "tile/tile_map_wrapper.h"
 #include "object_hero.h"
-#include "tile_map_wrapper.h"
 
 using namespace Ogre;
 

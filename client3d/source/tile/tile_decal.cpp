@@ -26,8 +26,8 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include <OgreSceneManager.h>
 #include <OgreMeshManager.h>
 #include "logger.h"
-#include "tile_decal.h"
-#include "tile_manager.h"
+#include "tile/tile_decal.h"
+#include "tile/tile_manager.h"
 
 using namespace Ogre;
 

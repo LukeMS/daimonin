@@ -31,10 +31,10 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include <OgreHardwarePixelBuffer.h>
 #include <OISKeyboard.h>
 #include "logger.h"
-#include "gui_manager.h"
-#include "gui_window.h"
-#include "gui_cursor.h"
-#include "gui_textinput.h"
+#include "gui/gui_manager.h"
+#include "gui/gui_window.h"
+#include "gui/gui_cursor.h"
+#include "gui/gui_textinput.h"
 
 using namespace Ogre;
 

@@ -3,6 +3,7 @@
 	ProjectType="Visual C++"
 	Version="9,00"
 	Name="Client3d"
+	ProjectGUID="{EBF97828-EAF7-4B61-BAB3-DA1769936136}"
 	RootNamespace="Client3d"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
@@ -21,7 +22,7 @@
 			IntermediateDirectory=".\obj\$(ConfigurationName)"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
-			CharacterSet="2"
+			CharacterSet="2" 
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -42,7 +43,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=".\OgreSDK\boost\;.\OgreSDK\include\Ogre\;.\OgreSDK\include\Ogre\WIN32;.\OgreSDK\include\OIS;..\..\..\include; ..\..\..\include\gui;..\..\..\source;..\..\..\source\gui;..\..\..\3rdParty\fmod;..\..\..\3rdParty\zlib;..\..\..\3rdParty\tinyxml"
+				AdditionalIncludeDirectories=".\OgreSDK\boost\;.\OgreSDK\include\Ogre\;.\OgreSDK\include\Ogre\WIN32;.\OgreSDK\include\OIS;..\..\..\3rdParty\zlib;..\..\..\3rdParty\fmod;..\..\..\3rdParty\tinyxml;..\..\..\include;..\..\..\source"
 				PreprocessorDefinitions="WIN32;TIXML_USE_STL;_CONSOLE;_CRT_SECURE_NO_DEPRECATE;_DEBUG"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -96,7 +97,6 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine=".\..\..\_Tools_\cp.exe plugins_d.cfg ..\..\..\plugins.cfg&quot;"
 			/>
 		</Configuration>
 		<Configuration
@@ -130,8 +130,8 @@
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				OmitFramePointers="true"
-				AdditionalIncludeDirectories=".\OgreSDK\boost\;.\OgreSDK\include\Ogre\;.\OgreSDK\include\Ogre\WIN32;.\OgreSDK\include\OIS;..\..\..\include; ..\..\..\include\gui;..\..\..\source;..\..\..\source\gui;..\..\..\3rdParty\fmod;..\..\..\3rdParty\zlib;..\..\..\3rdParty\tinyxml"
-				PreprocessorDefinitions="WIN32;TIXML_USE_STL;_CONSOLE;_CRT_SECURE_NO_DEPRECATE"
+				AdditionalIncludeDirectories=".\OgreSDK\boost\;.\OgreSDK\include\Ogre\;.\OgreSDK\include\Ogre\WIN32;.\OgreSDK\include\OIS;..\..\..\3rdParty\zlib;..\..\..\3rdParty\fmod;..\..\..\3rdParty\tinyxml;..\..\..\include;..\..\..\source"
+				PreprocessorDefinitions="WIN32;TIXML_USE_STL;_CONSOLE;_CRT_SECURE_NO_DEPRECATE;NDEBUG"
 				StringPooling="true"
 				MinimalRebuild="true"
 				RuntimeLibrary="2"
@@ -185,7 +185,6 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine=".\..\..\_Tools_\cp.exe plugins.cfg ..\..\..\plugins.cfg&quot;"
 			/>
 		</Configuration>
 	</Configurations>
@@ -292,22 +291,6 @@
 				RelativePath="..\..\..\source\spell_range.cpp"
 				>
 			</File>
-			<File
-				RelativePath="..\..\..\source\tile_chunk.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\source\tile_decal.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\source\tile_manager.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\source\tile_map.cpp"
-				>
-			</File>
 			<Filter
 				Name="gui"
 				>
@@ -373,6 +356,26 @@
 				</File>
 				<File
 					RelativePath="..\..\..\source\gui\gui_window.cpp"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="tile"
+				>
+				<File
+					RelativePath="..\..\..\source\tile\tile_chunk.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\source\tile\tile_decal.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\source\tile\tile_manager.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\source\tile\tile_map.cpp"
 					>
 				</File>
 			</Filter>
@@ -465,38 +468,6 @@
 				RelativePath="..\..\..\include\spell_range.h"
 				>
 			</File>
-			<File
-				RelativePath="..\..\..\include\tile_chunk.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\include\tile_decal.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\include\tile_interface.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\include\tile_manager.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\include\tile_map.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\include\tile_map_wrapper.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\include\tile_path.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\include\tile_pos.h"
-				>
-			</File>
 			<Filter
 				Name="gui"
 				>
@@ -566,6 +537,30 @@
 				</File>
 				<File
 					RelativePath="..\..\..\include\gui\gui_window.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="tile"
+				>
+				<File
+					RelativePath="..\..\..\include\tile\tile_chunk.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\include\tile\tile_decal.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\include\tile\tile_manager.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\include\tile\tile_map.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\include\tile\tile_map_wrapper.h"
 					>
 				</File>
 			</Filter>

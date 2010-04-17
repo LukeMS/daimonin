@@ -23,7 +23,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 
 #include <OgreHardwarePixelBuffer.h>
 #include "logger.h"
-#include "gui_element_scrollbar.h"
+#include "gui/gui_element_scrollbar.h"
 
 using namespace Ogre;
 

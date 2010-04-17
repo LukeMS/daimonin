@@ -28,7 +28,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include <OgreSceneManager.h>
 #include <OgreMaterialManager.h>
 #include "logger.h"
-#include "tile_manager.h"
+#include "tile/tile_manager.h"
 
 #include <OgreManualObject.h> // delet me!!
 

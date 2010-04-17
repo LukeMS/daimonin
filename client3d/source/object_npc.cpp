@@ -29,12 +29,12 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include "option.h"
 #include "logger.h"
 #include "spell_manager.h"
-#include "gui_manager.h"
+#include "gui/gui_manager.h"
 #include "object_manager.h"
 #include "object_visuals.h"
 #include "particle_manager.h"
 #include "events.h"
-#include "tile_manager.h"
+#include "tile/tile_manager.h"
 
 using namespace Ogre;
 

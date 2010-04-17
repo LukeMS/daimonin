@@ -24,15 +24,15 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include <OgreTextureManager.h>
 #include <OgreStringConverter.h>
 #include "logger.h"
-#include "gui_window.h"
-#include "gui_cursor.h"
-#include "gui_imageset.h"
-#include "gui_element_slot.h"
-#include "gui_element_table.h"
-#include "gui_element_textbox.h"
-#include "gui_element_listbox.h"
-#include "gui_element_button.h"
-#include "gui_element_statusbar.h"
+#include "gui/gui_window.h"
+#include "gui/gui_cursor.h"
+#include "gui/gui_imageset.h"
+#include "gui/gui_element_slot.h"
+#include "gui/gui_element_table.h"
+#include "gui/gui_element_textbox.h"
+#include "gui/gui_element_listbox.h"
+#include "gui/gui_element_button.h"
+#include "gui/gui_element_statusbar.h"
 
 using namespace Ogre;
 

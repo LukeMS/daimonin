@@ -21,6 +21,11 @@ You should have received a copy of the GNU General Public License along with
 this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
 
+//************************************************************************************************
+// This file is Daimonin specific. Don't import this to your project!
+// This whole stuff will replaced soon.
+//************************************************************************************************
+
 #ifndef TILE_MAP_WRAPPER_H
 #define TILE_MAP_WRAPPER_H
 
@@ -29,9 +34,6 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include <vector>
 #include "define.h"
 #include "logger.h"
-
-// QUICK HACK
-// This will be replaced when the new map protocol is ready.
 
 class ObjectWrapper
 {
@@ -153,7 +155,7 @@ public:
             name2d[0]=0;
             name3d[0]=0;
             bmpType *entry = new bmpType;
-            sscanf(mStrBuf.c_str(), "%d %s %s", &entry->num, name2d, name3d);
+            sscanf(mStrBuf.c_str(), "%d %*s %*s", &entry->num, name2d, name3d);
             // Cut the animation number.
             if (name2d && name2d[0])
                 entry->name2d = name2d;

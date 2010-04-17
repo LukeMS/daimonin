@@ -24,7 +24,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #ifndef TILE_MANAGER_H
 #define TILE_MANAGER_H
 
-#include "tile_chunk.h"
+#include "tile/tile_chunk.h"
 
 /**
  ** This singleton class handles all tile related stuff in the worldmap.
