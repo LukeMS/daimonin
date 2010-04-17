@@ -110,10 +110,10 @@ set (HEADER_FILES
   include/gui/gui_textout.h  
   include/gui/gui_window.h  
   include/define.h
-  include/tile_chunk.h
-  include/tile_decal.h  
-  include/tile_manager.h  
-  include/tile_map.h  
+  include/tile/tile_chunk.h
+  include/tile/tile_decal.h  
+  include/tile/tile_manager.h  
+  include/tile/tile_map.h  
   include/events.h  
   include/light_manager.h  
   include/logger.h  
@@ -163,10 +163,10 @@ set (SOURCE_FILES
   source/gui/gui_manager.cpp  
   source/gui/gui_textout.cpp  
   source/gui/gui_window.cpp  
-  source/tile_chunk.cpp  
-  source/tile_decal.cpp  
-  source/tile_manager.cpp  
-  source/tile_map.cpp  
+  source/tile/tile_chunk.cpp  
+  source/tile/tile_decal.cpp  
+  source/tile/tile_manager.cpp  
+  source/tile/tile_map.cpp  
   source/events.cpp  
   source/events_user.cpp  
   source/light_manager.cpp  
@@ -220,7 +220,8 @@ ELSE()
   set(PLUGIN_FOLDER "./")
 ENDIF()
 
-file(WRITE ./plugins.cfg
+IF("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
+  file(WRITE ./plugins.cfg
   "# Defines plugins to load\n"
   "# Don't edit this file it will be overwritten by cmake!\n\n"
   "# Define plugin folder\n"
@@ -232,6 +233,21 @@ file(WRITE ./plugins.cfg
   "Plugin=Plugin_ParticleFX\n"
   "Plugin=Plugin_CgProgramManager\n"
 )
+ELSE()
+  file(WRITE ./plugins_d.cfg
+  "# Defines plugins to load\n"
+  "# Don't edit this file it will be overwritten by cmake!\n\n"
+  "# Define plugin folder\n"
+  "# Choose your Ogre library path:\n"
+  "PluginFolder=${PLUGIN_FOLDER}\n"
+  "\n"
+  "# Select OpenGL rendering system\n"
+  "Plugin=RenderSystem_GL\n"
+  "Plugin=Plugin_ParticleFX\n"
+  "Plugin=Plugin_CgProgramManager\n"
+)
+ENDIF()
+
 MESSAGE(STATUS "-> done")
 
 MESSAGE(STATUS "############################################################")

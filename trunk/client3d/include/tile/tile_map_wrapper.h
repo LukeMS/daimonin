@@ -155,7 +155,7 @@ public:
             name2d[0]=0;
             name3d[0]=0;
             bmpType *entry = new bmpType;
-            sscanf(mStrBuf.c_str(), "%d %*s %*s", &entry->num, name2d, name3d);
+            sscanf(mStrBuf.c_str(), "%d %s %s", &entry->num, name2d, name3d);
             // Cut the animation number.
             if (name2d && name2d[0])
                 entry->name2d = name2d;
