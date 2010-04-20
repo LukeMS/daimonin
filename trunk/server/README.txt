@@ -7,7 +7,7 @@ If you have a source package, you must compile the server first (if you have
 a binary package, there are no /make and /src folders in the Daimonin/server
 directory).
 
-If you find a daimon_server executable in the same folder this README.txt is,
+If you find a daimonin_server executable in the same folder this README.txt is,
 you can start the server (after you run the install script for your OS).
 
 For help ask the dev team:

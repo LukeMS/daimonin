@@ -9,6 +9,14 @@ Note: The files inside the /install folder are the default files for a
       you will find them after the install inside the /data folder where you
       can access them.
 
+Note: The files in the /lib folder are necessary to run the server 'out of the
+      box'. However these files (the arch collection and some settings files)
+      are not kept up-to-date so for most uses you will need to recollect the
+      arches with Gridarta and copy the collection across before starting the
+      server. If you are running a Map Maker package on Windows, this is
+      already part of the established practice -- see README_FIRST.txt in the
+      Map Maker folder.
+
 Select the OS you need to install the package. If you can't find the OS
 you want install the server, the source is not ported to this OS.
 
