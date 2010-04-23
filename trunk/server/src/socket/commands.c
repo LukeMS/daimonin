@@ -1337,6 +1337,7 @@ void cs_cmd_addme(char *buf, int len, NewSocket *ns)
         /* give out some more initial info */
         start_info(pl->ob);
         display_motd(pl->ob);
+        new_draw_info(NDI_UNIQUE | NDI_RED, 0, pl->ob, "hello");
 #ifdef USE_CHANNELS
 #ifdef ANNOUNCE_CHANNELS
         /* TODO: We should instead give useful info here like which channels
