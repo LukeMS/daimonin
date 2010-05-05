@@ -20,7 +20,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-	The author can be reached via e-mail to info@daimonin.net
+    The author can be reached via e-mail to info@daimonin.net
 */
 
 #include <global.h>
@@ -168,17 +168,17 @@ int lookup_sound(int type_id, const char* soundname)
 
 void play_sound_player_only(player *pl, int soundnum, int soundtype, int x, int y)
 {
-	NewSocket *ns = &pl->socket;
+    NewSocket *ns = &pl->socket;
 
     if (!pl->socket.sound) /* player has disabled sound */
         return;
 
- 	SOCKBUF_REQUEST_BUFFER(ns, SOCKET_SIZE_SMALL);
+    SOCKBUF_REQUEST_BUFFER(ns, SOCKET_SIZE_SMALL);
     SockBuf_AddChar(ACTIVE_SOCKBUF(ns), (char) x);
     SockBuf_AddChar(ACTIVE_SOCKBUF(ns), (char) y);
     SockBuf_AddShort(ACTIVE_SOCKBUF(ns), (uint16) soundnum);
     SockBuf_AddChar(ACTIVE_SOCKBUF(ns), (char) soundtype);
-	SOCKBUF_REQUEST_FINISH(ns, BINARY_CMD_SOUND, SOCKBUF_DYNAMIC);
+    SOCKBUF_REQUEST_FINISH(ns, BINARY_CMD_SOUND, SOCKBUF_DYNAMIC);
 
 }
 
