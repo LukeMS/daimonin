@@ -523,13 +523,6 @@ static struct constant_decl preset_game_constants[] =
     {"TAD_SHOWSEASON", TAD_SHOWSEASON},
     {"TAD_LONGFORM",   TAD_LONGFORM},
 
-    /* SENTInce aware server? (config.h) */
-#ifndef SENTInce_SERVER
-    {"SENTInce_SERVER", 0}
-#else
-    {"SENTInce_SERVER", 1}
-#endif
-
 };
 
 lua_class Game =
