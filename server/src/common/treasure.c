@@ -1358,11 +1358,11 @@ void set_abs_magic(object *op, int magic)
            op->value += 130300;
        else
            op->value += 250300; 13 Jul 07 L00natyk & Longir*/
-    /*	here can be added additive system too and we can switch it by
-	eg. is_multiplicative 0/1 so it will make items pricing more
-	elastic. 13 Jul 07 L00natyk & Longir
+    /*    here can be added additive system too and we can switch it by
+    eg. is_multiplicative 0/1 so it will make items pricing more
+    elastic. 13 Jul 07 L00natyk & Longir
     */
-	    op->value += (op->value * magic);
+        op->value += (op->value * magic);
 
         if (op->type == ARMOUR)
             ARMOUR_SPEED(op) = (ARMOUR_SPEED(&op->arch->clone) * (100 + magic * 10)) / 100;
@@ -1387,49 +1387,49 @@ int roll_ring_bonus_stat(int current, int level, int bonus)
     int roll;
 
     if(level <= 20) {
-	roll = 1;
-	}
+    roll = 1;
+    }
     else if(level <= 50) {
-	roll = random_roll(1,2);
-	}
+    roll = random_roll(1,2);
+    }
     else if(level <= 80) {
-	if (current == 6) {
-	    roll = random_roll(1,2);
-	    }
-	else {
-	    roll = random_roll(1,3);
-	    }
-	}
-    else if(level > 80) {
-	if (current >= 7) {
-	    roll = random_roll(1,2);
-	    }
-	else {
-	    roll = random_roll(1,4);
-	    }
-	}
-    if (bonus < 0) {
-	return (roll * -1);
-	}
+    if (current == 6) {
+        roll = random_roll(1,2);
+        }
     else {
-	return roll;
-	}
+        roll = random_roll(1,3);
+        }
+    }
+    else if(level > 80) {
+    if (current >= 7) {
+        roll = random_roll(1,2);
+        }
+    else {
+        roll = random_roll(1,4);
+        }
+    }
+    if (bonus < 0) {
+    return (roll * -1);
+    }
+    else {
+    return roll;
+    }
 }
 
 void set_ring_bonus_value_calc(object *op)
 {
-    /*	here we can easy adjust values for each stat and to annoy
-	players cursed rings will be in material price as stats
-	does nothing. :D
+    /*    here we can easy adjust values for each stat and to annoy
+    players cursed rings will be in material price as stats
+    does nothing. :D
     */
     //op->value = 0;
     int resist;
 
     for(resist = 0; resist < num_resist_table; resist++) {
-	if (op->resist[resist_table[resist]] > 0) {
-	    op->value += (sint64)(op->resist[resist_table[resist]] * (op->item_quality / 100.0f) * 500);
-	    }
-	}
+    if (op->resist[resist_table[resist]] > 0) {
+        op->value += (sint64)(op->resist[resist_table[resist]] * (op->item_quality / 100.0f) * 500);
+        }
+    }
 
     if (op->stats.Str > 0) op->value += op->stats.Str * 10400;
     if (op->stats.Dex > 0) op->value += op->stats.Dex * 10030;
@@ -1453,14 +1453,14 @@ void set_ring_bonus_value_calc(object *op)
     if (op->stats.exp > 0) op->value += op->stats.exp * 3002;
 
     if(op->type == AMULET) {
-    	if(QUERY_FLAG(op, FLAG_REFL_MISSILE)) op->value += (sint64)(20000 * (op->item_quality / 100.0f));
-    	if(QUERY_FLAG(op, FLAG_REFL_SPELL)) op->value += (sint64)(60000 * (op->item_quality / 100.0f));
-	}
+        if(QUERY_FLAG(op, FLAG_REFL_MISSILE)) op->value += (sint64)(20000 * (op->item_quality / 100.0f));
+        if(QUERY_FLAG(op, FLAG_REFL_SPELL)) op->value += (sint64)(60000 * (op->item_quality / 100.0f));
+    }
 
 
     /* freak copper coins for make prices more fun */
 
-	op->value += random_roll(0, 199);
+    op->value += random_roll(0, 199);
 }
 /*
  * Randomly adds one magical ability to the given object.
@@ -1473,12 +1473,12 @@ void set_ring_bonus_value_calc(object *op)
  */
 int set_ring_bonus(object *op, int bonus, int level)
 {
-/*	int tmp, r, off;*/
+/*    int tmp, r, off;*/
     int tmp, off, roll, r;
     off = (level >= 50 ? 1 : 0) + (level >= 60 ? 1 : 0) + (level >= 70 ? 1 : 0) + (level >= 80 ? 1 : 0);
     set_ring_bonus_jump1: /* lets repeat, to lazy for a loop */
-/*	r = RANDOM() % (bonus > 0 ? 15 : 13);
-	SET_FLAG(op, FLAG_IS_MAGICAL);*/
+/*    r = RANDOM() % (bonus > 0 ? 15 : 13);
+    SET_FLAG(op, FLAG_IS_MAGICAL);*/
 
     if(op->type == AMULET) {
 /*     if (!(RANDOM() % 21))
@@ -1497,81 +1497,81 @@ int set_ring_bonus(object *op, int bonus, int level)
            r = 10;
        else
            r = 13 + RANDOM() % 7;*/
-	roll = random_roll(0,100);
+    roll = random_roll(0,100);
 
-	if(roll < 7) {
-	    r = 0; /* hp + */
-	    }
-	else if(roll < 15) {
-	    r = 1; /* sp + */
-	    }
-	else if(roll < 70) {
-	    r = 2; /* resist */
-	    }
-	else if(roll < 75) {
-	    r = 3; /* reflect spells */
-	    }
-	else if(roll < 80) {
-	    r = 4; /* reflect missles */
-	    }
-	else {
-	    r = 14; /* ac */
-	    }
+    if(roll < 7) {
+        r = 0; /* hp + */
+        }
+    else if(roll < 15) {
+        r = 1; /* sp + */
+        }
+    else if(roll < 70) {
+        r = 2; /* resist */
+        }
+    else if(roll < 75) {
+        r = 3; /* reflect spells */
+        }
+    else if(roll < 80) {
+        r = 4; /* reflect missles */
+        }
+    else {
+        r = 14; /* ac */
+        }
     }
 /*   switch (r % 25)*/
     else {
-	roll = random_roll(0,100);
+    roll = random_roll(0,100);
 
-	if(roll < 4) {
-	    r = 0; /* hp + */
-	    }
-	else if(roll < 9) {
-	    r = 1; /* sp + */
-	    }
-	else if(roll < 29) {
-	    r = 2; /* resist */
-	    }
-	else if(roll < 34) {
-	    r = 3; /* sp regen */
-	    }
-	else if(roll < 39) {
-	    r = 4; /* hp regen */
-	    }
-	else if(roll < 40) {
-	    r = 5; /* str */
-	    }
-	else if(roll < 42) {
-	    r = 6; /* dex */
-	    }
-	else if(roll < 44) {
-	    r = 7; /* con */
-	    }
-	else if(roll < 46) {
-	    r = 8; /* int */
-	    }
-	else if(roll < 48) {
-	    r = 9; /* wis */
-	    }
-	else if(roll < 50) {
-	    r = 10; /* pow */
-	    }
-	else if(roll < 52) {
-	    r = 11; /* cha */
-	    }
-	else if(roll < 58) {
-	    r = 12; /* dam */
-	    }
-	else if(roll < 65) {
-	    r = 13; /* wc */
-	    }
-	else if(roll < 75) {
-	    r = 14; /* ac */
-	    }
-	else {
-	    r = 15; /* speed */
-	    }
+    if(roll < 4) {
+        r = 0; /* hp + */
+        }
+    else if(roll < 9) {
+        r = 1; /* sp + */
+        }
+    else if(roll < 29) {
+        r = 2; /* resist */
+        }
+    else if(roll < 34) {
+        r = 3; /* sp regen */
+        }
+    else if(roll < 39) {
+        r = 4; /* hp regen */
+        }
+    else if(roll < 40) {
+        r = 5; /* str */
+        }
+    else if(roll < 42) {
+        r = 6; /* dex */
+        }
+    else if(roll < 44) {
+        r = 7; /* con */
+        }
+    else if(roll < 46) {
+        r = 8; /* int */
+        }
+    else if(roll < 48) {
+        r = 9; /* wis */
+        }
+    else if(roll < 50) {
+        r = 10; /* pow */
+        }
+    else if(roll < 52) {
+        r = 11; /* cha */
+        }
+    else if(roll < 58) {
+        r = 12; /* dam */
+        }
+    else if(roll < 65) {
+        r = 13; /* wc */
+        }
+    else if(roll < 75) {
+        r = 14; /* ac */
+        }
+    else {
+        r = 15; /* speed */
+        }
 
-	}
+    }
 
     switch (r)
     {
@@ -1625,7 +1625,7 @@ int set_ring_bonus(object *op, int bonus, int level)
           op->stats.maxhp = tmp;
           break;
         case 1:
-	// mana+
+    // mana+
           tmp = 3;
           if (level < 5)
           {
@@ -1670,8 +1670,8 @@ int set_ring_bonus(object *op, int bonus, int level)
           op->stats.maxsp = tmp;
           break;
         case 2:
-	    {
-	    //resist
+        {
+        //resist
               int b = 5 + FABS( bonus),val,resist = RANDOM() % (num_resist_table - 4 + off);
 
               /* Roughly generate a bonus between 100 and 35 (depending on the bonus) */
@@ -1699,25 +1699,25 @@ int set_ring_bonus(object *op, int bonus, int level)
                  * based on how good a resistance we gave.
                  */
               break;
-	      }
+          }
         case 3:
           if (op->type == AMULET)
           {
               SET_FLAG(op, FLAG_REFL_SPELL);
-	      if(bonus < 0) {
-	        op->item_quality -= random_roll(1,30), op->item_condition = op->item_quality;
-		}
+          if(bonus < 0) {
+            op->item_quality -= random_roll(1,30), op->item_condition = op->item_quality;
+        }
           }
           else
           {
-	    if(bonus > 0) {
-		roll = random_roll(1,10);
-		op->stats.sp = roll; /* regenerate spell points */
-	      }
-	     else {
-		roll = random_roll(1,3);
-		op->stats.sp = (roll * -1);
-		}
+        if(bonus > 0) {
+        roll = random_roll(1,10);
+        op->stats.sp = roll; /* regenerate spell points */
+          }
+         else {
+        roll = random_roll(1,3);
+        op->stats.sp = (roll * -1);
+        }
           }
           break;
 
@@ -1725,43 +1725,43 @@ int set_ring_bonus(object *op, int bonus, int level)
           if (op->type == AMULET)
           {
               SET_FLAG(op, FLAG_REFL_MISSILE);
-	      if(bonus < 0) {
-	        op->item_quality -= random_roll(1,30), op->item_condition = op->item_quality;
-		}
+          if(bonus < 0) {
+            op->item_quality -= random_roll(1,30), op->item_condition = op->item_quality;
+        }
           }
           else
           {
-	    if(bonus > 0) {
-		roll = random_roll(1,10);
-		op->stats.hp = roll; /* regenerate hit points */
-	      }
-	     else {
-		roll = random_roll(1,3);
-		op->stats.hp = (roll * -1);
-		}
+        if(bonus > 0) {
+        roll = random_roll(1,10);
+        op->stats.hp = roll; /* regenerate hit points */
+          }
+         else {
+        roll = random_roll(1,3);
+        op->stats.hp = (roll * -1);
+        }
           }
           break;
         case 5:
-	    op->stats.Str += roll_ring_bonus_stat(op->stats.Str, level, bonus);
-	    break;
+        op->stats.Str += roll_ring_bonus_stat(op->stats.Str, level, bonus);
+        break;
         case 6:
-	    op->stats.Dex += roll_ring_bonus_stat(op->stats.Dex, level, bonus);
-	    break;
+        op->stats.Dex += roll_ring_bonus_stat(op->stats.Dex, level, bonus);
+        break;
         case 7:
-	    op->stats.Con += roll_ring_bonus_stat(op->stats.Con, level, bonus);
-	    break;
+        op->stats.Con += roll_ring_bonus_stat(op->stats.Con, level, bonus);
+        break;
         case 8:
-	    op->stats.Int += roll_ring_bonus_stat(op->stats.Int, level, bonus);
-	    break;
+        op->stats.Int += roll_ring_bonus_stat(op->stats.Int, level, bonus);
+        break;
         case 9:
-	    op->stats.Wis += roll_ring_bonus_stat(op->stats.Wis, level, bonus);
-	    break;
+        op->stats.Wis += roll_ring_bonus_stat(op->stats.Wis, level, bonus);
+        break;
         case 10:
-	    op->stats.Pow += roll_ring_bonus_stat(op->stats.Pow, level, bonus);
-	    break;
+        op->stats.Pow += roll_ring_bonus_stat(op->stats.Pow, level, bonus);
+        break;
         case 11:
-	    op->stats.Cha += roll_ring_bonus_stat(op->stats.Cha, level, bonus);
-	    break;
+        op->stats.Cha += roll_ring_bonus_stat(op->stats.Cha, level, bonus);
+        break;
         case 12:
           tmp = 1 + (RANDOM()%(10*bonus));
           if(bonus<0)
@@ -2040,7 +2040,7 @@ int fix_generated_item(object **op_ptr, object *creator, int difficulty, int a_c
                   }
               }
 
-	      set_ring_bonus_value_calc(op);
+          set_ring_bonus_value_calc(op);
               break;
 
             case BOOK:

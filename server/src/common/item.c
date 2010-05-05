@@ -925,10 +925,10 @@ char * describe_item(const object *const op)
               {
                   float dps_swing = 0.0f;
 
-				  if (op->type == BOW || op->type == ARROW)
-					  dps_swing = ((float) op->last_grace * WEAPON_SWING_TIME);
+                  if (op->type == BOW || op->type == ARROW)
+                      dps_swing = ((float) op->last_grace * WEAPON_SWING_TIME);
 
-				  if (op->stats.dam)
+                  if (op->stats.dam)
                   {
                       int i, tmp_dam=0;
 
@@ -999,20 +999,20 @@ char * describe_item(const object *const op)
                       strcat(retbuf, buf);
                   }
 
-				  if (op->type == ARROW || op->type == BOW)
-				  {
-					  if(op->last_grace)
-					  {
-						  sprintf(buf, "(%1.2f sec)", dps_swing);
-						  strcat(retbuf, buf);
-					  }
+                  if (op->type == ARROW || op->type == BOW)
+                  {
+                      if(op->last_grace)
+                      {
+                          sprintf(buf, "(%1.2f sec)", dps_swing);
+                          strcat(retbuf, buf);
+                      }
 
-					  if (op->last_sp)
-					  {
-						  sprintf(buf, "(range%+d)", op->last_sp);
-						  strcat(retbuf, buf);
-					  }
-				  }
+                      if (op->last_sp)
+                      {
+                          sprintf(buf, "(range%+d)", op->last_sp);
+                          strcat(retbuf, buf);
+                      }
+                  }
                   else if (op->type == WEAPON)
                   {
                       sprintf(buf, "(%1.2f sec)", op->weapon_speed);

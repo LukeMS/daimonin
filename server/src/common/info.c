@@ -20,7 +20,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-	The author can be reached via e-mail to info@daimonin.net
+    The author can be reached via e-mail to info@daimonin.net
 */
 
 /* This file is the one and only DRAWINFO output module. All player
@@ -49,8 +49,8 @@
  */
 void new_draw_info(const int flags, const int pri, const object *const pl, const char *const buf)
 {
-	NewSocket *ns;
-	int len;
+    NewSocket *ns;
+    int len;
 
     if (!buf) /* should not happen - generate save string and LOG it */
     {
@@ -81,10 +81,10 @@ void new_draw_info(const int flags, const int pri, const object *const pl, const
     if (pri >= CONTR(pl)->listening) /* player don't want this */
         return;
 
-	SOCKBUF_REQUEST_BUFFER((ns = &CONTR(pl)->socket),(len = strlen(buf))+3);
-	SockBuf_AddShort(ACTIVE_SOCKBUF(ns), flags & NDI_FLAG_MASK);
-	SockBuf_AddString(ACTIVE_SOCKBUF(ns),buf,len);
-	SOCKBUF_REQUEST_FINISH(ns, BINARY_CMD_DRAWINFO2, SOCKBUF_DYNAMIC);
+    SOCKBUF_REQUEST_BUFFER((ns = &CONTR(pl)->socket),(len = strlen(buf))+3);
+    SockBuf_AddShort(ACTIVE_SOCKBUF(ns), flags & NDI_FLAG_MASK);
+    SockBuf_AddString(ACTIVE_SOCKBUF(ns),buf,len);
+    SOCKBUF_REQUEST_FINISH(ns, BINARY_CMD_DRAWINFO2, SOCKBUF_DYNAMIC);
 }
 
 /* This is a pretty trivial function, but it allows us to use printf style

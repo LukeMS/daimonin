@@ -29,8 +29,8 @@
 
 struct bmappair
 {
-	char                   *name;
-	int                     number;
+    char                   *name;
+    int                     number;
 };
 
 static struct bmappair *xbm = NULL;
@@ -43,51 +43,51 @@ static struct bmappair *xbm = NULL;
 
 typedef struct FaceInfo
 {
-	uint8  *data;           /* image data */
-	uint16  datalen;        /* length of the xpm data */
-	uint32  checksum;       /* Checksum of face data */
+    uint8  *data;           /* image data */
+    uint16  datalen;        /* length of the xpm data */
+    uint32  checksum;       /* Checksum of face data */
 } FaceInfo;
 
 
 typedef struct
 {
-	char           *prefix;
-	char           *fullname;
-	uint8           fallback;
-	char           *size;
-	char           *extension;
-	char           *comment;
-	FaceInfo       *faces;
+    char           *prefix;
+    char           *fullname;
+    uint8           fallback;
+    char           *size;
+    char           *extension;
+    char           *comment;
+    FaceInfo       *faces;
 } FaceSets;
 
 static FaceSets facesets[MAX_FACE_SETS];
 
 int is_valid_faceset(int fsn)
 {
-	if (fsn >= 0 && fsn < MAX_FACE_SETS && facesets[fsn].prefix)
-		return TRUE;
-	return FALSE;
+    if (fsn >= 0 && fsn < MAX_FACE_SETS && facesets[fsn].prefix)
+        return TRUE;
+    return FALSE;
 }
 
 void free_socket_images()
 {
-	int num, q;
+    int num, q;
 
-	for (num = 0; num < MAX_FACE_SETS; num++)
-	{
-		if (facesets[num].prefix)
-		{
-			for (q = 0; q < nrofpixmaps; q++)
-				if (facesets[num].faces[q].data)
-					free(facesets[num].faces[q].data);
-			free(facesets[num].prefix);
-			free(facesets[num].fullname);
-			free(facesets[num].size);
-			free(facesets[num].extension);
-			free(facesets[num].comment);
-			free(facesets[num].faces);
-		}
-	}
+    for (num = 0; num < MAX_FACE_SETS; num++)
+    {
+        if (facesets[num].prefix)
+        {
+            for (q = 0; q < nrofpixmaps; q++)
+                if (facesets[num].faces[q].data)
+                    free(facesets[num].faces[q].data);
+            free(facesets[num].prefix);
+            free(facesets[num].fullname);
+            free(facesets[num].size);
+            free(facesets[num].extension);
+            free(facesets[num].comment);
+            free(facesets[num].faces);
+        }
+    }
 }
 
 /* This returns the set we will actually use when sending
@@ -97,23 +97,23 @@ void free_socket_images()
 */
 static int get_face_fallback(int faceset, int imageno)
 {
-	/* faceset 0 is supposed to have every image, so just return.  Doing
-	* so also prevents infinite loops in the case if it not having
-	* the face, but in that case, we are likely to crash when we try
-	* to access the data, but that is probably preferable to an infinite
-	* loop.
-	*/
-	if (faceset == 0)
-		return 0;
+    /* faceset 0 is supposed to have every image, so just return.  Doing
+    * so also prevents infinite loops in the case if it not having
+    * the face, but in that case, we are likely to crash when we try
+    * to access the data, but that is probably preferable to an infinite
+    * loop.
+    */
+    if (faceset == 0)
+        return 0;
 
-	if (!facesets[faceset].prefix)
-	{
-		LOG(llevBug, "BUG: get_face_fallback called with unused set (%d)?\n", faceset);
-		return 0;   /* use default set */
-	}
-	if (facesets[faceset].faces[imageno].data)
-		return faceset;
-	return get_face_fallback(facesets[faceset].fallback, imageno);
+    if (!facesets[faceset].prefix)
+    {
+        LOG(llevBug, "BUG: get_face_fallback called with unused set (%d)?\n", faceset);
+        return 0;   /* use default set */
+    }
+    if (facesets[faceset].faces[imageno].data)
+        return faceset;
+    return get_face_fallback(facesets[faceset].fallback, imageno);
 }
 
 /* This is a simple recursive function that makes sure the fallbacks
@@ -124,19 +124,19 @@ static int get_face_fallback(int faceset, int imageno)
 */
 static void check_faceset_fallback(int faceset, int togo)
 {
-	int fallback    = facesets[faceset].fallback;
+    int fallback    = facesets[faceset].fallback;
 
-	/* proper case - falls back to base set */
-	if (fallback == 0)
-		return;
+    /* proper case - falls back to base set */
+    if (fallback == 0)
+        return;
 
-	if (!facesets[fallback].prefix)
-		LOG(llevError, "Face set %d falls to non set faceset %d\n", faceset, fallback);
-	togo--;
-	if (togo == 0)
-		LOG(llevError, "Infinite loop found in facesets. aborting.\n");
+    if (!facesets[fallback].prefix)
+        LOG(llevError, "Face set %d falls to non set faceset %d\n", faceset, fallback);
+    togo--;
+    if (togo == 0)
+        LOG(llevError, "Infinite loop found in facesets. aborting.\n");
 
-	check_faceset_fallback(fallback, togo);
+    check_faceset_fallback(fallback, togo);
 }
 
 /* read_client_images loads all the iamge types into memory.
@@ -165,107 +165,107 @@ static void check_faceset_fallback(int faceset, int togo)
 
 void read_client_images()
 {
-	char    filename[400];
-	char    buf[HUGE_BUF];
-	char   *cp, *cps[7];
-	FILE   *infile, *fbmap;
-	int     num, len, fileno, i, badline;
+    char    filename[400];
+    char    buf[HUGE_BUF];
+    char   *cp, *cps[7];
+    FILE   *infile, *fbmap;
+    int     num, len, fileno, i, badline;
 
-	memset(facesets, 0, sizeof(facesets));
-	sprintf(filename, "%s/image_info", settings.datadir);
-	if ((infile = fopen(filename, "r")) == NULL)
-		LOG(llevError, "Unable to open %s\n", filename);
-	while (fgets(buf, HUGE_BUF - 1, infile) != NULL)
-	{
-		badline = 0;
+    memset(facesets, 0, sizeof(facesets));
+    sprintf(filename, "%s/image_info", settings.datadir);
+    if ((infile = fopen(filename, "r")) == NULL)
+        LOG(llevError, "Unable to open %s\n", filename);
+    while (fgets(buf, HUGE_BUF - 1, infile) != NULL)
+    {
+        badline = 0;
 
-		if (buf[0] == '#' || buf[0] == '\n' || buf[0] == '\r')
-			continue;
-		cp = buf + (strlen(buf) - 1);
-		while(isspace(*cp))
-			--cp;
-		cp[1] = '\0';
+        if (buf[0] == '#' || buf[0] == '\n' || buf[0] == '\r')
+            continue;
+        cp = buf + (strlen(buf) - 1);
+        while(isspace(*cp))
+            --cp;
+        cp[1] = '\0';
 
-		if (!(cps[0] = strtok(buf, ":")))
-			badline = 1;
-		for (i = 1; i < 7; i++)
-		{
-			if (!(cps[i] = strtok(NULL, ":")))
-				badline = 1;
-		}
-		if (badline)
-			LOG(llevBug, "BUG: Bad line in image_info file, ignoring line:\n  %s", buf);
-		else
-		{
-			len = atoi(cps[0]);
-			if (len >= MAX_FACE_SETS)
-				LOG(llevError, "To high a setnum in image_info file: %d > %d\n", len, MAX_FACE_SETS);
-			facesets[len].prefix = strdup_local(cps[1]);
-			facesets[len].fullname = strdup_local(cps[2]);
-			facesets[len].fallback = atoi(cps[3]);
-			facesets[len].size = strdup_local(cps[4]);
-			facesets[len].extension = strdup_local(cps[5]);
-			facesets[len].comment = strdup_local(cps[6]);
-		}
-	}
-	fclose(infile);
-	for (i = 0; i < MAX_FACE_SETS; i++)
-	{
-		if (facesets[i].prefix)
-			check_faceset_fallback(i, MAX_FACE_SETS);
-	}
-	/* Loaded the faceset information - now need to load up the
-	* actual faces.
-	*/
+        if (!(cps[0] = strtok(buf, ":")))
+            badline = 1;
+        for (i = 1; i < 7; i++)
+        {
+            if (!(cps[i] = strtok(NULL, ":")))
+                badline = 1;
+        }
+        if (badline)
+            LOG(llevBug, "BUG: Bad line in image_info file, ignoring line:\n  %s", buf);
+        else
+        {
+            len = atoi(cps[0]);
+            if (len >= MAX_FACE_SETS)
+                LOG(llevError, "To high a setnum in image_info file: %d > %d\n", len, MAX_FACE_SETS);
+            facesets[len].prefix = strdup_local(cps[1]);
+            facesets[len].fullname = strdup_local(cps[2]);
+            facesets[len].fallback = atoi(cps[3]);
+            facesets[len].size = strdup_local(cps[4]);
+            facesets[len].extension = strdup_local(cps[5]);
+            facesets[len].comment = strdup_local(cps[6]);
+        }
+    }
+    fclose(infile);
+    for (i = 0; i < MAX_FACE_SETS; i++)
+    {
+        if (facesets[i].prefix)
+            check_faceset_fallback(i, MAX_FACE_SETS);
+    }
+    /* Loaded the faceset information - now need to load up the
+    * actual faces.
+    */
 
-	for (fileno = 0; fileno < MAX_FACE_SETS; fileno++)
-	{
-		/* if prefix is not set, this is not used */
-		if (!facesets[fileno].prefix)
-			continue;
-		facesets[fileno].faces = calloc(nrofpixmaps, sizeof(FaceInfo));
+    for (fileno = 0; fileno < MAX_FACE_SETS; fileno++)
+    {
+        /* if prefix is not set, this is not used */
+        if (!facesets[fileno].prefix)
+            continue;
+        facesets[fileno].faces = calloc(nrofpixmaps, sizeof(FaceInfo));
 
-		sprintf(filename, "%s/daimonin.%d", settings.datadir, fileno);
-		LOG(llevDebug, "Loading image file %s\n", filename);
+        sprintf(filename, "%s/daimonin.%d", settings.datadir, fileno);
+        LOG(llevDebug, "Loading image file %s\n", filename);
 
-		/* we don't use more as one face set here!! */
-		LOG(llevInfo, "Creating client_bmap....\n");
-		sprintf(buf, "%s/client_bmaps", settings.localdir);
-		if ((fbmap = fopen(buf, "wb")) == NULL)
-			LOG(llevError, "Unable to open %s\n", buf);
+        /* we don't use more as one face set here!! */
+        LOG(llevInfo, "Creating client_bmap....\n");
+        sprintf(buf, "%s/client_bmaps", settings.localdir);
+        if ((fbmap = fopen(buf, "wb")) == NULL)
+            LOG(llevError, "Unable to open %s\n", buf);
 
-		if ((infile = fopen(filename, "r")) == NULL)
-			LOG(llevError, "Unable to open %s\n", filename);
+        if ((infile = fopen(filename, "r")) == NULL)
+            LOG(llevError, "Unable to open %s\n", filename);
 
-		while (fgets(buf, HUGE_BUF - 1, infile) != NULL)
-		{
-			if (strncmp(buf, "IMAGE ", 6) != 0)
-				LOG(llevError, "read_client_images:Bad image line - not IMAGE, instead\n%s", buf);
-			num = atoi(buf + 6);
-			if (num < 0 || num >= nrofpixmaps)
-				LOG(llevError, "read_client_images: Image num %d not in 0..%d\n%s", num, nrofpixmaps, buf);
-			/* Skip accross the number data */
-			for (cp = buf + 6; *cp != ' '; cp++)
-				;
-			len = atoi(cp);
-			if (len == 0 || len > MAX_IMAGE_SIZE)
-				LOG(llevError, "read_client_images: length not valid: %d > %d \n%s", len, MAX_IMAGE_SIZE, buf);
-			/* We don't actualy care about the name if the image that
-			* is embedded in the image file, so just ignore it.
-			*/
-			facesets[fileno].faces[num].datalen = len;
-			facesets[fileno].faces[num].data = malloc(len);
-			if ((i = fread(facesets[fileno].faces[num].data, len, 1, infile)) != 1)
-				LOG(llevError, "read_client_images: Did not read desired amount of data, wanted %d, got %d\n%s", len, i,
-				buf);
+        while (fgets(buf, HUGE_BUF - 1, infile) != NULL)
+        {
+            if (strncmp(buf, "IMAGE ", 6) != 0)
+                LOG(llevError, "read_client_images:Bad image line - not IMAGE, instead\n%s", buf);
+            num = atoi(buf + 6);
+            if (num < 0 || num >= nrofpixmaps)
+                LOG(llevError, "read_client_images: Image num %d not in 0..%d\n%s", num, nrofpixmaps, buf);
+            /* Skip accross the number data */
+            for (cp = buf + 6; *cp != ' '; cp++)
+                ;
+            len = atoi(cp);
+            if (len == 0 || len > MAX_IMAGE_SIZE)
+                LOG(llevError, "read_client_images: length not valid: %d > %d \n%s", len, MAX_IMAGE_SIZE, buf);
+            /* We don't actualy care about the name if the image that
+            * is embedded in the image file, so just ignore it.
+            */
+            facesets[fileno].faces[num].datalen = len;
+            facesets[fileno].faces[num].data = malloc(len);
+            if ((i = fread(facesets[fileno].faces[num].data, len, 1, infile)) != 1)
+                LOG(llevError, "read_client_images: Did not read desired amount of data, wanted %d, got %d\n%s", len, i,
+                buf);
 
-			facesets[fileno].faces[num].checksum = (uint32) crc32(1L, facesets[fileno].faces[num].data, len);
-			sprintf(buf, "%x %x %s\n", len, facesets[fileno].faces[num].checksum, new_faces[num].name);
-			fputs(buf, fbmap);
-		}
-		fclose(infile);
-		fclose(fbmap);
-	} /* For fileno < MAX_FACE_SETS */
+            facesets[fileno].faces[num].checksum = (uint32) crc32(1L, facesets[fileno].faces[num].data, len);
+            sprintf(buf, "%x %x %s\n", len, facesets[fileno].faces[num].checksum, new_faces[num].name);
+            fputs(buf, fbmap);
+        }
+        fclose(infile);
+        fclose(fbmap);
+    } /* For fileno < MAX_FACE_SETS */
 }
 
 /*
@@ -278,55 +278,55 @@ void read_client_images()
 */
 int esrv_send_face(NewSocket *ns, short face_num, int nocache)
 {
-	int         fallback, cmdmode;
+    int         fallback, cmdmode;
 
-	if (face_num < 0 || face_num >= nrofpixmaps)
-	{
-		LOG(llevBug, "BUG: esrv_send_face (%d) out of bounds??\n", face_num);
-		return SEND_FACE_OUT_OF_BOUNDS;
-	}
+    if (face_num < 0 || face_num >= nrofpixmaps)
+    {
+        LOG(llevBug, "BUG: esrv_send_face (%d) out of bounds??\n", face_num);
+        return SEND_FACE_OUT_OF_BOUNDS;
+    }
 
-	fallback = get_face_fallback(0, face_num);
+    fallback = get_face_fallback(0, face_num);
 
-	if (facesets[fallback].faces[face_num].data == NULL)
-	{
-		LOG(llevBug, "BUG: esrv_send_face: faces[%d].data == NULL\n", face_num);
-		return SEND_FACE_NO_DATA;
-	}
+    if (facesets[fallback].faces[face_num].data == NULL)
+    {
+        LOG(llevBug, "BUG: esrv_send_face: faces[%d].data == NULL\n", face_num);
+        return SEND_FACE_NO_DATA;
+    }
 
-	if (!nocache)
-	{
-		cmdmode = BINARY_CMD_FACE1;
+    if (!nocache)
+    {
+        cmdmode = BINARY_CMD_FACE1;
 
-		SOCKBUF_REQUEST_BUFFER(ns, SOCKET_SIZE_MEDIUM);
+        SOCKBUF_REQUEST_BUFFER(ns, SOCKET_SIZE_MEDIUM);
 
-		SockBuf_AddShort(ACTIVE_SOCKBUF(ns), face_num);
-		if (ns->image2)
-			SockBuf_AddChar(ACTIVE_SOCKBUF(ns), (char) fallback);
+        SockBuf_AddShort(ACTIVE_SOCKBUF(ns), face_num);
+        if (ns->image2)
+            SockBuf_AddChar(ACTIVE_SOCKBUF(ns), (char) fallback);
                 /* This must be a very old backwards compatibility hack. */
-		if (ns->protocol_version >= 1026)
-			SockBuf_AddInt(ACTIVE_SOCKBUF(ns), facesets[fallback].faces[face_num].checksum);
-		SockBuf_AddString(ACTIVE_SOCKBUF(ns), new_faces[face_num].name, strlen(new_faces[face_num].name));
+        if (ns->protocol_version >= 1026)
+            SockBuf_AddInt(ACTIVE_SOCKBUF(ns), facesets[fallback].faces[face_num].checksum);
+        SockBuf_AddString(ACTIVE_SOCKBUF(ns), new_faces[face_num].name, strlen(new_faces[face_num].name));
 
-		SOCKBUF_REQUEST_FINISH(ns, cmdmode, SOCKBUF_DYNAMIC);
-	}
-	else
-	{
-		cmdmode = BINARY_CMD_IMAGE;
+        SOCKBUF_REQUEST_FINISH(ns, cmdmode, SOCKBUF_DYNAMIC);
+    }
+    else
+    {
+        cmdmode = BINARY_CMD_IMAGE;
 
-		SOCKBUF_REQUEST_BUFFER(ns, SOCKET_SIZE_MEDIUM);
+        SOCKBUF_REQUEST_BUFFER(ns, SOCKET_SIZE_MEDIUM);
 
-		SockBuf_AddInt(ACTIVE_SOCKBUF(ns), face_num);
-		if (ns->image2)
-			SockBuf_AddChar(ACTIVE_SOCKBUF(ns), (char) fallback);
-		SockBuf_AddInt(ACTIVE_SOCKBUF(ns), (uint32)facesets[fallback].faces[face_num].datalen);
-		SockBuf_AddString(ACTIVE_SOCKBUF(ns), facesets[fallback].faces[face_num].data, facesets[fallback].faces[face_num].datalen);
+        SockBuf_AddInt(ACTIVE_SOCKBUF(ns), face_num);
+        if (ns->image2)
+            SockBuf_AddChar(ACTIVE_SOCKBUF(ns), (char) fallback);
+        SockBuf_AddInt(ACTIVE_SOCKBUF(ns), (uint32)facesets[fallback].faces[face_num].datalen);
+        SockBuf_AddString(ACTIVE_SOCKBUF(ns), facesets[fallback].faces[face_num].data, facesets[fallback].faces[face_num].datalen);
 
-		SOCKBUF_REQUEST_FINISH(ns, cmdmode, SOCKBUF_DYNAMIC);
-	}
-	/*ns->faces_sent[face_num] = 1;*/
+        SOCKBUF_REQUEST_FINISH(ns, cmdmode, SOCKBUF_DYNAMIC);
+    }
+    /*ns->faces_sent[face_num] = 1;*/
 
-	return SEND_FACE_OK;
+    return SEND_FACE_OK;
 }
 
 #endif
