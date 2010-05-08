@@ -76,9 +76,6 @@
 	<File name="../../../src/include/stats.h" open="0" top="0" tabpos="8">
 		<Cursor position="52" topLine="0" />
 	</File>
-	<File name="../../../src/random_maps/reader.l" open="0" top="0" tabpos="0">
-		<Cursor position="2067" topLine="51" />
-	</File>
 	<File name="../../../src/server/aiconfig.c" open="0" top="0" tabpos="3">
 		<Cursor position="1889" topLine="35" />
 	</File>

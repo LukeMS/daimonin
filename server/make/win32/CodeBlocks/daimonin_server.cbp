@@ -61,7 +61,6 @@
 		</VirtualTargets>
 		<Compiler>
 			<Add directory="..\..\..\src\include" />
-			<Add directory="..\..\..\src\random_maps" />
 		</Compiler>
 		<Unit filename="readme.txt" />
 		<Unit filename="..\..\..\src\common\aggro.c">
@@ -237,11 +236,6 @@
 		<Unit filename="..\..\..\src\include\treasure.h" />
 		<Unit filename="..\..\..\src\include\version.h" />
 		<Unit filename="..\..\..\src\include\win32.h" />
-		<Unit filename="..\..\..\src\random_maps\expand2x.h" />
-		<Unit filename="..\..\..\src\random_maps\maze_gen.h" />
-		<Unit filename="..\..\..\src\random_maps\random_map.h" />
-		<Unit filename="..\..\..\src\random_maps\room_gen.h" />
-		<Unit filename="..\..\..\src\random_maps\rproto.h" />
 		<Unit filename="..\..\..\src\server\aiconfig.c">
 			<Option compilerVar="CC" />
 		</Unit>
