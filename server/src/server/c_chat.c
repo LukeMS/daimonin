@@ -225,22 +225,40 @@ int command_gsay(object *op, char *params)
     buf[MAX_BUF - 30] = '\0';
 #endif
 
-    for(ol = gmaster_list_MM;ol;ol=ol->next)
+    for (ol = gmaster_list_MM; ol; ol = ol->next)
     {
-        if (op != ol->objlink.ob && CONTR(op)->group_leader != CONTR(ol->objlink.ob)->group_leader)
-            new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_FLESH, 0, ol->objlink.ob, buf);
+        tmp = ol->objlink.ob;
+
+        if (op != tmp &&
+            CONTR(op)->group_leader != CONTR(tmp)->group_leader &&
+            CONTR(tmp)->eavesdropping)
+        {
+            new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_FLESH, 0, tmp, buf);
+        }
     }
 
-    for(ol = gmaster_list_GM;ol;ol=ol->next)
+    for (ol = gmaster_list_GM; ol; ol = ol->next)
     {
-        if (op != ol->objlink.ob && CONTR(op)->group_leader != CONTR(ol->objlink.ob)->group_leader)
-            new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_FLESH, 0, ol->objlink.ob, buf);
+        tmp = ol->objlink.ob;
+
+        if (op != tmp &&
+            CONTR(op)->group_leader != CONTR(tmp)->group_leader &&
+            CONTR(tmp)->eavesdropping)
+        {
+            new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_FLESH, 0, tmp, buf);
+        }
     }
 
-    for(ol = gmaster_list_VOL;ol;ol=ol->next)
+    for (ol = gmaster_list_VOL; ol; ol = ol->next)
     {
-        if (op != ol->objlink.ob && CONTR(op)->group_leader != CONTR(ol->objlink.ob)->group_leader)
-            new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_FLESH, 0, ol->objlink.ob, buf);
+        tmp = ol->objlink.ob;
+
+        if (op != tmp &&
+            CONTR(op)->group_leader != CONTR(tmp)->group_leader &&
+            CONTR(tmp)->eavesdropping)
+        {
+            new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_FLESH, 0, tmp, buf);
+        }
     }
 
 #ifdef USE_CHANNELS
@@ -368,33 +386,39 @@ int command_tell(object *op, char *params)
 
                 sprintf(buf, "%s tells %s: %s", op->name, pl->ob->name, msg);
 
-                for (ol = gmaster_list_VOL; ol; ol = ol->next)
+                for (ol = gmaster_list_MM; ol; ol = ol->next)
                 {
-                    if (pl->ob != ol->objlink.ob &&
-                        op != ol->objlink.ob)
+                    object *tmp = ol->objlink.ob;
+
+                    if (op != tmp &&
+                        pl->ob != tmp &&
+                        CONTR(tmp)->eavesdropping)
                     {
-                        new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_FLESH, 0,
-                                      ol->objlink.ob, buf);
+                        new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_FLESH, 0, tmp, buf);
                     }
                 }
 
                 for (ol = gmaster_list_GM; ol; ol = ol->next)
                 {
-                    if (pl->ob != ol->objlink.ob &&
-                        op != ol->objlink.ob)
+                    object *tmp = ol->objlink.ob;
+
+                    if (op != tmp &&
+                        pl->ob != tmp &&
+                        CONTR(tmp)->eavesdropping)
                     {
-                        new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_FLESH, 0,
-                                      ol->objlink.ob, buf);
+                        new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_FLESH, 0, tmp, buf);
                     }
                 }
 
-                for (ol = gmaster_list_MM; ol; ol = ol->next)
+                for (ol = gmaster_list_VOL; ol; ol = ol->next)
                 {
-                    if (pl->ob != ol->objlink.ob &&
-                        op != ol->objlink.ob)
+                    object *tmp = ol->objlink.ob;
+
+                    if (op != tmp &&
+                        pl->ob != tmp &&
+                        CONTR(tmp)->eavesdropping)
                     {
-                        new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_FLESH, 0,
-                                      ol->objlink.ob, buf);
+                        new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_FLESH, 0, tmp, buf);
                     }
                 }
             }

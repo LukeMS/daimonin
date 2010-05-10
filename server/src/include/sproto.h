@@ -167,6 +167,7 @@ int                         command_resting(object *op, char *params);
 int                         command_help(object *op, char *params);
 int                         command_save(object *op, char *params);
 int                         command_privacy(object *op, char *params);
+int                         command_eavesdrop(object *op, char *params);
 char                        *get_subdir(const char *name);
 int                         command_stuck(object *op, char *params);
 /* c_move.c */
