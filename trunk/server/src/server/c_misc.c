@@ -1345,7 +1345,6 @@ int command_save(object *op, char *params)
     return 0;
 }
 
-
 int command_privacy(object *op, char *params)
 {
     int new_status = !CONTR(op)->privacy;
@@ -1360,6 +1359,24 @@ int command_privacy(object *op, char *params)
 #ifdef USE_CHANNELS
     channel_privacy(CONTR(op), CONTR(op)->privacy);
 #endif
+
+    return 0;
+}
+
+int command_eavesdrop(object *op, char *params)
+{
+    int new_status = !CONTR(op)->eavesdropping;
+
+    CONTR(op)->eavesdropping = new_status;
+
+    if (new_status)
+    {
+        new_draw_info(NDI_UNIQUE, 0, op, "Eavesdropping enabled.");
+    }
+    else
+    {
+        new_draw_info(NDI_UNIQUE, 0, op, "Eavesdropping disabled.");
+    }
 
     return 0;
 }

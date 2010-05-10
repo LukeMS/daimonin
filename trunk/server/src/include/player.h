@@ -146,6 +146,7 @@ typedef struct pl_player
     uint32              last_known_spell    : 1;   /* What was last updated with draw_stats() */
     uint32              update_skills       : 1;   /* update skill list when set */
     uint32              privacy             : 1;
+    uint32              eavesdropping       : 1;   /* see other player's private chat */
 
     /* Instance system */
     long                instance_id;            /* instance_id is unique per server restart */
