@@ -249,18 +249,6 @@ int command_gsay(object *op, char *params)
         }
     }
 
-    for (ol = gmaster_list_VOL; ol; ol = ol->next)
-    {
-        tmp = ol->objlink.ob;
-
-        if (op != tmp &&
-            CONTR(op)->group_leader != CONTR(tmp)->group_leader &&
-            CONTR(tmp)->eavesdropping)
-        {
-            new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_FLESH, 0, tmp, buf);
-        }
-    }
-
 #ifdef USE_CHANNELS
     sprintf(buf,"%c%c%s %s:%s",2,NDI_YELLOW, "Group", op->name, params);
     sockbuf = SOCKBUF_COMPOSE(BINARY_CMD_CHANNELMSG, NULL, buf, strlen(buf+2)+2, 0);
@@ -371,14 +359,13 @@ int command_tell(object *op, char *params)
     {
         if (pl->ob->name == name_hash)
         {
-            /* VOLs, GMs, and MMs eavesdrop on tells, but not those from
+            /* GMs and MMs eavesdrop on tells, but not those from
              * privacy-seeking MMs. Only way to find out/control various abuses
              * without giving many people access to the server logs (not an
              * option). */
             if (!(pl->privacy &&
                   pl->gmaster_mode == GMASTER_MODE_MM) &&
-                (gmaster_list_VOL ||
-                 gmaster_list_GM ||
+                (gmaster_list_GM ||
                  gmaster_list_MM))
             {
                 char        buf[MAX_BUF];
@@ -399,18 +386,6 @@ int command_tell(object *op, char *params)
                 }
 
                 for (ol = gmaster_list_GM; ol; ol = ol->next)
-                {
-                    object *tmp = ol->objlink.ob;
-
-                    if (op != tmp &&
-                        pl->ob != tmp &&
-                        CONTR(tmp)->eavesdropping)
-                    {
-                        new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_FLESH, 0, tmp, buf);
-                    }
-                }
-
-                for (ol = gmaster_list_VOL; ol; ol = ol->next)
                 {
                     object *tmp = ol->objlink.ob;
 
