@@ -175,7 +175,6 @@ CommArray_s CommandsVOL[] =
     {"kick",      command_kick,      0.0f, 1, 0},
     {"mute",      command_mute,      0.0f, 1, 0},
     {"ip",        command_ip,        0.0f, 1, 0},
-    {"eavesdrop", command_eavesdrop, 0.0f, 1, 0},
 };
 
 CommArray_s CommandsGM[] =
@@ -188,6 +187,7 @@ CommArray_s CommandsGM[] =
     {"ban",            command_ban,            0.0f, 1, 0},
     {"silence",        command_silence,        0.0f, 1, 0},
     {"gmasterfile",    command_gmasterfile,    0.0f, 1, 0},
+    {"eavesdrop",      command_eavesdrop,      0.0f, 1, 0},
 };
 
 CommArray_s CommandsMW[] =
