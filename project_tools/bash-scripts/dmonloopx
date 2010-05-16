@@ -9,30 +9,31 @@ maxrestart=500
 for (( logcount = 1; logcount < $maxrestart; logcount++ )); do
     echo "### Start the server." 1>&2
     rm -fr $serverdir/data/tmp/*
-    echo ">>> Starting Daimonin `date` for the $logcount time..." 1>$serverdir/data/log/$logcount 2>&1
     cd $serverdir
-    $CMDNAME -d 1>>$serverdir/data/log/$logcount 2>&1
+    $CMDNAME -d -log $serverdir/data/log/t$logcount,$serverdir/data/log/c$logcount
 
     retexe=$?
     echo ">>> We have $retexe as shutdown" 1>&2
-    echo ">>> We have $retexe as shutdown" 1>>$serverdir/data/log/$logcount 2>&1
+    echo ">>> We have $retexe as shutdown" 1>>$serverdir/data/log/t$logcount 2>&1
 
     # 127 comes from a badly critical error like a non existing daimonin_server binary and such
     if [ $retexe -eq 127 ]; then
-        echo ">>> Critical error!" 1>>$serverdir/data/log/$logcount 2>&1
+        echo ">>> Critical error!" 1>>$serverdir/data/log/t$logcount 2>&1
     # restart
     elif [ $retexe -eq 253 ]; then
-        echo ">>> Restart!" 1>>$serverdir/data/log/$logcount 2>&1
+        echo ">>> Restart!" 1>>$serverdir/data/log/t$logcount 2>&1
     # unknown
     elif [ $retexe -eq 254 ]; then
-        echo ">>> Unknown reason for shutdown!" 1>>$serverdir/data/log/$logcount 2>&1
+        echo ">>> Unknown reason for shutdown!" 1>>$serverdir/data/log/t$logcount 2>&1
     # server crashed in the startup
     elif [ $retexe -eq 255 ]; then
-        echo ">>> Crash at startup!" 1>>$serverdir/data/log/$logcount 2>&1
+        echo ">>> Crash at startup!" 1>>$serverdir/data/log/t$logcount 2>&1
     fi
 
-    gzip $serverdir/data/log/$logcount
-    mv $serverdir/data/log/$logcount.gz $logsdir/`/bin/date +%y%m%d_%H-%M-%S_%Z`-$retexe.gz
+    gzip $serverdir/data/log/c$logcount
+    mv $serverdir/data/log/c$logcount.gz $logsdir/`/bin/date +%y%m%d_%H-%M-%S_%Z`-$retexe-chat.gz
+    gzip $serverdir/data/log/t$logcount
+    mv $serverdir/data/log/t$logcount.gz $logsdir/`/bin/date +%y%m%d_%H-%M-%S_%Z`-$retexe-tech.gz
 
     if [ -f core ]; then
         mv $serverdir/core $serverdir/core.$logcount
