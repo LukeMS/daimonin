@@ -77,5 +77,6 @@ typedef enum LogLevel
  * modules.
  */
 extern void LOG(LogLevel logLevel, char *format, ...);
+extern void CHATLOG(char *format, ...);
 
 #endif /* LOGGER_H */

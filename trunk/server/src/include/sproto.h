@@ -276,7 +276,7 @@ void                        put_object_in_sack(object *const op, object *const s
 void                        drop_object(object *const op, object *tmp, const uint32 nrof);
 void                        drop(object *const op, object *const ori);
 /* daemon.c */
-FILE                       *BecomeDaemon(char *filename);
+void                        BecomeDaemon(char *tlogfilename, char *clogfilename);
 /* disease.c */
 int                         move_disease(object *disease);
 int                         remove_symptoms(object *disease);

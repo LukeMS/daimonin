@@ -188,7 +188,7 @@ int command_say(object *op, char *params)
     if (!params || !(params = cleanup_chat_string(params)))
         return 1;
 
-    LOG(llevInfo, "CLOG SAY:%s >%s<\n", query_name(op), params);
+    CHATLOG("SAY:%s >%s<\n", query_name(op), params);
     communicate(op, params);
 
     return 0;
@@ -216,7 +216,7 @@ int command_gsay(object *op, char *params)
         return 1;
 
     /* moved down, cause if whitespace is shouted, then no need to log it */
-    LOG(llevInfo,"CLOG GSAY:%s >%s<\n", query_name(op), params);
+    CHATLOG("GSAY:%s >%s<\n", query_name(op), params);
 
 #ifndef USE_CHANNELS
     strcpy(buf, op->name);
@@ -284,7 +284,7 @@ int command_shout(object *op, char *params)
         return 1;
 
     /* moved down, cause if whitespace is shouted, then no need to log it */
-    LOG(llevInfo,"CLOG SHOUT:%s >%s<\n", query_name(op), params);
+    CHATLOG("SHOUT:%s >%s<\n", query_name(op), params);
 
     strcpy(buf, op->name);
     strcat(buf, " shouts: ");
@@ -318,7 +318,7 @@ int command_tell(object *op, char *params)
     if (!params || !(params = cleanup_chat_string(params)))
         return 1;
 
-    LOG(llevInfo, "CLOG TELL:%s >%s<\n", query_name(op), params);
+    CHATLOG("TELL:%s >%s<\n", query_name(op), params);
     name = params;
     msg = strchr(name, ' ');
 

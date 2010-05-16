@@ -706,7 +706,7 @@ void sendChannelMessage(player *pl,struct player_channel *pl_channel, char *para
     sockbuf_struct *sockbuf;
     char buf[512]; /* Player commands can only be around 250chars, so with this value, we are on the safe side */
 
-    LOG(llevInfo, "CLOG CH:%s:%s >%s<\n", pl_channel->channel->name, pl->ob->name, params);
+    CHATLOG("CH:%s:%s >%s<\n", pl_channel->channel->name, pl->ob->name, params);
 
 #ifdef CHANNEL_HIST
     addChannelHist(pl_channel->channel, pl->ob->name, params, 0);
@@ -736,7 +736,7 @@ void sendChannelEmote(player *pl,struct player_channel *pl_channel, char *params
     sockbuf_struct *sockbuf;
     char buf[512]; /* Player commands can only be around 250chars, so with this value, we are on the safe side */
 
-    LOG(llevInfo, "CLOG CH:%s:%s >%s<\n", pl_channel->channel->name, pl->ob->name, params);
+    CHATLOG("CH:%s:%s >%s<\n", pl_channel->channel->name, pl->ob->name, params);
 
 #ifdef CHANNEL_HIST
     addChannelHist(pl_channel->channel, pl->ob->name, params, 1);
@@ -969,7 +969,7 @@ void lua_channel_message(char *channelname,  const char *name, char *message, in
             sockbuf_struct *sockbuf;
             char buf[HUGE_BUF];
 
-            LOG(llevInfo, "CLOG LUA-CH:%s:%s >%s<\n", channel->name, name, message);
+            CHATLOG("LUA-CH:%s:%s >%s<\n", channel->name, name, message);
 
             /* TODO: channel history */
 #ifdef CHANNEL_HIST
@@ -1073,7 +1073,7 @@ int command_channel_create(object *ob, char *params)
         }
         final_addChannel(channelname,defaultshortcut,channelcolor, channelpostlevel, channelenterlevel, channelgmastermode);
         new_draw_info_format(NDI_UNIQUE, 0, ob, "Channel %s is created.",channelname);
-        LOG(llevInfo, "CLOG Create:>%s<: %s, %d, %d\n", ob->name, channelname, channelpostlevel, channelenterlevel, channelgmastermode);
+        CHATLOG("Create:>%s<: %s, %d, %d\n", ob->name, channelname, channelpostlevel, channelenterlevel, channelgmastermode);
         save_channels();
     }
 
@@ -1100,7 +1100,7 @@ void forceAddPlayerToChannel(struct player_channel *cpl, char *params)
     final_addChannelToPlayer(pl, cpl->channel, 0);
     new_draw_info_format(NDI_UNIQUE, 0, cpl->pl->ob, "You added player %s to channel %s.",pl->ob->name, cpl->channel->name);
     new_draw_info_format(NDI_UNIQUE, 0, pl->ob, "You were added to channel %s by %s.",cpl->channel->name, cpl->pl->ob->name);
-    LOG(llevInfo, "CLOG Pl >%s< added pl %s to channel %s\n", cpl->pl->ob->name, pl->ob->name, cpl->channel->name);
+    CHATLOG("Pl >%s< added pl %s to channel %s\n", cpl->pl->ob->name, pl->ob->name, cpl->channel->name);
 
     return;
 
@@ -1128,7 +1128,7 @@ void kickPlayerFromChannel(struct player_channel *cpl, char *params)
     sprintf(buf, "You were kicked from channel %s by %s.", cpl->channel->name, cpl->pl->ob->name);
     removeChannelFromPlayer(pl, kick, buf);
     new_draw_info_format(NDI_UNIQUE, 0, cpl->pl->ob, "You kicked player %s from channel %s.",pl->ob->name, cpl->channel->name);
-    LOG(llevInfo, "CLOG Pl >%s< kicked pl %s from channel %s\n", cpl->pl->ob->name, pl->ob->name, cpl->channel->name);
+    CHATLOG("Pl >%s< kicked pl %s from channel %s\n", cpl->pl->ob->name, pl->ob->name, cpl->channel->name);
 
     return;
 
@@ -1234,7 +1234,7 @@ int command_channel_delete(object *ob, char *params)
            ch_ptr1->next=channel->next;
            new_draw_info_format(NDI_UNIQUE, 0, ob, "Channel '%s' deleted.",channel->name);
            free(channel);
-           LOG(llevInfo, "CLOG Delete:>%s<: %s\n", ob->name, params);
+           CHATLOG("Delete:>%s<: %s\n", ob->name, params);
            save_channels();
            return 0;
         }
@@ -1383,7 +1383,7 @@ void sendChannelHist(struct player_channel *cpl, int lines)
         i++;
 
     }
-    LOG(llevInfo, "CLOG Pl >%s< called chan-hist from %s and got %d msg\n", cpl->pl->ob->name, cpl->channel->name, (i-1));
+    CHATLOG("Pl >%s< called chan-hist from %s and got %d msg\n", cpl->pl->ob->name, cpl->channel->name, (i-1));
 
     return;
 }

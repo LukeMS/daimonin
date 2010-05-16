@@ -63,21 +63,34 @@ extern int  errno;
 #include <stdio.h>
 #include <sys/file.h>
 
-FILE * BecomeDaemon(char *filename)
+void BecomeDaemon(char *tlogfilename, char *clogfilename)
 {
-    FILE   *logfile;
     register int i;
     int forkresult;
 
-    if ((logfile = fopen(filename, "a")) == NULL)
+    if (!(tlogfile = fopen(tlogfilename, "a")))
     {
-        printf("Couldn't create logfile %s.\n", filename);
+        printf("Couldn't create tlogfile %s.\n", tlogfilename);
         exit(0);
     }
-    fputs("\n========================\n", logfile);
-    fputs("Begin New Server Session\n", logfile);
-    fputs("========================\n\n", logfile);
-    fflush(logfile);
+
+    if (strcmp(tlogfilename, clogfilename))
+    {
+        if (!(clogfile = fopen(clogfilename, "a")))
+        {
+            printf("Couldn't create clogfile %s.\n", clogfilename);
+            exit(0);
+        }
+    }
+    else
+    {
+        clogfile = tlogfile;
+    }
+
+    fputs("\n========================\n", tlogfile);
+    fputs("Begin New Server Session\n", tlogfile);
+    fputs("========================\n\n", tlogfile);
+    fflush(tlogfile);
     /*
      * fork so that the process goes into the background automatically. Also
      * has a nice side effect of having the child process get inherited by
@@ -140,5 +153,4 @@ FILE * BecomeDaemon(char *filename)
     setpgrp(0, getpid());
 #  endif
 #endif
-    return(logfile);
 }

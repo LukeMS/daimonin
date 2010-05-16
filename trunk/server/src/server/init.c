@@ -34,7 +34,8 @@ struct Settings settings    =
     0,                      /* mute level = if set players below this level can't shout*/
     TRUE,                   /* login_allow */
     "",                     /* login_ip */
-    "",                     /* logfile to use */
+    "",                     /* tlogfile to use */
+    "",                     /* clogfile to use */
     CSPORT,                 /* Client/server port */
     GLOBAL_LOG_LEVEL,       /* Default debugging level */
     0,                      /* Set to dump various values/tables */
@@ -207,14 +208,24 @@ void set_pticks_time(long t)
 
 static void init_globals()
 {
-    if (settings.logfilename[0] == 0)
+    if (settings.tlogfilename[0] == 0)
     {
-        logfile = stderr;
+        tlogfile = stderr;
     }
-    else if ((logfile = fopen(settings.logfilename, "w")) == NULL)
+    else if ((tlogfile = fopen(settings.tlogfilename, "w")) == NULL)
     {
-        logfile = stderr;
-        LOG(llevInfo, "Unable to open %s as the logfile - will use stderr instead\n", settings.logfilename);
+        tlogfile = stderr;
+        LOG(llevInfo, "Unable to open %s as the tlogfile - will use stderr instead\n", settings.tlogfilename);
+    }
+
+    if (settings.clogfilename[0] == 0)
+    {
+        clogfile = tlogfile;
+    }
+    else if ((clogfile = fopen(settings.clogfilename, "w")) == NULL)
+    {
+        clogfile = tlogfile;
+        LOG(llevInfo, "Unable to open %s as the clogfile - will use tlogfile instead\n", settings.clogfilename);
     }
 
     level_up_arch = NULL;
@@ -561,7 +572,15 @@ static void init_clocks()
 
 static void set_logfile(char *val)
 {
-    settings.logfilename = val;
+    char *cp = strchr(val, ',');
+
+    if (cp)
+    {
+        *cp++ = '\0';
+    }
+
+    settings.tlogfilename = val;
+    settings.clogfilename = (cp && strcmp(val, cp)) ? cp : "";
 }
 
 static void call_version()
@@ -710,8 +729,9 @@ static void help()
     LOG(llevInfo, " -detach     The server will go in the background, closing all\n");
     LOG(llevInfo, "             connections to the tty.\n");
     LOG(llevInfo, " -h          Display this information.\n");
-    LOG(llevInfo, " -log <file> Specifies which file to send output to.\n");
-    LOG(llevInfo, "             Only has meaning if -detach is specified.\n");
+    LOG(llevInfo, " -log <file>[,<file] Specifies which file(s) to send output to.\n");
+    LOG(llevInfo, "                     The first file is for technical logs, the second for chat logs.\n");
+    LOG(llevInfo, "                     If only one is specified, all messages are logged together.\n");
     LOG(llevInfo, " -mon        Turns on monster debugging.\n");
     LOG(llevInfo, " -o          Prints out info on what was defined at compile time.\n");
     LOG(llevInfo, " -stat_loss_on_death - if set, player loses stat when they die\n");
@@ -1074,7 +1094,7 @@ void compile_info()
 
     LOG(llevInfo, "Max_time:\t%d (%f)\n", pticks_ums, pticks_second);
 
-    LOG(llevInfo, "Logfilename:\t%s (llev:%d)\n", settings.logfilename, settings.debug);
+    LOG(llevInfo, "Tlogfilename:\t%s, Clogfilename:\t%s (llev:%d)\n", settings.tlogfilename, settings.clogfilename, settings.debug);
     LOG(llevInfo, "ObjectSize:\t%d (living: %d)\n", sizeof(object), sizeof(living));
     LOG(llevInfo, "MapStructSize:\t%d\n", sizeof(mapstruct));
     LOG(llevInfo, "MapSpaceSize:\t%d\n", sizeof(MapSpace));
@@ -1198,7 +1218,7 @@ static void parse_args(int argc, char *argv[], int pass)
                     {
                         if (options[i].num_args == 1)
                             options[i].func(argv[on_arg + 1]);
-                        if (options[i].num_args == 2)
+                        else if (options[i].num_args == 2)
                             options[i].func(argv[on_arg + 1], argv[on_arg + 2]);
                         on_arg += options[i].num_args + 1;
                     }
@@ -1302,7 +1322,8 @@ void init(int argc, char **argv)
     (void) umask(0);    /* We don't want to be affected by players' umask */
 
     init_done = 0;      /* Must be done before init_signal() */
-    logfile = stderr;
+    tlogfile = stderr;
+    clogfile = stderr;
 
     parse_args(argc, argv, 1);  /* First arg pass - right now it does
                                  * nothing, but in future specifying the
@@ -1330,7 +1351,10 @@ void init(int argc, char **argv)
 
 #ifndef WIN32 /* ***win32: no BecomeDaemon in windows */
     if (settings.daemonmode)
-        logfile = BecomeDaemon(settings.logfilename[0] == '\0' ? "logfile" : settings.logfilename);
+    {
+        BecomeDaemon((!settings.tlogfilename[0]) ? "tlogfile" : settings.tlogfilename,
+                     (!settings.clogfilename[0]) ? "clogfile" : settings.clogfilename);
+    }
 #endif
 
     init_beforeplay();

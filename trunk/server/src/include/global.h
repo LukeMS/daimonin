@@ -450,7 +450,8 @@ typedef struct Settings
     int                             mutelevel;          /* default FALSE - if TRUE player < level 2 can't shout */
     int                             login_allow;        /* if set to FALSE, login_ip is checked */
     char                           *login_ip;           /* ip for login_allow */
-    char                           *logfilename;        /* logfile to use */
+    char                           *tlogfilename;       /* tlogfile to use */
+    char                           *clogfilename;       /* clogfile to use */
     uint16                          csport;             /* port for new client/server */
     LogLevel                        debug;              /* Default debugging level */
     uint8                           dumpvalues;         /* Set to dump various values/tables */
@@ -600,7 +601,8 @@ EXTERN uint32                   pticks_player_idle2;
 /*
  * Misc global variables:
  */
-EXTERN FILE                    *logfile;            /* Used by server/daemon.c */
+EXTERN FILE                    *tlogfile;           /* Used by server/daemon.c */
+EXTERN FILE                    *clogfile;           /* Used by server/daemon.c */
 EXTERN int                      exiting;            /* True if the game is about to exit */
 EXTERN long                     nroftreasures;      /* Only used in malloc_info() */
 EXTERN long                     nrofartifacts;      /* Only used in malloc_info() */

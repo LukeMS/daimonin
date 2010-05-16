@@ -31,31 +31,85 @@ static char log_buf[256*1024];
 #define TIMESTAMP_INTERVAL 600
 static struct timeval last_timestamp = {0, 0};
 
-/* Pull out common printing code from LOG */
-void do_print(char *buf)
-{
-#ifdef WIN32 /* ---win32 change log handling for win32 */
-    if (logfile)
-        fputs(buf, logfile);    /* wrote to file or stdout */
-    else
-        fputs(buf, stderr);
+static void CheckTimestamp(void);
+static void DoPrint(char *buf, FILE *fp);
 
-#ifdef DEBUG                /* if we have a debug version, we want see ALL output */
-    if (logfile)
-        fflush(logfile);    /* so flush this! We need this because we don't have added a exception/signal handler for win32 */
+#if 0
+/* force_timestamp can be called to force a timestamp on the
+ * next logged message, regardless of the time since the last
+ * one. This could be used for an event where an
+ * accurate time of occurrence is needed. For example, call
+ * this before logging a player login/logout if required.
+ * The call could be enclosed in a #ifdef to control this
+ * with a #define, of course. */
+ void force_timestamp()
+ {
+     last_timestamp.tv_sec = 0;
+ }
 #endif
-    if (logfile && logfile != stderr)   /* if was it a logfile wrote it to screen too */
-        fputs(buf, stderr);
-#else
-    if (logfile)
-        fputs(buf, logfile);
-    else
-        fputs(buf, stderr);
+
+/* Logs a message to tlogfile.
+ *
+ * See include/logger.h for possible logLevels.  Messages with llevSystem
+ * and llevError are always printed, regardless of debug mode. */
+void LOG(LogLevel logLevel, char *format, ...)
+{
+    /* Check if timestamp needed */
+    CheckTimestamp();
+
+    if (logLevel <= settings.debug ||
+        logLevel == llevSystem ||
+        logLevel == llevError)
+    {
+        va_list ap;
+
+        va_start(ap, format);
+        vsprintf(log_buf, format, ap);
+        va_end(ap);
+        DoPrint(log_buf, tlogfile);
+
+#ifdef _TESTSERVER
+        /* Mapbugs are broadcasted on the test server */
+        if (logLevel == llevMapbug)
+        {
+            new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_ALL | NDI_RED, 5, NULL,
+                          log_buf);
+        }
 #endif
+    }
+
+    if (logLevel == llevError)
+    {
+        exiting = 1;
+        DoPrint("Fatal: Shutdown server. Reason: Fatal Error\n", tlogfile);
+        fatal_signal(0, 1);
+    }
+    else if (logLevel == llevBug &&
+             ++nroferrors > MAX_ERRORS)
+    {
+        exiting = 1;
+        DoPrint("Fatal: Shutdown server. Reason: BUG flood\n", tlogfile);
+        fatal_signal(0, 1);
+    }
+}
+
+/* Logs a message to clogfile.  */
+void CHATLOG(char *format, ...)
+{
+    if (llevInfo <= settings.debug)
+    {
+        va_list ap;
+
+        sprintf(log_buf, "%s", (clogfile == tlogfile) ? "CLOG " : "");
+        va_start(ap, format);
+        vsprintf(strchr(log_buf, '\0'), format, ap);
+        va_end(ap);
+        DoPrint(log_buf, clogfile);
+    }
 }
 
 /* Check if timestamp is due */
-void check_timestamp()
+static void CheckTimestamp(void)
 {
     struct timeval   now;
     struct tm       *tim;
@@ -71,69 +125,36 @@ void check_timestamp()
         sprintf(buf, "\n*** TIMESTAMP: %4d-%02d-%02d %02d:%02d:%02d ***\n\n",
             tim->tm_year+1900, tim->tm_mon+1, tim->tm_mday,
             tim->tm_hour, tim->tm_min, tim->tm_sec);
-        do_print(buf);
+        DoPrint(buf, tlogfile);
     }
 }
 
-/* force_timestamp can be called to force a timestamp on the
- * next logged message, regardless of the time since the last
- * one. This could be used for an event where an
- * accurate time of occurrence is needed. For example, call
- * this before logging a player login/logout if required.
- * The call could be enclosed in a #ifdef to control this
- * with a #define, of course.
- */
- void force_timestamp()
- {
-     last_timestamp.tv_sec = 0;
- }
-
-/*
- * Logs a message to stderr, or to file, and/or even to socket.
- * Or discards the message if it is of no importanse, and none have
- * asked to hear messages of that logLevel.
- *
- * See include/logger.h for possible logLevels.  Messages with llevSystem
- * and llevError are always printed, regardless of debug mode.
- */
-
-void LOG(LogLevel logLevel, char *format, ...)
+/* Pull out common printing code. */
+static void DoPrint(char *buf, FILE *fp)
 {
-    static int  fatal_error = FALSE;
-
-    va_list     ap;
-    va_start(ap, format);
-
-    /* Check if timestamp needed */
-    check_timestamp();
-
-    log_buf[0] = '\0';
-    if (logLevel <= settings.debug)
+    if (fp)
     {
-        vsprintf(log_buf, format, ap);
-        do_print(log_buf);
+        fputs(buf, fp);
+    }
+    else
+    {
+        fputs(buf, stderr);
+    }
 
-        /* Mapbugs are broadcasted on the test server */
-
-#ifdef _TESTSERVER
-        if(logLevel == llevMapbug)
-            new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_ALL | NDI_RED, 5, NULL, log_buf);
+#ifdef WIN32 /* ---win32 change log handling for win32 */
+#ifdef DEBUG                /* if we have a debug version, we want see ALL output */
+    if (fp)
+    {
+        fflush(fp);    /* so flush this! We need this because we don't have added a exception/signal handler for win32 */
+    }
 #endif
-    }
 
-    va_end(ap);
-
-    if (logLevel == llevBug)
-        ++nroferrors;
-
-    if (nroferrors > MAX_ERRORS || logLevel == llevError)
+    /* if it was a logfile wrote it to screen too */
+    if (fp &&
+        fp != stderr)
     {
-        exiting = 1;
-        if (fatal_error == FALSE)
-        {
-            fatal_error = TRUE;
-            LOG(llevSystem, "Fatal: Shutdown server. Reason: %s\n", logLevel == llevError ? "Fatal Error" : "BUG flood");
-            fatal_signal(0,1);
-        }
+        fputs(buf, stderr);
     }
+#endif
 }
+
