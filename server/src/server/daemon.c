@@ -63,29 +63,10 @@ extern int  errno;
 #include <stdio.h>
 #include <sys/file.h>
 
-void BecomeDaemon(char *tlogfilename, char *clogfilename)
+void become_daemon(void)
 {
     register int i;
     int forkresult;
-
-    if (!(tlogfile = fopen(tlogfilename, "a")))
-    {
-        printf("Couldn't create tlogfile %s.\n", tlogfilename);
-        exit(0);
-    }
-
-    if (strcmp(tlogfilename, clogfilename))
-    {
-        if (!(clogfile = fopen(clogfilename, "a")))
-        {
-            printf("Couldn't create clogfile %s.\n", clogfilename);
-            exit(0);
-        }
-    }
-    else
-    {
-        clogfile = tlogfile;
-    }
 
     fputs("\n========================\n", tlogfile);
     fputs("Begin New Server Session\n", tlogfile);

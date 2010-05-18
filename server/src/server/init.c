@@ -88,6 +88,8 @@ struct Command_Line_Options
                                                  */
 };
 
+static void CreateLogfiles(const char *tlogfilename, const char *clogfilename,
+                           const char *mode, const uint8 llev);
 
 /*
  * Initialises global variables which can be changed by options.
@@ -208,26 +210,6 @@ void set_pticks_time(long t)
 
 static void init_globals()
 {
-    if (settings.tlogfilename[0] == 0)
-    {
-        tlogfile = stderr;
-    }
-    else if ((tlogfile = fopen(settings.tlogfilename, "w")) == NULL)
-    {
-        tlogfile = stderr;
-        LOG(llevInfo, "Unable to open %s as the tlogfile - will use stderr instead\n", settings.tlogfilename);
-    }
-
-    if (settings.clogfilename[0] == 0)
-    {
-        clogfile = tlogfile;
-    }
-    else if ((clogfile = fopen(settings.clogfilename, "w")) == NULL)
-    {
-        clogfile = tlogfile;
-        LOG(llevInfo, "Unable to open %s as the clogfile - will use tlogfile instead\n", settings.clogfilename);
-    }
-
     level_up_arch = NULL;
     arch_cmp = 0;       /* How many strcmp's */
     arch_search = 0;    /* How many searches */
@@ -1329,6 +1311,25 @@ void init(int argc, char **argv)
                                  * nothing, but in future specifying the
                                  * LibDir in this pass would be reasonable
                                  */
+    parse_args(argc, argv, 2);
+
+#ifndef WIN32 /* ***win32: no BecomeDaemon in windows */
+    if (settings.daemonmode)
+    {
+        CreateLogfiles((!settings.tlogfilename[0]) ? "tlog" : settings.tlogfilename,
+                       (!settings.clogfilename[0]) ? "clog" : settings.clogfilename,
+                       "a", llevError);
+        become_daemon();
+    }
+    else
+    {
+        CreateLogfiles(settings.tlogfilename, settings.clogfilename, "w",
+                       llevInfo);
+    }
+#else
+    CreateLogfiles(settings.tlogfilename, settings.clogfilename, "w",
+                   llevInfo);
+#endif
 
     init_library();             /* Must be called early */
     load_settings();            /* Load the settings file */
@@ -1338,25 +1339,12 @@ void init(int argc, char **argv)
         tadtick--;
 
     tick_tadclock();
-    parse_args(argc, argv, 2);
-
-
     SRANDOM((uint32)time(NULL));
     global_map_tag = (uint32) RANDOM();
-
     init_signals();     /* Sets up signal interceptions */
     init_commands();    /* Sort command tables */
     read_map_log();     /* Load up the old temp map files */
     parse_args(argc, argv, 3);
-
-#ifndef WIN32 /* ***win32: no BecomeDaemon in windows */
-    if (settings.daemonmode)
-    {
-        BecomeDaemon((!settings.tlogfilename[0]) ? "tlogfile" : settings.tlogfilename,
-                     (!settings.clogfilename[0]) ? "clogfile" : settings.clogfilename);
-    }
-#endif
-
     init_beforeplay();
     init_ericserver();
 #ifdef SERVER_SEND_FACES
@@ -1373,6 +1361,60 @@ void init(int argc, char **argv)
     init_instance_system();
     init_done = 1;
     parse_args(argc, argv, 4);
+}
+
+static void CreateLogfiles(const char *tlogfilename, const char *clogfilename,
+                           const char *mode, const uint8 llev)
+{
+    if (*tlogfilename)
+    {
+        char buf[MAX_BUF];
+
+        if (!strchr(tlogfilename, '/'))
+        {
+            sprintf(buf, "%s/log/%s", settings.localdir, tlogfilename);
+        }
+        else
+        {
+            sprintf(buf, "%s", tlogfilename);
+        }
+
+        if (!(tlogfile = fopen(buf, mode)))
+        {
+            tlogfile = stderr;
+            LOG(llev, "Unable to open '%s' as the tlogfile!\n",
+                buf);
+        }
+    }
+    else
+    {
+        tlogfile = stderr;
+    }
+
+    if (*clogfilename)
+    {
+        char buf[MAX_BUF];
+
+        if (!strchr(clogfilename, '/'))
+        {
+            sprintf(buf, "%s/log/%s", settings.localdir, clogfilename);
+        }
+        else
+        {
+            sprintf(buf, "%s", clogfilename);
+        }
+
+        if (!(clogfile = fopen(buf, mode)))
+        {
+            clogfile = tlogfile;
+            LOG(llev, "Unable to open '%s' as the clogfile!\n",
+                 buf);
+        }
+    }
+    else
+    {
+        clogfile = tlogfile;
+    }
 }
 
 void free_lists_and_tables()
