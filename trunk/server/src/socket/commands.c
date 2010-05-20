@@ -1317,16 +1317,23 @@ void cs_cmd_addme(char *buf, int len, NewSocket *ns)
         /* small trick - we use the socket player relink to point to the new player struct from login_player */
         pl = ns->pl;
         ns->pl = NULL;
-
         /*LOG(llevNoLog,"Socket: pl->socket: %x fd:%d :: ns: %x fd:%d\n", &pl->socket, pl->socket.fd, ns, ns->fd);*/
     }
 
     FREE_AND_CLEAR_HASH(hash_name); /* clear this reference */
 
-    /* now check the login was a success or not */
-    if ( error_msg != ADDME_MSG_OK )
+    if (clogfile != tlogfile)
     {
-        LOG(llevDebug, "ADDMEFAIL: login failed for %s on accout %s with error %d\n", buf, ns->pl_account.name, error_msg);
+        CHATLOG("LOGIN: IP >%s< Account >%s< Player >%s<... %s!\n",
+                ns->ip_host, (!pl) ? ns->pl_account.name : pl->account_name,
+                buf, (error_msg == ADDME_MSG_BANNED) ? "BANNED" :
+                ((error_msg == ADDME_MSG_OK) ? "OK" : "FAILED/ABORTED"));
+    }
+
+    /* now check the login was a success or not */
+    if (error_msg != ADDME_MSG_OK)
+    {
+        LOG(llevDebug, "ADDMEFAIL: login failed for %s on account %s with error %d\n", buf, ns->pl_account.name, error_msg);
         player_addme_failed(ns, error_msg);
     }
     else
