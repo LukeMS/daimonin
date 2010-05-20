@@ -10,7 +10,7 @@ for (( logcount = 1; logcount < $maxrestart; logcount++ )); do
     echo "### Start the server." 1>&2
     rm -fr $serverdir/data/tmp/*
     cd $serverdir
-    $CMDNAME -d -log $serverdir/data/log/t$logcount,$serverdir/data/log/c$logcount
+    $CMDNAME -d -log ,c$logcount 2>$serverdir/data/log/t$logcount
 
     retexe=$?
     echo ">>> We have $retexe as shutdown" 1>&2
