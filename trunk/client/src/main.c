@@ -347,25 +347,6 @@ static void         flip_screen(void);
 static void         show_intro(char *text, int progress);
 static void         delete_player_lists(void);
 
-/* Ensures that the username doesn't contain any invalid character */
-static int is_username_valid(const char *name)
-{
-    int i;
-
-    for (i=0; i< (int)strlen(name); i++)
-    {
-        if (name[i]!= '-' && !(((name[i] <= 90) && (name[i]>=65))||((name[i] >= 97) && (name[i]<=122))))
-            return 0;
-    }
-    return 1;
-}
-
-/* Ensures that the accountname doesn't contain any invalid character */
-static int is_accountname_valid(const char *name)
-{
-    return 1;
-}
-
 static void delete_player_lists(void)
 {
     int i, ii;
@@ -1007,23 +988,20 @@ Boolean game_status_chain(void)
                 GameStatus = GAME_STATUS_LOGIN_BREAK;
             else if (InputStringFlag == FALSE && InputStringEndFlag == TRUE)
             {
-                if (is_accountname_valid(InputString))
+                if (!account_name_valid(InputString))
                 {
-                    /* ensure a valid name */
-                    strncpy(cpl.acc_name, InputString,MAX_ACCOUNT_NAME);
-                    cpl.acc_name[MAX_ACCOUNT_NAME] = 0;
-
+                    dialog_login_warning_level = DIALOG_LOGIN_WARNING_NAME_WRONG;
+                    InputStringFlag = TRUE;
+                    InputStringEndFlag = FALSE;
+                }
+                else
+                {
+                    sprintf(cpl.acc_name, "%s", InputString);
                     dialog_login_warning_level = DIALOG_LOGIN_WARNING_NONE;
                     LOG(LOG_MSG,"Account Login: send name %s\n", cpl.acc_name);
                     client_send_checkname(cpl.acc_name);
                     reset_input_mode();
                     GameStatus = GAME_STATUS_LOGIN_WAIT_NAME; /* wait for response of server */
-                }
-                else
-                {
-                    dialog_login_warning_level = DIALOG_LOGIN_WARNING_NAME_WRONG;
-                    InputStringFlag=TRUE;
-                    InputStringEndFlag=FALSE;
                 }
             }
         }
@@ -1053,9 +1031,7 @@ Boolean game_status_chain(void)
                 }
                 else
                 {
-                    int pwd_len = strlen(InputString);
-
-                    if (pwd_len < MIN_ACCOUNT_PASSWORD || pwd_len > MAX_ACCOUNT_PASSWORD)
+                    if (!password_valid(InputString))
                     {
                         dialog_login_warning_level = DIALOG_LOGIN_WARNING_PWD_SHORT;
                         cpl.password[0] = 0;
@@ -1070,8 +1046,7 @@ Boolean game_status_chain(void)
                     }
                     else
                     {
-                        strncpy(cpl.password, InputString, MAX_ACCOUNT_PASSWORD);
-                        cpl.password[MAX_ACCOUNT_PASSWORD] = 0;
+                        sprintf(cpl.password, "%s", InputString);
                         /* lets type the user the password once more to ensure there is no typo */
                         LoginInputStep = LOGIN_STEP_PASS2;
                         dialog_login_warning_level = DIALOG_LOGIN_WARNING_NONE;
@@ -1106,11 +1081,8 @@ Boolean game_status_chain(void)
                 GameStatus = GAME_STATUS_LOGIN_BREAK;
             else if (InputStringFlag == FALSE && InputStringEndFlag == TRUE)
             {
-                int pwd_len = strlen(InputString);
-
                 /* we don't want that the server things we cheat - so check it here */
-                if (!is_accountname_valid(InputString)
-                    || pwd_len < MIN_ACCOUNT_NAME || pwd_len > MAX_ACCOUNT_NAME)
+                if (!account_name_valid(InputString))
                 {
                     dialog_login_warning_level = DIALOG_LOGIN_WARNING_NAME_WRONG;
                     cpl.acc_name[0] = 0;
@@ -1118,9 +1090,7 @@ Boolean game_status_chain(void)
                 }
                 else
                 {
-                    strncpy(cpl.acc_name, InputString,MAX_ACCOUNT_NAME);
-                    cpl.acc_name[MAX_ACCOUNT_NAME] = 0;
-
+                    sprintf(cpl.acc_name, "%s", InputString);
                     dialog_login_warning_level = DIALOG_LOGIN_WARNING_NONE;
                     cpl.password[0] = 0;
                     open_input_mode(MAX_ACCOUNT_PASSWORD);
@@ -1145,10 +1115,8 @@ Boolean game_status_chain(void)
                 GameStatus = GAME_STATUS_LOGIN_BREAK;
             else if (InputStringFlag == FALSE && InputStringEndFlag == TRUE)
             {
-                int pwd_len = strlen(InputString);
-
                 /* we don't want that the server things we cheat - so check it here */
-                if (pwd_len < MIN_ACCOUNT_PASSWORD || pwd_len > MAX_ACCOUNT_PASSWORD)
+                if (!password_valid(InputString))
                 {
                     dialog_login_warning_level = DIALOG_LOGIN_WARNING_PWD_SHORT;
                     cpl.password[0] = 0;
@@ -1156,9 +1124,7 @@ Boolean game_status_chain(void)
                 }
                 else
                 {
-                    strncpy(cpl.password, InputString, MAX_ACCOUNT_PASSWORD);
-                    cpl.password[MAX_ACCOUNT_PASSWORD] = 0;
-
+                    sprintf(cpl.password, "%s", InputString);
                     /* Now send name & pass to server and wait for the account data */
                     reset_input_mode();
                     GameStatus = GAME_STATUS_LOGIN_WAIT;
@@ -1242,10 +1208,8 @@ Boolean game_status_chain(void)
         }
         else if (InputStringFlag == FALSE && InputStringEndFlag == TRUE)
         {
-            int name_len = strlen(InputString);
-
             /* we don't want that the server things we cheat - so check it here */
-            if (!is_username_valid(InputString) || name_len < MIN_PLAYER_NAME || name_len > MAX_PLAYER_NAME)
+            if (!player_name_valid(InputString))
             {
                 /* tell player about the problem and let him try again */
                 dialog_new_char_warn = 1; /* = name must min/max */
@@ -1253,9 +1217,7 @@ Boolean game_status_chain(void)
             }
             else /* we have a valid name... now let the server decide to create or deny this char */
             {
-                strncpy(cpl.name, InputString, MAX_PLAYER_NAME);
-                cpl.name[MAX_PLAYER_NAME] = 0;
-
+                sprintf(cpl.name, "%s", InputString);
                 dialog_new_char_warn = 0; /* = name must min/max */
                 LoginInputStep = LOGIN_STEP_NOTHING;
                 /* Now send name & pass to server and wait for the account data */
