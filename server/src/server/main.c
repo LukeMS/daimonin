@@ -584,6 +584,8 @@ void leave(player *pl, int draw_exit)
 {
     if (pl != NULL)
     {
+        char buf[MAX_BUF];
+
         /* We do this so that the socket handling routine can do the final
          * cleanup.  We also leave that loop to actually handle the freeing
          * of the data.
@@ -607,7 +609,14 @@ void leave(player *pl, int draw_exit)
         container_unlink(pl, NULL);
 
         pl->socket.status = Ns_Dead;
-        LOG(llevInfo, "LOGOUT: >%s< from ip %s\n", query_name(pl->ob), pl->socket.ip_host);
+        sprintf(buf, "LOGOUT: IP >%s< Account >%s< Player >%s<!\n",
+                pl->socket.ip_host, pl->account_name, query_name(pl->ob));
+        LOG(llevInfo, buf);
+
+        if (clogfile != tlogfile)
+        {
+            CHATLOG(buf);
+        }
 
         if (pl->ob->map)
         {
