@@ -49,9 +49,6 @@ error - Your ANSI C compiler should be defining __STDC__;
 
 #include <debug.h> /* global & explicit debug settings */
 
-#define FONTDIR ""
-#define FONTNAME ""
-
 /* Decstations have trouble with fabs()... */
 #define FABS(x) ((x)<0?-(x):(x))
 #define abs(x) ((x)<0?-(x):(x))
