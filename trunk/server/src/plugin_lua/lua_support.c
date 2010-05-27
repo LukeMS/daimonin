@@ -393,7 +393,7 @@ static int set_attribute(lua_State *L, lua_object *obj, struct attribute_decl *a
 /* Extended variant of luaL_typerror that is aware of our object model */
 static inline void param_type_err(lua_State *L, int pos, const char *expected)
 {
-    static char buf[64];
+    static char buf[TINY_BUF];
 
     lua_object *obj = lua_touserdata(L, pos);
     sprintf(buf, "%s expected, got %s", expected, obj ? obj->class->name : lua_typename(L, lua_type(L, pos)));

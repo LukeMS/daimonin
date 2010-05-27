@@ -75,14 +75,14 @@ static void init_archetype_pointers()
 static void init_treasures(FILE *fp)
 {
     static treasurelist    *previous = NULL; /* important, we call this now recursive */
-    char                    buf[MAX_BUF], name[MAX_BUF];
+    char                    buf[MEDIUM_BUF], name[MEDIUM_BUF];
     treasurelist           *tl_tmp;
     treasure               *t;
     int                     t_style, a_chance;
     char                    dummy[10];
 
 
-    while (fgets(buf, MAX_BUF, fp) != NULL)
+    while (fgets(buf, MEDIUM_BUF, fp) != NULL)
     {
         if (*buf == '#' || *buf == '\n' || *buf == '\r')
             continue;
@@ -253,7 +253,7 @@ static void traverse_treasures_files(char* start_dir)
 void load_treasures(void)
 {
     FILE                   *fp;
-    char                    filename[MAX_BUF];
+    char                    filename[MEDIUM_BUF];
     treasurelist           *previous = NULL;
 
     /* load default treasure list file from /lib */
@@ -340,13 +340,13 @@ static void create_money_table(void)
 
 static treasure * load_treasure(FILE *fp, int *t_style, int *a_chance)
 {
-    char        buf[MAX_BUF], *cp=NULL, variable[MAX_BUF];
+    char        buf[MEDIUM_BUF], *cp=NULL, variable[MEDIUM_BUF];
     treasure   *t   = get_empty_treasure();
     int         value;
     int         start_marker = 0, t_style2, a_chance2;
 
     nroftreasures++;
-    while (fgets(buf, MAX_BUF, fp) != NULL)
+    while (fgets(buf, MEDIUM_BUF, fp) != NULL)
     {
         if (*buf == '#')
             continue;
@@ -2242,7 +2242,7 @@ void dump_monster_treasure_rec(const char *name, treasure *t, int depth)
 
 void fix_flesh_item(object *item, object *donor)
 {
-    char    tmpbuf[MAX_BUF];
+    char    tmpbuf[MEDIUM_BUF];
     int     i;
 
     if (item->type == FLESH && donor)

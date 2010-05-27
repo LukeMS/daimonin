@@ -197,7 +197,7 @@ int command_say(object *op, char *params)
 
 int command_gsay(object *op, char *params)
 {
-    char            buf[MAX_BUF];
+    char            buf[MEDIUM_BUF];
     objectlink     *ol;
     object         *tmp;
 #ifdef USE_CHANNELS
@@ -221,8 +221,8 @@ int command_gsay(object *op, char *params)
 #ifndef USE_CHANNELS
     strcpy(buf, op->name);
     strcat(buf, " (group): ");
-    strncat(buf, params, MAX_BUF - 30);
-    buf[MAX_BUF - 30] = '\0';
+    strncat(buf, params, MEDIUM_BUF - 30);
+    buf[MEDIUM_BUF - 30] = '\0';
 #endif
 
     for (ol = gmaster_list_MM; ol; ol = ol->next)
@@ -270,7 +270,7 @@ int command_gsay(object *op, char *params)
 
 int command_shout(object *op, char *params)
 {
-    char    buf[MAX_BUF];
+    char    buf[MEDIUM_BUF];
 #ifdef PLUGINS
     int     evtid;
     CFParm  CFP;
@@ -288,8 +288,8 @@ int command_shout(object *op, char *params)
 
     strcpy(buf, op->name);
     strcat(buf, " shouts: ");
-    strncat(buf, params, MAX_BUF - 30);
-    buf[MAX_BUF - 30] = '\0';
+    strncat(buf, params, MEDIUM_BUF - 30);
+    buf[MEDIUM_BUF - 30] = '\0';
     new_draw_info(NDI_SHOUT | NDI_PLAYER | NDI_UNIQUE | NDI_ALL | NDI_ORANGE, 1, NULL, buf);
 #ifdef PLUGINS
     /* GROS : Here we handle the SHOUT global event */
@@ -368,7 +368,7 @@ int command_tell(object *op, char *params)
                 (gmaster_list_GM ||
                  gmaster_list_MM))
             {
-                char        buf[MAX_BUF];
+                char        buf[MEDIUM_BUF];
                 objectlink *ol;
 
                 sprintf(buf, "%s tells %s: %s", op->name, pl->ob->name, msg);

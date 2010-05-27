@@ -390,7 +390,7 @@ void tick_tadclock(void)
  * reset every time the server reboots. */
 void write_tadclock(void)
 {
-    char  filename[MAX_BUF];
+    char  filename[MEDIUM_BUF];
     FILE *fp;
 
     LOG(llevInfo, "write tadclock()...\n");

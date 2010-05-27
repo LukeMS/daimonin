@@ -43,9 +43,9 @@ account_status account_save(Account *ac, const char *name)
 {
     int i;
     FILE *fp;
-    char filename[MAX_BUF];
-    char filepath[MAX_BUF];
-    char tmpfilename[MAX_BUF];
+    char filename[MEDIUM_BUF];
+    char filepath[MEDIUM_BUF];
+    char tmpfilename[MEDIUM_BUF];
 
     sprintf(filepath, "%s/%s/%s/%s", settings.localdir, settings.accountdir, get_subdir(name), name);
     sprintf(filename, "%s/%s.acc", filepath, name);    
@@ -128,7 +128,7 @@ account_status account_load(Account *ac, char *name, char *pass)
     FILE        *fp;
     int         i = -1, val, ret = ACCOUNT_STATUS_OK;
     char        filename[HUGE_BUF];
-    char        buf[MAX_BUF], bufall[MAX_BUF];
+    char        buf[MEDIUM_BUF], bufall[MEDIUM_BUF];
 
     sprintf(filename, "%s/%s/%s/%s/%s.acc", settings.localdir, settings.accountdir, get_subdir(name), name, name);
     LOG(llevInfo, "Login to Account: %s\n", filename);
@@ -139,7 +139,7 @@ account_status account_load(Account *ac, char *name, char *pass)
         return ACCOUNT_STATUS_UNKNOWN; /* unknown account */
     }
 
-    if (fgets(bufall, MAX_BUF, fp) == NULL)
+    if (fgets(bufall, MEDIUM_BUF, fp) == NULL)
     {
         LOG(llevDebug, "\nBUG: corrupt account file %s!\n", filename);
         fclose(fp);
@@ -182,7 +182,7 @@ account_status account_load(Account *ac, char *name, char *pass)
         }
     }
 
-    while (fgets(bufall, MAX_BUF, fp) != NULL)
+    while (fgets(bufall, MEDIUM_BUF, fp) != NULL)
     {
         if (!strncmp(bufall, "name ", 5))
         {
@@ -302,7 +302,7 @@ void account_send_client(NewSocket *ns, int stats)
 account_status account_delete_player(Account *ac, char *name)
 {
     int i, ret = ACCOUNT_STATUS_EXISTS;
-    char ac_fname[MAX_BUF], pl_fname[MAX_BUF];
+    char ac_fname[MEDIUM_BUF], pl_fname[MEDIUM_BUF];
     struct timeval   now;
 
     /* first, lets check we have that name in our account - in any case we remove it

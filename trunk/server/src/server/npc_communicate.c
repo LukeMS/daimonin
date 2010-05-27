@@ -131,8 +131,8 @@ void communicate(object *op, char *txt)
 
     /* Broadcast the say to others (players) nearby. */
     sprintf(buf, "%s says: ", query_name(op));
-    strncat(buf, txt, MAX_BUF - strlen(buf) - 1);
-    buf[MAX_BUF - 1] = 0;
+    strncat(buf, txt, MEDIUM_BUF - strlen(buf) - 1);
+    buf[MEDIUM_BUF - 1] = 0;
 
     flags = NDI_WHITE;
     if(op->type == PLAYER)

@@ -139,7 +139,7 @@ int command_channel(object *ob, char *params)
     /* lets get on with all the other stuff */
     if (mode=='-') /* leave a channel */
     {
-        char buf[MAX_BUF];
+        char buf[MEDIUM_BUF];
         sprintf(buf, "You leave channel %s", pl_channel->channel->name);
         removeChannelFromPlayer(CONTR(ob), pl_channel, buf);
         return 0;
@@ -810,7 +810,7 @@ void load_channels(void)
 {
     FILE   *channelfile;
     char    buf[HUGE_BUF];
-    char    line_buf[MAX_BUF];
+    char    line_buf[MEDIUM_BUF];
     char    channelname[MAX_CHANNEL_NAME];
     int     channelcolor=-1;
     int     channelenterlevel=1, channelpostlevel=1;
@@ -996,7 +996,7 @@ void lua_channel_message(char *channelname,  const char *name, char *message, in
  */
 void save_channels(void)
 {
-    char    filename[MAX_BUF];
+    char    filename[MEDIUM_BUF];
     struct channels *channel;
     FILE   *fp;
 
@@ -1109,7 +1109,7 @@ void kickPlayerFromChannel(struct player_channel *cpl, char *params)
 {
     player *pl=NULL;
     struct player_channel *kick;
-    char buf[MAX_BUF];
+    char buf[MEDIUM_BUF];
 
     if (cpl->pl->gmaster_mode < GMASTER_MODE_VOL)
         return;
@@ -1223,7 +1223,7 @@ int command_channel_delete(object *ob, char *params)
 
     for (cpl=channel->players;cpl;cpl=cpl->next_player)
     {
-        char buf[MAX_BUF];
+        char buf[MEDIUM_BUF];
         sprintf(buf, "Channel '%s' is now closed!", channel->name);
         removeChannelFromPlayer(cpl->pl, cpl, buf);
     }
@@ -1391,8 +1391,8 @@ void sendChannelHist(struct player_channel *cpl, int lines)
 void addChannelHist(struct channels *channel, const char* name, char *msg, int mode)
 {
     char *line=NULL;
-    char  buf[512];
-    char  timestr[64];
+    char  buf[LARGE_BUF];
+    char  timestr[TINY_BUF];
     time_t  zeit;
 
     if (channel->lines==MAX_CHANNEL_HIST_LINES)
@@ -1410,7 +1410,7 @@ void addChannelHist(struct channels *channel, const char* name, char *msg, int m
     if (line)
     {
         time(&zeit);
-        strftime(timestr,64,"[%H:%M]",gmtime(&zeit));
+        strftime(timestr,sizeof(timestr),"[%H:%M]",gmtime(&zeit));
         sprintf(buf,"%d%s %s:%s %s",mode, channel->name, name, msg, timestr);
         strncpy(line,buf,MAX_CHANNEL_HIST_CHAR);
         line[MAX_CHANNEL_HIST_CHAR-1]='\0';

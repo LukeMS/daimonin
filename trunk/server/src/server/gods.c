@@ -558,7 +558,7 @@ static int follower_level_to_enchantments(int level, int difficulty)
 
 static int god_enchants_weapon(object *op, object *god, object *tr)
 {
-    char    buf[MAX_BUF];
+    char    buf[MEDIUM_BUF];
     object *weapon;
     /*uint32  attacktype;*/
     int     tmp;
@@ -921,7 +921,7 @@ int god_examines_priest(object *op, object *god)
     /* well, well. Looks like we screwed up. Time for god's revenge */
     if (reaction < 0)
     {
-        char    buf[MAX_BUF];
+        char    buf[MEDIUM_BUF];
         int     loss    = 10000000;
         int     angry   = abs(reaction);
         if (op->chosen_skill->exp_obj)
@@ -943,7 +943,7 @@ int god_examines_priest(object *op, object *god)
 
 int god_examines_item(object *god, object *item)
 {
-    char    buf[MAX_BUF];
+    char    buf[MEDIUM_BUF];
 
     if (!god || !item)
         return 0;
@@ -963,7 +963,7 @@ int god_examines_item(object *god, object *item)
         {
             if (item->env)
             {
-                char    buf[MAX_BUF];
+                char    buf[MEDIUM_BUF];
                 sprintf(buf, "Heretic! You are using %s!", query_name(item));
                 new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, item->env, buf);
             }
@@ -1034,7 +1034,7 @@ int tailor_god_spell(object *spellop, object *caster)
         FREE_AND_COPY_HASH(spellop->title, god->name);
         if (spellop->title)
         {
-            char    buf[MAX_BUF];
+            char    buf[MEDIUM_BUF];
             sprintf(buf, "%s of %s", spellop->name, spellop->title);
             FREE_AND_COPY_HASH(spellop->name, buf);
         }

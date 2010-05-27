@@ -1483,7 +1483,7 @@ void drop_ob_inv(object *ob)
          !QUERY_FLAG(ob, FLAG_STARTEQUIP)) ||
         QUERY_FLAG(ob, FLAG_CORPSE_FORCED))
     {
-        char buf[MAX_BUF];
+        char buf[MEDIUM_BUF];
 
         /* Create the corpse object. */
         /* TODO: Change the corpse attribute from boolean to an arch name so

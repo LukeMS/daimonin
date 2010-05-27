@@ -29,7 +29,7 @@
 int player_save(object *op)
 {
     FILE   *fp;
-    char    filename[MAX_BUF], tmpfilename[MAXPATHLEN], backupfile[MAX_BUF]="";
+    char    filename[MEDIUM_BUF], tmpfilename[MAXPATHLEN], backupfile[MEDIUM_BUF]="";
     player *pl  = CONTR(op);
     int     tmp, have_file = TRUE, i, wiz = QUERY_FLAG(op, FLAG_WIZ);
     object *force;
@@ -328,8 +328,8 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
     object      *op;
     FILE        *fp;
     void        *mybuffer;
-    char        filename[MAX_BUF];
-    char        buf[MAX_BUF], bufall[MAX_BUF];
+    char        filename[MEDIUM_BUF];
+    char        buf[MEDIUM_BUF], bufall[MEDIUM_BUF];
     int         i, value;
     int         correct = FALSE;
     time_t      elapsed_save_time   = 0;
@@ -341,7 +341,7 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
     int     with_channels = FALSE;
     int     channelcount=0;
     /* we limit channels in save file for now to 256 entrys */
-    char    chantemp[256][MAX_BUF];
+    char    chantemp[256][MEDIUM_BUF];
 
     char channelname[MAX_CHANNEL_NAME+1];
     char shortcut;
@@ -381,7 +381,7 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
         }
 
         /* the first line is always the password - so, we check it first. */
-        if (fgets(bufall, MAX_BUF, fp) == NULL)
+        if (fgets(bufall, MEDIUM_BUF, fp) == NULL)
         {
             LOG(llevDebug, "\nBUG: Corrupt player file %s!\n", filename);
             fclose(fp);
@@ -478,7 +478,7 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
      * get a string parameter. What we need is a self coded fgets() which works
      * like gets(). MT-10/2006
      */
-    while (fgets(bufall, MAX_BUF, fp) != NULL)
+    while (fgets(bufall, MEDIUM_BUF, fp) != NULL)
     {
         if (!strncmp(bufall, "skill_group ",12))
         {
@@ -582,7 +582,7 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
             {
                 char *dummy; // purely to suppres GCC's warn_unused_result
 
-                dummy = fgets(chantemp[i-1], MAX_BUF, fp);
+                dummy = fgets(chantemp[i-1], MEDIUM_BUF, fp);
             }
         }
 #endif
@@ -899,7 +899,7 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
         !(pl->gmaster_mode == GMASTER_MODE_MM &&
           pl->privacy))
     {
-        char        buf[MAX_BUF];
+        char        buf[MEDIUM_BUF];
         objectlink *ol;
 
         buf[0] = '\0';

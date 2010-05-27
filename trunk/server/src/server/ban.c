@@ -85,7 +85,7 @@ void load_ban_file(void)
     int     ticks, ticks_left;
     char    ip[40];
     char    buf[HUGE_BUF];
-    char    line_buf[MAX_BUF], name[MAX_BUF];
+    char    line_buf[MEDIUM_BUF], name[MEDIUM_BUF];
 
     LOG(llevInfo,"loading ban_file....\n");
     sprintf(buf, "%s/%s", settings.localdir, BANFILE);
@@ -111,7 +111,7 @@ void load_ban_file(void)
  */
 void save_ban_file(void)
 {
-    char    filename[MAX_BUF];
+    char    filename[MEDIUM_BUF];
     objectlink *ol, *ol_tmp;
     FILE   *fp;
 

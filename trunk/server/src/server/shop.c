@@ -128,7 +128,7 @@ static inline archetype * find_next_coin(sint64 c, int *cointype)
  */
 char * cost_string_from_value(sint64 cost, int mode)
 {
-    static char buf[MAX_BUF];
+    static char buf[MEDIUM_BUF];
     archetype  *coin, *next_coin;
     char       *endbuf;
     uint32      num;
@@ -414,7 +414,7 @@ static sint64 pay_from_container(object *op, object *pouch, sint64 to_pay)
 
 int get_payment2(object *pl, object *op)
 {
-    char    buf[MAX_BUF];
+    char    buf[MEDIUM_BUF];
     int     ret = 1;
 
     if (op != NULL && op->inv)
@@ -431,7 +431,7 @@ int get_payment2(object *pl, object *op)
 
     if (op != NULL && QUERY_FLAG(op, FLAG_UNPAID))
     {
-        strncpy(buf, query_cost_string(op, pl, F_BUY, COSTSTRING_SHORT), MAX_BUF);
+        strncpy(buf, query_cost_string(op, pl, F_BUY, COSTSTRING_SHORT), MEDIUM_BUF);
         if (!pay_for_item(op, pl))
         {
             sint64 i   = query_cost(op, pl, F_BUY) - query_money(pl);

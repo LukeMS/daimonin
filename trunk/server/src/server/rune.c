@@ -54,7 +54,7 @@ int write_rune(object *op, int dir, int inspell, int level, char *runename)
     object     *tmp;
     archetype  *at  = NULL;
     mapstruct  *mt;
-    char        buf[MAX_BUF];
+    char        buf[MEDIUM_BUF];
 
     int         nx, ny;
 
@@ -110,7 +110,7 @@ int write_rune(object *op, int dir, int inspell, int level, char *runename)
         by doing some string manipulations */
         if (!at)
         {
-            char    insp[MAX_BUF];
+            char    insp[MEDIUM_BUF];
             int     i;
             strcpy(insp, spells[inspell].name);
             for (i = 0; i < (int) strlen(insp); i++)

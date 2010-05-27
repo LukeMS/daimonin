@@ -299,7 +299,7 @@ static void insert_spawn_mob_loot(object *op, object *mob, object *tmp)
 void spawn_point(object *op)
 {
     int     rmt, tag;
-    char    buf[MAX_BUF];
+    char    buf[MEDIUM_BUF];
     object *tmp, *mob, *next, *loot;
 
     if (op->enemy)

@@ -394,7 +394,7 @@ void dump_map(mapstruct *m, player *pl, int list, char *ref)
     else
     {
         size_t len;
-        char   buf[MAX_BUF];
+        char   buf[MEDIUM_BUF];
 
         if (!ref)
             sprintf(buf, "~Map %d~: ", list);
@@ -472,7 +472,7 @@ void dump_map(mapstruct *m, player *pl, int list, char *ref)
 void dump_msp(mapstruct *m, int x, int y, player *pl)
 {
     object *ob;
-    char    buf[MAX_BUF];
+    char    buf[MEDIUM_BUF];
     int     flags;
 
     ob = (pl) ? pl->ob : NULL;
@@ -1662,7 +1662,7 @@ const char *create_instance_path_sh(player * const pl, const char * const name, 
 static mapstruct * load_temporary_map(mapstruct *m)
 {
     FILE   *fp;
-    char    buf[MAX_BUF];
+    char    buf[MEDIUM_BUF];
 
     if (!m->tmpname)
     {
@@ -1917,7 +1917,7 @@ mapstruct * load_map(const char *filename, const char *src_name, int flags, shst
 {
     FILE       *fp;
     mapstruct  *m;
-    char       pathname[MAX_BUF];
+    char       pathname[MEDIUM_BUF];
 
     flags &= ~MAP_STATUS_ORIGINAL;
 

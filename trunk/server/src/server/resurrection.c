@@ -40,9 +40,9 @@ extern int      sys_nerr;
 
 void dead_player(object *op)
 {
-    char    filename[MAX_BUF];
-    char    newname[MAX_BUF];
-    char    path[MAX_BUF];
+    char    filename[MEDIUM_BUF];
+    char    newname[MEDIUM_BUF];
+    char    path[MEDIUM_BUF];
 
     /*  set up our paths/strings...  */
     sprintf(path, "%s/%s/%s/%s/%s", settings.localdir, settings.playerdir, get_subdir(op->name), op->name, op->name);
@@ -68,7 +68,7 @@ int cast_raise_dead_spell(object *op, int dir, int spell_type, object *corpseobj
 {
     object     *temp, *newob;
     mapstruct  *m;
-    char        name_to_resurrect[MAX_BUF];
+    char        name_to_resurrect[MEDIUM_BUF];
     int         xt, yt, leveldead = 25;
 
 
@@ -182,11 +182,11 @@ int resurrect_player(object *op, char *playername, int rspell)
 {
     FILE           *deadplayer, *liveplayer;
 
-    char            oldname[MAX_BUF];
-    char            newname[MAX_BUF];
-    char            path[MAX_BUF];
-    char            buf[MAX_BUF];
-    char            buf2[MAX_BUF];
+    char            oldname[MEDIUM_BUF];
+    char            newname[MEDIUM_BUF];
+    char            path[MEDIUM_BUF];
+    char            buf[MEDIUM_BUF];
+    char            buf2[MEDIUM_BUF];
 
     static char    *races[] =
     {
@@ -284,8 +284,8 @@ int resurrect_player(object *op, char *playername, int rspell)
 
 void dead_character(char *name)
 {
-    char    buf[MAX_BUF];
-    char    buf2[MAX_BUF];
+    char    buf[MEDIUM_BUF];
+    char    buf2[MEDIUM_BUF];
 
     sprintf(buf, "%s/%s/%s/%s/%s.pl", settings.localdir, settings.playerdir, get_subdir(name), name, name);
     /*  peterm:  create a .dead filename....  ***.pl.dead  */
@@ -298,7 +298,7 @@ void dead_character(char *name)
 
 int dead_player_exists(char *name)
 {
-    char    buf[MAX_BUF];
+    char    buf[MEDIUM_BUF];
 
     sprintf(buf, "%s/%s/%s/%s/%s", settings.localdir, settings.playerdir, get_subdir(name), name, name);
     strcat(buf, ".pl.dead");

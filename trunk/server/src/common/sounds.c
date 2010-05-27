@@ -39,7 +39,7 @@ static _sounds sounds = {0, NULL};
 
 void init_sounds()
 {
-    char    buf[MAX_BUF];
+    char    buf[MEDIUM_BUF];
     FILE    *fp;
     int     state = 0;
     char    name[32];
@@ -52,7 +52,7 @@ void init_sounds()
     LOG(llevDebug, "Reading sound definitions from %s...", STRING_SAFE(buf));
     if ((fp = fopen(buf, "r")) == NULL)
         LOG(llevError, "ERROR: Can not open sound definitions file Filename=%s\n", STRING_SAFE(buf));
-    while (fgets(buf, MAX_BUF - 1, fp) != NULL)
+    while (fgets(buf, MEDIUM_BUF - 1, fp) != NULL)
     {
         // Strip trailing newline character(s) (allow for \r\n or \n)
         buf[strcspn(buf, "\r\n")] = '\0';

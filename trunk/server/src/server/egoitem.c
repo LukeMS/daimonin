@@ -32,7 +32,7 @@
 char *get_ego_item_name(object *ob)
 {
     char *cptr;
-    static char name_buf[MAX_BUF];
+    static char name_buf[MEDIUM_BUF];
 
     if(!ob || !ob->name || !(cptr = strchr(ob->name, '\'')))
         return NULL;
@@ -74,7 +74,7 @@ int check_ego_item(object *pl, object *ob)
  */
 void create_ego_item(object *ob, const char *name, int mode)
 {
-    char buf[MAX_BUF];
+    char buf[MEDIUM_BUF];
 
     if(mode == EGO_ITEM_BOUND_CLAN)
         SET_FLAG(ob, FLAG_IS_EGOCLAN);

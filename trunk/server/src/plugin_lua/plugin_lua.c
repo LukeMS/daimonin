@@ -135,8 +135,8 @@ static int luaError(lua_State *L)
    variable LUA_PATH in the global table of 'L' */
 static int luaFindFile(lua_State *L, const char *filename, const char **path)
 {
-    static char buf[MAX_BUF];
-    char        lua_path[MAX_BUF];
+    static char buf[MEDIUM_BUF];
+    char        lua_path[MEDIUM_BUF];
     const char *part;
     int         i, j, part_size = 0, replace = 0;
     struct stat stat_buf;
@@ -145,7 +145,7 @@ static int luaFindFile(lua_State *L, const char *filename, const char **path)
     /* Get LUA_PATH */
     lua_pushstring(L, "LUA_PATH");
     lua_gettable(L, LUA_GLOBALSINDEX);
-    strncpy(lua_path, lua_tostring(L, -1), MAX_BUF);
+    strncpy(lua_path, lua_tostring(L, -1), MEDIUM_BUF);
     lua_pop(L, 1);
 
     /* Check if this file was already found */
@@ -179,7 +179,7 @@ static int luaFindFile(lua_State *L, const char *filename, const char **path)
         part_size = 0;
 
         /* Get the size of the next part */
-        while (part[part_size] != ';' && part[part_size] != '\0' && part_size != MAX_BUF - 2)
+        while (part[part_size] != ';' && part[part_size] != '\0' && part_size != MEDIUM_BUF - 2)
         {
             /* Count how many replacements in this part must be done */
             if (part[part_size] == '?')
@@ -195,7 +195,7 @@ static int luaFindFile(lua_State *L, const char *filename, const char **path)
         }
 
         /* Reset buf, i and j */
-        memset(buf, 0, MAX_BUF);
+        memset(buf, 0, MEDIUM_BUF);
         i = 0;
         j = 0;
 
@@ -205,11 +205,11 @@ static int luaFindFile(lua_State *L, const char *filename, const char **path)
             /* Copy every character and insert instead of the '?'
                the filename until there are no '?'s left or the
                limit of the buffer is reached */
-            for (; replace && j != MAX_BUF - 2; ++i, ++j)
+            for (; replace && j != MEDIUM_BUF - 2; ++i, ++j)
             {
                 if (part[i] != '?')
                     buf[j] = part[i];
-                else if (j + size < MAX_BUF - 2)
+                else if (j + size < MEDIUM_BUF - 2)
                 {
                     strncpy(buf + j, filename, size);
                     j += size - 1;
@@ -1030,7 +1030,7 @@ static int Event_isValid(lua_object *obj)
 MODULEAPI void init_Daimonin_Lua()
 {
     int     res;
-    char    lua_path[MAX_BUF];
+    char    lua_path[MEDIUM_BUF];
     char   *map_path;
 
     strcpy(lua_path, hooks->create_mapdir_pathname(LUA_PATH));

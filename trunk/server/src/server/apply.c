@@ -583,7 +583,7 @@ int improve_weapon_stat(object *op, object *improver, object *weapon, signed cha
 int prepare_weapon(object *op, object *improver, object *weapon)
 {
     int     sacrifice_count, i;
-    char    buf[MAX_BUF];
+    char    buf[MEDIUM_BUF];
 
     if (weapon->level != 0)
     {
@@ -1921,7 +1921,7 @@ static void apply_scroll(object *op, object *tmp)
 
     new_draw_info_format(NDI_WHITE, 0, op, "The scroll of %s turns to dust.", spells[tmp->stats.sp].name);
     /*    {
-          char buf[MAX_BUF];
+          char buf[MEDIUM_BUF];
 
           sprintf(buf, "%s reads a scroll of %s.",op->name,spells[tmp->stats.sp].name);
           new_info_map(NDI_ORANGE, op->map, buf);
@@ -3359,7 +3359,7 @@ void apply_lighter(object *who, object *lighter)
     tag_t   count;
     uint32  nrof;
     int     is_player_env   = 0;
-    char    item_name[MAX_BUF];
+    char    item_name[MEDIUM_BUF];
 
     item = find_marked_object(who);
     if (item)

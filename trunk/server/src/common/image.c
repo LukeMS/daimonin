@@ -364,7 +364,7 @@ static int compar(struct bmappair *a, struct bmappair *b)
 
 int ReadBmapNames()
 {
-    char    buf[MAX_BUF], *p, *q;
+    char    buf[MEDIUM_BUF], *p, *q;
     FILE   *fp;
     int     value, nrofbmaps = 0, i;
 
@@ -375,7 +375,7 @@ int ReadBmapNames()
         LOG(llevError, "ERROR: Can't open bmaps file buf = %s\n", buf);
 
     /* First count how many bitmaps we have, so we can allocate correctly */
-    while (fgets(buf, MAX_BUF, fp) != NULL)
+    while (fgets(buf, MEDIUM_BUF, fp) != NULL)
         if (buf[0] != '#' && buf[0] != '\n')
             nrofbmaps++;
     rewind(fp);
@@ -383,7 +383,7 @@ int ReadBmapNames()
     xbm = (struct bmappair *) malloc(sizeof(struct bmappair) * (nrofbmaps + 1));
     memset(xbm, 0, sizeof(struct bmappair) * (nrofbmaps + 1));
 
-    while (fgets(buf, MAX_BUF, fp) != NULL)
+    while (fgets(buf, MEDIUM_BUF, fp) != NULL)
     {
         if (*buf == '#')
             continue;

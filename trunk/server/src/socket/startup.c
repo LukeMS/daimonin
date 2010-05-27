@@ -88,7 +88,7 @@ static void load_srv_files(char *fname, int id, int cmd)
 static void create_client_settings(void)
 {
     archetype   *p_arch;
-    char        buf[MAX_BUF*4], arch_name[64];
+    char        buf[LARGE_BUF], arch_name[TINY_BUF];
     int         i, line=0, id, race=0, gender = 0;
     FILE        *fset_default, *fset_create;
 
@@ -114,7 +114,7 @@ static void create_client_settings(void)
     }
 
     /* copy default to target */
-    while (fgets(buf, MAX_BUF, fset_default) != NULL)
+    while (fgets(buf, MEDIUM_BUF, fset_default) != NULL)
     {
         if(buf[0] == '#')
             fputs(buf, fset_create);
@@ -191,7 +191,7 @@ static void create_client_settings(void)
  */
 void init_srv_files(void)
 {
-    char    buf[MAX_BUF];
+    char    buf[MEDIUM_BUF];
 
     memset(&SrvClientFiles, 0, sizeof(SrvClientFiles));
 

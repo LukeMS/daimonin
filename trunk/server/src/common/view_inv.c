@@ -140,7 +140,7 @@ void esrv_draw_look(object *pl)
     char       *tmp_sp;
     object     *head, *tmp, *last;
     int         len, flags, got_one = 0, anim_speed, start_look = 0, end_look = 0;
-    char        buf[MAX_BUF];
+    char        buf[MEDIUM_BUF];
 
     /* change out_of_map to OUT_OF_REAL_MAP(). we don't even think here about map crossing */
     if (QUERY_FLAG(pl, FLAG_REMOVED)
@@ -473,7 +473,7 @@ static int esrv_send_inventory_DM(object *pl, object *op)
     sockbuf_struct *sbptr = ACTIVE_SOCKBUF(&CONTR(pl)->socket);
     object *tmp;
     int     flags, got_one = 0, anim_speed, len;
-    char    item_n[MAX_BUF];
+    char    item_n[MEDIUM_BUF];
 
     for (tmp = op->inv; tmp; tmp = tmp->below)
     {
@@ -579,7 +579,7 @@ void esrv_send_inventory(object *pl, object *op)
     sockbuf_struct *sbptr;
     object     *tmp;
     int         flags, got_one = 0, anim_speed, len;
-    char        item_n[MAX_BUF];
+    char        item_n[MEDIUM_BUF];
 
     /*LOG(llevDebug,"send inventory of: %s\n", query_name(op));*/
     SOCKBUF_REQUEST_BUFFER(ns, SOCKET_SIZE_MEDIUM);
@@ -766,7 +766,7 @@ static void esrv_update_item_send(int flags, object *pl, object *op)
     if (flags & UPD_NAME)
     {
         int     len;
-        char    item_n[MAX_BUF];
+        char    item_n[MEDIUM_BUF];
 
         strncpy(item_n, query_base_name(op, pl), 127);
         item_n[127] = 0;
@@ -851,7 +851,7 @@ static void esrv_send_item_send(object *pl, object *op)
     NewSocket        *ns = &CONTR(pl)->socket;
     sockbuf_struct    *sbptr;
     int                anim_speed, len;
-    char            item_n[MAX_BUF];
+    char            item_n[MEDIUM_BUF];
 
 
     if(!pl ||!op)

@@ -91,7 +91,7 @@ static void init_artifacts(FILE *fp)
 {
     archetype      *atemp;
     long            old_pos, file_pos;
-    char            buf[MAX_BUF], *cp, *next;
+    char            buf[MEDIUM_BUF], *cp, *next;
     artifact       *art             = NULL;
     linked_char    *tmp;
     int             lcount, value, none_flag = 0, editor_flag = 0;
@@ -100,7 +100,7 @@ static void init_artifacts(FILE *fp)
     object            *dummy_obj=get_object(), *parse_obj;
 
     /* start read in the artifact list */
-    while (fgets(buf, MAX_BUF, fp) != NULL)
+    while (fgets(buf, MEDIUM_BUF, fp) != NULL)
     {
         if (*buf == '#')
             continue;
@@ -211,7 +211,7 @@ static void init_artifacts(FILE *fp)
              * to every part without copy it.
              */
             lcount = 0;
-            while (fgets(buf, MAX_BUF - 3, fp))
+            while (fgets(buf, MEDIUM_BUF - 3, fp))
             {
                 strcpy(buf_text + lcount, buf);
                 lcount += strlen(buf) + 1;
@@ -269,10 +269,10 @@ static void init_artifacts(FILE *fp)
 
 void second_artifact_pass(FILE *fp)
 {
-    char            buf[MAX_BUF], *variable = buf, *argument, *cp;
+    char            buf[MEDIUM_BUF], *variable = buf, *argument, *cp;
     archetype      *at =  NULL, *other;
 
-    while (fgets(buf, MAX_BUF, fp) != NULL)
+    while (fgets(buf, MEDIUM_BUF, fp) != NULL)
     {
         if (*buf == '#')
             continue;
@@ -447,7 +447,7 @@ void load_artifacts(int mode)
     FILE           *fp;
     artifactlist   *al;
     artifact       *art;
-    char            filename[MAX_BUF];
+    char            filename[MEDIUM_BUF];
 
     if (has_been_inited >= mode)
         return;

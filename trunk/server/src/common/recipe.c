@@ -126,7 +126,7 @@ void init_formulae()
 {
     static int      has_been_done   = 0;
     FILE           *fp;
-    char            filename[MAX_BUF], buf[MAX_BUF], *cp, *next;
+    char            filename[MEDIUM_BUF], buf[MEDIUM_BUF], *cp, *next;
     recipe         *formula         = NULL;
     recipelist     *fl              = init_recipelist();
     linked_char    *tmp;
@@ -148,7 +148,7 @@ void init_formulae()
         return;
     }
 
-    while (fgets(buf, MAX_BUF, fp) != NULL)
+    while (fgets(buf, MEDIUM_BUF, fp) != NULL)
     {
         if (*buf == '#')
             continue;
@@ -279,10 +279,10 @@ void dump_alchemy(void)
         for (formula = fl->items; formula != NULL; formula = formula->next)
         {
             artifact   *art = NULL;
-            char        buf[MAX_BUF], tmpbuf[MAX_BUF], *string;
+            char        buf[MEDIUM_BUF], tmpbuf[MEDIUM_BUF], *string;
 
-            strncpy(tmpbuf, formula->arch_name, MAX_BUF - 1);
-            tmpbuf[MAX_BUF - 1] = 0;
+            strncpy(tmpbuf, formula->arch_name, MEDIUM_BUF - 1);
+            tmpbuf[MEDIUM_BUF - 1] = 0;
             string = strtok(tmpbuf, ",");
             while (string)
             {
@@ -484,10 +484,10 @@ void dump_alchemy_costs(void)
         {
             artifact   *art = NULL;
             archetype  *at  = NULL;
-            char        buf[MAX_BUF], tmpbuf[MAX_BUF], *string;
+            char        buf[MEDIUM_BUF], tmpbuf[MEDIUM_BUF], *string;
 
-            strncpy(tmpbuf, formula->arch_name, MAX_BUF - 1);
-            tmpbuf[MAX_BUF - 1] = 0;
+            strncpy(tmpbuf, formula->arch_name, MEDIUM_BUF - 1);
+            tmpbuf[MEDIUM_BUF - 1] = 0;
             string = strtok(tmpbuf, ",");
             while (string)
             {

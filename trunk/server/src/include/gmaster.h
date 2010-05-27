@@ -34,7 +34,7 @@
 typedef struct _gmaster_struct
 {
     char                    entry[196]; /* unparsed gmaster_file entry for this node */
-    char                    host[MAX_BUF];
+    char                    host[MEDIUM_BUF];
     char                    name[MAX_ACCOUNT_NAME+1];
     int                     mode;    /* What is this entry? DM, VOL, GM? */
 } gmaster_struct;

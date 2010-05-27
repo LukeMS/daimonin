@@ -1661,7 +1661,7 @@ void move_golem(object *op)
      */
     if (--op->stats.hp < 0)
     {
-        char    buf[MAX_BUF];
+        char    buf[MEDIUM_BUF];
         if (op->exp_obj && op->exp_obj->stats.Wis)
         {
             if (op->inv)

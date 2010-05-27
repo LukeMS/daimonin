@@ -110,7 +110,7 @@ char *tempnam_local_ext(char *dir, char *pfx, char *name)
 void remove_directory(const char *path)
 {
     DIR *dirp;
-    char buf[MAX_BUF];
+    char buf[MEDIUM_BUF];
     struct stat statbuf;
     int status;
 
@@ -409,7 +409,7 @@ void save_long(char *buf, char *name, long n) {
     *cp++ = *name++;
   *cp='\0';
 #else
-  char buf2[MAX_BUF];
+  char buf2[MEDIUM_BUF];
   strcpy(buf2,name);
   strcat(buf2," ");
   strcat(buf2,ltostr10(n));
@@ -424,7 +424,7 @@ void save_long(char *buf, char *name, long n) {
 
 void make_path_to_file (char *filename)
 {
-    char buf[MAX_BUF], *cp = buf;
+    char buf[MEDIUM_BUF], *cp = buf;
     struct stat statbuf;
 
     if (!filename || !*filename)

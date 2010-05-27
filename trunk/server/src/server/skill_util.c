@@ -310,7 +310,7 @@ void dump_skills()
 
     /*  dump_all_objects(); */
     /*
-    char    buf[MAX_BUF];
+    char    buf[MEDIUM_BUF];
     int     i;
     LOG(llevInfo, "exper_catgry \t str \t dex \t con \t wis \t cha \t int \t pow \n");
     for (i = 0; i < NROFSKILLGROUPS; i++)
@@ -352,7 +352,7 @@ void dump_skills()
 void read_skill_params()
 {
     FILE   *skill_params;
-    char    fname[MAX_BUF];
+    char    fname[MEDIUM_BUF];
     char    skill_name[256];
     char    skill_attrib[256];
     int     i, cat, bexp, time, stat1, stat2, stat3, skillindex;
@@ -410,7 +410,7 @@ void read_skill_params()
 int lookup_skill_by_name(char *string)
 {
     int     skillnr = 0, nmlen;
-    char    name[MAX_BUF];
+    char    name[MEDIUM_BUF];
 
     if (!string)
         return -1;
@@ -908,7 +908,7 @@ int skill_attack(object *tmp, object *pl, int dir, char *string)
 int do_skill_attack(object *tmp, object *op, char *string)
 {
     int     success;
-    char    buf[MAX_BUF], *name = query_name(tmp);
+    char    buf[MEDIUM_BUF], *name = query_name(tmp);
     float   ticks = 0.0f;
 
     if (op->type == PLAYER)

@@ -59,7 +59,7 @@ static struct dmload_struct dmload_value = {"",""};
 int command_admin(object *op, char *params)
 {
     player *pl;
-    char    buf[MAX_BUF];
+    char    buf[MEDIUM_BUF];
 
     if (*settings.admin_password == '\0')
     {
@@ -122,9 +122,9 @@ static object * find_object(int i)
 */
 int command_dmload(object *op, char *params)
 {
-    char buf[MAX_BUF],
-         name[MAX_BUF] = "",
-         pwd[MAX_BUF] = "";
+    char buf[MEDIUM_BUF],
+         name[MEDIUM_BUF] = "",
+         pwd[MEDIUM_BUF] = "";
 
     if (!op ||
         op->type != PLAYER ||
@@ -316,7 +316,7 @@ int command_restart(object *ob, char *params)
 #ifdef _TESTSERVER
     int   time;
     char *stream;
-    char  buf[MAX_BUF];
+    char  buf[MEDIUM_BUF];
     FILE *fp;
 
     time = 30;
@@ -367,7 +367,7 @@ int command_restart(object *ob, char *params)
     return 0;
 #else
     int  time;
-    char buf[MAX_BUF];
+    char buf[MEDIUM_BUF];
 
     time = 300;
 
@@ -390,7 +390,7 @@ int command_restart(object *ob, char *params)
 int command_shutdown(object *op, char *params)
 {
     int  time;
-    char buf[MAX_BUF];
+    char buf[MEDIUM_BUF];
 
     time = 30;
 
@@ -440,7 +440,7 @@ int command_generate(object *op, char *params)
 {
     object     *tmp = NULL;
     int         nrof, i, magic, set_magic = 0, set_nrof = 0, gotquote, gotspace;
-    char        buf[MAX_BUF], *cp, *bp = buf, *bp2, *bp3, *bp4 = NULL, *obp, *cp2;
+    char        buf[MEDIUM_BUF], *cp, *bp = buf, *bp2, *bp3, *bp4 = NULL, *obp, *cp2;
     archetype  *at;
     artifact   *art = NULL;
 
@@ -757,7 +757,7 @@ int command_generate(object *op, char *params)
 
 int command_mutelevel(object *op, char *params)
 {
-    char buf[MAX_BUF];
+    char buf[MEDIUM_BUF];
     int lvl = 0;
     objectlink *ol;
 
@@ -794,7 +794,7 @@ int command_mutelevel(object *op, char *params)
 */
 int command_dm_connections(object *op, char *params)
 {
-    char buf[MAX_BUF];
+    char buf[MEDIUM_BUF];
     objectlink *ol;
     int nr = 2;
 
@@ -924,7 +924,7 @@ int command_create(object *op, char *params)
 {
     object     *tmp = NULL;
     int         nrof, i, magic, set_magic = 0, set_nrof = 0, gotquote, gotspace;
-    char        buf[MAX_BUF], *cp, *bp = buf, *bp2, *bp3, *bp4 = NULL, *obp, *cp2;
+    char        buf[MEDIUM_BUF], *cp, *bp = buf, *bp2, *bp3, *bp4 = NULL, *obp, *cp2;
     archetype  *at;
     artifact   *art = NULL;
 
@@ -1356,7 +1356,7 @@ int command_free(object *op, char *params)
 */
 int command_setskill(object *op, char *params)
 {
-    char    buf[MAX_BUF];
+    char    buf[MEDIUM_BUF];
     int     level, snr;
     object *exp_skill, *exp_ob;
     player *pl;
@@ -1448,7 +1448,7 @@ int command_setskill(object *op, char *params)
 
 int command_addexp(object *op, char *params)
 {
-    char    buf[MAX_BUF];
+    char    buf[MEDIUM_BUF];
     int     exp, snr;
     object *exp_skill, *exp_ob;
     player *pl;
@@ -1549,7 +1549,7 @@ int command_serverspeed(object *op, char *params)
 int command_stats(object *op, char *params)
 {
     player *pl;
-    char    buf[MAX_BUF];
+    char    buf[MEDIUM_BUF];
 
     if (!params)
         return 1;
@@ -1591,7 +1591,7 @@ int command_abil(object *op, char *params)
     char    thing[20], thing2[20];
     int     iii;
     player *pl;
-    char    buf[MAX_BUF];
+    char    buf[MEDIUM_BUF];
 
     iii = 0;
     thing[0] = '\0';
@@ -1822,7 +1822,7 @@ int command_check_fd(object *op, char *params)
  */
 int command_mute(object *op, char *params)
 {
-    char        name[MAX_BUF] = "";
+    char        name[MEDIUM_BUF] = "";
     int         seconds = 0;
     player     *pl;
     objectlink *ol;
@@ -1973,7 +1973,7 @@ int command_ban(object *op, char *params)
                *ob;
     player     *pl;
     char       *name,
-                name_buf[MAX_BUF] = "";
+                name_buf[MEDIUM_BUF] = "";
     int         ticks = 0;
     char       *str;
 
@@ -2363,9 +2363,9 @@ int command_gmasterfile(object *op, char *params)
 {
     player     *pl;
     objectlink *ol;
-    char        name[MAX_BUF],
-                host[MAX_BUF],
-                mode[MAX_BUF];
+    char        name[MEDIUM_BUF],
+                host[MEDIUM_BUF],
+                mode[MEDIUM_BUF];
     int         mode_id;
 
     if (!op ||
@@ -2545,7 +2545,7 @@ int command_listplugins(object *op, char *params)
 /* than once at a time, or bad things could happen.                          */
 int command_loadplugin(object *op, char *params)
 {
-    char buf[MAX_BUF];
+    char buf[MEDIUM_BUF];
 
     if (!params) /* fix crash bug with no paramaters -- Gramlath 3/30/2007 */
         return 1;

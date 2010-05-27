@@ -407,7 +407,7 @@ sint32 add_exp(object *op, int exp, int skill_nr)
  */
 void player_lvl_adj(object *who, object *op, int flag_msg)
 {
-    char    buf[MAX_BUF];
+    char    buf[MEDIUM_BUF];
     object *force;
     archetype *at = find_archetype("drain");
     int drain_level = 0;
