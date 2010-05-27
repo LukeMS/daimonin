@@ -98,8 +98,6 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define HUGE_BUF        4096 /* Used for messages - some can be quite long */
 #define SOCKET_BUFLEN       4096    /* Max length a packet could be */
 
-#define FONTSIZE        3000    /* Max chars in font */
-
 #define MAX_ANIMATIONS      256
 
 #define MAX_NAME 16
