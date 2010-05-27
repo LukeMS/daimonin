@@ -18,7 +18,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to info@daimonin.net
+    The author can be reached via e-mail to info@daimonin.org
 */
 
 #include <include.h>
@@ -619,7 +619,7 @@ void load_options_dat(void)
 
 /* we have to have it here, before we junp back because of missing config file */
 
-    strcpy(options.metaserver, "www.daimonin.com");
+    strcpy(options.metaserver, "www.daimonin.org");
     options.metaserver_port = DEFAULT_METASERVER_PORT;
 
     txtwin_start_size = txtwin[TW_MIX].size;
@@ -775,7 +775,7 @@ Boolean game_status_chain(void)
 
             if(!meta_ret)
             {
-                add_metaserver_data("Daimonin", "daimonin.game-server.cc", DEFAULT_SERVER_PORT, -1, "0.97x", "Public Daimonin game server from www.daimonin.com.");
+                add_metaserver_data("Daimonin", "daimonin.game-server.cc", DEFAULT_SERVER_PORT, -1, "0.97x", "Public Daimonin game server from www.daimonin.org.");
                 add_metaserver_data("Test Server", "test-server.game-server.cc", DEFAULT_SERVER_PORT, -1, "test", "Checkout here the newest features & maps! BETA TESTING.");
             }
         }
