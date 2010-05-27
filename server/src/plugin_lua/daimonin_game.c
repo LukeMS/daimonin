@@ -546,8 +546,8 @@ lua_class Game =
 int Game_init(lua_State *L)
 {
     int     i;
-    char    buf[64];
-    char    string[64];
+    char    buf[TINY_BUF];
+    char    string[TINY_BUF];
     char    name[32];
     char    prefix[32];
     FILE    *sf;

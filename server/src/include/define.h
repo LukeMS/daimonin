@@ -90,16 +90,19 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define MAX_STAT        125  /* The maximum legal value of any stat */
 #define MIN_STAT        1   /* The minimum legal value of any stat */
 
-#define MAX_BUF         256 /* Used for all kinds of things */
-#define VERY_BIG_BUF        1024
-#define HUGE_BUF        4096 /* Used for messages - some can be quite long */
-#define SOCKET_BUFLEN       4096    /* Max length a packet could be */
+#define TINY_BUF      64
+#define SMALL_BUF     128
+#define MEDIUM_BUF    256 /* Used for all kinds of things */
+#define LARGE_BUF     1024
+#define HUGE_BUF      4096 /* Used for messages - some can be quite long */
 
-#define MAX_ANIMATIONS      256
+#define SOCKET_BUFLEN 4096 /* Max length a packet could be */
 
 #define MAX_NAME 16
 #define BIG_NAME 32
 #define MAX_EXT_TITLE 128
+
+#define MAX_ANIMATIONS      256
 
 /* modes for cast_identify() */
 #define IDENTIFY_MODE_NORMAL 0

@@ -517,7 +517,7 @@ int damage_ob(object *op, int dam, object *hitter, int env_attack)
     /* lets kill, kill, kill... */
     if (op->stats.hp <= 0 && op->type == PLAYER && !QUERY_FLAG(op, FLAG_WIZ))
     {
-        char buf[128];
+        char buf[SMALL_BUF];
         strcpy(buf, query_name(hitter));
         FREE_AND_COPY_HASH(CONTR(op)->killer, buf);
         kill_player(op);
@@ -1317,7 +1317,7 @@ int kill_object(object *op, int dam, object *hitter, int typeX)
     int         maxdam              = 0;
     int         battleg             = 0;    /* true if op standing on battleground */
     mapstruct  *map;
-    char        *buf_ptr, buf2[MAX_BUF];
+    char        *buf_ptr, buf2[MEDIUM_BUF];
 
     /* Object has been killed.  Lets clean it up */
     if (op->stats.hp <= 0)
@@ -1396,7 +1396,7 @@ int kill_object(object *op, int dam, object *hitter, int typeX)
         /* Create kill message */
         if (owner->type == PLAYER)
         {
-            char        buf[MAX_BUF];
+            char        buf[MEDIUM_BUF];
 
             /* old pet code */
             /* if (owner != NULL)

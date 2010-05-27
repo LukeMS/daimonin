@@ -199,7 +199,7 @@ int load_gmaster_file(void)
 {
     FILE   *dmfile;
     char    buf[HUGE_BUF];
-    char    line_buf[MAX_BUF], name[MAX_BUF], host[MAX_BUF], mode[MAX_BUF], dummy[MAX_BUF];
+    char    line_buf[MEDIUM_BUF], name[MEDIUM_BUF], host[MEDIUM_BUF], mode[MEDIUM_BUF], dummy[MEDIUM_BUF];
 
     LOG(llevInfo,"loading gmaster_file....\n");
     sprintf(buf, "%s/%s", settings.localdir, GMASTER_FILE);
@@ -358,14 +358,14 @@ void set_gmaster_mode(player *pl, int mode)
 #ifdef _TESTSERVER
     if (mode == GMASTER_MODE_MW || mode == GMASTER_MODE_MM)
     {
-        char  buf[MAX_BUF];
+        char  buf[MEDIUM_BUF];
         FILE *fp;
         LOG(llevSystem, "read stream file...\n");
         sprintf(buf, "%s/%s", settings.localdir, "stream");
         if ((fp = fopen(buf, "r")))
         {
             char *cp;
-            if (!fgets(buf, MAX_BUF, fp))
+            if (!fgets(buf, MEDIUM_BUF, fp))
             {
                 LOG(llevBug, "BUG: error in stream file\n");
                 return;
@@ -377,7 +377,7 @@ void set_gmaster_mode(player *pl, int mode)
             else
             {
                 new_draw_info_format(NDI_UNIQUE, 0, pl->ob, "Server compiled with ~%s~ stream.", buf);
-                while (fgets(buf, MAX_BUF, fp))
+                while (fgets(buf, MEDIUM_BUF, fp))
                 {
                     if ((cp = strchr(buf, '\n')))
                         *cp = '\0';
@@ -414,7 +414,7 @@ void remove_gmaster_mode(player *pl)
     {
         if (pl_channel->channel->gmaster_mode != GMASTER_MODE_NO)
         {
-            char buf[MAX_BUF];
+            char buf[MEDIUM_BUF];
 
             sprintf(buf, "You leave channel %s", pl_channel->channel->name);
             removeChannelFromPlayer(pl, pl_channel, buf);
@@ -448,7 +448,7 @@ void remove_gmaster_mode(player *pl)
  */
 void write_gmaster_file(void)
 {
-    char    filename[MAX_BUF];
+    char    filename[MEDIUM_BUF];
     objectlink *ol;
     FILE   *fp;
 

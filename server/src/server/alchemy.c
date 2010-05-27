@@ -189,7 +189,7 @@ void attempt_do_alchemy(object *caster, object *cauldron)
 
 int content_recipe_value(object *op)
 {
-    char    name[MAX_BUF];
+    char    name[MEDIUM_BUF];
     object *tmp = op->inv;
     int     tval = 0, formula = 0;
 
@@ -668,7 +668,7 @@ void remove_contents(object *first_ob, object *save_item)
 int calc_alch_danger(object *caster, object *cauldron)
 {
     object *item;
-    char    name[MAX_BUF];
+    char    name[MEDIUM_BUF];
     int     danger = 0, nrofi = 0;
 
     /* Knowing alchemy skill reduces yer risk */

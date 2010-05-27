@@ -67,11 +67,11 @@ archetype * find_archetype_by_object_name(const char *name)
 object * get_archetype_by_object_name(const char *name)
 {
     archetype  *at;
-    char        tmpname[MAX_BUF];
+    char        tmpname[MEDIUM_BUF];
     int         i;
 
-    strncpy(tmpname, name, MAX_BUF - 1);
-    tmpname[MAX_BUF - 1] = 0;
+    strncpy(tmpname, name, MEDIUM_BUF - 1);
+    tmpname[MEDIUM_BUF - 1] = 0;
     for (i = strlen(tmpname); i > 0; i--)
     {
         tmpname[i] = 0;
@@ -119,7 +119,7 @@ archetype * get_skill_archetype(int skillnr)
  */
 int item_matched_string(object *pl, object *op, const char *name)
 {
-    char   *cp, local_name[MAX_BUF];
+    char   *cp, local_name[MEDIUM_BUF];
     int     count, retval = 0;
     strcpy(local_name, name);   /* strtok is destructive to name */
     for (cp = strtok(local_name, ","); cp; cp = strtok(NULL, ","))
@@ -159,7 +159,7 @@ int item_matched_string(object *pl, object *op, const char *name)
         else if (count > 1)
         {
             /* Need to plurify name for proper match */
-            char    newname[MAX_BUF];
+            char    newname[MEDIUM_BUF];
             strcpy(newname, op->name);
             if (!strcasecmp(newname, cp))
             {
@@ -431,10 +431,10 @@ void first_arch_pass(FILE *fp)
 void second_arch_pass(FILE *fp_start)
 {
     FILE           *fp  = fp_start;
-    char            buf[MAX_BUF], *variable = buf, *argument, *cp;
+    char            buf[MEDIUM_BUF], *variable = buf, *argument, *cp;
     archetype      *at =  NULL, *other;
 
-    while (fgets(buf, MAX_BUF, fp) != NULL)
+    while (fgets(buf, MEDIUM_BUF, fp) != NULL)
     {
         if (*buf == '#')
             continue;
@@ -482,7 +482,7 @@ void second_arch_pass(FILE *fp_start)
 void load_archetypes()
 {
     FILE           *fp;
-    char            filename[MAX_BUF];
+    char            filename[MEDIUM_BUF];
 #if TIME_ARCH_LOAD
     struct timeval  tv1, tv2;
 #endif

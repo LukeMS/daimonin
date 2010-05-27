@@ -90,8 +90,8 @@ void metaserver_init()
     /* No hostname specified, so lets try to figure one out */
     if (settings.meta_host[0] == 0)
     {
-        char    hostname[MAX_BUF], domain[MAX_BUF];
-        if (gethostname(hostname, MAX_BUF - 1))
+        char    hostname[MEDIUM_BUF], domain[MEDIUM_BUF];
+        if (gethostname(hostname, MEDIUM_BUF - 1))
         {
             LOG(llevDebug, "metaserver_init: gethostname failed - will not report hostname\n");
             return;
@@ -105,7 +105,7 @@ void metaserver_init()
         if (hostbn == (struct hostent *) NULL)
         {
 #else
-        if (getdomainname(domain, MAX_BUF - 1))
+        if (getdomainname(domain, MEDIUM_BUF - 1))
         {
 #endif /* win32 */
             LOG(llevDebug, "metaserver_init: getdomainname failed - will not report hostname\n");
@@ -123,7 +123,7 @@ void metaserver_init()
 
 void    metaserver_update   ()
 {
-    char data[MAX_BUF];
+    char data[MEDIUM_BUF];
 
     if (metafd == -1)
         return; /* No valid connection */

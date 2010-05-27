@@ -382,7 +382,7 @@ int cast_wow(object *op, int dir, int ability, SpellTypeFrom item)
 
 int perceive_self(object *op)
 {
-    char*cp = describe_item(op), buf[MAX_BUF];
+    char*cp = describe_item(op), buf[MEDIUM_BUF];
     archetype              *at  = find_archetype("depletion");
     object                 *tmp;
     int                     i;
@@ -3062,7 +3062,7 @@ int cast_charm_undead(object *op, object *caster, archetype *arch, int spellnum)
 
 object * choose_cult_monster(object *pl, object *god, int summon_level)
 {
-    char        buf[MAX_BUF], *race;
+    char        buf[MEDIUM_BUF], *race;
     int         racenr, mon_nr, i;
     racelink   *list;
     objectlink *tobl;
@@ -3145,7 +3145,7 @@ int summon_cult_monsters(object *op, int old_dir)
 {
     object *mon, *otmp, *god = find_god(determine_god(op));
     int     tries = 0, i, summon_level, number, dir;
-    char    buf[MAX_BUF];
+    char    buf[MEDIUM_BUF];
 
     /* find deity */
     if (!god)
@@ -3295,7 +3295,7 @@ int summon_cult_monsters(object *op, int old_dir)
 int summon_avatar(object *op, object *caster, int dir, archetype *at, int spellnum)
 {
     object *tmp;
-    char    buf[MAX_BUF];
+    char    buf[MEDIUM_BUF];
     object *god = find_god(determine_god(caster));
 
     if (god)
@@ -3468,7 +3468,7 @@ object * fix_summon_pet(archetype *at, object *op, int dir, int type)
 
 int cast_consecrate(object *op)
 {
-    char    buf[MAX_BUF];
+    char    buf[MEDIUM_BUF];
 
     object *tmp, *god = find_god(determine_god(op));
 
@@ -3573,7 +3573,7 @@ int animate_weapon(object *op, object *caster, int dir, archetype *at, int spell
     /* TODO: update for the new AI and pet systems. Gecko 2006-04-30 */
 #if 0
     object *weapon, *tmp;
-    char    buf[MAX_BUF];
+    char    buf[MEDIUM_BUF];
     int     a, i, j;
     int     magic;
 
@@ -4006,7 +4006,7 @@ int cast_cause_disease(object *op, object *caster, int dir, archetype *disease_a
 
                 if (infect_object(walk, disease, 1))
                 {
-                    char    buf[128];
+                    char    buf[SMALL_BUF];
                     object *flash;  /* visual effect for inflicting disease */
                     sprintf(buf, "You inflict %s on %s!", disease->name, walk->name);
                     new_draw_info(NDI_UNIQUE, 0, op, buf);
@@ -4100,7 +4100,7 @@ void move_peacemaker(object *op)
     /* TODO: update for the new AI and pet systems. Gecko 2006-04-30 */
 #if 0
     object *tmp;
-    char    buf[MAX_BUF];
+    char    buf[MEDIUM_BUF];
 
 
     for (tmp = get_map_ob(op->map, op->x, op->y); tmp != NULL; tmp = tmp->above)
@@ -4177,7 +4177,7 @@ int cast_cause_conflict(object *op, object *caster, archetype *spellarch, int ty
             if (random_roll(0, level - 1) > tmp->level)
             {
                 /* successfully induced conflict */
-                char    buf[MAX_BUF];
+                char    buf[MEDIUM_BUF];
                 SET_FLAG(tmp, FLAG_BERSERK);
                 if (tmp->name)
                 {

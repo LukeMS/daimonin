@@ -298,7 +298,7 @@ static void init_environ()
  */
 static void load_settings()
 {
-    char    buf[MAX_BUF], *cp;
+    char    buf[MEDIUM_BUF], *cp;
     int     has_val, i;
     FILE   *fp;
 
@@ -312,7 +312,7 @@ static void load_settings()
         LOG(llevBug, "BUG: No %s file found\n", SETTINGS);
         return;
     }
-    while (fgets(buf, MAX_BUF - 1, fp) != NULL)
+    while (fgets(buf, MEDIUM_BUF - 1, fp) != NULL)
     {
         if (buf[0] == '#')
             continue;
@@ -518,7 +518,7 @@ static void usage()
 
 static void init_clocks()
 {
-    char        filename[MAX_BUF];
+    char        filename[MEDIUM_BUF];
     FILE       *fp;
     static int  has_been_done   = 0;
 
@@ -1368,7 +1368,7 @@ static void CreateLogfiles(const char *tlogfilename, const char *clogfilename,
 {
     if (*tlogfilename)
     {
-        char buf[MAX_BUF];
+        char buf[MEDIUM_BUF];
 
         if (!strchr(tlogfilename, '/'))
         {
@@ -1393,7 +1393,7 @@ static void CreateLogfiles(const char *tlogfilename, const char *clogfilename,
 
     if (*clogfilename)
     {
-        char buf[MAX_BUF];
+        char buf[MEDIUM_BUF];
 
         if (!strchr(clogfilename, '/'))
         {

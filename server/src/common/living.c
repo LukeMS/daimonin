@@ -291,7 +291,7 @@ int change_abil(object *op, object *tmp)
            j,
            success = 0;
     object refop;
-    char   message[MAX_BUF];
+    char   message[MEDIUM_BUF];
     int    potion_max  = 0;
 
     /* remember what object was like before it was changed.  note that
@@ -2040,7 +2040,7 @@ void dragon_level_gain(object *who)
     object *abil    = NULL;    /* pointer to dragon ability force*/
     object *skin    = NULL;    /* pointer to dragon skin force*/
     object *tmp     = NULL;     /* tmp. object */
-    char    buf[MAX_BUF];      /* tmp. string buffer */
+    char    buf[MEDIUM_BUF];      /* tmp. string buffer */
 
     /* now grab the 'dragon_ability'-forces from the player's inventory */
     for (tmp = who->inv; tmp != NULL; tmp = tmp->below)

@@ -471,7 +471,7 @@ void remove_ns_dead_player(player *pl)
         if(gmaster_list_MM || gmaster_list_GM || gmaster_list_VOL)
         {
             objectlink *ol;
-            char buf_dm[128];
+            char buf_dm[SMALL_BUF];
 
             sprintf(buf_dm,"%s leaves the game (%d still playing).", query_name(pl->ob), player_active - 1);
 

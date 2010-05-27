@@ -72,7 +72,7 @@ player * find_player_hash(const char *plname)
 void display_motd(object *op)
 {
 #ifdef MOTD
-    char    buf[MAX_BUF];
+    char    buf[MEDIUM_BUF];
     FILE   *fp;
 
     sprintf(buf, "%s/%s", settings.localdir, MOTD_FILE);
@@ -84,7 +84,7 @@ void display_motd(object *op)
             return;
         }
     }
-    while (fgets(buf, MAX_BUF, fp) != NULL)
+    while (fgets(buf, MEDIUM_BUF, fp) != NULL)
     {
         char   *cp;
         if (*buf == '#')
@@ -425,7 +425,7 @@ int handle_newcs_player(player *pl)
 int save_life(object *op)
 {
     object *tmp;
-    char    buf[MAX_BUF];
+    char    buf[MEDIUM_BUF];
     if (!QUERY_FLAG(op, FLAG_LIFESAVE))
         return 0;
     for (tmp = op->inv; tmp != NULL; tmp = tmp->below)
@@ -605,7 +605,7 @@ static const char *CreateGravestone(object *op, mapstruct *m, int x, int y)
     static archetype *at = NULL;
     object           *gravestone;
     int               i;
-    char              buf[MAX_BUF];
+    char              buf[MEDIUM_BUF];
     timeanddate_t     tad;
 
     if (!at)
@@ -674,7 +674,7 @@ static const char *CreateGravestone(object *op, mapstruct *m, int x, int y)
 void kill_player(object *op)
 {
     player      *pl=CONTR(op);
-    char        buf[MAX_BUF];
+    char        buf[MEDIUM_BUF];
     int         x, y, i;
     mapstruct  *map;  /*  this is for resurrection */
     object     *tmp;
@@ -1298,7 +1298,7 @@ void dragon_ability_gain(object *who, int atnr, int level)
     treasure       *tr;                  /* treasure */
     object         *tmp;                   /* tmp. object */
     object         *item;                  /* treasure object */
-    char            buf[MAX_BUF];             /* tmp. string buffer */
+    char            buf[MEDIUM_BUF];             /* tmp. string buffer */
     int             i = 0, j = 0;
 
     /* get the appropriate treasurelist */

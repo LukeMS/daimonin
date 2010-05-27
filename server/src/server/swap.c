@@ -33,7 +33,7 @@ static void write_map_log()
 {
     FILE       *fp;
     mapstruct  *map;
-    char        buf[MAX_BUF];
+    char        buf[MEDIUM_BUF];
     long        current_time    = time(NULL);
 
     sprintf(buf, "%s/temp.maps", settings.localdir);
@@ -66,7 +66,7 @@ void read_map_log()
 {
     FILE       *fp;
     mapstruct  *map;
-    char        buf[MAX_BUF], *cp, *cp1;
+    char        buf[MEDIUM_BUF], *cp, *cp1;
     int         do_los, darkness, difficulty, lock;
 
     sprintf(buf, "%s/temp.maps", settings.localdir);
@@ -75,7 +75,7 @@ void read_map_log()
         LOG(llevDebug, "Could not open %s for reading\n", buf);
         return;
     }
-    while (fgets(buf, MAX_BUF, fp) != NULL)
+    while (fgets(buf, MEDIUM_BUF, fp) != NULL)
     {
         map = get_linked_map();
         /* scanf doesn't work all that great on strings, so we break

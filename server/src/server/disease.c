@@ -335,7 +335,7 @@ int infect_object(object *victim, object *disease, int force)
     CLEAR_FLAG(new_disease, FLAG_NO_PASS);
     if (new_disease->owner && new_disease->owner->type == PLAYER)
     {
-        char    buf[128];
+        char    buf[SMALL_BUF];
         /* if the disease has a title, it has a special infection message */
         /* This messages is printed in the form MESSAGE victim */
         if (new_disease->title)

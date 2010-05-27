@@ -191,7 +191,7 @@ void insert_quest_item(struct obj *quest_trigger, struct obj *target)
         if ((quest = find_quest_trigger(target, quest_trigger)) &&
             quest->magic != (sint8)quest_trigger->last_heal)
         {
-            char buf[MAX_BUF] = "";
+            char buf[MEDIUM_BUF] = "";
 
             quest->magic = (sint8)quest_trigger->last_heal;
 
@@ -497,7 +497,7 @@ void check_kill_quest_event(struct obj *pl, struct obj *op)
                 (!tmp_info->slaying || tmp_info->slaying == op->race) &&
                 (!tmp_info->weight_limit || tmp_info->weight_limit <= op->level))
             {
-                char buf[MAX_BUF];
+                char buf[MEDIUM_BUF];
 
                 /* the drop/kill chance can be random ... */
                 if(tmp_info->last_grace > 1 && (RANDOM() % tmp_info->last_grace))

@@ -130,7 +130,7 @@ void version(object *op)
 
 void start_info(object *op)
 {
-    char    buf[MAX_BUF];
+    char    buf[MEDIUM_BUF];
 
     sprintf(buf, "Welcome to Daimonin, v%s!", VERSION);
     new_draw_info(NDI_UNIQUE, 0, op, buf);
@@ -584,7 +584,7 @@ void leave(player *pl, int draw_exit)
 {
     if (pl != NULL)
     {
-        char buf[MAX_BUF];
+        char buf[MEDIUM_BUF];
 
         /* We do this so that the socket handling routine can do the final
          * cleanup.  We also leave that loop to actually handle the freeing

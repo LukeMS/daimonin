@@ -48,7 +48,7 @@ int command_motd(object *op, char *params)
         (CONTR(op)->gmaster_mode == GMASTER_MODE_GM ||
          CONTR(op)->gmaster_mode == GMASTER_MODE_MM))
     {
-        char  buf[MAX_BUF];
+        char  buf[MEDIUM_BUF];
         FILE *fp;
 
         sprintf(buf, "%s/%s", settings.localdir, MOTD_FILE);
@@ -82,15 +82,15 @@ int command_motd(object *op, char *params)
 
 int command_bug(object *op, char *params)
 {
-    char buf[MAX_BUF];
+    char buf[MEDIUM_BUF];
 
     if (!params)
         return 1;
 
     strcpy(buf, op->name);
     strcat(buf, " bug-reports: ");
-    strncat(buf, ++params, MAX_BUF - strlen(buf));
-    buf[MAX_BUF - 1] = '\0';
+    strncat(buf, ++params, MEDIUM_BUF - strlen(buf));
+    buf[MEDIUM_BUF - 1] = '\0';
     bug_report(buf);
     new_draw_info(NDI_ALL | NDI_UNIQUE, 1, NULL, buf);
     new_draw_info(NDI_UNIQUE, 0, op, "OK, thanks!");
@@ -242,7 +242,7 @@ int command_who(object *op, char *params)
             il,
             it;
 #ifdef _TESTSERVER
-    char    buf[MAX_BUF];
+    char    buf[MEDIUM_BUF];
     FILE   *fp;
 #endif
 
@@ -323,7 +323,7 @@ int command_who(object *op, char *params)
     {
         char *cp;
 
-        if (!fgets(buf, MAX_BUF, fp))
+        if (!fgets(buf, MEDIUM_BUF, fp))
         {
             LOG(llevBug, "BUG: error in stream file\n");
 
@@ -344,7 +344,7 @@ int command_who(object *op, char *params)
             new_draw_info_format(NDI_UNIQUE, 0, op, "Server compiled with ~%s~ stream.",
                                  buf);
 
-            while (fgets(buf, MAX_BUF, fp))
+            while (fgets(buf, MEDIUM_BUF, fp))
             {
                 if ((cp = strchr(buf, '\n')))
                 {
@@ -540,7 +540,7 @@ int command_archs(object *op, char *params)
 int command_debug(object *op, char *params)
 {
     int     i;
-    char    buf[MAX_BUF];
+    char    buf[MEDIUM_BUF];
 
     if (params == NULL || !sscanf(params, "%d", &i))
     {
@@ -760,8 +760,8 @@ int command_dm_password (object *op, char *params)
     player *pl;
     FILE *fp, *fpout;
     const char *name_hash;
-    char pfile[MAX_BUF], bufall[MAX_BUF], outfile[MAX_BUF];
-    char name[MAX_BUF]="", pwd[MAX_BUF]="";
+    char pfile[MEDIUM_BUF], bufall[MEDIUM_BUF], outfile[MEDIUM_BUF];
+    char name[MEDIUM_BUF]="", pwd[MEDIUM_BUF]="";
 
     if(params==NULL || !sscanf(params, "%s %s", name, pwd) || name[0] == 0 || pwd[0]== 0)
         return 1;
@@ -796,7 +796,7 @@ int command_dm_password (object *op, char *params)
         return 0;
     }
 
-    while (fgets(bufall,MAX_BUF-1,fp) != NULL)
+    while (fgets(bufall,MEDIUM_BUF-1,fp) != NULL)
     {
         if(!strncmp(bufall,"password ",9))
             fprintf(fpout,"password %s\n", crypt_string(pwd));
@@ -1028,7 +1028,7 @@ static void help_topics(object *op, int what)
 {
     DIR            *dirp;
     struct dirent  *de;
-    char            filename[MAX_BUF], line[80];
+    char            filename[MEDIUM_BUF], line[80];
     int             namelen, linelen = 0;
 
     switch (what)
@@ -1103,7 +1103,7 @@ int command_resting(object *op, char *params)
 static void show_help(char *fname, player *pl)
 {
     FILE *fp;
-    char  buf[MAX_BUF];
+    char  buf[MEDIUM_BUF];
 
     if ((fp = fopen(fname, "r")) == NULL)
     {
@@ -1199,7 +1199,7 @@ static void show_commands(player *pl)
     for (i = 0; i < 6 && ap[i]; i++)
     {
         int  j;
-        char buf[MAX_BUF];
+        char buf[MEDIUM_BUF];
 
         if (ap[i] == Commands)
             new_draw_info(NDI_UNIQUE | NDI_YELLOW, 0, pl->ob, "\nNormal Commands");
@@ -1252,7 +1252,7 @@ int command_help(object *op, char *params)
     /* Main help page */
     if (!params)
     {
-        char buf[MAX_BUF];
+        char buf[MEDIUM_BUF];
 
         sprintf(buf, "%s/index", HELPDIR);
         show_help(buf, pl);
@@ -1264,7 +1264,7 @@ int command_help(object *op, char *params)
     if (params[0] == '/')
     {
         CommArray_s *csp;
-        char         buf[MAX_BUF];
+        char         buf[MEDIUM_BUF];
 
 //        if (strpbrk(params + 1, " ./\\"))
 //        {

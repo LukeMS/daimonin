@@ -422,7 +422,7 @@ char *examine_monster(object *op, object *tmp, char *buf, int flag)
     float   dps;
     char   *gender, *att;
     int     val, val2, i;
-    char    buf2[MAX_BUF];
+    char    buf2[MEDIUM_BUF];
 
     if (QUERY_FLAG(mon, FLAG_IS_MALE))
     {
@@ -567,7 +567,7 @@ char *examine_monster(object *op, object *tmp, char *buf, int flag)
 
 char * long_desc(object *tmp, object *caller)
 {
-    static char buf[VERY_BIG_BUF];
+    static char buf[LARGE_BUF];
     char       *cp;
 
     if (tmp == NULL)
@@ -604,18 +604,18 @@ char * long_desc(object *tmp, object *caller)
           {
               int   len;
 
-              strncat(buf, query_name(tmp), VERY_BIG_BUF - 1);
+              strncat(buf, query_name(tmp), LARGE_BUF - 1);
 
-              buf[VERY_BIG_BUF - 1] = 0;
+              buf[LARGE_BUF - 1] = 0;
               len = strlen(buf);
-              if (len < VERY_BIG_BUF - 5 && ((tmp->type != AMULET && tmp->type != RING) || tmp->title))
+              if (len < LARGE_BUF - 5 && ((tmp->type != AMULET && tmp->type != RING) || tmp->title))
               {
                   /* Since we know the length, we save a few cpu cycles by using
                             * it instead of calling strcat */
                   strcpy(buf + len, " ");
                   len++;
-                  strncpy(buf + len, cp, VERY_BIG_BUF - len - 1);
-                  buf[VERY_BIG_BUF - 1] = 0;
+                  strncpy(buf + len, cp, LARGE_BUF - len - 1);
+                  buf[LARGE_BUF - 1] = 0;
               }
           }
           break;
@@ -623,8 +623,8 @@ char * long_desc(object *tmp, object *caller)
 
     if (buf[0] == '\0')
     {
-        strncat(buf, query_name_full(tmp, caller), VERY_BIG_BUF - 1);
-        buf[VERY_BIG_BUF - 1] = 0;
+        strncat(buf, query_name_full(tmp, caller), LARGE_BUF - 1);
+        buf[LARGE_BUF - 1] = 0;
     }
 
     return buf;
@@ -633,8 +633,8 @@ char * long_desc(object *tmp, object *caller)
 char *examine(object *op, object *tmp, int flag)
 {
     char    *buf_out = global_string_buf4096;
-    char    buf[VERY_BIG_BUF];
-    char    tmp_buf[64];
+    char    buf[LARGE_BUF];
+    char    tmp_buf[TINY_BUF];
     int     i;
 
     if (tmp == NULL || tmp->type == CLOSE_CON)
@@ -656,8 +656,8 @@ char *examine(object *op, object *tmp, int flag)
     if(flag)
     {
         strcpy(buf, "That is ");
-        strncat(buf, long_desc(tmp, op), VERY_BIG_BUF - strlen(buf) - 1);
-        buf[VERY_BIG_BUF - 1] = 0;
+        strncat(buf, long_desc(tmp, op), LARGE_BUF - strlen(buf) - 1);
+        buf[LARGE_BUF - 1] = 0;
     }
 
     if (op && op->type == PLAYER && tmp->type == FLESH)
@@ -665,8 +665,8 @@ char *examine(object *op, object *tmp, int flag)
 
     /* only add this for usable items, not for objects like walls or floors for example */
     if (!QUERY_FLAG(tmp, FLAG_IDENTIFIED) && need_identify(tmp))
-        strncat(buf, " (unidentified)", VERY_BIG_BUF - strlen(buf) - 1);
-    buf[VERY_BIG_BUF - 1] = 0;
+        strncat(buf, " (unidentified)", LARGE_BUF - strlen(buf) - 1);
+    buf[LARGE_BUF - 1] = 0;
 
     strcat(buf_out, buf);
     strcat(buf_out, "\n");

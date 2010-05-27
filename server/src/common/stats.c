@@ -16,10 +16,10 @@ void stats_event(stats_event_type type, ...)
     time_t              time_now;
     struct              tm* ts;
     char                buf[HUGE_BUF];          /* buffer for writing to stats file */
-    char                filename_base[MAX_BUF]; /* stats filename without dir */
-    char                filename_full[MAX_BUF]; /* includes path */
-    char                filename_source[MAX_BUF]; /* filename for rename */
-    char                filename_dest[MAX_BUF]; /* filename for rename */
+    char                filename_base[MEDIUM_BUF]; /* stats filename without dir */
+    char                filename_full[MEDIUM_BUF]; /* includes path */
+    char                filename_source[MEDIUM_BUF]; /* filename for rename */
+    char                filename_dest[MEDIUM_BUF]; /* filename for rename */
     static short        last_year = 0;
     static short        last_month = 0;
     static short        last_day = 0;

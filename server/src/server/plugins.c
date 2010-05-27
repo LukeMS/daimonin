@@ -336,7 +336,7 @@ int find_plugin_command(const char *cmd, object *op, CommArray_s *RTNCmd)
 /*****************************************************************************/
 void displayPluginsList(object *op)
 {
-    char    buf[MAX_BUF];
+    char    buf[MEDIUM_BUF];
     int     i;
 
     new_draw_info(NDI_UNIQUE, 0, op, "List of loaded plugins:");
@@ -374,8 +374,8 @@ void initPlugins(void)
     struct dirent  *currentfile;
     DIR            *plugdir;
     int             n;
-    char            buf[MAX_BUF];
-    char            buf2[MAX_BUF];
+    char            buf[MEDIUM_BUF];
+    char            buf2[MEDIUM_BUF];
 
     LOG(llevInfo, "Now initializing plugins\n");
     /* strcpy(buf,DATADIR); dlls should not part of DATADIR or LIBDOR */
@@ -544,8 +544,8 @@ void initPlugins(void)
 {
     struct dirent  **namelist   = NULL;
     int             n;
-    char            buf[MAX_BUF];
-    char            buf2[MAX_BUF];
+    char            buf[MEDIUM_BUF];
+    char            buf2[MEDIUM_BUF];
 
     LOG(llevInfo, "Initializing plugins :\n");
     /*        strcpy(buf,DATADIR);
@@ -1106,7 +1106,7 @@ CFParm * CFWSendCustomCommand(CFParm *PParm)
 /*****************************************************************************/
 CFParm * CFWCommunicate(CFParm *PParm)
 {
-    /*char buf[MAX_BUF];*/
+    /*char buf[MEDIUM_BUF];*/
     object *op      = (object *) PParm->Value[0];
     char   *string  = (char *) PParm->Value[1];
     if ((!op) || (!string))

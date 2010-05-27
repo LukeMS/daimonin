@@ -93,7 +93,7 @@ void add_god_to_list(archetype *god_arch)
 
 int baptize_altar(object *op)
 {
-    char    buf[MAX_BUF];
+    char    buf[MEDIUM_BUF];
 
     /* if the title field is pre-set, then that altar is
      * already dedicated. */

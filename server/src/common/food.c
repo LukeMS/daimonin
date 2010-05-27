@@ -294,7 +294,7 @@ int dragon_eat_flesh(object *op, object *meal)
     object *abil        = NULL;    /* pointer to dragon ability force*/
     object *tmp         = NULL;     /* tmp. object */
 
-    char    buf[MAX_BUF];            /* tmp. string buffer */
+    char    buf[MEDIUM_BUF];            /* tmp. string buffer */
     double  chance;                /* improvement-chance of one resistance type */
     double  maxchance   = 0;           /* highest chance of any type */
     double  bonus       = 0;               /* level bonus (improvement is easier at lowlevel) */

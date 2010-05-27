@@ -174,7 +174,7 @@ void send_target_command(player *pl)
     /* some nice extra info for DM's */
     if (QUERY_FLAG(pl->ob, FLAG_WIZ))
     {
-        char    buf[64];
+        char    buf[TINY_BUF];
         sprintf(buf, "(lvl %d)", pl->target_object->level);
         strcat(tmp + 3, buf);
     }
@@ -609,7 +609,7 @@ void send_ready_skill(object *op, char *skillname)
  */
 void send_golem_control(object *golem, int mode)
 {
-    char    tmp[MAX_BUF]; /* we should careful set a big enough buffer here */
+    char    tmp[MEDIUM_BUF]; /* we should careful set a big enough buffer here */
 
     if (mode == GOLEM_CTR_RELEASE)
         sprintf(tmp, "%d %d %s", mode, 0, golem->name);

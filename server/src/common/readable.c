@@ -376,7 +376,7 @@ static titlelist * get_titlelist(int i)
 
 int nstrtok(const char *buf1, const char *buf2)
 {
-    char   *tbuf, sbuf[12], buf[MAX_BUF];
+    char   *tbuf, sbuf[12], buf[MEDIUM_BUF];
     int     number  = 0;
 
     if (!buf1 || !buf2)
@@ -400,7 +400,7 @@ int nstrtok(const char *buf1, const char *buf2)
 char * strtoktolin(const char *buf1, const char *buf2)
 {
     int         maxi, i = nstrtok(buf1, buf2);
-    char       *tbuf, buf[MAX_BUF], sbuf[12];
+    char       *tbuf, buf[MEDIUM_BUF], sbuf[12];
     static char rbuf[BOOK_BUF];
 
     maxi = i;
@@ -444,7 +444,7 @@ int book_overflow(const char *buf1, const char *buf2, int booksize)
 static void init_msgfile(void)
 {
     FILE       *fp;
-    char        buf[MAX_BUF], msgbuf[HUGE_BUF], fname[MAX_BUF], *cp;
+    char        buf[MEDIUM_BUF], msgbuf[HUGE_BUF], fname[MEDIUM_BUF], *cp;
     static int  did_init_msgfile;
 
     if (did_init_msgfile)
@@ -457,7 +457,7 @@ static void init_msgfile(void)
     if ((fp = fopen(fname, "r")) != NULL)
     {
         linked_char    *tmp = NULL;
-        while (fgets(buf, MAX_BUF, fp) != NULL)
+        while (fgets(buf, MEDIUM_BUF, fp) != NULL)
         {
             if (*buf == '#' || *buf == '\0')
                 continue;
@@ -513,7 +513,7 @@ static void init_book_archive(void)
 {
     FILE       *fp;
     int         nroftitle = 0;
-    char        buf[MAX_BUF], fname[MAX_BUF], *cp;
+    char        buf[MEDIUM_BUF], fname[MEDIUM_BUF], *cp;
     title      *book    = NULL;
     titlelist  *bl      = get_empty_booklist();
     static int  did_init_barch;
@@ -531,7 +531,7 @@ static void init_book_archive(void)
     if ((fp = fopen(fname, "r")) != NULL)
     {
         int i = 0, value, type = 0;
-        while (fgets(buf, MAX_BUF, fp) != NULL)
+        while (fgets(buf, MEDIUM_BUF, fp) != NULL)
         {
             if (*buf == '#')
                 continue;
@@ -700,7 +700,7 @@ static title * find_title(object *book, int msgtype)
 static void new_text_name(object *book, int msgtype)
 {
     int     nbr;
-    char    name[MAX_BUF];
+    char    name[MEDIUM_BUF];
 
     if (book->type != BOOK)
         return;
@@ -761,7 +761,7 @@ static void new_text_name(object *book, int msgtype)
  */
 static void add_author(object *op, int msgtype)
 {
-    char    title[MAX_BUF], name[MAX_BUF];
+    char    title[MEDIUM_BUF], name[MEDIUM_BUF];
     int     nbr = sizeof(book_author) / sizeof(char *);
 
     if (msgtype < 0 || strlen(op->msg) < 5)
@@ -874,7 +874,7 @@ static void add_book_to_list(object *book, int msgtype)
 void change_book(object *book, int msgtype)
 {
     int     nbr = sizeof(book_descrpt) / sizeof(char *);
-    char    name[MAX_BUF];
+    char    name[MEDIUM_BUF];
 
     switch (book->type)
     {
@@ -908,7 +908,7 @@ void change_book(object *book, int msgtype)
               else
               {
                   int       numb, maxnames = max_titles[msgtype];
-                  char      old_title[MAX_BUF], old_name[MAX_BUF];
+                  char      old_title[MEDIUM_BUF], old_name[MEDIUM_BUF];
 
                   if (book->title)
                       strcpy(old_title, book->title);
@@ -1148,7 +1148,7 @@ char * artifact_msg(int level, int booksize)
     int             chance, i, type, index;
     sint64            val;
     int             book_entries    = level > 5 ? RANDOM() % 3 + RANDOM() % 3 + 2 : RANDOM() % level + 1;
-    char           *ch, name[MAX_BUF], buf[BOOK_BUF], sbuf[MAX_BUF];
+    char           *ch, name[MEDIUM_BUF], buf[BOOK_BUF], sbuf[MEDIUM_BUF];
     static char     retbuf[BOOK_BUF];
     object         *tmp             = NULL;
 
@@ -1348,7 +1348,7 @@ char * spellpath_msg(int level, int booksize)
 
 void make_formula_book(object *book, int level)
 {
-    char        retbuf[BOOK_BUF], title[MAX_BUF];
+    char        retbuf[BOOK_BUF], title[MEDIUM_BUF];
     recipelist *fl;
     recipe     *formula = NULL;
     int         chance;
@@ -1400,10 +1400,10 @@ void make_formula_book(object *book, int level)
         /* construct name of object to be made */
         if (nindex > 1)
         {
-            char    tmpbuf[MAX_BUF];
+            char    tmpbuf[MEDIUM_BUF];
             int     rnum    = RANDOM() % nindex;
-            strncpy(tmpbuf, formula->arch_name, MAX_BUF - 1);
-            tmpbuf[MAX_BUF - 1] = 0;
+            strncpy(tmpbuf, formula->arch_name, MEDIUM_BUF - 1);
+            tmpbuf[MEDIUM_BUF - 1] = 0;
             op_name = strtok(tmpbuf, ",");
             while (rnum)
             {
@@ -1555,7 +1555,7 @@ char * god_info_msg(int level, int booksize)
             if (enemy && !(god->path_denied & PATH_ARCANE))
                 if ((i = nstrtok(enemy, ",")) > 0)
                 {
-                    char    tmpbuf[MAX_BUF];
+                    char    tmpbuf[MEDIUM_BUF];
                     sprintf(buf, "The holy words of %s have the power to\n", name);
                     strcat(buf, "slay creatures belonging to the ");
                     if (i > 1)
@@ -1568,7 +1568,7 @@ char * god_info_msg(int level, int booksize)
         if (level == 4 && RANDOM() % 2)
         {
             /* Priest of god gets these protect,vulnerable... */
-            char    tmpbuf[MAX_BUF], *cp;
+            char    tmpbuf[MEDIUM_BUF], *cp;
 
             cp = describe_resistance(god, 1);
 
@@ -1591,7 +1591,7 @@ char * god_info_msg(int level, int booksize)
             if (race && !(god->path_denied & PATH_CONJURATION))
                 if ((i = nstrtok(race, ",")) > 0)
                 {
-                    char    tmpbuf[MAX_BUF];
+                    char    tmpbuf[MEDIUM_BUF];
                     sprintf(buf, "Creatures sacred to %s include the \n", name);
                     if (i > 1)
                         sprintf(tmpbuf, "following \n races:%s", strtoktolin(race, ","));
@@ -1603,7 +1603,7 @@ char * god_info_msg(int level, int booksize)
         if (level == 6 && RANDOM() % 2)
         {
             /* blessing,curse properties of the god */
-            char    tmpbuf[MAX_BUF], *cp;
+            char    tmpbuf[MEDIUM_BUF], *cp;
 
             cp = describe_resistance(god, 1);
 
@@ -1623,7 +1623,7 @@ char * god_info_msg(int level, int booksize)
         {
             /* immunity, holy possession */
             int     has_effect = 0, tmpvar;
-            char    tmpbuf[MAX_BUF];
+            char    tmpbuf[MEDIUM_BUF];
             sprintf(tmpbuf, "\n");
             sprintf(tmpbuf, "The priests of %s are known to make cast a mighty \n", name);
 
@@ -1649,7 +1649,7 @@ char * god_info_msg(int level, int booksize)
         {
             /* spell paths */
             int     has_effect = 0, tmpvar;
-            char    tmpbuf[MAX_BUF];
+            char    tmpbuf[MEDIUM_BUF];
             sprintf(tmpbuf, "\n");
             sprintf(tmpbuf, "It is rarely known fact that the priests of %s\n", name);
             strcat(tmpbuf, "are mystically transformed. Effects of this include:\n");
@@ -1861,7 +1861,7 @@ void write_book_archive(void)
 {
     FILE       *fp;
     int         index   = 0;
-    char        fname[MAX_BUF];
+    char        fname[MEDIUM_BUF];
     title      *book    = NULL;
     titlelist  *bl      = get_titlelist(0);
 

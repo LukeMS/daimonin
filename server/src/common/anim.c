@@ -42,7 +42,7 @@ void free_all_anim()
 
 void init_anim()
 {
-    char        buf[MAX_BUF];
+    char        buf[MEDIUM_BUF];
     FILE       *fp;
     static int  anim_init   = 0;
     int         num_frames = 0, faces[MAX_ANIMATIONS], i;
@@ -71,7 +71,7 @@ void init_anim()
     LOG(llevDebug, "Reading animations from %s...\n", STRING_SAFE(buf));
     if ((fp = fopen(buf, "r")) == NULL)
         LOG(llevError, "ERROR: Can not open animations file Filename=%s\n", STRING_SAFE(buf));
-    while (fgets(buf, MAX_BUF - 1, fp) != NULL)
+    while (fgets(buf, MEDIUM_BUF - 1, fp) != NULL)
     {
         if (*buf == '#')
             continue;

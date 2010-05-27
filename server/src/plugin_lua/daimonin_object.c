@@ -2571,7 +2571,7 @@ static int GameObject_AddQuestItem(lua_State *L)
 
     if (!myob)
     {
-        char buf[MAX_BUF];
+        char buf[MEDIUM_BUF];
 
         sprintf(buf, "object:AddQuestItem(): Can't find archetype '%s'", i_arch);
 
@@ -2776,7 +2776,7 @@ static int GameObject_CheckOneDropQuest(lua_State *L)
 
     if (!(arch = hooks->find_archetype(arch_name)))
     {
-        char buf[MAX_BUF];
+        char buf[MEDIUM_BUF];
 
         sprintf(buf, "object:CheckOneDropQuest(): Can't find archetype '%s'", arch_name);
 
@@ -2892,15 +2892,15 @@ static int GameObject_GetPlayerInfo(lua_State *L)
 static int GameObject_GetNextPlayerInfo(lua_State *L)
 {
     lua_object *myob;
-    char        name[128];
+    char        name[SMALL_BUF];
     object     *walk;
     lua_object *self;
 
     get_lua_args(L, "OO", &self, &myob);
 
     /* thats our check paramters: arch "force_info", name of this arch */
-    strncpy(name, STRING_OBJ_NAME(myob->data.object), 127); /* 127 chars should be enough for all */
-    name[127] = '\0';
+    strncpy(name, STRING_OBJ_NAME(myob->data.object), sizeof(name) - 1); /* 127 chars should be enough for all */
+    name[sizeof(name) - 1] = '\0';
 
     /* get the next linked player_info arch in this inventory */
     for (walk = myob->data.object->below; walk != NULL; walk = walk->below)
@@ -2953,7 +2953,7 @@ static object *CreateObjectInside_body(lua_State *L, object *where, char *archna
 
     if (!myob)
     {
-        char buf[MAX_BUF];
+        char buf[MEDIUM_BUF];
 
         sprintf(buf, "object:CreateObjectInside(): Can't find archetype '%s'", archname);
         luaL_error(L, buf);
@@ -3422,7 +3422,7 @@ static int GameObject_AddMoney(lua_State *L)
 static int GameObject_AddMoneyEx(lua_State *L)
 {
     lua_object *self;
-    char        buf[MAX_BUF];
+    char        buf[MEDIUM_BUF];
     int         c, s, g, m, flag=FALSE;
 
     get_lua_args(L, "Oiiii", &self, &c, &s, &g, &m);

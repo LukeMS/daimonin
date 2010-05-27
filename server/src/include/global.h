@@ -474,17 +474,17 @@ typedef struct Settings
     uint8                           stat_loss_on_death; /* If true, chars lose a random stat when they die */
     uint8                           balanced_stat_loss; /* If true, Death stat depletion based on level etc */
     int                             reset_loc_time;     /* Number of seconds to put player back at home */
-    char                            admin_password[MAX_BUF]; /* password for bigtime admin actions */
+    char                            admin_password[MEDIUM_BUF]; /* password for bigtime admin actions */
 
     /* The meta_ is information for the metaserver.  These are set in
      * the lib/settings file.
      */
     int                             meta_on : 1;        /* True if we should send updates */
-    char                            meta_server[MAX_BUF]; /* Hostname/ip addr of the metaserver */
-    char                            meta_name[MAX_BUF];   /* Servername listed in the meta server list */
-    char                            meta_host[MAX_BUF]; /* Hostname of this host */
+    char                            meta_server[MEDIUM_BUF]; /* Hostname/ip addr of the metaserver */
+    char                            meta_name[MEDIUM_BUF];   /* Servername listed in the meta server list */
+    char                            meta_host[MEDIUM_BUF]; /* Hostname of this host */
     uint16                          meta_port;          /* Port number to use for updates */
-    char                            meta_comment[MAX_BUF]; /* Comment we send to the metaserver */
+    char                            meta_comment[MEDIUM_BUF]; /* Comment we send to the metaserver */
     uint32                          worldmapstartx;     /* starting x tile for the worldmap */
     uint32                          worldmapstarty;     /* starting y tile for the worldmap */
     uint32                          worldmaptilesx;     /* number of tiles wide the worldmap is */

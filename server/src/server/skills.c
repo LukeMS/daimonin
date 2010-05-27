@@ -140,7 +140,7 @@ int attempt_steal(object *op, object *who)
         else
         {
             /* stealing from another player */
-            char    buf[MAX_BUF];
+            char    buf[MEDIUM_BUF];
             /* Notify the other player */
             if (success && who->stats.Int > random_roll(0, 19))
             {
@@ -277,7 +277,7 @@ int steal(object *op, int dir)
 
 int pick_lock(object *pl, int dir)
 {
-    char        buf[MAX_BUF];
+    char        buf[MEDIUM_BUF];
     object     *tmp;
     mapstruct  *m;
     int         x       = pl->x + freearr_x[dir];
@@ -376,7 +376,7 @@ int attempt_pick_lock(object *door, object *pl)
 
 int hide(object *op)
 {
-    char    buf[MAX_BUF];
+    char    buf[MEDIUM_BUF];
     /* int level= SK_level(op);*/
 
     /* the preliminaries -- Can we really hide now? */
@@ -564,7 +564,7 @@ int jump(object *pl, int dir)
 
 int skill_ident(object *pl)
 {
-    char    buf[MAX_BUF];
+    char    buf[MEDIUM_BUF];
     int     success = 0;
 
     if (!pl->chosen_skill)  /* should'nt happen... */

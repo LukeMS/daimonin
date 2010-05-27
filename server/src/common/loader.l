@@ -793,7 +793,7 @@ void *create_loader_buffer(void *fp)
 int load_object(void *fp, object *op, void *mybuffer, int bufstate, int map_flags) {
     int retval = 0;
 	float old_speed, old_sleft;
-    char inbuf[MAX_BUF];
+    char inbuf[MEDIUM_BUF];
 
 	/* note: at this point we have perhaps a "arch" parse or a "object"
 	 * parse - we don't know. "arch" parse means, arches are loaded - we
@@ -843,7 +843,7 @@ int load_object(void *fp, object *op, void *mybuffer, int bufstate, int map_flag
     else /* if (bufstate==LO_LINEMODE) */
 	{
 		YY_BUFFER_STATE  yybufstate;
-		while (fgets(inbuf, MAX_BUF-3, (FILE *)fp))
+		while (fgets(inbuf, MEDIUM_BUF-3, (FILE *)fp))
 		{
 			yybufstate=yy_scan_string(inbuf);
 			retval=lex_load(op, map_flags);

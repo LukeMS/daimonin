@@ -56,8 +56,8 @@ static char     levelnumbers_10[11][20] =
  */
 char * describe_resistance(const object *const op, int newline)
 {
-    static char buf[VERY_BIG_BUF];
-    char        buf1[VERY_BIG_BUF];
+    static char buf[LARGE_BUF];
+    char        buf1[LARGE_BUF];
     int         tmpvar, flag = 1;
 
     buf[0] = 0;
@@ -96,8 +96,8 @@ char * describe_resistance(const object *const op, int newline)
  */
 char * describe_attack(const object *const op, int newline)
 {
-    static char buf[VERY_BIG_BUF];
-    char        buf1[VERY_BIG_BUF];
+    static char buf[LARGE_BUF];
+    char        buf1[LARGE_BUF];
     int         tmpvar, flag = 1;
 
     buf[0] = 0;
@@ -155,7 +155,7 @@ char * query_weight(object *op)
 
 char * get_levelnumber(int i)
 {
-    static char buf[MAX_BUF];
+    static char buf[MEDIUM_BUF];
     if (i > 99)
     {
         sprintf(buf, "%d.", i);
@@ -184,7 +184,7 @@ char * get_number(int i)
         return numbers[i];
     else
     {
-        static char buf[MAX_BUF];
+        static char buf[MEDIUM_BUF];
         sprintf(buf, "%d", i);
         return buf;
     }
@@ -511,7 +511,7 @@ char  *query_name_full(const object *op, const object *caller)
  */
 char *query_base_name(object *op, object *caller)
 {
-    static char buf[MAX_BUF];
+    static char buf[MEDIUM_BUF];
     char        buf2[32];
     int         len;
 
@@ -750,8 +750,8 @@ char * describe_item(const object *const op)
 {
     object     *tmp;
     int         attr, val, more_info = 0, id_true = FALSE;
-    char        buf[MAX_BUF];
-    static char retbuf[VERY_BIG_BUF*3];
+    char        buf[MEDIUM_BUF];
+    static char retbuf[LARGE_BUF*3];
 
     retbuf[0] = '\0';
 
