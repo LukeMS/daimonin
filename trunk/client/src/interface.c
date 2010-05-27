@@ -16,7 +16,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to info@daimonin.net
+    The author can be reached via e-mail to info@daimonin.org
 */
 #include "include.h"
 #include <limits.h> // TODO:Put in include.h

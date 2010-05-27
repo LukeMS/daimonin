@@ -1050,7 +1050,7 @@ int main(int argc, char **argv)
              */
             auto_msg_count = AUTO_MSG_COUNTER;
             new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_ALL | NDI_GREEN, 5, NULL,
-                    "[INFO]: Please HELP US and VOTE for Daimonin DAILY!\nGo to www.daimonin.net and hit the VOTE ICONS!\nThanks and happy playing!! - Michtoen");
+                    "[INFO]: Please HELP US and VOTE for Daimonin DAILY!\nGo to www.daimonin.org and hit the VOTE ICONS!\nThanks and happy playing!! - Michtoen");
         }
 #endif
 

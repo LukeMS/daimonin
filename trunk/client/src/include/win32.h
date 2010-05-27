@@ -18,7 +18,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to info@daimonin.net
+    The author can be reached via e-mail to info@daimonin.org
 */
 
 #if !defined(__WIN32_H)
@@ -88,7 +88,7 @@
 #define MSG_DONTWAIT 0
 
 /* Define to the address where bug reports for this package should be sent. */
-#define PACKAGE_BUGREPORT "info@daimonin.net"
+#define PACKAGE_BUGREPORT "info@daimonin.org"
 
 /* Define to the full name of this package. */
 #define PACKAGE_NAME "Daimonin SDL Client"
