@@ -33,11 +33,6 @@ size_t  strftime(char *, size_t, const char *, const struct tm *);
 time_t  mktime(struct tm *);
 #endif
 
-void draw_find(object *op, object *find)
-{
-    new_draw_info_format(NDI_UNIQUE, 0, op, "You find %s in the chest.", query_name(find));
-}
-
 /*
  * Return value: 1 if money was destroyed, 0 if not.
  */
@@ -1965,7 +1960,8 @@ static void apply_treasure(object *op, object *tmp)
     {
         remove_ob(treas);
         check_walk_off(treas, NULL, MOVE_APPLY_VANISHED);
-        draw_find(op, treas);
+        new_draw_info_format(NDI_UNIQUE, 0, op, "You find %s in the chest.",
+                             query_name(treas));
         treas->x = op->x,treas->y = op->y;
         if (treas->type == MONSTER)
         {
