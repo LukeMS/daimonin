@@ -336,8 +336,8 @@ typedef struct pl_player
     char                levgrace[MAXLEVEL + 1];
     sint8               last_resist[NROFATTACKS];   /* shadow register for client update resist table */
 
-    char                quick_name[BIG_NAME*3];     /* thats rank + name +" the xxxx" */
-    char                ext_title[MAX_EXT_TITLE];   /* for client: <Rank> <Name>\n<Gender> <Race> <Profession> */
+    char                quick_name[SMALL_BUF];     /* thats rank + name +" the xxxx" */
+    char                ext_title[SMALL_BUF];   /* for client: <Rank> <Name>\n<Gender> <Race> <Profession> */
 
     uint16              last_flags;         /* fire/run on flags for last tick */
     uint32              count;              /* Any numbers typed before a command */

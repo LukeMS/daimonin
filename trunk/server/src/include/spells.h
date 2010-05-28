@@ -60,7 +60,7 @@
 
 typedef struct spell_struct
 {
-    char    name[BIG_NAME];   /* name of this spell */
+    char    name[TINY_BUF];   /* name of this spell */
     int     type;                /* Type of spell: wizard, priest, ... */
     int     level;           /* Level required to cast this spell */
     int     sp;              /* Spellpoint-cost to cast it */
