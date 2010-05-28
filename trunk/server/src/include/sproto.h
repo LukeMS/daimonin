@@ -11,7 +11,6 @@ void                        alchemy_failure_effect(object *op, object *cauldron,
 void                        remove_contents(object *first_ob, object *save_item);
 int                         calc_alch_danger(object *caster, object *cauldron);
 /* apply.c */
-void                        draw_find(object *op, object *find);
 int                         apply_potion(object *op, object *tmp);
 int                         check_item(object *op, const char *item);
 void                        eat_item(object *op, const char *item);
