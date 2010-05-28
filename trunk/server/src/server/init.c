@@ -143,6 +143,14 @@ static void init_strings()
     shstr_cons.guild_force = add_string("guild_force");
     shstr_cons.player_info = add_string("player_info");
 
+    shstr_cons.stat_strength = add_string("strength");
+    shstr_cons.stat_dexterity = add_string("dexterity");
+    shstr_cons.stat_constitution = add_string("constitution");
+    shstr_cons.stat_intelligence = add_string("intelligence");
+    shstr_cons.stat_wisdom = add_string("wisdom");
+    shstr_cons.stat_power = add_string("power");
+    shstr_cons.stat_charisma = add_string("charisma");
+
     shstr_cons.special_prayer = add_string("special prayer");
     shstr_cons.grace_limit = add_string("grace limit");
     shstr_cons.restore_grace = add_string("restore grace");

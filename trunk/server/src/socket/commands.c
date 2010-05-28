@@ -195,12 +195,13 @@ CommArray_s CommandsMW[] =
 #ifdef _TESTSERVER
     {"summon",        command_summon,      0.0f, 1, 0},
     {"stealth",       command_stealth,     0.0f, 1, 0},
+    {"addexp",        command_addexp,      0.0f, 1, 0},
+    {"setskill",      command_setskill,    0.0f, 1, 0},
+    {"setstat",       command_setstat,     0.0f, 1, 0},
 #endif
     {"teleport",      command_teleport,    0.0f, 1, 0},
     {"resetmap",      command_reset,       0.0f, 1, 0},
     {"goto",          command_goto,        0.0f, 1, 0},
-    {"addexp",        command_addexp,      0.0f, 1, 0},
-    {"setskill",      command_setskill,    0.0f, 1, 0},
     {"restart",       command_restart,     0.0f, 1, 0},
     {"dm_invis",      command_dm_invis,    0.0f, 1, 0},
     {"dm_dev",        command_dm_dev,      0.0f, 1, 0},
@@ -213,7 +214,14 @@ CommArray_s CommandsMW[] =
 
 CommArray_s CommandsMM[] =
 {
+#ifdef _TESTSERVER
+    {"serverspeed",  command_serverspeed,       0.0f, 1, 0},
+#else
     {"stealth",      command_stealth,           0.0f, 1, 0},
+    {"addexp",       command_addexp,            0.0f, 1, 0},
+    {"setskill",     command_setskill,          0.0f, 1, 0},
+    {"setstat",      command_setstat,           0.0f, 1, 0},
+#endif
     {"gmasterfile",  command_gmasterfile,       0.0f, 1, 0},
     {"plugin",       command_loadplugin,        0.0f, 1, 0},
     {"pluglist",     command_listplugins,       0.0f, 1, 0},
@@ -221,9 +229,6 @@ CommArray_s CommandsMM[] =
     {"plugout",      command_unloadplugin,      0.0f, 1, 0},
     {"create",       command_create,            0.0f, 1, 0},
     {"dump",         command_dump,              0.0f, 1, 0},
-#ifdef _TESTSERVER
-    {"serverspeed",  command_serverspeed,       0.0f, 1, 0},
-#endif
     {"d_active",     command_dumpactivelist,    0.0f, 1, 0},
     {"d_arches",     command_dumpallarchetypes, 0.0f, 1, 0},
     {"d_objects",    command_dumpallobjects,    0.0f, 1, 0},
@@ -248,7 +253,6 @@ CommArray_s CommandsMM[] =
     {"examine", command_examine,  0.5}, // should work in direction
     {"statistics", command_statistics,    0.0}, // will be send to client later in status
     {"archs", command_archs, 0.0},
-    {"abil", command_abil,0.0},
     {"debug", command_debug,0.0},
     {"fix_me", command_fix_me,   0.0},
     {"forget_spell", command_forget_spell, 0.0},
