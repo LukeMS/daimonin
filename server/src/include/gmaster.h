@@ -39,4 +39,11 @@ typedef struct _gmaster_struct
     int                     mode;    /* What is this entry? DM, VOL, GM? */
 } gmaster_struct;
 
+/* lists of the active ingame gmasters */
+extern objectlink *gmaster_list;
+extern objectlink *gmaster_list_VOL;
+extern objectlink *gmaster_list_GM;
+extern objectlink *gmaster_list_MW;
+extern objectlink *gmaster_list_MM;
+
 #endif
