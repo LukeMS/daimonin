@@ -36,6 +36,13 @@
 
 #include <global.h>
 
+/* lists of the active ingame gmasters */
+objectlink *gmaster_list;
+objectlink *gmaster_list_VOL;
+objectlink *gmaster_list_GM;
+objectlink *gmaster_list_MW;
+objectlink *gmaster_list_MM;
+
 /* returns a objectlink with gmaster_struct
  * we use for both the memorypool system
  */

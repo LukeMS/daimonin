@@ -222,11 +222,11 @@ static void init_globals()
 
     set_pticks_time(MAX_TIME);
 
-    gmaster_list=NULL;
-    gmaster_list_MW=NULL;
-    gmaster_list_VOL=NULL;
-    gmaster_list_GM=NULL;
-    gmaster_list_MM=NULL;
+    gmaster_list = NULL;
+    gmaster_list_VOL = NULL;
+    gmaster_list_GM = NULL;
+    gmaster_list_MW = NULL;
+    gmaster_list_MM = NULL;
 
     ban_list_player=NULL;
     ban_list_ip=NULL;
