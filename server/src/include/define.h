@@ -98,10 +98,6 @@ error - Your ANSI C compiler should be defining __STDC__;
 
 #define SOCKET_BUFLEN 4096 /* Max length a packet could be */
 
-#define MAX_NAME 16
-#define BIG_NAME 32
-#define MAX_EXT_TITLE 128
-
 #define MAX_ANIMATIONS      256
 
 /* modes for cast_identify() */
