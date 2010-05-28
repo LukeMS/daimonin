@@ -1586,69 +1586,76 @@ int command_stats(object *op, char *params)
     return 0;
 }
 
-int command_abil(object *op, char *params)
+int command_setstat(object *op, char *params)
 {
-    char    thing[20], thing2[20];
-    int     iii;
+    char    player_name[20],
+            stat_name[20];
+    int     v;
     player *pl;
-    char    buf[MEDIUM_BUF];
-
-    iii = 0;
-    thing[0] = '\0';
-    thing2[0] = '\0';
+    shstr  *hash_name = NULL;
 
     if (!params ||
-        !sscanf(params, "%s %s %d", thing, thing2, &iii) ||
-        thing[0] == '\0')
+        sscanf(params, "%s %s %d", player_name, stat_name, &v) != 3)
+    {
         return 1;
+    }
 
-    if (thing2[0] == '\0')
+    if (!(pl = find_player(player_name)))
     {
-        new_draw_info(NDI_UNIQUE, 0, op, "You can't change that.");
+        new_draw_info(NDI_UNIQUE, 0, op, "No such player!");
 
         return 0;
     }
 
-    if (!(pl = find_player(thing)))
+    hash_name = add_string(stat_name);
+
+    if (v < MIN_STAT ||
+        v > MAX_STAT)
     {
-        new_draw_info(NDI_UNIQUE, 0, op, "No such player.");
+        new_draw_info(NDI_UNIQUE, 0, op, "Illegal range of stat!");
 
         return 0;
     }
 
-
-    if (iii < MIN_STAT ||
-        iii > MAX_STAT)
+    if (hash_name == shstr_cons.stat_strength)
     {
-        new_draw_info(NDI_UNIQUE, 0, op, "Illegal range of stat.\n");
+        pl->orig_stats.Str = v;
+    }
+    else if (hash_name == shstr_cons.stat_dexterity)
+    {
+        pl->orig_stats.Dex = v;
+    }
+    else if (hash_name == shstr_cons.stat_constitution)
+    {
+        pl->orig_stats.Con = v;
+    }
+    else if (hash_name == shstr_cons.stat_intelligence)
+    {
+        pl->orig_stats.Int = v;
+    }
+    else if (hash_name == shstr_cons.stat_wisdom)
+    {
+        pl->orig_stats.Wis = v;
+    }
+    else if (hash_name == shstr_cons.stat_power)
+    {
+        pl->orig_stats.Pow = v;
+    }
+    else if (hash_name == shstr_cons.stat_charisma)
+    {
+        pl->orig_stats.Cha = v;
+    }
+    else
+    {
+        new_draw_info(NDI_UNIQUE , 0, op,  "Unrecognised stat!");
+        FREE_AND_CLEAR_HASH(hash_name);
 
-        return 0;
+        return 1;
     }
 
-    if (!strcmp("str", thing2))
-        pl->ob->stats.Str = iii,pl->orig_stats.Str = iii;
-
-    if (!strcmp("dex", thing2))
-        pl->ob->stats.Dex = iii,pl->orig_stats.Dex = iii;
-
-    if (!strcmp("con", thing2))
-        pl->ob->stats.Con = iii,pl->orig_stats.Con = iii;
-
-    if (!strcmp("wis", thing2))
-        pl->ob->stats.Wis = iii,pl->orig_stats.Wis = iii;
-
-    if (!strcmp("cha", thing2))
-        pl->ob->stats.Cha = iii,pl->orig_stats.Cha = iii;
-
-    if (!strcmp("int", thing2))
-        pl->ob->stats.Int = iii,pl->orig_stats.Int = iii;
-
-    if (!strcmp("pow", thing2))
-        pl->ob->stats.Pow = iii,pl->orig_stats.Pow = iii;
-
-    sprintf(buf, "%s has been altered.", pl->ob->name);
-    new_draw_info(NDI_UNIQUE, 0, op, buf);
-    FIX_PLAYER(pl->ob ,"command abil");
+    FREE_AND_CLEAR_HASH(hash_name);
+    new_draw_info_format(NDI_UNIQUE, 0, op, "%s has been altered.", pl->ob->name);
+    FIX_PLAYER(pl->ob, "command setstat");
 
     return 0;
 }

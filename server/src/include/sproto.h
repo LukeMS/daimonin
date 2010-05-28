@@ -242,7 +242,7 @@ int                         command_setskill(object *op, char *params);
 int                         command_addexp(object *op, char *params);
 int                         command_serverspeed(object *op, char *params);
 int                         command_stats(object *op, char *params);
-int                         command_abil(object *op, char *params);
+int                         command_setstat(object *op, char *params);
 int                         command_reset(object *op, char *params);
 int                         command_check_fd(object *op, char *params);
 int                         command_mute(object *op, char *params);
