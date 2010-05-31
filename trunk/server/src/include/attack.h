@@ -44,7 +44,7 @@ typedef enum _attacks
 {
     /* We start with the double used attacks - for resist & protection too */
     /* damage type: physical */
-    ATNR_PHYSICAL, /* = impact */
+    ATNR_IMPACT,
     ATNR_SLASH,
     ATNR_CLEAVE,
     ATNR_PIERCE,
