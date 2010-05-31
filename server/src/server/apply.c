@@ -781,7 +781,7 @@ int improve_armour(object *op, object *improver, object *armour)
 {
     int new_armour;
 
-    new_armour = armour->resist[ATNR_PHYSICAL] + armour->resist[ATNR_PHYSICAL] / 25 + op->level / 20 + 1;
+    new_armour = armour->resist[ATNR_IMPACT] + armour->resist[ATNR_IMPACT] / 25 + op->level / 20 + 1;
     if (new_armour > 90)
         new_armour = 90;
 
@@ -792,9 +792,9 @@ int improve_armour(object *op, object *improver, object *armour)
         return 0;
     }
 
-    if (new_armour > armour->resist[ATNR_PHYSICAL])
+    if (new_armour > armour->resist[ATNR_IMPACT])
     {
-        armour->resist[ATNR_PHYSICAL] = new_armour;
+        armour->resist[ATNR_IMPACT] = new_armour;
         armour->weight += (unsigned long) ((double) armour->weight * (double) 0.05);
     }
     else

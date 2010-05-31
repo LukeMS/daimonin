@@ -54,10 +54,10 @@ char *attack_name[NROFATTACKS] =
  * show up. */
 int resist_table[] =
 {
-    ATNR_SLASH, ATNR_CLEAVE, ATNR_PIERCE, ATNR_PHYSICAL, ATNR_MAGIC, ATNR_FIRE, ATNR_ELECTRICITY, ATNR_COLD,
+    ATNR_SLASH, ATNR_CLEAVE, ATNR_PIERCE, ATNR_IMPACT, ATNR_MAGIC, ATNR_FIRE, ATNR_ELECTRICITY, ATNR_COLD,
     ATNR_CONFUSION, ATNR_ACID, ATNR_DRAIN, ATNR_SHADOW, ATNR_POISON, ATNR_SLOW, ATNR_PARALYZE, ATNR_LIGHT, ATNR_FEAR,
-    ATNR_SLASH, ATNR_DEPLETION, ATNR_CLEAVE, ATNR_SONIC, ATNR_PHYSICAL, ATNR_SNARE, ATNR_LIFESTEAL, ATNR_PSIONIC,
-    ATNR_NETHER, ATNR_PIERCE, ATNR_SLASH, ATNR_CLEAVE, ATNR_PIERCE, ATNR_PHYSICAL, ATNR_MAGIC, ATNR_FIRE,
+    ATNR_SLASH, ATNR_DEPLETION, ATNR_CLEAVE, ATNR_SONIC, ATNR_IMPACT, ATNR_SNARE, ATNR_LIFESTEAL, ATNR_PSIONIC,
+    ATNR_NETHER, ATNR_PIERCE, ATNR_SLASH, ATNR_CLEAVE, ATNR_PIERCE, ATNR_IMPACT, ATNR_MAGIC, ATNR_FIRE,
     ATNR_ELECTRICITY, ATNR_COLD, ATNR_CONFUSION, ATNR_ACID, ATNR_DRAIN, ATNR_LIGHT, ATNR_POISON, ATNR_SLOW,
     ATNR_PARALYZE, ATNR_SNARE, ATNR_FEAR, ATNR_CANCELLATION, ATNR_DEPLETION, ATNR_COUNTERMAGIC, ATNR_SONIC, ATNR_CORRUPTION,
     ATNR_SNARE, ATNR_LIFESTEAL, ATNR_PSIONIC, ATNR_NETHER, ATNR_AETHER, ATNR_DEATH, ATNR_CHAOS, ATNR_GODPOWER,
@@ -256,7 +256,7 @@ int attack_ob(object *target, object *hitter, object *hit_obj)
                 play_sound_map(hitter->map, hitter->x, hitter->y, SOUND_HIT_SLASH, SOUND_NORMAL);
             else if (hitter->attack[ATNR_CLEAVE])
                 play_sound_map(hitter->map, hitter->x, hitter->y, SOUND_HIT_CLEAVE, SOUND_NORMAL);
-            else if (hitter->attack[ATNR_PHYSICAL])
+            else if (hitter->attack[ATNR_IMPACT])
                 play_sound_map(hitter->map, hitter->x, hitter->y, SOUND_HIT_IMPACT, SOUND_NORMAL);
             else
                 play_sound_map(hitter->map, hitter->x, hitter->y, SOUND_HIT_PIERCE, SOUND_NORMAL);
@@ -797,7 +797,7 @@ static int hit_player_attacktype(object *op, object *hitter, int *flags, int dam
     {
         switch (attacknum)
         {
-            case ATNR_PHYSICAL:
+            case ATNR_IMPACT:
             case ATNR_SLASH:
             case ATNR_CLEAVE:
             case ATNR_PIERCE:
@@ -854,7 +854,7 @@ static int hit_player_attacktype(object *op, object *hitter, int *flags, int dam
 
     switch (attacknum)
     {
-        case ATNR_PHYSICAL:
+        case ATNR_IMPACT:
           check_physically_infect(op, hitter); /* quick check for desease! */
 
         /* these are "pure" damage attacks */

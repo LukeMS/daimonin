@@ -1139,12 +1139,12 @@ int cast_change_attr(object *op, object *caster, object *target, int dir, int sp
               if ((tmp->stats.ac - force->stats.ac) < -20)
                   force->stats.ac = tmp->stats.ac + 20;
 
-              force->resist[ATNR_PHYSICAL] = 5 + 4 * SP_level_dam_adjust(op, caster, spell_type);
-              if (force->resist[ATNR_PHYSICAL] > 25)
-                  force->resist[ATNR_PHYSICAL] = 25;
-              if (tmp->resist[ATNR_PHYSICAL] > 70
-               && force->resist[ATNR_PHYSICAL] > (100 - tmp->resist[ATNR_PHYSICAL]) / 3)
-                  force->resist[ATNR_PHYSICAL] = 3;  /* diminishing returns at high armor. */
+              force->resist[ATNR_IMPACT] = 5 + 4 * SP_level_dam_adjust(op, caster, spell_type);
+              if (force->resist[ATNR_IMPACT] > 25)
+                  force->resist[ATNR_IMPACT] = 25;
+              if (tmp->resist[ATNR_IMPACT] > 70
+               && force->resist[ATNR_IMPACT] > (100 - tmp->resist[ATNR_IMPACT]) / 3)
+                  force->resist[ATNR_IMPACT] = 3;  /* diminishing returns at high armor. */
               new_draw_info(NDI_UNIQUE, 0, tmp, "A force shimmers around you.");
               break;
           }
@@ -1282,7 +1282,7 @@ int cast_change_attr(object *op, object *caster, object *target, int dir, int sp
               atnr = ATNR_DRAIN, path = PATH_DEATH, i = 1;
         case SP_PROT_ATTACK:
           if (!i)
-              atnr = ATNR_PHYSICAL, path = PATH_PROT, i = 1;
+              atnr = ATNR_IMPACT, path = PATH_PROT, i = 1;
         case SP_PROT_MAGIC:
           if (!i)
               atnr = ATNR_MAGIC, i = 1;
@@ -1330,7 +1330,7 @@ int cast_change_attr(object *op, object *caster, object *target, int dir, int sp
           force->resist[ATNR_DRAIN] = 100;
           break;
         case SP_IMMUNE_ATTACK:
-          force->resist[ATNR_PHYSICAL] = 100;
+          force->resist[ATNR_IMPACT] = 100;
           break;
         case SP_IMMUNE_MAGIC:
           force->resist[ATNR_MAGIC] = 100;
@@ -1347,7 +1347,7 @@ int cast_change_attr(object *op, object *caster, object *target, int dir, int sp
               i = 100;
           else
               i = 30;
-          force->resist[ATNR_PHYSICAL] = i;
+          force->resist[ATNR_IMPACT] = i;
           force->resist[ATNR_FIRE] = i;
           force->resist[ATNR_ELECTRICITY] = i;
           force->resist[ATNR_COLD] = i;
@@ -3754,9 +3754,9 @@ int animate_weapon(object *op, object *caster, int dir, archetype *at, int spell
             a = material[i].save[0];
         }
     }
-    tmp->resist[ATNR_PHYSICAL] = 100
+    tmp->resist[ATNR_IMPACT] = 100
                                - (int)
-                                 ((100.0 - (float) tmp->resist[ATNR_PHYSICAL])
+                                 ((100.0 - (float) tmp->resist[ATNR_IMPACT])
                                 / (30.0 - 2.0 * (a > 14 ? 14.0 : (float) a)));
     LOG(llevDebug, "animate_weapon: slaying %s\n", tmp->slaying ? tmp->slaying : "nothing");
 
@@ -3777,7 +3777,7 @@ int animate_weapon(object *op, object *caster, int dir, archetype *at, int spell
 
     if (tmp->speed > 3.33f)
         tmp->speed = 3.33f;
-    LOG(llevDebug, "animate_weapon: armour:%d  speed:%f  exp:%d.\n", tmp->resist[ATNR_PHYSICAL], tmp->speed,
+    LOG(llevDebug, "animate_weapon: armour:%d  speed:%f  exp:%d.\n", tmp->resist[ATNR_IMPACT], tmp->speed,
         tmp->stats.exp);
 
     /* spell-dependent finishing touches and descriptive text */

@@ -505,7 +505,7 @@ op->oz= op->z;
 ^is_magical{S}	    SET_OR_CLEAR_FLAG(op, FLAG_IS_MAGICAL, IVAL);
 
     /* Start of various attacktypes */
-^attack_impact{S}	SET_ATTACK(op, ATNR_PHYSICAL, IVAL);
+^attack_impact{S}	SET_ATTACK(op, ATNR_IMPACT, IVAL);
 ^attack_fire{S}		SET_ATTACK(op, ATNR_FIRE, IVAL);
 ^attack_electricity{S}	SET_ATTACK(op, ATNR_ELECTRICITY, IVAL);
 ^attack_cold{S}		SET_ATTACK(op, ATNR_COLD, IVAL);
@@ -540,7 +540,7 @@ op->oz= op->z;
 ^attack_corruption{S}	SET_ATTACK(op, ATNR_CORRUPTION, IVAL);
 
 	/* Start of various resisttypes */
-^resist_impact{S}	SET_RESIST(op, ATNR_PHYSICAL, IVAL);
+^resist_impact{S}	SET_RESIST(op, ATNR_IMPACT, IVAL);
 ^resist_fire{S}		SET_RESIST(op, ATNR_FIRE, IVAL);
 ^resist_electricity{S}	SET_RESIST(op, ATNR_ELECTRICITY, IVAL);
 ^resist_cold{S}		SET_RESIST(op, ATNR_COLD, IVAL);
@@ -576,7 +576,7 @@ op->oz= op->z;
 
 
 	/* outdate beta 3 attack/protection/resists  WE HOTMAP THEM TO NEW ONES HERE - remove this for 1.0 */
-^protect_impact{S}	SET_RESIST(op, ATNR_PHYSICAL, IVAL);
+^protect_impact{S}	SET_RESIST(op, ATNR_IMPACT, IVAL);
 ^protect_slash{S}	SET_RESIST(op, ATNR_SLASH, IVAL);
 ^protect_cleave{S}	SET_RESIST(op, ATNR_CLEAVE, IVAL);
 ^protect_pierce{S}	SET_RESIST(op, ATNR_PIERCE, IVAL);
