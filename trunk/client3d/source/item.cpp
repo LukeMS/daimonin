@@ -26,6 +26,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include "define.h"
 #include "item.h"
 #include "logger.h"
+#include "profiler.h"
 #include "network.h"
 #include "gui/gui_manager.h"
 #include "tile/tile_map_wrapper.h"
@@ -44,6 +45,7 @@ using namespace Ogre;
 //================================================================================================
 Item::Item()
 {
+    PROFILE()
     mActItemID[ITEMLIST_GROUND]    = 0; // Ground tile container ID is always 0.
     mActItemID[ITEMLIST_BACKPACK]  = CONTAINER_UNKNOWN;
     mActItemID[ITEMLIST_CONTAINER] = CONTAINER_UNKNOWN;
@@ -58,6 +60,7 @@ Item::Item()
 //================================================================================================
 Item::~Item()
 {
+    PROFILE()
     for (int i =0; i < ITEMLIST_SUM; ++i)
         clearContainer(mActItemID[i]);
 }
@@ -67,6 +70,7 @@ Item::~Item()
 //================================================================================================
 void Item::clearContainer(int container)
 {
+    PROFILE()
     for (int i =0; i < ITEMLIST_SUM; ++i)
     {
         if (container != mActItemID[i]) continue;
@@ -84,6 +88,7 @@ void Item::clearContainer(int container)
 //================================================================================================
 void Item::ItemXYCmd(uchar *data, int len, bool bflag)
 {
+    PROFILE()
     int pos = 0;
     int mode      = Network::getSingleton().GetInt_String(data + pos); pos+= 4;
     int container = Network::getSingleton().GetInt_String(data + pos); pos+= 4;
@@ -153,6 +158,7 @@ void Item::ItemXYCmd(uchar *data, int len, bool bflag)
 //================================================================================================
 int Item::getContainerID(unsigned int ItemID)
 {
+    PROFILE()
     std::list<sItem*>::iterator iter;
     for (int i =0; i < ITEMLIST_SUM; ++i)
     {
@@ -171,6 +177,7 @@ int Item::getContainerID(unsigned int ItemID)
 //================================================================================================
 const Item::sItem *Item::locateItem(int container, unsigned int tag)
 {
+    PROFILE()
     std::list<sItem*>::iterator iter;
     for (int i =0; i < ITEMLIST_SUM; ++i)
     {
@@ -189,6 +196,7 @@ const Item::sItem *Item::locateItem(int container, unsigned int tag)
 //================================================================================================
 void Item::delItem(unsigned int item, int container)
 {
+    PROFILE()
     std::list<sItem*>::iterator iter;
     for (int i =0; i < ITEMLIST_SUM; ++i)
     {
@@ -213,6 +221,7 @@ void Item::delItem(unsigned int item, int container)
 //================================================================================================
 bool Item::addItem(sItem *tmpItem, int container)
 {
+    PROFILE()
     for (int i =0; i < ITEMLIST_SUM; ++i)
     {
         if (mActItemID[i] == container)
@@ -231,6 +240,7 @@ bool Item::addItem(sItem *tmpItem, int container)
 //================================================================================================
 bool Item::update(sItem *tmpItem, int newContainerID, bool /*bflag*/)
 {
+    PROFILE()
     int actContainerID = getContainerID(tmpItem->tag);
     // The item doesn't has a container yet.
     if (actContainerID == CONTAINER_UNKNOWN)
@@ -252,6 +262,7 @@ bool Item::update(sItem *tmpItem, int newContainerID, bool /*bflag*/)
 //================================================================================================
 void Item::getInventoryItemFromFloor(int slotNr)
 {
+    PROFILE()
     char buffer[256];
     if (slotNr >= (int)mItemList[ITEMLIST_GROUND].size()) return;
     std::list<sItem*>::iterator iter;
@@ -272,6 +283,7 @@ void Item::getInventoryItemFromFloor(int slotNr)
 //================================================================================================
 void Item::dropInventoryItemToFloor(int slotNr)
 {
+    PROFILE()
     //int sumItems = 1;
     //sound_play_effect(SOUND_DROP, 0, 0, 100);
     char buffer[256];
@@ -293,6 +305,7 @@ void Item::dropInventoryItemToFloor(int slotNr)
 //================================================================================================
 void Item::dropItem(int srcWindow, int srcItemSlot, int dstWindow, int dstItemSlot)
 {
+    PROFILE()
     // ////////////////////////////////////////////////////////////////////
     // Drop outside a window -> drop this item to the floor.
     // ////////////////////////////////////////////////////////////////////
@@ -316,6 +329,7 @@ void Item::dropItem(int srcWindow, int srcItemSlot, int dstWindow, int dstItemSl
 //================================================================================================
 const char *Item::getItemGfxName(int itemFace)
 {
+    PROFILE()
     const int MASK_FACEFILTER = ~0x8000; // Filter to extract the face number (gfx-id).
     return ObjectWrapper::getSingleton().getMeshName(itemFace & MASK_FACEFILTER);
 }
@@ -325,6 +339,7 @@ const char *Item::getItemGfxName(int itemFace)
 //================================================================================================
 void Item::printAllItems()
 {
+    PROFILE()
     String strTmp;
     std::list<sItem*>::iterator iter;
     const char *names[ITEMLIST_SUM] = {"Backpack", "Container:", "Ground:" };

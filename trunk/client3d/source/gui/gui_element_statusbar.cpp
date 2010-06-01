@@ -23,6 +23,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 
 #include <OgreHardwarePixelBuffer.h>
 #include "logger.h"
+#include "profiler.h"
 #include "gui/gui_element_statusbar.h"
 
 using namespace Ogre;
@@ -34,6 +35,7 @@ const Real ANIMATION_SPEED = 1.2f;
 //================================================================================================
 void GuiStatusbar::sendMsg(const int message, Ogre::String &/*text*/, Ogre::uint32 &param, const char * /*text2*/)
 {
+    PROFILE()
     if (message == GuiManager::MSG_SET_VALUE)
         setValue(param);
 }
@@ -43,6 +45,7 @@ void GuiStatusbar::sendMsg(const int message, Ogre::String &/*text*/, Ogre::uint
 //================================================================================================
 void GuiStatusbar::update(Ogre::Real dTime)
 {
+    PROFILE()
     if (mDrawn == mValue) return;
     if (mSmoothChange)
     {
@@ -67,6 +70,7 @@ void GuiStatusbar::update(Ogre::Real dTime)
 //================================================================================================
 void GuiStatusbar::setValue(int value)
 {
+    PROFILE()
     mValue = (value <= 0)?0:(value*mLength)/100;
 }
 
@@ -75,6 +79,7 @@ void GuiStatusbar::setValue(int value)
 //================================================================================================
 GuiStatusbar::GuiStatusbar(TiXmlElement *xmlElement, const void *parent):GuiElement(xmlElement, parent)
 {
+    PROFILE()
     const char *temp = xmlElement->Attribute("smooth");
     mSmoothChange = (temp && atoi(temp))?true:false;
     TiXmlElement *xmlElem = xmlElement->FirstChildElement("Color");
@@ -104,6 +109,7 @@ GuiStatusbar::GuiStatusbar(TiXmlElement *xmlElement, const void *parent):GuiElem
 //================================================================================================
 void GuiStatusbar::draw()
 {
+    PROFILE()
     if (!mVisible)
     {
         GuiElement::draw(true);
@@ -122,6 +128,7 @@ void GuiStatusbar::draw()
 //================================================================================================
 void GuiStatusbar::drawColorBar(uint32 *dst)
 {
+    PROFILE()
     if (mAutoColor)
     {
         if      (mDrawn > mLength/2) mFillColor= 0x0000ff00; // green bar.
@@ -174,5 +181,6 @@ void GuiStatusbar::drawColorBar(uint32 *dst)
 //================================================================================================
 void GuiStatusbar::drawGfxBar(uint32 * /*dst*/)
 {
+    PROFILE()
     // todo
 }

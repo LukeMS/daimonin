@@ -26,6 +26,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include "network_serverfile.h"
 #include "network.h"
 #include "logger.h"
+#include "profiler.h"
 #include "zlib.h"
 
 using namespace std;
@@ -35,6 +36,7 @@ using namespace std;
 //================================================================================================
 ServerFile::ServerFile()
 {
+    PROFILE()
     srv_file[FILE_SKILLS  ].filename = FILE_CLIENT_SKILLS;
     srv_file[FILE_SPELLS  ].filename = FILE_CLIENT_SPELLS;
     srv_file[FILE_SETTINGS].filename = FILE_CLIENT_SETTINGS;
@@ -52,6 +54,7 @@ ServerFile::ServerFile()
 //================================================================================================
 void ServerFile::checkFileStatus(const char * /*cmd*/, char *param, int fileNr)
 {
+    PROFILE()
     Logger::log().info() << "Server file status of ["<< fileNr<< "] " << srv_file[fileNr].filename << "...";
     if (!strcmp((const char*)param, "OK"))
     {
@@ -76,6 +79,7 @@ void ServerFile::checkFileStatus(const char * /*cmd*/, char *param, int fileNr)
 //================================================================================================
 void ServerFile::checkFiles()
 {
+    PROFILE()
     for (int i=0; i< FILE_SUM; ++i)
     {
         ifstream in(srv_file[i].filename, ios::in | ios::binary);
@@ -101,6 +105,7 @@ void ServerFile::checkFiles()
 //================================================================================================
 bool ServerFile::requestFiles()
 {
+    PROFILE()
     for (unsigned char i = 0; i < FILE_SUM; ++i)
     {
         if (srv_file[i].status == STATUS_UPDATING) return false;

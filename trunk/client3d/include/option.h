@@ -147,7 +147,7 @@ public:
     {
         mLoginType = type;
     }
-    int getLoginType()
+    int getLoginType() const
     {
         return mLoginType;
     }
@@ -197,7 +197,7 @@ public:
         mGameStatus = status;
         return true;
     }
-    int getGameStatus()
+    int getGameStatus() const
     {
         return mGameStatus;
     }

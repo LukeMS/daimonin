@@ -84,7 +84,7 @@ public:
     {
         mAnim->toggleAnimation(animGroup, animNr);
     }
-    const Ogre::String &getNickName()
+    const Ogre::String &getNickName() const
     {
         return mNickName;
     }
@@ -92,7 +92,7 @@ public:
     {
         mNickName = name;
     }
-    int getFriendly()
+    int getFriendly() const
     {
         return mFriendly;
     }
@@ -100,17 +100,17 @@ public:
     {
         return mEntity;
     }
-    Ogre::Vector3 getTilePos()
+    Ogre::Vector3 getTilePos() const
     {
         return mTilePos;
     }
     void setPosition(Ogre::Vector3 pos);
     void activate(bool waitForHero = true);
-    unsigned int getIndex()
+    unsigned int getIndex() const
     {
         return mIndex;
     }
-    Ogre::Real getHeight()
+    Ogre::Real getHeight() const
     {
         return mBoundingBox.y;
     }

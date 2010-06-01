@@ -27,6 +27,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include "particle_manager.h"
 #include "option.h"
 #include "logger.h"
+#include "profiler.h"
 
 using namespace Ogre;
 
@@ -39,6 +40,7 @@ using namespace Ogre;
 //================================================================================================
 bool SpellManager::init(SceneManager *SceneMgr)
 {
+    PROFILE()
     mSceneMgr = SceneMgr;
     mNode = mSceneMgr->getRootSceneNode();
     return true;
@@ -47,8 +49,9 @@ bool SpellManager::init(SceneManager *SceneMgr)
 //================================================================================================
 //
 //================================================================================================
-bool SpellManager::addObject(unsigned int , unsigned int )
+bool SpellManager::addObject(unsigned int , unsigned int) const
 {
+    PROFILE()
     // Player cast Fireball.
 //    SceneNode *node = (SceneNode*) ObjectManager::getSingleton().getNpcNode(0);
     //ParticleManager::getSingleton().addNodeObject(node, "Particle/GreenyNimbus");
@@ -59,26 +62,33 @@ bool SpellManager::addObject(unsigned int , unsigned int )
 //================================================================================================
 //
 //================================================================================================
-void SpellManager::update(int , const FrameEvent& )
-{}
+void SpellManager::update(int , const FrameEvent&)
+{
+    PROFILE()
+}
 
 //================================================================================================
 // JUST FOR TESTING.
 //================================================================================================
-void SpellManager::keyEvent(int , int , int , int )
-{}
+void SpellManager::keyEvent(int , int , int , int)
+{
+    PROFILE()
+}
 
 //================================================================================================
 //
 //================================================================================================
-void SpellManager::delObject(int )
-{}
+void SpellManager::delObject(int) const
+{
+    PROFILE()
+}
 
 //================================================================================================
 //
 //================================================================================================
 SpellManager::~SpellManager()
 {
+    PROFILE()
     /*
         for (unsigned int i = 0; i < mvObject_range.size(); ++i)
         {

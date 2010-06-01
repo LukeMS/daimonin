@@ -28,6 +28,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include <OgreTextureManager.h>
 #include <OgreStringConverter.h>
 #include "logger.h"
+#include "profiler.h"
 #include "option.h"
 #include "item.h"
 #include "events.h"
@@ -46,6 +47,7 @@ using namespace Ogre;
 //================================================================================================
 bool Events::keyPressed( const OIS::KeyEvent &e)
 {
+    PROFILE()
     mIdleTime =0;
     static Real fogStart = 450.0;
     // ////////////////////////////////////////////////////////////////////
@@ -708,6 +710,7 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
 //================================================================================================
 bool Events::keyReleased(const OIS::KeyEvent &e)
 {
+    PROFILE()
     //mShiftDown = e->isShiftDown();
     switch (e.key)
     {
@@ -749,6 +752,7 @@ bool Events::keyReleased(const OIS::KeyEvent &e)
 //================================================================================================
 bool Events::mouseMoved(const OIS::MouseEvent &e)
 {
+    PROFILE()
     const int MOUSE_POINTER_SIZE = 10;
     mMouse.x = (Real) e.state.X.abs;
     mMouse.y = (Real) e.state.Y.abs;
@@ -764,6 +768,7 @@ bool Events::mouseMoved(const OIS::MouseEvent &e)
 //================================================================================================
 bool Events::mousePressed(const OIS::MouseEvent &e, const OIS::MouseButtonID button)
 {
+    PROFILE()
     // ////////////////////////////////////////////////////////////////////
     // First check if the mouse action is within the gui.
     // ////////////////////////////////////////////////////////////////////
@@ -827,6 +832,7 @@ bool Events::mousePressed(const OIS::MouseEvent &e, const OIS::MouseButtonID but
 //================================================================================================
 bool Events::mouseReleased(const OIS::MouseEvent &/*e*/, const OIS::MouseButtonID /*id*/)
 {
+    PROFILE()
     int ret = GuiManager::getSingleton().mouseEvent(GuiManager::BUTTON_RELEASED, mMouse);
     if (ret == GuiManager::EVENT_USER_ACTION)
         elementClicked(GuiManager::getSingleton().getElementPressed());
@@ -844,6 +850,7 @@ bool Events::mouseReleased(const OIS::MouseEvent &/*e*/, const OIS::MouseButtonI
 //================================================================================================
 void Events::elementClicked(int element)
 {
+    PROFILE()
     Sound::getSingleton().playStream(Sound::BUTTON_CLICK);
     const char *buf;
     switch (element)

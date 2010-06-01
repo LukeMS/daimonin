@@ -25,6 +25,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include "logger.h"
 #include "events.h"
 #include "option.h"
+#include "profiler.h"
 
 using namespace Ogre;
 

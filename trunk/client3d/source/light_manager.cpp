@@ -24,6 +24,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include "light_manager.h"
 #include "option.h"
 #include "logger.h"
+#include "profiler.h"
 
 using namespace Ogre;
 
@@ -37,13 +38,14 @@ using namespace Ogre;
 //================================================================================================
 bool LightManager::init(SceneManager *, SceneNode *)
 {
+    PROFILE()
     return true;
 }
 
 //================================================================================================
 ///
 //================================================================================================
-bool LightManager::addObject(unsigned int , const char *, Vector3 )
+bool LightManager::addObject(unsigned int , const char *, Vector3)
 {
     return true;
 }
@@ -51,19 +53,19 @@ bool LightManager::addObject(unsigned int , const char *, Vector3 )
 //================================================================================================
 ///
 //================================================================================================
-void LightManager::update(int , const FrameEvent& )
+void LightManager::update(int , const FrameEvent&)
 {}
 
 //================================================================================================
 // JUST FOR TESTING.
 //================================================================================================
-void LightManager::keyEvent(int , int , int , int )
+void LightManager::keyEvent(int , int , int , int)
 {}
 
 //================================================================================================
 ///
 //================================================================================================
-void LightManager::delObject(int )
+void LightManager::delObject(int) const
 {}
 
 LightManager::~LightManager()

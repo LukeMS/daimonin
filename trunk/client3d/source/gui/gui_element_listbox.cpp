@@ -25,6 +25,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include <OgreTimer.h>
 #include <OgreHardwarePixelBuffer.h>
 #include "logger.h"
+#include "profiler.h"
 #include "gui/gui_textout.h"
 #include "gui/gui_graphic.h"
 #include "gui/gui_element_listbox.h"
@@ -40,6 +41,7 @@ String GuiListbox::mKeywordPressed;
 //================================================================================================
 GuiListbox::GuiListbox(TiXmlElement *xmlElement, const void *parent):GuiElement(xmlElement, parent)
 {
+    PROFILE()
     mFontHeight = GuiTextout::getSingleton().getFontHeight(mFontNr);
     mMaxVisibleRows  = (int)((float)mHeight / (float)mFontHeight + 0.5);
     if (mMaxVisibleRows < 1) mMaxVisibleRows = 1;
@@ -59,6 +61,7 @@ GuiListbox::GuiListbox(TiXmlElement *xmlElement, const void *parent):GuiElement(
 //================================================================================================
 void GuiListbox::clear()
 {
+    PROFILE()
     mPrintPos = 0;
     mActLines = 0;
     mBufferPos= 0;
@@ -73,6 +76,7 @@ void GuiListbox::clear()
 //================================================================================================
 GuiListbox::~GuiListbox()
 {
+    PROFILE()
     delete mScrollBarV;
 }
 
@@ -81,6 +85,7 @@ GuiListbox::~GuiListbox()
 //================================================================================================
 void GuiListbox::sendMsg(const int msgID, Ogre::String &text, Ogre::uint32 &color, const char * /*text2*/)
 {
+    PROFILE()
     switch (msgID)
     {
         case GuiManager::MSG_ADD_ROW:
@@ -116,6 +121,7 @@ void GuiListbox::sendMsg(const int msgID, Ogre::String &text, Ogre::uint32 &colo
 //================================================================================================
 int GuiListbox::addText(const char *txt, uint32 stdColor)
 {
+    PROFILE()
     if (!txt) return 0; // We MUST check for NULL, so we can't use String for the first parameter of addText().
     String strText = txt;
     // ////////////////////////////////////////////////////////////////////
@@ -208,6 +214,7 @@ int GuiListbox::addText(const char *txt, uint32 stdColor)
 //================================================================================================
 int GuiListbox::addItem(const int itemId, uint32 stdColor)
 {
+    PROFILE()
     const int sumRowsForItem = GuiImageset::ITEM_SIZE / mFontHeight +1;
     String strKeyword = "$" + StringConverter::toString(itemId);
     int sumLines= 0;
@@ -231,6 +238,7 @@ int GuiListbox::addItem(const int itemId, uint32 stdColor)
 //================================================================================================
 int GuiListbox::mouseEvent(const int mouseAction, int mouseX, int mouseY, int mouseWheel)
 {
+    PROFILE()
     // Scrollbar action?
     if (mScrollBarV)
     {
@@ -269,6 +277,7 @@ int GuiListbox::mouseEvent(const int mouseAction, int mouseX, int mouseY, int mo
 //================================================================================================
 bool GuiListbox::extractKeyword(int mouseX, int mouseY)
 {
+    PROFILE()
     char key[] = { GuiTextout::TXT_CMD_LINK, GuiTextout::TXT_CMD_SEPARATOR, '\0'};
     int clickedLine = mMaxVisibleRows-(mouseY - mPosY)/ mFontHeight;
     clickedLine = (mActLines-clickedLine-mVScrollOffset) & (SIZE_STRING_BUFFER-1);
@@ -321,6 +330,7 @@ bool GuiListbox::extractKeyword(int mouseX, int mouseY)
 //================================================================================================
 void GuiListbox::update(Ogre::Real /*dTime*/)
 {
+    PROFILE()
     if (!mRowsToPrint) return;
     --mRowsToPrint;
     draw();
@@ -331,6 +341,7 @@ void GuiListbox::update(Ogre::Real /*dTime*/)
 //================================================================================================
 void GuiListbox::draw()
 {
+    PROFILE()
     uint32 *bak = mParent->getLayerBG() + mPosX + mPosY*mParent->getWidth();
     uint32 *dst = GuiManager::getSingleton().getBuildBuffer();
     GuiGraphic::getSingleton().restoreWindowBG(mWidth, mHeight, bak, dst, mParent->getWidth(), mWidth);
@@ -373,6 +384,7 @@ void GuiListbox::draw()
 //================================================================================================
 void GuiListbox::scrollTextVertical(int offset)
 {
+    PROFILE()
     if (mActLines < mMaxVisibleRows || !offset) return; // Nothing to scroll.
     if (offset < 0)
     {

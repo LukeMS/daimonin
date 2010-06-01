@@ -62,11 +62,11 @@ public:
     {
         return mNode;
     }
-    Ogre::Real getFacing()
+    Ogre::Real getFacing() const
     {
         return mFacing.valueDegrees();
     }
-    unsigned int getIndex()
+    unsigned int getIndex() const
     {
         return mIndex;
     }

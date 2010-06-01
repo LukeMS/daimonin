@@ -29,6 +29,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include <dirent.h>
 #endif
 #include "logger.h"
+#include "profiler.h"
 #include "gui/gui_imageset.h"
 
 using namespace Ogre;
@@ -65,6 +66,7 @@ const int UNKNOWN_ITEM_GFX = 0;
 //================================================================================================
 GuiImageset::~GuiImageset()
 {
+    PROFILE()
     for (std::vector<gfxSrcEntry*>::iterator i = mvSrcEntry.begin(); i < mvSrcEntry.end(); ++i)
     {
 #ifdef D_DEBUG
@@ -83,6 +85,7 @@ GuiImageset::~GuiImageset()
 //================================================================================================
 void GuiImageset::parseXML(const char *fileImageSet, bool createItemAtlas)
 {
+    PROFILE()
     // ////////////////////////////////////////////////////////////////////
     // Parse the imageset.
     // ////////////////////////////////////////////////////////////////////
@@ -148,6 +151,7 @@ void GuiImageset::parseXML(const char *fileImageSet, bool createItemAtlas)
 //================================================================================================
 bool GuiImageset::parseStates(TiXmlElement *xmlElem, gfxPos *stateNr, int sum_state, bool mouseStates)
 {
+    PROFILE()
     // By setting the xpos to -1 we declare this state to empty.
     for (int i=0; i < sum_state; ++i) stateNr[i].x = -1;
     // Read in the positions for all the states.
@@ -195,6 +199,7 @@ bool GuiImageset::parseStates(TiXmlElement *xmlElem, gfxPos *stateNr, int sum_st
 //================================================================================================
 GuiImageset::gfxSrcEntry *GuiImageset::getStateGfxPositions(const char* guiImage)
 {
+    PROFILE()
     if (guiImage)
     {
         for (unsigned int j = 0; j < mvSrcEntry.size(); ++j)
@@ -216,6 +221,7 @@ GuiImageset::gfxSrcEntry *GuiImageset::getStateGfxPositions(const char* guiImage
 //================================================================================================
 void GuiImageset::parseItems(bool createItemAtlas)
 {
+    PROFILE()
     String path = GuiManager::getSingleton().getPathItems();
     String fileAtlasGfx = GuiManager::FILE_ITEM_ATLAS;
     String fileAtlasTxt = path + GuiManager::FILE_ITEM_ATLAS;
@@ -339,6 +345,7 @@ void GuiImageset::parseItems(bool createItemAtlas)
 //================================================================================================
 int GuiImageset::getItemId(const char *gfxName)
 {
+    PROFILE()
     if (gfxName)
     {
         for (unsigned int i = 0; i < mvAtlasGfxName.size(); ++i)
@@ -355,6 +362,7 @@ int GuiImageset::getItemId(const char *gfxName)
 //================================================================================================
 const PixelBox &GuiImageset::getItemPB(int itemNr)
 {
+    PROFILE()
     static PixelBox pb;
     pb = mItemPixelBox.getSubVolume(Box(0, ITEM_SIZE * itemNr, ITEM_SIZE, ITEM_SIZE *(itemNr+1)));
     return (pb);

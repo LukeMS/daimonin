@@ -22,6 +22,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
 
 #include <OgreHardwarePixelBuffer.h>
+#include "profiler.h"
 #include "gui/gui_textout.h"
 #include "gui/gui_element_button.h"
 
@@ -32,6 +33,7 @@ using namespace Ogre;
 //================================================================================================
 GuiElementButton::GuiElementButton(TiXmlElement *xmlElement, const void *parent, const bool drawOnInit):GuiElement(xmlElement, parent)
 {
+    PROFILE()
     if ((xmlElement = xmlElement->FirstChildElement("Tooltip")))
     {
         const char *tmp;
@@ -47,6 +49,7 @@ GuiElementButton::GuiElementButton(TiXmlElement *xmlElement, const void *parent,
 //================================================================================================
 void GuiElementButton::sendMsg(const int message, String &text, uint32 &param, const char * /*text2*/)
 {
+    PROFILE()
     switch (message)
     {
         case GuiManager::MSG_SET_VISIBLE:
@@ -63,6 +66,7 @@ void GuiElementButton::sendMsg(const int message, String &text, uint32 &param, c
 //================================================================================================
 int GuiElementButton::mouseEvent(const int mouseAction, int mouseX, int mouseY, int /*mouseWheel*/)
 {
+    PROFILE()
     if (!mouseWithin(mouseX, mouseY))
     {
         // Mouse is no longer over the gadget.
@@ -106,6 +110,7 @@ int GuiElementButton::mouseEvent(const int mouseAction, int mouseX, int mouseY, 
 //================================================================================================
 void GuiElementButton::draw()
 {
+    PROFILE()
     GuiElement::draw(false);
     // Draw label.
     uint32 *dst = GuiManager::getSingleton().getBuildBuffer();

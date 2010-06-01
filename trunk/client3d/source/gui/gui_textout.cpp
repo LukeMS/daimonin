@@ -28,6 +28,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include <OgreStringConverter.h>
 #include <OgreHardwarePixelBuffer.h>
 #include "logger.h"
+#include "profiler.h"
 #include "gui/gui_textout.h"
 #include "gui/gui_graphic.h"
 #include "gui/gui_imageset.h"
@@ -54,6 +55,7 @@ const uint32 FONT_ENDX_SIGN = 0xff00ff00;
 //================================================================================================
 GuiTextout::GuiTextout()
 {
+    PROFILE()
     // ////////////////////////////////////////////////////////////////////
     // Parse the font extensions.
     // ////////////////////////////////////////////////////////////////////
@@ -119,6 +121,7 @@ GuiTextout::GuiTextout()
 //================================================================================================
 GuiTextout::~GuiTextout()
 {
+    PROFILE()
     for (std::vector<mFont*>::iterator i = mvFont.begin(); i < mvFont.end(); ++i)
     {
         delete[] (*i)->data;
@@ -135,6 +138,7 @@ GuiTextout::~GuiTextout()
 //================================================================================================
 void GuiTextout::loadRawFont(const char *filename)
 {
+    PROFILE()
     Image image;
     try
     {
@@ -180,6 +184,7 @@ void GuiTextout::loadRawFont(const char *filename)
 //================================================================================================
 void GuiTextout::loadTTFont(const char *filename, const char *size, const char *reso, bool createRawFont)
 {
+    PROFILE()
     // Load the font.
     if (!filename) return;
     Ogre::NameValuePairList pairList;
@@ -372,6 +377,7 @@ void GuiTextout::loadTTFont(const char *filename, const char *size, const char *
 //================================================================================================
 void GuiTextout::parseUserDefinedChars(String &txt)
 {
+    PROFILE()
     size_t found;
     char replacement[] = {(char)(STANDARD_CHARS_IN_FONT+32),0};
     for (unsigned int i=0; i < mvSpecialChar.size(); ++i)
@@ -387,6 +393,7 @@ void GuiTextout::parseUserDefinedChars(String &txt)
 //================================================================================================
 int GuiTextout::hexToInt(const char *text, int len, uint32 &result)
 {
+    PROFILE()
     int pos = 0;
     result = 0;
     for (int i = (len-1)*4; i >= 0; i-=4)
@@ -404,6 +411,7 @@ int GuiTextout::hexToInt(const char *text, int len, uint32 &result)
 //================================================================================================
 int GuiTextout::getCharWidth(int fontNr, uchar Char)
 {
+    PROFILE()
     return (Char<32)?0:mvFont[fontNr]->charWidth[Char-32]-1;
 }
 
@@ -412,6 +420,7 @@ int GuiTextout::getCharWidth(int fontNr, uchar Char)
 //================================================================================================
 int GuiTextout::calcTextWidth(const char *text, unsigned int fontNr)
 {
+    PROFILE()
     int width =0;
     if (fontNr >= (unsigned int)mvFont.size()) fontNr = 0;
     while (*text)
@@ -451,6 +460,7 @@ int GuiTextout::calcTextWidth(const char *text, unsigned int fontNr)
 //================================================================================================
 int GuiTextout::getLastCharPosition(const char *text, unsigned int fontNr, int width)
 {
+    PROFILE()
     int pos =0;
     if (fontNr >= (unsigned int)mvFont.size()) fontNr = 0;
     while (width > 0 && text[pos])
@@ -490,6 +500,7 @@ int GuiTextout::getLastCharPosition(const char *text, unsigned int fontNr, int w
 //================================================================================================
 const char *GuiTextout::getTextendColor(const String &strText)
 {
+    PROFILE()
     static char color[] = "~#ff000000\0";
     color[0] = '\0';
     const char *text = strText.c_str();
@@ -538,6 +549,7 @@ const char *GuiTextout::getTextendColor(const String &strText)
 void GuiTextout::printText(int width, int height, uint32 *dst, int dstLineSkip, uint32 *bak, int bakLineSkip,
                            const char *txt, unsigned int fontNr, uint32 fontColor, bool hideText, uint32 borderColor)
 {
+    PROFILE()
     const char *text = (!txt)?"":txt; // Prevent trouble when txt is NULL.
     if (fontNr >= (unsigned int)mvFont.size()) fontNr = 0;
 

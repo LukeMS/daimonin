@@ -23,6 +23,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 
 #include <OgreHardwarePixelBuffer.h>
 #include "logger.h"
+#include "profiler.h"
 #include "gui/gui_graphic.h"
 #include "gui/gui_element.h"
 #include "gui/gui_textout.h"
@@ -34,6 +35,7 @@ using namespace Ogre;
 //================================================================================================
 int GuiElement::mouseEvent(int, int, int, int)
 {
+    PROFILE()
     return GuiManager::EVENT_CHECK_NEXT; // No action here, check the other gadgets.
 }
 
@@ -42,6 +44,7 @@ int GuiElement::mouseEvent(int, int, int, int)
 //================================================================================================
 int GuiElement::keyEvent(const int, const unsigned int)
 {
+    PROFILE()
     return GuiManager::EVENT_CHECK_NEXT;
 }
 
@@ -50,6 +53,7 @@ int GuiElement::keyEvent(const int, const unsigned int)
 //================================================================================================
 GuiElement::GuiElement(TiXmlElement *xmlElem, const void *parent)
 {
+    PROFILE()
     TiXmlElement *xmlElement;
     const char *tmp;
     // Set default values.
@@ -150,6 +154,7 @@ GuiElement::GuiElement(TiXmlElement *xmlElem, const void *parent)
 //================================================================================================
 bool GuiElement::setState(uchar state)
 {
+    PROFILE()
     if (mState == state || state >= GuiImageset::STATE_ELEMENT_SUM)
         return false;
     mState = state;
@@ -161,6 +166,7 @@ bool GuiElement::setState(uchar state)
 //================================================================================================
 void GuiElement::setVisible(bool visible)
 {
+    PROFILE()
     if (visible == mVisible) return;
     mVisible = visible;
     draw(true);
@@ -172,6 +178,7 @@ void GuiElement::setVisible(bool visible)
 //================================================================================================
 void GuiElement::draw(bool uploadToTexture)
 {
+    PROFILE()
     uint32 *dst = GuiManager::getSingleton().getBuildBuffer();
     uint32 *bak = mParent->getLayerBG() + mPosX + mPosY*mParent->getWidth();
     // Draws a gfx into the window texture.

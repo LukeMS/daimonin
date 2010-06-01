@@ -25,6 +25,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include <fstream>
 #include "zlib.h"
 #include "logger.h"
+#include "profiler.h"
 #include "network.h"
 #include "option.h"
 #include "tile/tile_map.h"
@@ -88,6 +89,7 @@ enum
 //================================================================================================
 int Network::GetInt_String(uchar *data)
 {
+    PROFILE()
     if (mEndianConvert)
         return (data[0] << 24) + (data[1] << 16) + (data[2] << 8) + data[3];
     return (data[3] << 24) + (data[2] << 16) + (data[1] << 8) + data[0];
@@ -98,6 +100,7 @@ int Network::GetInt_String(uchar *data)
 //================================================================================================
 short Network::GetShort_String(uchar *data)
 {
+    PROFILE()
     if (mEndianConvert)
         return (data[0] << 8) + data[1];
     return (data[1] << 8) + data[0];
@@ -108,6 +111,7 @@ short Network::GetShort_String(uchar *data)
 //================================================================================================
 void Network::AccNameSuccess(uchar * /*data*/, int /*len*/)
 {
+    PROFILE()
     GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Account Success");
     Logger::log().error() << "AccNameSuccess";
     /*
@@ -145,6 +149,7 @@ void Network::AccNameSuccess(uchar * /*data*/, int /*len*/)
 //================================================================================================
 void Network::AccountCmd(uchar *data, int len)
 {
+    PROFILE()
     GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Account cmd from server");
     ObjectHero::getSingleton().clearAccount();
     // First, get the account status - it tells us too when login failed
@@ -172,6 +177,7 @@ void Network::AccountCmd(uchar *data, int len)
 //================================================================================================
 void Network::DrawInfoCmd(uchar *data, int /*len*/)
 {
+    PROFILE()
     // int color   = atoi(data);
     // Todo: Convert indexed color into rgb and add it to the text.
     char *buf = strchr((char *)data, ' ');
@@ -191,6 +197,7 @@ void Network::DrawInfoCmd(uchar *data, int /*len*/)
 //================================================================================================
 void Network::AddMeFail(uchar * /*data*/, int /*len*/)
 {
+    PROFILE()
     Logger::log().error() << "addme_failed received.\n";
     CloseSocket();
     Option::getSingleton().setGameStatus(Option::GAME_STATUS_INIT_NET);
@@ -201,12 +208,13 @@ void Network::AddMeFail(uchar * /*data*/, int /*len*/)
 //================================================================================================
 void Network::Map2Cmd(uchar *data, int len)
 {
+    PROFILE()
     static int map_w=0, map_h=0,mx=0,my=0;
     int     mask, x, y, pos = 0, ext_flag, xdata;
     int height_2, height_3, height_4;
     int     mapstat, ext1, ext2, ext3, probe;
     bool    map_new_flag = false;
-    int     ff0, ff1, ff2, ff3, ff_flag, xpos, ypos;
+    int     xpos, ypos;
     char    pname1[64], pname2[64], pname3[64], pname4[64];
     String  mapname;
     uint16  face;
@@ -340,27 +348,26 @@ void Network::Map2Cmd(uchar *data, int len)
             }
             if (ext_flag & 0x40) // damage add on the map
             {
-                ff0 = ff1 = ff2 = ff3 = -1;
-                ff_flag = (uint8) data[pos++];
+                uint8 ff_flag = (uint8) data[pos++];
                 if (ff_flag & 0x8)
                 {
-                    ff0 = GetShort_String(data + pos); pos += 2;
-//                    add_anim(ANIM_KILL, 0, 0, xpos + x, ypos + y, ff0);
+                    // int ff0 = GetShort_String(data + pos); pos += 2;
+                    // add_anim(ANIM_KILL, 0, 0, xpos + x, ypos + y, ff0);
                 }
                 if (ff_flag & 0x4)
                 {
-                    ff1 = GetShort_String(data + pos); pos += 2;
-//                   add_anim(ANIM_DAMAGE, 0, 0, xpos + x, ypos + y, ff1);
+                    // int ff1 = GetShort_String(data + pos); pos += 2;
+                    // add_anim(ANIM_DAMAGE, 0, 0, xpos + x, ypos + y, ff1);
                 }
                 if (ff_flag & 0x2)
                 {
-                    ff2 = GetShort_String(data + pos); pos += 2;
-//                   add_anim(ANIM_DAMAGE, 0, 0, xpos + x, ypos + y, ff2);
+                    // int ff2 = GetShort_String(data + pos); pos += 2;
+                    // add_anim(ANIM_DAMAGE, 0, 0, xpos + x, ypos + y, ff2);
                 }
                 if (ff_flag & 0x1)
                 {
-                    ff3 = GetShort_String(data + pos); pos += 2;
-//                    add_anim(ANIM_DAMAGE, 0, 0, xpos + x, ypos + y, ff3);
+                    // int ff3 = GetShort_String(data + pos); pos += 2;
+                    // add_anim(ANIM_DAMAGE, 0, 0, xpos + x, ypos + y, ff3);
                 }
             }
             if (ext_flag & 0x08)
@@ -441,6 +448,7 @@ void Network::Map2Cmd(uchar *data, int len)
 //================================================================================================
 void Network::DrawInfoCmd2(uchar *data, int len)
 {
+    PROFILE()
     char *tmp= 0, buf[2048];
 //    int flags = GetShort_String(data);
     data += 2;
@@ -612,6 +620,7 @@ enum _spell_sound_id
 //================================================================================================
 void Network::SoundCmd(uchar *data, int len)
 {
+    PROFILE()
     if (len != 5)
     {
         Logger::log().error() << "Got invalid length on sound command: " << len;
@@ -647,6 +656,7 @@ void Network::SoundCmd(uchar *data, int len)
 //================================================================================================
 void Network::TargetObject(uchar *data, int /*len*/)
 {
+    PROFILE()
     String strTmp = "[";
     strTmp += (char*)data+3;
     strTmp += "] selected";
@@ -672,6 +682,7 @@ void Network::TargetObject(uchar *data, int /*len*/)
 //================================================================================================
 void Network::StatsCmd(uchar * /*data*/, int /*len*/)
 {
+    PROFILE()
     /*
         int     i   = 0, x;
         int     c, temp;
@@ -960,6 +971,7 @@ void Network::StatsCmd(uchar * /*data*/, int /*len*/)
 //================================================================================================
 void Network::ImageCmd(uchar * /*data*/, int /*len*/)
 {
+    PROFILE()
     /*
         int     pnum, plen;
         char    buf[2048];
@@ -991,6 +1003,7 @@ void Network::ImageCmd(uchar * /*data*/, int /*len*/)
 //================================================================================================
 void Network::Face1Cmd(uchar * /*data*/, int /*len*/)
 {
+    PROFILE()
     /*
     int pnum = GetShort_String(data);
     uint32 checksum = GetInt_String(data + 2);
@@ -1005,6 +1018,7 @@ void Network::Face1Cmd(uchar * /*data*/, int /*len*/)
 //================================================================================================
 void Network::SkillRdyCmd(uchar * /*data*/, int /*len*/)
 {
+    PROFILE()
     /*
         strcpy(cpl.skill_name, data);
         // lets find the skill... and setup the shortcuts to the exp values.
@@ -1034,6 +1048,7 @@ void Network::SkillRdyCmd(uchar * /*data*/, int /*len*/)
 //================================================================================================
 void Network::PlayerCmd(uchar *data, int len)
 {
+    PROFILE()
     Option::getSingleton().setGameStatus(Option::GAME_STATUS_PLAY);
     Item::getSingleton().setBackpackID(GetInt_String(data));
     int i = 4;
@@ -1088,6 +1103,7 @@ void Network::PlayerCmd(uchar *data, int len)
 //================================================================================================
 void Network::SpelllistCmd(uchar * /*data*/, int /*len*/)
 {
+    PROFILE()
     /*
         int     i, ii, mode;
         uchar   *tmp, *tmp2;
@@ -1153,6 +1169,7 @@ void Network::SpelllistCmd(uchar * /*data*/, int /*len*/)
 //================================================================================================
 void Network::SkilllistCmd(uchar * /*data*/, int /*len*/)
 {
+    PROFILE()
     /*
         uchar *tmp, *tmp2, *tmp3, *tmp4;
         int     l, e, i, ii, mode;
@@ -1219,6 +1236,7 @@ void Network::SkilllistCmd(uchar * /*data*/, int /*len*/)
 //================================================================================================
 void Network::GolemCmd(uchar * /*data*/, int /*len*/)
 {
+    PROFILE()
     /*
         int     mode, face;
         char   *tmp, buf[256];
@@ -1255,6 +1273,7 @@ void Network::GolemCmd(uchar * /*data*/, int /*len*/)
 //================================================================================================
 void Network::SetupCmd(uchar *buf, int len)
 {
+    PROFILE()
     uchar *cmd, *param;
     //scrolldy = scrolldx = 0;
     int pos = 6; // Skip the endian test.
@@ -1358,6 +1377,7 @@ void Network::SetupCmd(uchar *buf, int len)
 //================================================================================================
 void Network::checkFileStatus(const char *cmd, char *param, int fileNr)
 {
+    PROFILE()
     ServerFile::getSingleton().checkFileStatus(cmd, param, fileNr);
 }
 
@@ -1366,6 +1386,7 @@ void Network::checkFileStatus(const char *cmd, char *param, int fileNr)
 //================================================================================================
 void Network::DataCmd(uchar *data, int len)
 {
+    PROFILE()
     const int DATA_PACKED_CMD = 1<<7;
     // ////////////////////////////////////////////////////////////////////
     // check for valid command:
@@ -1413,6 +1434,7 @@ void Network::DataCmd(uchar *data, int len)
 //================================================================================================
 void Network::GroupCmd(uchar * /*data*/, int /*len*/)
 {
+    PROFILE()
     /*
         char    name[64], *tmp;
         int     hp, mhp, sp, msp, gr, mgr, level, slot = 0;
@@ -1442,6 +1464,7 @@ void Network::GroupCmd(uchar * /*data*/, int /*len*/)
 //================================================================================================
 void Network::GroupInviteCmd(uchar * /*data*/, int /*len*/)
 {
+    PROFILE()
     /*
         if(global_group_status != GROUP_NO) // bug
             Logger::log().error() << "Got group invite when g_status != GROUP_NO (" << data << ")";
@@ -1458,6 +1481,7 @@ void Network::GroupInviteCmd(uchar * /*data*/, int /*len*/)
 //================================================================================================
 void Network::GroupUpdateCmd(uchar * /*data*/, int /*len*/)
 {
+    PROFILE()
     /*
         if (!len) return;
         int hp, mhp, sp, msp, gr, mgr, level, slot = 0;
@@ -1478,6 +1502,7 @@ void Network::GroupUpdateCmd(uchar * /*data*/, int /*len*/)
 //================================================================================================
 void Network::BookCmd(uchar * /*data*/, int /*len*/)
 {
+    PROFILE()
     /*
         sound_play_effect(SOUND_BOOK, 0, 0, 100);
         cpl.menustatus = MENU_BOOK;
@@ -1493,6 +1518,7 @@ void Network::BookCmd(uchar * /*data*/, int /*len*/)
 //================================================================================================
 void Network::MarkCmd(uchar * /*data*/, int /*len*/)
 {
+    PROFILE()
     //cpl.mark_count = GetInt_String(data);
 }
 
@@ -1501,6 +1527,7 @@ void Network::MarkCmd(uchar * /*data*/, int /*len*/)
 //================================================================================================
 void Network::CreatePlayerAccount()
 {
+    PROFILE()
     //   (buf, "nc %s %d %d %d %d %d %d %d", nc->char_arch[nc->gender_selected], nc->stats[0], nc->stats[1], nc->stats[2], nc->stats[3], nc->stats[4], nc->stats[5], nc->stats[6]);
     //cs_write_string("nc human_male 14 14 13 12 12 12 12 0");
 }
@@ -1510,6 +1537,7 @@ void Network::CreatePlayerAccount()
 //================================================================================================
 void Network::ItemUpdateCmd(uchar * /*data*/, int /*len*/)
 {
+    PROFILE()
     /*
         int     weight, loc, tag, face, sendflags, flags, pos = 0, nlen, anim, nrof, quality=254, condition=254;
         uint8   direction;
@@ -1604,14 +1632,14 @@ void Network::ItemUpdateCmd(uchar * /*data*/, int /*len*/)
 //================================================================================================
 // .
 //================================================================================================
-void Network::ItemDeleteCmd(uchar *data, int len)
+void Network::ItemDeleteCmd(uchar * /*data*/, int len)
 {
-    int pos = 0, tag;
+    PROFILE()
+    int pos = 0;
     while (pos < len)
     {
-        tag = GetInt_String(data);
+        //delete_item(GetInt_String(data));
         pos += 4;
-        //delete_item(tag);
     }
     if (pos > len)
         Logger::log().error() <<  "DeleteCmd: Overread buffer: " << pos << " > " << len;
@@ -1623,6 +1651,7 @@ void Network::ItemDeleteCmd(uchar *data, int len)
 //================================================================================================
 void Network::ItemXCmd(uchar *data, int len)
 {
+    PROFILE()
     Item::getSingleton().ItemXYCmd(data, len, false);
 }
 
@@ -1631,6 +1660,7 @@ void Network::ItemXCmd(uchar *data, int len)
 //================================================================================================
 void Network::ItemYCmd(uchar *data, int len)
 {
+    PROFILE()
     Item::getSingleton().ItemXYCmd(data, len, true);
 }
 
@@ -1642,6 +1672,7 @@ void Network::ItemYCmd(uchar *data, int len)
 //================================================================================================
 bool Network::console_command_check(String cmd)
 {
+    PROFILE()
     for (int i = 0; i < CONSOLE_CMD_SUM; ++i)
     {
         if (StringUtil::startsWith(cmd, mConsoleCmd[i].cmd, true))
@@ -1662,5 +1693,6 @@ bool Network::console_command_check(String cmd)
 //================================================================================================
 void Network::do_console_cmd(String &/*stCmd*/, int /*cmd*/)
 {
+    PROFILE()
     return;
 }

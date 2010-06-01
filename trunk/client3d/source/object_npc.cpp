@@ -28,6 +28,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include "sound.h"
 #include "option.h"
 #include "logger.h"
+#include "profiler.h"
 #include "spell_manager.h"
 #include "gui/gui_manager.h"
 #include "object_manager.h"
@@ -52,13 +53,16 @@ const float TIME_BEFORE_CORPSE_VANISHES = 2.0f;
 // Destructor.
 //================================================================================================
 ObjectNPC::~ObjectNPC()
-{}
+{
+    PROFILE()
+}
 
 //================================================================================================
 // Free all recources.
 //================================================================================================
 void ObjectNPC::freeRecources()
 {
+    PROFILE()
     if (mType == ObjectManager::OBJECT_PLAYER)
         delete mEquip;
 }
@@ -68,6 +72,7 @@ void ObjectNPC::freeRecources()
 //================================================================================================
 ObjectNPC::ObjectNPC(sObject &obj, bool spawn):ObjectStatic(obj)
 {
+    PROFILE()
     mReadyWeaponStatus = 0;
     mType    = obj.type;
     mFriendly= obj.friendly;
@@ -147,6 +152,7 @@ ObjectNPC::ObjectNPC(sObject &obj, bool spawn):ObjectStatic(obj)
 //================================================================================================
 void ObjectNPC::setSkinColor(int val)
 {
+    PROFILE()
     const float OFFSET = 0.01f; // Ignore the space of filtering between 2 colors.
     float colorIndex = (val & 31) /32.0f + OFFSET;
     for (unsigned int i= 0; i< mEntity->getNumSubEntities(); ++i)
@@ -158,6 +164,7 @@ void ObjectNPC::setSkinColor(int val)
 //================================================================================================
 void ObjectNPC::moveByCursor(Ogre::Real dTime)
 {
+    PROFILE()
     if (mIndex) return; // Only the hero can moved by cursor.
     static int oldX = (int)(mTilePos.x/TileManager::TILE_RENDER_SIZE/2);
     static int oldZ = (int)(mTilePos.z/TileManager::TILE_RENDER_SIZE/2);
@@ -183,13 +190,16 @@ void ObjectNPC::moveByCursor(Ogre::Real dTime)
 // .
 //================================================================================================
 void ObjectNPC::setPrimaryWeapon(int /*weapon*/)
-{}
+{
+    PROFILE()
+}
 
 //================================================================================================
 // Ready / Unready the primary weapon.
 //================================================================================================
 void ObjectNPC::readyPrimaryWeapon(bool ready)
 {
+    PROFILE()
     if (isSecondaryWeaponReady())
     {
         mAnim->toggleAnimation(ObjectAnimate::ANIM_GROUP_ABILITY, 4, false, true, false);
@@ -218,6 +228,7 @@ void ObjectNPC::readyPrimaryWeapon(bool ready)
 //================================================================================================
 void ObjectNPC::readySecondaryWeapon(bool ready)
 {
+    PROFILE()
     if (isPrimaryWeaponReady())
     {
         mAnim->toggleAnimation(ObjectAnimate::ANIM_GROUP_ABILITY, 4, false, true, false);
@@ -249,6 +260,7 @@ void ObjectNPC::readySecondaryWeapon(bool ready)
 //================================================================================================
 bool ObjectNPC::update(const FrameEvent& event)
 {
+    PROFILE()
     mAnim->update(event);
     //  Finish the current (non movement) anim first.
     //  if (!mAnim->isMovement()) return;
@@ -511,6 +523,7 @@ bool ObjectNPC::update(const FrameEvent& event)
 //================================================================================================
 bool ObjectNPC::movePosition(int deltaX, int deltaZ)
 {
+    PROFILE()
     mTilePos.x += deltaX * TileManager::TILE_RENDER_SIZE;
     mTilePos.z += deltaZ * TileManager::TILE_RENDER_SIZE;
     setPosition(mTilePos);
@@ -524,6 +537,7 @@ bool ObjectNPC::movePosition(int deltaX, int deltaZ)
 //================================================================================================
 void ObjectNPC::setDamage(int damage)
 {
+    PROFILE()
     if (mActHP <=0) return;
     mActHP-= damage;
     if (mActHP <= 0)
@@ -542,6 +556,7 @@ void ObjectNPC::setDamage(int damage)
 //================================================================================================
 void ObjectNPC::castSpell(int spell)
 {
+    PROFILE()
     //  if (!askServer.AllowedToCast(spell)) return;
     SpellManager::getSingleton().addObject(spell, mIndex);
 }
@@ -552,6 +567,7 @@ void ObjectNPC::castSpell(int spell)
 //================================================================================================
 void ObjectNPC::walking(Ogre::Real dir, bool cursorWalk)
 {
+    PROFILE()
     if (cursorWalk)
     {
         mCursorWalking = dir;
@@ -567,6 +583,7 @@ void ObjectNPC::walking(Ogre::Real dir, bool cursorWalk)
 //================================================================================================
 void ObjectNPC::turning(Real facing, bool cursorTurn)
 {
+    PROFILE()
     if (cursorTurn)
     {
         mCursorTurning = facing;
@@ -598,6 +615,7 @@ void ObjectNPC::turning(Real facing, bool cursorTurn)
 //================================================================================================
 void ObjectNPC::faceToTile(Vector3 /*pos*/)
 {
+    PROFILE()
     /*
     float deltaZ = (pos.z - mActTilePos.z) * TileManager::SUM_SUBTILES  +  (pos.subZ - mActTilePos.subZ);
     float deltaX = (pos.x - mActTilePos.x) * TileManager::SUM_SUBTILES  +  (pos.subX - mActTilePos.subX);
@@ -641,6 +659,7 @@ void ObjectNPC::faceToTile(Vector3 /*pos*/)
 //================================================================================================
 void ObjectNPC::attackShortRange(ObjectNPC *EnemyObject)
 {
+    PROFILE()
     if (!mAnim->isIdle() || !EnemyObject) return;
     if (this == EnemyObject) return; // No Harakiri! (this is not needed, if hero is ALWAYS friendly).
     // Ready the weapon.
@@ -668,6 +687,7 @@ void ObjectNPC::attackShortRange(ObjectNPC *EnemyObject)
 //================================================================================================
 void ObjectNPC::attackLongRange(ObjectNPC *EnemyObject)
 {
+    PROFILE()
     if (!mAnim->isIdle() || !EnemyObject) return;
     if (this == EnemyObject) return; // No Harakiri! (this is not needed, if hero is ALWAYS friendly).
     // Ready the weapon.
@@ -695,4 +715,6 @@ void ObjectNPC::attackLongRange(ObjectNPC *EnemyObject)
 // Add a new npc to the map.
 //================================================================================================
 void ObjectNPC::addToMap()
-{}
+{
+    PROFILE()
+}

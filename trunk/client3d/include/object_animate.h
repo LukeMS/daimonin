@@ -62,35 +62,35 @@ public:
     // ////////////////////////////////////////////////////////////////////
     ObjectAnimate(Ogre::Entity *entity);
     ~ObjectAnimate();
-    bool isMovement()
+    bool isMovement() const
     {
         return (mAnimGroup <= ANIM_GROUP_RUN);
     }
-    bool isIdle()
+    bool isIdle() const
     {
         return (mAnimGroup <= ANIM_GROUP_IDLE_FUN);
     }
-    bool isAttack()
+    bool isAttack() const
     {
         return (mAnimGroup == ANIM_GROUP_ATTACK) || (mAnimGroup == ANIM_GROUP_ATTACK_FUN);
     }
-    bool isHit()
+    bool isHit() const
     {
         return (mAnimGroup == ANIM_GROUP_HIT);
     }
-    const char *getActiceStateName()
+    const char *getActiceStateName() const
     {
         return StateNames[mAnimGroup];
     }
-    Ogre::Real getTimeLeft()
+    Ogre::Real getTimeLeft() const
     {
         return mTimeLeft;
     }
-    Ogre::Real getTimeLeft2()
+    Ogre::Real getTimeLeft2() const
     {
         return mTimeLeft2;
     }
-    int getSumAnimsInGroup(int animGroup)
+    int getSumAnimsInGroup(int animGroup) const
     {
         return mAnimGroupEntries[animGroup];
     }
@@ -98,7 +98,7 @@ public:
     void update(const Ogre::FrameEvent& event);
     void toggleAnimation(int animGroup, int animNr, bool loop = false, bool force = false, bool random = false, bool freezeLastFrame = false);
     void toggleAnimation2(int animGroup, int animNr, bool loop = false, bool force = false, bool random = false);
-    Ogre::Real getAnimSpeed()
+    Ogre::Real getAnimSpeed() const
     {
         return mAnimSpeed;
     }
