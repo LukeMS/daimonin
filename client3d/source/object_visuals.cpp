@@ -30,6 +30,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include "define.h"
 #include "option.h"
 #include "logger.h"
+#include "profiler.h"
 #include "events.h"
 #include "object_visuals.h"
 #include "particle_manager.h"
@@ -53,6 +54,7 @@ const char TEXTURE_NAME[]  = "TexVisuals";
 //===================================================
 void ObjectVisuals::freeRecources()
 {
+    PROFILE()
     mHardwarePB.setNull();
     delete[] mTexBuffer;
 }
@@ -62,6 +64,7 @@ void ObjectVisuals::freeRecources()
 //===================================================
 void ObjectVisuals::Init()
 {
+    PROFILE()
     Logger::log().headline() << "Creating Object Visuals";
     for (int i=0; i < VISUAL_SUM; ++i) mNode[i] = 0;
     // ////////////////////////////////////////////////////////////////////
@@ -133,6 +136,7 @@ void ObjectVisuals::Init()
 //===================================================
 void ObjectVisuals::buildEntity(int index, const char *meshName, const char *entityName)
 {
+    PROFILE()
     Real h = 20.0, w = 10.0;
     String strMob = "Mob"+ StringConverter::toString(index, 3, '0');
     ManualObject* mob = static_cast<ManualObject*>(Events::getSingleton().getSceneManager()->createMovableObject(strMob, ManualObjectFactory::FACTORY_TYPE_NAME));
@@ -155,7 +159,9 @@ void ObjectVisuals::buildEntity(int index, const char *meshName, const char *ent
 // .
 //===================================================
 void ObjectVisuals::setPosLifebar(Vector3 /*pos*/)
-{}
+{
+    PROFILE()
+}
 
 //===================================================
 // Draw the Lifebar for a NPC.
@@ -163,6 +169,7 @@ void ObjectVisuals::setPosLifebar(Vector3 /*pos*/)
 //===================================================
 void ObjectVisuals::setLifebar(Real percent, int barWidth)
 {
+    PROFILE()
     if (percent <=0.0) return;
     if (barWidth > TEXTURE_SIZE) barWidth = TEXTURE_SIZE;
     uint32 color, dColor;
@@ -222,6 +229,7 @@ void ObjectVisuals::setLifebar(Real percent, int barWidth)
 //===================================================
 void ObjectVisuals::select(const AxisAlignedBox &AABB, SceneNode *node, int friendly, Real percent, const char *name)
 {
+    PROFILE()
     /*
         int index = PARTICLE_COLOR_NEUTRAL_STRT;
     */
@@ -273,6 +281,7 @@ void ObjectVisuals::selectPlayer()
 //===================================================
 void ObjectVisuals::unselect()
 {
+    PROFILE()
     if (mNode[VISUAL_SELECTION]) mNode[VISUAL_SELECTION]->getParentSceneNode()->removeAndDestroyChild(mNode[VISUAL_SELECTION]->getName());
     if (mNode[VISUAL_LIFEBAR])   mNode[VISUAL_LIFEBAR]->getParentSceneNode()->removeAndDestroyChild(mNode[VISUAL_LIFEBAR]->getName());
     if (mPSystem)             mPSystem->setVisible(false);
@@ -286,6 +295,7 @@ void ObjectVisuals::unselect()
 //===================================================
 void ObjectVisuals::highlight(bool staticObject, int friendly, bool highlight)
 {
+    PROFILE()
     if (!highlight)
     {
         GuiManager::getSingleton().setMouseState(GuiManager::STATE_MOUSE_DEFAULT);

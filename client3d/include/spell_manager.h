@@ -66,8 +66,8 @@ public:
         static SpellManager Singleton; return Singleton;
     }
     bool init(Ogre::SceneManager *SceneMgr);
-    bool addObject( unsigned int npc, unsigned int spell);
-    void delObject(int number);
+    bool addObject(unsigned int npc, unsigned int spell) const;
+    void delObject(int number) const;
     void update(int type, const Ogre::FrameEvent& evt);
     void keyEvent(int obj_type, int action, int val1=0, int val2=0);
     void test(Ogre::Vector3 pos);

@@ -173,7 +173,7 @@ public:
     {
         return (mSelectedObject >= 0)?mvNPC[mSelectedObject]:0;
     }
-    const Ogre::Vector3 getTargetedPos()
+    const Ogre::Vector3 getTargetedPos() const
     {
         return mSelectedPos;
     }

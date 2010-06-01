@@ -61,7 +61,7 @@ public:
     }
     bool init(Ogre::SceneManager *SceneMgr, Ogre::SceneNode  *Node);
     bool addObject(unsigned int type, const char *desc_filename, Ogre::Vector3 pos);
-    void delObject(int number);
+    void delObject(int number) const;
     void update(int type, const Ogre::FrameEvent& evt);
     void keyEvent(int obj_type, int action, int val1=0, int val2=0);
 };

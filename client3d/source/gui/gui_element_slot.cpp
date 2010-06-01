@@ -24,6 +24,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include <OgreStringConverter.h>
 #include <OgreHardwarePixelBuffer.h>
 #include "logger.h"
+#include "profiler.h"
 #include "gui/gui_textout.h"
 #include "gui/gui_graphic.h"
 #include "gui/gui_element_slot.h"
@@ -41,6 +42,7 @@ int GuiElementSlot::uid = -1;
 //================================================================================================
 GuiElementSlot::GuiElementSlot(TiXmlElement *xmlElement, const void *parent, bool drawOnInit):GuiElement(xmlElement, parent)
 {
+    PROFILE()
     mSlotNr = ++uid;
     mItemGfxID = -1;
     mBusyTime = 1.0;  // Default time for a slot to be busy (MUST be > 0).
@@ -66,6 +68,7 @@ GuiElementSlot::GuiElementSlot(TiXmlElement *xmlElement, const void *parent, boo
 //================================================================================================
 void GuiElementSlot::sendMsg(const int message, Ogre::String &text, Ogre::uint32 &param, const char *text2)
 {
+    PROFILE()
     switch (message)
     {
         case GuiManager::MSG_ADD_ITEM:
@@ -82,6 +85,7 @@ void GuiElementSlot::sendMsg(const int message, Ogre::String &text, Ogre::uint32
 //================================================================================================
 void GuiElementSlot::setItem(const char *gfxName, int quantity, const char *itemName)
 {
+    PROFILE()
     //GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, gfxName);
     if (quantity >= 0)
     {
@@ -105,6 +109,7 @@ void GuiElementSlot::setItem(const char *gfxName, int quantity, const char *item
 //================================================================================================
 void GuiElementSlot::update(Real dTime)
 {
+    PROFILE()
     if (!mBusyTimeExpired) return;
     mBusyTimeExpired += dTime;
     Real newVal = (mBusyTimeExpired / mBusyTime)*360.0f;
@@ -121,6 +126,7 @@ void GuiElementSlot::update(Real dTime)
 //================================================================================================
 int GuiElementSlot::mouseEvent(const int mouseAction, int mouseX, int mouseY, int /*mouseWheel*/)
 {
+    PROFILE()
     if (mouseWithin(mouseX, mouseY))
     {
         if (mActiveSlot != mSlotNr)
@@ -157,6 +163,7 @@ int GuiElementSlot::mouseEvent(const int mouseAction, int mouseX, int mouseY, in
 //================================================================================================
 void GuiElementSlot::draw()
 {
+    PROFILE()
     if (!mVisible || mItemGfxID < 0)
     {
         GuiElement::draw(true);
@@ -197,7 +204,8 @@ void GuiElementSlot::draw()
 //================================================================================================
 void GuiElementSlot::drawBusy(int angle)
 {
-    int x2,x3,y2,dY,dX,xStep,yStep,delta,posY;
+    PROFILE()
+    int x2,x3,y2,dY,dX,yStep,delta,posY;
     uint32 *dst = GuiManager::getSingleton().getBuildBuffer();
     int x = mWidth/2;
     int y = mHeight/2;
@@ -226,7 +234,7 @@ void GuiElementSlot::drawBusy(int angle)
         dX = Math::IAbs(x2-x);
         dY = Math::IAbs(y2-y);
         delta= dX - dY;
-        xStep= (x2>x)?1:-1;
+        int xStep= (x2>x)?1:-1;
         yStep= (y2>y)?1:-1;
         x3= (y2<mHeight/2)?mWidth/2:0;
         while (x!=x2)
@@ -317,6 +325,7 @@ int GuiElementSlotGroup::uid = -1;
 //================================================================================================
 GuiElementSlotGroup::~GuiElementSlotGroup()
 {
+    PROFILE()
     for (std::vector<GuiElementSlot*>::iterator i = mvSlot.begin(); i < mvSlot.end(); ++i)
         delete (*i);
     mvSlot.clear();
@@ -327,6 +336,7 @@ GuiElementSlotGroup::~GuiElementSlotGroup()
 //================================================================================================
 GuiElementSlotGroup::GuiElementSlotGroup(TiXmlElement *xmlRoot, const void *parent):GuiElement(xmlRoot, parent)
 {
+    PROFILE()
     mGroupNr = ++uid;
     const char *tmp = xmlRoot->Attribute("slots");
     int sumSlots = tmp?atoi(tmp):0;
@@ -372,6 +382,7 @@ GuiElementSlotGroup::GuiElementSlotGroup(TiXmlElement *xmlRoot, const void *pare
 //================================================================================================
 void GuiElementSlotGroup::draw()
 {
+    PROFILE()
     for (unsigned int i = 0; i < mvSlot.size(); ++i)
         mvSlot[i]->draw();
 }
@@ -381,6 +392,7 @@ void GuiElementSlotGroup::draw()
 //================================================================================================
 int GuiElementSlotGroup::mouseEvent(const int mouseAction, int mouseX, int mouseY, int mouseWheel)
 {
+    PROFILE()
     for (unsigned int i = 0; i < mvSlot.size(); ++i)
     {
         int ret = mvSlot[i]->mouseEvent(mouseAction, mouseX, mouseY, mouseWheel);
@@ -394,6 +406,7 @@ int GuiElementSlotGroup::mouseEvent(const int mouseAction, int mouseX, int mouse
 //================================================================================================
 void GuiElementSlotGroup::sendMsg(const int message, Ogre::String &text, Ogre::uint32 &param, const char *text2)
 {
+    PROFILE()
     switch (message)
     {
         case GuiManager::MSG_ADD_ITEM:

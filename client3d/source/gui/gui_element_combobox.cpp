@@ -22,6 +22,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
 
 #include "logger.h"
+#include "profiler.h"
 #include "gui/gui_textout.h"
 #include "gui/gui_element_combobox.h"
 
@@ -36,6 +37,7 @@ using namespace Ogre;
 //================================================================================================
 int GuiElementCombobox::sendMsg(const int /*message*/, const char * /*text*/, uint32 /*param*/, const char * /*text2*/)
 {
+    PROFILE()
     return 0;
 }
 
@@ -44,6 +46,7 @@ int GuiElementCombobox::sendMsg(const int /*message*/, const char * /*text*/, ui
 //================================================================================================
 GuiElementCombobox::GuiElementCombobox(TiXmlElement *xmlElement, const void *parent) :GuiElement(xmlElement, parent)
 {
+    PROFILE()
     /*
     // ////////////////////////////////////////////////////////////////////
     // .
@@ -92,6 +95,7 @@ GuiElementCombobox::GuiElementCombobox(TiXmlElement *xmlElement, const void *par
 //================================================================================================
 void GuiElementCombobox::draw()
 {
+    PROFILE()
 }
 
 //================================================================================================
@@ -99,6 +103,7 @@ void GuiElementCombobox::draw()
 //================================================================================================
 bool GuiElementCombobox::setState(int state)
 {
+    PROFILE()
     if ( mState != state && mState == GuiImageset::STATE_ELEMENT_PUSHED)
     {
         if ( mActiveDropdownOption != -1 )
@@ -138,6 +143,7 @@ bool GuiElementCombobox::setState(int state)
 //================================================================================================
 void GuiElementCombobox::setText(const char *value)
 {
+    PROFILE()
     mvOption[0] = value;
 }
 
@@ -146,6 +152,7 @@ void GuiElementCombobox::setText(const char *value)
 //================================================================================================
 const char *GuiElementCombobox::getText()
 {
+    PROFILE()
     return mvOption[0].c_str();
 }
 
@@ -155,6 +162,7 @@ const char *GuiElementCombobox::getText()
 //================================================================================================
 bool GuiElementCombobox::mouseOver(int x, int y)
 {
+PROFILE()
     if ( GuiElement::mouseOver(x,y) )
     {
         if ( mDispDropdown )

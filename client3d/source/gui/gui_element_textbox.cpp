@@ -23,6 +23,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 
 #include <OgreHardwarePixelBuffer.h>
 #include "logger.h"
+#include "profiler.h"
 #include "gui/gui_textout.h"
 #include "gui/gui_element_textbox.h"
 
@@ -33,6 +34,7 @@ using namespace Ogre;
 //================================================================================================
 void GuiElementTextbox::sendMsg(const int message, Ogre::String &text, Ogre::uint32 &param, const char * /*text2*/)
 {
+    PROFILE()
     switch (message)
     {
         case GuiManager::MSG_SET_VISIBLE:
@@ -51,6 +53,7 @@ void GuiElementTextbox::sendMsg(const int message, Ogre::String &text, Ogre::uin
 //================================================================================================
 GuiElementTextbox::GuiElementTextbox(TiXmlElement *xmlElement, const void *parent):GuiElement(xmlElement, parent)
 {
+    PROFILE()
     const char *tmp = xmlElement->Attribute("hide");
     mHideText = (tmp && atoi(tmp))?true:false;
     if ((xmlElement = xmlElement->FirstChildElement("Tooltip")))
@@ -72,6 +75,7 @@ GuiElementTextbox::GuiElementTextbox(TiXmlElement *xmlElement, const void *paren
 //================================================================================================
 void GuiElementTextbox::draw()
 {
+    PROFILE()
     uint32 *dst = GuiManager::getSingleton().getBuildBuffer();
     GuiTextout::getSingleton().printText(mWidth, mHeight, dst, mWidth,
                                          mParent->getLayerBG() + mLabelPosX + mLabelPosY*mParent->getWidth(), mParent->getWidth(), mLabelString.c_str(), mLabelFontNr, mLabelColor, mHideText);

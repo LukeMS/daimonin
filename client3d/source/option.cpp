@@ -23,6 +23,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 
 #include "option.h"
 #include "logger.h"
+#include "profiler.h"
 
 using namespace Ogre;
 
@@ -31,6 +32,7 @@ using namespace Ogre;
 //================================================================================================
 bool Option::openDescFile(const char *filename)
 {
+    PROFILE()
     closeDescFile();
     mDescFile = new std::ifstream(filename, std::ios::in);
     if (!mDescFile)  return false;
@@ -50,6 +52,7 @@ bool Option::openDescFile(const char *filename)
 //================================================================================================
 void Option::closeDescFile()
 {
+    PROFILE()
     if (!mDescFile) return;
     mDescFile->close();
     delete mDescFile;
@@ -62,6 +65,7 @@ void Option::closeDescFile()
 //================================================================================================
 bool Option::getDescStr(const char *strKeyword, String &strBuffer, unsigned int posNr)
 {
+    PROFILE()
     size_t pos=0, startPos=0, stopPos, entryTest;
 checkForKeyword:
     startPos = mDescBuffer.find(strKeyword, startPos);
@@ -96,6 +100,7 @@ checkForKeyword:
 //================================================================================================
 Option::Option()
 {
+    PROFILE()
     Logger::log().headline() << "Init Options";
     mDescFile =0;
 }
@@ -105,5 +110,6 @@ Option::Option()
 //================================================================================================
 Option::~Option()
 {
+    PROFILE()
     closeDescFile();
 }

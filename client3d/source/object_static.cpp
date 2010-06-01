@@ -30,6 +30,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include "sound.h"
 #include "events.h"
 #include "logger.h"
+#include "profiler.h"
 #include "network.h"
 
 using namespace Ogre;
@@ -43,13 +44,16 @@ SceneManager *ObjectStatic::mSceneMgr =0;
 // Free all recources.
 //================================================================================================
 void ObjectStatic::freeRecources()
-{}
+{
+    PROFILE()
+}
 
 //================================================================================================
 // Destructor.
 //================================================================================================
 ObjectStatic::~ObjectStatic()
 {
+    PROFILE()
     delete mAnim;
     mNode->getParentSceneNode()->removeAndDestroyChild(mNode->getName());
 }
@@ -59,6 +63,7 @@ ObjectStatic::~ObjectStatic()
 //================================================================================================
 ObjectStatic::ObjectStatic(sObject &obj)
 {
+    PROFILE()
     static unsigned int index =0;
     if (!mSceneMgr)
     {
@@ -111,6 +116,7 @@ ObjectStatic::ObjectStatic(sObject &obj)
 //================================================================================================
 bool ObjectStatic::movePosition(int deltaX, int deltaZ)
 {
+    PROFILE()
     mTilePos.x += deltaX * TileManager::TILE_RENDER_SIZE;
     mTilePos.z += deltaZ * TileManager::TILE_RENDER_SIZE;
     setPosition(mTilePos);
@@ -123,6 +129,7 @@ bool ObjectStatic::movePosition(int deltaX, int deltaZ)
 //================================================================================================
 void ObjectStatic::setPosition(Vector3 pos)
 {
+    PROFILE()
     mTilePos = pos;
     mTilePos.y = TileManager::getSingleton().getTileHeight((int)mTilePos.x, (int)mTilePos.z);
     if (mFloor)
@@ -135,6 +142,7 @@ void ObjectStatic::setPosition(Vector3 pos)
 //================================================================================================
 bool ObjectStatic::update(const FrameEvent& event)
 {
+    PROFILE()
     mAnim->update(event);
     if (mAction == ACTION_NONE)
         return true;
@@ -168,6 +176,7 @@ bool ObjectStatic::update(const FrameEvent& event)
 //================================================================================================
 void ObjectStatic::activate(bool waitForHero)
 {
+    PROFILE()
     mWaitForHero = waitForHero;
     if (mOpen)
         mAction = ACTION_CLOSE;

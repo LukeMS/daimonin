@@ -23,12 +23,14 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 
 #include "object_hero.h"
 #include "logger.h"
+#include "profiler.h"
 
 //================================================================================================
 // Init all static Elemnts.
 //================================================================================================
 ObjectHero::ObjectHero()
 {
+    PROFILE()
     fire_on = firekey_on = 0;
     run_on = runkey_on = 0;
     resize_twin = resize_twin_marker = 0;
@@ -69,6 +71,7 @@ ObjectHero::ObjectHero()
 //================================================================================================
 int ObjectHero::fillAccount(int pos, const unsigned char *data)
 {
+    PROFILE()
     account.name[pos] = (const char*)data;
     int i = (int)account.name[pos].size();
     account.level [pos] = data[++i];

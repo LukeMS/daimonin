@@ -29,6 +29,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include "sound.h"
 #include "option.h"
 #include "logger.h"
+#include "profiler.h"
 
 // We can't use c++ api on non m$ compilers - shame on fmod!
 
@@ -76,6 +77,7 @@ const float DISTANCEFACTOR = 1.0f; // Units per meter. (feet = 3.28.  cm = 100).
 //================================================================================================
 bool Sound::Init()
 {
+    PROFILE()
     if (Option::getSingleton().getIntValue(Option::CMDLINE_OFF_SOUND)) return false;
     Logger::log().headline() << "Init Sound-System";
     // ////////////////////////////////////////////////////////////////////
@@ -122,6 +124,7 @@ bool Sound::Init()
 //================================================================================================
 void Sound::freeRecources()
 {
+    PROFILE()
     if (!mInit) return;
     for (unsigned int i = 0; i< SAMPLE_SUM; ++i)
     {
@@ -136,6 +139,7 @@ void Sound::freeRecources()
 //================================================================================================
 void Sound::createDummy()
 {
+    PROFILE()
     const unsigned char dummy[] =
     {
         0x52,0x49,0x46,0x46,0xC0,0x00,0x00,0x00,0x57,0x41,0x56,0x45,0x66,0x6D,0x74,0x20,
@@ -159,6 +163,7 @@ void Sound::createDummy()
 //================================================================================================
 void Sound::createStream(int id)
 {
+    PROFILE()
     std::string filename = PATH_SND;
     filename += mSoundFiles[id].filename;
     int options = FMOD_HARDWARE;
@@ -176,6 +181,7 @@ void Sound::createStream(int id)
 //================================================================================================
 void Sound::playStream(int id)
 {
+    PROFILE()
     if (!mInit) return;
     stopStream(id);
     result = FMOD_System_PlaySound(System, FMOD_CHANNEL_FREE, mSoundFiles[id].sound, 0, &mSoundFiles[id].channel);
@@ -190,6 +196,7 @@ void Sound::playStream(int id)
 
 void Sound::playStream(const char *file, bool loop)
 {
+    PROFILE()
     if (!mInit || !file) return;
     std::string filename = PATH_SND;
     filename+= file;
@@ -217,6 +224,7 @@ void Sound::playStream(const char *file, bool loop)
 //================================================================================================
 void Sound::stopStream(int id)
 {
+    PROFILE()
     if (mInit) FMOD_Channel_SetPaused(mSoundFiles[id].channel, true);
 }
 
@@ -225,6 +233,7 @@ void Sound::stopStream(int id)
 //================================================================================================
 void Sound::setVolume(unsigned int id, float volume)
 {
+    PROFILE()
     if (!mInit) return;
     if (volume <0)
     {
@@ -244,6 +253,7 @@ void Sound::setVolume(unsigned int id, float volume)
 //================================================================================================
 void Sound::set3DPos(unsigned int id, float &posX, float &posY, float &posZ)
 {
+    PROFILE()
     if (!mInit) return;
     FMOD_VECTOR pos =
     {

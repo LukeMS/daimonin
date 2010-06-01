@@ -25,6 +25,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include <Ogre.h>
 #include <OgreTimer.h>
 #include "logger.h"
+#include "profiler.h"
 #include "option.h"
 #include "network.h"
 #include "tile/tile_manager.h"
@@ -98,6 +99,7 @@ bool Network::mEndianConvert = false;
 //================================================================================================
 Network::command_buffer *Network::command_buffer_new(unsigned int len, uchar *data)
 {
+//    PROFILE()
     command_buffer *buf = new command_buffer;
     buf->next = buf->prev = NULL;
     buf->len = len;
@@ -112,6 +114,7 @@ Network::command_buffer *Network::command_buffer_new(unsigned int len, uchar *da
 //================================================================================================
 void Network::command_buffer_enqueue(command_buffer *buf, command_buffer **queue_start, command_buffer **queue_end)
 {
+//    PROFILE()
     buf->next = 0;
     buf->prev = *queue_end;
     if (*queue_start == NULL)
@@ -126,6 +129,7 @@ void Network::command_buffer_enqueue(command_buffer *buf, command_buffer **queue
 //================================================================================================
 Network::command_buffer *Network::command_buffer_dequeue(command_buffer **queue_start, command_buffer **queue_end)
 {
+//    PROFILE()
     command_buffer *buf = *queue_start;
     if (buf)
     {
@@ -143,6 +147,7 @@ Network::command_buffer *Network::command_buffer_dequeue(command_buffer **queue_
 //================================================================================================
 void Network::command_buffer_free(command_buffer *buf)
 {
+//    PROFILE()
     delete[] buf->data;
     delete buf;
 }
@@ -152,6 +157,7 @@ void Network::command_buffer_free(command_buffer *buf)
 //================================================================================================
 String &Network::getError()
 {
+//    PROFILE()
     static String strError;
 #ifdef WIN32
     strError = StringConverter::toString(WSAGetLastError());
@@ -169,6 +175,7 @@ String &Network::getError()
 //================================================================================================
 void Network::freeRecources()
 {
+    PROFILE()
     CloseSocket();
 #ifdef WIN32
     WSACleanup();
@@ -197,6 +204,7 @@ void Network::freeRecources()
 //================================================================================================
 bool Network::Init()
 {
+    PROFILE()
     Logger::log().headline() << "Starting Network";
 #ifdef WIN32
     WSADATA w;
@@ -217,6 +225,7 @@ bool Network::Init()
 //================================================================================================
 void Network::socket_thread_start()
 {
+    //  PROFILE()
     if (mThreadsActive) return;
     mAbortThread = false;
     mInputThread = boost::thread(&inputThread);
@@ -229,6 +238,7 @@ void Network::socket_thread_start()
 //================================================================================================
 void Network::update(Real timeSinceLastFrame)
 {
+    PROFILE()
     static Real dTime = 0;
     dTime += timeSinceLastFrame * 1000;
     if ((dTime < THREAD_SLEEPING_TIME) ||  mAbortThread) return;
@@ -306,6 +316,7 @@ static char *BreakMulticommand(const char *command)
 //================================================================================================
 void Network::send_game_command(const char *command)
 {
+//   PROFILE()
     if (!command) return;
     /*
     char *token, cmd[1024];
@@ -358,6 +369,7 @@ void Network::send_game_command(const char *command)
 //================================================================================================
 void Network::send_command_binary(uchar cmd, std::stringstream &stream)
 {
+    //  PROFILE()
     command_buffer *buf;
     boost::mutex::scoped_lock // Mutex is locked for this block of code.
     lock(mutex);
@@ -400,6 +412,7 @@ void Network::send_command_binary(uchar cmd, std::stringstream &stream)
 //================================================================================================
 int Network::getCmdLen(uchar *data, int bytes)
 {
+//    PROFILE()
     if (bytes == 2)
     {
         if (mEndianConvert)
@@ -496,6 +509,7 @@ void Network::outputThread()
 //================================================================================================
 void Network::CloseSocket(int socket)
 {
+    PROFILE()
     if (mSocket == NO_SOCKET) return;
 #ifdef WIN32
     shutdown(socket, SD_BOTH); // Do we have to wait here for WSAAsyncSelect() to send a FD_CLOSE?
@@ -512,6 +526,7 @@ void Network::CloseSocket(int socket)
 //================================================================================================
 bool Network::OpenActiveServerSocket()
 {
+    PROFILE()
     if (!OpenSocket(mvServer[mActServerNr]->ip.c_str(), mvServer[mActServerNr]->port, mSocket))
         return false;
     int tmp = 1;
@@ -529,6 +544,7 @@ bool Network::OpenActiveServerSocket()
 //================================================================================================
 bool Network::OpenSocket(const char *host, int port, int &sock)
 {
+    PROFILE()
     Logger::log().info() <<  "OpenSocket: " << host << " " << port;
     // The way to make the sockets work on XP Home - The 'unix' style socket seems to fail under xp home.
     sock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
@@ -609,6 +625,7 @@ bool Network::OpenSocket(const char *host, int port, int &sock)
 //================================================================================================
 bool Network::OpenSocket(const char *host, int port, int &sock)
 {
+    PROFILE()
     // Use new (getaddrinfo()) or old (gethostbyname()) socket API
 #if 0
     //#ifndef HAVE_GETADDRINFO
@@ -755,6 +772,7 @@ bool Network::OpenSocket(const char *host, int port, int &sock)
 //================================================================================================
 void Network::contactMetaserver()
 {
+    PROFILE()
     clearMetaServerData();
     GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "");
     GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Query metaserver...");
@@ -784,6 +802,7 @@ void Network::contactMetaserver()
 //================================================================================================
 void Network::read_metaserver_data(int &socket)
 {
+    PROFILE()
     static String buf;
     buf.clear();
     char *ptr = new char[MAXSOCKBUF];
@@ -815,6 +834,7 @@ void Network::read_metaserver_data(int &socket)
 //================================================================================================
 void Network::add_metaserver_data(String strMetaData)
 {
+    PROFILE()
     enum
     {
         DATA_DESC1,
@@ -873,6 +893,7 @@ void Network::add_metaserver_data(String strMetaData)
 //================================================================================================
 const char *Network::get_metaserver_info(int node, int infoLineNr)
 {
+    PROFILE()
     return mvServer[node]->desc[infoLineNr &3].c_str();
 }
 
@@ -881,6 +902,7 @@ const char *Network::get_metaserver_info(int node, int infoLineNr)
 //================================================================================================
 void Network::clearMetaServerData()
 {
+    PROFILE()
     GuiManager::getSingleton().clear(GuiManager::TABLE);
     if (mvServer.empty()) return;
     for (std::vector<Server*>::iterator i = mvServer.begin(); i != mvServer.end(); ++i)

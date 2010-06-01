@@ -26,6 +26,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include <OgreHardwarePixelBuffer.h>
 #include <OISKeyboard.h>
 #include "logger.h"
+#include "profiler.h"
 #include "gui/gui_textout.h"
 #include "gui/gui_element_table.h"
 
@@ -40,6 +41,7 @@ const int  TEXT_OFFSET = 2; // Text offset in pixel x/y from the topleft border.
 //================================================================================================
 GuiTable::GuiTable(TiXmlElement *xmlElement, const void *parent):GuiElement(xmlElement, parent)
 {
+    PROFILE()
     const char *tmp;
     TiXmlElement *xmlOpt;
     for (xmlOpt = xmlElement->FirstChildElement("Color"); xmlOpt; xmlOpt = xmlOpt->NextSiblingElement("Color"))
@@ -91,6 +93,7 @@ GuiTable::GuiTable(TiXmlElement *xmlElement, const void *parent):GuiElement(xmlE
 //================================================================================================
 GuiTable::~GuiTable()
 {
+    PROFILE()
     for (std::vector<ColumnEntry*>::iterator i = mvColumn.begin(); i < mvColumn.end(); ++i)
         delete(*i);
     mvColumn.clear();
@@ -105,6 +108,7 @@ GuiTable::~GuiTable()
 //================================================================================================
 void GuiTable::sendMsg(const int message, Ogre::String &text, Ogre::uint32 &param, const char * /*text2*/)
 {
+    PROFILE()
     switch (message)
     {
         case GuiManager::MSG_ADD_ROW:
@@ -130,6 +134,7 @@ void GuiTable::sendMsg(const int message, Ogre::String &text, Ogre::uint32 &para
 //================================================================================================
 int GuiTable::getUserBreak()
 {
+    PROFILE()
     if (!mUserBreak) return 0;
     mUserBreak = false;
     return -1;
@@ -140,6 +145,7 @@ int GuiTable::getUserBreak()
 //================================================================================================
 int GuiTable::keyEvent(const int /*keyChar*/, const unsigned int key)
 {
+    PROFILE()
     if (key == OIS::KC_UP)
     {
         if (mSelectedRow > 0)
@@ -176,6 +182,7 @@ int GuiTable::keyEvent(const int /*keyChar*/, const unsigned int key)
 //================================================================================================
 int GuiTable::mouseEvent(const int mouseAction, int mouseX, int mouseY, int /*mouseWheel*/)
 {
+    PROFILE()
     if (!mouseWithin(mouseX, mouseY))
         return GuiManager::EVENT_CHECK_NEXT;
     int row = (mouseY-mPosY-mHeightColumnLabel) / mHeightRow;
@@ -210,6 +217,7 @@ int GuiTable::mouseEvent(const int mouseAction, int mouseX, int mouseY, int /*mo
 //================================================================================================
 void GuiTable::setRow(const int row, const char * /*text*/)
 {
+    PROFILE()
     drawRow(row, (row == mSelectedRow)?mColorSelect:mColorRowBG[row&1]);
 }
 
@@ -218,6 +226,7 @@ void GuiTable::setRow(const int row, const char * /*text*/)
 //================================================================================================
 void GuiTable::clear()
 {
+    PROFILE()
     mvRow.clear();
     mSelectedRow = -1;
     mRowActivated = false;
@@ -243,6 +252,7 @@ int GuiTable::getActivatedRow()
 //================================================================================================
 int GuiTable::getSelectedRow()
 {
+    PROFILE()
     if (!mSeletedRowChanged)
         return -1;
     mSeletedRowChanged = false;
@@ -254,6 +264,7 @@ int GuiTable::getSelectedRow()
 //================================================================================================
 void GuiTable::addRow(const char *row)
 {
+    PROFILE()
     mvRow.push_back(row);
     drawSelection((int)mvRow.size()-1);
 }
@@ -262,6 +273,7 @@ void GuiTable::addRow(const char *row)
 //================================================================================================
 void GuiTable::draw()
 {
+    PROFILE()
     uint32 *dst = GuiManager::getSingleton().getBuildBuffer();
     uint32 *bak = mParent->getLayerBG() + mPosX + mPosY*mParent->getWidth();
     // Draws a gfx into the window texture.
@@ -294,6 +306,7 @@ void GuiTable::draw()
 //================================================================================================
 void GuiTable::drawSelection(int newSelection)
 {
+    PROFILE()
     drawRow(mSelectedRow, mColorRowBG[mSelectedRow&1]); // Restore selection background
     drawRow(newSelection, mColorSelect); // Draw new selection bar.
     mSelectedRow = newSelection;
@@ -304,6 +317,7 @@ void GuiTable::drawSelection(int newSelection)
 //================================================================================================
 void GuiTable::drawRow(int row, uint32 bgColor)
 {
+    PROFILE()
     if (row < 0) return;
     uint32 *dst = GuiManager::getSingleton().getBuildBuffer();
     // Draw the background.

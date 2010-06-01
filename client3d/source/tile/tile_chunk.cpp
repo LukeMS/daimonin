@@ -28,6 +28,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include <OgreSceneManager.h>
 #include <OgreMaterialManager.h>
 #include "logger.h"
+#include "profiler.h"
 #include "tile/tile_manager.h"
 
 #include <OgreManualObject.h> // delet me!!
@@ -70,6 +71,7 @@ int CHUNK_X_LENGTH[TileManager::CHUNK_SIZE_Z];
 //================================================================================================
 void TileChunk::init(int queryMaskLand, int queryMaskWater, SceneManager *sceneManager)
 {
+    PROFILE()
     mUndergrowth = true;
     AxisAlignedBox aab(AxisAlignedBox(-10000, -10000, -10000, 10000, 10000, 10000));
     mCameraRotation = 3; // 0° rotation of the camera in CHUNK_START_OFFSET[][] table.
@@ -339,6 +341,7 @@ void TileChunk::init(int queryMaskLand, int queryMaskWater, SceneManager *sceneM
 //================================================================================================
 void TileChunk::setGrid(bool visible)
 {
+    PROFILE()
     mGrid = visible;
     MaterialPtr tmpMaterial = MaterialManager::getSingleton().getByName(TileManager::MATERIAL_PREFIX + TileManager::LAND_PREFIX);
     GpuProgramParametersSharedPtr para = tmpMaterial->getBestTechnique()->getPass(0)->getVertexProgramParameters();
@@ -351,6 +354,7 @@ void TileChunk::setGrid(bool visible)
 //================================================================================================
 void TileChunk::setLight(Real brightness)
 {
+    PROFILE()
     mDaylight = brightness;
     MaterialPtr tmpMaterial = MaterialManager::getSingleton().getByName(TileManager::MATERIAL_PREFIX + TileManager::LAND_PREFIX);
     GpuProgramParametersSharedPtr para = tmpMaterial->getBestTechnique()->getPass(0)->getVertexProgramParameters();
@@ -367,6 +371,7 @@ void TileChunk::setLight(Real brightness)
 //================================================================================================
 void TileChunk::setWave(Real alpha, Real amplitude, Real speed)
 {
+    PROFILE()
     mWaveParam.x = alpha;
     mWaveParam.y = amplitude;
     mWaveParam.z = speed;
@@ -381,6 +386,7 @@ void TileChunk::setWave(Real alpha, Real amplitude, Real speed)
 //================================================================================================
 void TileChunk::setMaterial(int groupNr, int texSize)
 {
+    PROFILE()
     String strMatFile = "_"+ StringConverter::toString(groupNr, 2, '0')+"_"+ StringConverter::toString(texSize, 4, '0')+".png";
     MaterialPtr tmpMaterial = MaterialManager::getSingleton().getByName(TileManager::MATERIAL_PREFIX + TileManager::LAND_PREFIX);
     for (int i=0; i < tmpMaterial->getBestTechnique()->getPass(0)->getNumTextureUnitStates(); ++i)
@@ -395,6 +401,7 @@ void TileChunk::setMaterial(int groupNr, int texSize)
 //================================================================================================
 void TileChunk::setCameraRotation(Real cameraAngle)
 {
+    PROFILE()
     unsigned int rotation = (unsigned int)((cameraAngle + 45.0f) / 15.0f);
     if (mCameraRotation != rotation && rotation < SUM_CAMERA_POS)
     {
@@ -408,6 +415,7 @@ void TileChunk::setCameraRotation(Real cameraAngle)
 //================================================================================================
 void TileChunk::setVertex(Vector3 &pos, int maskNr, Real offsetU, Real offsetV, Vector4 &params)
 {
+    PROFILE()
     static const int TEXTURE_UNIT_SORT[]= {0,2,4, 0,4,2, 2,0,4, 2,4,0, 4,0,2, 4,2,0, 4,4,4};
     int sorting = maskNr * 3;
     // if (maskNr == 6) maskNr = 0;
@@ -440,6 +448,7 @@ void TileChunk::setVertex(Vector3 &pos, int maskNr, Real offsetU, Real offsetV, 
 //================================================================================================
 void TileChunk::setTriangle(int x, int z, Vector3 v1, Vector3 v2, Vector3 v3,int maskNr)
 {
+    PROFILE()
     Real offsetU1 = v1.x*HALF_TILE_SIZE;
     Real offsetV1 = v1.z*HALF_TILE_SIZE;
     Real offsetU2 = v2.x*HALF_TILE_SIZE;
@@ -512,6 +521,7 @@ void TileChunk::setTriangle(int x, int z, Vector3 v1, Vector3 v2, Vector3 v3,int
 //================================================================================================
 int TileChunk::getMask(int gfxVertex0, int gfxVertex1, int gfxVertex2)
 {
+    PROFILE()
     // Set the texture units with the default gfxNr.
     // After we have choosen the mask, they are sorted.
     mTexPosInAtlas[0] = (Real)(gfxVertex0%6);
@@ -538,6 +548,7 @@ int TileChunk::getMask(int gfxVertex0, int gfxVertex1, int gfxVertex2)
 //================================================================================================
 void TileChunk::updateLand()
 {
+    PROFILE()
     HardwareVertexBufferSharedPtr vbuf = mSubMeshLand->vertexData->vertexBufferBinding->getBuffer(0);
     mPosVBuf = static_cast<Real*>(vbuf->lock(HardwareBuffer::HBL_DISCARD));
     int maskNr, gfxNrVert0, gfxNrVert1, gfxNrNoBlending;
@@ -668,6 +679,7 @@ void TileChunk::updateLand()
 //================================================================================================
 void TileChunk::updateWater()
 {
+    PROFILE()
     HardwareVertexBufferSharedPtr vbuf = mSubMeshWater->vertexData->vertexBufferBinding->getBuffer(0);
     Real height;
     Real *pReal = static_cast<Real*>(vbuf->lock(HardwareBuffer::HBL_DISCARD));
@@ -720,6 +732,7 @@ void TileChunk::updateWater()
 //================================================================================================
 void TileChunk::updateUndergrowth()
 {
+    PROFILE()
     if (!mUndergrowth) return;
     HardwareVertexBufferSharedPtr vbuf = mSubMeshGrassFar->vertexData->vertexBufferBinding->getBuffer(0);
     Real height;
@@ -924,6 +937,7 @@ void TileChunk::updateUndergrowth()
 //================================================================================================
 void TileChunk::setRenderOptions(bool drawUndergrowth)
 {
+    PROFILE()
     if (drawUndergrowth == mUndergrowth) return;
     if (!drawUndergrowth)
     {

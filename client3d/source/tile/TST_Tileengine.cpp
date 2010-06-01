@@ -81,7 +81,7 @@ private:
 
     void destroyScene(void)
     {
-        TileManager::getSingleton().freeRecources();
+      TileManager::getSingleton().freeRecources();
     }
 };
 

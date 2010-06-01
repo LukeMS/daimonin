@@ -57,19 +57,19 @@ public:
     }
     void checkFiles();
 
-    int getStatus(int file_enum)
+    int getStatus(int file_enum) const
     {
         return srv_file[file_enum].status;
     }
-    int getLength(int file_enum)
+    int getLength(int file_enum) const
     {
         return srv_file[file_enum].length;
     }
-    unsigned int getCRC(int file_enum)
+    unsigned int getCRC(int file_enum) const
     {
         return srv_file[file_enum].crc;
     }
-    const char *getFilename(int file_enum)
+    const char *getFilename(int file_enum) const
     {
         return srv_file[file_enum].filename;
     }

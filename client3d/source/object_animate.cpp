@@ -23,6 +23,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 
 #include "option.h"
 #include "logger.h"
+#include "profiler.h"
 #include "object_animate.h"
 #include <OgreEntity.h>
 #include <OgreAnimation.h>
@@ -57,6 +58,7 @@ const char *ObjectAnimate::StateNames[ANIM_GROUP_SUM]=
 //=================================================================================================
 ObjectAnimate::ObjectAnimate(Entity *entity)
 {
+    PROFILE()
     if (!entity->hasSkeleton())
     {
         mIsAnimated = false;
@@ -118,6 +120,7 @@ ObjectAnimate::ObjectAnimate(Entity *entity)
 //=================================================================================================
 ObjectAnimate::~ObjectAnimate()
 {
+    PROFILE()
     mAnimState.clear();
 }
 //=================================================================================================
@@ -125,6 +128,7 @@ ObjectAnimate::~ObjectAnimate()
 //=================================================================================================
 void ObjectAnimate::update(const FrameEvent& event)
 {
+    PROFILE()
     if (!mIsAnimated) return;
 
     mActState->addTime(event.timeSinceLastFrame * mAnimSpeed);
@@ -152,6 +156,7 @@ void ObjectAnimate::update(const FrameEvent& event)
 //=================================================================================================
 void ObjectAnimate::toggleAnimation(int animGroup, int animNr, bool loop, bool force, bool random, bool freezeLastFrame)
 {
+    PROFILE()
     if (!mIsAnimated)
         return;
     // Is the selected animation already running?
@@ -200,6 +205,7 @@ void ObjectAnimate::toggleAnimation(int animGroup, int animNr, bool loop, bool f
 //=================================================================================================
 void ObjectAnimate::toggleAnimation2(int animGroup, int animNr, bool loop, bool force, bool random)
 {
+    PROFILE()
     if (!mIsAnimated)
         return;
     // Is the selected animation already running?
@@ -247,5 +253,6 @@ void ObjectAnimate::toggleAnimation2(int animGroup, int animNr, bool loop, bool 
 //=================================================================================================
 void ObjectAnimate::pause(bool p)
 {
+    PROFILE()
     mActState->setEnabled(!p);
 }

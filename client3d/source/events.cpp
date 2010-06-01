@@ -33,6 +33,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include "sound.h"
 #include "option.h"
 #include "logger.h"
+#include "profiler.h"
 #include "network.h"
 #include "gui/gui_manager.h"
 #include "tile/tile_manager.h"
@@ -65,6 +66,7 @@ const char BINARY_CMD_NEXT = '\0'; // Next commad.
 //================================================================================================
 void Events::Init(RenderWindow* win, SceneManager *SceneMgr)
 {
+    PROFILE()
     // ////////////////////////////////////////////////////////////////////
     // Create unbuffered key & mouse input.
     // ////////////////////////////////////////////////////////////////////
@@ -92,6 +94,7 @@ void Events::Init(RenderWindow* win, SceneManager *SceneMgr)
 //================================================================================================
 void Events::freeRecources()
 {
+    PROFILE()
     if (mInputManager)
     {
         mInputManager->destroyInputObject(mInputMouse);
@@ -111,6 +114,7 @@ void Events::freeRecources()
 //================================================================================================
 void Events::setWorldPos(int deltaX, int deltaZ)
 {
+    PROFILE()
     //ParticleManager::getSingleton().pauseAll(true);
     //TileManager::getSingleton().scrollMap(deltaX, deltaZ);
     std::stringstream strCmd;
@@ -134,6 +138,7 @@ void Events::setWorldPos(int deltaX, int deltaZ)
 //================================================================================================
 bool Events::frameStarted(const FrameEvent& evt)
 {
+    PROFILE()
     static unsigned long timeWaitServer;
     static String strAccountName, strAccountPswd, strAccountPlayer;
     if (mWindow->isClosed() || mQuitGame)
@@ -649,6 +654,7 @@ bool Events::frameStarted(const FrameEvent& evt)
 //================================================================================================
 bool Events::frameEnded(const FrameEvent& evt)
 {
+    PROFILE()
     if (Option::getSingleton().getGameStatus() < Option::GAME_STATUS_INIT_NET)
         return true;
     mInputMouse->capture();

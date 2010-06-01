@@ -27,6 +27,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include <OgreStringConverter.h>
 #include <OgreOverlayManager.h>
 #include <OgreHardwarePixelBuffer.h>
+#include "profiler.h"
 #include "gui/gui_cursor.h"
 
 using namespace Ogre;
@@ -39,6 +40,7 @@ const int MAX_CURSOR_SIZE = 1 << 7;
 //================================================================================================
 void GuiCursor::Init(const char *resourceName)
 {
+    PROFILE()
     GuiImageset::gfxSrcMouse *srcEntry = GuiImageset::getSingleton().getStateGfxPosMouse();
     mWidth = srcEntry->w;
     mHeight = srcEntry->h;
@@ -61,6 +63,7 @@ void GuiCursor::Init(const char *resourceName)
 //================================================================================================
 void GuiCursor::freeRecources()
 {
+    PROFILE()
     mTexture.setNull();
 }
 
@@ -69,6 +72,7 @@ void GuiCursor::freeRecources()
 //================================================================================================
 void GuiCursor::setState(uchar state)
 {
+    PROFILE()
     if (mState == state || state >= GuiManager::STATE_MOUSE_SUM) return;
     mState = state;
     draw();
@@ -79,6 +83,7 @@ void GuiCursor::setState(uchar state)
 //================================================================================================
 void GuiCursor::draw()
 {
+    PROFILE()
     GuiImageset::gfxSrcMouse *gfxSrcPos = GuiImageset::getSingleton().getStateGfxPosMouse();
     mTexture->getBuffer()->blitFromMemory(GuiImageset::getSingleton().getPixelBox().getSubVolume(
             Box(gfxSrcPos->state[mState].x,

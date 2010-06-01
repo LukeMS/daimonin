@@ -26,6 +26,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include <OgreSceneManager.h>
 #include <OgreMeshManager.h>
 #include "logger.h"
+#include "profiler.h"
 #include "tile/tile_decal.h"
 #include "tile/tile_manager.h"
 
@@ -41,6 +42,7 @@ Ogre::SceneManager *TileDecal::mSceneManager = 0;
 //================================================================================================
 TileDecal::TileDecal(unsigned int sizeInSubtiles, int posX, int posZ, const char *strMaterial)
 {
+    PROFILE()
     if (!mMaxDecal) mSceneManager = TileManager::getSingleton().getSceneManager();
     if (!mSceneManager)
     {
@@ -93,6 +95,7 @@ TileDecal::TileDecal(unsigned int sizeInSubtiles, int posX, int posZ, const char
 //================================================================================================
 TileDecal::~TileDecal()
 {
+    PROFILE()
     mNode->getParentSceneNode()->removeAndDestroyChild(mNode->getName());
     --mSumDecal;
 }
@@ -102,6 +105,7 @@ TileDecal::~TileDecal()
 //================================================================================================
 void TileDecal::setPosition(int posX, int posZ)
 {
+    PROFILE()
     const Real DELTA_HEIGHT = 0.5f;
     int tileX = posX/TileManager::TILE_RENDER_SIZE;
     int tileZ = posZ/TileManager::TILE_RENDER_SIZE;

@@ -26,18 +26,12 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include <OgreConfigFile.h>
 #include <sys/stat.h>
 #include "logger.h"
+#include "profiler.h"
 #include "tile/tile_chunk.h"
 #include "tile/tile_decal.h"
 #include "tile/tile_manager.h"
 
 using namespace Ogre;
-
-#define LOG_TIMING
-
-#ifdef LOG_TIMING
-#include <OgreRoot.h>
-#include <OgreTimer.h>
-#endif
 
 String TileManager::LAND_PREFIX    = "Land";
 String TileManager::WATER_PREFIX   = "Water";
@@ -71,6 +65,7 @@ SceneManager *TileManager::mSceneManager = 0;
 //================================================================================================
 TileManager::TileManager()
 {
+    PROFILE()
     mMap = 0;
 }
 
@@ -79,6 +74,7 @@ TileManager::TileManager()
 //================================================================================================
 TileManager::~TileManager()
 {
+    PROFILE()
     if (mMap ) Logger::log().error() << "TileManager::freeRecources() was not called!";
 }
 
@@ -87,6 +83,7 @@ TileManager::~TileManager()
 //================================================================================================
 void TileManager::freeRecources()
 {
+    PROFILE()
     if (!mMap) return; // Init(...) was never called.
     mSceneManager->destroyQuery(mRaySceneQuery);
     delete[] mMap; mMap = 0;
@@ -103,6 +100,7 @@ void TileManager::freeRecources()
 //================================================================================================
 void TileManager::Init(SceneManager *SceneMgr, int queryMaskLand, int queryMaskWater, int lod, bool createAtlas)
 {
+    PROFILE()
     Logger::log().headline() << "Init TileEngine";
     mSceneManager = SceneMgr;
     if (createAtlas)
@@ -147,13 +145,8 @@ void TileManager::Init(SceneManager *SceneMgr, int queryMaskLand, int queryMaskW
 //================================================================================================
 void TileManager::updateChunks()
 {
-#ifdef LOG_TIMING
-    unsigned long time = Root::getSingleton().getTimer()->getMicroseconds();
-#endif
+    PROFILE()
     mMapchunk.update();
-#ifdef LOG_TIMING
-    Logger::log().error() << "Time to change terrain: " << (double)(Root::getSingleton().getTimer()->getMicroseconds() - time)/1000 << " ms";
-#endif
 }
 
 //================================================================================================
@@ -167,6 +160,7 @@ void TileManager::updateChunks()
 //================================================================================================
 void TileManager::setMap(unsigned int x, unsigned int z, uchar heightLand, uchar gfxLayer0, uchar heightWater, uchar shadow, uchar gfxLayer1, bool spotLight)
 {
+    PROFILE()
     int ringBufferPos = ((mMapSPosZ + z)&mMapMaskZ)*mMapSizeX + ((mMapSPosX + x)&mMapMaskX);
     mMap[ringBufferPos].gfxLayer0  = gfxLayer0;
     mMap[ringBufferPos].gfxLayer1  = gfxLayer1;
@@ -181,6 +175,7 @@ void TileManager::setMap(unsigned int x, unsigned int z, uchar heightLand, uchar
 //================================================================================================
 Ogre::ushort TileManager::getMapHeight(unsigned int x, unsigned int z)
 {
+    PROFILE()
     return mMap[((mMapSPosZ + z)&mMapMaskZ)*mMapSizeX + ((mMapSPosX + x)&mMapMaskX)].heightLand * HEIGHT_STRETCH;
 }
 
@@ -189,6 +184,7 @@ Ogre::ushort TileManager::getMapHeight(unsigned int x, unsigned int z)
 //================================================================================================
 Ogre::ushort TileManager::getMapWater(unsigned int x, unsigned int z)
 {
+    PROFILE()
     return mMap[((mMapSPosZ + z)&mMapMaskZ)*mMapSizeX + ((mMapSPosX + x)&mMapMaskX)].heightWater;
 }
 
@@ -197,6 +193,7 @@ Ogre::ushort TileManager::getMapWater(unsigned int x, unsigned int z)
 //================================================================================================
 uchar TileManager::getMapLayer0(unsigned int x, unsigned int z)
 {
+    PROFILE()
     return mMap[((mMapSPosZ + z)&mMapMaskZ)*mMapSizeX + ((mMapSPosX + x)&mMapMaskX)].gfxLayer0;
 }
 
@@ -205,6 +202,7 @@ uchar TileManager::getMapLayer0(unsigned int x, unsigned int z)
 //================================================================================================
 uchar TileManager::getMapLayer1(unsigned int x, unsigned int z)
 {
+    PROFILE()
     return mMap[((mMapSPosZ + z)&mMapMaskZ)*mMapSizeX + ((mMapSPosX + x)&mMapMaskX)].gfxLayer1;
 }
 
@@ -213,6 +211,7 @@ uchar TileManager::getMapLayer1(unsigned int x, unsigned int z)
 //================================================================================================
 Real TileManager::getMapShadow(unsigned int x, unsigned int z)
 {
+    PROFILE()
     return Real(mMap[((mMapSPosZ + z)&mMapMaskZ)*mMapSizeX + ((mMapSPosX + x)&mMapMaskX)].shadow) / 255.0f;
 }
 
@@ -221,6 +220,7 @@ Real TileManager::getMapShadow(unsigned int x, unsigned int z)
 //================================================================================================
 bool TileManager::getMapSpotLight(unsigned int x, unsigned int z)
 {
+    PROFILE()
     return mMap[((mMapSPosZ + z)&mMapMaskZ)*mMapSizeX + ((mMapSPosX + x)&mMapMaskX)].spotLight;
 }
 
@@ -229,6 +229,7 @@ bool TileManager::getMapSpotLight(unsigned int x, unsigned int z)
 //================================================================================================
 void TileManager::scrollMap(int dx, int dz)
 {
+    PROFILE()
     mMapSPosX= (mMapSPosX-dx*2)&mMapMaskX;
     mMapSPosZ= (mMapSPosZ-dz*2)&mMapMaskZ;
     mMapchunk.update();
@@ -239,6 +240,7 @@ void TileManager::scrollMap(int dx, int dz)
 //================================================================================================
 void TileManager::setMapset(int landGroup, int /*waterGroup*/)
 {
+    PROFILE()
     mMapchunk.setMaterial(landGroup,  mTextureSize);
 }
 
@@ -247,9 +249,7 @@ void TileManager::setMapset(int landGroup, int /*waterGroup*/)
 //================================================================================================
 void TileManager::tileClick(float mouseX, float mouseY)
 {
-    Logger::log().error() << "mouse: " << mouseX;
-
-
+    PROFILE()
     Ray mouseRay = mSceneManager->getCamera("PlayerCam")->getCameraToViewportRay(mouseX, mouseY);
     mRaySceneQuery->setRay(mouseRay);
     mRaySceneQuery->setQueryMask(mQueryMaskLand);
@@ -333,6 +333,7 @@ void TileManager::tileClick(float mouseX, float mouseY)
 //================================================================================================
 bool TileManager::vertexPick(Ray *mouseRay, int x, int z, int pos)
 {
+    PROFILE()
     std::pair<bool, Real> Test;
     Test = Math::intersects(*mouseRay, mVertex[0], mVertex[1], mVertex[2]);
     if (!Test.first) return false;  // This tile piece was not clicked.
@@ -374,6 +375,7 @@ bool TileManager::vertexPick(Ray *mouseRay, int x, int z, int pos)
 //================================================================================================
 void TileManager::updateHeighlightVertexPos(int deltaX, int deltaZ)
 {
+    PROFILE()
     mSelectedVertexX+= deltaX; if (mSelectedVertexX > CHUNK_SIZE_X) mSelectedVertexX = 0;
     mSelectedVertexZ+= deltaZ; if (mSelectedVertexZ > CHUNK_SIZE_Z) mSelectedVertexZ = 0;
     highlightVertex(mSelectedVertexX, mSelectedVertexZ);
@@ -384,6 +386,7 @@ void TileManager::updateHeighlightVertexPos(int deltaX, int deltaZ)
 //================================================================================================
 void TileManager::highlightVertex(int x, int z)
 {
+    PROFILE()
     static SceneNode *tcNode = 0;
     if (!tcNode)
     {
@@ -426,6 +429,7 @@ void TileManager::highlightVertex(int x, int z)
 //================================================================================================
 void TileManager::updateTileHeight(int deltaHeight)
 {
+    PROFILE()
     mMap[((mMapSPosZ + mSelectedVertexZ)&mMapMaskZ)*mMapSizeX + ((mMapSPosX + mSelectedVertexX)&mMapMaskX)].heightLand+= deltaHeight;
     mMapchunk.update();
     highlightVertex(mSelectedVertexX, mSelectedVertexZ);
@@ -436,6 +440,7 @@ void TileManager::updateTileHeight(int deltaHeight)
 //================================================================================================
 void TileManager::updateTileGfx(int deltaGfxNr)
 {
+    PROFILE()
     mMap[((mMapSPosZ + mSelectedVertexZ)&mMapMaskZ)*mMapSizeX + ((mMapSPosX + mSelectedVertexX)&mMapMaskX)].gfxLayer0+= deltaGfxNr;
     mEditorActSelectedGfx = mMap[((mMapSPosZ + mSelectedVertexZ)&mMapMaskZ)*mMapSizeX + ((mMapSPosX + mSelectedVertexX)&mMapMaskX)].gfxLayer0;
     mMapchunk.update();
@@ -447,6 +452,7 @@ void TileManager::updateTileGfx(int deltaGfxNr)
 //================================================================================================
 void TileManager::setTileGfx()
 {
+    PROFILE()
     mMap[((mMapSPosZ + mSelectedVertexZ)&mMapMaskZ)*mMapSizeX + ((mMapSPosX + mSelectedVertexX)&mMapMaskX)].gfxLayer0 = mEditorActSelectedGfx;
     mMapchunk.update();
 }
@@ -456,6 +462,7 @@ void TileManager::setTileGfx()
 //================================================================================================
 int TileManager::calcHeight(int vert0, int vert1, int vert2, int posX, int posZ)
 {
+    PROFILE()
     if (posZ == TILE_RENDER_SIZE) return vert1;
     int h1 = ((vert1 - vert0) * posZ) / TILE_RENDER_SIZE + vert0;
     int h2 = ((vert1 - vert2) * posZ) / TILE_RENDER_SIZE + vert2;
@@ -468,6 +475,7 @@ int TileManager::calcHeight(int vert0, int vert1, int vert2, int posX, int posZ)
 //================================================================================================
 short TileManager::getTileHeight(int posX, int posZ)
 {
+    PROFILE()
     int TileX = posX / TILE_RENDER_SIZE; // Get the Tile position within the map.
     int TileZ = posZ / TILE_RENDER_SIZE; // Get the Tile position within the map.
     posX&= (TILE_RENDER_SIZE-1);         // Lower part is the position within the tile.
@@ -498,6 +506,7 @@ short TileManager::getTileHeight(int posX, int posZ)
 //================================================================================================
 void TileManager::createAtlasTexture(int textureSize, unsigned int startGroup)
 {
+    PROFILE()
     int stopGroup = startGroup+1;
     if (startGroup >= (unsigned int) MAX_MAP_SETS)
     {
@@ -530,6 +539,7 @@ void TileManager::createAtlasTexture(int textureSize, unsigned int startGroup)
 //================================================================================================
 bool TileManager::copyTileToAtlas(uchar *dstBuf)
 {
+    PROFILE()
     static int nr = -1;
     const unsigned int OFFSET = BORDER_SIZE*2+TILE_SIZE;
     int sumImages= 0;
@@ -609,6 +619,7 @@ bool TileManager::copyTileToAtlas(uchar *dstBuf)
 //================================================================================================
 void TileManager::copyFlowToAtlas(uchar *dstBuf)
 {
+    PROFILE()
     static int nr = -1;
     Image srcImage;
     uchar *src, *src2, *dst;
@@ -748,6 +759,7 @@ void TileManager::copyFlowToAtlas(uchar *dstBuf)
 //================================================================================================
 void TileManager::copyMaskToAtlas(uchar *dstBuf)
 {
+    PROFILE()
     static int nr = -1;
     const unsigned int OFFSET = BORDER_SIZE*2+TILE_SIZE/2;
     Image srcImage;
@@ -950,6 +962,7 @@ void TileManager::copyMaskToAtlas(uchar *dstBuf)
 //================================================================================================
 void TileManager::copySpotToAtlas(uchar *dstBuf)
 {
+    PROFILE()
     const unsigned int OFFSET = BORDER_SIZE*2+TILE_SIZE/2;
     Image srcImage;
     dstBuf+= 6*(BORDER_SIZE*2+TILE_SIZE)* RGB_A;
@@ -993,6 +1006,7 @@ void TileManager::copySpotToAtlas(uchar *dstBuf)
 //================================================================================================
 void TileManager::createMaskTemplate()
 {
+    PROFILE()
     const unsigned char color[3] = {0xC6, 0x38, 0xDB};
     int lineSkip = TILE_SIZE * RGB;
     const int UNUSED_SIZE = 16;
@@ -1076,6 +1090,7 @@ void TileManager::createMaskTemplate()
 //================================================================================================
 bool TileManager::setResourcePath(String key, String &refPath)
 {
+    PROFILE()
     ConfigFile cf; cf.load("resources.cfg");
     ConfigFile::SectionIterator seci = cf.getSectionIterator();
     while (seci.hasMoreElements())
@@ -1109,6 +1124,7 @@ bool TileManager::setResourcePath(String key, String &refPath)
 //================================================================================================
 bool TileManager::loadImage(Image &image, const Ogre::String &strFilename, bool logErrors)
 {
+    PROFILE()
     struct stat fileInfo;
     String strFile = mPathGfxTiles + strFilename;
     if (!stat(strFile.c_str(), &fileInfo))

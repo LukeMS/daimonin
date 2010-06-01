@@ -23,6 +23,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 
 #include <OgreHardwarePixelBuffer.h>
 #include "logger.h"
+#include "profiler.h"
 #include "gui/gui_element_scrollbar.h"
 
 using namespace Ogre;
@@ -40,6 +41,7 @@ const int SLIDER_INNER_OFFSET = 3;
 //================================================================================================
 GuiElementScrollbar::GuiElementScrollbar(TiXmlElement *xmlElement, const void *parent, const void * /*parentElement*/):GuiElement(xmlElement, parent)
 {
+    PROFILE()
     mButScrollUp  = 0;
     mButScrollDown= 0;
     mHorizontal = (mWidth > mHeight);
@@ -98,6 +100,7 @@ GuiElementScrollbar::GuiElementScrollbar(TiXmlElement *xmlElement, const void *p
 //================================================================================================
 GuiElementScrollbar::~GuiElementScrollbar()
 {
+    PROFILE()
     delete mButScrollUp;
     delete mButScrollDown;
 }
@@ -107,6 +110,7 @@ GuiElementScrollbar::~GuiElementScrollbar()
 //================================================================================================
 int GuiElementScrollbar::getScrollOffset()
 {
+    PROFILE()
     int scroll = mLastScrollAmount;
     mLastScrollAmount = 0;
     return scroll;
@@ -117,6 +121,7 @@ int GuiElementScrollbar::getScrollOffset()
 //================================================================================================
 bool GuiElementScrollbar::mouseOverSlider(int x, int y)
 {
+    PROFILE()
     if (mHorizontal)
         return false;
     return !(x < mStartX || x > mStopX || y < mStartY + mSliderPos || y > mStartY + mSliderPos + mSliderSize);
@@ -128,6 +133,7 @@ bool GuiElementScrollbar::mouseOverSlider(int x, int y)
 //================================================================================================
 int GuiElementScrollbar::mouseEvent(const int mouseAction, int mouseX, int mouseY, int mouseWheel)
 {
+    PROFILE()
     // ////////////////////////////////////////////////////////////////////
     // Mouse has left the window. Set the states to default.
     // ////////////////////////////////////////////////////////////////////
@@ -248,6 +254,7 @@ int GuiElementScrollbar::mouseEvent(const int mouseAction, int mouseX, int mouse
 //================================================================================================
 void GuiElementScrollbar::updateSliderSize(int sizeStrBuffer, int scrollOffset, int maxVisiblePos, int actPos)
 {
+    PROFILE()
     if (actPos <= maxVisiblePos)
     {
         mSliderPos   = 0;
@@ -269,6 +276,7 @@ void GuiElementScrollbar::updateSliderSize(int sizeStrBuffer, int scrollOffset, 
 //================================================================================================
 void GuiElementScrollbar::draw()
 {
+    PROFILE()
     uint32 *dst = GuiManager::getSingleton().getBuildBuffer();
     int w = mStopX-mStartX;
     int h = mStopY-mStartY;

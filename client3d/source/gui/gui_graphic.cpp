@@ -23,6 +23,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 
 
 #include <OgreVector3.h>
+#include "profiler.h"
 #include "gui/gui_graphic.h"
 
 using namespace Ogre;
@@ -32,6 +33,7 @@ using namespace Ogre;
 //================================================================================================
 void GuiGraphic::drawGfxToBuffer(int w, int h, int srcW, int srcH, uint32 *src, uint32 *bak, uint32 *dst, int srcRowSkip, int bakRowSkip, int dstRowSkip)
 {
+    PROFILE()
     int srcY = 0;
     for (; h; --h)
     {
@@ -52,6 +54,7 @@ void GuiGraphic::drawGfxToBuffer(int w, int h, int srcW, int srcH, uint32 *src, 
 //================================================================================================
 void GuiGraphic::drawColorToBuffer(int w, int h, uint32 color, uint32 *bak, uint32 *dst, int bakRowSkip, int dstRowSkip)
 {
+    PROFILE()
     for (; h; --h)
     {
         for (int x = 0; x < w; ++x)
@@ -66,6 +69,7 @@ void GuiGraphic::drawColorToBuffer(int w, int h, uint32 color, uint32 *bak, uint
 //================================================================================================
 void GuiGraphic::drawColorToBuffer(int w, int h, uint32 color, uint32 *dst, int dstRowSkip)
 {
+    PROFILE()
     for (; h; --h)
     {
         for (int x = 0; x < w; ++x)
@@ -79,6 +83,7 @@ void GuiGraphic::drawColorToBuffer(int w, int h, uint32 color, uint32 *dst, int 
 //================================================================================================
 void GuiGraphic::restoreWindowBG(int w, int h, uint32 *src, uint32 *dst, int srcRowSkip, int dstRowSkip)
 {
+    PROFILE()
     for (; h; --h)
     {
         for (int x = 0; x < w; ++x)
@@ -93,6 +98,7 @@ void GuiGraphic::restoreWindowBG(int w, int h, uint32 *src, uint32 *dst, int src
 //================================================================================================
 uint32 GuiGraphic::alphaBlend(const uint32 bg, const uint32 gfx)
 {
+    //PROFILE()
     uint32 alpha = gfx >> 24;
     if (alpha == 0x00) return bg;
     if (alpha == 0xff) return gfx;

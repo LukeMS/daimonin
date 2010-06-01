@@ -24,6 +24,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include <OgreTextureManager.h>
 #include <OgreStringConverter.h>
 #include "logger.h"
+#include "profiler.h"
 #include "gui/gui_window.h"
 #include "gui/gui_cursor.h"
 #include "gui/gui_imageset.h"
@@ -48,6 +49,7 @@ const int MAX_WINDOW_SIZE = 1 << 10;
 //================================================================================================
 void GuiWindow::freeRecources()
 {
+    PROFILE()
     for (std::vector<GuiElement*>::iterator i = mvElement.begin(); i < mvElement.end(); ++i)
         delete (*i);
     mvElement.clear();
@@ -60,6 +62,7 @@ void GuiWindow::freeRecources()
 //================================================================================================
 void GuiWindow::Init(TiXmlElement *xmlRoot, const char *resourceWin, int winNr, uchar defaultZPos)
 {
+    PROFILE()
     mWinLayerBG = 0;
     mLastMouseOverElement = -1;
     mHeight = GuiElement::MIN_SIZE;
@@ -204,6 +207,7 @@ void GuiWindow::Init(TiXmlElement *xmlRoot, const char *resourceWin, int winNr, 
 //================================================================================================
 void checkForOverlappingElements()
 {
+    PROFILE()
     // Todo
     //Logger::log().warning() << "Element " << xyz << " opverlaps element " << xyz2;
 }
@@ -213,6 +217,7 @@ void checkForOverlappingElements()
 //================================================================================================
 void GuiWindow::centerWindowOnMouse(int x, int y)
 {
+    PROFILE()
     if (!isVisible()) return;
     mPosX = (int)(x-mTexture->getWidth())/2;
     mPosY = (int)(y-mTexture->getHeight())/2 - 50;
@@ -224,6 +229,7 @@ void GuiWindow::centerWindowOnMouse(int x, int y)
 //================================================================================================
 int GuiWindow::keyEvent(const int keyChar, const unsigned int key)
 {
+    PROFILE()
     if (!isVisible()) return GuiManager::EVENT_CHECK_NEXT;
     for (unsigned int i = 0; i < mvElement.size(); ++i)
     {
@@ -238,6 +244,7 @@ int GuiWindow::keyEvent(const int keyChar, const unsigned int key)
 //================================================================================================
 int GuiWindow::mouseEvent(const int mouseAction, Vector3 &mouse)
 {
+    PROFILE()
     // ////////////////////////////////////////////////////////////////////
     // User is moving the window.
     // ////////////////////////////////////////////////////////////////////
@@ -313,6 +320,7 @@ int GuiWindow::mouseEvent(const int mouseAction, Vector3 &mouse)
 //================================================================================================
 void GuiWindow::mouseLeftWindow()
 {
+    PROFILE()
     if (mLastMouseOverElement >= 0)
     {
         mvElement[mLastMouseOverElement]->mouseEvent(-1, -1, -1, -1);
@@ -332,6 +340,7 @@ void GuiWindow::mouseLeftWindow()
 //================================================================================================
 void GuiWindow::setVisible(bool visible)
 {
+    PROFILE()
     if (!mOverlay) return;
     if (!visible) mOverlay->hide();
     else mOverlay->show();
@@ -342,6 +351,7 @@ void GuiWindow::setVisible(bool visible)
 //================================================================================================
 void GuiWindow::update(Ogre::Real timeSinceLastFrame)
 {
+    PROFILE()
     if (!isVisible()) return;
     // ToDo. Update drag animation (move back on wrong drag).
     for (unsigned int i = 0; i < mvElement.size(); ++i)
@@ -353,6 +363,7 @@ void GuiWindow::update(Ogre::Real timeSinceLastFrame)
 //================================================================================================
 void GuiWindow::sendMsg(int elementNr, int message, String &text, uint32 &param, const char *text2)
 {
+    PROFILE()
     if (!mvElement.empty())
     {
         if (elementNr <0 ||elementNr >= (int)mvElement.size())

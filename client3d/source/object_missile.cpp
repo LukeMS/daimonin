@@ -23,6 +23,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 
 #include <OgreSceneManager.h>
 #include "logger.h"
+#include "profiler.h"
 #include "option.h"
 #include "events.h"
 #include "object_manager.h"
@@ -41,13 +42,16 @@ unsigned int ObjectMissile::msUnique =0;
 // Free all recources.
 //================================================================================================
 void ObjectMissile::freeRecources()
-{}
+{
+    PROFILE()
+}
 
 //================================================================================================
 // Destructor.
 //================================================================================================
 ObjectMissile::~ObjectMissile()
 {
+    PROFILE()
     //delete particles;
     mNode->getParentSceneNode()->removeAndDestroyChild(mNode->getName());
 }
@@ -57,6 +61,7 @@ ObjectMissile::~ObjectMissile()
 //================================================================================================
 ObjectMissile::ObjectMissile(int type, ObjectNPC *srcMob, ObjectNPC *dstMob)
 {
+    PROFILE()
     // Create a missle.
     mType = type;
     mNode = Events::getSingleton().getSceneManager()->getRootSceneNode()->createChildSceneNode();
@@ -84,6 +89,7 @@ ObjectMissile::ObjectMissile(int type, ObjectNPC *srcMob, ObjectNPC *dstMob)
 //================================================================================================
 bool ObjectMissile::update(const FrameEvent& event)
 {
+    PROFILE()
     if (mHasBallistic)
     {
     }

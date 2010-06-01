@@ -29,6 +29,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include "events.h"
 #include "option.h"
 #include "logger.h"
+#include "profiler.h"
 
 using namespace Ogre;
 
@@ -42,6 +43,7 @@ using namespace Ogre;
 //================================================================================================
 ParticleManager::ParticleManager()
 {
+    PROFILE()
     mCounter  = 0;
 }
 
@@ -50,6 +52,7 @@ ParticleManager::ParticleManager()
 //================================================================================================
 ParticleManager::~ParticleManager()
 {
+    PROFILE()
     for (std::vector<sParticles*>::iterator i = mvParticle.begin(); i < mvParticle.end(); ++i)
     {
         delete (*i);
@@ -62,6 +65,7 @@ ParticleManager::~ParticleManager()
 //================================================================================================
 ParticleSystem *ParticleManager::addNodeObject(SceneNode *node, const char* pScript, Real lifeTime)
 {
+    PROFILE()
     sParticles *obj = new sParticles;
     mvParticle.push_back(obj);
     obj->lifeTime = lifeTime;
@@ -82,6 +86,7 @@ ParticleSystem *ParticleManager::addNodeObject(SceneNode *node, const char* pScr
 //================================================================================================
 ParticleSystem *ParticleManager::addBoneObject(Entity *ent, const char* strBone, const char* pScript, Real lifeTime)
 {
+    PROFILE()
     sParticles *obj = new sParticles;
     mvParticle.push_back(obj);
     obj->lifeTime = lifeTime;
@@ -101,6 +106,7 @@ ParticleSystem *ParticleManager::addBoneObject(Entity *ent, const char* strBone,
 //================================================================================================
 ParticleSystem *ParticleManager::addFreeObject(Vector3 pos, const char *pScript, Real lifeTime)
 {
+    PROFILE()
     sParticles *obj = new sParticles;
     mvParticle.push_back(obj);
     obj->lifeTime = lifeTime;
@@ -122,6 +128,7 @@ ParticleSystem *ParticleManager::addFreeObject(Vector3 pos, const char *pScript,
 //================================================================================================
 void ParticleManager::update(Real dTime)
 {
+    PROFILE()
     for (std::vector<sParticles*>::iterator i = mvParticle.begin(); i < mvParticle.end(); )
     {
         if ((*i)->lifeTime <0  // Infinite lifeTime.
@@ -155,6 +162,7 @@ void ParticleManager::update(Real dTime)
 //================================================================================================
 void ParticleManager::delObject(ParticleSystem *pSystem)
 {
+    PROFILE()
     for (std::vector<sParticles*>::iterator i = mvParticle.begin(); i < mvParticle.end(); ++i)
     {
         if ((*i)->pSystem == pSystem)
@@ -170,6 +178,7 @@ void ParticleManager::delObject(ParticleSystem *pSystem)
 //================================================================================================
 void ParticleManager::pauseAll(bool pause)
 {
+    PROFILE()
     for (std::vector<sParticles*>::iterator i = mvParticle.begin(); i < mvParticle.end(); ++i)
     {
         if (pause)
@@ -192,6 +201,7 @@ void ParticleManager::pauseAll(bool pause)
 //================================================================================================
 void ParticleManager::syncToWorldPos(Vector3 &deltaPos)
 {
+    PROFILE()
     Particle* p;
     for (std::vector<sParticles*>::iterator i = mvParticle.begin(); i < mvParticle.end(); ++i)
     {
@@ -221,6 +231,7 @@ void ParticleManager::syncToWorldPos(Vector3 &deltaPos)
 //================================================================================================
 void ParticleManager::setColorRange(ParticleSystem *pSystem, ColourValue start, ColourValue stop)
 {
+    PROFILE()
     for (int i=0; i < pSystem->getNumEmitters(); ++i)
     {
         pSystem->getEmitter(i)->setColourRangeStart(start);
@@ -233,6 +244,7 @@ void ParticleManager::setColorRange(ParticleSystem *pSystem, ColourValue start, 
 //================================================================================================
 void ParticleManager::setEmitterSize(ParticleSystem *pSystem, float sizeZ, float sizeX, bool adjustRate)
 {
+    PROFILE()
     for (int i=0; i < pSystem->getNumEmitters(); ++i)
     {
         pSystem->getEmitter(i)->setParameter("height", StringConverter::toString(sizeZ));

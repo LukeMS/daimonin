@@ -29,6 +29,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include <OgreMaterialManager.h>
 #include "option.h"
 #include "logger.h"
+#include "profiler.h"
 #include "events.h"
 #include "sound.h"
 #include "network.h"
@@ -57,6 +58,7 @@ const char *ObjectManager::ObjectID[OBJECT_SUM] = { "S","S","S","P","N" };
 //================================================================================================
 void ObjectManager::init()
 {
+    PROFILE()
     mSelectedType  =-1;
     mSelectedObject=-1;
     // mSelectedEnemy = false;
@@ -67,6 +69,7 @@ void ObjectManager::init()
 //================================================================================================
 void ObjectManager::addMobileObject(ObjectStatic::sObject &obj)
 {
+    PROFILE()
     if (obj.type < OBJECT_NPC)
         mvStatic.push_back(new ObjectStatic(obj));
     else
@@ -78,6 +81,7 @@ void ObjectManager::addMobileObject(ObjectStatic::sObject &obj)
 //================================================================================================
 void ObjectManager::update(int /*obj_type*/, const FrameEvent& evt)
 {
+    PROFILE()
     for (unsigned int i = 0; i < mvMissile.size(); ++i)
     {
         if (!mvMissile[i]->update(evt))
@@ -100,6 +104,7 @@ void ObjectManager::update(int /*obj_type*/, const FrameEvent& evt)
 //================================================================================================
 void ObjectManager::synchToWorldPos(int deltaX, int deltaZ)
 {
+    PROFILE()
     for (unsigned int i = 0; i < mvStatic.size(); ++i)
     {
         if (!mvStatic[i]->movePosition(deltaX, deltaZ))
@@ -118,6 +123,7 @@ void ObjectManager::synchToWorldPos(int deltaX, int deltaZ)
 //================================================================================================
 void ObjectManager::syncHeroPosition()
 {
+    PROFILE()
     mvNPC[0]->movePosition(0, 0);
 }
 
@@ -126,6 +132,7 @@ void ObjectManager::syncHeroPosition()
 //================================================================================================
 void ObjectManager::Event(int obj_type, int action, int id, int val1, int val2)
 {
+    PROFILE()
     if (obj_type >= OBJECT_NPC)
     {
         if (id >= (int) mvNPC.size()) return;
@@ -155,6 +162,7 @@ void ObjectManager::Event(int obj_type, int action, int id, int val1, int val2)
 //================================================================================================
 void ObjectManager::deleteNPC(int index)
 {
+    PROFILE()
     if (mSelectedObject == index) mSelectedObject =-1;
     else if (mSelectedObject > index) --mSelectedObject;
     mvNPC[index]->freeRecources();
@@ -169,6 +177,7 @@ void ObjectManager::deleteNPC(int index)
 //================================================================================================
 void ObjectManager::deleteStatic(int index)
 {
+    PROFILE()
     mvStatic[index]->freeRecources();
     delete mvStatic[index];
     std::vector<ObjectStatic*>::iterator i = mvStatic.begin();
@@ -181,6 +190,7 @@ void ObjectManager::deleteStatic(int index)
 //================================================================================================
 void ObjectManager::deleteMissile(int index)
 {
+    PROFILE()
     mvMissile[index]->freeRecources();
     delete mvMissile[index];
     std::vector<ObjectMissile*>::iterator i = mvMissile.begin();
@@ -193,6 +203,7 @@ void ObjectManager::deleteMissile(int index)
 //================================================================================================
 void ObjectManager::freeRecources()
 {
+    PROFILE()
     for (std::vector<ObjectNPC*>::iterator i = mvNPC.begin(); i < mvNPC.end(); ++i)
     {
         (*i)->freeRecources();
@@ -220,6 +231,7 @@ void ObjectManager::freeRecources()
 //================================================================================================
 void ObjectManager::highlightObject(MovableObject *mob, bool highlight)
 {
+    PROFILE()
     static String strMaterialBak;
     static Entity *entity = 0;
     if (highlight)
@@ -267,6 +279,7 @@ void ObjectManager::highlightObject(MovableObject *mob, bool highlight)
 //================================================================================================
 void ObjectManager::selectObject(MovableObject *mob)
 {
+    PROFILE()
     if (mvNPC[ObjectNPC::HERO]->isMoving()) return;
     if (mvNPC[ObjectNPC::HERO]->getHealth() <= 0) return;
 
@@ -299,6 +312,7 @@ void ObjectManager::selectObject(MovableObject *mob)
 //================================================================================================
 void ObjectManager::mousePressed(MovableObject *mob, bool modifier)
 {
+    PROFILE()
     // ////////////////////////////////////////////////////////////////////
     // An object was pressed.
     // ////////////////////////////////////////////////////////////////////
@@ -346,6 +360,7 @@ void ObjectManager::mousePressed(MovableObject *mob, bool modifier)
 //================================================================================================
 void ObjectManager::extractObject(MovableObject *mob)
 {
+    PROFILE()
     String strObject = mob->getName();
     for (mSelectedType=0; mSelectedType < OBJECT_SUM; ++mSelectedType)
     {
@@ -392,6 +407,7 @@ void ObjectManager::extractObject(MovableObject *mob)
 //================================================================================================
 void ObjectManager::shoot(int type, ObjectNPC *srcMob, ObjectNPC *dstMob)
 {
+    PROFILE()
     ObjectMissile *obj_missle = new ObjectMissile(type, srcMob, dstMob);
     if (obj_missle)  mvMissile.push_back(obj_missle);
 }
@@ -401,6 +417,7 @@ void ObjectManager::shoot(int type, ObjectNPC *srcMob, ObjectNPC *dstMob)
 //================================================================================================
 void ObjectManager::targetObjectAttackNPC(int npcIndex)
 {
+    PROFILE()
     if (mSelectedObject <0 || mSelectedObject == npcIndex) return;
     mvNPC[mSelectedObject]->turning(mvNPC[npcIndex]->getFacing() -180, false);
     mvNPC[mSelectedObject]->attack();
@@ -411,6 +428,7 @@ void ObjectManager::targetObjectAttackNPC(int npcIndex)
 //================================================================================================
 void ObjectManager::setEquipment(int npcID, int bone, int type, int itemID)
 {
+    PROFILE()
     if (mvNPC[npcID]->mEquip)
         mvNPC[npcID]->mEquip->equipItem(bone, type, itemID);
 }
@@ -419,13 +437,16 @@ void ObjectManager::setEquipment(int npcID, int bone, int type, int itemID)
 //
 //================================================================================================
 ObjectManager::~ObjectManager()
-{}
+{
+    PROFILE()
+}
 
 //================================================================================================
 // Create a 2d Animation from a model.
 //================================================================================================
 bool ObjectManager::createFlipBook(String meshName, int sumRotations)
 {
+    PROFILE()
     Entity *entity;
     try
     {

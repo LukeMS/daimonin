@@ -30,6 +30,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include "sound.h"
 #include "events.h"
 #include "logger.h"
+#include "profiler.h"
 
 using namespace Ogre;
 
@@ -93,6 +94,7 @@ const char *meshName[][ObjectEquipment::ITEM_SUM]=
 //================================================================================================
 ObjectEquipment::ObjectEquipment(Entity *parentEntity)
 {
+    PROFILE()
     Logger::log().list() << "Adding Equipment.";
     mParentEntity = parentEntity;
     for (int bone=0; bone < BONE_SUM; ++bone)
@@ -107,6 +109,7 @@ ObjectEquipment::ObjectEquipment(Entity *parentEntity)
 //================================================================================================
 void ObjectEquipment::equipItem(unsigned int bone, int type, int itemID, int particleID)
 {
+    PROFILE()
     if (bone >= BONE_SUM) return;
     dropItem(bone);
     // Add a particle system.
@@ -138,6 +141,7 @@ void ObjectEquipment::equipItem(unsigned int bone, int type, int itemID, int par
 //================================================================================================
 void ObjectEquipment::dropItem(int bone)
 {
+    PROFILE()
     if (mItem[bone].entity)
     {
         mParentEntity->detachObjectFromBone(mItem[bone].entity);

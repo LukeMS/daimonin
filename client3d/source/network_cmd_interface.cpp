@@ -23,6 +23,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 
 #include <OISKeyboard.h>
 #include "logger.h"
+#include "profiler.h"
 #include "gui/gui_manager.h"
 #include "network.h"
 #include "network_cmd_interface.h"
@@ -35,6 +36,7 @@ using namespace Ogre;
 //================================================================================================
 void Network::InterfaceCmd(uchar *data, int len)
 {
+    PROFILE()
     //TileManager::getSingleton().map_udate_flag = 2;
     /*
         if ((gui_interface_npc && gui_interface_npc->status != INTERFACE_STATUS_WAIT) &&
@@ -85,6 +87,7 @@ void Network::InterfaceCmd(uchar *data, int len)
 //================================================================================================
 int get_bmap_id(char * /*name*/)
 {
+    PROFILE()
     /*
     for (int = 0; i < bmaptype_table_size; i++)
     {
@@ -103,19 +106,23 @@ int get_bmap_id(char * /*name*/)
 //================================================================================================
 CmdInterface::CmdInterface()
 {
+    PROFILE()
 }
 
 //================================================================================================
 //
 //================================================================================================
 CmdInterface::~CmdInterface()
-{}
+{
+    PROFILE()
+}
 
 //================================================================================================
 //
 //================================================================================================
 char CmdInterface::parseParameter(char *data, int &pos)
 {
+    PROFILE()
     char c;
     while ((c= *(data + pos)))
     {
@@ -141,6 +148,7 @@ char CmdInterface::parseParameter(char *data, int &pos)
 //================================================================================================
 char *CmdInterface::get_parameter_string(char *data, int &pos)
 {
+    PROFILE()
     static char buf[4024];
     char *start_ptr = strchr(data+pos,'"');
     if (!start_ptr) return (char*)""; // error
@@ -157,6 +165,7 @@ char *CmdInterface::get_parameter_string(char *data, int &pos)
 //================================================================================================
 bool CmdInterface::cmd_head(char *data, int &pos)
 {
+    PROFILE()
     mHead.name = "";
     mHead.body_text = "";
     char c;
@@ -183,6 +192,7 @@ bool CmdInterface::cmd_head(char *data, int &pos)
 //================================================================================================
 bool CmdInterface::cmd_link(char *data, int &pos)
 {
+    PROFILE()
     mLink[mLink_count].link ="";
     mLink[mLink_count].cmd  ="";
     char c;
@@ -211,6 +221,7 @@ bool CmdInterface::cmd_link(char *data, int &pos)
 //================================================================================================
 bool CmdInterface::cmd_who(char *data, int &pos)
 {
+    PROFILE()
     mWho.body = "";
     char c;
     while ((c = parseParameter(data, pos)))
@@ -233,6 +244,7 @@ bool CmdInterface::cmd_who(char *data, int &pos)
 //================================================================================================
 bool CmdInterface::cmd_reward(char *data, int &pos)
 {
+    PROFILE()
     char *buf, c;
     mReward.title = "Description"; // default title
     mReward.body_text = "";
@@ -287,6 +299,7 @@ bool CmdInterface::cmd_reward(char *data, int &pos)
 //================================================================================================
 bool CmdInterface::cmd_message(char *data, int &pos)
 {
+    PROFILE()
     char c;
     mMessage.title = "";
     mMessage.body_text = "";
@@ -313,6 +326,7 @@ bool CmdInterface::cmd_message(char *data, int &pos)
 //================================================================================================
 bool CmdInterface::cmd_xtended(char *data, int &pos)
 {
+    PROFILE()
     mXtended.title = "";
     mXtended.body_text = "";
     char c;
@@ -339,6 +353,7 @@ bool CmdInterface::cmd_xtended(char *data, int &pos)
 //================================================================================================
 bool CmdInterface::cmd_icon(char *data, int &pos)
 {
+    PROFILE()
     mIcon[mIcon_count].name = "";
     mIcon[mIcon_count].title = "";
     mIcon[mIcon_count].body_text = "";
@@ -381,6 +396,7 @@ bool CmdInterface::cmd_icon(char *data, int &pos)
 //================================================================================================
 bool CmdInterface::cmd_button(Button &button, char *data, int &pos)
 {
+    PROFILE()
     char *buf, c;
     button.label = "";
     button.command = "";
@@ -414,6 +430,7 @@ bool CmdInterface::cmd_button(Button &button, char *data, int &pos)
 //================================================================================================
 bool CmdInterface::cmd_textfield(char *data, int &pos)
 {
+    PROFILE()
     mTextfield.text = "";
     char c;
     while ((c = parseParameter(data, pos)))
@@ -436,6 +453,7 @@ bool CmdInterface::cmd_textfield(char *data, int &pos)
 //================================================================================================
 void CmdInterface::format_gui_interface()
 {
+    PROFILE()
     mMode= INTERFACE_MODE_NPC;
     if (mUsed_flag & INTERFACE_WHO)
     {
@@ -559,6 +577,7 @@ void CmdInterface::format_gui_interface()
 //================================================================================================
 void CmdInterface::reset()
 {
+    PROFILE()
     mMessage.line_count =0;
     mXtended.line_count =0;
     mReward.line_count  =0;
@@ -573,9 +592,9 @@ void CmdInterface::reset()
 //================================================================================================
 bool CmdInterface::load(int /*mode*/, char *data, int len, int pos)
 {
-
+    PROFILE()
     int cmd      = INTERFACE_CMD_NO; // we have a open '<' and a command is active the string is related to this cmd.
-    int cmd_mode = INTERFACE_CMD_NO; // when we collect outside a cmd tag strings,
+    //int cmd_mode = INTERFACE_CMD_NO; // when we collect outside a cmd tag strings,
     int flag_start=0, flag_end=0;
     for (char c; len > pos; ++pos)
     {
@@ -592,7 +611,7 @@ bool CmdInterface::load(int /*mode*/, char *data, int len, int pos)
                 // our char before this was a '>' - now we get a '<'
                 flag_start=0;
                 flag_end=0;
-                cmd_mode = cmd;
+                //cmd_mode = cmd;
                 cmd = INTERFACE_CMD_NO;
             }
             if (flag_start) // double << ?
@@ -626,7 +645,7 @@ bool CmdInterface::load(int /*mode*/, char *data, int len, int pos)
                 flag_start=2;
                 // This char is a command marker
                 Logger::log().info() << "found cmd: "<< c;
-                cmd_mode = INTERFACE_CMD_NO;
+                //cmd_mode = INTERFACE_CMD_NO;
                 ++pos;
                 switch (c)
                 {
@@ -706,7 +725,7 @@ bool CmdInterface::load(int /*mode*/, char *data, int len, int pos)
             {
                 flag_end=0;
                 flag_start=0;
-                cmd_mode = cmd;
+                //cmd_mode = cmd;
                 cmd = INTERFACE_CMD_NO;
                 // close this command - perhaps we stay string collect mode for it
             }
@@ -745,6 +764,7 @@ normal_char:
 //================================================================================================
 void CmdInterface::sendCommand(int mode, char *cmd)
 {
+    PROFILE()
     /*
         if (mStatus == INTERFACE_STATUS_WAIT) return;
         if (mUsed_flag & INTERFACE_WHO)
@@ -809,6 +829,7 @@ void CmdInterface::sendCommand(int mode, char *cmd)
 //================================================================================================
 void CmdInterface::show()
 {
+    PROFILE()
     if (mUsed_flag & INTERFACE_HEAD)
     {
         // print head
@@ -973,6 +994,7 @@ void CmdInterface::show()
 //================================================================================================
 bool CmdInterface::keyEvent(const char /*keyChar*/, const uchar /*key*/)
 {
+    PROFILE()
     return false;
 }
 
@@ -981,6 +1003,7 @@ bool CmdInterface::keyEvent(const char /*keyChar*/, const uchar /*key*/)
 //================================================================================================
 void CmdInterface::buttonEvent(int index)
 {
+    PROFILE()
     // Accept button pressed.
     if (index)
     {
@@ -1019,6 +1042,7 @@ void CmdInterface::buttonEvent(int index)
 //================================================================================================
 void CmdInterface::mouseEvent(int line)
 {
+    PROFILE()
     if (line <0) return;
     int element, index;
     String keyword = "";
@@ -1059,6 +1083,7 @@ void CmdInterface::mouseEvent(int line)
 //================================================================================================
 bool CmdInterface::getElement(int line, int *element, int *index, String *keyword)
 {
+    PROFILE()
     // static char key[256]; // used to get keyword string parts for keyword and save it statically
     if ((mUsed_flag & INTERFACE_MESSAGE) && line < mMessage.line_count)
     {

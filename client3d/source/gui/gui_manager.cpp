@@ -31,6 +31,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include <OgreHardwarePixelBuffer.h>
 #include <OISKeyboard.h>
 #include "logger.h"
+#include "profiler.h"
 #include "gui/gui_manager.h"
 #include "gui/gui_window.h"
 #include "gui/gui_cursor.h"
@@ -154,6 +155,7 @@ GuiManager::ElementID GuiManager::mStateStruct[ELEMENTS_SUM]=
 //================================================================================================
 const char *GuiManager::getElementName(int index)
 {
+    PROFILE()
     return (index >= ELEMENTS_SUM)?0:mStateStruct[index].name;
 }
 
@@ -163,6 +165,7 @@ const char *GuiManager::getElementName(int index)
 void GuiManager::printText(int width, int height, uint32 *dst, int dstLineSkip,
                            uint32 *bak, int bakLineSkip, const char *txt, unsigned int fontNr, uint32 color, bool hideText)
 {
+    PROFILE()
     GuiTextout::getSingleton().printText(width, height, dst, dstLineSkip, bak, bakLineSkip, txt, fontNr, color, hideText);
 }
 
@@ -171,6 +174,7 @@ void GuiManager::printText(int width, int height, uint32 *dst, int dstLineSkip,
 //================================================================================================
 void GuiManager::setMouseState(int action)
 {
+    PROFILE()
     GuiCursor::getSingleton().setState(action);
 }
 
@@ -179,6 +183,7 @@ void GuiManager::setMouseState(int action)
 //================================================================================================
 void GuiManager::sendMsg(int element, Message message, const char *text, uint32 param, const char *text2)
 {
+    PROFILE()
     for (unsigned int i = 0; i < ELEMENTS_SUM; ++i)
     {
         if (element == mStateStruct[i].index)
@@ -196,6 +201,7 @@ void GuiManager::sendMsg(int element, Message message, const char *text, uint32 
 //================================================================================================
 void GuiManager::playSound(const char *filename)
 {
+    PROFILE()
     if (!filename) return;
     if (!filename[0])
         mvSound.push_back(mSoundWrongInput);
@@ -208,6 +214,7 @@ void GuiManager::playSound(const char *filename)
 //================================================================================================
 const char *GuiManager::getNextSound()
 {
+    PROFILE()
     if (mvSound.empty()) return 0;
     String strSound = mvSound[0];
     //Logger::log().warning() << "Gui Manager sound cmd: " << strSound;
@@ -220,6 +227,7 @@ const char *GuiManager::getNextSound()
 //================================================================================================
 int GuiManager::getElementIndex(const char *name, int windowID, int winElementNr)
 {
+    PROFILE()
     if (name)
     {
         for (int i = 0; i < ELEMENTS_SUM; ++i)
@@ -243,6 +251,7 @@ int GuiManager::getElementIndex(const char *name, int windowID, int winElementNr
 //================================================================================================
 int GuiManager::getElementPressed()
 {
+    PROFILE()
     return guiWindow[0].getElementPressed();
 }
 
@@ -251,6 +260,7 @@ int GuiManager::getElementPressed()
 //================================================================================================
 void GuiManager::Init(int w, int h, bool createMedia, bool printInfo, const char *soundActionFailed, const char *pathTxt, const char *pathGfx, const char *pathFonts, const char *pathItems)
 {
+    PROFILE()
     Logger::log().headline() << "Init GUI";
     mDragSrcWin     = NO_ACTIVE_WINDOW;
     mActiveWindow   = NO_ACTIVE_WINDOW;
@@ -293,6 +303,7 @@ void GuiManager::Init(int w, int h, bool createMedia, bool printInfo, const char
 //================================================================================================
 OverlayElement *GuiManager::createOverlay(String name, String strTexture, Overlay *&overlay)
 {
+    PROFILE()
     // ////////////////////////////////////////////////////////////////////
     // Create the material.
     // ////////////////////////////////////////////////////////////////////
@@ -339,6 +350,7 @@ OverlayElement *GuiManager::createOverlay(String name, String strTexture, Overla
 //================================================================================================
 TexturePtr GuiManager::createTexture(String strTexture)
 {
+    PROFILE()
     StringVector vString = StringUtil::split(strTexture, "_", 3);
     int s = atoi(vString[0].c_str());
     // ////////////////////////////////////////////////////////////////////
@@ -379,6 +391,7 @@ TexturePtr GuiManager::createTexture(String strTexture)
 //================================================================================================
 void GuiManager::resizeBuildBuffer(size_t newSize)
 {
+    PROFILE()
     static size_t size = 0;
     if (size < newSize)
     {
@@ -393,6 +406,7 @@ void GuiManager::resizeBuildBuffer(size_t newSize)
 //================================================================================================
 void GuiManager::centerWindowOnMouse(int window)
 {
+    PROFILE()
     guiWindow[window].centerWindowOnMouse((int)mMouse.x, (int)mMouse.y);
 }
 
@@ -401,6 +415,7 @@ void GuiManager::centerWindowOnMouse(int window)
 //================================================================================================
 void GuiManager::parseWindows()
 {
+    PROFILE()
     // ////////////////////////////////////////////////////////////////////
     // Parse the imageset.
     // ////////////////////////////////////////////////////////////////////
@@ -503,6 +518,7 @@ void GuiManager::parseWindows()
 //================================================================================================
 void GuiManager::freeRecources()
 {
+    PROFILE()
     for (int i=0; i < WIN_SUM; ++i) guiWindow[i].freeRecources();
     GuiCursor::getSingleton().freeRecources();
     mTexture.setNull();
@@ -515,6 +531,7 @@ void GuiManager::freeRecources()
 //================================================================================================
 bool GuiManager::keyEvent(const int key, const unsigned int keyChar)
 {
+    PROFILE()
     // We have an active Textinput.
     if (mTextInputWindow != NO_ACTIVE_WINDOW && mTextInputWindow == mActiveWindow)
     {
@@ -549,6 +566,7 @@ bool GuiManager::keyEvent(const int key, const unsigned int keyChar)
 //================================================================================================
 int GuiManager::mouseEvent(int mouseAction, Vector3 &mouse)
 {
+    PROFILE()
     mMouse = mouse;
     GuiCursor::getSingleton().setPos((int)mMouse.x, (int)mMouse.y);
     mMouse.x+= mHotSpotX;
@@ -607,12 +625,13 @@ int GuiManager::mouseEvent(int mouseAction, Vector3 &mouse)
     }
     return GuiManager::EVENT_CHECK_NEXT;
 }
-#
+
 //================================================================================================
 // .
 //================================================================================================
 void GuiManager::startTextInput(int window, int element, int maxChars, bool blockNumbers, bool blockWhitespaces)
 {
+    PROFILE()
     if (mTextInputWindow != NO_ACTIVE_WINDOW || !guiWindow[window].isVisible()) return;
     mTextInputWindow = window;
     mTextInputElement= element;
@@ -626,6 +645,7 @@ void GuiManager::startTextInput(int window, int element, int maxChars, bool bloc
 //================================================================================================
 void GuiManager::cancelTextInput()
 {
+    PROFILE()
     GuiTextinput::getSingleton().canceled();
     mTextInputWindow = NO_ACTIVE_WINDOW;
 }
@@ -635,6 +655,7 @@ void GuiManager::cancelTextInput()
 //================================================================================================
 bool GuiManager::brokenTextInput()
 {
+    PROFILE()
     return GuiTextinput::getSingleton().wasCanceled();
 }
 
@@ -643,6 +664,7 @@ bool GuiManager::brokenTextInput()
 //================================================================================================
 bool GuiManager::finishedTextInput()
 {
+    PROFILE()
     return GuiTextinput::getSingleton().wasFinished();
 }
 
@@ -651,6 +673,7 @@ bool GuiManager::finishedTextInput()
 //================================================================================================
 void GuiManager::resetTextInput()
 {
+    PROFILE()
     GuiTextinput::getSingleton().reset();
 }
 
@@ -659,6 +682,7 @@ void GuiManager::resetTextInput()
 //================================================================================================
 void GuiManager::windowToFront(int window)
 {
+    PROFILE()
     uchar actPos = guiWindow[window].getZPos();
     while (actPos < mSumDefinedWindows-1)
     {
@@ -676,6 +700,7 @@ void GuiManager::windowToFront(int window)
 //================================================================================================
 void GuiManager::showWindow(int window, bool visible)
 {
+    PROFILE()
     guiWindow[window].setVisible(visible);
     if (visible)
     {
@@ -693,6 +718,7 @@ void GuiManager::showWindow(int window, bool visible)
 //================================================================================================
 void GuiManager::update(Real timeSinceLastFrame)
 {
+    PROFILE()
     // ////////////////////////////////////////////////////////////////////
     // Update textinput.
     // ////////////////////////////////////////////////////////////////////
@@ -725,6 +751,7 @@ void GuiManager::update(Real timeSinceLastFrame)
 //================================================================================================
 void GuiManager::setTooltip(const char *text, bool systemMessage)
 {
+    PROFILE()
     if (!text || !(*text))
     {
         mStrTooltip ="";
@@ -750,6 +777,7 @@ void GuiManager::setTooltip(const char *text, bool systemMessage)
 //================================================================================================
 void GuiManager::drawTooltip()
 {
+    PROFILE()
     if (!mStrTooltip.size()) return;
     const int MAX_TOOLTIP_LINES = 16;
     std::string line[MAX_TOOLTIP_LINES];
@@ -839,6 +867,7 @@ void GuiManager::drawTooltip()
 //================================================================================================
 void GuiManager::drawDragElement(const PixelBox &src)
 {
+    PROFILE()
     size_t size = mTexture->getWidth()*mTexture->getHeight()*sizeof(uint32);
     memset(mTexture->getBuffer()->lock(0, size, HardwareBuffer::HBL_DISCARD), 0x00, size);
     mTexture->getBuffer()->unlock();
@@ -852,6 +881,7 @@ void GuiManager::drawDragElement(const PixelBox &src)
 //================================================================================================
 void GuiManager::debugText(const char *text, Ogre::uint32 timeBeforeNextMsg)
 {
+    PROFILE()
     static String strText;
     strText ="[Debug] ";
     strText+= text;
