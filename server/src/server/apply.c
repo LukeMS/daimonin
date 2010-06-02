@@ -1869,7 +1869,7 @@ static void apply_spellbook(object *op, object *tmp)
 static void apply_scroll(object *op, object *tmp)
 {
     /*object *old_skill;*/
-    int scroll_spell = tmp->stats.  sp;
+    int scroll_spell = tmp->stats.sp;
 
     if (QUERY_FLAG(op, FLAG_BLIND) && !QUERY_FLAG(op, FLAG_WIZ))
     {
