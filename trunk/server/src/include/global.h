@@ -472,7 +472,6 @@ typedef struct Settings
     char                           *statsdir;           /* Directory for active logs of statistical events */
     char                           *statsarchivedir;    /* Directory for logs, ready for further processing */
     uint8                           stat_loss_on_death; /* If true, chars lose a random stat when they die */
-    uint8                           balanced_stat_loss; /* If true, Death stat depletion based on level etc */
     int                             reset_loc_time;     /* Number of seconds to put player back at home */
     char                            admin_password[MEDIUM_BUF]; /* password for bigtime admin actions */
 

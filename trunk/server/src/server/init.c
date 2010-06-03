@@ -56,7 +56,6 @@ struct Settings settings    =
     STATS_DIR,              /* Directory for active logs of statistical events */
     STATS_ARCHIVE_DIR,      /* Directory for logs, ready for further processing */
     STAT_LOSS_ON_DEATH,     /* If true, chars lose a random stat when they die */
-    BALANCED_STAT_LOSS,     /* If true, Death stat depletion based on level etc */
     RESET_LOCATION_TIME,    /* Number of seconds to put player back at home */
     "",                     /* admin_password */
     0,                      /* True if we should send updates */
@@ -697,16 +696,6 @@ static void stat_loss_on_death_false()
     settings.stat_loss_on_death = 0;
 }
 
-static void balanced_stat_loss_true()
-{
-    settings.balanced_stat_loss = 1;
-}
-static void balanced_stat_loss_false()
-{
-    settings.balanced_stat_loss = 0;
-}
-
-
 static void help()
 {
     /* The information in usage is redundant with what is given below, so why call it? */
@@ -726,8 +715,6 @@ static void help()
     LOG(llevInfo, " -o          Prints out info on what was defined at compile time.\n");
     LOG(llevInfo, " -stat_loss_on_death - if set, player loses stat when they die\n");
     LOG(llevInfo, " +stat_loss_on_death - if set, player does not lose a stat when they die\n");
-    LOG(llevInfo, " -balanced_stat_loss - if set, death stat depletion is balanced by level etc\n");
-    LOG(llevInfo, " +balanced_stat_loss - if set, ordinary death stat depletion is used\n");
     LOG(llevInfo, " -v          Print version and contributors.\n");
     LOG(llevInfo, " -test       Run unit tests and exit.\n");
     LOG(llevInfo, " -benchmark  Run benchmarks and exit.\n");
@@ -1170,8 +1157,6 @@ struct Command_Line_Options options[]   =
 #endif
     {"-stat_loss_on_death", 0, 3, stat_loss_on_death_true},
     {"+stat_loss_on_death", 0, 3, stat_loss_on_death_false},
-    {"-balanced_stat_loss", 0, 3, balanced_stat_loss_true},
-    {"+balanced_stat_loss", 0, 3, balanced_stat_loss_false},
     {"-test", 0, 4, run_unit_tests},
     {"-benchmark", 0, 4, run_benchmarks}
 };
