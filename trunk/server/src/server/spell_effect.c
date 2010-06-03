@@ -407,7 +407,7 @@ int perceive_self(object *op)
             {
                 if (get_attr_value(&tmp->stats, i) < 0)
                 {
-                    sprintf(buf, "Your %s is depleted by %d", statname[i], -(get_attr_value(&tmp->stats, i)));
+                    sprintf(buf, "Your %s is depleted by %d", stat_name[i], -(get_attr_value(&tmp->stats, i)));
                     new_draw_info(NDI_UNIQUE, 0, op, buf);
                 }
             }
