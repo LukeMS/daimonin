@@ -314,13 +314,9 @@ int command_kick(object *op, char *params)
 int command_restart(object *ob, char *params)
 {
 #ifdef _TESTSERVER
-    int   time;
-    char *stream;
+    int   time = 30;
     char  buf[MEDIUM_BUF];
     FILE *fp;
-
-    time = 30;
-    stream = NULL;
 
     LOG(llevSystem,"write stream file...\n");
     sprintf(buf, "%s/%s", settings.localdir, "stream");
@@ -332,31 +328,25 @@ int command_restart(object *ob, char *params)
         return 0;
     }
 
+    sprintf(buf, "vanilla");
+
     if (params)
     {
-        if (sscanf(params, "%d", &time))
+        if (!sscanf(params, "%d %s", &time, buf))
         {
-            if ((stream = strchr(params, ' ')))
-            {
-                stream++;
-            }
-        }
-        else
-        {
-            stream = params;
-        }
-
-        /* Streams cannot have spaces. */
-        if (stream &&
-            strchr(stream, ' '))
-        {
-            fclose(fp);
-
-            return 1;
+           sscanf(params, "%s", buf);
         }
     }
 
-    fprintf(fp, "%s", (stream) ? stream : "(null)");
+    /* Streams cannot have spaces. */
+    if (strchr(buf, ' '))
+    {
+        fclose(fp);
+
+        return 1;
+    }
+
+    fprintf(fp, "%s", buf);
     fclose(fp);
 
     sprintf(buf, "'/restart%s%s' issued by %s\nServer will recompile and arches and maps will be updated!",
@@ -366,10 +356,8 @@ int command_restart(object *ob, char *params)
 
     return 0;
 #else
-    int  time;
+    int  time = 300;
     char buf[MEDIUM_BUF];
-
-    time = 300;
 
     if (params &&
         !sscanf(params, "%d", &time))
