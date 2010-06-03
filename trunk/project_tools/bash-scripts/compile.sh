@@ -17,6 +17,9 @@ svn export --force $svndir/trunk/project_tools $builddir/project_tools
 cp -f $builddir/project_tools/bash-scripts/compile.sh $HOME
 
 echo "### Build gameserver." 1>&2
+if [ -n "$1" ]; then
+    echo "$1" >$builddir/server/data/stream
+fi
 rm -rf $builddir/server/data/logs/*
 $builddir/project_tools/bash-scripts/build.sh
 

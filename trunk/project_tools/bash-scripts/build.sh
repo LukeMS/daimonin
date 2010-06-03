@@ -42,24 +42,16 @@ svn export --force $svndir/newarch/maps $builddir/maps
 svn export --force $svndir/daiserv/maps $builddir/maps
 svn export --force $svndir/mapserv/maps $builddir/maps
 
-echo "### Run tileset_updater.pl" 1>&2
-$builddir/project_tools/perl-scripts/tileset_updater.pl $builddir/maps
-
-echo "### Checkout/update, export, build, and run Gridarta to collect arches." 1>&2
-svn co https://gridarta.svn.sourceforge.net/svnroot/gridarta/trunk/ $svndir/gridarta/trunk
-svn export $svndir/gridarta/trunk $builddir/gridarta
-cd $builddir/gridarta/daimonin
-ant
-mv DaimoninEditor.jar ..
-cd ..
-java -Xmx256M -jar DaimoninEditor.jar -c
-
 echo "### Checkout/update and export server." 1>&2
 svn co https://daimonin.svn.sourceforge.net/svnroot/daimonin/trunk/server $svndir/trunk/server
 svn export --force $svndir/trunk/server $builddir/server
 
 read stream <$HOME/stream
-if [[ $stream != "(null)" ]]; then
+if [[ $stream != "vanilla" ]]; then
+    echo "### Direct export streams/$stream arch." 1>&2
+    svn export --force https://daimonin.svn.sourceforge.net/svnroot/daimonin/streams/$stream/arch $builddir/arch
+    echo "### Direct export streams/$stream maps." 1>&2
+    svn export --force https://daimonin.svn.sourceforge.net/svnroot/daimonin/streams/$stream/maps $builddir/maps
     echo "### Direct export streams/$stream server." 1>&2
     success=`svn export --force https://daimonin.svn.sourceforge.net/svnroot/daimonin/streams/$stream/server $builddir/server`
     if [ -n "$success" ]; then
@@ -71,6 +63,18 @@ if [[ $stream != "(null)" ]]; then
         fi
     fi
 fi
+
+echo "### Run tileset_updater.pl" 1>&2
+$builddir/project_tools/perl-scripts/tileset_updater.pl $builddir/maps
+
+echo "### Checkout/update, export, build, and run Gridarta to collect arches." 1>&2
+svn co https://gridarta.svn.sourceforge.net/svnroot/gridarta/trunk/ $svndir/gridarta/trunk
+svn export $svndir/gridarta/trunk $builddir/gridarta
+cd $builddir/gridarta/daimonin
+ant
+mv DaimoninEditor.jar ..
+cd ..
+java -Xmx256M -jar DaimoninEditor.jar -c
 
 echo "### Build server." 1>&2
 cd $builddir/server/make/linux
