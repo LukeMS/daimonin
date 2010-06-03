@@ -316,38 +316,42 @@ int command_restart(object *ob, char *params)
 #ifdef _TESTSERVER
     int   time = 30;
     char  buf[MEDIUM_BUF];
-    FILE *fp;
-
-    LOG(llevSystem,"write stream file...\n");
-    sprintf(buf, "%s/%s", settings.localdir, "stream");
-
-    if ((fp = fopen(buf, "w")) == NULL)
-    {
-        LOG(llevBug, "BUG: Cannot open %s for writing\n", buf);
-
-        return 0;
-    }
-
-    sprintf(buf, "vanilla");
 
     if (params)
     {
-        if (!sscanf(params, "%d %s", &time, buf))
+        char stream[TINY_BUF] = "";
+
+        if (!sscanf(params, "%d %s", &time, stream))
         {
-           sscanf(params, "%s", buf);
+           sscanf(params, "%s", stream);
+        }
+
+        if (stream[0])
+        {
+            FILE *fp;
+
+            LOG(llevSystem,"write stream file...\n");
+            sprintf(buf, "%s/%s", settings.localdir, "stream");
+
+            if (!(fp = fopen(buf, "w")))
+            {
+                LOG(llevBug, "BUG: Cannot open %s for writing\n", buf);
+            }
+            else
+            {
+                /* Streams cannot have spaces. */
+                if (strchr(stream, ' '))
+                {
+                    fclose(fp);
+
+                    return 1;
+                }
+
+                fprintf(fp, "%s", stream);
+                fclose(fp);
+            }
         }
     }
-
-    /* Streams cannot have spaces. */
-    if (strchr(buf, ' '))
-    {
-        fclose(fp);
-
-        return 1;
-    }
-
-    fprintf(fp, "%s", buf);
-    fclose(fp);
 
     sprintf(buf, "'/restart%s%s' issued by %s\nServer will recompile and arches and maps will be updated!",
             (params) ? " " : "", (params) ? params : "", STRING_OBJ_NAME(ob));
