@@ -12,7 +12,7 @@ ps ax|grep 'memcheck'|grep -v grep|awk '{print $1}'|xargs kill
 ps ax|grep 'dmonloopx'|grep -v grep|awk '{print $1}'|xargs kill
 
 echo "### Checkout/update and export project_tools" 1>&2
-svn co https://daimonin.svn.sourceforge.net/svnroot/daimonin/truunk/project_tools $svndir/trunk/project_tools
+svn co https://daimonin.svn.sourceforge.net/svnroot/daimonin/trunk/project_tools $svndir/trunk/project_tools
 svn export --force $svndir/trunk/project_tools $builddir/project_tools
 cp -f $builddir/project_tools/bash-scripts/compile.sh $HOME
 
