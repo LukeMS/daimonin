@@ -5,6 +5,7 @@ race dragon
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_magic&d22;loot_melee&d22
 type 80
 layer 6
+mpart_id 3
 identified 1
 is_named 1
 direction 5
