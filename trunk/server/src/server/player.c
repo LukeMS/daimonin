@@ -776,9 +776,18 @@ void kill_player(object *op)
         /* the rule is: only decrease stats when you are level 3 or higher!  */
         for (; z < num_stats_lose; z++)
         {
-            archetype *deparch = find_archetype("deathsick");
-            uint8      lose_this_stat = 1;
-            sint8      this_stat;
+            static archetype *deparch = NULL;
+            uint8             lose_this_stat = 1;
+            sint8             this_stat;
+
+            if (!deparch)
+            {
+                if (!(deparch = find_archetype("deathsick")))
+                {
+                    LOG(llevError, "ERROR: %s/kill_player(): archetype 'deathsick' not found!\n",
+                        __FILE__);
+                }
+            }
 
             if (!(dep = present_arch_in_ob(deparch, op)))
             {
