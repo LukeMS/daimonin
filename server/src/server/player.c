@@ -756,9 +756,9 @@ void kill_player(object *op)
        uint8 z = 0,
              num_stats_lose = 1;
 
-        /* Stats are lost on death through death sickness. With the
-         * balanced_stat_loss setting multiple stats may be lost, according to
-         * level. Otherwise, only one stat is lost.
+        /* Stats are lost on death through death sickness. With balanced stat
+         * loss, multiple stats may be lost according to level. Otherwise, only
+         * one stat is lost.
          *
          * The theory behind balanced stat loss is that lower level chars don't
          * lose as many stats because they suffer more if they do, while higher
@@ -768,7 +768,7 @@ void kill_player(object *op)
          * based on player level, not the number or value of lost stats. Which
          * negates some of the financial reasoning just given.
          * --Smacky  20100603 */
-        if (settings.balanced_stat_loss)
+        if (BALSL_NUMBER_LOSSES_RATIO > 0)
         {
             num_stats_lose += op->level / BALSL_NUMBER_LOSSES_RATIO;
         }
@@ -776,57 +776,54 @@ void kill_player(object *op)
         /* the rule is: only decrease stats when you are level 3 or higher!  */
         for (; z < num_stats_lose; z++)
         {
-            if (settings.stat_loss_on_death)
+            archetype *deparch = find_archetype("deathsick");
+            uint8      lose_this_stat = 1;
+            sint8      this_stat;
+
+            if (!(dep = present_arch_in_ob(deparch, op)))
             {
-                archetype *deparch = find_archetype("deathsick");
-                uint8      lose_this_stat = 1;
-                sint8      this_stat;
+                dep = arch_to_object(deparch);
+                insert_ob_in_ob(dep, op);
+            }
 
-                if (!(dep = present_arch_in_ob(deparch, op)))
+            i = RANDOM() % NUM_STATS;
+            this_stat = get_attr_value(&(dep->stats), i);
+
+            if (BALSL_NUMBER_LOSSES_RATIO > 0)
+            {
+                int loss_chance = op->level / BALSL_LOSS_CHANCE_RATIO;
+                int keep_chance = MAX(1, this_stat * this_stat);
+
+                /* There is a maximum depletion total per level. */
+                if (this_stat < -1 - loss_chance)
                 {
-                    dep = arch_to_object(deparch);
-                    insert_ob_in_ob(dep, op);
+                    lose_this_stat = 0;
                 }
-
-                i = RANDOM() % NUM_STATS;
-                this_stat = get_attr_value(&(dep->stats), i);
-
-                if (settings.balanced_stat_loss)
+                /* Take loss chance vs keep chance to see if we retain the stat. */
+                else
                 {
-                    int loss_chance = op->level / BALSL_LOSS_CHANCE_RATIO;
-                    int keep_chance = MAX(1, this_stat * this_stat);
-
-                    /* There is a maximum depletion total per level. */
-                    if (this_stat < -1 - loss_chance)
+                    if (random_roll(0, loss_chance + keep_chance) < keep_chance)
                     {
                         lose_this_stat = 0;
                     }
-                    /* Take loss chance vs keep chance to see if we retain the stat. */
-                    else
-                    {
-                        if (random_roll(0, loss_chance + keep_chance) < keep_chance)
-                        {
-                            lose_this_stat = 0;
-                        }
 
-                        /* LOG(llevDebug, "Determining stat loss. Stat: %d Keep: %d Lose: %d Result: %s.\n",
-                             this_stat, keep_chance, loss_chance + 1,
-                             lose_this_stat?"LOSE":"KEEP"); */
-                    }
+                    /* LOG(llevDebug, "Determining stat loss. Stat: %d Keep: %d Lose: %d Result: %s.\n",
+                         this_stat, keep_chance, loss_chance + 1,
+                         lose_this_stat?"LOSE":"KEEP"); */
                 }
+            }
 
-                /* TODO: Do something to control whether or not multiple points
-                 * are lost from a single stat and print a sensible message (ie
-                 * say it once that you lost n points of strength, not n times
-                 * print that you feel weaker. */
-                if (lose_this_stat)
+            /* TODO: Do something to control whether or not multiple points
+             * are lost from a single stat and print a sensible message (ie
+             * say it once that you lost n points of strength, not n times
+             * print that you feel weaker. */
+            if (lose_this_stat)
+            {
+                if (ABS(this_stat) < get_attr_value(&(op->stats), i))
                 {
-                    if (ABS(this_stat) < get_attr_value(&(op->stats), i))
-                    {
-                        change_attr_value(&(dep->stats), i, -1);
-                        new_draw_info(NDI_UNIQUE, 0, op, lose_msg[i]);
-                        lost_a_stat = 1;
-                    }
+                    change_attr_value(&(dep->stats), i, -1);
+                    new_draw_info(NDI_UNIQUE, 0, op, lose_msg[i]);
+                    lost_a_stat = 1;
                 }
             }
         }

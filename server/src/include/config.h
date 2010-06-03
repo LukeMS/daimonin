@@ -141,7 +141,6 @@
 * Short list of features, and what to search for:
 * ALCHEMY - enables alchemy code
 * ANNOUNCE_CHANNELS - announce the channel system at login (requires USE_CHANNELS)
-* BALANCED_STAT_LOSS - Based death stat depletion on level etc?
 * DEBUG - more verbose message logging?
 * MAP_CLIENT_X, MAP_CLIENT_Y - determines max size client map will receive
 * MAX_TIME - how long an internal tick is in microseconds
@@ -172,40 +171,6 @@
  * USE_CHANNELS is defined below! (Stoopid alphabetical arrangement)
  */
 #define ANNOUNCE_CHANNELS
-
-/* Use balanced stat loss code?
- * This code is a little more merciful with repeated stat loss at lower
- * levels. Basically, the more stats you have lost, the less likely that
- * you will lose more. Additionally, lower level characters are shown
- * a lot more mercy (there are caps on how much of a stat you can lose too).
- * On the nasty side, if you are higher level, you can lose mutiple stats
- * _at_once_ and are shown less mercy when you die. But when you're higher
- * level, it is much easier to buy back your stats with potions.
- * Turn this on if you want death-based stat loss to be more merciful
- * at low levels and more cruel at high levels.
- *
- * For this to have any effect, STAT_LOSS_ON_DEATH must be TRUE.
- *
- * The BALSL_.. values control this behaviour.
- * BALSL_NUMBER_LOSSES_RATIO determines the number of stats to lose.
- * the character level is divided by that value, and that is how many
- * stats are lost.
- *
- * BALSL_MAX_LOSS_RATIO puts the upper limit on depletion of a stat -
- * basically, level/max_loss_ratio is the most a stat can be depleted.
- *
- * BALSL_LOSS_CHANCE_RATIO controls how likely it is a stat is depleted.
- * The chance not to lose a stat is
- * depleteness^2 / (depletedness^2+ level/ratio).
- * ie, if the stats current depleted value is 2 and the character is level
- * 15, the chance not to lose the stat is 4/(4+3) or 4/7.  The higher the
- * level, the more likely it is a stat can get really depleted, but
- * this gets more offset as the stat gets more depleted. */
-#define BALANCED_STAT_LOSS TRUE
-#define BALSL_LOSS_CHANCE_RATIO    4
-#define BALSL_NUMBER_LOSSES_RATIO  18
-#define BALSL_MAX_LOSS_RATIO       2
-
 
 /* DEBUG generates copious amounts of output.  I tend to change the CC options
  * in the crosssite.def file if I want this.  By default, you probably
@@ -313,7 +278,6 @@
 #define SECURE
 */
 
-
 /*  SPELLPOINT_LEVEL_DEPEND  --  Causes the spellpoint cost
  *  of spells to vary with their power.  Spells that become very
  *  powerful at high level cost more.  The damage/time of
@@ -321,14 +285,45 @@
  */
 #define SPELLPOINT_LEVEL_DEPEND
 
-
 /* Set this to TRUE if you want characters to lose 1 point from a random stat
  * through death sickness when they die.
  * Set it to FALSE to turn off stat loss.
  * This can bee changed at run time via -stat_loss_on_death or
  * +stat_loss_on_death.
- * Also see BALANCED_STAT_LOSS. */
+ *
+ * Use balanced stat loss code?
+ * This code is a little more merciful with repeated stat loss at lower
+ * levels. Basically, the more stats you have lost, the less likely that
+ * you will lose more. Additionally, lower level characters are shown
+ * a lot more mercy (there are caps on how much of a stat you can lose too).
+ * On the nasty side, if you are higher level, you can lose mutiple stats
+ * _at_once_ and are shown less mercy when you die. But when you're higher
+ * level, it is much easier to buy back your stats with potions.
+ * Turn this on if you want death-based stat loss to be more merciful
+ * at low levels and more cruel at high levels.
+ *
+ * The BALSL_.. values control this behaviour.
+ *
+ * BALSL_NUMBER_LOSSES_RATIO determines the number of stats to lose.
+ * the character level is divided by that value, and that is how many
+ * stats are lost. If 0 all characters only lose 1 stat/point, regardless of
+ * level.
+ *
+ * BALSL_MAX_LOSS_RATIO puts the upper limit on depletion of a stat -
+ * basically, level/max_loss_ratio is the most a stat can be depleted.
+ * UNIMPLEMENTED.
+ *
+ * BALSL_LOSS_CHANCE_RATIO controls how likely it is a stat is depleted.
+ * The chance not to lose a stat is
+ * depleteness^2 / (depletedness^2+ level/ratio).
+ * ie, if the stats current depleted value is 2 and the character is level
+ * 15, the chance not to lose the stat is 4/(4+3) or 4/7.  The higher the
+ * level, the more likely it is a stat can get really depleted, but
+ * this gets more offset as the stat gets more depleted. PROBABLY BROKEN. */
 #define STAT_LOSS_ON_DEATH TRUE
+#define BALSL_NUMBER_LOSSES_RATIO  18
+#define BALSL_MAX_LOSS_RATIO       2
+#define BALSL_LOSS_CHANCE_RATIO    4
 
 /* you HAVE to also enable this in the lua-plugin (plugin_lua.h)!!! */
 #define USE_CHANNELS
