@@ -59,37 +59,70 @@ _races          item_race_table[RACE_NAME_INIT] =
 /* for atat values 0 to 9 */
 float stats_penalty[10] = {0.1f, 0.15f, 0.2f, 0.3f, 0.4f, 0.5f, 0.6f, 0.7f, 0.8f, 0.9f};
 
-static char    *drain_msg[7]                    =
+static char *drain_msg[NUM_STATS] =
 {
-    "Oh no! You are weakened!", "You're feeling clumsy!", "You feel less healthy",
-    "You suddenly begin to lose your memory!", "Your face gets distorted!", "Watch out, your mind is going!",
+    "Oh no! You are weakened!",
+    "You're feeling clumsy!",
+    "You feel less healthy",
+    "You suddenly begin to lose your memory!",
+    "Your face gets distorted!",
+    "Watch out, your mind is going!",
     "Your spirit feels drained!"
 };
-char           *restore_msg[7]                  =
+
+static char *gain_msg[NUM_STATS] =
 {
-    "You feel your strength return.", "You feel your agility return.", "You feel your health return.",
-    "You feel your wisdom return.", "You feel your charisma return.", "You feel your memory return.",
-    "You feel your spirits return."
-};
-char           *gain_msg[7]                     =
-{
-    "You feel stronger.", "You feel more agile.", "You feel healthy.", "You feel wiser.", "You seem to look better.",
-    "You feel smarter.", "You feel more potent."
-};
-char           *lose_msg[7]                     =
-{
-    "You feel weaker!", "You feel clumsy!", "You feel less healthy!", "You lose some of your memory!", "You look ugly!",
-    "You feel stupid!", "You feel less potent!"
+    "You feel stronger.",
+    "You feel more agile.",
+    "You feel healthy.",
+    "You feel smarter.",
+    "You feel wiser.",
+    "You feel more potent.",
+    "You seem to look better."
 };
 
-char           *statname[7]                     =
+char *lose_msg[NUM_STATS] =
 {
-    "strength", "dexterity", "constitution", "wisdom", "charisma", "intelligence", "power"
+    "You feel weaker!",
+    "You feel clumsy!",
+    "You feel less healthy!",
+    "You feel stupid!",
+    "You lose some of your memory!",
+    "You feel less potent!",
+    "You look ugly!"
 };
 
-char           *short_stat_name[7]              =
+char *restore_msg[NUM_STATS] =
 {
-    "Str", "Dex", "Con", "Wis", "Cha", "Int", "Pow"
+    "You feel your strength return.",
+    "You feel your agility return.",
+    "You feel your health return.",
+    "You feel your memory return.",
+    "You feel your wisdom return.",
+    "You feel your spirits return.",
+    "You feel your charisma return."
+};
+
+char *stat_name[NUM_STATS]  =
+{
+    "strength",
+    "dexterity",
+    "constitution",
+    "intelligence",
+    "wisdom",
+    "power",
+    "charisma"
+};
+
+char *short_stat_name[NUM_STATS] =
+{
+    "Str",
+    "Dex",
+    "Con",
+    "Int",
+    "Wis",
+    "Pow",
+    "Cha"
 };
 
 /*

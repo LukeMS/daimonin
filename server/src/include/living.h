@@ -44,10 +44,10 @@
 extern char    *attacks[NROFATTACKS];
 extern char    *spellpathnames[NRSPELLPATHS];
 extern float    stats_penalty[10];
-extern char    *restore_msg[NUM_STATS];
-extern char    *statname[NUM_STATS];
-extern char    *short_stat_name[NUM_STATS];
 extern char    *lose_msg[NUM_STATS];
+extern char    *restore_msg[NUM_STATS];
+extern char    *stat_name[NUM_STATS];
+extern char    *short_stat_name[NUM_STATS];
 
 #ifdef WIN32
 #pragma pack(push,1)
