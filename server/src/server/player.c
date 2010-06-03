@@ -677,12 +677,9 @@ void kill_player(object *op)
     char        buf[MEDIUM_BUF];
     int         x, y, i;
     mapstruct  *map;  /*  this is for resurrection */
-    object     *tmp;
-    int         z;
-    int         num_stats_lose;
-    int         lost_a_stat;
-    int         lose_this_stat;
-    int         this_stat;
+    object     *tmp,
+               *dep;
+    uint8       lost_a_stat = 0;
 
     if (save_life(op))
         return;
@@ -753,127 +750,120 @@ void kill_player(object *op)
      * file for a little more in depth detail about this.
      */
 
-    /* Basically two ways to go - remove a stat permanently, or just
-     * make it depletion.  This bunch of code deals with that aspect
-     * of death.
-     */
+    if (op->level > 3 &&
+        settings.stat_loss_on_death)
+    {
+       uint8 z = 0,
+             num_stats_lose = 1;
 
-    if (settings.balanced_stat_loss)
-    {
-        /* If stat loss is permanent, lose one stat only. */
-        /* Lower level chars don't lose as many stats because they suffer more
-           if they do. */
-        /* Higher level characters can afford things such as potions of
-           restoration, or better, stat potions. So we slug them that little
-           bit harder. */
-        /* GD */
-        if (settings.stat_loss_on_death)
-            num_stats_lose = 1;
-        else
-            num_stats_lose = 1 + op->level / BALSL_NUMBER_LOSSES_RATIO;
-    }
-    else
-    {
-        num_stats_lose = 1;
-    }
-    lost_a_stat = 0;
-
-    /* the rule is:
-     * only decrease stats when you are level 3 or higher!
-     */
-    for (z = 0; z < num_stats_lose; z++)
-    {
-        if (settings.stat_loss_on_death && op->level > 3)
+        /* Stats are lost on death through death sickness. With the
+         * balanced_stat_loss setting multiple stats may be lost, according to
+         * level. Otherwise, only one stat is lost.
+         *
+         * The theory behind balanced stat loss is that lower level chars don't
+         * lose as many stats because they suffer more if they do, while higher
+         * level characters can afford things such as potions of restoration,
+         * or better, stat potions. So we slug them that little bit harder. */
+        /* FIXME: IIRC cure death sickness restores ALL stats and the cost is
+         * based on player level, not the number or value of lost stats. Which
+         * negates some of the financial reasoning just given.
+         * --Smacky  20100603 */
+        if (settings.balanced_stat_loss)
         {
-            /* Pick a random stat and take a point off it.  Tell the player
-              * what he lost.
-              */
-            i = RANDOM() % 7;
-            change_attr_value(&(op->stats), i, -1);
-            check_stat_bounds(&(op->stats));
-            change_attr_value(&(pl->orig_stats), i, -1);
-            check_stat_bounds(&(pl->orig_stats));
-            new_draw_info(NDI_UNIQUE, 0, op, lose_msg[i]);
-            lost_a_stat = 1;
+            num_stats_lose += op->level / BALSL_NUMBER_LOSSES_RATIO;
         }
-        else if (op->level > 3)
-        {
-            /* deplete a stat */
-            archetype  *deparch = find_archetype("deathsick");
-            object     *dep;
 
-            i = RANDOM() % 7;
-            dep = present_arch_in_ob(deparch, op);
-            if (!dep)
+        /* the rule is: only decrease stats when you are level 3 or higher!  */
+        for (; z < num_stats_lose; z++)
+        {
+            if (settings.stat_loss_on_death)
             {
-                dep = arch_to_object(deparch);
-                insert_ob_in_ob(dep, op);
-            }
-            lose_this_stat = 1;
-            if (settings.balanced_stat_loss)
-            {
-                /* GD */
-                /* Get the stat that we're about to deplete. */
-                this_stat = get_attr_value(&(dep->stats), i);
-                if (this_stat < 0)
+                archetype *deparch = find_archetype("deathsick");
+                uint8      lose_this_stat = 1;
+                sint8      this_stat;
+
+                if (!(dep = present_arch_in_ob(deparch, op)))
                 {
-                    int loss_chance = 1 + op->level / BALSL_LOSS_CHANCE_RATIO;
-                    int keep_chance = this_stat *this_stat;
-                    /* Yes, I am paranoid. Sue me. */
-                    if (keep_chance < 1)
-                        keep_chance = 1;
+                    dep = arch_to_object(deparch);
+                    insert_ob_in_ob(dep, op);
+                }
+
+                i = RANDOM() % NUM_STATS;
+                this_stat = get_attr_value(&(dep->stats), i);
+
+                if (settings.balanced_stat_loss)
+                {
+                    int loss_chance = op->level / BALSL_LOSS_CHANCE_RATIO;
+                    int keep_chance = MAX(1, this_stat * this_stat);
 
                     /* There is a maximum depletion total per level. */
-                    if (this_stat < -1 - op->level / BALSL_MAX_LOSS_RATIO)
+                    if (this_stat < -1 - loss_chance)
                     {
                         lose_this_stat = 0;
-                        /* Take loss chance vs keep chance to see if we retain the stat. */
                     }
+                    /* Take loss chance vs keep chance to see if we retain the stat. */
                     else
                     {
-                        if (random_roll(0, loss_chance + keep_chance - 1) < keep_chance)
+                        if (random_roll(0, loss_chance + keep_chance) < keep_chance)
+                        {
                             lose_this_stat = 0;
+                        }
+
                         /* LOG(llevDebug, "Determining stat loss. Stat: %d Keep: %d Lose: %d Result: %s.\n",
-                             this_stat, keep_chance, loss_chance,
+                             this_stat, keep_chance, loss_chance + 1,
                              lose_this_stat?"LOSE":"KEEP"); */
                     }
                 }
-            }
 
-            if (lose_this_stat)
-            {
-                this_stat = get_attr_value(&(dep->stats), i);
-                /* We could try to do something clever like find another
-                     * stat to reduce if this fails.  But chances are, if
-                     * stats have been depleted to -50, all are pretty low
-                     * and should be roughly the same, so it shouldn't make a
-                     * difference.
-                     */
-                if (this_stat >= -50)
+                /* TODO: Do something to control whether or not multiple points
+                 * are lost from a single stat and print a sensible message (ie
+                 * say it once that you lost n points of strength, not n times
+                 * print that you feel weaker. */
+                if (lose_this_stat)
                 {
-                    change_attr_value(&(dep->stats), i, -1);
-                    SET_FLAG(dep, FLAG_APPLIED);
-                    new_draw_info(NDI_UNIQUE, 0, op, lose_msg[i]);
-                    FIX_PLAYER(op ,"kill player - change attr");
-                    lost_a_stat = 1;
+                    if (ABS(this_stat) < get_attr_value(&(op->stats), i))
+                    {
+                        change_attr_value(&(dep->stats), i, -1);
+                        new_draw_info(NDI_UNIQUE, 0, op, lose_msg[i]);
+                        lost_a_stat = 1;
+                    }
                 }
             }
         }
     }
+
+    if (lost_a_stat)
+    {
+        if (dep)
+        {
+            SET_FLAG(dep, FLAG_APPLIED);
+            FIX_PLAYER(op ,"kill player - change attr");
+        }
+        else
+        {
+           LOG(llevBug, "BUG:: %s/kill_player(): player lost stats but no death sickness object was found!\n",
+               __FILE__);
+        }
+    }
     /* If no stat lost, tell the player. */
-    /* FIXME: These messages need a rewrite -- one would assume holy protection
-     * is from death itself, not just stat loss.
+    /* FIXME: These messages need a rewrite -- one would assume
+     * holy protection is from death itself, not just stat loss.
      * -- Smacky 20100103 */
-    if (!lost_a_stat)
+    else
     {
         /* determine_god() seems to not work sometimes... why is this?
            Should I be using something else? GD */
         const char *god = determine_god(op);
+
         if (god != shstr_cons.none)
-            new_draw_info_format(NDI_UNIQUE, 0, op,
-                                 "For a brief moment you feel the holy presence of\n%s protecting you.", god);
+        {
+            new_draw_info_format(NDI_UNIQUE, 0, op, "For a brief moment you feel the holy presence of %s protecting you.",
+                                 god);
+        }
         else
-            new_draw_info(NDI_UNIQUE, 0, op, "For a brief moment you feel a holy presence\nprotecting you.");
+        {
+            new_draw_info(NDI_UNIQUE, 0, op, "For a brief moment you feel a holy presence protecting you.");
+        }
     }
 
 #ifdef USE_GRAVESTONES

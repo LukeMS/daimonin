@@ -183,8 +183,8 @@
  * level, it is much easier to buy back your stats with potions.
  * Turn this on if you want death-based stat loss to be more merciful
  * at low levels and more cruel at high levels.
- * Only works when stats are depleted rather than lost. This option has
- * no effect if you are using genuine stat loss.
+ *
+ * For this to have any effect, STAT_LOSS_ON_DEATH must be TRUE.
  *
  * The BALSL_.. values control this behaviour.
  * BALSL_NUMBER_LOSSES_RATIO determines the number of stats to lose.
@@ -200,14 +200,10 @@
  * ie, if the stats current depleted value is 2 and the character is level
  * 15, the chance not to lose the stat is 4/(4+3) or 4/7.  The higher the
  * level, the more likely it is a stat can get really depleted, but
- * this gets more offset as the stat gets more depleted.
- *
- */
-/* GD */
-
-#define BALANCED_STAT_LOSS FALSE
+ * this gets more offset as the stat gets more depleted. */
+#define BALANCED_STAT_LOSS TRUE
 #define BALSL_LOSS_CHANCE_RATIO    4
-#define BALSL_NUMBER_LOSSES_RATIO  6
+#define BALSL_NUMBER_LOSSES_RATIO  18
 #define BALSL_MAX_LOSS_RATIO       2
 
 
@@ -326,15 +322,13 @@
 #define SPELLPOINT_LEVEL_DEPEND
 
 
-/* Set this to FALSE if you don't want characters to loose a random stat when
- * they die - instead, they just get deplete.
- * Setting it to TRUE keeps the old behaviour.  This can be
- * changed at run time via -stat_loss_on_death or +stat_loss_on_death.
- * In theory, this can be changed on a running server, but so glue code
- * in the wiz stuff would need to be added for that to happen.
- */
-
-#define STAT_LOSS_ON_DEATH FALSE
+/* Set this to TRUE if you want characters to lose 1 point from a random stat
+ * through death sickness when they die.
+ * Set it to FALSE to turn off stat loss.
+ * This can bee changed at run time via -stat_loss_on_death or
+ * +stat_loss_on_death.
+ * Also see BALANCED_STAT_LOSS. */
+#define STAT_LOSS_ON_DEATH TRUE
 
 /* you HAVE to also enable this in the lua-plugin (plugin_lua.h)!!! */
 #define USE_CHANNELS
