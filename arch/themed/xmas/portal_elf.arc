@@ -11,6 +11,7 @@ is_animated 1
 anim_speed 4
 speed 0.1
 layer 5
+mpart_id 3
 no_teleport 1
 no_pick 1
 end
