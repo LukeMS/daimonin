@@ -313,9 +313,9 @@ int command_kick(object *op, char *params)
 /* Reboots the server (recompile code, update arches and maps). */
 int command_restart(object *ob, char *params)
 {
+    char buf[MEDIUM_BUF];
 #ifdef _TESTSERVER
-    int   time = 30;
-    char  buf[MEDIUM_BUF];
+    int  time = 30;
 
     if (params)
     {
@@ -352,22 +352,15 @@ int command_restart(object *ob, char *params)
             }
         }
     }
-
-    sprintf(buf, "'/restart%s%s' issued by %s\nServer will recompile and arches and maps will be updated!",
-            (params) ? " " : "", (params) ? params : "", STRING_OBJ_NAME(ob));
-    LOG(llevSystem, buf);
-    shutdown_agent(time, EXIT_RESETMAP, buf);
-
-    return 0;
 #else
     int  time = 300;
-    char buf[MEDIUM_BUF];
 
     if (params &&
         !sscanf(params, "%d", &time))
     {
         return 1;
     }
+#endif
 
     sprintf(buf, "'/restart%s%s' issued by %s\nServer will recompile and arches and maps will be updated!",
             (params) ? " " : "", (params) ? params : "", STRING_OBJ_NAME(ob));
@@ -375,7 +368,6 @@ int command_restart(object *ob, char *params)
     shutdown_agent(time, EXIT_RESETMAP, buf);
 
     return 0;
-#endif
 }
 
 /* Shuts down the server. Does not reboot. */
