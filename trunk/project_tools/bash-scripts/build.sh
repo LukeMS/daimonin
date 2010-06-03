@@ -18,9 +18,6 @@ cp $builddir/server/data/stream $HOME/stream
 echo "### Remove previous build." 1>&2
 rm -rf $builddir/arch
 rm -rf $builddir/maps
-if [ -e $builddir/tileset_updater.pl ]; then
-    rm $builddir/tileset_updater.pl
-fi
 rm -rf $builddir/gridarta
 cd $builddir/server/make/linux
 make distclean
@@ -45,9 +42,8 @@ svn export --force $svndir/newarch/maps $builddir/maps
 svn export --force $svndir/daiserv/maps $builddir/maps
 svn export --force $svndir/mapserv/maps $builddir/maps
 
-echo "### Direct export and run tileset_updater.pl" 1>&2
-svn export https://daimonin.svn.sourceforge.net/svnroot/daimonin/trunk/project_tools/perl-scripts/tileset_updater.pl $builddir/tileset_updater.pl
-$builddir/tileset_updater.pl $builddir/maps
+echo "### Run tileset_updater.pl" 1>&2
+$builddir/project_tools/perl-scripts/tileset_updater.pl $builddir/maps
 
 echo "### Checkout/update, export, build, and run Gridarta to collect arches." 1>&2
 svn co https://gridarta.svn.sourceforge.net/svnroot/gridarta/trunk/ $svndir/gridarta/trunk
