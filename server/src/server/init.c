@@ -55,7 +55,7 @@ struct Settings settings    =
     TMPDIR,                 /* Directory to use for temporary files */
     STATS_DIR,              /* Directory for active logs of statistical events */
     STATS_ARCHIVE_DIR,      /* Directory for logs, ready for further processing */
-    STAT_LOSS_ON_DEATH,     /* If true, chars lose a random stat when they die */
+    STAT_LOSS,              /* If not 0, players lose random stats on death. */
     RESET_LOCATION_TIME,    /* Number of seconds to put player back at home */
     "",                     /* admin_password */
     0,                      /* True if we should send updates */
@@ -687,13 +687,9 @@ static void set_csport(char *val)
 #endif /* win32 */
 }
 
-static void stat_loss_on_death_true()
+static void set_stat_loss(char *val)
 {
-    settings.stat_loss_on_death = 1;
-}
-static void stat_loss_on_death_false()
-{
-    settings.stat_loss_on_death = 0;
+    settings.stat_loss = (sint8)atoi(val);
 }
 
 static void help()
@@ -713,8 +709,7 @@ static void help()
     LOG(llevInfo, "                     If only one is specified, all messages are logged together.\n");
     LOG(llevInfo, " -mon        Turns on monster debugging.\n");
     LOG(llevInfo, " -o          Prints out info on what was defined at compile time.\n");
-    LOG(llevInfo, " -stat_loss_on_death - if set, player loses stat when they die\n");
-    LOG(llevInfo, " +stat_loss_on_death - if set, player does not lose a stat when they die\n");
+    LOG(llevInfo, " -stat_loss <num> - if not 0, players lose stat(s) when they die.\n");
     LOG(llevInfo, " -v          Print version and contributors.\n");
     LOG(llevInfo, " -test       Run unit tests and exit.\n");
     LOG(llevInfo, " -benchmark  Run benchmarks and exit.\n");
@@ -1155,8 +1150,7 @@ struct Command_Line_Options options[]   =
     {"-m5", 0, 3, set_dumpmon5}, {"-m6", 0, 3, set_dumpmon6}, {"-m7", 0, 3, set_dumpmon7}, {"-m8", 0, 3, set_dumpmon8},
     {"-m9", 0, 3, set_dumpmon9}, {"-mA", 0, 3, set_dumpmonA}, {"-mt", 1, 3, set_dumpmont},
 #endif
-    {"-stat_loss_on_death", 0, 3, stat_loss_on_death_true},
-    {"+stat_loss_on_death", 0, 3, stat_loss_on_death_false},
+    {"-stat_loss", 1, 3, set_stat_loss},
     {"-test", 0, 4, run_unit_tests},
     {"-benchmark", 0, 4, run_benchmarks}
 };
