@@ -151,7 +151,7 @@
 * RESURRECTION - lets players bring other dead players back to life.
 * SECURE - Allow overriding values with run time flags?
 * SPELL_* - various spell related options
-* STAT_LOSS_ON_DEATH - toggle between stat loss or stat depletion
+* STAT_LOSS - if not 0, players lose randdom stats on death.
 * USE_CHANNELS - enables channel system
 * USE_GRAVESTONES - enables gravestones when players die.
 * USE_LIGHTING - enable light/darkness & light sources
@@ -285,45 +285,18 @@
  */
 #define SPELLPOINT_LEVEL_DEPEND
 
-/* Set this to TRUE if you want characters to lose 1 point from a random stat
- * through death sickness when they die.
- * Set it to FALSE to turn off stat loss.
- * This can bee changed at run time via -stat_loss_on_death or
- * +stat_loss_on_death.
+/* STAT_LOSS controls whether and how many stat points a character
+ * loses through death sickness when they die.
  *
- * Use balanced stat loss code?
- * This code is a little more merciful with repeated stat loss at lower
- * levels. Basically, the more stats you have lost, the less likely that
- * you will lose more. Additionally, lower level characters are shown
- * a lot more mercy (there are caps on how much of a stat you can lose too).
- * On the nasty side, if you are higher level, you can lose mutiple stats
- * _at_once_ and are shown less mercy when you die. But when you're higher
- * level, it is much easier to buy back your stats with potions.
- * Turn this on if you want death-based stat loss to be more merciful
- * at low levels and more cruel at high levels.
+ * If >0 they lose level/STAT_LOSS points from random stats.
  *
- * The BALSL_.. values control this behaviour.
+ * If <0 they lose 1 point from a random stat.
  *
- * BALSL_NUMBER_LOSSES_RATIO determines the number of stats to lose.
- * the character level is divided by that value, and that is how many
- * stats are lost. If 0 all characters only lose 1 stat/point, regardless of
- * level.
+ * If =0 stat loss is disabled.
  *
- * BALSL_MAX_LOSS_RATIO puts the upper limit on depletion of a stat -
- * basically, level/max_loss_ratio is the most a stat can be depleted.
- * UNIMPLEMENTED.
- *
- * BALSL_LOSS_CHANCE_RATIO controls how likely it is a stat is depleted.
- * The chance not to lose a stat is
- * depleteness^2 / (depletedness^2+ level/ratio).
- * ie, if the stats current depleted value is 2 and the character is level
- * 15, the chance not to lose the stat is 4/(4+3) or 4/7.  The higher the
- * level, the more likely it is a stat can get really depleted, but
- * this gets more offset as the stat gets more depleted. PROBABLY BROKEN. */
-#define STAT_LOSS_ON_DEATH TRUE
-#define BALSL_NUMBER_LOSSES_RATIO  18
-#define BALSL_MAX_LOSS_RATIO       2
-#define BALSL_LOSS_CHANCE_RATIO    4
+ * The define is the default, it can be changed at run time via -stat_loss
+ * <n>. */
+#define STAT_LOSS 18
 
 /* you HAVE to also enable this in the lua-plugin (plugin_lua.h)!!! */
 #define USE_CHANNELS
