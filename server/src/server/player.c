@@ -747,6 +747,13 @@ void kill_player(object *op)
     /* NOT_PERMADEATH code.  This basically brings the character back to life
      * if they are dead - it takes some exp and a random stat.  See the config.h
      * file for a little more in depth detail about this. */
+
+    /* remove any poisoning and confusion the character may be suffering. */
+    cast_heal(op, 110, op, SP_CURE_POISON);
+    /*cast_heal(op, op, SP_CURE_CONFUSION);*/ // Why commented out? Smacky 20100604
+    cure_disease(op, NULL);  /* remove any disease */
+    restoration(NULL, op);
+
     /* The rule is: only decrease stats when the player is at least level 3 or
      * higher!  */
     if (settings.stat_loss &&
@@ -816,7 +823,9 @@ void kill_player(object *op)
     if (lost_a_stat)
     {
         SET_FLAG(dep, FLAG_APPLIED);
-        FIX_PLAYER(op ,"kill player - change attr");
+        /* apply_death_exp_penalty() below does a fix_player() so we don't need
+         * this one. */
+        /*FIX_PLAYER(op ,"kill player - change attr");*/
     }
     /* If no stat lost, tell the player. */
     /* FIXME: These messages need a rewrite -- one would assume
@@ -844,20 +853,6 @@ void kill_player(object *op)
      * is a free spot and isn't already one there. */
     CreateGravestone(op, map, x, y);
 #endif
-
-    /**************************************/
-    /*                                    */
-    /* Subtract the experience points,    */
-    /* if we died cause of food, give us  */
-    /* food, and reset HP's...            */
-    /*                                    */
-    /**************************************/
-
-    /* remove any poisoning and confusion the character may be suffering. */
-    cast_heal(op, 110, op, SP_CURE_POISON);
-    /*cast_heal(op, op, SP_CURE_CONFUSION);*/
-    cure_disease(op, NULL);  /* remove any disease */
-    restoration(NULL, op);
 
     apply_death_exp_penalty(op);
     op->stats.hp = op->stats.maxhp;
