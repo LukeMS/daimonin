@@ -804,7 +804,7 @@ int cast_heal(object *op, int level, object *target, int spell_type)
           else
           {
               if (target->type == PLAYER)
-                  new_draw_info(NDI_UNIQUE, 0, target, "Your are not poisoned.");
+                  new_draw_info(NDI_UNIQUE, 0, target, "You are not poisoned.");
               if (op != target && op->type == PLAYER)
                   new_draw_info_format(NDI_UNIQUE, 0, op, "%s is not poisoned.", target->name ? target->name : "someone");
           }
