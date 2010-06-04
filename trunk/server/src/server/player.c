@@ -809,16 +809,8 @@ void kill_player(object *op)
 
     if (lost_a_stat)
     {
-        if (dep)
-        {
-            SET_FLAG(dep, FLAG_APPLIED);
-            FIX_PLAYER(op ,"kill player - change attr");
-        }
-        else
-        {
-           LOG(llevBug, "BUG:: %s/kill_player(): player lost stats but no death sickness object was found!\n",
-               __FILE__);
-        }
+        SET_FLAG(dep, FLAG_APPLIED);
+        FIX_PLAYER(op ,"kill player - change attr");
     }
     /* If no stat lost, tell the player. */
     /* FIXME: These messages need a rewrite -- one would assume
