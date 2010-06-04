@@ -64,10 +64,10 @@ static char *drain_msg[NUM_STATS] =
     "Oh no! You are weakened!",
     "You're feeling clumsy!",
     "You feel less healthy",
-    "You suddenly begin to lose your memory!",
-    "Your face gets distorted!",
     "Watch out, your mind is going!",
-    "Your spirit feels drained!"
+    "Your face gets distorted!",
+    "You suddenly begin to lose your memory!",
+    "Your spirit feels drained!,"
 };
 
 static char *gain_msg[NUM_STATS] =
@@ -75,10 +75,10 @@ static char *gain_msg[NUM_STATS] =
     "You feel stronger.",
     "You feel more agile.",
     "You feel healthy.",
-    "You feel smarter.",
     "You feel wiser.",
+    "You seem to look better.",
+    "You feel smarter.",
     "You feel more potent.",
-    "You seem to look better."
 };
 
 char *lose_msg[NUM_STATS] =
@@ -86,10 +86,10 @@ char *lose_msg[NUM_STATS] =
     "You feel weaker!",
     "You feel clumsy!",
     "You feel less healthy!",
-    "You feel stupid!",
     "You lose some of your memory!",
+    "You look ugly!",
+    "You feel stupid!",
     "You feel less potent!",
-    "You look ugly!"
 };
 
 char *restore_msg[NUM_STATS] =
@@ -97,10 +97,10 @@ char *restore_msg[NUM_STATS] =
     "You feel your strength return.",
     "You feel your agility return.",
     "You feel your health return.",
-    "You feel your memory return.",
     "You feel your wisdom return.",
+    "You feel your charisma return.",
+    "You feel your memory return.",
     "You feel your spirits return.",
-    "You feel your charisma return."
 };
 
 char *stat_name[NUM_STATS]  =
@@ -108,10 +108,10 @@ char *stat_name[NUM_STATS]  =
     "strength",
     "dexterity",
     "constitution",
-    "intelligence",
     "wisdom",
+    "charisma",
+    "intelligence",
     "power",
-    "charisma"
 };
 
 char *short_stat_name[NUM_STATS] =
@@ -119,10 +119,10 @@ char *short_stat_name[NUM_STATS] =
     "Str",
     "Dex",
     "Con",
-    "Int",
     "Wis",
+    "Cha",
+    "Int",
     "Pow",
-    "Cha"
 };
 
 /*
