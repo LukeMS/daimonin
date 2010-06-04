@@ -795,9 +795,15 @@ void kill_player(object *op)
 
         for (i = 0; i < NUM_STATS; i++)
         {
-            if (stats[i] &&
-                ABS(get_attr_value(&(dep->stats), i)) + stats[i] <
-                get_attr_value(&(op->stats), i))
+            uint8 op_val = get_attr_value(&(op->stats), i),
+                  dep_val = ABS(get_attr_value(&(dep->stats), i));
+
+            if (dep_val + stats[i] >= op_val)
+            {
+                stats[i] = MAX(0, op_val - dep_val - 1);
+            }
+
+            if (stats[i])
             {
                 change_attr_value(&(dep->stats), i, -stats[i]);
                 new_draw_info_format(NDI_UNIQUE, 0, op, "%s (You lose ~%d~ %s).",
