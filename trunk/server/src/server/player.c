@@ -675,7 +675,7 @@ void kill_player(object *op)
 {
     player      *pl=CONTR(op);
     char        buf[MEDIUM_BUF];
-    int         x, y, i;
+    int         x, y;
     mapstruct  *map;  /*  this is for resurrection */
     object     *tmp,
                *dep;
@@ -737,22 +737,20 @@ void kill_player(object *op)
     GlobalEvent(&CFP);
 #endif
 
-    sprintf(buf, "%s died.", op->name);
-    play_sound_player_only(pl, SOUND_PLAYER_DIES, SOUND_NORMAL, 0, 0);
-
     /*  save the map location for corpse, gravestone*/
     x = op->x;
     y = op->y;
     map = op->map;
+    play_sound_player_only(pl, SOUND_PLAYER_DIES, SOUND_NORMAL, 0, 0);
 
 #ifdef NOT_PERMADEATH
     /* NOT_PERMADEATH code.  This basically brings the character back to life
      * if they are dead - it takes some exp and a random stat.  See the config.h
      * file for a little more in depth detail about this. */
-
-    /* the rule is: only decrease stats when you are level 3 or higher!  */
-    if (op->level > 3 &&
-        settings.stat_loss)
+    /* The rule is: only decrease stats when the player is at least level 3 or
+     * higher!  */
+    if (settings.stat_loss &&
+        op->level >= MAX(3, ABS(settings.stat_loss) / 5))
     {
        uint8 z = 0,
              num_stats_lose = 1;
@@ -777,6 +775,7 @@ void kill_player(object *op)
         {
             static archetype *deparch = NULL;
             sint8             this_stat;
+            uint8             i = RANDOM() % NUM_STATS;
 
             if (!deparch)
             {
@@ -793,7 +792,6 @@ void kill_player(object *op)
                 insert_ob_in_ob(dep, op);
             }
 
-            i = RANDOM() % NUM_STATS;
             this_stat = get_attr_value(&(dep->stats), i);
 
             /* TODO: Do something to control whether or not multiple points
