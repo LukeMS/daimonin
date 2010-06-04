@@ -752,8 +752,10 @@ void kill_player(object *op)
     if (settings.stat_loss &&
         op->level >= MAX(3, ABS(settings.stat_loss) / 5))
     {
-       uint8 z = 0,
-             num_stats_lose = 1;
+       uint8             i,
+                         num_stats_lose = 1,
+                         stats[NUM_STATS] = { 0, 0, 0, 0, 0, 0, 0 };
+       static archetype *deparch = NULL;
 
         /* Stats are lost on death through death sickness according to
          * settings.stat_loss -- see config.h/STAT_LOSS.
@@ -771,37 +773,35 @@ void kill_player(object *op)
             num_stats_lose += op->level / settings.stat_loss;
         }
 
-        for (; z < num_stats_lose; z++)
+        for (i = 0; i < num_stats_lose; i++)
         {
-            static archetype *deparch = NULL;
-            sint8             this_stat;
-            uint8             i = RANDOM() % NUM_STATS;
+            stats[RANDOM() % NUM_STATS]++;
+        }
 
-            if (!deparch)
+        if (!deparch)
+        {
+            if (!(deparch = find_archetype("deathsick")))
             {
-                if (!(deparch = find_archetype("deathsick")))
-                {
-                    LOG(llevError, "ERROR: %s/kill_player(): archetype 'deathsick' not found!\n",
-                        __FILE__);
-                }
+                LOG(llevError, "ERROR: %s/kill_player(): archetype 'deathsick' not found!\n",
+                    __FILE__);
             }
+        }
 
-            if (!(dep = present_arch_in_ob(deparch, op)))
+        if (!(dep = present_arch_in_ob(deparch, op)))
+        {
+            dep = arch_to_object(deparch);
+            insert_ob_in_ob(dep, op);
+        }
+
+        for (i = 0; i < NUM_STATS; i++)
+        {
+            if (stats[i] &&
+                ABS(get_attr_value(&(dep->stats), i)) + stats[i] <
+                get_attr_value(&(op->stats), i))
             {
-                dep = arch_to_object(deparch);
-                insert_ob_in_ob(dep, op);
-            }
-
-            this_stat = get_attr_value(&(dep->stats), i);
-
-            /* TODO: Do something to control whether or not multiple points
-             * are lost from a single stat and print a sensible message (ie
-             * say it once that you lost n points of strength, not n times
-             * print that you feel weaker. */
-            if (ABS(this_stat) < get_attr_value(&(op->stats), i))
-            {
-                change_attr_value(&(dep->stats), i, -1);
-                new_draw_info(NDI_UNIQUE, 0, op, lose_msg[i]);
+                change_attr_value(&(dep->stats), i, -stats[i]);
+                new_draw_info_format(NDI_UNIQUE, 0, op, "%s (You lose ~%d~ %s).",
+                                     lose_msg[i], stats[i], stat_name[i]);
                 lost_a_stat = 1;
             }
         }
