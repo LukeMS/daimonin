@@ -787,12 +787,11 @@ void dump_object2(const object *op)
     char   *cp;
     /*  object *tmp;*/
 
-    if (op->arch != NULL)
+    if (op &&
+        op->arch)
     {
-        strcat(errmsg, "arch ");
-        strcat(errmsg, op->arch->name ? op->arch->name : "(null)");
-        strcat(errmsg, "\n");
-        sprintf(errmsg, "%scount %d\n", errmsg, op->count);
+        sprintf(strchr(errmsg, '\0'), "arch %s\n", STRING_OBJ_ARCH_NAME(op));
+        sprintf(strchr(errmsg, '\0'), "count %d\n", op->count);
         if ((cp = get_ob_diff(op, &empty_archetype->clone)) != NULL)
             strcat(errmsg, cp);
 #if 0
@@ -810,12 +809,7 @@ void dump_object2(const object *op)
     }
     else
     {
-        strcat(errmsg, "Object ");
-        if (op->name == NULL)
-            strcat(errmsg, "(null)");
-        else
-            strcat(errmsg, op->name);
-        strcat(errmsg, "\n");
+        sprintf(strchr(errmsg, '\0'), "Object %s\n", STRING_OBJ_NAME(op));
 #if 0
       if((cp=get_ob_diff(op,&empty_archetype->clone))!=NULL)
         strcat(errmsg,cp);
@@ -835,13 +829,11 @@ void dump_object2(const object *op)
     {
         cp = get_ob_diff(op, &empty_archetype->clone);
         sprintf(strchr(errmsg, '\0'), "arch %s\ncount %d\n%send\n",
-                (op->arch->name) ? op->arch->name : "(null)", op->count,
-                (cp) ? cp : "");
+                STRING_OBJ_ARCH_NAME(op), op->count, (cp) ? cp : "");
     }
     else
     {
-        sprintf(strchr(errmsg, '\0'), "Object %s\nend\n",
-                (op->name) ? op->name : "(null)");
+        sprintf(strchr(errmsg, '\0'), "Object %s\nend\n", STRING_OBJ_NAME(op));
     }
 }
 #endif
@@ -878,9 +870,7 @@ void dump_me(object *op, char *outstr, size_t bufsize)
 
     if (op->arch != NULL)
     {
-        strcat(outstr, "arch ");
-        strcat(outstr, op->arch->name ? op->arch->name : "(null)");
-        strcat(outstr, "\n");
+        sprintf(strchr(outstr, '\0'), "arch %s\n", STRING_OBJ_ARCH_NAME(op));
         if ((cp = get_ob_diff(op, &empty_archetype->clone)) != NULL)
         {
             // JRG The 32 here is to allow for the arch/name/end text
@@ -890,13 +880,7 @@ void dump_me(object *op, char *outstr, size_t bufsize)
     }
     else
     {
-        strcat(outstr, "Object ");
-        if (op->name == NULL)
-            strcat(outstr, "(null)");
-        else
-            strcat(outstr, op->name);
-        strcat(outstr, "\n");
-        strcat(outstr, "end\n");
+        sprintf(strchr(outstr, '\0'), "Object %s\nend\n", STRING_OBJ_NAME(op));
     }
 }
 

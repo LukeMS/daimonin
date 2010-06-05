@@ -122,10 +122,7 @@ void send_target_command(player *pl)
                 pl->ob->enemy = pl->target_object;
                 pl->ob->enemy_count = pl->target_object_count;
             }
-            if (pl->target_object->name)
-                strcpy(tmp + 3, pl->target_object->name);
-            else
-                strcpy(tmp + 3, "(null)");
+            sprintf(tmp + 3, "%s", STRING_OBJ_NAME(pl->target_object));
         }
     }
     else
