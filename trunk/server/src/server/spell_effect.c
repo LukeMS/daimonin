@@ -403,7 +403,7 @@ int perceive_self(object *op)
         new_draw_info(NDI_UNIQUE, 0, op, cp);
         if (tmp != NULL)
         {
-            for (i = 0; i < 7; i++)
+            for (i = 0; i < NUM_STATS; i++)
             {
                 if (get_attr_value(&tmp->stats, i) < 0)
                 {
@@ -1962,7 +1962,7 @@ int remove_depletion(object *op, object *target)
 
     if ((depl = present_arch_in_ob(at, target)) != NULL)
     {
-        for (i = 0; i < 7; i++)
+        for (i = 0; i < NUM_STATS; i++)
         {
             if (get_attr_value(&depl->stats, i))
             {
@@ -2085,7 +2085,7 @@ int remove_deathsick(object *op, object *target)
 
     if ((depl = present_arch_in_ob(at, target)) != NULL)
     {
-        for (i = 0; i < 7; i++)
+        for (i = 0; i < NUM_STATS; i++)
         {
             if (get_attr_value(&depl->stats, i))
             {
