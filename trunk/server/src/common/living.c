@@ -64,10 +64,10 @@ static char *drain_msg[NUM_STATS] =
     "Oh no! You are weakened!",
     "You're feeling clumsy!",
     "You feel less healthy",
+    "You suddenly begin to lose your memory!",
+    "Your spirit feels drained!",
     "Watch out, your mind is going!",
     "Your face gets distorted!",
-    "You suddenly begin to lose your memory!",
-    "Your spirit feels drained!,"
 };
 
 static char *gain_msg[NUM_STATS] =
@@ -75,10 +75,10 @@ static char *gain_msg[NUM_STATS] =
     "You feel stronger.",
     "You feel more agile.",
     "You feel healthy.",
-    "You feel wiser.",
-    "You seem to look better.",
     "You feel smarter.",
+    "You feel wiser.",
     "You feel more potent.",
+    "You seem to look better.",
 };
 
 char *lose_msg[NUM_STATS] =
@@ -86,10 +86,10 @@ char *lose_msg[NUM_STATS] =
     "You feel weaker!",
     "You feel clumsy!",
     "You feel less healthy!",
-    "You lose some of your memory!",
-    "You look ugly!",
     "You feel stupid!",
+    "You lose some of your memory!",
     "You feel less potent!",
+    "You look ugly!",
 };
 
 char *restore_msg[NUM_STATS] =
@@ -97,10 +97,10 @@ char *restore_msg[NUM_STATS] =
     "You feel your strength return.",
     "You feel your agility return.",
     "You feel your health return.",
-    "You feel your wisdom return.",
-    "You feel your charisma return.",
     "You feel your memory return.",
+    "You feel your wisdom return.",
     "You feel your spirits return.",
+    "You feel your charisma return.",
 };
 
 char *stat_name[NUM_STATS]  =
@@ -108,10 +108,10 @@ char *stat_name[NUM_STATS]  =
     "strength",
     "dexterity",
     "constitution",
-    "wisdom",
-    "charisma",
     "intelligence",
+    "wisdom",
     "power",
+    "charisma",
 };
 
 char *short_stat_name[NUM_STATS] =
@@ -119,15 +119,15 @@ char *short_stat_name[NUM_STATS] =
     "Str",
     "Dex",
     "Con",
-    "Wis",
-    "Cha",
     "Int",
+    "Wis",
     "Pow",
+    "Cha",
 };
 
 /*
- * sets Str/Dex/con/Wis/Cha/Int/Pow in stats to value, depending on
- * what attr is (STR to POW).
+ * sets stats to value, depending on what attr is (STR, DEX, CON, INTELLIGENCE,
+ * WIS, POW, CHA).
  */
 
 void set_attr_value(living *stats, int attr, signed char value)
@@ -143,6 +143,9 @@ void set_attr_value(living *stats, int attr, signed char value)
         case CON:
           stats->Con = value;
           break;
+        case INTELLIGENCE:
+          stats->Int = value;
+          break;
         case WIS:
           stats->Wis = value;
           break;
@@ -152,9 +155,9 @@ void set_attr_value(living *stats, int attr, signed char value)
         case CHA:
           stats->Cha = value;
           break;
-        case INTELLIGENCE:
-          stats->Int = value;
-          break;
+        default:
+          LOG(llevBug, "BUG:: %s/set_attr_value(): Unknown stat (%d)!\n",
+              __FILE__, attr);
     }
 }
 
@@ -178,6 +181,9 @@ void change_attr_value(living *stats, int attr, signed char value)
         case CON:
           stats->Con += value;
           break;
+        case INTELLIGENCE:
+          stats->Int += value;
+          break;
         case WIS:
           stats->Wis += value;
           break;
@@ -187,11 +193,9 @@ void change_attr_value(living *stats, int attr, signed char value)
         case CHA:
           stats->Cha += value;
           break;
-        case INTELLIGENCE:
-          stats->Int += value;
-          break;
         default:
-          LOG(llevBug, "BUG: Invalid attribute in change_attr_value: %d\n", attr);
+          LOG(llevBug, "BUG:: %s/set_attr_value(): Unknown stat (%d)!\n",
+              __FILE__, attr);
     }
 }
 
@@ -209,21 +213,24 @@ signed char get_attr_value(const living *const stats, const int attr)
           return(stats->Dex);
         case CON:
           return(stats->Con);
-        case WIS:
-          return(stats->Wis);
-        case CHA:
-          return(stats->Cha);
         case INTELLIGENCE:
           return(stats->Int);
+        case WIS:
+          return(stats->Wis);
         case POW:
           return(stats->Pow);
+        case CHA:
+          return(stats->Cha);
+        default:
+          LOG(llevBug, "BUG:: %s/set_attr_value(): Unknown stat (%d)!\n",
+              __FILE__, attr);
     }
     return 0;
 }
 
 /*
- * Ensures that all stats (str/dex/con/wis/cha/int) are within the
- * 1-30 stat limit.
+ * Ensures that all stats (str/dex/con/int/wis/pow/cha) are within the
+ * stat limit.
  * not so "smart" as the solution before but simple, fast and easy.
  * MT-2004
  */
@@ -293,15 +300,15 @@ object * check_obj_stat_buffs(object *ob, object *pl)
     else if (ob->stats.Int > MAX_STAT - pl->stats.Int)
         ob->stats.Int = MAX_STAT - pl->stats.Int;
 
-    if (ob->stats.Pow <= -pl->stats.Pow)
-        ob->stats.Pow = -(pl->stats.Pow - 1);
-    else if (ob->stats.Pow > MAX_STAT - pl->stats.Pow)
-        ob->stats.Pow = MAX_STAT - pl->stats.Pow;
-
     if (ob->stats.Wis <= -pl->stats.Wis)
         ob->stats.Wis = -(pl->stats.Wis - 1);
     else if (ob->stats.Wis > MAX_STAT - pl->stats.Wis)
         ob->stats.Wis = MAX_STAT - pl->stats.Wis;
+
+    if (ob->stats.Pow <= -pl->stats.Pow)
+        ob->stats.Pow = -(pl->stats.Pow - 1);
+    else if (ob->stats.Pow > MAX_STAT - pl->stats.Pow)
+        ob->stats.Pow = MAX_STAT - pl->stats.Pow;
 
     if (ob->stats.Cha <= -pl->stats.Cha)
         ob->stats.Cha = -(pl->stats.Cha - 1);

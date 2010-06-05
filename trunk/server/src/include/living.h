@@ -26,20 +26,21 @@
 #ifndef LIVING_H
 #define LIVING_H
 
-#define STR 0
-#define DEX 1
-#define CON 2
-#define WIS 3
-#define CHA 4
-#define INTELLIGENCE 5
-#define POW 6
+enum
+{
+    STR,
+    DEX,
+    CON,
+    INTELLIGENCE,
+    WIS,
+    POW,
+    CHA,
 
-#define NUM_STATS 7
+    NUM_STATS,
 
-/* Changed from NO_STAT to NO_STAT_VAL to fix conlfict on
- * AIX systems
- */
-#define NO_STAT_VAL 99    /* needed by skills code -b.t. */
+    /* Changed from NO_STAT to NO_STAT_VAL to fix conlfict on AIX systems */
+    NO_STAT_VAL = 99
+};
 
 extern char    *attacks[NROFATTACKS];
 extern char    *spellpathnames[NRSPELLPATHS];

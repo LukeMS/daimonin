@@ -473,10 +473,10 @@ static struct constant_decl preset_game_constants[] =
     {"STAT_STRENGTH",     STR},
     {"STAT_DEXTERITY",    DEX},
     {"STAT_CONSTITUTION", CON},
-    {"STAT_WISDOM",       WIS},
-    {"STAT_CHARISMA",     CHA},
     {"STAT_INTELLIGENCE", INTELLIGENCE},
+    {"STAT_WISDOM",       WIS},
     {"STAT_POWER",        POW},
+    {"STAT_CHARISMA",     CHA},
     {"STAT_NONE",         NO_STAT_VAL},
 
     /*money_block modes (global.h) */
