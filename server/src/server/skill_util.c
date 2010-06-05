@@ -288,17 +288,17 @@ int get_weighted_skill_stat_sum(object *who, int sk)
         return 0;
     }
     else
-        sum = get_attr_value(&(who->stats), skills[sk].stat1);
+        sum = get_stat_value(&(who->stats), skills[sk].stat1);
 
     if (skills[sk].stat2 != NO_STAT_VAL)
     {
-        sum += get_attr_value(&(who->stats), skills[sk].stat2);
+        sum += get_stat_value(&(who->stats), skills[sk].stat2);
         number++;
     }
 
     if (skills[sk].stat3 != NO_STAT_VAL)
     {
-        sum += get_attr_value(&(who->stats), skills[sk].stat3);
+        sum += get_stat_value(&(who->stats), skills[sk].stat3);
         number++;
     }
 
@@ -1041,7 +1041,7 @@ int get_skill_stat1(object *op)
     int stat_value = 0, stat = NO_STAT_VAL;
 
     if ((op->chosen_skill) && ((stat = skills[op->chosen_skill->stats.sp].stat1) != NO_STAT_VAL))
-        stat_value = get_attr_value(&(op->stats), stat);
+        stat_value = get_stat_value(&(op->stats), stat);
 
     return stat_value;
 }
@@ -1055,7 +1055,7 @@ int get_skill_stat2(object *op)
     int stat_value = 0, stat = NO_STAT_VAL;
 
     if ((op->chosen_skill) && ((stat = skills[op->chosen_skill->stats.sp].stat2) != NO_STAT_VAL))
-        stat_value = get_attr_value(&(op->stats), stat);
+        stat_value = get_stat_value(&(op->stats), stat);
 
     return stat_value;
 }
@@ -1069,7 +1069,7 @@ int get_skill_stat3(object *op)
     int stat_value = 0, stat = NO_STAT_VAL;
 
     if ((op->chosen_skill) && ((stat = skills[op->chosen_skill->stats.sp].stat3) != NO_STAT_VAL))
-        stat_value = get_attr_value(&(op->stats), stat);
+        stat_value = get_stat_value(&(op->stats), stat);
 
     return stat_value;
 }

@@ -834,7 +834,7 @@ void god_intervention(object *op, object *god)
                     continue;
                 new_draw_info(NDI_UNIQUE, 0, op, "Shimmering light surrounds and restores you!");
                 for (i = 0; i < NUM_STATS; i++)
-                    if (get_attr_value(&depl->stats, i))
+                    if (get_stat_value(&depl->stats, i))
                         new_draw_info(NDI_UNIQUE, 0, op, restore_msg[i]);
                 remove_ob(depl);
                 FIX_PLAYER(op ,"god intervention");

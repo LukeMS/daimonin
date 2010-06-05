@@ -257,7 +257,7 @@ int apply_potion(object *op, object *tmp)
             {
                 for (i = 0; i < 7; i++)
                 {
-                    if (get_attr_value(&depl->stats, i))
+                    if (get_stat_value(&depl->stats, i))
                         new_draw_info(NDI_UNIQUE, 0, op, restore_msg[i]);
                 }
                 remove_ob(depl); /* in inventory of ... */

@@ -1103,7 +1103,7 @@ char * describe_item(const object *const op)
         {
             for (attr = 0; attr < 7; attr++)
             {
-                if ((val = get_attr_value(&(op->stats), attr)) != 0)
+                if ((val = get_stat_value(&(op->stats), attr)) != 0)
                 {
                     sprintf(buf, "(%s%+d)", short_stat_name[attr], val);
                     strcat(retbuf, buf);
