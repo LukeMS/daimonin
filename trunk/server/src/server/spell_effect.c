@@ -405,9 +405,9 @@ int perceive_self(object *op)
         {
             for (i = 0; i < NUM_STATS; i++)
             {
-                if (get_attr_value(&tmp->stats, i) < 0)
+                if (get_stat_value(&tmp->stats, i) < 0)
                 {
-                    sprintf(buf, "Your %s is depleted by %d", stat_name[i], -(get_attr_value(&tmp->stats, i)));
+                    sprintf(buf, "Your %s is depleted by %d", stat_name[i], -(get_stat_value(&tmp->stats, i)));
                     new_draw_info(NDI_UNIQUE, 0, op, buf);
                 }
             }
@@ -1964,7 +1964,7 @@ int remove_depletion(object *op, object *target)
     {
         for (i = 0; i < NUM_STATS; i++)
         {
-            if (get_attr_value(&depl->stats, i))
+            if (get_stat_value(&depl->stats, i))
             {
                 success++;
                 new_draw_info(NDI_UNIQUE, 0, target, restore_msg[i]);
@@ -2087,7 +2087,7 @@ int remove_deathsick(object *op, object *target)
     {
         for (i = 0; i < NUM_STATS; i++)
         {
-            if (get_attr_value(&depl->stats, i))
+            if (get_stat_value(&depl->stats, i))
             {
                 success++;
                 new_draw_info(NDI_UNIQUE, 0, target, restore_msg[i]);

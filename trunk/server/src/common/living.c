@@ -126,13 +126,13 @@ char *short_stat_name[NUM_STATS] =
 };
 
 /*
- * sets stats to value, depending on what attr is (STR, DEX, CON, INTELLIGENCE,
+ * sets stats to value, depending on what stat is (STR, DEX, CON, INTELLIGENCE,
  * WIS, POW, CHA).
  */
 
-void set_attr_value(living *stats, int attr, signed char value)
+void set_stat_value(living *stats, int stat, signed char value)
 {
-    switch (attr)
+    switch (stat)
     {
         case STR:
           stats->Str = value;
@@ -156,21 +156,21 @@ void set_attr_value(living *stats, int attr, signed char value)
           stats->Cha = value;
           break;
         default:
-          LOG(llevBug, "BUG:: %s/set_attr_value(): Unknown stat (%d)!\n",
-              __FILE__, attr);
+          LOG(llevBug, "BUG:: %s/set_stat_value(): Unknown stat (%d)!\n",
+              __FILE__, stat);
     }
 }
 
 /*
- * Like set_attr_value(), but instead the value (which can be negative)
+ * Like set_stat_value(), but instead the value (which can be negative)
  * is added to the specified stat.
  */
 
-void change_attr_value(living *stats, int attr, signed char value)
+void change_stat_value(living *stats, int stat, signed char value)
 {
     if (value == 0)
         return;
-    switch (attr)
+    switch (stat)
     {
         case STR:
           stats->Str += value;
@@ -194,18 +194,18 @@ void change_attr_value(living *stats, int attr, signed char value)
           stats->Cha += value;
           break;
         default:
-          LOG(llevBug, "BUG:: %s/change_attr_value(): Unknown stat (%d)!\n",
-              __FILE__, attr);
+          LOG(llevBug, "BUG:: %s/change_stat_value(): Unknown stat (%d)!\n",
+              __FILE__, stat);
     }
 }
 
 /*
- * returns the specified stat.  See also set_attr_value().
+ * returns the specified stat.  See also set_stat_value().
  */
 
-signed char get_attr_value(const living *const stats, const int attr)
+signed char get_stat_value(const living *const stats, const int stat)
 {
-    switch (attr)
+    switch (stat)
     {
         case STR:
           return(stats->Str);
@@ -222,8 +222,8 @@ signed char get_attr_value(const living *const stats, const int attr)
         case CHA:
           return(stats->Cha);
         default:
-          LOG(llevBug, "BUG:: %s/get_attr_value(): Unknown stat (%d)!\n",
-              __FILE__, attr);
+          LOG(llevBug, "BUG:: %s/get_stat_value(): Unknown stat (%d)!\n",
+              __FILE__, stat);
     }
     return 0;
 }
@@ -345,18 +345,18 @@ int change_abil(object *op, object *tmp)
         {
             for (j = 0; j < NUM_STATS; j++)
             {
-                i = get_attr_value(&(CONTR(op)->orig_stats), j);
+                i = get_stat_value(&(CONTR(op)->orig_stats), j);
 
                 /* Check to see if stats are within limits such that this can be
                  * applied.
                  */
-                if (((i + applied * get_attr_value(&(tmp->stats), j))
-                  <= (20 + tmp->stats.sp + get_attr_value(&(op->arch->clone.stats), j)))
+                if (((i + applied * get_stat_value(&(tmp->stats), j))
+                  <= (20 + tmp->stats.sp + get_stat_value(&(op->arch->clone.stats), j)))
                  && i
                   > 0)
                 {
-                    change_attr_value(&(CONTR(op)->orig_stats), j,
-                                      (signed char) (applied * get_attr_value(&(tmp->stats), j)));
+                    change_stat_value(&(CONTR(op)->orig_stats), j,
+                                      (signed char) (applied * get_stat_value(&(tmp->stats), j)));
                     tmp->stats.sp = 0;/* Fix it up for super potions */
                 }
                 else
@@ -370,7 +370,7 @@ int change_abil(object *op, object *tmp)
              * recalculates this anyway.
              */
             for (j = 0; j < NUM_STATS; j++)
-                change_attr_value(&(op->stats), j, (signed char) (applied * get_attr_value(&(tmp->stats), j)));
+                change_stat_value(&(op->stats), j, (signed char) (applied * get_stat_value(&(tmp->stats), j)));
             check_stat_bounds(&(op->stats));
         } /* end of potion handling code */
     }
@@ -645,7 +645,7 @@ int change_abil(object *op, object *tmp)
     {
         for (j = 0; j < NUM_STATS; j++)
         {
-            if ((i = get_attr_value(&(tmp->stats), j)) != 0)
+            if ((i = get_stat_value(&(tmp->stats), j)) != 0)
             {
                 success = 1;
                 if (i * applied > 0)
@@ -720,7 +720,7 @@ void drain_specific_stat(object *op, int deplete_stats)
         }
     }
 
-    change_attr_value(&tmp->stats, deplete_stats, -1);
+    change_stat_value(&tmp->stats, deplete_stats, -1);
     if(op->type == PLAYER)
         new_draw_info(NDI_UNIQUE, 0, op, drain_msg[deplete_stats]);
 
@@ -1214,7 +1214,7 @@ void fix_player(object *op)
                         continue;
 
                     for (i = 0; i < NUM_STATS; i++)
-                        change_attr_value(&(op->stats), i, get_attr_value(&(tmp->stats), i));
+                        change_stat_value(&(op->stats), i, get_stat_value(&(tmp->stats), i));
                     break;
 
                 /* throw/arrow dam & wc are dynmically calculated in the do_throw() function */
@@ -1243,7 +1243,7 @@ void fix_player(object *op)
                         pl->set_skill_archery = SK_SLING_WEAP;
 
                     for (i = 0; i < NUM_STATS; i++)
-                        change_attr_value(&(op->stats), i, get_attr_value(&(tmp->stats), i));
+                        change_stat_value(&(op->stats), i, get_stat_value(&(tmp->stats), i));
 
                     break;
 
@@ -1281,7 +1281,7 @@ void fix_player(object *op)
                   thacm += tmp->stats.thacm;
 
                   for (i = 0; i < NUM_STATS; i++)
-                      change_attr_value(&(op->stats), i, get_attr_value(&(tmp->stats), i));
+                      change_stat_value(&(op->stats), i, get_stat_value(&(tmp->stats), i));
                   break;
 
                 case TYPE_LIGHT_APPLY:
@@ -1369,7 +1369,7 @@ void fix_player(object *op)
                   thacm += tmp->stats.thacm;
 
                   for (i = 0; i < NUM_STATS; i++)
-                      change_attr_value(&(op->stats), i, get_attr_value(&(tmp->stats), i));
+                      change_stat_value(&(op->stats), i, get_stat_value(&(tmp->stats), i));
 
                   if (tmp->stats.wc)
                       pl->wc_bonus += (tmp->stats.wc + tmp->magic);
@@ -1384,7 +1384,7 @@ void fix_player(object *op)
                 case POTION_EFFECT:
                   /* no protection from potion effect -resist only! */
                   for (i = 0; i < NUM_STATS; i++)
-                      change_attr_value(&(op->stats), i, get_attr_value(&(tmp->stats), i));
+                      change_stat_value(&(op->stats), i, get_stat_value(&(tmp->stats), i));
                   /* collect highest boni & malus - only highest one count,
                              * no adding potion effects of same resist!
                              */
@@ -1450,7 +1450,7 @@ void fix_player(object *op)
                         pl->speed_enc_base += ARMOUR_SPEED(tmp);
 
                         for (i = 0; i < NUM_STATS; i++)
-                            change_attr_value(&(op->stats), i, get_attr_value(&(tmp->stats), i));
+                            change_stat_value(&(op->stats), i, get_stat_value(&(tmp->stats), i));
                         if (tmp->stats.wc)
                             pl->wc_bonus += (tmp->stats.wc + tmp->magic);
                         /* force effects goes to damage before calculation */
@@ -1473,7 +1473,7 @@ void fix_player(object *op)
 
                 case POISONING:
                   for (i = 0; i < NUM_STATS; i++)
-                      change_attr_value(&(op->stats), i, get_attr_value(&(tmp->stats), i));
+                      change_stat_value(&(op->stats), i, get_stat_value(&(tmp->stats), i));
 
                 fix_player_jump_resi:
 

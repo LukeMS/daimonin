@@ -107,16 +107,18 @@ extern objectlink      *objectlink_link(objectlink **startptr, objectlink **endp
 
 extern objectlink      *objectlink_unlink(objectlink **startptr, objectlink **endptr, objectlink *objptr);
 /* living.c */
-extern void             set_attr_value(living *stats, int attr, signed char value);
-extern void             change_attr_value(living *stats, int attr, signed char value);
-extern signed char      get_attr_value(const living *const stats, const int attr);
+extern void             set_stat_value(living *stats, int stat, signed char value);
+extern void             change_stat_value(living *stats, int stat, signed char value);
+extern signed char      get_stat_value(const living *const stats, const int stat);
 extern void             check_stat_bounds(living *stats);
-extern int              change_abil(object *op, object *tmp);extern object          *check_obj_stat_buffs(object *ob, object *pl);extern void             corrupt_stat(object *op);
+extern int              change_abil(object *op, object *tmp);
+extern object          *check_obj_stat_buffs(object *ob, object *pl);
+extern void             corrupt_stat(object *op);
 extern void             drain_stat(object *op);
 extern void             drain_specific_stat(object *op, int deplete_stats);
 extern void             drain_level(object *op, int level, int mode, int ticks);
 extern float            get_player_stat_bonus(int value);
-void					fix_player_weight(object *op);
+void                    fix_player_weight(object *op);
 #ifdef DEBUG_FIX_PLAYER
 extern void             fix_player(object *op, char *msg);
 #else

@@ -479,7 +479,7 @@ void alchemy_failure_effect(object *op, object *cauldron, recipe *rp, int danger
             /* change stats downward */
             do
             {
-                change_attr_value(&tmp->stats, random_roll(0, 6), (signed char) (-1 * (random_roll(1, 3))));
+                change_stat_value(&tmp->stats, random_roll(0, 6), (signed char) (-1 * (random_roll(1, 3))));
             }
             while (random_roll(0, 2));
         }
