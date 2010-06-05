@@ -1154,7 +1154,7 @@ int create_one_treasure(treasurelist *tl, object *op, int flag, int difficulty, 
     if (!t || value > 0)
     {
         LOG(llevBug, "BUG: create_one_treasure: got null object or not able to find treasure - tl:%s op:%s\n",
-            tl ? tl->listname : "(null)", op ? op->name : "(null)");
+            PTR_STRING_SAFE(tl, listname), STRING_OBJ_NAME(op));
         return ret;
     }
 
