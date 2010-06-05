@@ -336,7 +336,7 @@ int change_abil(object *op, object *tmp)
     {
         if (tmp->type == POTION)
         {
-            for (j = 0; j < 7; j++)
+            for (j = 0; j < NUM_STATS; j++)
             {
                 i = get_attr_value(&(CONTR(op)->orig_stats), j);
 
@@ -362,7 +362,7 @@ int change_abil(object *op, object *tmp)
              * sure if this is strictly necessary, being that fix_player probably
              * recalculates this anyway.
              */
-            for (j = 0; j < 7; j++)
+            for (j = 0; j < NUM_STATS; j++)
                 change_attr_value(&(op->stats), j, (signed char) (applied * get_attr_value(&(tmp->stats), j)));
             check_stat_bounds(&(op->stats));
         } /* end of potion handling code */
@@ -636,7 +636,7 @@ int change_abil(object *op, object *tmp)
 
     if (tmp->type != EXPERIENCE && !potion_max)
     {
-        for (j = 0; j < 7; j++)
+        for (j = 0; j < NUM_STATS; j++)
         {
             if ((i = get_attr_value(&(tmp->stats), j)) != 0)
             {
@@ -679,7 +679,7 @@ void corrupt_stat(object *op)
 
 void drain_stat(object *op)
 {
-    drain_specific_stat(op, RANDOM() % 7);
+    drain_specific_stat(op, RANDOM() % NUM_STATS);
 }
 
 void drain_specific_stat(object *op, int deplete_stats)
@@ -1206,7 +1206,7 @@ void fix_player(object *op)
                     if(!set_player_equipment(pl, tmp, PLAYER_EQUIP_BOW))
                         continue;
 
-                    for (i = 0; i < 7; i++)
+                    for (i = 0; i < NUM_STATS; i++)
                         change_attr_value(&(op->stats), i, get_attr_value(&(tmp->stats), i));
                     break;
 
@@ -1235,7 +1235,7 @@ void fix_player(object *op)
                     else
                         pl->set_skill_archery = SK_SLING_WEAP;
 
-                    for (i = 0; i < 7; i++)
+                    for (i = 0; i < NUM_STATS; i++)
                         change_attr_value(&(op->stats), i, get_attr_value(&(tmp->stats), i));
 
                     break;
@@ -1273,7 +1273,7 @@ void fix_player(object *op)
                   thac0 += tmp->stats.thac0;
                   thacm += tmp->stats.thacm;
 
-                  for (i = 0; i < 7; i++)
+                  for (i = 0; i < NUM_STATS; i++)
                       change_attr_value(&(op->stats), i, get_attr_value(&(tmp->stats), i));
                   break;
 
@@ -1361,7 +1361,7 @@ void fix_player(object *op)
                   thac0 += tmp->stats.thac0;
                   thacm += tmp->stats.thacm;
 
-                  for (i = 0; i < 7; i++)
+                  for (i = 0; i < NUM_STATS; i++)
                       change_attr_value(&(op->stats), i, get_attr_value(&(tmp->stats), i));
 
                   if (tmp->stats.wc)
@@ -1376,7 +1376,7 @@ void fix_player(object *op)
 
                 case POTION_EFFECT:
                   /* no protection from potion effect -resist only! */
-                  for (i = 0; i < 7; i++)
+                  for (i = 0; i < NUM_STATS; i++)
                       change_attr_value(&(op->stats), i, get_attr_value(&(tmp->stats), i));
                   /* collect highest boni & malus - only highest one count,
                              * no adding potion effects of same resist!
@@ -1442,7 +1442,7 @@ void fix_player(object *op)
                     {
                         pl->speed_enc_base += ARMOUR_SPEED(tmp);
 
-                        for (i = 0; i < 7; i++)
+                        for (i = 0; i < NUM_STATS; i++)
                             change_attr_value(&(op->stats), i, get_attr_value(&(tmp->stats), i));
                         if (tmp->stats.wc)
                             pl->wc_bonus += (tmp->stats.wc + tmp->magic);
@@ -1465,7 +1465,7 @@ void fix_player(object *op)
                   pl->speed_reduce_from_disease = tmp->last_sp;
 
                 case POISONING:
-                  for (i = 0; i < 7; i++)
+                  for (i = 0; i < NUM_STATS; i++)
                       change_attr_value(&(op->stats), i, get_attr_value(&(tmp->stats), i));
 
                 fix_player_jump_resi:
