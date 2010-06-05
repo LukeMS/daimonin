@@ -194,7 +194,7 @@ void change_attr_value(living *stats, int attr, signed char value)
           stats->Cha += value;
           break;
         default:
-          LOG(llevBug, "BUG:: %s/set_attr_value(): Unknown stat (%d)!\n",
+          LOG(llevBug, "BUG:: %s/change_attr_value(): Unknown stat (%d)!\n",
               __FILE__, attr);
     }
 }
@@ -222,7 +222,7 @@ signed char get_attr_value(const living *const stats, const int attr)
         case CHA:
           return(stats->Cha);
         default:
-          LOG(llevBug, "BUG:: %s/set_attr_value(): Unknown stat (%d)!\n",
+          LOG(llevBug, "BUG:: %s/get_attr_value(): Unknown stat (%d)!\n",
               __FILE__, attr);
     }
     return 0;
