@@ -35,9 +35,6 @@
 
 #include <global.h>
 
-static archetype *ring_arch = NULL, *ring_arch_normal = NULL, *amulet_arch = NULL;
-
-
 /* static functions */
 static treasure        *load_treasure(FILE *fp, int *t_style, int *a_chance);
 static void             change_treasure(struct _change_arch *ca, object *op); /* overrule default values */
@@ -1979,7 +1976,7 @@ int fix_generated_item(object **op_ptr, object *creator, int difficulty, int a_c
               }
 
             case AMULET:
-              if (op->arch == amulet_arch)
+              if (op->arch == archetype_global._amulet_generic)
                   op->value *= 5; /* Since it's not just decoration */
 
             case RING:
@@ -1990,18 +1987,18 @@ int fix_generated_item(object **op_ptr, object *creator, int difficulty, int a_c
                   break;
               }
 
-              if (op->arch != ring_arch && op->arch != amulet_arch) /* It's a special artefact!*/
+              if (op->arch != archetype_global._ring_generic && op->arch != archetype_global._amulet_generic) /* It's a special artefact!*/
                   break;
 
               /* We have no special ring - now we create one.
                      * we first get us a value, material & face
                      * changed prototype. Then we cast the powers over it.
                      */
-              if (op->arch == ring_arch)
+              if (op->arch == archetype_global._ring_generic)
               {
                   if (!QUERY_FLAG(op, FLAG_REMOVED))
                       remove_ob(op); /* this is called before we inserted it in the map or elsewhere */
-                  *op_ptr = op = arch_to_object(ring_arch_normal);
+                  *op_ptr = op = arch_to_object(archetype_global._ring_normal);
                   generate_artifact(op, difficulty, t_style, 99);
               }
 
