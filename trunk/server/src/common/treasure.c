@@ -49,25 +49,6 @@ static void             create_money_table(void);
 static void             postparse_treasurelist(treasure *t, treasurelist *tl);
 
 /*
-* Initialize global archtype pointers:
-*/
-static void init_archetype_pointers()
-{
-    if (ring_arch_normal == NULL)
-        ring_arch_normal = find_archetype("ring_normal");
-    if (!ring_arch_normal)
-        LOG(llevBug, "BUG: Cant'find 'ring_normal' arch (from artifacts)\n");
-    if (ring_arch == NULL)
-        ring_arch = find_archetype("ring_generic");
-    if (!ring_arch)
-        LOG(llevBug, "BUG: Cant'find 'ring_generic' arch\n");
-    if (amulet_arch == NULL)
-        amulet_arch = find_archetype("amulet_generic");
-    if (!amulet_arch)
-        LOG(llevBug, "BUG: Cant'find 'amulet_generic' arch\n");
-}
-
-/*
  * Opens LIBDIR/treasure and reads all treasure-declarations from it.
  * Each treasure is parsed with the help of load_treasure().
  */
@@ -274,7 +255,6 @@ void load_treasures(void)
         postparse_treasurelist(previous->items, previous);
 
     create_money_table();
-    init_archetype_pointers(); /* Setup global pointers to archetypes */
 }
 
 
@@ -317,10 +297,10 @@ static void postparse_treasurelist(treasure *t, treasurelist *tl)
  */
 static void create_money_table(void)
 {
-    coins_arch[0] = find_archetype("mitcoin");
-    coins_arch[1] = find_archetype("goldcoin");
-    coins_arch[2] = find_archetype("silvercoin");
-    coins_arch[3] = find_archetype("coppercoin");
+    coins_arch[0] = archetype_global._mitcoin;
+    coins_arch[1] = archetype_global._goldcoin;
+    coins_arch[2] = archetype_global._silvercoin;
+    coins_arch[3] = archetype_global._coppercoin;
     coins_arch[4] = NULL;
 
     if (!coins_arch[0] || !coins_arch[1] || !coins_arch[2] || !coins_arch[3])
