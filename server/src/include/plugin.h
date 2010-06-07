@@ -432,6 +432,7 @@ struct plugin_hooklist
 
     /* GLOBAL VARIABLES */
     Animations **animations;
+    struct _archetype_global *archetype_global;
     struct behaviourclass_decl *behaviourclasses;
     archetype **coins_arch;
     int *global_darkness_table;

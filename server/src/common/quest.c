@@ -242,22 +242,17 @@ static inline void remove_quest_items(player *pl, object *op)
  */
 void add_quest_containers(struct obj *op)
 {
-    static archetype *archt = NULL;
     player *pl;
 
     if(op->type != PLAYER)
         return;
-
-    /* lets fetch the quest_container static for speed up things */
-    if(!archt)
-        archt = find_archetype("quest_container");
 
     pl = CONTR(op);
 
     /* missing one drop container */
     if (!pl->quest_one_drop || !OBJECT_VALID(pl->quest_one_drop, pl->quest_one_drop_count) || pl->quest_one_drop->env != op)
     {
-        pl->quest_one_drop = arch_to_object(archt);
+        pl->quest_one_drop = arch_to_object(archetype_global._quest_container);
         pl->quest_one_drop_count = pl->quest_one_drop->count;
         pl->quest_one_drop->sub_type1 = ST1_QUEST_ONE_DROP;
         FREE_AND_COPY_HASH(pl->quest_one_drop->name, "QC: onedrops");
@@ -267,7 +262,7 @@ void add_quest_containers(struct obj *op)
 
     if(!pl->quests_done || !OBJECT_VALID(pl->quests_done,pl->quests_done_count) || pl->quests_done->env != op)
     {
-        pl->quests_done = arch_to_object(archt);
+        pl->quests_done = arch_to_object(archetype_global._quest_container);
         pl->quests_done_count = pl->quests_done->count;
         pl->quests_done->sub_type1 = ST1_QUESTS_TYPE_DONE;
         FREE_AND_COPY_HASH(pl->quests_done->name, "QC: list done");
@@ -276,7 +271,7 @@ void add_quest_containers(struct obj *op)
 
     if(!pl->quests_type_kill || !OBJECT_VALID(pl->quests_type_kill,pl->quests_type_kill_count) || pl->quests_type_kill->env != op)
     {
-        pl->quests_type_kill = arch_to_object(archt);
+        pl->quests_type_kill = arch_to_object(archetype_global._quest_container);
         pl->quests_type_kill_count = pl->quests_type_kill->count;
         pl->quests_type_kill->sub_type1 = ST1_QUESTS_TYPE_KILL;
         FREE_AND_COPY_HASH(pl->quests_type_kill->name, "QC: kill");
@@ -285,7 +280,7 @@ void add_quest_containers(struct obj *op)
 
     if(!pl->quests_type_normal || !OBJECT_VALID(pl->quests_type_normal,pl->quests_type_normal_count) || pl->quests_type_normal->env != op)
     {
-        pl->quests_type_normal = arch_to_object(archt);
+        pl->quests_type_normal = arch_to_object(archetype_global._quest_container);
         pl->quests_type_normal_count = pl->quests_type_normal->count;
         pl->quests_type_normal->sub_type1 = ST1_QUESTS_TYPE_NORMAL;
         FREE_AND_COPY_HASH(pl->quests_type_normal->name, "QC: normal");
@@ -447,13 +442,7 @@ int update_quest(struct obj *trigger, char *text, char *vim)
     }
 
     /* Create an empty quest_update. */
-    if (!(ob = arch_to_object(find_archetype("quest_update"))))
-    {
-        LOG(llevBug, "BUG:: %s/update_quest(): archetype 'quest_update' not found!\n",
-                     __FILE__);
-
-        return 0;
-    }
+    ob = arch_to_object(archetype_global._quest_update);
 
     /* Give the update a title, write text to it, and insert it in trigger. */
     get_tad(&tad);

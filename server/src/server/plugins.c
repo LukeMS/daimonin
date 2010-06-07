@@ -190,6 +190,7 @@ struct plugin_hooklist  hooklist    =
 
     /* GLOBAL VARIABLES */
     &animations,
+    &archetype_global,
     behaviourclasses,
     coins_arch,
     global_darkness_table,
