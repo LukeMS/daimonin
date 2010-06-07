@@ -116,7 +116,7 @@ struct obj *aggro_insert_damage(struct obj *target, struct obj *hitter)
     if(!tmp)
         tmp = insert_ob_in_ob(arch_to_object(archetype_global._aggro_history),  tmp_t);
 
-    tmp = insert_ob_in_ob(arch_to_object(global_dmg_info_arch), tmp);
+    tmp = insert_ob_in_ob(arch_to_object(archetype_global._dmg_info), tmp);
 
     /* damage source is hitter and tick global_round_tag */
     tmp->weight_limit = hitter->weight_limit;
@@ -225,7 +225,7 @@ struct obj *aggro_update_info(struct obj *target, struct obj *hitter, struct obj
             }
             else
             {
-                aggro = insert_ob_in_ob(arch_to_object(global_dmg_info_arch), history);
+                aggro = insert_ob_in_ob(arch_to_object(archetyp_global._dmg_info), history);
                 aggro->enemy_count = hitter->count;    /* tag so we can identify the hitter */
                 aggro->enemy = hitter;    /* so we can find later this damage dealer */
                 aggro->stats.hp = dmg;
@@ -245,7 +245,7 @@ struct obj *aggro_update_info(struct obj *target, struct obj *hitter, struct obj
                 }
                 if(!tmp)
                 {
-                    tmp = insert_ob_in_ob(arch_to_object(global_dmg_info_arch), aggro);
+                    tmp = insert_ob_in_ob(arch_to_object(archetype_global._dmg_info), aggro);
                     tmp->last_heal = skill_nr;
                     tmp->stats.hp = dmg;
                     tmp->last_sp = PLAYER;

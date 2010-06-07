@@ -210,9 +210,8 @@ int item_matched_string(object *pl, object *op, const char *name)
 
 /*
  * Initialises the internal linked list of archetypes (read from file).
- * Then the global "empty_archetype" pointer is initialised.
- * Then the global "base_info" pointer is initialised.
- * Then the blocksview[] array is initialised.
+ * Then the global archetype pointers are initialised.
+ * Then the blocksview[] array is initialised (apparently).
  */
 
 void init_archetypes()
@@ -223,9 +222,6 @@ void init_archetypes()
     arch_init = 1;
     load_archetypes();
     arch_init = 0;
-
-    if (!(global_dmg_info_arch = find_archetype("dmg_info")))
-        LOG(llevError, "FATAL: no dmg_info arch. Check the arch set!\n");
 
     SET_GLOBAL_ARCHETYPE(empty_archetype);
     SET_GLOBAL_ARCHETYPE(base_info);

@@ -536,8 +536,6 @@ extern spell                    spells[NROFREALSPELLS];
 EXTERN objectlink               *ban_list_player; /* see ban.c */
 EXTERN objectlink               *ban_list_ip;     /* see ban.c */
 
-EXTERN archetype               *global_dmg_info_arch;
-
 EXTERN object                  *active_objects; /* List of active objects that need to be processed */
 EXTERN object                  *inserted_active_objects; /* List of active objects that will be inserted into active_objects */
 EXTERN object                  *next_active_object; /* Loop index for process_events(), might be modified during the loop */
