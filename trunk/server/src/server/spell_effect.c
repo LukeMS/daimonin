@@ -781,7 +781,7 @@ int cast_heal(object *op, int level, object *target, int spell_type)
               new_draw_info_format(NDI_UNIQUE, 0, target, "%s casts cure poison on you!",
                                    op->name ? op->name : "someone");
           if (op != target && op->type == PLAYER)
-              new_draw_info_format(NDI_UNIQUE, 0, op, "You casts cure poison on %s!",
+              new_draw_info_format(NDI_UNIQUE, 0, op, "You cast cure poison on %s!",
                                    target->name ? target->name : "someone");
 
           for (temp = target->inv; temp != NULL; temp = temp->below)
@@ -817,7 +817,7 @@ int cast_heal(object *op, int level, object *target, int spell_type)
               new_draw_info_format(NDI_UNIQUE, 0, target, "%s casts cure confusion on you!",
                                    op->name ? op->name : "someone");
           if (op != target && op->type == PLAYER)
-              new_draw_info_format(NDI_UNIQUE, 0, op, "You casts cure confusion on %s!",
+              new_draw_info_format(NDI_UNIQUE, 0, op, "You cast cure confusion on %s!",
                                    target->name ? target->name : "someone");
 
           for (temp = target->inv; temp != NULL; temp = temp->below)
@@ -853,7 +853,7 @@ int cast_heal(object *op, int level, object *target, int spell_type)
               new_draw_info_format(NDI_UNIQUE, 0, target, "%s casts cure blindness on you!",
                                    op->name ? op->name : "someone");
           if (op != target && op->type == PLAYER)
-              new_draw_info_format(NDI_UNIQUE, 0, op, "You casts cure blindness on %s!",
+              new_draw_info_format(NDI_UNIQUE, 0, op, "You cast cure blindness on %s!",
                                    target->name ? target->name : "someone");
 
           for (temp = target->inv; temp != NULL; temp = temp->below)
@@ -876,7 +876,7 @@ int cast_heal(object *op, int level, object *target, int spell_type)
           else
           {
               if (target->type == PLAYER)
-                  new_draw_info(NDI_UNIQUE, 0, target, "Your are not blinded.");
+                  new_draw_info(NDI_UNIQUE, 0, target, "You are not blinded.");
               if (op != target && op->type == PLAYER)
                   new_draw_info_format(NDI_UNIQUE, 0, op, "%s is not blinded.", target->name ? target->name : "someone");
           }
