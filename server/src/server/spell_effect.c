@@ -1993,28 +1993,15 @@ int restoration(object *caster, object *target)
 {
     int success = 0;
     object *force;
-    static archetype  *at = NULL;
-
-    if (!at)
-    {
-        at = find_archetype("drain");
-        if (!at)
-        {
-            LOG(llevBug, "BUG: Couldn't find archetype drain.\n");
-            return 0;
-        }
-    }
 
     /* try to find and remove the draining forces */
     SET_FLAG(target, FLAG_NO_FIX_PLAYER);
-    force = present_arch_in_ob(at, target);
-    if(force)
+    if ((force = present_arch_in_ob(archetype_global._drain, target)))
     {
         success = 1;
         remove_ob(force);
     }
-    force = present_arch_in_ob_temp(at, target);
-    if(force)
+    if ((force = present_arch_in_ob_temp(archetype_global._drain, target)))
     {
         success = 1;
         remove_ob(force);

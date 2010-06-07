@@ -544,15 +544,7 @@ static inline int aggro_exp_group(object *victim, object *aggro, char *kill_msg)
     object *high = leader, *tmp, *member;
     int exp=0, t;
     object *force;
-    archetype *at;
     int tmp_drain_level = 0, high_drain_level = 0;
-
-    at = find_archetype("drain");
-    if (!at)
-    {
-        LOG(llevBug, "BUG: Couldn't find archetype drain.\n");
-        return FALSE;
-    }
 
     /* here comes the bad news for group playing:
      * The maximal used exp is counted by the highest REAL level
@@ -572,8 +564,7 @@ static inline int aggro_exp_group(object *victim, object *aggro, char *kill_msg)
          * it's probably not the most efficient way of doing it as calculations involving drain
          * should only be used with stats instead of drain affecting level system-wide.
          * however, this is an emergency bugfix, so it's better just to fix the bug first... */
-        force = present_arch_in_ob(at, tmp);
-        if (force)
+        if ((force = present_arch_in_ob(archetype_global._drain, tmp)))
             tmp_drain_level = force->level;
 
         if(high->level + high_drain_level < tmp->level + tmp_drain_level)
