@@ -54,4 +54,43 @@ typedef struct archt
 
 EXTERN archetype           *first_archetype;
 
+typedef struct _archetype_global
+{
+    archetype *_empty_archetype;
+    archetype *_base_info;
+    archetype *_waypoint;
+    archetype *_level_up;
+    archetype *_aggro_history;
+    archetype *_dmg_info;
+    archetype *_drain;
+    archetype *_depletion;
+    archetype *_ring_normal;
+    archetype *_ring_generic;
+    archetype *_amulet_generic;
+    archetype *_mitcoin;
+    archetype *_goldcoin;
+    archetype *_silvercoin;
+    archetype *_coppercoin;
+    archetype *_quest_container;
+    archetype *_quest_info;
+    archetype *_quest_trigger;
+    archetype *_quest_update;
+    archetype *_player_info;
+    archetype *_force;
+    archetype *_gravestone;
+    archetype *_deathsick;
+    archetype *_poisoning;
+    archetype *_slowness;
+    archetype *_fear;
+    archetype *_snare;
+    archetype *_confusion;
+    archetype *_blindness;
+    archetype *_paralyze;
+    archetype *_sword;
+    archetype *_corpse_default;
+}
+_archetype_global;
+
+extern _archetype_global archetype_global;
+
 #endif /* ARCH_H */

@@ -30,6 +30,8 @@
 
 static hashtable *arch_table;
 
+_archetype_global archetype_global;
+
 /**
  * GROS -  This function retrieves an archetype given the name that appears
  * during the game (for example, "writing pen" instead of "stylus").
@@ -197,6 +199,15 @@ int item_matched_string(object *pl, object *op, const char *name)
     return 0;
 }
 
+/* The preprocessor can't paste to . which is why all the member names begin
+ * with _ */
+#define SET_GLOBAL_ARCHETYPE(_A_) \
+    if (!(archetype_global._ ## _A_ = find_archetype(#_A_))) \
+    { \
+        LOG(llevError, "ERROR:: %s/init_archetypes(): Archetype '%s' not found!\n", \
+            __FILE__, #_A_); \
+    }
+
 /*
  * Initialises the internal linked list of archetypes (read from file).
  * Then the global "empty_archetype" pointer is initialised.
@@ -230,7 +241,42 @@ void init_archetypes()
 
     if (!(global_dmg_info_arch = find_archetype("dmg_info")))
         LOG(llevError, "FATAL: no dmg_info arch. Check the arch set!\n");
+
+    SET_GLOBAL_ARCHETYPE(empty_archetype);
+    SET_GLOBAL_ARCHETYPE(base_info);
+    SET_GLOBAL_ARCHETYPE(waypoint);
+    SET_GLOBAL_ARCHETYPE(level_up);
+    SET_GLOBAL_ARCHETYPE(aggro_history);
+    SET_GLOBAL_ARCHETYPE(dmg_info);
+    SET_GLOBAL_ARCHETYPE(drain);
+    SET_GLOBAL_ARCHETYPE(depletion);
+    SET_GLOBAL_ARCHETYPE(ring_normal);
+    SET_GLOBAL_ARCHETYPE(ring_generic);
+    SET_GLOBAL_ARCHETYPE(amulet_generic);
+    SET_GLOBAL_ARCHETYPE(mitcoin);
+    SET_GLOBAL_ARCHETYPE(goldcoin);
+    SET_GLOBAL_ARCHETYPE(silvercoin);
+    SET_GLOBAL_ARCHETYPE(coppercoin);
+    SET_GLOBAL_ARCHETYPE(quest_container);
+    SET_GLOBAL_ARCHETYPE(quest_info);
+    SET_GLOBAL_ARCHETYPE(quest_trigger);
+    SET_GLOBAL_ARCHETYPE(quest_update);
+    SET_GLOBAL_ARCHETYPE(player_info);
+    SET_GLOBAL_ARCHETYPE(force);
+    SET_GLOBAL_ARCHETYPE(gravestone);
+    SET_GLOBAL_ARCHETYPE(deathsick);
+    SET_GLOBAL_ARCHETYPE(poisoning);
+    SET_GLOBAL_ARCHETYPE(slowness);
+    SET_GLOBAL_ARCHETYPE(fear);
+    SET_GLOBAL_ARCHETYPE(snare);
+    SET_GLOBAL_ARCHETYPE(confusion);
+    SET_GLOBAL_ARCHETYPE(blindness);
+    SET_GLOBAL_ARCHETYPE(paralyze);
+    SET_GLOBAL_ARCHETYPE(sword);
+    SET_GLOBAL_ARCHETYPE(corpse_default);
 }
+
+#undef SET_GLOBAL_ARCHETYPE
 
 /*
  * Stores debug-information about how efficient the hashtable
