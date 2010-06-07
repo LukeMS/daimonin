@@ -445,10 +445,10 @@ void player_lvl_adj(object *who, object *op, int flag_msg)
 
             play_sound_player_only(CONTR(who), SOUND_LEVEL_UP, SOUND_NORMAL, 0, 0);
 
-            if (level_up_arch)
+            if (archetype_global._level_up)
             {
                 /* prepare effect */
-                effect_ob = arch_to_object(level_up_arch);
+                effect_ob = arch_to_object(archetype_global._level_up);
                 effect_ob->map = who->map;
                 effect_ob->x = who->x;
                 effect_ob->y = who->y;
