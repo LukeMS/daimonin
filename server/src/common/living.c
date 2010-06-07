@@ -2412,7 +2412,7 @@ object * insert_base_info_object(object *op)
     tmp->type = TYPE_BASE_INFO;
     tmp->speed_left = tmp->speed;
     tmp->speed = 0.0f; /* ensure this object will not be active in any way */
-    tmp->face = base_info_archetype->clone.face;
+    tmp->face = archetype_global._base_info->clone.face;
     SET_FLAG(tmp, FLAG_NO_DROP);
     CLEAR_FLAG(tmp, FLAG_ANIMATE);
     CLEAR_FLAG(tmp, FLAG_FRIENDLY);
