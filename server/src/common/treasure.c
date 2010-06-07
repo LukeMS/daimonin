@@ -297,10 +297,10 @@ static void postparse_treasurelist(treasure *t, treasurelist *tl)
  */
 static void create_money_table(void)
 {
-    coins_arch[0] = archetype_global._mitcoin;
-    coins_arch[1] = archetype_global._goldcoin;
-    coins_arch[2] = archetype_global._silvercoin;
-    coins_arch[3] = archetype_global._coppercoin;
+    coins_arch[0] = find_archetype("mitcoin");
+    coins_arch[1] = find_archetype("goldcoin");
+    coins_arch[2] = find_archetype("silvercoin");
+    coins_arch[3] = find_archetype("coppercoin");
     coins_arch[4] = NULL;
 
     if (!coins_arch[0] || !coins_arch[1] || !coins_arch[2] || !coins_arch[3])
