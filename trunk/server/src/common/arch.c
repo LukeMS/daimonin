@@ -224,9 +224,6 @@ void init_archetypes()
     load_archetypes();
     arch_init = 0;
 
-    if(!(empty_archetype = find_archetype("empty_archetype")))
-        LOG(llevError, "FATAL: no empty_archetype arch. Check the arch set!\n");
-
     if(!(base_info_archetype = find_archetype("base_info")))
         LOG(llevError, "FATAL: no base_info arch. Check the arch set!\n");
 
@@ -624,7 +621,7 @@ object * create_singularity(const char *name)
     object *op;
 
     LOG(llevDebug, "created Singularity: %s\n", name);
-    op = arch_to_object(empty_archetype);
+    op = arch_to_object(archetype_global._empty_archetype);
     FREE_AND_COPY_HASH(op->name, name);
     FREE_AND_COPY_HASH(op->title, " (removed object)");
     SET_FLAG(op, FLAG_IDENTIFIED);
