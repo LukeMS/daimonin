@@ -536,7 +536,6 @@ extern spell                    spells[NROFREALSPELLS];
 EXTERN objectlink               *ban_list_player; /* see ban.c */
 EXTERN objectlink               *ban_list_ip;     /* see ban.c */
 
-EXTERN archetype               *global_aggro_history_arch;
 EXTERN archetype               *global_dmg_info_arch;
 
 EXTERN object                  *active_objects; /* List of active objects that need to be processed */

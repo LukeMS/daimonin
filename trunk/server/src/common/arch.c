@@ -224,9 +224,6 @@ void init_archetypes()
     load_archetypes();
     arch_init = 0;
 
-    if (!(global_aggro_history_arch = find_archetype("aggro_history")))
-        LOG(llevError, "FATAL: no aggro_history arch. Check the arch set!\n");
-
     if (!(global_dmg_info_arch = find_archetype("dmg_info")))
         LOG(llevError, "FATAL: no dmg_info arch. Check the arch set!\n");
 
