@@ -682,7 +682,6 @@ EXTERN New_Face                *blank_face, *next_item_face, *prev_item_face;
 
 EXTERN NewSocket               *init_sockets;
 
-EXTERN archetype               *wp_archetype;   /* Nice to have fast access to it */
 EXTERN archetype               *level_up_arch; /* a global animation arch we use it in 2 modules, so not static */
 
 /* hashtable of beacons */
