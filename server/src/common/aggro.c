@@ -105,7 +105,7 @@ struct obj *aggro_insert_damage(struct obj *target, struct obj *hitter)
             break;
     }
     if(!tmp_t)
-        tmp_t = insert_ob_in_ob(arch_to_object(global_aggro_history_arch), target);
+        tmp_t = insert_ob_in_ob(arch_to_object(archetype_global._aggro_history), target);
 
     /* find or insert 2nd damage info container */
     for(tmp=tmp_t->inv;tmp;tmp=tmp->below)
@@ -114,7 +114,7 @@ struct obj *aggro_insert_damage(struct obj *target, struct obj *hitter)
             break;
     }
     if(!tmp)
-        tmp = insert_ob_in_ob(arch_to_object(global_aggro_history_arch),  tmp_t);
+        tmp = insert_ob_in_ob(arch_to_object(archetype_global._aggro_history),  tmp_t);
 
     tmp = insert_ob_in_ob(arch_to_object(global_dmg_info_arch), tmp);
 
@@ -190,7 +190,7 @@ struct obj *aggro_update_info(struct obj *target, struct obj *hitter, struct obj
                 break;
         }
         if(!history)
-            history = insert_ob_in_ob(arch_to_object(global_aggro_history_arch), target);
+            history = insert_ob_in_ob(arch_to_object(archetype_global._aggro_history), target);
 
         /*
          *    TODO: hitter != NULL & hitter_owner != NULL
