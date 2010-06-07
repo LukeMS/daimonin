@@ -2387,7 +2387,7 @@ static int GameObject_AddQuest(lua_State *L)
         return 0;
     }
 
-    myob = hooks->arch_to_object(hooks->find_archetype("quest_trigger"));
+    myob = hooks->arch_to_object(hooks->archetype_global->_quest_trigger);
 
     if (!myob)
         return luaL_error(L, "object:AddQuest(): Can't find archetype 'quest_trigger'");
@@ -2494,7 +2494,7 @@ static int GameObject_AddQuestTarget(lua_State *L)
 
     get_lua_args(L, "Oii|ssssi", &self, &chance, &nrof, &arch, &name, &race, &title, &level);
 
-    myob = hooks->arch_to_object(hooks->find_archetype("quest_info"));
+    myob = hooks->arch_to_object(hooks->archetype_global->_quest_info);
 
     if (!myob)
         return luaL_error(L, "object:AddQuestTarget(): Can't find archetype 'quest_info'");
