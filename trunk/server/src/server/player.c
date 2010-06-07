@@ -748,10 +748,9 @@ void kill_player(object *op)
     if (settings.stat_loss &&
         op->level >= MAX(3, ABS(settings.stat_loss) / 5))
     {
-       uint8             i,
-                         num_stats_lose = 1,
-                         stats[NUM_STATS] = { 0, 0, 0, 0, 0, 0, 0 };
-       static archetype *deparch = NULL;
+       uint8 i,
+             num_stats_lose = 1,
+             stats[NUM_STATS] = { 0, 0, 0, 0, 0, 0, 0 };
 
         /* Stats are lost on death through death sickness according to
          * settings.stat_loss -- see config.h/STAT_LOSS.
@@ -774,18 +773,9 @@ void kill_player(object *op)
             stats[RANDOM() % NUM_STATS]++;
         }
 
-        if (!deparch)
+        if (!(dep = present_arch_in_ob(archetype_global._deathsick, op)))
         {
-            if (!(deparch = find_archetype("deathsick")))
-            {
-                LOG(llevError, "ERROR: %s/kill_player(): archetype 'deathsick' not found!\n",
-                    __FILE__);
-            }
-        }
-
-        if (!(dep = present_arch_in_ob(deparch, op)))
-        {
-            dep = arch_to_object(deparch);
+            dep = arch_to_object(archetype_global._deathsick);
             insert_ob_in_ob(dep, op);
         }
 
