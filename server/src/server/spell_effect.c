@@ -2038,19 +2038,12 @@ int restoration(object *caster, object *target)
 
 int remove_deathsick(object *op, object *target)
 {
-    archetype  *at;
-    object     *depl;
-    int         i, success = 0;
-
-    if ((at = find_archetype("deathsick")) == NULL)
-    {
-        LOG(llevBug, "BUG: Could not find archetype deathsick");
-        return 0;
-    }
+    object *depl;
+    int     i,
+            success = 0;
 
     if (!op || !target)
         return success;
-
 
     if (target->type != PLAYER)
     {
@@ -2070,7 +2063,7 @@ int remove_deathsick(object *op, object *target)
     }
 
 
-    if ((depl = present_arch_in_ob(at, target)) != NULL)
+    if ((depl = present_arch_in_ob(archetype_global._deathsick, target)) != NULL)
     {
         for (i = 0; i < NUM_STATS; i++)
         {
