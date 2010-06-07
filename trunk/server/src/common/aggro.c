@@ -225,7 +225,7 @@ struct obj *aggro_update_info(struct obj *target, struct obj *hitter, struct obj
             }
             else
             {
-                aggro = insert_ob_in_ob(arch_to_object(archetyp_global._dmg_info), history);
+                aggro = insert_ob_in_ob(arch_to_object(archetype_global._dmg_info), history);
                 aggro->enemy_count = hitter->count;    /* tag so we can identify the hitter */
                 aggro->enemy = hitter;    /* so we can find later this damage dealer */
                 aggro->stats.hp = dmg;
