@@ -217,7 +217,6 @@ void set_pticks_time(long t)
 
 static void init_globals()
 {
-    level_up_arch = NULL;
     arch_cmp = 0;       /* How many strcmp's */
     arch_search = 0;    /* How many searches */
     arch_init = 0;      /* True if doing arch initialization */

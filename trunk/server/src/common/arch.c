@@ -224,9 +224,6 @@ void init_archetypes()
     load_archetypes();
     arch_init = 0;
 
-    if (!(level_up_arch = find_archetype("level_up")))
-        LOG(llevError, "FATAL: no level_up arch. Check the arch set!\n");
-
     if (!(global_aggro_history_arch = find_archetype("aggro_history")))
         LOG(llevError, "FATAL: no aggro_history arch. Check the arch set!\n");
 
