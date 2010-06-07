@@ -1418,7 +1418,7 @@ void save_object(FILE *fp,object *op, int flag) {
 		return;
 
     if((at=op->arch)==NULL)
-		at=empty_archetype;
+		at=archetype_global._empty_archetype;
 	fprintf(fp,"arch %s\n",at->name);
 
     if((cp=get_ob_diff(op,&at->clone)))
