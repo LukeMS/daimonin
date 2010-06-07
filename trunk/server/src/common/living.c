@@ -736,29 +736,18 @@ void drain_specific_stat(object *op, int deplete_stats)
 void drain_level(object *op, int level, int mode, int ticks)
 {
     object *force;
-    static archetype  *at = NULL;
     int original_level = op->level;
     
     if (op->level <= 1) /* level 1 mobs can't get drained any further */
         return;
 
-    if (!at)
-    {
-        at = find_archetype("drain");
-        if (!at)
-        {
-            LOG(llevBug, "BUG: Couldn't find archetype drain.\n");
-            return;
-        }
-    }
-
     if(mode==0)
-        force = present_arch_in_ob(at, op);
+        force = present_arch_in_ob(archetype_global._drain, op);
     else
-        force = present_arch_in_ob_temp(at, op);
+        force = present_arch_in_ob_temp(archetype_global._drain, op);
     if (!force)
     {
-        force = arch_to_object(at);
+        force = arch_to_object(archetype_global._drain);
         force = insert_ob_in_ob(force, op);
         SET_FLAG(force, FLAG_APPLIED);
 

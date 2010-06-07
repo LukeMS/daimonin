@@ -409,7 +409,6 @@ void player_lvl_adj(object *who, object *op, int flag_msg)
 {
     char    buf[MEDIUM_BUF];
     object *force;
-    archetype *at = find_archetype("drain");
     int drain_level = 0;
 
     SET_FLAG(who, FLAG_NO_FIX_PLAYER);
@@ -423,15 +422,7 @@ void player_lvl_adj(object *who, object *op, int flag_msg)
         return;
     }
 
-    /* check for drain before assuming the player has leveled up */
-    if (!at)
-    {
-        LOG(llevBug, "BUG: Couldn't find archetype drain.\n");
-        return;
-    }
-
-    force = present_arch_in_ob(at, op);
-    if (force)
+    if ((force = present_arch_in_ob(archetype_global._drain, op)))
         drain_level = force->level;
 
     if (op->level < MAXLEVEL && op->stats.exp >= GET_LEVEL_EXP(op->level + drain_level + 1))

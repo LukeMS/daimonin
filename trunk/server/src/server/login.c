@@ -33,7 +33,6 @@ int player_save(object *op)
     player *pl  = CONTR(op);
     int     tmp, have_file = TRUE, i, wiz = QUERY_FLAG(op, FLAG_WIZ);
     object *force;
-    archetype *at = find_archetype("drain");
     int drain_level = 0;
 
 #ifdef USE_CHANNELS
@@ -124,15 +123,8 @@ int player_save(object *op)
 #endif
 
     /* check for drain so we know the proper level of the player to save the hp table with */
-    if (!at)
-        LOG(llevBug, "BUG: Couldn't find archetype drain.\n");
-    else
-    {
-        force = present_arch_in_ob(at, op);
-
-        if (force)
-            drain_level = force->level;
-    }
+    if ((force = present_arch_in_ob(archetype_global._drain, op)))
+        drain_level = force->level;
 
     /* save hp table */
     fprintf(fp, "lev_hp %d\n", op->level + drain_level);
