@@ -224,9 +224,6 @@ void init_archetypes()
     load_archetypes();
     arch_init = 0;
 
-    if(!(wp_archetype = find_archetype("waypoint")))
-        LOG(llevError, "FATAL: no waypoint arch. Check the arch set!\n");
-
     if (!(level_up_arch = find_archetype("level_up")))
         LOG(llevError, "FATAL: no level_up arch. Check the arch set!\n");
 
