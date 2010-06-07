@@ -602,26 +602,14 @@ void do_some_living(object *op)
  * died. */
 static const char *CreateGravestone(object *op, mapstruct *m, int x, int y)
 {
-    static archetype *at = NULL;
-    object           *gravestone;
-    int               i;
-    char              buf[MEDIUM_BUF];
-    timeanddate_t     tad;
+    object        *gravestone;
+    int            i;
+    char           buf[MEDIUM_BUF];
+    timeanddate_t  tad;
 
-    if (!at)
-    {
-        if (!(at = find_archetype("gravestone")))
-        {
-            LOG(llevBug, "BUG:: %s/CreateGravestone(): archetype 'gravestone' not found!\n",
-                         __FILE__);
-
-            return NULL;
-        }
-    }
-
-    if (!(gravestone = arch_to_object(at)) ||
+    if (!(gravestone = arch_to_object(archetype_global._gravestone)) ||
         (i = check_insertion_allowed(gravestone, m, x, y, 1,
-                                    INS_NO_FORCE | INS_WITHIN_LOS)) == -1)
+                                     INS_NO_FORCE | INS_WITHIN_LOS)) == -1)
     {
         return NULL;
     }
@@ -663,7 +651,8 @@ static const char *CreateGravestone(object *op, mapstruct *m, int x, int y)
     gravestone->x = x;
     gravestone->y = y;
     insert_ob_in_map(gravestone, m, NULL, INS_NO_WALK_ON);
-	return gravestone->msg;
+
+    return gravestone->msg;
 }
 
 /* If the player should die (lack of hp, food, etc), we call this.
