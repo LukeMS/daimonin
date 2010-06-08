@@ -746,15 +746,15 @@ void kill_player(object *op)
      * and/or query flags here to be sure the player even has the ailment in
      * question. Not sure if all ailments have a flag though.
      * -- Smacky 20100608 */
-    cure_what_ails_you(op, ST1_FORCE_DEPLETE);
-    cure_what_ails_you(op, ST1_FORCE_DRAIN);
-    cure_what_ails_you(op, ST1_FORCE_SLOWED);
-    cure_what_ails_you(op, ST1_FORCE_FEAR);
-    cure_what_ails_you(op, ST1_FORCE_SNARE);
-    cure_what_ails_you(op, ST1_FORCE_PARALYZE);
-    cure_what_ails_you(op, ST1_FORCE_CONFUSED);
-    cure_what_ails_you(op, ST1_FORCE_BLIND);
-    cure_what_ails_you(op, ST1_FORCE_POISON);
+    (void)cure_what_ails_you(op, ST1_FORCE_DEPLETE);
+    (void)cure_what_ails_you(op, ST1_FORCE_DRAIN);
+    (void)cure_what_ails_you(op, ST1_FORCE_SLOWED);
+    (void)cure_what_ails_you(op, ST1_FORCE_FEAR);
+    (void)cure_what_ails_you(op, ST1_FORCE_SNARE);
+    (void)cure_what_ails_you(op, ST1_FORCE_PARALYZE);
+    (void)cure_what_ails_you(op, ST1_FORCE_CONFUSED);
+    (void)cure_what_ails_you(op, ST1_FORCE_BLIND);
+    (void)cure_what_ails_you(op, ST1_FORCE_POISON);
 
     /* The rule is: only decrease stats when the player is at least level 3 or
      * higher!  */
