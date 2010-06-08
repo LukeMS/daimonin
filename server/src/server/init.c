@@ -135,7 +135,6 @@ static void init_strings()
     shstr_cons.player = add_string("player");
     shstr_cons.money = add_string("money");
     shstr_cons.RANK_FORCE = add_string("RANK_FORCE");
-    shstr_cons.rank_force = add_string("rank_force");
     shstr_cons.ALIGNMENT_FORCE = add_string("ALIGNMENT_FORCE");
     shstr_cons.GUILD_FORCE = add_string("GUILD_FORCE");
 
