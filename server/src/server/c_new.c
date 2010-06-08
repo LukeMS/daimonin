@@ -628,7 +628,8 @@ void generate_ext_title(player *pl)
     /* collect all information from the force objects. Just walk one time through them*/
     for (walk = pl->ob->inv; walk != NULL; walk = walk->below)
     {
-        if (walk->name == shstr_cons.GUILD_FORCE && walk->arch->name == shstr_cons.guild_force)
+        if (walk->name == shstr_cons.GUILD_FORCE &&
+            walk->arch == archetype_global._guild_force)
         {
             if (walk->slaying)
                 strcpy(prof, walk->slaying);
