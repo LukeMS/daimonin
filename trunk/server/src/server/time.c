@@ -1495,11 +1495,33 @@ int process_object(object *op)
                         new_draw_info(NDI_UNIQUE, 0, op->env, "The world suddenly moves slower!");
                 }
                 else if(op->sub_type1 == ST1_FORCE_DEPLETE) /* depletion */
+                {
                     new_info_map_except_format(NDI_UNIQUE|NDI_GREY, op->env->map, op->env->x, op->env->y,
-                                MAP_INFO_NORMAL, op->env, op->env, "%s recovers depleted stats.", query_name(op->env));
+                    MAP_INFO_NORMAL, op->env, op->env, "%s recovers depleted stats.", query_name(op->env));
+                    if(op->env->type == PLAYER)
+                        new_draw_info(NDI_UNIQUE, 0, op->env, "You recover depleted stats!");
+                }
                 else if(op->sub_type1 == ST1_FORCE_DRAIN)
+                {
                     new_info_map_except_format(NDI_UNIQUE|NDI_GREY, op->env->map, op->env->x, op->env->y,
-                                MAP_INFO_NORMAL, op->env, op->env, "%s recovers drained levels.", query_name(op->env));
+                    MAP_INFO_NORMAL, op->env, op->env, "%s recovers drained levels.", query_name(op->env));
+                    if(op->env->type == PLAYER)
+                        new_draw_info(NDI_UNIQUE, 0, op->env, "You recover drained levels!");
+                }
+                else if(op->sub_type1 == ST1_FORCE_POISON)
+                {
+                    new_info_map_except_format(NDI_UNIQUE|NDI_GREY, op->env->map, op->env->x, op->env->y,
+                    MAP_INFO_NORMAL, op->env, op->env, "%s's body seems cleansed.", query_name(op->env));
+                    if(op->env->type == PLAYER)
+                        new_draw_info(NDI_UNIQUE, 0, op->env, "Your body seems cleansed!");
+                }
+                else if(op->sub_type1 == ST1_FORCE_DEATHSICK)
+                {
+                    new_info_map_except_format(NDI_UNIQUE|NDI_GREY, op->env->map, op->env->x, op->env->y,
+                    MAP_INFO_NORMAL, op->env, op->env, "%s seems to no longer suffer from death sickness.", query_name(op->env));
+                    if(op->env->type == PLAYER)
+                        new_draw_info(NDI_UNIQUE, 0, op->env, "You no longer suffer from death sickness!");
+                }
                 /*
                 else
                     new_info_map_except_format(NDI_UNIQUE|NDI_GREY, op->env->map, op->env->x, op->env->y,
@@ -1579,15 +1601,17 @@ int process_object(object *op)
           regenerate_rod(op);
           return 1;
         case FORCE:
+          if (!QUERY_FLAG(op, FLAG_IS_USED_UP))
+              remove_force(op);
+          else if (op->sub_type1 == ST1_FORCE_POISON)
+              poison_more(op);
+          return 1;
         case POTION_EFFECT:
           if (!QUERY_FLAG(op, FLAG_IS_USED_UP))
               remove_force(op);
           return 1;
         case SPAWN_POINT:
           spawn_point(op);
-          return 0;
-        case POISONING:
-          poison_more(op);
           return 0;
         case DISEASE:
           move_disease(op);

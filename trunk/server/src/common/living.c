@@ -1434,6 +1434,11 @@ void fix_player(object *op)
                     {
                             skill_level_drain += tmp->level;
                     }
+                    else if(tmp->sub_type1 == ST1_FORCE_POISON) /* applied poison  */
+                    {
+                        for (i = 0; i < NUM_STATS; i++)
+                            change_stat_value(&(op->stats), i, get_stat_value(&(tmp->stats), i));
+                    }
                     else
                     {
                         pl->speed_enc_base += ARMOUR_SPEED(tmp);
@@ -1459,8 +1464,6 @@ void fix_player(object *op)
                 case DISEASE:
                 case SYMPTOM:
                   pl->speed_reduce_from_disease = tmp->last_sp;
-
-                case POISONING:
                   for (i = 0; i < NUM_STATS; i++)
                       change_stat_value(&(op->stats), i, get_stat_value(&(tmp->stats), i));
 
@@ -1485,7 +1488,10 @@ void fix_player(object *op)
                       /* and we use adding attack boni - i set this for 120% max...
                                      * exclude all what is damaging itself with attack[]
                                     */
-                      if (tmp->type != DISEASE && tmp->type != SYMPTOM && tmp->type != POISONING)
+                      if (tmp->type != DISEASE &&
+                          tmp->type != SYMPTOM &&
+                          (tmp->type != FORCE ||
+                           tmp->sub_type1 != ST1_FORCE_POISON))
                       {
                           if (tmp->attack[i] > 0)
                           {

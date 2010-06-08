@@ -305,7 +305,6 @@ static struct constant_decl preset_game_constants[] =
     {"TYPE_RANDOM_DROP",      TYPE_RANDOM_DROP},
     {"TYPE_CONVERTER",        CONVERTER},
     {"TYPE_BRACERS",          BRACERS},
-    {"TYPE_POISONING",        POISONING},
     {"TYPE_SAVEBED",          SAVEBED},
     {"TYPE_POISONCLOUD",      POISONCLOUD},
     {"TYPE_FIREHOLES",        FIREHOLES},

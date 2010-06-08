@@ -267,11 +267,7 @@ error - Your ANSI C compiler should be defining __STDC__;
                                      */
 #define CONVERTER               103
 #define BRACERS                 104
-#define POISONING               105 /* thats the poison force... if á player applies for example
-                                     * a POISON object (poison food), this force is inserted in
-                                     * the player and does the poison effect until it wear out
-                                     * or get removed
-                                     */
+/* 105 is free. */
 #define SAVEBED                 106
 #define POISONCLOUD             107
 #define FIREHOLES               108
@@ -479,6 +475,8 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define ST1_FORCE_PARALYZE  6
 #define ST1_FORCE_CONFUSED  7
 #define ST1_FORCE_BLIND     8
+#define ST1_FORCE_POISON    9
+#define ST1_FORCE_DEATHSICK 10
 
 /* END SUB TYPE 1 DEFINE */
 

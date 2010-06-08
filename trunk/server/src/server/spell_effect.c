@@ -633,7 +633,7 @@ int cast_light(object *op, object *caster, int dir)
                 if (target->head)
                     target = target->head;
                 damage_ob(target, dam, op, ENV_ATTACK_CHECK);
-                return 1; /* one success only! */
+                return 1; /* one , const char *msgsuccess only! */
             }
     }
 
@@ -755,9 +755,8 @@ int dimension_door(object *op, int dir)
 
 int cast_heal(object *op, int level, object *target, int spell_type)
 {
-    archetype  *at;
-    object     *temp;
-    int         heal = 0, success = 0;
+    int heal = 0,
+        success = 0;
 
     /*LOG(llevNoLog,"dir: %d (%s -> %s)\n", dir, op?op->name:"<no op>",tmp?tmp->name:"<no tmp>");*/
 
@@ -775,8 +774,6 @@ int cast_heal(object *op, int level, object *target, int spell_type)
           break;
 
         case SP_CURE_POISON:
-          at = find_archetype("poisoning");
-
           if (op != target && target->type == PLAYER)
               new_draw_info_format(NDI_UNIQUE, 0, target, "%s casts cure poison on you!",
                                    op->name ? op->name : "someone");
@@ -784,35 +781,11 @@ int cast_heal(object *op, int level, object *target, int spell_type)
               new_draw_info_format(NDI_UNIQUE, 0, op, "You cast cure poison on %s!",
                                    target->name ? target->name : "someone");
 
-          for (temp = target->inv; temp != NULL; temp = temp->below)
-          {
-              if (temp->arch == at)
-              {
-                  success = 1;
-                  temp->stats.food = 1;
-              }
-          }
+          success = cure_what_ails_you(target, ST1_FORCE_POISON);
 
-          if (success)
-          {
-              if (target->type == PLAYER)
-                  new_draw_info(NDI_UNIQUE, 0, target, "Your body feels cleansed.");
-              if (op != target && op->type == PLAYER)
-                  new_draw_info_format(NDI_UNIQUE, 0, op, "%s body seems cleansed.",
-                                       target->name ? target->name : "someone");
-          }
-          else
-          {
-              if (target->type == PLAYER)
-                  new_draw_info(NDI_UNIQUE, 0, target, "You are not poisoned.");
-              if (op != target && op->type == PLAYER)
-                  new_draw_info_format(NDI_UNIQUE, 0, op, "%s is not poisoned.", target->name ? target->name : "someone");
-          }
           break;
 
         case SP_CURE_CONFUSION:
-          at = find_archetype("confusion");
-
           if (op != target && target->type == PLAYER)
               new_draw_info_format(NDI_UNIQUE, 0, target, "%s casts cure confusion on you!",
                                    op->name ? op->name : "someone");
@@ -820,35 +793,11 @@ int cast_heal(object *op, int level, object *target, int spell_type)
               new_draw_info_format(NDI_UNIQUE, 0, op, "You cast cure confusion on %s!",
                                    target->name ? target->name : "someone");
 
-          for (temp = target->inv; temp != NULL; temp = temp->below)
-          {
-              if (temp->arch == at)
-              {
-                  success = 1;
-                  temp->stats.food = 1;
-              }
-          }
+          success = cure_what_ails_you(target, ST1_FORCE_CONFUSED);
 
-          if (success)
-          {
-              if (target->type == PLAYER)
-                  new_draw_info(NDI_UNIQUE, 0, target, "Your mind feels clearer.");
-              if (op != target && op->type == PLAYER)
-                  new_draw_info_format(NDI_UNIQUE, 0, op, "%s mind seems clearer.",
-                                       target->name ? target->name : "someone");
-          }
-          else
-          {
-              if (target->type == PLAYER)
-                  new_draw_info(NDI_UNIQUE, 0, target, "Your are not confused.");
-              if (op != target && op->type == PLAYER)
-                  new_draw_info_format(NDI_UNIQUE, 0, op, "%s is not confused.", target->name ? target->name : "someone");
-          }
           break;
 
         case SP_CURE_BLINDNESS:
-          at = find_archetype("blindness");
-
           if (op != target && target->type == PLAYER)
               new_draw_info_format(NDI_UNIQUE, 0, target, "%s casts cure blindness on you!",
                                    op->name ? op->name : "someone");
@@ -856,30 +805,8 @@ int cast_heal(object *op, int level, object *target, int spell_type)
               new_draw_info_format(NDI_UNIQUE, 0, op, "You cast cure blindness on %s!",
                                    target->name ? target->name : "someone");
 
-          for (temp = target->inv; temp != NULL; temp = temp->below)
-          {
-              if (temp->arch == at)
-              {
-                  success = 1;
-                  temp->stats.food = 1;
-              }
-          }
+          success = cure_what_ails_you(target, ST1_FORCE_BLIND);
 
-          if (success)
-          {
-              if (target->type == PLAYER)
-                  new_draw_info(NDI_UNIQUE, 0, target, "Your vision begins to return.");
-              if (op != target && op->type == PLAYER)
-                  new_draw_info_format(NDI_UNIQUE, 0, op, "%s vision seems to return.",
-                                       target->name ? target->name : "someone");
-          }
-          else
-          {
-              if (target->type == PLAYER)
-                  new_draw_info(NDI_UNIQUE, 0, target, "You are not blinded.");
-              if (op != target && op->type == PLAYER)
-                  new_draw_info_format(NDI_UNIQUE, 0, op, "%s is not blinded.", target->name ? target->name : "someone");
-          }
           break;
 
         case SP_MINOR_HEAL:
@@ -4170,4 +4097,23 @@ int cast_cause_conflict(object *op, object *caster, archetype *spellarch, int ty
 #endif
 }
 
+/* Neutralises effects like poisoning, blindness, and confusion. */
+int cure_what_ails_you(object *op, uint8 st1)
+{
+    object *tmp = op->inv;
 
+    for (; tmp; tmp = tmp->below)
+    {
+        if (tmp->type == FORCE &&
+            tmp->sub_type1 == st1)
+        {
+            /* The force will be removed next tick in process_objects(). */
+            tmp->stats.food = 1;
+
+            /* We assume only one force. */
+            return 1;
+        }
+    }
+
+    return 0;
+}

@@ -418,7 +418,8 @@ object * find_marked_object(object *op)
  */
 char *examine_monster(object *op, object *tmp, char *buf, int flag)
 {
-    object *mon = tmp->head ? tmp->head : tmp;
+    object *mon = tmp->head ? tmp->head : tmp,
+           *walk;
     float   dps;
     char   *gender, *att;
     int     val, val2, i;
@@ -553,10 +554,14 @@ char *examine_monster(object *op, object *tmp, char *buf, int flag)
               break;
         }
     }
-    if (present_in_ob(POISONING, mon) != NULL)
+
+    for (walk = op->inv; walk; walk = walk->below)
     {
-        sprintf(buf2,"%s looks very ill.\n", att);
-        strcat(buf,buf2);
+        if (walk->type == FORCE &&
+            walk->sub_type1 == ST1_FORCE_POISON)
+        {
+            sprintf(strchr(buf, '\0'), "%s looks very ill.\n", att);
+        }
     }
 
     if(op)
