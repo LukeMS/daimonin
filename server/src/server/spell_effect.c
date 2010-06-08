@@ -781,7 +781,7 @@ int cast_heal(object *op, int level, object *target, int spell_type)
               new_draw_info_format(NDI_UNIQUE, 0, op, "You cast cure poison on %s!",
                                    target->name ? target->name : "someone");
 
-          success = cure_what_ails_you(target, ST1_FORCE_POISON);
+          success = (cure_what_ails_you(target, ST1_FORCE_POISON)) ? 1 : 0;
 
           break;
 
@@ -793,7 +793,7 @@ int cast_heal(object *op, int level, object *target, int spell_type)
               new_draw_info_format(NDI_UNIQUE, 0, op, "You cast cure confusion on %s!",
                                    target->name ? target->name : "someone");
 
-          success = cure_what_ails_you(target, ST1_FORCE_CONFUSED);
+          success = (cure_what_ails_you(target, ST1_FORCE_CONFUSED)) ? 1 : 0;
 
           break;
 
@@ -805,7 +805,7 @@ int cast_heal(object *op, int level, object *target, int spell_type)
               new_draw_info_format(NDI_UNIQUE, 0, op, "You cast cure blindness on %s!",
                                    target->name ? target->name : "someone");
 
-          success = cure_what_ails_you(target, ST1_FORCE_BLIND);
+          success = (cure_what_ails_you(target, ST1_FORCE_BLIND)) ? 1 : 0;
 
           break;
 
@@ -4098,7 +4098,7 @@ int cast_cause_conflict(object *op, object *caster, archetype *spellarch, int ty
 }
 
 /* Neutralises effects like poisoning, blindness, and confusion. */
-int cure_what_ails_you(object *op, uint8 st1)
+object *cure_what_ails_you(object *op, uint8 st1)
 {
     object *tmp = op->inv;
 
@@ -4111,9 +4111,9 @@ int cure_what_ails_you(object *op, uint8 st1)
             tmp->stats.food = 1;
 
             /* We assume only one force. */
-            return 1;
+            return tmp;
         }
     }
 
-    return 0;
+    return NULL;
 }

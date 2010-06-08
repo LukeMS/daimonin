@@ -647,7 +647,7 @@ int                         cast_cause_disease(object *op, object *caster, int d
 void                        move_aura(object *aura);
 void                        move_peacemaker(object *op);
 int                         cast_cause_conflict(object *op, object *caster, archetype *spellarch, int type);
-int                         cure_what_ails_you(object *op, uint8 st1);
+object                     *cure_what_ails_you(object *op, uint8 st1);
 /* spell_util.c */
 void                        init_spells(void);
 void                        dump_spells(void);
