@@ -629,7 +629,6 @@ EXTERN struct shstr_constants
     shstr *ALIGNMENT_FORCE;
     shstr *alignment_force;
     shstr *GUILD_FORCE;
-    shstr *guild_force;
     shstr *stat_strength;
     shstr *stat_dexterity;
     shstr *stat_constitution;

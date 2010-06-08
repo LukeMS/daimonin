@@ -25,8 +25,6 @@
 
 #include <global.h>
 
-static archetype *at_guild_force = NULL;
-
 /* get the guild object from a player */
 object *guild_get(player *pl, char *name)
 {
@@ -78,9 +76,8 @@ object *guild_join(player *pl, char *name, int s1_group, int s1_value, int s2_gr
     {
         if(!pl->guild_force)
         {
-            if(!at_guild_force)
-                at_guild_force = find_archetype(shstr_cons.guild_force);
-            pl->guild_force = insert_ob_in_ob(arch_to_object(at_guild_force), pl->ob);
+            pl->guild_force = insert_ob_in_ob(arch_to_object(archetype_global._guild_force),
+                                              pl->ob);
         }
 
         guild = pl->guild_force;
@@ -131,9 +128,8 @@ void guild_leave(player *pl)
 
     if(!old)
     {
-        if(!at_guild_force)
-            at_guild_force = find_archetype(shstr_cons.guild_force);
-        old= insert_ob_in_ob(arch_to_object(at_guild_force), walk);
+        old = insert_ob_in_ob(arch_to_object(archetype_global._guild_force),
+                              walk);
     }
 
     /* we have now an old or new created guild force inside the main info */

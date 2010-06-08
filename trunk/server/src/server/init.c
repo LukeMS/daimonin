@@ -139,7 +139,6 @@ static void init_strings()
     shstr_cons.ALIGNMENT_FORCE = add_string("ALIGNMENT_FORCE");
     shstr_cons.alignment_force = add_string("alignment_force");
     shstr_cons.GUILD_FORCE = add_string("GUILD_FORCE");
-    shstr_cons.guild_force = add_string("guild_force");
 
     shstr_cons.stat_strength = add_string("strength");
     shstr_cons.stat_dexterity = add_string("dexterity");
