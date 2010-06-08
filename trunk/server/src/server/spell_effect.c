@@ -1908,48 +1908,45 @@ int remove_depletion(object *op, object *target)
     return success;
 }
 
-int restoration(object *caster, object *target)
+int restoration(object *op, object *target)
 {
-    int success = 0;
-    object *force;
+    object *depl;
+    int     success = 0;
 
-    /* try to find and remove the draining forces */
-    SET_FLAG(target, FLAG_NO_FIX_PLAYER);
-    if ((force = present_arch_in_ob(archetype_global._drain, target)))
+    /* Sanity checks */
+    if (!op ||
+        !target)
     {
-        success = 1;
-        remove_ob(force);
+        return 0;
     }
-    if ((force = present_arch_in_ob_temp(archetype_global._drain, target)))
-    {
-        success = 1;
-        remove_ob(force);
-    }
-    CLEAR_FLAG(target, FLAG_NO_FIX_PLAYER);
 
-    if(caster)
+    if (op != target)
     {
-        if (caster->type == PLAYER)
+        if (op->type == PLAYER)
         {
-            if(caster == target)
-                new_draw_info(NDI_UNIQUE, 0, caster, "You cast restoration on yourself.");
-            else
-                new_draw_info_format(NDI_UNIQUE, 0, caster, "You cast restoration on %s.", query_base_name(target, caster));
+            new_draw_info_format(NDI_UNIQUE, 0, op, "You cast restoration on %s.",
+                                 query_base_name(target, op));
         }
-        if (caster != target && target->type == PLAYER)
+
+        if (target->type == PLAYER)
         {
-            new_draw_info_format(NDI_UNIQUE, 0, target, "%s cast restoration on you.", query_base_name(caster, target));
+            new_draw_info_format(NDI_UNIQUE, 0, target, "%s casts restoration on you.",
+                                 query_base_name(op, target));
         }
     }
 
-    if(success)
+    if ((depl = cure_what_ails_you(target, ST1_FORCE_DRAIN)))
     {
+         success = 1;
+         remove_ob(depl);
+    }
 
-        FIX_PLAYER(target ,"restoration");
-        if(target->type == PLAYER)
-            new_draw_info(NDI_UNIQUE, 0, target, "Your level is restored!");
-        if (caster && caster != target && target->type == PLAYER)
-            new_draw_info_format(NDI_UNIQUE, 0, caster, "You restored %s.", query_base_name(caster, target));
+    if (success &&
+        op != target &&
+        op->type == PLAYER)
+    {
+        new_draw_info_format(NDI_UNIQUE, 0, op, "You restored %s.",
+                             query_base_name(op, target));
     }
 
     return success;
