@@ -368,6 +368,30 @@ int cast_spell(object *op, object *caster, int dir, int type, int ability, Spell
     if ((caster && !OBJECT_ACTIVE(caster)) || (target && !OBJECT_ACTIVE(target)))
         return 0;
 
+#if 0
+    if (op != target)
+    {
+        if (op->type == PLAYER)
+        {
+            char buf[MEDIUM_BUF] = "";
+
+            if (target)
+            {
+                sprintf(buf, " on %s", query_base_name(target, op));
+            }
+
+            new_draw_info_format(NDI_UNIQUE, 0, op, "You cast ~%s~%s.",
+                                 spells[type].name, buf);
+        }
+
+        if (target->type == PLAYER)
+        {
+            new_draw_info_format(NDI_UNIQUE, 0, target, "%s casts ~%s~ on you.",
+                                 query_base_name(op, target), spells[type].name);
+        }
+    }
+#endif
+
     switch ((enum spellnrs) type)
     {
           /*
