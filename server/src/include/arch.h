@@ -86,7 +86,6 @@ typedef struct _archetype_global
     archetype *_confusion;
     archetype *_blindness;
     archetype *_paralyze;
-    archetype *_sword;
     archetype *_corpse_default;
 }
 _archetype_global;
