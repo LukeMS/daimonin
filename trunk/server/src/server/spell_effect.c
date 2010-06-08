@@ -1892,8 +1892,6 @@ int remove_depletion(object *op, object *target)
                 new_draw_info(NDI_UNIQUE, 0, target, restore_msg[i]);
             }
         }
-
-        remove_ob(depl);
     }
 
     if (success &&
@@ -1938,7 +1936,6 @@ int restoration(object *op, object *target)
     if ((depl = cure_what_ails_you(target, ST1_FORCE_DRAIN)))
     {
          success = 1;
-         remove_ob(depl);
     }
 
     if (success &&
@@ -1991,8 +1988,6 @@ int remove_deathsick(object *op, object *target)
                 new_draw_info(NDI_UNIQUE, 0, target, restore_msg[i]);
             }
         }
-
-        remove_ob(depl);
     }
 
     if (success &&
@@ -4096,7 +4091,15 @@ object *cure_what_ails_you(object *op, uint8 st1)
             tmp->sub_type1 == st1)
         {
             /* The force will be removed next tick in process_objects(). */
-            tmp->stats.food = 1;
+            if (QUERY_FLAG(tmp, FLAG_IS_USED_UP))
+            {
+                tmp->stats.food = 1;
+            }
+            /* Remove it now. */
+            else
+            {
+                remove_force(tmp);
+            }
 
             /* We assume only one force. */
             return tmp;
