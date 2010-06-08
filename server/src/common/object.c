@@ -1474,7 +1474,7 @@ void drop_ob_inv(object *ob)
          * that the corpse arch can be variable (ie, different capacities for a
          * gnat and a demon) and not hardwired in to the code.
          * -- Smacky 20090302 */
-        corpse = get_archetype("corpse_default");
+        corpse = arch_to_object(archetype_global._corpse_default);
 
         /* Give thie corpse the correct face -- this is the 0th entry of the
          * mob's animation (corpses are not animated). */

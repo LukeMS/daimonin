@@ -944,7 +944,7 @@ static void dump_races()
 
 void init_races()
 {
-    archetype  *at, *tmp;
+    archetype  *at;
     racelink   *list;
     static int  init_done   = 0;
 
@@ -983,16 +983,11 @@ void init_races()
     };
 
     /* last action: for all races without a special defined corpse
-     * add our corpse_default arch to it.
-     */
-    tmp = find_archetype("corpse_default");
-    if (!tmp)
-        LOG(llevError, "ERROR: init_races: can't find corpse_default in arches!\n");
-
+     * add our corpse_default arch to it. */
     for (list = first_race; list; list = list->next)
     {
         if (!list->corpse)
-            list->corpse = tmp;
+            list->corpse = archetype_global._corpse_default;
     }
 
 #ifdef DEBUG
