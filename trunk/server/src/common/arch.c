@@ -253,7 +253,6 @@ void init_archetypes()
     SET_GLOBAL_ARCHETYPE(confusion);
     SET_GLOBAL_ARCHETYPE(blindness);
     SET_GLOBAL_ARCHETYPE(paralyze);
-    SET_GLOBAL_ARCHETYPE(sword);
     SET_GLOBAL_ARCHETYPE(corpse_default);
 }
 
