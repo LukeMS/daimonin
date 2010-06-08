@@ -2844,11 +2844,7 @@ static int GameObject_CreatePlayerInfo(lua_State *L)
     lua_object *whatptr;
 
     get_lua_args(L, "Os", &whatptr, &txt);
-
-    myob = hooks->arch_to_object(hooks->find_archetype("player_info"));
-
-    if (!myob)
-        return luaL_error(L, "object:CreatePlayerInfo(): Can't find archetype 'player_info'");
+    myob = hooks->arch_to_object(hooks->archetype_global->_player_info);
 
     /* setup the info and put it in activator */
     FREE_AND_COPY_HASH(myob->name, txt);
@@ -2875,8 +2871,12 @@ static int GameObject_GetPlayerInfo(lua_State *L)
     /* get the first linked player_info arch in this inventory */
     for (walk = WHO->inv; walk != NULL; walk = walk->below)
     {
-        if (walk->name && walk->arch->name == hooks->shstr_cons->player_info && !strcmp(walk->name, name))
+        if (walk->name &&
+            walk->arch == hooks->archetype_global->_player_info &&
+            !strcmp(walk->name, name))
+        {
             return push_object(L, &GameObject, walk);
+        }
     }
 
     return 0; /* there was non */
@@ -2905,8 +2905,12 @@ static int GameObject_GetNextPlayerInfo(lua_State *L)
     /* get the next linked player_info arch in this inventory */
     for (walk = myob->data.object->below; walk != NULL; walk = walk->below)
     {
-        if (walk->name && walk->arch->name == hooks->shstr_cons->player_info && !strcmp(walk->name, name))
+        if (walk->name &&
+            walk->arch == hooks->archetype_global->_player_info &&
+            !strcmp(walk->name, name))
+        {
             return push_object(L, &GameObject, walk);
+        }
     }
 
     return 0; /* there was non left */
