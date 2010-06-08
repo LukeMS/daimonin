@@ -1966,33 +1966,35 @@ int restoration(object *caster, object *target)
 int remove_deathsick(object *op, object *target)
 {
     object *depl;
-    int     i,
-            success = 0;
+    int     success = 0;
 
-    if (!op || !target)
-        return success;
-
-    if (target->type != PLAYER)
+    /* Sanity checks */
+    if (!op ||
+        !target)
     {
-        if (op->type == PLAYER) /* fake messages for non player... */
-        {
-            new_draw_info_format(NDI_UNIQUE, 0, op, "You cast remove death sickness on %s.", query_base_name(target, op));
-            new_draw_info(NDI_UNIQUE, 0, op, "There is no death sickness.");
-        }
-        return success;
+        return 0;
     }
+
     if (op != target)
     {
         if (op->type == PLAYER)
-            new_draw_info_format(NDI_UNIQUE, 0, op, "You cast remove death sickness on %s.", query_base_name(target, op));
-        else if (target->type == PLAYER)
-            new_draw_info_format(NDI_UNIQUE, 0, target, "%s cast remove death sickness on you.", query_base_name(op, target));
+        {
+            new_draw_info_format(NDI_UNIQUE, 0, op, "You cast remove death sickness on %s.",
+                                 query_base_name(target, op));
+        }
+
+        if (target->type == PLAYER)
+        {
+            new_draw_info_format(NDI_UNIQUE, 0, target, "%s casts remove death sickness on you.",
+                                 query_base_name(op, target));
+        }
     }
 
-
-    if ((depl = present_arch_in_ob(archetype_global._deathsick, target)) != NULL)
+    if ((depl = cure_what_ails_you(target, ST1_FORCE_DEATHSICK)))
     {
-        for (i = 0; i < NUM_STATS; i++)
+        uint8 i = 0;
+
+        for (; i < NUM_STATS; i++)
         {
             if (get_stat_value(&depl->stats, i))
             {
@@ -2000,22 +2002,19 @@ int remove_deathsick(object *op, object *target)
                 new_draw_info(NDI_UNIQUE, 0, target, restore_msg[i]);
             }
         }
+
         remove_ob(depl);
-        FIX_PLAYER(target, "remove deathsick");
     }
 
-    if (op != target && op->type == PLAYER)
+    if (success &&
+        op != target &&
+        op->type == PLAYER)
     {
-        if (success)
-            new_draw_info(NDI_UNIQUE, 0, op, "Your prayer removes some death sickness.");
-        else
-            new_draw_info(NDI_UNIQUE, 0, op, "There is no death sickness.");
+        new_draw_info(NDI_UNIQUE, 0, op, "Your prayer removes some death sickness.");
     }
-
-    if (op != target && target->type == PLAYER && !success) /* if success, target got infos before */
-        new_draw_info(NDI_UNIQUE, 0, target, "There is no death sickness.");
 
     insert_spell_effect(spells[SP_REMOVE_DEATHSICK].archname, target->map, target->x, target->y);
+
     return success;
 }
 
