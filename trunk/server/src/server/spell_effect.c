@@ -1855,41 +1855,36 @@ int alchemy(object *op)
 
 int remove_depletion(object *op, object *target)
 {
-    archetype  *at;
-    object     *depl;
-    int         i, success = 0;
+    object *depl;
+    int     success = 0;
 
-    if ((at = find_archetype("depletion")) == NULL)
+    /* Sanity checks */
+    if (!op ||
+        !target)
     {
-        LOG(llevBug, "BUG: Could not find archetype depletion");
         return 0;
     }
 
-    if (!op || !target)
-        return success;
-
-
-    if (target->type != PLAYER)
-    {
-        if (op->type == PLAYER) /* fake messages for non player... */
-        {
-            new_draw_info_format(NDI_UNIQUE, 0, op, "You cast depletion on %s.", query_base_name(target, op));
-            new_draw_info(NDI_UNIQUE, 0, op, "There is no depletion.");
-        }
-        return success;
-    }
     if (op != target)
     {
         if (op->type == PLAYER)
-            new_draw_info_format(NDI_UNIQUE, 0, op, "You cast depletion on %s.", query_base_name(target, op));
-        else if (target->type == PLAYER)
-            new_draw_info_format(NDI_UNIQUE, 0, target, "%s cast remove depletion on you.", query_base_name(op, target));
+        {
+            new_draw_info_format(NDI_UNIQUE, 0, op, "You cast remove depletion on %s.",
+                                 query_base_name(target, op));
+        }
+
+        if (target->type == PLAYER)
+        {
+            new_draw_info_format(NDI_UNIQUE, 0, target, "%s casts remove depletion on you.",
+                                 query_base_name(op, target));
+        }
     }
 
-
-    if ((depl = present_arch_in_ob(at, target)) != NULL)
+    if ((depl = cure_what_ails_you(target, ST1_FORCE_DEPLETE)))
     {
-        for (i = 0; i < NUM_STATS; i++)
+        uint8 i = 0;
+
+        for (; i < NUM_STATS; i++)
         {
             if (get_stat_value(&depl->stats, i))
             {
@@ -1897,22 +1892,19 @@ int remove_depletion(object *op, object *target)
                 new_draw_info(NDI_UNIQUE, 0, target, restore_msg[i]);
             }
         }
+
         remove_ob(depl);
-        FIX_PLAYER(target ,"remove depletion");
     }
 
-    if (op != target && op->type == PLAYER)
+    if (success &&
+        op != target &&
+        op->type == PLAYER)
     {
-        if (success)
-            new_draw_info(NDI_UNIQUE, 0, op, "Your prayer removes some depletion.");
-        else
-            new_draw_info(NDI_UNIQUE, 0, op, "There is no depletion.");
+        new_draw_info(NDI_UNIQUE, 0, op, "Your prayer removes some depletion.");
     }
-
-    if (op != target && target->type == PLAYER && !success) /* if success, target got infos before */
-        new_draw_info(NDI_UNIQUE, 0, target, "There is no depletion.");
 
     insert_spell_effect(spells[SP_REMOVE_DEPLETION].archname, target->map, target->x, target->y);
+
     return success;
 }
 
