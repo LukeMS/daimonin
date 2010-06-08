@@ -739,9 +739,22 @@ void kill_player(object *op)
 
     /* remove any poisoning and confusion the character may be suffering. */
     cast_heal(op, 110, op, SP_CURE_POISON);
-    /*cast_heal(op, op, SP_CURE_CONFUSION);*/ // Why commented out? Smacky 20100604
     cure_disease(op, NULL);  /* remove any disease */
-    restoration(NULL, op);
+    /* FIXME: All the cure_what_ails_you()s are less than ideal as each one
+     * potentially searches the player's entire inv. We should use a flag
+     * system rather than st1 to do all the necessary forces in one pass,
+     * and/or query flags here to be sure the player even has the ailment in
+     * question. Not sure if all ailments have a flag though.
+     * -- Smacky 20100608 */
+    cure_what_ails_you(op, ST1_FORCE_DEPLETE);
+    cure_what_ails_you(op, ST1_FORCE_DRAIN);
+    cure_what_ails_you(op, ST1_FORCE_SLOWED);
+    cure_what_ails_you(op, ST1_FORCE_FEAR);
+    cure_what_ails_you(op, ST1_FORCE_SNARE);
+    cure_what_ails_you(op, ST1_FORCE_PARALYZE);
+    cure_what_ails_you(op, ST1_FORCE_CONFUSED);
+    cure_what_ails_you(op, ST1_FORCE_BLIND);
+    cure_what_ails_you(op, ST1_FORCE_POISON);
 
     /* The rule is: only decrease stats when the player is at least level 3 or
      * higher!  */

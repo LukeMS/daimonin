@@ -1,6 +1,7 @@
 Object poisoning
 name applied poison
-type 105
+type 114
+sub_type 9
 face force.101
 identified 1
 food 6

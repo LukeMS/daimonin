@@ -769,7 +769,8 @@ static int hit_player_attacktype(object *op, object *hitter, int *flags, int dam
         dam = dam * ((double) hitter->attack[ATNR_INTERNAL] / 100.0);
 
         /* handle special object attacks */
-        if (hitter->type == POISONING) /* we have a poison force object (thats the poison we had inserted) */
+        if (hitter->type == FORCE &&
+            hitter->sub_type1 == ST1_FORCE_POISON) /* we have a poison force object (thats the poison we had inserted) */
         {
             attacknum = ATNR_POISON; /* map to poison... */
             if (op->resist[attacknum] == 100)
