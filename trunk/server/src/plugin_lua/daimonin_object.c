@@ -1836,7 +1836,9 @@ static int GameObject_SetRank(lua_State *L)
     SET_FLAG(WHO, FLAG_FIX_PLAYER);
     for (walk = WHO->inv; walk != NULL; walk = walk->below)
     {
-        if (walk->name && walk->name == hooks->shstr_cons->RANK_FORCE && walk->arch->name == hooks->shstr_cons->rank_force)
+        if (walk->name &&
+            walk->name == hooks->shstr_cons->RANK_FORCE &&
+            walk->arch == hooks->archetype_global->_rank_force)
         {
             if (strcmp(rank, "Mr") == 0) /* Mr = keyword to clear title and not add it as rank */
             {

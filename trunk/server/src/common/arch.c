@@ -246,6 +246,7 @@ void init_archetypes()
     SET_GLOBAL_ARCHETYPE(force);
     SET_GLOBAL_ARCHETYPE(guild_force);
     SET_GLOBAL_ARCHETYPE(alignment_force);
+    SET_GLOBAL_ARCHETYPE(rank_force);
     SET_GLOBAL_ARCHETYPE(gravestone);
     SET_GLOBAL_ARCHETYPE(deathsick);
     SET_GLOBAL_ARCHETYPE(poisoning);
