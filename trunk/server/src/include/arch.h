@@ -78,6 +78,7 @@ typedef struct _archetype_global
     archetype *_player_info;
     archetype *_force;
     archetype *_guild_force;
+    archetype *_alignment_force;
     archetype *_gravestone;
     archetype *_deathsick;
     archetype *_poisoning;

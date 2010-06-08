@@ -1875,8 +1875,9 @@ static int GameObject_SetAlignment(lua_State *L)
     SET_FLAG(WHO, FLAG_FIX_PLAYER);
     for (walk = WHO->inv; walk != NULL; walk = walk->below)
     {
-        if (walk->name && walk->name == hooks->shstr_cons->ALIGNMENT_FORCE &&
-                walk->arch->name == hooks->shstr_cons->alignment_force)
+        if (walk->name &&
+            walk->name == hooks->shstr_cons->ALIGNMENT_FORCE &&
+            walk->arch == hooks->archetype_global->_alignment_force)
         {
             /* we find the alignment of the player, now change it to new one */
             FREE_AND_COPY_HASH(walk->title, align);
@@ -1908,9 +1909,12 @@ static int GameObject_GetAlignmentForce(lua_State *L)
 
     for (walk = WHO->inv; walk != NULL; walk = walk->below)
     {
-        if (walk->name && walk->name == hooks->shstr_cons->ALIGNMENT_FORCE &&
-                walk->arch->name == hooks->shstr_cons->alignment_force)
+        if (walk->name &&
+            walk->name == hooks->shstr_cons->ALIGNMENT_FORCE &&
+            walk->arch == hooks->archetype_global->_alignment_force)
+        {
             return push_object(L, &GameObject, walk);
+        }
     }
     LOG(llevDebug, "Lua Warning -> GetAlignmentForce: Object %s has no aligment_force!\n", STRING_OBJ_NAME(WHO));
 

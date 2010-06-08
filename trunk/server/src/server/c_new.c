@@ -647,7 +647,8 @@ void generate_ext_title(player *pl)
                 strcat(rank, " ");
             }
         }
-        else if (walk->name == shstr_cons.ALIGNMENT_FORCE && walk->arch->name == shstr_cons.alignment_force)
+        else if (walk->name == shstr_cons.ALIGNMENT_FORCE &&
+                 walk->arch == archetype_global._alignment_force)
         {
             if (walk->title)
                 strcpy(align, walk->title);
