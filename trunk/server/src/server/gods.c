@@ -92,7 +92,7 @@ void pray_at_altar(object *pl, object *altar)
         /* pray at your gods altar */
         int bonus   = ((pl->stats.Wis / 10) + (SK_level(pl) / 10));
 
-        new_draw_info_format(NDI_UNIQUE, 0, pl, "You feel the powers of your deity %s.", pl_god->name);
+        new_draw_info(NDI_UNIQUE, 0, pl, "You feel the powers of your deity %s.", pl_god->name);
 
         /* we can get neg grace up faster */
         if (pl->stats.grace < 0)
@@ -137,13 +137,13 @@ void pray_at_altar(object *pl, object *altar)
             {
                 /* you really screwed up */
                 angry = 3;
-                new_draw_info_format(NDI_UNIQUE | NDI_NAVY, 0, pl, "Foul Priest! %s punishes you!", pl_god->name);
+                new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, pl, "Foul Priest! %s punishes you!", pl_god->name);
                 cast_mana_storm(pl, pl_god->level + 20);
             }
-            new_draw_info_format(NDI_UNIQUE | NDI_NAVY, 0, pl, "Foolish heretic! %s is livid!", pl_god->name);
+            new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, pl, "Foolish heretic! %s is livid!", pl_god->name);
         }
         else
-            new_draw_info_format(NDI_UNIQUE | NDI_NAVY, 0, pl, "Heretic! %s is angered!", pl_god->name);
+            new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, pl, "Heretic! %s is angered!", pl_god->name);
 
         /* whether we will be successfull in defecting or not -
          * we lose experience from the clerical experience obj */
@@ -161,7 +161,7 @@ void pray_at_altar(object *pl, object *altar)
         else
         {
             /* toss this player off the altar.  He can try again. */
-            new_draw_info_format(NDI_UNIQUE | NDI_NAVY, 0, pl, "A divine force pushes you off the altar.");
+            new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, pl, "A divine force pushes you off the altar.");
             move_player(pl, absdir(pl->facing + 4), TRUE); /* back him off the way he came. */
         } /* didn't successfully change, so forced off altar. */
     } /* If prayed at altar to other god */
@@ -286,18 +286,18 @@ void become_follower(object *op, object *new_god)
 
     if (op->race && new_god->slaying && strstr(op->race, new_god->slaying))
     {
-        new_draw_info_format(NDI_UNIQUE | NDI_NAVY, 0, op, "Fool! %s detests your kind!", new_god->name);
+        new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, op, "Fool! %s detests your kind!", new_god->name);
         if (random_roll(0, op->level - 1) - 5 > 0)
             cast_mana_storm(op, new_god->level + 10);
         return;
     }
 
-    new_draw_info_format(NDI_UNIQUE | NDI_NAVY, 0, op, "You become a follower of %s!", new_god->name);
+    new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, op, "You become a follower of %s!", new_god->name);
 
     if (exp_obj->title)
     {
         /* get rid of old god */
-        new_draw_info_format(NDI_UNIQUE, 0, op, "%s's blessing is withdrawn from you.", exp_obj->title);
+        new_draw_info(NDI_UNIQUE, 0, op, "%s's blessing is withdrawn from you.", exp_obj->title);
         CLEAR_FLAG(exp_obj, FLAG_APPLIED);
         change_abil(op, exp_obj);
         FREE_AND_CLEAR_HASH2(exp_obj->title);
@@ -333,7 +333,7 @@ void become_follower(object *op, object *new_god)
     update_priest_flag(new_god, exp_obj, FLAG_XRAYS); /* better have this if blind! */
 #endif
 
-    new_draw_info_format(NDI_UNIQUE, 0, op, "You are bathed in %s's aura.", new_god->name);
+    new_draw_info(NDI_UNIQUE, 0, op, "You are bathed in %s's aura.", new_god->name);
 
 #ifdef MORE_PRIEST_GIFTS
     /* Weapon/armour use are special...handle flag toggles here as this can
@@ -376,10 +376,10 @@ int worship_forbids_use(object *op, object *exp_obj, uint32 flag, char *string)
         {
             update_priest_flag(exp_obj, op, flag);
             if (QUERY_FLAG(op, flag))
-                new_draw_info_format(NDI_UNIQUE, 0, op, "You may use %s again.", string);
+                new_draw_info(NDI_UNIQUE, 0, op, "You may use %s again.", string);
             else
             {
-                new_draw_info_format(NDI_UNIQUE, 0, op, "You are forbidden to use %s.", string);
+                new_draw_info(NDI_UNIQUE, 0, op, "You are forbidden to use %s.", string);
                 return 1;
             }
         }
@@ -583,7 +583,7 @@ static int god_enchants_weapon(object *op, object *god, object *tr)
     if (!weapon->slaying && god->slaying)
     {
         FREE_AND_COPY_HASH(weapon->slaying, god->slaying);
-        new_draw_info_format(NDI_UNIQUE, 0, op, "Your %s now hungers to slay enemies of your god!", weapon->name);
+        new_draw_info(NDI_UNIQUE, 0, op, "Your %s now hungers to slay enemies of your god!", weapon->name);
         return 1;
     }
 
@@ -659,9 +659,9 @@ static void follower_remove_similar_item(object *op, object *item)
             {
                 /* message */
                 if (tmp->nrof > 1)
-                    new_draw_info_format(NDI_UNIQUE, 0, op, "The %s crumble to dust!", query_short_name(tmp, op));
+                    new_draw_info(NDI_UNIQUE, 0, op, "The %s crumble to dust!", query_short_name(tmp, op));
                 else
-                    new_draw_info_format(NDI_UNIQUE, 0, op, "The %s crumbles to dust!", query_short_name(tmp, op));
+                    new_draw_info(NDI_UNIQUE, 0, op, "The %s crumbles to dust!", query_short_name(tmp, op));
 
                 remove_ob(tmp);    /* remove obj from players inv. */
                 esrv_del_item(CONTR(op), tmp->count, tmp->env); /* notify client */
@@ -680,7 +680,7 @@ static int god_gives_present(object *op, object *god, treasure *tr)
         return 0;
 
     tmp = arch_to_object(tr->item);
-    new_draw_info_format(NDI_UNIQUE, 0, op, "%s lets %s appear in your hands.", god->name, query_short_name(tmp, op));
+    new_draw_info(NDI_UNIQUE, 0, op, "%s lets %s appear in your hands.", god->name, query_short_name(tmp, op));
     tmp = insert_ob_in_ob(tmp, op);
     if (op->type == PLAYER)
         esrv_send_item(op, tmp);
@@ -868,7 +868,7 @@ void god_intervention(object *op, object *god)
                     continue;
                 if (IS_SYS_INVISIBLE(item))
                 {
-                    new_draw_info_format(NDI_UNIQUE, 0, op, "%s grants you use of a special prayer!", god->name);
+                    new_draw_info(NDI_UNIQUE, 0, op, "%s grants you use of a special prayer!", god->name);
                     do_learn_spell(op, spell, 1);
                     return;
                 }

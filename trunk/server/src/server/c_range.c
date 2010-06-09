@@ -160,7 +160,7 @@ float fire_magic_tool(object *op, object *weap, int dir)
         }
         else
         {
-            /*new_draw_info_format(NDI_ALL|NDI_UNIQUE,5,NULL,"Use %s - cast spell %d\n",weap->name,weap->stats.sp);*/
+            /*new_draw_info(NDI_ALL|NDI_UNIQUE,5,NULL,"Use %s - cast spell %d\n",weap->name,weap->stats.sp);*/
             if (cast_spell(op, weap, dir, weap->stats.sp, 0, weap->type == ROD ? spellRod : spellHorn, NULL))
             {
                 SET_FLAG(op, FLAG_BEEN_APPLIED); /* You now know something about it */
@@ -257,7 +257,7 @@ static void show_matching_spells(object *op, char *params, int cleric)
             sprintf(cost,"%3d",SP_level_spellpoint_cost(op,op,spnum));
         }
 
-    new_draw_info_format(NDI_UNIQUE,0,op,"[%s] [%s] %s",
+    new_draw_info(NDI_UNIQUE,0,op,"[%s] [%s] %s",
         cost, lev, spells[spnum].name);
     }
 }
@@ -319,7 +319,7 @@ int command_cast_spell(object *op, char *params)
     /* we don't know this spell name */
     if (spnum == -1)
     {
-        new_draw_info_format(NDI_UNIQUE, 0, op, "You don't know the spell %s.", params);
+        new_draw_info(NDI_UNIQUE, 0, op, "You don't know the spell %s.", params);
 
         return 0;
     }

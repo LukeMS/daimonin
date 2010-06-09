@@ -116,7 +116,7 @@ void apply_food(object *op, object *tmp)
         SET_FLAG(op, FLAG_EATING);
         force = insert_ob_in_ob(force, op);
 
-        new_draw_info_format(NDI_UNIQUE| NDI_NAVY, 0, op, "You start consuming the %s", STRING_SAFE(tmp->name));
+        new_draw_info(NDI_UNIQUE| NDI_NAVY, 0, op, "You start consuming the %s", STRING_SAFE(tmp->name));
 
     }
     decrease_ob(tmp);
@@ -155,7 +155,7 @@ void food_force_reg(object *op)
                 return;
             }
 
-            /*new_draw_info_format(NDI_UNIQUE, 0, op, "food-force ticks %d\n", op->stats.food);*/
+            /*new_draw_info(NDI_UNIQUE, 0, op, "food-force ticks %d\n", op->stats.food);*/
 
             /* negative food_status count signals active food force (and not resting) as source for regeneration */
             CONTR(op->env)->food_status = (1000/op->last_eat* op->stats.food)*-1;

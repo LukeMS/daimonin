@@ -65,7 +65,7 @@ static int apply_id_altar(object *money, object *altar, object *pl)
         if (operate_altar(altar, &money))
         {
             identify(marked);
-            new_draw_info_format(NDI_UNIQUE, 0, pl, "You have %s.", long_desc(marked, pl));
+            new_draw_info(NDI_UNIQUE, 0, pl, "You have %s.", long_desc(marked, pl));
             if (marked->msg)
             {
                 new_draw_info(NDI_UNIQUE, 0, pl, "The item has a story:");
@@ -82,7 +82,7 @@ static int apply_id_altar(object *money, object *altar, object *pl)
             if (operate_altar(altar, &money))
             {
                 identify(id);
-                new_draw_info_format(NDI_UNIQUE, 0, pl, "You have %s.", long_desc(id, pl));
+                new_draw_info(NDI_UNIQUE, 0, pl, "You have %s.", long_desc(id, pl));
                 if (id->msg)
                 {
                     new_draw_info(NDI_UNIQUE, 0, pl, "The item has a story:");
@@ -551,7 +551,7 @@ int improve_weapon_stat(object *op, object *improver, object *weapon, signed cha
     new_draw_info(NDI_UNIQUE, 0, op, "Your sacrifice was accepted.");
     *stat += sacrifice_count;
     weapon->last_eat++;
-    new_draw_info_format(NDI_UNIQUE, 0, op, "Weapon's bonus to %s improved by %d", statname, sacrifice_count);
+    new_draw_info(NDI_UNIQUE, 0, op, "Weapon's bonus to %s improved by %d", statname, sacrifice_count);
     decrease_ob(improver);
 
     /* So it updates the players stats and the window */
@@ -608,7 +608,7 @@ int prepare_weapon(object *op, object *improver, object *weapon)
     new_draw_info(NDI_UNIQUE, 0, op, "Your sacrifice was accepted.");
     eat_item(op, improver->slaying);
 
-    new_draw_info_format(NDI_UNIQUE, 0, op, "Your *%s may be improved %d times.", weapon->name, sacrifice_count);
+    new_draw_info(NDI_UNIQUE, 0, op, "Your *%s may be improved %d times.", weapon->name, sacrifice_count);
 
     sprintf(buf, "%s's %s", op->name, weapon->name);
     FREE_AND_COPY_HASH(weapon->name, buf);
@@ -660,7 +660,7 @@ int improve_weapon(object *op, object *improver, object *weapon)
     {
         weapon->stats.dam += 5;
         weapon->weight += 5000;     /* 5 KG's */
-        new_draw_info_format(NDI_UNIQUE, 0, op, "Damage has been increased by 5 to %d", weapon->stats.dam);
+        new_draw_info(NDI_UNIQUE, 0, op, "Damage has been increased by 5 to %d", weapon->stats.dam);
         weapon->last_eat++;
         decrease_ob(improver);
         return 1;
@@ -671,7 +671,7 @@ int improve_weapon(object *op, object *improver, object *weapon)
         weapon->weight = (weapon->weight * 8) / 10;
         if (weapon->weight < 1)
             weapon->weight = 1;
-        new_draw_info_format(NDI_UNIQUE, 0, op, "Weapon weight reduced to %6.1f kg", (float) weapon->weight / 1000.0);
+        new_draw_info(NDI_UNIQUE, 0, op, "Weapon weight reduced to %6.1f kg", (float) weapon->weight / 1000.0);
         weapon->last_eat++;
         decrease_ob(improver);
         return 1;
@@ -680,7 +680,7 @@ int improve_weapon(object *op, object *improver, object *weapon)
     {
         weapon->magic++;
         weapon->last_eat++;
-        new_draw_info_format(NDI_UNIQUE, 0, op, "Weapon magic increased to %d", weapon->magic);
+        new_draw_info(NDI_UNIQUE, 0, op, "Weapon magic increased to %d", weapon->magic);
         decrease_ob(improver);
         return 1;
     }
@@ -700,7 +700,7 @@ int improve_weapon(object *op, object *improver, object *weapon)
     sacrifice_count = check_sacrifice(op, improver);
     if (sacrifice_count < sacrifice_needed)
     {
-        new_draw_info_format(NDI_UNIQUE, 0, op, "You need at least %d %s", sacrifice_needed, improver->slaying);
+        new_draw_info(NDI_UNIQUE, 0, op, "You need at least %d %s", sacrifice_needed, improver->slaying);
         return 0;
     }
     eat_item(op, improver->slaying);
@@ -937,9 +937,9 @@ int esrv_apply_container(object *op, object *sack)
             return 1;
 
         if (container_unlink(CONTR(op), cont))
-            new_draw_info_format(NDI_UNIQUE, 0, op, "You close the %s.", query_name(cont));
+            new_draw_info(NDI_UNIQUE, 0, op, "You close the %s.", query_name(cont));
         else
-            new_draw_info_format(NDI_UNIQUE, 0, op, "You leave the %s.", query_name(cont));
+            new_draw_info(NDI_UNIQUE, 0, op, "You leave the %s.", query_name(cont));
 
 
         if (cont == sack) /* we closing the one we applied */
@@ -958,10 +958,10 @@ int esrv_apply_container(object *op, object *sack)
         {
             tmp = find_key(op, sack);
             if (tmp)
-                new_draw_info_format(NDI_UNIQUE, 0, op, "You unlock %s with %s.", query_name(sack), query_name(tmp));
+                new_draw_info(NDI_UNIQUE, 0, op, "You unlock %s with %s.", query_name(sack), query_name(tmp));
             else
             {
-                new_draw_info_format(NDI_UNIQUE, 0, op, "You don't have the key to unlock %s.", query_name(sack));
+                new_draw_info(NDI_UNIQUE, 0, op, "You don't have the key to unlock %s.", query_name(sack));
                 return 0;
             }
         }
@@ -972,12 +972,12 @@ int esrv_apply_container(object *op, object *sack)
                     (!(CONTR(op)->group_status & GROUP_STATUS_GROUP) ||
                         CONTR(CONTR(op)->group_leader)->group_id != sack->stats.maxhp))
             {
-                new_draw_info_format(NDI_UNIQUE, 0, op, "Its not your groups bounty.");
+                new_draw_info(NDI_UNIQUE, 0, op, "Its not your groups bounty.");
                 return 0;
             }
             else if (sack->sub_type1 == ST1_CONTAINER_CORPSE_player && sack->slaying != op->name)
             {
-                new_draw_info_format(NDI_UNIQUE, 0, op, "Its not your bounty.");
+                new_draw_info(NDI_UNIQUE, 0, op, "Its not your bounty.");
                 return 0;
             }
         }
@@ -997,11 +997,11 @@ int esrv_apply_container(object *op, object *sack)
         /* this is not possible - opening a container inside another container or a another player */
         if (sack->env)
         {
-            new_draw_info_format(NDI_UNIQUE, 0, op, "You can't open %s", query_name(sack));
+            new_draw_info(NDI_UNIQUE, 0, op, "You can't open %s", query_name(sack));
             return 0;
         }
 
-        new_draw_info_format(NDI_UNIQUE, 0, op, "You open %s.", query_name(sack));
+        new_draw_info(NDI_UNIQUE, 0, op, "You open %s.", query_name(sack));
         SET_FLAG(sack, FLAG_BEEN_APPLIED);
         container_link(CONTR(op), sack);
     }
@@ -1009,7 +1009,7 @@ int esrv_apply_container(object *op, object *sack)
     {
         if (QUERY_FLAG(sack, FLAG_APPLIED)) /* readied sack becoming open */
         {
-            new_draw_info_format(NDI_UNIQUE, 0, op, "You open %s.", query_name(sack));
+            new_draw_info(NDI_UNIQUE, 0, op, "You open %s.", query_name(sack));
             SET_FLAG(sack, FLAG_BEEN_APPLIED);
             container_link(CONTR(op), sack);
         }
@@ -1023,13 +1023,13 @@ int esrv_apply_container(object *op, object *sack)
                         tmp->race == sack->race && tmp != sack)
                 {
                     CLEAR_FLAG(tmp, FLAG_APPLIED);
-                    new_draw_info_format(NDI_UNIQUE, 0, op, "You unreadied %s.", query_name(tmp));
+                    new_draw_info(NDI_UNIQUE, 0, op, "You unreadied %s.", query_name(tmp));
                     update_object(tmp, UP_OBJ_FACE);
                     esrv_update_item(UPD_FLAGS, op, tmp);
                 }
             }
 
-            new_draw_info_format(NDI_UNIQUE, 0, op, "You readied %s.", query_name(sack));
+            new_draw_info(NDI_UNIQUE, 0, op, "You readied %s.", query_name(sack));
             SET_FLAG(sack, FLAG_APPLIED);
             update_object(sack, UP_OBJ_FACE);
             esrv_update_item(UPD_FLAGS, op, sack);
@@ -1057,7 +1057,7 @@ static int apply_altar(object *altar, object *sacrifice, object *originator)
          */
         if (altar->stats.sp != -1)
         {
-            new_draw_info_format(NDI_WHITE, 0, originator, "The altar casts %s.", spells[altar->stats.sp].name);
+            new_draw_info(NDI_WHITE, 0, originator, "The altar casts %s.", spells[altar->stats.sp].name);
             cast_spell(originator, altar, altar->last_sp, altar->stats.sp, 0, spellPotion, NULL);
             /* If it is connected, push the button.  Fixes some problems with
              * old maps.
@@ -1199,7 +1199,7 @@ static void apply_sign(object *op, object *sign)
             }
             else if((op->chosen_skill->weight_limit & sign->weight_limit) != sign->weight_limit)
             {
-                new_draw_info_format(NDI_UNIQUE, 0, op, "You are unable to decipher the %s.\nIt is written in %s.",
+                new_draw_info(NDI_UNIQUE, 0, op, "You are unable to decipher the %s.\nIt is written in %s.",
                                      query_name(sign), get_language(sign->weight_limit));
                 return;
             }
@@ -1223,11 +1223,11 @@ static void apply_sign(object *op, object *sign)
     if (!QUERY_FLAG(sign, FLAG_SYS_OBJECT))
     {
         if (!sign->msg)
-            new_draw_info_format(NDI_UNIQUE, 0, op, "Nothing is written on the %s.",
+            new_draw_info(NDI_UNIQUE, 0, op, "Nothing is written on the %s.",
                                  query_name(sign));
         else
         {
-            new_draw_info_format(NDI_UNIQUE, 0, op, "The %s is written in %s.\nYou start reading it.",
+            new_draw_info(NDI_UNIQUE, 0, op, "The %s is written in %s.\nYou start reading it.",
                                  query_name(sign), get_language(sign->weight_limit));
             new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, op, sign->msg);
         }
@@ -1584,13 +1584,13 @@ static void apply_book(object *op, object *tmp)
         }
         else if((op->chosen_skill->weight_limit & tmp->weight_limit)!=tmp->weight_limit)
         {
-            new_draw_info_format(NDI_UNIQUE, 0, op, "You are unable to decipher the %s.\nIts written in %s.",
+            new_draw_info(NDI_UNIQUE, 0, op, "You are unable to decipher the %s.\nIts written in %s.",
                                  query_name(tmp), get_language(tmp->weight_limit));
             return;
         }
     }
 
-    new_draw_info_format(NDI_UNIQUE, 0, op, "You open the %s and start reading.", query_name(tmp));
+    new_draw_info(NDI_UNIQUE, 0, op, "You open the %s and start reading.", query_name(tmp));
 
     /* Non-zero return value from script means stop here */
     if(trigger_object_plugin_event(
@@ -1600,7 +1600,7 @@ static void apply_book(object *op, object *tmp)
 
     if (tmp->msg == NULL)
     {
-        new_draw_info_format(NDI_UNIQUE, 0, op, "You open the %s and find it empty.", query_name(tmp));
+        new_draw_info(NDI_UNIQUE, 0, op, "You open the %s and find it empty.", query_name(tmp));
         return;
     }
 
@@ -1650,19 +1650,19 @@ static void apply_skillscroll(object *op, object *tmp)
     {
         case 0:
           new_draw_info(NDI_UNIQUE, 0, op, "You already possess the knowledge ");
-          new_draw_info_format(NDI_UNIQUE, 0, op, "held within the %s.\n", query_name(tmp));
+          new_draw_info(NDI_UNIQUE, 0, op, "held within the %s.\n", query_name(tmp));
           return;
 
         case 1:
-          new_draw_info_format(NDI_UNIQUE, 0, op, "You succeed in learning %s", skills[tmp->stats.sp].name);
-          new_draw_info_format(NDI_UNIQUE, 0, op, "Type 'bind ready_skill %s", skills[tmp->stats.sp].name);
+          new_draw_info(NDI_UNIQUE, 0, op, "You succeed in learning %s", skills[tmp->stats.sp].name);
+          new_draw_info(NDI_UNIQUE, 0, op, "Type 'bind ready_skill %s", skills[tmp->stats.sp].name);
           new_draw_info(NDI_UNIQUE, 0, op, "to store the skill in a key.");
           FIX_PLAYER(op ,"apply skill scroll");
           decrease_ob(tmp);
           return;
 
         default:
-          new_draw_info_format(NDI_UNIQUE, 0, op, "You fail to learn the knowledge of the %s.\n", query_name(tmp));
+          new_draw_info(NDI_UNIQUE, 0, op, "You fail to learn the knowledge of the %s.\n", query_name(tmp));
           decrease_ob(tmp);
           return;
     }
@@ -1707,7 +1707,7 @@ extern void do_learn_spell(object *op, int spell, int special_prayer)
     /* Upgrade special prayers to normal prayers */
     if (check_spell_known(op, spell))
     {
-        new_draw_info_format(NDI_UNIQUE, 0, op, "You already know the spell '%s'!", spells[spell].name);
+        new_draw_info(NDI_UNIQUE, 0, op, "You already know the spell '%s'!", spells[spell].name);
 
         if (special_prayer || !tmp)
         {
@@ -1733,7 +1733,7 @@ extern void do_learn_spell(object *op, int spell, int special_prayer)
         insert_special_prayer_mark(op, spell);
 
     send_spelllist_cmd(op, spells[spell].name, SPLIST_MODE_ADD);
-    new_draw_info_format(NDI_UNIQUE, 0, op, "You have learned the spell %s!", spells[spell].name);
+    new_draw_info(NDI_UNIQUE, 0, op, "You have learned the spell %s!", spells[spell].name);
 }
 
 extern void do_forget_spell(object *op, int spell)
@@ -1753,7 +1753,7 @@ extern void do_forget_spell(object *op, int spell)
     }
 
     play_sound_player_only(CONTR(op), SOUND_LOSE_SOME, SOUND_NORMAL, 0, 0);
-    new_draw_info_format(NDI_UNIQUE, 0, op, "You lose knowledge of %s.", spells[spell].name);
+    new_draw_info(NDI_UNIQUE, 0, op, "You lose knowledge of %s.", spells[spell].name);
 
     send_spelllist_cmd(op, spells[spell].name, SPLIST_MODE_REMOVE);
     tmp = find_special_prayer_mark(op, spell);
@@ -1788,7 +1788,7 @@ static void apply_spellbook(object *op, object *tmp)
         if ((tmp->stats.sp = look_up_spell_name(tmp->slaying)) < 0)
         {
             tmp->stats.sp = -1;
-            new_draw_info_format(NDI_UNIQUE, 0, op, "The book's formula for %s is incomplete", tmp->slaying);
+            new_draw_info(NDI_UNIQUE, 0, op, "The book's formula for %s is incomplete", tmp->slaying);
             return;
         }
         /* now clear tmp->slaying since we no longer need it */
@@ -1812,7 +1812,7 @@ static void apply_spellbook(object *op, object *tmp)
                 NULL, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
         return;
 
-    new_draw_info_format(NDI_UNIQUE, 0, op, "The spellbook contains the %s level spell %s.",
+    new_draw_info(NDI_UNIQUE, 0, op, "The spellbook contains the %s level spell %s.",
                          get_levelnumber(spells[tmp->stats.sp].level), spells[tmp->stats.sp].name);
 
     if (!QUERY_FLAG(tmp, FLAG_IDENTIFIED))
@@ -1914,7 +1914,7 @@ static void apply_scroll(object *op, object *tmp)
                 NULL, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
         return;
 
-    new_draw_info_format(NDI_WHITE, 0, op, "The scroll of %s turns to dust.", spells[tmp->stats.sp].name);
+    new_draw_info(NDI_WHITE, 0, op, "The scroll of %s turns to dust.", spells[tmp->stats.sp].name);
     /*    {
           char buf[MEDIUM_BUF];
 
@@ -1960,7 +1960,7 @@ static void apply_treasure(object *op, object *tmp)
     {
         remove_ob(treas);
         check_walk_off(treas, NULL, MOVE_APPLY_VANISHED);
-        new_draw_info_format(NDI_UNIQUE, 0, op, "You find %s in the chest.",
+        new_draw_info(NDI_UNIQUE, 0, op, "You find %s in the chest.",
                              query_name(treas));
         treas->x = op->x,treas->y = op->y;
         if (treas->type == MONSTER)
@@ -2164,7 +2164,7 @@ int manual_apply(object *op, object *tmp, int aflag)
     switch (tmp->type)
     {
         case HOLY_ALTAR:
-            new_draw_info_format(NDI_UNIQUE, 0, op, "You touch the %s.", tmp->name);
+            new_draw_info(NDI_UNIQUE, 0, op, "You touch the %s.", tmp->name);
             if (change_skill(op, SK_PRAYING))
             {
                 if(trigger_object_plugin_event(EVENT_APPLY, tmp, op, NULL,
@@ -2367,7 +2367,7 @@ int manual_apply(object *op, object *tmp, int aflag)
                   return 4; /* 1 = do not write an error message to the player */
 
               get_tad(&tad);
-              new_draw_info_format(NDI_UNIQUE, 0, op, "It is %s.",
+              new_draw_info(NDI_UNIQUE, 0, op, "It is %s.",
                                    print_tad(&tad, TAD_SHOWTIME));
               return 4;
           }
@@ -2441,9 +2441,9 @@ int player_apply(object *pl, object *op, int aflag, int quiet)
     if (!quiet)
     {
         if (tmp == 0)
-            new_draw_info_format(NDI_UNIQUE, 0, pl, "I don't know how to apply the %s.", query_name(op));
+            new_draw_info(NDI_UNIQUE, 0, pl, "I don't know how to apply the %s.", query_name(op));
         else if (tmp == 2)
-            new_draw_info_format(NDI_UNIQUE, 0, pl, "You must get it first!\n");
+            new_draw_info(NDI_UNIQUE, 0, pl, "You must get it first!\n");
     }
     return tmp;
 }
@@ -2555,7 +2555,7 @@ int apply_special(object *who, object *op, int aflags)
             return 0;
         if (op->item_condition && !(aflags & AP_IGNORE_CURSE) && (is_cursed_or_damned(op)))
         {
-            new_draw_info_format(NDI_UNIQUE, 0, who, "No matter how hard you try, you just can't remove it!");
+            new_draw_info(NDI_UNIQUE, 0, who, "No matter how hard you try, you just can't remove it!");
             return 1;
         }
 
@@ -2590,8 +2590,8 @@ int apply_special(object *who, object *op, int aflags)
                     {
                         /* its a tool, need to unlink it */
                         unlink_skill(op);
-                        new_draw_info_format(NDI_UNIQUE, 0, who, "You stop using the %s.", query_name(op));
-                        new_draw_info_format(NDI_UNIQUE, 0, who, "You can no longer use the skill: %s.",
+                        new_draw_info(NDI_UNIQUE, 0, who, "You stop using the %s.", query_name(op));
+                        new_draw_info(NDI_UNIQUE, 0, who, "You can no longer use the skill: %s.",
                                 skills[op->stats.sp].name);
                     }
                 }
@@ -2846,8 +2846,8 @@ int apply_special(object *who, object *op, int aflags)
                         LOG(llevBug, "BUG: apply_special(SKILL): found unapplied tool with experience object\n");
                     else
                         link_player_skill(who, op);
-                    new_draw_info_format(NDI_UNIQUE, 0, who, "You ready the %s.", query_name(op));
-                    new_draw_info_format(NDI_UNIQUE, 0, who, "You can now use the skill: %s.", skills[op->stats.sp].name);
+                    new_draw_info(NDI_UNIQUE, 0, who, "You ready the %s.", query_name(op));
+                    new_draw_info(NDI_UNIQUE, 0, who, "You can now use the skill: %s.", skills[op->stats.sp].name);
                 }
                 else
                     send_ready_skill(who, skills[op->stats.sp].name);
@@ -2870,7 +2870,7 @@ int apply_special(object *who, object *op, int aflags)
                 if(!pl->equipment[PLAYER_EQUIP_BOW] || pl->equipment[PLAYER_EQUIP_BOW]->type != BOW
                                         || pl->equipment[PLAYER_EQUIP_BOW]->sub_type1 != op->sub_type1)
                 {
-                    new_draw_info_format(NDI_UNIQUE, 0, who, "You can't use %s with applied range weapon.", query_short_name(op, NULL));
+                    new_draw_info(NDI_UNIQUE, 0, who, "You can't use %s with applied range weapon.", query_short_name(op, NULL));
                     return 1;
                 }
             }
@@ -2883,12 +2883,12 @@ int apply_special(object *who, object *op, int aflags)
 
             if((op->type == ROD || op->type == HORN) && who->chosen_skill->level < op->level)
             {
-                new_draw_info_format(NDI_UNIQUE, 0, who, "Your %s skill level is to low!", query_short_name(who->chosen_skill, who));
+                new_draw_info(NDI_UNIQUE, 0, who, "Your %s skill level is to low!", query_short_name(who->chosen_skill, who));
                 return 1;
             }
 
             SET_FLAG(op, FLAG_APPLIED);
-            new_draw_info_format(NDI_UNIQUE, 0, who, "You ready the %s.", query_name(op));
+            new_draw_info(NDI_UNIQUE, 0, who, "You ready the %s.", query_name(op));
             if (who->type == PLAYER)
             {
                 if (op->type != BOW)
@@ -2962,14 +2962,14 @@ void apply_player_light_refill(object *who, object *op)
     item = find_marked_object(who);
     if (!item)
     {
-        new_draw_info_format(NDI_UNIQUE, 0, who, "Mark a light source first you want refill.");
+        new_draw_info(NDI_UNIQUE, 0, who, "Mark a light source first you want refill.");
         return;
     }
 
 
     if (item->type != TYPE_LIGHT_APPLY || !item->race || !strstr(item->race, op->race))
     {
-        new_draw_info_format(NDI_UNIQUE, 0, who, "You can't refill the %s with the %s.", query_name(item),
+        new_draw_info(NDI_UNIQUE, 0, who, "You can't refill the %s with the %s.", query_name(item),
                 query_name(op));
         return;
     }
@@ -2986,14 +2986,14 @@ void apply_player_light_refill(object *who, object *op)
     tmp = (int) item->stats.maxhp - item->stats.food;
     if (!tmp)
     {
-        new_draw_info_format(NDI_UNIQUE, 0, who, "The %s is full and can't be refilled.", query_name(item));
+        new_draw_info(NDI_UNIQUE, 0, who, "The %s is full and can't be refilled.", query_name(item));
         return;
     }
 
     if (op->stats.food <= tmp)
     {
         item->stats.food += op->stats.food;
-        new_draw_info_format(NDI_UNIQUE, 0, who, "You refill the %s with %d units %s.", query_name(item),
+        new_draw_info(NDI_UNIQUE, 0, who, "You refill the %s with %d units %s.", query_name(item),
                 op->stats.food, query_name(op));
         decrease_ob(op);
     }
@@ -3017,7 +3017,7 @@ void apply_player_light_refill(object *who, object *op)
         }
 
         item->stats.food += tmp;
-        new_draw_info_format(NDI_UNIQUE, 0, who, "You refill the %s with %d units %s.", query_name(item), tmp,
+        new_draw_info(NDI_UNIQUE, 0, who, "You refill the %s with %d units %s.", query_name(item), tmp,
                 query_name(filler));
 
         esrv_send_item(who, filler);
@@ -3175,9 +3175,9 @@ void apply_player_light(object *who, object *op)
         if (op->msg)
             new_draw_info(NDI_UNIQUE, 0, who, op->msg);
         else if (!op->glow_radius)
-            new_draw_info_format(NDI_UNIQUE, 0, who, "You cannot light the %s.", query_name(op));
+            new_draw_info(NDI_UNIQUE, 0, who, "You cannot light the %s.", query_name(op));
         else
-            new_draw_info_format(NDI_UNIQUE, 0, who, "You cannot extinguish the %s.", query_name(op));
+            new_draw_info(NDI_UNIQUE, 0, who, "You cannot extinguish the %s.", query_name(op));
 
         return;
     }
@@ -3186,7 +3186,7 @@ void apply_player_light(object *who, object *op)
     {
         if (is_cursed_or_damned(op))
         {
-            new_draw_info_format(NDI_UNIQUE, 0, who, "No matter how hard you try, you just can't remove it!");
+            new_draw_info(NDI_UNIQUE, 0, who, "No matter how hard you try, you just can't remove it!");
             return;
         }
         if (QUERY_FLAG(op, FLAG_PERM_CURSED))
@@ -3201,7 +3201,7 @@ void apply_player_light(object *who, object *op)
         if (op->msg)
             new_draw_info(NDI_UNIQUE, 0, who, op->msg);
         else
-            new_draw_info_format(NDI_UNIQUE, 0, who, "You extinguish the %s.",
+            new_draw_info(NDI_UNIQUE, 0, who, "You extinguish the %s.",
                                  query_name(op));
 
         turn_off_light(op);
@@ -3223,7 +3223,7 @@ void apply_player_light(object *who, object *op)
          */
         if (!op->last_sp)
         {
-            new_draw_info_format(NDI_UNIQUE, 0, who, "The %s can't be lit.", query_name(op));
+            new_draw_info(NDI_UNIQUE, 0, who, "The %s can't be lit.", query_name(op));
             return;
         }
 
@@ -3243,7 +3243,7 @@ void apply_player_light(object *who, object *op)
                      * are non rechargable lights - like torches.
                      * they destroy
                      */
-                    new_draw_info_format(NDI_UNIQUE, 0, who, "You must first refill or recharge the %s.", query_name(op));
+                    new_draw_info(NDI_UNIQUE, 0, who, "You must first refill or recharge the %s.", query_name(op));
                     return;
                 }
             }
@@ -3254,7 +3254,7 @@ void apply_player_light(object *who, object *op)
 
             if (op->env && op->env->type == PLAYER)
             {
-                new_draw_info_format(NDI_UNIQUE, 0, who, "You prepare the %s to be your light source.",
+                new_draw_info(NDI_UNIQUE, 0, who, "You prepare the %s to be your light source.",
                                      query_name(op));
                 turn_on_light(op);
                 FIX_PLAYER(who ,"apply light - turn on light");
@@ -3264,7 +3264,7 @@ void apply_player_light(object *who, object *op)
                 if (op->msg)
                     new_draw_info(NDI_UNIQUE, 0, who, op->msg);
                 else
-                    new_draw_info_format(NDI_UNIQUE, 0, who, "You light the %s.",
+                    new_draw_info(NDI_UNIQUE, 0, who, "You light the %s.",
                                          query_name(op));
 
                 turn_on_light(op);
@@ -3281,7 +3281,7 @@ void apply_player_light(object *who, object *op)
                     {
                         if (is_cursed_or_damned(tmp))
                         {
-                            new_draw_info_format(NDI_UNIQUE, 0, who,
+                            new_draw_info(NDI_UNIQUE, 0, who,
                                     "No matter how hard you try, you just can't remove it!");
                             return;
                         }
@@ -3297,7 +3297,7 @@ void apply_player_light(object *who, object *op)
                         if (tmp->msg)
                             new_draw_info(NDI_UNIQUE, 0, who, tmp->msg);
                         else
-                            new_draw_info_format(NDI_UNIQUE, 0, who, "You extinguish the %s.",
+                            new_draw_info(NDI_UNIQUE, 0, who, "You extinguish the %s.",
                                                  query_name(tmp));
 
                         CLEAR_FLAG(tmp, FLAG_APPLIED);
@@ -3310,7 +3310,7 @@ void apply_player_light(object *who, object *op)
                 if (op->msg)
                     new_draw_info(NDI_UNIQUE, 0, who, op->msg);
                 else
-                    new_draw_info_format(NDI_UNIQUE, 0, who, "You apply the %s as your light source.",
+                    new_draw_info(NDI_UNIQUE, 0, who, "You apply the %s as your light source.",
                                          query_name(op));
 
                 SET_FLAG(op, FLAG_APPLIED);
@@ -3331,7 +3331,7 @@ void apply_player_light(object *who, object *op)
                 if (op->msg)
                     new_draw_info(NDI_UNIQUE, 0, who, op->msg);
                 else
-                    new_draw_info_format(NDI_UNIQUE, 0, who, "You extinguish the %s.",
+                    new_draw_info(NDI_UNIQUE, 0, who, "You extinguish the %s.",
                                          query_name(op));
 
                 turn_off_light(op);
@@ -3384,7 +3384,7 @@ void apply_lighter(object *who, object *lighter)
         else if (lighter->last_eat)
         {
             /* no charges left in lighter */
-            new_draw_info_format(NDI_UNIQUE, 0, who, "You attempt to light the %s with a used up %s.", item->name,
+            new_draw_info(NDI_UNIQUE, 0, who, "You attempt to light the %s with a used up %s.", item->name,
                                  lighter->name);
             return;
         }
@@ -3407,13 +3407,13 @@ void apply_lighter(object *who, object *lighter)
          */
         if ((nrof != item->nrof) || (count != item->count))
         {
-            new_draw_info_format(NDI_UNIQUE, 0, who, "You light the %s with the %s.", item_name, lighter->name);
+            new_draw_info(NDI_UNIQUE, 0, who, "You light the %s with the %s.", item_name, lighter->name);
             if (is_player_env)
                 FIX_PLAYER(who ,"apply lighter ");
         }
         else
         {
-            new_draw_info_format(NDI_UNIQUE, 0, who, "You attempt to light the %s with the %s and fail.", item->name,
+            new_draw_info(NDI_UNIQUE, 0, who, "You attempt to light the %s with the %s and fail.", item->name,
                                  lighter->name);
         }
     }

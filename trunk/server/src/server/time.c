@@ -111,7 +111,7 @@ int open_door(object *op, mapstruct *m, int x, int y, int mode)
                 if (op->type == PLAYER)
                 {
                     if (key)
-                        new_draw_info_format(NDI_UNIQUE, NDI_BROWN, op, "You open the door with the %s.",
+                        new_draw_info(NDI_UNIQUE, NDI_BROWN, op, "You open the door with the %s.",
                                              query_short_name(key, op));
 
                     /* Remove force message - it's usually inappropriate to say anything
@@ -375,77 +375,77 @@ void remove_force(object *op)
     {
         if(op->sub_type1 == ST1_FORCE_SNARE)
         {
-            new_info_map_except_format(NDI_UNIQUE|NDI_GREY, env->map, env->x, env->y,
+            new_info_map_except(NDI_UNIQUE|NDI_GREY, env->map, env->x, env->y,
                 MAP_INFO_NORMAL, env, env, "%s suddenly walks faster.", query_name(env));
             if(env->type == PLAYER)
                 new_draw_info(NDI_UNIQUE, 0, env, "You suddenly walk faster!");
         }
         else if(op->sub_type1 == ST1_FORCE_BLIND)
         {
-            new_info_map_except_format(NDI_UNIQUE|NDI_GREY, env->map, env->x, env->y,
+            new_info_map_except(NDI_UNIQUE|NDI_GREY, env->map, env->x, env->y,
                 MAP_INFO_NORMAL, env, env, "%s suddenly can see again.", query_name(env));
             if(env->type == PLAYER)
                 new_draw_info(NDI_UNIQUE, 0, env, "You suddenly can see again!");
         }
         else if(op->sub_type1 == ST1_FORCE_CONFUSED)
         {
-            new_info_map_except_format(NDI_UNIQUE|NDI_GREY, env->map, env->x, env->y,
+            new_info_map_except(NDI_UNIQUE|NDI_GREY, env->map, env->x, env->y,
                 MAP_INFO_NORMAL, env, env, "%s suddenly regain his senses.", query_name(env));
             if(env->type == PLAYER)
                 new_draw_info(NDI_UNIQUE, 0, env, "You suddenly regain your senses!");
         }
         else if(op->sub_type1 == ST1_FORCE_PARALYZE)
         {
-            new_info_map_except_format(NDI_UNIQUE|NDI_GREY, env->map, env->x, env->y,
+            new_info_map_except(NDI_UNIQUE|NDI_GREY, env->map, env->x, env->y,
                 MAP_INFO_NORMAL, env, env, "%s suddenly moves again.", query_name(env));
             if(env->type == PLAYER)
                 new_draw_info(NDI_UNIQUE, 0, env, "You suddenly can move again!");
         }
         else if(op->sub_type1 == ST1_FORCE_FEAR)
         {
-            new_info_map_except_format(NDI_UNIQUE|NDI_GREY, env->map, env->x, env->y,
+            new_info_map_except(NDI_UNIQUE|NDI_GREY, env->map, env->x, env->y,
                 MAP_INFO_NORMAL, env, env, "%s suddenly looks braver.", query_name(env));
             if(env->type == PLAYER)
                 new_draw_info(NDI_UNIQUE, 0, env, "You suddenly feel braver!");
         }
         else if(op->sub_type1 == ST1_FORCE_SLOWED)
         {
-            new_info_map_except_format(NDI_UNIQUE|NDI_GREY, env->map, env->x, env->y,
+            new_info_map_except(NDI_UNIQUE|NDI_GREY, env->map, env->x, env->y,
             MAP_INFO_NORMAL, env, env, "%s suddenly moves faster.", query_name(env));
             if(env->type == PLAYER)
                 new_draw_info(NDI_UNIQUE, 0, env, "The world suddenly moves slower!");
         }
         else if(op->sub_type1 == ST1_FORCE_DEPLETE) /* depletion */
         {
-            new_info_map_except_format(NDI_UNIQUE|NDI_GREY, env->map, env->x, env->y,
+            new_info_map_except(NDI_UNIQUE|NDI_GREY, env->map, env->x, env->y,
             MAP_INFO_NORMAL, env, env, "%s recovers depleted stats.", query_name(env));
             if(env->type == PLAYER)
                 new_draw_info(NDI_UNIQUE, 0, env, "You recover depleted stats!");
         }
         else if(op->sub_type1 == ST1_FORCE_DRAIN)
         {
-            new_info_map_except_format(NDI_UNIQUE|NDI_GREY, env->map, env->x, env->y,
+            new_info_map_except(NDI_UNIQUE|NDI_GREY, env->map, env->x, env->y,
             MAP_INFO_NORMAL, env, env, "%s recovers drained levels.", query_name(env));
             if(env->type == PLAYER)
                 new_draw_info(NDI_UNIQUE, 0, env, "You recover drained levels!");
         }
         else if(op->sub_type1 == ST1_FORCE_POISON)
         {
-            new_info_map_except_format(NDI_UNIQUE|NDI_GREY, env->map, env->x, env->y,
+            new_info_map_except(NDI_UNIQUE|NDI_GREY, env->map, env->x, env->y,
             MAP_INFO_NORMAL, env, env, "%s's body seems cleansed.", query_name(env));
             if(env->type == PLAYER)
                 new_draw_info(NDI_UNIQUE, 0, env, "Your body seems cleansed!");
         }
         else if(op->sub_type1 == ST1_FORCE_DEATHSICK)
         {
-            new_info_map_except_format(NDI_UNIQUE|NDI_GREY, env->map, env->x, env->y,
+            new_info_map_except(NDI_UNIQUE|NDI_GREY, env->map, env->x, env->y,
             MAP_INFO_NORMAL, env, env, "%s seems to no longer suffer from death sickness.", query_name(env));
             if(env->type == PLAYER)
                 new_draw_info(NDI_UNIQUE, 0, env, "You no longer suffer from death sickness!");
         }
         /*
         else
-            new_info_map_except_format(NDI_UNIQUE|NDI_GREY, env->map, env->x, env->y,
+            new_info_map_except(NDI_UNIQUE|NDI_GREY, env->map, env->x, env->y,
                         MAP_INFO_NORMAL, env, env, "%s lose some effects.", query_name(env));
         */
     }
@@ -554,7 +554,7 @@ void move_gate(object *op)
                 dam = dam * 3 + (tmp->level - dam) + 1;
                 damage_ob(tmp, dam, op, ENV_ATTACK_CHECK);
                 if (tmp->type == PLAYER)
-                    new_draw_info_format(NDI_UNIQUE, 0, tmp, "You are crushed by the %s!", op->name);
+                    new_draw_info(NDI_UNIQUE, 0, tmp, "You are crushed by the %s!", op->name);
             }
 
             /* If the object is alive, or the object either can
@@ -866,7 +866,7 @@ void change_object(object *op)
                     {
                         if (op->env->type == PLAYER) /* inside player char? */
                         {
-                            new_draw_info_format(NDI_UNIQUE, 0, op->env, "The %s burnt out.", query_name(op));
+                            new_draw_info(NDI_UNIQUE, 0, op->env, "The %s burnt out.", query_name(op));
                             op->glow_radius = 0;
                             esrv_send_item(op->env, op);
                             FIX_PLAYER(op->env ,"change object");
@@ -892,7 +892,7 @@ void change_object(object *op)
                 {
                     /* but give the player a note about it too */
                     if (op->env && op->env->type == PLAYER)
-                        new_draw_info_format(NDI_UNIQUE, 0, op->env, "The %s burnt out.", query_name(op));
+                        new_draw_info(NDI_UNIQUE, 0, op->env, "The %s burnt out.", query_name(op));
                 }
             }
         }

@@ -150,10 +150,10 @@ struct obj *aggro_update_info(struct obj *target, struct obj *hitter, struct obj
 
     /* debug...
     if(hitter && hitter->chosen_skill)
-        new_draw_info_format( NDI_UNIQUE, 0, hitter->type!=PLAYER?hitter_owner:hitter, "SKILL-hitter: %s (%d)",
+        new_draw_info( NDI_UNIQUE, 0, hitter->type!=PLAYER?hitter_owner:hitter, "SKILL-hitter: %s (%d)",
         skills[hitter->chosen_skill->stats.sp].name,hitter->chosen_skill->stats.sp);
     if(hitter_owner && hitter_owner->chosen_skill)
-        new_draw_info_format( NDI_UNIQUE, 0, hitter->type!=PLAYER?hitter_owner:hitter, "SKILL-howner: %s (%d)",
+        new_draw_info( NDI_UNIQUE, 0, hitter->type!=PLAYER?hitter_owner:hitter, "SKILL-howner: %s (%d)",
         skills[hitter_owner->chosen_skill->stats.sp].name,hitter_owner->chosen_skill->stats.sp);
     */
 
@@ -325,13 +325,13 @@ static inline int add_aggro_exp(object *hitter, int exp, int skillnr)
         if(CONTR(hitter)->exp_bonus)
         {
             int exp_bonus = (int)(((double)exp/100.0)*(double)CONTR(hitter)->exp_bonus);
-            new_draw_info_format(NDI_UNIQUE | NDI_WHITE, 0, hitter, "You got %d (+%d bonus) exp in %s.",
+            new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, hitter, "You got %d (+%d bonus) exp in %s.",
                                  add_exp(hitter, exp+exp_bonus, skillnr),
                                  exp_bonus, skills[skillnr].name);
         }
         else
         {
-            new_draw_info_format(NDI_UNIQUE | NDI_WHITE, 0, hitter, "You got %d exp in %s.",
+            new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, hitter, "You got %d exp in %s.",
                                  add_exp(hitter, exp, skillnr),
                                  skills[skillnr].name);
         }
@@ -340,7 +340,7 @@ static inline int add_aggro_exp(object *hitter, int exp, int skillnr)
     /*
      * that message was now given one time and only when no skill has >0 exp gain
     else
-        new_draw_info_format( NDI_UNIQUE, 0, hitter, "Your enemy was to low for exp.");
+        new_draw_info( NDI_UNIQUE, 0, hitter, "Your enemy was to low for exp.");
     */
     return FALSE;
 }
@@ -454,7 +454,7 @@ static inline int aggro_exp_single(object *victim, object *aggro, int base)
 
     /* if *all* possible skill exp has been zero because mob was to low - drop a message */
     if(ret == FALSE)
-        new_draw_info_format(NDI_UNIQUE | NDI_GREY, 0, hitter, "Your enemy was too low for exp.");
+        new_draw_info(NDI_UNIQUE | NDI_GREY, 0, hitter, "Your enemy was too low for exp.");
 
     return ret;
 }

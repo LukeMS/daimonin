@@ -89,7 +89,7 @@ static int check_mute(object *op, int mode)
         (CONTR(op)->gmaster_mode == GMASTER_MODE_NO ||
          CONTR(op)->gmaster_mode == GMASTER_MODE_MW))
     {
-        new_draw_info_format(NDI_UNIQUE | NDI_ORANGE, 0, op, "You need to be level %d or higher for shout/tell!",
+        new_draw_info(NDI_UNIQUE | NDI_ORANGE, 0, op, "You need to be level %d or higher for shout/tell!",
                              settings.mutelevel);
 
         return FALSE;
@@ -105,7 +105,7 @@ static int check_mute(object *op, int mode)
             {
                 unsigned long tmp = (CONTR(op)->mute_counter-pticks)/(1000000/MAX_TIME);
 
-                new_draw_info_format( NDI_UNIQUE, 0, op, "You are still muted for %d second(s).", (int)(tmp?tmp:1));
+                new_draw_info( NDI_UNIQUE, 0, op, "You are still muted for %d second(s).", (int)(tmp?tmp:1));
                 CONTR(op)->mute_msg_count = pticks+MUTE_MSG_FREQ;
             }
             return FALSE;
@@ -137,7 +137,7 @@ static int check_mute(object *op, int mode)
                 }
                 else /* mute him */
                 {
-                    new_draw_info_format( NDI_UNIQUE|NDI_RED, 0, op, "Auto-Mute: Don't spam! You are muted for %d seconds!",(int)(MUTE_AUTO_NORMAL/(1000000/MAX_TIME)));
+                    new_draw_info( NDI_UNIQUE|NDI_RED, 0, op, "Auto-Mute: Don't spam! You are muted for %d seconds!",(int)(MUTE_AUTO_NORMAL/(1000000/MAX_TIME)));
                     CONTR(op)->mute_counter = pticks+MUTE_AUTO_NORMAL;
                     return FALSE;
                 }
@@ -167,7 +167,7 @@ static int check_mute(object *op, int mode)
                 }
                 else /* mute him */
                 {
-                    new_draw_info_format( NDI_UNIQUE|NDI_RED, 0, op, "Auto-Mute: Don't spam! You are muted for %d seconds!",(int)(MUTE_AUTO_NORMAL/(1000000/MAX_TIME)));
+                    new_draw_info( NDI_UNIQUE|NDI_RED, 0, op, "Auto-Mute: Don't spam! You are muted for %d seconds!",(int)(MUTE_AUTO_NORMAL/(1000000/MAX_TIME)));
                     CONTR(op)->mute_counter = pticks+MUTE_AUTO_NORMAL;
                     return FALSE;
                 }
@@ -407,7 +407,7 @@ int command_tell(object *op, char *params)
                      CONTR(op)->gmaster_mode == GMASTER_MODE_GM ||
                      CONTR(op)->gmaster_mode == GMASTER_MODE_MM))
                 {
-                    new_draw_info_format(NDI_PLAYER | NDI_UNIQUE, 0, op, "You tell %s (~privacy mode~): %s",
+                    new_draw_info(NDI_PLAYER | NDI_UNIQUE, 0, op, "You tell %s (~privacy mode~): %s",
                                          name, msg);
                 }
                 else
@@ -415,15 +415,15 @@ int command_tell(object *op, char *params)
                     new_draw_info(NDI_UNIQUE, 0, op, "No such player.");
                 }
 
-                new_draw_info_format(NDI_TELL | NDI_PLAYER | NDI_UNIQUE |
+                new_draw_info(NDI_TELL | NDI_PLAYER | NDI_UNIQUE |
                                      NDI_NAVY, 0, pl->ob, "%s tells you (~privacy mode~): %s",
                                      op->name, msg);
             }
             else
             {
-                new_draw_info_format(NDI_PLAYER | NDI_UNIQUE, 0, op, "You tell %s: %s",
+                new_draw_info(NDI_PLAYER | NDI_UNIQUE, 0, op, "You tell %s: %s",
                                      name, msg);
-                new_draw_info_format(NDI_TELL | NDI_PLAYER | NDI_UNIQUE |
+                new_draw_info(NDI_TELL | NDI_PLAYER | NDI_UNIQUE |
                                      NDI_NAVY, 0, pl->ob, "%s tells you: %s",
                                      op->name, msg);
             }

@@ -370,14 +370,13 @@ struct plugin_hooklist
     /* N */
     uint32 (*nearest_pow_two_exp)(uint32);
     void (*new_draw_info)(const int, const int, const object *const,
-                          const char *const);
-    void (*new_draw_info_format)(const int, const int, const object *const,
-                                 const char *const, ...);
+                          const char *const, ...);
     void (*new_info_map)(const int, const mapstruct *const, const int,
-                         const int, const int, const char *const);
-    void (*new_info_map_except)(const int, const mapstruct *const, const int,
-                                const int, const int, const object *const,
-                                const object *const, const char *const);
+                         const int, const int, const char *const, ...);
+    void (*new_info_map_except)(const int, const mapstruct *const,
+                                const int, const int, const int,
+                                const object *const, const object *const,
+                                const char *const, ...);
     int (*new_save_map)(mapstruct *, int);
     char *(*normalize_path)(const char *, const char *, char *);
     char *(*normalize_path_direct)(const char *, const char *, char *);

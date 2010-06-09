@@ -36,18 +36,12 @@ void            read_client_images(void);
 int             esrv_send_face(NewSocket *ns, short face_num, int nocache);
 #endif
 /* info.c */
-void            new_draw_info(const int flags, const int pri, const object *const pl, const char *const buf);
-void            new_draw_info_format(const int flags, const int pri, const object *const pl, const char *const format, ...);
-void            new_info_map(const int color, const mapstruct *const map, const int x, const int y, const
-                             int dist, const char *const str);
-void            new_info_map_except(const int color, const mapstruct *const map, const int x, const int y,
+void            new_draw_info(const int flags, const int pri, const object *const op, const char *const format, ...);
+void            new_info_map(const int flags, const mapstruct *const map, const int x, const int y, const
+                             int dist, const char *const format, ...);
+void            new_info_map_except(const int flags, const mapstruct *const map, const int x, const int y,
                                     const int dist, const object *const op1, const object *const op,
-                                    const char *const str);
-void            new_info_map_format(const int color, const mapstruct *const map, const int x, const int y,
-                                    const int dist, const char *const format, ...);
-void            new_info_map_except_format(const int color, const mapstruct *const map, const int x, const int y,
-                                            const int dist, const object *const op1, const object *const op,
-                                            const char *const format, ...);
+                                    const char *const format, ...);
 /* init.c */
 void            InitConnection(NewSocket *ns, char *str_ip);
 void            init_ericserver(void);

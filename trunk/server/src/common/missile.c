@@ -96,7 +96,7 @@ float fire_bow(object *op, int dir)
 
     if (!bow->race || !bow->item_condition)
     {
-        new_draw_info_format(NDI_UNIQUE, 0, op, "Your %s is broken.", bow->name);
+        new_draw_info(NDI_UNIQUE, 0, op, "Your %s is broken.", bow->name);
         return 0;
     }
 
@@ -110,7 +110,7 @@ float fire_bow(object *op, int dir)
     arrow = get_split_ob(pl->equipment[PLAYER_EQUIP_AMUN], 1);
     if(!arrow || arrow->sub_type1 != bow->sub_type1)
     {
-        new_draw_info_format(NDI_UNIQUE, 0, op, "You have no %s left.", bow->race);
+        new_draw_info(NDI_UNIQUE, 0, op, "You have no %s left.", bow->race);
         return 0;
     }
 
@@ -740,7 +740,7 @@ int do_throw(object *thrower, object *toss_item, int dir)
 
     throw_ob->stats.dam = (sint16)((float) throw_ob->stats.dam * ((float)toss_item->item_condition/100.0f)); /* and finally the item condition! (mob & players) */
 
-    new_draw_info_format(NDI_UNIQUE, 0, thrower, "throwDAM: action_t=%d skill=%d dam:%d wc:%d",toss_item->last_grace, thrower->chosen_skill->last_grace, throw_ob->stats.dam, throw_ob->stats.wc);
+    new_draw_info(NDI_UNIQUE, 0, thrower, "throwDAM: action_t=%d skill=%d dam:%d wc:%d",toss_item->last_grace, thrower->chosen_skill->last_grace, throw_ob->stats.dam, throw_ob->stats.wc);
 
     ticks = toss_item->last_grace + thrower->chosen_skill->last_grace;
     /* chance of breaking. Proportional to force used and weight of item */

@@ -124,12 +124,12 @@ int command_party_invite(object *pl, char *params)
                         command_party_deny (pl, NULL); /* automatic /deny */
                     activator->group_mode = GROUP_MODE_INVITE;
                     FREE_AND_ADD_REF_HASH(activator->group_invite_name, target->ob->name);
-                    new_draw_info_format(NDI_UNIQUE, 0,pl, "Group: /invite enabled for player %s.", STRING_SAFE(params));
+                    new_draw_info(NDI_UNIQUE, 0,pl, "Group: /invite enabled for player %s.", STRING_SAFE(params));
                 }
             }
         }
 
-        new_draw_info_format(NDI_UNIQUE, 0,pl, "/invite %s: offline or unknown player.", params);
+        new_draw_info(NDI_UNIQUE, 0,pl, "/invite %s: offline or unknown player.", params);
 
         return 0;
     }
@@ -163,7 +163,7 @@ int command_party_invite(object *pl, char *params)
     if(target->group_status & GROUP_STATUS_INVITE)
     {
         /* we want avoid /invite spaming - so we don't give much information here */
-        new_draw_info_format(NDI_UNIQUE, 0,pl, "/invite: %s has pending invite request.", query_name(target->ob));
+        new_draw_info(NDI_UNIQUE, 0,pl, "/invite: %s has pending invite request.", query_name(target->ob));
 
         return 0;
     }
@@ -171,7 +171,7 @@ int command_party_invite(object *pl, char *params)
     /* target can be invited? */
     if(target->group_id != GROUP_NO) /* player has a group - GROUP_STATUS_GROUP should work to*/
     {
-        new_draw_info_format(NDI_UNIQUE, 0,pl, "/invite: %s is in another group.", query_name(target->ob));
+        new_draw_info(NDI_UNIQUE, 0,pl, "/invite: %s is in another group.", query_name(target->ob));
 
         return 0;
     }
@@ -180,7 +180,7 @@ int command_party_invite(object *pl, char *params)
     if(target->group_mode == GROUP_MODE_DENY ||
             (target->group_mode == GROUP_MODE_INVITE && pl->name != target->group_invite_name))
     {
-        new_draw_info_format(NDI_UNIQUE, 0,pl, "/invite: %s don't allow invite.", query_name(target->ob));
+        new_draw_info(NDI_UNIQUE, 0,pl, "/invite: %s don't allow invite.", query_name(target->ob));
 
         return 0;
     }
@@ -195,7 +195,7 @@ int command_party_invite(object *pl, char *params)
 
     /* send the /invite to our player */
     Write_String_To_Socket(&target->socket, BINARY_CMD_INVITE, pl->name, strlen(pl->name));
-    new_draw_info_format(NDI_YELLOW, 0,pl, "You invited %s to join the group.", query_name(target->ob));
+    new_draw_info(NDI_YELLOW, 0,pl, "You invited %s to join the group.", query_name(target->ob));
 
     return 0;
 }
@@ -222,7 +222,7 @@ int command_party_join(object *pl, char *params)
         target = CONTR(activator->group_leader);
     else if(!(target = find_player_hash(activator->group_invite_name)))
     {
-        new_draw_info_format(NDI_YELLOW, 0,pl, "/join: %s is offline.", STRING_SAFE(activator->group_invite_name));
+        new_draw_info(NDI_YELLOW, 0,pl, "/join: %s is offline.", STRING_SAFE(activator->group_invite_name));
         party_client_group_kill(pl);
         party_clear_links(activator);
 
@@ -234,7 +234,7 @@ int command_party_join(object *pl, char *params)
      */
     if(target->group_status & GROUP_STATUS_GROUP && target->group_leader != target->ob)
     {
-        new_draw_info_format(NDI_YELLOW, 0,pl, "/join: %s joined another group.", query_name(target->ob));
+        new_draw_info(NDI_YELLOW, 0,pl, "/join: %s joined another group.", query_name(target->ob));
         party_client_group_kill(pl);
         party_clear_links(activator);
 
@@ -264,7 +264,7 @@ int command_party_deny(object *pl, char *params)
         return 0;
 
     /* message is redundant because the invite window will vanish as signal */
-    /* new_draw_info_format(NDI_UNIQUE, 0,pl, "You denied the invite."); */
+    /* new_draw_info(NDI_UNIQUE, 0,pl, "You denied the invite."); */
     activator->group_status = GROUP_STATUS_FREE; /* simple action */
 
     return 0;
@@ -317,7 +317,7 @@ int command_party_remove(object *pl, char *params)
         !(target->group_status & GROUP_STATUS_GROUP) ||
         activator->group_id != target->group_id)
     {
-        new_draw_info_format(NDI_YELLOW, 0, pl, "/remove: %s is not in your group.",
+        new_draw_info(NDI_YELLOW, 0, pl, "/remove: %s is not in your group.",
                              STRING_SAFE(params));
 
         return 0;

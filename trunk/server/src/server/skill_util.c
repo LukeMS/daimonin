@@ -525,7 +525,7 @@ int check_skill_to_apply(object *who, object *item)
     {
         if (!change_skill(who, add_skill))
         {
-            /*new_draw_info_format(NDI_UNIQUE, 0,who,"You don't have the needed skill '%s'!", skills[add_skill].name);*/
+            /*new_draw_info(NDI_UNIQUE, 0,who,"You don't have the needed skill '%s'!", skills[add_skill].name);*/
             return 0;
         }
         change_skill(who, NO_SKILL_READY);
@@ -537,7 +537,7 @@ int check_skill_to_apply(object *who, object *item)
     {
         if (!change_skill(who, skill))
         {
-            /*new_draw_info_format(NDI_UNIQUE, 0,who,"You don't have the needed skill '%s'!", skills[skill].name);*/
+            /*new_draw_info(NDI_UNIQUE, 0,who,"You don't have the needed skill '%s'!", skills[skill].name);*/
             return 0;
         }
     }
@@ -614,7 +614,7 @@ int learn_skill(object *pl, object *scroll, char *name, int skillnr, int scroll_
     if(find_skill(pl,skillnr))
     {
         if(p && (p->state & ST_PLAYING))
-            new_draw_info_format(NDI_UNIQUE, 0, pl, "You already know the skill '%s'!", query_name(&skill->clone));
+            new_draw_info(NDI_UNIQUE, 0, pl, "You already know the skill '%s'!", query_name(&skill->clone));
         return 0;
     }
 
@@ -643,7 +643,7 @@ int learn_skill(object *pl, object *scroll, char *name, int skillnr, int scroll_
     if(p && (p->state & ST_PLAYING))
     {
         play_sound_player_only(CONTR(pl), SOUND_LEARN_SPELL, SOUND_NORMAL, 0, 0);
-        new_draw_info_format(NDI_UNIQUE, 0, pl, "You have learned the skill %s!", tmp->name);
+        new_draw_info(NDI_UNIQUE, 0, pl, "You have learned the skill %s!", tmp->name);
         send_skilllist_cmd(pl, tmp, SPLIST_MODE_ADD);
         esrv_send_item(pl, tmp);
     }
@@ -671,7 +671,7 @@ int use_skill(object *op, char *string)
 
         if (sknum == -1)
         {
-            new_draw_info_format(NDI_UNIQUE, 0, op, "Unable to find skill by name %s", string);
+            new_draw_info(NDI_UNIQUE, 0, op, "Unable to find skill by name %s", string);
             return 0;
         }
 
@@ -757,7 +757,7 @@ int change_skill(object *who, int sk_index)
         FIX_PLAYER(who, "change_skill AP_UNAPPLY");
     }
     if (sk_index >= 0)
-        new_draw_info_format(NDI_UNIQUE, 0, who, "You have no knowledge of %s.", skills[sk_index].name);
+        new_draw_info(NDI_UNIQUE, 0, who, "You have no knowledge of %s.", skills[sk_index].name);
     return 0;
 }
 
@@ -948,9 +948,9 @@ int do_skill_attack(object *tmp, object *op, char *string)
     {
         sprintf(buf, "%s", string);
         if (op->type == PLAYER)
-            new_draw_info_format(NDI_UNIQUE, 0, op, "You %s %s!", buf, name);
+            new_draw_info(NDI_UNIQUE, 0, op, "You %s %s!", buf, name);
         else if (tmp->type == PLAYER)
-            new_draw_info_format(NDI_UNIQUE, 0, tmp, "%s %s you!", query_name(op), buf);
+            new_draw_info(NDI_UNIQUE, 0, tmp, "%s %s you!", query_name(op), buf);
     }
 
     /* set the skill delay from the attack so we can't use other skills during the cooldown time */

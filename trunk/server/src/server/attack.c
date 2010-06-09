@@ -170,9 +170,9 @@ int attack_ob(object *target, object *hitter, object *hit_obj)
 
 #ifdef ATTACK_DEBUG
     if (hitter->type == PLAYER)
-        new_draw_info_format(NDI_RED, 0, hitter, "You roll: %d thac m:%d 0:%d (wc/roll: %d(%d) ac:%d)!", roll,hitter->stats.thac0,hitter->stats.thacm, hit_obj->stats.wc,hit_obj->stats.wc+roll,target->stats.ac);
+        new_draw_info(NDI_RED, 0, hitter, "You roll: %d thac m:%d 0:%d (wc/roll: %d(%d) ac:%d)!", roll,hitter->stats.thac0,hitter->stats.thacm, hit_obj->stats.wc,hit_obj->stats.wc+roll,target->stats.ac);
     if (target->type == PLAYER)
-        new_draw_info_format(NDI_RED, 0, target, "Hitter roll: %d thac m:%d 0:%d (wc/roll: %d(%d) ac:%d)!", roll,hitter->stats.thac0,hitter->stats.thacm, hit_obj->stats.wc,hit_obj->stats.wc+roll,target->stats.ac);
+        new_draw_info(NDI_RED, 0, target, "Hitter roll: %d thac m:%d 0:%d (wc/roll: %d(%d) ac:%d)!", roll,hitter->stats.thac0,hitter->stats.thacm, hit_obj->stats.wc,hit_obj->stats.wc+roll,target->stats.ac);
 #endif
 
     if (hitter->type == PLAYER)
@@ -212,7 +212,7 @@ int attack_ob(object *target, object *hitter, object *hit_obj)
         if (hitter->type == MONSTER || hitter->type == PLAYER)
         {
             if (target->type == PLAYER)
-                new_draw_info_format(NDI_PURPLE, 0, target, "%s fumbles!", hitter->name);
+                new_draw_info(NDI_PURPLE, 0, target, "%s fumbles!", hitter->name);
             if (hitter->type == PLAYER)
                 new_draw_info(NDI_ORANGE, 0, hitter, "You fumble!");
 
@@ -231,7 +231,7 @@ int attack_ob(object *target, object *hitter, object *hit_obj)
         if (hitter->type == MONSTER || hitter->type == PLAYER)
         {
             if (target->type == PLAYER)
-                new_draw_info_format(NDI_PURPLE, 0, target, "%s Direct Hit! (+20%% damage)", hitter->name);
+                new_draw_info(NDI_PURPLE, 0, target, "%s Direct Hit! (+20%% damage)", hitter->name);
             if (hitter->type == PLAYER)
                 new_draw_info(NDI_ORANGE, 0, hitter, "Direct Hit! (+20% damage)");
             hitdam = (int) (hitdam * 1.2f);
@@ -301,9 +301,9 @@ int attack_ob(object *target, object *hitter, object *hit_obj)
         if (hitter->type != ARROW)
         {
             if (target->type == PLAYER)
-                new_draw_info_format(NDI_PURPLE, 0, target, "%s misses you!", hitter->name);
+                new_draw_info(NDI_PURPLE, 0, target, "%s misses you!", hitter->name);
             if (hitter->type == PLAYER)
-                new_draw_info_format(NDI_ORANGE, 0, hitter, "you miss %s!", target->name);
+                new_draw_info(NDI_ORANGE, 0, hitter, "you miss %s!", target->name);
 
             if (hitter->type == PLAYER)
                 play_sound_map(hitter->map, hitter->x, hitter->y, SOUND_MISS_PLAYER, SOUND_NORMAL);
@@ -708,12 +708,12 @@ static inline void send_resist_msg(object *op, object *hitter, int attacknum)
 {
     if (op->type == PLAYER)
     {
-        new_draw_info_format(NDI_GREY, 0, op, "You resist the %s attack!", attack_name[attacknum]);
+        new_draw_info(NDI_GREY, 0, op, "You resist the %s attack!", attack_name[attacknum]);
     }
     /* i love C... ;) */
     if (hitter->type == PLAYER || ((hitter = get_owner(hitter)) && hitter->type == PLAYER))
     {
-        new_draw_info_format(NDI_GREY, 0, hitter, "%s resists the %s attack!", op->name, attack_name[attacknum]);
+        new_draw_info(NDI_GREY, 0, hitter, "%s resists the %s attack!", op->name, attack_name[attacknum]);
     }
 }
 
@@ -932,7 +932,7 @@ static int hit_player_attacktype(object *op, object *hitter, int *flags, int dam
             if(random_roll(0, (int)dam+4) >
             random_roll(0, 39)+2*tmp->magic) {
             if(op->type == PLAYER)
-            new_draw_info_format(NDI_UNIQUE|NDI_RED,0, op,
+            new_draw_info(NDI_UNIQUE|NDI_RED,0, op,
             "The %s's acid corrodes your %s!",
             query_name(hitter), query_name(tmp));
             flag = 1;
@@ -1056,15 +1056,15 @@ static int hit_player_attacktype(object *op, object *hitter, int *flags, int dam
             if(hitter->attack[attacknum] > (RANDOM()%100)) /* we hit with effect? */
             {
                 if (hitter->type == PLAYER)
-                    new_draw_info_format(NDI_ORANGE, 0, hitter, "You drain %s!", op->name);
+                    new_draw_info(NDI_ORANGE, 0, hitter, "You drain %s!", op->name);
                 if (op->type == PLAYER)
-                    new_draw_info_format(NDI_PURPLE, 0, op, "%s drains you!", hitter->name);
+                    new_draw_info(NDI_PURPLE, 0, op, "%s drains you!", hitter->name);
 
                 /* give the target the chance to resist */
                 if(op->resist[attacknum] > (RANDOM()%100)) /* resisted? */
                 {
                     if (hitter->type == PLAYER)
-                        new_draw_info_format(NDI_YELLOW, 0, hitter, "%s resists the drain!", op->name);
+                        new_draw_info(NDI_YELLOW, 0, hitter, "%s resists the drain!", op->name);
                     if (op->type == PLAYER)
                         new_draw_info(NDI_YELLOW, 0, op, "You resist!");
                 }
@@ -1078,15 +1078,15 @@ static int hit_player_attacktype(object *op, object *hitter, int *flags, int dam
             if(hitter->attack[attacknum] > (RANDOM()%100)) /* we hit with effect? */
             {
                 if (hitter->type == PLAYER)
-                    new_draw_info_format(NDI_ORANGE, 0, hitter, "You deplete %s!", op->name);
+                    new_draw_info(NDI_ORANGE, 0, hitter, "You deplete %s!", op->name);
                 if (op->type == PLAYER)
-                    new_draw_info_format(NDI_PURPLE, 0, op, "%s depletes you!", hitter->name);
+                    new_draw_info(NDI_PURPLE, 0, op, "%s depletes you!", hitter->name);
 
                 /* give the target the chance to resist */
                 if(op->resist[attacknum] > (RANDOM()%100)) /* resisted? */
                 {
                     if (hitter->type == PLAYER)
-                        new_draw_info_format(NDI_YELLOW, 0, hitter, "%s resists depletion!", op->name);
+                        new_draw_info(NDI_YELLOW, 0, hitter, "%s resists depletion!", op->name);
                     if (op->type == PLAYER)
                         new_draw_info(NDI_YELLOW, 0, op, "You resist!");
                 }
@@ -1099,15 +1099,15 @@ static int hit_player_attacktype(object *op, object *hitter, int *flags, int dam
             if(hitter->attack[attacknum] > (RANDOM()%100)) /* we hit with effect? */
             {
                 if (hitter->type == PLAYER)
-                    new_draw_info_format(NDI_ORANGE, 0, hitter, "You corrupt %s!", op->name);
+                    new_draw_info(NDI_ORANGE, 0, hitter, "You corrupt %s!", op->name);
                 if (op->type == PLAYER)
-                    new_draw_info_format(NDI_PURPLE, 0, op, "%s corrupts you!", hitter->name);
+                    new_draw_info(NDI_PURPLE, 0, op, "%s corrupts you!", hitter->name);
 
                 /* give the target the chance to resist */
                 if(op->resist[attacknum] > (RANDOM()%100)) /* resisted? */
                 {
                     if (hitter->type == PLAYER)
-                        new_draw_info_format(NDI_YELLOW, 0, hitter, "%s resists the corruption!", op->name);
+                        new_draw_info(NDI_YELLOW, 0, hitter, "%s resists the corruption!", op->name);
                     if (op->type == PLAYER)
                         new_draw_info(NDI_YELLOW, 0, op, "You resist!");
                 }
@@ -1120,15 +1120,15 @@ static int hit_player_attacktype(object *op, object *hitter, int *flags, int dam
             if(hitter->attack[attacknum] > (RANDOM()%100)) /* we hit with effect? */
             {
                 if (hitter->type == PLAYER)
-                    new_draw_info_format(NDI_ORANGE, 0, hitter, "You confuse %s!", op->name);
+                    new_draw_info(NDI_ORANGE, 0, hitter, "You confuse %s!", op->name);
                 if (op->type == PLAYER)
-                    new_draw_info_format(NDI_PURPLE, 0, op, "%s confuses you!", hitter->name);
+                    new_draw_info(NDI_PURPLE, 0, op, "%s confuses you!", hitter->name);
 
                 /* give the target the chance to resist */
                 if(op->resist[attacknum] > (RANDOM()%100)) /* resisted? */
                 {
                     if (hitter->type == PLAYER)
-                        new_draw_info_format(NDI_YELLOW, 0, hitter, "%s resist!", op->name);
+                        new_draw_info(NDI_YELLOW, 0, hitter, "%s resist!", op->name);
                     if (op->type == PLAYER)
                         new_draw_info(NDI_YELLOW, 0, op, "You resists confusion!");
                 }
@@ -1141,15 +1141,15 @@ static int hit_player_attacktype(object *op, object *hitter, int *flags, int dam
             if(hitter->attack[attacknum] > (RANDOM()%100)) /* we hit with effect? */
             {
                 if (hitter->type == PLAYER)
-                    new_draw_info_format(NDI_ORANGE, 0, hitter, "You slow %s!", op->name);
+                    new_draw_info(NDI_ORANGE, 0, hitter, "You slow %s!", op->name);
                 if (op->type == PLAYER)
-                    new_draw_info_format(NDI_PURPLE, 0, op, "%s slows you!", hitter->name);
+                    new_draw_info(NDI_PURPLE, 0, op, "%s slows you!", hitter->name);
 
                 /* give the target the chance to resist */
                 if(op->resist[attacknum] > (RANDOM()%100)) /* resisted? */
                 {
                     if (hitter->type == PLAYER)
-                        new_draw_info_format(NDI_YELLOW, 0, hitter, "%s resist the slow effect!", op->name);
+                        new_draw_info(NDI_YELLOW, 0, hitter, "%s resist the slow effect!", op->name);
                     if (op->type == PLAYER)
                         new_draw_info(NDI_YELLOW, 0, op, "You resist!");
                 }
@@ -1162,15 +1162,15 @@ static int hit_player_attacktype(object *op, object *hitter, int *flags, int dam
             if(hitter->attack[attacknum] > (RANDOM()%100)) /* we hit with effect? */
             {
                 if (hitter->type == PLAYER)
-                    new_draw_info_format(NDI_ORANGE, 0, hitter, "You scared %s!", op->name);
+                    new_draw_info(NDI_ORANGE, 0, hitter, "You scared %s!", op->name);
                 if (op->type == PLAYER)
-                    new_draw_info_format(NDI_PURPLE, 0, op, "%s scares you!", hitter->name);
+                    new_draw_info(NDI_PURPLE, 0, op, "%s scares you!", hitter->name);
 
                 /* give the target the chance to resist */
                 if(op->resist[attacknum] > (RANDOM()%100)) /* resisted? */
                 {
                     if (hitter->type == PLAYER)
-                        new_draw_info_format(NDI_YELLOW, 0, hitter, "%s resists fear!", op->name);
+                        new_draw_info(NDI_YELLOW, 0, hitter, "%s resists fear!", op->name);
                     if (op->type == PLAYER)
                         new_draw_info(NDI_YELLOW, 0, op, "You resist!");
                 }
@@ -1183,15 +1183,15 @@ static int hit_player_attacktype(object *op, object *hitter, int *flags, int dam
             if(hitter->attack[attacknum] > (RANDOM()%100)) /* we hit with effect? */
             {
                 if (hitter->type == PLAYER)
-                    new_draw_info_format(NDI_ORANGE, 0, hitter, "You snared %s!", op->name);
+                    new_draw_info(NDI_ORANGE, 0, hitter, "You snared %s!", op->name);
                 if (op->type == PLAYER)
-                    new_draw_info_format(NDI_PURPLE, 0, op, "%s snares you!", hitter->name);
+                    new_draw_info(NDI_PURPLE, 0, op, "%s snares you!", hitter->name);
 
                 /* give the target the chance to resist */
                 if(op->resist[attacknum] > (RANDOM()%100)) /* resisted? */
                 {
                     if (hitter->type == PLAYER)
-                        new_draw_info_format(NDI_YELLOW, 0, hitter, "%s resists the snare!", op->name);
+                        new_draw_info(NDI_YELLOW, 0, hitter, "%s resists the snare!", op->name);
                     if (op->type == PLAYER)
                         new_draw_info(NDI_YELLOW, 0, op, "You resist!");
                 }
@@ -1205,15 +1205,15 @@ static int hit_player_attacktype(object *op, object *hitter, int *flags, int dam
             if(hitter->attack[attacknum] > (RANDOM()%100)) /* we hit with effect? */
             {
                 if (hitter->type == PLAYER)
-                    new_draw_info_format(NDI_ORANGE, 0, hitter, "You paralyzed %s!", op->name);
+                    new_draw_info(NDI_ORANGE, 0, hitter, "You paralyzed %s!", op->name);
                 if (op->type == PLAYER)
-                    new_draw_info_format(NDI_PURPLE, 0, op, "%s paralyzes you!", hitter->name);
+                    new_draw_info(NDI_PURPLE, 0, op, "%s paralyzes you!", hitter->name);
 
                 /* give the target the chance to resist */
                 if(op->resist[attacknum] > (RANDOM()%100)) /* resisted? */
                 {
                     if (hitter->type == PLAYER)
-                        new_draw_info_format(NDI_YELLOW, 0, hitter, "%s resists the paralyzation effect!", op->name);
+                        new_draw_info(NDI_YELLOW, 0, hitter, "%s resists the paralyzation effect!", op->name);
                     if (op->type == PLAYER)
                         new_draw_info(NDI_YELLOW, 0, op, "You resist!");
 
@@ -1234,15 +1234,15 @@ static int hit_player_attacktype(object *op, object *hitter, int *flags, int dam
             if(hitter->attack[attacknum] > (RANDOM()%100)) /* we hit with effect? */
             {
                 if (hitter->type == PLAYER)
-                    new_draw_info_format(NDI_ORANGE, 0, hitter, "You use countermagic on %s!", op->name);
+                    new_draw_info(NDI_ORANGE, 0, hitter, "You use countermagic on %s!", op->name);
                 if (op->type == PLAYER)
-                    new_draw_info_format(NDI_PURPLE, 0, op, "%s uses countermagic on you!", hitter->name);
+                    new_draw_info(NDI_PURPLE, 0, op, "%s uses countermagic on you!", hitter->name);
 
                 /* give the target the chance to resist */
                 if(1 && op->resist[attacknum] > (RANDOM()%100)) /* resisted? */
                 {
                     if (hitter->type == PLAYER)
-                        new_draw_info_format(NDI_YELLOW, 0, hitter, "%s resists the countermagic!", op->name);
+                        new_draw_info(NDI_YELLOW, 0, hitter, "%s resists the countermagic!", op->name);
                     if (op->type == PLAYER)
                         new_draw_info(NDI_YELLOW, 0, op, "You resist!");
                 }
@@ -1257,15 +1257,15 @@ static int hit_player_attacktype(object *op, object *hitter, int *flags, int dam
             if(hitter->attack[attacknum] > (RANDOM()%100)) /* we hit with effect? */
             {
                 if (hitter->type == PLAYER)
-                    new_draw_info_format(NDI_ORANGE, 0, hitter, "You cancellate %s!", op->name);
+                    new_draw_info(NDI_ORANGE, 0, hitter, "You cancellate %s!", op->name);
                 if (op->type == PLAYER)
-                    new_draw_info_format(NDI_PURPLE, 0, op, "%s cancellates you!", hitter->name);
+                    new_draw_info(NDI_PURPLE, 0, op, "%s cancellates you!", hitter->name);
 
                 /* give the target the chance to resist */
                 if(1 && op->resist[attacknum] > (RANDOM()%100)) /* resisted? */
                 {
                     if (hitter->type == PLAYER)
-                        new_draw_info_format(NDI_YELLOW, 0, hitter, "%s resist the cancellation!", op->name);
+                        new_draw_info(NDI_YELLOW, 0, hitter, "%s resist the cancellation!", op->name);
                     if (op->type == PLAYER)
                         new_draw_info(NDI_YELLOW, 0, op, "You resist!");
                 }
@@ -1291,13 +1291,13 @@ static void send_attack_msg(object *op, object *hitter, int attacknum, int dam, 
 {
     if (op->type == PLAYER)
     {
-        new_draw_info_format(NDI_PURPLE, 0, op, "%s hits you for %d (%d) damage.", hitter->name, (int) dam,
+        new_draw_info(NDI_PURPLE, 0, op, "%s hits you for %d (%d) damage.", hitter->name, (int) dam,
                              ((int) dam) - damage);
     }
     /* i love C... ;) */
     if (hitter->type == PLAYER || ((hitter = get_owner(hitter)) && hitter->type == PLAYER))
     {
-        new_draw_info_format(NDI_ORANGE, 0, hitter, "You hit %s for %d (%d) with %s.", op->name, (int) dam,
+        new_draw_info(NDI_ORANGE, 0, hitter, "You hit %s for %d (%d) with %s.", op->name, (int) dam,
                              ((int) dam) - damage, attack_name[attacknum]);
     }
 }
@@ -1699,7 +1699,7 @@ void poison_player(object *op, object *hitter, float dam)
                     }
 
                     tmp = check_obj_stat_buffs(tmp, op);
-                    new_draw_info_format(NDI_UNIQUE, 0, op, "%s has poisoned you!", query_name(hitter));
+                    new_draw_info(NDI_UNIQUE, 0, op, "%s has poisoned you!", query_name(hitter));
                     SET_FLAG(tmp, FLAG_APPLIED);
                     insert_ob_in_ob(tmp, op);
                     FIX_PLAYER(op , "attack - poison");
@@ -1717,9 +1717,9 @@ void poison_player(object *op, object *hitter, float dam)
                     SET_FLAG(tmp, FLAG_APPLIED);
                     fix_monster(op);
                     if (hitter->type == PLAYER)
-                        new_draw_info_format(NDI_UNIQUE, 0, hitter, "You poisoned %s!", query_name(op));
+                        new_draw_info(NDI_UNIQUE, 0, hitter, "You poisoned %s!", query_name(op));
                     else if (get_owner(hitter) && hitter->owner->type == PLAYER)
-                        new_draw_info_format(NDI_UNIQUE, 0, hitter->owner, "%s poisoned %s!", query_name(hitter),
+                        new_draw_info(NDI_UNIQUE, 0, hitter->owner, "%s poisoned %s!", query_name(hitter),
                                              query_name(op));
                 }
             }
@@ -1772,7 +1772,7 @@ void slow_player(object *op, object *hitter, int dam)
         if (op->type == PLAYER)
             new_draw_info(NDI_UNIQUE, 0, op, "The world suddenly moves faster!");
         if (!QUERY_FLAG(op, FLAG_CONFUSED) && op->map)
-            new_info_map_except_format(NDI_UNIQUE|NDI_GREY, op->map, op->x, op->y, MAP_INFO_NORMAL, NULL, op, "%s suddenly moves slower!", STRING_SAFE(op->name));
+            new_info_map_except(NDI_UNIQUE|NDI_GREY, op->map, op->x, op->y, MAP_INFO_NORMAL, NULL, op, "%s suddenly moves slower!", STRING_SAFE(op->name));
         SET_FLAG(tmp, FLAG_APPLIED);
         FIX_PLAYER(op ," attack - slow"); /* will set FLAG_SLOWED */
     }
@@ -1812,7 +1812,7 @@ void fear_player(object *op, object *hitter, int dam)
         if (op->type == PLAYER)
             new_draw_info(NDI_UNIQUE, 0, op, "You are scared to death!");
         if (!QUERY_FLAG(op, FLAG_CONFUSED) && op->map)
-            new_info_map_except_format(NDI_UNIQUE|NDI_GREY, op->map, op->x, op->y, MAP_INFO_NORMAL, NULL, op, "%s suddenly looks scared!", STRING_SAFE(op->name));
+            new_info_map_except(NDI_UNIQUE|NDI_GREY, op->map, op->x, op->y, MAP_INFO_NORMAL, NULL, op, "%s suddenly looks scared!", STRING_SAFE(op->name));
         SET_FLAG(tmp, FLAG_APPLIED);
         FIX_PLAYER(op ,"attack fear"); /* will set FLAG_FEAR */
     }
@@ -1870,9 +1870,9 @@ void snare_player(object *op, object *hitter, int dam)
         if (!QUERY_FLAG(op, FLAG_CONFUSED) && op->map)
         {
             if(tmp->last_heal < 100)
-                new_info_map_except_format(NDI_UNIQUE|NDI_GREY, op->map, op->x, op->y, MAP_INFO_NORMAL, NULL, op, "%s suddenly walks slower!", STRING_SAFE(op->name));
+                new_info_map_except(NDI_UNIQUE|NDI_GREY, op->map, op->x, op->y, MAP_INFO_NORMAL, NULL, op, "%s suddenly walks slower!", STRING_SAFE(op->name));
             else
-                new_info_map_except_format(NDI_UNIQUE|NDI_GREY, op->map, op->x, op->y, MAP_INFO_NORMAL, NULL, op, "%s suddenly stops walking!", STRING_SAFE(op->name));
+                new_info_map_except(NDI_UNIQUE|NDI_GREY, op->map, op->x, op->y, MAP_INFO_NORMAL, NULL, op, "%s suddenly stops walking!", STRING_SAFE(op->name));
         }
         SET_FLAG(tmp, FLAG_APPLIED);
         FIX_PLAYER(op ,"attack snear "); /* will set FLAG_SNEAR */
@@ -1909,7 +1909,7 @@ void confuse_player(object *op, object *hitter, int ticks)
     if (op->type == PLAYER)
         new_draw_info(NDI_UNIQUE, 0, op, "You suddenly feel very confused!");
     if (!QUERY_FLAG(op, FLAG_CONFUSED) && op->map)
-        new_info_map_except_format(NDI_UNIQUE|NDI_GREY, op->map, op->x, op->y, MAP_INFO_NORMAL, NULL, op, "%s looks confused!", STRING_SAFE(op->name));
+        new_info_map_except(NDI_UNIQUE|NDI_GREY, op->map, op->x, op->y, MAP_INFO_NORMAL, NULL, op, "%s looks confused!", STRING_SAFE(op->name));
 
     SET_FLAG(tmp, FLAG_APPLIED);
     SET_FLAG(op, FLAG_CONFUSED);
@@ -1944,7 +1944,7 @@ void remove_confusion(object *op)
     if (op->type == PLAYER)
         new_draw_info(NDI_UNIQUE, 0, op, "You regain your senses.");
     if (op->map)
-        new_info_map_except_format(NDI_UNIQUE|NDI_GREY, op->map, op->x, op->y, MAP_INFO_NORMAL, NULL, op, "%s regains his senses!", STRING_SAFE(op->name));
+        new_info_map_except(NDI_UNIQUE|NDI_GREY, op->map, op->x, op->y, MAP_INFO_NORMAL, NULL, op, "%s regains his senses!", STRING_SAFE(op->name));
 
     FIX_PLAYER(op ,"attack - remove confusion");
 }
@@ -1978,7 +1978,7 @@ void blind_player(object *op, object *hitter, int dam)
     if (op->type == PLAYER)
         new_draw_info(NDI_UNIQUE, 0, op, "You suddenly are blinded!");
     if (!QUERY_FLAG(op, FLAG_CONFUSED) && op->map)
-        new_info_map_except_format(NDI_UNIQUE|NDI_GREY, op->map, op->x, op->y, MAP_INFO_NORMAL, NULL, op, "%s looks blinded!", STRING_SAFE(op->name));
+        new_info_map_except(NDI_UNIQUE|NDI_GREY, op->map, op->x, op->y, MAP_INFO_NORMAL, NULL, op, "%s looks blinded!", STRING_SAFE(op->name));
 
     SET_FLAG(tmp, FLAG_APPLIED);
     SET_FLAG(op, FLAG_BLIND);
@@ -2013,7 +2013,7 @@ void remove_blindness(object *op)
     if (op->type == PLAYER)
         new_draw_info(NDI_UNIQUE, 0, op, "You can see again.");
     if (op->map)
-        new_info_map_except_format(NDI_UNIQUE|NDI_GREY, op->map, op->x, op->y, MAP_INFO_NORMAL, NULL, op, "%s can see again!", STRING_SAFE(op->name));
+        new_info_map_except(NDI_UNIQUE|NDI_GREY, op->map, op->x, op->y, MAP_INFO_NORMAL, NULL, op, "%s can see again!", STRING_SAFE(op->name));
 
     FIX_PLAYER(op ,"attack - remove blind");
 }
@@ -2049,7 +2049,7 @@ void paralyze_player(object *op, object *hitter, int dam)
     if (op->type == PLAYER)
         new_draw_info(NDI_UNIQUE, 0, op, "You suddenly feel paralyzed!");
     if (!QUERY_FLAG(op, FLAG_CONFUSED) && op->map)
-        new_info_map_except_format(NDI_UNIQUE|NDI_GREY, op->map, op->x, op->y, MAP_INFO_NORMAL, NULL, op, "%s looks paralyzed!", STRING_SAFE(op->name));
+        new_info_map_except(NDI_UNIQUE|NDI_GREY, op->map, op->x, op->y, MAP_INFO_NORMAL, NULL, op, "%s looks paralyzed!", STRING_SAFE(op->name));
 
     SET_FLAG(tmp, FLAG_APPLIED);
     FIX_PLAYER(op ,"attach paralyze"); /* will set FLAG_PARALYZE */
@@ -2084,7 +2084,7 @@ void remove_paralyze(object *op)
     if (op->type == PLAYER)
         new_draw_info(NDI_UNIQUE, 0, op, "You can move again.");
     if (op->map)
-        new_info_map_except_format(NDI_UNIQUE|NDI_GREY, op->map, op->x, op->y, MAP_INFO_NORMAL, NULL, op, "%s can move again!", STRING_SAFE(op->name));
+        new_info_map_except(NDI_UNIQUE|NDI_GREY, op->map, op->x, op->y, MAP_INFO_NORMAL, NULL, op, "%s can move again!", STRING_SAFE(op->name));
 
     FIX_PLAYER(op ,"attack - remove paralyze");
 }

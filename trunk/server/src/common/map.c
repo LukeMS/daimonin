@@ -422,7 +422,7 @@ void dump_map(mapstruct *m, player *pl, int list, char *ref)
 #ifdef MAP_RESET
     LOG(llevSystem, "Current time is: %02ld:%02ld:%02ld.\n", (sec % 86400) / 3600, (sec % 3600) / 60, sec % 60);
 
-    new_draw_info_format(NDI_UNIQUE, 0, op, "Current time is: %02ld:%02ld:%02ld.", (sec % 86400) / 3600,
+    new_draw_info(NDI_UNIQUE, 0, op, "Current time is: %02ld:%02ld:%02ld.", (sec % 86400) / 3600,
                          (sec % 3600) / 60, sec % 60);
     new_draw_info(NDI_UNIQUE, 0, op, "Path               Pl PlM IM   TO Dif Reset");
 #else
