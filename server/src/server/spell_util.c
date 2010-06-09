@@ -368,9 +368,9 @@ int cast_spell(object *op, object *caster, int dir, int type, int ability, Spell
     if ((caster && !OBJECT_ACTIVE(caster)) || (target && !OBJECT_ACTIVE(target)))
         return 0;
 
-#if 0
-    if (op != target)
+    if (op == caster) // means cast spell/prayer not wand, etc.
     {
+#if 0 // This should be unnecessary as commands are already messaged back to players.
         if (op->type == PLAYER)
         {
             char buf[MEDIUM_BUF] = "";
@@ -380,17 +380,26 @@ int cast_spell(object *op, object *caster, int dir, int type, int ability, Spell
                 sprintf(buf, " on %s", query_base_name(target, op));
             }
 
-            new_draw_info_format(NDI_UNIQUE, 0, op, "You cast ~%s~%s.",
-                                 spells[type].name, buf);
+            new_draw_info_format(NDI_UNIQUE, 0, op, "You %s the %s ~%s~%s.",
+                                 (spells[type].type == SPELL_TYPE_PRIEST) ?
+                                 "invoke" : "cast",
+                                 (spells[type].type == SPELL_TYPE_PRIEST) ?
+                                 "prayer" : "spell", spells[type].name, buf);
         }
 
-        if (target->type == PLAYER)
+#endif
+        if (target &&
+            op != target &&
+            target->type == PLAYER)
         {
-            new_draw_info_format(NDI_UNIQUE, 0, target, "%s casts ~%s~ on you.",
-                                 query_base_name(op, target), spells[type].name);
+            new_draw_info_format(NDI_UNIQUE, 0, target, "%s %ss the %s ~%s~ on you.",
+                                 query_base_name(op, target),
+                                 (spells[type].type == SPELL_TYPE_PRIEST) ?
+                                 "invoke" : "cast",
+                                 (spells[type].type == SPELL_TYPE_PRIEST) ?
+                                 "prayer" : "spell", spells[type].name);
         }
     }
-#endif
 
     switch ((enum spellnrs) type)
     {
@@ -405,19 +414,11 @@ int cast_spell(object *op, object *caster, int dir, int type, int ability, Spell
         case SP_MINOR_HEAL:
         case SP_CURE_POISON:
         case SP_CURE_DISEASE:
+        case SP_REMOVE_DEPLETION:
+        case SP_REMOVE_DEATHSICK:
+        case SP_RESTORATION:
           success = cast_heal(op, casting_level(caster, type), target, type);
           break;
-
-        case SP_REMOVE_DEPLETION:
-          success = remove_depletion(op, target);
-          break;
-        case SP_REMOVE_DEATHSICK:
-            success = remove_deathsick(op, target);
-        break;
-
-        case SP_RESTORATION:
-            success = restoration(op, target);
-            break;
 
         case SP_REMOVE_CURSE:
         case SP_REMOVE_DAMNATION:
