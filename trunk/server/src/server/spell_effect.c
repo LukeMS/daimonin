@@ -4090,16 +4090,7 @@ object *cure_what_ails_you(object *op, uint8 st1)
         if (tmp->type == FORCE &&
             tmp->sub_type1 == st1)
         {
-            /* The force will be removed next tick in process_objects(). */
-            if (QUERY_FLAG(tmp, FLAG_IS_USED_UP))
-            {
-                tmp->stats.food = 1;
-            }
-            /* Remove it now. */
-            else
-            {
-                remove_force(tmp);
-            }
+            remove_force(tmp);
 
             /* We assume only one force. */
             return tmp;
