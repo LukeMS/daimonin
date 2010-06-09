@@ -30,87 +30,268 @@
  * logs in and we send "update your client" direct to the info windows.
  * But if the player is loged in - all DRAWINFO are generated here.
  */
-#include <global.h>
+#include "global.h"
 #include <stdarg.h>
+
+static void NewDrawInfo(const int flags, player *pl, const char *const buf);
+static void NewInfoMapAllExcept(const int flags, const mapstruct *const map,
+                                const object *const op1, const object *const op,
+                                const char *const str);
 
 /*
  * new_draw_info:
  *
- * flags is various flags - mostly color, plus a few specials.
+ * flags is various flags.
  *
  * pri is priority.  It is a little odd - the lower the value, the more
  * important it is.  Thus, 0 gets sent no matter what.  Otherwise, the
  * value must be less than the listening level that the player has set.
  * Unfortunately, there is no clear guideline on what each level does what.
  *
- * pl can be passed as NULL - in fact, this will be done if NDI_ALL is set
+ * op can be passed as NULL - in fact, this will be done if NDI_ALL is set
  * in the flags.
  *
  */
-void new_draw_info(const int flags, const int pri, const object *const pl, const char *const buf)
+void new_draw_info(const int flags, const int pri, const object *const op,
+                   const char *const format, ...)
 {
-    NewSocket *ns;
-    int len;
+    char       buf[HUGE_BUF];
+    va_list    ap;
 
-    if (!buf) /* should not happen - generate save string and LOG it */
+    if (!format) /* should not happen - generate save string and LOG it */
     {
-        LOG(llevBug, "BUG:: new_draw_info: NULL string send! %s (%x - %d)\n", query_name(pl), flags, pri);
+        LOG(llevBug, "BUG:: %s/new_draw_info: NULL string send! %s (%x - %d)\n",
+            __FILE__, query_name(op), flags, pri);
+
         return;
     }
 
-    /* here we handle global messages - still not sure i want this here */
-    if (flags & NDI_ALL)
-    {
-        player *tmppl;
-        for (tmppl = first_player; tmppl != NULL; tmppl = tmppl->next)
-        {
-            if(!(tmppl->state & (ST_DEAD|ST_ZOMBIE)) && tmppl->socket.status != Ns_Dead)
-                new_draw_info((flags & ~NDI_ALL), pri, tmppl->ob, buf);
-        }
-        return;
-    }
-
-    /* Silently refuse messages not to players.
-     * This lets us skip all ob->type == PLAYER checks all over the code */
-    if (!pl || pl->type != PLAYER)
-        return;
-
-    if (!CONTR(pl) || !(CONTR(pl)->state & ST_PLAYING))
-        return;
-
-    if (pri >= CONTR(pl)->listening) /* player don't want this */
-        return;
-
-    SOCKBUF_REQUEST_BUFFER((ns = &CONTR(pl)->socket),(len = strlen(buf))+3);
-    SockBuf_AddShort(ACTIVE_SOCKBUF(ns), flags & NDI_FLAG_MASK);
-    SockBuf_AddString(ACTIVE_SOCKBUF(ns),buf,len);
-    SOCKBUF_REQUEST_FINISH(ns, BINARY_CMD_DRAWINFO2, SOCKBUF_DYNAMIC);
-}
-
-/* This is a pretty trivial function, but it allows us to use printf style
- * formatting, so instead of the calling function having to do it, we do
- * it here.  IT may also have advantages in the future for reduction of
- * client/server bandwidth (client could keep track of various strings
- */
-
-void new_draw_info_format(const int flags, const int pri, const object *const pl, const char *const format, ...)
-{
-    char    buf[HUGE_BUF];
-
-    va_list ap;
     va_start(ap, format);
-
-    vsnprintf(buf, HUGE_BUF, format, ap);
-    buf[HUGE_BUF-1] = '\0';
-
+    vsnprintf(buf, sizeof(buf), format, ap);
+    buf[sizeof(buf) - 1] = '\0';
     va_end(ap);
 
-    new_draw_info(flags, pri, pl, buf);
+    /* here we handle global messages - still not sure i want this here */
+    if ((flags & NDI_ALL))
+    {
+        player *pl = first_player;
+
+        for (; pl; pl = pl->next)
+        {
+            if (!(pl->state & (ST_DEAD | ST_ZOMBIE)) &&
+                pl->socket.status != Ns_Dead &&
+                pri <= pl->listening)
+            {
+                NewDrawInfo((flags & ~NDI_ALL), pl, buf);
+            }
+        }
+
+        return;
+    }
+    else
+    {
+        /* Silently refuse messages not to players.
+         * This lets us skip all ob->type == PLAYER checks all over the code */
+        if (op &&
+            op->type == PLAYER &&
+            CONTR(op) &&
+            (CONTR(op)->state & ST_PLAYING) &&
+            pri <= CONTR(op)->listening)
+        {
+            NewDrawInfo(flags, CONTR(op), buf);
+        }
+    }
+}
+
+/*
+ * write to everyone on the current map in a defined area
+ *
+*/
+void new_info_map(const int flags, const mapstruct *const map, const int x,
+                  const int y, const int dist, const char *const format, ...)
+{
+    int     xt, yt, d;
+    object *tmp;
+    char    buf[HUGE_BUF];
+    va_list ap;
+
+    if (!map ||
+        map->in_memory != MAP_IN_MEMORY)
+    {
+        return;
+    }
+
+    va_start(ap, format);
+    vsnprintf(buf, sizeof(buf), format, ap);
+    buf[sizeof(buf) - 1] = '\0';
+    va_end(ap);
+
+    if (dist == MAP_INFO_ALL)
+    {
+        NewInfoMapAllExcept(flags, map, NULL, NULL, buf); /* we want all on this map */
+
+        return;
+    }
+
+    d = POW2(dist);
+
+    if (map->player_first) /* any player on this map? */
+    {
+        for (tmp = map->player_first; tmp; tmp = CONTR(tmp)->map_above)
+        {
+            if ((POW2(tmp->x - x) + POW2(tmp->y - y)) <= d)
+                NewDrawInfo(flags, CONTR(tmp), buf);
+        }
+    }
+
+    if (map->tile_map[TILED_MAPS_NORTH] &&
+        map->tile_map[TILED_MAPS_NORTH]->in_memory == MAP_IN_MEMORY &&
+        map->tile_map[TILED_MAPS_NORTH]->player_first)
+    {
+        yt = y + MAP_HEIGHT(map->tile_map[TILED_MAPS_NORTH]);
+
+        for (tmp = map->tile_map[TILED_MAPS_NORTH]->player_first; tmp;
+             tmp = CONTR(tmp)->map_above)
+        {
+            if ((POW2(tmp->x - x) + POW2(tmp->y - yt)) <= d)
+            {
+                NewDrawInfo(flags, CONTR(tmp), buf);
+            }
+        }
+    }
+
+    if (map->tile_map[TILED_MAPS_EAST] &&
+        map->tile_map[TILED_MAPS_EAST]->in_memory == MAP_IN_MEMORY &&
+        map->tile_map[TILED_MAPS_EAST]->player_first)
+    {
+        xt = x - MAP_WIDTH(map);
+
+        for (tmp = map->tile_map[TILED_MAPS_EAST]->player_first; tmp;
+             tmp = CONTR(tmp)->map_above)
+        {
+            if ((POW2(tmp->x - xt) + POW2(tmp->y - y)) <= d)
+            {
+                NewDrawInfo(flags, CONTR(tmp), buf);
+            }
+        }
+    }
+
+    if (map->tile_map[TILED_MAPS_SOUTH] &&
+        map->tile_map[TILED_MAPS_SOUTH]->in_memory == MAP_IN_MEMORY &&
+        map->tile_map[TILED_MAPS_SOUTH]->player_first)
+    {
+        yt = y - MAP_HEIGHT(map);
+
+        for (tmp = map->tile_map[TILED_MAPS_SOUTH]->player_first; tmp;
+             tmp = CONTR(tmp)->map_above)
+        {
+            if ((POW2(tmp->x - x) + POW2(tmp->y - yt)) <= d)
+            {
+                NewDrawInfo(flags, CONTR(tmp), buf);
+            }
+        }
+    }
+
+    if (map->tile_map[TILED_MAPS_WEST] &&
+        map->tile_map[TILED_MAPS_WEST]->in_memory == MAP_IN_MEMORY &&
+        map->tile_map[TILED_MAPS_WEST]->player_first)
+    {
+        xt = x + MAP_WIDTH(map->tile_map[TILED_MAPS_WEST]);
+
+        for (tmp = map->tile_map[TILED_MAPS_WEST]->player_first; tmp;
+             tmp = CONTR(tmp)->map_above)
+        {
+            if ((POW2(tmp->x - xt) + POW2(tmp->y - y)) <= d)
+            {
+                NewDrawInfo(flags, CONTR(tmp), buf);
+            }
+        }
+    }
+
+    if (map->tile_map[TILED_MAPS_NORTHEAST] &&
+        map->tile_map[TILED_MAPS_NORTHEAST]->in_memory == MAP_IN_MEMORY &&
+        map->tile_map[TILED_MAPS_NORTHEAST]->player_first)
+    {
+        yt = y + MAP_HEIGHT(map->tile_map[TILED_MAPS_NORTHEAST]);
+        xt = x - MAP_WIDTH(map);
+
+        for (tmp = map->tile_map[TILED_MAPS_NORTHEAST]->player_first; tmp;
+             tmp = CONTR(tmp)->map_above)
+        {
+            if ((POW2(tmp->x - xt) + POW2(tmp->y - yt)) <= d)
+            {
+                NewDrawInfo(flags, CONTR(tmp), buf);
+            }
+        }
+    }
+
+    if (map->tile_map[TILED_MAPS_SOUTHEAST] &&
+        map->tile_map[TILED_MAPS_SOUTHEAST]->in_memory == MAP_IN_MEMORY &&
+        map->tile_map[TILED_MAPS_SOUTHEAST]->player_first)
+    {
+        xt = x - MAP_WIDTH(map);
+        yt = y - MAP_HEIGHT(map);
+
+        for (tmp = map->tile_map[TILED_MAPS_SOUTHEAST]->player_first; tmp;
+             tmp = CONTR(tmp)->map_above)
+        {
+            if ((POW2(tmp->x - xt) + POW2(tmp->y - yt)) <= d)
+            {
+                NewDrawInfo(flags, CONTR(tmp), buf);
+            }
+        }
+    }
+
+    if (map->tile_map[TILED_MAPS_SOUTHWEST] &&
+        map->tile_map[TILED_MAPS_SOUTHWEST]->in_memory == MAP_IN_MEMORY &&
+        map->tile_map[TILED_MAPS_SOUTHWEST]->player_first)
+    {
+        xt = x + MAP_WIDTH(map->tile_map[TILED_MAPS_SOUTHWEST]);
+        yt = y - MAP_HEIGHT(map);
+
+        for (tmp = map->tile_map[TILED_MAPS_SOUTHWEST]->player_first; tmp;
+             tmp = CONTR(tmp)->map_above)
+        {
+            if ((POW2(tmp->x - xt) + POW2(tmp->y - yt)) <= d)
+            {
+                NewDrawInfo(flags, CONTR(tmp), buf);
+            }
+        }
+    }
+
+    if (map->tile_map[TILED_MAPS_NORTHWEST] &&
+        map->tile_map[TILED_MAPS_NORTHWEST]->in_memory == MAP_IN_MEMORY &&
+        map->tile_map[TILED_MAPS_NORTHWEST]->player_first)
+    {
+        xt = x + MAP_WIDTH(map->tile_map[TILED_MAPS_NORTHWEST]);
+        yt = y + MAP_HEIGHT(map->tile_map[TILED_MAPS_NORTHWEST]);
+
+        for (tmp = map->tile_map[TILED_MAPS_NORTHWEST]->player_first; tmp;
+             tmp = CONTR(tmp)->map_above)
+        {
+            if ((POW2(tmp->x - xt) + POW2(tmp->y - yt)) <= d)
+            {
+                NewDrawInfo(flags, CONTR(tmp), buf);
+            }
+        }
+    }
+}
+
+static void NewDrawInfo(const int flags, player *pl, const char *const buf)
+{
+    NewSocket    *ns = &pl->socket;
+    const size_t  len = strlen(buf) + 3;
+
+    SOCKBUF_REQUEST_BUFFER(ns, len);
+    SockBuf_AddShort(ACTIVE_SOCKBUF(ns), (flags & NDI_FLAG_MASK));
+    SockBuf_AddString(ACTIVE_SOCKBUF(ns), buf, len);
+    SOCKBUF_REQUEST_FINISH(ns, BINARY_CMD_DRAWINFO2, SOCKBUF_DYNAMIC);
 }
 
 /* we want give msg to all people on one, specific map
  */
-static void new_info_map_all_except(const int color, const mapstruct *const map, const object *const op1,
+static void NewInfoMapAllExcept(const int flags, const mapstruct *const map,
+                                const object *const op1,
                                     const object *const op, const char *const str)
 {
     object *tmp;
@@ -120,114 +301,7 @@ static void new_info_map_all_except(const int color, const mapstruct *const map,
         for (tmp = map->player_first; tmp; tmp = CONTR(tmp)->map_above)
         {
             if (tmp != op && tmp != op1)
-                new_draw_info(color, 0, tmp, str);
-        }
-    }
-}
-
-/*
- * write to everyone on the current map in a defined area
- *
-*/
-void new_info_map(const int color, const mapstruct *const map, const int x, const int y, const int dist, const char *const str)
-{
-    int     xt, yt, d;
-    object *tmp;
-
-    if (!map || map->in_memory != MAP_IN_MEMORY)
-        return;
-
-    if (dist != MAP_INFO_ALL)
-        d = POW2(dist);
-    else
-    {
-        new_info_map_all_except(color, map, NULL, NULL, str); /* we want all on this map */
-        return;
-    }
-
-    if (map->player_first) /* any player on this map? */
-    {
-        for (tmp = map->player_first; tmp; tmp = CONTR(tmp)->map_above)
-        {
-            if ((POW2(tmp->x - x) + POW2(tmp->y - y)) <= d)
-                new_draw_info(color, 0, tmp, str);
-        }
-    }
-
-    if (map->tile_map[TILED_MAPS_NORTH] && map->tile_map[TILED_MAPS_NORTH]->in_memory == MAP_IN_MEMORY && map->tile_map[TILED_MAPS_NORTH]->player_first)
-    {
-        yt = y + MAP_HEIGHT(map->tile_map[TILED_MAPS_NORTH]);
-        for (tmp = map->tile_map[TILED_MAPS_NORTH]->player_first; tmp; tmp = CONTR(tmp)->map_above)
-        {
-            if ((POW2(tmp->x - x) + POW2(tmp->y - yt)) <= d)
-                new_draw_info(color, 0, tmp, str);
-        }
-    }
-    if (map->tile_map[TILED_MAPS_EAST] && map->tile_map[TILED_MAPS_EAST]->in_memory == MAP_IN_MEMORY && map->tile_map[TILED_MAPS_EAST]->player_first)
-    {
-        xt = x - MAP_WIDTH(map);
-        for (tmp = map->tile_map[TILED_MAPS_EAST]->player_first; tmp; tmp = CONTR(tmp)->map_above)
-        {
-            if ((POW2(tmp->x - xt) + POW2(tmp->y - y)) <= d)
-                new_draw_info(color, 0, tmp, str);
-        }
-    }
-    if (map->tile_map[TILED_MAPS_SOUTH] && map->tile_map[TILED_MAPS_SOUTH]->in_memory == MAP_IN_MEMORY && map->tile_map[TILED_MAPS_SOUTH]->player_first)
-    {
-        yt = y - MAP_HEIGHT(map);
-        for (tmp = map->tile_map[TILED_MAPS_SOUTH]->player_first; tmp; tmp = CONTR(tmp)->map_above)
-        {
-            if ((POW2(tmp->x - x) + POW2(tmp->y - yt)) <= d)
-                new_draw_info(color, 0, tmp, str);
-        }
-    }
-    if (map->tile_map[TILED_MAPS_WEST] && map->tile_map[TILED_MAPS_WEST]->in_memory == MAP_IN_MEMORY && map->tile_map[TILED_MAPS_WEST]->player_first)
-    {
-        xt = x + MAP_WIDTH(map->tile_map[TILED_MAPS_WEST]);
-        for (tmp = map->tile_map[TILED_MAPS_WEST]->player_first; tmp; tmp = CONTR(tmp)->map_above)
-        {
-            if ((POW2(tmp->x - xt) + POW2(tmp->y - y)) <= d)
-                new_draw_info(color, 0, tmp, str);
-        }
-    }
-    if (map->tile_map[TILED_MAPS_NORTHEAST] && map->tile_map[TILED_MAPS_NORTHEAST]->in_memory == MAP_IN_MEMORY && map->tile_map[TILED_MAPS_NORTHEAST]->player_first)
-    {
-        yt = y + MAP_HEIGHT(map->tile_map[TILED_MAPS_NORTHEAST]);
-        xt = x - MAP_WIDTH(map);
-        for (tmp = map->tile_map[TILED_MAPS_NORTHEAST]->player_first; tmp; tmp = CONTR(tmp)->map_above)
-        {
-            if ((POW2(tmp->x - xt) + POW2(tmp->y - yt)) <= d)
-                new_draw_info(color, 0, tmp, str);
-        }
-    }
-    if (map->tile_map[TILED_MAPS_SOUTHEAST] && map->tile_map[TILED_MAPS_SOUTHEAST]->in_memory == MAP_IN_MEMORY && map->tile_map[TILED_MAPS_SOUTHEAST]->player_first)
-    {
-        xt = x - MAP_WIDTH(map);
-        yt = y - MAP_HEIGHT(map);
-        for (tmp = map->tile_map[TILED_MAPS_SOUTHEAST]->player_first; tmp; tmp = CONTR(tmp)->map_above)
-        {
-            if ((POW2(tmp->x - xt) + POW2(tmp->y - yt)) <= d)
-                new_draw_info(color, 0, tmp, str);
-        }
-    }
-    if (map->tile_map[TILED_MAPS_SOUTHWEST] && map->tile_map[TILED_MAPS_SOUTHWEST]->in_memory == MAP_IN_MEMORY && map->tile_map[TILED_MAPS_SOUTHWEST]->player_first)
-    {
-        xt = x + MAP_WIDTH(map->tile_map[TILED_MAPS_SOUTHWEST]);
-        yt = y - MAP_HEIGHT(map);
-        for (tmp = map->tile_map[TILED_MAPS_SOUTHWEST]->player_first; tmp; tmp = CONTR(tmp)->map_above)
-        {
-            if ((POW2(tmp->x - xt) + POW2(tmp->y - yt)) <= d)
-                new_draw_info(color, 0, tmp, str);
-        }
-    }
-    if (map->tile_map[TILED_MAPS_NORTHWEST] && map->tile_map[TILED_MAPS_NORTHWEST]->in_memory == MAP_IN_MEMORY && map->tile_map[TILED_MAPS_NORTHWEST]->player_first)
-    {
-        xt = x + MAP_WIDTH(map->tile_map[TILED_MAPS_NORTHWEST]);
-        yt = y + MAP_HEIGHT(map->tile_map[TILED_MAPS_NORTHWEST]);
-        for (tmp = map->tile_map[TILED_MAPS_NORTHWEST]->player_first; tmp; tmp = CONTR(tmp)->map_above)
-        {
-            if ((POW2(tmp->x - xt) + POW2(tmp->y - yt)) <= d)
-                new_draw_info(color, 0, tmp, str);
+                new_draw_info(flags, 0, tmp, str);
         }
     }
 }
@@ -235,11 +309,30 @@ void new_info_map(const int color, const mapstruct *const map, const int x, cons
 /*
  * write to everyone on the map *except* op and op1.  This is useful for emotions.
  */
-void new_info_map_except(const int color, const mapstruct *const map, const int x, const int y, const int dist,
-                         const  object *const op1, const object *const op, const char *const str)
+void new_info_map_except(const int flags, const mapstruct *const map,
+                         const int x, const int y, const int dist,
+                         const  object *const op1, const object *const op,
+                         const char *const format, ...)
 {
-    int     xt, yt, d;
-    object *tmp;
+    char     buf[HUGE_BUF];
+    va_list  ap;
+    int      xt,
+             yt,
+             d;
+    object  *tmp;
+
+    if (!format) /* should not happen - generate save string and LOG it */
+    {
+        LOG(llevBug, "BUG:: %s/new_info_map_except: NULL string send! %s (%x)\n",
+            __FILE__, query_name(op), flags);
+
+        return;
+    }
+
+    va_start(ap, format);
+    vsnprintf(buf, sizeof(buf), format, ap);
+    buf[sizeof(buf) - 1] = '\0';
+    va_end(ap);
 
     if (!map || map->in_memory != MAP_IN_MEMORY)
         return;
@@ -248,7 +341,7 @@ void new_info_map_except(const int color, const mapstruct *const map, const int 
         d = POW2(dist);
     else
     {
-        new_info_map_all_except(color, map, op1, op, str); /* we want all on this map */
+        NewInfoMapAllExcept(flags, map, op1, op, buf); /* we want all on this map */
         return;
     }
 
@@ -257,7 +350,7 @@ void new_info_map_except(const int color, const mapstruct *const map, const int 
         for (tmp = map->player_first; tmp; tmp = CONTR(tmp)->map_above)
         {
             if (tmp != op && tmp != op1 && (POW2(tmp->x - x) + POW2(tmp->y - y)) <= d)
-                new_draw_info(color, 0, tmp, str);
+                new_draw_info(flags, 0, tmp, buf);
         }
     }
 
@@ -267,7 +360,7 @@ void new_info_map_except(const int color, const mapstruct *const map, const int 
         for (tmp = map->tile_map[TILED_MAPS_NORTH]->player_first; tmp; tmp = CONTR(tmp)->map_above)
         {
             if (tmp != op && tmp != op1 && (POW2(tmp->x - x) + POW2(tmp->y - yt)) <= d)
-                new_draw_info(color, 0, tmp, str);
+                new_draw_info(flags, 0, tmp, buf);
         }
     }
     if (map->tile_map[TILED_MAPS_EAST] && map->tile_map[TILED_MAPS_EAST]->in_memory == MAP_IN_MEMORY && map->tile_map[TILED_MAPS_EAST]->player_first)
@@ -276,7 +369,7 @@ void new_info_map_except(const int color, const mapstruct *const map, const int 
         for (tmp = map->tile_map[TILED_MAPS_EAST]->player_first; tmp; tmp = CONTR(tmp)->map_above)
         {
             if (tmp != op && tmp != op1 && (POW2(tmp->x - xt) + POW2(tmp->y - y)) <= d)
-                new_draw_info(color, 0, tmp, str);
+                new_draw_info(flags, 0, tmp, buf);
         }
     }
     if (map->tile_map[TILED_MAPS_SOUTH] && map->tile_map[TILED_MAPS_SOUTH]->in_memory == MAP_IN_MEMORY && map->tile_map[TILED_MAPS_SOUTH]->player_first)
@@ -285,7 +378,7 @@ void new_info_map_except(const int color, const mapstruct *const map, const int 
         for (tmp = map->tile_map[TILED_MAPS_SOUTH]->player_first; tmp; tmp = CONTR(tmp)->map_above)
         {
             if (tmp != op && tmp != op1 && (POW2(tmp->x - x) + POW2(tmp->y - yt)) <= d)
-                new_draw_info(color, 0, tmp, str);
+                new_draw_info(flags, 0, tmp, buf);
         }
     }
     if (map->tile_map[TILED_MAPS_WEST] && map->tile_map[TILED_MAPS_WEST]->in_memory == MAP_IN_MEMORY && map->tile_map[TILED_MAPS_WEST]->player_first)
@@ -294,7 +387,7 @@ void new_info_map_except(const int color, const mapstruct *const map, const int 
         for (tmp = map->tile_map[TILED_MAPS_WEST]->player_first; tmp; tmp = CONTR(tmp)->map_above)
         {
             if (tmp != op && tmp != op1 && (POW2(tmp->x - xt) + POW2(tmp->y - y)) <= d)
-                new_draw_info(color, 0, tmp, str);
+                new_draw_info(flags, 0, tmp, buf);
         }
     }
     if (map->tile_map[TILED_MAPS_NORTHEAST] && map->tile_map[TILED_MAPS_NORTHEAST]->in_memory == MAP_IN_MEMORY && map->tile_map[TILED_MAPS_NORTHEAST]->player_first)
@@ -304,7 +397,7 @@ void new_info_map_except(const int color, const mapstruct *const map, const int 
         for (tmp = map->tile_map[TILED_MAPS_NORTHEAST]->player_first; tmp; tmp = CONTR(tmp)->map_above)
         {
             if (tmp != op && tmp != op1 && (POW2(tmp->x - xt) + POW2(tmp->y - yt)) <= d)
-                new_draw_info(color, 0, tmp, str);
+                new_draw_info(flags, 0, tmp, buf);
         }
     }
     if (map->tile_map[TILED_MAPS_SOUTHEAST] && map->tile_map[TILED_MAPS_SOUTHEAST]->in_memory == MAP_IN_MEMORY && map->tile_map[TILED_MAPS_SOUTHEAST]->player_first)
@@ -314,7 +407,7 @@ void new_info_map_except(const int color, const mapstruct *const map, const int 
         for (tmp = map->tile_map[TILED_MAPS_SOUTHEAST]->player_first; tmp; tmp = CONTR(tmp)->map_above)
         {
             if (tmp != op && tmp != op1 && (POW2(tmp->x - xt) + POW2(tmp->y - yt)) <= d)
-                new_draw_info(color, 0, tmp, str);
+                new_draw_info(flags, 0, tmp, buf);
         }
     }
     if (map->tile_map[TILED_MAPS_SOUTHWEST] && map->tile_map[TILED_MAPS_SOUTHWEST]->in_memory == MAP_IN_MEMORY && map->tile_map[TILED_MAPS_SOUTHWEST]->player_first)
@@ -324,7 +417,7 @@ void new_info_map_except(const int color, const mapstruct *const map, const int 
         for (tmp = map->tile_map[TILED_MAPS_SOUTHWEST]->player_first; tmp; tmp = CONTR(tmp)->map_above)
         {
             if (tmp != op && tmp != op1 && (POW2(tmp->x - xt) + POW2(tmp->y - yt)) <= d)
-                new_draw_info(color, 0, tmp, str);
+                new_draw_info(flags, 0, tmp, buf);
         }
     }
     if (map->tile_map[TILED_MAPS_NORTHWEST] && map->tile_map[TILED_MAPS_NORTHWEST]->in_memory == MAP_IN_MEMORY && map->tile_map[TILED_MAPS_NORTHWEST]->player_first)
@@ -334,39 +427,7 @@ void new_info_map_except(const int color, const mapstruct *const map, const int 
         for (tmp = map->tile_map[TILED_MAPS_NORTHWEST]->player_first; tmp; tmp = CONTR(tmp)->map_above)
         {
             if (tmp != op && tmp != op1 && (POW2(tmp->x - xt) + POW2(tmp->y - yt)) <= d)
-                new_draw_info(color, 0, tmp, str);
+                new_draw_info(flags, 0, tmp, buf);
         }
     }
-}
-
-/* same as above but as formated string version */
-void new_info_map_format(const int color, const mapstruct *const map, const int x, const int y, const int dist, const char *const format, ...)
-{
-    char    buf[HUGE_BUF];
-    va_list ap;
-
-    va_start(ap, format);
-
-    vsnprintf(buf, HUGE_BUF, format, ap);
-    buf[HUGE_BUF-1] = '\0';
-
-    va_end(ap);
-
-    new_info_map(color,map, x, y, dist, buf);
-}
-
-/* same as above but as formated string version */
-void new_info_map_except_format(const int color, const mapstruct *const map, const int x, const int y, const int dist, const object *const op1, const object *const op, const char *const format, ...)
-{
-    char    buf[HUGE_BUF];
-    va_list ap;
-
-    va_start(ap, format);
-
-    vsnprintf(buf, HUGE_BUF, format, ap);
-    buf[HUGE_BUF-1] = '\0';
-
-    va_end(ap);
-
-    new_info_map_except(color, map, x, y, dist, op1, op, buf);
 }

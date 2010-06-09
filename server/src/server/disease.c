@@ -592,7 +592,7 @@ int cure_disease(object *sufferer, object *caster)
         casting_level = 1000;  /* if null caster, CURE all.  */
     }
     if (caster != sufferer && sufferer->type == PLAYER)
-        new_draw_info_format(NDI_UNIQUE, 0, sufferer, "%s casts cure disease on you!",
+        new_draw_info(NDI_UNIQUE, 0, sufferer, "%s casts cure disease on you!",
                              caster->name ? caster->name : "someone");
 
     for (disease = sufferer->inv; disease; disease = next)
@@ -612,9 +612,9 @@ int cure_disease(object *sufferer, object *caster)
              || (!(random_roll(0, (disease->level - casting_level - 1)))))
             {
                 if (sufferer->type == PLAYER)
-                    new_draw_info_format(NDI_UNIQUE, 0, sufferer, "You are healed from disease %s.", disease->name);
+                    new_draw_info(NDI_UNIQUE, 0, sufferer, "You are healed from disease %s.", disease->name);
                 if (sufferer != caster && caster->type == PLAYER)
-                    new_draw_info_format(NDI_UNIQUE, 0, caster, "You heal %s from disease %s.", sufferer->name,
+                    new_draw_info(NDI_UNIQUE, 0, caster, "You heal %s from disease %s.", sufferer->name,
                                          disease->name);
                 remove_symptoms(disease);
                 remove_ob(disease);
@@ -625,10 +625,10 @@ int cure_disease(object *sufferer, object *caster)
             else
             {
                 if (sufferer->type == PLAYER)
-                    new_draw_info_format(NDI_UNIQUE, 0, sufferer, "The disease %s resists the cure prayer!",
+                    new_draw_info(NDI_UNIQUE, 0, sufferer, "The disease %s resists the cure prayer!",
                                          disease->name);
                 if (sufferer != caster && caster->type == PLAYER)
-                    new_draw_info_format(NDI_UNIQUE, 0, caster, "The disease %s resists the cure prayer!", disease->name);
+                    new_draw_info(NDI_UNIQUE, 0, caster, "The disease %s resists the cure prayer!", disease->name);
             }
         }
     }
@@ -637,7 +637,7 @@ int cure_disease(object *sufferer, object *caster)
         if (sufferer->type == PLAYER)
             new_draw_info(NDI_UNIQUE, 0, sufferer, "You are not diseased!");
         if (sufferer != caster && caster->type == PLAYER)
-            new_draw_info_format(NDI_UNIQUE, 0, caster, "%s is not diseased!",
+            new_draw_info(NDI_UNIQUE, 0, caster, "%s is not diseased!",
                                  sufferer->name ? sufferer->name : "someone");
     }
     return 1;

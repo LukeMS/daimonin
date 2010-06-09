@@ -208,20 +208,20 @@ int resurrect_player(object *op, char *playername, int rspell)
 
     if (!(deadplayer = fopen(oldname, "r")))
     {
-        new_draw_info_format(NDI_UNIQUE, 0, op, "The soul of %s cannot be reached.", playername);
+        new_draw_info(NDI_UNIQUE, 0, op, "The soul of %s cannot be reached.", playername);
         return 0;
     }
 
     if (!access(newname, 0))
     {
-        new_draw_info_format(NDI_UNIQUE, 0, op, "The soul of %s has already been reborn!", playername);
+        new_draw_info(NDI_UNIQUE, 0, op, "The soul of %s has already been reborn!", playername);
         fclose(deadplayer);
         return 0;
     }
 
     if (!(liveplayer = fopen(newname, "w")))
     {
-        new_draw_info_format(NDI_UNIQUE, 0, op, "The soul of %s cannot be re-embodied at the moment.", playername);
+        new_draw_info(NDI_UNIQUE, 0, op, "The soul of %s cannot be re-embodied at the moment.", playername);
         LOG(llevBug, "BUG: Cannot write player in ressurect_player!\n");
         fclose(deadplayer);
         return 0;
@@ -276,7 +276,7 @@ int resurrect_player(object *op, char *playername, int rspell)
     fclose(liveplayer);
     fclose(deadplayer);
     unlink(oldname);
-    new_draw_info_format(NDI_UNIQUE, 0, op, "%s lives again!", playername);
+    new_draw_info(NDI_UNIQUE, 0, op, "%s lives again!", playername);
 
     return 1;
 }

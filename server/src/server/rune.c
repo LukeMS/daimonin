@@ -103,7 +103,7 @@ int write_rune(object *op, int dir, int inspell, int level, char *runename)
          * creating a rune of sword should not be allowed. */
         if (at && at->clone.type != RUNE)
         {
-            new_draw_info_format(NDI_UNIQUE, 0, op, "You can't make a rune of %s", runename);
+            new_draw_info(NDI_UNIQUE, 0, op, "You can't make a rune of %s", runename);
             return 0;
         }
         /* next it attempts to look up a rune_archetype for this spell
@@ -153,7 +153,7 @@ int write_rune(object *op, int dir, int inspell, int level, char *runename)
         {
             if (strstr(runename, "endmsg"))
             {
-                new_draw_info_format(NDI_UNIQUE, 0, op, "Trying to cheat are we?", runename);
+                new_draw_info(NDI_UNIQUE, 0, op, "Trying to cheat are we?", runename);
                 LOG(llevInfo, "write_rune: player %s tried to write bogus rune\n", op->name);
                 return 0;
             }
@@ -449,7 +449,7 @@ int trap_disarm(object *disarmer, object *trap, int risk)
     if ((trap->level <= disarmer_level && (RANDOM() % 10))
      || !(random_roll(0, (MAX(2, MIN(20, trap->level - disarmer_level + 5 - disarmer->stats.Dex / 2)) - 1))))
     {
-        new_draw_info_format(NDI_UNIQUE, 0, disarmer, "You successfuly remove the %s (lvl %d)!", trap->name, trap->level);
+        new_draw_info(NDI_UNIQUE, 0, disarmer, "You successfuly remove the %s (lvl %d)!", trap->name, trap->level);
         remove_ob(trap);
         check_walk_off(trap, NULL, MOVE_APPLY_VANISHED);
         set_traped_flag(env);
@@ -463,7 +463,7 @@ int trap_disarm(object *disarmer, object *trap, int risk)
     }
     else
     {
-        new_draw_info_format(NDI_UNIQUE, 0, disarmer, "You fail to remove the %s (lvl %d).", trap->name, trap->level);
+        new_draw_info(NDI_UNIQUE, 0, disarmer, "You fail to remove the %s (lvl %d).", trap->name, trap->level);
         if ((trap->level > disarmer_level * 1.4f || (RANDOM() % 3)))
         {
             if (!(random_roll(0, (MAX(2, disarmer_level - trap->level + disarmer->stats.Dex / 2 - 6)) - 1))

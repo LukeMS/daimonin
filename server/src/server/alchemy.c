@@ -275,13 +275,13 @@ object * attempt_recipe(object *caster, object *cauldron, int ability, recipe *r
         if (!item->env && (item = insert_ob_in_ob(item, cauldron)) == NULL)
         {
             new_draw_info(NDI_UNIQUE, 0, caster, "Nothing happened.");
-            /* new_draw_info_format(NDI_UNIQUE, 0,caster,
+            /* new_draw_info(NDI_UNIQUE, 0,caster,
                   "Your spell causes the %s to explode!",cauldron->name); */
             /* kaboom_cauldron(); */
         }
         else
         {
-            new_draw_info_format(NDI_UNIQUE, 0, caster, "The %s %s.", cauldron->name, cauldron_sound());
+            new_draw_info(NDI_UNIQUE, 0, caster, "The %s %s.", cauldron->name, cauldron_sound());
         }
     }
 
@@ -441,7 +441,7 @@ void alchemy_failure_effect(object *op, object *cauldron, recipe *rp, int danger
             CLEAR_FLAG(tmp, FLAG_NO_PASS);
         }
         remove_contents(cauldron->inv, item);
-        new_draw_info_format(NDI_UNIQUE, 0, op, "The %s %s.", cauldron->name, cauldron_sound());
+        new_draw_info(NDI_UNIQUE, 0, op, "The %s %s.", cauldron->name, cauldron_sound());
         return;
     }
     else if (level < 40)
@@ -523,13 +523,13 @@ void alchemy_failure_effect(object *op, object *cauldron, recipe *rp, int danger
                 tmp = get_archetype("bomb");
                 tmp->stats.dam = random_roll(1, level);
                 tmp->stats.hp = random_roll(1, level);
-                new_draw_info_format(NDI_UNIQUE, 0, op, "The %s creates a bomb!", cauldron->name);
+                new_draw_info(NDI_UNIQUE, 0, op, "The %s creates a bomb!", cauldron->name);
                 break;
               default:
                 tmp = get_archetype("fireball");
                 tmp->stats.dam = random_roll(1, level) / 5 + 1;
                 tmp->stats.hp = random_roll(1, level) / 10 + 2;
-                new_draw_info_format(NDI_UNIQUE, 0, op, "The %s erupts in flame!", cauldron->name);
+                new_draw_info(NDI_UNIQUE, 0, op, "The %s erupts in flame!", cauldron->name);
                 break;
           }
           tmp->x = cauldron->x,tmp->y = cauldron->y;
@@ -539,7 +539,7 @@ void alchemy_failure_effect(object *op, object *cauldron, recipe *rp, int danger
       else if (level < 60)
       {
           /* CREATE MONSTER */
-          new_draw_info_format(NDI_UNIQUE, 0, op, "The %s %s.", cauldron->name, cauldron_sound());
+          new_draw_info(NDI_UNIQUE, 0, op, "The %s %s.", cauldron->name, cauldron_sound());
           remove_contents(cauldron->inv, NULL);
           return;
       }
@@ -548,7 +548,7 @@ void alchemy_failure_effect(object *op, object *cauldron, recipe *rp, int danger
           /* MAJOR FIRE */
           remove_contents(cauldron->inv, NULL);
 		  fire_arch(cauldron, cauldron, cauldron->x, cauldron->y ,0, spellarch[SP_L_FIREBALL], SP_L_FIREBALL, cauldron->level, 0);
-          new_draw_info_format(NDI_UNIQUE, 0, op, "The %s erupts in flame!", cauldron->name);
+          new_draw_info(NDI_UNIQUE, 0, op, "The %s erupts in flame!", cauldron->name);
           return;
       }
                /* #endif SPELL_FAILURE_EFFECTS */
@@ -563,10 +563,10 @@ void alchemy_failure_effect(object *op, object *cauldron, recipe *rp, int danger
           if (random_roll(0, 1))
           {
               remove_contents(cauldron->inv, NULL);
-              new_draw_info_format(NDI_UNIQUE, 0, op, "Your %s turns darker then makes a gulping sound!", cauldron->name);
+              new_draw_info(NDI_UNIQUE, 0, op, "Your %s turns darker then makes a gulping sound!", cauldron->name);
           }
           else
-              new_draw_info_format(NDI_UNIQUE, 0, op, "Your %s becomes darker.", cauldron->name);
+              new_draw_info(NDI_UNIQUE, 0, op, "Your %s becomes darker.", cauldron->name);
                return;
       }
            /* #ifdef SPELL_FAILURE_EFFECTS */
@@ -579,7 +579,7 @@ void alchemy_failure_effect(object *op, object *cauldron, recipe *rp, int danger
           if (!tmp)
               alchemy_failure_effect(op, cauldron, rp, level);
           else if (summon_hostile_monsters(cauldron, random_roll(1, 10), tmp->arch->name))
-              new_draw_info_format(NDI_UNIQUE, 0, op, "The %s %s and then pours forth monsters!", cauldron->name,
+              new_draw_info(NDI_UNIQUE, 0, op, "The %s %s and then pours forth monsters!", cauldron->name,
                                    cauldron_sound());
                return;
       }
@@ -612,7 +612,7 @@ void alchemy_failure_effect(object *op, object *cauldron, recipe *rp, int danger
               if ((tmp = insert_ob_in_ob(tmp, cauldron)))
               {
                   remove_contents(cauldron->inv, tmp);
-                  new_draw_info_format(NDI_UNIQUE, 0, op, "The %s %s.", cauldron->name, cauldron_sound());
+                  new_draw_info(NDI_UNIQUE, 0, op, "The %s %s.", cauldron->name, cauldron_sound());
               }
           }
           return;

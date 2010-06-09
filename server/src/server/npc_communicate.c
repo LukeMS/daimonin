@@ -237,7 +237,7 @@ void talk_to_npc(player *pl, char *topic)
                         }
                         else
                         {
-                            new_draw_info_format(NDI_NAVY | NDI_UNIQUE, 0,
+                            new_draw_info(NDI_NAVY | NDI_UNIQUE, 0,
                                                  pl->ob, "%s has nothing to say.",
                                                  query_name(t_obj));
                         }

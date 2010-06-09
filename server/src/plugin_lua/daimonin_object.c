@@ -2387,7 +2387,7 @@ static int GameObject_AddQuest(lua_State *L)
     /* Player has too many quests? Message player and abort. */
     if(hooks->quest_count_pending(WHO) >= QUESTS_PENDING_MAX)
     {
-        hooks->new_draw_info_format(NDI_UNIQUE | NDI_NAVY, 0, WHO, "You can't have more than %d open quests.\nRemove one first!",
+        hooks->new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, WHO, "You can't have more than %d open quests.\nRemove one first!",
                                     QUESTS_PENDING_MAX);
 
         return 0;
@@ -2729,7 +2729,7 @@ static int GameObject_RemoveQuestItem(lua_State *L)
         if(nrof == -1) /* if we don't have an explicit number, use number from kill target */
             nrof = myob->nrof;
 
-        hooks->new_draw_info_format(NDI_UNIQUE | NDI_NAVY, 0, pl, "%s is removed from your inventory.",
+        hooks->new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, pl, "%s is removed from your inventory.",
                 hooks->query_short_name(myob, NULL));
         remove_quest_items(pl->inv, myob, nrof);
     }
@@ -3040,7 +3040,7 @@ static int GameObject_CreateObjectInsideEx(lua_State *L)
     pl = hooks->is_player_inv(myob);
     if(pl)
     {
-        hooks->new_draw_info_format(NDI_UNIQUE | NDI_NAVY, 0, pl, "you got %d %s",
+        hooks->new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, pl, "you got %d %s",
                 nrof?nrof:1, hooks->query_base_name(myob, NULL));
     }
 

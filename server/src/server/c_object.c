@@ -71,7 +71,7 @@ int command_rskill(object *pl, char *params)
 
     if ((skillno = lookup_skill_by_name(params)) == -1)
     {
-        new_draw_info_format(NDI_UNIQUE, 0, pl, "Couldn't find the skill %s", params);
+        new_draw_info(NDI_UNIQUE, 0, pl, "Couldn't find the skill %s", params);
 
         return 0;
     }
@@ -97,14 +97,14 @@ int command_egobind ( object *pl, char *params)
     /* kein egoitem or previous bound */
     if(!QUERY_FLAG(mark, FLAG_IS_EGOITEM) || QUERY_FLAG(mark, FLAG_IS_EGOBOUND))
     {
-        new_draw_info_format(NDI_UNIQUE, 0,pl, "Your marked item %s is not an unbound ego item!", query_name(mark));
+        new_draw_info(NDI_UNIQUE, 0,pl, "Your marked item %s is not an unbound ego item!", query_name(mark));
 
         return 0;
     }
 
     if(!params)
     {
-        new_draw_info_format(NDI_UNIQUE, 0,pl, "To bind the %s type: /egobind %d", query_name(mark), mark->count);
+        new_draw_info(NDI_UNIQUE, 0,pl, "To bind the %s type: /egobind %d", query_name(mark), mark->count);
 
         return 0;
     }
@@ -112,12 +112,12 @@ int command_egobind ( object *pl, char *params)
     /* be sure we REALLY bind the marked and previous announced item! */
     if(mark->count != (uint32) strtoul(params, NULL, 10))
     {
-        new_draw_info_format(NDI_UNIQUE, 0,pl, "The numbers don't match!\nTo bind the %s type: /egobind %d", query_name(mark), mark->count);
+        new_draw_info(NDI_UNIQUE, 0,pl, "The numbers don't match!\nTo bind the %s type: /egobind %d", query_name(mark), mark->count);
 
         return 0;
     }
 
-    new_draw_info_format(NDI_UNIQUE, 0,pl, "You have bound the %s!", query_name(mark));
+    new_draw_info(NDI_UNIQUE, 0,pl, "You have bound the %s!", query_name(mark));
     create_ego_item(mark, pl->name, EGO_ITEM_BOUND_PLAYER);
     esrv_update_item (UPD_NAME, pl, mark);
     play_sound_player_only (CONTR(pl), SOUND_LEARN_SPELL, SOUND_NORMAL, 0, 0);
@@ -162,7 +162,7 @@ int command_apply(object *op, char *params)
     if ((inv = find_best_object_match(op, params)))
         player_apply(op, inv, aflag, 0);
     else
-        new_draw_info_format(NDI_UNIQUE, 0, op, "Could not find any match to the %s.",
+        new_draw_info(NDI_UNIQUE, 0, op, "Could not find any match to the %s.",
                              params);
 
     return 0;
@@ -310,7 +310,7 @@ int command_examine(object *op, char *params)
         if ((tmp = find_best_object_match(op, params)))
             examine(op, tmp, TRUE);
         else
-            new_draw_info_format(NDI_UNIQUE, 0, op, "Could not find an object that matches %s", params);
+            new_draw_info(NDI_UNIQUE, 0, op, "Could not find an object that matches %s", params);
     }
 
     return 0;
@@ -565,7 +565,7 @@ char *examine_monster(object *op, object *tmp, char *buf, int flag)
     }
 
     if(op)
-        new_draw_info_format(NDI_UNIQUE, 0, op, buf);
+        new_draw_info(NDI_UNIQUE, 0, op, buf);
 
     return buf;
 }
@@ -1063,14 +1063,14 @@ void inventory(object *op, object *inv)
          && (IS_SYS_INVISIBLE(tmp) || (inv && inv->type != CONTAINER && !QUERY_FLAG(tmp, FLAG_APPLIED))))
             continue;
         if ((!op || QUERY_FLAG(op, FLAG_WIZ)))
-            new_draw_info_format(NDI_UNIQUE, 0, op, "%s- %-*.*s (%5d) %-8s", in, length, length, query_name(tmp),
+            new_draw_info(NDI_UNIQUE, 0, op, "%s- %-*.*s (%5d) %-8s", in, length, length, query_name(tmp),
                                  tmp->count, query_weight(tmp));
         else
-            new_draw_info_format(NDI_UNIQUE, 0, op, "%s- %-*.*s %-8s", in, length + 8, length + 8, query_name(tmp),
+            new_draw_info(NDI_UNIQUE, 0, op, "%s- %-*.*s %-8s", in, length + 8, length + 8, query_name(tmp),
                                  query_weight(tmp));
     }
     if (!inv && op)
     {
-        new_draw_info_format(NDI_UNIQUE, 0, op, "%-*s %-8s", 41, "Total weight :", query_weight(op));
+        new_draw_info(NDI_UNIQUE, 0, op, "%-*s %-8s", 41, "Total weight :", query_weight(op));
     }
 }

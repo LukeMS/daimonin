@@ -61,7 +61,7 @@ static char     days[7][4]  =
  * -- Smacky 20090613 */
 void version(object *op)
 {
-    new_draw_info_format(NDI_UNIQUE, 0, op, "This is Daimonin v%s", VERSION);
+    new_draw_info(NDI_UNIQUE, 0, op, "This is Daimonin v%s", VERSION);
 
     /* If in a socket, don't print out the list of authors.  It confuses the
      * crossclient program.
@@ -741,13 +741,13 @@ void shutdown_agent(int timer, int ret, char *reason)
 
         new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_ALL | NDI_GREEN, 5, NULL, "[Server]: ** SERVER SHUTDOWN STARTED **");
         if (reason)
-            new_draw_info_format(NDI_PLAYER | NDI_UNIQUE | NDI_ALL | NDI_GREEN, 5, NULL, "[Server]: %s", reason);
+            new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_ALL | NDI_GREEN, 5, NULL, "[Server]: %s", reason);
 
         if (t_sec)
-            new_draw_info_format(NDI_PLAYER | NDI_UNIQUE | NDI_ALL | NDI_GREEN, 5, NULL,
+            new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_ALL | NDI_GREEN, 5, NULL,
             "[Server]: SERVER SHUTDOWN in %d minutes and %d seconds", t_min, t_sec);
         else
-            new_draw_info_format(NDI_PLAYER | NDI_UNIQUE | NDI_ALL | NDI_GREEN, 5, NULL,
+            new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_ALL | NDI_GREEN, 5, NULL,
             "[Server]: SERVER SHUTDOWN in %d minutes", t_min);
         GETTIMEOFDAY(&tv1);
         m_count = timer / 60 - 1;
@@ -764,7 +764,7 @@ void shutdown_agent(int timer, int ret, char *reason)
             new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_ALL | NDI_GREEN, 5, NULL,
                 "[Server]: ** SERVER GOES DOWN NOW!!! **");
             if (reason)
-                new_draw_info_format(NDI_PLAYER | NDI_UNIQUE | NDI_ALL | NDI_GREEN, 5, NULL, "[Server]: %s", reason);
+                new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_ALL | NDI_GREEN, 5, NULL, "[Server]: %s", reason);
             sd_timer = -1;
             real_count = 30;
         }
@@ -778,10 +778,10 @@ void shutdown_agent(int timer, int ret, char *reason)
         {
             m_count = t_min - 1;
             if (t_sec)
-                new_draw_info_format(NDI_PLAYER | NDI_UNIQUE | NDI_ALL | NDI_GREEN, 5, NULL,
+                new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_ALL | NDI_GREEN, 5, NULL,
                 "[Server]: SERVER SHUTDOWN in %d minutes and %d seconds", t_min, t_sec);
             else
-                new_draw_info_format(NDI_PLAYER | NDI_UNIQUE | NDI_ALL | NDI_GREEN, 5, NULL,
+                new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_ALL | NDI_GREEN, 5, NULL,
                 "[Server]: SERVER SHUTDOWN in %d minutes", t_min);
         }
     }

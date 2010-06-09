@@ -568,7 +568,7 @@ void do_some_living(object *op)
                 }
                 else if(pl->resting_reg_timer > 0)
                 {
-                    /*new_draw_info_format(NDI_UNIQUE, 0, op, "reg - prepare %d", pl->resting_reg_timer);*/
+                    /*new_draw_info(NDI_UNIQUE, 0, op, "reg - prepare %d", pl->resting_reg_timer);*/
                     --pl->resting_reg_timer; /* player is still in rest preparing phase */
                     pl->food_status = (1000/RESTING_DEFAULT_SEC_TIMER)*(pl->resting_reg_timer+1);
                 }
@@ -805,7 +805,7 @@ void kill_player(object *op)
             if (stats[i])
             {
                 change_stat_value(&(dep->stats), i, -stats[i]);
-                new_draw_info_format(NDI_UNIQUE, 0, op, "%s (You lose ~%d~ %s).",
+                new_draw_info(NDI_UNIQUE, 0, op, "%s (You lose ~%d~ %s).",
                                      lose_msg[i], stats[i], stat_name[i]);
                 lost_a_stat = 1;
             }
@@ -831,7 +831,7 @@ void kill_player(object *op)
 
         if (god != shstr_cons.none)
         {
-            new_draw_info_format(NDI_UNIQUE, 0, op, "For a brief moment you feel the holy presence of %s protecting you.",
+            new_draw_info(NDI_UNIQUE, 0, op, "For a brief moment you feel the holy presence of %s protecting you.",
                                  god);
         }
         else
@@ -960,7 +960,7 @@ void cast_dust(object *op, object *throw_ob, int dir)
         LOG(llevBug, "BUG: cast_dust() can't find an archetype to use!\n");
 
     if (op->type == PLAYER && arch)
-        new_draw_info_format(NDI_UNIQUE, 0, op, "You cast %s.", query_name(throw_ob));
+        new_draw_info(NDI_UNIQUE, 0, op, "You cast %s.", query_name(throw_ob));
     if (!QUERY_FLAG(throw_ob, FLAG_REMOVED))
         destruct_ob(throw_ob);
 }
@@ -1155,7 +1155,7 @@ int action_makes_visible(object *op)
         if(!QUERY_FLAG(op,FLAG_SEE_INVISIBLE))
           return 0;
         else if(op->hide) {
-          new_draw_info_format(NDI_UNIQUE, 0,op,"You become %!",op->hide?"unhidden":"visible");
+          new_draw_info(NDI_UNIQUE, 0,op,"You become %!",op->hide?"unhidden":"visible");
           return 1;
         } else if(CONTR(op) && !CONTR(op)->shottype==range_magic) {
               new_draw_info(NDI_UNIQUE, 0,op,"Your invisibility spell is broken!");

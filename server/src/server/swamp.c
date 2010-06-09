@@ -77,7 +77,7 @@ void move_deep_swamp(object *op)
                       if (random_roll(0, 4) == 0 || !change_skill(above, SK_WOODSMAN))
                       {
                           op->stats.food = 0;
-                          new_draw_info_format(NDI_UNIQUE | NDI_ALL, 1, NULL, "%s disappeared into a swamp.",
+                          new_draw_info(NDI_UNIQUE | NDI_ALL, 1, NULL, "%s disappeared into a swamp.",
                                                above->name);
                           FREE_AND_ADD_REF_HASH(CONTR(above)->killer, shstr_cons.drowning);
 

@@ -51,7 +51,7 @@ static void free_container_monster(object *monster, object *op)
     }
     fix_monster(monster);
     if (insert_ob_in_map(monster, op->map, monster, 0))
-        new_draw_info_format(NDI_UNIQUE, 0, op, "A %s jumps out of the %s.", query_name(monster), query_name(container));
+        new_draw_info(NDI_UNIQUE, 0, op, "A %s jumps out of the %s.", query_name(monster), query_name(container));
 }
 
 
@@ -433,15 +433,15 @@ static void pick_up_object(object *pl, object *op, object *tmp, uint32 nrof)
 int sack_can_hold(const object *const pl, const object *const sack, const object *const op, const uint32 nrof)
 {
     if (!QUERY_FLAG(sack, FLAG_APPLIED))
-        new_draw_info_format(NDI_UNIQUE, 0, pl, "The %s is not active.", query_short_name(sack, pl));
+        new_draw_info(NDI_UNIQUE, 0, pl, "The %s is not active.", query_short_name(sack, pl));
     else if (sack == op)
-        new_draw_info_format(NDI_UNIQUE, 0, pl, "You can't put the %s into itself.", query_short_name(sack, pl));
+        new_draw_info(NDI_UNIQUE, 0, pl, "You can't put the %s into itself.", query_short_name(sack, pl));
     else if ((sack->race && (sack->sub_type1 & 1) != ST1_CONTAINER_CORPSE)
         && (sack->race != op->race || op->type == CONTAINER || (sack->stats.food && sack->stats.food != op->type)))
-        new_draw_info_format(NDI_UNIQUE, 0, pl, "You can put only %s into the %s.", sack->race,
+        new_draw_info(NDI_UNIQUE, 0, pl, "You can put only %s into the %s.", sack->race,
                              query_short_name(sack, pl));
     else if (op->type == SPECIAL_KEY && sack->slaying && op->slaying)
-        new_draw_info_format(NDI_UNIQUE, 0, pl, "You don't want put the key into %s.", query_short_name(sack, pl));
+        new_draw_info(NDI_UNIQUE, 0, pl, "You don't want put the key into %s.", query_short_name(sack, pl));
     else
     {
         if(sack->weight_limit == 0 || (sack->weight_limit > 0 && sack->weight_limit > sack->carrying + (sint32)
@@ -449,7 +449,7 @@ int sack_can_hold(const object *const pl, const object *const sack, const object
           ((sint32)op->damage_round_tag+op->weight):(sint32)(WEIGHT_NROF(op, nrof)))))
             return TRUE;
 
-        new_draw_info_format(NDI_UNIQUE, 0, pl, "The %s is too heavy for the %s!",
+        new_draw_info(NDI_UNIQUE, 0, pl, "The %s is too heavy for the %s!",
                                     query_short_name(op, pl),query_name(sack));
     }
 
@@ -469,7 +469,7 @@ void pick_up(object *const op, object *const ori)
     {
         if (!can_pick(op, alt))
         {
-            new_draw_info_format(NDI_UNIQUE, 0, op, "You can't pick up %s.", alt->name);
+            new_draw_info(NDI_UNIQUE, 0, op, "You can't pick up %s.", alt->name);
             goto leave;
         }
         tmp = alt;
@@ -612,7 +612,7 @@ void put_object_in_sack(object *const op, object *const sack, object *tmp, const
 
     if (sack->type != CONTAINER)
     {
-        new_draw_info_format(NDI_UNIQUE, 0, op, "The %s is not a container.", query_name(sack));
+        new_draw_info(NDI_UNIQUE, 0, op, "The %s is not a container.", query_name(sack));
         return;
     }
 
@@ -789,7 +789,7 @@ void drop_object(object *const op, object *tmp, const uint32 nrof)
         {
             if (op->type == PLAYER)
             {
-                new_draw_info_format(NDI_UNIQUE, 0, op, "The shop magic put it to the storage.");
+                new_draw_info(NDI_UNIQUE, 0, op, "The shop magic put it to the storage.");
                 esrv_del_item(CONTR(op), tmp->count, tmp->env);
             }
             FIX_PLAYER(op ,"drop_object - unpaid");

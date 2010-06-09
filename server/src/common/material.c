@@ -921,7 +921,7 @@ void material_attack_damage(object *op, int num, int chance, int base)
     if(op->type != PLAYER || !(pl = CONTR(op)))
         return;
 
-    /*new_draw_info_format(NDI_UNIQUE, 0, op, "num: %d chance:%d base:%d", num,chance,base);*/
+    /*new_draw_info(NDI_UNIQUE, 0, op, "num: %d chance:%d base:%d", num,chance,base);*/
     flag_fix = FALSE;
     while(num--)
     {
@@ -977,7 +977,7 @@ void material_attack_damage(object *op, int num, int chance, int base)
         mnaterial_dmg_jmp:
         /* we have an item, we can damage it - do it */
 
-        /*new_draw_info_format(NDI_UNIQUE, 0, op, "DAMAGE ITEM:: %s (%d)", query_name(item), item->item_condition);*/
+        /*new_draw_info(NDI_UNIQUE, 0, op, "DAMAGE ITEM:: %s (%d)", query_name(item), item->item_condition);*/
         /* sanity check */
         if(item->item_condition > 0)
             item->item_condition--;

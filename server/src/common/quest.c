@@ -172,7 +172,7 @@ void insert_quest_item(struct obj *quest_trigger, struct obj *target)
 
                     if (qt)
                     {
-                        new_draw_info_format(NDI_UNIQUE | NDI_NAVY | NDI_VIM,
+                        new_draw_info(NDI_UNIQUE | NDI_NAVY | NDI_VIM,
                                              0, target, "You found the %s drop %s!",
                                              (QUERY_FLAG(qt, FLAG_ONE_DROP)) ?
                                              "one" : "special",
@@ -455,7 +455,7 @@ int update_quest(struct obj *trigger, char *text, char *vim)
     SET_FLAG(trigger, FLAG_BLIND);
 
     /* Notify player that a quest has been updated. */
-    new_draw_info_format(NDI_UNIQUE | NDI_NAVY | NDI_VIM, 0, pl->ob,
+    new_draw_info(NDI_UNIQUE | NDI_NAVY | NDI_VIM, 0, pl->ob,
                          "Quest updated!\n%s", vim);
     play_sound_player_only(pl, SOUND_LEVEL_UP, SOUND_NORMAL, 0, 0);
 
@@ -836,7 +836,7 @@ void quest_list_command(struct obj *pl, char *cmd)
 
         if(quest)
         {
-            new_draw_info_format(NDI_UNIQUE | NDI_ORANGE, 0, pl, "Quest '%s' removed from quest list!", quest->name);
+            new_draw_info(NDI_UNIQUE | NDI_ORANGE, 0, pl, "Quest '%s' removed from quest list!", quest->name);
             remove_ob(quest);
             send_quest_list(pl);
         }

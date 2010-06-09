@@ -295,7 +295,7 @@ int cast_spell(object *op, object *caster, int dir, int type, int ability, Spell
     {
         /* little trick - if we fail we set target== NULL - thats mark its "yourself" */
         if (op->type == PLAYER)
-            new_draw_info_format(NDI_UNIQUE, 0, op, "You can't cast this spell on %s!",
+            new_draw_info(NDI_UNIQUE, 0, op, "You can't cast this spell on %s!",
                                  target ? target->name : "yourself");
         return 0;
     }
@@ -330,7 +330,7 @@ int cast_spell(object *op, object *caster, int dir, int type, int ability, Spell
             return 0;
 
         if (s->flags & SPELL_DESC_WIS)
-            new_draw_info_format(NDI_UNIQUE, 0, op, "This ground is unholy!  %s ignores you.", godname);
+            new_draw_info(NDI_UNIQUE, 0, op, "This ground is unholy!  %s ignores you.", godname);
         else
             new_draw_info(NDI_UNIQUE, 0, op, "Something blocks the magic.");
         return 0;
@@ -380,7 +380,7 @@ int cast_spell(object *op, object *caster, int dir, int type, int ability, Spell
                 sprintf(buf, " on %s", query_base_name(target, op));
             }
 
-            new_draw_info_format(NDI_UNIQUE, 0, op, "You %s the %s ~%s~%s.",
+            new_draw_info(NDI_UNIQUE, 0, op, "You %s the %s ~%s~%s.",
                                  (spells[type].type == SPELL_TYPE_PRIEST) ?
                                  "invoke" : "cast",
                                  (spells[type].type == SPELL_TYPE_PRIEST) ?
@@ -392,7 +392,7 @@ int cast_spell(object *op, object *caster, int dir, int type, int ability, Spell
             op != target &&
             target->type == PLAYER)
         {
-            new_draw_info_format(NDI_UNIQUE, 0, target, "%s %ss the %s ~%s~ on you.",
+            new_draw_info(NDI_UNIQUE, 0, target, "%s %ss the %s ~%s~ on you.",
                                  query_base_name(op, target),
                                  (spells[type].type == SPELL_TYPE_PRIEST) ?
                                  "invoke" : "cast",
@@ -1751,12 +1751,12 @@ void move_golem(object *op)
             if (victim->race && op->race && strstr(op->race, victim->race))
             {
                 if (op->owner)
-                    new_draw_info_format(NDI_UNIQUE, 0, op->owner, "%s avoids damaging %s.", op->name, victim->name);
+                    new_draw_info(NDI_UNIQUE, 0, op->owner, "%s avoids damaging %s.", op->name, victim->name);
             }
             else if (op->exp_obj && victim == op->owner)
             {
                 if (op->owner)
-                    new_draw_info_format(NDI_UNIQUE, 0, op->owner, "%s avoids damaging you.", op->name);
+                    new_draw_info(NDI_UNIQUE, 0, op->owner, "%s avoids damaging you.", op->name);
             }
             else
             {
@@ -2244,7 +2244,7 @@ void move_ball_lightning(object *op)
     {
         remove_ob(op);
         check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
-        new_draw_info_format(NDI_UNIQUE, 0, owner,
+        new_draw_info(NDI_UNIQUE, 0, owner,
                              "The ball lightning dispells immediately.  Perhaps you need attunement to the spell path?");
         return;
     }
@@ -2850,7 +2850,7 @@ int cast_smite_spell(object *op, object *caster, int dir, int type)
     if (effect->attacktype & AT_GODPOWER)
     {
         if (tailor_god_spell(effect, op))
-            new_draw_info_format(NDI_UNIQUE, 0, op, "%s answers your call!", determine_god(op));
+            new_draw_info(NDI_UNIQUE, 0, op, "%s answers your call!", determine_god(op));
         else
         {
             new_draw_info(NDI_UNIQUE, 0, op, "Your request is ignored.");

@@ -92,7 +92,7 @@ void prayer_failure(object *op, int failure, int power)
 
     if (failure <= -20 && failure > -40) /* wonder */
     {
-        new_draw_info_format(NDI_UNIQUE, 0, op, "%s gives a sign to renew your faith.", godname);
+        new_draw_info(NDI_UNIQUE, 0, op, "%s gives a sign to renew your faith.", godname);
         cast_cone(op, op, 0, 10, SP_WOW, spellarch[SP_WOW], SK_level(op), 0);
     }
     else if (failure <= -40 && failure > -60) /* confusion */
@@ -102,13 +102,13 @@ void prayer_failure(object *op, int failure, int power)
     }
     else if (failure <= -60 && failure > -150) /* paralysis */
     {
-        new_draw_info_format(NDI_UNIQUE, 0, op, "%s requires you to pray NOW.", godname);
+        new_draw_info(NDI_UNIQUE, 0, op, "%s requires you to pray NOW.", godname);
         new_draw_info(NDI_UNIQUE, 0, op, "You comply, ignoring all else.");
         paralyze_player(op, op, 99);
     }
     else if (failure <= -150) /* blast the immediate area */
     {
-        new_draw_info_format(NDI_UNIQUE, 0, op, "%s smites you!", godname);
+        new_draw_info(NDI_UNIQUE, 0, op, "%s smites you!", godname);
         cast_magic_storm(op, get_archetype("god_power"), power);
     }
 }
@@ -179,12 +179,12 @@ int recharge(object *op)
         return 0;
     if (!(random_roll(0, 3)))
     {
-        new_draw_info_format(NDI_UNIQUE, 0, op, "The %s vibrates violently, then explodes!", query_name(wand));
+        new_draw_info(NDI_UNIQUE, 0, op, "The %s vibrates violently, then explodes!", query_name(wand));
         play_sound_map(op->map, op->x, op->y, SOUND_OB_EXPLODE, SOUND_NORMAL);
         destruct_ob(wand);
         return 1;
     }
-    new_draw_info_format(NDI_UNIQUE, 0, op, "The %s glows with power.", query_name(wand));
+    new_draw_info(NDI_UNIQUE, 0, op, "The %s glows with power.", query_name(wand));
 
     wand->stats.food += random_roll(1, spells[wand->stats.sp].charges);
     if (wand->arch && QUERY_FLAG(&wand->arch->clone, FLAG_ANIMATE))
@@ -243,9 +243,9 @@ int probe(object *op)
 #ifdef DEBUG_PROBE_IS_CHARM
                 /* Temporarily made probe into charm to test pet code */
                 if(add_pet(op->owner, tmp, 0) == 0)
-                    new_draw_info_format(NDI_UNIQUE, 0, op->owner, "Your probe charms %s.", tmp->name);
+                    new_draw_info(NDI_UNIQUE, 0, op->owner, "Your probe charms %s.", tmp->name);
 #else
-                new_draw_info_format(NDI_UNIQUE, 0, op->owner, "Your probe analyse %s.", tmp->name);
+                new_draw_info(NDI_UNIQUE, 0, op->owner, "Your probe analyse %s.", tmp->name);
                 if (tmp->head != NULL)
                     tmp = tmp->head;
                 examine(op->owner, tmp, TRUE);
@@ -389,7 +389,7 @@ int perceive_self(object *op)
 
     tmp = find_god(determine_god(op));
     if (tmp)
-        new_draw_info_format(NDI_UNIQUE, 0, op, "You worship %s", tmp->name);
+        new_draw_info(NDI_UNIQUE, 0, op, "You worship %s", tmp->name);
     else
         new_draw_info(NDI_UNIQUE, 0, op, "You worship no god");
 
@@ -797,7 +797,7 @@ int cast_heal(object *op, int level, object *target, int spell_type)
           if (op->type == PLAYER)
           {
               if (heal > 0)
-                  new_draw_info_format(NDI_UNIQUE, 0, op, "The prayer heals %s for %d hp!",
+                  new_draw_info(NDI_UNIQUE, 0, op, "The prayer heals %s for %d hp!",
                                        op == target ? "you" : query_name(target), heal);
               else
                   new_draw_info(NDI_UNIQUE, 0, op, "The healing prayer fails!");
@@ -806,10 +806,10 @@ int cast_heal(object *op, int level, object *target, int spell_type)
           if (op != target && target->type == PLAYER)
           {
               if (heal > 0)
-                  new_draw_info_format(NDI_UNIQUE, 0, target, "%s casts minor healing on you healing %d hp!", op->name,
+                  new_draw_info(NDI_UNIQUE, 0, target, "%s casts minor healing on you healing %d hp!", op->name,
                                        heal);
               else
-                  new_draw_info_format(NDI_UNIQUE, 0, target, "%s casts minor healing on you but it fails!", op->name);
+                  new_draw_info(NDI_UNIQUE, 0, target, "%s casts minor healing on you but it fails!", op->name);
           }
 
           break;
@@ -866,7 +866,7 @@ int cast_heal(object *op, int level, object *target, int spell_type)
           if (success &&
               op->type == PLAYER)
           {
-              new_draw_info_format(NDI_UNIQUE, 0, op, "You restored %s.",
+              new_draw_info(NDI_UNIQUE, 0, op, "You restored %s.",
                                    (op != target) ?
                                    query_base_name(op, target) : "yourself");
           }
@@ -1008,21 +1008,21 @@ int cast_change_attr(object *op, object *caster, object *target, int dir, int sp
               return 0;
           }
           else if (op->type == PLAYER && op != tmp)
-              new_draw_info_format(NDI_UNIQUE, 0, tmp, "%s casts strength on you!", op->name ? op->name : "someone");
+              new_draw_info(NDI_UNIQUE, 0, tmp, "%s casts strength on you!", op->name ? op->name : "someone");
 
 
           if (force->stats.Str < 2)
           {
               force->stats.Str++;
               if (op->type == PLAYER && op != tmp)
-                  new_draw_info_format(NDI_UNIQUE, 0, op, "%s get stronger.", tmp->name ? tmp->name : "someone");
+                  new_draw_info(NDI_UNIQUE, 0, op, "%s get stronger.", tmp->name ? tmp->name : "someone");
           }
           else
           {
               msg_flag = 0;
               new_draw_info(NDI_UNIQUE, 0, tmp, "You don't grow stronger but the spell is refreshed.");
               if (op->type == PLAYER && op != tmp)
-                  new_draw_info_format(NDI_UNIQUE, 0, op, "%s don't grow stronger but the spell is refreshed.",
+                  new_draw_info(NDI_UNIQUE, 0, op, "%s don't grow stronger but the spell is refreshed.",
                                        tmp->name ? tmp->name : "someone");
           }
 
@@ -1150,14 +1150,14 @@ int cast_change_attr(object *op, object *caster, object *target, int dir, int sp
                   }
 
                   force->path_attuned |= god->path_attuned;
-                  new_draw_info_format(NDI_UNIQUE, 0, tmp, "You are possessed by the essence of %s!", god->name);
+                  new_draw_info(NDI_UNIQUE, 0, tmp, "You are possessed by the essence of %s!", god->name);
               }
               else
                   new_draw_info(NDI_UNIQUE, 0, op, "Your blessing seems empty.");
               if (tmp != op && op->type == PLAYER && tmp->type == PLAYER)
               {
-                  new_draw_info_format(NDI_UNIQUE, 0, op, "You bless %s mightily!", tmp->name);
-                  new_draw_info_format(NDI_UNIQUE, 0, tmp, "%s blessed you mightily!", op->name);
+                  new_draw_info(NDI_UNIQUE, 0, op, "You bless %s mightily!", tmp->name);
+                  new_draw_info(NDI_UNIQUE, 0, tmp, "%s blessed you mightily!", op->name);
               }
               /* ADD POSITIVE WC ADD HERE */
               force->stats.wc += SP_level_dam_adjust(op, caster, SP_HOLY_POSSESSION);
@@ -1174,13 +1174,13 @@ int cast_change_attr(object *op, object *caster, object *target, int dir, int sp
               {
                   force->path_repelled |= god->path_repelled;
                   force->path_denied |= god->path_denied;
-                  new_draw_info_format(NDI_UNIQUE, 0, tmp, "You are a victim of %s's curse!", god->name);
+                  new_draw_info(NDI_UNIQUE, 0, tmp, "You are a victim of %s's curse!", god->name);
               }
               else
                   new_draw_info(NDI_UNIQUE, 0, op, "Your curse seems empty.");
 
               if (tmp != op && caster->type == PLAYER)
-                  new_draw_info_format(NDI_UNIQUE, 0, caster, "You curse %s!", tmp->name);
+                  new_draw_info(NDI_UNIQUE, 0, caster, "You curse %s!", tmp->name);
               /* change this to negative ! */
               /* ADD POSITIVE WC ADD HERE */
               force->stats.ac -= SP_level_dam_adjust(op, caster, SP_CURSE);
@@ -1207,15 +1207,15 @@ int cast_change_attr(object *op, object *caster, object *target, int dir, int sp
                           force->resist[i] = 0; /* adding of diff. types not allowed */
                   }
                   force->path_attuned |= god->path_attuned;
-                  new_draw_info_format(NDI_UNIQUE, 0, tmp, "You receive the blessing of %s.", god->name);
+                  new_draw_info(NDI_UNIQUE, 0, tmp, "You receive the blessing of %s.", god->name);
               }
               else
                   new_draw_info(NDI_UNIQUE, 0, op, "Your blessing seems empty.");
 
               if (tmp != op && op->type == PLAYER && tmp->type == PLAYER)
               {
-                  new_draw_info_format(NDI_UNIQUE, 0, op, "You bless %s.", tmp->name);
-                  new_draw_info_format(NDI_UNIQUE, 0, tmp, "%s blessed you.", op->name);
+                  new_draw_info(NDI_UNIQUE, 0, op, "You bless %s.", tmp->name);
+                  new_draw_info(NDI_UNIQUE, 0, tmp, "%s blessed you.", op->name);
               }
               /* ADD POSITIVE WC ADD HERE */
               force->stats.wc += SP_level_dam_adjust(op, caster, SP_BLESS);
@@ -1905,10 +1905,10 @@ int remove_curse(object *op, object *target, int type, SpellTypeFrom src)
     if (op != target)
     {
         if (op->type == PLAYER)
-            new_draw_info_format(NDI_UNIQUE, 0, op, "You cast remove %s on %s.",
+            new_draw_info(NDI_UNIQUE, 0, op, "You cast remove %s on %s.",
                                  type == SP_REMOVE_CURSE ? "curse" : "damnation", query_base_name(target, op));
         else if (target->type == PLAYER)
-            new_draw_info_format(NDI_UNIQUE, 0, target, "%s cast remove %s on you.", query_base_name(op, target),
+            new_draw_info(NDI_UNIQUE, 0, target, "%s cast remove %s on you.", query_base_name(op, target),
                                  type == SP_REMOVE_CURSE ? "curse" : "damnation");
     }
 
@@ -1932,10 +1932,10 @@ int remove_curse(object *op, object *target, int type, SpellTypeFrom src)
             else /* level of the items is to high for this remove curse */
             {
                 if (target->type == PLAYER)
-                    new_draw_info_format(NDI_UNIQUE, 0, target, "The %s curse is stronger as the prayer!",
+                    new_draw_info(NDI_UNIQUE, 0, target, "The %s curse is stronger as the prayer!",
                                          query_base_name(tmp, target));
                 else if (op != target && op->type == PLAYER)
-                    new_draw_info_format(NDI_UNIQUE, 0, op, "The %s curse of %s is stronger as your prayer!",
+                    new_draw_info(NDI_UNIQUE, 0, op, "The %s curse of %s is stronger as your prayer!",
                                          query_base_name(tmp, op), query_base_name(target, op));
             }
         }
@@ -1946,7 +1946,7 @@ int remove_curse(object *op, object *target, int type, SpellTypeFrom src)
         if (success)
             new_draw_info(NDI_UNIQUE, 0, op, "Your prayer removes some curses.");
         else
-            new_draw_info_format(NDI_UNIQUE, 0, op, "%s items seems uncursed.", query_base_name(target, op));
+            new_draw_info(NDI_UNIQUE, 0, op, "%s items seems uncursed.", query_base_name(target, op));
     }
 
     if (target->type == PLAYER)
@@ -2001,7 +2001,7 @@ int cast_identify(object *op, int level, object *single_ob, int mode)
             if (level < tmp->level)
             {
                 if (op->type == PLAYER)
-                    new_draw_info_format(NDI_UNIQUE, 0, op, "The %s is too powerful for this identify!",
+                    new_draw_info(NDI_UNIQUE, 0, op, "The %s is too powerful for this identify!",
                                          query_base_name(tmp, op));
             }
             else
@@ -2009,7 +2009,7 @@ int cast_identify(object *op, int level, object *single_ob, int mode)
                 identify(tmp);
                 if (op->type == PLAYER)
                 {
-                    new_draw_info_format(NDI_UNIQUE, 0, op, "You have %s.", long_desc(tmp, op));
+                    new_draw_info(NDI_UNIQUE, 0, op, "You have %s.", long_desc(tmp, op));
                     if (tmp->msg)
                     {
                         new_draw_info(NDI_UNIQUE, 0, op, "The item has a story:");
@@ -2041,7 +2041,7 @@ int cast_identify(object *op, int level, object *single_ob, int mode)
       {
         identify(tmp);
         if (op->type==PLAYER) {
-    new_draw_info_format(NDI_UNIQUE, 0,op,
+    new_draw_info(NDI_UNIQUE, 0,op,
         "On the ground is %s.", long_desc(tmp, op));
     if (tmp->msg) {
       new_draw_info(NDI_UNIQUE, 0,op, "The item has a story:");
@@ -2071,7 +2071,7 @@ int cast_detection(object *op, object *target, int type)
     {
         case SP_DETECT_MAGIC:
           if (op->type == PLAYER && target != op)
-              new_draw_info_format(NDI_UNIQUE, 0, op, "You cast detect magic on %s.",
+              new_draw_info(NDI_UNIQUE, 0, op, "You cast detect magic on %s.",
                                    target->name ? target->name : "someone");
 
           if (target->type != PLAYER) /* only use self or players */
@@ -2081,7 +2081,7 @@ int cast_detection(object *op, object *target, int type)
               return 0;
           }
           if (target != op)
-              new_draw_info_format(NDI_UNIQUE, 0, target, "%s casts detect magic on you.",
+              new_draw_info(NDI_UNIQUE, 0, target, "%s casts detect magic on you.",
                                    op->name ? op->name : "someone");
 
 
@@ -2115,7 +2115,7 @@ int cast_detection(object *op, object *target, int type)
 
         case SP_DETECT_CURSE:
           if (op->type == PLAYER && target != op)
-              new_draw_info_format(NDI_UNIQUE, 0, op, "You cast detect curse on %s.",
+              new_draw_info(NDI_UNIQUE, 0, op, "You cast detect curse on %s.",
                                    target->name ? target->name : "someone");
 
           if (target->type != PLAYER) /* only use self or players */
@@ -2125,7 +2125,7 @@ int cast_detection(object *op, object *target, int type)
               return 0;
           }
           if (target != op)
-              new_draw_info_format(NDI_UNIQUE, 0, target, "%s casts detect curse on you.",
+              new_draw_info(NDI_UNIQUE, 0, target, "%s casts detect curse on you.",
                                    op->name ? op->name : "someone");
 
           for (tmp = target->inv; tmp; tmp = tmp->below)
@@ -2880,7 +2880,7 @@ object * choose_cult_monster(object *pl, object *god, int summon_level)
      */
     if ((list = find_racelink(race)) == NULL)
     {
-        new_draw_info_format(NDI_UNIQUE, 0, pl, "The spell fails! %s's creatures are beyond", god->name);
+        new_draw_info(NDI_UNIQUE, 0, pl, "The spell fails! %s's creatures are beyond", god->name);
         new_draw_info(NDI_UNIQUE, 0, pl, "the range of your summons.");
         LOG(llevDebug, "choose_cult_monster() requested non-existant aligned race!\n");
         return 0;
@@ -2937,7 +2937,7 @@ int summon_cult_monsters(object *op, int old_dir)
     }
     else if (!god->race)
     {
-        new_draw_info_format(NDI_UNIQUE, 0, op, "%s has no creatures that you may summon!", god->name);
+        new_draw_info(NDI_UNIQUE, 0, op, "%s has no creatures that you may summon!", god->name);
         return 0;
     }
     /* the summon level */
@@ -2962,7 +2962,7 @@ int summon_cult_monsters(object *op, int old_dir)
          */
         if (!mon)
         {
-            new_draw_info_format(NDI_UNIQUE, 0, op, "%s fails to send anything.", god->name);
+            new_draw_info(NDI_UNIQUE, 0, op, "%s fails to send anything.", god->name);
             return 0;
         }
         /* Now lets see if we can find a place for this monster. */
@@ -3089,7 +3089,7 @@ int summon_avatar(object *op, object *caster, int dir, archetype *at, int spelln
     }
     if (!at)
     {
-        new_draw_info_format(NDI_UNIQUE, 0, op, "%s has no %s for you to call.", god->name,
+        new_draw_info(NDI_UNIQUE, 0, op, "%s has no %s for you to call.", god->name,
                              spellnum == SP_SUMMON_AVATAR ? "avatar" : "servant");
         return 0;
     }
@@ -3271,7 +3271,7 @@ int cast_consecrate(object *op)
                */
             if (tmp->level > SK_level(op))
             {
-                new_draw_info_format(NDI_UNIQUE, 0, op, "You are not poweful enough to reconsecrate the %s", tmp->name);
+                new_draw_info(NDI_UNIQUE, 0, op, "You are not poweful enough to reconsecrate the %s", tmp->name);
                 return 0;
             }
             else
@@ -3283,7 +3283,7 @@ int cast_consecrate(object *op)
                 tmp->other_arch = god->arch;
                 if (op->type == PLAYER)
                     esrv_update_item(UPD_NAME, op, tmp);
-                new_draw_info_format(NDI_UNIQUE, 0, op, "You consecrated the altar to %s!", god->name);
+                new_draw_info(NDI_UNIQUE, 0, op, "You consecrated the altar to %s!", god->name);
                 return 1;
             }
         }
@@ -3327,7 +3327,7 @@ int finger_of_death(object *op, object *caster, int dir)
         }
         else
         {
-            new_draw_info_format(NDI_UNIQUE, 0, op, "The %s looks stronger!", query_name(target));
+            new_draw_info(NDI_UNIQUE, 0, op, "The %s looks stronger!", query_name(target));
             target->stats.hp = target->stats.maxhp * 2;
             return 0;
         }
@@ -3570,7 +3570,7 @@ int animate_weapon(object *op, object *caster, int dir, archetype *at, int spell
           break;
 
         case SP_ANIMATE_WEAPON:
-          new_draw_info_format(NDI_UNIQUE, 0, op, "Your %s flies from your hand and hovers in mid-air!", weapon->name);
+          new_draw_info(NDI_UNIQUE, 0, op, "Your %s flies from your hand and hovers in mid-air!", weapon->name);
           sprintf(buf, "animated %s", weapon->name);
           FREE_AND_COPY_HASH(tmp->name, buf);
 

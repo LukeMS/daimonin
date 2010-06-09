@@ -879,7 +879,7 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
     /* If pl has not requested privacy, announcethe login to all players. */
     if (!pl->privacy)
     {
-        new_draw_info_format(NDI_UNIQUE | NDI_ALL, 0, NULL, "~%s~ has entered the game.",
+        new_draw_info(NDI_UNIQUE | NDI_ALL, 0, NULL, "~%s~ has entered the game.",
                              query_name(pl->ob));
     }
 

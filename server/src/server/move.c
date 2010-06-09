@@ -228,11 +228,11 @@ void recursive_roll(object *op, int dir, object *pusher)
 {
     if (!roll_ob(op, dir, pusher))
     {
-        new_draw_info_format(NDI_UNIQUE, 0, pusher, "You fail to push the %s.", query_name(op));
+        new_draw_info(NDI_UNIQUE, 0, pusher, "You fail to push the %s.", query_name(op));
         return;
     }
     (void) move_ob(pusher, dir, pusher);
-    new_draw_info_format(NDI_WHITE, 0, pusher, "You roll the %s.", query_name(op));
+    new_draw_info(NDI_WHITE, 0, pusher, "You roll the %s.", query_name(op));
     return;
 }
 
@@ -367,14 +367,14 @@ int push_ob(object *who, int dir, object *pusher)
        if(owner != pusher &&  pusher->type == PLAYER && who->type != PLAYER &&
                                                     !QUERY_FLAG(who,FLAG_FRIENDLY)) {
     if(CONTR(pusher)->run_on) {
-        new_draw_info_format(NDI_UNIQUE, 0, pusher,
+        new_draw_info(NDI_UNIQUE, 0, pusher,
                  "You start to attack %s !!",who->name);
            update_npc_knowledge(who, pusher, FRIENDSHIP_PUSH, 0);
            return 1;
     }
     else
     {
-        new_draw_info_format(NDI_UNIQUE, 0, pusher,
+        new_draw_info(NDI_UNIQUE, 0, pusher,
                  "You avoid to attack %s .",who->name);
     }
        }*/
@@ -382,7 +382,7 @@ int push_ob(object *who, int dir, object *pusher)
     /* now, lets test stand still we NEVER can push stand_still monsters. */
     if (QUERY_FLAG(who, FLAG_STAND_STILL))
     {
-        new_draw_info_format(NDI_UNIQUE, 0, pusher, "You can't push %s.", who->name);
+        new_draw_info(NDI_UNIQUE, 0, pusher, "You can't push %s.", who->name);
         return 0;
     }
 
@@ -407,7 +407,7 @@ int push_ob(object *who, int dir, object *pusher)
      >= random_roll(str2, str2/ 2 + str2 * 2)
      || !move_ob(who, dir, pusher))
     {
-        new_draw_info_format(NDI_UNIQUE, 0, who, "%s tried to push you.", pusher->name);
+        new_draw_info(NDI_UNIQUE, 0, who, "%s tried to push you.", pusher->name);
         return 0;
     }
 
@@ -417,8 +417,8 @@ int push_ob(object *who, int dir, object *pusher)
      * player
      */
     (void) move_ob(pusher, dir, pusher);
-    new_draw_info_format(NDI_UNIQUE, 0, who, "%s pushed you.", pusher->name);
-    new_draw_info_format(NDI_UNIQUE, 0, pusher, "You pushed %s back.", who->name);
+    new_draw_info(NDI_UNIQUE, 0, who, "%s pushed you.", pusher->name);
+    new_draw_info(NDI_UNIQUE, 0, pusher, "You pushed %s back.", who->name);
 
     return 1;
 }
@@ -446,7 +446,7 @@ int push_roll_object(object * const op, int dir, const int flag)
 	}
 	if (tmp == NULL)
 	{
-        new_draw_info_format(NDI_UNIQUE, 0, op, "You fail to push anything.");
+        new_draw_info(NDI_UNIQUE, 0, op, "You fail to push anything.");
 		return 0;
 	}
 	/* here we try to push pets, players and mobs */
@@ -667,7 +667,7 @@ int enter_map_by_exit(object *op, object *exit_ob)
 
     if(! EXIT_PATH(exit_ob))
     {
-        new_draw_info_format(NDI_UNIQUE, 0, op, "The %s is closed.", query_name(exit_ob));
+        new_draw_info(NDI_UNIQUE, 0, op, "The %s is closed.", query_name(exit_ob));
         return FALSE;
     }
 
@@ -769,7 +769,7 @@ int enter_map_by_exit(object *op, object *exit_ob)
 
     if (!newmap)
     {
-        new_draw_info_format(NDI_UNIQUE, 0, op, "The %s is closed.", query_name(exit_ob));
+        new_draw_info(NDI_UNIQUE, 0, op, "The %s is closed.", query_name(exit_ob));
         return FALSE;
     }
 

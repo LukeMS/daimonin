@@ -421,7 +421,7 @@ void cs_cmd_generic(char *buf, int len, NewSocket *ns)
 
     if (!(pl->state & ST_PLAYING))
     {
-        new_draw_info_format(NDI_UNIQUE, 0, ob, "You can not issue commands - state is not ST_PLAYING (%s)",
+        new_draw_info(NDI_UNIQUE, 0, ob, "You can not issue commands - state is not ST_PLAYING (%s)",
                              buf);
 
         return;
@@ -437,7 +437,7 @@ void cs_cmd_generic(char *buf, int len, NewSocket *ns)
     /* Find the command. */
     if (!(csp = find_command(buf, pl)))
     {
-        new_draw_info_format(NDI_UNIQUE, 0, ob, "'/%s' is not a valid command.",
+        new_draw_info(NDI_UNIQUE, 0, ob, "'/%s' is not a valid command.",
                              buf);
 
         return;
@@ -449,7 +449,7 @@ void cs_cmd_generic(char *buf, int len, NewSocket *ns)
          * think this can be set from the client yet, so its use would be
          * pointless ATM.
          * -- Smacky 20090607 */
-        new_draw_info_format(NDI_UNIQUE | NDI_YELLOW, 0, ob, "/%s %s",
+        new_draw_info(NDI_UNIQUE | NDI_YELLOW, 0, ob, "/%s %s",
                              buf, (cp) ? cp : "");
     }
 
@@ -470,7 +470,7 @@ void cs_cmd_generic(char *buf, int len, NewSocket *ns)
     /* command_foo() funcs return zero/non-zero to indicate success/failure. */
     if (csp->func(ob, cp))
     {
-        new_draw_info_format(NDI_UNIQUE | NDI_WHITE, 0, ob, "Syntax error: Try ~/help /%s~",
+        new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, ob, "Syntax error: Try ~/help /%s~",
                              csp->name);
 
         return;

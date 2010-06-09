@@ -436,7 +436,7 @@ int get_payment2(object *pl, object *op)
         {
             sint64 i   = query_cost(op, pl, F_BUY) - query_money(pl);
             CLEAR_FLAG(op, FLAG_UNPAID);
-            new_draw_info_format(NDI_UNIQUE, 0, pl, "You lack %s to buy %s.", cost_string_from_value(i, COSTSTRING_SHORT), query_name(op));
+            new_draw_info(NDI_UNIQUE, 0, pl, "You lack %s to buy %s.", cost_string_from_value(i, COSTSTRING_SHORT), query_name(op));
             SET_FLAG(op, FLAG_UNPAID);
             return 0;
         }
@@ -450,7 +450,7 @@ int get_payment2(object *pl, object *op)
 
             if (pl->type == PLAYER)
             {
-                new_draw_info_format(NDI_UNIQUE, 0, pl, "You paid %s for %s.",
+                new_draw_info(NDI_UNIQUE, 0, pl, "You paid %s for %s.",
                                      buf, query_name(op));
 
                 if (tmp)
@@ -498,7 +498,7 @@ void sell_item(object *op, object *pl, sint64 value)
     if (!i)
     {
         if (op)
-            new_draw_info_format(NDI_UNIQUE, 0, pl, "We're not interested in %s.", query_name(op));
+            new_draw_info(NDI_UNIQUE, 0, pl, "We're not interested in %s.", query_name(op));
 
         /* Even if the character doesn't get anything for it, it may still be
          * worth something.  If so, make it unpaid
@@ -574,7 +574,7 @@ void sell_item(object *op, object *pl, sint64 value)
     if (i != 0)
         LOG(llevBug, "BUG: Warning - payment not zero: %d\n", i);
 
-    new_draw_info_format(NDI_UNIQUE, 0, pl, "You receive %s for %s.", query_cost_string(op, pl, F_SELL, COSTSTRING_FULL), query_name(op));
+    new_draw_info(NDI_UNIQUE, 0, pl, "You receive %s for %s.", query_cost_string(op, pl, F_SELL, COSTSTRING_FULL), query_name(op));
     SET_FLAG(op, FLAG_UNPAID);
     /* TODO: unique item shop will work like old CF shops
       identify(op);

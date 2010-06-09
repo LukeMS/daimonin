@@ -130,7 +130,7 @@ int attempt_steal(object *op, object *who)
                 /* TODO: should probaly call set_npc_enemy() here instead */
                 /* TODO: disabled while cleaning up monster.c */
                 /* npc_call_help(op); */
-                new_draw_info_format(NDI_UNIQUE, 0, who, "%s notices your attempted pilfering!", query_name(op));
+                new_draw_info(NDI_UNIQUE, 0, who, "%s notices your attempted pilfering!", query_name(op));
             }
             CLEAR_FLAG(op, FLAG_UNAGGRESSIVE);
             /* all remaining npc items are guarded now. Set flag NO_STEAL
@@ -496,7 +496,7 @@ static int attempt_jump(object *pl, int dir, int spaces)
             /* Jump into creature */
             if (QUERY_FLAG(tmp, FLAG_MONSTER) || tmp->type == PLAYER)
             {
-                new_draw_info_format(NDI_UNIQUE, 0, pl, "You jump into%s%s.", tmp->type == PLAYER ? " " : " the ",
+                new_draw_info(NDI_UNIQUE, 0, pl, "You jump into%s%s.", tmp->type == PLAYER ? " " : " the ",
                                      tmp->name);
                 if (tmp->type != PLAYER)
                     exp = skill_attack(tmp, pl, pl->facing, "kicked"); /* pl makes an attack */
@@ -709,7 +709,7 @@ int do_skill_ident2(object *tmp, object *pl, int obj_class)
             identify(tmp);
             if (pl->type == PLAYER)
             {
-                new_draw_info_format(NDI_UNIQUE, 0, pl, "You identify %s.", long_desc(tmp, pl));
+                new_draw_info(NDI_UNIQUE, 0, pl, "You identify %s.", long_desc(tmp, pl));
                 if (tmp->msg)
                 {
                     new_draw_info(NDI_UNIQUE, 0, pl, "The item has a story:");
@@ -788,14 +788,14 @@ int use_oratory(object *pl, int dir)
             return 0;
 
 
-        new_draw_info_format(NDI_UNIQUE, 0, pl, "You orate to the %s.", query_name(tmp));
+        new_draw_info(NDI_UNIQUE, 0, pl, "You orate to the %s.", query_name(tmp));
 
         /* the following conditions limit who may be 'charmed' */
 
         /* it's hostile! */
         if (!QUERY_FLAG(tmp, FLAG_UNAGGRESSIVE) && !QUERY_FLAG(tmp, FLAG_FRIENDLY))
         {
-            new_draw_info_format(NDI_UNIQUE, 0, pl, "Too bad the %s isn't listening!\n", query_name(tmp));
+            new_draw_info(NDI_UNIQUE, 0, pl, "Too bad the %s isn't listening!\n", query_name(tmp));
             return 0;
         }
 
@@ -811,7 +811,7 @@ int use_oratory(object *pl, int dir)
             {
                 /* you steal the follower! */
                 set_owner(tmp, pl);
-                new_draw_info_format(NDI_UNIQUE, 0, pl, "You convince the %s to follow you instead!\n", query_name(tmp));
+                new_draw_info(NDI_UNIQUE, 0, pl, "You convince the %s to follow you instead!\n", query_name(tmp));
                 /* Abuse fix - don't give exp since this can otherwise
                      * be used by a couple players to gets lots of exp.
                      */
@@ -824,7 +824,7 @@ int use_oratory(object *pl, int dir)
         /* Ok, got a 'sucker' lets try to make them a follower */
         if (chance > 0 && tmp->level < (random_roll(0, chance - 1) - 1))
         {
-            new_draw_info_format(NDI_UNIQUE, 0, pl, "You convince the %s to become your follower.\n", query_name(tmp));
+            new_draw_info(NDI_UNIQUE, 0, pl, "You convince the %s to become your follower.\n", query_name(tmp));
 
             set_owner(tmp, pl);
             SET_FLAG(tmp, FLAG_MONSTER);
@@ -836,7 +836,7 @@ int use_oratory(object *pl, int dir)
         /* Charm failed.  Creature may be angry now */
         else if ((SK_level(pl) + ((stat1 - 10) / 2)) < random_roll(1, 2 * tmp->level))
         {
-            new_draw_info_format(NDI_UNIQUE, 0, pl, "Your speech angers the %s!\n", query_name(tmp));
+            new_draw_info(NDI_UNIQUE, 0, pl, "Your speech angers the %s!\n", query_name(tmp));
             /* TODO: should probaly call set_npc_enemy() here instead/also */
             if (QUERY_FLAG(tmp, FLAG_FRIENDLY))
             {
@@ -873,7 +873,7 @@ int singing(object *pl, int dir)
     if (pl->type != PLAYER)
         return 0;    /* only players use this skill */
 
-    new_draw_info_format(NDI_UNIQUE, 0, pl, "You sing");
+    new_draw_info(NDI_UNIQUE, 0, pl, "You sing");
     for (i = dir; i < (dir + MIN(SK_level(pl), SIZEOFFREE)); i++)
     {
         xt = pl->x + freearr_x[i];
@@ -921,7 +921,7 @@ int singing(object *pl, int dir)
             if (chance && tmp->level * 2 < random_roll(0, chance - 1))
             {
                 SET_FLAG(tmp, FLAG_UNAGGRESSIVE);
-                new_draw_info_format(NDI_UNIQUE, 0, pl, "You calm down the %s\n", query_name(tmp));
+                new_draw_info(NDI_UNIQUE, 0, pl, "You calm down the %s\n", query_name(tmp));
                 tmp->stats.Int = 1; /* this prevents re-pacification */
                 /* Give exp only if they are not aware */
                 if (!QUERY_FLAG(tmp, FLAG_NO_STEAL))
@@ -930,7 +930,7 @@ int singing(object *pl, int dir)
             }
             else
             {
-                new_draw_info_format(NDI_UNIQUE, 0, pl, "Too bad the %s isn't listening!\n", query_name(tmp));
+                new_draw_info(NDI_UNIQUE, 0, pl, "Too bad the %s isn't listening!\n", query_name(tmp));
             }
         }
     }
@@ -1082,7 +1082,7 @@ int write_on_item(object *pl, char *params)
               break;
         }
     }
-    new_draw_info_format(NDI_UNIQUE, 0, pl, "You have no %s to write on", msgtype == BOOK ? "book" : "scroll");
+    new_draw_info(NDI_UNIQUE, 0, pl, "You have no %s to write on", msgtype == BOOK ? "book" : "scroll");
     return 0;
 }
 
@@ -1102,7 +1102,7 @@ int write_note(object *pl, object *item, char *msg)
     if (!msg)
     {
         new_draw_info(NDI_UNIQUE, 0, pl, "No message to write!");
-        new_draw_info_format(NDI_UNIQUE, 0, pl, "Usage: use_skill %s <message>", skills[SK_INSCRIPTION].name);
+        new_draw_info(NDI_UNIQUE, 0, pl, "Usage: use_skill %s <message>", skills[SK_INSCRIPTION].name);
         return 0;
     }
     if (strstr(msg, "endmsg"))
@@ -1141,11 +1141,11 @@ int write_note(object *pl, object *item, char *msg)
             FREE_AND_COPY_HASH(item->msg, buf);
             esrv_send_item(pl, item);
         }
-        new_draw_info_format(NDI_UNIQUE, 0, pl, "You write in the %s.", query_short_name(item, pl));
+        new_draw_info(NDI_UNIQUE, 0, pl, "You write in the %s.", query_short_name(item, pl));
         return strlen(msg);
     }
     else
-        new_draw_info_format(NDI_UNIQUE, 0, pl, "Your message won't fit in the %s!", query_short_name(item, pl));
+        new_draw_info(NDI_UNIQUE, 0, pl, "Your message won't fit in the %s!", query_short_name(item, pl));
     return 0;
 }
 
@@ -1177,18 +1177,18 @@ int write_scroll(object *pl, object *scroll)
     if (!(spells[chosen_spell].spell_use & SPELL_USE_SCROLL))
     {
         /* Tried to write non-scroll spell */
-        new_draw_info_format(NDI_UNIQUE, 0, pl, "The spell %s cannot be inscribed.", spells[chosen_spell].name);
+        new_draw_info(NDI_UNIQUE, 0, pl, "The spell %s cannot be inscribed.", spells[chosen_spell].name);
         return 0;
     }
     if (spells[chosen_spell].flags & SPELL_DESC_WIS && spells[chosen_spell].sp > pl->stats.grace)
     {
-        new_draw_info_format(NDI_UNIQUE, 0, pl, "You don't have enough grace to write a scroll of %s.",
+        new_draw_info(NDI_UNIQUE, 0, pl, "You don't have enough grace to write a scroll of %s.",
                              spells[chosen_spell].name);
         return 0;
     }
     else if (spells[chosen_spell].sp > pl->stats.sp)
     {
-        new_draw_info_format(NDI_UNIQUE, 0, pl, "You don't have enough mana to write a scroll of %s.",
+        new_draw_info(NDI_UNIQUE, 0, pl, "You don't have enough mana to write a scroll of %s.",
                              spells[chosen_spell].name);
         return 0;
     }
@@ -1199,7 +1199,7 @@ int write_scroll(object *pl, object *scroll)
      */
     if (scroll->stats.sp && random_roll(0, scroll->level * 2) > SK_level(pl))
     {
-        new_draw_info_format(NDI_UNIQUE, 0, pl, "Oops! You accidently read it while trying to write on it.");
+        new_draw_info(NDI_UNIQUE, 0, pl, "Oops! You accidently read it while trying to write on it.");
         manual_apply(pl, scroll, 0);
         change_skill(pl, SK_INSCRIPTION);
         return 0;
@@ -1361,7 +1361,7 @@ int find_traps(object *op, int level)
         }
         else
         {
-            new_draw_info_format(NDI_UNIQUE, 0, op, "You find %d new traps!",
+            new_draw_info(NDI_UNIQUE, 0, op, "You find %d new traps!",
                                                       found);
             if (aware)
                 new_draw_info(NDI_UNIQUE, 0, op, "You also find signs of more traps hidden beyond your skill...");

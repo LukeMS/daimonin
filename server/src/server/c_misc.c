@@ -278,7 +278,7 @@ int command_who(object *op, char *params)
 
         if (pl->state & ST_PLAYING)
         {
-            new_draw_info_format(NDI_UNIQUE, 0, op, "~%s~ the %s %s (L:%d)",
+            new_draw_info(NDI_UNIQUE, 0, op, "~%s~ the %s %s (L:%d)",
                                  pl->quick_name,
                                  (QUERY_FLAG(pl->ob, FLAG_IS_MALE)) ?
                                  ((QUERY_FLAG(pl->ob, FLAG_IS_FEMALE)) ? "hermaphrodite" : "male") :
@@ -302,18 +302,18 @@ int command_who(object *op, char *params)
                 else
                     off = 0;
 
-                new_draw_info_format(NDI_UNIQUE, 0, op, "    ~Map~: %s%s %d,%d",
+                new_draw_info(NDI_UNIQUE, 0, op, "    ~Map~: %s%s %d,%d",
                                      (off) ? "..." : "",
                                      pl->ob->map->path + off, pl->ob->x,
                                      pl->ob->y);
-                new_draw_info_format(NDI_UNIQUE, 0, op, "    ~IP~: %s",
+                new_draw_info(NDI_UNIQUE, 0, op, "    ~IP~: %s",
                                      pl->socket.ip_host);
             }
         }
     }
 
     it = ip + il;
-    new_draw_info_format(NDI_UNIQUE, 0, op, "There %s %d player%s online (%d in login).",
+    new_draw_info(NDI_UNIQUE, 0, op, "There %s %d player%s online (%d in login).",
                          (it > 1) ? "are" : "is", it, (it > 1) ? "s" : "", il);
 #ifdef _TESTSERVER
     LOG(llevSystem, "read stream file...\n");
@@ -341,7 +341,7 @@ int command_who(object *op, char *params)
         }
         else
         {
-            new_draw_info_format(NDI_UNIQUE, 0, op, "Server compiled with ~%s~ stream.",
+            new_draw_info(NDI_UNIQUE, 0, op, "Server compiled with ~%s~ stream.",
                                  buf);
 
             while (fgets(buf, MEDIUM_BUF, fp))
@@ -524,7 +524,7 @@ int command_time(object *op, char *params)
         flags = TAD_SHOWTIME | TAD_SHOWDATE | TAD_SHOWSEASON | TAD_LONGFORM;
 
     /* Send the tad string to the player. */
-    new_draw_info_format(NDI_UNIQUE | NDI_NAVY, 0, op, "It is %s.",
+    new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, op, "It is %s.",
                          print_tad(&tad, flags));
 
     return 0;
@@ -674,7 +674,7 @@ int command_dm_invis(object *op, char *params)
         return 0;
 
     pl->dm_invis = (pl->dm_invis) ? 0 : 1;
-    new_draw_info_format(NDI_UNIQUE, 0, op, "toggled dm_invis to %d",
+    new_draw_info(NDI_UNIQUE, 0, op, "toggled dm_invis to %d",
                          pl->dm_invis);
     FIX_PLAYER(op, "command dm_invis");
 
@@ -715,14 +715,14 @@ int command_stealth(object *op, char *params)
 
    if (CONTR(op)->stealth)
    {
-       new_draw_info_format(NDI_UNIQUE | NDI_ALL, 5, NULL, "%s has entered the game.",
+       new_draw_info(NDI_UNIQUE | NDI_ALL, 5, NULL, "%s has entered the game.",
                             query_name(op));
        CONTR(op)->stealth = 0;
    }
    else
        CONTR(op)->stealth = 1;
 
-   new_draw_info_format(NDI_UNIQUE, 0, op, "toggled stealth to %d",
+   new_draw_info(NDI_UNIQUE, 0, op, "toggled stealth to %d",
                         CONTR(op)->stealth);
 
     return 0;
@@ -747,7 +747,7 @@ int command_dm_light(object *op, char *params)
         sscanf(params, "%d", &personal_light);
 
     set_personal_light(pl, personal_light);
-    new_draw_info_format(NDI_UNIQUE, 0, op, "Switch personal light %s (%d).",
+    new_draw_info(NDI_UNIQUE, 0, op, "Switch personal light %s (%d).",
                          (pl->personal_light) ? "to" : "off", pl->personal_light);
 
     return 0;
@@ -772,7 +772,7 @@ int command_dm_password (object *op, char *params)
     sprintf(pfile, "%s/%s/%s/%s/%s.pl", settings.localdir, settings.playerdir, get_subdir(name), name, name);
     if (access(pfile, F_OK)==-1)
     {
-        new_draw_info_format(NDI_UNIQUE, 0,op, "dm_pwd: player %s don't exists or has no player file!", name);
+        new_draw_info(NDI_UNIQUE, 0,op, "dm_pwd: player %s don't exists or has no player file!", name);
 
         return 0;
     }
@@ -784,14 +784,14 @@ int command_dm_password (object *op, char *params)
     /* lets do a safe read/write in a temp. file */
     if((fp=fopen(pfile,"r"))==NULL)
     {
-        new_draw_info_format(NDI_UNIQUE, 0,op, "dm_pwd: error open file %s!", pfile);
+        new_draw_info(NDI_UNIQUE, 0,op, "dm_pwd: error open file %s!", pfile);
 
         return 0;
     }
 
     if((fpout=fopen(outfile,"w"))==NULL)
     {
-        new_draw_info_format(NDI_UNIQUE, 0,op, "dm_pwd: error open file %s!", outfile);
+        new_draw_info(NDI_UNIQUE, 0,op, "dm_pwd: error open file %s!", outfile);
 
         return 0;
     }
@@ -830,7 +830,7 @@ int command_dm_password (object *op, char *params)
     unlink(pfile);
     rename(outfile, pfile);
 
-    new_draw_info_format(NDI_UNIQUE, 0,op, "Done. Changed password of %s to %s!", name, pwd);
+    new_draw_info(NDI_UNIQUE, 0,op, "Done. Changed password of %s to %s!", name, pwd);
 
     return 0;
 }
@@ -911,7 +911,7 @@ int command_printlos(object *op, char *params)
 
 int command_version(object *op, char *params)
 {
-    new_draw_info_format(NDI_UNIQUE | NDI_WHITE, 0, op, "This is Daimonin v%s.",
+    new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, op, "This is Daimonin v%s.",
                          VERSION);
 
     return 0;
@@ -939,7 +939,7 @@ int command_listen(object *op, char *params)
         return 1;
 
     CONTR(op)->listening = (char) i;
-    new_draw_info_format(NDI_UNIQUE, 0, op, "Your verbosity level is now %d.",
+    new_draw_info(NDI_UNIQUE, 0, op, "Your verbosity level is now %d.",
                          i);
 
     return 0;
@@ -955,23 +955,23 @@ int command_statistics(object *pl, char *params)
     if (pl->type != PLAYER || !CONTR(pl))
         return 0;
 
-    new_draw_info_format(NDI_UNIQUE, 0, pl, "  Experience: %d", pl->stats.exp);
-    new_draw_info_format(NDI_UNIQUE, 0, pl, "  Next Level: %d", GET_LEVEL_EXP(pl->level + 1));
+    new_draw_info(NDI_UNIQUE, 0, pl, "  Experience: %d", pl->stats.exp);
+    new_draw_info(NDI_UNIQUE, 0, pl, "  Next Level: %d", GET_LEVEL_EXP(pl->level + 1));
     new_draw_info(NDI_UNIQUE, 0, pl, "\nStat       Nat/Real/Max");
 
-    new_draw_info_format(NDI_UNIQUE, 0, pl, "Str         %2d/ %3d/%3d", CONTR(pl)->orig_stats.Str, pl->stats.Str,
+    new_draw_info(NDI_UNIQUE, 0, pl, "Str         %2d/ %3d/%3d", CONTR(pl)->orig_stats.Str, pl->stats.Str,
                          20 + pl->arch->clone.stats.Str);
-    new_draw_info_format(NDI_UNIQUE, 0, pl, "Dex         %2d/ %3d/%3d", CONTR(pl)->orig_stats.Dex, pl->stats.Dex,
+    new_draw_info(NDI_UNIQUE, 0, pl, "Dex         %2d/ %3d/%3d", CONTR(pl)->orig_stats.Dex, pl->stats.Dex,
                          20 + pl->arch->clone.stats.Dex);
-    new_draw_info_format(NDI_UNIQUE, 0, pl, "Con         %2d/ %3d/%3d", CONTR(pl)->orig_stats.Con, pl->stats.Con,
+    new_draw_info(NDI_UNIQUE, 0, pl, "Con         %2d/ %3d/%3d", CONTR(pl)->orig_stats.Con, pl->stats.Con,
                          20 + pl->arch->clone.stats.Con);
-    new_draw_info_format(NDI_UNIQUE, 0, pl, "Int         %2d/ %3d/%3d", CONTR(pl)->orig_stats.Int, pl->stats.Int,
+    new_draw_info(NDI_UNIQUE, 0, pl, "Int         %2d/ %3d/%3d", CONTR(pl)->orig_stats.Int, pl->stats.Int,
                          20 + pl->arch->clone.stats.Int);
-    new_draw_info_format(NDI_UNIQUE, 0, pl, "Wis         %2d/ %3d/%3d", CONTR(pl)->orig_stats.Wis, pl->stats.Wis,
+    new_draw_info(NDI_UNIQUE, 0, pl, "Wis         %2d/ %3d/%3d", CONTR(pl)->orig_stats.Wis, pl->stats.Wis,
                          20 + pl->arch->clone.stats.Wis);
-    new_draw_info_format(NDI_UNIQUE, 0, pl, "Pow         %2d/ %3d/%3d", CONTR(pl)->orig_stats.Pow, pl->stats.Pow,
+    new_draw_info(NDI_UNIQUE, 0, pl, "Pow         %2d/ %3d/%3d", CONTR(pl)->orig_stats.Pow, pl->stats.Pow,
                          20 + pl->arch->clone.stats.Pow);
-    new_draw_info_format(NDI_UNIQUE, 0, pl, "Cha         %2d/ %3d/%3d", CONTR(pl)->orig_stats.Cha, pl->stats.Cha,
+    new_draw_info(NDI_UNIQUE, 0, pl, "Cha         %2d/ %3d/%3d", CONTR(pl)->orig_stats.Cha, pl->stats.Cha,
                          20 + pl->arch->clone.stats.Cha);
 
     /* Can't think of anything else to print right now */
@@ -1012,7 +1012,7 @@ int command_resistances(object *op, char *params)
         if (i == ATNR_INTERNAL)
             continue;
 
-        new_draw_info_format(NDI_UNIQUE, 0, op, "%-20s %+5d",
+        new_draw_info(NDI_UNIQUE, 0, op, "%-20s %+5d",
                              attack_name[i], op->resist[i]);
     }
 
@@ -1273,7 +1273,7 @@ int command_help(object *op, char *params)
 //
 //            return 0;
 //        }
-        new_draw_info_format(NDI_UNIQUE | NDI_YELLOW, 0, pl->ob, "Help for command %s:",
+        new_draw_info(NDI_UNIQUE | NDI_YELLOW, 0, pl->ob, "Help for command %s:",
                              params);
 
         if (!(csp = find_command(params + 1, NULL)))
@@ -1306,7 +1306,7 @@ int command_help(object *op, char *params)
     /* TODO: Individual category. */
 
     /* Unknown topic */
-    new_draw_info_format(NDI_UNIQUE, 0, pl->ob, "No help available on '%s'",
+    new_draw_info(NDI_UNIQUE, 0, pl->ob, "No help available on '%s'",
                          params);
 
     return 0;

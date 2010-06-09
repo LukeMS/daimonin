@@ -134,7 +134,6 @@ struct plugin_hooklist  hooklist    =
     /* N */
     nearest_pow_two_exp,
     new_draw_info,
-    new_draw_info_format,
     new_info_map,
     new_info_map_except,
     new_save_map,
