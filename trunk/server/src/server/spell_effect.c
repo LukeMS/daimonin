@@ -755,8 +755,9 @@ int dimension_door(object *op, int dir)
 
 int cast_heal(object *op, int level, object *target, int spell_type)
 {
-    int heal = 0,
-        success = 0;
+    int     heal = 0,
+            success = 0;
+    object *tmp;
 
     /*LOG(llevNoLog,"dir: %d (%s -> %s)\n", dir, op?op->name:"<no op>",tmp?tmp->name:"<no tmp>");*/
 
@@ -774,37 +775,16 @@ int cast_heal(object *op, int level, object *target, int spell_type)
           break;
 
         case SP_CURE_POISON:
-          if (op != target && target->type == PLAYER)
-              new_draw_info_format(NDI_UNIQUE, 0, target, "%s casts cure poison on you!",
-                                   op->name ? op->name : "someone");
-          if (op != target && op->type == PLAYER)
-              new_draw_info_format(NDI_UNIQUE, 0, op, "You cast cure poison on %s!",
-                                   target->name ? target->name : "someone");
-
           success = (cure_what_ails_you(target, ST1_FORCE_POISON)) ? 1 : 0;
 
           break;
 
         case SP_CURE_CONFUSION:
-          if (op != target && target->type == PLAYER)
-              new_draw_info_format(NDI_UNIQUE, 0, target, "%s casts cure confusion on you!",
-                                   op->name ? op->name : "someone");
-          if (op != target && op->type == PLAYER)
-              new_draw_info_format(NDI_UNIQUE, 0, op, "You cast cure confusion on %s!",
-                                   target->name ? target->name : "someone");
-
           success = (cure_what_ails_you(target, ST1_FORCE_CONFUSED)) ? 1 : 0;
 
           break;
 
         case SP_CURE_BLINDNESS:
-          if (op != target && target->type == PLAYER)
-              new_draw_info_format(NDI_UNIQUE, 0, target, "%s casts cure blindness on you!",
-                                   op->name ? op->name : "someone");
-          if (op != target && op->type == PLAYER)
-              new_draw_info_format(NDI_UNIQUE, 0, op, "You cast cure blindness on %s!",
-                                   target->name ? target->name : "someone");
-
           success = (cure_what_ails_you(target, ST1_FORCE_BLIND)) ? 1 : 0;
 
           break;
@@ -831,7 +811,68 @@ int cast_heal(object *op, int level, object *target, int spell_type)
               else
                   new_draw_info_format(NDI_UNIQUE, 0, target, "%s casts minor healing on you but it fails!", op->name);
           }
+
           break;
+
+        case SP_REMOVE_DEPLETION:
+          if ((tmp = cure_what_ails_you(target, ST1_FORCE_DEPLETE)))
+          {
+              uint8 i = 0;
+
+              for (; i < NUM_STATS; i++)
+              {
+                  if (get_stat_value(&tmp->stats, i))
+                  {
+                      success++;
+                      new_draw_info(NDI_UNIQUE, 0, target, restore_msg[i]);
+                  }
+              }
+          }
+
+          if (success &&
+              op->type == PLAYER)
+          {
+              new_draw_info(NDI_UNIQUE, 0, op, "Your prayer removes some depletion.");
+          }
+
+          break;
+
+        case SP_REMOVE_DEATHSICK:
+          if ((tmp = cure_what_ails_you(target, ST1_FORCE_DEATHSICK)))
+          {
+              uint8 i = 0;
+
+              for (; i < NUM_STATS; i++)
+              {
+                  if (get_stat_value(&tmp->stats, i))
+                  {
+                      success++;
+                      new_draw_info(NDI_UNIQUE, 0, target, restore_msg[i]);
+                  }
+              }
+          }
+
+          if (success &&
+              op->type == PLAYER)
+          {
+              new_draw_info(NDI_UNIQUE, 0, op, "Your prayer removes some death sickness.");
+          }
+
+          break;
+
+        case SP_RESTORATION:
+          success = (cure_what_ails_you(target, ST1_FORCE_DRAIN)) ? 1 : 0;
+
+          if (success &&
+              op->type == PLAYER)
+          {
+              new_draw_info_format(NDI_UNIQUE, 0, op, "You restored %s.",
+                                   (op != target) ?
+                                   query_base_name(op, target) : "yourself");
+          }
+
+          break;
+
           /*
             case SP_MED_HEAL:
               heal=random_roll_roll(3, 6)+4;
@@ -1851,155 +1892,6 @@ int alchemy(object *op)
       }
       */
     return 1;
-}
-
-int remove_depletion(object *op, object *target)
-{
-    object *depl;
-    int     success = 0;
-
-    /* Sanity checks */
-    if (!op ||
-        !target)
-    {
-        return 0;
-    }
-
-    if (op != target)
-    {
-        if (op->type == PLAYER)
-        {
-            new_draw_info_format(NDI_UNIQUE, 0, op, "You cast remove depletion on %s.",
-                                 query_base_name(target, op));
-        }
-
-        if (target->type == PLAYER)
-        {
-            new_draw_info_format(NDI_UNIQUE, 0, target, "%s casts remove depletion on you.",
-                                 query_base_name(op, target));
-        }
-    }
-
-    if ((depl = cure_what_ails_you(target, ST1_FORCE_DEPLETE)))
-    {
-        uint8 i = 0;
-
-        for (; i < NUM_STATS; i++)
-        {
-            if (get_stat_value(&depl->stats, i))
-            {
-                success++;
-                new_draw_info(NDI_UNIQUE, 0, target, restore_msg[i]);
-            }
-        }
-    }
-
-    if (success &&
-        op != target &&
-        op->type == PLAYER)
-    {
-        new_draw_info(NDI_UNIQUE, 0, op, "Your prayer removes some depletion.");
-    }
-
-    insert_spell_effect(spells[SP_REMOVE_DEPLETION].archname, target->map, target->x, target->y);
-
-    return success;
-}
-
-int restoration(object *op, object *target)
-{
-    object *depl;
-    int     success = 0;
-
-    /* Sanity checks */
-    if (!op ||
-        !target)
-    {
-        return 0;
-    }
-
-    if (op != target)
-    {
-        if (op->type == PLAYER)
-        {
-            new_draw_info_format(NDI_UNIQUE, 0, op, "You cast restoration on %s.",
-                                 query_base_name(target, op));
-        }
-
-        if (target->type == PLAYER)
-        {
-            new_draw_info_format(NDI_UNIQUE, 0, target, "%s casts restoration on you.",
-                                 query_base_name(op, target));
-        }
-    }
-
-    if ((depl = cure_what_ails_you(target, ST1_FORCE_DRAIN)))
-    {
-         success = 1;
-    }
-
-    if (success &&
-        op != target &&
-        op->type == PLAYER)
-    {
-        new_draw_info_format(NDI_UNIQUE, 0, op, "You restored %s.",
-                             query_base_name(op, target));
-    }
-
-    return success;
-}
-
-int remove_deathsick(object *op, object *target)
-{
-    object *depl;
-    int     success = 0;
-
-    /* Sanity checks */
-    if (!op ||
-        !target)
-    {
-        return 0;
-    }
-
-    if (op != target)
-    {
-        if (op->type == PLAYER)
-        {
-            new_draw_info_format(NDI_UNIQUE, 0, op, "You cast remove death sickness on %s.",
-                                 query_base_name(target, op));
-        }
-
-        if (target->type == PLAYER)
-        {
-            new_draw_info_format(NDI_UNIQUE, 0, target, "%s casts remove death sickness on you.",
-                                 query_base_name(op, target));
-        }
-    }
-
-    if ((depl = cure_what_ails_you(target, ST1_FORCE_DEATHSICK)))
-    {
-        uint8 i = 0;
-
-        for (; i < NUM_STATS; i++)
-        {
-            if (get_stat_value(&depl->stats, i))
-            {
-                success++;
-                new_draw_info(NDI_UNIQUE, 0, target, restore_msg[i]);
-            }
-        }
-    }
-
-    if (success &&
-        op != target &&
-        op->type == PLAYER)
-    {
-        new_draw_info(NDI_UNIQUE, 0, op, "Your prayer removes some death sickness.");
-    }
-
-    insert_spell_effect(spells[SP_REMOVE_DEATHSICK].archname, target->map, target->x, target->y);
-
-    return success;
 }
 
 int remove_curse(object *op, object *target, int type, SpellTypeFrom src)
