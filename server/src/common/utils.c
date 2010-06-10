@@ -27,7 +27,6 @@
  * General convenience functions for crossfire.
  */
 
-#include <stdarg.h>
 #include <global.h>
 
 

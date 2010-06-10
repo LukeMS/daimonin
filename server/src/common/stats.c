@@ -1,5 +1,4 @@
 #include <global.h>
-#include <stdarg.h>
 
 /*
  * STATS_EVENT writes a stats event line to a file in settings.statsdir
