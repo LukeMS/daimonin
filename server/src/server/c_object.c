@@ -555,7 +555,7 @@ char *examine_monster(object *op, object *tmp, char *buf, int flag)
         }
     }
 
-    for (walk = op->inv; walk; walk = walk->below)
+    for (walk = mon->inv; walk; walk = walk->below)
     {
         if (walk->type == FORCE &&
             walk->sub_type1 == ST1_FORCE_POISON)
