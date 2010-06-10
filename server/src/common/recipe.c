@@ -20,7 +20,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to daimonin@nord-com.net
+    The author can be reached via e-mail to info@daimonin.org
 */
 /* Basic stuff for use with the alchemy code. Clearly some of this stuff
  * could go into server/alchemy, but I left it here just in case it proves
