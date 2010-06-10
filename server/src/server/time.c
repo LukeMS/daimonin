@@ -378,7 +378,8 @@ void remove_force(object *op)
             case ST1_FORCE_DEPLETE:
                 new_info_map_except(NDI_UNIQUE | NDI_GREY, env->map, env->x,
                                     env->y, MAP_INFO_NORMAL, env, env,
-                                    "%s recovers depleted stats.", query_name(env));
+                                    "%s recovers depleted stats.",
+                                    query_short_name(env, NULL));
 
                 if (env->type == PLAYER)
                 {
@@ -391,7 +392,7 @@ void remove_force(object *op)
                 new_info_map_except(NDI_UNIQUE | NDI_GREY, env->map, env->x,
                                     env->y, MAP_INFO_NORMAL, env, env,
                                     "%s recovers drained levels.",
-                                    query_name(env));
+                                    query_short_name(env, NULL));
 
                 if (env->type == PLAYER)
                 {
@@ -404,7 +405,7 @@ void remove_force(object *op)
                 new_info_map_except(NDI_UNIQUE | NDI_GREY, env->map, env->x,
                                     env->y, MAP_INFO_NORMAL, env, env,
                                     "%s suddenly moves faster.",
-                                    query_name(env));
+                                    query_short_name(env, NULL));
 
                 if (env->type == PLAYER)
                 {
@@ -417,7 +418,7 @@ void remove_force(object *op)
                 new_info_map_except(NDI_UNIQUE | NDI_GREY, env->map, env->x,
                                     env->y, MAP_INFO_NORMAL, env, env,
                                     "%s suddenly looks braver.",
-                                    query_name(env));
+                                    query_short_name(env, NULL));
 
                 if (env->type == PLAYER)
                 {
@@ -430,7 +431,7 @@ void remove_force(object *op)
                 new_info_map_except(NDI_UNIQUE | NDI_GREY, env->map, env->x,
                                     env->y, MAP_INFO_NORMAL, env, env,
                                     "%s suddenly walks faster.",
-                                    query_name(env));
+                                    query_short_name(env, NULL));
 
                 if (env->type == PLAYER)
                 {
@@ -443,7 +444,7 @@ void remove_force(object *op)
                 new_info_map_except(NDI_UNIQUE | NDI_GREY, env->map, env->x,
                                     env->y, MAP_INFO_NORMAL, env, env,
                                     "%s suddenly moves again.",
-                                    query_name(env));
+                                    query_short_name(env, NULL));
 
                 if (env->type == PLAYER)
                 {
@@ -456,7 +457,7 @@ void remove_force(object *op)
                 new_info_map_except(NDI_UNIQUE | NDI_GREY, env->map, env->x,
                                     env->y, MAP_INFO_NORMAL, env, env,
                                     "%s suddenly regain his senses.",
-                                    query_name(env));
+                                    query_short_name(env, NULL));
 
                 if (env->type == PLAYER)
                 {
@@ -469,7 +470,7 @@ void remove_force(object *op)
                 new_info_map_except(NDI_UNIQUE | NDI_GREY, env->map, env->x,
                                     env->y, MAP_INFO_NORMAL, env, env,
                                     "%s suddenly can see again.",
-                                    query_name(env));
+                                    query_short_name(env, NULL));
 
                 if (env->type == PLAYER)
                 {
@@ -482,7 +483,7 @@ void remove_force(object *op)
                 new_info_map_except(NDI_UNIQUE | NDI_GREY, env->map, env->x,
                                     env->y, MAP_INFO_NORMAL, env, env,
                                     "%s's body seems cleansed.",
-                                    query_name(env));
+                                    query_short_name(env, NULL));
 
                 if (env->type == PLAYER)
                 {
@@ -495,7 +496,7 @@ void remove_force(object *op)
                 new_info_map_except(NDI_UNIQUE | NDI_GREY, env->map, env->x,
                                     env->y, MAP_INFO_NORMAL, env, env,
                                     "%s seems to no longer suffer from death sickness.",
-                                    query_name(env));
+                                    query_short_name(env, NULL));
 
                 if (env->type == PLAYER)
                 {
@@ -507,7 +508,8 @@ void remove_force(object *op)
             default:
                 new_info_map_except(NDI_UNIQUE | NDI_GREY, env->map, env->x,
                                     env->y, MAP_INFO_NORMAL, env, env,
-                                    "%s lose some effects.", query_name(env));
+                                    "%s loses some effects.",
+                                    query_short_name(env, NULL));
 #endif
         }
     }
