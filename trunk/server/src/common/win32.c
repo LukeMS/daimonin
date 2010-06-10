@@ -25,10 +25,7 @@
 
 #include <global.h>
 
-#include <stdarg.h>
 #include <malloc.h>
-#include <string.h>
-#include <errno.h>
 #include <mmsystem.h>
 
 

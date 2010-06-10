@@ -31,7 +31,6 @@
  * But if the player is loged in - all DRAWINFO are generated here.
  */
 #include "global.h"
-#include <stdarg.h>
 
 static void NewDrawInfo(const int flags, player *pl, const char *const buf);
 static void NewInfoMapAllExcept(const int flags, const mapstruct *const map,

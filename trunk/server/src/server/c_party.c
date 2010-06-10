@@ -22,7 +22,6 @@
 
     The author can be reached via e-mail to daimonin@nord-com.net
 */
-#include <stdarg.h>
 #include <global.h>
 
 /* DEBUG ONLY */
