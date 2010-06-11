@@ -191,7 +191,7 @@ spell spells[NROFREALSPELLS]          =
     5, 16, 3, 6,3, 1.0,
     0,       0,     0,      0,
     0, 0, 0, 0, SOUND_MAGIC_STAT,
-    SPELL_USE_CAST | SPELL_USE_SCROLL | SPELL_USE_HORN | SPELL_USE_WAND | SPELL_USE_ROD, /* npc/god only atm */
+    SPELL_USE_CAST | SPELL_USE_SCROLL | SPELL_USE_HORN | SPELL_USE_WAND | SPELL_USE_ROD,
     SPELL_DESC_SELF | SPELL_DESC_FRIENDLY | SPELL_DESC_TOWN | SPELL_DESC_WIS,
     PATH_LIFE, "meffect_purple",SPELL_ACTIVE
     },
@@ -203,7 +203,62 @@ spell spells[NROFREALSPELLS]          =
     SPELL_USE_CAST | SPELL_USE_HORN | SPELL_USE_WAND | SPELL_USE_ROD | SPELL_USE_DUST | SPELL_USE_BOOK | SPELL_USE_POTION,
     SPELL_DESC_DIRECTION,
     PATH_ELEMENTAL, "lightning", SPELL_ACTIVE
-    }
+    },
+
+    {"remove slow",            SPELL_TYPE_PRIEST, 1, 
+    5, 16, 3, 6,3, 1.0,
+    0,       0,     0,      0,
+    0, 0, 0, 0, SOUND_MAGIC_STAT,
+    SPELL_USE_CAST | SPELL_USE_SCROLL | SPELL_USE_HORN | SPELL_USE_WAND | SPELL_USE_ROD,
+    SPELL_DESC_SELF | SPELL_DESC_FRIENDLY | SPELL_DESC_TOWN | SPELL_DESC_WIS,
+    PATH_LIFE, "meffect_purple",SPELL_ACTIVE
+    },
+
+    {"remove fear",            SPELL_TYPE_PRIEST, 1, 
+    5, 16, 3, 6,3, 1.0,
+    0,       0,     0,      0,
+    0, 0, 0, 0, SOUND_MAGIC_STAT,
+    SPELL_USE_CAST | SPELL_USE_SCROLL | SPELL_USE_HORN | SPELL_USE_WAND | SPELL_USE_ROD,
+    SPELL_DESC_SELF | SPELL_DESC_FRIENDLY | SPELL_DESC_TOWN | SPELL_DESC_WIS,
+    PATH_LIFE, "meffect_purple",SPELL_ACTIVE
+    },
+
+    {"remove snare",            SPELL_TYPE_PRIEST, 1, 
+    5, 16, 3, 6,3, 1.0,
+    0,       0,     0,      0,
+    0, 0, 0, 0, SOUND_MAGIC_STAT,
+    SPELL_USE_CAST | SPELL_USE_SCROLL | SPELL_USE_HORN | SPELL_USE_WAND | SPELL_USE_ROD,
+    SPELL_DESC_SELF | SPELL_DESC_FRIENDLY | SPELL_DESC_TOWN | SPELL_DESC_WIS,
+    PATH_LIFE, "meffect_purple",SPELL_ACTIVE
+    },
+
+    {"remove paralysis",            SPELL_TYPE_PRIEST, 1, 
+    5, 16, 3, 6,3, 1.0,
+    0,       0,     0,      0,
+    0, 0, 0, 0, SOUND_MAGIC_STAT,
+    SPELL_USE_CAST | SPELL_USE_SCROLL | SPELL_USE_HORN | SPELL_USE_WAND | SPELL_USE_ROD,
+    SPELL_DESC_SELF | SPELL_DESC_FRIENDLY | SPELL_DESC_TOWN | SPELL_DESC_WIS,
+    PATH_LIFE, "meffect_purple",SPELL_ACTIVE
+    },
+
+    {"remove confusion",            SPELL_TYPE_PRIEST, 1, 
+    5, 16, 3, 6,3, 1.0,
+    0,       0,     0,      0,
+    0, 0, 0, 0, SOUND_MAGIC_STAT,
+    SPELL_USE_CAST | SPELL_USE_SCROLL | SPELL_USE_HORN | SPELL_USE_WAND | SPELL_USE_ROD,
+    SPELL_DESC_SELF | SPELL_DESC_FRIENDLY | SPELL_DESC_TOWN | SPELL_DESC_WIS,
+    PATH_LIFE, "meffect_purple",SPELL_ACTIVE
+    },
+
+    {"remove blindness",            SPELL_TYPE_PRIEST, 1, 
+    5, 16, 3, 6,3, 1.0,
+    0,       0,     0,      0,
+    0, 0, 0, 0, SOUND_MAGIC_STAT,
+    SPELL_USE_CAST | SPELL_USE_SCROLL | SPELL_USE_HORN | SPELL_USE_WAND | SPELL_USE_ROD,
+    SPELL_DESC_SELF | SPELL_DESC_FRIENDLY | SPELL_DESC_TOWN | SPELL_DESC_WIS,
+    PATH_LIFE, "meffect_purple",SPELL_ACTIVE
+    },
+
 };
 
 /*

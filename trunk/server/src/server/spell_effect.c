@@ -769,26 +769,6 @@ int cast_heal(object *op, int level, object *target, int spell_type)
 
     switch (spell_type)
     {
-        case SP_CURE_DISEASE:
-          if (cure_disease(target, op))
-              success = 1;
-          break;
-
-        case SP_CURE_POISON:
-          success = (cure_what_ails_you(target, ST1_FORCE_POISON)) ? 1 : 0;
-
-          break;
-
-        case SP_CURE_CONFUSION:
-          success = (cure_what_ails_you(target, ST1_FORCE_CONFUSED)) ? 1 : 0;
-
-          break;
-
-        case SP_CURE_BLINDNESS:
-          success = (cure_what_ails_you(target, ST1_FORCE_BLIND)) ? 1 : 0;
-
-          break;
-
         case SP_MINOR_HEAL:
           success = 1;
           heal = random_roll(2, 5 + level) + 6;
@@ -814,6 +794,11 @@ int cast_heal(object *op, int level, object *target, int spell_type)
 
           break;
 
+        case SP_CURE_DISEASE:
+          if (cure_disease(target, op))
+              success = 1;
+          break;
+
         case SP_REMOVE_DEPLETION:
           if ((tmp = cure_what_ails_you(target, ST1_FORCE_DEPLETE)))
           {
@@ -834,6 +819,54 @@ int cast_heal(object *op, int level, object *target, int spell_type)
           {
               new_draw_info(NDI_UNIQUE, 0, op, "Your prayer removes some depletion.");
           }
+
+          break;
+
+        case SP_RESTORATION:
+          success = (cure_what_ails_you(target, ST1_FORCE_DRAIN)) ? 1 : 0;
+
+          if (success &&
+              op->type == PLAYER)
+          {
+              new_draw_info(NDI_UNIQUE, 0, op, "You restored %s.",
+                                   (op != target) ?
+                                   query_base_name(op, target) : "yourself");
+          }
+
+          break;
+
+        case SP_REMOVE_SLOW:
+          success = (cure_what_ails_you(target, ST1_FORCE_CONFUSED)) ? 1 : 0;
+
+          break;
+
+        case SP_REMOVE_FEAR:
+          success = (cure_what_ails_you(target, ST1_FORCE_CONFUSED)) ? 1 : 0;
+
+          break;
+
+        case SP_REMOVE_SNARE:
+          success = (cure_what_ails_you(target, ST1_FORCE_CONFUSED)) ? 1 : 0;
+
+          break;
+
+        case SP_REMOVE_PARALYZE:
+          success = (cure_what_ails_you(target, ST1_FORCE_CONFUSED)) ? 1 : 0;
+
+          break;
+
+        case SP_REMOVE_CONFUSED:
+          success = (cure_what_ails_you(target, ST1_FORCE_CONFUSED)) ? 1 : 0;
+
+          break;
+
+        case SP_REMOVE_BLIND:
+          success = (cure_what_ails_you(target, ST1_FORCE_BLIND)) ? 1 : 0;
+
+          break;
+
+        case SP_CURE_POISON:
+          success = (cure_what_ails_you(target, ST1_FORCE_POISON)) ? 1 : 0;
 
           break;
 
@@ -860,19 +893,6 @@ int cast_heal(object *op, int level, object *target, int spell_type)
 
           break;
 
-        case SP_RESTORATION:
-          success = (cure_what_ails_you(target, ST1_FORCE_DRAIN)) ? 1 : 0;
-
-          if (success &&
-              op->type == PLAYER)
-          {
-              new_draw_info(NDI_UNIQUE, 0, op, "You restored %s.",
-                                   (op != target) ?
-                                   query_base_name(op, target) : "yourself");
-          }
-
-          break;
-
           /*
             case SP_MED_HEAL:
               heal=random_roll_roll(3, 6)+4;
@@ -886,30 +906,6 @@ int cast_heal(object *op, int level, object *target, int spell_type)
               heal=tmp->stats.maxhp;
               new_draw_info(NDI_UNIQUE, 0,tmp, "You feel just fine!");
               break;
-            case SP_CURE_CONFUSION:
-              at=find_archetype("confusion");
-              poison=present_arch_in_ob(at,tmp);
-              if (poison) {
-                success = 1;
-                new_draw_info(NDI_UNIQUE, 0,tmp, "Your mind feels clearer");
-                poison->stats.food = 1;
-              }
-              break;
-            case SP_RESTORATION:
-              if (cast_heal (op, op, SP_CURE_POISON))
-                success = 1;
-              if (cast_heal (op, op, SP_CURE_CONFUSION))
-                success = 1;
-              if (cast_heal (op, op, SP_CURE_DISEASE))
-                success = 1;
-              if (tmp->stats.food < 999) {
-                success = 1;
-                tmp->stats.food=999;
-              }
-
-              if (cast_heal (op, op, SP_HEAL))
-                  success = 1;
-              return success;
             */
     }
 
