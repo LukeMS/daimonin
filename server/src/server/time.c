@@ -373,7 +373,7 @@ void remove_force(object *op)
         IS_LIVE(env) &&
         env->map)
     {
-        switch (op->type)
+        switch (op->sub_type1)
         {
             case ST1_FORCE_DEPLETE:
                 new_info_map_except(NDI_UNIQUE | NDI_GREY, env->map, env->x,

@@ -800,38 +800,12 @@ int cast_heal(object *op, int level, object *target, int spell_type)
           break;
 
         case SP_REMOVE_DEPLETION:
-          if ((tmp = cure_what_ails_you(target, ST1_FORCE_DEPLETE)))
-          {
-              uint8 i = 0;
-
-              for (; i < NUM_STATS; i++)
-              {
-                  if (get_stat_value(&tmp->stats, i))
-                  {
-                      success++;
-                      new_draw_info(NDI_UNIQUE, 0, target, restore_msg[i]);
-                  }
-              }
-          }
-
-          if (success &&
-              op->type == PLAYER)
-          {
-              new_draw_info(NDI_UNIQUE, 0, op, "Your prayer removes some depletion.");
-          }
+          success = (cure_what_ails_you(target, ST1_FORCE_DEPLETE)) ? 1 : 0;
 
           break;
 
         case SP_RESTORATION:
           success = (cure_what_ails_you(target, ST1_FORCE_DRAIN)) ? 1 : 0;
-
-          if (success &&
-              op->type == PLAYER)
-          {
-              new_draw_info(NDI_UNIQUE, 0, op, "You restored %s.",
-                                   (op != target) ?
-                                   query_base_name(op, target) : "yourself");
-          }
 
           break;
 
@@ -871,25 +845,7 @@ int cast_heal(object *op, int level, object *target, int spell_type)
           break;
 
         case SP_REMOVE_DEATHSICK:
-          if ((tmp = cure_what_ails_you(target, ST1_FORCE_DEATHSICK)))
-          {
-              uint8 i = 0;
-
-              for (; i < NUM_STATS; i++)
-              {
-                  if (get_stat_value(&tmp->stats, i))
-                  {
-                      success++;
-                      new_draw_info(NDI_UNIQUE, 0, target, restore_msg[i]);
-                  }
-              }
-          }
-
-          if (success &&
-              op->type == PLAYER)
-          {
-              new_draw_info(NDI_UNIQUE, 0, op, "Your prayer removes some death sickness.");
-          }
+          success = (cure_what_ails_you(target, ST1_FORCE_DEATHSICK)) ? 1 : 0;
 
           break;
 
