@@ -417,6 +417,12 @@ int cast_spell(object *op, object *caster, int dir, int type, int ability, Spell
         case SP_REMOVE_DEPLETION:
         case SP_REMOVE_DEATHSICK:
         case SP_RESTORATION:
+        case SP_REMOVE_SLOW:
+        case SP_REMOVE_FEAR:
+        case SP_REMOVE_SNARE:
+        case SP_REMOVE_PARALYZE:
+        case SP_REMOVE_CONFUSED:
+        case SP_REMOVE_BLIND:
           success = cast_heal(op, casting_level(caster, type), target, type);
           break;
 
