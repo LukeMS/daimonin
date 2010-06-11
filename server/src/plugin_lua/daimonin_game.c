@@ -411,6 +411,7 @@ static struct constant_decl preset_game_constants[] =
     {"PATH_ARCANE",        PATH_ARCANE},
 
     /* spell types (spells.h) */
+    {"SPELL_TYPE_NONE",    -1},
     {"SPELL_TYPE_NATURAL", SPELL_TYPE_NATURAL},
     {"SPELL_TYPE_WIZARD",  SPELL_TYPE_WIZARD},
     {"SPELL_TYPE_PRIEST",  SPELL_TYPE_PRIEST},
@@ -879,18 +880,26 @@ static int Game_FindPlayer(lua_State *L)
 /*****************************************************************************/
 /* Name   : Game_GetSpellNr                                                  */
 /* Lua    : game:GetSpellNr(name)                                            */
-/* Info   : Gets the number of the named spell. -1 if no such spell exists   */
+/* Info   : Gets the number and type of the named spell.                     */
+/*          Returns spell number and spell type (one of the game.SPELL_TYPE_**/
+/*          constants (or -1 and game.SPELL_TYPE_NONE if no such spell       */
+/*          exists.                                                          */
 /* Status : Tested/Stable                                                    */
 /*****************************************************************************/
 static int Game_GetSpellNr(lua_State *L)
 {
-    char   *spell;
+    char       *name;
     lua_object *self;
+    int         n;
+    int         t;
 
-    get_lua_args(L, "Gs", &self, &spell);
+    get_lua_args(L, "Gs", &self, &name);
+    n = hooks->look_up_spell_name(name);
+    t = (n == -1) ? -1 : hooks->spells[n].type;
+    lua_pushnumber(L, n);
+    lua_pushnumber(L, t);
 
-    lua_pushnumber(L, hooks->look_up_spell_name(spell));
-    return 1;
+    return 2;
 }
 
 /*****************************************************************************/

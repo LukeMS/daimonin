@@ -440,6 +440,7 @@ struct plugin_hooklist
     unsigned long *pticks;
     Settings *settings;
     struct shstr_constants *shstr_cons;
+    spell *spells;
 };
 
 /*****************************************************************************/
