@@ -198,6 +198,7 @@ struct plugin_hooklist  hooklist    =
     &pticks,
     &settings,
     &shstr_cons,
+    spells,
 };
 
 CFPlugin                PlugList[PLUGINS_MAX_NROF];

@@ -1733,7 +1733,9 @@ extern void do_learn_spell(object *op, int spell, int special_prayer)
         insert_special_prayer_mark(op, spell);
 
     send_spelllist_cmd(op, spells[spell].name, SPLIST_MODE_ADD);
-    new_draw_info(NDI_UNIQUE, 0, op, "You have learned the spell %s!", spells[spell].name);
+    new_draw_info(NDI_UNIQUE, 0, op, "You have learned the %s %s!",
+                  (spells[spell].type == SPELL_TYPE_PRIEST) ? "prayer" :
+                  "spell", spells[spell].name);
 }
 
 extern void do_forget_spell(object *op, int spell)
