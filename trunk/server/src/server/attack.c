@@ -1915,40 +1915,6 @@ void confuse_player(object *op, object *hitter, int ticks)
     SET_FLAG(op, FLAG_CONFUSED);
 }
 
-/* remove confusion effect and force (if there is one)
-* Note: This is for explicit remove - in time.c the force can
-* auto destruct itself without calling this function. This.
-*/
-void remove_confusion(object *op)
-{
-    static archetype  *at  = NULL;
-    object     *tmp;
-
-    CLEAR_FLAG(op,FLAG_BLIND);
-
-    if (!at)
-    {
-        at = find_archetype("confusion");
-        if (!at)
-        {
-            LOG(llevBug, "BUG: Couldn't find archetype confusion.\n");
-            return;
-        }
-    }
-
-    if ((tmp = present_arch_in_ob(at, op)) == NULL)
-        return;
-
-    remove_ob(tmp);
-
-    if (op->type == PLAYER)
-        new_draw_info(NDI_UNIQUE, 0, op, "You regain your senses.");
-    if (op->map)
-        new_info_map_except(NDI_UNIQUE|NDI_GREY, op->map, op->x, op->y, MAP_INFO_NORMAL, NULL, op, "%s regains his senses!", STRING_SAFE(op->name));
-
-    FIX_PLAYER(op ,"attack - remove confusion");
-}
-
 void blind_player(object *op, object *hitter, int dam)
 {
     static archetype  *at  = NULL;
@@ -1983,41 +1949,6 @@ void blind_player(object *op, object *hitter, int dam)
     SET_FLAG(tmp, FLAG_APPLIED);
     SET_FLAG(op, FLAG_BLIND);
 }
-
-/* remove blindness effect and force (if there is one)
-* Note: This is for explicit remove - in time.c the force can
-* auto destruct itself without calling this function. This.
-*/
-void remove_blindness(object *op)
-{
-    static archetype  *at  = NULL;
-    object     *tmp;
-
-    CLEAR_FLAG(op,FLAG_BLIND);
-
-    if (!at)
-    {
-        at = find_archetype("blindness");
-        if (!at)
-        {
-            LOG(llevBug, "BUG: Couldn't find archetype blindness.\n");
-            return;
-        }
-    }
-
-    if ((tmp = present_arch_in_ob(at, op)) == NULL)
-        return;
-
-    remove_ob(tmp);
-
-    if (op->type == PLAYER)
-        new_draw_info(NDI_UNIQUE, 0, op, "You can see again.");
-    if (op->map)
-        new_info_map_except(NDI_UNIQUE|NDI_GREY, op->map, op->x, op->y, MAP_INFO_NORMAL, NULL, op, "%s can see again!", STRING_SAFE(op->name));
-
-    FIX_PLAYER(op ,"attack - remove blind");
-}
-
 
 void paralyze_player(object *op, object *hitter, int dam)
 {
