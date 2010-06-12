@@ -51,9 +51,7 @@ void                        poison_player(object *op, object *hitter, float dam)
 void                        slow_player(object *op, object *hitter, int dam);
 void                        fear_player(object *op, object *hitter, int dam);
 void                        confuse_player(object *op, object *hitter, int ticks);
-void                        remove_confusion(object *op);
 void                        blind_player(object *op, object *hitter, int dam);
-void                        remove_blindness(object *op);
 void                        paralyze_player(object *op, object *hitter, int dam);
 void                        remove_paralyze(object *op);
 int                         is_aimed_missile(object *op);
