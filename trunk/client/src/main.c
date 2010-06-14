@@ -1614,14 +1614,12 @@ int main(int argc, char *argv[])
             options.cli_account[0] = toupper(options.cli_account[0]);
             --argc;
         }
-#if (1)
         else if (strcmp(argv[argc-1], "-pass") == 0)
         {
             strncpy(options.cli_pass,argv[argc],39);
             options.cli_pass[39]='\0'; /* sanity \0 */
             --argc;
         }
-#endif
         else if (strcmp(argv[argc-1], "-server") == 0)
         {
             options.cli_server=atoi(argv[argc]);
