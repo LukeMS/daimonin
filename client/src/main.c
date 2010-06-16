@@ -1217,7 +1217,6 @@ Boolean game_status_chain(void)
             }
             else /* we have a valid name... now let the server decide to create or deny this char */
             {
-                sprintf(cpl.name, "%s", InputString);
                 dialog_new_char_warn = 0; /* = name must min/max */
                 LoginInputStep = LOGIN_STEP_NOTHING;
                 /* Now send name & pass to server and wait for the account data */
@@ -1611,7 +1610,6 @@ int main(int argc, char *argv[])
         {
             strncpy(options.cli_account,argv[argc],39);
             options.cli_account[39]='\0'; /* sanity \0 */
-            options.cli_account[0] = toupper(options.cli_account[0]);
             --argc;
         }
         else if (strcmp(argv[argc-1], "-pass") == 0)

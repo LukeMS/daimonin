@@ -401,11 +401,15 @@ static int key_account_menu(SDL_KeyboardEvent *key)
             {
                 /* tell server that we want play with this char */
                 SendAddMe(account.name[account.selected]);
+                sprintf(cpl.name, "%s", account.name[account.selected]);
                 GameStatus = GAME_STATUS_WAITFORPLAY;
 
                 /* some sanity settings */
                 clear_map();
-                cpl.name[0] = 0;
+                // This appears to be INsane in fact. We always blank the
+                // character name when we log in?
+                // -- Smacky 20100616
+                //cpl.name[0] = 0;
                 map_udate_flag = 2;
                 map_transfer_flag = 1;
             }
