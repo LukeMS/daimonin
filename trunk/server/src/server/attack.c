@@ -24,7 +24,7 @@
 */
 #include <global.h>
 
-/* flags for hit_player_attacktype() */
+/* flags for HitPlayerAttacktype() */
 /* important: the first 5 bits are the same is in material_base_xx in material.h */
 #define HIT_FLAG_PARALYZED_ADD 32
 #define HIT_FLAG_PARALYZED_REM 64
@@ -65,18 +65,19 @@ int resist_table[] =
 };
 
 /* some static defines */
-static int  abort_attack(object *target, object *hitter, int env_attack);
-static void send_attack_msg(object *op, object *hitter, int attacknum, int dam, int damage);
-static int  hit_player_attacktype(object *op, object *hitter, int *flags, int damage, uint32 attacknum, int magic);
+static int GetAttackMode(object **target, object **hitter, int *env_attack);
+static int  AbortAttack(object *target, object *hitter, int env_attack);
+static void SendAttackMsg(object *op, object *hitter, int attacknum, int dam, int damage);
+static int  HitPlayerAttacktype(object *op, object *hitter, int *flags, int damage, uint32 attacknum, int magic);
 
 /* check and adjust all pre-attack issues like checking attack is valid,
  * attack objects are in the right state and such.
  */
-static int get_attack_mode(object **target, object **hitter, int *env_attack)
+static int GetAttackMode(object **target, object **hitter, int *env_attack)
 {
     if (OBJECT_FREE(*target) || OBJECT_FREE(*hitter))
     {
-        LOG(llevBug, "BUG: get_attack_mode(): freed object\n");
+        LOG(llevBug, "BUG:: %s/GetAttackMode(): freed object\n", __FILE__);
         return 1;
     }
     if ((*target)->head)
@@ -93,8 +94,9 @@ static int get_attack_mode(object **target, object **hitter, int *env_attack)
         || (*hitter)->map == NULL
         || !on_same_tileset((*hitter), (*target)))
     {
-        LOG(llevBug, "BUG: hitter (arch %s, name %s) with no relation to target\n", (*hitter)->arch->name,
-            query_name(*hitter));
+        LOG(llevBug, "BUG:: %s/GetAttackMode(): hitter (%s[%d]) with no relation to target (%s[%d])!\n",
+            __FILE__, STRING_OBJ_NAME(*hitter), (*hitter)->count,
+            STRING_OBJ_NAME(*target), (*target)->count);
         return 1;
     }
     *env_attack = ENV_ATTACK_NO;
@@ -144,10 +146,10 @@ int attack_ob(object *target, object *hitter, object *hit_obj)
     int     hitdam, env_attack, roll;
     tag_t   op_tag, hitter_tag;
 
-    /* get_attack_mode will pre-check and adjust *ANY* topic.
+    /* GetAttackMode will pre-check and adjust *ANY* topic.
      * Including setting ->head objects and checking maps
      */
-    if (get_attack_mode(&target, &hitter, &env_attack))
+    if (GetAttackMode(&target, &hitter, &env_attack))
         goto error;
 
     if(trigger_object_plugin_event(EVENT_ATTACK,
@@ -270,7 +272,7 @@ int attack_ob(object *target, object *hitter, object *hit_obj)
             decrease_ob(hitter);
 
             if (was_destroyed(hitter, hitter_tag) || was_destroyed(target, op_tag)
-                || abort_attack(target, hitter, env_attack))
+                || AbortAttack(target, hitter, env_attack))
                 goto leave;
         }
 
@@ -286,13 +288,13 @@ int attack_ob(object *target, object *hitter, object *hit_obj)
             damage_ob(hitter, random_roll(0, target->stats.dam), target, env_attack);
 
             if (was_destroyed(target, op_tag) || was_destroyed(hitter, hitter_tag)
-                || abort_attack(target, hitter, env_attack))
+                || AbortAttack(target, hitter, env_attack))
                 goto leave;
         }
 
         /* the damage is between 70 and 100% of the (adjusted) base damage */
         hitdam = damage_ob(target, random_roll((int)(hitdam*0.7f)+1, hitdam), hitter, env_attack);
-        if (was_destroyed(target, op_tag) || was_destroyed(hitter, hitter_tag) || abort_attack(target, hitter, env_attack))
+        if (was_destroyed(target, op_tag) || was_destroyed(hitter, hitter_tag) || AbortAttack(target, hitter, env_attack))
             goto leave;
     }
     else /* we missed, dam=0 */
@@ -360,19 +362,27 @@ int damage_ob(object *op, int dam, object *hitter, int env_attack)
     else
         hit_level = hitter->level;
 
-    if (hit_level == 0 || target_obj->level == 0) /* very useful sanity check! */
-        LOG(llevDebug,
-            "DEBUG: damage_ob(): hit or target object level == 0(h:>%s< (o:>%s<) l->%d t:>%s< (>%s<)(o:>%s<) l->%d\n",
-            query_name(hitter), query_name(get_owner(hitter)), hit_level, query_name(op), target_obj->arch->name,
-            query_name(get_owner(op)), target_obj->level);
+    if (hit_level == 0 ||
+        target_obj->level == 0) /* very useful sanity check! */
+    {
+        object *hown = get_owner(hitter),
+               *town = get_owner(target_obj);
+
+        LOG(llevDebug, "DEBUG:: %s/damage_ob(): hit or target object level == 0 (h:%s[%d] o:%s[%d] l->%d, t:%s[%d] o:%s[%d] l->%d)!\n",
+            __FILE__, STRING_OBJ_NAME(hitter), hitter->count,
+            STRING_OBJ_NAME(hown), hown->count, hit_level,
+            STRING_OBJ_NAME(target_obj), target_obj->count,
+            STRING_OBJ_NAME(town), town->count, target_obj->level);
+    }
 
     /* New (but still very basic) code for avoiding mobs (and players) on
      * the same side to damage each other. */
     if(get_friendship(hit_obj, target_obj) >= FRIENDSHIP_HELP)
     {
-        LOG(llevDebug, "DEBUG: damage_ob(): friendly hit ('%s' => '%s' / '%s' => '%s') ignored\n",
-                query_name(hitter), query_name(op),
-                query_name(hit_obj), query_name(target_obj));
+        LOG(llevDebug, "DEBUG:: %s/damage_ob(): friendly hit (%s[%d] => %s[%d] / %s[%d] => %s[%d]) ignored\n",
+            __FILE__, STRING_OBJ_NAME(hitter), hitter->count,
+            STRING_OBJ_NAME(op), op->count, STRING_OBJ_NAME(hit_obj),
+            hit_obj->count, STRING_OBJ_NAME(target_obj), target_obj->count);
         return 0;
     }
 
@@ -406,7 +416,7 @@ int damage_ob(object *op, int dam, object *hitter, int env_attack)
      * atm, this value is only used in the door attack */
     if(env_attack == ENV_ATTACK_CHECK)
     {
-        if (get_attack_mode(&op, &hitter, &env_attack))
+        if (GetAttackMode(&op, &hitter, &env_attack))
             return 0;
     }
 
@@ -416,7 +426,8 @@ int damage_ob(object *op, int dam, object *hitter, int env_attack)
     /* A last safery check - this happened in the past sometimes */
     if (op->stats.hp <= 0)
     {
-        LOG(llevDebug, "BUG/FIXME: victim (arch %s, name %s (%x - %d)) already dead in hit_player()\n", op->arch->name, query_name(op), op, op->count);
+        LOG(llevDebug, "DEBUG:: %s/damage_ob(): victim (%s[%d])) already dead!\n",
+            __FILE__, STRING_OBJ_NAME(op), op->count);
         return 0;
     }
 
@@ -446,7 +457,7 @@ int damage_ob(object *op, int dam, object *hitter, int env_attack)
     flags = 0; /* important flags to track actions BETWEEN single effect hits of ONE attack */
 
     /* Go through and hit the player with each attacktype, one by one.
-    * hit_player_attacktype only figures out the damage, doesn't inflict
+    * HitPlayerAttacktype only figures out the damage, doesn't inflict
     * it.  It will do the appropriate action for attacktypes with
     * effects (slow, paralization, etc.
     */
@@ -458,7 +469,7 @@ int damage_ob(object *op, int dam, object *hitter, int env_attack)
                             hitter->name,hitter->stats.dam,op->stats.dam, hitter->stats.wc,op->stats.wc,
                             hitter->stats.ac,op->stats.ac,hitter->attack[attacknum]);
             */
-            maxdam += hit_player_attacktype(op, hitter, &flags, dam, attacknum, 0);
+            maxdam += HitPlayerAttacktype(op, hitter, &flags, dam, attacknum, 0);
         }
     }
 
@@ -563,7 +574,8 @@ int damage_ob(object *op, int dam, object *hitter, int env_attack)
 
         if (!op->other_arch)
         {
-            LOG(llevBug, "BUG: SPLITTING without other_arch error.\n");
+            LOG(llevBug, "BUG:: %s/damage_ob(): %s[%d] attempted split without other_arch!\n",
+                __FILE__, STRING_OBJ_NAME(op), op->count);
             return maxdam;
         }
 
@@ -612,27 +624,23 @@ int hit_map(object *op, int dir)
 
     if (OBJECT_FREE(op))
     {
-        LOG(llevBug, "BUG: hit_map(): free object\n");
-        return 0;
-    }
-
-    if (QUERY_FLAG(op, FLAG_REMOVED) || op->env != NULL)
-    {
-        LOG(llevBug, "BUG: hit_map(): hitter (arch %s, name %s) not on a map\n", op->arch->name, query_name(op));
+        LOG(llevBug, "BUG:: %s/hit_map(): free object %s[%d]!\n",
+            __FILE__, STRING_OBJ_NAME(op), op->count);
         return 0;
     }
 
     if (op->head)
         op = op->head;
 
-    op_tag = op->count;
-
-    if (!op->map)
+    if (QUERY_FLAG(op, FLAG_REMOVED) ||
+        !op->map)
     {
-        LOG(llevBug, "BUG: hit_map(): %s has no map.\n", query_name(op));
+        LOG(llevBug, "BUG:: %s/hit_map(): hitter (%s[%d]) not on a map!\n",
+            __FILE__, STRING_OBJ_NAME(op), op->count);
         return 0;
     }
 
+    op_tag = op->count;
     x = op->x + freearr_x[dir];
     y = op->y + freearr_y[dir];
     if (!(map = out_of_map(op->map, &x, &y)))
@@ -673,7 +681,8 @@ int hit_map(object *op, int dir)
 
         if (OBJECT_FREE(tmp))
         {
-            LOG(llevBug, "BUG: hit_map(): found freed object (%s)\n", STRING_SAFE(tmp->arch->name));
+            LOG(llevBug, "BUG:: %s/hit_map(): found freed object (%s[%d])\n",
+                __FILE__, STRING_OBJ_NAME(tmp), tmp->count);
             break;
         }
 
@@ -723,7 +732,7 @@ static inline void send_resist_msg(object *op, object *hitter, int attacknum)
  * take.  However, it will do other effects (paralyzation, slow, etc.)
  * Note - changed for PR code - we now pass the attack number and not
  * the attacktype.  Makes it easier for the PR code.  */
-static int hit_player_attacktype(object *op, object *hitter, int *flags, int damage, uint32 attacknum, int magic)
+static int HitPlayerAttacktype(object *op, object *hitter, int *flags, int damage, uint32 attacknum, int magic)
 {
     double  dam         = (double) damage;
     int     doesnt_slay = 1;
@@ -731,7 +740,8 @@ static int hit_player_attacktype(object *op, object *hitter, int *flags, int dam
     /* just a sanity check */
     if (dam < 0)
     {
-        LOG(llevBug, "BUG: hit_player_attacktype called with negative damage: %d from object: %s\n", dam, query_name(op));
+        LOG(llevBug, "BUG:: %s/HitPlayerAttacktype(): called with negative damage: %d from object %s[%d]!\n",
+            __FILE__, dam, STRING_OBJ_NAME(op), op->count);
         return 0;
     }
 
@@ -776,7 +786,7 @@ static int hit_player_attacktype(object *op, object *hitter, int *flags, int dam
             if (op->resist[attacknum] == 100)
             {
                 dam = 0;
-                send_attack_msg(op, hitter, attacknum, (int) dam, damage);
+                SendAttackMsg(op, hitter, attacknum, (int) dam, damage);
                 return (int) dam;
             }
 
@@ -787,7 +797,7 @@ static int hit_player_attacktype(object *op, object *hitter, int *flags, int dam
         if (damage && dam < 1.0)
             dam = 1.0;
 
-        send_attack_msg(op, hitter, attacknum, (int) dam, damage);
+        SendAttackMsg(op, hitter, attacknum, (int) dam, damage);
         return (int) dam;
     }
 
@@ -868,7 +878,7 @@ static int hit_player_attacktype(object *op, object *hitter, int *flags, int dam
                 ATTACK_RESIST_DAMAGE(op, attacknum);    /* reduce to % resistance */
             if (damage && dam < 1.0)
                 dam = 1.0;
-            send_attack_msg(op, hitter, attacknum, (int) dam, damage);
+            SendAttackMsg(op, hitter, attacknum, (int) dam, damage);
             break;
 
         case ATNR_COLD:
@@ -881,7 +891,7 @@ static int hit_player_attacktype(object *op, object *hitter, int *flags, int dam
                 ATTACK_RESIST_DAMAGE(op, attacknum);    /* reduce to % resistance */
             if (damage && dam < 1.0)
                 dam = 1.0;
-            send_attack_msg(op, hitter, attacknum, (int) dam, damage);
+            SendAttackMsg(op, hitter, attacknum, (int) dam, damage);
             break;
 
         case ATNR_MAGIC:
@@ -891,7 +901,7 @@ static int hit_player_attacktype(object *op, object *hitter, int *flags, int dam
                 ATTACK_RESIST_DAMAGE(op, attacknum);    /* reduce to % resistance */
             if (damage && dam < 1.0)
                 dam = 1.0;
-            send_attack_msg(op, hitter, attacknum, (int) dam, damage);
+            SendAttackMsg(op, hitter, attacknum, (int) dam, damage);
             break;
 
         case ATNR_WEAPONMAGIC:
@@ -901,7 +911,7 @@ static int hit_player_attacktype(object *op, object *hitter, int *flags, int dam
                 ATTACK_RESIST_DAMAGE(op, attacknum);    /* reduce to % resistance */
             if (damage && dam < 1.0)
                 dam = 1.0;
-            send_attack_msg(op, hitter, attacknum, (int) dam, damage);
+            SendAttackMsg(op, hitter, attacknum, (int) dam, damage);
             break;
 
         case ATNR_POISON:
@@ -911,7 +921,7 @@ static int hit_player_attacktype(object *op, object *hitter, int *flags, int dam
                 ATTACK_RESIST_DAMAGE(op, attacknum);    /* reduce to % resistance */
             if (damage && dam < 1.0)
                 dam = 1.0;
-            send_attack_msg(op, hitter, attacknum, (int) dam, damage);
+            SendAttackMsg(op, hitter, attacknum, (int) dam, damage);
             /* i must adjust this... alive stand for mobs and player include
             * golems, undead and demons - but not for doors or "technical objects"
             * like earth walls.
@@ -927,7 +937,7 @@ static int hit_player_attacktype(object *op, object *hitter, int *flags, int dam
                 ATTACK_RESIST_DAMAGE(op, attacknum);    /* reduce to % resistance */
             if (damage && dam < 1.0)
                 dam = 1.0;
-            send_attack_msg(op, hitter, attacknum, (int) dam, damage);
+            SendAttackMsg(op, hitter, attacknum, (int) dam, damage);
             /*
             if(random_roll(0, (int)dam+4) >
             random_roll(0, 39)+2*tmp->magic) {
@@ -950,7 +960,7 @@ static int hit_player_attacktype(object *op, object *hitter, int *flags, int dam
                 ATTACK_RESIST_DAMAGE(op, attacknum);    /* reduce to % resistance */
             if (damage && dam < 1.0)
                 dam = 1.0;
-            send_attack_msg(op, hitter, attacknum, (int) dam, damage);
+            SendAttackMsg(op, hitter, attacknum, (int) dam, damage);
             /* TODO: add blinding effect */
             break;
 
@@ -961,7 +971,7 @@ static int hit_player_attacktype(object *op, object *hitter, int *flags, int dam
                 ATTACK_RESIST_DAMAGE(op, attacknum);    /* reduce to % resistance */
             if (damage && dam < 1.0)
                 dam = 1.0;
-            send_attack_msg(op, hitter, attacknum, (int) dam, damage);
+            SendAttackMsg(op, hitter, attacknum, (int) dam, damage);
             /* TODO: add special effects */
             break;
 
@@ -972,7 +982,7 @@ static int hit_player_attacktype(object *op, object *hitter, int *flags, int dam
                 ATTACK_RESIST_DAMAGE(op, attacknum);    /* reduce to % resistance */
             if (damage && dam < 1.0)
                 dam = 1.0;
-            send_attack_msg(op, hitter, attacknum, (int) dam, damage);
+            SendAttackMsg(op, hitter, attacknum, (int) dam, damage);
             /* TODO: add special effects */
             break;
 
@@ -983,7 +993,7 @@ static int hit_player_attacktype(object *op, object *hitter, int *flags, int dam
                 ATTACK_RESIST_DAMAGE(op, attacknum);    /* reduce to % resistance */
             if (damage && dam < 1.0)
                 dam = 1.0;
-            send_attack_msg(op, hitter, attacknum, (int) dam, damage);
+            SendAttackMsg(op, hitter, attacknum, (int) dam, damage);
             /* TODO: add lifesteal effect (this is old code )
             {
                 int new_hp;
@@ -1006,7 +1016,7 @@ static int hit_player_attacktype(object *op, object *hitter, int *flags, int dam
                 ATTACK_RESIST_DAMAGE(op, attacknum);    /* reduce to % resistance */
             if (damage && dam < 1.0)
                 dam = 1.0;
-            send_attack_msg(op, hitter, attacknum, (int) dam, damage);
+            SendAttackMsg(op, hitter, attacknum, (int) dam, damage);
             /* TODO: add special effects */
             break;
         case ATNR_CHAOS:
@@ -1016,7 +1026,7 @@ static int hit_player_attacktype(object *op, object *hitter, int *flags, int dam
                 ATTACK_RESIST_DAMAGE(op, attacknum);    /* reduce to % resistance */
             if (damage && dam < 1.0)
                 dam = 1.0;
-            send_attack_msg(op, hitter, attacknum, (int) dam, damage);
+            SendAttackMsg(op, hitter, attacknum, (int) dam, damage);
             /* TODO: add special effects */
             break;
         case ATNR_AETHER:
@@ -1026,7 +1036,7 @@ static int hit_player_attacktype(object *op, object *hitter, int *flags, int dam
                 ATTACK_RESIST_DAMAGE(op, attacknum);    /* reduce to % resistance */
             if (damage && dam < 1.0)
                 dam = 1.0;
-            send_attack_msg(op, hitter, attacknum, (int) dam, damage);
+            SendAttackMsg(op, hitter, attacknum, (int) dam, damage);
             /* TODO: add special effects */
             break;
         case ATNR_NETHER:
@@ -1036,7 +1046,7 @@ static int hit_player_attacktype(object *op, object *hitter, int *flags, int dam
                 ATTACK_RESIST_DAMAGE(op, attacknum);    /* reduce to % resistance */
             if (damage && dam < 1.0)
                 dam = 1.0;
-            send_attack_msg(op, hitter, attacknum, (int) dam, damage);
+            SendAttackMsg(op, hitter, attacknum, (int) dam, damage);
             /* TODO: add special effects */
             break;
         case ATNR_GODPOWER:
@@ -1046,7 +1056,7 @@ static int hit_player_attacktype(object *op, object *hitter, int *flags, int dam
                 ATTACK_RESIST_DAMAGE(op, attacknum);    /* reduce to % resistance */
             if (damage && dam < 1.0)
                 dam = 1.0;
-            send_attack_msg(op, hitter, attacknum, (int) dam, damage);
+            SendAttackMsg(op, hitter, attacknum, (int) dam, damage);
             /* TODO: add special effects */
             break;
 
@@ -1276,7 +1286,8 @@ static int hit_player_attacktype(object *op, object *hitter, int *flags, int dam
             }
             break;
         default:
-            LOG(llevBug,"attack(): find unimplemented special attack: #%d obj:%s\n", attacknum, query_name(hitter));
+            LOG(llevBug,"BUG:: %s/HitPlayerAttacktype(): Unknown attack: %d on %s[%d]!\n",
+                __FILE__, attacknum, STRING_OBJ_NAME(hitter), hitter->count);
           break;
     }
 
@@ -1287,7 +1298,7 @@ static int hit_player_attacktype(object *op, object *hitter, int *flags, int dam
 /* we need this called spread in the function before because sometimes we want drop
  * a message BEFORE we tell the damage and sometimes we want a message after it.
  */
-static void send_attack_msg(object *op, object *hitter, int attacknum, int dam, int damage)
+static void SendAttackMsg(object *op, object *hitter, int attacknum, int dam, int damage)
 {
     if (op->type == PLAYER)
     {
@@ -1480,10 +1491,10 @@ int kill_object(object *op, int dam, object *hitter, int typeX)
 }
 
 
-static int abort_attack(object *target, object *hitter, int env_attack)
+static int AbortAttack(object *target, object *hitter, int env_attack)
 {
     /* Check if target and hitter are still in a relation similar to the one
-     * determined by get_attack_mode().  Returns true if the relation has changed.
+     * determined by GetAttackMode().  Returns true if the relation has changed.
      */
     int new_mode;
 
@@ -1555,7 +1566,8 @@ void tear_down_wall(object *op)
 
     if (!op->stats.maxhp)
     {
-        LOG(llevBug, "BUG: TEAR_DOWN wall %s had no maxhp.\n", op->name);
+        LOG(llevBug, "BUG:: %s/tear_down_wall(): %s[%d] had no maxhp!\n",
+            __FILE__, STRING_OBJ_NAME(op), op->count);
         perc = 1;
     }
     else if (!GET_ANIM_ID(op))
@@ -1616,7 +1628,8 @@ void poison_player(object *op, object *hitter, float dam)
     {
         if ((tmp = arch_to_object(at)) == NULL)
         {
-            LOG(llevBug, "BUG: Failed to clone arch poisoning.\n");
+            LOG(llevBug, "BUG:: %s/poison_player(): Failed to clone arch poisoning.\n",
+                __FILE__);
             return;
         }
         else
@@ -1741,7 +1754,8 @@ void slow_player(object *op, object *hitter, int dam)
         at = find_archetype("slowness");
         if (!at)
         {
-            LOG(llevBug, "BUG: Couldn't find archetype slowness.\n");
+            LOG(llevBug, "BUG:: %s/slow_player(): Couldn't find archetype slowness.\n",
+                __FILE__);
             return;
         }
     }
@@ -1790,7 +1804,8 @@ void fear_player(object *op, object *hitter, int dam)
         at = find_archetype("fear");
         if (!at)
         {
-            LOG(llevBug, "BUG: Couldn't find archetype fear.\n");
+            LOG(llevBug, "BUG:: %s/fear_player(): Couldn't find archetype fear!\n",
+                __FILE__);
             return;
         }
     }
@@ -1830,7 +1845,8 @@ void snare_player(object *op, object *hitter, int dam)
         at = find_archetype("snare");
         if (!at)
         {
-            LOG(llevBug, "BUG: Couldn't find archetype snare.\n");
+            LOG(llevBug, "BUG:: %s/snare_player(): Couldn't find archetype snare!\n",
+                __FILE__);
             return;
         }
     }
@@ -1890,7 +1906,8 @@ void confuse_player(object *op, object *hitter, int ticks)
         at = find_archetype("confusion");
         if (!at)
         {
-            LOG(llevBug, "BUG: Couldn't find archetype confusion.\n");
+            LOG(llevBug, "BUG:: %s/confuse_player(): Couldn't find archetype confusion!\n",
+                __FILE__);
             return;
         }
     }
@@ -1925,7 +1942,8 @@ void blind_player(object *op, object *hitter, int dam)
         at = find_archetype("blindness");
         if (!at)
         {
-            LOG(llevBug, "BUG: Couldn't find archetype blindness.\n");
+            LOG(llevBug, "BUG:: %s/blind_player(): Couldn't find archetype blindness!\n",
+                __FILE__);
             return;
         }
     }
@@ -1950,6 +1968,7 @@ void blind_player(object *op, object *hitter, int dam)
     SET_FLAG(op, FLAG_BLIND);
 }
 
+
 void paralyze_player(object *op, object *hitter, int dam)
 {
     static archetype  *at  = NULL;
@@ -1960,7 +1979,8 @@ void paralyze_player(object *op, object *hitter, int dam)
         at = find_archetype("paralyze");
         if (!at)
         {
-            LOG(llevBug, "BUG: Couldn't find archetype paralyze.\n");
+            LOG(llevBug, "BUG:: %s/paralyze_player(): Couldn't find archetype paralyze!\n",
+                __FILE__);
             return;
         }
     }
@@ -2002,7 +2022,8 @@ void remove_paralyze(object *op)
         at = find_archetype("paralyze");
         if (!at)
         {
-            LOG(llevBug, "BUG: Couldn't find archetype paralyze.\n");
+            LOG(llevBug, "BUG:: %s/remove_paralyze(): Couldn't find archetype paralyze!\n",
+                __FILE__);
             return;
         }
     }
