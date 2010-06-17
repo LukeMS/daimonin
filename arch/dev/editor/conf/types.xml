@@ -365,108 +365,108 @@
     ]]>
   </description>
 <section name="attack">
-  <attribute arch="attack_impact" editor="impact (physical)" length="3" type="int" min="0" max="100">
+  <attribute arch="attack_impact" editor="impact (physical)" type="int" min="0" max="100">
     "Impact" is damage from clubs, maces or a simple fist.
     It belongs to the group of physical attacks.
   </attribute>
-  <attribute arch="attack_slash" editor="slash (physical)" length="3" type="int" min="0" max="100">
+  <attribute arch="attack_slash" editor="slash (physical)" type="int" min="0" max="100">
     "Slash" is sword type damage. Creatures with large claws can also do slash damage.
     It belongs to the group of physical attacks.
   </attribute>
-  <attribute arch="attack_cleave" editor="cleave (physical)" length="3" type="int" min="0" max="100">
+  <attribute arch="attack_cleave" editor="cleave (physical)" type="int" min="0" max="100">
     "Cleave" is axe and halberd damage.
     It belongs to the group of physical attacks.
   </attribute>
-  <attribute arch="attack_pierce" editor="pierce (physical)" length="3" type="int" min="0" max="100">
+  <attribute arch="attack_pierce" editor="pierce (physical)" type="int" min="0" max="100">
     "Pierce" attacks come from arrows or rapier weapons.
     For example: arrows, bolts, daggers, spears.
     It belongs to the group of physical attacks.
   </attribute>
-  <attribute arch="attack_cold" editor="cold (elemental)" length="3" type="int" min="0" max="100">
+  <attribute arch="attack_cold" editor="cold (elemental)" type="int" min="0" max="100">
     Cold belongs to the group of elemental attacks. Pure damage.
   </attribute>
-  <attribute arch="attack_fire" editor="fire (elemental)" length="3" type="int" min="0" max="100">
+  <attribute arch="attack_fire" editor="fire (elemental)" type="int" min="0" max="100">
     Fire belongs to the group of elemental attacks. Pure damage.
   </attribute>
-  <attribute arch="attack_electricity" editor="electricity (elemental)" length="3" type="int" min="0" max="100">
+  <attribute arch="attack_electricity" editor="electricity (elemental)" type="int" min="0" max="100">
     Electricity belongs to the group of elemental attacks. Pure damage.
   </attribute>
-  <attribute arch="attack_acid" editor="acid (elemental)" length="3" type="int" min="0" max="100">
+  <attribute arch="attack_acid" editor="acid (elemental)" type="int" min="0" max="100">
     Acid belongs to the group of elemental attacks. Can do extra damage to target
     and equipment.
   </attribute>
-  <attribute arch="attack_poison" editor="poison (elemental)" length="3" type="int" min="0" max="100">
+  <attribute arch="attack_poison" editor="poison (elemental)" type="int" min="0" max="100">
     Poison belongs to the group of elemental attacks. Can inflict poison effects.
   </attribute>
-  <attribute arch="attack_sonic" editor="sonic (elemental)" length="3" type="int" min="0" max="100">
+  <attribute arch="attack_sonic" editor="sonic (elemental)" type="int" min="0" max="100">
     Sonic belongs to the group of elemental attacks. Pure damage.
   </attribute>
-  <attribute arch="attack_magic" editor="channelling (magical)" length="3" type="int" min="0" max="100">
+  <attribute arch="attack_magic" editor="channelling (magical)" type="int" min="0" max="100">
     Channelling belongs to the group of magical attacks. Its pure mana used to attack.
     damage only.
   </attribute>
-  <attribute arch="attack_corruption" editor="corruption (magical)" length="3" type="int" min="0" max="100">
+  <attribute arch="attack_corruption" editor="corruption (magical)" type="int" min="0" max="100">
     Corruption is a effect attack (no damage). It will drain mana and grace of the target.
   </attribute>
-  <attribute arch="attack_light" editor="light (magical)" length="3" type="int" min="0" max="100">
+  <attribute arch="attack_light" editor="light (magical)" type="int" min="0" max="100">
     Light belongs to the group of magical attacks. Can inflict blinding effects.
   </attribute>
-  <attribute arch="attack_shadow" editor="shadow (magical)" length="3" type="int" min="0" max="100">
+  <attribute arch="attack_shadow" editor="shadow (magical)" type="int" min="0" max="100">
     Shadow belongs to the group of magical attacks. Mana or grace of the
     target can be effected (reduced) too.
   </attribute>
-  <attribute arch="attack_psionic" editor="psionic (magical)" length="3" type="int" min="0" max="100">
+  <attribute arch="attack_psionic" editor="psionic (magical)" type="int" min="0" max="100">
     Psionic (also called mental) belongs to the group of magical attacks. Leech attack:
     Mana or grace of the target can be effected, reduced and given to the attacker.
   </attribute>
-  <attribute arch="attack_lifesteal" editor="lifesteal (magical)" length="3" type="int" min="0" max="100">
+  <attribute arch="attack_lifesteal" editor="lifesteal (magical)" type="int" min="0" max="100">
     Lifesteal belongs to the group of magical attacks. Leech attack: Parts of the damage
     are given to the attacker and added to the hitpoints.
   </attribute>
-  <attribute arch="attack_death" editor="death (spherical)" length="3" type="int" min="0" max="100">
+  <attribute arch="attack_death" editor="death (spherical)" type="int" min="0" max="100">
     Death belongs to the group of spherical attacks. Special attack: A death damage hit
     has the chance to HALF the targets HP - after the normal damage is done.
   </attribute>
-  <attribute arch="attack_chaos" editor="chaos (spherical)" length="3" type="int" min="0" max="100">
+  <attribute arch="attack_chaos" editor="chaos (spherical)" type="int" min="0" max="100">
     Chaos belongs to the group of spherical attacks. Special attack: A chaos hit will
     drain level and skills (like drain attack) and age the target.
   </attribute>
-  <attribute arch="attack_nether" editor="nether (spherical)" length="3" type="int" min="0" max="100">
+  <attribute arch="attack_nether" editor="nether (spherical)" type="int" min="0" max="100">
     Nether belongs to the group of spherical attacks. Special attack: A nether hit will
     deplete the target stats (like depletion attack) and age the target.
   </attribute>
-  <attribute arch="attack_aether" editor="aether (spherical)" length="3" type="int" min="0" max="100">
+  <attribute arch="attack_aether" editor="aether (spherical)" type="int" min="0" max="100">
     Aether belongs to the group of spherical attacks. Special attack: A aether hit will
     corrupt the target (reduce mana and grace) and age the target.
   </attribute>
-  <attribute arch="attack_weaponmagic" editor="weaponmagic" length="3" type="int" min="0" max="100">
+  <attribute arch="attack_weaponmagic" editor="weaponmagic" type="int" min="0" max="100">
     Weaponmagic is a special damage attack. Resistance and protection of weaponmagic
     are VERY uncommon. Only invulnerable items will not be effected by weaponmagic.
   </attribute>
-  <attribute arch="attack_godpower" editor="godpower" length="3" type="int" min="0" max="100">
+  <attribute arch="attack_godpower" editor="godpower" type="int" min="0" max="100">
     Godpower is a special damage attack. It inflicts random attack effects,
     will heavily effects the conditions of equipment and age the target.
   </attribute>
-  <attribute arch="attack_drain" editor="drain (effect)" length="3" type="int" min="0" max="100">
+  <attribute arch="attack_drain" editor="drain (effect)" type="int" min="0" max="100">
     Drain is a effect attack (no damage). It will drain levels and skills of the target.
   </attribute>
-  <attribute arch="attack_depletion" editor="depletion (effect)" length="3" type="int" min="0" max="100">
+  <attribute arch="attack_depletion" editor="depletion (effect)" type="int" min="0" max="100">
     Depletion is a effect attack (no damage). It will drain stats and abilities of the target.
   </attribute>
-  <attribute arch="attack_confusion" editor="confusion (effect)" length="3" type="int" min="0" max="100">
+  <attribute arch="attack_confusion" editor="confusion (effect)" type="int" min="0" max="100">
     Confuse is a effect attack (no damage). It will confuse the target so it will do strange,
     uncontrolled actions.
   </attribute>
-  <attribute arch="attack_fear" editor="fear (effect)" length="3" type="int" min="0" max="100">
+  <attribute arch="attack_fear" editor="fear (effect)" type="int" min="0" max="100">
     Fear is a effect attack (no damage). It will reduce the attack and defense abilities.
   </attribute>
-  <attribute arch="attack_slow" editor="slow (effect)" length="3" type="int" min="0" max="100">
+  <attribute arch="attack_slow" editor="slow (effect)" type="int" min="0" max="100">
     Slow is a effect attack (no damage). A slowed target will move and fight slower.
   </attribute>
-  <attribute arch="attack_paralyze" editor="paralyze (effect)" length="3" type="int" min="0" max="100">
+  <attribute arch="attack_paralyze" editor="paralyze (effect)" type="int" min="0" max="100">
     Paralyze is a effect attack (no damage). A paralyzed target can't move or attack.
   </attribute>
-  <attribute arch="attack_snare" editor="snare (effect)" length="3" type="int" min="0" max="100">
+  <attribute arch="attack_snare" editor="snare (effect)" type="int" min="0" max="100">
     Snare is a effect attack (no damage). A snared target moves slower but still attacks
     normal. A total snared object is called rooted.
   </attribute>
@@ -481,107 +481,107 @@
     ]]>
   </description>
 <section name="resistance">
-  <attribute arch="resist_impact" editor="impact (physical)" length="3" type="int" min="-100" max="100" check_min="-99" check_max="99">
+  <attribute arch="resist_impact" editor="impact (physical)" type="int" min="-100" max="100" check_min="-99" check_max="99">
     "Impact" is damage from clubs, maces or a simple fist.
     It belongs to the group of physical attacks.
   </attribute>
-  <attribute arch="resist_slash" editor="slash (physical)" length="3" type="int" min="-100" max="100" check_min="-99" check_max="99">
+  <attribute arch="resist_slash" editor="slash (physical)" type="int" min="-100" max="100" check_min="-99" check_max="99">
     "Slash" is sword type damage. Creatures with large claws can also do slash damage.
     It belongs to the group of physical attacks.
   </attribute>
-  <attribute arch="resist_cleave" editor="cleave (physical)" length="3" type="int" min="-100" max="100" check_min="-99" check_max="99">
+  <attribute arch="resist_cleave" editor="cleave (physical)" type="int" min="-100" max="100" check_min="-99" check_max="99">
     "Cleave" is axe and halberd damage.
     It belongs to the group of physical attacks.
   </attribute>
-  <attribute arch="resist_pierce" editor="pierce (physical)" length="3" type="int" min="-100" max="100" check_min="-99" check_max="99">
+  <attribute arch="resist_pierce" editor="pierce (physical)" type="int" min="-100" max="100" check_min="-99" check_max="99">
     "Pierce" attacks come from arrows or rapier weapons.
     For example: arrows, bolts, daggers, spears.
     It belongs to the group of physical attacks.
   </attribute>
-  <attribute arch="resist_cold" editor="cold (elemental)" length="3" type="int" min="-100" max="100" check_min="-99" check_max="99">
+  <attribute arch="resist_cold" editor="cold (elemental)" type="int" min="-100" max="100" check_min="-99" check_max="99">
     Cold belongs to the group of elemental attacks. Pure damage.
   </attribute>
-  <attribute arch="resist_fire" editor="fire (elemental)" length="3" type="int" min="-100" max="100" check_min="-99" check_max="99">
+  <attribute arch="resist_fire" editor="fire (elemental)" type="int" min="-100" max="100" check_min="-99" check_max="99">
     Fire belongs to the group of elemental attacks. Pure damage.
   </attribute>
-  <attribute arch="resist_electricity" editor="electricity (elemental)" length="3" type="int" min="-100" max="100" check_min="-99" check_max="99">
+  <attribute arch="resist_electricity" editor="electricity (elemental)" type="int" min="-100" max="100" check_min="-99" check_max="99">
     Electricity belongs to the group of elemental attacks. Pure damage.
   </attribute>
-  <attribute arch="resist_acid" editor="acid (elemental)" length="3" type="int" min="-100" max="100" check_min="-99" check_max="99">
+  <attribute arch="resist_acid" editor="acid (elemental)" type="int" min="-100" max="100" check_min="-99" check_max="99">
     Acid belongs to the group of elemental attacks. Can do extra damage to target
     and equipment.
   </attribute>
-  <attribute arch="resist_poison" editor="poison (elemental)" length="3" type="int" min="-100" max="100" check_min="-99" check_max="99">
+  <attribute arch="resist_poison" editor="poison (elemental)" type="int" min="-100" max="100" check_min="-99" check_max="99">
     Poison belongs to the group of elemental attacks. Can inflict poison effects.
   </attribute>
-  <attribute arch="resist_sonic" editor="sonic (elemental)" length="3" type="int" min="-100" max="100" check_min="-99" check_max="99">
+  <attribute arch="resist_sonic" editor="sonic (elemental)" type="int" min="-100" max="100" check_min="-99" check_max="99">
     Sonic belongs to the group of elemental attacks. Pure damage.
   </attribute>
-  <attribute arch="resist_magic" editor="channelling (magical)" length="3" type="int" min="-100" max="100" check_min="-99" check_max="99">
+  <attribute arch="resist_magic" editor="channelling (magical)" type="int" min="-100" max="100" check_min="-99" check_max="99">
     Channelling belongs to the group of magical attacks. Pure mana used for damage only.
   </attribute>
-  <attribute arch="resist_corruption" editor="corruption (magical)" length="3" type="int" min="-100" max="100" check_min="-99" check_max="99">
+  <attribute arch="resist_corruption" editor="corruption (magical)" type="int" min="-100" max="100" check_min="-99" check_max="99">
     Corruption is a effect attack (no damage). It will drain mana and grace of the target.
   </attribute>
-  <attribute arch="resist_light" editor="light (magical)" length="3" type="int" min="-100" max="100" check_min="-99" check_max="99">
+  <attribute arch="resist_light" editor="light (magical)" type="int" min="-100" max="100" check_min="-99" check_max="99">
     Light belongs to the group of magical attacks. Can inflict blinding effects.
   </attribute>
-  <attribute arch="resist_shadow" editor="shadow (magical)" length="3" type="int" min="-100" max="100" check_min="-99" check_max="99">
+  <attribute arch="resist_shadow" editor="shadow (magical)" type="int" min="-100" max="100" check_min="-99" check_max="99">
     Shadow belongs to the group of magical attacks. Mana or grace of the
     target can be effected (reduced) too.
   </attribute>
-  <attribute arch="resist_psionic" editor="psionic (magical)" length="3" type="int" min="-100" max="100" check_min="-99" check_max="99">
+  <attribute arch="resist_psionic" editor="psionic (magical)" type="int" min="-100" max="100" check_min="-99" check_max="99">
     Psionic (also called mental) belongs to the group of magical attacks. Leech attack:
     Mana or grace of the target can be effected, reduced and given to the attacker.
   </attribute>
-  <attribute arch="resist_lifesteal" editor="lifesteal (magical)" length="3" type="int" min="-100" max="100" check_min="-99" check_max="99">
+  <attribute arch="resist_lifesteal" editor="lifesteal (magical)" type="int" min="-100" max="100" check_min="-99" check_max="99">
     Lifesteal belongs to the group of magical attacks. Leech attack: Parts of the damage
     are given to the attacker and added to the hitpoints.
   </attribute>
-  <attribute arch="resist_death" editor="death (spherical)" length="3" type="int" min="-100" max="100" check_min="-99" check_max="99">
+  <attribute arch="resist_death" editor="death (spherical)" type="int" min="-100" max="100" check_min="-99" check_max="99">
     Death belongs to the group of spherical attacks. Special attack: A death damage hit
     has the chance to HALF the targets HP - after the normal damage is done.
   </attribute>
-  <attribute arch="resist_chaos" editor="chaos (spherical)" length="3" type="int" min="-100" max="100" check_min="-99" check_max="99">
+  <attribute arch="resist_chaos" editor="chaos (spherical)" type="int" min="-100" max="100" check_min="-99" check_max="99">
     Chaos belongs to the group of spherical attacks. Special attack: A chaos hit will
     drain level and skills (like drain attack) and age the target.
   </attribute>
-  <attribute arch="resist_nether" editor="nether (spherical)" length="3" type="int" min="-100" max="100" check_min="-99" check_max="99">
+  <attribute arch="resist_nether" editor="nether (spherical)" type="int" min="-100" max="100" check_min="-99" check_max="99">
     Nether belongs to the group of spherical attacks. Special attack: A nether hit will
     deplete the target stats (like depletion attack) and age the target.
   </attribute>
-  <attribute arch="resist_aether" editor="aether (spherical)" length="3" type="int" min="-100" max="100" check_min="-99" check_max="99">
+  <attribute arch="resist_aether" editor="aether (spherical)" type="int" min="-100" max="100" check_min="-99" check_max="99">
     Aether belongs to the group of spherical attacks. Special attack: A aether hit will
     corrupt the target (reduce mana and grace) and age the target.
   </attribute>
-  <attribute arch="resist_weaponmagic" editor="weaponmagic" length="3" type="int" min="-100" max="100" check_min="-99" check_max="99">
+  <attribute arch="resist_weaponmagic" editor="weaponmagic" type="int" min="-100" max="100" check_min="-99" check_max="99">
     Weaponmagic is a special damage attack. Resistance and protection of weaponmagic
     are VERY uncommon. Only invulnerable items will not be effected by weaponmagic.
   </attribute>
-  <attribute arch="resist_godpower" editor="godpower" length="3" type="int" min="-100" max="100" check_min="-99" check_max="99">
+  <attribute arch="resist_godpower" editor="godpower" type="int" min="-100" max="100" check_min="-99" check_max="99">
     Godpower is a special damage attack. It inflicts random attack effects,
     will heavily effects the conditions of equipment and age the target.
   </attribute>
-  <attribute arch="resist_drain" editor="drain (effect)" length="3" type="int" min="-100" max="100" check_min="-99" check_max="99">
+  <attribute arch="resist_drain" editor="drain (effect)" type="int" min="-100" max="100" check_min="-99" check_max="99">
     Drain is a effect attack (no damage). It will drain levels and skills of the target.
   </attribute>
-  <attribute arch="resist_depletion" editor="depletion (effect)" length="3" type="int" min="-100" max="100" check_min="-99" check_max="99">
+  <attribute arch="resist_depletion" editor="depletion (effect)" type="int" min="-100" max="100" check_min="-99" check_max="99">
     Depletion is a effect attack (no damage). It will drain stats and abilities of the target.
   </attribute>
-  <attribute arch="resist_confusion" editor="confusion (effect)" length="3" type="int" min="-100" max="100" check_min="-99" check_max="99">
+  <attribute arch="resist_confusion" editor="confusion (effect)" type="int" min="-100" max="100" check_min="-99" check_max="99">
     Confuse is a effect attack (no damage). It will confuse the target so it will do strange,
     uncontrolled actions.
   </attribute>
-  <attribute arch="resist_fear" editor="fear (effect)" length="3" type="int" min="-100" max="100" check_min="-99" check_max="99">
+  <attribute arch="resist_fear" editor="fear (effect)" type="int" min="-100" max="100" check_min="-99" check_max="99">
     Fear is a effect attack (no damage). It will reduce the attack and defense abilities.
   </attribute>
-  <attribute arch="resist_slow" editor="slow (effect)" length="3" type="int" min="-100" max="100" check_min="-99" check_max="99">
+  <attribute arch="resist_slow" editor="slow (effect)" type="int" min="-100" max="100" check_min="-99" check_max="99">
     Slow is a effect attack (no damage). A slowed target will move and fight slower.
   </attribute>
-  <attribute arch="resist_paralyze" editor="paralyze (effect)" length="3" type="int" min="-100" max="100" check_min="-99" check_max="99">
+  <attribute arch="resist_paralyze" editor="paralyze (effect)" type="int" min="-100" max="100" check_min="-99" check_max="99">
     Paralyze is a effect attack (no damage). A paralyzed target can't move or attack.
   </attribute>
-  <attribute arch="resist_snare" editor="snare (effect)" length="3" type="int" min="-100" max="100" check_min="-99" check_max="99">
+  <attribute arch="resist_snare" editor="snare (effect)" type="int" min="-100" max="100" check_min="-99" check_max="99">
     Snare is a effect attack (no damage). A snared target moves slower but still attacks
     normal. A total snared object is called rooted.
   </attribute>
