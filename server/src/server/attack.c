@@ -41,12 +41,11 @@ char *attack_name[NROFATTACKS] =
 {
     "impact", "slash", "cleave", "pierce",
     "fire", "cold", "electricity", "poison", "acid", "sonic",
-    "magic", "psionic", "light", "shadow", "lifesteal",
+    "magic", "corruption", "psionic", "light", "shadow", "lifesteal",
     "aether", "nether", "chaos", "death",
     "weaponmagic", "godpower",
-    "drain", "depletion", "corruption",
-    "countermagic", "cancellation", "confusion",
-    "fear", "slow", "paralyze", "snare", "internal"
+    "drain", "depletion", "countermagic", "cancellation", "confusion", "fear", "slow", "paralyze", "snare",
+    "internal"
 };
 
 /* If you want to weight things so certain resistances show up more often than
@@ -67,7 +66,10 @@ int resist_table[] =
 /* some static defines */
 static int GetAttackMode(object **target, object **hitter, int *env_attack);
 static int  AbortAttack(object *target, object *hitter, int env_attack);
-static void SendAttackMsg(object *op, object *hitter, int attacknum, int dam, int damage);
+static void SendAttackMsg(object *op, object *hitter, int attacknum, int dam,
+                          int damage);
+static void SendCorruptMsg(object *op, object *hitter, int attacknum, int dam,
+                           int damage);
 static int  HitPlayerAttacktype(object *op, object *hitter, int *flags, int damage, uint32 attacknum, int magic);
 
 /* check and adjust all pre-attack issues like checking attack is valid,
@@ -953,6 +955,33 @@ static int HitPlayerAttacktype(object *op, object *hitter, int *flags, int damag
             */
             break;
 
+        case ATNR_CORRUPTION:
+            *flags |=HIT_FLAG_DMG|MATERIAL_BASE_MAGICAL;
+            ATTACK_HIT_DAMAGE(hitter, attacknum);       /* get % of dam from this attack form */
+            if (op->resist[attacknum])
+                ATTACK_RESIST_DAMAGE(op, attacknum);    /* reduce to % resistance */
+            if (damage && dam < 1.0)
+                dam = 1.0;
+            SendCorruptMsg(op, hitter, attacknum, (int) dam, damage);
+            if (op->type == PLAYER &&
+                op->stats.sp <= 0 &&
+                op->stats.grace > 0)
+            {
+                if ((op->stats.grace -= dam) < 0)
+                {
+                    op->stats.grace = 0;
+                }
+            }
+            else if (op->stats.sp > 0)
+            {
+                if ((op->stats.sp -= dam) < 0)
+                {
+                    op->stats.sp = 0;
+                }
+            }
+            dam = 0.0; // don't do actual (hp) damage
+            break;
+
         case ATNR_LIGHT: /* has a chance to blind the target */
             *flags |=HIT_FLAG_DMG|MATERIAL_BASE_MAGICAL;
             ATTACK_HIT_DAMAGE(hitter, attacknum);       /* get % of dam from this attack form */
@@ -972,7 +1001,23 @@ static int HitPlayerAttacktype(object *op, object *hitter, int *flags, int damag
             if (damage && dam < 1.0)
                 dam = 1.0;
             SendAttackMsg(op, hitter, attacknum, (int) dam, damage);
-            /* TODO: add special effects */
+            SendCorruptMsg(op, hitter, attacknum, (int) dam, damage);
+            if (op->type == PLAYER &&
+                op->stats.sp <= 0 &&
+                op->stats.grace > 0)
+            {
+                if ((op->stats.grace -= dam) < 0)
+                {
+                    op->stats.grace = 0;
+                }
+            }
+            else if (op->stats.sp > 0)
+            {
+                if ((op->stats.sp -= dam) < 0)
+                {
+                    op->stats.sp = 0;
+                }
+            }
             break;
 
         case ATNR_PSIONIC:
@@ -1037,6 +1082,23 @@ static int HitPlayerAttacktype(object *op, object *hitter, int *flags, int damag
             if (damage && dam < 1.0)
                 dam = 1.0;
             SendAttackMsg(op, hitter, attacknum, (int) dam, damage);
+            SendCorruptMsg(op, hitter, attacknum, (int) dam, damage);
+            if (op->type == PLAYER &&
+                op->stats.sp <= 0 &&
+                op->stats.grace > 0)
+            {
+                if ((op->stats.grace -= dam) < 0)
+                {
+                    op->stats.grace = 0;
+                }
+            }
+            else if (op->stats.sp > 0)
+            {
+                if ((op->stats.sp -= dam) < 0)
+                {
+                    op->stats.sp = 0;
+                }
+            }
             /* TODO: add special effects */
             break;
         case ATNR_NETHER:
@@ -1102,27 +1164,6 @@ static int HitPlayerAttacktype(object *op, object *hitter, int *flags, int damag
                 }
                 else /* effect has hit! */
                     drain_stat(op);
-            }
-            break;
-        case ATNR_CORRUPTION:
-            dam = 0.0;
-            if(hitter->attack[attacknum] > (RANDOM()%100)) /* we hit with effect? */
-            {
-                if (hitter->type == PLAYER)
-                    new_draw_info(NDI_ORANGE, 0, hitter, "You corrupt %s!", op->name);
-                if (op->type == PLAYER)
-                    new_draw_info(NDI_PURPLE, 0, op, "%s corrupts you!", hitter->name);
-
-                /* give the target the chance to resist */
-                if(op->resist[attacknum] > (RANDOM()%100)) /* resisted? */
-                {
-                    if (hitter->type == PLAYER)
-                        new_draw_info(NDI_YELLOW, 0, hitter, "%s resists the corruption!", op->name);
-                    if (op->type == PLAYER)
-                        new_draw_info(NDI_YELLOW, 0, op, "You resist!");
-                }
-                else /* effect has hit! */
-                    corrupt_stat(op);
             }
             break;
         case ATNR_CONFUSION:
@@ -1294,26 +1335,53 @@ static int HitPlayerAttacktype(object *op, object *hitter, int *flags, int damag
     return (int) dam;
 }
 
-
 /* we need this called spread in the function before because sometimes we want drop
  * a message BEFORE we tell the damage and sometimes we want a message after it.
  */
-static void SendAttackMsg(object *op, object *hitter, int attacknum, int dam, int damage)
+static void SendAttackMsg(object *op, object *hitter, int attacknum, int dam,
+                          int damage)
 {
     if (op->type == PLAYER)
     {
-        new_draw_info(NDI_PURPLE, 0, op, "%s hits you for %d (%d) damage.", hitter->name, (int) dam,
-                             ((int) dam) - damage);
+        new_draw_info(NDI_PURPLE, 0, op, "%s hits you for %d (%d) damage.",
+                      hitter->name, (int)dam, ((int)dam) - damage);
     }
+
     /* i love C... ;) */
-    if (hitter->type == PLAYER || ((hitter = get_owner(hitter)) && hitter->type == PLAYER))
+    if (hitter->type == PLAYER ||
+        ((hitter = get_owner(hitter)) &&
+        hitter->type == PLAYER))
     {
-        new_draw_info(NDI_ORANGE, 0, hitter, "You hit %s for %d (%d) with %s.", op->name, (int) dam,
-                             ((int) dam) - damage, attack_name[attacknum]);
+        new_draw_info(NDI_ORANGE, 0, hitter, "You hit %s for %d (%d) with %s.",
+                      op->name, (int)dam, ((int)dam) - damage,
+                      attack_name[attacknum]);
     }
 }
 
+static void SendCorruptMsg(object *op, object *hitter, int attacknum, int dam,
+                           int damage)
+{
+    if (op->type == PLAYER &&
+        (op->stats.sp > 0 ||
+         op->stats.grace > 0))
+    {
+        new_draw_info(NDI_PURPLE, 0, op, "%s corrupts you for %d (%d) %s.",
+                      hitter->name, (int)dam, ((int)dam) - damage,
+                      (op->stats.sp > 0) ? "mana" : "grace");
+    }
 
+    /* i love C... ;) */
+    if ((hitter->type == PLAYER ||
+         ((hitter = get_owner(hitter)) &&
+         hitter->type == PLAYER)) &&
+        (op->stats.sp > 0 ||
+         op->stats.grace > 0))
+    {
+        new_draw_info(NDI_ORANGE, 0, hitter, "You corrupt %s for %d (%d) %s.",
+                      op->name, (int)dam, ((int)dam) - damage,
+                      (op->stats.sp > 0) ? "mana" : "grace");
+    }
+}
 /* GROS: This code comes from damage_ob. It has been made external to
  * allow script procedures to "kill" objects in a combat-like fashion.
  * It was initially used by (kill-object) developed for the Collector's

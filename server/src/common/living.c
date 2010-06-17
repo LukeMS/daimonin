@@ -658,27 +658,6 @@ int change_abil(object *op, object *tmp)
     return success;
 }
 
-/* drain (corrupt) mana and/or grace
- * for 10% + random(10%).
- */
-void corrupt_stat(object *op)
-{
-    if(op->stats.sp > op->stats.grace) /* drain mana */
-    {
-        /* sp - 10% to 20% */
-        op->stats.sp = (int)((1.0f -(0.1f+( ((float)(RANDOM()%11))*0.01f)))*(float)op->stats.sp);
-        if(op->type == PLAYER)
-            new_draw_info(NDI_UNIQUE, 0, op, "You lose some mana!");
-    }
-    else if(op->stats.grace) /* drain grace */
-    {
-        /* grace - 10% to 20% */
-        op->stats.grace = (int)((1.0f -(0.1f+( ((float)(RANDOM()%11))*0.01f)))*(float)op->stats.grace);
-        if(op->type == PLAYER)
-            new_draw_info(NDI_UNIQUE, 0, op, "You lose some grace!");
-    }
-}
-
 /*
  * Stat draining by Vick 930307
  * (Feeling evil, I made it work as well now.  -Frank 8)

@@ -259,30 +259,29 @@ void widget_show_resist(int x, int y)
         print_resist("SO", 158, 15, ATNR_SONIC);
 
         print_resist("MA", 8, 27, ATNR_FORCE);
-        print_resist("PS", 38, 27, ATNR_PSIONIC);
-        print_resist("LI", 68, 27, ATNR_LIGHT);
-        print_resist("SH", 98, 27, ATNR_SHADOW);
-        print_resist("LS", 128, 27, ATNR_LIFESTEAL);
-        print_resist("AE", 158, 27, ATNR_AETHER);
+        print_resist("CR", 38, 27, ATNR_CORRUPTION);
+        print_resist("PS", 68, 27, ATNR_PSIONIC);
+        print_resist("LI", 98, 27, ATNR_LIGHT);
+        print_resist("SH", 128, 27, ATNR_SHADOW);
+        print_resist("LS", 158, 27, ATNR_LIFESTEAL);
 
-        print_resist("NE", 8, 39, ATNR_NETHER);
-        print_resist("CH", 38, 39, ATNR_CHAOS);
-        print_resist("DE", 68, 39, ATNR_DEATH);
-
-        print_resist("WE", 98, 39, ATNR_WEAPONMAGIC);
-        print_resist("GO", 128, 39, ATNR_GODPOWER);
+        print_resist("AE", 8, 39, ATNR_AETHER);
+        print_resist("NE", 38, 39, ATNR_NETHER);
+        print_resist("CH", 68, 39, ATNR_CHAOS);
+        print_resist("DE", 98, 39, ATNR_DEATH);
+        print_resist("WE", 128, 39, ATNR_WEAPONMAGIC);
+        print_resist("GO", 158, 39, ATNR_GODPOWER);
 
         print_resist("DR", 8, 51, ATNR_DRAIN);
         print_resist("DE", 38, 51, ATNR_DEPLETION);
-        print_resist("CR", 68, 51, ATNR_CORRUPTION);
-        print_resist("CM", 98, 51, ATNR_COUNTERMAGIC);
-        print_resist("CA", 128, 51, ATNR_CANCELLATION);
-        print_resist("CF", 158, 51, ATNR_CONFUSION);
+        print_resist("CM", 68, 51, ATNR_COUNTERMAGIC);
+        print_resist("CA", 98, 51, ATNR_CANCELLATION);
+        print_resist("CF", 128, 51, ATNR_CONFUSION);
+        print_resist("FE", 158, 51, ATNR_FEAR);
 
-        print_resist("FE", 8, 63, ATNR_FEAR);
-        print_resist("SL", 38, 63, ATNR_SLOW);
-        print_resist("PA", 68, 63, ATNR_PARALYZE);
-        print_resist("SN", 98, 63, ATNR_SNARE);
+        print_resist("SL", 8, 63, ATNR_SLOW);
+        print_resist("PA", 38, 63, ATNR_PARALYZE);
+        print_resist("SN", 68, 63, ATNR_SNARE);
     }
     box.x=x;
     box.y=y;

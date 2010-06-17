@@ -406,6 +406,9 @@
     Magic belongs to the group of magical attacks. Its pure mana used to attack.
     damage only.
   </attribute>
+  <attribute arch="attack_corruption" editor="corruption (magical)" length="15" type="int">
+    Corruption is a effect attack (no damage). It will drain mana and grace of the target.
+  </attribute>
   <attribute arch="attack_light" editor="light (magical)" length="15" type="int">
     Light belongs to the group of magical attacks. Can inflict blinding effects.
   </attribute>
@@ -450,9 +453,6 @@
   </attribute>
   <attribute arch="attack_depletion" editor="depletion (effect)" length="15" type="int">
     Depletion is a effect attack (no damage). It will drain stats and abilities of the target.
-  </attribute>
-  <attribute arch="attack_corruption" editor="corruption (effect)" length="15" type="int">
-    Corruption is a effect attack (no damage). It will drain mana and grace of the target.
   </attribute>
   <attribute arch="attack_confusion" editor="confusion (effect)" length="15" type="int">
     Confuse is a effect attack (no damage). It will confuse the target so it will do strange,
@@ -521,6 +521,9 @@
   <attribute arch="resist_magic" editor="magic (magical)" length="15" type="int">
     Magic belongs to the group of magical attacks. Pure mana used for damage only.
   </attribute>
+  <attribute arch="resist_corruption" editor="corruption (magical)" length="15" type="int">
+    Corruption is a effect attack (no damage). It will drain mana and grace of the target.
+  </attribute>
   <attribute arch="resist_light" editor="light (magical)" length="15" type="int">
     Light belongs to the group of magical attacks. Can inflict blinding effects.
   </attribute>
@@ -565,9 +568,6 @@
   </attribute>
   <attribute arch="resist_depletion" editor="depletion (effect)" length="15" type="int">
     Depletion is a effect attack (no damage). It will drain stats and abilities of the target.
-  </attribute>
-  <attribute arch="resist_corruption" editor="corruption (effect)" length="15" type="int">
-    Corruption is a effect attack (no damage). It will drain mana and grace of the target.
   </attribute>
   <attribute arch="resist_confusion" editor="confusion (effect)" length="15" type="int">
     Confuse is a effect attack (no damage). It will confuse the target so it will do strange,
