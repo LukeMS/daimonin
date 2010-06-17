@@ -41,7 +41,7 @@ char *attack_name[NROFATTACKS] =
 {
     "impact", "slash", "cleave", "pierce",
     "fire", "cold", "electricity", "poison", "acid", "sonic",
-    "magic", "corruption", "psionic", "light", "shadow", "lifesteal",
+    "channelling", "corruption", "psionic", "light", "shadow", "lifesteal",
     "aether", "nether", "chaos", "death",
     "weaponmagic", "godpower",
     "drain", "depletion", "countermagic", "cancellation", "confusion", "fear", "slow", "paralyze", "snare",
@@ -53,10 +53,10 @@ char *attack_name[NROFATTACKS] =
  * show up. */
 int resist_table[] =
 {
-    ATNR_SLASH, ATNR_CLEAVE, ATNR_PIERCE, ATNR_IMPACT, ATNR_MAGIC, ATNR_FIRE, ATNR_ELECTRICITY, ATNR_COLD,
+    ATNR_SLASH, ATNR_CLEAVE, ATNR_PIERCE, ATNR_IMPACT, ATNR_CHANNELLING, ATNR_FIRE, ATNR_ELECTRICITY, ATNR_COLD,
     ATNR_CONFUSION, ATNR_ACID, ATNR_DRAIN, ATNR_SHADOW, ATNR_POISON, ATNR_SLOW, ATNR_PARALYZE, ATNR_LIGHT, ATNR_FEAR,
     ATNR_SLASH, ATNR_DEPLETION, ATNR_CLEAVE, ATNR_SONIC, ATNR_IMPACT, ATNR_SNARE, ATNR_LIFESTEAL, ATNR_PSIONIC,
-    ATNR_NETHER, ATNR_PIERCE, ATNR_SLASH, ATNR_CLEAVE, ATNR_PIERCE, ATNR_IMPACT, ATNR_MAGIC, ATNR_FIRE,
+    ATNR_NETHER, ATNR_PIERCE, ATNR_SLASH, ATNR_CLEAVE, ATNR_PIERCE, ATNR_IMPACT, ATNR_CHANNELLING, ATNR_FIRE,
     ATNR_ELECTRICITY, ATNR_COLD, ATNR_CONFUSION, ATNR_ACID, ATNR_DRAIN, ATNR_LIGHT, ATNR_POISON, ATNR_SLOW,
     ATNR_PARALYZE, ATNR_SNARE, ATNR_FEAR, ATNR_CANCELLATION, ATNR_DEPLETION, ATNR_COUNTERMAGIC, ATNR_SONIC, ATNR_CORRUPTION,
     ATNR_SNARE, ATNR_LIFESTEAL, ATNR_PSIONIC, ATNR_NETHER, ATNR_AETHER, ATNR_DEATH, ATNR_CHAOS, ATNR_GODPOWER,
@@ -832,7 +832,7 @@ static int HitPlayerAttacktype(object *op, object *hitter, int *flags, int damag
                     remove_paralyze(op);
                 break;
 
-            case ATNR_MAGIC:
+            case ATNR_CHANNELLING:
             case ATNR_CORRUPTION:
             case ATNR_LIGHT:
             case ATNR_SHADOW:
@@ -897,7 +897,7 @@ static int HitPlayerAttacktype(object *op, object *hitter, int *flags, int damag
             SendAttackMsg(op, hitter, attacknum, (int) dam, damage);
             break;
 
-        case ATNR_MAGIC:
+        case ATNR_CHANNELLING:
             *flags |=HIT_FLAG_DMG|MATERIAL_BASE_MAGICAL;
             ATTACK_HIT_DAMAGE(hitter, attacknum);       /* get % of dam from this attack form */
             if (op->resist[attacknum])

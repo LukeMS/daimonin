@@ -1205,7 +1205,7 @@ int cast_change_attr(object *op, object *caster, object *target, int dir, int sp
               atnr = ATNR_IMPACT, path = PATH_PROT, i = 1;
         case SP_PROT_MAGIC:
           if (!i)
-              atnr = ATNR_MAGIC, i = 1;
+              atnr = ATNR_CHANNELLING, i = 1;
         case SP_PROT_CONFUSE:
           if (!i)
               atnr = ATNR_CONFUSION, path = PATH_MIND, i = 1;
@@ -1253,7 +1253,7 @@ int cast_change_attr(object *op, object *caster, object *target, int dir, int sp
           force->resist[ATNR_IMPACT] = 100;
           break;
         case SP_IMMUNE_MAGIC:
-          force->resist[ATNR_MAGIC] = 100;
+          force->resist[ATNR_CHANNELLING] = 100;
           break;
 
         case SP_INVULNERABILITY:

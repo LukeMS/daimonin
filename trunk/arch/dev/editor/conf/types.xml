@@ -401,8 +401,8 @@
   <attribute arch="attack_sonic" editor="sonic (elemental)" length="3" type="int" min="0" max="100">
     Sonic belongs to the group of elemental attacks. Pure damage.
   </attribute>
-  <attribute arch="attack_magic" editor="magic (magical)" length="3" type="int" min="0" max="100">
-    Magic belongs to the group of magical attacks. Its pure mana used to attack.
+  <attribute arch="attack_magic" editor="channelling (magical)" length="3" type="int" min="0" max="100">
+    Channelling belongs to the group of magical attacks. Its pure mana used to attack.
     damage only.
   </attribute>
   <attribute arch="attack_corruption" editor="corruption (magical)" length="3" type="int" min="0" max="100">
@@ -517,8 +517,8 @@
   <attribute arch="resist_sonic" editor="sonic (elemental)" length="3" type="int" min="-100" max="100" check_min="-99" check_max="99">
     Sonic belongs to the group of elemental attacks. Pure damage.
   </attribute>
-  <attribute arch="resist_magic" editor="magic (magical)" length="3" type="int" min="-100" max="100" check_min="-99" check_max="99">
-    Magic belongs to the group of magical attacks. Pure mana used for damage only.
+  <attribute arch="resist_magic" editor="channelling (magical)" length="3" type="int" min="-100" max="100" check_min="-99" check_max="99">
+    Channelling belongs to the group of magical attacks. Pure mana used for damage only.
   </attribute>
   <attribute arch="resist_corruption" editor="corruption (magical)" length="3" type="int" min="-100" max="100" check_min="-99" check_max="99">
     Corruption is a effect attack (no damage). It will drain mana and grace of the target.
