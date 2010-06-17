@@ -899,6 +899,7 @@ static int HitPlayerAttacktype(object *op, object *hitter, int *flags, int damag
 
         case ATNR_CHANNELLING:
             *flags |=HIT_FLAG_DMG|MATERIAL_BASE_MAGICAL;
+            dam = hitter->stats.sp; // use mana to directly damage
             ATTACK_HIT_DAMAGE(hitter, attacknum);       /* get % of dam from this attack form */
             if (op->resist[attacknum])
                 ATTACK_RESIST_DAMAGE(op, attacknum);    /* reduce to % resistance */
