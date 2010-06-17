@@ -258,7 +258,7 @@ void widget_show_resist(int x, int y)
         print_resist("AC", 128, 15, ATNR_ACID);
         print_resist("SO", 158, 15, ATNR_SONIC);
 
-        print_resist("MA", 8, 27, ATNR_FORCE);
+        print_resist("CH", 8, 27, ATNR_CHANNELLING);
         print_resist("CR", 38, 27, ATNR_CORRUPTION);
         print_resist("PS", 68, 27, ATNR_PSIONIC);
         print_resist("LI", 98, 27, ATNR_LIGHT);

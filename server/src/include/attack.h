@@ -58,7 +58,7 @@ typedef enum _attacks
     ATNR_SONIC,
 
     /* damage type: magical */
-    ATNR_MAGIC,
+    ATNR_CHANNELLING,
     ATNR_CORRUPTION,
     ATNR_PSIONIC,
     ATNR_LIGHT,

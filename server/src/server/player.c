@@ -1378,7 +1378,7 @@ void dragon_ability_gain(object *who, int atnr, int level)
  */
 int atnr_is_dragon_enabled(int attacknr)
 {
-    if (attacknr == ATNR_MAGIC
+    if (attacknr == ATNR_CHANNELLING
      || attacknr == ATNR_FIRE
      || attacknr == ATNR_ELECTRICITY
      || attacknr == ATNR_COLD

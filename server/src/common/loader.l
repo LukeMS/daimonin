@@ -533,7 +533,7 @@ op->oz= op->z;
 ^attack_psionic{S}	SET_ATTACK(op, ATNR_PSIONIC, IVAL);
 
 ^attack_light{S}	SET_ATTACK(op, ATNR_LIGHT, IVAL);
-^attack_magic{S}	SET_ATTACK(op, ATNR_MAGIC, IVAL);
+^attack_magic{S}	SET_ATTACK(op, ATNR_CHANNELLING, IVAL);
 ^attack_aether{S}	SET_ATTACK(op, ATNR_AETHER, IVAL);
 ^attack_snare{S}		SET_ATTACK(op, ATNR_SNARE, IVAL);
 ^attack_shadow{S}		SET_ATTACK(op, ATNR_SHADOW, IVAL);
@@ -567,7 +567,7 @@ op->oz= op->z;
 ^resist_sonic{S}	SET_RESIST(op, ATNR_SONIC, IVAL);
 ^resist_psionic{S}	SET_RESIST(op, ATNR_PSIONIC, IVAL);
 
-^resist_magic{S}	SET_RESIST(op, ATNR_MAGIC, IVAL);
+^resist_magic{S}	SET_RESIST(op, ATNR_CHANNELLING, IVAL);
 ^resist_aether{S}	SET_RESIST(op, ATNR_AETHER, IVAL);
 ^resist_light{S}	SET_RESIST(op, ATNR_LIGHT, IVAL);
 ^resist_shadow{S}	SET_RESIST(op, ATNR_SHADOW, IVAL);
@@ -587,7 +587,7 @@ op->oz= op->z;
 ^protect_acid{S}		SET_RESIST(op, ATNR_ACID, IVAL);
 ^protect_sonic{S}		SET_RESIST(op, ATNR_SONIC, IVAL);
 ^protect_psionic{S}		SET_RESIST(op, ATNR_PSIONIC, IVAL);
-^protect_force{S}		SET_RESIST(op, ATNR_MAGIC, IVAL);
+^protect_force{S}		SET_RESIST(op, ATNR_CHANNELLING, IVAL);
 ^protect_death{S}		SET_RESIST(op, ATNR_DEATH, IVAL);
 ^protect_light{S}		SET_RESIST(op, ATNR_LIGHT, IVAL);
 ^protect_shadow{S}		SET_RESIST(op, ATNR_SHADOW, IVAL);
@@ -603,14 +603,14 @@ op->oz= op->z;
 ^protect_body{S}		SET_RESIST(op, ATNR_SHADOW, IVAL); /* old: PROTECT_BODY */
 ^protect_spiritual{S}   SET_RESIST(op, ATNR_LIFESTEAL, IVAL); /* old: PROTECT_SPIRITUAL */
 ^protect_corruption{S}  SET_RESIST(op, ATNR_AETHER, IVAL);/* old: PROTECT_CORRUPTION */
-^resist_force{S}	SET_RESIST(op, ATNR_MAGIC, IVAL);
+^resist_force{S}	SET_RESIST(op, ATNR_CHANNELLING, IVAL);
 ^resist_time{S}		SET_RESIST(op, ATNR_SHADOW, IVAL);
 ^resist_demonic{S}	SET_RESIST(op, ATNR_AETHER, IVAL);
 ^resist_blind{S}	SET_RESIST(op, ATNR_LIGHT, IVAL);
 ^resist_purity{S}	SET_RESIST(op, ATNR_CORRUPTION, IVAL);
 ^resist_ghosthit{S}	SET_RESIST(op, ATNR_SNARE, IVAL);
 ^attack_blind{S}	SET_ATTACK(op, ATNR_LIGHT, IVAL);
-^attack_force{S}	SET_ATTACK(op, ATNR_MAGIC, IVAL);
+^attack_force{S}	SET_ATTACK(op, ATNR_CHANNELLING, IVAL);
 ^attack_demonic{S}	SET_ATTACK(op, ATNR_AETHER, IVAL);
 ^attack_purity{S}	SET_ATTACK(op, ATNR_CORRUPTION, IVAL);
 ^attack_time{S}		SET_ATTACK(op, ATNR_SHADOW, IVAL);
