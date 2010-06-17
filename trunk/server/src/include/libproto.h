@@ -113,7 +113,6 @@ extern signed char      get_stat_value(const living *const stats, const int stat
 extern void             check_stat_bounds(living *stats);
 extern int              change_abil(object *op, object *tmp);
 extern object          *check_obj_stat_buffs(object *ob, object *pl);
-extern void             corrupt_stat(object *op);
 extern void             drain_stat(object *op);
 extern void             drain_specific_stat(object *op, int deplete_stats);
 extern void             drain_level(object *op, int level, int mode, int ticks);

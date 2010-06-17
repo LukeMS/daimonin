@@ -59,6 +59,7 @@ typedef enum _attacks
 
     /* damage type: magical */
     ATNR_MAGIC,
+    ATNR_CORRUPTION,
     ATNR_PSIONIC,
     ATNR_LIGHT,
     ATNR_SHADOW,
@@ -77,7 +78,6 @@ typedef enum _attacks
     /* at this point attack effects starts - only resist maps to it */
     ATNR_DRAIN,
     ATNR_DEPLETION,
-    ATNR_CORRUPTION,
     ATNR_COUNTERMAGIC,
     ATNR_CANCELLATION,
     ATNR_CONFUSION,
