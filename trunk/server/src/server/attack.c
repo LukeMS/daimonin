@@ -833,6 +833,7 @@ static int HitPlayerAttacktype(object *op, object *hitter, int *flags, int damag
                 break;
 
             case ATNR_MAGIC:
+            case ATNR_CORRUPTION:
             case ATNR_LIGHT:
             case ATNR_SHADOW:
             case ATNR_PSIONIC:
