@@ -1217,6 +1217,7 @@ Boolean game_status_chain(void)
             }
             else /* we have a valid name... now let the server decide to create or deny this char */
             {
+                sprintf(cpl.name, "%s", InputString);
                 dialog_new_char_warn = 0; /* = name must min/max */
                 LoginInputStep = LOGIN_STEP_NOTHING;
                 /* Now send name & pass to server and wait for the account data */
