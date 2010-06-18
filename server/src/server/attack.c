@@ -372,9 +372,10 @@ int damage_ob(object *op, int dam, object *hitter, int env_attack)
 
         LOG(llevDebug, "DEBUG:: %s/damage_ob(): hit or target object level == 0 (h:%s[%d] o:%s[%d] l->%d, t:%s[%d] o:%s[%d] l->%d)!\n",
             __FILE__, STRING_OBJ_NAME(hitter), hitter->count,
-            STRING_OBJ_NAME(hown), hown->count, hit_level,
+            STRING_OBJ_NAME(hown), (hown) ? hown->count : 0, hit_level,
             STRING_OBJ_NAME(target_obj), target_obj->count,
-            STRING_OBJ_NAME(town), town->count, target_obj->level);
+            STRING_OBJ_NAME(town), (town) ? town->count : 0,
+            target_obj->level);
     }
 
     /* New (but still very basic) code for avoiding mobs (and players) on
