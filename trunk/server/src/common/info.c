@@ -37,8 +37,7 @@ static void NewInfoMapAllExcept(const int flags, const mapstruct *const map,
                                 const object *const op1, const object *const op,
                                 const char *const str);
 
-/*
- * new_draw_info:
+/* new_draw_info:
  *
  * flags is various flags.
  *
@@ -48,14 +47,12 @@ static void NewInfoMapAllExcept(const int flags, const mapstruct *const map,
  * Unfortunately, there is no clear guideline on what each level does what.
  *
  * op can be passed as NULL - in fact, this will be done if NDI_ALL is set
- * in the flags.
- *
- */
+ * in the flags. */
 void new_draw_info(const int flags, const int pri, const object *const op,
                    const char *const format, ...)
 {
-    char       buf[HUGE_BUF];
-    va_list    ap;
+    char    buf[HUGE_BUF] = "";
+    va_list ap;
 
     if (!format) /* should not happen - generate save string and LOG it */
     {
@@ -67,51 +64,54 @@ void new_draw_info(const int flags, const int pri, const object *const op,
 
     va_start(ap, format);
     vsnprintf(buf, sizeof(buf), format, ap);
-    buf[sizeof(buf) - 1] = '\0';
     va_end(ap);
+    buf[sizeof(buf) - 1] = '\0';
 
     /* here we handle global messages - still not sure i want this here */
-    if ((flags & NDI_ALL))
+    /* Do not try to send empty messages. */
+    if (buf[0])
     {
-        player *pl = first_player;
-
-        for (; pl; pl = pl->next)
+        if ((flags & NDI_ALL))
         {
-            if (!(pl->state & (ST_DEAD | ST_ZOMBIE)) &&
-                pl->socket.status != Ns_Dead &&
-                pri <= pl->listening)
+            player *pl = first_player;
+
+            for (; pl; pl = pl->next)
             {
-                NewDrawInfo((flags & ~NDI_ALL), pl, buf);
+                if (!(pl->state & (ST_DEAD | ST_ZOMBIE)) &&
+                    pl->socket.status != Ns_Dead &&
+                    pri <= pl->listening)
+                {
+                    NewDrawInfo((flags & ~NDI_ALL), pl, buf);
+                }
             }
         }
-
-        return;
-    }
-    else
-    {
-        /* Silently refuse messages not to players.
-         * This lets us skip all ob->type == PLAYER checks all over the code */
-        if (op &&
-            op->type == PLAYER &&
-            CONTR(op) &&
-            (CONTR(op)->state & ST_PLAYING) &&
-            pri <= CONTR(op)->listening)
+        else
         {
-            NewDrawInfo(flags, CONTR(op), buf);
+            /* Silently refuse messages not to players. This lets us skip all
+             * ob->type == PLAYER checks all over the code */
+            /* Neater maybe, but surely slower as we then go through all the
+             * NDI rigmarole for nothing (ie, in common calling funcs which
+             * work for both players and monsters.
+             * -- Smacky 20100619 */
+            if (op &&
+                op->type == PLAYER &&
+                CONTR(op) &&
+                (CONTR(op)->state & ST_PLAYING) &&
+                pri <= CONTR(op)->listening)
+            {
+                NewDrawInfo(flags, CONTR(op), buf);
+            }
         }
     }
 }
 
-/*
- * write to everyone on the current map in a defined area
- *
-*/
+/* write to everyone on the current map in a defined area. */
 void new_info_map(const int flags, const mapstruct *const map, const int x,
                   const int y, const int dist, const char *const format, ...)
 {
     int     xt, yt, d;
     object *tmp;
-    char    buf[HUGE_BUF];
+    char    buf[HUGE_BUF] = "";
     va_list ap;
 
     if (!map ||
@@ -122,9 +122,14 @@ void new_info_map(const int flags, const mapstruct *const map, const int x,
 
     va_start(ap, format);
     vsnprintf(buf, sizeof(buf), format, ap);
-    buf[sizeof(buf) - 1] = '\0';
     va_end(ap);
+    buf[sizeof(buf) - 1] = '\0';
 
+    /* Do not try to send empty messages. */
+    if (!buf[0])
+    {
+        return;
+    }
     if (dist == MAP_INFO_ALL)
     {
         NewInfoMapAllExcept(flags, map, NULL, NULL, buf); /* we want all on this map */
@@ -287,11 +292,10 @@ static void NewDrawInfo(const int flags, player *pl, const char *const buf)
     SOCKBUF_REQUEST_FINISH(ns, BINARY_CMD_DRAWINFO2, SOCKBUF_DYNAMIC);
 }
 
-/* we want give msg to all people on one, specific map
- */
+/* we want give msg to all people on one, specific map. */
 static void NewInfoMapAllExcept(const int flags, const mapstruct *const map,
                                 const object *const op1,
-                                    const object *const op, const char *const str)
+                                const object *const op, const char *const str)
 {
     object *tmp;
 
@@ -305,15 +309,13 @@ static void NewInfoMapAllExcept(const int flags, const mapstruct *const map,
     }
 }
 
-/*
- * write to everyone on the map *except* op and op1.  This is useful for emotions.
- */
+/* write to everyone on the map *except* op and op1.  This is useful for emotions. */
 void new_info_map_except(const int flags, const mapstruct *const map,
                          const int x, const int y, const int dist,
                          const  object *const op1, const object *const op,
                          const char *const format, ...)
 {
-    char     buf[HUGE_BUF];
+    char     buf[HUGE_BUF] = "";
     va_list  ap;
     int      xt,
              yt,
@@ -330,8 +332,8 @@ void new_info_map_except(const int flags, const mapstruct *const map,
 
     va_start(ap, format);
     vsnprintf(buf, sizeof(buf), format, ap);
-    buf[sizeof(buf) - 1] = '\0';
     va_end(ap);
+    buf[sizeof(buf) - 1] = '\0';
 
     if (!map || map->in_memory != MAP_IN_MEMORY)
         return;
