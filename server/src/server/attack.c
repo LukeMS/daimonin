@@ -68,8 +68,6 @@ static int GetAttackMode(object **target, object **hitter, int *env_attack);
 static int  AbortAttack(object *target, object *hitter, int env_attack);
 static void SendAttackMsg(object *op, object *hitter, int attacknum, int dam,
                           int damage);
-static void SendLeechMsg(object *op, object *hitter, int attacknum, int dam,
-                         int damage);
 static int  HitPlayerAttacktype(object *op, object *hitter, int *flags, int damage, uint32 attacknum, int magic);
 
 /* check and adjust all pre-attack issues like checking attack is valid,
@@ -737,8 +735,9 @@ static inline void send_resist_msg(object *op, object *hitter, int attacknum)
  * the attacktype.  Makes it easier for the PR code.  */
 static int HitPlayerAttacktype(object *op, object *hitter, int *flags, int damage, uint32 attacknum, int magic)
 {
-    double  dam         = (double) damage;
-    int     doesnt_slay = 1;
+    double dam = (double) damage;
+    int    doesnt_slay = 1;
+    uint8  chance;
 
     /* just a sanity check */
     if (dam < 0)
@@ -867,6 +866,8 @@ static int HitPlayerAttacktype(object *op, object *hitter, int *flags, int damag
         return 0;
     }
 
+    chance = MAX(0, hitter->attack[attacknum] - op->resist[attacknum]);
+
     switch (attacknum)
     {
         case ATNR_IMPACT:
@@ -965,23 +966,7 @@ static int HitPlayerAttacktype(object *op, object *hitter, int *flags, int damag
                 ATTACK_RESIST_DAMAGE(op, attacknum);    /* reduce to % resistance */
             if (damage && dam < 1.0)
                 dam = 1.0;
-            SendLeechMsg(op, hitter, attacknum, (int) dam, damage);
-            if (op->type != PLAYER &&
-                op->stats.sp > 0)
-            {
-                if ((op->stats.sp -= dam) < 0)
-                {
-                    op->stats.sp = 0;
-                }
-            }
-            else if (op->stats.grace > 0)
-            {
-                if ((op->stats.grace -= dam) < 0)
-                {
-                    op->stats.grace = 0;
-                }
-            }
-            /* TODO: Leeching */
+            leech_hind(hitter, op, attacknum, (int)dam, damage, chance);
             dam = 0.0; // don't do actual (hp) damage
             break;
 
@@ -1013,15 +998,7 @@ static int HitPlayerAttacktype(object *op, object *hitter, int *flags, int damag
                 ATTACK_RESIST_DAMAGE(op, attacknum);    /* reduce to % resistance */
             if (damage && dam < 1.0)
                 dam = 1.0;
-            SendLeechMsg(op, hitter, attacknum, (int) dam, damage);
-            if (op->stats.sp > 0)
-            {
-                if ((op->stats.sp -= dam) < 0)
-                {
-                    op->stats.sp = 0;
-                }
-            }
-            /* TODO: Leeching */
+            leech_hind(hitter, op, attacknum, (int)dam, damage, chance);
             dam = 0.0; // don't do actual (hp) damage
             break;
 
@@ -1032,8 +1009,8 @@ static int HitPlayerAttacktype(object *op, object *hitter, int *flags, int damag
                 ATTACK_RESIST_DAMAGE(op, attacknum);    /* reduce to % resistance */
             if (damage && dam < 1.0)
                 dam = 1.0;
-            SendLeechMsg(op, hitter, attacknum, (int) dam, damage);
-            /* TODO: Leeching */
+            leech_hind(hitter, op, attacknum, (int)dam, damage, chance);
+            dam = 0.0; // don't do actual (hp) damage
             /* (this is old code )
             {
                 int new_hp;
@@ -1332,36 +1309,6 @@ static void SendAttackMsg(object *op, object *hitter, int attacknum, int dam,
     {
         new_draw_info(NDI_ORANGE, 0, hitter, "You hit %s for %d (%d) with %s.",
                       op->name, (int)dam, ((int)dam) - damage,
-                      attack_name[attacknum]);
-    }
-}
-
-static void SendLeechMsg(object *op, object *hitter, int attacknum, int dam,
-                         int damage)
-{
-    char buf[TINY_BUF];
-
-    sprintf(buf, "%s",
-            (attacknum == ATNR_PSIONIC) ? "mana" :
-            ((attacknum == ATNR_CORRUPTION) ? "grace" : "damage"));
-
-    if (op->type == PLAYER &&
-        (op->stats.sp > 0 ||
-         op->stats.grace > 0))
-    {
-        new_draw_info(NDI_PURPLE, 0, op, "%s hits you for %d (%d) %s.",
-                      hitter->name, (int)dam, ((int)dam) - damage, buf);
-    }
-
-    /* i love C... ;) */
-    if ((hitter->type == PLAYER ||
-         ((hitter = get_owner(hitter)) &&
-         hitter->type == PLAYER)) &&
-        (op->stats.sp > 0 ||
-         op->stats.grace > 0))
-    {
-        new_draw_info(NDI_ORANGE, 0, hitter, "You hit %s for %d (%d) %s with %s.",
-                      op->name, (int)dam, ((int)dam) - damage, buf,
                       attack_name[attacknum]);
     }
 }

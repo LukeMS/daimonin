@@ -2478,3 +2478,115 @@ void set_mobile_speed(object *op, int factor)
     if ((old_speed && !op->speed) || (!old_speed && op->speed))
         update_ob_speed(op);
 }
+
+/* Leeches a health indicator (that is takes some off leechee and gives a
+ * proportion to leecher). */
+void leech_hind(object *leecher, object *leechee, uint8 attack, sint16 plose,
+                sint16 pmod, uint8 chance)
+{
+    sint16 pgain = 0;
+    char   buf[TINY_BUF];
+
+    /* Sanity -- no damage, nothing to do. */
+    if (plose <= 0)
+    {
+        return;
+    }
+
+    /* First do the damage/leech. */
+    if (attack == ATNR_CORRUPTION && // Corruption on player
+        leechee->type == PLAYER)
+    {
+        /* Sanity -- no hind to leech, nothing to do. */
+        if (leechee->stats.grace <= 0)
+        {
+            return;
+        }
+
+        if ((leechee->stats.grace -= plose) < 0)
+        {
+            leechee->stats.grace = 0;
+        }
+
+        pgain = random_roll(1, plose / 100.0f * chance);
+
+        if (leecher->type == PLAYER)
+        {
+            if ((leecher->stats.grace += pgain) > leecher->stats.maxgrace)
+            {
+                leecher->stats.grace = leecher->stats.maxgrace;
+            }
+        }
+        /* mobs only have sp ATM */
+        else
+        {
+            if ((leecher->stats.sp += pgain) > leecher->stats.maxsp)
+            {
+                leecher->stats.sp = leecher->stats.maxsp;
+            }
+        }
+    }
+    else if (attack != ATNR_LIFESTEAL) // Psionic or corruption on mob
+    {
+        /* Sanity -- no hind to leech, nothing to do. */
+        if (leechee->stats.sp <= 0)
+        {
+            return;
+        }
+
+        if ((leechee->stats.sp -= plose) < 0)
+        {
+            leechee->stats.sp = 0;
+        }
+
+        pgain = random_roll(1, plose / 100.0f * chance);
+
+        if ((leecher->stats.sp += pgain) > leecher->stats.maxsp)
+        {
+            leecher->stats.sp = leecher->stats.maxsp;
+        }
+    }
+    else // Lifesteal
+    {
+        /* Sanity -- no hind to leech, nothing to do. */
+        if (leechee->stats.hp <= 0)
+        {
+            return;
+        }
+
+        /* FIXME: not 100% sure it is wise to directly lower hp like this
+         * rather than calling damage_ob(). */
+        if ((leechee->stats.hp -= plose) < 0)
+        {
+            leechee->stats.hp = 0;
+        }
+
+        pgain = random_roll(1, plose / 100.0f * chance);
+
+        if ((leecher->stats.hp += pgain) > leecher->stats.maxhp)
+        {
+            leecher->stats.hp = leecher->stats.maxhp;
+        }
+    }
+
+    /* Then say what has happened. */
+    sprintf(buf, "%s",
+            (attack == ATNR_PSIONIC) ? "mana" :
+            ((attack == ATNR_CORRUPTION) ? "grace" : "damage"));
+
+    if (leechee->type == PLAYER)
+    {
+        new_draw_info(NDI_PURPLE, 0, leechee, "%s hits you for %d (%d) %s. It is a leech attack!",
+                      leecher->name, (int)plose, ((int)plose) - pmod, buf);
+    }
+
+    /* i love C... ;) */
+    if ((leecher->type == PLAYER ||
+         ((leecher = get_owner(leecher)) &&
+         leecher->type == PLAYER)))
+    {
+        new_draw_info(NDI_ORANGE, 0, leecher, "You hit %s for %d (%d) %s with %s. It is a leech attack!",
+                      leechee->name, (int)plose, ((int)plose) - pmod, buf,
+                      attack_name[attack]);
+    }
+}
