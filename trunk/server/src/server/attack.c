@@ -235,7 +235,7 @@ int attack_ob(object *target, object *hitter, object *hit_obj)
             if (target->type == PLAYER)
                 new_draw_info(NDI_PURPLE, 0, target, "%s Direct Hit! (+20%% damage)", hitter->name);
             if (hitter->type == PLAYER)
-                new_draw_info(NDI_ORANGE, 0, hitter, "Direct Hit! (+20% damage)");
+                new_draw_info(NDI_ORANGE, 0, hitter, "Direct Hit! (+20%% damage)");
             hitdam = (int) (hitdam * 1.2f);
         }
 
