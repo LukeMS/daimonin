@@ -1,5 +1,5 @@
 Object rows
-name rows
+name pair of oars
 face rows.101
 no_pick 1
 type 79

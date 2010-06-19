@@ -420,7 +420,6 @@ last_grace 4
 x 6
 y 11
 arch cube_gel
-name small gelantinous cube
 type 83
 wis 2
 dam 30
