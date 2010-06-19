@@ -1,5 +1,5 @@
 Object stairs_red_up
-name stairs going up
+name flight of stairs going up
 face stairs_red_up.131
 animation stairs_red_up
 is_animated 0
@@ -15,7 +15,7 @@ no_pick 1
 end
 
 Object stairs_red_down
-name stairs going down
+name flight of stairs going down
 face stairs_red_down.131
 animation stairs_red_down
 is_animated 0
