@@ -14,6 +14,9 @@ maxhp 200
 food 200
 last_eat 1
 nrof 1
+identified 1
+known_magical 1
+known_cursed 1
 end
 
 Object large_candle_b
@@ -33,6 +36,9 @@ maxhp 200
 food 200
 last_eat 1
 nrof 1
+identified 1
+known_magical 1
+known_cursed 1
 end
 
 Object large_candle_c
@@ -52,6 +58,9 @@ maxhp 200
 food 200
 last_eat 1
 nrof 1
+identified 1
+known_magical 1
+known_cursed 1
 end
 
 Object large_candle_burnt
@@ -63,4 +72,7 @@ layer 3
 no_pick 1
 weight 1000
 nrof 1
+identified 1
+known_magical 1
+known_cursed 1
 end

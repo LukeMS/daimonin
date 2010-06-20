@@ -13,4 +13,7 @@ weight 1250
 material 144
 food 1
 nrof 1
+identified 1
+known_magical 1
+known_cursed 1
 end

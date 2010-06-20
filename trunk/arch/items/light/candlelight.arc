@@ -14,6 +14,9 @@ glow_radius 3
 weight 1150
 food 1
 nrof 1
+identified 1
+known_magical 1
+known_cursed 1
 end
 
 Object candlelight2.101
@@ -32,6 +35,9 @@ glow_radius 3
 weight 1150
 food 1
 nrof 1
+identified 1
+known_magical 1
+known_cursed 1
 end
 
 Object candlelight3.101
@@ -50,6 +56,9 @@ glow_radius 3
 weight 1150
 food 1
 nrof 1
+identified 1
+known_magical 1
+known_cursed 1
 end
 
 Object candlelight4.101
@@ -68,4 +77,7 @@ glow_radius 2
 weight 850
 food 1
 nrof 1
+identified 1
+known_magical 1
+known_cursed 1
 end
