@@ -18,4 +18,7 @@ material 144
 food 1
 speed -0.02
 nrof 1
+identified 1
+known_magical 1
+known_cursed 1
 end

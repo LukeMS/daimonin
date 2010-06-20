@@ -660,18 +660,24 @@ char *examine(object *op, object *tmp, int flag)
     *buf='\0';
     if(flag)
     {
-        strcpy(buf, "That is ");
-        strncat(buf, long_desc(tmp, op), LARGE_BUF - strlen(buf) - 1);
-        buf[LARGE_BUF - 1] = 0;
+        sprintf(buf, "That is %s", long_desc(tmp, op));
     }
 
     if (op && op->type == PLAYER && tmp->type == FLESH)
         CLEAR_FLAG(tmp, FLAG_SEE_INVISIBLE);
 
     /* only add this for usable items, not for objects like walls or floors for example */
-    if (!QUERY_FLAG(tmp, FLAG_IDENTIFIED) && need_identify(tmp))
-        strncat(buf, " (unidentified)", LARGE_BUF - strlen(buf) - 1);
-    buf[LARGE_BUF - 1] = 0;
+    if (!QUERY_FLAG(tmp, FLAG_IDENTIFIED) &&
+        need_identify(tmp))
+    {
+        sprintf(strchr(buf, '\0'), " (unidentified)");
+    }
+
+    if (tmp->type == TYPE_LIGHT_APPLY)
+    {
+        sprintf(strchr(buf, '\0'), " (%s)",
+                (tmp->glow_radius) ? "lit" : "extinguished");
+    }
 
     strcat(buf_out, buf);
     strcat(buf_out, "\n");
@@ -963,21 +969,50 @@ char *examine(object *op, object *tmp, int flag)
     /* Does the object have a message?  Don't show message for all object
      * types - especially if the first entry is a match
      */
-    if (tmp->msg && tmp->type != EXIT
-     && tmp->type != GRAVESTONE
-     && tmp->type != SIGN
-     && tmp->type != BOOK
-     && tmp->type != CORPSE
-     && !QUERY_FLAG(tmp, FLAG_WALK_ON)
-     && strncasecmp(tmp->msg, "@match", 7))
+    if (tmp->msg)
     {
-        /* This is just a hack so when identifying hte items, we print
-         * out the extra message
-         */
-        if (need_identify(tmp) && QUERY_FLAG(tmp, FLAG_IDENTIFIED))
+        if (!QUERY_FLAG(tmp, FLAG_WALK_ON) &&
+            (tmp->type == EXIT ||
+             tmp->type == GRAVESTONE ||
+             tmp->type == SIGN ||
+             tmp->type == BOOK ||
+             tmp->type == CORPSE ||
+             tmp->type == TYPE_LIGHT_APPLY))
         {
-            strcat(buf_out, "The object has a story:\n");
-            strcat(buf_out, tmp->msg);
+            /* This is just a hack so when identifying hte items, we print
+             * out the extra message.  */
+            if (need_identify(tmp) &&
+                QUERY_FLAG(tmp, FLAG_IDENTIFIED))
+            {
+                /* For non-applyable applyable lights    we *do* want the
+                 * message but *do not* want the story line. */
+                if (tmp->type != TYPE_LIGHT_APPLY ||
+                    !QUERY_FLAG(tmp, FLAG_NO_FIX_PLAYER))
+                {
+                    sprintf(strchr(buf_out, '\0'), "The object has a story:\n");
+                }
+
+                sprintf(strchr(buf_out, '\0'), "%s", tmp->msg);
+            }
+        }
+    }
+    /* Applyable applyable lights with no msg have default instructions. */
+    else if (tmp->type == TYPE_LIGHT_APPLY &&
+             !QUERY_FLAG(tmp, FLAG_NO_FIX_PLAYER))
+    {
+        if (!tmp->glow_radius)
+        {
+            sprintf(strchr(buf_out, '\0'), "Apply to attempt to light.");
+        }
+        else if (tmp->env &&
+                 tmp->env->type == PLAYER &&
+                 !QUERY_FLAG(tmp, FLAG_APPLIED))
+        {
+            sprintf(strchr(buf_out, '\0'), "Apply to attempt to use as your light source");
+        }
+        else
+        {
+            sprintf(strchr(buf_out, '\0'), "Apply to attempt to extinguish.");
         }
     }
 
