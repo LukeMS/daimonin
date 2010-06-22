@@ -150,48 +150,41 @@
 
 /* Gecko 2005-05-14: This old hook system is being phased out, use the
  * plugin_hooklist struct below instead */
-#define HOOK_NONE               0
+enum
+{	
+    HOOK_SENDCUSTOMCOMMAND,
+    HOOK_CREATEOBJECT,
+    HOOK_OUTOFMAP,
+    HOOK_CMDRSKILL,
+    HOOK_BECOMEFOLLOWER,
+    HOOK_PICKUP,
+    HOOK_GETMAPOBJECT,
+    HOOK_COMMUNICATE,
+    HOOK_FINDPLAYER,
+    HOOK_MANUALAPPLY,
+    HOOK_CMDDROP,
+    HOOK_CMDTAKE,
+    HOOK_FINDMARKEDOBJECT,
+    HOOK_KILLOBJECT,
+    HOOK_LEARNSPELL,
+    HOOK_IDENTIFYOBJECT,
+    HOOK_CHECKFORSPELL,
+    HOOK_DESTRUCTOBJECT,
+    HOOK_CLONEOBJECT,
+    HOOK_LOADOBJECT,
+    HOOK_UPDATESPEED,
+    HOOK_UPDATEOBJECT,
+    HOOK_FINDANIMATION,
+    HOOK_LEARNSKILL,
+    HOOK_DUMPOBJECT,
+    HOOK_ADDEXP,
+    HOOK_DETERMINEGOD,
+    HOOK_FINDGOD,
+    HOOK_REGISTEREVENT,
+    HOOK_UNREGISTEREVENT,
 
-#define HOOK_SENDCUSTOMCOMMAND   1
-#define HOOK_REMOVEOBJECT        2
-#define HOOK_CREATEOBJECT        3
-
-#define HOOK_OUTOFMAP            4
-
-#define HOOK_CMDRSKILL          5
-#define HOOK_BECOMEFOLLOWER     6
-#define HOOK_PICKUP             7
-#define HOOK_GETMAPOBJECT       8
-
-#define HOOK_COMMUNICATE        9
-#define HOOK_FINDPLAYER         10
-#define HOOK_MANUALAPPLY        11
-#define HOOK_CMDDROP            12
-#define HOOK_CMDTAKE            13
-
-#define HOOK_FINDMARKEDOBJECT   14
-#define HOOK_KILLOBJECT         15
-#define HOOK_LEARNSPELL         16
-
-#define HOOK_IDENTIFYOBJECT     17
-#define HOOK_CHECKFORSPELL      18
-#define HOOK_DESTRUCTOBJECT     19
-#define HOOK_CLONEOBJECT        20
-#define HOOK_LOADOBJECT         21
-#define HOOK_UPDATESPEED        22
-#define HOOK_UPDATEOBJECT       23
-#define HOOK_FINDANIMATION      24
-
-#define HOOK_LEARNSKILL         25
-
-#define HOOK_DUMPOBJECT         26
-#define HOOK_ADDEXP             27
-#define HOOK_DETERMINEGOD       28
-#define HOOK_FINDGOD            29
-#define HOOK_REGISTEREVENT      30
-#define HOOK_UNREGISTEREVENT    31
-
-#define NR_OF_HOOKS              32
+    NR_OF_HOOKS
+};
 
 
 /*****************************************************************************/
@@ -281,7 +274,7 @@ struct plugin_hooklist
     /* D */
     object *(*decrease_ob_nr)(object *, uint32);
     void (*delete_map)(mapstruct *);
-    void (*drop_ob_inv)(object *);
+    void (*destruct_ob)(object *);
     /* E */
     int (*enter_map)(object *, object *, mapstruct *, int, int, int, int);
     int (*enter_map_by_exit)(object *, object *);
@@ -402,6 +395,7 @@ struct plugin_hooklist
     mapstruct *(*ready_map_name)(const char *,const char *, int, shstr *);
     void  (*reload_behaviours)(object *);
     sint64 (*remove_money_type)(object *, object *, sint64, sint64);
+    void (*remove_ob)(object *);
     void (*reset_instance_data)(player *pl);
     void (*return_poolchunk_array_real)(void *, uint32, struct mempool *);
     /* S */

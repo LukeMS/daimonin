@@ -488,7 +488,6 @@ CFParm                     *CFWDetermineGod(CFParm *PParm);
 CFParm                     *CFWFindGod(CFParm *PParm);
 CFParm                     *CFWDumpObject(CFParm *PParm);
 CFParm                     *CFWLoadObject(CFParm *PParm);
-CFParm                     *CFWRemoveObject(CFParm *PParm);
 CFParm                     *CFWSendCustomCommand(CFParm *PParm);
 CFParm                     *CFWCommunicate(CFParm *PParm);
 CFParm                     *CFWFindMarkedObject(CFParm *PParm);

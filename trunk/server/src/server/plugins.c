@@ -60,7 +60,7 @@ struct plugin_hooklist  hooklist    =
     /* D */
     decrease_ob_nr,
     delete_map,
-    drop_ob_inv,
+    destruct_ob,
     /* E */
     enter_map,
     enter_map_by_exit,
@@ -161,6 +161,7 @@ struct plugin_hooklist  hooklist    =
     ready_map_name,
     reload_behaviours,
     remove_money_type,
+    remove_ob,
     reset_instance_data,
     return_poolchunk_array_real,
     /* S */
@@ -478,7 +479,7 @@ void initOnePlugin(const char *pluginfile)
         HookParm = (CFParm *) (malloc(sizeof(CFParm)));
         HookParm->Value[0] = (int *) (malloc(sizeof(int)));
 
-        for (j = 1; j <= NR_OF_HOOKS; j++)
+        for (j = 0; j < NR_OF_HOOKS; j++)
         {
             memcpy(HookParm->Value[0], &j, sizeof(int));
             HookParm->Value[1] = HookList[j];
@@ -674,7 +675,7 @@ void initOnePlugin(const char *pluginfile)
         HookParm = (CFParm *) (malloc(sizeof(CFParm)));
         HookParm->Value[0] = (int *) (malloc(sizeof(int)));
 
-        for (j = 1; j < NR_OF_HOOKS; j++)
+        for (j = 0; j < NR_OF_HOOKS; j++)
         {
             memcpy(HookParm->Value[0], &j, sizeof(int));
             HookParm->Value[1] = HookList[j];
@@ -1068,17 +1069,6 @@ CFParm * CFWLoadObject(CFParm *PParm)
     LOG(llevDebug, "CFWLoadObject: %s\n", query_name(val));
     CFP->Value[0] = (void *) (val);
     return CFP;
-}
-
-/*****************************************************************************/
-/* remove_ob wrapper.                                                        */
-/*****************************************************************************/
-/* 0 - object to remove.                                                     */
-/*****************************************************************************/
-CFParm * CFWRemoveObject(CFParm *PParm)
-{
-    remove_ob((object *) (PParm->Value[0]));
-    return NULL;
 }
 
 /*****************************************************************************/
