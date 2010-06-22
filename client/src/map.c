@@ -139,6 +139,8 @@ void display_mapscroll(int dx, int dy)
     int         x, y, i;
     struct Map  newmap;
 
+    memset(&newmap, 0, sizeof(struct Map)); // initialise newmap
+
     for (x = 0; x < MapStatusX; x++)
     {
         for (y = 0; y < MapStatusY; y++)
