@@ -3156,7 +3156,7 @@ static int GameObject_SetSaveBed(lua_State *L)
 /*          object:Remove() as a shortcut for                                */
 /*          object:DecreasNrOf(object.quantity) or vice versa.               */
 /* Also   : If you want to genuinely remove an object, regardless of its     */
-/*          quantity, use pbject:Remove(). If you want to represent the      */
+/*          quantity, use object:Remove(). If you want to represent the      */
 /*          destruction of an object, use object:Destruct().                 */
 /* Status : Untested/Stable                                                  */
 /*****************************************************************************/
@@ -3213,12 +3213,9 @@ static int GameObject_Remove(lua_State *L)
 /*          Removes the object from the game and drops all items in object's */
 /*          inventory on the floor or in a corpse                            */
 /*          The method takes no arguments.                                   */
-/* Note   : This method does not handles stacks properly. Do not be tempted  */
-/*          to use object:Remove() as a shortcut for                    `    */
-/*          object:DecreasNrOf(object.quantity) or vice versa.               */
 /* Also   : If you want reduce the quantity of a stack, use                  */
-/*          object:DecreaseNrOf(). If you want to represent the destruction  */
-/*          of an object, use object:Destruct().                             */
+/*          object:DecreaseNrOf(). If you want to quietly remove an object,  */
+/*          not fiddle with the stack, use object:Remove()                   */
 /* Status : Untested/Stable                                                  */
 /*****************************************************************************/
 static int GameObject_Destruct(lua_State *L)
