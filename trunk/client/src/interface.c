@@ -2817,7 +2817,7 @@ static void SelectKeyword(_gui_npc_element *element)
      * visible window (plus a bit for context). USHRT_MAX means do not
      * reposition the window. */
     if (element &&
-        element->box.y != USHRT_MAX &&
+        element->box.y != SHRT_MAX &&
         gui_npc->height > GUI_NPC_HEIGHT)
     {
         gui_npc->yoff = MIN(element->box.y - element->box.h,
