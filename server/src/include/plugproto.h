@@ -25,23 +25,37 @@
 #ifndef PLUGPROTO_H_
 #define PLUGPROTO_H_
 
-f_plugin    HookList[NR_OF_HOOKS]   =
+f_plugin HookList[NR_OF_HOOKS] =
 {
-    NULL,
     CFWSendCustomCommand,
-    CFWRemoveObject ,
     CFWCreateObject,
     CFWOutOfMap,
-    CFWCmdRSkill, CFWBecomeFollower, CFWPickup,
-    CFWGetMapObject, CFWCommunicate,
-
-    CFWFindPlayer, CFWManualApply, CFWCmdDrop, CFWCmdTake, CFWFindMarkedObject,
-    CFWKillObject, CFWDoLearnSpell,
-    CFWIdentifyObject, CFWCheckSpellKnown,
-    CFWDestructObject, CFWObjectCreateClone, CFWLoadObject,
-    CFWUpdateSpeed, CFWUpdateObject, CFWFindAnimation,
+    CFWCmdRSkill,
+    CFWBecomeFollower,
+    CFWPickup,
+    CFWGetMapObject,
+    CFWCommunicate,
+    CFWFindPlayer,
+    CFWManualApply,
+    CFWCmdDrop,
+    CFWCmdTake,
+    CFWFindMarkedObject,
+    CFWKillObject,
+    CFWDoLearnSpell,
+    CFWIdentifyObject,
+    CFWCheckSpellKnown,
+    CFWDestructObject,
+    CFWObjectCreateClone,
+    CFWLoadObject,
+    CFWUpdateSpeed,
+    CFWUpdateObject,
+    CFWFindAnimation,
     CFWDoLearnSkill,
-    CFWDumpObject, CFWAddExp, CFWDetermineGod, CFWFindGod, RegisterGlobalEvent,
+    CFWDumpObject,
+    CFWAddExp,
+    CFWDetermineGod,
+    CFWFindGod,
+    RegisterGlobalEvent,
     UnregisterGlobalEvent
 };
 

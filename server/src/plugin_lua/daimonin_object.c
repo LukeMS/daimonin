@@ -1326,7 +1326,6 @@ static int GameObject_SetGod(lua_State *L)
     return 0;
 }
 
-
 /*****************************************************************************/
 /* Name   : GameObject_InsertInside                                          */
 /* Lua    : object:InsertInside(where)                                       */
@@ -1335,27 +1334,28 @@ static int GameObject_SetGod(lua_State *L)
 /*****************************************************************************/
 static int GameObject_InsertInside(lua_State *L)
 {
-    lua_object *whatptr;
-    object     *myob, *tmp, *obenv;
-    lua_object *self;
+    lua_object *self,
+               *whatptr;
+    object     *obenv,
+               *tmp;
 
     get_lua_args(L, "OO", &self, &whatptr);
+    obenv = WHO->env;
 
-    myob = self->data.object;
-    obenv = myob->env;
-
-    if (!QUERY_FLAG(myob, FLAG_REMOVED))
+    if (!QUERY_FLAG(WHO, FLAG_REMOVED))
     {
-        CFParm CFP;
-        CFP.Value[0] = (void *) (myob);
-        (PlugHooks[HOOK_REMOVEOBJECT]) (&CFP);
+        hooks->remove_ob(WHO);
     }
 
-    myob = hooks->insert_ob_in_ob(myob, WHAT);
-    hooks->esrv_send_item(hooks->is_player_inv(WHAT), myob);
+    WHO = hooks->insert_ob_in_ob(WHO, WHAT);
 
-    if((tmp = hooks->is_player_inv(obenv)))
+    /* TODO: incorporate in insert_ob_in_ob() */					
+    hooks->esrv_send_item(hooks->is_player_inv(WHAT), WHO);
+
+    if ((tmp = hooks->is_player_inv(obenv)))
+    {
         hooks->esrv_send_inventory(tmp, tmp);
+    }
 
     return 0;
 }
@@ -3146,25 +3146,37 @@ static int GameObject_SetSaveBed(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : GameObject_DecreaseNrOf                                          */
-/* Lua    : object:DecreaseNrOf(decrease)                                    */
-/* Info   : Reduces the number of objects in a stack, removing the stack if  */
-/*          the last object is removed.                                      */
-/*          decrease is the number of objects to remove from the stack. 1    */
-/*          is default, -1 means to remove the whole stack.                  */
+/* Lua    : object:DecreaseNrOf(nrof)                                        */
+/* Info   : Reduces the quantity of a stack by nrof, removing the object if  */
+/*          the entire stack is removed.                                     */
+/*          nrof is optional. If not given (or 0) it is the same as          */
+/*          object:DecreaseNrOf(1). If negative, it is the same as           */
+/*          object:DecreaseNrOf(object.quantity).                            */
+/* Note   : This method handles stacks properly. Do not be tempted to use    */
+/*          object:Remove() as a shortcut for                                */
+/*          object:DecreasNrOf(object.quantity) or vice versa.               */
+/* Also   : If you want to genuinely remove an object, regardless of its     */
+/*          quantity, use pbject:Remove(). If you want to represent the      */
+/*          destruction of an object, use object:Destruct().                 */
 /* Status : Untested/Stable                                                  */
 /*****************************************************************************/
 static int GameObject_DecreaseNrOf(lua_State *L)
 {
     lua_object *self;
-    int         nrof = 1;
+    int         nrof = 0;
 
     get_lua_args(L, "O|i", &self, &nrof);
 
-    /* -1 means "delete all" */
-    if(nrof==-1)
-        nrof = MAX(self->data.object->nrof, 1);
+    if (nrof == 0)                             
+    {
+        nrof = 1;
+    }
+    else if (nrof < 0)
+    {
+        nrof = MAX(1, WHO->nrof);
+    }
 
-    hooks->decrease_ob_nr(self->data.object, nrof);
+    hooks->decrease_ob_nr(WHO, nrof);
 
     return 0;
 }
@@ -3172,36 +3184,24 @@ static int GameObject_DecreaseNrOf(lua_State *L)
 /*****************************************************************************/
 /* Name   : GameObject_Remove                                                */
 /* Lua    : object:Remove()                                                  */
-/* Info   : Takes the object out of whatever map or inventory it is in. The  */
+/* Info   : Takes the object out of whatever map or environment it is in. The*/
 /*          object can then be inserted or teleported somewhere else, or just*/
 /*          left alone for the garbage collection to take care of.           */
-/*          If you just want to remove a part of a stack, have a look at     */
-/*          object:DecreaseNrOf(). If you actually want to represent the     */
-/*          destruction of an object, use object:Destruct()                  */
-/* Status : Tested/Stable                                                    */
+/*          The method takes no arguments.                                   */
+/* Note   : This method does not handles stacks properly. Do not be tempted  */
+/*          to use object:Remove() as a shortcut for                    `    */
+/*          object:DecreasNrOf(object.quantity) or vice versa.               */
+/* Also   : If you want reduce the quantity of a stack, use                  */
+/*          object:DecreaseNrOf(). If you want to represent the destruction  */
+/*          of an object, use object:Destruct().                             */
+/* Status : Untested/Stable                                                  */
 /*****************************************************************************/
 static int GameObject_Remove(lua_State *L)
 {
     lua_object *self;
-    object     *myob;
-    object     *obenv, *tmp;
-    CFParm      CFP;
 
     get_lua_args(L, "O", &self);
-
-    myob = WHO;
-    obenv = myob->env;
-
-    CFP.Value[0] = (void *) (myob);
-    (PlugHooks[HOOK_REMOVEOBJECT]) (&CFP);
-
-    /* Update player's inventory if object was removed from player
-     * TODO: see how well this works with things in containers */
-    /*`TODO: this is broken. See reduce_ob_nrof for the correct implementation (and possibly
-     * something that can be broken out and reused */
-    for (tmp = obenv; tmp != NULL; tmp = tmp->env)
-        if (tmp->type == PLAYER)
-            hooks->esrv_send_inventory(tmp, tmp);
+    hooks->remove_ob(WHO);
 
     return 0;
 }
@@ -3209,9 +3209,17 @@ static int GameObject_Remove(lua_State *L)
 /*****************************************************************************/
 /* Name   : GameObject_Destruct                                              */
 /* Lua    : object:Destruct()                                                */
-/* Info   : Removes the object from the game and drops all items in object's */
+/* Info   : Only works for monster objects. Other types generate an error.   */
+/*          Removes the object from the game and drops all items in object's */
 /*          inventory on the floor or in a corpse                            */
-/* Status : Tested/Stable                                                    */
+/*          The method takes no arguments.                                   */
+/* Note   : This method does not handles stacks properly. Do not be tempted  */
+/*          to use object:Remove() as a shortcut for                    `    */
+/*          object:DecreasNrOf(object.quantity) or vice versa.               */
+/* Also   : If you want reduce the quantity of a stack, use                  */
+/*          object:DecreaseNrOf(). If you want to represent the destruction  */
+/*          of an object, use object:Destruct().                             */
+/* Status : Untested/Stable                                                  */
 /*****************************************************************************/
 static int GameObject_Destruct(lua_State *L)
 {
@@ -3219,10 +3227,12 @@ static int GameObject_Destruct(lua_State *L)
 
     get_lua_args(L, "O", &self);
 
-    if(WHO->inv)
-        hooks->drop_ob_inv(WHO);
+    if (WHO->type != MONSTER)
+    {
+        return luaL_error(L, "Destruct() can only be called on monster!");
+    }
 
-    hooks->decrease_ob_nr(WHO, MAX(WHO->nrof, 1));
+    hooks->destruct_ob(WHO);
 
     return 0;
 }
