@@ -44,7 +44,6 @@ f_plugin HookList[NR_OF_HOOKS] =
     CFWDoLearnSpell,
     CFWIdentifyObject,
     CFWCheckSpellKnown,
-    CFWDestructObject,
     CFWObjectCreateClone,
     CFWLoadObject,
     CFWUpdateSpeed,

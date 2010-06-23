@@ -1071,17 +1071,6 @@ CFParm * CFWLoadObject(CFParm *PParm)
     return CFP;
 }
 
-/*****************************************************************************/
-/* destruct_ob wrapper.                                                      */
-/*****************************************************************************/
-/* 0 - object to destruct.                                                   */
-/*****************************************************************************/
-CFParm * CFWDestructObject(CFParm *PParm)
-{
-    destruct_ob((object *) (PParm->Value[0]));
-    return NULL;
-}
-
 CFParm * CFWSendCustomCommand(CFParm *PParm)
 {
     send_plugin_custom_message((object *) (PParm->Value[0]), (char *) (PParm->Value[1]));

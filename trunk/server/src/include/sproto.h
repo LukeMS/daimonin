@@ -500,7 +500,6 @@ void                        GlobalEvent(CFParm *PParm);
 CFParm                     *CFWCreateObject(CFParm *PParm);
 CFParm                     *CFMapSave(CFParm *PParm);
 CFParm                     *CFMapDelete(CFParm *PParm);
-CFParm                     *CFWDestructObject(CFParm *PParm);
 CFParm                     *CFInterface(CFParm *PParm);
 void                        send_plugin_custom_message(object *pl, char *buf);
 
