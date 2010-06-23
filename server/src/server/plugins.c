@@ -869,26 +869,6 @@ CFParm * CFWCmdTake(CFParm *PParm)
 }
 
 /*****************************************************************************/
-/* kill_object wrapper.                                                      */
-/*****************************************************************************/
-/* 0 - killed object;                                                        */
-/* 1 - damage done;                                                          */
-/* 2 - killer object;                                                        */
-/* 3 - type of killing.                                                      */
-/*****************************************************************************/
-CFParm * CFWKillObject(CFParm *PParm)
-{
-    CFParm     *CFP;
-    static int  val;
-    CFP = (CFParm *) (malloc(sizeof(CFParm)));
-    val = kill_object((object *) (PParm->Value[0]), *(int *) (PParm->Value[1]), (object *) (PParm->Value[2]),
-                      *(int *) (PParm->Value[3]));
-    CFP->Value[0] = &val;
-    return CFP;
-}
-
-
-/*****************************************************************************/
 /* check_spell_known wrapper.                                                */
 /*****************************************************************************/
 /* 0 - object to check;                                                      */
@@ -962,36 +942,6 @@ CFParm * CFWUpdateSpeed(CFParm *PParm)
     update_ob_speed((object *) (PParm->Value[0]));
     return NULL;
 }
-
-/*****************************************************************************/
-/* update_object wrapper.                                                    */
-/*****************************************************************************/
-/* 0 - object to update.                                                     */
-/*****************************************************************************/
-CFParm * CFWUpdateObject(CFParm *PParm)
-{
-    update_object((object *) (PParm->Value[0]), *(int *) (PParm->Value[1]));
-    return NULL;
-}
-
-/*****************************************************************************/
-/* find_animation wrapper.                                                   */
-/*****************************************************************************/
-/* 0 - name of the animation to find.                                        */
-/*****************************************************************************/
-CFParm * CFWFindAnimation(CFParm *PParm)
-{
-    CFParm     *CFP;
-    static int  val;
-    CFP = (CFParm *) (malloc(sizeof(CFParm)));
-    LOG(llevInfo, "CFWFindAnimation: %s\n", (char *) (PParm->Value[0]));
-    val = find_animation((char *) (PParm->Value[0]));
-    LOG(llevInfo, "Returned val: %i\n", val);
-    CFP->Value[0] = (void *) (&val);
-    return CFP;
-}
-
-
 
 /*****************************************************************************/
 /* add_exp wrapper.                                                          */
