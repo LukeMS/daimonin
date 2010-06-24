@@ -401,7 +401,7 @@
   <attribute arch="attack_sonic" editor="sonic (elemental)" type="int" min="0" max="100">
     Sonic belongs to the group of elemental attacks. Pure damage.
   </attribute>
-  <attribute arch="attack_magic" editor="channelling (magical)" type="int" min="0" max="100">
+  <attribute arch="attack_channelling" editor="channelling (magical)" type="int" min="0" max="100">
     Channelling belongs to the group of magical attacks. Its pure mana used to attack.
     damage only.
   </attribute>
@@ -517,7 +517,7 @@
   <attribute arch="resist_sonic" editor="sonic (elemental)" type="int" min="-100" max="100" check_min="-99" check_max="99">
     Sonic belongs to the group of elemental attacks. Pure damage.
   </attribute>
-  <attribute arch="resist_magic" editor="channelling (magical)" type="int" min="-100" max="100" check_min="-99" check_max="99">
+  <attribute arch="resist_channelling" editor="channelling (magical)" type="int" min="-100" max="100" check_min="-99" check_max="99">
     Channelling belongs to the group of magical attacks. Pure mana used for damage only.
   </attribute>
   <attribute arch="resist_corruption" editor="corruption (magical)" type="int" min="-100" max="100" check_min="-99" check_max="99">

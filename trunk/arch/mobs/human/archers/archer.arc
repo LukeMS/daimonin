@@ -42,12 +42,12 @@ resist_impact 12
 resist_cleave 12
 resist_pierce 12
 resist_slash 12
-resist_magic 20
+resist_channelling 20
 dam 42
 item_condition 10
 weapon_speed 3.5
 attack_pierce 60
-attack_magic 30
+attack_channelling 30
 attack_weaponmagic 10
 speed -0.049
 level 1

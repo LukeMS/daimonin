@@ -124,7 +124,7 @@ resist_impact 3
 resist_cleave 6
 resist_pierce 3
 resist_slash 6
-resist_magic 5
+resist_channelling 5
 resist_light 5
 resist_shadow 5
 resist_psionic 5

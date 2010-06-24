@@ -2299,7 +2299,7 @@ resist_depletion 30
 resist_corruption 30
 resist_confusion 30
 resist_slash 125
-resist_magic 125
+resist_channelling 125
 resist_godpower 125
 resist_fear 30
 resist_slow 30

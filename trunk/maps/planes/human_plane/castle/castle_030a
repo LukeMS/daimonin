@@ -3329,7 +3329,7 @@ resist_electricity 250
 resist_acid 250
 resist_poison 250
 resist_sonic 250
-resist_magic 250
+resist_channelling 250
 resist_light 250
 resist_shadow 250
 resist_psionic 250
