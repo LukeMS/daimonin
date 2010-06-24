@@ -70,10 +70,8 @@ $builddir/project_tools/perl-scripts/tileset_updater.pl $builddir/maps
 echo "### Checkout/update, export, build, and run Gridarta to collect arches." 1>&2
 svn co https://gridarta.svn.sourceforge.net/svnroot/gridarta/trunk/ $svndir/gridarta/trunk
 svn export $svndir/gridarta/trunk $builddir/gridarta
-cd $builddir/gridarta/daimonin
-ant
-mv DaimoninEditor.jar ..
-cd ..
+cd $builddir/gridarta
+ant jar-daimonin
 java -Xmx256M -jar DaimoninEditor.jar -c
 
 echo "### Build server." 1>&2
