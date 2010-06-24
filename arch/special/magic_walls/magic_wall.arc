@@ -18,7 +18,7 @@ last_eat 1
 maxsp 1
 ac 3
 exp 50
-resist_magic 100
+resist_channelling 100
 resist_fire 100
 resist_electricity 100
 resist_cold 100

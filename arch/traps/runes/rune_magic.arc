@@ -13,7 +13,7 @@ anim_speed 1
 is_invisible 1
 no_pick 1
 walk_on 1
-attack_magic 100
+attack_channelling 100
 dam 8
 cha 20
 end

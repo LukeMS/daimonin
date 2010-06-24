@@ -533,7 +533,7 @@ op->oz= op->z;
 ^attack_psionic{S}	SET_ATTACK(op, ATNR_PSIONIC, IVAL);
 
 ^attack_light{S}	SET_ATTACK(op, ATNR_LIGHT, IVAL);
-^attack_magic{S}	SET_ATTACK(op, ATNR_CHANNELLING, IVAL);
+^attack_channelling{S}	SET_ATTACK(op, ATNR_CHANNELLING, IVAL);
 ^attack_aether{S}	SET_ATTACK(op, ATNR_AETHER, IVAL);
 ^attack_snare{S}		SET_ATTACK(op, ATNR_SNARE, IVAL);
 ^attack_shadow{S}		SET_ATTACK(op, ATNR_SHADOW, IVAL);
@@ -567,7 +567,7 @@ op->oz= op->z;
 ^resist_sonic{S}	SET_RESIST(op, ATNR_SONIC, IVAL);
 ^resist_psionic{S}	SET_RESIST(op, ATNR_PSIONIC, IVAL);
 
-^resist_magic{S}	SET_RESIST(op, ATNR_CHANNELLING, IVAL);
+^resist_channelling{S}	SET_RESIST(op, ATNR_CHANNELLING, IVAL);
 ^resist_aether{S}	SET_RESIST(op, ATNR_AETHER, IVAL);
 ^resist_light{S}	SET_RESIST(op, ATNR_LIGHT, IVAL);
 ^resist_shadow{S}	SET_RESIST(op, ATNR_SHADOW, IVAL);

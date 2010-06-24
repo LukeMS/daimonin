@@ -39,12 +39,12 @@ resist_impact 45
 resist_cleave 45
 resist_pierce 45
 resist_slash 45
-resist_magic 50
+resist_channelling 50
 resist_electricity 100
 dam 85
 weapon_speed 3.5
 attack_slash 25
-attack_magic 25
+attack_channelling 25
 attack_weaponmagic 25
 attack_electricity 25
 speed -0.025
