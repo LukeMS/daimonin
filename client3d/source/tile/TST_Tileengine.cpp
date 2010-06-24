@@ -61,27 +61,25 @@ private:
         TileManager::getSingleton().setMap(18,  5,  80, 4, 0);
 
         // Some water.
-        /*
-                TileManager::getSingleton().setMap(10,  8, 30, 6, 48);
-                TileManager::getSingleton().setMap(11,  8, 30, 6, 48);
-                TileManager::getSingleton().setMap(10,  9, 30, 6, 48);
-                TileManager::getSingleton().setMap(11,  9, 30, 6, 48);
-                TileManager::getSingleton().setMap(12,  9, 30, 6, 48);
-                TileManager::getSingleton().setMap(11,  4, 30, 6, 48);
-                TileManager::getSingleton().setMap(12,  4, 30, 6, 48);
-                TileManager::getSingleton().setMap(11,  5, 30, 6, 48);
-                TileManager::getSingleton().setMap(12,  5, 30, 6, 48);
-                TileManager::getSingleton().setMap(13,  5, 30, 6, 48);
-        */
-        //                                  x,  z    h, gfx, h, shadow, hard edge, spot
-        TileManager::getSingleton().setMap(17,  8,  60,   1, 0, 0,      0, true);
-        TileManager::getSingleton().setMap(18,  9,  60,   2, 0, 0,      0, true);
+        TileManager::getSingleton().setMap(10,  8, 30, 6, 48);
+        TileManager::getSingleton().setMap(11,  8, 30, 6, 48);
+        TileManager::getSingleton().setMap(10,  9, 30, 6, 48);
+        TileManager::getSingleton().setMap(11,  9, 30, 6, 48);
+        TileManager::getSingleton().setMap(12,  9, 30, 6, 48);
+        TileManager::getSingleton().setMap(11,  4, 30, 6, 48);
+        TileManager::getSingleton().setMap(12,  4, 30, 6, 48);
+        TileManager::getSingleton().setMap(11,  5, 30, 6, 48);
+        TileManager::getSingleton().setMap(12,  5, 30, 6, 48);
+        TileManager::getSingleton().setMap(13,  5, 30, 6, 48);
+        //                                  x,  z    h, gfx, h, hard edge, spot
+        TileManager::getSingleton().setMap(17,  8,  60,   1, 0,      0, true);
+        TileManager::getSingleton().setMap(18,  9,  60,   2, 0,      0, true);
         TileManager::getSingleton().updateChunks();
     }
 
     void destroyScene(void)
     {
-      TileManager::getSingleton().freeRecources();
+        TileManager::getSingleton().freeRecources();
     }
 };
 

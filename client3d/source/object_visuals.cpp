@@ -293,10 +293,10 @@ void ObjectVisuals::unselect()
 //===================================================
 // .
 //===================================================
-void ObjectVisuals::highlight(bool staticObject, int friendly, bool highlight)
+void ObjectVisuals::highlight(bool staticObject, int friendly, bool doHighlight)
 {
     PROFILE()
-    if (!highlight)
+    if (!doHighlight)
     {
         GuiManager::getSingleton().setMouseState(GuiManager::STATE_MOUSE_DEFAULT);
         return;

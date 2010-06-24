@@ -98,13 +98,12 @@ public:
      ** @param height      The new height of the top/left vertex of this map pos.
      ** @param gfx         The tile-gfx number (0...41, while 41 is always a complete black gfx for fog of war).
      ** @param waterLvl    The height of the water surface. 0 means no water on this tile.
-     ** @param shadow      The amount of the darkening for this tile. Used to fake shadows.
      ** @param gfxHardEdge The tile-gfx number with hard edge e.g. for indoor tiles.
      ** @param spotLight   True for a spotlight (Spotlights can only be placed in the middle of the border to a
                            horizontal or vertical neighbour tile).
      *****************************************************************************/
     void setMap(unsigned int x, unsigned int z, Ogre::uchar height, Ogre::uchar gfxLayer0, Ogre::uchar waterLvl =0,
-                Ogre::uchar shadow = 255, Ogre::uchar gfxHardEdge = 0, bool spotLight = false);
+                Ogre::uchar gfxHardEdge = 0, bool spotLight = false);
     Ogre::uchar  getMapLayer0(unsigned int x, unsigned int z);
     Ogre::uchar  getMapLayer1(unsigned int x, unsigned int z);
     Ogre::ushort getMapWater (unsigned int x, unsigned int z);
@@ -173,7 +172,7 @@ private:
         Ogre::uchar gfxLayer1;   /**< Graphic of the Top/Left vertex. Layer1 is drawn on top of Layer0 without blending. **/
         Ogre::uchar heightLand;  /**< Height  of the Top/Left vertex. **/
         Ogre::uchar heightWater; /**< Height of the water surface (0 -> no water). **/
-        Ogre::uchar shadow;      /**< The darkening amount to simulate terrain shadows. **/
+        Ogre::Vector3 normal;    /**< The normal vector. Used for lightning. **/
         bool spotLight;          /**< If >0 the subtile is lighten by by a spotlight. **/
     } mapStruct;
     mapStruct *mMap;

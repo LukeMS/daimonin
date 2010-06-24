@@ -83,25 +83,6 @@ void Network::InterfaceCmd(uchar *data, int len)
 }
 
 //================================================================================================
-// Find a face ID by name, request the face (find it, load it or request it) and return the ID.
-//================================================================================================
-int get_bmap_id(char * /*name*/)
-{
-    PROFILE()
-    /*
-    for (int = 0; i < bmaptype_table_size; i++)
-    {
-        if (bmaptype_table[i].name[0] && !strcmp(bmaptype_table[i].name, name))
-        {
-            request_face(i, 0);
-            return i;
-        }
-    }
-    */
-    return -1;
-}
-
-//================================================================================================
 //
 //================================================================================================
 CmdInterface::CmdInterface()
@@ -510,14 +491,13 @@ void CmdInterface::format_gui_interface()
     // search for the bmap num id's and load/request them if possible
     for (int s=0; s < mIcon_count; ++s)
     {
-        if (mIcon[s].mode == 'S')
-            mIcon_select = true;
-        //      gui_int->icon[s].element.face = get_bmap_id(gui_int->icon[s].name);
-        //        if(gui_int->icon[s].element.face==-1)
+        mIcon_select = (mIcon[s].mode == 'S')?true:false;
+        //mIcon[s].element.face = get_bmap_id(mIcon[s].name);
+        //if (mIcon[s].element.face==-1)
         {
-            //            char line[256];
-            //        (line, "%s%s.png", GetIconDirectory(), gui_int->icon[s].name);
-            //        gui_int->icon[s].picture = sprite_load_file(line, 0);
+            // char line[256];
+            // sprintf(line, "%s%s.png", GetIconDirectory(), mIcon[s].name);
+            // mIcon[s].picture = sprite_load_file(line, 0);
         }
     }
     // ////////////////////////////////////////////////////////////////////

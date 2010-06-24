@@ -42,10 +42,11 @@ const unsigned int RGB_A= 4; /**< Pixelsize. **/
 
 //////// Only for TESTING
 #include <stdio.h>
+
 void TileManager::loadLvl()
 {
     FILE *stream = fopen("client3d.lvl", "rb");
-    fread(&mMap, sizeof(mMap), 1, stream);
+    fread(mMap, sizeof(mapStruct), mMapSizeX * mMapSizeZ, stream);
     fclose(stream);
     updateChunks();
 }
@@ -53,7 +54,7 @@ void TileManager::loadLvl()
 void TileManager::saveLvl()
 {
     FILE *stream = fopen("client3d.lvl", "wb");
-    fwrite(&mMap, sizeof(mMap), 1, stream);
+    fwrite(mMap, sizeof(mapStruct), mMapSizeX * mMapSizeZ, stream);
     fclose(stream);
 }
 //////////////////////////
@@ -114,8 +115,8 @@ void TileManager::Init(SceneManager *SceneMgr, int queryMaskLand, int queryMaskW
     }
     mRaySceneQuery = mSceneManager->createRayQuery(Ray());
     // Create the world map.
-    mMapSizeX = 1; while (mMapSizeX < CHUNK_SIZE_X*2+4) mMapSizeX <<= 1; // Map size mst be power of 2.
-    mMapSizeZ = 1; while (mMapSizeZ < CHUNK_SIZE_Z*2+4) mMapSizeZ <<= 1; // Map size mst be power of 2.
+    mMapSizeX = 1; while (mMapSizeX < CHUNK_SIZE_X*2+4) mMapSizeX <<= 1; // Map size must be power of 2.
+    mMapSizeZ = 1; while (mMapSizeZ < CHUNK_SIZE_Z*2+4) mMapSizeZ <<= 1; // Map size must be power of 2.
     mMapMaskX = mMapSizeX -1;
     mMapMaskZ = mMapSizeZ -1;
     mMapSPosX = 1; // Ringbuffer start pos x.
@@ -158,7 +159,7 @@ void TileManager::updateChunks()
 // | /|\ |
 // +--S--+
 //================================================================================================
-void TileManager::setMap(unsigned int x, unsigned int z, uchar heightLand, uchar gfxLayer0, uchar heightWater, uchar shadow, uchar gfxLayer1, bool spotLight)
+void TileManager::setMap(unsigned int x, unsigned int z, uchar heightLand, uchar gfxLayer0, uchar heightWater, uchar gfxLayer1, bool spotLight)
 {
     PROFILE()
     int ringBufferPos = ((mMapSPosZ + z)&mMapMaskZ)*mMapSizeX + ((mMapSPosX + x)&mMapMaskX);
@@ -166,7 +167,7 @@ void TileManager::setMap(unsigned int x, unsigned int z, uchar heightLand, uchar
     mMap[ringBufferPos].gfxLayer1  = gfxLayer1;
     mMap[ringBufferPos].heightLand = heightLand;
     mMap[ringBufferPos].heightWater= heightWater;
-    mMap[ringBufferPos].shadow     = shadow;
+    //mMap[ringBufferPos].normal     = ;
     mMap[ringBufferPos].spotLight  = spotLight;
 }
 
@@ -185,7 +186,7 @@ Ogre::ushort TileManager::getMapHeight(unsigned int x, unsigned int z)
 Ogre::ushort TileManager::getMapWater(unsigned int x, unsigned int z)
 {
     PROFILE()
-    return mMap[((mMapSPosZ + z)&mMapMaskZ)*mMapSizeX + ((mMapSPosX + x)&mMapMaskX)].heightWater;
+    return mMap[((mMapSPosZ + z)&mMapMaskZ)*mMapSizeX + ((mMapSPosX + x)&mMapMaskX)].heightWater * HEIGHT_STRETCH;
 }
 
 //================================================================================================
@@ -212,7 +213,25 @@ uchar TileManager::getMapLayer1(unsigned int x, unsigned int z)
 Real TileManager::getMapShadow(unsigned int x, unsigned int z)
 {
     PROFILE()
-    return Real(mMap[((mMapSPosZ + z)&mMapMaskZ)*mMapSizeX + ((mMapSPosX + x)&mMapMaskX)].shadow) / 255.0f;
+    //return Real(mMap[((mMapSPosZ + z)&mMapMaskZ)*mMapSizeX + ((mMapSPosX + x)&mMapMaskX)].shadow) / 255.0f;
+    /*
+        static Vector3 normal;
+        Vector3 posLight = Vector3(0, 255,0);
+        normal.x = getMapHeight(x-1, z) - getMapHeight(x+1, z);
+        normal.y = 2;
+        normal.z = getMapHeight(x, z-1) - getMapHeight(x, z+1);
+        normal.normalise();
+        float shadow = (normal.x * posLight.x + normal.y * posLight.y + normal.z * posLight.z);///255.0f;
+        if (shadow < posLight[1]) shadow = 0.7f;
+        return shadow;
+    */
+    float h = getMapHeight(x, z);
+    if (getMapHeight(x+1, z) > h || getMapHeight(x-1, z) > h || getMapHeight(x, z+1) > h || getMapHeight(x, z-1) > h ||
+            getMapHeight(x-1, z+1) > h || getMapHeight(x+1, z+1) >h || getMapHeight(x-1, z-1) > h || getMapHeight(x+1, z-1) > h)
+        return 0.75f;
+    return 1.00f;
+
+
 }
 
 //================================================================================================
