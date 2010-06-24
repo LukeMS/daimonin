@@ -31,8 +31,6 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include "profiler.h"
 #include "tile/tile_manager.h"
 
-#include <OgreManualObject.h> // delet me!!
-
 using namespace Ogre;
 
 const unsigned int SUM_CAMERA_POS  = 7;
@@ -96,18 +94,12 @@ void TileChunk::init(int queryMaskLand, int queryMaskWater, SceneManager *sceneM
     vData->vertexCount = 4*6*TileManager::CHUNK_SIZE_X*TileManager::CHUNK_SIZE_Z; // 4 Subtiles/tile, 6 vertices/subtile;
     VertexDeclaration *vdec = vData->vertexDeclaration;
     size_t offset = 0;
-    vdec->addElement(0, offset, VET_FLOAT3, VES_POSITION);
-    offset+= VertexElement::getTypeSize(VET_FLOAT3);
-    vdec->addElement(0, offset, VET_FLOAT4, VES_DIFFUSE);
-    offset+= VertexElement::getTypeSize(VET_FLOAT4);
-    vdec->addElement(0, offset, VET_FLOAT2, VES_TEXTURE_COORDINATES, 0);
-    offset+= VertexElement::getTypeSize(VET_FLOAT2);
-    vdec->addElement(0, offset, VET_FLOAT2, VES_TEXTURE_COORDINATES, 1);
-    offset+= VertexElement::getTypeSize(VET_FLOAT2);
-    vdec->addElement(0, offset, VET_FLOAT2, VES_TEXTURE_COORDINATES, 2);
-    offset+= VertexElement::getTypeSize(VET_FLOAT2);
-    vdec->addElement(0, offset, VET_FLOAT2, VES_TEXTURE_COORDINATES, 3);
-    offset+= VertexElement::getTypeSize(VET_FLOAT2);
+    vdec->addElement(0, offset, VET_FLOAT3, VES_POSITION);               offset+= VertexElement::getTypeSize(VET_FLOAT3);
+    vdec->addElement(0, offset, VET_FLOAT4, VES_DIFFUSE);                offset+= VertexElement::getTypeSize(VET_FLOAT4);
+    vdec->addElement(0, offset, VET_FLOAT2, VES_TEXTURE_COORDINATES, 0); offset+= VertexElement::getTypeSize(VET_FLOAT2);
+    vdec->addElement(0, offset, VET_FLOAT2, VES_TEXTURE_COORDINATES, 1); offset+= VertexElement::getTypeSize(VET_FLOAT2);
+    vdec->addElement(0, offset, VET_FLOAT2, VES_TEXTURE_COORDINATES, 2); offset+= VertexElement::getTypeSize(VET_FLOAT2);
+    vdec->addElement(0, offset, VET_FLOAT2, VES_TEXTURE_COORDINATES, 3); offset+= VertexElement::getTypeSize(VET_FLOAT2);
     HardwareVertexBufferSharedPtr vbuf = HardwareBufferManager::getSingleton().createVertexBuffer(offset, vData->vertexCount, HardwareBuffer::HBU_STATIC_WRITE_ONLY, false);
     vData->vertexBufferBinding->setBinding(0, vbuf);
     mSubMeshLand->vertexData = vData;
@@ -150,10 +142,8 @@ void TileChunk::init(int queryMaskLand, int queryMaskWater, SceneManager *sceneM
     vData->vertexCount = sumVertices;
     vdec = vData->vertexDeclaration;
     offset = 0;
-    vdec->addElement(0, offset, VET_FLOAT3, VES_POSITION);
-    offset+= VertexElement::getTypeSize(VET_FLOAT3);
-    vdec->addElement(0, offset, VET_FLOAT2, VES_TEXTURE_COORDINATES, 0);
-    offset+= VertexElement::getTypeSize(VET_FLOAT2);
+    vdec->addElement(0, offset, VET_FLOAT3, VES_POSITION);               offset+= VertexElement::getTypeSize(VET_FLOAT3);
+    vdec->addElement(0, offset, VET_FLOAT2, VES_TEXTURE_COORDINATES, 0); offset+= VertexElement::getTypeSize(VET_FLOAT2);
     vbuf = HardwareBufferManager::getSingleton().createVertexBuffer(offset, sumVertices*4, HardwareBuffer::HBU_STATIC_WRITE_ONLY, false);
     vData->vertexBufferBinding->setBinding(0, vbuf);
     mSubMeshWater->vertexData = vData;
@@ -212,10 +202,8 @@ void TileChunk::init(int queryMaskLand, int queryMaskWater, SceneManager *sceneM
     vData->vertexCount = sumVertices;
     vdec = vData->vertexDeclaration;
     offset = 0;
-    vdec->addElement(0, offset, VET_FLOAT3, VES_POSITION);
-    offset+= VertexElement::getTypeSize(VET_FLOAT3);
-    vdec->addElement(0, offset, VET_FLOAT2, VES_TEXTURE_COORDINATES, 0);
-    offset+= VertexElement::getTypeSize(VET_FLOAT2);
+    vdec->addElement(0, offset, VET_FLOAT3, VES_POSITION);               offset+= VertexElement::getTypeSize(VET_FLOAT3);
+    vdec->addElement(0, offset, VET_FLOAT2, VES_TEXTURE_COORDINATES, 0); offset+= VertexElement::getTypeSize(VET_FLOAT2);
     vbuf = HardwareBufferManager::getSingleton().createVertexBuffer(offset, sumVertices*4, HardwareBuffer::HBU_STATIC_WRITE_ONLY, false);
     vData->vertexBufferBinding->setBinding(0, vbuf);
     mSubMeshGrassFar->vertexData = vData;
@@ -419,12 +407,12 @@ void TileChunk::setVertex(Vector3 &pos, int maskNr, Real offsetU, Real offsetV, 
     static const int TEXTURE_UNIT_SORT[]= {0,2,4, 0,4,2, 2,0,4, 2,4,0, 4,0,2, 4,2,0, 4,4,4};
     int sorting = maskNr * 3;
     // if (maskNr == 6) maskNr = 0;
-    *mPosVBuf++ = pos.x;
+    *mPosVBuf++ = pos.x * TileManager::TILE_RENDER_SIZE;
     *mPosVBuf++ = pos.y;
-    *mPosVBuf++ = pos.z;
+    *mPosVBuf++ = pos.z * TileManager::TILE_RENDER_SIZE;
     *mPosVBuf++ = params.x; // Faked shadow
-    *mPosVBuf++ = params.y; // Faked shadow
-    *mPosVBuf++ = params.z; // Faked shadow
+    *mPosVBuf++ = params.x; // Reserved
+    *mPosVBuf++ = params.x; // Reserved
     *mPosVBuf++ = params.w; // Spotlight
     // Sort the texture units (the higher the gfxNr, the higher the used texture unit)
     // Pos in Atlastexture for Texture #0
@@ -449,71 +437,32 @@ void TileChunk::setVertex(Vector3 &pos, int maskNr, Real offsetU, Real offsetV, 
 void TileChunk::setTriangle(int x, int z, Vector3 v1, Vector3 v2, Vector3 v3,int maskNr)
 {
     PROFILE()
-    Real offsetU1 = v1.x*HALF_TILE_SIZE;
-    Real offsetV1 = v1.z*HALF_TILE_SIZE;
-    Real offsetU2 = v2.x*HALF_TILE_SIZE;
-    Real offsetV2 = v2.z*HALF_TILE_SIZE;
-    Real offsetU3 = v3.x*HALF_TILE_SIZE;
-    Real offsetV3 = v3.z*HALF_TILE_SIZE;
-    v1.y = TileManager::getSingleton().getMapHeight((int)(x+v1.x), (int)(z+v1.z));
-    v2.y = TileManager::getSingleton().getMapHeight((int)(x+v2.x), (int)(z+v2.z));
-    v3.y = TileManager::getSingleton().getMapHeight((int)(x+v3.x), (int)(z+v3.z));
     Vector4 params;
-    if ((v1.y <= v2.y) && (v1.y <= v3.y))
-    {
-        params.x = v1.y;
-        params.y = TileManager::getSingleton().getMapShadow((int)(x+v1.x), (int)(z+v1.z));
-        if (v2.y >= v3.y)
-        {
-            params.z = (v2.y == params.x)?0:(TileManager::getSingleton().getMapShadow((int)(x+v2.x), (int)(z+v2.z)) - params.y)/ (v2.y-params.x);
-            params.w = TileManager::getSingleton().getMapSpotLight((int)(x+v2.x), (int)(z+v2.z))?1.0f:0.0f;
-        }
-        else
-        {
-            params.z = (v3.y == params.x)?0:(TileManager::getSingleton().getMapShadow((int)(x+v3.x), (int)(z+v3.z)) - params.y)/ (v3.y-params.x);
-            params.w = TileManager::getSingleton().getMapSpotLight((int)(x+v3.x), (int)(z+v3.z))?1.0f:0.0f;
-        }
-    }
-    else if ((v2.y <= v1.y) && (v2.y <= v3.y))
-    {
-        params.x = v2.y;
-        params.y = TileManager::getSingleton().getMapShadow((int)(x+v2.x), (int)(z+v2.z));
-        if (v1.y >= v3.y)
-        {
-            params.z = (v1.y == params.x)?0:(TileManager::getSingleton().getMapShadow((int)(x+v1.x), (int)(z+v1.z)) - params.y)/ (v1.y-params.x);
-            params.w = TileManager::getSingleton().getMapSpotLight((int)(x+v1.x), (int)(z+v1.z))?1.0f:0.0f;
-        }
-        else
-        {
-            params.z = (v3.y == params.x)?0:(TileManager::getSingleton().getMapShadow((int)(x+v3.x), (int)(z+v3.z)) - params.y)/ (v3.y-params.x);
-            params.w = TileManager::getSingleton().getMapSpotLight((int)(x+v3.x), (int)(z+v3.z))?1.0f:0.0f;
-        }
-    }
-    else if ((v3.y <= v1.y) && (v3.y <= v2.y))
-    {
-        params.x = v3.y;
-        params.y = TileManager::getSingleton().getMapShadow((int)(x+v3.x), (int)(z+v3.z));
-        if (v1.y >= v2.y)
-        {
-            params.z = (v1.y == params.x)?0:(TileManager::getSingleton().getMapShadow((int)(x+v1.x), (int)(z+v1.z)) - params.y)/ (v1.y-params.x);
-            params.w = TileManager::getSingleton().getMapSpotLight((int)(x+v1.x), (int)(z+v1.z))?1.0f:0.0f;
-        }
-        else
-        {
-            params.z = (v2.y == params.x)?0:(TileManager::getSingleton().getMapShadow((int)(x+v3.x), (int)(z+v2.z)) - params.y)/ (v2.y-params.x);
-            //params.w = TileManager::getSingleton().getMapSpotLight((int)(x+v3.x), (int)(z+v2.z))?1.0f:0.0f;
-            params.w = TileManager::getSingleton().getMapSpotLight((int)(x+v3.x), (int)(z+v3.z))?1.0f:0.0f;
-        }
-    }
-    v3.x = (x+v3.x) * TileManager::TILE_RENDER_SIZE;
-    v3.z = (z+v3.z) * TileManager::TILE_RENDER_SIZE;
-    v1.x = (x+v1.x) * TileManager::TILE_RENDER_SIZE;
-    v1.z = (z+v1.z) * TileManager::TILE_RENDER_SIZE;
-    v2.x = (x+v2.x) * TileManager::TILE_RENDER_SIZE;
-    v2.z = (z+v2.z) * TileManager::TILE_RENDER_SIZE;
-    setVertex(v1, maskNr, offsetU1, offsetV1, params);
-    setVertex(v2, maskNr, offsetU2, offsetV2, params);
-    setVertex(v3, maskNr, offsetU3, offsetV3, params);
+    params.w = TileManager::getSingleton().getMapSpotLight((int)(x+v2.x), (int)(z+v2.z))?1.0f:0.0f;
+    // Vertex 1
+    Real offsetU = v1.x*HALF_TILE_SIZE;
+    Real offsetV = v1.z*HALF_TILE_SIZE;
+    v1.x+= x;
+    v1.z+= z;
+    v1.y = TileManager::getSingleton().getMapHeight((int)v1.x, (int)v1.z);
+    params.x = TileManager::getSingleton().getMapShadow((int)v1.x, (int)v1.z);
+    setVertex(v1, maskNr, offsetU, offsetV, params);
+    // Vertex 2
+    offsetU = v2.x*HALF_TILE_SIZE;
+    offsetV = v2.z*HALF_TILE_SIZE;
+    v2.x+= x;
+    v2.z+= z;
+    v2.y = TileManager::getSingleton().getMapHeight((int)v2.x, (int)v2.z);
+    params.x = TileManager::getSingleton().getMapShadow((int)v2.x, (int)v2.z);
+    setVertex(v2, maskNr, offsetU, offsetV, params);
+    // Vertex 3
+    offsetU = v3.x*HALF_TILE_SIZE;
+    offsetV = v3.z*HALF_TILE_SIZE;
+    v3.x+= x;
+    v3.z+= z;
+    v3.y = TileManager::getSingleton().getMapHeight((int)v3.x, (int)v3.z);
+    params.x = TileManager::getSingleton().getMapShadow((int)v3.x, (int)v3.z);
+    setVertex(v3, maskNr, offsetU, offsetV, params);
 }
 
 //================================================================================================

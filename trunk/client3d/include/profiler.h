@@ -95,8 +95,7 @@ public:
         return getSingleton;
     }
 
-int start;
-    void startBlock(std::string file, std::string func, int line)
+    void startBlock(std::string file, std::string func, int /* line */)
     {
         Ogre::String filename, path;
         Ogre::StringUtil::splitFilename(file, filename, path);

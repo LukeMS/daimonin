@@ -25,7 +25,7 @@ void MainVP_Land_Lod0(
     outMask = inMask;
     outPara.rg= para.rg;  // Daylight Level, grid
     outPara.b = params.w; // Spotlight
-    outPara.a = params.y + (inPos.y-params.x) * params.z; // Faked shadow.
+    outPara.a = params.x; // Faked shadow.
 }
 
 //================================================================================================

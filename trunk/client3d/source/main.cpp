@@ -34,7 +34,7 @@ const int SUM_MIPMAPS = 0;
 //================================================================================================
 // Parse the command line.
 //================================================================================================
-bool parseCmdLine(const char *cmd, const char *value)
+static bool parseCmdLine(const char *cmd, const char *value)
 {
     int options =0;
     if (cmd[0] == '-')
@@ -110,7 +110,7 @@ bool parseCmdLine(const char *cmd, const char *value)
 //================================================================================================
 // Define the source of resources (other than current folder)
 //================================================================================================
-void setupResources(void)
+static void setupResources(void)
 {
     // Load resource paths from config file
     ConfigFile cf;
@@ -135,7 +135,7 @@ void setupResources(void)
 //================================================================================================
 // Write the excepition into the logfile.
 //================================================================================================
-void LogException(Exception& e)
+static void LogException(Exception& e)
 {
     std::string s = e.getFullDescription();
     size_t found = s.find('\n');
