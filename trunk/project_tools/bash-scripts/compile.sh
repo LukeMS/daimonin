@@ -3,6 +3,7 @@
 
 svndir="$HOME/svn"
 builddir="$HOME/build"
+logsdir="/var/www/html/logs"
 
 echo "### Kill any svn, build, server, or dmonloopx processes." 1>&2
 ps ax|grep 'svn'|grep -v grep|awk '{print $1}'|xargs kill
@@ -16,11 +17,22 @@ svn co https://daimonin.svn.sourceforge.net/svnroot/daimonin/trunk/project_tools
 svn export --force $svndir/trunk/project_tools $builddir/project_tools
 cp -f $builddir/project_tools/bash-scripts/compile.sh $HOME
 
+echo "### Archive leftover logs." 1>&2
+read fromtime <$HOME/fromtime
+if [[ $fromtime != "" ]]; then
+    logfile="$logsdir/$fromtime"
+    tlogfile="$logfile-tech.txt"
+    clogfile="$logfile-chat.txt"
+    totime=`/bin/date +%y%m%d_%H-%M-%S_%Z`
+    tar -czf $logfile-$totime-$retexe.tar.gz $tlogfile $clogfile
+    rm $tlogfile $clogfile
+    echo "" >$HOME/fromtime
+fi
+
 echo "### Build gameserver." 1>&2
 if [ -n "$1" ]; then
     echo "$1" >$builddir/server/data/stream
 fi
-rm -rf $builddir/server/data/logs/*
 $builddir/project_tools/bash-scripts/build.sh
 
 echo "### Replace dmonloopx." 1>&2
