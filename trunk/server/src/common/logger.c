@@ -125,11 +125,17 @@ static void CheckTimestamp(void)
             tim->tm_year+1900, tim->tm_mon+1, tim->tm_mday,
             tim->tm_hour, tim->tm_min, tim->tm_sec);
         DoPrint(buf, tlogfile);
+        fflush(tlogfile);
 
         if (clogfile != tlogfile)
         {
             DoPrint(buf, clogfile);
+            fflush(clogfile);
         }
+
+#ifdef HAVE_UNISTD_H
+        sync(); // force write to disk
+#endif
     }
 }
 
