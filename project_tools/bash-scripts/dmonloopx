@@ -35,10 +35,8 @@ for (( logcount = 1; logcount < $maxrestart; logcount++ )); do
 #        echo ">>> Crash at startup!" 1>>$logfile$tlog 2>&1
 #    fi
 
-    gzip $tlogfile
-    mv $tlogfile.gz $logfile-`/bin/date +%y%m%d_%H-%M-%S_%Z`-$retexe-$tlog.gz
-    gzip $clogfile
-    mv $clogfile.gz $logfile-`/bin/date +%y%m%d_%H-%M-%S_%Z`-$retexe-$clog.gz
+    tar -czf $logfile-`/bin/date +%y%m%d_%H-%M-%S_%Z`-$retexe.tar.gz $tlogfile $clogfile
+    rm $tlogfile $clogfile
 
     if [ -f core ]; then
         mv $builddir/server/core $builddir/server/core.$logcount
