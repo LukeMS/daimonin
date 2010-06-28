@@ -7,13 +7,13 @@ CMDNAME="valgrind ./daimonin_server"
 maxrestart=500
 
 for (( logcount = 1; logcount < $maxrestart; logcount++ )); do
-    logfile=$logsdir/`/bin/date +%y%m%d_%H-%M-%S_%Z`
-    tlog=tech.txt
-    clog=chat.txt
-    tlogfile=$logfile-$tlog
-    clogfile=$logfile-$clog
+    fromtime=`/bin/date +%y%m%d_%H-%M-%S_%Z`
+    echo "$fromtime" >$HOME/fromtime
+    logfile="$logsdir/$fromtime"
+    tlogfile="$logfile-tech.txt"
+    clogfile="$logfile-chat.txt"
+
     echo "### Start the server." 1>&2
-    rm -fr $builddir/server/data/tmp/*
     cd $builddir/server
     $CMDNAME -d -log ,$clogfile 2>$tlogfile
 
@@ -35,8 +35,10 @@ for (( logcount = 1; logcount < $maxrestart; logcount++ )); do
 #        echo ">>> Crash at startup!" 1>>$logfile$tlog 2>&1
 #    fi
 
-    tar -czf $logfile-`/bin/date +%y%m%d_%H-%M-%S_%Z`-$retexe.tar.gz $tlogfile $clogfile
+    totime=`/bin/date +%y%m%d_%H-%M-%S_%Z`
+    tar -czf $logfile-$totime-$retexe.tar.gz $tlogfile $clogfile
     rm $tlogfile $clogfile
+    echo "" >$HOME/fromtime
 
     if [ -f core ]; then
         mv $builddir/server/core $builddir/server/core.$logcount
