@@ -24,7 +24,7 @@ if [[ $fromtime != "" ]]; then
     tlogfile="$logfile-tech.txt"
     clogfile="$logfile-chat.txt"
     totime=`/bin/date +%y%m%d_%H-%M-%S_%Z`
-    tar -czf $logfile-$totime-$retexe.tar.gz $tlogfile $clogfile
+    tar -czf $logfile-$totime-MR.tar.gz $tlogfile $clogfile
     rm $tlogfile $clogfile
     echo "" >$HOME/fromtime
 fi
