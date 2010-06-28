@@ -7,33 +7,36 @@ CMDNAME="valgrind ./daimonin_server"
 maxrestart=500
 
 for (( logcount = 1; logcount < $maxrestart; logcount++ )); do
+    logfile=$logdir/`/bin/date +%y%m%d_%H-%M-%S_%Z`
+    tlog=-tech.txt
+    clog=-chat.txt
     echo "### Start the server." 1>&2
     rm -fr $builddir/server/data/tmp/*
     cd $builddir/server
-    $CMDNAME -d -log ,c$logcount 2>$builddir/server/data/log/t$logcount
+    $CMDNAME -d -log ,$logfile$clog 2>$logfile$tlog
 
     retexe=$?
     echo ">>> We have $retexe as shutdown" 1>&2
-    echo ">>> We have $retexe as shutdown" 1>>$builddir/server/data/log/t$logcount 2>&1
+    echo ">>> We have $retexe as shutdown" 1>>$logfile$tlog 2>&1
 
-    # 127 comes from a badly critical error like a non existing daimonin_server binary and such
-    if [ $retexe -eq 127 ]; then
-        echo ">>> Critical error!" 1>>$builddir/server/data/log/t$logcount 2>&1
-    # restart
-    elif [ $retexe -eq 253 ]; then
-        echo ">>> Restart!" 1>>$builddir/server/data/log/t$logcount 2>&1
-    # unknown
-    elif [ $retexe -eq 254 ]; then
-        echo ">>> Unknown reason for shutdown!" 1>>$builddir/server/data/log/t$logcount 2>&1
-    # server crashed in the startup
-    elif [ $retexe -eq 255 ]; then
-        echo ">>> Crash at startup!" 1>>$builddir/server/data/log/t$logcount 2>&1
-    fi
+#    # 127 comes from a badly critical error like a non existing daimonin_server binary and such
+#    if [ $retexe -eq 127 ]; then
+#        echo ">>> Critical error!" 1>>$logfile$tlog 2>&1
+#    # restart
+#    elif [ $retexe -eq 253 ]; then
+#        echo ">>> Restart!" 1>>$logfile$tlog 2>&1
+#    # unknown
+#    elif [ $retexe -eq 254 ]; then
+#        echo ">>> Unknown reason for shutdown!" 1>>$logfile$tlog 2>&1
+#    # server crashed in the startup
+#    elif [ $retexe -eq 255 ]; then
+#        echo ">>> Crash at startup!" 1>>$logfile$tlog 2>&1
+#    fi
 
-    gzip $builddir/server/data/log/c$logcount
-    mv $builddir/server/data/log/c$logcount.gz $logsdir/`/bin/date +%y%m%d_%H-%M-%S_%Z`-$retexe-chat.gz
-    gzip $builddir/server/data/log/t$logcount
-    mv $builddir/server/data/log/t$logcount.gz $logsdir/`/bin/date +%y%m%d_%H-%M-%S_%Z`-$retexe-tech.gz
+    gzip $logfile$tlog
+    mv $logfile$tlog.gz $logfile-`/bin/date +%y%m%d_%H-%M-%S_%Z`-$retexe$tlog.gz
+    gzip $logfile$clog
+    mv $logfile$clog.gz $logfile-`/bin/date +%y%m%d_%H-%M-%S_%Z`-$retexe$clog.gz
 
     if [ -f core ]; then
         mv $builddir/server/core $builddir/server/core.$logcount
