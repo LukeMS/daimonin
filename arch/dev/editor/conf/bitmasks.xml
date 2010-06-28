@@ -57,15 +57,4 @@
 <bmentry bit="7" name="From East"/>
 <bmentry bit="8" name="From Southeast"/>
 </bitmask>
-
-<!-- From time.c -->
-<bitmask name="day_of_week">
-<bmentry bit="0" name="Day of the Moon"/>
-<bmentry bit="1" name="Day of the Bull"/>
-<bmentry bit="2" name="Day of the Deception"/>
-<bmentry bit="3" name="Day of Thunder"/>
-<bmentry bit="4" name="Day of Freedom"/>
-<bmentry bit="5" name="Day of the Great Gods"/>
-<bmentry bit="6" name="Day of the Sun"/>
-</bitmask>
 </bitmasks>

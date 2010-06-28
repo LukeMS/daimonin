@@ -5792,7 +5792,8 @@ that food.]]>
   <description><![CDATA[
     Environment sensors periodically watch their environment for specific
     conditions. Currently they can check for time of day (ToD), day of week
-    (DoW) and brightness, all at the same time.
+    (DoW) -- DoW does not work at this time -- and brightness, all at the
+    same time.
     ]]>
   </description>
   <use><![CDATA[
@@ -5813,10 +5814,6 @@ that food.]]>
     The time interval this sensors should trigger. This should be in the form
     "hh:mm-hh:mm", for example "12:00-23:59" to trigger during the afternoon.
     An empty (or malformed) value means don't care about time of day.
-  </attribute>
-  <attribute arch="last_heal" editor="trigger weekday" type="bitmask_day_of_week">
-    Which days to trigger the connection.
-    No selected days means don't care about weekdays.
   </attribute>
   <attribute arch="last_grace" editor="trigger brightness" type="int">
     The sensors will trigger (and stay triggered) when its environmental
