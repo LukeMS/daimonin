@@ -132,10 +132,6 @@ static void CheckTimestamp(void)
             DoPrint(buf, clogfile);
             fflush(clogfile);
         }
-
-#ifdef HAVE_UNISTD_H
-        sync(); // force write to disk
-#endif
     }
 }
 
