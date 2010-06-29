@@ -86,11 +86,13 @@ echo "### Run tileset_updater.pl" 1>&2
 wait
 
 echo "### Checkout/update, export, build, and run Gridarta to collect arches." 1>&2
-svn co https://gridarta.svn.sourceforge.net/svnroot/gridarta/trunk/ $svndir/gridarta/trunk
-svn export $svndir/gridarta/trunk $builddir/gridarta
+svn co https://gridarta.svn.sourceforge.net/svnroot/gridarta/tags/0.8.1/ $svndir/gridarta
+svn export $svndir/gridarta $builddir/gridarta
 (
-    cd $builddir/gridarta
-    ant jar-daimonin
+    cd $builddir/gridarta/daimonin
+    ant
+    mv DaimoninEditor.jar ..
+    cd ..
     java -Xmx256M -jar DaimoninEditor.jar -c
 )
 wait
