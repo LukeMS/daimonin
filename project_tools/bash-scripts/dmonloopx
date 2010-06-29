@@ -47,6 +47,8 @@ for (( logcount = 1; logcount < $maxrestart; logcount++ )); do
     fi
 
     $builddir/project_tools/bash-scripts/build.sh
+
+    wait
 done
 
 exit 0
