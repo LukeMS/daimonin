@@ -264,7 +264,7 @@ function QuestManager:RegisterQuest(qtype, ib)
                  "necessary but may result in yor quest missing info in " ..
                  "quest list. You should fix your script.")
         game:Log(game.LOG_DEBUG, "Original interface string: " .. original)
-        game:Log(game.LOG_DEBUG, "Original interface string: " .. ib:Build())
+        game:Log(game.LOG_DEBUG, "Fixed interface string: " .. ib:Build())
     end
 
     ---------
