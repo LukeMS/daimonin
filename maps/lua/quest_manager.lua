@@ -243,6 +243,29 @@ function QuestManager:RegisterQuest(qtype, ib)
         ib.message = nil
     end
 
+    ---------
+    -- Remove message and button blocks from ib as these are useed internally
+    -- by the server for qlists so if we also added them here, it would produce
+    -- an error. The workaround above will already have transferred any message
+    -- block to the description block.
+    --
+    -- Log a warning if anything was removed.
+    ---------
+    if ib.message ~= nil or
+       ib.lhsbutton ~= nil or
+       ib.rhsbutton ~= nil then
+        local original = ib:Build()
+
+        ib.message = nil
+        ib.lhsbutton = nil
+        ib.rhsbutton = nil
+        game:Log(game.LOG_DEBUG,
+                 "Interface string modified by qm:RegisterQuest()! This is " ..
+                 "necessary but may result in yor quest missing info in " ..
+                 "quest list. You should fix your script.")
+        game:Log(game.LOG_DEBUG, "Original interface string: " .. original)
+        game:Log(game.LOG_DEBUG, "Original interface string: " .. ib:Build())
+    end
 
     ---------
     -- Remove any clickable keywords.
