@@ -1064,7 +1064,7 @@ static int Game_Log(lua_State *L)
 
     if(level == llevBug || level == llevError)
         luaL_error(L, "Illegal log level: %d\n", level);
-    LOG(level, "LUA:%s\n", text);
+    LOG(level, "LUA script log - %s\n", text);
 
     return 0;
 }
