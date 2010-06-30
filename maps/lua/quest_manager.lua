@@ -201,6 +201,50 @@ function QuestManager:RegisterQuest(qtype, ib)
     end
 
     ---------
+    -- Temporary workaround.
+    --
+    -- Pre-SENTInce quests tended to use the message block (possibly as well as
+    -- the description block) when registering a quest. This was partly to make
+    -- things easier for the scripter, as they could just double-use the text
+    -- they showed in the NPC talk interface, and partly because pre-SENTInce
+    -- there was no strict and consistent approach in this area anyway. So
+    -- people jst did whatever they preferred which did not help create a
+    -- nice and consisten Daimonin look and feel for players.
+    --
+    -- Consistency is a central concept to SENTInce. Due to several
+    -- enhancements a message block here is unnecessary and in fact will cause
+    -- the qlist to fail with the INVALID GUI CMD errpr.
+    --
+    -- This workaround will prepend any existing message block to the
+    -- description block (creating one first if needed) and delete the message
+    -- block before writing the ib to the quest trigger. Which means the qlist
+    -- will work again.
+    --
+    -- Eventually such scripts will be rewritten anyway, and this workaround
+    -- will be removed at some point in B6.
+    ---------
+    if type(ib.message) == "table" then
+        local tmp = ib.description
+
+        ib.description = nil
+
+        if ib.message.body ~= nil then
+            ib:SetDesc(ib.message.body)
+        end
+
+        if type(tmp) == "table" then
+            if tmp.body ~= nil then
+                ib:AddDesc(tmp.body)
+            end
+
+            ib:SetCoins(tmp.copper, tmp.silver, tmp.gold, tmp.mithril)
+        end
+
+        ib.message = nil
+    end
+
+
+    ---------
     -- Remove any clickable keywords.
     ---------
     local text = string.gsub(ib:Build(), "%^", "")
