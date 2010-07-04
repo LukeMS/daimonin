@@ -3,7 +3,7 @@ AC_PREREQ(2.59)
 
 # The package name is used in the client-server handshake and must be exactly
 # "Daimonin SDL Client".
-AC_INIT([Daimonin SDL Client], [0.10.0], [http://www.daimonin.net])
+AC_INIT([Daimonin SDL Client], [0.10.0], [http://www.daimonin.org])
 AC_CONFIG_AUX_DIR(make_utils)
 AC_CANONICAL_SYSTEM
 AM_INIT_AUTOMAKE(daimonin, 0.10.0)
@@ -393,7 +393,7 @@ if test "x$endianness" != "xlittle" ; then
 	echo "*** WARNING:"
 	echo " Your CPU was detected as being $endianness-endian. This is currently not"
 	echo " supported very well by Daimonin. Proceed with caution."
-    echo " Also please report your results to info@daimonin.net"
+    echo " Also please report your results to info@daimonin.org"
 	echo
 fi	
 
@@ -403,7 +403,7 @@ if test "x$cpubits" != "x32" ; then
 	echo "*** WARNING:"
 	echo " Your CPU was detected as being $cpubits-bit. This is currently not"
 	echo " supported very well by Daimonin. Proceed with caution."
-    echo " Also please report your results to info@daimonin.net"
+    echo " Also please report your results to info@daimonin.org"
 	echo
 fi	
 
