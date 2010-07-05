@@ -316,47 +316,7 @@ int command_who(object *op, char *params)
     new_draw_info(NDI_UNIQUE, 0, op, "There %s %d player%s online (%d in login).",
                          (it > 1) ? "are" : "is", it, (it > 1) ? "s" : "", il);
 #ifdef _TESTSERVER
-    LOG(llevSystem, "read stream file...\n");
-    sprintf(buf, "%s/%s", settings.localdir, "stream");
-
-    if ((fp = fopen(buf, "r")))
-    {
-        char *cp;
-
-        if (!fgets(buf, MEDIUM_BUF, fp))
-        {
-            LOG(llevBug, "BUG: error in stream file\n");
-
-            return 0;
-        }
-
-        if ((cp = strchr(buf, '\n')))
-        {
-            *cp = '\0';
-        }
-
-        if (!strcmp(buf, "(null)"))
-        {
-            new_draw_info(NDI_UNIQUE, 0, op, "Server compiled with trunk only.");
-        }
-        else
-        {
-            new_draw_info(NDI_UNIQUE, 0, op, "Server compiled with ~%s~ stream.",
-                                 buf);
-
-            while (fgets(buf, MEDIUM_BUF, fp))
-            {
-                if ((cp = strchr(buf, '\n')))
-                {
-                    *cp = '\0';
-                }
-
-                new_draw_info(NDI_UNIQUE, 0, op, buf);
-            }
-        }
-
-        fclose(fp);
-    }
+    show_stream_info(&CONTR(op)->socket);
 #endif
 
     return 0;

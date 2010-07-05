@@ -334,6 +334,7 @@ int                         player_save(object *op);
 addme_login_msg             player_load(NewSocket *ns, const char *name);
 addme_login_msg             player_create(NewSocket *ns,player **pl_ret,char *name,int race,int gender,int skill_nr);
 void                        player_addme_failed(NewSocket *ns, int error_msg);
+void                        show_stream_info(NewSocket *ns);
 /* main.c */
 void                        start_info(object *op);
 char                       *crypt_string(char *str);
