@@ -362,41 +362,7 @@ void set_gmaster_mode(player *pl, int mode)
     new_draw_info(NDI_UNIQUE, 0, pl->ob, "%s mode activated for %s!",
                          (mode == GMASTER_MODE_MM) ? "MM" : ((mode == GMASTER_MODE_GM) ? "GM" : ((mode == GMASTER_MODE_VOL) ? "VOL" : "MW")),
                          pl->ob->name);
-#ifdef _TESTSERVER
-    if (mode == GMASTER_MODE_MW || mode == GMASTER_MODE_MM)
-    {
-        char  buf[MEDIUM_BUF];
-        FILE *fp;
-        LOG(llevSystem, "read stream file...\n");
-        sprintf(buf, "%s/%s", settings.localdir, "stream");
-        if ((fp = fopen(buf, "r")))
-        {
-            char *cp;
-            if (!fgets(buf, MEDIUM_BUF, fp))
-            {
-                LOG(llevBug, "BUG: error in stream file\n");
-                return;
-            }
-            if ((cp = strchr(buf, '\n')))
-                *cp = '\0';
-            if (!strcmp(buf, "(null)"))
-                new_draw_info(NDI_UNIQUE, 0, pl->ob, "Server compiled with trunk only.");
-            else
-            {
-                new_draw_info(NDI_UNIQUE, 0, pl->ob, "Server compiled with ~%s~ stream.", buf);
-                while (fgets(buf, MEDIUM_BUF, fp))
-                {
-                    if ((cp = strchr(buf, '\n')))
-                        *cp = '\0';
-                    new_draw_info(NDI_UNIQUE, 0, pl->ob, buf);
-                }
-            }
-            fclose(fp);
-        }
-    }
-#endif
 }
-
 
 /* remove the current gmaster mode
  */
