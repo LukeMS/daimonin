@@ -37,8 +37,8 @@ String TileManager::LAND_PREFIX    = "Land";
 String TileManager::WATER_PREFIX   = "Water";
 String TileManager::ATLAS_PREFIX   = "Atlas_Tiles";
 String TileManager::MATERIAL_PREFIX= "Terrain/";
-const unsigned int RGB  = 3; /**< Pixelsize. **/
-const unsigned int RGB_A= 4; /**< Pixelsize. **/
+static const unsigned int RGB  = 3; /**< Pixelsize. **/
+static const unsigned int RGB_A= 4; /**< Pixelsize. **/
 
 //////// Only for TESTING
 #include <stdio.h>

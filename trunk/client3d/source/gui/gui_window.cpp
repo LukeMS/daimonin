@@ -42,7 +42,7 @@ int GuiWindow::mDragOffsetY = -1;
 int GuiWindow::mDragElement = -1;
 int GuiWindow::mDragWindowNr= -1;
 int GuiWindow::mElementClicked = -1;
-const int MAX_WINDOW_SIZE = 1 << 10;
+static const int MAX_WINDOW_SIZE = 1 << 10;
 
 //================================================================================================
 // Destructor.
@@ -205,7 +205,7 @@ void GuiWindow::Init(TiXmlElement *xmlRoot, const char *resourceWin, int winNr, 
 // Check if an interavtive element overlaps another to prevent strange behavior of the gui
 // like ignoring a button or activate 2 buttons at the same time.
 //================================================================================================
-void checkForOverlappingElements()
+void GuiWindow::checkForOverlappingElements()
 {
     PROFILE()
     // Todo

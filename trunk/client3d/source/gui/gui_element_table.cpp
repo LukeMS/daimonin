@@ -32,9 +32,9 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 
 using namespace Ogre;
 
-const char SEPARATOR_COL    = ',';
-const char SEPARATOR_SUBROW = ';';
-const int  TEXT_OFFSET = 2; // Text offset in pixel x/y from the topleft border.
+static const char SEPARATOR_COL    = ',';
+static const char SEPARATOR_SUBROW = ';';
+static const int  TEXT_OFFSET = 2; // Text offset in pixel x/y from the topleft border.
 
 //================================================================================================
 // Constructor.

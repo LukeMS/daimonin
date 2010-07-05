@@ -31,8 +31,8 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 
 using namespace Ogre;
 
-const uint32 SLOT_BUSY_COLOR     = 0xdd777777;
-const uint32 SLOT_QUANTITY_COLOR = 0x00888888;
+static const uint32 SLOT_BUSY_COLOR     = 0xdd777777;
+static const uint32 SLOT_QUANTITY_COLOR = 0x00888888;
 int GuiElementSlot::mDragSlot =  -1;
 int GuiElementSlot::mActiveSlot= -1;
 int GuiElementSlot::uid = -1;

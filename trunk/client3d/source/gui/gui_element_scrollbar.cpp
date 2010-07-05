@@ -28,8 +28,8 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 
 using namespace Ogre;
 
-const int MIN_SLIDER_SIZE = 15;
-const int SLIDER_INNER_OFFSET = 3;
+static const int MIN_SLIDER_SIZE = 15;
+static const int SLIDER_INNER_OFFSET = 3;
 
 // TODO:
 // Disable buttons/slider if they doesnt fit into the window.

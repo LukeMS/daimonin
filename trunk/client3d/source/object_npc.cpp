@@ -39,11 +39,11 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 
 using namespace Ogre;
 
-const int   WALK_SPEED   =  TileManager::TILE_RENDER_SIZE;
-const int   TURN_SPEED   = 400;
-const Real  WALK_PRECISON= 1.0f;
-const float BIG_LAGGING  = 0.04f;
-const float TIME_BEFORE_CORPSE_VANISHES = 2.0f;
+static const int   WALK_SPEED   =  TileManager::TILE_RENDER_SIZE;
+static const int   TURN_SPEED   = 400;
+static const Real  WALK_PRECISON= 1.0f;
+static const float BIG_LAGGING  = 0.04f;
+static const float TIME_BEFORE_CORPSE_VANISHES = 2.0f;
 
 //================================================================================================
 // Init all static Elemnts.

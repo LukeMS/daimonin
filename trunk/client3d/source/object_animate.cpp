@@ -37,7 +37,7 @@ using namespace Ogre;
 //=================================================================================================
 // Init all static Elemnts.
 //=================================================================================================
-const char *ObjectAnimate::StateNames[ANIM_GROUP_SUM]=
+const char *ObjectAnimate::mSTATE_NAMES[ANIM_GROUP_SUM]=
 {
     "Idle", "Idle_Fun",
     "Walk",
@@ -75,7 +75,7 @@ ObjectAnimate::ObjectAnimate(Entity *entity)
     for (int i=0; i < ANIM_GROUP_SUM; ++i)
     {
         mAnimGroupEntries[i] =0;
-        strGroup = StateNames[i];
+        strGroup = mSTATE_NAMES[i];
         j =0;
         while (1)
         {

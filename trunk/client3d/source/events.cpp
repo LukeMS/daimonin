@@ -51,15 +51,15 @@ static const unsigned int MIN_LEN_LOGIN_NAME =  3;
 static const unsigned int MAX_LEN_LOGIN_NAME = 12;
 static const unsigned int MIN_LEN_LOGIN_PSWD =  6;
 static const unsigned int MAX_LEN_LOGIN_PSWD = 17;
-const Real CAMERA_POS_Y = TileManager::TILE_RENDER_SIZE * (TileManager::CHUNK_SIZE_Z+1);
-const Real CAMERA_POS_Z = CAMERA_POS_Y + TileManager::TILE_RENDER_SIZE * (TileManager::CHUNK_SIZE_Z-4)/2;
-const int  CAMERA_TURN_DELAY = 50; // The speed of the camera turning.
-//const int  CAMERA_TURN_MAX   = 45; // Maximum degree of camera turning by user.
-const int  CAMERA_TURN_MAX   = 90; // Maximum degree of camera turning by user.
-const char *GUI_LOADING_OVERLAY = "GUI_LOADING_OVERLAY";
-const char *GUI_LOADING_OVERLAY_ELEMENT = "GUI_LOADING_OVERLAY_ELEMENT";
-const unsigned long SERVER_TIMEOUT = 5000; // Server timeout in ms.
-const char BINARY_CMD_NEXT = '\0'; // Next commad.
+static const Real CAMERA_POS_Y = TileManager::TILE_RENDER_SIZE * (TileManager::CHUNK_SIZE_Z+1);
+static const Real CAMERA_POS_Z = CAMERA_POS_Y + TileManager::TILE_RENDER_SIZE * (TileManager::CHUNK_SIZE_Z-4)/2;
+static const int  CAMERA_TURN_DELAY = 50; // The speed of the camera turning.
+//static const int  CAMERA_TURN_MAX   = 45; // Maximum degree of camera turning by user.
+static const int  CAMERA_TURN_MAX   = 90; // Maximum degree of camera turning by user.
+static const char *GUI_LOADING_OVERLAY = "GUI_LOADING_OVERLAY";
+static const char *GUI_LOADING_OVERLAY_ELEMENT = "GUI_LOADING_OVERLAY_ELEMENT";
+static const unsigned long SERVER_TIMEOUT = 5000; // Server timeout in ms.
+static const char BINARY_CMD_NEXT = '\0'; // Next commad.
 
 //================================================================================================
 // Constructor.

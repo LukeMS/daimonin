@@ -28,7 +28,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 
 using namespace Ogre;
 
-const Real ANIMATION_SPEED = 1.2f;
+static const Real ANIMATION_SPEED = 1.2f;
 
 //================================================================================================
 // .

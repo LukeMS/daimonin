@@ -33,12 +33,12 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 
 using namespace Ogre;
 
-const unsigned int SUM_CAMERA_POS  = 7;
-const int SUM_NEAR_GRASS_ROWS = 5;
-const Real HALF_TILE_SIZE  = 128.0          / (Real)TileManager::MAX_TEXTURE_SIZE; // Size of a subtile.
-const Real HALF_TILE_SPACE = (128.0 + 16.0) / (Real)TileManager::MAX_TEXTURE_SIZE; // Space between 2 subtiles.
-const Real FULL_TILE_SPACE = (256.0 + 16.0) / (Real)TileManager::MAX_TEXTURE_SIZE; // Space between 2 tiles.
-const Real RENDER_SIZE = (Real)TileManager::TILE_RENDER_SIZE;
+static const unsigned int SUM_CAMERA_POS  = 7;
+static const int SUM_NEAR_GRASS_ROWS = 5;
+static const Real HALF_TILE_SIZE  = 128.0          / (Real)TileManager::MAX_TEXTURE_SIZE; // Size of a subtile.
+static const Real HALF_TILE_SPACE = (128.0 + 16.0) / (Real)TileManager::MAX_TEXTURE_SIZE; // Space between 2 subtiles.
+static const Real FULL_TILE_SPACE = (256.0 + 16.0) / (Real)TileManager::MAX_TEXTURE_SIZE; // Space between 2 tiles.
+static const Real RENDER_SIZE = (Real)TileManager::TILE_RENDER_SIZE;
 
 //================================================================================================
 // Holds the x-offset for each row of tiles.

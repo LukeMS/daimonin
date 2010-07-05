@@ -59,15 +59,15 @@ const uint32 GuiManager::COLOR_PINK  = 0xffff00ff;
 const uint32 GuiManager::COLOR_YELLOW= 0xffffff00;
 const uint32 GuiManager::COLOR_WHITE = 0xffffffff;
 
-const int BORDER = 8;
-const int TOOLTIP_SIZE = 1 << 8;
-const unsigned long TOOLTIP_DELAY = 2000; // Wait x ms before showing the tooltip.
-const uint32 BORDER_COLOR = 0xff888888;
-const uint32 BACKGR_COLOR = 0xff444488;
-const char *RESOURCE_MCURSOR = "GUI-MCursor";
-const char *RESOURCE_TOOLTIP = "GUI-Tooltip";
-const char *RESOURCE_WINDOW  = "GUI-Window";
-const char *TOOLTIP_LINEBREAK_SIGN = "#";
+static const int BORDER = 8;
+static const int TOOLTIP_SIZE = 1 << 8;
+static const unsigned long TOOLTIP_DELAY = 2000; // Wait x ms before showing the tooltip.
+static const uint32 BORDER_COLOR = 0xff888888;
+static const uint32 BACKGR_COLOR = 0xff444488;
+static const char *RESOURCE_MCURSOR = "GUI-MCursor";
+static const char *RESOURCE_TOOLTIP = "GUI-Tooltip";
+static const char *RESOURCE_WINDOW  = "GUI-Window";
+static const char *TOOLTIP_LINEBREAK_SIGN = "#";
 
 GuiManager::WindowID GuiManager::mWindowID[WIN_SUM]=
 {

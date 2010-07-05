@@ -27,9 +27,9 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include <exception>
 #include "logger.h"
 
-const char *PRG_NAME = "Daimonin Ogre3d Client";
-const char *FILENAME = "./client_log.html";
-const char *STR_STYLE[] = {"List", "Info", "Warn", "Error", "Success", "Headline"};
+static const char *PRG_NAME = "Daimonin Ogre3d Client";
+static const char *FILENAME = "./client_log.html";
+static const char *STR_STYLE[] = {"List", "Info", "Warn", "Error", "Success", "Headline"};
 int Logger::mType = 0;
 
 //================================================================================================

@@ -32,8 +32,8 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 
 using namespace Ogre;
 
-const int MIN_CURSOR_SIZE = 1 << 4;
-const int MAX_CURSOR_SIZE = 1 << 7;
+static const int MIN_CURSOR_SIZE = 1 << 4;
+static const int MAX_CURSOR_SIZE = 1 << 7;
 
 //================================================================================================
 // Create an overlay for the mouse-cursor.
