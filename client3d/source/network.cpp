@@ -33,9 +33,14 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 
 using namespace Ogre;
 
-const int DEFAULT_METASERVER_PORT = 13326;
-const char *DEFAULT_METASERVER = "www.daimonin.com";
-const int THREAD_SLEEPING_TIME = 50;
+static const char *DEFAULT_METASERVER = "www.daimonin.com";
+static const int DEFAULT_METASERVER_PORT = 13326;
+static const int THREAD_SLEEPING_TIME = 50;
+static const int TIMEOUT_MS = 4000;
+static const int NO_SOCKET  = -1;
+static const int MAXSOCKBUF = 128*1024; // Maximum size of any packet we expect.
+static const int MAX_BUF    = 256;
+static boost::mutex mutex;
 
 struct CmdMapping
 {
@@ -76,19 +81,11 @@ struct CmdMapping commands[] =
 //  { Network::ChannelMsgCmd },  // 28
 };
 
-const int SUM_SERVER_COMMANDS = sizeof(commands) / sizeof(CmdMapping);
-
-boost::mutex mutex;
+static const int SUM_SERVER_COMMANDS = sizeof(commands) / sizeof(CmdMapping);
 
 // start is the first waiting item in queue, end is the most recent enqueued:
 Network::command_buffer *Network::mInputQueueStart = 0, *Network::mInputQueueEnd = 0;
 Network::command_buffer *Network::mOutputQueueStart= 0, *Network::mOutputQueueEnd= 0;
-
-const int TIMEOUT_MS = 4000;
-const int NO_SOCKET  = -1;
-const int MAXSOCKBUF = 128*1024; // Maximum size of any packet we expect.
-const int MAX_BUF    = 256;
-
 int Network::mSocket = NO_SOCKET;
 bool Network::mThreadsActive = false;
 bool Network::mAbortThread   = true;

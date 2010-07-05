@@ -38,7 +38,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 
 using namespace Ogre;
 
-const char MATERIAL_HIGHLIGHT[] = "MatObjectHighlight";
+static const char MATERIAL_HIGHLIGHT[] = "MatObjectHighlight";
 
 //================================================================================================
 // Defines:

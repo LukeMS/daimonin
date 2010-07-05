@@ -35,8 +35,8 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 
 using namespace std;
 
-FMOD_SYSTEM *System = 0;
-FMOD_RESULT result;
+static FMOD_SYSTEM *System = 0;
+static FMOD_RESULT result;
 
 typedef struct
 {
@@ -70,7 +70,7 @@ SoundFiles mSoundFiles[Sound::SAMPLE_SUM] =
     { "dummy.wav",           0, 0, false, true },
 };
 
-const float DISTANCEFACTOR = 1.0f; // Units per meter. (feet = 3.28.  cm = 100).
+static const float DISTANCEFACTOR = 1.0f; // Units per meter. (feet = 3.28.  cm = 100).
 
 //================================================================================================
 // Init the sound-system.

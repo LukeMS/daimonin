@@ -48,7 +48,7 @@ const uint32 GuiTextout::TXT_COLOR_HIGHLIGHT = 0x0000ff00;
 const uint32 GuiTextout::TXT_COLOR_LOWLIGHT  = 0x00ffffff;
 const uint32 GuiTextout::TXT_COLOR_LINK      = 0x00ff2233;
 const uint32 GuiTextout::TXT_COLOR_INFO      = 0x00ffff00;
-const uint32 FONT_ENDX_SIGN = 0xff00ff00;
+static const uint32 FONT_ENDX_SIGN = 0xff00ff00;
 
 //================================================================================================
 // Constructor.

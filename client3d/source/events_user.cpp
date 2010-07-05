@@ -481,6 +481,11 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
             TileManager::getSingleton().setMap(10, 19, 30, 6, 40);
             TileManager::getSingleton().setMap(11, 19, 30, 6, 40);
             TileManager::getSingleton().setMap(12, 19, 30, 6, 40);
+
+            TileManager::getSingleton().setMap(10, 20, 30, 6, 40);
+            TileManager::getSingleton().setMap(11, 20, 30, 6, 40);
+            TileManager::getSingleton().setMap(12, 20, 30, 6, 40);
+
             // SpotLight
             TileManager::getSingleton().setMap(2, 19, 60, 1, 0, 0, true);
             TileManager::getSingleton().setMap(4, 19, 60, 1, 0, 0, true);

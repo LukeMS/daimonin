@@ -42,12 +42,10 @@ using namespace Ogre;
 //===================================================
 // Init all static Elemnts.
 //===================================================
-
-const int  TEXTURE_SIZE = 128;
-const int  CHARNAME_FONT_NR = 3;
-const char MATERIAL_NAME[] = "NPC_Visuals";
-const char TEXTURE_NAME[]  = "TexVisuals";
-
+static const int  TEXTURE_SIZE = 128;
+static const int  CHARNAME_FONT_NR = 3;
+static const char MATERIAL_NAME[] = "NPC_Visuals";
+static const char TEXTURE_NAME[]  = "TexVisuals";
 
 //===================================================
 // Free all recources.

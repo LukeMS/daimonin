@@ -34,8 +34,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 
 using namespace Ogre;
 
-const char *FILE_SHADOW_IMAGE = "shadow.png";
-String boneName[ObjectEquipment::BONE_SUM]=
+static const String boneName[ObjectEquipment::BONE_SUM]=
 {
     "Pelvis",
     "Center",
@@ -53,13 +52,13 @@ String boneName[ObjectEquipment::BONE_SUM]=
     "LToes",     "RToes"
 };
 
-const char *particleName[ObjectEquipment::PARTICLE_FX_SUM]=
+static const char *particleName[ObjectEquipment::PARTICLE_FX_SUM]=
 {
     "Particle/SwordGlow"
 };
 
 // Todo: use pointer to vector for this. and read meshnames from a xml-file.
-const char *meshName[][ObjectEquipment::ITEM_SUM]=
+static const char *meshName[][ObjectEquipment::ITEM_SUM]=
 {
     {
         // ITEM_WEAPON

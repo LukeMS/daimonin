@@ -80,7 +80,7 @@ public:
     }
     const char *getActiceStateName() const
     {
-        return StateNames[mAnimGroup];
+        return mSTATE_NAMES[mAnimGroup];
     }
     Ogre::Real getTimeLeft() const
     {
@@ -117,7 +117,7 @@ private:
     Ogre::AnimationState *mActState, *mActState2;
     std::vector<Ogre::AnimationState*>mAnimState;
     Ogre::uchar mAnimGroupEntries[ANIM_GROUP_SUM];
-    static const char *StateNames[ANIM_GROUP_SUM];
+    static const char *mSTATE_NAMES[ANIM_GROUP_SUM];
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////

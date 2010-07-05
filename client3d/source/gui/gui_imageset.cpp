@@ -35,7 +35,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 using namespace Ogre;
 
 // Mouse states.
-GuiImageset::StateNames mMouseState[GuiManager::STATE_MOUSE_SUM]=
+const GuiImageset::StateNames MouseState[GuiManager::STATE_MOUSE_SUM]=
 {
     { "Default",           GuiManager::STATE_MOUSE_DEFAULT            },
     { "Pushed",            GuiManager::STATE_MOUSE_PUSHED             },
@@ -51,7 +51,7 @@ GuiImageset::StateNames mMouseState[GuiManager::STATE_MOUSE_SUM]=
 };
 
 // GuiElement states.
-GuiImageset::StateNames GuiImageset::mElementState[STATE_ELEMENT_SUM]=
+const GuiImageset::StateNames GuiImageset::mElementState[STATE_ELEMENT_SUM]=
 {
     { "Default",   STATE_ELEMENT_DEFAULT },
     { "Pressed",   STATE_ELEMENT_PUSHED  },
@@ -59,7 +59,7 @@ GuiImageset::StateNames GuiImageset::mElementState[STATE_ELEMENT_SUM]=
     { "Passive",   STATE_ELEMENT_PASSIVE },
 };
 
-const int UNKNOWN_ITEM_GFX = 0;
+static const int UNKNOWN_ITEM_GFX = 0;
 
 //================================================================================================
 // .
@@ -164,7 +164,7 @@ bool GuiImageset::parseStates(TiXmlElement *xmlElem, gfxPos *stateNr, int sum_st
         state = -1;
         for (int i=0; i < sum_state; ++i)
         {
-            if (!stricmp(strTemp, mouseStates?mMouseState[i].name:mElementState[i].name))
+            if (!stricmp(strTemp, mouseStates?MouseState[i].name:mElementState[i].name))
             {
                 state = i;
                 break;
