@@ -23,8 +23,8 @@
     The author can be reached via e-mail to info@daimonin.org
 */
 
-#ifndef INCLUDES_H
-#define INCLUDES_H
+#ifndef __INCLUDES_H
+#define __INCLUDES_H
 
 #define ASSERT(x)
 
@@ -145,5 +145,4 @@ time_t  mktime(struct tm *);
 #endif
 #endif
 
-#endif /* INCLUDES_H */
-
+#endif /* ifndef __INCLUDES_H */

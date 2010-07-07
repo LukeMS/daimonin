@@ -22,8 +22,9 @@
 
     The author can be reached via e-mail to info@daimonin.org
 */
-#ifndef SOUNDS_H
-#define SOUNDS_H
+
+#ifndef __SOUNDS_H
+#define __SOUNDS_H
 
 /*
  * New sound system
@@ -157,4 +158,4 @@ typedef enum _spell_sound_id
     SPELL_SOUND_MAX
 }   _sound_id;
 
-#endif
+#endif /* ifndef __SOUNDS_H */

@@ -23,6 +23,9 @@
     The author can be reached via e-mail to info@daimonin.org
 */
 
+#ifndef __SPELLIST_H
+#define __SPELLIST_H
+
 spell spells[NROFREALSPELLS]          =
 {
     {"firestorm",                   SPELL_TYPE_WIZARD, 1, 
@@ -867,3 +870,5 @@ char   *spellpathnames[NRSPELLPATHS]    =
     "Nature", "Shadow", "Chaos", "Earth",
     "Conjuration", "Abjuration", "Transmutation", "Arcane"
 };
+
+#endif /* ifndef __SPELLIST_H */

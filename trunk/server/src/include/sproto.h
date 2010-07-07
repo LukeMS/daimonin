@@ -1,3 +1,31 @@
+/*
+    Daimonin, the Massive Multiuser Online Role Playing Game
+    Server Applicatiom
+
+    Copyright (C) 2001 Michael Toennies
+
+    A split from Crossfire, a Multiplayer game for X-windows.
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+
+    The author can be reached via e-mail to info@daimonin.org
+*/
+
+#ifndef __SPROTO_H
+#define __SPROTO_H
+
 /* alchemy.c */
 char                       *cauldron_sound(void);
 void                        attempt_do_alchemy(object *caster, object *cauldron);
@@ -750,3 +778,5 @@ void                        get_tad(timeanddate_t *tad);
 char                       *print_tad(timeanddate_t *tad, int flags);
 void                        tick_tadclock(void);
 void                        write_tadclock(void);
+
+#endif /* ifndef __SPROTO_H */

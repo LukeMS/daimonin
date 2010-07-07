@@ -23,9 +23,8 @@
     The author can be reached via e-mail to info@daimonin.org
 */
 
-
-#ifndef ATTACK_H
-#define ATTACK_H
+#ifndef __ATTACK_H
+#define __ATTACK_H
 
 /* status for attack function to decide kind of attack */
 typedef enum _env_attack
@@ -102,4 +101,4 @@ extern int   resist_table[];
 
 #define num_resist_table 58
 
-#endif
+#endif /* ifndef __ATTACK_H */

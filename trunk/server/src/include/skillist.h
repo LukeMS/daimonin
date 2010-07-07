@@ -23,6 +23,8 @@
     The author can be reached via e-mail to info@daimonin.org
 */
 
+#ifndef __SKILLIST_H
+#define __SKILLIST_H
 
 /* This is the order of the skills structure:
  *  char *name;
@@ -110,5 +112,4 @@ skill   skills[NROFSKILLS]  =
     { "polearm mastery",    NULL, SKILLGROUP_MISC, 11, 0, 0.0f,      STR,      DEX, NO_STAT_VAL }
 };
 
-
-
+#endif /* ifndef __SKILLIST_H */

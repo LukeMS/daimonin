@@ -23,8 +23,8 @@
     The author can be reached via e-mail to info@daimonin.org
 */
 
-#ifndef PATHFINDER_H
-#define PATHFINDER_H
+#ifndef __PATHFINDER_H
+#define __PATHFINDER_H
 
 typedef struct astar_node
 {
@@ -63,4 +63,5 @@ static inline void free_path(struct path_segment *p)
 
 /* Uncomment this to enable more intelligent use of CPU time for path finding */
 #define LEFTOVER_CPU_FOR_PATHFINDING
-#endif
+
+#endif /* ifndef __PATHFINDER_H */

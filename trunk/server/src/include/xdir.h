@@ -27,6 +27,9 @@
  * in server/encounter.c, too
  */
 
+#ifndef __XDIR_H
+#define __XDIR_H
+
 /* This glob is right out of the autoconf manual */
 
 #if HAVE_DIRENT_H
@@ -46,3 +49,4 @@
 # endif
 #endif
 
+#endif /* __XDIR_H */

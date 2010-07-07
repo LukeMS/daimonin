@@ -39,8 +39,8 @@
  * be initialized in one of the source files.
  */
 
-#ifndef COMMANDS_H
-#define COMMANDS_H
+#ifndef __COMMANDS_H
+#define __COMMANDS_H
 
 typedef int (*CommFunc)(object *op, char *params);
 
@@ -129,4 +129,4 @@ extern const int CommandsMMSize;
 #define TARGET_FRIEND 1
 #define TARGET_SELF   2
 
-#endif
+#endif /* ifndef __COMMANDS_H */

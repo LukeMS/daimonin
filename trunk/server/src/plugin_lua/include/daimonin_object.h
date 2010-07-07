@@ -23,8 +23,8 @@
     The author can be reached via e-mail to info@daimonin.org
 */
 
-#ifndef GAME_OBJECT_H
-#define GAME_OBJECT_H
+#ifndef __DAIMONIN_OBJECT_H
+#define __DAIMONIN_OBJECT_H
 
 /* First the required header files - only the CF module interface and Lua */
 #include <plugin_lua.h>
@@ -157,4 +157,4 @@ static PyObject* GameObject_GetEventOptions(GameObject *self, PyObject* args);
 static PyObject* GameObject_SetEventOptions(GameObject *self, PyObject* args);
 #endif
 
-#endif /*GAME_OBJECT_H*/
+#endif /* ifndef __DAIMONIN_OBJECT_H */

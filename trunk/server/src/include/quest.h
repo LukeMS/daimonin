@@ -22,6 +22,7 @@
 
     The author can be reached via e-mail to info@daimonin.org
 */
+
 #ifndef __QUEST_H
 #define __QUEST_H
 
@@ -41,4 +42,4 @@ extern struct obj *quest_find_name(const struct obj *pl, const char *name);
 extern void send_quest_list(struct obj *pl);
 extern void quest_list_command(struct obj *pl, char *cmd);
 
-#endif
+#endif /* ifndef __QUEST_H */

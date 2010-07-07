@@ -25,9 +25,8 @@
     The author can be reached via e-mail to info@daimonin.org
 */
 
-#include <stdio.h>
-#include <string.h>
-#include <ctype.h>
+#ifndef __IPCOMPARE_H
+#define __IPCOMPARE_H
 
 #ifdef WIN32
 #define NEED_INET_PTON
@@ -63,3 +62,5 @@ int inet_pton(int af, const char *src, void *dst);
 #else
 #include <arpa/inet.h>
 #endif
+
+#endif /* ifndef __IPCOMPARE_H */

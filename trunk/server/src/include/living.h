@@ -23,8 +23,8 @@
     The author can be reached via e-mail to info@daimonin.org
 */
 
-#ifndef LIVING_H
-#define LIVING_H
+#ifndef __LIVING_H
+#define __LIVING_H
 
 enum
 {
@@ -80,4 +80,4 @@ typedef struct liv
 #pragma pack(pop)
 #endif
 
-#endif
+#endif/* ifndef __LIVING_H */

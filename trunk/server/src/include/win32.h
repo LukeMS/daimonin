@@ -26,8 +26,9 @@
  * Structures and types used to implement opendir/readdir/closedir
  * on Windows 95/NT and set the loe level defines
  */
-#ifndef WIN32_H
-#define WIN32_H
+
+#ifndef __WIN32_H
+#define __WIN32_H
 
 #if !defined(AFX_STDAFX_H__31666CA1_2474_11D5_AE6C_F07569C10000__INCLUDED_)
 #define AFX_STDAFX_H__31666CA1_2474_11D5_AE6C_F07569C10000__INCLUDED_
@@ -180,4 +181,4 @@ extern struct dirent   *readdir(DIR *);
 extern int              closedir(DIR *);
 extern void             rewinddir(DIR *);
 
-#endif
+#endif /* ifndef __WIN32_H */

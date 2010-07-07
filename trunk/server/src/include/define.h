@@ -29,8 +29,8 @@
  * to be dumped in here.
  */
 
-#ifndef DEFINE_H
-#define DEFINE_H
+#ifndef __DEFINE_H
+#define __DEFINE_H
 
 /*
  * Crossfire requires ANSI-C, but some compilers "forget" to define it.
@@ -1019,4 +1019,4 @@ enum apply_flag
 #define SRANDOM(xyz) MTRand_init(xyz)
 
 #define PLUGINS
-#endif /* DEFINE_H */
+#endif /* ifndef __DEFINE_H */

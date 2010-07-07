@@ -22,6 +22,7 @@
 
     The author can be reached via e-mail to info@daimonin.org
 */
+
 #ifndef __GMASTER_H
 #define __GMASTER_H
 
@@ -46,4 +47,4 @@ extern objectlink *gmaster_list_GM;
 extern objectlink *gmaster_list_MW;
 extern objectlink *gmaster_list_MM;
 
-#endif
+#endif /* ifndef __GMASTER_H */

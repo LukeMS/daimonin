@@ -22,6 +22,10 @@
 
     The author can be reached via e-mail to info@daimonin.org
 */
+
+#ifndef __LOADER_H
+#define __LOADER_H
+
 #define LL_IGNORED  -1
 #define LL_EOF      0
 #define LL_MORE     1
@@ -35,3 +39,5 @@
 #define LO_MEMORYMODE 4
 
 extern int  nroffiles, nrofpixmaps;
+
+#endif /* ifndef __LOADER_H */

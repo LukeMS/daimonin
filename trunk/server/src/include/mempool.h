@@ -23,8 +23,8 @@
     The author can be reached via e-mail to info@daimonin.org
 */
 
-#ifndef MEMPOOL_H
-#define MEMPOOL_H
+#ifndef __MEMPOOL_H
+#define __MEMPOOL_H
 
 /* Pooling memory management stuff */
 
@@ -133,4 +133,4 @@ extern int nrof_mempools;
 #define return_poolarray(_data_, _arraysize_, _pool_) \
     return_poolchunk_array_real((_data_), nearest_pow_two_exp(_arraysize_), (_pool_))
 
-#endif
+#endif /* ifndef __MEMPOOL_H */

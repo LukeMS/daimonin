@@ -23,8 +23,8 @@
     The author can be reached via e-mail to info@daimonin.org
 */
 
-#ifndef DAIMONIN_MAP_H
-#define DAIMONIN_MAP_H
+#ifndef __DAIMONIN_MAP_H
+#define __DAIMONIN_MAP_H
 
 #include <plugin_lua.h>
 
@@ -45,4 +45,4 @@ static int  Map_ReadyInheritedMap(lua_State *L);
 static int  Map_Save(lua_State *L);
 static int  Map_SetDarkness(lua_State *L);
 
-#endif /* DAIMONIN_MAP_H*/
+#endif /* ifndef __DAIMONIN_MAP_H */

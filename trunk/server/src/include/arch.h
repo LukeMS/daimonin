@@ -23,8 +23,8 @@
     The author can be reached via e-mail to info@daimonin.org
 */
 
-#ifndef ARCH_H
-#define ARCH_H
+#ifndef __ARCH_H
+#define __ARCH_H
 
 /*
  * The archetype structure is a set of rules on how to generate and manipulate
@@ -95,4 +95,4 @@ _archetype_global;
 
 extern _archetype_global archetype_global;
 
-#endif /* ARCH_H */
+#endif /* ifndef __ARCH_H */

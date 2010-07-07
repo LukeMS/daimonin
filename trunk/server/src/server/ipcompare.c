@@ -25,6 +25,7 @@
     The author can be reached via e-mail to info@daimonin.org
 */
 
+#include "global.h"
 #include "ipcompare.h"
 
 #define BUF_SZ 100
@@ -306,7 +307,7 @@ int main(int argc, char **argv)
 
 /* Some versions of libc don't do this right, so we need to replicate inet_pton for the victims */
 #ifdef NEED_INET_PTON
-static int errno = 0;
+/*static int errno = 0;*/
 
  /*
   * Copyright (C) 1996-2001  Internet Software Consortium.

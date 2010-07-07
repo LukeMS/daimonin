@@ -251,4 +251,4 @@ typedef struct behaviour_move_response
     } data;
 } move_response;
 
-#endif
+#endif /* ifndef __MONSTER_H */

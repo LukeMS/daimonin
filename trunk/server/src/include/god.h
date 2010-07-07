@@ -22,6 +22,10 @@
 
     The author can be reached via e-mail to info@daimonin.org
 */
+
+#ifndef __GOD_H
+#define __GOD_H
+
 typedef struct glnk
 {
     /* Used to link together the gods */
@@ -32,3 +36,4 @@ typedef struct glnk
     struct glnk    *next;
 } godlink;
 
+#endif /* ifndef __GOD_H */

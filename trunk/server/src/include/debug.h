@@ -28,8 +28,8 @@
  * debugflags get enabled/disabled by commenting then out or not.
  */
 
-#ifndef DEBUG_H
-#define DEBUG_H
+#ifndef __DEBUG_H
+#define __DEBUG_H
 
 /* Uncomment this to disable all debugging and some sanity
  * checks in core loops */
@@ -107,4 +107,4 @@
 #define FIX_PLAYER(_o_, _m_) fix_player(_o_)
 #endif
 
-#endif
+#endif /* ifndef __DEBUG_H */

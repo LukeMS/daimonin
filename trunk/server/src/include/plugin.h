@@ -22,6 +22,10 @@
 
     The author can be reached via e-mail to info@daimonin.org
 */
+
+#ifndef __PLUGIN_H
+#define __PLUGIN_H
+
 /*****************************************************************************/
 /* Daimonin  plugin support - (C) 2001 by Yann Chachkoff.                    */
 /* This code is placed under the GPL.                                        */
@@ -30,9 +34,6 @@
 /*****************************************************************************/
 /* Headers needed.                                                           */
 /*****************************************************************************/
-
-#ifndef PLUGIN_H_
-#define PLUGIN_H_
 
 /*****************************************************************************/
 /* This one does not exist under Win32.                                      */
@@ -455,4 +456,4 @@ extern MODULEAPI CFParm    *triggerEvent(CFParm *PParm);
 extern CFPlugin             PlugList[PLUGINS_MAX_NROF];
 extern int                  PlugNR;
 
-#endif /*PLUGIN_H_*/
+#endif /* ifndef __PLUGIN_H */

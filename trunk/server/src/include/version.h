@@ -23,8 +23,13 @@
     The author can be reached via e-mail to info@daimonin.org
 */
 
+#ifndef __VERSION_H
+#define __VERSION_H
+
 #ifdef MAKE
 #define Version "0.10.0"
 #else
 #define VERSION "0.10.0"
 #endif
+
+#endif /* ifndef __VERSION_H */

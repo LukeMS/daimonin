@@ -41,8 +41,8 @@
  */
 
 
-#ifndef NEWCLIENT_H
-#define NEWCLIENT_H
+#ifndef __NEWCLIENT_H
+#define __NEWCLIENT_H
 
 /* max. socket input buffer we can read/fill when reading from socket.
  * This is raw data until we sort it out and put it in the player command queue.
@@ -213,4 +213,4 @@ typedef struct _srv_client_files
 	}
 
 
-#endif
+#endif /* ifndef __NEWCLIENT_H */

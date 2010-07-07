@@ -23,6 +23,9 @@
     The author can be reached via e-mail to info@daimonin.org
 */
 
+#ifndef __PLAYER_H
+#define __PLAYER_H
+
 typedef struct _level_color
 {
     int                 green;
@@ -380,3 +383,5 @@ typedef struct pl_player
 #ifdef WIN32
 #pragma pack(pop)
 #endif
+
+#endif /* ifndef __PLAYER_H */
