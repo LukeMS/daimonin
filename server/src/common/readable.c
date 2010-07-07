@@ -1255,7 +1255,7 @@ char * artifact_msg(int level, int booksize)
         {
             sprintf(buf, "%s item with a value of %ld\n", sbuf, tmp->value);
         }
-#elif SIZEOF_LONG_LONG == 8
+#else
         if(val) /* avoid devide by zero */
         {
             sprintf(buf, "%s item with a value that is %lld times normal.\n", sbuf, tmp->value/val);

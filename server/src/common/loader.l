@@ -1260,7 +1260,7 @@ char *get_ob_diff(const object *op, const object *op2) {
 #else /* LINUX and others */
 #if SIZEOF_LONG == 8
 		sprintf(buf2,"value %ld\n", op->value);
-#elif SIZEOF_LONG_LONG == 8
+#else
 		sprintf(buf2,"value %lld\n", op->value);
 #endif
 #endif
