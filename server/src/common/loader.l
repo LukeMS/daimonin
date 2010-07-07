@@ -1255,12 +1255,15 @@ char *get_ob_diff(const object *op, const object *op2) {
 
   if(op->value!=op2->value)
   {
-#ifndef WIN32
-		sprintf(buf2,"value %lld\n", op->value);
-#else
+#ifdef WIN32
 		sprintf(buf2,"value %I64d\n", op->value);
+#else /* LINUX and others */
+#if SIZEOF_LONG == 8
+		sprintf(buf2,"value %ld\n", op->value);
+#elif SIZEOF_LONG_LONG == 8
+		sprintf(buf2,"value %lld\n", op->value);
 #endif
-
+#endif
 		strcat(buf,buf2);
 	}
 

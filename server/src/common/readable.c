@@ -1236,12 +1236,36 @@ char * artifact_msg(int level, int booksize)
             sprintf(sbuf, "a very rare");
 
         /* value of artifact */
+#ifdef WIN32
+        if(val) /* avoid devide by zero */
+        {
+            sprintf(buf, "%s item with a value that is %I64d times normal.\n", sbuf, tmp->value/val);
+        }
+        else
+        {
+            sprintf(buf, "%s item with a value of %I64d\n", sbuf, tmp->value);
+        }
+#else /* LINUX and others */
+#if SIZEOF_LONG == 8
+        if(val) /* avoid devide by zero */
+        {
+            sprintf(buf, "%s item with a value that is %ld times normal.\n", sbuf, tmp->value/val);
+        }
+        else
+        {
+            sprintf(buf, "%s item with a value of %ld\n", sbuf, tmp->value);
+        }
+#elif SIZEOF_LONG_LONG == 8
         if(val) /* avoid devide by zero */
         {
             sprintf(buf, "%s item with a value that is %lld times normal.\n", sbuf, tmp->value/val);
         }
         else
+        {
             sprintf(buf, "%s item with a value of %lld\n", sbuf, tmp->value);
+        }
+#endif
+#endif
 
         strcat(retbuf, buf);
         if ((ch = describe_item(tmp)) != NULL && strlen(ch) > 1)
