@@ -23,6 +23,9 @@
     The author can be reached via e-mail to info@daimonin.org
 */
 
+#ifndef __LINKS_H
+#define __LINKS_H
+
 /* Used to link together several objects */
 
 /* I created this improved link structures using the
@@ -87,3 +90,4 @@ typedef struct oblnk
 #define free_objectlinkpt_simple(_chunk_) return_poolchunk((_chunk_), pool_objectlink);
 #define oblinkpt objectlink
 
+#endif /* ifndef __LINKS_H */

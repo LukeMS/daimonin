@@ -23,6 +23,9 @@
     The author can be reached via e-mail to info@daimonin.org
 */
 
+#ifndef __SPELLS_H
+#define __SPELLS_H
+
 #define SPELL_USE_INTERN 0x00 /* special spells - don't list them as avaible spell */
 #define SPELL_USE_CAST   0x01 /* spell can be casted normal */
 #define SPELL_USE_BALM   0x02
@@ -394,3 +397,4 @@ typedef enum SpellTypeFrom
     spellNPC
 }    SpellTypeFrom;
 
+#endif /* ifndef __SPELLS_H */

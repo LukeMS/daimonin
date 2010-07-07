@@ -22,6 +22,10 @@
 
     The author can be reached via e-mail to info@daimonin.org
 */
+
+#ifndef __RECIPE_H
+#define __RECIPE_H
+
 /* 'recipe' and 'recipelist' are used by the alchemy code */
 typedef struct recipestruct
 {
@@ -46,4 +50,4 @@ typedef struct recipeliststruct
     struct recipeliststruct    *next;   /* pointer to next recipe list */
 } recipelist;
 
-
+#endif /* ifndef __RECIPE_H */

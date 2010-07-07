@@ -23,8 +23,8 @@
     The author can be reached via e-mail to info@daimonin.org
 */
 
-#ifndef AI_OBJECT_H
-#define AI_OBJECT_H
+#ifndef __AI_OBJECT_H
+#define __AI_OBJECT_H
 
 /* First the required header files - only the CF module interface and Lua */
 #include <plugin_lua.h>
@@ -46,5 +46,4 @@ static int AI_LastSeen(lua_State *L);
 static int AI_GetKnownMobs(lua_State *L);
 static int AI_GetKnownObjects(lua_State *L);
 
-
-#endif /*AI_OBJECT_H*/
+#endif /* ifndef __AI_OBJECT_H */

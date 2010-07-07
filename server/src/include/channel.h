@@ -126,4 +126,4 @@ void    lua_channel_message(char *channelname, const char *name, char *message, 
 void sendVirtualChannelMsg(player *sender, char *channelname, player *target, char* msg, int color);
 
 #endif
-#endif
+#endif /* ifndef __CHANNEL_H */

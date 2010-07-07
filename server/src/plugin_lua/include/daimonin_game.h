@@ -23,8 +23,8 @@
     The author can be reached via e-mail to info@daimonin.org
 */
 
-#ifndef DAIMONIN_GAME_H
-#define DAIMONIN_GAME_H
+#ifndef __DAIMONIN_GAME_H
+#define __DAIMONIN_GAME_H
 
 /* First the required header files - only the CF module interface and Lua */
 #include <plugin_lua.h>
@@ -45,4 +45,4 @@ static int  Game_ReadyMap(lua_State *L);
 static int  Game_UpgradeApartment(lua_State *L);
 // static int Game_RegisterCommand(lua_State *L);
 
-#endif /* DAIMONIN_GAME_H */
+#endif /* ifndef__DAIMONIN_GAME_H */

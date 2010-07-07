@@ -22,6 +22,10 @@
 
     The author can be reached via e-mail to info@daimonin.org
 */
+
+#ifndef __CONFIG_H
+#define __CONFIG_H
+
 /* This file contains various #defines that select various options.
  * Some may not be desirable, and some just may not work.
  *
@@ -652,3 +656,4 @@
  */
 #define NEED_INET_PTON
 
+#endif /* ifndef __CONFIG_H */

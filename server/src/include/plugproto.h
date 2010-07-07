@@ -22,8 +22,9 @@
 
     The author can be reached via e-mail to info@daimonin.org
 */
-#ifndef PLUGPROTO_H_
-#define PLUGPROTO_H_
+
+#ifndef __PLUGPROTO_H
+#define __PLUGPROTO_H
 
 f_plugin HookList[NR_OF_HOOKS] =
 {
@@ -55,4 +56,4 @@ f_plugin HookList[NR_OF_HOOKS] =
     UnregisterGlobalEvent
 };
 
-#endif /*PLUGPROTO_H_*/
+#endif /* ifndef __PLUGPROTO_H */

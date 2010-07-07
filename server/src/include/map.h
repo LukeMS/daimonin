@@ -28,8 +28,8 @@
  * It contains pointers (very indirectly) to all objects on the map.
  */
 
-#ifndef MAP_H
-#define MAP_H
+#ifndef __MAP_H
+#define __MAP_H
 
 #define MAP_INSTANCE_NUM_INVALID (-1)
 
@@ -473,4 +473,4 @@ struct mapsearch_node
     struct mapsearch_node  *next;
 };
 
-#endif
+#endif /* ifndef __MAP_H */

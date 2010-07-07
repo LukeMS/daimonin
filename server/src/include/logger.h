@@ -22,9 +22,9 @@
 
     The author can be reached via e-mail to info@daimonin.org
 */
-#ifndef LOGGER_H
-#define LOGGER_H
 
+#ifndef __LOGGER_H
+#define __LOGGER_H
 
 /* The LOG system is more as a logger - it works also as a error & bug counter system.
  * Every llevError LOG will increase the error counter of the server - if to many errors
@@ -79,4 +79,4 @@ typedef enum LogLevel
 extern void LOG(LogLevel logLevel, char *format, ...);
 extern void CHATLOG(char *format, ...);
 
-#endif /* LOGGER_H */
+#endif /* ifndef __LOGGER_H */

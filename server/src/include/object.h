@@ -23,8 +23,8 @@
     The author can be reached via e-mail to info@daimonin.org
 */
 
-#ifndef OBJECT_H
-#define OBJECT_H
+#ifndef __OBJECT_H
+#define __OBJECT_H
 
 #ifdef WIN32
 #pragma pack(push,1)
@@ -305,4 +305,4 @@ typedef struct obj
 #define GET_INV_BOTTOM(I, O) \
         for ((O) = (I)->inv; (O) && (O)->below; (O) = (O)->below)
 
-#endif
+#endif /* ifndef __OBJECT_H */

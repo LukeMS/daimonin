@@ -24,8 +24,8 @@
     The author can be reached via e-mail to info@daimonin.org
 */
 
-#ifndef GLOBAL_H
-#define GLOBAL_H
+#ifndef __GLOBAL_H
+#define __GLOBAL_H
 
 #ifndef EXTERN
 #define EXTERN extern
@@ -692,4 +692,4 @@ EXTERN hashtable               *beacon_table;
 
 
 
-#endif /* GLOBAL_H */
+#endif /* ifndef __GLOBAL_H */

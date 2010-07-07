@@ -23,6 +23,9 @@
     The author can be reached via e-mail to info@daimonin.org
 */
 
+#ifndef __FACE_H
+#define __FACE_H
+
 /* New face structure - this enforces the notion that data is face by
  * face only - you can not change the color of an item - you need to instead
  * create a new face with that color.
@@ -50,4 +53,4 @@ typedef struct
     uint8       facings;          /* How many facings (9 and 25 are allowed only with the new ext anim system ) */
 } Animations;
 
-
+#endif /* ifndef __FACE_H */

@@ -29,8 +29,8 @@
     newclient.h
 */
 
-#ifndef NEWSERVER_H
-#define NEWSERVER_H
+#ifndef __NEWSERVER_H
+#define __NEWSERVER_H
 
 #define NUM_LOOK_OBJECTS 15
 
@@ -244,4 +244,4 @@ typedef struct Socket_Info_struct
     int             allocated_sockets;  /* number of allocated in init_sockets */
 } Socket_Info;
 
-#endif
+#endif /* ifndef __NEWSERVER_H */

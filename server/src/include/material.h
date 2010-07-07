@@ -23,8 +23,9 @@
     The author can be reached via e-mail to info@daimonin.org
 */
 /* #defines are needed by living.h, so they must be loaded early */
-#ifndef MATERIAL_H
-#define MATERIAL_H
+
+#ifndef __MATERIAL_H
+#define __MATERIAL_H
 
 #define MATERIAL_BASE_PHYSICAL  1
 #define MATERIAL_BASE_ELEMENTAL 2
@@ -91,4 +92,4 @@ typedef struct _material_real_struct
 extern materialtype         material[NROFMATERIALS];
 extern material_real_struct material_real[NROFMATERIALS *NROFMATERIALS_REAL + 1];
 
-#endif
+#endif /* ifndef __MATERIAL_H */

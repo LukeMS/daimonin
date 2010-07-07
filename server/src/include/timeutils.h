@@ -24,8 +24,8 @@
 */
 /* Copyright 2005 Björn Axelsson */
 
-#ifndef _DAIMONIN_TIME_H_
-#define _DAIMONIN_TIME_H_
+#ifndef __TIMEUTILS_H
+#define __TIMEUTILS_H
 
 #ifndef WIN32 /* ---win32 exclude unix headers */
     #include <sys/time.h>
@@ -56,4 +56,4 @@ static inline void add_time(struct timeval *dst, struct timeval *a, struct timev
     }
 }
 
-#endif /* _DAIMONIN_TIME_H_ */
+#endif /* ifndef __TIMEUTILS_H */

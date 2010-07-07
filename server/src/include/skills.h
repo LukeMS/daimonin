@@ -67,6 +67,9 @@
  *  - b.t.
  */
 
+#ifndef __SKILLS_H
+#define __SKILLS_H
+
 /* define this if you want to have player skills stored for
  * faster access from a linked list. If skill tools are heavily used
  * calls to malloc from this code can actually make performance worse.
@@ -185,3 +188,5 @@ extern skill    skills[];
 
 #define USING_SKILL(op, skill) \
     ((op)->chosen_skill->stats.sp == skill)
+
+#endif /* ifndef __SKILLS_H */

@@ -26,8 +26,8 @@
  * defines and variables used by the artifact generation routines
  */
 
-#ifndef TREASURE_H
-#define TREASURE_H
+#ifndef __TREASURE_H
+#define __TREASURE_H
 
 #define CHANCE_FOR_ARTIFACT 20
 #define T_MAGIC_UNSET (-999)
@@ -153,6 +153,4 @@ typedef struct treasureliststruct
     struct treasurestruct      *items;      /* Items in this list, linked */
 } treasurelist;
 
-
-
-#endif
+#endif /* ifndef __TREASURE_H */

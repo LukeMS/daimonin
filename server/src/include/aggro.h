@@ -22,6 +22,7 @@
 
     The author can be reached via e-mail to info@daimonin.org
 */
+
 #ifndef __AGGRO_H
 #define __AGGRO_H
 
@@ -58,4 +59,4 @@ extern struct obj *aggro_update_info(struct obj *target, struct obj *hitter, str
  */
 extern struct obj *aggro_calculate_exp(struct obj *victim, struct obj *slayer, char *kill_msg);
 
-#endif
+#endif /* ifndef __AGGRO_H */

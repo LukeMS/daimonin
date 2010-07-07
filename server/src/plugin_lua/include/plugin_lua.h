@@ -35,8 +35,8 @@
 /* Contact: gecko-at-acc.umu.se                                              */
 /*****************************************************************************/
 
-#ifndef PLUGIN_LUA_H
-#define PLUGIN_LUA_H
+#ifndef __PLUGIN_LUA_H
+#define __PLUGIN_LUA_H
 
 /* uncomment this to enable channels support in lua plugin */
 /* you NEED to have channels enabled in the server!        */
@@ -343,4 +343,5 @@ extern PythonCmd CustomCommand[NR_CUSTOM_CMD];
 /* way I found to pass the command index to cmd_customPython.                */
 extern int NextCustomCommand;
 #endif
-#endif /*PLUGIN_LUA_H*/
+
+#endif /* ifndef __PLUGIN_LUA_H */

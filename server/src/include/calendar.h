@@ -23,8 +23,8 @@
     The author can be reached via e-mail to info@daimonin.org
 */
 
-#ifndef _CALENDAR_H_
-#define _CALENDAR_H_
+#ifndef __CALENDAR_H
+#define __CALENDAR_H
 
 /* game time */
 #define ARKHE_MES_PER_HR 60
@@ -110,4 +110,4 @@ typedef struct _timeanddate
 extern unsigned long tadtick; /* time of the year tick counter: 1 tick = 1 game hour */
 extern int           world_darkness; /* daylight value. 0= totally dark. 7= daylight */
 
-#endif /* _CALENDAR_H_ */
+#endif /* ifndef __CALENDAR_H */

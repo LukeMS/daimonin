@@ -22,11 +22,15 @@
 
     The author can be reached via e-mail to info@daimonin.org
 */
+
 /* re-cmp.h
  * Datastructures for representing a subset of regular expressions.
  *
  * Author: Kjetil T. Homme <kjetilho@ifi.uio.no> May 1993
  */
+
+#ifndef __RE_CMP_H
+#define __RE_CMP_H
 
 /*   C o n f i g u r a t i o n
  */
@@ -105,3 +109,5 @@ typedef struct
     } u;
     repetetion_type repeat;
 } selection;
+
+#endif /* ifndef RE_CMP_H */

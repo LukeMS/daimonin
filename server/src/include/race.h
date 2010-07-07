@@ -22,6 +22,10 @@
 
     The author can be reached via e-mail to info@daimonin.org
 */
+
+#ifndef __RACE_H
+#define __RACE_H
+
 /* thats the race list - init is in init.c */
 typedef struct ralnk
 {
@@ -65,3 +69,5 @@ typedef struct _races
 }_races;
 
 extern struct _races    item_race_table[RACE_NAME_INIT];
+
+#endif /* ifndef __RACE_H */
