@@ -757,7 +757,7 @@ int cast_heal(object *op, int level, object *target, int spell_type)
 {
     int     heal = 0,
             success = 0;
-    object *tmp;
+    /*object *tmp;*/
 
     /*LOG(llevNoLog,"dir: %d (%s -> %s)\n", dir, op?op->name:"<no op>",tmp?tmp->name:"<no tmp>");*/
 
