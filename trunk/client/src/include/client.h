@@ -21,6 +21,9 @@
     The author can be reached via e-mail to info@daimonin.org
 */
 
+#ifndef __CLIENT_H
+#define __CLIENT_H
+
 #define MAP_UPDATE_CMD_SAME 0
 #define MAP_UPDATE_CMD_NEW 1
 #define MAP_UPDATE_CMD_CONNECTED 2
@@ -220,3 +223,5 @@ extern void     send_mark_command(int tag);
 extern void     send_fire_command(int num, int mode, char *tmp_name);
 extern void     client_send_checkname(char *buf);
 extern void     client_send_login(int mode, char *name, char *pass);
+
+#endif /* ifndef __CLIENT_H */

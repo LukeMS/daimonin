@@ -20,7 +20,8 @@
 
     The author can be reached via e-mail to info@daimonin.org
 */
-#if !defined(__INCLUDE_H)
+
+#ifndef __INCLUDE_H
 #define __INCLUDE_H
 
 #if defined(__LINUX) || defined(__linux__) || defined(__unix__)
@@ -111,4 +112,4 @@ typedef signed char     sint8;
 #define PHYSFS_File PHYSFS_file
 #endif
 
-#endif
+#endif /* ifndef __INCLUDE_H */

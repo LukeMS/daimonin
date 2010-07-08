@@ -50,8 +50,8 @@
   (zlib format), rfc1951.txt (deflate format) and rfc1952.txt (gzip format).
 */
 
-#ifndef ZLIB_H
-#define ZLIB_H
+#ifndef __ZLIB_H
+#define __ZLIB_H
 
 #include "zconf.h"
 
@@ -1226,4 +1226,4 @@ extern "C"
 }
 #endif
 
-#endif /* ZLIB_H */
+#endif /* ifndef __ZLIB_H */

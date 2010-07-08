@@ -20,8 +20,9 @@
 
     The author can be reached via e-mail to info@daimonin.org
 */
-#ifndef ITEM_H
-#define ITEM_H
+
+#ifndef __ITEM_H
+#define __ITEM_H
 
 /*
  *  These should probably be in a separate file
@@ -284,4 +285,5 @@ extern void         update_item(int tag, int loc, char *name, int weight, int fa
 extern void         print_inventory(item *op);
 
 extern void         dump_inv(item *);
-#endif /* ITEM_H */
+
+#endif /* ifndef __ITEM_H */

@@ -21,7 +21,7 @@
     The author can be reached via e-mail to info@daimonin.org
 */
 
-#if !defined(__BOOK_H)
+#ifndef __BOOK_H
 #define __BOOK_H
 
 #define BOOK_PAGE_LINES 16
@@ -67,4 +67,4 @@ extern _global_book_data global_book_data;
 extern _gui_book_struct *load_book_interface(int mode, char *data, int len);
 extern void show_book(int x, int y);
 
-#endif
+#endif /* ifndef __BOOK_H */

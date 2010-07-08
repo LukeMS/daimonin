@@ -21,6 +21,9 @@
     The author can be reached via e-mail to info@daimonin.org
 */
 
+#ifndef __PROTOCOL_H
+#define __PROTOCOL_H
+
 #define PROTOCOL_VERSION 991030
 
 /* min & max length of player & account names & password
@@ -277,3 +280,5 @@ extern int password_valid(char *cp);
 extern int password_char_valid(char c);
 extern int player_name_valid(char *cp);
 extern int player_char_valid(char c);
+
+#endif /* ifndef __PROTOCOL_H */

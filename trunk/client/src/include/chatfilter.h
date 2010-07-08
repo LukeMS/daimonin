@@ -24,9 +24,9 @@
     Mostly c&p code from ignore
 
 */
-#if !defined(__CHATFILTER_H)
-#define __CHATFILTER_H
 
+#ifndef __CHATFILTER_H
+#define __CHATFILTER_H
 
 void chatfilter_list_clear(void);
 void chatfilter_list_load(void);
@@ -35,4 +35,4 @@ int chatfilter_check(char *word);
 void chatfilter_filter(char *msg);
 void chatfilter_command(char *cmd);
 
-#endif
+#endif /* ifndef __CHATFILTER_H */

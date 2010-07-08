@@ -21,7 +21,7 @@
     The author can be reached via e-mail to info@daimonin.org
 */
 
-#if !defined(__FILEWRAP_H)
+#ifndef __FILEWRAP_H
 #define __FILEWRAP_H
 
 extern FILE *fopen_wrapper(const char *fname, const char *mode);
@@ -33,4 +33,4 @@ extern Mix_Music *Mix_LoadMUS_wrapper(const char *file);
 extern char *file_path(const char *fname, const char *mode);
 extern int determine_best_location(char *tmp, const char *fname);
 
-#endif
+#endif /* ifndef __FILEWRAP_H */

@@ -21,7 +21,7 @@
     The author can be reached via e-mail to info@daimonin.org
 */
 
-#if !defined(__TEXTWIN_H)
+#ifndef __TEXTWIN_H
 #define __TEXTWIN_H
 
 #define TEXT_WIN_MAX 250
@@ -95,5 +95,4 @@ extern void         textwin_clearhistory();
 extern void         textwin_putstring(char *text);
 extern void         widget_textwin_show(int x, int y, int actWin);
 
-#endif
-
+#endif /* ifndef __TEXTWIN_H */

@@ -21,7 +21,7 @@
     The author can be reached via e-mail to info@daimonin.org
 */
 
-#if !defined(__INTERFACE_H)
+#ifndef __INTERFACE_H
 #define __INTERFACE_H
 
 #define GUI_NPC_WIDTH          296 /* Width of the scrollable window */
@@ -140,4 +140,4 @@ extern void gui_npc_mousemove(uint16 x, uint16 y);
 extern void gui_npc_mouseclick(SDL_Event *e);
 extern void gui_npc_keypress(int key);
 
-#endif
+#endif /* ifndef __INTERFACE_H */

@@ -25,8 +25,8 @@
  * For conditions of distribution and use, see copyright notice in zlib.h
  */
 
-#ifndef ZCONF_H
-#define ZCONF_H
+#ifndef __ZCONF_H
+#define __ZCONF_H
 
 /* this is a slightly tweaked original ZLIB */
 
@@ -349,4 +349,4 @@ typedef Byte           *voidp;
 #   pragma map(inflate_copyright,"INCOPY")
 #endif
 
-#endif /* ZCONF_H */
+#endif /* ifndef __ZCONF_H */

@@ -21,7 +21,7 @@
     The author can be reached via e-mail to info@daimonin.org
 */
 
-#if !defined(__MISC_H)
+#ifndef __MISC_H
 #define __MISC_H
 
 #define MAX_INPUT_STR 256
@@ -43,4 +43,4 @@ extern uint32           adjust_endian_int32(const uint32 buf);
 extern uint16           adjust_endian_int16(const uint16 buf);
 extern char             *adjust_string(char *buf);
 
-#endif
+#endif /* ifndef __MISC_H */

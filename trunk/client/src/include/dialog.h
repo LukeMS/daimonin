@@ -21,7 +21,7 @@
     The author can be reached via e-mail to info@daimonin.org
 */
 
-#if !defined(__DIALOG_H)
+#ifndef __DIALOG_H
 #define __DIALOG_H
 
 #define OPTWIN_MAX_TAB 20
@@ -81,5 +81,5 @@ extern void show_newplayer_server(void);
 extern void show_login_server(void);
 extern void show_meta_server(_server *node, int metaserver_start, int metaserver_sel);
 extern void show_account(void);
-#endif
 
+#endif /* ifndef __DIALOG_H */

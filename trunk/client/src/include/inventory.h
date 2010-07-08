@@ -21,9 +21,8 @@
     The author can be reached via e-mail to info@daimonin.org
 */
 
-#if !defined(__INVENTORY_H)
+#ifndef __INVENTORY_H
 #define __INVENTORY_H
-
 
 #define INVITEMBELOWXLEN 8
 #define INVITEMBELOWYLEN 1
@@ -40,4 +39,4 @@ extern int      get_inventory_data(item *op, int *cflag, int *slot, int *start, 
 extern void     examine_range_inv(void);
 extern Boolean  blt_inv_item_centered(item *tmp, int x, int y);
 
-#endif
+#endif /* ifndef __INVENTORY_H */

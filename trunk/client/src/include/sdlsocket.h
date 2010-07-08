@@ -20,7 +20,8 @@
 
     The author can be reached via e-mail to info@daimonin.org
 */
-#if !defined(__SDLSOCKET_H)
+
+#ifndef __SDLSOCKET_H
 #define __SDLSOCKET_H
 
 #define SOCKET_NO -1
@@ -56,4 +57,4 @@ extern Boolean  SOCKET_CloseClientSocket(struct ClientSocket *csock);
 extern int      SOCKET_GetError(void);  /* returns socket error */
 extern int      read_metaserver_data(SOCKET fd);
 
-#endif
+#endif /* ifndef __SDLSOCKET_H */

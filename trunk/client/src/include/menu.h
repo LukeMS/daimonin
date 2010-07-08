@@ -20,7 +20,8 @@
 
     The author can be reached via e-mail to info@daimonin.org
 */
-#if !defined(__MENU_H)
+
+#ifndef __MENU_H
 #define __MENU_H
 
 #define MENU_NO       0x01
@@ -167,4 +168,4 @@ extern void     reload_icons(void);
 extern int get_bmap_id(char *name);
 extern void reset_menu_status(void);
 
-#endif
+#endif /* ifndef __MENU_H */

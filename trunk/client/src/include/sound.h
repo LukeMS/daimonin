@@ -20,7 +20,8 @@
 
     The author can be reached via e-mail to info@daimonin.org
 */
-#if !defined(__SOUND_H)
+
+#ifndef __SOUND_H
 #define __SOUND_H
 
 /* possible status of the sound system*/
@@ -257,4 +258,4 @@ int     sound_test_playing(int channel);
 void    sound_play_music(char *fname, int vol, int fade, int loop, int flags, int mode);
 void    sound_fadeout_music(int value);
 
-#endif
+#endif /* ifndef __SOUND_H */

@@ -21,7 +21,7 @@
     The author can be reached via e-mail to info@daimonin.org
 */
 
-#if !defined(__COMMANDS_H)
+#ifndef __COMMANDS_H
 #define __COMMANDS_H
 
 extern void DoClient(void);
@@ -62,4 +62,4 @@ extern void AccountCmd(char *data, int len);
 extern void ChannelMsgCmd(char *data, int len);
 #endif
 
-#endif
+#endif /* ifndef __COMMANDS_H */

@@ -20,7 +20,8 @@
 
     The author can be reached via e-mail to jonsebox28@teleport.com
 */
-#if !defined(__WIDGET_H)
+
+#ifndef __WIDGET_H
 #define __WIDGET_H
 
 /* used in the priority list (to order widgets) */
@@ -143,4 +144,4 @@ extern int      get_widget_owner(int x,int y);
 /* helpermakros */
 #define WIDGET_REDRAW(__a) cur_widget[__a].redraw=TRUE;
 
-#endif
+#endif /* ifndef __WIDGET_H */

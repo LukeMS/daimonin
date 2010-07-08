@@ -20,7 +20,8 @@
 
     The author can be reached via e-mail to info@daimonin.org
 */
-#if !defined(__FONT_H)
+
+#ifndef __FONT_H
 #define __FONT_H
 
 #define FONT_BLANKLINE 5
@@ -43,5 +44,4 @@ extern _font font_large_out;
 
 extern void font_init(void);
 
-#endif
-
+#endif /* ifndef __FONT_H */

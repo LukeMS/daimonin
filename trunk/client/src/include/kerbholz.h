@@ -22,7 +22,8 @@
 
     kerbholz - Kill Stats by Alderan
 */
-#if !defined(__KERBHOLZ_H)
+
+#ifndef __KERBHOLZ_H
 #define __KERBHOLZ_H
 
 typedef struct kills_list
@@ -33,8 +34,6 @@ typedef struct kills_list
     unsigned int session;
 } _kills_list;
 
-
-
 int addKill(char *name);
 void addNewKill(char *name, unsigned int kills, unsigned int session);
 void kill_list_show(int type);
@@ -44,6 +43,4 @@ void kill_list_save(void);
 void kill_command(char *cmd);
 _kills_list *getKillEntry(char *name);
 
-
-
-#endif
+#endif /* ifndef __KERBHOLZ_H */
