@@ -30,8 +30,8 @@
    subject to change. Applications should only use zlib.h.
  */
 
-#ifndef ZUTIL_H
-#define ZUTIL_H
+#ifndef __ZUTIL_H
+#define __ZUTIL_H
 
 #define ZLIB_INTERNAL
 #include "zlib.h"
@@ -275,4 +275,4 @@ void   zcfree           OF((voidpf opaque, voidpf ptr));
 #define ZFREE(strm, addr)  (*((strm)->zfree))((strm)->opaque, (voidpf)(addr))
 #define TRY_FREE(s, p) {if (p) ZFREE(s, p);}
 
-#endif /* ZUTIL_H */
+#endif /* ifndef __ZUTIL_H */

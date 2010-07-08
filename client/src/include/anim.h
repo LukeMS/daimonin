@@ -23,7 +23,8 @@
     Client-side animation stuff, 2008 Alderan
 
 */
-#if !defined(__ANIM_H)
+
+#ifndef __ANIM_H
 #define __ANIM_H
 
 /* This defines our maximum animation sequences/stances we support
@@ -150,8 +151,4 @@ extern int          load_anim_tmp(void);
 
 extern void         NewAnimCmd(unsigned char *data, int len);
 
-
-
-
-
-#endif
+#endif /* ifndef __ANIM_H */

@@ -21,7 +21,7 @@
     The author can be reached via e-mail to info@daimonin.org
 */
 
-#if !defined(__SPRITE_H)
+#ifndef __SPRITE_H
 #define __SPRITE_H
 
 /* our blt & sprite structure */
@@ -188,4 +188,4 @@ int zoomSurfaceY(SDL_Surface * src, SDL_Surface * dst, int flipx, int flipy);
         string_blt((surf), (font), (text), (x), (y), COLOR_BLACK, (area), (bltfx)); \
         string_blt((surf), (font), (text), (x) + 1, (y) + 1, (col), (area), (bltfx));
 
-#endif
+#endif /* ifndef __SPRITE_H */

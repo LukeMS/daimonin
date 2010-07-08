@@ -23,6 +23,9 @@
 /* This is a config file for the client.
  */
 
+#ifndef __CONFIG_H
+#define __CONFIG_H
+
 #define DEVELOPMENT
 
 /* this gives feedback text based on input */
@@ -95,3 +98,5 @@
 /* The numbers of our dark levels */
 /* for each level-1 we store a own bitmap copy, so be careful */
 #define DARK_LEVELS 7
+
+#endif /* ifndef __CONFIG_H */

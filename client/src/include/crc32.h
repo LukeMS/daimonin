@@ -24,6 +24,9 @@
  * Generated automatically by crc32.c
  */
 
+#ifndef __CRC32_H
+#define __CRC32_H
+
 local const unsigned long FAR   crc_table[TBLS][256]    =
     {
         {
@@ -455,3 +458,5 @@ local const unsigned long FAR   crc_table[TBLS][256]    =
 #endif
         }
     };
+
+#endif /* ifndef __CRC32_H */

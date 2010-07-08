@@ -21,7 +21,7 @@
     The author can be reached via e-mail to info@daimonin.org
 */
 
-#if !defined(__PLAYER_H)
+#ifndef __PLAYER_H
 #define __PLAYER_H
 
 /* imported from server - attack.h file */
@@ -273,4 +273,4 @@ void        widget_skill_exp_event(int x, int y, int MEvent);
 
 void        widget_show_statometer(int x, int y);
 
-#endif
+#endif /* ifndef __PLAYER_H */

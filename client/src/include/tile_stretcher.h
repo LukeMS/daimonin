@@ -22,7 +22,7 @@
     The author can be reached via e-mail to jlittle@sric.com
 */
 
-#if !defined(__TILE_STRETCHER_H)
+#ifndef __TILE_STRETCHER_H
 #define __TILE_STRETCHER_H
 
 extern void DrawPixel(SDL_Surface *screen, int x, int y, Uint32 color);
@@ -33,4 +33,4 @@ extern int copy_verticle_line( SDL_Surface *src,SDL_Surface *dest,
                         
 extern SDL_Surface *tile_stretch(SDL_Surface *src, int n, int e, int s, int w);
 
-#endif
+#endif /* ifndef __TILE_STRETCHER_H */

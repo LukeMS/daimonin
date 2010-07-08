@@ -21,7 +21,7 @@
     The author can be reached via e-mail to info@daimonin.org
 */
 
-#if !defined(__GROUP_H)
+#ifndef __GROUP_H
 #define __GROUP_H
 
 /* define the group status.
@@ -61,4 +61,4 @@ extern void widget_show_group(int x, int y);
 extern void clear_group(void);
 extern void set_group(int slot, char *name, int level, int hp, int maxhp, int sp, int maxsp, int grace, int maxgrace);
 
-#endif
+#endif /* ifndef __GROUP_H */

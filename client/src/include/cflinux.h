@@ -20,8 +20,10 @@
 
     The author can be reached via e-mail to info@daimonin.org
 */
-#if !defined(__LINUX_H)
-#define __LINUX_H
+
+#ifndef __CFLINUX_H
+#define __CFLINUX_H
+
 #ifdef __LINUX
 
 #ifdef HAVE_SYS_STAT_H
@@ -79,4 +81,4 @@
 
 #define SOCKET int
 
-#endif
+#endif /* ifndef __CFLINUX_H */

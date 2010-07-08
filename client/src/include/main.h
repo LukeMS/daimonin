@@ -20,7 +20,8 @@
 
     The author can be reached via e-mail to info@daimonin.org
 */
-#if !defined(__MAIN_H)
+
+#ifndef __MAIN_H
 #define __MAIN_H
 
 extern _server_char    *first_server_char;
@@ -739,5 +740,5 @@ extern void load_skindef();
 extern void load_options_dat(void);
 extern void save_options_dat(void);
 extern void reset_input_mode(void);
-#endif
 
+#endif /* ifndef __MAIN_H */

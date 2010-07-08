@@ -25,9 +25,14 @@
  * For conditions of distribution and use, see copyright notice in zlib.h
  */
 
+#ifndef __INFFAST_H
+#define __INFFAST_H
+
 /* WARNING: this file should *not* be used by applications. It is
    part of the implementation of the compression library and is
    subject to change. Applications should only use zlib.h.
  */
 
 void inflate_fast   OF((z_streamp strm, unsigned start));
+
+#endif /* ifndef __INFFAST_H */

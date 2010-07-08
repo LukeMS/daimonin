@@ -20,7 +20,8 @@
 
     The author can be reached via e-mail to info@daimonin.org
 */
-#if !defined(__EVENT_H)
+
+#ifndef __EVENT_H
 #define __EVENT_H
 
 #define MAX_KEYS 512
@@ -148,5 +149,5 @@ extern Boolean  check_menu_macros(char *text);
 
 Boolean     process_macro_keys(int id, int value);
 extern void     check_keys(int key);
-#endif
 
+#endif /* ifndef __EVENT_H */

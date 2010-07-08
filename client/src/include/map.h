@@ -21,7 +21,7 @@
     The author can be reached via e-mail to info@daimonin.org
 */
 
-#if !defined(__MAP_H)
+#ifndef __MAP_H
 #define __MAP_H
 
 #define MAP_START_XOFF 390
@@ -119,4 +119,4 @@ extern void             load_mapdef_dat(void);
 extern void             adjust_map_cache(int x, int y);
 extern int              get_tile_position(int mx, int my, int *tx, int *ty);
 
-#endif
+#endif /* ifndef __MAP_H */

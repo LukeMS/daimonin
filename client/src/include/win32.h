@@ -21,8 +21,9 @@
     The author can be reached via e-mail to info@daimonin.org
 */
 
-#if !defined(__WIN32_H)
+#ifndef __WIN32_H
 #define __WIN32_H
+
 #ifdef __WIN_32
 
 #define STRICT
@@ -114,4 +115,5 @@
 #endif
 
 #endif
-#endif
+
+#endif /* ifndef __WIN32_H */

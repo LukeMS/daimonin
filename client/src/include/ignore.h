@@ -20,9 +20,9 @@
 
     The author can be reached via e-mail to info@daimonin.org
 */
-#if !defined(__IGNORE_H)
-#define __IGNORE_H
 
+#ifndef __IGNORE_H
+#define __IGNORE_H
 
 void ignore_list_clear(void);
 void ignore_list_load(void);
@@ -30,4 +30,4 @@ void ignore_list_save(void);
 int ignore_check(char *name, char *type);
 void ignore_command(char *cmd);
 
-#endif
+#endif /* ifndef __IGNORE_H */

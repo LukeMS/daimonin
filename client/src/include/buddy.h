@@ -20,7 +20,8 @@
 
     The author can be reached via e-mail to info@daimonin.org
 */
-#if !defined(__BUDDY_H)
+
+#ifndef __BUDDY_H
 #define __BUDDY_H
 
 
@@ -30,4 +31,4 @@ void buddy_list_save(void);
 int buddy_check(char *name);
 void buddy_command(char *cmd);
 
-#endif
+#endif /*  ifndef __BUDDY_H */

@@ -21,7 +21,7 @@
     The author can be reached via e-mail to info@daimonin.org
 */
 
-#if !defined(__WRAPPER_H)
+#ifndef __WRAPPER_H
 #define __WRAPPER_H
 
 #include <physfs.h>
@@ -123,5 +123,4 @@ extern char * PHYSFS_fgets(char * const str, const int size, PHYSFS_File *const 
 extern void print_SDL_versions();
 extern void print_SDL_version(char* preamble, SDL_version* v);
 
-
-#endif
+#endif /* ifndef __WRAPPER_H */
