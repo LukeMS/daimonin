@@ -135,7 +135,7 @@ extern _gui_npc *gui_npc;
 
 extern void gui_npc_reset(void);
 extern _gui_npc *gui_npc_create(int mode, char *data, int len, int pos);
-extern void gui_npc_show(int mark);
+extern void gui_npc_show(void);
 extern void gui_npc_mousemove(uint16 x, uint16 y);
 extern void gui_npc_mouseclick(SDL_Event *e);
 extern void gui_npc_keypress(int key);
