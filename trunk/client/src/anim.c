@@ -556,7 +556,7 @@ int load_anim_tmp(void)
     {
         for (j = 0; j < MAX_SEQUENCES; j++)
         {
-            if (animation[i].aSeq[j] && (!animation[i].aSeq[j]->flags & 0x80))
+            if (animation[i].aSeq[j] && !(animation[i].aSeq[j]->flags & 0x80))
             {
                 for (k = 0; k < 9; k++)
                 {
