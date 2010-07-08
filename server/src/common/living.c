@@ -25,41 +25,44 @@
 
 #include <global.h>
 
-#define RN_DEFAULT      1
-#define RN_DWARVEN      2
-#define RN_ELVEN        4
-#define RN_GNOMISH      8
-#define RN_DROW         16
-#define RN_ORCISH       32
-#define RN_GOBLIN       64
-#define RN_KOBOLD       128
-
-#define RN_GIANT        256
-#define RN_TINY         512
-#define RN_GENIE        1024
-#define RN_DEMONISH     2048
-#define RN_DRACONISH    4096
+#define RN_DEFAULT      1<< 0 /* Always use this form when a value is 2^x */
+#define RN_DWARVEN      1<< 1
+#define RN_ELVEN        1<< 2
+#define RN_GNOMISH      1<< 3
+#define RN_DROW         1<< 4
+#define RN_ORCISH       1<< 5
+#define RN_GOBLIN       1<< 6
+#define RN_KOBOLD       1<< 7
+#define RN_GIANT        1<< 8
+#define RN_TINY         1<< 9
+#define RN_GENIE        1<<10
+#define RN_DEMONISH     1<<11
+#define RN_DRACONISH    1<<12
 
 _races          item_race_table[RACE_NAME_INIT] =
 {
-    {"",             RN_DEFAULT},  /* default value - human like */
-    {"dwarven ",     RN_DWARVEN}, {"elven ",       RN_ELVEN}, {"gnomish ",     RN_GNOMISH}, {"drow ",        RN_DROW},
-    {"orcish ",      RN_ORCISH}, {"goblin ",      RN_GOBLIN}, {"kobold ",      RN_KOBOLD},
-    /* count also as tiny, but "unclean" */
-    {"giant ",       RN_GIANT},  /* all demihumans "bigger as humans" */
-    {"tiny ",        RN_TINY},  /* different small race (sprites, ...) */
-    {"demonish ",    RN_DEMONISH},  /* this is usable from all sizes */
-    {"draconish ",   RN_DRACONISH},   /* usable from all sizes */
-    {"ogre ",       RN_GIANT}     /* count as giant */
+    {"",           RN_DEFAULT},   /* default value - human like */
+    {"dwarven ",   RN_DWARVEN},
+    {"elven ",     RN_ELVEN},
+    {"gnomish ",   RN_GNOMISH},
+    {"drow ",      RN_DROW},
+    {"orcish ",    RN_ORCISH},
+    {"goblin ",    RN_GOBLIN},
+    {"kobold ",    RN_KOBOLD},    /* count also as tiny, but "unclean" */
+    {"giant ",     RN_GIANT},     /* all demihumans "bigger as humans" */
+    {"tiny ",      RN_TINY},      /* different small race (sprites, ...) */
+    {"demonish ",  RN_DEMONISH},  /* this is usable from all sizes */
+    {"draconish ", RN_DRACONISH}, /* usable from all sizes */
+    {"ogre ",      RN_GIANT}      /* count as giant */
 };
 
 /* when we carry more as this of our weight_limit, we get encumbered. */
 #define ENCUMBRANCE_LIMIT 0.35f
 
-/* for atat values 0 to 9 */
-float stats_penalty[10] = {0.1f, 0.15f, 0.2f, 0.3f, 0.4f, 0.5f, 0.6f, 0.7f, 0.8f, 0.9f};
+/* for stat values 0 to 9 */
+const float stats_penalty[10] = {0.1f, 0.15f, 0.2f, 0.3f, 0.4f, 0.5f, 0.6f, 0.7f, 0.8f, 0.9f};
 
-static char *drain_msg[NUM_STATS] =
+static const char *drain_msg[NUM_STATS] =
 {
     "Oh no! You are weakened!",
     "You're feeling clumsy!",
@@ -70,7 +73,7 @@ static char *drain_msg[NUM_STATS] =
     "Your face gets distorted!",
 };
 
-static char *gain_msg[NUM_STATS] =
+static const char *gain_msg[NUM_STATS] =
 {
     "You feel stronger.",
     "You feel more agile.",
@@ -81,7 +84,7 @@ static char *gain_msg[NUM_STATS] =
     "You seem to look better.",
 };
 
-char *lose_msg[NUM_STATS] =
+const char *lose_msg[NUM_STATS] =
 {
     "You feel weaker!",
     "You feel clumsy!",
@@ -92,7 +95,7 @@ char *lose_msg[NUM_STATS] =
     "You look ugly!",
 };
 
-char *restore_msg[NUM_STATS] =
+const char *restore_msg[NUM_STATS] =
 {
     "You feel your strength return.",
     "You feel your agility return.",
@@ -103,7 +106,7 @@ char *restore_msg[NUM_STATS] =
     "You feel your charisma return.",
 };
 
-char *stat_name[NUM_STATS]  =
+const char *stat_name[NUM_STATS]  =
 {
     "strength",
     "dexterity",
@@ -114,7 +117,7 @@ char *stat_name[NUM_STATS]  =
     "charisma",
 };
 
-char *short_stat_name[NUM_STATS] =
+const char *short_stat_name[NUM_STATS] =
 {
     "Str",
     "Dex",
@@ -716,7 +719,7 @@ void drain_level(object *op, int level, int mode, int ticks)
 {
     object *force;
     int original_level = op->level;
-    
+
     if (op->level <= 1) /* level 1 mobs can't get drained any further */
         return;
 
@@ -812,7 +815,7 @@ static inline void set_speed_encumbrance(object *op, player *pl)
         float speed_factor;
 
         /* the * 1.15f is the trick. We add 15% because we don't want 0% speed (rooted) */
-        speed_factor = (float)(op->carrying - (sint32) (pl->weight_limit - pl->speed_enc_limit)) 
+        speed_factor = (float)(op->carrying - (sint32) (pl->weight_limit - pl->speed_enc_limit))
             / ((float)pl->speed_enc_limit * 1.15f);
         /* speed_factor should be now something between 0.15 and x.0 (when weight ins normal) */
 
@@ -1575,7 +1578,7 @@ void fix_player(object *op)
                 tmp_dam = tmp->stats.dam + tmp->magic;
                 tmp_wc = tmp->stats.wc + tmp->magic;
                 tmp_time = tmp->last_grace;
-                
+
                 /* map it over to the real arrow */
                 tmp = pl->equipment[PLAYER_EQUIP_AMUN];
             }
@@ -1592,13 +1595,13 @@ void fix_player(object *op)
              * but we add in wc modifier from equipment - means ATM a ring wc+2 will add wc to melee AND
              * to distance!
              */
-            pl->dist_wc = (int)((float)(tmp_wc + skill_ptr->stats.wc) * get_player_stat_bonus(op->stats.Dex))+ pl->wc_bonus; 
+            pl->dist_wc = (int)((float)(tmp_wc + skill_ptr->stats.wc) * get_player_stat_bonus(op->stats.Dex))+ pl->wc_bonus;
 
             /* lets calculate the real dmg and dps */
             pl->dist_dps = (int) ((float) tmp_dam * LEVEL_DAMAGE(skill_ptr->level)); /* dmg level adjusted */
 
             /* and now we adjust it by the stats and devide by 10 - thats the "real dmg" now */
-            pl->dist_dps = (int)(((float)pl->dist_dps * 
+            pl->dist_dps = (int)(((float)pl->dist_dps *
                 (get_player_stat_bonus(op->stats.Str)/2.0f + get_player_stat_bonus(op->stats.Dex)/2.0f)) /10.0f);
 
             /* the damage bonus of rings and stuff are added AFTER dmg adjustment! */
@@ -1618,7 +1621,7 @@ void fix_player(object *op)
 
             /* last work - cast the swing time to INT for transfering */
             pl->dist_action_time = (int)(f * 1000.0f);
-                
+
         }
         else /* show '**' in the range weapon area of the client */
         {
@@ -1676,7 +1679,7 @@ void fix_player(object *op)
             pl->set_skill_weapon);
         else
         {
-                        
+
                         if(pl->skill_ptr[pl->set_skill_weapon]->level <= 10)
                           {
                              thacm += (10 - pl->skill_ptr[pl->set_skill_weapon]->level);
@@ -2110,13 +2113,13 @@ void fix_monster(object *op)
     int wc_mali=0, ac_mali=0, snare_penalty=0, slow_penalty=0;
     object *base, *tmp, *spawn_info=NULL, *bow=NULL, *wc_tmp;
     float   tmp_add;
-    int mob_wc[MAXLEVEL + 1] = 
+    int mob_wc[MAXLEVEL + 1] =
      { 1,2,3,4,5,6,7,8,9,10,10,11,11,12,12,13,13,14,14,15,15,16,16,17,17,18,
        18,19,19,20,20,20,21,21,22,22,23,23,24,24,25,25,26,26,27,27,28,28,29,29,30,
        30,31,31,32,32,33,33,34,34,35,35,36,36,37,37,38,38,39,39,40,40,41,41,42,42,
        43,43,44,44,45,45,46,46,47,47,48,48,49,49,50,50,51,51,52,52,53,53,54,54,55,
        55,56,56,57,57,58,58,59,60,60};
-    int mob_ac[MAXLEVEL + 1] = 
+    int mob_ac[MAXLEVEL + 1] =
      { 1,2,3,4,5,6,7,8,9,10,10,11,11,12,12,13,13,14,14,15,15,16,16,17,17,18,
    18,19,19,20,20,20,21,21,22,22,23,23,24,24,25,25,26,26,27,27,28,28,29,29,30,
    30,31,31,32,32,33,33,34,34,35,35,36,36,37,37,38,38,39,39,40,40,41,41,42,42,
@@ -2508,7 +2511,7 @@ void leech_hind(object *leecher, object *leechee, uint8 attack, sint16 plose,
             leechee->stats.grace = 0;
         }
 
-        pgain = random_roll(1, (float)plose / 100.0f * chance);
+        pgain = random_roll(1, (int)(plose / 100.0f * chance));
 
         if (leecher->type == PLAYER)
         {
@@ -2539,7 +2542,7 @@ void leech_hind(object *leecher, object *leechee, uint8 attack, sint16 plose,
             leechee->stats.sp = 0;
         }
 
-        pgain = random_roll(1, (float)plose / 100.0f * chance);
+        pgain = random_roll(1, (int)(plose / 100.0f * chance));
 
         if ((leecher->stats.sp += pgain) > leecher->stats.maxsp)
         {
@@ -2561,7 +2564,7 @@ void leech_hind(object *leecher, object *leechee, uint8 attack, sint16 plose,
             leechee->stats.hp = 0;
         }
 
-        pgain = random_roll(1, (float)plose / 100.0f * chance);
+        pgain = random_roll(1, (int)(plose / 100.0f * chance));
 
         if ((leecher->stats.hp += pgain) > leecher->stats.maxhp)
         {

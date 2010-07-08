@@ -379,7 +379,7 @@ enum spellnrs
 #define PATH_TIME_MULT(__op,__spell) (((__op->path_attuned & __spell->path) ? 1.15 : 1) * \
                 ((__op->path_repelled & __spell->path) ? 0.8 : 1))
 
-extern char        *spellpathnames[NRSPELLPATHS];
+extern const char  *spellpathnames[NRSPELLPATHS];
 extern archetype   *spellarch[NROFREALSPELLS];
 
 /* i added spellNPC here as special... its used for example to force scripted npc

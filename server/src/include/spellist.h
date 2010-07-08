@@ -863,7 +863,7 @@ PATH_TURNING,"holy_orb",},
 };
 */
 
-char   *spellpathnames[NRSPELLPATHS]    =
+const char   *spellpathnames[NRSPELLPATHS]    =
 {
     "Life", "Death", "Elemental", "Energy",
     "Spirit", "Protection", "Light", "Nether",
