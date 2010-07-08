@@ -23,54 +23,45 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 
 #include <vector>
 #include <fstream>
-#include "fmod.h"
-#include "fmod_errors.h"
+#include "include/cAudio.h"
 #include "define.h"
 #include "sound.h"
 #include "option.h"
 #include "logger.h"
 #include "profiler.h"
 
-// We can't use c++ api on non m$ compilers - shame on fmod!
-
-using namespace std;
-
-static FMOD_SYSTEM *System = 0;
-static FMOD_RESULT result;
+using namespace cAudio;
 
 typedef struct
 {
+    IAudioSource *sound;
     const char   *filename;
-    FMOD_SOUND   *sound;
-    FMOD_CHANNEL *channel;
-    bool isMusic;
-    bool is2D;
-    //FMOD_VECTOR  pos;
-    //FMOD_VECTOR vel;
+    bool loop;
+    bool stream;
 }
 SoundFiles;
 
 SoundFiles mSoundFiles[Sound::SAMPLE_SUM] =
 {
-    // Background musics.
-    { "invtro94.s3m",        0, 0, true , true },
-    // Long sound e.g. spoken text (ogg).
-    { "Player_Idle.ogg",     0, 0, false, true },
-    { "Wizard_Visitor.ogg",  0, 0, false, true },
-    { "male_bounty_01.ogg",  0, 0, false, true },
-    // Short sounds (wav)
-    { "console.wav",         0, 0, false, true },
-    { "male_hit_01.wav",     0, 0, false, true },
-    { "female_hit_01.wav",   0, 0, false, true },
-    { "female_hit_02.wav",   0, 0, false, true },
-    { "tentacle_hit_01.wav", 0, 0, false, true },
-    { "golem_hit_01.wav",    0, 0, false, true },
-    { "attack_01.wav",       0, 0, false, true },
+    // Background music.
+    { 0, "intro94.s3m",         true , true },
+    // Long sound (e.g. spoken text).
+    { 0, "Player_Idle.ogg",     false, true },
+    { 0, "Wizard_Visitor.ogg",  false, true },
+    { 0, "male_bounty_01.ogg",  false, true },
+    // Short sound.
+    { 0, "console.wav",         false, false},
+    { 0, "male_hit_01.wav",     false, false},
+    { 0, "female_hit_01.wav",   false, false},
+    { 0, "female_hit_02.wav",   false, false},
+    { 0, "tentacle_hit_01.wav", false, false},
+    { 0, "golem_hit_01.wav",    false, false},
+    { 0, "attack_01.wav",       false, false},
     // Dummy sound (for error handling).
-    { "dummy.wav",           0, 0, false, true },
+    { 0, "dummy.wav",           false, false},
 };
 
-static const float DISTANCEFACTOR = 1.0f; // Units per meter. (feet = 3.28.  cm = 100).
+static IAudioManager *mSoundManager = 0;
 
 //================================================================================================
 // Init the sound-system.
@@ -83,39 +74,40 @@ bool Sound::Init()
     // ////////////////////////////////////////////////////////////////////
     // Create the main system object.
     // ////////////////////////////////////////////////////////////////////
-    result = FMOD_System_Create(&System);
-    if (result != FMOD_OK)
+    mSoundManager = cAudio::createAudioManager(false);
+    if(!mSoundManager)
     {
-        Logger::log().error() << "FMOD error! " << result << " " << FMOD_ErrorString(result);
+        Logger::log().error() << "Failed to create audio playback manager.";
         return false;
     }
-    // ////////////////////////////////////////////////////////////////////
-    // Init Fmod.
-    // ////////////////////////////////////////////////////////////////////
-    result = FMOD_System_Init(System, 32, FMOD_INIT_NORMAL, 0);
-    if (result != FMOD_OK)
+    //Allow the user to choose a playback device
+    Logger::log().info() << "\nAvailable Playback Devices: \n";
+    std::string defaultDeviceName = mSoundManager->getDefaultDeviceName();
+    for(unsigned int i=0; i< mSoundManager->getAvailableDeviceCount(); ++i)
     {
-        Logger::log().error() << "FMOD error! " << result << " " << FMOD_ErrorString(result);
-        return false;
+        std::string deviceName = mSoundManager->getAvailableDeviceName(i);
+        if (!deviceName.compare(defaultDeviceName))
+            Logger::log().info() << i << "): " << deviceName << " [DEFAULT]";
+        else
+            Logger::log().info() << i << "): " << deviceName;
     }
-    result = FMOD_System_Set3DSettings(System, 1.0, DISTANCEFACTOR, 1.0f);
-    if (result != FMOD_OK)
+    //Initialize the manager with first device.
+    if (!mSoundManager->initialize(mSoundManager->getAvailableDeviceName(0)))
     {
-        Logger::log().error() << "FMOD error! " << result << " " << FMOD_ErrorString(result);
+        Logger::log().error() << "Failed to initialize the sound manager.";
+        mSoundManager = 0;
         return false;
     }
     mMusicVolume = 0.5;
     mSoundVolume = 1.0;
-    mInit = true;
     // ////////////////////////////////////////////////////////////////////
     // Load all samples.
     // ////////////////////////////////////////////////////////////////////
     createDummy();
     Logger::log().info() << "Loading all Sounds.";
-    for (unsigned int i = 0; i< SAMPLE_SUM; ++i)
-    {
-        createStream(i);
-    }
+    for (SampleID i = BG_MUSIC; i< SAMPLE_SUM; i=SampleID(i+1))
+        openStream(i);
+    //playStream(ATTACK_01);
     return true;
 }
 
@@ -125,13 +117,10 @@ bool Sound::Init()
 void Sound::freeRecources()
 {
     PROFILE()
-    if (!mInit) return;
-    for (unsigned int i = 0; i< SAMPLE_SUM; ++i)
-    {
-        FMOD_Sound_Release(mSoundFiles[i].sound);
-    }
-    result = FMOD_System_Close(System);
-    result = FMOD_System_Release(System);
+    if (!mSoundManager) return;
+    mSoundManager->releaseAllSources();
+    mSoundManager->shutDown();
+    destroyAudioManager(mSoundManager);
 }
 
 //================================================================================================
@@ -140,92 +129,47 @@ void Sound::freeRecources()
 void Sound::createDummy()
 {
     PROFILE()
-    const unsigned char dummy[] =
+    const char dummy[] =
     {
-        0x52,0x49,0x46,0x46,0xC0,0x00,0x00,0x00,0x57,0x41,0x56,0x45,0x66,0x6D,0x74,0x20,
-        0x12,0x00,0x00,0x00,0x01,0x00,0x01,0x00,0x11,0x2B,0x00,0x00,0x11,0x2B,0x00,0x00,
-        0x01,0x00,0x08,0x00,0x00,0x00,0x66,0x61,0x63,0x74,0x04,0x00,0x00,0x00,0x8E,0x00,
-        0x00,0x00,0x64,0x61,0x74,0x61,0x8E,0x00,0x00,0x00,0x80,0x80,0x80,0x80,0x80,0x80
+        'R' ,'I' , 'F','F' , 0x2c,0x00,0x00,0x00, 'W' ,'A' ,'V' ,'E' ,
+        'f' ,'m' ,'t' ,' ' , 0x10,0x00,0x00,0x00, 0x01,0x00,0x01,0x00,
+        0x44,0xac,0x00,0x00, 0x88,0x58,0x01,0x00, 0x02,0x00,0x10,0x00,
+        'd' ,'a' ,'t' ,'a' , 0x08,0x00,0x00,0x00, 0x00,0x00,0x00,0x00,
+        0x00,0x00,0x00,0x00
     };
-    std::string filename = PATH_SND;
-    filename += mSoundFiles[DUMMY].filename;
-    ofstream out(filename.c_str(), ios::binary);
-    if (!out)
-    {
+    std::ofstream out((PATH_SND + mSoundFiles[DUMMY].filename).c_str(), std::ios::binary);
+    if (out)
+        out.write(dummy, sizeof(dummy));
+    else
         Logger::log().error() << "Critical: Cound not create the dummy wavefile.";
-        return;
-    }
-    out.write((char*)dummy, sizeof(dummy));
+}
+
+//================================================================================================
+//Create an audio source and load a sound from a file.
+//================================================================================================
+void Sound::openStream(SampleID id)
+{
+    PROFILE()
+    mSoundFiles[id].sound = mSoundManager->create(0, (PATH_SND + mSoundFiles[id].filename).c_str(), mSoundFiles[id].stream);
 }
 
 //================================================================================================
 // Create a stream.
 //================================================================================================
-void Sound::createStream(int id)
+void Sound::playStream(SampleID id)
 {
-    PROFILE()
-    std::string filename = PATH_SND;
-    filename += mSoundFiles[id].filename;
-    int options = FMOD_HARDWARE;
-    options |= mSoundFiles[id].isMusic?FMOD_LOOP_NORMAL:FMOD_LOOP_OFF;
-    options |= mSoundFiles[id].is2D?FMOD_2D:FMOD_3D;
-    result = FMOD_System_CreateStream(System, filename.c_str(), options, 0, &mSoundFiles[id].sound);
-    if (result != FMOD_OK)
+    if (!mSoundFiles[id].sound->play2d(mSoundFiles[id].loop))
     {
-        Logger::log().error() << "Error on creating Soundstream " << mSoundFiles[id].filename << " : " << FMOD_ErrorString(result);
+        Logger::log().error() << "Error on creating Soundstream " << mSoundFiles[id].filename;
     }
 }
 
-//================================================================================================
-// Plays a stream.
-//================================================================================================
-void Sound::playStream(int id)
-{
-    PROFILE()
-    if (!mInit) return;
-    stopStream(id);
-    result = FMOD_System_PlaySound(System, FMOD_CHANNEL_FREE, mSoundFiles[id].sound, 0, &mSoundFiles[id].channel);
-    if (result != FMOD_OK)
-    {
-        Logger::log().error() << "Error on play Soundstream " << mSoundFiles[id].filename << " : " << FMOD_ErrorString(result);
-        return;
-    }
-    setVolume(id);
-    //set3DPos(id, );
-}
-
-void Sound::playStream(const char *file, bool loop)
-{
-    PROFILE()
-    if (!mInit || !file) return;
-    std::string filename = PATH_SND;
-    filename+= file;
-    int options = FMOD_HARDWARE | FMOD_2D;
-    options |= (loop)?FMOD_LOOP_NORMAL:FMOD_LOOP_OFF;
-    result = FMOD_System_CreateStream(System, filename.c_str(), options, 0, &mSoundFiles[DUMMY].sound);
-    if (result != FMOD_OK)
-    {
-        Logger::log().error() << "Error on creating Soundstream " << filename << " : "  << FMOD_ErrorString(result);
-        return;
-    }
-    stopStream(DUMMY);
-    result = FMOD_System_PlaySound(System, FMOD_CHANNEL_FREE, mSoundFiles[DUMMY].sound, 0, &mSoundFiles[DUMMY].channel);
-    if (result != FMOD_OK)
-    {
-        Logger::log().error() << "Error on play Soundstream " << filename << " : " << FMOD_ErrorString(result);
-        return;
-    }
-    setVolume(DUMMY);
-    //set3DPos(id, );
-}
 
 //================================================================================================
-// Stops the stream.
+// Create a stream.
 //================================================================================================
-void Sound::stopStream(int id)
+void Sound::playStream(const char *filename, bool loop)
 {
-    PROFILE()
-    if (mInit) FMOD_Channel_SetPaused(mSoundFiles[id].channel, true);
 }
 
 //================================================================================================
@@ -233,19 +177,7 @@ void Sound::stopStream(int id)
 //================================================================================================
 void Sound::setVolume(unsigned int id, float volume)
 {
-    PROFILE()
-    if (!mInit) return;
-    if (volume <0)
-    {
-        if (mSoundFiles[id].isMusic)
-            FMOD_Channel_SetVolume(mSoundFiles[id].channel, mMusicVolume);
-        else
-            FMOD_Channel_SetVolume(mSoundFiles[id].channel, mSoundVolume);
-    }
-    else
-    {
-        FMOD_Channel_SetVolume(mSoundFiles[id].channel, volume);
-    }
+
 }
 
 //================================================================================================
@@ -253,19 +185,5 @@ void Sound::setVolume(unsigned int id, float volume)
 //================================================================================================
 void Sound::set3DPos(unsigned int id, float &posX, float &posY, float &posZ)
 {
-    PROFILE()
-    if (!mInit) return;
-    FMOD_VECTOR pos =
-    {
-        posX * DISTANCEFACTOR, posY, posZ
-    };
-    FMOD_VECTOR vel =
-    {
-        0.0f, 0.0f, 0.0f
-    };
-    result = FMOD_Channel_Set3DAttributes(mSoundFiles[id].channel, &pos, &vel);
-    if (result != FMOD_OK)
-    {
-        Logger::log().error() << "Coundn't set 3D pos of sound. " << result << " " << FMOD_ErrorString(result);
-    }
+
 }
