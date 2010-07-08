@@ -33,9 +33,9 @@ public:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
-    enum SampleName
+    typedef enum
     {
-        // Background musics.
+        // Background music.
         BG_MUSIC,
         // Long sound e.g. spoken text (ogg).
         PLAYER_IDLE,
@@ -52,7 +52,7 @@ public:
         // Dummy sound (for error handling).
         DUMMY,
         SAMPLE_SUM
-    };
+    }SampleID;
 
     // ////////////////////////////////////////////////////////////////////
     // Functions.
@@ -64,10 +64,10 @@ public:
     bool Init();
     void freeRecources();
     void createDummy();
-    void createStream(int id);
-    void playStream(int id);
+    void openStream(SampleID id);
+    void playStream(SampleID id);
     void playStream(const char *filename, bool loop =false);
-    void stopStream(int id);
+    //void stopStream(unsigned int id);
     void set3DPos( unsigned int channel,  float &posX, float &posY, float &posZ );
     void setVolume( unsigned int channel, float volume =-1);
 
@@ -76,13 +76,11 @@ private:
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
     float mMusicVolume, mSoundVolume;
-    bool  mSound3D;
-    bool  mInit;
 
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    Sound() { mInit = false; }
+    Sound() {}
     ~Sound() {}
     Sound(const Sound&);            /**< disable copy-constructor. **/
     Sound &operator=(const Sound&); /**< disable assignment operator. **/

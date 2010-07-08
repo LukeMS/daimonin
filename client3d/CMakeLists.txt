@@ -69,12 +69,19 @@ IF (NOT OIS_FOUND)
 ENDIF()
 set(LIBS ${LIBS} ${OIS_LIBRARY})
 
-# Looking for package: fmod
-INCLUDE(${MY_CMAKE_MODULE_PATH}/FindFmod.cmake)
-IF (NOT FMOD_FOUND)
-  MESSAGE(FATAL_ERROR "fmod was not found.")
+# Looking for package: openAL
+INCLUDE(${MY_CMAKE_MODULE_PATH}/FindOpenAL.cmake)
+IF (NOT OPENAL_FOUND)
+  MESSAGE(FATAL_ERROR "openAL was not found.")
 ENDIF()
-set(LIBS ${LIBS} ${FMOD_LIBRARY})
+set(LIBS ${LIBS} ${OPENAL_LIBRARY})
+
+# Looking for package: cAudio
+INCLUDE(${MY_CMAKE_MODULE_PATH}/FindCAudio.cmake)
+IF (NOT CAUDIO_FOUND)
+  MESSAGE(FATAL_ERROR "cAudio was not found.")
+ENDIF()
+set(LIBS ${LIBS} ${CAUDIO_LIBRARY})
 
 link_libraries(${LIBS})
 MESSAGE(STATUS "-> done")
@@ -83,7 +90,12 @@ MESSAGE(STATUS "-> done")
 # define all header and source files
 ############################################################
 set (HEADER_FILES
-  3rdParty/fmod/fmod.h
+  3rdParty/caudio/include/IAudio.h
+  3rdParty/caudio/include/IAudioDecoder.h
+  3rdParty/caudio/include/IAudioDecoderFactory.h
+  3rdParty/caudio/include/IAudioManager.h
+  3rdParty/caudio/include/IDataSource.h
+  3rdParty/caudio/include/IListener.h
   3rdParty/tinyxml/tinystr.h  
   3rdParty/tinyxml/tinyxml.h  
   3rdParty/zlib/crc32.h  
@@ -195,11 +207,10 @@ set (SOURCE_FILES
 
 #Set all include direcetories here
 INCLUDE_DIRECTORIES(
-  "3rdParty/fmod"
+  "3rdParty/caudio"
   "3rdParty/tinyxml"
   "3rdParty/zlib"
   "include"
-  "include/gui"
   ${OGRE_INCLUDE}
   ${OIS_INCLUDE}
 )
@@ -251,7 +262,7 @@ ENDIF()
 MESSAGE(STATUS "-> done")
 
 MESSAGE(STATUS "############################################################")
-MESSAGE(STATUS "# You can compile the client whith the 'make' command now.")
+MESSAGE(STATUS "# You can compile the client with the 'make' command now.")
 MESSAGE(STATUS "############################################################")
 
 MESSAGE(STATUS ${CMAKE_BUILD_TYPE})

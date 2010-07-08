@@ -30,7 +30,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 const char PATH_GFX_FONTS[] = "./media/textures/fonts/";
 const char PATH_GFX_ITEMS[] = "./media/textures/items/"; /**< The item graphics to build the Item-Atlas-Texture. **/
 const char PATH_GFX[]       = "./media/textures/";
-const char PATH_SND[]       = "./media/sound/";
+const std::string PATH_SND  = "./media/sound/";
 const char PATH_TXT[]       = "./media/xml/";
 const char PATH_SRV[]       = "./srv_files/";
 
@@ -50,7 +50,7 @@ const char FILE_BMAPS_CLIENT3D[]  = "./srv_files/bmaps_3d";        /**< The fina
 //const char FILE_BMAPS_P0[]        = "./bmaps.p0";
 //const char FILE_DAIMONIN_P0[]     = "./daimonin.p0";
 //const char FILE_ARCHDEF[]         = "./archdef.dat";
-//const char FILE_BMAPS_TMP[]          = "./srv_files/bmaps.tmp";
-//const char FILE_ANIMS_TMP[]          = "./srv_files/anims.tmp";
+//const char FILE_BMAPS_TMP[]       = "./srv_files/bmaps.tmp";
+//const char FILE_ANIMS_TMP[]       = "./srv_files/anims.tmp";
 
 #endif
