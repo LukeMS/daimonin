@@ -13,7 +13,6 @@
 				<Option compiler="gcc" />
 				<Option projectResourceIncludeDirsRelation="0" />
 				<Compiler>
-					<Add option="-Wall" />
 					<Add option="-g" />
 					<Add option="-D_DEBUG" />
 				</Compiler>
@@ -33,7 +32,6 @@
 				<Option compiler="gcc" />
 				<Option projectResourceIncludeDirsRelation="0" />
 				<Compiler>
-					<Add option="-Wall" />
 					<Add option="-DNDEBUG" />
 				</Compiler>
 				<Linker>
@@ -50,6 +48,14 @@
 			<Add alias="All" targets="Debug;Release;" />
 		</VirtualTargets>
 		<Compiler>
+			<Add option="-Winit-self" />
+			<Add option="-Wredundant-decls" />
+			<Add option="-Wcast-align" />
+			<Add option="-Winline" />
+			<Add option="-Wmissing-declarations" />
+			<Add option="-Wmissing-include-dirs" />
+			<Add option="-Wmain" />
+			<Add option="-Wall" />
 			<Add option="-mthreads" />
 			<Add option="-fmessage-length=0" />
 			<Add option="-fexceptions" />
@@ -61,7 +67,7 @@
 			<Add directory="OgreSDK\include\OIS" />
 			<Add directory="..\..\..\3rdParty\tinyxml" />
 			<Add directory="..\..\..\3rdParty\zlib" />
-			<Add directory="..\..\..\3rdParty\fmod" />
+			<Add directory="..\..\..\3rdParty\caudio" />
 			<Add directory="..\..\..\source" />
 			<Add directory="..\..\..\include" />
 		</Compiler>
@@ -70,17 +76,37 @@
 			<Add option="-Wl,--add-stdcall-alias" />
 			<Add option="-Wl,--enable-auto-import" />
 			<Add library="ws2_32" />
-			<Add library="fmodex" />
+			<Add library="cAudio" />
 			<Add directory="fmod_lib" />
 		</Linker>
-		<Unit filename="..\..\..\3rdParty\fmod\fmod.h" />
-		<Unit filename="..\..\..\3rdParty\fmod\fmod.hpp" />
-		<Unit filename="..\..\..\3rdParty\fmod\fmod_codec.h" />
-		<Unit filename="..\..\..\3rdParty\fmod\fmod_dsp.h" />
-		<Unit filename="..\..\..\3rdParty\fmod\fmod_errors.h" />
-		<Unit filename="..\..\..\3rdParty\fmod\fmod_output.h" />
-		<Unit filename="..\..\..\3rdParty\fmod\fmoddyn.h" />
-		<Unit filename="..\..\..\3rdParty\fmod\wincompat.h" />
+		<Unit filename="..\..\..\3rdParty\caudio\include\EAudioFormats.h" />
+		<Unit filename="..\..\..\3rdParty\caudio\include\IAudioCapture.h" />
+		<Unit filename="..\..\..\3rdParty\caudio\include\IAudioDecoder.h" />
+		<Unit filename="..\..\..\3rdParty\caudio\include\IAudioDecoderFactory.h" />
+		<Unit filename="..\..\..\3rdParty\caudio\include\IAudioEffects.h" />
+		<Unit filename="..\..\..\3rdParty\caudio\include\IAudioManager.h" />
+		<Unit filename="..\..\..\3rdParty\caudio\include\IAudioPlugin.h" />
+		<Unit filename="..\..\..\3rdParty\caudio\include\IAudioSource.h" />
+		<Unit filename="..\..\..\3rdParty\caudio\include\ICaptureEventHandler.h" />
+		<Unit filename="..\..\..\3rdParty\caudio\include\IDataSource.h" />
+		<Unit filename="..\..\..\3rdParty\caudio\include\IDataSourceFactory.h" />
+		<Unit filename="..\..\..\3rdParty\caudio\include\IEffect.h" />
+		<Unit filename="..\..\..\3rdParty\caudio\include\IEffectParameters.h" />
+		<Unit filename="..\..\..\3rdParty\caudio\include\IFilter.h" />
+		<Unit filename="..\..\..\3rdParty\caudio\include\IListener.h" />
+		<Unit filename="..\..\..\3rdParty\caudio\include\ILogReceiver.h" />
+		<Unit filename="..\..\..\3rdParty\caudio\include\ILogger.h" />
+		<Unit filename="..\..\..\3rdParty\caudio\include\IManagerEventHandler.h" />
+		<Unit filename="..\..\..\3rdParty\caudio\include\IMemoryProvider.h" />
+		<Unit filename="..\..\..\3rdParty\caudio\include\IPluginManager.h" />
+		<Unit filename="..\..\..\3rdParty\caudio\include\IRefCounted.h" />
+		<Unit filename="..\..\..\3rdParty\caudio\include\ISourceEventHandler.h" />
+		<Unit filename="..\..\..\3rdParty\caudio\include\cAudio.h" />
+		<Unit filename="..\..\..\3rdParty\caudio\include\cAudioDefines.h" />
+		<Unit filename="..\..\..\3rdParty\caudio\include\cAudioMemory.h" />
+		<Unit filename="..\..\..\3rdParty\caudio\include\cAudioPlatform.h" />
+		<Unit filename="..\..\..\3rdParty\caudio\include\cAudioSleep.h" />
+		<Unit filename="..\..\..\3rdParty\caudio\include\cVector3.h" />
 		<Unit filename="..\..\..\3rdParty\tinyxml\tinystr.cpp" />
 		<Unit filename="..\..\..\3rdParty\tinyxml\tinystr.h" />
 		<Unit filename="..\..\..\3rdParty\tinyxml\tinyxml.cpp" />
@@ -150,6 +176,7 @@
 		<Unit filename="..\..\..\include\object_visuals.h" />
 		<Unit filename="..\..\..\include\option.h" />
 		<Unit filename="..\..\..\include\particle_manager.h" />
+		<Unit filename="..\..\..\include\profiler.h" />
 		<Unit filename="..\..\..\include\sound.h" />
 		<Unit filename="..\..\..\include\spell_manager.h" />
 		<Unit filename="..\..\..\include\spell_range.h" />
