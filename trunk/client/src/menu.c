@@ -540,7 +540,7 @@ void show_menu(void)
         int x,
             y;
 
-        gui_npc_show(esc_menu_index);
+        gui_npc_show();
 
         /* Force selection of element under pointer. */
         SDL_PumpEvents();

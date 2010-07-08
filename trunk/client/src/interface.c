@@ -74,13 +74,6 @@ _gui_npc *gui_npc_create(int mode, char *data, int len, int pos)
         {
             if (flag_end == 1)
             {
-                if (flag_end == 2) /* bug */
-                {
-                    BadInterfaceString(data, pos);
-
-                    return NULL;
-                }
-
                 /* our char before this was a '>' - now we get a '<' */
                 flag_start = 0;
                 flag_end = 0;
@@ -1599,7 +1592,7 @@ static uint16 PrecalcGUI(void)
 
 /* show npc interface. ATM its included in the menu system, but
  * we need to crate a lower layer level for it. */
-void gui_npc_show(int mark)
+void gui_npc_show(void)
 {
     ShowGUIBackground(gui_npc->startx, gui_npc->starty);
 
@@ -1822,8 +1815,6 @@ static void ShowGUIFurniture(uint16 x, uint16 y)
         }
         else
         {
-            int len;
-
             if (interface_mode == GUI_NPC_MODE_QUEST)
             {
                 sprintf(buf, "~RETURN~ to send");
@@ -1845,7 +1836,6 @@ static void ShowGUIFurniture(uint16 x, uint16 y)
             /* A selected keyword overrides everything else. */
             if (gui_npc->keyword_selected)
             {
-                char buf[SMALL_BUF];
                 int  c;
 
                 sprintf(buf, "%s", gui_npc->keyword_selected->keyword);
@@ -2532,7 +2522,7 @@ static void ShowIcon(_gui_npc_element *this)
     else if (this->mode == 'S' ||
              this->mode == 'G')
     {
-        if (this->quantity >= 0)
+        if (this->quantity > 0)
         {
             sprite_blt(Bitmaps[BITMAP_DIALOG_ICON_BG_POSITIVE], xoff + 3,
                        yoff + 3, NULL, NULL);
