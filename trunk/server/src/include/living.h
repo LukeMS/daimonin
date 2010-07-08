@@ -80,4 +80,4 @@ typedef struct liv
 #pragma pack(pop)
 #endif
 
-#endif/* ifndef __LIVING_H */
+#endif /* ifndef __LIVING_H */

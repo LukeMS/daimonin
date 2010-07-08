@@ -1,4 +1,3 @@
-
 /*
     Daimonin, the Massive Multiuser Online Role Playing Game
     Server Applicatiom
@@ -689,7 +688,5 @@ EXTERN hashtable               *beacon_table;
 
 //#include <../random_maps/random_map.h>
 //#include <../random_maps/rproto.h>
-
-
 
 #endif /* ifndef __GLOBAL_H */
