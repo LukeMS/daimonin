@@ -42,13 +42,13 @@ enum
     NO_STAT_VAL = 99
 };
 
-extern char    *attacks[NROFATTACKS];
-extern char    *spellpathnames[NRSPELLPATHS];
-extern float    stats_penalty[10];
-extern char    *lose_msg[NUM_STATS];
-extern char    *restore_msg[NUM_STATS];
-extern char    *stat_name[NUM_STATS];
-extern char    *short_stat_name[NUM_STATS];
+extern const char    *attacks[NROFATTACKS];
+extern const char    *spellpathnames[NRSPELLPATHS];
+extern const float    stats_penalty[10];
+extern const char    *lose_msg[NUM_STATS];
+extern const char    *restore_msg[NUM_STATS];
+extern const char    *stat_name[NUM_STATS];
+extern const char    *short_stat_name[NUM_STATS];
 
 #ifdef WIN32
 #pragma pack(push,1)
