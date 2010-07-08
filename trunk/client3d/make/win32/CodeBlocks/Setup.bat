@@ -22,3 +22,5 @@ copy .\OgreSDK\bin\debug\Plugin_ParticleFX_d.dll       ..\..\..\Plugin_ParticleF
 copy .\OgreSDK\bin\debug\Plugin_CgProgramManager_d.dll ..\..\..\Plugin_CgProgramManager_d.dll
 copy .\OgreSDK\bin\debug\RenderSystem_GL_d.dll         ..\..\..\RenderSystem_GL_d.dll
 copy .\OgreSDK\bin\debug\RenderSystem_Direct3D9_D.dll  ..\..\..\RenderSystem_Direct3D9_d.dll
+
+copy .\Sound\*.dll ..\..\..\
