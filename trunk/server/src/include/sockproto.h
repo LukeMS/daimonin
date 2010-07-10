@@ -64,12 +64,12 @@ void            read_client_images(void);
 int             esrv_send_face(NewSocket *ns, short face_num, int nocache);
 #endif
 /* info.c */
-void            new_draw_info(const int flags, const int pri, const object *const op, const char *const format, ...);
+void            new_draw_info(const int flags, const int pri, const object *const op, const char *const format, ...) DAI_GNUC_PRINTF(4, 5);
 void            new_info_map(const int flags, const mapstruct *const map, const int x, const int y, const
-                             int dist, const char *const format, ...);
+                             int dist, const char *const format, ...) DAI_GNUC_PRINTF(6, 7);
 void            new_info_map_except(const int flags, const mapstruct *const map, const int x, const int y,
                                     const int dist, const object *const op1, const object *const op,
-                                    const char *const format, ...);
+                                    const char *const format, ...) DAI_GNUC_PRINTF(8, 9);
 /* init.c */
 void            InitConnection(NewSocket *ns, char *str_ip);
 void            init_ericserver(void);

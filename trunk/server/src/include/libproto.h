@@ -174,8 +174,8 @@ extern void             init_vars(void);
 extern char            *get_ob_diff(const object *op, const object *op2);
 extern void             save_object(FILE *fp, object *op, int flag);
 /* logger.c */
-extern void             LOG(LogLevel logLevel, char *format, ...);
-extern void             CHATLOG(char *format, ...);
+extern void             LOG(LogLevel logLevel, char *format, ...) DAI_GNUC_PRINTF(2, 3);
+extern void             CHATLOG(char *format, ...) DAI_GNUC_PRINTF(1, 2);
 /* los.c */
 extern void             init_block(void);
 extern void             set_block(int x, int y, int bx, int by);
@@ -419,7 +419,7 @@ extern int              buf_overflow(const char *buf1, const char *buf2, int buf
 extern int              transform_name_string(char *name);
 extern void             bitstostring(long bits, int num, char *str);
 extern int              clipped_percent(int a, int b);
-extern void             NDI_LOG(LogLevel logLevel, int flags, int pri, object *ob, char *format, ...);
+extern void             NDI_LOG(LogLevel logLevel, int flags, int pri, object *ob, char *format, ...) DAI_GNUC_PRINTF(5, 6);
 /* view_map.c */
 void            draw_client_map(object *pl);
 void            draw_client_map2(object *pl);

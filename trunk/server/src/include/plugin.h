@@ -343,7 +343,7 @@ struct plugin_hooklist
     /* L */
     object *(*load_object_str)(char *);
     object *(*locate_beacon)(shstr *);
-    void (*LOG)(LogLevel, char *, ...);
+    void (*LOG)(LogLevel, char *, ...) DAI_GNUC_PRINTF(2, 3);
     int (*look_up_spell_name)(const char *);
     int (*lookup_skill_by_name)(char *);
 #ifdef USE_CHANNELS
@@ -360,13 +360,13 @@ struct plugin_hooklist
     /* N */
     uint32 (*nearest_pow_two_exp)(uint32);
     void (*new_draw_info)(const int, const int, const object *const,
-                          const char *const, ...);
+                          const char *const, ...) DAI_GNUC_PRINTF(4, 5);
     void (*new_info_map)(const int, const mapstruct *const, const int,
-                         const int, const int, const char *const, ...);
+                         const int, const int, const char *const, ...) DAI_GNUC_PRINTF(6, 7);
     void (*new_info_map_except)(const int, const mapstruct *const,
                                 const int, const int, const int,
                                 const object *const, const object *const,
-                                const char *const, ...);
+                                const char *const, ...) DAI_GNUC_PRINTF(8, 9);
     int (*new_save_map)(mapstruct *, int);
     char *(*normalize_path)(const char *, const char *, char *);
     char *(*normalize_path_direct)(const char *, const char *, char *);
