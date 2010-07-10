@@ -235,7 +235,7 @@ int                         command_party_leave ( object *pl, char *params);
 int                         command_party_remove ( object *pl, char *params);
 void                        party_add_member(player *leader, player *member);
 void                        party_remove_member(player *member, int flag);
-void                        party_message(int mode, int flags, int pri,object *leader, object *source, char *format, ...);
+void                        party_message(int mode, int flags, int pri,object *leader, object *source, char *format, ...) DAI_GNUC_PRINTF(6, 7);
 void                        party_client_group_status(object *member);
 void                        party_client_group_kill(object *member);
 void                        party_client_group_update(object *member, int flag);
