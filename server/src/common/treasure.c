@@ -263,7 +263,7 @@ static void postparse_treasurelist(treasure *t, treasurelist *tl)
         LOG(llevError, "ERROR: Treasurelist %s has element with no name or archetype\n", STRING_SAFE(tl->listname));
     if (t->chance >= 100 && t->next_yes && (t->next || t->next_no))
         LOG(llevBug,
-            "BUG: Treasurelist %s has element that has 100% generation, next_yes field as well as next or next_no\n",
+            "BUG: Treasurelist %s has element that has 100%% generation, next_yes field as well as next or next_no\n",
             tl->listname);
 
     /* if we have a list name && its not "none" -> link the list in */
@@ -302,7 +302,7 @@ static void create_money_table(void)
 
     if (!coins_arch[0] || !coins_arch[1] || !coins_arch[2] || !coins_arch[3])
     {
-        LOG(llevError, "create_money_table(): Can't find money.\n (mit: %x - gold: %x - silver: %x - copper: %x)",
+        LOG(llevError, "create_money_table(): Can't find money.\n (mit: %p - gold: %p - silver: %p - copper: %p)",
                 coins_arch[0],coins_arch[1],coins_arch[2],coins_arch[3]);
         return;
     }

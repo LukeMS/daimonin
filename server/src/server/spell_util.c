@@ -1692,23 +1692,21 @@ void move_golem(object *op)
      */
     if (--op->stats.hp < 0)
     {
-        char    buf[MEDIUM_BUF];
         if (op->exp_obj && op->exp_obj->stats.Wis)
         {
             if (op->inv)
-                strcpy(buf, "Your staff stops slithering around and lies still.");
+                new_draw_info(NDI_UNIQUE, 0, op->owner, "Your staff stops slithering around and lies still.");
             else
-                sprintf(buf, "Your %s departed this plane.", op->name);
+                new_draw_info(NDI_UNIQUE, 0, op->owner, "Your %s departed this plane.", op->name);
         }
         else if (!strncmp(op->name, "animated ", 9))
         {
-            sprintf(buf, "Your %s falls to the ground.", op->name);
+            new_draw_info(NDI_UNIQUE, 0, op->owner, "Your %s falls to the ground.", op->name);
         }
         else
         {
-            sprintf(buf, "Your %s dissolved.", op->name);
+            new_draw_info(NDI_UNIQUE, 0, op->owner, "Your %s dissolved.", op->name);
         }
-        new_draw_info(NDI_UNIQUE, 0, op->owner, buf);
         send_golem_control(op, GOLEM_CTR_RELEASE);
         CONTR(op->owner)->golem = NULL;
 

@@ -116,7 +116,8 @@ void apply_food(object *op, object *tmp)
         SET_FLAG(op, FLAG_EATING);
         force = insert_ob_in_ob(force, op);
 
-        new_draw_info(NDI_UNIQUE| NDI_NAVY, 0, op, "You start consuming the %s", STRING_SAFE(tmp->name));
+        new_draw_info(NDI_UNIQUE| NDI_NAVY, 0, op, "You start consuming the %s",
+                      query_name(tmp));
 
     }
     decrease_ob(tmp);
@@ -294,7 +295,6 @@ int dragon_eat_flesh(object *op, object *meal)
     object *abil        = NULL;    /* pointer to dragon ability force*/
     object *tmp         = NULL;     /* tmp. object */
 
-    char    buf[MEDIUM_BUF];            /* tmp. string buffer */
     double  chance;                /* improvement-chance of one resistance type */
     double  maxchance   = 0;           /* highest chance of any type */
     double  bonus       = 0;               /* level bonus (improvement is easier at lowlevel) */
@@ -384,18 +384,17 @@ int dragon_eat_flesh(object *op, object *meal)
 
     /* print message according to maxchance */
     if (maxchance > 50.)
-        sprintf(buf, "Hmm! The %s tasted delicious!", meal->name);
+        new_draw_info(NDI_UNIQUE, 0, op, "Hmm! The %s tasted delicious!", meal->name);
     else if (maxchance > 10.)
-        sprintf(buf, "The %s tasted very good.", meal->name);
+        new_draw_info(NDI_UNIQUE, 0, op, "The %s tasted very good.", meal->name);
     else if (maxchance > 1.)
-        sprintf(buf, "The %s tasted good.", meal->name);
+        new_draw_info(NDI_UNIQUE, 0, op, "The %s tasted good.", meal->name);
     else if (maxchance > 0.0001)
-        sprintf(buf, "The %s had a boring taste.", meal->name);
+        new_draw_info(NDI_UNIQUE, 0, op, "The %s had a boring taste.", meal->name);
     else if (meal->last_eat > 0 && atnr_is_dragon_enabled(meal->last_eat))
-        sprintf(buf, "The %s tasted strange.", meal->name);
+        new_draw_info(NDI_UNIQUE, 0, op, "The %s tasted strange.", meal->name);
     else
-        sprintf(buf, "The %s had no taste.", meal->name);
-    new_draw_info(NDI_UNIQUE, 0, op, buf);
+        new_draw_info(NDI_UNIQUE, 0, op, "The %s had no taste.", meal->name);
 
     /* now choose a winner if we have any */
     i = -1;
@@ -408,8 +407,7 @@ int dragon_eat_flesh(object *op, object *meal)
         skin->resist[i]++;
         FIX_PLAYER(op ,"dragon eat flesh - resist");
 
-        sprintf(buf, "Your skin is now more resistant to %s!", attack_name[i]);
-        new_draw_info(NDI_UNIQUE | NDI_RED, 0, op, buf);
+        new_draw_info(NDI_UNIQUE | NDI_RED, 0, op, "Your skin is now more resistant to %s!", attack_name[i]);
     }
 
     /* if this flesh contains a new ability focus, we mark it
@@ -420,15 +418,12 @@ int dragon_eat_flesh(object *op, object *meal)
 
         if (meal->last_eat != abil->stats.exp)
         {
-            sprintf(buf, "Your metabolism prepares to focus on %s!", attack_name[meal->last_eat]);
-            new_draw_info(NDI_UNIQUE, 0, op, buf);
-            sprintf(buf, "The change will happen at level %d", abil->level + 1);
-            new_draw_info(NDI_UNIQUE, 0, op, buf);
+            new_draw_info(NDI_UNIQUE, 0, op, "Your metabolism prepares to focus on %s!", attack_name[meal->last_eat]);
+            new_draw_info(NDI_UNIQUE, 0, op, "The change will happen at level %d", abil->level + 1);
         }
         else
         {
-            sprintf(buf, "Your metabolism will continue to focus on %s.", attack_name[meal->last_eat]);
-            new_draw_info(NDI_UNIQUE, 0, op, buf);
+            new_draw_info(NDI_UNIQUE, 0, op, "Your metabolism will continue to focus on %s.", attack_name[meal->last_eat]);
             abil->last_eat = 0;
         }
     }

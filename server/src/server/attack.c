@@ -743,7 +743,7 @@ static int HitPlayerAttacktype(object *op, object *hitter, int *flags, int damag
     if (dam < 0)
     {
         LOG(llevBug, "BUG:: %s/HitPlayerAttacktype(): called with negative damage: %d from object %s[%d]!\n",
-            __FILE__, dam, STRING_OBJ_NAME(op), op->count);
+            __FILE__, (int)dam, STRING_OBJ_NAME(op), op->count);
         return 0;
     }
 
@@ -1440,7 +1440,7 @@ int kill_object(object *op, int dam, object *hitter, int typeX)
                 sprintf(buf2, "%s killed %s.",  query_name(owner), query_name(op));
                 sprintf(buf, "You killed %s.", query_name(op));
             }
-            new_draw_info(NDI_WHITE, 0, owner, buf);
+            new_draw_info(NDI_WHITE, 0, owner, "%s", buf);
         }
 
         /* Give exp and create the corpse. Decide we get a loot or not */

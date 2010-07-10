@@ -343,9 +343,9 @@ int infect_object(object *victim, object *disease, int force)
         else
             sprintf(buf, "You infect %s with your disease, %s!", victim->name, new_disease->name);
         if (victim->type == PLAYER)
-            new_draw_info(NDI_UNIQUE | NDI_RED, 0, new_disease->owner, buf);
+            new_draw_info(NDI_UNIQUE | NDI_RED, 0, new_disease->owner, "%s", buf);
         else
-            new_draw_info(0, 4, new_disease->owner, buf);
+            new_draw_info(0, 4, new_disease->owner, "%s", buf);
     }
     if (victim->type == PLAYER)
         new_draw_info(NDI_UNIQUE | NDI_RED, 0, victim, "You suddenly feel ill.");
@@ -550,7 +550,7 @@ int move_symptom(object *symptom)
         }
     }
     if (victim->type == PLAYER)
-        new_draw_info(NDI_UNIQUE | NDI_RED, 0, victim, symptom->msg);
+        new_draw_info(NDI_UNIQUE | NDI_RED, 0, victim, "%s", symptom->msg);
 
     return 1;
 }

@@ -471,7 +471,10 @@ static int check_behaviour_parameters(struct mob_behaviour *behaviour)
                     case AI_STRINGINT_TYPE:
 //                      LOG(llevBug, "Loading default STRINGINT parameter for %s:%s\n", behaviour->declaration->name, behaviour->declaration->params[i].name);
                       if(parse_stringint_parameter(&behaviour->parameters[i], behaviour->declaration->params[i].defaultvalue))
-                          LOG(llevBug, "BUG: Bad STRINGINT default value (\"%s\") for parameter %s:%s\n", behaviour->declaration->params[i].defaultvalue, behaviour->declaration->name, behaviour->declaration->params[i].name);
+                          LOG(llevBug, "BUG: Bad STRINGINT default value (\"%s\") for parameter %s:%s\n",
+                              (char *)behaviour->declaration->params[i].defaultvalue,
+                              behaviour->declaration->name,
+                              behaviour->declaration->params[i].name);
                       break;
                 }
             }

@@ -143,8 +143,8 @@ int command_dmload(object *op, char *params)
 
     sprintf(buf,"DM_LOAD name:>%s< pwd:>%s<\n", dmload_value.name, dmload_value.password);
 
-    LOG(llevDebug, buf);
-    new_draw_info(NDI_UNIQUE, 0, op, buf);
+    LOG(llevDebug, "%s", buf);
+    new_draw_info(NDI_UNIQUE, 0, op, "%s", buf);
 
     return 0;
 }
@@ -364,7 +364,7 @@ int command_restart(object *ob, char *params)
 
     sprintf(buf, "'/restart%s%s' issued by %s\nServer will recompile and arches and maps will be updated!",
             (params) ? " " : "", (params) ? params : "", STRING_OBJ_NAME(ob));
-    LOG(llevSystem, buf);
+    LOG(llevSystem, "%s", buf);
     shutdown_agent(time, EXIT_RESETMAP, buf);
 
     return 0;
@@ -385,7 +385,7 @@ int command_shutdown(object *op, char *params)
 
     sprintf(buf, "'/shutdown%s%s' issued by %s\nServer will shutdown and not reboot!",
             (params) ? " " : "", (params) ? params : "", STRING_OBJ_NAME(op));
-    LOG(llevSystem, buf);
+    LOG(llevSystem, "%s", buf);
     shutdown_agent(time, EXIT_SHUTODWN, buf);
     /* not reached - server will terminate itself before that line */
 
@@ -762,13 +762,13 @@ int command_mutelevel(object *op, char *params)
     sprintf(buf,"SET: shout level set to %d!\n", lvl);
 
     for(ol = gmaster_list_VOL; ol; ol = ol->next)
-        new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ol->objlink.ob, buf);
+        new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ol->objlink.ob, "%s", buf);
 
     for(ol = gmaster_list_GM; ol; ol = ol->next)
-        new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ol->objlink.ob, buf);
+        new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ol->objlink.ob, "%s", buf);
 
     for(ol = gmaster_list_MM; ol; ol = ol->next)
-        new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ol->objlink.ob, buf);
+        new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ol->objlink.ob, "%s", buf);
 
     return 0;
 }
@@ -796,13 +796,13 @@ int command_dm_connections(object *op, char *params)
             nr);
 
     for(ol = gmaster_list_VOL; ol; ol = ol->next)
-        new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ol->objlink.ob, buf);
+        new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ol->objlink.ob, "%s", buf);
 
     for(ol = gmaster_list_GM; ol; ol = ol->next)
-        new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ol->objlink.ob, buf);
+        new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ol->objlink.ob, "%s", buf);
 
     for(ol = gmaster_list_MM; ol; ol = ol->next)
-        new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ol->objlink.ob, buf);
+        new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ol->objlink.ob, "%s", buf);
 
     return 0;
 }
@@ -1261,7 +1261,7 @@ int command_dump(object *op, char *params)
         return 1;
 
     dump_object(tmp);
-    new_draw_info(NDI_UNIQUE, 0, op, errmsg);
+    new_draw_info(NDI_UNIQUE, 0, op, "%s", errmsg);
 
     return 0;
 }
@@ -1354,7 +1354,7 @@ int command_setskill(object *op, char *params)
         sprintf(buf, "Usage: setskill [who] [skill nr] [level]\nSkills/Nr: ");
         for(i=0;i<NROFSKILLS;i++)
             sprintf(strchr(buf, '\0'), ",%s(%d)", skills[i].name,i);
-        new_draw_info(NDI_UNIQUE, 0, op, buf);
+        new_draw_info(NDI_UNIQUE, 0, op, "%s", buf);
         return 0;
     }
 
@@ -1445,7 +1445,7 @@ int command_addexp(object *op, char *params)
         sprintf(buf, "Usage: addexp [who] [skill nr] [exp]\nSkills/Nr: ");
         for(i=0;i<NROFSKILLS;i++)
             sprintf(strchr(buf, '\0'), "%s(%d), ", skills[i].name,i);
-        new_draw_info(NDI_UNIQUE, 0, op, buf);
+        new_draw_info(NDI_UNIQUE, 0, op, "%s", buf);
         return 0;
     }
 
@@ -1545,27 +1545,21 @@ int command_stats(object *op, char *params)
         return 0;
     }
 
-    sprintf(buf, "Str : %-2d      H.P. : %-4d  MAX : %d",
-            pl->ob->stats.Str, pl->ob->stats.hp, pl->ob->stats.maxhp);
-    new_draw_info(NDI_UNIQUE, 0, op, buf);
-    sprintf(buf, "Dex : %-2d      S.P. : %-4d  MAX : %d",
-            pl->ob->stats.Dex, pl->ob->stats.sp, pl->ob->stats.maxsp);
-    new_draw_info(NDI_UNIQUE, 0, op, buf);
-    sprintf(buf, "Con : %-2d        AC : %-4d  WC  : %d",
-            pl->ob->stats.Con, pl->ob->stats.ac, pl->ob->stats.wc);
-    new_draw_info(NDI_UNIQUE, 0, op, buf);
-    sprintf(buf, "Wis : %-2d       EXP : %d",
-            pl->ob->stats.Wis, pl->ob->stats.exp);
-    new_draw_info(NDI_UNIQUE, 0, op, buf);
-    sprintf(buf, "Cha : %-2d      Food : %d",
-            pl->ob->stats.Cha, pl->ob->stats.food);
-    new_draw_info(NDI_UNIQUE, 0, op, buf);
-    sprintf(buf, "Int : %-2d    Damage : %d",
-            pl->ob->stats.Int, pl->ob->stats.dam);
-    new_draw_info(NDI_UNIQUE, 0, op, buf);
-    sprintf(buf, "Pow : %-2d    Grace : %d",
-            pl->ob->stats.Pow, pl->ob->stats.grace);
-    new_draw_info(NDI_UNIQUE, 0, op, buf);
+    new_draw_info(NDI_UNIQUE, 0, op, 
+                  "Str : %-2d      H.P. : %-4d  MAX : %d\n"
+                  "Dex : %-2d      S.P. : %-4d  MAX : %d\n"
+                  "Con : %-2d        AC : %-4d  WC  : %d\n"
+                  "Int : %-2d       EXP : %d\n"
+                  "Wis : %-2d      Food : %d\n"
+                  "Pow : %-2d    Damage : %d\n"
+                  "Cha : %-2d    Grace : %d",
+                  pl->ob->stats.Str, pl->ob->stats.hp, pl->ob->stats.maxhp,
+                  pl->ob->stats.Dex, pl->ob->stats.sp, pl->ob->stats.maxsp,
+                  pl->ob->stats.Con, pl->ob->stats.ac, pl->ob->stats.wc,
+                  pl->ob->stats.Int, pl->ob->stats.exp,
+                  pl->ob->stats.Wis, pl->ob->stats.food,
+                  pl->ob->stats.Pow, pl->ob->stats.dam,
+                  pl->ob->stats.Cha, pl->ob->stats.grace);
 
     return 0;
 }
@@ -1851,27 +1845,20 @@ int command_mute(object *op, char *params)
     }
     else
     {
-        pl->mute_counter = pticks + seconds * (1000000 / MAX_TIME);
+        char buf[SMALL_BUF];
 
-        for(ol = gmaster_list_MW; ol; ol = ol->next)
-            new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ol->objlink.ob,
-                                 "MUTE: Player %s has been muted by %s for %d seconds.\n",
-                                 query_name(pl->ob), query_name(op), seconds);
+        pl->mute_counter = pticks + seconds * (1000000 / MAX_TIME);
+        sprintf(buf, "MUTE: Player %s has been muted by %s for %d seconds.\n",
+                query_name(pl->ob), query_name(op), seconds);
 
         for(ol = gmaster_list_VOL; ol; ol = ol->next)
-            new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ol->objlink.ob,
-                                 "MUTE: Player %s has been muted by %s for %d seconds.\n",
-                                 query_name(pl->ob), query_name(op), seconds);
+            new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ol->objlink.ob, "%s", buf);
 
         for(ol = gmaster_list_GM; ol; ol = ol->next)
-            new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ol->objlink.ob,
-                                 "MUTE: Player %s has been muted by %s for %d seconds.\n",
-                                 query_name(pl->ob), query_name(op), seconds);
+            new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ol->objlink.ob, "%s", buf);
 
         for(ol = gmaster_list_MM; ol; ol = ol->next)
-            new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ol->objlink.ob,
-                                 "MUTE: Player %s has been muted by %s for %d seconds.\n",
-                                 query_name(pl->ob), query_name(op), seconds);
+            new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ol->objlink.ob, "%s", buf);
     }
 
     return 0;
@@ -1889,6 +1876,7 @@ int command_silence(object *op, char *params)
 static void add_banlist_ip(object* op, char *ip, int ticks)
 {
     objectlink *ol, *ol_tmp, *ob;
+    char buf[SMALL_BUF];
 
     for(ol = ban_list_ip;ol;ol=ol_tmp)
     {
@@ -1901,24 +1889,29 @@ static void add_banlist_ip(object* op, char *ip, int ticks)
         if(!strcmp(ol->objlink.ban->ip, ip))
             remove_ban_entry(ol);
     }
-    new_draw_info(NDI_UNIQUE, 0, op, "IP %s is now banned for %d seconds.", ip, ticks/8);
-    LOG(llevSystem, "IP %s is now banned for %d seconds.\n", ip, ticks/8);
+
+    sprintf(buf, "IP %s is now banned for %d seconds.", ip, ticks/8);
+    new_draw_info(NDI_UNIQUE, 0, op, "%s", buf);
+    LOG(llevSystem, "%s", buf);
     add_ban_entry(NULL, ip, ticks, ticks);
+    sprintf(buf, "BAN: IP %s has been banned by %s for %d seconds.\n",
+            ip, query_name(op), ticks/8);
+
     for(ob = gmaster_list_VOL;ob;ob=ob->next)
-        new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ob->objlink.ob,
-            "BAN: IP %s has been banned by %s for %d seconds.\n", ip, query_name(op), ticks/8);
+        new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ob->objlink.ob, "%s", buf);
+
     for(ob = gmaster_list_GM;ob;ob=ob->next)
-        new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ob->objlink.ob,
-            "BAN: IP %s has been banned by %s for %d seconds.\n", ip, query_name(op), ticks/8);
+        new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ob->objlink.ob, "%s", buf);
+
     for(ob = gmaster_list_MM;ob;ob=ob->next)
-        new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ob->objlink.ob,
-            "BAN: IP %s has been banned by %s for %d seconds.\n", ip, query_name(op), ticks/8);
+        new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ob->objlink.ob, "%s", buf);
 }
 
 static void add_banlist_name(object* op, char *name, int ticks)
 {
     objectlink *ol, *ol_tmp, *ob;
     const char *name_hash;
+    char buf[SMALL_BUF];
 
     transform_name_string(name);
 
@@ -1934,19 +1927,22 @@ static void add_banlist_name(object* op, char *name, int ticks)
         if(ol->objlink.ban->name == name_hash)
             remove_ban_entry(ol);
     }
-    new_draw_info(NDI_UNIQUE, 0, op, "Player %s is now banned for %d seconds.", name, ticks/8);
-    LOG(llevSystem,"Player %s is now banned for %d seconds.\n", name, ticks/8);
-    add_ban_entry(name, NULL, ticks, ticks);
-    for(ob = gmaster_list_VOL;ob;ob=ob->next)
-        new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ob->objlink.ob,
-            "BAN: Player %s has been banned by %s for %d seconds.\n", name, query_name(op), ticks/8);
-    for(ob = gmaster_list_GM;ob;ob=ob->next)
-        new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ob->objlink.ob,
-            "BAN: Player %s has been banned by %s for %d seconds.\n", name, query_name(op), ticks/8);
-    for(ob = gmaster_list_MM;ob;ob=ob->next)
-        new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ob->objlink.ob,
-            "BAN: Player %s has been banned by %s for %d seconds.\n", name, query_name(op), ticks/8);
 
+    sprintf(buf, "Player %s is now banned for %d seconds.", name, ticks/8);
+    new_draw_info(NDI_UNIQUE, 0, op, "%s", buf);
+    LOG(llevSystem, "%s", buf);
+    add_ban_entry(name, NULL, ticks, ticks);
+    sprintf(buf, "BAN: Player %s has been banned by %s for %d seconds.\n",
+            name, query_name(op), ticks/8);
+
+    for(ob = gmaster_list_VOL;ob;ob=ob->next)
+        new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ob->objlink.ob, "%s", buf);
+
+    for(ob = gmaster_list_GM;ob;ob=ob->next)
+        new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ob->objlink.ob, "%s", buf);
+
+    for(ob = gmaster_list_MM;ob;ob=ob->next)
+        new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ob->objlink.ob, "%s", buf);
 }
 
 /* a player can be banned forever or for a time.
@@ -1986,7 +1982,7 @@ int command_ban(object *op, char *params)
                 pticks >= ol->objlink.ban->ticks)
                 remove_ban_entry(ol); /* is not valid anymore, gc it on the fly */
             else
-                new_draw_info(NDI_UNIQUE, 0, op, "%s -> %d left (of %d) sec",
+                new_draw_info(NDI_UNIQUE, 0, op, "%s -> %lu left (of %d) sec",
                                      ol->objlink.ban->name,
                                      (ol->objlink.ban->ticks - pticks) / 8,
                                      ol->objlink.ban->ticks_init / 8);
@@ -2000,7 +1996,7 @@ int command_ban(object *op, char *params)
                 pticks >= ol->objlink.ban->ticks)
                 remove_ban_entry(ol); /* is not valid anymore, gc it on the fly */
             else
-                new_draw_info(NDI_UNIQUE, 0, op, "%s :: %d left (of %d) sec",
+                new_draw_info(NDI_UNIQUE, 0, op, "%s :: %lu left (of %d) sec",
                                      ol->objlink.ban->ip,
                                      (ol->objlink.ban->ticks - pticks) / 8,
                                      ol->objlink.ban->ticks_init / 8);
@@ -2094,6 +2090,8 @@ int command_ban(object *op, char *params)
             }
             else
             {
+                char buf[SMALL_BUF];
+
                 if (CONTR(op)->gmaster_mode == GMASTER_MODE_VOL &&
                     ticks == -1)
                     return 1;
@@ -2107,21 +2105,17 @@ int command_ban(object *op, char *params)
                 save_ban_file();
                 LOG(llevInfo, "BANCMD: %s issued /ban add %s %s %d seconds\n",
                     op->name, name, name_buf, ticks / 8);
+                sprintf(buf, "BAN: Player %s and IP %s have been banned by %s for %d seconds.\n",
+                        query_name(pl->ob), pl->socket.ip_host, op->name, ticks / 8);
 
                 for(ob = gmaster_list_VOL; ob; ob = ob->next)
-                    new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ob->objlink.ob,
-                                         "BAN: Player %s and IP %s have been banned by %s for %d seconds.\n",
-                                         query_name(pl->ob), pl->socket.ip_host, op->name, ticks / 8);
+                    new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ob->objlink.ob, "%s", buf);
 
                 for(ob = gmaster_list_GM; ob; ob = ob->next)
-                    new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ob->objlink.ob,
-                                         "BAN: Player %s and IP %s have been banned by %s for %d seconds.\n",
-                                         query_name(pl->ob), pl->socket.ip_host, op->name, ticks / 8);
+                    new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ob->objlink.ob, "%s", buf);
 
                 for(ob = gmaster_list_MM; ob; ob = ob->next)
-                    new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ob->objlink.ob,
-                                         "BAN: Player %s and IP %s have been banned by %s for %d seconds.\n",
-                                         query_name(pl->ob), pl->socket.ip_host, op->name, ticks / 8);
+                    new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ob->objlink.ob, "%s", buf);
 
                 kick_player(pl);
             }
@@ -2144,6 +2138,8 @@ int command_ban(object *op, char *params)
 
                 if (!strcmp(ol->objlink.ban->ip, name))
                 {
+                    char buf[SMALL_BUF];
+
                     if ((CONTR(op)->gmaster_mode != GMASTER_MODE_GM &&
                          CONTR(op)->gmaster_mode != GMASTER_MODE_MM) &&
                         ol->objlink.ban->ticks_init == -1)
@@ -2157,21 +2153,17 @@ int command_ban(object *op, char *params)
                         query_name(op), name);
                     new_draw_info(NDI_UNIQUE, 0, op, "You unbanned IP %s!",
                                          name);
+                    sprintf(buf, "BAN: IP %s has been unbanned by %s.\n",
+                            name, op->name);
 
                     for (ob = gmaster_list_VOL; ob; ob = ob->next)
-                        new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ob->objlink.ob,
-                                             "BAN: IP %s has been unbanned by %s.\n",
-                                             name, op->name);
+                        new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ob->objlink.ob, "%s", buf);
 
                     for (ob = gmaster_list_GM; ob; ob = ob->next)
-                        new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ob->objlink.ob,
-                                             "BAN: IP %s has been unbanned by %s.\n",
-                                             name, op->name);
+                        new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ob->objlink.ob, "%s", buf);
 
                     for (ob = gmaster_list_MM; ob; ob = ob->next)
-                        new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ob->objlink.ob,
-                                             "BAN: IP %s has been unbanned by %s.\n",
-                                             name, op->name);
+                        new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ob->objlink.ob, "%s", buf);
 
                     remove_ban_entry(ol);
                     success = TRUE;
@@ -2187,6 +2179,8 @@ int command_ban(object *op, char *params)
 
                 if (ol->objlink.ban->name == name_hash)
                 {
+                    char buf[SMALL_BUF];
+
                     if ((CONTR(op)->gmaster_mode != GMASTER_MODE_GM &&
                          CONTR(op)->gmaster_mode != GMASTER_MODE_MM) &&
                         ol->objlink.ban->ticks_init == -1)
@@ -2200,21 +2194,17 @@ int command_ban(object *op, char *params)
                         query_name(op), name);
                     new_draw_info(NDI_UNIQUE, 0, op, "You unbanned player %s!",
                                          name);
+                    sprintf(buf, "BAN: Player %s has been unbanned by %s.\n",
+                            name, op->name);
 
                     for (ob = gmaster_list_VOL; ob; ob = ob->next)
-                        new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ob->objlink.ob,
-                                             "BAN: Player %s has been unbanned by %s.\n",
-                                             name, op->name);
+                        new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ob->objlink.ob, "%s", buf);
 
                     for (ob = gmaster_list_GM; ob; ob = ob->next)
-                        new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ob->objlink.ob,
-                                             "BAN: Player %s has been unbanned by %s.\n",
-                                             name, op->name);
+                        new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ob->objlink.ob, "%s", buf);
 
                     for (ob = gmaster_list_MM; ob; ob = ob->next)
-                        new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ob->objlink.ob,
-                                             "BAN: Player %s has been unbanned by %s.\n",
-                                             name, op->name);
+                        new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ob->objlink.ob, "%s", buf);
 
                     remove_ban_entry(ol);
                     success = TRUE;
@@ -2314,7 +2304,7 @@ int command_gmasterlist(object *op, char *params)
     {
         if(!CONTR(ol->objlink.ob)->privacy)
         {
-            new_draw_info(NDI_UNIQUE, 0, op,
+            new_draw_info(NDI_UNIQUE, 0, op, "%s",
                           CONTR(ol->objlink.ob)->quick_name);
         }
     }
@@ -2323,7 +2313,7 @@ int command_gmasterlist(object *op, char *params)
     {
         if(!CONTR(ol->objlink.ob)->privacy)
         {
-            new_draw_info(NDI_UNIQUE, 0, op,
+            new_draw_info(NDI_UNIQUE, 0, op, "%s",
                           CONTR(ol->objlink.ob)->quick_name);
         }
     }
@@ -2332,7 +2322,7 @@ int command_gmasterlist(object *op, char *params)
     {
         if(!CONTR(ol->objlink.ob)->privacy)
         {
-            new_draw_info(NDI_UNIQUE, 0, op,
+            new_draw_info(NDI_UNIQUE, 0, op, "%s",
                           CONTR(ol->objlink.ob)->quick_name);
         }
     }
@@ -2341,7 +2331,7 @@ int command_gmasterlist(object *op, char *params)
     {
         if(!CONTR(ol->objlink.ob)->privacy)
         {
-            new_draw_info(NDI_UNIQUE, 0, op,
+            new_draw_info(NDI_UNIQUE, 0, op, "%s",
                           CONTR(ol->objlink.ob)->quick_name);
         }
     }
@@ -2371,7 +2361,7 @@ int command_gmasterfile(object *op, char *params)
     {
         for (ol = gmaster_list; ol; ol = ol->next)
         {
-            new_draw_info(NDI_UNIQUE, 0, op, ol->objlink.gm->entry);
+            new_draw_info(NDI_UNIQUE, 0, op, "%s", ol->objlink.gm->entry);
         }
 
         return 0;

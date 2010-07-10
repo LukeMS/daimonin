@@ -565,7 +565,7 @@ char *examine_monster(object *op, object *tmp, char *buf, int flag)
     }
 
     if(op)
-        new_draw_info(NDI_UNIQUE, 0, op, buf);
+        new_draw_info(NDI_UNIQUE, 0, op, "%s", buf);
 
     return buf;
 }
@@ -1018,7 +1018,7 @@ char *examine(object *op, object *tmp, int flag)
 
     if(op)
     {
-        new_draw_info(NDI_UNIQUE, 0, op, buf_out);
+        new_draw_info(NDI_UNIQUE, 0, op, "%s", buf_out);
 
         /* Examining signs also applies them (so the player can see what is on
          * them). This is because for signs their whole raison d'etre is to be
@@ -1036,7 +1036,7 @@ char *examine(object *op, object *tmp, int flag)
         if (QUERY_FLAG(op, FLAG_WIZ))
         {
             dump_object(tmp);
-            new_draw_info(NDI_UNIQUE, 0, op, errmsg);
+            new_draw_info(NDI_UNIQUE, 0, op, "%s", errmsg);
         }
     }
     return buf_out;

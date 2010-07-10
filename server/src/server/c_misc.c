@@ -92,7 +92,7 @@ int command_bug(object *op, char *params)
     strncat(buf, ++params, MEDIUM_BUF - strlen(buf));
     buf[MEDIUM_BUF - 1] = '\0';
     bug_report(buf);
-    new_draw_info(NDI_ALL | NDI_UNIQUE, 1, NULL, buf);
+    new_draw_info(NDI_ALL | NDI_UNIQUE, 1, NULL, "%s", buf);
     new_draw_info(NDI_UNIQUE, 0, op, "OK, thanks!");
 
     return 0;
@@ -143,28 +143,18 @@ void malloc_info(object *op)
             mapmem += MAP_WIDTH(m) * MAP_HEIGHT(m) * (sizeof(object *) + sizeof(MapSpace));
             nrm++;
         }
-    sprintf(errmsg, "Sizeof: object=%ld  player=%ld  socketbuf=%ld  map=%ld", (long)sizeof(object),
-            (long) (sizeof(player) + MAXSOCKBUF_IN * 2), (long)SOCKET_BUFSIZE_SEND+SOCKET_BUFSIZE_READ, (long)sizeof(mapstruct));
-    new_draw_info(NDI_UNIQUE, 0, op, errmsg);
-    LOG(llevSystem, "%s\n", errmsg);
 
+    NDI_LOG(llevSystem, NDI_UNIQUE, 0, op, "Sizeof: object=%ld  player=%ld  socketbuf=%ld  map=%ld",
+            (long)sizeof(object), (long) (sizeof(player) + MAXSOCKBUF_IN * 2),
+            (long)SOCKET_BUFSIZE_SEND+SOCKET_BUFSIZE_READ, (long)sizeof(mapstruct));
     dump_mempool_statistics(op, &sum_used, &sum_alloc);
-
-    sprintf(errmsg, "%4d active objects", count_active());
-    new_draw_info(NDI_UNIQUE, 0, op, errmsg);
-    LOG(llevSystem, "%s\n", errmsg);
-
-    sprintf(errmsg, "%4d player(s) using buffers: %d", player_active,
+    NDI_LOG(llevSystem, NDI_UNIQUE, 0, op, "%4d active objects", count_active());
+    NDI_LOG(llevSystem, NDI_UNIQUE, 0, op, "%4d player(s) using buffers: %d", player_active,
             i = (player_active * (MAXSOCKBUF_IN * 2)));
-    new_draw_info(NDI_UNIQUE, 0, op, errmsg);
     sum_alloc += i;
-    LOG(llevSystem, "%s\n", errmsg);
-
-    sprintf(errmsg, "%d socket(s) allocated: %d", socket_info.allocated_sockets,
+    NDI_LOG(llevSystem, NDI_UNIQUE, 0, op, "%d socket(s) allocated: %d", socket_info.allocated_sockets,
             i = (socket_info.allocated_sockets * (sizeof(NewSocket) + SOCKET_BUFSIZE_SEND+SOCKET_BUFSIZE_READ)));
     sum_alloc += i;
-    new_draw_info(NDI_UNIQUE, 0, op, errmsg);
-    LOG(llevSystem, "%s\n", errmsg);
 
 #ifndef WIN32 /* non windows */
 #ifdef HAVE_SYSCONF
@@ -180,58 +170,31 @@ void malloc_info(object *op)
     fd = -3;
 #endif
 
-    sprintf(errmsg, "socket max fd: %d  (%d %s) ncom: %d ", socket_info.max_filedescriptor, fd,
+    NDI_LOG(llevSystem, NDI_UNIQUE, 0, op, "socket max fd: %d  (%d %s) ncom: %d ", socket_info.max_filedescriptor, fd,
             fd != -3 ? "avaible" : "win32/ignore", socket_info.nconns);
-    new_draw_info(NDI_UNIQUE, 0, op, errmsg);
-    LOG(llevSystem, "%s\n", errmsg);
-
-    sprintf(errmsg, "%4d maps allocated:  %d", nrofmaps, i = (nrofmaps * sizeof(mapstruct)));
-    LOG(llevSystem, "%s\n", errmsg);
-    new_draw_info(NDI_UNIQUE, 0, op, errmsg);
+    NDI_LOG(llevSystem, NDI_UNIQUE, 0, op, "%4d maps allocated:  %d", nrofmaps, i = (nrofmaps * sizeof(mapstruct)));
     sum_alloc += i;  sum_used += nrm * sizeof(mapstruct);
-    sprintf(errmsg, "%4d maps in memory:  %8d", nrm, mapmem);
-    new_draw_info(NDI_UNIQUE, 0, op, errmsg);
-    LOG(llevSystem, "%s\n", errmsg);
+    NDI_LOG(llevSystem, NDI_UNIQUE, 0, op, "%4d maps in memory:  %8d", nrm, mapmem);
     sum_alloc += mapmem; sum_used += mapmem;
-    sprintf(errmsg, "%4d archetypes:      %8d", anr, i = (anr * sizeof(archetype)));
-    new_draw_info(NDI_UNIQUE, 0, op, errmsg);
-    LOG(llevSystem, "%s\n", errmsg);
+    NDI_LOG(llevSystem, NDI_UNIQUE, 0, op, "%4d archetypes:      %8d", anr, i = (anr * sizeof(archetype)));
     sum_alloc += i; sum_used += i;
-    sprintf(errmsg, "%4d animations:      %8d", anims, i = (anims * sizeof(unsigned short)));
-    new_draw_info(NDI_UNIQUE, 0, op, errmsg);
-    LOG(llevSystem, "%s\n", errmsg);
+    NDI_LOG(llevSystem, NDI_UNIQUE, 0, op, "%4d animations:      %8d", anims, i = (anims * sizeof(unsigned short)));
     sum_alloc += i; sum_used += i;
-    sprintf(errmsg, "%4d spells:          %8d", NROFREALSPELLS, i = (NROFREALSPELLS * sizeof(spell)));
-    new_draw_info(NDI_UNIQUE, 0, op, errmsg);
-    LOG(llevSystem, "%s\n", errmsg);
+    NDI_LOG(llevSystem, NDI_UNIQUE, 0, op, "%4d spells:          %8d", NROFREALSPELLS, i = (NROFREALSPELLS * sizeof(spell)));
     sum_alloc += i; sum_used += i;
-    sprintf(errmsg, "%4d treasurelists    %8d", tlnr, i = (tlnr * sizeof(treasurelist)));
-    new_draw_info(NDI_UNIQUE, 0, op, errmsg);
-    LOG(llevSystem, "%s\n", errmsg);
+    NDI_LOG(llevSystem, NDI_UNIQUE, 0, op, "%4d treasurelists    %8d", tlnr, i = (tlnr * sizeof(treasurelist)));
     sum_alloc += i; sum_used += i;
-    sprintf(errmsg, "%4ld treasures        %8d", nroftreasures, i = (nroftreasures * sizeof(treasure)));
-    new_draw_info(NDI_UNIQUE, 0, op, errmsg);
-    LOG(llevSystem, "%s\n", errmsg);
+    NDI_LOG(llevSystem, NDI_UNIQUE, 0, op, "%4ld treasures        %8d", nroftreasures, i = (nroftreasures * sizeof(treasure)));
     sum_alloc += i; sum_used += i;
-    sprintf(errmsg, "%4ld artifacts        %8d", nrofartifacts, i = (nrofartifacts * sizeof(artifact)));
-    new_draw_info(NDI_UNIQUE, 0, op, errmsg);
-    LOG(llevSystem, "%s\n", errmsg);
+    NDI_LOG(llevSystem, NDI_UNIQUE, 0, op, "%4ld artifacts        %8d", nrofartifacts, i = (nrofartifacts * sizeof(artifact)));
     sum_alloc += i; sum_used += i;
-    sprintf(errmsg, "%4ld artifacts strngs %8d", nrofallowedstr, i = (nrofallowedstr * sizeof(linked_char)));
-    new_draw_info(NDI_UNIQUE, 0, op, errmsg);
-    LOG(llevSystem, "%s\n", errmsg);
+    NDI_LOG(llevSystem, NDI_UNIQUE, 0, op, "%4ld artifacts strngs %8d", nrofallowedstr, i = (nrofallowedstr * sizeof(linked_char)));
     sum_alloc += i;sum_used += i;
-    sprintf(errmsg, "%4d artifactlists    %8d", alnr, i = (alnr * sizeof(artifactlist)));
-    LOG(llevSystem, "%s\n", errmsg);
-    new_draw_info(NDI_UNIQUE, 0, op, errmsg);
+    NDI_LOG(llevSystem, NDI_UNIQUE, 0, op, "%s\n", "%4d artifactlists    %8d", alnr, i = (alnr * sizeof(artifactlist)));
     sum_alloc += i; sum_used += i;
 
-    sprintf(errmsg, "Total space allocated:%8d", sum_alloc);
-    new_draw_info(NDI_UNIQUE, 0, op, errmsg);
-    LOG(llevSystem, "%s\n", errmsg);
-    sprintf(errmsg, "Total space used:     %8d", sum_used);
-    new_draw_info(NDI_UNIQUE, 0, op, errmsg);
-    LOG(llevSystem, "%s\n", errmsg);
+    NDI_LOG(llevSystem, NDI_UNIQUE, 0, op, "Total space allocated:%8d", sum_alloc);
+    NDI_LOG(llevSystem, NDI_UNIQUE, 0, op, "Total space used:     %8d", sum_used);
 }
 
 /* Lists online players, respecting privacy mode. */
@@ -441,12 +404,10 @@ int command_sstable(object *op, char *params)
     ss_dump_statistics(errmsg);
     if (errmsg[0] != '\0')
     {
-        new_draw_info(NDI_UNIQUE, 0, op, errmsg);
-        LOG(llevSystem, "%s\n", errmsg);
+        NDI_LOG(llevSystem, NDI_UNIQUE, 0, op, "%s", errmsg);
     }
     tmp = ss_dump_table(flags);
-    LOG(llevSystem, "%s\n", tmp);
-    new_draw_info(NDI_UNIQUE, 0, op, tmp);
+    NDI_LOG(llevSystem, NDI_UNIQUE, 0, op, "%s", tmp);
 
     return 0;
 }
@@ -499,13 +460,11 @@ int command_archs(object *op, char *params)
 
 int command_debug(object *op, char *params)
 {
-    int     i;
-    char    buf[MEDIUM_BUF];
+    int i;
 
     if (params == NULL || !sscanf(params, "%d", &i))
     {
-        sprintf(buf, "Global debug level is %d.", settings.debug);
-        new_draw_info(NDI_UNIQUE, 0, op, buf);
+        new_draw_info(NDI_UNIQUE, 0, op, "Global debug level is %d.", settings.debug);
 
         return 0;
     }
@@ -518,8 +477,7 @@ int command_debug(object *op, char *params)
     }
 
     settings.debug = (enum LogLevel) FABS(i);
-    sprintf(buf, "Set debug level to %d.", i);
-    new_draw_info(NDI_UNIQUE, 0, op, buf);
+    new_draw_info(NDI_UNIQUE, 0, op, "Set debug level to %d.", i);
 
     return 0;
 }
@@ -542,7 +500,7 @@ int command_dumpbelowfull(object *op, char *params)
             continue;
 
         dump_object(tmp);
-        new_draw_info(NDI_UNIQUE, 0, op, errmsg);
+        new_draw_info(NDI_UNIQUE, 0, op, "%s", errmsg);
 
         if (tmp->above && tmp->above != op)
             new_draw_info(NDI_UNIQUE, 0, op, ">next object<");
@@ -556,7 +514,6 @@ int command_dumpbelowfull(object *op, char *params)
 int command_dumpbelow(object *op, char *params)
 {
     object *tmp;
-    char    buf[5 * 1024];
     int     i   = 0;
 
     new_draw_info(NDI_UNIQUE, 0, op, "DUMP OBJECTS OF THIS TILE");
@@ -567,10 +524,9 @@ int command_dumpbelow(object *op, char *params)
         if (tmp == op) /* exclude the DM player object */
             continue;
 
-        sprintf(buf, "#%d  >%s<  >%s<  >%s<", i, query_name(tmp),
+        new_draw_info(NDI_UNIQUE, 0, op, "#%d  >%s<  >%s<  >%s<", i, query_name(tmp),
                 tmp->arch ? (tmp->arch->name ? tmp->arch->name : "no arch name") : "NO ARCH",
                 tmp->env ? query_name(tmp->env) : "");
-        new_draw_info(NDI_UNIQUE, 0, op, buf);
     }
 
     new_draw_info(NDI_UNIQUE, 0, op, "------------------");
@@ -592,7 +548,7 @@ int command_dumpallobjects(object *op, char *params)
             obj = MEM_USERDATA((char *)puddle->first_chunk + i * (sizeof(struct mempool_chunk) + pool_object->chunksize));
 
             if(! OBJECT_FREE(obj))
-                LOG(llevDebug, "obj '%s'-(%s) %x (%d)(%s) #=%d\n", STRING_OBJ_NAME(obj),
+                LOG(llevDebug, "obj '%s'-(%s) %p (%d)(%s) #=%d\n", STRING_OBJ_NAME(obj),
                         STRING_OBJ_ARCH_NAME(obj), obj, obj->count,
                         QUERY_FLAG(obj, FLAG_REMOVED) ? "removed" : "in use",
                         obj->nrof);
@@ -807,12 +763,12 @@ int command_dumpactivelist(object *op, char *params)
         count++;
         sprintf(buf, "%08d %03d %f %s (%s)", tmp->count, tmp->type, tmp->speed, query_short_name(tmp, NULL),
                 tmp->arch->name ? tmp->arch->name : "<NA>");
-        /*new_draw_info(NDI_UNIQUE, 0,op, buf); It will overflow the send buffer with many player online */
+        /*new_draw_info(NDI_UNIQUE, 0,op, "%s", buf); It will overflow the send buffer with many player online */
         LOG(llevSystem, "%s\n", buf);
     }
 
     sprintf(buf, "active objects: %d (dumped to log)", count);
-    new_draw_info(NDI_UNIQUE, 0, op, buf);
+    new_draw_info(NDI_UNIQUE, 0, op, "%s", buf);
     LOG(llevSystem, "%s\n", buf);
 
     return 0;
@@ -838,7 +794,7 @@ int command_setmaplight(object *op, char *params)
     op->map->light_value = global_darkness_table[i];
 
     sprintf(buf, "WIZ: set map darkness: %d -> map:%s (%d)", i, op->map->path, MAP_OUTDOORS(op->map));
-    new_draw_info(NDI_UNIQUE, 0, op, buf);
+    new_draw_info(NDI_UNIQUE, 0, op, "%s", buf);
 
     return 0;
 }
@@ -1018,7 +974,7 @@ static void help_topics(object *op, int what)
         linelen += namelen + 1;
         if (linelen > 42)
         {
-            new_draw_info(NDI_UNIQUE, 0, op, line);
+            new_draw_info(NDI_UNIQUE, 0, op, "%s", line);
             sprintf(line, " %s", de->d_name);
             linelen = namelen + 1;
             continue;
@@ -1026,7 +982,7 @@ static void help_topics(object *op, int what)
         strcat(line, " ");
         strcat(line, de->d_name);
     }
-    new_draw_info(NDI_UNIQUE, 0, op, line);
+    new_draw_info(NDI_UNIQUE, 0, op, "%s", line);
     closedir(dirp);
 }
 #endif
@@ -1081,7 +1037,7 @@ static void show_help(char *fname, player *pl)
         if (buf[len] == '\n')
             buf[len] = (len) ? '\0' : ' ';
 
-        new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, pl->ob, buf);
+        new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, pl->ob, "%s", buf);
     }
 
     fclose(fp);
@@ -1189,14 +1145,14 @@ static void show_commands(player *pl)
              * -- Smacky 20090604 */
             if (strlen(buf) + strlen(ap[i][j].name) > 42)
             {
-                new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, pl->ob, buf);
+                new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, pl->ob, "%s", buf);
                 buf[0] = '\0';
             }
 
             sprintf(strchr(buf, '\0'), " /%s ~+~", ap[i][j].name);
         }
 
-        new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, pl->ob, buf);
+        new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, pl->ob, "%s", buf);
     }
 }
 
@@ -1228,8 +1184,7 @@ int command_help(object *op, char *params)
 
 //        if (strpbrk(params + 1, " ./\\"))
 //        {
-//            sprintf(line, "Illegal characters in '%s'", params);
-//            new_draw_info(NDI_UNIQUE, 0, op, line);
+//            new_draw_info(NDI_UNIQUE, 0, op, "Illegal characters in '%s'", params);
 //
 //            return 0;
 //        }

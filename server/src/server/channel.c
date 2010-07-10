@@ -565,7 +565,7 @@ struct player_channel *final_addChannelToPlayer(player *pl, struct channels *cha
 void printChannelUsage(object *ob)
 {
     new_draw_info(NDI_UNIQUE, 0, ob, "Usage:\n       -<channel>[ ][:]<Text>");
-    new_draw_info(NDI_UNIQUE, 0, ob, "       -<channel>[+-?!*%]");
+    new_draw_info(NDI_UNIQUE, 0, ob, "       -<channel>[+-?!*%%]");
     new_draw_info(NDI_UNIQUE, 0, ob, "       -[+-?]");
     return;
 }
@@ -689,7 +689,7 @@ void removeChannelFromPlayer(player *pl, struct player_channel *pl_channel, char
     return_poolchunk(pl_channel,pool_player_channel);
 
     if (msg)
-        new_draw_info(NDI_UNIQUE, 0, pl->ob, msg);
+        new_draw_info(NDI_UNIQUE, 0, pl->ob, "%s", msg);
 
     return;
 }

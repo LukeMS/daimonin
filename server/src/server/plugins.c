@@ -348,7 +348,7 @@ void displayPluginsList(object *op)
         strcpy(buf, PlugList[i].id);
         strcat(buf, ", ");
         strcat(buf, PlugList[i].fullname);
-        new_draw_info(NDI_UNIQUE, 0, op, buf);
+        new_draw_info(NDI_UNIQUE, 0, op, "%s", buf);
     }
 }
 

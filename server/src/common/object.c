@@ -886,8 +886,11 @@ void dump_me(object *op, char *outstr, size_t bufsize)
 
 void free_all_object_data()
 {
-    LOG(llevDebug, "%d allocated objects, %d free objects\n", pool_object->nrof_allocated,
-        pool_object->nrof_free);
+    unsigned int allo = *pool_object->nrof_allocated,
+                 free = *pool_object->nrof_free;
+
+    LOG(llevDebug, "%u allocated objects, %u free objects\n",
+        allo, free);
 }
 
 /*
@@ -1449,8 +1452,8 @@ void drop_ob_inv(object *ob)
          ob->map->in_memory != MAP_IN_MEMORY))
     {
         /* TODO */
-        LOG(llevDebug, "BUG: drop_ob_inv() - can't drop inventory of objects not in map yet: %s (%x)\n",
-            ob->name, ob->map);
+        LOG(llevDebug, "BUG: drop_ob_inv() - can't drop inventory of objects not in map yet: %s (%s)\n",
+            STRING_OBJ_NAME(ob), STRING_OBJ_MAP_PATH(ob));
 
         return;
     }
@@ -1735,7 +1738,7 @@ void free_object_data(object *ob, int free_static_data)
               {
                   object *registered = hashtable_find(beacon_table, ob->custom_attrset);
                   /* the original object name is stored in custom_attrset */
-                  LOG(llevDebug, "Removing beacon (%s)\n", ob->custom_attrset);
+                  LOG(llevDebug, "Removing beacon (%s)\n", (char *)ob->custom_attrset);
 
                   if(registered != ob)
                       LOG(llevDebug, "  Another beacon has replaced it. Not deregistering\n");
@@ -1878,9 +1881,8 @@ void remove_ob(object *op)
     if (QUERY_FLAG(op, FLAG_REMOVED))
     {
         /*dump_object(op)*/;
-        LOG(llevBug, "BUG: Trying to remove removed object.:<%s> (<%d> %d %x) map:%s (%d,%d)\n", query_name(op),
-                op->arch?STRING_SAFE(op->arch->name):"NOARCH", op->type, op->count,
-                op->map ? (op->map->path ? op->map->path : "op->map->path == NULL") : "op->map==NULL", op->x, op->y);
+        LOG(llevBug, "BUG: Trying to remove removed object.:%s[%d] map:%s (%d,%d)\n",
+            STRING_OBJ_NAME(op), op->count, STRING_OBJ_MAP_PATH(op), op->x, op->y);
         return;
     }
 
@@ -3288,7 +3290,7 @@ static void beacon_initializer(object *op)
         /* Replace existing entry TODO: speed up with hashtable_replace() or
          * something similar */
         LOG(llevDebug, "DEBUG:: %s/beacon_initializer(): Replacing already registered beacon (%s[%d]!\n",
-            __FILE__, op->custom_attrset, op->count);
+            __FILE__, (char *)op->custom_attrset, op->count);
         hashtable_erase(beacon_table, op->custom_attrset);
         hashtable_insert(beacon_table, op->custom_attrset, op);
     }

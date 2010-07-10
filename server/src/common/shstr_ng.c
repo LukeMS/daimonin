@@ -430,7 +430,7 @@ static void ss_find_totals(int *entries, int *refs, int *links, int what)
         *refs += ss->refcount;
         *links += probes;
         if(what & SS_DUMP_TOTALS)
-            LOG(llevSystem, "%4d -- %4d refs '%s' (%d probes)\n", i, (ss->refcount), ss->string, probes);
+            LOG(llevSystem, "%4d -- %4d refs '%s' (%d probes)\n", (int)i, (int)(ss->refcount), ss->string, probes);
     }
 }
 

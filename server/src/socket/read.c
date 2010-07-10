@@ -26,7 +26,7 @@
 void command_buffer_enqueue(NewSocket *ns, command_struct *cmdptr)
 {
 
-	LOG(llevNoLog,"ENQUEUE CMD: cmdptr:%x\n", cmdptr);
+	LOG(llevNoLog,"ENQUEUE CMD: cmdptr:%p\n", cmdptr);
 	if(ns->cmd_start)
 	{
 		ns->cmd_end->next = cmdptr;

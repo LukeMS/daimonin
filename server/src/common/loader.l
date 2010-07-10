@@ -269,7 +269,8 @@ WS	[ \t]*{NL}?
 ^msg{WS}	    {	BEGIN( MESSAGE ); msgbuf[0]='\0'; msg_flag=0;}
 <MESSAGE>^endmsg{WS} {	BEGIN( INITIAL );
     			if (strlen(msgbuf) > HUGE_BUF-16 )
-	    		    LOG(llevMapbug, "\n\tMAPBUG: SKIPPED msg/endmsg -> buffer overflow!! (obj: %s) %d (max allowed=%d)\n", query_name(op), strlen(msgbuf),HUGE_BUF-16);
+	    		    LOG(llevMapbug, "\n\tMAPBUG: SKIPPED msg/endmsg -> buffer overflow!! (obj: %s) %d (max allowed=%d)\n",
+                                query_name(op), (int)strlen(msgbuf), HUGE_BUF - 16);
                 else
     		    	FREE_AND_COPY_HASH(op->msg, msgbuf);
                 }

@@ -130,7 +130,8 @@ int attempt_steal(object *op, object *who)
                 /* TODO: should probaly call set_npc_enemy() here instead */
                 /* TODO: disabled while cleaning up monster.c */
                 /* npc_call_help(op); */
-                new_draw_info(NDI_UNIQUE, 0, who, "%s notices your attempted pilfering!", query_name(op));
+                new_draw_info(NDI_UNIQUE, 0, who, "%s notices your attempted pilfering!",
+                              query_short_name(op, who));
             }
             CLEAR_FLAG(op, FLAG_UNAGGRESSIVE);
             /* all remaining npc items are guarded now. Set flag NO_STEAL
@@ -140,28 +141,28 @@ int attempt_steal(object *op, object *who)
         else
         {
             /* stealing from another player */
-            char    buf[MEDIUM_BUF];
             /* Notify the other player */
             if (success && who->stats.Int > random_roll(0, 19))
             {
-                sprintf(buf, "Your %s is missing!", query_name(success));
+                new_draw_info(NDI_UNIQUE, 0, op, "Your %s is missing!",
+                              query_name(success));
             }
             else
             {
-                sprintf(buf, "Your pack feels strangely lighter.");
+                new_draw_info(NDI_UNIQUE, 0, op, "Your pack feels strangely lighter.");
             }
-            new_draw_info(NDI_UNIQUE, 0, op, buf);
+
             if (!success)
             {
                 if (QUERY_FLAG(who, FLAG_IS_INVISIBLE))
                 {
-                    sprintf(buf, "you feel itchy fingers getting at your pack.");
+                    new_draw_info(NDI_UNIQUE, 0, op, "you feel itchy fingers getting at your pack.");
                 }
                 else
                 {
-                    sprintf(buf, "%s looks very shifty.", query_name(who));
+                    new_draw_info(NDI_UNIQUE, 0, op, "%s looks very shifty.",
+                                  query_short_name(who, op));
                 }
-                new_draw_info(NDI_UNIQUE, 0, op, buf);
             }
         } /* else stealing from another player */
         /* play_sound("stop! thief!"); kindofthing */
@@ -277,7 +278,6 @@ int steal(object *op, int dir)
 
 int pick_lock(object *pl, int dir)
 {
-    char        buf[MEDIUM_BUF];
     object     *tmp;
     mapstruct  *m;
     int         x       = pl->x + freearr_x[dir];
@@ -288,10 +288,9 @@ int pick_lock(object *pl, int dir)
         dir = pl->facing;
 
     /* For all the stacked objects at this point find a door*/
-    sprintf(buf, "There is no lock there.");
     if (!(m = out_of_map(pl->map, &x, &y)))
     {
-        new_draw_info(NDI_UNIQUE, 0, pl, buf);
+        new_draw_info(NDI_UNIQUE, 0, pl, "There is no lock there.");
         return 0;
     }
 
@@ -304,29 +303,28 @@ int pick_lock(object *pl, int dir)
             case DOOR:
               if (!QUERY_FLAG(tmp, FLAG_NO_PASS))
               {
-                  strcpy(buf, "The door has no lock!");
+                  new_draw_info(NDI_UNIQUE, 0, pl, "The door has no lock!");
               }
               else
               {
                   if (attempt_pick_lock(tmp, pl))
                   {
                       success = 1;
-                      sprintf(buf, "you pick the lock.");
+                      new_draw_info(NDI_UNIQUE, 0, pl, "You pick the lock.");
                   }
                   else
                   {
-                      sprintf(buf, "you fail to pick the lock.");
+                      new_draw_info(NDI_UNIQUE, 0, pl, "You fail to pick the lock.");
                   }
               }
               break;
             case LOCKED_DOOR:
-              sprintf(buf, "you can't pick that lock!");
+              new_draw_info(NDI_UNIQUE, 0, pl, "You can't pick that lock!");
               break;
             default:
               break;
         }
     }
-    new_draw_info(NDI_UNIQUE, 0, pl, buf);
     if (success)
         return calc_skill_exp(pl, NULL, 1.0f,-1, NULL);
     else
@@ -376,7 +374,6 @@ int attempt_pick_lock(object *door, object *pl)
 
 int hide(object *op)
 {
-    char    buf[MEDIUM_BUF];
     /* int level= SK_level(op);*/
 
     /* the preliminaries -- Can we really hide now? */
@@ -384,14 +381,12 @@ int hide(object *op)
 
     if (QUERY_FLAG(op, FLAG_SEE_INVISIBLE))
     {
-        sprintf(buf, "You don't need to hide while invisible!");
-        new_draw_info(NDI_UNIQUE, 0, op, buf);
+        new_draw_info(NDI_UNIQUE, 0, op, "You don't need to hide while invisible!");
         return 0;
     }
     else if (!op->hide && QUERY_FLAG(op, FLAG_IS_INVISIBLE) && op->type == PLAYER)
     {
-        sprintf(buf, "Your attempt to hide breaks the invisibility spell!");
-        new_draw_info(NDI_UNIQUE, 0, op, buf);
+        new_draw_info(NDI_UNIQUE, 0, op, "Your attempt to hide breaks the invisibility spell!");
         make_visible(op);
         return 0;
     }
@@ -564,7 +559,6 @@ int jump(object *pl, int dir)
 
 int skill_ident(object *pl)
 {
-    char    buf[MEDIUM_BUF];
     int     success = 0;
 
     if (!pl->chosen_skill)  /* should'nt happen... */
@@ -573,8 +567,7 @@ int skill_ident(object *pl)
     if (pl->type != PLAYER)
         return 0;  /* only players will skill-identify */
 
-    sprintf(buf, "You look at the objects nearby...");
-    new_draw_info(NDI_UNIQUE, 0, pl, buf);
+    new_draw_info(NDI_UNIQUE, 0, pl, "You look at the objects nearby...");
 
     switch (pl->chosen_skill->stats.sp)
     {
@@ -647,8 +640,7 @@ int skill_ident(object *pl)
     }
     if (!success)
     {
-        sprintf(buf, "...and learn nothing more.");
-        new_draw_info(NDI_UNIQUE, 0, pl, buf);
+        new_draw_info(NDI_UNIQUE, 0, pl, "...and learn nothing more.");
     }
 
     return success;
@@ -713,7 +705,7 @@ int do_skill_ident2(object *tmp, object *pl, int obj_class)
                 if (tmp->msg)
                 {
                     new_draw_info(NDI_UNIQUE, 0, pl, "The item has a story:");
-                    new_draw_info(NDI_UNIQUE, 0, pl, tmp->msg);
+                    new_draw_info(NDI_UNIQUE, 0, pl, "%s", tmp->msg);
                 }
                 /* identify will take care of updating the item if
                      * it is in the players inventory.  IF on map, do it

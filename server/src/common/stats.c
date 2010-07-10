@@ -139,7 +139,7 @@ void stats_event(stats_event_type type, ...)
         sprintf(filename_full, "%s/%s", settings.statsdir, filename_base);
         if((fp = fopen(filename_full, "w")) == NULL)
         {
-            LOG(llevBug, "BUG: Cannot open %s for writing event %d\n", filename_full, event_id);
+            LOG(llevBug, "BUG: Cannot open %s for writing event %lu\n", filename_full, event_id);
             return;
         }
         /* Move all the other files into archive */

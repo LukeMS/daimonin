@@ -560,7 +560,7 @@ static int Map_Message(lua_State *L)
     hooks->new_info_map_except(NDI_UNIQUE | color, WHERE, x, y, d,
                                (except1) ? except1->data.object : NULL,
                                (except2) ? except2->data.object : NULL,
-                               message);
+                               "%s", message);
 
     return 0;
 }

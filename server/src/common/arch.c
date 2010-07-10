@@ -268,8 +268,7 @@ void init_archetypes()
 
 void arch_info(object *op)
 {
-    sprintf(errmsg, "%d searches and %d strcmp()'s", arch_search, arch_cmp);
-    new_draw_info(NDI_WHITE, 0, op, errmsg);
+    new_draw_info(NDI_WHITE, 0, op, "%d searches and %d strcmp()'s", arch_search, arch_cmp);
 }
 
 /*

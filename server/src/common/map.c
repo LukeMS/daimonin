@@ -454,15 +454,14 @@ void dump_map(mapstruct *m, player *pl, int list, char *ref)
 /*        sprintf(buf, "%-18.18s %2d   %c %4d %2d  %02d:%02d:%02d", map_path, players_on_map(m),*/
 
         if (!strcmp(m->path, m->orig_path))
-            sprintf(buf, "%s %2d   %c %4d %2d  %02d:%02d:%02d", m->path, players_on_map(m),
+            new_draw_info(NDI_UNIQUE, 0, op, "%s %2d   %c %4d %2d  %02d:%02d:%02d", m->path, players_on_map(m),
                     m->in_memory ? (m->in_memory == MAP_IN_MEMORY ? 'm' : 's') : 'X', m->timeout, m->difficulty,
                     (MAP_WHEN_RESET(m) % 86400) / 3600, (MAP_WHEN_RESET(m) % 3600) / 60, MAP_WHEN_RESET(m) % 60);
         else
-            sprintf(buf, "%s (%s) %2d   %c %4d %2d  %02d:%02d:%02d", m->path, m->orig_path, players_on_map(m),
+            new_draw_info(NDI_UNIQUE, 0, op, "%s (%s) %2d   %c %4d %2d  %02d:%02d:%02d", m->path, m->orig_path, players_on_map(m),
                     m->in_memory ? (m->in_memory == MAP_IN_MEMORY ? 'm' : 's') : 'X', m->timeout, m->difficulty,
                     (MAP_WHEN_RESET(m) % 86400) / 3600, (MAP_WHEN_RESET(m) % 3600) / 60, MAP_WHEN_RESET(m) % 60);
 #endif
-        new_draw_info(NDI_UNIQUE, 0, op, buf);
     }
 #endif
 }
@@ -2495,10 +2494,10 @@ void save_objects(mapstruct *m, FILE *fp, int flag)
                     /* sanity check for the mob structures & ptr */
                     if(!MOB_DATA(head) || !MOB_DATA(head)->spawn_info)
                     {
-                        LOG( llevBug, "BUG: Spawn mob (%s %s) without SPAWN INFO (%s) or MOB_DATA(%x).\n",
+                        LOG( llevBug, "BUG: Spawn mob (%s %s) without SPAWN INFO (%s) or MOB_DATA(%p).\n",
                             STRING_SAFE(head->arch->name), query_name(head),
                             MOB_DATA(head)?query_name(MOB_DATA(head)->spawn_info):"NULL",
-                            MOB_DATA(head)?MOB_DATA(head):0x00);
+                            MOB_DATA(head)?MOB_DATA(head):NULL);
                     }
                     else
                     {

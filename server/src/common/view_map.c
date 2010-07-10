@@ -332,7 +332,7 @@ void draw_client_map2(object *pl)
                          * except we are in DM mode - there we skip all this LOS stuff.
                          */
                 if (!QUERY_FLAG(pl, FLAG_WIZ))
-                    LOG(llevDebug, "BUG: draw_client_map2() out_of_map for player <%s> map:%s (%,%d)\n", query_name(pl),
+                    LOG(llevDebug, "BUG: draw_client_map2() out_of_map for player <%s> map:%s (%d,%d)\n", query_name(pl),
                         pl->map->path ? pl->map->path : "<no path?>", x, y);
 
                 if (pl_ptr->socket.lastmap.cells[ax][ay].count != -1)

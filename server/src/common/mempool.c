@@ -420,11 +420,10 @@ void dump_mempool_statistics(object *op, int *sum_used, int *sum_alloc)
                 int mem_used = ob_used*((mempools[j]->chunksize << k) + sizeof(struct mempool_chunk));
                 int mem_free = ob_free*((mempools[j]->chunksize << k) + sizeof(struct mempool_chunk));
 
-                sprintf(errmsg, "%4d used (%4d free) %s[%3d]: %d (%d)", ob_used, ob_free, mempools[j]->chunk_description,
+                NDI_LOG(llevSystem, NDI_UNIQUE, 0, op, "%4d used (%4d free) %s[%3d]: %d (%d)",
+                        ob_used, ob_free, mempools[j]->chunk_description,
                         1 << k, mem_used, mem_free);
-                if(op)
-                    new_draw_info(NDI_UNIQUE, 0, op, errmsg);
-                LOG(llevSystem, "%s\n", errmsg);
+
                 if(sum_used)
                     *sum_used += mem_used;
                 if(sum_alloc)

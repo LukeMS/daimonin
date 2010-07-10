@@ -292,7 +292,7 @@ int check_banned(NewSocket *ns, const char *name, char *ip)
         for(ol = ban_list_ip; ol; ol = ol_tmp)
         {
             ol_tmp = ol->next;
-            LOG( -1,"CHECK-IP: >%s< with >%s< - pticks: %d left: %d (%d)\n",
+            LOG(llevInfo, "CHECK-IP: >%s< with >%s< - pticks: %lu left: %d (%d)\n",
               STRING_SAFE(ip), STRING_SAFE(ol->objlink.ban->ip),
               pticks, ol->objlink.ban->ticks,ol->objlink.ban->ticks_init);
 

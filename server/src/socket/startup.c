@@ -78,7 +78,7 @@ static void load_srv_files(char *fname, int id, int cmd)
     free(file_tmp);
     free(comp_tmp);
 
-    LOG(llevDebug, "(size: %d (%d) (crc uncomp.: %x)\n", SrvClientFiles[id].len_ucomp, numread, SrvClientFiles[id].crc);
+    LOG(llevDebug, "(size: %d (%lu) (crc uncomp.: %x)\n", SrvClientFiles[id].len_ucomp, numread, SrvClientFiles[id].crc);
     fclose(fp);
 }
 

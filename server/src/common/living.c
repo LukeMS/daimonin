@@ -334,7 +334,6 @@ int change_abil(object *op, object *tmp)
            j,
            success = 0;
     object refop;
-    char   message[MEDIUM_BUF];
     int    potion_max  = 0;
 
     /* remember what object was like before it was changed.  note that
@@ -633,13 +632,13 @@ int change_abil(object *op, object *tmp)
             success = 1;
             if (op->resist[i] > refop.resist[i])
             {
-                sprintf(message, "Your resistance to %s rises to %d%%.", attack_name[i], op->resist[i]);
-                new_draw_info(NDI_UNIQUE | NDI_GREEN, 0, op, message);
+                new_draw_info(NDI_UNIQUE | NDI_GREEN, 0, op, "Your resistance to %s rises to %d%%.",
+                              attack_name[i], op->resist[i]);
             }
             else
             {
-                sprintf(message, "Your resistance to %s drops to %d%%.", attack_name[i], op->resist[i]);
-                new_draw_info(NDI_UNIQUE | NDI_BLUE, 0, op, message);
+                new_draw_info(NDI_UNIQUE | NDI_BLUE, 0, op, "Your resistance to %s drops to %d%%.",
+                              attack_name[i], op->resist[i]);
             }
         }
     }
@@ -652,9 +651,9 @@ int change_abil(object *op, object *tmp)
             {
                 success = 1;
                 if (i * applied > 0)
-                    new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, op, gain_msg[j]);
+                    new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, op, "%s", gain_msg[j]);
                 else
-                    new_draw_info(NDI_UNIQUE | NDI_GREY, 0, op, lose_msg[j]);
+                    new_draw_info(NDI_UNIQUE | NDI_GREY, 0, op, "%s", lose_msg[j]);
             }
         }
     }
@@ -704,7 +703,7 @@ void drain_specific_stat(object *op, int deplete_stats)
 
     change_stat_value(&tmp->stats, deplete_stats, -1);
     if(op->type == PLAYER)
-        new_draw_info(NDI_UNIQUE, 0, op, drain_msg[deplete_stats]);
+        new_draw_info(NDI_UNIQUE, 0, op, "%s", drain_msg[deplete_stats]);
 
     FIX_PLAYER(op, "drain_specific_stat");
 }
@@ -2057,7 +2056,6 @@ void dragon_level_gain(object *who)
     object *abil    = NULL;    /* pointer to dragon ability force*/
     object *skin    = NULL;    /* pointer to dragon skin force*/
     object *tmp     = NULL;     /* tmp. object */
-    char    buf[MEDIUM_BUF];      /* tmp. string buffer */
 
     /* now grab the 'dragon_ability'-forces from the player's inventory */
     for (tmp = who->inv; tmp != NULL; tmp = tmp->below)
@@ -2090,8 +2088,8 @@ void dragon_level_gain(object *who)
         if (abil->last_eat > 0 && atnr_is_dragon_enabled(abil->last_eat))
         {
             /* apply new ability focus */
-            sprintf(buf, "Your metabolism now focuses on %s!", attack_name[abil->last_eat]);
-            new_draw_info(NDI_UNIQUE | NDI_BLUE, 0, who, buf);
+            new_draw_info(NDI_UNIQUE | NDI_BLUE, 0, who, "Your metabolism now focuses on %s!",
+                          attack_name[abil->last_eat]);
 
             abil->stats.exp = abil->last_eat;
             abil->last_eat = 0;

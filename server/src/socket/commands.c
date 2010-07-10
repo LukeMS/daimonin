@@ -363,7 +363,7 @@ void process_command_queue(NewSocket *ns, player *pl)
     while (ns->cmd_start)
     {
 #ifdef DEBUG_PROCESS_QUEUE
-        LOG(llevDebug, "process_command_queue: Found cmdptr:%x . Cmd: %d\n", ns->cmd_start, ns->cmd_start->cmd);
+        LOG(llevDebug, "process_command_queue: Found cmdptr:%p . Cmd: %d\n", ns->cmd_start, ns->cmd_start->cmd);
 #endif
 
         /* reset idle counter */
@@ -491,7 +491,7 @@ void cs_cmd_setup(char *buf, int len, NewSocket *ns)
     /* lets do some sanity checks */
     if (!buf || ns->status != Ns_Login || !len || buf[len-1] != 0)
     {
-        LOG(llevInfo, "HACKBUG: invalid setup data part from %s (%x %d %d)\n",
+        LOG(llevInfo, "HACKBUG: invalid setup data part from %s (%s %d %d)\n",
             STRING_SAFE(ns->ip_host), buf, len, buf[len-1]);
         ns->status = Ns_Dead;
         return;

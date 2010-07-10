@@ -367,7 +367,8 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
             elapsed_save_time = time(NULL) - statbuf.st_mtime;
             if (elapsed_save_time < 0)
             {
-                LOG(llevBug, "\nBUG: Player file %s was saved in the future? (%d time)\n", filename, elapsed_save_time);
+                LOG(llevBug, "\nBUG: Player file %s was saved in the future? (%d time)\n",
+                    filename, (int)elapsed_save_time);
                 elapsed_save_time = 0;
             }
         }
@@ -908,17 +909,17 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
 
         for (ol = gmaster_list_VOL; ol; ol = ol->next)
         {
-            new_draw_info(NDI_UNIQUE, 0, ol->objlink.ob, buf);
+            new_draw_info(NDI_UNIQUE, 0, ol->objlink.ob, "%s", buf);
         }
 
         for (ol = gmaster_list_GM; ol; ol = ol->next)
         {
-            new_draw_info(NDI_UNIQUE, 0, ol->objlink.ob, buf);
+            new_draw_info(NDI_UNIQUE, 0, ol->objlink.ob, "%s", buf);
         }
 
         for (ol = gmaster_list_MM; ol; ol = ol->next)
         {
-            new_draw_info(NDI_UNIQUE, 0, ol->objlink.ob, buf);
+            new_draw_info(NDI_UNIQUE, 0, ol->objlink.ob, "%s", buf);
         }
     }
 
@@ -1080,7 +1081,7 @@ void show_stream_info(NewSocket *ns)
 
                 if (buf[0])
                 {
-                    new_draw_info(NDI_UNIQUE, 0, ns->pl->ob, buf);
+                    new_draw_info(NDI_UNIQUE, 0, ns->pl->ob, "%s", buf);
                 }
             }
         }
