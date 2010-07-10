@@ -150,7 +150,7 @@ void signal_connection(object *op, object *activator, object *originator, mapstr
               {
                   /* Don't send null buffer if sound only */
                   if (tmp->msg)
-                      new_info_map(NDI_UNIQUE | NDI_NAVY, tmp->map, tmp->x, tmp->y, MAP_INFO_NORMAL, tmp->msg);
+                      new_info_map(NDI_UNIQUE | NDI_NAVY, tmp->map, tmp->x, tmp->y, MAP_INFO_NORMAL, "%s", tmp->msg);
                   if (tmp->stats.food)
                       tmp->last_eat++;
               }
@@ -557,7 +557,7 @@ int operate_altar(object *altar, object **sacrifice)
         *sacrifice = decrease_ob_nr(*sacrifice, NROF_SACRIFICE(altar));
 
     if (altar->msg)
-        new_info_map(NDI_WHITE, altar->map, altar->x, altar->y, MAP_INFO_NORMAL, altar->msg);
+        new_info_map(NDI_WHITE, altar->map, altar->x, altar->y, MAP_INFO_NORMAL, "%s", altar->msg);
     return 1;
 }
 

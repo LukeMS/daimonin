@@ -572,7 +572,13 @@ void sell_item(object *op, object *pl, sint64 value)
         return;
 
     if (i != 0)
-        LOG(llevBug, "BUG: Warning - payment not zero: %d\n", i);
+#ifdef WIN32
+        LOG(llevBug, "BUG: Warning - payment not zero: %I64d\n", i);
+#elif SIZEOF_LONG == 8
+        LOG(llevBug, "BUG: Warning - payment not zero: %ld\n", i);
+#else
+        LOG(llevBug, "BUG: Warning - payment not zero: %lld\n", i);
+#endif
 
     new_draw_info(NDI_UNIQUE, 0, pl, "You receive %s for %s.", query_cost_string(op, pl, F_SELL, COSTSTRING_FULL), query_name(op));
     SET_FLAG(op, FLAG_UNPAID);

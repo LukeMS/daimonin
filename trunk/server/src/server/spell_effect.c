@@ -382,7 +382,7 @@ int cast_wow(object *op, int dir, int ability, SpellTypeFrom item)
 
 int perceive_self(object *op)
 {
-    char*cp = describe_item(op), buf[MEDIUM_BUF];
+    char*cp = describe_item(op);
     archetype              *at  = find_archetype("depletion");
     object                 *tmp;
     int                     i;
@@ -399,16 +399,16 @@ int perceive_self(object *op)
         new_draw_info(NDI_UNIQUE, 0, op, "You feel very mundane");
     else
     {
-        new_draw_info(NDI_UNIQUE, 0, op, "You have:");
-        new_draw_info(NDI_UNIQUE, 0, op, cp);
+        new_draw_info(NDI_UNIQUE, 0, op, "You have:\n%s", cp);
         if (tmp != NULL)
         {
             for (i = 0; i < NUM_STATS; i++)
             {
                 if (get_stat_value(&tmp->stats, i) < 0)
                 {
-                    sprintf(buf, "Your %s is depleted by %d", stat_name[i], -(get_stat_value(&tmp->stats, i)));
-                    new_draw_info(NDI_UNIQUE, 0, op, buf);
+                    new_draw_info(NDI_UNIQUE, 0, op, "Your %s is depleted by %d",
+                                  stat_name[i],
+                                  -(get_stat_value(&tmp->stats, i)));
                 }
             }
         }
@@ -1460,8 +1460,7 @@ int summon_pet(object *op, int dir, SpellTypeFrom item)
         {
             if (i < number)
             {
-                new_draw_info(NDI_UNIQUE, 0, op, "There is something in the way,");
-                new_draw_info(NDI_UNIQUE, 0, op, "no more pets for this casting.");
+                new_draw_info(NDI_UNIQUE, 0, op, "There is something in the way, no more pets for this casting.");
                 if (item != spellNormal)
                 {
                     /* op->stats.sp += (5 + 12 * level + op->level) / (number - i); */
@@ -1964,8 +1963,7 @@ int cast_identify(object *op, int level, object *single_ob, int mode)
                     new_draw_info(NDI_UNIQUE, 0, op, "You have %s.", long_desc(tmp, op));
                     if (tmp->msg)
                     {
-                        new_draw_info(NDI_UNIQUE, 0, op, "The item has a story:");
-                        new_draw_info(NDI_UNIQUE, 0, op, tmp->msg);
+                        new_draw_info(NDI_UNIQUE, 0, op, "The item has a story:\n%s", tmp->msg);
                     }
                 }
 
@@ -1996,8 +1994,7 @@ int cast_identify(object *op, int level, object *single_ob, int mode)
     new_draw_info(NDI_UNIQUE, 0,op,
         "On the ground is %s.", long_desc(tmp, op));
     if (tmp->msg) {
-      new_draw_info(NDI_UNIQUE, 0,op, "The item has a story:");
-      new_draw_info(NDI_UNIQUE, 0,op, tmp->msg);
+      new_draw_info(NDI_UNIQUE, 0,op, "The item has a story:\n%s", tmp->msg);
     }
     esrv_send_item(op, tmp);
         }
@@ -3013,8 +3010,7 @@ int summon_cult_monsters(object *op, int old_dir)
         {
             if (i < number)
             {
-                new_draw_info(NDI_UNIQUE, 0, op, "There is something in the way,");
-                new_draw_info(NDI_UNIQUE, 0, op, "no more monsters for this casting.");
+                new_draw_info(NDI_UNIQUE, 0, op, "There is something in the way, no more monsters for this casting.");
                 return 1;
             }
         }
@@ -3740,10 +3736,9 @@ int cast_cause_disease(object *op, object *caster, int dir, archetype *disease_a
 
                 if (infect_object(walk, disease, 1))
                 {
-                    char    buf[SMALL_BUF];
                     object *flash;  /* visual effect for inflicting disease */
-                    sprintf(buf, "You inflict %s on %s!", disease->name, walk->name);
-                    new_draw_info(NDI_UNIQUE, 0, op, buf);
+                    new_draw_info(NDI_UNIQUE, 0, op, "You inflict %s on %s!",
+                                  disease->name, walk->name);
                     flash = get_archetype("detect_magic");
                     flash->x = xt;
                     flash->y = yt;
@@ -3834,8 +3829,6 @@ void move_peacemaker(object *op)
     /* TODO: update for the new AI and pet systems. Gecko 2006-04-30 */
 #if 0
     object *tmp;
-    char    buf[MEDIUM_BUF];
-
 
     for (tmp = get_map_ob(op->map, op->x, op->y); tmp != NULL; tmp = tmp->above)
     {
@@ -3867,8 +3860,8 @@ void move_peacemaker(object *op)
             CLEAR_FLAG(victim, FLAG_MONSTER);
             if (victim->name)
             {
-                sprintf(buf, "%s no longer feels like fighting.", victim->name);
-                new_draw_info(NDI_UNIQUE, 0, op->owner, buf);
+                new_draw_info(NDI_UNIQUE, 0, op->owner, "%s no longer feels like fighting.",
+                              victim->name);
             }
         }
     }
@@ -3911,12 +3904,11 @@ int cast_cause_conflict(object *op, object *caster, archetype *spellarch, int ty
             if (random_roll(0, level - 1) > tmp->level)
             {
                 /* successfully induced conflict */
-                char    buf[MEDIUM_BUF];
                 SET_FLAG(tmp, FLAG_BERSERK);
                 if (tmp->name)
                 {
-                    sprintf(buf, "You've clouded %s's mind.  He turns on his friends!", tmp->name);
-                    new_draw_info(NDI_RED, 0, op, buf);
+                    new_draw_info(NDI_RED, 0, op, "You've clouded %s's mind. He turns on his friends!",
+                                  query_short_name(tmp, op));
                 }
             }
         }

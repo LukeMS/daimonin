@@ -899,7 +899,7 @@ static int GameObject_CheckInstance(lua_State *L)
 
     LOG(llevDebug, "pl->instance_name: %s, orig_path_sh: %s\n", CONTR(WHO)->instance_name, orig_path_sh);
     LOG(llevDebug, "pl->instance_id: %ld, global_instance_id: %ld\n", CONTR(WHO)->instance_id, *hooks->global_instance_id);
-    LOG(llevDebug, "pl->instance_num: %ld\n", CONTR(WHO)->instance_num);
+    LOG(llevDebug, "pl->instance_num: %d\n", CONTR(WHO)->instance_num);
 
     /* the instance data are inside the player struct */
     if( CONTR(WHO)->instance_name == orig_path_sh &&
@@ -1660,7 +1660,7 @@ static int GameObject_Say(lua_State *L)
         snprintf(buf, sizeof(buf), "%s says: %s", STRING_OBJ_NAME(WHO), message);
         message = buf;
     }
-    hooks->new_info_map(NDI_UNIQUE | NDI_WHITE, WHO->map, WHO->x, WHO->y, range, message);
+    hooks->new_info_map(NDI_UNIQUE | NDI_WHITE, WHO->map, WHO->x, WHO->y, range, "%s", message);
 
     return 0;
 }
@@ -1695,16 +1695,16 @@ static int GameObject_SayTo(lua_State *L)
     target = obptr2->data.object;
 
     if(mode == 1)
-        hooks->new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, target, message);
+        hooks->new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, target, "%s", message);
     else /* thats default */
     {
         if(mode == 2)
         {
             snprintf(buf, sizeof(buf), "%s talks to %s.", STRING_OBJ_NAME(WHO),STRING_OBJ_NAME(target));
-            hooks->new_info_map_except(NDI_UNIQUE | NDI_WHITE, WHO->map, WHO->x, WHO->y, range, WHO, target, buf);
+            hooks->new_info_map_except(NDI_UNIQUE | NDI_WHITE, WHO->map, WHO->x, WHO->y, range, WHO, target, "%s", buf);
         }
         snprintf(buf, sizeof(buf), "%s says: %s", STRING_OBJ_NAME(WHO), message);
-        hooks->new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, target, buf);
+        hooks->new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, target, "%s", buf);
     }
 
     return 0;
@@ -1750,7 +1750,7 @@ static int GameObject_Write(lua_State *L)
 
     get_lua_args(L, "Os|i", &self, &message, &color);
 
-    hooks->new_draw_info(NDI_UNIQUE | color, 0, WHO, message);
+    hooks->new_draw_info(NDI_UNIQUE | color, 0, WHO, "%s", message);
 
     return 0;
 }
@@ -3466,7 +3466,7 @@ static int GameObject_AddMoneyEx(lua_State *L)
         sprintf(strchr(buf, '\0'), "%s %d %s", flag?" and ":"", c, "copper");
 
     strcat(buf, " coin.");
-    hooks->new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, WHO, buf);
+    hooks->new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, WHO, "%s", buf);
 
     return 0;
 }

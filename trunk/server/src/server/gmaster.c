@@ -175,12 +175,12 @@ int check_gmaster_file_entry(char *name, char *host, char *mode)
 
     if(strlen(name) > MAX_ACCOUNT_NAME)
     {
-        LOG(llevBug, "BUG: load_gmaster_file): name %s too long: %d\n", name, strlen(name));
+        LOG(llevBug, "BUG: load_gmaster_file): name %s too long: %d\n", name, (int)strlen(name));
         return mode_id;
     }
     if(strlen(host) >= 120)
     {
-        LOG(llevBug, "BUG: load_gmaster_file): host %s too long: %d\n", host, strlen(host));
+        LOG(llevBug, "BUG: load_gmaster_file): host %s too long: %d\n", host, (int)strlen(host));
         return mode_id;
     }
 
@@ -194,7 +194,7 @@ int check_gmaster_file_entry(char *name, char *host, char *mode)
         mode_id = GMASTER_MODE_MM;
 
     if(mode_id == GMASTER_MODE_NO)
-        LOG(llevBug, "BUG: load_gmaster_file): invalid mode tag: %s\n", mode_id);
+        LOG(llevBug, "BUG: load_gmaster_file): invalid mode tag: %d\n", mode_id);
 
     return mode_id;
 }

@@ -407,7 +407,6 @@ sint32 add_exp(object *op, int exp, int skill_nr)
  */
 void player_lvl_adj(object *who, object *op, int flag_msg)
 {
-    char    buf[MEDIUM_BUF];
     object *force;
     int drain_level = 0;
 
@@ -488,19 +487,19 @@ void player_lvl_adj(object *who, object *op, int flag_msg)
             }
             if(flag_msg)
             {
-                sprintf(buf, "You are now level %d in %s based skills.", op->level, op->name);
-                new_draw_info(NDI_UNIQUE | NDI_RED, 0, who, buf);
+                new_draw_info(NDI_UNIQUE | NDI_RED, 0, who, "You are now level %d in %s based skills.",
+                              op->level, op->name);
             }
         }
         else if (flag_msg && op->level > 1 && op->type == SKILL)
         {
-            sprintf(buf, "You are now level %d in the skill %s.", op->level, op->name);
-            new_draw_info(NDI_UNIQUE | NDI_RED, 0, who, buf);
+            new_draw_info(NDI_UNIQUE | NDI_RED, 0, who, "You are now level %d in the skill %s.",
+                           op->level, op->name);
         }
         else if(flag_msg)
         {
-            sprintf(buf, "You are now level %d.", op->level);
-            new_draw_info(NDI_UNIQUE | NDI_RED, 0, who, buf);
+            new_draw_info(NDI_UNIQUE | NDI_RED, 0, who, "You are now level %d.",
+                          op->level);
         }
 
         player_lvl_adj(who, op, flag_msg); /* To increase more levels */
@@ -513,18 +512,18 @@ void player_lvl_adj(object *who, object *op, int flag_msg)
         {
             if (op->type == EXPERIENCE)
             {
-                sprintf(buf, "-You are now level %d in %s based skills.", op->level, op->name);
-                new_draw_info(NDI_UNIQUE | NDI_RED, 0, who, buf);
+                new_draw_info(NDI_UNIQUE | NDI_RED, 0, who, "-You are now level %d in %s based skills.",
+                              op->level, op->name);
             }
             else if (op->type == SKILL)
             {
-                sprintf(buf, "-You are now level %d in the skill %s.", op->level, op->name);
-                new_draw_info(NDI_UNIQUE | NDI_RED, 0, who, buf);
+                new_draw_info(NDI_UNIQUE | NDI_RED, 0, who, "-You are now level %d in the skill %s.",
+                              op->level, op->name);
             }
             else
             {
-                sprintf(buf, "-You are now level %d.", op->level);
-                new_draw_info(NDI_UNIQUE | NDI_RED, 0, who, buf);
+                new_draw_info(NDI_UNIQUE | NDI_RED, 0, who, "-You are now level %d.",
+                              op->level);
             }
         }
         player_lvl_adj(who, op, flag_msg); /* To decrease more levels */

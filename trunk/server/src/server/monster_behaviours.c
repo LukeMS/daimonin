@@ -472,7 +472,7 @@ int get_npc_attitude(object *op, object *other)
     else if(MOB_DATA(op) == NULL)
     {
         LOG(llevDebug, "Warning: AI not initialized when requesting attitude of monster '%s' towards '%s'.\n",
-                STRING_OBJ_NAME(op), STRING_OBJ_NAME(other));
+            STRING_OBJ_NAME(op), STRING_OBJ_NAME(other));
         return 0;
     }
 

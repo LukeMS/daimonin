@@ -130,15 +130,13 @@ void communicate(object *op, char *txt)
     }
 
     /* Broadcast the say to others (players) nearby. */
-    sprintf(buf, "%s says: ", query_name(op));
-    strncat(buf, txt, MEDIUM_BUF - strlen(buf) - 1);
-    buf[MEDIUM_BUF - 1] = 0;
-
     flags = NDI_WHITE;
+
     if(op->type == PLAYER)
         flags |= (NDI_SAY | NDI_PLAYER);
 
-    new_info_map(flags, op->map, op->x, op->y, MAP_INFO_NORMAL, buf);
+    new_info_map(flags, op->map, op->x, op->y, MAP_INFO_NORMAL, "%s says: %s",
+                 query_name(op), txt);
 }
 
 /* Handle a player attempting to /talk.
@@ -232,14 +230,14 @@ void talk_to_npc(player *pl, char *topic)
 
                         if(t_obj->msg)
                         {
-                            new_draw_info(NDI_NAVY | NDI_UNIQUE, 0, pl->ob,
+                            new_draw_info(NDI_NAVY | NDI_UNIQUE, 0, pl->ob, "%s",
                                           t_obj->msg);
                         }
                         else
                         {
                             new_draw_info(NDI_NAVY | NDI_UNIQUE, 0,
                                                  pl->ob, "%s has nothing to say.",
-                                                 query_name(t_obj));
+                                                 query_short_name(t_obj, pl->ob));
                         }
                     }
 

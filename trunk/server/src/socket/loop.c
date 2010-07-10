@@ -476,13 +476,13 @@ void remove_ns_dead_player(player *pl)
             sprintf(buf_dm,"%s leaves the game (%d still playing).", query_name(pl->ob), player_active - 1);
 
             for(ol = gmaster_list_MM;ol;ol=ol->next)
-                new_draw_info(NDI_UNIQUE, 0,ol->objlink.ob, buf_dm);
+                new_draw_info(NDI_UNIQUE, 0,ol->objlink.ob, "%s", buf_dm);
 
             for(ol = gmaster_list_GM;ol;ol=ol->next)
-                new_draw_info(NDI_UNIQUE, 0,ol->objlink.ob, buf_dm);
+                new_draw_info(NDI_UNIQUE, 0,ol->objlink.ob, "%s", buf_dm);
 
             for(ol = gmaster_list_VOL;ol;ol=ol->next)
-                new_draw_info(NDI_UNIQUE, 0,ol->objlink.ob, buf_dm);
+                new_draw_info(NDI_UNIQUE, 0,ol->objlink.ob, "%s", buf_dm);
         }
 
         container_unlink(pl, NULL);
@@ -734,7 +734,7 @@ void doeric_server(int update, struct timeval *timeout)
 
         getnameinfo((struct sockaddr *) &addr, addrlen, tmp_ip, sizeof(tmp_ip), NULL, 0, NI_NUMERICHOST);
 #endif
-            LOG(llevDebug, " ip %s (socket %d) (%x)\n", tmp_ip, newsock->fd, newsock);
+            LOG(llevDebug, " ip %s (socket %d) (%p)\n", tmp_ip, newsock->fd, newsock);
             InitConnection(newsock, tmp_ip);
             check_ip_ban(newsock, tmp_ip);
             if(newsock->status <= Ns_Zombie) /* set from ban check */

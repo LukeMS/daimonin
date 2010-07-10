@@ -28,30 +28,43 @@
 #ifdef DEBUG_GROUP
 static void party_dump(object *pobj)
 {
-    int i=0;
+    int     i = 0;
     object *tmp;
 
-    if(!CONTR(pobj))
+    if (!CONTR(pobj))
     {
-        LOG(llevDebug, "PARTY_DUMP: object %s without controller!", query_name(pobj));
+        LOG(llevDebug, "PARTY_DUMP: object %s without controller!",
+            STRING_OBJ_NAME(pobj), pobj->count);
+
         return;
     }
 
-    for(tmp=CONTR(pobj)->group_leader;tmp;tmp=CONTR(tmp)->group_next,i++)
+    for(tmp = CONTR(pobj)->group_leader; tmp; tmp = CONTR(tmp)->group_next, i++)
     {
-        if(QUERY_FLAG(tmp, FLAG_REMOVED))
+        player *pl = CONTR(tmp);
+
+        if (QUERY_FLAG(tmp, FLAG_REMOVED))
         {
-            LOG(llevDebug, "PARTY_DUMP %d: object %x REMOVED?!", i, tmp);
+            LOG(llevDebug, "PARTY_DUMP %d: object %s[%d] REMOVED?!",
+                i, STRING_OBJ_NAME(tmp), tmp->count);
             return;
         }
-        if(tmp->type != PLAYER ||!CONTR(tmp))
+
+        if (tmp->type != PLAYER ||
+            !pl)
         {
-            LOG(llevDebug, "PARTY_DUMP %d: object %x no CONTR/NO PLAYER?!", i, tmp);
+            LOG(llevDebug, "PARTY_DUMP %d: object %s[%d] no CONTR/NO PLAYER?!",
+                i, STRING_OBJ_NAME(tmp), tmp->count);
+
             return;
         }
-        LOG(llevDebug, "PARTY_DUMP %d: player %s (%x c:%d)-> s:%d id:%d nr:%d nrof:%d l:%x p:%x n:%x\n", i, query_name(tmp),
-                tmp, tmp->count, CONTR(tmp)->group_status, CONTR(tmp)->group_id,CONTR(tmp)->group_nr, CONTR(tmp)->group_nrof,
-                CONTR(tmp)->group_leader, CONTR(tmp)->group_prev, CONTR(tmp)->group_next);
+
+        LOG(llevDebug, "PARTY_DUMP %d: player %s[%d])-> s:%d id:%d nr:%d nrof:%d l:%s[%d] p:%s[%d] n:%s[%d]\n",
+            i, STRING_OBJ_NAME(tmp), tmp->count, pl->group_status,
+            pl->group_id,pl->group_nr, pl->group_nrof,
+            STRING_OBJ_NAME(pl->group_leader), pl->group_leader->count,
+            STRING_OBJ_NAME(pl->group_prev), pl->group_prev->count,
+            STRING_OBJ_NAME(pl->group_next), pl->group_next->count);
     }
 }
 #endif
@@ -508,7 +521,7 @@ void party_message(int mode, int flags, int pri,object *leader, object *source, 
     for(tmp=CONTR(leader)->group_leader;tmp;tmp=CONTR(tmp)->group_next)
     {
         if(tmp != source && (!(mode&PMSG_MODE_NOTEXT) || !(CONTR(tmp)->group_status &GROUP_STATUS_NOQUEST)) )
-            new_draw_info(flags, pri, tmp, buf);
+            new_draw_info(flags, pri, tmp, "%s", buf);
     }
 }
 

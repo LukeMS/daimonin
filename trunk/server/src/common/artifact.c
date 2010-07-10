@@ -204,7 +204,7 @@ static void init_artifacts(FILE *fp)
             file_pos = ftell(fp);
 
             if (fseek(fp, old_pos, SEEK_SET))
-                LOG(llevError, "ERROR: Init_Artifacts: Could not fseek(fp,%d,SEEK_SET).\n", old_pos);
+                LOG(llevError, "ERROR: Init_Artifacts: Could not fseek(fp,%ld,SEEK_SET).\n", old_pos);
 
             /* the lex reader will bug when it don't get feed with a <text>+0x0a+0 string.
              * so, we do it here and in the lex part we simple do a strlen and point
@@ -218,7 +218,7 @@ static void init_artifacts(FILE *fp)
                 if (ftell(fp) == file_pos)
                     break;
                 if (ftell(fp) > file_pos) /* should not possible! */
-                    LOG(llevError, "ERROR: Init_Artifacts: fgets() read to much data! (%d - %d)\n", file_pos, ftell(fp));
+                    LOG(llevError, "ERROR: Init_Artifacts: fgets() read to much data! (%ld - %ld)\n", file_pos, ftell(fp));
             };
 
             /* now store the parse text in the artifacts list entry */

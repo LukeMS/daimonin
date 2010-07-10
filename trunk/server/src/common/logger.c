@@ -72,7 +72,7 @@ void LOG(LogLevel logLevel, char *format, ...)
         if (logLevel == llevMapbug)
         {
             new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_ALL | NDI_RED, 5, NULL,
-                          log_buf);
+                          "%s", log_buf);
         }
 #endif
     }

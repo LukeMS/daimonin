@@ -92,7 +92,7 @@ void display_motd(object *op)
         cp = strchr(buf, '\n');
         if (cp != NULL)
             *cp = '\0';
-        new_draw_info(NDI_UNIQUE, 0, op, buf);
+        new_draw_info(NDI_UNIQUE, 0, op, "%s", buf);
     }
     fclose(fp);
     new_draw_info(NDI_UNIQUE, 0, op, " ");
@@ -425,15 +425,14 @@ int handle_newcs_player(player *pl)
 int save_life(object *op)
 {
     object *tmp;
-    char    buf[MEDIUM_BUF];
+
     if (!QUERY_FLAG(op, FLAG_LIFESAVE))
         return 0;
     for (tmp = op->inv; tmp != NULL; tmp = tmp->below)
         if (QUERY_FLAG(tmp, FLAG_APPLIED) && QUERY_FLAG(tmp, FLAG_LIFESAVE))
         {
             play_sound_map(op->map, op->x, op->y, SOUND_OB_EVAPORATE, SOUND_NORMAL);
-            sprintf(buf, "Your %s vibrates violently, then evaporates.", query_name(tmp));
-            new_draw_info(NDI_UNIQUE, 0, op, buf);
+            new_draw_info(NDI_UNIQUE, 0, op, "Your %s vibrates violently, then evaporates.", query_name(tmp));
             if (CONTR(op))
                 esrv_del_item(CONTR(op), tmp->count, tmp->env);
             remove_ob(tmp);
@@ -1284,8 +1283,7 @@ void dragon_ability_gain(object *who, int atnr, int level)
             return;
         if (IS_SYS_INVISIBLE(item))
         {
-            sprintf(buf, "You gained the ability of %s", spells[spell].name);
-            new_draw_info(NDI_UNIQUE | NDI_BLUE, 0, who, buf);
+            new_draw_info(NDI_UNIQUE | NDI_BLUE, 0, who, "You gained the ability of %s", spells[spell].name);
             do_learn_spell(who, spell, 0);
             return;
         }
@@ -1309,7 +1307,7 @@ void dragon_ability_gain(object *who, int atnr, int level)
                 /* tmp->attacktype += item->attacktype; */
 
                 if (item->msg != NULL)
-                    new_draw_info(NDI_UNIQUE | NDI_BLUE, 0, who, item->msg);
+                    new_draw_info(NDI_UNIQUE | NDI_BLUE, 0, who, "%s", item->msg);
             }
         }
     }
@@ -1342,7 +1340,7 @@ void dragon_ability_gain(object *who, int atnr, int level)
                 }
             }
             strcat(buf, ".");
-            new_draw_info(NDI_UNIQUE | NDI_BLUE, 0, who, buf);
+            new_draw_info(NDI_UNIQUE | NDI_BLUE, 0, who, "%s", buf);
         }
 
         /* evtl. adding flags: */
@@ -1355,14 +1353,13 @@ void dragon_ability_gain(object *who, int atnr, int level)
 
         /* print message if there is one */
         if (item->msg != NULL)
-            new_draw_info(NDI_UNIQUE | NDI_BLUE, 0, who, item->msg);
+            new_draw_info(NDI_UNIQUE | NDI_BLUE, 0, who, "%s", item->msg);
     }
     else
     {
         /* generate misc. treasure */
         tmp = arch_to_object(tr->item);
-        sprintf(buf, "You gained %s", query_short_name(tmp, NULL));
-        new_draw_info(NDI_UNIQUE | NDI_BLUE, 0, who, buf);
+        new_draw_info(NDI_UNIQUE | NDI_BLUE, 0, who, "You gained %s", query_name(tmp));
         tmp = insert_ob_in_ob(tmp, who);
         if (who->type == PLAYER)
             esrv_send_item(who, tmp);

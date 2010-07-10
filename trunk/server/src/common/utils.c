@@ -225,5 +225,5 @@ void NDI_LOG(LogLevel logLevel, int flags, int pri, object *ob, char *format, ..
 
     if (ob &&
         CONTR(ob))
-        new_draw_info(flags, pri, ob, buf);
+        new_draw_info(flags, pri, ob, "%s", buf);
 } 

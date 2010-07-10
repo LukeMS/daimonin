@@ -93,8 +93,7 @@ int write_rune(object *op, int dir, int inspell, int level, char *runename)
         /* can't have runes of small fireball!!!  */
         if (inspell == -1)
         {
-            new_draw_info(NDI_UNIQUE, 0, op, "You can't make a rune containing");
-            new_draw_info(NDI_UNIQUE, 0, op, "a spell you don't know.  (idiot!)");
+            new_draw_info(NDI_UNIQUE, 0, op, "You can't make a rune containing a spell you don't know.");
             return 0;
         }
         at = find_archetype(runename);
@@ -154,7 +153,8 @@ int write_rune(object *op, int dir, int inspell, int level, char *runename)
             if (strstr(runename, "endmsg"))
             {
                 new_draw_info(NDI_UNIQUE, 0, op, "Trying to cheat are we?", runename);
-                LOG(llevInfo, "write_rune: player %s tried to write bogus rune\n", op->name);
+                LOG(llevInfo, "write_rune: player %s tried to write bogus rune\n",
+                    STRING_OBJ_NAME(op));
                 return 0;
             }
             strncpy(rune, runename, HUGE_BUF - 2);
@@ -267,7 +267,7 @@ void spring_trap(object *trap, object *victim)
         return;
 
     if (victim && victim->type == PLAYER && trap->msg)
-        new_draw_info(NDI_UNIQUE, 0, victim, trap->msg);
+        new_draw_info(NDI_UNIQUE, 0, victim, "%s", trap->msg);
 
     /* Flash an image of the trap on the map so the poor sod
     *   knows what hit him.
@@ -380,8 +380,7 @@ int trap_see(object *op, object *trap, int level)
              MAX(5,
                  ((int) ((float) (op->map->difficulty + trap->level + trap->stats.Cha - op->level) / 10.0 * 50.0))))))
     {
-        // sprintf(buf, "You spot a %s (lvl %d)!", trap->name, trap->level);
-        // new_draw_info(NDI_UNIQUE, 0, op, buf);
+        // new_draw_info(NDI_UNIQUE, 0, op, "You spot a %s (lvl %d)!", trap->name, trap->level);
         return 1;
     }
     return 0;

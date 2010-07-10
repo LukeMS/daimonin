@@ -68,8 +68,7 @@ static int apply_id_altar(object *money, object *altar, object *pl)
             new_draw_info(NDI_UNIQUE, 0, pl, "You have %s.", long_desc(marked, pl));
             if (marked->msg)
             {
-                new_draw_info(NDI_UNIQUE, 0, pl, "The item has a story:");
-                new_draw_info(NDI_UNIQUE, 0, pl, marked->msg);
+                new_draw_info(NDI_UNIQUE, 0, pl, "The item has a story:\n%s", marked->msg);
             }
             return money == NULL;
         }
@@ -85,8 +84,7 @@ static int apply_id_altar(object *money, object *altar, object *pl)
                 new_draw_info(NDI_UNIQUE, 0, pl, "You have %s.", long_desc(id, pl));
                 if (id->msg)
                 {
-                    new_draw_info(NDI_UNIQUE, 0, pl, "The item has a story:");
-                    new_draw_info(NDI_UNIQUE, 0, pl, id->msg);
+                    new_draw_info(NDI_UNIQUE, 0, pl, "The item has a story:\n%s", id->msg);
                 }
                 success = 1;
                 /* If no more money, might as well quit now */
@@ -258,7 +256,7 @@ int apply_potion(object *op, object *tmp)
                 for (i = 0; i < 7; i++)
                 {
                     if (get_stat_value(&depl->stats, i))
-                        new_draw_info(NDI_UNIQUE, 0, op, restore_msg[i]);
+                        new_draw_info(NDI_UNIQUE, 0, op, "%s", restore_msg[i]);
                 }
                 remove_ob(depl); /* in inventory of ... */
                 FIX_PLAYER(op ,"apply_potion - minor restoration");
@@ -533,9 +531,7 @@ static int check_sacrifice(object *op, object *improver)
         count = check_item(op, improver->slaying);
         if (count < 1)
         {
-            char    buf[200];
-            sprintf(buf, "The gods want more %ss", improver->slaying);
-            new_draw_info(NDI_UNIQUE, 0, op, buf);
+            new_draw_info(NDI_UNIQUE, 0, op, "The gods want more %ss", improver->slaying);
             return 0;
         }
     }
@@ -646,9 +642,7 @@ int improve_weapon(object *op, object *improver, object *weapon)
     }
     if (QUERY_FLAG(weapon, FLAG_APPLIED) && !check_weapon_power(op, weapon->last_eat + 1))
     {
-        new_draw_info(NDI_UNIQUE, 0, op, "Improving the weapon will make it too");
-        new_draw_info(NDI_UNIQUE, 0, op, "powerful for you to use.  Unready it if you");
-        new_draw_info(NDI_UNIQUE, 0, op, "really want to improve it.");
+        new_draw_info(NDI_UNIQUE, 0, op, "Improving the weapon will make it too powerful for you to use. Unready it if you really want to improve it.");
         return 0;
     }
     /* This just increases damage by 5 points, no matter what.  No sacrifice
@@ -787,8 +781,7 @@ int improve_armour(object *op, object *improver, object *armour)
 
     if (armour->magic >= (op->level / 10 + 1) || new_armour > op->level)
     {
-        new_draw_info(NDI_UNIQUE, 0, op, "You are not yet powerfull enough");
-        new_draw_info(NDI_UNIQUE, 0, op, "to improve this armour.");
+        new_draw_info(NDI_UNIQUE, 0, op, "You are not yet powerfull enough to improve this armour.");
         return 0;
     }
 
@@ -799,8 +792,7 @@ int improve_armour(object *op, object *improver, object *armour)
     }
     else
     {
-        new_draw_info(NDI_UNIQUE, 0, op, "The armour value of this equipment");
-        new_draw_info(NDI_UNIQUE, 0, op, "cannot be further improved.");
+        new_draw_info(NDI_UNIQUE, 0, op, "The armour value of this equipment cannot be further improved.");
     }
     armour->magic++;
     if (op->type == PLAYER)
@@ -1121,7 +1113,7 @@ static int apply_shop_mat(object *shop_mat, object *op)
         rv = teleport(shop_mat, SHOP_MAT, op);
         if (shop_mat->msg)
         {
-            new_draw_info(NDI_UNIQUE, 0, op, shop_mat->msg);
+            new_draw_info(NDI_UNIQUE, 0, op, "%s", shop_mat->msg);
         }
         /* This check below is a bit simplistic - generally it should be correct,
             * but there is never a guarantee that the bottom space on the map is
@@ -1229,7 +1221,7 @@ static void apply_sign(object *op, object *sign)
         {
             new_draw_info(NDI_UNIQUE, 0, op, "The %s is written in %s.\nYou start reading it.",
                                  query_name(sign), get_language(sign->weight_limit));
-            new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, op, sign->msg);
+            new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, op, "%s", sign->msg);
         }
     }
     /* magic mouth */
@@ -1244,7 +1236,7 @@ static void apply_sign(object *op, object *sign)
               absdir(sign->direction - 1) == op->direction)))
         {
             if (sign->msg)
-                new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, op, sign->msg);
+                new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, op, "%s", sign->msg);
 
             if (raceval && sign->slaying)
             {
@@ -1621,7 +1613,7 @@ static void apply_book(object *op, object *tmp)
     SockBuf_AddString(sptr, buf, len);
 
     SOCKBUF_REQUEST_FINISH(&CONTR(op)->socket, BINARY_CMD_BOOK, SOCKBUF_DYNAMIC);
-    /*new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, op, tmp->msg);*/
+    /*new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, op, "%s", tmp->msg);*/
 
     /* identify the book - successful reading will do it always */
     if (!QUERY_FLAG(tmp, FLAG_NO_SKILL_IDENT))
@@ -1649,8 +1641,7 @@ static void apply_skillscroll(object *op, object *tmp)
     switch ((int) learn_skill(op, tmp, NULL, -1, 1))
     {
         case 0:
-          new_draw_info(NDI_UNIQUE, 0, op, "You already possess the knowledge ");
-          new_draw_info(NDI_UNIQUE, 0, op, "held within the %s.\n", query_name(tmp));
+          new_draw_info(NDI_UNIQUE, 0, op, "You already possess the knowledge held within the %s.\n", query_name(tmp));
           return;
 
         case 1:
@@ -1918,10 +1909,7 @@ static void apply_scroll(object *op, object *tmp)
 
     new_draw_info(NDI_WHITE, 0, op, "The scroll of %s turns to dust.", spells[tmp->stats.sp].name);
     /*    {
-          char buf[MEDIUM_BUF];
-
-          sprintf(buf, "%s reads a scroll of %s.",op->name,spells[tmp->stats.sp].name);
-          new_info_map(NDI_ORANGE, op->map, buf);
+          new_info_map(NDI_ORANGE, op->map, "%s reads a scroll of %s.",op->name,spells[tmp->stats.sp].name);
         }
         */
 
@@ -1951,7 +1939,7 @@ static void apply_treasure(object *op, object *tmp)
         play_sound_map(tmp->map, tmp->x, tmp->y, SOUND_OPEN_CONTAINER, SOUND_NORMAL);
 
     if (tmp->msg) /* msg like "the chest crumbles to dust" */
-        new_draw_info(NDI_UNIQUE, 0, op, tmp->msg);
+        new_draw_info(NDI_UNIQUE, 0, op, "%s", tmp->msg);
     if (treas == NULL)
     {
         new_draw_info(NDI_UNIQUE, 0, op, "The chest was empty.");
@@ -2651,7 +2639,7 @@ int apply_special(object *who, object *op, int aflags)
         {
             if (who->type == PLAYER)
             {
-                new_draw_info(NDI_UNIQUE, 0, who, buf);
+                new_draw_info(NDI_UNIQUE, 0, who, "%s", buf);
                 FIX_PLAYER(who ,"apply special ");
             }
             else
@@ -2704,28 +2692,24 @@ int apply_special(object *who, object *op, int aflags)
         case ARROW:
             if(!op->item_condition)
             {
-                sprintf(buf, "The %s is broken and can't be applied.", query_name(op));
-                new_draw_info(NDI_UNIQUE, 0, who, buf);
+                new_draw_info(NDI_UNIQUE, 0, who, "The %s is broken and can't be applied.", query_name(op));
                 return 1;
             }
             break;
         case WEAPON:
             if(!op->item_condition)
             {
-                sprintf(buf, "The %s is broken and can't be applied.", query_name(op));
-                new_draw_info(NDI_UNIQUE, 0, who, buf);
+                new_draw_info(NDI_UNIQUE, 0, who, "The %s is broken and can't be applied.", query_name(op));
                 return 1;
             }
             if (!QUERY_FLAG(who, FLAG_USE_WEAPON))
             {
-                sprintf(buf, "You can't use %s.", query_name(op));
-                new_draw_info(NDI_UNIQUE, 0, who, buf);
+                new_draw_info(NDI_UNIQUE, 0, who, "You can't use %s.", query_name(op));
                 return 1;
             }
             if (!check_weapon_power(who, op->last_eat))
             {
-                new_draw_info(NDI_UNIQUE, 0, who, "That weapon is too powerful for you to use.");
-                new_draw_info(NDI_UNIQUE, 0, who, "It would consume your soul!.");
+                new_draw_info(NDI_UNIQUE, 0, who, "That weapon is too powerful for you to use. It would consume your soul!.");
                 return 1;
             }
             if (op->level && (strncmp(op->name, who->name, strlen(who->name))))
@@ -2753,8 +2737,7 @@ int apply_special(object *who, object *op, int aflags)
             /* don't allow of polearm or 2hand weapon with a shield */
             if(!op->item_condition)
             {
-                sprintf(buf, "The %s is broken and can't be applied.", query_name(op));
-                new_draw_info(NDI_UNIQUE, 0, who, buf);
+                new_draw_info(NDI_UNIQUE, 0, who, "The %s is broken and can't be applied.", query_name(op));
                 return 1;
             }
             if ((who->type == PLAYER && pl && pl->equipment[PLAYER_EQUIP_WEAPON1])
@@ -2777,14 +2760,12 @@ int apply_special(object *who, object *op, int aflags)
         case CLOAK:
             if(!op->item_condition)
             {
-                sprintf(buf, "The %s is broken and can't be applied.", query_name(op));
-                new_draw_info(NDI_UNIQUE, 0, who, buf);
+                new_draw_info(NDI_UNIQUE, 0, who, "The %s is broken and can't be applied.", query_name(op));
                 return 1;
             }
             if (!QUERY_FLAG(who, FLAG_USE_ARMOUR))
             {
-                sprintf(buf, "You can't use %s.", query_name(op));
-                new_draw_info(NDI_UNIQUE, 0, who, buf);
+                new_draw_info(NDI_UNIQUE, 0, who, "You can't use %s.", query_name(op));
                 return 1;
             }
             break;
@@ -2817,7 +2798,7 @@ int apply_special(object *who, object *op, int aflags)
             SET_FLAG(op, FLAG_APPLIED);
             SET_FLAG(who, FLAG_READY_WEAPON);
             change_abil(who, op);
-            sprintf(buf, "You wield the %s.", query_name(op));
+            new_draw_info(NDI_UNIQUE, 0, who, "You wield the %s.", query_name(op));
             break;
 
         case SHIELD:
@@ -2834,7 +2815,7 @@ int apply_special(object *who, object *op, int aflags)
         case AMULET:
             SET_FLAG(op, FLAG_APPLIED);
             change_abil(who, op);
-            sprintf(buf, "You put on the %s.", query_name(op));
+            new_draw_info(NDI_UNIQUE, 0, who, "You put on the %s.", query_name(op));
             break;
 
             /* this part is needed for skill-tools */
@@ -2858,7 +2839,6 @@ int apply_special(object *who, object *op, int aflags)
             /* change_abil(who, op); */
             /*LOG(llevDebug, "APPLY SKILL: %s change %s to %s\n", query_name(who), query_name(who->chosen_skill), query_name(op) );*/
             who->chosen_skill = op;
-            buf[0] = '\0';
             break;
 
         case ARROW:
@@ -2905,12 +2885,10 @@ int apply_special(object *who, object *op, int aflags)
             break;
 
         default:
-            sprintf(buf, "You apply the %s.", query_name(op));
+            new_draw_info(NDI_UNIQUE, 0, who, "You apply the %s.", query_name(op));
     }
     if (!QUERY_FLAG(op, FLAG_APPLIED))
         SET_FLAG(op, FLAG_APPLIED);
-    if (buf[0] != '\0')
-        new_draw_info(NDI_UNIQUE, 0, who, buf);
     if (tmp != NULL)
         tmp = insert_ob_in_ob(tmp, who);
     FIX_PLAYER(who ,"apply special - you apply ");
@@ -3175,7 +3153,7 @@ void apply_player_light(object *who, object *op)
                          __FILE__);
 
         if (op->msg)
-            new_draw_info(NDI_UNIQUE, 0, who, op->msg);
+            new_draw_info(NDI_UNIQUE, 0, who, "%s", op->msg);
         else if (!op->glow_radius)
             new_draw_info(NDI_UNIQUE, 0, who, "You cannot light the %s.", query_name(op));
         else
@@ -3201,7 +3179,7 @@ void apply_player_light(object *who, object *op)
             return;
 
         if (op->msg)
-            new_draw_info(NDI_UNIQUE, 0, who, op->msg);
+            new_draw_info(NDI_UNIQUE, 0, who, "%s", op->msg);
         else
             new_draw_info(NDI_UNIQUE, 0, who, "You extinguish the %s.",
                                  query_name(op));
@@ -3264,7 +3242,7 @@ void apply_player_light(object *who, object *op)
             else
             {
                 if (op->msg)
-                    new_draw_info(NDI_UNIQUE, 0, who, op->msg);
+                    new_draw_info(NDI_UNIQUE, 0, who, "%s", op->msg);
                 else
                     new_draw_info(NDI_UNIQUE, 0, who, "You light the %s.",
                                          query_name(op));
@@ -3297,7 +3275,7 @@ void apply_player_light(object *who, object *op)
                             return;
 
                         if (tmp->msg)
-                            new_draw_info(NDI_UNIQUE, 0, who, tmp->msg);
+                            new_draw_info(NDI_UNIQUE, 0, who, "%s", tmp->msg);
                         else
                             new_draw_info(NDI_UNIQUE, 0, who, "You extinguish the %s.",
                                                  query_name(tmp));
@@ -3310,7 +3288,7 @@ void apply_player_light(object *who, object *op)
                 }
 
                 if (op->msg)
-                    new_draw_info(NDI_UNIQUE, 0, who, op->msg);
+                    new_draw_info(NDI_UNIQUE, 0, who, "%s", op->msg);
                 else
                     new_draw_info(NDI_UNIQUE, 0, who, "You apply the %s as your light source.",
                                          query_name(op));
@@ -3331,7 +3309,7 @@ void apply_player_light(object *who, object *op)
                     return;
 
                 if (op->msg)
-                    new_draw_info(NDI_UNIQUE, 0, who, op->msg);
+                    new_draw_info(NDI_UNIQUE, 0, who, "%s", op->msg);
                 else
                     new_draw_info(NDI_UNIQUE, 0, who, "You extinguish the %s.",
                                          query_name(op));

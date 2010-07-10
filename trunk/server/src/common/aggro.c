@@ -628,7 +628,7 @@ static inline int aggro_exp_group(object *victim, object *aggro, char *kill_msg)
          * from the quest item function (= no quest item for leecher)
          */
 #ifdef DEBUG_AGGRO
-        LOG(llevNoLog,"GROUP_MEMBER: %s (%x)\n", query_name(tmp), pl);
+        LOG(llevNoLog,"GROUP_MEMBER: %s (%p)\n", query_name(tmp), pl);
 #endif
         if(!in_group_exp_range(victim, aggro->enemy == tmp?NULL:aggro->enemy, tmp))
         {
@@ -640,7 +640,7 @@ static inline int aggro_exp_group(object *victim, object *aggro, char *kill_msg)
          * the exp gain messages... ugly, but well, better as double calc the exp gain
          */
         if(kill_msg && aggro->enemy != tmp)
-            new_draw_info(NDI_YELLOW, 0, tmp, kill_msg);
+            new_draw_info(NDI_YELLOW, 0, tmp, "%s", kill_msg);
 
         pl->group_status &= ~GROUP_STATUS_NOQUEST;
         if(pl->exp_calc_tag == exp_calc_tag)

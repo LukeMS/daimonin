@@ -130,10 +130,7 @@ void version(object *op)
 
 void start_info(object *op)
 {
-    char    buf[MEDIUM_BUF];
-
-    sprintf(buf, "Welcome to Daimonin, v%s!", VERSION);
-    new_draw_info(NDI_UNIQUE, 0, op, buf);
+    new_draw_info(NDI_UNIQUE, 0, op, "Welcome to Daimonin, v%s!", VERSION);
 }
 
 /* here we hook in to crypt the password - this feature is disabled atm */
@@ -611,11 +608,11 @@ void leave(player *pl, int draw_exit)
         pl->socket.status = Ns_Dead;
         sprintf(buf, "LOGOUT: IP >%s< Account >%s< Player >%s<!\n",
                 pl->socket.ip_host, pl->account_name, query_name(pl->ob));
-        LOG(llevInfo, buf);
+        LOG(llevInfo, "%s", buf);
 
         if (clogfile != tlogfile)
         {
-            CHATLOG(buf);
+            CHATLOG("%s", buf);
         }
 
         if (pl->ob->map)

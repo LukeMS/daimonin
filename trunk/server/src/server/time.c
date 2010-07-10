@@ -99,7 +99,7 @@ int open_door(object *op, mapstruct *m, int x, int y, int mode)
                 if (!(key = find_key(op, tmp)) && !(force = find_force(op, tmp)))
                 {
                     if (op->type == PLAYER && mode)
-                        new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, op, tmp->msg);
+                        new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, op, "%s", tmp->msg);
                     return 0; /* we can't open it! */
                 }
             }
@@ -618,7 +618,8 @@ void move_gate(object *op)
                 dam = dam * 3 + (tmp->level - dam) + 1;
                 damage_ob(tmp, dam, op, ENV_ATTACK_CHECK);
                 if (tmp->type == PLAYER)
-                    new_draw_info(NDI_UNIQUE, 0, tmp, "You are crushed by the %s!", op->name);
+                    new_draw_info(NDI_UNIQUE, 0, tmp, "You are crushed by the %s!",
+                                  query_name(op));
             }
 
             /* If the object is alive, or the object either can
@@ -1560,7 +1561,7 @@ void move_marker(object *op)
                 FREE_AND_COPY_HASH(force->slaying, op->slaying);
                 insert_ob_in_ob(force, tmp);
                 if (op->msg)
-                    new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, tmp, op->msg);
+                    new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, tmp, "%s", op->msg);
                 if (op->stats.hp > 0)
                 {
                     op->stats.hp--;

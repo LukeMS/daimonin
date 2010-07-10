@@ -1044,8 +1044,8 @@ void compile_info()
 #else
     LOG(llevInfo, "Map reset:\t<false>\n");
 #endif
-    LOG(llevInfo, "Max objects:\t%d (allocated:%d free:%d)\n", MAX_OBJECTS, pool_object->nrof_allocated,
-        pool_object->nrof_free);
+    LOG(llevInfo, "Max objects:\t%d (allocated:%u free:%u)\n", MAX_OBJECTS, *pool_object->nrof_allocated,
+        *pool_object->nrof_free);
 
 
 #ifdef USE_CALLOC
@@ -1054,14 +1054,14 @@ void compile_info()
     LOG(llevInfo, "Use_calloc:\t<false>\n");
 #endif
 
-    LOG(llevInfo, "Max_time:\t%d (%f)\n", pticks_ums, pticks_second);
+    LOG(llevInfo, "Max_time:\t%ld (%f)\n", pticks_ums, pticks_second);
 
     LOG(llevInfo, "Tlogfilename:\t%s, Clogfilename:\t%s (llev:%d)\n", settings.tlogfilename, settings.clogfilename, settings.debug);
-    LOG(llevInfo, "ObjectSize:\t%d (living: %d)\n", sizeof(object), sizeof(living));
-    LOG(llevInfo, "MapStructSize:\t%d\n", sizeof(mapstruct));
-    LOG(llevInfo, "MapSpaceSize:\t%d\n", sizeof(MapSpace));
-    LOG(llevInfo, "PlayerSize:\t%d\n", sizeof(player) + MAXSOCKBUF_IN);
-    LOG(llevInfo, "SocketSize:\t%d\n", sizeof(NewSocket) + MAXSOCKBUF_IN);
+    LOG(llevInfo, "ObjectSize:\t%lu (living: %lu)\n", sizeof(object), sizeof(living));
+    LOG(llevInfo, "MapStructSize:\t%lu\n", sizeof(mapstruct));
+    LOG(llevInfo, "MapSpaceSize:\t%lu\n", sizeof(MapSpace));
+    LOG(llevInfo, "PlayerSize:\t%lu\n", sizeof(player) + MAXSOCKBUF_IN);
+    LOG(llevInfo, "SocketSize:\t%lu\n", sizeof(NewSocket) + MAXSOCKBUF_IN);
 
     LOG(llevInfo, "Setup info: Done.\n");
 }
@@ -1270,7 +1270,7 @@ static void init_instance_system(void)
 
     global_instance_num = 0; /* every instance has an unique tag/number */
 
-    LOG(llevInfo,"Init instance system:  set ID:%d num:%d\n", global_instance_id, global_instance_num);
+    LOG(llevInfo,"Init instance system:  set ID:%ld num:%d\n", global_instance_id, global_instance_num);
 }
 
 /*

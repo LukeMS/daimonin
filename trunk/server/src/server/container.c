@@ -354,7 +354,7 @@ static void pick_up_object(object *pl, object *op, object *tmp, uint32 nrof)
         tmp = get_split_ob(tmp, nrof);
         if (!tmp)
         {
-            new_draw_info(NDI_UNIQUE, 0, pl, errmsg);
+            new_draw_info(NDI_UNIQUE, 0, pl, "%s", errmsg);
             return;
         }
         /* Tell a client what happened rest of objects */
@@ -383,22 +383,20 @@ static void pick_up_object(object *pl, object *op, object *tmp, uint32 nrof)
             if ((result = check_walk_off(tmp, pl, MOVE_APPLY_VANISHED)) != CHECK_WALK_OK)
             {
                 if(result == CHECK_WALK_DESTROYED)
-                    sprintf(buf, "Trying to pick up the %s unfortunately destroyed it.\n", query_name(tmp));
+                    new_draw_info(NDI_UNIQUE, 0, pl, "Trying to pick up the %s unfortunately destroyed it.\n", query_name(tmp));
                 else
-                    sprintf(buf, "You somehow lost the %s when picking it up.\n", query_name(tmp));
-                new_draw_info(NDI_UNIQUE, 0, pl, buf);
+                    new_draw_info(NDI_UNIQUE, 0, pl, "You somehow lost the %s when picking it up.\n", query_name(tmp));
                 return;
             }
         }
     }
 
-    new_draw_info(NDI_UNIQUE, 0, pl, buf);
+    new_draw_info(NDI_UNIQUE, 0, pl, "%s", buf);
     tmp = insert_ob_in_ob(tmp, op);
 
     if(op->type != PLAYER)
     {
-        sprintf(buf,"You put it into %s.", query_name(op));
-        new_draw_info(NDI_UNIQUE, 0, pl, buf);
+        new_draw_info(NDI_UNIQUE, 0, pl, "You put it into %s.", query_name(op));
     }
 
     /* All the stuff below deals with client/server code, and is only
@@ -638,7 +636,7 @@ void put_object_in_sack(object *const op, object *const sack, object *tmp, const
 
         if (!tmp)
         {
-            new_draw_info(NDI_UNIQUE, 0, op, errmsg);
+            new_draw_info(NDI_UNIQUE, 0, op, "%s", errmsg);
             return;
         }
         /* Tell a client what happened other objects */
@@ -662,20 +660,16 @@ void put_object_in_sack(object *const op, object *const sack, object *tmp, const
         {
             CLEAR_FLAG(tmp, FLAG_NO_PICK);
             SET_FLAG(tmp, FLAG_STARTEQUIP);
-            sprintf(buf, "You pick up %s for %s from the storage.", query_name(tmp), query_cost_string(tmp, op, F_BUY, COSTSTRING_SHORT));
+            new_draw_info(NDI_UNIQUE, 0, op, "You pick up %s for %s from the storage.", query_name(tmp), query_cost_string(tmp, op, F_BUY, COSTSTRING_SHORT));
         }
         else /* this is a unique shop item */
-            sprintf(buf, "%s will cost you %s.", query_name(tmp), query_cost_string(tmp, op, F_BUY, COSTSTRING_SHORT));
-        new_draw_info(NDI_UNIQUE, 0, op, buf);
+            new_draw_info(NDI_UNIQUE, 0, op, "%s will cost you %s.", query_name(tmp), query_cost_string(tmp, op, F_BUY, COSTSTRING_SHORT));
     }
 
-    sprintf(buf, "You put the %s into ", query_name(tmp));
-    strcat(buf, query_name(sack));
-    strcat(buf, ".");
+    new_draw_info(NDI_UNIQUE, 0, op, "You put the %s into the %s.", query_name(tmp), query_name(sack));
     tmp_tag = tmp->count;
     tmp_cont = tmp->env;
     tmp2 = insert_ob_in_ob(tmp, sack);
-    new_draw_info(NDI_UNIQUE, 0, op, buf);
     FIX_PLAYER(op, "put_object_in_sack"); /* This is overkill, fix_player() is called somewhere */
     /* in object.c */
 
@@ -732,7 +726,7 @@ void drop_object(object *const op, object *tmp, const uint32 nrof)
         tmp = get_split_ob(tmp, nrof);
         if (!tmp)
         {
-            new_draw_info(NDI_UNIQUE, 0, op, errmsg);
+            new_draw_info(NDI_UNIQUE, 0, op, "%s", errmsg);
             return;
         }
         /* Tell a client what happened rest of objects.  tmp2 is now the
@@ -767,8 +761,7 @@ void drop_object(object *const op, object *tmp, const uint32 nrof)
     {
         if (op->type == PLAYER)
         {
-            sprintf(buf, "You drop the %s.", query_name(tmp));
-            new_draw_info(NDI_UNIQUE, 0, op, buf);
+            new_draw_info(NDI_UNIQUE, 0, op, "You drop the %s.", query_name(tmp));
 
             if (QUERY_FLAG(tmp, FLAG_UNPAID))
                 new_draw_info(NDI_UNIQUE, 0, op, "The shop magic put it back to the storage.");

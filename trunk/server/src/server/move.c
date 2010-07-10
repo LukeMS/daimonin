@@ -368,21 +368,22 @@ int push_ob(object *who, int dir, object *pusher)
                                                     !QUERY_FLAG(who,FLAG_FRIENDLY)) {
     if(CONTR(pusher)->run_on) {
         new_draw_info(NDI_UNIQUE, 0, pusher,
-                 "You start to attack %s !!",who->name);
+                 "You start to attack %s !!", query_short_name(who, pusher));
            update_npc_knowledge(who, pusher, FRIENDSHIP_PUSH, 0);
            return 1;
     }
     else
     {
         new_draw_info(NDI_UNIQUE, 0, pusher,
-                 "You avoid to attack %s .",who->name);
+                 "You avoid attacking %s.", query_short_name(who, pusher));
     }
        }*/
 
     /* now, lets test stand still we NEVER can push stand_still monsters. */
     if (QUERY_FLAG(who, FLAG_STAND_STILL))
     {
-        new_draw_info(NDI_UNIQUE, 0, pusher, "You can't push %s.", who->name);
+        new_draw_info(NDI_UNIQUE, 0, pusher, "You can't push %s.",
+                      query_short_name(who, pusher));
         return 0;
     }
 
@@ -407,7 +408,8 @@ int push_ob(object *who, int dir, object *pusher)
      >= random_roll(str2, str2/ 2 + str2 * 2)
      || !move_ob(who, dir, pusher))
     {
-        new_draw_info(NDI_UNIQUE, 0, who, "%s tried to push you.", pusher->name);
+        new_draw_info(NDI_UNIQUE, 0, who, "%s tried to push you.",
+                      query_short_name(pusher, who));
         return 0;
     }
 
@@ -417,8 +419,10 @@ int push_ob(object *who, int dir, object *pusher)
      * player
      */
     (void) move_ob(pusher, dir, pusher);
-    new_draw_info(NDI_UNIQUE, 0, who, "%s pushed you.", pusher->name);
-    new_draw_info(NDI_UNIQUE, 0, pusher, "You pushed %s back.", who->name);
+    new_draw_info(NDI_UNIQUE, 0, who, "%s pushed you.",
+                  query_short_name(pusher, who));
+    new_draw_info(NDI_UNIQUE, 0, pusher, "You pushed %s back.",
+                  query_short_name(who, pusher));
 
     return 1;
 }
@@ -727,7 +731,8 @@ int enter_map_by_exit(object *op, object *exit_ob)
                                         QUERY_FLAG(exit_ob, FLAG_IS_MALE)?INSTANCE_FLAG_NO_REENTER:0);
             }
             else
-                LOG(llevError, "FATAL ERROR: enter_map_by_exit(): Map %s without valid map status (dynamic) (%d)!\n", STRING_MAP_PATH(exit_ob->map));
+                LOG(llevError, "FATAL ERROR: enter_map_by_exit(): Map %s without valid map status (dynamic) (%d)!\n",
+                    STRING_MAP_PATH(exit_ob->map), exit_ob->map->map_status);
         }
     }
     else /* dst path is static and stored in exit_ob->title */
@@ -787,7 +792,7 @@ int enter_map_by_exit(object *op, object *exit_ob)
 
     /* Send any exit message to exiter */
     if (exit_ob->msg)
-        new_draw_info(NDI_NAVY, 0, op, exit_ob->msg);
+        new_draw_info(NDI_NAVY, 0, op, "%s", exit_ob->msg);
 
     /* collect the flag settings from our exit_ob */
     flags = EXIT_STATUS(exit_ob);

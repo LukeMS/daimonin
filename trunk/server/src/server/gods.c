@@ -835,7 +835,7 @@ void god_intervention(object *op, object *god)
                 new_draw_info(NDI_UNIQUE, 0, op, "Shimmering light surrounds and restores you!");
                 for (i = 0; i < NUM_STATS; i++)
                     if (get_stat_value(&depl->stats, i))
-                        new_draw_info(NDI_UNIQUE, 0, op, restore_msg[i]);
+                        new_draw_info(NDI_UNIQUE, 0, op, "%s", restore_msg[i]);
                 remove_ob(depl);
                 FIX_PLAYER(op ,"god intervention");
                 return;
@@ -845,7 +845,7 @@ void god_intervention(object *op, object *god)
             // Messages
             if (item->type == BOOK && IS_SYS_INVISIBLE(item) && item->name == shstr_cons.message)
             {
-                new_draw_info(NDI_UNIQUE, 0, op, item->msg);
+                new_draw_info(NDI_UNIQUE, 0, op, "%s", item->msg);
                 return;
             }
 
@@ -921,7 +921,6 @@ int god_examines_priest(object *op, object *god)
     /* well, well. Looks like we screwed up. Time for god's revenge */
     if (reaction < 0)
     {
-        char    buf[MEDIUM_BUF];
         int     loss    = 10000000;
         int     angry   = abs(reaction);
         if (op->chosen_skill->exp_obj)
@@ -929,8 +928,7 @@ int god_examines_priest(object *op, object *god)
         lose_priest_exp(op, random_roll(0, loss * angry - 1));
         if (random_roll(0, angry))
             cast_mana_storm(op, SK_level(op) + (angry * 3));
-        sprintf(buf, "%s becomes angry and punishes you!", god->name);
-        new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, op, buf);
+        new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, op, "%s becomes angry and punishes you!", god->name);
     }
 
     return reaction;
@@ -963,9 +961,7 @@ int god_examines_item(object *god, object *item)
         {
             if (item->env)
             {
-                char    buf[MEDIUM_BUF];
-                sprintf(buf, "Heretic! You are using %s!", query_name(item));
-                new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, item->env, buf);
+                new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, item->env, "Heretic! You are using %s!", query_name(item));
             }
             return -1;
         }

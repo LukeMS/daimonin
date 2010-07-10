@@ -196,7 +196,8 @@ void insert_quest_item(struct obj *quest_trigger, struct obj *target)
             quest->magic = (sint8)quest_trigger->last_heal;
 
             if(quest_trigger->msg)
-                new_draw_info(NDI_UNIQUE | NDI_ORANGE, 0, target, quest_trigger->msg);
+                new_draw_info(NDI_UNIQUE | NDI_ORANGE, 0, target, "%s",
+                              quest_trigger->msg);
 
             for (tmp = quest->inv; tmp; tmp = tmp->below)
             {
@@ -330,7 +331,7 @@ void add_quest_trigger(struct obj *who, struct obj *trigger)
 
         default:
             LOG(llevBug, "BUG:: %s/add_quest_trigger(): Wrong quest subtype: %d!\n",
-                trigger->sub_type1);
+                __FILE__, trigger->sub_type1);
     }
 }
 
