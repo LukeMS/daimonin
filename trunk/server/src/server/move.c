@@ -935,7 +935,7 @@ int check_insertion_allowed(object *op, mapstruct *map, int x, int y, int mode, 
 
 #if 0
     LOG(llevDebug, "DEBUG: %s/check_insertion_allowed(): op=%s[%d], mode=%d, INS_NO_FORCE=%d, INS_WITHIN_LOS=%d, i=%d\n",
-        __FILE__, op->name, op->count, mode,
+        __FILE__, STRING_OBJ_NAME(op), TAG(op), mode,
         (ins_flags & INS_NO_FORCE), (ins_flags & INS_WITHIN_LOS), i);
 #endif
 

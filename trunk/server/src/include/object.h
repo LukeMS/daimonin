@@ -35,6 +35,8 @@
 #define WEIGHT(op) ((unsigned int)(((op->nrof > 0) ? op->weight * ((sint32)op->nrof) : op->weight) + op->carrying))
 #define WEIGHT_NROF(op, nrof) ((unsigned int)(((nrof > 0) ? op->weight * ((sint32)nrof) : op->weight) + op->carrying))
 
+#define TAG(_O_) (((_O_)) ? (_O_)->count : 0)
+
 /* move_apply() function call flags */
 #define MOVE_APPLY_DEFAULT  0
 #define MOVE_APPLY_WALK_ON  1

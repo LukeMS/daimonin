@@ -95,8 +95,8 @@ static int GetAttackMode(object **target, object **hitter, int *env_attack)
         || !on_same_tileset((*hitter), (*target)))
     {
         LOG(llevBug, "BUG:: %s/GetAttackMode(): hitter (%s[%d]) with no relation to target (%s[%d])!\n",
-            __FILE__, STRING_OBJ_NAME(*hitter), (*hitter)->count,
-            STRING_OBJ_NAME(*target), (*target)->count);
+            __FILE__, STRING_OBJ_NAME(*hitter), TAG(*hitter),
+            STRING_OBJ_NAME(*target), TAG(*target));
         return 1;
     }
     *env_attack = ENV_ATTACK_NO;
@@ -369,11 +369,10 @@ int damage_ob(object *op, int dam, object *hitter, int env_attack)
                *town = get_owner(target_obj);
 
         LOG(llevDebug, "DEBUG:: %s/damage_ob(): hit or target object level == 0 (h:%s[%d] o:%s[%d] l->%d, t:%s[%d] o:%s[%d] l->%d)!\n",
-            __FILE__, STRING_OBJ_NAME(hitter), hitter->count,
-            STRING_OBJ_NAME(hown), (hown) ? hown->count : 0, hit_level,
-            STRING_OBJ_NAME(target_obj), target_obj->count,
-            STRING_OBJ_NAME(town), (town) ? town->count : 0,
-            target_obj->level);
+            __FILE__, STRING_OBJ_NAME(hitter), TAG(hitter),
+            STRING_OBJ_NAME(hown), TAG(hown), hit_level,
+            STRING_OBJ_NAME(target_obj), TAG(target_obj),
+            STRING_OBJ_NAME(town), TAG(town), target_obj->level);
     }
 
     /* New (but still very basic) code for avoiding mobs (and players) on
@@ -381,9 +380,9 @@ int damage_ob(object *op, int dam, object *hitter, int env_attack)
     if(get_friendship(hit_obj, target_obj) >= FRIENDSHIP_HELP)
     {
         LOG(llevDebug, "DEBUG:: %s/damage_ob(): friendly hit (%s[%d] => %s[%d] / %s[%d] => %s[%d]) ignored\n",
-            __FILE__, STRING_OBJ_NAME(hitter), hitter->count,
-            STRING_OBJ_NAME(op), op->count, STRING_OBJ_NAME(hit_obj),
-            hit_obj->count, STRING_OBJ_NAME(target_obj), target_obj->count);
+            __FILE__, STRING_OBJ_NAME(hitter), TAG(hitter),
+            STRING_OBJ_NAME(op), TAG(op), STRING_OBJ_NAME(hit_obj),
+            TAG(hit_obj), STRING_OBJ_NAME(target_obj), TAG(target_obj));
         return 0;
     }
 
@@ -428,7 +427,7 @@ int damage_ob(object *op, int dam, object *hitter, int env_attack)
     if (op->stats.hp <= 0)
     {
         LOG(llevDebug, "DEBUG:: %s/damage_ob(): victim (%s[%d])) already dead!\n",
-            __FILE__, STRING_OBJ_NAME(op), op->count);
+            __FILE__, STRING_OBJ_NAME(op), TAG(op));
         return 0;
     }
 
@@ -576,7 +575,7 @@ int damage_ob(object *op, int dam, object *hitter, int env_attack)
         if (!op->other_arch)
         {
             LOG(llevBug, "BUG:: %s/damage_ob(): %s[%d] attempted split without other_arch!\n",
-                __FILE__, STRING_OBJ_NAME(op), op->count);
+                __FILE__, STRING_OBJ_NAME(op), TAG(op));
             return maxdam;
         }
 
@@ -626,7 +625,7 @@ int hit_map(object *op, int dir)
     if (OBJECT_FREE(op))
     {
         LOG(llevBug, "BUG:: %s/hit_map(): free object %s[%d]!\n",
-            __FILE__, STRING_OBJ_NAME(op), op->count);
+            __FILE__, STRING_OBJ_NAME(op), TAG(op));
         return 0;
     }
 
@@ -637,7 +636,7 @@ int hit_map(object *op, int dir)
         !op->map)
     {
         LOG(llevBug, "BUG:: %s/hit_map(): hitter (%s[%d]) not on a map!\n",
-            __FILE__, STRING_OBJ_NAME(op), op->count);
+            __FILE__, STRING_OBJ_NAME(op), TAG(op));
         return 0;
     }
 
@@ -683,7 +682,7 @@ int hit_map(object *op, int dir)
         if (OBJECT_FREE(tmp))
         {
             LOG(llevBug, "BUG:: %s/hit_map(): found freed object (%s[%d])\n",
-                __FILE__, STRING_OBJ_NAME(tmp), tmp->count);
+                __FILE__, STRING_OBJ_NAME(tmp), TAG(tmp));
             break;
         }
 
@@ -743,7 +742,7 @@ static int HitPlayerAttacktype(object *op, object *hitter, int *flags, int damag
     if (dam < 0)
     {
         LOG(llevBug, "BUG:: %s/HitPlayerAttacktype(): called with negative damage: %d from object %s[%d]!\n",
-            __FILE__, (int)dam, STRING_OBJ_NAME(op), op->count);
+            __FILE__, (int)dam, STRING_OBJ_NAME(op), TAG(op));
         return 0;
     }
 
@@ -1283,7 +1282,7 @@ static int HitPlayerAttacktype(object *op, object *hitter, int *flags, int damag
             break;
         default:
             LOG(llevBug,"BUG:: %s/HitPlayerAttacktype(): Unknown attack: %d on %s[%d]!\n",
-                __FILE__, attacknum, STRING_OBJ_NAME(hitter), hitter->count);
+                __FILE__, attacknum, STRING_OBJ_NAME(hitter), TAG(hitter));
           break;
     }
 
@@ -1566,7 +1565,7 @@ void tear_down_wall(object *op)
     if (!op->stats.maxhp)
     {
         LOG(llevBug, "BUG:: %s/tear_down_wall(): %s[%d] had no maxhp!\n",
-            __FILE__, STRING_OBJ_NAME(op), op->count);
+            __FILE__, STRING_OBJ_NAME(op), TAG(op));
         perc = 1;
     }
     else if (!GET_ANIM_ID(op))

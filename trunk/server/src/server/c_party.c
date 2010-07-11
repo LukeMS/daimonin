@@ -46,7 +46,7 @@ static void party_dump(object *pobj)
         if (QUERY_FLAG(tmp, FLAG_REMOVED))
         {
             LOG(llevDebug, "PARTY_DUMP %d: object %s[%d] REMOVED?!",
-                i, STRING_OBJ_NAME(tmp), tmp->count);
+                i, STRING_OBJ_NAME(tmp), TAG(tmp));
             return;
         }
 
@@ -54,17 +54,17 @@ static void party_dump(object *pobj)
             !pl)
         {
             LOG(llevDebug, "PARTY_DUMP %d: object %s[%d] no CONTR/NO PLAYER?!",
-                i, STRING_OBJ_NAME(tmp), tmp->count);
+                i, STRING_OBJ_NAME(tmp), TAG(tmp));
 
             return;
         }
 
         LOG(llevDebug, "PARTY_DUMP %d: player %s[%d])-> s:%d id:%d nr:%d nrof:%d l:%s[%d] p:%s[%d] n:%s[%d]\n",
-            i, STRING_OBJ_NAME(tmp), tmp->count, pl->group_status,
+            i, STRING_OBJ_NAME(tmp), TAG(tmp), pl->group_status,
             pl->group_id,pl->group_nr, pl->group_nrof,
-            STRING_OBJ_NAME(pl->group_leader), pl->group_leader->count,
-            STRING_OBJ_NAME(pl->group_prev), pl->group_prev->count,
-            STRING_OBJ_NAME(pl->group_next), pl->group_next->count);
+            STRING_OBJ_NAME(pl->group_leader), TAG(pl->group_leader),
+            STRING_OBJ_NAME(pl->group_prev), TAG(pl->group_prev),
+            STRING_OBJ_NAME(pl->group_next), TAG(pl->group_next));
     }
 }
 #endif
