@@ -54,11 +54,17 @@ void new_draw_info(const int flags, const int pri, const object *const op,
     char    buf[HUGE_BUF] = "";
     va_list ap;
 
-    if (!format) /* should not happen - generate save string and LOG it */
+    /* Don't send empty string. */
+    if (!format ||
+        !*format)
     {
-        LOG(llevBug, "BUG:: %s/new_draw_info: NULL string send! %s (%x - %d)\n",
-            __FILE__, query_name(op), flags, pri);
+        return;
+    }
 
+    /* For non-NDI_ALL messages sent to a non-player, bail out quick. */
+    if (!(flags & NDI_ALL) &&
+        op->type != PLAYER)
+    {
         return;
     }
 
@@ -68,36 +74,32 @@ void new_draw_info(const int flags, const int pri, const object *const op,
     buf[sizeof(buf) - 1] = '\0';
 
     /* here we handle global messages - still not sure i want this here */
-    /* Do not try to send empty messages. */
-    if (buf[0])
+    if ((flags & NDI_ALL))
     {
-        if ((flags & NDI_ALL))
-        {
-            player *pl = first_player;
+        player *pl = first_player;
 
-            for (; pl; pl = pl->next)
+        for (; pl; pl = pl->next)
+        {
+            if (pri <= pl->listening)
             {
-                if (pri <= pl->listening)
-                {
-                    NewDrawInfo(flags, pl, buf);
-                }
+                NewDrawInfo(flags, pl, buf);
             }
         }
-        else
+    }
+    else
+    {
+        /* Silently refuse messages not to players. This lets us skip all
+         * ob->type == PLAYER checks all over the code */
+        /* Neater maybe, but surely slower as we then go through all the
+         * NDI rigmarole for nothing (ie, in common calling funcs which
+         * work for both players and monsters.
+         * -- Smacky 20100619 */
+        if (op &&
+            op->type == PLAYER &&
+            CONTR(op) &&
+            pri <= CONTR(op)->listening)
         {
-            /* Silently refuse messages not to players. This lets us skip all
-             * ob->type == PLAYER checks all over the code */
-            /* Neater maybe, but surely slower as we then go through all the
-             * NDI rigmarole for nothing (ie, in common calling funcs which
-             * work for both players and monsters.
-             * -- Smacky 20100619 */
-            if (op &&
-                op->type == PLAYER &&
-                CONTR(op) &&
-                pri <= CONTR(op)->listening)
-            {
-                NewDrawInfo(flags, CONTR(op), buf);
-            }
+            NewDrawInfo(flags, CONTR(op), buf);
         }
     }
 }
@@ -111,6 +113,14 @@ void new_info_map(const int flags, const mapstruct *const map, const int x,
     char    buf[HUGE_BUF] = "";
     va_list ap;
 
+    /* Don't send empty string. */
+    if (!format ||
+        !*format)
+    {
+        return;
+    }
+
+    /* No map? Quit */
     if (!map ||
         map->in_memory != MAP_IN_MEMORY)
     {
@@ -121,12 +131,6 @@ void new_info_map(const int flags, const mapstruct *const map, const int x,
     vsnprintf(buf, sizeof(buf), format, ap);
     va_end(ap);
     buf[sizeof(buf) - 1] = '\0';
-
-    /* Do not try to send empty messages. */
-    if (!buf[0])
-    {
-        return;
-    }
 
     if (dist == MAP_INFO_ALL)
     {
@@ -294,11 +298,17 @@ void new_info_map_except(const int flags, const mapstruct *const map,
              d;
     object  *tmp;
 
-    if (!format) /* should not happen - generate save string and LOG it */
+    /* Don't send empty string. */
+    if (!format ||
+        !*format)
     {
-        LOG(llevBug, "BUG:: %s/new_info_map_except: NULL string send! %s (%x)\n",
-            __FILE__, query_name(op), flags);
+        return;
+    }
 
+    /* No map? Quit */
+    if (!map ||
+        map->in_memory != MAP_IN_MEMORY)
+    {
         return;
     }
 
@@ -306,12 +316,6 @@ void new_info_map_except(const int flags, const mapstruct *const map,
     vsnprintf(buf, sizeof(buf), format, ap);
     va_end(ap);
     buf[sizeof(buf) - 1] = '\0';
-
-    if (!map ||
-         map->in_memory != MAP_IN_MEMORY)
-    {
-        return;
-    }
 
     if (dist != MAP_INFO_ALL)
     {
