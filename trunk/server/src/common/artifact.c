@@ -577,7 +577,7 @@ void give_artifact_abilities(object *op, artifact *art)
     return;
 }
 
-static int legal_artifact_combination(object *op, artifact *art)
+int legal_artifact_combination(object *op, artifact *art)
 {
     int             neg, success = 0;
     linked_char    *tmp;

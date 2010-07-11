@@ -530,7 +530,8 @@ int command_generate(object *op, char *params)
             set_abs_magic(tmp, magic);
 
         if (art)
-            give_artifact_abilities(tmp, art);
+		if(legal_artifact_combination(tmp, art))
+	            give_artifact_abilities(tmp, art);
 
         if (need_identify(tmp))
         {
@@ -622,11 +623,9 @@ int command_generate(object *op, char *params)
     {
         archetype      *atmp;
         object*prev =   NULL, *head = NULL;
-
         for (atmp = at; atmp != NULL; atmp = atmp->more)
         {
             tmp = arch_to_object(atmp);
-
             if (head == NULL)
                 head = tmp;
 
@@ -638,7 +637,8 @@ int command_generate(object *op, char *params)
                 set_abs_magic(tmp, magic);
 
             if (art)
-                give_artifact_abilities(tmp, art);
+		if(legal_artifact_combination(tmp, art))
+	                give_artifact_abilities(tmp, art);
 
             if (need_identify(tmp))
             {
