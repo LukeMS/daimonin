@@ -22,10 +22,6 @@
 
     The author can be reached via e-mail to info@daimonin.org
 */
-
-#ifndef __ARTIFACT_H
-#define __ARTIFACT_H
-
 #define ARTIFACT_FLAG_HAS_DEF_ARCH    1
 
 typedef struct artifactstruct
@@ -51,5 +47,3 @@ typedef struct artifactliststruct
                                                          * -1 are "Allowed none" items. They are called explicit by name
                                                          */
 } artifactlist;
-
-#endif /* ifndef __ARTIFACT_H */

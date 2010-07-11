@@ -91,6 +91,7 @@ enum
 #define MUTE_FLAG_SHOUT_WARNING 0x02
 #define MUTE_FLAG_SAY           0x04
 #define MUTE_FLAG_SAY_WARNING   0x08
+#define MUTE_FLAG_SILENCE	0x16
 
 #define MUTE_FREQ_SHOUT     16
 #define MUTE_FREQ_SAY       16
