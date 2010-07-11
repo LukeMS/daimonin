@@ -557,10 +557,14 @@ static int Map_Message(lua_State *L)
     get_lua_args(L, "Miiis|iOO", &self, &x, &y, &d, &message, &color, &except1,
                  &except2);
 
-    hooks->new_info_map_except(NDI_UNIQUE | color, WHERE, x, y, d,
-                               (except1) ? except1->data.object : NULL,
-                               (except2) ? except2->data.object : NULL,
-                               "%s", message);
+    /* No point mucking about with an empty message. */
+    if (*message)
+    {
+        hooks->new_info_map_except(NDI_UNIQUE | color, WHERE, x, y, d,
+                                   (except1) ? except1->data.object : NULL,
+                                   (except2) ? except2->data.object : NULL,
+                                   "%s", message);
+    }
 
     return 0;
 }

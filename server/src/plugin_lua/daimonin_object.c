@@ -1660,7 +1660,13 @@ static int GameObject_Say(lua_State *L)
         snprintf(buf, sizeof(buf), "%s says: %s", STRING_OBJ_NAME(WHO), message);
         message = buf;
     }
-    hooks->new_info_map(NDI_UNIQUE | NDI_WHITE, WHO->map, WHO->x, WHO->y, range, "%s", message);
+
+    /* No point mucking about with an empty message. */
+    if (*message)
+    {
+        hooks->new_info_map(NDI_UNIQUE | NDI_WHITE, WHO->map, WHO->x, WHO->y,
+                            range, "%s", message);
+    }
 
     return 0;
 }
@@ -1692,19 +1698,32 @@ static int GameObject_SayTo(lua_State *L)
 
     get_lua_args(L, "OOs|ii", &self, &obptr2, &message, &mode, &range);
 
-    target = obptr2->data.object;
-
-    if(mode == 1)
-        hooks->new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, target, "%s", message);
-    else /* thats default */
+    /* No point mucking about with an empty message. */
+    if (*message)
     {
-        if(mode == 2)
+        target = obptr2->data.object;
+
+        if (mode == 1)
         {
-            snprintf(buf, sizeof(buf), "%s talks to %s.", STRING_OBJ_NAME(WHO),STRING_OBJ_NAME(target));
-            hooks->new_info_map_except(NDI_UNIQUE | NDI_WHITE, WHO->map, WHO->x, WHO->y, range, WHO, target, "%s", buf);
+            hooks->new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, target, "%s",
+                                 message);
         }
-        snprintf(buf, sizeof(buf), "%s says: %s", STRING_OBJ_NAME(WHO), message);
-        hooks->new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, target, "%s", buf);
+        else /* thats default */
+        {
+            if (mode == 2)
+            {
+                snprintf(buf, sizeof(buf), "%s talks to %s.",
+                         hooks->query_short_name(WHO, NULL),
+                         hooks->query_short_name(target, NULL));
+                hooks->new_info_map_except(NDI_UNIQUE | NDI_WHITE, WHO->map,
+                                           WHO->x, WHO->y, range, WHO, target,
+                                           "%s", buf);
+            }
+
+            snprintf(buf, sizeof(buf), "%s says: %s",
+                     hooks->query_short_name(WHO, target), message);
+            hooks->new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, target, "%s", buf);
+        }
     }
 
     return 0;
@@ -1728,7 +1747,12 @@ static int GameObject_ChannelMsg(lua_State *L)
 
     get_lua_args(L, "Oss|i", &self, &channel, &message, &mode);
 
-    hooks->lua_channel_message(channel, STRING_OBJ_NAME(WHO), message, mode);
+    /* No point mucking about with an empty message. */
+    if (*message)
+    {
+        hooks->lua_channel_message(channel, STRING_OBJ_NAME(WHO), message,
+                                   mode);
+    }
 
     return 0;
 }
@@ -1750,7 +1774,11 @@ static int GameObject_Write(lua_State *L)
 
     get_lua_args(L, "Os|i", &self, &message, &color);
 
-    hooks->new_draw_info(NDI_UNIQUE | color, 0, WHO, "%s", message);
+    /* No point mucking about with an empty message. */
+    if (*message)
+    {
+        hooks->new_draw_info(NDI_UNIQUE | color, 0, WHO, "%s", message);
+    }
 
     return 0;
 }
