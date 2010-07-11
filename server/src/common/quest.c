@@ -299,8 +299,7 @@ void add_quest_trigger(struct obj *who, struct obj *trigger)
     if (!trigger || trigger->type != TYPE_QUEST_TRIGGER)
     {
         LOG(llevBug, "BUG:: %s/add_quest_trigger(): trigger (%s[%d]) is not a quest trigger!\n",
-            __FILE__, (trigger) ? trigger->name : "NULL",
-            (trigger) ? trigger->count : 0);
+            __FILE__, STRING_OBJ_NAME(trigger), TAG(trigger));
 
         return;
     }
@@ -308,7 +307,7 @@ void add_quest_trigger(struct obj *who, struct obj *trigger)
     if (!who || who->type != PLAYER || !(pl = CONTR(who)))
     {
         LOG(llevBug, "BUG:: %s/add_quest_trigger(): who (%s[%d]) is not a player!\n",
-            __FILE__, (who) ? who->name : "NULL", (who) ? who->count : 0);
+            __FILE__, STRING_OBJ_NAME(who), TAG(who));
 
         return;
     }

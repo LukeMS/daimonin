@@ -469,7 +469,7 @@ void spawn_point(object *op)
     /* *now* all is done - *now* put it on map */
     if (!insert_ob_in_map(mob, mob->map, op, 0))
         LOG(llevBug, "BUG:: %s/spawn_point(): Could not insert mob (%s[%d]) in map!\n",
-            __FILE__, STRING_OBJ_NAME(op), op->count);
+            __FILE__, STRING_OBJ_NAME(op), TAG(op));
 
     /* initialise any beacons in the newly spawned mob's inv */
     next = mob;

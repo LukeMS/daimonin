@@ -607,7 +607,7 @@ static int GameObject_toString(lua_State *L)
     lua_object *obj = lua_touserdata(L, 1);
 
     if (obj && obj->class->type == LUATYPE_OBJECT)
-        lua_pushfstring(L, "%s [%d] ", STRING_OBJ_NAME(obj->data.object), obj->data.object->count);
+        lua_pushfstring(L, "%s[%d] ", STRING_OBJ_NAME(obj->data.object), TAG(obj->data.object));
     else
         luaL_error(L, "Not an object");
 
@@ -2379,7 +2379,7 @@ static int GameObject_AddQuest(lua_State *L)
     if (hooks->quest_find_name(WHO, name))
     {
         LOG(llevInfo, "LUA INFO:: object:AddQuest(): %s[%d] already has quest '%s'!\n",
-            WHO->name, WHO->count, name);
+            STRING_OBJ_NAME(WHO), TAG(WHO), name);
 
         return 0;
     }

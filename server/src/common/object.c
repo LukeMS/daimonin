@@ -600,7 +600,7 @@ object * merge_ob(object *op, object *tmp)
         else
         {
             LOG(llevBug, "BUG:: %s/merge_ob(): op (%s[%d]) has neither map nor environment!",
-                __FILE__, op->name, op->count);
+                __FILE__, STRING_OBJ_NAME(op), TAG(op));
 
             return NULL;
         }
@@ -622,8 +622,8 @@ object * merge_ob(object *op, object *tmp)
 #if DEBUG_MERGE_OB
             LOG(llevDebug,"DEBUG:: %s/merge_ob(): Merging %s[%d] = %d to %s[%d] = %d!\n",
                 __FILE__,
-                tmp->name, tmp->count, tmp->nrof,
-                op->name, op->count, op->nrof);
+                STRING_OBJ_NAME(tmp), TAG(tmp), tmp->nrof,
+                STRING_OBJ_NAME(op), TAG(op), op->nrof);
 #endif
             op->nrof = op->nrof + tmp->nrof;
             (void)decrease_ob_nr(tmp, tmp->nrof);
@@ -1882,7 +1882,7 @@ void remove_ob(object *op)
     {
         /*dump_object(op)*/;
         LOG(llevBug, "BUG: Trying to remove removed object.:%s[%d] map:%s (%d,%d)\n",
-            STRING_OBJ_NAME(op), op->count, STRING_OBJ_MAP_PATH(op), op->x, op->y);
+            STRING_OBJ_NAME(op), TAG(op), STRING_OBJ_MAP_PATH(op), op->x, op->y);
         return;
     }
 
@@ -3259,24 +3259,24 @@ static void beacon_initializer(object *op)
     if (!MAP_MULTI(parent->map))
     {
         LOG(llevDebug, "\nDEBUG:: %s/beacon_initializer(): Ignoring beacon on instance (%s[%d]).\n",
-            __FILE__, STRING_OBJ_NAME(op), op->count);
+            __FILE__, STRING_OBJ_NAME(op), TAG(op));
         //remove_ob(op);
         return;
     }
 
     LOG(llevDebug, "\nDEBUG:: %s/beacon_initializer(): Initializing beacon (%s[%d]).\n",
-        __FILE__, STRING_OBJ_NAME(op), op->count);
+        __FILE__, STRING_OBJ_NAME(op), TAG(op));
 
     if (op->custom_attrset)
     {
         LOG(llevBug, "  BUG:: Beacon initialized twice (%s[%d])!\n",
-            STRING_OBJ_NAME(op), op->count);
+            STRING_OBJ_NAME(op), TAG(op));
         return;
     }
     else if (!op->name)
     {
         LOG(llevBug, "BUG:: Beacon with NULL name (NULL[%d])!\n",
-            op->count);
+            TAG(op));
         return;
     }
 
@@ -3290,7 +3290,7 @@ static void beacon_initializer(object *op)
         /* Replace existing entry TODO: speed up with hashtable_replace() or
          * something similar */
         LOG(llevDebug, "DEBUG:: %s/beacon_initializer(): Replacing already registered beacon (%s[%d]!\n",
-            __FILE__, (char *)op->custom_attrset, op->count);
+            __FILE__, (char *)op->custom_attrset, TAG(op));
         hashtable_erase(beacon_table, op->custom_attrset);
         hashtable_insert(beacon_table, op->custom_attrset, op);
     }
@@ -3334,8 +3334,8 @@ object *find_next_object(object *op, uint8 type, uint8 mode, object *root)
 #ifdef DEBUG_FNO
     LOG(llevDebug, "DEBUG:: %s/find_next_object(%s[%d], %d, %d, %s[%d]):",
         __FILE__,
-        (op) ? op->name : "NULL", (op) ? op->count : 0, type,
-        mode, (root) ? root->name : "NULL", (root) ? root->count : 0);
+        STRING_OBJ_NAME(op), TAG(op), type,
+        mode, STRING_OBJ_NAME(root), TAG(root));
 #endif
 
     next = op;
@@ -3367,7 +3367,7 @@ object *find_next_object(object *op, uint8 type, uint8 mode, object *root)
                 tmp = (next->env) ? next->below : NULL;
 #ifdef DEBUG_FNO
                 LOG(llevDebug, "\n ^ %s[%d]",
-                    next->name, next->count);
+                    STRING_OBJ_NAME(next), TAG(next));
 #endif
             }
 
@@ -3402,7 +3402,7 @@ object *find_next_object(object *op, uint8 type, uint8 mode, object *root)
         {
 #ifdef DEBUG_FNO
             LOG(llevDebug, " %s[%d]",
-                next->name, next->count);
+                STRING_OBJ_NAME(next), TAG(next));
 #endif
 
             if (root && (next == root || next == root->env))
