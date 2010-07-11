@@ -253,10 +253,10 @@ int string_width(_font *font, char *text)
     {
         switch (text[i])
         {
-            case '`': // gold (intertitle)
-            case '|': // yellow (strong)
-            case '~': // green (emphasis)
-            case '^': // blue (clickable keyword)
+            case ECC_STRONG:
+            case ECC_EMPHASIS:
+            case ECC_UNDERLINE:
+            case ECC_HYPERTEXT:
                 break;
 
             default:
@@ -276,10 +276,10 @@ int string_width_offset(_font *font, char *text, int *line, int len)
     {
         switch (text[i])
         {
-            case '`': // gold (intertitle)
-            case '|': // yellow (strong)
-            case '~': // green (emphasis)
-            case '^': // blue (clickable keyword)
+            case ECC_STRONG:
+            case ECC_EMPHASIS:
+            case ECC_UNDERLINE:
+            case ECC_HYPERTEXT:
                 break;
 
             default:
@@ -354,7 +354,7 @@ void string_blt(SDL_Surface *surf, _font *font, char *text, int x, int y, uint8 
     {
         switch (*c)
         {
-            case '|': /* strong */
+            case ECC_STRONG:
                 if (!hyper &&
                     col != COLOR_BLACK)
                 {
@@ -396,7 +396,7 @@ void string_blt(SDL_Surface *surf, _font *font, char *text, int x, int y, uint8 
 
                 continue;
 
-            case '~': /* emphasis */
+            case ECC_EMPHASIS:
                 if (!hyper &&
                     col != COLOR_BLACK)
                 {
@@ -438,7 +438,7 @@ void string_blt(SDL_Surface *surf, _font *font, char *text, int x, int y, uint8 
 
                 continue;
 
-            case '`': /* intertitle */
+            case ECC_UNDERLINE:
                 if (!hyper &&
                     col != COLOR_BLACK)
                 {
@@ -480,7 +480,7 @@ void string_blt(SDL_Surface *surf, _font *font, char *text, int x, int y, uint8 
 
                 continue;
 
-            case '^': /* hypertext */
+            case ECC_HYPERTEXT:
                 /* Only allow in NPC GUI and book GUI. */
                 if (cpl.menustatus == MENU_NPC ||
                     cpl.menustatus == MENU_BOOK)

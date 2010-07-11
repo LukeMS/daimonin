@@ -38,6 +38,28 @@
 #define MIN_ACCOUNT_PASSWORD    6
 #define MAX_ACCOUNT_PASSWORD    16
 
+/* The embedded character codes used to markup text, mainly in the textwindows
+ * and GUIs (but theoretically anywhere).
+ *
+ * Underline has extra meaning in the NPC GUI (and eventually also the book
+ * GUI). Here it will render a so-called intertitle, basically a sub-title.
+ *
+ * Hypertext is only available in the NPC GUI (and eventually probably thr book
+ * GUI too). Otherwise it will just print the character.
+ *
+ * Emphasis, strong, and underline can be combined to apply any combination of
+ * two or three markups to the text (TODO: not sure if this works 100% in
+ * current SVN). Hypertext negates any existing strong, emphasis, or underline.
+ *
+ * NOTE: While the client still uses bitmaps and not real fonts, bold and
+ * italics are not available so strong and emphasis are shown by changing the
+ * text  colour (by default to yellow and green). As such, it is not currently
+ * possible to display both markups at the same time. */
+#define ECC_STRONG    '|'
+#define ECC_EMPHASIS  '~'
+#define ECC_UNDERLINE '`'
+#define ECC_HYPERTEXT '^'
+
 /* List of client to server (cs) binary command tags */
 typedef enum client_cmd {
     /* start of pre-processed cmds */

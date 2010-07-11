@@ -33,7 +33,9 @@ static int      old_slider_pos  = 0;
 SDL_Surface     *txtwinbg = NULL;
 int             old_txtwin_alpha = -1;
 
-
+/* TODO: All this to be removed, please ignore it. Hypertext (keywords) ONLY
+ * available in NPC and book GUIs.
+ * -- Smacky 20100711 */
 /******************************************************************
   definition of keyword:
     a keyword is the text between two '^' chars.

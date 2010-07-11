@@ -1174,8 +1174,14 @@ static void key_string_event(SDL_KeyboardEvent *key)
                     c = toupper(c);
 
                 /* These chars are never allowed. */
-                if (c < 32 || c == '^' || c == '~' || c == '|' || c == '`')
+                if (c < 32 ||
+                    c == ECC_STRONG ||
+                    c == ECC_EMPHASIS ||
+                    c == ECC_UNDERLINE ||
+                    c == ECC_HYPERTEXT)
+                {
                     c = 0;
+                }
                 else
                 {
                     if (GameStatus >= GAME_STATUS_LOGIN_ACCOUNT && GameStatus <= GAME_STATUS_LOGIN_NEW)
