@@ -51,6 +51,12 @@ static struct constant_decl *Game_constants = NULL;
 
 static struct constant_decl preset_game_constants[] =
 {
+    /* Embedded character codes (protocol.h) */
+    {"ECC_STRONG",    ECC_STRONG},
+    {"ECC_EMPHASIS",  ECC_EMPHASIS},
+    {"ECC_UNDERLINE", ECC_UNDERLINE},
+    {"ECC_HYPERTEXT", ECC_HYPERTEXT},
+
     /* directions (constants not defined by server) */
     {"NORTH",     1},
     {"NORTHEAST", 2},

@@ -793,10 +793,10 @@ static char *StripCodes(char *s, const char *ct)
 
     for (i = 0, j = 0; *(ct + i); i++)
     {
-        if (*(ct + i) != '~' && /* emphasis */
-            *(ct + i) != '|' && /* strong */
-            *(ct + i) != '`' && /* intertitle */
-            *(ct + i) != '^') /* clickable keyword */
+        if (*(ct + i) != ECC_STRONG &&
+            *(ct + i) != ECC_EMPHASIS &&
+            *(ct + i) != ECC_UNDERLINE &&
+            *(ct + i) != ECC_HYPERTEXT)
         {
             s[j++] = *(ct + i);
         }
@@ -868,28 +868,28 @@ static void FormatBody(_font *font, uint16 width, uint8 lines, _gui_npc_element 
 
             /* Intertitle (gold text) markup tag? Toggle intertitle and append
              * a tag to line. If intertitle has been switched on, force a line break. */
-            case '`':
+            case ECC_UNDERLINE:
                 intertitle = !intertitle;
 
                 if (intertitle)
                 {
-                    buf[lc++] = '`';
+                    buf[lc++] = ECC_UNDERLINE;
 
                     if (strong)
                     {
                         strong = 0;
-                        buf[lc++] = '|';
+                        buf[lc++] = ECC_STRONG;
                     }
 
                     if (emphasis)
                     {
                         emphasis = 0;
-                        buf[lc++] = '~';
+                        buf[lc++] = ECC_EMPHASIS;
                     }
                 }
                 else
                 {
-                    buf[lc++] = '`';
+                    buf[lc++] = ECC_UNDERLINE;
 
                     if (element->body.text[bc + 1] == '\n' ||
                         element->body.text[bc + 1] == '\0')
@@ -905,29 +905,29 @@ static void FormatBody(_font *font, uint16 width, uint8 lines, _gui_npc_element 
 
             /* Strong (yellow text) markup tag? Toggle strong and append a tag
              * to line. */
-            case '|':
+            case ECC_STRONG:
                 if (!intertitle)
                 {
                     strong = !strong;
-                    buf[lc++] = '|';
+                    buf[lc++] = ECC_STRONG;
                 }
 
                 break;
 
             /* Emphasis (green text) markup tag? Toggle emphasis and append a
              * tag to line. */
-            case '~':
+            case ECC_EMPHASIS:
                 if (!intertitle)
                 {
                     emphasis = !emphasis;
-                    buf[lc++] = '~';
+                    buf[lc++] = ECC_EMPHASIS;
                 }
 
                 break;
 
             /* Hypertext (keyword) markup tag? Toggle hyper and, if this is the
              * opening tag, get the keyword. */
-            case '^':
+            case ECC_HYPERTEXT:
                 hyper = !hyper;
 
                 if (hyper)
@@ -940,7 +940,7 @@ static void FormatBody(_font *font, uint16 width, uint8 lines, _gui_npc_element 
                     {
                         if (element->body.text[bcc] == '\0' ||
                             element->body.text[bcc] == '\n' ||
-                            element->body.text[bcc] == '^')
+                            element->body.text[bcc] == ECC_HYPERTEXT)
                         {
                             _gui_npc_element *this;
 
@@ -974,9 +974,9 @@ static void FormatBody(_font *font, uint16 width, uint8 lines, _gui_npc_element 
                         switch (element->body.text[bcc])
                         {
                             case '\r':
-                            case '`':
-                            case '|':
-                            case '~':
+                            case ECC_STRONG:
+                            case ECC_EMPHASIS:
+                            case ECC_UNDERLINE:
                                 break;
 
                             default:
@@ -997,17 +997,17 @@ static void FormatBody(_font *font, uint16 width, uint8 lines, _gui_npc_element 
                 {
                     if (intertitle)
                     {
-                        buf[lc++] = '`';
+                        buf[lc++] = ECC_UNDERLINE;
                     }
 
                     if (strong)
                     {
-                        buf[lc++] = '|';
+                        buf[lc++] = ECC_STRONG;
                     }
 
                     if (emphasis)
                     {
-                        buf[lc++] = '~'; 
+                        buf[lc++] = ECC_EMPHASIS; 
                     }
                 }
 
@@ -1028,19 +1028,19 @@ static void FormatBody(_font *font, uint16 width, uint8 lines, _gui_npc_element 
                         {
                             break;
                         }
-                        else if (buf[lcc] == '`')
+                        else if (buf[lcc] == ECC_UNDERLINE)
                         {
                             intertitle = !intertitle;
                         }
-                        else if (buf[lcc] == '|')
+                        else if (buf[lcc] == ECC_STRONG)
                         {
                             strong = !strong;
                         }
-                        else if (buf[lcc] == '~')
+                        else if (buf[lcc] == ECC_EMPHASIS)
                         {
                             emphasis = !emphasis;
                         }
-                        else if (buf[lcc] == '^')
+                        else if (buf[lcc] == ECC_HYPERTEXT)
                         {
                             hyper = !hyper;
                         }
@@ -1061,17 +1061,17 @@ static void FormatBody(_font *font, uint16 width, uint8 lines, _gui_npc_element 
                      * for the next line). */
                     if (intertitle)
                     {
-                        buf[lc++] = '`';
+                        buf[lc++] = ECC_UNDERLINE;
                     }
 
                     if (strong)
                     {
-                        buf[lc++] = '|';
+                        buf[lc++] = ECC_STRONG;
                     }
 
                     if (emphasis)
                     {
-                        buf[lc++] = '~';
+                        buf[lc++] = ECC_EMPHASIS;
                     }
 
                     endline = 1;
