@@ -468,26 +468,59 @@ static inline int can_merge(object *ob1, object *ob2)
      * Idea is: if inv is identical events only then go ahead and merge)
      * This goes hand in hand with the event keeping addition in get_split_ob()
      */
-    if (ob1->inv || ob2->inv)
+    if (ob1->inv ||
+         ob2->inv)
     {
-        object *tmp1, *tmp2;
-        if (!ob1->inv || !ob2->inv)
+        object *tmp1 = ob1->inv,
+               *tmp2 = ob2->inv;
+
+        if (!tmp1 ||
+            !tmp2)
+        {
             return 0;
+        }
 
         /* Check that all inv objects are event objects */
-        for (tmp1 = ob1->inv, tmp2 = ob2->inv; tmp1 && tmp2; tmp1 = tmp1->below, tmp2 = tmp2->below)
-            if (tmp1->type != TYPE_EVENT_OBJECT || tmp2->type != TYPE_EVENT_OBJECT)
+        for (; tmp1 && tmp2; tmp1 = tmp1->below, tmp2 = tmp2->below)
+        {
+            /* I don't understand how this relates to the for loops below.
+             * Surely if both invs are event objects only (so we get through
+             * this test) the following can_merge() test is redundant?
+             * -- Smacky 20100712 */
+            if (tmp1->type != TYPE_EVENT_OBJECT ||
+                tmp2->type != TYPE_EVENT_OBJECT)
+            {
                 return 0;
-        if (tmp1 || tmp2) /* Same number of events */
+            }
+        }
+
+        /* FIXME: This seems wrong. 1) this takes no account of the event types
+         * of those objects. Is it OK to stack an object with an APPLY event
+         * and one with a TRIGGER event for example. 3) even if the event types
+         * are the same, the scripts might not be. 4) even if the events and
+         * scripts are the same, the script data might not be.
+         * -- Smacky 20100712 */
+        /* Same number of events */
+        if (tmp1 ||
+            tmp2)
+        {
             return 0;
+        }
 
         for (tmp1 = ob1->inv; tmp1; tmp1 = tmp1->below)
         {
             for (tmp2 = ob2->inv; tmp2; tmp2 = tmp2->below)
+            {
                 if (can_merge(tmp1, tmp2))
+                {
                     break;
+                }
+            }
+
             if (!tmp2) /* Couldn't find something to merge event from ob1 with? */
+            {
                 return 0;
+            }
         }
     }
 
