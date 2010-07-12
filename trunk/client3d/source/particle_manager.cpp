@@ -232,7 +232,7 @@ void ParticleManager::syncToWorldPos(Vector3 &deltaPos)
 void ParticleManager::setColorRange(ParticleSystem *pSystem, ColourValue start, ColourValue stop)
 {
     PROFILE()
-    for (int i=0; i < pSystem->getNumEmitters(); ++i)
+    for (Ogre::ushort i=0; i < pSystem->getNumEmitters(); ++i)
     {
         pSystem->getEmitter(i)->setColourRangeStart(start);
         pSystem->getEmitter(i)->setColourRangeEnd  (stop);
@@ -245,7 +245,7 @@ void ParticleManager::setColorRange(ParticleSystem *pSystem, ColourValue start, 
 void ParticleManager::setEmitterSize(ParticleSystem *pSystem, float sizeZ, float sizeX, bool adjustRate)
 {
     PROFILE()
-    for (int i=0; i < pSystem->getNumEmitters(); ++i)
+    for (Ogre::ushort i=0; i < pSystem->getNumEmitters(); ++i)
     {
         pSystem->getEmitter(i)->setParameter("height", StringConverter::toString(sizeZ));
         pSystem->getEmitter(i)->setParameter("width" , StringConverter::toString(sizeX));

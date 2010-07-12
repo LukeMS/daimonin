@@ -22,7 +22,6 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
 
 #include <iterator>
-#include "define.h"
 #include "network_serverfile.h"
 #include "network.h"
 #include "logger.h"
@@ -37,15 +36,13 @@ using namespace std;
 ServerFile::ServerFile()
 {
     PROFILE()
-    srv_file[FILE_SKILLS  ].filename = FILE_CLIENT_SKILLS;
-    srv_file[FILE_SPELLS  ].filename = FILE_CLIENT_SPELLS;
-    srv_file[FILE_SETTINGS].filename = FILE_CLIENT_SETTINGS;
-    srv_file[FILE_ANIMS   ].filename = FILE_CLIENT_ANIMS; // File not used anymore.
-    srv_file[FILE_BMAPS   ].filename = FILE_CLIENT_BMAPS;
+    srv_file[FILE_SKILLS  ].filename = "";
+    srv_file[FILE_SPELLS  ].filename = "";
+    srv_file[FILE_SETTINGS].filename = "";
+    srv_file[FILE_BMAPS   ].filename = "";
     srv_file[FILE_SKILLS  ].status = STATUS_OK;
     srv_file[FILE_SPELLS  ].status = STATUS_OK;
     srv_file[FILE_SETTINGS].status = STATUS_OK;
-    srv_file[FILE_ANIMS   ].status = STATUS_OK;
     srv_file[FILE_BMAPS   ].status = STATUS_OK;
 }
 
@@ -77,26 +74,24 @@ void ServerFile::checkFileStatus(const char * /*cmd*/, char *param, int fileNr)
 //================================================================================================
 // Get length and checksum from (server sended) files.
 //================================================================================================
-void ServerFile::checkFiles()
+void ServerFile::checkFile(eSeverfileNr nr, const char *filename)
 {
     PROFILE()
-    for (int i=0; i< FILE_SUM; ++i)
+    srv_file[nr].filename = filename;
+    ifstream in(filename, ios::in | ios::binary);
+    if (!in.is_open())
     {
-        ifstream in(srv_file[i].filename, ios::in | ios::binary);
-        if (!in.is_open())
-        {
-            setCRC   (i, 0);
-            setLength(i, 0);
-        }
-        else
-        {
-            ostringstream out(ios::binary);
-            in.unsetf(ios::skipws); // don't skip whitespace  (!ios::skipws and ios::binary must be set).
-            copy(istream_iterator<char>(in), istream_iterator<char>(), ostream_iterator<char>(out));
-            setCRC   (i, crc32(1L, (const unsigned char *)out.str().c_str(), (int)out.str().size()));
-            setLength(i, (int)out.str().size());
-            in.close();
-        }
+        setCRC   (nr, 0);
+        setLength(nr, 0);
+    }
+    else
+    {
+        ostringstream out(ios::binary);
+        in.unsetf(ios::skipws); // don't skip whitespace  (!ios::skipws and ios::binary must be set).
+        copy(istream_iterator<char>(in), istream_iterator<char>(), ostream_iterator<char>(out));
+        setCRC   (nr, crc32(1L, (const unsigned char *)out.str().c_str(), (int)out.str().size()));
+        setLength(nr, (int)out.str().size());
+        in.close();
     }
 }
 

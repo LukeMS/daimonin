@@ -32,8 +32,12 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include <iostream>
 #include <fstream>
 #include <vector>
-#include "define.h"
 #include "logger.h"
+
+static const char FILE_BMAPS_UNIQUE[]    = "./srv_files/bmaps_unique";    /**< The objects from bmaps without animation states */
+static const char FILE_BMAPS_CONVERT[]   = "./srv_files/bmaps_convert";   /**< This file holds the unique client2d and client3d obj names */
+static const char FILE_BMAPS_CLIENT3D[]  = "./srv_files/bmaps_3d";        /**< The final client3d object file */
+static const char FILE_CLIENT_BMAPS[]    = "./srv_files/client_bmap";
 
 class ObjectWrapper
 {

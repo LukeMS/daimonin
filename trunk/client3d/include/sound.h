@@ -32,15 +32,20 @@ class Sound
 public:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
-    // ////////////////////////////////////////////////////////////////////
+    // ////////////////////////////////////////////////////////////////////GUI_
     typedef enum
     {
-        // Background music.
-        BG_MUSIC,
-        // Long sound e.g. spoken text (ogg).
-        PLAYER_IDLE,
-        GREETS_VISITOR,
-        MALE_BOUNTY_01,
+        // Dummy sound (for error handling). MUST be the first sound.
+        DUMMY,
+        // Internal gui sounds. Must be copied from gui_manager.
+        GUI_WRONG_INPUT,
+        GUI_MOUSE_CLICK,
+        GUI_KEY_PRESSED,
+        GUI_RESERVED_1,
+        GUI_RESERVED_2,
+        GUI_RESERVED_3,
+        GUI_RESERVED_4,
+        GUI_RESERVED_5,
         // Short sounds (wav)
         BUTTON_CLICK,
         MALE_HIT_01,
@@ -49,8 +54,12 @@ public:
         TENTACLE_HIT,
         GOLEM_HIT,
         ATTACK_01,
-        // Dummy sound (for error handling).
-        DUMMY,
+        // Long sound e.g. spoken text (ogg).
+        PLAYER_IDLE,
+        GREETS_VISITOR,
+        MALE_BOUNTY_01,
+        // Background music.
+        BG_MUSIC,
         SAMPLE_SUM
     }SampleID;
 
@@ -61,21 +70,22 @@ public:
     {
         static Sound Singleton; return Singleton;
     }
-    bool Init();
+    bool Init(const char *filePath);
     void freeRecources();
     void createDummy();
     void openStream(SampleID id);
     void playStream(SampleID id);
-    void playStream(const char *filename, bool loop =false);
-    //void stopStream(unsigned int id);
-    void set3DPos( unsigned int channel,  float &posX, float &posY, float &posZ );
-    void setVolume( unsigned int channel, float volume =-1);
+    void playMusic(std::string filename, bool loop = true);
+    void playGuiSounds(unsigned char activeSounds);
+    void stopStream(SampleID id);
+    void set3DPos(SampleID id, float &posX, float &posY, float &posZ);
+    void setVolume(SampleID id, float volume = 1.0f);
 
 private:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
-    float mMusicVolume, mSoundVolume;
+    std::string mFilePath;
 
     // ////////////////////////////////////////////////////////////////////
     // Functions.

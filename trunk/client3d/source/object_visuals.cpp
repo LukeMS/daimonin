@@ -27,7 +27,6 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include <OgreSceneManager.h>
 #include <OgreTextureManager.h>
 #include <OgreMaterialManager.h>
-#include "define.h"
 #include "option.h"
 #include "logger.h"
 #include "profiler.h"
@@ -60,7 +59,7 @@ void ObjectVisuals::freeRecources()
 //===================================================
 // .
 //===================================================
-void ObjectVisuals::Init()
+void ObjectVisuals::Init(const char *filePath, const char *fileName)
 {
     PROFILE()
     Logger::log().headline() << "Creating Object Visuals";
@@ -69,15 +68,15 @@ void ObjectVisuals::Init()
     // Check for a working description file.
     // ////////////////////////////////////////////////////////////////////
     TiXmlElement *xmlRoot, *xmlElem, *xmlColor;
-    String filename = PATH_TXT; filename+= FILE_NPC_VISUALS;
-    TiXmlDocument doc(filename.c_str());
+    String strFile = filePath; strFile+= fileName;
+    TiXmlDocument doc(strFile.c_str());
     const char *strTemp;
     if (!doc.LoadFile() || !(xmlRoot = doc.RootElement()))
     {
-        Logger::log().error() << "XML-File '" << FILE_NPC_VISUALS << "' is broken or missing.";
+        Logger::log().error() << "XML-File '" << fileName << "' is broken or missing.";
         return;
     }
-    Logger::log().info() << "Parsing the file '" << FILE_NPC_VISUALS << "'.";
+    Logger::log().info() << "Parsing the file '" << fileName << "'.";
     // ////////////////////////////////////////////////////////////////////
     // Parse the gfx coordinates.
     // ////////////////////////////////////////////////////////////////////
@@ -91,7 +90,7 @@ void ObjectVisuals::Init()
         {
             if (++i >= PARTICLE_COLOR_SUM)
             {
-                Logger::log().error() << "XML-File '" << FILE_NPC_VISUALS << " Particle entries are broken.";
+                Logger::log().error() << "XML-File '" << fileName << " Particle entries are broken.";
                 break;
             }
             if ((strTemp = xmlColor->Attribute("red"  ))) color[0] = (Real)atof(strTemp);
@@ -301,11 +300,11 @@ void ObjectVisuals::highlight(bool staticObject, int friendly, bool doHighlight)
     }
     if (!staticObject)
     {
-        int action;
-        if      (friendly >0) action = GuiManager::STATE_MOUSE_TALK;
-        else if (friendly <0) action = Events::getSingleton().isShiftDown()?GuiManager::STATE_MOUSE_LONG_RANGE_ATTACK:GuiManager::STATE_MOUSE_SHORT_RANGE_ATTACK;
-        else                  action = GuiManager::STATE_MOUSE_DEFAULT;
-        GuiManager::getSingleton().setMouseState(action);
+        int state;
+        if      (friendly >0) state = GuiManager::STATE_MOUSE_TALK;
+        else if (friendly <0) state = Events::getSingleton().isShiftDown()?GuiManager::STATE_MOUSE_LONG_RANGE_ATTACK:GuiManager::STATE_MOUSE_SHORT_RANGE_ATTACK;
+        else                  state = GuiManager::STATE_MOUSE_DEFAULT;
+        GuiManager::getSingleton().setMouseState(state);
     }
     else
     {

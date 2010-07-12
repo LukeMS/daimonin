@@ -28,7 +28,6 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include <OgreOverlayManager.h>
 #include <OgreStringConverter.h>
 #include <OgreOverlayContainer.h>
-#include "define.h"
 #include "events.h"
 #include "sound.h"
 #include "option.h"
@@ -60,6 +59,32 @@ static const char *GUI_LOADING_OVERLAY = "GUI_LOADING_OVERLAY";
 static const char *GUI_LOADING_OVERLAY_ELEMENT = "GUI_LOADING_OVERLAY_ELEMENT";
 static const unsigned long SERVER_TIMEOUT = 5000; // Server timeout in ms.
 static const char BINARY_CMD_NEXT = '\0'; // Next commad.
+
+//================================================================================================
+// All paths of the whole project MUST be placed here!
+//================================================================================================
+static const char PATH_GFX_FONTS[] = "./media/textures/fonts/";
+static const char PATH_GFX_ITEMS[] = "./media/textures/items/"; /**< The item graphics to build the Item-Atlas-Texture. **/
+static const char PATH_GFX[]       = "./media/textures/";
+static const char PATH_SND[]       = "./media/sound/";
+static const char PATH_TXT[]       = "./media/xml/";
+static const char PATH_SRV[]       = "./srv_files/";
+
+//================================================================================================
+// Filenames
+//================================================================================================
+static const char FILE_NPC_VISUALS[]     = "NPC_Visuals.xml";
+static const char FILE_OPTIONS[]         = "./options.dat";
+static const char FILE_CLIENT_SPELLS[]   = "./srv_files/client_spells";
+static const char FILE_CLIENT_SKILLS[]   = "./srv_files/client_skills";
+static const char FILE_CLIENT_SETTINGS[] = "./srv_files/client_settings";
+static const char FILE_CLIENT_ANIMS[]    = "./srv_files/client_anims";
+static const char FILE_BMAPS_UNIQUE[]    = "./srv_files/bmaps_unique";    /**< The objects from bmaps without animation states */
+//const char FILE_BMAPS_P0[]        = "./bmaps.p0";
+//const char FILE_DAIMONIN_P0[]     = "./daimonin.p0";
+//const char FILE_ARCHDEF[]         = "./archdef.dat";
+//const char FILE_BMAPS_TMP[]       = "./srv_files/bmaps.tmp";
+//const char FILE_ANIMS_TMP[]       = "./srv_files/anims.tmp";
 
 //================================================================================================
 // Constructor.
@@ -172,7 +197,7 @@ bool Events::frameStarted(const FrameEvent& evt)
             GuiManager::getSingleton().Init(mWindow->getWidth(), mWindow->getHeight(),
                                             Option::getSingleton().getIntValue(Option::CMDLINE_CREATE_MEDIA)?true:false,
                                             Option::getSingleton().getIntValue(Option::CMDLINE_GUI_INFORMATION)?true:false,
-                                            "console.wav", PATH_TXT, PATH_GFX, PATH_GFX_FONTS, PATH_GFX_ITEMS);
+                                            PATH_TXT, PATH_GFX, PATH_GFX_FONTS, PATH_GFX_ITEMS);
             // Show the loading-gfx.
             Overlay *overlay = OverlayManager::getSingleton().create(GUI_LOADING_OVERLAY);
             overlay->setZOrder(400);
@@ -229,7 +254,7 @@ bool Events::frameStarted(const FrameEvent& evt)
             // ////////////////////////////////////////////////////////////////////
             // Init the sound and play the background music.
             // ////////////////////////////////////////////////////////////////////
-            Sound::getSingleton().Init();
+            Sound::getSingleton().Init(PATH_SND);
             Option::getSingleton().setGameStatus(Option::GAME_STATUS_INIT_LIGHT);
             GuiManager::getSingleton().displaySystemMessage("Starting the light-manager...");
             break;
@@ -380,7 +405,11 @@ bool Events::frameStarted(const FrameEvent& evt)
 
         case Option::GAME_STATUS_SETUP:
         {
-            ServerFile::getSingleton().checkFiles();
+            ServerFile::getSingleton().checkFile(ServerFile::FILE_SKILLS,   FILE_CLIENT_SKILLS);
+            ServerFile::getSingleton().checkFile(ServerFile::FILE_SPELLS,   FILE_CLIENT_SPELLS);
+            ServerFile::getSingleton().checkFile(ServerFile::FILE_SETTINGS, FILE_CLIENT_SETTINGS);
+            ServerFile::getSingleton().checkFile(ServerFile::FILE_BMAPS,    FILE_BMAPS_UNIQUE);
+            ServerFile::getSingleton().checkFile(ServerFile::FILE_ANIMS,    FILE_CLIENT_ANIMS);
             std::stringstream strCmd;
             strCmd  <<
             "pv "   << Network::PROTOCOL_VERSION <<
@@ -573,7 +602,7 @@ bool Events::frameStarted(const FrameEvent& evt)
             {
                 once = true;
                 ObjectManager::getSingleton().init();
-                ObjectVisuals::getSingleton().Init();
+                ObjectVisuals::getSingleton().Init(PATH_TXT, FILE_NPC_VISUALS);
                 GuiManager::getSingleton().showWindow(GuiManager::WIN_STATISTICS, true);
                 GuiManager::getSingleton().showWindow(GuiManager::WIN_PLAYERINFO, false);
                 mWindow->resetStatistics();
@@ -660,7 +689,7 @@ bool Events::frameEnded(const FrameEvent& evt)
     mInputMouse->capture();
     mInputKeyboard->capture();
     GuiManager::getSingleton().update(evt.timeSinceLastFrame);
-    Sound::getSingleton().playStream(GuiManager::getSingleton().getNextSound());
+    Sound::getSingleton().playGuiSounds(GuiManager::getSingleton().getActiveSounds());
     Network::getSingleton().update(evt.timeSinceLastFrame);
     // ////////////////////////////////////////////////////////////////////
     // Update camera movement.

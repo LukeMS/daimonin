@@ -53,7 +53,6 @@ public:
     static const char TXT_CMD_HIGHLIGHT;   /**< Used to encode a color toggle. Can be followed by a TXT_SUB_CMD_COLOR **/
     static const char TXT_SUB_CMD_COLOR;   /**< Followed by 8 hex-chars to encode a color toggle in the text. **/
     static const char TXT_CMD_CHANGE_FONT; /**< Followed by 2 hex-chars to encode a font change in the text. **/
-    static const char TXT_CMD_SOUND;       /**< Followed by a filename to encode a sound in the text. **/
     static const char CURSOR[];
     static const unsigned int TXT_COLOR_DEFAULT;
     static const unsigned int TXT_COLOR_LOWLIGHT;

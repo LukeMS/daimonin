@@ -35,12 +35,11 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 
 using namespace Ogre;
 
-const char GuiTextout::TXT_CMD_SEPARATOR   = '#';
 const char GuiTextout::TXT_CMD_HIGHLIGHT   = '~';
 const char GuiTextout::TXT_CMD_LOWLIGHT    = -80; // prevent anjuta-ide problems with the degree character.
 const char GuiTextout::TXT_CMD_LINK        = '^';
 const char GuiTextout::TXT_CMD_INFO        = '|';
-const char GuiTextout::TXT_CMD_SOUND       = '§';
+const char GuiTextout::TXT_CMD_SEPARATOR   = '#';
 const char GuiTextout::TXT_SUB_CMD_COLOR   = '#'; // followed by 8 chars (atoi -> uint32).
 const char GuiTextout::TXT_CMD_CHANGE_FONT = '@'; // followed by 2 chars (atoi -> char).
 const char GuiTextout::CURSOR[] = { GuiTextout::STANDARD_CHARS_IN_FONT+31, 0 };

@@ -31,10 +31,14 @@ this program; If not, see <http://www.gnu.org/licenses/>.
  ** This class manages the gui functionality.
  ** ONLY this class is needed to be included from the outside.
  **
+ ** To prevent a sound-manager dependency, the gui doesn't call a sound function.
+ ** Instead the sound-manager must request a list of all sounds to play.
+ **
  ** Dependencies (other than Ogre):
  ** <tinyxml.h>
  ** <OISKeyboard.h>
  ** "logger.h"
+ ** "profile.h"
  *****************************************************************************/
 class GuiManager
 {
@@ -184,6 +188,20 @@ public:
         STATE_MOUSE_SUM
     };
 
+    /** 8 internal sounds are supported.
+        All other sounds are triggered outside the gui. **/
+    typedef enum
+    {
+        SND_WRONG_INPUT = 1 << 0, // SND_WRONG_INPUT MUST be the first entry!
+        SND_MOUSE_CLICK = 1 << 1,
+        SND_KEY_PRESSED = 1 << 2,
+        SND_RESERVED_1  = 1 << 3,
+        SND_RESERVED_2  = 1 << 4,
+        SND_RESERVED_3  = 1 << 5,
+        SND_RESERVED_4  = 1 << 6,
+        SND_RESERVED_5  = 1 << 7,
+    } Sound;
+
     static const Ogre::uint32 COLOR_BLACK;
     static const Ogre::uint32 COLOR_BLUE;
     static const Ogre::uint32 COLOR_GREEN;
@@ -207,7 +225,7 @@ public:
         static GuiManager singleton;
         return singleton;
     }
-    void Init(int w, int h, bool createMedia, bool printInfo, const char *soundActionFailed, const char *pathTxt, const char *pathGfx, const char *pathFonts, const char *pathItems);
+    void Init(int w, int h, bool createMedia, bool printInfo, const char *pathTxt, const char *pathGfx, const char *pathFonts, const char *pathItems);
     void resizeBuildBuffer(size_t size);
     Ogre::uint32 *getBuildBuffer() const
     {
@@ -224,10 +242,12 @@ public:
     {
         setTooltip(text, true);
     }
-    /** The gui doesn't play sounds but stores the filesnames in a string-vector.
-        This vector will be accessed via getNextSound() from outside the gui. **/
-    void playSound(const char *filename); /**< Stores the filename of a sound in a string-vector. **/
-    const char *getNextSound();           /**< Returns the first sound and delete it from the string-vector. **/
+    /** Mark a sound as active.
+     ** The sound-manager can ask for a list of all these sounds later. **/
+    void playSound(Sound sound);
+    /** Returns a list of all active sounds and clear the list.
+     ** The sound-manager is in charge of playing all sounds from the list. **/
+    Ogre::uchar getActiveSounds();
     void setMouseState(int action);
     int getScreenWidth() const
     {
@@ -402,11 +422,10 @@ private:
     unsigned long mTooltipDelay; /**< Delay for the tooltip to show up. */
     unsigned int mScreenWidth, mScreenHeight;
     bool mTextInputUserAction;
-    std::vector<Ogre::String> mvSound;
+    unsigned char mActiveSounds; /**< Sounds that needs to be played (by an external manager). */
     Ogre::uint32 *mBuildBuffer;  /**< Buffer to draw all graphics before blitting them into the texture. **/
     Ogre::Vector3 mMouse;
     Ogre::TexturePtr mTexture;
-    Ogre::String mSoundWrongInput; /**< Filename of the sound 'wrong user input'. **/
     Ogre::String mStrTooltip;
     Ogre::String mStrTextInput, mBackupStrTextInput;
     Ogre::String mPathDescription, mPathTextures, mPathTexturesFonts, mPathTexturesItems;

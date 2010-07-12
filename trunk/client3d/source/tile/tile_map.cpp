@@ -121,7 +121,7 @@ void TileMap::InitMapData(const char *name, int xl, int yl, int px, int py)
             *p2++ = 0;
             if (strstr(tag + 1, ".ogg"))
             {
-                Sound::getSingleton().playStream(tag + 1, true);
+                Sound::getSingleton().playMusic(tag + 1, true);
                 //sound_play_music(tag + 1, options.music_volume, 2000, atoi(p2), atoi(p1), MUSIC_MODE_NORMAL);
                 music_fade = 1;
             }

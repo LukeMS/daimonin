@@ -23,8 +23,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 
 #include <vector>
 #include <fstream>
-#include "include/cAudio.h"
-#include "define.h"
+#include <cAudio.h>
 #include "sound.h"
 #include "option.h"
 #include "logger.h"
@@ -43,12 +42,17 @@ SoundFiles;
 
 SoundFiles mSoundFiles[Sound::SAMPLE_SUM] =
 {
-    // Background music.
-    { 0, "intro94.s3m",         true , true },
-    // Long sound (e.g. spoken text).
-    { 0, "Player_Idle.ogg",     false, true },
-    { 0, "Wizard_Visitor.ogg",  false, true },
-    { 0, "male_bounty_01.ogg",  false, true },
+    // Dummy sound (for error handling).
+    { 0, "dummy.wav",           false, false},
+    // The 8 internal gui sounds
+    { 0, "console.wav",         false, false},
+    { 0, "console.wav",         false, false},
+    { 0, "console.wav",         false, false},
+    { 0, "console.wav",         false, false},
+    { 0, "console.wav",         false, false},
+    { 0, "console.wav",         false, false},
+    { 0, "console.wav",         false, false},
+    { 0, "console.wav",         false, false},
     // Short sound.
     { 0, "console.wav",         false, false},
     { 0, "male_hit_01.wav",     false, false},
@@ -57,8 +61,12 @@ SoundFiles mSoundFiles[Sound::SAMPLE_SUM] =
     { 0, "tentacle_hit_01.wav", false, false},
     { 0, "golem_hit_01.wav",    false, false},
     { 0, "attack_01.wav",       false, false},
-    // Dummy sound (for error handling).
-    { 0, "dummy.wav",           false, false},
+    // Long sound (e.g. spoken text).
+    { 0, "Player_Idle.ogg",     false, true },
+    { 0, "Wizard_Visitor.ogg",  false, true },
+    { 0, "male_bounty_01.ogg",  false, true },
+    // Background music.
+    { 0, "intro94.s3m",         true , true },
 };
 
 static IAudioManager *mSoundManager = 0;
@@ -66,11 +74,12 @@ static IAudioManager *mSoundManager = 0;
 //================================================================================================
 // Init the sound-system.
 //================================================================================================
-bool Sound::Init()
+bool Sound::Init(const char *filePath)
 {
     PROFILE()
     if (Option::getSingleton().getIntValue(Option::CMDLINE_OFF_SOUND)) return false;
     Logger::log().headline() << "Init Sound-System";
+    mFilePath = filePath;
     // ////////////////////////////////////////////////////////////////////
     // Create the main system object.
     // ////////////////////////////////////////////////////////////////////
@@ -98,16 +107,14 @@ bool Sound::Init()
         mSoundManager = 0;
         return false;
     }
-    mMusicVolume = 0.5;
-    mSoundVolume = 1.0;
     // ////////////////////////////////////////////////////////////////////
     // Load all samples.
     // ////////////////////////////////////////////////////////////////////
     createDummy();
     Logger::log().info() << "Loading all Sounds.";
-    for (SampleID i = BG_MUSIC; i< SAMPLE_SUM; i=SampleID(i+1))
+    for (SampleID i = GUI_WRONG_INPUT; i< SAMPLE_SUM; i=SampleID(i+1))
         openStream(i);
-    //playStream(ATTACK_01);
+    //playStream(PLAYER_IDLE); // Just for testing. delete me!
     return true;
 }
 
@@ -129,7 +136,7 @@ void Sound::freeRecources()
 void Sound::createDummy()
 {
     PROFILE()
-    const char dummy[] =
+    const unsigned char dummy[] =
     {
         'R' ,'I' , 'F','F' , 0x2c,0x00,0x00,0x00, 'W' ,'A' ,'V' ,'E' ,
         'f' ,'m' ,'t' ,' ' , 0x10,0x00,0x00,0x00, 0x01,0x00,0x01,0x00,
@@ -137,9 +144,9 @@ void Sound::createDummy()
         'd' ,'a' ,'t' ,'a' , 0x08,0x00,0x00,0x00, 0x00,0x00,0x00,0x00,
         0x00,0x00,0x00,0x00
     };
-    std::ofstream out((PATH_SND + mSoundFiles[DUMMY].filename).c_str(), std::ios::binary);
+    std::ofstream out((mFilePath + mSoundFiles[DUMMY].filename).c_str(), std::ios::binary);
     if (out)
-        out.write(dummy, sizeof(dummy));
+        out.write((char*)dummy, sizeof(dummy));
     else
         Logger::log().error() << "Critical: Cound not create the dummy wavefile.";
 }
@@ -150,40 +157,82 @@ void Sound::createDummy()
 void Sound::openStream(SampleID id)
 {
     PROFILE()
-    mSoundFiles[id].sound = mSoundManager->create(0, (PATH_SND + mSoundFiles[id].filename).c_str(), mSoundFiles[id].stream);
+    mSoundFiles[id].sound = mSoundManager->create(0, (mFilePath + mSoundFiles[id].filename).c_str(), mSoundFiles[id].stream);
+    if (!mSoundFiles[id].sound)
+    {
+        Logger::log().warning() << "Soundfile " << mSoundFiles[id].filename << " could not be found or the codec is unknown.";
+        mSoundFiles[id].sound = mSoundFiles[DUMMY].sound; // use the dummy wavefile.
+    }
 }
 
 //================================================================================================
-// Create a stream.
+// Play an already created stream.
 //================================================================================================
 void Sound::playStream(SampleID id)
 {
+    PROFILE()
+    if (mSoundFiles[id].sound->isPlaying()) stopStream(id);
     if (!mSoundFiles[id].sound->play2d(mSoundFiles[id].loop))
     {
         Logger::log().error() << "Error on creating Soundstream " << mSoundFiles[id].filename;
     }
 }
 
+//================================================================================================
+// Play an already created stream.
+//================================================================================================
+void Sound::stopStream(SampleID id)
+{
+    PROFILE()
+    mSoundFiles[id].sound->stop();
+}
 
 //================================================================================================
-// Create a stream.
+// Create and play a stream for the background music.
 //================================================================================================
-void Sound::playStream(const char *filename, bool loop)
+void Sound::playMusic(std::string filename, bool loop)
 {
+    PROFILE()
+    static IAudioSource *music = 0;
+    if (music) mSoundManager->release(music);
+    music = mSoundManager->create(0, (mFilePath + filename).c_str(), true);
+    if (!music)
+        Logger::log().warning() << "Music " << music << " could not be found or the codec is unknown.";
+    else
+        music->play2d(loop);
+}
+
+//================================================================================================
+// .
+//================================================================================================
+void Sound::playGuiSounds(unsigned char activeSounds)
+{
+    PROFILE()
+    if (!activeSounds) return;
+    if (activeSounds &  1) playStream(SampleID(GUI_WRONG_INPUT+0));
+    if (activeSounds &  2) playStream(SampleID(GUI_WRONG_INPUT+1));
+    if (activeSounds &  4) playStream(SampleID(GUI_WRONG_INPUT+2));
+    if (activeSounds &  8) playStream(SampleID(GUI_WRONG_INPUT+3));
+    if (activeSounds & 16) playStream(SampleID(GUI_WRONG_INPUT+4));
+    if (activeSounds & 32) playStream(SampleID(GUI_WRONG_INPUT+5));
+    if (activeSounds & 64) playStream(SampleID(GUI_WRONG_INPUT+6));
+    if (activeSounds &128) playStream(SampleID(GUI_WRONG_INPUT+7));
 }
 
 //================================================================================================
 // Set the volume.
 //================================================================================================
-void Sound::setVolume(unsigned int id, float volume)
+void Sound::setVolume(SampleID id, float volume)
 {
-
+    PROFILE()
+    mSoundFiles[id].sound->setVolume(volume);
 }
 
 //================================================================================================
 // Sets the 3D-pos of the stream.
 //================================================================================================
-void Sound::set3DPos(unsigned int id, float &posX, float &posY, float &posZ)
+void Sound::set3DPos(SampleID id, float &x, float &y, float &z)
 {
-
+    PROFILE()
+    mSoundFiles[id].sound->setPosition(cVector3(x,y,z));
 }
