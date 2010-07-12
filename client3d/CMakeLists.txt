@@ -207,7 +207,7 @@ set (SOURCE_FILES
 
 #Set all include direcetories here
 INCLUDE_DIRECTORIES(
-  "3rdParty/caudio"
+  "3rdParty/caudio/include"
   "3rdParty/tinyxml"
   "3rdParty/zlib"
   "include"

@@ -23,7 +23,6 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 
 #include <OgreMath.h>  // Without it VC reports an error in OgreMath.h.
 #include <OgreStringConverter.h>
-#include "define.h"
 #include "item.h"
 #include "logger.h"
 #include "profiler.h"

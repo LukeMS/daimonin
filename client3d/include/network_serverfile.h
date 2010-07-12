@@ -33,15 +33,15 @@ public:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
-    enum
+    typedef enum
     {
         FILE_SKILLS,
         FILE_SPELLS,
         FILE_SETTINGS,
-        FILE_ANIMS,
         FILE_BMAPS,
+        FILE_ANIMS,
         FILE_SUM
-    };
+    }eSeverfileNr;
     enum
     {
         STATUS_OK,
@@ -55,7 +55,7 @@ public:
     {
         static ServerFile Singleton; return Singleton;
     }
-    void checkFiles();
+    void checkFile(eSeverfileNr nr, const char *filename);
 
     int getStatus(int file_enum) const
     {

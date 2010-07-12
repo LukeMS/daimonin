@@ -197,29 +197,24 @@ void GuiManager::sendMsg(int element, Message message, const char *text, uint32 
 }
 
 //================================================================================================
-// .
+// Mark a sound as active. The sound-manager can ask for all active sounds later.
 //================================================================================================
-void GuiManager::playSound(const char *filename)
+void GuiManager::playSound(Sound sound)
 {
     PROFILE()
-    if (!filename) return;
-    if (!filename[0])
-        mvSound.push_back(mSoundWrongInput);
-    else
-        mvSound.push_back(filename);
+    mActiveSounds |= sound;
 }
 
 //================================================================================================
-// .
+// Returns a list of all active sounds and clear the list.
+// The sound-manager is in charge of playing them.
 //================================================================================================
-const char *GuiManager::getNextSound()
+unsigned char GuiManager::getActiveSounds()
 {
     PROFILE()
-    if (mvSound.empty()) return 0;
-    String strSound = mvSound[0];
-    //Logger::log().warning() << "Gui Manager sound cmd: " << strSound;
-    mvSound.erase(mvSound.begin());
-    return strSound.c_str();
+    unsigned char active = mActiveSounds;
+    mActiveSounds = 0;
+    return active;
 }
 
 //================================================================================================
@@ -258,7 +253,7 @@ int GuiManager::getElementPressed()
 //================================================================================================
 // .
 //================================================================================================
-void GuiManager::Init(int w, int h, bool createMedia, bool printInfo, const char *soundActionFailed, const char *pathTxt, const char *pathGfx, const char *pathFonts, const char *pathItems)
+void GuiManager::Init(int w, int h, bool createMedia, bool printInfo, const char *pathTxt, const char *pathGfx, const char *pathFonts, const char *pathItems)
 {
     PROFILE()
     Logger::log().headline() << "Init GUI";
@@ -271,7 +266,6 @@ void GuiManager::Init(int w, int h, bool createMedia, bool printInfo, const char
     mPrintInfo      = printInfo;
     mBuildBuffer    = 0;
     mTooltipDelay   = 0;
-    mSoundWrongInput=soundActionFailed;
     mPathTextures      = pathGfx;
     mPathDescription   = pathTxt;
     mPathTexturesFonts = pathFonts;
@@ -522,7 +516,6 @@ void GuiManager::freeRecources()
     for (int i=0; i < WIN_SUM; ++i) guiWindow[i].freeRecources();
     GuiCursor::getSingleton().freeRecources();
     mTexture.setNull();
-    mvSound.clear();
 }
 
 //================================================================================================

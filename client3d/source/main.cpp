@@ -174,8 +174,8 @@ int main(int argc, char **argv)
             {
                 Logger::log().error() << "Unknown cmdline " << argv[argc-1] << " " << argv[argc];
                 return 0;
-                --argc;
             }
+            --argc;
         }
         else
         {

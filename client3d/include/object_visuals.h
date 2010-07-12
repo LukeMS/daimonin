@@ -62,7 +62,7 @@ public:
     {
         static ObjectVisuals Singleton; return Singleton;
     }
-    void Init();
+    void Init(const char *filePath, const char *filename);
     void freeRecources();
     /** health < 0 disables the lifebar. */
     void select(const Ogre::AxisAlignedBox &AABB, Ogre::SceneNode *node, int friendly, Ogre::Real percent, const char *name);

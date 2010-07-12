@@ -207,7 +207,7 @@ public:
                     || (mBlockNumbers  && (keyChar >= '0' && keyChar <= '9'))
                     || (mBlockWhiteSpace && (keyChar <'A' || keyChar > 'z')))
             {
-                GuiManager::getSingleton().playSound("");
+                GuiManager::getSingleton().playSound(GuiManager::SND_WRONG_INPUT);
                 return true;
             }
             mStrTextInput.insert(mCursorPos,1,keyChar);

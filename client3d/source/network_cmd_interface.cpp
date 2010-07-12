@@ -22,6 +22,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
 
 #include <OISKeyboard.h>
+#include <OgreStringConverter.h>
 #include "logger.h"
 #include "profiler.h"
 #include "gui/gui_manager.h"
@@ -390,7 +391,7 @@ bool CmdInterface::cmd_button(Button &button, char *data, int &pos)
                 if (!(buf = get_parameter_string(data, pos)))
                     return false;
                 button.label = "~";
-                button.label+= toupper(buf[0]);
+                button.label+= (char)toupper(buf[0]);
                 button.label+= "~";
                 button.label+= buf+1;
                 break;
@@ -840,26 +841,26 @@ void CmdInterface::show()
         // only print the "Your rewards:" message when there is one
         if (mReward.copper || mReward.gold || mReward.silver || mReward.mithril || mIcon_count)
         {
-            String strMsg;
+            String strMsg = "Your rewards: ";
             if (mReward.copper)
             {
                 //sprite_blt(Bitmaps[BITMAP_COIN_COPPER], x + 110, y + yoff, NULL, NULL);
-                strMsg = "Your rewards: "; strMsg+= mReward.copper;
+                strMsg+= StringConverter::toString(mReward.copper);
             }
             if (mReward.silver)
             {
                 //sprite_blt(Bitmaps[BITMAP_COIN_SILVER], x + 140, y + yoff+6, NULL, NULL);
-                strMsg = "Your rewards: "; strMsg+=  mReward.silver;
+                strMsg+= StringConverter::toString(mReward.silver);
             }
             if (mReward.gold)
             {
                 //sprite_blt(Bitmaps[BITMAP_COIN_GOLD], x + 170, y + yoff+6, NULL, NULL);
-                strMsg = "Your rewards: "; strMsg+=  mReward.gold;
+                strMsg+= StringConverter::toString(mReward.gold);
             }
             if (mReward.mithril)
             {
                 //sprite_blt(Bitmaps[BITMAP_COIN_MITHRIL], x + 200, y + yoff+9, NULL, NULL);
-                strMsg = "Your rewards: "; strMsg+=  mReward.mithril;
+                strMsg+= StringConverter::toString(mReward.mithril);
             }
             GuiManager::getSingleton().print(GuiManager::LIST_NPC, strMsg.c_str());
         }

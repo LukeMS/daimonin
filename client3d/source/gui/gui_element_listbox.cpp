@@ -124,16 +124,6 @@ int GuiListbox::addText(const char *txt, uint32 stdColor)
     PROFILE()
     if (!txt) return 0; // We MUST check for NULL, so we can't use String for the first parameter of addText().
     String strText = txt;
-    // ////////////////////////////////////////////////////////////////////
-    // Mask out all sound commands.
-    // ////////////////////////////////////////////////////////////////////
-    size_t start, stop, link;
-    while ((start = strText.find(GuiTextout::TXT_CMD_SOUND))!= std::string::npos)
-    {
-        stop = strText.find('\n', start); // Sound cmd ends with a linebreak.
-        GuiManager::getSingleton().playSound(strText.substr(start+1, stop-start-1).c_str());
-        strText.erase(start, stop-start+1);
-    }
     GuiTextout::getSingleton().parseUserDefinedChars(strText);
     // ////////////////////////////////////////////////////////////////////
     // Keywords:
@@ -141,6 +131,7 @@ int GuiListbox::addText(const char *txt, uint32 stdColor)
     // - The keywords will be stored in keyword entry of the textrow.
     // ////////////////////////////////////////////////////////////////////
     String keyword;
+    size_t start, stop, link;
     link = stop = 0;
     char keySign[] = { '#', '1', '\0' };
     while ((start = strText.find(GuiTextout::TXT_CMD_LINK, stop))!= std::string::npos)
