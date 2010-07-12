@@ -30,11 +30,11 @@
 * important - for a login server this must snyced up with it too
 */
 #define MIN_PLAYER_NAME        3
-#define MAX_PLAYER_NAME        12
+#define MAX_PLAYER_NAME        16
 /* Note: there is no password for a player (aka single characters) anymore */
 
 #define MIN_ACCOUNT_NAME        3
-#define MAX_ACCOUNT_NAME        12
+#define MAX_ACCOUNT_NAME        24
 #define MIN_ACCOUNT_PASSWORD    6
 #define MAX_ACCOUNT_PASSWORD    16
 

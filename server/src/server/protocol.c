@@ -147,9 +147,9 @@ int player_name_valid(char *cp)
 /* Return 1 or 0 depending on whether we have only valid chars. */
 int player_char_valid(char c)
 {
-    /* FIXME: Only letters and '-' now? */
     if (!isalpha(c) &&
-        c != '-')
+        c != '-' &&
+        c != '_')
     {
         return 0;
     }
