@@ -55,12 +55,6 @@ option.
 You ALWAYS have to install the SDL and SDL_image libs on your system. 
 The client can't run without them!
 
-64-bit or Big-endian
---------------------
-None of the developers have access to 64-bit or big-endian machines, so we
-can't test the client on those systems. Some problems have been reported.
-If you try this, please let us know how it works.
-
 IPv6
 ----
 The client does optionally support IPv6. To enable IPv6 support, configure with
