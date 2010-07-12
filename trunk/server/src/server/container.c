@@ -579,7 +579,7 @@ void put_object_in_sack(object *const op, object *const sack, object *tmp, const
     tag_t   tmp_tag, tmp2_tag;
     object *tmp2, *tmp_cont;
     /*object *sack2;*/
-    char    buf[MEDIUM_BUF];
+//    char    buf[MEDIUM_BUF];
 
     if (op->type != PLAYER)
     {
@@ -693,7 +693,7 @@ void put_object_in_sack(object *const op, object *const sack, object *tmp, const
 */
 void drop_object(object *const op, object *tmp, const uint32 nrof)
 {
-    char    buf[MEDIUM_BUF];
+//    char    buf[MEDIUM_BUF];
     object *floor;
     uint32 tmp_nrof;
 

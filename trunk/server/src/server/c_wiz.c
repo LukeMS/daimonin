@@ -1533,7 +1533,7 @@ int command_serverspeed(object *op, char *params)
 int command_stats(object *op, char *params)
 {
     player *pl;
-    char    buf[MEDIUM_BUF];
+//    char    buf[MEDIUM_BUF];
 
     if (!params)
         return 1;

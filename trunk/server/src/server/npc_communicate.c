@@ -55,7 +55,7 @@ void communicate(object *op, char *txt)
     object     *npc;
     mapstruct  *m;
     int         flags, i, xt, yt;
-    char        buf[HUGE_BUF];
+//    char        buf[HUGE_BUF];
 
     if (!txt)
         return;
