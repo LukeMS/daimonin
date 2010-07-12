@@ -268,7 +268,7 @@ int command_gsay(object *op, char *params)
 
 int command_shout(object *op, char *params)
 {
-    char    buf[MEDIUM_BUF];
+//    char    buf[MEDIUM_BUF];
 #ifdef PLUGINS
     int     evtid;
     CFParm  CFP;
