@@ -202,7 +202,7 @@ CommArray_s CommandsMW[] =
     {"teleport",      command_teleport,    0.0f, 1, 0},
     {"resetmap",      command_reset,       0.0f, 1, 0},
     {"goto",          command_goto,        0.0f, 1, 0},
-    {"restart",       command_restart,     0.0f, 1, 0},
+//    {"restart",       command_restart,     0.0f, 1, 0},
     {"dm_invis",      command_dm_invis,    0.0f, 1, 0},
     {"dm_dev",        command_dm_dev,      0.0f, 1, 0},
     {"dm_light",      command_dm_light,    0.0f, 1, 0},
