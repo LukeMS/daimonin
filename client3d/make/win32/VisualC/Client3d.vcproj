@@ -3,7 +3,6 @@
 	ProjectType="Visual C++"
 	Version="9,00"
 	Name="Client3d"
-	ProjectGUID="{EBF97828-EAF7-4B61-BAB3-DA1769936136}"
 	RootNamespace="Client3d"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
@@ -22,7 +21,7 @@
 			IntermediateDirectory=".\obj\$(ConfigurationName)"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
-			CharacterSet="2" 
+			CharacterSet="2"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -43,7 +42,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=".\OgreSDK\boost\;.\OgreSDK\include\Ogre\;.\OgreSDK\include\Ogre\WIN32;.\OgreSDK\include\OIS;..\..\..\3rdParty\zlib;..\..\..\3rdParty\fmod;..\..\..\3rdParty\tinyxml;..\..\..\include;..\..\..\source"
+				AdditionalIncludeDirectories=".\OgreSDK\boost\;.\OgreSDK\include\Ogre\;.\OgreSDK\include\Ogre\WIN32;.\OgreSDK\include\OIS;..\..\..\3rdParty\zlib;..\..\..\3rdParty\caudio\include;..\..\..\3rdParty\tinyxml;..\..\..\include;..\..\..\source"
 				PreprocessorDefinitions="WIN32;TIXML_USE_STL;_CONSOLE;_CRT_SECURE_NO_DEPRECATE;_DEBUG"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -64,11 +63,11 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="OgreMain_d.lib OIS_d.lib fmodex_vc.lib WS2_32.lib"
+				AdditionalDependencies="OgreMain_d.lib OIS_d.lib cAudio.lib WS2_32.lib"
 				OutputFile="$(OutDir)/Client3d_d.exe"
 				Version="0.99"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories=".\OgreSDK\lib\debug\;.\OgreSDK\boost\lib\;.\fmod_lib"
+				AdditionalLibraryDirectories=".\OgreSDK\lib\debug\;.\OgreSDK\boost\lib\;.\Sound\"
 				IgnoreAllDefaultLibraries="false"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(OutDir)/Client3d.pdb"
@@ -130,7 +129,7 @@
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				OmitFramePointers="true"
-				AdditionalIncludeDirectories=".\OgreSDK\boost\;.\OgreSDK\include\Ogre\;.\OgreSDK\include\Ogre\WIN32;.\OgreSDK\include\OIS;..\..\..\3rdParty\zlib;..\..\..\3rdParty\fmod;..\..\..\3rdParty\tinyxml;..\..\..\include;..\..\..\source"
+				AdditionalIncludeDirectories=".\OgreSDK\boost\;.\OgreSDK\include\Ogre\;.\OgreSDK\include\Ogre\WIN32;.\OgreSDK\include\OIS;..\..\..\3rdParty\zlib;..\..\..\3rdParty\caudio\include;..\..\..\3rdParty\tinyxml;..\..\..\include;..\..\..\source"
 				PreprocessorDefinitions="WIN32;TIXML_USE_STL;_CONSOLE;_CRT_SECURE_NO_DEPRECATE;NDEBUG"
 				StringPooling="true"
 				MinimalRebuild="true"
@@ -152,11 +151,11 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="OgreMain.lib OIS.lib fmodex_vc.lib WS2_32.Lib"
+				AdditionalDependencies="OgreMain.lib OIS.lib cAudio.lib WS2_32.Lib"
 				OutputFile="$(OutDir)/Client3d.exe"
 				Version="0.99"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories=".\OgreSDK\lib\release\;.\OgreSDK\boost\lib\;.\fmod_lib"
+				AdditionalLibraryDirectories=".\OgreSDK\lib\release\;.\OgreSDK\boost\lib\;.\Sound"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				OptimizeReferences="2"
@@ -569,38 +568,118 @@
 			Name="3rdParty"
 			>
 			<Filter
-				Name="fmod"
+				Name="caudio"
 				>
 				<File
-					RelativePath="..\..\..\3rdParty\fmod\fmod.h"
+					RelativePath="..\..\..\3rdParty\caudio\include\cAudio.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\3rdParty\fmod\fmod.hpp"
+					RelativePath="..\..\..\3rdParty\caudio\include\cAudioDefines.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\3rdParty\fmod\fmod_codec.h"
+					RelativePath="..\..\..\3rdParty\caudio\include\cAudioMemory.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\3rdParty\fmod\fmod_dsp.h"
+					RelativePath="..\..\..\3rdParty\caudio\include\cAudioPlatform.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\3rdParty\fmod\fmod_errors.h"
+					RelativePath="..\..\..\3rdParty\caudio\include\cAudioSleep.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\3rdParty\fmod\fmod_output.h"
+					RelativePath="..\..\..\3rdParty\caudio\include\cVector3.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\3rdParty\fmod\fmoddyn.h"
+					RelativePath="..\..\..\3rdParty\caudio\include\EAudioFormats.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\3rdParty\fmod\wincompat.h"
+					RelativePath="..\..\..\3rdParty\caudio\include\IAudioCapture.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\3rdParty\caudio\include\IAudioDecoder.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\3rdParty\caudio\include\IAudioDecoderFactory.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\3rdParty\caudio\include\IAudioEffects.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\3rdParty\caudio\include\IAudioManager.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\3rdParty\caudio\include\IAudioPlugin.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\3rdParty\caudio\include\IAudioSource.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\3rdParty\caudio\include\ICaptureEventHandler.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\3rdParty\caudio\include\IDataSource.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\3rdParty\caudio\include\IDataSourceFactory.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\3rdParty\caudio\include\IEffect.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\3rdParty\caudio\include\IEffectParameters.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\3rdParty\caudio\include\IFilter.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\3rdParty\caudio\include\IListener.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\3rdParty\caudio\include\ILogger.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\3rdParty\caudio\include\ILogReceiver.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\3rdParty\caudio\include\IManagerEventHandler.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\3rdParty\caudio\include\IMemoryProvider.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\3rdParty\caudio\include\IPluginManager.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\3rdParty\caudio\include\IRefCounted.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\3rdParty\caudio\include\ISourceEventHandler.h"
 					>
 				</File>
 			</Filter>
