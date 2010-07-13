@@ -104,6 +104,7 @@
 #include "define.h"
 #include "version.h"
 #include "logger.h"
+#include "ipcompare.h"
 
 #ifndef TRUE
 #define TRUE 1

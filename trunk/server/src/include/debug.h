@@ -107,4 +107,6 @@
 #define FIX_PLAYER(_o_, _m_) fix_player(_o_)
 #endif
 
+/*#define DEBUG_IPCOMPARE*/
+
 #endif /* ifndef __DEBUG_H */

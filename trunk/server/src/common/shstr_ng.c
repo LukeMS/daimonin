@@ -32,22 +32,7 @@
  * Copyright (C) 2006 Björn Axelsson (gecko)
  */
 
-#include <stdio.h>
-
-#include "hashtable.h"
-#include "hashfunc.h"
-
-#include "shstr_ng.h"
-
-/* small hack to insert LOG here to without the whole other externs */
-#include "logger.h"
-
-#ifndef WIN32
-#include <autoconf.h>
-#endif
-#ifdef HAVE_LIBDMALLOC
-#include <dmalloc.h>
-#endif
+#include "global.h"
 
 #ifdef SS_STATISTICS
 static struct statistics

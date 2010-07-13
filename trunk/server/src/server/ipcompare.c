@@ -26,11 +26,8 @@
 */
 
 #include "global.h"
-#include "ipcompare.h"
 
 #define BUF_SZ 100
-
-/*#define DEBUG_IPCOMPARE*/
 
 #define MASK_ALL 4
 #define MASK_HUNDREDS 3
@@ -282,28 +279,6 @@ int ip_compare(const char * ip1, const char * ip2)
 
     return 1;
 }
-
-#ifdef DEBUG_IPCOMPARE_MAIN
-int main(int argc, char **argv)
-{
-    char *a, *b;
-    if (argc > 2)
-    {
-        a = argv[1];
-        b = argv[2];
-    }
-    else
-        return 0;
-
-    if(ip_compare(a,b))
-        printf("match: %s == %s\n",a,b);
-    else
-        printf("no match: %s != %s\n",a,b);
-
-    return 0;
-}
-
-#endif
 
 /* Some versions of libc don't do this right, so we need to replicate inet_pton for the victims */
 #ifdef NEED_INET_PTON
