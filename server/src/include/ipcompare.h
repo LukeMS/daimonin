@@ -32,13 +32,6 @@
 #define NEED_INET_PTON
 #endif
 
-#ifdef DEBUG_IPCOMPARE_MAIN
-#define llevDebug 0
-#define LOG(x,y,args...) printf(y,## args)
-#else
-#include <logger.h>
-#endif
-
 #ifdef NEED_INET_PTON
 /* prototype of local version */
 int inet_pton(int af, const char *src, void *dst);

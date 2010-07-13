@@ -72,21 +72,4 @@ typedef enum LogLevel
 #endif
 #endif
 
-/* Nicked from glib.h */
-#ifndef DAI_GNUC_PRINTF
-#ifdef __GNUC__
-#define DAI_GNUC_PRINTF(format_idx, arg_idx) \
-  __attribute__((__format__ (__printf__, format_idx, arg_idx)))
-#else
-#define DAI_GNUC_PRINTF(format_idx, arg_idx)
-#endif
-#endif
-
-/* WARNING: this extern will also be in ...proto.h
- * this will allow to explicit include our LOG() in
- * modules.
- */
-extern void LOG(LogLevel logLevel, char *format, ...) DAI_GNUC_PRINTF(2, 3);
-extern void CHATLOG(char *format, ...) DAI_GNUC_PRINTF(1, 2);
-
 #endif /* ifndef __LOGGER_H */
