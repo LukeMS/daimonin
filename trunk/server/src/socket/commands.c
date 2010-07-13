@@ -1165,10 +1165,15 @@ void cs_cmd_checkname(char *buf, int len, NewSocket *ns)
     const char *hash_name = NULL;
     char filename[MEDIUM_BUF];
 
-    if (ns->pl_account.nrof_chars == ACCOUNT_MAX_PLAYER || !buf
-                    || len<(PARM_SIZE_CHAR*3) || buf[len-1] || ns->status != Ns_Login)
+    /* If the command isn't perfect, kill the socket. */
+    if (!buf ||
+        len < MIN_ACCOUNT_NAME + 1 ||
+        len > MAX_ACCOUNT_NAME + 1 ||
+        buf[len - 1] ||
+        ns->status != Ns_Login)
     {
         ns->status = Ns_Dead;
+
         return;
     }
 
@@ -1226,9 +1231,15 @@ void cs_cmd_login(char *buf, int len, NewSocket *ns)
     account_status  ret = ACCOUNT_STATUS_OK;
     int             mode;
 
-    if (!buf || len<(PARM_SIZE_CHAR*5) || buf[len-1] || ns->status != Ns_Login)
+    /* If the command isn't perfect, kill the socket. */
+    if (!buf ||
+        len < MIN_ACCOUNT_NAME + MIN_ACCOUNT_PASSWORD + 3 ||
+        len > MAX_ACCOUNT_NAME + MAX_ACCOUNT_PASSWORD + 3 ||
+        buf[len - 1] ||
+        ns->status != Ns_Login)
     {
         ns->status = Ns_Dead;
+
         return;
     }
 
@@ -1288,9 +1299,15 @@ void cs_cmd_addme(char *buf, int len, NewSocket *ns)
     addme_login_msg error_msg;
     const char *hash_name;
 
-    if (!buf || len < (MIN_PLAYER_NAME+1) || buf[len-1] || ns->status != Ns_Account)
+    /* If the cmd isn't perfect, kill the socket. */
+    if (!buf ||
+        len < MIN_PLAYER_NAME + 1 ||
+        len > MAX_PLAYER_NAME + 1 ||
+        buf[len - 1] ||
+        ns->status != Ns_Account)
     {
         ns->status = Ns_Dead;
+
         return;
     }
 
@@ -1371,10 +1388,16 @@ void cs_cmd_newchar(char *buf, int len, NewSocket *ns)
     int     gender, race, skill_nr, ret = ADDME_MSG_OK;
     char    filename[MEDIUM_BUF];
 
-    if (ns->pl_account.nrof_chars == ACCOUNT_MAX_PLAYER || !buf || len < (4+MIN_PLAYER_NAME)
-                            || len > (3+MAX_PLAYER_NAME) || buf[len-1] || ns->status != Ns_Account)
+    /* if the cmd isn't perfect, kill the socket. */
+    if (ns->pl_account.nrof_chars == ACCOUNT_MAX_PLAYER ||
+        !buf ||
+        len < MIN_PLAYER_NAME + 4 ||
+        len > MAX_PLAYER_NAME + 4 ||
+        buf[len - 1] ||
+        ns->status != Ns_Account)
     {
         ns->status = Ns_Dead;
+
         return;
     }
 
@@ -1450,10 +1473,16 @@ void cs_cmd_delchar(char *buf, int len, NewSocket *ns)
 {
     int ret;
 
-    if (!ns->pl_account.nrof_chars || !buf || len < (1+MIN_PLAYER_NAME)
-                                || len > (1+MAX_PLAYER_NAME) || buf[len-1] || ns->status != Ns_Account)
+    /* if the cmd isn't perfect, kill the socket. */
+    if (!ns->pl_account.nrof_chars ||
+        !buf ||
+        len < MIN_PLAYER_NAME + 1 ||
+        len > MAX_PLAYER_NAME + 1 ||
+        buf[len - 1] ||
+        ns->status != Ns_Account)
     {
         ns->status = Ns_Dead;
+
         return;
     }
 
