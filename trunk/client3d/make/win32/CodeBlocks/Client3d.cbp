@@ -67,7 +67,7 @@
 			<Add directory="OgreSDK\include\OIS" />
 			<Add directory="..\..\..\3rdParty\tinyxml" />
 			<Add directory="..\..\..\3rdParty\zlib" />
-			<Add directory="..\..\..\3rdParty\caudio" />
+			<Add directory="..\..\..\3rdParty\caudio\include" />
 			<Add directory="..\..\..\source" />
 			<Add directory="..\..\..\include" />
 		</Compiler>
@@ -141,7 +141,6 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\3rdParty\zlib\zutil.h" />
-		<Unit filename="..\..\..\include\define.h" />
 		<Unit filename="..\..\..\include\events.h" />
 		<Unit filename="..\..\..\include\gui\gui_animation.h" />
 		<Unit filename="..\..\..\include\gui\gui_cursor.h" />
