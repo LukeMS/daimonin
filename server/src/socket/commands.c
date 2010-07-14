@@ -225,7 +225,7 @@ CommArray_s CommandsMM[] =
     {"gmasterfile",  command_gmasterfile,       0.0f, 1, 0},
     {"plugin",       command_loadplugin,        0.0f, 1, 0},
     {"pluglist",     command_listplugins,       0.0f, 1, 0},
-//    {"shutdown",     command_shutdown,          0.0f, 1, 1},
+    {"shutdown",     command_shutdown,          0.0f, 1, 1},
     {"plugout",      command_unloadplugin,      0.0f, 1, 0},
     {"create",       command_create,            0.0f, 1, 0},
     {"dump",         command_dump,              0.0f, 1, 0},
