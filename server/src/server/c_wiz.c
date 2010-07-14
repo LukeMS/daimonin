@@ -56,55 +56,6 @@ static struct dmload_struct dmload_value = {"",""};
 */
 #endif
 
-int command_admin(object *op, char *params)
-{
-    player *pl;
-    char    buf[MEDIUM_BUF];
-
-    if (*settings.admin_password == '\0')
-    {
-        new_draw_info(NDI_UNIQUE | NDI_RED, 0, op, "Server does not require admin confirmation!");
-
-        return 0;
-    }
-
-    if (!params)
-    {
-        return 1;
-    }
-
-    if (!(pl = CONTR(op)) ||
-        !pl->last_command)
-    {
-        new_draw_info(NDI_UNIQUE | NDI_RED, 0, op, "Last command does not require confirmation!");
-
-        return 0;
-    }
-
-    if (strcmp(params, settings.admin_password))
-   {
-        new_draw_info(NDI_UNIQUE | NDI_RED, 0, op, "Confirmation failed!");
-        new_draw_info(NDI_UNIQUE, 0, op, "Please re-type original command.");
-
-        return 0;
-   }
-
-    new_draw_info(NDI_UNIQUE | NDI_GREEN, 0, op, "Confirmation verified!");
-    new_draw_info(NDI_UNIQUE, 0, op, "Reissuing command.");
-    sprintf(buf, "%s", pl->last_command);
-    pl->last_command_confirmed = 1;
-    cs_cmd_generic(buf, strlen(buf), &pl->socket);
-
-    return 0;
-}
-
-int command_confirmme(object *op, char *params)
-{
-    new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_ALL | NDI_PURPLE | NDI_VIM, 0, op, "%s tests the /admin command!",
-                         query_name(op));
-    return 0;
-}
-
 /*
  * Helper function get an object somewhere in the game
  * Returns the object which has the count-variable equal to the argument.
