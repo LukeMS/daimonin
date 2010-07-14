@@ -1,5 +1,5 @@
 /* zutil.h -- internal interface and configuration of the compression library
- * Copyright (C) 1995-2003 Jean-loup Gailly.
+ * Copyright (C) 1995-2010 Jean-loup Gailly.
  * For conditions of distribution and use, see copyright notice in zlib.h
  */
 
@@ -8,21 +8,30 @@
    subject to change. Applications should only use zlib.h.
  */
 
+/* @(#) $Id: zutil.h 5666 2010-07-14 13:48:06Z polyveg $ */
+
 #ifndef ZUTIL_H
 #define ZUTIL_H
 
-#define ZLIB_INTERNAL
+/* Modified by the daimonin team (start) */
+#ifdef MINGW
+#  define NO_VIZ
+#endif
+/* Modified by the daimonin team (stop) */
+#if ((__GNUC__-0) * 10 + __GNUC_MINOR__-0 >= 33) && !defined(NO_VIZ)
+#  define ZLIB_INTERNAL __attribute__((visibility ("hidden")))
+#else
+#  define ZLIB_INTERNAL
+#endif
+
 #include "zlib.h"
 
 #ifdef STDC
-#  include <stddef.h>
+#  if !(defined(_WIN32_WCE) && defined(_MSC_VER))
+#    include <stddef.h>
+#  endif
 #  include <string.h>
 #  include <stdlib.h>
-#endif
-#ifdef NO_ERRNO_H
-extern int                  errno;
-#else
-#   include <errno.h>
 #endif
 
 #ifndef local
@@ -30,13 +39,13 @@ extern int                  errno;
 #endif
 /* compile with -Dlocal if your debugger can't find static symbols */
 
-typedef unsigned char       uch;
-typedef uch FAR             uchf;
-typedef unsigned short      ush;
-typedef ush FAR             ushf;
-typedef unsigned long       ulg;
+typedef unsigned char  uch;
+typedef uch FAR uchf;
+typedef unsigned short ush;
+typedef ush FAR ushf;
+typedef unsigned long  ulg;
 
-extern const char * const   z_errmsg[10]; /* indexed by 2-zlib_error */
+extern const char * const z_errmsg[10]; /* indexed by 2-zlib_error */
 /* (size given to avoid silly warnings with Visual C++) */
 
 #define ERR_MSG(err) z_errmsg[Z_NEED_DICT-(err)]
@@ -45,7 +54,7 @@ extern const char * const   z_errmsg[10]; /* indexed by 2-zlib_error */
   return (strm->msg = (char*)ERR_MSG(err), (err))
 /* To be used only when the state is known to be valid */
 
-/* common constants */
+        /* common constants */
 
 #ifndef DEF_WBITS
 #  define DEF_WBITS MAX_WBITS
@@ -70,15 +79,15 @@ extern const char * const   z_errmsg[10]; /* indexed by 2-zlib_error */
 
 #define PRESET_DICT 0x20 /* preset dictionary flag in zlib header */
 
-/* target dependencies */
+        /* target dependencies */
 
 #if defined(MSDOS) || (defined(WINDOWS) && !defined(WIN32))
 #  define OS_CODE  0x00
 #  if defined(__TURBOC__) || defined(__BORLANDC__)
-#    if(__STDC__ == 1) && (defined(__LARGE__) || defined(__COMPACT__))
-/* Allow compilation with ANSI keywords only enabled */
-void _Cdecl             farfree(void *block);
-void *_Cdecl            farmalloc(unsigned long nbytes);
+#    if (__STDC__ == 1) && (defined(__LARGE__) || defined(__COMPACT__))
+       /* Allow compilation with ANSI keywords only enabled */
+       void _Cdecl farfree( void *block );
+       void *_Cdecl farmalloc( unsigned long nbytes );
 #    else
 #      include <alloc.h>
 #    endif
@@ -103,6 +112,9 @@ void *_Cdecl            farmalloc(unsigned long nbytes);
 
 #ifdef OS2
 #  define OS_CODE  0x06
+#  ifdef M_I86
+#    include <malloc.h>
+#  endif
 #endif
 
 #if defined(MACOS) || defined(TARGET_OS_MAC)
@@ -134,11 +146,11 @@ void *_Cdecl            farmalloc(unsigned long nbytes);
 #  define fdopen(fd,mode) NULL /* No fdopen() */
 #endif
 
-#if (defined(_MSC_VER) && (_MSC_VER > 600))
+#if (defined(_MSC_VER) && (_MSC_VER > 600)) && !defined __INTERIX
 #  if defined(_WIN32_WCE)
 #    define fdopen(fd,mode) NULL /* No fdopen() */
 #    ifndef _PTRDIFF_T_DEFINED
-typedef int                 ptrdiff_t;
+       typedef int ptrdiff_t;
 #      define _PTRDIFF_T_DEFINED
 #    endif
 #  else
@@ -146,7 +158,19 @@ typedef int                 ptrdiff_t;
 #  endif
 #endif
 
-/* common defaults */
+#if defined(__BORLANDC__)
+  #pragma warn -8004
+  #pragma warn -8008
+  #pragma warn -8066
+#endif
+
+/* provide prototypes for these when building zlib without LFS */
+#if !defined(_LARGEFILE64_SOURCE) || _LFS64_LARGEFILE-0 == 0
+    ZEXTERN uLong ZEXPORT adler32_combine64 OF((uLong, uLong, z_off_t));
+    ZEXTERN uLong ZEXPORT crc32_combine64 OF((uLong, uLong, z_off_t));
+#endif
+
+        /* common defaults */
 
 #ifndef OS_CODE
 #  define OS_CODE  0x03  /* assume Unix */
@@ -156,7 +180,7 @@ typedef int                 ptrdiff_t;
 #  define F_OPEN(name, mode) fopen((name), (mode))
 #endif
 
-/* functions */
+         /* functions */
 
 #if defined(STDC99) || (defined(__TURBOC__) && __TURBOC__ >= 0x550)
 #  ifndef HAVE_VSNPRINTF
@@ -170,39 +194,37 @@ typedef int                 ptrdiff_t;
 #endif
 #ifndef HAVE_VSNPRINTF
 #  ifdef MSDOS
-/* vsnprintf may exist on some MS-DOS compilers (DJGPP?),
-   but for now we just assume it doesn't. */
+     /* vsnprintf may exist on some MS-DOS compilers (DJGPP?),
+        but for now we just assume it doesn't. */
 #    define NO_vsnprintf
 #  endif
 #  ifdef __TURBOC__
 #    define NO_vsnprintf
 #  endif
 #  ifdef WIN32
-/* In Win32, vsnprintf is available as the "non-ANSI" _vsnprintf. */
+     /* In Win32, vsnprintf is available as the "non-ANSI" _vsnprintf. */
 #    if !defined(vsnprintf) && !defined(NO_vsnprintf)
-#      define vsnprintf _vsnprintf
+#      if !defined(_MSC_VER) || ( defined(_MSC_VER) && _MSC_VER < 1500 )
+#         define vsnprintf _vsnprintf
+#      endif
 #    endif
 #  endif
 #  ifdef __SASC
 #    define NO_vsnprintf
 #  endif
 #endif
-
-#ifdef HAVE_STRERROR
-extern char *strerror   OF((int));
-#  define zstrerror(errnum) strerror(errnum)
-#else
-#  define zstrerror(errnum) ""
+#ifdef VMS
+#  define NO_vsnprintf
 #endif
 
 #if defined(pyr)
 #  define NO_MEMCPY
 #endif
 #if defined(SMALL_MEDIUM) && !defined(_MSC_VER) && !defined(__SC__)
-/* Use our own functions for small and medium model with MSC <= 5.0.
- * You may have to use the same strategy for Borland C (untested).
- * The __SC__ check is for Symantec.
- */
+ /* Use our own functions for small and medium model with MSC <= 5.0.
+  * You may have to use the same strategy for Borland C (untested).
+  * The __SC__ check is for Symantec.
+  */
 #  define NO_MEMCPY
 #endif
 #if defined(STDC) && !defined(HAVE_MEMCPY) && !defined(NO_MEMCPY)
@@ -219,16 +241,16 @@ extern char *strerror   OF((int));
 #    define zmemzero(dest, len) memset(dest, 0, len)
 #  endif
 #else
-extern void zmemcpy     OF((Bytef *dest, const Bytef *source, uInt len));
-extern int  zmemcmp     OF((const Bytef *s1, const Bytef *s2, uInt len));
-extern void zmemzero    OF((Bytef *dest, uInt len));
+   void ZLIB_INTERNAL zmemcpy OF((Bytef* dest, const Bytef* source, uInt len));
+   int ZLIB_INTERNAL zmemcmp OF((const Bytef* s1, const Bytef* s2, uInt len));
+   void ZLIB_INTERNAL zmemzero OF((Bytef* dest, uInt len));
 #endif
 
 /* Diagnostic functions */
-#ifdef DEBUG_ZLIB
+#ifdef DEBUG
 #  include <stdio.h>
-extern int                  z_verbose;
-extern void z_error     OF((char *m));
+   extern int ZLIB_INTERNAL z_verbose;
+   extern void ZLIB_INTERNAL z_error OF((char *m));
 #  define Assert(cond,msg) {if(!(cond)) z_error(msg);}
 #  define Trace(x) {if (z_verbose>=0) fprintf x ;}
 #  define Tracev(x) {if (z_verbose>0) fprintf x ;}
@@ -245,8 +267,9 @@ extern void z_error     OF((char *m));
 #endif
 
 
-voidpf zcalloc          OF((voidpf opaque, unsigned items, unsigned size));
-void   zcfree           OF((voidpf opaque, voidpf ptr));
+voidpf ZLIB_INTERNAL zcalloc OF((voidpf opaque, unsigned items,
+                        unsigned size));
+void ZLIB_INTERNAL zcfree  OF((voidpf opaque, voidpf ptr));
 
 #define ZALLOC(strm, items, size) \
            (*((strm)->zalloc))((strm)->opaque, (items), (size))
