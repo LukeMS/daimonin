@@ -33,7 +33,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 
 using namespace Ogre;
 
-//#define D_DEBUG
+#define D_DEBUG
 
 //================================================================================================
 // Init all static Elements.

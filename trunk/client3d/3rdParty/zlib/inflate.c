@@ -1,27 +1,5 @@
-/*
-    Daimonin SDL client, a client program for the Daimonin MMORPG.
-
-
-  Copyright (C) 2003 Michael Toennies
-
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-
-    The author can be reached via e-mail to info@daimonin.net
-*/
 /* inflate.c -- zlib decompression
- * Copyright (C) 1995-2003 Mark Adler
+ * Copyright (C) 1995-2005 Mark Adler
  * For conditions of distribution and use, see copyright notice in zlib.h
  */
 
@@ -131,15 +109,35 @@ z_streamp strm;
     state = (struct inflate_state FAR *)strm->state;
     strm->total_in = strm->total_out = state->total = 0;
     strm->msg = Z_NULL;
+    strm->adler = 1;        /* to support ill-conceived Java test suite */
     state->mode = HEAD;
     state->last = 0;
     state->havedict = 0;
+    state->dmax = 32768U;
+    state->head = Z_NULL;
     state->wsize = 0;
     state->whave = 0;
+    state->write = 0;
     state->hold = 0;
     state->bits = 0;
     state->lencode = state->distcode = state->next = state->codes;
     Tracev((stderr, "inflate: reset\n"));
+    return Z_OK;
+}
+
+int ZEXPORT inflatePrime(strm, bits, value)
+z_streamp strm;
+int bits;
+int value;
+{
+    struct inflate_state FAR *state;
+
+    if (strm == Z_NULL || strm->state == Z_NULL) return Z_STREAM_ERROR;
+    state = (struct inflate_state FAR *)strm->state;
+    if (bits > 16 || state->bits + bits > 32) return Z_STREAM_ERROR;
+    value &= (1L << bits) - 1;
+    state->hold += value << state->bits;
+    state->bits += bits;
     return Z_OK;
 }
 
@@ -165,7 +163,7 @@ int stream_size;
             ZALLOC(strm, 1, sizeof(struct inflate_state));
     if (state == Z_NULL) return Z_MEM_ERROR;
     Tracev((stderr, "inflate: allocated\n"));
-    strm->state = (voidpf)state;
+    strm->state = (struct internal_state FAR *)state;
     if (windowBits < 0) {
         state->wrap = 0;
         windowBits = -windowBits;
@@ -603,6 +601,8 @@ int flush;
                 break;
             }
             state->flags = 0;           /* expect zlib header */
+            if (state->head != Z_NULL)
+                state->head->done = -1;
             if (!(state->wrap & 1) ||   /* check if zlib header allowed */
 #else
             if (
@@ -618,11 +618,13 @@ int flush;
                 break;
             }
             DROPBITS(4);
-            if (BITS(4) + 8 > state->wbits) {
+            len = BITS(4) + 8;
+            if (len > state->wbits) {
                 strm->msg = (char *)"invalid window size";
                 state->mode = BAD;
                 break;
             }
+            state->dmax = 1U << len;
             Tracev((stderr, "inflate:   zlib header ok\n"));
             strm->adler = state->check = adler32(0L, Z_NULL, 0);
             state->mode = hold & 0x200 ? DICTID : TYPE;
@@ -642,16 +644,24 @@ int flush;
                 state->mode = BAD;
                 break;
             }
+            if (state->head != Z_NULL)
+                state->head->text = (int)((hold >> 8) & 1);
             if (state->flags & 0x0200) CRC2(state->check, hold);
             INITBITS();
             state->mode = TIME;
         case TIME:
             NEEDBITS(32);
+            if (state->head != Z_NULL)
+                state->head->time = hold;
             if (state->flags & 0x0200) CRC4(state->check, hold);
             INITBITS();
             state->mode = OS;
         case OS:
             NEEDBITS(16);
+            if (state->head != Z_NULL) {
+                state->head->xflags = (int)(hold & 0xff);
+                state->head->os = (int)(hold >> 8);
+            }
             if (state->flags & 0x0200) CRC2(state->check, hold);
             INITBITS();
             state->mode = EXLEN;
@@ -659,15 +669,26 @@ int flush;
             if (state->flags & 0x0400) {
                 NEEDBITS(16);
                 state->length = (unsigned)(hold);
+                if (state->head != Z_NULL)
+                    state->head->extra_len = (unsigned)hold;
                 if (state->flags & 0x0200) CRC2(state->check, hold);
                 INITBITS();
             }
+            else if (state->head != Z_NULL)
+                state->head->extra = Z_NULL;
             state->mode = EXTRA;
         case EXTRA:
             if (state->flags & 0x0400) {
                 copy = state->length;
                 if (copy > have) copy = have;
                 if (copy) {
+                    if (state->head != Z_NULL &&
+                        state->head->extra != Z_NULL) {
+                        len = state->head->extra_len - state->length;
+                        zmemcpy(state->head->extra + len, next,
+                                len + copy > state->head->extra_max ?
+                                state->head->extra_max - len : copy);
+                    }
                     if (state->flags & 0x0200)
                         state->check = crc32(state->check, next, copy);
                     have -= copy;
@@ -676,6 +697,7 @@ int flush;
                 }
                 if (state->length) goto inf_leave;
             }
+            state->length = 0;
             state->mode = NAME;
         case NAME:
             if (state->flags & 0x0800) {
@@ -683,13 +705,20 @@ int flush;
                 copy = 0;
                 do {
                     len = (unsigned)(next[copy++]);
+                    if (state->head != Z_NULL &&
+                            state->head->name != Z_NULL &&
+                            state->length < state->head->name_max)
+                        state->head->name[state->length++] = len;
                 } while (len && copy < have);
-                if (state->flags & 0x02000)
+                if (state->flags & 0x0200)
                     state->check = crc32(state->check, next, copy);
                 have -= copy;
                 next += copy;
                 if (len) goto inf_leave;
             }
+            else if (state->head != Z_NULL)
+                state->head->name = Z_NULL;
+            state->length = 0;
             state->mode = COMMENT;
         case COMMENT:
             if (state->flags & 0x1000) {
@@ -697,13 +726,19 @@ int flush;
                 copy = 0;
                 do {
                     len = (unsigned)(next[copy++]);
+                    if (state->head != Z_NULL &&
+                            state->head->comment != Z_NULL &&
+                            state->length < state->head->comm_max)
+                        state->head->comment[state->length++] = len;
                 } while (len && copy < have);
-                if (state->flags & 0x02000)
+                if (state->flags & 0x0200)
                     state->check = crc32(state->check, next, copy);
                 have -= copy;
                 next += copy;
                 if (len) goto inf_leave;
             }
+            else if (state->head != Z_NULL)
+                state->head->comment = Z_NULL;
             state->mode = HCRC;
         case HCRC:
             if (state->flags & 0x0200) {
@@ -714,6 +749,10 @@ int flush;
                     break;
                 }
                 INITBITS();
+            }
+            if (state->head != Z_NULL) {
+                state->head->hcrc = (int)((state->flags >> 9) & 1);
+                state->head->done = 1;
             }
             strm->adler = state->check = crc32(0L, Z_NULL, 0);
             state->mode = TYPE;
@@ -883,6 +922,9 @@ int flush;
                 }
             }
 
+            /* handle error breaks in while */
+            if (state->mode == BAD) break;
+
             /* build code tables */
             state->next = state->codes;
             state->lencode = (code const FAR *)(state->next);
@@ -987,6 +1029,13 @@ int flush;
                 state->offset += BITS(state->extra);
                 DROPBITS(state->extra);
             }
+#ifdef INFLATE_STRICT
+            if (state->offset > state->dmax) {
+                strm->msg = (char *)"invalid distance too far back";
+                state->mode = BAD;
+                break;
+            }
+#endif
             if (state->offset > state->whave + out - left) {
                 strm->msg = (char *)"invalid distance too far back";
                 state->mode = BAD;
@@ -1128,12 +1177,16 @@ uInt dictLength;
     /* check state */
     if (strm == Z_NULL || strm->state == Z_NULL) return Z_STREAM_ERROR;
     state = (struct inflate_state FAR *)strm->state;
-    if (state->mode != DICT) return Z_STREAM_ERROR;
+    if (state->wrap != 0 && state->mode != DICT)
+        return Z_STREAM_ERROR;
 
     /* check for correct dictionary id */
-    id = adler32(0L, Z_NULL, 0);
-    id = adler32(id, dictionary, dictLength);
-    if (id != state->check) return Z_DATA_ERROR;
+    if (state->mode == DICT) {
+        id = adler32(0L, Z_NULL, 0);
+        id = adler32(id, dictionary, dictLength);
+        if (id != state->check)
+            return Z_DATA_ERROR;
+    }
 
     /* copy dictionary to window */
     if (updatewindow(strm, strm->avail_out)) {
@@ -1152,6 +1205,23 @@ uInt dictLength;
     }
     state->havedict = 1;
     Tracev((stderr, "inflate:   dictionary set\n"));
+    return Z_OK;
+}
+
+int ZEXPORT inflateGetHeader(strm, head)
+z_streamp strm;
+gz_headerp head;
+{
+    struct inflate_state FAR *state;
+
+    /* check state */
+    if (strm == Z_NULL || strm->state == Z_NULL) return Z_STREAM_ERROR;
+    state = (struct inflate_state FAR *)strm->state;
+    if ((state->wrap & 2) == 0) return Z_STREAM_ERROR;
+
+    /* save header structure */
+    state->head = head;
+    head->done = 0;
     return Z_OK;
 }
 
@@ -1257,6 +1327,7 @@ z_streamp source;
     struct inflate_state FAR *state;
     struct inflate_state FAR *copy;
     unsigned char FAR *window;
+    unsigned wsize;
 
     /* check input */
     if (dest == Z_NULL || source == Z_NULL || source->state == Z_NULL ||
@@ -1279,14 +1350,19 @@ z_streamp source;
     }
 
     /* copy state */
-    *dest = *source;
-    *copy = *state;
-    copy->lencode = copy->codes + (state->lencode - state->codes);
-    copy->distcode = copy->codes + (state->distcode - state->codes);
+    zmemcpy(dest, source, sizeof(z_stream));
+    zmemcpy(copy, state, sizeof(struct inflate_state));
+    if (state->lencode >= state->codes &&
+        state->lencode <= state->codes + ENOUGH - 1) {
+        copy->lencode = copy->codes + (state->lencode - state->codes);
+        copy->distcode = copy->codes + (state->distcode - state->codes);
+    }
     copy->next = copy->codes + (state->next - state->codes);
-    if (window != Z_NULL)
-        zmemcpy(window, state->window, 1U << state->wbits);
+    if (window != Z_NULL) {
+        wsize = 1U << state->wbits;
+        zmemcpy(window, state->window, wsize);
+    }
     copy->window = window;
-    dest->state = (voidpf)copy;
+    dest->state = (struct internal_state FAR *)copy;
     return Z_OK;
 }

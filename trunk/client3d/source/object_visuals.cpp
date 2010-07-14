@@ -134,7 +134,7 @@ void ObjectVisuals::Init(const char *filePath, const char *fileName)
 void ObjectVisuals::buildEntity(int index, const char *meshName, const char *entityName)
 {
     PROFILE()
-    Real h = 20.0, w = 10.0;
+    Real h = 20.0, w = 10.0f;
     String strMob = "Mob"+ StringConverter::toString(index, 3, '0');
     ManualObject* mob = static_cast<ManualObject*>(Events::getSingleton().getSceneManager()->createMovableObject(strMob, ManualObjectFactory::FACTORY_TYPE_NAME));
     mob->begin(MATERIAL_NAME);

@@ -34,7 +34,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 using namespace Ogre;
 
 static const unsigned int SUM_CAMERA_POS  = 7;
-static const int SUM_NEAR_GRASS_ROWS = 5;
+static const int SUM_NEAR_GRASS_ROWS = 7;
 static const Real HALF_TILE_SIZE  = 128.0          / (Real)TileManager::MAX_TEXTURE_SIZE; // Size of a subtile.
 static const Real HALF_TILE_SPACE = (128.0 + 16.0) / (Real)TileManager::MAX_TEXTURE_SIZE; // Space between 2 subtiles.
 static const Real FULL_TILE_SPACE = (256.0 + 16.0) / (Real)TileManager::MAX_TEXTURE_SIZE; // Space between 2 tiles.
@@ -263,10 +263,9 @@ void TileChunk::init(int queryMaskLand, int queryMaskWater, SceneManager *sceneM
     vData->vertexCount = sumVertices;
     vdec = vData->vertexDeclaration;
     offset = 0;
-    vdec->addElement(0, offset, VET_FLOAT3, VES_POSITION);
-    offset+= VertexElement::getTypeSize(VET_FLOAT3);
-    vdec->addElement(0, offset, VET_FLOAT2, VES_TEXTURE_COORDINATES, 0);
-    offset+= VertexElement::getTypeSize(VET_FLOAT2);
+    vdec->addElement(0, offset, VET_FLOAT3, VES_POSITION);               offset+= VertexElement::getTypeSize(VET_FLOAT3);
+    vdec->addElement(0, offset, VET_FLOAT2, VES_DIFFUSE);                offset+= VertexElement::getTypeSize(VET_FLOAT2);
+    vdec->addElement(0, offset, VET_FLOAT2, VES_TEXTURE_COORDINATES, 0); offset+= VertexElement::getTypeSize(VET_FLOAT2);
     vbuf = HardwareBufferManager::getSingleton().createVertexBuffer(offset, sumVertices*4, HardwareBuffer::HBU_STATIC_WRITE_ONLY, false);
     vData->vertexBufferBinding->setBinding(0, vbuf);
     mSubMeshGrassNear->vertexData = vData;
@@ -311,7 +310,7 @@ void TileChunk::init(int queryMaskLand, int queryMaskWater, SceneManager *sceneM
     MeshGrassNear->load();
     mEntityGrassNear = sceneManager->createEntity("Entity_GrassNear", "Mesh_GrassNear");
     //mEntityGrassNear->setMaterialName(TileManager::MATERIAL_PREFIX + TileManager::GrassNear_PREFIX);
-    mEntityGrassNear->setMaterialName("Terrain/GrassNear");
+    mEntityGrassNear->setMaterialName("Terrain/GrassWaving");
     mEntityGrassNear->setQueryFlags(queryMaskWater);
     mEntityGrassNear->setRenderQueueGroup(RENDER_QUEUE_8); // See OgreRenderQueue.h
     // ////////////////////////////////////////////////////////////////////
@@ -352,6 +351,11 @@ void TileChunk::setLight(Real brightness)
     para = tmpMaterial->getBestTechnique()->getPass(0)->getVertexProgramParameters();
     if (para->_findNamedConstantDefinition("para"))
         para->setNamedConstant("para", Vector4(mDaylight, mWaveParam.x, mWaveParam.y, mWaveParam.z));
+
+    tmpMaterial = MaterialManager::getSingleton().getByName(TileManager::MATERIAL_PREFIX + TileManager::UNDERGROWTH_PREFIX);
+    para = tmpMaterial->getBestTechnique()->getPass(0)->getVertexProgramParameters();
+    if (para->_findNamedConstantDefinition("para"))
+        para->setNamedConstant("para", Vector4(mDaylight, mUndergrowthParam.x, mUndergrowthParam.y, mUndergrowthParam.z));
 }
 
 //================================================================================================
@@ -367,6 +371,21 @@ void TileChunk::setWave(Real alpha, Real amplitude, Real speed)
     GpuProgramParametersSharedPtr para = tmpMaterial->getBestTechnique()->getPass(0)->getVertexProgramParameters();
     if (para->_findNamedConstantDefinition("para"))
         para->setNamedConstant("para", Vector4(mDaylight, mWaveParam.x, mWaveParam.y, mWaveParam.z));
+}
+
+//================================================================================================
+// Set the parameter for the undergrow.
+//================================================================================================
+void TileChunk::setUndergrowth(Real alpha, Real amplitude, Real speed)
+{
+    PROFILE()
+    mUndergrowthParam.x = alpha;
+    mUndergrowthParam.y = amplitude;
+    mUndergrowthParam.z = speed;
+    MaterialPtr tmpMaterial = MaterialManager::getSingleton().getByName(TileManager::MATERIAL_PREFIX + TileManager::UNDERGROWTH_PREFIX);
+    GpuProgramParametersSharedPtr para = tmpMaterial->getBestTechnique()->getPass(0)->getVertexProgramParameters();
+    if (para->_findNamedConstantDefinition("para"))
+        para->setNamedConstant("para", Vector4(mDaylight, mUndergrowthParam.x, mUndergrowthParam.y, mUndergrowthParam.z));
 }
 
 //================================================================================================
@@ -683,8 +702,8 @@ void TileChunk::updateUndergrowth()
 {
     PROFILE()
     if (!mUndergrowth) return;
-    HardwareVertexBufferSharedPtr vbuf = mSubMeshGrassFar->vertexData->vertexBufferBinding->getBuffer(0);
     Real height;
+    HardwareVertexBufferSharedPtr vbuf = mSubMeshGrassFar->vertexData->vertexBufferBinding->getBuffer(0);
     Real *pReal = static_cast<Real*>(vbuf->lock(HardwareBuffer::HBL_DISCARD));
     unsigned int numVertices = 0;
     for (int z = 0; z < TileManager::CHUNK_SIZE_Z*2-SUM_NEAR_GRASS_ROWS; ++z)
@@ -725,13 +744,12 @@ void TileChunk::updateUndergrowth()
     vbuf = mSubMeshGrassNear->vertexData->vertexBufferBinding->getBuffer(0);
     pReal = static_cast<Real*>(vbuf->lock(HardwareBuffer::HBL_DISCARD));
     numVertices = 0;
-    const Real GRASS_SIZE = 70.0;
-    Real z = 0;
-    for (int zz = TileManager::CHUNK_SIZE_Z*2-SUM_NEAR_GRASS_ROWS; zz < TileManager::CHUNK_SIZE_Z*2; ++zz, ++z)
+    const Real GRASS_SIZE = 70.0f;
+    for (int z = TileManager::CHUNK_SIZE_Z*2-SUM_NEAR_GRASS_ROWS; z < TileManager::CHUNK_SIZE_Z*2; ++z)
     {
         for (int x = 0; x < TileManager::CHUNK_SIZE_X*2; ++x)
         {
-            height = TileManager::getSingleton().getMapHeight(x, zz) + TileManager::TILE_RENDER_SIZE/2.0f;
+            height = TileManager::getSingleton().getMapHeight(x, z);
 //#define STYLE_1
 #ifdef STYLE_1
             /*    \/    */
@@ -739,139 +757,187 @@ void TileChunk::updateUndergrowth()
             /*  _/__\_  */
             /*  /    \  */
             // Front
-            *pReal++ = TileManager::TILE_RENDER_SIZE * x + GRASS_SIZE/2;
+            *pReal++ = TileManager::TILE_RENDER_SIZE * x + GRASS_SIZE/2.0f;
+            *pReal++ = height + TileManager::TILE_RENDER_SIZE/2.0f;
+            *pReal++ = TileManager::TILE_RENDER_SIZE * z + GRASS_SIZE/2.0f;
+            *pReal++ = 0.0f; // Waving strength (x direction).
+            *pReal++ = 1.0f; // Waving strength (z direction).
+            *pReal++ = 1.0f;
+            *pReal++ = 0.0f;
+            *pReal++ = TileManager::TILE_RENDER_SIZE * x - GRASS_SIZE/2.0f;
+            *pReal++ = height + TileManager::TILE_RENDER_SIZE/2.0f;
+            *pReal++ = TileManager::TILE_RENDER_SIZE * z + GRASS_SIZE/2.0f;
+            *pReal++ = 0.0f; // Waving strength (x direction).
+            *pReal++ = 1.0f; // Waving strength (z direction).
+            *pReal++ = 0.0f;
+            *pReal++ = 0.0f;
+            *pReal++ = TileManager::TILE_RENDER_SIZE * x - GRASS_SIZE/2.0f;
             *pReal++ = height;
-            *pReal++ = TileManager::TILE_RENDER_SIZE * z + GRASS_SIZE/2;
-            *pReal++ = 1.0;
-            *pReal++ = 0.0;
-            *pReal++ = TileManager::TILE_RENDER_SIZE * x - GRASS_SIZE/2;
+            *pReal++ = TileManager::TILE_RENDER_SIZE * z + GRASS_SIZE/2.0f;
+            *pReal++ = 0.0f; // Waving strength (x direction).
+            *pReal++ = 0.0f; // Waving strength (z direction).
+            *pReal++ = 0.0f;
+            *pReal++ = 1.0f;
+            *pReal++ = TileManager::TILE_RENDER_SIZE * x + GRASS_SIZE/2.0f;
             *pReal++ = height;
-            *pReal++ = TileManager::TILE_RENDER_SIZE * z + GRASS_SIZE/2;
-            *pReal++ = 0.0;
-            *pReal++ = 0.0;
-            *pReal++ = TileManager::TILE_RENDER_SIZE * x - GRASS_SIZE/2;
-            *pReal++ = height-TileManager::TILE_RENDER_SIZE/2;
-            *pReal++ = TileManager::TILE_RENDER_SIZE * z + GRASS_SIZE/2;
-            *pReal++ = 0.0;
-            *pReal++ = 1.0;
-            *pReal++ = TileManager::TILE_RENDER_SIZE * x + GRASS_SIZE/2;
-            *pReal++ = height-TileManager::TILE_RENDER_SIZE/2;
-            *pReal++ = TileManager::TILE_RENDER_SIZE * z + GRASS_SIZE/2;
-            *pReal++ = 1.0;
-            *pReal++ = 1.0;
+            *pReal++ = TileManager::TILE_RENDER_SIZE * z + GRASS_SIZE/2.0f;
+            *pReal++ = 0.0f; // Waving strength (x direction).
+            *pReal++ = 0.0f; // Waving strength (z direction).
+            *pReal++ = 1.0f;
+            *pReal++ = 1.0f;
             ++numVertices;
             // Right
-            *pReal++ = TileManager::TILE_RENDER_SIZE * x + GRASS_SIZE/2;
-            *pReal++ = height;
-            *pReal++ = TileManager::TILE_RENDER_SIZE * z + GRASS_SIZE/1.5;
-            *pReal++ = 1.0;
-            *pReal++ = 0.0;
+            *pReal++ = TileManager::TILE_RENDER_SIZE * x + GRASS_SIZE/2.0f;
+            *pReal++ = height + TileManager::TILE_RENDER_SIZE/2.0f;
+            *pReal++ = TileManager::TILE_RENDER_SIZE * z + GRASS_SIZE/1.5f;
+            *pReal++ = 0.5f; // Waving strength (x direction).
+            *pReal++ =-0.5f; // Waving strength (z direction).
+            *pReal++ = 1.0f;
+            *pReal++ = 0.0f;
+            *pReal++ = TileManager::TILE_RENDER_SIZE * x - GRASS_SIZE/8;
+            *pReal++ = height + TileManager::TILE_RENDER_SIZE/2.0f;
+            *pReal++ = TileManager::TILE_RENDER_SIZE * z - GRASS_SIZE/4;
+            *pReal++ = 0.5f; // Waving strength (x direction).
+            *pReal++ =-0.5f; // Waving strength (z direction).
+            *pReal++ = 0.0f;
+            *pReal++ = 0.0f;
             *pReal++ = TileManager::TILE_RENDER_SIZE * x - GRASS_SIZE/8;
             *pReal++ = height;
             *pReal++ = TileManager::TILE_RENDER_SIZE * z - GRASS_SIZE/4;
-            *pReal++ = 0.0;
-            *pReal++ = 0.0;
-            *pReal++ = TileManager::TILE_RENDER_SIZE * x - GRASS_SIZE/8;
-            *pReal++ = height-TileManager::TILE_RENDER_SIZE/2;
-            *pReal++ = TileManager::TILE_RENDER_SIZE * z - GRASS_SIZE/4;
-            *pReal++ = 0.0;
-            *pReal++ = 1.0;
-            *pReal++ = TileManager::TILE_RENDER_SIZE * x + GRASS_SIZE/2;
-            *pReal++ = height-TileManager::TILE_RENDER_SIZE/2;
-            *pReal++ = TileManager::TILE_RENDER_SIZE * z + GRASS_SIZE/1.5;
-            *pReal++ = 1.0;
-            *pReal++ = 1.0;
+            *pReal++ = 0.0f; // Waving strength (x direction).
+            *pReal++ = 0.0f; // Waving strength (z direction).
+            *pReal++ = 0.0f;
+            *pReal++ = 1.0f;
+            *pReal++ = TileManager::TILE_RENDER_SIZE * x + GRASS_SIZE/2.0f;
+            *pReal++ = height;
+            *pReal++ = TileManager::TILE_RENDER_SIZE * z + GRASS_SIZE/1.5f;
+            *pReal++ = 0.0f; // Waving strength (x direction).
+            *pReal++ = 0.0f; // Waving strength (z direction).
+            *pReal++ = 1.0f;
+            *pReal++ = 1.0f;
             ++numVertices;
             // Left
             *pReal++ = TileManager::TILE_RENDER_SIZE * x + GRASS_SIZE/8;
-            *pReal++ = height;
+            *pReal++ = height + TileManager::TILE_RENDER_SIZE/2.0f;
             *pReal++ = TileManager::TILE_RENDER_SIZE * z - GRASS_SIZE/4;
-            *pReal++ = 1.0;
-            *pReal++ = 0.0;
-            *pReal++ = TileManager::TILE_RENDER_SIZE * x - GRASS_SIZE/2;
+            *pReal++ = 0.5f; // Waving strength (x direction).
+            *pReal++ =-0.5f; // Waving strength (z direction).
+            *pReal++ = 1.0f;
+            *pReal++ = 0.0f;
+            *pReal++ = TileManager::TILE_RENDER_SIZE * x - GRASS_SIZE/2.0f;
+            *pReal++ = height + TileManager::TILE_RENDER_SIZE/2.0f;
+            *pReal++ = TileManager::TILE_RENDER_SIZE * z + GRASS_SIZE/1.5f;
+            *pReal++ = 0.5f; // Waving strength (x direction).
+            *pReal++ =-0.5f; // Waving strength (z direction).
+            *pReal++ = 0.0f;
+            *pReal++ = 0.0f;
+            *pReal++ = TileManager::TILE_RENDER_SIZE * x - GRASS_SIZE/2.0f;
             *pReal++ = height;
-            *pReal++ = TileManager::TILE_RENDER_SIZE * z + GRASS_SIZE/1.5;
-            *pReal++ = 0.0;
-            *pReal++ = 0.0;
-            *pReal++ = TileManager::TILE_RENDER_SIZE * x - GRASS_SIZE/2;
-            *pReal++ = height-TileManager::TILE_RENDER_SIZE/2;
-            *pReal++ = TileManager::TILE_RENDER_SIZE * z + GRASS_SIZE/1.5;
-            *pReal++ = 0.0;
-            *pReal++ = 1.0;
+            *pReal++ = TileManager::TILE_RENDER_SIZE * z + GRASS_SIZE/1.5f;
+            *pReal++ = 0.0f; // Waving strength (x direction).
+            *pReal++ = 0.0f; // Waving strength (z direction).
+            *pReal++ = 0.0f;
+            *pReal++ = 1.0f;
             *pReal++ = TileManager::TILE_RENDER_SIZE * x + GRASS_SIZE/8;
-            *pReal++ = height-TileManager::TILE_RENDER_SIZE/2;
+            *pReal++ = height;
             *pReal++ = TileManager::TILE_RENDER_SIZE * z - GRASS_SIZE/4;
-            *pReal++ = 1.0;
-            *pReal++ = 1.0;
+            *pReal++ = 0.0f; // Waving strength (x direction).
+            *pReal++ = 0.0f; // Waving strength (z direction).
+            *pReal++ = 1.0f;
+            *pReal++ = 1.0f;
             ++numVertices;
 #else
             /*  _\/_  */
             /*   /\   */
             // Horizontal
-            *pReal++ = TileManager::TILE_RENDER_SIZE * x + GRASS_SIZE/2.5f;
+            *pReal++ = TileManager::TILE_RENDER_SIZE * x + GRASS_SIZE/2.0f;
+            *pReal++ = height + TileManager::TILE_RENDER_SIZE/2.0f;
+            *pReal++ = TileManager::TILE_RENDER_SIZE *z;
+            *pReal++ = 0.0f; // Waving strength (x direction).
+            *pReal++ = 1.0f; // Waving strength (z direction).
+            *pReal++ = 1.0f;
+            *pReal++ = 0.0f;
+            *pReal++ = TileManager::TILE_RENDER_SIZE * x - GRASS_SIZE/2.0f;
+            *pReal++ = height + TileManager::TILE_RENDER_SIZE/2.0f;
+            *pReal++ = TileManager::TILE_RENDER_SIZE *z;
+            *pReal++ = 0.0f; // Waving strength (x direction).
+            *pReal++ = 1.0f; // Waving strength (z direction).
+            *pReal++ = 0.0f;
+            *pReal++ = 0.0f;
+            *pReal++ = TileManager::TILE_RENDER_SIZE * x - GRASS_SIZE/2.0f;
             *pReal++ = height;
             *pReal++ = TileManager::TILE_RENDER_SIZE *z;
-            *pReal++ = 1.0;
-            *pReal++ = 0.0;
-            *pReal++ = TileManager::TILE_RENDER_SIZE * x - GRASS_SIZE/2.5f;
+            *pReal++ = 0.0f; // Waving strength (x direction).
+            *pReal++ = 0.0f; // Waving strength (z direction).
+            *pReal++ = 0.0f;
+            *pReal++ = 1.0f;
+            *pReal++ = TileManager::TILE_RENDER_SIZE * x + GRASS_SIZE/2.0f;
             *pReal++ = height;
             *pReal++ = TileManager::TILE_RENDER_SIZE *z;
-            *pReal++ = 0.0;
-            *pReal++ = 0.0;
-            *pReal++ = TileManager::TILE_RENDER_SIZE * x - GRASS_SIZE/2.5f;
-            *pReal++ = height-TileManager::TILE_RENDER_SIZE/2;
-            *pReal++ = TileManager::TILE_RENDER_SIZE *z;
-            *pReal++ = 0.0;
-            *pReal++ = 1.0;
-            *pReal++ = TileManager::TILE_RENDER_SIZE * x + GRASS_SIZE/2.5f;
-            *pReal++ = height-TileManager::TILE_RENDER_SIZE/2;
-            *pReal++ = TileManager::TILE_RENDER_SIZE *z;
-            *pReal++ = 1.0;
-            *pReal++ = 1.0;
+            *pReal++ = 0.0f; // Waving strength (x direction).
+            *pReal++ = 0.0f; // Waving strength (z direction).
+            *pReal++ = 1.0f;
+            *pReal++ = 1.0f;
             ++numVertices;
             // Vertical 1
             *pReal++ = TileManager::TILE_RENDER_SIZE * x + GRASS_SIZE/4.5f;
-            *pReal++ = height;
+            *pReal++ = height + TileManager::TILE_RENDER_SIZE/2.0f;
             *pReal++ = TileManager::TILE_RENDER_SIZE * z + GRASS_SIZE/3.0f;
-            *pReal++ = 1.0;
-            *pReal++ = 0.0;
+            *pReal++ =-0.5f; // Waving strength (x direction).
+            *pReal++ = 0.5f; // Waving strength (z direction).
+            *pReal++ = 1.0f;
+            *pReal++ = 0.0f;
+            *pReal++ = TileManager::TILE_RENDER_SIZE * x - GRASS_SIZE/4.5f;
+            *pReal++ = height + TileManager::TILE_RENDER_SIZE/2.0f;
+            *pReal++ = TileManager::TILE_RENDER_SIZE * z - GRASS_SIZE/3.0f;
+            *pReal++ =-0.5f; // Waving strength (x direction).
+            *pReal++ = 0.5f; // Waving strength (z direction).
+            *pReal++ = 0.0f;
+            *pReal++ = 0.0f;
             *pReal++ = TileManager::TILE_RENDER_SIZE * x - GRASS_SIZE/4.5f;
             *pReal++ = height;
             *pReal++ = TileManager::TILE_RENDER_SIZE * z - GRASS_SIZE/3.0f;
-            *pReal++ = 0.0;
-            *pReal++ = 0.0;
-            *pReal++ = TileManager::TILE_RENDER_SIZE * x - GRASS_SIZE/4.5f;
-            *pReal++ = height-TileManager::TILE_RENDER_SIZE/2;
-            *pReal++ = TileManager::TILE_RENDER_SIZE * z - GRASS_SIZE/3.0f;
-            *pReal++ = 0.0;
-            *pReal++ = 1.0;
+            *pReal++ = 0.0f; // Waving strength (x direction).
+            *pReal++ = 0.0f; // Waving strength (z direction).
+            *pReal++ = 0.0f;
+            *pReal++ = 1.0f;
             *pReal++ = TileManager::TILE_RENDER_SIZE * x + GRASS_SIZE/4.5f;
-            *pReal++ = height-TileManager::TILE_RENDER_SIZE/2;
+            *pReal++ = height;
             *pReal++ = TileManager::TILE_RENDER_SIZE * z + GRASS_SIZE/3.0f;
-            *pReal++ = 1.0;
-            *pReal++ = 1.0;
+            *pReal++ = 0.0f; // Waving strength (x direction).
+            *pReal++ = 0.0f; // Waving strength (z direction).
+            *pReal++ = 1.0f;
+            *pReal++ = 1.0f;
             ++numVertices;
             // Vertical 2
             *pReal++ = TileManager::TILE_RENDER_SIZE * x - GRASS_SIZE/4.5f;
-            *pReal++ = height;
+            *pReal++ = height + TileManager::TILE_RENDER_SIZE/2.0f;
             *pReal++ = TileManager::TILE_RENDER_SIZE * z + GRASS_SIZE/3.0f;
-            *pReal++ = 1.0;
-            *pReal++ = 0.0;
+            *pReal++ =-0.5f; // Waving strength (x direction).
+            *pReal++ = 0.5f; // Waving strength (z direction).
+            *pReal++ = 1.0f;
+            *pReal++ = 0.0f;
+            *pReal++ = TileManager::TILE_RENDER_SIZE * x + GRASS_SIZE/4.5f;
+            *pReal++ = height + TileManager::TILE_RENDER_SIZE/2.0f;
+            *pReal++ = TileManager::TILE_RENDER_SIZE * z - GRASS_SIZE/3.0f;
+            *pReal++ =-0.5f; // Waving strength (x direction).
+            *pReal++ = 0.5f; // Waving strength (z direction).
+            *pReal++ = 0.0f;
+            *pReal++ = 0.0f;
             *pReal++ = TileManager::TILE_RENDER_SIZE * x + GRASS_SIZE/4.5f;
             *pReal++ = height;
             *pReal++ = TileManager::TILE_RENDER_SIZE * z - GRASS_SIZE/3.0f;
-            *pReal++ = 0.0;
-            *pReal++ = 0.0;
-            *pReal++ = TileManager::TILE_RENDER_SIZE * x + GRASS_SIZE/4.5f;
-            *pReal++ = height-TileManager::TILE_RENDER_SIZE/2;
-            *pReal++ = TileManager::TILE_RENDER_SIZE * z - GRASS_SIZE/3.0f;
-            *pReal++ = 0.0;
-            *pReal++ = 1.0;
+            *pReal++ = 0.0f; // Waving strength (x direction).
+            *pReal++ = 0.0f; // Waving strength (z direction).
+            *pReal++ = 0.0f;
+            *pReal++ = 1.0f;
             *pReal++ = TileManager::TILE_RENDER_SIZE * x - GRASS_SIZE/4.5f;
-            *pReal++ = height-TileManager::TILE_RENDER_SIZE/2;
+            *pReal++ = height;
             *pReal++ = TileManager::TILE_RENDER_SIZE * z + GRASS_SIZE/3.0f;
-            *pReal++ = 1.0;
-            *pReal++ = 1.0;
+            *pReal++ = 0.0f; // Waving strength (x direction).
+            *pReal++ = 0.0f; // Waving strength (z direction).
+            *pReal++ = 1.0f;
+            *pReal++ = 1.0f;
             ++numVertices;
 #endif
         }

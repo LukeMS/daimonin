@@ -60,6 +60,7 @@ public:
     // ////////////////////////////////////////////////////////////////////
     static Ogre::String LAND_PREFIX;
     static Ogre::String WATER_PREFIX;
+    static Ogre::String UNDERGROWTH_PREFIX;
     static Ogre::String ATLAS_PREFIX;
     static Ogre::String MATERIAL_PREFIX;
     enum {CHUNK_SIZE_X     =  12};                /**< Size of the visible part of the world on x-axis. **/
@@ -121,7 +122,6 @@ public:
     {
         mMapchunk.setCameraRotation(cameraAngle);
     }
-    bool loadImage(Ogre::Image &image, const Ogre::String &filename, bool logErrors);
     /** Get the height of a position within the terrain.
      ** Used to place objects on the terrain ground.
      ** @param posX The x-pos.
@@ -135,6 +135,10 @@ public:
     void setWave(Ogre::Real alpha, Ogre::Real amplitude, Ogre::Real speed)
     {
         mMapchunk.setWave(alpha, amplitude, speed);
+    }
+    void setUndergrowth(Ogre::Real alpha, Ogre::Real amplitude, Ogre::Real speed)
+    {
+        mMapchunk.setUndergrowth(alpha, amplitude, speed);
     }
     void setGrid(bool visible)
     {
@@ -204,6 +208,7 @@ private:
     void copyFlowToAtlas(Ogre::uchar *dstBuf); /**<  3 Special tiles with a flow effect (Water/Lava/etc). **/
     void copySpotToAtlas(Ogre::uchar *dstBuf);
     void copyMaskToAtlas(Ogre::uchar *dstBuf);
+    bool loadImage(Ogre::Image &image, const Ogre::String &filename, bool logErrors);
     bool vertexPick(Ogre::Ray *mouseRay, int x, int z, int pos);
     int  calcHeight(int vert0, int vert1, int vert2, int posX, int posZ);
     /// Create a template to make it easier for the artists to create a maskset.

@@ -57,7 +57,6 @@ void MainVP_Land_Lod0(
     outPara.b = params.w; // Spotlight
     outPara.a = params.x; // Faked shadow.
 }
-
 //================================================================================================
 // Fragment Program (Land Lod 0)
 //================================================================================================
@@ -80,7 +79,6 @@ float4 MainFP_Land_Lod0(
     color*= max(para.r, para.b * maskColor.a);               // Daylight + Spotlight
     return color;
 }
-
 //================================================================================================
 // Fragment Program (Land Lod 1)
 //================================================================================================
@@ -100,10 +98,9 @@ float4 MainFP_Land_Lod1(
     color = lerp(color, tex2D(texture1, tex1), maskColor.r);  // Ground Layer 1
     color = lerp(color, tex2D(texture2, tex2), maskColor.g);  // Ground Layer 2
     color*= para.r * para.a * saturate(para.g +maskColor.b);  // Daylight + Faked shadow + Grid
-    color+= float4(para.b,para.b,para.b, 1.0) *maskColor.a/4; // Spotlight
+    color+= float4(para.b,para.b,para.b, 1.0f) *maskColor.a/4; // Spotlight
     return color;
 }
-
 
 
 //================================================================================================
@@ -118,12 +115,11 @@ float2 MainVP_Water_Lod0(
     uniform float Time,
     uniform float4x4 worldViewProj) : COLOR
 {
-    inPos.y+= sin(sin(inPos.x*8) + cos(inPos.z*8) + Time * para.a)*para.b;
+    inPos.y+= sin(sin(inPos.x*8.0f) + cos(inPos.z*8.0f) + Time * para.a)*para.b;
     outPos  = mul(worldViewProj, inPos);
     outTex0 = inTex0;
     return para.rg;
 }
-
 //================================================================================================
 // Fragment Program (Water Lod 0)
 //================================================================================================
@@ -139,7 +135,6 @@ float4 MainFP_Water_Lod0(
 }
 
 
-
 //================================================================================================
 // Vertex Program (Sprite)
 // The sprite always faces the camera.
@@ -153,8 +148,8 @@ void MainVP_Sprite(
     uniform float4x4 worldMatrix,
     uniform float4x4 viewProjMatrix)
 {
-    const float  SIZE = 64.0;
-    const float3 UP_VECTOR = /*normalize*/(float3(0,1,0));
+    const float  SIZE = 64.0f;
+    const float3 UP_VECTOR = /*normalize*/(float3(0.0f, 1.0f, 0.0f));
 
     float3 eyeVector = viewProjMatrix[2].xyz;
     float3 sideVector= /*normalize*/(cross(eyeVector, UP_VECTOR));
@@ -164,7 +159,6 @@ void MainVP_Sprite(
     oPosition = mul(viewProjMatrix, center);
     oUV= uv;
 }
-
 //================================================================================================
 // Fragment Program (Sprite)
 //================================================================================================
@@ -173,6 +167,36 @@ float4 MainFP_Sprite(float2 tex0 : TEXCOORD0, uniform sampler2D texture0) : COLO
     return tex2D(texture0, tex0);
 }
 
+
+//================================================================================================
+// Vertex Program (waving grass)
+//================================================================================================
+void MainVP_GrassWaving(
+    float4 inPos     : POSITION,
+    float2 inUV      : TEXCOORD0,
+    float2 wave      : COLOR0,
+    out float  outDaylight,
+    out float4 outPos: POSITION,
+    out float2 outUV : TEXCOORD0,
+    uniform float Time,
+    uniform float4 para,  // r=daylight, g=alpha, b=amplitude, a=speed
+    uniform float4x4 worldViewProj)
+{
+    inPos.x+=  wave.x * sin(Time * para.a)*para.b;
+    inPos.z+=  wave.y * sin(Time * para.a)*para.b;
+    outPos = mul(worldViewProj, inPos);
+    outUV  = inUV;
+    outDaylight = para.r;
+}
+//================================================================================================
+// Fragment Program (waving grass)
+//================================================================================================
+float4 MainFP_GrassWaving(float daylight, float2 tex0 : TEXCOORD0, uniform sampler2D texture0) : COLOR
+{
+    float4 color = tex2D(texture0, tex0);
+    //color.rgb*= daylight;
+    return color;
+}
 
 
 //================================================================================================
@@ -184,10 +208,9 @@ void MainVP_VSelection(
     out float4 outDark: COLOR0,
     uniform float4x4 worldViewProj)
 {
-    outDark = float4(inPos.x/4, inPos.y/4, inPos.z/4, 1.0);
+    outDark = float4(inPos.x/4.0f, inPos.y/4.0f, inPos.z/4, 1.0f);
     outPos = mul(worldViewProj, inPos);
 }
-
 //================================================================================================
 // Fragment Program (Vertexselection)
 //================================================================================================

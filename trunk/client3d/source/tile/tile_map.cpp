@@ -322,9 +322,9 @@ void TileMap::set_map_face(int x, int y, int layer, int face, int pos, int ext, 
                     {
                         once = false;
                         Vector3 pos;
-                        pos.x = TileManager::TILE_RENDER_SIZE/2 * 8.5;
+                        pos.x = TileManager::TILE_RENDER_SIZE/2 * 8.5f;
                         pos.y = 0;
-                        pos.z = TileManager::TILE_RENDER_SIZE/2 * 8.5;
+                        pos.z = TileManager::TILE_RENDER_SIZE/2 * 8.5f;
                         ObjectManager::getSingleton().setPosition(ObjectNPC::HERO, pos);
                         Logger::log().error() << "we got the Hero face: " << face;
                     }

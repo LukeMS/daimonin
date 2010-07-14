@@ -45,7 +45,7 @@ GuiElementSlot::GuiElementSlot(TiXmlElement *xmlElement, const void *parent, boo
     PROFILE()
     mSlotNr = ++uid;
     mItemGfxID = -1;
-    mBusyTime = 1.0;  // Default time for a slot to be busy (MUST be > 0).
+    mBusyTime = 1.0f;  // Default time for a slot to be busy (MUST be > 0).
     mBusyOldVal = -1;
     mBusyTimeExpired = 0;
     // Look for a background graphic (its a png from the item folder).
