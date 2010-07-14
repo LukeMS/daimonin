@@ -57,7 +57,6 @@ struct Settings settings    =
     STATS_ARCHIVE_DIR,      /* Directory for logs, ready for further processing */
     STAT_LOSS,              /* If not 0, players lose random stats on death. */
     RESET_LOCATION_TIME,    /* Number of seconds to put player back at home */
-    "",                     /* admin_password */
     0,                      /* True if we should send updates */
     "",                     /* Hostname/ip addr of the metaserver */
     "",                        /* name of the server */
@@ -359,13 +358,6 @@ static void load_settings()
         {
             if(*cp)
                 settings.login_ip = strdup_local(cp);
-        }
-        else if (!strcasecmp(buf, "admin_password"))
-        {
-            if (has_val)
-            {
-                strcpy(settings.admin_password, cp);
-            }
         }
         else if (!strcasecmp(buf, "metaserver_notification"))
         {

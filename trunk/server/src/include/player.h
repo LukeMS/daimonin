@@ -375,9 +375,6 @@ typedef struct pl_player
 
     /* All pets owned by this player */
     objectlink         *pets;
-
-    char               *last_command; /* If the last command requires confirmation, it is stored here. */
-    uint8               last_command_confirmed : 1; /* If last_command has been confirmed. */
 } player;
 
 
