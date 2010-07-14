@@ -70,7 +70,7 @@ public:
     {
         static Sound Singleton; return Singleton;
     }
-    bool Init(const char *filePath);
+    bool Init(const char *filePath, int preferredDevice = -1);
     void freeRecources();
     void createDummy();
     void openStream(SampleID id);

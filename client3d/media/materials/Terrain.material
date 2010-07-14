@@ -7,7 +7,6 @@ vertex_program VP_Land_Lod0 cg
     entry_point MainVP_Land_Lod0
     profiles arbvp1 vs_1_1
 }
-
 //================================================================================================
 // Land: Pixel shader (Lod 0).
 //================================================================================================
@@ -17,7 +16,6 @@ fragment_program FP_Land_Lod0 cg
     entry_point MainFP_Land_Lod0
     profiles arbfp1 ps_2_0
 }
-
 //================================================================================================
 // Land: Pixel shader (Lod 1).
 //================================================================================================
@@ -27,7 +25,6 @@ fragment_program FP_Land_Lod1 cg
     entry_point MainFP_Land_Lod1
     profiles fp20
 }
-
 //================================================================================================
 // Land: Material.
 //================================================================================================
@@ -72,7 +69,6 @@ material Terrain/Land
 }
 
 
-
 //================================================================================================
 // Water: Vertex Program (Lod 0).
 //================================================================================================
@@ -82,7 +78,6 @@ vertex_program VP_Water_Lod0 cg
     entry_point MainVP_Water_Lod0
     profiles arbvp1 vs_1_1
 }
-
 //================================================================================================
 // Water: Pixel shader (Lod 0).
 //================================================================================================
@@ -92,7 +87,6 @@ fragment_program FP_Water_Lod0 cg
     entry_point MainFP_Water_Lod0
     profiles arbfp1 fp20 ps_1_3
 }
-
 //================================================================================================
 // Water: Material.
 //================================================================================================
@@ -118,7 +112,6 @@ material Terrain/Water
 }
 
 
-
 //================================================================================================
 // Sprite: Vertex Program (Lod 0).
 //================================================================================================
@@ -128,7 +121,6 @@ vertex_program VP_Srite cg
     entry_point MainVP_Sprite
     profiles arbvp1 vs_1_1
 }
-
 //================================================================================================
 // Sprite: Pixel shader (Lod 0).
 //================================================================================================
@@ -138,7 +130,6 @@ fragment_program FP_Sprite cg
     entry_point MainFP_Sprite
     profiles arbfp1 fp20 ps_1_3
 }
-
 //================================================================================================
 // Sprite: Material.
 //================================================================================================
@@ -164,10 +155,58 @@ material Terrain/Sprite
     }
 }
 
+
 //================================================================================================
-// Sprite: Material.
+// Waving grass: Vertex Program (Lod 0).
 //================================================================================================
-material Terrain/GrassNear
+vertex_program VP_GrassWaving cg
+{
+    source Terrain.cg
+    entry_point MainVP_GrassWaving
+    profiles arbvp1 vs_1_1
+}
+//================================================================================================
+// Waving grass: Pixel shader (Lod 0).
+//================================================================================================
+fragment_program FP_GrassWaving cg
+{
+    source Terrain.cg
+    entry_point MainFP_GrassWaving
+    profiles arbfp1 fp20 ps_1_3
+}
+//================================================================================================
+// Waving grass: Material.
+//================================================================================================
+material Terrain/GrassWaving
+{
+    technique
+    {
+        pass
+        {
+//            lighting off
+            cull_hardware none
+            cull_software none
+            alpha_rejection greater_equal 128
+            vertex_program_ref VP_GrassWaving
+            {
+                param_named_auto Time time
+                param_named_auto worldViewProj worldviewproj_matrix
+            }
+            fragment_program_ref FP_GrassWaving {}
+            texture_unit
+            {
+                filtering anisotropic
+                texture grass.png
+            }
+        }
+    }
+}
+
+
+//================================================================================================
+// Grass static: Material.
+//================================================================================================
+material Terrain/GrassStatic
 {
     technique
     {
@@ -175,6 +214,7 @@ material Terrain/GrassNear
         {
             cull_hardware none
             cull_software none
+            //lighting off
             alpha_rejection greater_equal 128
             texture_unit
             {
@@ -184,24 +224,6 @@ material Terrain/GrassNear
     }
 }
 
-
-material Terrain/test
-{
-    technique
-    {
-        pass
-        {
-            depth_write off
-            depth_check off
-            lighting off
-            alpha_rejection greater_equal 128
-            texture_unit
-            {
-                texture grass.png
-            }
-        }
-    }
-}
 
 //================================================================================================
 // Vertexselection: Vertex Program (Lod 0).
@@ -212,7 +234,6 @@ vertex_program VP_VSelection cg
     entry_point MainVP_VSelection
     profiles arbvp1 vs_1_1
 }
-
 //================================================================================================
 // Vertexselection: Pixel shader (Lod 0).
 //================================================================================================
@@ -222,7 +243,6 @@ fragment_program FP_VSelection cg
     entry_point MainFP_VSelection
     profiles arbfp1 fp20 ps_2_0
 }
-
 //================================================================================================
 // Vertexselection: Material.
 //================================================================================================

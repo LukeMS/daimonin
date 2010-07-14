@@ -87,7 +87,7 @@ public:
     }
     bool mouseWithin(int x, int y)
     {
-        return !(!isVisible() || x < mPosX || x > mPosX + mWidth || y < mPosY || y > mPosY + mHeight);
+        return (isVisible() && x > mPosX && x < (mPosX + mWidth) && y > mPosY && y < (mPosY + mHeight));
     }
     void mouseLeftWindow();
     void centerWindowOnMouse(int x, int y);

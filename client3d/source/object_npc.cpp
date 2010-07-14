@@ -86,9 +86,9 @@ ObjectNPC::ObjectNPC(sObject &obj, bool spawn):ObjectStatic(obj)
     mActGrace= obj.maxGrace;
     mBoundingRadius = obj.boundingRadius;
     if (!spawn || !mIndex)
-        mSpawnSize = 1.0;
+        mSpawnSize = 1.0f;
     else
-        mSpawnSize = 0.0;
+        mSpawnSize = 0.0f;
     mNode->setScale(mSpawnSize,mSpawnSize,mSpawnSize);
     // ////////////////////////////////////////////////////////////////////
     // Only players can change equipment.
@@ -120,7 +120,7 @@ ObjectNPC::ObjectNPC(sObject &obj, bool spawn):ObjectStatic(obj)
     blob->begin("Material_blob_shadow");
     const AxisAlignedBox &AABB = mEntity->getBoundingBox();
     float sizeX = (AABB.getMaximum().x -AABB.getMinimum().x);
-    float sizeY = 0.5;
+    float sizeY = 0.5f;
     float sizeZ = (AABB.getMaximum().z -AABB.getMinimum().z);
     if (sizeX < sizeZ) sizeX = sizeZ;
     blob->position(-sizeX, sizeY,  sizeX); blob->normal(0,0,1); blob->textureCoord(0.0, 0.0);
@@ -337,7 +337,7 @@ bool ObjectNPC::update(const FrameEvent& event)
             mAnim->toggleAnimation(ObjectAnimate::ANIM_GROUP_SPAWN, 0, false, true, false);
         }
         mSpawnSize+= event.timeSinceLastFrame;
-        if (mSpawnSize > 1.0) mSpawnSize =1.0;
+        if (mSpawnSize > 1.0) mSpawnSize =1.0f;
         mNode->setScale(mSpawnSize,mSpawnSize,mSpawnSize);
     }
     // ////////////////////////////////////////////////////////////////////
@@ -408,7 +408,7 @@ bool ObjectNPC::update(const FrameEvent& event)
         mAnim->toggleAnimation(ObjectAnimate::ANIM_GROUP_WALK, 0, true, true);
         // On slow systems it will happen that distance goes negative.
         // So we look if the squared length is bigger than the previous squared length.
-        static float squaredLengthPrev = 1000.0; // Somthing big.
+        static float squaredLengthPrev = 1000.0f; // Somthing big.
         Vector3 dist = mDestWalkVec - mNode->getPosition();
         float squaredLength = dist.squaredLength();
         // We have reached a waypoint || we went too far.
@@ -416,7 +416,7 @@ bool ObjectNPC::update(const FrameEvent& event)
         {
             mActTilePos = mDestStepPos;
             mNode->setPosition(mDestWalkVec); // Set the exact position.
-            squaredLengthPrev = 1000.0;       // Somthing big.
+            squaredLengthPrev = 1000.0f;       // Somthing big.
             moveToNeighbourTile(0);           // Move to next waypoint.
         }
         // We have to move on.
@@ -545,8 +545,8 @@ void ObjectNPC::setDamage(int damage)
         mAttacking = ATTACK_NONE;
         mAnim->toggleAnimation(ObjectAnimate::ANIM_GROUP_DEATH, 0);
         // mDeltaDegree is not used any longer. So we can misuse it here ;)
-        mDeltaDegree = 0.0;
-        mSpawnSize = 0.0;
+        mDeltaDegree = 0.0f;
+        mSpawnSize = 0.0f;
         Sound::getSingleton().playStream(Sound::MALE_BOUNTY_01);
     }
 }

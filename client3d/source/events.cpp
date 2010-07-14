@@ -254,7 +254,7 @@ bool Events::frameStarted(const FrameEvent& evt)
             // ////////////////////////////////////////////////////////////////////
             // Init the sound and play the background music.
             // ////////////////////////////////////////////////////////////////////
-            Sound::getSingleton().Init(PATH_SND);
+            Sound::getSingleton().Init(PATH_SND, Option::getSingleton().getIntValue(Option::CMDLINE_SND_DEVICE));
             Option::getSingleton().setGameStatus(Option::GAME_STATUS_INIT_LIGHT);
             GuiManager::getSingleton().displaySystemMessage("Starting the light-manager...");
             break;

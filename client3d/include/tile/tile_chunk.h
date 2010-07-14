@@ -57,6 +57,12 @@ public:
      ** @param speed     The speed for the waves.
      *****************************************************************************/
     void setWave(Ogre::Real alpha, Ogre::Real amplitude, Ogre::Real speed);
+    /** Set the shader parameters for the waves on the water.
+     ** @param alpha     unused.
+     ** @param amplitude The amplitude for the waving.
+     ** @param speed     The speed for the waving.
+     *****************************************************************************/
+    void setUndergrowth(Ogre::Real alpha, Ogre::Real amplitude, Ogre::Real speed);
     /** Set the shader parameter for the grid. */
     void setGrid(bool visible);
     /** Set the shader parameter for the ambient light. */
@@ -77,6 +83,7 @@ private:
     Ogre::SubMesh *mSubMeshLand, *mSubMeshWater, *mSubMeshGrassFar, *mSubMeshGrassNear;
     Ogre::Entity *mEntityGrassFar, *mEntityGrassNear;
     Ogre::Vector3 mWaveParam;
+    Ogre::Vector3 mUndergrowthParam;
     Ogre::Real mDaylight;
     Ogre::Real *mPosVBuf;
     Ogre::Real mTexPosInAtlas[6];

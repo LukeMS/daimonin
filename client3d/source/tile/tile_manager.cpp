@@ -33,10 +33,11 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 
 using namespace Ogre;
 
-String TileManager::LAND_PREFIX    = "Land";
-String TileManager::WATER_PREFIX   = "Water";
-String TileManager::ATLAS_PREFIX   = "Atlas_Tiles";
-String TileManager::MATERIAL_PREFIX= "Terrain/";
+String TileManager::LAND_PREFIX        = "Land";
+String TileManager::WATER_PREFIX       = "Water";
+String TileManager::UNDERGROWTH_PREFIX = "GrassWaving";
+String TileManager::ATLAS_PREFIX       = "Atlas_Tiles";
+String TileManager::MATERIAL_PREFIX    = "Terrain/";
 static const unsigned int RGB  = 3; /**< Pixelsize. **/
 static const unsigned int RGB_A= 4; /**< Pixelsize. **/
 
@@ -135,7 +136,8 @@ void TileManager::Init(SceneManager *SceneMgr, int queryMaskLand, int queryMaskW
     setMapset(0, 0);
     //setLight(1.0f);
     setLight(0.6f);
-    setWave(0.5, HEIGHT_STRETCH, 1.5);
+    setWave(0.5f, HEIGHT_STRETCH, 1.5f);
+    setUndergrowth(0.5f, 1.5f, 2.0f);
     setGrid(false);
     setRenderOptions(false);
     Logger::log().success(true);
@@ -1144,18 +1146,15 @@ bool TileManager::setResourcePath(String key, String &refPath)
 bool TileManager::loadImage(Image &image, const Ogre::String &strFilename, bool logErrors)
 {
     PROFILE()
-    struct stat fileInfo;
-    String strFile = mPathGfxTiles + strFilename;
-    if (!stat(strFile.c_str(), &fileInfo))
+    try
     {
-        try
-        {
-            image.load(strFilename, ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
-            return true;
-        }
-        catch (Exception &) {}
+        image.load(strFilename, ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
     }
-    if (logErrors)
-        Logger::log().error() << "Error on opening file " << strFile;
-    return false;
+    catch (Exception &)
+    {
+        if (logErrors)
+            Logger::log().error() << "Error on opening file " << mPathGfxTiles + strFilename;
+        return false;
+    }
+    return true;
 }

@@ -211,7 +211,7 @@ void Network::Map2Cmd(uchar *data, int len)
     PROFILE()
     static int map_w=0, map_h=0,mx=0,my=0;
     int     mask, x, y, pos = 0, ext_flag, xdata;
-    int height_2, height_3, height_4;
+//    int height_2, height_3, height_4;
     int     mapstat, ext1, ext2, ext3, probe;
     bool    map_new_flag = false;
     int     xpos, ypos;
@@ -247,6 +247,8 @@ void Network::Map2Cmd(uchar *data, int len)
             mx = xpos;
             my = ypos;
 //            remove_item_inventory(locate_item(0)); // implicit clear below
+            xoff = yoff; // DELETE ME! (switch off "value is nerver used" warning).
+            yoff = xoff; // DELETE ME! (switch off "value is nerver used" warning).
 //            TileMap::getSingleton().scroll(xoff, yoff);
         }
     }
@@ -332,17 +334,20 @@ void Network::Map2Cmd(uchar *data, int len)
                 }
                 if (pname_flag & 0x40)
                 {
-                    height_2 = GetShort_String(data + pos); pos+=2;
+                    //height_2 = GetShort_String(data + pos);
+                    pos+=2;
                     c = data[pos++];
                 }
                 if (pname_flag & 0x20)
                 {
-                    height_3 = GetShort_String(data + pos); pos+=2;
+                    //height_3 = GetShort_String(data + pos);
+                    pos+=2;
                     c = data[pos++];
                 }
                 if (pname_flag & 0x10)
                 {
-                    height_4 = GetShort_String(data + pos); pos+=2;
+                    //height_4 = GetShort_String(data + pos);
+                    pos+=2;
                     c = data[pos++];
                 }
             }

@@ -76,6 +76,12 @@ static bool parseCmdLine(const char *cmd, const char *value)
             Option::getSingleton().setIntValue(Option::CMDLINE_OFF_SOUND, true);
             ++options;
         }
+        if ((cmd[1] == 'd' || !stricmp(cmd, "--device")))
+        {
+            Logger::log().info() << "You told me to use Sound device #" << value;
+            Option::getSingleton().setIntValue(Option::CMDLINE_SND_DEVICE, atoi(value));
+            ++options;
+        }
         if (!stricmp(cmd, "--bbox"))
         {
             Logger::log().info() << "You told me to display bounding-boxes.";
@@ -92,14 +98,15 @@ static bool parseCmdLine(const char *cmd, const char *value)
     if (!options)
     {
         std::cout << "\nusage:\n"
-                  << "--guiinfo               -g  Prints some informations about the gui\n"
-                  << "--media                 -m  Create atlastextures and raw-fonts\n"
-                  << "--server <name>         -s  <name>\n"
-                  << "--port   <num>          -p  <num>\n"
-                  << "--lod    <num>              Set LoD for the TileEngine\n"
-                  << "--sound off             -x  disable Sound\n"
-                  << "--bbox                      show bounding-boxes\n"
-                  << "--flipbook <meshName>       convert a mesh into Imposters\n" << std::endl;
+                  << "--guiinfo               -g        Prints some informations about the gui\n"
+                  << "--media                 -m        Create atlastextures and raw-fonts\n"
+                  << "--server <name>         -s <name> Manually select a server\n"
+                  << "--port   <num>          -p <num>  Manually select a server port\n"
+                  << "--lod    <num>                    Set LoD for the TileEngine\n"
+                  << "--sound off             -x        Disable Sound\n"
+                  << "--device <num>          -d <num>  Choose a Sound-device\n"
+                  << "--bbox                            Show bounding-boxes\n"
+                  << "--flipbook <meshName>             Convert a mesh into Imposters\n" << std::endl;
         return false;
     }
     return true;

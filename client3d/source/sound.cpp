@@ -74,42 +74,46 @@ static IAudioManager *mSoundManager = 0;
 //================================================================================================
 // Init the sound-system.
 //================================================================================================
-bool Sound::Init(const char *filePath)
+bool Sound::Init(const char *filePath, int preferredDevice)
 {
     PROFILE()
     if (Option::getSingleton().getIntValue(Option::CMDLINE_OFF_SOUND)) return false;
     Logger::log().headline() << "Init Sound-System";
     mFilePath = filePath;
-    // ////////////////////////////////////////////////////////////////////
     // Create the main system object.
-    // ////////////////////////////////////////////////////////////////////
     mSoundManager = cAudio::createAudioManager(false);
     if(!mSoundManager)
     {
         Logger::log().error() << "Failed to create audio playback manager.";
         return false;
     }
-    //Allow the user to choose a playback device
-    Logger::log().info() << "\nAvailable Playback Devices: \n";
+    // Show all playback devices
     std::string defaultDeviceName = mSoundManager->getDefaultDeviceName();
-    for(unsigned int i=0; i< mSoundManager->getAvailableDeviceCount(); ++i)
+    int defaultDevice = -1;
+    Logger::log().info() << "\nAvailable Playback Devices: \n";
+    for (unsigned int i=0; i< mSoundManager->getAvailableDeviceCount(); ++i)
     {
         std::string deviceName = mSoundManager->getAvailableDeviceName(i);
         if (!deviceName.compare(defaultDeviceName))
+        {
             Logger::log().info() << i << "): " << deviceName << " [DEFAULT]";
+            defaultDevice = i;
+        }
         else
             Logger::log().info() << i << "): " << deviceName;
     }
-    //Initialize the manager with first device.
-    if (!mSoundManager->initialize(mSoundManager->getAvailableDeviceName(0)))
+    // If no preferedDevice was defined, use the system default.
+    if (preferredDevice < 0) preferredDevice = defaultDevice;
+    // Initialize the manager.
+    if (!mSoundManager->initialize(mSoundManager->getAvailableDeviceName(preferredDevice)))
     {
-        Logger::log().error() << "Failed to initialize the sound manager.";
+        Logger::log().error() << "Failed to initialize the sound manager with device " << mSoundManager->getAvailableDeviceName(preferredDevice);
+        destroyAudioManager(mSoundManager);
         mSoundManager = 0;
         return false;
     }
-    // ////////////////////////////////////////////////////////////////////
+    Logger::log().info() << "Playback Device '" << mSoundManager->getAvailableDeviceName(preferredDevice) << "' is active.";
     // Load all samples.
-    // ////////////////////////////////////////////////////////////////////
     createDummy();
     Logger::log().info() << "Loading all Sounds.";
     for (SampleID i = GUI_WRONG_INPUT; i< SAMPLE_SUM; i=SampleID(i+1))
@@ -157,6 +161,7 @@ void Sound::createDummy()
 void Sound::openStream(SampleID id)
 {
     PROFILE()
+    if (!mSoundManager) return;
     mSoundFiles[id].sound = mSoundManager->create(0, (mFilePath + mSoundFiles[id].filename).c_str(), mSoundFiles[id].stream);
     if (!mSoundFiles[id].sound)
     {
@@ -171,6 +176,7 @@ void Sound::openStream(SampleID id)
 void Sound::playStream(SampleID id)
 {
     PROFILE()
+    if (!mSoundManager) return;
     if (mSoundFiles[id].sound->isPlaying()) stopStream(id);
     if (!mSoundFiles[id].sound->play2d(mSoundFiles[id].loop))
     {
@@ -184,6 +190,7 @@ void Sound::playStream(SampleID id)
 void Sound::stopStream(SampleID id)
 {
     PROFILE()
+    if (!mSoundManager) return;
     mSoundFiles[id].sound->stop();
 }
 
@@ -193,6 +200,7 @@ void Sound::stopStream(SampleID id)
 void Sound::playMusic(std::string filename, bool loop)
 {
     PROFILE()
+    if (!mSoundManager) return;
     static IAudioSource *music = 0;
     if (music) mSoundManager->release(music);
     music = mSoundManager->create(0, (mFilePath + filename).c_str(), true);
@@ -208,7 +216,7 @@ void Sound::playMusic(std::string filename, bool loop)
 void Sound::playGuiSounds(unsigned char activeSounds)
 {
     PROFILE()
-    if (!activeSounds) return;
+    if (!mSoundManager || !activeSounds) return;
     if (activeSounds &  1) playStream(SampleID(GUI_WRONG_INPUT+0));
     if (activeSounds &  2) playStream(SampleID(GUI_WRONG_INPUT+1));
     if (activeSounds &  4) playStream(SampleID(GUI_WRONG_INPUT+2));
@@ -225,6 +233,7 @@ void Sound::playGuiSounds(unsigned char activeSounds)
 void Sound::setVolume(SampleID id, float volume)
 {
     PROFILE()
+    if (!mSoundManager) return;
     mSoundFiles[id].sound->setVolume(volume);
 }
 
@@ -234,5 +243,6 @@ void Sound::setVolume(SampleID id, float volume)
 void Sound::set3DPos(SampleID id, float &x, float &y, float &z)
 {
     PROFILE()
+    if (!mSoundManager) return;
     mSoundFiles[id].sound->setPosition(cVector3(x,y,z));
 }

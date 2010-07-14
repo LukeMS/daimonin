@@ -49,7 +49,7 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
 {
     PROFILE()
     mIdleTime =0;
-    static Real fogStart = 450.0;
+    static Real fogStart = 450.0f;
     // ////////////////////////////////////////////////////////////////////
     // GUI keyEvents.
     // ////////////////////////////////////////////////////////////////////
@@ -156,8 +156,7 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
 
         case OIS::KC_H:
         {
-            static int val = 100;
-            val=0;
+            //static int val = 100;
             //GuiManager::getSingleton().print(GuiManager::LIST_CHATWIN, StringConverter::toString(val).c_str());
             //GuiManager::getSingleton().setValue(GuiManager::STATUSBAR_PLAYER_MANA, val);
             //ObjectManager::getSingleton().Event(OBJECT_PLAYER, EVT_ANIMATION, 0,ObjectAnimate::STATE_HIT1);
@@ -626,7 +625,7 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
             static int mNumScreenShots=0;
             String strTemp = "Client3d_" + StringConverter::toString(++mNumScreenShots,2,'0') + ".png";
             mWindow->writeContentsToFile(strTemp.c_str());
-            //mTimeUntilNextToggle = 0.5;
+            //mTimeUntilNextToggle = 0.5f;
             break;
         }
         // ////////////////////////////////////////////////////////////////////

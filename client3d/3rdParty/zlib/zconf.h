@@ -1,34 +1,16 @@
-/*
-    Daimonin SDL client, a client program for the Daimonin MMORPG.
+/* ------------------------------------------ */
+/* This file was altered by the daimonin team */
+/* ------------------------------------------ */
 
-
-  Copyright (C) 2003 Michael Toennies
-
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-
-    The author can be reached via e-mail to info@daimonin.net
-*/
 /* zconf.h -- configuration of the zlib compression library
- * Copyright (C) 1995-2003 Jean-loup Gailly.
+ * Copyright (C) 1995-2005 Jean-loup Gailly.
  * For conditions of distribution and use, see copyright notice in zlib.h
  */
 
+/* @(#) $Id$ */
+
 #ifndef ZCONF_H
 #define ZCONF_H
-
-/* this is a slightly tweaked original ZLIB */
 
 /* enable this to set zlib modules to debug mode */
 /*#define DEBUG_ZLIB */
@@ -36,49 +18,57 @@
 #define FASTEST
 #define NO_GZCOMPRESS
 #define NO_GZIP
-#define BUILDFIXED
+#define BUILDFIXED 
+
 /*
  * If you *really* need a unique prefix for all types and library functions,
  * compile with -DZ_PREFIX. The "standard" zlib should be compiled without it.
  */
 #ifdef Z_PREFIX
-#  define deflateInit_  z_deflateInit_
-#  define deflate       z_deflate
-#  define deflateEnd    z_deflateEnd
-#  define inflateInit_  z_inflateInit_
-#  define inflate       z_inflate
-#  define inflateEnd    z_inflateEnd
-#  define deflateInit2_ z_deflateInit2_
-#  define deflateSetDictionary z_deflateSetDictionary
-#  define deflateCopy   z_deflateCopy
-#  define deflateReset  z_deflateReset
-#  define deflatePrime  z_deflatePrime
-#  define deflateParams z_deflateParams
-#  define deflateBound  z_deflateBound
-#  define inflateInit2_ z_inflateInit2_
-#  define inflateSetDictionary z_inflateSetDictionary
-#  define inflateSync   z_inflateSync
-#  define inflateSyncPoint z_inflateSyncPoint
-#  define inflateCopy   z_inflateCopy
-#  define inflateReset  z_inflateReset
-#  define compress      z_compress
-#  define compress2     z_compress2
-#  define compressBound z_compressBound
-#  define uncompress    z_uncompress
-#  define adler32       z_adler32
-#  define crc32         z_crc32
-#  define get_crc_table z_get_crc_table
+#  define deflateInit_          z_deflateInit_
+#  define deflate               z_deflate
+#  define deflateEnd            z_deflateEnd
+#  define inflateInit_          z_inflateInit_
+#  define inflate               z_inflate
+#  define inflateEnd            z_inflateEnd
+#  define deflateInit2_         z_deflateInit2_
+#  define deflateSetDictionary  z_deflateSetDictionary
+#  define deflateCopy           z_deflateCopy
+#  define deflateReset          z_deflateReset
+#  define deflateParams         z_deflateParams
+#  define deflateBound          z_deflateBound
+#  define deflatePrime          z_deflatePrime
+#  define inflateInit2_         z_inflateInit2_
+#  define inflateSetDictionary  z_inflateSetDictionary
+#  define inflateSync           z_inflateSync
+#  define inflateSyncPoint      z_inflateSyncPoint
+#  define inflateCopy           z_inflateCopy
+#  define inflateReset          z_inflateReset
+#  define inflateBack           z_inflateBack
+#  define inflateBackEnd        z_inflateBackEnd
+#  define compress              z_compress
+#  define compress2             z_compress2
+#  define compressBound         z_compressBound
+#  define uncompress            z_uncompress
+#  define adler32               z_adler32
+#  define crc32                 z_crc32
+#  define get_crc_table         z_get_crc_table
+#  define zError                z_zError
 
-#  define Byte          z_Byte
-#  define uInt          z_uInt
-#  define uLong         z_uLong
-#  define Bytef         z_Bytef
-#  define charf         z_charf
-#  define intf          z_intf
-#  define uIntf         z_uIntf
-#  define uLongf        z_uLongf
-#  define voidpf        z_voidpf
-#  define voidp         z_voidp
+#  define alloc_func            z_alloc_func
+#  define free_func             z_free_func
+#  define in_func               z_in_func
+#  define out_func              z_out_func
+#  define Byte                  z_Byte
+#  define uInt                  z_uInt
+#  define uLong                 z_uLong
+#  define Bytef                 z_Bytef
+#  define charf                 z_charf
+#  define intf                  z_intf
+#  define uIntf                 z_uIntf
+#  define uLongf                z_uLongf
+#  define voidpf                z_voidpf
+#  define voidp                 z_voidp
 #endif
 
 #if defined(__MSDOS__) && !defined(MSDOS)
@@ -90,8 +80,10 @@
 #if defined(_WINDOWS) && !defined(WINDOWS)
 #  define WINDOWS
 #endif
-#if (defined(_WIN32) || defined(__WIN32__)) && !defined(WIN32)
-#  define WIN32
+#if defined(_WIN32) || defined(_WIN32_WCE) || defined(__WIN32__)
+#  ifndef WIN32
+#    define WIN32
+#  endif
 #endif
 #if (defined(MSDOS) || defined(OS2) || defined(WINDOWS)) && !defined(WIN32)
 #  if !defined(__GNUC__) && !defined(__FLAT__) && !defined(__386__)
@@ -181,7 +173,7 @@
  for small objects.
 */
 
-/* Type declarations */
+                        /* Type declarations */
 
 #ifndef OF /* function prototypes */
 #  ifdef STDC
@@ -199,7 +191,7 @@
  */
 #ifdef SYS16BIT
 #  if defined(M_I86SM) || defined(M_I86MM)
-/* MSC small or medium model */
+     /* MSC small or medium model */
 #    define SMALL_MEDIUM
 #    ifdef _MSC_VER
 #      define FAR _far
@@ -208,7 +200,7 @@
 #    endif
 #  endif
 #  if (defined(__SMALL__) || defined(__MEDIUM__))
-/* Turbo C small or medium model */
+     /* Turbo C small or medium model */
 #    define SMALL_MEDIUM
 #    ifdef __BORLANDC__
 #      define FAR _far
@@ -219,9 +211,9 @@
 #endif
 
 #if defined(WINDOWS) || defined(WIN32)
-/* If building or using zlib as a DLL, define ZLIB_DLL.
- * This is not mandatory, but it offers a little performance increase.
- */
+   /* If building or using zlib as a DLL, define ZLIB_DLL.
+    * This is not mandatory, but it offers a little performance increase.
+    */
 #  ifdef ZLIB_DLL
 #    if defined(WIN32) && (!defined(__BORLANDC__) || (__BORLANDC__ >= 0x500))
 #      ifdef ZLIB_INTERNAL
@@ -231,17 +223,17 @@
 #      endif
 #    endif
 #  endif  /* ZLIB_DLL */
-/* If building or using zlib with the WINAPI/WINAPIV calling convention,
- * define ZLIB_WINAPI.
- * Caution: the standard ZLIB1.DLL is NOT compiled using ZLIB_WINAPI.
- */
+   /* If building or using zlib with the WINAPI/WINAPIV calling convention,
+    * define ZLIB_WINAPI.
+    * Caution: the standard ZLIB1.DLL is NOT compiled using ZLIB_WINAPI.
+    */
 #  ifdef ZLIB_WINAPI
 #    ifdef FAR
 #      undef FAR
 #    endif
 #    include <windows.h>
-/* No need for _export, use ZLIB.DEF instead. */
-/* For complete Windows compatibility, use WINAPI, not __stdcall. */
+     /* No need for _export, use ZLIB.DEF instead. */
+     /* For complete Windows compatibility, use WINAPI, not __stdcall. */
 #    define ZEXPORT WINAPI
 #    ifdef WIN32
 #      define ZEXPORTVA WINAPIV
@@ -278,39 +270,39 @@
 #endif
 
 #if !defined(__MACTYPES__)
-typedef unsigned char   Byte;  /* 8 bits */
+typedef unsigned char  Byte;  /* 8 bits */
 #endif
-typedef unsigned int    uInt;  /* 16 bits or more */
-typedef unsigned long   uLong; /* 32 bits or more */
+typedef unsigned int   uInt;  /* 16 bits or more */
+typedef unsigned long  uLong; /* 32 bits or more */
 
 #ifdef SMALL_MEDIUM
-/* Borland C/C++ and some old MSC versions ignore FAR inside typedef */
+   /* Borland C/C++ and some old MSC versions ignore FAR inside typedef */
 #  define Bytef Byte FAR
 #else
-typedef Byte  FAR       Bytef;
+   typedef Byte  FAR Bytef;
 #endif
-typedef char  FAR       charf;
-typedef int   FAR       intf;
-typedef uInt  FAR       uIntf;
-typedef uLong FAR       uLongf;
+typedef char  FAR charf;
+typedef int   FAR intf;
+typedef uInt  FAR uIntf;
+typedef uLong FAR uLongf;
 
 #ifdef STDC
-typedef void const     *voidpc;
-typedef void FAR       *voidpf;
-typedef void           *voidp;
+   typedef void const *voidpc;
+   typedef void FAR   *voidpf;
+   typedef void       *voidp;
 #else
-typedef Byte const     *voidpc;
-typedef Byte FAR       *voidpf;
-typedef Byte           *voidp;
+   typedef Byte const *voidpc;
+   typedef Byte FAR   *voidpf;
+   typedef Byte       *voidp;
 #endif
 
-#if 0           /* HAVE_UNISTD_H -- this line is updated by ./configure */
+#if 0           /* (changed by polyveg) HAVE_UNISTD_H -- this line is updated by ./configure */
 #  include <sys/types.h> /* for off_t */
 #  include <unistd.h>    /* for SEEK_* and off_t */
 #  ifdef VMS
 #    include <unixio.h>   /* for off_t */
 #  endif
-#  define z_off_t  off_t
+#  define z_off_t off_t
 #endif
 #ifndef SEEK_SET
 #  define SEEK_SET        0       /* Seek from beginning of file.  */
@@ -318,11 +310,11 @@ typedef Byte           *voidp;
 #  define SEEK_END        2       /* Set file pointer to EOF plus "offset" */
 #endif
 #ifndef z_off_t
-#  define  z_off_t long
+#  define z_off_t long
 #endif
 
 #if defined(__OS400__)
-#define NO_vsnprintf
+#  define NO_vsnprintf
 #endif
 
 #if defined(__MVS__)
