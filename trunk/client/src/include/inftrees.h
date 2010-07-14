@@ -1,32 +1,7 @@
-/*
-    Daimonin SDL client, a client program for the Daimonin MMORPG.
-
-
-  Copyright (C) 2003 Michael Toennies
-
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-
-    The author can be reached via e-mail to info@daimonin.org
-*/
 /* inftrees.h -- header to use inftrees.c
- * Copyright (C) 1995-2003 Mark Adler
+ * Copyright (C) 1995-2005, 2010 Mark Adler
  * For conditions of distribution and use, see copyright notice in zlib.h
  */
-
-#ifndef __INFTREES_H
-#define __INFTREES_H
 
 /* WARNING: this file should *not* be used by applications. It is
    part of the implementation of the compression library and is
@@ -46,13 +21,11 @@
    of the bit buffer.  val is the actual byte to output in the case
    of a literal, the base length or distance, or the offset from
    the current table to the next table.  Each entry is four bytes. */
-typedef struct
-{
-    unsigned char   op;           /* operation, extra bits, table bits */
-    unsigned char   bits;         /* bits in this part of the code */
-    unsigned short  val;         /* offset in table or code value */
-}
-code;
+typedef struct {
+    unsigned char op;           /* operation, extra bits, table bits */
+    unsigned char bits;         /* bits in this part of the code */
+    unsigned short val;         /* offset in table or code value */
+} code;
 
 /* op values as set by inflate_table():
     00000000 - literal
@@ -62,24 +35,28 @@ code;
     01000000 - invalid code
  */
 
-/* Maximum size of dynamic tree.  The maximum found in a long but non-
-   exhaustive search was 1004 code structures (850 for length/literals
-   and 154 for distances, the latter actually the result of an
-   exhaustive search).  The true maximum is not known, but the value
-   below is more than safe. */
-#define ENOUGH 1440
-#define MAXD 154
+/* Maximum size of the dynamic table.  The maximum number of code structures is
+   1444, which is the sum of 852 for literal/length codes and 592 for distance
+   codes.  These values were found by exhaustive searches using the program
+   examples/enough.c found in the zlib distribtution.  The arguments to that
+   program are the number of symbols, the initial root table size, and the
+   maximum bit length of a code.  "enough 286 9 15" for literal/length codes
+   returns returns 852, and "enough 30 6 15" for distance codes returns 592.
+   The initial root table size (9 or 6) is found in the fifth argument of the
+   inflate_table() calls in inflate.c and infback.c.  If the root table size is
+   changed, then these maximum sizes would be need to be recalculated and
+   updated. */
+#define ENOUGH_LENS 852
+#define ENOUGH_DISTS 592
+#define ENOUGH (ENOUGH_LENS+ENOUGH_DISTS)
 
-/* Type of code to build for inftable() */
-typedef enum
-{
+/* Type of code to build for inflate_table() */
+typedef enum {
     CODES,
     LENS,
     DISTS
-}    codetype;
+} codetype;
 
-extern int inflate_table    OF((codetype type, unsigned short FAR *lens,
-                                    unsigned codes, code FAR *FAR *table,
-                                    unsigned FAR *bits, unsigned short FAR *work));
-
-#endif /* ifndef __INFTREES_H */
+int ZLIB_INTERNAL inflate_table OF((codetype type, unsigned short FAR *lens,
+                             unsigned codes, code FAR * FAR *table,
+                             unsigned FAR *bits, unsigned short FAR *work));
