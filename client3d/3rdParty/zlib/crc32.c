@@ -1,5 +1,5 @@
 /* crc32.c -- compute the CRC-32 of a data stream
- * Copyright (C) 1995-2005 Mark Adler
+ * Copyright (C) 1995-2006, 2010 Mark Adler
  * For conditions of distribution and use, see copyright notice in zlib.h
  *
  * Thanks to Rodney Brown <rbrown64@csc.com.au> for his contribution of faster
@@ -53,7 +53,7 @@
 
 /* Definitions for doing the crc four data bytes at a time. */
 #ifdef BYFOUR
-#  define REV(w) (((w)>>24)+(((w)>>8)&0xff00)+ \
+#  define REV(w) ((((w)>>24)&0xff)+(((w)>>8)&0xff00)+ \
                 (((w)&0xff00)<<8)+(((w)&0xff)<<24))
    local unsigned long crc32_little OF((unsigned long,
                         const unsigned char FAR *, unsigned));
@@ -68,6 +68,8 @@
 local unsigned long gf2_matrix_times OF((unsigned long *mat,
                                          unsigned long vec));
 local void gf2_matrix_square OF((unsigned long *square, unsigned long *mat));
+local uLong crc32_combine_(uLong crc1, uLong crc2, z_off64_t len2);
+
 
 #ifdef DYNAMIC_CRC_TABLE
 
@@ -105,6 +107,11 @@ local void make_crc_table OF((void));
 */
 local void make_crc_table()
 {
+/* Modified by the daimonin team (start) */
+/* unsigned long c; */
+/* int n, k; */
+/* unsigned long poly; polynomial exclusive-or pattern */
+/* Modified by the daimonin team (stop) */
     /* terms of polynomial defining this crc (except x^32): */
     static volatile int first = 1;      /* flag to limit concurrent making */
     static const unsigned char p[] = {0,1,2,4,5,7,8,10,11,12,16,22,23,26};
@@ -113,10 +120,13 @@ local void make_crc_table()
        than nothing -- significantly reduces duration of vulnerability in
        case the advice about DYNAMIC_CRC_TABLE is ignored) */
     if (first) {
-        int n, k;
-        unsigned long c;  /* (changed by polyveg) */
-        unsigned long poly;                 /* polynomial exclusive-or pattern */
+/* Modified by the daimonin team (start) */
+    unsigned long c;
+    int n, k;
+    unsigned long poly;                 /* polynomial exclusive-or pattern */
+/* Modified by the daimonin team (stop) */
         first = 0;
+
         /* make exclusive-or pattern from polynomial (0xedb88320UL) */
         poly = 0UL;
         for (n = 0; n < sizeof(p)/sizeof(unsigned char); n++)
@@ -218,7 +228,7 @@ const unsigned long FAR * ZEXPORT get_crc_table()
 unsigned long ZEXPORT crc32(crc, buf, len)
     unsigned long crc;
     const unsigned char FAR *buf;
-    unsigned len;
+    uInt len;
 {
     if (buf == Z_NULL) return 0UL;
 
@@ -366,22 +376,22 @@ local void gf2_matrix_square(square, mat)
 }
 
 /* ========================================================================= */
-uLong ZEXPORT crc32_combine(crc1, crc2, len2)
+local uLong crc32_combine_(crc1, crc2, len2)
     uLong crc1;
     uLong crc2;
-    z_off_t len2;
+    z_off64_t len2;
 {
     int n;
     unsigned long row;
     unsigned long even[GF2_DIM];    /* even-power-of-two zeros operator */
     unsigned long odd[GF2_DIM];     /* odd-power-of-two zeros operator */
 
-    /* degenerate case */
-    if (len2 == 0)
+    /* degenerate case (also disallow negative lengths) */
+    if (len2 <= 0)
         return crc1;
 
     /* put operator for one zero bit in odd */
-    odd[0] = 0xedb88320L;           /* CRC-32 polynomial */
+    odd[0] = 0xedb88320UL;          /* CRC-32 polynomial */
     row = 1;
     for (n = 1; n < GF2_DIM; n++) {
         odd[n] = row;
@@ -419,4 +429,21 @@ uLong ZEXPORT crc32_combine(crc1, crc2, len2)
     /* return combined crc */
     crc1 ^= crc2;
     return crc1;
+}
+
+/* ========================================================================= */
+uLong ZEXPORT crc32_combine(crc1, crc2, len2)
+    uLong crc1;
+    uLong crc2;
+    z_off_t len2;
+{
+    return crc32_combine_(crc1, crc2, len2);
+}
+
+uLong ZEXPORT crc32_combine64(crc1, crc2, len2)
+    uLong crc1;
+    uLong crc2;
+    z_off64_t len2;
+{
+    return crc32_combine_(crc1, crc2, len2);
 }
