@@ -62,6 +62,7 @@
 			<Add option="-fident" />
 			<Add option="-pipe" />
 			<Add option="-DWIN32" />
+			<Add option="-DMINGW" />
 			<Add directory="OgreSDK\boost\" />
 			<Add directory="OgreSDK\include\Ogre" />
 			<Add directory="OgreSDK\include\OIS" />
