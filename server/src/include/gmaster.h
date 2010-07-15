@@ -26,18 +26,19 @@
 #ifndef __GMASTER_H
 #define __GMASTER_H
 
-#define GMASTER_MODE_NO        0
-#define GMASTER_MODE_MW        1
-#define GMASTER_MODE_VOL       2
-#define GMASTER_MODE_GM        4
-#define GMASTER_MODE_MM        8
+#define GMASTER_MODE_NO  1 << 0
+#define GMASTER_MODE_MW  1 << 1
+#define GMASTER_MODE_VOL 1 << 2
+#define GMASTER_MODE_GM  1 << 3
+#define GMASTER_MODE_MM  1 << 4
+#define GMASTER_MODE_SA  1 << 5
 
 typedef struct _gmaster_struct
 {
     char                    entry[196]; /* unparsed gmaster_file entry for this node */
     char                    host[MEDIUM_BUF];
     char                    name[MAX_ACCOUNT_NAME+1];
-    int                     mode;    /* What is this entry? DM, VOL, GM? */
+    int                     mode;
 } gmaster_struct;
 
 /* lists of the active ingame gmasters */
@@ -46,5 +47,6 @@ extern objectlink *gmaster_list_VOL;
 extern objectlink *gmaster_list_GM;
 extern objectlink *gmaster_list_MW;
 extern objectlink *gmaster_list_MM;
+extern objectlink *gmaster_list_SA;
 
 #endif /* ifndef __GMASTER_H */

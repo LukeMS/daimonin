@@ -92,7 +92,7 @@ int command_channel(object *ob, char *params)
             {
                 /* We don't display channels we can't get on.
                  * This may be by level restriction ot gmaster_mode.
-                 * VOLs, GMs, and MMs are not subject to level restrictions. */
+                 * VOLs, GMs, and SAs are not subject to level restrictions. */
                 if (!compare_gmaster_mode(channel->gmaster_mode,
                                        CONTR(ob)->gmaster_mode) ||
 /* Method stub for later to implement clan system
@@ -101,7 +101,8 @@ int command_channel(object *ob, char *params)
  */
 //                  !is_player_in_clan(channel->clan) ||
                     ((CONTR(ob)->gmaster_mode == GMASTER_MODE_NO ||
-                      CONTR(ob)->gmaster_mode == GMASTER_MODE_MW) &&
+                      CONTR(ob)->gmaster_mode == GMASTER_MODE_MW ||
+                      CONTR(ob)->gmaster_mode == GMASTER_MODE_MM) &&
                      ob->level < channel->enter_lvl))
                         continue;
                 if((pl_channel=findPlayerChannelFromName(CONTR(ob),CONTR(ob), channel->name, TRUE)))
@@ -166,10 +167,11 @@ int command_channel(object *ob, char *params)
         {
             return 1;
         }
-        /* Check for lvl-post restrictions. VOLs, GMs, and MMs can always post. */
+        /* Check for lvl-post restrictions. VOLs, GMs, and SAs can always post. */
         if (ob->level<pl_channel->channel->post_lvl &&
             (CONTR(ob)->gmaster_mode == GMASTER_MODE_NO ||
-             CONTR(ob)->gmaster_mode == GMASTER_MODE_MW))
+             CONTR(ob)->gmaster_mode == GMASTER_MODE_MW ||
+             CONTR(ob)->gmaster_mode == GMASTER_MODE_MM))
         {
             new_draw_info(NDI_UNIQUE, 0, ob, "You need at least level %d to post on this channel.",pl_channel->channel->post_lvl);
             return 0;
@@ -184,10 +186,11 @@ int command_channel(object *ob, char *params)
         {
             return 1;
         }
-        /* Check for lvl-post restrictions. VOLs, GMs, and MMs can always post. */
+        /* Check for lvl-post restrictions. VOLs, GMs, and SAs can always post. */
         if (ob->level<pl_channel->channel->post_lvl &&
             (CONTR(ob)->gmaster_mode == GMASTER_MODE_NO ||
-             CONTR(ob)->gmaster_mode == GMASTER_MODE_MW))
+             CONTR(ob)->gmaster_mode == GMASTER_MODE_MW ||
+             CONTR(ob)->gmaster_mode == GMASTER_MODE_MM))
         {
             new_draw_info(NDI_UNIQUE, 0, ob, "You need at least level %d to post on this channel.",pl_channel->channel->post_lvl);
             return 0;
@@ -356,7 +359,7 @@ struct channels *findGlobalChannelFromName(player *pl, char *name, int mute)
     {
                 /* We don't display channels we can't get on.
                  * This may be by level restriction ot gmaster_mode.
-                 * VOLs, GMs, and MMs are not subject to level restrictions. */
+                 * VOLs, GMs, and SAs are not subject to level restrictions. */
                 if (!compare_gmaster_mode(c->gmaster_mode, pl->gmaster_mode) ||
 /* Method stub for later to implement clan system
  * This function should return TRUE if the player is in that clan.
@@ -364,7 +367,8 @@ struct channels *findGlobalChannelFromName(player *pl, char *name, int mute)
  */
 //                  !is_player_in_clan(c->clan) ||
                     ((pl->gmaster_mode == GMASTER_MODE_NO ||
-                      pl->gmaster_mode == GMASTER_MODE_MW) &&
+                      pl->gmaster_mode == GMASTER_MODE_MW ||
+                      pl->gmaster_mode == GMASTER_MODE_MM) &&
                      pl->ob->level < c->enter_lvl))
            {
                 c=c->next;
@@ -386,7 +390,7 @@ struct channels *findGlobalChannelFromName(player *pl, char *name, int mute)
     {
                 /* We don't display channels we can't get on.
                  * This may be by level restriction ot gmaster_mode.
-                 * VOLs, GMs, and MMs are not subject to level restrictions. */
+                 * VOLs, GMs, and SAs are not subject to level restrictions. */
                 if (!compare_gmaster_mode(tmp->gmaster_mode, pl->gmaster_mode) ||
 /* Method stub for later to implement clan system
  * This function should return TRUE if the player is in that clan.
@@ -394,7 +398,8 @@ struct channels *findGlobalChannelFromName(player *pl, char *name, int mute)
  */
 //                  !is_player_in_clan(tmp->clan) ||
                     ((pl->gmaster_mode == GMASTER_MODE_NO ||
-                      pl->gmaster_mode == GMASTER_MODE_MW) &&
+                      pl->gmaster_mode == GMASTER_MODE_MW ||
+                      pl->gmaster_mode == GMASTER_MODE_MM) &&
                      pl->ob->level < tmp->enter_lvl))
                 continue;
         if (!strncasecmp(tmp->name, name, strlen(name)))
@@ -452,7 +457,7 @@ struct channels *getChannelFromGlobalShortcut(player *pl, char *name)
     {
                 /* We don't display channels we can't get on.
                  * This may be by level restriction ot gmaster_mode.
-                 * VOLs, GMs, and MMs are not subject to level restrictions. */
+                 * VOLs, GMs, and SAs are not subject to level restrictions. */
                 if (!compare_gmaster_mode(channel->gmaster_mode,
                                        pl->gmaster_mode) ||
 /* Method stub for later to implement clan system
@@ -461,7 +466,8 @@ struct channels *getChannelFromGlobalShortcut(player *pl, char *name)
  */
 //                  !is_player_in_clan(channel->clan) ||
                     ((pl->gmaster_mode == GMASTER_MODE_NO ||
-                      pl->gmaster_mode == GMASTER_MODE_MW) &&
+                      pl->gmaster_mode == GMASTER_MODE_MW ||
+                      pl->gmaster_mode == GMASTER_MODE_MM) &&
                      pl->ob->level < channel->enter_lvl))
                 continue;/* restricted channel */
         if(channel->shortcut==name[0])
@@ -830,6 +836,7 @@ void load_channels(void)
         final_addChannel("GM",'G',3,1,1,GMASTER_MODE_GM);
         final_addChannel("MW",'W',3,1,1,GMASTER_MODE_MW);
         final_addChannel("MM",'M',3,1,1,GMASTER_MODE_MM);
+        final_addChannel("SA",'S',3,1,1,GMASTER_MODE_SA);
         return;
     }
     while (fgets(line_buf, 160, channelfile) != NULL)
@@ -1085,7 +1092,8 @@ void forceAddPlayerToChannel(struct player_channel *cpl, char *params)
 {
     player *pl=NULL;
 
-    if (cpl->pl->gmaster_mode < GMASTER_MODE_MM)
+    /* FIXME: Not sure what this is for. */
+    if (cpl->pl->gmaster_mode < GMASTER_MODE_SA)
         return;
     if (!params)
     {

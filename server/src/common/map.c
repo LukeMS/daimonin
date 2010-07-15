@@ -331,11 +331,11 @@ static char *show_map_flags(mapstruct *m)
  * If ref is also non-NULL we print %s Map, otherwise Map %d. The former is for
  * listing tiled maps, the latter for listing many maps.
  *
- * The amount of info given depends on the Gmaster mode of pl. If pl is a MW or
- * MM (or NULL), the full header is dumped. Otherwise just enough for general
- * info/bugfixing purposes (ie, to locate the player exactly).
+ * The amount of info given depends on the Gmaster mode of pl. If pl is a MW,
+ * MM, or SA (or NULL), the full header is dumped. Otherwise just enough for
+ * general info/bugfixing purposes (ie, to locate the player exactly).
  *
- * MWs/MMs/NULL also gets the number of players on the map.
+ * MWs/MMs/SAs/NULL also gets the number of players on the map.
  *
  * TODO: Map status, rest time, swap time.
  * TODO: Finish listing layout. */
@@ -362,7 +362,8 @@ void dump_map(mapstruct *m, player *pl, int list, char *ref)
 
         if (!pl ||
             (pl->gmaster_mode == GMASTER_MODE_MW ||
-             pl->gmaster_mode == GMASTER_MODE_MM))
+             pl->gmaster_mode == GMASTER_MODE_MM ||
+             pl->gmaster_mode == GMASTER_MODE_SA))
         {
             NDI_LOG(llevSystem, NDI_UNIQUE, 0, ob, "~Type~: %s",
                     ((MAP_MULTI(m)) ? "Multiplayer" :

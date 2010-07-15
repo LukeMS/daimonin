@@ -37,7 +37,7 @@ int command_spell_reset(object *op, char *params)
     return 0;
 }
 
-/* '/motd' displays the MOTD. GMs and MMs can also set the MOTD:
+/* '/motd' displays the MOTD. GMs and SAs can also set the MOTD:
  *   '/motd default' restores the server-set MOTD (actually deletes the
  *   GMASTER-set one).
  *   '/motd <message>' sets the GMASTER-set MOTD. */
@@ -46,7 +46,7 @@ int command_motd(object *op, char *params)
 #ifdef MOTD
     if (params &&
         (CONTR(op)->gmaster_mode == GMASTER_MODE_GM ||
-         CONTR(op)->gmaster_mode == GMASTER_MODE_MM))
+         CONTR(op)->gmaster_mode == GMASTER_MODE_SA))
     {
         char  buf[MEDIUM_BUF];
         FILE *fp;
@@ -222,10 +222,10 @@ int command_who(object *op, char *params)
     for (pl = first_player, ip = 0, il = 0; pl; pl = pl->next)
     {
         if (pl->privacy &&
-            (pl->gmaster_mode == GMASTER_MODE_MM ||
+            (pl->gmaster_mode == GMASTER_MODE_SA ||
              !(CONTR(op)->gmaster_mode == GMASTER_MODE_VOL ||
                CONTR(op)->gmaster_mode == GMASTER_MODE_GM ||
-               CONTR(op)->gmaster_mode == GMASTER_MODE_MM)))
+               CONTR(op)->gmaster_mode == GMASTER_MODE_SA)))
         {
             continue;
         }
@@ -250,7 +250,7 @@ int command_who(object *op, char *params)
 
             if (CONTR(op)->gmaster_mode == GMASTER_MODE_VOL ||
                 CONTR(op)->gmaster_mode == GMASTER_MODE_GM ||
-                CONTR(op)->gmaster_mode == GMASTER_MODE_MM)
+                CONTR(op)->gmaster_mode == GMASTER_MODE_SA)
             {
                 uint16 len,
                        off;
@@ -321,9 +321,10 @@ int command_mapinfo(object *op, char *params)
 
     if (params)
     {
-        /* Only MWs/MMs can use the fancy commands. */
+        /* Only MWs/MMs/SAs can use the fancy commands. */
         if (pl->gmaster_mode != GMASTER_MODE_MW &&
-            pl->gmaster_mode != GMASTER_MODE_MM)
+            pl->gmaster_mode != GMASTER_MODE_MM &&
+            pl->gmaster_mode != GMASTER_MODE_SA)
             return 1;
 
         /* List all the loaded maps. */
@@ -1045,15 +1046,9 @@ static void show_help(char *fname, player *pl)
 
 static void show_commands(player *pl)
 {
-    CommArray_s *ap[6];
-    int          size[6],
+    CommArray_s *ap[7] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL };
+    int          size[7] = { -1, -1, -1, -1, -1, -1, -1 },
                  i;
-
-    for (i = 0; i < 6; i++)
-    {
-        ap[i] = NULL;
-        size[i] = -1;
-    }
 
     switch (pl->gmaster_mode)
     {
@@ -1105,6 +1100,24 @@ static void show_commands(player *pl)
 
             break;
 
+        case GMASTER_MODE_SA:
+            ap[0] = Commands;
+            ap[1] = EmoteCommands;
+            ap[2] = CommandsVOL;
+            ap[3] = CommandsGM;
+            ap[4] = CommandsMW;
+            ap[5] = CommandsMM;
+            ap[6] = CommandsSA;
+            size[0] = CommandsSize;
+            size[1] = EmoteCommandsSize;
+            size[2] = CommandsVOLSize;
+            size[3] = CommandsGMSize;
+            size[4] = CommandsMWSize;
+            size[5] = CommandsMMSize;
+            size[6] = CommandsSASize;
+
+            break;
+
         default:
             ap[0] = Commands;
             ap[1] = EmoteCommands;
@@ -1129,6 +1142,8 @@ static void show_commands(player *pl)
             new_draw_info(NDI_UNIQUE | NDI_YELLOW, 0, pl->ob, "\nMW Commands");
         else if (ap[i] == CommandsMM)
             new_draw_info(NDI_UNIQUE | NDI_YELLOW, 0, pl->ob, "\nMM Commands");
+        else if (ap[i] == CommandsSA)
+            new_draw_info(NDI_UNIQUE | NDI_YELLOW, 0, pl->ob, "\nSA Commands");
         else
         {
             LOG(llevDebug, "DEBUG:: %s/show_commands(): Unknown command structure!\n",

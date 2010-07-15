@@ -83,14 +83,15 @@ static int check_mute(object *op, int mode)
         return TRUE;
 
     /* players less than settings.shout_lvl cannot shout due to spam problems.
-     * VOLs, GMs, and MMs are exempt. */
+     * VOLs, GMs, and SAs are exempt. */
     if (mode == MUTE_MODE_SHOUT &&
         op->level < settings.mutelevel &&
         (CONTR(op)->gmaster_mode == GMASTER_MODE_NO ||
-         CONTR(op)->gmaster_mode == GMASTER_MODE_MW))
+         CONTR(op)->gmaster_mode == GMASTER_MODE_MW ||
+         CONTR(op)->gmaster_mode == GMASTER_MODE_MM))
     {
         new_draw_info(NDI_UNIQUE | NDI_ORANGE, 0, op, "You need to be level %d or higher for shout/tell!",
-                             settings.mutelevel);
+                      settings.mutelevel);
 
         return FALSE;
     }
@@ -218,7 +219,7 @@ int command_gsay(object *op, char *params)
     /* moved down, cause if whitespace is shouted, then no need to log it */
     CHATLOG("GSAY:%s >%s<\n", STRING_OBJ_NAME(op), params);
 
-    for (ol = gmaster_list_MM; ol; ol = ol->next)
+    for (ol = gmaster_list_GM; ol; ol = ol->next)
     {
         tmp = ol->objlink.ob;
 
@@ -231,7 +232,7 @@ int command_gsay(object *op, char *params)
         }
     }
 
-    for (ol = gmaster_list_GM; ol; ol = ol->next)
+    for (ol = gmaster_list_SA; ol; ol = ol->next)
     {
         tmp = ol->objlink.ob;
 
@@ -355,14 +356,14 @@ int command_tell(object *op, char *params)
     {
         if (pl->ob->name == name_hash)
         {
-            /* GMs and MMs eavesdrop on tells, but not those from
-             * privacy-seeking MMs. Only way to find out/control various abuses
+            /* GMs and SAs eavesdrop on tells, but not those from
+             * privacy-seeking SAs. Only way to find out/control various abuses
              * without giving many people access to the server logs (not an
              * option). */
             if (!(pl->privacy &&
-                  pl->gmaster_mode == GMASTER_MODE_MM) &&
+                  pl->gmaster_mode == GMASTER_MODE_SA) &&
                 (gmaster_list_GM ||
-                 gmaster_list_MM))
+                 gmaster_list_SA))
             {
                 char        buf[LARGE_BUF];
                 objectlink *ol;
@@ -370,7 +371,7 @@ int command_tell(object *op, char *params)
                 sprintf(buf, "%s tells %s: %s",
                         query_name(op), query_name(pl->ob), msg);
 
-                for (ol = gmaster_list_MM; ol; ol = ol->next)
+                for (ol = gmaster_list_GM; ol; ol = ol->next)
                 {
                     object *tmp = ol->objlink.ob;
 
@@ -383,7 +384,7 @@ int command_tell(object *op, char *params)
                     }
                 }
 
-                for (ol = gmaster_list_GM; ol; ol = ol->next)
+                for (ol = gmaster_list_SA; ol; ol = ol->next)
                 {
                     object *tmp = ol->objlink.ob;
 
@@ -398,13 +399,13 @@ int command_tell(object *op, char *params)
             }
 
             /* If pl has requested privacy we send the msg but we don't reveal
-             * his presence, EXCEPT to VOLs, GMs, and MMs, UNLESS he is an MM! */
+             * his presence, EXCEPT to VOLs, GMs, and SAs, UNLESS he is an SA! */
             if (pl->privacy)
             {
-                if (pl->gmaster_mode != GMASTER_MODE_MM &&
+                if (pl->gmaster_mode != GMASTER_MODE_SA &&
                     (CONTR(op)->gmaster_mode == GMASTER_MODE_VOL ||
                      CONTR(op)->gmaster_mode == GMASTER_MODE_GM ||
-                     CONTR(op)->gmaster_mode == GMASTER_MODE_MM))
+                     CONTR(op)->gmaster_mode == GMASTER_MODE_SA))
                 {
                     new_draw_info(NDI_PLAYER | NDI_UNIQUE, 0, op, "You tell %s (~privacy mode~): %s",
                                          query_short_name(pl->ob, op), msg);
@@ -442,14 +443,14 @@ static void emote_other(object *op, object *target, char *str, char *buf, char *
         name = target->name;
 
 #if 0
-    /* Only GMs and MMs can emote stealthed MMs. FIXME: MWs too! */
+    /* Only GMs and SAs can emote stealthed SAs. */
     if ((target->type == PLAYER &&
          CONTR(target) &&
          CONTR(target)->privacy) &&
         (op->type == PLAYER &&
          CONTR(op) &&
          (CONTR(op)->gmaster_mode != GMASTER_MODE_GM &&
-          CONTR(op)->gmaster_mode != GMASTER_MODE_MM)))
+          CONTR(op)->gmaster_mode != GMASTER_MODE_SA)))
        {
           new_draw_info(NDI_UNIQUE, 0, op, "No such player.");
           return;

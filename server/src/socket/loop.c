@@ -468,21 +468,30 @@ void remove_ns_dead_player(player *pl)
         if(pl->group_status & GROUP_STATUS_GROUP)
             party_remove_member(pl, TRUE);
 
-        if(gmaster_list_MM || gmaster_list_GM || gmaster_list_VOL)
+        if (gmaster_list_VOL ||
+            gmaster_list_GM ||
+            gmaster_list_SA)
         {
             objectlink *ol;
-            char buf_dm[SMALL_BUF];
+            char        buf[SMALL_BUF];
 
-            sprintf(buf_dm,"%s leaves the game (%d still playing).", query_name(pl->ob), player_active - 1);
+            sprintf(buf, "%s leaves the game (%d still playing).",
+                    query_name(pl->ob), player_active - 1);
 
-            for(ol = gmaster_list_MM;ol;ol=ol->next)
-                new_draw_info(NDI_UNIQUE, 0,ol->objlink.ob, "%s", buf_dm);
+            for (ol = gmaster_list_VOL; ol; ol = ol->next)
+            {
+                new_draw_info(NDI_UNIQUE, 0, ol->objlink.ob, "%s", buf);
+            }
 
-            for(ol = gmaster_list_GM;ol;ol=ol->next)
-                new_draw_info(NDI_UNIQUE, 0,ol->objlink.ob, "%s", buf_dm);
+            for (ol = gmaster_list_GM; ol; ol = ol->next)
+            {
+                new_draw_info(NDI_UNIQUE, 0, ol->objlink.ob, "%s", buf);
+            }
 
-            for(ol = gmaster_list_VOL;ol;ol=ol->next)
-                new_draw_info(NDI_UNIQUE, 0,ol->objlink.ob, "%s", buf_dm);
+            for (ol = gmaster_list_SA; ol; ol = ol->next)
+            {
+                new_draw_info(NDI_UNIQUE, 0, ol->objlink.ob, "%s", buf);
+            }
         }
 
         container_unlink(pl, NULL);
