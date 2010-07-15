@@ -68,7 +68,8 @@
 			} \
 		}\
 \
-
+#else
+#define YY_NO_UNISTD_H
 #endif
 
 #define YY_DECL int lex_load(object *op, int map_flags)
