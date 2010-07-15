@@ -60,6 +60,7 @@ extern CommArray_s CommandsVOL[];
 extern CommArray_s CommandsGM[];
 extern CommArray_s CommandsMW[];
 extern CommArray_s CommandsMM[];
+extern CommArray_s CommandsSA[];
 
 extern const int CommandsSize;
 extern const int EmoteCommandsSize;
@@ -67,6 +68,7 @@ extern const int CommandsVOLSize;
 extern const int CommandsGMSize;
 extern const int CommandsMWSize;
 extern const int CommandsMMSize;
+extern const int CommandsSASize;
 
 #define EMOTE_NOD   1
 #define EMOTE_DANCE 2

@@ -66,8 +66,8 @@ typedef struct channels
     char                     shortcut;                  /* default shortcut, at entering will be copyed to pl_channel_list struct */
     int                      color;                     /* default color */
     int                      pl_count;                  /* player count */
-    sint8                    post_lvl;                  /* lvl required to send message (VOLs, GMs, and MMs are exempt) */
-    sint8                    enter_lvl;                 /* lvl required to enter (VOLs, GMs, and MMs are exempt) */
+    sint8                    post_lvl;                  /* lvl required to send message (VOLs, GMs, and SAs are exempt) */
+    sint8                    enter_lvl;                 /* lvl required to enter (VOLs, GMs, and SAs are exempt) */
     int                      gmaster_mode;              /* gmaster_mode required to enter */
 #ifdef CHANNEL_HIST
     char                     history[MAX_CHANNEL_HIST_LINES][MAX_CHANNEL_HIST_CHAR];

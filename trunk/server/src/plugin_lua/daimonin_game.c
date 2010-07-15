@@ -374,6 +374,7 @@ static struct constant_decl preset_game_constants[] =
     {"GMASTER_MODE_VOL", GMASTER_MODE_VOL},
     {"GMASTER_MODE_GM",  GMASTER_MODE_GM},
     {"GMASTER_MODE_MM",  GMASTER_MODE_MM},
+    {"GMASTER_MODE_SA",  GMASTER_MODE_SA},
 
     /* spell paths (define.h) */
     {"PATH_NONE",          PATH_NULL},

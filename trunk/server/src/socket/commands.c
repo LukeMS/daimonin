@@ -101,10 +101,11 @@ CommArray_s Commands[] =
 #ifdef _TESTSERVER
     {"stuck",         command_stuck,          0.0f, 1},
 #endif
-    {"mm",            command_mm,             0.0f, 1},
-    {"gm",            command_gm,             0.0f, 1},
     {"vol",           command_vol,            0.0f, 1},
+    {"gm",            command_gm,             0.0f, 1},
     {"mw",            command_mw,             0.0f, 1},
+    {"mm",            command_mm,             0.0f, 1},
+    {"sa",            command_sa,             0.0f, 1},
     {"gmasterlist",   command_gmasterlist,    0.0f, 1},
 };
 
@@ -186,6 +187,7 @@ CommArray_s CommandsGM[] =
     {"silence",        command_silence,        0.0f, 1},
     {"gmasterfile",    command_gmasterfile,    0.0f, 1},
     {"eavesdrop",      command_eavesdrop,      0.0f, 1},
+    {"stats",          command_stats,          0.0f, 1},
 };
 
 CommArray_s CommandsMW[] =
@@ -196,7 +198,7 @@ CommArray_s CommandsMW[] =
     {"addexp",        command_addexp,      0.0f, 1},
     {"setskill",      command_setskill,    0.0f, 1},
     {"setstat",       command_setstat,     0.0f, 1},
-#endif
+    {"wizpass",       command_wizpass,     0.0f, 1},
     {"teleport",      command_teleport,    0.0f, 1},
     {"resetmap",      command_reset,       0.0f, 1},
     {"goto",          command_goto,        0.0f, 1},
@@ -205,27 +207,44 @@ CommArray_s CommandsMW[] =
     {"dm_dev",        command_dm_dev,      0.0f, 1},
     {"dm_light",      command_dm_light,    0.0f, 1},
     {"set_map_light", command_setmaplight, 0.0f, 1},
+#endif
     {"generate",      command_generate,    0.0f, 1},
     {"mspinfo",       command_mspinfo,     0.0f, 1},
-    {"wizpass",       command_wizpass,     0.0f, 1},
 };
 
 CommArray_s CommandsMM[] =
 {
 #ifdef _TESTSERVER
     {"serverspeed",  command_serverspeed,       0.0f, 1},
+    {"create",       command_create,            0.0f, 1},
 #else
     {"stealth",      command_stealth,           0.0f, 1},
+    {"wizpass",       command_wizpass,     0.0f, 1},
+    {"teleport",      command_teleport,    0.0f, 1},
+    {"resetmap",      command_reset,       0.0f, 1},
+    {"goto",          command_goto,        0.0f, 1},
+    {"restart",       command_restart,     0.0f, 1},
+    {"dm_invis",      command_dm_invis,    0.0f, 1},
+    {"dm_dev",        command_dm_dev,      0.0f, 1},
+    {"dm_light",      command_dm_light,    0.0f, 1},
+    {"set_map_light", command_setmaplight, 0.0f, 1},
+#endif
+    {"gmasterfile",  command_gmasterfile,       0.0f, 1},
+};
+
+CommArray_s CommandsSA[] =
+{
+#ifndef _TESTSERVER
+    {"serverspeed",  command_serverspeed,       0.0f, 1},
+    {"create",       command_create,            0.0f, 1},
     {"addexp",       command_addexp,            0.0f, 1},
     {"setskill",     command_setskill,          0.0f, 1},
     {"setstat",      command_setstat,           0.0f, 1},
 #endif
-    {"gmasterfile",  command_gmasterfile,       0.0f, 1},
     {"plugin",       command_loadplugin,        0.0f, 1},
     {"pluglist",     command_listplugins,       0.0f, 1},
     {"shutdown",     command_shutdown,          0.0f, 1},
     {"plugout",      command_unloadplugin,      0.0f, 1},
-    {"create",       command_create,            0.0f, 1},
     {"dump",         command_dump,              0.0f, 1},
     {"d_active",     command_dumpactivelist,    0.0f, 1},
     {"d_arches",     command_dumpallarchetypes, 0.0f, 1},
@@ -233,7 +252,6 @@ CommArray_s CommandsMM[] =
     {"d_belowfull",  command_dumpbelowfull,     0.0f, 1},
     {"d_below",      command_dumpbelow,         0.0f, 1},
     {"d_hash",       command_sstable,           0.0f, 1},
-    {"stats",        command_stats,             0.0f, 1},
     {"check_fd",     command_check_fd,          0.0f, 1},
     {"malloc",       command_malloc,            0.0f, 1},
 
@@ -276,6 +294,7 @@ const int CommandsVOLSize = sizeof(CommandsVOL) / sizeof(CommArray_s);
 const int CommandsGMSize = sizeof(CommandsGM) / sizeof(CommArray_s);
 const int CommandsMWSize = sizeof(CommandsMW) / sizeof(CommArray_s);
 const int CommandsMMSize = sizeof(CommandsMM) / sizeof(CommArray_s);
+const int CommandsSASize = sizeof(CommandsSA) / sizeof(CommArray_s);
 
 static int compare_A(const void *a, const void *b)
 {
@@ -284,12 +303,13 @@ static int compare_A(const void *a, const void *b)
 
 void init_commands()
 {
-    qsort((char *) Commands, CommandsSize, sizeof(CommArray_s), compare_A);
-    qsort((char *) EmoteCommands, EmoteCommandsSize, sizeof(CommArray_s), compare_A);
-    qsort((char *) CommandsVOL, CommandsVOLSize, sizeof(CommArray_s), compare_A);
-    qsort((char *) CommandsGM, CommandsGMSize, sizeof(CommArray_s), compare_A);
-    qsort((char *) CommandsMW, CommandsMWSize, sizeof(CommArray_s), compare_A);
-    qsort((char *) CommandsMM, CommandsMMSize, sizeof(CommArray_s), compare_A);
+    qsort((char *)Commands, CommandsSize, sizeof(CommArray_s), compare_A);
+    qsort((char *)EmoteCommands, EmoteCommandsSize, sizeof(CommArray_s), compare_A);
+    qsort((char *)CommandsVOL, CommandsVOLSize, sizeof(CommArray_s), compare_A);
+    qsort((char *)CommandsGM, CommandsGMSize, sizeof(CommArray_s), compare_A);
+    qsort((char *)CommandsMW, CommandsMWSize, sizeof(CommArray_s), compare_A);
+    qsort((char *)CommandsMM, CommandsMMSize, sizeof(CommArray_s), compare_A);
+    qsort((char *)CommandsSA, CommandsSASize, sizeof(CommArray_s), compare_A);
 }
 
 /* Finds cmd if it exists for pl (determined by gmaster_mode). 
@@ -325,6 +345,10 @@ CommArray_s *find_command(char *cmd, player *pl)
     else if ((!pl ||
               compare_gmaster_mode(GMASTER_MODE_MM, pl->gmaster_mode)) &&
              (csp = find_command_element(cmd, CommandsMM, CommandsMMSize)))
+        return csp;
+    else if ((!pl ||
+              compare_gmaster_mode(GMASTER_MODE_SA, pl->gmaster_mode)) &&
+             (csp = find_command_element(cmd, CommandsSA, CommandsSASize)))
         return csp;
 
     return NULL;

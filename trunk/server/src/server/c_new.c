@@ -663,16 +663,15 @@ void generate_ext_title(player *pl)
     else
         gender = "neuter";
 
-    /* get a possible special tag for DM/GM/VOL */
-tmp = (pl->gmaster_mode==GMASTER_MODE_NO?"":(pl->gmaster_mode==GMASTER_MODE_MM ? " [MM]" : (pl->gmaster_mode==GMASTER_MODE_GM ?" [GM]" : (pl->gmaster_mode==GMASTER_MODE_VOL ?" [VOL]" : " [MW]"))));
-
-
-    strcpy(pl->quick_name, rank);
-    strcat(pl->quick_name, pl->ob->name);
-    strcat(pl->quick_name, tmp);
-
-    /*strcat(pl->quick_name, title);*/
-    sprintf( pl->ext_title, "%s\n%s%s %s\n%s\n%s\n%s\n%s\n%c\n", rank, pl->ob->name,tmp,
-             title, pl->ob->race, prof, align, determine_god(pl->ob), *gender);
+    sprintf(pl->quick_name, "%s%s%s",
+            rank, pl->ob->name,
+            ((pl->gmaster_mode == GMASTER_MODE_VOL) ? "[VOL]" :
+             ((pl->gmaster_mode == GMASTER_MODE_GM) ? "[GM]" :
+              ((pl->gmaster_mode == GMASTER_MODE_MW) ? "[MW]" :
+               ((pl->gmaster_mode == GMASTER_MODE_MM) ? "[MM]" :
+                ((pl->gmaster_mode == GMASTER_MODE_SA) ? "[SA]" : ""))))));
+    sprintf(pl->ext_title, "%s\n%s%s %s\n%s\n%s\n%s\n%s\n%c\n",
+            rank, pl->ob->name,tmp, title, pl->ob->race, prof, align,
+            determine_god(pl->ob), *gender);
 }
 

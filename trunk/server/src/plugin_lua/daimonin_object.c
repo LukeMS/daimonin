@@ -3904,11 +3904,12 @@ static int GameObject_GetPets(lua_State *L)
 /* Lua    : object:GetGmasterMode()                                          */
 /* Info   : Only works for player objects. Returns one of the                */
 /*          Game.GMASTER_MODE_* constants:                                   */
-/*              Game.GMASTER_MODE_NO    if the object is not a MW/Vol/GM/MM  */
-/*              Game.GMASTER_MODE_MW    if the object is a MW                */
-/*              Game.GMASTER_MODE_VOL   if the object is a Vol               */
-/*              Game.GMASTER_MODE_GM    if the object is a GM                */
-/*              Game.GMASTER_MODE_MM    if the object is a MM                */
+/*              Game.GMASTER_MODE_NO    if the object is not MW/Vol/GM/MM\SA */
+/*              Game.GMASTER_MODE_MW    if the object is MW                  */
+/*              Game.GMASTER_MODE_VOL   if the object is VOL                 */
+/*              Game.GMASTER_MODE_GM    if the object is GM                  */
+/*              Game.GMASTER_MODE_MM    if the object is MM                  */
+/*              Game.GMASTER_MODE_SA    if the object is SA                  */
 /* Status : Tested/Stable                                                    */
 /*****************************************************************************/
 static int GameObject_GetGmasterMode(lua_State *L)

@@ -182,6 +182,7 @@ int command_kick(object *op, char *params)
     player     *pl;
     const char *kicker_name,
                *kickee_name;
+    char        buf[MEDIUM_BUF];
     objectlink *ol;
     int         ticks;
 
@@ -227,27 +228,31 @@ int command_kick(object *op, char *params)
 
     /* Log it and tell everyone so justice is seen to be done, or at least we
      * all get a good laugh. */
-    LOG(llevInfo, "KICKCMD: %s issued /kick %s\n",
-        kicker_name, kickee_name);
+    sprintf(buf, "KICK: Player %s has been kicked by %s",
+            kickee_name, kicker_name);
+    LOG(llevInfo, "%s\n", buf);
     new_draw_info(NDI_UNIQUE | NDI_ALL, 5, op, "%s is kicked out of the game.",
-                         kickee_name);
+                  kickee_name);
 
-    /* Tell all VOLs/GMs/MMs particularly. TODO: use VOL channel not individual
+    /* Tell all VOLs/GMs/SAs particularly. TODO: use VOL channel not individual
      * NDIs. */
-    for(ol = gmaster_list_VOL; ol; ol = ol->next)
+    for (ol = gmaster_list_VOL; ol; ol = ol->next)
+    {
         new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ol->objlink.ob,
-            "KICK: Player %s has been kicked by %s\n",
-            kickee_name, kicker_name);
+                      "%s", buf);
+    }
 
-    for(ol = gmaster_list_GM; ol; ol = ol->next)
+    for (ol = gmaster_list_GM; ol; ol = ol->next)
+    {
         new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ol->objlink.ob,
-            "KICK: Player %s has been kicked by %s\n",
-            kickee_name, kicker_name);
+                      "%s", buf);
+    }
 
-    for(ol = gmaster_list_MM; ol; ol = ol->next)
+    for (ol = gmaster_list_SA; ol; ol = ol->next)
+    {
         new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ol->objlink.ob,
-            "KICK: Player %s has been kicked by %s\n",
-            kickee_name, kicker_name);
+                      "%s", buf);
+    }
 
     /* we kicked player params succesfull.
      * Now we give him a 1min temp ban, so he can
@@ -712,14 +717,23 @@ int command_mutelevel(object *op, char *params)
     settings.mutelevel = lvl;
     sprintf(buf,"SET: shout level set to %d!\n", lvl);
 
-    for(ol = gmaster_list_VOL; ol; ol = ol->next)
-        new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ol->objlink.ob, "%s", buf);
+    for (ol = gmaster_list_VOL; ol; ol = ol->next)
+    {
+        new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ol->objlink.ob,
+                      "%s", buf);
+    }
 
-    for(ol = gmaster_list_GM; ol; ol = ol->next)
-        new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ol->objlink.ob, "%s", buf);
+    for (ol = gmaster_list_GM; ol; ol = ol->next)
+    {
+        new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ol->objlink.ob,
+                      "%s", buf);
+    }
 
-    for(ol = gmaster_list_MM; ol; ol = ol->next)
-        new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ol->objlink.ob, "%s", buf);
+    for (ol = gmaster_list_SA; ol; ol = ol->next)
+    {
+        new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ol->objlink.ob,
+                      "%s", buf);
+    }
 
     return 0;
 }
@@ -752,7 +766,7 @@ int command_dm_connections(object *op, char *params)
     for(ol = gmaster_list_GM; ol; ol = ol->next)
         new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ol->objlink.ob, "%s", buf);
 
-    for(ol = gmaster_list_MM; ol; ol = ol->next)
+    for(ol = gmaster_list_SA; ol; ol = ol->next)
         new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ol->objlink.ob, "%s", buf);
 
     return 0;
@@ -1808,7 +1822,7 @@ int command_mute(object *op, char *params)
         for(ol = gmaster_list_GM; ol; ol = ol->next)
             new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ol->objlink.ob, "%s", buf);
 
-        for(ol = gmaster_list_MM; ol; ol = ol->next)
+        for(ol = gmaster_list_SA; ol; ol = ol->next)
             new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ol->objlink.ob, "%s", buf);
     }
 
@@ -1854,7 +1868,7 @@ static void add_banlist_ip(object* op, char *ip, int ticks)
     for(ob = gmaster_list_GM;ob;ob=ob->next)
         new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ob->objlink.ob, "%s", buf);
 
-    for(ob = gmaster_list_MM;ob;ob=ob->next)
+    for(ob = gmaster_list_SA;ob;ob=ob->next)
         new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ob->objlink.ob, "%s", buf);
 }
 
@@ -1892,7 +1906,7 @@ static void add_banlist_name(object* op, char *name, int ticks)
     for(ob = gmaster_list_GM;ob;ob=ob->next)
         new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ob->objlink.ob, "%s", buf);
 
-    for(ob = gmaster_list_MM;ob;ob=ob->next)
+    for(ob = gmaster_list_SA;ob;ob=ob->next)
         new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ob->objlink.ob, "%s", buf);
 }
 
@@ -2065,7 +2079,7 @@ int command_ban(object *op, char *params)
                 for(ob = gmaster_list_GM; ob; ob = ob->next)
                     new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ob->objlink.ob, "%s", buf);
 
-                for(ob = gmaster_list_MM; ob; ob = ob->next)
+                for(ob = gmaster_list_SA; ob; ob = ob->next)
                     new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ob->objlink.ob, "%s", buf);
 
                 kick_player(pl);
@@ -2092,10 +2106,10 @@ int command_ban(object *op, char *params)
                     char buf[SMALL_BUF];
 
                     if ((CONTR(op)->gmaster_mode != GMASTER_MODE_GM &&
-                         CONTR(op)->gmaster_mode != GMASTER_MODE_MM) &&
+                         CONTR(op)->gmaster_mode != GMASTER_MODE_SA) &&
                         ol->objlink.ban->ticks_init == -1)
                     {
-                        new_draw_info(NDI_UNIQUE, 0, op, "Only GMs and MMs can unban permanently banned!");
+                        new_draw_info(NDI_UNIQUE, 0, op, "Only GMs and SAs can unban permanently banned!");
 
                         return 0;
                     }
@@ -2113,7 +2127,7 @@ int command_ban(object *op, char *params)
                     for (ob = gmaster_list_GM; ob; ob = ob->next)
                         new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ob->objlink.ob, "%s", buf);
 
-                    for (ob = gmaster_list_MM; ob; ob = ob->next)
+                    for (ob = gmaster_list_SA; ob; ob = ob->next)
                         new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ob->objlink.ob, "%s", buf);
 
                     remove_ban_entry(ol);
@@ -2133,10 +2147,10 @@ int command_ban(object *op, char *params)
                     char buf[SMALL_BUF];
 
                     if ((CONTR(op)->gmaster_mode != GMASTER_MODE_GM &&
-                         CONTR(op)->gmaster_mode != GMASTER_MODE_MM) &&
+                         CONTR(op)->gmaster_mode != GMASTER_MODE_SA) &&
                         ol->objlink.ban->ticks_init == -1)
                     {
-                        new_draw_info(NDI_UNIQUE, 0, op, "Only GMs and MMs can unban permanently banned!");
+                        new_draw_info(NDI_UNIQUE, 0, op, "Only GMs and SAs can unban permanently banned!");
 
                         return 0;
                     }
@@ -2154,7 +2168,7 @@ int command_ban(object *op, char *params)
                     for (ob = gmaster_list_GM; ob; ob = ob->next)
                         new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ob->objlink.ob, "%s", buf);
 
-                    for (ob = gmaster_list_MM; ob; ob = ob->next)
+                    for (ob = gmaster_list_SA; ob; ob = ob->next)
                         new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ob->objlink.ob, "%s", buf);
 
                     remove_ban_entry(ol);
@@ -2174,23 +2188,6 @@ int command_ban(object *op, char *params)
 //    new_draw_info(NDI_UNIQUE, 0, op, "Usage: /ban  ip <IP> <second>");
 //    new_draw_info(NDI_UNIQUE, 0, op, "Usage: /ban  add <player name> <second>");
 //    new_draw_info(NDI_UNIQUE, 0, op, "Note: /ban add will ban ip AND name. Player must be still online.");
-    return 0;
-}
-
-/* become a MW */
-int command_mw(object *op, char *params)
-{
-    if(CONTR(op)->gmaster_mode == GMASTER_MODE_MW) /* turn off ? */
-        remove_gmaster_mode(CONTR(op));
-
-    else if(check_gmaster_list(CONTR(op), GMASTER_MODE_MW))
-    {
-        /* remove from other lists when we change mode */
-        if(CONTR(op)->gmaster_mode != GMASTER_MODE_NO)
-            remove_gmaster_mode(CONTR(op));
-        set_gmaster_mode(CONTR(op), GMASTER_MODE_MW);
-    }
-
     return 0;
 }
 
@@ -2226,8 +2223,24 @@ int command_gm(object *op, char *params)
     return 0;
 }
 
-/* Actual command to perhaps become dm.  Changed around a bit in version 0.92.2
- * - allow people on sockets to become dm, and allow better dm file */
+/* become a MW */
+int command_mw(object *op, char *params)
+{
+    if(CONTR(op)->gmaster_mode == GMASTER_MODE_MW) /* turn off ? */
+        remove_gmaster_mode(CONTR(op));
+
+    else if(check_gmaster_list(CONTR(op), GMASTER_MODE_MW))
+    {
+        /* remove from other lists when we change mode */
+        if(CONTR(op)->gmaster_mode != GMASTER_MODE_NO)
+            remove_gmaster_mode(CONTR(op));
+        set_gmaster_mode(CONTR(op), GMASTER_MODE_MW);
+    }
+
+    return 0;
+}
+
+/* become a MM */
 int command_mm(object *op, char *params)
 {
     if(CONTR(op)->gmaster_mode == GMASTER_MODE_MM) /* turn off ? */
@@ -2243,7 +2256,23 @@ int command_mm(object *op, char *params)
     return 0;
 }
 
-/* Lists online VOLs, GMs, MWs and MMs unless they have requested privacy. */
+/* become a SA */
+int command_sa(object *op, char *params)
+{
+    if(CONTR(op)->gmaster_mode == GMASTER_MODE_SA) /* turn off ? */
+        remove_gmaster_mode(CONTR(op));
+    else if(check_gmaster_list(CONTR(op), GMASTER_MODE_SA))
+    {
+        /* remove from other lists when we change mode */
+        if(CONTR(op)->gmaster_mode != GMASTER_MODE_NO)
+            remove_gmaster_mode(CONTR(op));
+        set_gmaster_mode(CONTR(op), GMASTER_MODE_SA);
+    }
+
+    return 0;
+}
+
+/* Lists online gmasters unless they have requested privacy. */
 int command_gmasterlist(object *op, char *params)
 {
     objectlink *ol;
@@ -2279,6 +2308,15 @@ int command_gmasterlist(object *op, char *params)
     }
 
     for(ol = gmaster_list_MM; ol; ol = ol->next)
+    {
+        if(!CONTR(ol->objlink.ob)->privacy)
+        {
+            new_draw_info(NDI_UNIQUE, 0, op, "%s",
+                          CONTR(ol->objlink.ob)->quick_name);
+        }
+    }
+
+    for(ol = gmaster_list_SA; ol; ol = ol->next)
     {
         if(!CONTR(ol->objlink.ob)->privacy)
         {

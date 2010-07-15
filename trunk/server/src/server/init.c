@@ -228,6 +228,7 @@ static void init_globals()
     gmaster_list_GM = NULL;
     gmaster_list_MW = NULL;
     gmaster_list_MM = NULL;
+    gmaster_list_SA = NULL;
 
     ban_list_player=NULL;
     ban_list_ip=NULL;
