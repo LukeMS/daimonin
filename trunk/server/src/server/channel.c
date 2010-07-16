@@ -100,9 +100,7 @@ int command_channel(object *ob, char *params)
  * channel->clan will be some sort of pointer to the clan info...
  */
 //                  !is_player_in_clan(channel->clan) ||
-                    ((CONTR(ob)->gmaster_mode == GMASTER_MODE_NO ||
-                      CONTR(ob)->gmaster_mode == GMASTER_MODE_MW ||
-                      CONTR(ob)->gmaster_mode == GMASTER_MODE_MM) &&
+                    (!(CONTR(ob)->gmaster_mode & (GMASTER_MODE_SA | GMASTER_MODE_GM | GMASTER_MODE_VOL)) &&
                      ob->level < channel->enter_lvl))
                         continue;
                 if((pl_channel=findPlayerChannelFromName(CONTR(ob),CONTR(ob), channel->name, TRUE)))
@@ -169,9 +167,7 @@ int command_channel(object *ob, char *params)
         }
         /* Check for lvl-post restrictions. VOLs, GMs, and SAs can always post. */
         if (ob->level<pl_channel->channel->post_lvl &&
-            (CONTR(ob)->gmaster_mode == GMASTER_MODE_NO ||
-             CONTR(ob)->gmaster_mode == GMASTER_MODE_MW ||
-             CONTR(ob)->gmaster_mode == GMASTER_MODE_MM))
+            !(CONTR(ob)->gmaster_mode & (GMASTER_MODE_SA | GMASTER_MODE_GM | GMASTER_MODE_VOL)))
         {
             new_draw_info(NDI_UNIQUE, 0, ob, "You need at least level %d to post on this channel.",pl_channel->channel->post_lvl);
             return 0;
@@ -188,9 +184,7 @@ int command_channel(object *ob, char *params)
         }
         /* Check for lvl-post restrictions. VOLs, GMs, and SAs can always post. */
         if (ob->level<pl_channel->channel->post_lvl &&
-            (CONTR(ob)->gmaster_mode == GMASTER_MODE_NO ||
-             CONTR(ob)->gmaster_mode == GMASTER_MODE_MW ||
-             CONTR(ob)->gmaster_mode == GMASTER_MODE_MM))
+            !(CONTR(ob)->gmaster_mode & (GMASTER_MODE_SA | GMASTER_MODE_GM | GMASTER_MODE_VOL)))
         {
             new_draw_info(NDI_UNIQUE, 0, ob, "You need at least level %d to post on this channel.",pl_channel->channel->post_lvl);
             return 0;
@@ -207,7 +201,8 @@ int command_channel(object *ob, char *params)
         lines=atoi(params);
         if (lines<=0)
             lines=5; /*max 5 lines if he is not specific */
-        if ((lines>10) && (CONTR(ob)->gmaster_mode < GMASTER_MODE_VOL))
+        if ((lines>10) &&
+            !(CONTR(ob)->gmaster_mode & (GMASTER_MODE_SA | GMASTER_MODE_GM | GMASTER_MODE_VOL)))
             lines=10; /*players have 10 lines limit */
 
         sendChannelHist(pl_channel,lines);
@@ -366,9 +361,7 @@ struct channels *findGlobalChannelFromName(player *pl, char *name, int mute)
  * channel->clan will be some sort of pointer to the clan info...
  */
 //                  !is_player_in_clan(c->clan) ||
-                    ((pl->gmaster_mode == GMASTER_MODE_NO ||
-                      pl->gmaster_mode == GMASTER_MODE_MW ||
-                      pl->gmaster_mode == GMASTER_MODE_MM) &&
+                    (!(pl->gmaster_mode & (GMASTER_MODE_SA | GMASTER_MODE_GM | GMASTER_MODE_VOL)) &&
                      pl->ob->level < c->enter_lvl))
            {
                 c=c->next;
@@ -397,9 +390,7 @@ struct channels *findGlobalChannelFromName(player *pl, char *name, int mute)
  * channel->clan will be some sort of pointer to the clan info...
  */
 //                  !is_player_in_clan(tmp->clan) ||
-                    ((pl->gmaster_mode == GMASTER_MODE_NO ||
-                      pl->gmaster_mode == GMASTER_MODE_MW ||
-                      pl->gmaster_mode == GMASTER_MODE_MM) &&
+                    (!(pl->gmaster_mode & (GMASTER_MODE_SA | GMASTER_MODE_GM | GMASTER_MODE_VOL)) &&
                      pl->ob->level < tmp->enter_lvl))
                 continue;
         if (!strncasecmp(tmp->name, name, strlen(name)))
@@ -465,9 +456,7 @@ struct channels *getChannelFromGlobalShortcut(player *pl, char *name)
  * channel->clan will be some sort of pointer to the clan info...
  */
 //                  !is_player_in_clan(channel->clan) ||
-                    ((pl->gmaster_mode == GMASTER_MODE_NO ||
-                      pl->gmaster_mode == GMASTER_MODE_MW ||
-                      pl->gmaster_mode == GMASTER_MODE_MM) &&
+                    (!(pl->gmaster_mode & (GMASTER_MODE_SA | GMASTER_MODE_GM | GMASTER_MODE_VOL)) &&
                      pl->ob->level < channel->enter_lvl))
                 continue;/* restricted channel */
         if(channel->shortcut==name[0])
@@ -1035,8 +1024,6 @@ int command_channel_create(object *ob, char *params)
     char    defaultshortcut='#';
     struct channels *channel;
 
-    if (CONTR(ob)->gmaster_mode < GMASTER_MODE_VOL)
-        return 0;
     if (!params)
     {
         new_draw_info(NDI_UNIQUE, 0, ob, "Syntax: /createchannel <name> <defaultshortcut> <defaultcolor> <postlevel> <enterlevel> <gmastermode>");
@@ -1092,9 +1079,6 @@ void forceAddPlayerToChannel(struct player_channel *cpl, char *params)
 {
     player *pl=NULL;
 
-    /* FIXME: Not sure what this is for. */
-    if (cpl->pl->gmaster_mode < GMASTER_MODE_SA)
-        return;
     if (!params)
     {
         new_draw_info(NDI_UNIQUE, 0, cpl->pl->ob, "Syntax: -<channel>!add <player>");
@@ -1119,8 +1103,6 @@ void kickPlayerFromChannel(struct player_channel *cpl, char *params)
     struct player_channel *kick;
     char buf[MEDIUM_BUF];
 
-    if (cpl->pl->gmaster_mode < GMASTER_MODE_VOL)
-        return;
     if (!params)
     {
         new_draw_info(NDI_UNIQUE, 0, cpl->pl->ob, "Syntax: -<channel>!kick <player>");
@@ -1324,8 +1306,6 @@ void modify_channel_params(struct player_channel *cpl, char *params)
     int enter_lvl=0;
     int post_lvl=0;
 
-    if (cpl->pl->gmaster_mode < GMASTER_MODE_VOL)
-        return;
     if (!params)
     {
         new_draw_info(NDI_UNIQUE, 0, cpl->pl->ob, "Syntax: -<channel>!mod <postlevel> <enterlevel>");

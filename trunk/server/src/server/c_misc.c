@@ -45,8 +45,7 @@ int command_motd(object *op, char *params)
 {
 #ifdef MOTD
     if (params &&
-        (CONTR(op)->gmaster_mode == GMASTER_MODE_GM ||
-         CONTR(op)->gmaster_mode == GMASTER_MODE_SA))
+        (CONTR(op)->gmaster_mode & (GMASTER_MODE_SA | GMASTER_MODE_GM)))
     {
         char  buf[MEDIUM_BUF];
         FILE *fp;
@@ -222,10 +221,8 @@ int command_who(object *op, char *params)
     for (pl = first_player, ip = 0, il = 0; pl; pl = pl->next)
     {
         if (pl->privacy &&
-            (pl->gmaster_mode == GMASTER_MODE_SA ||
-             !(CONTR(op)->gmaster_mode == GMASTER_MODE_VOL ||
-               CONTR(op)->gmaster_mode == GMASTER_MODE_GM ||
-               CONTR(op)->gmaster_mode == GMASTER_MODE_SA)))
+            ((pl->gmaster_mode & GMASTER_MODE_SA) ||
+             !(CONTR(op)->gmaster_mode & (GMASTER_MODE_SA | GMASTER_MODE_GM | GMASTER_MODE_VOL))))
         {
             continue;
         }
@@ -248,9 +245,7 @@ int command_who(object *op, char *params)
                                  ((QUERY_FLAG(pl->ob, FLAG_IS_FEMALE)) ? "female" : "neuter"),
                                  pl->ob->race, pl->ob->level);
 
-            if (CONTR(op)->gmaster_mode == GMASTER_MODE_VOL ||
-                CONTR(op)->gmaster_mode == GMASTER_MODE_GM ||
-                CONTR(op)->gmaster_mode == GMASTER_MODE_SA)
+            if ((CONTR(op)->gmaster_mode & (GMASTER_MODE_SA | GMASTER_MODE_GM | GMASTER_MODE_VOL)))
             {
                 uint16 len,
                        off;
@@ -322,9 +317,7 @@ int command_mapinfo(object *op, char *params)
     if (params)
     {
         /* Only MWs/MMs/SAs can use the fancy commands. */
-        if (pl->gmaster_mode != GMASTER_MODE_MW &&
-            pl->gmaster_mode != GMASTER_MODE_MM &&
-            pl->gmaster_mode != GMASTER_MODE_SA)
+        if (!(pl->gmaster_mode & (GMASTER_MODE_SA | GMASTER_MODE_MM | GMASTER_MODE_MW)))
             return 1;
 
         /* List all the loaded maps. */
@@ -1046,113 +1039,61 @@ static void show_help(char *fname, player *pl)
 
 static void show_commands(player *pl)
 {
+    char         name[7][TINY_BUF] = { "", "", "", "", "", "", "" };
     CommArray_s *ap[7] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL };
     int          size[7] = { -1, -1, -1, -1, -1, -1, -1 },
-                 i;
+                 i = 0;
 
-    switch (pl->gmaster_mode)
+    sprintf(name[i], "Normal Commands");
+    ap[i] = Commands;
+    size[i++] = CommandsSize;
+    sprintf(name[i], "Emotes");
+    ap[i] = EmoteCommands;
+    size[i++] = EmoteCommandsSize;
+
+    if ((pl->gmaster_mode & GMASTER_MODE_SA))
     {
-        case GMASTER_MODE_VOL:
-            ap[0] = Commands;
-            ap[1] = EmoteCommands;
-            ap[2] = CommandsVOL;
-            size[0] = CommandsSize;
-            size[1] = EmoteCommandsSize;
-            size[2] = CommandsVOLSize;
+        sprintf(name[i], "SA Commands");
+        ap[i] = CommandsSA;
+        size[i++] = CommandsSASize;
+    }
 
-            break;
+    if ((pl->gmaster_mode & GMASTER_MODE_MM))
+    {
+        sprintf(name[i], "MM Commands");
+        ap[i] = CommandsMM;
+        size[i++] = CommandsMMSize;
+    }
 
-        case GMASTER_MODE_GM:
-            ap[0] = Commands;
-            ap[1] = EmoteCommands;
-            ap[2] = CommandsVOL;
-            ap[3] = CommandsGM;
-            size[0] = CommandsSize;
-            size[1] = EmoteCommandsSize;
-            size[2] = CommandsVOLSize;
-            size[3] = CommandsGMSize;
+    if ((pl->gmaster_mode & GMASTER_MODE_MW))
+    {
+        sprintf(name[i], "MW Commands");
+        ap[i] = CommandsMW;
+        size[i++] = CommandsMWSize;
+    }
 
-            break;
+    if ((pl->gmaster_mode & GMASTER_MODE_GM))
+    {
+        sprintf(name[i], "GM Commands");
+        ap[i] = CommandsGM;
+        size[i++] = CommandsGMSize;
+    }
 
-        case GMASTER_MODE_MW:
-            ap[0] = Commands;
-            ap[1] = EmoteCommands;
-            ap[2] = CommandsMW;
-            size[0] = CommandsSize;
-            size[1] = EmoteCommandsSize;
-            size[2] = CommandsMWSize;
-
-            break;
-
-        case GMASTER_MODE_MM:
-            ap[0] = Commands;
-            ap[1] = EmoteCommands;
-            ap[2] = CommandsVOL;
-            ap[3] = CommandsGM;
-            ap[4] = CommandsMW;
-            ap[5] = CommandsMM;
-            size[0] = CommandsSize;
-            size[1] = EmoteCommandsSize;
-            size[2] = CommandsVOLSize;
-            size[3] = CommandsGMSize;
-            size[4] = CommandsMWSize;
-            size[5] = CommandsMMSize;
-
-            break;
-
-        case GMASTER_MODE_SA:
-            ap[0] = Commands;
-            ap[1] = EmoteCommands;
-            ap[2] = CommandsVOL;
-            ap[3] = CommandsGM;
-            ap[4] = CommandsMW;
-            ap[5] = CommandsMM;
-            ap[6] = CommandsSA;
-            size[0] = CommandsSize;
-            size[1] = EmoteCommandsSize;
-            size[2] = CommandsVOLSize;
-            size[3] = CommandsGMSize;
-            size[4] = CommandsMWSize;
-            size[5] = CommandsMMSize;
-            size[6] = CommandsSASize;
-
-            break;
-
-        default:
-            ap[0] = Commands;
-            ap[1] = EmoteCommands;
-            size[0] = CommandsSize;
-            size[1] = EmoteCommandsSize;
+    if ((pl->gmaster_mode & GMASTER_MODE_VOL))
+    {
+        sprintf(name[i], "VOL Commands");
+        ap[i] = CommandsVOL;
+        size[i++] = CommandsVOLSize;
     }
 
     for (i = 0; i < 6 && ap[i]; i++)
     {
         int  j;
-        char buf[MEDIUM_BUF];
+        char buf[MEDIUM_BUF] = "";
 
-        if (ap[i] == Commands)
-            new_draw_info(NDI_UNIQUE | NDI_YELLOW, 0, pl->ob, "\nNormal Commands");
-        else if (ap[i] == EmoteCommands)
-            new_draw_info(NDI_UNIQUE | NDI_YELLOW, 0, pl->ob, "\nEmotes");
-        else if (ap[i] == CommandsVOL)
-            new_draw_info(NDI_UNIQUE | NDI_YELLOW, 0, pl->ob, "\nVOL Commands");
-        else if (ap[i] == CommandsGM)
-            new_draw_info(NDI_UNIQUE | NDI_YELLOW, 0, pl->ob, "\nGM Commands");
-        else if (ap[i] == CommandsMW)
-            new_draw_info(NDI_UNIQUE | NDI_YELLOW, 0, pl->ob, "\nMW Commands");
-        else if (ap[i] == CommandsMM)
-            new_draw_info(NDI_UNIQUE | NDI_YELLOW, 0, pl->ob, "\nMM Commands");
-        else if (ap[i] == CommandsSA)
-            new_draw_info(NDI_UNIQUE | NDI_YELLOW, 0, pl->ob, "\nSA Commands");
-        else
-        {
-            LOG(llevDebug, "DEBUG:: %s/show_commands(): Unknown command structure!\n",
-                __FILE__);
+        new_draw_info(NDI_UNIQUE | NDI_YELLOW, 0, pl->ob, "\n%s", name[i]);
 
-            return;
-        }
-
-        for (j = 0, buf[0] = '\0'; j < size[i]; j++)
+        for (j = 0; j < size[i]; j++)
         {
             /* TODO: This calculation can be removed, and the following
              * new_draw_info() moved to inside this for loop by having the

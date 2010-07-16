@@ -46,7 +46,9 @@ void ai_move_towards_owner(object *op, struct mob_behaviour_param *params, move_
  */
 int mob_can_see_obj(object *op, object *obj, struct mob_known_obj *known_obj)
 {
-    int  aggro_range, stealth_range;
+    int     aggro_range,
+            stealth_range;
+    player *pl = CONTR(obj);
 
     /* Cache values */
     static tag_t cached_op_tag, cached_obj_tag;
@@ -71,18 +73,18 @@ int mob_can_see_obj(object *op, object *obj, struct mob_known_obj *known_obj)
     /* Gmaster with stealth? */
 #ifdef _TESTSERVER
     if (obj->type == PLAYER &&
-        CONTR(obj)->stealth &&
-        (CONTR(obj)->gmaster_mode == GMASTER_MODE_MW ||
-         CONTR(obj)->gmaster_mode == GMASTER_MODE_MM ||
-         CONTR(obj)->gmaster_mode == GMASTER_MODE_SA))
-        return FALSE;
+        pl &&
+        pl->stealth &&
+        (pl->gmaster_mode & (GMASTER_MODE_SA | GMASTER_MODE_MM | GMASTER_MODE_MW)))
 #else
     if (obj->type == PLAYER &&
-        CONTR(obj)->stealth &&
-        CONTR(obj)->gmaster_mode == GMASTER_MODE_MM ||
-        CONTR(obj)->gmaster_mode == GMASTER_MODE_SA)
-        return FALSE;
+        pl &&
+        pl->stealth &&
+        (pl->gmaster_mode & (GMASTER_MODE_SA | GMASTER_MODE_MM)))
 #endif
+    {
+        return FALSE;
+    }
 
     /* Invisibility */
     if (QUERY_FLAG(obj, FLAG_IS_INVISIBLE) && !QUERY_FLAG(op, FLAG_SEE_INVISIBLE))
@@ -148,7 +150,7 @@ void npc_call_for_help(object *op) {
               register_npc_known_obj(friend->ob, op->enemy, FRIENDSHIP_ATTACK, 0);
           }
       }
-  }
+  
 }
 #endif
 
