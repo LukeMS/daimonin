@@ -94,7 +94,7 @@ void become_daemon(void)
 
     close(0);
     close(1);
-    close(2);
+//    close(2);
 
     /*
      * Set up the standard file descriptors.
