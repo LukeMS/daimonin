@@ -619,7 +619,7 @@ void send_golem_control(object *golem, int mode)
 void generate_ext_title(player *pl)
 {
     object *walk;
-    char   *gender, *tmp;
+    char   *gender, *gmaster;
     char    prof[32]    = "";
     char    title[32]   = "";
     char    rank[32]    = "";
@@ -665,31 +665,32 @@ void generate_ext_title(player *pl)
 
     if ((pl->gmaster_mode & GMASTER_MODE_SA))
     {
-        sprintf(pl->quick_name, "%s%s[SA]", rank, pl->ob->name);
+        gmaster = "[SA]";
     }
     else if ((pl->gmaster_mode & GMASTER_MODE_MM))
     {
-        sprintf(pl->quick_name, "%s%s[MM]", rank, pl->ob->name);
+        gmaster = "[MM]";
     }
     else if ((pl->gmaster_mode & GMASTER_MODE_MW))
     {
-        sprintf(pl->quick_name, "%s%s[MW]", rank, pl->ob->name);
+        gmaster = "[MW]";
     }
     else if ((pl->gmaster_mode & GMASTER_MODE_GM))
     {
-        sprintf(pl->quick_name, "%s%s[GM]", rank, pl->ob->name);
+        gmaster = "[GM]";
     }
     else if ((pl->gmaster_mode & GMASTER_MODE_VOL))
     {
-        sprintf(pl->quick_name, "%s%s[VOL]", rank, pl->ob->name);
+        gmaster = "[VOL]";
     }
     else
     {
-        sprintf(pl->quick_name, "%s%s", rank, pl->ob->name);
+        gmaster = "";
     }
 
+    sprintf(pl->quick_name, "%s%s%s", rank, pl->ob->name, gmaster);
     sprintf(pl->ext_title, "%s\n%s%s %s\n%s\n%s\n%s\n%s\n%c\n",
-            rank, pl->ob->name, tmp, title, pl->ob->race, prof, align,
+            rank, pl->ob->name, gmaster, title, pl->ob->race, prof, align,
             determine_god(pl->ob), *gender);
 }
 
