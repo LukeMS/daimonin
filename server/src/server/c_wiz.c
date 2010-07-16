@@ -707,7 +707,8 @@ int command_mutelevel(object *op, char *params)
     /* set shout/mute level from params */
     sscanf(params, "%d", &lvl);
 
-    if (CONTR(op)->gmaster_mode == GMASTER_MODE_VOL &&
+    if ((CONTR(op)->gmaster_mode & GMASTER_MODE_VOL) &&
+        !(CONTR(op)->gmaster_mode & (GMASTER_MODE_SA | GMASTER_MODE_GM)) &&
         lvl > 10)
     {
         new_draw_info(NDI_UNIQUE, 0, op, "WARNING: Maximum mutelevel for VOLs is 10.");
@@ -717,7 +718,7 @@ int command_mutelevel(object *op, char *params)
     settings.mutelevel = lvl;
     sprintf(buf,"SET: shout level set to %d!\n", lvl);
 
-    for (ol = gmaster_list_VOL; ol; ol = ol->next)
+    for (ol = gmaster_list_SA; ol; ol = ol->next)
     {
         new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ol->objlink.ob,
                       "%s", buf);
@@ -729,7 +730,7 @@ int command_mutelevel(object *op, char *params)
                       "%s", buf);
     }
 
-    for (ol = gmaster_list_SA; ol; ol = ol->next)
+    for (ol = gmaster_list_VOL; ol; ol = ol->next)
     {
         new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ol->objlink.ob,
                       "%s", buf);
@@ -1843,16 +1844,23 @@ static void add_banlist_ip(object* op, char *ip, int ticks)
     objectlink *ol, *ol_tmp, *ob;
     char buf[SMALL_BUF];
 
-    for(ol = ban_list_ip;ol;ol=ol_tmp)
+    for(ol = ban_list_ip; ol; ol = ol_tmp)
     {
-            if(CONTR(op)->gmaster_mode == GMASTER_MODE_VOL && ol->objlink.ban->ticks_init == -1)
-             {
-                new_draw_info(NDI_UNIQUE, 0, op, "Only GMs and DMs can unban permanently banned!");
-                return;
-             }
+        if ((CONTR(op)->gmaster_mode & GMASTER_MODE_VOL) &&
+            !(CONTR(op)->gmaster_mode & (GMASTER_MODE_SA | GMASTER_MODE_GM)) &&
+            ol->objlink.ban->ticks_init == -1)
+        {
+            new_draw_info(NDI_UNIQUE, 0, op, "VOLs cannot unban permanently banned!");
+
+            return;
+        }
+
         ol_tmp = ol->next;
-        if(!strcmp(ol->objlink.ban->ip, ip))
+
+        if (!strcmp(ol->objlink.ban->ip, ip))
+        {
             remove_ban_entry(ol);
+        }
     }
 
     sprintf(buf, "IP %s is now banned for %d seconds.", ip, ticks/8);
@@ -1881,16 +1889,24 @@ static void add_banlist_name(object* op, char *name, int ticks)
     transform_name_string(name);
 
     name_hash = find_string(name); /* we need an shared string to check ban list */
-    for(ol = ban_list_player;ol;ol=ol_tmp)
+
+    for (ol = ban_list_player; ol; ol = ol_tmp)
     {
-            if(CONTR(op)->gmaster_mode == GMASTER_MODE_VOL && ol->objlink.ban->ticks_init == -1)
-             {
-                new_draw_info(NDI_UNIQUE, 0, op, "Only GMs and DMs can unban permanently banned!");
-                return;
-             }
+        if ((CONTR(op)->gmaster_mode & GMASTER_MODE_VOL) &&
+            !(CONTR(op)->gmaster_mode & (GMASTER_MODE_SA | GMASTER_MODE_GM)) &&
+            ol->objlink.ban->ticks_init == -1)
+        {
+            new_draw_info(NDI_UNIQUE, 0, op, "VOLs cannot unban permanently banned!");
+
+            return;
+        }
+
         ol_tmp = ol->next;
-        if(ol->objlink.ban->name == name_hash)
+
+        if (ol->objlink.ban->name == name_hash)
+        {
             remove_ban_entry(ol);
+        }
     }
 
     sprintf(buf, "Player %s is now banned for %d seconds.", name, ticks/8);
@@ -1984,9 +2000,12 @@ int command_ban(object *op, char *params)
 
             if (name)
             {
-                if (CONTR(op)->gmaster_mode == GMASTER_MODE_VOL &&
+                if ((CONTR(op)->gmaster_mode & GMASTER_MODE_VOL) &&
+                    !(CONTR(op)->gmaster_mode & (GMASTER_MODE_SA | GMASTER_MODE_GM)) &&
                     ticks == -1)
+                {
                     return 1;
+                }
 
                 if (ticks != -1)
                     ticks *= 8;     /* convert seconds to ticks */

@@ -663,15 +663,33 @@ void generate_ext_title(player *pl)
     else
         gender = "neuter";
 
-    sprintf(pl->quick_name, "%s%s%s",
-            rank, pl->ob->name,
-            ((pl->gmaster_mode == GMASTER_MODE_VOL) ? "[VOL]" :
-             ((pl->gmaster_mode == GMASTER_MODE_GM) ? "[GM]" :
-              ((pl->gmaster_mode == GMASTER_MODE_MW) ? "[MW]" :
-               ((pl->gmaster_mode == GMASTER_MODE_MM) ? "[MM]" :
-                ((pl->gmaster_mode == GMASTER_MODE_SA) ? "[SA]" : ""))))));
+    if ((pl->gmaster_mode & GMASTER_MODE_SA))
+    {
+        sprintf(pl->quick_name, "%s%s[SA]", rank, pl->ob->name);
+    }
+    else if ((pl->gmaster_mode & GMASTER_MODE_MM))
+    {
+        sprintf(pl->quick_name, "%s%s[MM]", rank, pl->ob->name);
+    }
+    else if ((pl->gmaster_mode & GMASTER_MODE_MW))
+    {
+        sprintf(pl->quick_name, "%s%s[MW]", rank, pl->ob->name);
+    }
+    else if ((pl->gmaster_mode & GMASTER_MODE_GM))
+    {
+        sprintf(pl->quick_name, "%s%s[GM]", rank, pl->ob->name);
+    }
+    else if ((pl->gmaster_mode & GMASTER_MODE_VOL))
+    {
+        sprintf(pl->quick_name, "%s%s[VOL]", rank, pl->ob->name);
+    }
+    else
+    {
+        sprintf(pl->quick_name, "%s%s", rank, pl->ob->name);
+    }
+
     sprintf(pl->ext_title, "%s\n%s%s %s\n%s\n%s\n%s\n%s\n%c\n",
-            rank, pl->ob->name,tmp, title, pl->ob->race, prof, align,
+            rank, pl->ob->name, tmp, title, pl->ob->race, prof, align,
             determine_god(pl->ob), *gender);
 }
 

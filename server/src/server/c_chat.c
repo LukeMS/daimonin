@@ -86,9 +86,7 @@ static int check_mute(object *op, int mode)
      * VOLs, GMs, and SAs are exempt. */
     if (mode == MUTE_MODE_SHOUT &&
         op->level < settings.mutelevel &&
-        (CONTR(op)->gmaster_mode == GMASTER_MODE_NO ||
-         CONTR(op)->gmaster_mode == GMASTER_MODE_MW ||
-         CONTR(op)->gmaster_mode == GMASTER_MODE_MM))
+        !(CONTR(op)->gmaster_mode & (GMASTER_MODE_SA | GMASTER_MODE_GM | GMASTER_MODE_VOL)))
     {
         new_draw_info(NDI_UNIQUE | NDI_ORANGE, 0, op, "You need to be level %d or higher for shout/tell!",
                       settings.mutelevel);
@@ -361,9 +359,9 @@ int command_tell(object *op, char *params)
              * without giving many people access to the server logs (not an
              * option). */
             if (!(pl->privacy &&
-                  pl->gmaster_mode == GMASTER_MODE_SA) &&
-                (gmaster_list_GM ||
-                 gmaster_list_SA))
+                  (pl->gmaster_mode & GMASTER_MODE_SA)) &&
+                (gmaster_list_SA ||
+                 gmaster_list_GM))
             {
                 char        buf[LARGE_BUF];
                 objectlink *ol;
@@ -371,7 +369,7 @@ int command_tell(object *op, char *params)
                 sprintf(buf, "%s tells %s: %s",
                         query_name(op), query_name(pl->ob), msg);
 
-                for (ol = gmaster_list_GM; ol; ol = ol->next)
+                for (ol = gmaster_list_SA; ol; ol = ol->next)
                 {
                     object *tmp = ol->objlink.ob;
 
@@ -384,7 +382,7 @@ int command_tell(object *op, char *params)
                     }
                 }
 
-                for (ol = gmaster_list_SA; ol; ol = ol->next)
+                for (ol = gmaster_list_GM; ol; ol = ol->next)
                 {
                     object *tmp = ol->objlink.ob;
 
@@ -402,10 +400,8 @@ int command_tell(object *op, char *params)
              * his presence, EXCEPT to VOLs, GMs, and SAs, UNLESS he is an SA! */
             if (pl->privacy)
             {
-                if (pl->gmaster_mode != GMASTER_MODE_SA &&
-                    (CONTR(op)->gmaster_mode == GMASTER_MODE_VOL ||
-                     CONTR(op)->gmaster_mode == GMASTER_MODE_GM ||
-                     CONTR(op)->gmaster_mode == GMASTER_MODE_SA))
+                if (!(pl->gmaster_mode & GMASTER_MODE_SA) &&
+                    (CONTR(op)->gmaster_mode & (GMASTER_MODE_SA | GMASTER_MODE_GM | GMASTER_MODE_VOL)))
                 {
                     new_draw_info(NDI_PLAYER | NDI_UNIQUE, 0, op, "You tell %s (~privacy mode~): %s",
                                          query_short_name(pl->ob, op), msg);
@@ -449,8 +445,7 @@ static void emote_other(object *op, object *target, char *str, char *buf, char *
          CONTR(target)->privacy) &&
         (op->type == PLAYER &&
          CONTR(op) &&
-         (CONTR(op)->gmaster_mode != GMASTER_MODE_GM &&
-          CONTR(op)->gmaster_mode != GMASTER_MODE_SA)))
+         (CONTR(op)->gmaster_mode & (GMASTER_MODE_SA | GMASTER_MODE_GM))))
        {
           new_draw_info(NDI_UNIQUE, 0, op, "No such player.");
           return;

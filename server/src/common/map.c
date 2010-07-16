@@ -361,9 +361,7 @@ void dump_map(mapstruct *m, player *pl, int list, char *ref)
         NDI_LOG(llevSystem, NDI_UNIQUE, 0, ob, "~Orig Path~: %s", m->orig_path);
 
         if (!pl ||
-            (pl->gmaster_mode == GMASTER_MODE_MW ||
-             pl->gmaster_mode == GMASTER_MODE_MM ||
-             pl->gmaster_mode == GMASTER_MODE_SA))
+            (pl->gmaster_mode & (GMASTER_MODE_MW | GMASTER_MODE_MM | GMASTER_MODE_SA)))
         {
             NDI_LOG(llevSystem, NDI_UNIQUE, 0, ob, "~Type~: %s",
                     ((MAP_MULTI(m)) ? "Multiplayer" :

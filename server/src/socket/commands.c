@@ -94,9 +94,6 @@ CommArray_s Commands[] =
     {"remove",        command_party_remove,   4.0f, 1},
 #ifdef USE_CHANNELS
     {"channel",       command_channel,        1.0f, 0}, /* channel system */
-    {"createchannel", command_channel_create, 0.0f, 1}, /* channel system */
-    {"deletechannel", command_channel_delete, 0.0f, 1}, /* channel system */
-    {"channelmute",   command_channel_mute,   0.0f, 1}, /* channel system */
 #endif
 #ifdef _TESTSERVER
     {"stuck",         command_stuck,          0.0f, 1},
@@ -174,6 +171,11 @@ CommArray_s CommandsVOL[] =
     {"kick",      command_kick,      0.0f, 1},
     {"mute",      command_mute,      0.0f, 1},
     {"ip",        command_ip,        0.0f, 1},
+#ifdef USE_CHANNELS
+    {"createchannel", command_channel_create, 0.0f, 1}, /* channel system */
+    {"deletechannel", command_channel_delete, 0.0f, 1}, /* channel system */
+    {"channelmute",   command_channel_mute,   0.0f, 1}, /* channel system */
+#endif
 };
 
 CommArray_s CommandsGM[] =

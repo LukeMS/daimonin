@@ -70,18 +70,28 @@ int player_save(object *op)
 
     fprintf(fp, "SENTInce %d\n", pl->SENTInce);
 
-    if(pl->gmaster_mode != GMASTER_MODE_NO)
+    if (pl->gmaster_mode != GMASTER_MODE_NO)
     {
-        if(pl->gmaster_mode == GMASTER_MODE_VOL)
-            fprintf(fp, "dm_VOL\n");
-        else if(pl->gmaster_mode == GMASTER_MODE_GM)
-            fprintf(fp, "dm_GM\n");
-        else if(pl->gmaster_mode == GMASTER_MODE_MW)
-            fprintf(fp, "dm_MW\n");
-        else if(pl->gmaster_mode == GMASTER_MODE_MM)
-            fprintf(fp, "dm_MM\n");
-        else
+        if ((pl->gmaster_mode & GMASTER_MODE_SA))
+        {
             fprintf(fp, "dm_SA\n");
+        }
+        else if ((pl->gmaster_mode & GMASTER_MODE_MM))
+        {
+            fprintf(fp, "dm_MM\n");
+        }
+        else if ((pl->gmaster_mode & GMASTER_MODE_MW))
+        {
+            fprintf(fp, "dm_MW\n");
+        }
+        else if ((pl->gmaster_mode & GMASTER_MODE_GM))
+        {
+            fprintf(fp, "dm_GM\n");
+        }
+        else if ((pl->gmaster_mode & GMASTER_MODE_VOL))
+        {
+            fprintf(fp, "dm_VOL\n");
+        }
     }
     if(pl->mute_counter > pticks)
         fprintf(fp, "mute %d\n", (int)(pl->mute_counter-pticks)); /* should be not THAT long */
@@ -485,16 +495,18 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
             break;
         else if (!strcmp(buf, "SENTInce"))
             pl->SENTInce = value;
-        else if (!strcmp(buf, "dm_VOL"))
-            pl->gmaster_mode = GMASTER_MODE_VOL;
-        else if (!strcmp(buf, "dm_GM"))
-            pl->gmaster_mode = GMASTER_MODE_GM;
+        else if (!strcmp(buf, "dm_SA"))
+            pl->gmaster_mode = GMASTER_MODE_SA |
+                               GMASTER_MODE_MM | GMASTER_MODE_MW |
+                               GMASTER_MODE_GM | GMASTER_MODE_VOL;
+        else if (!strcmp(buf, "dm_MM"))
+            pl->gmaster_mode = GMASTER_MODE_MM | GMASTER_MODE_MW;
         else if (!strcmp(buf, "dm_MW"))
             pl->gmaster_mode = GMASTER_MODE_MW;
-        else if (!strcmp(buf, "dm_MM"))
-            pl->gmaster_mode = GMASTER_MODE_MM;
-        else if (!strcmp(buf, "dm_SA"))
-            pl->gmaster_mode = GMASTER_MODE_SA;
+        else if (!strcmp(buf, "dm_GM"))
+            pl->gmaster_mode = GMASTER_MODE_GM | GMASTER_MODE_VOL;
+        else if (!strcmp(buf, "dm_VOL"))
+            pl->gmaster_mode = GMASTER_MODE_VOL;
         else if (!strcmp(buf, "mute"))
             pl->mute_counter = pticks+(unsigned long)value;
         else if (!strcmp(buf, "state"))
@@ -893,7 +905,7 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
     if ((gmaster_list_VOL ||
          gmaster_list_GM ||
          gmaster_list_SA) &&
-        !(pl->gmaster_mode == GMASTER_MODE_SA &&
+        !((pl->gmaster_mode & GMASTER_MODE_SA) &&
           pl->privacy))
     {
         char        buf[MEDIUM_BUF];
