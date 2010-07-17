@@ -568,13 +568,13 @@ void write_gmaster_file(void)
 /* Returns TRUE if p has sufficient gmaster_mode to access t, FALSE if not. */
 int compare_gmaster_mode(int t, int p)
 {
-    /* If t is 0, automatic success. */
-    if (!t)
+    /* If t is GMASTER_MODE_NO, automatic success. */
+    if (t == GMASTER_MODE_NO)
     {
         return 1;
     }
-    /* Else if p is 0, automatic failure. */
-    else if (!p)
+    /* Else if p is GMASTER_MODE_NO, automatic failure. */
+    else if (p == GMASTER_MODE_NO)
     {
         return 0;
     }
