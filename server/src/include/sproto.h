@@ -351,7 +351,7 @@ void                        lose_priest_exp(object *pl, int loss);
 /* init.c */
 void                        init(int argc, char **argv);
 void                        compile_info(void);
-void                        fatal_signal(int make_core, int close_sockets);
+void                        fatal_signal(int make_core, int close_sockets, uint8 status);
 void                        init_library();
 void                        free_strings();
 void                        set_pticks_time(long t);
@@ -369,8 +369,7 @@ int                         get_new_instance_num(void);
 void                        process_players1(mapstruct *map);
 void                        process_players2(mapstruct *map);
 void                        clean_tmp_files(int flag);
-void                        cleanup(int exit);
-void                        cleanup_without_exit();
+void                        cleanup_without_exit(void);
 void                        leave(player *pl, int draw_exit);
 void                        dequeue_path_requests(void);
 void                        do_specials(void);

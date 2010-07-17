@@ -135,10 +135,32 @@ typedef signed long long   sint64;
 
 #define POW2(x) ((x) * (x))
 
-#define EXIT_NORMAL     0
-#define EXIT_ERROR     -1
-#define EXIT_SHUTODWN  -2
-#define EXIT_RESETMAP  -3
+enum
+{
+    /* The so-called 'normal' exit */
+    SERVER_EXIT_NORMAL,
+
+    /* Certain gmasters can cause these exits */
+    SERVER_EXIT_RESTART, // Server will reboot
+    SERVER_EXIT_SHUTDOWN, // Server will not reboot
+
+    /* Specific internal errors */
+    SERVER_EXIT_ARTIFACT, // An artifact file is broken
+    SERVER_EXIT_TREASURE, // A treasure file is broken
+
+    /* General logging errors which cause the server to suicide */
+    SERVER_EXIT_FATAL, // A llevFatal was logged
+    SERVER_EXIT_FLOOD, // Too many llevBugs were logged
+
+    /* Various signals (not used on Windows) */
+    SERVER_EXIT_SIGSEGV,
+    SERVER_EXIT_SIGINT,
+    SERVER_EXIT_SIGQUIT,
+    SERVER_EXIT_SIGPIPE,
+    SERVER_EXIT_SIGBUS,
+    SERVER_EXIT_SIGTERM,
+    SERVER_EXIT_SIGHUP,
+};
 
 #define ROUND_TAG            pticks /* put this here because the DIFF */
 
@@ -555,7 +577,6 @@ EXTERN void (*object_initializers[256])(object *);
 EXTERN _srv_client_files        SrvClientFiles[SRV_CLIENT_FILES];
 EXTERN Socket_Info              socket_info;
 
-EXTERN int                      global_exit_return; /* return value for exit() */
 EXTERN long                     global_instance_id; /* every instance has a base ID at server runtime */
 EXTERN int                      global_instance_num; /* every instance has an unique tag/number */
 EXTERN uint32                   global_group_tag; /* every group gets an unique group tag identifier */

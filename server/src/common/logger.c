@@ -81,14 +81,14 @@ void LOG(LogLevel logLevel, char *format, ...)
     {
         exiting = 1;
         DoPrint("Fatal: Shutdown server. Reason: Fatal Error\n", tlogfile);
-        fatal_signal(0, 1);
+        fatal_signal(0, 1, SERVER_EXIT_FATAL);
     }
     else if (logLevel == llevBug &&
              ++nroferrors > MAX_ERRORS)
     {
         exiting = 1;
         DoPrint("Fatal: Shutdown server. Reason: BUG flood\n", tlogfile);
-        fatal_signal(0, 1);
+        fatal_signal(0, 1, SERVER_EXIT_FLOOD);
     }
 }
 

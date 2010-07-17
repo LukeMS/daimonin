@@ -321,7 +321,7 @@ int command_restart(object *ob, char *params)
     sprintf(buf, "'/restart%s%s' issued by %s\nServer will recompile and arches and maps will be updated!",
             (params) ? " " : "", (params) ? params : "", STRING_OBJ_NAME(ob));
     LOG(llevSystem, "%s", buf);
-    shutdown_agent(time, EXIT_RESETMAP, buf);
+    shutdown_agent(time, SERVER_EXIT_RESTART, buf);
 
     return 0;
 }
@@ -342,7 +342,7 @@ int command_shutdown(object *op, char *params)
     sprintf(buf, "'/shutdown%s%s' issued by %s\nServer will shutdown and not reboot!",
             (params) ? " " : "", (params) ? params : "", STRING_OBJ_NAME(op));
     LOG(llevSystem, "%s", buf);
-    shutdown_agent(time, EXIT_SHUTODWN, buf);
+    shutdown_agent(time, SERVER_EXIT_SHUTDOWN, buf);
     /* not reached - server will terminate itself before that line */
 
     return 0;
