@@ -538,7 +538,7 @@ void clean_tmp_files(int flag)
     }
 }
 
-void cleanup_without_exit()
+void cleanup_without_exit(void)
 {
     LOG(llevDebug, "Cleanup called.  freeing data.\n");
     clean_tmp_files(TRUE);
@@ -568,13 +568,6 @@ void cleanup_without_exit()
     cleanup_mempools();
 
     /* free_all_srv_files(); */
-}
-
-/* clean up everything before exiting */
-void cleanup(int ret)
-{
-    cleanup_without_exit();
-    exit(ret);
 }
 
 void leave(player *pl, int draw_exit)
@@ -724,7 +717,8 @@ void shutdown_agent(int timer, int ret, char *reason)
             {
                 LOG(llevSystem, "SERVER SHUTDOWN STARTED\n");
                 kick_player(NULL);
-                cleanup(ret);
+                cleanup_without_exit();
+                exit(ret);
             }
         }
         return; /* nothing to do */
@@ -970,7 +964,7 @@ void iterate_main_loop()
     nroferrors = 0;                 /* every llevBug will increase this counter - avoid LOG loops */
     pticks++;                       /* ROUND_TAG ! this is THE global tick counter . Use ROUND_TAG in the code */
 
-    shutdown_agent(-1, EXIT_NORMAL, NULL);       /* check & run a shutdown count (with messages & shutdown ) */
+    shutdown_agent(-1, SERVER_EXIT_NORMAL, NULL);       /* check & run a shutdown count (with messages & shutdown ) */
 
 #ifdef DEBUG_MEMPOOL_OBJECT_TRACKING
     check_use_object_list();
@@ -1012,8 +1006,6 @@ int main(int argc, char **argv)
     int auto_msg_count = 8*60*3; /* kick the first message 3 minutes after server start */
 #endif
 
-    global_exit_return = EXIT_ERROR; /* return -1 will signal that we have a problem in the startup */
-
 #ifdef WIN32 /* ---win32 this sets the win32 from 0d0a to 0a handling */
     _fmode = _O_BINARY ;
 #endif
@@ -1033,7 +1025,6 @@ int main(int argc, char **argv)
 #ifdef DEBUG_TRAVERSE_PLAYER_DIR
     traverse_player_stats("./data/players");
 #endif
-    global_exit_return = EXIT_NORMAL;
 
     LOG(llevInfo, "Server ready.\nWaiting for connections...\n");
     for (; ;)

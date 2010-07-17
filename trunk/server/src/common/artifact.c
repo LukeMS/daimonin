@@ -415,7 +415,7 @@ static void traverse_artifact_files(char* start_dir, int recursive, int mode)
                 if ((fp = fopen(entry->d_name, "r")) == NULL)
                 {
                     LOG(llevError, "ERROR: Can't open %s.\n", entry->d_name);
-                    exit(global_exit_return);
+                    exit(SERVER_EXIT_ARTIFACT);
                 }
 
                 if(mode == ARTIFACTS_FIRST_PASS)

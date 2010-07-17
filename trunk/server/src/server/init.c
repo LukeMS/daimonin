@@ -738,27 +738,31 @@ static void help()
 static void rec_sigsegv(int i)
 {
     LOG(llevSystem, "\nSIGSEGV received.\n");
-    fatal_signal(1, 1);
+    fatal_signal(1, 1, SERVER_EXIT_SIGSEGV);
 }
 
 static void rec_sigint(int i)
 {
     LOG(llevSystem, "\nSIGINT received.\n");
-    fatal_signal(0, 1);
+    fatal_signal(0, 1, SERVER_EXIT_SIGINT);
 }
 
 static void rec_sighup(int i)
 {
     LOG(llevSystem, "\nSIGHUP received\n");
+
     if (init_done)
-        cleanup(0);
-    exit(global_exit_return);
+    {
+        cleanup_without_exit();
+    }
+
+    exit(SERVER_EXIT_SIGHUP);
 }
 
 static void rec_sigquit(int i)
 {
     LOG(llevSystem, "\nSIGQUIT received\n");
-    fatal_signal(1, 1);
+    fatal_signal(1, 1, SERVER_EXIT_SIGQUIT);
 }
 
 static void rec_sigpipe(int i)
@@ -775,7 +779,7 @@ static void rec_sigpipe(int i)
     signal(SIGPIPE, rec_sigpipe);/* hocky-pux clears signal handlers */
 #else
     LOG(llevSystem, "\nSIGPIPE received, not ignoring...\n");
-    fatal_signal(1, 1); /*Might consider to uncomment this line */
+    fatal_signal(1, 1, SERVER_EXIT_SIGPIPE); /*Might consider to uncomment this line */
 #endif
 }
 
@@ -783,14 +787,14 @@ static void rec_sigbus(int i)
 {
 #ifdef SIGBUS
     LOG(llevSystem, "\nSIGBUS received\n");
-    fatal_signal(1, 1);
+    fatal_signal(1, 1, SERVER_EXIT_SIGBUS);
 #endif
 }
 
 static void rec_sigterm(int i)
 {
     LOG(llevSystem, "\nSIGTERM received\n");
-    fatal_signal(0, 1);
+    fatal_signal(0, 1, SERVER_EXIT_SIGTERM);
 }
 
 #endif
@@ -1063,7 +1067,7 @@ void compile_info()
 * fatal_signal() is meant to be called whenever a fatal signal is intercepted.
 * It will try to kick the player and save them and the clean_tmp_files functions.
 */
-void fatal_signal(int make_core, int close_sockets)
+void fatal_signal(int make_core, int close_sockets, uint8 status)
 {
     if (init_done)
     {
@@ -1081,9 +1085,15 @@ void fatal_signal(int make_core, int close_sockets)
         write_tadclock();   /* lets just write the clock here */
         save_ban_file();
     }
+
     if (make_core)
+    {
         abort();
-    exit(global_exit_return);
+    }
+    else
+    {
+        exit(status);
+    }
 }
 
 
