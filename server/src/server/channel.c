@@ -86,15 +86,15 @@ int command_channel(object *ob, char *params)
         if ((mode=='?') && (params[0]==0)) /* List all channels */
         {
             /* atm its only a quick listing, TODO: maybe descriptions for channels? */
+            new_draw_info(NDI_UNIQUE, 0, ob, "These channels exist:");
 
-            new_draw_info(NDI_UNIQUE, 0, ob, "These channels exists: ");
             for (channel=channel_list_start;channel;channel=channel->next)
             {
                 /* We don't display channels we can't get on.
                  * This may be by level restriction ot gmaster_mode.
                  * VOLs, GMs, and SAs are not subject to level restrictions. */
                 if (!compare_gmaster_mode(channel->gmaster_mode,
-                                       CONTR(ob)->gmaster_mode) ||
+                                          CONTR(ob)->gmaster_mode) ||
 /* Method stub for later to implement clan system
  * This function should return TRUE if the player is in that clan.
  * channel->clan will be some sort of pointer to the clan info...
@@ -697,7 +697,7 @@ void removeChannelFromPlayer(player *pl, struct player_channel *pl_channel, char
 void sendChannelMessage(player *pl,struct player_channel *pl_channel, char *params)
 {
     struct player_channel *cpl;
-	NewSocket *ns = &pl->socket;
+    NewSocket *ns = &pl->socket;
     sockbuf_struct *sockbuf;
     char buf[512]; /* Player commands can only be around 250chars, so with this value, we are on the safe side */
 
@@ -814,20 +814,23 @@ void load_channels(void)
 
     LOG(llevInfo,"loading channel_file....\n");
     sprintf(buf, "%s/channel_file", settings.localdir);
+
     if ((channelfile = fopen(buf, "r")) == NULL)
     {
         LOG(llevDebug, "Could not find channel_file. Using default channels.\n");
-        final_addChannel("Auction",'a',2,2,1,GMASTER_MODE_NO);
-        final_addChannel("Quest",'q',5,2,1,GMASTER_MODE_NO);
-        final_addChannel("General",'g',-1,2,1,GMASTER_MODE_NO);
-        final_addChannel("Help",'h',4,1,1,GMASTER_MODE_NO);
-        final_addChannel("VOL",'V',3,1,1,GMASTER_MODE_VOL);
-        final_addChannel("GM",'G',3,1,1,GMASTER_MODE_GM);
-        final_addChannel("MW",'W',3,1,1,GMASTER_MODE_MW);
-        final_addChannel("MM",'M',3,1,1,GMASTER_MODE_MM);
-        final_addChannel("SA",'S',3,1,1,GMASTER_MODE_SA);
+        final_addChannel("SA", 'S', 3, 1, 1, GMASTER_MODE_SA);
+        final_addChannel("MM", 'M', 3, 1, 1, GMASTER_MODE_MM);
+        final_addChannel("MW", 'W', 3, 1, 1, GMASTER_MODE_MW);
+        final_addChannel("GM", 'G', 3, 1, 1, GMASTER_MODE_GM);
+        final_addChannel("VOL", 'V', 3, 1, 1, GMASTER_MODE_VOL);
+        final_addChannel("Auction", 'a', 2, 2, 1, GMASTER_MODE_NO);
+        final_addChannel("General", 'g', -1, 2, 1, GMASTER_MODE_NO);
+        final_addChannel("Help", 'h', 4, 1, 1, GMASTER_MODE_NO);
+        final_addChannel("Quest", 'q', 5, 2, 1, GMASTER_MODE_NO);
+
         return;
     }
+
     while (fgets(line_buf, 160, channelfile) != NULL)
     {
         if (line_buf[0] == '#')
@@ -880,33 +883,38 @@ struct channels *final_addChannel(char *name, char shortcut, int color, sint8 po
     node->post_lvl = post_lvl;
     node->enter_lvl = enter_lvl;
     node->gmaster_mode = gmaster_mode;
+
     /* First Element of List? */
-    if(channel_list_start==NULL)
+    if (!channel_list_start)
     {
-        channel_list_start=node;
-        node->next=NULL;
+        channel_list_start = node;
+        node->next = NULL;
     }
     else
     {
-        ptr=channel_list_start;
-        while(ptr != NULL && (strcasecmp(ptr->name,name) < 0))
+        ptr = channel_list_start;
+
+        while (ptr &&
+               (!compare_gmaster_mode(ptr->gmaster_mode, node->gmaster_mode) ||
+                strcasecmp(ptr->name, name) < 0))
         {
-            ptr1=ptr;
-            ptr=ptr->next;
+            ptr1 = ptr;
+            ptr = ptr->next;
         }
+
         /* If node 'smaller' as first element, insert at beginning */
-        if(ptr==channel_list_start)
+        if (ptr == channel_list_start)
         {
-            channel_list_start=node;
-            node->next=ptr;
+            channel_list_start = node;
+            node->next = ptr;
         }
         /* last position, or in the middle ptr1 holds the forerunner */
         else
         {
-            ptr1->next=node;
-            node->next=ptr;
+            ptr1->next = node;
+            node->next = ptr;
         }
-    } //Ende else
+    }
 
     return node;
 }
