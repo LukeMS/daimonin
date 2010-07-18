@@ -708,6 +708,12 @@ void shutdown_agent(int timer, int ret, char *reason)
 {
     static int sd_timer = -1, m_count, real_count = -1;
     static struct timeval   tv1, tv2;
+    static int status = SERVER_EXIT_NORMAL;
+
+    if (ret != SERVER_EXIT_NORMAL)
+    {
+        status = ret;
+    }
 
     if (timer == -1 && sd_timer == -1)
     {
