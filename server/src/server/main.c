@@ -724,7 +724,7 @@ void shutdown_agent(int timer, int ret, char *reason)
                 LOG(llevSystem, "SERVER SHUTDOWN STARTED\n");
                 kick_player(NULL);
                 cleanup_without_exit();
-                exit(ret);
+                exit(status);
             }
         }
         return; /* nothing to do */
