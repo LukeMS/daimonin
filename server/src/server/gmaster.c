@@ -140,103 +140,23 @@ void remove_gmaster_list(player *pl)
     }
 }
 
-/* This performs some basic checks on the parameters to make sure they all add
- * up to a valid entry. If they do, GMASTER_MODE_FOO is returned according to
- * <mode>. If they don't, GMASTER_MODE_NO is returned. */
-int validate_gmaster_params(char *name, char *host, char *mode)
-{
-    int mode_id = GMASTER_MODE_NO,
-        len;
-
-    /* First validate mode and set mode_id. */
-    if (!strcmp(mode, "SA"))
-    {
-        mode_id = GMASTER_MODE_SA |
-                  GMASTER_MODE_MM | GMASTER_MODE_MW |
-                  GMASTER_MODE_GM | GMASTER_MODE_VOL;
-    }
-    else
-    {
-        if (!strcmp(mode, "MM"))
-        {
-            mode_id = GMASTER_MODE_MM | GMASTER_MODE_MW;
-        }
-        else if (!strcmp(mode, "MW"))
-        {
-            mode_id = GMASTER_MODE_MW;
-        }
-
-        if (!strcmp(mode, "GM"))
-        {
-            mode_id = GMASTER_MODE_GM | GMASTER_MODE_VOL;
-        }
-        else if (!strcmp(mode, "VOL"))
-        {
-            mode_id = GMASTER_MODE_VOL;
-        }
-    }
-
-    /* Validate name. */
-    if (!name ||
-        (((len = strlen(name)) == 1 &&
-          *name != '*') &&
-         (len < MIN_ACCOUNT_NAME ||
-          len > MAX_ACCOUNT_NAME)))
-    {
-        mode_id = GMASTER_MODE_NO;
-        LOG(llevInfo, "INFO:: validate_gmaster_mode(): invalid name '%s'!\n",
-            name);
-    }
-
-    /* Validate host. */
-    if (!host ||
-        (((len = strlen(host)) == 1 &&
-          *host != '*') &&
-         (len <= 6 ||
-          len >= 120)))
-    {
-        mode_id = GMASTER_MODE_NO;
-        LOG(llevInfo, "INFO:: validate_gmaster_mode(): invalid host '%s'!\n",
-            host);
-    }
-
-    return mode_id;
-}
-
 /* check a file entry.
  * Return GMASTER_MODE_NO for a invalid entry.
  */
 int check_gmaster_file_entry(char *name, char *host, char *mode)
 {
-    int mode_id = GMASTER_MODE_NO;
-
-    if (strlen(name) > MAX_ACCOUNT_NAME)
-    {
-        LOG(llevBug, "BUG:: %s/check_gmaster_file_entry(): name %s too long: %d\n",
-            __FILE__, name, (int)strlen(name));
-
-        return GMASTER_MODE_NO;
-    }
-
-    if (strlen(host) >= 120)
-    {
-        LOG(llevBug, "BUG:: %s/check_gmaster_file_entry(): host %s too long: %d\n",
-            __FILE__, host, (int)strlen(host));
-
-        return GMASTER_MODE_NO;
-    }
+    int mode_id = GMASTER_MODE_NO,
+        len;
 
     if (!strcmp(mode, "SA"))
     {
-        mode_id = GMASTER_MODE_SA |
-                  GMASTER_MODE_MM | GMASTER_MODE_MW |
-                  GMASTER_MODE_GM | GMASTER_MODE_VOL;
+        mode_id = GMASTER_MODE_SA;
     }
     else
     {
         if (!strcmp(mode, "MM"))
         {
-            mode_id = GMASTER_MODE_MM | GMASTER_MODE_MW;
+            mode_id = GMASTER_MODE_MM;
         }
         else if (!strcmp(mode, "MW"))
         {
@@ -245,7 +165,7 @@ int check_gmaster_file_entry(char *name, char *host, char *mode)
 
         if (!strcmp(mode, "GM"))
         {
-            mode_id = GMASTER_MODE_GM | GMASTER_MODE_VOL;
+            mode_id = GMASTER_MODE_GM;
         }
         else if (!strcmp(mode, "VOL"))
         {
@@ -255,8 +175,28 @@ int check_gmaster_file_entry(char *name, char *host, char *mode)
 
     if (mode_id == GMASTER_MODE_NO)
     {
-        LOG(llevBug, "BUG:: %s/check_gmaster_file_entry(): Invalid mode tag: %d\n",
-            __FILE__, mode_id);
+        LOG(llevInfo, "INFO:: %s/check_gmaster_file_entry(): Invalid mode tag: %d\n",
+	    __FILE__, mode_id);
+    }
+    else if (!name ||
+             (((len = strlen(name)) == 1 &&
+               *name != '*') &&
+              (len < MIN_ACCOUNT_NAME ||
+               len > MAX_ACCOUNT_NAME)))
+    {
+        mode_id = GMASTER_MODE_NO;
+        LOG(llevInfo, "INFO:: %s/check_gmaster_file_entry(): invalid name '%s'!\n",
+            __FILE__, name);
+    }
+    else if (!host ||
+             (((len = strlen(host)) == 1 &&
+               *host != '*') &&
+              (len <= 6 ||
+               len >= 120)))
+    {
+        mode_id = GMASTER_MODE_NO;
+        LOG(llevInfo, "INFO:: %s/check_gmaster_file_entry(): invalid host '%s'!\n",
+            __FILE__, host);
     }
 
     return mode_id;
@@ -286,14 +226,12 @@ int load_gmaster_file(void)
             LOG(llevBug, "BUG: malformed gmaster_file entry: %s\n", line_buf);
         else
         {
-
             int mode_id = check_gmaster_file_entry(name, host, mode);
 
-            if (mode_id == GMASTER_MODE_NO)
-                continue;
-
-            /* all ok, setup the gmaster node and add it to our list */
-            add_gmaster_file_entry(name, host, mode_id);
+            if (mode_id != GMASTER_MODE_NO)
+            {
+                add_gmaster_file_entry(name, host, mode_id);
+            }
         }
 
     }
@@ -365,13 +303,13 @@ int check_gmaster_list(player *pl, int mode)
 
         /*LOG(llevNoLog,"CHECK: %s - %s -%d\n",ol->objlink.gm->name,
                 ol->objlink.gm->host,ol->objlink.gm->mode );*/
-        if ((!strcmp(gm->name, "*") ||
+        if (gm->mode != GMASTER_MODE_NO &&
+            (!strcmp(gm->name, "*") ||
              !strcasecmp(pl->account_name, gm->name)) &&
             (!strcmp(gm->host, "*") ||
-             !strcasecmp(pl->socket.ip_host, gm->host)) &&
-            gm->mode != GMASTER_MODE_NO)
+             !strcasecmp(pl->socket.ip_host, gm->host)))
         {
-            return compare_gmaster_mode(gm->mode, mode);
+            return compare_gmaster_mode(mode, gm->mode);
         }
     }
 
@@ -400,9 +338,43 @@ void set_gmaster_mode(player *pl, int mode)
     struct channels        *channel;
     extern struct channels *channel_list_start;
 #endif
+
+    /* Check if the player is allowed in this mode in gmaster_file. */
+    if (!check_gmaster_list(pl, mode))
+    {
+        new_draw_info(NDI_UNIQUE, 0, pl->ob, "Sorry, you have insufficient gmaster permissions.");
+
+        return;
+    }
+
     /* remove first the old mode if there is one */
-    if(pl->gmaster_mode != GMASTER_MODE_NO)
+    if (pl->gmaster_mode != GMASTER_MODE_NO)
+    {
         remove_gmaster_mode(pl);
+    }
+    
+    if (mode == GMASTER_MODE_SA)
+    {
+        mode = GMASTER_MODE_SA |
+               GMASTER_MODE_MM | GMASTER_MODE_MW |
+               GMASTER_MODE_GM | GMASTER_MODE_VOL;
+    }
+    else if (mode == GMASTER_MODE_MM)
+    {
+        mode = GMASTER_MODE_MM | GMASTER_MODE_MW;
+    }
+    else if (mode == GMASTER_MODE_MW)
+    {
+        mode = GMASTER_MODE_MW;
+    }
+    else if (mode == GMASTER_MODE_GM)
+    {
+        mode = GMASTER_MODE_GM | GMASTER_MODE_VOL;
+    }
+    else if (mode == GMASTER_MODE_VOL)
+    {
+        mode = GMASTER_MODE_VOL;
+    }
 
     pl->gmaster_mode = mode;
     pl->gmaster_node = add_gmaster_list(pl); /* link player to list of gmasters */
@@ -466,29 +438,12 @@ void remove_gmaster_mode(player *pl)
     struct player_channel  *pl_channel;
 #endif
 
-    mode = pl->gmaster_mode;
-
-    if ((mode & GMASTER_MODE_SA))
+    if ((mode = pl->gmaster_mode) == GMASTER_MODE_NO)
     {
-        new_draw_info(NDI_UNIQUE, 0, pl->ob, "SA mode eactivated.");
-    }
-    else if ((mode & GMASTER_MODE_MM))
-    {
-        new_draw_info(NDI_UNIQUE, 0, pl->ob, "MM mode deactivated.");
-    }
-    else if ((mode & GMASTER_MODE_MW))
-    {
-        new_draw_info(NDI_UNIQUE, 0, pl->ob, "MW mode deactivated.");
-    }
-    else if ((mode & GMASTER_MODE_GM))
-    {
-        new_draw_info(NDI_UNIQUE, 0, pl->ob, "GM mode deactivated.");
-    }
-    else if ((mode & GMASTER_MODE_VOL))
-    {
-        new_draw_info(NDI_UNIQUE, 0, pl->ob, "VOL mode deactivated.");
+        return;
     }
 
+    new_draw_info(NDI_UNIQUE, 0, pl->ob, "Gmaster_mode deactivated.");
     remove_gmaster_list(pl);
     pl->gmaster_mode = GMASTER_MODE_NO;
 

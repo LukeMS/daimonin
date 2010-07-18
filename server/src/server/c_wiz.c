@@ -2210,50 +2210,22 @@ int command_ban(object *op, char *params)
     return 0;
 }
 
-/* become a VOL */
-int command_vol(object *op, char *params)
+/* become a SA */
+int command_sa(object *op, char *params)
 {
-    if(CONTR(op)->gmaster_mode == GMASTER_MODE_VOL) /* turn off ? */
-        remove_gmaster_mode(CONTR(op));
-    else if(check_gmaster_list(CONTR(op), GMASTER_MODE_VOL))
+    player *pl;
+
+    if (op &&
+        (pl = CONTR(op)))
     {
-        /* remove from other lists when we change mode */
-        if(CONTR(op)->gmaster_mode != GMASTER_MODE_NO)
-            remove_gmaster_mode(CONTR(op));
-        set_gmaster_mode(CONTR(op), GMASTER_MODE_VOL);
-    }
-
-    return 0;
-}
-
-/* become a GM */
-int command_gm(object *op, char *params)
-{
-    if(CONTR(op)->gmaster_mode == GMASTER_MODE_GM) /* turn off ? */
-        remove_gmaster_mode(CONTR(op));
-    else if(check_gmaster_list(CONTR(op), GMASTER_MODE_GM))
-    {
-        /* remove from other lists when we change mode */
-        if(CONTR(op)->gmaster_mode != GMASTER_MODE_NO)
-            remove_gmaster_mode(CONTR(op));
-        set_gmaster_mode(CONTR(op), GMASTER_MODE_GM);
-    }
-
-    return 0;
-}
-
-/* become a MW */
-int command_mw(object *op, char *params)
-{
-    if(CONTR(op)->gmaster_mode == GMASTER_MODE_MW) /* turn off ? */
-        remove_gmaster_mode(CONTR(op));
-
-    else if(check_gmaster_list(CONTR(op), GMASTER_MODE_MW))
-    {
-        /* remove from other lists when we change mode */
-        if(CONTR(op)->gmaster_mode != GMASTER_MODE_NO)
-            remove_gmaster_mode(CONTR(op));
-        set_gmaster_mode(CONTR(op), GMASTER_MODE_MW);
+        if ((pl->gmaster_mode & GMASTER_MODE_SA))
+        {
+            remove_gmaster_mode(pl);
+        }
+        else
+        {
+            set_gmaster_mode(pl, GMASTER_MODE_SA);
+        }
     }
 
     return 0;
@@ -2262,30 +2234,86 @@ int command_mw(object *op, char *params)
 /* become a MM */
 int command_mm(object *op, char *params)
 {
-    if(CONTR(op)->gmaster_mode == GMASTER_MODE_MM) /* turn off ? */
-        remove_gmaster_mode(CONTR(op));
-    else if(check_gmaster_list(CONTR(op), GMASTER_MODE_MM))
+    player *pl;
+
+    if (op &&
+        (pl = CONTR(op)))
     {
-        /* remove from other lists when we change mode */
-        if(CONTR(op)->gmaster_mode != GMASTER_MODE_NO)
-            remove_gmaster_mode(CONTR(op));
-        set_gmaster_mode(CONTR(op), GMASTER_MODE_MM);
+        if ((pl->gmaster_mode & GMASTER_MODE_MM) &&
+            !(pl->gmaster_mode & GMASTER_MODE_SA))
+        {
+            remove_gmaster_mode(pl);
+        }
+        else
+        {
+            set_gmaster_mode(pl, GMASTER_MODE_MM);
+        }
     }
 
     return 0;
 }
 
-/* become a SA */
-int command_sa(object *op, char *params)
+/* become a MW */
+int command_mw(object *op, char *params)
 {
-    if(CONTR(op)->gmaster_mode == GMASTER_MODE_SA) /* turn off ? */
-        remove_gmaster_mode(CONTR(op));
-    else if(check_gmaster_list(CONTR(op), GMASTER_MODE_SA))
+    player *pl;
+
+    if (op &&
+        (pl = CONTR(op)))
     {
-        /* remove from other lists when we change mode */
-        if(CONTR(op)->gmaster_mode != GMASTER_MODE_NO)
-            remove_gmaster_mode(CONTR(op));
-        set_gmaster_mode(CONTR(op), GMASTER_MODE_SA);
+        if ((pl->gmaster_mode & GMASTER_MODE_MW) &&
+            !(pl->gmaster_mode & (GMASTER_MODE_SA | GMASTER_MODE_MM)))
+        {
+            remove_gmaster_mode(pl);
+        }
+        else
+        {
+            set_gmaster_mode(pl, GMASTER_MODE_MW);
+        }
+    }
+
+    return 0;
+}
+
+/* become a GM */
+int command_gm(object *op, char *params)
+{
+    player *pl;
+
+    if (op &&
+        (pl = CONTR(op)))
+    {
+        if ((pl->gmaster_mode & GMASTER_MODE_GM) &&
+            !(pl->gmaster_mode & GMASTER_MODE_SA))
+        {
+            remove_gmaster_mode(pl);
+        }
+        else
+        {
+            set_gmaster_mode(pl, GMASTER_MODE_GM);
+        }
+    }
+
+    return 0;
+}
+
+/* become a VOL */
+int command_vol(object *op, char *params)
+{
+    player *pl;
+
+    if (op &&
+        (pl = CONTR(op)))
+    {
+        if ((pl->gmaster_mode & GMASTER_MODE_VOL) &&
+            !(pl->gmaster_mode & (GMASTER_MODE_SA | GMASTER_MODE_GM)))
+        {
+            remove_gmaster_mode(pl);
+        }
+        else
+        {
+            set_gmaster_mode(pl, GMASTER_MODE_VOL);
+        }
     }
 
     return 0;
@@ -2378,7 +2406,7 @@ int command_gmasterfile(object *op, char *params)
     else if (!strncmp(params, "add", 3))
     {
         if (sscanf(params + 4, "%[^/]/%[^/]/%s", name, host, mode) != 3 ||
-            (mode_id = validate_gmaster_params(name, host, mode)) == GMASTER_MODE_NO)
+            (mode_id = check_gmaster_file_entry(name, host, mode)) == GMASTER_MODE_NO)
         {
             new_draw_info(NDI_UNIQUE, 0, op, "Malformed or missing parameter.");
 
@@ -2404,7 +2432,7 @@ int command_gmasterfile(object *op, char *params)
     else if (!strncmp(params, "remove", 6))
     {
         if (sscanf(params + 7, "%[^/]/%[^/]/%s", name, host, mode) != 3 ||
-            (mode_id = validate_gmaster_params(name, host, mode)) == GMASTER_MODE_NO)
+            (mode_id = check_gmaster_file_entry(name, host, mode)) == GMASTER_MODE_NO)
         {
             new_draw_info(NDI_UNIQUE, 0, op, "Malformed or missing parameter.");
 
