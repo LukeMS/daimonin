@@ -324,8 +324,8 @@ int                         check_gmaster_file_entry(char *name, char *host, cha
 int                         load_gmaster_file(void);
 void                        add_gmaster_file_entry(char *name, char *host, int mode_id);
 void                        remove_gmaster_file_entry(objectlink *ol);
-int                         check_gmaster_list(player *pl, int mode);
-void                        set_gmaster_mode(player *pl, int mode);
+int                         check_gmaster_list(player *pl, int mode_id);
+void                        set_gmaster_mode(player *pl, int mode_id);
 void                        remove_gmaster_mode(player *pl);
 int                         compare_gmaster_mode(int t, int p);
 void                        write_gmaster_file(void);
