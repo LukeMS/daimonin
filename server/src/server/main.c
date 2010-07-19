@@ -706,81 +706,88 @@ void do_specials()
  */
 void shutdown_agent(int timer, int ret, char *reason)
 {
-    static int sd_timer = -1, m_count, real_count = -1;
-    static struct timeval   tv1, tv2;
-    static int status = SERVER_EXIT_NORMAL;
+    static int            status = SERVER_EXIT_NORMAL,
+                          sd_timer = -1;
+    static struct timeval tv1,
+                          tv2;
+    static char           buf[MEDIUM_BUF] = "";
+    int                   t_tot,
+                          t_min,
+                          t_sec;
 
     if (ret != SERVER_EXIT_NORMAL)
     {
         status = ret;
     }
 
-    if (timer == -1 && sd_timer == -1)
+    /* Set a new timer of <timer> seconds. */
+    if (timer >= 0)
     {
-        if (real_count > 0)
-        {
-            if (--real_count <= 0)
-            {
-                LOG(llevSystem, "SERVER SHUTDOWN STARTED\n");
-                kick_player(NULL);
-                cleanup_without_exit();
-                exit(status);
-            }
-        }
-        return; /* nothing to do */
-    }
-
-    if (timer != -1) /* reset shutdown count */
-    {
-        int t_min   = timer / 60;
-        int t_sec   = timer - (int) (timer / 60) * 60;
         sd_timer = timer;
-
-        new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_ALL | NDI_GREEN, 5, NULL, "[Server]: ** SERVER SHUTDOWN STARTED **");
-        if (reason)
-            new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_ALL | NDI_GREEN, 5, NULL, "[Server]: %s", reason);
-
-        if (t_sec)
-            new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_ALL | NDI_GREEN, 5, NULL,
-            "[Server]: SERVER SHUTDOWN in %d minutes and %d seconds", t_min, t_sec);
-        else
-            new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_ALL | NDI_GREEN, 5, NULL,
-            "[Server]: SERVER SHUTDOWN in %d minutes", t_min);
         GETTIMEOFDAY(&tv1);
-        m_count = timer / 60 - 1;
-        real_count = -1;
+
+        if (reason)
+        {
+            sprintf(buf, "%s", reason);
+        }
+
+        t_tot = timer;
+        new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_ALL | NDI_GREEN, 5, NULL,
+                      "[Server]: ** SERVER %s STARTED **\n    %s",
+                      (status == SERVER_EXIT_RESTART) ? "RESTART" : "SHUTDOWN",
+                      buf);
     }
-    else /* count the shutdown tango */
+    /* Countdown the existing timer. */
+    else if (sd_timer >= 0)
     {
-        int t_min;
-        int t_sec   = 0;
         GETTIMEOFDAY(&tv2);
+        t_tot = sd_timer - (int)(tv2.tv_sec - tv1.tv_sec);
 
-        if ((int) (tv2.tv_sec - tv1.tv_sec) >= sd_timer) /* end countdown */
+        /* Exactly when the timer expires, send messages to the client. */
+        if (t_tot == 0)
         {
-            new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_ALL | NDI_GREEN, 5, NULL,
-                "[Server]: ** SERVER GOES DOWN NOW!!! **");
-            if (reason)
-                new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_ALL | NDI_GREEN, 5, NULL, "[Server]: %s", reason);
-            sd_timer = -1;
-            real_count = 30;
+            new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_ALL | NDI_GREEN, 5,
+                          NULL, "[Server]: ** SERVER GOES DOWN NOW!!! **");
+
+            return;
+        }
+        /* Wait another 3 seconds before really killing the server so the
+         * messages above can be broadcast. */
+        else if (t_tot <= -3)
+        {
+            LOG(llevSystem, "\n\nSERVER %s -- %s\n",
+                (status == SERVER_EXIT_RESTART) ? "RESTART" : "SHUTDOWN",
+                (buf[0]) ? buf : "no reason specified!");
+            kick_player(NULL);
+            cleanup_without_exit();
+            exit(status);
+
+            return; // actually never reached
         }
 
-        t_min = (sd_timer - (int) (tv2.tv_sec - tv1.tv_sec)) / 60;
-        t_sec = (sd_timer - (int) (tv2.tv_sec - tv1.tv_sec))
-            - (int) ((sd_timer - (int) (tv2.tv_sec - tv1.tv_sec)) / 60) * 60;
+        t_tot--;
+    }
+    /* Do nothing */
+    else
+    {
+        return;
+    }
 
-        /*LOG(llevNoLog,"SEC: %d (%d - %d)\n", tv2.tv_sec-tv1.tv_sec,t_min,t_sec);*/
-        if ((t_min == m_count && !t_sec))
-        {
-            m_count = t_min - 1;
-            if (t_sec)
-                new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_ALL | NDI_GREEN, 5, NULL,
-                "[Server]: SERVER SHUTDOWN in %d minutes and %d seconds", t_min, t_sec);
-            else
-                new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_ALL | NDI_GREEN, 5, NULL,
-                "[Server]: SERVER SHUTDOWN in %d minutes", t_min);
-        }
+    /* If the countdown has been reset or every minute on the minute, report
+     * the time left. */
+    t_min = t_tot / 60;
+    t_sec = t_tot - t_min * 60;
+
+    if (sd_timer >= 0 &&
+        t_tot >= 0 &&
+        (!t_sec ||
+         timer >= 0))
+    {
+        new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_ALL | NDI_GREEN, 5, NULL,
+                      "[Server]: SERVER %s in %d minute%s and %d second%s",
+                      (status == SERVER_EXIT_RESTART) ? "RESTART" : "SHUTDOWN",
+                      t_min, (t_min == 1) ? "" : "s",
+                      t_sec, (t_sec == 1) ? "" : "s");
     }
 }
 
@@ -970,7 +977,13 @@ void iterate_main_loop()
     nroferrors = 0;                 /* every llevBug will increase this counter - avoid LOG loops */
     pticks++;                       /* ROUND_TAG ! this is THE global tick counter . Use ROUND_TAG in the code */
 
-    shutdown_agent(-1, SERVER_EXIT_NORMAL, NULL);       /* check & run a shutdown count (with messages & shutdown ) */
+    /* Only call this every second. More precision is unnecessary.
+     * We assume it won't be called in the first second of the server's life,
+     * to save a check. */
+    if (!(ROUND_TAG % (long unsigned int)pticks_second))
+    {
+        shutdown_agent(-1, SERVER_EXIT_NORMAL, NULL);
+    }
 
 #ifdef DEBUG_MEMPOOL_OBJECT_TRACKING
     check_use_object_list();
