@@ -249,13 +249,6 @@ void add_gmaster_file_entry(char *name, char *host, int mode_id)
 
     ol = get_gmaster_node();
 
-    *name = toupper(*name);
-
-    for (i = 1; *(name + i) != '\0'; i++)
-    {
-        *(name + i) = tolower(*(name + i));
-    }
-
     if (mode_id == GMASTER_MODE_SA)
     {
         sprintf(ol->objlink.gm->entry, "%s/%s/SA", name, host);

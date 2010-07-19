@@ -2420,6 +2420,33 @@ int command_gmasterfile(object *op, char *params)
             return 0;
         }
 
+        if (name[0] != '*')
+        {
+            uint8 i = 0;
+            char  filename[HUGE_BUF];
+
+            /* Account names must be all lowercase. */
+            for (; name[i]; i++)
+            {
+                name[i] = tolower(name[i]);
+            }
+
+            sprintf(filename, "%s/%s/%s/%s/%s.acc",
+                    settings.localdir, settings.accountdir, get_subdir(name),
+                    name, name);
+
+            if (access(filename, F_OK) != 0)
+            {
+                new_draw_info(NDI_UNIQUE, 0, op, "There is no account of that name.");
+
+                return 0;
+            }
+
+            /* Well it looks nicer to capitalise the names once in the
+             * gmaster_file. */
+            name[0] = toupper(name[0]);
+        }
+
         /* all ok, setup the gmaster node and add it to our list */
         LOG(llevInfo, "INFO:: /gmasterfile %s invoked by %s\n",
             params, query_name(op));
