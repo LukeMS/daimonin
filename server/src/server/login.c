@@ -339,8 +339,8 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
     time_t      elapsed_save_time   = 0;
     struct stat statbuf;
     object     *tmp, *tmp2;
-    int         kick_loop = 0;
-
+    int         kick_loop = 0,
+                mode_id = GMASTER_MODE_NO;
 #ifdef USE_CHANNELS
     int     with_channels = FALSE;
     int     channelcount=0;
@@ -496,17 +496,15 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
         else if (!strcmp(buf, "SENTInce"))
             pl->SENTInce = value;
         else if (!strcmp(buf, "dm_SA"))
-            pl->gmaster_mode = GMASTER_MODE_SA |
-                               GMASTER_MODE_MM | GMASTER_MODE_MW |
-                               GMASTER_MODE_GM | GMASTER_MODE_VOL;
+            mode_id = GMASTER_MODE_SA;
         else if (!strcmp(buf, "dm_MM"))
-            pl->gmaster_mode = GMASTER_MODE_MM | GMASTER_MODE_MW;
+            mode_id = GMASTER_MODE_MM;
         else if (!strcmp(buf, "dm_MW"))
-            pl->gmaster_mode = GMASTER_MODE_MW;
+            mode_id = GMASTER_MODE_MW;
         else if (!strcmp(buf, "dm_GM"))
-            pl->gmaster_mode = GMASTER_MODE_GM | GMASTER_MODE_VOL;
+            mode_id = GMASTER_MODE_GM;
         else if (!strcmp(buf, "dm_VOL"))
-            pl->gmaster_mode = GMASTER_MODE_VOL;
+            mode_id = GMASTER_MODE_VOL;
         else if (!strcmp(buf, "mute"))
             pl->mute_counter = pticks+(unsigned long)value;
         else if (!strcmp(buf, "state"))
@@ -798,13 +796,13 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
      * if so, check the setting is still allowed and if so,
      * set the player to it.
      */
-    if(pl->gmaster_mode != GMASTER_MODE_NO)
+    if (mode_id != GMASTER_MODE_NO)
     {
-        int mode = pl->gmaster_mode;
-
+        set_gmaster_mode(pl, mode_id);
+    }
+    else
+    {
         pl->gmaster_mode = GMASTER_MODE_NO;
-        if(check_gmaster_list(pl, mode))
-            set_gmaster_mode(pl, mode);
     }
 
     /* This seems to compile without warnings now.  Don't know if it works
