@@ -435,7 +435,7 @@ int command_generate(object *op, char *params)
         return 0;
     }
 
-    if (at->clone.type == (MONSTER || PLAYER))
+    if (at->clone.type == MONSTER || at->clone.type == PLAYER)
     {
         new_draw_info(NDI_UNIQUE, 0, op, "Generate cannot be used to create mobs.");
 
