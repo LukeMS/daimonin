@@ -372,7 +372,7 @@ void                        cleanup_without_exit(void);
 void                        leave(player *pl, int draw_exit);
 void                        dequeue_path_requests(void);
 void                        do_specials(void);
-void                        shutdown_agent(int timer, int ret, char *reason);
+void                        shutdown_agent(int timer, int ret, player *pl, char *reason);
 int                         main(int argc, char **argv);
 void                        process_events();
 void                        iterate_main_loop();

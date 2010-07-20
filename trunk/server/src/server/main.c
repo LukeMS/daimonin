@@ -704,13 +704,14 @@ void do_specials()
  * It gives out messages to all player to announce
  * the shutdown and the status of the shutdown.
  */
-void shutdown_agent(int timer, int ret, char *reason)
+void shutdown_agent(int timer, int ret, player *pl, char *reason)
 {
     static int            status = SERVER_EXIT_NORMAL,
                           sd_timer = -1;
     static struct timeval tv1,
                           tv2;
-    static char           buf[MEDIUM_BUF] = "";
+    static char           name[SMALL_BUF] = "",
+                          buf[MEDIUM_BUF] = "";
     int                   t_tot,
                           t_min,
                           t_sec;
@@ -726,6 +727,13 @@ void shutdown_agent(int timer, int ret, char *reason)
         sd_timer = timer;
         GETTIMEOFDAY(&tv1);
 
+        /* Make a staic copy of the caller's name in case he logs before the
+           countdown is done. */
+        if (pl)
+        {
+            sprintf(name, "%s", query_name(pl->ob));
+        }
+
         if (reason)
         {
             sprintf(buf, "%s", reason);
@@ -733,9 +741,10 @@ void shutdown_agent(int timer, int ret, char *reason)
 
         t_tot = timer;
         new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_ALL | NDI_GREEN, 5, NULL,
-                      "[Server]: ** SERVER %s STARTED **\n    %s",
+                      "[Server]: ** SERVER %s STARTED by %s **\n    %s",
                       (status == SERVER_EXIT_RESTART) ? "RESTART" : "SHUTDOWN",
-                      buf);
+                      (name[0]) ? name : "no-one",
+                      (buf[0]) ? buf : "no reason specified!");
     }
     /* Countdown the existing timer. */
     else if (sd_timer >= 0)
@@ -752,11 +761,12 @@ void shutdown_agent(int timer, int ret, char *reason)
             return;
         }
         /* Wait another 3 seconds before really killing the server so the
-         * messages above can be broadcast. */
+         * m`essages above can be broadcast. */
         else if (t_tot <= -3)
         {
-            LOG(llevSystem, "\n\nSERVER %s -- %s\n",
+            LOG(llevSystem, "\n\nSERVER %s by %s -- %s\n",
                 (status == SERVER_EXIT_RESTART) ? "RESTART" : "SHUTDOWN",
+                (name[0]) ? name : "no-one",
                 (buf[0]) ? buf : "no reason specified!");
             kick_player(NULL);
             cleanup_without_exit();
@@ -982,7 +992,7 @@ void iterate_main_loop()
      * to save a check. */
     if (!(ROUND_TAG % (long unsigned int)pticks_second))
     {
-        shutdown_agent(-1, SERVER_EXIT_NORMAL, NULL);
+        shutdown_agent(-1, SERVER_EXIT_NORMAL, NULL, NULL);
     }
 
 #ifdef DEBUG_MEMPOOL_OBJECT_TRACKING

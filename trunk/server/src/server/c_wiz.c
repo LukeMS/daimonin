@@ -269,9 +269,17 @@ int command_kick(object *op, char *params)
 /* Reboots the server (recompile code, update arches and maps). */
 int command_restart(object *ob, char *params)
 {
-    char buf[MEDIUM_BUF];
+    int time;
+
+    if (!ob ||
+        ob->type != PLAYER ||
+        !CONTR(ob))
+    {
+        return 0;
+    }
+
 #ifdef _TESTSERVER
-    int  time = 30;
+    time = 30;
 
     if (params)
     {
@@ -284,6 +292,7 @@ int command_restart(object *ob, char *params)
 
         if (stream[0])
         {
+            char  buf[MEDIUM_BUF];
             FILE *fp;
 
             LOG(llevSystem,"write stream file...\n");
@@ -309,7 +318,7 @@ int command_restart(object *ob, char *params)
         }
     }
 #else
-    int  time = 300;
+    time = 300;
 
     if (params &&
         !sscanf(params, "%d", &time))
@@ -318,10 +327,8 @@ int command_restart(object *ob, char *params)
     }
 #endif
 
-    sprintf(buf, "'/restart%s%s' issued by %s\nServer will recompile and arches and maps will be updated!",
-            (params) ? " " : "", (params) ? params : "", STRING_OBJ_NAME(ob));
-    LOG(llevSystem, "%s", buf);
-    shutdown_agent(time, SERVER_EXIT_RESTART, buf);
+    shutdown_agent(time, SERVER_EXIT_RESTART, CONTR(ob),
+                   "Server will recompile and arches and maps will be updated.");
 
     return 0;
 }
@@ -329,21 +336,22 @@ int command_restart(object *ob, char *params)
 /* Shuts down the server. Does not reboot. */
 int command_shutdown(object *op, char *params)
 {
-    int  time;
-    char buf[MEDIUM_BUF];
+    int time = 1;
 
-    time = 30;
+    if (!op ||
+        op->type != PLAYER ||
+        !CONTR(op))
+    {
+        return 0;
+    }
 
     if (params)
     {
         sscanf(params, "%d", &time);
     }
 
-    sprintf(buf, "'/shutdown%s%s' issued by %s\nServer will shutdown and not reboot!",
-            (params) ? " " : "", (params) ? params : "", STRING_OBJ_NAME(op));
-    LOG(llevSystem, "%s", buf);
-    shutdown_agent(time, SERVER_EXIT_SHUTDOWN, buf);
-    /* not reached - server will terminate itself before that line */
+    shutdown_agent(time, SERVER_EXIT_SHUTDOWN, CONTR(op),
+                   "Server will shutdown and not reboot.");
 
     return 0;
 }
