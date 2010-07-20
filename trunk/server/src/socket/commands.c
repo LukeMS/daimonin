@@ -298,6 +298,8 @@ const int CommandsMWSize = sizeof(CommandsMW) / sizeof(CommArray_s);
 const int CommandsMMSize = sizeof(CommandsMM) / sizeof(CommArray_s);
 const int CommandsSASize = sizeof(CommandsSA) / sizeof(CommArray_s);
 
+_subcommand subcommands;
+
 static int compare_A(const void *a, const void *b)
 {
     return strcmp(((CommArray_s *) a)->name, ((CommArray_s *) b)->name);
@@ -312,6 +314,9 @@ void init_commands()
     qsort((char *)CommandsMW, CommandsMWSize, sizeof(CommArray_s), compare_A);
     qsort((char *)CommandsMM, CommandsMMSize, sizeof(CommArray_s), compare_A);
     qsort((char *)CommandsSA, CommandsSASize, sizeof(CommArray_s), compare_A);
+
+    subcommands.add = add_string("add");
+    subcommands.remove = add_string("remove");
 }
 
 /* Finds cmd if it exists for pl (determined by gmaster_mode). 

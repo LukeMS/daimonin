@@ -86,6 +86,7 @@ struct Command_Line_Options
                                                  */
 };
 
+static void FreeStrings(size_t nrof, shstr **ptr);
 static void CreateLogfiles(const char *tlogfilename, const char *clogfilename,
                            const char *mode, const uint8 llev);
 
@@ -168,17 +169,24 @@ static void init_strings()
     shstr_cons.emergency_mappath = add_string(EMERGENCY_MAPPATH);
     shstr_cons.start_mappath = add_string(START_MAP_MAPPATH);
     shstr_cons.bind_mappath = add_string(BIND_MAP_MAPPATH);
-
 }
 
-void free_strings()
+void free_strings(void)
 {
-    int nrof_strings = sizeof(shstr_cons) / sizeof(shstr *);
-    shstr **ptr = (shstr **)&shstr_cons;
-    int i=0;
-    LOG(llevDebug, "Freeing all string constants\n");
-    for(i=0; i<nrof_strings; i++)
+    LOG(llevDebug, "Freeing shared strings.\n");
+    FreeStrings(sizeof(shstr_cons), (shstr **)&shstr_cons);
+    /* See commands.c */
+    FreeStrings(sizeof(subcommands), (shstr **)&subcommands);
+}
+
+static void FreeStrings(size_t nrof, shstr **ptr)
+{
+    size_t i = nrof / sizeof(shstr *);
+
+    for(; i >= 0; i--)
+    {
         FREE_ONLY_HASH(ptr[i]);
+    }
 }
 
 /* set the pticks_xx but NOT pticks itself.
