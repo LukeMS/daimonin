@@ -351,10 +351,10 @@ void                        lose_priest_exp(object *pl, int loss);
 void                        init(int argc, char **argv);
 void                        compile_info(void);
 void                        fatal_signal(int make_core, int close_sockets, uint8 status);
-void                        init_library();
-void                        free_strings();
+void                        init_library(void);
+void                        free_strings(void);
 void                        set_pticks_time(long t);
-void                        free_lists_and_tables();
+void                        free_lists_and_tables(void);
 /* login.c */
 int                         player_save(object *op);
 addme_login_msg             player_load(NewSocket *ns, const char *name);

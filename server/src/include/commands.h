@@ -53,6 +53,12 @@ typedef struct
     int       notify; /* Whether to print the command name -- ATM 0 or 1 */
 } CommArray_s;
 
+typedef struct _subcommand
+{
+    shstr *add;
+    shstr *remove;
+}
+_subcommand;
 
 extern CommArray_s Commands[];
 extern CommArray_s EmoteCommands[];
@@ -69,6 +75,8 @@ extern const int CommandsGMSize;
 extern const int CommandsMWSize;
 extern const int CommandsMMSize;
 extern const int CommandsSASize;
+
+extern _subcommand subcommands;
 
 #define EMOTE_NOD   1
 #define EMOTE_DANCE 2

@@ -2387,6 +2387,8 @@ int command_gmasterlist(object *op, char *params)
 int command_gmasterfile(object *op, char *params)
 {
     player     *pl;
+    char       *cp;
+    shstr      *hash = NULL;
     objectlink *ol;
     char        name[MEDIUM_BUF],
                 host[MEDIUM_BUF],
@@ -2410,10 +2412,32 @@ int command_gmasterfile(object *op, char *params)
 
         return 0;
     }
-    /* add an entry. */
-    else if (!strncmp(params, "add", 3))
+
+    /* Find the subcommand. */
+    if ((cp = strchr(params, ' ')))
     {
-        if (sscanf(params + 4, "%[^/]/%[^/]/%s", name, host, mode) != 3 ||
+        *(cp++) = '\0';
+
+        while (*cp == ' ')
+        {
+            cp++;
+        }
+
+        hash = add_string(params);
+    }
+    /* For this command all subcommands have further parmeters, so no space in
+     * params means the player typed nonsense. */
+    else
+    {
+        return 1;
+    }
+
+    /* Add an entry. */
+    if (hash == subcommands.add)
+    {
+        FREE_AND_CLEAR_HASH(hash);
+
+        if (sscanf(cp, "%[^/]/%[^/]/%s", name, host, mode) != 3 ||
             (mode_id = check_gmaster_file_entry(name, host, mode)) == GMASTER_MODE_NO)
         {
             new_draw_info(NDI_UNIQUE, 0, op, "Malformed or missing parameter.");
@@ -2455,18 +2479,15 @@ int command_gmasterfile(object *op, char *params)
             name[0] = toupper(name[0]);
         }
 
-        /* all ok, setup the gmaster node and add it to our list */
-        LOG(llevInfo, "INFO:: /gmasterfile %s invoked by %s\n",
-            params, query_name(op));
         add_gmaster_file_entry(name, host, mode_id);
         write_gmaster_file();
-
-        return 0;
     }
-    /* remove an entry. */
-    else if (!strncmp(params, "remove", 6))
+    /* Remove an entry. */
+    else if (hash == subcommands.remove)
     {
-        if (sscanf(params + 7, "%[^/]/%[^/]/%s", name, host, mode) != 3 ||
+        FREE_AND_CLEAR_HASH(hash);
+
+        if (sscanf(cp, "%[^/]/%[^/]/%s", name, host, mode) != 3 ||
             (mode_id = check_gmaster_file_entry(name, host, mode)) == GMASTER_MODE_NO)
         {
             new_draw_info(NDI_UNIQUE, 0, op, "Malformed or missing parameter.");
@@ -2485,26 +2506,37 @@ int command_gmasterfile(object *op, char *params)
                 {
                     new_draw_info(NDI_UNIQUE, 0, op, "You have insufficient permission to remove this entry.");
 
-                   return 0;
+                    return 0;
                 }
 
-                /* remove the entry... */
-                LOG(llevInfo, "INFO:: /gmasterfile %s invoked by %s\n",
-                    params, query_name(op));
                 remove_gmaster_file_entry(ol);
                 write_gmaster_file();
                 update_gmaster_file();
 
-                return 0;
+                break;
             }
         }
 
-        new_draw_info(NDI_UNIQUE, 0, op, "Entry could not be found!");
+        if (!ol)
+        {
+            new_draw_info(NDI_UNIQUE, 0, op, "Entry could not be found!");
 
-        return 0;
+           return 0;
+        }
+    }
+    /* Unknown subcommand. */
+    else
+    {
+        FREE_AND_CLEAR_HASH(hash);
+
+        return 1;
     }
 
-    return 1;
+    /* TODO: Message to relevant fmaster channel. */
+    LOG(llevInfo, "INFO:: /gmasterfile %s %s invoked by %s\n",
+        params, cp, query_name(op));
+
+    return 0;
 }
 
 int command_invisible(object *op, char *params)
