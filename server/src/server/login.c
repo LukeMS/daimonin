@@ -942,6 +942,9 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
     show_stream_info(&pl->socket);
 #endif
 
+    /* Report any scheduled shutdown to the new player. */
+    shutdown_agent(-1, SERVER_EXIT_NORMAL, pl, NULL);
+
     return ADDME_MSG_OK;
 }
 

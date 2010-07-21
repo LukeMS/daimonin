@@ -699,10 +699,9 @@ void do_specials()
 }
 
 
-/* the shutdown agent is a automatic timer
- * which shutdown the server after the given time.
- * It gives out messages to all player to announce
- * the shutdown and the status of the shutdown. */
+/* The shutdown agent is a automatic timer which shuts down the server after
+ * the given time. It gives out messages to all players to announce the
+ * shutdown and the status of the shutdown. */
 void shutdown_agent(int timer, int ret, player *pl, char *reason)
 {
     static int            status = SERVER_EXIT_NORMAL,
@@ -803,21 +802,33 @@ void shutdown_agent(int timer, int ret, player *pl, char *reason)
         return;
     }
 
-    /* If the countdown has been reset or every minute on the minute, report
-     * the time left. */
-    t_min = t_tot / 60;
-    t_sec = t_tot - t_min * 60;
-
+    /* If the circumstances are right report the time left. */
     if (sd_timer >= 0 &&
-        t_tot >= 0 &&
-        (!t_sec ||
-         timer >= 0))
+        t_tot >= 0)
     {
-        new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_ALL | NDI_GREEN, 5, NULL,
-                      "[Server]: SERVER %s in %d minute%s and %d second%s",
-                      (status == SERVER_EXIT_RESTART) ? "RESTART" : "SHUTDOWN",
-                      t_min, (t_min == 1) ? "" : "s",
-                      t_sec, (t_sec == 1) ? "" : "s");
+        t_min = t_tot / 60;
+        t_sec = t_tot - t_min * 60;
+
+        /* To everyone if the countdown has been reset or every minute on the
+         * minute. */
+        if (!t_sec ||
+            timer >= 0)
+        {
+            new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_ALL | NDI_GREEN, 5,
+                          NULL, "[Server]: SERVER %s in %d minute%s and %d second%s",
+                          (status == SERVER_EXIT_RESTART) ? "RESTART" : "SHUTDOWN",
+                          t_min, (t_min == 1) ? "" : "s",
+                          t_sec, (t_sec == 1) ? "" : "s");
+        }
+        /* To individual players who login during a countdown. */
+        else if (timer == -1 &&
+                 pl)
+        {
+            new_draw_info(NDI_UNIQUE | NDI_GREEN, 5, pl->ob, "[Server]: SERVER %s in %d minute%s and %d second%s",
+                          (status == SERVER_EXIT_RESTART) ? "RESTART" : "SHUTDOWN",
+                          t_min, (t_min == 1) ? "" : "s",
+                          t_sec, (t_sec == 1) ? "" : "s");
+        }
     }
 }
 
