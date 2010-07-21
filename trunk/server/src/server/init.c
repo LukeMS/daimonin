@@ -181,7 +181,7 @@ void free_strings(void)
 
 static void FreeStrings(size_t nrof, shstr **ptr)
 {
-    size_t i = nrof / sizeof(shstr *);
+    sint16 i = nrof / sizeof(shstr *) - 1;
 
     for(; i >= 0; i--)
     {
