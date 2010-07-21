@@ -4,18 +4,25 @@
 IF (WIN32)
   #Todo
 ELSE (WIN32)
-  FIND_LIBRARY(CAUDIO_LIBRARY cAudio
-    PATHS
-    ./make/linux
-    /usr/lib
-    /opt/lib
-    /usr/lib64
-    /opt/lib64
-    /usr/local/lib
-    /opt/local/lib
-    /usr/local/lib64
-    /opt/local/lib64
-    )
+  IF (CMAKE_SIZEOF_VOID_P MATCHES "8")
+    FIND_LIBRARY(CAUDIO_LIBRARY cAudio
+      PATHS
+      /usr/lib64
+      /opt/lib64
+      /usr/local/lib64
+      /opt/local/lib64
+      ./make/linux/lib64
+      )
+  ELSE (CMAKE_SIZEOF_VOID_P MATCHES "8")
+    FIND_LIBRARY(CAUDIO_LIBRARY cAudio
+      PATHS
+      /usr/lib
+      /opt/lib
+      /usr/local/lib
+      /opt/local/lib
+      ./make/linux/lib32
+      )
+  ENDIF (CMAKE_SIZEOF_VOID_P MATCHES "8")
 ENDIF (WIN32)
 
 IF (CAUDIO_LIBRARY) 
