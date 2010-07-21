@@ -702,8 +702,7 @@ void do_specials()
 /* the shutdown agent is a automatic timer
  * which shutdown the server after the given time.
  * It gives out messages to all player to announce
- * the shutdown and the status of the shutdown.
- */
+ * the shutdown and the status of the shutdown. */
 void shutdown_agent(int timer, int ret, player *pl, char *reason)
 {
     static int            status = SERVER_EXIT_NORMAL,
@@ -715,6 +714,27 @@ void shutdown_agent(int timer, int ret, player *pl, char *reason)
     int                   t_tot,
                           t_min,
                           t_sec;
+
+    /* Stop shutdown/restart */
+    if (timer == -2)
+    {
+        if (status != SERVER_EXIT_NORMAL)
+        {
+            sprintf(buf, "SERVER %s STOPPED by %s",
+                    (status == SERVER_EXIT_RESTART) ? "RESTART" : "SHUTDOWN",
+                    query_name(pl->ob));
+            LOG(llevSystem, "%s", buf);
+            new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_ALL | NDI_GREEN, 5,
+                          NULL, "[Server]: ** %s **", buf);
+        }
+
+        status = SERVER_EXIT_NORMAL;
+        sd_timer = -1;
+        name[0] = '\0';
+        buf[0] = '\0';
+
+        return;
+    }
 
     if (ret != SERVER_EXIT_NORMAL)
     {

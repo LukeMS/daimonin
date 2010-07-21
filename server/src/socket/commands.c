@@ -204,7 +204,7 @@ CommArray_s CommandsMW[] =
     {"teleport",      command_teleport,    0.0f, 1},
     {"resetmap",      command_reset,       0.0f, 1},
     {"goto",          command_goto,        0.0f, 1},
-    {"restart",       command_restart,     0.0f, 1},
+    {"reboot",        command_reboot,      0.0f, 1},
     {"dm_invis",      command_dm_invis,    0.0f, 1},
     {"dm_dev",        command_dm_dev,      0.0f, 1},
     {"dm_light",      command_dm_light,    0.0f, 1},
@@ -217,21 +217,21 @@ CommArray_s CommandsMW[] =
 CommArray_s CommandsMM[] =
 {
 #ifdef _TESTSERVER
-    {"serverspeed",  command_serverspeed,       0.0f, 1},
-    {"create",       command_create,            0.0f, 1},
+    {"serverspeed",   command_serverspeed, 0.0f, 1},
+    {"create",        command_create,      0.0f, 1},
 #else
-    {"stealth",      command_stealth,           0.0f, 1},
+    {"stealth",       command_stealth,     0.0f, 1},
     {"wizpass",       command_wizpass,     0.0f, 1},
     {"teleport",      command_teleport,    0.0f, 1},
     {"resetmap",      command_reset,       0.0f, 1},
     {"goto",          command_goto,        0.0f, 1},
-    {"restart",       command_restart,     0.0f, 1},
+    {"reboot",        command_reboot,      0.0f, 1},
     {"dm_invis",      command_dm_invis,    0.0f, 1},
     {"dm_dev",        command_dm_dev,      0.0f, 1},
     {"dm_light",      command_dm_light,    0.0f, 1},
     {"set_map_light", command_setmaplight, 0.0f, 1},
 #endif
-    {"gmasterfile",  command_gmasterfile,       0.0f, 1},
+    {"gmasterfile",   command_gmasterfile, 0.0f, 1},
 };
 
 CommArray_s CommandsSA[] =
@@ -245,7 +245,6 @@ CommArray_s CommandsSA[] =
 #endif
     {"plugin",       command_loadplugin,        0.0f, 1},
     {"pluglist",     command_listplugins,       0.0f, 1},
-    {"shutdown",     command_shutdown,          0.0f, 1},
     {"plugout",      command_unloadplugin,      0.0f, 1},
     {"dump",         command_dump,              0.0f, 1},
     {"d_active",     command_dumpactivelist,    0.0f, 1},
@@ -316,8 +315,11 @@ void init_commands()
     qsort((char *)CommandsSA, CommandsSASize, sizeof(CommArray_s), compare_A);
 
     subcommands.add = add_string("add");
+    subcommands.cancel = add_string("cancel");
     subcommands.list = add_string("list");
     subcommands.remove = add_string("remove");
+    subcommands.restart = add_string("restart");
+    subcommands.shutdown = add_string("shutdown");
 }
 
 /* Finds cmd if it exists for pl (determined by gmaster_mode). 
