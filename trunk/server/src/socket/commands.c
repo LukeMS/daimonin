@@ -316,6 +316,7 @@ void init_commands()
     qsort((char *)CommandsSA, CommandsSASize, sizeof(CommArray_s), compare_A);
 
     subcommands.add = add_string("add");
+    subcommands.list = add_string("list");
     subcommands.remove = add_string("remove");
 }
 
