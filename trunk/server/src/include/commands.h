@@ -56,8 +56,11 @@ typedef struct
 typedef struct _subcommand
 {
     shstr *add;
+    shstr *cancel;
     shstr *list;
     shstr *remove;
+    shstr *restart;
+    shstr *shutdown;
 }
 _subcommand;
 

@@ -266,77 +266,11 @@ int command_kick(object *op, char *params)
     return 0;
 }
 
-/* Reboots the server (recompile code, update arches and maps). */
-int command_restart(object *ob, char *params)
+int command_reboot(object *op, char *params)
 {
-    int time;
-
-    if (!ob ||
-        ob->type != PLAYER ||
-        !CONTR(ob))
-    {
-        return 0;
-    }
-
-#ifdef _TESTSERVER
-    time = 30;
-
-    if (params)
-    {
-        char stream[TINY_BUF] = "";
-
-        if (!sscanf(params, "%d %s", &time, stream))
-        {
-           sscanf(params, "%s", stream);
-        }
-
-        if (stream[0])
-        {
-            char  buf[MEDIUM_BUF];
-            FILE *fp;
-
-            LOG(llevSystem,"write stream file...\n");
-            sprintf(buf, "%s/%s", settings.localdir, "stream");
-
-            if (!(fp = fopen(buf, "w")))
-            {
-                LOG(llevBug, "BUG: Cannot open %s for writing\n", buf);
-            }
-            else
-            {
-                /* Streams cannot have spaces. */
-                if (strchr(stream, ' '))
-                {
-                    fclose(fp);
-
-                    return 1;
-                }
-
-                fprintf(fp, "%s", stream);
-                fclose(fp);
-            }
-        }
-    }
-#else
-    time = 300;
-
-    if (params &&
-        !sscanf(params, "%d", &time))
-    {
-        return 1;
-    }
-#endif
-
-    shutdown_agent(time, SERVER_EXIT_RESTART, CONTR(ob),
-                   "Server will recompile and arches and maps will be updated.");
-
-    return 0;
-}
-
-/* Shuts down the server. Does not reboot. */
-int command_shutdown(object *op, char *params)
-{
-    int time = 1;
+    char       *cp;
+    shstr      *hash = NULL;
+    int         time = 300;
 
     if (!op ||
         op->type != PLAYER ||
@@ -345,15 +279,118 @@ int command_shutdown(object *op, char *params)
         return 0;
     }
 
-    if (params)
+    /* No subcommand? Default to restart. */
+    if (!params)
     {
-        sscanf(params, "%d", &time);
+        hash = add_refcount(subcommands.restart);
+    }
+    else
+    {
+        /* Find the subcommand. */
+        if ((cp = strchr(params, ' ')))
+        {
+            *(cp++) = '\0';
+
+            while (*cp == ' ')
+            {
+                cp++;
+            }
+        }
+
+        hash = add_string(params);
     }
 
-    shutdown_agent(time, SERVER_EXIT_SHUTDOWN, CONTR(op),
-                   "Server will shutdown and not reboot.");
+    /* Cancel scheduled reboot. */
+    if (hash == subcommands.cancel)
+    {
+        FREE_AND_CLEAR_HASH(hash);
+        shutdown_agent(-2, SERVER_EXIT_NORMAL, CONTR(op), NULL);
 
-    return 0;
+        return 0;
+    }
+    /* Restart server. */
+    else if (hash == subcommands.restart)
+    {
+        char stream[TINY_BUF] = "";
+
+        FREE_AND_CLEAR_HASH(hash);
+#ifdef _TESTSERVER
+        time = 30;
+
+        if (cp)
+        {
+            if (!sscanf(cp, "%d %s", &time, stream))
+            {
+               sscanf(cp, "%s", stream);
+            }
+        }
+
+        if (stream[0] &&
+            !strpbrk(stream, "\"&*/ "))
+        {
+            char  buf[HUGE_BUF];
+            FILE *fp;
+
+            sprintf(buf, "%s/%s", settings.localdir, "stream");
+
+            if (!(fp = fopen(buf, "w")))
+            {
+                LOG(llevSystem, "Write '%s'... FAILED!\n", buf);
+                LOG(llevBug, "BUG:: %s/command_reboot(): Cannot open file for writing!\n",
+                    __FILE__);
+            }
+            else
+            {
+                LOG(llevSystem, "Write '%s'... OK!\n", buf);
+                fprintf(fp, "%s", stream);
+                fclose(fp);
+            }
+        }
+#else
+        time = 300;
+
+        if (cp)
+        {
+            sscanf(cp, "%d", &time);
+        }
+#endif
+
+        shutdown_agent(time, SERVER_EXIT_RESTART, CONTR(op),
+                       "Server will recompile and arches and maps will be updated.");
+
+        return 0;
+    }
+    /* Shutdown server. */
+    else if (hash == subcommands.shutdown)
+    {
+        FREE_AND_CLEAR_HASH(hash);
+
+        /* Shutdown is special so we restrict it further (hopefully to people
+         * who can start it up again). */
+        if (!(CONTR(op)->gmaster_mode & GMASTER_MODE_SA))
+        {
+            new_draw_info(NDI_UNIQUE, 0, op, "You have insufficient permission to shutdown the server.");
+
+           return 0;
+        }
+
+        time = 0;
+
+        if (cp)
+        {
+            sscanf(cp, "%d", &time);
+        }
+
+        shutdown_agent(time, SERVER_EXIT_SHUTDOWN, CONTR(op),
+                       "Server will shutdown and not reboot.");
+
+        return 0;
+    }
+
+    /* Unknown subcommand. */
+    FREE_AND_CLEAR_HASH(hash);
+
+    return 1;
 }
 
 int command_goto(object *op, char *params)
