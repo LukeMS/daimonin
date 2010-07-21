@@ -2482,6 +2482,90 @@ int command_gmasterfile(object *op, char *params)
         add_gmaster_file_entry(name, host, mode_id);
         write_gmaster_file();
     }
+    /* List subset of entries. */
+    else if (hash == subcommands.list)
+    {
+        uint8 success = 0;
+
+        FREE_AND_CLEAR_HASH(hash);
+
+        if (strstr(cp, "SA"))
+        {
+            success = 1;
+
+            for (ol = gmaster_list; ol; ol = ol->next)
+            {
+                struct _gmaster_struct *gm = ol->objlink.gm;
+
+                if (gm->mode == GMASTER_MODE_SA)
+                {
+                    new_draw_info(NDI_UNIQUE, 0, op, "%s", gm->entry);
+                }
+            }
+        }
+
+        if (strstr(cp, "MM"))
+        {
+            success = 1;
+
+            for (ol = gmaster_list; ol; ol = ol->next)
+            {
+                struct _gmaster_struct *gm = ol->objlink.gm;
+
+                if (gm->mode == GMASTER_MODE_MM)
+                {
+                    new_draw_info(NDI_UNIQUE, 0, op, "%s", gm->entry);
+                }
+            }
+        }
+
+        if (strstr(cp, "MW"))
+        {
+            success = 1;
+
+            for (ol = gmaster_list; ol; ol = ol->next)
+            {
+                struct _gmaster_struct *gm = ol->objlink.gm;
+
+                if (gm->mode == GMASTER_MODE_MW)
+                {
+                    new_draw_info(NDI_UNIQUE, 0, op, "%s", gm->entry);
+                }
+            }
+        }
+
+        if (strstr(cp, "GM"))
+        {
+            success = 1;
+
+            for (ol = gmaster_list; ol; ol = ol->next)
+            {
+                struct _gmaster_struct *gm = ol->objlink.gm;
+
+                if (gm->mode == GMASTER_MODE_GM)
+                {
+                    new_draw_info(NDI_UNIQUE, 0, op, "%s", gm->entry);
+                }
+            }
+        }
+
+        if (strstr(cp, "VOL"))
+        {
+            success = 1;
+
+            for (ol = gmaster_list; ol; ol = ol->next)
+            {
+                struct _gmaster_struct *gm = ol->objlink.gm;
+
+                if (gm->mode == GMASTER_MODE_VOL)
+                {
+                    new_draw_info(NDI_UNIQUE, 0, op, "%s", gm->entry);
+                }
+            }
+        }
+
+        return !success;
+    }
     /* Remove an entry. */
     else if (hash == subcommands.remove)
     {
