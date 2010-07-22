@@ -1640,17 +1640,28 @@ static void ShowGUIPanel(uint16 x, uint16 y)
 
     for (; this; this = this->next, i++)
     {
+        char   buf[SMALL_BUF];
+        int    len;
         uint16 ch = font_medium.line_height,
                cw = 16;
 
+        sprintf(buf, "%s", this->keyword);
+
+        if (string_width_offset(&font_medium, buf, &len,
+            Bitmaps[BITMAP_GUI_NPC_PANEL]->bitmap->w - cw))
+        {
+            buf[len - 2] = '\0';
+            strcat(buf, "...");
+        }
+
         if (gui_npc->keyword_selected == this)
         {
-            string_blt(ScreenSurface, &font_medium, this->keyword, x + cw / 2,
-                      y + ch / 2 + ch * i, COLOR_DK_NAVY, NULL, NULL);
+            string_blt(ScreenSurface, &font_medium, buf, x + cw / 2,
+                       y + ch / 2 + ch * i, COLOR_DK_NAVY, NULL, NULL);
         }
         else
         {
-            string_blt(ScreenSurface, &font_medium, this->keyword, x + cw / 2,
+            string_blt(ScreenSurface, &font_medium, buf, x + cw / 2,
                       y + ch / 2 + ch * i, COLOR_TURQUOISE, NULL, NULL);
         }
     }
