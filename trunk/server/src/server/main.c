@@ -701,7 +701,24 @@ void do_specials()
 
 /* The shutdown agent is a automatic timer which shuts down the server after
  * the given time. It gives out messages to all players to announce the
- * shutdown and the status of the shutdown. */
+ * shutdown and the status of the shutdown.
+ *
+ * If timer >= 0, a new countdown will start. ret should be SERVER_EXIT_RESTART
+ * or SERVER_EXIT_SHUTDOWN. pl should be the player who started the shutdown
+ * (or NULL for anonymous). reason should be any extra explanation of the
+ * shutdown (or NULL for none given). A message that a countdown has started
+ * will be broadcast to all players
+ *
+ * If timer == -1, any existing countdown will continue. ret should be
+ * SERVER_EXIT_NORMAL. pl should be a player or NULL. reason should be NULL.
+ * Every minute and when the countdown reaches 0 a message about the shutdown's
+ * progress is broadcast to all players. If pl != NULL, the current countdown,
+ * wherever it is, is sent to that player only. There is always a three second
+ * delay before the actual shutdown happens.
+ *
+ * If timer == -2, any existing countdown is stopped. pl should be the player
+ * responsible. Other parameters are ignored. A message that the shutdown has
+ * been stopped is broadcast to all players. */
 void shutdown_agent(int timer, int ret, player *pl, char *reason)
 {
     static int            status = SERVER_EXIT_NORMAL,
