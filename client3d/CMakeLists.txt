@@ -43,17 +43,13 @@ MESSAGE(STATUS "############################################################")
 MESSAGE(STATUS "# Looking for all external packages")
 MESSAGE(STATUS "############################################################")
 # Looking for package: boost-thread.
-find_package(Boost 1.35 REQUIRED COMPONENTS thread)
-IF   (NOT Boost_FOUND)
+find_package(Boost 1.38 REQUIRED COMPONENTS thread)
+IF   (NOT Boost_THREAD_FOUND)
   MESSAGE(FATAL_ERROR "Boost-thread was not found.")
-ENDIF()
-# Smacky found out that client3d doesn't compile with version 1.37 on ubuntu.
-IF   (${Boost_MAJOR_VERSION} EQUAL "1" AND ${Boost_MINOR_VERSION} EQUAL "37")
-  MESSAGE(FATAL_ERROR "* Boost-thread version 1.37 was found.\nPlease install a boost-thread version >= 1.35 BUT NOT 1.37")
 ELSE ()
   MESSAGE(STATUS "* Boost-thread was found.")
 ENDIF()
-set(LIBS ${LIBS} ${Boost_LIBRARY})
+set(LIBS ${LIBS} ${Boost_THREAD_LIBRARY})
 
 # Looking for package: Ogre.
 INCLUDE(${MY_CMAKE_MODULE_PATH}/FindOGRE.cmake)
