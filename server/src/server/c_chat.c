@@ -327,7 +327,7 @@ int command_tell(object *op, char *params)
     if (!name)
         return 1;
 
-    transform_name_string(name); /* we have a name. be sure its "Xxxxx" */
+    transform_player_name_string(name); /* we have a name. be sure its "Xxxxx" */
 
     if (!(name_hash = find_string(name))) /* if its not in the hash table there is 100% no player */
     {
@@ -754,7 +754,7 @@ static int basic_emote(object *op, char *params, int emotion)
         {
             /* But only capitalize on those emotes that are for sure a player name param. */
             if(op->type == PLAYER)
-                transform_name_string(params);
+                transform_player_name_string(params);
         }
     }
 
