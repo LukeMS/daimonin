@@ -1931,7 +1931,7 @@ static void add_banlist_name(object* op, char *name, int ticks)
     const char *name_hash;
     char buf[SMALL_BUF];
 
-    transform_name_string(name);
+    transform_player_name_string(name);
 
     name_hash = find_string(name); /* we need an shared string to check ban list */
 
@@ -2199,7 +2199,7 @@ int command_ban(object *op, char *params)
                 }
             }
 
-            transform_name_string(name);
+            transform_player_name_string(name);
             name_hash = find_string(name); /* we need an shared string to check ban list */
 
             for (ol = ban_list_player; ol; ol = ol_tmp)

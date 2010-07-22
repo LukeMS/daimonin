@@ -43,7 +43,7 @@ player * find_player(char *plname)
         return NULL;
 
     strcpy(name, plname); /* we need to copy it because we access the string */
-    transform_name_string(name);
+    transform_player_name_string(name);
     if (!(name_hash = find_string(name)))
         return NULL;
 

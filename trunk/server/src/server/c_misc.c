@@ -676,7 +676,7 @@ int command_dm_password (object *op, char *params)
     if(params==NULL || !sscanf(params, "%s %s", name, pwd) || name[0] == 0 || pwd[0]== 0)
         return 1;
 
-    transform_name_string(name);
+    transform_player_name_string(name);
 
     /* we have now 2 strings - name and password - lets check there is a player file for that name */
     sprintf(pfile, "%s/%s/%s/%s/%s.pl", settings.localdir, settings.playerdir, get_subdir(name), name, name);

@@ -156,3 +156,73 @@ int player_char_valid(char c)
 
     return 1;
 }
+
+/* Transform a given account name string. Ie, "xXxxX" or "XXXXXX" to "xxxxxx".
+ * Also trim trailing spaces.
+ *
+ * Validity (length, allowed characters) is NOT checked here. Use
+ * account_name_valid() for that (which also fixes the case).
+ *
+ * The chars are changed directly in the given buffer so be sure not to give
+ * hash or constant pointers here. As a small gimmick return the strlen of the
+ * (transformed) name. */
+int transform_account_name_string(char *name)
+{
+    char *tmp = name;
+
+    if (!tmp ||
+        *tmp == '\0')
+    {
+        return 0;
+    }
+
+    while (*tmp != '\0')
+    {
+        *tmp = tolower(*tmp++);
+    }
+
+    /* Trim the string on the right side */
+    while (tmp >= name &&
+           *(tmp - 1) == ' ')
+    {
+        *(--tmp) = '\0';
+    }
+
+    return tmp - name; /* i love C */
+}
+
+/* Transform a given player name string. Ie, "xXxxX" or "xxxxxx" to "Xxxxxx".
+ * Also trim trailing spaces.
+ *
+ * Validity (length, allowed characters) is NOT checked here. Use
+ * player_name_valid() for that (which also fixes the case).
+ *
+ * The chars are changed directly in the given buffer so be sure not to give
+ * hash or constant pointers here. As a small gimmick return the strlen of the
+ * (transformed) name. */
+int transform_player_name_string(char *name)
+{
+    char *tmp = name;
+
+    if (!tmp ||
+        *tmp == '\0')
+    {
+        return 0;
+    }
+
+    *tmp = toupper(*tmp);
+
+    while (*(++tmp) != '\0')
+    {
+        *tmp = tolower(*tmp);
+    }
+
+    /* Trim the string on the right side */
+    while (tmp >= name &&
+           *(tmp - 1) == ' ')
+    {
+        *(--tmp) = '\0';
+    }
+
+    return tmp - name; /* i love C */
+}

@@ -138,31 +138,6 @@ int buf_overflow(const char *buf1, const char *buf2, int bufsize)
     return 0;
 }
 
-/* we transform a given name string
- * like "xxXxxX" or "xxxxxx" to "Xxxxxx"!
- * We change the string chars direct in the given buffer
- * so be sure not to give hash or constant pointers here.
- * as a small gimmick we give back the strlen of the name.
- */
-int transform_name_string(char *name)
-{
-    char   *tmp = name;
-
-    if (!tmp || *tmp == '\0')
-        return 0;
-
-    *tmp = toupper(*tmp);
-
-    while (*(++tmp) != '\0')
-        *tmp = tolower(*tmp);
-
-    /* trim the string on the right side */
-    while(tmp>=name && *(tmp-1) ==' ')
-        *(--tmp)='\0';
-
-    return tmp - name; /* i love C */
-}
-
 /*
  * Writes <num> ones and zeros to the given string based on the
  * <bits> variable.

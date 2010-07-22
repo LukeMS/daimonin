@@ -302,5 +302,7 @@ extern int password_valid(char *cp);
 extern int password_char_valid(char c);
 extern int player_name_valid(char *cp);
 extern int player_char_valid(char c);
+extern int transform_account_name_string(char *name);
+extern int transform_player_name_string(char *name);
 
 #endif /* ifndef __PROTOCOL_H */
