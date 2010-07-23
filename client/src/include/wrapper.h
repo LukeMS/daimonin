@@ -45,29 +45,22 @@
 #endif
 
 /* mallocs _P_ to size _S_, logging OOM or initialising to 0. */
+#undef MALLOC
 #define MALLOC(_P_, _S_) \
-if (!((_P_) = malloc((_S_)))) \
-{ \
-    LOG(LOG_DEBUG, "%s %d: Out of memory!\n", __FILE__, __LINE__); \
-} \
-else \
-{ \
-    memset((_P_), 0, (_S_)); \
-}
+((!((_P_) = malloc((_S_)))) ? \
+LOG(LOG_DEBUG, "%s %d: Out of memory!\n", __FILE__, __LINE__) : \
+memset((_P_), 0, (_S_)))
 
 /* mallocs _P_ to size strlen(_S_) + 1, logging OOM or initialising to
  * sprintf(_P_, "%s", _S_). */
+#undef MALLOC2
 #define MALLOC2(_P_, _S_) \
-if (!((_P_) = malloc(strlen(_S_) + 1))) \
-{ \
-    LOG(LOG_DEBUG, "%s %d: Out of memory!\n", __FILE__, __LINE__); \
-} \
-else \
-{ \
-    sprintf((_P_), "%s", (_S_)); \
-}
+((!((_P_) = malloc(strlen(_S_) + 1))) ? \
+LOG(LOG_DEBUG, "%s %d: Out of memory!\n", __FILE__, __LINE__) : \
+sprintf((_P_), "%s", (_S_)))
 
 /* frees _P_ and sets it to NULL. */
+#undef FREE
 #define FREE(_P_) \
 do \
 { \
