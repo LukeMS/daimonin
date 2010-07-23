@@ -1053,12 +1053,6 @@ void compile_info()
         *pool_object->nrof_free);
 
 
-#ifdef USE_CALLOC
-    LOG(llevInfo, "Use_calloc:\t<true>\n");
-#else
-    LOG(llevInfo, "Use_calloc:\t<false>\n");
-#endif
-
     LOG(llevInfo, "Max_time:\t%ld (%f)\n", pticks_ums, pticks_second);
 
     LOG(llevInfo, "Tlogfilename:\t%s, Clogfilename:\t%s (llev:%d)\n", settings.tlogfilename, settings.clogfilename, settings.debug);

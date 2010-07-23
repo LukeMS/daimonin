@@ -368,7 +368,8 @@ archetype * get_archetype_struct()
 {
     archetype *new;
 
-    new = (archetype *) CALLOC(1, sizeof(archetype));
+    MALLOC(new, sizeof(archetype));
+
     if (new == NULL)
         LOG(llevError, "get_archetype_struct() - out of memory\n");
 

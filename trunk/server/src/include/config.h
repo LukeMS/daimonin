@@ -374,7 +374,6 @@
  * MAX_OBJECTS_LWM - only swap maps out if below that value
  * MOTD - message of the day - printed each time someone joins the game
  * SHUTDOWN - used when shutting down the server
- * USE_CALLOC for some memory requests
  ***********************************************************************
  */
 
@@ -540,21 +539,6 @@
 #define MOTD_DEFAULT "motd"
 #define MOTD_FILE "motd_file"
 #endif
-
-
-/*
- * If undefined, malloc is always used.
- * It looks like this can be oboleted.  However, it can be useful to
- * track down some bugs, as it will make sure that the entire data structure
- * is set to 0, at the expense of speed.
- * Rupert Goldie has run Purify against the code, and if this is disabled,
- * apparantly there are a lot of uninitialized memory reads - I haven't
- * seen any problem (maybe the memory reads are copies, and the destination
- * doesn't actually use the garbage values either?), but the impact on speed
- * of using this probably isn't great, and should make things more stable.
- * Msw 8-9-97
- */
-#define USE_CALLOC
 
 
 /*
