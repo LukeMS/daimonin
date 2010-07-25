@@ -2263,113 +2263,115 @@ static void ShowGUIContents(uint16 x, uint16 y)
                 gui_npc->reward->silver ||
                 gui_npc->reward->mithril)
             {
-                uint8 i;
-                int   bitmaps[] =
-                {
-                    BITMAP_COIN_COPPER,
-                    BITMAP_COIN_SILVER,
-                    BITMAP_COIN_GOLD,
-                    BITMAP_COIN_MITHRIL,
-                    0
-                };
-                int   coins;
+                uint8    i = 0;
+                int      coins[DENOMINATIONS];
+                _Sprite *sprites[DENOMINATIONS];
+
+                coins[i] = gui_npc->reward->copper;
+                sprites[i++] = FaceList[get_bmap_id("coppercoin.101")].sprite;
+                coins[i] = gui_npc->reward->silver;
+                sprites[i++] = FaceList[get_bmap_id("silvercoin.101")].sprite;
+                coins[i] = gui_npc->reward->gold;
+                sprites[i++] = FaceList[get_bmap_id("goldcoin.101")].sprite;
+                coins[i] = gui_npc->reward->mithril;
+                sprites[i++] = FaceList[get_bmap_id("mit_coin.101")].sprite;
 
                 if (gui_npc->reward->body.line_count)
                 {
                     yoff += FONT_BLANKLINE;
                 }
 
-                for (i = 0; bitmaps[i]; i++)
+                for (i = 0; i < DENOMINATIONS; i++) // 4 denominations
                 {
-                    if ((bitmaps[i] == BITMAP_COIN_COPPER &&
-                         (coins = gui_npc->reward->copper)) ||
-                        (bitmaps[i] == BITMAP_COIN_SILVER &&
-                         (coins = gui_npc->reward->silver)) ||
-                        (bitmaps[i] == BITMAP_COIN_GOLD &&
-                         (coins = gui_npc->reward->gold)) ||
-                        (bitmaps[i] == BITMAP_COIN_MITHRIL &&
-                         (coins = gui_npc->reward->mithril)))
+                    if (coins[i] != 0)
                     {
-                        uint16 w;
-
-                        xoff = x + gui_npc->reward->box.x +
+                        box.x = x + gui_npc->reward->box.x +
                                (GUI_NPC_WIDTH / 4) * i;
-                        sprite_blt(Bitmaps[bitmaps[i]], xoff, yoff + 9, NULL,
-                                   NULL);
+                        box.y = yoff + 9;
+                        box.w = sprites[i]->bitmap->w;
+                        box.h = sprites[i]->bitmap->h;
+//                        SDL_SetClipRect(ScreenSurface, &box);
+                        xoff = box.x + box.w / 2 -
+                               (sprites[i]->bitmap->w - sprites[i]->border_left) / 2 -
+                               sprites[i]->border_left;
+                        sprite_blt(sprites[i], xoff, yoff + 9, NULL, NULL);
+//                        SDL_SetClipRect(ScreenSurface, NULL);
 
                         if (gui_npc->shop)
                         {
-                            if (coins > 9999 ||
-                                coins < -9999)
+                            if (coins[i] > 9999 ||
+                                coins[i] < -9999)
                             {
                                 sprintf(buf, "many");
                             }
                             else
                             {
-                                sprintf(buf, "%d", coins);
+                                sprintf(buf, "%d", coins[i]);
                             }
                         }
                         else
                         {
-                            if (coins > 9999)
+                            if (coins[i] > 9999)
                             {
                                 sprintf(buf, "+many");
                             }
-                            else if (coins < -9999)
+                            else if (coins[i] < -9999)
                             {
                                 sprintf(buf, "-many");
                             }
                             else
                             {
-                                sprintf(buf, "%+d", coins);
+                                sprintf(buf, "%+d", coins[i]);
                             }
                         }
 
-                        w = string_width(&font_small_out, buf);
-
-                        if (coins < 0)
+                        if (coins[i] < 0)
                         {
+                            uint16 w = string_width(&font_small_out, buf);
+
                             string_blt(ScreenSurface, &font_small_out, buf,
                                       xoff + 28 - w / 2, yoff + 18, COLOR_RED, NULL,
                                       NULL);
                         }
                         else
                         {
+                            uint16 w = string_width(&font_small_out, buf);
+
                             string_blt(ScreenSurface, &font_small_out, buf,
                                       xoff + 28 - w / 2, yoff + 18, COLOR_GREEN, NULL,
                                       NULL);
                         }
                     }
+                }
 
-                    /* Play a coins sound depending on gui_npc->total_coins.
-                     * Reset head->sound to 0 afterwards to prevent a constant
-                     * loop (this function is called repeatedly as long as the
-                     * interface remains open. */
-                    if (gui_npc->sound)
+                /* Play a coins sound depending on gui_npc->total_coins.
+                 * Reset head->sound to 0 afterwards to prevent a constant
+                 * loop (this function is called repeatedly as long as the
+                 * interface remains open. */
+                if (gui_npc->sound)
+                {
+                    if (gui_npc->total_coins > 500)
                     {
-                        if (gui_npc->total_coins > 500)
-                        {
-                            sound_play_effect(SOUNDTYPE_CLIENT, SOUND_COINS4, 0, 0,
-                                              MENU_SOUND_VOL);
-                        }
-                        else if (gui_npc->total_coins > 100)
-                        {
-                            sound_play_effect(SOUNDTYPE_CLIENT, SOUND_COINS3, 0, 0,
-                                              MENU_SOUND_VOL);
-                        }
-                        else if (gui_npc->total_coins > 50)
-                        {
-                            sound_play_effect(SOUNDTYPE_CLIENT, SOUND_COINS2, 0, 0,
-                                              MENU_SOUND_VOL);
-                        }
-                        else if (gui_npc->total_coins > 0)
-                        {
-                            sound_play_effect(SOUNDTYPE_CLIENT, SOUND_COINS1, 0, 0,
-                                              MENU_SOUND_VOL);
-                        }
-
-                        gui_npc->sound = 0;
+                        sound_play_effect(SOUNDTYPE_CLIENT, SOUND_COINS4, 0, 0,
+                                          MENU_SOUND_VOL);
                     }
+                    else if (gui_npc->total_coins > 100)
+                    {
+                        sound_play_effect(SOUNDTYPE_CLIENT, SOUND_COINS3, 0, 0,
+                                          MENU_SOUND_VOL);
+                    }
+                    else if (gui_npc->total_coins > 50)
+                    {
+                        sound_play_effect(SOUNDTYPE_CLIENT, SOUND_COINS2, 0, 0,
+                                          MENU_SOUND_VOL);
+                    }
+                    else if (gui_npc->total_coins > 0)
+                    {
+                        sound_play_effect(SOUNDTYPE_CLIENT, SOUND_COINS1, 0, 0,
+                                          MENU_SOUND_VOL);
+                    }
+
+                    gui_npc->sound = 0;
                 }
             }
         }

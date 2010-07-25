@@ -99,4 +99,6 @@
 /* for each level-1 we store a own bitmap copy, so be careful */
 #define DARK_LEVELS 7
 
+#define DENOMINATIONS 4 // number of coin types
+
 #endif /* ifndef __CONFIG_H */
