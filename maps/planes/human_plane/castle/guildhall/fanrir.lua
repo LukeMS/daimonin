@@ -681,6 +681,7 @@ local function topic_questComplete()
         -- "Mouse Hunt"
         ---------
         elseif questnr == 3 then
+            ib:Sound(true)
             ib:SetMsg("Many thanks! That should slow them down a bit.\n")
             ib:AddMsg("\nWell, that deserves a reward. Here you go.")
             ib:SetCoins(10, 0, 0, 0)
