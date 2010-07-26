@@ -681,26 +681,6 @@ int read_anim_tmp(void)
     return load_anim_tmp(); /* all fine - load file */
 }
 
-/* The editor creates the facespack alphabetically, so we can do a quick binary search... */
-int get_facenum_from_name(char * name)
-{
-    int l=0;
-    int r=(bmaptype_table_size-1);
-    int x;
-    while(r >= l)
-    {
-        x=(l+r)/2;
-        if(strcmp(name, bmaptype_table[x].name)<0)/* smaller? */
-            r=x-1;
-        else      /* bigger! */
-            l=x+1;
-        if(!strcmp(name, bmaptype_table[x].name))
-            return x;     /* Gefunden; x = Position*/
-    }
-    return -1;
-}
-
-
 void read_anims(void)
 {
     FILE *stream;
@@ -1053,14 +1033,25 @@ void delete_server_chars(void)
  */
 int get_bmap_id(char *name)
 {
-    int i;
+    int l = 0,
+        r = bmaptype_table_size - 1,
+        x = r / 2;
 
-    for (i = 0; i < bmaptype_table_size; i++)
+    for (; r >= l; x = (l + r) / 2)
     {
-        if (bmaptype_table[i].name[0] && !strcmp(bmaptype_table[i].name, name))
+        int diff = strcmp(name, bmaptype_table[x].name);
+
+        if (diff < 0)
         {
-            request_face(i);
-            return i;
+            r = x - 1;
+        }
+        else if (diff > 0)
+        {
+            l = x + 1;
+        }
+        else
+        {
+            return x;
         }
     }
 
@@ -1103,35 +1094,54 @@ void load_settings(void)
                     sscanf(adjust_string(buf), "%s %d %d %d %d %d %d", buf1, &serv_char->bar[0], &serv_char->bar[1],
                            &serv_char->bar[2], &serv_char->bar_add[0], &serv_char->bar_add[1], &serv_char->bar_add[2]);
 
-                    serv_char->pic_id = get_bmap_id(buf1);
+                    if ((serv_char->pic_id = get_bmap_id(buf1)) != -1)
+                    {
+                        request_face(serv_char->pic_id);
+                    }
 
                     while (fgets(buf, LARGE_BUF - 1, stream) != NULL && (buf[0] == '#' || buf[0] == '\0'))
                         ;
                     sscanf(adjust_string(buf), "%d %s %s", &serv_char->gender[0], buf1, buf2);
                     serv_char->char_arch[0] = malloc(strlen(buf1) + 1);
                     strcpy(serv_char->char_arch[0], buf1);
-                    serv_char->face_id[0] = get_bmap_id(buf2);
+
+                    if ((serv_char->face_id[0] = get_bmap_id(buf2)) != -1)
+                    {
+                        request_face(serv_char->face_id[0]);
+                    }
 
                     while (fgets(buf, LARGE_BUF - 1, stream) != NULL && (buf[0] == '#' || buf[0] == '\0'))
                         ;
                     sscanf(adjust_string(buf), "%d %s %s", &serv_char->gender[1], buf1, buf2);
                     serv_char->char_arch[1] = malloc(strlen(buf1) + 1);
                     strcpy(serv_char->char_arch[1], buf1);
-                    serv_char->face_id[1] = get_bmap_id(buf2);
+
+                    if ((serv_char->face_id[1] = get_bmap_id(buf2)) != -1)
+                    {
+                        request_face(serv_char->face_id[1]);
+                    }
 
                     while (fgets(buf, LARGE_BUF - 1, stream) != NULL && (buf[0] == '#' || buf[0] == '\0'))
                         ;
                     sscanf(adjust_string(buf), "%d %s %s", &serv_char->gender[2], buf1, buf2);
                     serv_char->char_arch[2] = malloc(strlen(buf1) + 1);
                     strcpy(serv_char->char_arch[2], buf1);
-                    serv_char->face_id[2] = get_bmap_id(buf2);
+
+                    if ((serv_char->face_id[2] = get_bmap_id(buf2)) != -1)
+                    {
+                        request_face(serv_char->face_id[2]);
+                    }
 
                     while (fgets(buf, LARGE_BUF - 1, stream) != NULL && (buf[0] == '#' || buf[0] == '\0'))
                         ;
                     sscanf(adjust_string(buf), "%d %s %s", &serv_char->gender[3], buf1, buf2);
                     serv_char->char_arch[3] = malloc(strlen(buf1) + 1);
                     strcpy(serv_char->char_arch[3], buf1);
-                    serv_char->face_id[3] = get_bmap_id(buf2);
+
+                    if ((serv_char->face_id[3] = get_bmap_id(buf2)) != -1)
+                    {
+                        request_face(serv_char->face_id[3]);
+                    }
 
                     while (fgets(buf, LARGE_BUF - 1, stream) != NULL && (buf[0] == '#' || buf[0] == '\0'))
                         ;
