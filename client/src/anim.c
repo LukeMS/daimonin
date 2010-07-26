@@ -854,7 +854,7 @@ void create_anim_tmp()
             }
             else
             {
-                i = get_facenum_from_name(cmd);
+                i = get_bmap_id(cmd);
 
                 if (i == -1)
                 {

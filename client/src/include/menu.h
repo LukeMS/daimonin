@@ -140,7 +140,6 @@ extern void     do_keybind_input(void);
 extern void     do_npcdialog_input(void);
 
 
-extern int      get_facenum_from_name(char * name);
 extern int      read_anim_tmp(void);
 extern int      read_bmap_tmp(void);
 extern void     read_anims(void);

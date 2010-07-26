@@ -383,23 +383,34 @@ _gui_npc *gui_npc_create(int mode, char *data, int len, int pos)
      */
     if (gui_npc->head)
     {
-        gui_npc->head->image.face = get_bmap_id(gui_npc->head->image.name);
+        int i = get_bmap_id(gui_npc->head->image.name);
 
         /* If the image is not in FaceList, load it from the local icons
          * dir. */
-        if (gui_npc->head->image.face == -1)
+        if (i == -1)
         {
-            char buf[MEDIUM_BUF];
+            char     buf[MEDIUM_BUF];
 
             sprintf(buf, "%s%s.png",
                     GetIconDirectory(), gui_npc->head->image.name);
-            gui_npc->head->image.sprite = sprite_load_file(buf,
-                                                           SURFACE_FLAG_DISPLAYFORMAT);
+
+             /* Still can't find it? Bug. */
+            if (!(gui_npc->head->image.sprite = sprite_load_file(buf,
+                                                                 SURFACE_FLAG_DISPLAYFORMAT)))
+            {
+                i = 0;
+                LOG(LOG_ERROR, "Can't find image '%s' in FacList or akin!\n",
+                    gui_npc->head->image.name);
+            }
         }
-        else
+
+        if (i != -1)
         {
-            gui_npc->head->image.sprite = FaceList[gui_npc->head->image.face].sprite;
+            request_face(i);
+            gui_npc->head->image.sprite = FaceList[i].sprite;
         }
+
+        gui_npc->head->image.face = i;
 
         /* If the interface string specifies no explicit title, default to the
          * name of the target (ie, who you are talking to). */
@@ -428,6 +439,8 @@ _gui_npc *gui_npc_create(int mode, char *data, int len, int pos)
 
         for (this = gui_npc->icon; this; this = this->next)
         {
+            int i = get_bmap_id(this->image.name);
+
             /* First split body_text into lines. */
             if (gui_npc->shop)
             {
@@ -441,23 +454,31 @@ _gui_npc *gui_npc_create(int mode, char *data, int len, int pos)
                            GUI_NPC_ICON_MAX_LINE, this);
             }
 
-            /* search for the bmap num id's and load/request them if possible */
-            this->image.face = get_bmap_id(this->image.name);
-
             /* If the image is not in FaceList, load it from the local icons
              * dir. */
-            if (this->image.face == -1)
+            if (i == -1)
             {
                 char buf[MEDIUM_BUF];
 
                 sprintf(buf, "%s%s.png", GetIconDirectory(), this->image.name);
-                this->image.sprite = sprite_load_file(buf,
-                                                      SURFACE_FLAG_DISPLAYFORMAT);
+
+                /* Still can't find it? Bug. */
+                if (!(this->image.sprite = sprite_load_file(buf,
+                                                            SURFACE_FLAG_DISPLAYFORMAT)))
+                {
+                    i = 0;
+                    LOG(LOG_ERROR, "Can't find image '%s' in FacList or akin!\n",
+                        this->image.name);
+                }
             }
-            else
+
+            if (i != -1)
             {
-                this->image.sprite = FaceList[this->image.face].sprite;
+                request_face(i);
+                this->image.sprite = FaceList[i].sprite;
             }
+
+            this->image.face = i;
 
             /* if we have already come across a selectable icon and now find a
              * non-selectable one, reorder them */

@@ -876,21 +876,22 @@ static void face_flag_extension(int pnum, char *buf)
         *(strstr(fname, ".a") + 1) = 'b';
 
         /* Look for fname in the bmap table, requesting it if necessary. */
-        if ((i = get_facenum_from_name(fname)) == -1)
+        if ((i = get_bmap_id(fname)) == -1)
+        {
+            i = 0;
             LOG(LOG_MSG, "%s/face_flag_extension(): %s could not be found in bmaptype_table!\n",
                 __FILE__, fname);
-        else
-        {
-            request_face(i);
-
-            /* Set our_ref. */
-            FaceList[pnum].alt_a = -1;
-            FaceList[pnum].alt_b = i;
-
-            /* Set your_ref. */
-            FaceList[i].alt_a = pnum;
-            FaceList[i].alt_b = -1;
         }
+
+        request_face(i);
+
+        /* Set our_ref. */
+        FaceList[pnum].alt_a = -1;
+        FaceList[pnum].alt_b = i;
+
+        /* Set your_ref. */
+        FaceList[i].alt_a = pnum;
+        FaceList[i].alt_b = -1;
     }
     else if ((stemp = strstr(buf, ".b")))
     {
@@ -910,21 +911,22 @@ static void face_flag_extension(int pnum, char *buf)
         *(strstr(fname, ".b") + 1) = 'a';
 
         /* Look for fname in the bmap table, requesting it if necessary. */
-        if ((i = get_facenum_from_name(fname)) == -1)
-            LOG(LOG_MSG, "%s/face_flag_extension(): %s could not be found in bmaptype_table!\n",
-                __FILE__, fname);
-        else
+        if ((i = get_bmap_id(fname)) == -1)
         {
-            request_face(i);
-
-            /* Set our_ref. */
-            FaceList[pnum].alt_a = i;
-            FaceList[pnum].alt_b = -1;
-
-            /* Set your_ref. */
-            FaceList[i].alt_a = -1;
-            FaceList[i].alt_b = pnum;
+           i = 0;
+           LOG(LOG_MSG, "%s/face_flag_extension(): %s could not be found in bmaptype_table!\n",
+                __FILE__, fname);
         }
+
+        request_face(i);
+
+        /* Set our_ref. */
+        FaceList[pnum].alt_a = i;
+        FaceList[pnum].alt_b = -1;
+
+        /* Set your_ref. */
+        FaceList[i].alt_a = -1;
+        FaceList[i].alt_b = pnum;
     }
     else if ((stemp = strstr(buf, ".d")))
         FaceList[pnum].flags |= FACE_FLAG_DOUBLE;
