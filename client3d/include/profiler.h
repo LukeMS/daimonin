@@ -8,10 +8,6 @@
 #include <vector>
 #include <stack>
 
-
-#include "logger.h"
-
-
 // Todo: PROFILE(n) to log more than 1 task.
 
 /**
@@ -129,7 +125,6 @@ private:
 
     DProfiler()
     {
-        start =0;
         mPofileTime = 0.0f;
         mProfileStartTime = SourcefileNode::getTime();
     }

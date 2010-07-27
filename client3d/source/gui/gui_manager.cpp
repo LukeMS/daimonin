@@ -85,6 +85,7 @@ GuiManager::WindowID GuiManager::mWindowID[WIN_SUM]=
     { "Win_ChatWindow",    WIN_CHATWINDOW    },
     { "Win_Statistics",    WIN_STATISTICS    },
     { "Win_PlayerTarget",  WIN_PLAYERTARGET  },
+    { "Win_OptionAudio",   WIN_OPTION_AUDIO, },
 //  { "Win_Creation",      WIN_CREATION      },
 };
 
@@ -312,7 +313,6 @@ OverlayElement *GuiManager::createOverlay(String name, String strTexture, Overla
     material->setDepthWriteEnabled(false);
     material->setDepthCheckEnabled(false);
     material->setSceneBlending(SBT_TRANSPARENT_ALPHA);
-    material->getTechnique(0)->getPass(0)->setAlphaRejectSettings(CMPF_GREATER, 128);
     material->getTechnique(0)->getPass(0)->createTextureUnitState();
     material->getTechnique(0)->getPass(0)->getTextureUnitState(0)->setTextureFiltering(TFO_NONE);
     material->getTechnique(0)->getPass(0)->getTextureUnitState(0)->setTextureName(strTexture);

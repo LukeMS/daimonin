@@ -140,7 +140,7 @@ void GuiStatusbar::drawColorBar(uint32 *dst)
     dColor+= ((mFillColor & 0x0000ff00)/ (mDiameter/2+1)) & 0x0000ff00;
     dColor+= ((mFillColor & 0x000000ff)/ (mDiameter/2+1)) & 0x000000ff;
     uint32 color = 0xff000000 + dColor;
-    if (mHorizontal)
+    if (!mHorizontal)
     {
         for (int x=0; x < mDiameter/2; ++x)
         {

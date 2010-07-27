@@ -395,6 +395,7 @@ void TileChunk::setMaterial(int groupNr, int texSize)
 {
     PROFILE()
     String strMatFile = "_"+ StringConverter::toString(groupNr, 2, '0')+"_"+ StringConverter::toString(texSize, 4, '0')+".png";
+    //String strMatFile = "_"+ StringConverter::toString(groupNr, 2, '0')+"_"+ StringConverter::toString(texSize, 4, '0')+".dds";
     MaterialPtr tmpMaterial = MaterialManager::getSingleton().getByName(TileManager::MATERIAL_PREFIX + TileManager::LAND_PREFIX);
     for (int i=0; i < tmpMaterial->getBestTechnique()->getPass(0)->getNumTextureUnitStates(); ++i)
         tmpMaterial->getBestTechnique()->getPass(0)->getTextureUnitState(i)->setTextureName(TileManager::ATLAS_PREFIX + strMatFile);
@@ -957,11 +958,13 @@ void TileChunk::setRenderOptions(bool drawUndergrowth)
     if (!drawUndergrowth)
     {
         mEntityGrassFar->getParentSceneNode()->detachObject(mEntityGrassFar);
+        mEntityGrassNear->getParentSceneNode()->detachObject(mEntityGrassNear);
     }
     else
     {
         SceneNode *sn = static_cast<SceneNode*> (TileManager::getSingleton().getSceneManager()->getRootSceneNode()->getChild("snTileChunk"));
         sn->attachObject(mEntityGrassFar);
+        sn->attachObject(mEntityGrassNear);
     }
     mUndergrowth = drawUndergrowth;
 }
