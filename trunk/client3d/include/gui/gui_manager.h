@@ -126,8 +126,10 @@ public:
         WIN_CHATWINDOW,
         WIN_STATISTICS,
         WIN_PLAYERTARGET,
+        WIN_OPTION_AUDIO,
         //WIN_CREATION,
         WIN_SUM
+
     };
     static const int SUM_WIN_DIGITS; /**< Numbers of digits (For string format) **/
     enum

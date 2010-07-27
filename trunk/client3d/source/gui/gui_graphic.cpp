@@ -106,5 +106,21 @@ uint32 GuiGraphic::alphaBlend(const uint32 bg, const uint32 gfx)
     // so we need 2 operations on the 3 colors.
     uint32 rb = (((gfx & 0x00ff00ff) * alpha) + ((bg & 0x00ff00ff) * (0xff - alpha))) & 0xff00ff00;
     uint32 g  = (((gfx & 0x0000ff00) * alpha) + ((bg & 0x0000ff00) * (0xff - alpha))) & 0x00ff0000;
-    return (bg & 0xff000000) | ((rb | g) >> 8);
+    return (gfx & 0xff000000) | ((rb | g) >> 8);
+}
+
+//================================================================================================
+// .
+//================================================================================================
+uint32 GuiGraphic::fontBlend(const uint32 bg, const uint32 gfx)
+{
+    //PROFILE()
+    uint32 alpha = gfx >> 24;
+    if (alpha == 0x00) return bg;
+    if (alpha == 0xff) return gfx;
+    // We need 1 byte of free space before each color (because of the alpha multiplication),
+    // so we need 2 operations on the 3 colors.
+    uint32 rb = (((gfx & 0x00ff00ff) * alpha) + ((bg & 0x00ff00ff) * (0xff - alpha))) & 0xff00ff00;
+    uint32 g  = (((gfx & 0x0000ff00) * alpha) + ((bg & 0x0000ff00) * (0xff - alpha))) & 0x00ff0000;
+    return 0xff000000 | ((rb | g) >> 8);
 }

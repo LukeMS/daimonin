@@ -43,13 +43,15 @@ static const unsigned int RGB_A= 4; /**< Pixelsize. **/
 
 //////// Only for TESTING
 #include <stdio.h>
-
+#include "object_manager.h"
 void TileManager::loadLvl()
 {
     FILE *stream = fopen("client3d.lvl", "rb");
+    if (!stream) return;
     fread(mMap, sizeof(mapStruct), mMapSizeX * mMapSizeZ, stream);
     fclose(stream);
     updateChunks();
+    ObjectManager::getSingleton().syncHeroPosition();
 }
 
 void TileManager::saveLvl()
@@ -114,6 +116,11 @@ void TileManager::Init(SceneManager *SceneMgr, int queryMaskLand, int queryMaskW
             createAtlasTexture(MAX_TEXTURE_SIZE, 0);
         }
     }
+
+    lod = 0;
+
+
+
     mRaySceneQuery = mSceneManager->createRayQuery(Ray());
     // Create the world map.
     mMapSizeX = 1; while (mMapSizeX < CHUNK_SIZE_X*2+4) mMapSizeX <<= 1; // Map size must be power of 2.

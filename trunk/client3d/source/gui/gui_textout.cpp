@@ -281,9 +281,6 @@ void GuiTextout::loadTTFont(const char *filename, const char *size, const char *
             for (int y = y1; y < y1+fnt->height; ++y)
             {
                 fnt->data[fnt->charStart[i]+x + yPos] = ttfData[x1+x + y*texture->getWidth()]& 0xff000000;
-                // For a better looking font, increase alpha a bit.
-                if (fnt->data[fnt->charStart[i]+x + yPos])
-                    fnt->data[fnt->charStart[i]+x + yPos] |= 0x0f000000;
                 yPos+= fnt->textureWidth;
             }
         }
@@ -635,7 +632,7 @@ void GuiTextout::printText(int width, int height, uint32 *dst, int dstLineSkip, 
                             for (int x = 0; x < stopX; ++x)
                             {
                                 if (mvFont[fontNr]->data[srcRow + x])
-                                    dst[dstRow+x] = GuiGraphic::getSingleton().alphaBlend(borderColor, actColor + mvFont[fontNr]->data[srcRow + x]);
+                                    dst[dstRow+x] = GuiGraphic::getSingleton().fontBlend(borderColor, actColor + mvFont[fontNr]->data[srcRow + x]);
                                 else
                                     dst[dstRow+x] = *bak;
                             }
@@ -648,7 +645,7 @@ void GuiTextout::printText(int width, int height, uint32 *dst, int dstLineSkip, 
                         for (int y =deltaHeight; y < height; ++y)
                         {
                             for (int x = 0; x < stopX; ++x)
-                                dst[dstRow + x] = GuiGraphic::getSingleton().alphaBlend(*bak, actColor + mvFont[fontNr]->data[srcRow + x]); // oldversion without bordercolor
+                                dst[dstRow + x] = GuiGraphic::getSingleton().fontBlend(*bak, actColor + mvFont[fontNr]->data[srcRow + x]); // oldversion without bordercolor
                             srcRow+= mvFont[fontNr]->textureWidth;
                             dstRow+= dstLineSkip;
                         }
@@ -673,7 +670,7 @@ void GuiTextout::printText(int width, int height, uint32 *dst, int dstLineSkip, 
                             for (int x = 0; x < stopX; ++x)
                             {
                                 if (mvFont[fontNr]->data[srcRow + x])
-                                    dst[dstRow+x] = GuiGraphic::getSingleton().alphaBlend(borderColor, actColor + mvFont[fontNr]->data[srcRow + x]);
+                                    dst[dstRow+x] = GuiGraphic::getSingleton().fontBlend(borderColor, actColor + mvFont[fontNr]->data[srcRow + x]);
                                 else
                                     dst[dstRow+x] = bak[bakRow + x];
                             }
@@ -687,7 +684,7 @@ void GuiTextout::printText(int width, int height, uint32 *dst, int dstLineSkip, 
                         for (int y =deltaHeight; y < height; ++y)
                         {
                             for (int x = 0; x < stopX; ++x)
-                                dst[dstRow + x] = GuiGraphic::getSingleton().alphaBlend(bak[bakRow + x], actColor + mvFont[fontNr]->data[srcRow + x]);
+                                dst[dstRow + x] = GuiGraphic::getSingleton().fontBlend(bak[bakRow + x], actColor + mvFont[fontNr]->data[srcRow + x]);
                             srcRow+= mvFont[fontNr]->textureWidth;
                             dstRow+= dstLineSkip;
                             bakRow+= bakLineSkip;

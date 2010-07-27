@@ -186,6 +186,8 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
         {
             GuiManager::getSingleton().showWindow(GuiManager::WIN_EQUIPMENT, false);
             GuiManager::getSingleton().showWindow(GuiManager::WIN_INVENTORY, false);
+            //GuiManager::getSingleton().showWindow(GuiManager::WIN_OPTION_AUDIO, false);
+            GuiManager::getSingleton().showWindow(GuiManager::WIN_PLAYERTARGET, false);
             GuiManager::getSingleton().showWindow(GuiManager::WIN_CONTAINER, false);
 
             /*
@@ -225,7 +227,8 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
 
         case OIS::KC_O:
         {
-            GuiManager::getSingleton().print(GuiManager::LIST_CHATWIN, "Show inventory");
+            GuiManager::getSingleton().showWindow(GuiManager::WIN_OPTION_AUDIO, true);
+            //GuiManager::getSingleton().print(GuiManager::LIST_CHATWIN, "Show inventory");
             // ObjectManager::getSingleton().setPlayerEquipment(ObjectManager::OBJECT_PLAYER, ObjectNPC::BONE_SHIELD_HAND, 1);
             break;
         }
