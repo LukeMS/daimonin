@@ -6,27 +6,36 @@
 
 require("topic_list")
 require("interface_builder")
-require("quest_manager")
+require("quest_builder")
 
 local pl = event.activator
 local me = event.me
-
--- quest names must be unique, the player will store the name forever
-local q_mgr_1 = QuestManager(pl, "How to Skin a Cat")
-local q_status_1 = q_mgr_1:GetStatus()
-
+local qb = QuestBuilder()
 local ib = InterfaceBuilder()
-ib:SetHeader(me, me.name .. " the smith")
+
+local function questGoal(questnr)
+    qb:AddQuestTarget(questnr, 2, 3, "cat_black", "Wild Cat"):
+       AddQuestItem(3, "quest_object", "skin.101", "Wild Cat Skin")
+    pl:Sound(0, 0, 2, 0)
+    pl:Write("You take the quest '"..qb:GetName(1).."'.", game.COLOR_NAVY)
+end
+
+-- quest names must be unique
+qb:AddQuest("How to Skin a Cat", game.QUEST_KILLITEM, nil, nil, nil,
+            nil, 1, questGoal, nil)
+
+local questnr = qb:Build(pl)
+local qstat = qb:GetStatus(1)
 
 function repairCost(item)
     local cost = 5 + item:GetRepairCost()
     return cost
 end
 
-
 -- TODO: add in a sidenote about the cats bothering the chickens
-local function quest1_body()    
-    ib:SetTitle(q_mgr_1.name)
+local function quest1_body()   
+    ib:SetHeader("st_003", me.name .. " the smith") 
+    ib:SetTitle(qb:GetName(1))
     ib:AddMsg("It is just a small thing.\n\n")
     ib:AddMsg("I have been awaiting a shipment of leather for some time, but it appears the trader has been delayed.\n\n")
     ib:AddMsg("I urgently need some feline skins for an item ordered by ^Chereth^.\n\n")
@@ -36,31 +45,31 @@ end
 
 function topicDefault(force)
     -- Autocomplete quest, if applicable
-    if q_status_1 == game.QSTAT_SOLVED and not force then
+    if qstat == game.QSTAT_SOLVED and not force then
         topicQuestComplete()
         return
     end
-
+    ib:SetHeader("st_001", me.name .. " the smith")
     ib:SetTitle("The Smithy")
     ib:SetMsg("Hello! I am " .. me.name .. ", the smith.\n")
     ib:AddMsg("I can repair or identify your equipment.\n\n")
 
-    if q_status_1 == game.QSTAT_NO then
+    if qstat == game.QSTAT_NO then
         ib:AddMsg("I could also use your help for a small task.\n\n")
         ib:AddLink("Tell me more about your quest", "explain quest")
-    elseif q_status_1 == game.QSTAT_ACTIVE then
+    elseif qstat == game.QSTAT_ACTIVE then
+        ib:SetHeader("st_003", me.name .. " the smith")
         ib:AddMsg("You still don't have all the cat skins I asked for.")
-        ib:AddQuestChecklist(q_mgr_1)
     end
 
     ib:AddMsg("\nWhat would you like to do?")
     ib:AddLink("Repair my Equipment", "repair")
     ib:AddLink("Identify Items", "identify")
-    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 function topicRepair()
     local flag = false
+    ib:SetHeader("st_005", me.name .. " the smith")
     ib:SetTitle("Repair my Equipment")
     ib:SetMsg("Let me check your equipment...\nPerhaps an item needs a fix.\nI will tell you how much each will cost.")
     tmp = pl:FindMarkedObject()
@@ -79,7 +88,6 @@ function topicRepair()
         ib:AddMsg("\n\n~Your equipment doesn't need any repair~")
     end
     ib:SetButton("Back", "hi") 
-    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 function topicItemFix(what)
@@ -92,6 +100,7 @@ function topicItemFix(what)
     if tmp == nil then
         topicRepair()
     else
+        ib:SetHeader("st_005", me.name .. " the smith")
         ib:SetTitle("Repairing")
         if tmp.item_quality > 0 and tmp.item_condition < tmp.item_quality then
             ib:SetMsg("Will cost you " .. pl:ShowCost(repairCost(tmp),0))
@@ -104,7 +113,6 @@ function topicItemFix(what)
             ib:SetMsg("The item doesn't need any repair.")
             ib:SetButton("Back", "repair") 
         end
-        pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
     end
 end
 
@@ -120,6 +128,7 @@ function topicFix(what)
         tmp = pl:GetEquipment(num)
     end
     ib:SetTitle("Pay and Repair")
+    ib:SetHeader("st_005", me.name .. " the smith")
     if tmp == nil then
         ib:SetMsg("Hm, where is the item??")
     else
@@ -147,6 +156,7 @@ function topicFix(what)
 end
 
 function topicIdentify()
+    ib:SetHeader("st_005", me.name .. " the smith")
     ib:SetTitle("Item Identification")
     ib:SetMsg("Lets see what i can do for you.\nI can ~identify~ a single item or all.\nI can ~detect magic~ or ~detect curse~.\nRember you must mark the single item first.\n\n")
     ib:AddMsg(".You have " .. pl:ShowCost(pl:GetMoney()) .. ".\n\n") 
@@ -163,10 +173,10 @@ function topicIdentify()
     ib:AddLink("Detect magic for 50 copper", "detect magic")
     ib:AddLink("Detect curse for 50 copper", "detect curse")
     ib:SetButton("Back", "hi") 
-    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 function topicDetect(what)
+    ib:SetHeader("st_005", me.name .. " the smith")
     ib:SetTitle("It will cost you")
     if what=="magic" then
         ib:SetMsg("I can cast ~Detect Magic~ for 50 copper")
@@ -180,7 +190,6 @@ function topicDetect(what)
     ib:AddMsg(" coins.\n\nYou have " .. pl:ShowCost(pl:GetMoney()) .. ".\n\nYou want me to do it now?")
     ib:SetAccept(nil, "cast " .. what) 
     ib:SetDecline(nil, "identify") 
-    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 function topicCast(what)
@@ -200,6 +209,7 @@ function topicCast(what)
             return
         end
     end
+    ib:SetHeader("st_005", me.name .. " the smith")
     ib:SetTitle("Identification...")
     if pl:PayAmount(sum) == 1 then
         if sum == 500 then
@@ -214,50 +224,43 @@ function topicCast(what)
         ib:SetMsg("You don't have enough money!")
     end
     ib:SetButton("Back", "identify") 
-    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 -- The player asks about available quests
 function topicQuest()
-    if q_status_1 == game.QSTAT_ACTIVE then
-        ib:SetTitle(q_mgr_1.name)
+    ib:SetHeader("st_003", me.name .. " the smith")
+    if qstat == game.QSTAT_ACTIVE then
+        ib:SetTitle(qb:GetName(1))
         ib:AddMsg("You still don't have all the cat skins I asked for.")
-        ib:AddQuestChecklist(q_mgr_1)
-    elseif q_status_1 == game.QSTAT_NO then
+    elseif qstat == game.QSTAT_NO then
         quest1_body()
         ib:SetAccept("Accept", "accept quest")
     else
         topicGreeting()
         return
     end
-    pl:Interface(game.GUI_NPC_MODE_NPC,ib:Build())
 end
 
 -- The player wants to accept a quest. Activate the next accessible one.
 function topicAccept()
-    if q_status_1 == game.QSTAT_NO then
+    if qstat == game.QSTAT_NO then
+        ib:SetHeader("st_003", me.name .. " the smith")
         quest1_body()
-        if q_mgr_1:RegisterQuest(game.QUEST_KILLITEM, ib) then
-            q_mgr_1:AddQuestTarget(2, 3, "cat_black", "Wild Cat"):
-                    AddQuestItem(3, "quest_object", "skin.101", "Wild Cat Skin")
-            pl:Sound(0, 0, 2, 0)
-            pl:Write("You take the quest '"..q_mgr_1.name.."'.", game.COLOR_NAVY)
-        end
+        qb:RegisterQuest(questnr, me, ib)
     else
-        topicGreeting()
+        topicDefault()
         return
     end
-    pl:Interface(game.GUI_NPC_MODE_NO)
 end
 
 -- The player claims to have completed a quest. Double check and
 -- possibly give out rewards
 function topicQuestComplete(reward)
-    if q_status_1 == game.QSTAT_ACTIVE then
-        ib:SetTitle(q_mgr_1.name)
+    if qstat == game.QSTAT_ACTIVE then
+        ib:SetHeader("st_005", me.name .. " the smith")
+        ib:SetTitle(qb:GetName(1))
         ib:AddMsg("You still don't have all the cat skins I asked for.")
-        ib:AddQuestChecklist(q_mgr_1)
-    elseif q_status_1 == game.QSTAT_SOLVED then
+    elseif qstat == game.QSTAT_SOLVED then
 		-- We give the item a 5% weapon speed bonus.
 		local item_enhance = 0.95
         ib:SetMsg("Many thanks! This will work well, and the chickens will be safe.\n\n")
@@ -265,11 +268,12 @@ function topicQuestComplete(reward)
         if reward == nil then
             ib:SetTitle("Select Reward")
             ib:AddMsg("Please select the weapon you want me to rebalance for you:")
-			
+			local t = 0
             for item in obj_inventory(pl) do
 				-- Check for weapons that have weapon speeds that are able to be enhanced up to a certain level (this case is a 5% enhancement).
                 if not item.f_sys_object and item.type == game.TYPE_WEAPON and item.item_level <= 7 then
-					-- Create temporary base arch of item to compare so that its weapon speed can be compared to the item.
+					t = t + 1 -- Variable t is used for topics.
+                    -- Create temporary base arch of item to compare so that its weapon speed can be compared to the item.
 					local temp_item = me:CreateObjectInside(item:GetArchName(), game.IDENTIFIED, 1)
 					local item_base_ws = temp_item.weapon_speed
 					temp_item:Remove()
@@ -283,7 +287,7 @@ function topicQuestComplete(reward)
 						end
 						if item.f_identified then
 							-- The math.floor() is used to combat rounding errors. We make weapons very slightly better than the check so they won't appear again if the quest is redone.
-							ib:AddSelect(item:GetName()..is_item_applied, item:GetFace(), "WS: "..string.format('%0.2f', item.weapon_speed).." sec -> |"..string.format('%0.2f', math.floor(item_base_ws * item_enhance * 100) / 100).." sec|")
+							ib:AddSelect(item:GetName()..is_item_applied, "quest complete "..t, item:GetFace(), "WS: "..string.format('%0.2f', item.weapon_speed).." sec -> |"..string.format('%0.2f', math.floor(item_base_ws * item_enhance * 100) / 100).." sec|")
 						else
 							ib:AddSelect(item:GetName().." (unidentified)"..is_item_applied, item:GetFace(), "WS: ??? -> |???|")
 						end
@@ -344,24 +348,28 @@ function topicQuestComplete(reward)
             pl:Write("|** Your "..item.name.." seems slightly better balanced now. **|")
 
             ib:SetButton("Back", "hello")
-            q_mgr_1:RemoveQuestItems()
-            q_mgr_1:Finish()
+            qb:Finish(1)
             pl:Sound(0, 0, 2, 0)
         end
     else
-        topicGreeting()
+        topicDefault()
         return
     end
-    pl:Interface(game.GUI_NPC_MODE_NPC,ib:Build())
 end
 
 local function topicChereth()
+    ib:SetHeader("st_002", me.name .. " the smith")
     ib:SetTitle("Chereth")
     ib:SetMsg("\n\nChereth was the guild's master archer until she unfortunately lost her sight in battle.")
     ib:AddMsg("\n\nNowadays she usually hangs out downstairs in the guild.")
     ib:SetButton("Back", "hi")
-    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
+
+
+local function topicRebalance(itemnum)
+
+end
+
 
 tl = TopicList()
 tl:AddGreeting({"greetings (force)"}, topicDefault)
@@ -372,11 +380,11 @@ tl:AddTopics("repair", topicRepair)
 tl:AddTopics("itemfix (.*)", topicItemFix) 
 tl:AddTopics("fix (.*)", topicFix)
 tl:AddTopics("identify", topicIdentify) 
-    
+
 tl:AddTopics("chereth", topicChereth)
 
 tl:AddTopics({"quest", "explain%s+quest"}, topicQuest)
 tl:AddTopics({"accept", "accept%s+quest"}, topicAccept)
 tl:AddTopics({"complete", "quest%s+complete%s*#?(%d*)"}, topicQuestComplete)
 
-tl:CheckMessage(event)
+ib:ShowSENTInce(game.GUI_NPC_MODE_NPC, tl:CheckMessage(event, true))

@@ -22,7 +22,6 @@ local key = pl:CheckInventory(1, nil, "mine shaft key", nil, -1)
 local key_given = false
 
 local ib = InterfaceBuilder()
-ib:SetHeader(me, me.name)
 ib:SetTitle("Gaffrey")
 
 local quest_list = {"Mouse Hunt", "The Mercenary Guild Quest", "Rusty Rod Retrieval"}
@@ -57,7 +56,7 @@ end
 
 local function topicDefault()
     local q = checkQuests()
-
+    ib:SetHeader("st_001", me)
     if spoken then
         ib:SetMsg("\n\nWelcome back, friend!\n\n")
     else
@@ -72,27 +71,27 @@ local function topicDefault()
         ib:AddMsg("\n\nCan I help you in any specific way?")
         ib:AddLink("Ask about the mine shaft key", "key")    
     end
-    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 local function topicTaleus()
+    ib:SetHeader("st_004", me)
     ib:SetTitle("Taleus")
     ib:AddMsg("\n\nTaleus is the one you want to see for archery training.")
     ib:AddMsg("\n\nHe's not here for the moment, though. He went to ^Stonehaven^ to get some supplies. If you really must see him, he is probably in the shop in Stonehaven.")
     ib:SetButton("Back", "hi")
-    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 local function topicStonehaven()
+    ib:SetHeader("st_002", me)
     ib:SetTitle("Stonehaven")
     ib:AddMsg("\n\nStonehaven is the big castle nearby.")
     ib:AddMsg("\n\nTo get there exit the guildhall compound through the western gates and follow the road until the first major intersection. There you turn north and keep going until you reach the Stonehaven gates.")
     ib:AddMsg("\n\nIt can be a bit rough for an inexperienced traveler, though. There are still some wild animals in the area, and the occasional ogre raiding party.")
     ib:SetButton("Back", "hi")
-    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 local function topicKey()
+    ib:SetHeader("st_002", me)
     ib:SetMsg("\n\nWell, I do have an old key that fits, but I am under strict ")
     ib:AddMsg("instructions not to let newbies anywhere near that dangerous place.\n\n")
     local q = checkQuests()
@@ -108,7 +107,6 @@ local function topicKey()
         ib:AddMsg("However, you've completed the basic quests, and seem strong enough, ")
         allowKey()
     end
-    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 tl = TopicList()
@@ -116,4 +114,4 @@ tl:SetDefault(topicDefault)
 tl:AddTopics("taleus", topicTaleus)
 tl:AddTopics("stonehaven", topicStonehaven)
 tl:AddTopics("key", topicKey) 
-tl:CheckMessage(event)
+ib:ShowSENTInce(game.GUI_NPC_MODE_NPC, tl:CheckMessage(event, true))

@@ -7,7 +7,6 @@ local pl = event.activator
 local me = event.me
 
 local ib = InterfaceBuilder()
-ib:SetHeader(me, me.name)
 
 -- Guild checks
 local guild_tag = "Mercenary"
@@ -36,6 +35,7 @@ local function topicDefault()
     local join = "join"
     ib:SetTitle("Greetings!")
     ib:SetMsg("\n\nWelcome to the Mercenary guild.")
+    ib:SetHeader("st_001", me)
     if guild_stat ~= game.GUILD_IN then
         if guild_stat == game.GUILD_OLD then
             join = "rejoin"
@@ -56,6 +56,7 @@ local function topicDefault()
 end
 
 local function topCashin()
+    ib:SetHeader("st_004", me)
     ib:SetTitle("Cashin")
     ib:SetMsg("\n\nCashin is the Guild Master.\n\n")
     if guild_stat == game.GUILD_NO then
@@ -68,6 +69,7 @@ local function topCashin()
 end
 
 local function topTaleus()
+    ib:SetHeader("st_004", me)
     ib:SetTitle("Taleus")
     ib:SetMsg("\n\nTaleus is our Archery Commander now. He took over archery training for me after I lost my sight.")
     ib:AddMsg("\n\nHe has become an expert in all of the skills, and will be an excellent teacher for you.")
@@ -78,6 +80,7 @@ local function topTaleus()
 end
 
 local function topJahrlen()
+    ib:SetHeader("st_004", me)
     ib:SetTitle("Jahrlen")
     ib:SetMsg("\n\nAh yes, dear old Jahrlen. If you looked at him you wouldn't guess he is over 200 years old, would you?")
     ib:AddMsg("\n\nHe has a highly developed sense of humour, which is why we were laughing when you ")
@@ -93,5 +96,5 @@ tl:SetDefault(topicDefault)
 tl:AddTopics("cashin", topCashin)
 tl:AddTopics("taleus", topTaleus)
 tl:AddTopics("jahrlen", topJahrlen)
-tl:CheckMessage(event)
+ib:ShowSENTInce(game.GUI_NPC_MODE_NPC, tl:CheckMessage(event, true))
  
