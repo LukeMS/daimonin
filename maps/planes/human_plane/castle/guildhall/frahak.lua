@@ -1,34 +1,52 @@
 -- Ogre Chief Frah'aks Letter Quest using template for a "item quest" script
 require("topic_list")
-require("quest_manager")
+require("quest_builder")
 require("interface_builder")
 
 local pl        = event.activator
 local me        = event.me
 local msg       = string.lower(event.message)
-local skill = game:GetSkillNr('find traps')
+local qb        = QuestBuilder()
+local skill     = game:GetSkillNr('find traps')
+
+local function questGoal(questnr)
+    qb:AddQuestItem(questnr, 1, "quest_object", "letter.101", "Frah'aks Letter")
+    pl:Sound(0, 0, 2, 0)
+    pl:Write("You take the quest '".. qb:GetName(questnr) .."'.", game.COLOR_NAVY)
+end
+
+local function questReward(questnr)
+    pl:Sound(0, 0, 2, 0)
+    pl:AcquireSkill(skill, game.LEARN)
+end
+
 -- quest names must be unique
-local q_mgr_1   = QuestManager(pl,"Ogre Chief Frah'aks Letter")
+qb:AddQuest("Ogre Chief Frah'aks Letter", game.QUEST_ITEM, nil, nil, nil,
+            nil, 1, questGoal, questReward)
+
+local questnr = qb:Build(pl)
+local qstat   = qb:GetStatus(1)
+
 local ib = InterfaceBuilder()
-ib:SetHeader(me, me.name)
 
 local function topicDefault()
-    if q_mgr_1:GetStatus() < game.QSTAT_DONE and pl:FindSkill(skill) == nil then
-        ib:AddMsg("The quest status is: ".. q_mgr_1:GetStatus() .."\n\n")
-        if q_mgr_1:GetStatus() == game.QSTAT_NO then
+    if qstat < game.QSTAT_DONE and pl:FindSkill(skill) == nil then
+        if qstat == game.QSTAT_NO then
+            ib:SetHeader("st_001", me)
             ib:SetTitle("Ogre Chief Frah'ak")
             ib:AddMsg("\nYo shut up.\nYo grack zhal hihzuk alshzu...\nMe mighty ogre chief.\nMe ^warrior^ ,will destroy yo. They come.\nGuard and ^kobolds^ will die then.")          
         else
+            ib:SetHeader("st_001", me)
             ib:SetTitle("Ogre Chief Frah'aks Letter Quest solved?")
             ib:AddMsg("You have the letter?")
             ib:AddLink("Finish Ogre Chief Frah'aks Letter Quest", "checkq1")
         end
     else
+        ib:SetHeader("st_005", me)
         ib:SetTitle("Yo Want More Teaching")
         ib:AddMsg("\nAshahk! Yo want me teaching yo more ^find traps^?\nWill teach for money.\n")
         ib:AddLink("Buy More Find Trap Skill", "find traps")
     end
-    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 -- quest body (added to player quest obj for quest list)
@@ -43,72 +61,62 @@ end
 
 -- start: accept or decline the quest
 local function topStartQ1()
-    if q_mgr_1:GetStatus() ~= game.QSTAT_NO then
+    if qstat ~= game.QSTAT_NO then
         topicDefault()
         return
-    end		
-    ib:SetTitle(q_mgr_1.name)
+    end
+    ib:SetHeader("st_003", me)
+    ib:SetTitle(qb:GetName(questnr))
     quest_body1()
     quest_icons1()
     ib:SetAccept(nil, "acceptq1") 
     ib:SetDecline(nil, "hi") 
-    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 -- accepted: start the quest
 local function topAcceptQ1()
-    if q_mgr_1:GetStatus() ~= game.QSTAT_NO then
+    if qstat ~= game.QSTAT_NO then
         topicDefault()
         return
     end
+    ib:SetHeader("st_003", me)
     quest_body1()
     quest_icons1()
-    if q_mgr_1:RegisterQuest(game.QUEST_ITEM, ib) then
-        q_mgr_1:AddQuestItem(1, "quest_object", "letter.101", "Frah'aks Letter")
-        pl:Sound(0, 0, 2, 0)
-        pl:Write("You take the quest '".. q_mgr_1.name .."'.", game.COLOR_NAVY)
-    end
-    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
+    qb:RegisterQuest(questnr, me, ib)
 end
 
 -- try to finish: check the quest
 local function topCheckQ1()
-    if q_mgr_1:GetStatus() == game.QSTAT_NO then
+    if qstat == game.QSTAT_NO then
         topicDefault()
         return
     end
+    ib:SetHeader("st_003", me)
     ib:SetTitle("Ogre Chief Frah'aks Letter Quest")
-    --ib:SetMsg("The quest status is: ".. q_mgr_1:GetStatus() .."\n\n")
-    if q_mgr_1:GetStatus() ~= game.QSTAT_SOLVED then
+    --ib:SetMsg("The quest status is: ".. qstat .."\n\n")
+    if qstat ~= game.QSTAT_SOLVED then
         ib:AddMsg("\nNah, bring Frah'ak note from ^kobolds^ first!\n")
-        ib:AddQuestChecklist(q_mgr_1)
         ib:SetButton("Back", "hi") 
     else
         ib:AddMsg("\nAshahk! Yo bring me note!\nKobold chief bad time now, ha?\nNow me will teach you!\n")
         ib:SetDesc("here it is...", 0, 0, 0, 0)
         quest_icons1()
-        ib:AddQuestChecklist(q_mgr_1)
         ib:SetAccept(nil, "finishq1") 
         ib:SetDecline(nil, "hi") 
     end
-    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 -- done: finish quest and give reward
 local function topFinishQ1()
-    if q_mgr_1:GetStatus() ~= game.QSTAT_SOLVED then
+    if qstat ~= game.QSTAT_SOLVED then
         topicDefault()
         return
     end
-    q_mgr_1:RemoveQuestItems()
-    q_mgr_1:Finish()
-    pl:Sound(0, 0, 2, 0)
-    pl:AcquireSkill(skill, game.LEARN)
+    qb:Finish(1)
     
     ib:SetTitle("Quest Completed")
-    ib:SetMsg("Frah'ak teach an ancient skill.")
+    ib:SetMsg("Frah'ak teaches you an ancient skill.")
     ib:SetButton("Ok", "hi") 
-    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 local function topFindtraps()
@@ -116,17 +124,17 @@ local function topFindtraps()
     local slevel = sobj.level + 1
     local eobj = pl:GetSkill(game.TYPE_EXPERIENCE, game.EXP_AGILITY)
     if  eobj ~= nil and eobj.level >= slevel then
+        ib:SetHeader("st_005", me)
         ib:SetTitle("Find Traps Skill Cost")
         ib:SetMsg("\nYou have " .. pl:ShowCost(pl:GetMoney()) .. "\n ")
         ib:AddMsg("\nFind traps lvl "..slevel.." will cost you \n" .. pl:ShowCost( slevel * slevel * (50+slevel) * 3).." .")
         ib:AddLink("Pay For More Find Trap Skill", "teach traps")
         ib:SetButton("Ok", "hi") 
-        pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
     else
+        ib:SetHeader("st_005", me)
         ib:SetTitle("Find Traps Skill Cost")
         ib:SetMsg("Ho, yo agility to low to teach!!" )
         ib:SetButton("Ok", "hi") 
-        pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
     end
 end
 
@@ -134,6 +142,7 @@ local function topTeachtraps()
     local sobj = pl:GetSkill(game.TYPE_SKILL, skill)
     local slevel = sobj.level + 1
     local eobj = pl:GetSkill(game.TYPE_EXPERIENCE, game.EXP_AGILITY)
+    ib:SetHeader("st_005", me)
     ib:SetTitle("Teach Find	Traps")
     ib:SetMsg("\nYou have " .. pl:ShowCost(pl:GetMoney()) .. "\n ")
     if  eobj == nil or eobj.level < slevel then
@@ -150,29 +159,28 @@ local function topTeachtraps()
         end
     end
     ib:SetButton("Ok", "hi") 
-    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 local function topWarrior()
+    ib:SetHeader("st_002", me)
     ib:SetTitle("Warrior")
     ib:AddMsg("\nMe big chief. Me ogre destroy you.\nStomp on. Dragon kakka." )
     ib:SetButton("Back", "Hi") 
-    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 local function topKobolds()
+    ib:SetHeader("st_002", me)
     ib:SetTitle("Kolbolds")
     ib:AddMsg("\nKobolds traitors!\nGive gold for note, kobolds don't bring note to ogres.\nMe tell you: Kill kobold chief!\nMe will teach you find traps skill!\nShow me note i will teach you.\nKobolds in hole next room. Secret entry in wall." )
     ib:AddLink("Start the Ogre Chief Frah'aks Letter Quest", "startq1")
     ib:SetButton("Back", "Hi")
-    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 tl = TopicList()
 tl:AddGreeting(nil, topicDefault)
 tl:SetDefault(topicDefault)
 
-if q_mgr_1:GetStatus() < game.QSTAT_DONE then
+if qb:GetStatus(1) < game.QSTAT_DONE then
     tl:AddTopics("startq1", topStartQ1) 
     tl:AddTopics("acceptq1", topAcceptQ1) 
     tl:AddTopics("checkq1", topCheckQ1) 
@@ -183,4 +191,4 @@ tl:AddTopics("find traps", topFindtraps)
 tl:AddTopics("teach traps", topTeachtraps)
 tl:AddTopics("warrior", topWarrior)
 tl:AddTopics("kobolds", topKobolds)
-tl:CheckMessage(event)
+ib:ShowSENTInce(game.GUI_NPC_MODE_NPC, tl:CheckMessage(event, true))

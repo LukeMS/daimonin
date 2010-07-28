@@ -6,24 +6,33 @@
 -- 3. Retrieve Rusty Rod. Location: Beneath Guild Hall. Lvl: 4-5. Reward: Magic Bullet
 
 require("topic_list")
-require("quest_manager")
+require("quest_builder")
 require("interface_builder")
 
 local pl        = event.activator
 local me        = event.me
+local qb        = QuestBuilder()
+local ib        = InterfaceBuilder()
 
-local ib = InterfaceBuilder()
-ib:SetHeader(me, me.name)
+local function questGoal(questnr)
+    if questnr == 1 then
+        qb:AddQuestTarget(questnr, 0, 1, "rat_d", "Rat King"):
+                AddQuestItem(1, "quest_object", "tail_rat.101", "Rat King's tail")
+    elseif questnr == 2 then
+        qb:AddQuestItem(questnr, 1, "quest_object", "rod_light.101", "Rusty Rod")
+    end
+    pl:Sound(0, 0, 2, 0)
+    pl:Write("You take the quest '"..qb:GetName(questnr).."'.", game.COLOR_NAVY)
+end
 
-local q_mgr_1   = QuestManager(pl,"Rat King of the Water Well")
-local q_mgr_2   = QuestManager(pl,"Rusty Rod Retrieval")
-local q_status_1 = q_mgr_1:GetStatus()
-local q_status_2 = q_mgr_2:GetStatus()
-    
-local unfinished_q
-if q_status_1 == game.QSTAT_ACTIVE then unfinished_q = q_mgr_1 
-elseif q_status_2 == game.QSTAT_ACTIVE then unfinished_q = q_mgr_2 
-end 
+qb:AddQuest("Rat King of the Water Well", game.QUEST_KILLITEM, nil, nil, nil,
+            nil, 1, questGoal, nil)
+qb:AddQuest("Rusty Rod Retrieval", game.QUEST_ITEM, nil, nil, nil,
+            nil, 1, questGoal, nil)
+
+local questnr = qb:Build(pl)
+local qstat_1 = qb:GetStatus(1)
+local qstat_2 = qb:GetStatus(2)
 
 -- Guild checks
 local guild_tag = "Mercenary"
@@ -55,7 +64,7 @@ local function teachSpell(spell)
 end
 
 local function quest1_body()    
-    ib:SetTitle(q_mgr_1.name)
+    ib:SetTitle(qb:GetName(questnr))
     ib:AddMsg("Yes, we could use some help.\n")
     ib:AddMsg("\nIn the last few days we have noticed some problems with our main water source.\n")
     ib:AddMsg("\nIt seems that rats have invaded the caverns under our water well and are making the water unsafe to " ..
@@ -67,7 +76,7 @@ local function quest1_body()
 end
 
 local function quest2_body()
-    ib:SetTitle(q_mgr_2.name)
+    ib:SetTitle(qb:GetName(questnr))
     ib:AddMsg("I was refurbishing a rusty old rod I found in a pile of rubbish. When it is repaired, and its magic is " ..
               "restored, it will actually be quite valuable.\n")
     ib:AddMsg("\nHowever, a nasty little hobgoblin by the name of ^Mahch^ crept in here late one night and stole it.\n")
@@ -80,9 +89,8 @@ end
 
 -- Generate a simple and generic reminder for an unfinished quest
 local function quest_reminder()
-    ib:SetTitle(unfinished_q.name)
+    ib:SetTitle(qb:GetName(questnr))
     ib:SetMsg("You haven't done as I asked. Please finish your quest then come back.")
-    ib:AddQuestChecklist(unfinished_q)
 end
 
 --
@@ -91,6 +99,7 @@ end
 
 function topicGreeting()
     if guild_stat ~= game.GUILD_IN then
+        ib:SetHeader("st_001", me)
         -- Refuse to talk to non-members.
         local join = "join"
         ib:SetMsg("This place is only for members of the "..guild_tag.." guild!\n\n")
@@ -98,16 +107,19 @@ function topicGreeting()
             join = "rejoin"
         end
         ib:AddMsg("Go back upstairs and see Cashin to "..join.." the guild.\n\nThen we will talk again.")
-    elseif q_mgr_1:GetStatus() == game.QSTAT_NO then
+    elseif qstat_1 == game.QSTAT_NO then
         -- First real welcome text.
+        ib:SetHeader("st_001", me)
         ib:SetMsg("\n\nHello! I am Jahrlen, war ^Chronomancer^ of Thraal.\n\n")
         ib:AddMsg("I can teach you the wizardry skill and the ^Probe^ and ^Magic Bullet^ spells.\n\n")
         ib:AddMsg("But you will have to do something for me. Are you interested?")
         ib:AddLink("Please tell me about the quest", "explain quest")
-    elseif q_status_1 == game.QSTAT_DONE and q_status_2 == game.QSTAT_NO then
+    elseif qstat_1 == game.QSTAT_DONE and qstat_2 == game.QSTAT_NO then
+        ib:SetHeader("st_001", me)
         ib:SetMsg("You have done a good job with the rats. I still have the ^Magic Bullet^ spell to teach you. If you retrieve an item I have lost, I'll teach it to you.")
         ib:AddLink("Tell me about the quest", "explain quest")
-    elseif q_status_1 == game.QSTAT_DONE and q_status_2 == game.QSTAT_DONE then
+    elseif qstat_2 == game.QSTAT_DONE and qstat_2 == game.QSTAT_DONE then
+        ib:SetHeader("st_001", me)
         ib:SetMsg("Thank you for getting my rod back. I think that soon it will be as good as new again. Two weeks.\n\n")
         ib:AddMsg("I have already taught you ^Probe^ and ^Magic Bullet^. I have nothing more for you to do.\n\n")
         ib:AddMsg("I suggest you now go and talk to Taleus about learning archery. His old teacher Chereth, who is standing over there, might know where he is.\n\n")
@@ -119,49 +131,41 @@ function topicGreeting()
     end
     
     ib:SetTitle("Greetings!")
-    pl:Interface(game.GUI_NPC_MODE_NPC,ib:Build())
 end
 
 -- The player asks about available quests
 function topicQuest()
     if unfinished_q then
         quest_reminder()
-    elseif q_status_1 == game.QSTAT_NO then
+    elseif qstat_1 == game.QSTAT_NO then
+        ib:SetHeader("st_003", me)
         quest1_body()
         ib:SetAccept("Accept", "accept quest")
-    elseif q_status_1 == game.QSTAT_DONE and q_status_2 == game.QSTAT_NO then
+    elseif qstat_1 == game.QSTAT_DONE and qstat_2 == game.QSTAT_NO then
+        ib:SetHeader("st_003", me)
         quest2_body()
         ib:SetAccept("Accept", "accept quest")
     else
         topicGreeting()
         return
     end
-    pl:Interface(game.GUI_NPC_MODE_NPC,ib:Build())
 end
 
 -- The player wants to accept a quest. Activate the next accessible one.
 -- TODO: make sure player can't have two quests active at the same time.
 function topicAccept()
-    if q_status_1 == game.QSTAT_NO then
+    if qstat_1 == game.QSTAT_NO then
+        ib:SetHeader("st_003", me)
         quest1_body()
-        if q_mgr_1:RegisterQuest(game.QUEST_KILLITEM, ib) then
-            q_mgr_1:AddQuestTarget(0, 1, "rat_d", "Rat King"):
-                    AddQuestItem(1, "quest_object", "tail_rat.101", "Rat King's tail")
-            pl:Sound(0, 0, 2, 0)
-            pl:Write("You take the quest '"..q_mgr_1.name.."'.", game.COLOR_NAVY)
-        end
-    elseif q_status_1 == game.QSTAT_DONE and q_status_2 == game.QSTAT_NO then
+        qb:RegisterQuest(questnr, me, ib)
+    elseif qstat_1 == game.QSTAT_DONE and qstat_2 == game.QSTAT_NO then
+        ib:SetHeader("st_003", me)
         quest2_body()
-        if q_mgr_2:RegisterQuest(game.QUEST_ITEM, ib) then
-            q_mgr_2:AddQuestItem(1, "quest_object", "rod_light.101", "Rusty Rod")
-            pl:Sound(0, 0, 2, 0)
-            pl:Write("You take the quest '"..q_mgr_2.name.."'.", game.COLOR_NAVY)
-        end
+        qb:RegisterQuest(questnr, me, ib)
     else
         topicGreeting()
         return
     end
-    pl:Interface(game.GUI_NPC_MODE_NO)
 end
 
 -- The player claims to have completed a quest. Double check and
@@ -169,28 +173,27 @@ end
 function topicQuestComplete()
     if unfinished_q then
         quest_reminder()
-    elseif q_status_1 == game.QSTAT_SOLVED then
+    elseif qstat_1 == game.QSTAT_SOLVED then
+        ib:SetHeader("st_003", me)
         ib:SetTitle("Quest Complete")
         ib:SetMsg("Very well done. Hopefully we won't have any more rat trouble for some time.\n\n")
         --ib:AddMsg("I'll now teach you the ~Wizardry Spells~ skill and the ^Probe^ spell")
         teachSpell("probe") 
         ib:SetButton("Back", "hello")
-        q_mgr_1:RemoveQuestItems()
-        q_mgr_1:Finish()
+        qb:Finish(questnr)
         pl:Sound(0, 0, 2, 0)
-    elseif q_status_2 == game.QSTAT_SOLVED then
+    elseif qstat_2 == game.QSTAT_SOLVED then
+        ib:SetHeader("st_003", me)
         ib:SetTitle("Quest Complete")
         ib:SetMsg("Great! It seems Mahch had made himself a pretty good nest down there. I'm glad you made it back okay.")
         ib:SetButton("Back", "hello")
         teachSpell("magic bullet")
-        q_mgr_2:RemoveQuestItems()
-        q_mgr_2:Finish()
+        qb:Finish(questnr)
         pl:Sound(0, 0, 2, 0)
     else
         topicGreeting()
         return
     end
-    pl:Interface(game.GUI_NPC_MODE_NPC,ib:Build())
 end
 
 --
@@ -198,6 +201,7 @@ end
 --
 
 local function topChrono()
+    ib:SetHeader("st_002", me)
     ib:SetTitle("Chronomancer")
     ib:SetMsg("\n\nYes, I am a master of the chronomancers of Thraal.\n\n")
     ib:AddMsg("We are one of the more powerful wizard guilds. ")
@@ -205,18 +209,18 @@ local function topChrono()
     ib:AddMsg("Hmm... If you ever meet ^Rangaron^ in your travels, tell him that Jahrlen has sent you.\n\n")
     ib:AddMsg("Don't ask me more now.")
     ib:SetButton("Back", "hi")
-    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 local function topRangaron()
+    ib:SetHeader("st_004", me)
     ib:SetTitle("Rangaron")
     ib:SetMsg("\n\nI said 'Don't ask me more now'! You have problems with your ears??\n\n")
     ib:AddMsg("If you meet Rangaron, and I'm sure you will, then tell him what I told you.")
     ib:SetButton("Back", "hi")
-    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 local function topProbe()
+    ib:SetHeader("st_002", me)
     ib:SetTitle("Probe")
     ib:SetMsg("\n\nI can teach you the ~Probe~ spell.\n\n")
     ib:AddMsg("It is one of the most useful information spells you can learn!\n\n")
@@ -224,10 +228,10 @@ local function topProbe()
     ib:AddMsg("The spell itself is very safe. Creatures will not notice that they were probed. ")
     ib:AddMsg("They will not get angry or attack.")
     ib:SetButton("Back", "hi")
-    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 local function topMagicBullet()
+    ib:SetHeader("st_002", me)
     ib:SetTitle("Magic Bullet")
     ib:SetMsg("\n\nI can teach you the ~Magic Bullet~ spell.\n\n")
     ib:AddMsg("This can be used to attack enemies from a distance.\n\n")
@@ -237,17 +241,16 @@ local function topMagicBullet()
     ib:AddMsg("be it a wall or a monster that could be beyond your range of vision. Be assured that ")
     ib:AddMsg("a monster you disturb like this will hunt you down!")
     ib:SetButton("Back", "hi")
-    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 local function topMahch()
+    ib:SetHeader("st_002", me)
     ib:SetTitle("Mahch")
     ib:SetMsg("\n\nYes, he is a nasty little hobgoblin.\n\n")
     ib:AddMsg("He creeps around at night stealing things.\n\n")
     ib:AddMsg("We have tried to see where his bolt hole is, and we think it might be somewhere ")
     ib:AddMsg("close to some boxes outside.")
     ib:SetButton("Back", "hi")
-    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 tl = TopicList()
@@ -266,4 +269,4 @@ if guild_stat == game.GUILD_IN then
     tl:AddTopics("mahch", topMahch)
 end
 
-tl:CheckMessage(event)
+ib:ShowSENTInce(game.GUI_NPC_MODE_NPC, tl:CheckMessage(event, true))

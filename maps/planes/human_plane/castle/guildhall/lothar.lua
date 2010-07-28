@@ -78,7 +78,6 @@ local function topicDefault()
             end
         end
     end
-    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 -- check if this is a pedestal
@@ -104,5 +103,5 @@ else
     tl = TopicList()
     tl:AddGreeting(nil, topicDefault)
     tl:SetDefault(topicDefault)
-    tl:CheckMessage(event)
+    ib:ShowSENTInce(game.GUI_NPC_MODE_NPC, tl:CheckMessage(event, true))
 end
