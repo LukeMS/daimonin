@@ -19,6 +19,7 @@ function getBalance(who)
 end
 
 function topicDefault()
+    ib:SetHeader("st_001", me)
     local bmsg, balance = getBalance(pl)
     local onhand = pl:GetMoney()
     ib:SetTitle("At the bank")
@@ -33,10 +34,10 @@ function topicDefault()
     ib:AddMsg("Would you like to ")
     if balance > 0 then ib:AddLink("make a withdrawal?", "withdrawal") end
     if onhand > 0 then ib:AddLink("make a deposit?", "deposit") end
-    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 function topicDepositDialog()
+    ib:SetHeader("st_005", me)
     local onhand = pl:GetMoney()
     ib:SetTitle("Deposit money")
     ib:SetMsg(getBalance(pl))
@@ -54,11 +55,11 @@ or simply ~deposit all~ to deposit all your money.
         ib:AddMsg("You have no money to deposit.\n\n")
     end
     ib:SetButton("Back", "hi")
-    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 -- The actual deposit handler
 function topicDeposit(what)
+    ib:SetHeader("st_005", me)
     ib:SetTitle( "Deposit - New Balance" )
     local pinfo = pl:GetPlayerInfo(pinfo_tag)
     if pinfo == nil then
@@ -75,10 +76,10 @@ function topicDeposit(what)
         ib:SetButton("Back", "deposit")
     end
     ib:AddMsg("You have on hand " .. pl:ShowCost(pl:GetMoney()) .. ".\n")
-    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 function topicWithdrawDialog()
+    ib:SetHeader("st_005", me)
     ib:SetTitle("Withdraw money")
     local bmsg, balance = getBalance(pl)
     ib:SetTitle("Withdraw money")
@@ -97,11 +98,11 @@ simply ~withdraw all~ to withdraw all your money.
         ib:AddMsg("There is no money to withdraw.\n\n")
     end
     ib:SetButton("Back", "hi")
-    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 -- The actual withdraw handler
 function topicWithdraw(what)
+    ib:SetHeader("st_005", me)
     ib:SetTitle( "Withdraw - New Balance" )
     local pinfo = pl:GetPlayerInfo(pinfo_tag)
     if pinfo == nil then
@@ -121,7 +122,6 @@ function topicWithdraw(what)
         end
     end
     ib:AddMsg("You have on hand " .. pl:ShowCost(pl:GetMoney()) .. ".\n")
-    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 tl = TopicList()
@@ -131,4 +131,4 @@ tl:AddTopics("deposit", topicDepositDialog)
 tl:AddTopics("withdrawal", topicWithdrawDialog)
 tl:AddTopics("(deposit .*)", topicDeposit)
 tl:AddTopics("(withdraw .*)", topicWithdraw)
-tl:CheckMessage(event)
+ib:ShowSENTInce(game.GUI_NPC_MODE_NPC, tl:CheckMessage(event, true))

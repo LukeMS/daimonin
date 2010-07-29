@@ -6,7 +6,6 @@ local me = event.me
 local msg = string.lower(event.message)
 
 local ib = InterfaceBuilder()
-ib:SetHeader(me, me.name)
 
 local sum
 local spell
@@ -14,6 +13,7 @@ local spell
 -- Note: all spell teaching disabled and moved to quests in the stonehaven village.
 
 local function topicDefault()
+    ib:SetHeader("st_001", me)
     ib:SetTitle("The Church of the Tabernacle")
     ib:SetMsg("Hello! I am " .. me.name ..".\n\nWelcome to the church of the Tabernacle!\n\n")
     ib:AddMsg("If you are confused by my services, I can ^explain^ it.\nYou need some of our services?")
@@ -24,10 +24,10 @@ local function topicDefault()
     ib:AddLink("Cure Poison", "cast poison")
     ib:AddLink("Remove Curse from items", "cast curse")
     ib:AddLink("Remove Damnation from items", "cast damn")
-    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 local function topicExplain()
+    ib:SetHeader("st_002", me)
     ib:SetTitle("About our Services")
     ib:AddMsg("I can cure various things by casting the named spells on you when you pay me the money.\n\n")
     ib:AddMsg("Deathsick is a stronger form of depletion.\nEverytime you die stats are depleted by death sickness.")
@@ -36,6 +36,7 @@ local function topicExplain()
 end
 
 local function topicCast(what)
+    ib:SetHeader("st_005", me)
     if what=="sick" then
         ib:SetMsg("I can cast ~Remove Deathsick~ for " .. pl:ShowCost(100 + (4 * pl.level * pl.level)))
     elseif what == "deplete" then
@@ -54,10 +55,10 @@ local function topicCast(what)
     ib:AddMsg(".\n\nYou have " .. pl:ShowCost(pl:GetMoney()) .. ".\n\nDo you want me to do it now?") 
     ib:SetAccept(nil, "docast " .. what) 
     ib:SetDecline(nil, "hi")
-    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 local function topicDoCast(what)
+    ib:SetHeader("st_005", me)
     if what == "sick" then
         sum = 100 + (4 * pl.level * pl.level)
         spell = "remove death sickness"
@@ -88,7 +89,6 @@ local function topicDoCast(what)
         ib:SetMsg("You don't have enough money!")
     end
     ib:SetButton("Back", "Hi") 
-    pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
 
 tl = TopicList()
@@ -97,4 +97,4 @@ tl:SetDefault(topicDefault)
 tl:AddTopics("explain", topicExplain)
 tl:AddTopics("cast (.*)", topicCast)
 tl:AddTopics("docast (.*)", topicDoCast)
-tl:CheckMessage(event)
+ib:ShowSENTInce(game.GUI_NPC_MODE_NPC, tl:CheckMessage(event, true))

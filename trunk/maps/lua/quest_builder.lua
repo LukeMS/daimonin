@@ -36,7 +36,7 @@ setmetatable(QuestBuilder, { __call = QuestBuilder.New })
 -- qb:AddQuest() adds an entry to qb.
 -- Note that qb is not 'ready' until it is built with qb:Build().
 -------------------
-function QuestBuilder:AddQuest(quest, mode, level, skill, required, finalstep, repeats, goal, reward)
+function QuestBuilder:AddQuest(quest, mode, level, skill, required, finalstep, repeats, goal, reward, silent)
     assert(type(quest) == "string", "Arg #1 must be string!")
     assert(type(mode) == "number", "Arg #2 must be number!")
     assert(type(level) == "number" or
@@ -54,6 +54,8 @@ function QuestBuilder:AddQuest(quest, mode, level, skill, required, finalstep, r
            goal == nil, "Arg #8 must be function or nil!")
     assert(type(reward) == "function" or
            reward == nil, "Arg #9 must be function or nil!")
+    assert(type(silent) == "boolean" or
+           silent == nil, "Arg #10 must be boolean or nil!")
 
     if level == nil then
         level = 1
@@ -90,7 +92,8 @@ function QuestBuilder:AddQuest(quest, mode, level, skill, required, finalstep, r
                          ["finalstep"] = finalstep,
                          ["repeats"] = repeats,
                          ["goal"] = goal,
-                         ["reward"] = reward })
+                         ["reward"] = reward, 
+                         ["silent"] = silent}) -- Silent quests are not displayed to the player.
 end
 
 -------------------
@@ -247,7 +250,9 @@ function QuestBuilder:RegisterQuest(nr, npc, ib)
     local player = self[nr].player
 
     player:Sound(0, 0, game.SOUND_LEARN_SPELL)
-    player:Write("You start the quest '" .. self[nr].name .. "'.")
+    if not self[nr].silent then
+        player:Write("You start the quest '" .. self[nr].name .. "'.")
+    end
 
     if type(self[nr].goal) == "function" then
         self[nr].goal(nr)
@@ -385,7 +390,10 @@ function QuestBuilder:Finish(nr, reward)
     local player = self[nr].player
 
     player:Sound(0, 0, game.SOUND_LEVEL_UP)
-    player:Write("You finish the quest '" .. self[nr].name .. "'.")
+    
+    if not self[nr].silent then
+        player:Write("You finish the quest '" .. self[nr].name .. "'.")
+    end
 
     if reward then
         player:Write("You are rewarded with " .. reward .. "!")
