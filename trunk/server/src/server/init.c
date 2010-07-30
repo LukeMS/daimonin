@@ -169,6 +169,8 @@ static void init_strings()
     shstr_cons.emergency_mappath = add_string(EMERGENCY_MAPPATH);
     shstr_cons.start_mappath = add_string(START_MAP_MAPPATH);
     shstr_cons.bind_mappath = add_string(BIND_MAP_MAPPATH);
+
+    shstr_cons.nopass = add_string(RECLAIM_NOPASS);
 }
 
 void free_strings(void)

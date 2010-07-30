@@ -220,8 +220,9 @@ typedef struct Player_Struct
     //    char                    last_command[MAX_BUF];  /* Last command entered */
     char                    input_text[MAX_BUF];    /* keys typed (for long commands) */
     char                    acc_name[MAX_ACCOUNT_NAME+1];   /* account name + '\0' */
-    char                    name[MAX_PLAYER_NAME+1];        /* name of char which is selected to play */
     char                    password[MAX_ACCOUNT_PASSWORD+1];  /* account password */
+    char                    name[MAX_PLAYER_NAME+1];        /* name of char which is selected to play */
+    char                    reclaim_password[17]; /* player password if reclaiming a B4 player */
     char                    spells[255][40];    /* List of all the spells the */
     char                    target_name[MAX_BUF];   /* Rank & Name of char*/
     char                    num_text[300];

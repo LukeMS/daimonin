@@ -31,12 +31,22 @@
 */
 #define MIN_PLAYER_NAME        3
 #define MAX_PLAYER_NAME        16
-/* Note: there is no password for a player (aka single characters) anymore */
 
 #define MIN_ACCOUNT_NAME        3
 #define MAX_ACCOUNT_NAME        24
 #define MIN_ACCOUNT_PASSWORD    6
 #define MAX_ACCOUNT_PASSWORD    16
+
+/* When reclaiming a pre-account (=B4) player, the user must enter the correct
+ * password. This is a default that will be used the first time (when the
+ * sever is just checking to see if the player exists to be reclaimed at all).
+ *
+ * By sending this dummy password we avoid inidicating password guessing.
+ *
+ * If a client does not send exactly this string, password guessing will be
+ * indicated, although (ATM) this has no effect other than a false positive in
+ * the server logs. */
+#define RECLAIM_NOPASS "NOPASS" // must be >= 6 characters
 
 /* The embedded character codes used to markup text, mainly in the textwindows
  * and GUIs (but theoretically anywhere).
@@ -176,7 +186,8 @@ typedef enum addme_login_msg_struct {
     ADDME_MSG_TAKEN,
     ADDME_MSG_INTERNAL,
     ADDME_MSG_BANNED,
-    ADDME_MSG_DISCONNECT
+    ADDME_MSG_DISCONNECT,
+    ADDME_MSG_WRONGPWD
 } addme_login_msg;
 
 enum

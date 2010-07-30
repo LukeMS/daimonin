@@ -450,12 +450,28 @@ void AddMeFail(char *data, int len)
          {
              textwin_showstring(COLOR_ORANGE, "Player is BANNED!");
          }
+         else if (msg == ADDME_MSG_WRONGPWD)
+         {
+             textwin_showstring(COLOR_ORANGE, "Player exists but is saved in B4 format!\nNow enter the password to reclaim this name.");
+
+             if(GameStatus == GAME_STATUS_ACCOUNT_CHAR_CREATE_WAIT)
+             {
+                 reset_input_mode();
+                 InputStringFlag = TRUE;
+                 InputStringEndFlag = FALSE;
+                 open_input_mode(16);
+                 GameStatus = GAME_STATUS_ACCOUNT_CHAR_RECLAIM;
+                 cpl.menustatus = MENU_NO;
+
+                 return;
+             }
+         }
          else
          {
              textwin_showstring(COLOR_ORANGE, "Player loading failed!");
          }
          SDL_Delay(1250);
-         if(GameStatus == GAME_STATUS_ACCOUNT_CHAR_NAME_WAIT)
+         if(GameStatus == GAME_STATUS_ACCOUNT_CHAR_CREATE_WAIT)
          {
              reset_input_mode();
              cpl.name[0] = 0;
