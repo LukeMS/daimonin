@@ -56,8 +56,12 @@ static command_buffer *command_buffer_new(unsigned int len, uint8 *data)
 {
     command_buffer *buf;
 
-    if( !(buf = (command_buffer *)malloc(sizeof(command_buffer)+len+16)) )
-		return NULL;
+    MALLOC(buf, sizeof(command_buffer) + len + 16);
+
+    if (!buf)
+    {
+        return NULL;
+    }
 
     buf->next = buf->prev = NULL;
     buf->len = len;
@@ -71,7 +75,7 @@ static command_buffer *command_buffer_new(unsigned int len, uint8 *data)
 /** Free all memory related to a single command buffer */
 void command_buffer_free(command_buffer *buf)
 {
-    free(buf);
+    FREE(buf);
 }
 
 /** Enqueue a command buffer last in a queue */
@@ -221,14 +225,17 @@ command_buffer *get_next_input_command()
 static int reader_thread_loop(void *nix)
 {
     static uint8 *readbuf = NULL;
-	static int readbuf_malloc = 256;
+    static int readbuf_malloc = 256;
     int readbuf_len = 0;
     int header_len = 0;
     int cmd_len = -1;
 
     LOG(LOG_DEBUG, "Reader thread started\n");
-	if(!readbuf)
-		readbuf = malloc(readbuf_malloc);
+
+    if (!readbuf)
+    {
+        MALLOC(readbuf, readbuf_malloc);
+    }
 
     while (! abort_thread)
     {
@@ -263,9 +270,9 @@ static int reader_thread_loop(void *nix)
 				uint8 *tmp = readbuf;
 
 				readbuf_malloc = cmd_len+16;
-				readbuf = (uint8 *) malloc(readbuf_malloc);
+				MALLOC(readbuf, readbuf_malloc);
 				memcpy(readbuf, tmp, readbuf_len); /* save the already read in header part */
-				free(tmp);
+				FREE(tmp);
 			}
 
 //			LOG(-1,"CMD_LEN: toread:%d len:%d (%x)\n", toread, cmd_len, (*((char *)readbuf))&~0x80);
@@ -323,7 +330,7 @@ static int reader_thread_loop(void *nix)
 
 out:
     SOCKET_CloseClientSocket(&csocket);
-	free(readbuf);
+	FREE(readbuf);
 	readbuf = NULL;
     LOG(LOG_DEBUG, "Reader thread stopped\n");
     return -1;
@@ -853,9 +860,10 @@ int read_metaserver_data(SOCKET fd)
     char   *ptr, *buf;
     void   *tmp_free;
 
-    ptr = (char *) malloc(MAX_METASTRING_BUFFER);
-    buf = (char *) malloc(MAX_METASTRING_BUFFER);
+    MALLOC(ptr, MAX_METASTRING_BUFFER);
+    MALLOC(buf, MAX_METASTRING_BUFFER);
     temp = 0;
+
     for (; ;)
     {
         /* win32 style input */
@@ -902,8 +910,8 @@ int read_metaserver_data(SOCKET fd)
     char   *ptr, *buf;
     void   *tmp_free;
 
-    ptr = (char *) _malloc(MAX_METASTRING_BUFFER, "read_metaserver_data(): metastring buffer1");
-    buf = (char *) _malloc(MAX_METASTRING_BUFFER, "read_metaserver_data(): metastring buffer2");
+    MALLOC(ptr, MAX_METASTRING_BUFFER);
+    MALLOC(buf, MAX_METASTRING_BUFFER);
     temp = 0;
     for (; ;)
     {

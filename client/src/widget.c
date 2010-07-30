@@ -203,7 +203,8 @@ void init_priority_list()
 //    LOG(LOG_MSG,"Entering init_priority_list()..\n");
 
 	/* allocate the head of the list */
-    priority_list_head = node = _malloc (sizeof(widget_node),"init_priority_list: widget_node");
+    MALLOC(node, sizeof(widget_node));
+    priority_list_head = node;
     if (!node) { exit(0); }
 	/* set the members and store a 'link' to this pointer */
 	priority_list_head->next = NULL;
@@ -214,7 +215,7 @@ void init_priority_list()
     for (lp=1; lp<TOTAL_WIDGETS; ++lp)
 	{
 		/* allocate it */
-		node->next = _malloc (sizeof(widget_node),"init_priority_list: widget_node");
+		MALLOC(node->next, sizeof(widget_node));
 		if (!node->next) { exit(0); }
 		node->next->prev = node;
 		/* set the members and store a 'link' to this pointer */
@@ -257,7 +258,7 @@ void kill_priority_list()
 //        LOG(LOG_MSG, "..Node #%d: %d\n", lp, priority_list_head->WidgetID);
 
         tmp_node = priority_list_head->next;
-        free(priority_list_head);
+        FREE(priority_list_head);
         priority_list_head = tmp_node;
     }
 
@@ -1014,7 +1015,7 @@ void SetPriorityWidget(int nWidgetID)
 
 
 	/* move the current highest to second highest priority */
-	node = (widget_node *) _malloc (sizeof(widget_node),"SetPriorityWidget: widget_node");
+	MALLOC(node, sizeof(widget_node));
 	if(!node) { exit(0); } /* memory error */
 	*node = *priority_list_head;
 	node->prev = priority_list_head;
@@ -1044,7 +1045,7 @@ void SetPriorityWidget(int nWidgetID)
 		node->prev->next = NULL;
 	}
 
-	free(node);
+	FREE(node);
 
 	/* re-link the widget lookup */
 	cur_widget[nWidgetID].priority_index = priority_list_head;

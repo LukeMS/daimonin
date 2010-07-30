@@ -31,7 +31,6 @@
 #include "win32.h"
 #elif __LINUX
 #include <cflinux.h>
-#define _malloc(__d,__s) malloc(__d)
 #endif
 
 #if !defined(HAVE_STRICMP)

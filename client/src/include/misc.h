@@ -32,7 +32,6 @@ int                     read_substr_char(char *srcstr, char *desstr, int *sz, ch
 char                    *get_parameter_string(char *data, int *pos, int maxlen);
 int                     isqrt(int n);
 void                    smiley_convert(char *msg);
-void                    *my_malloc(size_t blen, char *info);
 extern unsigned long    hasharch(char *str, int tablesize);
 extern _bmaptype        *find_bmap(char *name);
 extern void             add_bmap(_bmaptype *at);

@@ -38,8 +38,8 @@ struct ignore_list *ignore_list_start = NULL;
 static void ignore_entry_add(char *name, char *type)
 {
     struct ignore_list *node;
-    node = (struct ignore_list *) malloc(sizeof(struct ignore_list));
-    strcpy(node->name, name);
+    MALLOC(node, sizeof(struct ignore_list));
+    sprintf(node->name, "%s", name);
     if (type[0]=='\0')
         node->type[0]='\0';
     else
@@ -62,7 +62,7 @@ static void ignore_entry_remove(char *name, char *type)
             else
                 ignore_list_start = node->next;
 
-            free(node);
+            FREE(node);
             return;
 
         }
@@ -92,7 +92,7 @@ void ignore_list_clear(void)
     for (node = ignore_list_start;node;node = tmp)
     {
         tmp = node->next;
-        free(node);
+        FREE(node);
     }
     ignore_list_start=NULL;
 }

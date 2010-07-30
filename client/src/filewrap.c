@@ -105,7 +105,7 @@ static int mkdir_recurse(const char *path)
             *p = '\0';
         if(access(copy, F_OK) == -1){
             if (mkdir (copy, 0755) == -1){
-				free(copy);
+				FREE(copy);
                 return -1;
             }
         }
@@ -113,7 +113,7 @@ static int mkdir_recurse(const char *path)
             *p = CSLASH;
     }
 	if(copy){
-		free(copy);
+		FREE(copy);
 	}
     return 0;
 }

@@ -70,7 +70,7 @@ void addNewKill(char *name, unsigned int kills, unsigned int session)
     struct kills_list *node;
     struct kills_list *ptr, *ptr1;
 
-    node = (struct kills_list *) malloc(sizeof(struct kills_list));
+    MALLOC(node, sizeof(struct kills_list));
     node->kills = kills;
     node->session=session;
     node->next=NULL;
@@ -139,7 +139,7 @@ void kill_list_clear(void)
     for(node = kills_list_start;node;node = tmp)
     {
         tmp = node->next;
-        free(node);
+        FREE(node);
     }
     kills_list_start=NULL;
 }

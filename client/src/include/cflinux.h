@@ -69,8 +69,6 @@
 #include <SDL_thread.h>
 #include <SDL_mutex.h>
 
-#define _malloc(__d,__s) malloc(__d)
-
 #ifndef O_BINARY
 #define O_BINARY 0x0
 #endif

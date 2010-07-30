@@ -86,7 +86,7 @@ void FreeMemory(void **p)
     if (p == NULL)
         return;
     if (*p != NULL)
-        free(*p);
+        FREE(*p);
     *p = NULL;
 }
 
@@ -216,13 +216,6 @@ char *get_parameter_string(char *data, int *pos, int maxlen)
     }
 
     return buf;
-}
-
-
-void * _my_malloc(size_t blen, char *info)
-{
-    LOG(LOG_DEBUG, "Malloc(): size %d info: %s\n", blen, info);
-    return malloc(blen);
 }
 
 /*
