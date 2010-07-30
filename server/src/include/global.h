@@ -694,6 +694,7 @@ EXTERN struct shstr_constants
     shstr *emergency_mappath;
     shstr *start_mappath;
     shstr *bind_mappath;
+    shstr *nopass;
 } shstr_cons;
 
 EXTERN Animations              *animations;

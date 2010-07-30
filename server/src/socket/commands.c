@@ -1402,13 +1402,14 @@ void cs_cmd_addme(char *buf, int len, NewSocket *ns)
 void cs_cmd_newchar(char *buf, int len, NewSocket *ns)
 {
     int     gender, race, skill_nr, ret = ADDME_MSG_OK;
+    shstr  *pass;
     char    filename[MEDIUM_BUF];
 
     /* if the cmd isn't perfect, kill the socket. */
     if (ns->pl_account.nrof_chars == ACCOUNT_MAX_PLAYER ||
         !buf ||
-        len < MIN_PLAYER_NAME + 4 ||
-        len > MAX_PLAYER_NAME + 4 ||
+        len < MIN_PLAYER_NAME + 6 + 5 ||
+        len > MAX_PLAYER_NAME + 16 + 5 ||
         buf[len - 1] ||
         ns->status != Ns_Account)
     {
@@ -1420,6 +1421,7 @@ void cs_cmd_newchar(char *buf, int len, NewSocket *ns)
     race = GetChar_Buffer(buf);
     gender = GetChar_Buffer(buf);
     skill_nr = GetChar_Buffer(buf);
+    pass = add_string(buf + strlen(buf) + 1);
 
     if (!player_name_valid(buf))
     {
@@ -1434,8 +1436,91 @@ void cs_cmd_newchar(char *buf, int len, NewSocket *ns)
     sprintf(filename, "%s/%s/%s/%s/%s.pl", settings.localdir, settings.playerdir, get_subdir(buf), buf, buf);
 
     if (access(filename, F_OK) == 0)
-        ret = ADDME_MSG_TAKEN;
-    else
+    {
+        FILE *fp;
+
+        if ((fp = fopen(filename, "r")))
+        {
+            char real_password[TINY_BUF];
+            /* Old player files have password ... as the first line. So if the
+             * name exists but this is not the first line we can surmise it is
+             * a new-style player already associated with an account. */
+            if (fscanf(fp, "password %s", real_password) != 1)
+            {
+                ret = ADDME_MSG_TAKEN;
+            }
+            /* Otherwise it must be old-style and therefore reclaimable. */
+            else
+            {
+                shstr *password = add_string(real_password);
+
+                /* If the password from the client does not match the password
+                 * in the save file, the reclaim fails. */
+                if (pass != password)
+                {
+                    ret = ADDME_MSG_WRONGPWD;
+
+                    /* The first time, the client (should -- see protocol.h)
+                     * send a dummy password. This simply marks that attempt as
+                     * a testing the waters attempt so we know not to log it as
+                     * password guessing. */
+                    if (pass != shstr_cons.nopass)
+                    {
+                        CHATLOG("RECLAIM: IP >%s< Account >%s< Player >%s<... WRONG PASSWORD!\n",
+                                ns->ip_host, ns->pl_account.name, buf);
+                    }
+                }
+                /* A match means we reclaim this name. Do this by backing up
+                 * the old save dir to the account so we can add a new-style
+                 * player below. */
+                else
+                {
+                     /* Add a dummy player so that delete player will work! */
+                     ns->pl_account.level[ns->pl_account.nrof_chars] = 1; /* we always start with level 1 */
+                     ns->pl_account.race[ns->pl_account.nrof_chars] = race;
+                     ns->pl_account.gender[ns->pl_account.nrof_chars] = gender;
+                     strcpy(ns->pl_account.charname[ns->pl_account.nrof_chars], buf);
+                     ns->pl_account.nrof_chars += 1;
+                     account_save(&ns->pl_account, ns->pl_account.name); /* ignore problems here, we have later a 2nd try perhaps */
+
+                    /* This is basically the business end from cs_cmd_delchar()
+                     * below. */
+                    if ((ret = account_delete_player(&ns->pl_account, buf)) ==
+                        ACCOUNT_STATUS_EXISTS)
+                    {
+                        ns->status = Ns_Dead;
+
+                        return;
+                    }
+
+                    account_save(&ns->pl_account, ns->pl_account.name);
+
+                    if (ret != ACCOUNT_STATUS_OK)
+                    {
+                        ret = ADDME_MSG_CORRUPT;
+                    }
+                    else
+                    {
+                        //account_send_client(ns, ACCOUNT_STATUS_OK);
+                        ret = ADDME_MSG_OK;
+                    }
+
+                    CHATLOG("RECLAIM: IP >%s< Account >%s< Player >%s<... OK!\n",
+                            ns->ip_host, ns->pl_account.name, buf);
+                }
+
+                FREE_AND_CLEAR_HASH(password);
+            }
+        }
+        else
+        {
+            ret = ADDME_MSG_CORRUPT;
+        }
+    }
+
+    FREE_AND_CLEAR_HASH(pass);
+
+    if (ret == ADDME_MSG_OK)
     {
         player *pl = NULL;
 

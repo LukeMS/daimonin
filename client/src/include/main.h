@@ -460,11 +460,12 @@ typedef enum _game_status
 
     GAME_STATUS_ACCOUNT,                /* show the account screen with player chars */
 
-    GAME_STATUS_ACCOUNT_CHAR_DEL,       /* we typed 'D' for character deletion */
-    GAME_STATUS_ACCOUNT_CHAR_DEL_WAIT,  /* wait for delete response. ESC will drop the connection */
-    GAME_STATUS_ACCOUNT_CHAR_CREATE,    /* we typed 'C' and select race & stats of a new char */
-    GAME_STATUS_ACCOUNT_CHAR_NAME,      /* we type in a name and send it to server checking name is ok */
-    GAME_STATUS_ACCOUNT_CHAR_NAME_WAIT, /* wait for name request from server.  ESC will drop the connection */
+    GAME_STATUS_ACCOUNT_CHAR_DEL,         /* we typed 'D' for character deletion */
+    GAME_STATUS_ACCOUNT_CHAR_DEL_WAIT,    /* wait for delete response. ESC will drop the connection */
+    GAME_STATUS_ACCOUNT_CHAR_CREATE,      /* we typed 'C' and select race & stats of a new char */
+    GAME_STATUS_ACCOUNT_CHAR_NAME,        /* we type in a name and send it to server checking name is ok */
+    GAME_STATUS_ACCOUNT_CHAR_RECLAIM,     /* we type in a reclaim password and send it to server checking all is ok */
+    GAME_STATUS_ACCOUNT_CHAR_CREATE_WAIT, /* wait for name request from server.  ESC will drop the connection */
 
     GAME_STATUS_WAITFORPLAY,            /* addme <name> send - wait server puts us into the game */
     GAME_STATUS_PLAY

@@ -1214,24 +1214,49 @@ Boolean game_status_chain(void)
             else /* we have a valid name... now let the server decide to create or deny this char */
             {
                 sprintf(cpl.name, "%s", InputString);
+                sprintf(cpl.reclaim_password, RECLAIM_NOPASS);
                 dialog_new_char_warn = 0; /* = name must min/max */
                 LoginInputStep = LOGIN_STEP_NOTHING;
                 /* Now send name & pass to server and wait for the account data */
                 reset_input_mode();
-                GameStatus =  GAME_STATUS_ACCOUNT_CHAR_NAME_WAIT;
+                GameStatus =  GAME_STATUS_ACCOUNT_CHAR_CREATE_WAIT;
                 send_new_char(&new_character);
             }
         }
     }
-    else if (GameStatus == GAME_STATUS_ACCOUNT_CHAR_NAME_WAIT)
+    else if (GameStatus == GAME_STATUS_ACCOUNT_CHAR_RECLAIM)
+    {
+        /* get a reclaim password for the char we created in
+         * GAME_STATUS_ACCOUNT_CHAR_CREATE and named in
+         * GAME_STATUS_ACCOUNR_CHAR_NAME.
+         * Fallback for ESC is GAME_STATUS_ACCOUNT_CHAR_CREATE
+         */
+        if (InputStringEscFlag)
+        {
+            GameStatus = GAME_STATUS_ACCOUNT_CHAR_CREATE;
+        }
+        else if (InputStringFlag == FALSE && InputStringEndFlag == TRUE)
+        {
+            sprintf(cpl.reclaim_password, "%s", InputString);
+            dialog_new_char_warn = 0; /* = name must min/max */
+            LoginInputStep = LOGIN_STEP_NOTHING;
+            /* Now send name & pass to server and wait for the account data */
+            reset_input_mode();
+            GameStatus = GAME_STATUS_ACCOUNT_CHAR_CREATE_WAIT;
+            send_new_char(&new_character);
+        }
+    }
+    else if (GameStatus == GAME_STATUS_ACCOUNT_CHAR_CREATE_WAIT)
     {
         /* we wait for response from the server that name is ok or not.
-         * there are 3 actions:
+         * there are 4 actions:
          * 1.) we press ESC. To avoid sync problems, we drop connection!
          * 2.) name is ok and server created char. We get a new account data
          * and a automatic fallback to GAME_STATUS_ACCOUNT
          * 3.) name is taken or something - we get a error msg in addme_fails and
          * fallback to GAME_STATUS_ACCOUNT_CHAR_NAME for another chance
+         * 4.) reclaim password is wrong - we get a error msg in addme_fails and
+         * fallback to GAME_STATUS_ACCOUNT_CHAR_RECLAIM for another chance
          * All that is done elsewhere, this is just a placeholder
          */
     }
@@ -2044,7 +2069,7 @@ int main(int argc, char *argv[])
             show_login_server();
         else if (GameStatus >= GAME_STATUS_ACCOUNT && GameStatus <= GAME_STATUS_ACCOUNT_CHAR_DEL_WAIT)
             show_account();
-        else if (GameStatus >= GAME_STATUS_ACCOUNT_CHAR_CREATE && GameStatus <= GAME_STATUS_ACCOUNT_CHAR_NAME_WAIT )
+        else if (GameStatus >= GAME_STATUS_ACCOUNT_CHAR_CREATE && GameStatus <= GAME_STATUS_ACCOUNT_CHAR_CREATE_WAIT )
             cpl.menustatus = MENU_CREATE;
 
         /* show all kind of the small dialog windows */

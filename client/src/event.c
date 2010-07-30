@@ -746,6 +746,11 @@ int Event_PollInputDevice(void)
                 key_string_event(&event.key);
                 break;
             }
+            else if (GameStatus == GAME_STATUS_ACCOUNT_CHAR_RECLAIM && InputStringFlag)
+            {
+                key_string_event(&event.key);
+                break;
+            }
             else if (cpl.menustatus == MENU_NO && (!InputStringFlag || cpl.input_mode != INPUT_MODE_NUMBER))
             {
 #ifdef DEVELOPMENT

@@ -1271,7 +1271,7 @@ void show_newplayer_server(void)
 {
     int             id  = 0;
     int             x, y, i;
-    char            buf[256];
+    char            buf[MEDIUM_BUF];
     int             mx, my, mb;
     int             delta;
     _server_char   *tmpc;
@@ -1558,16 +1558,28 @@ void show_newplayer_server(void)
     }
     else
     {
-        char namebuf[MAX_BUF];
-
-        string_blt(ScreenSurface, &font_large_out, "Try Character Name", x + 134, y + 323, COLOR_WHITE, NULL, NULL);
-
-        if(GameStatus == GAME_STATUS_ACCOUNT_CHAR_NAME)
+        if (GameStatus == GAME_STATUS_ACCOUNT_CHAR_NAME)
         {
+            string_blt(ScreenSurface, &font_large_out, "Try Character Name", x + 134, y + 323, COLOR_WHITE, NULL, NULL);
             sprite_blt(Bitmaps[BITMAP_LOGIN_INP], x + 132, y + 345, NULL, NULL);
-            sprintf(namebuf, "%s%c", InputString, '_');
-            namebuf[0] = toupper(namebuf[0]);
-            string_blt(ScreenSurface, &font_small, namebuf, x + 138, y + 347, COLOR_WHITE, NULL, NULL);
+            sprintf(buf, "%s%c", InputString, '_');
+            buf[0] = toupper(buf[0]);
+            string_blt(ScreenSurface, &font_small, buf, x + 138, y + 347, COLOR_WHITE, NULL, NULL);
+        }
+        else if (GameStatus == GAME_STATUS_ACCOUNT_CHAR_RECLAIM)
+        {
+            string_blt(ScreenSurface, &font_large_out, "Try Character Name", x + 134, y + 323, COLOR_WHITE, NULL, NULL);
+            sprite_blt(Bitmaps[BITMAP_LOGIN_INP], x + 132, y + 345, NULL, NULL);
+            string_blt(ScreenSurface, &font_small, cpl.name, x + 138, y + 347, COLOR_WHITE, NULL, NULL);
+            string_blt(ScreenSurface, &font_large_out, "Try Reclaim Password", x + 134, y + 370, COLOR_WHITE, NULL, NULL);
+            sprite_blt(Bitmaps[BITMAP_LOGIN_INP], x + 132, y + 392, NULL, NULL);
+            sprintf(buf, "%s", InputString);
+            for (i = 0; buf[i]; i++)
+            {
+                buf[i] = '*';
+            }
+            strcat(buf, "_");
+            string_blt(ScreenSurface, &font_small, buf, x + 138, y + 394, COLOR_WHITE, NULL, NULL);
         }
         else
         {
@@ -1578,8 +1590,8 @@ void show_newplayer_server(void)
             box.w= 250;
             box.h= 20;
             SDL_FillRect(ScreenSurface, &box, sdl_gray3);
-            sprintf(namebuf, "*** WAIT: Ask server to create character %s ***", cpl.name);
-            string_blt(ScreenSurface, &font_small, namebuf, x + 138, y + 347, COLOR_GREEN, NULL, NULL);
+            sprintf(buf, "*** WAIT: Ask server to create character %s ***", cpl.name);
+            string_blt(ScreenSurface, &font_small, buf, x + 138, y + 347, COLOR_GREEN, NULL, NULL);
         }
     }
 

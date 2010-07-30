@@ -1216,7 +1216,8 @@ void SendAddMe(char *name)
 }
 
 /* the server also parsed client_settings. 
- * We only tell him our name, the selected default arch (as gender_selected)
+ * We only tell him our name, password (for reclaiming B4
+ * characters), the selected default arch (as gender_selected)
  * and the weapon skill
  * The server will grap the other values from the loaded file
  */
@@ -1225,7 +1226,6 @@ void send_new_char(_server_char *nc)
     int i =0;
     SockList    sl;
     _server_char   *tmpc;
-
 
     /* lets find the entry number */
     for (tmpc = first_server_char; tmpc; tmpc = tmpc->next)
@@ -1242,6 +1242,7 @@ void send_new_char(_server_char *nc)
     SockList_AddChar(&sl, nc->gender_selected);
     SockList_AddChar(&sl, nc->skill_selected);
     SockList_AddString(&sl, cpl.name);
+    SockList_AddString(&sl, cpl.reclaim_password);
     send_socklist_binary(&sl);
 }
 
