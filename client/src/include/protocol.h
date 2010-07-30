@@ -24,7 +24,7 @@
 #ifndef __PROTOCOL_H
 #define __PROTOCOL_H
 
-#define PROTOCOL_VERSION 991030
+#define PROTOCOL_VERSION 991031
 
 /* min & max length of player & account names & password
 * important - for a login server this must snyced up with it too
