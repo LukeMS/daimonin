@@ -1365,28 +1365,24 @@ void clear_metaserver_data(void)
 
 void add_metaserver_data(char *name, char *server, int port, int player, char *ver, char *desc)
 {
-    _server    *node;
+    _server *node;
 
-    node = (_server *) _malloc(sizeof(_server), "add_metaserver_data(): add server struct");
-    memset(node, 0, sizeof(_server));
+    MALLOC(node, sizeof(_server));
+
     if (!start_server)
         start_server = node;
     if (!end_server)
         end_server = node;
     else
         end_server->next = node;
-    end_server = node;
 
+    end_server = node;
     node->player = player;
     node->port = port;
-    node->name = _malloc(strlen(name) + 1, "add_metaserver_data(): name string");
-    strcpy(node->name, name);
-    node->nameip = _malloc(strlen(server) + 1, "add_metaserver_data(): nameip string");
-    strcpy(node->nameip, server);
-    node->version = _malloc(strlen(ver) + 1, "add_metaserver_data(): version string");
-    strcpy(node->version, ver);
-    node->desc1 = _malloc(strlen(desc) + 1, "add_metaserver_data(): desc string");
-    strcpy(node->desc1, desc);
+    MALLOC2(node->name, name);
+    MALLOC2(node->nameip, server);
+    MALLOC2(node->version, ver);
+    MALLOC2(node->desc1, desc);
 }
 
 static void count_meta_server(void)

@@ -254,8 +254,7 @@ void InitMapData(int xl, int yl, int px, int py)
         * map on a 16x16 map. Its possible to handle this here, but then we need
         * to know the sizes of the attached maps here
         */
-        TheMapCache = malloc(9 * xl * yl * sizeof(struct MapCell));
-        memset(TheMapCache, 0, 9 * xl * yl * sizeof(struct MapCell));
+        MALLOC(TheMapCache, 9 * xl * yl * sizeof(struct MapCell));
     }
 }
 

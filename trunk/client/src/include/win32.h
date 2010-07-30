@@ -79,8 +79,6 @@
 #define umask(__a) _umask(__a)
 #define lseek(__a, __b, __c) _lseek(__a, __b, __c)
 
-#define _malloc(__d,__s) malloc(__d)
-
 #define inline __inline
 
 #define HAVE_STRICMP

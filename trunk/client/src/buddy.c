@@ -37,8 +37,8 @@ static void buddy_entry_add(char *name)
 {
 	struct buddy_list *node;
 
-	node = (struct buddy_list *) malloc(sizeof(struct buddy_list));
-	strcpy(node->name, name);
+	MALLOC(node, sizeof(struct buddy_list));
+	sprintf(node->name, "%s", name);
 	node->next = buddy_list_start;
 	buddy_list_start = node;
 }
@@ -57,7 +57,7 @@ static void buddy_entry_remove(char *name)
 			else
 				buddy_list_start = node->next;
 
-			free(node);
+			FREE(node);
 			return;
 
 		}
@@ -89,7 +89,7 @@ void buddy_list_clear(void)
 	for(node = buddy_list_start;node;node = tmp)
 	{
 		tmp = node->next;
-		free(node);
+		FREE(node);
 	}
     buddy_list_start=NULL;
 }

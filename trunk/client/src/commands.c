@@ -1995,7 +1995,7 @@ void DataCmd(char *data, int len)
     if (data_comp)
     {
         dest_len = GetUINT32_String(data);
-        dest = malloc(dest_len);
+        MALLOC(dest, dest_len);
         len-=4;
         data+=4;
         LOG(LOG_DEBUG, "data cmd: compressed file(len:%d->destlen:%d)\n", len, dest_len);
@@ -2087,7 +2087,7 @@ void DataCmd(char *data, int len)
             break;
     }
     if (dest!=NULL)
-        free(dest);
+        FREE(dest);
 }
 
 #ifdef USE_CHANNELS

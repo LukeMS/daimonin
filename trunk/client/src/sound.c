@@ -63,8 +63,10 @@ static void sound_start_music(char *fname, int vol, int fade, int loop);
 // Duplicate string
 char *str_dup(const char *str)
 {
-    char *ret = (char *)malloc(strlen(str) + 1);
-    strcpy(ret, str);
+    char *ret;
+
+    MALLOC2(ret, str);
+
     return ret;
 }
 
@@ -89,10 +91,10 @@ void read_sounds(void)
         fstat(fileno(stream), &statbuf);
         i = (int) statbuf.st_size;
         srv_client_files[SRV_CLIENT_SOUNDS].len = i;
-        temp_buf = malloc(i);
+        MALLOC(temp_buf, i);
         dummy = fread(temp_buf, sizeof(char), i, stream);
         srv_client_files[SRV_CLIENT_SOUNDS].crc = crc32(1L, temp_buf, i);
-        free(temp_buf);
+        FREE(temp_buf);
         fclose(stream);
         LOG(LOG_DEBUG, " found file!(%d/%x)",
             srv_client_files[SRV_CLIENT_SOUNDS].len,
@@ -144,7 +146,7 @@ void load_sounds(void)
                 sounds.count = type_count;
 
                 // Allocate memory
-                sounds.types = malloc(type_count * sizeof(_soundtype));
+                MALLOC(sounds.types, type_count * sizeof(_soundtype));
 
                 state++;
             }
@@ -163,7 +165,7 @@ void load_sounds(void)
                 sscanf(strtok(NULL, "|"), "%d", &sound_count);
                 sounds.types[type_index].count = sound_count;
                 sounds.types[type_index].name = str_dup(name);
-                sounds.types[type_index].sounds = malloc(sound_count * sizeof(_sound)); // space for sounds
+                MALLOC(sounds.types[type_index].sounds, sound_count * sizeof(_sound)); // space for sounds
                 sound_index = -1;
                 state++;
             }
@@ -271,16 +273,16 @@ void sound_freeall(void)
 
     for (i = 0; i < sounds.count; i++)
     {
-        free(sounds.types[i].name);
+        FREE(sounds.types[i].name);
         for (j = 0; j < sounds.types[i].count; j++)
         {
-            free(sounds.types[i].sounds[j].name);
-            free(sounds.types[i].sounds[j].file);
+            FREE(sounds.types[i].sounds[j].name);
+            FREE(sounds.types[i].sounds[j].file);
             Mix_FreeChunk(sounds.types[i].sounds[j].sound);
         }
-        free(sounds.types[i].sounds);
+        FREE(sounds.types[i].sounds);
     }
-    free(sounds.types);
+    FREE(sounds.types);
 #endif
 }
 

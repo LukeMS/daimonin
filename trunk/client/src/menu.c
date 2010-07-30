@@ -701,11 +701,11 @@ void read_anims(void)
         fstat(fileno(stream), &statbuf);
         i = (int)statbuf.st_size;
         srv_client_files[SRV_CLIENT_ANIMS].len = i;
-        temp_buf = malloc(i);
+        MALLOC(temp_buf, i);
         dummy = fread(temp_buf, sizeof(char), i, stream);
         srv_client_files[SRV_CLIENT_ANIMS].crc = crc32(1L, temp_buf, i);
         fclose(stream);
-        free(temp_buf);
+        FREE(temp_buf);
         LOG(LOG_DEBUG, " found file!(%d/%x)",
             srv_client_files[SRV_CLIENT_ANIMS].len,
             srv_client_files[SRV_CLIENT_ANIMS].crc);
@@ -739,9 +739,8 @@ static void load_bmaps_p0(void)
     {
         sscanf(buf, "%d %d %x %d %s", &num, &pos, &crc, &len, name);
 
-        at = (_bmaptype *) malloc(sizeof(_bmaptype));
-        at->name = (char *) malloc(strlen(name) + 1);
-        strcpy(at->name, name);
+        MALLOC(at, sizeof(_bmaptype));
+        MALLOC2(at->name, name);
         at->crc = crc;
         at->num = num;
         at->len = len;
@@ -781,7 +780,9 @@ void read_bmaps_p0(void)
         unlink(FILE_BMAPS_P0);
         exit(0);
     }
-    temp_buf = malloc((bufsize = 24 * 1024));
+
+    bufsize = 24 * 1024;
+    MALLOC(temp_buf, bufsize);
 
     while (fgets(buf, LARGE_BUF - 1, fpic) != NULL)
     {
@@ -807,7 +808,7 @@ void read_bmaps_p0(void)
 
         if (len > bufsize) /* dynamic buffer adjustment */
         {
-            free(temp_buf);
+            FREE(temp_buf);
             /* we assume thats this is nonsense */
             if (len > 128 * 1024)
             {
@@ -818,8 +819,9 @@ void read_bmaps_p0(void)
                 unlink(FILE_BMAPS_P0);
                 exit(0);
             }
+
             bufsize = len;
-            temp_buf = malloc(bufsize);
+            MALLOC(temp_buf, bufsize);
         }
 
         dummy = fread(temp_buf, 1, len, fpic);
@@ -831,7 +833,7 @@ void read_bmaps_p0(void)
     }
 
 
-    free(temp_buf);
+    FREE(temp_buf);
     fclose(fbmap);
     fclose(fpic);
     load_bmaps_p0();
@@ -846,7 +848,7 @@ void delete_bmap_tmp(void)
     for (i = 0; i < BMAPTABLE; i++)
     {
         if (bmaptype_table[i].name)
-            free(bmaptype_table[i].name);
+            FREE(bmaptype_table[i].name);
         bmaptype_table[i].name = NULL;
     }
 }
@@ -871,8 +873,7 @@ static int load_bmap_tmp(void)
         bmaptype_table[i].crc = crc;
         bmaptype_table[i].len = len;
         bmaptype_table[i].pos = pos;
-        bmaptype_table[i].name = (char *) malloc(strlen(name) + 1);
-        strcpy(bmaptype_table[i].name, name);
+        MALLOC2(bmaptype_table[i].name, name);
         i++;
     }
     bmaptype_table_size = i;
@@ -985,11 +986,11 @@ void read_bmaps(void)
         fstat(fileno(stream), &statbuf);
         i = (int)statbuf.st_size;
         srv_client_files[SRV_CLIENT_BMAPS].len = i;
-        temp_buf = malloc(i);
+        MALLOC(temp_buf, i);
         dummy = fread(temp_buf, sizeof(char), i, stream);
         srv_client_files[SRV_CLIENT_BMAPS].crc = crc32(1L, temp_buf, i);
         fclose(stream);
-        free(temp_buf);
+        FREE(temp_buf);
         LOG(LOG_DEBUG, " found file!(%d/%x)",
             srv_client_files[SRV_CLIENT_BMAPS].len,
             srv_client_files[SRV_CLIENT_BMAPS].crc);
@@ -1012,16 +1013,16 @@ void delete_server_chars(void)
     for (tmp1 = tmp = first_server_char; tmp1; tmp = tmp1)
     {
         tmp1 = tmp->next;
-        free(tmp->name);
-        free(tmp->desc[0]);
-        free(tmp->desc[1]);
-        free(tmp->desc[2]);
-        free(tmp->desc[3]);
-        free(tmp->char_arch[0]);
-        free(tmp->char_arch[1]);
-        free(tmp->char_arch[2]);
-        free(tmp->char_arch[3]);
-        free(tmp);
+        FREE(tmp->name);
+        FREE(tmp->desc[0]);
+        FREE(tmp->desc[1]);
+        FREE(tmp->desc[2]);
+        FREE(tmp->desc[3]);
+        FREE(tmp->char_arch[0]);
+        FREE(tmp->char_arch[1]);
+        FREE(tmp->char_arch[2]);
+        FREE(tmp->char_arch[3]);
+        FREE(tmp);
     }
     first_server_char = NULL;
 }
@@ -1081,12 +1082,10 @@ void load_settings(void)
                 sscanf(adjust_string(buf), "%s %s", cmd, para);
                 if (!strcmp(cmd, "char"))
                 {
-                    _server_char   *serv_char   = malloc(sizeof(_server_char));
+                    _server_char *serv_char;
 
-                    memset(serv_char, 0, sizeof(_server_char));
-                    /* copy name */
-                    serv_char->name = malloc(strlen(para) + 1);
-                    strcpy(serv_char->name, para);
+                    MALLOC(serv_char, sizeof(_server_char));
+                    MALLOC2(serv_char->name, para);
 
                     /* get next legal line */
                     while (fgets(buf, LARGE_BUF - 1, stream) != NULL && (buf[0] == '#' || buf[0] == '\0'))
@@ -1102,8 +1101,7 @@ void load_settings(void)
                     while (fgets(buf, LARGE_BUF - 1, stream) != NULL && (buf[0] == '#' || buf[0] == '\0'))
                         ;
                     sscanf(adjust_string(buf), "%d %s %s", &serv_char->gender[0], buf1, buf2);
-                    serv_char->char_arch[0] = malloc(strlen(buf1) + 1);
-                    strcpy(serv_char->char_arch[0], buf1);
+                    MALLOC2(serv_char->char_arch[0], buf1);
 
                     if ((serv_char->face_id[0] = get_bmap_id(buf2)) != -1)
                     {
@@ -1113,8 +1111,7 @@ void load_settings(void)
                     while (fgets(buf, LARGE_BUF - 1, stream) != NULL && (buf[0] == '#' || buf[0] == '\0'))
                         ;
                     sscanf(adjust_string(buf), "%d %s %s", &serv_char->gender[1], buf1, buf2);
-                    serv_char->char_arch[1] = malloc(strlen(buf1) + 1);
-                    strcpy(serv_char->char_arch[1], buf1);
+                    MALLOC2(serv_char->char_arch[1], buf1);
 
                     if ((serv_char->face_id[1] = get_bmap_id(buf2)) != -1)
                     {
@@ -1124,8 +1121,7 @@ void load_settings(void)
                     while (fgets(buf, LARGE_BUF - 1, stream) != NULL && (buf[0] == '#' || buf[0] == '\0'))
                         ;
                     sscanf(adjust_string(buf), "%d %s %s", &serv_char->gender[2], buf1, buf2);
-                    serv_char->char_arch[2] = malloc(strlen(buf1) + 1);
-                    strcpy(serv_char->char_arch[2], buf1);
+                    MALLOC2(serv_char->char_arch[2], buf1);
 
                     if ((serv_char->face_id[2] = get_bmap_id(buf2)) != -1)
                     {
@@ -1135,8 +1131,7 @@ void load_settings(void)
                     while (fgets(buf, LARGE_BUF - 1, stream) != NULL && (buf[0] == '#' || buf[0] == '\0'))
                         ;
                     sscanf(adjust_string(buf), "%d %s %s", &serv_char->gender[3], buf1, buf2);
-                    serv_char->char_arch[3] = malloc(strlen(buf1) + 1);
-                    strcpy(serv_char->char_arch[3], buf1);
+                    MALLOC2(serv_char->char_arch[3], buf1);
 
                     if ((serv_char->face_id[3] = get_bmap_id(buf2)) != -1)
                     {
@@ -1152,20 +1147,20 @@ void load_settings(void)
 
                     while (fgets(buf, LARGE_BUF - 1, stream) != NULL && (buf[0] == '#' || buf[0] == '\0'))
                         ;
-                    serv_char->desc[0] = malloc(strlen(adjust_string(buf)) + 1);
-                    strcpy(serv_char->desc[0], buf);
+                    adjust_string(buf);
+                    MALLOC2(serv_char->desc[0], buf);
                     while (fgets(buf, LARGE_BUF - 1, stream) != NULL && (buf[0] == '#' || buf[0] == '\0'))
                         ;
-                    serv_char->desc[1] = malloc(strlen(adjust_string(buf)) + 1);
-                    strcpy(serv_char->desc[1], buf);
+                    adjust_string(buf);
+                    MALLOC2(serv_char->desc[1], buf);
                     while (fgets(buf, LARGE_BUF - 1, stream) != NULL && (buf[0] == '#' || buf[0] == '\0'))
                         ;
-                    serv_char->desc[2] = malloc(strlen(adjust_string(buf)) + 1);
-                    strcpy(serv_char->desc[2], buf);
+                    adjust_string(buf);
+                    MALLOC2(serv_char->desc[2], buf);
                     while (fgets(buf, LARGE_BUF - 1, stream) != NULL && (buf[0] == '#' || buf[0] == '\0'))
                         ;
-                    serv_char->desc[3] = malloc(strlen(adjust_string(buf)) + 1);
-                    strcpy(serv_char->desc[3], buf);
+                    adjust_string(buf);
+                    MALLOC2(serv_char->desc[3], buf);
                     serv_char->skill_selected = 0;
 
                     /* add this char template to list */
@@ -1249,11 +1244,11 @@ void read_settings(void)
         fstat(fileno(stream), &statbuf);
         i = (int)statbuf.st_size;
         srv_client_files[SRV_CLIENT_SETTINGS].len = i;
-        temp_buf = malloc(i);
+        MALLOC(temp_buf, i);
         dummy = fread(temp_buf, sizeof(char), i, stream);
         srv_client_files[SRV_CLIENT_SETTINGS].crc = crc32(1L, temp_buf, i);
         fclose(stream);
-        free(temp_buf);
+        FREE(temp_buf);
         LOG(LOG_DEBUG, " found file!(%d/%x)",
             srv_client_files[SRV_CLIENT_SETTINGS].len,
             srv_client_files[SRV_CLIENT_SETTINGS].crc);
@@ -1297,10 +1292,10 @@ void read_spells(void)
         fstat(fileno(stream), &statbuf);
         i = (int) statbuf.st_size;
         srv_client_files[SRV_CLIENT_SPELLS].len = i;
-        temp_buf = malloc(i);
+        MALLOC(temp_buf, i);
         dummy = fread(temp_buf, sizeof(char), i, stream);
         srv_client_files[SRV_CLIENT_SPELLS].crc = crc32(1L, temp_buf, i);
-        free(temp_buf);
+        FREE(temp_buf);
         rewind(stream);
 
         for (i = 0; ; i++)
@@ -1423,10 +1418,10 @@ void read_skills(void)
         fstat(fileno(stream), &statbuf);
         i = (int) statbuf.st_size;
         srv_client_files[SRV_CLIENT_SKILLS].len = i;
-        temp_buf = malloc(i);
+        MALLOC(temp_buf, i);
         dummy = fread(temp_buf, sizeof(char), i, stream);
         srv_client_files[SRV_CLIENT_SKILLS].crc = crc32(1L, temp_buf, i);
-        free(temp_buf);
+        FREE(temp_buf);
         rewind(stream);
 
         for (i = 0; ; i++)
@@ -1779,7 +1774,7 @@ static void freeQuickSlots(_quickslot *quickslots, int size)
     for (i = 0; i != size; ++i)
     {
         if (quickslots[i].shared.is_spell == FALSE)
-            free(quickslots[i].name.name);
+            FREE(quickslots[i].name.name);
     }
 }
 
@@ -1825,7 +1820,7 @@ static int readNextQuickSlots(FILE *fp, char *server, int *port, char *name, _qu
                 return 0;
             }
             r += sizeof(int);
-            quickslots[i].name.name = (char *)malloc(sizeof(char) * 128);
+            MALLOC(quickslots[i].name.name, sizeof(char) * 128);
             for (ch = 1, j = 0; ch; ++r)
             {
                 if (j == 128)
@@ -1945,7 +1940,7 @@ void load_quickslots_entrys()
                             quick_slots[i].item.tag = -1;
                         }
                     }
-                    free(quick_slots[i].name.name);
+                    FREE(quick_slots[i].name.name);
                 }
                 else
                 {
@@ -1991,7 +1986,7 @@ void save_quickslots_entrys()
             item *ob = locate_item_from_inv(cpl.ob->inv, quick_slots[n].item.tag);
 
             w += sizeof(int);
-            quick_slots[n].name.name = (char *)malloc(sizeof(char) * 128);
+            MALLOC(quick_slots[n].name.name, sizeof(char) * 128);
             if (ob != NULL)
             {
                 int i = strlen(ob->s_name) + 1;
@@ -2027,7 +2022,7 @@ void save_quickslots_entrys()
 
                 fseek(stream, 0, SEEK_END);
                 w = ftell(stream) - pos;
-                buf = (char *)malloc(w);
+                MALLOC(buf, w);
                 fseek(stream, pos, SEEK_SET);
                 dummy = fread(buf, 1, w, stream);
                 fseek(stream, pos + n, SEEK_SET);
@@ -2044,7 +2039,7 @@ void save_quickslots_entrys()
 
                     fwrite(buf, 1, w, stream);
                 }
-                free(buf);
+                FREE(buf);
                 fseek(stream, pos, SEEK_SET);
             }
             fseek(stream, -size, SEEK_CUR);

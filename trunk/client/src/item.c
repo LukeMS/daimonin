@@ -147,7 +147,9 @@ char * get_number(int i)
  */
 static item * new_item()
 {
-    item   *op  = _malloc(sizeof(item), "new_item (): new item");
+    item *op;
+
+    MALLOC(op, sizeof(item));
 
     if (!op)
         exit(0);

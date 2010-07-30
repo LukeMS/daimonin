@@ -194,8 +194,7 @@ static void book_link_page(_gui_book_page *page)
 
     if (!gui_interface_book)
     {
-        gui_interface_book = malloc(sizeof(_gui_book_struct));
-        memset(gui_interface_book,0,sizeof(_gui_book_struct));
+        MALLOC(gui_interface_book, sizeof(_gui_book_struct));
     }
     if (!gui_interface_book->start)
     {
@@ -249,13 +248,13 @@ void book_clear(void)
         for (i=0;i<BOOK_PAGE_LINES;i++)
         {
             if (page->line[i])
-                free(page->line[i]);
+                FREE(page->line[i]);
         }
-        free(page);
+        FREE(page);
         page=page_tmp;
     }
 
-    free(gui_interface_book);
+    FREE(gui_interface_book);
     gui_interface_book = NULL;
 }
 
@@ -303,7 +302,9 @@ title_repeat_jump:
             if ((book_line->mode & BOOK_LINE_TITLE && plc_logic+2 >= BOOK_PAGE_LINES)
                     || book_line->mode & BOOK_LINE_PAGE)
             {
-                _gui_book_page *page = malloc(sizeof(_gui_book_page));
+                _gui_book_page *page;
+
+                MALLOC(page, sizeof(_gui_book_page));
 
                 /* add the page & reset the current one */
                 memcpy(page, &current_book_page, sizeof(_gui_book_page));
@@ -316,7 +317,9 @@ title_repeat_jump:
             if (book_line->mode & BOOK_LINE_TITLE)
             {
                 int l_len;
-                _gui_book_line *b_line = malloc(sizeof(_gui_book_line));
+                _gui_book_line *b_line;
+
+                MALLOC(b_line, sizeof(_gui_book_line));
 
                 memcpy(b_line, book_line,sizeof(_gui_book_line));
                 b_line->mode = BOOK_LINE_TITLE;
@@ -376,7 +379,7 @@ title_repeat_jump:
 force_line_jump:
             current_book_line.line[lc]=0;
 
-            book_line = malloc(sizeof(_gui_book_line));
+            MALLOC(book_line, sizeof(_gui_book_line));
             memcpy(book_line, &current_book_line,sizeof(_gui_book_line));
             current_book_page.line[plc] = book_line;
             tmp_line = current_book_page.line[plc++];
@@ -385,7 +388,9 @@ force_line_jump:
 
             if (plc_logic >= BOOK_PAGE_LINES)
             {
-                _gui_book_page *page = malloc(sizeof(_gui_book_page));
+                _gui_book_page *page;
+
+                MALLOC(page, sizeof(_gui_book_page));
 
                 /* add the page & reset the current one */
                 memcpy(page, &current_book_page, sizeof(_gui_book_page));
@@ -472,7 +477,9 @@ force_line_jump_out:
 
     if (plc_logic)
     {
-        _gui_book_page *page = malloc(sizeof(_gui_book_page));
+        _gui_book_page *page;
+
+        MALLOC(page, sizeof(_gui_book_page));
 
         /* add the page & reset the current one */
         memcpy(page, &current_book_page, sizeof(_gui_book_page));

@@ -117,9 +117,13 @@ _Sprite * sprite_tryload_file(char *fname, uint32 flag, SDL_RWops *rwop)
     {
         bitmap = IMG_LoadPNG_RW(rwop);
     }
-    if ((sprite = malloc(sizeof(_Sprite))) == NULL)
-        return(NULL);
-    memset(sprite, 0, sizeof(_Sprite));
+
+    MALLOC(sprite, sizeof(_Sprite));
+
+    if (!sprite)
+    {
+        return NULL;
+    }
 
     sprite->status = SPRITE_STATUS_LOADED;
     sprite->type = SPRITE_TYPE_NORMAL;
@@ -955,8 +959,9 @@ struct _anim * add_anim(int type, int x, int y, int mapx, int mapy, int value)
         if (!tmp->next)
             break;
     }
+
     /* tmp == null - no anim in que, else tmp = last anim */
-    anim = (struct _anim *) malloc(sizeof(struct _anim));
+    MALLOC(anim, sizeof(struct _anim));
 
     if (!tmp)
         start_anim = anim;
@@ -1355,14 +1360,23 @@ int zoomSurfaceY(SDL_Surface * src, SDL_Surface * dst, int flipx, int flipy)
     /*
      * Allocate memory for row increments
      */
-    if ((sax = (Uint32 *) malloc(dst->w * sizeof(Uint32))) == NULL) {
-    return (-1);
+    MALLOC(sax, dst->w * sizeof(Uint32));
+
+    if (!sax)
+    {
+        return -1;
     }
-    if ((say = (Uint32 *) malloc(dst->h * sizeof(Uint32))) == NULL) {
-    if (sax != NULL) {
-        free(sax);
-    }
-    return (-1);
+
+    MALLOC(say, dst->h * sizeof(Uint32));
+
+    if (!say)
+    {
+        if (sax)
+        {
+            FREE(sax);
+        }
+
+        return -1;
     }
 
     /*
@@ -1441,8 +1455,8 @@ int zoomSurfaceY(SDL_Surface * src, SDL_Surface * dst, int flipx, int flipy)
     /*
      * Remove temp arrays
      */
-    free(sax);
-    free(say);
+    FREE(sax);
+    FREE(say);
 
     return (0);
 }
@@ -1482,12 +1496,23 @@ int zoomSurfaceRGBA(SDL_Surface * src, SDL_Surface * dst, int flipx, int flipy, 
     /*
      * Allocate memory for row increments
      */
-    if ((sax = (int *) malloc((dst->w + 1) * sizeof(Uint32))) == NULL) {
-    return (-1);
+    MALLOC(sax, (dst->w + 1) * sizeof(Uint32));
+
+    if (!sax)
+    {
+        return -1;
     }
-    if ((say = (int *) malloc((dst->h + 1) * sizeof(Uint32))) == NULL) {
-    free(sax);
-    return (-1);
+
+    MALLOC(say, (dst->h + 1) * sizeof(Uint32));
+
+    if (!say)
+    {
+        if (sax)
+        {
+            FREE(sax);
+        }
+
+        return -1;
     }
 
     /*
@@ -1633,8 +1658,8 @@ int zoomSurfaceRGBA(SDL_Surface * src, SDL_Surface * dst, int flipx, int flipy, 
     /*
      * Remove temp arrays
      */
-    free(sax);
-    free(say);
+    FREE(sax);
+    FREE(say);
 
     return (0);
 }

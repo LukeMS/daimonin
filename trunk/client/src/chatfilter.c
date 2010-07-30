@@ -44,8 +44,8 @@ static void chatfilter_entry_add(char *word)
 {
     struct chatfilter_list *node;
 
-    node = (struct chatfilter_list *) malloc(sizeof(struct chatfilter_list));
-    strcpy(node->word, word);
+    MALLOC(node, sizeof(struct chatfilter_list));
+    sprintf(node->word, "%s", word);
     node->next = chatfilter_list_start;
     chatfilter_list_start = node;
 }
@@ -64,7 +64,7 @@ static void chatfilter_entry_remove(char *word)
             else
                 chatfilter_list_start = node->next;
 
-            free(node);
+            FREE(node);
             return;
 
         }
@@ -96,7 +96,7 @@ void chatfilter_list_clear(void)
     for (node = chatfilter_list_start;node;node = tmp)
     {
         tmp = node->next;
-        free(node);
+        FREE(node);
     }
     chatfilter_list_start=NULL;
 }

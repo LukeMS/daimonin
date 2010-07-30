@@ -269,7 +269,7 @@ int attempt_fullscreen_toggle(SDL_Surface **surface, uint32 *flags)
     if ((!(tmpflags & SDL_OPENGL)) && (!(tmpflags & SDL_OPENGLBLIT)))
     {
         framesize = (w * h) * ((*surface)->format->BytesPerPixel);
-        pixels = malloc(framesize);
+        MALLOC(pixels, framesize);
         if (pixels == NULL)
             return(0);
         memcpy(pixels, (*surface)->pixels, framesize);
@@ -279,10 +279,10 @@ int attempt_fullscreen_toggle(SDL_Surface **surface, uint32 *flags)
     if ((*surface)->format->palette != NULL)
     {
         ncolors = (*surface)->format->palette->ncolors;
-        palette = malloc(ncolors * sizeof(SDL_Color));
+        MALLOC(palette, ncolors * sizeof(SDL_Color));
         if (palette == NULL)
         {
-            free(pixels);
+            FREE(pixels);
             return(0);
         } /* if */
         memcpy(palette, (*surface)->format->palette->colors, ncolors * sizeof(SDL_Color));
@@ -307,10 +307,10 @@ int attempt_fullscreen_toggle(SDL_Surface **surface, uint32 *flags)
         if (*surface == NULL)  /* completely screwed. */
         {
             if (pixels != NULL)
-                free(pixels);
+                FREE(pixels);
 #ifdef BROKEN
             if (palette != NULL)
-                free(palette);
+                FREE(palette);
 #endif
             return(0);
         } /* if */
@@ -321,7 +321,7 @@ int attempt_fullscreen_toggle(SDL_Surface **surface, uint32 *flags)
     if (pixels != NULL)
     {
         memcpy((*surface)->pixels, pixels, framesize);
-        free(pixels);
+        FREE(pixels);
     } /* if */
 
 #ifdef BROKEN
@@ -329,7 +329,7 @@ int attempt_fullscreen_toggle(SDL_Surface **surface, uint32 *flags)
     {
         /* !!! FIXME : No idea if that flags param is right. */
         SDL_SetPalette(*surface, SDL_LOGPAL, palette, 0, ncolors);
-        free(palette);
+        FREE(palette);
     } /* if */
 #endif
 
@@ -502,9 +502,8 @@ int parse_metaserver_data(char *info)
 
     // Allocate entries and tag array
     size = server_count * sizeof(struct entry);
-    entries = _malloc(size , "parse_metaserver_data: entries");
-    memset(entries, 0, size);
-    tag = _malloc(server_count * sizeof(int), "parse_metaserver_data: tag");
+    MALLOC(entries, size);
+    MALLOC(tag, server_count * sizeof(int));
 
     // Initialize tag array
     for (i = 0; i < server_count; i++)
@@ -557,8 +556,8 @@ int parse_metaserver_data(char *info)
     }
 
     /* Free memory */
-    free(entries);
-    free(tag);
+    FREE(entries);
+    FREE(tag);
 
     return (server_count > 0) ? TRUE : FALSE;
 }

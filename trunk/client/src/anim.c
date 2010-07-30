@@ -77,7 +77,7 @@ void new_anim_remove(anim_list *al)
 
         ptr->next=al->next;
     }
-    free(al);
+    FREE(al);
     return;
 }
 
@@ -96,7 +96,8 @@ anim_list *new_anim_add(uint16 anim, uint8 sequence, uint8 dir, uint8 speed)
         LOG(LOG_DEBUG,"na_add: anim-params out of bound\n");
         return NULL;
     }
-	al = (struct anim_list*) malloc(sizeof(struct anim_list));
+
+    MALLOC(al, sizeof(anim_list));
 
     if (!al)
     {
@@ -104,7 +105,6 @@ anim_list *new_anim_add(uint16 anim, uint8 sequence, uint8 dir, uint8 speed)
         return NULL;
     }
 
-    memset(al, 0, sizeof(struct anim_list));
     al->next = AnimListStart;
     AnimListStart = al;
     al->speed = speed;
@@ -563,17 +563,17 @@ int load_anim_tmp(void)
                     if (!(animation[i].aSeq[j]->dirs[k].flags & ASEQ_MAPPED))
                     {
                         if (animation[i].aSeq[j]->dirs[k].faces)
-                            free(animation[i].aSeq[j]->dirs[k].faces);
+                            FREE(animation[i].aSeq[j]->dirs[k].faces);
 
                         if (animation[i].aSeq[j]->dirs[k].delays)
-                            free(animation[i].aSeq[j]->dirs[k].delays);
+                            FREE(animation[i].aSeq[j]->dirs[k].delays);
                     }
                 }
-                free(animation[i].aSeq[j]);
+                FREE(animation[i].aSeq[j]);
             }
         }
         if (animcmd[i].anim_cmd)
-            free(animcmd[i].anim_cmd);
+            FREE(animcmd[i].anim_cmd);
     }
     memset(animation, 0, sizeof(animation));
     memset(animcmd, 0, sizeof(animcmd));
@@ -606,7 +606,7 @@ int load_anim_tmp(void)
     }
     anim_cmd[i++] =0xFF;
 
-    animcmd[count].anim_cmd = malloc(i);
+    MALLOC(animcmd[count].anim_cmd, i);
     memcpy(animcmd[count].anim_cmd, anim_cmd, i);
     animcmd[count].len = i;
     /* end of dummy animation #0 */
@@ -628,10 +628,9 @@ int load_anim_tmp(void)
     {
         anim_len = temp1[0] << 8;
         anim_len |= temp1[1];
-
         animcmd[count].len = anim_len;
+        MALLOC(animcmd[count].anim_cmd, anim_len);
 
-        animcmd[count].anim_cmd = malloc(anim_len);
         if (!animcmd[count].anim_cmd)
         {
             LOG(LOG_ERROR, "load_anim_tmp: out of memory allocating %d bytes for anim: %d\n",anim_len, count);
@@ -927,13 +926,12 @@ void NewAnimCmd(unsigned char *data, int len)
             LOG(LOG_DEBUG, "NewAnimCmd: sequence invalid: %d\n", sequence);
             return;
         }
-        as = (AnimSeq *) malloc(sizeof(AnimSeq));
+        MALLOC(as, sizeof(AnimSeq));
         if (!as)
         {
             LOG(LOG_DEBUG, "NewAnimCmd: out of memory allocating AnimSeq: %d (%d)\n",sequence, animnum);
             return;
         }
-        memset(as, 0, sizeof(AnimSeq));
         animation[animnum].aSeq[sequence] = as;
         /* one byte flags */
         as->flags = *(data + pos++);
@@ -989,9 +987,8 @@ void NewAnimCmd(unsigned char *data, int len)
             as->dirs[dir].flags = 0;
             /* one byte frame count (255 frames for one sequence should be enough... */
             as->dirs[dir].frames = *(data + pos++);
-
-            as->dirs[dir].faces = _malloc(sizeof(uint16) * as->dirs[dir].frames, "NewAnimCmd(): face buf");
-            as->dirs[dir].delays = _malloc(sizeof(uint8) * as->dirs[dir].frames, "NewAnimCmd(): delay buf");
+            MALLOC(as->dirs[dir].faces, sizeof(uint16) * as->dirs[dir].frames);
+            MALLOC(as->dirs[dir].delays, sizeof(uint8) * as->dirs[dir].frames);
 
             if (!as->dirs[dir].faces || !as->dirs[dir].delays)
             {

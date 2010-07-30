@@ -1003,9 +1003,7 @@ void finish_face_cmd(int pnum, uint32 checksum, char *face)
 
     /* first, safe face data: name & checksum */
     sprintf(buf, "%s.png", face);
-    FaceList[pnum].name = (char *) _malloc(strlen(buf) + 1, "finish_face_cmd(): FaceList name");
-    strcpy(FaceList[pnum].name, buf);
-
+    MALLOC2(FaceList[pnum].name, buf);
     FaceList[pnum].checksum = checksum;
 
     /* Check private cache first */
@@ -1014,7 +1012,7 @@ void finish_face_cmd(int pnum, uint32 checksum, char *face)
     {
         fstat(fileno(stream), &statbuf);
         len = (int) statbuf.st_size;
-        data = malloc(len);
+        MALLOC(data, len);
         len = fread(data, 1, len, stream);
         fclose(stream);
         newsum = 0;
@@ -1025,7 +1023,7 @@ void finish_face_cmd(int pnum, uint32 checksum, char *face)
         else /* lets go for the checksum check*/
             newsum = crc32(1L, data, len);
 
-        free(data);
+        FREE(data);
 
         if (newsum == checksum)
         {
@@ -1063,7 +1061,7 @@ static int load_picture_from_pack(int num)
 
     lseek(fileno(stream), bmaptype_table[num].pos, SEEK_SET);
 
-    pbuf = malloc(bmaptype_table[num].len);
+    MALLOC(pbuf, bmaptype_table[num].len);
     dummy = fread(pbuf, bmaptype_table[num].len, 1, stream);
     rwop = SDL_RWFromMem(pbuf, bmaptype_table[num].len);
     FaceList[num].sprite = sprite_tryload_file(NULL, 0, rwop);
@@ -1072,7 +1070,7 @@ static int load_picture_from_pack(int num)
         face_flag_extension(num, FaceList[num].name);
 
     fclose(stream);
-    free(pbuf);
+    FREE(pbuf);
 
     return 0;
 }
@@ -1110,7 +1108,7 @@ int request_face(int pnum)
              */
         fstat(fileno(stream), &statbuf);
         len = (int) statbuf.st_size;
-        data = malloc(len);
+        MALLOC(data, len);
         len = fread(data, 1, len, stream);
         fclose(stream);
         if (len > 0)
@@ -1121,15 +1119,14 @@ int request_face(int pnum)
             {
                 face_flag_extension(num, buf);
                 sprintf(buf, "%s%s.png", GetGfxUserDirectory(), bmaptype_table[num].name);
-                FaceList[num].name = (char *) malloc(strlen(buf) + 1);
-                strcpy(FaceList[num].name, buf);
+                MALLOC2(FaceList[num].name, buf);
                 FaceList[num].checksum = crc32(1L, data, len);
-                free(data);
+                FREE(data);
                 return 1;
             }
         }
         /* if we are here something was wrong with the gfx_user file.*/
-        free(data);
+        FREE(data);
     }
 
     /* ok - at this point we hook in our client stored png lib.
@@ -1138,8 +1135,7 @@ int request_face(int pnum)
     if (bmaptype_table[num].pos != -1) /* best case - we have it in daimonin.p0! */
     {
         sprintf(buf, "%s.png", bmaptype_table[num].name);
-        FaceList[num].name = (char *) _malloc(strlen(buf) + 1, "request_face(): FaceList name");
-        strcpy(FaceList[num].name, buf);
+        MALLOC2(FaceList[num].name, buf);
         FaceList[num].checksum = bmaptype_table[num].crc;
         load_picture_from_pack(num);
     }
