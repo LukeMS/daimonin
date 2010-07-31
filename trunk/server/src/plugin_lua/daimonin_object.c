@@ -3904,24 +3904,57 @@ static int GameObject_GetPets(lua_State *L)
 /* Lua    : object:GetGmasterMode()                                          */
 /* Info   : Only works for player objects. Returns one of the                */
 /*          Game.GMASTER_MODE_* constants:                                   */
-/*              Game.GMASTER_MODE_NO    if the object is not MW/Vol/GM/MM\SA */
-/*              Game.GMASTER_MODE_MW    if the object is MW                  */
-/*              Game.GMASTER_MODE_VOL   if the object is VOL                 */
-/*              Game.GMASTER_MODE_GM    if the object is GM                  */
-/*              Game.GMASTER_MODE_MM    if the object is MM                  */
+/*              Game.GMASTER_MODE_NO    if the object is not SA/MM/MW/GM/VOL */
 /*              Game.GMASTER_MODE_SA    if the object is SA                  */
+/*              Game.GMASTER_MODE_MM    if the object is MM                  */
+/*              Game.GMASTER_MODE_MW    if the object is MW                  */
+/*              Game.GMASTER_MODE_GM    if the object is GM                  */
+/*              Game.GMASTER_MODE_VOL   if the object is VOL                 */
 /* Status : Tested/Stable                                                    */
 /*****************************************************************************/
 static int GameObject_GetGmasterMode(lua_State *L)
 {
     lua_object *self;
+    uint8       mode_id = GMASTER_MODE_NO;
 
     get_lua_args(L, "O", &self);
 
     if (WHO->type != PLAYER || CONTR(WHO) == NULL)
         luaL_error(L, "GetGmasterMode() can only be called on a legal player object.");
 
-    lua_pushnumber(L, CONTR(WHO)->gmaster_mode);
+    /* FIXME: Problem: gmaster_mode is a bitmask but Lua isn't bitwise.
+     * Temp solution: Until it is (we shouldn't use external addons to the
+     * language), we should approximate the return value from the object's
+     * gmaster_mode. The logic below means GM/VOL status takes preference over
+     * MM/MW status!
+     * -- Smacky 20100731 */
+    if ((CONTR(WHO)->gmaster_mode & GMASTER_MODE_SA))
+    {
+        mode_id = GMASTER_MODE_SA;
+    }
+    else
+    {
+        if (((CONTR(WHO)->gmaster_mode & GMASTER_MODE_MM)))
+        {
+            mode_id = GMASTER_MODE_MM;
+        }
+        else if (((CONTR(WHO)->gmaster_mode & GMASTER_MODE_MW)))
+        {
+            mode_id = GMASTER_MODE_MW;
+        }
+
+        if (((CONTR(WHO)->gmaster_mode & GMASTER_MODE_GM)))
+        {
+            mode_id = GMASTER_MODE_GM;
+        }
+        else if (((CONTR(WHO)->gmaster_mode & GMASTER_MODE_VOL)))
+        {
+            mode_id = GMASTER_MODE_VOL;
+        }
+    }
+
+    lua_pushnumber(L, mode_id);
+
     return 1;
 }
 
