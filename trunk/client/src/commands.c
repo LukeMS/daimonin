@@ -638,7 +638,7 @@ void DrawInfoCmd2(char *data, int len)
     {
         char *vimbuf;
 
-        MALLOC2(vimbuf, buf);
+        MALLOC_STRING(vimbuf, buf);
 
         if (vimbuf)
         {
@@ -665,7 +665,7 @@ void DrawInfoCmd2(char *data, int len)
                         continue;
                     }
 
-                    MALLOC2(vim[i].msg, p);
+                    MALLOC_STRING(vim[i].msg, p);
 
                     if (vim[i].msg)
                     {

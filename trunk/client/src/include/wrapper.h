@@ -64,14 +64,14 @@ else \
 
 /* mallocs _P_ to size strlen(_S_) + 1, logging OOM or initialising to
  * sprintf(_P_, "%s", _S_). */
-#undef MALLOC2
+#undef MALLOC_STRING
 #if 0 // Seems Visual C++ cannot handle this style.
-#define MALLOC2(_P_, _S_) \
+#define MALLOC_STRING(_P_, _S_) \
 ((!((_P_) = malloc(strlen((_S_)) + 1))) ? \
 LOG(LOG_DEBUG, "%s %d: Out of memory!\n", __FILE__, __LINE__) : \
 sprintf((_P_), "%s", (_S_)))
 #else
-#define MALLOC2(_P_, _S_) \
+#define MALLOC_STRING(_P_, _S_) \
 if (!((_P_) = malloc(strlen((_S_)) + 1))) \
 { \
     LOG(LOG_DEBUG, "%s %d: Out of memory!\n", __FILE__, __LINE__); \

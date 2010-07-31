@@ -65,7 +65,7 @@ char *str_dup(const char *str)
 {
     char *ret;
 
-    MALLOC2(ret, str);
+    MALLOC_STRING(ret, str);
 
     return ret;
 }

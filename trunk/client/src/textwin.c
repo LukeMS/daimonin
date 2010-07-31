@@ -267,7 +267,7 @@ void textwin_showstring(int flags, char *format, ...)
 
     /* Create a modifiable version of buf */
     /* FIXME: Basically unnecessary. */
-    MALLOC2(buf2, buf);
+    MALLOC_STRING(buf2, buf);
 
     /*
      * first: we set all white spaces (char<32) to 32 to remove really all odd stuff.

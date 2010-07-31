@@ -1379,10 +1379,10 @@ void add_metaserver_data(char *name, char *server, int port, int player, char *v
     end_server = node;
     node->player = player;
     node->port = port;
-    MALLOC2(node->name, name);
-    MALLOC2(node->nameip, server);
-    MALLOC2(node->version, ver);
-    MALLOC2(node->desc1, desc);
+    MALLOC_STRING(node->name, name);
+    MALLOC_STRING(node->nameip, server);
+    MALLOC_STRING(node->version, ver);
+    MALLOC_STRING(node->desc1, desc);
 }
 
 static void count_meta_server(void)

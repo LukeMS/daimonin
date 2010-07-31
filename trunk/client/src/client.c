@@ -1003,7 +1003,7 @@ void finish_face_cmd(int pnum, uint32 checksum, char *face)
 
     /* first, safe face data: name & checksum */
     sprintf(buf, "%s.png", face);
-    MALLOC2(FaceList[pnum].name, buf);
+    MALLOC_STRING(FaceList[pnum].name, buf);
     FaceList[pnum].checksum = checksum;
 
     /* Check private cache first */
@@ -1119,7 +1119,7 @@ int request_face(int pnum)
             {
                 face_flag_extension(num, buf);
                 sprintf(buf, "%s%s.png", GetGfxUserDirectory(), bmaptype_table[num].name);
-                MALLOC2(FaceList[num].name, buf);
+                MALLOC_STRING(FaceList[num].name, buf);
                 FaceList[num].checksum = crc32(1L, data, len);
                 FREE(data);
                 return 1;
@@ -1135,7 +1135,7 @@ int request_face(int pnum)
     if (bmaptype_table[num].pos != -1) /* best case - we have it in daimonin.p0! */
     {
         sprintf(buf, "%s.png", bmaptype_table[num].name);
-        MALLOC2(FaceList[num].name, buf);
+        MALLOC_STRING(FaceList[num].name, buf);
         FaceList[num].checksum = bmaptype_table[num].crc;
         load_picture_from_pack(num);
     }
