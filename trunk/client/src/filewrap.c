@@ -97,7 +97,8 @@ static int mkdir_recurse(const char *path)
 {
     char *copy, *p;
 
-    p = copy = strdup(path);
+    MALLOC2(copy, path);
+    p = copy;
 
     while(p){
         p = strchr (p + 1, CSLASH);
