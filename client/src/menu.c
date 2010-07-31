@@ -740,7 +740,7 @@ static void load_bmaps_p0(void)
         sscanf(buf, "%d %d %x %d %s", &num, &pos, &crc, &len, name);
 
         MALLOC(at, sizeof(_bmaptype));
-        MALLOC2(at->name, name);
+        MALLOC_STRING(at->name, name);
         at->crc = crc;
         at->num = num;
         at->len = len;
@@ -873,7 +873,7 @@ static int load_bmap_tmp(void)
         bmaptype_table[i].crc = crc;
         bmaptype_table[i].len = len;
         bmaptype_table[i].pos = pos;
-        MALLOC2(bmaptype_table[i].name, name);
+        MALLOC_STRING(bmaptype_table[i].name, name);
         i++;
     }
     bmaptype_table_size = i;
@@ -1085,7 +1085,7 @@ void load_settings(void)
                     _server_char *serv_char;
 
                     MALLOC(serv_char, sizeof(_server_char));
-                    MALLOC2(serv_char->name, para);
+                    MALLOC_STRING(serv_char->name, para);
 
                     /* get next legal line */
                     while (fgets(buf, LARGE_BUF - 1, stream) != NULL && (buf[0] == '#' || buf[0] == '\0'))
@@ -1101,7 +1101,7 @@ void load_settings(void)
                     while (fgets(buf, LARGE_BUF - 1, stream) != NULL && (buf[0] == '#' || buf[0] == '\0'))
                         ;
                     sscanf(adjust_string(buf), "%d %s %s", &serv_char->gender[0], buf1, buf2);
-                    MALLOC2(serv_char->char_arch[0], buf1);
+                    MALLOC_STRING(serv_char->char_arch[0], buf1);
 
                     if ((serv_char->face_id[0] = get_bmap_id(buf2)) != -1)
                     {
@@ -1111,7 +1111,7 @@ void load_settings(void)
                     while (fgets(buf, LARGE_BUF - 1, stream) != NULL && (buf[0] == '#' || buf[0] == '\0'))
                         ;
                     sscanf(adjust_string(buf), "%d %s %s", &serv_char->gender[1], buf1, buf2);
-                    MALLOC2(serv_char->char_arch[1], buf1);
+                    MALLOC_STRING(serv_char->char_arch[1], buf1);
 
                     if ((serv_char->face_id[1] = get_bmap_id(buf2)) != -1)
                     {
@@ -1121,7 +1121,7 @@ void load_settings(void)
                     while (fgets(buf, LARGE_BUF - 1, stream) != NULL && (buf[0] == '#' || buf[0] == '\0'))
                         ;
                     sscanf(adjust_string(buf), "%d %s %s", &serv_char->gender[2], buf1, buf2);
-                    MALLOC2(serv_char->char_arch[2], buf1);
+                    MALLOC_STRING(serv_char->char_arch[2], buf1);
 
                     if ((serv_char->face_id[2] = get_bmap_id(buf2)) != -1)
                     {
@@ -1131,7 +1131,7 @@ void load_settings(void)
                     while (fgets(buf, LARGE_BUF - 1, stream) != NULL && (buf[0] == '#' || buf[0] == '\0'))
                         ;
                     sscanf(adjust_string(buf), "%d %s %s", &serv_char->gender[3], buf1, buf2);
-                    MALLOC2(serv_char->char_arch[3], buf1);
+                    MALLOC_STRING(serv_char->char_arch[3], buf1);
 
                     if ((serv_char->face_id[3] = get_bmap_id(buf2)) != -1)
                     {
@@ -1148,19 +1148,19 @@ void load_settings(void)
                     while (fgets(buf, LARGE_BUF - 1, stream) != NULL && (buf[0] == '#' || buf[0] == '\0'))
                         ;
                     adjust_string(buf);
-                    MALLOC2(serv_char->desc[0], buf);
+                    MALLOC_STRING(serv_char->desc[0], buf);
                     while (fgets(buf, LARGE_BUF - 1, stream) != NULL && (buf[0] == '#' || buf[0] == '\0'))
                         ;
                     adjust_string(buf);
-                    MALLOC2(serv_char->desc[1], buf);
+                    MALLOC_STRING(serv_char->desc[1], buf);
                     while (fgets(buf, LARGE_BUF - 1, stream) != NULL && (buf[0] == '#' || buf[0] == '\0'))
                         ;
                     adjust_string(buf);
-                    MALLOC2(serv_char->desc[2], buf);
+                    MALLOC_STRING(serv_char->desc[2], buf);
                     while (fgets(buf, LARGE_BUF - 1, stream) != NULL && (buf[0] == '#' || buf[0] == '\0'))
                         ;
                     adjust_string(buf);
-                    MALLOC2(serv_char->desc[3], buf);
+                    MALLOC_STRING(serv_char->desc[3], buf);
                     serv_char->skill_selected = 0;
 
                     /* add this char template to list */

@@ -417,7 +417,7 @@ _gui_npc *gui_npc_create(int mode, char *data, int len, int pos)
         if (!gui_npc->head->title &&
             cpl.target_name)
         {
-            MALLOC2(gui_npc->head->title, cpl.target_name);
+            MALLOC_STRING(gui_npc->head->title, cpl.target_name);
         }
     }
 
@@ -607,7 +607,7 @@ static uint8 ParseTag(_gui_npc_element *element, char *data, int *pos)
                     return 0;
                 }
 
-                MALLOC2(element->body.text, cp);
+                MALLOC_STRING(element->body.text, cp);
 
                 break;
 
@@ -625,7 +625,7 @@ static uint8 ParseTag(_gui_npc_element *element, char *data, int *pos)
                     return 0;
                 }
 
-                MALLOC2(element->command, StripCodes(buf, cp));
+                MALLOC_STRING(element->command, StripCodes(buf, cp));
 
                 break;
 
@@ -645,7 +645,7 @@ static uint8 ParseTag(_gui_npc_element *element, char *data, int *pos)
                     return 0;
                 }
 
-                MALLOC2(element->image.name, cp);
+                MALLOC_STRING(element->image.name, cp);
 
                 break;
 
@@ -710,11 +710,11 @@ static uint8 ParseTag(_gui_npc_element *element, char *data, int *pos)
                 {
                     sprintf(buf, "`");
                     sprintf(strchr(StripCodes(buf + 1, cp), '\0'), "`");
-                    MALLOC2(element->title, buf);
+                    MALLOC_STRING(element->title, buf);
                 }
                 else
                 {
-                    MALLOC2(element->title, StripCodes(buf, cp));
+                    MALLOC_STRING(element->title, StripCodes(buf, cp));
                 }
 
                 break;
@@ -986,7 +986,7 @@ static void FormatBody(_font *font, uint16 width, uint8 lines, _gui_npc_element 
                                 this->box.h = font->line_height;
                                 gui_npc->hypertext->last = this;
                                 kbuf[kc] = '\0';
-                                MALLOC2(this->keyword, kbuf);
+                                MALLOC_STRING(this->keyword, kbuf);
                             }
 
                             break;
@@ -1103,7 +1103,7 @@ static void FormatBody(_font *font, uint16 width, uint8 lines, _gui_npc_element 
 
         if (endline)
         {
-            MALLOC2(element->body.line[element->body.line_count], buf);
+            MALLOC_STRING(element->body.line[element->body.line_count], buf);
 
             if (++element->body.line_count == lines ||
                 !element->body.text[bc])
@@ -1148,8 +1148,8 @@ static void FineTuneButtons(void)
             if (!gui_npc->lhsbutton->command &&
                 !gui_npc->lhsbutton->title)
             {
-                MALLOC2(gui_npc->lhsbutton->command, "hello");
-                MALLOC2(gui_npc->lhsbutton->title, "Hello");
+                MALLOC_STRING(gui_npc->lhsbutton->command, "hello");
+                MALLOC_STRING(gui_npc->lhsbutton->title, "Hello");
             }
 
             /* If the LHS button has no title, copy the command as title. */
@@ -1158,11 +1158,11 @@ static void FineTuneButtons(void)
             {
                 if (*gui_npc->lhsbutton->command == '#')
                 {
-                    MALLOC2(gui_npc->lhsbutton->title, gui_npc->lhsbutton->command + 1);
+                    MALLOC_STRING(gui_npc->lhsbutton->title, gui_npc->lhsbutton->command + 1);
                 }
                 else
                 {
-                    MALLOC2(gui_npc->lhsbutton->title, gui_npc->lhsbutton->command);
+                    MALLOC_STRING(gui_npc->lhsbutton->title, gui_npc->lhsbutton->command);
                 }
             }
 
@@ -1195,11 +1195,11 @@ static void FineTuneButtons(void)
                     (*gui_npc->lhsbutton->title == 'G' ||
                      *gui_npc->lhsbutton->title == 'g'))
                 {
-                    MALLOC2(gui_npc->rhsbutton->title, "Bye");
+                    MALLOC_STRING(gui_npc->rhsbutton->title, "Bye");
                 }
                 else
                 {
-                    MALLOC2(gui_npc->rhsbutton->title, "Goodbye");
+                    MALLOC_STRING(gui_npc->rhsbutton->title, "Goodbye");
                 }
             }
 
@@ -1209,11 +1209,11 @@ static void FineTuneButtons(void)
             {
                 if (*gui_npc->rhsbutton->command == '#')
                 {
-                    MALLOC2(gui_npc->rhsbutton->title, gui_npc->rhsbutton->command + 1);
+                    MALLOC_STRING(gui_npc->rhsbutton->title, gui_npc->rhsbutton->command + 1);
                 }
                 else
                 {
-                    MALLOC2(gui_npc->rhsbutton->title, gui_npc->rhsbutton->command);
+                    MALLOC_STRING(gui_npc->rhsbutton->title, gui_npc->rhsbutton->command);
                 }
             }
 
@@ -1230,7 +1230,7 @@ static void FineTuneButtons(void)
         {
             *gui_npc->lhsbutton->title = toupper(*gui_npc->lhsbutton->title);
 
-            /* use MALLOC and sprintf rather than MALLOC2 here because we
+            /* use MALLOC and sprintf rather than MALLOC_STRING here because we
              * insert extra characters. */
             MALLOC(gui_npc->lhsbutton->title2,
                    strlen(gui_npc->lhsbutton->title) + 2 + 1);
@@ -1244,7 +1244,7 @@ static void FineTuneButtons(void)
         }
         else
         {
-            MALLOC2(gui_npc->lhsbutton->title2, gui_npc->lhsbutton->title);
+            MALLOC_STRING(gui_npc->lhsbutton->title2, gui_npc->lhsbutton->title);
         }
     }
 
@@ -1255,7 +1255,7 @@ static void FineTuneButtons(void)
         {
             *gui_npc->rhsbutton->title = toupper(*gui_npc->rhsbutton->title);
 
-            /* use MALLOC and sprintf rather than MALLOC2 here because we
+            /* use MALLOC and sprintf rather than MALLOC_STRING here because we
              * insert extra characters. */
             MALLOC(gui_npc->rhsbutton->title2,
                    strlen(gui_npc->rhsbutton->title) + 2 + 1);
@@ -1269,7 +1269,7 @@ static void FineTuneButtons(void)
         }
         else
         {
-            MALLOC2(gui_npc->rhsbutton->title2, gui_npc->rhsbutton->title);
+            MALLOC_STRING(gui_npc->rhsbutton->title2, gui_npc->rhsbutton->title);
         }
     }
 }
