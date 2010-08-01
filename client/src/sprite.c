@@ -485,9 +485,10 @@ void string_blt(SDL_Surface *surf, _font *font, char *text, int x, int y, uint8 
                 continue;
 
             case ECC_HYPERTEXT:
-                /* Only allow in NPC GUI and book GUI. */
-                if (cpl.menustatus == MENU_NPC ||
-                    cpl.menustatus == MENU_BOOK)
+                /* Only allow in NPC GUI (TODO: and book GUI). */
+                if (gui_npc &&
+                    (cpl.menustatus == MENU_NPC ||
+                     cpl.menustatus == MENU_BOOK))
                 {
                     hyper = !hyper;
      
