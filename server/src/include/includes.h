@@ -102,7 +102,6 @@
 
 #include "config.h"
 #include "define.h"
-#include "version.h"
 #include "logger.h"
 #include "ipcompare.h"
 

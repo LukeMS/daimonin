@@ -64,8 +64,6 @@
 #define snprintf _snprintf
 #endif
 
-#include "version.h"
-
 /* include all needed autoconfig.h defines */
 #define HAVE_STRICMP
 #define HAVE_STRNICMP

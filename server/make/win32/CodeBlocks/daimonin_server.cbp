@@ -234,7 +234,6 @@
 		<Unit filename="..\..\..\src\include\testproto.h" />
 		<Unit filename="..\..\..\src\include\timeutils.h" />
 		<Unit filename="..\..\..\src\include\treasure.h" />
-		<Unit filename="..\..\..\src\include\version.h" />
 		<Unit filename="..\..\..\src\include\win32.h" />
 		<Unit filename="..\..\..\src\server\aiconfig.c">
 			<Option compilerVar="CC" />

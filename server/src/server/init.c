@@ -572,8 +572,9 @@ static void set_logfile(char *val)
 
 static void call_version()
 {
-    printf("This is Daimonin v%s (protocol version %d)\n\n",
-           VERSION, PROTOCOL_VERSION);
+    printf("This is Daimonin v%d.%d.%d (protocol version %d)\n\n",
+           DAI_VERSION_RELEASE, DAI_VERSION_MAJOR, DAI_VERSION_MINOR,
+           PROTOCOL_VERSION);
     exit(0);
 }
 
@@ -1434,7 +1435,8 @@ void init_library()
     init_mempools();   /* Inits the mempool manager and the object system */
     init_vars();
     init_block();
-    LOG(llevInfo, "Daimonin Server, v%s\n", VERSION);
+    LOG(llevInfo, "Daimonin Server, v%d.%d.%d\n",
+        DAI_VERSION_RELEASE, DAI_VERSION_MAJOR, DAI_VERSION_MINOR);
     LOG(llevInfo, "Copyright (C) 2002-2009 Michael Toennies.\n");
     ReadBmapNames();
     init_anim();        /* Must be after we read in the bitmaps */

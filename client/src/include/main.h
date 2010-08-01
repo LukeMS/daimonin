@@ -479,7 +479,6 @@ extern int          music_global_fade; /* global flag for polling music fade out
 extern _game_status GameStatus;     /* THE game status 2*/
 extern int          GameStatusSelect; /* select next game status: create or login for exmaple */
 extern int          ShowLocalServer;        /* show local server in the meta list */
-extern char         GlobalClientVersion[64]; /* the client version */
 extern int          MapStatusX;             /* map x,y len */
 extern int          MapStatusY;
 extern int          SoundStatus;            /* SoundStatus 0=no 1= yes */

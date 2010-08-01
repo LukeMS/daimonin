@@ -25,6 +25,9 @@
 #define __PROTOCOL_H
 
 #define PROTOCOL_VERSION 991031
+#define DAI_VERSION_RELEASE 0
+#define DAI_VERSION_MAJOR 10
+#define DAI_VERSION_MINOR 0
 
 /* min & max length of player & account names & password
 * important - for a login server this must snyced up with it too
