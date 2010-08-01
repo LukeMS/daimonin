@@ -1188,9 +1188,6 @@
 				RelativePath="..\..\..\src\include\treasure.h">
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\version.h">
-			</File>
-			<File
 				RelativePath="..\..\..\src\include\win32.h">
 			</File>
 			<File

@@ -29,8 +29,6 @@
 #include <netinet/in.h>
 #include <netdb.h>
 #include <arpa/inet.h>
-
-#include <version.h>
 #endif /* end win32 */
 
 static int                  metafd  = -1;
@@ -128,8 +126,10 @@ void    metaserver_update   ()
     if (metafd == -1)
         return; /* No valid connection */
 
-    sprintf(data, "%s|%s|%d|%s|%d|%s", settings.meta_name, settings.meta_host, settings.csport, 
-		VERSION, player_active_meta, settings.meta_comment);
+    sprintf(data, "%s|%s|%d|%d.%d.%d|%d|%s",
+            settings.meta_name, settings.meta_host, settings.csport,
+            DAI_VERSION_RELEASE, DAI_VERSION_MAJOR, DAI_VERSION_MINOR,
+            player_active_meta, settings.meta_comment);
     player_active_meta = player_active;
     if (sendto(metafd, data, strlen(data), 0, (struct sockaddr *) &sock, sizeof(sock)) < 0)
         LOG(llevDebug, "metaserver_update: sendto failed, err = %d (%s)\n", errno, strerror_local(errno));

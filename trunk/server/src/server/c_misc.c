@@ -821,8 +821,8 @@ int command_printlos(object *op, char *params)
 
 int command_version(object *op, char *params)
 {
-    new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, op, "This is Daimonin v%s.",
-                         VERSION);
+    new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, op, "This is Daimonin v%d.%d.%d.",
+                  DAI_VERSION_RELEASE, DAI_VERSION_MAJOR, DAI_VERSION_MINOR);
 
     return 0;
 }

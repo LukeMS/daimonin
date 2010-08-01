@@ -109,7 +109,6 @@ Boolean             InputStringEscFlag;
 _game_status        GameStatus; /* the global status identifier */
 int                 GameStatusSelect;
 int                 ShowLocalServer;
-char                GlobalClientVersion[64];
 
 time_t sleeptime;
 
@@ -387,18 +386,15 @@ static void load_version_file(void)
     char buf[64];
     FILE   *stream;
 
-    // set the version to the binary default
-    strcpy(GlobalClientVersion, PACKAGE_VERSION);
-
     // lets try to fetch the current patch level
     if (!(stream = fopen_wrapper("update/version", "r")))
     {
         LOG(LOG_DEBUG,"Can't open version file.\n");
         return;
     }
+
     if (fgets(buf, sizeof(buf), stream) != NULL)
     {
-        strcpy(GlobalClientVersion, buf);
         LOG(LOG_DEBUG,"Version patch level: %s\n", buf);
     }
     else
@@ -1823,10 +1819,9 @@ int main(int argc, char *argv[])
     }
     ; /* wait for keypress */
 
-    textwin_showstring(COLOR_HGOLD,
-                       "Welcome to Daimonin v%s\n"\
-                       "~init network...~",
-                       GlobalClientVersion);
+    textwin_showstring(COLOR_HGOLD, "Welcome to Daimonin v%d.%d.%d",
+                       DAI_VERSION_RELEASE, DAI_VERSION_MAJOR, DAI_VERSION_MINOR);
+    textwin_showstring(COLOR_HGOLD, "~init network...~");
 
     if (!SOCKET_InitSocket()) /* log in function*/
         exit(1);
@@ -2314,7 +2309,6 @@ static void ParseInvocationLine(int argc, char *argv[])
                 invalid[0] = '\0';
             }
         }
-        /* FIXME */
         else if (GetOption(argv[argc], "-v", "--version", key, value))
         {
             if (value[0])
@@ -2323,7 +2317,24 @@ static void ParseInvocationLine(int argc, char *argv[])
             }
             else
             {
-                 sprintf(invalid, "TODO");
+                LOG(LOG_MSG, "Client version %d.%d.%d\n",
+                    DAI_VERSION_RELEASE, DAI_VERSION_MAJOR, DAI_VERSION_MINOR);
+
+                /* EXPERIMENTAL: Should exit with the x.y.z version as a single
+                 * 15-bit number as long as we keep to limits, or -1 otherwise.
+                 * --Smacky 20100901 */
+                if (DAI_VERSION_RELEASE > 7 ||
+                    DAI_VERSION_MAJOR > 63 ||
+                    DAI_VERSION_MINOR > 63)
+                {
+                    exit(-1);
+                }
+                else
+                {
+                    exit((DAI_VERSION_RELEASE << 12) +
+                         (DAI_VERSION_MAJOR << 6) +
+                         DAI_VERSION_MINOR);
+                }
             }
         }
 
@@ -2400,8 +2411,8 @@ static void flip_screen(void)
     if (GameStatus < GAME_STATUS_WAITFORPLAY)
     {
         char    buf[128];
-        sprintf(buf, "v. %s (SENTInce AWARE)%s",
-                GlobalClientVersion,
+        sprintf(buf, "v%d.%d.%d%s",
+                DAI_VERSION_RELEASE, DAI_VERSION_MAJOR, DAI_VERSION_MINOR,
 #ifdef _DEBUG
                 " *DEBUG VERSION*"
 #else
