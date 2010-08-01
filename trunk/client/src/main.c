@@ -336,12 +336,13 @@ static void display_layer2(void);   /* frame (background image) */
 static void display_layer3(void);   /* widgets (graphical user interface) */
 static void display_layer4(void);   /* place for menu later */
 static void DisplayCustomCursor(void);
-
-
-static void         count_meta_server(void);
-static void         flip_screen(void);
-static void         show_intro(char *text, int progress);
-static void         delete_player_lists(void);
+static void count_meta_server(void);
+static void flip_screen(void);
+static void ParseInvocationLine(int argc, char *argv[]);
+static const char *GetOption(const char *arg, const char *sopt,
+                             const char *lopt, char *key, char *value);
+static void show_intro(char *text, int progress);
+static void delete_player_lists(void);
 
 static void delete_player_lists(void)
 {
@@ -1616,67 +1617,7 @@ int main(int argc, char *argv[])
     // pollret;
 
     init_game_data();
-    while (argc > 1)
-    {
-        --argc;
-        if (strcmp(argv[argc - 1], "-port") == 0)
-        {
-            argServerPort = atoi(argv[argc]);
-            --argc;
-        }
-        else if (strcmp(argv[argc-1], "-account") == 0)
-        {
-            strncpy(options.cli_account,argv[argc],39);
-            options.cli_account[39]='\0'; /* sanity \0 */
-            --argc;
-        }
-        else if (strcmp(argv[argc-1], "-pass") == 0)
-        {
-            strncpy(options.cli_pass,argv[argc],39);
-            options.cli_pass[39]='\0'; /* sanity \0 */
-            --argc;
-        }
-        else if (strcmp(argv[argc-1], "-server") == 0)
-        {
-            options.cli_server=atoi(argv[argc]);
-            --argc;
-        }
-        else if (strcmp(argv[argc-1], "-skin") == 0)
-        {
-            strncpy(options.skin,argv[argc],63);
-            options.skin[63]='\0';
-            --argc;
-        }
-        /*        else if (strcmp(argv[argc - 1], "-server") == 0)
-                {
-                    strcpy(argServerName, argv[argc]);
-                    --argc;
-                }*/
-        else if (strcmp(argv[argc], "-local") == 0)
-        {
-            ShowLocalServer = TRUE;
-        }
-        else if (strcmp(argv[argc], "-nometa") == 0)
-        {
-            options.no_meta = 1;
-        }
-        else if (strcmp(argv[argc], "-key") == 0)
-        {
-            KeyScanFlag = TRUE;
-        }
-        else
-        {
-            char    tmp[1024];
-//            sprintf(tmp, "Usage: %s [-server <name>] [-port <num>]\n", argv[0]);
-#ifdef DEVELOPMENT
-            sprintf(tmp, "Usage: %s -account <accountname> -pass <password> [-server <n>]\n1 - daimonin.game-server.cc\n2-test-server.game-server.cc\n3-localhost\n", argv[0]);
-#endif
-            LOG(LOG_MSG, "%s", tmp);
-            fprintf(stderr, "%s", tmp);
-            exit(1);
-        }
-    }
-
+    ParseInvocationLine(argc, argv);
 
 #if defined( __LINUX)
     LOG(LOG_MSG, "**** NOTE ****\n");
@@ -2242,6 +2183,189 @@ int main(int argc, char *argv[])
 
     SYSTEM_End();
     return(0);
+}
+
+/* Does what it says, helpfully printing an error when you give it a wrong
+ * option. */
+static void ParseInvocationLine(int argc, char *argv[])
+{
+    while (--argc >= 1)
+    {
+        char  key[TINY_BUF],
+              value[MEDIUM_BUF],
+              invalid[SMALL_BUF] = "invalid option";
+
+        if (GetOption(argv[argc], "-a", "--account", key, value))
+        {
+            if (!account_name_valid(value))
+            {
+                sprintf(invalid, "account name invalid");
+            }
+            else
+            {
+                sprintf(options.cli_account, "%s", value);
+                invalid[0] = '\0';;
+            }
+        }
+        else if (GetOption(argv[argc], "-h", "--help", key, value))
+        {
+            if (value[0])
+            {
+                 sprintf(invalid, "option takes no value");
+            }
+            else
+            {
+                LOG(LOG_MSG, "Usage: %s [OPTION]...\n", argv[0]);
+                LOG(LOG_MSG, "A Free MMORPG\n\n");
+                LOG(LOG_MSG, "Mandatory arguments for long options are mandatory for short options too.\n");
+                LOG(LOG_MSG, "  -a, --account=STRING : login to the named account\n");
+                LOG(LOG_MSG, "  -h, --help           : display this help and exit\n");
+                LOG(LOG_MSG, "  -l. --local          : show a local server in the server list\n");
+                LOG(LOG_MSG, "  -n, --nometa         : do not query the metaserver\n");
+                LOG(LOG_MSG, "  -p, --pass=STRING    : use this password when logging in to an account\n");
+                LOG(LOG_MSG, "  -s, --server=NUMBER  : connect automatically to the specified official server\n");
+                LOG(LOG_MSG, "                           0 - your local server (if running)\n");
+                LOG(LOG_MSG, "                           1 - the main server, which is best for simply playing the game\n");
+                LOG(LOG_MSG, "                           2 - the test server, which is best for testing new content (maps), both official and unofficial\n");
+                LOG(LOG_MSG, "                           3 - the main server, which is best for testing new code (features)\n");
+                LOG(LOG_MSG, "  -v, --version        : output client version number and exit\n");
+                exit(EXIT_SUCCESS);
+            }
+        }
+        /* TODO: Remove. */
+        else if (GetOption(argv[argc], "-k", "--key", key, value))
+        {
+            if (value[0])
+            {
+                 sprintf(invalid, "option takes no value");
+            }
+            else
+            {
+                KeyScanFlag = TRUE;
+                invalid[0] = '\0';
+            }
+        }
+        else if (GetOption(argv[argc], "-l", "--local", key, value))
+        {
+            if (value[0])
+            {
+                 sprintf(invalid, "option takes no value");
+            }
+            else
+            {
+                ShowLocalServer = TRUE;
+                invalid[0] = '\0';
+            }
+        }
+        else if (GetOption(argv[argc], "-n", "--nometa", key, value))
+        {
+            if (value[0])
+            {
+                 sprintf(invalid, "option takes no value");
+            }
+            else
+            {
+                options.no_meta = 1;
+                invalid[0] = '\0';
+            }
+        }
+        else if (GetOption(argv[argc], "-p", "--pass", key, value))
+        {
+            if (!password_valid(value))
+            {
+                sprintf(invalid, "password invalid");
+            }
+            else
+            {
+                sprintf(options.cli_pass, "%s", value);
+                invalid[0] = '\0';;
+            }
+        }
+        /* TODO: Remove. */
+        else if (GetOption(argv[argc], "-P", "--port", key, value))
+        {
+            char          *endp = NULL;
+            unsigned long  nr = strtoul(value, &endp, 10);
+
+            if (!value[0] ||
+                *endp)
+            {
+                sprintf(invalid, "port must be a number");
+            }
+            else
+            {
+                argServerPort = (int)nr;
+                invalid[0] = '\0';
+            }
+        }
+        else if (GetOption(argv[argc], "-s", "--server", key, value))
+        {
+            char          *endp = NULL;
+            unsigned long  nr = strtoul(value, &endp, 10);
+
+            if (!value[0] ||
+                *endp)
+            {
+                sprintf(invalid, "server must be a number");
+            }
+            else
+            {
+                options.cli_server = (int)nr;
+                invalid[0] = '\0';
+            }
+        }
+        /* FIXME */
+        else if (GetOption(argv[argc], "-v", "--version", key, value))
+        {
+            if (value[0])
+            {
+                 sprintf(invalid, "option takes no value");
+            }
+            else
+            {
+                 sprintf(invalid, "TODO");
+            }
+        }
+
+        if (invalid[0])
+        {
+            LOG(LOG_ERROR, "%s: %s -- '%s'\n", argv[0], invalid, argv[argc]);
+            LOG(LOG_ERROR, "Try `%s --help' for more information.\n", argv[0]);
+            exit(EXIT_FAILURE);
+        }
+    }
+}
+
+/* Splits arg into key and (optional) value ('=' is the delimiter) if arg
+ * begins with one of sopt or lopt and returns key (or NULL). */
+static const char *GetOption(const char *arg, const char *sopt,
+                             const char *lopt, char *key, char *value)
+{
+    char  buf[HUGE_BUF],
+         *cp;
+
+    *key = '\0';
+    *value = '\0';
+    sprintf(buf, "%s", arg);
+
+    if ((cp = strchr(buf, '=')))
+    {
+        *cp++ = '\0';
+    }
+
+    if (arg &&
+        ((sopt &&
+          !strcmp(buf, sopt)) ||
+         (lopt &&
+          !strcmp(buf, lopt))))
+    {
+        sprintf(key, "%s", buf);
+        sprintf(value, "%s", (cp) ? cp : "");
+
+        return key;
+    }
+
+    return NULL;
 }
 
 static void show_intro(char *text, int progress)
