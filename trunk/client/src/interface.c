@@ -1633,9 +1633,18 @@ void gui_npc_show(void)
         }
     }
 
-    ShowGUIFurniture(gui_npc->startx, gui_npc->starty);
-    ShowGUIContents(gui_npc->startx + GUI_NPC_LEFTMARGIN,
-                    gui_npc->starty + GUI_NPC_TOPMARGIN);
+    add_close_button(gui_npc->startx - 116, gui_npc->starty + 5, MENU_NPC,
+                     skindef.newclosebutton);
+
+
+    /* When clicked, the close button obviously closes the GUI which frees the
+     * structure, so only draw the rest if there is anything left to draw! */
+    if (gui_npc)
+    {
+        ShowGUIFurniture(gui_npc->startx, gui_npc->starty);
+        ShowGUIContents(gui_npc->startx + GUI_NPC_LEFTMARGIN,
+                        gui_npc->starty + GUI_NPC_TOPMARGIN);
+    }
 }
 
 static void ShowGUIBackground(uint16 x, uint16 y)
@@ -1695,8 +1704,6 @@ static void ShowGUIFurniture(uint16 x, uint16 y)
     int      len;
     uint16   xoff,
              yoff;
-
-    add_close_button(x - 116, y + 5, MENU_NPC, skindef.newclosebutton);
 
     if (gui_npc->head)
     {
@@ -2706,11 +2713,20 @@ static void ShowIcon(_gui_npc_element *this)
 /* Returns the element under the pointer. */
 static _gui_npc_element *GetElement(int mx, int my)
 {
-    uint16      x = gui_npc->startx,
-                y = gui_npc->starty,
+    uint16      x,
+                y,
                 xoff,
                 yoff;
     uint8       i;
+
+    /* Sanity. */
+    if (!gui_npc)
+    {
+        return NULL;
+    }
+
+    x = gui_npc->startx;
+    y = gui_npc->starty;
 
     /* Keyword panel. */
     if (options.keyword_panel &&
