@@ -377,32 +377,6 @@ static void delete_player_lists(void)
     }
 }
 
-
-/******************************************************************
-Try to read in the version file to find the real patch level
-******************************************************************/
-static void load_version_file(void)
-{
-    char buf[64];
-    FILE   *stream;
-
-    // lets try to fetch the current patch level
-    if (!(stream = fopen_wrapper("update/version", "r")))
-    {
-        LOG(LOG_DEBUG,"Can't open version file.\n");
-        return;
-    }
-
-    if (fgets(buf, sizeof(buf), stream) != NULL)
-    {
-        LOG(LOG_DEBUG,"Version patch level: %s\n", buf);
-    }
-    else
-        LOG(LOG_DEBUG,"Can't read version file.\n");
-
-    fclose(stream);
-}
-
 /* pre init, overrule in hardware module if needed */
 void init_game_data(void)
 {
@@ -511,7 +485,6 @@ void init_game_data(void)
     media_count = 0;    /* buffered media files*/
     media_show = MEDIA_SHOW_NO; /* show this media file*/
 
-    load_version_file();
     textwin_clearhistory();
     delete_player_lists();
     load_options_dat(); /* now load options, allowing the user to override the presetings */
