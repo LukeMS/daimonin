@@ -2384,8 +2384,13 @@ static void flip_screen(void)
     if (GameStatus < GAME_STATUS_WAITFORPLAY)
     {
         char    buf[128];
-        sprintf(buf, "v%d.%d.%d%s",
+        sprintf(buf, "v%d.%d.%d%s%s",
                 DAI_VERSION_RELEASE, DAI_VERSION_MAJOR, DAI_VERSION_MINOR,
+#ifdef DEVELOPMENT
+                " *DEVELOPMENT VERSION*",
+#else
+                "",
+#endif
 #ifdef _DEBUG
                 " *DEBUG VERSION*"
 #else
