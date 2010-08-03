@@ -531,7 +531,7 @@ int widget_event_mousedn(int x,int y, SDL_Event *event)
 			widget_event_move.id = nID;
 			widget_event_move.xOffset = x - cur_widget[nID].x1;
 			widget_event_move.yOffset = y - cur_widget[nID].y1;
-#ifndef DEVELOPMENT
+#ifndef DAI_DEVELOPMENT
 			/* nothing owns the mouse right now */
 			widget_mouse_event.owner = -1; // Why? -- Smacky 20080127
 #endif

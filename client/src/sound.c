@@ -501,7 +501,7 @@ static void sound_start_music(char *fname, int vol, int fade, int loop)
     music.data = Mix_LoadMUS_wrapper(buf);
     if (!music.data)
     {
-#ifdef DEVELOPMENT
+#ifdef DAI_DEVELOPMENT
         textwin_showstring(COLOR_GREEN, "mix_loadmus() failed (%s).", buf);
 #endif
         return;

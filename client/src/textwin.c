@@ -282,7 +282,7 @@ void textwin_showstring(int flags, char *format, ...)
         }
     }
 
-#ifdef DEVELOPMENT
+#ifdef DAI_DEVELOPMENT
     LOG(LOG_MSG,">%s<\n", buf2);
 #endif
 

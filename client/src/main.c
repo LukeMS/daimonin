@@ -748,7 +748,7 @@ Boolean game_status_chain(void)
 
         // add local server only when user gives the -local option OR when its not a development compile
 
-#ifndef DEVELOPMENT
+#ifndef DAI_DEVELOPMENT
         if(ShowLocalServer)
 #endif
             add_metaserver_data("LOCAL SERVER", "127.0.0.1", argServerPort, -1, "LOCAL", "localhost. Start your server before you try to connect.");
@@ -2386,7 +2386,7 @@ static void flip_screen(void)
         char    buf[128];
         sprintf(buf, "v%d.%d.%d%s%s",
                 DAI_VERSION_RELEASE, DAI_VERSION_MAJOR, DAI_VERSION_MINOR,
-#ifdef DEVELOPMENT
+#ifdef DAI_DEVELOPMENT
                 " *DEVELOPMENT VERSION*",
 #else
                 "",
