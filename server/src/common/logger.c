@@ -67,7 +67,7 @@ void LOG(LogLevel logLevel, char *format, ...)
         va_end(ap);
         DoPrint(log_buf, tlogfile);
 
-#ifdef _TESTSERVER
+#ifdef DAI_DEVELOPMENT_CONTENT
         /* Mapbugs are broadcasted on the test server */
         if (logLevel == llevMapbug)
         {

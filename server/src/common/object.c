@@ -1749,10 +1749,12 @@ void free_object_data(object *ob, int free_static_data)
         /*      LOG(llevDebug,"destroy_object() custom attrset found in object %s (type %d)\n",
                       STRING_OBJ_NAME(ob), ob->type);*/
 
-#ifndef PRODUCTION_SYSTEM /* Avoid this check on performance-critical servers */
-        if(ob->head) /* TODO: this shouldn't be compiled into a production server */
-            LOG(llevDebug, "BUG: destroy_object() custom attrset found in object %s subpart (type %d)\n",
-                    STRING_OBJ_NAME(ob), ob->type);
+#ifdef DAI_DEVELOPMENT_CODE /* Avoid this check on performance-critical servers */
+        if(ob->head)
+        {
+            LOG(llevDebug, "DEBUG:: %s/free_object_data(): Custom attrset found in object %s[%d] subpart (type %d)\n",
+                __FILE__, STRING_OBJ_NAME(ob), TAG(ob), ob->type);
+        }
 #endif
 
         switch (ob->type)

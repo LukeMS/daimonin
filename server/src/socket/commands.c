@@ -95,7 +95,7 @@ CommArray_s Commands[] =
 #ifdef USE_CHANNELS
     {"channel",       command_channel,        1.0f, 0}, /* channel system */
 #endif
-#ifdef _TESTSERVER
+#ifdef DAI_DEVELOPMENT_CONTENT
     {"stuck",         command_stuck,          0.0f, 1},
 #endif
     {"vol",           command_vol,            0.0f, 1},
@@ -194,7 +194,7 @@ CommArray_s CommandsGM[] =
 
 CommArray_s CommandsMW[] =
 {
-#ifdef _TESTSERVER
+#ifdef DAI_DEVELOPMENT_CONTENT
     {"summon",        command_summon,      0.0f, 1},
     {"stealth",       command_stealth,     0.0f, 1},
     {"addexp",        command_addexp,      0.0f, 1},
@@ -216,7 +216,7 @@ CommArray_s CommandsMW[] =
 
 CommArray_s CommandsMM[] =
 {
-#ifdef _TESTSERVER
+#ifdef DAI_DEVELOPMENT_CONTENT
     {"serverspeed",   command_serverspeed, 0.0f, 1},
     {"create",        command_create,      0.0f, 1},
 #else
@@ -236,7 +236,7 @@ CommArray_s CommandsMM[] =
 
 CommArray_s CommandsSA[] =
 {
-#ifndef _TESTSERVER
+#ifndef DAI_DEVELOPMENT_CONTENT
     {"serverspeed",  command_serverspeed,       0.0f, 1},
     {"create",       command_create,            0.0f, 1},
     {"addexp",       command_addexp,            0.0f, 1},
