@@ -382,14 +382,12 @@ static uint8 CommandCheck(char *cmd, char *params)
 
         return 1;
     }
-#ifdef DAI_DEVELOPMENT
     else if (!strcmp(cmd, "/grid"))
     {
         options.grid = !options.grid;
 
         return 1;
     }
-#endif
     else if (!strcmp(cmd, "/ignore"))
     {
         ignore_command(params);
