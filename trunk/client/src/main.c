@@ -432,7 +432,11 @@ void init_game_data(void)
     GameStatusSelect = GAME_STATUS_LOGIN_ACCOUNT;
     LoginInputStep = LOGIN_STEP_NOTHING;
 
-    ShowLocalServer = FALSE;
+#ifndef DAI_DEVELOPMENT
+    ShowLocalServer = 1;
+#else
+    ShowLocalServer = 0;
+#endif
     SoundStatus = 1;
     MapStatusX = MAP_MAX_SIZE;
     MapStatusY = MAP_MAX_SIZE;
@@ -746,12 +750,11 @@ Boolean game_status_chain(void)
             }
         }
 
-        // add local server only when user gives the -local option OR when its not a development compile
-
-#ifndef DAI_DEVELOPMENT
-        if(ShowLocalServer)
-#endif
-            add_metaserver_data("LOCAL SERVER", "127.0.0.1", argServerPort, -1, "LOCAL", "localhost. Start your server before you try to connect.");
+        if (ShowLocalServer)
+        {
+            add_metaserver_data("LOCAL SERVER", "127.0.0.1", argServerPort, -1, "LOCAL",
+                                "localhost. Start your server before you try to connect.");
+        }
 
         count_meta_server();
         textwin_showstring(COLOR_GREEN, "select a server.");
