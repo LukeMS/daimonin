@@ -913,7 +913,7 @@ void map_draw_map(void)
         }
     }
 
-#ifdef DEVELOPMENT
+#ifdef DAI_DEVELOPMENT
     /* Draw a grid. */
     if (options.grid)
     {

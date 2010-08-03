@@ -51,7 +51,7 @@ _gui_npc *gui_npc_create(int mode, char *data, int len, int pos)
          flag_end;
     char c;
 
-#ifdef DEVELOPMENT
+#ifdef DAI_DEVELOPMENT
     LOG(LOG_DEBUG, "Interface command: mode=%d len=%d, %s\n",
         mode, len, (char *)(data + pos));
 #else

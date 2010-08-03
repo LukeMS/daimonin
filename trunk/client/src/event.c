@@ -753,7 +753,7 @@ int Event_PollInputDevice(void)
             }
             else if (cpl.menustatus == MENU_NO && (!InputStringFlag || cpl.input_mode != INPUT_MODE_NUMBER))
             {
-#ifdef DEVELOPMENT
+#ifdef DAI_DEVELOPMENT
                 if (widget_mouse_event.owner > -1 && f_custom_cursor == MSCURSOR_MOVE && (event.key.keysym.sym == SDLK_DELETE || event.key.keysym.sym == SDLK_BACKSPACE))
                 {
                     switch (widget_mouse_event.owner)

@@ -382,7 +382,7 @@ static uint8 CommandCheck(char *cmd, char *params)
 
         return 1;
     }
-#ifdef DEVELOPMENT
+#ifdef DAI_DEVELOPMENT
     else if (!strcmp(cmd, "/grid"))
     {
         options.grid = !options.grid;
@@ -590,7 +590,7 @@ static uint8 CommandCheck(char *cmd, char *params)
 
         return 1;
     }
-#ifdef DEVELOPMENT
+#ifdef DAI_DEVELOPMENT
     else if (!strcmp(cmd, "/searchpath"))
     {
         char **i,
@@ -731,7 +731,7 @@ static uint8 CommandCheck(char *cmd, char *params)
 
         return 1;
     }
-#ifdef DEVELOPMENT
+#ifdef DAI_DEVELOPMENT
     else if (!strcmp(cmd, "/teststretch"))
     {
         uint8 i,

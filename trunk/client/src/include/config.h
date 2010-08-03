@@ -26,10 +26,18 @@
 #ifndef __CONFIG_H
 #define __CONFIG_H
 
-#define DEVELOPMENT
-
+#ifdef DAI_DEVELOPMENT
 /* this gives feedback text based on input */
 //#define DEBUG_TEXT
+
+/* NEVER enable this on productions clients, and NEVER on mapmaker clients
+ * use it only for profiling, the log will grow quite big
+ */
+//#define PROFILING
+//#define PROFILING_WIDGETS
+
+//#define WIDGET_SNAP
+#endif
 
 /* uncomment this to enable the channel support in the client */
 #define USE_CHANNELS
@@ -44,14 +52,6 @@
  * hopefully i didn't do the calcs wrong
  */
 //#define ANIM_FRAMESKIP
-
-/* NEVER enable this on productions clients, and NEVER on mapmaker clients
- * use it only for profiling, the log will grow quite big
- */
-//#define PROFILING
-//#define PROFILING_WIDGETS
-
-//#define WIDGET_SNAP
 
 #define DEFAULT_SERVER_PORT 13327
 #define DEFAULT_METASERVER_PORT 13326

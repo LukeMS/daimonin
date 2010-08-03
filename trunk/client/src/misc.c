@@ -208,7 +208,7 @@ char *get_parameter_string(char *data, int *pos, int maxlen)
     /* sanity truncate string to maxlen */
     if (maxlen>0)
     {
-#ifdef DEVELOPMENT
+#ifdef DAI_DEVELOPMENT
         if ((int)strlen(buf)>maxlen)
             textwin_showstring(COLOR_RED,"FixMe: Interface parameter string out of bounds!");
 #endif
