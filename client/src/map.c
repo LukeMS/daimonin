@@ -913,7 +913,6 @@ void map_draw_map(void)
         }
     }
 
-#ifdef DAI_DEVELOPMENT
     /* Draw a grid. */
     if (options.grid)
     {
@@ -927,7 +926,6 @@ void map_draw_map(void)
             }
         }
     }
-#endif
 }
 
 
