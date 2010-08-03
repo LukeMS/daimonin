@@ -938,7 +938,7 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
         }
     }
 
-#ifdef _TESTSERVER
+#ifdef DAI_DEVELOPMENT_CODE
     show_stream_info(&pl->socket);
 #endif
 

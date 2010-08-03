@@ -314,7 +314,7 @@ int command_reboot(object *op, char *params)
         char stream[TINY_BUF] = "";
 
         FREE_AND_CLEAR_HASH(hash);
-#ifdef _TESTSERVER
+#ifdef DAI_DEVELOPMENT_CODE
         time = 30;
 
         if (cp)

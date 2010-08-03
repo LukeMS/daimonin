@@ -203,10 +203,6 @@ int command_who(object *op, char *params)
     int     ip,
             il,
             it;
-#ifdef _TESTSERVER
-    char    buf[MEDIUM_BUF];
-    FILE   *fp;
-#endif
 
     if (!op)
     {
@@ -273,7 +269,7 @@ int command_who(object *op, char *params)
     it = ip + il;
     new_draw_info(NDI_UNIQUE, 0, op, "There %s %d player%s online (%d in login).",
                          (it > 1) ? "are" : "is", it, (it > 1) ? "s" : "", il);
-#ifdef _TESTSERVER
+#ifdef DAI_DEVELOPMENT_CODE
     show_stream_info(&CONTR(op)->socket);
 #endif
 

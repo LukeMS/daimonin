@@ -358,7 +358,9 @@ void return_poolchunk_array_real(void *data, uint32 arraysize_exp, struct mempoo
     {
         /* When this happens we can choose to ignore it and return or stop and
          * make finding the original error easier. */
-#ifdef PRODUCTION_SYSTEM
+        /* Is this right? Should we ever 'ignore' this problem?
+         * -- Smacky 20100803 */
+#ifndef DAI_DEVELOPMENT_CODE
         LOG(llevBug, "BUG: return_poolchunk on already free chunk (pool \"%s\")\n",
             pool->chunk_description);
         return; /* Ignore the problem */

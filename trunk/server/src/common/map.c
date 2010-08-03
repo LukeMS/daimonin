@@ -830,16 +830,15 @@ static int load_map_header(FILE *fp, mapstruct *m, int flags)
             m->enter_y = v;
         }
         /* width is the total number of x (west-east) squares. There is a
-         * default which should be stuck to and any deviation on a
-         * non-production will produce a debug warning. However this is not
-         * enforced and once the map gets to a production server the
-         * non-standard width is assumed to be intentional so no warning is
-         * given. */
+         * default which should be stuck to and any deviation on a testserver
+         * will produce a debug warning. However this is not enforced and once
+         * the map gets to a non-testserver the non-standard width is assumed
+         * to be intentional so no warning is given. */
         else if (!strcmp(key, "width"))
         {
             int v = atoi(value);
 
-#ifndef PRODUCTION_SYSTEM
+#ifdef DAI_DEVELOPMENT_CONTENT
             if (v != MAP_DEFAULT_WIDTH)
                 LOG(llevDebug, "DEBUG:: Non-standard map width %d (should be %d)!\n",
                     v, MAP_DEFAULT_WIDTH);
@@ -848,16 +847,15 @@ static int load_map_header(FILE *fp, mapstruct *m, int flags)
             m->width = v;
         }
         /* height is the total number of y (north-south) squares. There is a
-         * default which should be stuck to and any deviation on a
-         * non-production will produce a debug warning. However this is not
-         * enforced and once the map gets to a production server the
-         * non-standard height is assumed to be intentional so no warning is
-         * given. */
+         * default which should be stuck to and any deviation on a testserver
+         * will produce a debug warning. However this is not enforced and once
+         * the map gets to a non-testserver the non-standard height is assumed
+         * to be intentional so no warning is given. */
         else if (!strcmp(key, "height"))
         {
             int v = atoi(value);
 
-#ifndef PRODUCTION_SYSTEM
+#ifdef DAI_DEVELOPMENT_CONTENT
             if (v != MAP_DEFAULT_HEIGHT)
                 LOG(llevDebug, "DEBUG:: Non-standard map height %d (should be %d)!\n",
                     v, MAP_DEFAULT_HEIGHT);
@@ -1192,7 +1190,7 @@ static int load_map_header(FILE *fp, mapstruct *m, int flags)
         MAP_ENTER_Y(m) = 0;
     }
 
-#ifndef PRODUCTION_SYSTEM
+#ifdef DAI_DEVELOPMENT_CONTENT
     /* Verify tileset_id after linking */
     {
         int i;

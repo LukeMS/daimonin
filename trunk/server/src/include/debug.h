@@ -31,13 +31,10 @@
 #ifndef __DEBUG_H
 #define __DEBUG_H
 
-/* Uncomment this to disable all debugging and some sanity
- * checks in core loops */
-/* #define PRODUCTION_SYSTEM */
+#ifdef DAI_DEVELOPMENT_CODE
 
 #define ESRV_DEBUG
 
-#ifndef PRODUCTION_SYSTEM
 /* Active list debugging: object.c (activelist_insert_inline()) */
 /* #define DEBUG_ACTIVELIST_LOG */ /* log message when an object is added or removed from an active list */
 
@@ -99,7 +96,7 @@
 /*#define DEBUG_MERGE_OB*/
 
 /*#define DEBUG_CALENDAR*/
-#endif /* ifndef PRODUCTION_SYSTEM */
+#endif /* ifdef DAI_DEVELOPMENT_CODE */
 
 #ifdef DEBUG_FIX_PLAYER
 #define FIX_PLAYER(_o_, _m_) fix_player(_o_, _m_)

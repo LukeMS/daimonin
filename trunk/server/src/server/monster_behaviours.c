@@ -71,7 +71,7 @@ int mob_can_see_obj(object *op, object *obj, struct mob_known_obj *known_obj)
         return cached_result;
 
     /* Gmaster with stealth? */
-#ifdef _TESTSERVER
+#ifdef DAI_DEVELOPMENT_CONTENT
     if (obj->type == PLAYER &&
         pl &&
         pl->stealth &&

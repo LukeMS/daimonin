@@ -389,7 +389,7 @@ void set_gmaster_mode(player *pl, int mode_id)
     }
 #endif
 
-#ifdef _TESTSERVER
+#ifdef DAI_DEVELOPMENT_CONTENT
     if ((mode & (GMASTER_MODE_SA | GMASTER_MODE_MM | GMASTER_MODE_MW)))
 #else
     if ((mode & (GMASTER_MODE_SA | GMASTER_MODE_MM)))
@@ -459,7 +459,7 @@ void remove_gmaster_mode(player *pl)
     }
 #endif
 
-#ifdef _TESTSERVER
+#ifdef DAI_DEVELOPMENT_CONTENT
     if ((mode & (GMASTER_MODE_SA | GMASTER_MODE_MM | GMASTER_MODE_MW)))
 #else
     if ((mode & (GMASTER_MODE_SA | GMASTER_MODE_MM)))
