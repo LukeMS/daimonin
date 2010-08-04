@@ -157,34 +157,6 @@ int nRetVal = 0;
     return nRetVal;
 }
 
-#define VERSION_MAXSIZE (32)
-
-const char *getversion(void){
-FILE *pfi;
-static char sVersion[VERSION_MAXSIZE];
-char *sRet = NULL;
-int nRead, i;
-char sfile[256] = "";
-
-    append_to_path(sfile, SYSPATH);
-    append_to_path(sfile, "update/version");
-
-    if((pfi = fopen(sfile, "r"))){
-        if(((nRead = fread(sVersion, 1, VERSION_MAXSIZE - 1, pfi)) > 0)){
-            sVersion[nRead] = '\0';
-            for(i=0;i < nRead;i++){ /* only keep the major version information */
-                if(sVersion[i] == ' '){
-                    sVersion[i] = '\0';
-                    break;
-                }
-            }
-            sRet = sVersion;
-        }
-        fclose(pfi);
-    }
-    return sRet;
-}
-
 /*
 returns 0 if we failed to use a user dir location - in this case we use the SYSPATH location
 returns 1 if we maange to use a user dir location
@@ -193,7 +165,7 @@ int determine_best_location(char *tmp, const char *fname){
 #ifdef __WIN_32 
 char *stmp;
 #endif
-const char *sVer;
+char buf[TINY_BUF];
 
 *tmp = '\0';
 
@@ -216,10 +188,10 @@ const char *sVer;
 	append_to_path(tmp, ".daimonin");
 #endif
 
-	if((sVer = getversion())){ /* Append the short version */
-	    append_to_path(tmp, sVer);
-	}
+	sprintf(buf, "%d.%d", DAI_VERSION_RELEASE, DAI_VERSION_MAJOR);
+	append_to_path(tmp, buf);
 	append_to_path(tmp, fname);
+
 	return 1;
 }
 
