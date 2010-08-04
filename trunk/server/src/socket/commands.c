@@ -180,8 +180,10 @@ CommArray_s CommandsVOL[] =
 
 CommArray_s CommandsGM[] =
 {
-    {"dm_connections", command_dm_connections, 0.0f, 1},
+#if DAI_DEVELOPMENT_CONTENT
     {"generate",       command_generate,       0.0f, 1},
+#endif
+    {"dm_connections", command_dm_connections, 0.0f, 1},
     {"inventory",      command_inventory,      0.0f, 1},
     {"summon",         command_summon,         0.0f, 1},
     {"teleport",       command_teleport,       0.0f, 1},
@@ -209,8 +211,8 @@ CommArray_s CommandsMW[] =
     {"dm_dev",        command_dm_dev,      0.0f, 1},
     {"dm_light",      command_dm_light,    0.0f, 1},
     {"set_map_light", command_setmaplight, 0.0f, 1},
-#endif
     {"generate",      command_generate,    0.0f, 1},
+#endif
     {"mspinfo",       command_mspinfo,     0.0f, 1},
 };
 
@@ -242,6 +244,7 @@ CommArray_s CommandsSA[] =
     {"addexp",       command_addexp,            0.0f, 1},
     {"setskill",     command_setskill,          0.0f, 1},
     {"setstat",      command_setstat,           0.0f, 1},
+    {"generate",     command_generate,          0.0f, 1},
 #endif
     {"plugin",       command_loadplugin,        0.0f, 1},
     {"pluglist",     command_listplugins,       0.0f, 1},
