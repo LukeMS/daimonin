@@ -241,7 +241,6 @@ void sound_loadall(void)
 {
 #ifdef INSTALL_SOUND
     int     i, j;
-    char    buf[2048];
 
     if (SoundSystem != SOUND_SYSTEM_ON)
         return;
@@ -252,10 +251,22 @@ void sound_loadall(void)
     {
         for (j = 0; j < sounds.types[i].count; j++)
         {
-            sprintf(buf, "%s%s", GetSfxDirectory(), sounds.types[i].sounds[j].file);
-            sounds.types[i].sounds[j].sound = Mix_LoadWAV_wrapper(buf);
+            const char *fname = sounds.types[i].sounds[j].file;
+            char        buf[MEDIUM_BUF];
+            SDL_RWops  *rw;
+
+            sprintf(buf, "%s%s", GetSfxDirectory(), fname);
+
+            if ((rw = PHYSFSRWOPS_openRead(buf)))
+            {
+                sounds.types[i].sounds[j].sound = Mix_LoadWAV_RW(rw, 1);
+            }
+
             if (!sounds.types[i].sounds[j].sound)
-                LOG(LOG_ERROR, "sound_loadall: missing sound file %s\n", buf);
+            {
+                LOG(LOG_ERROR, "sound_loadall: missing sound file %s\n",
+                    fname);
+            }
         }
     }
 
@@ -483,10 +494,14 @@ void sound_play_music(char *fname, int vol, int fade, int loop, int flags, int m
 static void sound_start_music(char *fname, int vol, int fade, int loop)
 {
 #ifdef INSTALL_SOUND
-    char    buf[4096];
+    char       buf[MEDIUM_BUF];
+    SDL_RWops *rw;
 
-    if (SoundSystem != SOUND_SYSTEM_ON)
+    if (SoundSystem != SOUND_SYSTEM_ON ||
+        !fname)
+    {
         return;
+    }
 
     if (music.data)
     {
@@ -496,9 +511,14 @@ static void sound_start_music(char *fname, int vol, int fade, int loop)
         music.flag = 0;
     }
 
-    /* try to load the music */
     sprintf(buf, "%s%s", GetMediaDirectory(), fname);
-    music.data = Mix_LoadMUS_wrapper(buf);
+
+    /* try to load the music */
+    if ((rw = PHYSFSRWOPS_openRead(buf)))
+    {
+        music.data = Mix_LoadMUS_RW(rw);
+    }
+
     if (!music.data)
     {
 #ifdef DAI_DEVELOPMENT

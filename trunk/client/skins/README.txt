@@ -1,1 +1,0 @@
-NEVER delete the subred skin, NEVER!

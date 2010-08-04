@@ -340,6 +340,7 @@ static void flip_screen(void);
 static void ParseInvocationLine(int argc, char *argv[]);
 static const char *GetOption(const char *arg, const char *sopt,
                              const char *lopt, char *key, char *value);
+static void InitPhysFS(const char *argv0);
 static void show_intro(char *text, int progress);
 static void delete_player_lists(void);
 
@@ -453,9 +454,10 @@ void init_game_data(void)
     gui_interface_book = NULL;
     LoginInputStep = LOGIN_STEP_NAME;
 
-    options.cli_account[0]='\0';
-    options.cli_pass[0]='\0';
-    options.cli_server=-1;
+    options.cli_account[0] = '\0';
+    options.cli_pass[0] = '\0';
+    options.cli_server = -1;
+    options.cli_addons[0] = '\0';
 
     options.resolution = 0;
     options.channelformat=0;
@@ -1575,7 +1577,6 @@ int main(int argc, char *argv[])
     Uint32          videoflags;
     int             i, done = 0, FrameCount = 0;
     Boolean         showtimer = FALSE;
-    Boolean         newskin = FALSE;
     uint32          speeduptick = 0;
     uint32          new_anim_tick = 0;
     uint16          BestFPS = 0,
@@ -1616,66 +1617,7 @@ int main(int argc, char *argv[])
 	atexit(SDL_Quit);
     signal(SIGSEGV, SIG_DFL); /* allows better debugging under linux by removing SDL parachute for this signal */
 
-/* Start the physfs-system */
-    if (PHYSFS_init(argv[0])==0)
-        LOG(LOG_MSG,"PHYSFS_Ini failed: %s\n",PHYSFS_getLastError());
-
-    if (PHYSFS_addToSearchPath(PHYSFS_getBaseDir() , 1)==0)
-        LOG(LOG_MSG,"PHYSFS_addPath (%s) failed: %s\n",PHYSFS_getBaseDir(),PHYSFS_getLastError());
-
-    /* Append the default subred skin to the search path. First try the plain
-     * dir then a zip. */
-    if (PHYSFS_addToSearchPath(SYSPATH"skins/subred/", 1) ||
-        PHYSFS_addToSearchPath(SYSPATH"skins/subred.zip", 1))
-        newskin = TRUE;
-    else
-        LOG(LOG_MSG, "Default skin 'subred' not found!\n");
-
-    /* Prepend the option skin to the search path. First try the plain dir
-     * then a zip. */
-    if (strcmp(options.skin, "subred"))
-    {
-        char dir[TINY_BUF],
-             zip[TINY_BUF];
-
-        sprintf(dir, "%sskins/%s/", SYSPATH, options.skin);
-        sprintf(zip, "%sskins/%s.zip", SYSPATH, options.skin);
-
-        if (PHYSFS_addToSearchPath(dir, 0) ||
-            PHYSFS_addToSearchPath(zip, 0))
-            newskin = TRUE;
-        else
-            LOG(LOG_MSG, "Option skin '%s' not found!\n", options.skin);
-    }
-    else
-        strcpy(options.skin, "subred");
-
-    if (!newskin)
-    {
-        LOG(LOG_ERROR, "ERROR: No skin could be found!\n");
-        exit(0);
-    }
-
-    if (PHYSFS_addToSearchPath("facepack.zip",0)==0)
-        LOG(LOG_MSG,"PHYSFS_addPath facepack.zip failed: %s\n",PHYSFS_getLastError());
-#if 0
-/* This is just a temporary quick fix -- see FS#32. */
-#ifdef __LINUX
-    sprintf(buf, "%s/.daimonin", getenv("HOME"));
-    if (PHYSFS_addToSearchPath(buf,1)==0)
-        LOG(LOG_MSG,"PHYSFS_addPath4 failed: %s\n",PHYSFS_getLastError());
-    if (PHYSFS_addToSearchPath(SYSPATH"_widget",1)==0)
-        LOG(LOG_MSG,"PHYSFS_addPath4 failed: %s\n",PHYSFS_getLastError());
-
-#endif
-#else
-    (void)determine_best_location(buf, "");
-    buf[strlen(buf) - 1] = '\0';
-    if (PHYSFS_addToSearchPath(buf,1)==0)
-        LOG(LOG_MSG,"PHYSFS_addPath4 failed: %s\n",PHYSFS_getLastError());
-    if (PHYSFS_addToSearchPath(SYSPATH"_widget",1)==0)
-        LOG(LOG_MSG,"PHYSFS_addPath4 failed: %s\n",PHYSFS_getLastError());
-#endif
+    InitPhysFS(argv[0]);
     SYSTEM_Start(); /* start the system AFTER start SDL */
 
     videoflags = get_video_flags();
@@ -2178,6 +2120,20 @@ static void ParseInvocationLine(int argc, char *argv[])
                 invalid[0] = '\0';;
             }
         }
+        else if (GetOption(argv[argc], "-A", "--addon", key, value))
+        {
+            if (!value[0])
+            {
+                 sprintf(invalid, "option imust be passed a value");
+            }
+            /* TODO: Check that value (file/dir) exists. */
+            else
+            {
+                sprintf(strchr(options.cli_addons, '\0'), "%s%s",
+                        (options.cli_addons[0]) ? "," : "", value);
+                invalid[0] = '\0';
+            }
+        }
         else if (GetOption(argv[argc], "-h", "--help", key, value))
         {
             if (value[0])
@@ -2190,6 +2146,7 @@ static void ParseInvocationLine(int argc, char *argv[])
                 LOG(LOG_MSG, "A Free MMORPG\n\n");
                 LOG(LOG_MSG, "Mandatory arguments for long options are mandatory for short options too.\n");
                 LOG(LOG_MSG, "  -a, --account=STRING : login to the named account\n");
+                LOG(LOG_MSG, "  -A, --addon=STRING   : prepend named addon pack to PhysFS search path\n");
                 LOG(LOG_MSG, "  -h, --help           : display this help and exit\n");
                 LOG(LOG_MSG, "  -l. --local          : show a local server in the server list\n");
                 LOG(LOG_MSG, "  -n, --nometa         : do not query the metaserver\n");
@@ -2353,6 +2310,96 @@ static const char *GetOption(const char *arg, const char *sopt,
     }
 
     return NULL;
+}
+
+static void InitPhysFS(const char *argv0)
+{
+    char        buf[MEDIUM_BUF];
+    const char *sep,
+               *env;
+
+    /* Start the PhysFS system */
+    if (!PHYSFS_init(argv0))
+    {
+        LOG(LOG_MSG, "%s\n", PHYSFS_getLastError());
+    }
+
+    /* Get the platform-dependent dir separator. */
+    sep = PHYSFS_getDirSeparator();
+
+    /* Add the base dir to the search path. The base dir is where all the
+     * defaults are (or should be). */
+    if (!PHYSFS_addToSearchPath(PHYSFS_getBaseDir(), 1))
+    {
+        LOG(LOG_MSG, "%s\n", PHYSFS_getLastError());
+    }
+
+    /* Determine the user dir (ie, ~/.daimonin/0.10). */
+#if __WIN_32
+    /* Use APPDATA if defined. */
+    if ((env = getenv("APPDATA")))
+    {
+        sprintf(buf, "%s%sDaimonin%s%d.%d",
+                env, sep, sep, DAI_VERSION_RELEASE, DAI_VERSION_MAJOR);
+    }
+    /* Not defined? (May not be on W98, but such an old OS is unsupported anyway.) */
+    else
+    {
+        /* Use WINDIR if defined. */
+        if ((env = getenv("WINDIR")))
+        {
+            sprintf(buf, "%s%sApplication Data%sDaimonin%s%d.%d",
+                    env, sep, sep, sep, DAI_VERSION_RELEASE, DAI_VERSION_MAJOR);
+        }
+        /* Not defined either? Just use the the base dir. */
+        else
+        {
+            sprintf(buf, "%s", PHYSFS_getBaseDir());
+        }
+    }
+#elif __LINUX
+    env = getenv("HOME");
+    sprintf(buf, "%s%s.daimonin%s%d.%d",
+            env, sep, sep, DAI_VERSION_RELEASE, DAI_VERSION_MAJOR);
+#else /* As a default, use the base dir. */
+    sprintf(buf, "%s", PHYSFS_getBaseDir());
+#endif
+
+    /* Prepend the user dir to the search path. This means files are read from
+     * this location in preference to the defaults. */
+    if (strcmp(PHYSFS_getBaseDir(), buf)) // Only if different to base dir.
+    {
+        if (!PHYSFS_addToSearchPath(buf, 0))
+        {
+            LOG(LOG_MSG, "%s\n", PHYSFS_getLastError());
+        }
+    }
+
+    /* Also the user dir is (the only) place where files are written to. */
+    if (!PHYSFS_setWriteDir(buf))
+    {
+        LOG(LOG_MSG, "%s\n", PHYSFS_getLastError());
+    }
+
+    /* Prepend any add-on packs to the search path. This means files are read
+     * from these locations in preference to the defaults and the user dir. */
+    /* TODO: Check addon against PHYSFS_supportedArchiveTypes(). */
+    if (options.cli_addons[0])
+    {
+        char *token = strtok(options.cli_addons, ",");
+
+        while (token)
+        {
+            /* Check PhysFS version and use PHYSFS_mount() if >= 2.0.0 */
+            if (!PHYSFS_addToSearchPath(token, 0))
+            {
+                LOG(LOG_MSG, "Add-on pack '%s' not found!\n", token);
+                LOG(LOG_MSG, "%s\n", PHYSFS_getLastError());
+            }
+
+            token = strtok(NULL, ",");
+        }
+    }
 }
 
 static void show_intro(char *text, int progress)
@@ -2580,7 +2627,9 @@ void load_skindef()
 
 
     /* lets try to load the skin.def */
-    if (!(stream = PHYSFS_openRead("skin.def")))
+    sprintf(line, "%s/skin.def", DIR_SETTINGS);
+
+    if (!(stream = PHYSFS_openRead(line)))
     {
         LOG(LOG_MSG, "Could not load skin-definition for skin: %s.\nReason: %s\nUsing defaults.\n",options.skin, PHYSFS_getLastError());
         return;
