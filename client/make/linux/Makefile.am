@@ -79,14 +79,16 @@ install-data-hook:
 	$(MKDIR) -p $(d_datadir)/logs
 	$(MKDIR) -p $(d_datadir)/gfx_user
 	$(MKDIR) -p $(d_datadir)/srv_files
-	$(MKDIR) -p $(d_datadir)/skins
+	$(MKDIR) -p $(d_datadir)/bitmaps
+	$(MKDIR) -p $(d_datadir)/icons
 	$(MKDIR) -p $(d_datadir)/settings
 	$(MKDIR) -p $(d_datadir)/update
 	$(CP) ../../sfx/*.* $(d_datadir)/sfx
 	$(CP) -R ../../man/* $(d_datadir)/man
 	$(CP) ../../media/*.* $(d_datadir)/media
 	$(CP) ../../cache/*.* $(d_datadir)/cache
-	$(CP) -R ../../skins/* $(d_datadir)/skins
+	$(CP) ../../bitmaps/* $(d_datadir)/bitmaps
+	$(CP) ../../icons/* $(d_datadir)/icons
 	$(CP) -R ../../settings/*.* $(d_datadir)/settings
 	$(CP) ../../srv_files/*.* $(d_datadir)/srv_files
 	$(CP) ../../update/version $(d_datadir)/update

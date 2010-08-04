@@ -126,6 +126,16 @@ extern int              bmaptype_table_size;
 #define SYSPATH "./"
 #endif
 
+#define DIR_BITMAPS "bitmaps"
+#define DIR_CACHE "cache"
+#define DIR_GFX_USER "gfx_user"
+#define DIR_ICONS "icons"
+#define DIR_LOGS "logs"
+#define DIR_MUSIC "media"
+#define DIR_SETTINGS "settings"
+#define DIR_SOUNDS "sfx"
+#define DIR_SRV_FILES "srv_files"
+
 #define FILE_DAIMONIN_P0 "daimonin.p0"
 #define FILE_BMAPS_P0 "bmaps.p0"
 #define FILE_BMAPS_TMP "srv_files/bmaps.tmp"
@@ -285,10 +295,11 @@ typedef struct _options
     uint32                  videoflags_full;
     uint32                  videoflags_win;
 
-    char                    cli_account[40];
-    char                    cli_pass[40];
+    char                    cli_account[TINY_BUF];
+    char                    cli_pass[TINY_BUF];
     int                     cli_server;
-    char                    skin[64];
+    char                    cli_addons[HUGE_BUF];
+    char                    skin[TINY_BUF];
 
     Boolean                 firststart;
     Boolean                 sleepcounter;

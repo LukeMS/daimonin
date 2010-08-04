@@ -255,85 +255,6 @@ static uint8 CommandCheck(char *cmd, char *params)
 
         return 1;
     }
-    else if (!strcmp(cmd, "/changeskin"))
-    {
-        char    tmpbuf[LARGE_BUF];
-        Boolean newskin = FALSE;
-
-//        if (!*params)
-//        {
-//            textwin_showstring(COLOR_WHITE, "usage: /changeskin <skin>");
-//        }
-
-        if (!stricmp(options.skin, params))
-        {
-            textwin_showstring(COLOR_WHITE, "You are already using that skin");
-        }
-
-        sprintf(tmpbuf, "skins/%s.zip", params);
-
-        if (PHYSFS_exists(tmpbuf))
-        {
-            if (!PHYSFS_addToSearchPath(tmpbuf, 0))
-            {
-                LOG(LOG_MSG, "PHYSFS_addPath (%s) failed: %s\n",
-                    tmpbuf, PHYSFS_getLastError());
-            }
-            else
-            {
-                newskin = TRUE;
-            }
-        }
-
-        sprintf(tmpbuf, "skins/%s", params);
-
-        if (PHYSFS_isDirectory(tmpbuf))
-        {
-            if (!PHYSFS_addToSearchPath(tmpbuf, 0))
-            {
-                LOG(LOG_MSG, "PHYSFS_addPath (%s) failed: %s\n",
-                    tmpbuf, PHYSFS_getLastError());
-            }
-            else
-            {
-                newskin = TRUE;
-            }
-        }
-
-        if (!newskin)
-        {
-            textwin_showstring(COLOR_RED, "Skin '%s' not found, using old one.",
-                               params);
-        }
-        else
-        {
-            if (strnicmp(options.skin, "subred", 6))
-            {
-                sprintf(tmpbuf, "skins/%s.zip", options.skin);
-
-                if (!PHYSFS_removeFromSearchPath(tmpbuf))
-                {
-                    LOG(LOG_MSG, "PHYSFS_removePath (%s) failed: %s\n",
-                        tmpbuf, PHYSFS_getLastError());
-                }
-
-                sprintf(tmpbuf, "skins/%s", options.skin);
-
-                if (!PHYSFS_removeFromSearchPath(tmpbuf))
-                {
-                    LOG(LOG_MSG, "PHYSFS_removePath (%s) failed: %s\n",
-                        tmpbuf, PHYSFS_getLastError());
-                }
-            }
-
-            strncpy(options.skin, params, 63);
-            save_options_dat();
-            reload_skin();
-            reload_icons();
-        }
-
-        return 1;
-    }
     else if (!strcmp(cmd, "/f1"))
     {
         quickslot_key(NULL, 0);
@@ -497,6 +418,7 @@ static uint8 CommandCheck(char *cmd, char *params)
 
         return 1;
     }
+    /* TODO; check and remove/fix. */
     else if (!strcmp(cmd, "/reloadskinnow"))
     {
         textwin_showstring(COLOR_GREEN, "Reloading skin. This function is only for skin creating, and may be removed anytime!");
