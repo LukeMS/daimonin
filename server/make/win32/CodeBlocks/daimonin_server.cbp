@@ -20,6 +20,8 @@
 					<Add option="-DNDEBUG" />
 					<Add option="-DLUA_PLUGIN_EXPORTS" />
 					<Add option="-DMIN_GW" />
+					<Add option="-DDAI_DEVELOPMENT_CODE" />
+					<Add option="-DDAI_DEVELOPMENT_CONTENT" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
@@ -46,6 +48,8 @@
 					<Add option="-DWIN32" />
 					<Add option="-DLUA_PLUGIN_EXPORTS" />
 					<Add option="-DMIN_GW" />
+					<Add option="-DDAI_DEVELOPMENT_CODE" />
+					<Add option="-DDAI_DEVELOPMENT_CONTENT" />
 				</Compiler>
 				<Linker>
 					<Add library="wsock32" />

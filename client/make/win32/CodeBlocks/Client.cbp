@@ -41,6 +41,7 @@
 			<Add option="-DWIN32" />
 			<Add option="-D__WIN_32" />
 			<Add option="-DMINGW" />
+			<Add option="-DDAI_DEVELOPMENT" />
 			<Add directory="..\..\..\src\include" />
 			<Add directory="sdl_inc" />
 			<Add directory="sdl_inc\SDL" />
