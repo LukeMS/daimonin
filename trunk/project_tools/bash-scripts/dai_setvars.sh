@@ -27,7 +27,7 @@ export dai_setvars_sh="dai_setvars.sh"
 export dai_refresh_sh="dai_refresh.sh"
 export dai_reboot_sh="dai_reboot.sh"
 export dai_time_data="dai_time.data"
-export dai_server="daimonin_server"
+export dai_server_exe="daimonin_server"
 
 
 ########
