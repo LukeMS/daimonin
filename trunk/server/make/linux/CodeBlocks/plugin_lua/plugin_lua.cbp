@@ -23,6 +23,8 @@
 					<Add option="-DLUA_PLUGIN_EXPORTS" />
 					<Add option="-DLINUX" />
 					<Add option="-DNDEBUG" />
+					<Add option="-DDAI_DEVELOPMENT_CODE" />
+					<Add option="-DDAI_DEVELOPMENT_CONTENT" />
 					<Add directory="../../../../src/include" />
 					<Add directory="../../../../src/lua" />
 					<Add directory="../../../../src/lua/include" />
@@ -51,6 +53,8 @@
 					<Add option="-DLINUX" />
 					<Add option="-DDEBUG_MOVEATTACK" />
 					<Add option="-DDEBUG" />
+					<Add option="-DDAI_DEVELOPMENT_CODE" />
+					<Add option="-DDAI_DEVELOPMENT_CONTENT" />
 					<Add directory="../../../../src/include" />
 					<Add directory="../../../../src/lua" />
 					<Add directory="../../../../src/lua/include" />

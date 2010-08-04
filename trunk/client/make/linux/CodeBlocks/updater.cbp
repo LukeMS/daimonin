@@ -37,6 +37,7 @@
 		</Build>
 		<Compiler>
 			<Add option="-W" />
+			<Add option="-DDAI_DEVELOPMENT" />
 		</Compiler>
 		<Linker>
 			<Add library="/usr/lib/libphysfs.so" />
