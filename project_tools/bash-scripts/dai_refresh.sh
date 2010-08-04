@@ -23,7 +23,6 @@ echo
 echo "#############################"
 echo "### Direct export scripts ###"
 echo "#############################"
-svn export --force ${dai_daimonin_repo}/trunk/project_tools/bash-scripts/dai_setvars.sh ${dai_home}/${dai_setvars_sh}
 svn export --force ${dai_daimonin_repo}/trunk/project_tools/bash-scripts/dai_refresh.sh ${dai_home}/${dai_refresh_sh}
 svn export --force ${dai_daimonin_repo}/trunk/project_tools/bash-scripts/dai_reboot.sh ${dai_home}/${dai_reboot_sh}
 svn export --force ${dai_daimonin_repo}/trunk/project_tools/perl-scripts/tileset_updater.pl ${dai_home}/tileset_updater.pl
