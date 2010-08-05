@@ -56,14 +56,36 @@
 #define DEFAULT_SERVER_PORT 13327
 #define DEFAULT_METASERVER_PORT 13326
 
+#ifndef SYSPATH
+#define SYSPATH "./"
+#endif
+
+#define DIR_BITMAPS "bitmaps"
+#define DIR_CACHE "cache"
+#define DIR_GFX_USER "gfx_user"
+#define DIR_ICONS "icons"
+#define DIR_LOGS "logs"
+#define DIR_MUSIC "media"
+#define DIR_SETTINGS "settings"
+#define DIR_SOUNDS "sfx"
+#define DIR_SRV_FILES "srv_files"
+
+#define FILE_DAIMONIN_P0 "daimonin.p0"
+#define FILE_BMAPS_P0 "bmaps.p0"
+#define FILE_BMAPS_TMP "srv_files/bmaps.tmp"
+#define FILE_ANIMS_TMP "srv_files/anims.tmp"
+#define FILE_ANIMS_TMP2 "srv_files/newanims.tmp"
+#define FILE_CLIENT_SOUNDS "srv_files/client_sounds"
+#define FILE_CLIENT_SPELLS "srv_files/client_spells"
+#define FILE_CLIENT_SKILLS "srv_files/client_skills"
+#define FILE_CLIENT_SETTINGS "srv_files/client_settings"
+#define FILE_CLIENT_BMAPS "srv_files/client_bmap"
+#define FILE_CLIENT_ANIMS "srv_files/client_anims"
+#define FILE_OPTION "options.dat"
 #define KEYBIND_FILE "settings/keys.dat"
-#define OPTION_FILE  "settings/options.dat"
 #define ARCHDEF_FILE "archdef.dat"
-
 #define INTERFACE_FILE "settings/interface.gui"
-
-
-#define LOG_FILE     "logs/client.log"
+#define LOG_FILE "logs/client.log"
 
 #define CLIENT_ICON_NAME "icon.png"
 
