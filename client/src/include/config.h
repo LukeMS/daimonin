@@ -82,7 +82,7 @@
 #define FILE_CLIENT_BMAPS "srv_files/client_bmap"
 #define FILE_CLIENT_ANIMS "srv_files/client_anims"
 #define FILE_OPTION "options.dat"
-#define KEYBIND_FILE "settings/keys.dat"
+#define FILE_KEYBIND "keys.dat"
 #define ARCHDEF_FILE "archdef.dat"
 #define INTERFACE_FILE "settings/interface.gui"
 #define LOG_FILE "logs/client.log"

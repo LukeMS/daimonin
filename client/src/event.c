@@ -1424,7 +1424,7 @@ Boolean check_menu_macros(char *text)
     if (!strcmp("?M_SPELL_LIST", text))
     {
         if (cpl.menustatus == MENU_KEYBIND)
-            save_keybind_file(KEYBIND_FILE);
+            save_keybind_file();
         map_udate_flag = 2;
         if (cpl.menustatus != MENU_SPELL)
         {
@@ -1442,7 +1442,7 @@ Boolean check_menu_macros(char *text)
     if (!strcmp("?M_SKILL_LIST", text))
     {
         if (cpl.menustatus == MENU_KEYBIND)
-            save_keybind_file(KEYBIND_FILE);
+            save_keybind_file();
 
         map_udate_flag = 2;
         if (cpl.menustatus != MENU_SKILL)
@@ -1465,7 +1465,7 @@ Boolean check_menu_macros(char *text)
         }
         else
         {
-            save_keybind_file(KEYBIND_FILE);
+            save_keybind_file();
             cpl.menustatus = MENU_NO;
         }
         sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICK, 0, 0, 100);
@@ -1475,7 +1475,7 @@ Boolean check_menu_macros(char *text)
     if (!strcmp("?M_STATUS", text))
     {
         if (cpl.menustatus == MENU_KEYBIND)
-            save_keybind_file(KEYBIND_FILE);
+            save_keybind_file();
 
         map_udate_flag = 2;
         if (cpl.menustatus != MENU_STATUS)
@@ -1620,7 +1620,7 @@ Boolean process_macro_keys(int id, int value)
         map_udate_flag = 2;
         sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICK, 0, 0, 100);
         if (cpl.menustatus == MENU_KEYBIND)
-            save_keybind_file(KEYBIND_FILE);
+            save_keybind_file();
 
         if (cpl.menustatus != MENU_SPELL)
         {
@@ -1635,7 +1635,7 @@ Boolean process_macro_keys(int id, int value)
     case KEYFUNC_SKILL:
         map_udate_flag = 2;
         if (cpl.menustatus == MENU_KEYBIND)
-            save_keybind_file(KEYBIND_FILE);
+            save_keybind_file();
 
         sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICK, 0, 0, 100);
         if (cpl.menustatus != MENU_SKILL)
@@ -1647,7 +1647,7 @@ Boolean process_macro_keys(int id, int value)
     case KEYFUNC_STATUS:
         map_udate_flag = 2;
         if (cpl.menustatus == MENU_KEYBIND)
-            save_keybind_file(KEYBIND_FILE);
+            save_keybind_file();
 
         if (cpl.menustatus != MENU_STATUS)
             cpl.menustatus = MENU_STATUS;
@@ -1665,7 +1665,7 @@ Boolean process_macro_keys(int id, int value)
         }
         else
         {
-            save_keybind_file(KEYBIND_FILE);
+            save_keybind_file();
             cpl.menustatus = MENU_NO;
         }
         sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICK, 0, 0, 100);
@@ -1918,7 +1918,7 @@ Boolean process_macro_keys(int id, int value)
 
     case KEYFUNC_HELP:
         if (cpl.menustatus == MENU_KEYBIND)
-            save_keybind_file(KEYBIND_FILE);
+            save_keybind_file();
 
         cpl.menustatus = MENU_NO;
         sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICK, 0, 0, 100);
@@ -2322,64 +2322,111 @@ static void key_repeat(void)
 /******************************************************************
  Import the key-binding file.
 ******************************************************************/
-void read_keybind_file(char *fname)
+void read_keybind_file(void)
 {
-    FILE   *stream;
-    char    line[256];
-    int     i, pos;
+    char         buf[MEDIUM_BUF];
+    PHYSFS_File *handle;
+    int          i, pos;
 
-    if ((stream = fopen_wrapper(fname, "r")))
+    sprintf(buf, "%s/%s", DIR_SETTINGS, FILE_KEYBIND);
+
+    if (!(handle = PHYSFS_openRead(buf)))
+    {
+        LOG(LOG_ERROR, "%s\n", PHYSFS_getLastError());
+    }
+    else
     {
         bindkey_list_set.group_nr = -1;
         bindkey_list_set.entry_nr = 0;
-        while (fgets(line, 255, stream))
+
+        while (PHYSFS_fgets(buf, sizeof(buf) - 1, handle))
         {
-            if (strlen(line) < 4)
+            if (strlen(buf) < 4)
+            {
                 continue; /* skip empty/incomplete lines */
+            }
+
             i = 1;
+
             /* found key group */
-            if (line[0] == '+')
+            if (buf[0] == '+')
             {
                 if (++bindkey_list_set.group_nr == BINDKEY_LIST_MAX)
+                {
                     break;
-                while (line[++i] && line[i] != '"' && i - 2 < OPTWIN_MAX_TABLEN - 1)
-                    bindkey_list[bindkey_list_set.group_nr].name[i - 2] = line[i];
+                }
+
+                while (buf[++i] && buf[i] != '"' && i - 2 < OPTWIN_MAX_TABLEN - 1)
+                {
+                    bindkey_list[bindkey_list_set.group_nr].name[i - 2] = buf[i];
+                }
+
                 bindkey_list[bindkey_list_set.group_nr].name[i - 2] = 0;
                 bindkey_list_set.entry_nr = 0;
+
                 continue;
             }
+
             if (bindkey_list_set.group_nr < 0)
+            {
                 break; /* something is wrong with the file */
+            }
+
             /* found a key entry */
-            sscanf(line, " %d %d", &bindkey_list[bindkey_list_set.group_nr].entry[bindkey_list_set.entry_nr].key,
+            sscanf(buf, " %d %d", &bindkey_list[bindkey_list_set.group_nr].entry[bindkey_list_set.entry_nr].key,
                    &bindkey_list[bindkey_list_set.group_nr].entry[bindkey_list_set.entry_nr].repeatflag);
             pos = 0;
-            while (line[++i] && line[i] != '"'); /* start of 1. string */
-            while (line[++i] && line[i] != '"')
-                bindkey_list[bindkey_list_set.group_nr].entry[bindkey_list_set.entry_nr].keyname[pos++] = line[i];
+
+            while (buf[++i] && buf[i] != '"') /* start of 1. string */
+            {
+                ;
+            }
+
+            while (buf[++i] && buf[i] != '"')
+            {
+                bindkey_list[bindkey_list_set.group_nr].entry[bindkey_list_set.entry_nr].keyname[pos++] = buf[i];
+            }
+
             bindkey_list[bindkey_list_set.group_nr].entry[bindkey_list_set.entry_nr].keyname[pos] = 0;
             pos = 0;
-            while (line[++i] && line[i] != '"'); /* start of 2. string */
-            while (line[++i] && line[i] != '"')
-                bindkey_list[bindkey_list_set.group_nr].entry[bindkey_list_set.entry_nr].text[pos++] = line[i];
+
+            while (buf[++i] && buf[i] != '"') /* start of 2. string */
+            {
+                ;
+            }
+
+            while (buf[++i] && buf[i] != '"')
+            {
+                bindkey_list[bindkey_list_set.group_nr].entry[bindkey_list_set.entry_nr].text[pos++] = buf[i];
+            }
+
             bindkey_list[bindkey_list_set.group_nr].entry[bindkey_list_set.entry_nr].text[pos] = 0;
 
             if (!strcmp(bindkey_list[bindkey_list_set.group_nr].entry[bindkey_list_set.entry_nr].text, "?M_GET"))
+            {
                 get_action_keycode = bindkey_list[bindkey_list_set.group_nr].entry[bindkey_list_set.entry_nr].key;
-            if (!strcmp(bindkey_list[bindkey_list_set.group_nr].entry[bindkey_list_set.entry_nr].text, "?M_DROP"))
+            }
+            else if (!strcmp(bindkey_list[bindkey_list_set.group_nr].entry[bindkey_list_set.entry_nr].text, "?M_DROP"))
+            {
                 drop_action_keycode = bindkey_list[bindkey_list_set.group_nr].entry[bindkey_list_set.entry_nr].key;
+            }
 
             if (++bindkey_list_set.entry_nr == OPTWIN_MAX_OPT)
+            {
                 break;
+            }
         }
-        fclose(stream);
+
+        PHYSFS_close(handle);
     }
+
     if (bindkey_list_set.group_nr <= 0)
     {
-        sprintf(bindkey_list[0].entry[0].keyname, "file %s is corrupt!", fname);
-        strcpy(bindkey_list[0].entry[0].text, "°ERROR!°");
-        LOG(LOG_ERROR, "ERROR: key-binding file %s is corrupt.\n", fname);
+        sprintf(bindkey_list[0].entry[0].keyname, "keybind file is corrupt!");
+        strcpy(bindkey_list[0].entry[0].text, "|ERROR!|");
+        LOG(LOG_ERROR, "ERROR: keybind file %s is corrupt.\n");
     }
+
     bindkey_list_set.group_nr = 0;
     bindkey_list_set.entry_nr = 0;
 }
@@ -2387,39 +2434,62 @@ void read_keybind_file(char *fname)
 /******************************************************************
  Export the key-binding file.
 ******************************************************************/
-void save_keybind_file(char *fname)
+void save_keybind_file(void)
 {
-    FILE   *stream;
-    int     entry, group;
-    char    buf[MEDIUM_BUF];
+    int          entry, group;
+    char         buf[MEDIUM_BUF];
+    PHYSFS_File *handle;
 
-    if (!(stream = fopen_wrapper(fname, "w+")))
+    sprintf(buf, "%s/%s", DIR_SETTINGS, FILE_KEYBIND);
+
+    if (!(handle = PHYSFS_openWrite(buf)))
+    {
+        LOG(LOG_ERROR, "%s\n", PHYSFS_getLastError());
+
         return;
+    }
+
     for (group = 0; group < BINDKEY_LIST_MAX; group++)
     {
         if (!bindkey_list[group].name[0])
+        {
             continue; /* this group is empty, what about the next one? */
+        }
+
         if (group)
-            fputs("\n", stream);
+        {
+            PHYSFS_writeString(handle, "\n");
+        }
+
         sprintf(buf, "+\"%s\"\n", bindkey_list[group].name);
-        fputs(buf, stream);
+        PHYSFS_writeString(handle, buf);
+
         for (entry = 0; entry < OPTWIN_MAX_OPT; entry++)
         {
             if (!bindkey_list[group].entry[entry].text[0])
+            {
                 continue; /* this entry is empty, what about the next one? */
+            }
+
             /* we need to know for INPUT_MODE_NUMBER "quick get" this key */
             if (!strcmp(bindkey_list[group].entry[entry].text, "?M_GET"))
+            {
                 get_action_keycode = bindkey_list[group].entry[entry].key;
-            if (!strcmp(bindkey_list[group].entry[entry].text, "?M_DROP"))
+            }
+            else if (!strcmp(bindkey_list[group].entry[entry].text, "?M_DROP"))
+            {
                 drop_action_keycode = bindkey_list[group].entry[entry].key;
+            }
+
             /* save key entry */
             sprintf(buf, "%.3d %d \"%s\" \"%s\"\n", bindkey_list[group].entry[entry].key,
                     bindkey_list[group].entry[entry].repeatflag, bindkey_list[group].entry[entry].keyname,
                     bindkey_list[group].entry[entry].text);
-            fputs(buf, stream);
+            PHYSFS_writeString(handle, buf);
         }
     }
-    fclose(stream);
+
+    PHYSFS_close(handle);
 }
 
 /******************************************************************
@@ -2440,7 +2510,7 @@ static void check_esc_menu_keys(int key)
         {
             keybind_status = KEYBIND_STATUS_NO;
             if (cpl.menustatus == MENU_KEYBIND)
-                save_keybind_file(KEYBIND_FILE);
+                save_keybind_file();
             cpl.menustatus = MENU_OPTION;
         }
         else if (esc_menu_index == ESC_MENU_LOGOUT)
@@ -2933,7 +3003,7 @@ void check_menu_keys(int menu, int key)
             menuRepeatKey = SDLK_DOWN;
             break;
         case SDLK_d:
-            save_keybind_file(KEYBIND_FILE);
+            save_keybind_file();
             sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICK, 0, 0, MENU_SOUND_VOL);
         case SDLK_ESCAPE:
             cpl.menustatus = MENU_NO;
