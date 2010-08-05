@@ -635,6 +635,18 @@ char * PHYSFS_fgets(char * const str, const int size, PHYSFS_File *const fp)
     return str;
 }
 
+PHYSFS_sint64 PHYSFS_writeString(PHYSFS_File *handle, const char *cs)
+{
+    PHYSFS_uint32 objCount = strlen(cs);
+
+    if (PHYSFS_write(handle, cs, 1, objCount) < objCount)
+    {
+        LOG(LOG_ERROR, "%s\n", PHYSFS_getLastError());
+    }
+
+    return objCount;
+}
+
 /* Flush the SDL version to the client log */
 void print_SDL_version(char* preamble, SDL_version* v)
 {

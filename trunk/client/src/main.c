@@ -493,11 +493,9 @@ void init_game_data(void)
 
     textwin_clearhistory();
     delete_player_lists();
-    load_options_dat(); /* now load options, allowing the user to override the presetings */
     server_level.exp[1]=2500; /* dummy value for startup */
     Screensize = Screendefs[options.resolution];
     init_widgets_fromCurrent();
-
 }
 
 /******************************************************************
@@ -505,55 +503,71 @@ void init_game_data(void)
 ******************************************************************/
 void save_options_dat(void)
 {
-    char    txtBuffer[20];
     int     i = -1, j = -1;
-    FILE   *stream;
+    char         buf[MEDIUM_BUF];
+    PHYSFS_File *handle;
 
-    if (!(stream = fopen_wrapper(OPTION_FILE, "w")))
+    sprintf(buf, "%s/%s", DIR_SETTINGS, FILE_OPTION);
+
+    if (!(handle = PHYSFS_openWrite(buf)))
+    {
+        LOG(LOG_ERROR, "%s\n", PHYSFS_getLastError());
+
         return;
-    fputs("###############################################\n", stream);
-    fputs("# This is the Daimonin SDL client option file #\n", stream);
-    fputs("###############################################\n", stream);
-    fputs("\n",stream);
+    }
+
+    PHYSFS_writeString(handle, "###############################################\n");
+    PHYSFS_writeString(handle, "# This is the Daimonin SDL client option file #\n");
+    PHYSFS_writeString(handle, "###############################################\n\n");
+
     if (!options.firststart)
     {
-        sprintf(txtBuffer,"* %c\n",'0');
-        fputs(txtBuffer,stream);
+        sprintf(buf, "* %c\n", '0');
+        PHYSFS_writeString(handle, buf);
     }
+
     /* the %-settings are settings which (should) not shown in options win */
-    sprintf(txtBuffer,"%%1 %s\n",options.skin);
-    fputs(txtBuffer, stream);
-    sprintf(txtBuffer,"%%21 %d\n",txtwin[TW_MSG].size);
-    fputs(txtBuffer, stream);
-    sprintf(txtBuffer,"%%22 %d\n",txtwin[TW_CHAT].size);
-    fputs(txtBuffer, stream);
+    sprintf(buf, "%%1 %s\n", options.skin);
+    PHYSFS_writeString(handle, buf);
+    sprintf(buf, "%%21 %d\n", txtwin[TW_MSG].size);
+    PHYSFS_writeString(handle, buf);
+    sprintf(buf, "%%22 %d\n", txtwin[TW_CHAT].size);
+    PHYSFS_writeString(handle, buf);
 
     while (opt_tab[++i])
     {
-        fputs("\n# ", stream);
-        fputs(opt_tab[i], stream);
-        fputs("\n", stream);
+        sprintf(buf, "\n# %s\n", opt_tab[i]);
+        PHYSFS_writeString(handle, buf);
+
         while (opt[++j].name && opt[j].name[0] != '#')
         {
-            fputs(opt[j].name, stream);
             switch (opt[j].value_type)
             {
                 case VAL_BOOL:
                 case VAL_INT:
-                    sprintf(txtBuffer, " %d", *((int *) opt[j].value));
+                    sprintf(buf, "%s %d\n",
+                            opt[j].name, *((int *)opt[j].value));
+
                     break;
+
                 case VAL_U32:
-                    sprintf(txtBuffer, " %d", *((uint32 *) opt[j].value));
+                    sprintf(buf, "%s %d\n",
+                            opt[j].name, *((uint32 *)opt[j].value));
+
                     break;
+
                 case VAL_CHAR:
-                    sprintf(txtBuffer, " %d", *((uint8 *) opt[j].value));
+                    sprintf(buf, "%s %d\n",
+                            opt[j].name, *((uint8 *) opt[j].value));
+
                     break;
             }
-            fputs(txtBuffer, stream);
-            fputs("\n", stream);
+
+            PHYSFS_writeString(handle, buf);
         }
     }
-    fclose(stream);
+
+    PHYSFS_close(handle);
 }
 
 /******************************************************************
@@ -562,7 +576,7 @@ void save_options_dat(void)
 void load_options_dat(void)
 {
     int     i = -1, pos;
-    FILE   *stream;
+    PHYSFS_File *handle;
     char    line[256], keyword[256], parameter[256];
 
     /* Fill all options with default values */
@@ -588,23 +602,25 @@ void load_options_dat(void)
         }
     }
 
-
 /* we have to have it here, before we junp back because of missing config file */
 
     strcpy(options.metaserver, "www.daimonin.org");
     options.metaserver_port = DEFAULT_METASERVER_PORT;
-
     txtwin_start_size = txtwin[TW_MIX].size;
 //    txtwin[TW_MIX].size=50;
 
-
     /* Read the options from file */
-    if (!(stream = fopen_wrapper(OPTION_FILE, "r")))
+    sprintf(line, "%s/%s", DIR_SETTINGS, FILE_OPTION);
+
+    if (!(handle = PHYSFS_openRead(line)))
     {
-        LOG(LOG_MSG, "Can't find file %s. Using defaults.\n", OPTION_FILE);
+        LOG(LOG_ERROR, "%s\n", PHYSFS_getLastError());
+        LOG(LOG_MSG, "Can't find option file! Using defaults.\n");
+
         return;
     }
-    while (fgets(line, 255, stream))
+
+    while (PHYSFS_fgets(line, 255, handle))
     {
         if (line[0] == '#' || line[0] == '\n')
             continue;
@@ -667,7 +683,8 @@ void load_options_dat(void)
             }
         }
     }
-    fclose(stream);
+
+    PHYSFS_close(handle);
 
     /*
      TODO implement server options.
@@ -1618,6 +1635,7 @@ int main(int argc, char *argv[])
     signal(SIGSEGV, SIG_DFL); /* allows better debugging under linux by removing SDL parachute for this signal */
 
     InitPhysFS(argv[0]);
+    load_options_dat(); /* now load options, allowing the user to override the presetings */
     SYSTEM_Start(); /* start the system AFTER start SDL */
 
     videoflags = get_video_flags();
