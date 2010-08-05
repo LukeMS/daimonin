@@ -1714,7 +1714,7 @@ int main(int argc, char *argv[])
     for (i = BITMAP_PROGRESS_BACK+1; i < BITMAP_MAX; i++) /* add later better error handling here*/
         load_bitmap(i);
     show_intro("load keys", 36);
-    read_keybind_file(KEYBIND_FILE);
+    read_keybind_file();
     show_intro("load mapdefs", 45);
     load_mapdef_dat();
     show_intro("load picture data", 54);

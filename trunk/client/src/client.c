@@ -342,7 +342,7 @@ static uint8 CommandCheck(char *cmd, char *params)
         }
         else
         {
-            save_keybind_file(KEYBIND_FILE);
+            save_keybind_file();
             cpl.menustatus = MENU_NO;
         }
 
