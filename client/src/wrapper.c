@@ -607,31 +607,45 @@ int strcasecmp(char *s1, char *s2)
 #endif
 #endif
 
-/* little helper function to have fgets behavior with physfs */
-char * PHYSFS_fgets(char * const str, const int size, PHYSFS_File *const fp)
+/* Similar to fgets(). Reads the next line from handle into s (at most len - 1
+ * characters), stopping when it reads \0, \n, or EOF. This terminating
+ * character is replaced in s with \0. The return is the number of characters
+ * read excluuding the terminator (so (PHYSFS_sint64)strlen(s)) or -1 on
+ * error. */
+PHYSFS_sint64 PHYSFS_readString(PHYSFS_File *handle, char *s, size_t len)
 {
-    int i = 0;
-    char c;
-    do
+    size_t        i = 0;
+    char          c;
+    PHYSFS_sint64 objCount = 0;
+
+    for (; i < len; i++)
     {
-        if (i == size-1)
-          break;
+        if (PHYSFS_read(handle, &c, 1, 1) < 1)
+        {
+            LOG(LOG_ERROR, "%s\n", PHYSFS_getLastError());
+            objCount = -1;
 
-        if (PHYSFS_read(fp, &c, 1, 1) != 1)
             break;
+        }
 
-        str[i++] = c;
+        if (c == '\0' ||
+            c == '\n' ||
+            c == EOF)
+        {
+            break;
+        }
+
+        *(s + i) = c;
+        objCount++;
     }
-    while (c != '\0' && c != -1 && c != '\n');
 
-    str[i] = '\0';
+    *(s + i) = '\0';
 
-    if (i == 0)
-        return NULL;
-
-    return str;
+    return objCount;
 }
 
+/* Write cs to handle. Returns number of characters written (or less if there
+ * was an error, which is logged, or -1 for a total failure. */
 PHYSFS_sint64 PHYSFS_writeString(PHYSFS_File *handle, const char *cs)
 {
     PHYSFS_uint32 objCount = strlen(cs);
