@@ -87,7 +87,7 @@ Boolean SYSTEM_Start(void)
     SDL_RWops   *rw;
     SDL_Surface *icon;
 
-    sprintf(buf, "%s%s", GetBitmapDirectory(), CLIENT_ICON_NAME);
+    sprintf(buf, "%s/%s", DIR_BITMAPS, CLIENT_ICON_NAME);
 
     if (PHYSFS_exists(buf) &&
         (rw = PHYSFSRWOPS_openRead(buf)) &&
@@ -97,19 +97,16 @@ Boolean SYSTEM_Start(void)
         SDL_WM_SetIcon(icon, 0);
     }
 
-    SDL_WM_SetCaption(PACKAGE_NAME, PACKAGE_NAME);
+    sprintf(buf, "Daimonin SDL Client v%d.%d.%d",
+            DAI_VERSION_RELEASE, DAI_VERSION_MAJOR, DAI_VERSION_MINOR);
+    SDL_WM_SetCaption(buf, buf);
 
-#if defined( __WIN_32)  || defined(__LINUX)
-
-    return(TRUE);
-#endif
+    return TRUE;
 }
 
 Boolean SYSTEM_End(void)
 {
-#if defined( __WIN_32)  || defined(__LINUX)
-    return(TRUE);
-#endif
+    return TRUE;
 }
 
 char * GetBitmapDirectory(void)
