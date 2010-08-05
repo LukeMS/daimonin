@@ -620,7 +620,7 @@ void load_options_dat(void)
         return;
     }
 
-    while (PHYSFS_fgets(line, 255, handle))
+    while (PHYSFS_readString(handle, line, sizeof(line)) != -1)
     {
         if (line[0] == '#' || line[0] == '\n')
             continue;
@@ -2633,27 +2633,29 @@ void reload_skin()
 /* This function is more or less a stub, and has to be greatly improved, and maybe moved to a own file skin.c */
 void load_skindef()
 {
-    PHYSFS_File *stream;
+    PHYSFS_File *handle;
     int     i;
     char line[512], keyword[256], parameter[256];
-
 
     /* first we fill with default values */
     skindef.rowcolor[0]=SDL_MapRGB(ScreenSurface->format, 100, 57, 30);
     skindef.rowcolor[1]=SDL_MapRGB(ScreenSurface->format, 57, 59, 39);
     skindef.newclosebutton = TRUE;
 
-
     /* lets try to load the skin.def */
     sprintf(line, "%s/skin.def", DIR_SETTINGS);
 
-    if (!(stream = PHYSFS_openRead(line)))
+    if (!(handle = PHYSFS_openRead(line)))
     {
-        LOG(LOG_MSG, "Could not load skin-definition for skin: %s.\nReason: %s\nUsing defaults.\n",options.skin, PHYSFS_getLastError());
+        LOG(LOG_MSG, "Could not load skin-definition for skin: %s.\nReason: %s\nUsing defaults.\n",
+            options.skin, PHYSFS_getLastError());
+
         return;
     }
-    PHYSFS_setBuffer(stream, 4096);
-    while (PHYSFS_fgets( line, 511, stream ))
+
+    PHYSFS_setBuffer(handle, HUGE_BUF);
+
+    while (PHYSFS_readString(handle, line, sizeof(line)) != -1)
     {
         if(line[0]=='#' || line[0]=='\n')
             continue;
@@ -2680,6 +2682,6 @@ void load_skindef()
         }
     }
 
-    PHYSFS_close(stream);
+    PHYSFS_close(handle);
 
 }

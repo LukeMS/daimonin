@@ -2326,6 +2326,7 @@ void read_keybind_file(void)
 {
     char         buf[MEDIUM_BUF];
     PHYSFS_File *handle;
+    size_t       len;
     int          i, pos;
 
     sprintf(buf, "%s/%s", DIR_SETTINGS, FILE_KEYBIND);
@@ -2339,9 +2340,9 @@ void read_keybind_file(void)
         bindkey_list_set.group_nr = -1;
         bindkey_list_set.entry_nr = 0;
 
-        while (PHYSFS_fgets(buf, sizeof(buf) - 1, handle))
+        while ((len = PHYSFS_readString(handle, buf, sizeof(buf))) != -1)
         {
-            if (strlen(buf) < 4)
+            if (len < 4)
             {
                 continue; /* skip empty/incomplete lines */
             }
