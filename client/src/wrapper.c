@@ -22,50 +22,50 @@
 */
 #include <include.h>
 
-#if defined( __WIN_32)  || defined(__LINUX)
-FILE   *logstream;
-
-Boolean logFlush;
-#endif
 void LOG(int logLevel, char *format, ...)
 {
-#if defined( __WIN_32)  || defined(__LINUX)
-    Boolean flag    = FALSE;
-    va_list ap;
+    static PHYSFS_File *handle = NULL;
+    va_list             ap;
+    char                buf[HUGE_BUF];
 
-    if (LOGLEVEL < 0)   /* we want log exactly ONE logLevel*/
+    /* we want log exactly ONE logLevel*/
+    if (LOGLEVEL < 0 &&
+        LOGLEVEL * (-1) != logLevel)
     {
-        if (LOGLEVEL * (-1) == logLevel)
-            flag = TRUE;
+        return;
     }
-    else    /* we log all logLevel < LOGLEVEL*/
+    /* we log all logLevel < LOGLEVEL*/
+    else if (LOGLEVEL >= 0 &&
+             logLevel >= LOGLEVEL)
     {
-        if (logLevel <= LOGLEVEL)
-            flag = TRUE;
+        return;
     }
-    if (!logstream)     /* secure: we have no open stream*/
-    {
-        logstream = fopen_wrapper(LOG_FILE, "w");
-        if (!logstream)
-            flag = FALSE;
-    }
-    if (flag)
-    {
-        va_start(ap, format);
-        vfprintf(stdout, format, ap);
-        va_end(ap);
-        va_start(ap, format);
-        vfprintf(logstream, format, ap);
-        va_end(ap);
-    }
-    fflush(logstream);
 
-#endif
+    if (PHYSFS_isInit() &&
+        !handle)
+    {
+        sprintf(buf, "%s/%s", DIR_LOGS, FILE_LOG);
+
+        if (!(handle = PHYSFS_openWrite(buf)))
+        {
+            fprintf(stderr, "%s\n'%s' will not be saved!\n",
+                    PHYSFS_getLastError(), buf);
+        }
+    }
+
+    va_start(ap, format);
+    vsprintf(buf, format, ap);
+    va_end(ap);
+    fprintf(stdout, "%s", buf);
+
+    if (handle)
+    {
+        PHYSFS_writeString(handle, buf);
+    }
 }
 
 void MSGLOG (char *msg)
 {
-#if defined( __WIN_32)  || defined(__LINUX)
         char timestr[20];
         if(msglog)      /* secure: we have no open stream*/
         {
@@ -78,7 +78,6 @@ void MSGLOG (char *msg)
         else
             LOG(LOG_DEBUG,"Error with chatlogfile\n");
         fflush(msglog);
-#endif
 }
 
 Boolean SYSTEM_Start(void)

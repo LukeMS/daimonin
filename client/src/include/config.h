@@ -85,7 +85,7 @@
 #define FILE_KEYBIND "keys.dat"
 #define ARCHDEF_FILE "archdef.dat"
 #define FILE_INTERFACE "interface.gui"
-#define LOG_FILE "logs/client.log"
+#define FILE_LOG "client.log"
 
 #define CLIENT_ICON_NAME "icon.png"
 
