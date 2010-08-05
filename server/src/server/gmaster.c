@@ -245,7 +245,6 @@ int load_gmaster_file(void)
 void add_gmaster_file_entry(char *name, char *host, int mode_id)
 {
     objectlink *ol;
-    uint8      i;
 
     ol = get_gmaster_node();
 
