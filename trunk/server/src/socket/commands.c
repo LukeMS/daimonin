@@ -505,6 +505,9 @@ void cs_cmd_setup(char *buf, int len, NewSocket *ns)
 {
     int     s;
     char   *cmd, *param, tmpbuf[MAX_DATA_TAIL_LENGTH+128], *cmdback;
+    uint32  rel = 0,
+            maj = 0,
+            min = 0;
 
     /* lets do some sanity checks */
     if (!buf || ns->status != Ns_Login || !len || buf[len-1] != 0)
@@ -569,7 +572,29 @@ void cs_cmd_setup(char *buf, int len, NewSocket *ns)
         strcat(cmdback, cmd);
         strcat(cmdback, " ");
 
-        if (!strcmp(cmd, "pv"))
+        if (!strcmp(cmd, "dv"))
+        {
+            char *cp1 = NULL,
+                 *cp2 = NULL;
+
+            if ((cp1 = strchr(param, '.')))
+            {
+                *cp1++ = '\0';
+                rel = (uint32)strtoul(param, NULL, 10);
+
+                if ((cp2 = strchr(cp1, '.')))
+                {
+                    *cp2++ = '\0';
+                    maj = (uint32)strtoul(cp1, NULL, 10);
+                    min = (uint32)strtoul(cp2, NULL, 10);
+                }
+            }
+
+            sprintf(tmpbuf, "%u.%u.%u",
+                    DAI_VERSION_RELEASE, DAI_VERSION_MAJOR, DAI_VERSION_MINOR);
+            strcat(cmdback, tmpbuf);
+        }
+        else if (!strcmp(cmd, "pv"))
         {
             ns->protocol_version = (uint32)strtoul(param, (char **)NULL, 10);
             sprintf(tmpbuf, "%d", PROTOCOL_VERSION);
@@ -793,6 +818,20 @@ void cs_cmd_setup(char *buf, int len, NewSocket *ns)
     /* lets check the client version is ok. If not, we send back the setup command
     * but then we go in zombie mode
     */
+    if (DAI_VERSION_RELEASE != rel ||
+        (DAI_VERSION_RELEASE == rel &&
+         DAI_VERSION_MAJOR != maj))
+    {
+        LOG(llevInfo, "Daimonin version mismatch client: %u.%u.%u server: %u.%u.%u\n",
+            rel, maj, min, DAI_VERSION_RELEASE, DAI_VERSION_MAJOR,
+            DAI_VERSION_MINOR);
+        ns->login_count = ROUND_TAG + (uint32)(10.0f * pticks_second);
+        ns->status = Ns_Zombie; /* we hold the socket open for a *bit* */
+        ns->idle_flag = 1;
+
+        return;
+    }
+
     if (PROTOCOL_VERSION != ns->protocol_version)
     {
         LOG(llevInfo, "Protocol version mismatch client:(%u) server:(%u)\n",

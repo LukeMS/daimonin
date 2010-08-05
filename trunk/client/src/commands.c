@@ -185,7 +185,75 @@ void SetupCmd(char *buf, int len)
         while (s < len && buf[s] == ' ')
             s++;
 
-        if (!strcmp(cmd, "pv"))
+        if (!strcmp(cmd, "dv"))
+        {
+            char   *cp1 = NULL,
+                   *cp2 = NULL,
+                    tmpbuf[TINY_BUF];
+            uint32  rel = 0,
+                    maj = 0,
+                    min = 0;
+
+            if ((cp1 = strchr(param, '.')))
+            {
+                *cp1++ = '\0';
+                rel = (uint32)strtoul(param, NULL, 10);
+
+                if ((cp2 = strchr(cp1, '.')))
+                {
+                    *cp2++ = '\0';
+                    maj = (uint32)strtoul(cp1, NULL, 10);
+                    min = (uint32)strtoul(cp2, NULL, 10);
+                }
+            }
+
+            if (!cp1 ||
+                !cp2)
+            {
+                sprintf(buf, "The server is broken!\nPlease report it and select a different one!");
+                textwin_showstring(COLOR_RED, buf);
+                LOG(LOG_ERROR, "%s\n", buf);
+                SOCKET_CloseSocket(csocket.fd);
+                GameStatus = GAME_STATUS_START;
+
+                return;
+            }
+            else if (rel != DAI_VERSION_RELEASE ||
+                     (rel == DAI_VERSION_RELEASE &&
+                      maj != DAI_VERSION_MAJOR))
+            {
+                textwin_showstring(COLOR_RED, "Mismatched x.y versions (server: %u.%u, client: %u.%u)!",
+                                   rel, maj, DAI_VERSION_RELEASE,
+                                   DAI_VERSION_MAJOR);
+
+                if (rel < DAI_VERSION_RELEASE ||
+                    (rel == DAI_VERSION_RELEASE &&
+                     maj < DAI_VERSION_MAJOR))
+                {
+                    sprintf(tmpbuf, "The server is outdated!\nSelect a different one!");
+                }
+                else
+                {
+                    sprintf(tmpbuf, "Your client is outdated!\nUpdate your client!");
+                }
+
+                LOG(LOG_ERROR, "%s\n", tmpbuf);
+                textwin_showstring(COLOR_RED, tmpbuf);
+                SOCKET_CloseSocket(csocket.fd);
+                GameStatus = GAME_STATUS_START;
+                SDL_Delay(3250);
+
+                return;
+            }
+
+            if (min != DAI_VERSION_MINOR)
+            {
+                textwin_showstring(COLOR_ORANGE, "Mismatched z version (server: %u, client: %u)!",
+                                   min, DAI_VERSION_MINOR);
+                textwin_showstring(COLOR_ORANGE, "You can still connect and play but you might encounter minor problem of new features may not work properly.");
+            }
+        }
+        else if (!strcmp(cmd, "pv"))
         {
             unsigned int pv;
 
