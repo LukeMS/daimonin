@@ -127,6 +127,7 @@ extern void     kill_widgets();
 
 /* file */
 extern void     save_interface_file(void);
+extern Boolean  load_interface_file(void);
 
 /* events */
 extern int      widget_event_mousedn(int x,int y, SDL_Event *event);

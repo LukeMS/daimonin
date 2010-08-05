@@ -36,7 +36,6 @@
 
 /* file-scope routines .. */
 static void     process_widget(int nID, int proc);
-static Boolean  load_interface_file(char *filename);
 static void     init_priority_list();
 static void     kill_priority_list();
 /* ... */
@@ -146,10 +145,10 @@ void init_widgets_fromCurrent()
 
     /* if cannot open/load the interface file .. */
     /* .. load defaults and create file */
-    if(!load_interface_file(INTERFACE_FILE))
+    if(!load_interface_file())
     {
         /* inform user.. */
-        LOG(LOG_MSG, "..Can't open/load the interface file - %s. Resetting..\n", INTERFACE_FILE);
+        LOG(LOG_MSG, "..Can't open/load the interface file. Resetting..\n");
         /* load the defaults - this also allocates priority list */
         init_widgets_fromDefault();
         /* create the interface file.. */
@@ -178,7 +177,7 @@ Boolean init_widgets_fromFile(char *filename)
     if(!TOTAL_WIDGETS) { return FALSE; }
 
     /* exit, if cannot open/find file */
-    if(!load_interface_file(filename)) { return FALSE; }
+    if(!load_interface_file()) { return FALSE; }
 
     /* clear the priority list if it already exists */
     if(priority_list_head) { kill_priority_list(); }
@@ -288,13 +287,16 @@ void kill_widgets()
 
 /* load the widgets/interface from a file */
 /* do not perform any dynamic allocation! */
-Boolean load_interface_file(char *filename)
+Boolean load_interface_file(void)
 {
-    int i=-1, pos;
-    FILE *stream;
-    _widgetdata tmp_widget[TOTAL_WIDGETS];
-    char line[256], keyword[256], parameter[256];
-    int found_widget[TOTAL_WIDGETS] = {0};
+    int          i = -1,
+                 pos,
+                 found_widget[TOTAL_WIDGETS] = { 0 };
+    _widgetdata  tmp_widget[TOTAL_WIDGETS];
+    char         line[MEDIUM_BUF],
+                 keyword[MEDIUM_BUF],
+                 parameter[MEDIUM_BUF];
+    PHYSFS_File *handle;
 
 //    LOG(LOG_MSG,"Entering load_interface_file()..\n");
 
@@ -303,17 +305,17 @@ Boolean load_interface_file(char *filename)
     for(pos=0; pos < TOTAL_WIDGETS; ++pos)
         tmp_widget[pos] = con_widget[pos];
 
-    /* sanity check - if the file doesn't exist, exit w/ error */
-    if (!(stream = fopen_wrapper(filename, "r")))
+    sprintf(line, "%s/%s", DIR_SETTINGS, FILE_INTERFACE);
+
+    if (!(handle = PHYSFS_openRead(line)))
     {
-        /* inform user.. */
-        LOG(LOG_MSG, "load_interface_file(): Can't find file %s.\n",filename);
-        /* done.. */
+        LOG(LOG_ERROR, "%s\n", PHYSFS_getLastError());
+
         return FALSE;
     }
 
     /* Read the settings from the file */
-    while (fgets( line, 255, stream ))
+    while (PHYSFS_readString(handle, line, sizeof(line)) != -1)
     {
         if(line[0]=='#' || line[0]=='\n')
             continue;
@@ -362,7 +364,7 @@ Boolean load_interface_file(char *filename)
                     continue;
                 }
 
-                while (fgets( line, 255, stream ))
+                while (PHYSFS_readString(handle, line, sizeof(line)) != -1)
                 {
                     if(line[0]=='#' || line[0]=='\n')
                         continue;
@@ -409,7 +411,8 @@ Boolean load_interface_file(char *filename)
             }
         }
     }
-    fclose(stream);
+
+    PHYSFS_close(handle);
 
     /* test to see if all widgets were found */
     for(pos=0; pos < TOTAL_WIDGETS && found_widget[pos]; ++pos) { }
@@ -423,7 +426,7 @@ Boolean load_interface_file(char *filename)
     /* some are missing, don't transfer .. */
     else
     {
-        LOG(LOG_MSG, "load_interface_file(): Error! Not all widgets included in interface file: %s\n", filename);
+        LOG(LOG_MSG, "load_interface_file(): Not all widgets included in interface file!\n");
 
         return FALSE;
     }
@@ -436,53 +439,44 @@ Boolean load_interface_file(char *filename)
 /* save the widgets/interface to a file */
 void save_interface_file(void)
 {
-    char txtBuffer[20];
-    int i=-1;
-    FILE *stream;
+    char         buf[MEDIUM_BUF];
+    PHYSFS_File *handle;
+    int          i = -1;
+
+    sprintf(buf, "%s/%s", DIR_SETTINGS, FILE_INTERFACE);
 
     /* leave, if there's an error opening or creating */
-    if(!(stream = fopen_wrapper(INTERFACE_FILE, "w")))
-        return;
+    if(!(handle = PHYSFS_openWrite(buf)))
+    {
+        LOG(LOG_ERROR, "%s\n", PHYSFS_getLastError());
 
-    fputs("##############################################\n",stream);
-    fputs("# This is the daimonin client interface file #\n",stream);
-    fputs("##############################################\n",stream);
+        return;
+    }
+
+    PHYSFS_writeString(handle, "##############################################\n");
+    PHYSFS_writeString(handle, "# This is the daimonin client interface file #\n");
+    PHYSFS_writeString(handle, "##############################################\n");
 
     while (++i < TOTAL_WIDGETS)
     {
-        /* beginning of block */
-        fputs("\nWidget: ", stream);
-        fputs(cur_widget[i].name, stream);
-        fputs("\n", stream);
-
-        fputs("....Moveable:", stream);
-        sprintf(txtBuffer, " %d",  cur_widget[i].moveable);
-        fputs(txtBuffer,stream); fputs("\n",stream);
-
-        fputs("....Active:", stream);
-        sprintf(txtBuffer, " %d",  cur_widget[i].show);
-        fputs(txtBuffer,stream); fputs("\n",stream);
-
-        fputs("....X1:", stream);
-        sprintf(txtBuffer, " %d",  cur_widget[i].x1);
-        fputs(txtBuffer,stream); fputs("\n",stream);
-
-        fputs("....Y1:", stream);
-        sprintf(txtBuffer, " %d",  cur_widget[i].y1);
-        fputs(txtBuffer,stream); fputs("\n",stream);
-
-        fputs("....Wd:", stream);
-        sprintf(txtBuffer, " %d",  cur_widget[i].wd);
-        fputs(txtBuffer,stream); fputs("\n",stream);
-
-        fputs("....Ht:", stream);
-        sprintf(txtBuffer, " %d",  cur_widget[i].ht);
-        fputs(txtBuffer,stream); fputs("\n",stream);
-
-        /* end of block */
-        fputs("....END\n", stream);
+        sprintf(buf, "\nWidget: %s\n", cur_widget[i].name);
+        PHYSFS_writeString(handle, buf);
+        sprintf(buf, "....Moveable: %d\n", cur_widget[i].moveable);
+        PHYSFS_writeString(handle, buf);
+        sprintf(buf, "....Active: %d\n", cur_widget[i].show);
+        PHYSFS_writeString(handle, buf);
+        sprintf(buf, "....X1: %d\n", cur_widget[i].x1);
+        PHYSFS_writeString(handle, buf);
+        sprintf(buf, "....Y1: %d\n", cur_widget[i].y1);
+        PHYSFS_writeString(handle, buf);
+        sprintf(buf, "....Wd: %d\n", cur_widget[i].wd);
+        PHYSFS_writeString(handle, buf);
+        sprintf(buf, "....Ht: %d\n", cur_widget[i].ht);
+        PHYSFS_writeString(handle, buf);
+        PHYSFS_writeString(handle, "....END\n");
     }
-    fclose(stream);
+
+    PHYSFS_close(handle);
 }
 
 /* is the widget being moved by the user? if so, let me know! */
