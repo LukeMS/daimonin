@@ -1608,6 +1608,7 @@ int main(int argc, char *argv[])
     init_game_data();
     ParseInvocationLine(argc, argv);
 
+    InitPhysFS(argv[0]);
 #if defined( __LINUX)
     LOG(LOG_MSG, "**** NOTE ****\n");
     LOG(LOG_MSG, "With sound enabled SDL will throw a parachute\n");
@@ -1633,7 +1634,6 @@ int main(int argc, char *argv[])
 	atexit(SDL_Quit);
     signal(SIGSEGV, SIG_DFL); /* allows better debugging under linux by removing SDL parachute for this signal */
 
-    InitPhysFS(argv[0]);
     load_options_dat(); /* now load options, allowing the user to override the presetings */
     init_widgets_fromCurrent();
     SYSTEM_Start(); /* start the system AFTER start SDL */
