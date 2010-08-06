@@ -80,12 +80,12 @@ int x_custom_cursor = 0;
 int y_custom_cursor = 0;
 
 /* global endian templates (send from server) */
-int		endian_do16;	/* if FALSE we don't must shift! */
-int		endian_do32;	/* if FALSE we don't must shift! */
-int		endian_shift16[2]; /* shift values */
-int		endian_shift32[4];
-uint32	endian_int32;	/* thats the 0x04030201 32bit endian */
-uint16	endian_int16;   /* thats the 0x0201 short endian */
+int        endian_do16;    /* if FALSE we don't must shift! */
+int        endian_do32;    /* if FALSE we don't must shift! */
+int        endian_shift16[2]; /* shift values */
+int        endian_shift32[4];
+uint32    endian_int32;    /* thats the 0x04030201 32bit endian */
+uint16    endian_int16;   /* thats the 0x0201 short endian */
 
 
 struct gui_book_struct    *gui_interface_book;
@@ -433,7 +433,7 @@ void init_game_data(void)
     GameStatusSelect = GAME_STATUS_LOGIN_ACCOUNT;
     LoginInputStep = LOGIN_STEP_NOTHING;
 
-#ifndef DAI_DEVELOPMENT
+#ifdef DAI_DEVELOPMENT
     ShowLocalServer = 1;
 #else
     ShowLocalServer = 0;
@@ -731,14 +731,17 @@ Boolean game_status_chain(void)
         interface_mode = GUI_NPC_MODE_NO;
         clear_group();
         map_udate_flag = 2;
-        if (argServerName[0] != 0)
-            add_metaserver_data(argServerName, argServerName, argServerPort, -1, "user server",
-            "Server from -server '...' command line.");
 
-        /* skip of -nometa in command line or no metaserver set in options */
+        if (ShowLocalServer)
+        {
+            add_metaserver_data("LOCAL", "127.0.0.1", argServerPort, -1, "UNKNOWN",
+                                "Your local server (if running)");
+        }
+
+        /* skip if --nometa in command line or no metaserver set in options */
         if (options.no_meta || !options.metaserver[0])
         {
-            textwin_showstring(COLOR_GREEN, "Option '-nometa'.metaserver ignored.");
+            textwin_showstring(COLOR_GREEN, "Metaserver ignored.");
         }
         else
         {
@@ -763,19 +766,20 @@ Boolean game_status_chain(void)
 
             if(!meta_ret)
             {
-                add_metaserver_data("Daimonin", "daimonin.game-server.cc", DEFAULT_SERVER_PORT, -1, "0.97x", "Public Daimonin game server from www.daimonin.org.");
-                add_metaserver_data("Test Server", "test-server.game-server.cc", DEFAULT_SERVER_PORT, -1, "test", "Checkout here the newest features & maps! BETA TESTING.");
+                add_metaserver_data("Main", "daimonin.game-server.cc",
+                                    DEFAULT_SERVER_PORT, -1, "UNKNOWN",
+                                    "Best for simply playing the game");
+                add_metaserver_data("Test", "62.75.168.180",
+                                    DEFAULT_SERVER_PORT, -1, "UNKNOWN",
+                                    "Best for testing new content (maps), both official and unofficial");
+                add_metaserver_data("Dev", "www.daimonin.org",
+                                    DEFAULT_SERVER_PORT, -1, "UNKNOWN",
+                                    "Best for testing new code (features)");
             }
         }
 
-        if (ShowLocalServer)
-        {
-            add_metaserver_data("LOCAL SERVER", "127.0.0.1", argServerPort, -1, "LOCAL",
-                                "localhost. Start your server before you try to connect.");
-        }
-
         count_meta_server();
-        textwin_showstring(COLOR_GREEN, "select a server.");
+        textwin_showstring(COLOR_GREEN, "Select a server.");
         GameStatus = GAME_STATUS_START;
     }
     else if (GameStatus == GAME_STATUS_START)
@@ -785,38 +789,51 @@ Boolean game_status_chain(void)
         map_udate_flag = 2;
         clear_map();
         map_redraw_flag=TRUE;
-
         clear_player();
         reset_keys();
         free_faces();
         sprite_clear_backbuffer();
-		SOCKET_CloseClientSocket(&csocket);
+        SOCKET_CloseClientSocket(&csocket);
         GameStatus = GAME_STATUS_WAITLOOP;
 
-        switch (options.cli_server)
+        if (options.cli_server >= 0)
         {
-            case 0: /* Local */
-                strcpy(ServerName,"127.0.0.1"); /* BAD BAD BAD, i know... but we don't want to have a real -server option */
-                ServerPort=13327;
-                GameStatus = GAME_STATUS_STARTCONNECT;
-                break;
-            case 1: /* Main */
-                strcpy(ServerName,"daimonin.game-server.cc"); /* BAD BAD BAD, i know... but we don't want to have a real -server option */
-                ServerPort=13327;
-                GameStatus = GAME_STATUS_STARTCONNECT;
-                break;
-            case 2: /* Test */
-                strcpy(ServerName,"test-server.game-server.cc"); /* BAD BAD BAD, i know... but we don't want to have a real -server option */
-                ServerPort=13327;
-                GameStatus = GAME_STATUS_STARTCONNECT;
-                break;
-            case 3: /* Dev */
-                strcpy(ServerName,"www.daimonin.org"); /* BAD BAD BAD, i know... but we don't want to have a real -server option */
-                ServerPort=13327;
-                GameStatus = GAME_STATUS_STARTCONNECT;
-                break;
+            switch (options.cli_server)
+            {
+                case 0: /* Local */
+                    strcpy(ServerName,"127.0.0.1");
+                    ServerPort = argServerPort;
+                    GameStatus = GAME_STATUS_STARTCONNECT;
+
+                    break;
+
+                case 1: /* Main */
+                    strcpy(ServerName,"daimonin.game-server.cc");
+                    ServerPort = argServerPort;
+                    GameStatus = GAME_STATUS_STARTCONNECT;
+
+                    break;
+
+                case 2: /* Test */
+                    strcpy(ServerName,"62.75.168.180");
+                    ServerPort = argServerPort;
+                    GameStatus = GAME_STATUS_STARTCONNECT;
+
+                    break;
+
+                case 3: /* Dev */
+                    strcpy(ServerName,"www.daimonin.org");
+                    ServerPort = argServerPort;
+                    GameStatus = GAME_STATUS_STARTCONNECT;
+
+                    break;
+
+                default:
+                    textwin_showstring(COLOR_RED, "Unknown server! See --help for a list of valid server numbers.");
+            }
         }
-        options.cli_server=-1; /* only try once */
+
+        options.cli_server = -1; /* only try once */
     }
     else if (GameStatus == GAME_STATUS_STARTCONNECT)
     {
@@ -1629,9 +1646,9 @@ int main(int argc, char *argv[])
         }
         exit(1);
     }
-	print_SDL_versions();
+    print_SDL_versions();
 
-	atexit(SDL_Quit);
+    atexit(SDL_Quit);
     signal(SIGSEGV, SIG_DFL); /* allows better debugging under linux by removing SDL parachute for this signal */
 
     load_options_dat(); /* now load options, allowing the user to override the presetings */
@@ -2173,7 +2190,7 @@ static void ParseInvocationLine(int argc, char *argv[])
                 LOG(LOG_MSG, "                           0 - your local server (if running)\n");
                 LOG(LOG_MSG, "                           1 - the main server, which is best for simply playing the game\n");
                 LOG(LOG_MSG, "                           2 - the test server, which is best for testing new content (maps), both official and unofficial\n");
-                LOG(LOG_MSG, "                           3 - the main server, which is best for testing new code (features)\n");
+                LOG(LOG_MSG, "                           3 - the dev server, which is best for testing new code (features)\n");
                 LOG(LOG_MSG, "  -v, --version        : output client version number and exit\n");
                 exit(EXIT_SUCCESS);
             }
@@ -2199,7 +2216,7 @@ static void ParseInvocationLine(int argc, char *argv[])
             }
             else
             {
-                ShowLocalServer = TRUE;
+                ShowLocalServer = 1;
                 invalid[0] = '\0';
             }
         }
