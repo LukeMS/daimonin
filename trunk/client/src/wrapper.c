@@ -22,6 +22,10 @@
 */
 #include <include.h>
 
+#if PHYSFS_VER_MAJOR < 2
+int PHYSFS_isInitialised = 0;
+#endif
+
 void LOG(int logLevel, char *format, ...)
 {
     static PHYSFS_File *handle = NULL;
@@ -604,6 +608,13 @@ int strcasecmp(char *s1, char *s2)
     return (int) (*s1 - *s2);
 }
 #endif
+#endif
+
+#if PHYSFS_VER_MAJOR < 2
+int PHYSFS_isInit(void)
+{
+    return !PHYSFS_isInitialised;
+}
 #endif
 
 /* Similar to fgets(). Reads the next line from handle into s (at most len - 1
