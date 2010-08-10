@@ -26,6 +26,7 @@ export dai_logsdir=""
 export dai_setvars_sh="dai_setvars.sh"
 export dai_refresh_sh="dai_refresh.sh"
 export dai_reboot_sh="dai_reboot.sh"
+export dai_recollect_sh="dai_recollect.sh"
 export dai_time_data="dai_time.data"
 export dai_server_exe="daimonin_server"
 
@@ -33,8 +34,16 @@ export dai_server_exe="daimonin_server"
 ########
 # SVN repository URLs
 
-# These are public reposiitories so anyone can access them (and the scripts
-# won't work without them).
+# These are public repositories so anyone can access them. The scripts won't
+# work without ${dai_daimonin_repo}. If ${dai_gridarta_repo} is not null,
+# Gridarta will be downloaded, built, and run to collect the arches. If it is
+# null, this will be done by the ${dai_recollect_sh} script. The main
+# differences are size and complexity (Gridarta is a full featured map editor,
+# though we only use it for this simple task from the command line here and
+# requires you to install a few hundred MB of a Java SDK and it's dependencies,
+# while ${dai_recollect_sh} is a purpose-written BASH scriptt of about 4KB) and
+# speed (Gridarta does the job in seconds -- but you do need to fetch and build
+# it first -- whereas ${dai_recollect_sh} takes a few minutes).
 export dai_daimonin_repo="https://daimonin.svn.sourceforge.net/svnroot/daimonin"
 export dai_gridarta_repo="https://gridarta.svn.sourceforge.net/svnroot/gridarta"
 
@@ -63,6 +72,11 @@ export dai_gridarta_ttbs="tags/0.8.1"
 # ${dai_daimonin_repo}/streams/newarch will also be added. If null, they won't
 # be.
 export dai_use_newarch=""
+
+# If this is null ${dai_recollect_sh} will show a running collection count.
+# This is useful on screen but not in logs, so set it to not null if the reboot
+# is to be logged.
+export dai_suppress_progress=""
 
 # Any CFLAGS you want to pass to make. Foe example, use -DDAI_DEVELOPMENT_CODE
 # and/or -DDAI_DEVELOPMENT_CONTENT to compile a development server (note that

@@ -3,7 +3,7 @@
 
 ########
 # Set global variables.
-. ./dai_setvars.sh
+source ./dai_setvars.sh
 
 if [ -f ./nohup.out ]
 then
@@ -25,6 +25,12 @@ echo "### Direct export scripts ###"
 echo "#############################"
 svn export --force ${dai_daimonin_repo}/trunk/project_tools/bash-scripts/dai_refresh.sh ${dai_home}/${dai_refresh_sh}
 svn export --force ${dai_daimonin_repo}/trunk/project_tools/bash-scripts/dai_reboot.sh ${dai_home}/${dai_reboot_sh}
+
+if [ -n "${dai_gridarta_repo}" ]
+then
+    svn export --force ${dai_daimonin_repo}/trunk/project_tools/bash-scripts/dai_recollect.sh ${dai_home}/${dai_recollect_sh}
+fi
+
 svn export --force ${dai_daimonin_repo}/trunk/project_tools/perl-scripts/tileset_updater.pl ${dai_home}/tileset_updater.pl
 
 echo
@@ -37,7 +43,11 @@ then
     svn cleanup ${dai_svndir}/daimonin/${dai_gameserver}/arch
     svn cleanup ${dai_svndir}/daimonin/${dai_gameserver}/maps
     svn cleanup ${dai_svndir}/daimonin/${dai_gameserver}/server
-    svn cleanup ${dai_svndir}/gridarta
+
+    if [ -n "${dai_gridarta_repo}" ]
+    then
+        svn cleanup ${dai_svndir}/gridarta
+    fi
 
     if [ -e ${dai_home}/stream ]
     then
@@ -49,19 +59,19 @@ then
         fi
     fi
 
-    if [ -n ${dai_use_newarch} ]
+    if [ -n "${dai_use_newarch}" ]
     then
         svn cleanup ${dai_svndir}/daimonin/newarch/arch
         svn cleanup ${dai_svndir}/daimonin/newarch/maps
     fi
 
-    if [ -n ${dai_daiserv_repo} ]
+    if [ -n "${dai_daiserv_repo}" ]
     then
         svn cleanup ${dai_svndir}/daiserv/arch
         svn cleanup ${dai_svndir}/daiserv/maps
     fi
 
-    if [ -n ${dai_mapserv_repo} ]
+    if [ -n "${dai_mapserv_repo}" ]
     then
         svn cleanup ${dai_svndir}/mapserv/arch
         svn cleanup ${dai_svndir}/mapserv/maps

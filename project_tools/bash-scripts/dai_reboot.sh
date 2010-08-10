@@ -3,7 +3,7 @@
 
 ########
 # Set global variables.
-. ./dai_setvars.sh
+source ./dai_setvars.sh
 
 ########
 # Set some script variables.
@@ -108,7 +108,7 @@ echo "${fromtime},${totime},${reason}" > ${dai_home}/${dai_time_data}
                 reason=`cut -d , -f 3 ${dai_home}/${dai_time_data}`
                 logfile="${dai_builddir}/server/data/log/${fromtime}"
 
-                if [ -n ${dai_logsdir} ]
+                if [ -n "${dai_logsdir}" ]
                 then
                     logfile="${dai_logsdir}/${fromtime}"
                 fi
@@ -148,19 +148,23 @@ echo "${fromtime},${totime},${reason}" > ${dai_home}/${dai_time_data}
                 mkdir ${dai_svndir}/daimonin
                 mkdir ${dai_svndir}/daimonin/${dai_gameserver}
                 mkdir ${dai_svndir}/daimonin/stream
-                mkdir ${dai_svndir}/gridarta
 
-                if [ -n ${dai_use_newarch} ]
+                if [ -n "${dai_gridarta_repo}" ]
+                then
+                    mkdir ${dai_svndir}/gridarta
+                fi
+
+                if [ -n "${dai_use_newarch}" ]
                 then
                     mkdir ${dai_svndir}/daimonin/newarch
                 fi
 
-                if [ -n ${dai_daiserv_repo} ]
+                if [ -n "${dai_daiserv_repo}" ]
                 then
                     mkdir ${dai_svndir}/daiserv
                 fi
 
-                if [ -n ${dai_mapserv_repo} ]
+                if [ -n "${dai_mapserv_repo}" ]
                 then
                     mkdir ${dai_svndir}/mapserv
                 fi
@@ -234,17 +238,17 @@ echo "${fromtime},${totime},${reason}" > ${dai_home}/${dai_time_data}
             echo "### Checkout/update and export arches."
             svn co ${dai_daimonin_repo}/${dai_gameserver}/arch ${dai_svndir}/daimonin/${dai_gameserver}/arch
 
-            if [ -n ${dai_daiserv_repo} ]
+            if [ -n "${dai_daiserv_repo}" ]
             then
                 svn co ${dai_daiserv_repo}/arch ${dai_svndir}/daiserv/arch
             fi
 
-            if [ -n ${dai_mapserv_repo} ]
+            if [ -n "${dai_mapserv_repo}" ]
             then
                 svn co ${dai_mapserv_repo}/arch ${dai_svndir}/mapserv/arch
             fi
 
-            if [ -n ${dai_use_newarch} ]
+            if [ -n "${dai_use_newarch}" ]
             then
                 svn co ${dai_daimonin_repo}/streams/newarch/arch ${dai_svndir}/daimonin/newarch/arch
             fi
@@ -257,17 +261,17 @@ echo "${fromtime},${totime},${reason}" > ${dai_home}/${dai_time_data}
                 svn export --force ${dai_svndir}/daimonin/stream/arch ${dai_builddir}/arch
             fi
 
-            if [ -n ${dai_daiserv_repo} ]
+            if [ -n "${dai_daiserv_repo}" ]
             then
                 svn export --force ${dai_svndir}/daiserv/arch ${dai_builddir}/arch
             fi
 
-            if [ -n ${dai_mapserv_repo} ]
+            if [ -n "${dai_mapserv_repo}" ]
             then
                 svn export --force ${dai_svndir}/mapserv/arch ${dai_builddir}/arch
             fi
 
-            if [ -n ${dai_use_newarch} ]
+            if [ -n "${dai_use_newarch}" ]
             then
                 svn export --force ${dai_svndir}/daimonin/newarch/arch ${dai_builddir}/arch
             fi
@@ -276,17 +280,17 @@ echo "${fromtime},${totime},${reason}" > ${dai_home}/${dai_time_data}
             echo "### Checkout/update and export maps."
             svn co ${dai_daimonin_repo}/${dai_gameserver}/maps ${dai_svndir}/daimonin/${dai_gameserver}/maps
 
-            if [ -n ${dai_daiserv_repo} ]
+            if [ -n "${dai_daiserv_repo}" ]
             then
                 svn co ${dai_daiserv_repo}/maps ${dai_svndir}/daiserv/maps
             fi
 
-            if [ -n ${dai_mapserv_repo} ]
+            if [ -n "${dai_mapserv_repo}" ]
             then
                 svn co ${dai_mapserv_repo}/maps ${dai_svndir}/mapserv/maps
             fi
 
-            if [ -n ${dai_use_newarch} ]
+            if [ -n "${dai_use_newarch}" ]
             then
                 svn co ${dai_daimonin_repo}/streams/newarch/maps ${dai_svndir}/daimonin/newarch/maps
             fi
@@ -299,17 +303,17 @@ echo "${fromtime},${totime},${reason}" > ${dai_home}/${dai_time_data}
                 svn export --force ${dai_svndir}/daimonin/stream/maps ${dai_builddir}/maps
             fi
 
-            if [ -n ${dai_daiserv_repo} ]
+            if [ -n "${dai_daiserv_repo}" ]
             then
                 svn export --force ${dai_svndir}/daiserv/maps ${dai_builddir}/maps
             fi
 
-            if [ -n ${dai_mapserv_repo} ]
+            if [ -n "${dai_mapserv_repo}" ]
             then
                 svn export --force ${dai_svndir}/mapserv/maps ${dai_builddir}/maps
             fi
 
-            if [ -n ${dai_use_newarch} ]
+            if [ -n "${dai_use_newarch}" ]
             then
                 svn export --force ${dai_svndir}/daimonin/newarch/maps ${dai_builddir}/maps
             fi
@@ -319,17 +323,22 @@ echo "${fromtime},${totime},${reason}" > ${dai_home}/${dai_time_data}
             {
                 ${dai_home}/tileset_updater.pl ${dai_builddir}/maps
             }
-            echo
-            echo "### Checkout/update, export, build, and run Gridarta to collect arches."
-            svn co ${dai_gridarta_repo}/${dai_gridarta_ttbs} ${dai_svndir}/gridarta
-            svn export ${dai_svndir}/gridarta ${dai_builddir}/gridarta
-            {
-                cd ${dai_builddir}/gridarta/daimonin
-                ant
-                mv DaimoninEditor.jar ..
-                cd ..
-                java -Xmx256M -jar DaimoninEditor.jar -c
-            }
+
+            if [ -n "${dai_gridarta_repo}" ]
+            then
+                echo
+                echo "### Checkout/update, export, build, and run Gridarta to collect arches."
+                svn co ${dai_gridarta_repo}/${dai_gridarta_ttbs} ${dai_svndir}/gridarta
+                svn export ${dai_svndir}/gridarta ${dai_builddir}/gridarta
+                {
+                    cd ${dai_builddir}/gridarta/daimonin
+                    ant
+                    mv DaimoninEditor.jar ..
+                    cd ..
+                    java -Xmx256M -jar DaimoninEditor.jar -c
+                }
+            fi
+
             echo
             echo "### Build server."
             {
@@ -338,6 +347,12 @@ echo "${fromtime},${totime},${reason}" > ${dai_home}/${dai_time_data}
                 ./configure
                 make CFLAGS="${dai_cflags}" install
             }
+
+            if [ -z "${dai_gridarta_repo}" ]
+            then
+                ${dai_home}/${dai_recollect_sh} ${dai_builddir}/arch ${dai_builddir}/server/lib
+            fi
+
             echo
             echo "### Restore the persistent files."
             cp ${dai_home}/ban_file ${dai_builddir}/server/data/ban_file
@@ -358,7 +373,7 @@ echo "${fromtime},${totime},${reason}" > ${dai_home}/${dai_time_data}
             echo "${fromtime},UNKNOWN,255" > ${dai_home}/${dai_time_data}
             logfile="${dai_builddir}/server/data/log/${fromtime}"
 
-            if [ -n ${dai_logsdir} ]
+            if [ -n "${dai_logsdir}" ]
             then
                 logfile="${dai_logsdir}/${fromtime}"
             fi
@@ -367,7 +382,7 @@ echo "${fromtime},${totime},${reason}" > ${dai_home}/${dai_time_data}
             clogfile="${logfile}-chat.txt"
             cd ${dai_builddir}/server
 
-            if [-z ${dai_use_valgrind} ]
+            if [ -z "${dai_use_valgrind}" ]
             then
                 ./${dai_server_exe} ${dai_server_options} -log ${tlogfile},${clogile}
             else
