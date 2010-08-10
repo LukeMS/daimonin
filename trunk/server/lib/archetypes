@@ -1059,7 +1059,7 @@ no_pick 1
 end
 Object stairs_red_up
 editor_folder exits/stairs
-name stairs going up
+name flight of stairs going up
 face stairs_red_up.131
 animation stairs_red_up
 is_animated 0
@@ -1075,7 +1075,7 @@ no_pick 1
 end
 Object stairs_red_down
 editor_folder exits/stairs
-name stairs going down
+name flight of stairs going down
 face stairs_red_down.131
 animation stairs_red_down
 is_animated 0
@@ -1091,7 +1091,7 @@ no_pick 1
 end
 Object stairs_stone_up
 editor_folder exits/stairs
-name stairs going up
+name flight of stairs going up
 face stairs_stone_up.131
 animation stairs_stone_up
 is_animated 0
@@ -1107,7 +1107,7 @@ no_pick 1
 end
 Object stairs_stone_down
 editor_folder exits/stairs
-name stairs going down
+name flight of stairs going down
 face stairs_stone_down.131
 animation stairs_stone_down
 is_animated 0
@@ -1123,7 +1123,7 @@ no_pick 1
 end
 Object stairs_wood_up
 editor_folder exits/stairs
-name stairs going up
+name flight of stairs going up
 face stairs_wood_up.131
 animation stairs_wood_up
 is_animated 0
@@ -1139,7 +1139,7 @@ no_pick 1
 end
 Object stairs_wood_down
 editor_folder exits/stairs
-name stairs going down
+name flight of stairs going down
 face stairs_wood_down.131
 animation stairs_wood_down
 is_animated 0
@@ -6380,12 +6380,12 @@ resist_impact 45
 resist_cleave 45
 resist_pierce 45
 resist_slash 45
-resist_magic 50
+resist_channelling 50
 resist_electricity 100
 dam 85
 weapon_speed 3.5
 attack_slash 25
-attack_magic 25
+attack_channelling 25
 attack_weaponmagic 25
 attack_electricity 25
 speed -0.025
@@ -10862,7 +10862,7 @@ resist_cleave 6
 resist_pierce 3
 resist_slash 6
 resist_cold 5
-resist_magic 5
+resist_channelling 5
 resist_light 5
 resist_shadow 5
 resist_psionic 5
@@ -11011,7 +11011,7 @@ resist_impact 3
 resist_cleave 6
 resist_pierce 3
 resist_slash 6
-resist_magic 5
+resist_channelling 5
 resist_light 5
 resist_shadow 5
 resist_psionic 5
@@ -12782,6 +12782,9 @@ glow_radius 3
 weight 1150
 food 1
 nrof 1
+identified 1
+known_magical 1
+known_cursed 1
 end
 Object candlelight2.101
 editor_folder items/light
@@ -12800,6 +12803,9 @@ glow_radius 3
 weight 1150
 food 1
 nrof 1
+identified 1
+known_magical 1
+known_cursed 1
 end
 Object candlelight3.101
 editor_folder items/light
@@ -12818,6 +12824,9 @@ glow_radius 3
 weight 1150
 food 1
 nrof 1
+identified 1
+known_magical 1
+known_cursed 1
 end
 Object candlelight4.101
 editor_folder items/light
@@ -12836,6 +12845,9 @@ glow_radius 2
 weight 850
 food 1
 nrof 1
+identified 1
+known_magical 1
+known_cursed 1
 end
 Object crystal_light
 editor_folder items/light
@@ -12864,14 +12876,17 @@ layer 5
 type 74
 glow_radius 4
 last_sp 4
-weight 1250
-material 144
+weight 125000
+material 256
 food 1
 speed -0.02
 no_pick 1
 no_fix_player 1
 is_animated 1
 animation glower.101
+identified 1
+known_magical 1
+known_cursed 1
 nrof 1
 end
 Object grave_fire.101
@@ -12891,6 +12906,9 @@ glow_radius 5
 weight 100000
 food 1
 nrof 1
+identified 1
+known_magical 1
+known_cursed 1
 end
 Object lamp
 editor_folder items/light
@@ -12928,6 +12946,9 @@ weight 1250
 material 144
 food 1
 nrof 1
+identified 1
+known_magical 1
+known_cursed 1
 end
 Object lamp_post
 editor_folder items/light
@@ -12948,6 +12969,9 @@ material 144
 food 1
 speed -0.02
 nrof 1
+identified 1
+known_magical 1
+known_cursed 1
 end
 Object lamp_snow
 editor_folder items/light
@@ -12989,6 +13013,9 @@ material 144
 food 1
 speed -0.02
 nrof 1
+identified 1
+known_magical 1
+known_cursed 1
 end
 Object lantern_magic.131
 msg
@@ -13002,8 +13029,8 @@ layer 5
 type 74
 glow_radius 5
 last_sp 5
-weight 1250
-material 144
+weight 125000
+material 256
 food 1
 speed -0.02
 animation lantern_magic.131
@@ -13011,6 +13038,9 @@ is_turnable 1
 direction 5
 no_pick 1
 no_fix_player 1
+identified 1
+known_magical 1
+known_cursed 1
 nrof 1
 end
 Object lantern2_magic.131
@@ -13025,8 +13055,8 @@ layer 5
 type 74
 glow_radius 4
 last_sp 4
-weight 1250
-material 144
+weight 125000
+material 256
 food 1
 speed -0.02
 animation lantern2_magic.131
@@ -13034,6 +13064,9 @@ is_turnable 1
 direction 1
 no_pick 1
 no_fix_player 1
+identified 1
+known_magical 1
+known_cursed 1
 nrof 1
 end
 Object large_candle_a
@@ -13053,6 +13086,9 @@ maxhp 200
 food 200
 last_eat 1
 nrof 1
+identified 1
+known_magical 1
+known_cursed 1
 end
 Object large_candle_b
 editor_folder items/light
@@ -13072,6 +13108,9 @@ maxhp 200
 food 200
 last_eat 1
 nrof 1
+identified 1
+known_magical 1
+known_cursed 1
 end
 Object large_candle_c
 editor_folder items/light
@@ -13091,6 +13130,9 @@ maxhp 200
 food 200
 last_eat 1
 nrof 1
+identified 1
+known_magical 1
+known_cursed 1
 end
 Object large_candle_burnt
 editor_folder items/light
@@ -13102,6 +13144,9 @@ layer 3
 no_pick 1
 weight 1000
 nrof 1
+identified 1
+known_magical 1
+known_cursed 1
 end
 Object oil_lamp
 editor_folder items/light
@@ -13170,6 +13215,9 @@ material 144
 food 1
 speed -0.02
 nrof 1
+identified 1
+known_magical 1
+known_cursed 1
 end
 Object torch_wall_1
 editor_folder items/light
@@ -13192,6 +13240,9 @@ material 144
 food 1
 speed -0.02
 nrof 1
+identified 1
+known_magical 1
+known_cursed 1
 end
 Object crystal_ball
 editor_folder items/magic_tools
@@ -15011,7 +15062,7 @@ end
 Object sign
 editor_folder items/signs
 name sign
-face sign.111
+face sign_default.101
 type 98
 layer 4
 no_pick 1
@@ -25009,6 +25060,7 @@ anim_speed 4
 no_pick 1
 end
 Object knome
+mpart_id 3
 editor_folder mobs/demihumans
 name Knome
 face knome.331
@@ -27405,12 +27457,12 @@ resist_impact 12
 resist_cleave 12
 resist_pierce 12
 resist_slash 12
-resist_magic 20
+resist_channelling 20
 dam 42
 item_condition 10
 weapon_speed 3.5
 attack_pierce 60
-attack_magic 30
+attack_channelling 30
 attack_weaponmagic 10
 speed -0.049
 level 1
@@ -27677,12 +27729,12 @@ resist_impact 15
 resist_cleave 15
 resist_pierce 15
 resist_slash 15
-resist_magic 50
+resist_channelling 50
 dam 55
 item_condition 10
 weapon_speed 3.5
 attack_slash 35
-attack_magic 35
+attack_channelling 35
 attack_weaponmagic 30
 speed -0.048
 level 1
@@ -27737,12 +27789,12 @@ resist_impact 15
 resist_cleave 15
 resist_pierce 15
 resist_slash 15
-resist_magic 50
+resist_channelling 50
 dam 55
 item_condition 10
 weapon_speed 3.5
 attack_slash 35
-attack_magic 35
+attack_channelling 35
 attack_weaponmagic 30
 speed -0.048
 level 1
@@ -27797,12 +27849,12 @@ resist_impact 12
 resist_cleave 12
 resist_pierce 12
 resist_slash 12
-resist_magic 30
+resist_channelling 30
 dam 45
 item_condition 10
 weapon_speed 3.5
 attack_cleave 50
-attack_magic 25
+attack_channelling 25
 attack_weaponmagic 25
 speed -0.048
 level 1
@@ -27857,12 +27909,12 @@ resist_impact 15
 resist_cleave 15
 resist_pierce 15
 resist_slash 15
-resist_magic 50
+resist_channelling 50
 dam 65
 item_condition 10
 weapon_speed 3.5
 attack_slash 35
-attack_magic 35
+attack_channelling 35
 attack_weaponmagic 30
 speed -0.0485
 level 1
@@ -27917,12 +27969,12 @@ resist_impact 10
 resist_cleave 10
 resist_pierce 10
 resist_slash 10
-resist_magic 50
+resist_channelling 50
 dam 35
 item_condition 10
 weapon_speed 3.5
 attack_pierce 20
-attack_magic 50
+attack_channelling 50
 attack_weaponmagic 30
 speed -0.047
 level 1
@@ -27977,12 +28029,12 @@ resist_impact 10
 resist_cleave 10
 resist_pierce 10
 resist_slash 10
-resist_magic 50
+resist_channelling 50
 dam 35
 item_condition 10
 weapon_speed 3.5
 attack_pierce 20
-attack_magic 50
+attack_channelling 50
 attack_weaponmagic 30
 speed -0.047
 level 1
@@ -28037,12 +28089,12 @@ resist_impact 10
 resist_cleave 10
 resist_pierce 10
 resist_slash 10
-resist_magic 50
+resist_channelling 50
 dam 35
 item_condition 10
 weapon_speed 3.5
 attack_pierce 20
-attack_magic 50
+attack_channelling 50
 attack_weaponmagic 30
 speed -0.047
 level 1
@@ -28097,12 +28149,12 @@ resist_impact 10
 resist_cleave 10
 resist_pierce 10
 resist_slash 10
-resist_magic 50
+resist_channelling 50
 dam 35
 item_condition 10
 weapon_speed 3.5
 attack_pierce 20
-attack_magic 50
+attack_channelling 50
 attack_weaponmagic 30
 speed -0.047
 level 1
@@ -28156,12 +28208,12 @@ resist_impact 20
 resist_cleave 20
 resist_pierce 20
 resist_slash 20
-resist_magic 50
+resist_channelling 50
 dam 48
 item_condition 10
 weapon_speed 3.5
 attack_impact 60
-attack_magic 20
+attack_channelling 20
 attack_weaponmagic 20
 speed -0.049
 level 1
@@ -28652,12 +28704,12 @@ resist_impact 15
 resist_cleave 15
 resist_pierce 15
 resist_slash 15
-resist_magic 25
+resist_channelling 25
 dam 40
 item_condition 10
 weapon_speed 3.5
 attack_pierce 40
-attack_magic 30
+attack_channelling 30
 attack_weaponmagic 30
 speed -0.0495
 level 1
@@ -28712,12 +28764,12 @@ resist_impact 15
 resist_cleave 15
 resist_pierce 15
 resist_slash 15
-resist_magic 25
+resist_channelling 25
 dam 40
 item_condition 10
 weapon_speed 3.5
 attack_pierce 40
-attack_magic 30
+attack_channelling 30
 attack_weaponmagic 30
 speed -0.0495
 level 1
@@ -28772,12 +28824,12 @@ resist_impact 15
 resist_cleave 15
 resist_pierce 15
 resist_slash 15
-resist_magic 25
+resist_channelling 25
 dam 40
 item_condition 10
 weapon_speed 3.5
 attack_pierce 40
-attack_magic 30
+attack_channelling 30
 attack_weaponmagic 30
 speed -0.0495
 level 1
@@ -28832,12 +28884,12 @@ resist_impact 15
 resist_cleave 15
 resist_pierce 15
 resist_slash 15
-resist_magic 25
+resist_channelling 25
 dam 40
 item_condition 10
 weapon_speed 3.5
 attack_pierce 40
-attack_magic 30
+attack_channelling 30
 attack_weaponmagic 30
 speed -0.0495
 level 1
@@ -28892,12 +28944,12 @@ resist_impact 15
 resist_cleave 15
 resist_pierce 15
 resist_slash 15
-resist_magic 25
+resist_channelling 25
 dam 40
 item_condition 10
 weapon_speed 3.5
 attack_pierce 40
-attack_magic 30
+attack_channelling 30
 attack_weaponmagic 30
 speed -0.0495
 level 1
@@ -28952,12 +29004,12 @@ resist_impact 15
 resist_cleave 15
 resist_pierce 15
 resist_slash 15
-resist_magic 25
+resist_channelling 25
 dam 40
 item_condition 10
 weapon_speed 3.5
 attack_pierce 40
-attack_magic 30
+attack_channelling 30
 attack_weaponmagic 30
 speed -0.0495
 level 1
@@ -29013,12 +29065,12 @@ resist_impact 10
 resist_cleave 10
 resist_pierce 10
 resist_slash 10
-resist_magic 50
+resist_channelling 50
 dam 40
 item_condition 10
 weapon_speed 3.5
 attack_impact 60
-attack_magic 30
+attack_channelling 30
 attack_weaponmagic 10
 speed -0.048
 level 1
@@ -29074,12 +29126,12 @@ resist_impact 10
 resist_cleave 10
 resist_pierce 10
 resist_slash 10
-resist_magic 50
+resist_channelling 50
 dam 36
 item_condition 10
 weapon_speed 3.5
 attack_impact 60
-attack_magic 30
+attack_channelling 30
 attack_weaponmagic 10
 speed -0.048
 level 1
@@ -29135,12 +29187,12 @@ resist_impact 10
 resist_cleave 10
 resist_pierce 10
 resist_slash 10
-resist_magic 50
+resist_channelling 50
 dam 40
 item_condition 10
 weapon_speed 3.5
 attack_impact 60
-attack_magic 30
+attack_channelling 30
 attack_weaponmagic 10
 speed -0.048
 level 1
@@ -29196,12 +29248,12 @@ resist_impact 10
 resist_cleave 10
 resist_pierce 10
 resist_slash 10
-resist_magic 50
+resist_channelling 50
 dam 36
 item_condition 10
 weapon_speed 3.5
 attack_impact 60
-attack_magic 30
+attack_channelling 30
 attack_weaponmagic 10
 speed -0.048
 level 1
@@ -29257,12 +29309,12 @@ resist_impact 15
 resist_cleave 15
 resist_pierce 15
 resist_slash 15
-resist_magic 25
+resist_channelling 25
 dam 40
 item_condition 10
 weapon_speed 3.5
 attack_pierce 40
-attack_magic 30
+attack_channelling 30
 attack_weaponmagic 30
 speed -0.0495
 level 1
@@ -29317,7 +29369,7 @@ resist_impact 20
 resist_cleave 20
 resist_pierce 20
 resist_slash 20
-resist_magic 50
+resist_channelling 50
 dam 48
 item_condition 10
 weapon_speed 3.5
@@ -29376,7 +29428,7 @@ resist_impact 20
 resist_cleave 20
 resist_pierce 20
 resist_slash 20
-resist_magic 50
+resist_channelling 50
 dam 48
 item_condition 10
 weapon_speed 3.5
@@ -29593,12 +29645,12 @@ resist_impact 15
 resist_cleave 15
 resist_pierce 15
 resist_slash 15
-resist_magic 25
+resist_channelling 25
 dam 40
 item_condition 10
 weapon_speed 3.5
 attack_pierce 40
-attack_magic 30
+attack_channelling 30
 attack_weaponmagic 30
 speed -0.0495
 level 1
@@ -29653,12 +29705,12 @@ resist_impact 15
 resist_cleave 15
 resist_pierce 15
 resist_slash 15
-resist_magic 25
+resist_channelling 25
 dam 40
 item_condition 10
 weapon_speed 3.5
 attack_pierce 40
-attack_magic 30
+attack_channelling 30
 attack_weaponmagic 30
 speed -0.0495
 level 1
@@ -34487,7 +34539,7 @@ speed -0.2
 end
 Object rows
 editor_folder scenery/misc
-name rows
+name pair of oars
 face rows.101
 no_pick 1
 type 79
@@ -37339,6 +37391,7 @@ x 1
 y 1
 end
 Object snowy_rock_big1
+mpart_id 3
 editor_folder scenery/rocks
 name rocks
 layer 5
@@ -37349,6 +37402,7 @@ no_pass 1
 no_pick 1
 end
 Object snowy_rock_big2
+mpart_id 3
 editor_folder scenery/rocks
 name rocks
 layer 5
@@ -39985,7 +40039,7 @@ last_eat 1
 maxsp 1
 ac 3
 exp 50
-resist_magic 100
+resist_channelling 100
 resist_fire 100
 resist_electricity 100
 resist_cold 100
@@ -41820,7 +41874,7 @@ resist_impact 20
 resist_cleave 20
 resist_pierce 20
 resist_slash 20
-resist_magic 50
+resist_channelling 50
 dam 48
 weapon_speed 3.5
 attack_impact 50
@@ -42740,7 +42794,7 @@ anim_speed 1
 is_invisible 1
 no_pick 1
 walk_on 1
-attack_magic 100
+attack_channelling 100
 dam 8
 cha 20
 end
