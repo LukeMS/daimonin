@@ -138,8 +138,8 @@ angel_warrior.281
 mina
 anim ant_queen
 facings 25
-dummy.111
-dummy.111
+corpse_insect.101
+corpse_insect.101
 ant_queen.131
 ant_queen.132
 ant_queen.131
@@ -191,8 +191,8 @@ ant_queen.352
 mina
 anim ant_red
 facings 25
-dummy.111
-dummy.111
+corpse_insect.101
+corpse_insect.101
 ant_red.131
 ant_red.132
 ant_red.131
@@ -244,8 +244,8 @@ ant_red.352
 mina
 anim ant_soldier
 facings 25
-dummy.111
-dummy.111
+corpse_insect.101
+corpse_insect.101
 ant_soldier.131
 ant_soldier.132
 ant_soldier.131
@@ -321,8 +321,8 @@ anvil_big.111
 mina
 anim archer
 facings 25
-dummy.111
-dummy.111
+corpse_human.101
+corpse_human.101
 archer.131
 archer.132
 archer.131
@@ -482,10 +482,10 @@ bar1.181
 mina
 anim barmaid
 facings 25
-dummy.111
-dummy.111
-dummy.111
-dummy.111
+corpse_human.101
+corpse_human.101
+corpse_human.101
+corpse_human.101
 barmaid.131
 barmaid.132
 barmaid.133
@@ -613,8 +613,8 @@ barrow_wight.181
 mina
 anim bartender
 facings 25
-dummy.111
-dummy.111
+corpse_human.101
+corpse_human.101
 bartender.131
 bartender.132
 bartender.131
@@ -965,8 +965,8 @@ bed_4b.111
 mina
 anim bee_killer
 facings 25
-dummy.111
-dummy.111
+corpse_insect.101
+corpse_insect.101
 bee_killer.131
 bee_killer.132
 bee_killer.131
@@ -1168,8 +1168,8 @@ bench5.171
 mina
 anim black_golem_mage
 facings 25
-dummy.111
-dummy.111
+corpse_golem.101
+corpse_golem.101
 black_golem_mage.131
 black_golem_mage.132
 black_golem_mage.131
@@ -2100,8 +2100,8 @@ pedestal.132
 mina
 anim chef
 facings 25
-dummy.111
-dummy.111
+corpse_human.101
+corpse_human.101
 chef.131
 chef.132
 chef.131
@@ -2315,8 +2315,8 @@ chicken_large.283
 mina
 anim childf1
 facings 25
-dummy.111
-dummy.111
+corpse_human.101
+corpse_human.101
 childf1.181
 childf1.182
 childf1.111
@@ -2368,8 +2368,8 @@ childf1.172
 mina
 anim childf2
 facings 25
-dummy.111
-dummy.111
+corpse_human.101
+corpse_human.101
 childf2.181
 childf2.182
 childf2.111
@@ -2421,8 +2421,8 @@ childf2.172
 mina
 anim childf3
 facings 25
-dummy.111
-dummy.111
+corpse_human.101
+corpse_human.101
 childf3.181
 childf3.182
 childf3.111
@@ -2474,8 +2474,8 @@ childf3.172
 mina
 anim childf4
 facings 25
-dummy.111
-dummy.111
+corpse_human.101
+corpse_human.101
 childf4.181
 childf4.182
 childf4.111
@@ -2527,8 +2527,8 @@ childf4.172
 mina
 anim childm1
 facings 25
-dummy.111
-dummy.111
+corpse_human.101
+corpse_human.101
 childm1.181
 childm1.182
 childm1.111
@@ -2580,8 +2580,8 @@ childm1.172
 mina
 anim childm2
 facings 25
-dummy.111
-dummy.111
+corpse_human.101
+corpse_human.101
 childm2.181
 childm2.182
 childm2.111
@@ -2633,8 +2633,8 @@ childm2.172
 mina
 anim childm3
 facings 25
-dummy.111
-dummy.111
+corpse_human.101
+corpse_human.101
 childm3.181
 childm3.182
 childm3.111
@@ -2686,8 +2686,8 @@ childm3.172
 mina
 anim childm4
 facings 25
-dummy.111
-dummy.111
+corpse_human.101
+corpse_human.101
 childm4.181
 childm4.182
 childm4.111
@@ -3723,9 +3723,9 @@ demilich.381
 mina
 anim demon_armour
 facings 25
-dummy.111
-dummy.111
-dummy.111
+corpse_demon.101
+corpse_demon.101
+corpse_demon.101
 demon_armour.111
 demon_armour.112
 demon_armour.113
@@ -3801,9 +3801,9 @@ demon_armour.383
 mina
 anim demon_goat
 facings 25
-dummy.111
-dummy.111
-dummy.111
+corpse_demon.101
+corpse_demon.101
+corpse_demon.101
 demon_goat.111
 demon_goat.112
 demon_goat.113
@@ -3879,9 +3879,9 @@ demon_goat.383
 mina
 anim demon_green
 facings 25
-dummy.111
-dummy.111
-dummy.111
+corpse_demon.101
+corpse_demon.101
+corpse_demon.101
 demon_green.111
 demon_green.112
 demon_green.111
@@ -3957,7 +3957,7 @@ demon_green.383
 mina
 anim demon_lord
 facings 25
-dummy.111
+corpse_demon.101
 demon_lord.111
 demon_lord.121
 demon_lord.131
@@ -4038,9 +4038,9 @@ demon_pumpkin.281
 mina
 anim demon_sfire
 facings 25
-dummy.111
-dummy.111
-dummy.111
+corpse_demon.101
+corpse_demon.101
+corpse_demon.101
 demon_sfire.111
 demon_sfire.112
 demon_sfire.113
@@ -4161,8 +4161,8 @@ pedestal.132
 mina
 anim devil_lord
 facings 25
-dummy.111
-dummy.111
+corpse_demon.101
+corpse_demon.101
 devil_lord.111
 devil_lord.112
 devil_lord.121
@@ -5014,9 +5014,9 @@ drawers1.111
 mina
 anim drow_annihilator
 facings 25
-dummy.111
-dummy.111
-dummy.111
+corpse_human.101
+corpse_human.101
+corpse_human.101
 drow_annihilator.131
 drow_annihilator.132
 drow_annihilator.131
@@ -5092,9 +5092,9 @@ drow_annihilator.151
 mina
 anim drow_captain
 facings 25
-dummy.111
-dummy.111
-dummy.111
+corpse_human.101
+corpse_human.101
+corpse_human.101
 drow_captain.131
 drow_captain.132
 drow_captain.131
@@ -5170,9 +5170,9 @@ drow_captain.151
 mina
 anim drow_fighter
 facings 25
-dummy.111
-dummy.111
-dummy.111
+corpse_human.101
+corpse_human.101
+corpse_human.101
 drow_fighter.111
 drow_fighter.112
 drow_fighter.113
@@ -5248,9 +5248,9 @@ drow_fighter.383
 mina
 anim drow_guard
 facings 25
-dummy.111
-dummy.111
-dummy.111
+corpse_human.101
+corpse_human.101
+corpse_human.101
 drow_guard.111
 drow_guard.112
 drow_guard.113
@@ -5326,9 +5326,9 @@ drow_guard.383
 mina
 anim drow_sorcerer
 facings 25
-dummy.111
-dummy.111
-dummy.111
+corpse_human.101
+corpse_human.101
+corpse_human.101
 drow_sorcerer.131
 drow_sorcerer.132
 drow_sorcerer.131
@@ -5791,9 +5791,9 @@ dwarf_wheel_2.103
 mina
 anim elemental_ice
 facings 25
-dummy.111
-dummy.111
-dummy.111
+elemental_ice_corpse.101
+elemental_ice_corpse.101
+elemental_ice_corpse.101
 elemental_ice.111
 elemental_ice.112
 elemental_ice.111
@@ -6083,9 +6083,9 @@ elf_toytable.172
 mina
 anim elven_merchant
 facings 25
-dummy.111
-dummy.111
-dummy.111
+corpse_human.101
+corpse_human.101
+corpse_human.101
 elven_merchant.131
 elven_merchant.132
 elven_merchant.133
@@ -6277,8 +6277,8 @@ exit_green.102
 mina
 anim female1
 facings 25
-dummy.111
-dummy.111
+corpse_human.101
+corpse_human.101
 female1.131
 female1.132
 female1.131
@@ -6330,8 +6330,8 @@ female1.152
 mina
 anim female2
 facings 25
-dummy.111
-dummy.111
+corpse_human.101
+corpse_human.101
 female2.131
 female2.132
 female2.131
@@ -7538,9 +7538,9 @@ gnoll.152
 mina
 anim goblin
 facings 25
-dummy.111
-dummy.111
-dummy.111
+corpse_goblinoid.101
+corpse_goblinoid.101
+corpse_goblinoid.101
 goblin.131
 goblin.132
 goblin.131
@@ -7616,8 +7616,8 @@ goblin.152
 mina
 anim golem
 facings 25
-dummy.111
-dummy.111
+corpse_golem.101
+corpse_golem.101
 golem.131
 golem.132
 golem.131
@@ -7669,8 +7669,8 @@ golem.252
 mina
 anim golem_mage
 facings 25
-dummy.111
-dummy.111
+corpse_golem.101
+corpse_golem.101
 golem_mage.131
 golem_mage.132
 golem_mage.131
@@ -8139,9 +8139,9 @@ gray_ooze.112
 mina
 anim guard
 facings 25
-dummy.111
-dummy.111
-dummy.111
+corpse_human.101
+corpse_human.101
+corpse_human.101
 guard1.131
 guard1.132
 guard1.133
@@ -8217,9 +8217,9 @@ guard1.251
 mina
 anim guard2
 facings 25
-dummy.111
-dummy.111
-dummy.111
+corpse_human.101
+corpse_human.101
+corpse_human.101
 guard2.111
 guard2.112
 guard2.113
@@ -8295,9 +8295,9 @@ guard2.383
 mina
 anim guard_pole
 facings 25
-dummy.111
-dummy.111
-dummy.111
+corpse_human.101
+corpse_human.101
+corpse_human.101
 guard_pole.131
 guard_pole.132
 guard_pole.133
@@ -8373,9 +8373,9 @@ guard_pole.153
 mina
 anim guard_royal
 facings 25
-dummy.111
-dummy.111
-dummy.111
+corpse_human.101
+corpse_human.101
+corpse_human.101
 guard_royal.131
 guard_royal.132
 guard_royal.133
@@ -8739,9 +8739,9 @@ heart.101
 mina
 anim hobgoblin
 facings 25
-dummy.111
-dummy.111
-dummy.111
+corpse_goblinoid.101
+corpse_goblinoid.101
+corpse_goblinoid.101
 hobgoblin.131
 hobgoblin.132
 hobgoblin.131
@@ -8817,9 +8817,9 @@ hobgoblin.152
 mina
 anim hobo_old
 facings 25
-dummy.111
-dummy.111
-dummy.111
+corpse_human.101
+corpse_human.101
+corpse_human.101
 hobo_old.131
 hobo_old.132
 hobo_old.133
@@ -8901,8 +8901,8 @@ horn.104
 mina
 anim hornet
 facings 25
-dummy.111
-dummy.111
+corpse_insect.101
+corpse_insect.101
 hornet.111
 hornet.112
 hornet.121
@@ -9296,12 +9296,12 @@ icecave_deco_w5.u.151
 mina
 anim icegolem
 facings 25
-dummy.111
-dummy.111
-dummy.111
-dummy.111
-dummy.111
-dummy.111
+corpse_golem.101
+corpse_golem.101
+corpse_golem.101
+corpse_golem.101
+corpse_golem.101
+corpse_golem.101
 golem_ice.111
 golem_ice.111
 golem_ice.112
@@ -9775,9 +9775,9 @@ kiddy_bench.171
 mina
 anim king
 facings 25
-dummy.111
-dummy.111
-dummy.111
+corpse_human.101
+corpse_human.101
+corpse_human.101
 king.111
 king.111
 king.111
@@ -9853,9 +9853,9 @@ king.171
 mina
 anim king1
 facings 25
-dummy.111
-dummy.111
-dummy.111
+corpse_human.101
+corpse_human.101
+corpse_human.101
 king1.131
 king1.132
 king1.131
@@ -10009,8 +10009,8 @@ knome.401
 mina
 anim kobold
 facings 25
-dummy.111
-dummy.111
+corpse_goblinoid.101
+corpse_goblinoid.101
 kobold.131
 kobold.132
 kobold.131
@@ -10062,8 +10062,8 @@ kobold.153
 mina
 anim kobold_big
 facings 25
-dummy.111
-dummy.111
+corpse_goblinoid.101
+corpse_goblinoid.101
 kobold_big.131
 kobold_big.132
 kobold_big.131
@@ -10115,9 +10115,9 @@ kobold_big.153
 mina
 anim kobold_fighter
 facings 25
-dummy.111
-dummy.111
-dummy.111
+corpse_goblinoid.101
+corpse_goblinoid.101
+corpse_goblinoid.101
 kobold_fighter.131
 kobold_fighter.132
 kobold_fighter.131
@@ -10193,9 +10193,9 @@ kobold_fighter.151
 mina
 anim kobold_guard
 facings 25
-dummy.111
-dummy.111
-dummy.111
+corpse_goblinoid.101
+corpse_goblinoid.101
+corpse_goblinoid.101
 kobold_guard.131
 kobold_guard.131
 kobold_guard.132
@@ -10271,8 +10271,8 @@ kobold_guard.151
 mina
 anim kobold_shaman
 facings 25
-dummy.111
-dummy.111
+corpse_goblinoid.101
+corpse_goblinoid.101
 kobold_shaman.131
 kobold_shaman.132
 kobold_shaman.131
@@ -10688,12 +10688,12 @@ larva.151
 mina
 anim lavagolem
 facings 25
-dummy.111
-dummy.111
-dummy.111
-dummy.111
-dummy.111
-dummy.111
+corpse_golem.101
+corpse_golem.101
+corpse_golem.101
+corpse_golem.101
+corpse_golem.101
+corpse_golem.101
 golem_lava.111
 golem_lava.111
 golem_lava.112
@@ -11850,9 +11850,9 @@ locker5.111
 mina
 anim lom_lobon
 facings 25
-dummy.111
-dummy.111
-dummy.111
+corpse_demon.101
+corpse_demon.101
+corpse_demon.101
 lom_lobon.131
 lom_lobon.132
 lom_lobon.131
@@ -12006,8 +12006,8 @@ lost_soul.383
 mina
 anim mage_old
 facings 25
-dummy.111
-dummy.111
+corpse_human.101
+corpse_human.101
 mage_old.131
 mage_old.132
 mage_old.131
@@ -12241,8 +12241,8 @@ mirror_big.111
 mina
 anim monk
 facings 25
-dummy.111
-dummy.111
+corpse_human.101
+corpse_human.101
 monk.131
 monk.132
 monk.131
@@ -12663,8 +12663,8 @@ newt.152
 mina
 anim noble
 facings 25
-dummy.111
-dummy.111
+corpse_human.101
+corpse_human.101
 noble.131
 noble.132
 noble.131
@@ -12728,8 +12728,8 @@ npsign.121
 mina
 anim oarman
 facings 25
-dummy.111
-dummy.111
+corpse_human.101
+corpse_human.101
 oarman.131
 oarman.132
 oarman.131
@@ -12925,9 +12925,9 @@ open_flame.101
 mina
 anim orc_archer
 facings 25
-dummy.111
-dummy.111
-dummy.111
+corpse_goblinoid.101
+corpse_goblinoid.101
+corpse_goblinoid.101
 orc_archer.111
 orc_archer.112
 orc_archer.113
@@ -13003,9 +13003,9 @@ orc_archer.213
 mina
 anim orc_berserker
 facings 25
-dummy.111
-dummy.111
-dummy.111
+corpse_goblinoid.101
+corpse_goblinoid.101
+corpse_goblinoid.101
 orc_berserker.131
 orc_berserker.132
 orc_berserker.131
@@ -13081,9 +13081,9 @@ orc_berserker.151
 mina
 anim orc_captain
 facings 25
-dummy.111
-dummy.111
-dummy.111
+corpse_goblinoid.101
+corpse_goblinoid.101
+corpse_goblinoid.101
 orc_captain.131
 orc_captain.132
 orc_captain.131
@@ -13159,9 +13159,9 @@ orc_captain.151
 mina
 anim orc_fighter
 facings 25
-dummy.111
-dummy.111
-dummy.111
+corpse_goblinoid.101
+corpse_goblinoid.101
+corpse_goblinoid.101
 orc_fighter.311
 orc_fighter.311
 orc_fighter.313
@@ -13237,9 +13237,9 @@ orc_fighter.383
 mina
 anim orc_outlaw
 facings 25
-dummy.111
-dummy.111
-dummy.111
+corpse_goblinoid.101
+corpse_goblinoid.101
+corpse_goblinoid.101
 orc_outlaw.131
 orc_outlaw.132
 orc_outlaw.131
@@ -13315,9 +13315,9 @@ orc_outlaw.151
 mina
 anim orc_priest
 facings 25
-dummy.111
-dummy.111
-dummy.111
+corpse_goblinoid.101
+corpse_goblinoid.101
+corpse_goblinoid.101
 orc_priest.131
 orc_priest.132
 orc_priest.131
@@ -13393,9 +13393,9 @@ orc_priest.151
 mina
 anim orc_sorcerer
 facings 25
-dummy.111
-dummy.111
-dummy.111
+corpse_goblinoid.101
+corpse_goblinoid.101
+corpse_goblinoid.101
 orc_sorcerer.131
 orc_sorcerer.132
 orc_sorcerer.131
@@ -13471,9 +13471,9 @@ orc_sorcerer.151
 mina
 anim orc_warlord
 facings 25
-dummy.111
-dummy.111
-dummy.111
+corpse_goblinoid.101
+corpse_goblinoid.101
+corpse_goblinoid.101
 orc_warlord.131
 orc_warlord.132
 orc_warlord.131
@@ -13549,9 +13549,9 @@ orc_warlord.151
 mina
 anim orc_warrior
 facings 25
-dummy.111
-dummy.111
-dummy.111
+corpse_goblinoid.101
+corpse_goblinoid.101
+corpse_goblinoid.101
 orc_warrior.131
 orc_warrior.132
 orc_warrior.131
@@ -14017,7 +14017,7 @@ parrot.252
 mina
 anim patron
 facings 25
-dummy.111
+corpse_human.101
 patron.131
 patron.131
 patron.131
@@ -14045,8 +14045,8 @@ patron.151
 mina
 anim peasant
 facings 25
-dummy.111
-dummy.111
+corpse_human.101
+corpse_human.101
 peasant.131
 peasant.132
 peasant.131
@@ -14641,8 +14641,8 @@ pillar_white2d.111
 mina
 anim pirate
 facings 25
-dummy.111
-dummy.111
+corpse_human.101
+corpse_human.101
 pirate.131
 pirate.132
 pirate.131
@@ -14694,8 +14694,8 @@ pirate.134
 mina
 anim pirate_2
 facings 25
-dummy.111
-dummy.111
+corpse_human.101
+corpse_human.101
 pirate_2.131
 pirate_2.132
 pirate_2.131
@@ -14747,8 +14747,8 @@ pirate_2.134
 mina
 anim pirate_3
 facings 25
-dummy.111
-dummy.111
+corpse_human.101
+corpse_human.101
 pirate_3.131
 pirate_3.132
 pirate_3.131
@@ -14800,9 +14800,9 @@ pirate_3.134
 mina
 anim pirate_sorceress
 facings 25
-dummy.111
-dummy.111
-dummy.111
+corpse_human.101
+corpse_human.101
+corpse_human.101
 pirate_sorceress.131
 pirate_sorceress.132
 pirate_sorceress.133
@@ -15325,9 +15325,9 @@ power_crystal.104
 mina
 anim priest_church
 facings 25
-dummy.111
-dummy.111
-dummy.111
+corpse_human.101
+corpse_human.101
+corpse_human.101
 priest_church.131
 priest_church.132
 priest_church.133
@@ -15403,9 +15403,9 @@ priest_church.153
 mina
 anim priest_green
 facings 25
-dummy.111
-dummy.111
-dummy.111
+corpse_human.101
+corpse_human.101
+corpse_human.101
 priest_green.131
 priest_green.132
 priest_green.133
@@ -15481,9 +15481,9 @@ priest_green.153
 mina
 anim priest_robed
 facings 25
-dummy.111
-dummy.111
-dummy.111
+corpse_human.101
+corpse_human.101
+corpse_human.101
 priest_robed.131
 priest_robed.132
 priest_robed.133
@@ -15865,8 +15865,8 @@ pudding_red.112
 mina
 anim queen
 facings 25
-dummy.111
-dummy.111
+corpse_human.101
+corpse_human.101
 queen.131
 queen.132
 queen.131
@@ -15918,8 +15918,8 @@ queen.152
 mina
 anim quickwood
 facings 25
-dummy.111
-dummy.111
+quickwood_corpse.101
+quickwood_corpse.101
 quickwood.131
 quickwood.132
 quickwood.131
@@ -16121,8 +16121,8 @@ chest_wood_s.111
 mina
 anim ranger
 facings 25
-dummy.111
-dummy.111
+corpse_human.101
+corpse_human.101
 ranger.131
 ranger.132
 ranger.131
@@ -16596,8 +16596,8 @@ rune_weaponmagic.101
 mina
 anim sadpriest
 facings 25
-dummy.111
-dummy.111
+corpse_human.101
+corpse_human.101
 sadpriest.121
 sadpriest.121
 sadpriest.121
@@ -16777,7 +16777,7 @@ scarecrow.111
 mina
 anim seether
 facings 25
-dummy.111
+corpse_human.101
 seether.101
 seether.101
 seether.101
@@ -17045,10 +17045,10 @@ shelf_wall_dem3.111
 mina
 anim ship_captain
 facings 25
-dummy.111
-dummy.111
-dummy.111
-dummy.111
+corpse_human.101
+corpse_human.101
+corpse_human.101
+corpse_human.101
 ship_captain.131
 ship_captain.132
 ship_captain.133
@@ -17515,7 +17515,7 @@ skeleton.151
 mina
 anim skorpion
 facings 25
-dummy.111
+corpse_insect.101
 skorpion.131
 skorpion.131
 skorpion.131
@@ -17727,8 +17727,8 @@ slug_giant.251
 mina
 anim smith
 facings 25
-dummy.111
-dummy.111
+corpse_human.101
+corpse_human.101
 smith.141
 smith.142
 smith.141
@@ -17974,8 +17974,8 @@ snowman_evil2.152
 mina
 anim sparkle_black_golem_mage
 facings 25
-dummy.111
-dummy.111
+corpse_golem.101
+corpse_golem.101
 sparkle_black_golem_mage.131
 sparkle_black_golem_mage.132
 sparkle_black_golem_mage.131
@@ -18027,9 +18027,9 @@ sparkle_black_golem_mage.152
 mina
 anim spider
 facings 25
-dummy.111
-dummy.111
-dummy.111
+corpse_insect.101
+corpse_insect.101
+corpse_insect.101
 spider.111
 spider.112
 spider.113
@@ -18109,9 +18109,9 @@ spider_web.112
 mina
 anim spider_widow
 facings 25
-dummy.111
-dummy.111
-dummy.111
+corpse_insect.101
+corpse_insect.101
+corpse_insect.101
 spider_widow.111
 spider_widow.112
 spider_widow.113
@@ -18588,10 +18588,10 @@ table_wood1.111
 mina
 anim tailor
 facings 25
-dummy.111
-dummy.111
-dummy.111
-dummy.111
+corpse_human.101
+corpse_human.101
+corpse_human.101
+corpse_human.101
 tailor.131
 tailor.132
 tailor.133
@@ -18715,7 +18715,7 @@ exit.102
 mina
 anim thief_female
 facings 25
-dummy.111
+corpse_human.101
 thief_female.111
 thief_female.121
 thief_female.131
@@ -18907,8 +18907,8 @@ hole.101
 mina
 anim traveller_parka
 facings 25
-dummy.111
-dummy.111
+corpse_human.101
+corpse_human.101
 traveller_parka.131
 traveller_parka.132
 traveller_parka.131
@@ -18960,8 +18960,8 @@ traveller_parka.152
 mina
 anim traveller_wife
 facings 25
-dummy.111
-dummy.111
+corpse_human.101
+corpse_human.101
 traveller_wife.131
 traveller_wife.151
 traveller_wife.131
@@ -19552,8 +19552,8 @@ wand_frozenice.102
 mina
 anim wasp_giant
 facings 25
-dummy.111
-dummy.111
+corpse_insect.101
+corpse_insect.101
 wasp_giant.131
 wasp_giant.132
 wasp_giant.131
@@ -19644,8 +19644,8 @@ watertrough.141
 mina
 anim weapon_smith
 facings 25
-dummy.111
-dummy.111
+corpse_human.101
+corpse_human.101
 weapon_smith.141
 weapon_smith.142
 weapon_smith.141
@@ -19704,9 +19704,9 @@ xmastreeinside.105
 mina
 anim wizard_fm
 facings 25
-dummy.111
-dummy.111
-dummy.111
+corpse_human.101
+corpse_human.101
+corpse_human.101
 wizard_fm.210
 wizard_fm.211
 wizard_fm.212
@@ -19782,9 +19782,9 @@ wizard_fm.182
 mina
 anim wizard_white
 facings 25
-dummy.111
-dummy.111
-dummy.111
+corpse_human.101
+corpse_human.101
+corpse_human.101
 wizard.111
 wizard.112
 wizard.113
@@ -20181,8 +20181,8 @@ wolf.151
 mina
 anim woman_old
 facings 25
-dummy.111
-dummy.111
+corpse_human.101
+corpse_human.101
 woman_old.131
 woman_old.132
 woman_old.131
