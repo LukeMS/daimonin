@@ -26,7 +26,7 @@ echo "#############################"
 svn export --force ${dai_daimonin_repo}/trunk/project_tools/bash-scripts/dai_refresh.sh ${dai_home}/${dai_refresh_sh}
 svn export --force ${dai_daimonin_repo}/trunk/project_tools/bash-scripts/dai_reboot.sh ${dai_home}/${dai_reboot_sh}
 
-if [ -n "${dai_gridarta_repo}" ]
+if [ -z "${dai_gridarta_repo}" ]
 then
     svn export --force ${dai_daimonin_repo}/trunk/project_tools/bash-scripts/dai_recollect.sh ${dai_home}/${dai_recollect_sh}
 fi
