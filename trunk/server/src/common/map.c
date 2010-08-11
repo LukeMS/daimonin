@@ -802,9 +802,14 @@ static int load_map_header(FILE *fp, mapstruct *m, int flags)
                     break;
                 else
                 {
+#if 0 // SIGSEGVs
                     /* slightly more efficient than strcat */
                     strcpy(msgbuf + msgpos, buf);
                     msgpos += strlen(buf);
+#else
+                    /* TODO: Use snprintf to not risk buffer overflow. */
+                    sprintf(strchr(msgbuf, '\0'), "%s", buf);
+#endif
                 }
             }
             /* There are lots of maps that have empty messages (eg, msg/endmsg
@@ -812,8 +817,10 @@ static int load_map_header(FILE *fp, mapstruct *m, int flags)
              * keep the empty message.  Also, msgbuf contains garbage data
              * when msgpos is zero, so copying it results in crashes
              */
-            if (msgpos != 0)
+            if (msgbuf[0])
+            {
                 FREE_AND_COPY_HASH(m->msg, msgbuf);
+            }
         }
         /* enter_x is the default x (west-east) entry point. */
         else if (!strcmp(key, "enter_x"))
