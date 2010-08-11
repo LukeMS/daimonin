@@ -234,7 +234,7 @@ fi
 let i=num
 let count=1
 
-while [ ${i} -gt 9 ]
+while [ ${i} -ne 0 ]
 do
     let i=i/10
     let count=count+1
