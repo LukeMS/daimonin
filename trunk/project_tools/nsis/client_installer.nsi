@@ -1,30 +1,38 @@
-; installer.nsi
+; client_installer.nsi
 ;
 ; NSIS installer script to make Daimonin Client windoze installer.
 ; By Alex Tokar (http://www.atokar.net/), April 13 2009
 ; To make the installer, place this script in your client
-; directory and run makensis client_installer.nsi
+; directory and run, eg:
+;   makensis.exe /DFLAVOUR="dev" /DVERSION="0.10.1" client_installer.nsi
+; (See below for the commandline defines.)
 
 ;--------------------------------
 
+; These are failsafes and should be set on the commandline with the /D switch:
+; FLAVOUR should be one of "dev" or "main".
+; VERSION should be the correct "x.y.z".
+!define \ifndef FLAVOUR "dummy"
+!define \ifndef VERSION "?.?.?"
+
 ; The name of the installer
-Name "Daimonin B5 Client"
+Name "Daimonin Client (${FLAVOUR})"
 
 ; The file to write
-OutFile "Daimonin-B5.exe"
+OutFile "Daimonin-${FLAVOUR}-${VERSION}.exe"
 
 ; The default installation directory
-InstallDir $PROGRAMFILES\Daimonin\client-0.10.0
+InstallDir $PROGRAMFILES\Daimonin\client-${FLAVOUR}
 
 ; License file
 LicenseData License
 
 ; Registry key to check for directory (so if you install again, it will 
 ; overwrite the old one automatically)
-InstallDirRegKey HKLM "Software\Daimonin-B5" "Install_Dir"
+InstallDirRegKey HKLM "Software\Daimonin-${FLAVOUR}" "Install_Dir"
 
 ; Branding text
-BrandingText "Created by ATokar.net Dev Team"
+BrandingText "Created by Daimonin Dev Team"
 
 ;--------------------------------
 
@@ -81,22 +89,14 @@ Section "Client (required)"
   CreateDirectory $INSTDIR\settings
   SetOutPath $INSTDIR\settings
   File "settings\*.*"
-  ; skins directory
-  CreateDirectory $INSTDIR\skins
-  SetOutPath $INSTDIR\skins
-  File "skins\*.*"
-  ; skins/subred directory
-  CreateDirectory $INSTDIR\skins\subred
-  SetOutPath $INSTDIR\skins\subred
-  File "skins\subred\*.*"
-  ; skins/subred/bitmaps directory
-  CreateDirectory $INSTDIR\skins\subred\bitmaps
-  SetOutPath $INSTDIR\skins\subred\bitmaps
-  File "skins\subred\bitmaps\*.*"
-  ; skins/subred/icons directory
-  CreateDirectory $INSTDIR\skins\subred\icons
-  SetOutPath $INSTDIR\skins\subred\icons
-  File "skins\subred\icons\*.*"
+  ; bitmaps directory
+  CreateDirectory $INSTDIR\bitmaps
+  SetOutPath $INSTDIR\bitmaps
+  File "bitmaps\*.*"
+  ; icons directory
+  CreateDirectory $INSTDIR\icons
+  SetOutPath $INSTDIR\icons
+  File "icons\*.*"
   ; srv_files directory
   CreateDirectory $INSTDIR\srv_files
   SetOutPath $INSTDIR\srv_files
@@ -113,21 +113,21 @@ Section "Client (required)"
   SetOutPath $INSTDIR
   
   ; Write the installation path into the registry
-  WriteRegStr HKLM SOFTWARE\Daimonin-B5 "Install_Dir" "$INSTDIR"
+  WriteRegStr HKLM SOFTWARE\Daimonin-${FLAVOUR} "Install_Dir" "$INSTDIR"
   
   ; Write the uninstall keys for windoze
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Daimonin-B5" "DisplayName" "Daimonin B5 Client"
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Daimonin-B5" "UninstallString" '"$INSTDIR\uninstall.exe"'
-  WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Daimonin-B5" "NoModify" 1
-  WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Daimonin-B5" "NoRepair" 1
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Daimonin-${FLAVOUR}" "DisplayName" "Daimonin Client (${FLAVOUR})"
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Daimonin-${FLAVOUR}" "UninstallString" '"$INSTDIR\uninstall.exe"'
+  WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Daimonin-${FLAVOUR}" "NoModify" 1
+  WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Daimonin-${FLAVOUR}" "NoRepair" 1
   WriteUninstaller "uninstall.exe"
 SectionEnd
 
 ; Optional section (can be disabled by the user)
 Section "Start Menu Shortcuts"
-  CreateDirectory "$SMPROGRAMS\Daimonin-B5"
-  CreateShortCut "$SMPROGRAMS\Daimonin-B5\Uninstall.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0
-  CreateShortCut "$SMPROGRAMS\Daimonin-B5\Daimonin B5 Client.lnk" "$INSTDIR\daimonin_start.exe" "" "$INSTDIR\daimonin_start.exe" 0
+  CreateDirectory "$SMPROGRAMS\Daimonin-${FLAVOUR}"
+  CreateShortCut "$SMPROGRAMS\Daimonin-${FLAVOUR}\Uninstall.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0
+  CreateShortCut "$SMPROGRAMS\Daimonin-${FLAVOUR}\Daimonin Client (${FLAVOUR}).lnk" "$INSTDIR\daimonin_start.exe" "" "$INSTDIR\daimonin_start.exe" 0
 SectionEnd
 
 ;--------------------------------
@@ -136,11 +136,11 @@ SectionEnd
 
 Section "Uninstall"
   ; Remove registry keys
-  DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Daimonin-B5"
-  DeleteRegKey HKLM SOFTWARE\Daimonin-B5
+  DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Daimonin-${FLAVOUR}"
+  DeleteRegKey HKLM SOFTWARE\Daimonin-${FLAVOUR}
 
   ; Remove shortcuts, if any
-  RMDir /r /REBOOTOK "$SMPROGRAMS\Daimonin-B5"
+  RMDir /r /REBOOTOK "$SMPROGRAMS\Daimonin-${FLAVOUR}"
 
   RMDir /r /REBOOTOK "$INSTDIR"
 SectionEnd
