@@ -594,35 +594,48 @@ void AccNameSuccess(char *data, int len)
 
 void ImageCmd(char *data, int len)
 {
-    int     pnum, plen;
-    char    buf[2048];
-    /*int fd,l; */
-    FILE   *stream;
+    int          pnum = GetSINT32_String(data),
+                 plen = GetSINT32_String(data + 4);
+    char         buf[MEDIUM_BUF];
+    PHYSFS_File *handle;
 
-    pnum = GetSINT32_String(data);
-    plen = GetSINT32_String(data + 4);
-
-    if (len < 8 || (len - 8) < plen)
+    if (len < 8 ||
+        (len - 8) < plen)
     {
-        LOG(LOG_ERROR, "PixMapCmd: Lengths don't compare (%d,%d)\n", (len - 8), plen);
+        LOG(LOG_ERROR, "PixMapCmd: Lengths don't compare (%d,%d)\n",
+            len - 8, plen);
+
+        return;
+    }
+
+    sprintf(buf, "%s/", DIR_CACHE);
+
+    if (!PHYSFS_mkdir(buf))
+    {
+        LOG(LOG_ERROR, "%s\n", PHYSFS_getLastError());
+
         return;
     }
 
     /* save picture to cache*/
-    /* and load it to FaceList*/
-
-    sprintf(buf, "%s%s", GetCacheDirectory(), FaceList[pnum].name);
+    sprintf(buf, "%s/%s", DIR_CACHE, FaceList[pnum].name);
     LOG(LOG_DEBUG, "ImageFromServer: %s\n", FaceList[pnum].name);
-    if ((stream = fopen_wrapper(buf, "wb+")) != NULL)
+
+    if (!(handle = PHYSFS_openWrite(buf)))
     {
-        fwrite((char *) data + 8, 1, plen, stream);
-        fclose(stream);
+        LOG(LOG_ERROR, "%s\n", PHYSFS_getLastError());
     }
+    else
+    {
+        PHYSFS_write(handle, (char *)data + 8, 1, plen);
+        PHYSFS_close(handle);
+    }
+
+    /* and load it to FaceList*/
     FaceList[pnum].sprite = sprite_tryload_file(buf, 0, NULL);
     map_udate_flag = 2;
     map_redraw_flag = TRUE;
 //    textwin_showstring(COLOR_GREEN,"map_draw_update: ImageCmd");
-
 }
 
 

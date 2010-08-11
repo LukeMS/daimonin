@@ -2355,7 +2355,8 @@ static const char *GetOption(const char *arg, const char *sopt,
 
 static void InitPhysFS(const char *argv0)
 {
-    char        buf[MEDIUM_BUF];
+    char        home[MEDIUM_BUF],
+                buf[LARGE_BUF];
     const char *sep,
                *env;
 
@@ -2384,6 +2385,7 @@ static void InitPhysFS(const char *argv0)
     /* Use APPDATA if defined. */
     if ((env = getenv("APPDATA")))
     {
+        sprintf(home, "%s", env);
         sprintf(buf, "%s%sDaimonin%s%d.%d",
                 env, sep, sep, DAI_VERSION_RELEASE, DAI_VERSION_MAJOR);
     }
@@ -2393,37 +2395,62 @@ static void InitPhysFS(const char *argv0)
         /* Use WINDIR if defined. */
         if ((env = getenv("WINDIR")))
         {
+            sprintf(home, "%s", env);
             sprintf(buf, "%s%sApplication Data%sDaimonin%s%d.%d",
                     env, sep, sep, sep, DAI_VERSION_RELEASE, DAI_VERSION_MAJOR);
         }
         /* Not defined either? Just use the the base dir. */
         else
         {
+            sprintf(home, "%s", PHYSFS_getBaseDir());
             sprintf(buf, "%s", PHYSFS_getBaseDir());
         }
     }
 #elif __LINUX
     env = getenv("HOME");
+    sprintf(home, "%s", env);
     sprintf(buf, "%s%s.daimonin%s%d.%d",
             env, sep, sep, DAI_VERSION_RELEASE, DAI_VERSION_MAJOR);
 #else /* As a default, use the base dir. */
+    sprintf(home, "%s", PHYSFS_getBaseDir());
     sprintf(buf, "%s", PHYSFS_getBaseDir());
 #endif
+
+    /* The user dir is (the only) place where files are written to. */
+    if (!PHYSFS_setWriteDir(home))
+    {
+        LOG(LOG_MSG, "%s\n", PHYSFS_getLastError());
+        LOG(LOG_ERROR, "Could not set write dir.(home='%s') Exiting!\n",
+            home);
+        exit(EXIT_FAILURE);
+    }
 
     /* Prepend the user dir to the search path. This means files are read from
      * this location in preference to the defaults. */
     if (strcmp(PHYSFS_getBaseDir(), buf)) // Only if different to base dir.
     {
+        char temp[LARGE_BUF];
+
+        if (!PHYSFS_mkdir(buf))
+        {
+            LOG(LOG_MSG, "%s\n", PHYSFS_getLastError());
+        }
+
+        sprintf(temp, "%s%s%s", home, sep, buf);
+        sprintf(buf, "%s", temp);
+
+        if (!PHYSFS_setWriteDir(buf))
+        {
+            LOG(LOG_MSG, "%s\n", PHYSFS_getLastError());
+            LOG(LOG_ERROR, "Could not set write dir (buf='%s'). Exiting!\n",
+                buf);
+            exit(EXIT_FAILURE);
+        }
+
         if (!PHYSFS_addToSearchPath(buf, 0))
         {
             LOG(LOG_MSG, "%s\n", PHYSFS_getLastError());
         }
-    }
-
-    /* Also the user dir is (the only) place where files are written to. */
-    if (!PHYSFS_setWriteDir(buf))
-    {
-        LOG(LOG_MSG, "%s\n", PHYSFS_getLastError());
     }
 
     /* Prepend any add-on packs to the search path. This means files are read
