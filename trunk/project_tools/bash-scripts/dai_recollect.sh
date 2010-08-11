@@ -87,7 +87,7 @@ collect_objects()
         then
             print_backspaces ${#count}
             count="${num} "
-            echo -n "${count} "
+            echo -n "${count}"
         fi
 
         more=0
@@ -179,7 +179,7 @@ collect_objects()
         then
             print_backspaces ${#count}
             count="${num} "
-            echo -n "${count} "
+            echo -n "${count}"
         fi
     done < ${TMPFILE}
 
