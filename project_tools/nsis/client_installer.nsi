@@ -54,7 +54,7 @@ Section "Client (required)"
   ; Set output path to the installation directory.
   SetOutPath $INSTDIR
   ; Files
-  File "daimonin_start.exe"
+;  File "daimonin_start.exe"
   File "daimonin.exe"
   File "*.dll"
   File "License"
@@ -127,7 +127,8 @@ SectionEnd
 Section "Start Menu Shortcuts"
   CreateDirectory "$SMPROGRAMS\Daimonin-${FLAVOUR}"
   CreateShortCut "$SMPROGRAMS\Daimonin-${FLAVOUR}\Uninstall.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0
-  CreateShortCut "$SMPROGRAMS\Daimonin-${FLAVOUR}\Daimonin Client (${FLAVOUR}).lnk" "$INSTDIR\daimonin_start.exe" "" "$INSTDIR\daimonin_start.exe" 0
+;  CreateShortCut "$SMPROGRAMS\Daimonin-${FLAVOUR}\Daimonin Client (${FLAVOUR}).lnk" "$INSTDIR\daimonin_start.exe" "" "$INSTDIR\daimonin_start.exe" 0
+  CreateShortCut "$SMPROGRAMS\Daimonin-${FLAVOUR}\Daimonin Client (${FLAVOUR}).lnk" "$INSTDIR\daimonin.exe" "" "$INSTDIR\daimonin.exe" 0
 SectionEnd
 
 ;--------------------------------
