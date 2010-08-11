@@ -231,18 +231,9 @@ then
     echo -n "${num} "
 fi
 
-let i=num
-let count=1
-
-while [ ${i} -ne 0 ]
-do
-    let i=i/10
-    let count=count+1
-done
-
 images=`cat ${TMPFILE} | sort`
-bmaps=`echo "${images}" | awk '{print $1}' | nl -n rz -s ' ' -v 1 -w ${count}`
-echo "`printf "%0${count}d" 0` bug.101" > ${lib}/bmaps
+bmaps=`echo "${images}" | awk '{print $1}' | nl -n rz -s ' ' -v 1 -w 5`
+echo "`printf "%05d" 0` bug.101" > ${lib}/bmaps
 echo "${bmaps}" >> ${lib}/bmaps
 echo -n "(pass 2)... "
 let num=0
