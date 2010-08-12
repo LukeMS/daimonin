@@ -1,14 +1,15 @@
 arch map
 name Kobold Den
-background_music 100-dreamybells.ogg
 msg
 Creator: Daimonin Map Editor
 Date:    3/22/2004
+Modified: 2010-08-12 smacky
 endmsg
 width 24
 height 24
 difficulty 2
 darkness 3
+background_music 100-dreamybells.ogg
 end
 arch floor_grit4a
 end
@@ -514,19 +515,20 @@ arch floor_grit4a
 x 2
 y 21
 end
-arch corpse_goblinoid
+arch corpse_default
 name kobold corpse
 speed 0
 is_used_up 0
+face corpse_goblinoid.101
 x 2
 y 21
 arch note
-name Kabash note
 msg
 Me Warning all!
 Water rotten our weapons.
 Me rotten storage master.
 endmsg
+name Kabash note
 no_pick 1
 end
 end
