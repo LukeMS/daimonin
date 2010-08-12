@@ -1,0 +1,4 @@
+# This update updated 0.9.7.1 rev 107 to rev 108
+install w daimonin_start.exe
+check w daimonin_start.exe
+check w daimonin.exe

@@ -1,0 +1,41 @@
+# This updates latest B4 to B5 base
+
+# new updater
+install w daimonin_start.exe
+check w daimonin_start.exe
+
+# Remember - all directories in the patch are copied over automatically
+# remove outdated directories
+rmdir w settings
+rmdir w skins
+
+# update the arches
+xdelta x daimonin.p0.diff daimonin.p0 daimonin.p0
+
+# clean out the old dlls
+del w jpeg.dll
+del w libogg-0.dll
+del w libpng12-0.dll
+del w libtiff-3.dll
+del w libvorbis-0.dll
+del w libvorbisfile-3.dll
+del w physfs.dll
+del w SDL.dll
+del w SDL_image.dll
+del w SDL_mixer.dll
+del w smpeg.dll
+del w zlib1.dll
+
+# throw in new dlls
+check w libogg.dll
+check w libpng14.dll
+check w libvorbis.dll
+check w libvorbisfile.dll
+check w physfs.dll
+check w SDL.dll
+check w SDL_image.dll
+check w SDL_mixer.dll
+check w zlib1.dll
+
+# and update the client
+check w daimonin.exe
