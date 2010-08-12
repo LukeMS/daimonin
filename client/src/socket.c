@@ -243,76 +243,78 @@ static int reader_thread_loop(void *nix)
         int toread;
 
         /* First, try to read a command length sequence */
-		if (!readbuf_len)
-			toread = 1; /* try to read a command from the socket */
-		else if (!(readbuf[0] & 0x80) && readbuf_len < 3)
-			toread = 3 - readbuf_len; /* read in 2 or 1 more bytes */
-		else if ((readbuf[0] & 0x80) && readbuf_len < 5)
-			toread = 5 - readbuf_len; /* read in 4 to 1 more bytes */
+        if (!readbuf_len)
+            toread = 1; /* try to read a command from the socket */
+        else if (!(readbuf[0] & 0x80) && readbuf_len < 3)
+            toread = 3 - readbuf_len; /* read in 2 or 1 more bytes */
+        else if ((readbuf[0] & 0x80) && readbuf_len < 5)
+            toread = 5 - readbuf_len; /* read in 4 to 1 more bytes */
         else
         {
-			if (readbuf_len == 3 && !(readbuf[0] & 0x80))
-			{
-				header_len = 3;
-				cmd_len = adjust_endian_int16(*((uint16 *)(readbuf+1)));
-			}
-			else
-			if (readbuf_len == 5 && (readbuf[0] & 0x80))
-			{
-				header_len = 5;
-				cmd_len = adjust_endian_int32(*((uint32 *)(readbuf+1)));
+            if (readbuf_len == 3 && !(readbuf[0] & 0x80))
+            {
+                header_len = 3;
+                cmd_len = adjust_endian_int16(*((uint16 *)(readbuf+1)));
+            }
+            else
+            if (readbuf_len == 5 && (readbuf[0] & 0x80))
+            {
+                header_len = 5;
+                cmd_len = adjust_endian_int32(*((uint32 *)(readbuf+1)));
 
-			}
+            }
 
-			toread = cmd_len + header_len - readbuf_len;
-			if(cmd_len+16 > readbuf_malloc)
-			{
-				uint8 *tmp = readbuf;
+            toread = cmd_len + header_len - readbuf_len;
+            if(cmd_len+16 > readbuf_malloc)
+            {
+                uint8 *tmp = readbuf;
 
-				readbuf_malloc = cmd_len+16;
-				MALLOC(readbuf, readbuf_malloc);
-				memcpy(readbuf, tmp, readbuf_len); /* save the already read in header part */
-				FREE(tmp);
-			}
+                readbuf_malloc = cmd_len+16;
+                MALLOC(readbuf, readbuf_malloc);
+                memcpy(readbuf, tmp, readbuf_len); /* save the already read in header part */
+                FREE(tmp);
+            }
 
-//			LOG(-1,"CMD_LEN: toread:%d len:%d (%x)\n", toread, cmd_len, (*((char *)readbuf))&~0x80);
+//            LOG(-1,"CMD_LEN: toread:%d len:%d (%x)\n", toread, cmd_len, (*((char *)readbuf))&~0x80);
 
         }
-		if(toread)
-		{
-			ret = recv(csocket.fd, readbuf + readbuf_len, toread, 0);
+        if(toread)
+        {
+            ret = recv(csocket.fd, readbuf + readbuf_len, toread, 0);
 
-	        if (ret == 0)
-		    {
-			    /* End of file */
-				LOG(LOG_DEBUG, "Reader got EOF trying to read %d bytes\n", toread);
-				goto out;
-			}
-			else if (ret == -1)
-			{
-				/* IO error */
-	#ifdef WIN32
-		        LOG(LOG_DEBUG, "Reader got error %d\n", WSAGetLastError());
-	#else
-		        LOG(LOG_DEBUG, "Reader got error %d (%s)\n", errno, strerror(errno));
-	#endif
-		        goto out;
-			}
-			else
-			{
-				readbuf_len += ret;
+            if (ret == 0)
+            {
+                /* End of file */
+                LOG(LOG_DEBUG, "Reader got EOF trying to read %d bytes\n", toread);
+                goto out;
+            }
+            else if (ret == -1)
+            {
+                /* IO error */
+#ifdef WIN32
+                LOG(LOG_DEBUG, "Reader got error %d\n", WSAGetLastError());
+#else
+                LOG(LOG_DEBUG, "Reader got error %d (%s)\n", errno, strerror(errno));
+#endif
+                goto out;
+            }
+            else
+            {
+                readbuf_len += ret;
 /* LOG(LOG_DEBUG, "Reader got some data (%d bytes total)\n", readbuf_len); */
-			}
-		}
+            }
+        }
         /* Finished with a command ? */
         if (readbuf_len == cmd_len + header_len && !abort_thread)
         {
             command_buffer *buf;
 
-            LOG(-1," CMD:%x len:%d\n", (*((char *)readbuf))&~0x80,readbuf_len);
-            /*LOG(-1," CMD-DATA:%s\n", readbuf+3);*/
+#ifdef DAI_DEVELOPMENT
+            LOG(LOG_MSG," CMD:%x len:%d\n", (*((char *)readbuf))&~0x80,readbuf_len);
+            /*LOG(LOG_MSG," CMD-DATA:%s\n", readbuf+3);*/
+#endif
 
-			buf = command_buffer_new(readbuf_len, readbuf);
+            buf = command_buffer_new(readbuf_len, readbuf);
             if (buf == NULL)
                 goto out;
             buf->data[readbuf_len] = 0; /* we terminate our buffer for security and incoming raw strings */
@@ -330,8 +332,8 @@ static int reader_thread_loop(void *nix)
 
 out:
     SOCKET_CloseClientSocket(&csocket);
-	FREE(readbuf);
-	readbuf = NULL;
+    FREE(readbuf);
+    readbuf = NULL;
     LOG(LOG_DEBUG, "Reader thread stopped\n");
     return -1;
 }
