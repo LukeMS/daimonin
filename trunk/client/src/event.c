@@ -2324,10 +2324,10 @@ static void key_repeat(void)
 ******************************************************************/
 void read_keybind_file(void)
 {
-    char         buf[MEDIUM_BUF];
-    PHYSFS_File *handle;
-    size_t       len;
-    int          i, pos;
+    char           buf[MEDIUM_BUF];
+    PHYSFS_File   *handle;
+    PHYSFS_sint64  len;
+    int            i, pos;
 
     sprintf(buf, "%s/%s", DIR_SETTINGS, FILE_KEYBIND);
 
