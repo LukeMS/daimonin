@@ -11,6 +11,17 @@ then
 fi
 
 echo
+echo "#######################################################"
+echo "### Permanently backup some persistent server files ###"
+echo "#######################################################"
+cp ${dai_builddir}/server/data/ban_file ${dai_home}/ban_file.bak
+cp ${dai_builddir}/server/data/clockdata ${dai_home}/clockdata.bak
+cp ${dai_builddir}/server/data/gmaster_file ${dai_home}/gmaster_file.bak
+cp ${dai_builddir}/server/data/motd ${dai_home}/motd.bak
+cp ${dai_builddir}/server/data/settings ${dai_home}/settings.bak
+cp ${dai_builddir}/server/data/stream ${dai_home}/stream.bak
+
+echo
 echo "#######################"
 echo "### Kill gameserver ###"
 echo "#######################"
