@@ -1,0 +1,3 @@
+# This update updated 0.9.7.1 rev 105 to rev 106
+check w daimonin.exe
+xdelta x daimonin.p0.diff daimonin.p0 daimonin.p0

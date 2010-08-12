@@ -1,0 +1,7 @@
+# This update updated 0.9.7.1 rev 102 to rev 103
+# It only updates the imagepack daimonin.p0
+
+# now we do some delta patching with the daimonin.p0
+# the commands are diff.file, old.file, new.file  (the new file is automatically created 
+# in the patch dir). the diff is automatically deleted after applying
+xdelta x daimonin.p0.diff daimonin.p0 daimonin.p0

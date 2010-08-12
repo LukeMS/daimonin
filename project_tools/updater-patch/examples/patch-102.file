@@ -1,0 +1,65 @@
+# This is the update file from 0.9.7 r101 to 0.9.7.1 r102 (widget client)
+
+# this update shouldn't affect linux so first we have to clear out patch directory
+# normally you can do this with check, but check can only delete single files
+
+# rmdir is normally used for removing a dir in the base path, but we use it for the patch folder
+# command, system, path
+rmdir l update/patch/skins
+rmdir l update/patch/settings
+
+# client.exe is now renamed to daimonin.exe
+del w client.exe
+
+# now we use check for example, note that check deletes files which are NOT for this system
+# here the files are for win, so linux will skip them
+check w jpeg.dll
+check w libogg-0.dll
+check w libpng12-0.dll
+check w libtiff-3.dll
+check w libvorbis-0.dll
+check w libvorbisfile-3.dll
+check w physfs.dll
+check w SDL.dll
+check w SDL_image.dll
+check w SDL_mixer.dll
+check w zlib1.dll
+check w daimonin.exe
+check w README_Update.txt
+# ok we have cleared the patch dir
+
+# we create in the base dir a directory settings
+# normally it would just be created automatically because it is included in this patch, BUT
+# we want to keep the players keys.dat and quick.dat
+mkdir w settings
+move w keys.dat settings/keys.dat
+move w quick.dat settings/quick.dat
+
+# we throw out the old client.log
+del w client.log
+
+# old options are not really compatible
+del w options.dat
+
+# create the needed logs-dir
+mkdir w logs
+
+# throw out the old bitmaps/icons...
+rmdir w bitmaps
+rmdir w icons
+
+# we don't need the tools anymore, all is included in the updater
+rmdir w tools
+
+# now we do some delta patching, the daimonin.p0 and archdef.dat
+# the commands are diff.file, old.file, new.file  (the new file is automatically created 
+# in the patch dir). the diff is automatically deleted after applying
+#xdelta w daimonin.p0.vcdiff daimonin.p0 daimonin.p0
+#xdelta w archdef.dat.vcdiff archdef.dat archdef.dat
+
+# the contens of this file will be displayed at the end. If there are more notes commands 
+# they will be displayed in the order of appearance
+# !!! Be sure to save it with linux lineendings!!! (only LF)
+notes w notes1.txt
+
+# so thats all
