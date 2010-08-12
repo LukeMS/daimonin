@@ -51,8 +51,15 @@ echo "##################################"
 
 if [ -d ${dai_svndir} ]
 then
-    svn cleanup ${dai_svndir}/daimonin/${dai_gameserver}/arch
-    svn cleanup ${dai_svndir}/daimonin/${dai_gameserver}/maps
+    svn cleanup ${dai_svndir}/daimonin/trunk/arch
+    svn cleanup ${dai_svndir}/daimonin/trunk/maps
+
+    if [ ${dai_gameserver} != "trunk" ]
+    then
+        svn cleanup ${dai_svndir}/daimonin/${dai_gameserver}/arch
+        svn cleanup ${dai_svndir}/daimonin/${dai_gameserver}/maps
+    fi
+
     svn cleanup ${dai_svndir}/daimonin/${dai_gameserver}/server
 
     if [ -n "${dai_gridarta_repo}" ]
