@@ -796,6 +796,8 @@ static int load_map_header(FILE *fp, mapstruct *m, int flags)
         }
         else if (!strcmp(key, "msg"))
         {
+            msgbuf[0] = '\0';
+
             while (fgets(buf, HUGE_BUF - 1, fp) != NULL)
             {
                 if (!strcmp(buf, "endmsg\n"))
@@ -812,6 +814,7 @@ static int load_map_header(FILE *fp, mapstruct *m, int flags)
 #endif
                 }
             }
+
             /* There are lots of maps that have empty messages (eg, msg/endmsg
              * with nothing between).  There is no reason in those cases to
              * keep the empty message.  Also, msgbuf contains garbage data
