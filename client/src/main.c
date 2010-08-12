@@ -2429,15 +2429,10 @@ static void InitPhysFS(const char *argv0)
      * this location in preference to the defaults. */
     if (strcmp(PHYSFS_getBaseDir(), buf)) // Only if different to base dir.
     {
-        char temp[LARGE_BUF];
-
         if (!PHYSFS_mkdir(buf))
         {
             LOG(LOG_MSG, "%s\n", PHYSFS_getLastError());
         }
-
-        sprintf(temp, "%s%s%s", home, sep, buf);
-        sprintf(buf, "%s", temp);
 
         if (!PHYSFS_setWriteDir(buf))
         {
