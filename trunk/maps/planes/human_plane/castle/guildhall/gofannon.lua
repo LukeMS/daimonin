@@ -294,8 +294,8 @@ function topicQuestComplete(reward)
 					end
                 end
             end
-            ib:SetAccept(nil, "quest complete")
-            ib:SetDecline(nil, "greetings force")
+            --ib:SetAccept(nil, "quest complete")
+            --ib:SetDecline(nil, "greetings force")
         else
             -- Find the previously selected item
             local item

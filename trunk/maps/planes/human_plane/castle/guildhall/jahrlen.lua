@@ -118,7 +118,7 @@ function topicGreeting()
         ib:SetHeader("st_001", me)
         ib:SetMsg("You have done a good job with the rats. I still have the ^Magic Bullet^ spell to teach you. If you retrieve an item I have lost, I'll teach it to you.")
         ib:AddLink("Tell me about the quest", "explain quest")
-    elseif qstat_2 == game.QSTAT_DONE and qstat_2 == game.QSTAT_DONE then
+    elseif qstat_1 == game.QSTAT_DONE and qstat_2 == game.QSTAT_DONE then
         ib:SetHeader("st_001", me)
         ib:SetMsg("Thank you for getting my rod back. I think that soon it will be as good as new again. Two weeks.\n\n")
         ib:AddMsg("I have already taught you ^Probe^ and ^Magic Bullet^. I have nothing more for you to do.\n\n")
@@ -135,7 +135,7 @@ end
 
 -- The player asks about available quests
 function topicQuest()
-    if unfinished_q then
+    if qstat_1 == game.QSTAT_ACTIVE or qstat_2 == game.QSTAT_ACTIVE then
         quest_reminder()
     elseif qstat_1 == game.QSTAT_NO then
         ib:SetHeader("st_003", me)
@@ -177,7 +177,7 @@ function topicQuestComplete()
         ib:SetHeader("st_003", me)
         ib:SetTitle("Quest Complete")
         ib:SetMsg("Very well done. Hopefully we won't have any more rat trouble for some time.\n\n")
-        --ib:AddMsg("I'll now teach you the ~Wizardry Spells~ skill and the ^Probe^ spell")
+        ib:AddMsg("I'll now teach you the ~Wizardry Spells~ skill and the ^Probe^ spell")
         teachSpell("probe") 
         ib:SetButton("Back", "hello")
         qb:Finish(questnr)
