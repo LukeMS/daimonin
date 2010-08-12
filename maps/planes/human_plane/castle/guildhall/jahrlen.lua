@@ -171,7 +171,7 @@ end
 -- The player claims to have completed a quest. Double check and
 -- possibly give out rewards
 function topicQuestComplete()
-    if unfinished_q then
+    if qstat_1 == game.QSTAT_ACTIVE or qstat_2 == game.QSTAT_ACTIVE then
         quest_reminder()
     elseif qstat_1 == game.QSTAT_SOLVED then
         ib:SetHeader("st_003", me)
