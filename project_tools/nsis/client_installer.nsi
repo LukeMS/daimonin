@@ -22,7 +22,9 @@ Name "Daimonin Client (${FLAVOUR})"
 OutFile "Daimonin-${FLAVOUR}-${VERSION}.exe"
 
 ; The default installation directory
-InstallDir $PROGRAMFILES\Daimonin\client-${FLAVOUR}
+; We need a warning to users not to install to \Program Files\ etc as this
+; will prevent the updater working in Vista or later.
+InstallDir C:\Daimonin\client-${FLAVOUR}
 
 ; License file
 LicenseData License
