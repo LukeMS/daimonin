@@ -53,11 +53,6 @@ public:
         STATE_ELEMENT_PUSHED,
         STATE_ELEMENT_M_OVER,  /**< Mouse over. **/
         STATE_ELEMENT_PASSIVE, /**< Disabled. **/
-        /// Extra states for checkbuttons.
-        STATE_ELEMENT_CHECKED,
-        STATE_ELEMENT_CHECKED_PUSHED,
-        STATE_ELEMENT_CHECKED_M_OVER,  /**< Mouse over. **/
-        STATE_ELEMENT_CHECKED_PASSIVE, /**< Disabled. **/
         STATE_ELEMENT_SUM
     };
     static const StateNames mElementState[STATE_ELEMENT_SUM & 0xff];
