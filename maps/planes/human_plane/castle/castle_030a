@@ -3,7 +3,7 @@ name Guild Hall
 msg
 Creator: Daimonin Map Editor
 Date:    7/16/2004
-Modified: 2010-01-11 smacky
+Modified: 2010-08-13 Grommit
 endmsg
 width 24
 height 24
@@ -64,10 +64,10 @@ arch grassd_2
 y 9
 end
 arch wmask_wanted
+name proclamation
 msg
 Cell 1 -- VACANCY
 endmsg
-name proclamation
 y 9
 end
 arch floor_flagm1
@@ -161,10 +161,6 @@ arch floor_sblack2
 x 1
 y 3
 end
-arch light1
-x 1
-y 3
-end
 arch floor_sblack2
 x 1
 y 4
@@ -198,10 +194,10 @@ x 1
 y 9
 end
 arch wmask_wanted
+name proclamation
 msg
 Cell 2 -- VACANCY
 endmsg
-name proclamation
 x 1
 y 9
 end
@@ -511,10 +507,10 @@ x 3
 y 9
 end
 arch wmask_wanted
+name proclamation
 msg
 Cell 3 -- OUT OF ORDER
 endmsg
-name proclamation
 x 3
 y 9
 end
@@ -676,22 +672,22 @@ x 4
 y 9
 end
 arch sign_generic
+name sign
 msg
 -----------Guild Hall Jail------------
 *Don't fret; they're under lock and key*
 endmsg
-name sign
 direction 5
 x 4
 y 9
 end
 arch wmask_wanted
+name proclamation
 msg
 Cell 4 -- NO VACANCY
 Fra'hak, the notorious ogre rogue clan leader from Cloud Mountains, has been caught and jailed.
 Report ogre activity near the city to the guards.
 endmsg
-name proclamation
 x 4
 y 9
 end
@@ -1944,8 +1940,8 @@ type 83
 title of the Mercenary Guild
 level 100
 arch event_obj
-sub_type 13
 name lua
+sub_type 13
 race guildhall/cashin.lua
 end
 end
@@ -2613,8 +2609,8 @@ name Advisor Fanrir
 type 83
 level 15
 arch event_obj
-sub_type 13
 name lua
+sub_type 13
 race guildhall/fanrir.lua
 end
 end
@@ -2660,11 +2656,11 @@ x 15
 y 8
 end
 arch sign_generic
+name sign
 msg
 ---------Mercenary Guild of Guild Hall----------
 *We fight for protection, for valor, and for glory!*
 endmsg
-name sign
 direction 3
 x 15
 y 8
@@ -3181,10 +3177,10 @@ x 18
 y 8
 end
 arch ladder_down
+name boxes
 msg
 You move the boxes aside and slip through the hole, unnoticed.
 endmsg
-name boxes
 face box2.101
 is_turnable 0
 slaying guildhall/guildhall_a_030a
@@ -3970,6 +3966,7 @@ name Gaffrey
 type 83
 title the Archer
 level 6
+stand_still 1
 arch ai_caster
 msg
 # This is a generic Spellcaster AI that can be used for most mobs
