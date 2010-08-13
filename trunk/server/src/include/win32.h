@@ -54,7 +54,7 @@
 #include <sys/types.h>
 #include <process.h>
 
-#ifndef MIN_GW
+#ifndef MINGW
 #define __STDC__ 1      /* odd too: CF want this, but don't include it */
 /* before the standard includes */
 #endif
@@ -99,7 +99,7 @@
 #define hypot(__a, __b) _hypot(__a, __b)
 #define umask(__a) _umask(__a)
 
-#ifndef MIN_GW
+#ifndef MINGW
 #define fileno(__a) _fileno(__a)
 #define R_OK 6      /* for __access() */
 #define F_OK 6
@@ -107,7 +107,7 @@
 
 #define PREFIXDIR ""
 
-#ifndef MIN_GW
+#ifndef MINGW
 #define S_ISDIR(x) (((x) & S_IFMT) == S_IFDIR)
 #define S_ISREG(x) (((x) & S_IFMT) == S_IFREG)
 #endif

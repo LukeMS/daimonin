@@ -15,13 +15,7 @@
 				<Option projectResourceIncludeDirsRelation="1" />
 				<Compiler>
 					<Add option="-W" />
-					<Add option="-D_CONSOLE" />
-					<Add option="-DWIN32" />
 					<Add option="-DNDEBUG" />
-					<Add option="-DLUA_PLUGIN_EXPORTS" />
-					<Add option="-DMIN_GW" />
-					<Add option="-DDAI_DEVELOPMENT_CODE" />
-					<Add option="-DDAI_DEVELOPMENT_CONTENT" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
@@ -40,16 +34,10 @@
 				<Option compiler="gcc" />
 				<Option projectResourceIncludeDirsRelation="1" />
 				<Compiler>
-					<Add option="-W" />
 					<Add option="-g" />
-					<Add option="-D_CONSOLE" />
+					<Add option="-W" />
 					<Add option="-DDEBUG" />
 					<Add option="-DDEBUG_MOVEATTACK" />
-					<Add option="-DWIN32" />
-					<Add option="-DLUA_PLUGIN_EXPORTS" />
-					<Add option="-DMIN_GW" />
-					<Add option="-DDAI_DEVELOPMENT_CODE" />
-					<Add option="-DDAI_DEVELOPMENT_CONTENT" />
 				</Compiler>
 				<Linker>
 					<Add library="wsock32" />
@@ -64,6 +52,12 @@
 			<Add alias="All" targets="Release;Debug;" />
 		</VirtualTargets>
 		<Compiler>
+			<Add option="-D_CONSOLE" />
+			<Add option="-DWIN32" />
+			<Add option="-DMINGW" />
+			<Add option="-DLUA_PLUGIN_EXPORTS" />
+			<Add option="-DDAI_DEVELOPMENT_CODE" />
+			<Add option="-DDAI_DEVELOPMENT_CONTENT" />
 			<Add directory="..\..\..\src\include" />
 		</Compiler>
 		<Unit filename="readme.txt" />
