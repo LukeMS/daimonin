@@ -61,9 +61,16 @@ void new_draw_info(const int flags, const int pri, const object *const op,
         return;
     }
 
-    /* For non-NDI_ALL messages sent to a non-player, bail out quick. */
+    /* Silently refuse non-NDI_ALL messages not to players. This lets us skip
+     * all ob->type == PLAYER checks all over the code */
+    /* Neater maybe, but surely slower as we then go through all the NDI
+     * rigmarole for nothing (ie, in common calling funcs which work for both
+     * players and monsters.
+     * -- Smacky 20100619 */
     if (!(flags & NDI_ALL) &&
-        op->type != PLAYER)
+        (!op ||
+         op->type != PLAYER ||
+         !CONTR(op)))
     {
         return;
     }
@@ -86,21 +93,9 @@ void new_draw_info(const int flags, const int pri, const object *const op,
             }
         }
     }
-    else
+    else if (pri <= CONTR(op)->listening)
     {
-        /* Silently refuse messages not to players. This lets us skip all
-         * ob->type == PLAYER checks all over the code */
-        /* Neater maybe, but surely slower as we then go through all the
-         * NDI rigmarole for nothing (ie, in common calling funcs which
-         * work for both players and monsters.
-         * -- Smacky 20100619 */
-        if (op &&
-            op->type == PLAYER &&
-            CONTR(op) &&
-            pri <= CONTR(op)->listening)
-        {
-            NewDrawInfo(flags, CONTR(op), buf);
-        }
+        NewDrawInfo(flags, CONTR(op), buf);
     }
 }
 
