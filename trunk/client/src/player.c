@@ -523,16 +523,33 @@ void widget_show_player_doll_event(int x, int y, int MEvent)
         if (!(locate_item(cpl.win_inv_tag))->applied)
             process_macro_keys(KEYFUNC_APPLY, 0); /* drop to player-doll */
     }
-    if (draggingInvItem(DRAG_GET_STATUS) == DRAG_IWIN_INV)
+    else if (draggingInvItem(DRAG_GET_STATUS) == DRAG_IWIN_INV)
     {
         if ((locate_item(cpl.win_inv_tag))->applied)
             textwin_showstring(COLOR_WHITE, "This is applied already!");
         else
             process_macro_keys(KEYFUNC_APPLY, 0); /* drop to player-doll */
     }
+    else if (draggingInvItem(DRAG_GET_STATUS) == DRAG_IWIN_BELOW)
+    {
+        item *op;
+
+        cpl.inventory_win = IWIN_BELOW; 
+        sound_play_effect(SOUNDTYPE_CLIENT, SOUND_GET, 0, 0, 100);
+        process_macro_keys(KEYFUNC_GET, 0); /* get to inv */
+
+        /* In case object disappears or auto-applies when picked up. */
+        if ((op = locate_item(cpl.win_inv_tag)) &&
+            !op->applied)
+        {
+            cpl.inventory_win = IWIN_INV;
+	    cpl.win_inv_tag = cpl.win_below_tag;
+            process_macro_keys(KEYFUNC_APPLY, 0); /* drop to player-doll */
+        }
+    }
+
     cpl.inventory_win = old_inv_win;
     cpl.win_inv_tag = old_inv_tag;
-
     draggingInvItem(DRAG_NONE);
     itemExamined = 0;
 
