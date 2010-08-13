@@ -145,13 +145,13 @@
 #define PACKAGE_NAME "Daimonin SDL Client"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "Daimonin SDL Client 0.10.1"
+#define PACKAGE_STRING "Daimonin SDL Client x.y.z"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "daimonin-sdl-client"
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "0.10.1"
+#define PACKAGE_VERSION "x.y.z"
 
 /* Define to the type of arg 1 for `select'. */
 #define SELECT_TYPE_ARG1 int
@@ -172,7 +172,7 @@
 #define TIME_WITH_SYS_TIME 1
 
 /* Version number of package */
-#define VERSION "0.10.1"
+#define VERSION "x.y.z"
 
 /* CPU uses big-endian words */
 /* #undef WORDS_BIGENDIAN */
