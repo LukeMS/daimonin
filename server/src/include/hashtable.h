@@ -34,7 +34,7 @@
 #include <win32.h>
 #include <stddef.h>
 #define SIZEOF_VOID_P 4
-#ifndef MIN_GW
+#ifndef MINGW
 typedef unsigned short uint16_t;
 typedef unsigned int uint32_t;
 typedef uint32_t ub4;    /* unsigned 4-byte quantities */
