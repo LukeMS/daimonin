@@ -225,7 +225,6 @@ bool Events::frameStarted(const FrameEvent& evt)
 
         case Option::GAME_STATUS_INIT_SOUND:
         {
-
             //////////////////////////////////////////////////////////////////////////////////////////////////////////
             //////////////////////// TESTING (Create the alpha values for a NPC texture) /////////////////////////////
             //////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -373,7 +372,8 @@ bool Events::frameStarted(const FrameEvent& evt)
             if (GuiManager::getSingleton().getUserBreak(GuiManager::TABLE))
             {
                 GuiManager::getSingleton().showWindow(GuiManager::WIN_SERVERSELECT, false);
-                Option::getSingleton().setGameStatus(Option::GAME_STATUS_PLAY);
+                Option::getSingleton().setGameStatus(Option::GAME_STATUS_INIT_NET);
+                mQuitGame = true;
             }
             // A server was selected.
             int select = GuiManager::getSingleton().getActivated(GuiManager::TABLE);
@@ -646,6 +646,10 @@ bool Events::frameStarted(const FrameEvent& evt)
             static unsigned long time = Root::getSingleton().getTimer()->getMilliseconds();
             if (Root::getSingleton().getTimer()->getMilliseconds() - time > 180.0)
             {
+                //////// Only for TESTING (Loads a level shortly after login)
+                static int loops = 0; if (loops == 2) { TileManager::getSingleton().loadLvl(); ++loops; }
+                else ++loops;
+
                 RaySceneQuery *mRaySceneQuery = mSceneManager->createRayQuery(Ray());
                 mRaySceneQuery->setRay(mCamera->getCameraToViewportRay(mMouse.x / mWindow->getWidth(), mMouse.y / mWindow->getHeight()));
                 mRaySceneQuery->setQueryMask(ObjectManager::QUERY_NPC_MASK | ObjectManager::QUERY_CONTAINER);
