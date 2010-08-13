@@ -646,10 +646,13 @@ int widget_event_mouseup(int x, int y, SDL_Event *event)
 //                group_event();
                 break;
             case PDOLL_ID:
-                    widget_show_player_doll_event(x,y, MOUSE_UP);
+                widget_show_player_doll_event(x,y, MOUSE_UP);
                 break;
             case RANGE_ID:
                 widget_range_event(x,y, *event, MOUSE_UP);
+                break;
+            case BELOW_INV_ID:
+                widget_below_window_event(x, y, MOUSE_UP);
                 break;
             case MAIN_INV_ID:
                 widget_inventory_event(x, y, *event);

@@ -169,8 +169,10 @@ void widget_inventory_event(int x, int y, SDL_Event event)
         }
         else if (draggingInvItem(DRAG_GET_STATUS) == DRAG_IWIN_BELOW)
         {
+            cpl.inventory_win = IWIN_BELOW;
             sound_play_effect(SOUNDTYPE_CLIENT, SOUND_GET, 0, 0, 100);
             process_macro_keys(KEYFUNC_GET, 0);
+            cpl.inventory_win = IWIN_INV; // keep inv open.
         }
         draggingInvItem(DRAG_NONE);
         itemExamined = 0; /* ready for next item */
@@ -225,7 +227,7 @@ void widget_inventory_event(int x, int y, SDL_Event event)
                                                      INVITEMYLEN);
                 if (event.button.button == SDL_BUTTON_RIGHT || event.button.button == SDL_BUTTON_MIDDLE)
                     process_macro_keys(KEYFUNC_MARK, 0);
-                else
+                else if (cpl.win_inv_tag >= 0)
                 {
                     if (cpl.inventory_win == IWIN_INV)
                         draggingInvItem(DRAG_IWIN_INV);
@@ -372,57 +374,103 @@ jump_in_container1:
 
 void widget_below_window_event(int x, int y, int MEvent)
 {
-    /* ground ( IWIN_BELOW )  */
-    if (y >= cur_widget[BELOW_INV_ID].y1+19 &&
-        y <= cur_widget[BELOW_INV_ID].y1 + cur_widget[BELOW_INV_ID].ht - 4 &&
-        x > cur_widget[BELOW_INV_ID].x1+4 &&
-        x < cur_widget[BELOW_INV_ID].x1 + cur_widget[BELOW_INV_ID].wd - 12)
+    switch (MEvent)
     {
-        item     *Item;
-        if (cpl.inventory_win == IWIN_INV)
-            cpl.inventory_win = IWIN_BELOW;
-        cpl.win_below_slot = (x-cur_widget[BELOW_INV_ID].x1 - 5) / 32;
-        cpl.win_below_tag = get_inventory_data(cpl.below, &cpl.win_below_ctag, &cpl.win_below_slot,
-                                               &cpl.win_below_start, &cpl.win_below_count, INVITEMBELOWXLEN,
-                                               INVITEMBELOWYLEN);
-        Item = locate_item(cpl.win_below_tag);
-        if ((SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_LEFT)))
-            draggingInvItem(DRAG_IWIN_BELOW);
-        else
-            process_macro_keys(KEYFUNC_APPLY, 0);
-    }
-    else if (y >= cur_widget[BELOW_INV_ID].y1+20 &&
-            y <= cur_widget[BELOW_INV_ID].y1+29 &&
-            x > cur_widget[BELOW_INV_ID].x1+262 &&
-            x < cur_widget[BELOW_INV_ID].x1+269 &&
-            MEvent == MOUSE_DOWN)
-    {
-        if (cpl.inventory_win == IWIN_INV)
-            cpl.inventory_win = IWIN_BELOW;
-        cpl.win_below_slot = cpl.win_below_slot - INVITEMBELOWXLEN;
-        if (cpl.win_below_slot < 0)
-            cpl.win_below_slot = 0;
-        cpl.win_below_tag = get_inventory_data(cpl.below, &cpl.win_below_ctag, &cpl.win_below_slot,
-                                               &cpl.win_below_start, &cpl.win_below_count, INVITEMBELOWXLEN,
-                                               INVITEMBELOWYLEN);
-    }
-    else if (y >= cur_widget[BELOW_INV_ID].y1+42 &&
-            y <= cur_widget[BELOW_INV_ID].y1+51 &&
-            x > cur_widget[BELOW_INV_ID].x1+262 &&
-            x < cur_widget[BELOW_INV_ID].x1+269 &&
-            MEvent == MOUSE_DOWN)
-    {
-        if (cpl.inventory_win == IWIN_INV)
-            cpl.inventory_win = IWIN_BELOW;
-        cpl.win_below_slot = cpl.win_below_slot + INVITEMBELOWXLEN;
-        if (cpl.win_below_slot > cpl.win_below_count -1)
-            cpl.win_below_slot = cpl.win_below_count -1;
-        cpl.win_below_tag = get_inventory_data(cpl.below, &cpl.win_below_ctag, &cpl.win_below_slot,
-                                               &cpl.win_below_start, &cpl.win_below_count, INVITEMBELOWXLEN,
-                                               INVITEMBELOWYLEN);
-    }
+        case MOUSE_UP:
+            if (draggingInvItem(DRAG_GET_STATUS) > DRAG_IWIN_BELOW)
+            {
+                /* KEYFUNC_APPLY and KEYFUNC_DROP works only if cpl.inventory_win = IWIN_INV. The tag must
+                            be placed in cpl.win_inv_tag. So we do this and after DnD we restore the old values. */
+                int old_inv_win = cpl.inventory_win;
+                int old_inv_tag = cpl.win_inv_tag;
+
+                cpl.inventory_win = IWIN_INV;
+
+#if 0 // surely unnecessary if the server really is secure.
+                if (draggingInvItem(DRAG_GET_STATUS) == DRAG_PDOLL)
+                {
+//                    item *op;
+
+                    cpl.win_inv_tag = cpl.win_pdoll_tag;
+                    process_macro_keys(KEYFUNC_APPLY, 0); /* drop to inventory */
 
 
+//                    /* In case object disappears when unapplieid or is cursed. */
+//                   if ((op = locate_item(cpl.win_inv_tag)) &&
+//                        !op->applied)
+                    {
+                        process_macro_keys(KEYFUNC_DROP, 0); /* drop to floor */
+                    }
+                }
+#endif
+                if (draggingInvItem(DRAG_GET_STATUS) != DRAG_QUICKSLOT_SPELL)
+                {
+                    process_macro_keys(KEYFUNC_DROP, 0); /* drop to floor */
+                }
+
+                cpl.inventory_win = old_inv_win;
+                cpl.win_inv_tag = old_inv_tag;
+                draggingInvItem(DRAG_NONE);
+                itemExamined = 0; /* ready for next item */
+            }
+
+            break;
+
+        case MOUSE_DOWN:
+            /* ground ( IWIN_BELOW )  */
+            if (y >= cur_widget[BELOW_INV_ID].y1+19 &&
+                y <= cur_widget[BELOW_INV_ID].y1 + cur_widget[BELOW_INV_ID].ht - 4 &&
+                x > cur_widget[BELOW_INV_ID].x1+4 &&
+                x < cur_widget[BELOW_INV_ID].x1 + cur_widget[BELOW_INV_ID].wd - 12)
+            {
+//                if (cpl.inventory_win == IWIN_INV)
+//                    cpl.inventory_win = IWIN_BELOW;
+                cpl.win_below_slot = (x-cur_widget[BELOW_INV_ID].x1 - 5) / 32;
+                cpl.win_below_tag = get_inventory_data(cpl.below, &cpl.win_below_ctag, &cpl.win_below_slot,
+                                                       &cpl.win_below_start, &cpl.win_below_count, INVITEMBELOWXLEN,
+                                                       INVITEMBELOWYLEN);
+
+                if (cpl.win_below_tag >= 0)
+                {
+                    if ((SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_LEFT)))
+                        draggingInvItem(DRAG_IWIN_BELOW);
+                    else
+                        process_macro_keys(KEYFUNC_APPLY, 0);
+                }
+            }
+            else if (y >= cur_widget[BELOW_INV_ID].y1+20 &&
+                    y <= cur_widget[BELOW_INV_ID].y1+29 &&
+                    x > cur_widget[BELOW_INV_ID].x1+262 &&
+                    x < cur_widget[BELOW_INV_ID].x1+269 &&
+                    MEvent == MOUSE_DOWN)
+            {
+//                if (cpl.inventory_win == IWIN_INV)
+//                    cpl.inventory_win = IWIN_BELOW;
+                cpl.win_below_slot = cpl.win_below_slot - INVITEMBELOWXLEN;
+                if (cpl.win_below_slot < 0)
+                    cpl.win_below_slot = 0;
+                cpl.win_below_tag = get_inventory_data(cpl.below, &cpl.win_below_ctag, &cpl.win_below_slot,
+                                                       &cpl.win_below_start, &cpl.win_below_count, INVITEMBELOWXLEN,
+                                                       INVITEMBELOWYLEN);
+            }
+            else if (y >= cur_widget[BELOW_INV_ID].y1+42 &&
+                    y <= cur_widget[BELOW_INV_ID].y1+51 &&
+                    x > cur_widget[BELOW_INV_ID].x1+262 &&
+                    x < cur_widget[BELOW_INV_ID].x1+269 &&
+                    MEvent == MOUSE_DOWN)
+            {
+//                if (cpl.inventory_win == IWIN_INV)
+//                    cpl.inventory_win = IWIN_BELOW;
+                cpl.win_below_slot = cpl.win_below_slot + INVITEMBELOWXLEN;
+                if (cpl.win_below_slot > cpl.win_below_count -1)
+                    cpl.win_below_slot = cpl.win_below_count -1;
+                cpl.win_below_tag = get_inventory_data(cpl.below, &cpl.win_below_ctag, &cpl.win_below_slot,
+                                                       &cpl.win_below_start, &cpl.win_below_count, INVITEMBELOWXLEN,
+                                                       INVITEMBELOWYLEN);
+            }
+
+            break;
+    }
 }
 
 void widget_show_below_window(item *op, int x, int y)
@@ -720,14 +768,14 @@ void examine_range_inv(void)
     if (!op->inv)
         return;
     fire_mode_tab[FIRE_MODE_BOW].item = FIRE_ITEM_NO;
-	fire_mode_tab[FIRE_MODE_BOW].amun = FIRE_ITEM_NO;
+    fire_mode_tab[FIRE_MODE_BOW].amun = FIRE_ITEM_NO;
 
     for (tmp = op->inv; tmp; tmp = tmp->next)
     {
         if (tmp->applied && (tmp->itype == TYPE_BOW || (tmp->itype == TYPE_ARROW && tmp->stype >= 128)
-			|| tmp->itype == TYPE_WAND || tmp->itype == TYPE_ROD || tmp->itype == TYPE_HORN))
+            || tmp->itype == TYPE_WAND || tmp->itype == TYPE_ROD || tmp->itype == TYPE_HORN))
             fire_mode_tab[FIRE_MODE_BOW].item = tmp->tag;
-		else if(tmp->applied && tmp->itype == TYPE_ARROW && tmp->stype < 128)
-			fire_mode_tab[FIRE_MODE_BOW].amun = tmp->tag;
+        else if(tmp->applied && tmp->itype == TYPE_ARROW && tmp->stype < 128)
+            fire_mode_tab[FIRE_MODE_BOW].amun = tmp->tag;
     }
 }
