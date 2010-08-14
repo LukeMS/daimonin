@@ -51,8 +51,10 @@ public:
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
     enum {SC_NORMAL, SC_FIRERUN, SC_ALWAYS};
-    enum {PROTOCOL_VERSION = 991031};
-
+    enum {PROTOCOL_VERSION    = 991031};
+    enum {DAI_VERSION_RELEASE =  0};
+    enum {DAI_VERSION_MAJOR   = 10};
+    enum {DAI_VERSION_MINOR   =  2};
     // List of client to server (cs) binary command tags.
     enum client_cmd
     {
@@ -225,7 +227,6 @@ private:
     static void do_console_cmd(Ogre::String &stCmd, int cmd);
     static void command_buffer_free(command_buffer *buf);
     static void command_buffer_enqueue(command_buffer *buf, command_buffer **queue_start, command_buffer **queue_end);
-    static void checkFileStatus(const char *cmd, char *param, int fileNr);
     static void inputThread();
     static void outputThread();
 };

@@ -855,6 +855,9 @@ void Network::add_metaserver_data(String strMetaData)
             endPos = strMetaData.find('|',  startPos);
             if (endPos >= ServerEnd) endPos = ServerEnd;
             strData[i] = strMetaData.substr(startPos, endPos-startPos);
+            std::replace(strData[i].begin(), strData[i].end(), '_', ' ');
+            // ',' must be replaced, because its a keysign of GUI_ELEMENT_TABLE
+            std::replace(strData[i].begin(), strData[i].end(), ',', '-');
             if (endPos == ServerEnd) break;
             startPos = ++endPos;
         }
@@ -870,15 +873,14 @@ void Network::add_metaserver_data(String strMetaData)
         node->desc[2]= strData[DATA_DESC1];
         node->desc[3]= strData[DATA_DESC1];
         mvServer.push_back(node);
-
         String strRow = "~#ff00ff00";
         if      (strData[DATA_NAME].find("Test")      != String::npos) strRow = "~#ffff0000";
+        else if (strData[DATA_NAME].find("Dev")       != String::npos) strRow = "~#ffffff00";
         else if (strData[DATA_NAME].find("Localhost") != String::npos) strRow = "~#ffffffff";
         strRow+= node->name+ "~;";
         strRow+= "~#ffffffa8" + node->ip +"~ (Version: " + node->version + ");";
         strRow+= "~#ffffffff" + strData[DATA_INFO];
-        strRow+=(node->player <0)?",-":","+strData[DATA_PLAYER];
-        std::replace(strRow.begin(), strRow.end(), '_', ' ');
+        strRow+= (node->player <0)?",~#ffffffa8  -":",~#ffffffa8  "+strData[DATA_PLAYER];
         GuiManager::getSingleton().addLine(GuiManager::TABLE, strRow.c_str());
         // Next server
         ServerStart = ++ServerEnd;

@@ -40,16 +40,16 @@ ServerFile::ServerFile()
     srv_file[FILE_SPELLS  ].filename = "";
     srv_file[FILE_SETTINGS].filename = "";
     srv_file[FILE_BMAPS   ].filename = "";
-    srv_file[FILE_SKILLS  ].status = STATUS_OK;
-    srv_file[FILE_SPELLS  ].status = STATUS_OK;
-    srv_file[FILE_SETTINGS].status = STATUS_OK;
-    srv_file[FILE_BMAPS   ].status = STATUS_OK;
+    srv_file[FILE_SKILLS  ].status = STATUS_OUTDATED;
+    srv_file[FILE_SPELLS  ].status = STATUS_OUTDATED;
+    srv_file[FILE_SETTINGS].status = STATUS_OUTDATED;
+    srv_file[FILE_BMAPS   ].status = STATUS_OUTDATED;
 }
 
 //================================================================================================
 // .
 //================================================================================================
-void ServerFile::checkFileStatus(const char * /*cmd*/, char *param, int fileNr)
+void ServerFile::checkFileStatus(char *param, int fileNr)
 {
     PROFILE()
     Logger::log().info() << "Server file status of ["<< fileNr<< "] " << srv_file[fileNr].filename << "...";

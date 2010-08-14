@@ -22,6 +22,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
 
 #include <OgreMath.h>  // Without it VC reports an error in OgreMath.h.
+#include <OgreStringConverter.h>
 #include <fstream>
 #include "zlib.h"
 #include "logger.h"
@@ -1299,6 +1300,35 @@ void Network::SetupCmd(uchar *buf, int len)
         if (pos >= len) break;
         buf[pos++] = '\0';
 
+        if (!strcmp((const char*)cmd, "dv"))
+        {
+            int version[3] = {-1,-1,-1};
+            std::string tmpString = (const char*)param;
+            for (int i = 0; i < 3; ++i)
+            {
+                std::string::size_type loc = tmpString.find('.', 0);
+                version[i] = StringConverter::parseInt(tmpString.substr(0,loc));
+                tmpString = tmpString.substr(loc+1);
+            }
+            if (version[0] < 0 || version[1] < 0 || version[2] < 0)
+            {
+                GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "~#ffff0000Got a wrong dv command from server!");
+                Logger::log().error() << "Got a wrong dv command from server!";
+                Option::getSingleton().setGameStatus(Option::GAME_STATUS_INIT_NET);
+                return;
+            }
+            if (version[0]!= DAI_VERSION_RELEASE || version[1]!= DAI_VERSION_MAJOR)
+            {
+                GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "~#ffff0000Your client differs from the server version!");
+                if (version[0] < DAI_VERSION_RELEASE || version[1] < DAI_VERSION_MAJOR)
+                    GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "~#ffff0000This server is outdated. Choose another one.");
+                else
+                    GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "~#ffff0000Your Client is outdated. Update your client.");
+                Option::getSingleton().setGameStatus(Option::GAME_STATUS_INIT_NET);
+                return;
+            }
+            continue;
+        }
         if (!strcmp((const char*)cmd, "pv"))
         {
             if (PROTOCOL_VERSION != atoi((const char*)param))
@@ -1309,19 +1339,6 @@ void Network::SetupCmd(uchar *buf, int len)
                 return;
             }
             Logger::log().info() << "Protocol version confirmed";
-            continue;
-        }
-        if (!strcmp((const char*)cmd, "sn"))
-        {
-            /*
-            if (VERSION_SC != atoi((const char*)param))
-            {
-                GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "~The server is outdated!\nSelect a different one!~");
-                CloseClientSocket();
-                return;
-            }
-            */
-            Logger::log().info() << "Sound file outdated.";
             continue;
         }
         if (!strcmp((const char*)cmd, "ac"))
@@ -1346,44 +1363,35 @@ void Network::SetupCmd(uchar *buf, int len)
         }
         if (!strcmp((const char*)cmd, "skf"))
         {
-            checkFileStatus((const char*)cmd, (char*)param, ServerFile::FILE_SKILLS);
+            ServerFile::getSingleton().checkFileStatus((char*)param, ServerFile::FILE_SKILLS);
             continue;
         }
         if (!strcmp((const char*)cmd, "spf"))
         {
-            checkFileStatus((const char*)cmd, (char*)param, ServerFile::FILE_SPELLS);
+            ServerFile::getSingleton().checkFileStatus((char*)param, ServerFile::FILE_SPELLS);
             continue;
         }
         if (!strcmp((const char*)cmd, "stf"))
         {
-            checkFileStatus((const char*)cmd, (char*)param, ServerFile::FILE_SETTINGS);
+            ServerFile::getSingleton().checkFileStatus((char*)param, ServerFile::FILE_SETTINGS);
             continue;
         }
         if (!strcmp((const char*)cmd, "bpf"))
         {
-            checkFileStatus((const char*)cmd, (char*)param, ServerFile::FILE_BMAPS);
+            ServerFile::getSingleton().checkFileStatus((char*)param, ServerFile::FILE_BMAPS);
             continue;
         }
         if (!strcmp((const char*)cmd, "amf"))
         {
-            checkFileStatus((const char*)cmd, (char*)param, ServerFile::FILE_ANIMS);
+            ServerFile::getSingleton().checkFileStatus((char*)param, ServerFile::FILE_ANIMS);
             continue;
         }
         Logger::log().error() << "Got setup for a command we don't understand: " << cmd << " " << param;
-        Option::getSingleton().setGameStatus(Option::GAME_STATUS_START);
-        CloseSocket();
+        Option::getSingleton().setGameStatus(Option::GAME_STATUS_INIT_NET);
         return;
     }
+    GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Requesting files...");
     Option::getSingleton().setGameStatus(Option::GAME_STATUS_REQUEST_FILES);
-}
-
-//================================================================================================
-// .
-//================================================================================================
-void Network::checkFileStatus(const char *cmd, char *param, int fileNr)
-{
-    PROFILE()
-    ServerFile::getSingleton().checkFileStatus(cmd, param, fileNr);
 }
 
 //================================================================================================
@@ -1427,7 +1435,7 @@ void Network::DataCmd(uchar *data, int len)
     std::ofstream out(ServerFile::getSingleton().getFilename(data_cmd), std::ios::out|std::ios::binary);
     if (!out)
         Logger::log().error()  << "save data cmd file : writing of file "
-        << ServerFile::getSingleton().getFilename(data_cmd) << " failed.";
+                               << ServerFile::getSingleton().getFilename(data_cmd) << " failed.";
     else
         out.write((char*)data, len);
     delete[] dest;

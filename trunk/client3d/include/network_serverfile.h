@@ -85,7 +85,7 @@ public:
     {
         srv_file[file_enum].crc = value;
     }
-    void checkFileStatus(const char *cmd, char *param, int fileNr);
+    void checkFileStatus(char *param, int fileNr);
     bool requestFiles();
 
 private:

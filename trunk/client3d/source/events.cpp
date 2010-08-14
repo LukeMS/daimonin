@@ -412,7 +412,8 @@ bool Events::frameStarted(const FrameEvent& evt)
             ServerFile::getSingleton().checkFile(ServerFile::FILE_ANIMS,    FILE_CLIENT_ANIMS);
             std::stringstream strCmd;
             strCmd  <<
-            "pv "   << Network::PROTOCOL_VERSION <<
+            "dv "   << Network::DAI_VERSION_RELEASE << "." << Network::DAI_VERSION_MAJOR << "." << Network::DAI_VERSION_MINOR <<
+            " pv "  << Network::PROTOCOL_VERSION <<
             " sn "  << "0" << // Sounds
             " mz "  << 17 << "x" << 17 <<
             " skf " << ServerFile::getSingleton().getLength(ServerFile::FILE_SKILLS)  << "|" << std::hex<< ServerFile::getSingleton().getCRC(ServerFile::FILE_SKILLS)     << std::dec <<
@@ -444,7 +445,10 @@ bool Events::frameStarted(const FrameEvent& evt)
         {
             // Wait until all files are upToDate.
             if (ServerFile::getSingleton().requestFiles())
+            {
+                GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "All files ok.");
                 Option::getSingleton().setGameStatus(Option::GAME_STATUS_LOGIN);
+            }
             break;
         }
 
