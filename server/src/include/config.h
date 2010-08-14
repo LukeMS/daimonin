@@ -144,7 +144,6 @@
 *
 * Short list of features, and what to search for:
 * ALCHEMY - enables alchemy code
-* ANNOUNCE_CHANNELS - announce the channel system at login (requires USE_CHANNELS)
 * DEBUG - more verbose message logging?
 * MAP_CLIENT_X, MAP_CLIENT_Y - determines max size client map will receive
 * MAX_TIME - how long an internal tick is in microseconds
@@ -157,6 +156,7 @@
 * SPELL_* - various spell related options
 * STAT_LOSS - if not 0, players lose randdom stats on death.
 * USE_CHANNELS - enables channel system
+* ANNOUNCE_CHANNELS - announce the channel system at login (requires USE_CHANNELS)
 * USE_GRAVESTONES - enables gravestones when players die.
 * USE_LIGHTING - enable light/darkness & light sources
 * USE_TILESTRETCHER - enables tilestretcher for uneven ground surface
@@ -170,11 +170,6 @@
  */
 
 #define ALCHEMY
-
-/* When defined, annouces the channel system at login. Be sure that
- * USE_CHANNELS is defined below! (Stoopid alphabetical arrangement)
- */
-#define ANNOUNCE_CHANNELS
 
 /* DEBUG generates copious amounts of output.  I tend to change the CC options
  * in the crosssite.def file if I want this.  By default, you probably
@@ -303,7 +298,12 @@
 #define STAT_LOSS 18
 
 /* you HAVE to also enable this in the lua-plugin (plugin_lua.h)!!! */
+#ifdef DAI_DEVELOPMENT_CODE
 #define USE_CHANNELS
+/* When defined, annouces the channel system at login. Be sure that
+ * USE_CHANNELS is defined below! (Screw the alphabetical arrangement) */
+#define ANNOUNCE_CHANNELS
+#endif
 
 /* Gravestones mark the spot where a player died (they disappear after a few
  * minutes). They cause damage to players stepping on them if
