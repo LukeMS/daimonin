@@ -2340,11 +2340,14 @@ void read_keybind_file(void)
         bindkey_list_set.group_nr = -1;
         bindkey_list_set.entry_nr = 0;
 
-        while ((len = PHYSFS_readString(handle, buf, sizeof(buf))) != -1)
+        while ((len = PHYSFS_readString(handle, buf, sizeof(buf))) >= 0)
         {
-            if (len < 4)
+            /* Skip comments, blank lines, and incomplete lines. */
+            if (buf[0] == '#' ||
+                buf[0] == '\0' ||
+                len < 4)
             {
-                continue; /* skip empty/incomplete lines */
+                continue;
             }
 
             i = 1;

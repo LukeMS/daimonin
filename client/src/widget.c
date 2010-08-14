@@ -315,18 +315,20 @@ Boolean load_interface_file(void)
     }
 
     /* Read the settings from the file */
-    while (PHYSFS_readString(handle, line, sizeof(line)) != -1)
+    while (PHYSFS_readString(handle, line, sizeof(line)) >= 0)
     {
-        if(line[0]=='#' || line[0]=='\n')
+        /* Skip comments and blank lines. */
+        if (line[0]=='#' ||
+            line[0]=='\0')
+        {
             continue;
+        }
 
         i=0;
         while (line[i] && line[i]!= ':') i++;
         line[++i]=0;
         strcpy(keyword, line);
         strcpy(parameter, line + i + 1);
-        /* remove the newline character */
-        parameter[strcspn(line + i + 1, "\n")] = 0;
 
         /* 1) if we find a widget (beginning of block) .. */
         /* 2) read until "....END" (end of block) ,, */
@@ -364,10 +366,15 @@ Boolean load_interface_file(void)
                     continue;
                 }
 
-                while (PHYSFS_readString(handle, line, sizeof(line)) != -1)
+                while (PHYSFS_readString(handle, line, sizeof(line)) >= 0)
                 {
-                    if(line[0]=='#' || line[0]=='\n')
+                    /* Skip comments and blank lines. */
+                    if (line[0]=='#' ||
+                        line[0]=='\0')
+                    {
                         continue;
+                    }
+
                     if(!strncmp(line, "....END", 7))
                         break;
 

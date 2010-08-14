@@ -619,10 +619,15 @@ void load_options_dat(void)
         return;
     }
 
-    while (PHYSFS_readString(handle, line, sizeof(line)) != -1)
+    while (PHYSFS_readString(handle, line, sizeof(line)) >= 0)
     {
-        if (line[0] == '#' || line[0] == '\n')
+        /* Skip comments and blank lines. */
+        if (line[0] == '#' ||
+            line[0] == '\0')
+       {
             continue;
+       }
+
         if (line[0] == '*')
         {
             if (line[2]=='0')
@@ -684,13 +689,7 @@ void load_options_dat(void)
     }
 
     PHYSFS_close(handle);
-
-    /*
-     TODO implement server options.
-    */
-
-    LOG(LOG_MSG,"skin from options: %s\n",options.skin);
-
+//    LOG(LOG_MSG,"skin from options: %s\n",options.skin);
 }
 
 
@@ -2704,10 +2703,14 @@ void load_skindef()
 
     PHYSFS_setBuffer(handle, HUGE_BUF);
 
-    while (PHYSFS_readString(handle, line, sizeof(line)) != -1)
+    while (PHYSFS_readString(handle, line, sizeof(line)) >= 0)
     {
-        if(line[0]=='#' || line[0]=='\n')
+        /* Skip comments and blank lines. */
+        if (line[0]=='#' ||
+            line[0]=='\0')
+        {
             continue;
+        }
 
         i=0;
         while (line[i] && line[i]!= ':')
@@ -2715,8 +2718,6 @@ void load_skindef()
         line[++i]=0;
         strcpy(keyword, line);
         strcpy(parameter, line + i + 1);
-        /* remove the newline character */
-        parameter[strcspn(line + i + 1, "\n")] = 0;
 
         if (!strcmp(keyword, "newclosebutton:"))
             skindef.newclosebutton = atoi(parameter);
@@ -2732,5 +2733,4 @@ void load_skindef()
     }
 
     PHYSFS_close(handle);
-
 }

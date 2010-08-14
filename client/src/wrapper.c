@@ -626,27 +626,32 @@ PHYSFS_sint64 PHYSFS_readString(PHYSFS_File *handle, char *s, size_t len)
 {
     size_t        i = 0;
     char          c;
-    PHYSFS_sint64 objCount = 0;
+    PHYSFS_sint64 objCount = -1;
 
-    for (; i < len; i++)
+    /* Sanity. */
+    if (handle)
     {
-        if (PHYSFS_read(handle, &c, 1, 1) < 1)
+        for (; i < len; i++)
         {
-            LOG(LOG_ERROR, "%s\n", PHYSFS_getLastError());
-            objCount = -1;
+            if (PHYSFS_read(handle, &c, 1, 1) < 1)
+            {
+                LOG(LOG_ERROR, "%s\n", PHYSFS_getLastError());
+                objCount = -1;
 
-            break;
+                break;
+            }
+
+            objCount++;
+
+            if (c == '\0' ||
+                c == '\n' ||
+                c == EOF)
+            {
+                break;
+            }
+
+            *(s + i) = c;
         }
-
-        if (c == '\0' ||
-            c == '\n' ||
-            c == EOF)
-        {
-            break;
-        }
-
-        *(s + i) = c;
-        objCount++;
     }
 
     *(s + i) = '\0';
@@ -658,11 +663,17 @@ PHYSFS_sint64 PHYSFS_readString(PHYSFS_File *handle, char *s, size_t len)
  * was an error, which is logged, or -1 for a total failure. */
 PHYSFS_sint64 PHYSFS_writeString(PHYSFS_File *handle, const char *cs)
 {
-    PHYSFS_uint32 objCount = strlen(cs);
+    PHYSFS_sint64 objCount = -1;;
 
-    if (PHYSFS_write(handle, cs, 1, objCount) < objCount)
+    /* Sanity. */
+    if (handle)
     {
-        LOG(LOG_ERROR, "%s\n", PHYSFS_getLastError());
+        size_t len = strlen(cs);
+
+        if ((objCount = PHYSFS_write(handle, cs, 1, (PHYSFS_uint32)len)) < (PHYSFS_sint64)len)
+        {
+            LOG(LOG_ERROR, "%s\n", PHYSFS_getLastError());
+        }
     }
 
     return objCount;
