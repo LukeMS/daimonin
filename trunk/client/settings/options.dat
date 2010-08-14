@@ -9,7 +9,7 @@
 
 # Communication
 Channel format: 0
-Enable smileys: 0
+Enable smileys: 1
 Log messages: 1
 Textwindows use alpha: 1
 Textwindows alpha value: 110
