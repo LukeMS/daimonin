@@ -1747,12 +1747,12 @@ static int GameObject_ChannelMsg(lua_State *L)
 
     get_lua_args(L, "Oss|i", &self, &channel, &message, &mode);
 
-    /* No point mucking about with an empty message. */
-    if (*message)
-    {
-        hooks->lua_channel_message(channel, STRING_OBJ_NAME(WHO), message,
-                                   mode);
-    }
+//    /* No point mucking about with an empty message. */
+//    if (*message)
+//    {
+//        hooks->lua_channel_message(channel, STRING_OBJ_NAME(WHO), message,
+//                                   mode);
+//    }
 
     return 0;
 }
