@@ -927,6 +927,7 @@ void finish_face_cmd(int pnum, uint32 checksum, char *face)
     FaceList[pnum].checksum = checksum;
 
     /* Check private cache first */
+    /* TODO: Update to use PhysFS. */
     sprintf(buf, "%s%s", GetCacheDirectory(), FaceList[pnum].name);
     if ((stream = fopen_wrapper(buf, "rb")) != NULL)
     {
@@ -1001,65 +1002,93 @@ static int load_picture_from_pack(int num)
  */
 int request_face(int pnum)
 {
-    char        buf[256 * 2];
-    FILE       *stream;
-    struct stat statbuf;
-    int         len;
-    unsigned char * data;
-    uint16      num     = (uint16) (pnum&~0x8000);
+    uint16       num = (uint16)(pnum & ~0x8000);
+    char         buf[LARGE_BUF];
+    PHYSFS_File *handle;
 
-    if (FaceList[num].name || FaceList[num].flags & FACE_REQUESTED) /* loaded OR requested.. */
+    /* Is the face already loaded or requested? */
+    if (FaceList[num].name ||
+        FaceList[num].flags & FACE_REQUESTED)
+    {
         return 1;
+    }
 
+    /* Is the facenum too big? */
     if (num >= bmaptype_table_size)
     {
-        LOG(LOG_ERROR, "REQUEST_FILE(): server sent picture id to big (%d %d)\n", num, bmaptype_table_size);
+        LOG(LOG_ERROR, "Image ID too big (%d %d)\n",
+            num, bmaptype_table_size);
+
         return 0;
     }
 
-    /* now lets check BEFORE we do any other test for this name in /gfx_user.
-     * Perhaps we have a customized picture here.
-     */
-    sprintf(buf, "%s%s.png", GetGfxUserDirectory(), bmaptype_table[num].name);
-    if ((stream = fopen_wrapper(buf, "rb")) != NULL)
+    /* Check this name in DIR_GFX_USER. Perhaps we have a custom face here. */
+    sprintf(buf, "%s/%s.png", DIR_GFX_USER, bmaptype_table[num].name);
+
+    if ((handle = PHYSFS_openRead(buf)))
     {
-        /* yes we have a picture with this name in /gfx_user!
-             * lets try to load.
-             */
-        fstat(fileno(stream), &statbuf);
-        len = (int) statbuf.st_size;
-        MALLOC(data, len);
-        len = fread(data, 1, len, stream);
-        fclose(stream);
-        if (len > 0)
+        PHYSFS_sint64  len = PHYSFS_fileLength(handle);
+        uint8         *data = NULL;
+
+        if (len == -1)
         {
-            /* lets try to load first... */
-            FaceList[num].sprite = sprite_tryload_file(buf, 0, NULL);
-            if (FaceList[num].sprite) /* NOW we have a valid png with right name ...*/
+            LOG(LOG_ERROR, "There was an error reading the '%s' custom face file (len=%d). Trying the default.\n",
+                buf, (int)len);
+        }
+        else
+        {
+            if (!PHYSFS_setBuffer(handle, (PHYSFS_uint64)len))
             {
-                face_flag_extension(num, buf);
-                sprintf(buf, "%s%s.png", GetGfxUserDirectory(), bmaptype_table[num].name);
-                MALLOC_STRING(FaceList[num].name, buf);
-                FaceList[num].checksum = crc32(1L, data, len);
-                FREE(data);
-                return 1;
+                LOG(LOG_ERROR, "There was an error buffering the '%s' custom face data (len=%d). Trying the default.\n",
+                    buf, (int)len);
+            }
+            else
+            {
+                PHYSFS_sint64  objCount;
+
+                MALLOC(data, len);
+
+                if (data &&
+                    (objCount = PHYSFS_read(handle, data, (PHYSFS_uint32)len, 1)) < 1)
+                {
+                    LOG(LOG_ERROR, "%s\n", PHYSFS_getLastError());
+                    LOG(LOG_ERROR, "There was an error reading the '%s' custom face data (count=%d). Trying the default.\n",
+                        buf, (int)objCount);
+                }
+                else if ((FaceList[num].sprite = sprite_tryload_file(buf, 0, NULL)))
+                {
+                    face_flag_extension(num, buf);
+                    MALLOC_STRING(FaceList[num].name, buf);
+                    FaceList[num].checksum = crc32(1L, data, len);
+#ifdef DAI_DEVELOPMENT
+                    LOG(LOG_MSG, "Custom image '%s %s' successfully loaded.\n",
+                        PHYSFS_getRealDir(buf), buf);
+#endif
+                }
             }
         }
-        /* if we are here something was wrong with the gfx_user file.*/
+
         FREE(data);
+        PHYSFS_close(handle);
+
+        if (FaceList[num].sprite)
+        {
+            return 1;
+        }
     }
 
-    /* ok - at this point we hook in our client stored png lib.
-    */
-
-    if (bmaptype_table[num].pos != -1) /* best case - we have it in daimonin.p0! */
+    /* ok - at this point we hook in our client stored png lib. */
+    /* Best case - we have it in daimonin.p0! */
+    if (bmaptype_table[num].pos != -1)
     {
         sprintf(buf, "%s.png", bmaptype_table[num].name);
         MALLOC_STRING(FaceList[num].name, buf);
         FaceList[num].checksum = bmaptype_table[num].crc;
         load_picture_from_pack(num);
     }
-    else /* check client /cache folder. If its not there, finish_face_cmd() will stop or ask the server */
+    /* Check client /cache folder. If it's not there, finish_face_cmd() will
+     * stop or ask the server. */
+    else
     {
         FaceList[num].flags |= FACE_REQUESTED;
         finish_face_cmd(num, bmaptype_table[num].crc, bmaptype_table[num].name);
