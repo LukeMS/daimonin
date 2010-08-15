@@ -395,27 +395,55 @@ int command_reboot(object *op, char *params)
 
 int command_goto(object *op, char *params)
 {
-    int  x = -1,
-         y = -1;
-    char name[MAXPATHLEN] = {"\0"};
+    char   name[MAXPATHLEN] = {"\0"};
+    shstr *path,
+          *src_path;
+    int    x = -1,
+           y = -1,
+           flags = 0;
 
-    if (!op)
-        return 0;
-
-    if (!params)
-        return 1;
-
-    sscanf(params, "%s %d %d", name, &x, &y);
-
-    if(name[0] != '\0')
+    if (!op ||
+        op->type != PLAYER ||
+        !CONTR(op))
     {
-        shstr *hash_name = add_string(name);
-
-        if(enter_map_by_name(op, hash_name, hash_name, x, y, 0))
-            new_draw_info(NDI_UNIQUE, 0, op, "Difficulty: %d.", op->map->difficulty);
-
-        FREE_ONLY_HASH(hash_name);
+        return 0;
     }
+
+    if (params)
+    {
+        sscanf(params, "%s %d %d", name, &x, &y);
+    }
+
+    /* If no name is given or the named map does not exist, goto the player's
+     * savebed. */
+    if (!name[0] ||
+        check_path(name, 1) == -1)
+    {
+        path = add_string(CONTR(op)->savebed_map);
+        src_path = add_string(CONTR(op)->orig_savebed_map);
+        flags = CONTR(op)->bed_status;
+        x = CONTR(op)->bed_x;
+        y = CONTR(op)->bed_y;
+
+        if (name[0])
+        {
+            new_draw_info(NDI_UNIQUE, 0, op, "Map '%s' does not exist!", name);
+        }
+    }
+    else
+    {
+        path = add_string(name);
+        src_path = add_refcount(path);
+    }
+
+    if (enter_map_by_name(op, path, src_path, x, y, flags))
+    {
+        new_draw_info(NDI_UNIQUE, 0, op, "Difficulty: %d.",
+                      op->map->difficulty);
+    }
+
+    FREE_ONLY_HASH(path);
+    FREE_ONLY_HASH(src_path);
 
     return 0;
 }
