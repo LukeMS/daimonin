@@ -609,6 +609,7 @@ bool Events::frameStarted(const FrameEvent& evt)
                 ObjectVisuals::getSingleton().Init(PATH_TXT, FILE_NPC_VISUALS);
                 GuiManager::getSingleton().showWindow(GuiManager::WIN_STATISTICS, true);
                 GuiManager::getSingleton().showWindow(GuiManager::WIN_PLAYERINFO, false);
+                GuiManager::getSingleton().showWindow(GuiManager::WIN_FIRST_STEPS, true);
                 mWindow->resetStatistics();
                 GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Client3d commands:");
                 GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Press ~1 ... 8~ to change cloth.");
@@ -650,10 +651,6 @@ bool Events::frameStarted(const FrameEvent& evt)
             static unsigned long time = Root::getSingleton().getTimer()->getMilliseconds();
             if (Root::getSingleton().getTimer()->getMilliseconds() - time > 180.0)
             {
-                //////// Only for TESTING (Loads a level shortly after login)
-                static int loops = 0; if (loops == 2) { TileManager::getSingleton().loadLvl(); ++loops; }
-                else ++loops;
-
                 RaySceneQuery *mRaySceneQuery = mSceneManager->createRayQuery(Ray());
                 mRaySceneQuery->setRay(mCamera->getCameraToViewportRay(mMouse.x / mWindow->getWidth(), mMouse.y / mWindow->getHeight()));
                 mRaySceneQuery->setQueryMask(ObjectManager::QUERY_NPC_MASK | ObjectManager::QUERY_CONTAINER);

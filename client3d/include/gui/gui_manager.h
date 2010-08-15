@@ -127,6 +127,7 @@ public:
         WIN_STATISTICS,
         WIN_PLAYERTARGET,
         WIN_OPTION_AUDIO,
+        WIN_FIRST_STEPS,
         //WIN_CREATION,
         WIN_SUM
 

@@ -55,7 +55,7 @@
     <!--=============================================-->
     <Graphic>
       <Pos x= "1" y= "19" />
-      <Color red= "70" green= "90" blue= "50" alpha = "150" />
+      <Color red= "70" green= "90" blue= "50" alpha = "200" />
       <Size width= "148" height= "80" />
     </Graphic>
     <TextBox>
@@ -281,7 +281,7 @@
       <Size width= "508" height= "4" />
     </Graphic>
     <TextBox>
-      <Label x= "210" y= "6" font="04" red= "255" green= "255" blue= "255" text= "Login1" />
+      <Label x= "210" y= "10" font="04" red= "255" green= "255" blue= "255" text= "Login1" />
     </TextBox>
     <Graphic>
       <Image name = "Bar-Horizontal-Bottom"/>
@@ -422,7 +422,7 @@
       <Size width= "9" height= "9" />
     </Graphic>
     <TextBox>
-      <Label x= "225" y= "2" font="04" text= "Login" />
+      <Label x= "225" y= "10" font="04" text= "Login" />
     </TextBox>
     <Graphic>
       <Image name = "Bar-Horizontal-Top"/>
@@ -457,13 +457,11 @@
     <!--=============================================-->
     <!-- Layer 1                                     -->
     <!--=============================================-->
-    <Button name = "But_CreateAccount">
-      <Image name = "Button-02-Standard"/>
-      <Pos x= "200" y= "63" />
-      <Label x= "4" y= "2" font="03" text= "create" />
-    </Button>
     <TextBox>
-      <Label x= "20" y= "65" font="03" text= "~#ffffff00Login on your account, or               an account." />
+      <Label x= "20" y= "48" font="03" text= "~#ffff5555(To create an account use the 2d client)" />
+    </TextBox>
+    <TextBox>
+      <Label x= "20" y= "70" font="03" text= "Login to your account:" />
     </TextBox>
     <TextBox>
       <Label x= "80" y= "105" font="03" text= "Account Name: " />
@@ -1510,6 +1508,16 @@
       <Pos x= "0" y= "0" />
       <Size width= "255" height= "255" />
     </Graphic>
+    <!--=============================================-->
+    <!-- Layer 0                                     -->
+    <!--=============================================-->
+    <Button  name = "But_Close">
+      <Image name = "Button-01-Close"/>
+      <Pos x= "236" y= "4" />
+    </Button>
+    <!--=============================================-->
+    <!-- Layer 1                                     -->
+    <!--=============================================-->
     <Statusbar name = "Bar_Health">
       <Color red= "255" green= "0" blue= "0" />
       <Pos x= "2" y= "2" />
@@ -1522,13 +1530,206 @@
     </Statusbar>
     <Statusbar name = "Bar_Grace">
       <Color red= "255" green= "255" blue= "0" />
-      <Pos x= "38" y= "2" />
-      <Size width= "16" height= "100" />
+      <Pos x= "38" y= "140" />
+      <Size width= "100" height= "16" />
     </Statusbar>
-    <Button  name = "But_Close">
+  </Window>
+
+    <!--#############################################-->
+    <!--WINDOW: Audio Options                        -->
+    <!--#############################################-->
+  <Window name= "Win_OptionAudio">
+    <Size width= "255" height= "255" />
+    <Pos  x="450" y= "100" />
+    <!--=============================================-->
+    <!-- Window Title                                -->
+    <!--=============================================-->
+    <Graphic>
+      <Image name = "edge01-nw" />
+      <Pos x= "0" y= "0" />
+    </Graphic>
+    <Graphic>
+      <Image name = "border01-top" />
+      <Pos x= "9" y= "0" />
+      <Size width= "226" />
+    </Graphic>
+    <Graphic>
+      <Image name = "edge01-ne" />
+      <Pos x= "235" y= "0" />
+    </Graphic>
+    <Graphic>
+      <Pos x= "9" y= "9" />
+      <Color red= "40" green= "123" blue= "98" alpha = "200" />
+      <Size width= "226" height= "13" />
+    </Graphic>
+    <Graphic>
+      <Image name = "border01-left" />
+      <Pos x= "0" y= "9" />
+      <Size height= "11" />
+    </Graphic>
+    <Graphic>
+      <Image name = "border01-horizontal-left" />
+      <Pos x= "0" y= "20" />
+    </Graphic>
+    <Graphic>
+      <Image name = "border01-right" />
+      <Pos x= "235" y= "9" />
+      <Size height= "11" />
+    </Graphic>
+    <Graphic>
+      <Image name = "border01-horizontal-right" />
+      <Pos x= "233" y= "20" />
+    </Graphic>
+    <TextBox>
+      <Label x= "80" y= "11" font="02" red= "255" green= "255" blue= "255" text= "Sound Settings" />
+    </TextBox>
+    <Graphic>
+      <Image name = "border01-horizontal-middle" />
+      <Pos x= "11" y= "22" />
+      <Size width= "222" />
+    </Graphic>
+    <!--=============================================-->
+    <!-- Window Body                                 -->
+    <!--=============================================-->
+    <Graphic>
+      <Image name = "border01-left" />
+      <Pos x= "0" y= "36" />
+      <Size height= "199" />
+    </Graphic>
+    <Graphic>
+      <Image name = "border01-right" />
+      <Pos x= "235" y= "36" />
+      <Size height= "199" />
+    </Graphic>
+    <Graphic>
+      <Image name = "edge01-sw" />
+      <Pos x= "0" y= "235" />
+    </Graphic>
+    <Graphic>
+      <Image name = "border01-bottom" />
+      <Pos x= "9" y= "235" />
+      <Size width= "226" />
+    </Graphic>
+    <Graphic>
+      <Image name = "edge01-se" />
+      <Pos x= "235" y= "235" />
+    </Graphic>
+    <Graphic>
+      <Pos x= "9" y= "34" />
+      <Color red= "40" green= "123" blue= "98" alpha = "200" />
+      <Size width= "226" height= "201" />
+    </Graphic>
+  </Window>
+
+    <!--#############################################-->
+    <!--WINDOW: First Steps                          -->
+    <!--#############################################-->
+  <Window name= "Win_FirstSteps">
+    <Size width= "355" height= "355" />
+    <Pos  x="250" y= "100" />
+    <!--=============================================-->
+    <!-- Window Title                                -->
+    <!--=============================================-->
+    <Graphic>
+      <Image name = "edge01-nw" />
+      <Pos x= "0" y= "0" />
+    </Graphic>
+    <Graphic>
+      <Image name = "border01-top" />
+      <Pos x= "9" y= "0" />
+      <Size width= "326" />
+    </Graphic>
+    <Graphic>
+      <Image name = "edge01-ne" />
+      <Pos x= "335" y= "0" />
+    </Graphic>
+    <Graphic>
+      <Pos x= "9" y= "9" />
+      <Color red= "40" green= "123" blue= "98" alpha = "200" />
+      <Size width= "326" height= "13" />
+    </Graphic>
+    <Graphic>
+      <Image name = "border01-left" />
+      <Pos x= "0" y= "9" />
+      <Size height= "11" />
+    </Graphic>
+    <Graphic>
+      <Image name = "border01-horizontal-left" />
+      <Pos x= "0" y= "20" />
+    </Graphic>
+    <Graphic>
+      <Image name = "border01-right" />
+      <Pos x= "335" y= "9" />
+      <Size height= "11" />
+    </Graphic>
+    <Graphic>
+      <Image name = "border01-horizontal-right" />
+      <Pos x= "333" y= "20" />
+    </Graphic>
+    <TextBox>
+      <Label x= "115" y= "11" font="02" red= "255" green= "255" blue= "255" text= "Client3d Tech Demo" />
+    </TextBox>
+    <Graphic>
+      <Image name = "border01-horizontal-middle" />
+      <Pos x= "11" y= "22" />
+      <Size width= "322" />
+    </Graphic>
+    <Button name = "But_Close">
       <Image name = "Button-01-Close"/>
-      <Pos x= "236" y= "4" />
+      <Pos x= "321" y= "8" />
     </Button>
+    <!--=============================================-->
+    <!-- Window Body                                 -->
+    <!--=============================================-->
+    <Graphic>
+      <Image name = "border01-left" />
+      <Pos x= "0" y= "36" />
+      <Size height= "299" />
+    </Graphic>
+    <Graphic>
+      <Image name = "border01-right" />
+      <Pos x= "335" y= "36" />
+      <Size height= "299" />
+    </Graphic>
+    <Graphic>
+      <Image name = "edge01-sw" />
+      <Pos x= "0" y= "335" />
+    </Graphic>
+    <Graphic>
+      <Image name = "border01-bottom" />
+      <Pos x= "9" y= "335" />
+      <Size width= "326" />
+    </Graphic>
+    <Graphic>
+      <Image name = "edge01-se" />
+      <Pos x= "335" y= "335" />
+    </Graphic>
+    <Graphic>
+      <Pos x= "9" y= "34" />
+      <Color red= "40" green= "123" blue= "98" alpha = "200" />
+      <Size width= "326" height= "301" />
+    </Graphic>
+    <!--=============================================-->
+    <!-- Window Text                                 -->
+    <!--=============================================-->
+    <TextBox><Label x= "10" y=  "35" font="02" text= "First Steps:" /></TextBox>
+    <TextBox><Label x= "10" y=  "50" font="02" text= "Press ~9~ to load the mask demo." /></TextBox>
+    <TextBox><Label x= "10" y=  "62" font="02" text= "The terrain is build from an atlas-texture, which blends" /></TextBox>
+    <TextBox><Label x= "10" y=  "74" font="02" text= "the individual gfx's by masks at any edge of a subtile." /></TextBox>
+    <TextBox><Label x= "10" y=  "86" font="02" text= "Press ~g~ now, to see a grid." /></TextBox>
+    <TextBox><Label x= "10" y=  "98" font="02" text= "Press the left mousebutton on a junction to the left of" /></TextBox>
+    <TextBox><Label x= "10" y= "110" font="02" text= "this window. You can see an arrow, which indicates that" /></TextBox>
+    <TextBox><Label x= "10" y= "122" font="02" text= "the 'editor' is active and waits for you to press ~3~,~3~" /></TextBox>
+    <TextBox><Label x= "10" y= "134" font="02" text= "and 5 times ~2~." /></TextBox>
+    <TextBox><Label x= "10" y= "150" font="02" text= "The gfx-nr in the atlas (~3~/~4~ to increase/decrease)" /></TextBox>
+    <TextBox><Label x= "10" y= "162" font="02" text= "is proportional to the layer number, so e.g. snow will" /></TextBox>
+    <TextBox><Label x= "10" y= "174" font="02" text= "always be on the top of the terrain." /></TextBox>
+    <TextBox><Label x= "10" y= "190" font="02" text= "As you can see: With a real editor it will be very easy" /></TextBox>
+    <TextBox><Label x= "10" y= "202" font="02" text= "to create good looking terrains - and best of all:" /></TextBox>
+    <TextBox><Label x= "10" y= "214" font="02" text= "the server needs only to send a few bytes to define the" /></TextBox>
+    <TextBox><Label x= "10" y= "226" font="02" text= "terrain. Levels with nearly infinite size are about to come." /></TextBox>
+    <TextBox><Label x= "10" y= "250" font="02" text= "Press ~7~ to show a gras shader test." /></TextBox>
+    <TextBox><Label x= "10" y= "262" font="02" text= "Use ~pgup~/~pgdn~ to rotate the terrain." /></TextBox>
   </Window>
 
 </XML>

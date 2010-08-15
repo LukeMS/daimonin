@@ -874,8 +874,8 @@ void Network::add_metaserver_data(String strMetaData)
         node->desc[3]= strData[DATA_DESC1];
         mvServer.push_back(node);
         String strRow = "~#ff00ff00";
-        if      (strData[DATA_NAME].find("Test")      != String::npos) strRow = "~#ffff0000";
-        else if (strData[DATA_NAME].find("Dev")       != String::npos) strRow = "~#ffffff00";
+             if (strData[DATA_NAME].find("Dev")       != String::npos) strRow = "~#ffff0000";
+        else if (strData[DATA_NAME].find("Test")      != String::npos) strRow = "~#ffffff00";
         else if (strData[DATA_NAME].find("Localhost") != String::npos) strRow = "~#ffffffff";
         strRow+= node->name+ "~;";
         strRow+= "~#ffffffa8" + node->ip +"~ (Version: " + node->version + ");";
