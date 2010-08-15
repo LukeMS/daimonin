@@ -86,6 +86,7 @@ GuiManager::WindowID GuiManager::mWindowID[WIN_SUM]=
     { "Win_Statistics",    WIN_STATISTICS    },
     { "Win_PlayerTarget",  WIN_PLAYERTARGET  },
     { "Win_OptionAudio",   WIN_OPTION_AUDIO, },
+    { "Win_FirstSteps",    WIN_FIRST_STEPS,  },
 //  { "Win_Creation",      WIN_CREATION      },
 };
 
