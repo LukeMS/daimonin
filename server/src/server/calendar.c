@@ -317,7 +317,7 @@ char *print_tad(timeanddate_t *tad, int flags)
 
     if ((flags & TAD_SHOWTIME))
     {
-        sprintf(strchr(errmsg, '\0'),"%d:%02d", tad->hour, tad->minute);
+        sprintf(strchr(errmsg, '\0'),"%02d:%02d", tad->hour, tad->minute);
 
         /* ' on ' / ' ' */
         if ((flags & TAD_SHOWDATE))
