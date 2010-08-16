@@ -395,9 +395,9 @@ int command_reboot(object *op, char *params)
 
 int command_goto(object *op, char *params)
 {
-    char   name[MAXPATHLEN] = {"\0"};
-    shstr *path,
-          *src_path;
+    char   name[MAXPATHLEN] = {"\0"},
+           buf[MAXPATHLEN];
+    shstr *path = NULL;
     int    x = -1,
            y = -1,
            flags = 0;
@@ -414,36 +414,54 @@ int command_goto(object *op, char *params)
         sscanf(params, "%s %d %d", name, &x, &y);
     }
 
-    /* If no name is given or the named map does not exist, goto the player's
-     * savebed. */
-    if (!name[0] ||
-        check_path(name, 1) == -1)
+    switch (name[0])
     {
-        path = add_string(CONTR(op)->savebed_map);
-        src_path = add_string(CONTR(op)->orig_savebed_map);
-        flags = CONTR(op)->bed_status;
-        x = CONTR(op)->bed_x;
-        y = CONTR(op)->bed_y;
+        /* No path: Goto savebed. */
+        case '\0': // none given
+            path = add_string(CONTR(op)->savebed_map);
+            flags = CONTR(op)->bed_status;
+            x = CONTR(op)->bed_x;
+            y = CONTR(op)->bed_y;
 
-        if (name[0])
-        {
-            new_draw_info(NDI_UNIQUE, 0, op, "Map '%s' does not exist!", name);
-        }
+            break;
+
+        /* Absolute. */
+        case '/':
+            if (check_path(normalize_path("/", name, buf), 1) != -1)
+            {
+                path = add_string(buf);
+            }
+
+            break;
+
+        /* Relative. */
+        default: // relative
+            if (check_path(normalize_path(CONTR(op)->orig_map, name, buf),
+                           1) != -1)
+            {
+                path = add_string(buf);
+            }
     }
-    else
+
+    if (!path)
     {
-        path = add_string(name);
-        src_path = add_refcount(path);
+        new_draw_info(NDI_UNIQUE, 0, op, "Map '%s' does not exist!",
+                      buf);
+        new_draw_info(NDI_UNIQUE, 0, op, "You're going nowhere!");
+
+        return 0;
     }
 
-    if (enter_map_by_name(op, path, src_path, x, y, flags))
+    if (enter_map_by_name(op, path, (path != CONTR(op)->savebed_map) ? path :
+                          CONTR(op)->orig_savebed_map, x, y, flags))
+            
     {
         new_draw_info(NDI_UNIQUE, 0, op, "Difficulty: %d.",
                       op->map->difficulty);
+        set_mappath_by_map(op);
     }
 
     FREE_ONLY_HASH(path);
-    FREE_ONLY_HASH(src_path);
 
     return 0;
 }
