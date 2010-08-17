@@ -494,7 +494,6 @@ void init_game_data(void)
     textwin_clearhistory();
     delete_player_lists();
     server_level.exp[1]=2500; /* dummy value for startup */
-    Screensize = Screendefs[options.resolution];
 }
 
 /******************************************************************
@@ -1654,6 +1653,7 @@ int main(int argc, char *argv[])
     signal(SIGSEGV, SIG_DFL); /* allows better debugging under linux by removing SDL parachute for this signal */
 
     load_options_dat(); /* now load options, allowing the user to override the presetings */
+    Screensize = Screendefs[options.resolution];
     init_widgets_fromCurrent();
     SYSTEM_Start(); /* start the system AFTER start SDL */
 
