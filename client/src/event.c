@@ -2329,106 +2329,113 @@ void read_keybind_file(void)
     PHYSFS_sint64  len;
     int            i, pos;
 
+    LOG(LOG_MSG, "Trying to load keybindings... ");
     sprintf(buf, "%s/%s", DIR_SETTINGS, FILE_KEYBIND);
 
     if (!(handle = PHYSFS_openRead(buf)))
     {
-        LOG(LOG_ERROR, "%s\n", PHYSFS_getLastError());
-    }
-    else
-    {
-        bindkey_list_set.group_nr = -1;
+        LOG(LOG_ERROR, "FAILED: %s!\n", PHYSFS_getLastError());
+        bindkey_list_set.group_nr = 0;
         bindkey_list_set.entry_nr = 0;
 
-        while ((len = PHYSFS_readString(handle, buf, sizeof(buf))) >= 0)
+        return;
+    }
+
+    bindkey_list_set.group_nr = -1;
+    bindkey_list_set.entry_nr = 0;
+
+    while ((len = PHYSFS_readString(handle, buf, sizeof(buf))) >= 0)
+    {
+        /* Skip comments, blank lines, and incomplete lines. */
+        if (buf[0] == '#' ||
+            buf[0] == '\0' ||
+            len < 4)
         {
-            /* Skip comments, blank lines, and incomplete lines. */
-            if (buf[0] == '#' ||
-                buf[0] == '\0' ||
-                len < 4)
-            {
-                continue;
-            }
+            continue;
+        }
 
-            i = 1;
+        i = 1;
 
-            /* found key group */
-            if (buf[0] == '+')
-            {
-                if (++bindkey_list_set.group_nr == BINDKEY_LIST_MAX)
-                {
-                    break;
-                }
-
-                while (buf[++i] && buf[i] != '"' && i - 2 < OPTWIN_MAX_TABLEN - 1)
-                {
-                    bindkey_list[bindkey_list_set.group_nr].name[i - 2] = buf[i];
-                }
-
-                bindkey_list[bindkey_list_set.group_nr].name[i - 2] = 0;
-                bindkey_list_set.entry_nr = 0;
-
-                continue;
-            }
-
-            if (bindkey_list_set.group_nr < 0)
-            {
-                break; /* something is wrong with the file */
-            }
-
-            /* found a key entry */
-            sscanf(buf, " %d %d", &bindkey_list[bindkey_list_set.group_nr].entry[bindkey_list_set.entry_nr].key,
-                   &bindkey_list[bindkey_list_set.group_nr].entry[bindkey_list_set.entry_nr].repeatflag);
-            pos = 0;
-
-            while (buf[++i] && buf[i] != '"') /* start of 1. string */
-            {
-                ;
-            }
-
-            while (buf[++i] && buf[i] != '"')
-            {
-                bindkey_list[bindkey_list_set.group_nr].entry[bindkey_list_set.entry_nr].keyname[pos++] = buf[i];
-            }
-
-            bindkey_list[bindkey_list_set.group_nr].entry[bindkey_list_set.entry_nr].keyname[pos] = 0;
-            pos = 0;
-
-            while (buf[++i] && buf[i] != '"') /* start of 2. string */
-            {
-                ;
-            }
-
-            while (buf[++i] && buf[i] != '"')
-            {
-                bindkey_list[bindkey_list_set.group_nr].entry[bindkey_list_set.entry_nr].text[pos++] = buf[i];
-            }
-
-            bindkey_list[bindkey_list_set.group_nr].entry[bindkey_list_set.entry_nr].text[pos] = 0;
-
-            if (!strcmp(bindkey_list[bindkey_list_set.group_nr].entry[bindkey_list_set.entry_nr].text, "?M_GET"))
-            {
-                get_action_keycode = bindkey_list[bindkey_list_set.group_nr].entry[bindkey_list_set.entry_nr].key;
-            }
-            else if (!strcmp(bindkey_list[bindkey_list_set.group_nr].entry[bindkey_list_set.entry_nr].text, "?M_DROP"))
-            {
-                drop_action_keycode = bindkey_list[bindkey_list_set.group_nr].entry[bindkey_list_set.entry_nr].key;
-            }
-
-            if (++bindkey_list_set.entry_nr == OPTWIN_MAX_OPT)
+        /* found key group */
+        if (buf[0] == '+')
+        {
+            if (++bindkey_list_set.group_nr == BINDKEY_LIST_MAX)
             {
                 break;
             }
+
+            while (buf[++i] && buf[i] != '"' && i - 2 < OPTWIN_MAX_TABLEN - 1)
+            {
+                bindkey_list[bindkey_list_set.group_nr].name[i - 2] = buf[i];
+            }
+
+            bindkey_list[bindkey_list_set.group_nr].name[i - 2] = 0;
+            bindkey_list_set.entry_nr = 0;
+
+            continue;
         }
 
-        PHYSFS_close(handle);
+        if (bindkey_list_set.group_nr < 0)
+        {
+            break; /* something is wrong with the file */
+        }
+
+        /* found a key entry */
+        sscanf(buf, " %d %d", &bindkey_list[bindkey_list_set.group_nr].entry[bindkey_list_set.entry_nr].key,
+               &bindkey_list[bindkey_list_set.group_nr].entry[bindkey_list_set.entry_nr].repeatflag);
+        pos = 0;
+
+        while (buf[++i] && buf[i] != '"') /* start of 1. string */
+        {
+            ;
+        }
+
+        while (buf[++i] && buf[i] != '"')
+        {
+            bindkey_list[bindkey_list_set.group_nr].entry[bindkey_list_set.entry_nr].keyname[pos++] = buf[i];
+        }
+
+        bindkey_list[bindkey_list_set.group_nr].entry[bindkey_list_set.entry_nr].keyname[pos] = 0;
+        pos = 0;
+
+        while (buf[++i] && buf[i] != '"') /* start of 2. string */
+        {
+            ;
+        }
+
+        while (buf[++i] && buf[i] != '"')
+        {
+            bindkey_list[bindkey_list_set.group_nr].entry[bindkey_list_set.entry_nr].text[pos++] = buf[i];
+        }
+
+        bindkey_list[bindkey_list_set.group_nr].entry[bindkey_list_set.entry_nr].text[pos] = 0;
+
+        if (!strcmp(bindkey_list[bindkey_list_set.group_nr].entry[bindkey_list_set.entry_nr].text, "?M_GET"))
+        {
+            get_action_keycode = bindkey_list[bindkey_list_set.group_nr].entry[bindkey_list_set.entry_nr].key;
+        }
+        else if (!strcmp(bindkey_list[bindkey_list_set.group_nr].entry[bindkey_list_set.entry_nr].text, "?M_DROP"))
+        {
+            drop_action_keycode = bindkey_list[bindkey_list_set.group_nr].entry[bindkey_list_set.entry_nr].key;
+        }
+
+        if (++bindkey_list_set.entry_nr == OPTWIN_MAX_OPT)
+        {
+            break;
+        }
     }
+
+    PHYSFS_close(handle);
 
     if (bindkey_list_set.group_nr <= 0)
     {
         sprintf(bindkey_list[0].entry[0].keyname, "keybind file is corrupt!");
         strcpy(bindkey_list[0].entry[0].text, "|ERROR!|");
-        LOG(LOG_ERROR, "ERROR: keybind file %s is corrupt.\n");
+        LOG(LOG_ERROR, "FAILED: keybind file is corrupt!\n");
+    }
+    else
+    {
+        LOG(LOG_MSG, "OK!\n");
     }
 
     bindkey_list_set.group_nr = 0;
@@ -2444,11 +2451,12 @@ void save_keybind_file(void)
     char         buf[MEDIUM_BUF];
     PHYSFS_File *handle;
 
+    LOG(LOG_MSG, "Trying to save keybindings... ");
     sprintf(buf, "%s/%s", DIR_SETTINGS, FILE_KEYBIND);
 
     if (!(handle = PHYSFS_openWrite(buf)))
     {
-        LOG(LOG_ERROR, "%s\n", PHYSFS_getLastError());
+        LOG(LOG_ERROR, "FAILED: %s!\n", PHYSFS_getLastError());
 
         return;
     }
@@ -2494,6 +2502,7 @@ void save_keybind_file(void)
     }
 
     PHYSFS_close(handle);
+    LOG(LOG_MSG, "OK!\n");
 }
 
 /******************************************************************

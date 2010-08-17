@@ -633,6 +633,12 @@ PHYSFS_sint64 PHYSFS_readString(PHYSFS_File *handle, char *s, size_t len)
     {
         for (; i < len; i++)
         {
+            if (!handle ||
+                PHYSFS_eof(handle))
+            {
+                break;
+            }
+
             if (PHYSFS_read(handle, &c, 1, 1) < 1)
             {
                 LOG(LOG_ERROR, "%s\n", PHYSFS_getLastError());
