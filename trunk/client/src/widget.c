@@ -305,14 +305,17 @@ Boolean load_interface_file(void)
     for(pos=0; pos < TOTAL_WIDGETS; ++pos)
         tmp_widget[pos] = con_widget[pos];
 
+    LOG(LOG_MSG, "Trying to load widget postions... ");
     sprintf(line, "%s/%s", DIR_SETTINGS, FILE_INTERFACE);
 
     if (!(handle = PHYSFS_openRead(line)))
     {
-        LOG(LOG_ERROR, "%s\n", PHYSFS_getLastError());
+        LOG(LOG_ERROR, "FAILED: %s!\n", PHYSFS_getLastError());
 
         return FALSE;
     }
+
+    LOG(LOG_MSG, "OK!\n");
 
     /* Read the settings from the file */
     while (PHYSFS_readString(handle, line, sizeof(line)) >= 0)
@@ -450,12 +453,13 @@ void save_interface_file(void)
     PHYSFS_File *handle;
     int          i = -1;
 
+    LOG(LOG_MSG, "Trying to save  widget positions... ");
     sprintf(buf, "%s/%s", DIR_SETTINGS, FILE_INTERFACE);
 
     /* leave, if there's an error opening or creating */
     if(!(handle = PHYSFS_openWrite(buf)))
     {
-        LOG(LOG_ERROR, "%s\n", PHYSFS_getLastError());
+        LOG(LOG_ERROR, "FAILED: %s!\n", PHYSFS_getLastError());
 
         return;
     }
@@ -484,6 +488,7 @@ void save_interface_file(void)
     }
 
     PHYSFS_close(handle);
+    LOG(LOG_MSG, "OK!\n");
 }
 
 /* is the widget being moved by the user? if so, let me know! */
