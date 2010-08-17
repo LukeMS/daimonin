@@ -1123,14 +1123,16 @@ CFParm * CFWObjectCreateClone(CFParm *PParm)
 /*****************************************************************************/
 CFParm * RegisterGlobalEvent(CFParm *PParm)
 {
-    int PNR = findPlugin((char *) (PParm->Value[1]));
-#ifdef LOG_VERBOSE
-    LOG(llevDebug, "Plugin %s (%i) registered the event %i\n", (char *) (PParm->Value[1]), PNR,
-        *(int *) (PParm->Value[0]));
-#endif
-    LOG(llevDebug, "Plugin %s (%i) registered the event %i\n", (char *) (PParm->Value[1]), PNR,
-        *(int *) (PParm->Value[0]));
-    PlugList[PNR].gevent[*(int *) (PParm->Value[0])] = 1;
+    int PNR = findPlugin((char *)(PParm->Value[1]));
+
+//#ifdef LOG_VERBOSE
+//    LOG(llevDebug, "Plugin %s (%i) registered the event %i\n", (char *) (PParm->Value[1]), PNR,
+//        *(int *) (PParm->Value[0]));
+//#endif
+//LOG(llevDebug, "Plugin %s (%i) registered the event %i\n", (char *) (PParm->Value[1]), PNR,
+//    *(int *) (PParm->Value[0]));
+    PlugList[PNR].gevent[*(int *)(PParm->Value[0])] = 1;
+
     return NULL;
 }
 
