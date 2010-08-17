@@ -505,11 +505,12 @@ void save_options_dat(void)
     char         buf[MEDIUM_BUF];
     PHYSFS_File *handle;
 
+    LOG(LOG_MSG, "Trying to save options... ");
     sprintf(buf, "%s/%s", DIR_SETTINGS, FILE_OPTION);
 
     if (!(handle = PHYSFS_openWrite(buf)))
     {
-        LOG(LOG_ERROR, "%s\n", PHYSFS_getLastError());
+        LOG(LOG_ERROR, "ERROR: %s!\n", PHYSFS_getLastError());
 
         return;
     }
@@ -566,6 +567,7 @@ void save_options_dat(void)
     }
 
     PHYSFS_close(handle);
+    LOG(LOG_MSG, "OK!\n");
 }
 
 /******************************************************************
@@ -608,12 +610,12 @@ void load_options_dat(void)
 //    txtwin[TW_MIX].size=50;
 
     /* Read the options from file */
+    LOG(LOG_MSG, "Tring to load options... ");
     sprintf(line, "%s/%s", DIR_SETTINGS, FILE_OPTION);
 
     if (!(handle = PHYSFS_openRead(line)))
     {
-        LOG(LOG_ERROR, "%s\n", PHYSFS_getLastError());
-        LOG(LOG_MSG, "Can't find option file! Using defaults.\n");
+        LOG(LOG_ERROR, "FAILED: %s!\n", PHYSFS_getLastError());
 
         return;
     }
@@ -688,7 +690,7 @@ void load_options_dat(void)
     }
 
     PHYSFS_close(handle);
-//    LOG(LOG_MSG,"skin from options: %s\n",options.skin);
+    LOG(LOG_MSG,"OK!\n");
 }
 
 
@@ -2691,12 +2693,12 @@ void load_skindef()
     skindef.newclosebutton = TRUE;
 
     /* lets try to load the skin.def */
+    LOG(LOG_MSG, "Trying to load skin definition... ");
     sprintf(line, "%s/skin.def", DIR_SETTINGS);
 
     if (!(handle = PHYSFS_openRead(line)))
     {
-        LOG(LOG_MSG, "Could not load skin-definition for skin: %s.\nReason: %s\nUsing defaults.\n",
-            options.skin, PHYSFS_getLastError());
+        LOG(LOG_ERROR, "FAILED: %s!\n", PHYSFS_getLastError());
 
         return;
     }
@@ -2733,4 +2735,5 @@ void load_skindef()
     }
 
     PHYSFS_close(handle);
+    LOG(LOG_MSG, "OK!\n");
 }
