@@ -22,8 +22,6 @@ background_music ColeForeverPiano.ogg
 end
 arch grassd_2
 end
-arch event_obj
-end
 arch grassd_5
 y 1
 end
