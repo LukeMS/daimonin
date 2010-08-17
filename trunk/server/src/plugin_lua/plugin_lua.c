@@ -688,8 +688,8 @@ MODULEAPI int HandleEvent(CFParm *PParm)
     struct lua_context *context;
     int                 ret, res;
 
-#ifdef LUA_DEBUG
-    LOG(llevDebug, "LUA - event:%d file:>%s< o1:>%s< o2:>%s< o3:>%s< text:>%s< i1:%d i2:%d i3:%d i4:%d\n",
+    /* This info is always good to see in the logs. */
+    LOG(llevInfo, "LUA - event:%d file:>%s< o1:>%s< o2:>%s< o3:>%s< text:>%s< i1:%d i2:%d i3:%d i4:%d\n",
         *(int*)PParm->Value[0],
         (char *)PParm->Value[9],
         STRING_OBJ_NAME((object *) PParm->Value[1]),
@@ -700,7 +700,6 @@ MODULEAPI int HandleEvent(CFParm *PParm)
         PParm->Value[6] ? *(int *) PParm->Value[6] : 0,
         PParm->Value[7] ? *(int *) PParm->Value[7] : 0,
         PParm->Value[8] ? *(int *) PParm->Value[8] : 0);
-#endif
 
     if(PParm->Value[9] == NULL)
     {
