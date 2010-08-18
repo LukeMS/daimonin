@@ -1450,8 +1450,8 @@ void cs_cmd_newchar(char *buf, int len, NewSocket *ns)
     /* if the cmd isn't perfect, kill the socket. */
     if (ns->pl_account.nrof_chars == ACCOUNT_MAX_PLAYER ||
         !buf ||
-        len < MIN_PLAYER_NAME + 6 + 5 ||
-        len > MAX_PLAYER_NAME + 16 + 5 ||
+        len < MIN_PLAYER_NAME + 3 + 5 ||
+        len > MAX_PLAYER_NAME + 17 + 5 ||
         buf[len - 1] ||
         ns->status != Ns_Account)
     {

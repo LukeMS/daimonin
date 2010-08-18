@@ -527,7 +527,7 @@ void AddMeFail(char *data, int len)
                  reset_input_mode();
                  InputStringFlag = TRUE;
                  InputStringEndFlag = FALSE;
-                 open_input_mode(16);
+                 open_input_mode(17);
                  GameStatus = GAME_STATUS_ACCOUNT_CHAR_RECLAIM;
                  cpl.menustatus = MENU_NO;
 
