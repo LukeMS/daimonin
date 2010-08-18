@@ -701,7 +701,7 @@ Boolean SOCKET_OpenSocket(SOCKET *socket_temp, char *host, int port)
 
     if (protox == (struct protoent *) NULL)
     {
-        fprintf(stderr, "Error getting prorobyname (tcp)\n");
+        fprintf(stderr, "Error getting protobyname (tcp)\n");
         return FALSE;
     }
     *socket_temp = socket(PF_INET, SOCK_STREAM, protox->p_proto);
