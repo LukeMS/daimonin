@@ -966,25 +966,22 @@ char *examine(object *op, object *tmp, int flag)
         }
     }
 
-    /* Does the object have a message?  Don't show message for all object
-     * types - especially if the first entry is a match
-     */
     if (tmp->msg)
     {
-        if (!QUERY_FLAG(tmp, FLAG_WALK_ON) &&
-            (tmp->type == EXIT ||
-             tmp->type == GRAVESTONE ||
-             tmp->type == SIGN ||
-             tmp->type == BOOK ||
-             tmp->type == CORPSE ||
-             tmp->type == TYPE_LIGHT_APPLY))
+        /* Don't show message for all objects. */
+        if (!(tmp->type == EXIT ||
+              tmp->type == GRAVESTONE ||
+              tmp->type == BOOK ||
+              tmp->type == CORPSE) ||
+            (!QUERY_FLAG(tmp, FLAG_WALK_ON) &&
+             tmp->type == SIGN))
         {
             /* This is just a hack so when identifying hte items, we print
              * out the extra message.  */
             if (need_identify(tmp) &&
                 QUERY_FLAG(tmp, FLAG_IDENTIFIED))
             {
-                /* For non-applyable applyable lights    we *do* want the
+                /* For non-applyable applyable lights we *do* want the
                  * message but *do not* want the story line. */
                 if (tmp->type != TYPE_LIGHT_APPLY ||
                     !QUERY_FLAG(tmp, FLAG_NO_FIX_PLAYER))
