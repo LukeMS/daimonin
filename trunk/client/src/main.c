@@ -2132,6 +2132,7 @@ int main(int argc, char *argv[])
         LOG(LOG_MSG, "FPS: Best (%d), Worst (%d)\n", BestFPS, WorstFPS);
     }
 
+    LOG(LOG_MSG, "\n^^^^^^^^^ CLIENT ENDS ^^^^^^^^^\n");
     PHYSFS_deinit();
 #if PHYSFS_VER_MAJOR < 2
     PHYSFS_isInitialised = 0;
@@ -2360,6 +2361,7 @@ static void InitPhysFS(const char *argv0)
                *env;
     char        home[MEDIUM_BUF],
                 buf[LARGE_BUF];
+    time_t      tp;
 #ifdef DAI_DEVELOPMENT
     char      **list;
 #endif
@@ -2460,6 +2462,29 @@ static void InitPhysFS(const char *argv0)
         LOG(LOG_ERROR, "%s\n", PHYSFS_getLastError());
         exit(EXIT_FAILURE);
     }
+
+    /* Log that the client has started. */
+    if (time(&tp) == -1)
+    {
+        sprintf(buf, "[Time not available!]");
+    }
+    else
+    {
+        struct tm *ctp;
+        uint8      utc = 1;
+
+        if (!(ctp = gmtime(&tp)))
+        {
+            ctp = localtime(&tp);
+            utc = 0;
+        }
+
+        sprintf(buf, "%s", asctime(ctp));
+        sprintf(strchr(buf, '\n'), " %s", (utc) ? "UTC" : "LOCAL");
+    }
+
+    LOG(LOG_MSG, "vvvvvvvv CLIENT STARTS vvvvvvvv\n\n%s\nClient version %d.%d.%d\n",
+        buf, DAI_VERSION_RELEASE, DAI_VERSION_MAJOR, DAI_VERSION_MINOR);
 
     /* Prepend the user dir to the search path. This means files are read from
      * this location in preference to the defaults. */

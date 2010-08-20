@@ -45,25 +45,29 @@ void LOG(int logLevel, char *format, ...)
         return;
     }
 
-    if (PHYSFS_isInit() &&
-        !handle)
-    {
-        sprintf(buf, "%s/%s", DIR_LOGS, FILE_LOG);
-
-        if (!(handle = PHYSFS_openWrite(buf)))
-        {
-            fprintf(stderr, "%s\n'%s' will not be saved!\n",
-                    PHYSFS_getLastError(), buf);
-        }
-    }
-
     va_start(ap, format);
     vsprintf(buf, format, ap);
     va_end(ap);
     fprintf(stdout, "%s", buf);
 
-    if (handle)
+    if (PHYSFS_isInit() &&
+        PHYSFS_getWriteDir())
     {
+        if (!handle)
+        {
+            char fname[TINY_BUF];
+
+            sprintf(fname, "%s/%s", DIR_LOGS, FILE_LOG);
+
+            if (!(handle = PHYSFS_openWrite(fname)))
+            {
+                fprintf(stderr, "%s\n'%s' will not be saved!\n",
+                        PHYSFS_getLastError(), fname);
+
+                return;
+            }
+        }
+
         PHYSFS_writeString(handle, buf);
     }
 }
@@ -613,7 +617,7 @@ int strcasecmp(char *s1, char *s2)
 #if PHYSFS_VER_MAJOR < 2
 int PHYSFS_isInit(void)
 {
-    return !PHYSFS_isInitialised;
+    return PHYSFS_isInitialised;
 }
 #endif
 
