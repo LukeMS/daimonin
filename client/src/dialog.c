@@ -235,6 +235,55 @@ static char        *spell_class[SPELL_LIST_CLASS]   =
         "Spell", "Prayer"
     };
 
+static void ShowInfo(_font *font, SDL_Rect *box, char *text);
+
+/* Prints <text> in <font> in the so-called info area of a dialog (which is
+ * defined by <box>). A newline forces a line break. */
+static void ShowInfo(_font *font, SDL_Rect *box, char *text)
+{
+    int  n,
+         y,
+         c;
+
+    for (n = 0, y = box->y;
+         *(text + n) != '\0' &&
+         y + font->line_height < box->y + box->h;
+         n += c, y += font->line_height)
+    {
+        int  i,
+             j;
+        char buf[MEDIUM_BUF];
+
+        if (string_width_offset(font, text + n, &c, box->w))
+        {
+            while (c >= 1 &&
+                   !isspace(*(text + n + c - 1)))
+            {
+               c--;
+            }
+        }
+
+        for (i = 0, j = 0; i < c && j < sizeof(buf); i++)
+        {
+            switch (*(text + n + i))
+            {
+                case '\n':
+                    c = i + 1;
+
+                    break;
+
+                default:
+                    buf[j++] = *(text + n + i);
+
+                    break;
+            }
+        }
+
+        buf[j] = '\0';
+        ENGRAVE(ScreenSurface, font, buf, box->x, y, COLOR_HGOLD, NULL, NULL);
+    }
+}
+
 /******************************************************************
  draws a frame.
 ******************************************************************/
@@ -1955,13 +2004,12 @@ void show_meta_server(_server *node, int metaserver_start, int metaserver_sel)
 
     /* frame for selection field */
     draw_frame(box.x - 1, box.y + 11, box.w + 1, 313);
-    /* we should prepare for this the font_small_out */
-    string_blt(ScreenSurface, &font_small, "Servers", x + TXT_START_NAME + 1, y + TXT_Y_START - 1, COLOR_BLACK, NULL,
-              NULL);
-    string_blt(ScreenSurface, &font_small, "Servers", x + TXT_START_NAME, y + TXT_Y_START - 2, COLOR_WHITE, NULL, NULL);
-    string_blt(ScreenSurface, &font_small, "Players", x + 416, y + TXT_Y_START - 1, COLOR_BLACK, NULL, NULL);
-    string_blt(ScreenSurface, &font_small, "Players", x + 415, y + TXT_Y_START - 2, COLOR_WHITE, NULL, NULL);
-
+    ENGRAVE(ScreenSurface, &font_large_out, "Servers", x + TXT_START_NAME,
+            y + TXT_Y_START - 8, COLOR_HGOLD, NULL, NULL);
+    ENGRAVE(ScreenSurface, &font_medium, "Version", x + 365,
+            y + TXT_Y_START - 4, COLOR_HGOLD, NULL, NULL);
+    ENGRAVE(ScreenSurface, &font_medium, "Players", x + 415,
+            y + TXT_Y_START - 4, COLOR_HGOLD, NULL, NULL);
     sprintf(buf, "use cursors ~%c%c~ to select server                                  press ~RETURN~ to connect",
             ASCII_UP, ASCII_DOWN);
     string_blt(ScreenSurface, &font_small, buf, x + 140, y + 410, COLOR_WHITE, NULL, NULL);
@@ -1982,20 +2030,20 @@ void show_meta_server(_server *node, int metaserver_start, int metaserver_sel)
     {
         if (i == metaserver_sel - metaserver_start)
         {
-            int o   = 0;
+            SDL_Rect box2 =
+            {
+                x + 160,
+                y + 431,
+                300,
+                55
+            };
 
-			sprintf(buf, "Version: %s", node->version);
-            string_blt(ScreenSurface, &font_small, buf, x + 160, y + 438 + o, COLOR_BLACK, NULL, NULL);
-            string_blt(ScreenSurface, &font_small, buf, x + 159, y + 437 + o, COLOR_WHITE, NULL, NULL);
-
-            string_blt(ScreenSurface, &font_small, node->desc1, x + 160, y + 451 + o, COLOR_BLACK, &rec_desc, NULL);
-            string_blt(ScreenSurface, &font_small, node->desc1, x + 159, y + 450 + o, COLOR_HGOLD, &rec_desc, NULL);
-
-            /*string_blt(ScreenSurface,&font_small, node->desc1, x+150, y+464+o, COLOR_HGOLD, &rec_desc,NULL);*/
+            ShowInfo(&font_large_out, &box2, node->desc1);
             box.y = y + TXT_Y_START + 13 + i * 12;
             SDL_FillRect(ScreenSurface, &box, sdl_blue1);
         }
-        string_blt(ScreenSurface, &font_small, node->name, x + 137, y + 94 + i * 12, COLOR_WHITE, &rec_name, NULL);
+        string_blt(ScreenSurface, &font_small, node->name, x + 137, y + 94 + i * 12, COLOR_WHITE, NULL, NULL);
+        string_blt(ScreenSurface, &font_small, node->version, x + 366, y + 94 + i * 12, COLOR_WHITE, NULL, NULL);
         if (node->player >= 0)
             sprintf(buf, "%d", node->player);
         else
