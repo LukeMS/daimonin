@@ -2126,16 +2126,16 @@ int main(int argc, char *argv[])
     sound_freeall();
     sound_deinit();
     free_bitmaps();
-    PHYSFS_deinit();
-#if PHYSFS_VER_MAJOR < 2
-    PHYSFS_isInitialised = 0;
-#endif
 
     if (options.show_frame)
     {
         LOG(LOG_MSG, "FPS: Best (%d), Worst (%d)\n", BestFPS, WorstFPS);
     }
 
+    PHYSFS_deinit();
+#if PHYSFS_VER_MAJOR < 2
+    PHYSFS_isInitialised = 0;
+#endif
     SYSTEM_End();
     return(0);
 }
@@ -2356,15 +2356,19 @@ static const char *GetOption(const char *arg, const char *sopt,
 
 static void InitPhysFS(const char *argv0)
 {
-    char        home[MEDIUM_BUF],
-                buf[LARGE_BUF];
     const char *sep,
                *env;
+    char        home[MEDIUM_BUF],
+                buf[LARGE_BUF];
+#ifdef DAI_DEVELOPMENT
+    char      **list;
+#endif
 
     /* Start the PhysFS system */
     if (!PHYSFS_init(argv0))
     {
-        LOG(LOG_MSG, "%s\n", PHYSFS_getLastError());
+        LOG(LOG_ERROR, "FATAL: %s!\n", PHYSFS_getLastError());
+        exit(EXIT_FAILURE);
     }
 
 #if PHYSFS_VER_MAJOR < 2
@@ -2387,8 +2391,8 @@ static void InitPhysFS(const char *argv0)
     if ((env = getenv("APPDATA")))
     {
         sprintf(home, "%s", env);
-        sprintf(buf, "%s%sDaimonin%s%d.%d",
-                env, sep, sep, DAI_VERSION_RELEASE, DAI_VERSION_MAJOR);
+        sprintf(buf, "Daimonin%s%d.%d",
+                sep, DAI_VERSION_RELEASE, DAI_VERSION_MAJOR);
     }
     /* Not defined? (May not be on W98, but such an old OS is unsupported anyway.) */
     else
@@ -2397,55 +2401,63 @@ static void InitPhysFS(const char *argv0)
         if ((env = getenv("WINDIR")))
         {
             sprintf(home, "%s", env);
-            sprintf(buf, "%s%sApplication Data%sDaimonin%s%d.%d",
-                    env, sep, sep, sep, DAI_VERSION_RELEASE, DAI_VERSION_MAJOR);
+            sprintf(buf, "Application Data%sDaimonin%s%d.%d",
+                    sep, DAI_VERSION_RELEASE, DAI_VERSION_MAJOR);
         }
         /* Not defined either? Just use the the base dir. */
         else
         {
             sprintf(home, "%s", PHYSFS_getBaseDir());
-            sprintf(buf, "%s", PHYSFS_getBaseDir());
+            buf[0] = '\0';
         }
     }
 #elif __LINUX
     env = getenv("HOME");
     sprintf(home, "%s", env);
-    sprintf(buf, "%s%s.daimonin%s%d.%d",
-            env, sep, sep, DAI_VERSION_RELEASE, DAI_VERSION_MAJOR);
+    sprintf(buf, ".daimonin%s%d.%d",
+            sep, DAI_VERSION_RELEASE, DAI_VERSION_MAJOR);
 #else /* As a default, use the base dir. */
     sprintf(home, "%s", PHYSFS_getBaseDir());
-    sprintf(buf, "%s", PHYSFS_getBaseDir());
+    buf[0] = '\0';
 #endif
 
-    /* The user dir is (the only) place where files are written to. */
+    /* The user dir is (the only) place where files are written to. It must be
+     * set, so if it can't be, we exit straight away. Note that the log here
+     * will go to stderr only (as obviously we can't open a file). */
     if (!PHYSFS_setWriteDir(home))
     {
-        LOG(LOG_MSG, "%s\n", PHYSFS_getLastError());
-        LOG(LOG_ERROR, "Could not set write dir.(home='%s') Exiting!\n",
-            home);
+        LOG(LOG_ERROR, "Could not set write dir (1, '%s'): %s. Exiting!\n",
+            home, PHYSFS_getLastError());
         exit(EXIT_FAILURE);
+    }
+
+    if (buf[0])
+    {
+        if (!PHYSFS_mkdir(buf))
+        {
+            LOG(LOG_ERROR, "%s\n", PHYSFS_getLastError());
+        }
+
+        sprintf(strchr(home, '\0'), "%s%s", sep, buf);
+
+        if (strcmp(PHYSFS_getBaseDir(), home))
+        {
+            if (!PHYSFS_setWriteDir(home))
+            {
+                LOG(LOG_ERROR, "Could not set write dir (2, '%s'): %s. Exiting!\n",
+                    home, PHYSFS_getLastError());
+                exit(EXIT_FAILURE);
+            }
+        }
     }
 
     /* Prepend the user dir to the search path. This means files are read from
      * this location in preference to the defaults. */
-    if (strcmp(PHYSFS_getBaseDir(), buf)) // Only if different to base dir.
+    if (strcmp(PHYSFS_getBaseDir(), home))
     {
-        if (!PHYSFS_mkdir(buf))
+        if (!PHYSFS_addToSearchPath(home, 0))
         {
-            LOG(LOG_MSG, "%s\n", PHYSFS_getLastError());
-        }
-
-        if (!PHYSFS_setWriteDir(buf))
-        {
-            LOG(LOG_MSG, "%s\n", PHYSFS_getLastError());
-            LOG(LOG_ERROR, "Could not set write dir (buf='%s'). Exiting!\n",
-                buf);
-            exit(EXIT_FAILURE);
-        }
-
-        if (!PHYSFS_addToSearchPath(buf, 0))
-        {
-            LOG(LOG_MSG, "%s\n", PHYSFS_getLastError());
+            LOG(LOG_ERROR, "%s\n", PHYSFS_getLastError());
         }
     }
 
@@ -2458,16 +2470,27 @@ static void InitPhysFS(const char *argv0)
 
         while (token)
         {
-            /* Check PhysFS version and use PHYSFS_mount() if >= 2.0.0 */
+            /* TODO: Check PhysFS version and use PHYSFS_mount() if >= 2.0.0 */
             if (!PHYSFS_addToSearchPath(token, 0))
             {
-                LOG(LOG_MSG, "Add-on pack '%s' not found!\n", token);
-                LOG(LOG_MSG, "%s\n", PHYSFS_getLastError());
+                LOG(LOG_ERROR, "Add-on pack '%s' not found: %s!\n",
+                    token, PHYSFS_getLastError());
             }
 
             token = strtok(NULL, ",");
         }
     }
+
+#ifdef DAI_DEVELOPMENT
+    LOG(LOG_MSG, "Base dir: %s\n", PHYSFS_getBaseDir());
+    LOG(LOG_MSG, "Write dir: %s\n", PHYSFS_getWriteDir());
+    LOG(LOG_MSG, "Search path:\n");
+
+    for (list = PHYSFS_getSearchPath(); *list; list++)
+    {
+        LOG(LOG_MSG, "  %s\n", *list);
+    }
+#endif
 }
 
 static void show_intro(char *text, int progress)
