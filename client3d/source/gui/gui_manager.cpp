@@ -141,7 +141,7 @@ GuiManager::ElementID GuiManager::mStateStruct[ELEMENTS_SUM]=
     // Table
     { -1, -1, "Table_Server",       TABLE },
     // Combobox.
-//    { -1, -1, "ComboBoxTest",       COMBOBOX_TEST  },
+    { -1, -1, "Combo_SoundSource",  COMBOBOX_SOUNDSOURCE  },
     // Element_Slot
     { -1, -1, "Slot_Quickslot",     SLOT_QUICKSLOT      },
     { -1, -1, "Slot_Equipment",     SLOT_EQUIPMENT      },
@@ -165,10 +165,12 @@ const char *GuiManager::getElementName(int index)
 // .
 //================================================================================================
 void GuiManager::printText(int width, int height, uint32 *dst, int dstLineSkip,
-                           uint32 *bak, int bakLineSkip, const char *txt, unsigned int fontNr, uint32 color, bool hideText)
+                           uint32 *bak, int bakLineSkip, const char *txt, unsigned int fontNr,
+                           uint32 color, uint32 outlineColor, bool hideText)
 {
     PROFILE()
-    GuiTextout::getSingleton().printText(width, height, dst, dstLineSkip, bak, bakLineSkip, txt, fontNr, color, hideText);
+    GuiTextout::getSingleton().printText(width, height, dst, dstLineSkip, bak, bakLineSkip,
+                                         txt, fontNr, color, outlineColor, hideText);
 }
 
 //================================================================================================
@@ -841,7 +843,7 @@ void GuiManager::drawTooltip()
     for (int i = 0; i < sumLines; ++i)
     {
         dest = back + BORDER + (BORDER + i*fontHeight) * w;
-        GuiTextout::getSingleton().printText(maxWidth, fontHeight, dest, w, color, line[i].c_str(), GuiTextout::FONT_SYSTEM);
+        GuiTextout::getSingleton().printText(maxWidth, fontHeight, dest, w, &color, 0, line[i].c_str(), GuiTextout::FONT_SYSTEM);
     }
     mTexture->getBuffer()->unlock();
     if (mTooltipDelay)

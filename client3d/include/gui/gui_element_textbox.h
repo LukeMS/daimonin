@@ -38,7 +38,7 @@ public:
     GuiElementTextbox(TiXmlElement *xmlElement, const void *parent);
     ~GuiElementTextbox() {}
     virtual void sendMsg(const int message, Ogre::String &text, Ogre::uint32 &param, const char *text2);
-
+    void draw();
 private:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
@@ -51,7 +51,7 @@ private:
     // ////////////////////////////////////////////////////////////////////
     GuiElementTextbox(const GuiElementTextbox&);            /**< disable copy-constructor. **/
     GuiElementTextbox &operator=(const GuiElementTextbox&); /**< disable assignment operator. **/
-    void draw();
+
     void setLabel(const char *newText)
     {
         mLabelString = newText;

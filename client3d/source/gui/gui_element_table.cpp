@@ -284,7 +284,7 @@ void GuiTable::draw()
         {
             GuiTextout::getSingleton().printText((*i)->width, mHeightColumnLabel, dst + startX, mWidth,
                                                  bak + startX, mParent->getWidth(),
-                                                 (*i)->label.c_str(), mFontNr, 0x00ffffff);
+                                                 (*i)->label.c_str(), mFontNr);
         }
         startX+= (*i)->width;
     }
@@ -344,8 +344,10 @@ void GuiTable::drawRow(int row, uint32 bgColor)
                 colEnd = mvRow[row].find(SEPARATOR_COL, colStart);
                 if (colEnd > subRowEnd || colEnd == std::string::npos)
                     colEnd = subRowEnd;
-                GuiTextout::getSingleton().printText((*col)->width, fontHeight, buf + offX, mWidth,
-                                                     bgColor, mvRow[row].substr(colStart, colEnd-colStart).c_str(), (*subRow)->fontNr, (*subRow)->color);
+                GuiTextout::getSingleton().printText((*col)->width, fontHeight,
+                                                     buf + offX, mWidth,
+                                                     &bgColor, 0,
+                                                     mvRow[row].substr(colStart, colEnd-colStart).c_str(), (*subRow)->fontNr, (*subRow)->color);
                 if (++colEnd >= subRowEnd) break;
                 offX += (*col)->width;
             }

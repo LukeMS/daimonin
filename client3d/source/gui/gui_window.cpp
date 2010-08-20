@@ -33,6 +33,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include "gui/gui_element_textbox.h"
 #include "gui/gui_element_listbox.h"
 #include "gui/gui_element_button.h"
+#include "gui/gui_element_combobox.h"
 #include "gui/gui_element_statusbar.h"
 
 using namespace Ogre;
@@ -152,22 +153,26 @@ void GuiWindow::Init(TiXmlElement *xmlRoot, const char *resourceWin, int winNr, 
     mElement->setPosition(mPosX, mPosY);
     setZPos(defaultZPos);
     // ////////////////////////////////////////////////////////////////////
-    // Parse the child elements.
+    // Parse the STATIC child elements.
     // ////////////////////////////////////////////////////////////////////
     for (xmlElem = xmlRoot->FirstChildElement("Graphic"); xmlElem; xmlElem = xmlElem->NextSiblingElement("Graphic"))
     {
         GuiElement *gfx = new GuiElement(xmlElem, this);
-        gfx->draw();
+        gfx->draw(true);
         delete gfx;
     }
+    for (xmlElem = xmlRoot->FirstChildElement("String"); xmlElem; xmlElem = xmlElem->NextSiblingElement("String"))
+    {
+        GuiElementTextbox *str = new GuiElementTextbox(xmlElem, this);
+        delete str;
+    }
+    // ////////////////////////////////////////////////////////////////////
+    // Parse the Dynamic child elements.
+    // ////////////////////////////////////////////////////////////////////
     for (xmlElem = xmlRoot->FirstChildElement("TextBox"); xmlElem; xmlElem = xmlElem->NextSiblingElement("TextBox"))
     {
-        int index = GuiManager::getSingleton().getElementIndex(xmlElem->Attribute("name"));
-        GuiElement *element = new GuiElementTextbox(xmlElem, this);
-        if (index <0)
-            delete element;
-        else
-            mvElement.push_back(element);
+        if (xmlElem->Attribute("name"))
+            mvElement.push_back(new GuiElementTextbox(xmlElem, this));
     }
     for (xmlElem = xmlRoot->FirstChildElement("Table"); xmlElem; xmlElem = xmlElem->NextSiblingElement("Table"))
     {
@@ -182,12 +187,12 @@ void GuiWindow::Init(TiXmlElement *xmlRoot, const char *resourceWin, int winNr, 
     for (xmlElem = xmlRoot->FirstChildElement("Button"); xmlElem; xmlElem = xmlElem->NextSiblingElement("Button"))
     {
         if (xmlElem->Attribute("name"))
-            mvElement.push_back(new GuiElementButton(xmlElem, this, true));
+            mvElement.push_back(new GuiElementButton(xmlElem, this));
     }
     for (xmlElem = xmlRoot->FirstChildElement("Slot"); xmlElem; xmlElem = xmlElem->NextSiblingElement("Slot"))
     {
         if (xmlElem->Attribute("name"))
-            mvElement.push_back(new GuiElementSlot(xmlElem, this, true));
+            mvElement.push_back(new GuiElementSlot(xmlElem, this));
     }
     for (xmlElem = xmlRoot->FirstChildElement("Slotgroup"); xmlElem; xmlElem = xmlElem->NextSiblingElement("Slotgroup"))
     {
@@ -198,6 +203,11 @@ void GuiWindow::Init(TiXmlElement *xmlRoot, const char *resourceWin, int winNr, 
     {
         if (xmlElem->Attribute("name"))
             mvElement.push_back(new GuiStatusbar(xmlElem, this));
+    }
+    for (xmlElem = xmlRoot->FirstChildElement("Combobox"); xmlElem; xmlElem = xmlElem->NextSiblingElement("Combobox"))
+    {
+        if (xmlElem->Attribute("name"))
+            mvElement.push_back(new GuiElementCombobox(xmlElem, this));
     }
 }
 

@@ -43,9 +43,9 @@
       <Color red= "80" green= "100" blue= "60" alpha = "255" />
       <Size width= "148" height= "17" />
     </Graphic>
-    <TextBox>
+    <String>
       <Label x= "45" y= "5" font="02" red= "255" green= "255" blue= "255" text= "Statistics" />
-    </TextBox>
+    </String>
     <Button name = "But_Close">
       <Image name = "Button-01-Close"/>
       <Pos x= "132" y= "1" />
@@ -58,36 +58,16 @@
       <Color red= "70" green= "90" blue= "50" alpha = "200" />
       <Size width= "148" height= "80" />
     </Graphic>
-    <TextBox>
-      <Label x=   "5" y= "25" font="02" text= "Current FPS:" />
-    </TextBox>
-    <TextBox name= "Engine_CurrentFPS">
-      <Label x= "100" y= "25" font="02" text= "000.0  " />
-    </TextBox>
-    <TextBox>
-      <Label x=   "5" y= "40" font="02" text= "Best FPS:" />
-    </TextBox>
-    <TextBox name= "Engine_BestFPS">
-      <Label x= "100" y= "40" font="02" text= "000.0  " />
-    </TextBox>
-    <TextBox>
-      <Label x=   "5" y= "55" font="02" text= "Worst FPS:" />
-    </TextBox>
-    <TextBox name= "Engine_WorstFPS">
-      <Label x= "100" y= "55" font="02" text= "000.0  " />
-    </TextBox>
-    <TextBox>
-      <Label x=   "5" y= "70" font="02" text= "Triangles:" />
-    </TextBox>
-    <TextBox name= "Engine_SumTris">
-      <Label x= "100" y= "70" font="02" text= "0000  " />
-    </TextBox>
-    <TextBox>
-      <Label x=   "5" y= "85" font="02" text= "Batch Count:" />
-    </TextBox>
-    <TextBox name= "Engine_BatchCount">
-      <Label x= "100" y= "85" font="02" text= "0000  " />
-    </TextBox>
+    <String><Label                            x=   "5" y= "25" font="02" text= "Current FPS:" /> </String>
+    <TextBox name= "Engine_CurrentFPS"><Label x= "100" y= "25" font="02" text= "000.0  "      /></TextBox>
+    <String><Label                            x=   "5" y= "40" font="02" text= "Best FPS:"    /></String>
+    <TextBox name= "Engine_BestFPS"><Label    x= "100" y= "40" font="02" text= "000.0  "      /></TextBox>
+    <String><Label                            x=   "5" y= "55" font="02" text= "Worst FPS:"   /></String>
+    <TextBox name= "Engine_WorstFPS"><Label   x= "100" y= "55" font="02" text= "000.0  "      /></TextBox>
+    <String><Label                            x=   "5" y= "70" font="02" text= "Triangles:"   /></String>
+    <TextBox name= "Engine_SumTris"><Label    x= "100" y= "70" font="02" text= "0000  "       /></TextBox>
+    <String><Label                            x=   "5" y= "85" font="02" text= "Batch Count:" /></String>
+    <TextBox name= "Engine_BatchCount"><Label x= "100" y= "85" font="02" text= "0000  "       /></TextBox>
   </Window>
 
 
@@ -280,9 +260,9 @@
       <Pos x= "9" y= "0" />
       <Size width= "508" height= "4" />
     </Graphic>
-    <TextBox>
+    <String>
       <Label x= "210" y= "10" font="04" red= "255" green= "255" blue= "255" text= "Login1" />
-    </TextBox>
+    </String>
     <Graphic>
       <Image name = "Bar-Horizontal-Bottom"/>
       <Pos x= "4" y= "30" />
@@ -421,9 +401,9 @@
       <Pos x= "503" y= "0" />
       <Size width= "9" height= "9" />
     </Graphic>
-    <TextBox>
+    <String>
       <Label x= "225" y= "10" font="04" text= "Login" />
-    </TextBox>
+    </String>
     <Graphic>
       <Image name = "Bar-Horizontal-Top"/>
       <Pos x= "5" y= "30" />
@@ -457,22 +437,22 @@
     <!--=============================================-->
     <!-- Layer 1                                     -->
     <!--=============================================-->
-    <TextBox>
+    <String>
       <Label x= "20" y= "48" font="03" text= "~#ffff5555(To create an account use the 2d client)" />
-    </TextBox>
-    <TextBox>
+    </String>
+    <String>
       <Label x= "20" y= "70" font="03" text= "Login to your account:" />
-    </TextBox>
-    <TextBox>
+    </String>
+    <String>
       <Label x= "80" y= "105" font="03" text= "Account Name: " />
-    </TextBox>
+    </String>
     <TextBox name= "Input_Login_Name" >
       <Label x= "200" y= "105" font="03" text= "" />
       <Size width= "110" />
     </TextBox>
-    <TextBox>
+    <String>
       <Label x= "80" y= "125" font="03" text= "Password: " />
-    </TextBox>
+    </String>
     <TextBox name= "Input_Login_Passwd" hide= "1">
       <Label x= "200" y= "125" font="03" text= "" />
       <Size width= "100" />
@@ -990,7 +970,7 @@
     <Button   name = "Tab_Stats">
       <Image name = "Button-02-Standard"/>
       <Pos   x= "13" y= "473" />
-      <Label x= "5" y= "3" font="02" text= "Weapons" />
+       <Label x= "5" y= "3" font="02" text= "Weapons" />
     </Button>
     <Button  name = "Tab_Skills">
       <Image name = "Button-02-Standard"/>
@@ -1029,12 +1009,12 @@
     </Button>
     <Button  name = "Next_page">
       <Image name = "Button-01-Next"/>
-      <Pos   x= "301" y= "543" />
+      <Pos   x= "295" y= "540" />
       <Label x= "5" y= "3" font="02" text= "" />
     </Button>
     <Button  name = "Prev_Page">
       <Image name = "Button-01-Prev"/>
-      <Pos   x= "6" y= "543" />
+      <Pos   x= "9" y= "540" />
       <Label x= "5" y= "3" font="02" text= "" />
     </Button>
     <Button  name = "But_Close">
@@ -1580,9 +1560,9 @@
       <Image name = "border01-horizontal-right" />
       <Pos x= "233" y= "20" />
     </Graphic>
-    <TextBox>
+    <String>
       <Label x= "80" y= "11" font="02" red= "255" green= "255" blue= "255" text= "Sound Settings" />
-    </TextBox>
+    </String>
     <Graphic>
       <Image name = "border01-horizontal-middle" />
       <Pos x= "11" y= "22" />
@@ -1619,6 +1599,24 @@
       <Color red= "40" green= "123" blue= "98" alpha = "200" />
       <Size width= "226" height= "201" />
     </Graphic>
+    <!--=============================================-->
+    <!-- Window Interactive                          -->
+    <!--=============================================-->
+    <Combobox name = "Combo_SoundSource">
+      <!--<Image name = "Button-02-Standard"/> -->
+
+       <Color red= "255" green= "0" blue= "0" alpha = "250" />
+       <Size width= "63" height= "21" />
+      <Pos x= "110" y= "66" />
+      <Itemlist>
+        <Color red= "40" green= "123" blue= "98" alpha = "200" />
+        <Size height = "100"/>
+        <Item text ="Item 1"/>
+        <Item text ="Item 2"/>
+        <Item text ="Item 3"/>
+      </Itemlist>
+    </Combobox>
+
   </Window>
 
     <!--#############################################-->
@@ -1666,9 +1664,9 @@
       <Image name = "border01-horizontal-right" />
       <Pos x= "333" y= "20" />
     </Graphic>
-    <TextBox>
+    <String>
       <Label x= "115" y= "11" font="02" red= "255" green= "255" blue= "255" text= "Client3d Tech Demo" />
-    </TextBox>
+    </String>
     <Graphic>
       <Image name = "border01-horizontal-middle" />
       <Pos x= "11" y= "22" />
@@ -1712,24 +1710,24 @@
     <!--=============================================-->
     <!-- Window Text                                 -->
     <!--=============================================-->
-    <TextBox><Label x= "10" y=  "35" font="02" text= "First Steps:" /></TextBox>
-    <TextBox><Label x= "10" y=  "50" font="02" text= "Press ~9~ to load the mask demo." /></TextBox>
-    <TextBox><Label x= "10" y=  "62" font="02" text= "The terrain is build from an atlas-texture, which blends" /></TextBox>
-    <TextBox><Label x= "10" y=  "74" font="02" text= "the individual gfx's by masks at any edge of a subtile." /></TextBox>
-    <TextBox><Label x= "10" y=  "86" font="02" text= "Press ~g~ now, to see a grid." /></TextBox>
-    <TextBox><Label x= "10" y=  "98" font="02" text= "Press the left mousebutton on a junction to the left of" /></TextBox>
-    <TextBox><Label x= "10" y= "110" font="02" text= "this window. You can see an arrow, which indicates that" /></TextBox>
-    <TextBox><Label x= "10" y= "122" font="02" text= "the 'editor' is active and waits for you to press ~3~,~3~" /></TextBox>
-    <TextBox><Label x= "10" y= "134" font="02" text= "and 5 times ~2~." /></TextBox>
-    <TextBox><Label x= "10" y= "150" font="02" text= "The gfx-nr in the atlas (~3~/~4~ to increase/decrease)" /></TextBox>
-    <TextBox><Label x= "10" y= "162" font="02" text= "is proportional to the layer number, so e.g. snow will" /></TextBox>
-    <TextBox><Label x= "10" y= "174" font="02" text= "always be on the top of the terrain." /></TextBox>
-    <TextBox><Label x= "10" y= "190" font="02" text= "As you can see: With a real editor it will be very easy" /></TextBox>
-    <TextBox><Label x= "10" y= "202" font="02" text= "to create good looking terrains - and best of all:" /></TextBox>
-    <TextBox><Label x= "10" y= "214" font="02" text= "the server needs only to send a few bytes to define the" /></TextBox>
-    <TextBox><Label x= "10" y= "226" font="02" text= "terrain. Levels with nearly infinite size are about to come." /></TextBox>
-    <TextBox><Label x= "10" y= "250" font="02" text= "Press ~7~ to show a gras shader test." /></TextBox>
-    <TextBox><Label x= "10" y= "262" font="02" text= "Use ~pgup~/~pgdn~ to rotate the terrain." /></TextBox>
+    <String><Label x= "10" y=  "35" font="02" text= "First Steps:" /></String>
+    <String><Label x= "10" y=  "50" font="02" text= "Press ~9~ to load the mask demo." /></String>
+    <String><Label x= "10" y=  "62" font="02" text= "The terrain is build from an atlas-texture, which blends" /></String>
+    <String><Label x= "10" y=  "74" font="02" text= "the individual gfx's by masks at any edge of a subtile." /></String>
+    <String><Label x= "10" y=  "86" font="02" text= "Press ~g~ now, to see a grid." /></String>
+    <String><Label x= "10" y=  "98" font="02" text= "Press the left mousebutton on a junction to the left of" /></String>
+    <String><Label x= "10" y= "110" font="02" text= "this window. You can see an arrow, which indicates that" /></String>
+    <String><Label x= "10" y= "122" font="02" text= "the 'editor' is active and waits for you to press ~3~,~3~" /></String>
+    <String><Label x= "10" y= "134" font="02" text= "and 5 times ~2~." /></String>
+    <String><Label x= "10" y= "150" font="02" text= "The gfx-nr in the atlas (~3~/~4~ to increase/decrease)" /></String>
+    <String><Label x= "10" y= "162" font="02" text= "is proportional to the layer number, so e.g. snow will" /></String>
+    <String><Label x= "10" y= "174" font="02" text= "always be on the top of the terrain." /></String>
+    <String><Label x= "10" y= "190" font="02" text= "As you can see: With a real editor it will be very easy" /></String>
+    <String><Label x= "10" y= "202" font="02" text= "to create good looking terrains - and best of all:" /></String>
+    <String><Label x= "10" y= "214" font="02" text= "the server needs only to send a few bytes to define the" /></String>
+    <String><Label x= "10" y= "226" font="02" text= "terrain. Levels with nearly infinite size are about to come." /></String>
+    <String><Label x= "10" y= "250" font="02" text= "Press ~7~ to show a gras shader test." /></String>
+    <String><Label x= "10" y= "262" font="02" text= "Use ~pgup~/~pgdn~ to rotate the terrain." /></String>
   </Window>
 
 </XML>

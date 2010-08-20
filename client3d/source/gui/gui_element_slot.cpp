@@ -40,7 +40,7 @@ int GuiElementSlot::uid = -1;
 //================================================================================================
 // Constructor.
 //================================================================================================
-GuiElementSlot::GuiElementSlot(TiXmlElement *xmlElement, const void *parent, bool drawOnInit):GuiElement(xmlElement, parent)
+GuiElementSlot::GuiElementSlot(TiXmlElement *xmlElement, const void *parent, bool isChildElement):GuiElement(xmlElement, parent)
 {
     PROFILE()
     mSlotNr = ++uid;
@@ -60,7 +60,7 @@ GuiElementSlot::GuiElementSlot(TiXmlElement *xmlElement, const void *parent, boo
     }
     if (GuiImageset::ITEM_SIZE > mWidth || GuiImageset::ITEM_SIZE > mHeight)
         Logger::log().warning() << "GuiElementSlot: Item-gfx is bigger than the slot-gfx.";
-    if (drawOnInit) draw();
+    if (!isChildElement) draw();
 }
 
 //================================================================================================
@@ -164,7 +164,7 @@ int GuiElementSlot::mouseEvent(const int mouseAction, int mouseX, int mouseY, in
 void GuiElementSlot::draw()
 {
     PROFILE()
-    if (!mVisible || mItemGfxID < 0)
+    if (mHidden || mItemGfxID < 0)
     {
         GuiElement::draw(true);
         return;
@@ -188,11 +188,10 @@ void GuiElementSlot::draw()
     uint32 *buf = dst + dX + dY * mWidth;
     GuiGraphic::getSingleton().drawGfxToBuffer(GuiImageset::ITEM_SIZE, GuiImageset::ITEM_SIZE, GuiImageset::ITEM_SIZE, GuiImageset::ITEM_SIZE, (uint32*)src.data, buf, buf, GuiImageset::ITEM_SIZE, mWidth, mWidth);
     // Print the number of items.
-
     if (!mStrQuantity.empty())
-        GuiTextout::getSingleton().printText(mWidth-mLabelPosX, mHeight-mLabelPosY,
-                                             buf + mLabelPosX + mLabelPosY*mWidth, mWidth,
-                                             mStrQuantity.c_str(), mLabelFontNr, 0x00ffffff, false, 0x00555555);
+    {
+        GuiTextout::getSingleton().printText(mWidth-mLabelPosX, mHeight-mLabelPosY, buf + mLabelPosX + mLabelPosY*mWidth, mWidth, mStrQuantity.c_str(), mLabelFontNr);
+    }
     // Draw the busy-gfx to the build-buffer.
     if (mBusyTimeExpired) drawBusy((int)mBusyOldVal);
     // Copy the build-buffer to the window texture.
@@ -357,7 +356,7 @@ GuiElementSlotGroup::GuiElementSlotGroup(TiXmlElement *xmlRoot, const void *pare
     int y = mHeight;
     for (int i = 0; i < sumSlots; ++i)
     {
-        GuiElementSlot *slot = new GuiElementSlot(xmlSlot, mParent, false);
+        GuiElementSlot *slot = new GuiElementSlot(xmlSlot, mParent, true);
         mvSlot.push_back(slot);
         int size = slot->getWidth();
         x-= size+mSpaceX;

@@ -36,7 +36,7 @@ public:
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    GuiElementSlot(TiXmlElement *xmlElement, const void *parent, bool drawOnInit);
+    GuiElementSlot(TiXmlElement *xmlElement, const void *parent, bool isChildElement = false);
     ~GuiElementSlot() {}
     virtual void sendMsg(const int message, Ogre::String &text, Ogre::uint32 &param, const char *text2);
     virtual int mouseEvent(const int mouseAction, int mouseX, int mouseY, int mouseWheel);
