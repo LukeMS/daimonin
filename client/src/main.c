@@ -2451,6 +2451,16 @@ static void InitPhysFS(const char *argv0)
         }
     }
 
+    /* Make sure all the dirs that may be written to exist. */
+    if (!PHYSFS_mkdir(DIR_CACHE) ||
+        !PHYSFS_mkdir(DIR_LOGS) ||
+        !PHYSFS_mkdir(DIR_SETTINGS) ||
+        !PHYSFS_mkdir(DIR_SRV_FILES))
+    {
+        LOG(LOG_ERROR, "%s\n", PHYSFS_getLastError());
+        exit(EXIT_FAILURE);
+    }
+
     /* Prepend the user dir to the search path. This means files are read from
      * this location in preference to the defaults. */
     if (strcmp(PHYSFS_getBaseDir(), home))
