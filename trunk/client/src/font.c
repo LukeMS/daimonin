@@ -40,7 +40,7 @@ void font_init(void)
     CreateNewFont(Bitmaps[BITMAP_FONTSMALLOUT], &font_small_out, 16, 16, 1, 12);
     CreateNewFont(Bitmaps[BITMAP_FONTMEDIUM], &font_medium, 16, 16, 1, 15);
     CreateNewFont(Bitmaps[BITMAP_FONTMEDIUMOUT], &font_medium_out, 16, 16, 0, 16);
-    CreateNewFont(Bitmaps[BITMAP_FONTBIGOUT], &font_large_out, 11, 16, 1, 20);
+    CreateNewFont(Bitmaps[BITMAP_FONTBIGOUT], &font_large_out, 11, 16, 1, 18);
 }
 
 /* init this font structure with gfx data from sprite bitmap */
