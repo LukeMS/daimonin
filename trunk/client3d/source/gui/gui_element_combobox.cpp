@@ -21,187 +21,178 @@ You should have received a copy of the GNU General Public License along with
 this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
 
+#include <OgreHardwarePixelBuffer.h>
 #include "logger.h"
 #include "profiler.h"
+#include "gui/gui_graphic.h"
 #include "gui/gui_textout.h"
 #include "gui/gui_element_combobox.h"
 
 using namespace Ogre;
 
-// needs to be rewritten!
-// - drop down list as table?
-// - drop down list texture from tooltip?
-
 //================================================================================================
-//
+// Constructor.
 //================================================================================================
-int GuiElementCombobox::sendMsg(const int /*message*/, const char * /*text*/, uint32 /*param*/, const char * /*text2*/)
+GuiElementCombobox::GuiElementCombobox(TiXmlElement *xmlRoot, const void *parent):GuiElement(xmlRoot, parent)
 {
     PROFILE()
-    return 0;
+    if ((xmlRoot = xmlRoot->FirstChildElement("Itemlist")))
+    {
+        TiXmlElement *xmlElem;
+        const char *strTmp;
+        for (xmlElem = xmlRoot->FirstChildElement("Item"); xmlElem; xmlElem = xmlElem->NextSiblingElement("Item"))
+        {
+            if ((strTmp = xmlElem->Attribute("text"))) mvItem.push_back(strTmp);
+        }
+        if ((xmlElem = xmlRoot->FirstChildElement("Size")))
+        {
+            if ((strTmp = xmlElem->Attribute("height"))) mListHeight = atoi(strTmp);
+        }
+        if ((xmlElem = xmlRoot->FirstChildElement("Color")))
+        {
+            // PixelFormat: ARGB.
+            if ((strTmp = xmlElem->Attribute("red"  ))) mListColor = atoi(strTmp) << 16;
+            if ((strTmp = xmlElem->Attribute("green"))) mListColor+= atoi(strTmp) <<  8;
+            if ((strTmp = xmlElem->Attribute("blue" ))) mListColor+= atoi(strTmp);
+            if ((strTmp = xmlElem->Attribute("alpha"))) mListColor+= atoi(strTmp) << 24;
+        }
+    }
+    else // Default values.
+    {
+        mListHeight = 200;
+        mListColor = 0xff00ff00;
+    }
+    mActItem = 0;
+    mMouseOver = false;
+    mMouseButDown = false;
+    mShowItemList = false;
+    draw();
 }
 
 //================================================================================================
-//
+// Destructor.
 //================================================================================================
-GuiElementCombobox::GuiElementCombobox(TiXmlElement *xmlElement, const void *parent) :GuiElement(xmlElement, parent)
+GuiElementCombobox::~GuiElementCombobox()
 {
     PROFILE()
-    /*
-    // ////////////////////////////////////////////////////////////////////
-    // .
-    // ////////////////////////////////////////////////////////////////////
-    mvValue.push_back(-1);
-    mvOption.push_back("");
-
-    TiXmlElement *xmlOpt;
-    for (xmlOpt = xmlElement->FirstChildElement("Option"); xmlOpt; xmlOpt = xmlOpt->NextSiblingElement("Option"))
+    mvItem.clear();
+}
+//================================================================================================
+// Message handling.
+//================================================================================================
+void GuiElementCombobox::sendMsg(const int message, String &text, uint32 &param, const char * /*text2*/)
+{
+    PROFILE()
+    switch (message)
     {
-        mvOption.push_back(xmlOpt->Attribute("text"));
+        case GuiManager::MSG_SET_VISIBLE:
+            setHidden(param?false:true);
+            return;
+        case GuiManager::MSG_SET_TEXT:
+            //setLabel(text);
+            return;
     }
-
-    srcButton = GuiImageset::getSingleton().getStateGfxPositions(xmlElement->FirstChildElement("Button")->Attribute("image_name"));
-    srcScrollbarDown = GuiImageset::getSingleton().getStateGfxPositions(xmlElement->FirstChildElement("Scroll")->FirstChildElement("Down")->Attribute("image_name"));
-    srcScrollbarUp = GuiImageset::getSingleton().getStateGfxPositions(xmlElement->FirstChildElement("Scroll")->FirstChildElement("Up")->Attribute("image_name"));
-
-    mMaxChars = 20;
-    mUseNumbers = true;
-    mUseWhitespaces = true;
-    mDispDropdown = false;
-    mGfxBuffer = NULL;
-    mEntryHeight = mHeight;
-    mVirtualHeight = GuiTextout::getSingleton().getFontHeight(mLabelFontNr) * ((int)mvOption.size()-1);
-    mScrollPos = 0;
-
-    int mMaxY = 0;
-
-    if ( mPosY + mEntryHeight + mVirtualHeight > mMaxY )
-    {
-        printf("The dropdown needs a scroll\n");
-        mNeedsScroll = true;
-        mViewport = mMaxY - mPosY - mEntryHeight;
-        mScrollPos = mVirtualHeight - mViewport;
-    }
-    else
-    {
-        printf("Noo need for a scroll here... \n");
-        mNeedsScroll = false;
-    }
-    */
 }
 
 //================================================================================================
-//
+// Returns true if the mouse event was on this gadget (so no need to check the other gadgets).
+//================================================================================================
+int GuiElementCombobox::mouseEvent(const int mouseAction, int mouseX, int mouseY, int /*mouseWheel*/)
+{
+    PROFILE()
+    if (!mouseWithin(mouseX, mouseY))
+    {
+        // Mouse is no longer over the gadget.
+        if (setState(GuiImageset::STATE_ELEMENT_DEFAULT))
+        {
+            /*
+            mMouseOver = false;
+            mMouseButDown = false;
+            draw();
+            GuiManager::getSingleton().setTooltip("");
+            */
+            return GuiManager::EVENT_CHECK_NEXT;
+        }
+    }
+    else // Mousecursor is over the button.
+    {
+        /*
+                if (!mMouseOver)
+                {
+                    mMouseOver = true;
+                    if (setState(GuiImageset::STATE_ELEMENT_M_OVER)) draw();
+                    //GuiManager::getSingleton().setTooltip(mStrTooltip.c_str());
+                    return GuiManager::EVENT_CHECK_DONE;
+                }
+        */
+        if (mouseAction == GuiManager::BUTTON_PRESSED)
+        {
+            mShowItemList = !mShowItemList;
+            mMouseButDown = mShowItemList;
+            setState(mShowItemList?GuiImageset::STATE_ELEMENT_PUSHED:GuiImageset::STATE_ELEMENT_DEFAULT);
+            draw();
+            return GuiManager::EVENT_CHECK_DONE;
+        }
+        // if (itemWasPressed) ... return GuiManager::EVENT_USER_ACTION;
+        /*
+        if (mouseAction == GuiManager::BUTTON_RELEASED && mMouseButDown)
+        {
+            mMouseButDown = false;
+            //if (setState(GuiImageset::STATE_ELEMENT_M_OVER)) draw();
+            //mShowItemList = !mShowItemList;
+            //return GuiManager::EVENT_USER_ACTION;
+        }
+        */
+        return GuiManager::EVENT_CHECK_DONE; // No need to check other gadgets.
+    }
+    return GuiManager::EVENT_CHECK_NEXT; // No action here, check the other gadgets.
+}
+
+//================================================================================================
+// Draw the guiElement.
 //================================================================================================
 void GuiElementCombobox::draw()
 {
     PROFILE()
+    GuiElement::draw(false);
+    if (!mHidden && !mvItem.empty())
+    {
+        // The combobox gfx was drawn by GuiElement::draw() into the build-buffer, now blend
+        // the text for the actice item over it. Then blit the result into the window-texture.
+        //int fontHeight = GuiTextout::getSingleton().getFontHeight(mLabelFontNr);
+        uint32 *dst = GuiManager::getSingleton().getBuildBuffer();
+        mLabelPosX = 2; // Just for testing!!!!
+        GuiTextout::getSingleton().printText(mWidth-mLabelPosX, mHeight, dst+mLabelPosX,
+                                             mWidth, mvItem[mActItem].c_str(), mLabelFontNr);
+        mParent->getTexture()->getBuffer()->blitFromMemory(PixelBox(mWidth, mHeight, 1, PF_A8R8G8B8, dst),
+                Box(mPosX, mPosY, mPosX+mWidth, mPosY+mHeight));
+    }
+    drawItemList();
 }
 
 //================================================================================================
-//
+// Draw the guiElement.
 //================================================================================================
-bool GuiElementCombobox::setState(int state)
+void GuiElementCombobox::drawItemList()
 {
     PROFILE()
-    if ( mState != state && mState == GuiImageset::STATE_ELEMENT_PUSHED)
+    uint32 *dst = GuiManager::getSingleton().getBuildBuffer();
+    if (mHidden || !mShowItemList || mvItem.empty())
     {
-        if ( mActiveDropdownOption != -1 )
+        uint32 *bak = mParent->getLayerBG() + mPosX + (mPosY+mHeight)*mParent->getWidth();
+        GuiGraphic::getSingleton().restoreWindowBG(mWidth, mListHeight, bak, dst, mParent->getWidth(), mWidth);
+    }
+    else
+    {
+        int fontHeight = GuiTextout::getSingleton().getFontHeight(mLabelFontNr);
+        uint32 *buf = dst;
+        // Draw all items
+        for (unsigned int i = 0; i < mWidth * mListHeight; ++i) buf[i] = mListColor;
+        for (std::vector<String>::iterator i = mvItem.begin(); i < mvItem.end(); ++i)
         {
-            setText(mvOption[mActiveDropdownOption].c_str());
-            mDispDropdown = false;
-            mActiveDropdownOption = -1;
-        }
-        else
-        {
-            switch ( mButton )
-            {
-                case ELEMENT_COMBOBOX_DDBUTTON:
-                    mDispDropdown = true;
-                    break;
-                case ELEMENT_COMBOBOX_SCROLL_DOWN:
-                    mScrollPos += 5;
-                    if ( mScrollPos > mVirtualHeight - mViewport )
-                        mScrollPos = mVirtualHeight - mViewport;
-                    break;
-                case ELEMENT_COMBOBOX_SCROLL_UP:
-                    mScrollPos -= 5;
-                    if ( mScrollPos < 0 )
-                        mScrollPos = 0;
-                    break;
-                default:
-                    mAction = 1;//GuiWindow::ACTION_START_TEXT_INPUT;
-            }
+            GuiTextout::getSingleton().printText(mWidth, fontHeight, buf, mWidth, (*i).c_str(), mLabelFontNr);
+            buf+= fontHeight * mWidth;
         }
     }
-
-    return GuiElement::setState(state);
+    mParent->getTexture()->getBuffer()->blitFromMemory(PixelBox(mWidth, mListHeight, 1, PF_A8R8G8B8, dst), Box(mPosX, mPosY+mHeight, mPosX+mWidth, mPosY+mHeight+mListHeight));
 }
-
-//================================================================================================
-//
-//================================================================================================
-void GuiElementCombobox::setText(const char *value)
-{
-    PROFILE()
-    mvOption[0] = value;
-}
-
-//================================================================================================
-//
-//================================================================================================
-const char *GuiElementCombobox::getText()
-{
-    PROFILE()
-    return mvOption[0].c_str();
-}
-
-/*
-//================================================================================================
-//
-//================================================================================================
-bool GuiElementCombobox::mouseOver(int x, int y)
-{
-PROFILE()
-    if ( GuiElement::mouseOver(x,y) )
-    {
-        if ( mDispDropdown )
-        {
-            if ( y - mPosY < mEntryHeight )
-                mActiveDropdownOption = 0;
-            else if ( !srcScrollbarUp || x - mPosX < mWidth - srcScrollbarUp->width )
-            {
-                if ( y - mPosY < mEntryHeight )
-                    mActiveDropdownOption = 0;
-                else
-                    mActiveDropdownOption = (y - mPosY - mEntryHeight + mScrollPos) / GuiTextout::getSingleton().getFontHeight(mLabelFontNr) + 1;
-                if ( (unsigned int)mActiveDropdownOption > mvOption.size() )
-                    mActiveDropdownOption = mvOption.size()-1;
-            }
-            else
-            {
-                mActiveDropdownOption = -1;
-                if ( y - mPosY - mEntryHeight < srcScrollbarUp->height )
-                    mButton = ELEMENT_COMBOBOX_SCROLL_UP;
-                else if ( y - mPosY - mEntryHeight > mViewport - srcScrollbarUp->height )
-                    mButton = ELEMENT_COMBOBOX_SCROLL_DOWN;
-                else
-                    mButton = ELEMENT_COMBOBOX_SCROLL_BAR;
-            }
-        }
-        else
-        {
-            mActiveDropdownOption = -1;
-            if( srcButton && x > mPosX + mWidth - srcButton->width )
-                mButton = ELEMENT_COMBOBOX_DDBUTTON;
-            else
-                mButton = ELEMENT_COMBOBOX_NONE;
-        }
-
-        return true;
-    }
-    if ( mDispDropdown )
-        mDispDropdown = false;
-    return false;
-}
-*/

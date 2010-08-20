@@ -95,7 +95,7 @@ public:
      *****************************************************************************/
     bool mouseWithin(const int x, const int y) const
     {
-        return !(!mVisible || x < mPosX || x > mPosX + mWidth || y < mPosY || y > mPosY + mHeight);
+        return !(mHidden || x < mPosX || x > mPosX + mWidth || y < mPosY || y > mPosY + mHeight);
     }
     /// Returns the unique numer of this element.
     int getIndex() const
@@ -108,7 +108,7 @@ protected:
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
     int mIndex;                          /**< Unique number. -1 means its a background-gfx (no interaction) **/
-    bool mVisible;
+    bool mHidden;
     GuiWindow *mParent;                  /**< Pointer to the parent window. **/
     Ogre::uchar mState;                  /**< Actual state of this element. **/
     Ogre::uint16 mPosX, mPosY;           /**< Pixeloffset from the upper-left corner of the window. **/
@@ -123,11 +123,11 @@ protected:
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    bool isVisible() const
+    bool isHidden() const
     {
-        return mVisible;
+        return mHidden;
     }
-    void setVisible(bool visible);
+    void setHidden(bool hidden);
 
 private:
     // ////////////////////////////////////////////////////////////////////

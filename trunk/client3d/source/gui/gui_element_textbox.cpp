@@ -38,7 +38,7 @@ void GuiElementTextbox::sendMsg(const int message, Ogre::String &text, Ogre::uin
     switch (message)
     {
         case GuiManager::MSG_SET_VISIBLE:
-            setVisible(param?true:false);
+            setHidden(param?false:true);
             return;
         case GuiManager::MSG_SET_TEXT:
             mLabelString = text;
@@ -78,6 +78,8 @@ void GuiElementTextbox::draw()
     PROFILE()
     uint32 *dst = GuiManager::getSingleton().getBuildBuffer();
     GuiTextout::getSingleton().printText(mWidth, mHeight, dst, mWidth,
-                                         mParent->getLayerBG() + mLabelPosX + mLabelPosY*mParent->getWidth(), mParent->getWidth(), mLabelString.c_str(), mLabelFontNr, mLabelColor, mHideText);
-    mParent->getTexture()->getBuffer()->blitFromMemory(PixelBox(mWidth, mHeight, 1, PF_A8R8G8B8, dst), Box(mLabelPosX, mLabelPosY, mLabelPosX+mWidth, mLabelPosY+mHeight));
+                                         mParent->getLayerBG() + mLabelPosX + mLabelPosY*mParent->getWidth(), mParent->getWidth(),
+                                         mLabelString.c_str(), mLabelFontNr, mLabelColor, 0, mHideText);
+    mParent->getTexture()->getBuffer()->blitFromMemory(PixelBox(mWidth, mHeight, 1, PF_A8R8G8B8, dst),
+            Box(mLabelPosX, mLabelPosY, mLabelPosX+mWidth, mLabelPosY+mHeight));
 }

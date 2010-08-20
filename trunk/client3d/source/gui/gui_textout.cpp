@@ -543,7 +543,7 @@ const char *GuiTextout::getTextendColor(const String &strText)
 // Alphablend a text with a gfx/color into a given background. Clipping is performed.
 //================================================================================================
 void GuiTextout::printText(int width, int height, uint32 *dst, int dstLineSkip, uint32 *bak, int bakLineSkip,
-                           const char *txt, unsigned int fontNr, uint32 fontColor, bool hideText, uint32 borderColor)
+                           const char *txt, unsigned int fontNr, uint32 fontColor, uint32 outlineColor, bool hideText)
 {
     PROFILE()
     const char *text = (!txt)?"":txt; // Prevent trouble when txt is NULL.
@@ -552,9 +552,8 @@ void GuiTextout::printText(int width, int height, uint32 *dst, int dstLineSkip, 
     int srcRow, bakRow, dstRow, stopX, clipX=0;
     uchar chr;
     fontColor&= 0x00ffffff; // Alpha part comes from the font.
-    if (borderColor) borderColor|=0xff000000;
+    //outlineColor|= 0xff000000;
     uint32 actColor, color = fontColor;
-
     while (*text)
     {
         if ((uchar) *text < 32)
@@ -625,30 +624,17 @@ void GuiTextout::printText(int width, int height, uint32 *dst, int dstLineSkip, 
                         dstRow+= dstLineSkip;
                     }
                     //for (int y =(int)mvFont[fontNr]->height < height?(int)mvFont[fontNr]->height:height; y; --y)
-                    if (borderColor)
+                    for (int y =deltaHeight; y < height; ++y)
                     {
-                        for (int y =deltaHeight; y < height; ++y)
+                        for (int x = 0; x < stopX; ++x)
                         {
-                            for (int x = 0; x < stopX; ++x)
-                            {
-                                if (mvFont[fontNr]->data[srcRow + x])
-                                    dst[dstRow+x] = GuiGraphic::getSingleton().fontBlend(borderColor, actColor + mvFont[fontNr]->data[srcRow + x]);
-                                else
-                                    dst[dstRow+x] = *bak;
-                            }
-                            srcRow+= mvFont[fontNr]->textureWidth;
-                            dstRow+= dstLineSkip;
+                            if (outlineColor && mvFont[fontNr]->data[srcRow + x])
+                                dst[dstRow+x] = GuiGraphic::getSingleton().alphaBlend(outlineColor, actColor + mvFont[fontNr]->data[srcRow + x]);
+                            else
+                                dst[dstRow+x] = GuiGraphic::getSingleton().alphaBlend(*bak, actColor + mvFont[fontNr]->data[srcRow + x]);
                         }
-                    }
-                    else
-                    {
-                        for (int y =deltaHeight; y < height; ++y)
-                        {
-                            for (int x = 0; x < stopX; ++x)
-                                dst[dstRow + x] = GuiGraphic::getSingleton().fontBlend(*bak, actColor + mvFont[fontNr]->data[srcRow + x]); // oldversion without bordercolor
-                            srcRow+= mvFont[fontNr]->textureWidth;
-                            dstRow+= dstLineSkip;
-                        }
+                        srcRow+= mvFont[fontNr]->textureWidth;
+                        dstRow+= dstLineSkip;
                     }
                 }
                 else // Background is a graphic.
@@ -663,32 +649,18 @@ void GuiTextout::printText(int width, int height, uint32 *dst, int dstLineSkip, 
                         bakRow+= bakLineSkip;
                     }
                     //for (int y =(int)mvFont[fontNr]->height < height?(int)mvFont[fontNr]->height:height; y; --y)
-                    if (borderColor)
+                    for (int y =deltaHeight; y < height; ++y)
                     {
-                        for (int y =deltaHeight; y < height; ++y)
+                        for (int x = 0; x < stopX; ++x)
                         {
-                            for (int x = 0; x < stopX; ++x)
-                            {
-                                if (mvFont[fontNr]->data[srcRow + x])
-                                    dst[dstRow+x] = GuiGraphic::getSingleton().fontBlend(borderColor, actColor + mvFont[fontNr]->data[srcRow + x]);
-                                else
-                                    dst[dstRow+x] = bak[bakRow + x];
-                            }
-                            srcRow+= mvFont[fontNr]->textureWidth;
-                            dstRow+= dstLineSkip;
-                            bakRow+= bakLineSkip;
+                            if (outlineColor && mvFont[fontNr]->data[srcRow + x])
+                                dst[dstRow+x] = GuiGraphic::getSingleton().alphaBlend(outlineColor, actColor + mvFont[fontNr]->data[srcRow + x]);
+                            else
+                                dst[dstRow+x] = GuiGraphic::getSingleton().alphaBlend(bak[bakRow + x], actColor + mvFont[fontNr]->data[srcRow + x]);
                         }
-                    }
-                    else
-                    {
-                        for (int y =deltaHeight; y < height; ++y)
-                        {
-                            for (int x = 0; x < stopX; ++x)
-                                dst[dstRow + x] = GuiGraphic::getSingleton().fontBlend(bak[bakRow + x], actColor + mvFont[fontNr]->data[srcRow + x]);
-                            srcRow+= mvFont[fontNr]->textureWidth;
-                            dstRow+= dstLineSkip;
-                            bakRow+= bakLineSkip;
-                        }
+                        srcRow+= mvFont[fontNr]->textureWidth;
+                        dstRow+= dstLineSkip;
+                        bakRow+= bakLineSkip;
                     }
                     bak+= stopX;
                 }

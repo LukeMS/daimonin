@@ -110,7 +110,7 @@ GuiStatusbar::GuiStatusbar(TiXmlElement *xmlElement, const void *parent):GuiElem
 void GuiStatusbar::draw()
 {
     PROFILE()
-    if (!mVisible)
+    if (mHidden)
     {
         GuiElement::draw(true);
         return;

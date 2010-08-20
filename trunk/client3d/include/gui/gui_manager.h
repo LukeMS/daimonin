@@ -95,7 +95,7 @@ public:
         // Table
         TABLE,
         // Combobox
-//        COMBOBOX_TEST,
+        COMBOBOX_SOUNDSOURCE,
         // Slots
         SLOT_QUICKSLOT,
         SLOT_EQUIPMENT,
@@ -289,7 +289,7 @@ public:
     }
     void printText(int width, int height, Ogre::uint32 *dst, int dstLineSkip,
                    Ogre::uint32 *bak, int bakLineSkip, const char *txt, unsigned int fontNr,
-                   Ogre::uint32 color = 0xffffffff, bool hideText = false);
+                   Ogre::uint32 color = 0xffffffff, Ogre::uint32 outlineColor = 0, bool hideText = false);
     void drawDragElement(const Ogre::PixelBox &src);
     bool getMediaCreation() const
     {

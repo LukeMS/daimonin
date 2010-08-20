@@ -63,9 +63,9 @@ GuiElementScrollbar::GuiElementScrollbar(TiXmlElement *xmlElement, const void *p
     for (xmlOpt = xmlElement->FirstChildElement("Button"); xmlOpt; xmlOpt = xmlOpt->NextSiblingElement("Button"))
     {
         if (!strcmp(xmlOpt->Attribute("name"), "But_ScrollUp"))
-            mButScrollUp = new GuiElementButton(xmlOpt, parent, false);
+            mButScrollUp = new GuiElementButton(xmlOpt, parent, true);
         else if (!strcmp(xmlOpt->Attribute("name"), "But_ScrollDown"))
-            mButScrollDown = new GuiElementButton(xmlOpt, parent, false);
+            mButScrollDown = new GuiElementButton(xmlOpt, parent, true);
     }
     mDragging = false;
     mMouseOver = false;
@@ -77,8 +77,8 @@ GuiElementScrollbar::GuiElementScrollbar(TiXmlElement *xmlElement, const void *p
         mStartY = mPosY;
         mStopX  = mPosX + mWidth - mButScrollDown->getWidth();
         mStopY  = mPosY + mHeight;
-        mButScrollUp->setPosition(mStopX, mPosY);
-        mButScrollDown->setPosition(mPosX, mPosY);
+        if (mButScrollUp)  mButScrollUp->setPosition(mStopX, mPosY);
+        if (mButScrollDown) mButScrollDown->setPosition(mPosX, mPosY);
         mMaxSliderSize = (mStopX -mStartX - SLIDER_INNER_OFFSET-1);
     }
     else
@@ -87,8 +87,8 @@ GuiElementScrollbar::GuiElementScrollbar(TiXmlElement *xmlElement, const void *p
         mStartY = mPosY + mButScrollDown->getHeight();
         mStopX  = mPosX + mButScrollDown->getWidth();
         mStopY  = mPosY + mHeight - mButScrollDown->getHeight();
-        mButScrollDown->setPosition(mStartX, mStopY);
-        mButScrollUp->setPosition(mPosX, mPosY);
+        if (mButScrollUp) mButScrollUp->setPosition(mPosX, mPosY);
+        if (mButScrollDown) mButScrollDown->setPosition(mStartX, mStopY);
         mMaxSliderSize = (mStopY -mStartY - SLIDER_INNER_OFFSET-1);
     }
     if (mButScrollUp)   mButScrollUp->draw();

@@ -58,7 +58,7 @@ GuiElement::GuiElement(TiXmlElement *xmlElem, const void *parent)
     const char *tmp;
     // Set default values.
     mState = GuiImageset::STATE_ELEMENT_DEFAULT;
-    mVisible = true;
+    mHidden = false;
     mParent= (GuiWindow*)parent;
     int maxX = mParent->getWidth();
     int maxY = mParent->getHeight();
@@ -164,11 +164,11 @@ bool GuiElement::setState(uchar state)
 //================================================================================================
 // .
 //================================================================================================
-void GuiElement::setVisible(bool visible)
+void GuiElement::setHidden(bool hidden)
 {
     PROFILE()
-    if (visible == mVisible) return;
-    mVisible = visible;
+    if (hidden == mHidden) return;
+    mHidden = hidden;
     draw(true);
 }
 
@@ -187,20 +187,20 @@ void GuiElement::draw(bool uploadToTexture)
         PixelBox src = GuiImageset::getSingleton().getPixelBox().getSubVolume(Box(mGfxSrc->state[mState].x, mGfxSrc->state[mState].y,
                        mGfxSrc->state[mState].x + mGfxSrc->w, mGfxSrc->state[mState].y + mGfxSrc->h));
         int srcRowSkip = (int)GuiImageset::getSingleton().getPixelBox().getWidth();
-        if (mIndex < 0) // This gfx is part of the background.
+        if (mIndex < 0) // The gfx is part of the background or a part of another element (e.g: button of a scrollbar element).
             GuiGraphic::getSingleton().drawGfxToBuffer(mWidth, mHeight, mGfxSrc->w, mGfxSrc->h, (uint32*)src.data, bak, bak, srcRowSkip, mParent->getWidth(), mParent->getWidth());
-        else if (mVisible)
+        else if (!mHidden)
             GuiGraphic::getSingleton().drawGfxToBuffer(mWidth, mHeight, mGfxSrc->w, mGfxSrc->h, (uint32*)src.data, bak, dst, srcRowSkip, mParent->getWidth(), mWidth);
     }
     // Draws a color area to the window texture.
     else
     {
-        if (mIndex < 0) // The gfx is part of the background.
+        if (mIndex < 0) // The gfx is part of the background or a part of another element (e.g: button of a scrollbar element).
             GuiGraphic::getSingleton().drawColorToBuffer(mWidth, mHeight, mFillColor, bak, mParent->getWidth());
-        else if (mVisible)
+        else if (!mHidden)
             GuiGraphic::getSingleton().drawColorToBuffer(mWidth, mHeight, mFillColor, bak, dst, mParent->getWidth(), mWidth);
     }
-    if (mIndex < 0 || !mVisible)
+    if (mIndex < 0 || mHidden)
         GuiGraphic::getSingleton().restoreWindowBG(mWidth, mHeight, bak, dst, mParent->getWidth(), mWidth);
     if (uploadToTexture)
         mParent->getTexture()->getBuffer()->blitFromMemory(PixelBox(mWidth, mHeight, 1, PF_A8R8G8B8, dst), Box(mPosX, mPosY, mPosX+mWidth, mPosY+mHeight));

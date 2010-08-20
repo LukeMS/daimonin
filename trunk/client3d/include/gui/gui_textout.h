@@ -91,27 +91,6 @@ public:
      *****************************************************************************/
     const char *getTextendColor(const Ogre::String &text);
 
-    /** Alphablends a text with a single background color into a buffer.
-     ** @param width       The width of the textfield. All beyond this with will be clipped.
-     ** @param height      The height of the textfield. All beyond this height will be clipped.
-     ** @param dst         A pointer to the destination buffer.
-     ** @param dstLineSkip The lineskip of the destination buffer.
-     ** @param colorBG     The color of the background to draw.
-     ** @param text        The text to print.
-     ** @param fontNr      The font-number of the text.
-     ** @param fontColor   The color of the text.
-     ** @param hideText    If true the text is hidden e.g. for printing passwords.
-     ** @param borderColor If set, the text will be printed with a colored border.
-     *****************************************************************************/
-    void printText(int width, int height,
-                   unsigned int *dst, int dstLineSkip,
-                   unsigned int colorBG,
-                   const char *text, unsigned int fontNr,
-                   unsigned int fontColor = 0xffffffff, bool hideText = false, unsigned int borderColor = 0)
-    {
-        printText(width, height, dst, dstLineSkip, &colorBG, 0, text, fontNr, fontColor, hideText, borderColor);
-    }
-
     /** Alphablends a text with the given buffer.
      ** @param width       The width of the textfield. All beyond this with will be clipped.
      ** @param height      The height of the textfield. All beyond this height will be clipped.
@@ -121,34 +100,34 @@ public:
      ** @param fontNr      The font-number of the text.
      ** @param fontColor   The color of the text.
      ** @param hideText    If true the text is hidden e.g. for printing passwords.
-     ** @param borderColor If set, the text will be printed with a colored border.
      *****************************************************************************/
     void printText(int width, int height,
                    unsigned int *dst, int dstLineSkip,
                    const char *text, unsigned int fontNr,
-                   unsigned int fontColor = 0xffffffff, bool hideText = false, unsigned int borderColor = 0)
+                   Ogre::uint32 fontColor = 0x00ffffff, Ogre::uint32 outlineColor = 0, bool hideText = false)
     {
-        printText(width, height, dst, dstLineSkip, dst, dstLineSkip, text, fontNr, fontColor, hideText, borderColor);
+        printText(width, height, dst, dstLineSkip, dst, dstLineSkip, text, fontNr, fontColor, outlineColor, hideText);
     }
 
-    /** Alphablends a text with a graphical background into a buffer.
+    /** Alphablends a text with a graphical background or a single background color into a buffer.
      ** @param width       The width of the textfield. All beyond this with will be clipped.
      ** @param height      The height of the textfield. All beyond this height will be clipped.
      ** @param dst         A pointer to the destination buffer.
      ** @param dstLineSkip The lineskip of the destination buffer.
-     ** @param bak         A pointer to the background buffer.
-     ** @param bakLineSkip The lineskip of the background buffer.
+     ** @param bak         A pointer to the background buffer
+     **                    Or the address of a single background color if !bakLineSkip.
+     ** @param bakLineSkip The lineskip of the background buffer
+     **                    Or 0 for single background color mode.
      ** @param text        The text to print.
      ** @param fontNr      The font-number of the text.
      ** @param fontColor   The color of the text.
      ** @param hideText    If true the text is hidden e.g. for printing passwords.
-     ** @param borderColor If set, the text will be printed with a colored border.
      *****************************************************************************/
     void printText(int width, int height,
                    unsigned int *dst, int dstLineSkip,
                    unsigned int *bak, int bakLineSkip,
                    const char *text, unsigned int fontNr,
-                   unsigned int fontColor = 0xffffffff, bool hideText = false, unsigned int borderColor = 0);
+                   Ogre::uint32 fontColor = 0x00ffffff, Ogre::uint32 outlineColor = 0, bool hideText = false);
 
     /** Returns the height (in pixel) for the given font-number.
      ** @param fontNr The font-number.

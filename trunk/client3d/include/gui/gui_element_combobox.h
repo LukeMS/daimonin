@@ -32,48 +32,40 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 class GuiElementCombobox : public GuiElement
 {
 public:
-    enum
-    {
-        ELEMENT_COMBOBOX_NONE,
-        ELEMENT_COMBOBOX_DDBUTTON,
-        ELEMENT_COMBOBOX_SCROLL_UP,
-        ELEMENT_COMBOBOX_SCROLL_DOWN,
-        ELEMENT_COMBOBOX_SCROLL_BAR,
-        ELEMENT_COMBOBOX_SUM
-    };
-
+    // ////////////////////////////////////////////////////////////////////
+    // Functions.
+    // ////////////////////////////////////////////////////////////////////
     GuiElementCombobox(TiXmlElement *xmlElement, const void *parent);
-    ~GuiElementCombobox() {}
-    int sendMsg(const int message, const char *text, Ogre::uint32 param, const char *text2);
+    ~GuiElementCombobox();
+    /// @copydoc GuiElement::sendMsg
+    virtual void sendMsg(const int message, Ogre::String &text, Ogre::uint32 &param, const char *text2);
+    virtual int mouseEvent(const int mouseAction, int mouseX, int mouseY, int mouseWheel);
     void draw();
-    void setText(const char *value);
-    bool setState(int state);
-    bool mouseOver(int x, int y);
-    const char *getText();
 
 private:
-    GuiImageset::gfxSrcEntry *srcButton;
-    GuiImageset::gfxSrcEntry *srcScrollbarUp;
-    GuiImageset::gfxSrcEntry *srcScrollbarDown;
-    Ogre::uint32 *mGfxBuffer;
-    int mAction;
-    int mFontHeight;
-    int mMaxChars;
-    int mEntryHeight;
-    int bw;
-    int mMouseX, mMouseY;
-    int mActiveDropdownOption;
-    int mVirtualHeight;
-    int mScrollPos;
-    int mViewport;
-    int mButton;
-    bool mNeedsScroll;
-    bool mUseNumbers;
-    bool mUseWhitespaces;
-    bool mDispDropdown;
-    bool mDDButton;
-    std::vector<Ogre::String> mvOption;
-    std::vector<int> mvValue;
+    // ////////////////////////////////////////////////////////////////////
+    // Variables / Constants.
+    // ////////////////////////////////////////////////////////////////////
+    std::vector<Ogre::String>mvItem;
+    unsigned int mActItem;
+    unsigned int mListHeight;
+    Ogre::uint32 mListColor;
+    bool mMouseOver, mMouseButDown;
+    bool mShowItemList;
+
+    // ////////////////////////////////////////////////////////////////////
+    // Functions.
+    // ////////////////////////////////////////////////////////////////////
+    void drawItemList();
+    /** Select the item holding the given text.
+     ** @param item The item to select.
+     *****************************************************************************/
+    void SetSelection(const Ogre::String item);
+
+    /** Select the item given by a number.
+     ** @param item The item to select.
+     *****************************************************************************/
+    void SetSelection(unsigned int itemNr);
 
     GuiElementCombobox(const GuiElementCombobox&);            /**< disable copy-constructor. **/
     GuiElementCombobox &operator=(const GuiElementCombobox&); /**< disable assignment operator. **/

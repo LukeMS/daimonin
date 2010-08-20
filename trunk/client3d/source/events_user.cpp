@@ -522,7 +522,7 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
         {
             static bool tst = 1;
             tst = !tst;
-            GuiManager::getSingleton().setVisible(GuiManager::BUTTON_TEST, tst);
+            GuiManager::getSingleton().setVisible(GuiManager::COMBOBOX_SOUNDSOURCE, tst);
             /*
                         Vector3 pos = mCamera->getPosition();
                         pos.y+= 15;

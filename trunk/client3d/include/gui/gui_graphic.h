@@ -44,7 +44,6 @@ public:
     void drawColorToBuffer(int w, int h, unsigned int color, unsigned int *dst, int dstRowSkip);
     void drawColorToBuffer(int w, int h, unsigned int color, unsigned int *bak, unsigned int *dst, int bakRowSkip, int dstRowSkip);
     unsigned int alphaBlend(const unsigned int bg, const unsigned int gfx);
-    unsigned int fontBlend(const unsigned int bg, const unsigned int gfx);
 
 private:
     // ////////////////////////////////////////////////////////////////////

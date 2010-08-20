@@ -31,7 +31,7 @@ using namespace Ogre;
 //================================================================================================
 // Constructor.
 //================================================================================================
-GuiElementButton::GuiElementButton(TiXmlElement *xmlElement, const void *parent, const bool drawOnInit):GuiElement(xmlElement, parent)
+GuiElementButton::GuiElementButton(TiXmlElement *xmlElement, const void *parent, bool isChildElement):GuiElement(xmlElement, parent)
 {
     PROFILE()
     if ((xmlElement = xmlElement->FirstChildElement("Tooltip")))
@@ -41,7 +41,9 @@ GuiElementButton::GuiElementButton(TiXmlElement *xmlElement, const void *parent,
     }
     mMouseOver = false;
     mMouseButDown = false;
-    if (drawOnInit) draw();
+    // If this element is an child, we cant draw the grafic at creation time, because the
+    // pixel-position comes from the parent element some time after the creation.
+    if (!isChildElement) draw();
 }
 
 //================================================================================================
@@ -53,7 +55,7 @@ void GuiElementButton::sendMsg(const int message, String &text, uint32 &param, c
     switch (message)
     {
         case GuiManager::MSG_SET_VISIBLE:
-            setVisible(param?true:false);
+            setHidden(param?false:true);
             return;
         case GuiManager::MSG_SET_TEXT:
             setLabel(text);
@@ -112,14 +114,15 @@ void GuiElementButton::draw()
 {
     PROFILE()
     GuiElement::draw(false);
-    // Draw label.
+    // The button gfx was drawn by GuiElement::draw() into the build-buffer, now blend
+    // the text for the label over it. Then blit the result into the window-texture.
     uint32 *dst = GuiManager::getSingleton().getBuildBuffer();
-    if (mVisible && !mLabelString.empty())
+    if (!mHidden && !mLabelString.empty())
     {
         int offset = (mState == GuiImageset::STATE_ELEMENT_PUSHED)?1:0;
-        GuiTextout::getSingleton().printText(mWidth-mLabelPosX-2*offset, mHeight-mLabelPosY-offset,
-                                             dst+mLabelPosX+offset + (mLabelPosY+2*offset)*mWidth, mWidth,
-                                             mLabelString.c_str(), mLabelFontNr, 0x00ffffff);
+        GuiTextout::getSingleton().printText(mWidth-mLabelPosX-2*offset, GuiTextout::getSingleton().getFontHeight(mLabelFontNr),
+                                             dst+mLabelPosX+offset + (mLabelPosY+mLabelPosY)*mWidth, mWidth,
+                                             mLabelString.c_str(), mLabelFontNr);
     }
     mParent->getTexture()->getBuffer()->blitFromMemory(PixelBox(mWidth, mHeight, 1, PF_A8R8G8B8, dst), Box(mPosX, mPosY, mPosX+mWidth, mPosY+mHeight));
 }

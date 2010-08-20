@@ -35,7 +35,12 @@ public:
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    GuiElementButton(TiXmlElement *xmlElement, const void *parent, const bool drawOnInit);
+    /** Constructor.
+     ** @param xmlElement   Pointer to the xmlElement.
+     ** @param parent       Pointer to the parent.
+     ** @param isSubElement Is this button used as a child of another GuiElement?
+     *****************************************************************************/
+    GuiElementButton(TiXmlElement *xmlElement, const void *parent, bool isChildElement = false);
     ~GuiElementButton() {}
     /// @copydoc GuiElement::sendMsg
     virtual void sendMsg(const int message, Ogre::String &text, Ogre::uint32 &param, const char *text2);
