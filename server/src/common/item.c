@@ -1034,42 +1034,44 @@ char * describe_item(const object *const op)
               {
                   if (op->type == FLESH && op->last_eat > 0 && atnr_is_dragon_enabled(op->last_eat))
                   {
-                      sprintf(buf, "(%s metabolism)", attack_name[op->last_eat]);
-                      strcat(retbuf, buf);
+                      sprintf(strchr(retbuf, '\0'), "(%s metabolism)", attack_name[op->last_eat]);
                   }
+
                   if (op->stats.thac0)
                   {
-                      sprintf(buf, "(hit%+d)", op->stats.thac0);
-                      strcat(retbuf, buf);
+                      sprintf(strchr(retbuf, '\0'), "(hit%+d)", op->stats.thac0);
                   }
+
                   if (op->stats.thacm)
                   {
-                      sprintf(buf, "(miss%+d)", op->stats.thacm);
-                      strcat(retbuf, buf);
+                      sprintf(strchr(retbuf, '\0'), "(miss%+d)", op->stats.thacm);
                   }
-                  sprintf(buf, "\nIf eaten it will restore in %d seconds\n", op->last_eat);
-                  strcat(retbuf, buf);
+
+                  strcat(retbuf, "\nIf consumed it will restore ");
 
                   if (op->stats.hp)
                   {
-                      sprintf(buf, "%d hp", op->last_eat*op->stats.hp);
-                      strcat(retbuf, buf);
+                      sprintf(strchr(retbuf, '\0'), "%d hp%s",
+                              op->last_eat * op->stats.hp,
+                              (op->stats.sp && op->stats.grace) ? "," : "");
                   }
+
                   if (op->stats.sp)
                   {
-                      if (op->stats.hp)
-                          strcat(retbuf, " and ");
-                      sprintf(buf, "%d sp", op->last_eat*op->stats.sp);
-                      strcat(retbuf, buf);
-
+                      sprintf(strchr(retbuf, '\0'), "%s%d mana%s",
+                              (op->stats.hp) ? " and " : "",
+                              op->last_eat * op->stats.sp,
+                              (op->stats.hp && op->stats.grace) ? "," : "");
                   }
+
                   if (op->stats.grace)
                   {
-                      if (op->stats.hp || op->stats.sp)
-                          strcat(retbuf, " and ");
-                      sprintf(buf, "%d grace", op->last_eat*op->stats.grace);
-                      strcat(retbuf, buf);
+                      sprintf(strchr(retbuf, '\0'), "%s%d grace",
+                              (op->stats.hp || op->stats.sp) ? " and " : "",
+                              op->last_eat * op->stats.grace);
                   }
+
+                  sprintf(strchr(retbuf, '\0'), " over %d seconds.", op->last_eat);
               }
               break;
 
