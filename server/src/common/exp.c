@@ -749,13 +749,13 @@ float calc_level_difference(int who_lvl, int op_lvl)
             if (r < 1)
                 r = 1;
             v = 0.2f / (float) r;
-            tmp = 1.2f + (v * (float) (op_lvl - who_lvl));
+            tmp = 1.4f + (v * (float) (op_lvl - who_lvl));
         }
         else /* red or purple! */
         {
             r = (op_lvl + 1) - level_color[who_lvl].red;
             v = 0.1f * (float) r;
-            tmp = 1.4f + v;
+            tmp = 1.8f + v;
         }
     }
 
@@ -803,23 +803,23 @@ int calc_skill_exp(object *who, object *op, float mod, int level, int *real)
         return 0; /* no exp for no level and no exp ;) */
 
     if (who_lvl < 2)
-        max_mul = 0.95f;
+        max_mul = 1.15f;
     else if (who_lvl < 3)
-        max_mul = 0.85f;
+        max_mul = 1.10f;
     else if (who_lvl < 4)
-        max_mul = 0.75f;
+        max_mul = 1.05f;
     else if (who_lvl < 5)
-        max_mul = 0.65f;
+        max_mul = 1.0f;
     else if (who_lvl < 7)
-        max_mul = 0.5f;
+        max_mul = 0.95f;
     else if (who_lvl < 8)
-        max_mul = 0.35f;
+        max_mul = 0.9f;
     else
-        max_mul = 0.2f;
+        max_mul = 0.85f;
 
     /* we get first a global level difference mulitplicator */
     exp_mul = calc_level_difference(who_lvl, op_lvl);
-    op_exp = (int) (((float) op_exp * lev_exp[op_lvl] * mod)* exp_mul);
+    op_exp = (int) (((float) op_exp * lev_exp[op_lvl] * mod)* exp_mul * 1.1f);
     if(real != NULL)
     {
         if(*real > 0)
