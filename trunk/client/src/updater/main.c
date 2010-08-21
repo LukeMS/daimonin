@@ -36,7 +36,7 @@
 
 #define MAX_DIR_PATH 2048 /* maximal full path we support.      */
 char version_path[MAX_DIR_PATH], process_path[MAX_DIR_PATH], output[4096],
-prg_path[MAX_DIR_PATH], file_path[MAX_DIR_PATH], parms[MAX_DIR_PATH];
+prg_path[MAX_DIR_PATH], file_path[MAX_DIR_PATH], parms[MAX_DIR_PATH + 1 + 4096];
 
 #define COPY_BUFFER_SIZE 1024*512
 char *copy_buffer = NULL, *argv0;
@@ -62,6 +62,8 @@ int curl_progresshandler(void *clientp, double dltotal, double dlnow, double ult
 int process_xdelta3(FILE*  patchFile, FILE*  oldFile, FILE* destFile, int BufSize);
 extern int  apply_xdelta3(char *patchfile, char *oldfile, char *destfile);
 extern int  calc_md5(char *filename, char *outputbuf);
+
+static char ClientSwitches[4096] = "";
 
 static void free_resources(void)
 {
@@ -89,7 +91,7 @@ static void start_client_and_close(char *p_path)
 //    getchar();
     strcpy(process_path, p_path);
     strcat(process_path, PROCESS_CLIENT); /* '/' will work in windows too */
-    execute_process(process_path, PROCESS_CLIENT, "", NULL, 0);
+    execute_process(process_path, PROCESS_CLIENT, ClientSwitches, NULL, 0);
     free_resources();
     if (version_handle)
         fclose(version_handle);
@@ -140,6 +142,7 @@ int main(int argc, char *argv[])
     char version[256], buf[256], *string_pos;
     char file_name[256], md5[64];
     char *dummy; // purely to avoid GCC's warn_unused_result warning
+    int i;
 
 #ifndef WIN32
     /*    struct flock fl = { F_RDLCK, SEEK_SET, 0,       0,     0 };*/
@@ -164,6 +167,15 @@ int main(int argc, char *argv[])
     else
         prg_path[0]='\0';
 
+    /* Extract and remember client switches (any args beginning with '-'). */
+    for (i = 1; i < argc; i++)
+    {
+        if (*argv[i] == '-')
+        {
+            sprintf(strchr(ClientSwitches, '\0'), "%s ", argv[i]);
+        }
+    }
+
     /* check for install or update keywords */
     if (argc>1)
     {
@@ -179,7 +191,7 @@ int main(int argc, char *argv[])
 
                 fclose(tmp);
                 copy_patch(argv[0], argv[2]);
-                sprintf(parms,"update \"%s\"", argv[0]);
+                sprintf(parms,"update \"%s\" %s", argv[0], ClientSwitches);
                 execute_process(argv[2], argv[2], parms, NULL, 0);
 
                 printf("updated... restarting.\n");
@@ -793,7 +805,7 @@ int process_patch_file(char *patch_file, int mode)
                     fclose(stream);
                     /* start the new installer and stop, so it can copy over us */
                     sprintf(process_path,"%s%s%s", prg_path, FOLDER_PATCH, src_path);
-                    sprintf(parms,"install \"%s\"", argv0);
+                    sprintf(parms,"install \"%s\" %s", argv0, ClientSwitches);
                     fclose(version_handle); /* important: allow instances */
                     execute_process(process_path, process_path, parms, NULL, 0);
 
