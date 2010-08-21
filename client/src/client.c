@@ -1046,7 +1046,7 @@ int request_face(int pnum)
             {
                 PHYSFS_sint64  objCount;
 
-                MALLOC(data, len);
+                MALLOC(data, (uint32)len);
 
                 if (data &&
                     (objCount = PHYSFS_read(handle, data, (PHYSFS_uint32)len, 1)) < 1)
@@ -1059,7 +1059,7 @@ int request_face(int pnum)
                 {
                     face_flag_extension(num, buf);
                     MALLOC_STRING(FaceList[num].name, buf);
-                    FaceList[num].checksum = crc32(1L, data, len);
+                    FaceList[num].checksum = crc32(1L, data, (uint32)len);
 #ifdef DAI_DEVELOPMENT
                     LOG(LOG_MSG, "Custom image '%s %s' successfully loaded.\n",
                         PHYSFS_getRealDir(buf), buf);
