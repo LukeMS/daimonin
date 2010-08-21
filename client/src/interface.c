@@ -2292,17 +2292,70 @@ static void ShowGUIContents(uint16 x, uint16 y)
                 gui_npc->reward->mithril)
             {
                 uint8    i = 0;
-                int      coins[DENOMINATIONS];
+                int      coins[DENOMINATIONS],
+                         id;
                 _Sprite *sprites[DENOMINATIONS];
 
                 coins[i] = gui_npc->reward->copper;
-                sprites[i++] = FaceList[get_bmap_id("coppercoin.101")].sprite;
+                sprintf(buf, "coppercoin.101");
+                id = get_bmap_id(buf);
+
+                if (id == -1)
+                {
+                    id = 0;
+                    LOG(LOG_ERROR, "Can't find image '%s'!\n", buf);
+                }
+                else
+                {
+                    request_face(id);
+                }
+
+                sprites[i++] = FaceList[id].sprite;
                 coins[i] = gui_npc->reward->silver;
-                sprites[i++] = FaceList[get_bmap_id("silvercoin.101")].sprite;
+                sprintf(buf, "silvercoin.101");
+                id = get_bmap_id(buf);
+
+                if (id == -1)
+                {
+                    id = 0;
+                    LOG(LOG_ERROR, "Can't find image '%s'!\n", buf);
+                }
+                else
+                {
+                    request_face(id);
+                }
+
+                sprites[i++] = FaceList[id].sprite;
                 coins[i] = gui_npc->reward->gold;
-                sprites[i++] = FaceList[get_bmap_id("goldcoin.101")].sprite;
+                sprintf(buf, "goldcoin.101");
+                id = get_bmap_id(buf);
+
+                if (id == -1)
+                {
+                    id = 0;
+                    LOG(LOG_ERROR, "Can't find image '%s'!\n", buf);
+                }
+                else
+                {
+                    request_face(id);
+                }
+
+                sprites[i++] = FaceList[id].sprite;
                 coins[i] = gui_npc->reward->mithril;
-                sprites[i++] = FaceList[get_bmap_id("mit_coin.101")].sprite;
+                sprintf(buf, "mit_coin.101");
+                id = get_bmap_id(buf);
+
+                if (id == -1)
+                {
+                    id = 0;
+                    LOG(LOG_ERROR, "Can't find image '%s'!\n", buf);
+                }
+                else
+                {
+                    request_face(id);
+                }
+
+                sprites[i++] = FaceList[id].sprite;
 
                 if (gui_npc->reward->body.line_count)
                 {
