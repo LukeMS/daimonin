@@ -1014,6 +1014,15 @@ void NewAnimCmd(unsigned char *data, int len)
         }
     }
 
+/* I'm not entirely sure what the intended behaviour of this code is. However,
+ * right now it can assign the same address to multiple pointers which all ends
+ * up being freed later, producing undefined behaviour as a result of a double
+ * free.
+ * As a temporary measure, this code has been disabled for now in order to
+ * avoid this issue. It doesn't seem to break anything, but probably needs to
+ * be looked at when client-side animations is implemented.
+ * -- Lippy 20100822 */
+#if 0
     /* lets do the mappings */
 
     /* first the default mappings */
@@ -1038,6 +1047,7 @@ void NewAnimCmd(unsigned char *data, int len)
             animation[animnum].aSeq[i] = animation[animnum].aSeq[seqmap[i]];
         }
     }
+#endif
 
     /* mark it as successful loaded */
     animation[animnum].loaded = TRUE;
