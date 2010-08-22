@@ -1,9 +1,14 @@
 -------------------------------------------------------------------------------
 -- quest_manager.lua
 --
--- High-level API for managing quests.
+-- Deprecated for direct use, use quest_builder.lua.
 -------------------------------------------------------------------------------
 QuestManager = { }
+
+if not QuestBuilder then
+    game:Log(game.LOG_INFO, "WARNING: quest_manager.lua is deprecated for " ..
+             "direct use, use quest_builder.lua!")
+end
 
 ---------------------------------------
 -- Meet... da management!

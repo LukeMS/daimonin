@@ -9,11 +9,11 @@
 -- a higher number quest without first completing each lower number quest,
 -- and it is impossible to have more than one quest active at a time.
 -------------------------------------------------------------------------------
+QuestBuilder = { }
+
 if not QuestManager then
     require("quest_manager")
 end
-
-QuestBuilder = { }
 
 ---------------------------------------
 -- Meet... da management!
