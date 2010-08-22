@@ -51,6 +51,8 @@
 #include <stdarg.h>
 #include <stddef.h>
 #include <stdlib.h>
+#include <direct.h>
+
 
 #include <SDL/SDL.h>
 #include <SDL/SDL_main.h>
