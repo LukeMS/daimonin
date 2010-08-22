@@ -1047,31 +1047,60 @@ char * describe_item(const object *const op)
                       sprintf(strchr(retbuf, '\0'), "(miss%+d)", op->stats.thacm);
                   }
 
-                  strcat(retbuf, "\nIf consumed it will restore ");
-
-                  if (op->stats.hp)
+                  if (op->last_eat <= 0)
                   {
-                      sprintf(strchr(retbuf, '\0'), "%d hp%s",
-                              op->last_eat * op->stats.hp,
-                              (op->stats.sp && op->stats.grace) ? "," : "");
+                      strcat(retbuf, "\nIt has no restorative qualities.");
                   }
-
-                  if (op->stats.sp)
+                  else
                   {
-                      sprintf(strchr(retbuf, '\0'), "%s%d mana%s",
-                              (op->stats.hp) ? " and " : "",
-                              op->last_eat * op->stats.sp,
-                              (op->stats.hp && op->stats.grace) ? "," : "");
-                  }
+                      strcat(retbuf, "\nIf consumed it will ");
 
-                  if (op->stats.grace)
-                  {
-                      sprintf(strchr(retbuf, '\0'), "%s%d grace",
-                              (op->stats.hp || op->stats.sp) ? " and " : "",
-                              op->last_eat * op->stats.grace);
-                  }
+                      if (op->stats.hp > 0)
+                      {
+                          sprintf(strchr(retbuf, '\0'), "restore %d hp%s",
+                                  op->last_eat * op->stats.hp,
+                                  (op->stats.sp > 0 && op->stats.grace > 0) ? "," : "");
+                      }
 
-                  sprintf(strchr(retbuf, '\0'), " over %d seconds.", op->last_eat);
+                      if (op->stats.sp > 0)
+                      {
+                          sprintf(strchr(retbuf, '\0'), "%s%d mana%s",
+                                  (op->stats.hp > 0) ? " and " : "restore ",
+                                  op->last_eat * op->stats.sp,
+                                  (op->stats.hp > 0 && op->stats.grace > 0) ? "," : "");
+                      }
+
+                      if (op->stats.grace > 0)
+                      {
+                          sprintf(strchr(retbuf, '\0'), "%s%d grace",
+                                  (op->stats.hp > 0 || op->stats.sp > 0) ? " and " : "restore ",
+                                  op->last_eat * op->stats.grace);
+                      }
+
+                      if (op->stats.hp < 0)
+                      {
+                          sprintf(strchr(retbuf, '\0'), " but reduce %d hp%s",
+                                  ABS(op->last_eat * op->stats.hp),
+                                  (op->stats.sp < 0 && op->stats.grace < 0) ? "," : "");
+                      }
+
+                      if (op->stats.sp < 0)
+                      {
+                          sprintf(strchr(retbuf, '\0'), "%s%d mana%s",
+                                  (op->stats.hp < 0) ? " and " : " but reduce ",
+                                  ABS(op->last_eat * op->stats.sp),
+                                  (op->stats.hp < 0 && op->stats.grace < 0) ? "," : "");
+                      }
+
+                      if (op->stats.grace < 0)
+                      {
+                          sprintf(strchr(retbuf, '\0'), "%s%d grace",
+                                  (op->stats.hp < 0 || op->stats.sp < 0) ? " and " : " but reduce ",
+                                  ABS(op->last_eat * op->stats.grace));
+                      }
+
+                      sprintf(strchr(retbuf, '\0'), " over %d seconds.", op->last_eat);
+                  }
               }
               break;
 

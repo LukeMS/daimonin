@@ -736,6 +736,20 @@ void kill_player(object *op)
      * if they are dead - it takes some exp and a random stat.  See the config.h
      * file for a little more in depth detail about this. */
 
+    /* Clear out any food forces so if the player died while eating a bad
+     * apple he won't keep redying in his apt. */
+    for (tmp = op->inv; tmp; tmp = dep)
+    {
+        dep = tmp->below;
+
+        if (tmp->type == TYPE_FOOD_FORCE)
+        {
+            CLEAR_FLAG(op, FLAG_EATING);
+            pl->food_status = 0;
+            remove_force(tmp);
+        }
+    }
+
     /* remove any poisoning and confusion the character may be suffering. */
     cast_heal(op, 110, op, SP_CURE_POISON);
     cure_disease(op, NULL);  /* remove any disease */
