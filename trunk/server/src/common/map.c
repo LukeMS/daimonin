@@ -349,6 +349,8 @@ void dump_map(mapstruct *m, player *pl, int list, char *ref)
     {
         NDI_LOG(llevSystem, NDI_UNIQUE, 0, ob, "~Name~: %s",
                 STRING_SAFE(m->name));
+        NDI_LOG(llevSystem, NDI_UNIQUE, 0, ob, "~Msg~: %s",
+                STRING_SAFE(m->msg));
         NDI_LOG(llevSystem, NDI_UNIQUE, 0, ob, "~Music~: %s",
                 STRING_SAFE(m->music));
 
@@ -367,11 +369,6 @@ void dump_map(mapstruct *m, player *pl, int list, char *ref)
                     ((MAP_MULTI(m)) ? "Multiplayer" :
                      ((MAP_UNIQUE(m)) ? "Unique" :
                       ((MAP_INSTANCE(m)) ? "Instance" : "UNKNOWN"))));
-
-            if (m->msg)
-                NDI_LOG(llevSystem, NDI_UNIQUE, 0, ob, "~Msg~: %s",
-                        STRING_SAFE(m->msg));
-
             NDI_LOG(llevSystem, NDI_UNIQUE, 0, ob, "~Size~: %dx%d (%d, %d)",
                     MAP_WIDTH(m), MAP_HEIGHT(m), MAP_ENTER_X(m), MAP_ENTER_Y(m));
             NDI_LOG(llevSystem, NDI_UNIQUE, 0, ob, "~Darkness/Light~: %d/%d%s",
