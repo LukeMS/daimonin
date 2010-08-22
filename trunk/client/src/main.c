@@ -2435,12 +2435,32 @@ static void InitPhysFS(const char *argv0)
 
     if (buf[0])
     {
-        if (!PHYSFS_mkdir(buf))
+		// disabled: hotf PHYSFS_mkdir bug under win7
+		// This bug will shutdown the client for everyone installing it fresh without old client
+		// data in the user roaming directory (win7 confirmed, vista possible)
+		// - PHYSFS_mkdir() fails to write the "Daimonin/0.10/" in the user Roaming under win7
+		// - it even fails with a single "Daimonin" to create
+		// - it fails with a  "insecure filename" message
+		// reason can be a miss setting of the base dirs or a new security feature
+		// in physfs applied by new dlls. This must checked out
+		// PHYSFS_mkdir will NOT triggere the LOG_ERROR, which indicates its a setting
+		// or feature problem
+
+/*        if (!PHYSFS_mkdir(buf))
         {
             LOG(LOG_ERROR, "%s\n", PHYSFS_getLastError());
         }
-
+*/
+		
         sprintf(strchr(home, '\0'), "%s%s", sep, buf);
+
+		// hotfix for the PHYSFS_mkdir bug under win7... read the bugtracker
+		// create first the root in the user stuff
+		sprintf(buf, "%s/Daimonin/", env);
+        mkdir(buf, 0777);
+		// now the whole thing with version (mkdir can't create implicit the root directory)
+        mkdir(home, 0777);
+		// end hotfix
 
         if (strcmp(PHYSFS_getBaseDir(), home))
         {
