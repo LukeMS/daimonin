@@ -106,8 +106,10 @@ static void write_version_file(char *version, int version_nr)
 {
     char buf[256];
 
-    sprintf(buf,"%s %d", version, version_nr);
-    fseek(version_handle, 0L, SEEK_SET);
+	// dirty fix to ensure we have a clean version file
+    sprintf(buf,"%s %d                                       ", version, version_nr);
+	fseek(version_handle, 0L, SEEK_SET);
+
     if (fputs(buf,version_handle)<0)
     {
         perror("fputs():");
