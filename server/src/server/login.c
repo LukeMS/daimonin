@@ -335,12 +335,10 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
     char        filename[MEDIUM_BUF];
     char        buf[MEDIUM_BUF], bufall[MEDIUM_BUF];
     int         i, value;
-    int         correct = FALSE;
     time_t      elapsed_save_time   = 0;
     struct stat statbuf;
     object     *tmp, *tmp2;
-    int         kick_loop = 0,
-                mode_id = GMASTER_MODE_NO;
+    int         mode_id = GMASTER_MODE_NO;
 #ifdef USE_CHANNELS
     int     with_channels = FALSE;
     int     channelcount=0;
@@ -359,109 +357,51 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
     sprintf(filename, "%s/%s/%s/%s/%s.pl", settings.localdir, settings.playerdir, get_subdir(name), name, name);
     LOG(llevInfo, "PLAYER: %s\n", filename);
 
-    while(kick_loop++ < 10)
+    if ((fp = fopen(filename, "r")) == NULL)
     {
-        correct = FALSE;
+        return ADDME_MSG_UNKNOWN; /* player not found - return addme fails with no player */
+    }
 
-        if ((fp = fopen(filename, "r")) == NULL)
+    /* do some sanity checks with the the file */
+    if (fstat(fileno(fp), &statbuf))
+    {
+        LOG(llevBug, "\nBUG: Unable to stat %s?\n", filename);
+        elapsed_save_time = 0;
+    }
+    else
+    {
+        elapsed_save_time = time(NULL) - statbuf.st_mtime;
+        if (elapsed_save_time < 0)
         {
-            return ADDME_MSG_UNKNOWN; /* player not found - return addme fails with no player */
-        }
-
-        /* do some sanity checks with the the file */
-        if (fstat(fileno(fp), &statbuf))
-        {
-            LOG(llevBug, "\nBUG: Unable to stat %s?\n", filename);
+            LOG(llevBug, "\nBUG: Player file %s was saved in the future? (%d time)\n",
+                filename, (int)elapsed_save_time);
             elapsed_save_time = 0;
         }
-        else
-        {
-            elapsed_save_time = time(NULL) - statbuf.st_mtime;
-            if (elapsed_save_time < 0)
-            {
-                LOG(llevBug, "\nBUG: Player file %s was saved in the future? (%d time)\n",
-                    filename, (int)elapsed_save_time);
-                elapsed_save_time = 0;
-            }
-        }
-
-        /* the first line is always the password - so, we check it first. */
-        if (fgets(bufall, MEDIUM_BUF, fp) == NULL)
-        {
-            LOG(llevDebug, "\nBUG: Corrupt player file %s!\n", filename);
-            fclose(fp);
-            return ADDME_MSG_CORRUPT; /* addme fails - can't load player */
-        }
-        else
-        {
-            if (sscanf(bufall, "account %s\n", buf))
-            {
-                /* TODO: check double login of char under different accounts.
-                 * can be when a DM force a player load to his connection
-                 * for maintance
-                 */
-
-                /* simple sanity check - player is owned by this account? */
-                if(strcmp(ns->pl_account.name, buf))
-                {
-                    fclose(fp);
-                    return ADDME_MSG_ACCOUNT;
-                }
-
-                correct = TRUE;
-                /* lets check we have ghosting players - if so, kick them and retry */
-                if (correct)
-                {
-                    char double_login_warning[] = "3 Double login! Kicking older instance!";
-                    player *ptmp;
-
-                    for (ptmp = first_player; ptmp != NULL; ptmp = ptmp->next)
-                    {
-                        if ((ptmp->state & ST_PLAYING) && ptmp->ob->name == name)
-                        {
-                            LOG(llevInfo, "Double login! Kicking older instance! (%d) ", kick_loop);
-                            Write_String_To_Socket(ns, BINARY_CMD_DRAWINFO, double_login_warning, strlen(double_login_warning));
-#if 0
-                            /* I don't fully understand why but if we close fp
-                             * here, the fgets() below SIGSEGVs. Well the reason
-                             * is clear (reading from a closed stream), but
-                             * what I don't understand is that player_save()
-                             * closes the same stream anyway! I assume it is
-                             * because fp is a local variable to either
-                             * function, so we don't want to NULL this local fp
-                             * that we're going to then read...
-                             * An alternative might be to close iit here, then
-                             * fopen() it again (with all the checks that
-                             * implies) just before we fgets()...
-                             * But this is simpler and works -- Smacky 20090303 */
-                            fclose(fp); /* we will rewrite the file when saving beyond! close it first */
-                            /* This looks to be superfluous as player_save()
-                             * will be called anyway by remove_ns_dead_player().
-                             * -- Smacky 20090410 */
-                            player_save(ptmp->ob);
-#endif
-                            ptmp->state &= ~ST_PLAYING;
-                            ptmp->state |= ST_ZOMBIE;
-                            ptmp->socket.status = Ns_Dead;
-                            remove_ns_dead_player(ptmp);/* super hard kick! */
-                            continue;
-                        }
-                    }
-                }
-            }
-
-        } /* fgets account name */
-
-        break; /* all fine - leave kick loop sanity */
-    } /* while kickloop */
-
-    /* sanity check for the kick loop */
-    if (!correct)
-    {
-        LOG(llevBug, "KickLoop failed for name %s?!\n", name);
-        fclose(fp);
-        return ADDME_MSG_INTERNAL; /* addme_fail error with internal! */
     }
+
+    /* the first line is always the password - so, we check it first. */
+    if (fgets(bufall, MEDIUM_BUF, fp) == NULL)
+    {
+        LOG(llevDebug, "\nBUG: Corrupt player file %s!\n", filename);
+        fclose(fp);
+        return ADDME_MSG_CORRUPT; /* addme fails - can't load player */
+    }
+    else
+    {
+        if (sscanf(bufall, "account %s\n", buf))
+        {
+            /* TODO: check double login of char under different accounts.
+             * can be when a DM force a player load to his connection
+             * for maintance
+             */
+            /* simple sanity check - player is owned by this account? */
+            if(strcmp(ns->pl_account.name, buf))
+            {
+                fclose(fp);
+                return ADDME_MSG_ACCOUNT;
+            }
+        }
+    } /* fgets account name */
 
     /* Here we go.. at this point we will put this player on the map, whatever happens
      * If needed we overrule bogus loaded stats but we WILL put a valid player in the
