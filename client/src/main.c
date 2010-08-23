@@ -2362,7 +2362,7 @@ static void InitPhysFS(const char *argv0)
     char        home[MEDIUM_BUF],
                 userpath[MEDIUM_BUF],
                 buf[LARGE_BUF];
-#ifdef __WIN32
+#if __WIN_32
     char        root_buf[SMALL_BUF];
 #endif
     time_t      tp;
