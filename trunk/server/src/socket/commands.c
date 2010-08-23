@@ -1385,6 +1385,49 @@ void cs_cmd_addme(char *buf, int len, NewSocket *ns)
     }
     else
     {
+        char    double_login_warning[] = "3 Double login! Kicking older instance!";
+        player *ptmp = first_player;
+
+        for (; ptmp; ptmp = ptmp->next)
+        {
+            /* If a same-named player is already playing, kick him (he's a
+             * ghost) BEFORE we load the player file for this new instance.
+             * This avoids duping. */
+            if ((ptmp->state & ST_PLAYING) &&
+                ptmp->ob->name == hash_name)
+            {
+                LOG(llevInfo, "Double login! Kicking older instance!");
+                Write_String_To_Socket(ns, BINARY_CMD_DRAWINFO,
+                                       double_login_warning,
+                                       strlen(double_login_warning));
+#if 0
+                /* I don't fully understand why but if we close fp
+                 * here, the fgets() below SIGSEGVs. Well the reason
+                 * is clear (reading from a closed stream), but
+                 * what I don't understand is that player_save()
+                 * closes the same stream anyway! I assume it is
+                 * because fp is a local variable to either
+                 * function, so we don't want to NULL this local fp
+                 * that we're going to then read...
+                 * An alternative might be to close iit here, then
+                 * fopen() it again (with all the checks that
+                 * implies) just before we fgets()...
+                 * But this is simpler and works -- Smacky 20090303 */
+                fclose(fp); /* we will rewrite the file when saving beyond! close it first */
+                /* This looks to be superfluous as player_save()
+                 * will be called anyway by remove_ns_dead_player().
+                 * -- Smacky 20090410 */
+                player_save(ptmp->ob);
+#endif
+                ptmp->state &= ~ST_PLAYING;
+                ptmp->state |= ST_ZOMBIE;
+                ptmp->socket.status = Ns_Dead;
+                remove_ns_dead_player(ptmp);/* super hard kick! */
+
+                continue;
+            }
+        }
+
         /* lets try to login! ns is our socket, the player name must be a hash
         * the return value will tell us player is now loaded & active or there is a problem.
         * login_player() will put the player on the map and send all initial commands in the
