@@ -2354,12 +2354,14 @@ static const char *GetOption(const char *arg, const char *sopt,
 
     return NULL;
 }
-
 static void InitPhysFS(const char *argv0)
 {
     const char *sep,
                *env;
+    struct stat dir_stat;
     char        home[MEDIUM_BUF],
+				userpath[MEDIUM_BUF],
+				root_buf[128],
                 buf[LARGE_BUF];
     time_t      tp;
 #ifdef DAI_DEVELOPMENT
@@ -2392,9 +2394,10 @@ static void InitPhysFS(const char *argv0)
     /* Use APPDATA if defined. */
     if ((env = getenv("APPDATA")))
     {
-        sprintf(home, "%s", env);
-        sprintf(buf, "Daimonin%s%d.%d",
-                sep, DAI_VERSION_RELEASE, DAI_VERSION_MAJOR);
+		sprintf(home, "%s", env);
+		sprintf(root_buf, "%s", "Daimonin");
+        sprintf(buf, "%s%s%d.%d",
+                root_buf, sep, DAI_VERSION_RELEASE, DAI_VERSION_MAJOR);
     }
     /* Not defined? (May not be on W98, but such an old OS is unsupported anyway.) */
     else
@@ -2403,8 +2406,9 @@ static void InitPhysFS(const char *argv0)
         if ((env = getenv("WINDIR")))
         {
             sprintf(home, "%s", env);
-            sprintf(buf, "Application Data%sDaimonin%s%d.%d",
-                    sep, DAI_VERSION_RELEASE, DAI_VERSION_MAJOR);
+			sprintf(root_buf, "Application Data%sDaimonin", sep);
+            sprintf(buf, "%s%s%d.%d",
+                    root_buf, DAI_VERSION_RELEASE, DAI_VERSION_MAJOR);
         }
         /* Not defined either? Just use the the base dir. */
         else
@@ -2423,57 +2427,79 @@ static void InitPhysFS(const char *argv0)
     buf[0] = '\0';
 #endif
 
-    /* The user dir is (the only) place where files are written to. It must be
+	/* The user dir is (the only) place where files are written to. It must be
      * set, so if it can't be, we exit straight away. Note that the log here
      * will go to stderr only (as obviously we can't open a file). */
-    if (!PHYSFS_setWriteDir(home))
-    {
-        LOG(LOG_ERROR, "Could not set write dir (1, '%s'): %s. Exiting!\n",
-            home, PHYSFS_getLastError());
-        exit(EXIT_FAILURE);
-    }
 
-    if (buf[0])
+	// set the final path to the user specific and fire it up... do not care about errors here
+	// buf can be '\0' the trailing slash will be ignored
+    sprintf(userpath, "%s%s%s", home, sep, buf);
+	PHYSFS_mkdir(userpath);
+	PHYSFS_setWriteDir(userpath);
+
+	// at this point the home should be there!
+	// Well, except some access control interrupted us WITHOUT GIVE BACK THE RIGHT WARNINGS!
+	// That means that for example some windows versions are simply technical broken because they act
+	// like a virus checker and not telling us "the truth about what our access is doing",
+	// even they tell us by error flow that all is fine.
+	// Not giving back the right error messages to IO functions is simply a hack and some
+	// windows versions are doing it. 
+
+	// simply check our user patch is there
+	// PHYSFS *can* create it, but sometimes access control says no
+	// PHYSFS_setWriteDir() seems to work fine WHEN the dir is there
+	if (stat(userpath, &dir_stat) != 0)
+	{
+		LOG(LOG_ERROR, "Could not set write dir with PHYSFS_mkdir() (2, '%s'): %s. Retry with mkdir()!\n",
+                    userpath, PHYSFS_getLastError());
+
+		#ifdef WIN32
+			// to fix physfs problems under different win OS, we force the directory creation here
+	        sprintf(userpath, "%s%s%s", env, sep, root_buf);
+			mkdir(userpath, 0777);
+			// now the whole thing with version (mkdir can't create implicit the root directory)
+			sprintf(userpath, "%s%s%s", home, sep, buf);
+			mkdir(userpath, 0777);
+		#else
+			// add here custom fallback code for linux and other OS when needed
+		#endif
+	}
+
+
+	if (buf[0])
     {
+		sprintf(strchr(home, '\0'), "%s%s", sep, buf);
+
 #ifdef WIN32
-        // disabled: hotf PHYSFS_mkdir bug under win7
-        // This bug will shutdown the client for everyone installing it fresh without old client
-        // data in the user roaming directory (win7 confirmed, vista possible)
-        // - PHYSFS_mkdir() fails to write the "Daimonin/0.10/" in the user Roaming under win7
-        // - it even fails with a single "Daimonin" to create
-        // - it fails with a  "insecure filename" message
-        // reason can be a miss setting of the base dirs or a new security feature
-        // in physfs applied by new dlls. This must checked out
-        // PHYSFS_mkdir will NOT triggere the LOG_ERROR, which indicates its a setting
-        // or feature problem
-
-        // hotfix for the PHYSFS_mkdir bug under win7... read the bugtracker
-        // create first the root in the user stuff
-        sprintf(strchr(home, '\0'), "%s%s", sep, buf);
-        sprintf(buf, "%s/Daimonin/", env);
-        mkdir(buf, 0777);
-        // now the whole thing with version (mkdir can't create implicit the root directory)
-        mkdir(home, 0777);
-        // end hotfix
+		// nothing to do here... the trick is done above
 #else
         if (!PHYSFS_mkdir(buf))
         {
             LOG(LOG_ERROR, "%s\n", PHYSFS_getLastError());
         }
 		
-        sprintf(strchr(home, '\0'), "%s%s", sep, buf);
 #endif
 
-        if (strcmp(PHYSFS_getBaseDir(), home))
-        {
-            if (!PHYSFS_setWriteDir(home))
-            {
-                LOG(LOG_ERROR, "Could not set write dir (2, '%s'): %s. Exiting!\n",
-                    home, PHYSFS_getLastError());
-                exit(EXIT_FAILURE);
-            }
-        }
-    }
+		// ok, here we have now a problem...
+		// try an emergency fallback and fire it up... perhaps it will work
+		if (stat(home, &dir_stat) != 0)
+		{
+			LOG(LOG_ERROR, "FAILED to set user dir %s - EMERGENCY fallback to: %s\n", home, PHYSFS_getBaseDir());
+			sprintf(home, "%s", PHYSFS_getBaseDir());
+			buf[0] = '\0';
+		}
+
+		// home WILL hold now the home, do the final check
+		if (!PHYSFS_setWriteDir(home))
+		{
+			LOG(LOG_ERROR, "Could not set write dir (2, '%s'): %s. Exiting!\n",
+				home, PHYSFS_getLastError());
+		    exit(EXIT_FAILURE);
+		}
+	}
+
+	// at this point we should have catched all OS glitches and also a glitch in physfs
+	// the code looks a bit odd, but it works!
 
     /* Make sure all the dirs that may be written to exist. */
     if (!PHYSFS_mkdir(DIR_CACHE) ||
