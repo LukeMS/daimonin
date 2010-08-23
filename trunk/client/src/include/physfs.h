@@ -1,25 +1,9 @@
-/*
-    Daimonin SDL client, a client program for the Daimonin MMORPG.
+/**
+ * \file physfs.h
+ *
+ * Main header file for PhysicsFS.
+ */
 
-
-  Copyright (C) 2003 Michael Toennies
-
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-
-    The author can be reached via e-mail to info@daimonin.org
-*/
 /**
  * \mainpage PhysicsFS
  *
@@ -229,8 +213,8 @@
  *  \author Ryan C. Gordon.
  */
 
-#ifndef __PHYSFS_H
-#define __PHYSFS_H
+#ifndef _INCLUDE_PHYSFS_H_
+#define _INCLUDE_PHYSFS_H_
 
 #ifdef __cplusplus
 extern "C" {
@@ -354,7 +338,7 @@ PHYSFS_COMPILE_TIME_ASSERT(sint64, sizeof(PHYSFS_sint64) == 8);
  * \sa PHYSFS_setBuffer
  * \sa PHYSFS_flush
  */
-typedef struct
+typedef struct PHYSFS_File
 {
     void *opaque;  /**< That's all you get. Don't touch. */
 } PHYSFS_File;
@@ -389,7 +373,7 @@ typedef struct
  *
  * \sa PHYSFS_supportedArchiveTypes
  */
-typedef struct
+typedef struct PHYSFS_ArchiveInfo
 {
     const char *extension;   /**< Archive file extension: "ZIP", for example. */
     const char *description; /**< Human-readable archive description. */
@@ -411,7 +395,7 @@ typedef struct
  * \sa PHYSFS_VERSION
  * \sa PHYSFS_getLinkedVersion
  */
-typedef struct
+typedef struct PHYSFS_Version
 {
     PHYSFS_uint8 major; /**< major revision */
     PHYSFS_uint8 minor; /**< minor revision */
@@ -419,8 +403,8 @@ typedef struct
 } PHYSFS_Version;
 
 #ifndef DOXYGEN_SHOULD_IGNORE_THIS
-#define PHYSFS_VER_MAJOR 1
-#define PHYSFS_VER_MINOR 1
+#define PHYSFS_VER_MAJOR 2
+#define PHYSFS_VER_MINOR 0
 #define PHYSFS_VER_PATCH 1
 #endif  /* DOXYGEN_SHOULD_IGNORE_THIS */
 
@@ -518,8 +502,9 @@ __EXPORT__ int PHYSFS_init(const char *argv0);
  *  handle a specific failure.
  *
  * Once successfully deinitialized, PHYSFS_init() can be called again to
- *  restart the subsystem. All defaults API states are restored at this
- *  point.
+ *  restart the subsystem. All default API states are restored at this
+ *  point, with the exception of any custom allocator you might have
+ *  specified, which survives between initializations.
  *
  *  \return nonzero on success, zero on error. Specifics of the error can be
  *          gleaned from PHYSFS_getLastError(). If failure, state of PhysFS is
@@ -550,7 +535,7 @@ __EXPORT__ int PHYSFS_deinit(void);
  * for (i = PHYSFS_supportedArchiveTypes(); *i != NULL; i++)
  * {
  *     printf("Supported archive: [%s], which is [%s].\n",
- *              i->extension, i->description);
+ *              (*i)->extension, (*i)->description);
  * }
  * \endcode
  *
@@ -1005,7 +990,7 @@ __EXPORT__ const char *PHYSFS_getRealDir(const char *filename);
  * PHYSFS_freeList(rc);
  * \endcode
  *
- *  ...will print:
+ *  \...will print:
  *
  * \verbatim
  * We've got [x.sav].
@@ -1993,7 +1978,7 @@ __EXPORT__ int PHYSFS_symbolicLinksPermitted(void);
  *
  * \sa PHYSFS_setAllocator
  */
-typedef struct
+typedef struct PHYSFS_Allocator
 {
     int (*Init)(void);   /**< Initialize. Can be NULL. Zero on failure. */
     void (*Deinit)(void);  /**< Deinitialize your allocator. Can be NULL. */
@@ -2404,4 +2389,7 @@ __EXPORT__ void PHYSFS_utf8FromLatin1(const char *src, char *dst,
 }
 #endif
 
-#endif  /* ifndef __PHYSFS_H */
+#endif  /* !defined _INCLUDE_PHYSFS_H_ */
+
+/* end of physfs.h ... */
+
