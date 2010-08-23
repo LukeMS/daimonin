@@ -2360,9 +2360,11 @@ static void InitPhysFS(const char *argv0)
                *env;
     struct stat dir_stat;
     char        home[MEDIUM_BUF],
-				userpath[MEDIUM_BUF],
-				root_buf[128],
+                userpath[MEDIUM_BUF],
                 buf[LARGE_BUF];
+#ifdef __WIN32
+    char        root_buf[SMALL_BUF];
+#endif
     time_t      tp;
 #ifdef DAI_DEVELOPMENT
     char      **list;
