@@ -26,7 +26,7 @@
 
 #define DAI_VERSION_RELEASE 0
 #define DAI_VERSION_MAJOR 10
-#define DAI_VERSION_MINOR 3
+#define DAI_VERSION_MINOR 4
 #define PROTOCOL_VERSION 991031
 
 /* min & max length of player & account names & password
