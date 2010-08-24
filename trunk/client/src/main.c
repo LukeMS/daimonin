@@ -2455,7 +2455,7 @@ static void InitPhysFS(const char *argv0)
 		LOG(LOG_ERROR, "Could not set write dir with PHYSFS_mkdir() (2, '%s'): %s. Retry with mkdir()!\n",
                     userpath, PHYSFS_getLastError());
 
-		#ifdef WIN32
+		#ifdef __WIN_32
 			// to fix physfs problems under different win OS, we force the directory creation here
 	        sprintf(userpath, "%s%s%s", env, sep, root_buf);
 			mkdir(userpath, 0777);
@@ -2467,12 +2467,11 @@ static void InitPhysFS(const char *argv0)
 		#endif
 	}
 
-
 	if (buf[0])
     {
 		sprintf(strchr(home, '\0'), "%s%s", sep, buf);
 
-#ifdef WIN32
+#ifdef __WIN_32
 		// nothing to do here... the trick is done above
 #else
         if (!PHYSFS_mkdir(buf))
@@ -2491,13 +2490,21 @@ static void InitPhysFS(const char *argv0)
 			buf[0] = '\0';
 		}
 
-		// home WILL hold now the home, do the final check
-		if (!PHYSFS_setWriteDir(home))
+        // TODO: will not work for UTF8 pathes, fallback will go to daimonin original install
+        if (!PHYSFS_setWriteDir(home))
 		{
-			LOG(LOG_ERROR, "Could not set write dir (2, '%s'): %s. Exiting!\n",
-				home, PHYSFS_getLastError());
-		    exit(EXIT_FAILURE);
-		}
+            LOG(LOG_ERROR, "Could not set write dir (2, '%s'): Final EMERGENCY fallback: %s !\n",
+				home, PHYSFS_getBaseDir());
+
+			sprintf(home, "%s", PHYSFS_getBaseDir());
+		    buf[0] = '\0';
+			if (!PHYSFS_setWriteDir(home))
+			{
+				LOG(LOG_ERROR, "Could not set write dir (2, '%s'): LAST ERROR: %s. Exiting!\n",
+                    home, PHYSFS_getLastError());
+                exit(EXIT_FAILURE);
+            }
+        }
 	}
 
 	// at this point we should have catched all OS glitches and also a glitch in physfs
