@@ -3016,9 +3016,9 @@ void check_menu_keys(int menu, int key)
             menuRepeatKey = SDLK_DOWN;
             break;
         case SDLK_d:
+        case SDLK_ESCAPE:
             save_keybind_file();
             sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICK, 0, 0, MENU_SOUND_VOL);
-        case SDLK_ESCAPE:
             cpl.menustatus = MENU_NO;
             map_udate_flag = 2;
             reset_keys();
