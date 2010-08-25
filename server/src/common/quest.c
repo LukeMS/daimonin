@@ -40,11 +40,18 @@ static object *find_quest_item(object *target, object *obj)
         {
             object *item;
 
-            if((item = find_quest_item(tmp, obj)))
+            if ((item = find_quest_item(tmp, obj)))
+            {
                 return item;
+            }
         }
-        else if (tmp->type == obj->type && tmp->name == obj->name && tmp->title == obj->title)
+        else if (!QUERY_FLAG(tmp, FLAG_SYS_OBJECT) &&
+                 tmp->type == obj->type &&
+                 tmp->name == obj->name &&
+                 tmp->title == obj->title)
+        {
             return tmp;
+        }
     }
 
     return NULL;
