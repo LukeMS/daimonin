@@ -22,9 +22,7 @@
 */
 #include <include.h>
 
-#if PHYSFS_VER_MAJOR < 2
 int PHYSFS_isInitialised = 0;
-#endif
 
 void LOG(int logLevel, char *format, ...)
 {
@@ -50,7 +48,7 @@ void LOG(int logLevel, char *format, ...)
     va_end(ap);
     fprintf(stdout, "%s", buf);
 
-    if (PHYSFS_isInit() &&
+    if (wrapper_PHYSFS_isInit() &&
         PHYSFS_getWriteDir())
     {
         if (!handle)
@@ -425,6 +423,7 @@ uint32 get_video_flags(void)
     }
 }
 
+
 /* Parse server host into address and port
  * Allows URL style syntax with address in brackets
  * for addresses which include colons
@@ -614,12 +613,21 @@ int strcasecmp(char *s1, char *s2)
 #endif
 #endif
 
-#if PHYSFS_VER_MAJOR < 2
-int PHYSFS_isInit(void)
+int wrapper_PHYSFS_isInit(void)
 {
-    return PHYSFS_isInitialised;
+    PHYSFS_Version linked;
+
+    PHYSFS_getLinkedVersion(&linked);
+
+    if (linked.major < 2)
+    {
+        return PHYSFS_isInitialised;
+    }
+    else
+    {
+        return PHYSFS_isInit();
+    }
 }
-#endif
 
 /* Similar to fgets(). Reads the next line from handle into s (at most len - 1
  * characters), stopping when it reads \0, \n, or EOF. This terminating
