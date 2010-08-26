@@ -22,6 +22,10 @@
 */
 #include <include.h>
 
+/* This is because PHYSFS_isInit() was introduced in 2.0.0 and some linux
+ * distros are still stuck in 1.x.x. So in time we can dump this global and
+ * use PHYSFS_isInit(). But for now, it's a simple query we can reproduce
+ * 100% across the board this way, so lets do that. */
 int PHYSFS_isInitialised = 0;
 
 void LOG(int logLevel, char *format, ...)
@@ -48,7 +52,7 @@ void LOG(int logLevel, char *format, ...)
     va_end(ap);
     fprintf(stdout, "%s", buf);
 
-    if (wrapper_PHYSFS_isInit() &&
+    if (PHYSFS_isInitialised &&
         PHYSFS_getWriteDir())
     {
         if (!handle)
@@ -612,22 +616,6 @@ int strcasecmp(char *s1, char *s2)
 }
 #endif
 #endif
-
-int wrapper_PHYSFS_isInit(void)
-{
-    PHYSFS_Version linked;
-
-    PHYSFS_getLinkedVersion(&linked);
-
-    if (linked.major < 2)
-    {
-        return PHYSFS_isInitialised;
-    }
-    else
-    {
-        return PHYSFS_isInit();
-    }
-}
 
 /* Similar to fgets(). Reads the next line from handle into s (at most len - 1
  * characters), stopping when it reads \0, \n, or EOF. This terminating

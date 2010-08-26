@@ -137,7 +137,6 @@ int             strcasecmp(char *s1, char *s2);
 
 extern int PHYSFS_isInitialised;
 
-extern int wrapper_PHYSFS_isInit(void);
 extern PHYSFS_sint64 PHYSFS_readString(PHYSFS_File *handle, char *s, size_t len);
 extern PHYSFS_sint64 PHYSFS_writeString(PHYSFS_File *handle, const char *cs);
 extern void print_SDL_versions();
