@@ -1622,9 +1622,7 @@ int main(int argc, char *argv[])
     //struct timeval  timeout;
     // pollret;
 
-#if PHYSFS_VER_MAJOR < 2
     PHYSFS_isInitialised = 0;
-#endif
     init_game_data();
     ParseInvocationLine(argc, argv);
 
@@ -2134,9 +2132,7 @@ int main(int argc, char *argv[])
 
     LOG(LOG_MSG, "\n^^^^^^^^^ CLIENT ENDS ^^^^^^^^^\n");
     PHYSFS_deinit();
-#if PHYSFS_VER_MAJOR < 2
     PHYSFS_isInitialised = 0;
-#endif
     SYSTEM_End();
     return(0);
 }
@@ -2377,9 +2373,7 @@ static void InitPhysFS(const char *argv0)
         exit(EXIT_FAILURE);
     }
 
-#if PHYSFS_VER_MAJOR < 2
     PHYSFS_isInitialised = 1;
-#endif
 
     /* Get the platform-dependent dir separator. */
     sep = PHYSFS_getDirSeparator();
