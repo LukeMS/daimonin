@@ -250,7 +250,7 @@ void SetupCmd(char *buf, int len)
             {
                 textwin_showstring(COLOR_ORANGE, "Mismatched z version (server: %u, client: %u)!",
                                    min, DAI_VERSION_MINOR);
-                textwin_showstring(COLOR_ORANGE, "You can still connect and play but you might encounter minor problem of new features may not work properly.");
+                textwin_showstring(COLOR_ORANGE, "You can still connect and play but you might encounter minor problems or new features may not work properly.");
             }
         }
         else if (!strcmp(cmd, "pv"))
