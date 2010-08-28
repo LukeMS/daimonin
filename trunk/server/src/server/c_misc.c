@@ -202,7 +202,8 @@ int command_who(object *op, char *params)
     player *pl;
     int     ip,
             il,
-            it;
+            it,
+            pri;
 
     if (!op)
     {
@@ -214,13 +215,16 @@ int command_who(object *op, char *params)
         return 1;
     }
 
-    for (pl = first_player, ip = 0, il = 0; pl; pl = pl->next)
+    for (pl = first_player, ip = 0, il = 0, pri = 0; pl; pl = pl->next)
     {
         if (pl->privacy &&
             ((pl->gmaster_mode & GMASTER_MODE_SA) ||
              !(CONTR(op)->gmaster_mode & (GMASTER_MODE_SA | GMASTER_MODE_GM | GMASTER_MODE_VOL))))
         {
-            continue;
+            pri++;
+            // Ensure the SAs can see everything.
+            if(!(CONTR(op)->gmaster_mode & GMASTER_MODE_SA))
+                continue;
         }
 
         if (!pl->ob->map)
@@ -266,9 +270,9 @@ int command_who(object *op, char *params)
         }
     }
 
-    it = ip + il;
-    new_draw_info(NDI_UNIQUE, 0, op, "There %s %d player%s online (%d in login).",
-                         (it > 1) ? "are" : "is", it, (it > 1) ? "s" : "", il);
+    it = ip + il + pri; // show whats shown in meta server too, we add login to privacy 
+    new_draw_info(NDI_UNIQUE, 0, op, "There %s %d player%s online (%d privacy).",
+                         (it > 1) ? "are" : "is", it, (it > 1) ? "s" : "", pri+il);
 #ifdef DAI_DEVELOPMENT_CODE
     show_stream_info(&CONTR(op)->socket);
 #endif
