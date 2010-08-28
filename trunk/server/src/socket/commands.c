@@ -1541,6 +1541,8 @@ void cs_cmd_newchar(char *buf, int len, NewSocket *ns)
                  * player below. */
                 else
                 {
+                     shstr *name = NULL;
+
                      /* Add a dummy player so that delete player will work! */
                      ns->pl_account.level[ns->pl_account.nrof_chars] = 1; /* we always start with level 1 */
                      ns->pl_account.race[ns->pl_account.nrof_chars] = race;
@@ -1551,8 +1553,11 @@ void cs_cmd_newchar(char *buf, int len, NewSocket *ns)
 
                     /* This is basically the business end from cs_cmd_delchar()
                      * below. */
-                    if ((ret = account_delete_player(&ns->pl_account, buf)) ==
-                        ACCOUNT_STATUS_EXISTS)
+                    name = add_string(buf);
+                    ret = account_delete_player(ns, name);
+                    FREE_AND_CLEAR_HASH(name);
+
+                    if (ret == ACCOUNT_STATUS_EXISTS)
                     {
                         ns->status = Ns_Dead;
 
@@ -1639,6 +1644,7 @@ void cs_cmd_newchar(char *buf, int len, NewSocket *ns)
 void cs_cmd_delchar(char *buf, int len, NewSocket *ns)
 {
     int ret;
+    shstr *name = NULL;
 
     /* if the cmd isn't perfect, kill the socket. */
     if (!ns->pl_account.nrof_chars ||
@@ -1660,9 +1666,10 @@ void cs_cmd_delchar(char *buf, int len, NewSocket *ns)
     }
 
     /* name is ok, now try to remove from account and move the player file.
-     * account_delete_player() will take care about the flow
-     */
-    ret = account_delete_player(&ns->pl_account, buf);
+     * account_delete_player() will take care about the flow */
+    name = add_string(buf);
+    ret = account_delete_player(ns, name);
+    FREE_AND_CLEAR_HASH(name);
 
     /* no player with that name is part of this account.
      * this is a hack or a nasty sync problem - the client MUST send us a name which is part of account

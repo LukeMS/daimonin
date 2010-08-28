@@ -33,7 +33,7 @@ account_status  account_create(Account *ac, const char *name, char *pass);
 account_status  account_load(Account *ac, char *name, char *pass);
 void            account_create_msg(NewSocket *ns, int msg);
 void            account_send_client(NewSocket *ns, int stats);
-account_status  account_delete_player(Account *ac, char *name);
+account_status  account_delete_player(NewSocket *ns, shstr *name);
 /* commands.c */
 CommArray_s    *find_command(char *cmd, player *pl);
 CommArray_s    *find_command_element(char *cmd, CommArray_s *commarray, int commsize);

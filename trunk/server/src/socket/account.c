@@ -299,11 +299,13 @@ void account_send_client(NewSocket *ns, int stats)
  * (we also remove name from account - in this case the player name should be blocked which
  * will effect a newchar with that name but did no harm)
  */
-account_status account_delete_player(Account *ac, char *name)
+account_status account_delete_player(NewSocket *ns, shstr *name)
 {
+    Account *ac = &ns->pl_account;
     int i, ret = ACCOUNT_STATUS_EXISTS;
     char ac_fname[MEDIUM_BUF], pl_fname[MEDIUM_BUF];
     struct timeval   now;
+    player *ptmp = first_player;
 
     /* first, lets check we have that name in our account - in any case we remove it
      * from the account!
@@ -329,6 +331,23 @@ account_status account_delete_player(Account *ac, char *name)
     /* ok, lets try to move the player - but first some sanity check - we need a account name */
     if(!ac->name)
         return ACCOUNT_STATUS_CORRUPT; /* something is really sick */
+
+    for (; ptmp; ptmp = ptmp->next)
+    {
+        /* If a the player is playing, kick him BEFORE we delete the player
+         * file for this new instance. */
+        if ((ptmp->state & ST_PLAYING) &&
+            ptmp->ob->name == name)
+        {
+            LOG(llevInfo, "INFO:: Online player %s deleted!\n", name);
+            ptmp->state &= ~ST_PLAYING;
+            ptmp->state |= ST_ZOMBIE;
+            ptmp->socket.status = Ns_Dead;
+            remove_ns_dead_player(ptmp);/* super hard kick! */
+
+            continue;
+        }
+    }
 
     /* we move the whole player dir */
     sprintf(pl_fname, "%s/%s/%s/%s", settings.localdir, settings.playerdir, get_subdir(name), name);

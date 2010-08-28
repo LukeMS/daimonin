@@ -1261,6 +1261,17 @@ int new_save_map(mapstruct *m, int flag)
     {
         if (MAP_UNIQUE(m) || MAP_INSTANCE(m))
         {
+            /* When the player has been deleted we mustn't try to save the map,
+             * just delete it too. */
+            if (access(m->path, F_OK) == -1)
+            {
+                LOG(llevInfo, "INFO:: Player %s no longer exists so deleting map %s\n",
+                    m->reference, m->path);
+                delete_map(m);
+
+                return 0;
+            }
+
             /* that ensures we always reload from original maps */
             if (MAP_NOSAVE(m))
             {
