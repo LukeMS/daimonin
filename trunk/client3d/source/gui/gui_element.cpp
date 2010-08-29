@@ -162,14 +162,14 @@ bool GuiElement::setState(uchar state)
 }
 
 //================================================================================================
-// .
+// Returns true if the derived class needs a redraw.
 //================================================================================================
-void GuiElement::setHidden(bool hidden)
+bool GuiElement::setHidden(bool hidden)
 {
     PROFILE()
-    if (hidden == mHidden) return;
+    if (mHidden == hidden) return false;
     mHidden = hidden;
-    draw(true);
+    return true;
 }
 
 //================================================================================================
@@ -188,17 +188,17 @@ void GuiElement::draw(bool uploadToTexture)
                        mGfxSrc->state[mState].x + mGfxSrc->w, mGfxSrc->state[mState].y + mGfxSrc->h));
         int srcRowSkip = (int)GuiImageset::getSingleton().getPixelBox().getWidth();
         if (mIndex < 0) // The gfx is part of the background or a part of another element (e.g: button of a scrollbar element).
-            GuiGraphic::getSingleton().drawGfxToBuffer(mWidth, mHeight, mGfxSrc->w, mGfxSrc->h, (uint32*)src.data, bak, bak, srcRowSkip, mParent->getWidth(), mParent->getWidth());
+            GuiGraphic::getSingleton().blendGfxToBuffer(mWidth, mHeight, mGfxSrc->w, mGfxSrc->h, (uint32*)src.data, bak, bak, srcRowSkip, mParent->getWidth(), mParent->getWidth());
         else if (!mHidden)
-            GuiGraphic::getSingleton().drawGfxToBuffer(mWidth, mHeight, mGfxSrc->w, mGfxSrc->h, (uint32*)src.data, bak, dst, srcRowSkip, mParent->getWidth(), mWidth);
+            GuiGraphic::getSingleton().blendGfxToBuffer(mWidth, mHeight, mGfxSrc->w, mGfxSrc->h, (uint32*)src.data, bak, dst, srcRowSkip, mParent->getWidth(), mWidth);
     }
     // Draws a color area to the window texture.
     else
     {
         if (mIndex < 0) // The gfx is part of the background or a part of another element (e.g: button of a scrollbar element).
-            GuiGraphic::getSingleton().drawColorToBuffer(mWidth, mHeight, mFillColor, bak, mParent->getWidth());
+            GuiGraphic::getSingleton().blendColorToBuffer(mWidth, mHeight, mFillColor, bak, mParent->getWidth());
         else if (!mHidden)
-            GuiGraphic::getSingleton().drawColorToBuffer(mWidth, mHeight, mFillColor, bak, dst, mParent->getWidth(), mWidth);
+            GuiGraphic::getSingleton().blendColorToBuffer(mWidth, mHeight, mFillColor, bak, dst, mParent->getWidth(), mWidth);
     }
     if (mIndex < 0 || mHidden)
         GuiGraphic::getSingleton().restoreWindowBG(mWidth, mHeight, bak, dst, mParent->getWidth(), mWidth);

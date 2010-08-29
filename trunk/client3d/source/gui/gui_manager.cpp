@@ -32,9 +32,10 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include <OISKeyboard.h>
 #include "logger.h"
 #include "profiler.h"
-#include "gui/gui_manager.h"
 #include "gui/gui_window.h"
 #include "gui/gui_cursor.h"
+#include "gui/gui_graphic.h"
+#include "gui/gui_manager.h"
 #include "gui/gui_textinput.h"
 
 using namespace Ogre;
@@ -59,7 +60,7 @@ const uint32 GuiManager::COLOR_PINK  = 0xffff00ff;
 const uint32 GuiManager::COLOR_YELLOW= 0xffffff00;
 const uint32 GuiManager::COLOR_WHITE = 0xffffffff;
 
-static const int BORDER = 8;
+static const int BORDER_SIZE = 8;
 static const int TOOLTIP_SIZE = 1 << 8;
 static const unsigned long TOOLTIP_DELAY = 2000; // Wait x ms before showing the tooltip.
 static const uint32 BORDER_COLOR = 0xff888888;
@@ -742,7 +743,7 @@ void GuiManager::update(Real timeSinceLastFrame)
 //================================================================================================
 // Set the tooltip text.
 // 0 hides the tooltip.
-// # indicates a linebreaks.
+// # indicates a linebreak.
 // While loading screen is active, the tooltip texture is used for system messages.
 //================================================================================================
 void GuiManager::setTooltip(const char *text, bool systemMessage)
@@ -750,21 +751,21 @@ void GuiManager::setTooltip(const char *text, bool systemMessage)
     PROFILE()
     if (!text || !(*text))
     {
-        mStrTooltip ="";
-        mOverlay->hide();
+        mStrTooltip.clear();
         mTooltipDelay = 0;
+        mOverlay->hide();
         return;
     }
     if (systemMessage)
     {
+        if (!mStrTooltip.empty())
+            mStrTooltip+= TOOLTIP_LINEBREAK_SIGN;
         mStrTooltip+= text;
-        mStrTooltip+= TOOLTIP_LINEBREAK_SIGN; // Linebreak.
         mTooltipDelay = 0;
         drawTooltip();
         return;
     }
     mStrTooltip = text;
-    mStrTooltip+= TOOLTIP_LINEBREAK_SIGN;
     mTooltipDelay = Root::getSingleton().getTimer()->getMilliseconds() + TOOLTIP_DELAY;
 }
 
@@ -775,75 +776,40 @@ void GuiManager::drawTooltip()
 {
     PROFILE()
     if (!mStrTooltip.size()) return;
-    const int MAX_TOOLTIP_LINES = 16;
-    std::string line[MAX_TOOLTIP_LINES];
-    int txtWidth[MAX_TOOLTIP_LINES];
-    int sumLines = 0;
-    int stop, start = 0;
-    int fontHeight = GuiTextout::getSingleton().getFontHeight(GuiTextout::FONT_SYSTEM);
-    for (sumLines = 0; sumLines < MAX_TOOLTIP_LINES; ++sumLines)
-    {
-        stop = (int)mStrTooltip.find(TOOLTIP_LINEBREAK_SIGN, start);
-        if (stop == (int)std::string::npos)
-        {
-            if (start < (int)mStrTooltip.size())
-                line[sumLines] = mStrTooltip.substr(start, mStrTooltip.size());
-            break;
-        }
-        line[sumLines] = mStrTooltip.substr(start, stop-start);
-        start = stop+1;
-    }
-    if (MAX_TOOLTIP_LINES*fontHeight + 2*BORDER > TOOLTIP_SIZE)
-    {
-        sumLines =3;
-        line[0] = "*ERROR* ";
-        line[1] = "Tooltip-text doesnt fit into the texture!";
-        line[2] = "change MAX_TOOLTIP_LINES in gui_manager.cpp.";
-    }
-    if (sumLines >= MAX_TOOLTIP_LINES-1)
-        line[MAX_TOOLTIP_LINES-1] = "(...)"; // Show the user that there is no more space left for another textline.
+    const int FONT_HEIGHT = GuiTextout::getSingleton().getFontHeight(GuiTextout::FONT_SYSTEM);
+    const int MAX_LINES = (TOOLTIP_SIZE-2*BORDER_SIZE) / FONT_HEIGHT;
     // ////////////////////////////////////////////////////////////////////
-    // Calculate the needed dimension of the tooltip.
+    // Count the textlines and calculate the size of the text.
     // ////////////////////////////////////////////////////////////////////
-    int maxWidth = 0;
-    for (int i = 0; i < sumLines; ++i)
+    int sumLines = 1, actWidth = 0;
+    size_t posLF[MAX_LINES];
+    posLF[0] = 0;
+    for (; sumLines < MAX_LINES; ++sumLines)
     {
-        txtWidth[i] = GuiTextout::getSingleton().calcTextWidth(line[i].c_str(), GuiTextout::FONT_SYSTEM);
-        if (txtWidth[i] > TOOLTIP_SIZE) txtWidth[i] = TOOLTIP_SIZE;
-        if (txtWidth[i] > maxWidth) maxWidth = txtWidth[i];
+        posLF[sumLines] = mStrTooltip.find(TOOLTIP_LINEBREAK_SIGN, posLF[sumLines-1]);
+        int txtWidth = GuiTextout::getSingleton().calcTextWidth(mStrTooltip.substr(posLF[sumLines-1], posLF[sumLines]-posLF[sumLines-1]).c_str(), GuiTextout::FONT_SYSTEM);
+        if (actWidth < txtWidth) actWidth = txtWidth;
+        if (posLF[sumLines]++ == std::string::npos) break;
     }
-    maxWidth+=2*BORDER;
-    if (maxWidth > TOOLTIP_SIZE) maxWidth = TOOLTIP_SIZE;
+    actWidth+= 2*BORDER_SIZE;
+    int actHeight = sumLines*FONT_HEIGHT + 2*BORDER_SIZE;
     // ////////////////////////////////////////////////////////////////////
     // Draw the background.
     // ////////////////////////////////////////////////////////////////////
-    const int w = (int)mTexture->getWidth();
-    const int h = (int)mTexture->getHeight();
-    uint32 *dest = (uint32*)mTexture->getBuffer()->lock(0, w*h*sizeof(uint32), HardwareBuffer::HBL_DISCARD);
-    uint32 *back = dest;
-    uint32 color;
-    int x,y, endY = (sumLines+1)*fontHeight;
-    for (y = 0; y < endY; ++y)
-    {
-        color =(y < 2 || y >= endY-2)?BORDER_COLOR:BACKGR_COLOR;
-        *dest++ = BORDER_COLOR;
-        *dest++ = BORDER_COLOR;
-        for (x = 2; x < maxWidth-2; ++x) *dest++ = color;
-        *dest++ = BORDER_COLOR;
-        *dest++ = BORDER_COLOR;
-        for (; x < w-2; ++x) *dest++ = 0;
-    }
-    y = (h-endY) * w;
-    for (; --y;) *dest++ = 0;
-    maxWidth-=BORDER*2;
+    int maxWidth = (int)mTexture->getWidth();
+    int maxHeight= (int)mTexture->getHeight();
+    uint32 *dst = (uint32*)mTexture->getBuffer()->lock(HardwareBuffer::HBL_DISCARD);
+    memset(dst, 0x00, maxWidth*maxHeight*sizeof(uint32));
+    GuiGraphic::getSingleton().drawColorBorder(actWidth, actHeight, BACKGR_COLOR, BORDER_COLOR, dst, maxWidth, 1);
     // ////////////////////////////////////////////////////////////////////
     // Draw the text.
     // ////////////////////////////////////////////////////////////////////
-    color = BACKGR_COLOR;
+    dst+= BORDER_SIZE*maxWidth + BORDER_SIZE;
     for (int i = 0; i < sumLines; ++i)
     {
-        dest = back + BORDER + (BORDER + i*fontHeight) * w;
-        GuiTextout::getSingleton().printText(maxWidth, fontHeight, dest, w, &color, 0, line[i].c_str(), GuiTextout::FONT_SYSTEM);
+        GuiTextout::getSingleton().printText(actWidth-2*BORDER_SIZE, FONT_HEIGHT, dst, maxWidth, (uint32*)&BACKGR_COLOR, 0,
+                                             mStrTooltip.substr(posLF[i], posLF[i+1]-posLF[i]-1).c_str(), GuiTextout::FONT_SYSTEM);
+        dst+= FONT_HEIGHT*maxWidth;
     }
     mTexture->getBuffer()->unlock();
     if (mTooltipDelay)
@@ -851,7 +817,7 @@ void GuiManager::drawTooltip()
         Real x = mMouse.x+40.0f;
         Real y = mMouse.y+40.0f;
         if (x+ maxWidth > mScreenWidth)  x = mScreenWidth - maxWidth-40.0f;
-        if (y+ endY     > mScreenHeight) y = mScreenHeight- endY-40.0f;
+        if (y+ maxHeight> mScreenHeight) y = mScreenHeight- maxHeight-40.0f;
         mElement->setPosition(x,y);
         mTooltipDelay = 0;
     }
@@ -864,11 +830,10 @@ void GuiManager::drawTooltip()
 void GuiManager::drawDragElement(const PixelBox &src)
 {
     PROFILE()
-    size_t size = mTexture->getWidth()*mTexture->getHeight()*sizeof(uint32);
-    memset(mTexture->getBuffer()->lock(0, size, HardwareBuffer::HBL_DISCARD), 0x00, size);
+    uint32 *dst = (uint32*)mTexture->getBuffer()->lock(HardwareBuffer::HBL_DISCARD);
+    memset(dst, 0x00, mTexture->getWidth()*mTexture->getHeight()*sizeof(uint32));
+    GuiGraphic::getSingleton().restoreWindowBG(src.getWidth(), src.getHeight(), (uint32*)src.data, dst, src.getWidth(), mTexture->getWidth());
     mTexture->getBuffer()->unlock();
-    size = src.getWidth();
-    mTexture->getBuffer()->blitFromMemory(src, Box(0, 0, size, size));
     mOverlay->show();
 }
 

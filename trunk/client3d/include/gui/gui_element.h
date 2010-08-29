@@ -56,7 +56,7 @@ public:
     /** Update an element. Used for drag'n'drop, animations, etc.
      ** @param deltaTime The time since the last frame.
      *****************************************************************************/
-    virtual void update(Ogre::Real /*deltaTime*/) {}
+    virtual void update(Ogre::Real /*deltaTime*/){}
 
     /** Draw an element into the parent window.
      ** @param uploadToTexture When false the gfx is not yet copied to the texture.
@@ -89,9 +89,10 @@ public:
         mPosY = y;
     }
 
-    /** Returns true if the mouse is within the borders of this element.
+    /** Check if the Mouse-Pointer is within this element.
      ** @param x The mouse x-pos in pixel.
      ** @param y The mouse y-pos in pixel.
+     ** @return Returns true if the mouse is within the borders of this element.
      *****************************************************************************/
     bool mouseWithin(const int x, const int y) const
     {
@@ -127,7 +128,12 @@ protected:
     {
         return mHidden;
     }
-    void setHidden(bool hidden);
+
+    /** Hiding/Unhiding an element.
+     ** @param hidden Set the hidden status of this element.
+     ** @return Returns true if the derived class needs a redraw.
+     *****************************************************************************/
+    bool setHidden(bool hidden);
 
 private:
     // ////////////////////////////////////////////////////////////////////

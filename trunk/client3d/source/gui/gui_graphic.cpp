@@ -31,7 +31,7 @@ using namespace Ogre;
 //================================================================================================
 // .
 //================================================================================================
-void GuiGraphic::drawGfxToBuffer(int w, int h, int srcW, int srcH, uint32 *src, uint32 *bak, uint32 *dst, int srcRowSkip, int bakRowSkip, int dstRowSkip)
+void GuiGraphic::blendGfxToBuffer(int w, int h, int srcW, int srcH, uint32 *src, uint32 *bak, uint32 *dst, int srcRowSkip, int bakRowSkip, int dstRowSkip)
 {
     PROFILE()
     int srcY = 0;
@@ -52,7 +52,7 @@ void GuiGraphic::drawGfxToBuffer(int w, int h, int srcW, int srcH, uint32 *src, 
 //================================================================================================
 // .
 //================================================================================================
-void GuiGraphic::drawColorToBuffer(int w, int h, uint32 color, uint32 *bak, uint32 *dst, int bakRowSkip, int dstRowSkip)
+void GuiGraphic::blendColorToBuffer(int w, int h, uint32 color, uint32 *bak, uint32 *dst, int bakRowSkip, int dstRowSkip)
 {
     PROFILE()
     for (; h; --h)
@@ -67,7 +67,7 @@ void GuiGraphic::drawColorToBuffer(int w, int h, uint32 color, uint32 *bak, uint
 //================================================================================================
 // .
 //================================================================================================
-void GuiGraphic::drawColorToBuffer(int w, int h, uint32 color, uint32 *dst, int dstRowSkip)
+void GuiGraphic::blendColorToBuffer(int w, int h, uint32 color, uint32 *dst, int dstRowSkip)
 {
     PROFILE()
     for (; h; --h)
@@ -75,6 +75,35 @@ void GuiGraphic::drawColorToBuffer(int w, int h, uint32 color, uint32 *dst, int 
         for (int x = 0; x < w; ++x)
             dst[x] = alphaBlend(dst[x], color);
         dst+=dstRowSkip;
+    }
+}
+//================================================================================================
+// .
+//================================================================================================
+void GuiGraphic::drawColorBorder(int w, int h, uint32 colorBG, uint32 colorBorder, uint32 *dst, int rowSkip, int sizeBorder)
+{
+    PROFILE()
+    int offsetY = (h-sizeBorder)*rowSkip;
+    for (int y=0; y < sizeBorder; ++y)
+    {
+        for (int x = 0; x < w; ++x)
+        {
+            *(dst+offsetY) = colorBorder; // Bottom Border.
+            *dst++ = colorBorder; // Top Border.
+        }
+        dst+= rowSkip-w;
+    }
+    h-= sizeBorder;
+    for (; h > sizeBorder; --h)
+    {
+        for (int x = 0; x < w; ++x)
+        {
+            if (x < sizeBorder || x >= w-sizeBorder)
+                *dst++ = colorBorder;
+            else
+                *dst++ = colorBG;
+        }
+        dst+= rowSkip-w;
     }
 }
 
@@ -107,4 +136,19 @@ uint32 GuiGraphic::alphaBlend(const uint32 bg, const uint32 gfx)
     uint32 rb = (((gfx & 0x00ff00ff) * alpha) + ((bg & 0x00ff00ff) * (0xff - alpha))) & 0xff00ff00;
     uint32 g  = (((gfx & 0x0000ff00) * alpha) + ((bg & 0x0000ff00) * (0xff - alpha))) & 0x00ff0000;
     return ((gfx|bg) & 0xff000000) | ((rb | g) >> 8);
+}
+
+//================================================================================================
+// .
+//================================================================================================
+unsigned int GuiGraphic::roundToPowerOfTwo(unsigned int val, unsigned int maxVal)
+{
+    if (!val) return 1;
+    --val;
+    for (unsigned int i=1; i< sizeof(int)*8; i<<=1)
+    {
+       if ((val | val >> i) > maxVal) return val+1;
+       val |= val >> i;
+    }
+    return val+1;
 }

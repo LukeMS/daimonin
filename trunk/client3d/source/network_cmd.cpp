@@ -1417,17 +1417,17 @@ void Network::DataCmd(uchar *data, int len)
     // ////////////////////////////////////////////////////////////////////
     // Uncompress if needed.
     // ////////////////////////////////////////////////////////////////////
-    char *dest =0;
+    char *dst =0;
     if (data_type & DATA_PACKED_CMD)
     {
         // Warning! if the uncompressed size of a incoming compressed(!) file is larger then
-        // dest_len default setting, the file is cutted and the rest skiped.
+        // dst_len default setting, the file is cutted and the rest skiped.
         // Look at the zlib docu for more info.
-        unsigned long dest_len = 512 * 1024;
-        dest = new char[dest_len];
-        uncompress((uchar *)dest, &dest_len, (uchar *)data, len);
-        data = (uchar*)dest;
-        len  = dest_len;
+        unsigned long dst_len = 512 * 1024;
+        dst = new char[dst_len];
+        uncompress((uchar *)dst, &dst_len, (uchar *)data, len);
+        data = (uchar*)dst;
+        len  = dst_len;
     }
     // ////////////////////////////////////////////////////////////////////
     // Save the file.
@@ -1438,7 +1438,7 @@ void Network::DataCmd(uchar *data, int len)
                                << ServerFile::getSingleton().getFilename(data_cmd) << " failed.";
     else
         out.write((char*)data, len);
-    delete[] dest;
+    delete[] dst;
     ServerFile::getSingleton().setStatus(data_cmd, ServerFile::STATUS_OK);
 }
 
