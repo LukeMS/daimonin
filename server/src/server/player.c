@@ -738,17 +738,8 @@ void kill_player(object *op)
 
     /* Clear out any food forces so if the player died while eating a bad
      * apple he won't keep redying in his apt. */
-    for (tmp = op->inv; tmp; tmp = dep)
-    {
-        dep = tmp->below;
-
-        if (tmp->type == TYPE_FOOD_FORCE)
-        {
-            CLEAR_FLAG(op, FLAG_EATING);
-            pl->food_status = 0;
-            remove_force(tmp);
-        }
-    }
+    remove_food_force(op);
+    pl->food_status = 0;
 
     /* remove any poisoning and confusion the character may be suffering. */
     cast_heal(op, 110, op, SP_CURE_POISON);
