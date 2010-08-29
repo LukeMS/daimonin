@@ -329,7 +329,7 @@ char * get_value(void *value, int type)
 /******************************************************************
  add the close button and handle mouse events on it.
 ******************************************************************/
-void add_close_button(int x, int y, int menu, Boolean newstyle)
+void add_close_button(int x, int y, int menu, uint8 newstyle)
 {
     int mx, my, mb;
     mb = SDL_GetMouseState(&mx, &my) & SDL_BUTTON(SDL_BUTTON_LEFT);
@@ -395,7 +395,7 @@ int add_button(int x, int y, int id, int gfxNr, char *text, char *text_h)
               global_buttons.my_up < y + Bitmaps[gfxNr]->bitmap->h)
     {
         global_buttons.valid = -1;
-        ret = TRUE;
+        ret = 1;
     }
     else
     {
@@ -620,7 +620,7 @@ inline void optwin_draw_options(int x, int y)
                 string_blt(ScreenSurface, &font_small, opt[i].name, x, y + 2, tmp, NULL, NULL);
 
                 sprite_blt(Bitmaps[BITMAP_DIALOG_CHECKER], x + LEN_NAME, y, NULL, NULL);
-                if (*((Boolean *) opt[i].value) == TRUE)
+                if (*((uint8 *) opt[i].value) == 1)
                 {
                     string_blt(ScreenSurface, &font_small, "X", x + LEN_NAME + 8, y + 2, COLOR_BLACK, NULL, NULL);
                     string_blt(ScreenSurface, &font_small, "X", x + LEN_NAME + 7, y + 1, COLOR_WHITE, NULL, NULL);
@@ -636,10 +636,10 @@ inline void optwin_draw_options(int x, int y)
                 {
                     mb_clicked = 0;
                     option_list_set.key_change = 0;
-                    if (*((Boolean *) opt[i].value) == TRUE)
-                        *((Boolean *) opt[i].value) = FALSE;
+                    if (*((uint8 *) opt[i].value) == 1)
+                        *((uint8 *) opt[i].value) = 0;
                     else
-                        *((Boolean *) opt[i].value) = TRUE;
+                        *((uint8 *) opt[i].value) = 1;
                 }
                 break;
 
@@ -1236,7 +1236,7 @@ void show_keybind()
             if (mb & SDL_BUTTON(SDL_BUTTON_LEFT))
             {
                 /* cancel edit */
-                InputStringEscFlag = TRUE;
+                InputStringEscFlag = 1;
                 keybind_status = KEYBIND_STATUS_NO;
             }
             bindkey_list_set.entry_nr = i;

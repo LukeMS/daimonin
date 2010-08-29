@@ -28,8 +28,8 @@ extern _server_char    *first_server_char;
 extern _server_char     new_character; /* if we login as new char, thats the values of it we set */
 
 /* global endian templates (send from server) */
-extern int      endian_do16;    /* if FALSE we don't must shift! */
-extern int      endian_do32;    /* if FALSE we don't must shift! */
+extern int      endian_do16;    /* if 0 we don't must shift! */
+extern int      endian_do32;    /* if 0 we don't must shift! */
 extern int      endian_shift16[2]; /* shift values */
 extern int      endian_shift32[4];
 extern uint32   endian_int32;   /* thats the 0x04030201 32bit endian */
@@ -159,7 +159,7 @@ extern int                  mb_clicked;
 typedef struct _skindef
 {
     Uint32              rowcolor[2];
-    Boolean             newclosebutton;
+    uint8             newclosebutton;
 }
 _skindef;
 
@@ -184,14 +184,14 @@ typedef struct _options
     /* Visual */
     int                     video_bpp;
     int                     fullscreen;
-    Boolean                 use_TextwinSplit;
-    Boolean                 use_TextwinAlpha;
+    uint8                 use_TextwinSplit;
+    uint8                 use_TextwinAlpha;
     int                     textwin_alpha;
     int                     resolution;
     int                     mapstart_x;
     int                     mapstart_y;
     int                     zoom;
-    Boolean                 smooth;
+    uint8                 smooth;
 
     /* Look & Feel */
     int                     player_names;
@@ -199,25 +199,25 @@ typedef struct _options
     int                     heartbeat;
     int                     warning_hp;
     int                     warning_weight;
-    Boolean                 show_tooltips;
-    Boolean                 show_d_key_infos; /* key-infos in dialog-wins. */
-    Boolean                 smileys;
+    uint8                 show_tooltips;
+    uint8                 show_d_key_infos; /* key-infos in dialog-wins. */
+    uint8                 smileys;
     int                     channelformat;
-    Boolean                 collectAll;
-    Boolean                 chatfilter;         /* true: filter chatmessages */
-    Boolean                 hp_bar;         /* show hp-bar */
-    Boolean                 hp_percent;     /* show hp in % */
-    Boolean                 hp_color;       /* color bar and % */
+    uint8                 collectAll;
+    uint8                 chatfilter;         /* true: filter chatmessages */
+    uint8                 hp_bar;         /* show hp-bar */
+    uint8                 hp_percent;     /* show hp in % */
+    uint8                 hp_color;       /* color bar and % */
     int                     iExpDisplay;    /* robed's extended exp-display */
-    Boolean                 kerbholz;       /* use kill stats */
+    uint8                 kerbholz;       /* use kill stats */
     int                     msglog;         /* log-options */
-    Boolean                 playerdoll;
-    Boolean                 statometer;
+    uint8                 playerdoll;
+    uint8                 statometer;
     int                     statsupdate;
-    Boolean                 showqc;
+    uint8                 showqc;
     int                     itemdmg_limit_orange;
     int                     itemdmg_limit_red;
-    Boolean                 shoutoff;
+    uint8                 shoutoff;
     int                     menu_repeat;
 #ifdef WIDGET_SNAP
     int                     widget_snap;
@@ -225,43 +225,43 @@ typedef struct _options
     int                     keyword_panel;
 
     /* Debug */
-    Boolean                 force_redraw;
-    Boolean                 show_frame;         /* true: show frame rate */
-    Boolean                 use_gl;
+    uint8                 force_redraw;
+    uint8                 show_frame;         /* true: show frame rate */
+    uint8                 use_gl;
     int                     sleep;
-    Boolean                 limit_speed;
+    uint8                 limit_speed;
     int                     speedup;
-    Boolean                 auto_bpp_flag;
-    Boolean                 use_rect;
+    uint8                 auto_bpp_flag;
+    uint8                 use_rect;
 
     /* Fullscreen Flags */
-    Boolean                 Full_HWSURFACE;
-    Boolean                 Full_SWSURFACE;
-    Boolean                 Full_HWACCEL;
-    Boolean                 Full_DOUBLEBUF;
-    Boolean                 Full_ANYFORMAT;
-    Boolean                 Full_ASYNCBLIT;
-    Boolean                 Full_HWPALETTE;
-    Boolean                 Full_RESIZABLE;
-    Boolean                 Full_NOFRAME;
-    Boolean                 Full_RLEACCEL;
+    uint8                 Full_HWSURFACE;
+    uint8                 Full_SWSURFACE;
+    uint8                 Full_HWACCEL;
+    uint8                 Full_DOUBLEBUF;
+    uint8                 Full_ANYFORMAT;
+    uint8                 Full_ASYNCBLIT;
+    uint8                 Full_HWPALETTE;
+    uint8                 Full_RESIZABLE;
+    uint8                 Full_NOFRAME;
+    uint8                 Full_RLEACCEL;
 
     /* Windowed flags */
-    Boolean                 Win_HWSURFACE;
-    Boolean                 Win_SWSURFACE;
-    Boolean                 Win_HWACCEL;
-    Boolean                 Win_DOUBLEBUF;
-    Boolean                 Win_ANYFORMAT;
-    Boolean                 Win_ASYNCBLIT;
-    Boolean                 Win_HWPALETTE;
-    Boolean                 Win_RESIZABLE;
-    Boolean                 Win_NOFRAME;
-    Boolean                 Win_RLEACCEL;
+    uint8                 Win_HWSURFACE;
+    uint8                 Win_SWSURFACE;
+    uint8                 Win_HWACCEL;
+    uint8                 Win_DOUBLEBUF;
+    uint8                 Win_ANYFORMAT;
+    uint8                 Win_ASYNCBLIT;
+    uint8                 Win_HWPALETTE;
+    uint8                 Win_RESIZABLE;
+    uint8                 Win_NOFRAME;
+    uint8                 Win_RLEACCEL;
 
     /* INTERN FLAGS - Setup depends on option settings and selected mode */
-    Boolean                 fullscreen_flag;      /* we are in fullscreen mode */
-    Boolean                 doublebuf_flag;       /* we doublebuf */
-    Boolean                 rleaccel_flag;
+    uint8                 fullscreen_flag;      /* we are in fullscreen mode */
+    uint8                 doublebuf_flag;       /* we doublebuf */
+    uint8                 rleaccel_flag;
     int                     no_meta;
     Uint8                   used_video_bpp;
     Uint8                   real_video_bpp;
@@ -274,12 +274,12 @@ typedef struct _options
     char                    cli_addons[HUGE_BUF];
     char                    skin[TINY_BUF];
 
-    Boolean                 firststart;
-    Boolean                 sleepcounter;
+    uint8                 firststart;
+    uint8                 sleepcounter;
     int                     anim_frame_time;
     int                     anim_check_time;
 
-    Boolean                 grid;
+    uint8                 grid;
 }
 _options;
 
@@ -686,9 +686,9 @@ extern char                 InputHistory[MAX_HISTORY_LINES][MAX_INPUT_STRING];  
 extern int                  HistoryPos;
 extern int                  CurrentCursorPos;
 extern int                  InputCount, InputMax;                   /* nr. of char in string and max chars. */
-extern Boolean              InputStringFlag;    /* if true keyboard and game is in input str mode*/
-extern Boolean              InputStringEndFlag; /* if true, we had entered some in text mode and its ready*/
-extern Boolean              InputStringEscFlag;
+extern uint8              InputStringFlag;    /* if true keyboard and game is in input str mode*/
+extern uint8              InputStringEndFlag; /* if true, we had entered some in text mode and its ready*/
+extern uint8              InputStringEscFlag;
 
 extern struct _fire_mode    fire_mode_tab[FIRE_MODE_INIT]; /* range table */
 extern int                  RangeFireMode;

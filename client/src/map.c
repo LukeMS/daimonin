@@ -78,7 +78,7 @@ void adjust_map_cache(int xpos, int ypos)
             /*
                         map = TheMapCache + (yreal * MapData.xlen * 3) + xreal;
 
-                        map->fog_of_war = FALSE;
+                        map->fog_of_war = 0;
                         map->darkness = the_map.cells[x][y].darkness;
 
                         for (i = 0; i < MAXFACES; i++)
@@ -431,7 +431,7 @@ void set_map_face(int x, int y, int layer, int face, int pos, int ext, char *nam
     /*
         map = TheMapCache + (yreal * MapData.xlen * 3) + xreal;
 
-        map->fog_of_war = FALSE;
+        map->fog_of_war = 0;
         map->darkness = the_map.cells[x][y].darkness;
 
         for (i = 0; i < MAXFACES; i++)
@@ -468,7 +468,7 @@ void display_map_clearcell(long x, long y)
     /*
         map = TheMapCache + (yreal * MapData.xlen * 3) + xreal;
 
-        map->fog_of_war = TRUE;
+        map->fog_of_war = 1;
         map->darkness = 0;
         for (i = 0; i < MAXFACES; i++)
         {
@@ -686,7 +686,7 @@ void map_draw_map(void)
                                 }
                             }
 
-                            if (map->fog_of_war == TRUE)
+                            if (map->fog_of_war == 1)
                                 bltfx.flags |= BLTFX_FLAG_FOW;
                             else if (cpl.stats.flags & SF_INFRAVISION && index_tmp & 0x8000 && map->darkness < 150)
                                 bltfx.flags |= BLTFX_FLAG_RED;

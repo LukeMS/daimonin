@@ -145,9 +145,9 @@ extern void read_keybind_file(void);
 extern void save_keybind_file(void);
 extern void check_menu_keys(int menu, int value);
 extern void quickslot_key(SDL_KeyboardEvent *key, int slot);
-extern Boolean  check_menu_macros(char *text);
+extern uint8  check_menu_macros(char *text);
 
-Boolean     process_macro_keys(int id, int value);
+uint8     process_macro_keys(int id, int value);
 extern void     check_keys(int key);
 
 #endif /* ifndef __EVENT_H */

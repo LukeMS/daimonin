@@ -185,7 +185,7 @@ int execute_process(char *p_path, char *exe_name, char *parms, char *output, int
     {
         *output='\0';
         saAttr.nLength = sizeof(SECURITY_ATTRIBUTES);
-        saAttr.bInheritHandle =TRUE;
+        saAttr.bInheritHandle =1;
         saAttr.lpSecurityDescriptor = NULL;
 
         if (! CreatePipe(&hChildStdoutRd, &hChildStdoutWr, &saAttr, 0))
@@ -210,9 +210,9 @@ int execute_process(char *p_path, char *exe_name, char *parms, char *output, int
 	if(!strcmp(exe_name, PROCESS_CLIENT))
 		siStartupInfo.dwFlags |= STARTF_RUNFULLSCREEN;
 
-    if (CreateProcess(p_path, cmd, 0, 0, TRUE,
+    if (CreateProcess(p_path, cmd, 0, 0, 1,
                       CREATE_DEFAULT_ERROR_MODE, 0, 0, &siStartupInfo,
-                      &piProcessInfo) != FALSE)
+                      &piProcessInfo) != 0)
     {
         if (!seconds_to_wait)
         {

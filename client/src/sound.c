@@ -555,13 +555,13 @@ void sound_fadeout_music(int i)
             /* fadeout has failed - buffer is busy or a different fade is still on the way */
             music_new.flag = i;
             /* now set the global main loop marker - we poll it for the hard way */
-            music_global_fade = TRUE;
+            music_global_fade = 1;
             return;
         }
         /* all ok, we fade out and the callback will do the rest */
         music_new.flag = i;
     }
-    music_global_fade = FALSE;
+    music_global_fade = 0;
 
 #endif
 }
@@ -583,7 +583,7 @@ static void musicDone(void)
         sound_start_music(music_new.name, options.music_volume, music_new.fade, music_new.loop);
         music_new.flag = 0;
     }
-    music_global_fade = FALSE;
+    music_global_fade = 0;
 #endif
 }
 

@@ -276,7 +276,7 @@ void widget_show_inventory_window(int x, int y)
     if (cpl.inventory_win != IWIN_INV)
     {
         if (!options.playerdoll)
-            cur_widget[PDOLL_ID].show = FALSE;
+            cur_widget[PDOLL_ID].show = 0;
         cur_widget[MAIN_INV_ID].ht = 32;
         sprite_blt(Bitmaps[BITMAP_INV_BG], x, y, NULL, NULL);
         string_blt(ScreenSurface, &font_small, "Carry", x+140, y+4, COLOR_HGOLD, NULL, NULL);
@@ -290,7 +290,7 @@ void widget_show_inventory_window(int x, int y)
     }
 
     if (!options.playerdoll)
-       cur_widget[PDOLL_ID].show = TRUE;
+       cur_widget[PDOLL_ID].show = 1;
     cur_widget[MAIN_INV_ID].ht = 129;
 
 
@@ -570,7 +570,7 @@ jump_in_container2:
 }
 
 #define ICONDEFLEN 32
-Boolean blt_inv_item_centered(item *tmp, int x, int y)
+uint8 blt_inv_item_centered(item *tmp, int x, int y)
 {
     register int temp;
     int         xstart, xlen, ystart, ylen;
@@ -587,10 +587,10 @@ Boolean blt_inv_item_centered(item *tmp, int x, int y)
        bltfx.dark_level=0;*/
 
     if (!FaceList[tmp->face].sprite)
-        return FALSE;
+        return 0;
 
     if (FaceList[tmp->face].sprite->status != SPRITE_STATUS_LOADED)
-        return FALSE;
+        return 0;
 
     anim1 = tmp->face;
 
@@ -722,7 +722,7 @@ Boolean blt_inv_item_centered(item *tmp, int x, int y)
         }
      }
 
-    return TRUE;
+    return 1;
 }
 
 void blt_inv_item(item *tmp, int x, int y)

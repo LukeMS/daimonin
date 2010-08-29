@@ -75,11 +75,6 @@
 
 #include <fcntl.h>
 
-#ifndef FALSE
-#define FALSE 0
-#define TRUE (!FALSE)
-#endif
-
 #define CURL_NO_OLDIES
 #include <curl/curl.h>
 

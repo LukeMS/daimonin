@@ -50,16 +50,16 @@ int                     quickslots_pos[MAX_QUICK_SLOTS][2]  =
 
 void do_console(int x, int y)
 {
-    if (InputStringEscFlag == TRUE)
+    if (InputStringEscFlag == 1)
     {
         sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CONSOLE, 0, 0, 100);
         reset_keys();
         cpl.input_mode = INPUT_MODE_NO;
-        cur_widget[IN_CONSOLE_ID].show = FALSE;
+        cur_widget[IN_CONSOLE_ID].show = 0;
         map_udate_flag = 2;
     }
     /* if set, we got a finished input!*/
-    if (InputStringFlag == FALSE && InputStringEndFlag == TRUE)
+    if (InputStringFlag == 0 && InputStringEndFlag == 1)
     {
         sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CONSOLE, 0, 0, 100);
         if (InputString[0])
@@ -71,10 +71,10 @@ void do_console(int x, int y)
         reset_keys();
         cpl.input_mode = INPUT_MODE_NO;
         map_udate_flag = 2;
-        cur_widget[IN_CONSOLE_ID].show = FALSE;
+        cur_widget[IN_CONSOLE_ID].show = 0;
     }
     else
-        cur_widget[IN_CONSOLE_ID].show = TRUE;
+        cur_widget[IN_CONSOLE_ID].show = 1;
 }
 
 void widget_show_console(int x, int y)
@@ -86,15 +86,15 @@ void widget_show_console(int x, int y)
 
 void do_number(int x, int y)
 {
-    if (InputStringEscFlag == TRUE)
+    if (InputStringEscFlag == 1)
     {
         reset_keys();
         cpl.input_mode = INPUT_MODE_NO;
-        cur_widget[IN_NUMBER_ID].show = FALSE;
+        cur_widget[IN_NUMBER_ID].show = 0;
         map_udate_flag = 2;
     }
     /* if set, we got a finished input!*/
-    if (InputStringFlag == FALSE && InputStringEndFlag == TRUE)
+    if (InputStringFlag == 0 && InputStringEndFlag == 1)
     {
         if (InputString[0])
         {
@@ -118,15 +118,15 @@ void do_number(int x, int y)
         reset_keys();
         cpl.input_mode = INPUT_MODE_NO;
         map_udate_flag = 2;
-        cur_widget[IN_NUMBER_ID].show = FALSE;
+        cur_widget[IN_NUMBER_ID].show = 0;
     }
     else
-        cur_widget[IN_NUMBER_ID].show = TRUE;
+        cur_widget[IN_NUMBER_ID].show = 1;
 }
 
 void do_keybind_input(void)
 {
-    if (InputStringEscFlag == TRUE)
+    if (InputStringEscFlag == 1)
     {
         reset_keys();
         sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICKFAIL, 0, 0, 100);
@@ -135,7 +135,7 @@ void do_keybind_input(void)
         map_udate_flag = 2;
     }
     /* if set, we got a finished input!*/
-    if (InputStringFlag == FALSE && InputStringEndFlag == TRUE)
+    if (InputStringFlag == 0 && InputStringEndFlag == 1)
     {
         if (InputString[0])
         {
@@ -158,17 +158,17 @@ void do_keybind_input(void)
 
 void do_npcdialog_input(void)
 {
-    if (InputStringEscFlag == TRUE)
+    if (InputStringEscFlag == 1)
     {
         reset_keys();
         sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICKFAIL, 0, 0, 100);
         cpl.input_mode = INPUT_MODE_NO;
         map_udate_flag = 2;
-        gui_npc->input_flag = FALSE;
+        gui_npc->input_flag = 0;
     }
 
     /* if set, we got a finished input!*/
-    if (InputStringFlag == FALSE && InputStringEndFlag == TRUE)
+    if (InputStringFlag == 0 && InputStringEndFlag == 1)
     {
         if (InputString[0])
         {
@@ -180,7 +180,7 @@ void do_npcdialog_input(void)
 
         reset_keys();
         cpl.input_mode = INPUT_MODE_NO;
-        gui_npc->input_flag = FALSE;
+        gui_npc->input_flag = 0;
         map_udate_flag = 2;
     }
 }
@@ -197,8 +197,8 @@ void widget_number_event(int x, int y, SDL_Event event)
         if (mx > 239 && mx < 249 && my > 5 && my < 17)
         {
             SDL_EnableKeyRepeat(0, SDL_DEFAULT_REPEAT_INTERVAL);
-            InputStringFlag = FALSE;
-            InputStringEndFlag = TRUE;
+            InputStringFlag = 0;
+            InputStringEndFlag = 1;
         }
     }
 }
@@ -237,7 +237,7 @@ void widget_show_resist(int x, int y)
 
     if (cur_widget[RESIST_ID].redraw)
     {
-        cur_widget[RESIST_ID].redraw=FALSE;
+        cur_widget[RESIST_ID].redraw=0;
 
         bltfx.surface=widgetSF[RESIST_ID];
         bltfx.flags = 0;
@@ -289,16 +289,16 @@ void widget_show_resist(int x, int y)
 }
 
 #define ICONDEFLEN 32
-Boolean blt_face_centered(int face, int x, int y)
+uint8 blt_face_centered(int face, int x, int y)
 {
     register int temp;
     SDL_Rect    box;
 
     if (!FaceList[face].sprite)
-        return FALSE;
+        return 0;
 
     if (FaceList[face].sprite->status != SPRITE_STATUS_LOADED)
-        return FALSE;
+        return 0;
 
     box.x = FaceList[face].sprite->border_left;
     box.w = FaceList[face].sprite->bitmap->w;
@@ -333,7 +333,7 @@ Boolean blt_face_centered(int face, int x, int y)
     }
     sprite_blt(FaceList[face].sprite, x, y, &box, NULL);
 
-    return TRUE;
+    return 1;
 }
 
 void widget_range_event(int x, int y, SDL_Event event, int MEvent)
@@ -1533,7 +1533,7 @@ void show_quickslots(int x, int y)
         if (quick_slots[i].shared.tag != -1)
         {
             /* spell in quickslot */
-            if (quick_slots[i].shared.is_spell == TRUE)
+            if (quick_slots[i].shared.is_spell == 1)
             {
                 sprite_blt(spell_list[quick_slots[i].spell.groupNr].entry[quick_slots[i].spell.classNr][quick_slots[i].shared.tag].icon,
                            x + quickslots_pos[i][qsx]+xoff, y + quickslots_pos[i][qsy], NULL, NULL);
@@ -1600,7 +1600,7 @@ void widget_quickslots(int x, int y)
         if (quick_slots[i].shared.tag != -1)
         {
             /* spell in quickslot */
-            if (quick_slots[i].shared.is_spell == TRUE)
+            if (quick_slots[i].shared.is_spell == 1)
             {
                 sprite_blt(spell_list[quick_slots[i].spell.groupNr].entry[quick_slots[i].spell.classNr][quick_slots[i].shared.tag].icon,
                            x + quickslots_pos[i][qsx]+xoff, y + quickslots_pos[i][qsy], NULL, NULL);
@@ -1649,7 +1649,7 @@ void widget_quickslots_mouse_event(int x, int y, int MEvent)
             {
                 if (draggingInvItem(DRAG_GET_STATUS) == DRAG_QUICKSLOT_SPELL)
                 {
-                    quick_slots[ind].shared.is_spell = TRUE;
+                    quick_slots[ind].shared.is_spell = 1;
                     quick_slots[ind].spell.groupNr = quick_slots[cpl.win_quick_tag].spell.groupNr;
                     quick_slots[ind].spell.classNr = quick_slots[cpl.win_quick_tag].spell.classNr;
                     quick_slots[ind].shared.tag = quick_slots[cpl.win_quick_tag].spell.spellNr;
@@ -1663,7 +1663,7 @@ void widget_quickslots_mouse_event(int x, int y, int MEvent)
                         cpl.win_quick_tag = cpl.win_pdoll_tag;
                     quick_slots[ind].shared.tag = cpl.win_quick_tag;
                     quick_slots[ind].item.invSlot = ind;
-                    quick_slots[ind].shared.is_spell = FALSE;
+                    quick_slots[ind].shared.is_spell = 0;
                     /* now we do some tests... first, ensure this item can fit */
                     update_quickslots(-1);
                     /* now: if this is null, item is *not* in the main inventory
@@ -1697,7 +1697,7 @@ void widget_quickslots_mouse_event(int x, int y, int MEvent)
             cpl.win_quick_tag = quick_slots[ind].shared.tag;
             if ((SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_LEFT)))
             {
-                if (quick_slots[ind].shared.is_spell == TRUE)
+                if (quick_slots[ind].shared.is_spell == 1)
                 {
                     draggingInvItem(DRAG_QUICKSLOT_SPELL);
                     quick_slots[ind].spell.spellNr = quick_slots[ind].shared.tag;
@@ -1757,7 +1757,7 @@ void update_quickslots(int del_item)
         if (quick_slots[i].shared.tag == -1)
             continue;
         /* only items in the *main* inventory can used with quickslot! */
-        if (quick_slots[i].shared.is_spell == FALSE)
+        if (quick_slots[i].shared.is_spell == 0)
         {
             if (!locate_item_from_inv(cpl.ob->inv, quick_slots[i].shared.tag))
                 quick_slots[i].shared.tag = -1;
@@ -1773,7 +1773,7 @@ static void freeQuickSlots(_quickslot *quickslots, int size)
 
     for (i = 0; i != size; ++i)
     {
-        if (quickslots[i].shared.is_spell == FALSE)
+        if (quickslots[i].shared.is_spell == 0)
             FREE(quickslots[i].name.name);
     }
 }
@@ -1804,13 +1804,13 @@ static int readNextQuickSlots(FILE *fp, char *server, int *port, char *name, _qu
     }
     for (i = r = 0; i != MAX_QUICK_SLOTS; ++i)
     {
-        if (!fread(&quickslots[i].shared.is_spell, sizeof(Boolean), 1, fp))
+        if (!fread(&quickslots[i].shared.is_spell, sizeof(uint8), 1, fp))
         {
             freeQuickSlots(quickslots, i);
             return 0;
         }
-        r += sizeof(Boolean);
-        if (quickslots[i].shared.is_spell == FALSE)
+        r += sizeof(uint8);
+        if (quickslots[i].shared.is_spell == 0)
         {
             int j;
 
@@ -1888,27 +1888,27 @@ void load_quickslots_entrys()
     {
         if (!strcmp(ServerName, server) && ServerPort == port)
         {
-            Boolean cont = FALSE;
+            uint8 cont = 0;
 
             port = strlen(cpl.name) + 1;
             for (i = 0; i != port; ++i)
             {
                 if (tolower(cpl.name[i]) != tolower(name[i]))
                 {
-                    cont = TRUE;
+                    cont = 1;
                     break;
                 }
             }
 
-            if (cont == TRUE)
+            if (cont == 1)
                 continue;
 
             for (i = 0; i != MAX_QUICK_SLOTS; ++i)
             {
-                if (quick_slots[i].shared.is_spell == FALSE)
+                if (quick_slots[i].shared.is_spell == 0)
                 {
                     int      j;
-                    Boolean  match = FALSE;
+                    uint8  match = 0;
                     item    *ob = cpl.ob->inv;
 
                     for (j = 0; ob != NULL; ++j, ob = ob->next)
@@ -1918,25 +1918,25 @@ void load_quickslots_entrys()
                             if (!strcmp(ob->s_name, quick_slots[i].name.name))
                             {
                                 quick_slots[i].item.tag = ob->tag;
-                                match = TRUE;
+                                match = 1;
                             }
                             break;
                         }
                     }
-                    if (match == FALSE)
+                    if (match == 0)
                     {
                         for (ob = cpl.ob->inv; ob; ob = ob->next)
                         {
                             if (!strcmp(ob->s_name, quick_slots[i].name.name))
                             {
                                 quick_slots[i].item.tag = ob->tag;
-                                match = TRUE;
+                                match = 1;
                                 break;
                             }
                         }
-                        if (match == FALSE)
+                        if (match == 0)
                         {
-                            cont = TRUE;
+                            cont = 1;
                             quick_slots[i].item.tag = -1;
                         }
                     }
@@ -1946,11 +1946,11 @@ void load_quickslots_entrys()
                 {
                     memcpy(&quick_slots[i], &quickslots[i], sizeof(_quickslot));
                     if (quick_slots[i].shared.tag == -1)
-                        cont = TRUE;
+                        cont = 1;
                 }
-                if (cont == TRUE)
+                if (cont == 1)
                     continue;
-                if (quick_slots[i].shared.is_spell == FALSE)
+                if (quick_slots[i].shared.is_spell == 0)
                     cpl.win_inv_slot = quick_slots[i].item.invSlot;
             }
             break;
@@ -1980,8 +1980,8 @@ void save_quickslots_entrys()
     fwrite(&header, sizeof(header), 1, stream);
     for (n = w = 0; n != MAX_QUICK_SLOTS; ++n)
     {
-        w += sizeof(Boolean);
-        if (quick_slots[n].shared.is_spell == FALSE)
+        w += sizeof(uint8);
+        if (quick_slots[n].shared.is_spell == 0)
         {
             item *ob = locate_item_from_inv(cpl.ob->inv, quick_slots[n].item.tag);
 
@@ -2045,8 +2045,8 @@ void save_quickslots_entrys()
             fseek(stream, -size, SEEK_CUR);
             for (n = 0; n != MAX_QUICK_SLOTS; ++n)
             {
-                fwrite(&quick_slots[n].shared.is_spell, sizeof(Boolean), 1, stream);
-                if (quick_slots[n].shared.is_spell == FALSE)
+                fwrite(&quick_slots[n].shared.is_spell, sizeof(uint8), 1, stream);
+                if (quick_slots[n].shared.is_spell == 0)
                 {
                     fwrite(&quick_slots[n].item.nr, sizeof(int), 1, stream);
                     fwrite(quick_slots[n].name.name, sizeof(char), strlen(quick_slots[n].name.name) + 1, stream);
@@ -2073,8 +2073,8 @@ void save_quickslots_entrys()
     fwrite(&cpl.name, sizeof(char), strlen(cpl.name) + 1, stream);
     for (n = 0; n != MAX_QUICK_SLOTS; ++n)
     {
-        fwrite(&quick_slots[n].shared.is_spell, sizeof(Boolean), 1, stream);
-        if (quick_slots[n].shared.is_spell == FALSE)
+        fwrite(&quick_slots[n].shared.is_spell, sizeof(uint8), 1, stream);
+        if (quick_slots[n].shared.is_spell == 0)
         {
             fwrite(&quick_slots[n].item.nr, sizeof(int), 1, stream);
             fwrite(quick_slots[n].name.name, sizeof(char), strlen(quick_slots[n].name.name) + 1, stream);

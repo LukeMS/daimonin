@@ -147,7 +147,7 @@ void buddy_list_save(void)
 
 
 /* check player <name> is on the buddy list.
- * return TRUE: player is on the buddy list
+ * return 1: player is on the buddy list
  */
 int buddy_check(char *name)
 {
@@ -157,9 +157,9 @@ int buddy_check(char *name)
 	{
 		/*textwin_showstring(COLOR_WHITE, "compare >%s< with >%s<", name, node->name);*/
 		if(!stricmp(name, node->name))
-			return TRUE;
+			return 1;
 	}
-	return FALSE;
+	return 0;
 }
 
 /* parse a /buddy <cmd> part (without "/buddy " part) */

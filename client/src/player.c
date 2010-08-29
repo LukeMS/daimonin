@@ -251,7 +251,7 @@ void widget_player_stats(int x, int y)
     /* we have a backbuffer SF, test for the redrawing flag and do the redrawing */
     if (cur_widget[STATS_ID].redraw)
     {
-        cur_widget[STATS_ID].redraw=FALSE;
+        cur_widget[STATS_ID].redraw=0;
 
         /* we redraw here only all halfway static stuff */
         /* we simply don't need to redraw that stuff every frame, how often the stats change? */
@@ -472,7 +472,7 @@ void widget_skillgroups(int x, int y)
 
     if (cur_widget[SKILL_LVL_ID].redraw)
     {
-        cur_widget[SKILL_LVL_ID].redraw=FALSE;
+        cur_widget[SKILL_LVL_ID].redraw=0;
 
         bltfx.surface=widgetSF[SKILL_LVL_ID];
         bltfx.flags = 0;
@@ -701,7 +701,7 @@ void widget_show_main_lvl(int x, int y)
 
     if (cur_widget[MAIN_LVL_ID].redraw)
     {
-        cur_widget[MAIN_LVL_ID].redraw=FALSE;
+        cur_widget[MAIN_LVL_ID].redraw=0;
 
         bltfx.surface=widgetSF[MAIN_LVL_ID];
         bltfx.flags = 0;
@@ -788,7 +788,7 @@ void widget_show_skill_exp(int x, int y)
 
     if (cur_widget[SKILL_EXP_ID].redraw)
     {
-        cur_widget[SKILL_EXP_ID].redraw=FALSE;
+        cur_widget[SKILL_EXP_ID].redraw=0;
 
         bltfx.surface=widgetSF[SKILL_EXP_ID];
         bltfx.flags = 0;
@@ -969,7 +969,7 @@ void widget_show_regeneration(int x, int y)
 
     if (cur_widget[REGEN_ID].redraw)
     {
-        cur_widget[REGEN_ID].redraw=FALSE;
+        cur_widget[REGEN_ID].redraw=0;
 
         bltfx.surface=widgetSF[REGEN_ID];
         bltfx.flags = 0;
@@ -1000,7 +1000,7 @@ void widget_show_statometer(int x, int y)
 
     if (!options.statsupdate)
     {
-        cur_widget[STATOMETER_ID].show=FALSE;
+        cur_widget[STATOMETER_ID].show=0;
         return;
     }
 

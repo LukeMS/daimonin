@@ -60,13 +60,13 @@ typedef union _quickslot
 {
     struct
     {
-        Boolean         is_spell; /* do we have an item or a spell in quickslot */
+        uint8         is_spell; /* do we have an item or a spell in quickslot */
         int             tag;
     }
     shared;
     struct
     {
-        Boolean         is_spell;
+        uint8         is_spell;
         int             tag;     /* what item/spellNr in quickslot */
         int             invSlot;
         int             nr;
@@ -74,7 +74,7 @@ typedef union _quickslot
     item;
     struct
     {
-        Boolean         is_spell;
+        uint8         is_spell;
         int             tag;
         int             spellNr;     /* */
         int             groupNr; /* spellgroup */
@@ -83,7 +83,7 @@ typedef union _quickslot
     spell;
     struct
     {
-        Boolean         is_spell;
+        uint8         is_spell;
         int             tag;
         char           *name;
     }
@@ -151,7 +151,7 @@ extern void     load_settings(void);
 extern void     read_settings(void);
 extern void     read_spells(void);
 extern void     read_skills(void);
-extern Boolean  blt_face_centered(int face, int x, int y);
+extern uint8  blt_face_centered(int face, int x, int y);
 extern int      get_quickslot(int x, int y);
 extern void     show_quickslots(int x, int y);
 extern void     widget_quickslots(int x, int y);

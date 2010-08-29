@@ -48,12 +48,12 @@ extern command_buffer *get_next_input_command(void);
 extern void socket_thread_start(void);
 extern void socket_thread_stop(void);
 extern int handle_socket_shutdown();
-extern Boolean  SOCKET_InitSocket(void);
-extern Boolean  SOCKET_DeinitSocket(void);
-extern Boolean  SOCKET_OpenSocket(SOCKET *socket_temp, char *host, int port);
-extern Boolean  SOCKET_OpenClientSocket(struct ClientSocket *csock, char *host, int port);
-extern Boolean  SOCKET_CloseSocket(SOCKET socket);
-extern Boolean  SOCKET_CloseClientSocket(struct ClientSocket *csock);
+extern uint8  SOCKET_InitSocket(void);
+extern uint8  SOCKET_DeinitSocket(void);
+extern uint8  SOCKET_OpenSocket(SOCKET *socket_temp, char *host, int port);
+extern uint8  SOCKET_OpenClientSocket(struct ClientSocket *csock, char *host, int port);
+extern uint8  SOCKET_CloseSocket(SOCKET socket);
+extern uint8  SOCKET_CloseClientSocket(struct ClientSocket *csock);
 extern int      SOCKET_GetError(void);  /* returns socket error */
 extern int      read_metaserver_data(SOCKET fd);
 

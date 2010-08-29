@@ -181,7 +181,7 @@ typedef struct Player_Struct
 
     float                   action_timer; /* skill cooldown time */
 
-    uint32                  no_echo             : 1;    /* If TRUE, don't echo keystrokes */
+    uint32                  no_echo             : 1;    /* If 1, don't echo keystrokes */
     uint32                  fire_on             : 1;    /* True if fire key is pressed = action key (ALT;CTRL)*/
     uint32                  run_on              : 1;    /* True if run key is on = action key (ALT;CTRL)*/
     uint32                  resize_twin         : 1;
@@ -199,9 +199,9 @@ typedef struct Player_Struct
     uint16                  pmapx, pmapy;   /* Where the player is on the magic map */
     uint16                  mapxres, mapyres;/* resolution to draw on the magic map */
 
-    Boolean                 warn_statdown;
-    Boolean                 warn_statup;
-    Boolean                 warn_drain;
+    uint8                 warn_statdown;
+    uint8                 warn_statup;
+    uint8                 warn_drain;
     Stats                   stats;      /* Player stats */
     rangetype               shoottype;  /* What type of range attack player has */
 

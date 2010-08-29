@@ -50,28 +50,28 @@ _widgetdata def_widget[TOTAL_WIDGETS];
 /* {name,priority_index,x1,y1,width,height,moveable?, active?} */
 static const _widgetdata con_widget[TOTAL_WIDGETS] =
 {
-    {"STATS",NULL,227,0,172,102,        TRUE, TRUE, TRUE},
-    {"RESIST",NULL,497,0,198,79,        TRUE, TRUE, TRUE},
-    {"MAIN_LVL",NULL,399,39,98,62,      TRUE, TRUE, TRUE},
-    {"SKILL_EXP",NULL,497,79,198,22,    TRUE, TRUE, TRUE},
-    {"REGEN",NULL,399,0,98,39,          TRUE, TRUE, TRUE},
-    {"SKILL_LVL",NULL,695,0,52,101,     TRUE, TRUE, TRUE},
-    {"MENUBUTTONS",NULL,747,0,47,101,   TRUE, TRUE, TRUE},
-    {"QUICKSLOTS",NULL,513,107,282,34,  TRUE, TRUE, TRUE},
-    {"CHATWIN",NULL,0,366,261,233,      TRUE, TRUE, TRUE},
-    {"MSGWIN",NULL,537,366,261,233,     TRUE, TRUE, TRUE},
-    {"MIXWIN",NULL,539,420,261,233,     TRUE, FALSE, TRUE},
-    {"GROUP",NULL,658,187,120,31,       TRUE, TRUE, TRUE},
-    {"PLAYERDOLL",NULL,0,41,221,224,    TRUE, TRUE, TRUE},
-    {"BELOWINV",NULL,262,545,274,55,    TRUE, TRUE, TRUE},
-    {"PLAYERINFO",NULL,0,0,219,41,      TRUE, TRUE, TRUE},
-    {"RANGEBOX",NULL,6,100,94,60,       TRUE, TRUE, TRUE},
-    {"TARGET",NULL,267,514,264,31,      TRUE, TRUE, TRUE},
-    {"MAININV",NULL,539,147,239,32,     TRUE, TRUE, TRUE},
-    {"MAPNAME",NULL,228,106,36,12,      TRUE, TRUE, TRUE},
-    {"CONSOLE",NULL,271,517,256,25,     TRUE, FALSE, TRUE},
-    {"NUMBER",NULL,271,465,256,43,      TRUE, FALSE, TRUE},
-    {"STATOMETER",NULL,8,50,160,40,     TRUE, TRUE, TRUE},
+    {"STATS",NULL,227,0,172,102,        1, 1, 1},
+    {"RESIST",NULL,497,0,198,79,        1, 1, 1},
+    {"MAIN_LVL",NULL,399,39,98,62,      1, 1, 1},
+    {"SKILL_EXP",NULL,497,79,198,22,    1, 1, 1},
+    {"REGEN",NULL,399,0,98,39,          1, 1, 1},
+    {"SKILL_LVL",NULL,695,0,52,101,     1, 1, 1},
+    {"MENUBUTTONS",NULL,747,0,47,101,   1, 1, 1},
+    {"QUICKSLOTS",NULL,513,107,282,34,  1, 1, 1},
+    {"CHATWIN",NULL,0,366,261,233,      1, 1, 1},
+    {"MSGWIN",NULL,537,366,261,233,     1, 1, 1},
+    {"MIXWIN",NULL,539,420,261,233,     1, 0, 1},
+    {"GROUP",NULL,658,187,120,31,       1, 1, 1},
+    {"PLAYERDOLL",NULL,0,41,221,224,    1, 1, 1},
+    {"BELOWINV",NULL,262,545,274,55,    1, 1, 1},
+    {"PLAYERINFO",NULL,0,0,219,41,      1, 1, 1},
+    {"RANGEBOX",NULL,6,100,94,60,       1, 1, 1},
+    {"TARGET",NULL,267,514,264,31,      1, 1, 1},
+    {"MAININV",NULL,539,147,239,32,     1, 1, 1},
+    {"MAPNAME",NULL,228,106,36,12,      1, 1, 1},
+    {"CONSOLE",NULL,271,517,256,25,     1, 0, 1},
+    {"NUMBER",NULL,271,465,256,43,      1, 0, 1},
+    {"STATOMETER",NULL,8,50,160,40,     1, 1, 1},
 };
 
 /* default overall priority list.. will change during runtime */
@@ -94,7 +94,7 @@ _widgetevent widget_mouse_event =
 /* this is used when moving a widget with the mouse */
 static _widgetmove widget_event_move =
 {
-    FALSE,
+    0,
     0,
     0,
     0
@@ -105,7 +105,7 @@ SDL_Surface*    widgetSF[TOTAL_WIDGETS] = {NULL};
 
 /* a way to steal the mouse, and to prevent widgets from using mouse events */
 /* Ex: prevents widgets from using mouse events during dragging procedure */
-Boolean IsMouseExclusive = FALSE;
+uint8 IsMouseExclusive = 0;
 
 /* load the defaults and initialize the priority list */
 /* create the interface file, if it doesn't exist */
@@ -169,15 +169,15 @@ void init_widgets_fromCurrent()
 
 /* try to load an interface file and initialize the priority list */
 /* on failure, exit without changing anything */
-Boolean init_widgets_fromFile(char *filename)
+uint8 init_widgets_fromFile(char *filename)
 {
 //    LOG(LOG_MSG,"Entering init_widgets_fromFile()..\n");
 
     /* exit, if there're no widgets */
-    if(!TOTAL_WIDGETS) { return FALSE; }
+    if(!TOTAL_WIDGETS) { return 0; }
 
     /* exit, if cannot open/find file */
-    if(!load_interface_file()) { return FALSE; }
+    if(!load_interface_file()) { return 0; }
 
     /* clear the priority list if it already exists */
     if(priority_list_head) { kill_priority_list(); }
@@ -187,7 +187,7 @@ Boolean init_widgets_fromFile(char *filename)
 
 //    LOG(LOG_MSG, "..init_widgets_fromFile(): Done.\n");
 
-    return TRUE;
+    return 1;
 }
 
 /* used in two places atm, so its in a static-scope function.. */
@@ -287,7 +287,7 @@ void kill_widgets()
 
 /* load the widgets/interface from a file */
 /* do not perform any dynamic allocation! */
-Boolean load_interface_file(void)
+uint8 load_interface_file(void)
 {
     int          i = -1,
                  pos,
@@ -312,7 +312,7 @@ Boolean load_interface_file(void)
     {
         LOG(LOG_ERROR, "FAILED: %s!\n", PHYSFS_getLastError());
 
-        return FALSE;
+        return 0;
     }
 
     LOG(LOG_MSG, "OK!\n");
@@ -438,12 +438,12 @@ Boolean load_interface_file(void)
     {
         LOG(LOG_MSG, "load_interface_file(): Not all widgets included in interface file!\n");
 
-        return FALSE;
+        return 0;
     }
 
 //    LOG(LOG_MSG, "..load_interface_file(): Done.\n");
 
-    return TRUE;
+    return 1;
 }
 
 /* save the widgets/interface to a file */
@@ -493,7 +493,7 @@ void save_interface_file(void)
 
 /* is the widget being moved by the user? if so, let me know! */
 /* ..used a function to protect internals */
-Boolean IsWidgetDragging()
+uint8 IsWidgetDragging()
 {
     return widget_event_move.active;
 }
@@ -510,7 +510,7 @@ int widget_event_mousedn(int x,int y, SDL_Event *event)
     widget_mouse_event.owner = nID;
 
     /* sanity check */
-    if(nID<0) { return FALSE; }
+    if(nID<0) { return 0; }
 
     /* setup the event structure in response */
     widget_mouse_event.x = x;
@@ -528,7 +528,7 @@ int widget_event_mousedn(int x,int y, SDL_Event *event)
 
             default:
                 /* we know this widget owns the mouse.. */
-                widget_event_move.active = TRUE;
+                widget_event_move.active = 1;
                 break;
         }
         /* start the movement procedures */
@@ -547,7 +547,7 @@ int widget_event_mousedn(int x,int y, SDL_Event *event)
             SDL_ShowCursor(0);
         }
 
-        return TRUE;
+        return 1;
     }
     /* NORMAL CONDITION - RESPOND TO MOUSEDOWN EVENT */
     else
@@ -594,7 +594,7 @@ int widget_event_mousedn(int x,int y, SDL_Event *event)
                 break;
         }
 
-        return TRUE;
+        return 1;
     }
 }
 
@@ -608,7 +608,7 @@ int widget_event_mouseup(int x, int y, SDL_Event *event)
     /* widget moving condition */
     if(widget_event_move.active)
     {
-        widget_event_move.active = FALSE;
+        widget_event_move.active = 0;
         widget_mouse_event.owner = widget_event_move.id;
         widget_mouse_event.x = x;
         widget_mouse_event.y = y;
@@ -621,7 +621,7 @@ int widget_event_mouseup(int x, int y, SDL_Event *event)
         /* the interface has changed, save it! */
 //        if(options.auto_save_interface) { save_interface_file(); }
 
-        return TRUE;
+        return 1;
     }
     /* NORMAL CONDITION - RESPOND TO MOUSEUP EVENT */
     else
@@ -634,7 +634,7 @@ int widget_event_mouseup(int x, int y, SDL_Event *event)
         /* handler(s) for miscellanous mouse movement(s) go here */
 
         /* sanity check.. return if mouse is not in a widget */
-        if(nID<0) { return FALSE; }
+        if(nID<0) { return 0; }
         else
         {
             /* setup the event structure in response */
@@ -670,7 +670,7 @@ int widget_event_mouseup(int x, int y, SDL_Event *event)
                 widget_inventory_event(x, y, *event);
                 break;
         }
-        return TRUE;
+        return 1;
     }
 }
 
@@ -701,7 +701,7 @@ int widget_event_mousemv(int x,int y, SDL_Event *event)
                 for (node = priority_list_head; node; node = node->next)
                 {
                     int     nID  = node->WidgetID;
-                    Boolean done = FALSE;
+                    uint8 done = 0;
                     if (nID == mID || !cur_widget[nID].show)
                         continue;
                     if ((TOP(mID) >= TOP(nID) && TOP(mID) <= BOTTOM (nID)) || (BOTTOM(mID) >= TOP(nID) && BOTTOM(mID) <= BOTTOM(nID)))
@@ -710,13 +710,13 @@ int widget_event_mousemv(int x,int y, SDL_Event *event)
                         {
     //                        adjx = RIGHT(nID);
                             event->motion.x = RIGHT(nID) + widget_event_move.xOffset;
-                            done = TRUE;
+                            done = 1;
                         }
                         else if (event->motion.xrel > 0 && RIGHT(mID) >= LEFT(nID) - options.widget_snap && RIGHT(mID) < LEFT(nID))
                         {
     //                        adjx = LEFT(nID) - cur_widget[mID].wd;
                             event->motion.x = LEFT(nID) - cur_widget[mID].wd + widget_event_move.xOffset;
-                            done = TRUE;
+                            done = 1;
                         }
                     }
                     if ((LEFT(mID) >= LEFT(nID) && LEFT(mID) <= RIGHT(nID)) || (RIGHT(mID) >= LEFT(nID) && RIGHT(mID) <= RIGHT(nID)))
@@ -725,13 +725,13 @@ int widget_event_mousemv(int x,int y, SDL_Event *event)
                         {
     //                        adjy = BOTTOM(nID);
                             event->motion.y = BOTTOM(nID) + widget_event_move.yOffset;
-                            done = TRUE;
+                            done = 1;
                         }
                         else if (event->motion.yrel > 0 && BOTTOM(mID) >= TOP(nID) - options.widget_snap && BOTTOM(mID) < TOP(nID))
                         {
     //                        adjy = TOP(nID) - cur_widget[mID].ht;
                             event->motion.y = TOP(nID) - cur_widget[mID].ht + widget_event_move.yOffset;
-                            done = TRUE;
+                            done = 1;
                         }
                     }
                     if (done)
@@ -753,7 +753,7 @@ int widget_event_mousemv(int x,int y, SDL_Event *event)
         cur_widget[widget_event_move.id].x1 = x - widget_event_move.xOffset; // adjx;
         cur_widget[widget_event_move.id].y1 = y - widget_event_move.yOffset; // adjy;
         map_udate_flag = 2;
-        return TRUE;
+        return 1;
     }
     /* NORMAL CONDITION - RESPOND TO MOUSEMOVE EVENT */
     else
@@ -778,7 +778,7 @@ int widget_event_mousemv(int x,int y, SDL_Event *event)
             WIDGET_REDRAW(MSGWIN_ID);
         }
         /* sanity check.. return if mouse is not in a widget */
-        if(nID<0) { return FALSE; }
+        if(nID<0) { return 0; }
         else
         {
             /* setup the event structure in response */
@@ -800,7 +800,7 @@ int widget_event_mousemv(int x,int y, SDL_Event *event)
                 break;
         }
 
-        return TRUE;
+        return 1;
     }
 }
 

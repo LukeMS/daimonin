@@ -375,7 +375,7 @@ title_repeat_jump:
             int l_len;
             _gui_book_line *tmp_line;
 
-            force_line = FALSE;
+            force_line = 0;
 force_line_jump:
             current_book_line.line[lc]=0;
 
@@ -403,7 +403,7 @@ force_line_jump:
             /* now lets check the last line - if the line is to long, lets adjust it */
             if (string_width_offset((tmp_line->mode == BOOK_LINE_TITLE) ?&font_large_out:&font_medium, tmp_line->line, &l_len, 186))
             {
-                int i, wspace_flag = TRUE;
+                int i, wspace_flag = 1;
 
 
                 tmp_line->line[l_len]=0; /* bigger can't be the string - current_book_line.line is our backbuffer */
@@ -420,7 +420,7 @@ force_line_jump:
                         if (tmp_line->line[i] == '(' && tmp_line->line[i-1] == ')')
                         {
                             tmp_line->line[i]=0;
-                            wspace_flag = FALSE;
+                            wspace_flag = 0;
                             break;
                         }
                     }
@@ -470,7 +470,7 @@ force_line_jump_out:
         current_book_line.line[lc++]=c;
         if (lc>=BOOK_LINES_CHAR-2)
         {
-            force_line = TRUE;
+            force_line = 1;
             goto force_line_jump;
         }
     }
@@ -503,7 +503,7 @@ void show_book(int x, int y)
     global_book_data.xlen = Bitmaps[BITMAP_JOURNAL]->bitmap->w;
     global_book_data.ylen = Bitmaps[BITMAP_JOURNAL]->bitmap->h;
 
-    add_close_button(x+27, y+2, MENU_BOOK, FALSE);
+    add_close_button(x+27, y+2, MENU_BOOK, 0);
 
     if (!gui_interface_book)
         return;

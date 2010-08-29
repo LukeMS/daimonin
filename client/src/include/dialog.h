@@ -73,7 +73,7 @@ enum
     DIALOG_LOGIN_WARNING_ACCOUNT_UNKNOWN
 };
 
-void add_close_button(int x, int y, int menu, Boolean newstyle);
+void add_close_button(int x, int y, int menu, uint8 newstyle);
 int add_button(int x, int y, int id, int gfxNr, char *text, char *text_h);
 int add_rangebox(int x, int y, int id, int text_w, int text_x, char *text, int color);
 extern void show_optwin(void);

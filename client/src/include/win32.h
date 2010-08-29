@@ -110,10 +110,6 @@
    computer */
 #define INSTALL_SOUND
 
-#ifndef Boolean
-#define Boolean int
-#endif
-
 #endif
 
 #endif /* ifndef __WIN32_H */

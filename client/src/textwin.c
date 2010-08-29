@@ -614,7 +614,7 @@ void widget_textwin_show(int x, int y, int actWin)
     if (cur_widget[wID].redraw)
     {
 
-        cur_widget[wID].redraw=FALSE;
+        cur_widget[wID].redraw=0;
 
         SDL_FillRect(widgetSF[wID],NULL, SDL_MapRGBA(widgetSF[wID]->format, 0, 0, 0, options.textwin_alpha));
 

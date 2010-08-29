@@ -41,10 +41,10 @@ Uint32              sdl_dgreen, sdl_dred, sdl_gray1, sdl_gray2, sdl_gray3, sdl_g
 
 _skindef            skindef;
 
-int                 music_global_fade   = FALSE;
+int                 music_global_fade   = 0;
 int                 mb_clicked          = 0;
 int        InputFirstKeyPress;
-static Boolean      newplayer = FALSE;
+static uint8      newplayer = 0;
 
 int                    interface_mode;
 
@@ -80,8 +80,8 @@ int x_custom_cursor = 0;
 int y_custom_cursor = 0;
 
 /* global endian templates (send from server) */
-int        endian_do16;    /* if FALSE we don't must shift! */
-int        endian_do32;    /* if FALSE we don't must shift! */
+int        endian_do16;    /* if 0 we don't must shift! */
+int        endian_do32;    /* if 0 we don't must shift! */
 int        endian_shift16[2]; /* shift values */
 int        endian_shift32[4];
 uint32    endian_int32;    /* thats the 0x04030201 32bit endian */
@@ -102,9 +102,9 @@ int                 HistoryPos;
 int                 CurrentCursorPos;
 
 int                 InputCount, InputMax;
-Boolean             InputStringFlag;    /* if true keyboard and game is in input str mode*/
-Boolean             InputStringEndFlag; /* if true, we had entered some in text mode and its ready*/
-Boolean             InputStringEscFlag;
+uint8             InputStringFlag;    /* if true keyboard and game is in input str mode*/
+uint8             InputStringEndFlag; /* if true, we had entered some in text mode and its ready*/
+uint8             InputStringEscFlag;
 
 _game_status        GameStatus; /* the global status identifier */
 int                 GameStatusSelect;
@@ -137,8 +137,8 @@ _screensize Screendefs[16] =
 _face_struct        FaceList[MAX_FACE_TILES];   /* face data*/
 
 void    init_game_data(void);
-Boolean game_status_chain(void);
-Boolean load_bitmap(int index);
+uint8 game_status_chain(void);
+uint8 load_bitmap(int index);
 
 _vimmsg vim[MAX_NROF_VIM];
 
@@ -389,18 +389,18 @@ void init_game_data(void)
     textwin_flags = 0;
     first_server_char = NULL;
 
-    esc_menu_flag = FALSE;
+    esc_menu_flag = 0;
     srand((uint32) time(NULL));
 
     memset(animcmd, 0, sizeof(animcmd));
     memset(animation, 0, sizeof(animation));
     memset(bmaptype_table, 0, sizeof(bmaptype_table));
-    ToggleScreenFlag = FALSE;
-    KeyScanFlag = FALSE;
+    ToggleScreenFlag = 0;
+    KeyScanFlag = 0;
     memset(&fire_mode_tab, 0, sizeof(fire_mode_tab));
 
     for (i = 0; i < MAXFACES; i++)
-        debug_layer[i] = TRUE;
+        debug_layer[i] = 1;
 
     memset(&options, 0, sizeof(struct _options));
     InitMapData(0, 0, 0, 0);
@@ -442,12 +442,12 @@ void init_game_data(void)
     MapStatusX = MAP_MAX_SIZE;
     MapStatusY = MAP_MAX_SIZE;
     map_udate_flag = 2;
-    map_redraw_flag=TRUE;
+    map_redraw_flag=1;
 //        textwin_showstring(COLOR_GREEN,"map_draw_update: InitGameData");
 
-    InputStringFlag = FALSE;    /* if true keyboard and game is in input str mode*/
-    InputStringEndFlag = FALSE;
-    InputStringEscFlag = FALSE;
+    InputStringFlag = 0;    /* if true keyboard and game is in input str mode*/
+    InputStringEndFlag = 0;
+    InputStringEscFlag = 0;
     csocket.fd = SOCKET_NO;
     RangeFireMode = 0;
     gui_npc = NULL;
@@ -462,8 +462,8 @@ void init_game_data(void)
     options.resolution = 0;
     options.channelformat=0;
 
-    options.playerdoll = FALSE;
-    options.sleepcounter = FALSE;
+    options.playerdoll = 0;
+    options.sleepcounter = 0;
     options.zoom=100;
     options.speedup = 0;
     options.mapstart_x = -10;
@@ -475,12 +475,12 @@ void init_game_data(void)
 
 //    options.statometer=1;
     options.statsupdate=5;
-    options.firststart=TRUE;
+    options.firststart=1;
 #ifdef WIDGET_SNAP
     options.widget_snap=0;
 #endif
-    options.shoutoff=FALSE;
-    options.no_meta=FALSE;
+    options.shoutoff=0;
+    options.no_meta=0;
 
     options.anim_frame_time = 50;
     options.anim_check_time = 50;
@@ -632,7 +632,7 @@ void load_options_dat(void)
         if (line[0] == '*')
         {
             if (line[2]=='0')
-                options.firststart=FALSE;
+                options.firststart=0;
             continue;
         }
         /* this are special settings which won't show in the options win, this has to be reworked in a general way */
@@ -695,7 +695,7 @@ void load_options_dat(void)
 
 
 /* asynchron connection chain*/
-Boolean game_status_chain(void)
+uint8 game_status_chain(void)
 {
     /* lets drop some status messages for the client logs */
     static int st = -1, lg = -1, gs = -1;
@@ -745,7 +745,7 @@ Boolean game_status_chain(void)
         }
         else
         {
-            int meta_ret = FALSE;
+            int meta_ret = 0;
             SOCKET fd = SOCKET_NO;
 
             textwin_showstring(COLOR_GREEN,
@@ -788,7 +788,7 @@ Boolean game_status_chain(void)
         clear_group();
         map_udate_flag = 2;
         clear_map();
-        map_redraw_flag=TRUE;
+        map_redraw_flag=1;
         clear_player();
         reset_keys();
         free_faces();
@@ -990,13 +990,13 @@ Boolean game_status_chain(void)
         {
             if (InputStringEscFlag)
                 GameStatus = GAME_STATUS_LOGIN_BREAK;
-            else if (InputStringFlag == FALSE && InputStringEndFlag == TRUE)
+            else if (InputStringFlag == 0 && InputStringEndFlag == 1)
             {
                 if (!account_name_valid(InputString))
                 {
                     dialog_login_warning_level = DIALOG_LOGIN_WARNING_NAME_WRONG;
-                    InputStringFlag = TRUE;
-                    InputStringEndFlag = FALSE;
+                    InputStringFlag = 1;
+                    InputStringEndFlag = 0;
                 }
                 else
                 {
@@ -1014,7 +1014,7 @@ Boolean game_status_chain(void)
             textwin_clearhistory();
             if (InputStringEscFlag)
                 GameStatus = GAME_STATUS_LOGIN_BREAK;
-            else if (InputStringFlag == FALSE && InputStringEndFlag == TRUE)
+            else if (InputStringFlag == 0 && InputStringEndFlag == 1)
             {
                 if(LoginInputStep == LOGIN_STEP_PASS2)
                 {
@@ -1077,13 +1077,13 @@ Boolean game_status_chain(void)
             {
                 strcpy(InputString, options.cli_account);
                 options.cli_account[0] = '\0'; // we generally only try once
-                InputStringFlag = FALSE;
-                InputStringEndFlag = TRUE;
+                InputStringFlag = 0;
+                InputStringEndFlag = 1;
             }
 
             if (InputStringEscFlag)
                 GameStatus = GAME_STATUS_LOGIN_BREAK;
-            else if (InputStringFlag == FALSE && InputStringEndFlag == TRUE)
+            else if (InputStringFlag == 0 && InputStringEndFlag == 1)
             {
                 /* we don't want that the server things we cheat - so check it here */
                 if (!account_name_valid(InputString))
@@ -1111,13 +1111,13 @@ Boolean game_status_chain(void)
             {
                 strcpy(InputString, options.cli_pass);
                 options.cli_pass[0] = '\0';
-                InputStringFlag = FALSE;
-                InputStringEndFlag = TRUE;
+                InputStringFlag = 0;
+                InputStringEndFlag = 1;
             }
 
             if (InputStringEscFlag)
                 GameStatus = GAME_STATUS_LOGIN_BREAK;
-            else if (InputStringFlag == FALSE && InputStringEndFlag == TRUE)
+            else if (InputStringFlag == 0 && InputStringEndFlag == 1)
             {
                 /* we don't want that the server things we cheat - so check it here */
                 if (!password_valid(InputString))
@@ -1165,7 +1165,7 @@ Boolean game_status_chain(void)
             reset_input_mode();
             GameStatus = GAME_STATUS_ACCOUNT;
         }
-        else if (InputStringFlag == FALSE && InputStringEndFlag == TRUE)
+        else if (InputStringFlag == 0 && InputStringEndFlag == 1)
         {
             if(!stricmp(InputString, "delete"))
             {
@@ -1199,7 +1199,7 @@ Boolean game_status_chain(void)
          */
         reset_input_mode();
         dialog_new_char_warn = 0;
-        newplayer = TRUE;
+        newplayer = 1;
     }
     else if (GameStatus == GAME_STATUS_ACCOUNT_CHAR_NAME)
     {
@@ -1210,7 +1210,7 @@ Boolean game_status_chain(void)
         {
             GameStatus = GAME_STATUS_ACCOUNT_CHAR_CREATE;
         }
-        else if (InputStringFlag == FALSE && InputStringEndFlag == TRUE)
+        else if (InputStringFlag == 0 && InputStringEndFlag == 1)
         {
             /* we don't want that the server things we cheat - so check it here */
             if (!player_name_valid(InputString))
@@ -1243,7 +1243,7 @@ Boolean game_status_chain(void)
         {
             GameStatus = GAME_STATUS_ACCOUNT_CHAR_CREATE;
         }
-        else if (InputStringFlag == FALSE && InputStringEndFlag == TRUE)
+        else if (InputStringFlag == 0 && InputStringEndFlag == 1)
         {
             sprintf(cpl.reclaim_password, "%s", InputString);
             dialog_new_char_warn = 0; /* = name must min/max */
@@ -1275,7 +1275,7 @@ Boolean game_status_chain(void)
         map_udate_flag=2;
         map_draw_map_clear(); /* draw a clear map */
     }
-    return(TRUE);
+    return(1);
 }
 
 
@@ -1288,7 +1288,7 @@ void load_bitmaps(void)
         load_bitmap(i);
 }
 
-Boolean load_bitmap(int index)
+uint8 load_bitmap(int index)
 {
     char    buf[2048];
     uint32  flags   = 0;
@@ -1307,9 +1307,9 @@ Boolean load_bitmap(int index)
     if (!Bitmaps[index] || !Bitmaps[index]->bitmap)
     {
         LOG(LOG_MSG, "load_bitmap(): Can't load bitmap %s\n", buf);
-        return(FALSE);
+        return(0);
     }
-    return(TRUE);
+    return(1);
 }
 
 /* free the skin & standard gfx */
@@ -1429,9 +1429,9 @@ void reset_input_mode(void)
     HistoryPos = 0;
     InputHistory[0][0] = 0;
     CurrentCursorPos = 0;
-    InputStringFlag = FALSE;
-    InputStringEndFlag = FALSE;
-    InputStringEscFlag = FALSE;
+    InputStringFlag = 0;
+    InputStringEndFlag = 0;
+    InputStringEscFlag = 0;
 }
 
 void open_input_mode(int maxchar)
@@ -1440,11 +1440,11 @@ void open_input_mode(int maxchar)
     int delay    = (options.menu_repeat > 0) ? interval + 280 / options.menu_repeat : 0;
     reset_input_mode();
     InputMax = maxchar;
-    InputFirstKeyPress = TRUE;
+    InputFirstKeyPress = 1;
     SDL_EnableKeyRepeat(delay, interval); // SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
     if (cpl.input_mode != INPUT_MODE_NUMBER)
         cpl.inventory_win = IWIN_BELOW;
-    InputStringFlag = TRUE;
+    InputStringFlag = 1;
     /* if true keyboard and game is in input str mode*/
 }
 
@@ -1496,17 +1496,17 @@ static void play_action_sounds(void)
     if (cpl.warn_statdown)
     {
         sound_play_one_repeat(SOUNDTYPE_CLIENT, SOUND_WARN_STATDOWN, SPECIAL_SOUND_STATDOWN);
-        cpl.warn_statdown = FALSE;
+        cpl.warn_statdown = 0;
     }
     if (cpl.warn_statup)
     {
         sound_play_one_repeat(SOUNDTYPE_CLIENT, SOUND_WARN_STATUP, SPECIAL_SOUND_STATUP);
-        cpl.warn_statup = FALSE;
+        cpl.warn_statup = 0;
     }
     if (cpl.warn_drain)
     {
         sound_play_one_repeat(SOUNDTYPE_CLIENT, SOUND_WARN_DRAIN, SPECIAL_SOUND_DRAIN);
-        cpl.warn_drain = FALSE;
+        cpl.warn_drain = 0;
     }
 }
 
@@ -1609,7 +1609,7 @@ int main(int argc, char *argv[])
     uint32          anim_tick;
     Uint32          videoflags;
     int             i, done = 0, FrameCount = 0;
-    Boolean         showtimer = FALSE;
+    uint8         showtimer = 0;
     uint32          speeduptick = 0;
     uint32          new_anim_tick = 0;
     uint16          BestFPS = 0,
@@ -1814,12 +1814,12 @@ int main(int argc, char *argv[])
         {
             uint32  flags, tf;
             if (options.fullscreen)
-                options.fullscreen = FALSE;
+                options.fullscreen = 0;
             else
-                options.fullscreen = TRUE;
+                options.fullscreen = 1;
             tf = flags = get_video_flags();
             attempt_fullscreen_toggle(&ScreenSurface, &flags);
-            ToggleScreenFlag = FALSE;
+            ToggleScreenFlag = 0;
         }
 #endif
 
@@ -1971,9 +1971,9 @@ int main(int argc, char *argv[])
         LastTick = SDL_GetTicks();
 
         /* Seems a fairly hideous way of doing this but this mimics the show_help_screen_new -- Smacky 20070201 */
-        if (GameStatus == GAME_STATUS_PLAY && newplayer == TRUE)
+        if (GameStatus == GAME_STATUS_PLAY && newplayer == 1)
         {
-            newplayer = FALSE;
+            newplayer = 0;
             textwin_showstring(COLOR_DEFAULT,
                                "|Welcome to Daimonin, %s -- WHAT NOW?|\n"\
                                "As this is your first time playing, you may be asking this question.\n"\
@@ -1991,20 +1991,20 @@ int main(int argc, char *argv[])
 
                 if (difftime(now,sleeptime)>0)
                 {
-                    showtimer = TRUE;
+                    showtimer = 1;
                 }
             }
         if (showtimer && !esc_menu_flag)
             sprite_blt(Bitmaps[BITMAP_STIMER], options.mapstart_x+300, options.mapstart_y+150, NULL, NULL);
         }
         if (!options.sleepcounter)
-            showtimer = FALSE;
+            showtimer = 0;
 
         if (GameStatus == GAME_STATUS_PLAY)
         {
             if (options.statsupdate)
             {
-                cur_widget[STATOMETER_ID].show = TRUE;
+                cur_widget[STATOMETER_ID].show = 1;
 
                 if ((int)(LastTick - statometer.lastupdate) >
                     (options.statsupdate * 1000))
@@ -2208,7 +2208,7 @@ static void ParseInvocationLine(int argc, char *argv[])
             }
             else
             {
-                KeyScanFlag = TRUE;
+                KeyScanFlag = 1;
                 invalid[0] = '\0';
             }
         }
@@ -2691,7 +2691,7 @@ static void display_layer1(void)
 #ifdef PROFILING
         LOG(LOG_MSG, "[Prof] DisplayFormat or Map-Zoom: %d\n", SDL_GetTicks() - ts);
 #endif
-        map_redraw_flag=FALSE;
+        map_redraw_flag=0;
     }
     rect.x=options.mapstart_x;
     rect.y=options.mapstart_y;
@@ -2752,8 +2752,8 @@ static void display_layer4(void)
     if (GameStatus >= GAME_STATUS_WAITFORPLAY)
     {
         /* we have to make sure that this two windows get closed/hidden right */
-        cur_widget[IN_CONSOLE_ID].show = FALSE;
-        cur_widget[IN_NUMBER_ID].show = FALSE;
+        cur_widget[IN_CONSOLE_ID].show = 0;
+        cur_widget[IN_NUMBER_ID].show = 0;
 
         if (cpl.input_mode == INPUT_MODE_CONSOLE)
             do_console(cur_widget[IN_CONSOLE_ID].x1, cur_widget[IN_CONSOLE_ID].y1);
@@ -2765,7 +2765,7 @@ static void display_layer4(void)
             do_npcdialog_input();
     }
     /* show main-option menu */
-    if(esc_menu_flag == TRUE)
+    if(esc_menu_flag == 1)
     {
         show_option(esc_menu_index, (Screensize.x/2), (Screensize.y/2)-(Bitmaps[BITMAP_OPTIONS_ALPHA]->bitmap->h/2));
     }
@@ -2799,7 +2799,7 @@ void load_skindef()
     /* first we fill with default values */
     skindef.rowcolor[0]=SDL_MapRGB(ScreenSurface->format, 100, 57, 30);
     skindef.rowcolor[1]=SDL_MapRGB(ScreenSurface->format, 57, 59, 39);
-    skindef.newclosebutton = TRUE;
+    skindef.newclosebutton = 1;
 
     /* lets try to load the skin.def */
     LOG(LOG_MSG, "Trying to load skin definition... ");
