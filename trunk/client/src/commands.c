@@ -525,8 +525,8 @@ void AddMeFail(char *data, int len)
              if(GameStatus == GAME_STATUS_ACCOUNT_CHAR_CREATE_WAIT)
              {
                  reset_input_mode();
-                 InputStringFlag = TRUE;
-                 InputStringEndFlag = FALSE;
+                 InputStringFlag = 1;
+                 InputStringEndFlag = 0;
                  open_input_mode(17);
                  GameStatus = GAME_STATUS_ACCOUNT_CHAR_RECLAIM;
                  cpl.menustatus = MENU_NO;
@@ -543,8 +543,8 @@ void AddMeFail(char *data, int len)
          {
              reset_input_mode();
              cpl.name[0] = 0;
-             InputStringFlag=TRUE;
-             InputStringEndFlag=FALSE;
+             InputStringFlag=1;
+             InputStringEndFlag=0;
              open_input_mode(MAX_PLAYER_NAME);
              GameStatus = GAME_STATUS_ACCOUNT_CHAR_NAME;
              cpl.menustatus = MENU_NO;
@@ -634,7 +634,7 @@ void ImageCmd(char *data, int len)
     /* and load it to FaceList*/
     FaceList[pnum].sprite = sprite_tryload_file(buf, 0, NULL);
     map_udate_flag = 2;
-    map_redraw_flag = TRUE;
+    map_redraw_flag = 1;
 //    textwin_showstring(COLOR_GREEN,"map_draw_update: ImageCmd");
 }
 
@@ -687,7 +687,7 @@ void DrawInfoCmd2(char *data, int len)
 {
     int     flags;
     char    *tmp=NULL, buf[2048];
-    Boolean buddy=FALSE;
+    uint8 buddy=0;
 
     flags = GetUINT16_String(data);
     data += 2;
@@ -801,11 +801,11 @@ void DrawInfoCmd2(char *data, int len)
 
         if (buddy_check(data)) /* Color messages from buddys */
         {
-            buddy=TRUE;
+            buddy=1;
             flags = (flags & 0xff00) | 113;
         }
         else
-            buddy=FALSE;
+            buddy=0;
 
         if ((flags & NDI_SHOUT) && (options.shoutoff) && !buddy)
             return;
@@ -835,7 +835,7 @@ void TargetObject(char *data, int len)
     cpl.target_code = *data++;
     strcpy(cpl.target_name, (const char *)data);
     map_udate_flag = 2;
-    map_redraw_flag = TRUE;
+    map_redraw_flag = 1;
 #if 0
     textwin_showstring(COLOR_GREEN,
                        "map_draw_update: TargetObject\n"\
@@ -932,9 +932,9 @@ void StatsCmd(char *data, int len)
                 case CS_STAT_STR:
                     temp = (int) * (data + i++);
                     if (temp >= cpl.stats.Str)
-                        cpl.warn_statup = TRUE;
+                        cpl.warn_statup = 1;
                     else
-                        cpl.warn_statdown = TRUE;
+                        cpl.warn_statdown = 1;
 
                     cpl.stats.Str = temp;
                     WIDGET_REDRAW(STATS_ID);
@@ -942,9 +942,9 @@ void StatsCmd(char *data, int len)
                 case CS_STAT_INT:
                     temp = (int) * (data + i++);
                     if (temp >= cpl.stats.Int)
-                        cpl.warn_statup = TRUE;
+                        cpl.warn_statup = 1;
                     else
-                        cpl.warn_statdown = TRUE;
+                        cpl.warn_statdown = 1;
 
                     cpl.stats.Int = temp;
                     WIDGET_REDRAW(STATS_ID);
@@ -952,9 +952,9 @@ void StatsCmd(char *data, int len)
                 case CS_STAT_POW:
                     temp = (int) * (data + i++);
                     if (temp >= cpl.stats.Pow)
-                        cpl.warn_statup = TRUE;
+                        cpl.warn_statup = 1;
                     else
-                        cpl.warn_statdown = TRUE;
+                        cpl.warn_statdown = 1;
 
                     cpl.stats.Pow = temp;
                     WIDGET_REDRAW(STATS_ID);
@@ -963,9 +963,9 @@ void StatsCmd(char *data, int len)
                 case CS_STAT_WIS:
                     temp = (int) * (data + i++);
                     if (temp >= cpl.stats.Wis)
-                        cpl.warn_statup = TRUE;
+                        cpl.warn_statup = 1;
                     else
-                        cpl.warn_statdown = TRUE;
+                        cpl.warn_statdown = 1;
 
                     cpl.stats.Wis = temp;
 
@@ -974,9 +974,9 @@ void StatsCmd(char *data, int len)
                 case CS_STAT_DEX:
                     temp = (int) * (data + i++);
                     if (temp >= cpl.stats.Dex)
-                        cpl.warn_statup = TRUE;
+                        cpl.warn_statup = 1;
                     else
-                        cpl.warn_statdown = TRUE;
+                        cpl.warn_statdown = 1;
 
                     cpl.stats.Dex = temp;
                     WIDGET_REDRAW(STATS_ID);
@@ -984,9 +984,9 @@ void StatsCmd(char *data, int len)
                 case CS_STAT_CON:
                     temp = (int) * (data + i++);
                     if (temp >= cpl.stats.Con)
-                        cpl.warn_statup = TRUE;
+                        cpl.warn_statup = 1;
                     else
-                        cpl.warn_statdown = TRUE;
+                        cpl.warn_statdown = 1;
 
                     cpl.stats.Con = temp;
                     WIDGET_REDRAW(STATS_ID);
@@ -994,9 +994,9 @@ void StatsCmd(char *data, int len)
                 case CS_STAT_CHA:
                     temp = (int) * (data + i++);
                     if (temp >= cpl.stats.Cha)
-                        cpl.warn_statup = TRUE;
+                        cpl.warn_statup = 1;
                     else
-                        cpl.warn_statdown = TRUE;
+                        cpl.warn_statdown = 1;
 
                     cpl.stats.Cha = temp;
                     WIDGET_REDRAW(STATS_ID);
@@ -1004,7 +1004,7 @@ void StatsCmd(char *data, int len)
                 case CS_STAT_EXP:
                     temp = GetSINT32_String(data + i);
                     if (temp < cpl.stats.exp)
-                        cpl.warn_drain = TRUE;
+                        cpl.warn_drain = 1;
                     cpl.stats.exp = temp;
                     cpl.stats.exp_level = server_level.level; //we need to set it to max_level as default!!!
                     /* get the real level depending on the exp */
@@ -1023,7 +1023,7 @@ void StatsCmd(char *data, int len)
                     cpl.stats.level = (sint8) * (data + i++);
                     if (cpl.stats.level != cpl.stats.exp_level)
                     {
-                        cpl.warn_drain = TRUE;
+                        cpl.warn_drain = 1;
                     }
                     WIDGET_REDRAW(MAIN_LVL_ID);
                     break;
@@ -1194,10 +1194,10 @@ void PlayerCmd(char *data, int len)
     int     tag, weight, face, i = 0, nlen;
     char filename[255];
 
-    options.firststart = FALSE;
+    options.firststart = 0;
     GameStatus = GAME_STATUS_PLAY;
     txtwin[TW_MIX].size = txtwin_start_size;
-    InputStringEndFlag = FALSE;
+    InputStringEndFlag = 0;
     tag = GetSINT32_String(data);
     i += 4;
     weight = GetSINT32_String(data + i);
@@ -1219,7 +1219,7 @@ void PlayerCmd(char *data, int len)
     map_draw_map_clear();
     map_transfer_flag = 1;
     map_udate_flag = 2;
-    map_redraw_flag=TRUE;
+    map_redraw_flag=1;
 //    textwin_showstring(COLOR_GREEN,"map_draw_update: PlayerCmd");
 
 
@@ -1330,13 +1330,13 @@ void ItemXYCmd(char *data, int len, int bflag)
 /* ItemXCmd is ItemCmd with sort order normal (add to end) */
 void ItemXCmd(char *data, int len)
 {
-    ItemXYCmd(data, len, FALSE);
+    ItemXYCmd(data, len, 0);
 }
 
 /* ItemYCmd is ItemCmd with sort order reversed (add to front) */
 void ItemYCmd(char *data, int len)
 {
-    ItemXYCmd(data, len, TRUE);
+    ItemXYCmd(data, len, 1);
 }
 
 void GroupCmd(char *data, int len)
@@ -1551,7 +1551,7 @@ if (ip->anim)
         condition = (int)(data[pos++]);
     }
     update_item(tag, loc, name, weight, face, flags, anim, animspeed, nrof, 254, 254, quality, condition, 254, 254, direction,
-                FALSE);
+                0);
     map_udate_flag = 2;
 }
 
@@ -1589,7 +1589,7 @@ void Map2Cmd(char *data, int len)
     static int      step = 0;
     int     mask, x, y, pos = 0, ext_flag, xdata;
     int     mapstat, ext1, ext2, ext3, probe;
-    int     map_new_flag    = FALSE;
+    int     map_new_flag    = 0;
     int     ff0, ff1, ff2, ff3, ff_flag, xpos, ypos;
 
     sint16 height_2, height_3, height_4;
@@ -1610,7 +1610,7 @@ void Map2Cmd(char *data, int len)
         if (mapstat == MAP_UPDATE_CMD_NEW)
         {
             /*
-                    map_new_flag = TRUE;
+                    map_new_flag = 1;
             */
             map_w = (uint8) (data[pos++]);
             map_h = (uint8) (data[pos++]);
@@ -1890,7 +1890,7 @@ void Map2Cmd(char *data, int len)
         }
     } /* more tiles */
     map_udate_flag = 2;
-    map_redraw_flag = TRUE;
+    map_redraw_flag = 1;
 //    textwin_showstring(COLOR_GREEN,"map_draw_update: Map2Cmd");
 
 }
@@ -2181,7 +2181,7 @@ void DataCmd(char *data, int len)
 * @param one_prefix emotes got only prefix in first line
 * @param result breaked and prefixed string
 */
-static inline void break_string(char *text, char *prefix, Boolean one_prefix, char *result)
+static inline void break_string(char *text, char *prefix, uint8 one_prefix, char *result)
 {
     char buf[200];
     char pref[50];
@@ -2220,7 +2220,7 @@ static inline void break_string(char *text, char *prefix, Boolean one_prefix, ch
         break;
 
     case 1:
-        one_prefix=TRUE;
+        one_prefix=1;
         strcpy(pref,"       ");
         break;
     }
@@ -2326,12 +2326,12 @@ void ChannelMsgCmd(char *data, int len)
         char message2[1024];
         sprintf(prefix,"[%s:%s ",channelname, playername);
         sprintf(message2,"%s%c",message,']');
-        break_string(message2, prefix, TRUE, outstring);
+        break_string(message2, prefix, 1, outstring);
     }
     else
     {
         sprintf(prefix,"[%s:%s] ",channelname, playername);
-        break_string(message, prefix, FALSE, outstring);
+        break_string(message, prefix, 0, outstring);
     }
 
     textwin_showstring((NDI_PLAYER | color), "%s", outstring);

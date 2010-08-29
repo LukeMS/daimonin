@@ -133,7 +133,7 @@ anim_list *new_anim_add_tile(uint16 anim, uint8 sequence, uint8 dir, uint8 speed
     if (the_map.cells[x][y].anim[layer])
     {
         al = the_map.cells[x][y].anim[layer];
-        new_anim_change(al, anim, sequence, dir, speed, FALSE);
+        new_anim_change(al, anim, sequence, dir, speed, 0);
         return al;
     }
 
@@ -147,7 +147,7 @@ anim_list *new_anim_add_tile(uint16 anim, uint8 sequence, uint8 dir, uint8 speed
     if (animation[anim].aSeq[sequence]->dirs[dir].frames==1)
     {
         the_map.cells[x][y].faces[layer] = animation[anim].aSeq[sequence]->dirs[dir].faces[0];
-        map_redraw_flag = TRUE;
+        map_redraw_flag = 1;
 
         return NULL;
     }
@@ -184,9 +184,9 @@ anim_list *new_anim_add_tile(uint16 anim, uint8 sequence, uint8 dir, uint8 speed
  * if you set speed to 120(%), you get 250/1.2 = 208ms for that frame...
  * keep in mind that this will affect also the currently shown frame-delay
  */
-void new_anim_change(anim_list *al, uint16 anim, uint8 sequence, uint8 dir, uint8 speed, Boolean restart)
+void new_anim_change(anim_list *al, uint16 anim, uint8 sequence, uint8 dir, uint8 speed, uint8 restart)
 {
-    Boolean need_reset = restart;
+    uint8 need_reset = restart;
     if (!al)
         return;
 
@@ -204,13 +204,13 @@ void new_anim_change(anim_list *al, uint16 anim, uint8 sequence, uint8 dir, uint
             case ATYPE_TILE:
                 ((struct MapCell *)al->obj)->faces[al->layer] =
                     animation[anim].aSeq[sequence]->dirs[dir].faces[0];
-                map_redraw_flag = TRUE;
+                map_redraw_flag = 1;
                 new_anim_remove_tile(al);
             break;
             case ATYPE_ITEM:
                 ((item *)al->obj)->face = animation[anim].aSeq[sequence]->dirs[dir].faces[0];
                 new_anim_remove_item(((item *)al->obj));
-                //inv_redraw_flag = TRUE;
+                //inv_redraw_flag = 1;
             break;
         }
         return;
@@ -232,7 +232,7 @@ void new_anim_change(anim_list *al, uint16 anim, uint8 sequence, uint8 dir, uint
         {
             al->dir = dir;
             if (animation[al->animnum].aSeq[al->sequence]->flags & ASEQ_DIR_RESET)
-                need_reset = TRUE;
+                need_reset = 1;
         }
     }
 
@@ -243,7 +243,7 @@ void new_anim_change(anim_list *al, uint16 anim, uint8 sequence, uint8 dir, uint
         else
         {
             al->sequence = sequence;
-            need_reset = TRUE;
+            need_reset = 1;
         }
     }
 
@@ -254,7 +254,7 @@ void new_anim_change(anim_list *al, uint16 anim, uint8 sequence, uint8 dir, uint
         else
         {
             al->animnum = anim;
-            need_reset = TRUE;
+            need_reset = 1;
         }
     }
 
@@ -264,7 +264,7 @@ void new_anim_change(anim_list *al, uint16 anim, uint8 sequence, uint8 dir, uint
     return;
 }
 
-Boolean new_anim_load_and_check(uint16 anim, uint8 sequence, uint8 dir)
+uint8 new_anim_load_and_check(uint16 anim, uint8 sequence, uint8 dir)
 {
     /* test if we have already loaded the basic anim (doesn't mean the needed faces are already loaded, only the structure) */
     if (!animation[anim].loaded)
@@ -276,7 +276,7 @@ Boolean new_anim_load_and_check(uint16 anim, uint8 sequence, uint8 dir)
     if (!animation[anim].loaded)
     {
         LOG(LOG_DEBUG,"Error loading animation...%d\n",anim);
-        return FALSE;
+        return 0;
     }
 
     /* lets look if the sequence exists, not all anims have all sequences or mappings... */
@@ -284,14 +284,14 @@ Boolean new_anim_load_and_check(uint16 anim, uint8 sequence, uint8 dir)
     if (!animation[anim].aSeq[sequence])
     {
         LOG(LOG_DEBUG,"Error loading animation, sequence doesn't exist: a:%d, s:%d\n",anim, sequence);
-        return FALSE;
+        return 0;
     }
 
     /* now lets look if the wanted direction has an animation (eg. frames >0) */
     if (animation[anim].aSeq[sequence]->dirs[dir].frames<=0)
     {
         LOG(LOG_DEBUG,"Error loading animation, direction doesn't exist: a:%d, s:%d, d:%d\n",anim, sequence,dir);
-        return FALSE;
+        return 0;
     }
 
     /* ok, if we are here the animation exists, lets check if the faces for this animation are loaded, if not do it */
@@ -304,7 +304,7 @@ Boolean new_anim_load_and_check(uint16 anim, uint8 sequence, uint8 dir)
             request_face(animation[anim].aSeq[sequence]->dirs[dir].faces[i]);
     }
 
-    return TRUE;
+    return 1;
 }
 
 
@@ -323,11 +323,11 @@ void new_anim_reset(anim_list *al)
     {
         case ATYPE_TILE:
             ((struct MapCell *)al->obj)->faces[al->layer] = animation[al->animnum].aSeq[al->sequence]->dirs[al->dir].faces[0];
-            map_redraw_flag = TRUE;
+            map_redraw_flag = 1;
         break;
         case ATYPE_ITEM:
             ((item *)al->obj)->face = animation[al->animnum].aSeq[al->sequence]->dirs[al->dir].faces[0];
-            //inv_redraw_flag = TRUE;
+            //inv_redraw_flag = 1;
         break;
     }
 
@@ -395,7 +395,7 @@ anim_list *new_anim_add_item(uint16 anim, uint8 sequence, uint8 dir, uint8 speed
     {
         al = it->anim;
         /* set new anim params, try to not restart the anim if possible */
-        new_anim_change(al, anim, sequence, dir, speed, FALSE);
+        new_anim_change(al, anim, sequence, dir, speed, 0);
 
         return al;
     }
@@ -448,11 +448,11 @@ void new_anim_animate(uint32 curTick)
 #ifdef PROFILING
     Uint32 ts = SDL_GetTicks();
 #endif
-    Boolean got_map  = FALSE;
-    Boolean got_item = FALSE;
+    uint8 got_map  = 0;
+    uint8 got_item = 0;
 #ifdef ANIM_FRAMESKIP
     uint32             lasttime;
-    Boolean new_face = FALSE;
+    uint8 new_face = 0;
 #endif
     anim_list *node = NULL;
 
@@ -469,7 +469,7 @@ void new_anim_animate(uint32 curTick)
                             (float)(animation[node->animnum].aSeq[node->sequence]->dirs[node->dir].delays[node->current_frame])
                             / ((float)node->speed/100.0f))) <= curTick)
         {
-            new_face = TRUE;
+            new_face = 1;
 
             if (++(node->current_frame) >= animation[node->animnum].aSeq[node->sequence]->dirs[node->dir].frames)
                 node->current_frame = 0;
@@ -485,12 +485,12 @@ void new_anim_animate(uint32 curTick)
                 case ATYPE_TILE:
                     ((struct MapCell *)node->obj)->faces[node->layer] =
                         animation[node->animnum].aSeq[node->sequence]->dirs[node->dir].faces[node->current_frame];
-                    got_map = TRUE;
+                    got_map = 1;
                 break;
                 case ATYPE_ITEM:
                     ((item *)node->obj)->face =
                         animation[node->animnum].aSeq[node->sequence]->dirs[node->dir].faces[node->current_frame];
-                    got_item = TRUE;
+                    got_item = 1;
                 break;
             }
         }
@@ -516,12 +516,12 @@ void new_anim_animate(uint32 curTick)
                 case ATYPE_TILE:
                     ((struct MapCell *)node->obj)->faces[node->layer] =
                         animation[node->animnum].aSeq[node->sequence]->dirs[node->dir].faces[node->current_frame];
-                    got_map = TRUE;
+                    got_map = 1;
                 break;
                 case ATYPE_ITEM:
                     ((item *)node->obj)->face =
                         animation[node->animnum].aSeq[node->sequence]->dirs[node->dir].faces[node->current_frame];
-                    got_item = TRUE;
+                    got_item = 1;
                 break;
 
             }
@@ -529,7 +529,7 @@ void new_anim_animate(uint32 curTick)
     }
 #endif
     if (got_map)
-        map_redraw_flag = TRUE;
+        map_redraw_flag = 1;
 
 #ifdef PROFILING
     LOG(LOG_MSG, "[Prof] new_anim_animate: %d\n",SDL_GetTicks() - ts);
@@ -658,7 +658,7 @@ void create_anim_tmp()
     uint8       seqnum, dirnum, delay=0, frames=0;
     char        buf[LARGE_BUF], cmd[LARGE_BUF];
     char        anim_cmd[2048];
-    Boolean     anim = FALSE, sequence=FALSE, dir=FALSE, old_format = TRUE;
+    uint8     anim = 0, sequence=0, dir=0, old_format = 1;
     uint16      faces[1024]; /* temp face buffer for old anims */
 
     memset(faces, 0, sizeof(faces));
@@ -682,11 +682,11 @@ void create_anim_tmp()
     while (fgets(buf, LARGE_BUF - 1, stream) != NULL)
     {
         sscanf(buf, "%s", cmd);
-        if (anim == FALSE) /* we are outside a anim body ? */
+        if (anim == 0) /* we are outside a anim body ? */
         {
             if (!strncmp(buf, "anim ", 5))
             {
-                anim = TRUE;
+                anim = 1;
                 facings = 0;
                 numfaces = 0;
                 delay = DEFAULT_ANIM_DELAY;
@@ -704,13 +704,13 @@ void create_anim_tmp()
         {
             if (!strncmp(buf, "sequence ", 9))
             {
-                old_format = FALSE;
+                old_format = 0;
                 seqnum = atoi(buf + 9);
-                sequence = TRUE;
+                sequence = 1;
                 if (dir) /* we had a dir command before, now we have a new sequence, lets set the enddir marker */
                 {
                     anim_cmd[anim_len++]=0xFF;
-                    dir=FALSE;
+                    dir=0;
                     if (dirframepos)
                     {
                         anim_cmd[dirframepos] = frames;
@@ -722,16 +722,16 @@ void create_anim_tmp()
             }
             else if (!strncmp(buf, "sequencemap ",12))
             {
-                old_format = FALSE;
-                sequence = TRUE;
+                old_format = 0;
+                sequence = 1;
                 seqnum = atoi(buf + 12);
                 anim_cmd[(anim_len-1)] |= ASEQ_MAPPED;
                 anim_cmd[anim_len++] = seqnum;
             }
             else if (!strncmp(buf, "dirreset ", 9))
             {
-                old_format = FALSE;
-                sequence = TRUE;
+                old_format = 0;
+                sequence = 1;
                 if (atoi(buf+9))
                     anim_cmd[(anim_len)-1] |= ASEQ_DIR_RESET;
 
@@ -750,7 +750,7 @@ void create_anim_tmp()
                     dirframepos = 0;
                 }
 
-                dir = TRUE;
+                dir = 1;
                 dirnum = atoi(buf + 4);
                 anim_cmd[anim_len++] = dirnum;
                 anim_cmd[anim_len++] = 0; /* nrof frames */
@@ -845,10 +845,10 @@ void create_anim_tmp()
                 memset(faces, 0, sizeof(faces));
                 memset(anim_cmd, 0, sizeof(anim_cmd));
                 count++;
-                anim = FALSE;
-                old_format = TRUE;
-                sequence = FALSE;
-                dir = FALSE;
+                anim = 0;
+                old_format = 1;
+                sequence = 0;
+                dir = 0;
                 numfaces = 0;
             }
             else
@@ -1050,6 +1050,6 @@ void NewAnimCmd(unsigned char *data, int len)
 #endif
 
     /* mark it as successful loaded */
-    animation[animnum].loaded = TRUE;
+    animation[animnum].loaded = 1;
     return;
 }

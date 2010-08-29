@@ -32,7 +32,7 @@ button_status global_buttons;
 
 typedef struct _keys
 {
-    Boolean         pressed; /*true: key is pressed*/
+    uint8         pressed; /*true: key is pressed*/
     uint32          time; /*tick time last repeat is initiated*/
 }
 _keys;
@@ -122,7 +122,7 @@ static char    *directionsrun[10]       =
 
 static int      key_event(SDL_KeyboardEvent *key);
 static void     key_string_event(SDL_KeyboardEvent *key);
-static Boolean  check_macro_keys(char *text);
+static uint8  check_macro_keys(char *text);
 static void     move_keys(int num);
 static void     key_repeat(void);
 static void     cursor_keys(int num);
@@ -147,12 +147,12 @@ void reset_keys(void)
 
     SDL_EnableKeyRepeat(0, SDL_DEFAULT_REPEAT_INTERVAL);
     reset_input_mode();
-    InputStringFlag = FALSE;
-    InputStringEndFlag = FALSE;
-    InputStringEscFlag = FALSE;
+    InputStringFlag = 0;
+    InputStringEndFlag = 0;
+    InputStringEscFlag = 0;
 
     for (i = 0; i < MAX_KEYS; i++)
-        keys[i].pressed = FALSE;
+        keys[i].pressed = 0;
 }
 
 /******************************************************************
@@ -382,8 +382,8 @@ static int key_account_menu(SDL_KeyboardEvent *key)
                 GameStatus = GAME_STATUS_ACCOUNT_CHAR_DEL;
                 /* the player must write "delete" , then we allow deletion of the selected char name */
                 reset_input_mode();
-                InputStringFlag=TRUE;
-                InputStringEndFlag=FALSE;
+                InputStringFlag=1;
+                InputStringEndFlag=0;
                 open_input_mode(MAX_PLAYER_NAME);
                 cpl.menustatus = MENU_NO;
             }
@@ -762,7 +762,7 @@ int Event_PollInputDevice(void)
                             if (!options.playerdoll) // Actually this shouldn't be necessary as the widget should already be hidden, but JIC
                             {
                                 sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICK, 0, 0, MENU_SOUND_VOL);
-                                cur_widget[widget_mouse_event.owner].show = FALSE;
+                                cur_widget[widget_mouse_event.owner].show = 0;
                                 f_custom_cursor = 0;
                                 SDL_ShowCursor(1);
                             }
@@ -778,7 +778,7 @@ int Event_PollInputDevice(void)
                             if (!options.statsupdate) // Actually this shouldn't be necessary as the widget should already be hidden, but JIC
                             {
                                 sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICK, 0, 0, MENU_SOUND_VOL);
-                                cur_widget[widget_mouse_event.owner].show = FALSE;
+                                cur_widget[widget_mouse_event.owner].show = 0;
                                 f_custom_cursor = 0;
                                 SDL_ShowCursor(1);
                             }
@@ -787,7 +787,7 @@ int Event_PollInputDevice(void)
                             break;
                         default:
                             sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICK, 0, 0, MENU_SOUND_VOL);
-                            cur_widget[widget_mouse_event.owner].show = FALSE;
+                            cur_widget[widget_mouse_event.owner].show = 0;
                             f_custom_cursor = 0;
                             SDL_ShowCursor(1);
                     }
@@ -800,9 +800,9 @@ int Event_PollInputDevice(void)
                 if (event.key.keysym.mod & KMOD_RCTRL
                         || event.key.keysym.mod & KMOD_LCTRL
                         || event.key.keysym.mod & KMOD_CTRL)
-                    cpl.fire_on = TRUE;
+                    cpl.fire_on = 1;
                 else
-                    cpl.fire_on = FALSE;
+                    cpl.fire_on = 0;
             }
 
             if (InputStringFlag)
@@ -917,7 +917,7 @@ static void key_string_event(SDL_KeyboardEvent *key)
         {
         case SDLK_ESCAPE:
 //            SDL_EnableKeyRepeat(0, SDL_DEFAULT_REPEAT_INTERVAL);
-            InputStringEscFlag = TRUE;
+            InputStringEscFlag = 1;
             return;
             break;
 
@@ -933,8 +933,8 @@ static void key_string_event(SDL_KeyboardEvent *key)
             if (key->keysym.sym != SDLK_TAB || GameStatus < GAME_STATUS_WAITFORPLAY)
             {
 //                SDL_EnableKeyRepeat(0, SDL_DEFAULT_REPEAT_INTERVAL);
-                InputStringFlag = FALSE;
-                InputStringEndFlag = TRUE; /* mark that we've got something here */
+                InputStringFlag = 0;
+                InputStringEndFlag = 1; /* mark that we've got something here */
 
                 /* record this line in input history only if we are in console mode */
                 if (cpl.input_mode == INPUT_MODE_CONSOLE)
@@ -1049,7 +1049,7 @@ static void key_string_event(SDL_KeyboardEvent *key)
 
                 strcpy(InputString, InputHistory[HistoryPos] + 6);
                 InputCount =CurrentCursorPos = strlen(InputString);
-                InputStringFlag = TRUE;
+                InputStringFlag = 1;
 
                 box.x = gui_npc->startx + 95;
                 box.y = gui_npc->starty + 449;
@@ -1087,7 +1087,7 @@ static void key_string_event(SDL_KeyboardEvent *key)
                 }
                 strcpy(InputString, InputHistory[HistoryPos] + 6);
                 InputCount =CurrentCursorPos = strlen(InputString);
-                InputStringFlag = TRUE;
+                InputStringFlag = 1;
                 box.x = gui_npc->startx + 95;
                 box.y = gui_npc->starty + 449;
                 box.h = 12;
@@ -1160,8 +1160,8 @@ static void key_string_event(SDL_KeyboardEvent *key)
                     && ((int)key->keysym.sym == get_action_keycode || (int)key->keysym.sym == drop_action_keycode))
             {
 //                SDL_EnableKeyRepeat(0, SDL_DEFAULT_REPEAT_INTERVAL);
-                InputStringFlag = FALSE;
-                InputStringEndFlag = TRUE;/* mark that we got some here*/
+                InputStringFlag = 0;
+                InputStringEndFlag = 1;/* mark that we got some here*/
             }
 
             /* now keyboard magic - transform a sym (kind of scancode)
@@ -1272,7 +1272,7 @@ static void key_string_event(SDL_KeyboardEvent *key)
             }
             break;
         }
-        InputFirstKeyPress = FALSE;
+        InputFirstKeyPress = 0;
     }
 }
 
@@ -1291,11 +1291,11 @@ int key_event(SDL_KeyboardEvent *key)
 
         if (cpl.menustatus != MENU_NO)
         {
-            keys[key->keysym.sym].pressed = FALSE;
+            keys[key->keysym.sym].pressed = 0;
         }
         else
         {
-            keys[key->keysym.sym].pressed = FALSE;
+            keys[key->keysym.sym].pressed = 0;
             switch (key->keysym.sym)
             {
             case SDLK_LSHIFT:
@@ -1308,11 +1308,11 @@ int key_event(SDL_KeyboardEvent *key)
 #ifdef DEBUG_TEXT
                 textwin_showstring(COLOR_DGOLD, "run_stop");
 #endif
-                cpl.run_on = FALSE;
+                cpl.run_on = 0;
                 break;
             case SDLK_RCTRL:
             case SDLK_LCTRL:
-                cpl.fire_on = FALSE;
+                cpl.fire_on = 0;
                 break;
 
             default:
@@ -1340,16 +1340,16 @@ int key_event(SDL_KeyboardEvent *key)
                     return(0);
                 }
             }
-            keys[key->keysym.sym].pressed = TRUE;
+            keys[key->keysym.sym].pressed = 1;
             keys[key->keysym.sym].time = LastTick + KEY_REPEAT_TIME_INIT;
             check_menu_keys(cpl.menustatus, key->keysym.sym);
         }
         else
         {
             /* no menu */
-            if (esc_menu_flag != TRUE)
+            if (esc_menu_flag != 1)
             {
-                keys[key->keysym.sym].pressed = TRUE;
+                keys[key->keysym.sym].pressed = 1;
                 keys[key->keysym.sym].time = LastTick + KEY_REPEAT_TIME_INIT;
                 check_keys(key->keysym.sym);
             }
@@ -1388,27 +1388,27 @@ int key_event(SDL_KeyboardEvent *key)
                 break;
             case SDLK_RALT:
             case SDLK_LALT:
-                cpl.run_on = TRUE;
+                cpl.run_on = 1;
                 break;
             case SDLK_RCTRL:
             case SDLK_LCTRL:
-                cpl.fire_on = TRUE;
+                cpl.fire_on = 1;
 
                 break;
             case SDLK_ESCAPE:
-                if (esc_menu_flag == FALSE)
+                if (esc_menu_flag == 0)
                 {
                     map_udate_flag = 1;
-                    esc_menu_flag = TRUE;
+                    esc_menu_flag = 1;
                     esc_menu_index = ESC_MENU_BACK;
                 }
                 else
-                    esc_menu_flag = FALSE;
+                    esc_menu_flag = 0;
                 sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICK, 0, 0, 100);
                 break;
 
             default:
-                if (esc_menu_flag == TRUE)
+                if (esc_menu_flag == 1)
                     check_esc_menu_keys((int)key->keysym.sym);
                 break;
             };
@@ -1419,7 +1419,7 @@ int key_event(SDL_KeyboardEvent *key)
 
 
 /* here we look in the user defined keymap and try to get same useful macros */
-Boolean check_menu_macros(char *text)
+uint8 check_menu_macros(char *text)
 {
     if (!strcmp("?M_SPELL_LIST", text))
     {
@@ -1437,7 +1437,7 @@ Boolean check_menu_macros(char *text)
 
         sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICK, 0, 0, 100);
         reset_keys();
-        return TRUE;
+        return 1;
     }
     if (!strcmp("?M_SKILL_LIST", text))
     {
@@ -1453,7 +1453,7 @@ Boolean check_menu_macros(char *text)
             cpl.menustatus = MENU_NO;
         sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICK, 0, 0, 100);
         reset_keys();
-        return TRUE;
+        return 1;
     }
     if (!strcmp("?M_KEYBIND", text))
     {
@@ -1470,7 +1470,7 @@ Boolean check_menu_macros(char *text)
         }
         sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICK, 0, 0, 100);
         reset_keys();
-        return TRUE;
+        return 1;
     }
     if (!strcmp("?M_STATUS", text))
     {
@@ -1486,10 +1486,10 @@ Boolean check_menu_macros(char *text)
             cpl.menustatus = MENU_NO;
         sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICK, 0, 0, 100);
         reset_keys();
-        return TRUE;
+        return 1;
     }
 
-    return FALSE;
+    return 0;
 }
 
 /* here we handle menu change direct from open menu to
@@ -1508,11 +1508,11 @@ static int check_keys_menu_status(int key)
             if (key == bindkey_list[j].entry[i].key)
             {
                 if (check_menu_macros(bindkey_list[j].entry[i].text))
-                    return TRUE;
+                    return 1;
             }
         }
     }
-    return  FALSE;
+    return  0;
 }
 
 
@@ -1543,7 +1543,7 @@ void check_keys(int key)
 }
 
 
-static Boolean check_macro_keys(char *text)
+static uint8 check_macro_keys(char *text)
 {
     register int i;
     int magic_len;
@@ -1553,22 +1553,22 @@ static Boolean check_macro_keys(char *text)
     {
         process_macro_keys(KEYFUNC_CONSOLE, 0);
         textwin_putstring(&text[magic_len]);
-        return(FALSE);
+        return(0);
     }
     for (i = 0; i < (int)DEFAULT_KEYMAP_MACROS; i++)
     {
         if (!strcmp(defkey_macro[i].macro, text))
         {
             if (!process_macro_keys(defkey_macro[i].internal, defkey_macro[i].value))
-                return(FALSE);
-            return(TRUE);
+                return(0);
+            return(1);
         }
     }
-    return(TRUE);
+    return(1);
 }
 
 
-Boolean process_macro_keys(int id, int value)
+uint8 process_macro_keys(int id, int value)
 {
     int     nrof, tag = 0, loc = 0;
     char    buf[MEDIUM_BUF];
@@ -1687,7 +1687,7 @@ Boolean process_macro_keys(int id, int value)
         break;
 
     case KEYFUNC_RUN:
-        if (!(cpl.runkey_on = cpl.runkey_on ? FALSE : TRUE))
+        if (!(cpl.runkey_on = cpl.runkey_on ? 0 : 1))
             send_game_command("/run_stop");
 #ifdef DEBUG_TEXT
         textwin_showstring(COLOR_DGOLD, "runmode %s",
@@ -1720,7 +1720,7 @@ Boolean process_macro_keys(int id, int value)
             RangeFireMode = value;
         }
         map_udate_flag = 2;
-        return FALSE;
+        return 0;
         break;
 
     case KEYFUNC_APPLY:
@@ -1730,12 +1730,12 @@ Boolean process_macro_keys(int id, int value)
             tag = cpl.win_inv_tag;
 
         if (tag == -1 || !locate_item(tag))
-            return FALSE;
+            return 0;
 #ifdef DEBUG_TEXT
         textwin_showstring(COLOR_DGOLD, "apply %s", locate_item(tag)->s_name);
 #endif
         client_send_apply(tag);
-        return FALSE;
+        return 0;
         break;
     case KEYFUNC_EXAMINE:
         if (cpl.inventory_win == IWIN_BELOW)
@@ -1743,12 +1743,12 @@ Boolean process_macro_keys(int id, int value)
         else
             tag = cpl.win_inv_tag;
         if (tag == -1 || !locate_item(tag))
-            return FALSE;
+            return 0;
         client_send_examine(tag);
 #ifdef DEBUG_TEXT
         textwin_showstring(COLOR_DGOLD, "examine %s", locate_item(tag)->s_name);
 #endif
-        return FALSE;
+        return 0;
         break;
     case KEYFUNC_MARK:
         if (cpl.inventory_win == IWIN_BELOW)
@@ -1756,7 +1756,7 @@ Boolean process_macro_keys(int id, int value)
         else
             tag = cpl.win_inv_tag;
         if (tag == -1 || !locate_item(tag))
-            return FALSE;
+            return 0;
         send_mark_obj((it = locate_item(tag)));
         if (it)
         {
@@ -1764,7 +1764,7 @@ Boolean process_macro_keys(int id, int value)
                                (cpl.mark_count == (int)it->tag) ? "unmark" :
                                "mark", it->s_name);
         }
-        return FALSE;
+        return 0;
         break;
     case KEYFUNC_LOCK:
         if (cpl.inventory_win == IWIN_BELOW)
@@ -1772,13 +1772,13 @@ Boolean process_macro_keys(int id, int value)
         else
             tag = cpl.win_inv_tag;
         if (tag == -1 || !locate_item(tag))
-            return FALSE;
+            return 0;
         toggle_locked((it = locate_item(tag)));
         if (!it)
-            return FALSE;
+            return 0;
         textwin_showstring(COLOR_DGOLD, "%s %s",
                            (it->locked) ? "unlock" : "lock", it->s_name);
-        return FALSE;
+        return 0;
         break;
     case KEYFUNC_GET:
         nrof = 1; /* number of Items */
@@ -1837,11 +1837,11 @@ Boolean process_macro_keys(int id, int value)
         }
 
         if (tag == -1 || !locate_item(tag))
-            return FALSE;
+            return 0;
         if ((it = locate_item(tag)))
             nrof = it->nrof;
         else
-            return FALSE;
+            return 0;
         if (nrof == 1)
             nrof = 0;
         else
@@ -1867,7 +1867,7 @@ Boolean process_macro_keys(int id, int value)
             textwin_putstring(buf);
             strncpy(cpl.num_text, it->s_name, 250);
             cpl.num_text[250] = 0;
-            return FALSE;
+            return 0;
         }
         /*collectAll:*/
         sound_play_effect(SOUNDTYPE_CLIENT, SOUND_GET, 0, 0, 100);
@@ -1875,45 +1875,45 @@ Boolean process_macro_keys(int id, int value)
         textwin_showstring(COLOR_DGOLD, "get %s", it->s_name);
 #endif
         send_inv_move(loc, tag, nrof);
-        return FALSE;
+        return 0;
 
         break;
 
     case KEYFUNC_LAYER0:
         if (debug_layer[0])
-            debug_layer[0] = FALSE;
+            debug_layer[0] = 0;
         else
-            debug_layer[0] = TRUE;
+            debug_layer[0] = 1;
         textwin_showstring(COLOR_DGOLD, "debug: map layer 0 %s.",
                            (debug_layer[0]) ? "activated" : "deactivated");
-        return FALSE;
+        return 0;
         break;
     case KEYFUNC_LAYER1:
         if (debug_layer[1])
-            debug_layer[1] = FALSE;
+            debug_layer[1] = 0;
         else
-            debug_layer[1] = TRUE;
+            debug_layer[1] = 1;
         textwin_showstring(COLOR_DGOLD, "debug: map layer 1 %s.",
                            (debug_layer[1]) ? "activated" : "deactivated");
-        return FALSE;
+        return 0;
         break;
     case KEYFUNC_LAYER2:
         if (debug_layer[2])
-            debug_layer[2] = FALSE;
+            debug_layer[2] = 0;
         else
-            debug_layer[2] = TRUE;
+            debug_layer[2] = 1;
         textwin_showstring(COLOR_DGOLD, "debug: map layer 2 %s.",
                            (debug_layer[2]) ? "activated" : "deactivated");
-        return FALSE;
+        return 0;
         break;
     case KEYFUNC_LAYER3:
         if (debug_layer[3])
-            debug_layer[3] = FALSE;
+            debug_layer[3] = 0;
         else
-            debug_layer[3] = TRUE;
+            debug_layer[3] = 1;
         textwin_showstring(COLOR_DGOLD, "debug: map layer 3 %s.",
                            (debug_layer[3]) ? "activated" : "deactivated");
-        return FALSE;
+        return 0;
         break;
 
     case KEYFUNC_HELP:
@@ -1927,7 +1927,7 @@ Boolean process_macro_keys(int id, int value)
                 cpl.menustatus = MENU_NO;
                 sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICK, 0, 0, 100);
         */
-        return FALSE;
+        return 0;
         break;
 
     case KEYFUNC_DROP:
@@ -1952,20 +1952,20 @@ Boolean process_macro_keys(int id, int value)
         else
         {
             textwin_showstring(COLOR_DGOLD, "Select something that can be dropped first!");
-            return FALSE;
+            return 0;
         }
         if (tag == -1 || !locate_item(tag))
-            return FALSE;
+            return 0;
         if ((it = locate_item(tag)))
             nrof = it->nrof;
         else
-            return FALSE;
+            return 0;
 
         if (it->locked)
         {
             sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICKFAIL, 0, 0, 100);
             textwin_showstring(COLOR_DGOLD, "Unlock the item first!");
-            return FALSE;
+            return 0;
         }
 
         if (nrof == 1)
@@ -1984,27 +1984,27 @@ Boolean process_macro_keys(int id, int value)
             textwin_putstring(buf);
             strncpy(cpl.num_text, it->s_name, 250);
             cpl.num_text[250] = 0;
-            return FALSE;
+            return 0;
         }
         sound_play_effect(SOUNDTYPE_NORMAL, SOUND_DROP, 0, 0, 100);
 #ifdef DEBUG_TEXT
         textwin_showstring(COLOR_DGOLD, "drop %s", it->s_name);
 #endif
         send_inv_move(loc, tag, nrof);
-        return FALSE;
+        return 0;
         break;
     case KEYFUNC_SCREENTOGGLE:
         if (!ToggleScreenFlag)
-            ToggleScreenFlag = TRUE;
-        return FALSE;
+            ToggleScreenFlag = 1;
+        return 0;
         break;
 
 
     default:
-        return TRUE;
+        return 1;
         break;
     }
-    return FALSE;
+    return 0;
 }
 
 static void cursor_keys(int num)
@@ -2094,15 +2094,15 @@ void quickslot_key(SDL_KeyboardEvent *key, int slot)
         if (spell_list[spell_list_set.group_nr].entry[spell_list_set.class_nr][spell_list_set.entry_nr].flag
                 == LIST_ENTRY_KNOWN)
         {
-            if (quick_slots[slot].shared.is_spell == TRUE && quick_slots[slot].shared.tag == spell_list_set.entry_nr)
+            if (quick_slots[slot].shared.is_spell == 1 && quick_slots[slot].shared.tag == spell_list_set.entry_nr)
             {
-                quick_slots[slot].shared.is_spell = FALSE;
+                quick_slots[slot].shared.is_spell = 0;
                 quick_slots[slot].shared.tag = -1;
                 textwin_showstring(COLOR_DGOLD, "unset F%d.", slot + 1);
             }
             else
             {
-                quick_slots[slot].shared.is_spell = TRUE;
+                quick_slots[slot].shared.is_spell = 1;
                 quick_slots[slot].spell.groupNr = spell_list_set.group_nr;
                 quick_slots[slot].spell.classNr = spell_list_set.class_nr;
                 quick_slots[slot].shared.tag = spell_list_set.entry_nr;
@@ -2121,7 +2121,7 @@ void quickslot_key(SDL_KeyboardEvent *key, int slot)
 
         if (tag == -1 || !locate_item(tag))
             return;
-        quick_slots[slot].shared.is_spell = FALSE;
+        quick_slots[slot].shared.is_spell = 0;
         if (quick_slots[slot].shared.tag == tag)
             quick_slots[slot].shared.tag = -1;
         else
@@ -2137,7 +2137,7 @@ void quickslot_key(SDL_KeyboardEvent *key, int slot)
     {
         if (quick_slots[slot].shared.tag != -1)
         {
-            if (quick_slots[slot].shared.is_spell == TRUE)
+            if (quick_slots[slot].shared.is_spell == 1)
             {
                 fire_mode_tab[FIRE_MODE_SPELL].spell = &spell_list[quick_slots[slot].spell.groupNr].entry[quick_slots[slot].spell.classNr][quick_slots[slot].shared.tag];
                 RangeFireMode = FIRE_MODE_SPELL;
@@ -2269,7 +2269,7 @@ static void key_repeat(void)
     register int i,j;
 
     /* A 'real' menu/dialog or the escape menu: */
-    if (cpl.menustatus != MENU_NO || esc_menu_flag == TRUE)
+    if (cpl.menustatus != MENU_NO || esc_menu_flag == 1)
     {
         /* check menu-keys for repeat */
         if (options.menu_repeat > 0 && (SDL_GetTicks() - menuRepeatTicks > menuRepeatTime || !menuRepeatTicks || menuRepeatKey < 0))
@@ -2277,7 +2277,7 @@ static void key_repeat(void)
             menuRepeatTicks = SDL_GetTicks();
             if (menuRepeatKey >= 0)
             {
-                if (esc_menu_flag == TRUE)
+                if (esc_menu_flag == 1)
                     check_esc_menu_keys(menuRepeatKey);
                 else
                     check_menu_keys(cpl.menustatus, menuRepeatKey);
@@ -2532,7 +2532,7 @@ static void check_esc_menu_keys(int key)
             SOCKET_CloseClientSocket(&csocket);
         }
         sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICK, 0, 0, 100);
-        esc_menu_flag = FALSE;
+        esc_menu_flag = 0;
         break;
 
     case SDLK_UP:
@@ -2558,7 +2558,7 @@ void check_menu_keys(int menu, int key)
     int   shiftPressed = (SDL_GetModState() & KMOD_SHIFT),
           ctrlPressed = (SDL_GetModState() & KMOD_CTRL);
     sint8 n;
-    Boolean res_change = FALSE;
+    uint8 res_change = 0;
 
     if (cpl.menustatus == MENU_NO ||
         check_keys_menu_status(key))
@@ -2700,7 +2700,7 @@ void check_menu_keys(int menu, int key)
             save_options_dat();
             Mix_VolumeMusic(options.music_volume);
             if (options.playerdoll)
-                cur_widget[PDOLL_ID].show = TRUE;
+                cur_widget[PDOLL_ID].show = 1;
 
             /* ToggleScreenFlag sets changes this option in the main loop
              * so we revert this setting, also if a resolution change occurs
@@ -2710,10 +2710,10 @@ void check_menu_keys(int menu, int key)
             if (options.fullscreen_flag != options.fullscreen)
             {
                 if (options.fullscreen)
-                    options.fullscreen = FALSE;
+                    options.fullscreen = 0;
                 else
-                    options.fullscreen = TRUE;
-                ToggleScreenFlag = TRUE;
+                    options.fullscreen = 1;
+                ToggleScreenFlag = 1;
             }
             /* lets add on the fly resolution change for testing */
             /* i know this part is heavy, but we want to make sure we try everything
@@ -2757,13 +2757,13 @@ void check_menu_keys(int menu, int key)
                             exit(2);
                         }
                         else
-                            res_change = TRUE;
+                            res_change = 1;
                     }
                     else
-                        res_change = TRUE;
+                        res_change = 1;
                 }
                 else
-                    res_change = TRUE;
+                    res_change = 1;
             }
             if (res_change)
             {
@@ -3035,8 +3035,8 @@ void check_menu_keys(int menu, int key)
         case SDLK_r:
             sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICK, 0, 0, MENU_SOUND_VOL);
             bindkey_list[bindkey_list_set.group_nr].entry[bindkey_list_set.entry_nr].repeatflag = bindkey_list[bindkey_list_set.group_nr].entry[bindkey_list_set.entry_nr].repeatflag
-                    ? FALSE
-                    : TRUE;
+                    ? 0
+                    : 1;
             sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICK, 0, 0, MENU_SOUND_VOL);
             break;
         }
@@ -3065,8 +3065,8 @@ void check_menu_keys(int menu, int key)
             dialog_new_char_warn = 0;
             reset_input_mode();
             cpl.name[0] = 0;
-            InputStringFlag=TRUE;
-            InputStringEndFlag=FALSE;
+            InputStringFlag=1;
+            InputStringEndFlag=0;
             open_input_mode(MAX_PLAYER_NAME);
             GameStatus = GAME_STATUS_ACCOUNT_CHAR_NAME;
             cpl.menustatus = MENU_NO;

@@ -191,7 +191,7 @@ void chatfilter_filter(char *msg)
 }
 
 /* checks if an word is already on the list
- * returns TRUE if in list
+ * returns 1 if in list
  */
 int chatfilter_check(char *word)
 {
@@ -200,9 +200,9 @@ int chatfilter_check(char *word)
     for (node = chatfilter_list_start;node;node = node->next)
     {
         if (!stricmp(word, node->word))
-            return TRUE;
+            return 1;
     }
-    return FALSE;
+    return 0;
 }
 
 
@@ -225,13 +225,13 @@ void chatfilter_command(char *cmd)
         chatfilter_list_show();
     else if (cmd[0]=='+')
     {
-        options.chatfilter=TRUE;
+        options.chatfilter=1;
         textwin_showstring(COLOR_WHITE, "Chatfilter enabled.");
         save_options_dat();
     }
     else if (cmd[0]=='-')
     {
-        options.chatfilter=FALSE;
+        options.chatfilter=0;
         textwin_showstring(COLOR_WHITE, "Chatfilter disabled.");
         save_options_dat();
     }

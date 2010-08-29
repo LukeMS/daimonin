@@ -51,7 +51,7 @@ typedef enum _sprite_type
 /* here we can change default blt options or set special options */
 typedef struct _BLTFX
 {
-    UINT32          flags;           /* used from BLTFX_FLAG_xxxx */
+    uint32          flags;           /* used from BLTFX_FLAG_xxxx */
     SDL_Surface    *surface;    /* if != null, overrule default screen */
     int             dark_level;         /* use dark_level[i] surface */
     uint8           alpha;
@@ -133,11 +133,11 @@ extern void             remove_anim(struct _anim *anim);
 extern void             play_anims(int mx, int my);
 extern void             delete_anim_que(void);
 extern void             show_tooltip(int mx, int my, char *text);
-extern Boolean          sprite_init_system(void);
-extern Boolean          sprite_deinit_system(void);
+extern uint8          sprite_init_system(void);
+extern uint8          sprite_deinit_system(void);
 
-extern _Sprite         *sprite_load_file(char *fname, UINT32 flags);
-extern _Sprite         *sprite_tryload_file(char *fname, UINT32 flags, SDL_RWops *rwob);
+extern _Sprite         *sprite_load_file(char *fname, uint32 flags);
+extern _Sprite         *sprite_tryload_file(char *fname, uint32 flags, SDL_RWops *rwob);
 extern void             sprite_free_sprite(_Sprite *sprite);
 extern void             sprite_blt(_Sprite *sprite, int x, int y, SDL_Rect *box, _BLTFX *bltfx);
 extern void             sprite_blt_map(_Sprite *sprite, int x, int y, SDL_Rect *box, _BLTFX *bltfx, Uint32 stretch);

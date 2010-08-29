@@ -162,7 +162,7 @@ void ignore_list_save(void)
 
 
 /* check player <name> is on the ignore list.
- * return TRUE: player is on the ignore list
+ * return 1: player is on the ignore list
  */
 int ignore_check(char *name, char *type)
 {
@@ -172,9 +172,9 @@ int ignore_check(char *name, char *type)
     {
 //        textwin_showstring(COLOR_WHITE, "compare >%s< with >%s< (%s with %s)", name, node->name,type, node->type);
         if (!stricmp(name, node->name) && ((!stricmp(type,node->type)) || (!node->type[0])))
-            return TRUE;
+            return 1;
     }
-    return FALSE;
+    return 0;
 }
 
 /* parse a /ignore <cmd> part (without "/ignore " part) */

@@ -90,7 +90,7 @@ void MSGLOG (char *msg)
         fflush(msglog);
 }
 
-Boolean SYSTEM_Start(void)
+uint8 SYSTEM_Start(void)
 {
     char         buf[MEDIUM_BUF];
     SDL_RWops   *rw;
@@ -110,12 +110,12 @@ Boolean SYSTEM_Start(void)
             DAI_VERSION_RELEASE, DAI_VERSION_MAJOR, DAI_VERSION_MINOR);
     SDL_WM_SetCaption(buf, buf);
 
-    return TRUE;
+    return 1;
 }
 
-Boolean SYSTEM_End(void)
+uint8 SYSTEM_End(void)
 {
-    return TRUE;
+    return 1;
 }
 
 char * GetBitmapDirectory(void)
@@ -403,25 +403,25 @@ uint32 get_video_flags(void)
 
     if (options.fullscreen)
     {
-        options.fullscreen_flag = TRUE;
-        options.doublebuf_flag = FALSE;
-        options.rleaccel_flag = FALSE;
+        options.fullscreen_flag = 1;
+        options.doublebuf_flag = 0;
+        options.rleaccel_flag = 0;
         if (options.Full_RLEACCEL)
-            options.rleaccel_flag = TRUE;
+            options.rleaccel_flag = 1;
         if (options.videoflags_full & SDL_DOUBLEBUF)
-            options.doublebuf_flag = TRUE;
+            options.doublebuf_flag = 1;
 
         return videoflags_full;
     }
     else
     {
-        options.fullscreen_flag = FALSE;
-        options.doublebuf_flag = FALSE;
-        options.rleaccel_flag = FALSE;
+        options.fullscreen_flag = 0;
+        options.doublebuf_flag = 0;
+        options.rleaccel_flag = 0;
         if (options.Win_RLEACCEL)
-            options.rleaccel_flag = TRUE;
+            options.rleaccel_flag = 1;
         if (options.videoflags_win & SDL_DOUBLEBUF)
-            options.doublebuf_flag = TRUE;
+            options.doublebuf_flag = 1;
 
         return videoflags_win;
     }
@@ -505,7 +505,7 @@ int parse_metaserver_data(char *info)
             server_count++;
     }
     if (server_count == 0)
-        return FALSE;
+        return 0;
 
     // Allocate entries and tag array
     size = server_count * sizeof(struct entry);
@@ -566,7 +566,7 @@ int parse_metaserver_data(char *info)
     FREE(entries);
     FREE(tag);
 
-    return (server_count > 0) ? TRUE : FALSE;
+    return (server_count > 0) ? 1 : 0;
 }
 
 /* This seems to be lacking on some system */

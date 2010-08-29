@@ -98,7 +98,7 @@ typedef struct Animations
 {
     AnimSeq *aSeq[MAX_SEQUENCES]; /* pointer to our sequence structs */
     uint8   flags;                  /* flags...*/
-    Boolean loaded;               /* is basic animation loaded? */
+    uint8 loaded;               /* is basic animation loaded? */
 }
 Animations;
 
@@ -136,13 +136,13 @@ extern anim_list    *AnimListStart;
 extern void         new_anim_remove(anim_list *al); /* deletes the anim from our animation list */
 extern anim_list *  new_anim_add(uint16 anim, uint8 sequence, uint8 dir, uint8 speed); /* adds a new admin */
 extern anim_list *  new_anim_add_tile(uint16 anim, uint8 sequence, uint8 dir, uint8 speed, int x, int y, uint8 layer);
-extern void         new_anim_change(anim_list *al, uint16 anim, uint8 sequence, uint8 dir, uint8 speed, Boolean restart); /* modify all parameters */
+extern void         new_anim_change(anim_list *al, uint16 anim, uint8 sequence, uint8 dir, uint8 speed, uint8 restart); /* modify all parameters */
 extern void         new_anim_reset(anim_list *al);
 extern void         new_anim_remove_tile_all(struct MapCell *mc);
 extern void         new_anim_remove_tile(anim_list *al);
 extern void         new_anim_remove_item(item *it);
 extern anim_list *  new_anim_add_item(uint16 anim, uint8 sequence, uint8 dir, uint8 speed, item *it);
-extern Boolean      new_anim_load_and_check(uint16 anim, uint8 sequence, uint8 dir);
+extern uint8      new_anim_load_and_check(uint16 anim, uint8 sequence, uint8 dir);
 
 extern void         new_anim_animate(uint32 curTick);
 

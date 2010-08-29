@@ -35,7 +35,7 @@ static SDL_cond *output_buffer_cond;
 static SDL_mutex *socket_mutex;
 
 /** All socket threads will exit if they see this flag set */
-static int abort_thread = FALSE;
+static int abort_thread = 0;
 
 /* start is the first waiting item in queue, end is the most recent enqueued */
 static command_buffer *input_queue_start = NULL, *input_queue_end = NULL;
@@ -411,7 +411,7 @@ void socket_thread_start(void)
         socket_mutex = SDL_CreateMutex();
     }
 
-    abort_thread = FALSE;
+    abort_thread = 0;
 
     input_thread = SDL_CreateThread(reader_thread_loop, NULL);
     if ( input_thread == NULL )
@@ -446,7 +446,7 @@ int handle_socket_shutdown()
     if (abort_thread)
     {
         socket_thread_stop();
-        abort_thread = FALSE;
+        abort_thread = 0;
 
         /* Empty all queues */
         while (input_queue_start)
@@ -455,9 +455,9 @@ int handle_socket_shutdown()
             command_buffer_free(command_buffer_dequeue(&output_queue_start, &output_queue_end));
 
         LOG(LOG_DEBUG, "Connection lost\n");
-        return TRUE;
+        return 1;
     }
-    return FALSE;
+    return 0;
 }
 
 /*
@@ -473,10 +473,10 @@ int SOCKET_GetError()
 #endif
 }
 
-Boolean SOCKET_CloseSocket(SOCKET fd)
+uint8 SOCKET_CloseSocket(SOCKET fd)
 {
     if ((int)fd == SOCKET_NO)
-        return(TRUE);
+        return(1);
 
 #ifdef __LINUX
     if (shutdown(fd, SHUT_RDWR))
@@ -487,17 +487,17 @@ Boolean SOCKET_CloseSocket(SOCKET fd)
     shutdown(fd, 2);
     closesocket(fd);
 #endif
-    return(TRUE);
+    return(1);
 }
 
-Boolean SOCKET_CloseClientSocket(struct ClientSocket *csock)
+uint8 SOCKET_CloseClientSocket(struct ClientSocket *csock)
 {
     SDL_LockMutex(socket_mutex);
 
     if ((int)csock->fd == SOCKET_NO)
     {
         SDL_UnlockMutex(socket_mutex);
-        return(TRUE);
+        return(1);
     }
 
     LOG(-1, "CloseClientSocket()\n");
@@ -506,7 +506,7 @@ Boolean SOCKET_CloseClientSocket(struct ClientSocket *csock)
 
     csock->fd = SOCKET_NO;
 
-    abort_thread = TRUE;
+    abort_thread = 1;
 
     /* Poke anyone waiting at a cond */
     SDL_CondSignal(input_buffer_cond);
@@ -514,11 +514,11 @@ Boolean SOCKET_CloseClientSocket(struct ClientSocket *csock)
 
     SDL_UnlockMutex(socket_mutex);
 
-    return(TRUE);
+    return(1);
 }
 
 
-Boolean SOCKET_InitSocket(void)
+uint8 SOCKET_InitSocket(void)
 {
 #ifdef WIN32
     WSADATA w;
@@ -540,18 +540,18 @@ Boolean SOCKET_InitSocket(void)
             if (error)
             {
                 LOG(LOG_ERROR, "Error:  Error init starting Winsock: %d!\n", error);
-                return(FALSE);
+                return(0);
             }
         }
     }
 
     LOG(LOG_MSG, "Using socket version %x!\n", w.wVersion);
 #endif
-    return(TRUE);
+    return(1);
 }
 
 
-Boolean SOCKET_DeinitSocket(void)
+uint8 SOCKET_DeinitSocket(void)
 {
     if ((int)csocket.fd != SOCKET_NO)
         SOCKET_CloseClientSocket(&csocket);
@@ -560,27 +560,27 @@ Boolean SOCKET_DeinitSocket(void)
     WSACleanup();
 #endif
 
-    return(TRUE);
+    return(1);
 }
 
 #define MAXSOCKBUF 128*1024
-Boolean SOCKET_OpenClientSocket(struct ClientSocket *csock, char *host, int port)
+uint8 SOCKET_OpenClientSocket(struct ClientSocket *csock, char *host, int port)
 {
     int tmp = 1;
 
     if (! SOCKET_OpenSocket(&csock->fd, host, port))
-        return FALSE;
+        return 0;
 
     if (setsockopt(csock->fd, IPPROTO_TCP, TCP_NODELAY, (char *) &tmp, sizeof(tmp)))
     {
         LOG(LOG_ERROR, "ERROR: setsockopt(TCP_NODELAY) failed\n");
     }
 
-    return TRUE;
+    return 1;
 }
 
 #ifdef __WIN_32
-Boolean SOCKET_OpenSocket(SOCKET *socket_temp, char *host, int port)
+uint8 SOCKET_OpenSocket(SOCKET *socket_temp, char *host, int port)
 {
     int             error;
     long            temp;
@@ -608,7 +608,7 @@ Boolean SOCKET_OpenSocket(SOCKET *socket_temp, char *host, int port)
         {
             LOG(LOG_ERROR, "Unknown host: %s\n", host);
             *socket_temp = SOCKET_NO;
-            return(FALSE);
+            return(0);
         }
         memcpy(&insock.sin_addr, hostbn->h_addr, hostbn->h_length);
     }
@@ -619,7 +619,7 @@ Boolean SOCKET_OpenSocket(SOCKET *socket_temp, char *host, int port)
     {
         LOG(LOG_ERROR, "ERROR: ioctlsocket(*socket_temp, FIONBIO , &temp)\n");
         *socket_temp = SOCKET_NO;
-        return(FALSE);
+        return(0);
     }
 
     linger_opt.l_onoff = 1;
@@ -637,7 +637,7 @@ Boolean SOCKET_OpenSocket(SOCKET *socket_temp, char *host, int port)
         if (start_timer + SOCKET_TIMEOUT_MS < SDL_GetTicks())
         {
             *socket_temp = SOCKET_NO;
-            return(FALSE);
+            return(0);
         }
 
         SocketStatusErrorNr = WSAGetLastError();
@@ -654,7 +654,7 @@ Boolean SOCKET_OpenSocket(SOCKET *socket_temp, char *host, int port)
 
         LOG(LOG_MSG, "Connect Error:  %d\n", SocketStatusErrorNr);
         *socket_temp = SOCKET_NO;
-        return(FALSE);
+        return(0);
     }
     /* we got a connect here! */
 
@@ -664,7 +664,7 @@ Boolean SOCKET_OpenSocket(SOCKET *socket_temp, char *host, int port)
     {
         LOG(LOG_ERROR, "ERROR: ioctlsocket(*socket_temp, FIONBIO , &temp == 0)\n");
         *socket_temp = SOCKET_NO;
-        return(FALSE);
+        return(0);
     }
 
     if (getsockopt(*socket_temp, SOL_SOCKET, SO_RCVBUF, (char *) &oldbufsize, &buflen) == -1)
@@ -679,11 +679,11 @@ Boolean SOCKET_OpenSocket(SOCKET *socket_temp, char *host, int port)
     }
 
     LOG(LOG_MSG, "Connected to %s:%d\n", host, port);
-    return(TRUE);
+    return(1);
 }
 
 #elif __LINUX
-Boolean SOCKET_OpenSocket(SOCKET *socket_temp, char *host, int port)
+uint8 SOCKET_OpenSocket(SOCKET *socket_temp, char *host, int port)
 {
     unsigned int  oldbufsize, newbufsize = 65535, buflen = sizeof(int);
     struct linger linger_opt;
@@ -702,7 +702,7 @@ Boolean SOCKET_OpenSocket(SOCKET *socket_temp, char *host, int port)
     if (protox == (struct protoent *) NULL)
     {
         fprintf(stderr, "Error getting protobyname (tcp)\n");
-        return FALSE;
+        return 0;
     }
     *socket_temp = socket(PF_INET, SOCK_STREAM, protox->p_proto);
 
@@ -710,7 +710,7 @@ Boolean SOCKET_OpenSocket(SOCKET *socket_temp, char *host, int port)
     {
         perror("init_connection:  Error on socket command.\n");
         *socket_temp = SOCKET_NO;
-        return FALSE;
+        return 0;
     }
     insock.sin_family = AF_INET;
     insock.sin_port = htons((unsigned short) port);
@@ -723,7 +723,7 @@ Boolean SOCKET_OpenSocket(SOCKET *socket_temp, char *host, int port)
         if (hostbn == (struct hostent *) NULL)
         {
             fprintf(stderr, "Unknown host: %s\n", host);
-            return FALSE;
+            return 0;
         }
         memcpy(&insock.sin_addr, hostbn->h_addr, hostbn->h_length);
     }
@@ -734,7 +734,7 @@ Boolean SOCKET_OpenSocket(SOCKET *socket_temp, char *host, int port)
     {
         LOG(LOG_ERROR, "socket: Error on switching to non-blocking.fcntl %x.\n", fcntl(*socket_temp, F_GETFL));
         *socket_temp = SOCKET_NO;
-        return(FALSE);
+        return(0);
     }
     // Try to connect.
     start_timer = SDL_GetTicks();
@@ -746,7 +746,7 @@ Boolean SOCKET_OpenSocket(SOCKET *socket_temp, char *host, int port)
         {
             perror("Can't connect to server");
             *socket_temp = SOCKET_NO;
-            return(FALSE);
+            return(0);
         }
     }
     // Set back to blocking.
@@ -754,7 +754,7 @@ Boolean SOCKET_OpenSocket(SOCKET *socket_temp, char *host, int port)
     {
         LOG(LOG_ERROR, "socket: Error on switching to blocking.fcntl %x.\n", fcntl(*socket_temp, F_GETFL));
         *socket_temp = SOCKET_NO;
-        return(FALSE);
+        return(0);
     }
 #else
 struct addrinfo hints;
@@ -773,7 +773,7 @@ hints.ai_socktype = SOCK_STREAM;
 hints.ai_flags = AI_NUMERICSERV;
 
 if (getaddrinfo(host, port_str, &hints, &res) != 0)
-    return FALSE;
+    return 0;
 
 for (ai = res; ai != NULL; ai = ai->ai_next)
 {
@@ -792,7 +792,7 @@ for (ai = res; ai != NULL; ai = ai->ai_next)
     {
         LOG(LOG_ERROR, "socket: Error on switching to non-blocking.fcntl %x.\n", fcntl(*socket_temp, F_GETFL));
         *socket_temp = SOCKET_NO;
-        return(FALSE);
+        return(0);
     }
     // Try to connect.
     start_timer = SDL_GetTicks();
@@ -812,7 +812,7 @@ for (ai = res; ai != NULL; ai = ai->ai_next)
     {
         LOG(LOG_ERROR, "socket: Error on switching to blocking.fcntl %x.\n", fcntl(*socket_temp, F_GETFL));
         *socket_temp = SOCKET_NO;
-        return(FALSE);
+        return(0);
     }
     break;
 next_try:
@@ -823,7 +823,7 @@ freeaddrinfo(res);
 if (*socket_temp == SOCKET_NO)
 {
     perror("Can't connect to server");
-    return FALSE;
+    return 0;
 }
 #endif
 
@@ -843,7 +843,7 @@ if (*socket_temp == SOCKET_NO)
             setsockopt(*socket_temp, SOL_SOCKET, SO_RCVBUF, (char *) &oldbufsize, sizeof(&oldbufsize));
         }
     }
-    return TRUE;
+    return 1;
 }
 
 #endif

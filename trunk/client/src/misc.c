@@ -164,7 +164,7 @@ char *get_parameter_string(char *data, int *pos, int maxlen)
 {
     char *start_ptr, *end_ptr;
     static char buf[4096];
-    int done=FALSE;
+    int done=0;
     int offset=0, cpysize=0;
 
     /* we assume a " after the =... don't be to shy, we search for a '"' */
@@ -198,7 +198,7 @@ char *get_parameter_string(char *data, int *pos, int maxlen)
                 cpysize=4095-strlen(buf);
 
             strncat(buf, start_ptr-offset, cpysize);
-            done=TRUE;
+            done=1;
         }
     }
 
@@ -406,30 +406,30 @@ int setup_endian_sync(const char *const buf)
     LOG(LOG_MSG, "Endian:: we got short16:%x int32:%x\n", endian_int16, endian_int32);
 
     /* lets first check the simplest case: which means we don't must shift anything! */
-    endian_do16 = FALSE; /* easy going! */
+    endian_do16 = 0; /* easy going! */
     if(endian_int16 != 0x0201)
     {
         uint16 test16 = 0x0201;
 
         /* well, its easy: if we don't have 0x0201 then we have 0x0102... */
         if(endian_int16 == 0x0201) /* some stupid sanity check */
-            return FALSE;
+            return 0;
 
-        endian_do16 = TRUE;
+        endian_do16 = 1;
 
         LOG(LOG_MSG, "CHECK Endian 16bit:: we got %x we created read:%x send:%x\n", endian_int16, adjust_endian_int16(endian_int16), adjust_endian_int16(test16));
         if(endian_int16 != adjust_endian_int16(test16) || test16 != adjust_endian_int16(endian_int16))
-            return FALSE; /* should NEVER happens */
+            return 0; /* should NEVER happens */
     }
 
     /* 32 bit is a bit more complex */
     if(endian_int32 == 0x04030201)
-        endian_do32 = FALSE;
+        endian_do32 = 0;
     else /* ok, we have a bit work to do */
     {
         uint32 test32 = 0x04030201;
 
-        endian_do32 = TRUE;
+        endian_do32 = 1;
         /* to lazy to do this smart with a loop */
         if((endian_int32 & 0x000000ff) == 0x01)
             endian_shift32[0] = 0;
@@ -472,9 +472,9 @@ int setup_endian_sync(const char *const buf)
         */
         LOG(LOG_MSG, "CHECK Endian 32bit:: we got %x we created read:%x send:%x\n", endian_int32, adjust_endian_int32(endian_int32), adjust_endian_int32(test32));
         if(endian_int32 != adjust_endian_int32(test32) || test32 != adjust_endian_int32(endian_int32))
-            return FALSE; /* should NEVER happens */
+            return 0; /* should NEVER happens */
     }
-    return TRUE;
+    return 1;
 }
 
 

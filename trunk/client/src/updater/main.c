@@ -41,7 +41,7 @@ prg_path[MAX_DIR_PATH], file_path[MAX_DIR_PATH], parms[MAX_DIR_PATH + 1 + 4096];
 #define COPY_BUFFER_SIZE 1024*512
 char *copy_buffer = NULL, *argv0;
 
-int update_flag = FALSE;
+int update_flag = 0;
 
 FILE *version_handle=NULL;
 
@@ -140,7 +140,7 @@ static char *adjust_string(char *buf)
 int main(int argc, char *argv[])
 {
     FILE   *stream, *notes_stream;
-    int version_nr, version_def_nr, patched=FALSE;
+    int version_nr, version_def_nr, patched=0;
     char version[256], buf[256], *string_pos;
     char file_name[256], md5[64];
     char *dummy; // purely to avoid GCC's warn_unused_result warning
@@ -207,7 +207,7 @@ int main(int argc, char *argv[])
             FILE *tmp=NULL;
             if (argc>2)
             {
-                update_flag = TRUE;
+                update_flag = 1;
                 while (!(tmp = fopen(argv[2], "w"))){}
                 fclose(tmp);
                 unlink(argv[2]);
@@ -217,7 +217,7 @@ int main(int argc, char *argv[])
 
     /* we use the version file as lock/unlock to avoid different instances of the updater running at once.
     */
-    if (update_flag==FALSE)
+    if (update_flag==0)
         printf("Loading version info.... ");
     sprintf(version_path,"%s%s/%s", prg_path, FOLDER_UPDATE, UPDATE_VERSION);
     if ((version_handle = fopen(version_path, "r+t")) == NULL)
@@ -251,7 +251,7 @@ int main(int argc, char *argv[])
      * do a packer based patch. We have force file to file check.
      * This will also restore a valid version info for the next time.
      */
-    if (update_flag==FALSE)
+    if (update_flag==0)
     {
         printf("version %s\n", version);
         printf("Get update info....\n");
@@ -297,7 +297,7 @@ int main(int argc, char *argv[])
 
         /* we have something new. patch it */
         /* if we have the update flag set, we assume this is our old patch file */
-        if (update_flag==FALSE)
+        if (update_flag==0)
         {
 
             if (!download_file(UPDATE_URL, file_name, FOLDER_UPDATE, file_name))
@@ -346,8 +346,8 @@ int main(int argc, char *argv[])
 
             printf("prepare patch...\n");
         }
-        process_patch_file(UPDATE_PATCH_FILE, FALSE);
-        process_patch_file(UPDATE_PATCH_FILE, TRUE);
+        process_patch_file(UPDATE_PATCH_FILE, 0);
+        process_patch_file(UPDATE_PATCH_FILE, 1);
         printf("copy files... ");
         copy_patch_files(FOLDER_PATCH);
         clear_directory(FOLDER_PATCH);
@@ -360,7 +360,7 @@ int main(int argc, char *argv[])
 
         /* now make it "offical" */
         version_def_nr = version_nr;
-        patched = TRUE;
+        patched = 1;
         write_version_file(version, version_nr);
         printf("patch applied.\n");
 
@@ -445,10 +445,10 @@ int check_patch_master(void)
     if(strcmp(cmd,"END"))
     {
         printf("\nmaster patch file failed sanity check!\n");
-        return FALSE;
+        return 0;
     }
 
-    return TRUE;
+    return 1;
 }
 /*
 * recusively traverse the given directory and clear it
@@ -770,8 +770,8 @@ void copy_patch_files(char* start_dir)
 
 
 /* read in the patch file and execute the given commands.
-* mode = FALSE: only process xdelta and local commands.
-* mode = TRUE: execute commands like removing folder/files
+* mode = 0: only process xdelta and local commands.
+* mode = 1: execute commands like removing folder/files
 * inside the base folders.
 */
 int process_patch_file(char *patch_file, int mode)
@@ -792,14 +792,14 @@ int process_patch_file(char *patch_file, int mode)
             continue;
 
         sscanf(output, "%s %s %s %s %s", cmd, os_tag, src_path, target_path, dest_path);
-        if (mode == FALSE)
+        if (mode == 0)
         {
 
             if (!strcmp(cmd, "install"))
             {
                 if (update_flag)
                 {
-                    update_flag = FALSE;
+                    update_flag = 0;
                     continue;
                 }
                 if (!strcmp(os_tag,"x") || strchr(os_tag,SYSTEM_OS_TAG))
@@ -817,7 +817,7 @@ int process_patch_file(char *patch_file, int mode)
                 }
             }
 
-            if (update_flag == TRUE)
+            if (update_flag == 1)
                 continue;
 
             if (!strcmp(cmd, "xdelta"))
@@ -915,7 +915,7 @@ int process_patch_file(char *patch_file, int mode)
     fclose(stream);
 
     /* delete at last the patch.file so we have a clean patch directory */
-    if (mode == TRUE)
+    if (mode == 1)
     {
         sprintf(file_path,"%s/%s", FOLDER_PATCH, patch_file);
         unlink(file_path);
@@ -959,7 +959,7 @@ int download_file(char *url, char *remotefilename, char *destfolder, char *destf
     curl_easy_setopt(curlhandle, CURLOPT_WRITEFUNCTION, my_fwrite);
     curl_easy_setopt(curlhandle, CURLOPT_WRITEDATA, &ftpfile);
     curl_easy_setopt(curlhandle, CURLOPT_VERBOSE, 0);
-    curl_easy_setopt(curlhandle, CURLOPT_NOPROGRESS, FALSE);
+    curl_easy_setopt(curlhandle, CURLOPT_NOPROGRESS, 0);
     curl_easy_setopt(curlhandle, CURLOPT_PROGRESSFUNCTION, curl_progresshandler);
 
     res = curl_easy_perform(curlhandle);
@@ -973,7 +973,7 @@ int download_file(char *url, char *remotefilename, char *destfolder, char *destf
     if (httpresult>=300)
     {
         printf("\nError downloading file, Server Response: %d\n",(int) httpresult);
-        return FALSE;
+        return 0;
     }
 
     /* we failed? */
@@ -981,7 +981,7 @@ int download_file(char *url, char *remotefilename, char *destfolder, char *destf
         updater_error("curl error.");
 
     printf("\n%s downloaded succesful (%d).\n",destfilename, res);
-    return TRUE;
+    return 1;
 }
 
 int curl_progresshandler(void *clientp, double dltotal, double dlnow, double ultotal, double ulnow)
@@ -1158,10 +1158,10 @@ int apply_xdelta3(char *patchfile, char *oldfile, char *destfile)
     if (ret==0)
     {
         printf("ok\n");
-        return TRUE;
+        return 1;
     } else {
         printf("failed: %s\n",xd3_strerror(ret));
-        return FALSE;
+        return 0;
     }
 
 }
@@ -1176,13 +1176,13 @@ int calc_md5(char *filename, char *outputbuf)
     if (!stream)
     {
         printf("md5: could not open file for reading: %s\n",filename);
-        return FALSE;
+        return 0;
     }
     if (md5_stream(stream, buf)==1)
     {
         printf("error with md5 calc: %s\n",filename);
         fclose(stream);
-        return FALSE;
+        return 0;
     }
     /* convert the hex to string */
     for (i=0;i<16;i++)
@@ -1191,5 +1191,5 @@ int calc_md5(char *filename, char *outputbuf)
     }
 
     fclose(stream);
-    return TRUE;
+    return 1;
 }

@@ -31,12 +31,6 @@
 #include "config.h"
 
 /* Just some handy ones I like to use */
-#ifndef FALSE
-#define FALSE 0
-#endif
-#ifndef TRUE
-#define TRUE 1
-#endif
 #ifndef ABS
 #define ABS(x) ((x)<0?-(x):(x))
 #endif

@@ -44,7 +44,7 @@ struct _imagestats  ImageStats;
 
 SDL_Surface     *FormatHolder;
 
-static Boolean  GetBitmapBorders(SDL_Surface *Surface, int *up, int *down, int *left, int *right, UINT32 ckey);
+static uint8  GetBitmapBorders(SDL_Surface *Surface, int *up, int *down, int *left, int *right, uint32 ckey);
 static void     grey_scale(_Sprite *sprite);
 static void     red_scale(_Sprite *sprite);
 static void     fow_scale(_Sprite *sprite);
@@ -55,13 +55,13 @@ static void stretch_init(void);
 
 
 /* not much special inside atm */
-Boolean sprite_init_system(void)
+uint8 sprite_init_system(void)
 {
     sprite_clear_backbuffer();
 
     FormatHolder=SDL_CreateRGBSurface(SDL_SRCALPHA,1, 1, 32, 0xFF000000, 0x00FF0000 ,0x0000FF00 ,0x000000FF);
     SDL_SetAlpha(FormatHolder,SDL_SRCALPHA,255);
-    return(TRUE);
+    return(1);
 }
 
 void sprite_clear_backbuffer(void)
@@ -70,9 +70,9 @@ void sprite_clear_backbuffer(void)
     stretch_init();
 }
 
-Boolean sprite_deinit_system(void)
+uint8 sprite_deinit_system(void)
 {
-    return(TRUE);
+    return(1);
 }
 
 _Sprite * sprite_load_file(char *fname, uint32 flags)
@@ -93,7 +93,7 @@ _Sprite * sprite_tryload_file(char *fname, uint32 flag, SDL_RWops *rwop)
 {
     _Sprite        *sprite;
     SDL_Surface    *bitmap;
-    UINT32          ckflags, tmp=0;
+    uint32          ckflags, tmp=0;
     SDL_RWops       *rw;
 
     if (fname)
@@ -274,7 +274,7 @@ int string_width(_font *font, char *text)
 /* Calculate the displayed chars for a given width*/
 int string_width_offset(_font *font, char *text, int *line, int len)
 {
-    int w = 0, i, c, flag = FALSE;
+    int w = 0, i, c, flag = 0;
 
     for (c = i = 0; text[i] != '\0'; i++)
     {
@@ -290,7 +290,7 @@ int string_width_offset(_font *font, char *text, int *line, int len)
                 w += font->c[(unsigned char) (text[i])].w + font->char_offset;
                 if (w>=len && !flag)
                 {
-                    flag = TRUE;
+                    flag = 1;
                     *line = c;
                 }
                 break;
@@ -612,7 +612,7 @@ void show_tooltip(int mx, int my, char *text)
     string_blt(ScreenSurface, &font_small, tooltip, rec.x + 2, rec.y - 1, COLOR_BLACK, NULL, NULL);
 }
 
-static Boolean GetBitmapBorders(SDL_Surface *Surface, int *up, int *down, int *left, int *right, UINT32 ckey)
+static uint8 GetBitmapBorders(SDL_Surface *Surface, int *up, int *down, int *left, int *right, uint32 ckey)
 {
     register int x,y;
 
@@ -635,7 +635,7 @@ static Boolean GetBitmapBorders(SDL_Surface *Surface, int *up, int *down, int *l
     }
 
     /* we only need check this one time here - if we are here, the sprite is blank */
-    return FALSE;
+    return 0;
 
 right_border:
     /* right side border */
@@ -674,11 +674,11 @@ down_border:
             if (GetSurfacePixel(Surface, x, y) != ckey)
             {
                 *down = (Surface->h - 1) - y;
-                return TRUE;
+                return 1;
             }
         }
     }
-    return TRUE;
+    return 1;
 }
 
 /* Graps a pixel from a SDL_Surface on the position x,y in the right format & colors */
@@ -723,7 +723,7 @@ void sprite_blt(_Sprite *sprite, int x, int y, SDL_Rect *box, _BLTFX *bltfx)
 {
     SDL_Rect        dst;
     SDL_Surface    *surface, *blt_sprite;
-    Boolean         reset_trans = FALSE;
+    uint8         reset_trans = 0;
 
     /* Sanity check. */
     if (!sprite)
@@ -790,7 +790,7 @@ void sprite_blt(_Sprite *sprite, int x, int y, SDL_Rect *box, _BLTFX *bltfx)
         !(ScreenSurface->flags & SDL_HWSURFACE))
     {
         SDL_SetAlpha(blt_sprite, SDL_SRCALPHA, bltfx->alpha);
-        reset_trans = TRUE;
+        reset_trans = 1;
     }
 
     SDL_BlitSurface(blt_sprite, box, surface, &dst);
@@ -806,8 +806,8 @@ void sprite_blt_map(_Sprite *sprite, int x, int y, SDL_Rect *box, _BLTFX *bltfx,
 {
     SDL_Rect        dst;
     SDL_Surface    *surface, *blt_sprite, *tmp;
-    Boolean         reset_trans = FALSE;
-    Boolean         need_stretch = FALSE;
+    uint8         reset_trans = 0;
+    uint8         need_stretch = 0;
 
     if (!sprite)
         return;
@@ -880,21 +880,21 @@ void sprite_blt_map(_Sprite *sprite, int x, int y, SDL_Rect *box, _BLTFX *bltfx,
             if (!sprite->fog_of_war)
                 fow_scale(sprite);
             blt_sprite = sprite->fog_of_war;
-            need_stretch = TRUE;
+            need_stretch = 1;
         }
         else if (bltfx->flags & BLTFX_FLAG_RED)
         {
             if (!sprite->red)
                 red_scale(sprite);
             blt_sprite = sprite->red;
-            need_stretch = TRUE;
+            need_stretch = 1;
         }
         else if (bltfx->flags & BLTFX_FLAG_GREY)
         {
             if (!sprite->grey)
                 grey_scale(sprite);
             blt_sprite = sprite->grey;
-            need_stretch = TRUE;
+            need_stretch = 1;
         }
         if (!blt_sprite)
             return;
@@ -933,7 +933,7 @@ void sprite_blt_map(_Sprite *sprite, int x, int y, SDL_Rect *box, _BLTFX *bltfx,
         if (bltfx->flags & BLTFX_FLAG_SRCALPHA && !(ScreenSurface->flags & SDL_HWSURFACE))
         {
             SDL_SetAlpha(blt_sprite, SDL_SRCALPHA, bltfx->alpha);
-            reset_trans = TRUE;
+            reset_trans = 1;
         }
     }
 

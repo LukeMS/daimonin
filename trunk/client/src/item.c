@@ -408,7 +408,7 @@ static void add_item(item *env, item *op, int bflag)
     if (!op)
         return;
 
-    if (bflag == FALSE)
+    if (bflag == 0)
     {
         op->next = env->inv;
         if (op->next)
@@ -668,7 +668,7 @@ void update_item(int tag, int loc, char *name, int weight, int face, int flags, 
      * but needs some more intensive testing
      */
     if ((loc==0) && bflag)
-        bflag=FALSE;
+        bflag=0;
 
     /* Need to do some special handling if this is the player that is
      * being updated.

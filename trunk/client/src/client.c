@@ -474,7 +474,7 @@ static uint8 CommandCheck(char *cmd, char *params)
                         break;
                     case 12: // PLAYERDOLL, actually this shouldn't be necessary as we can't override the option with mouse-hiding, but JIC
                         if (options.playerdoll)
-                            cur_widget[nID].show = TRUE;
+                            cur_widget[nID].show = 1;
                         break;
                     case 17: // MAININV
                     case 19: // CONSOLE
@@ -482,10 +482,10 @@ static uint8 CommandCheck(char *cmd, char *params)
                         break;
                     case 21: // STATOMETER, actually this shouldn't be necessary as we can't override the option with mouse-hiding, but JIC
                         if (options.statsupdate)
-                            cur_widget[nID].show = TRUE;
+                            cur_widget[nID].show = 1;
                         break;
                     default:
-                        cur_widget[nID].show = TRUE;
+                        cur_widget[nID].show = 1;
                 }
             }
         }

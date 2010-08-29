@@ -31,9 +31,9 @@ int check_tools(char *name)
     if (res < 0)
     {
         fprintf(stderr, "Can't find %s\n", name);
-        return FALSE;
+        return 0;
     }
-        return TRUE;
+        return 1;
 }
 
 int execute_process(char *p_path, char *exe_name, char *parms, char *output, int seconds_to_wait)
