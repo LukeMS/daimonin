@@ -40,11 +40,12 @@ public:
         return Singleton;
     }
     void restoreWindowBG(int w, int h, unsigned int *bak, unsigned int *dst, int bakRowSkip, int dstRowSkip);
-    void drawGfxToBuffer(int w, int h, int srcW, int srcH, unsigned int *src, unsigned int *bak, unsigned int *dst, int srcRowSkip, int bakRowSkip, int dstRowSkip);
-    void drawColorToBuffer(int w, int h, unsigned int color, unsigned int *dst, int dstRowSkip);
-    void drawColorToBuffer(int w, int h, unsigned int color, unsigned int *bak, unsigned int *dst, int bakRowSkip, int dstRowSkip);
+    void blendGfxToBuffer(int w, int h, int srcW, int srcH, unsigned int *src, unsigned int *bak, unsigned int *dst, int srcRowSkip, int bakRowSkip, int dstRowSkip);
+    void blendColorToBuffer(int w, int h, unsigned int color, unsigned int *dst, int dstRowSkip);
+    void blendColorToBuffer(int w, int h, unsigned int color, unsigned int *bak, unsigned int *dst, int bakRowSkip, int dstRowSkip);
+    void drawColorBorder(int w, int h, unsigned int colorBG, unsigned int colorBorder, unsigned int *dst, int rowSkip, int sizeBorder);
     unsigned int alphaBlend(const unsigned int bg, const unsigned int gfx);
-
+    unsigned int roundToPowerOfTwo(unsigned int val, unsigned int maxValue);
 private:
     // ////////////////////////////////////////////////////////////////////
     // Functions.

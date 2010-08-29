@@ -193,31 +193,27 @@ void ObjectVisuals::setLifebar(Real percent, int barWidth)
         if (len >TEXTURE_SIZE) len = TEXTURE_SIZE;
         len = (TEXTURE_SIZE - len) /2;
         // Print NPC name.
-        dest_data = (uint32*)pb.data + (TEXTURE_SIZE-1-28) * TEXTURE_SIZE + len;
+        dst = (uint32*)pb.data + (TEXTURE_SIZE-1-28) * TEXTURE_SIZE + len;
         if (!mStrName.empty())
-            GuiManager::getSingleton().printText(TEXTURE_SIZE, TEXTURE_SIZE, dest_data, TEXTURE_SIZE, mStrName.c_str(), CHARNAME_FONT_NR, 0x00000000);
+            GuiManager::getSingleton().printText(TEXTURE_SIZE, TEXTURE_SIZE, dst, TEXTURE_SIZE, mStrName.c_str(), CHARNAME_FONT_NR, 0x00000000);
         int x1 = (TEXTURE_SIZE - barWidth)/2;
     */
     int xfill =  (int)(percent * barWidth);
     PixelBox pb = mHardwarePB->lock(Box(0, 0, TEXTURE_SIZE, TEXTURE_SIZE), HardwareBuffer::HBL_DISCARD);
-    uint32 *dest_data = (uint32*)pb.data;
-
-    // Clear the whole texture.
-    for (int i=0; i < TEXTURE_SIZE*TEXTURE_SIZE; ++i) *dest_data++ = 0;
-
-    dest_data = (uint32*)pb.data;
-    for (int x = 0; x < barWidth; ++x) dest_data[x] = 0xff000000;
-    dest_data+= TEXTURE_SIZE;
+    uint32 *dst = (uint32*)pb.data;
+    memset(dst, 0x00, TEXTURE_SIZE*TEXTURE_SIZE*sizeof(uint32)); // Clear the whole texture.
+    for (int x = 0; x < barWidth; ++x) dst[x] = 0xff000000;
+    dst+= TEXTURE_SIZE;
     for (int y = 0; y < 9; ++y)
     {
         for (int x = 0; x < barWidth; ++x)
         {
-            dest_data[x] = (x > xfill)?0xff000000:color;
+            dst[x] = (x > xfill)?0xff000000:color;
         }
         color+= (y < 4)?dColor:dColor*-1;
-        dest_data+= TEXTURE_SIZE;
+        dst+= TEXTURE_SIZE;
     }
-    for (int x = 0; x < barWidth; ++x) dest_data[x] = 0xff000000;
+    for (int x = 0; x < barWidth; ++x) dst[x] = 0xff000000;
     mHardwarePB->unlock();
 }
 

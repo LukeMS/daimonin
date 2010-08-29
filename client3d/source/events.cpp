@@ -539,7 +539,7 @@ bool Events::frameStarted(const FrameEvent& evt)
             {
                 // Server doesn't understand our login command. Can only happen while coding/testing.
                 GuiManager::getSingleton().setText(GuiManager::TEXTBOX_LOGIN_WARN, "~#ffff0000Server timeout on account login!");
-                Option::getSingleton().setGameStatus(Option::GAME_STATUS_START);
+                Option::getSingleton().setGameStatus(Option::GAME_STATUS_INIT_NET);
             }
             break;
         }

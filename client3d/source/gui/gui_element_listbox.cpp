@@ -108,12 +108,11 @@ void GuiListbox::sendMsg(const int msgID, Ogre::String &text, Ogre::uint32 &colo
                 addText(text.c_str(), GuiManager::COLOR_RED);
                 time = Root::getSingleton().getTimer()->getMilliseconds();
             }
-        }
-        return;
-        default:
-            Logger::log().warning() << "GuiListbox::sendMsg() unknow msgID: " << msgID;
             return;
+        }
     }
+    Logger::log().warning() << "GuiListbox::sendMsg() unknow msgID: " << msgID;
+    return;
 }
 
 //================================================================================================
@@ -350,7 +349,7 @@ void GuiListbox::draw()
             PixelBox src = GuiImageset::getSingleton().getItemPB(tmp);
             tmp = GuiImageset::ITEM_SIZE;
             //GuiGraphic::getSingleton().restoreWindowBG(tmp, tmp, (uint32*)src.data, dst+offset*mWidth, tmp, mWidth);
-            GuiGraphic::getSingleton().drawGfxToBuffer(tmp, tmp, tmp, tmp, (uint32*)src.data, bak+offset*mWidth, dst+offset*mWidth, tmp, mParent->getWidth(), mWidth);
+            GuiGraphic::getSingleton().blendGfxToBuffer(tmp, tmp, tmp, tmp, (uint32*)src.data, bak+offset*mWidth, dst+offset*mWidth, tmp, mParent->getWidth(), mWidth);
         }
         // ////////////////////////////////////////////////////////////////////
         // Draw text.

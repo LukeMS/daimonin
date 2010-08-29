@@ -46,17 +46,17 @@ private:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
+    enum {LIST_TEXT_OFFSET = 3, LIST_MAX_HEIGHT = 200};
     std::vector<Ogre::String>mvItem;
     unsigned int mActItem;
-    unsigned int mListHeight;
-    Ogre::uint32 mListColor;
+    int mListHeight;
+    Ogre::uint32 mListColor, mBorderColor, mCursorColor;
     bool mMouseOver, mMouseButDown;
     bool mShowItemList;
 
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    void drawItemList();
     /** Select the item holding the given text.
      ** @param item The item to select.
      *****************************************************************************/
@@ -67,6 +67,7 @@ private:
      *****************************************************************************/
     void SetSelection(unsigned int itemNr);
 
+    void calcListHeight();
     GuiElementCombobox(const GuiElementCombobox&);            /**< disable copy-constructor. **/
     GuiElementCombobox &operator=(const GuiElementCombobox&); /**< disable assignment operator. **/
 };

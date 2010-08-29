@@ -55,7 +55,7 @@ void GuiElementButton::sendMsg(const int message, String &text, uint32 &param, c
     switch (message)
     {
         case GuiManager::MSG_SET_VISIBLE:
-            setHidden(param?false:true);
+            if (setHidden(param?false:true)) draw();
             return;
         case GuiManager::MSG_SET_TEXT:
             setLabel(text);

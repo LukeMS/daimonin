@@ -38,7 +38,7 @@ void GuiElementTextbox::sendMsg(const int message, Ogre::String &text, Ogre::uin
     switch (message)
     {
         case GuiManager::MSG_SET_VISIBLE:
-            setHidden(param?false:true);
+            if (setHidden(param?false:true)) draw();
             return;
         case GuiManager::MSG_SET_TEXT:
             mLabelString = text;

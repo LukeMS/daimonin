@@ -36,6 +36,9 @@ using namespace Ogre;
 GuiElementCombobox::GuiElementCombobox(TiXmlElement *xmlRoot, const void *parent):GuiElement(xmlRoot, parent)
 {
     PROFILE()
+    mListColor  = 0xff00ff00;
+    mBorderColor= 0xff000000;
+    mCursorColor= 0xff888888;
     if ((xmlRoot = xmlRoot->FirstChildElement("Itemlist")))
     {
         TiXmlElement *xmlElem;
@@ -48,24 +51,33 @@ GuiElementCombobox::GuiElementCombobox(TiXmlElement *xmlRoot, const void *parent
         {
             if ((strTmp = xmlElem->Attribute("height"))) mListHeight = atoi(strTmp);
         }
-        if ((xmlElem = xmlRoot->FirstChildElement("Color")))
+        if ((xmlElem = xmlRoot->FirstChildElement("BackColor")))
         {
-            // PixelFormat: ARGB.
-            if ((strTmp = xmlElem->Attribute("red"  ))) mListColor = atoi(strTmp) << 16;
+            if ((strTmp = xmlElem->Attribute("alpha"))) mListColor = atoi(strTmp) << 24;
+            if ((strTmp = xmlElem->Attribute("red"  ))) mListColor+= atoi(strTmp) << 16;
             if ((strTmp = xmlElem->Attribute("green"))) mListColor+= atoi(strTmp) <<  8;
             if ((strTmp = xmlElem->Attribute("blue" ))) mListColor+= atoi(strTmp);
-            if ((strTmp = xmlElem->Attribute("alpha"))) mListColor+= atoi(strTmp) << 24;
         }
-    }
-    else // Default values.
-    {
-        mListHeight = 200;
-        mListColor = 0xff00ff00;
+        if ((xmlElem = xmlRoot->FirstChildElement("BorderColor")))
+        {
+            if ((strTmp = xmlElem->Attribute("alpha"))) mBorderColor = atoi(strTmp) << 24;
+            if ((strTmp = xmlElem->Attribute("red"  ))) mBorderColor+= atoi(strTmp) << 16;
+            if ((strTmp = xmlElem->Attribute("green"))) mBorderColor+= atoi(strTmp) <<  8;
+            if ((strTmp = xmlElem->Attribute("blue" ))) mBorderColor+= atoi(strTmp);
+        }
+        if ((xmlElem = xmlRoot->FirstChildElement("CursorColor")))
+        {
+            if ((strTmp = xmlElem->Attribute("alpha"))) mCursorColor = atoi(strTmp) << 24;
+            if ((strTmp = xmlElem->Attribute("red"  ))) mCursorColor+= atoi(strTmp) << 16;
+            if ((strTmp = xmlElem->Attribute("green"))) mCursorColor+= atoi(strTmp) <<  8;
+            if ((strTmp = xmlElem->Attribute("blue" ))) mCursorColor+= atoi(strTmp);
+        }
     }
     mActItem = 0;
     mMouseOver = false;
     mMouseButDown = false;
     mShowItemList = false;
+    calcListHeight();
     draw();
 }
 
@@ -86,7 +98,7 @@ void GuiElementCombobox::sendMsg(const int message, String &text, uint32 &param,
     switch (message)
     {
         case GuiManager::MSG_SET_VISIBLE:
-            setHidden(param?false:true);
+            if (setHidden(param?false:true)) draw();
             return;
         case GuiManager::MSG_SET_TEXT:
             //setLabel(text);
@@ -154,45 +166,52 @@ int GuiElementCombobox::mouseEvent(const int mouseAction, int mouseX, int mouseY
 void GuiElementCombobox::draw()
 {
     PROFILE()
-    GuiElement::draw(false);
-    if (!mHidden && !mvItem.empty())
-    {
-        // The combobox gfx was drawn by GuiElement::draw() into the build-buffer, now blend
-        // the text for the actice item over it. Then blit the result into the window-texture.
-        //int fontHeight = GuiTextout::getSingleton().getFontHeight(mLabelFontNr);
-        uint32 *dst = GuiManager::getSingleton().getBuildBuffer();
-        mLabelPosX = 2; // Just for testing!!!!
-        GuiTextout::getSingleton().printText(mWidth-mLabelPosX, mHeight, dst+mLabelPosX,
-                                             mWidth, mvItem[mActItem].c_str(), mLabelFontNr);
-        mParent->getTexture()->getBuffer()->blitFromMemory(PixelBox(mWidth, mHeight, 1, PF_A8R8G8B8, dst),
-                Box(mPosX, mPosY, mPosX+mWidth, mPosY+mHeight));
-    }
-    drawItemList();
-}
-
-//================================================================================================
-// Draw the guiElement.
-//================================================================================================
-void GuiElementCombobox::drawItemList()
-{
-    PROFILE()
     uint32 *dst = GuiManager::getSingleton().getBuildBuffer();
-    if (mHidden || !mShowItemList || mvItem.empty())
+    if (mHidden)
     {
-        uint32 *bak = mParent->getLayerBG() + mPosX + (mPosY+mHeight)*mParent->getWidth();
-        GuiGraphic::getSingleton().restoreWindowBG(mWidth, mListHeight, bak, dst, mParent->getWidth(), mWidth);
+        GuiGraphic::getSingleton().restoreWindowBG(mWidth, mHeight+mListHeight,
+                mParent->getLayerBG()+mPosX+mPosY*mParent->getWidth(), dst, mParent->getWidth(), mWidth);
     }
     else
     {
+        const int LIST_BORDER_SIZE = 1;
+        GuiElement::draw(false); // Draw the combobox background.
+        GuiGraphic::getSingleton().restoreWindowBG(mWidth, mListHeight,
+                mParent->getLayerBG()+mPosX+(mPosY+mHeight)*mParent->getWidth(),
+                dst+mHeight*mWidth , mParent->getWidth(), mWidth);
         int fontHeight = GuiTextout::getSingleton().getFontHeight(mLabelFontNr);
-        uint32 *buf = dst;
-        // Draw all items
-        for (unsigned int i = 0; i < mWidth * mListHeight; ++i) buf[i] = mListColor;
-        for (std::vector<String>::iterator i = mvItem.begin(); i < mvItem.end(); ++i)
+        GuiTextout::getSingleton().printText(mWidth, fontHeight, dst+mLabelPosX+(mLabelPosY*mWidth), mWidth,
+                                             mvItem[mActItem].c_str(), mLabelFontNr);
+        if (mShowItemList && !mvItem.empty() && mListHeight)
         {
-            GuiTextout::getSingleton().printText(mWidth, fontHeight, buf, mWidth, (*i).c_str(), mLabelFontNr);
-            buf+= fontHeight * mWidth;
+            uint32 *buf = dst+mHeight*mWidth;
+            // Background itemlist.
+            GuiGraphic::getSingleton().drawColorBorder(mWidth, mListHeight, mListColor, mBorderColor, dst+mHeight*mWidth, mWidth, LIST_BORDER_SIZE);
+            // Background active item.
+            GuiGraphic::getSingleton().blendColorToBuffer(mWidth-LIST_BORDER_SIZE*2, fontHeight, mCursorColor,
+                                                            dst+(fontHeight*mActItem+mHeight+LIST_BORDER_SIZE)*mWidth+LIST_BORDER_SIZE, mWidth);
+            buf = dst+mHeight*mWidth;
+            for (std::vector<String>::iterator i = mvItem.begin(); i < mvItem.end(); ++i)
+            {
+                GuiTextout::getSingleton().printText(mWidth-LIST_TEXT_OFFSET, fontHeight,
+                                                     buf+LIST_TEXT_OFFSET+(LIST_TEXT_OFFSET*mWidth), mWidth, (*i).c_str(), mLabelFontNr);
+                buf+= fontHeight * mWidth;
+            }
         }
     }
-    mParent->getTexture()->getBuffer()->blitFromMemory(PixelBox(mWidth, mListHeight, 1, PF_A8R8G8B8, dst), Box(mPosX, mPosY+mHeight, mPosX+mWidth, mPosY+mHeight+mListHeight));
+    // Blit to the texture.
+    mParent->getTexture()->getBuffer()->blitFromMemory(PixelBox(mWidth, mHeight+mListHeight, 1, PF_A8R8G8B8, dst),
+            Box(mPosX, mPosY, mPosX+mWidth, mPosY+mHeight+mListHeight));
+}
+
+//================================================================================================
+// Calc the height of the itemlist.
+//================================================================================================
+void GuiElementCombobox::calcListHeight()
+{
+    int fontHeight = GuiTextout::getSingleton().getFontHeight(mLabelFontNr);
+    mListHeight = fontHeight * mvItem.size() + LIST_TEXT_OFFSET;
+    while (mListHeight > LIST_MAX_HEIGHT || mPosY+mHeight+mListHeight+LIST_TEXT_OFFSET > mParent->getHeight())
+        mListHeight-= fontHeight;
+    if (mListHeight < 0) mListHeight = 0;
 }
