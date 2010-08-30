@@ -858,10 +858,10 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
                     query_name(pl->ob));
         }
 
-        sprintf(strchr(buf, '\0'), "    (~IP~: %s).\nPlayers now playing: %d.",
-                pl->socket.ip_host, player_active);
+        sprintf(strchr(buf, '\0'), "  ~IP~: %s.\n", pl->socket.ip_host);
+        sprintf(strchr(buf, '\0'), "  ~Account~: %s.\n", pl->account_name);
+        sprintf(strchr(buf, '\0'), "Players now playing: %d.", player_active);
  
-
         for (ol = gmaster_list_VOL; ol; ol = ol->next)
         {
             new_draw_info(NDI_UNIQUE, 0, ol->objlink.ob, "%s", buf);
