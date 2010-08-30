@@ -266,6 +266,8 @@ int command_who(object *op, char *params)
                                      pl->ob->y);
                 new_draw_info(NDI_UNIQUE, 0, op, "    ~IP~: %s",
                                      pl->socket.ip_host);
+                new_draw_info(NDI_UNIQUE, 0, op, "    ~Account~: %s",
+                                     pl->account_name);
             }
         }
     }
