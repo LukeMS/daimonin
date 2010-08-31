@@ -1675,37 +1675,37 @@ void poison_player(object *op, object *hitter, float dam)
                     /* this is where we deal with stat loss from poison attacks */
                     if (op->stats.Con > 1 && !(RANDOM() % 2))
                     {
-                        tmp->stats.Con = (sint8) ((hitter->level / 2 + RANDOM() % (hitter->level * 8 + 1) / 10) * 0.1f + 2.0f);
+                        tmp->stats.Con = (sint8) (hitter->level / 10 + RANDOM() % (hitter->level * 8) / 100.0f + 2.0f);
                         tmp->stats.Con *= -1;
                     }
                     if (op->stats.Str > 1 && !(RANDOM() % 2))
                     {
-                        tmp->stats.Str = (sint8) ((hitter->level / 2 + RANDOM() % (hitter->level * 8 + 1) / 10) * 0.1f + 2.0f);
+                        tmp->stats.Str = (sint8) (hitter->level / 10 + RANDOM() % (hitter->level * 8) / 100.0f + 2.0f);
                         tmp->stats.Str *= -1;
                     }
                     if (op->stats.Dex > 1 && !(RANDOM() % 2))
                     {
-                        tmp->stats.Dex = (sint8) ((hitter->level / 2 + RANDOM() % (hitter->level * 8 + 1) / 10) * 0.1f + 2.0f);
+                        tmp->stats.Dex = (sint8) (hitter->level / 10 + RANDOM() % (hitter->level * 8) / 100.0f + 2.0f);
                         tmp->stats.Dex *= -1;
                     }
                     if (op->stats.Int > 1 && !(RANDOM() % 2))
                     {
-                        tmp->stats.Int = (sint8) ((hitter->level / 2 + RANDOM() % (hitter->level * 8 + 1) / 10) * 0.1f + 2.0f);
+                        tmp->stats.Int = (sint8) (hitter->level / 10 + RANDOM() % (hitter->level * 8) / 100.0f + 2.0f);
                         tmp->stats.Int *= -1;
                     }
                     if (op->stats.Cha > 1 && !(RANDOM() % 2))
                     {
-                        tmp->stats.Cha = (sint8) ((hitter->level / 2 + RANDOM() % (hitter->level * 8 + 1) / 10) * 0.1f + 2.0f);
+                        tmp->stats.Cha = (sint8) (hitter->level / 10 + RANDOM() % (hitter->level * 8) / 100.0f + 2.0f);
                         tmp->stats.Cha *= -1;
                     }
                     if (op->stats.Pow > 1 && !(RANDOM() % 2))
                     {
-                        tmp->stats.Pow = (sint8) ((hitter->level / 2 + RANDOM() % (hitter->level * 8 + 1) / 10) * 0.1f + 2.0f);
+                        tmp->stats.Pow = (sint8) (hitter->level / 10 + RANDOM() % (hitter->level * 8) / 100.0f + 2.0f);
                         tmp->stats.Pow *= -1;
                     }
                     if (op->stats.Wis > 1 && !(RANDOM() % 2))
                     {
-                        tmp->stats.Wis = (sint8) ((hitter->level / 2 + RANDOM() % (hitter->level * 8 + 1) / 10) * 0.1f + 2.0f);
+                        tmp->stats.Wis = (sint8) (hitter->level / 10 + RANDOM() % (hitter->level * 8) / 100.0f + 2.0f);
                         tmp->stats.Wis *= -1;
                     }
 
@@ -1735,7 +1735,6 @@ void poison_player(object *op, object *hitter, float dam)
                 }
             }
         }
-        tmp->speed_left = 0;
     }
     else
         tmp->stats.food++;
