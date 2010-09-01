@@ -1261,15 +1261,29 @@ int new_save_map(mapstruct *m, int flag)
     {
         if (MAP_UNIQUE(m) || MAP_INSTANCE(m))
         {
-            /* When the player has been deleted we mustn't try to save the map,
-             * just delete it too. */
-            if (access(m->path, F_OK) == -1)
-            {
-                LOG(llevInfo, "INFO:: Player %s no longer exists so deleting map %s\n",
-                    m->reference, m->path);
-                delete_map(m);
+            char *cp;
 
-                return 0;
+            sprintf(filename, "%s", m->path);
+
+            if ((cp = strrchr(filename, '/')))
+            {
+                *cp = '\0';
+
+                /* When the player has been deleted we mustn't try to save the map,
+                 * just delete it too. */
+                if (access(filename, F_OK) == -1)
+                {
+                    LOG(llevInfo, "INFO:: Player %s no longer exists so deleting map %s\n",
+                        m->reference, m->path);
+                    delete_map(m);
+
+                    return 0;
+                }
+            }
+            else
+            {
+                LOG(llevDebug, "DEBUG:: %s/new_save_map(): Invalid path (%s)!\n",
+                    __FILE__, m->path);
             }
 
             /* that ensures we always reload from original maps */
