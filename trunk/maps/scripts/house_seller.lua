@@ -155,15 +155,14 @@ function topicUpgrade()
     if pinfo == nil then
         ib:AddMsg("You don't have any apartment to upgrade.\n")
     else
-        -- pinfo.last_heal = -1
-        ib:AddMsg("I'm sorry, but the mages in charge of our upgrade process seem to be having trouble. Please come back soon! Sorry for any inconveniences.")
-        -- ib:AddMsg("Apartment upgrading will work like this then\n")
-        -- ib:AddMsg("a.) Choose your new home in the upgrade procedure.\n")
-        -- ib:AddMsg("b.) You get *no* money back for your old apartment.\n")
-        -- ib:AddMsg("c.) All items in your old apartment are *automatically* transfered, including items in containers. They appear in a big pile in your new apartment.\n")
-        -- ib:AddMsg("d.) Your old apartment is exchanged with your new one.\n")
-        -- ib:AddMsg("Upgrading will also work to change an expensive apartment to a cheap one.\n")
-        -- ib:AddMsg("Go to upgrade ^procedure^ when you want upgrade now.\n")
+        pinfo.last_heal = -1
+        ib:AddMsg("Apartment upgrading will work like this then\n")
+        ib:AddMsg("a.) Choose your new home in the upgrade procedure.\n")
+        ib:AddMsg("b.) You get *no* money back for your old apartment.\n")
+        ib:AddMsg("c.) All items in your old apartment are *automatically* transfered, including items in containers. They appear in a big pile in your new apartment.\n")
+        ib:AddMsg("d.) Your old apartment is exchanged with your new one.\n")
+        ib:AddMsg("Upgrading will also work to change an expensive apartment to a cheap one.\n")
+        ib:AddMsg("Go to upgrade ^procedure^ when you want upgrade now.\n")
     end
     ib:SetButton("Back", "hi")
     pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
@@ -473,10 +472,10 @@ end
 
 tl = TopicList()
 
---tl:AddTopics("upgrade to cheap apartment", topicUpgradeToCheap)
---tl:AddTopics("upgrade to normal apartment", topicUpgradeToNormal)
---tl:AddTopics("upgrade to expensive apartment", topicUpgradeToExpensive)
---tl:AddTopics("upgrade to luxurious apartment", topicUpgradeToLuxurious)
+tl:AddTopics("upgrade to cheap apartment", topicUpgradeToCheap)
+tl:AddTopics("upgrade to normal apartment", topicUpgradeToNormal)
+tl:AddTopics("upgrade to expensive apartment", topicUpgradeToExpensive)
+tl:AddTopics("upgrade to luxurious apartment", topicUpgradeToLuxurious)
 
 tl:AddTopics("sell me a cheap apartment", topicSellCheap)
 tl:AddTopics("sell me a normal apartment", topicSellNormal)
