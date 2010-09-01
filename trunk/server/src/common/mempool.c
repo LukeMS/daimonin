@@ -471,7 +471,7 @@ void check_use_object_list(void)
                         tmp->map->name ? tmp->map->name : "NONE", chunk->id);
                 else
                 {
-                    for (tmp2 = get_map_ob(tmp->map, tmp->x, tmp->y); tmp2; tmp2 = tmp2->above)
+                    for (tmp2 = GET_MAP_OB(tmp->map, tmp->x, tmp->y); tmp2; tmp2 = tmp2->above)
                     {
                         if (tmp2 == tmp)
                             goto goto_object_found;

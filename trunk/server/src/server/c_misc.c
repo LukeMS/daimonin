@@ -490,7 +490,7 @@ int command_dumpbelowfull(object *op, char *params)
     new_draw_info(NDI_UNIQUE, 0, op, "DUMP OBJECTS OF THIS TILE");
     new_draw_info(NDI_UNIQUE, 0, op, "-------------------");
 
-    for (tmp = get_map_ob(op->map, op->x, op->y); tmp; tmp = tmp->above)
+    for (tmp = GET_MAP_OB(op->map, op->x, op->y); tmp; tmp = tmp->above)
     {
         if (tmp == op) /* exclude the DM player object */
             continue;
@@ -515,7 +515,7 @@ int command_dumpbelow(object *op, char *params)
     new_draw_info(NDI_UNIQUE, 0, op, "DUMP OBJECTS OF THIS TILE");
     new_draw_info(NDI_UNIQUE, 0, op, "-------------------");
 
-    for (tmp = get_map_ob(op->map, op->x, op->y); tmp; tmp = tmp->above, i++)
+    for (tmp = GET_MAP_OB(op->map, op->x, op->y); tmp; tmp = tmp->above, i++)
     {
         if (tmp == op) /* exclude the DM player object */
             continue;

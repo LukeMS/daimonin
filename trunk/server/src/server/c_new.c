@@ -286,7 +286,7 @@ int command_target(object *op, char *params)
              * on a square - but i try this first without
              * handle it.
              */
-            for (tmp = get_map_ob(m, xt, yt); tmp != NULL; tmp = tmp->above)
+            for (tmp = GET_MAP_OB(m, xt, yt); tmp != NULL; tmp = tmp->above)
             {
                 /* this is a possible target */
                 tmp->head != NULL ? (head = tmp->head) : (head = tmp); /* ensure we have head */
@@ -334,7 +334,7 @@ int command_target(object *op, char *params)
              * on a square - but i try this first without
              * handle it.
              */
-            for (tmp = get_map_ob(m, xt, yt); tmp != NULL; tmp = tmp->above)
+            for (tmp = GET_MAP_OB(m, xt, yt); tmp != NULL; tmp = tmp->above)
             {
                 /* this is a possible target */
                 tmp->head != NULL ? (head = tmp->head) : (head = tmp); /* ensure we have head */
@@ -414,7 +414,7 @@ int command_target(object *op, char *params)
                  * on a square - but i try this first without
                  * handle it.  */
                 if (get_ob_flag)
-                    tmp = get_map_ob(m, xt, yt);
+                    tmp = GET_MAP_OB(m, xt, yt);
 
                 for (get_ob_flag = 1; tmp != NULL; tmp = tmp->above)
                 {
@@ -493,7 +493,7 @@ int command_target(object *op, char *params)
              * on a square - but i try this first without
              * handle it.
              */
-            for (tmp = get_map_ob(m, xt, yt); tmp != NULL; tmp = tmp->above)
+            for (tmp = GET_MAP_OB(m, xt, yt); tmp != NULL; tmp = tmp->above)
             {
                 head = (tmp->head) ? tmp->head : tmp;
 

@@ -861,7 +861,7 @@ void kill_player(object *op)
      * in the map.
      */
 
-    tmp = get_map_ob(op->map, op->x, op->y);
+    tmp = GET_MAP_OB(op->map, op->x, op->y);
     if (tmp && tmp->type == SHOP_FLOOR)
     {
         remove_unpaid_objects(op->inv, op);
@@ -1077,7 +1077,7 @@ int stand_near_hostile(object *who)
         yt = who->y + freearr_y[i];
         if (!(m = out_of_map(who->map, &xt, &yt)))
             continue;
-        for (tmp = get_map_ob(m, xt, yt); tmp; tmp = tmp->above)
+        for (tmp = GET_MAP_OB(m, xt, yt); tmp; tmp = tmp->above)
         {
             if (!QUERY_FLAG(tmp, FLAG_UNAGGRESSIVE) && get_friendship(who, tmp) <= FRIENDSHIP_ATTACK)
                 return 1;

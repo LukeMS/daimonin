@@ -1419,7 +1419,7 @@ void map_transfer_apartment_items(mapstruct *map_old, mapstruct * map_new, int x
     {
         for (j = 0; j < MAP_HEIGHT(map_old); j++)
         {
-            for (op = get_map_ob(map_old, i, j); op; op = tmp2)
+            for (op = GET_MAP_OB(map_old, i, j); op; op = tmp2)
             {
                 tmp2 = op->above;
                 /* if thats true, the player can't get it - no sense to transfer it! */

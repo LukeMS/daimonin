@@ -873,7 +873,7 @@ int convert_item(object *item, object *converter, object *originator)
         item->nrof = CONV_NR(converter);
     if (nr)
         item->nrof *= nr;
-    for (tmp = get_map_ob(converter->map, converter->x, converter->y); tmp != NULL; tmp = tmp->above)
+    for (tmp = GET_MAP_OB(converter->map, converter->x, converter->y); tmp != NULL; tmp = tmp->above)
     {
         if (tmp->type == SHOP_FLOOR)
             break;
@@ -1119,7 +1119,7 @@ static int apply_shop_mat(object *shop_mat, object *op)
             * but there is never a guarantee that the bottom space on the map is
             * actually the shop floor.
             */
-        else if (!rv && (tmp = get_map_ob(op->map, op->x, op->y)) != NULL && tmp->type != SHOP_FLOOR)
+        else if (!rv && (tmp = GET_MAP_OB(op->map, op->x, op->y)) != NULL && tmp->type != SHOP_FLOOR)
         {
             new_draw_info(NDI_UNIQUE, 0, op, "Thank you for visiting our shop.");
         }

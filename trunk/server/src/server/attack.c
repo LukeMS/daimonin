@@ -648,7 +648,7 @@ int hit_map(object *op, int dir)
 
     mflags = GET_MAP_FLAGS(map, x, y);
 
-    next = get_map_ob(map, x, y);
+    next = GET_MAP_OB(map, x, y);
     if (next)
         next_tag = next->count;
 

@@ -250,7 +250,7 @@ int check_infection(object *disease)
             yt = j;
             if ((mt = out_of_map(map, &xt, &yt)))
             {
-                for (tmp = get_map_ob(mt, xt, yt); tmp; tmp = tmp->above)
+                for (tmp = GET_MAP_OB(mt, xt, yt); tmp; tmp = tmp->above)
                     infect_object(tmp, disease, 0);
             }
         }

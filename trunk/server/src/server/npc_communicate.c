@@ -110,7 +110,7 @@ void communicate(object *op, char *txt)
             if (GET_MAP_FLAGS(m, xt, yt) & (P_MAGIC_EAR | P_IS_ALIVE)) /* quick check we have a magic ear */
             {
                 /* ok, browse now only on demand */
-                for (npc = get_map_ob(m, xt, yt); npc != NULL; npc = npc->above)
+                for (npc = GET_MAP_OB(m, xt, yt); npc != NULL; npc = npc->above)
                 {
                     /* search but avoid talking to self */
                     if ((npc->type == MAGIC_EAR || QUERY_FLAG(npc, FLAG_ALIVE)) && op != npc)
