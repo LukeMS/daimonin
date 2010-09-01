@@ -2659,7 +2659,7 @@ object * decrease_ob_nr(object *op, uint32 i)
                 }
             }
         }
-        else // if (op->map)
+        else if (op->map)
         {
             check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
             insert_ob_in_map(op, op->map, op, 0);
