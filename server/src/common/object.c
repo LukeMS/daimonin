@@ -2634,28 +2634,35 @@ object * decrease_ob_nr(object *op, uint32 i)
     }
     else
     {
-        object *above   = op->above;
+        tmp = op->above;
 
-        if (i < op->nrof)
-        {
-            op->nrof -= i;
-        }
-        else
+        if (!(op->nrof = (i < op->nrof) ? op->nrof - i : 0) ||
+            op->map)
         {
             remove_ob(op);
-            check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
-            op->nrof = 0;
         }
-        /* Since we just removed op, op->above is null */
-        for (tmp = above; tmp != NULL; tmp = tmp->above)
+
+        if (op->env)
         {
-            if (tmp->type == PLAYER)
+            for (; tmp; tmp = tmp->above)
             {
-                if (op->nrof)
-                    esrv_send_item(tmp, op);
-                else
-                    esrv_del_item(CONTR(tmp), op->count, op->env);
+                if (tmp->type == PLAYER)
+                {
+                    if (op->nrof)
+                    {
+                        esrv_send_item(tmp, op);
+                    }
+                    else
+                    {
+                        esrv_del_item(CONTR(tmp), op->count, op->env);
+                    }
+                }
             }
+        }
+        else // if (op->map)
+        {
+            check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
+            insert_ob_in_map(op, op->map, op, 0);
         }
     }
 
