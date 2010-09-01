@@ -75,7 +75,7 @@ int write_rune(object *op, int dir, int inspell, int level, char *runename)
         return 0;
     }
 
-    for (tmp = get_map_ob(mt, nx, ny); tmp != NULL; tmp = tmp->above)
+    for (tmp = GET_MAP_OB(mt, nx, ny); tmp != NULL; tmp = tmp->above)
         if (tmp->type == RUNE)
             break;
     if (tmp)
@@ -338,7 +338,7 @@ int dispel_rune(object *op, int dir, int risk)
     yt = op->y + freearr_y[dir];
     if (!(m = out_of_map(op->map, &xt, &yt)))
         return 0;
-    for (tmp = get_map_ob(m, xt, yt); tmp != NULL; tmp = tmp->above)
+    for (tmp = GET_MAP_OB(m, xt, yt); tmp != NULL; tmp = tmp->above)
     {
         if (tmp->type == RUNE)
             break;

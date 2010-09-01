@@ -187,7 +187,7 @@ int teleport(object *teleporter, uint8 tele_type, object *user)
             yt = teleporter->y + j;
             if (!(m = out_of_map(teleporter->map, &xt, &yt)))
                 continue;
-            other_teleporter = get_map_ob(m, xt, yt);
+            other_teleporter = GET_MAP_OB(m, xt, yt);
 
             while (other_teleporter)
             {
@@ -441,7 +441,7 @@ int push_roll_object(object * const op, int dir, const int flag)
     yt = op->y + freearr_y[dir];
     if (!(m = out_of_map(op->map, &xt, &yt)))
         return 0;
-	for (tmp = get_map_ob(m, xt, yt); tmp != NULL; tmp = tmp->above)
+	for (tmp = GET_MAP_OB(m, xt, yt); tmp != NULL; tmp = tmp->above)
 	{
         if (IS_LIVE(tmp)|| QUERY_FLAG(tmp,FLAG_CAN_ROLL))
 		{

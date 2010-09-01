@@ -1012,7 +1012,7 @@ static inline int check_spell_instance(mapstruct *m, int x, int y, object *op)
 {
     object *tmp;
 
-    for (tmp = get_map_ob(m, x, y); tmp != NULL; tmp = tmp->above)
+    for (tmp = GET_MAP_OB(m, x, y); tmp != NULL; tmp = tmp->above)
     {
         /* weight_limit is the ->count of the original spell object which started
          * this spell!
@@ -1240,7 +1240,7 @@ void check_cone_push(object *op)
 
     weight_move = 1000 + 1000 * op->level;
 
-    for (tmp = get_map_ob(op->map, op->x, op->y); tmp != NULL; tmp = tmp->above)
+    for (tmp = GET_MAP_OB(op->map, op->x, op->y); tmp != NULL; tmp = tmp->above)
     {
         int num_sections    = 1;
 
@@ -1735,7 +1735,7 @@ void move_golem(object *op)
         if (!(m = out_of_map(op->map, &x, &y)))
             continue;
 
-        for (victim = get_map_ob(m, x, y); victim; victim = victim->above)
+        for (victim = GET_MAP_OB(m, x, y); victim; victim = victim->above)
         {
             if (IS_LIVE(victim))
                 break;
@@ -1992,7 +1992,7 @@ void check_fired_arch(object *op)
         hitter = op;
 
     flag = GET_MAP_FLAGS(op->map, op->x, op->y) & P_IS_PVP;
-    for (tmp = get_map_ob(op->map, op->x, op->y); tmp != NULL; tmp = tmp->above)
+    for (tmp = GET_MAP_OB(op->map, op->x, op->y); tmp != NULL; tmp = tmp->above)
     {
         tmp_head = tmp->head;
         if (!tmp_head)
@@ -2211,7 +2211,7 @@ int find_target_for_spell(object *op, object *item, object **target, int dir, ui
                 tmp=NULL;
             else
             {
-                for(tmp=get_map_ob(m,xt,yt);tmp!=NULL;tmp=tmp->above)
+                for(tmp=GET_MAP_OB(m,xt,yt);tmp!=NULL;tmp=tmp->above)
                 {
                     if(tmp->type==PLAYER)
                         break;
@@ -2220,7 +2220,7 @@ int find_target_for_spell(object *op, object *item, object **target, int dir, ui
         }
         if(tmp==NULL)
         {
-            for(tmp=get_map_ob(op->map,op->x,op->y);tmp!=NULL;tmp=tmp->above)
+            for(tmp=GET_MAP_OB(op->map,op->x,op->y);tmp!=NULL;tmp=tmp->above)
             {
                 if(tmp->type==PLAYER)
                     break;
@@ -2470,7 +2470,7 @@ int spell_find_dir(mapstruct *m, int x, int y, object *exclude)
         ny = y + freearr_y[i];
         if ((m = out_of_map(m, &nx, &ny)))
         {
-            tmp = get_map_ob(m, nx, ny);
+            tmp = GET_MAP_OB(m, nx, ny);
             while (tmp
                 != NULL
                 && (((owner_type == PLAYER && !QUERY_FLAG(tmp, FLAG_MONSTER) && !QUERY_FLAG(tmp, FLAG_GENERATOR))
@@ -2808,7 +2808,7 @@ object * get_pointed_target(object *op, int dir)
       for(x=op->x+freearr_x[dir],y=op->y+freearr_y[dir]
          ;!out_of_map(op->map,x,y)&&!blocks_view(op->map,x,y)
          &&!wall(op->map,x,y);x+=freearr_x[dir],y+=freearr_y[dir])
-            for(target=get_map_ob(op->map,x,y);target;target=target->above) {
+            for(target=GET_MAP_OB(op->map,x,y);target;target=target->above) {
                   if(QUERY_FLAG(target->head?target->head:target,FLAG_MONSTER)) {
                        if(!blocks_magic(op->map,x,y))
                               return target;

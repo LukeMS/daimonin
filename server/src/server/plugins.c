@@ -777,7 +777,7 @@ CFParm * CFWGetMapObject(CFParm *PParm)
 
     /* Gecko: added tiled map check */
     if ((mt = out_of_map(mt, &x, &y)))
-        val = get_map_ob(mt, x, y);
+        val = GET_MAP_OB(mt, x, y);
 
     CFP.Value[0] = (void *) (val);
     return &CFP;

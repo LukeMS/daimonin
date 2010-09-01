@@ -82,7 +82,7 @@ int cast_raise_dead_spell(object *op, int dir, int spell_type, object *corpseobj
         {
             /*  First we need to find a corpse, if any.  */
             /* If no object, temp will be set to NULL */
-            for (temp = get_map_ob(m, xt, yt); temp != NULL; temp = temp->above)
+            for (temp = GET_MAP_OB(m, xt, yt); temp != NULL; temp = temp->above)
                     /* Remove checks for immunity - bit of a hack.  Anyways, only
                      * the CORPSE type is being used corpses for players, so
                      * this check should be sufficient.  If we really want

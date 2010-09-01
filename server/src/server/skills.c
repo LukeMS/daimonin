@@ -247,7 +247,7 @@ int steal(object *op, int dir)
     if (!(mt = out_of_map(op->map, &x, &y)))
         return 0;
     /* Find the topmost object at this spot */
-    for (tmp = get_map_ob(mt, x, y); tmp != NULL && tmp->above != NULL; tmp = tmp->above)
+    for (tmp = GET_MAP_OB(mt, x, y); tmp != NULL && tmp->above != NULL; tmp = tmp->above)
         ;
 
     /* For all the stacked objects at this point, attempt a steal */
@@ -294,7 +294,7 @@ int pick_lock(object *pl, int dir)
         return 0;
     }
 
-    for (tmp = get_map_ob(m, x, y); tmp; tmp = tmp->above)
+    for (tmp = GET_MAP_OB(m, x, y); tmp; tmp = tmp->above)
     {
         if (!tmp)
             continue;
@@ -479,7 +479,7 @@ static int attempt_jump(object *pl, int dir, int spaces)
             (void) stop_jump(pl, i, spaces);
             return 0; /* no action, no exp */
         }
-        for (tmp = get_map_ob(m, xt, yt); tmp; tmp = tmp->above)
+        for (tmp = GET_MAP_OB(m, xt, yt); tmp; tmp = tmp->above)
         {
             if (wall(tmp->map, xt, yt))
             {
@@ -733,7 +733,7 @@ int do_skill_ident(object *pl, int obj_class)
     for (tmp = pl->inv; tmp; tmp = tmp->below)
         success += do_skill_ident2(tmp, pl, obj_class);
     /*  check the ground */
-    for (tmp = get_map_ob(pl->map, pl->x, pl->y); tmp; tmp = tmp->above)
+    for (tmp = GET_MAP_OB(pl->map, pl->x, pl->y); tmp; tmp = tmp->above)
         success += do_skill_ident2(tmp, pl, obj_class);
 
     return success;
@@ -760,7 +760,7 @@ int use_oratory(object *pl, int dir)
     if (!(m = out_of_map(pl->map, &x, &y)))
         return 0;
 
-    for (tmp = get_map_ob(m, x, y); tmp; tmp = tmp->above)
+    for (tmp = GET_MAP_OB(m, x, y); tmp; tmp = tmp->above)
     {
         if (!tmp)
             return 0;
@@ -872,7 +872,7 @@ int singing(object *pl, int dir)
         yt = pl->y + freearr_y[i];
         if (!(m = out_of_map(pl->map, &xt, &yt)))
             continue;
-        for (tmp = get_map_ob(m, xt, yt); tmp; tmp = tmp->above)
+        for (tmp = GET_MAP_OB(m, xt, yt); tmp; tmp = tmp->above)
         {
             if (!tmp)
                 return 0;
@@ -1310,7 +1310,7 @@ int find_traps(object *op, int level)
         if (!(m = out_of_map(op->map, &xt, &yt)))
             continue;
  
-        next = get_map_ob(m, xt, yt);
+        next = GET_MAP_OB(m, xt, yt);
         while ((this = next))
         {
             /* this is the object on the map, that is the current object under
@@ -1381,7 +1381,7 @@ int remove_trap(object *op, int dir, int level)
             continue;
 
         /*  Check everything in the square for trapness */
-        for (tmp = get_map_ob(m, x, y); tmp != NULL; tmp = tmp->above)
+        for (tmp = GET_MAP_OB(m, x, y); tmp != NULL; tmp = tmp->above)
         {
             /* And now we'd better do an inventory traversal of each
                        * of these objects' inventory */

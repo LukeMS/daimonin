@@ -1050,7 +1050,7 @@ object * esrv_get_ob_from_count(object *pl, tag_t count)
         }
         if(pl->map)
         {
-            for (op = get_map_ob(pl->map, pl->x, pl->y); op; op = op->above)
+            for (op = GET_MAP_OB(pl->map, pl->x, pl->y); op; op = op->above)
             {
                 if (op->count == count)
                     return op;
@@ -1074,7 +1074,7 @@ object * esrv_get_ob_from_count(object *pl, tag_t count)
 
     if(pl->map)
     {
-        for (op = get_map_ob(pl->map, pl->x, pl->y); op; op = op->above)
+        for (op = GET_MAP_OB(pl->map, pl->x, pl->y); op; op = op->above)
             if (op->count == count)
                 return op;
             else if (op->type == CONTAINER && CONTR(pl)->container == op)

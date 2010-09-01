@@ -154,7 +154,7 @@ void aggravate_monsters(object *op)
         for (j = 0; j < MAP_HEIGHT(op->map); j++) {
           if (out_of_map(op->map, op->x + i , op->y + j))
             continue;
-          for (tmp = get_map_ob(op->map, op->x + i, op->y + j);
+          for (tmp = GET_MAP_OB(op->map, op->x + i, op->y + j);
                tmp; tmp = tmp->above)
             if (QUERY_FLAG(tmp, FLAG_MONSTER)) {
           CLEAR_FLAG(tmp, FLAG_SLEEP);
@@ -234,7 +234,7 @@ int probe(object *op)
 {
     object *tmp;
 
-    for (tmp = get_map_ob(op->map, op->x, op->y); tmp != NULL; tmp = tmp->above)
+    for (tmp = GET_MAP_OB(op->map, op->x, op->y); tmp != NULL; tmp = tmp->above)
     {
         if (IS_LIVE(tmp))
         {
@@ -307,7 +307,7 @@ int cast_earth2dust(object *op, object *caster)
             yt = op->y + j;
             if (!(m = out_of_map(op->map, &xt, &yt)))
                 continue;
-            for (tmp = get_map_ob(m, xt, yt); tmp != NULL; tmp = next)
+            for (tmp = GET_MAP_OB(m, xt, yt); tmp != NULL; tmp = next)
             {
                 next = tmp->above;
                 if (tmp && QUERY_FLAG(tmp, FLAG_TEAR_DOWN))
@@ -446,7 +446,7 @@ int cast_destruction(object *op, object *caster, int dam, int attacktype)
             yt = op->y + j;
             if (!(m = out_of_map(op->map, &xt, &yt)))
                 continue;
-            tmp = get_map_ob(m, xt, yt);
+            tmp = GET_MAP_OB(m, xt, yt);
             while (tmp != NULL && (!QUERY_FLAG(tmp, FLAG_ALIVE) || tmp->type == PLAYER))
                 tmp = tmp->above;
             if (tmp == NULL)
@@ -626,7 +626,7 @@ int cast_light(object *op, object *caster, int dir)
 
     if ((m = out_of_map(op->map, &x, &y)))
     {
-        for (target = get_map_ob(m, x, y); target; target = target->above)
+        for (target = GET_MAP_OB(m, x, y); target; target = target->above)
             if (QUERY_FLAG(target, FLAG_MONSTER))
             {
                 /* coky doky. got a target monster. Lets make a blinding attack */
@@ -1792,7 +1792,7 @@ int alchemy(object *op)
           if(out_of_map(op->map,x,y) || wall(op->map,x,y) ||
          blocks_view(op->map,x,y))
             continue;
-        for(tmp=get_map_ob(op->map,x,y);tmp!=NULL;tmp=next) {
+        for(tmp=GET_MAP_OB(op->map,x,y);tmp!=NULL;tmp=next) {
               next=tmp->above;
           if(QUERY_FLAG(tmp,FLAG_IS_CAULDRON)) {
             attempt_do_alchemy(op, tmp);
@@ -1814,7 +1814,7 @@ int alchemy(object *op)
         small_nuggets=0;
         large_nuggets=0;
 
-        for(tmp=get_map_ob(op->map,x,y);tmp!=NULL;tmp=next) {
+        for(tmp=GET_MAP_OB(op->map,x,y);tmp!=NULL;tmp=next) {
               next=tmp->above;
           if (tmp->weight>0 && !QUERY_FLAG(tmp, FLAG_NO_PICK)
               && !QUERY_FLAG(tmp, FLAG_ALIVE)) {
@@ -1985,7 +1985,7 @@ int cast_identify(object *op, int level, object *single_ob, int mode)
      *
     if(IDENTIFY_MODE_ALL)
     {
-      for(tmp = get_map_ob(op->map,op->x,op->y);tmp!=NULL;tmp=tmp->above)
+      for(tmp = GET_MAP_OB(op->map,op->x,op->y);tmp!=NULL;tmp=tmp->above)
       if (!QUERY_FLAG(tmp, FLAG_IDENTIFIED) && !IS_SYS_INVISIBLE(tmp) &&
     need_identify(tmp))
       {
@@ -2159,9 +2159,9 @@ static int cast_detection_old(object *op, object *target,int type) {
             continue;
 
         if (type==SP_SHOW_INVIS)
-            last = get_map_ob(m, nx, ny);
+            last = GET_MAP_OB(m, nx, ny);
         else {
-        for (tmp=get_map_ob(m, nx, ny); tmp; tmp=tmp->above) last=tmp;
+        for (tmp=GET_MAP_OB(m, nx, ny); tmp; tmp=tmp->above) last=tmp;
 
         for (tmp=last; tmp; tmp=tmp->below) {
             if (tmp->type == FLOOR) break;
@@ -2290,7 +2290,7 @@ int cast_pacify(object *op, object *weap, archetype *arch, int spellnum)
             yt = op->y + i;
             if (!(m = out_of_map(op->map, &xt, &yt)))
                 continue;
-            for (tmp = get_map_ob(m, xt, yt); tmp && (!QUERY_FLAG(tmp, FLAG_MONSTER)); tmp = tmp->above)
+            for (tmp = GET_MAP_OB(m, xt, yt); tmp && (!QUERY_FLAG(tmp, FLAG_MONSTER)); tmp = tmp->above)
                 ;
             if (!tmp)
                 continue;
@@ -2472,14 +2472,14 @@ int cast_transfer(object *op, int dir)
     yt = op->y + freearr_y[dir];
     if ((m = out_of_map(op->map, &xt, &yt)))
     {
-        for (plyr = get_map_ob(m, xt, yt); plyr != NULL; plyr = plyr->above)
+        for (plyr = GET_MAP_OB(m, xt, yt); plyr != NULL; plyr = plyr->above)
             if (IS_LIVE(plyr))
                 break;
     }
     /*  If we did not find a player in the specified direction, transfer
     to anyone on top of us. */
     if (plyr == NULL)
-        for (plyr = get_map_ob(op->map, op->x, op->y); plyr != NULL; plyr = plyr->above)
+        for (plyr = GET_MAP_OB(op->map, op->x, op->y); plyr != NULL; plyr = plyr->above)
             if (IS_LIVE(plyr))
                 break;
 
@@ -2530,7 +2530,7 @@ int drain_magic(object *op, int dir)
     yt = op->y + freearr_y[dir];
     if ((m = out_of_map(op->map, &xt, &yt)))
     {
-        for (tmp = get_map_ob(m, xt, yt); tmp != NULL; tmp = tmp->above)
+        for (tmp = GET_MAP_OB(m, xt, yt); tmp != NULL; tmp = tmp->above)
             if (IS_LIVE(tmp))
                 break;
         /*  If we did not find a player in the specified direction, transfer
@@ -2538,7 +2538,7 @@ int drain_magic(object *op, int dir)
     }
 
     if (tmp == NULL)
-        for (tmp = get_map_ob(op->map, op->x, op->y); tmp != NULL; tmp = tmp->above)
+        for (tmp = GET_MAP_OB(op->map, op->x, op->y); tmp != NULL; tmp = tmp->above)
             if (IS_LIVE(tmp))
                 break;
 
@@ -2583,7 +2583,7 @@ void counterspell(object *op, int dir)
     if (!(m = out_of_map(op->map, &xt, &yt)))
         return;
 
-    for (tmp = get_map_ob(m, xt, yt); tmp != NULL; tmp = tmp->above,nflag = 0)
+    for (tmp = GET_MAP_OB(m, xt, yt); tmp != NULL; tmp = tmp->above,nflag = 0)
     {
         /* Basially, if the object is magical and not counterspell,
          * we will more or less remove the object.  Changed in 0.94.3
@@ -2696,7 +2696,7 @@ int cast_charm(object *op, object *caster, archetype *arch, int spellnum)
         yt = op->x + freearr_x[i];
         if (!(m = out_of_map(op->map, &xt, &yt)))
             continue;
-        for (tmp = get_map_ob(m, xt, yt); tmp && (!QUERY_FLAG(tmp, FLAG_MONSTER)); tmp = tmp->above)
+        for (tmp = GET_MAP_OB(m, xt, yt); tmp && (!QUERY_FLAG(tmp, FLAG_MONSTER)); tmp = tmp->above)
             ;
         if (!tmp)
             continue;
@@ -2756,7 +2756,7 @@ int cast_charm_undead(object *op, object *caster, archetype *arch, int spellnum)
         yt = op->x + freearr_x[i];
         if (!(m = out_of_map(op->map, &xt, &yt)))
             continue;
-        for (tmp = get_map_ob(m, xt, yt); tmp && (!QUERY_FLAG(tmp, FLAG_MONSTER)); tmp = tmp->above)
+        for (tmp = GET_MAP_OB(m, xt, yt); tmp && (!QUERY_FLAG(tmp, FLAG_MONSTER)); tmp = tmp->above)
             ;
         if (!tmp)
             continue;
@@ -3596,7 +3596,7 @@ int cast_faery_fire(object *op, object *caster)
             yt = op->y + i;
             if (!(m = out_of_map(op->map, &xt, &yt)))
                 continue;
-            tmp = get_map_ob(m, xt, yt);
+            tmp = GET_MAP_OB(m, xt, yt);
             while (tmp
                 != NULL
                 && (!QUERY_FLAG(tmp, FLAG_ALIVE)
@@ -3671,7 +3671,7 @@ int cast_cause_disease(object *op, object *caster, int dir, archetype *disease_a
         if (!(m = out_of_map(op->map, &xt, &yt)))
             continue;
         /* search this square for a victim */
-        for (walk = get_map_ob(m, xt, yt); walk; walk = walk->above)
+        for (walk = GET_MAP_OB(m, xt, yt); walk; walk = walk->above)
             if (QUERY_FLAG(walk, FLAG_MONSTER) || !(walk->type == PLAYER))
             {
                 /* found a victim */
@@ -3830,7 +3830,7 @@ void move_peacemaker(object *op)
 #if 0
     object *tmp;
 
-    for (tmp = get_map_ob(op->map, op->x, op->y); tmp != NULL; tmp = tmp->above)
+    for (tmp = GET_MAP_OB(op->map, op->x, op->y); tmp != NULL; tmp = tmp->above)
     {
         int     atk_lev, def_lev;
         object *victim  = tmp;
@@ -3891,7 +3891,7 @@ int cast_cause_conflict(object *op, object *caster, archetype *spellarch, int ty
             yt = op->y + i;
             if (!(m = out_of_map(op->map, &xt, &yt)))
                 continue;
-            tmp = get_map_ob(m, xt, yt);
+            tmp = GET_MAP_OB(m, xt, yt);
             while (tmp != NULL && (!QUERY_FLAG(tmp, FLAG_ALIVE) || tmp->type == PLAYER))
                 tmp = tmp->above;
             if (tmp == NULL)

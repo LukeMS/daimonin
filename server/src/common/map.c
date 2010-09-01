@@ -2476,7 +2476,7 @@ void save_objects(mapstruct *m, FILE *fp, int flag)
     {
         for (j = 0; j < yl; j++)
         {
-            for (op = get_map_ob(m, i, j); op; op = otmp)
+            for (op = GET_MAP_OB(m, i, j); op; op = otmp)
             {
                 otmp = op->above;
                 last_valid = op->below; /* thats NULL OR a valid ptr - it CAN'T be a non valid
@@ -2507,7 +2507,7 @@ void save_objects(mapstruct *m, FILE *fp, int flag)
                         else if (last_valid)
                             otmp = last_valid->above;
                         else
-                            otmp = get_map_ob(m, i, j); /* should be really rare */
+                            otmp = GET_MAP_OB(m, i, j); /* should be really rare */
                     }
                     continue;
                 }
@@ -2559,7 +2559,7 @@ void save_objects(mapstruct *m, FILE *fp, int flag)
                         else if (last_valid)
                             otmp = last_valid->above;
                         else
-                            otmp = get_map_ob(m, i, j); /* should be really rare */
+                            otmp = GET_MAP_OB(m, i, j); /* should be really rare */
                     }
                     continue;
                 }
@@ -2577,7 +2577,7 @@ void save_objects(mapstruct *m, FILE *fp, int flag)
                         else if (last_valid)
                             otmp = last_valid->above;
                         else
-                            otmp = get_map_ob(m, i, j); /* should be really rare */
+                            otmp = GET_MAP_OB(m, i, j); /* should be really rare */
                     }
                     continue;
                 }
@@ -2611,7 +2611,7 @@ void save_objects(mapstruct *m, FILE *fp, int flag)
                                 else if (last_valid)
                                     otmp = last_valid->above;
                                 else
-                                    otmp = get_map_ob(m, i, j); /* should be really rare */
+                                    otmp = GET_MAP_OB(m, i, j); /* should be really rare */
                             }
                         }
                     }
@@ -2653,7 +2653,7 @@ void save_objects(mapstruct *m, FILE *fp, int flag)
                             else if (last_valid)
                                 otmp = last_valid->above;
                             else
-                                otmp = get_map_ob(m, i, j); /* should be really rare */
+                                otmp = GET_MAP_OB(m, i, j); /* should be really rare */
                         }
                         continue;
                     }
