@@ -2019,7 +2019,7 @@ static void apply_savebed(object *pl, object *bed)
 {
     player *p_ptr =CONTR(pl);
 
-    if (!p_ptr || !p_ptr->name_changed || !pl->stats.exp)
+    if (!p_ptr || !p_ptr->name_changed)
     {
         new_draw_info(NDI_UNIQUE, 0, pl, "You don't deserve to save your character yet.");
         return;
