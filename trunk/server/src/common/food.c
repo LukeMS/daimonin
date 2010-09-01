@@ -95,8 +95,8 @@ void apply_food(object *op, object *tmp)
         force->type = TYPE_FOOD_FORCE;
         SET_FLAG(force, FLAG_IS_USED_UP); /* or it will auto destroyed with first tick */
         SET_FLAG(force, FLAG_NO_SAVE);
-        force->stats.food += tmp->last_eat; /* how long this force will stay */
-        force->last_eat = tmp->last_eat;    /* we need that to know the base time */
+        force->stats.food += tmp->last_eat + 1; /* how long this force will stay */
+        force->last_eat = tmp->last_eat + 1;    /* we need that to know the base time */
         if (force->stats.food <= 0)
             force->stats.food = 1;
         force->stats.hp = tmp->stats.hp;
