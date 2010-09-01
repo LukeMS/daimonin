@@ -1062,7 +1062,7 @@ void StatsCmd(char *data, int len)
                     i += 4;
                     break;
                 case CS_STAT_FOOD:
-                    cpl.stats.food = GetUINT16_String(data + i);
+                    cpl.stats.food = GetSINT16_String(data + i);
                     i += 2;
                     WIDGET_REDRAW(STATS_ID);
                     break;
