@@ -2,13 +2,13 @@ arch map
 name Stonehaven
 msg
 Created:  2004-06-09 Daimonin Map Editor
-Modified: 2009-03-29 smacky
+Modified: 2010-08-31 Franklin Barnett (aka _person_)
 endmsg
 width 24
 height 24
 difficulty 1
-outdoor 1
 darkness -1
+outdoor 1
 tile_path_1 castle_0103
 tile_path_2 castle_0202
 tile_path_3 castle_0101
@@ -29,160 +29,305 @@ end
 arch grassd_2
 y 3
 end
-arch grassd_4
+arch grassd_2
+y 4
+end
+arch wall_wood_8
 y 4
 end
 arch grassd_1
 y 5
 end
-arch grassd_7
-y 6
-end
-arch grassd_1
-y 7
-end
-arch grassd_6
-y 8
-end
-arch grassd_3
-y 9
-end
-arch grassd_1
-y 10
+arch wall_wood2_3
+y 5
 end
 arch grassd_5
+y 6
+end
+arch wall_wood3_3
+y 6
+end
+arch picture15
+direction 7
+y 6
+end
+arch grassd_2
+y 7
+end
+arch wall_wood3_3
+y 7
+end
+arch grassd_7
+y 8
+end
+arch wall_wood3_3
+y 8
+end
+arch grassd_7
+y 9
+end
+arch wall_wood3_3
+y 9
+end
+arch grassd_7
+y 10
+end
+arch wall_wood3_3
+y 10
+end
+arch grassd_7
+y 11
+end
+arch wall_wood3_3
 y 11
 end
 arch grassd_7
 y 12
 end
-arch grassd_2
+arch wall_wood3_3
+y 12
+end
+arch grassd_7
 y 13
 end
-arch grassd_8
+arch wall_wood3_3
+y 13
+end
+arch grassd_7
 y 14
 end
-arch grassd_7
+arch wall_wood3_3
+y 14
+end
+arch grassd_6
 y 15
 end
-arch plant17
+arch wall_wood3_3
 y 15
 end
-arch grassd_7
+arch grassd_2
 y 16
 end
-arch grassd_3
+arch wall_wood3_3
+y 16
+end
+arch plant_flower2
 y 17
 end
-arch grassd_8
+arch grassd_6
+y 17
+end
+arch wall_wood3_3
+y 17
+end
+arch grassd_4
+y 18
+end
+arch wall_wood3_3
 y 18
 end
 arch grassd_1
 y 19
 end
-arch grassd_8
+arch wall_wood2_3
+y 19
+end
+arch grassd_2
 y 20
 end
-arch plant_flower7
+arch wall_wood2_3
 y 20
+end
+arch plant16
+y 21
 end
 arch grassd_4
 y 21
 end
-arch grassd_5
+arch wall_wood2_3
+y 21
+end
+arch grassd_3
 y 22
 end
-arch grassd_4
+arch grassd_8
 y 23
-end
-arch grassd_6
-x 1
-end
-arch grassd_1
-x 1
-y 1
-end
-arch grassd_6
-x 1
-y 2
-end
-arch grassd_1
-x 1
-y 3
-end
-arch grassd_3
-x 1
-y 4
-end
-arch grassd_2
-x 1
-y 5
-end
-arch grassd_3
-x 1
-y 6
-end
-arch grassd_8
-x 1
-y 7
-end
-arch grassd_2
-x 1
-y 8
-end
-arch grassd_6
-x 1
-y 9
-end
-arch grassd_5
-x 1
-y 10
-end
-arch grassd_4
-x 1
-y 11
-end
-arch grassd_6
-x 1
-y 12
-end
-arch grassd_8
-x 1
-y 13
-end
-arch grassd_5
-x 1
-y 14
-end
-arch grassd_5
-x 1
-y 15
-end
-arch grassd_1
-x 1
-y 16
-end
-arch grassd_4
-x 1
-y 17
 end
 arch tree30
+y 23
+end
+arch grassd_6
+x 1
+end
+arch grassd_1
+x 1
+y 1
+end
+arch grassd_6
+x 1
+y 2
+end
+arch grassd_1
+x 1
+y 3
+end
+arch grassd_8
+x 1
+y 4
+end
+arch wall_wood2_1
+x 1
+y 4
+end
+arch floor_ostone1
+x 1
+y 5
+end
+arch chair_small
+x 1
+y 5
+end
+arch floor_ostone1
+x 1
+y 6
+end
+arch chair_small
+x 1
+y 6
+end
+arch floor_ostone1
+x 1
+y 7
+end
+arch chair_small
+x 1
+y 7
+end
+arch floor_ostone1
+x 1
+y 8
+end
+arch wall_wood3_1
+x 1
+y 8
+end
+arch floor_ostone1
+x 1
+y 9
+end
+arch wmask_wanted
+x 1
+y 9
+end
+arch floor_ostone1
+x 1
+y 10
+end
+arch bank1.111
+direction 7
+x 1
+y 10
+end
+arch wmask_wanted
+direction 7
+x 1
+y 10
+end
+arch floor_ostone1
+x 1
+y 11
+end
+arch wmask_wanted
+direction 7
+x 1
+y 11
+end
+arch floor_ostone1
+x 1
+y 12
+end
+arch bank1.111
+direction 7
+x 1
+y 12
+end
+arch wmask_wanted
+direction 7
+x 1
+y 12
+end
+arch floor_ostone1
+x 1
+y 13
+end
+arch floor_ostone1
+x 1
+y 14
+end
+arch wmask_wanted
+direction 7
+x 1
+y 14
+end
+arch floor_ostone1
+x 1
+y 15
+end
+arch wmask_wanted
+direction 7
+x 1
+y 15
+end
+arch bank1.111
+direction 7
+x 1
+y 15
+end
+arch floor_ostone1
+x 1
+y 16
+end
+arch wmask_wanted
+msg
+Beta 6 will be released in two weeks (MT)
+endmsg
+direction 7
+x 1
+y 16
+end
+arch floor_ostone1
 x 1
 y 17
 end
-arch grassd_5
+arch wall_wood3_1
+x 1
+y 17
+end
+arch floor_ostone1
 x 1
 y 18
 end
-arch grassd_7
+arch shelf1_wall.111
+x 1
+y 18
+end
+arch floor_ostone1
 x 1
 y 19
 end
-arch grassd_3
+arch floor_ostone1
 x 1
 y 20
 end
-arch grassd_7
+arch potted_plant1
+x 1
+y 20
+end
+arch floor_ostone1
+x 1
+y 21
+end
+arch wall_wood3_1
 x 1
 y 21
 end
@@ -212,102 +357,161 @@ arch grassd_5
 x 2
 y 3
 end
-arch grassd_1
+arch grassd_3
 x 2
 y 4
 end
-arch plant_flower5
+arch wall_wood2_1
 x 2
 y 4
 end
-arch grassd_4
+arch picture14
+x 2
+y 4
+end
+arch floor_ostone1
 x 2
 y 5
 end
-arch grassd_6
+arch chair_small
+x 2
+y 5
+end
+arch floor_ostone1
 x 2
 y 6
 end
-arch grassd_1
+arch table_wood1.111
+direction 5
+x 2
+y 6
+end
+arch light4
+x 2
+y 6
+end
+arch floor_ostone1
 x 2
 y 7
 end
-arch grassd_5
+arch chair_small
+x 2
+y 7
+end
+arch floor_ostone1
 x 2
 y 8
 end
-arch grassd_3
+arch door_wood1
+msg
+No Entry - Paper Staff Only
+endmsg
+slaying paperonly
+x 2
+y 8
+end
+arch floor_ostone1
 x 2
 y 9
 end
-arch grassd_8
+arch floor_ostone1
 x 2
 y 10
+end
+arch floor_ostone1
+x 2
+y 11
 end
 arch spawn_point
 x 2
-y 10
-arch guard_pole
-type 83
-level 50
+y 11
+arch traveller_parka
+msg
+Fascinating... Just fascinating.
+endmsg
 random_move 1
-item_race 80
-item_level 20
+item_race 3
+item_level 3
+type 83
 end
 end
-arch grassd_2
-x 2
-y 11
-end
-arch grassd_3
+arch floor_ostone1
 x 2
 y 12
 end
-arch grassd_7
+arch floor_ostone1
 x 2
 y 13
 end
-arch grassd_1
+arch floor_ostone1
 x 2
 y 14
 end
-arch grassd_3
+arch floor_ostone1
 x 2
 y 15
 end
-arch plant_flower5
-x 2
-y 15
-end
-arch grassd_8
+arch floor_ostone1
 x 2
 y 16
 end
-arch grassd_6
+arch floor_ostone1
 x 2
 y 17
 end
-arch grassd_4
+arch door_wood1
+x 2
+y 17
+end
+arch floor_ostone1
 x 2
 y 18
 end
-arch grassd_2
+arch floor_ostone1
 x 2
 y 19
 end
-arch grassd_8
+arch spawn_point
+x 2
+y 19
+arch patron
+msg
+Now, now. The Town Crier is very busy at the minute. Please read the signs or contact the editor if you have any queries.
+endmsg
+name Ziggy
+level 98
+type 83
+end
+end
+arch chair_small
+x 2
+y 19
+end
+arch floor_ostone1
 x 2
 y 20
 end
-arch grassd_5
+arch table_lab3.111
+x 2
+y 20
+end
+arch light4
+x 2
+y 20
+end
+arch floor_ostone1
 x 2
 y 21
 end
-arch grassd_7
+arch wall_wood3_1
+x 2
+y 21
+end
+arch grassd_3
 x 2
 y 22
 end
-arch grassd_4
+arch grassd_5
 x 2
 y 23
 end
@@ -330,83 +534,123 @@ arch grassd_7
 x 3
 y 4
 end
-arch grassd_2
+arch wall_wood2_1
+x 3
+y 4
+end
+arch floor_ostone1
 x 3
 y 5
 end
-arch grassd_3
+arch stairs_wood_up
+direction 5
+slaying tc_002
+hp 11
+sp 1
+x 3
+y 5
+end
+arch floor_ostone1
 x 3
 y 6
 end
-arch grassd_7
+arch floor_ostone1
 x 3
 y 7
 end
-arch grassd_5
+arch floor_ostone1
 x 3
 y 8
 end
-arch grassd_7
+arch wall_wood3_1
+x 3
+y 8
+end
+arch floor_ostone1
 x 3
 y 9
 end
-arch grassd_1
+arch wmask_wanted
+x 3
+y 9
+end
+arch floor_ostone1
 x 3
 y 10
 end
-arch grassd_2
+arch floor_ostone1
 x 3
 y 11
 end
-arch plant17
-x 3
-y 11
-end
-arch grassd_4
+arch floor_ostone1
 x 3
 y 12
 end
-arch grassd_5
+arch floor_ostone1
 x 3
 y 13
 end
-arch grassd_7
+arch ped_white_ww1
+x 3
+y 13
+end
+arch light4
+x 3
+y 13
+end
+arch floor_ostone1
 x 3
 y 14
 end
-arch grassd_8
+arch ped_white_hw3
+x 3
+y 14
+end
+arch light4
+x 3
+y 14
+end
+arch floor_ostone1
 x 3
 y 15
 end
-arch grassd_5
+arch floor_ostone1
 x 3
 y 16
 end
-arch grassd_8
+arch floor_ostone1
 x 3
 y 17
 end
-arch grassd_3
+arch wall_wood3_1
+x 3
+y 17
+end
+arch floor_ostone1
 x 3
 y 18
 end
-arch grassd_7
+arch shelf1.111
+x 3
+y 18
+end
+arch floor_ostone1
 x 3
 y 19
 end
-arch grassd_6
+arch floor_ostone1
 x 3
 y 20
 end
-arch grassd_4
+arch floor_ostone1
 x 3
 y 21
 end
-arch plant17
+arch wall_wood3_1
 x 3
 y 21
 end
-arch grassd_2
+arch grassd_1
 x 3
 y 22
 end
@@ -429,83 +673,143 @@ arch grassd_1
 x 4
 y 3
 end
-arch grassd_3
+arch grassd_6
 x 4
 y 4
 end
-arch grassd_8
+arch wall_wood2_1
+x 4
+y 4
+end
+arch floor_ostone1
 x 4
 y 5
 end
-arch grassd_5
+arch wall_wood2_3
+x 4
+y 5
+end
+arch floor_ostone1
 x 4
 y 6
 end
-arch grassd_7
+arch wall_wood2_3
+x 4
+y 6
+end
+arch floor_ostone1
 x 4
 y 7
 end
-arch grassd_4
+arch wall_wood2_3
+x 4
+y 7
+end
+arch floor_ostone1
 x 4
 y 8
 end
-arch grassd_5
+arch wall_wood_4
+x 4
+y 8
+end
+arch floor_ostone1
 x 4
 y 9
 end
-arch grassd_6
+arch cupboard1_wall.111
+x 4
+y 9
+end
+arch floor_ostone1
 x 4
 y 10
 end
-arch grassd_5
+arch floor_ostone1
 x 4
 y 11
 end
-arch grassd_8
+arch floor_ostone1
 x 4
 y 12
 end
-arch grassd_6
+arch floor_ostone1
 x 4
 y 13
 end
-arch grassd_2
+arch ped_white_hws1
+x 4
+y 13
+end
+arch light4
+x 4
+y 13
+end
+arch floor_ostone1
 x 4
 y 14
 end
-arch grassd_6
+arch ped_white_ww2
+x 4
+y 14
+end
+arch light4
+x 4
+y 14
+end
+arch floor_ostone1
 x 4
 y 15
 end
-arch grassd_8
+arch floor_ostone1
 x 4
 y 16
 end
-arch grassd_1
+arch floor_ostone1
 x 4
 y 17
 end
-arch grassd_7
+arch wall_wood3_1
+x 4
+y 17
+end
+arch floor_ostone1
 x 4
 y 18
 end
-arch grassd_3
+arch wall_wood2_3
+x 4
+y 18
+end
+arch floor_ostone1
 x 4
 y 19
 end
-arch grassd_4
+arch wall_wood2_3
+x 4
+y 19
+end
+arch floor_ostone1
 x 4
 y 20
 end
-arch grassd_5
+arch wall_wood2_3
+x 4
+y 20
+end
+arch floor_ostone1
 x 4
 y 21
 end
-arch grassd_8
+arch wall_wood_4
+x 4
+y 21
+end
+arch grassd_3
 x 4
 y 22
 end
-arch grassd_7
+arch grassd_5
 x 4
 y 23
 end
@@ -524,200 +828,255 @@ arch grassd_8
 x 5
 y 3
 end
-arch grassd_4
+arch plant16
 x 5
 y 4
 end
-arch grassd_2
-x 5
-y 5
-end
-arch grassd_8
-x 5
-y 6
-end
 arch grassd_1
 x 5
-y 7
+y 4
 end
 arch plant17
 x 5
-y 7
-end
-arch grassd_8
-x 5
-y 8
-end
-arch grassd_3
-x 5
-y 9
+y 5
 end
 arch grassd_4
 x 5
+y 5
+end
+arch grassd_6
+x 5
+y 6
+end
+arch grassd_2
+x 5
+y 7
+end
+arch grassd_2
+x 5
+y 8
+end
+arch wall_wood3_1
+x 5
+y 8
+end
+arch floor_ostone1
+x 5
+y 9
+end
+arch potted_plant5
+x 5
+y 9
+end
+arch floor_ostone1
+x 5
 y 10
 end
-arch grassd_8
+arch floor_ostone1
 x 5
 y 11
 end
-arch grassd_3
+arch floor_ostone1
 x 5
 y 12
 end
-arch grassd_7
+arch floor_ostone1
 x 5
 y 13
 end
-arch plant_flower7
-x 5
-y 13
-end
-arch grassd_5
+arch floor_ostone1
 x 5
 y 14
 end
-arch grassd_7
+arch floor_ostone1
 x 5
 y 15
+end
+arch floor_ostone1
+x 5
+y 16
+end
+arch floor_ostone1
+x 5
+y 17
+end
+arch wall_wood3_1
+x 5
+y 17
+end
+arch grassd_8
+x 5
+y 18
+end
+arch tree_big4b
+x 5
+y 18
+end
+arch grassd_1
+x 5
+y 19
+end
+arch grassd_2
+x 5
+y 20
+end
+arch grassd_7
+x 5
+y 21
+end
+arch grassd_1
+x 5
+y 22
+end
+arch grassd_8
+x 5
+y 23
+end
+arch grassd_7
+x 6
 end
 arch bench3.111
 no_pass 0
+x 6
+end
+arch grassd_1
+x 6
+y 1
+end
+arch grassd_5
+x 6
+y 2
+end
+arch grassd_7
+x 6
+y 3
+end
+arch grassd_7
+x 6
+y 4
+end
+arch grassd_3
+x 6
+y 5
+end
+arch grassd_1
+x 6
+y 6
+end
+arch grassd_5
+x 6
+y 7
+end
+arch grassd_5
+x 6
+y 8
+end
+arch wall_wood3_1
+x 6
+y 8
+end
+arch floor_ostone1
+x 6
+y 9
+end
+arch wall_wood2_3
+x 6
+y 9
+end
+arch floor_ostone1
+x 6
+y 10
+end
+arch wall_wood_w_3
+x 6
+y 10
+end
+arch floor_ostone1
+x 6
+y 11
+end
+arch wall_wood_w_3
+x 6
+y 11
+end
+arch floor_ostone1
+x 6
+y 12
+end
+arch wall_wood_w_3
+x 6
+y 12
+end
+arch floor_ostone1
+x 6
+y 13
+end
+arch door_wood4
 direction 7
-x 5
-y 15
-end
-arch grassd_3
-x 5
-y 16
-end
-arch grassd_7
-x 5
-y 17
-end
-arch grassd_4
-x 5
-y 18
-end
-arch grassd_8
-x 5
-y 19
-end
-arch grassd_7
-x 5
-y 20
-end
-arch grassd_1
-x 5
-y 21
-end
-arch grassd_5
-x 5
-y 22
-end
-arch grassd_3
-x 5
-y 23
-end
-arch grassd_7
-x 6
-end
-arch bench3.111
-no_pass 0
-x 6
-end
-arch grassd_1
-x 6
-y 1
-end
-arch grassd_5
-x 6
-y 2
-end
-arch grassd_7
-x 6
-y 3
-end
-arch grassd_2
-x 6
-y 4
-end
-arch grassd_7
-x 6
-y 5
-end
-arch grassd_6
-x 6
-y 6
-end
-arch grassd_7
-x 6
-y 7
-end
-arch grassd_5
-x 6
-y 8
-end
-arch grassd_7
-x 6
-y 9
-end
-arch grassd_7
-x 6
-y 10
-end
-arch grassd_2
-x 6
-y 11
-end
-arch grassd_6
-x 6
-y 12
-end
-arch grassd_1
 x 6
 y 13
 end
-arch grassd_8
+arch floor_ostone1
 x 6
 y 14
 end
-arch grassd_4
+arch wall_wood_w_3
+x 6
+y 14
+end
+arch floor_ostone1
 x 6
 y 15
 end
-arch grassd_8
+arch wall_wood_w_3
+x 6
+y 15
+end
+arch floor_ostone1
 x 6
 y 16
 end
-arch grassd_5
+arch wall_wood_w_3
+x 6
+y 16
+end
+arch floor_ostone1
 x 6
 y 17
 end
-arch plant17
+arch wall_wood_4
 x 6
 y 17
 end
-arch grassd_5
+arch plant1
 x 6
 y 18
 end
-arch grassd_2
+arch grassd_8
+x 6
+y 18
+end
+arch grassd_5
 x 6
 y 19
 end
-arch grassd_4
+arch plant_flower2
 x 6
 y 20
 end
-arch grassd_7
+arch grassd_1
+x 6
+y 20
+end
+arch grassd_6
 x 6
 y 21
 end
-arch grassd_8
+arch grassd_1
 x 6
 y 22
 end
-arch grassd_5
+arch grassd_8
 x 6
 y 23
 end
@@ -780,7 +1139,11 @@ arch grassd_3
 x 7
 y 11
 end
-arch grassd_7
+arch grassd_2
+x 7
+y 12
+end
+arch mailbox
 x 7
 y 12
 end
@@ -797,6 +1160,10 @@ x 7
 y 15
 end
 arch grassd_7
+x 7
+y 16
+end
+arch plant12
 x 7
 y 16
 end
@@ -918,6 +1285,10 @@ arch grassd_8
 x 8
 y 18
 end
+arch plant11
+x 8
+y 18
+end
 arch grassd_2
 x 8
 y 19
@@ -984,6 +1355,17 @@ end
 arch grassd_8
 x 9
 y 6
+end
+arch spawn_point
+x 9
+y 6
+arch guard_pole
+type 83
+level 50
+random_move 1
+item_race 80
+item_level 20
+end
 end
 arch grassd_2
 x 9
@@ -1939,39 +2321,71 @@ arch grassd_6
 x 16
 y 5
 end
-arch grassd_6
+arch grassd_5
 x 16
 y 6
 end
-arch grassd_8
+arch fwall_plant
+x 16
+y 6
+end
+arch grassd_6
 x 16
 y 7
 end
-arch grassd_1
+arch fwall_plant
+x 16
+y 7
+end
+arch grassd_8
 x 16
 y 8
 end
-arch grassd_7
+arch fwall_plant
+x 16
+y 8
+end
+arch grassd_1
 x 16
 y 9
 end
-arch grassd_7
+arch fwall_plant
+x 16
+y 9
+end
+arch grassd_5
 x 16
 y 10
 end
-arch grassd_2
+arch grassd_3
 x 16
 y 11
 end
-arch grassd_7
+arch fwall_plant
 x 16
-y 12
+y 11
 end
 arch grassd_4
 x 16
+y 12
+end
+arch fwall_plant
+x 16
+y 12
+end
+arch grassd_2
+x 16
 y 13
 end
-arch grassd_1
+arch fwall_plant
+x 16
+y 13
+end
+arch grassd_2
+x 16
+y 14
+end
+arch fwall_plant
 x 16
 y 14
 end
@@ -2058,39 +2472,55 @@ arch grassd_3
 x 17
 y 5
 end
-arch grassd_2
+arch grassd_7
 x 17
 y 6
 end
-arch grassd_2
+arch fence_01.113
 x 17
-y 7
+y 6
 end
 arch grassd_4
 x 17
+y 7
+end
+arch potted_plant4
+x 17
+y 7
+end
+arch grassd_2
+x 17
 y 8
-end
-arch grassd_6
-x 17
-y 9
-end
-arch grassd_3
-x 17
-y 10
-end
-arch grassd_8
-x 17
-y 11
 end
 arch grassd_5
 x 17
+y 9
+end
+arch grassd_8
+x 17
+y 10
+end
+arch grassd_6
+x 17
+y 11
+end
+arch grassd_3
+x 17
 y 12
 end
-arch grassd_7
+arch grassd_6
+x 17
+y 13
+end
+arch potted_plant4
 x 17
 y 13
 end
 arch grassd_6
+x 17
+y 14
+end
+arch fence_01.153
 x 17
 y 14
 end
@@ -2177,39 +2607,60 @@ arch grassd_8
 x 18
 y 5
 end
-arch grassd_6
+arch grassd_5
 x 18
 y 6
 end
-arch grassd_8
+arch fence_01.111
+x 18
+y 6
+end
+arch grassd_3
 x 18
 y 7
 end
-arch grassd_6
+arch bench4.111
+direction 5
+x 18
+y 7
+end
+arch grassd_2
 x 18
 y 8
 end
-arch grassd_7
+arch grassd_4
 x 18
 y 9
 end
-arch grassd_8
+arch grassd_2
 x 18
 y 10
 end
-arch grassd_4
+arch grassd_5
 x 18
 y 11
 end
-arch grassd_1
+arch plant12
 x 18
 y 12
 end
-arch grassd_8
+arch grassd_4
+x 18
+y 12
+end
+arch grassd_7
 x 18
 y 13
 end
-arch grassd_2
+arch bench4.111
+x 18
+y 13
+end
+arch grassd_8
+x 18
+y 14
+end
+arch fence_01.151
 x 18
 y 14
 end
@@ -2288,15 +2739,23 @@ arch grassd_6
 x 19
 y 5
 end
-arch grassd_1
+arch grassd_5
 x 19
 y 6
 end
-arch grassd_7
+arch fence_01.111
+x 19
+y 6
+end
+arch grassd_4
 x 19
 y 7
 end
-arch grassd_7
+arch candlelight3.101
+x 19
+y 7
+end
+arch grassd_8
 x 19
 y 8
 end
@@ -2304,11 +2763,26 @@ arch grassd_1
 x 19
 y 9
 end
-arch grassd_3
+arch plant16
 x 19
 y 10
 end
-arch grassd_7
+arch grassd_5
+x 19
+y 10
+end
+arch spawn_point
+x 19
+y 10
+arch priest_church
+msg
+Hear Ye, Hear Ye, The news of the day...
+endmsg
+name Town Crier
+type 83
+end
+end
+arch grassd_6
 x 19
 y 11
 end
@@ -2316,15 +2790,19 @@ arch grassd_7
 x 19
 y 12
 end
-arch grassd_4
+arch grassd_3
 x 19
 y 13
 end
-arch plant17
+arch candlelight3.101
 x 19
 y 13
 end
-arch grassd_6
+arch grassd_8
+x 19
+y 14
+end
+arch fence_01.151
 x 19
 y 14
 end
@@ -2413,39 +2891,64 @@ arch grassd_6
 x 20
 y 5
 end
-arch grassd_8
+arch plant17
 x 20
 y 6
 end
-arch grassd_6
+arch grassd_3
+x 20
+y 6
+end
+arch fence_01.111
+x 20
+y 6
+end
+arch grassd_3
 x 20
 y 7
 end
-arch grassd_4
+arch bench4.111
+direction 5
+x 20
+y 7
+end
+arch grassd_7
 x 20
 y 8
 end
-arch grassd_8
+arch grassd_3
 x 20
 y 9
 end
-arch grassd_6
+arch grassd_5
 x 20
 y 10
 end
-arch grassd_7
+arch plant10
 x 20
 y 11
 end
-arch grassd_2
+arch grassd_3
+x 20
+y 11
+end
+arch grassd_7
 x 20
 y 12
 end
-arch grassd_8
+arch grassd_2
 x 20
 y 13
 end
-arch grassd_7
+arch bench4.111
+x 20
+y 13
+end
+arch grassd_8
+x 20
+y 14
+end
+arch fence_01.151
 x 20
 y 14
 end
@@ -2528,7 +3031,7 @@ arch grassd_3
 x 21
 y 6
 end
-arch tree30
+arch fence_01.111
 x 21
 y 6
 end
@@ -2536,39 +3039,47 @@ arch grassd_8
 x 21
 y 7
 end
-arch grassd_2
+arch potted_plant4
 x 21
-y 8
-end
-arch plant17
-x 21
-y 8
+y 7
 end
 arch grassd_3
+x 21
+y 8
+end
+arch plant1
 x 21
 y 9
 end
 arch grassd_7
 x 21
-y 10
-end
-arch plant_flower5
-x 21
-y 10
+y 9
 end
 arch grassd_1
 x 21
-y 11
+y 10
 end
 arch grassd_7
 x 21
-y 12
+y 11
 end
 arch grassd_6
 x 21
+y 12
+end
+arch grassd_7
+x 21
 y 13
 end
-arch grassd_3
+arch potted_plant4
+x 21
+y 13
+end
+arch grassd_7
+x 21
+y 14
+end
+arch fence_01.151
 x 21
 y 14
 end
@@ -2651,39 +3162,71 @@ arch grassd_6
 x 22
 y 5
 end
-arch grassd_7
+arch grassd_1
 x 22
 y 6
 end
-arch grassd_4
+arch fence_01.121
+x 22
+y 6
+end
+arch grassd_2
 x 22
 y 7
 end
-arch grassd_7
+arch fence_01.131
+x 22
+y 7
+end
+arch grassd_3
 x 22
 y 8
 end
-arch grassd_8
+arch fence_01.131
+x 22
+y 8
+end
+arch grassd_7
 x 22
 y 9
 end
-arch grassd_6
+arch fence_01.131
+x 22
+y 9
+end
+arch grassd_5
 x 22
 y 10
 end
-arch grassd_8
+arch grassd_4
 x 22
 y 11
 end
-arch grassd_7
+arch fence_01.131
+x 22
+y 11
+end
+arch grassd_8
 x 22
 y 12
 end
-arch grassd_4
+arch fence_01.131
+x 22
+y 12
+end
+arch grassd_1
 x 22
 y 13
 end
-arch grassd_7
+arch fence_01.131
+x 22
+y 13
+end
+arch grassd_5
+x 22
+y 14
+end
+arch fence_01.141
 x 22
 y 14
 end
