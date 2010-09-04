@@ -2350,21 +2350,20 @@ static const char *GetOption(const char *arg, const char *sopt,
 
     return NULL;
 }
+
 static void InitPhysFS(const char *argv0)
 {
     const char *sep,
                *env;
     struct stat dir_stat;
     char        home[MEDIUM_BUF],
-                userpath[MEDIUM_BUF],
                 buf[LARGE_BUF];
 #if __WIN_32
-    char        root_buf[SMALL_BUF];
+    char        userpath[MEDIUM_BUF],
+                root_buf[SMALL_BUF];
 #endif
     time_t      tp;
-#ifdef DAI_DEVELOPMENT
     char      **list;
-#endif
 
     /* Start the PhysFS system */
     if (!PHYSFS_init(argv0))
@@ -2390,8 +2389,8 @@ static void InitPhysFS(const char *argv0)
     /* Use APPDATA if defined. */
     if ((env = getenv("APPDATA")))
     {
-		sprintf(home, "%s", env);
-		sprintf(root_buf, "%s", "Daimonin");
+        sprintf(home, "%s", env);
+        sprintf(root_buf, "%s", "Daimonin");
         sprintf(buf, "%s%s%d.%d",
                 root_buf, sep, DAI_VERSION_RELEASE, DAI_VERSION_MAJOR);
     }
@@ -2402,7 +2401,7 @@ static void InitPhysFS(const char *argv0)
         if ((env = getenv("WINDIR")))
         {
             sprintf(home, "%s", env);
-			sprintf(root_buf, "Application Data%sDaimonin", sep);
+            sprintf(root_buf, "Application Data%sDaimonin", sep);
             sprintf(buf, "%s%s%d.%d",
                     root_buf, DAI_VERSION_RELEASE, DAI_VERSION_MAJOR);
         }
@@ -2423,86 +2422,98 @@ static void InitPhysFS(const char *argv0)
     buf[0] = '\0';
 #endif
 
-	/* The user dir is (the only) place where files are written to. It must be
+    /* The user dir is (the only) place where files are written to. It must be
      * set, so if it can't be, we exit straight away. Note that the log here
      * will go to stderr only (as obviously we can't open a file). */
-
-	// set the final path to the user specific and fire it up... do not care about errors here
-	// buf can be '\0' the trailing slash will be ignored
+#if __WIN_32
+    // set the final path to the user specific and fire it up... do not care about errors here
+    // buf can be '\0' the trailing slash will be ignored
     sprintf(userpath, "%s%s%s", home, sep, buf);
-	PHYSFS_mkdir(userpath);
-	PHYSFS_setWriteDir(userpath);
+    PHYSFS_mkdir(userpath);
+    PHYSFS_setWriteDir(userpath);
+    // at this point the home should be there!
+    // Well, except some access control interrupted us WITHOUT GIVE BACK THE RIGHT WARNINGS!
+    // That means that for example some windows versions are simply technical broken because they act
+    // like a virus checker and not telling us "the truth about what our access is doing",
+    // even they tell us by error flow that all is fine.
+    // Not giving back the right error messages to IO functions is simply a hack and some
+    // windows versions are doing it. 
 
-	// at this point the home should be there!
-	// Well, except some access control interrupted us WITHOUT GIVE BACK THE RIGHT WARNINGS!
-	// That means that for example some windows versions are simply technical broken because they act
-	// like a virus checker and not telling us "the truth about what our access is doing",
-	// even they tell us by error flow that all is fine.
-	// Not giving back the right error messages to IO functions is simply a hack and some
-	// windows versions are doing it. 
-
-	// simply check our user patch is there
-	// PHYSFS *can* create it, but sometimes access control says no
-	// PHYSFS_setWriteDir() seems to work fine WHEN the dir is there
-	if (stat(userpath, &dir_stat) != 0)
-	{
-		LOG(LOG_ERROR, "Could not set write dir with PHYSFS_mkdir() (2, '%s'): %s. Retry with mkdir()!\n",
+    // simply check our user patch is there
+    // PHYSFS *can* create it, but sometimes access control says no
+    // PHYSFS_setWriteDir() seems to work fine WHEN the dir is there
+    if (stat(userpath, &dir_stat) != 0)
+    {
+        LOG(LOG_ERROR, "Could not set write dir with PHYSFS_mkdir() ('%s'): %s. Retry with mkdir()!\n",
                     userpath, PHYSFS_getLastError());
 
-		#ifdef __WIN_32
-			// to fix physfs problems under different win OS, we force the directory creation here
-	        sprintf(userpath, "%s%s%s", env, sep, root_buf);
-			mkdir(userpath, 0777);
-			// now the whole thing with version (mkdir can't create implicit the root directory)
-			sprintf(userpath, "%s%s%s", home, sep, buf);
-			mkdir(userpath, 0777);
-		#else
-			// add here custom fallback code for linux and other OS when needed
-		#endif
-	}
+        #ifdef WIN32
+            // to fix physfs problems under different win OS, we force the directory creation here
+            sprintf(userpath, "%s%s%s", env, sep, root_buf);
+            mkdir(userpath, 0777);
+            // now the whole thing with version (mkdir can't create implicit the root directory)
+            sprintf(userpath, "%s%s%s", home, sep, buf);
+            mkdir(userpath, 0777);
+        #else
+            // add here custom fallback code for linux and other OS when needed
+        #endif
+    }
 
-	if (buf[0])
+    if (buf[0])
     {
-		sprintf(strchr(home, '\0'), "%s%s", sep, buf);
+        sprintf(strchr(home, '\0'), "%s%s", sep, buf);
 
-#ifdef __WIN_32
-		// nothing to do here... the trick is done above
+        // ok, here we have now a problem...
+        // try an emergency fallback and fire it up... perhaps it will work
+        if (stat(home, &dir_stat) != 0)
+        {
+            LOG(LOG_ERROR, "FAILED to set user dir %s - EMERGENCY fallback to: %s\n", home, PHYSFS_getBaseDir());
+            sprintf(home, "%s", PHYSFS_getBaseDir());
+            buf[0] = '\0';
+        }
+
+        // home WILL hold now the home, do the final check
+        if (!PHYSFS_setWriteDir(home))
+        {
+            LOG(LOG_ERROR, "Could not set write dir ('%s'): %s. Exiting!\n",
+                home, PHYSFS_getLastError());
+            exit(EXIT_FAILURE);
+        }
+    }
+
+    // at this point we should have catched all OS glitches and also a glitch in physfs
+    // the code looks a bit odd, but it works!
 #else
+    /* The user dir is (the only) place where files are written to. It must be
+     * set, so if it can't be, we exit straight away. Note that the log here
+     * will go to stderr only (as obviously we can't open a file). */
+    if (!PHYSFS_setWriteDir(home))
+    {
+        LOG(LOG_ERROR, "Could not set write dir (1, '%s'): %s. Exiting!\n",
+            home, PHYSFS_getLastError());
+        exit(EXIT_FAILURE);
+    }
+
+    if (buf[0])
+    {
         if (!PHYSFS_mkdir(buf))
         {
             LOG(LOG_ERROR, "%s\n", PHYSFS_getLastError());
         }
-		
-#endif
 
-		// ok, here we have now a problem...
-		// try an emergency fallback and fire it up... perhaps it will work
-		if (stat(home, &dir_stat) != 0)
-		{
-			LOG(LOG_ERROR, "FAILED to set user dir %s - EMERGENCY fallback to: %s\n", home, PHYSFS_getBaseDir());
-			sprintf(home, "%s", PHYSFS_getBaseDir());
-			buf[0] = '\0';
-		}
+        sprintf(strchr(home, '\0'), "%s%s", sep, buf);
 
-        // TODO: will not work for UTF8 pathes, fallback will go to daimonin original install
-        if (!PHYSFS_setWriteDir(home))
-		{
-            LOG(LOG_ERROR, "Could not set write dir (2, '%s'): Final EMERGENCY fallback: %s !\n",
-				home, PHYSFS_getBaseDir());
-
-			sprintf(home, "%s", PHYSFS_getBaseDir());
-		    buf[0] = '\0';
-			if (!PHYSFS_setWriteDir(home))
-			{
-				LOG(LOG_ERROR, "Could not set write dir (2, '%s'): LAST ERROR: %s. Exiting!\n",
+        if (strcmp(PHYSFS_getBaseDir(), home))
+        {
+            if (!PHYSFS_setWriteDir(home))
+            {
+                LOG(LOG_ERROR, "Could not set write dir (2, '%s'): %s. Exiting!\n",
                     home, PHYSFS_getLastError());
                 exit(EXIT_FAILURE);
             }
         }
-	}
-
-	// at this point we should have catched all OS glitches and also a glitch in physfs
-	// the code looks a bit odd, but it works!
+    } 
+#endif
 
     /* Make sure all the dirs that may be written to exist. */
     if (!PHYSFS_mkdir(DIR_CACHE) ||
@@ -2567,7 +2578,6 @@ static void InitPhysFS(const char *argv0)
         }
     }
 
-#ifdef DAI_DEVELOPMENT
     LOG(LOG_MSG, "Base dir: %s\n", PHYSFS_getBaseDir());
     LOG(LOG_MSG, "Write dir: %s\n", PHYSFS_getWriteDir());
     LOG(LOG_MSG, "Search path:\n");
@@ -2576,7 +2586,6 @@ static void InitPhysFS(const char *argv0)
     {
         LOG(LOG_MSG, "  %s\n", *list);
     }
-#endif
 }
 
 static void show_intro(char *text, int progress)
