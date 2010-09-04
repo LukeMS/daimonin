@@ -2355,10 +2355,10 @@ static void InitPhysFS(const char *argv0)
 {
     const char *sep,
                *env;
-    struct stat dir_stat;
     char        home[MEDIUM_BUF],
                 buf[LARGE_BUF];
 #if __WIN_32
+    struct stat dir_stat;
     char        userpath[MEDIUM_BUF],
                 root_buf[SMALL_BUF];
 #endif
