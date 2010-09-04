@@ -160,7 +160,7 @@ typedef struct _bitmap_name
 _bitmap_name ;
 
 /* for loading, use BITMAP_xx in the other modules*/
-static _bitmap_name bitmap_name[BITMAP_INIT]    =
+static _bitmap_name BitmapName[BITMAP_INIT]    =
 {
     {"palette.png", PIC_TYPE_PALETTE},
     {"font7x4.png", PIC_TYPE_PALETTE},
@@ -327,24 +327,24 @@ static _bitmap_name bitmap_name[BITMAP_INIT]    =
     {"closeb.png", PIC_TYPE_DEFAULT},
 };
 
-#define BITMAP_MAX (int)(sizeof(bitmap_name)/sizeof(struct _bitmap_name))
+#define BITMAP_MAX (int)(sizeof(BitmapName)/sizeof(struct _bitmap_name))
 _Sprite            *Bitmaps[BITMAP_MAX];
 
-static void display_layer1(void);   /* map & player */
-static void display_layer2(void);   /* frame (background image) */
-static void display_layer3(void);   /* widgets (graphical user interface) */
-static void display_layer4(void);   /* place for menu later */
+static void DisplayLayer1(void);   /* map & player */
+static void DisplayLayer2(void);   /* frame (background image) */
+static void DisplayLayer3(void);   /* widgets (graphical user interface) */
+static void DisplayLayer4(void);   /* place for menu later */
 static void DisplayCustomCursor(void);
-static void count_meta_server(void);
-static void flip_screen(void);
+static void CountMetaServer(void);
+static void FlipScreen(void);
 static void ParseInvocationLine(int argc, char *argv[]);
 static const char *GetOption(const char *arg, const char *sopt,
                              const char *lopt, char *key, char *value);
 static void InitPhysFS(const char *argv0);
-static void show_intro(char *text, int progress);
-static void delete_player_lists(void);
+static void ShowIntro(char *text, int progress);
+static void DeletePlayerLists(void);
 
-static void delete_player_lists(void)
+static void DeletePlayerLists(void)
 {
     int i, ii;
 
@@ -492,7 +492,7 @@ void init_game_data(void)
     media_show = MEDIA_SHOW_NO; /* show this media file*/
 
     textwin_clearhistory();
-    delete_player_lists();
+    DeletePlayerLists();
     server_level.exp[1]=2500; /* dummy value for startup */
 }
 
@@ -716,7 +716,7 @@ uint8 game_status_chain(void)
         interface_mode = GUI_NPC_MODE_NO;
         clear_group();
         map_udate_flag = 2;
-        delete_player_lists();
+        DeletePlayerLists();
 #ifdef INSTALL_SOUND
         if (!music.flag || strcmp(music.name, "orchestral.ogg"))
             sound_play_music("orchestral.ogg", options.music_volume, 0, -1, 0, MUSIC_MODE_DIRECT);
@@ -778,7 +778,7 @@ uint8 game_status_chain(void)
             }
         }
 
-        count_meta_server();
+        CountMetaServer();
         textwin_showstring(COLOR_GREEN, "Select a server.");
         GameStatus = GAME_STATUS_START;
     }
@@ -838,7 +838,7 @@ uint8 game_status_chain(void)
     else if (GameStatus == GAME_STATUS_STARTCONNECT)
     {
         char    sbuf[256];
-        sprintf(sbuf, "%s%s", GetBitmapDirectory(), bitmap_name[BITMAP_LOADING].name);
+        sprintf(sbuf, "%s%s", GetBitmapDirectory(), BitmapName[BITMAP_LOADING].name);
         FaceList[MAX_FACE_TILES - 1].sprite = sprite_tryload_file(sbuf, 0, NULL);
 
         map_udate_flag = 2;
@@ -1293,11 +1293,11 @@ uint8 load_bitmap(int index)
     char    buf[2048];
     uint32  flags   = 0;
 
-    sprintf(buf, "%s%s", GetBitmapDirectory(), bitmap_name[index].name);
+    sprintf(buf, "%s%s", GetBitmapDirectory(), BitmapName[index].name);
 
-    if (bitmap_name[index].type == PIC_TYPE_PALETTE)
+    if (BitmapName[index].type == PIC_TYPE_PALETTE)
         flags |= SURFACE_FLAG_PALETTE;
-    if (bitmap_name[index].type == PIC_TYPE_TRANS)
+    if (BitmapName[index].type == PIC_TYPE_TRANS)
         flags |= SURFACE_FLAG_COLKEY_16M;
 
     if ((index>=BITMAP_PROGRESS_BACK) && (index!=BITMAP_TEXTWIN_MASK))
@@ -1393,7 +1393,7 @@ void add_metaserver_data(char *name, char *server, int port, int player, char *v
     MALLOC_STRING(node->desc1, desc);
 }
 
-static void count_meta_server(void)
+static void CountMetaServer(void)
 {
     _server    *node;
 
@@ -1725,30 +1725,30 @@ int main(int argc, char *argv[])
     load_skindef();
     load_bitmaps();
     font_init();
-    show_intro("start sound system", 9);
+    ShowIntro("start sound system", 9);
     sound_init();
-    show_intro("load sounds", 18);
+    ShowIntro("load sounds", 18);
     read_sounds();
-    show_intro("load bitmaps", 27);
+    ShowIntro("load bitmaps", 27);
     for (i = BITMAP_PROGRESS_BACK+1; i < BITMAP_MAX; i++) /* add later better error handling here*/
         load_bitmap(i);
-    show_intro("load keys", 36);
+    ShowIntro("load keys", 36);
     read_keybind_file();
-    show_intro("load mapdefs", 45);
+    ShowIntro("load mapdefs", 45);
     load_mapdef_dat();
-    show_intro("load picture data", 54);
+    ShowIntro("load picture data", 54);
     read_bmaps_p0();
-    show_intro("load settings", 63);
+    ShowIntro("load settings", 63);
     read_settings();
-    show_intro("load spells", 72);
+    ShowIntro("load spells", 72);
     read_spells();
-    show_intro("load skills", 81);
+    ShowIntro("load skills", 81);
     read_skills();
-    show_intro("load anims", 90);
+    ShowIntro("load anims", 90);
     read_anims();
-    show_intro("load bmaps", 99);
+    ShowIntro("load bmaps", 99);
     read_bmaps();
-    show_intro(NULL, 100);
+    ShowIntro(NULL, 100);
     sound_play_music("orchestral.ogg", options.music_volume, 0, -1, 0, MUSIC_MODE_DIRECT);
     sprite_init_system();
     while (1)
@@ -1868,20 +1868,20 @@ int main(int argc, char *argv[])
 
 #ifdef PROFILING
             ts2 = SDL_GetTicks();
-            display_layer1();
+            DisplayLayer1();
             LOG(LOG_MSG, "[Prof] layer1 (map)            complete: %d\n",((ts3 = SDL_GetTicks()) - ts2));
-            display_layer2();
+            DisplayLayer2();
             LOG(LOG_MSG, "[Prof] layer2 (inv stuff     ) complete: %d\n",((ts2 = SDL_GetTicks()) - ts3));
-            display_layer3();
+            DisplayLayer3();
             LOG(LOG_MSG, "[Prof] layer3 (widgets)        complete: %d\n",((ts3 = SDL_GetTicks()) - ts2));
-            display_layer4();
+            DisplayLayer4();
             LOG(LOG_MSG, "[Prof] layer4 (menues)         complete: %d\n",((ts2 = SDL_GetTicks()) - ts3));
 
 #else
-            display_layer1();
-            display_layer2();
-            display_layer3();
-            display_layer4();
+            DisplayLayer1();
+            DisplayLayer2();
+            DisplayLayer3();
+            DisplayLayer4();
 #endif
             if (GameStatus < GAME_STATUS_WAITFORPLAY)
                 SDL_FillRect(ScreenSurface, NULL, 0);
@@ -2109,7 +2109,7 @@ int main(int argc, char *argv[])
             }
         }
 
-        flip_screen();
+        FlipScreen();
 #ifdef PROFILING
         LOG(LOG_MSG, "[Prof] mainloop: %d\n", SDL_GetTicks() - ts);
 #endif
@@ -2588,7 +2588,7 @@ static void InitPhysFS(const char *argv0)
     }
 }
 
-static void show_intro(char *text, int progress)
+static void ShowIntro(char *text, int progress)
 {
     int      x,
              y;
@@ -2611,11 +2611,11 @@ static void show_intro(char *text, int progress)
     else
         string_blt(ScreenSurface, &font_small, "** Press Key **", x+375, y+585, COLOR_DEFAULT, NULL, NULL);
 
-    flip_screen();
+    FlipScreen();
 }
 
 
-static void flip_screen(void)
+static void FlipScreen(void)
 {
     if (GameStatus < GAME_STATUS_WAITFORPLAY)
     {
@@ -2666,7 +2666,7 @@ static void DisplayCustomCursor(void)
 }
 
 /* map & player & anims */
-static void display_layer1(void)
+static void DisplayLayer1(void)
 {
     static int gfx_toggle=0;
     SDL_Rect    rect;
@@ -2723,7 +2723,7 @@ static void display_layer1(void)
     }
 }
 
-static void display_layer2(void)
+static void DisplayLayer2(void)
 {
     cpl.container = NULL; /* this will be set right on the fly in get_inventory_data() */
 
@@ -2745,7 +2745,7 @@ static void display_layer2(void)
 }
 
 /* display the widgets (graphical user interface) */
-static void display_layer3(void)
+static void DisplayLayer3(void)
 {
     /* process the widgets */
     if(GameStatus  >= GAME_STATUS_WAITFORPLAY)
@@ -2756,7 +2756,7 @@ static void display_layer3(void)
 
 
 /* dialogs, highest-priority layer */
-static void display_layer4(void)
+static void DisplayLayer4(void)
 {
     if (GameStatus >= GAME_STATUS_WAITFORPLAY)
     {
