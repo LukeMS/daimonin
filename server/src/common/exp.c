@@ -32,7 +32,7 @@
 #include <stdio.h>
 
 
-float           lev_exp[MAXLEVEL + 1]       =
+float           lev_exp[MAXLEVEL + 18]       =
 {
     0.0f, 1.0f, 1.11f, 1.75f, 3.2f, 5.5f, 10.0f, 20.0f, 35.25f, 66.1f, 137.0f, 231.58f, 240.00f, 247.62f, 254.55f,
     260.87f, 266.67f, 272.00f, 276.92f, 281.48f, 285.71f, 289.66f, 293.33f, 296.77f, 300.00f, 303.03f, 305.88f, 308.57f,
@@ -42,7 +42,9 @@ float           lev_exp[MAXLEVEL + 1]       =
     357.33f, 357.89f, 358.44f, 358.97f, 359.49f, 360.00f, 360.49f, 360.98f, 361.45f, 361.90f, 362.35f, 362.79f, 363.22f,
     363.64f, 364.04f, 364.44f, 364.84f, 365.22f, 365.59f, 365.96f, 366.32f, 366.67f, 367.01f, 367.35f, 367.68f, 368.00f,
     368.32f, 368.63f, 368.93f, 369.23f, 369.52f, 369.81f, 370.09f, 370.37f, 370.64f, 370.91f, 371.17f, 371.43f, 371.68f,
-    371.93f, 372.17f, 372.41f, 372.65f, 372.88f
+    371.93f, 372.17f, 372.41f, 372.65f, 372.88f, 373.10f, 373.31f, 373.51f, 373.70f,
+373.88f, 374.05f, 374.21f, 374.36f, 374.50f, 374.63f, 374.75f, 374.86f, 374.96f,
+375.05f, 375.13f, 375.20f, 375.26f
 };
 
 /* around level 11 you need 38+(2*(your_level-11)) yellow
@@ -54,7 +56,7 @@ float           lev_exp[MAXLEVEL + 1]       =
  * even here we have around 500.000.000 max exp - thats a pretty big
  * number.
  */
-sint32          new_levels[MAXLEVEL + 2]    =
+sint32          new_levels[MAXLEVEL + 19]    =
 {
     0, 0, 1000, 2000, 4000, 8000, 16000, 32000, 64000, 128000,        /* 9 */
     256000, 512000, 1024000, 2300000, 3700000, 5200000, 6800000, 8900000, 10600000, 12500000, /* 19 */
@@ -73,7 +75,9 @@ sint32          new_levels[MAXLEVEL + 2]    =
     /* 99 */
     503000000, 513600000, 523800000, 534100000, 544500000, 555000000, 565600000, 576300000, 587100000, 598000000,
     /* 109 */
-    610000000, 700000000 /* 111 is only a dummy */
+    610000000, 700000000, 800000000, 900000000, 1000000000, 1100000000, 1200000000,
+1300000000, 1400000000, 1500000000, 1600000000, 1700000000, 1800000000, 1900000000,
+2000000000, 2100000000, 2200000000, 2300000000 /* 111+ is only a dummy */
 };
 
 _level_color    level_color[201]        =
@@ -285,7 +289,7 @@ _level_color    level_color[201]        =
    Since this is nowhere defined ...
    Both come in handy at least in function add_exp()
 */
-#define MAX_EXPERIENCE  new_levels[MAXLEVEL]
+#define MAX_EXPERIENCE  new_levels[MAXLEVEL + 18]
 
 
 /* init_new_exp_system() - called in init(). This function will reconfigure
