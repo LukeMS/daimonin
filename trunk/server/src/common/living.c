@@ -598,36 +598,30 @@ int change_abil(object *op, object *tmp)
             }
         }
     }
-
-    if (op->type == PLAYER &&
-        tmp->type != TYPE_FOOD_FORCE)
+    if ((tmp->stats.hp || tmp->stats.maxhp) && op->type == PLAYER)
     {
-        if ((tmp->stats.hp || tmp->stats.maxhp))
-        {
-            success = 1;
-            if (applied * tmp->stats.hp > 0 || applied * tmp->stats.maxhp > 0)
-                new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, op, "You feel much more healthy!");
-            else
-                new_draw_info(NDI_UNIQUE | NDI_GREY, 0, op, "You feel much less healthy!");
-        }
-
-        if ((tmp->stats.sp || tmp->stats.maxsp) && tmp->type != SKILL)
-        {
-            success = 1;
-            if (applied * tmp->stats.sp > 0 || applied * tmp->stats.maxsp > 0)
-                new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, op, "You feel one with the powers of magic!");
-            else
-                new_draw_info(NDI_UNIQUE | NDI_GREY, 0, op, "You suddenly feel very mundane.");
-        }
-
-        if ((tmp->stats.grace || tmp->stats.maxgrace))
-        {
-            success = 1;
-            if (applied * tmp->stats.grace > 0 || applied * tmp->stats.maxgrace)
-                new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, op, "You feel closer to your deity!");
-            else
-                new_draw_info(NDI_UNIQUE | NDI_GREY, 0, op, "You suddenly feel less holy.");
-        }
+        success = 1;
+        if (applied * tmp->stats.hp > 0 || applied * tmp->stats.maxhp > 0)
+            new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, op, "You feel much more healthy!");
+        else
+            new_draw_info(NDI_UNIQUE | NDI_GREY, 0, op, "You feel much less healthy!");
+    }
+    if ((tmp->stats.sp || tmp->stats.maxsp) && op->type == PLAYER && tmp->type != SKILL)
+    {
+        success = 1;
+        if (applied * tmp->stats.sp > 0 || applied * tmp->stats.maxsp > 0)
+            new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, op, "You feel one with the powers of magic!");
+        else
+            new_draw_info(NDI_UNIQUE | NDI_GREY, 0, op, "You suddenly feel very mundane.");
+    }
+    /* for the future when artifacts set this -b.t. */
+    if ((tmp->stats.grace || tmp->stats.maxgrace) && op->type == PLAYER)
+    {
+        success = 1;
+        if (applied * tmp->stats.grace > 0 || applied * tmp->stats.maxgrace)
+            new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, op, "You feel closer to your deity!");
+        else
+            new_draw_info(NDI_UNIQUE | NDI_GREY, 0, op, "You suddenly feel less holy.");
     }
 
     /* Messages for changed resistance */
@@ -1020,8 +1014,6 @@ void fix_player(object *op)
     CLEAR_FLAG(op, FLAG_REFL_MISSILE);
     CLEAR_FLAG(op, FLAG_REFL_SPELL);
 
-    CLEAR_FLAG(op, FLAG_EATING);
-
     if (QUERY_FLAG(op, FLAG_IS_INVISIBLE))
         inv_flag = 1;
     if (QUERY_FLAG(op, FLAG_SEE_INVISIBLE))
@@ -1390,10 +1382,6 @@ void fix_player(object *op)
                   /* i am not 100% sure this is safe for *all* objects - i have used for that
                          * reason not default here.
                          */
-                case TYPE_FOOD_FORCE:
-                  SET_FLAG(op, FLAG_EATING);
-                  goto fix_player_jump_resi;
-
                 case TYPE_AGE_FORCE:
                   pl->age_force = tmp; /* store our age force */
                   pl->age = tmp->stats.hp;
@@ -1404,7 +1392,6 @@ void fix_player(object *op)
                       SET_FLAG(op, FLAG_IS_AGED);
                   else
                       CLEAR_FLAG(op, FLAG_IS_AGED);
-                  goto fix_player_jump_resi;
 
                 case FORCE:
                     if(tmp->sub_type1 == ST1_FORCE_SNARE)
@@ -2127,18 +2114,20 @@ void fix_monster(object *op)
     int wc_mali=0, ac_mali=0, snare_penalty=0, slow_penalty=0;
     object *base, *tmp, *spawn_info=NULL, *bow=NULL, *wc_tmp;
     float   tmp_add;
-    int mob_wc[MAXLEVEL + 1] =
+    int mob_wc[MAXLEVEL + 18] =
      { 1,2,3,4,5,6,7,8,9,10,10,11,11,12,12,13,13,14,14,15,15,16,16,17,17,18,
        18,19,19,20,20,20,21,21,22,22,23,23,24,24,25,25,26,26,27,27,28,28,29,29,30,
        30,31,31,32,32,33,33,34,34,35,35,36,36,37,37,38,38,39,39,40,40,41,41,42,42,
        43,43,44,44,45,45,46,46,47,47,48,48,49,49,50,50,51,51,52,52,53,53,54,54,55,
-       55,56,56,57,57,58,58,59,60,60};
-    int mob_ac[MAXLEVEL + 1] =
+       55,56,56,57,57,58,58,59,60,60,61,61,62,62,63,63,64,64,65,66,67,67,68,68,69,
+       70,70};
+    int mob_ac[MAXLEVEL + 18] =
      { 1,2,3,4,5,6,7,8,9,10,10,11,11,12,12,13,13,14,14,15,15,16,16,17,17,18,
    18,19,19,20,20,20,21,21,22,22,23,23,24,24,25,25,26,26,27,27,28,28,29,29,30,
    30,31,31,32,32,33,33,34,34,35,35,36,36,37,37,38,38,39,39,40,40,41,41,42,42,
    43,43,44,44,45,45,46,46,47,47,48,48,49,49,50,50,51,51,52,52,53,53,54,54,55,
-   55,56,56,57,57,58,58,59,60,60};
+   55,56,56,57,57,58,58,59,60,6061,61,62,62,63,63,64,64,65,66,67,67,68,68,69,
+   70,70};
     if (op->head) /* don't adjust tails or player - only single objects or heads */
         return;
 
