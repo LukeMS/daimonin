@@ -272,7 +272,6 @@ typedef struct _options
     char                    cli_pass[TINY_BUF];
     int                     cli_server;
     char                    cli_addons[HUGE_BUF];
-    char                    skin[TINY_BUF];
 
     uint8                 firststart;
     uint8                 sleepcounter;
