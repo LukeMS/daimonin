@@ -526,8 +526,6 @@ void save_options_dat(void)
     }
 
     /* the %-settings are settings which (should) not shown in options win */
-    sprintf(buf, "%%1 %s\n", options.skin);
-    PHYSFS_writeString(handle, buf);
     sprintf(buf, "%%21 %d\n", txtwin[TW_MSG].size);
     PHYSFS_writeString(handle, buf);
     sprintf(buf, "%%22 %d\n", txtwin[TW_CHAT].size);
@@ -636,28 +634,19 @@ void load_options_dat(void)
             continue;
         }
         /* this are special settings which won't show in the options win, this has to be reworked in a general way */
-        if (line[0] == '%')
+        if (line[0] == '%' &&
+            line[1] == '2')
         {
-            switch (line[1])
+            switch (line[2])
             {
-                case '1':  /* skinsetting */
-                    strncpy(options.skin,line+3,63);
-                    options.skin[63]='\0';
-                    options.skin[strlen(options.skin)-1]='\0';
+                case '1':
+                    txtwin[TW_MSG].size=atoi(line+4);
                     break;
                 case '2':
-                    switch (line[2])
-                    {
-                        case '1':
-                            txtwin[TW_MSG].size=atoi(line+4);
-                            break;
-                        case '2':
-                            txtwin[TW_CHAT].size=atoi(line+4);
-                            break;
-                    }
+                    txtwin[TW_CHAT].size=atoi(line+4);
                     break;
             }
-            continue;
+            break;
         }
         i = 0;
         while (line[i] && line[i] != ':')
