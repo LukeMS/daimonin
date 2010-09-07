@@ -21,14 +21,16 @@ You should have received a copy of the GNU General Public License along with
 this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
 
-#ifndef ObjectEquipment_H
-#define ObjectEquipment_H
+#ifndef OBJECT_ELEMENT_EQUIP3D_H
+#define OBJECT_ELEMENT_EQUIP3D_H
+
+#include "object/object_element.h"
 
 /**
  ** This class handles all equipment of an object like weapon, armour, etc.
  ** Equipment supports particle-effects and color change of the bodyparts.
  *****************************************************************************/
-class ObjectEquipment
+class ObjectElementEquip3d: public ObjectElement
 {
 public:
     // ////////////////////////////////////////////////////////////////////
@@ -69,8 +71,11 @@ public:
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    ObjectEquipment(Ogre::Entity *parent);
-    ~ObjectEquipment() {}
+    ObjectElementEquip3d(Object *parent, Ogre::Entity *entity);
+    ~ObjectElementEquip3d() {}
+    Object::familyID getFamilyID() const { return Object::FAMILY_EQUIP3D; }
+    bool update(const Ogre::FrameEvent &event);
+
     void dropItem(int bone);
     void equipItem(unsigned int bone, int type, int itemID, int particleID =-1);
 
@@ -88,7 +93,8 @@ private:
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    ObjectEquipment(const ObjectEquipment&);            /**< disable copy-constructor. **/
-    ObjectEquipment &operator=(const ObjectEquipment&); /**< disable assignment operator. **/
+    ObjectElementEquip3d(const ObjectElementEquip3d&);            /**< disable copy-constructor. **/
+    ObjectElementEquip3d &operator=(const ObjectElementEquip3d&); /**< disable assignment operator. **/
 };
+
 #endif

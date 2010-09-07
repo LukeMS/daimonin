@@ -48,8 +48,9 @@ private:
     // ////////////////////////////////////////////////////////////////////
     enum {LIST_TEXT_OFFSET = 3, LIST_MAX_HEIGHT = 200};
     std::vector<Ogre::String>mvItem;
-    unsigned int mActItem;
-    int mListHeight;
+    int mActItem;       /**< The actual selected item. **/
+    int mMouseOverItem; /**< The item under the mouse pointer (when the itemlist is opened). **/
+    int mListHeight;    /**< The height of the itemlist. **/
     Ogre::uint32 mListColor, mBorderColor, mCursorColor;
     bool mMouseOver, mMouseButDown;
     bool mShowItemList;
@@ -66,6 +67,13 @@ private:
      ** @param item The item to select.
      *****************************************************************************/
     void SetSelection(unsigned int itemNr);
+
+    /** Returns the active item.
+     *****************************************************************************/
+    int getSelection() const
+    {
+        return mActItem;
+    }
 
     void calcListHeight();
     GuiElementCombobox(const GuiElementCombobox&);            /**< disable copy-constructor. **/

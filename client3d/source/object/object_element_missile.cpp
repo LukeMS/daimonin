@@ -26,12 +26,12 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include "profiler.h"
 #include "option.h"
 #include "events.h"
-#include "object_manager.h"
-#include "object_missile.h"
+#include "object/object_manager.h"
+#include "object/object_element_missile.h"
 #include "sound.h"
 
 using namespace Ogre;
-
+/*
 //================================================================================================
 // Init all static Elemnts.
 //================================================================================================
@@ -68,7 +68,7 @@ ObjectMissile::ObjectMissile(int type, ObjectNPC *srcMob, ObjectNPC *dstMob)
     Entity *mEntity = Events::getSingleton().getSceneManager()->createEntity(
                           "Mob"+ StringConverter::toString(++msUnique, 6, '0'),
                           "Arrow.mesh");
-    mEntity->setQueryFlags(ObjectManager::QUERY_ENVIRONMENT_MASK);
+    mEntity->setQueryFlags(ObjectManager::QUERY_MASK_ENVIRONMENT);
     mNode->attachObject(mEntity);
     // Set the start position.
     Vector3 pos = srcMob->getPosition();
@@ -104,4 +104,4 @@ bool ObjectMissile::update(const FrameEvent& event)
     }
     return true;
 }
-
+*/

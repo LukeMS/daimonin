@@ -32,7 +32,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include "tile/tile_map.h"
 #include "tile/tile_map_wrapper.h"
 #include "tile/tile_manager.h"
-#include "object_manager.h"
+#include "object/object_manager.h"
 #include "particle_manager.h"
 
 using namespace Ogre;
@@ -234,7 +234,7 @@ void TileMap::set_map_face(int x, int y, int layer, int face, int pos, int ext, 
             if (once)
             {
                 once = false;
-                ObjectStatic::sObject obj;
+                ObjectManager::sObject obj;
                 obj.meshName  = "Smitty.mesh";
                 //obj.meshName  = "Ogre_Big.mesh";
                 obj.nickName  = "Nick_Smith";
@@ -246,12 +246,12 @@ void TileMap::set_map_face(int x, int y, int layer, int face, int pos, int ext, 
                 obj.maxHP     = 50;
                 obj.maxMana   = 50;
                 obj.maxGrace  = 50;
-                obj.pos.x     = x * TileManager::TILE_RENDER_SIZE/2.0f + 3 * 8;
-                obj.pos.z     = y * TileManager::TILE_RENDER_SIZE/2.0f + 3 * 8;
+                obj.pos.x     = x * TileManager::HALF_RENDER_SIZE/2.0f + 3 * 8;
+                obj.pos.z     = y * TileManager::HALF_RENDER_SIZE/2.0f + 3 * 8;
                 obj.level     = 0;
                 obj.facing    = 30;
                 obj.particleNr=-1;
-                ObjectManager::getSingleton().addMobileObject(obj);
+                ObjectManager::getSingleton().addCreature(obj);
             }
         }
         else if (meshName == "Monk.mesh")
@@ -260,8 +260,7 @@ void TileMap::set_map_face(int x, int y, int layer, int face, int pos, int ext, 
             if (once)
             {
                 once = false;
-                ObjectStatic::sObject obj;
-
+                ObjectManager::sObject obj;
                 obj.meshName  = "Smitty.mesh";
                 obj.nickName  = "Nick_Monk";
                 obj.type      = ObjectManager::OBJECT_NPC;
@@ -272,12 +271,12 @@ void TileMap::set_map_face(int x, int y, int layer, int face, int pos, int ext, 
                 obj.maxHP     = 50;
                 obj.maxMana   = 50;
                 obj.maxGrace  = 50;
-                obj.pos.x     = x * TileManager::TILE_RENDER_SIZE/2.0f + 3 * 8;
-                obj.pos.z     = y * TileManager::TILE_RENDER_SIZE/2.0f + 3 * 8;
+                obj.pos.x     = x * TileManager::HALF_RENDER_SIZE/2.0f + 3 * 8;
+                obj.pos.z     = y * TileManager::HALF_RENDER_SIZE/2.0f + 3 * 8;
                 obj.level     = 0;
                 obj.facing    = -60;
                 obj.particleNr=-1;
-                ObjectManager::getSingleton().addMobileObject(obj);
+                ObjectManager::getSingleton().addCreature(obj);
 
                 obj.meshName  = "Tentacle_N_Small.mesh";
                 obj.nickName  = "Nick_Tentacle";
@@ -289,12 +288,12 @@ void TileMap::set_map_face(int x, int y, int layer, int face, int pos, int ext, 
                 obj.maxHP     = 50;
                 obj.maxMana   = 50;
                 obj.maxGrace  = 50;
-                obj.pos.x     = (x+1) * TileManager::TILE_RENDER_SIZE/2.0f + 3 * 8;
-                obj.pos.z     = (y+4) * TileManager::TILE_RENDER_SIZE/2.0f + 3 * 8;
+                obj.pos.x     = (x+1) * TileManager::HALF_RENDER_SIZE/2.0f + 3 * 8;
+                obj.pos.z     = (y+4) * TileManager::HALF_RENDER_SIZE/2.0f + 3 * 8;
                 obj.level     = 0;
                 obj.facing    = -60;
                 obj.particleNr=-1;
-                ObjectManager::getSingleton().addMobileObject(obj);
+                ObjectManager::getSingleton().addCreature(obj);
 
                 obj.meshName  = "Box_D.mesh";
                 obj.nickName  = "Nick_Box2";
@@ -306,12 +305,12 @@ void TileMap::set_map_face(int x, int y, int layer, int face, int pos, int ext, 
                 obj.maxHP     = 50;
                 obj.maxMana   = 50;
                 obj.maxGrace  = 50;
-                obj.pos.x     = x * TileManager::TILE_RENDER_SIZE/2.0f + 3 * 8;
-                obj.pos.z     = (y+5) * TileManager::TILE_RENDER_SIZE/2.0f + 3 * 8;
+                obj.pos.x     = x * TileManager::HALF_RENDER_SIZE/2.0f + 3 * 8;
+                obj.pos.z     = (y+5) * TileManager::HALF_RENDER_SIZE/2.0f + 3 * 8;
                 obj.level     = 0;
                 obj.facing    = 120;
                 obj.particleNr=-1;
-                ObjectManager::getSingleton().addMobileObject(obj);
+                ObjectManager::getSingleton().addCreature(obj);
             }
         }
         /*
@@ -322,9 +321,9 @@ void TileMap::set_map_face(int x, int y, int layer, int face, int pos, int ext, 
                     {
                         once = false;
                         Vector3 pos;
-                        pos.x = TileManager::TILE_RENDER_SIZE/2 * 8.5f;
+                        pos.x = TileManager::HALF_RENDER_SIZE/2 * 8.5f;
                         pos.y = 0;
-                        pos.z = TileManager::TILE_RENDER_SIZE/2 * 8.5f;
+                        pos.z = TileManager::HALF_RENDER_SIZE/2 * 8.5f;
                         ObjectManager::getSingleton().setPosition(ObjectNPC::HERO, pos);
                         Logger::log().error() << "we got the Hero face: " << face;
                     }
@@ -354,7 +353,7 @@ void TileMap::set_map_face(int x, int y, int layer, int face, int pos, int ext, 
             if (once)
             {
                 once = false;
-                ObjectStatic::sObject obj;
+                ObjectManager::sObject obj;
                 obj.meshName  = "Sack_N.mesh";
                 obj.nickName  = "Nick_Sack";
                 obj.type      = ObjectManager::OBJECT_CONTAINER;
@@ -365,12 +364,12 @@ void TileMap::set_map_face(int x, int y, int layer, int face, int pos, int ext, 
                 obj.maxHP     = 50;
                 obj.maxMana   = 50;
                 obj.maxGrace  = 50;
-                obj.pos.x     = x * TileManager::TILE_RENDER_SIZE/2.0f + 3 * 8;
-                obj.pos.z     = y * TileManager::TILE_RENDER_SIZE/2.0f + 3 * 8;
+                obj.pos.x     = x * TileManager::HALF_RENDER_SIZE/2.0f + 3 * 8;
+                obj.pos.z     = y * TileManager::HALF_RENDER_SIZE/2.0f + 3 * 8;
                 obj.level     = 0;
                 obj.facing    = -60;
                 obj.particleNr=-1;
-                ObjectManager::getSingleton().addMobileObject(obj);
+                ObjectManager::getSingleton().addCreature(obj);
             }
         }
         else if (meshName == "Object_Anvil.mesh")
@@ -379,7 +378,7 @@ void TileMap::set_map_face(int x, int y, int layer, int face, int pos, int ext, 
             if (once)
             {
                 once = false;
-                ObjectStatic::sObject obj;
+                ObjectManager::sObject obj;
                 obj.meshName  = "Object_Anvil.mesh";
                 obj.nickName  = "Nick_Anvil";
                 obj.type      = ObjectManager::OBJECT_ENVIRONMENT;
@@ -390,12 +389,12 @@ void TileMap::set_map_face(int x, int y, int layer, int face, int pos, int ext, 
                 obj.maxHP     = 50;
                 obj.maxMana   = 50;
                 obj.maxGrace  = 50;
-                obj.pos.x     = x * TileManager::TILE_RENDER_SIZE/2.0f + 3 * 8;
-                obj.pos.z     = y * TileManager::TILE_RENDER_SIZE/2.0f + 3 * 8;
+                obj.pos.x     = x * TileManager::HALF_RENDER_SIZE/2.0f + 3 * 8;
+                obj.pos.z     = y * TileManager::HALF_RENDER_SIZE/2.0f + 3 * 8;
                 obj.level     = 0;
                 obj.facing    = 35;
                 obj.particleNr=-1;
-                ObjectManager::getSingleton().addMobileObject(obj);
+                ObjectManager::getSingleton().addCreature(obj);
             }
         }
     }

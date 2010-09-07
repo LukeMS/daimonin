@@ -21,63 +21,19 @@ You should have received a copy of the GNU General Public License along with
 this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
 
-#include "object_hero.h"
-#include "logger.h"
-#include "profiler.h"
+#include "object/object_element_physical.h"
 
 //================================================================================================
-// Init all static Elemnts.
+// Constructor.
 //================================================================================================
-ObjectHero::ObjectHero()
+ObjectElementPhysical::ObjectElementPhysical(class Object *parent):ObjectElement(parent)
 {
-    PROFILE()
-    fire_on = firekey_on = 0;
-    run_on = runkey_on = 0;
-    resize_twin = resize_twin_marker = 0;
-    inventory_win = IWIN_BELOW;
-    count_left = 0;
-    memset(&stats, 0, sizeof(Stats));
-    stats.maxsp = 1;
-    stats.maxhp = 1;
-    gen_hp = 0.0f;
-    gen_sp = 0.0f;
-    gen_grace = 0.0f;
-    target_hp = 0;
-    stats.maxgrace = 1;
-    stats.speed = 1;
-    count_left = 0;
-    stats.maxsp = 1;    // avoid div by 0 errors.
-    stats.maxhp = 1;    // avoid div by 0 errors.
-    stats.maxgrace = 1; // avoid div by 0 errors.
-    stats.speed = 0;
-    stats.weapon_sp = 0;
-    last_command = "";
-    input_text = "";
-    alignment = "";
-    gender = "";
-    range = "";
-    // this is set from title in stat cmd.
-    pname = "";
-    title = "";
-    map_x = 0;
-    map_y = 0;
-    magicmap = 0;
-    account.count =0;
-//    RangeFireMode = 0;
 }
 
 //================================================================================================
 //
 //================================================================================================
-int ObjectHero::fillAccount(int pos, const unsigned char *data)
+bool ObjectElementPhysical::update(const Ogre::FrameEvent &event)
 {
-    PROFILE()
-    account.name[pos] = (const char*)data;
-    int i = (int)account.name[pos].size();
-    account.level [pos] = data[++i];
-    account.race  [pos] = data[++i];
-    account.gender[pos] =(data[++i]>0)?true:false;
-    ++account.count;
-    Logger::log().error() << "Player " << account.name[pos] << " Level: " << account.level[pos] << " race: " << account.race[pos] ;
-    return ++i;
+    return true;
 }

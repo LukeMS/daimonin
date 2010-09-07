@@ -183,7 +183,7 @@ material Terrain/GrassWaving
     {
         pass
         {
-//            lighting off
+            // lighting off
             cull_hardware none
             cull_software none
             alpha_rejection greater_equal 128
@@ -212,12 +212,13 @@ material Terrain/GrassStatic
     {
         pass
         {
+            //lighting off
             cull_hardware none
             cull_software none
-            //lighting off
             alpha_rejection greater_equal 128
             texture_unit
             {
+                filtering anisotropic
                 texture grass.png
             }
         }

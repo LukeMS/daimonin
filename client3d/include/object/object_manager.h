@@ -25,9 +25,8 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #define OBJECT_MANAGER_H
 
 #include <vector>
-#include "object_npc.h"
-#include "object_static.h"
-#include "object_missile.h"
+#include "object/object.h"
+#include "object/object_element.h"
 
 // ////////////////////////////////////////////////////////////////////
 // Define:
@@ -46,6 +45,26 @@ public:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
+    typedef struct
+    {
+        Ogre::String nickName;      /**< Ingame-Name. **/
+        Ogre::String meshName;      /**< Name of the ogre3d mesh. **/
+        Ogre::Vector3 pos;          /**< Tile-pos. **/
+        Ogre::uchar boundingRadius; /**< The radius of subtiles, the NPC stands on. **/
+        Ogre::Real facing;
+        unsigned int index;         /**< Unique number for this object. **/
+        int type;                   /**< Type: e.g. static, npc, ... **/
+        int particleNr;             /**< Number of the particle effect. **/
+        int level;                  /**< Floor-level. **/
+        int friendly;
+        int attack;
+        int defend;
+        int maxHP;
+        int maxMana;
+        int maxGrace;
+        //char walkable[8];           /**< 8x8 bit for the walkable status of a tile. **/
+    }
+    sObject;
     enum
     {
         MISSLE_ARROW,
@@ -61,18 +80,18 @@ public:
         EVT_HIT,
         EVT_SUM
     };
-    enum
+    typedef enum
     {
-        QUERY_PARTICLE_MASK   =1 << 0,
-        QUERY_TILES_WATER_MASK=1 << 1,
-        QUERY_TILES_LAND_MASK =1 << 2,
-        QUERY_ENVIRONMENT_MASK=1 << 3,
-        QUERY_NPC_MASK        =1 << 4,
-        QUERY_CONTAINER       =1 << 5,  /**< Stuff that can be opened (chest, sack,... **/
-        QUERY_EQUIPMENT_MASK  =1 << 6,  /**< Stuff that can be equipped (clothes, weapons,... **/
-        QUERY_NPC_SELECT_MASK =1 << 7,
-        QUERY_CAMERA_MASK     =1 << 8,
-    };
+        QUERY_MASK_PARTICLE    =1 << 0,
+        QUERY_MASK_TILES_WATER =1 << 1,
+        QUERY_MASK_TILES_LAND  =1 << 2,
+        QUERY_MASK_ENVIRONMENT =1 << 3,
+        QUERY_MASK_NPC         =1 << 4,
+        QUERY_MASK_CONTAINER   =1 << 5,  /**< Stuff that can be opened (chest, sack,... **/
+        QUERY_MASK_EQUIPMENT   =1 << 6,  /**< Stuff that can be equipped (clothes, weapons,... **/
+        QUERY_MASK_NPC_SELECT  =1 << 7,
+        QUERY_MASK_CAMERA      =1 << 8,
+    } queryMask;
     // Attached objects
     enum
     {
@@ -101,27 +120,23 @@ public:
     {
         static ObjectManager Singleton; return Singleton;
     }
-    /** Sync the y-pos of the hero to terrain. Needed after loading a new level. **/
-    void syncHeroPosition();
     void freeRecources();
     void init();
-    void addMobileObject(ObjectStatic::sObject &obj);
-    void deleteMissile(int number);
-    void deleteStatic(int number);
-    void deleteNPC   (int number);
-    void update(int type, const Ogre::FrameEvent& evt);
+    void addCreature(sObject &obj);
+    void update(const Ogre::FrameEvent& evt);
     void mousePressed(Ogre::MovableObject *mob, bool modifier);
-    void Event(int obj_type, int action, int id, int val0=0, int val1=0);
+    void Event(std::string &name, int action, int id, int val0=0, int val1=0);
     void setEquipment(int npcID, int bone, int type, int itemID);
     void highlightObject(Ogre::MovableObject *mob, bool highlight);
-    void shoot(int missle, ObjectNPC *srcMob, ObjectNPC *dstMob);
+//    void shoot(int missle, ObjectNPC *srcMob, ObjectNPC *dstMob);
+/*
     void readyPrimaryWeapon(int npc, bool ready)
     {
-        mvNPC[npc]->readyPrimaryWeapon(ready);
+//        mvNPC[npc]->readyPrimaryWeapon(ready);
     }
     bool isMoving(int npc)
     {
-        return mvNPC[npc]->isMoving();
+        //return mvNPC[npc]->isMoving();
     }
     bool isPrimaryWeaponReady(int npc)
     {
@@ -159,8 +174,10 @@ public:
     {
         return mvNPC[npc]->getPosition();
     }
-    void synchToWorldPos(int deltaX, int deltaZ);
+*/
+    void syncToMapScroll(int deltaX, int deltaZ);
     void selectObject(Ogre::MovableObject *mob);
+/*
     Ogre::Vector3 getTargetedWorldPos()
     {
         return mvNPC[mSelectedObject]->getSceneNode()->getPosition();
@@ -178,16 +195,18 @@ public:
         return mSelectedPos;
     }
     void targetObjectAttackNPC(int npcIndex); // just a hack. Server will handle this.
+*/
     bool createFlipBook(Ogre::String meshName, int sumRotations = 8);
+    void setAvatarName(std::string &name) { mAvatarName = name;}
+    std::string getAvatarName() { return mAvatarName;}
+    const Ogre::Vector3 getAvatarPos();
 
 private:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
     Ogre::String mDescFile;
-    std::vector<ObjectStatic*> mvStatic;
-    std::vector<ObjectNPC*   > mvNPC;
-    std::vector<ObjectMissile*> mvMissile;
+//    std::vector<ObjectMissile*> mvMissile;
     int mSelectedType, mSelectedObject;
     Ogre::Vector3 mSelectedPos;
     // ////////////////////////////////////////////////////////////////////
@@ -198,6 +217,13 @@ private:
     ObjectManager(const ObjectManager&);            /**< disable copy-constructor. **/
     ObjectManager &operator=(const ObjectManager&); /**< disable assignment operator. **/
     void extractObject(Ogre::MovableObject *mob);
+    Object *getObject(std::string &name);
+
+    //////// NEW
+    std::string mAvatarName;
+    std::map<std::string, class Object*> mmObject;
+    Ogre::SceneManager *mSceneManager;
+    Object *mObjectAvatar;
 };
 
 #endif

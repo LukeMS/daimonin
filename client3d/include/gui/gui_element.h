@@ -56,7 +56,7 @@ public:
     /** Update an element. Used for drag'n'drop, animations, etc.
      ** @param deltaTime The time since the last frame.
      *****************************************************************************/
-    virtual void update(Ogre::Real /*deltaTime*/){}
+    virtual void update(Ogre::Real /*deltaTime*/) {}
 
     /** Draw an element into the parent window.
      ** @param uploadToTexture When false the gfx is not yet copied to the texture.

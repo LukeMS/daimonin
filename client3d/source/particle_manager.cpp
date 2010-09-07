@@ -95,7 +95,7 @@ ParticleSystem *ParticleManager::addBoneObject(Entity *ent, const char* strBone,
     obj->delNodeOnCleanup = false;
     obj->sceneNode = 0;
     obj->entity = ent;
-    //obj->entity->setQueryFlags(QUERY_NPC_SELECT_MASK);
+    //obj->entity->setQueryFlags(QUERY_MASK_NPC_SELECT);
     obj->entity->attachObjectToBone(strBone, obj->pSystem);
     obj->neededSync = SYNC_PARTICLES;
     return obj->pSystem;
@@ -199,7 +199,7 @@ void ParticleManager::pauseAll(bool pause)
 //================================================================================================
 // Workaround for a ogre bug (Attached particles wont get updeted after a position change).
 //================================================================================================
-void ParticleManager::syncToWorldPos(Vector3 &deltaPos)
+void ParticleManager::syncToMapScroll(Vector3 &deltaPos)
 {
     PROFILE()
     Particle* p;

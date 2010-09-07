@@ -43,7 +43,7 @@ static const unsigned int RGB_A= 4; /**< Pixelsize. **/
 
 //////// Only for TESTING
 #include <stdio.h>
-#include "object_manager.h"
+#include "object/object_manager.h"
 void TileManager::loadLvl()
 {
     FILE *stream = fopen("client3d.lvl", "rb");
@@ -51,7 +51,7 @@ void TileManager::loadLvl()
     fread(mMap, sizeof(mapStruct), mMapSizeX * mMapSizeZ, stream);
     fclose(stream);
     updateChunks();
-    ObjectManager::getSingleton().syncHeroPosition();
+    ObjectManager::getSingleton().syncToMapScroll(0, 0);
 }
 
 void TileManager::saveLvl()
@@ -116,11 +116,6 @@ void TileManager::Init(SceneManager *SceneMgr, int queryMaskLand, int queryMaskW
             createAtlasTexture(MAX_TEXTURE_SIZE, 0);
         }
     }
-
-    lod = 0;
-
-
-
     mRaySceneQuery = mSceneManager->createRayQuery(Ray());
     // Create the world map.
     mMapSizeX = 1; while (mMapSizeX < CHUNK_SIZE_X*2+4) mMapSizeX <<= 1; // Map size must be power of 2.
@@ -253,7 +248,7 @@ bool TileManager::getMapSpotLight(unsigned int x, unsigned int z)
 }
 
 //================================================================================================
-// Scroll the map.
+// Scroll the map by 1 tile (subtile scrolling is not possible!).
 //================================================================================================
 void TileManager::scrollMap(int dx, int dz)
 {
@@ -298,28 +293,28 @@ void TileManager::tileClick(float mouseX, float mouseY)
                 // +-+
                 // |/
                 // +
-                mVertex[0].x = (x+0.0f)*TILE_RENDER_SIZE;
+                mVertex[0].x = (x+0.0f)*HALF_RENDER_SIZE;
                 mVertex[0].y = getMapHeight(x, z);
-                mVertex[0].z = (z+0.0f)*TILE_RENDER_SIZE;
-                mVertex[1].x = (x+0.0f)*TILE_RENDER_SIZE;
+                mVertex[0].z = (z+0.0f)*HALF_RENDER_SIZE;
+                mVertex[1].x = (x+0.0f)*HALF_RENDER_SIZE;
                 mVertex[1].y = getMapHeight(x, z-1);
-                mVertex[1].z = (z+1.0f)*TILE_RENDER_SIZE;
-                mVertex[2].x = (x+1.0f)*TILE_RENDER_SIZE;
+                mVertex[1].z = (z+1.0f)*HALF_RENDER_SIZE;
+                mVertex[2].x = (x+1.0f)*HALF_RENDER_SIZE;
                 mVertex[2].y = getMapHeight(x-1, z);
-                mVertex[2].z = (z+0.0f)*TILE_RENDER_SIZE;
+                mVertex[2].z = (z+0.0f)*HALF_RENDER_SIZE;
                 if (vertexPick(&mouseRay, x, z, 0)) return; // We got a hit.
                 //   +
                 //  /|
                 // +-+
-                mVertex[0].x = (x+1.0f)*TILE_RENDER_SIZE;
+                mVertex[0].x = (x+1.0f)*HALF_RENDER_SIZE;
                 mVertex[0].y = getMapHeight(x+1, z);
-                mVertex[0].z = (z+0.0f)*TILE_RENDER_SIZE;
-                mVertex[1].x = (x+0.0f)*TILE_RENDER_SIZE;
+                mVertex[0].z = (z+0.0f)*HALF_RENDER_SIZE;
+                mVertex[1].x = (x+0.0f)*HALF_RENDER_SIZE;
                 mVertex[1].y = getMapHeight(x, z-1);
-                mVertex[1].z = (z+1.0f)*TILE_RENDER_SIZE;
-                mVertex[2].x = (x+1.0f)*TILE_RENDER_SIZE;
+                mVertex[1].z = (z+1.0f)*HALF_RENDER_SIZE;
+                mVertex[2].x = (x+1.0f)*HALF_RENDER_SIZE;
                 mVertex[2].y = getMapHeight(x+1, z-1);
-                mVertex[2].z = (z+1.0f)*TILE_RENDER_SIZE;
+                mVertex[2].z = (z+1.0f)*HALF_RENDER_SIZE;
                 if (vertexPick(&mouseRay, x, z, 1)) return; // We got a hit.
             }
             else
@@ -328,28 +323,28 @@ void TileManager::tileClick(float mouseX, float mouseY)
                 //   +
                 //   |\.
                 //   +-+
-                mVertex[0].x = (x+0.0f)*TILE_RENDER_SIZE;
+                mVertex[0].x = (x+0.0f)*HALF_RENDER_SIZE;
                 mVertex[0].y = getMapHeight(x, z);
-                mVertex[0].z = (z+0.0f)*TILE_RENDER_SIZE;
-                mVertex[1].x = (x+0.0f)*TILE_RENDER_SIZE;
+                mVertex[0].z = (z+0.0f)*HALF_RENDER_SIZE;
+                mVertex[1].x = (x+0.0f)*HALF_RENDER_SIZE;
                 mVertex[1].y = getMapHeight(x, z-1);
-                mVertex[1].z = (z+1.0f)*TILE_RENDER_SIZE;
-                mVertex[2].x = (x+1.0f)*TILE_RENDER_SIZE;
+                mVertex[1].z = (z+1.0f)*HALF_RENDER_SIZE;
+                mVertex[2].x = (x+1.0f)*HALF_RENDER_SIZE;
                 mVertex[2].y = getMapHeight(x+1, z-1);
-                mVertex[2].z = (z+1.0f)*TILE_RENDER_SIZE;
+                mVertex[2].z = (z+1.0f)*HALF_RENDER_SIZE;
                 if (vertexPick(&mouseRay, x, z, 2)) return; // We got a hit.
                 // +-+
                 //  \|
                 //   +
-                mVertex[0].x = (x+1.0f)*TILE_RENDER_SIZE;
+                mVertex[0].x = (x+1.0f)*HALF_RENDER_SIZE;
                 mVertex[0].y = getMapHeight(x+1, z-1);
-                mVertex[0].z = (z+1.0f)*TILE_RENDER_SIZE;
-                mVertex[1].x = (x+1.0f)*TILE_RENDER_SIZE;
+                mVertex[0].z = (z+1.0f)*HALF_RENDER_SIZE;
+                mVertex[1].x = (x+1.0f)*HALF_RENDER_SIZE;
                 mVertex[1].y = getMapHeight(x+1, z);
-                mVertex[1].z = (z+0.0f)*TILE_RENDER_SIZE;
-                mVertex[2].x = (x+0.0f)*TILE_RENDER_SIZE;
+                mVertex[1].z = (z+0.0f)*HALF_RENDER_SIZE;
+                mVertex[2].x = (x+0.0f)*HALF_RENDER_SIZE;
                 mVertex[2].y = getMapHeight(x, z);
-                mVertex[2].z = (z+0.0f)*TILE_RENDER_SIZE;
+                mVertex[2].z = (z+0.0f)*HALF_RENDER_SIZE;
                 if (vertexPick(&mouseRay, x, z, 3))  return; // We got a hit.
             }
         }
@@ -418,7 +413,7 @@ void TileManager::highlightVertex(int x, int z)
     static SceneNode *tcNode = 0;
     if (!tcNode)
     {
-        int size = TILE_RENDER_SIZE/6;
+        int size = HALF_RENDER_SIZE/6;
         ManualObject *mob = static_cast<ManualObject*>(mSceneManager->createMovableObject("VertexHighlight", ManualObjectFactory::FACTORY_TYPE_NAME));
         mob->begin("Terrain/VertexHighlight");
         mob->position(-1.0f*size, 1.5f*size,-0.80f*size);
@@ -447,8 +442,8 @@ void TileManager::highlightVertex(int x, int z)
     }
     mSelectedVertexX = x;
     mSelectedVertexZ = z;
-    x*= TILE_RENDER_SIZE;
-    z*= TILE_RENDER_SIZE;
+    x*= HALF_RENDER_SIZE;
+    z*= HALF_RENDER_SIZE;
     tcNode->setPosition((Real)x, getTileHeight(x, z), (Real)z);
 }
 
@@ -491,10 +486,10 @@ void TileManager::setTileGfx()
 int TileManager::calcHeight(int vert0, int vert1, int vert2, int posX, int posZ)
 {
     PROFILE()
-    if (posZ == TILE_RENDER_SIZE) return vert1;
-    int h1 = ((vert1 - vert0) * posZ) / TILE_RENDER_SIZE + vert0;
-    int h2 = ((vert1 - vert2) * posZ) / TILE_RENDER_SIZE + vert2;
-    int maxX = TILE_RENDER_SIZE - posZ;
+    if (posZ == HALF_RENDER_SIZE) return vert1;
+    int h1 = ((vert1 - vert0) * posZ) / HALF_RENDER_SIZE + vert0;
+    int h2 = ((vert1 - vert2) * posZ) / HALF_RENDER_SIZE + vert2;
+    int maxX = HALF_RENDER_SIZE - posZ;
     return ((h2 - h1) * posX) / maxX + h1;
 }
 
@@ -504,10 +499,10 @@ int TileManager::calcHeight(int vert0, int vert1, int vert2, int posX, int posZ)
 short TileManager::getTileHeight(int posX, int posZ)
 {
     PROFILE()
-    int TileX = posX / TILE_RENDER_SIZE; // Get the Tile position within the map.
-    int TileZ = posZ / TILE_RENDER_SIZE; // Get the Tile position within the map.
-    posX&= (TILE_RENDER_SIZE-1);         // Lower part is the position within the tile.
-    posZ&= (TILE_RENDER_SIZE-1);         // Lower part is the position within the tile.
+    int TileX = posX / HALF_RENDER_SIZE; // Get the Tile position within the map.
+    int TileZ = posZ / HALF_RENDER_SIZE; // Get the Tile position within the map.
+    posX&= (HALF_RENDER_SIZE-1);         // Lower part is the position within the tile.
+    posZ&= (HALF_RENDER_SIZE-1);         // Lower part is the position within the tile.
     //   +-+v2
     //   |/|
     // v1+-+
@@ -515,9 +510,9 @@ short TileManager::getTileHeight(int posX, int posZ)
     {
         int v1 = getMapHeight(TileX  , TileZ+1); // BL
         int v2 = getMapHeight(TileX+1, TileZ  ); // TR
-        if (TILE_RENDER_SIZE - posX > posZ)
+        if (HALF_RENDER_SIZE - posX > posZ)
             return calcHeight(getMapHeight(TileX, TileZ), v1, v2, posX, posZ); // TL
-        return calcHeight(getMapHeight(TileX+1, TileZ+1), v1, v2, TILE_RENDER_SIZE-posZ, TILE_RENDER_SIZE-posX); // BR
+        return calcHeight(getMapHeight(TileX+1, TileZ+1), v1, v2, HALF_RENDER_SIZE-posZ, HALF_RENDER_SIZE-posX); // BR
     }
     // v1+-+
     //   |\|
@@ -525,8 +520,8 @@ short TileManager::getTileHeight(int posX, int posZ)
     int v1 = getMapHeight(TileX  , TileZ  ); // TL
     int v2 = getMapHeight(TileX+1, TileZ+1); // BR
     if (posX < posZ)
-        return calcHeight(getMapHeight(TileX  , TileZ+1), v1, v2, posX, TILE_RENDER_SIZE-posZ); // BL
-    return calcHeight(getMapHeight(TileX+1, TileZ  ), v1, v2, posZ, TILE_RENDER_SIZE-posX); //TR
+        return calcHeight(getMapHeight(TileX  , TileZ+1), v1, v2, posX, HALF_RENDER_SIZE-posZ); // BL
+    return calcHeight(getMapHeight(TileX+1, TileZ  ), v1, v2, posZ, HALF_RENDER_SIZE-posX); //TR
 }
 
 //================================================================================================

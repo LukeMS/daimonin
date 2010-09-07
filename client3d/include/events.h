@@ -49,7 +49,7 @@ public:
     }
     void Init(Ogre::RenderWindow *win, Ogre::SceneManager *mSceneMgr);
     void freeRecources();
-    void setWorldPos(int posX, int posZ);
+    void checkTileBorderMovement();
     Ogre::SceneManager *getSceneManager() const
     {
         return mSceneManager;

@@ -23,7 +23,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 
 #include <OgreSceneManager.h>
 #include "spell_manager.h"
-#include "object_manager.h"
+#include "object/object_manager.h"
 #include "particle_manager.h"
 #include "option.h"
 #include "logger.h"

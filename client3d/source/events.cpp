@@ -34,12 +34,13 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include "logger.h"
 #include "profiler.h"
 #include "network.h"
+#include "network_account.h"
 #include "gui/gui_manager.h"
 #include "tile/tile_manager.h"
 #include "tile/tile_map.h"
-#include "object_manager.h"
-#include "object_hero.h"
-#include "object_visuals.h"
+#include "object/object_manager.h"
+#include "object/object_element_avatar.h"
+#include "object/object_element_animate3d.h"
 #include "particle_manager.h"
 #include "spell_manager.h"
 #include "network_serverfile.h"
@@ -50,8 +51,8 @@ static const unsigned int MIN_LEN_LOGIN_NAME =  3;
 static const unsigned int MAX_LEN_LOGIN_NAME = 12;
 static const unsigned int MIN_LEN_LOGIN_PSWD =  6;
 static const unsigned int MAX_LEN_LOGIN_PSWD = 17;
-static const Real CAMERA_POS_Y = TileManager::TILE_RENDER_SIZE * (TileManager::CHUNK_SIZE_Z+1);
-static const Real CAMERA_POS_Z = CAMERA_POS_Y + TileManager::TILE_RENDER_SIZE * (TileManager::CHUNK_SIZE_Z-4)/2;
+static const Real CAMERA_POS_Y = TileManager::HALF_RENDER_SIZE * (TileManager::CHUNK_SIZE_Z+1);
+static const Real CAMERA_POS_Z = CAMERA_POS_Y + TileManager::HALF_RENDER_SIZE * (TileManager::CHUNK_SIZE_Z-6)/2;
 static const int  CAMERA_TURN_DELAY = 50; // The speed of the camera turning.
 //static const int  CAMERA_TURN_MAX   = 45; // Maximum degree of camera turning by user.
 static const int  CAMERA_TURN_MAX   = 90; // Maximum degree of camera turning by user.
@@ -131,31 +132,39 @@ void Events::freeRecources()
     Network      ::getSingleton().freeRecources();
     GuiManager   ::getSingleton().freeRecources();
     Sound        ::getSingleton().freeRecources();
-    ObjectVisuals::getSingleton().freeRecources();
 }
 
 //================================================================================================
-// Player has moved over a tile border. Update the world positions.
+// Avatar movement.
 //================================================================================================
-void Events::setWorldPos(int deltaX, int deltaZ)
+void Events::checkTileBorderMovement()
 {
     PROFILE()
-    //ParticleManager::getSingleton().pauseAll(true);
-    //TileManager::getSingleton().scrollMap(deltaX, deltaZ);
-    std::stringstream strCmd;
-    if      (deltaX >0 && deltaZ >0) strCmd << (char) 1; // sw
-    else if (deltaX <0 && deltaZ >0) strCmd << (char) 3; // se
-    else if (deltaX >0 && deltaZ <0) strCmd << (char) 7; // nw
-    else if (deltaX <0 && deltaZ <0) strCmd << (char) 9; // ne
-    else if (deltaX==0 && deltaZ <0) strCmd << (char) 8; // n
-    else if (deltaX==0 && deltaZ >0) strCmd << (char) 2; // s
-    else if (deltaX >0 && deltaZ==0) strCmd << (char) 4; // w
-    else if (deltaX <0 && deltaZ==0) strCmd << (char) 6; // e
-    Network::getSingleton().send_command_binary(Network::CLIENT_CMD_MOVE, strCmd);
-    //TileManager::getSingleton().changeChunks();
-    //Vector3 deltaPos = ObjectManager::getSingleton().synchToWorldPos(deltaX, deltaZ);
-    //ParticleManager::getSingleton().synchToWorldPos(deltaPos);
-    //ParticleManager::getSingleton().pauseAll(false);
+    static Vector3 oldPos = ObjectManager::getSingleton().getAvatarPos()/TileManager::TILE_RENDER_SIZE;
+    Vector3 actPos = ObjectManager::getSingleton().getAvatarPos()/TileManager::TILE_RENDER_SIZE;
+    int dx = (int)oldPos.x - (int)actPos.x;
+    int dz = (int)oldPos.z - (int)actPos.z;
+    // Player moved over a tile border.
+    if (dx || dz)
+    {
+        //ParticleManager::getSingleton().pauseAll(true);
+        TileManager::getSingleton().scrollMap(dx, dz);
+        ObjectManager::getSingleton().syncToMapScroll(dx, dz);
+        oldPos = ObjectManager::getSingleton().getAvatarPos()/TileManager::TILE_RENDER_SIZE;
+/*
+        std::stringstream strCmd;
+        if      (deltaX >0 && deltaZ >0) strCmd << (char) 1; // sw
+        else if (deltaX <0 && deltaZ >0) strCmd << (char) 3; // se
+        else if (deltaX >0 && deltaZ <0) strCmd << (char) 7; // nw
+        else if (deltaX <0 && deltaZ <0) strCmd << (char) 9; // ne
+        else if (deltaX==0 && deltaZ <0) strCmd << (char) 8; // n
+        else if (deltaX==0 && deltaZ >0) strCmd << (char) 2; // s
+        else if (deltaX >0 && deltaZ==0) strCmd << (char) 4; // w
+        else if (deltaX <0 && deltaZ==0) strCmd << (char) 6; // e
+        Network::getSingleton().send_command_binary(Network::CLIENT_CMD_MOVE, strCmd);
+*/
+        //ParticleManager::getSingleton().pauseAll(false);
+    }
 }
 
 //================================================================================================
@@ -183,7 +192,7 @@ bool Events::frameStarted(const FrameEvent& evt)
             // Create one viewport, entire window.
             // ////////////////////////////////////////////////////////////////////
             mCamera = mSceneManager->createCamera("PlayerCam");
-            mCamera->setQueryFlags(ObjectManager::QUERY_CAMERA_MASK);
+            mCamera->setQueryFlags(ObjectManager::QUERY_MASK_CAMERA);
             Viewport *VP = mWindow->addViewport(mCamera);
             mCamera->setAspectRatio(Real(VP->getActualWidth()) / Real(VP->getActualHeight()));
             mCameraZoom = STD_CAMERA_ZOOM;
@@ -318,10 +327,18 @@ bool Events::frameStarted(const FrameEvent& evt)
 
         case Option::GAME_STATUS_INIT_TILE:
         {
-            TileManager::getSingleton().Init(mSceneManager, ObjectManager::QUERY_TILES_LAND_MASK,
-                                             ObjectManager::QUERY_TILES_WATER_MASK,
+            TileManager::getSingleton().Init(mSceneManager, ObjectManager::QUERY_MASK_TILES_LAND,
+                                             ObjectManager::QUERY_MASK_TILES_WATER,
                                              Option::getSingleton().getIntValue(Option::CMDLINE_TILEENGINE_LOD),
                                              Option::getSingleton().getIntValue(Option::CMDLINE_CREATE_MEDIA)?true:false);
+            Option::getSingleton().setGameStatus(Option::GAME_STATUS_INIT_OBJECT);
+            GuiManager::getSingleton().displaySystemMessage("Starting the object-manager...");
+            break;
+        }
+
+        case Option::GAME_STATUS_INIT_OBJECT:
+        {
+            ObjectManager::getSingleton().init();
             Option::getSingleton().setGameStatus(Option::GAME_STATUS_INIT_GUI);
             GuiManager::getSingleton().displaySystemMessage("Starting the GUI...");
             break;
@@ -412,15 +429,15 @@ bool Events::frameStarted(const FrameEvent& evt)
             ServerFile::getSingleton().checkFile(ServerFile::FILE_ANIMS,    FILE_CLIENT_ANIMS);
             std::stringstream strCmd;
             strCmd  <<
-            "dv "   << Network::DAI_VERSION_RELEASE << "." << Network::DAI_VERSION_MAJOR << "." << Network::DAI_VERSION_MINOR <<
-            " pv "  << Network::PROTOCOL_VERSION <<
-            " sn "  << "0" << // Sounds
-            " mz "  << 17 << "x" << 17 <<
-            " skf " << ServerFile::getSingleton().getLength(ServerFile::FILE_SKILLS)  << "|" << std::hex<< ServerFile::getSingleton().getCRC(ServerFile::FILE_SKILLS)     << std::dec <<
-            " spf " << ServerFile::getSingleton().getLength(ServerFile::FILE_SPELLS)  << "|" << std::hex<< ServerFile::getSingleton().getCRC(ServerFile::FILE_SPELLS)     << std::dec <<
-            " bpf " << ServerFile::getSingleton().getLength(ServerFile::FILE_BMAPS)   << "|" << std::hex<< ServerFile::getSingleton().getCRC(ServerFile::FILE_BMAPS)      << std::dec <<
-            " stf " << ServerFile::getSingleton().getLength(ServerFile::FILE_SETTINGS)<< "|" << std::hex<< ServerFile::getSingleton().getCRC(ServerFile::FILE_SETTINGS)   << std::dec <<
-            " amf " << ServerFile::getSingleton().getLength(ServerFile::FILE_ANIMS)   << "|" << std::hex<< ServerFile::getSingleton().getCRC(ServerFile::FILE_ANIMS)      << std::dec;
+                    "dv "   << Network::DAI_VERSION_RELEASE << "." << Network::DAI_VERSION_MAJOR << "." << Network::DAI_VERSION_MINOR <<
+                    " pv "  << Network::PROTOCOL_VERSION <<
+                    " sn "  << "0" << // Sounds
+                    " mz "  << 17 << "x" << 17 <<
+                    " skf " << ServerFile::getSingleton().getLength(ServerFile::FILE_SKILLS)  << "|" << std::hex<< ServerFile::getSingleton().getCRC(ServerFile::FILE_SKILLS)     << std::dec <<
+                    " spf " << ServerFile::getSingleton().getLength(ServerFile::FILE_SPELLS)  << "|" << std::hex<< ServerFile::getSingleton().getCRC(ServerFile::FILE_SPELLS)     << std::dec <<
+                    " bpf " << ServerFile::getSingleton().getLength(ServerFile::FILE_BMAPS)   << "|" << std::hex<< ServerFile::getSingleton().getCRC(ServerFile::FILE_BMAPS)      << std::dec <<
+                    " stf " << ServerFile::getSingleton().getLength(ServerFile::FILE_SETTINGS)<< "|" << std::hex<< ServerFile::getSingleton().getCRC(ServerFile::FILE_SETTINGS)   << std::dec <<
+                    " amf " << ServerFile::getSingleton().getLength(ServerFile::FILE_ANIMS)   << "|" << std::hex<< ServerFile::getSingleton().getCRC(ServerFile::FILE_ANIMS)      << std::dec;
             Network::getSingleton().send_command_binary(Network::CLIENT_CMD_SETUP, strCmd);
             timeWaitServer = Root::getSingleton().getTimer()->getMicroseconds();
             Option::getSingleton().setGameStatus(Option::GAME_STATUS_WAITSETUP);
@@ -548,12 +565,13 @@ bool Events::frameStarted(const FrameEvent& evt)
         {
             GuiManager::getSingleton().clear(GuiManager::TABLE);
             String strTabel;
-            for (int i = 0; i < ObjectHero::getSingleton().getSumChars(); ++i)
+            for (int i = 0; i < NetworkAccount::getSingleton().getSumChars(); ++i)
             {
-                strTabel = ObjectHero::getSingleton().getCharName(i);   strTabel+= ";";
-                strTabel+= ObjectHero::getSingleton().getCharRace(i);   strTabel+= " ";
-                strTabel+= ObjectHero::getSingleton().getCharGender(i); strTabel+= ";";
-                strTabel+= StringConverter::toString(ObjectHero::getSingleton().getCharLevel(i));
+                const NetworkAccount::account *acc = NetworkAccount::getSingleton().getAccountEntry(i);
+                strTabel = acc->name + ";";
+                strTabel+= acc->race?  "Elfish ":"Human ";
+                strTabel+= acc->gender?"Female;":"Male;";
+                strTabel+= "Level " + StringConverter::toString(acc->level);
                 GuiManager::getSingleton().addLine(GuiManager::TABLE, strTabel.c_str());
             }
             GuiManager::getSingleton().showWindow(GuiManager::WIN_SERVERSELECT, true);
@@ -576,7 +594,7 @@ bool Events::frameStarted(const FrameEvent& evt)
             {
                 GuiManager::getSingleton().setText(GuiManager::TEXTBOX_SERVER_INFO2, " ");
                 GuiManager::getSingleton().setText(GuiManager::TEXTBOX_SERVER_INFO3, " ");
-                ObjectHero::getSingleton().setSelected(select);
+                NetworkAccount::getSingleton().setSelected(select);
                 GuiManager::getSingleton().showWindow(GuiManager::WIN_SERVERSELECT, false);
                 Option::getSingleton().setGameStatus(Option::GAME_STATUS_LOGIN_CHARACTER);
             }
@@ -585,8 +603,10 @@ bool Events::frameStarted(const FrameEvent& evt)
 
         case Option::GAME_STATUS_LOGIN_CHARACTER:
         {
+            std::string name = NetworkAccount::getSingleton().getSelectedChar();
+            ObjectManager::getSingleton().setAvatarName(name);
             std::stringstream ssTemp;
-            ssTemp << ObjectHero::getSingleton().getSelectedCharName();
+            ssTemp << name;
             Network::getSingleton().send_command_binary(Network::CLIENT_CMD_ADDME, ssTemp);
 //            GuiManager::getSingleton().addTextline(GuiManager::WIN_CHATWINDOW, GuiManager::LIST_MSGWIN, name.c_str());
             Option::getSingleton().setGameStatus(Option::GAME_STATUS_LOGIN_CHARACTER_WAIT);
@@ -605,8 +625,6 @@ bool Events::frameStarted(const FrameEvent& evt)
             if (!once)
             {
                 once = true;
-                ObjectManager::getSingleton().init();
-                ObjectVisuals::getSingleton().Init(PATH_TXT, FILE_NPC_VISUALS);
                 GuiManager::getSingleton().showWindow(GuiManager::WIN_STATISTICS, true);
                 GuiManager::getSingleton().showWindow(GuiManager::WIN_PLAYERINFO, false);
                 GuiManager::getSingleton().showWindow(GuiManager::WIN_FIRST_STEPS, true);
@@ -653,7 +671,7 @@ bool Events::frameStarted(const FrameEvent& evt)
             {
                 RaySceneQuery *mRaySceneQuery = mSceneManager->createRayQuery(Ray());
                 mRaySceneQuery->setRay(mCamera->getCameraToViewportRay(mMouse.x / mWindow->getWidth(), mMouse.y / mWindow->getHeight()));
-                mRaySceneQuery->setQueryMask(ObjectManager::QUERY_NPC_MASK | ObjectManager::QUERY_CONTAINER);
+                mRaySceneQuery->setQueryMask(ObjectManager::QUERY_MASK_NPC | ObjectManager::QUERY_MASK_CONTAINER);
                 RaySceneQueryResult &result = mRaySceneQuery->execute();
                 if (!result.empty() && !GuiManager::getSingleton().mouseInsideGui())
                 {
@@ -669,9 +687,10 @@ bool Events::frameStarted(const FrameEvent& evt)
                 mSceneManager->destroyQuery(mRaySceneQuery);
                 time = Root::getSingleton().getTimer()->getMilliseconds();
             }
-            ObjectManager::getSingleton().update(ObjectManager::OBJECT_NPC, evt);
+            ObjectManager::getSingleton().update(evt);
             ParticleManager::getSingleton().update(evt.timeSinceLastFrame);
             TileMap::getSingleton().update();
+            checkTileBorderMovement();
             break;
         }
 

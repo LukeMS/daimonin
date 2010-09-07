@@ -115,7 +115,7 @@ float2 MainVP_Water_Lod0(
     uniform float Time,
     uniform float4x4 worldViewProj) : COLOR
 {
-    inPos.y+= sin(sin(inPos.x*8.0f) + cos(inPos.z*8.0f) + Time * para.a)*para.b;
+    inPos.y+= sin(sin(inPos.x*16.0f) + cos(inPos.z*16.0f) + Time * para.a)*para.b;
     outPos  = mul(worldViewProj, inPos);
     outTex0 = inTex0;
     return para.rg;
@@ -148,14 +148,14 @@ void MainVP_Sprite(
     uniform float4x4 worldMatrix,
     uniform float4x4 viewProjMatrix)
 {
-    const float  SIZE = 64.0f;
+    const float  SIZE = 20.0f;
     const float3 UP_VECTOR = /*normalize*/(float3(0.0f, 1.0f, 0.0f));
 
     float3 eyeVector = viewProjMatrix[2].xyz;
     float3 sideVector= /*normalize*/(cross(eyeVector, UP_VECTOR));
     float4 center = mul(worldMatrix, position);
     center.xyz += (uv.x-0.5f)*sideVector * SIZE;
-    center.y -= uv.y * SIZE; // center.xyz -= uv.y *UP_VECTOR * SIZE;
+    center.y -= uv.y * SIZE - 2.0f; // center.xyz -= uv.y *UP_VECTOR * SIZE;
     oPosition = mul(viewProjMatrix, center);
     oUV= uv;
 }

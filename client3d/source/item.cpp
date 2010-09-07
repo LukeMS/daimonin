@@ -29,9 +29,11 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include "network.h"
 #include "gui/gui_manager.h"
 #include "tile/tile_map_wrapper.h"
-#include "object_hero.h"
 
 using namespace Ogre;
+
+
+// todo put this into the object class
 
 #define D_DEBUG
 
