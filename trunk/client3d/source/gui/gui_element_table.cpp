@@ -49,7 +49,7 @@ GuiTable::GuiTable(TiXmlElement *xmlElement, const void *parent):GuiElement(xmlE
         uint32 *color = 0;
         if      (!strcmp(xmlOpt->Attribute("type"), "COLOR_ODD_ROWS"))  color = &mColorRowBG[0]; // Color of odd  rows.
         else if (!strcmp(xmlOpt->Attribute("type"), "COLOR_EVEN_ROWS")) color = &mColorRowBG[1]; // Color of even rows.
-        else if (!strcmp(xmlOpt->Attribute("type"), "COLOR_SELECTION")) color = &mColorSelect;  // Color of selection.
+        else if (!strcmp(xmlOpt->Attribute("type"), "COLOR_SELECTION")) color = &mColorSelect;   // Color of selection.
         if (!color)
             Logger::log().warning() << "Unknown Color type " << xmlOpt->Attribute("type");
         else

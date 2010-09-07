@@ -33,8 +33,9 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include "tile/tile_manager.h"
 #include "gui/gui_manager.h"
 #include "network_serverfile.h"
-#include "object_manager.h"
-#include "object_hero.h"
+#include "network_account.h"
+#include "object/object_manager.h"
+#include "object/object_element_avatar.h"
 #include "item.h"
 
 using namespace Ogre;
@@ -152,7 +153,7 @@ void Network::AccountCmd(uchar *data, int len)
 {
     PROFILE()
     GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Account cmd from server");
-    ObjectHero::getSingleton().clearAccount();
+    NetworkAccount::getSingleton().clearAccount();
     // First, get the account status - it tells us too when login failed
     if (*data) // something is wrong when not ACCOUNT_STATUS_OK (0)
     {
@@ -161,13 +162,8 @@ void Network::AccountCmd(uchar *data, int len)
     }
     else // we have account data... set it up and move player to account view mode
     {
-        int count = 1;
+        NetworkAccount::getSingleton().fillAccount(len, data);
         GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Account ok");
-        for (int nr = 0; nr < ObjectHero::ACCOUNT_MAX_PLAYER; ++nr)
-        {
-            if (count >= len) break;
-            count += ObjectHero::getSingleton().fillAccount(nr, data+count);
-        }
         Option::getSingleton().setGameStatus(Option::GAME_STATUS_LOGIN_DONE);
     }
 }
@@ -1058,9 +1054,9 @@ void Network::PlayerCmd(uchar *data, int len)
     Option::getSingleton().setGameStatus(Option::GAME_STATUS_PLAY);
     Item::getSingleton().setBackpackID(GetInt_String(data));
     int i = 4;
-//    ObjectHero::getSingleton().weight = GetInt_String(data + i);
+//    ObjectElementAvatar::getSingleton().weight = GetInt_String(data + i);
     i += 4;
-    //ObjectHero.getSingleton().face = GetInt_String(data + i);
+    //ObjectElementAvatar.getSingleton().face = GetInt_String(data + i);
     //request_face(face, 0);
     i += 4;
     int nlen = data[i++];
@@ -1082,8 +1078,8 @@ void Network::PlayerCmd(uchar *data, int len)
     if (once)
     {
         once = false;
-        ObjectStatic::sObject obj;
-        obj.nickName  = "Polyveg";
+        ObjectManager::sObject obj;
+        obj.nickName  = NetworkAccount::getSingleton().getSelectedChar();//"Polyveg";
         obj.meshName  = "Smitty.mesh";
         obj.type      = ObjectManager::OBJECT_PLAYER;
         obj.boundingRadius = 2;
@@ -1093,12 +1089,12 @@ void Network::PlayerCmd(uchar *data, int len)
         obj.maxHP     = 150;
         obj.maxMana   = 150;
         obj.maxGrace  = 150;
-        obj.pos.x     = 1*TileManager::TILE_RENDER_SIZE * TileManager::CHUNK_SIZE_X;
-        obj.pos.z     = 2*TileManager::TILE_RENDER_SIZE * (TileManager::CHUNK_SIZE_Z-3);
+        obj.pos.x     = 1*TileManager::HALF_RENDER_SIZE * TileManager::CHUNK_SIZE_X;
+        obj.pos.z     = 2*TileManager::HALF_RENDER_SIZE * (TileManager::CHUNK_SIZE_Z-3);
         obj.level     = 0;
         obj.facing    = -60;
         obj.particleNr=-1;
-        ObjectManager::getSingleton().addMobileObject(obj);
+        ObjectManager::getSingleton().addCreature(obj);
     }
     Logger::log().info() << "Loading quickslot settings";
     //load_quickslots_entrys();

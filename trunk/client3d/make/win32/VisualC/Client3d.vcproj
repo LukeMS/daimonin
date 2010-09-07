@@ -3,6 +3,7 @@
 	ProjectType="Visual C++"
 	Version="9,00"
 	Name="Client3d"
+	ProjectGUID="{56C4C46D-B17B-4641-9141-BCD53C5651D4}"
 	RootNamespace="Client3d"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
@@ -63,7 +64,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="OgreMain_d.lib OIS_d.lib cAudio.lib WS2_32.lib"
+				AdditionalDependencies="OgreMain_d.lib OIS_d.lib cAudio_d.lib WS2_32.lib"
 				OutputFile="$(OutDir)/Client3d_d.exe"
 				Version="0.99"
 				LinkIncremental="2"
@@ -207,10 +208,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\source\light_manager.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\source\logger.cpp"
 				>
 			</File>
@@ -223,6 +220,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\source\network_account.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\source\network_cmd.cpp"
 				>
 			</File>
@@ -232,38 +233,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\source\network_serverfile.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\source\object_animate.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\source\object_equipment.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\source\object_hero.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\source\object_manager.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\source\object_missile.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\source\object_npc.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\source\object_static.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\source\object_visuals.cpp"
 				>
 			</File>
 			<File
@@ -378,6 +347,50 @@
 					>
 				</File>
 			</Filter>
+			<Filter
+				Name="object"
+				>
+				<File
+					RelativePath="..\..\..\source\object\object.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\source\object\object_element.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\source\object\object_element_animate3d.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\source\object\object_element_avatar.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\source\object\object_element_equip3d.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\source\object\object_element_missile.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\source\object\object_element_physical.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\source\object\object_element_visual2d.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\source\object\object_element_visual3d.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\source\object\object_manager.cpp"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -396,10 +409,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\include\light_manager.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\include\logger.h"
 				>
 			</File>
@@ -408,43 +417,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\include\network_account.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\include\network_cmd_interface.h"
 				>
 			</File>
 			<File
 				RelativePath="..\..\..\include\network_serverfile.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\include\object_animate.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\include\object_equipment.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\include\object_hero.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\include\object_manager.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\include\object_missile.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\include\object_npc.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\include\object_static.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\include\object_visuals.h"
 				>
 			</File>
 			<File
@@ -560,6 +541,50 @@
 				</File>
 				<File
 					RelativePath="..\..\..\include\tile\tile_map_wrapper.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="object"
+				>
+				<File
+					RelativePath="..\..\..\include\object\object.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\include\object\object_element.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\include\object\object_element_animate3d.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\include\object\object_element_avatar.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\include\object\object_element_equip3d.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\include\object\object_element_missile.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\include\object\object_element_physical.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\include\object\object_element_visual2d.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\include\object\object_element_visual3d.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\include\object\object_manager.h"
 					>
 				</File>
 			</Filter>

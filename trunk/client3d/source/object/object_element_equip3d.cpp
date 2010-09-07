@@ -24,8 +24,8 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include <OgreEntity.h>
 #include <OgreSceneManager.h>
 #include <OgreStringConverter.h>
-#include "object_manager.h"
-#include "object_equipment.h"
+#include "object/object_manager.h"
+#include "object/object_element_equip3d.h"
 #include "particle_manager.h"
 #include "sound.h"
 #include "events.h"
@@ -34,7 +34,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 
 using namespace Ogre;
 
-static const String boneName[ObjectEquipment::BONE_SUM]=
+static const String boneName[ObjectElementEquip3d::BONE_SUM]=
 {
     "Pelvis",
     "Center",
@@ -52,13 +52,13 @@ static const String boneName[ObjectEquipment::BONE_SUM]=
     "LToes",     "RToes"
 };
 
-static const char *particleName[ObjectEquipment::PARTICLE_FX_SUM]=
+static const char *particleName[ObjectElementEquip3d::PARTICLE_FX_SUM]=
 {
     "Particle/SwordGlow"
 };
 
 // Todo: use pointer to vector for this. and read meshnames from a xml-file.
-static const char *meshName[][ObjectEquipment::ITEM_SUM]=
+static const char *meshName[][ObjectElementEquip3d::ITEM_SUM]=
 {
     {
         // ITEM_WEAPON
@@ -91,10 +91,11 @@ static const char *meshName[][ObjectEquipment::ITEM_SUM]=
 //================================================================================================
 // Init the model from the description file.
 //================================================================================================
-ObjectEquipment::ObjectEquipment(Entity *parentEntity)
+ObjectElementEquip3d::ObjectElementEquip3d(Object *parent, Entity *parentEntity):ObjectElement(parent)
 {
     PROFILE()
     Logger::log().list() << "Adding Equipment.";
+    parent->addElement(getFamilyID(), this);
     mParentEntity = parentEntity;
     for (int bone=0; bone < BONE_SUM; ++bone)
     {
@@ -104,9 +105,17 @@ ObjectEquipment::ObjectEquipment(Entity *parentEntity)
 }
 
 //================================================================================================
+//
+//================================================================================================
+bool ObjectElementEquip3d::update(const Ogre::FrameEvent &event)
+{
+    return true;
+}
+
+//================================================================================================
 // Create and attach an equipment item to bone.
 //================================================================================================
-void ObjectEquipment::equipItem(unsigned int bone, int type, int itemID, int particleID)
+void ObjectElementEquip3d::equipItem(unsigned int bone, int type, int itemID, int particleID)
 {
     PROFILE()
     if (bone >= BONE_SUM) return;
@@ -130,7 +139,8 @@ void ObjectEquipment::equipItem(unsigned int bone, int type, int itemID, int par
         static unsigned long itemIndex =0;
         String tmpName = "Item_" + StringConverter::toString(++itemIndex, 8, '0');
         mItem[bone].entity= Events::getSingleton().getSceneManager()->createEntity(tmpName, meshName[type][itemID]);
-        mItem[bone].entity->setQueryFlags(ObjectManager::QUERY_EQUIPMENT_MASK);
+        mItem[bone].entity->setQueryFlags(ObjectManager::QUERY_MASK_NPC);
+        mItem[bone].entity->setRenderQueueGroup(Ogre::RENDER_QUEUE_7);
         mParentEntity->attachObjectToBone(boneName[bone], mItem[bone].entity);
     }
 }
@@ -138,7 +148,7 @@ void ObjectEquipment::equipItem(unsigned int bone, int type, int itemID, int par
 //================================================================================================
 // Detach and destroy an equipment item from bone.
 //================================================================================================
-void ObjectEquipment::dropItem(int bone)
+void ObjectElementEquip3d::dropItem(int bone)
 {
     PROFILE()
     if (mItem[bone].entity)

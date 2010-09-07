@@ -21,8 +21,8 @@ You should have received a copy of the GNU General Public License along with
 this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
 
-#ifndef ObjectHero_H
-#define ObjectHero_H
+#ifndef OBJECT_ELEMENT_AVATAR_H
+#define OBJECT_ELEMENT_AVATAR_H
 
 #include "item.h"
 
@@ -35,13 +35,12 @@ this program; If not, see <http://www.gnu.org/licenses/>.
  ** This singleton class is the final object class.
  ** It handles additional functions like weapon and equipment changes.
  *****************************************************************************/
-class ObjectHero
+class ObjectElementAvatar
 {
 public:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
-    enum {ACCOUNT_MAX_PLAYER = 6};
     enum {MAX_SKILL = 6};
     typedef enum _attacks
     {
@@ -128,156 +127,22 @@ public:
     }
     Stats;
 
-    typedef enum _inventory_win
-    {
-        IWIN_BELOW,
-        IWIN_INV
-    } _inventory_win;
-
-    int weight_limit;
-    int count; // Repeat count on command
-    int target_mode;
-    int target_code;
-    int target_color;
-    int inventory_win; // inventory windows
-    int menustatus;
-    int mark_count;
-    int loc;
-    int tag;
-    int nrof;
-    int skill_g; // skill group and entry of ready skill
-    int skill_e;
-    int warn_hp;
-    int win_inv_slot;
-    int win_inv_tag;
-    int win_quick_tag;
-    int win_pdoll_tag;
-    int win_inv_start;
-    int win_inv_count;
-    int win_inv_ctag;
-    int win_below_slot;
-    int win_below_tag;
-    int win_below_start;
-    int win_below_count;
-    int win_below_ctag;
-
-    int input_mode; // mode: no, console(textstring), numinput
-    int nummode;
-
-    float gen_hp;    /**< Hitpoint regeneration speed **/
-    float gen_sp;    /**< Spellpoint regeneration speed **/
-    float gen_grace; /**< Grace regeneration speed **/
-
-    bool no_echo; /**< If true, don't echo keystrokes **/
-    bool fire_on; /**< If true, fire key is pressed = action key (ALT;CTRL) **/
-    bool run_on;  /**< If true, run key is on = action key (ALT;CTRL) **/
-    bool resize_twin;
-    bool resize_twin_marker;
-    bool firekey_on; // True if fire key is pressed = permanent mode
-    bool runkey_on; // sic!
-    bool echo_bindings; // If true, echo the command that the key
-    bool warn_statdown;
-    bool warn_statup;
-    bool warn_drain;
-
-    int window_weight;
-    int real_weight;
-
-    unsigned short count_left; // count for commands
-    unsigned short mmapx, mmapy; // size of magic map
-    unsigned short pmapx, pmapy; // Where the player is on the magic map
-    unsigned short mapxres, mapyres;// resolution to draw on the magic map
-
-    Stats stats; // Player stats
-//    Input_State input_state; // What the input state is
-    rangetype shoottype; // What type of range attack player has
-
-    Ogre::uchar *magicmap; // Magic map data
-    Ogre::uchar showmagic; // If 0, show normal map, otherwise, show magic map.
-
-    Ogre::uchar command_window; // How many outstanding commands to allow
-    Ogre::uchar ready_spell; // Index to spell that is readied
-// player knows
-    Ogre::uchar map_x, map_y; // These are offset values. See object.c
-
-    char target_hp; /**<  hp of our target in % **/
-    std::string last_command; // Last command entered
-    std::string input_text; // keys typed (for long commands)
-    std::string spells[255]; // List of all the spells the
-    std::string target_name; // Rank & Name of char
-    std::string num_text;
-    std::string skill_name;
-    std::string rankandname;
-    std::string pname; /**<  Name of char **/
-    std::string title; /**< Race & Profession of character **/
-    std::string rank;
-    std::string race;
-    std::string godname;
-    std::string alignment; // alignment
-    std::string gender;
-    std::string range; /**<  Range attack chosen. **/
-    std::string player_reply;
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    static ObjectHero &getSingleton()
-    {
-        static ObjectHero Singleton; return Singleton;
-    }
-    int fillAccount(int count, const Ogre::uchar *data);
-    void clearAccount()
-    {
-        account.count = 0;
-    }
-    const Ogre::String &getSelectedCharName() const
-    {
-        return account.name[account.selected];
-    }
-    const Ogre::String &getCharName(unsigned int nr) const
-    {
-        return account.name[nr];
-    }
-    const char *getCharRace(unsigned int nr) const
-    {
-        return (!account.race[nr])?"Human":"Elfish";
-    }
-    int getCharLevel(int nr) const
-    {
-        return account.level[nr];
-    }
-    const char *getCharGender(unsigned int nr) const
-    {
-        return (account.gender[nr])?"Male":"Female";
-    }
-    void setSelected(int nr)
-    {
-        account.selected = nr;
-    }
-    int getSumChars() const
-    {
-        return account.count;
-    }
-
+    //virtual Object::familyID getFamilyID() const { return Object::FAMILY_AVATAR; }
 private:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
-    struct _Account
-    {
-        int count;    /**< Number of chars already created. **/
-        int selected; /**< Actually selected character. **/
-        Ogre::String name[ACCOUNT_MAX_PLAYER]; /**< List of account chars. **/
-        int  level [ACCOUNT_MAX_PLAYER];
-        int  race  [ACCOUNT_MAX_PLAYER];
-        bool gender[ACCOUNT_MAX_PLAYER];
-    } account;
+
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    ObjectHero();
-    ~ObjectHero() {}
-    ObjectHero(const ObjectHero&);            /**< disable copy-constructor. **/
-    ObjectHero &operator=(const ObjectHero&); /**< disable assignment operator. **/
+    ObjectElementAvatar();
+    ~ObjectElementAvatar() {}
+    ObjectElementAvatar(const ObjectElementAvatar&);            /**< disable copy-constructor. **/
+    ObjectElementAvatar &operator=(const ObjectElementAvatar&); /**< disable assignment operator. **/
 };
 
 #endif

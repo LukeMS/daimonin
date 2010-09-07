@@ -21,8 +21,8 @@ You should have received a copy of the GNU General Public License along with
 this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
 
-#ifndef OBJECT_ANIMATE_H
-#define OBJECT_ANIMATE_H
+#ifndef OBJECT_ELEMENT_ANIMATE3D_H
+#define OBJECT_ELEMENT_ANIMATE3D_H
 
 /**
  ** This class handles object animation.
@@ -30,7 +30,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
  **       So it will be possible to walk and shoot arrows at same time
  **       without generating mixed mode animations.
  *****************************************************************************/
-class ObjectAnimate
+class ObjectElementAnimate3d : public ObjectElement
 {
 public:
     // ////////////////////////////////////////////////////////////////////
@@ -60,8 +60,11 @@ public:
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    ObjectAnimate(Ogre::Entity *entity);
-    ~ObjectAnimate();
+    ObjectElementAnimate3d(Object *parent, Ogre::Entity *entity);
+    ~ObjectElementAnimate3d();
+    Object::familyID getFamilyID() const { return Object::FAMILY_ANIMATION3D; }
+    bool update(const Ogre::FrameEvent &event);
+
     bool isMovement() const
     {
         return (mAnimGroup <= ANIM_GROUP_RUN);
@@ -95,7 +98,6 @@ public:
         return mAnimGroupEntries[animGroup];
     }
     void pause(bool p);
-    void update(const Ogre::FrameEvent& event);
     void toggleAnimation(int animGroup, int animNr, bool loop = false, bool force = false, bool random = false, bool freezeLastFrame = false);
     void toggleAnimation2(int animGroup, int animNr, bool loop = false, bool force = false, bool random = false);
     Ogre::Real getAnimSpeed() const
@@ -121,8 +123,8 @@ private:
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    ObjectAnimate(const ObjectAnimate&);            /**< disable copy-constructor. **/
-    ObjectAnimate &operator=(const ObjectAnimate&); /**< disable assignment operator. **/
+    ObjectElementAnimate3d(const ObjectElementAnimate3d&);            /**< disable copy-constructor. **/
+    ObjectElementAnimate3d &operator=(const ObjectElementAnimate3d&); /**< disable assignment operator. **/
 };
 
 #endif

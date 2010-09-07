@@ -24,7 +24,8 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include "option.h"
 #include "logger.h"
 #include "profiler.h"
-#include "object_animate.h"
+#include "object/object.h"
+#include "object/object_element_animate3d.h"
 #include <OgreEntity.h>
 #include <OgreAnimation.h>
 #include <OgreFrameListener.h>
@@ -37,7 +38,7 @@ using namespace Ogre;
 //=================================================================================================
 // Init all static Elemnts.
 //=================================================================================================
-const char *ObjectAnimate::mSTATE_NAMES[ANIM_GROUP_SUM]=
+const char *ObjectElementAnimate3d::mSTATE_NAMES[ANIM_GROUP_SUM]=
 {
     "Idle", "Idle_Fun",
     "Walk",
@@ -56,15 +57,10 @@ const char *ObjectAnimate::mSTATE_NAMES[ANIM_GROUP_SUM]=
 //=================================================================================================
 // Constructor.
 //=================================================================================================
-ObjectAnimate::ObjectAnimate(Entity *entity)
+ObjectElementAnimate3d::ObjectElementAnimate3d(Object *parent, Entity *entity):ObjectElement(parent)
 {
     PROFILE()
-    if (!entity->hasSkeleton())
-    {
-        mIsAnimated = false;
-        Logger::log().list() << "Object has no Skeleton. It is not animated.";
-        return;
-    }
+    parent->addElement(getFamilyID(), this);
     mAnimSpeed = 2;
     mAnimGroup =-1;
     String strTmp, strGroup;
@@ -118,7 +114,7 @@ ObjectAnimate::ObjectAnimate(Entity *entity)
 //=================================================================================================
 // Constructor.
 //=================================================================================================
-ObjectAnimate::~ObjectAnimate()
+ObjectElementAnimate3d::~ObjectElementAnimate3d()
 {
     PROFILE()
     mAnimState.clear();
@@ -126,11 +122,9 @@ ObjectAnimate::~ObjectAnimate()
 //=================================================================================================
 // Update the animation.
 //=================================================================================================
-void ObjectAnimate::update(const FrameEvent& event)
+bool ObjectElementAnimate3d::update(const FrameEvent& event)
 {
     PROFILE()
-    if (!mIsAnimated) return;
-
     mActState->addTime(event.timeSinceLastFrame * mAnimSpeed);
     mTimeLeft = mActState->getLength() - mActState->getTimePosition();
     // if an animation ends -> force the idle animation.
@@ -149,16 +143,15 @@ void ObjectAnimate::update(const FrameEvent& event)
                 toggleAnimation2(ANIM_GROUP_IDLE, 0, true, true, true);
         }
     */
+    return true;
 }
 
 //=================================================================================================
 // Toggle the animation.
 //=================================================================================================
-void ObjectAnimate::toggleAnimation(int animGroup, int animNr, bool loop, bool force, bool random, bool freezeLastFrame)
+void ObjectElementAnimate3d::toggleAnimation(int animGroup, int animNr, bool loop, bool force, bool random, bool freezeLastFrame)
 {
     PROFILE()
-    if (!mIsAnimated)
-        return;
     // Is the selected animation already running?
     if (animGroup == mAnimGroup && animNr == mAnimNr)
         return;
@@ -190,7 +183,7 @@ void ObjectAnimate::toggleAnimation(int animGroup, int animNr, bool loop, bool f
     mActState->setEnabled(false);
     mActState= mAnimState[animGroup+ animNr];
 
-    // Set a random offest for the animation start (prevent synchronous "dancing").
+    // Set a random offest for the animation start (prevent synchronous "dancing" of all objects).
     if (random)
         mActState->setTimePosition(Math::RangeRandom(0.0, mActState->getLength()));
     else
@@ -203,7 +196,7 @@ void ObjectAnimate::toggleAnimation(int animGroup, int animNr, bool loop, bool f
 //=================================================================================================
 // Toggle the animation.
 //=================================================================================================
-void ObjectAnimate::toggleAnimation2(int animGroup, int animNr, bool loop, bool force, bool random)
+void ObjectElementAnimate3d::toggleAnimation2(int animGroup, int animNr, bool loop, bool force, bool random)
 {
     PROFILE()
     if (!mIsAnimated)
@@ -251,7 +244,7 @@ void ObjectAnimate::toggleAnimation2(int animGroup, int animNr, bool loop, bool 
 //=================================================================================================
 // Pause an animation.
 //=================================================================================================
-void ObjectAnimate::pause(bool p)
+void ObjectElementAnimate3d::pause(bool p)
 {
     PROFILE()
     mActState->setEnabled(!p);

@@ -21,80 +21,76 @@ You should have received a copy of the GNU General Public License along with
 this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
 
-#ifndef OBJECT_VISUALS_H
-#define OBJECT_VISUALS_H
+#ifndef NETWORK_ACCOUNT_H
+#define NETWORK_ACCOUNT_H
 
-#include <OgreImage.h>
-#include <OgreHardwarePixelBuffer.h>
-#include "object_npc.h"
+#include <string>
 
 /**
- ** This singleton class handles all visual informations of an object.
- ** Visuals are lifebars, selction gfx's, etc.
+ ** .
  *****************************************************************************/
-class ObjectVisuals
+class NetworkAccount
 {
 public:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
-    enum
+    enum { ACCOUNT_MAX_PLAYER = 6 };
+    typedef struct
     {
-        VISUAL_LIFEBAR,
-        VISUAL_SELECTION,
-        VISUAL_SUM
-    };
-    enum
-    {
-        PARTICLE_COLOR_FRIEND_STRT,
-        PARTICLE_COLOR_FRIEND_STOP,
-        PARTICLE_COLOR_ENEMY_STRT,
-        PARTICLE_COLOR_ENEMY_STOP,
-        PARTICLE_COLOR_NEUTRAL_STRT,
-        PARTICLE_COLOR_NEUTRAL_STOP,
-        PARTICLE_COLOR_SUM
-    };
-
+        std::string name;
+        int  level;
+        int  race;
+        bool gender;
+    } account;
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    static ObjectVisuals &getSingleton()
+    static NetworkAccount &getSingleton()
     {
-        static ObjectVisuals Singleton; return Singleton;
+        static NetworkAccount Singleton; return Singleton;
     }
-    void Init(const char *filePath, const char *filename);
-    void freeRecources();
-    /** health < 0 disables the lifebar. */
-    void select(const Ogre::AxisAlignedBox &AABB, Ogre::SceneNode *node, int friendly, Ogre::Real percent, const char *name);
-    void unselect();
-    void highlight(bool staticObject, int friendly, bool highlight);
-    void setPosLifebar(Ogre::Vector3 pos);
-    void setLifebar(Ogre::Real percent, int barWidth = 128);
-    void blit(const Ogre::HardwarePixelBufferSharedPtr &src, const Ogre::Image::Box &srcBox, const Ogre::Image::Box &dstBox);
+
+    void fillAccount(int count, const unsigned char *data);
+    void clearAccount()
+    {
+        mSumEntries = 0;
+    }
+    void setSelected(int pos)
+    {
+        if (pos < ACCOUNT_MAX_PLAYER)  mSelected = pos;
+    }
+    int getSumChars() const
+    {
+        return mSumEntries;
+    }
+    const account *getAccountEntry(int pos)
+    {
+        if (pos < ACCOUNT_MAX_PLAYER)
+            return &mAccountEntry[pos];
+        return 0;
+    }
+    std::string getSelectedChar()
+    {
+        return mAccountEntry[mSelected].name;
+    }
 
 private:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
-    Ogre::ParticleSystem *mPSystem; /**< If !0 Selection is a particleSystem else Selection is a gfx. **/
-    Ogre::Entity *mEntity[VISUAL_SUM];
-    Ogre::SceneNode *mNode[VISUAL_SUM];
-    Ogre::ColourValue particleColor[PARTICLE_COLOR_SUM];
-    Ogre::HardwarePixelBufferSharedPtr mHardwarePB;
-    Ogre::Image mImage;
-    Ogre::PixelBox mSrcPixelBox;
-    Ogre::uchar *mTexBuffer;
-    Ogre::String mStrName;
-    int mDefaultAction;
+    account mAccountEntry[ACCOUNT_MAX_PLAYER];
+    int mSumEntries; /**< Number of chars already created. **/
+    int mSelected;   /**< Actually selected character. **/
+
 
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    ObjectVisuals()  {}
-    ~ObjectVisuals() {}
-    ObjectVisuals(const ObjectVisuals&);            /**< disable copy-constructor. **/
-    ObjectVisuals &operator=(const ObjectVisuals&); /**< disable assignment operator. **/
-    void buildEntity(int index, const char *meshName, const char *entityName);
+    NetworkAccount() { clearAccount(); }
+    ~NetworkAccount() {}
+    NetworkAccount(const NetworkAccount&);            /**< disable copy-constructor. **/
+    NetworkAccount &operator=(const NetworkAccount&); /**< disable assignment operator. **/
 };
 
 #endif

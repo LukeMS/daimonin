@@ -21,52 +21,36 @@ You should have received a copy of the GNU General Public License along with
 this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
 
-#include "light_manager.h"
-#include "option.h"
-#include "logger.h"
-#include "profiler.h"
-
-using namespace Ogre;
+#include "object/object.h"
 
 //================================================================================================
-// Init all static Elemnts.
+// Add an element to this object.
 //================================================================================================
-
-
-//================================================================================================
-// Init the model from the description file.
-//================================================================================================
-bool LightManager::init(SceneManager *, SceneNode *)
+void Object::addElement(familyID id, class ObjectElement *element)
 {
-    PROFILE()
-    return true;
+    mElementMap.insert(std::pair<familyID, ObjectElement*>(id, element));
 }
 
 //================================================================================================
-///
+// Get the element with the given id.
 //================================================================================================
-bool LightManager::addObject(unsigned int , const char *, Vector3)
+class ObjectElement *Object::getElement(familyID id)
 {
-    return true;
+    std::map<familyID, class ObjectElement*>::const_iterator i= mElementMap.find(id);
+    if (i!= mElementMap.end())
+        return (*i).second;
+    return 0;
 }
 
 //================================================================================================
-///
+// Update all elements in this object.
 //================================================================================================
-void LightManager::update(int , const FrameEvent&)
-{}
-
-//================================================================================================
-// JUST FOR TESTING.
-//================================================================================================
-void LightManager::keyEvent(int , int , int , int)
-{}
-
-//================================================================================================
-///
-//================================================================================================
-void LightManager::delObject(int) const
-{}
-
-LightManager::~LightManager()
-{}
+bool Object::update(const Ogre::FrameEvent &event)
+{
+    for (std::map<familyID, class ObjectElement*>::const_iterator i=mElementMap.begin(); i!=mElementMap.end(); ++i)
+    {
+        if ((*i).second)
+            (*i).second->update(event);
+    }
+    return true;
+}

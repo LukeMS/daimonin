@@ -390,12 +390,12 @@ TexturePtr GuiManager::createTexture(String strTexture)
 void GuiManager::resizeBuildBuffer(size_t newSize)
 {
     PROFILE()
-    static size_t size = 0;
-    if (size < newSize)
+    static size_t actSize = 0;
+    if (actSize < newSize)
     {
         delete[] mBuildBuffer;
         mBuildBuffer = new uint32[newSize];
-        size = newSize;
+        actSize = newSize;
     }
 }
 
@@ -777,14 +777,14 @@ void GuiManager::drawTooltip()
     PROFILE()
     if (!mStrTooltip.size()) return;
     const int FONT_HEIGHT = GuiTextout::getSingleton().getFontHeight(GuiTextout::FONT_SYSTEM);
-    const int MAX_LINES = (TOOLTIP_SIZE-2*BORDER_SIZE) / FONT_HEIGHT;
+    int maxLines = (TOOLTIP_SIZE-2*BORDER_SIZE) / FONT_HEIGHT;
     // ////////////////////////////////////////////////////////////////////
     // Count the textlines and calculate the size of the text.
     // ////////////////////////////////////////////////////////////////////
     int sumLines = 1, actWidth = 0;
-    size_t posLF[MAX_LINES];
+    size_t *posLF = new size_t[maxLines];
     posLF[0] = 0;
-    for (; sumLines < MAX_LINES; ++sumLines)
+    for (; sumLines < maxLines; ++sumLines)
     {
         posLF[sumLines] = mStrTooltip.find(TOOLTIP_LINEBREAK_SIGN, posLF[sumLines-1]);
         int txtWidth = GuiTextout::getSingleton().calcTextWidth(mStrTooltip.substr(posLF[sumLines-1], posLF[sumLines]-posLF[sumLines-1]).c_str(), GuiTextout::FONT_SYSTEM);
@@ -848,4 +848,3 @@ void GuiManager::debugText(const char *text, Ogre::uint32 timeBeforeNextMsg)
     strText+= text;
     sendMsg(LIST_MSGWIN, MSG_SET_DEBUG_TEXT, strText.c_str(), timeBeforeNextMsg);
 }
-

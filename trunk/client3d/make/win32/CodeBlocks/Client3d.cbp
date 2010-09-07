@@ -142,7 +142,11 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\3rdParty\zlib\zutil.h" />
-		<Unit filename="..\..\..\include\events.h" />
+		<Unit filename="..\..\..\include\tile\tile_chunk.h" />
+		<Unit filename="..\..\..\include\tile\tile_decal.h" />
+		<Unit filename="..\..\..\include\tile\tile_manager.h" />
+		<Unit filename="..\..\..\include\tile\tile_map.h" />
+		<Unit filename="..\..\..\include\tile\tile_map_wrapper.h" />
 		<Unit filename="..\..\..\include\gui\gui_animation.h" />
 		<Unit filename="..\..\..\include\gui\gui_cursor.h" />
 		<Unit filename="..\..\..\include\gui\gui_element.h" />
@@ -160,31 +164,29 @@
 		<Unit filename="..\..\..\include\gui\gui_textinput.h" />
 		<Unit filename="..\..\..\include\gui\gui_textout.h" />
 		<Unit filename="..\..\..\include\gui\gui_window.h" />
+		<Unit filename="..\..\..\include\object\object.h" />
+		<Unit filename="..\..\..\include\object\object_element.h" />
+		<Unit filename="..\..\..\include\object\object_element_animate3d.h" />
+		<Unit filename="..\..\..\include\object\object_element_avatar.h" />
+		<Unit filename="..\..\..\include\object\object_element_equip3d.h" />
+		<Unit filename="..\..\..\include\object\object_element_missile.h" />
+		<Unit filename="..\..\..\include\object\object_element_physical.h" />
+		<Unit filename="..\..\..\include\object\object_element_visual2d.h" />
+		<Unit filename="..\..\..\include\object\object_element_visual3d.h" />
+		<Unit filename="..\..\..\include\object\object_manager.h" />
+		<Unit filename="..\..\..\include\events.h" />
 		<Unit filename="..\..\..\include\item.h" />
-		<Unit filename="..\..\..\include\light_manager.h" />
 		<Unit filename="..\..\..\include\logger.h" />
 		<Unit filename="..\..\..\include\network.h" />
 		<Unit filename="..\..\..\include\network_cmd_interface.h" />
+		<Unit filename="..\..\..\include\network_account.h" />
 		<Unit filename="..\..\..\include\network_serverfile.h" />
-		<Unit filename="..\..\..\include\object_animate.h" />
-		<Unit filename="..\..\..\include\object_equipment.h" />
-		<Unit filename="..\..\..\include\object_hero.h" />
-		<Unit filename="..\..\..\include\object_manager.h" />
-		<Unit filename="..\..\..\include\object_missile.h" />
-		<Unit filename="..\..\..\include\object_npc.h" />
-		<Unit filename="..\..\..\include\object_static.h" />
-		<Unit filename="..\..\..\include\object_visuals.h" />
 		<Unit filename="..\..\..\include\option.h" />
 		<Unit filename="..\..\..\include\particle_manager.h" />
 		<Unit filename="..\..\..\include\profiler.h" />
 		<Unit filename="..\..\..\include\sound.h" />
 		<Unit filename="..\..\..\include\spell_manager.h" />
 		<Unit filename="..\..\..\include\spell_range.h" />
-		<Unit filename="..\..\..\include\tile\tile_chunk.h" />
-		<Unit filename="..\..\..\include\tile\tile_decal.h" />
-		<Unit filename="..\..\..\include\tile\tile_manager.h" />
-		<Unit filename="..\..\..\include\tile\tile_map.h" />
-		<Unit filename="..\..\..\include\tile\tile_map_wrapper.h" />
 		<Unit filename="..\..\CodingStyle.txt">
 			<Option target="Release" />
 		</Unit>
@@ -223,21 +225,23 @@
 		<Unit filename="..\..\..\source\gui\gui_textout.cpp" />
 		<Unit filename="..\..\..\source\gui\gui_window.cpp" />
 		<Unit filename="..\..\..\source\item.cpp" />
-		<Unit filename="..\..\..\source\light_manager.cpp" />
 		<Unit filename="..\..\..\source\logger.cpp" />
 		<Unit filename="..\..\..\source\main.cpp" />
 		<Unit filename="..\..\..\source\network.cpp" />
 		<Unit filename="..\..\..\source\network_cmd.cpp" />
 		<Unit filename="..\..\..\source\network_cmd_interface.cpp" />
+		<Unit filename="..\..\..\source\network_account.cpp" />
 		<Unit filename="..\..\..\source\network_serverfile.cpp" />
-		<Unit filename="..\..\..\source\object_animate.cpp" />
-		<Unit filename="..\..\..\source\object_equipment.cpp" />
-		<Unit filename="..\..\..\source\object_hero.cpp" />
-		<Unit filename="..\..\..\source\object_manager.cpp" />
-		<Unit filename="..\..\..\source\object_missile.cpp" />
-		<Unit filename="..\..\..\source\object_npc.cpp" />
-		<Unit filename="..\..\..\source\object_static.cpp" />
-		<Unit filename="..\..\..\source\object_visuals.cpp" />
+		<Unit filename="..\..\..\source\object\object.cpp" />
+		<Unit filename="..\..\..\source\object\object_element.cpp" />
+		<Unit filename="..\..\..\source\object\object_element_animate3d.cpp" />
+		<Unit filename="..\..\..\source\object\object_element_avatar.cpp" />
+		<Unit filename="..\..\..\source\object\object_element_equip3d.cpp" />
+		<Unit filename="..\..\..\source\object\object_element_missile.cpp" />
+		<Unit filename="..\..\..\source\object\object_element_physical.cpp" />
+		<Unit filename="..\..\..\source\object\object_element_visual2d.cpp" />
+		<Unit filename="..\..\..\source\object\object_element_visual3d.cpp" />
+		<Unit filename="..\..\..\source\object\object_manager.cpp" />
 		<Unit filename="..\..\..\source\option.cpp" />
 		<Unit filename="..\..\..\source\option_init.cpp" />
 		<Unit filename="..\..\..\source\particle_manager.cpp" />
@@ -255,6 +259,15 @@
 			<wxsmith version="1">
 				<gui name="wxWidgets" src="" main="" init_handlers="necessary" language="CPP" />
 			</wxsmith>
+			<DoxyBlocks>
+				<comment_style block="0" line="0" />
+				<doxyfile_project />
+				<doxyfile_build />
+				<doxyfile_warnings />
+				<doxyfile_output />
+				<doxyfile_dot />
+				<general />
+			</DoxyBlocks>
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>

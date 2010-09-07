@@ -83,7 +83,7 @@ GuiElement::GuiElement(TiXmlElement *xmlElem, const void *parent)
             else
             {
                 Logger::log().warning() << "Image " << tmp << " was defined in '" << GuiManager::FILE_TXT_WINDOWS
-                << "' but the gfx-data in '" << GuiManager::FILE_TXT_IMAGESET << "' is missing.";
+                                        << "' but the gfx-data in '" << GuiManager::FILE_TXT_IMAGESET << "' is missing.";
             }
         }
     }

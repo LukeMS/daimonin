@@ -66,7 +66,8 @@ public:
     enum {CHUNK_SIZE_X     =  12};                /**< Size of the visible part of the world on x-axis. **/
     enum {CHUNK_SIZE_Z     =  12};                /**< Size of the visible part of the world on z-axis. **/
     enum {HEIGHT_STRETCH   =   2};                /**< Stretch the map height by this factor. **/
-    enum {TILE_RENDER_SIZE = 1<< 6};              /**< Rendersize of a tile. **/
+    enum {TILE_RENDER_SIZE =  1<< 6};             /**< Rendersize of a tile. **/
+    enum {HALF_RENDER_SIZE = TILE_RENDER_SIZE/2}; /**< Rendersize of a sub-tile. **/
     enum {MAX_TEXTURE_SIZE = 1<<11};              /**< Atlassize for high quality. **/
     enum {TILE_SIZE        = MAX_TEXTURE_SIZE/8}; /**< Tilesize for high quality. **/
     enum {BORDER_SIZE      = TILE_SIZE/32};       /**< Bordersize for high quality (Border is used to fix filtering errors). **/
@@ -116,6 +117,10 @@ public:
      *****************************************************************************/
     Ogre::ushort getMapHeight(unsigned int x, unsigned int z);
     void setMapset(int landGroup, int waterGroup);
+    /** Scroll the map by n tiles (Subtile scrolling is not possible!).
+     ** @param posX The sroll amount in x direction.
+     ** @param posZ The sroll amount in z direction.
+     *****************************************************************************/
     void scrollMap(int x, int z);
     void updateChunks();
     void rotateCamera(Ogre::Real cameraAngle)

@@ -21,49 +21,79 @@ You should have received a copy of the GNU General Public License along with
 this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
 
-#ifndef LIGHT_MANAGER_H
-#define LIGHT_MANAGER_H
-
-#include <vector>
-#include <OgreLight.h>
+#ifndef OBJ_NISSLE_H
+#define OBJ_NISSLE_H
 
 /**
- ** This singleton class handles all light related stuff.
+ ** This class handles all ranged weapon objects.
  *****************************************************************************/
-class LightManager
+class ObjectMissile
 {
+public:
+    // ////////////////////////////////////////////////////////////////////
+    // Variables / Constants.
+    // ////////////////////////////////////////////////////////////////////
+    typedef enum { DART, ARROW, BOLT, SHURIKEN, SPEAR, BOOMERANG, } enumType;
+    typedef enum { FIRE, ICE, POISON,  } enumParticle;
+    typedef struct
+    {
+        unsigned int index;
+        enumType     type;
+        enumParticle particle;
+        Ogre::String meshName;
+        Ogre::Real facing;
+        int maxDamage;
+        int minDamage;
+    }
+    sObject;
+
+    // ////////////////////////////////////////////////////////////////////
+    // Functions.
+    // ////////////////////////////////////////////////////////////////////
+/*
+    ObjectMissile(int type, ObjectNPC *src, ObjectNPC *dst);
+    ~ObjectMissile();
+    Object::familyID getFamilyID() const { return Object::FAMILY_MISSILE; }
+    bool update(const Ogre::FrameEvent& event);
+    const Ogre::Vector3 &getPosition()
+    {
+        return mNode->getPosition();
+    }
+    Ogre::SceneNode *getSceneNode()
+    {
+        return mNode;
+    }
+    Ogre::Real getFacing() const
+    {
+        return mFacing.valueDegrees();
+    }
+    unsigned int getIndex() const
+    {
+        return mIndex;
+    }
+
 private:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
-    enum { LIGHT_SPOT, LIGHT_SUM };
-    Ogre::SceneManager *mSceneMgr;
-    Ogre::SceneNode  *mNode;
-    Ogre::String mDescFile;
-    std::vector<Ogre::Light*>mvLightObject;
-
+    static Ogre::SceneManager *msSceneMgr;
+    static unsigned int msUnique;
+    unsigned int mIndex;
+    Ogre::Degree mFacing;
+    Ogre::SceneNode *mNode;
+    Ogre::Entity *mEntity;
+    Ogre::Vector3 mDestPosition;
+    Ogre::Vector3 mSpeed;
+    int mType;
+    int mParticle;
+    bool mHasBallistic;
+    bool mShow;
+*/
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    LightManager(const LightManager&);            /**< disable copy-constructor. **/
-    LightManager &operator=(const LightManager&); /**< disable assignment operator. **/
-
-public:
-    // ////////////////////////////////////////////////////////////////////
-    // Functions.
-    // ////////////////////////////////////////////////////////////////////
-    LightManager()
-    {}
-    ~LightManager();
-    static LightManager &getSingleton()
-    {
-        static LightManager Singleton; return Singleton;
-    }
-    bool init(Ogre::SceneManager *SceneMgr, Ogre::SceneNode  *Node);
-    bool addObject(unsigned int type, const char *desc_filename, Ogre::Vector3 pos);
-    void delObject(int number) const;
-    void update(int type, const Ogre::FrameEvent& evt);
-    void keyEvent(int obj_type, int action, int val1=0, int val2=0);
+    ObjectMissile(const ObjectMissile&);            /**< disable copy-constructor. **/
+    ObjectMissile &operator=(const ObjectMissile&); /**< disable assignment operator. **/
 };
 
 #endif

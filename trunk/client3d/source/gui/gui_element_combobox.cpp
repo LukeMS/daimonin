@@ -30,6 +30,8 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 
 using namespace Ogre;
 
+static const int LIST_BORDER_SIZE = 1;
+
 //================================================================================================
 // Constructor.
 //================================================================================================
@@ -101,8 +103,34 @@ void GuiElementCombobox::sendMsg(const int message, String &text, uint32 &param,
             if (setHidden(param?false:true)) draw();
             return;
         case GuiManager::MSG_SET_TEXT:
-            //setLabel(text);
+            SetSelection(text);
             return;
+    }
+}
+
+//================================================================================================
+// .
+//================================================================================================
+void GuiElementCombobox::SetSelection(unsigned int itemNr)
+{
+    PROFILE()
+    if (itemNr < (unsigned int)mListHeight/GuiTextout::getSingleton().getFontHeight(mLabelFontNr))
+        mActItem = itemNr;
+}
+
+//================================================================================================
+// .
+//================================================================================================
+void GuiElementCombobox::SetSelection(const Ogre::String item)
+{
+    PROFILE()
+    for (unsigned int i = 0; i < mvItem.size(); ++i)
+    {
+        if (mvItem[i] == item)
+        {
+            mActItem = i;
+            return;
+        }
     }
 }
 
@@ -114,6 +142,30 @@ int GuiElementCombobox::mouseEvent(const int mouseAction, int mouseX, int mouseY
     PROFILE()
     if (!mouseWithin(mouseX, mouseY))
     {
+        if (mShowItemList)
+        {
+            if (mouseAction == GuiManager::BUTTON_PRESSED)
+            {
+                mActItem = mMouseOverItem;
+                mShowItemList = false;
+                draw();
+            }
+            else
+            {
+                int fontHeight = GuiTextout::getSingleton().getFontHeight(mLabelFontNr);
+                int mouseOverItem = (mouseY-mPosY-mHeight-LIST_BORDER_SIZE)/fontHeight;
+                if (mouseOverItem <0)
+                    mouseOverItem = 0;
+                else if (mouseOverItem >= mListHeight/fontHeight)
+                    mouseOverItem = mListHeight/fontHeight-1;
+                if (mMouseOverItem != mouseOverItem)
+                {
+                    mMouseOverItem = mouseOverItem;
+                    draw();
+                }
+            }
+            return GuiManager::EVENT_CHECK_DONE;
+        }
         // Mouse is no longer over the gadget.
         if (setState(GuiImageset::STATE_ELEMENT_DEFAULT))
         {
@@ -174,7 +226,6 @@ void GuiElementCombobox::draw()
     }
     else
     {
-        const int LIST_BORDER_SIZE = 1;
         GuiElement::draw(false); // Draw the combobox background.
         GuiGraphic::getSingleton().restoreWindowBG(mWidth, mListHeight,
                 mParent->getLayerBG()+mPosX+(mPosY+mHeight)*mParent->getWidth(),
@@ -188,8 +239,8 @@ void GuiElementCombobox::draw()
             // Background itemlist.
             GuiGraphic::getSingleton().drawColorBorder(mWidth, mListHeight, mListColor, mBorderColor, dst+mHeight*mWidth, mWidth, LIST_BORDER_SIZE);
             // Background active item.
-            GuiGraphic::getSingleton().blendColorToBuffer(mWidth-LIST_BORDER_SIZE*2, fontHeight, mCursorColor,
-                                                            dst+(fontHeight*mActItem+mHeight+LIST_BORDER_SIZE)*mWidth+LIST_BORDER_SIZE, mWidth);
+            GuiGraphic::getSingleton().blendColorToBuffer(mWidth-LIST_BORDER_SIZE*2, fontHeight+LIST_BORDER_SIZE, mCursorColor,
+                    dst+(fontHeight*mMouseOverItem+mHeight+LIST_BORDER_SIZE)*mWidth+LIST_BORDER_SIZE, mWidth);
             buf = dst+mHeight*mWidth;
             for (std::vector<String>::iterator i = mvItem.begin(); i < mvItem.end(); ++i)
             {
@@ -209,6 +260,7 @@ void GuiElementCombobox::draw()
 //================================================================================================
 void GuiElementCombobox::calcListHeight()
 {
+    PROFILE()
     int fontHeight = GuiTextout::getSingleton().getFontHeight(mLabelFontNr);
     mListHeight = fontHeight * mvItem.size() + LIST_TEXT_OFFSET;
     while (mListHeight > LIST_MAX_HEIGHT || mPosY+mHeight+mListHeight+LIST_TEXT_OFFSET > mParent->getHeight())

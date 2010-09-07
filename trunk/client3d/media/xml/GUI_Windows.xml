@@ -795,11 +795,13 @@
      <Image name = "Button-02-Standard"/>
       <Pos   x= "13" y= "538" />
       <Label x= "5" y= "3" font="02" text= "Stats" />
+      <Tooltip text ="Tab_Stats" />
     </Button>
     <Button  name = "Tab_Skills">
       <Image name = "Button-02-Standard"/>
       <Pos   x= "93" y= "538" />
       <Label x= "5" y= "3" font="02" text= "Skills" />
+      <Tooltip text ="Tab_Skills" />
     </Button>
     <Button  name = "Tab_Protection">
       <Image name = "Button-02-Standard"/>
@@ -1604,16 +1606,19 @@
     <!--=============================================-->
     <Combobox name = "Combo_SoundSource">
       <!--<Image name = "Button-02-Standard"/> -->
-
-       <Color red= "255" green= "0" blue= "0" alpha = "250" />
-       <Size width= "63" height= "21" />
-      <Pos x= "110" y= "66" />
+      <Color red= "255" green= "0" blue= "0" alpha = "250" />
+      <Size width= "63" height= "21" />
+      <Pos x= "210" y= "66" />
+      <Label x= "2" y= "6" font="02" />
       <Itemlist>
-        <Color red= "40" green= "123" blue= "98" alpha = "200" />
+        <BackColor red= "40" green= "123" blue=  "98" alpha = "200" />
+        <BorderColor red= "0" green= "0" blue= "0" alpha = "255" />
+        <CursorColor red= "50" green= "50" blue= "222" alpha = "255" />
         <Size height = "100"/>
         <Item text ="Item 1"/>
         <Item text ="Item 2"/>
         <Item text ="Item 3"/>
+        <Item text ="Item 4"/>
       </Itemlist>
     </Combobox>
 
