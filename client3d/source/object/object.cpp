@@ -24,6 +24,19 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include "object/object.h"
 
 //================================================================================================
+// Destructor.
+//================================================================================================
+Object::~Object()
+{
+    for (std::map<familyID, class ObjectElement*>::const_iterator i=mElementMap.begin(); i!=mElementMap.end(); ++i)
+    {
+        if ((*i).second)
+            delete (*i).second;
+    }
+    mElementMap.clear();
+}
+
+//================================================================================================
 // Add an element to this object.
 //================================================================================================
 void Object::addElement(familyID id, class ObjectElement *element)
@@ -37,9 +50,7 @@ void Object::addElement(familyID id, class ObjectElement *element)
 class ObjectElement *Object::getElement(familyID id)
 {
     std::map<familyID, class ObjectElement*>::const_iterator i= mElementMap.find(id);
-    if (i!= mElementMap.end())
-        return (*i).second;
-    return 0;
+    return (i!= mElementMap.end()) ? (*i).second : 0;
 }
 
 //================================================================================================

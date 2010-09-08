@@ -221,7 +221,7 @@ private:
 
     //////// NEW
     std::string mAvatarName;
-    std::map<std::string, class Object*> mmObject;
+    std::map<std::string, class Object*> mObjectMap;
     Ogre::SceneManager *mSceneManager;
     Object *mObjectAvatar;
 };

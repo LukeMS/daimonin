@@ -48,6 +48,7 @@ public:
     } familyID;
 
     Object() {}
+    ~Object();
     class ObjectElement *getElement(familyID id);
     void addElement(familyID id, class ObjectElement *element);
     bool update(const Ogre::FrameEvent &event); /**< Update all elements of this object. **/

@@ -55,6 +55,7 @@
 			<Add option="-fident" />
 			<Add option="-pipe" />
 			<Add option="-DWIN32" />
+			<Add option="-DTILEENGINE_SKIP_LEVELLOADING" />
 			<Add directory="OgreSDK\boost\" />
 			<Add directory="OgreSDK\include\" />
 			<Add directory="OgreSDK\include\Ogre" />

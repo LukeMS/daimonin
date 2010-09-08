@@ -11,11 +11,11 @@ public:
 private:
     void createScene(void)
     {
-        const Real CAMERA_POS_Z = TileManager::TILE_RENDER_SIZE * TileManager::CHUNK_SIZE_Z;
+        const Real CAMERA_POS_Y = TileManager::HALF_RENDER_SIZE * TileManager::CHUNK_SIZE_Z;
         mCamera->pitch(Degree(-35));
         //mCamera->setFOVy(Degree(50)); // Height of the camera.
         //mCamera->setAspectRatio(Real(VP->getActualWidth()) / Real(VP->getActualHeight()));
-        mCamera->setPosition(TileManager::TILE_RENDER_SIZE * (TileManager::CHUNK_SIZE_X+1), CAMERA_POS_Z, 2*CAMERA_POS_Z);
+        mCamera->setPosition(TileManager::HALF_RENDER_SIZE * TileManager::CHUNK_SIZE_X, CAMERA_POS_Y, 2*CAMERA_POS_Y);
         int lod = 1;
         int queryMaskLand  = 1 << 2;
         int queryMaskSprite= 1 << 1;
