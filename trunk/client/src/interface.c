@@ -18,8 +18,8 @@
 
     The author can be reached via e-mail to info@daimonin.org
 */
+
 #include "include.h"
-#include <limits.h> // TODO:Put in include.h
 
 _gui_npc *gui_npc;
 

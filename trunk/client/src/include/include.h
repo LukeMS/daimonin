@@ -66,6 +66,7 @@ typedef signed char     sint8;
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <limits.h>
 
 #include <zlib.h>
 #include <item.h>
