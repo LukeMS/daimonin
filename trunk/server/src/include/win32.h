@@ -137,9 +137,6 @@
 #define YY_NEVER_INTERACTIVE 1
 
 /* define 64bit handling */
-#ifndef int64
-#define int64 __int64
-#endif
 #ifndef atoll
 #define atoll    _atoi64
 #endif
