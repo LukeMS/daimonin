@@ -485,8 +485,6 @@ void init_game_data(void)
     options.anim_frame_time = 50;
     options.anim_check_time = 50;
 
-    options.skin[0]='\0';
-
     memset(media_file, 0, sizeof(_media_file) * MEDIA_MAX);
     media_count = 0;    /* buffered media files*/
     media_show = MEDIA_SHOW_NO; /* show this media file*/
