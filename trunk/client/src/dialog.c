@@ -263,7 +263,7 @@ static void ShowInfo(_font *font, SDL_Rect *box, char *text)
             }
         }
 
-        for (i = 0, j = 0; i < c && j < sizeof(buf); i++)
+        for (i = 0, j = 0; i < c && j < (int)sizeof(buf); i++)
         {
             switch (*(text + n + i))
             {
@@ -2126,7 +2126,7 @@ void show_account(void)
         {
             char_count++;
             string_blt(ScreenSurface, &font_large_out, account.name[i], x+120, y+100+i*50, COLOR_WHITE, NULL, NULL);
-            sprintf(buf,"Level:%d Race:%d Gender:%d", account.level[i],account.race[i],account.gender[i]);
+            sprintf(buf,"%s %s on Level %d", account.race[i]?"Elfish":"Human", account.gender[i]?"Female":"Male", account.level[i]);
             string_blt(ScreenSurface, &font_small, buf, x+120, y+116+i*50, COLOR_WHITE, NULL, NULL);
         }
     }
