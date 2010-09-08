@@ -77,7 +77,7 @@ sint32          new_levels[MAXLEVEL + 19]    =
     /* 109 */
     610000000, 700000000, 800000000, 900000000, 1000000000, 1100000000, 1200000000,
 1300000000, 1400000000, 1500000000, 1600000000, 1700000000, 1800000000, 1900000000,
-2000000000, 2100000000, 2200000000, 2300000000 /* 111+ is only a dummy */
+2000000000, 2100000000, 2200000000, 2300000000 /* 111 is only a dummy */
 };
 
 _level_color    level_color[201]        =
@@ -289,7 +289,7 @@ _level_color    level_color[201]        =
    Since this is nowhere defined ...
    Both come in handy at least in function add_exp()
 */
-#define MAX_EXPERIENCE  new_levels[MAXLEVEL + 18]
+#define MAX_EXPERIENCE  new_levels[MAXLEVEL + 1]
 
 
 /* init_new_exp_system() - called in init(). This function will reconfigure
@@ -772,8 +772,8 @@ float calc_level_difference(int who_lvl, int op_lvl)
  */
 int calc_skill_exp(object *who, object *op, float mod, int level, int *real)
 {
-    int     who_lvl = level;
-    int     op_exp = 0, op_lvl = 0;
+    int     who_lvl = level, op_lvl = 0;
+    int    op_exp = 0;
     float   exp_mul, max_mul, tmp;
 
     if (!who || who->type != PLAYER) /* no exp for non players... its senseless to do */
@@ -836,7 +836,7 @@ int calc_skill_exp(object *who, object *op, float mod, int level, int *real)
     if ((float) op_exp > tmp)
     {
         /*LOG(llevNoLog,"exp to high(%d)! adjusted to: %d",op_exp, (int)tmp);*/
-        op_exp = (int) tmp;
+        op_exp = (int)tmp;
     }
 
     return op_exp;
