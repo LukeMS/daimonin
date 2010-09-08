@@ -41,7 +41,11 @@ String TileManager::MATERIAL_PREFIX    = "Terrain/";
 static const unsigned int RGB  = 3; /**< Pixelsize. **/
 static const unsigned int RGB_A= 4; /**< Pixelsize. **/
 
-//////// Only for TESTING
+
+//================================================================================================
+// Just for testing. Will be removed soon!
+//================================================================================================
+#ifndef TILEENGINE_SKIP_LEVELLOADING
 #include <stdio.h>
 #include "object/object_manager.h"
 void TileManager::loadLvl()
@@ -53,14 +57,13 @@ void TileManager::loadLvl()
     updateChunks();
     ObjectManager::getSingleton().syncToMapScroll(0, 0);
 }
-
 void TileManager::saveLvl()
 {
     FILE *stream = fopen("client3d.lvl", "wb");
     fwrite(mMap, sizeof(mapStruct), mMapSizeX * mMapSizeZ, stream);
     fclose(stream);
 }
-//////////////////////////
+#endif
 
 SceneManager *TileManager::mSceneManager = 0;
 
@@ -95,7 +98,7 @@ void TileManager::freeRecources()
     if (count)
     {
         Logger::log().error() << count << " Decal(s) were created by 'new' but not destroyed by 'delete'. "
-        "(All decals must be deleted before TileManager::freeRecources() is called)";
+                              "(All decals must be deleted before TileManager::freeRecources() is called)";
     }
 }
 

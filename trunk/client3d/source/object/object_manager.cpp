@@ -87,7 +87,7 @@ const Ogre::Vector3 ObjectManager::getAvatarPos()
 void ObjectManager::addCreature(sObject &obj)
 {
     Object *object = new Object();
-    mmObject.insert(std::pair<std::string, class Object*>(obj.nickName, object));
+    mObjectMap.insert(std::pair<std::string, class Object*>(obj.nickName, object));
     ObjectElementVisual3d *objV3d = new ObjectElementVisual3d(object, mSceneManager);
     Entity *entityWithSkeleton = objV3d->createEntity(obj.nickName, obj.meshName.c_str(), Ogre::RENDER_QUEUE_7, QUERY_MASK_NPC);
     if (entityWithSkeleton)
@@ -177,7 +177,7 @@ void ObjectManager::addCreature(sObject &obj)
 void ObjectManager::update(const FrameEvent &event)
 {
     PROFILE()
-    for (std::map<std::string, class Object*>::const_iterator i=mmObject.begin(); i!=mmObject.end(); ++i)
+    for (std::map<std::string, class Object*>::const_iterator i=mObjectMap.begin(); i!=mObjectMap.end(); ++i)
         (*i).second->update(event);
 }
 
@@ -187,7 +187,7 @@ void ObjectManager::update(const FrameEvent &event)
 void ObjectManager::syncToMapScroll(int deltaX, int deltaZ)
 {
     PROFILE()
-    for (std::map<std::string, class Object*>::const_iterator i=mmObject.begin(); i!=mmObject.end(); ++i)
+    for (std::map<std::string, class Object*>::const_iterator i=mObjectMap.begin(); i!=mObjectMap.end(); ++i)
     {
         ObjectElementVisual3d *element = static_cast<ObjectElementVisual3d*>((*i).second->getElement(Object::FAMILY_VISUAL3D));
         if (element)
@@ -202,8 +202,8 @@ Object* ObjectManager::getObject(std::string &name)
 {
     if (name.empty())
         return mObjectAvatar;
-    std::map<std::string, class Object*>::const_iterator i= mmObject.find(name);
-    return (i== mmObject.end()) ?0:(*i).second;
+    std::map<std::string, class Object*>::const_iterator i= mObjectMap.find(name);
+    return (i== mObjectMap.end()) ?0:(*i).second;
 }
 
 //================================================================================================
@@ -441,6 +441,12 @@ void ObjectManager::extractObject(MovableObject *mob)
 void ObjectManager::freeRecources()
 {
     PROFILE()
+    for (std::map<std::string, class Object*>::const_iterator i=mObjectMap.begin(); i!=mObjectMap.end(); ++i)
+    {
+        if ((*i).second)
+            delete (*i).second;
+    }
+    mObjectMap.clear();
 }
 
 //================================================================================================
