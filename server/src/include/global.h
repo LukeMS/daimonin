@@ -48,9 +48,9 @@
 #include "includes.h"
 
 /* Type defines for specific signed/unsigned variables of a certain number
- * of bits.  Not really used anyplace, but if a certain number of bits
- * is required, these type defines should then be used.  This will make
- * porting to systems that have different sized data types easier.
+ * of bits.  If a certain number of bits is required, these type defines
+ * should then be used.  This will make porting to systems that have different
+ * sized data types easier.
  *
  * Note: The type defines should just mean that the data type has at
  * least that many bits.  if a uint16 is actually 32 bits, no big deal,
@@ -59,9 +59,10 @@
  * Note2:  When using something that is normally stored in a character
  * (ie strings), don't use the uint8/sint8 typdefs, use 'char' instead.
  * The signedness for char is probably not universal, and using char
- * will probably be more portable than sint8/unit8
- */
-
+ * will probably be more portable than sint8/unit8.
+ *
+ * TODO: Change these to eg int8_t/uint8_t and only define if stdint.h (C99) is
+ * unavailable. */
 typedef signed char        sint8;
 typedef unsigned char      uint8;
 typedef signed short       sint16;
@@ -72,10 +73,9 @@ typedef uint32             tag_t;
 
 /* 64bit definition */
 #ifdef WIN32
-typedef int64              sint64;
-typedef unsigned int64     uint64;
-#else /* LINUX and others */
-#if SIZEOF_LONG == 8
+typedef __int64            sint64;
+typedef unsigned __int64   uint64;
+#elif SIZEOF_LONG == 8
 typedef unsigned long      uint64;
 typedef signed long        sint64;
 #elif SIZEOF_LONG_LONG == 8
@@ -83,7 +83,6 @@ typedef unsigned long long uint64;
 typedef signed long long   sint64;
 #else
 #error Your compiler misses 64-bit support
-#endif
 #endif
 
 /* porting stuff for file handle function names. */
