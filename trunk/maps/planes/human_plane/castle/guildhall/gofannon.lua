@@ -34,13 +34,13 @@ end
 
 -- TODO: add in a sidenote about the cats bothering the chickens
 local function quest1_body()   
-    ib:SetHeader("st_003", me.name .. " the smith") 
+    ib:SetHeader("st_003", me)
     ib:SetTitle(qb:GetName(1))
     ib:AddMsg("It is just a small thing.\n\n")
     ib:AddMsg("I have been awaiting a shipment of leather for some time, but it appears the trader has been delayed.\n\n")
     ib:AddMsg("I urgently need some feline skins for an item ordered by ^Chereth^.\n\n")
     ib:AddMsg("Obviously I can't get mountain leopard skins as ordered, but there are a few wild cats running around in the forest patch east of here. Could you please see if you can catch a few and return to me with at least three cat skins?\n\n")
-    ib:SetDesc("Bring back 3 Wild Cat Skins to Smith the smith", 0,0,0,0)
+    ib:SetDesc("Bring back 3 Wild Cat Skins to " .. me:GetName() .. ".")
 end
 
 function topicDefault(force)
@@ -49,16 +49,16 @@ function topicDefault(force)
         topicQuestComplete()
         return
     end
-    ib:SetHeader("st_001", me.name .. " the smith")
+    ib:SetHeader("st_001", me)
     ib:SetTitle("The Smithy")
-    ib:SetMsg("Hello! I am " .. me.name .. ", the smith.\n")
+    ib:SetMsg("Hello! I am " .. me:GetName() .. ".\n")
     ib:AddMsg("I can repair or identify your equipment.\n\n")
 
     if qstat == game.QSTAT_NO then
         ib:AddMsg("I could also use your help for a small task.\n\n")
         ib:AddLink("Tell me more about your quest", "explain quest")
     elseif qstat == game.QSTAT_ACTIVE then
-        ib:SetHeader("st_003", me.name .. " the smith")
+        ib:SetHeader("st_003", me)
         ib:AddMsg("You still don't have all the cat skins I asked for.")
     end
 
@@ -69,7 +69,7 @@ end
 
 function topicRepair()
     local flag = false
-    ib:SetHeader("st_005", me.name .. " the smith")
+    ib:SetHeader("st_005", me)
     ib:SetTitle("Repair my Equipment")
     ib:SetMsg("Let me check your equipment...\nPerhaps an item needs a fix.\nI will tell you how much each will cost.")
     tmp = pl:FindMarkedObject()
@@ -100,7 +100,7 @@ function topicItemFix(what)
     if tmp == nil then
         topicRepair()
     else
-        ib:SetHeader("st_005", me.name .. " the smith")
+        ib:SetHeader("st_005", me)
         ib:SetTitle("Repairing")
         if tmp.item_quality > 0 and tmp.item_condition < tmp.item_quality then
             ib:SetMsg("Will cost you " .. pl:ShowCost(repairCost(tmp),0))
@@ -128,7 +128,7 @@ function topicFix(what)
         tmp = pl:GetEquipment(num)
     end
     ib:SetTitle("Pay and Repair")
-    ib:SetHeader("st_005", me.name .. " the smith")
+    ib:SetHeader("st_005", me)
     if tmp == nil then
         ib:SetMsg("Hm, where is the item??")
     else
@@ -156,7 +156,7 @@ function topicFix(what)
 end
 
 function topicIdentify()
-    ib:SetHeader("st_005", me.name .. " the smith")
+    ib:SetHeader("st_005", me)
     ib:SetTitle("Item Identification")
     ib:SetMsg("Lets see what i can do for you.\nI can ~identify~ a single item or all.\nI can ~detect magic~ or ~detect curse~.\nRember you must mark the single item first.\n\n")
     ib:AddMsg(".You have " .. pl:ShowCost(pl:GetMoney()) .. ".\n\n") 
@@ -176,7 +176,7 @@ function topicIdentify()
 end
 
 function topicDetect(what)
-    ib:SetHeader("st_005", me.name .. " the smith")
+    ib:SetHeader("st_005", me)
     ib:SetTitle("It will cost you")
     if what=="magic" then
         ib:SetMsg("I can cast ~Detect Magic~ for 50 copper")
@@ -209,7 +209,7 @@ function topicCast(what)
             return
         end
     end
-    ib:SetHeader("st_005", me.name .. " the smith")
+    ib:SetHeader("st_005", me)
     ib:SetTitle("Identification...")
     if pl:PayAmount(sum) == 1 then
         if sum == 500 then
@@ -228,7 +228,7 @@ end
 
 -- The player asks about available quests
 function topicQuest()
-    ib:SetHeader("st_003", me.name .. " the smith")
+    ib:SetHeader("st_003", me)
     if qstat == game.QSTAT_ACTIVE then
         ib:SetTitle(qb:GetName(1))
         ib:AddMsg("You still don't have all the cat skins I asked for.")
@@ -244,7 +244,7 @@ end
 -- The player wants to accept a quest. Activate the next accessible one.
 function topicAccept()
     if qstat == game.QSTAT_NO then
-        ib:SetHeader("st_003", me.name .. " the smith")
+        ib:SetHeader("st_003", me)
         quest1_body()
         qb:RegisterQuest(questnr, me, ib)
     else
@@ -257,7 +257,7 @@ end
 -- possibly give out rewards
 function topicQuestComplete(reward)
     if qstat == game.QSTAT_ACTIVE then
-        ib:SetHeader("st_005", me.name .. " the smith")
+        ib:SetHeader("st_005", me)
         ib:SetTitle(qb:GetName(1))
         ib:AddMsg("You still don't have all the cat skins I asked for.")
     elseif qstat == game.QSTAT_SOLVED then
@@ -358,7 +358,7 @@ function topicQuestComplete(reward)
 end
 
 local function topicChereth()
-    ib:SetHeader("st_002", me.name .. " the smith")
+    ib:SetHeader("st_002", me)
     ib:SetTitle("Chereth")
     ib:SetMsg("\n\nChereth was the guild's master archer until she unfortunately lost her sight in battle.")
     ib:AddMsg("\n\nNowadays she usually hangs out downstairs in the guild.")
