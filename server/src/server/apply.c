@@ -33,6 +33,8 @@ size_t  strftime(char *, size_t, const char *, const struct tm *);
 time_t  mktime(struct tm *);
 #endif
 
+static void ApplySavebed(player *pl, object *bed);
+
 /*
  * Return value: 1 if money was destroyed, 0 if not.
  */
@@ -2015,26 +2017,25 @@ void apply_poison(object *op, object *tmp)
     decrease_ob(tmp);
 }
 
-static void apply_savebed(object *pl, object *bed)
+static void ApplySavebed(player *pl, object *bed)
 {
-    player *p_ptr =CONTR(pl);
+//    if (!p_ptr || !p_ptr->name_changed)
+//    {
+//        new_draw_info(NDI_UNIQUE, 0, pl, "You don't deserve to save your character yet.");
+//        return;
+//    }
 
-    if (!p_ptr || !p_ptr->name_changed)
+    if (trigger_object_plugin_event(EVENT_APPLY, bed, pl->ob, NULL, NULL, NULL,
+                                    NULL, NULL, SCRIPT_FIX_ACTIVATOR))
     {
-        new_draw_info(NDI_UNIQUE, 0, pl, "You don't deserve to save your character yet.");
         return;
     }
 
-    if(trigger_object_plugin_event(
-                EVENT_APPLY, bed, pl, NULL,
-                NULL, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
-        return;
-
     /* update respawn position */
-    set_bindpath_by_name(p_ptr, pl->map->path, pl->map->orig_path, pl->map->map_status, pl->x, pl->y);
-
-    new_draw_info(NDI_UNIQUE, 0, pl, "You save and quit the game. Bye!\nleaving...");
-    p_ptr->socket.status = Ns_Dead;
+    set_bindpath_by_name(pl, pl->ob->map->path, pl->ob->map->orig_path,
+                         pl->ob->map->map_status, pl->ob->x, pl->ob->y);
+    new_draw_info(NDI_UNIQUE, 0, pl->ob, "You have saved!");
+    new_draw_info(NDI_UNIQUE, 0, pl->ob, "In future you will respawn here.");
 }
 
 
@@ -2327,9 +2328,10 @@ int manual_apply(object *op, object *tmp, int aflag)
           return (1+8);
 
         case SAVEBED:
-          if (op->type == PLAYER)
+          if (op->type == PLAYER &&
+              CONTR(op))
           {
-              apply_savebed(op, tmp);
+              ApplySavebed(CONTR(op), tmp);
               return 1;
           }
           return 0;
