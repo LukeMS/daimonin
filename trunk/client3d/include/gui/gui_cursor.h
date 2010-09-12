@@ -27,44 +27,49 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include <OgreOverlayElement.h>
 #include "gui_imageset.h"
 
-/**
- ** This singleton class provides the mouse cursor (as an ogre3d overlay).
- *****************************************************************************/
+/// @brief This singleton class provides the mouse cursor.
+/// @details OgreOverlay is used to display the texture.
 class GuiCursor
 {
 public:
     // ////////////////////////////////////////////////////////////////////
+    // Variables / Constants.
+    // ////////////////////////////////////////////////////////////////////
+
+    // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    /** Set the position of the mouse cursor.
-     ** @param x The x-pos in pixel.
-     ** @param y The y-pos in pixel.
-     *****************************************************************************/
+    /// @brief Returns the reference to this singleton class.
+    static GuiCursor &getSingleton()
+    {
+        static GuiCursor Singleton; return Singleton;
+    }
+
+    /// @brief Set the position of the mouse cursor.
+    /// @param x The x-pos in pixel.
+    /// @param y The y-pos in pixel.
     void setPos(const int x, const int y)
     {
         mElement->setPosition((float)x, (float)y);
     }
 
-    void draw(); /**< Draws the mouse-cursor into its texture. **/
+    /// @brief Draw the mouse-cursor into its texture.
+    void draw();
 
-    /** Set the state of the mouse cursor.
-     ** @param state The state is the look of the mouse cursor.
-     *****************************************************************************/
+    /// @brief Set the state of the mouse cursor.
+    /// @details The mouse-cursor can have different graphical states.
+    /// These are used to show possible actions that can be triggered.
+    /// (e.g. a mouth to show the user that he can talk to this npc.)
+    /// @param state The state is the look of the mouse cursor.
+    /// @see GuiManager for all defined states.
     void setState(Ogre::uchar state);
 
-    /** Init the mouse cursor.
-     ** @param resourceName An unique name for creationg the Ogre resources.
-     *****************************************************************************/
+    /// @brief Init the mouse cursor.
+    /// @param resourceName An unique name for creationg the Ogre resources.
     void Init(const char *resourceName);
 
-    /// Free all Ogre resources. Must be called before the destructor.
+    /// @brief Free all Ogre resources. Must be called before the destructor.
     void freeRecources();
-
-    static GuiCursor &getSingleton()
-    {
-        static GuiCursor Singleton;
-        return Singleton;
-    }
 
 private:
     // ////////////////////////////////////////////////////////////////////
@@ -75,13 +80,14 @@ private:
     Ogre::OverlayElement *mElement;
     Ogre::TexturePtr mTexture;
     GuiImageset::gfxSrcMouse gfxSrcPos;
+
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
     GuiCursor()  {}
     ~GuiCursor() {}
-    GuiCursor(const GuiCursor&);            /**< disable copy-constructor. **/
-    GuiCursor &operator=(const GuiCursor&); /**< disable assignment operator. **/
+    GuiCursor(const GuiCursor&);            ///< disable copy-constructor.
+    GuiCursor &operator=(const GuiCursor&); ///< disable assignment operator.
 };
 
 #endif

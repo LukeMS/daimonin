@@ -24,13 +24,11 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #ifndef OBJECT_ELEMENT_ANIMATE3D_H
 #define OBJECT_ELEMENT_ANIMATE3D_H
 
-/**
- ** This class handles object animation.
- ** @todo separate Upper/lower Body animation.
- **       So it will be possible to walk and shoot arrows at same time
- **       without generating mixed mode animations.
- *****************************************************************************/
-class ObjectElementAnimate3d : public ObjectElement
+/// @brief This class handles 3d animation of an object.
+/// @todo separate Upper/lower Body animation.
+///       So it will be possible to walk and shoot arrows at same time
+///       without generating mixed mode animations.
+ class ObjectElementAnimate3d : public ObjectElement
 {
 public:
     // ////////////////////////////////////////////////////////////////////

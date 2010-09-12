@@ -44,6 +44,8 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include "particle_manager.h"
 #include "spell_manager.h"
 #include "network_serverfile.h"
+#include "assert.h"
+
 
 using namespace Ogre;
 
@@ -151,18 +153,18 @@ void Events::checkTileBorderMovement()
         TileManager::getSingleton().scrollMap(dx, dz);
         ObjectManager::getSingleton().syncToMapScroll(dx, dz);
         oldPos = ObjectManager::getSingleton().getAvatarPos()/TileManager::TILE_RENDER_SIZE;
-/*
-        std::stringstream strCmd;
-        if      (deltaX >0 && deltaZ >0) strCmd << (char) 1; // sw
-        else if (deltaX <0 && deltaZ >0) strCmd << (char) 3; // se
-        else if (deltaX >0 && deltaZ <0) strCmd << (char) 7; // nw
-        else if (deltaX <0 && deltaZ <0) strCmd << (char) 9; // ne
-        else if (deltaX==0 && deltaZ <0) strCmd << (char) 8; // n
-        else if (deltaX==0 && deltaZ >0) strCmd << (char) 2; // s
-        else if (deltaX >0 && deltaZ==0) strCmd << (char) 4; // w
-        else if (deltaX <0 && deltaZ==0) strCmd << (char) 6; // e
-        Network::getSingleton().send_command_binary(Network::CLIENT_CMD_MOVE, strCmd);
-*/
+        /*
+                std::stringstream strCmd;
+                if      (deltaX >0 && deltaZ >0) strCmd << (char) 1; // sw
+                else if (deltaX <0 && deltaZ >0) strCmd << (char) 3; // se
+                else if (deltaX >0 && deltaZ <0) strCmd << (char) 7; // nw
+                else if (deltaX <0 && deltaZ <0) strCmd << (char) 9; // ne
+                else if (deltaX==0 && deltaZ <0) strCmd << (char) 8; // n
+                else if (deltaX==0 && deltaZ >0) strCmd << (char) 2; // s
+                else if (deltaX >0 && deltaZ==0) strCmd << (char) 4; // w
+                else if (deltaX <0 && deltaZ==0) strCmd << (char) 6; // e
+                Network::getSingleton().send_command_binary(Network::CLIENT_CMD_MOVE, strCmd);
+        */
         //ParticleManager::getSingleton().pauseAll(false);
     }
 }

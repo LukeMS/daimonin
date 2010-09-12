@@ -27,120 +27,118 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include "gui_window.h"
 #include "gui_imageset.h"
 
-/**
- ** This is the base class for a gui element.
- *****************************************************************************/
+/// @brief This is the base class for a gui element.
+/// @details
 class GuiElement
 {
 public:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
-    enum { MIN_SIZE = 1 << 2 }; /**< Minimal graphic size of an element. **/
+    enum { MIN_SIZE = 1 << 2  /**< Minimal graphic size of an element. **/ };
+
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    GuiElement(TiXmlElement *xmlElement, const void *parent);
-    virtual ~GuiElement() {}
+    GuiElement(TiXmlElement *xmlElement, const void *parent); ///< Default constructor.
+    virtual ~GuiElement() {} ///< Default destructor.
 
-    /** Send a message from GuiManager with max 2 parameters and returns max. 2 values.
-     ** @param message The message/command for the element.
-     ** @param text    parameter and/or return string value.
-     ** @param param   parameter and/or return integer value.
-     ** @param text2   Additional text parameter.
-     *****************************************************************************/
+    /// @brief This function is called to interact with this element.
+    /// @param message The message/command for this element.
+    /// @param string  parameter and/or return string value.
+    /// @param param   parameter and/or return integer value.
+    /// @param text    Additional text parameter.
     virtual void sendMsg(const int /*message*/, Ogre::String &/*text*/, Ogre::uint32 &/*param*/, const char * /*text2*/) {}
-    virtual int keyEvent(const int keyChar, const unsigned int key);
-    virtual int mouseEvent(const int mouseAction, int mouseX, int mouseY, int mouseWheel);
 
-    /** Update an element. Used for drag'n'drop, animations, etc.
-     ** @param deltaTime The time since the last frame.
-     *****************************************************************************/
+    /// @brief This function is called when a key event has happened.
+    /// @param  keyChar The key character.
+    /// @param  key     The key value.
+    /// @return The status of event.
+    /// @see GuiManager for all defined status types.
+    virtual int keyEvent(const int keyChar, const unsigned int key);
+
+    /// @brief This function is called when a mouse event has happened.
+    /// @param action The mouse action (button pressed, etc).
+    /// @param posX   The x-pos of the mouse cursor.
+    /// @param posY   The y-pos of the mouse cursor.
+    /// @param wheel  The pos of the mouse wheel.
+    virtual int mouseEvent(const int action, int posX, int posY, int wheel);
+
+    /// @brief Update this element. Used for drag'n'drop, animations, etc.
+    /// @param deltaTime The time since the last frame.
     virtual void update(Ogre::Real /*deltaTime*/) {}
 
-    /** Draw an element into the parent window.
-     ** @param uploadToTexture When false the gfx is not yet copied to the texture.
-     **                        This way texture write access can be optimized for
-     **                        multi layer graphics.
-     *****************************************************************************/
+    /// @brief Draw an element into the parent window.
+    /// @param uploadToTexture When false the gfx is not yet copied to the texture.
+    ///        This way texture write access can be optimized for multi layer graphics.
     virtual void draw(bool uploadToTexture = true);
-    Ogre::uint16 getWidth()  const
-    {
-        return mWidth;
-    }
-    Ogre::uint16 getHeight() const
-    {
-        return mHeight;
-    }
 
-    /** Set the state of the element.
-     ** @param  state The state is the look of the element.
-     ** @return Returns true if the state was changed.
-     *****************************************************************************/
+    /// @brief Returns the width of this element.
+    Ogre::uint16 getWidth() const  { return mWidth;  }
+
+    /// @brief Returns the height of this element.
+    Ogre::uint16 getHeight() const { return mHeight; }
+
+    /// @brief Returns the unique numer of this element.
+    int getIndex() const { return mIndex; }
+
+    /// @brief Set the state of this element.
+    /// @param  state The state is the look of this element.
+    /// @return Returns true if the state has changed.
     bool setState(const Ogre::uchar state);
 
-    /** Set the position of the element.
-     ** @param x The x-pos in pixel from the top-left pos of the parent window.
-     ** @param y The y-pos in pixel from the top-left pos of the parent window.
-     *****************************************************************************/
+    /// @brief Set the position of this element.
+    /// @param x The x-pos in pixel from the top-left pos of the parent window.
+    /// @param y The y-pos in pixel from the top-left pos of the parent window.
     void setPosition(const int x, const int y)
     {
         mPosX = x;
         mPosY = y;
     }
 
-    /** Check if the Mouse-Pointer is within this element.
-     ** @param x The mouse x-pos in pixel.
-     ** @param y The mouse y-pos in pixel.
-     ** @return Returns true if the mouse is within the borders of this element.
-     *****************************************************************************/
+    /// @brief Check if the Mouse-Pointer is within this element.
+    /// @param x The mouse x-pos in pixel.
+    /// @param y The mouse y-pos in pixel.
+    /// @return Returns true if the mouse is within the borders of this element.
     bool mouseWithin(const int x, const int y) const
     {
         return !(mHidden || x < mPosX || x > mPosX + mWidth || y < mPosY || y > mPosY + mHeight);
-    }
-    /// Returns the unique numer of this element.
-    int getIndex() const
-    {
-        return mIndex;
     }
 
 protected:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
-    int mIndex;                          /**< Unique number. -1 means its a background-gfx (no interaction) **/
-    bool mHidden;
-    GuiWindow *mParent;                  /**< Pointer to the parent window. **/
-    Ogre::uchar mState;                  /**< Actual state of this element. **/
-    Ogre::uint16 mPosX, mPosY;           /**< Pixeloffset from the upper-left corner of the window. **/
-    Ogre::uint16 mWidth, mHeight;        /**< Dimension of this element. **/
+    int mIndex;                          ///< Unique number. -1 means its a background-gfx (no interaction)
+    bool mHidden;                        ///< Is this element currently hidden?
+    GuiWindow *mParent;                  ///< Pointer to the parent window.
+    Ogre::uchar mState;                  ///< Actual state of this element.
+    Ogre::uint16 mPosX, mPosY;           ///< Pixeloffset from the upper-left corner of the window.
+    Ogre::uint16 mWidth, mHeight;        ///< Dimension of this element.
     Ogre::uint16 mFontNr, mLabelFontNr;
     Ogre::uint16 mLabelPosX, mLabelPosY;
-    Ogre::String mLabelString;
-    Ogre::uint32 mLabelColor;            /**< The textcolor of the label. **/
-    Ogre::uint32 mFillColor;             /**< The fill color of the element. Only used when mGfxSrc is null. **/
-    GuiImageset::gfxSrcEntry *mGfxSrc;   /**< Pointer to the gfx-data structure or 0 for a colorfill. **/
+    Ogre::String mLabelString;           ///< The text of the label.
+    Ogre::uint32 mLabelColor;            ///< The textcolor of the label.
+    Ogre::uint32 mFillColor;             ///< The fill color of this element. Only used when mGfxSrc is null.
+    GuiImageset::gfxSrcEntry *mGfxSrc;   ///< Pointer to the gfx-data structure or 0 for a colorfill.
 
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    bool isHidden() const
-    {
-        return mHidden;
-    }
+    /// @return Returns true if this element is currently hidden.
+    bool isHidden() const { return mHidden; }
 
-    /** Hiding/Unhiding an element.
-     ** @param hidden Set the hidden status of this element.
-     ** @return Returns true if the derived class needs a redraw.
-     *****************************************************************************/
+    /// @brief Hiding/Unhiding an element.
+    /// @param hidden Set the hidden status of this element.
+    /// @return Returns true if the derived class needs a redraw.
     bool setHidden(bool hidden);
 
 private:
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    GuiElement(const GuiElement&);            /**< disable copy-constructor. **/
-    GuiElement &operator=(const GuiElement&); /**< disable assignment operator. **/
+    GuiElement(const GuiElement&);            ///< disable copy-constructor.
+    GuiElement &operator=(const GuiElement&); ///< disable assignment operator.
 };
 
 #endif

@@ -35,10 +35,9 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 // monster: ai controlled.
 // ////////////////////////////////////////////////////////////////////
 
-/**
- ** This singleton class handles all interactive objects.
- ** For non-interactive object the TileManager is used.
- *****************************************************************************/
+///
+/// This singleton class handles all interactive objects.
+/// For non-interactive object the TileManager is used.
 class ObjectManager
 {
 public:
@@ -47,22 +46,22 @@ public:
     // ////////////////////////////////////////////////////////////////////
     typedef struct
     {
-        Ogre::String nickName;      /**< Ingame-Name. **/
-        Ogre::String meshName;      /**< Name of the ogre3d mesh. **/
-        Ogre::Vector3 pos;          /**< Tile-pos. **/
-        Ogre::uchar boundingRadius; /**< The radius of subtiles, the NPC stands on. **/
+        Ogre::String nickName;      ///< Ingame-Name.
+        Ogre::String meshName;      ///< Name of the ogre3d mesh.
+        Ogre::Vector3 pos;          ///< Tile-pos.
+        Ogre::uchar boundingRadius; ///< The radius of subtiles, the NPC stands on.
         Ogre::Real facing;
-        unsigned int index;         /**< Unique number for this object. **/
-        int type;                   /**< Type: e.g. static, npc, ... **/
-        int particleNr;             /**< Number of the particle effect. **/
-        int level;                  /**< Floor-level. **/
+        unsigned int index;         ///< Unique number for this object.
+        int type;                   ///< Type: e.g. static, npc, etc.
+        int particleNr;             ///< Number of the particle effect.
+        int level;                  ///< Floor-level.
         int friendly;
         int attack;
         int defend;
         int maxHP;
         int maxMana;
         int maxGrace;
-        //char walkable[8];           /**< 8x8 bit for the walkable status of a tile. **/
+        //char walkable[8];           ///< 8x8 bit for the walkable status of a tile.
     }
     sObject;
     enum
@@ -87,8 +86,8 @@ public:
         QUERY_MASK_TILES_LAND  =1 << 2,
         QUERY_MASK_ENVIRONMENT =1 << 3,
         QUERY_MASK_NPC         =1 << 4,
-        QUERY_MASK_CONTAINER   =1 << 5,  /**< Stuff that can be opened (chest, sack,... **/
-        QUERY_MASK_EQUIPMENT   =1 << 6,  /**< Stuff that can be equipped (clothes, weapons,... **/
+        QUERY_MASK_CONTAINER   =1 << 5,  ///< Stuff that can be opened (chest, sack,...
+        QUERY_MASK_EQUIPMENT   =1 << 6,  ///< Stuff that can be equipped (clothes, weapons,...
         QUERY_MASK_NPC_SELECT  =1 << 7,
         QUERY_MASK_CAMERA      =1 << 8,
     } queryMask;
@@ -100,16 +99,16 @@ public:
         ATTACHED_OBJECT_SUM,
     };
 
-    /** Independant Object types. **/
+    /// Independant Object types.
     enum
     {
         // Static positon objects.
-        OBJECT_ENVIRONMENT, /**< Non interactive element. **/
-        OBJECT_WALL,        /**< Non interactive element (special placement on tile). **/
-        OBJECT_CONTAINER,   /**< Chest, Sack, ... **/
+        OBJECT_ENVIRONMENT, ///< Non interactive element.
+        OBJECT_WALL,        ///< Non interactive element (special placement on tile).
+        OBJECT_CONTAINER,   ///< Chest, Sack, ...
         // Dynamic positon objects.
-        OBJECT_NPC,         /**< Server contolled character. **/
-        OBJECT_PLAYER,      /**< Human controlled character. **/
+        OBJECT_NPC,         ///< Server contolled character.
+        OBJECT_PLAYER,      ///< Human controlled character.
         OBJECT_SUM,
     };
     static const char *ObjectID[OBJECT_SUM];
@@ -214,8 +213,8 @@ private:
     // ////////////////////////////////////////////////////////////////////
     ObjectManager() {}
     ~ObjectManager();
-    ObjectManager(const ObjectManager&);            /**< disable copy-constructor. **/
-    ObjectManager &operator=(const ObjectManager&); /**< disable assignment operator. **/
+    ObjectManager(const ObjectManager&);            ///< disable copy-constructor.
+    ObjectManager &operator=(const ObjectManager&); ///< disable assignment operator.
     void extractObject(Ogre::MovableObject *mob);
     Object *getObject(std::string &name);
 

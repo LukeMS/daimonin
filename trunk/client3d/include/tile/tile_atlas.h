@@ -21,38 +21,60 @@ You should have received a copy of the GNU General Public License along with
 this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
 
-#ifndef GUI_ANIMATION_H
-#define GUI_ANIMATION_H
+#ifndef TILE_ATLAS_H
+#define TILE_ATLAS_H
 
-#include <tinyxml.h>
-
-///////////////////////////////////////////////////////////////////////
-/// \brief This class provides 2d animations within a GuiWindow.
-/// \details
-///////////////////////////////////////////////////////////////////////
-class GuiAnimation
+class TileAtlas
 {
 public:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
+    enum {ATLAS_LAND_COLS = 6 /**< Cols of Landtiles in the altlastexture. **/ };
+    enum {ATLAS_LAND_ROWS = 7 /**< Rows of Landtiles in the altlastexture. **/ };
 
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    GuiAnimation(TiXmlElement *xmlElem, const void *parent); ///< Default constructor.
-    ~GuiAnimation(); ///< Default destructor.
+    static TileAtlas &getSingleton()
+    {
+        static TileAtlas Singleton; return Singleton;
+    }
+    /// Create the atlastexture in different resolutions.
+    /// @param filenamePrefix The prefix of the atlas texture filename.
+    /// @param maxTextureSize The maximum size of the atlas to create.
+    /// @param groupNr        How many atlas groups to create. -1 to create all groups found in the media folder.
+    /// @return true if the atlas-texture was created successful.
+    void createAtlasTexture(Ogre::String &filenamePrefix, Ogre::uint32 groupNr = -1);
 
 private:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
+    Ogre::uint32 mTileSize;
+    Ogre::uint32 mBorderSize;
+    Ogre::String mPathGfxTiles;
+    Ogre::uint32 mMaxTextureSize;
 
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    GuiAnimation(const GuiAnimation&);            ///< Disable copy-constructor.
-    GuiAnimation &operator=(const GuiAnimation&); ///< Disable assignment operator.
+    TileAtlas() {}
+    ~TileAtlas(){}
+    TileAtlas(const TileAtlas&);               ///< disable copy-constructor.
+    TileAtlas &operator=(const TileAtlas&);    ///< disable assignment operator.
+    bool copyTileToAtlas(Ogre::uchar *dstBuf); ///< 41 Standard tiles.
+    void copyFlowToAtlas(Ogre::uchar *dstBuf); ///<  3 Special tiles with a flow effect (Water/Lava/etc).
+    void copySpotToAtlas(Ogre::uchar *dstBuf);
+    void copyMaskToAtlas(Ogre::uchar *dstBuf);
+    bool loadImage(Ogre::Image &image, const Ogre::String &filename, bool logErrors);
+    /// Create a template to make it easier for the artists to create a maskset.
+    void createMaskTemplate();
+    /// Set the path string with the parsed entry of the 'resources.cfg' file.
+    /// Reimplemented
+    /// @param resource The directory name to be found in the resources file.
+    /// @param path     The path string to be set.
+    int setResourcePath(Ogre::String resource, Ogre::String &path);
 };
 
 #endif

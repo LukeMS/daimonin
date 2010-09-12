@@ -27,13 +27,11 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include <list>
 #include <OgreString.h>
 
-/**
- ** This class keeps all information of what the client knows about items.
- ** There are special items, called containers, which are items that can hold
- ** other items (like chests, sacks, etc).
- ** Every time a container is opened, the server sends all containing items.
- ** Therefore only 1 itemlist is needed for open containers.
- *****************************************************************************/
+/// This class keeps all information of what the client knows about items.
+///There are special items, called containers, which are items that can hold
+/// other items (like chests, sacks, etc).
+/// Every time a container is opened, the server sends all containing items.
+/// Therefore only 1 itemlist is needed for open containers.
 class Item
 {
 public:

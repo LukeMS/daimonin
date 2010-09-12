@@ -26,15 +26,23 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 
 #include "object/object.h"
 
+/// @brief This is the base class for an object-elememt.
+/// @details
 class ObjectElement
 {
 public:
-    ObjectElement(class Object *parent);
+    ObjectElement(class Object *parent); ///< Default constructor.
+    virtual ~ObjectElement() = 0;        ///< Default destructor.
+
+    /// @brief Get the parent object.
     Object *getParent() const { return mParent; }
-    virtual ~ObjectElement() = 0;
+
+    /// @brief Update this element.
+    /// @param event Ogre frame event. Used to get time since last frame.
     virtual bool update(const Ogre::FrameEvent &event) = 0;
 
 protected:
+    /// @brief Pointer to he parent object.
     class Object *mParent;
 };
 
