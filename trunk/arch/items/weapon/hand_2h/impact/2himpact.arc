@@ -133,8 +133,8 @@ nrof 1
 end
 Object quaterstaff
 layer 3
-name quaterstaff
-face quaterstaff.101
+name quarterstaff
+face quarterstaff.101
 weapon_speed 4.25
 attack_impact 100
 dam 191
