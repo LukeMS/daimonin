@@ -142,11 +142,8 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\3rdParty\zlib\zutil.h" />
-		<Unit filename="..\..\..\include\tile\tile_chunk.h" />
-		<Unit filename="..\..\..\include\tile\tile_decal.h" />
-		<Unit filename="..\..\..\include\tile\tile_manager.h" />
-		<Unit filename="..\..\..\include\tile\tile_map.h" />
-		<Unit filename="..\..\..\include\tile\tile_map_wrapper.h" />
+		<Unit filename="..\..\..\include\assert_manager.h" />
+		<Unit filename="..\..\..\include\events.h" />
 		<Unit filename="..\..\..\include\gui\gui_animation.h" />
 		<Unit filename="..\..\..\include\gui\gui_cursor.h" />
 		<Unit filename="..\..\..\include\gui\gui_element.h" />
@@ -164,6 +161,12 @@
 		<Unit filename="..\..\..\include\gui\gui_textinput.h" />
 		<Unit filename="..\..\..\include\gui\gui_textout.h" />
 		<Unit filename="..\..\..\include\gui\gui_window.h" />
+		<Unit filename="..\..\..\include\item.h" />
+		<Unit filename="..\..\..\include\logger.h" />
+		<Unit filename="..\..\..\include\network.h" />
+		<Unit filename="..\..\..\include\network_account.h" />
+		<Unit filename="..\..\..\include\network_cmd_interface.h" />
+		<Unit filename="..\..\..\include\network_serverfile.h" />
 		<Unit filename="..\..\..\include\object\object.h" />
 		<Unit filename="..\..\..\include\object\object_element.h" />
 		<Unit filename="..\..\..\include\object\object_element_animate3d.h" />
@@ -174,19 +177,18 @@
 		<Unit filename="..\..\..\include\object\object_element_visual2d.h" />
 		<Unit filename="..\..\..\include\object\object_element_visual3d.h" />
 		<Unit filename="..\..\..\include\object\object_manager.h" />
-		<Unit filename="..\..\..\include\events.h" />
-		<Unit filename="..\..\..\include\item.h" />
-		<Unit filename="..\..\..\include\logger.h" />
-		<Unit filename="..\..\..\include\network.h" />
-		<Unit filename="..\..\..\include\network_cmd_interface.h" />
-		<Unit filename="..\..\..\include\network_account.h" />
-		<Unit filename="..\..\..\include\network_serverfile.h" />
 		<Unit filename="..\..\..\include\option.h" />
 		<Unit filename="..\..\..\include\particle_manager.h" />
 		<Unit filename="..\..\..\include\profiler.h" />
 		<Unit filename="..\..\..\include\sound.h" />
 		<Unit filename="..\..\..\include\spell_manager.h" />
 		<Unit filename="..\..\..\include\spell_range.h" />
+		<Unit filename="..\..\..\include\tile\tile_atlas.h" />
+		<Unit filename="..\..\..\include\tile\tile_chunk.h" />
+		<Unit filename="..\..\..\include\tile\tile_decal.h" />
+		<Unit filename="..\..\..\include\tile\tile_manager.h" />
+		<Unit filename="..\..\..\include\tile\tile_map.h" />
+		<Unit filename="..\..\..\include\tile\tile_map_wrapper.h" />
 		<Unit filename="..\..\CodingStyle.txt">
 			<Option target="Release" />
 		</Unit>
@@ -228,9 +230,9 @@
 		<Unit filename="..\..\..\source\logger.cpp" />
 		<Unit filename="..\..\..\source\main.cpp" />
 		<Unit filename="..\..\..\source\network.cpp" />
+		<Unit filename="..\..\..\source\network_account.cpp" />
 		<Unit filename="..\..\..\source\network_cmd.cpp" />
 		<Unit filename="..\..\..\source\network_cmd_interface.cpp" />
-		<Unit filename="..\..\..\source\network_account.cpp" />
 		<Unit filename="..\..\..\source\network_serverfile.cpp" />
 		<Unit filename="..\..\..\source\object\object.cpp" />
 		<Unit filename="..\..\..\source\object\object_element.cpp" />
@@ -248,6 +250,7 @@
 		<Unit filename="..\..\..\source\sound.cpp" />
 		<Unit filename="..\..\..\source\spell_manager.cpp" />
 		<Unit filename="..\..\..\source\spell_range.cpp" />
+		<Unit filename="..\..\..\source\tile\tile_atlas.cpp" />
 		<Unit filename="..\..\..\source\tile\tile_chunk.cpp" />
 		<Unit filename="..\..\..\source\tile\tile_decal.cpp" />
 		<Unit filename="..\..\..\source\tile\tile_manager.cpp" />

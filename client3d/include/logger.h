@@ -26,127 +26,83 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 
 #include <fstream>
 
-/**
- ** This singleton class provides logging facility.
- ** Logs are stored in HTML format.
- *****************************************************************************/
+/// @brief This singleton class provides logging facility in HTML format.
+/// @details
 class Logger
 {
 private:
     enum
     {
-        STYLE_LIST,
-        STYLE_INFO,
-        STYLE_WARN,
-        STYLE_ERROR,
-        STYLE_SUCCESS,
-        STYLE_HEADLINE,
-        STYLE_SUM
+        STYLE_HEADLINE, ///< @brief Write a headline.
+        STYLE_LIST,     ///< @brief Write a list entry.
+        STYLE_INFO,     ///< @brief Write a text line with black text color.
+        STYLE_WARN,     ///< @brief Write a text line with orange text color.
+        STYLE_ERROR,    ///< @brief Write a text line with red text color.
+        STYLE_DEBUG,    ///< @brief Write a text line with violet text color.
+        STYLE_ATTEMPT,  ///< @brief Write a text line with black text color.
+        STYLE_OK,       ///< @brief Write a text line with black text color.
+        STYLE_SUM       ///< @brief Number of elements in this enum.
     };
     static int mType;
-
-    /**
-     ** Cconstructor creates the log file and initalizes it with the html header.
-     *****************************************************************************/
+    /// @brief   Default constructor.
+    /// @details Creates the log file and initalizes it with the html header.
     Logger();
 
-    /**
-     ** Destructor writes a closing html header and closes the logfile.
-     ** Both HTML 4.01 Transitional as well as HTML 4.01 Strict
-     ** allow the omission of the HTML and BODY start and end tag.
-     ** So we can consider not an error leaving the log without the closing header.
-     *****************************************************************************/
+    /// @brief    Default destructor.
+    /// @details  Writes a closing html header and closes the logfile.
+    /// Both HTML 4.01 Transitional as well as HTML 4.01 Strict
+    /// allow the omission of the HTML and BODY start and end tag.
+    /// So we can consider not an error leaving the log without the closing header.
     ~Logger();
 
-    /**
-     ** Returns the actual date and time.
-     *****************************************************************************/
+    /// @brief Returns the actual date and time.
     const std::string now();
 
+    /// @brief Helper class that writes to the HTML-file.
     class LogEntry
     {
     public:
-        /**
-         ** The Constructor writes the line header.
-         ** @param type The type of information to log (e.g. warnings).
-         *****************************************************************************/
+        /// @brief The Constructor writes the line header.
+        /// @param type The type of information to log (e.g. warnings).
         LogEntry(int type);
-        /**
-         ** This template function provides to LogEntry a stream-like behaviour.
-         ** Note that it returns a reference to this object so many calls to
-         ** operator<< can be chained in the usual manner.
-         ** @param in Takes a const reference to the object to log.
-         ** @return Reference to *this.
-         *****************************************************************************/
+
+        /// @brief This template function provides to LogEntry a stream-like behaviour.
+        /// @details Note that it returns a reference to this object so many calls to
+        ///          operator<< can be chained in the usual manner.
+        /// @param in Takes a const reference to the object to log.
+        /// @return Reference to *this.
         template <typename T>
         LogEntry& operator<<(const T &in)
         {
             if (mOut.is_open()) mOut << in;
             return *this;
         }
-        LogEntry(const LogEntry&) {}
-        ~LogEntry();
+
+        LogEntry(const LogEntry&) {} /// @brief Default constructor.
+        ~LogEntry();                 /// @brief Default destructor.
     private:
+        static bool mAttemptActive;
         std::ofstream mOut;
-        LogEntry &operator=(const LogEntry&); /**< disable assignment operator. **/
+        LogEntry &operator=(const LogEntry&); ///< @brief disable assignment operator.
     };
 
 public:
-    /**
-     ** This static method returns a reference to a static Logger object.
-     ** This allows users to use this class in a singleton-like manner.
-     ** @return Reference to a static singleton Logger object.
-     *****************************************************************************/
+    /// @brief Returns the reference to this singleton class.
     static Logger &log()
     {
         static Logger Singleton; return Singleton;
     }
-
-    /**
-     ** Writes a status message ("Ok" or "Failed") to the end of a line.
-     ** @param status True means "Ok", false means "Failed".
-     *****************************************************************************/
-    void success(bool status);
-
-    /**
-     ** Writes a list entry.
-     *****************************************************************************/
-    LogEntry list()
-    {
-        return LogEntry(STYLE_LIST);
-    }
-
-    /**
-     ** Writes an information.
-     *****************************************************************************/
-    LogEntry info()
-    {
-        return LogEntry(STYLE_INFO);
-    }
-
-    /**
-     ** Writes a warning.
-     *****************************************************************************/
-    LogEntry warning()
-    {
-        return LogEntry(STYLE_WARN);
-    }
-
-    /**
-     ** Writes an error.
-     *****************************************************************************/
-    LogEntry error()
-    {
-        return LogEntry(STYLE_ERROR);
-    }
-
-    /**
-     ** Writes a headline.
-     *****************************************************************************/
-    LogEntry headline()
-    {
-        return LogEntry(STYLE_HEADLINE);
-    }
+    /// @brief Writes an attempt message and adds a status message to it.
+    /// @details First it outputs the attempt message (e.g. "Starting the Gui-Manager...").
+    ///          If the next logger cmd is an error() it adds "failed" else "ok" to the end of the line.
+    ///          If you don't want to log an error on a failed attempt just add an empty error message.
+    LogEntry attempt()  { return LogEntry(STYLE_ATTEMPT);  }
+    LogEntry headline() { return LogEntry(STYLE_HEADLINE); } ///< @brief Writes a headline.
+    LogEntry list()     { return LogEntry(STYLE_LIST);     } ///< @brief Writes a list entry.
+    LogEntry warning()  { return LogEntry(STYLE_WARN);     } ///< @brief Writes a warning message.
+    LogEntry debug()    { return LogEntry(STYLE_DEBUG);    } ///< @brief Writes a debug message.
+    LogEntry error()    { return LogEntry(STYLE_ERROR);    } ///< @brief Writes an error message.
+    LogEntry info()     { return LogEntry(STYLE_INFO);     } ///< @brief Writes an info message.
 };
 
 #endif

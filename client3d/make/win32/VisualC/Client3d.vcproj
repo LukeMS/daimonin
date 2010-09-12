@@ -331,6 +331,10 @@
 				Name="tile"
 				>
 				<File
+					RelativePath="..\..\..\source\tile\tile_atlas.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\..\..\source\tile\tile_chunk.cpp"
 					>
 				</File>
@@ -396,6 +400,10 @@
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl;inc"
 			>
+			<File
+				RelativePath="..\..\..\source\assert_manager.h"
+				>
+			</File>
 			<File
 				RelativePath="..\..\..\include\define.h"
 				>
@@ -523,6 +531,10 @@
 			<Filter
 				Name="tile"
 				>
+				<File
+					RelativePath="..\..\..\include\tile\tile_atlas.h"
+					>
+				</File>
 				<File
 					RelativePath="..\..\..\include\tile\tile_chunk.h"
 					>

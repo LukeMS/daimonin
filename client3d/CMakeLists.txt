@@ -120,6 +120,7 @@ set (HEADER_FILES
   include/define.h
   include/tile/tile_chunk.h
   include/tile/tile_decal.h
+  include/tile/tile_atlas.h
   include/tile/tile_manager.h
   include/tile/tile_map.h
   include/object/object.h
@@ -134,6 +135,7 @@ set (HEADER_FILES
   include/object/object_manager.h
   include/events.h
   include/logger.h
+  include/assert_manager.h
   include/network.h
   include/network_account.h
   include/network_cmd_interface.h
@@ -175,6 +177,7 @@ set (SOURCE_FILES
   source/gui/gui_window.cpp
   source/tile/tile_chunk.cpp
   source/tile/tile_decal.cpp
+   source/tile/tile_atlas.cpp
   source/tile/tile_manager.cpp
   source/tile/tile_map.cpp
   source/object/object.cpp

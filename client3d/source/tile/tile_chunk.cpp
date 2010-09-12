@@ -29,6 +29,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include <OgreMaterialManager.h>
 #include "logger.h"
 #include "profiler.h"
+#include "tile/tile_atlas.h"
 #include "tile/tile_manager.h"
 
 using namespace Ogre;
@@ -652,7 +653,7 @@ void TileChunk::updateWater()
     HardwareVertexBufferSharedPtr vbuf = mSubMeshWater->vertexData->vertexBufferBinding->getBuffer(0);
     Real height;
     Real *pReal = static_cast<Real*>(vbuf->lock(HardwareBuffer::HBL_DISCARD));
-    const Real START_Z = TileManager::ATLAS_LAND_ROWS*FULL_TILE_SPACE;
+    const Real START_Z = TileAtlas::ATLAS_LAND_ROWS*FULL_TILE_SPACE;
     unsigned int numVertices = 0;
     for (int z = 0; z < TileManager::CHUNK_SIZE_Z*2; ++z)
     {

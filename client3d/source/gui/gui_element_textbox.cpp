@@ -25,6 +25,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include "logger.h"
 #include "profiler.h"
 #include "gui/gui_textout.h"
+#include "gui/gui_graphic.h"
 #include "gui/gui_element_textbox.h"
 
 using namespace Ogre;
@@ -80,6 +81,8 @@ void GuiElementTextbox::draw()
     GuiTextout::getSingleton().printText(mWidth, mHeight, dst, mWidth,
                                          mParent->getLayerBG() + mLabelPosX + mLabelPosY*mParent->getWidth(), mParent->getWidth(),
                                          mLabelString.c_str(), mLabelFontNr, mLabelColor, 0, mHideText);
+    if (mIndex < 0) // The text is part of the background or a part of another element.
+        GuiGraphic::getSingleton().restoreWindowBG(mWidth, mHeight, dst, mParent->getLayerBG() + mLabelPosX + mLabelPosY*mParent->getWidth(), mWidth, mParent->getWidth());
     mParent->getTexture()->getBuffer()->blitFromMemory(PixelBox(mWidth, mHeight, 1, PF_A8R8G8B8, dst),
             Box(mLabelPosX, mLabelPosY, mLabelPosX+mWidth, mLabelPosY+mHeight));
 }

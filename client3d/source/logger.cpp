@@ -24,13 +24,13 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include <ctime>
 #include <sstream>
 #include <iomanip>
-#include <exception>
 #include "logger.h"
 
 static const char *PRG_NAME = "Daimonin Ogre3d Client";
 static const char *FILENAME = "./client_log.html";
-static const char *STR_STYLE[] = {"List", "Info", "Warn", "Error", "Success", "Headline"};
+static const char *STR_STYLE[] = {"Head", "List", "Info", "Warn", "Error", "Debug", "Attempt", "Ok" };
 int Logger::mType = 0;
+bool Logger::LogEntry::mAttemptActive = false;
 
 //================================================================================================
 // Constructor.
@@ -40,18 +40,20 @@ Logger::Logger()
     std::ofstream log_stream(FILENAME, std::ios::out);
     if (!log_stream.is_open()) return;
     log_stream  << "<html>\n<head><title>" << PRG_NAME << " - Logfile</title></head>\n" <<
-    "<style>\n" <<
-    "td."<< STR_STYLE[STYLE_LIST    ]<< " {color:black;  }\n" <<
-    "td."<< STR_STYLE[STYLE_INFO    ]<< " {color:black;  }\n" <<
-    "td."<< STR_STYLE[STYLE_WARN    ]<< " {color:orange; }\n" <<
-    "td."<< STR_STYLE[STYLE_ERROR   ]<< " {color:red;    }\n" <<
-    "td."<< STR_STYLE[STYLE_SUCCESS ]<< " {color:#00ff00;}\n" <<
-    "td."<< STR_STYLE[STYLE_HEADLINE]<< " {color:black; font-size: 18pt; font-weight: bold;}\n" <<
-    "</style>\n" <<
-    "<body>\n" <<
-    "<table  width=\"100%\">\n\n" <<
-    "<h1>" << PRG_NAME << " - Logfile</h1>\n" <<
-    "<h2>Started: " << now() << "</h2>\n";
+                "<style>\n" <<
+                "td."<< STR_STYLE[STYLE_HEADLINE]<< " {color:black; font-weight: bold;}\n" <<
+                "td."<< STR_STYLE[STYLE_LIST    ]<< " {color:black;  }\n" <<
+                "td."<< STR_STYLE[STYLE_INFO    ]<< " {color:black;  }\n" <<
+                "td."<< STR_STYLE[STYLE_WARN    ]<< " {color:orange; }\n" <<
+                "td."<< STR_STYLE[STYLE_ERROR   ]<< " {color:red;    }\n" <<
+                "td."<< STR_STYLE[STYLE_DEBUG   ]<< " {color:violet; }\n" <<
+                "td."<< STR_STYLE[STYLE_ATTEMPT ]<< " {color:black;  }\n" <<
+                "td."<< STR_STYLE[STYLE_OK      ]<< " {color:#00ff00;}\n" <<
+                "</style>\n\n" <<
+                "<body>\n" <<
+                "<table  width=\"100%\">\n" <<
+                "<h1>" << PRG_NAME << " - Logfile</h1>\n" <<
+                "<h2>Started: " << now() << "</h2>";
 }
 
 //================================================================================================
@@ -62,7 +64,7 @@ Logger::~Logger()
     std::ofstream log_stream(FILENAME, std::ios::out | std::ios::app);
     if (log_stream.is_open())
     {
-        log_stream << "\n\n</table>\n<hr><h2>Ended: " << now() << "</h2>\n</body>\n</html>";
+        log_stream << "\n</table>\n\n<hr><h2>Ended: " << now() << "</h2>\n</body>\n</html>";
     }
 }
 
@@ -77,28 +79,12 @@ const std::string Logger::now()
     std::ostringstream os;
     os.fill('0');
     os << std::setw(2) << tdata->tm_mday <<
-    '.'<< std::setw(2) << tdata->tm_mon+1 <<
-    '.'<< std::setw(2) << tdata->tm_year+1900 <<
-    ' '<< std::setw(2) << tdata->tm_hour <<
-    ':'<< std::setw(2) << tdata->tm_min <<
-    ':'<< std::setw(2) << tdata->tm_sec;
+       '.'<< std::setw(2) << tdata->tm_mon+1 <<
+       '.'<< std::setw(2) << tdata->tm_year+1900 <<
+       ' '<< std::setw(2) << tdata->tm_hour <<
+       ':'<< std::setw(2) << tdata->tm_min <<
+       ':'<< std::setw(2) << tdata->tm_sec;
     return os.str();
-}
-
-//================================================================================================
-// Writes a status message to the end of line.
-//================================================================================================
-void Logger::success(bool status)
-{
-    std::ofstream log_stream(FILENAME, std::ios::out | std::ios::in| std::ios::binary);
-    if (log_stream.is_open())
-    {
-        log_stream.seekp(-5, std::ios::end); // position before </tr> key.
-        if (status)
-            log_stream << "<td width=\"5%\" class=\"" << STR_STYLE[STYLE_SUCCESS] << "\"> ok </td></tr>";
-        else
-            log_stream << "<td width=\"5%\" class=\"" << STR_STYLE[STYLE_ERROR] << "\"> failed </td></tr>";
-    }
 }
 
 //================================================================================================
@@ -107,13 +93,24 @@ void Logger::success(bool status)
 Logger::LogEntry::LogEntry(int type)
 {
     mOut.open(FILENAME, std::ios::out | std::ios::app);
-    if (!mOut.is_open())  throw std::bad_exception();
-    if ((mType = type) == STYLE_HEADLINE)
-        mOut << "\n</table>\n\n<hr>\n<table  width=\"100%\">";
+    if (!mOut.is_open()) throw std::bad_exception();
+    if (mAttemptActive)
+    {
+        if (type != STYLE_ERROR)
+            mOut << "<font color=#00ff00>  ok</font></td></tr>";
+        else
+            mOut << "<font color=red>  failed</font></td></tr>";
+        mAttemptActive = false;
+    }
+    mType = type;
+    if (type == STYLE_HEADLINE)
+        mOut << "\n</table>\n\n<hr>\n<table width=\"100%\">";
     if (type == STYLE_LIST)
-        mOut << "\n<tr><td width= \"95%\" class=\"" << STR_STYLE[STYLE_LIST] << "\"><li>";
+        mOut << "\n<tr><td class=\"" << STR_STYLE[STYLE_LIST] << "\"><li>";
     else
-        mOut << "\n<tr><td width= \"95%\" class=\"" << STR_STYLE[type] << "\">";
+        mOut << "\n<tr><td class=\"" << STR_STYLE[type] << "\">";
+    if (type == STYLE_ATTEMPT)
+        mAttemptActive = true;
 }
 
 //================================================================================================
@@ -123,6 +120,6 @@ Logger::LogEntry::~LogEntry()
 {
     if (!mOut.is_open()) return;
     if (mType == STYLE_LIST) mOut << "</li>";
-    mOut << "</td></tr>";
+    if (!mAttemptActive)     mOut << "</td></tr>";
     mOut.close();
 }

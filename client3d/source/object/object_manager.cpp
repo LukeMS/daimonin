@@ -65,6 +65,7 @@ const char *ObjectManager::ObjectID[OBJECT_SUM] = { "S","S","S","P","N" };
 void ObjectManager::init()
 {
     PROFILE()
+    Logger::log().headline() << "Init Object Managaer";
     mSelectedType  =-1;
     mSelectedObject=-1;
     // mSelectedEnemy = false;
@@ -86,6 +87,7 @@ const Ogre::Vector3 ObjectManager::getAvatarPos()
 //================================================================================================
 void ObjectManager::addCreature(sObject &obj)
 {
+    Logger::log().headline() << "Add object:";
     Object *object = new Object();
     mObjectMap.insert(std::pair<std::string, class Object*>(obj.nickName, object));
     ObjectElementVisual3d *objV3d = new ObjectElementVisual3d(object, mSceneManager);

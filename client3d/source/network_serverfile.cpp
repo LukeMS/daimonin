@@ -52,15 +52,13 @@ ServerFile::ServerFile()
 void ServerFile::checkFileStatus(char *param, int fileNr)
 {
     PROFILE()
-    Logger::log().info() << "Server file status of ["<< fileNr<< "] " << srv_file[fileNr].filename << "...";
+    Logger::log().attempt() << "Server file status of ["<< fileNr<< "] " << srv_file[fileNr].filename << "...";
     if (!strcmp((const char*)param, "OK"))
     {
-        Logger::log().success(true);
         srv_file[fileNr].status = STATUS_OK;
     }
     else
     {
-        Logger::log().success(false);
         int pos = 0;
         for (; param[pos]!='|'; ++pos) ;
         param[pos++] = '\0';
@@ -68,6 +66,7 @@ void ServerFile::checkFileStatus(char *param, int fileNr)
         setLength(fileNr, atoi(param));
         param+= pos;
         setCRC(fileNr, strtoul(param, 0, 16));
+        Logger::log().error() << "";
     }
 }
 
