@@ -35,7 +35,12 @@ sint64 query_cost(object *tmp, object *who, int flag)
 {
     sint64  val;
     int     number; /* used to better calculate value */
-
+    float   bon=0.0f;
+    const float                     stats_penalty[10] = {0.1f, 0.15f, 0.2f, 0.3f, 0.4f, 0.5f, 0.6f, 0.7f, 0.8f, 0.9f}; /* used for stats 0-9 */
+    if(who->stats.Cha < 10)
+      bon = (-1.0f + stats_penalty[who->stats.Cha]);
+    else if(who->stats.Cha > 10)
+      bon = ((float)(who->stats.Cha - 10) / 100.0f);
     if ((number = tmp->nrof) == 0)
         number = 1;
 
@@ -52,9 +57,9 @@ sint64 query_cost(object *tmp, object *who, int flag)
         else
 		{
 			if (flag == F_BUY)
-				val = (sint64)((float)(tmp->value * number) *1.0f);
+				val = (sint64)((float)(tmp->value * number) *(1.0f - bon));
 			else
-				val = (sint64)((float)(tmp->value * number) *0.8f);
+				val = (sint64)((float)(tmp->value * number) *(0.5f + bon));
 		}
     }
     else /* This area deals with objects that are not identified, but can be */
@@ -75,9 +80,9 @@ sint64 query_cost(object *tmp, object *who, int flag)
                 else
 				{
 					if (flag == F_BUY)
-						val = (sint64)((float)(tmp->arch->clone.value * number) *1.0f);
+						val = (sint64)((float)(tmp->arch->clone.value * number) *(1.0f - bon));
 					else
-						val = (sint64)((float)(tmp->arch->clone.value * number) *0.8f);
+						val = (sint64)((float)(tmp->arch->clone.value * number) *(0.5f + bon));
 				}
             }
         }
