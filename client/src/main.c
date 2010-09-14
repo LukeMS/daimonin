@@ -37,7 +37,7 @@ ClientSocket        csocket;
 int                 SocketStatusErrorNr;        /* if an socket error, this is it */
 
 _login_step          LoginInputStep;
-Uint32              sdl_dgreen, sdl_dred, sdl_gray1, sdl_gray2, sdl_gray3, sdl_gray4, sdl_blue1;
+Uint32              sdl_dgreen, sdl_dred, sdl_gray1, sdl_gray2, sdl_gray3, sdl_gray4;
 
 _skindef            skindef;
 
@@ -215,11 +215,11 @@ static _bitmap_name BitmapName[BITMAP_INIT]    =
     {"number.png", PIC_TYPE_DEFAULT},
     {"invslot_u.png", PIC_TYPE_TRANS},
     {"death.png", PIC_TYPE_TRANS},
-    {"sleep.png", PIC_TYPE_TRANS},
     {"confused.png", PIC_TYPE_TRANS},
     {"paralyzed.png", PIC_TYPE_TRANS},
     {"scared.png", PIC_TYPE_TRANS},
     {"blind.png", PIC_TYPE_TRANS},
+    {"exclusive_effect.png", PIC_TYPE_DEFAULT},
     {"enemy1.png", PIC_TYPE_TRANS},
     {"enemy2.png", PIC_TYPE_TRANS},
     {"probe.png", PIC_TYPE_TRANS},
@@ -238,7 +238,6 @@ static _bitmap_name BitmapName[BITMAP_INIT]    =
     {"target_normal.png", PIC_TYPE_TRANS},
     {"loading.png", PIC_TYPE_TRANS},
     {"warn_hp.png", PIC_TYPE_DEFAULT},
-    {"warn_food.png", PIC_TYPE_DEFAULT},
     {"main_stats.png", PIC_TYPE_DEFAULT},
     {"warn_weight.png", PIC_TYPE_DEFAULT},
     {"logo270.png", PIC_TYPE_DEFAULT},
@@ -1699,15 +1698,8 @@ int main(int argc, char *argv[])
     sdl_dred = SDL_MapRGB(ScreenSurface->format, 0x80, 0x00, 0x00);
     sdl_gray1 = SDL_MapRGB(ScreenSurface->format, 0x45, 0x45, 0x45);
     sdl_gray2 = SDL_MapRGB(ScreenSurface->format, 0x55, 0x55, 0x55);
-
     sdl_gray3 = SDL_MapRGB(ScreenSurface->format, 0x55, 0x55, 0x55);
     sdl_gray4 = SDL_MapRGB(ScreenSurface->format, 0x60, 0x60, 0x60);
-
-    sdl_blue1 = SDL_MapRGB(ScreenSurface->format, 0x00, 0x00, 0xef);
-
-
-
-
     SDL_EnableUNICODE(1);
     load_skindef();
     load_bitmaps();
@@ -2789,19 +2781,23 @@ void reload_skin()
 void load_skindef()
 {
     PHYSFS_File *handle;
-    int     i;
-    char line[512], keyword[256], parameter[256];
+    char         buf[MEDIUM_BUF];
 
     /* first we fill with default values */
-    skindef.rowcolor[0]=SDL_MapRGB(ScreenSurface->format, 100, 57, 30);
-    skindef.rowcolor[1]=SDL_MapRGB(ScreenSurface->format, 57, 59, 39);
-    skindef.newclosebutton = 1;
+    skindef.newclosebutton = 1; // TODO: Remove.
+    skindef.dialog_rows0 = SDL_MapRGB(ScreenSurface->format, 100, 57, 30);
+    skindef.dialog_rows1 = SDL_MapRGB(ScreenSurface->format, 57, 59, 39);
+    skindef.dialog_rowsS = SDL_MapRGB(ScreenSurface->format, 0, 0, 239);
+    skindef.effect_width = 9;
+    skindef.effect_height = 16;
+    MALLOC_STRING(skindef.effect_eating, "Nyom! ");
+    MALLOC_STRING(skindef.effect_sleeping, "Zzz! ");
 
     /* lets try to load the skin.def */
     LOG(LOG_MSG, "Trying to load skin definition... ");
-    sprintf(line, "%s/skin.def", DIR_SETTINGS);
+    sprintf(buf, "%s/skin.def", DIR_SETTINGS);
 
-    if (!(handle = PHYSFS_openRead(line)))
+    if (!(handle = PHYSFS_openRead(buf)))
     {
         LOG(LOG_ERROR, "FAILED: %s!\n", PHYSFS_getLastError());
 
@@ -2810,32 +2806,81 @@ void load_skindef()
 
     PHYSFS_setBuffer(handle, HUGE_BUF);
 
-    while (PHYSFS_readString(handle, line, sizeof(line)) >= 0)
+    while (PHYSFS_readString(handle, buf, sizeof(buf)) >= 0)
     {
+        char   *key,
+               *val;
+
         /* Skip comments and blank lines. */
-        if (line[0]=='#' ||
-            line[0]=='\0')
+        if (buf[0]=='#' ||
+            buf[0]=='\0')
         {
             continue;
         }
 
-        i=0;
-        while (line[i] && line[i]!= ':')
-            i++;
-        line[++i]=0;
-        strcpy(keyword, line);
-        strcpy(parameter, line + i + 1);
-
-        if (!strcmp(keyword, "newclosebutton:"))
-            skindef.newclosebutton = atoi(parameter);
-        else if(!strcmp(keyword, "color:"))
+        if (!(val = strchr(buf, ':')))
         {
-            int r=0, g=0, b=0;
-            sscanf(parameter, "%s %d %d %d",keyword, &r, &g, &b);
-            if (!strcmp(keyword, "rowcolor_0:"))
-                skindef.rowcolor[0]=SDL_MapRGB(ScreenSurface->format, r, g, b);
-            else if (!strcmp(keyword, "rowcolor_1:"))
-                skindef.rowcolor[1]=SDL_MapRGB(ScreenSurface->format, r, g, b);
+            LOG(LOG_ERROR, "Ignoring malformed entry in skin.def: '%s'\n",
+                buf);
+
+            continue;
+        }
+
+        key = buf;
+        *val = '\0';
+        val += 2;
+
+        if (!strcmp(key, "newclosebutton"))
+        {
+            if (*val == '0')
+            {
+                skindef.newclosebutton = 0;
+            }
+        }
+        else if (!strcmp(key, "dialog_rows0"))
+        {
+            uint32 n = (uint32)strtoul(val, NULL, 10);
+
+            skindef.dialog_rows0 = SDL_MapRGB(ScreenSurface->format,
+                                              (n >> 16) & 0xff,
+                                              (n >> 8) & 0xff,
+                                              n & 0xff);
+        }
+        else if (!strcmp(key, "dialog_rows1"))
+        {
+            uint32 n = (uint32)strtoul(val, NULL, 10);
+
+            skindef.dialog_rows1 = SDL_MapRGB(ScreenSurface->format,
+                                              (n >> 16) & 0xff,
+                                              (n >> 8) & 0xff,
+                                              n & 0xff);
+        }
+        else if (!strcmp(key, "dialog_rowsS"))
+        {
+            uint32 n = (uint32)strtoul(val, NULL, 10);
+
+            skindef.dialog_rowsS = SDL_MapRGB(ScreenSurface->format,
+                                              (n >> 16) & 0xff,
+                                              (n >> 8) & 0xff,
+                                              n & 0xff);
+        }
+        else if (!strcmp(key, "effect_width"))
+        {
+            skindef.effect_width = (uint8)strtoul(val, NULL, 10);
+        }
+        else if (!strcmp(key, "effect_height"))
+        {
+            skindef.effect_height = (uint8)strtoul(val, NULL, 10);
+        }
+        else if (!strcmp(key, "effect_eating"))
+        {
+            FREE(skindef.effect_eating);
+            MALLOC_STRING(skindef.effect_eating, val);
+        }
+        else if (!strcmp(key, "effect_sleeping"))
+        {
+            FREE(skindef.effect_sleeping);
+            MALLOC_STRING(skindef.effect_sleeping, val);
         }
     }
 

@@ -45,6 +45,10 @@ struct _map_object_parse   *start_map_object_parse  = NULL;
 
 _multi_part_obj             MultiArchs[16];
 
+static void ShowEffects(uint32 flags, uint16 x, uint16 y);
+static uint16 ShowExclusiveEffect(uint16 x, uint16 y, uint16 xoff, uint16 w,
+                                  char *text);
+
 /* TODO: do a real adjust... we just clear here the cache.
  */
 void adjust_map_cache(int xpos, int ypos)
@@ -519,11 +523,20 @@ void map_draw_map(void)
     _Sprite        *face_sprite;
     register int ypos, xpos;
     int         x, y, k, xl, yl, temp, kk, kt, yt, xt, alpha;
-    int         xml, xmpos, xtemp = 0;
+    int         xml, xmpos;
     uint16      index, index_tmp;
     int         mid, mnr, xreal, yreal;
     _BLTFX      bltfx;
     SDL_Rect    rect;
+    sint16      left = 0,
+                right = 0,
+                t = -1,
+                t_left = 0,
+                t_right = 0,
+                t_bar = 0,
+                t_xl = 0,
+                t_yl = 0;
+    uint32      t_flags = 0;
 
     /* we should move this later to a better position, this only for testing here */
     _Sprite     player_dummy;
@@ -768,140 +781,58 @@ void map_draw_map(void)
                             else
                                 sprite_blt_map(face_sprite, xl, yl, NULL, &bltfx, stretch);
 
-                            /* have we a playername? then print it! */
-                            if (options.player_names && map->pname[k][0])
+                            /* perhaps the object has a marked effect, blt it now */
+                            if (map->ext[k] ||
+                                map->pname[k][0])
                             {
-                                if (options.player_names == 1 /* all names */
-                                        || (options.player_names == 2 && namecmp(map->pname[k], cpl.rankandname)) /* names from other players only */
-                                        || (options.player_names == 3 && !namecmp(map->pname[k], cpl.rankandname))) /* only you */
-                                {
-                                    int s, col = COLOR_DEFAULT;
+                                left = (sint32)(((double)(xml - 10) / 100.0) *
+                                                ((xml == MAP_TILE_POS_XOFF) ?
+                                                 25.0 : 20.0));
+                                right = MAX(1, MIN((xml + 10) - (left * 2),
+                                                   300));
 
-                                    for (s = 0; s < GROUP_MAX_MEMBER; s++)
-                                    {
-                                        char *name_tmp = strchr(map->pname[k], ' ');
-                                        int len = 0;
-
-                                        if (name_tmp)
-                                        {
-                                            len = name_tmp - map->pname[k];
-                                            if (len != (int) strlen(&group[s].name[0]))
-                                                len = 0;
-                                        }
-
-                                        if (group[s].name[0] != '\0' && (!strcmp(&group[s].name[0], map->pname[k])||
-                                                                         (len && !strncmp(&group[s].name[0], map->pname[k], len)) ))
-                                        {
-                                            col = COLOR_GREEN;
-                                            break;
-                                        }
-                                    }
-                                    string_blt(ScreenSurfaceMap, &font_tiny_out, map->pname[k],
-                                              xpos - (strlen(map->pname[k]) * 2) + 22, ypos - 48, col, NULL, NULL);
-                                }
-                            }
-
-                            /* perhaps the objects has a marked effect, blt it now */
-                            if (map->ext[k])
-                            {
-                                if (map->ext[k] & FFLAG_SLEEP)
-                                    sprite_blt_map(Bitmaps[BITMAP_SLEEP], xl + face_sprite->bitmap->w / 2, yl - 5, NULL,
-                                               NULL, 0);
-                                if (map->ext[k] & FFLAG_CONFUSED)
-                                    sprite_blt_map(Bitmaps[BITMAP_CONFUSE], xl + face_sprite->bitmap->w / 2 - 1, yl - 4,
-                                               NULL, NULL, 0);
-//                                if (map->ext[k] & FFLAG_SCARED)
-//                                    sprite_blt_map(Bitmaps[BITMAP_SCARED], xl + face_sprite->bitmap->w / 2 + 10, yl - 4,
-//                                               NULL, NULL);
-                                if (map->ext[k] & FFLAG_EATING)
-                                    sprite_blt_map(Bitmaps[BITMAP_WARN_FOOD], xpos + 17, yl - 13, NULL,
-                                               NULL, 0);
-                                if (map->ext[k] & FFLAG_PARALYZED)
-                                {
-                                    sprite_blt_map(Bitmaps[BITMAP_PARALYZE], xl + face_sprite->bitmap->w / 2 + 2, yl + 3,
-                                               NULL, NULL, 0);
-                                    sprite_blt_map(Bitmaps[BITMAP_PARALYZE], xl + face_sprite->bitmap->w / 2 + 9, yl + 3,
-                                               NULL, NULL, 0);
-                                }
-                                if (map->ext[k] & FFLAG_PROBE)
+                                if ((map->ext[k] & FFLAG_PROBE))
                                 {
                                     if (face_sprite)
                                     {
-                                        /* 2007-01-15 Alderan: modifying/extend robed's HP patch */
-                                        int hp_col;
-                                        Uint32 sdl_col;
+                                        t = k;
+                                        t_bar = (sint32)((double)right /
+                                                100.0 * (double)MAX(1,
+                                                MIN(map->probe[k], 100))) + 1;
+                                        t_left = left + (xmpos - 5);
+                                        t_right = right + t_left;
+                                        t_xl = xmpos + left + right / 2 - 10;
+                                        t_yl = yl - skindef.effect_height;
+                                        t_flags = map->ext[k];
+                                    }
+                                }
+                                else
+                                {
+                                    ShowEffects(map->ext[k],
+                                                xmpos + left + right / 2 - 10,
+                                                yl - skindef.effect_height);
 
-
-                                             if (cpl.target_hp > 90) hp_col = COLOR_GREEN;
-                                        else if (cpl.target_hp > 75) hp_col = COLOR_DGOLD;
-                                        else if (cpl.target_hp > 50) hp_col = COLOR_HGOLD;
-                                        else if (cpl.target_hp > 25) hp_col = COLOR_ORANGE;
-                                        else if (cpl.target_hp > 10) hp_col = COLOR_YELLOW;
-                                        else                         hp_col = COLOR_RED;
-
-                                        if(xml == MAP_TILE_POS_XOFF)
-                                            xtemp = (int) (((double)xml/100.0)*25.0);
-                                        else
-                                            xtemp = (int) (((double)xml/100.0)*20.0);
-
-                                        temp = (xml-xtemp*2)-1;
-                                        if (temp <=0)
-                                            temp = 1;
-                                        if(temp >= 300)
-                                            temp = 300;
-                                        mid = map->probe[k];
-                                        if(mid<=0)
-                                            mid = 1;
-                                        if (mid>100)
-                                            mid = 100;
-                                        temp = (int)(((double)temp/100.0)*(double)mid);
-                                        rect.h=2 ;
-                                        rect.w=temp ;
-                                        rect.x = 0;
-                                        rect.y = 0;
-
-                                        sdl_col = SDL_MapRGB(ScreenSurfaceMap->format,
-                                               Bitmaps[BITMAP_PALETTE]->bitmap->format->palette->colors[hp_col].r,
-                                               Bitmaps[BITMAP_PALETTE]->bitmap->format->palette->colors[hp_col].g,
-                                               Bitmaps[BITMAP_PALETTE]->bitmap->format->palette->colors[hp_col].b);
-
-                                        /* first we draw the bar: */
-                                        rect.x = xmpos+xtemp-1;
-                                        rect.y = yl-9;
-                                        rect.h = 1;
-                                        SDL_FillRect(ScreenSurfaceMap,&rect,sdl_col);
-                                        /* horizontal lines of left bracked */
-                                        rect.h=1;
-                                        rect.w=3;
-                                        rect.x = xmpos+xtemp-3;
-                                        rect.y = yl-11;
-                                        SDL_FillRect(ScreenSurfaceMap,&rect,sdl_col);
-                                        rect.y = yl-7;
-                                        SDL_FillRect(ScreenSurfaceMap,&rect,sdl_col);
-                                        /* hor. lines of right bracked */
-                                        rect.x = xmpos+xtemp+(xml-xtemp*2)-3;
-                                        SDL_FillRect(ScreenSurfaceMap,&rect,sdl_col);
-                                        rect.y = yl-11;
-                                        SDL_FillRect(ScreenSurfaceMap,&rect,sdl_col);
-                                        /* vertical lines */
-                                        rect.w = 1;
-                                        rect.h = 5;
-                                        rect.x = xmpos+xtemp-3;
-                                        rect.y = yl-11;
-                                        SDL_FillRect(ScreenSurfaceMap,&rect,sdl_col);
-                                        rect.x = xmpos+xtemp+(xml-xtemp*2)-1;
-                                        SDL_FillRect(ScreenSurfaceMap,&rect,sdl_col);
-
-                                        /* Draw the name of target if it's not a player */
-                                        if (!(options.player_names && map->pname[k][0]))
-                                            string_blt(ScreenSurfaceMap, &font_tiny_out, cpl.target_name, xpos - (strlen(cpl.target_name)*2) + 22, yl - 26, cpl.target_color, NULL, NULL);
-                                        /* Draw HP remaining percent */
-                                        if (cpl.target_hp>0)
+                                    /* have we a playername? then print it! */
+                                    if (options.player_names &&
+                                        map->pname[k][0])
+                                    {
+                                        if (options.player_names == 1 || /* all names */
+                                            (options.player_names == 2 &&
+                                             namecmp(map->pname[k], cpl.rankandname)) || /* names from other players only */
+                                            (options.player_names == 3 &&
+                                             !namecmp(map->pname[k], cpl.rankandname))) /* only you */
                                         {
-                                            char hp_text[9];
-                                            int hp_len;
-                                            hp_len = sprintf((char *)hp_text, "HP: %d%%", cpl.target_hp);
-                                            string_blt(ScreenSurfaceMap, &font_tiny_out, hp_text, xpos - hp_len*2 + 22, yl - 36, hp_col, NULL, NULL);
+                                            string_blt(ScreenSurfaceMap,
+                                                       &font_small_out,
+                                                       map->pname[k],
+                                                       xmpos + left + right /
+                                                       2 - 10 -
+                                                       string_width(&font_small_out,
+                                                                    map->pname[k]) / 2,
+                                                       yl - skindef.effect_height -
+                                                       font_small_out.line_height -
+                                                       8, COLOR_WHITE, NULL,
+                                                       NULL);
                                         }
                                     }
                                 }
@@ -926,6 +857,188 @@ void map_draw_map(void)
             }
         }
     }
+
+    /* Have we drawn a target above? Now show the info (name, hp bar, etc).
+     * This way it is drawn on top of the map and is not obscured by walls,
+     * etc. */
+    if (t >= 0)
+    {
+        uint8   hp_col;
+        uint32  sdl_col;
+
+        if (cpl.target_hp > 90)
+        {
+            hp_col = COLOR_GREEN;
+        }
+        else if (cpl.target_hp > 75)
+        {
+            hp_col = COLOR_DGOLD;
+        }
+        else if (cpl.target_hp > 50)
+        {
+            hp_col = COLOR_HGOLD;
+        }
+        else if (cpl.target_hp > 25)
+        {
+            hp_col = COLOR_ORANGE;
+        }
+        else if (cpl.target_hp > 10)
+        {
+            hp_col = COLOR_YELLOW;
+        }
+        else
+        {
+            hp_col = COLOR_RED;
+        }
+
+        sdl_col = SDL_MapRGB(ScreenSurfaceMap->format,
+                             Bitmaps[BITMAP_PALETTE]->bitmap->format->palette->colors[hp_col].r,
+                             Bitmaps[BITMAP_PALETTE]->bitmap->format->palette->colors[hp_col].g,
+                             Bitmaps[BITMAP_PALETTE]->bitmap->format->palette->colors[hp_col].b);
+        ShowEffects(t_flags, t_xl, t_yl);
+        // hp% line
+        rect.x = t_left;
+        rect.y = t_yl - 5;
+        rect.w = t_bar;
+        rect.h = 1;
+        SDL_FillRect(ScreenSurfaceMap, &rect, sdl_col);
+        // top horizontal line of left bracket
+        rect.x = t_left - 2;
+        rect.y = t_yl - 7;
+        rect.w = 3;
+        rect.h = 1;
+        SDL_FillRect(ScreenSurfaceMap, &rect, sdl_col);
+        // bottom horizontal line of left bracket
+        rect.y = t_yl - 3;
+        SDL_FillRect(ScreenSurfaceMap, &rect, sdl_col);
+        // bottom horizontal line of right bracket
+        rect.x = t_right;
+        SDL_FillRect(ScreenSurfaceMap, &rect, sdl_col);
+        // top horizontal line of right bracket
+        rect.y = t_yl - 7;
+        SDL_FillRect(ScreenSurfaceMap, &rect, sdl_col);
+        // vertical line of left bracket
+        rect.x = t_left - 2;
+        rect.y = t_yl - 7;
+        rect.w = 1;
+        rect.h = 5;
+        SDL_FillRect(ScreenSurfaceMap, &rect, sdl_col);
+        // vertical line of right bracket
+        rect.x = t_right + 2;
+        SDL_FillRect(ScreenSurfaceMap, &rect, sdl_col);
+        string_blt(ScreenSurfaceMap, &font_small_out, cpl.target_name,
+                   t_xl - string_width(&font_small_out, cpl.target_name) / 2,
+                   t_yl - font_small_out.line_height - 8, cpl.target_color,
+                   NULL, NULL);
+    }
+}
+
+static void ShowEffects(uint32 flags, uint16 x, uint16 y)
+{
+    uint8 i = 0,
+          nrof = 0;
+
+    /* Inclusive effects: */
+//    if ((flags & FFLAG_BLIND))
+//    {
+//        nrof++;
+//    }
+
+    if ((flags & FFLAG_CONFUSED))
+    {
+        nrof++;
+    }
+
+    if ((flags & FFLAG_PARALYZED))
+    {
+        nrof++;
+    }
+
+    if ((flags & FFLAG_SCARED))
+    {
+        nrof++;
+    }
+
+    for (; i < nrof; i++)
+    {
+        if ((flags & FFLAG_SCARED))
+        {
+            sprite_blt_map(Bitmaps[BITMAP_SCARED], x - skindef.effect_width * (i + 1), y,
+                           NULL, NULL, 0);
+            flags &= ~FFLAG_SCARED;
+        }
+        else if ((flags & FFLAG_PARALYZED))
+        {
+            sprite_blt_map(Bitmaps[BITMAP_PARALYZE], x - skindef.effect_width * (i + 1), y,
+                           NULL, NULL, 0);
+            flags &= ~FFLAG_PARALYZED;
+        }
+        else if ((flags & FFLAG_CONFUSED))
+        {
+            sprite_blt_map(Bitmaps[BITMAP_CONFUSE], x - skindef.effect_width * (i + 1), y,
+                           NULL, NULL, 0);
+            flags &= ~FFLAG_CONFUSED;
+        }
+//        else if ((flags & FFLAG_BLINDED))
+//        {
+//            sprite_blt_map(Bitmaps[BITMAP_BLIND], x - skindef.effect_width * (i + 1), y,
+//                           NULL, NULL, 0);
+//            flags &= ~FFLAG_BLINDED;
+//        }
+    }
+
+    /* Exclusive effects: */
+    if ((flags & FFLAG_SLEEP))
+    {
+        static uint16 w = 0,
+                      xoff = 0;
+
+        if (w == 0)
+        {
+            w = string_width(&font_small_out, skindef.effect_sleeping);
+        }
+
+        xoff = ShowExclusiveEffect(x, y, xoff, w, skindef.effect_sleeping);
+    }
+    else if ((flags & FFLAG_EATING))
+    {
+        static uint16 w = 0,
+                      xoff = 0;
+
+        if (w == 0)
+        {
+            w = string_width(&font_small_out, skindef.effect_eating);
+        }
+
+        xoff = ShowExclusiveEffect(x, y, xoff, w, skindef.effect_eating);
+    }
+}
+
+static uint16 ShowExclusiveEffect(uint16 x, uint16 y, uint16 xoff, uint16 w,
+                                  char *text)
+{
+    SDL_Rect box;
+
+    sprite_blt_map(Bitmaps[BITMAP_EXCLUSIVE_EFFECT], x + skindef.effect_width,
+                   y, NULL, NULL, 0);
+    box.x = x + skindef.effect_width + 3;
+    box.y = y + 1;
+    box.w = skindef.effect_width * 3;
+    box.h = font_small_out.line_height;
+    SDL_SetClipRect(ScreenSurfaceMap, &box);
+
+    if ((xoff += 2) > w)
+    {
+        xoff = 0;
+    }
+
+    string_blt(ScreenSurfaceMap, &font_small_out, text, box.x - xoff, box.y,
+               COLOR_RED, NULL, NULL);
+    string_blt(ScreenSurfaceMap, &font_small_out, text, box.x - xoff + w,
+               box.y, COLOR_RED, NULL, NULL);
+    SDL_SetClipRect(ScreenSurfaceMap, NULL);
+
+    return xoff;
 }
 
 
