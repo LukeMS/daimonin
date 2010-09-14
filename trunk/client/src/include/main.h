@@ -146,7 +146,7 @@ typedef struct _srv_client_files
 _srv_client_files;
 
 extern _srv_client_files    srv_client_files[SRV_CLIENT_FILES];
-extern  Uint32              sdl_dgreen, sdl_dred, sdl_gray1, sdl_gray2, sdl_gray3, sdl_gray4, sdl_blue1;
+extern  Uint32              sdl_dgreen, sdl_dred, sdl_gray1, sdl_gray2, sdl_gray3, sdl_gray4;
 extern int                  mb_clicked;
 
 /* spell list commands for client spell list */
@@ -158,8 +158,14 @@ extern int                  mb_clicked;
 /* TODO: don't clutter this stuff over all files, instead make a structure for all that stuff */
 typedef struct _skindef
 {
-    Uint32              rowcolor[2];
-    uint8             newclosebutton;
+    uint8   newclosebutton;
+    uint32  dialog_rows0;
+    uint32  dialog_rows1;
+    uint32  dialog_rowsS;
+    uint8   effect_width;
+    uint8   effect_height;
+    char   *effect_eating;
+    char   *effect_sleeping;
 }
 _skindef;
 
@@ -560,11 +566,11 @@ typedef enum _bitmap_index
     BITMAP_NUMBER,
     BITMAP_INVSLOT_U,
     BITMAP_DEATH,
-    BITMAP_SLEEP,
     BITMAP_CONFUSE,
     BITMAP_PARALYZE,
     BITMAP_SCARED,
     BITMAP_BLIND,
+    BITMAP_EXCLUSIVE_EFFECT,
     BITMAP_ENEMY1,
     BITMAP_ENEMY2,
     BITMAP_PROBE,
@@ -583,7 +589,6 @@ typedef enum _bitmap_index
     BITMAP_TARGET_NORMAL,
     BITMAP_LOADING,
     BITMAP_WARN_HP,
-    BITMAP_WARN_FOOD,
     BITMAP_STATS_BG,
     BITMAP_WARN_WEIGHT,
     BITMAP_LOGO270,

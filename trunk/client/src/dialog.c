@@ -901,12 +901,12 @@ void show_skilllist(void)
         if (i != skill_list_set.entry_nr)
         {
             if (i & 1)
-                SDL_FillRect(ScreenSurface, &box, skindef.rowcolor[0]);
+                SDL_FillRect(ScreenSurface, &box, skindef.dialog_rows0);
             else
-                SDL_FillRect(ScreenSurface, &box, skindef.rowcolor[1]);
+                SDL_FillRect(ScreenSurface, &box, skindef.dialog_rows1);
         }
         else
-            SDL_FillRect(ScreenSurface, &box, sdl_blue1);
+            SDL_FillRect(ScreenSurface, &box, skindef.dialog_rowsS);
 
         if (skill_list[skill_list_set.group_nr].entry[i].flag == LIST_ENTRY_KNOWN)
         {
@@ -1059,12 +1059,12 @@ void show_spelllist(void)
         if (i != spell_list_set.entry_nr)
         {
             if (i & 1)
-                SDL_FillRect(ScreenSurface, &box, skindef.rowcolor[0]);
+                SDL_FillRect(ScreenSurface, &box, skindef.dialog_rows0);
             else
-                SDL_FillRect(ScreenSurface, &box, skindef.rowcolor[1]);
+                SDL_FillRect(ScreenSurface, &box, skindef.dialog_rows1);
         }
         else
-            SDL_FillRect(ScreenSurface, &box, sdl_blue1);
+            SDL_FillRect(ScreenSurface, &box, skindef.dialog_rowsS);
 
         if (spell_list[spell_list_set.group_nr].entry[spell_list_set.class_nr][i].flag == LIST_ENTRY_KNOWN)
         {
@@ -1252,12 +1252,12 @@ void show_keybind()
         if (i != bindkey_list_set.entry_nr)
         {
             if (i & 1)
-                SDL_FillRect(ScreenSurface, &box, skindef.rowcolor[0]);
+                SDL_FillRect(ScreenSurface, &box, skindef.dialog_rows0);
             else
-                SDL_FillRect(ScreenSurface, &box, skindef.rowcolor[1]);
+                SDL_FillRect(ScreenSurface, &box, skindef.dialog_rows1);
         }
         else
-            SDL_FillRect(ScreenSurface, &box, sdl_blue1);
+            SDL_FillRect(ScreenSurface, &box, skindef.dialog_rowsS);
 
         if (bindkey_list[bindkey_list_set.group_nr].entry[i].text[0])
         {
@@ -1714,10 +1714,10 @@ void show_login_server(void)
     string_blt(ScreenSurface, &font_large_out, buf, t + 1, y - 21, COLOR_BLACK, NULL, NULL);
     string_blt(ScreenSurface, &font_large_out, buf, t, y - 22, COLOR_HGOLD, NULL, NULL);
 
-    SDL_FillRect(ScreenSurface, &box, skindef.rowcolor[0]);
+    SDL_FillRect(ScreenSurface, &box, skindef.dialog_rows0);
     box.y = y + 15;
     box.h = 150;
-    SDL_FillRect(ScreenSurface, &box, skindef.rowcolor[1]);
+    SDL_FillRect(ScreenSurface, &box, skindef.dialog_rows1);
     string_blt(ScreenSurface, &font_small, "- UPDATING FILES- ", x + 58, y + 1, COLOR_BLACK, NULL, NULL);
     string_blt(ScreenSurface, &font_small, "- UPDATING FILES -", x + 57, y, COLOR_WHITE, NULL, NULL);
     if (request_file_chain >= 0)
@@ -2018,9 +2018,9 @@ void show_meta_server(_server *node, int metaserver_start, int metaserver_sel)
     {
         box.y += 12;
         if (i & 1)
-            SDL_FillRect(ScreenSurface, &box, skindef.rowcolor[0]);
+            SDL_FillRect(ScreenSurface, &box, skindef.dialog_rows0);
         else
-            SDL_FillRect(ScreenSurface, &box, skindef.rowcolor[1]);
+            SDL_FillRect(ScreenSurface, &box, skindef.dialog_rows1);
     }
 
     for (i = 0; node && i < metaserver_start; i++)
@@ -2040,7 +2040,7 @@ void show_meta_server(_server *node, int metaserver_start, int metaserver_sel)
 
             ShowInfo(&font_large_out, &box2, node->desc1);
             box.y = y + TXT_Y_START + 13 + i * 12;
-            SDL_FillRect(ScreenSurface, &box, sdl_blue1);
+            SDL_FillRect(ScreenSurface, &box, skindef.dialog_rowsS);
         }
         string_blt(ScreenSurface, &font_small, node->name, x + 137, y + 94 + i * 12, COLOR_WHITE, NULL, NULL);
         string_blt(ScreenSurface, &font_small, node->version, x + 366, y + 94 + i * 12, COLOR_WHITE, NULL, NULL);
