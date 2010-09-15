@@ -1583,50 +1583,43 @@ void ai_run_away_from_enemy(object *op, struct mob_behaviour_param *params, move
 {
     rv_vector  *rv;
 
-    /* Become scared? */
-    if(!QUERY_FLAG(op, FLAG_SCARED))
+    /* Become scared or regain senses according to hp. */
+    if (op->stats.maxhp &&
+        AIPARAM_PRESENT(AIPARAM_RUN_AWAY_FROM_ENEMY_HP_THRESHOLD))
     {
-        if (op->stats.maxhp
-         && AIPARAM_PRESENT(AIPARAM_RUN_AWAY_FROM_ENEMY_HP_THRESHOLD)
-         && (op->stats.hp * 100) / op->stats.maxhp < AIPARAM_INT(AIPARAM_RUN_AWAY_FROM_ENEMY_HP_THRESHOLD))
-            SET_FLAG(op, FLAG_SCARED);
+         uint8 is_scared = ((op->stats.hp * 100) / op->stats.maxhp <
+                            AIPARAM_INT(AIPARAM_RUN_AWAY_FROM_ENEMY_HP_THRESHOLD));
+
+         SET_OR_CLEAR_FLAG(op, FLAG_SCARED, is_scared);
+    }
+    /* Else low hp is not the problem so if we're scared we can stop being
+     * afraid after a random delay */
+    else if (QUERY_FLAG(op, FLAG_SCARED) &&
+             !(RANDOM() % 20))
+    {
+        CLEAR_FLAG(op, FLAG_SCARED);
     }
 
-    /* Is scared? */
-    if (QUERY_FLAG(op, FLAG_SCARED) && op->enemy)
+    /* No longer scared, or no enemy (so nothing to run away from)? */
+    if (!QUERY_FLAG(op, FLAG_SCARED) ||
+        !op->enemy)
     {
-        if ((rv = get_known_obj_rv(op, MOB_DATA(op)->enemy, MAX_KNOWN_OBJ_RV_AGE)))
-        {
-            /* TODO: more intelligent: use pathfinding to find the
-             * most distant point from enemy */
-            response->type = MOVE_RESPONSE_DIR;
-            response->data.direction = absdir(rv->direction + 4);
-            op->speed_left-=0.5f;/* let him move away "scared" - with weak legs */
-        }
-        else
-        {
-            response->type = MOVE_RESPONSE_DIR;
-            response->data.direction = RANDOM() % 8 + 1; /* Run randomly */
-        }
+        return;
+    }
 
-        /* Regain senses? */
-        if (op->stats.maxhp && AIPARAM_PRESENT(AIPARAM_RUN_AWAY_FROM_ENEMY_HP_THRESHOLD))
-        {
-            /* Gecko: I added a slight hysteresis treshold here
-             * (stay afraid until hp reaches 2*runaway % of maxhp) */
-            if (op->stats.hp == op->stats.maxhp
-             || (op->stats.hp * 100) / op->stats.maxhp > AIPARAM_INT(AIPARAM_RUN_AWAY_FROM_ENEMY_HP_THRESHOLD) * 2)
-            {
-                CLEAR_FLAG(op, FLAG_SCARED);
-            }
-        }
-        else
-        {
-            /* If we aren't scared because of low hp, we can stop
-             * being afraid after a random delay */
-            if (!(RANDOM() % 20))
-                CLEAR_FLAG(op, FLAG_SCARED);
-        }
+    /* Run away! Run away! */
+    if ((rv = get_known_obj_rv(op, MOB_DATA(op)->enemy, MAX_KNOWN_OBJ_RV_AGE)))
+    {
+        /* TODO: more intelligent: use pathfinding to find the
+         * most distant point from enemy */
+        response->type = MOVE_RESPONSE_DIR;
+        response->data.direction = absdir(rv->direction + 4);
+        op->speed_left -= 0.5f;/* let him move away "scared" - with weak legs */
+    }
+    else
+    {
+        response->type = MOVE_RESPONSE_DIR;
+        response->data.direction = RANDOM() % 8 + 1; /* Run randomly */
     }
 }
 
