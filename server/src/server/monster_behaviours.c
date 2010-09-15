@@ -1132,6 +1132,8 @@ void ai_step_back_after_swing(object *op, struct mob_behaviour_param *params, mo
 void ai_avoid_line_of_fire(object *op, struct mob_behaviour_param *params, move_response *response)
 {
     struct mob_known_obj *tmp;
+    sint16                chance;
+    object               *dodged = NULL;
 
     /* Disabled for multi-tile mobs. TODO: add support */
     if(op->more)
@@ -1143,6 +1145,47 @@ void ai_avoid_line_of_fire(object *op, struct mob_behaviour_param *params, move_
         rv_vector  *rv  = get_known_obj_rv(op, MOB_DATA(op)->enemy, MAX_KNOWN_OBJ_RV_AGE);
         if (rv && rv->distance <= 1)
             return;
+    }
+
+    /* Sleeping mobs cannot dodge missiles. */
+    if (QUERY_FLAG(op, FLAG_SLEEP))
+    {
+        return;
+    }
+
+    /* Blind mobs have a flat 2% chance. */
+    if (QUERY_FLAG(op, FLAG_BLIND))
+    {
+        chance = 2;
+    }
+    /* Else it is calculated from the mob's sensing range. */
+    else
+    {
+        chance = op->stats.Wis * 8;
+
+        /* Panicky mobs don't dodge so well. */
+        if (QUERY_FLAG(op, FLAG_SCARED))
+        {
+            chance /= 2;
+        }
+        /* TODO: Add other effects. */
+        /* If the mob has an enemy we take this to mean it is alert and ready
+         * to react. */
+        else if (op->enemy)
+        {
+            chance *= 2;
+        }
+
+        /* Normalizie the chance -- for gameplay all awake mobs have a 10%
+         * chance of dodging and all mobs have a 1% chance of getting it
+         * wrong. */
+        chance = MAX(10, MIN(chance, 99));
+    }
+
+    /* So test if the mob dodges. */
+    if (random_roll(0, 99) >= chance)
+    {
+        return;
     }
 
     /* Find relevant missiles */
@@ -1183,6 +1226,9 @@ void ai_avoid_line_of_fire(object *op, struct mob_behaviour_param *params, move_
                             response->forbidden |= (1 << d);
                     }
                 }
+
+                dodged = tmp->obj;
+
                 break;
 
             /* Area-like "missiles" */
@@ -1208,6 +1254,9 @@ void ai_avoid_line_of_fire(object *op, struct mob_behaviour_param *params, move_
                         }
                     }
                 }
+
+                dodged = tmp->obj;
+
                 break;
 
             /* Note: untested and probably not very smart... */
@@ -1224,8 +1273,19 @@ void ai_avoid_line_of_fire(object *op, struct mob_behaviour_param *params, move_
                         response->forbidden |= (1 << 0);
                     }
                 }
+
+                dodged = tmp->obj;
+
                 break;
         }
+    }
+
+    /* So we have dodged something. Now, if we don't have an enemy already,
+     * the missile-firer becomes our enemy. */
+    if (dodged &&
+        !op->enemy)
+    {
+        (void)aggro_update_info(op, dodged, get_owner(dodged), 0);
     }
 }
 
