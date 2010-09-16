@@ -268,9 +268,9 @@ int command_kick(object *op, char *params)
 
 int command_reboot(object *op, char *params)
 {
-    char       *cp;
-    shstr      *hash = NULL;
-    int         time = 300;
+    char  *cp = NULL;
+    shstr *hash = NULL;
+    int    time = 300;
 
     if (!op ||
         op->type != PLAYER ||
