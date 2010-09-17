@@ -7917,7 +7917,7 @@ Allowed none
 chance 100
 artifact ring_normal
 def_arch ring_generic
-editor 2:items/talisman/rings
+editor 1:items/talisman/rings
 Object
 value 4250
 type 70
@@ -8644,7 +8644,7 @@ artifact potion_minor_res_fire
 difficulty 3
 t_style 1
 def_arch potion_generic
-editor 2:items/spells/potions
+editor 1:items/spells/potions
 Object
 title of minor fire resistance
 face potion_red.101
@@ -8664,7 +8664,7 @@ artifact potion_minor_res_cold
 t_style 2
 difficulty 3
 def_arch potion_generic
-editor 2:items/spells/potions
+editor 1:items/spells/potions
 Object
 title of minor cold resistance
 inv_face potioncon.101
@@ -8683,7 +8683,7 @@ t_style 3
 artifact potion_minor_res_elec
 difficulty 3
 def_arch potion_generic
-editor 2:items/spells/potions
+editor 1:items/spells/potions
 Object
 title of minor electricity resistance
 inv_face potioncon.101
@@ -8702,7 +8702,7 @@ t_style 4
 artifact potion_minor_res_poison
 difficulty 3
 def_arch potion_generic
-editor 2:items/spells/potions
+editor 1:items/spells/potions
 Object
 title of minor poison resistance
 inv_face potioncon.101
@@ -8721,7 +8721,7 @@ t_style 5
 artifact potion_minor_res_acid
 difficulty 3
 def_arch potion_generic
-editor 2:items/spells/potions
+editor 1:items/spells/potions
 Object
 title of minor acid resistance
 inv_face potioncon.101
@@ -8739,7 +8739,7 @@ chance 40
 artifact potion_minor_strength
 difficulty 3
 def_arch potion_generic
-editor 2:items/spells/potions
+editor 1:items/spells/potions
 Object
 title of minor strength
 face potion_red.101
@@ -8757,7 +8757,7 @@ chance 40
 artifact potion_minor_dex
 difficulty 3
 def_arch potion_generic
-editor 2:items/spells/potions
+editor 1:items/spells/potions
 Object
 title of minor dexterity
 face potion_yellow.101
@@ -8775,7 +8775,7 @@ chance 40
 artifact potion_minor_con
 difficulty 3
 def_arch potion_generic
-editor 2:items/spells/potions
+editor 1:items/spells/potions
 Object
 title of minor constitution
 inv_face potioncon.101
@@ -8792,7 +8792,7 @@ chance 40
 artifact potion_evil_liquid
 difficulty 3
 def_arch potion_generic
-editor 2:items/spells/potions
+editor 1:items/spells/potions
 Object
 title of evil liquid
 face potion_grey.101
@@ -8815,7 +8815,7 @@ chance 20
 artifact potion_minor_res
 difficulty 3
 def_arch potion_generic
-editor 2:items/spells/potions
+editor 1:items/spells/potions
 Object
 title of minor restoration
 face potion_grey.101
@@ -8832,7 +8832,7 @@ chance 15
 artifact potion_improve
 difficulty 5
 def_arch potion_generic
-editor 2:items/spells/potions
+editor 1:items/spells/potions
 Object
 title of improvement
 inv_face potionimp.101
@@ -8847,7 +8847,7 @@ Allowed potion_generic
 chance 30
 artifact potion_firestorm
 def_arch potion_generic
-editor 2:items/spells/potions
+editor 1:items/spells/potions
 Object
 title of firestorm
 face potion_red.101
@@ -8864,7 +8864,7 @@ Allowed potion_generic
 chance 30
 artifact potion_freezing
 def_arch potion_generic
-editor 2:items/spells/potions
+editor 1:items/spells/potions
 Object
 title of freezing
 inv_face potioncol.101
@@ -8880,7 +8880,7 @@ Allowed potion_generic
 chance 35
 artifact potion_cure_sickness
 def_arch potion_generic
-editor 2:items/spells/potions
+editor 1:items/spells/potions
 Object
 title of cure sickness
 stand_still 1
@@ -8897,7 +8897,7 @@ Allowed potion_generic
 chance 35
 artifact potion_cure_illness
 def_arch potion_generic
-editor 2:items/spells/potions
+editor 1:items/spells/potions
 Object
 title of cure illness
 level 1
@@ -8916,7 +8916,7 @@ Allowed balm_generic
 chance 40
 artifact balm_first_aid
 def_arch balm_generic
-editor 2:items/spells
+editor 1:items/spells
 Object
 title of first aid
 is_magical 1
@@ -8995,7 +8995,7 @@ Allowed none
 chance 1
 artifact arrow_sys
 def_arch arrow
-editor 2:items/weapon/missile/sys
+editor 1:items/weapon/missile/sys
 Object
 race missile_sys
 identified 1
@@ -9005,7 +9005,7 @@ Allowed none
 chance 1
 artifact bolt_sys
 def_arch bolt
-editor 2:items/weapon/missile/sys
+editor 1:items/weapon/missile/sys
 Object
 race missile_sys
 identified 1
@@ -9015,7 +9015,7 @@ Allowed none
 chance 1
 artifact sstone_sys
 def_arch sstone
-editor 2:items/weapon/missile/sys
+editor 1:items/weapon/missile/sys
 Object
 race missile_sys
 identified 1
@@ -9025,7 +9025,7 @@ Allowed none
 chance 1
 artifact t_axe_sys
 def_arch t_axe
-editor 2:items/weapon/missile/sys
+editor 1:items/weapon/missile/sys
 Object
 race rock_sys
 identified 1
@@ -9035,7 +9035,7 @@ Allowed none
 chance 1
 artifact t_hammer_sys
 def_arch t_hammer
-editor 2:items/weapon/missile/sys
+editor 1:items/weapon/missile/sys
 Object
 race rock_sys
 identified 1
@@ -9045,7 +9045,7 @@ Allowed none
 chance 1
 artifact t_dagger_sys
 def_arch t_dagger
-editor 2:items/weapon/missile/sys
+editor 1:items/weapon/missile/sys
 Object
 race rock_sys
 identified 1
@@ -9055,7 +9055,7 @@ Allowed none
 chance 1
 artifact t_star_sys
 def_arch t_star
-editor 2:items/weapon/missile/sys
+editor 1:items/weapon/missile/sys
 Object
 race rock_sys
 identified 1
@@ -9065,7 +9065,7 @@ Allowed none
 chance 1
 artifact starsdavid2_sys
 def_arch starsdavid2
-editor 2:items/weapon/missile/sys
+editor 1:items/weapon/missile/sys
 Object
 race rock_sys
 identified 1
@@ -9075,7 +9075,7 @@ Allowed none
 chance 1
 artifact t_rock_sys
 def_arch t_rock
-editor 2:items/weapon/missile/sys
+editor 1:items/weapon/missile/sys
 Object
 race rock_sys
 identified 1
@@ -9085,7 +9085,7 @@ Allowed none
 chance 1
 artifact t_boulder_sys
 def_arch t_boulder
-editor 2:items/weapon/missile/sys
+editor 1:items/weapon/missile/sys
 Object
 race rock_sys
 identified 1
@@ -9095,7 +9095,7 @@ Allowed none
 chance 1
 artifact t_lboulder_sys
 def_arch t_lboulder
-editor 2:items/weapon/missile/sys
+editor 1:items/weapon/missile/sys
 Object
 race rock_sys
 identified 1
@@ -9105,7 +9105,7 @@ Allowed none
 chance 1
 artifact snowball_sys
 def_arch snow_ball
-editor 2:items/weapon/missile/sys
+editor 1:items/weapon/missile/sys
 Object
 race rock_sys
 identified 1
@@ -9115,7 +9115,7 @@ Allowed none
 chance 1
 artifact snowball_big_sys
 def_arch snow_ball2
-editor 2:items/weapon/missile/sys
+editor 1:items/weapon/missile/sys
 Object
 race rock_sys
 identified 1
