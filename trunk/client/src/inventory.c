@@ -741,23 +741,50 @@ void blt_inv_item(item *tmp, int x, int y)
                   NULL);
     }
 
+    /* bottom left */
     if (tmp->locked)
+    {
         sprite_blt(Bitmaps[BITMAP_LOCK], x, y + ICONDEFLEN - Bitmaps[BITMAP_LOCK]->bitmap->w - 2, NULL, NULL);
+    }
+
+    /* top left */
     /* applied and unpaid some spot - can't apply unpaid items */
     if (tmp->applied)
+    {
         sprite_blt(Bitmaps[BITMAP_APPLY], x, y, NULL, NULL);
-    if (tmp->unpaid)
+    }
+    else if (tmp->unpaid)
+    {
         sprite_blt(Bitmaps[BITMAP_UNPAID], x, y, NULL, NULL);
+    }
+
+    /* bottom right */
     if (tmp->magical)
+    {
         sprite_blt(Bitmaps[BITMAP_MAGIC], x + ICONDEFLEN - Bitmaps[BITMAP_MAGIC]->bitmap->w - 2,
                    y + ICONDEFLEN - Bitmaps[BITMAP_MAGIC]->bitmap->h - 2, NULL, NULL);
-    if (tmp->cursed)
-        sprite_blt(Bitmaps[BITMAP_CURSED], x + ICONDEFLEN - Bitmaps[BITMAP_CURSED]->bitmap->w - 2, y, NULL, NULL);
-    if (tmp->damned)
-        sprite_blt(Bitmaps[BITMAP_DAMNED], x + ICONDEFLEN - Bitmaps[BITMAP_DAMNED]->bitmap->w - 2, y, NULL, NULL);
+    }
+    else if (tmp->item_qua == 255)
+    {
+        sprite_blt(Bitmaps[BITMAP_UNIDENTIFIED], x + ICONDEFLEN - Bitmaps[BITMAP_UNIDENTIFIED]->bitmap->w - 2,
+                   y + ICONDEFLEN - Bitmaps[BITMAP_UNIDENTIFIED]->bitmap->h - 2, NULL, NULL);
+    }
 
+    /* top right */
+    if (tmp->damned)
+    {
+        sprite_blt(Bitmaps[BITMAP_DAMNED], x + ICONDEFLEN - Bitmaps[BITMAP_DAMNED]->bitmap->w - 2, y, NULL, NULL);
+    }
+    else if (tmp->cursed)
+    {
+        sprite_blt(Bitmaps[BITMAP_CURSED], x + ICONDEFLEN - Bitmaps[BITMAP_CURSED]->bitmap->w - 2, y, NULL, NULL);
+    }
+
+    /* central */
     if (tmp->traped)
+    {
         sprite_blt(Bitmaps[BITMAP_TRAPED], x + 8, y + 7, NULL, NULL);
+    }
 }
 
 void examine_range_inv(void)
