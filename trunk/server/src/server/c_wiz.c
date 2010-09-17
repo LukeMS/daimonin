@@ -1553,7 +1553,7 @@ int command_addexp(object *op, char *params)
     player_lvl_adj(pl->ob, exp_skill, TRUE);
     player_lvl_adj(pl->ob, exp_ob, TRUE);
     player_lvl_adj(pl->ob, NULL, TRUE);
-
+    FIX_PLAYER(pl->ob, "addexp");
     return 0;
 }
 
