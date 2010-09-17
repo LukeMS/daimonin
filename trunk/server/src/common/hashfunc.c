@@ -294,7 +294,11 @@ int string_key_equals(const hashtable_const_key_t key1, const hashtable_const_ke
  */
 hashtable_size_t int32_hash(const hashtable_const_key_t key_store)
 {
+#if SIZEOF_VOID_P == 4
     uint32_t key = (uint32_t)key_store;
+#elif SIZEOF_VOID_P == 8
+    uint32_t key = (uint32_t)((uint64_t)key_store);
+#endif
     key += ~(key << 15);
     key ^=  (key >> 10);
     key +=  (key << 3);
