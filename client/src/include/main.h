@@ -166,6 +166,8 @@ typedef struct _skindef
     uint8   effect_height;
     char   *effect_eating;
     char   *effect_sleeping;
+    uint8   item_size;
+    uint8   icon_size;
 }
 _skindef;
 

@@ -569,7 +569,6 @@ jump_in_container2:
     /*   sprite_blt(Bitmaps[BITMAP_MIDDLE_OVERLAY],242+143, 472+78, NULL, NULL); */
 }
 
-#define ICONDEFLEN 32
 uint8 blt_inv_item_centered(item *tmp, int x, int y)
 {
     register int temp;
@@ -731,20 +730,28 @@ void blt_inv_item(item *tmp, int x, int y)
 
     if (tmp->nrof > 1)
     {
-        char    buf[64];
+        char buf[TINY_BUF];
+
         if (tmp->nrof > 9999)
-            strcpy(buf, "many");
+        {
+            sprintf(buf, "many");
+        }
         else
+        {
             sprintf(buf, "%d", tmp->nrof);
-        string_blt(ScreenSurface, &font_tiny_out, buf,
-                  x + (ICONDEFLEN / 2) - (string_width(&font_tiny_out, buf) / 2), y + 18, COLOR_WHITE, NULL,
-                  NULL);
+        }
+
+        string_blt(ScreenSurface, &font_tiny_out, buf, x +
+                   skindef.item_size / 2 -
+                   string_width(&font_tiny_out, buf) / 2, y + 18, COLOR_WHITE,
+                   NULL, NULL);
     }
 
     /* bottom left */
     if (tmp->locked)
     {
-        sprite_blt(Bitmaps[BITMAP_LOCK], x, y + ICONDEFLEN - Bitmaps[BITMAP_LOCK]->bitmap->w - 2, NULL, NULL);
+        sprite_blt(Bitmaps[BITMAP_LOCK], x, y + skindef.item_size -
+                   skindef.icon_size, NULL, NULL);
     }
 
     /* top left */
@@ -758,26 +765,32 @@ void blt_inv_item(item *tmp, int x, int y)
         sprite_blt(Bitmaps[BITMAP_UNPAID], x, y, NULL, NULL);
     }
 
-    /* bottom right */
-    if (tmp->magical)
+    /* right side, top to bottom */
+    if (tmp->item_qua == 255)
     {
-        sprite_blt(Bitmaps[BITMAP_MAGIC], x + ICONDEFLEN - Bitmaps[BITMAP_MAGIC]->bitmap->w - 2,
-                   y + ICONDEFLEN - Bitmaps[BITMAP_MAGIC]->bitmap->h - 2, NULL, NULL);
-    }
-    else if (tmp->item_qua == 255)
-    {
-        sprite_blt(Bitmaps[BITMAP_UNIDENTIFIED], x + ICONDEFLEN - Bitmaps[BITMAP_UNIDENTIFIED]->bitmap->w - 2,
-                   y + ICONDEFLEN - Bitmaps[BITMAP_UNIDENTIFIED]->bitmap->h - 2, NULL, NULL);
+        sprite_blt(Bitmaps[BITMAP_UNIDENTIFIED],
+                   x + skindef.item_size - skindef.icon_size - 2, y, NULL, NULL);
     }
 
-    /* top right */
+    if (tmp->magical)
+    {
+        sprite_blt(Bitmaps[BITMAP_MAGIC],
+                   x + skindef.item_size - skindef.icon_size - 2,
+                   y + skindef.icon_size, NULL, NULL);
+    }
+
+    if (tmp->cursed)
+    {
+        sprite_blt(Bitmaps[BITMAP_CURSED],
+                   x + skindef.item_size - skindef.icon_size - 2,
+                   y + skindef.icon_size * 2, NULL, NULL);
+    }
+
     if (tmp->damned)
     {
-        sprite_blt(Bitmaps[BITMAP_DAMNED], x + ICONDEFLEN - Bitmaps[BITMAP_DAMNED]->bitmap->w - 2, y, NULL, NULL);
-    }
-    else if (tmp->cursed)
-    {
-        sprite_blt(Bitmaps[BITMAP_CURSED], x + ICONDEFLEN - Bitmaps[BITMAP_CURSED]->bitmap->w - 2, y, NULL, NULL);
+        sprite_blt(Bitmaps[BITMAP_DAMNED],
+                   x + skindef.item_size - skindef.icon_size - 2,
+                   y + skindef.icon_size * 3, NULL, NULL);
     }
 
     /* central */

@@ -10,3 +10,5 @@ effect_width: 9
 effect_height: 16
 effect_eating: Nyom! 
 effect_sleeping: Zzz! 
+item_size: 32
+icon_size: 8

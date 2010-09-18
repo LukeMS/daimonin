@@ -2793,6 +2793,8 @@ void load_skindef()
     skindef.effect_height = 16;
     MALLOC_STRING(skindef.effect_eating, "Nyom! ");
     MALLOC_STRING(skindef.effect_sleeping, "Zzz! ");
+    skindef.item_size = 32;
+    skindef.icon_size = 8;
 
     /* lets try to load the skin.def */
     LOG(LOG_MSG, "Trying to load skin definition... ");
@@ -2882,6 +2884,14 @@ void load_skindef()
         {
             FREE(skindef.effect_sleeping);
             MALLOC_STRING(skindef.effect_sleeping, val);
+        }
+        else if (!strcmp(key, "item_size"))
+        {
+            skindef.item_size = (uint8)strtoul(val, NULL, 10);
+        }
+        else if (!strcmp(key, "icon_size"))
+        {
+            skindef.icon_size = (uint8)strtoul(val, NULL, 10);
         }
     }
 
