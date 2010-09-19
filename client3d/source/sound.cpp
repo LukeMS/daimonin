@@ -69,7 +69,25 @@ SoundFiles mSoundFiles[Sound::SAMPLE_SUM] =
     { 0, "intro94.s3m",         true , true },
 };
 
+class myLogReceiver : public ILogReceiver
+{
+public:
+    myLogReceiver() {}
+    ~myLogReceiver() {}
+    bool OnLogMessage(const char* sender, const char* message, LogLevel level, float time)
+    {
+        if      (level == ELL_ERROR || level == ELL_CRITICAL)
+            Logger::log().error()   << Logger::ICON_CAUDIO << message;
+        else if (level == ELL_WARNING)
+            Logger::log().warning() << Logger::ICON_CAUDIO << message;
+        else
+            Logger::log().info()    << Logger::ICON_CAUDIO << message;
+        return true;
+    }
+};
+
 static IAudioManager *mSoundManager = 0;
+static myLogReceiver *mLogger = 0;
 
 //================================================================================================
 // Init the sound-system.
@@ -84,38 +102,44 @@ bool Sound::Init(const char *filePath, int preferredDevice)
     mSoundManager = cAudio::createAudioManager(false);
     if(!mSoundManager)
     {
-        Logger::log().error() << "Failed to create audio playback manager.";
+        Logger::log().error() << Logger::ICON_CLIENT << "Failed to create audio playback manager.";
         return false;
     }
+    // Add our LogListener to cAudio.
+    mLogger = new myLogReceiver;
+    cAudio::getLogger()->registerLogReceiver(mLogger, "Loggin");
+    // Unregester the internal cAudio LogListener.
+    cAudio::getLogger()->unRegisterLogReceiver("File");
+    remove("cAudioEngineLog.html");
     // Show all playback devices
     std::string defaultDeviceName = mSoundManager->getDefaultDeviceName();
     int defaultDevice = -1;
-    Logger::log().info() << "\nAvailable Playback Devices: \n";
+    Logger::log().info() << Logger::ICON_CLIENT << "\nAvailable Playback Devices: \n";
     for (unsigned int i=0; i< mSoundManager->getAvailableDeviceCount(); ++i)
     {
         std::string deviceName = mSoundManager->getAvailableDeviceName(i);
         if (!deviceName.compare(defaultDeviceName))
         {
-            Logger::log().info() << i << "): " << deviceName << " [DEFAULT]";
+            Logger::log().info() << Logger::ICON_CLIENT << i << "): " << deviceName << " [DEFAULT]";
             defaultDevice = i;
         }
         else
-            Logger::log().info() << i << "): " << deviceName;
+            Logger::log().info() << Logger::ICON_CLIENT << i << "): " << deviceName;
     }
     // If no preferedDevice was defined, use the system default.
     if (preferredDevice < 0) preferredDevice = defaultDevice;
     // Initialize the manager.
     if (!mSoundManager->initialize(mSoundManager->getAvailableDeviceName(preferredDevice)))
     {
-        Logger::log().error() << "Failed to initialize the sound manager with device " << mSoundManager->getAvailableDeviceName(preferredDevice);
+        Logger::log().error() << Logger::ICON_CLIENT << "Failed to initialize the sound manager with device " << mSoundManager->getAvailableDeviceName(preferredDevice);
         destroyAudioManager(mSoundManager);
         mSoundManager = 0;
         return false;
     }
-    Logger::log().info() << "Playback Device '" << mSoundManager->getAvailableDeviceName(preferredDevice) << "' is active.";
+    Logger::log().info() << Logger::ICON_CLIENT << "Playback Device '" << mSoundManager->getAvailableDeviceName(preferredDevice) << "' is active.";
     // Load all samples.
     createDummy();
-    Logger::log().info() << "Loading all Sounds.";
+    Logger::log().info() << Logger::ICON_CLIENT << "Loading all Sounds.";
     for (SampleID i = GUI_WRONG_INPUT; i< SAMPLE_SUM; i=SampleID(i+1))
         openStream(i);
     //playStream(PLAYER_IDLE); // Just for testing. delete me!
@@ -132,6 +156,7 @@ void Sound::freeRecources()
     mSoundManager->releaseAllSources();
     mSoundManager->shutDown();
     destroyAudioManager(mSoundManager);
+    delete mLogger;
 }
 
 //================================================================================================
@@ -152,7 +177,7 @@ void Sound::createDummy()
     if (out)
         out.write((char*)dummy, sizeof(dummy));
     else
-        Logger::log().error() << "Critical: Cound not create the dummy wavefile.";
+        Logger::log().error() << Logger::ICON_CLIENT << "Critical: Cound not create the dummy wavefile.";
 }
 
 //================================================================================================
@@ -165,7 +190,7 @@ void Sound::openStream(SampleID id)
     mSoundFiles[id].sound = mSoundManager->create(0, (mFilePath + mSoundFiles[id].filename).c_str(), mSoundFiles[id].stream);
     if (!mSoundFiles[id].sound)
     {
-        Logger::log().warning() << "Soundfile " << mSoundFiles[id].filename << " could not be found or the codec is unknown.";
+        Logger::log().warning() << Logger::ICON_CLIENT << "Soundfile " << mSoundFiles[id].filename << " could not be found or the codec is unknown.";
         mSoundFiles[id].sound = mSoundFiles[DUMMY].sound; // use the dummy wavefile.
     }
 }
@@ -180,7 +205,7 @@ void Sound::playStream(SampleID id)
     if (mSoundFiles[id].sound->isPlaying()) stopStream(id);
     if (!mSoundFiles[id].sound->play2d(mSoundFiles[id].loop))
     {
-        Logger::log().error() << "Error on creating Soundstream " << mSoundFiles[id].filename;
+        Logger::log().error() << Logger::ICON_CLIENT << "Error on creating Soundstream " << mSoundFiles[id].filename;
     }
 }
 
@@ -205,7 +230,7 @@ void Sound::playMusic(std::string filename, bool loop)
     if (music) mSoundManager->release(music);
     music = mSoundManager->create(0, (mFilePath + filename).c_str(), true);
     if (!music)
-        Logger::log().warning() << "Music " << music << " could not be found or the codec is unknown.";
+        Logger::log().warning() << Logger::ICON_CLIENT << "Music " << music << " could not be found or the codec is unknown.";
     else
         music->play2d(loop);
 }

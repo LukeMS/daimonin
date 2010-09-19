@@ -87,6 +87,9 @@ private:
     };
 
 public:
+    static const char *ICON_CAUDIO;
+    static const char *ICON_OGRE3D;
+    static const char *ICON_CLIENT;
     /// @brief Returns the reference to this singleton class.
     static Logger &log()
     {

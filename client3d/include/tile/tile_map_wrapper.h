@@ -62,7 +62,7 @@ public:
         std::ofstream fbmapOut(FILE_BMAPS_UNIQUE, std::ios::out | std::ios::binary);
         if (!fbmapOut)
         {
-            Logger::log().error() << "Error on file " << FILE_BMAPS_UNIQUE;
+            Logger::log().error() << Logger::ICON_CLIENT << "Error on file " << FILE_BMAPS_UNIQUE;
             return;
         }
         int sumPics=0;
@@ -91,7 +91,7 @@ public:
         fbmapIn.open(FILE_BMAPS_CONVERT, std::ios::in | std::ios::binary);
         if (!fbmapIn)
         {
-            Logger::log().error() << "Error on file " << FILE_BMAPS_CONVERT;
+            Logger::log().error() << Logger::ICON_CLIENT << "Error on file " << FILE_BMAPS_CONVERT;
         }
         char *name2d = new char[256];
         char *name3d = new char[256];
@@ -226,7 +226,7 @@ private:
         std::ifstream fbmapIn(FILE_CLIENT_BMAPS, std::ios::in | std::ios::binary);
         if (!fbmapIn)
         {
-            Logger::log().error() << "Error on file " << FILE_CLIENT_BMAPS;
+            Logger::log().error() << Logger::ICON_CLIENT << "Error on file " << FILE_CLIENT_BMAPS;
             return;
         }
         char *name = new char[256];

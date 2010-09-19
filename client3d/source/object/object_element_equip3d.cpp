@@ -94,7 +94,7 @@ static const char *meshName[][ObjectElementEquip3d::ITEM_SUM]=
 ObjectElementEquip3d::ObjectElementEquip3d(Object *parent, Entity *parentEntity):ObjectElement(parent)
 {
     PROFILE()
-    Logger::log().list() << "Adding Equipment.";
+    Logger::log().list() << Logger::ICON_CLIENT << "Adding Equipment.";
     parent->addElement(getFamilyID(), this);
     mParentEntity = parentEntity;
     for (int bone=0; bone < BONE_SUM; ++bone)

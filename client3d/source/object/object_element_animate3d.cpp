@@ -87,22 +87,22 @@ ObjectElementAnimate3d::ObjectElementAnimate3d(Object *parent, Entity *entity):O
     int invalidAnims = entity->getSkeleton()->getNumAnimations()-sum;
     if (invalidAnims && !sum)
     {
-        Logger::log().list() << "Object has no valid animation";
+        Logger::log().list() << Logger::ICON_CLIENT << "Object has no valid animation";
         mIsAnimated = false;
         return;
     }
     // Every skeleton MUST have the Idle1 animation.
     if (!animSet->hasAnimationState("Idle1"))
     {
-        Logger::log().error() << "The animation 'Idle1' is missing. No animation will be available.";
+        Logger::log().error() << Logger::ICON_CLIENT << "The animation 'Idle1' is missing. No animation will be available.";
         mIsAnimated = false;
         return;
     }
     mIsAnimated = true;
-    Logger::log().list() << "Object has " << entity->getSkeleton()->getNumAnimations() << " animations.";
+    Logger::log().list() << Logger::ICON_CLIENT << "Object has " << entity->getSkeleton()->getNumAnimations() << " animations.";
     if (invalidAnims)
     {
-        Logger::log().warning() << invalidAnims << " of the animations are invalid.";
+        Logger::log().warning() << Logger::ICON_CLIENT << invalidAnims << " of the animations are invalid.";
     }
     // Set the init-anim to Idle1.
     mActState= mAnimState[ANIM_GROUP_IDLE + 0];

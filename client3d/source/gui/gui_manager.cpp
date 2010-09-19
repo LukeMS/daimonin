@@ -290,8 +290,8 @@ void GuiManager::Init(int w, int h, bool createMedia, bool printInfo, const char
     // ////////////////////////////////////////////////////////////////////
     if (mPrintInfo)
     {
-        Logger::log().info() << "These elements are currently known and can be used in " << FILE_TXT_WINDOWS<< ":";
-        for (int i =0; i < ELEMENTS_SUM; ++i) Logger::log().info() << "- "<< mStateStruct[i].name;
+        Logger::log().info() << Logger::ICON_CLIENT << "These elements are currently known and can be used in " << FILE_TXT_WINDOWS<< ":";
+        for (int i =0; i < ELEMENTS_SUM; ++i) Logger::log().info() << Logger::ICON_CLIENT << "- "<< mStateStruct[i].name;
     }
     // Load the default font.
     GuiTextout::getSingleton().loadRawFont(FILE_SYSTEM_FONT);
@@ -310,7 +310,7 @@ OverlayElement *GuiManager::createOverlay(String name, String strTexture, Overla
     MaterialPtr material = MaterialManager::getSingleton().create(name + MATERIAL_RESOURCE_NAME, ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
     if (material.isNull())
     {
-        Logger::log().error() << "Could not create material." << name + MATERIAL_RESOURCE_NAME;
+        Logger::log().error() << Logger::ICON_CLIENT << "Could not create material." << name + MATERIAL_RESOURCE_NAME;
         return 0;
     }
     material->setLightingEnabled(false);
@@ -327,7 +327,7 @@ OverlayElement *GuiManager::createOverlay(String name, String strTexture, Overla
     OverlayElement *element = OverlayManager::getSingleton().createOverlayElement("Panel", name + "_OverlayElement");
     if (!overlay || !element)
     {
-        Logger::log().error() << "Could not create Overlay " << name;
+        Logger::log().error() << Logger::ICON_CLIENT << "Could not create Overlay " << name;
         return 0;
     }
     overlay->add2D(static_cast<OverlayContainer*>(element));
@@ -357,11 +357,11 @@ TexturePtr GuiManager::createTexture(String strTexture)
     TexturePtr texture = TextureManager::getSingleton().getByName(strTexture);
     if (texture.isNull())
     {
-        Logger::log().info() << "(Re)creating texture: " << vString[1] << " of size: " << s << "x" << s;
+        Logger::log().info() << Logger::ICON_CLIENT << "(Re)creating texture: " << vString[1] << " of size: " << s << "x" << s;
         texture = TextureManager::getSingleton().createManual(strTexture, ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
                   TEX_TYPE_2D, s, s, 0, PF_A8R8G8B8, TU_STATIC_WRITE_ONLY, &mManualLoader);
         if (texture.isNull())
-            Logger::log().error() << "(Re)creating texture: " << vString[1]  << " of size: " << s << "x" << s << " failed!";
+            Logger::log().error() << Logger::ICON_CLIENT << "(Re)creating texture: " << vString[1]  << " of size: " << s << "x" << s << " failed!";
         return texture;
     }
     // ////////////////////////////////////////////////////////////////////
@@ -373,7 +373,7 @@ TexturePtr GuiManager::createTexture(String strTexture)
     // ////////////////////////////////////////////////////////////////////
     // (Re)draw the pixeldata.
     // ////////////////////////////////////////////////////////////////////
-    Logger::log().info() << "(Re)drawing texture: " << vString[1] << " of size: " << s << "x" << s;
+    Logger::log().info() << Logger::ICON_CLIENT << "(Re)drawing texture: " << vString[1] << " of size: " << s << "x" << s;
     if      (vString[1] == RESOURCE_TOOLTIP) drawTooltip();
     else if (vString[1] == RESOURCE_MCURSOR) GuiCursor::getSingleton().draw();
     else if (vString[1] == RESOURCE_WINDOW)
@@ -429,13 +429,13 @@ void GuiManager::parseWindows()
     // Check for a working window description.
     if (!doc.LoadFile() || !(xmlRoot = doc.RootElement()))
     {
-        Logger::log().error() << "XML-File '" << file << "' is missing or broken.";
+        Logger::log().error() << Logger::ICON_CLIENT << "XML-File '" << file << "' is missing or broken.";
         return;
     }
     if ((valString = xmlRoot->Attribute("name")))
-        Logger::log().info() << "Parsing '" << valString << "' in file" << file << ".";
+        Logger::log().info() << Logger::ICON_CLIENT << "Parsing '" << valString << "' in file" << file << ".";
     else
-        Logger::log().error() << "File '" << file << "' has no name entry.";
+        Logger::log().error() << Logger::ICON_CLIENT << "File '" << file << "' has no name entry.";
     // ////////////////////////////////////////////////////////////////////
     // Parse the fonts.
     // ////////////////////////////////////////////////////////////////////
@@ -460,11 +460,11 @@ void GuiManager::parseWindows()
                 ++sumEntries;
             }
         }
-        Logger::log().list() << sumEntries << " Fonts were parsed.";
+        Logger::log().list() << Logger::ICON_CLIENT << sumEntries << " Fonts were parsed.";
     }
     else
     {
-        Logger::log().error() << "CRITICAL: No fonts found in " << file;
+        Logger::log().error() << Logger::ICON_CLIENT << "CRITICAL: No fonts found in " << file;
     }
     // ////////////////////////////////////////////////////////////////////
     // Parse the mouse-cursor.
@@ -483,12 +483,12 @@ void GuiManager::parseWindows()
         }
         else
         {
-            Logger::log().warning() << "ImageSet has no mouse-cursor defined.";
+            Logger::log().warning() << Logger::ICON_CLIENT << "ImageSet has no mouse-cursor defined.";
         }
     }
     else
     {
-        Logger::log().error() << "File '" << file << "' has no mouse-cursor defined.";
+        Logger::log().error() << Logger::ICON_CLIENT << "File '" << file << "' has no mouse-cursor defined.";
     }
     // ////////////////////////////////////////////////////////////////////
     // Init the windows.
@@ -508,7 +508,7 @@ void GuiManager::parseWindows()
             }
         }
     }
-    Logger::log().list() << mSumDefinedWindows << " Windows were parsed.";
+    Logger::log().list() << Logger::ICON_CLIENT << mSumDefinedWindows << " Windows were parsed.";
 }
 
 //================================================================================================

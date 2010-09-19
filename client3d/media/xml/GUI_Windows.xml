@@ -58,15 +58,15 @@
       <Color red= "70" green= "90" blue= "50" alpha = "200" />
       <Size width= "148" height= "80" />
     </Graphic>
-    <String><Label                            x=   "5" y= "25" font="02" text= "Current FPS:" /> </String>
+    <String>                           <Label x=   "5" y= "25" font="02" text= "Current FPS:" /></String>
     <TextBox name= "Engine_CurrentFPS"><Label x= "100" y= "25" font="02" text= "000.0  "      /></TextBox>
-    <String><Label                            x=   "5" y= "40" font="02" text= "Best FPS:"    /></String>
-    <TextBox name= "Engine_BestFPS"><Label    x= "100" y= "40" font="02" text= "000.0  "      /></TextBox>
-    <String><Label                            x=   "5" y= "55" font="02" text= "Worst FPS:"   /></String>
-    <TextBox name= "Engine_WorstFPS"><Label   x= "100" y= "55" font="02" text= "000.0  "      /></TextBox>
-    <String><Label                            x=   "5" y= "70" font="02" text= "Triangles:"   /></String>
-    <TextBox name= "Engine_SumTris"><Label    x= "100" y= "70" font="02" text= "0000  "       /></TextBox>
-    <String><Label                            x=   "5" y= "85" font="02" text= "Batch Count:" /></String>
+    <String>                           <Label x=   "5" y= "40" font="02" text= "Best FPS:"    /></String>
+    <TextBox name= "Engine_BestFPS">   <Label x= "100" y= "40" font="02" text= "000.0  "      /></TextBox>
+    <String>                           <Label x=   "5" y= "55" font="02" text= "Worst FPS:"   /></String>
+    <TextBox name= "Engine_WorstFPS">  <Label x= "100" y= "55" font="02" text= "000.0  "      /></TextBox>
+    <String>                           <Label x=   "5" y= "70" font="02" text= "Triangles:"   /></String>
+    <TextBox name= "Engine_SumTris">   <Label x= "100" y= "70" font="02" text= "0000  "       /></TextBox>
+    <String>                           <Label x=   "5" y= "85" font="02" text= "Batch Count:" /></String>
     <TextBox name= "Engine_BatchCount"><Label x= "100" y= "85" font="02" text= "0000  "       /></TextBox>
   </Window>
 

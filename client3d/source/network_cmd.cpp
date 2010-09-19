@@ -115,7 +115,7 @@ void Network::AccNameSuccess(uchar * /*data*/, int /*len*/)
 {
     PROFILE()
     GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Account Success");
-    Logger::log().error() << "AccNameSuccess";
+    Logger::log().error() << Logger::ICON_CLIENT << "AccNameSuccess";
     /*
     int num = (len)?GetUINT8_String(data):ACCOUNT_STATUS_DISCONNECT;
     if(num == ACCOUNT_STATUS_DISCONNECT)
@@ -180,7 +180,7 @@ void Network::DrawInfoCmd(uchar *data, int /*len*/)
     char *buf = strchr((char *)data, ' ');
     if (!buf)
     {
-        Logger::log().error() << "DrawInfoCmd - got no data";
+        Logger::log().error() << Logger::ICON_CLIENT << "DrawInfoCmd - got no data";
         buf = (char*)"";
     }
     else
@@ -195,7 +195,7 @@ void Network::DrawInfoCmd(uchar *data, int /*len*/)
 void Network::AddMeFail(uchar * /*data*/, int /*len*/)
 {
     PROFILE()
-    Logger::log().error() << "addme_failed received.\n";
+    Logger::log().error() << Logger::ICON_CLIENT << "addme_failed received.\n";
     CloseSocket();
     Option::getSingleton().setGameStatus(Option::GAME_STATUS_INIT_NET);
 }
@@ -269,7 +269,7 @@ void Network::Map2Cmd(uchar *data, int len)
     }
     TileMap::getSingleton().mMapData.posx = xpos; // map windows is from range to +MAPWINSIZE_X
     TileMap::getSingleton().mMapData.posy = ypos;
-    //Logger::log().info() << "MapPos x: " << xpos << " y: " << ypos << " (nflag: " << map_new_flag << ")";
+    //Logger::log().info() << Logger::ICON_CLIENT << "MapPos x: " << xpos << " y: " << ypos << " (nflag: " << map_new_flag << ")";
     while (pos < len)
     {
         ext_flag = 0;
@@ -415,7 +415,7 @@ void Network::Map2Cmd(uchar *data, int len)
             xdata = 0;
             int height = GetShort_String(data + pos); pos += 2;
             TileMap::getSingleton().set_map_face(x, y, 0, face, xdata, -1, pname1, height);
-            //Logger::log().error() << "Layer 0: " << x << " "<< y << " "<< height;
+            //Logger::log().error() << Logger::ICON_CLIENT << "Layer 0: " << x << " "<< y << " "<< height;
         }
         if (mask & 0x4) // Layer 1 (gras, bridge, ...).
         {
@@ -480,7 +480,7 @@ void Network::DrawInfoCmd2(uchar *data, int len)
             if (flags & NDI_TELL)
                 strcpy(cpl.player_reply, data);
 
-            //Logger::log().info() << "IGNORE?: player >" << data << "<";
+            //Logger::log().info() << Logger::ICON_CLIENT << "IGNORE?: player >" << data << "<";
             if (flags & NDI_EMOTE)
                 flags &= ~NDI_PLAYER;
         }
@@ -625,7 +625,7 @@ void Network::SoundCmd(uchar *data, int len)
     PROFILE()
     if (len != 5)
     {
-        Logger::log().error() << "Got invalid length on sound command: " << len;
+        Logger::log().error() << Logger::ICON_CLIENT << "Got invalid length on sound command: " << len;
         return;
     }
     int x = (char) data[0];
@@ -636,7 +636,7 @@ void Network::SoundCmd(uchar *data, int len)
     {
         if (num < 0 || num >= SPELL_SOUND_MAX)
         {
-            Logger::log().error() << "Got invalid spell sound id: " <<  num;
+            Logger::log().error() << Logger::ICON_CLIENT << "Got invalid spell sound id: " <<  num;
             return;
         }
         num += SOUND_MAX; // this maps us to the spell sound table part
@@ -645,12 +645,12 @@ void Network::SoundCmd(uchar *data, int len)
     {
         if (num < 0 || num >= SOUND_MAX)
         {
-            Logger::log().error() << "Got invalid sound id: " << num;
+            Logger::log().error() << Logger::ICON_CLIENT << "Got invalid sound id: " << num;
             return;
         }
     }
 //    calculate_map_sound(num, x, y, 0);
-    Logger::log().warning() << "Play sound: " << num << " posX: " << x << " posY: " << y;
+    Logger::log().warning() << Logger::ICON_CLIENT << "Play sound: " << num << " posX: " << x << " posY: " << y;
 }
 
 //================================================================================================
@@ -948,7 +948,7 @@ void Network::StatsCmd(uchar * /*data*/, int /*len*/)
                       break;
                     case CS_STAT_TITLE:
                       {
-                          Logger::log().warning() << "Command get stats: CS_STAT_TITLE is outdated");
+                          Logger::log().warning() << Logger::ICON_CLIENT << "Command get stats: CS_STAT_TITLE is outdated");
                           //    int rlen=data[i++];
                           //    strncpy(cpl.title2,
                           //    (const char*)data+i,rlen);
@@ -957,13 +957,13 @@ void Network::StatsCmd(uchar * /*data*/, int /*len*/)
                       }
                       break;
                     default:
-                      Logger::log().error() << "Unknown stat number " << c;
+                      Logger::log().error() << Logger::ICON_CLIENT << "Unknown stat number " << c;
                 }
             }
         }
         if (i > len)
         {
-            Logger::log().error() << "got stats overflow, processed " << i << " bytes out of " << len;
+            Logger::log().error() << Logger::ICON_CLIENT << "got stats overflow, processed " << i << " bytes out of " << len;
         }
     */
 }
@@ -983,7 +983,7 @@ void Network::ImageCmd(uchar * /*data*/, int /*len*/)
         plen = GetInt_String(data + 4);
         if (len < 8 || (len - 8) != plen)
         {
-            Logger::log().error() << "PixMapCmd: Lengths don't compare (" << (len - 8) " " << " " << plen << ")";
+            Logger::log().error() << Logger::ICON_CLIENT << "PixMapCmd: Lengths don't compare (" << (len - 8) " " << " " << plen << ")";
             return;
         }
 
@@ -1066,7 +1066,7 @@ void Network::PlayerCmd(uchar *data, int len)
     i += nlen;
     if (i != len)
     {
-        Logger::log().error() << "PlayerCmd: lengths does not match (" << len << " != " << i << ")";
+        Logger::log().error() << Logger::ICON_CLIENT << "PlayerCmd: lengths does not match (" << len << " != " << i << ")";
     }
 //    new_player(tag, name, weight, (short) face);
 //    map_draw_map_clear();
@@ -1096,7 +1096,7 @@ void Network::PlayerCmd(uchar *data, int len)
         obj.particleNr=-1;
         ObjectManager::getSingleton().addCreature(obj);
     }
-    Logger::log().info() << "Loading quickslot settings";
+    Logger::log().info() << Logger::ICON_CLIENT << "Loading quickslot settings";
     //load_quickslots_entrys();
 }
 
@@ -1309,7 +1309,7 @@ void Network::SetupCmd(uchar *buf, int len)
             if (version[0] < 0 || version[1] < 0 || version[2] < 0)
             {
                 GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "~#ffff0000Got a wrong dv command from server!");
-                Logger::log().error() << "Got a wrong dv command from server!";
+                Logger::log().error() << Logger::ICON_CLIENT << "Got a wrong dv command from server!";
                 Option::getSingleton().setGameStatus(Option::GAME_STATUS_INIT_NET);
                 return;
             }
@@ -1330,11 +1330,11 @@ void Network::SetupCmd(uchar *buf, int len)
             if (PROTOCOL_VERSION != atoi((const char*)param))
             {
                 GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "~Your client is outdated!~");
-                Logger::log().error() << "Protocol version client/server doesn't match!";
+                Logger::log().error() << Logger::ICON_CLIENT << "Protocol version client/server doesn't match!";
                 CloseSocket();
                 return;
             }
-            Logger::log().info() << "Protocol version confirmed";
+            Logger::log().info() << Logger::ICON_CLIENT << "Protocol version confirmed";
             continue;
         }
         if (!strcmp((const char*)cmd, "ac"))
@@ -1382,7 +1382,7 @@ void Network::SetupCmd(uchar *buf, int len)
             ServerFile::getSingleton().checkFileStatus((char*)param, ServerFile::FILE_ANIMS);
             continue;
         }
-        Logger::log().error() << "Got setup for a command we don't understand: " << cmd << " " << param;
+        Logger::log().error() << Logger::ICON_CLIENT << "Got setup for a command we don't understand: " << cmd << " " << param;
         Option::getSingleton().setGameStatus(Option::GAME_STATUS_INIT_NET);
         return;
     }
@@ -1405,7 +1405,7 @@ void Network::DataCmd(uchar *data, int len)
     uchar data_cmd  = (data_type &~DATA_PACKED_CMD) -1;
     if (data_cmd >= ServerFile::FILE_SUM)
     {
-        Logger::log().error()  << "data cmd: unknown type " << data_type << " (len:" << len << ")";
+        Logger::log().error() << Logger::ICON_CLIENT  << "data cmd: unknown type " << data_type << " (len:" << len << ")";
         return;
     }
     --len;
@@ -1430,7 +1430,7 @@ void Network::DataCmd(uchar *data, int len)
     // ////////////////////////////////////////////////////////////////////
     std::ofstream out(ServerFile::getSingleton().getFilename(data_cmd), std::ios::out|std::ios::binary);
     if (!out)
-        Logger::log().error()  << "save data cmd file : writing of file "
+        Logger::log().error() << Logger::ICON_CLIENT  << "save data cmd file : writing of file "
                                << ServerFile::getSingleton().getFilename(data_cmd) << " failed.";
     else
         out.write((char*)data, len);
@@ -1476,7 +1476,7 @@ void Network::GroupInviteCmd(uchar * /*data*/, int /*len*/)
     PROFILE()
     /*
         if(global_group_status != GROUP_NO) // bug
-            Logger::log().error() << "Got group invite when g_status != GROUP_NO (" << data << ")";
+            Logger::log().error() << Logger::ICON_CLIENT << "Got group invite when g_status != GROUP_NO (" << data << ")";
         else
         {
             global_group_status = GROUP_INVITE;
@@ -1566,7 +1566,7 @@ void Network::ItemUpdateCmd(uchar * /*data*/, int /*len*/)
         }
         *name = '\0';
         loc = ip->env ? ip->env->tag : 0;
-        // Logger::log().error() <<  "UPDATE: loc: "<< loc << " tag: "<<  tag;
+        // Logger::log().error() << Logger::ICON_CLIENT <<  "UPDATE: loc: "<< loc << " tag: "<<  tag;
         weight = ip->weight;
         face = ip->face;
         request_face(face, 0);
@@ -1581,7 +1581,7 @@ void Network::ItemUpdateCmd(uchar * /*data*/, int /*len*/)
             loc = GetInt_String(data + pos);
             env = locate_item(loc);
             if (!env)
-                Logger::log().error() << "UpdateItemCmd: unknown object tag "<<loc << " for new location";
+                Logger::log().error() << Logger::ICON_CLIENT << "UpdateItemCmd: unknown object tag "<<loc << " for new location";
             pos += 4;
         }
         if (sendflags & UPD_FLAGS)
@@ -1610,7 +1610,7 @@ void Network::ItemUpdateCmd(uchar * /*data*/, int /*len*/)
         }
         if (pos > len)
         {
-            Logger::log().error() << "UpdateItemCmd: Overread buffer: " << pos << " > " << len;
+            Logger::log().error() << Logger::ICON_CLIENT << "UpdateItemCmd: Overread buffer: " << pos << " > " << len;
             return;
         }
         if (sendflags & UPD_ANIM)
@@ -1651,7 +1651,7 @@ void Network::ItemDeleteCmd(uchar * /*data*/, int len)
         pos += 4;
     }
     if (pos > len)
-        Logger::log().error() <<  "DeleteCmd: Overread buffer: " << pos << " > " << len;
+        Logger::log().error() << Logger::ICON_CLIENT <<  "DeleteCmd: Overread buffer: " << pos << " > " << len;
     //TileManager::getSingleton().map_udate_flag = 2;
 }
 
@@ -1687,9 +1687,9 @@ bool Network::console_command_check(String cmd)
         if (StringUtil::startsWith(cmd, mConsoleCmd[i].cmd, true))
         {
             int len = (int)strlen(mConsoleCmd[i].cmd);
-            Logger::log().error() << "before: " << cmd;
+            Logger::log().error() << Logger::ICON_CLIENT << "before: " << cmd;
             cmd = cmd.substr(len, cmd.size()-len);
-            Logger::log().error() << "after: " << cmd;
+            Logger::log().error() << Logger::ICON_CLIENT << "after: " << cmd;
             do_console_cmd(cmd, i);
             return true;
         }

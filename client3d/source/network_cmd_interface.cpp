@@ -58,7 +58,7 @@ void Network::InterfaceCmd(uchar *data, int len)
         int pos =1;
         if (!CmdInterface::getSingleton().load(mode, (char*)data, len, pos))
         {
-            Logger::log().error() << "INVALID GUI CMD";
+            Logger::log().error() << Logger::ICON_CLIENT << "INVALID GUI CMD";
             return;
         }
         CmdInterface::getSingleton().show();
@@ -506,7 +506,7 @@ void CmdInterface::format_gui_interface()
     // ////////////////////////////////////////////////////////////////////
     if (mUsed_flag & INTERFACE_DECLINE && !(mUsed_flag & INTERFACE_ACCEPT))
     {
-        Logger::log().error() << " if (mUsed_flag & INTERFACE_DECLINE && !(mUsed_flag & INTERFACE_ACCEPT))";
+        Logger::log().error() << Logger::ICON_CLIENT << " if (mUsed_flag & INTERFACE_DECLINE && !(mUsed_flag & INTERFACE_ACCEPT))";
 
         if (butDecline.label.empty())
             butDecline.label = "~D~ecline";
@@ -516,7 +516,7 @@ void CmdInterface::format_gui_interface()
     }
     else if (mUsed_flag & INTERFACE_ACCEPT)
     {
-        Logger::log().error() << "else if (mUsed_flag & INTERFACE_ACCEPT)";
+        Logger::log().error() << Logger::ICON_CLIENT << "else if (mUsed_flag & INTERFACE_ACCEPT)";
         if (butAccept.label.empty())
             butAccept.label = "~A~ccept";
         if (mUsed_flag & INTERFACE_DECLINE)
@@ -533,7 +533,7 @@ void CmdInterface::format_gui_interface()
     }
     else if (mUsed_flag & INTERFACE_BUTTON) // means: single button
     {
-        Logger::log().error() << "else if (mUsed_flag & INTERFACE_BUTTON) // means: single button";
+        Logger::log().error() << Logger::ICON_CLIENT << "else if (mUsed_flag & INTERFACE_BUTTON) // means: single button";
         mUsed_flag |=INTERFACE_ACCEPT; // yes, thats right! we fake the accept button
         if (butAccept.label.empty())
         {
@@ -586,7 +586,7 @@ bool CmdInterface::load(int /*mode*/, char *data, int len, int pos)
             {
                 if (flag_end == 2) // bug
                 {
-                    Logger::log().error() << "Bad interface string (flag end error): " << data;
+                    Logger::log().error() << Logger::ICON_CLIENT << "Bad interface string (flag end error): " << data;
                     return false;
                 }
                 // our char before this was a '>' - now we get a '<'
@@ -599,7 +599,7 @@ bool CmdInterface::load(int /*mode*/, char *data, int len, int pos)
             {
                 if (flag_start == 2) // bug
                 {
-                    Logger::log().error() << "Bad interface string (flag end error): " << data;
+                    Logger::log().error() << Logger::ICON_CLIENT << "Bad interface string (flag end error): " << data;
                     return false;
                 }
                 flag_start=0;
@@ -625,7 +625,7 @@ bool CmdInterface::load(int /*mode*/, char *data, int len, int pos)
             {
                 flag_start=2;
                 // This char is a command marker
-                Logger::log().info() << "found cmd: "<< c;
+                Logger::log().info() << Logger::ICON_CLIENT << "found cmd: "<< c;
                 //cmd_mode = INTERFACE_CMD_NO;
                 ++pos;
                 switch (c)
@@ -634,71 +634,71 @@ bool CmdInterface::load(int /*mode*/, char *data, int len, int pos)
                         cmd = INTERFACE_CMD_HEAD;
                         if (!cmd_head(data, pos)) return false;
                         mUsed_flag |=INTERFACE_HEAD;
-                        Logger::log().error() << "INTERFACE_CMD_HEAD";
+                        Logger::log().error() << Logger::ICON_CLIENT << "INTERFACE_CMD_HEAD";
                         break;
                     case 'm': // title & text - what he has to say
                         cmd = INTERFACE_CMD_MESSAGE;
                         if (!cmd_message(data, pos)) return false;
                         mUsed_flag |=INTERFACE_MESSAGE;
-                        Logger::log().error() << "INTERFACE_MESSAGE";
+                        Logger::log().error() << Logger::ICON_CLIENT << "INTERFACE_MESSAGE";
                         break;
                     case 'r': // reward info
                         cmd = INTERFACE_CMD_REWARD;
                         if (!cmd_reward(data, pos)) return false;
                         mUsed_flag |=INTERFACE_REWARD;
-                        Logger::log().error() << "INTERFACE_CMD_REWARD";
+                        Logger::log().error() << Logger::ICON_CLIENT << "INTERFACE_CMD_REWARD";
                         break;
                     case 'w': // who info
                         cmd = INTERFACE_CMD_WHO;
                         if (!cmd_who(data, pos)) return false;
                         mUsed_flag |=INTERFACE_WHO;
-                        Logger::log().error() << "INTERFACE_CMD_WHO";
+                        Logger::log().error() << Logger::ICON_CLIENT << "INTERFACE_CMD_WHO";
                         break;
                     case 'x': // xtended info
                         cmd = INTERFACE_CMD_XTENDED;
                         if (!cmd_xtended(data, pos)) return false;
                         mUsed_flag |=INTERFACE_XTENDED;
-                        Logger::log().error() << "INTERFACE_CMD_XTENDED";
+                        Logger::log().error() << Logger::ICON_CLIENT << "INTERFACE_CMD_XTENDED";
                         break;
                     case 'l': // define a "link" string line
                         cmd = INTERFACE_CMD_LINK;
                         if (!cmd_link(data, pos)) return false;
                         ++mLink_count;
-                        Logger::log().error() << "INTERFACE_CMD_LINK";
+                        Logger::log().error() << Logger::ICON_CLIENT << "INTERFACE_CMD_LINK";
                         break;
                     case 'i': // define a "icon" - graphical presentation of reward or message part
                         cmd = INTERFACE_CMD_ICON;
                         if (!cmd_icon(data, pos)) return false;
                         ++mIcon_count;
-                        Logger::log().error() << "INTERFACE_CMD_ICON";
+                        Logger::log().error() << Logger::ICON_CLIENT << "INTERFACE_CMD_ICON";
                         break;
                     case 'a': // define accept button
                         cmd = INTERFACE_CMD_ACCEPT;
                         if (!cmd_button(butAccept, data, pos)) return false;
                         mUsed_flag |=INTERFACE_ACCEPT;
-                        Logger::log().error() << "INTERFACE_CMD_ACCEPT";
+                        Logger::log().error() << Logger::ICON_CLIENT << "INTERFACE_CMD_ACCEPT";
                         break;
                     case 'b': // define single button
                         cmd = INTERFACE_CMD_BUTTON;
                         if (!cmd_button(butAccept, data, pos)) return false;
                         // we use the accept button struct for single buttons too
                         mUsed_flag |=INTERFACE_BUTTON;
-                        Logger::log().error() << "INTERFACE_CMD_BUTTON";
+                        Logger::log().error() << Logger::ICON_CLIENT << "INTERFACE_CMD_BUTTON";
                         break;
                     case 'd': // define decline button
                         cmd = INTERFACE_CMD_DECLINE;
                         if (!cmd_button(butDecline, data, pos)) return false;
                         mUsed_flag |=INTERFACE_DECLINE;
-                        Logger::log().error() << "INTERFACE_CMD_DECLINE";
+                        Logger::log().error() << Logger::ICON_CLIENT << "INTERFACE_CMD_DECLINE";
                         break;
                     case 't': // textfield contents
                         cmd = INTERFACE_CMD_TEXTFIELD;
                         if (!cmd_textfield(data, pos)) return false;
                         mUsed_flag |=INTERFACE_TEXTFIELD;
-                        Logger::log().error() << "INTERFACE_CMD_TEXTFIELD";
+                        Logger::log().error() << Logger::ICON_CLIENT << "INTERFACE_CMD_TEXTFIELD";
                         break;
                     default:
-                        Logger::log().error() << "NPC Dialog -> Bad command tag: " << data;
+                        Logger::log().error() << Logger::ICON_CLIENT << "NPC Dialog -> Bad command tag: " << data;
                         return false;
                 }
             }
@@ -1029,7 +1029,7 @@ void CmdInterface::mouseEvent(int line)
     String keyword = "";
     if (getElement(line, &element, &index, &keyword))
     {
-        //Logger::log().error() <<  "keyword: " << keyword;
+        //Logger::log().error() << Logger::ICON_CLIENT <<  "keyword: " << keyword;
         if (element == INTERFACE_ICON)
         {
             Sound::getSingleton().playStream(Sound::BUTTON_CLICK); // SOUND_GET
@@ -1120,7 +1120,7 @@ bool CmdInterface::getElement(int line, int *element, int *index, String *keywor
         return true;
     }
     //    for (int i=0;i < mLink_count; ++i)
-    //        Logger::log().error() <<  "Link_count: " << link[i].cmd << " - " << link[i].link;
+    //        Logger::log().error() << Logger::ICON_CLIENT <<  "Link_count: " << link[i].cmd << " - " << link[i].link;
     /*
         // reward is also used as "objective"
         if (mUsed_flag & INTERFACE_REWARD)

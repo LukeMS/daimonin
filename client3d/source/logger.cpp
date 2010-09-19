@@ -31,6 +31,9 @@ static const char *FILENAME = "./client_log.html";
 static const char *STR_STYLE[] = {"Head", "List", "Info", "Warn", "Error", "Debug", "Attempt", "Ok" };
 int Logger::mType = 0;
 bool Logger::LogEntry::mAttemptActive = false;
+const char *Logger::ICON_CAUDIO = "<img src='media/textures/logger/caudio.png' style='vertical-align:middle;'>";
+const char *Logger::ICON_OGRE3D = "<img src='media/textures/logger/ogre3d.png' style='vertical-align:middle;'>";
+const char *Logger::ICON_CLIENT = "<img src='media/textures/logger/client.png' style='vertical-align:middle;'>";
 
 //================================================================================================
 // Constructor.
@@ -41,14 +44,14 @@ Logger::Logger()
     if (!log_stream.is_open()) return;
     log_stream  << "<html>\n<head><title>" << PRG_NAME << " - Logfile</title></head>\n" <<
                 "<style>\n" <<
-                "td."<< STR_STYLE[STYLE_HEADLINE]<< " {color:black; font-weight: bold;}\n" <<
-                "td."<< STR_STYLE[STYLE_LIST    ]<< " {color:black;  }\n" <<
-                "td."<< STR_STYLE[STYLE_INFO    ]<< " {color:black;  }\n" <<
-                "td."<< STR_STYLE[STYLE_WARN    ]<< " {color:orange; }\n" <<
-                "td."<< STR_STYLE[STYLE_ERROR   ]<< " {color:red;    }\n" <<
-                "td."<< STR_STYLE[STYLE_DEBUG   ]<< " {color:violet; }\n" <<
-                "td."<< STR_STYLE[STYLE_ATTEMPT ]<< " {color:black;  }\n" <<
-                "td."<< STR_STYLE[STYLE_OK      ]<< " {color:#00ff00;}\n" <<
+                "td."<< STR_STYLE[STYLE_HEADLINE]<< " {vertical-align:middle; color:black; font-weight: bold;}\n" <<
+                "td."<< STR_STYLE[STYLE_LIST    ]<< " {vertical-align:middle; color:black;  }\n" <<
+                "td."<< STR_STYLE[STYLE_INFO    ]<< " {vertical-align:middle; color:black;  }\n" <<
+                "td."<< STR_STYLE[STYLE_WARN    ]<< " {vertical-align:middle; color:orange; }\n" <<
+                "td."<< STR_STYLE[STYLE_ERROR   ]<< " {vertical-align:middle; color:red;    }\n" <<
+                "td."<< STR_STYLE[STYLE_DEBUG   ]<< " {vertical-align:middle; color:violet; }\n" <<
+                "td."<< STR_STYLE[STYLE_ATTEMPT ]<< " {vertical-align:middle; color:black;  }\n" <<
+                "td."<< STR_STYLE[STYLE_OK      ]<< " {vertical-align:middle; color:#00ff00;}\n" <<
                 "</style>\n\n" <<
                 "<body>\n" <<
                 "<table  width=\"100%\">\n" <<
@@ -106,9 +109,9 @@ Logger::LogEntry::LogEntry(int type)
     if (type == STYLE_HEADLINE)
         mOut << "\n</table>\n\n<hr>\n<table width=\"100%\">";
     if (type == STYLE_LIST)
-        mOut << "\n<tr><td class=\"" << STR_STYLE[STYLE_LIST] << "\"><li>";
+        mOut << "\n<tr><td nowrap class=\"" << STR_STYLE[STYLE_LIST] << "\"><li>";
     else
-        mOut << "\n<tr><td class=\"" << STR_STYLE[type] << "\">";
+        mOut << "\n<tr><td nowrap class=\"" << STR_STYLE[type] << "\">";
     if (type == STYLE_ATTEMPT)
         mAttemptActive = true;
 }

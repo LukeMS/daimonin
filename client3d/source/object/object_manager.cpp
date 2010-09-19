@@ -271,8 +271,8 @@ void ObjectManager::highlightObject(MovableObject *mob, bool highlight)
                 // If it crashes here, then there is an object without setQueryFlags(0).
                 if (mSelectedObject < 0)
                 {
-                    Logger::log().error() << "An object without a defined query flag was found!";
-                    Logger::log().error() << "Use setQueryFlags(0) on all objects that needs no mouse picking.";
+                    Logger::log().error() << Logger::ICON_CLIENT << "An object without a defined query flag was found!";
+                    Logger::log().error() << Logger::ICON_CLIENT << "Use setQueryFlags(0) on all objects that needs no mouse picking.";
                     return;
                 }
                 if (entity || mSelectedObject == ObjectNPC::HERO) return;
@@ -433,7 +433,7 @@ void ObjectManager::extractObject(MovableObject *mob)
                 }
             }
         }
-        Logger::log().error() << "Bug in ObjectManager::extractObject(...) : Could not extract object!";
+        Logger::log().error() << Logger::ICON_CLIENT << "Bug in ObjectManager::extractObject(...) : Could not extract object!";
     */
 }
 

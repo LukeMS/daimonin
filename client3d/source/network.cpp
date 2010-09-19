@@ -182,9 +182,9 @@ void Network::freeRecources()
     {
         mAbortThread = true;
         mInputThread.join();  // Wait for the thread to end.
-        Logger::log().info() << "Reader thread stopped";
+        Logger::log().info() << Logger::ICON_CLIENT << "Reader thread stopped";
         mOutputThread.join(); // Wait for the thread to end.
-        Logger::log().info() << "Writer thread stopped";
+        Logger::log().info() << Logger::ICON_CLIENT << "Writer thread stopped";
         mThreadsActive = false;
     }
     // Empty all queues.
@@ -210,7 +210,7 @@ bool Network::Init()
     int error = WSAStartup(MAKEWORD(1, 1), &w);      // Version 1.1
     if (error)
     {
-        Logger::log().error() << "Error init starting Winsock: "<< error;
+        Logger::log().error() << Logger::ICON_CLIENT << "Error init starting Winsock: "<< error;
         return false;
     }
 #endif
@@ -247,7 +247,7 @@ void Network::update(Real timeSinceLastFrame)
     if (!cmd) return;// The queue is empty.
     // Bit 7 holds the header length.
     int lenHeader = cmd->data[0]&0x80?5:3;
-    //Logger::log().error() << "Got server cmd " << (int)(cmd->data[0]&~0x80)-1 << " len (incl. Header) =" << cmd->len;
+    //Logger::log().error() << Logger::ICON_CLIENT << "Got server cmd " << (int)(cmd->data[0]&~0x80)-1 << " len (incl. Header) =" << cmd->len;
     commands[(cmd->data[0]&~0x80) - 1].serverCmd(cmd->data+lenHeader, cmd->len-lenHeader);
     command_buffer_free(cmd);
 }
@@ -382,7 +382,7 @@ void Network::send_command_binary(uchar cmd, std::stringstream &stream)
         buf = command_buffer_new((int)full_cmd.str().size(), (uchar*)full_cmd.str().c_str());
     }
     /*
-        Logger::log().error() << "send " << buf->len << " bytes:";
+        Logger::log().error() << Logger::ICON_CLIENT << "send " << buf->len << " bytes:";
         String str1="", str2="";
         char strBuf[12];
         for (int i= 0; i < buf->len; ++i)
@@ -395,8 +395,8 @@ void Network::send_command_binary(uchar cmd, std::stringstream &stream)
             else
                 str2+= (char)buf->data[i];
         }
-        Logger::log().error() << str1.substr(0, str1.size()-1);
-        Logger::log().error() << str2;
+        Logger::log().error() << Logger::ICON_CLIENT << str1.substr(0, str1.size()-1);
+        Logger::log().error() << Logger::ICON_CLIENT << str2;
     */
     command_buffer_enqueue(buf, &mOutputQueueStart, &mOutputQueueEnd);
 }
@@ -427,7 +427,7 @@ int Network::getCmdLen(uchar *data, int bytes)
 void Network::inputThread()
 {
     static uchar readbuf[MAXSOCKBUF+1];
-    Logger::log().info() << "Reader thread started ";
+    Logger::log().info() << Logger::ICON_CLIENT << "Reader thread started ";
     while (!mAbortThread)
     {
         // Read the command byte.
@@ -435,14 +435,14 @@ void Network::inputThread()
         // Is this a valid command?
         if (!readbuf[0] || (readbuf[0]&~0x80)-1 >= SUM_SERVER_COMMANDS)
         {
-            Logger::log().error() << "Bad command from server: Command number is " << (int)(readbuf[0]&~0x80)-1 << ").";
+            Logger::log().error() << Logger::ICON_CLIENT << "Bad command from server: Command number is " << (int)(readbuf[0]&~0x80)-1 << ").";
             continue;
         }
         // Bit 7 of the command byte indicates the datatype (2 or 4 byte sized integer)
         int sizeOfCmd = readbuf[0] & (1<<7)?4:2;
         if (!sizeOfCmd)
         {
-            Logger::log().error() << "Bad command from server: Command size is zero!";
+            Logger::log().error() << Logger::ICON_CLIENT << "Bad command from server: Command size is zero!";
             continue;
         }
         int pos = 1;
@@ -451,7 +451,7 @@ void Network::inputThread()
         int cmd_len = getCmdLen(readbuf+1, sizeOfCmd) + pos;
         if (cmd_len >= MAXSOCKBUF)
         {
-            Logger::log().error() << "Network::reader_thread_loop: To much data from server.";
+            Logger::log().error() << Logger::ICON_CLIENT << "Network::reader_thread_loop: To much data from server.";
             break;
         }
         while (cmd_len-pos >0 && !mAbortThread)
@@ -469,7 +469,7 @@ void Network::inputThread()
 //================================================================================================
 void Network::outputThread()
 {
-    Logger::log().info() << "Writer thread started";
+    Logger::log().info() << Logger::ICON_CLIENT << "Writer thread started";
     while (!mAbortThread)
     {
 #ifdef WIN32
@@ -487,12 +487,12 @@ void Network::outputThread()
             int ret = send(mSocket, (char*)buf->data + written, buf->len - written, 0);
             if (ret == 0)
             {
-                Logger::log().error() << "Writer got EOF";
+                Logger::log().error() << Logger::ICON_CLIENT << "Writer got EOF";
                 break;
             }
             if (ret == -1)
             {
-                Logger::log().error() << "Writer thread got error " << getError();
+                Logger::log().error() << Logger::ICON_CLIENT << "Writer thread got error " << getError();
                 break;
             }
             written += ret;
@@ -529,7 +529,7 @@ bool Network::OpenActiveServerSocket()
     int tmp = 1;
     if (setsockopt(mSocket, IPPROTO_TCP, TCP_NODELAY, (char *) &tmp, sizeof(tmp)))
     {
-        Logger::log().error() << "Network::OpenActiveServerSocket(): setsockopt(TCP_NODELAY) failed";
+        Logger::log().error() << Logger::ICON_CLIENT << "Network::OpenActiveServerSocket(): setsockopt(TCP_NODELAY) failed";
         return false;
     }
     return true;
@@ -542,7 +542,7 @@ bool Network::OpenActiveServerSocket()
 bool Network::OpenSocket(const char *host, int port, int &sock)
 {
     PROFILE()
-    Logger::log().info() <<  "OpenSocket: " << host << " " << port;
+    Logger::log().info() << Logger::ICON_CLIENT <<  "OpenSocket: " << host << " " << port;
     // The way to make the sockets work on XP Home - The 'unix' style socket seems to fail under xp home.
     sock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
     struct sockaddr_in insock;
@@ -555,7 +555,7 @@ bool Network::OpenSocket(const char *host, int port, int &sock)
         struct hostent *hostbn = gethostbyname(host);
         if (hostbn == (struct hostent *) NULL)
         {
-            Logger::log().warning() <<  "Unknown host: "<< host;
+            Logger::log().warning() << Logger::ICON_CLIENT <<  "Unknown host: "<< host;
             sock = NO_SOCKET;
             return false;
         }
@@ -564,7 +564,7 @@ bool Network::OpenSocket(const char *host, int port, int &sock)
     long temp = 1;   // non-block
     if (ioctlsocket(sock, FIONBIO, (u_long*)&temp) == -1)
     {
-        Logger::log().error() << "ioctlsocket(socket, FIONBIO , &temp)";
+        Logger::log().error() << Logger::ICON_CLIENT << "ioctlsocket(socket, FIONBIO , &temp)";
         sock = NO_SOCKET;
         return false;
     }
@@ -572,7 +572,7 @@ bool Network::OpenSocket(const char *host, int port, int &sock)
     linger_opt.l_onoff = 1;
     linger_opt.l_linger = 5;
     if (setsockopt(sock, SOL_SOCKET, SO_LINGER, (char *) &linger_opt, sizeof(struct linger)))
-        Logger::log().error() << "BUG: Error on setsockopt LINGER";
+        Logger::log().error() << Logger::ICON_CLIENT << "BUG: Error on setsockopt LINGER";
     int error = 0;
     uint32 timeout =  Root::getSingleton().getTimer()->getMilliseconds() + TIMEOUT_MS;
     while (connect(sock, (struct sockaddr *) &insock, sizeof(insock)) == SOCKET_ERROR)
@@ -590,7 +590,7 @@ bool Network::OpenSocket(const char *host, int port, int &sock)
             error = 1;
             continue;
         }
-        Logger::log().warning() <<  "Connect Error: " << errorNr;
+        Logger::log().warning() << Logger::ICON_CLIENT <<  "Connect Error: " << errorNr;
         sock = NO_SOCKET;
         return false;
     }
@@ -599,7 +599,7 @@ bool Network::OpenSocket(const char *host, int port, int &sock)
     temp = 0;
     if (ioctlsocket(sock, FIONBIO, (u_long*)&temp) == -1)
     {
-        Logger::log().error() << "ioctlsocket(Socket, FIONBIO , &temp == 0)";
+        Logger::log().error() << Logger::ICON_CLIENT << "ioctlsocket(Socket, FIONBIO , &temp == 0)";
         sock = NO_SOCKET;
         return false;
     }
@@ -611,7 +611,7 @@ bool Network::OpenSocket(const char *host, int port, int &sock)
         if (setsockopt(sock, SOL_SOCKET, SO_RCVBUF, (char *) &newbufsize, sizeof(&newbufsize)))
             setsockopt(sock, SOL_SOCKET, SO_RCVBUF, (char *) &oldbufsize, sizeof(&oldbufsize));
     }
-    Logger::log().info() <<  "Connected to "<< host << "  " <<  port;
+    Logger::log().info() << Logger::ICON_CLIENT <<  "Connected to "<< host << "  " <<  port;
     return true;
 }
 #endif
@@ -629,17 +629,17 @@ bool Network::OpenSocket(const char *host, int port, int &sock)
     // This method is preferable unless IPv6 is required, due to buggy distros. See mantis 0000425
     struct protoent *protox;
     struct sockaddr_in insock;
-    Logger::log().info() << "Opening to " << host << " " << port;
+    Logger::log().info() << Logger::ICON_CLIENT << "Opening to " << host << " " << port;
     protox = getprotobyname("tcp");
     if (protox == (struct protoent *) NULL)
     {
-        Logger::log().error() << "Error on getting prorobyname (tcp)";
+        Logger::log().error() << Logger::ICON_CLIENT << "Error on getting prorobyname (tcp)";
         return false;
     }
     sock = socket(PF_INET, SOCK_STREAM, protox->p_proto);
     if (sock == -1)
     {
-        Logger::log().error() << "init_connection:  Error on socket command.";
+        Logger::log().error() << Logger::ICON_CLIENT << "init_connection:  Error on socket command.";
         sock = NO_SOCKET;
         return false;
     }
@@ -652,7 +652,7 @@ bool Network::OpenSocket(const char *host, int port, int &sock)
         struct hostent *hostbn  = gethostbyname(host);
         if (hostbn == (struct hostent *) NULL)
         {
-            Logger::log().error() << "Unknown host: " << host;
+            Logger::log().error() << Logger::ICON_CLIENT << "Unknown host: " << host;
             return false;
         }
         memcpy(&insock.sin_addr, hostbn->h_addr, hostbn->h_length);
@@ -661,7 +661,7 @@ bool Network::OpenSocket(const char *host, int port, int &sock)
     int flags = fcntl(sock, F_GETFL);
     if (fcntl(sock, F_SETFL, flags | O_NONBLOCK) == -1)
     {
-        Logger::log().error() << "socket: Error on switching to non-blocking.\n";
+        Logger::log().error() << Logger::ICON_CLIENT << "socket: Error on switching to non-blocking.\n";
         sock = NO_SOCKET;
         return false;
     }
@@ -671,7 +671,7 @@ bool Network::OpenSocket(const char *host, int port, int &sock)
     {
         if (Root::getSingleton().getTimer()->getMilliseconds() > timeout)
         {
-            Logger::log().error() << "Can't connect to server";
+            Logger::log().error() << Logger::ICON_CLIENT << "Can't connect to server";
             sock = NO_SOCKET;
             return false;
         }
@@ -679,7 +679,7 @@ bool Network::OpenSocket(const char *host, int port, int &sock)
     // Set back to blocking.
     if (fcntl(sock, F_SETFL, flags) == -1)
     {
-        Logger::log().error() << "socket: Error on switching to blocking.";
+        Logger::log().error() << Logger::ICON_CLIENT << "socket: Error on switching to blocking.";
         sock = NO_SOCKET;
         return false;
     }
@@ -688,7 +688,7 @@ bool Network::OpenSocket(const char *host, int port, int &sock)
     struct addrinfo *res=0;
     struct addrinfo *ai;
     char hostaddr[40];
-    Logger::log().info() << "Opening to "<< host << " " << port;
+    Logger::log().info() << Logger::ICON_CLIENT << "Opening to "<< host << " " << port;
     memset(&hints, 0, sizeof(hints));
     hints.ai_family = AF_UNSPEC;
     hints.ai_socktype = SOCK_STREAM;
@@ -700,7 +700,7 @@ bool Network::OpenSocket(const char *host, int port, int &sock)
     for (ai = res; ai != NULL; ai = ai->ai_next)
     {
         getnameinfo(ai->ai_addr, ai->ai_addrlen, hostaddr, sizeof(hostaddr), NULL, 0, NI_NUMERICHOST);
-        Logger::log().info() << "  Trying " << hostaddr;
+        Logger::log().info() << Logger::ICON_CLIENT << "  Trying " << hostaddr;
         sock = socket(ai->ai_family, ai->ai_socktype, ai->ai_protocol);
         if (sock == -1)
         {
@@ -711,7 +711,7 @@ bool Network::OpenSocket(const char *host, int port, int &sock)
         int flags = fcntl(sock, F_GETFL);
         if (fcntl(sock, F_SETFL, flags | O_NONBLOCK) == -1)
         {
-            Logger::log().error() << "socket: Error on switching to non-blocking.";
+            Logger::log().error() << Logger::ICON_CLIENT << "socket: Error on switching to non-blocking.";
             sock = NO_SOCKET;
             return false;
         }
@@ -730,7 +730,7 @@ bool Network::OpenSocket(const char *host, int port, int &sock)
         // Got a connection. Set back to blocking.
         if (fcntl(sock, F_SETFL, flags) == -1)
         {
-            Logger::log().error() << "socket: Error on switching to blocking.";
+            Logger::log().error() << Logger::ICON_CLIENT << "socket: Error on switching to blocking.";
             sock = NO_SOCKET;
             return false;
         }
@@ -739,7 +739,7 @@ bool Network::OpenSocket(const char *host, int port, int &sock)
     freeaddrinfo(res);
     if (sock == NO_SOCKET)
     {
-        Logger::log().error() << "Can't connect to server";
+        Logger::log().error() << Logger::ICON_CLIENT << "Can't connect to server";
         return false;
     }
 #endif
@@ -748,18 +748,18 @@ bool Network::OpenSocket(const char *host, int port, int &sock)
     linger_opt.l_onoff = 1;
     linger_opt.l_linger = 5;
     if (setsockopt(sock, SOL_SOCKET, SO_LINGER, (char *) &linger_opt, sizeof(struct linger)))
-        Logger::log().error() <<  "BUG: Error on setsockopt LINGER";
+        Logger::log().error() << Logger::ICON_CLIENT <<  "BUG: Error on setsockopt LINGER";
     if (getsockopt(sock, SOL_SOCKET, SO_RCVBUF, (char *) &oldbufsize, &buflen) == -1)
         oldbufsize = 0;
     if (oldbufsize < newbufsize)
     {
         if (setsockopt(sock, SOL_SOCKET, SO_RCVBUF, (char *) &newbufsize, sizeof(&newbufsize)))
         {
-            Logger::log().error() << "socket: setsockopt unable to set output buf size to " << newbufsize;
+            Logger::log().error() << Logger::ICON_CLIENT << "socket: setsockopt unable to set output buf size to " << newbufsize;
             setsockopt(sock, SOL_SOCKET, SO_RCVBUF, (char *) &oldbufsize, sizeof(&oldbufsize));
         }
     }
-    Logger::log().info() <<  "Connected to "<< host << "  " <<  port;
+    Logger::log().info() << Logger::ICON_CLIENT <<  "Connected to "<< host << "  " <<  port;
     return true;
 }
 #endif
@@ -812,7 +812,7 @@ void Network::read_metaserver_data(int &socket)
             int errorNr = WSAGetLastError();
             if (errorNr != WSAEWOULDBLOCK)
             {
-                Logger::log().error() << "Error reading metaserver data!: " << errorNr;
+                Logger::log().error() << Logger::ICON_CLIENT << "Error reading metaserver data!: " << errorNr;
                 break;
             }
 #endif

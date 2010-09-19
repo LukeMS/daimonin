@@ -46,7 +46,7 @@ GuiListbox::GuiListbox(TiXmlElement *xmlElement, const void *parent):GuiElement(
     mMaxVisibleRows  = (int)((float)mHeight / (float)mFontHeight + 0.5);
     if (mMaxVisibleRows < 1) mMaxVisibleRows = 1;
     if (mWidth < GuiImageset::ITEM_SIZE || mHeight < GuiImageset::ITEM_SIZE)
-        Logger::log().warning() << "The size of the listbox " << GuiManager::getSingleton().getElementName(mIndex) << " is smaller than the size of an item.";
+        Logger::log().warning() << Logger::ICON_CLIENT << "The size of the listbox " << GuiManager::getSingleton().getElementName(mIndex) << " is smaller than the size of an item.";
     mScrollBarV = 0;
     for (TiXmlElement *xmlOpt = xmlElement->FirstChildElement("Element"); xmlOpt; xmlOpt = xmlOpt->NextSiblingElement("Element"))
     {
@@ -111,7 +111,7 @@ void GuiListbox::sendMsg(const int msgID, Ogre::String &text, Ogre::uint32 &colo
             return;
         }
     }
-    Logger::log().warning() << "GuiListbox::sendMsg() unknow msgID: " << msgID;
+    Logger::log().warning() << Logger::ICON_CLIENT << "GuiListbox::sendMsg() unknow msgID: " << msgID;
     return;
 }
 

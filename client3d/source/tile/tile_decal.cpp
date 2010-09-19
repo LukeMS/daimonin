@@ -46,7 +46,7 @@ TileDecal::TileDecal(unsigned int sizeInSubtiles, int posX, int posZ, const char
     if (!mMaxDecal) mSceneManager = TileManager::getSingleton().getSceneManager();
     if (!mSceneManager)
     {
-        Logger::log().error() << "TileManager must me initialized before you can use the TileDecal class!";
+        Logger::log().error() << Logger::ICON_CLIENT << "TileManager must me initialized before you can use the TileDecal class!";
         return;
     }
     mSize = (sizeInSubtiles >= MAX_SIZE)?(int)MAX_SIZE:sizeInSubtiles+1;

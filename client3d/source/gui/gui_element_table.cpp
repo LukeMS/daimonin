@@ -51,7 +51,7 @@ GuiTable::GuiTable(TiXmlElement *xmlElement, const void *parent):GuiElement(xmlE
         else if (!strcmp(xmlOpt->Attribute("type"), "COLOR_EVEN_ROWS")) color = &mColorRowBG[1]; // Color of even rows.
         else if (!strcmp(xmlOpt->Attribute("type"), "COLOR_SELECTION")) color = &mColorSelect;   // Color of selection.
         if (!color)
-            Logger::log().warning() << "Unknown Color type " << xmlOpt->Attribute("type");
+            Logger::log().warning() << Logger::ICON_CLIENT << "Unknown Color type " << xmlOpt->Attribute("type");
         else
         {
             *color = 0x00000000; // default color.

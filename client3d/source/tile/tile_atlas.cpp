@@ -38,7 +38,7 @@ static const unsigned int RGB_A= 4; ///< Pixelsize.
 void TileAtlas::createAtlasTexture(String &filenamePrefix, uint32 startGroup)
 {
     PROFILE()
-    Logger::log().info() << "Creating atlas-texture...";
+    Logger::log().info() << Logger::ICON_CLIENT << "Creating atlas-texture...";
     // ////////////////////////////////////////////////////////////////////
     // Create the resource path.
     // ////////////////////////////////////////////////////////////////////
@@ -49,13 +49,13 @@ void TileAtlas::createAtlasTexture(String &filenamePrefix, uint32 startGroup)
     Image image;
     if (!loadImage(image, "terrain_00_00.png", false))
     {
-        Logger::log().error() << "Tile graphic 'terrain_00_00.png' was not found!";
+        Logger::log().error() << Logger::ICON_CLIENT << "Tile graphic 'terrain_00_00.png' was not found!";
         return;
     }
     mTileSize = image.getWidth();
     if ((mTileSize != image.getHeight()) || (mTileSize != 256 && mTileSize != 512))
     {
-        Logger::log().error() << "The graphics for the tiles must have a size of 256x256 or 512x512 pixel.";
+        Logger::log().error() << Logger::ICON_CLIENT << "The graphics for the tiles must have a size of 256x256 or 512x512 pixel.";
         return;
     }
     mBorderSize = mTileSize/32;
@@ -118,7 +118,7 @@ bool TileAtlas::copyTileToAtlas(uchar *dstBuf)
             }
             if ((srcImage.getWidth() != mTileSize) || (srcImage.getHeight() != mTileSize))
             {
-                Logger::log().error() << "Gfx " << srcFilename << " has the wrong size! Alle tiles must have the same size than terrain_00_00.png";
+                Logger::log().error() << Logger::ICON_CLIENT << "Gfx " << srcFilename << " has the wrong size! Alle tiles must have the same size than terrain_00_00.png";
                 return true;
             }
             int srcAlpha = (srcImage.getFormat()==PF_A8R8G8B8)?1:0; // Ignore alpha.
@@ -192,18 +192,18 @@ void TileAtlas::copyFlowToAtlas(uchar *dstBuf)
             // FlowTile was not found, so we use the default one.
             if (!loadImage(srcImage, "terrain_00_F0.png", false))
             {
-                Logger::log().error() << "The default flow-tile (terrain_00_F0.png) was not found.";
+                Logger::log().error() << Logger::ICON_CLIENT << "The default flow-tile (terrain_00_F0.png) was not found.";
                 return;
             }
         }
         if ((srcImage.getWidth() != mTileSize) || (srcImage.getHeight() != mTileSize))
         {
-            Logger::log().error() << "Gfx " << srcFilename << " has the wrong size! Alle tiles must have the same size than terrain_00_00.png";
+            Logger::log().error() << Logger::ICON_CLIENT << "Gfx " << srcFilename << " has the wrong size! Alle tiles must have the same size than terrain_00_00.png";
             return;
         }
         if (srcImage.getFormat()!=PF_R8G8B8)
         {
-            Logger::log().error() << "Gfx " << srcFilename << " has the wrong pixelformat. Only RGB is supported for tiles.";
+            Logger::log().error() << Logger::ICON_CLIENT << "Gfx " << srcFilename << " has the wrong pixelformat. Only RGB is supported for tiles.";
             return;
         }
         // Left horizontal Border
@@ -334,18 +334,18 @@ void TileAtlas::copyMaskToAtlas(uchar *dstBuf)
             // Mask was not found, so we use the default mask.
             if (!loadImage(srcImage, "terrain_00_M0.png", false))
             {
-                Logger::log().error() << "The default tile-mask (terrain_00_M0.png) was not found.";
+                Logger::log().error() << Logger::ICON_CLIENT << "The default tile-mask (terrain_00_M0.png) was not found.";
                 return;
             }
         }
         if ((srcImage.getWidth() != mTileSize) || (srcImage.getHeight() != mTileSize))
         {
-            Logger::log().error() << "Gfx " << srcFilename << " has the wrong size! Alle tiles must have the same size than terrain_00_00.png";
+            Logger::log().error() << Logger::ICON_CLIENT << "Gfx " << srcFilename << " has the wrong size! Alle tiles must have the same size than terrain_00_00.png";
             return;
         }
         if (srcImage.getFormat()!=PF_R8G8B8)
         {
-            Logger::log().error() << "Gfx " << srcFilename << " has the wrong pixelformat. Only RGB is supported for masks.";
+            Logger::log().error() << Logger::ICON_CLIENT << "Gfx " << srcFilename << " has the wrong pixelformat. Only RGB is supported for masks.";
             return;
         }
         // Erase the help lines from the mask template.
@@ -528,17 +528,17 @@ void TileAtlas::copySpotToAtlas(uchar *dstBuf)
     String srcFilename = "Spotlight.png";
     if (!loadImage(srcImage, srcFilename, false))
     {
-        Logger::log().error() << "The spotlight-mask was not found.";
+        Logger::log().error() << Logger::ICON_CLIENT << "The spotlight-mask was not found.";
         return;
     }
     if ((srcImage.getWidth() != mTileSize/2) || (srcImage.getHeight() != mTileSize/2))
     {
-        Logger::log().error() << "Gfx " << srcFilename << " has the wrong size! Alle tiles must have the same size than terrain_00_00.png";
+        Logger::log().error() << Logger::ICON_CLIENT << "Gfx " << srcFilename << " has the wrong size! Alle tiles must have the same size than terrain_00_00.png";
         return;
     }
     if (srcImage.getFormat()!=PF_R8G8B8)
     {
-        Logger::log().error() << "Gfx " << srcFilename << " has the wrong pixelformat. Only RGB is supported for masks.";
+        Logger::log().error() << Logger::ICON_CLIENT << "Gfx " << srcFilename << " has the wrong pixelformat. Only RGB is supported for masks.";
         return;
     }
     uchar *dst = dstBuf;
@@ -658,7 +658,7 @@ bool TileAtlas::loadImage(Image &image, const Ogre::String &strFilename, bool lo
     catch (Exception &)
     {
         if (logErrors)
-            Logger::log().error() << "Error on opening file " << mPathGfxTiles + strFilename;
+            Logger::log().error() << Logger::ICON_CLIENT << "Error on opening file " << mPathGfxTiles + strFilename;
         return false;
     }
     return true;
@@ -682,7 +682,7 @@ int TileAtlas::setResourcePath(String key, String &refPath)
                 struct stat fileInfo;
                 if (stat(i->second.c_str(), &fileInfo))
                 {
-                    Logger::log().error() << "The '"<< key << "' entry given in 'resources.cfg' does not exist in the media folder!";
+                    Logger::log().error() << Logger::ICON_CLIENT << "The '"<< key << "' entry given in 'resources.cfg' does not exist in the media folder!";
                     return false;
                 }
                 refPath = i->second + "/";
@@ -690,6 +690,6 @@ int TileAtlas::setResourcePath(String key, String &refPath)
             }
         }
     }
-    Logger::log().error() << "The 'resources.cfg' is missing a '"<< key << "' entry!";
+    Logger::log().error() << Logger::ICON_CLIENT << "The 'resources.cfg' is missing a '"<< key << "' entry!";
     return false;
 }
