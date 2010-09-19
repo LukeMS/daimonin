@@ -319,14 +319,14 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
                         txtFile.open(filename.c_str(), std::ios::in | std::ios::binary);
                         if (!txtFile)
                         {
-                            Logger::log().error() << "Error on file " << filename;
+                            Logger::log().error() << Logger::ICON_CLIENT << "Error on file " << filename;
                         }
                         else
                         {
                             while (1)
                             {
                                 int heightTL, tex1, tex2, fil1, shadow;
-                                //Logger::log().error() << "Error on file " << filename;
+                                //Logger::log().error() << Logger::ICON_CLIENT << "Error on file " << filename;
                                 if (!getline(txtFile, filename)) goto ennn;
                                 if (!getline(txtFile, filename)) goto ennn;
                                 if (!getline(txtFile, filename)) goto ennn;
@@ -548,7 +548,7 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
             /*
                         Vector3 pos = mCamera->getPosition();
                         pos.y+= 15;
-                        Logger::log().error() << "camera pos: " << pos.x << "   " <<pos.y << "   " << pos.z;
+                        Logger::log().error() << Logger::ICON_CLIENT << "camera pos: " << pos.x << "   " <<pos.y << "   " << pos.z;
                         mCamera->setPosition(pos);
             */
         }
@@ -558,7 +558,7 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
         {
             Vector3 pos = mCamera->getPosition();
             pos.y-= 15;
-            Logger::log().error() << "camera pos: " << pos.x << "   " <<pos.y << "   " << pos.z;
+            Logger::log().error() << Logger::ICON_CLIENT << "camera pos: " << pos.x << "   " <<pos.y << "   " << pos.z;
             mCamera->setPosition(pos);
         }
         break;
@@ -567,7 +567,7 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
         {
             Vector3 pos = mCamera->getPosition();
             pos.z+= 15;
-            Logger::log().error() << "camera pos: " << pos.x << "   " << pos.y << "   " << pos.z;
+            Logger::log().error() << Logger::ICON_CLIENT << "camera pos: " << pos.x << "   " << pos.y << "   " << pos.z;
             mCamera->setPosition(pos);
         }
         break;
@@ -576,7 +576,7 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
         {
             Vector3 pos = mCamera->getPosition();
             pos.z-= 15;
-            Logger::log().error() << "camera pos: " << pos.x << "   "<< pos.y << "   " << pos.z;
+            Logger::log().error() << Logger::ICON_CLIENT << "camera pos: " << pos.x << "   "<< pos.y << "   " << pos.z;
             mCamera->setPosition(pos);
         }
         break;
@@ -585,7 +585,7 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
         {
             static int cAdd =0;
             ++cAdd;
-            Logger::log().error() << "camera pitch add: " << cAdd;
+            Logger::log().error() << Logger::ICON_CLIENT << "camera pitch add: " << cAdd;
             mCamera->pitch(Degree(+1));
             mCamera->moveRelative (Vector3(0,-30, -30));
 
@@ -597,7 +597,7 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
         {
             static int cAdd =0;
             ++cAdd;
-            Logger::log().error() << "camera pitch sub: " << cAdd;
+            Logger::log().error() << Logger::ICON_CLIENT << "camera pitch sub: " << cAdd;
             mCamera->pitch(Degree(-1));
             mCamera->moveRelative (Vector3(0, 30, 30));
         }
@@ -755,7 +755,7 @@ bool Events::mousePressed(const OIS::MouseEvent &e, const OIS::MouseButtonID but
             RaySceneQueryResult &result = mRaySceneQuery->execute();
             if (!result.empty())
             {
-                //Logger::log().warning() << result.size();
+                //Logger::log().warning() << Logger::ICON_CLIENT << result.size();
                 RaySceneQueryResult::iterator itr = result.begin();
                 ObjectManager::getSingleton().selectObject(itr->movable);
             }

@@ -21,7 +21,10 @@ You should have received a copy of the GNU General Public License along with
 this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
 
-#include <Ogre.h>
+#include <OgreRoot.h>
+#include <OgreConfigFile.h>
+#include <OgreLogManager.h>
+#include <OgreResourceGroupManager.h>
 #include "logger.h"
 #include "events.h"
 #include "option.h"
@@ -39,58 +42,58 @@ static bool parseCmdLine(const char *cmd, const char *value)
     {
         if (!stricmp(cmd, "--flipbook"))
         {
-            Logger::log().info() << "You told me to convert the mesh " << value << " to a Flip-Book";
+            Logger::log().info() << Logger::ICON_CLIENT << "You told me to convert the mesh " << value << " to a Flip-Book";
             Option::getSingleton().setStrValue(Option::CMDLINE_CREATE_IMPOSTERS, value);
             ++options;
         }
         if ((cmd[1] == 'g' || !stricmp(cmd, "--guiinfo")))
         {
-            Logger::log().info() << "You told me to print gui infos.";
+            Logger::log().info() << Logger::ICON_CLIENT << "You told me to print gui infos.";
             Option::getSingleton().setIntValue(Option::CMDLINE_GUI_INFORMATION, true);
             ++options;
         }
         if ((cmd[1] == 'm' || !stricmp(cmd, "--media")))
         {
-            Logger::log().info() << "You told me to create the media stuff:";
-            Logger::log().info() << "- Item Atlastexture";
-            Logger::log().info() << "- Tile Atlastexture";
-            Logger::log().info() << "- Raw fonts";
+            Logger::log().info() << Logger::ICON_CLIENT << "You told me to create the media stuff:";
+            Logger::log().info() << Logger::ICON_CLIENT << "- Item Atlastexture";
+            Logger::log().info() << Logger::ICON_CLIENT << "- Tile Atlastexture";
+            Logger::log().info() << Logger::ICON_CLIENT << "- Raw fonts";
             Option::getSingleton().setIntValue(Option::CMDLINE_CREATE_MEDIA, true);
             ++options;
         }
         if ((cmd[1] == 's' || !stricmp(cmd, "--server")))
         {
-            Logger::log().info() << "You told me to use Server " << value;
+            Logger::log().info() << Logger::ICON_CLIENT << "You told me to use Server " << value;
             Option::getSingleton().setStrValue(Option::CMDLINE_SERVER_NAME, value);
             ++options;
         }
         if ((cmd[1] == 'p' || !stricmp(cmd, "--port")))
         {
-            Logger::log().info() << "You told me to connect on port " << value;
+            Logger::log().info() << Logger::ICON_CLIENT << "You told me to connect on port " << value;
             Option::getSingleton().setStrValue(Option::CMDLINE_SERVER_PORT, value);
             ++options;
         }
         if ((cmd[1] == 'x' || !stricmp(cmd, "--sound off")))
         {
-            Logger::log().info() << "You told me to disable the Sound.";
+            Logger::log().info() << Logger::ICON_CLIENT << "You told me to disable the Sound.";
             Option::getSingleton().setIntValue(Option::CMDLINE_OFF_SOUND, true);
             ++options;
         }
         if ((cmd[1] == 'd' || !stricmp(cmd, "--device")))
         {
-            Logger::log().info() << "You told me to use Sound device #" << value;
+            Logger::log().info() << Logger::ICON_CLIENT << "You told me to use Sound device #" << value;
             Option::getSingleton().setIntValue(Option::CMDLINE_SND_DEVICE, atoi(value));
             ++options;
         }
         if (!stricmp(cmd, "--bbox"))
         {
-            Logger::log().info() << "You told me to display bounding-boxes.";
+            Logger::log().info() << Logger::ICON_CLIENT << "You told me to display bounding-boxes.";
             Option::getSingleton().setIntValue(Option::CMDLINE_SHOW_BOUNDING_BOX, true);
             ++options;
         }
         if (!stricmp(cmd, "--lod"))
         {
-            Logger::log().info() << "You told me to to set LoD " << value << " for the TileEngine.";
+            Logger::log().info() << Logger::ICON_CLIENT << "You told me to to set LoD " << value << " for the TileEngine.";
             Option::getSingleton().setIntValue(Option::CMDLINE_TILEENGINE_LOD, atoi(value));
             ++options;
         }
@@ -138,6 +141,40 @@ static void setupResources(void)
 }
 
 //================================================================================================
+// Class to overwrite the standard Ogre::LogListener.
+//================================================================================================
+class NewLogListener: public Ogre::LogListener
+{
+private:
+    LogManager *mOgreLogManager;
+    Log *mOgreLog;
+
+public:
+    NewLogListener()
+    {
+        mOgreLogManager = new Ogre::LogManager();
+        mOgreLog = mOgreLogManager->createLog("Ogre.log", false, true, true);
+        mOgreLog->addListener(this);
+    }
+    ~NewLogListener()
+    {
+        mOgreLog->removeListener(this);
+    }
+    void messageLogged(const String &message, LogMessageLevel lml, bool /*maskDebug*/, const String &/*logName*/)
+    {
+        if (lml == LML_CRITICAL)
+            Logger::log().error() << Logger::ICON_OGRE3D << message;
+        else
+        {
+            if (message.substr(0,8) =="WARNING:")
+                Logger::log().warning()  << Logger::ICON_OGRE3D << message.substr(9);
+            else
+                Logger::log().info()  << Logger::ICON_OGRE3D << message;
+        }
+    }
+};
+
+//================================================================================================
 // Write the excepition into the logfile.
 //================================================================================================
 static void LogException(Exception& e)
@@ -149,7 +186,7 @@ static void LogException(Exception& e)
         s.replace(found, 1, "<br>\n");
         found = s.find('\n', found+6);
     }
-    Logger::log().error() << s;
+    Logger::log().error() << Logger::ICON_CLIENT << "<img src='media/textures/logger/ogre.png'>" << s;
 }
 
 //================================================================================================
@@ -179,7 +216,7 @@ int main(int argc, char **argv)
         {
             if (!parseCmdLine(argv[argc-1], argv[argc]))
             {
-                Logger::log().error() << "Unknown cmdline " << argv[argc-1] << " " << argv[argc];
+                Logger::log().error() << Logger::ICON_CLIENT << "Unknown cmdline " << argv[argc-1] << " " << argv[argc];
                 return 0;
             }
             --argc;
@@ -188,19 +225,21 @@ int main(int argc, char **argv)
         {
             if (!parseCmdLine(argv[argc], "0"))
             {
-                Logger::log().error() << "Unknown cmdline " << argv[argc-1];
+                Logger::log().error() << Logger::ICON_CLIENT << "Unknown cmdline " << argv[argc-1];
                 return 0;
             }
         }
     }
     Root *root =0;
     RenderWindow *window=0;
+    Logger::log().headline() << "Init Ogre";
+    NewLogListener *logListener = new NewLogListener; // Must be done before creating Ogre::Root.
     try
     {
 #ifdef NDEBUG
-        root = OGRE_NEW Root("plugins.cfg", "ogre.cfg", "Ogre.log");
+        root = OGRE_NEW Root("plugins.cfg", "ogre.cfg");
 #else
-        root = OGRE_NEW Root("plugins_d.cfg", "ogre.cfg", "Ogre.log");
+        root = OGRE_NEW Root("plugins_d.cfg", "ogre.cfg");
 #endif
         ConfigFile cf;
         cf.load("resources.cfg");
@@ -212,6 +251,8 @@ int main(int argc, char **argv)
         // ////////////////////////////////////////////////////////////////////
         if (!root->showConfigDialog())
         {
+            Logger::log().info() << Logger::ICON_CLIENT << "User break in ConfigDialog";
+            delete logListener;
             OGRE_DELETE root;
             return 0;
         }
@@ -220,6 +261,7 @@ int main(int argc, char **argv)
     catch (Exception &e)
     {
         LogException(e);
+        delete logListener;
         OGRE_DELETE root;
         return 0;
     }
@@ -229,10 +271,9 @@ int main(int argc, char **argv)
     if (!root->getRenderSystem()->getCapabilities()->hasCapability(RSC_FRAGMENT_PROGRAM)
             || (!root->getRenderSystem()->getCapabilities()->hasCapability(RSC_VERTEX_PROGRAM)))
     {
-        Logger::log().error() << "Your gfx-card doesn't support shader programs!";
+        Logger::log().error() << Logger::ICON_CLIENT << "Your gfx-card doesn't support shader programs!";
         Option::getSingleton().setIntValue(Option::ERROR_NO_SHADRES, true);
     }
-
     TexturePtr mTexture, mTextur2;
     Option::getSingleton().setIntValue(Option::HIGH_TEXTURE_DETAILS, true);
     Option::getSingleton().setIntValue(Option::HIGH_TILES_DETAILS, true);
@@ -263,15 +304,15 @@ int main(int argc, char **argv)
             }
             catch ( Exception& )
             {
-                Logger::log().warning() << "Your gfx-card seems to have less than 64 MB";
-                Logger::log().warning() << "Switching to minimal Details.";
-                Logger::log().warning() << "Can't load TTF's with size > 16 on this gfx-card. You must use raw-fonts instead!";
+                Logger::log().warning() << Logger::ICON_CLIENT << "Your gfx-card seems to have less than 64 MB";
+                Logger::log().warning() << Logger::ICON_CLIENT << "Switching to minimal Details.";
+                Logger::log().warning() << Logger::ICON_CLIENT << "Can't load TTF's with size > 16 on this gfx-card. You must use raw-fonts instead!";
                 Option::getSingleton().setIntValue(Option::HIGH_TEXTURE_DETAILS, false);
                 Option::getSingleton().setIntValue(Option::HIGH_TILES_DETAILS, false);
             }
-            Logger::log().warning() << "Your gfx-card seems to only have 64 MB";
-            Logger::log().warning() << "High texture details will be disabled.";
-            Logger::log().warning() << "Can't load TTF's with size > 16 on this gfx-card. You must use raw-fonts instead!";
+            Logger::log().warning() << Logger::ICON_CLIENT << "Your gfx-card seems to only have 64 MB";
+            Logger::log().warning() << Logger::ICON_CLIENT << "High texture details will be disabled.";
+            Logger::log().warning() << Logger::ICON_CLIENT << "Can't load TTF's with size > 16 on this gfx-card. You must use raw-fonts instead!";
             Option::getSingleton().setIntValue(Option::HIGH_TEXTURE_DETAILS, false);
         }
     */
@@ -286,6 +327,7 @@ int main(int argc, char **argv)
         // Optional override method where you can perform resource group loading
         // Must at least do initialiseAllResourceGroups();
         // ////////////////////////////////////////////////////////////////////
+        Logger::log().headline() << "Init Ogre Resources";
         ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
         Events::getSingleton().Init(window, root->createSceneManager(ST_GENERIC));
         root->addFrameListener(&Events::getSingleton());
@@ -295,11 +337,12 @@ int main(int argc, char **argv)
         // ////////////////////////////////////////////////////////////////////
         Logger::log().headline() << "Shutdown";
         Events::getSingleton().freeRecources();
-        OGRE_DELETE root;
     }
     catch (Exception& e)
     {
         LogException(e);
     }
+    delete logListener;
+    OGRE_DELETE root;
     return 0;
 }

@@ -52,7 +52,7 @@ ServerFile::ServerFile()
 void ServerFile::checkFileStatus(char *param, int fileNr)
 {
     PROFILE()
-    Logger::log().attempt() << "Server file status of ["<< fileNr<< "] " << srv_file[fileNr].filename << "...";
+    Logger::log().attempt() << Logger::ICON_CLIENT << "Server file status of ["<< fileNr<< "] " << srv_file[fileNr].filename << "...";
     if (!strcmp((const char*)param, "OK"))
     {
         srv_file[fileNr].status = STATUS_OK;

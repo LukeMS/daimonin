@@ -59,7 +59,7 @@ GuiElementSlot::GuiElementSlot(TiXmlElement *xmlElement, const void *parent, boo
             mSlotGfxBG = -1;
     }
     if (GuiImageset::ITEM_SIZE > mWidth || GuiImageset::ITEM_SIZE > mHeight)
-        Logger::log().warning() << "GuiElementSlot: Item-gfx is bigger than the slot-gfx.";
+        Logger::log().warning() << Logger::ICON_CLIENT << "GuiElementSlot: Item-gfx is bigger than the slot-gfx.";
     if (!isChildElement) draw();
 }
 
@@ -341,7 +341,7 @@ GuiElementSlotGroup::GuiElementSlotGroup(TiXmlElement *xmlRoot, const void *pare
     int sumSlots = tmp?atoi(tmp):0;
     if (sumSlots <= 0)
     {
-        Logger::log().error() << "Wrong settings in slotgroup '" << xmlRoot->Attribute("name") << "'. Number of slots not defined.";
+        Logger::log().error() << Logger::ICON_CLIENT << "Wrong settings in slotgroup '" << xmlRoot->Attribute("name") << "'. Number of slots not defined.";
         return;
     }
     TiXmlElement *xmlSlot = xmlRoot->FirstChildElement("Slot");
@@ -366,7 +366,7 @@ GuiElementSlotGroup::GuiElementSlotGroup(TiXmlElement *xmlRoot, const void *pare
             y-= size+mSpaceY;
             if (x < 0 || y < 0)
             {
-                Logger::log().error() << "Wrong settings in slotgroup '" << xmlRoot->Attribute("name")
+                Logger::log().error() << Logger::ICON_CLIENT << "Wrong settings in slotgroup '" << xmlRoot->Attribute("name")
                 << "'. Number of slots not doesn't fit into the slotgroup.";
                 break;
             }

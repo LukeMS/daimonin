@@ -110,7 +110,7 @@ void TileChunk::init(int queryMaskLand, int queryMaskWater, SceneManager *sceneM
     HardwareIndexBufferSharedPtr ibuf;
     if (sumIndices > 65526)
     {
-        Logger::log().warning() << "You want to create a HardwareBuffer with " << sumIndices << " entries. Switching to 32bit index buffer. This can crash older gfx-cards!";
+        Logger::log().warning() << Logger::ICON_CLIENT << "You want to create a HardwareBuffer with " << sumIndices << " entries. Switching to 32bit index buffer. This can crash older gfx-cards!";
         ibuf = HardwareBufferManager::getSingleton().createIndexBuffer(HardwareIndexBuffer::IT_32BIT, sumIndices, HardwareBuffer::HBU_STATIC_WRITE_ONLY, false);
         unsigned int *pIdx = static_cast<unsigned int*>(ibuf->lock(HardwareBuffer::HBL_DISCARD));
         for (unsigned int p=0; p < sumIndices;) *pIdx++ = p++;
@@ -150,7 +150,7 @@ void TileChunk::init(int queryMaskLand, int queryMaskWater, SceneManager *sceneM
     mSubMeshWater->vertexData = vData;
     if (sumVertices > 65526)
     {
-        Logger::log().warning() << "You want to create a HardwareBuffer with " << sumVertices << " entries. Switching to 32bit index buffer. This can crash older gfx-cards!";
+        Logger::log().warning() << Logger::ICON_CLIENT << "You want to create a HardwareBuffer with " << sumVertices << " entries. Switching to 32bit index buffer. This can crash older gfx-cards!";
         ibuf = HardwareBufferManager::getSingleton().createIndexBuffer(HardwareIndexBuffer::IT_32BIT, sumVertices*6, HardwareBuffer::HBU_STATIC_WRITE_ONLY, false);
         unsigned int *pIdx = static_cast<unsigned int*>(ibuf->lock(HardwareBuffer::HBL_DISCARD));
         for (unsigned int p=0; sumVertices; --sumVertices)
@@ -210,7 +210,7 @@ void TileChunk::init(int queryMaskLand, int queryMaskWater, SceneManager *sceneM
     mSubMeshGrassFar->vertexData = vData;
     if (sumVertices > 65526)
     {
-        Logger::log().warning() << "You want to create a HardwareBuffer with " << sumVertices << " entries. Switching to 32bit index buffer. This can crash older gfx-cards!";
+        Logger::log().warning() << Logger::ICON_CLIENT << "You want to create a HardwareBuffer with " << sumVertices << " entries. Switching to 32bit index buffer. This can crash older gfx-cards!";
         ibuf = HardwareBufferManager::getSingleton().createIndexBuffer(HardwareIndexBuffer::IT_32BIT, sumVertices*6, HardwareBuffer::HBU_STATIC_WRITE_ONLY, false);
         unsigned int *pIdx = static_cast<unsigned int*>(ibuf->lock(HardwareBuffer::HBL_DISCARD));
         for (unsigned int p=0; sumVertices; --sumVertices)
@@ -272,7 +272,7 @@ void TileChunk::init(int queryMaskLand, int queryMaskWater, SceneManager *sceneM
     mSubMeshGrassNear->vertexData = vData;
     if (sumVertices > 65526)
     {
-        Logger::log().warning() << "You want to create a HardwareBuffer with " << sumVertices << " entries. Switching to 32bit index buffer. This can crash older gfx-cards!";
+        Logger::log().warning() << Logger::ICON_CLIENT << "You want to create a HardwareBuffer with " << sumVertices << " entries. Switching to 32bit index buffer. This can crash older gfx-cards!";
         ibuf = HardwareBufferManager::getSingleton().createIndexBuffer(HardwareIndexBuffer::IT_32BIT, sumVertices*6, HardwareBuffer::HBU_STATIC_WRITE_ONLY, false);
         unsigned int *pIdx = static_cast<unsigned int*>(ibuf->lock(HardwareBuffer::HBL_DISCARD));
         for (unsigned int p=0; sumVertices; --sumVertices)

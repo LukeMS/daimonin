@@ -64,7 +64,7 @@ GuiTextout::GuiTextout()
     const char *strTemp;
     if (!doc.LoadFile() || !(xmlRoot = doc.RootElement()) || !(strTemp = xmlRoot->Attribute("file")))
     {
-        Logger::log().error() << "XML-File '" << file << "' is broken or missing.";
+        Logger::log().error() << Logger::ICON_CLIENT << "XML-File '" << file << "' is broken or missing.";
         return;
     }
     // ////////////////////////////////////////////////////////////////////
@@ -106,8 +106,8 @@ GuiTextout::GuiTextout()
             }
             if (mvSpecialChar.size() == SPECIAL_CHARS_IN_FONT-1)
             {
-                Logger::log().warning() << "Maximum of user defined chars was reached.";
-                Logger::log().warning() << "You can't define more than " << (int)SPECIAL_CHARS_IN_FONT << " chars.";
+                Logger::log().warning() << Logger::ICON_CLIENT << "Maximum of user defined chars was reached.";
+                Logger::log().warning() << Logger::ICON_CLIENT << "You can't define more than " << (int)SPECIAL_CHARS_IN_FONT << " chars.";
                 break;
             }
         }
@@ -145,7 +145,7 @@ void GuiTextout::loadRawFont(const char *filename)
     }
     catch (Exception&)
     {
-        Logger::log().error() << "RAW-Font " << filename << " was not found!";
+        Logger::log().error() << Logger::ICON_CLIENT << "RAW-Font " << filename << " was not found!";
         return;
     }
     size_t size = image.getHeight() * image.getWidth();
@@ -175,7 +175,7 @@ void GuiTextout::loadRawFont(const char *filename)
             if (++i >= CHARS_IN_FONT) break;
         }
     }
-    Logger::log().info() << "System-Font (" << image.getWidth() << "x" << image. getHeight() <<") was created.";
+    Logger::log().info() << Logger::ICON_CLIENT << "System-Font (" << image.getWidth() << "x" << image. getHeight() <<") was created.";
 }
 
 //================================================================================================
@@ -206,8 +206,8 @@ void GuiTextout::loadTTFont(const char *filename, const char *size, const char *
     }
     catch (Exception&)
     {
-        Logger::log().warning() << "Your gfx-card doesn't have enough Memory to load the TTF-Font with a size of " << size << ".";
-        Logger::log().warning() << "You must use raw-fonts instead!";
+        Logger::log().warning() << Logger::ICON_CLIENT << "Your gfx-card doesn't have enough Memory to load the TTF-Font with a size of " << size << ".";
+        Logger::log().warning() << Logger::ICON_CLIENT << "You must use raw-fonts instead!";
         if (!pFont.isNull()) FontManager::getSingleton().remove(pFont->getName());
         return;
     }

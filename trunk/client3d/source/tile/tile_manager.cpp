@@ -83,7 +83,7 @@ TileManager::TileManager()
 TileManager::~TileManager()
 {
     PROFILE()
-    if (mMap) Logger::log().error() << "TileManager::freeRecources() was not called!";
+    if (mMap) Logger::log().error() << Logger::ICON_CLIENT << "TileManager::freeRecources() was not called!";
 }
 
 //================================================================================================
@@ -98,7 +98,7 @@ void TileManager::freeRecources()
     int count = TileDecal::getSumDecals();
     if (count)
     {
-        Logger::log().error() << count << " Decal(s) were created by 'new' but not destroyed by 'delete'. "
+        Logger::log().error() << Logger::ICON_CLIENT << count << " Decal(s) were created by 'new' but not destroyed by 'delete'. "
                               "(All decals must be deleted before TileManager::freeRecources() is called)";
     }
 }
@@ -118,7 +118,7 @@ void TileManager::Init(SceneManager *SceneMgr, int queryMaskLand, int queryMaskW
     mTextureSize = MAX_TEXTURE_SIZE >> lod;
     //mTextureSize = MAX_TEXTURE_SIZE;
     if (mTextureSize < 256) mTextureSize = 256;
-    Logger::log().info() << "Setting LoD to " << lod << ". Atlas size is " << mTextureSize << "x" << mTextureSize<< ".";
+    Logger::log().info() << Logger::ICON_CLIENT << "Setting LoD to " << lod << ". Atlas size is " << mTextureSize << "x" << mTextureSize<< ".";
     mRaySceneQuery = mSceneManager->createRayQuery(Ray());
     // Create the world map.
     mMapSizeX = 1; while (mMapSizeX < CHUNK_SIZE_X*2+4) mMapSizeX <<= 1; // Map size must be power of 2.
@@ -127,13 +127,13 @@ void TileManager::Init(SceneManager *SceneMgr, int queryMaskLand, int queryMaskW
     mMapMaskZ = mMapSizeZ -1;
     mMapSPosX = 1; // Ringbuffer start pos x.
     mMapSPosZ = 1; // Ringbuffer start pos z.
-    Logger::log().info() << "Map size: " << mMapSizeX     << " * " << mMapSizeZ      << " Subtiles.";
-    Logger::log().info() << "Visible: " << CHUNK_SIZE_X*2 << " * " << CHUNK_SIZE_Z*2 << " Subtiles.";
+    Logger::log().info() << Logger::ICON_CLIENT << "Map size: " << mMapSizeX     << " * " << mMapSizeZ      << " Subtiles.";
+    Logger::log().info() << Logger::ICON_CLIENT << "Visible: " << CHUNK_SIZE_X*2 << " * " << CHUNK_SIZE_Z*2 << " Subtiles.";
     mMap = new mapStruct[mMapSizeX*mMapSizeZ];
     mQueryMaskLand = queryMaskLand;
     mEditorActSelectedGfx = 0;
     mSelectedVertexX = mSelectedVertexZ = 0; // Tile picking.
-    Logger::log().attempt() << "Creating tile chunk...";
+    Logger::log().attempt() << Logger::ICON_CLIENT << "Creating tile chunk...";
     mMapchunk.init(queryMaskLand, queryMaskWater, mSceneManager);
     setMapset(0, 0);
     //setLight(1.0f);
@@ -265,8 +265,8 @@ void TileManager::tileClick(float mouseX, float mouseY)
     RaySceneQueryResult &result = mRaySceneQuery->execute();
     if (result.size() >1)
     {
-        Logger::log().error() << "BUG in tileClick(...): RaySceneQuery returned more than 1 result.";
-        Logger::log().error() << "(Perhaps you created Entities without setting a setQueryFlags() on them)";
+        Logger::log().error() << Logger::ICON_CLIENT << "BUG in tileClick(...): RaySceneQuery returned more than 1 result.";
+        Logger::log().error() << Logger::ICON_CLIENT << "(Perhaps you created Entities without setting a setQueryFlags() on them)";
         return;
     }
     for (int x = 0; x < CHUNK_SIZE_X*2; ++x)

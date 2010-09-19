@@ -33,7 +33,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 /**
  ** This singleton class handles all engine and user events.
  *****************************************************************************/
-class Events: public Ogre::FrameListener, public OIS::KeyListener, OIS::MouseListener
+class Events: public Ogre::FrameListener, OIS::KeyListener, OIS::MouseListener
 {
 public:
     // ////////////////////////////////////////////////////////////////////

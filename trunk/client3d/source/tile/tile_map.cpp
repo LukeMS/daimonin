@@ -193,11 +193,11 @@ void TileMap::set_map_face(int x, int y, int layer, int face, int pos, int ext, 
     if (layer == LAYER_TILES)
     {
         const char *strTile = ObjectWrapper::getSingleton().getMeshName(face & ~0x8000);
-        //Logger::log().info() << x << " " << y << " " << (uchar)(strTile[ 8]-'0') << " " << (uchar)(strTile[10]-'0');
+        //Logger::log().info() << Logger::ICON_CLIENT << x << " " << y << " " << (uchar)(strTile[ 8]-'0') << " " << (uchar)(strTile[10]-'0');
         // Undefined tile.
         if (!strTile || !strTile[0])
         {
-            //Logger::log().error() << "Unknown tile: " << face << " pos: " << x << ", " << y << "  " << strTile;
+            //Logger::log().error() << Logger::ICON_CLIENT << "Unknown tile: " << face << " pos: " << x << ", " << y << "  " << strTile;
             TileManager::getSingleton().setMap(x, y, height, 2, 20);
         }
         else
@@ -210,7 +210,7 @@ void TileMap::set_map_face(int x, int y, int layer, int face, int pos, int ext, 
                                                20    , // Water lvl
                                                shadow // Shadow
                                               );
-            //Logger::log().error() << "Tile face: " << face << " pos: " << x << ", " << y << "  " << strTile << " height: " << ((uchar)strTile[ 8]-'0')*10;
+            //Logger::log().error() << Logger::ICON_CLIENT << "Tile face: " << face << " pos: " << x << ", " << y << "  " << strTile << " height: " << ((uchar)strTile[ 8]-'0')*10;
         }
         mNeedsRedraw = true;
         return;
@@ -220,11 +220,11 @@ void TileMap::set_map_face(int x, int y, int layer, int face, int pos, int ext, 
     // ////////////////////////////////////////////////////////////////////
     if (layer == LAYER_OBJECTS)
     {
-        //Logger::log().error() << "object: " << ObjectWrapper::getSingleton().getMeshName(face & ~0x8000) << "  " << (int) (face & ~0x8000);
+        //Logger::log().error() << Logger::ICON_CLIENT << "object: " << ObjectWrapper::getSingleton().getMeshName(face & ~0x8000) << "  " << (int) (face & ~0x8000);
         String meshName = ObjectWrapper::getSingleton().getMeshName(face & ~0x8000);
         if (meshName.empty())
         {
-            //Logger::log().error() << "Object face: " << face << " pos: " << x << ", " << y;
+            //Logger::log().error() << Logger::ICON_CLIENT << "Object face: " << face << " pos: " << x << ", " << y;
             return;
         }
 
@@ -325,7 +325,7 @@ void TileMap::set_map_face(int x, int y, int layer, int face, int pos, int ext, 
                         pos.y = 0;
                         pos.z = TileManager::HALF_RENDER_SIZE/2 * 8.5f;
                         ObjectManager::getSingleton().setPosition(ObjectNPC::HERO, pos);
-                        Logger::log().error() << "we got the Hero face: " << face;
+                        Logger::log().error() << Logger::ICON_CLIENT << "we got the Hero face: " << face;
                     }
                 }
         */

@@ -142,12 +142,12 @@ void Item::ItemXYCmd(uchar *data, int len, bool bflag)
         tmpItem->sumItems = Network::getSingleton().GetInt_String(data + pos); pos += 4;
 #ifdef D_DEBUG
         String strDebug = "Add item: " + tmpItem->d_name + "  gfx-id: " + StringConverter::toString(tmpItem->face);
-        Logger::log().warning() << strDebug;
+        Logger::log().warning() << Logger::ICON_CLIENT << strDebug;
         GuiManager::getSingleton().print(GuiManager::LIST_CHATWIN, strDebug.c_str());
 #endif
         if (!update(tmpItem, container, bflag))
         {
-            Logger::log().error() << "<Item::ItemXYCmd> Unknown container ID: " << container << " for item " << tmpItem->d_name;
+            Logger::log().error() << Logger::ICON_CLIENT << "<Item::ItemXYCmd> Unknown container ID: " << container << " for item " << tmpItem->d_name;
             delete tmpItem;
         }
     }

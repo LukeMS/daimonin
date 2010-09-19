@@ -71,7 +71,7 @@ GuiImageset::~GuiImageset()
     {
 #ifdef D_DEBUG
         if (!(*i)->isUsed)
-            Logger::log().info() << "Element '" << (*i)->name << "' is defined in " << GuiManager::FILE_TXT_IMAGESET << " but is not used by the GUI.";
+            Logger::log().info() << Logger::ICON_CLIENT << "Element '" << (*i)->name << "' is defined in " << GuiManager::FILE_TXT_IMAGESET << " but is not used by the GUI.";
 #endif
         delete (*i);
     }
@@ -95,11 +95,11 @@ void GuiImageset::parseXML(const char *fileImageSet, bool createItemAtlas)
     const char *strTemp;
     if (!doc.LoadFile() || !(xmlRoot = doc.RootElement()) || !(strTemp = xmlRoot->Attribute("file")))
     {
-        Logger::log().error() << "XML-File '" << fileImageSet << "' is broken or missing.";
+        Logger::log().error() << Logger::ICON_CLIENT << "XML-File '" << fileImageSet << "' is broken or missing.";
         return;
     }
     mStrImageSetGfxFile = strTemp;
-    Logger::log().info() << "Parsing the ImageSet file '" << mStrImageSetGfxFile << "'.";
+    Logger::log().info() << Logger::ICON_CLIENT << "Parsing the ImageSet file '" << mStrImageSetGfxFile << "'.";
     // Parse the gfx coordinates.
     for (xmlElem = xmlRoot->FirstChildElement("Image"); xmlElem; xmlElem = xmlElem->NextSiblingElement("Image"))
     {
@@ -114,7 +114,7 @@ void GuiImageset::parseXML(const char *fileImageSet, bool createItemAtlas)
             else
             {
                 mSrcEntryMouse =0;
-                Logger::log().error() << "MouseCursor has no default state and will be ignored.";
+                Logger::log().error() << Logger::ICON_CLIENT << "MouseCursor has no default state and will be ignored.";
                 delete Entry;
             }
         }
@@ -131,12 +131,12 @@ void GuiImageset::parseXML(const char *fileImageSet, bool createItemAtlas)
                 mvSrcEntry.push_back(Entry);
             else
             {
-                Logger::log().warning() << "Element '" << Entry->name << "' has no default state and will be ignored.";
+                Logger::log().warning() << Logger::ICON_CLIENT << "Element '" << Entry->name << "' has no default state and will be ignored.";
                 delete Entry;
             }
         }
     }
-    Logger::log().list() << (int) mvSrcEntry.size() +1 << " Image Entries were parsed."; // +1 because of mouseCursor.
+    Logger::log().list() << Logger::ICON_CLIENT << (int) mvSrcEntry.size() +1 << " Image Entries were parsed."; // +1 because of mouseCursor.
     static Image image;
     image.load(mStrImageSetGfxFile, ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
     mGuiGfxPixelBox = image.getPixelBox();
@@ -172,7 +172,7 @@ bool GuiImageset::parseStates(TiXmlElement *xmlElem, gfxPos *stateNr, int sum_st
         }
         if (state < 0)
         {
-            Logger::log().error() << "Unknown state: " << strTemp;
+            Logger::log().error() << Logger::ICON_CLIENT << "Unknown state: " << strTemp;
             continue;
         }
         if ((strTemp= xmlState->Attribute("posX"))) stateNr[state].x = atoi(strTemp);
@@ -271,12 +271,12 @@ void GuiImageset::parseItems(bool createItemAtlas)
 #endif
         if (itemFilename.empty())
         {
-            Logger::log().error() << "Could not find any item graphics in " << path;
+            Logger::log().error() << Logger::ICON_CLIENT << "Could not find any item graphics in " << path;
             return;
         }
         if (!unknownGfxFound)
         {
-            Logger::log().error() << "Could not find the gfx for an unknown item (filename: " << GuiManager::FILE_ITEM_UNKNOWN
+            Logger::log().error() << Logger::ICON_CLIENT << "Could not find the gfx for an unknown item (filename: " << GuiManager::FILE_ITEM_UNKNOWN
             << " in folder " << path << ").";
         }
         Image itemImage, itemAtlas;
@@ -288,13 +288,13 @@ void GuiImageset::parseItems(bool createItemAtlas)
             itemImage.load(itemFilename[i], ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
             if (itemImage.getHeight() != ITEM_SIZE || itemImage.getWidth() != ITEM_SIZE)
             {
-                Logger::log().warning() << "CreateItemAtlas: Unsupported image size. Only Items of "
+                Logger::log().warning() << Logger::ICON_CLIENT << "CreateItemAtlas: Unsupported image size. Only Items of "
                 << (int)ITEM_SIZE << " * " << (int)ITEM_SIZE << " pixel are allowed "<< "[" << itemFilename[i] << "].";
                 break;
             }
             if (itemImage.getFormat() != PF_A8R8G8B8)
             {
-                Logger::log().warning() << "CreateItemAtlas: Unsupported image format ("<< itemImage.getFormat() <<")."
+                Logger::log().warning() << Logger::ICON_CLIENT << "CreateItemAtlas: Unsupported image format ("<< itemImage.getFormat() <<")."
                 << " Only 32bit [ARGB] png format is allowed "<< "[" << itemFilename[i] << "].";
                 break;
             }
@@ -324,7 +324,7 @@ void GuiImageset::parseItems(bool createItemAtlas)
     txtFile.open(fileAtlasTxt.c_str(), std::ios::in | std::ios::binary);
     if (!txtFile)
     {
-        Logger::log().error() << "Error on file " << fileAtlasTxt;
+        Logger::log().error() << Logger::ICON_CLIENT << "Error on file " << fileAtlasTxt;
         return;
     }
     getline(txtFile, fileAtlasTxt); // skip the comment.

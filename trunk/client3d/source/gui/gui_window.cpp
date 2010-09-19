@@ -74,7 +74,7 @@ void GuiWindow::Init(TiXmlElement *xmlRoot, const char *resourceWin, int winNr, 
     int screenW = GuiManager::getSingleton().getScreenWidth();
     const char *strTmp = xmlRoot->Attribute("name");
     if (strTmp && GuiManager::getSingleton().getPrintInfo())
-        Logger::log().info() << "Parsing window: " << strTmp;
+        Logger::log().info() << Logger::ICON_CLIENT << "Parsing window: " << strTmp;
     // ////////////////////////////////////////////////////////////////////
     // Parse the Size entries.
     // ////////////////////////////////////////////////////////////////////
@@ -219,7 +219,7 @@ void GuiWindow::checkForOverlappingElements()
 {
     PROFILE()
     // Todo
-    //Logger::log().warning() << "Element " << xyz << " opverlaps element " << xyz2;
+    //Logger::log().warning() << Logger::ICON_CLIENT << "Element " << xyz << " opverlaps element " << xyz2;
 }
 
 //================================================================================================
@@ -378,8 +378,8 @@ void GuiWindow::sendMsg(int elementNr, int message, String &text, uint32 &param,
     {
         if (elementNr <0 ||elementNr >= (int)mvElement.size())
         {
-            Logger::log().error() << "Critical: GuiWindow::sendMsg: elementNr out of Range! (MessageID = " << message <<")";
-            //Logger::log().error() << "Ignoring Message: (text)" << text.c_str() << " (text2) " << text2;
+            Logger::log().error() << Logger::ICON_CLIENT << "Critical: GuiWindow::sendMsg: elementNr out of Range! (MessageID = " << message <<")";
+            //Logger::log().error() << Logger::ICON_CLIENT << "Ignoring Message: (text)" << text.c_str() << " (text2) " << text2;
             return;
         }
         mvElement[elementNr]->sendMsg((int)message, text, param, text2);
