@@ -107,7 +107,7 @@ ObjectElementEquip3d::ObjectElementEquip3d(Object *parent, Entity *parentEntity)
 //================================================================================================
 //
 //================================================================================================
-bool ObjectElementEquip3d::update(const Ogre::FrameEvent &event)
+bool ObjectElementEquip3d::update(const Ogre::FrameEvent &/*event*/)
 {
     return true;
 }

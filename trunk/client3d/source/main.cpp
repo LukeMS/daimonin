@@ -24,6 +24,8 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include <OgreRoot.h>
 #include <OgreConfigFile.h>
 #include <OgreLogManager.h>
+#include <OgreRenderWindow.h>
+#include <OgreWindowEventUtilities.h>
 #include <OgreResourceGroupManager.h>
 #include "logger.h"
 #include "events.h"
@@ -40,12 +42,6 @@ static bool parseCmdLine(const char *cmd, const char *value)
     int options =0;
     if (cmd[0] == '-')
     {
-        if (!stricmp(cmd, "--flipbook"))
-        {
-            Logger::log().info() << Logger::ICON_CLIENT << "You told me to convert the mesh " << value << " to a Flip-Book";
-            Option::getSingleton().setStrValue(Option::CMDLINE_CREATE_IMPOSTERS, value);
-            ++options;
-        }
         if ((cmd[1] == 'g' || !stricmp(cmd, "--guiinfo")))
         {
             Logger::log().info() << Logger::ICON_CLIENT << "You told me to print gui infos.";
@@ -109,7 +105,7 @@ static bool parseCmdLine(const char *cmd, const char *value)
                   << "--sound off             -x        Disable Sound\n"
                   << "--device <num>          -d <num>  Choose a Sound-device\n"
                   << "--bbox                            Show bounding-boxes\n"
-                  << "--flipbook <meshName>             Convert a mesh into Imposters\n" << std::endl;
+                  << std::endl;
         return false;
     }
     return true;
@@ -331,7 +327,28 @@ int main(int argc, char **argv)
         ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
         Events::getSingleton().Init(window, root->createSceneManager(ST_GENERIC));
         root->addFrameListener(&Events::getSingleton());
-        root->startRendering();
+        {
+            root->startRendering();
+        }
+/*
+        {
+            // If root->startRendering(); makes trouble on alt+tab use this:
+            root->getRenderSystem()->_initRenderTargets();
+            root->clearEventTimes();
+            while(1)
+            {
+                WindowEventUtilities::messagePump();
+                if(window->isActive())
+                {
+                    if (!root->renderOneFrame()) break;
+                }
+                else
+                {
+                    root->clearEventTimes();
+                }
+            }
+        }
+*/
         // ////////////////////////////////////////////////////////////////////
         // End of mainloop -> Clean up.
         // ////////////////////////////////////////////////////////////////////
