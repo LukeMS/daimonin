@@ -74,7 +74,7 @@ class myLogReceiver : public ILogReceiver
 public:
     myLogReceiver() {}
     ~myLogReceiver() {}
-    bool OnLogMessage(const char* sender, const char* message, LogLevel level, float time)
+    bool OnLogMessage(const char */*sender*/, const char* message, LogLevel level, float /*time*/)
     {
         if      (level == ELL_ERROR || level == ELL_CRITICAL)
             Logger::log().error()   << Logger::ICON_CAUDIO << message;
@@ -98,6 +98,11 @@ bool Sound::Init(const char *filePath, int preferredDevice)
     if (Option::getSingleton().getIntValue(Option::CMDLINE_OFF_SOUND)) return false;
     Logger::log().headline() << "Init Sound-System";
     mFilePath = filePath;
+    // Add our LogListener to cAudio.
+    mLogger = new myLogReceiver;
+    cAudio::getLogger()->registerLogReceiver(mLogger, "Logger");
+    cAudio::getLogger()->unRegisterLogReceiver("File");
+    cAudio::getLogger()->unRegisterLogReceiver("Console");
     // Create the main system object.
     mSoundManager = cAudio::createAudioManager(false);
     if(!mSoundManager)
@@ -105,12 +110,6 @@ bool Sound::Init(const char *filePath, int preferredDevice)
         Logger::log().error() << Logger::ICON_CLIENT << "Failed to create audio playback manager.";
         return false;
     }
-    // Add our LogListener to cAudio.
-    mLogger = new myLogReceiver;
-    cAudio::getLogger()->registerLogReceiver(mLogger, "Loggin");
-    // Unregester the internal cAudio LogListener.
-    cAudio::getLogger()->unRegisterLogReceiver("File");
-    remove("cAudioEngineLog.html");
     // Show all playback devices
     std::string defaultDeviceName = mSoundManager->getDefaultDeviceName();
     int defaultDevice = -1;
@@ -156,6 +155,7 @@ void Sound::freeRecources()
     mSoundManager->releaseAllSources();
     mSoundManager->shutDown();
     destroyAudioManager(mSoundManager);
+    cAudio::getLogger()->unRegisterLogReceiver("Logger");
     delete mLogger;
 }
 
@@ -190,7 +190,7 @@ void Sound::openStream(SampleID id)
     mSoundFiles[id].sound = mSoundManager->create(0, (mFilePath + mSoundFiles[id].filename).c_str(), mSoundFiles[id].stream);
     if (!mSoundFiles[id].sound)
     {
-        Logger::log().warning() << Logger::ICON_CLIENT << "Soundfile " << mSoundFiles[id].filename << " could not be found or the codec is unknown.";
+        // CAudio logs the error.
         mSoundFiles[id].sound = mSoundFiles[DUMMY].sound; // use the dummy wavefile.
     }
 }
@@ -201,7 +201,7 @@ void Sound::openStream(SampleID id)
 void Sound::playStream(SampleID id)
 {
     PROFILE()
-    if (!mSoundManager) return;
+    if (!mSoundManager || !mSoundFiles[id].sound) return;
     if (mSoundFiles[id].sound->isPlaying()) stopStream(id);
     if (!mSoundFiles[id].sound->play2d(mSoundFiles[id].loop))
     {
@@ -215,7 +215,7 @@ void Sound::playStream(SampleID id)
 void Sound::stopStream(SampleID id)
 {
     PROFILE()
-    if (!mSoundManager) return;
+    if (!mSoundManager || !mSoundFiles[id].sound) return;
     mSoundFiles[id].sound->stop();
 }
 

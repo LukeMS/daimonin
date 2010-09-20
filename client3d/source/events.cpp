@@ -185,12 +185,6 @@ bool Events::frameStarted(const FrameEvent& evt)
         case Option::GAME_STATUS_INIT_VIEWPORT:
         {
             // ////////////////////////////////////////////////////////////////////
-            // Commandline argument to create Imposters.
-            // ////////////////////////////////////////////////////////////////////
-            const char *meshName = Option::getSingleton().getStrValue(Option::CMDLINE_CREATE_IMPOSTERS);
-            if (strlen(meshName) > 1)
-                if (!ObjectManager::getSingleton().createFlipBook(meshName, 16)) return false;
-            // ////////////////////////////////////////////////////////////////////
             // Create one viewport, entire window.
             // ////////////////////////////////////////////////////////////////////
             mCamera = mSceneManager->createCamera("PlayerCam");
@@ -667,7 +661,6 @@ bool Events::frameStarted(const FrameEvent& evt)
                 Sound::getSingleton().playStream(Sound::PLAYER_IDLE);
                 break;
             }
-
             static unsigned long time = Root::getSingleton().getTimer()->getMilliseconds();
             if (Root::getSingleton().getTimer()->getMilliseconds() - time > 180.0)
             {
@@ -698,6 +691,7 @@ bool Events::frameStarted(const FrameEvent& evt)
 
         default:
         {
+            Logger::log().error() << Logger::ICON_CLIENT << "frameStarted(): unknown state";
             break;
         }
     }

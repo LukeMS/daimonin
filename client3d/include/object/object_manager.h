@@ -195,7 +195,6 @@ public:
     }
     void targetObjectAttackNPC(int npcIndex); // just a hack. Server will handle this.
 */
-    bool createFlipBook(Ogre::String meshName, int sumRotations = 8);
     void setAvatarName(std::string &name) { mAvatarName = name;}
     std::string getAvatarName() { return mAvatarName;}
     const Ogre::Vector3 getAvatarPos();
