@@ -32,7 +32,6 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include "option.h"
 #include "logger.h"
 #include "profiler.h"
-#include "events.h"
 #include "sound.h"
 #include "network.h"
 #include "object/object_manager.h"
@@ -47,22 +46,9 @@ using namespace Ogre;
 static const char MATERIAL_HIGHLIGHT[] = "MatObjectHighlight";
 
 //================================================================================================
-// Defines:
-// * static: fixed to a single pos, does not have ai (stones, walls, trees, ...)
-// * npc:    controlled by ai.
-// * player: controlled by a human player.
-//================================================================================================
-
-//================================================================================================
-// Init all static Elemnts.
-//================================================================================================
-// Prefix for the object name (S)tatic, (P)layer, (N)PC
-const char *ObjectManager::ObjectID[OBJECT_SUM] = { "S","S","S","P","N" };
-
-//================================================================================================
 // Init the model from the description file.
 //================================================================================================
-void ObjectManager::init()
+void ObjectManager::init(SceneManager *sceneManager)
 {
     PROFILE()
     Logger::log().headline() << "Init Object Managaer";
@@ -70,7 +56,15 @@ void ObjectManager::init()
     mSelectedObject=-1;
     // mSelectedEnemy = false;
     mAvatarName = "";
-    mSceneManager = Events::getSingleton().getSceneManager();
+    mSceneManager = sceneManager;
+}
+
+//================================================================================================
+//
+//================================================================================================
+ObjectManager::~ObjectManager()
+{
+    PROFILE()
 }
 
 //================================================================================================
@@ -95,8 +89,7 @@ void ObjectManager::addCreature(sObject &obj)
     if (entityWithSkeleton)
     {
         objV3d->setAnimationElement(new ObjectElementAnimate3d(object, entityWithSkeleton));
-        ObjectElementEquip3d *objEquip = new ObjectElementEquip3d(object, entityWithSkeleton);
-        objEquip->equipItem(ObjectElementEquip3d::BONE_WEAPON_HAND, ObjectElementEquip3d::ITEM_WEAPON, 0, -1);  // Just for test (Sword)
+        /*ObjectElementEquip3d *objEquip =*/ new ObjectElementEquip3d(object, entityWithSkeleton);
     }
     objV3d->setPosition(obj.pos, obj.facing);
     Real spawnSize = 1.0f;
@@ -200,7 +193,7 @@ void ObjectManager::syncToMapScroll(int deltaX, int deltaZ)
 //================================================================================================
 //
 //================================================================================================
-Object* ObjectManager::getObject(std::string &name)
+Object *ObjectManager::getObject(std::string &name)
 {
     if (name.empty())
         return mObjectAvatar;
@@ -478,17 +471,15 @@ void ObjectManager::targetObjectAttackNPC(int npcIndex)
 //================================================================================================
 //
 //================================================================================================
-void ObjectManager::setEquipment(int npcID, int bone, int type, int itemID)
+void ObjectManager::setEquipment(std::string &objName, int bone, int type, int itemID, int particleID)
 {
     PROFILE()
-//    if (mvNPC[npcID]->mEquip)
-//        mvNPC[npcID]->mEquip->equipItem(bone, type, itemID);
+    Object *objNPC = getObject(objName);
+    if (objNPC)
+    {
+        ObjectElementEquip3d *element = static_cast<ObjectElementEquip3d*>(objNPC->getElement(Object::FAMILY_EQUIP3D));
+        if (element)
+            element->equipItem(bone, type, itemID, particleID);
+    }
 }
 
-//================================================================================================
-//
-//================================================================================================
-ObjectManager::~ObjectManager()
-{
-    PROFILE()
-}

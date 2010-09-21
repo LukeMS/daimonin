@@ -50,14 +50,6 @@ public:
     void Init(Ogre::RenderWindow *win, Ogre::SceneManager *mSceneMgr);
     void freeRecources();
     void checkTileBorderMovement();
-    Ogre::SceneManager *getSceneManager() const
-    {
-        return mSceneManager;
-    }
-    Ogre::Camera *getCamera() const
-    {
-        return mCamera;
-    }
     bool isShiftDown() const
     {
         return mShiftDown;

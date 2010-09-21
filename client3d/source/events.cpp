@@ -41,7 +41,6 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include "object/object_manager.h"
 #include "object/object_element_avatar.h"
 #include "object/object_element_animate3d.h"
-#include "particle_manager.h"
 #include "spell_manager.h"
 #include "network_serverfile.h"
 #include "assert.h"
@@ -306,7 +305,6 @@ bool Events::frameStarted(const FrameEvent& evt)
 
         case Option::GAME_STATUS_INIT_PARTICLE:
         {
-            ParticleManager::getSingleton().update(0);
             Option::getSingleton().setGameStatus(Option::GAME_STATUS_INIT_GUI_WINDOWS);
             GuiManager::getSingleton().displaySystemMessage("Starting the gui-manager...");
             GuiManager::getSingleton().displaySystemMessage(" - Parsing windows.");
@@ -334,7 +332,7 @@ bool Events::frameStarted(const FrameEvent& evt)
 
         case Option::GAME_STATUS_INIT_OBJECT:
         {
-            ObjectManager::getSingleton().init();
+            ObjectManager::getSingleton().init(mSceneManager);
             Option::getSingleton().setGameStatus(Option::GAME_STATUS_INIT_GUI);
             GuiManager::getSingleton().displaySystemMessage("Starting the GUI...");
             break;
@@ -683,7 +681,6 @@ bool Events::frameStarted(const FrameEvent& evt)
                 time = Root::getSingleton().getTimer()->getMilliseconds();
             }
             ObjectManager::getSingleton().update(evt);
-            ParticleManager::getSingleton().update(evt.timeSinceLastFrame);
             TileMap::getSingleton().update();
             checkTileBorderMovement();
             break;

@@ -42,11 +42,11 @@ public:
     // Functions.
     // ////////////////////////////////////////////////////////////////////
     ObjectElementVisual3d(Object *parent, Ogre::SceneManager *sceneManager);
-    ~ObjectElementVisual3d() {}
+    ~ObjectElementVisual3d();
     Object::familyID getFamilyID() const { return Object::FAMILY_VISUAL3D; }
     bool update(const Ogre::FrameEvent &event);
-
     Ogre::Entity *createEntity(Ogre::String nickName, const char *meshName, int renderQueue, ObjectManager::queryMask qMask);
+    void attachParticle(Ogre::String particleScript);
     void setScale(Ogre::Vector3 scale);
     void setPosition(Ogre::Vector3 pos, Ogre::Real facing);
     void setPosition(Ogre::Vector3 pos) { mTilePos = pos; }
@@ -69,9 +69,11 @@ public:
     void setSkinColor(Ogre::uint32 val);
 private:
     bool mIsAvatar;
-    int mWalkDirection, mTurnDirection;
+    int mWalkDirection;
+    int mTurnDirection;
     Ogre::SceneNode *mNode;
     Ogre::Entity *mEntity;
+    Ogre::ParticleSystem *mParticle;
     Ogre::Vector3 mBoundingBox;
     Ogre::Vector3 mTilePos;   /**< the actual pos in the map. **/
     Ogre::String mNickName;

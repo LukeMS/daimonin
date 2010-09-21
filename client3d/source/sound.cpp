@@ -74,7 +74,7 @@ class myLogReceiver : public ILogReceiver
 public:
     myLogReceiver() {}
     ~myLogReceiver() {}
-    bool OnLogMessage(const char */*sender*/, const char* message, LogLevel level, float /*time*/)
+    bool OnLogMessage(const char * /*sender*/, const char *message, LogLevel level, float /*time*/)
     {
         if      (level == ELL_ERROR || level == ELL_CRITICAL)
             Logger::log().error()   << Logger::ICON_CAUDIO << message;

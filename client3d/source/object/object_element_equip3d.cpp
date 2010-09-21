@@ -23,12 +23,11 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 
 #include <OgreEntity.h>
 #include <OgreSceneManager.h>
+#include <OgreParticleSystem.h>
 #include <OgreStringConverter.h>
 #include "object/object_manager.h"
 #include "object/object_element_equip3d.h"
-#include "particle_manager.h"
 #include "sound.h"
-#include "events.h"
 #include "logger.h"
 #include "profiler.h"
 
@@ -107,60 +106,66 @@ ObjectElementEquip3d::ObjectElementEquip3d(Object *parent, Entity *parentEntity)
 //================================================================================================
 //
 //================================================================================================
+ObjectElementEquip3d::~ObjectElementEquip3d()
+{
+    for (int bone =0; bone < BONE_SUM; ++bone)
+        dropItem(bone);
+}
+
+//================================================================================================
+//
+//================================================================================================
 bool ObjectElementEquip3d::update(const Ogre::FrameEvent &/*event*/)
 {
     return true;
 }
 
 //================================================================================================
-// Create and attach an equipment item to bone.
+// Adds an item (with optionl particle effects) to a bone.
 //================================================================================================
 void ObjectElementEquip3d::equipItem(unsigned int bone, int type, int itemID, int particleID)
 {
     PROFILE()
     if (bone >= BONE_SUM) return;
     dropItem(bone);
-    // Add a particle system.
-    if (particleID < 0 || particleID >= PARTICLE_FX_SUM)
+    if ((unsigned int)itemID >= ITEM_SUM) return;
+    static unsigned long itemIndex =0;
+    String tmpName = "Item_" + StringConverter::toString(++itemIndex, 8, '0');
+    try
     {
-        mItem[bone].particle= 0;
-    }
-    else
-    {
-        mItem[bone].particle = ParticleManager::getSingleton().addBoneObject(mParentEntity, boneName[bone].c_str(), particleName[particleID], -1);
-    }
-    // Add a entity.
-    if (itemID < 0 || itemID >= ITEM_SUM)
-    {
-        mItem[bone].entity = 0;
-    }
-    else
-    {
-        static unsigned long itemIndex =0;
-        String tmpName = "Item_" + StringConverter::toString(++itemIndex, 8, '0');
-        mItem[bone].entity= Events::getSingleton().getSceneManager()->createEntity(tmpName, meshName[type][itemID]);
+        // Add an entity.
+        mItem[bone].entity= mParentEntity->getParentSceneNode()->getCreator()->createEntity(tmpName, meshName[type][itemID]);
         mItem[bone].entity->setQueryFlags(ObjectManager::QUERY_MASK_NPC);
         mItem[bone].entity->setRenderQueueGroup(Ogre::RENDER_QUEUE_7);
         mParentEntity->attachObjectToBone(boneName[bone], mItem[bone].entity);
+        // Add a particle system.
+        if ((unsigned int)particleID < PARTICLE_FX_SUM)
+        {
+            mItem[bone].particle = mParentEntity->getParentSceneNode()->getCreator()->createParticleSystem(tmpName+"_p", particleName[particleID]);
+            mItem[bone].particle->setBoundsAutoUpdated(false);
+            mItem[bone].particle->setKeepParticlesInLocalSpace(true);
+            mItem[bone].particle->setQueryFlags(ObjectManager::QUERY_MASK_NPC);
+            mItem[bone].particle->setRenderQueueGroup(RENDER_QUEUE_7);
+            mParentEntity->attachObjectToBone(boneName[bone], mItem[bone].particle);
+        }
     }
+    catch (Exception &/*e*/) {}
 }
 
 //================================================================================================
-// Detach and destroy an equipment item from bone.
+// Detach and destroy an equipment item from a bone.
 //================================================================================================
 void ObjectElementEquip3d::dropItem(int bone)
 {
     PROFILE()
-    if (mItem[bone].entity)
-    {
-        mParentEntity->detachObjectFromBone(mItem[bone].entity);
-        Events::getSingleton().getSceneManager()->destroyEntity(mItem[bone].entity);
-        mItem[bone].entity =0;
-    }
+    if ((unsigned int)bone >= BONE_SUM || !mItem[bone].entity) return;
+    //mParentEntity->detachObjectFromBone(mItem[bone].entity);
+    mParentEntity->getParentSceneNode()->getCreator()->destroyEntity(mItem[bone].entity);
+    mItem[bone].entity =0;
     if (mItem[bone].particle)
     {
-        mParentEntity->detachObjectFromBone(mItem[bone].particle);
-        ParticleManager::getSingleton().delObject(mItem[bone].particle);
+        //mParentEntity->detachObjectFromBone(mItem[bone].particle);
+        mParentEntity->getParentSceneNode()->getCreator()->destroyParticleSystem(mItem[bone].particle);
         mItem[bone].particle =0;
     }
 }

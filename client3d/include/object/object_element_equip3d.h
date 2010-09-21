@@ -72,10 +72,9 @@ public:
     // Functions.
     // ////////////////////////////////////////////////////////////////////
     ObjectElementEquip3d(Object *parent, Ogre::Entity *entity);
-    ~ObjectElementEquip3d() {}
+    ~ObjectElementEquip3d();
     Object::familyID getFamilyID() const { return Object::FAMILY_EQUIP3D; }
     bool update(const Ogre::FrameEvent &event);
-
     void dropItem(int bone);
     void equipItem(unsigned int bone, int type, int itemID, int particleID =-1);
 

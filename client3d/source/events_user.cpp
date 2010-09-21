@@ -38,8 +38,8 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include "tile/tile_manager.h"
 #include "object/object_manager.h"
 #include "object/object_element_avatar.h"
+#include "object/object_element_equip3d.h"
 #include "object/object_element_animate3d.h"
-#include "particle_manager.h"
 
 using namespace Ogre;
 
@@ -446,6 +446,14 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
         case OIS::KC_8:
         {
             //ObjectManager::getSingleton().toggleMesh(OBJECT_PLAYER, BONE_HEAD, 1);
+            static int toggle1 = 0, toggle2 = 0;
+            String name = ObjectManager::getSingleton().getAvatarName();
+            ObjectManager::getSingleton().setEquipment(name, ObjectElementEquip3d::BONE_WEAPON_HAND, ObjectElementEquip3d::ITEM_WEAPON, toggle1, toggle1<0?-1:toggle2);
+            if (++toggle1 >1)
+            {
+                toggle1 = -1; // Item
+                toggle2 = !toggle2?-1:0;
+            }
             break;
         }
 

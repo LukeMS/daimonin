@@ -244,10 +244,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\source\particle_manager.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\source\sound.cpp"
 				>
 			</File>
@@ -438,10 +434,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\include\option.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\include\particle_manager.h"
 				>
 			</File>
 			<File
