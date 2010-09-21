@@ -178,7 +178,6 @@
 		<Unit filename="..\..\..\include\object\object_element_visual3d.h" />
 		<Unit filename="..\..\..\include\object\object_manager.h" />
 		<Unit filename="..\..\..\include\option.h" />
-		<Unit filename="..\..\..\include\particle_manager.h" />
 		<Unit filename="..\..\..\include\profiler.h" />
 		<Unit filename="..\..\..\include\sound.h" />
 		<Unit filename="..\..\..\include\spell_manager.h" />
@@ -246,7 +245,6 @@
 		<Unit filename="..\..\..\source\object\object_manager.cpp" />
 		<Unit filename="..\..\..\source\option.cpp" />
 		<Unit filename="..\..\..\source\option_init.cpp" />
-		<Unit filename="..\..\..\source\particle_manager.cpp" />
 		<Unit filename="..\..\..\source\sound.cpp" />
 		<Unit filename="..\..\..\source\spell_manager.cpp" />
 		<Unit filename="..\..\..\source\spell_range.cpp" />

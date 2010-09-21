@@ -33,7 +33,6 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include "tile/tile_map_wrapper.h"
 #include "tile/tile_manager.h"
 #include "object/object_manager.h"
-#include "particle_manager.h"
 
 using namespace Ogre;
 

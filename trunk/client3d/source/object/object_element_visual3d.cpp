@@ -24,9 +24,9 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include <OgreEntity.h>
 #include <OgreSubEntity.h>
 #include <OgreManualObject.h>
+#include <OgreParticleSystem.h>
 #include "logger.h"
 #include "profiler.h"
-#include "events.h"
 #include "tile/tile_manager.h"
 #include "object/object_element_visual3d.h"
 
@@ -39,14 +39,21 @@ static const int TURN_SPEED   = 400;
 //================================================================================================
 //
 //================================================================================================
-ObjectElementVisual3d::ObjectElementVisual3d(Object *parent, SceneManager *sceneManager):ObjectElement(parent)
+ObjectElementVisual3d::ObjectElementVisual3d(Object *parent, SceneManager *sceneManager)
+    :ObjectElement(parent), mWalkDirection(0), mTurnDirection(0), mEntity(0), mParticle(0)
 {
     PROFILE()
     parent->addElement(getFamilyID(), this);
     mNode = sceneManager->getRootSceneNode()->createChildSceneNode();
-    mEntity = 0;
-    mWalkDirection = 0;
-    mTurnDirection = 0;
+}
+
+//================================================================================================
+//
+//================================================================================================
+ObjectElementVisual3d::~ObjectElementVisual3d()
+{
+    for (int i = mNode->numAttachedObjects()-1; i>=0; --i)
+        mNode->getCreator()->destroyMovableObject(mNode->getAttachedObject(i));
 }
 
 //================================================================================================
@@ -57,13 +64,14 @@ Ogre::Entity *ObjectElementVisual3d::createEntity(String nickName, const char *m
     PROFILE()
     mElementAnimation = 0;
     mEntity = mNode->getCreator()->createEntity(nickName, meshName);
-    mEntity->setRenderQueueGroup(renderQueue);    mEntity->setQueryFlags(qMask);
+    mEntity->setRenderQueueGroup(renderQueue);
+    mEntity->setQueryFlags(qMask);
     mNode->attachObject(mEntity);
     // ////////////////////////////////////////////////////////////////////
     // Attach the blob shadow.
     // ////////////////////////////////////////////////////////////////////
     nickName+= "_blob";
-    ManualObject* blob = static_cast<ManualObject*>(Events::getSingleton().getSceneManager()->createMovableObject(nickName, ManualObjectFactory::FACTORY_TYPE_NAME));
+    ManualObject* blob = static_cast<ManualObject*>(mNode->getCreator()->createMovableObject(nickName, ManualObjectFactory::FACTORY_TYPE_NAME));
     blob->begin("Material_blob_shadow");
     const AxisAlignedBox &AABB = mEntity->getBoundingBox();
     float sizeX = (AABB.getMaximum().x -AABB.getMinimum().x);
@@ -81,10 +89,25 @@ Ogre::Entity *ObjectElementVisual3d::createEntity(String nickName, const char *m
     blob->setQueryFlags(0);
     blob->setRenderQueueGroup(RENDER_QUEUE_6); // see OgreRenderQueue.h
     mNode->attachObject(blob);
+    //attachParticle( "Particle/SwordGlow"); //Just for Testing.
     // ////////////////////////////////////////////////////////////////////
     // If the entity can be animated, return the entity for adding the animation element.
     // ////////////////////////////////////////////////////////////////////
     return (mEntity->hasSkeleton())?mEntity:0;
+}
+
+//================================================================================================
+//
+//================================================================================================
+void ObjectElementVisual3d::attachParticle(String particleScript)
+{
+    PROFILE()
+    mParticle = mNode->getCreator()->createParticleSystem(mNickName+"_p", particleScript);
+    mParticle->setBoundsAutoUpdated(false);
+    mParticle->setKeepParticlesInLocalSpace(true);
+    mParticle->setQueryFlags(ObjectManager::QUERY_MASK_NPC);
+    mParticle->setRenderQueueGroup(RENDER_QUEUE_7);
+    mNode->attachObject(mParticle);
 }
 
 //================================================================================================
@@ -214,4 +237,3 @@ void ObjectElementVisual3d::setMove(int direction)
             mElementAnimation->toggleAnimation(ObjectElementAnimate3d::ANIM_GROUP_IDLE, 0, true);
     }
 }
-

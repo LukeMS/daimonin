@@ -141,7 +141,6 @@ set (HEADER_FILES
   include/network_cmd_interface.h
   include/network_serverfile.h
   include/option.h
-  include/particle_manager.h
   include/sound.h
   include/spell_manager.h
   include/spell_range.h
@@ -177,7 +176,7 @@ set (SOURCE_FILES
   source/gui/gui_window.cpp
   source/tile/tile_chunk.cpp
   source/tile/tile_decal.cpp
-   source/tile/tile_atlas.cpp
+  source/tile/tile_atlas.cpp
   source/tile/tile_manager.cpp
   source/tile/tile_map.cpp
   source/object/object.cpp
@@ -201,7 +200,6 @@ set (SOURCE_FILES
   source/network_serverfile.cpp
   source/option.cpp
   source/option_init.cpp
-  source/particle_manager.cpp
   source/sound.cpp
   source/spell_manager.cpp
   source/spell_range.cpp

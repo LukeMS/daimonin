@@ -28,13 +28,6 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include "object/object.h"
 #include "object/object_element.h"
 
-// ////////////////////////////////////////////////////////////////////
-// Define:
-// player:  human controlled.
-// hero:    human controlled (the one in front of this keyboard).
-// monster: ai controlled.
-// ////////////////////////////////////////////////////////////////////
-
 ///
 /// This singleton class handles all interactive objects.
 /// For non-interactive object the TileManager is used.
@@ -120,12 +113,12 @@ public:
         static ObjectManager Singleton; return Singleton;
     }
     void freeRecources();
-    void init();
+    void init(Ogre::SceneManager *sceneManager);
     void addCreature(sObject &obj);
     void update(const Ogre::FrameEvent& evt);
     void mousePressed(Ogre::MovableObject *mob, bool modifier);
     void Event(std::string &name, int action, int id, int val0=0, int val1=0);
-    void setEquipment(int npcID, int bone, int type, int itemID);
+    void setEquipment(std::string &objName, int bone, int type, int itemID, int particleID);
     void highlightObject(Ogre::MovableObject *mob, bool highlight);
 //    void shoot(int missle, ObjectNPC *srcMob, ObjectNPC *dstMob);
 /*
@@ -207,6 +200,11 @@ private:
 //    std::vector<ObjectMissile*> mvMissile;
     int mSelectedType, mSelectedObject;
     Ogre::Vector3 mSelectedPos;
+
+    std::string mAvatarName;
+    std::map<std::string, class Object*> mObjectMap;
+    Ogre::SceneManager *mSceneManager;
+    Object *mObjectAvatar;
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
@@ -215,13 +213,12 @@ private:
     ObjectManager(const ObjectManager&);            ///< disable copy-constructor.
     ObjectManager &operator=(const ObjectManager&); ///< disable assignment operator.
     void extractObject(Ogre::MovableObject *mob);
-    Object *getObject(std::string &name);
 
-    //////// NEW
-    std::string mAvatarName;
-    std::map<std::string, class Object*> mObjectMap;
-    Ogre::SceneManager *mSceneManager;
-    Object *mObjectAvatar;
+    /// @brief Get the object by its name.
+    /// @details
+    /// @param name The name of the object or "" for the avatar.
+    /// @return Returns the found object or 0 if the object does not exist.
+    Object *getObject(std::string &name);
 };
 
 #endif
