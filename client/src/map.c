@@ -535,8 +535,12 @@ void map_draw_map(void)
                 t_right = 0,
                 t_bar = 0,
                 t_xl = 0,
-                t_yl = 0;
-    uint32      t_flags = 0;
+                t_yl = 0,
+                p = -1,
+                p_xl = 0,
+                p_yl = 0;
+    uint32      t_flags = 0,
+                p_flags = 0;
 
     /* we should move this later to a better position, this only for testing here */
     _Sprite     player_dummy;
@@ -791,7 +795,15 @@ void map_draw_map(void)
                                 right = MAX(1, MIN((xml + 10) - (left * 2),
                                                    300));
 
-                                if ((map->ext[k] & FFLAG_PROBE))
+                                if (map->pname[k][0] &&
+                                    !namecmp(map->pname[k], cpl.rankandname))
+                                {
+                                    p = k;
+                                    p_xl = xmpos + left + right / 2 - 10;
+                                    p_yl = yl - skindef.effect_height;
+                                    p_flags = map->ext[k];
+                                }
+                                else if ((map->ext[k] & FFLAG_PROBE))
                                 {
                                     if (face_sprite)
                                     {
@@ -813,27 +825,19 @@ void map_draw_map(void)
                                                 yl - skindef.effect_height);
 
                                     /* have we a playername? then print it! */
-                                    if (options.player_names &&
-                                        map->pname[k][0])
+                                    if (map->pname[k][0] &&
+                                        (options.player_names == 1 ||
+                                         options.player_names == 2))
                                     {
-                                        if (options.player_names == 1 || /* all names */
-                                            (options.player_names == 2 &&
-                                             namecmp(map->pname[k], cpl.rankandname)) || /* names from other players only */
-                                            (options.player_names == 3 &&
-                                             !namecmp(map->pname[k], cpl.rankandname))) /* only you */
-                                        {
-                                            string_blt(ScreenSurfaceMap,
-                                                       &font_small_out,
-                                                       map->pname[k],
-                                                       xmpos + left + right /
-                                                       2 - 10 -
-                                                       string_width(&font_small_out,
-                                                                    map->pname[k]) / 2,
-                                                       yl - skindef.effect_height -
-                                                       font_small_out.line_height -
-                                                       8, COLOR_WHITE, NULL,
-                                                       NULL);
-                                        }
+                                        string_blt(ScreenSurfaceMap,
+                                                   &font_small_out,
+                                                   map->pname[k],
+                                                   xmpos + left + right / 2 - 10 -
+                                                   string_width(&font_small_out,
+                                                                map->pname[k]) / 2,
+                                                   yl - skindef.effect_height -
+                                                   font_small_out.line_height - 8,
+                                                   COLOR_WHITE, NULL, NULL);
                                     }
                                 }
                             }
@@ -858,8 +862,25 @@ void map_draw_map(void)
         }
     }
 
-    /* Have we drawn a target above? Now show the info (name, hp bar, etc).
-     * This way it is drawn on top of the map and is not obscured by walls,
+    /* Have we drawn the player above? Should have. Now show the name and
+     * effects. This way they are drawn on top of the map and are not obscured
+     * by walls, etc. Note that the target info will be drawn over this.*/
+    if (p >= 0)
+    {
+        ShowEffects(p_flags, p_xl, p_yl);
+
+        if (options.player_names == 1 ||
+            options.player_names == 3)
+        {
+            string_blt(ScreenSurfaceMap, &font_small_out, cpl.rankandname,
+                       p_xl - string_width(&font_small_out, cpl.rankandname) / 2,
+                       p_yl - font_small_out.line_height - 8, COLOR_HGOLD,
+                       NULL, NULL);
+        }
+    }
+
+    /* Have we drawn a target above? Now show the effects, name, and hp bar.
+     * This way they are drawn on top of the map and are not obscured by walls,
      * etc. */
     if (t >= 0)
     {
