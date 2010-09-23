@@ -20,7 +20,9 @@ local for_sale =
 
 local function topicDefault()
     ib:SetTitle("Tavern")
-    ib:SetMsg("Hello! I am " .. me.name ..".\n\nWelcome to "..tavern..".\nWe serve drinks and food here.\n\nWhat do you want?")
+    ib:SetMsg("Hello! I am " .. me.name ..".")
+    ib:AddMsg("\nWelcome to " .. tavern .. ". We serve drinks and food here.")
+    ib:AddMsg("\nWhat do you want?")
     for what, data in for_sale do
         ib:AddLink("Buy  1 "..data.title.. " for "..pl:ShowCost(data.price), "buy 1 "..data.title)
         ib:AddLink("Buy 10 "..data.title.. " for "..pl:ShowCost(data.price*10), "buy 10 "..data.title)
@@ -33,23 +35,31 @@ local function topicBuy(nrof, what)
     local data = for_sale[what]
     if data == nil then
         ib:SetTitle("Sorry, we don't have that")
-        ib:SetMsg("Sorry, but we don't serve that here. Can I get you something else?")
+        ib:SetMsg("Sorry, but we don't serve that here. Can I get you " ..
+                  "something else?")
         ib:SetDecline("No")
         ib:SetAccept("Yes", "hello")
     else 
         if nrof == nil then 
-            nrof=1 
+            nrof="1" 
         end
         if nrof <= "50" then
             ib:SetTitle("Here is my offer")
-            ib:SetMsg(nrof.." ~"..data.title.."~ will cost you "..pl:ShowCost(data.price*nrof))    
+            ib:SetMsg(nrof .. " " .. data.title .. " will cost you ~" ..
+                      pl:ShowCost(data.price * nrof) .. "~.")
+            ib:AddMsg("\nYou have ~" .. pl:ShowCost(pl:GetMoney()) .. "~.")
+            if nrof == "1" then
+                ib:AddMsg("\nYou want to buy it?")
+            else
+                ib:AddMsg("\nYou want to buy them?")
+            end
+            ib:AddIcon(data.title, data.icon, "", tonumber(nrof))
             ib:SetAccept(nil, "confirm "..nrof.." "..data.title) 
-            ib:AddIcon(data.title, data.icon, "")
             ib:SetDecline(nil, "hi")
-            ib:AddMsg(".\n\nYou have " .. pl:ShowCost(pl:GetMoney()) .. ".\n\nYou want to buy it?") 
         else
             ib:SetTitle("Tavern")
-            ib:SetMsg("Sorry but we aren't a wholesale, you can only buy small amounts.\n\n")
+            ib:SetMsg("Sorry but we aren't a wholesaler, you can only buy " ..
+                      "small amounts.")
         end
     end
     pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
@@ -59,21 +69,25 @@ local function topicConfirm(nrof, what)
     ib:SetTitle("Buying some Stuff")
     local data = for_sale[what]
     if nrof == nil then
-        nrof = 1
+        nrof = "1"
     end
     if data == nil then
         ib:SetTitle("Sorry, we don't have that")
-        ib:SetMsg("Sorry, but we don't serve that here. Can I get you something else?")
+        ib:SetMsg("Sorry, but we don't serve that here. Can I get you " ..
+                  "something else?")
         ib:SetDecline("No")
         ib:SetAccept("Yes", "hello")
     elseif nrof > "50" then
-        ib:SetMsg("Sorry, but we aren't a wholesale, you can only buy small amounts.\n\n")        
-    elseif pl.carrying+(nrof*data.weight)>=pl:GetPlayerWeightLimit() then
-        ib:SetMsg("Can you explain me, how you would carry all that stuff, without collapsing?")
-    elseif pl:PayAmount(data.price*nrof) == 1 then
-        ib:SetMsg("|** " .. me.name .. " takes your money **|\n\nOk, here is your "..data.title.."!")
+        ib:SetMsg("Sorry, but we aren't a wholesaler, you can only buy " ..
+                  "small amounts.")
+    elseif pl.carrying + (nrof * data.weight) >= pl:GetPlayerWeightLimit() then
+        ib:SetMsg("Can you explain me, how you would carry all that stuff, " ..
+                  "without collapsing?")
+    elseif pl:PayAmount(data.price * nrof) == 1 then
+        ib:SetMsg("|** " .. me.name .. " takes your money **|")
+        ib:AddMsg("\nOk, here is your " .. data.title .. "!")
         tmp = pl:CreateObjectInsideEx(data.arch, 1, nrof) 
-        ib:AddIcon(tmp.name, tmp:GetFace(), "")
+        ib:AddIcon(tmp.name, tmp:GetFace(), "", tonumber(nrof))
     else
         ib:SetMsg("You don't have enough money!")
     end
