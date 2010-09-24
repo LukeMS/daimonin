@@ -192,14 +192,14 @@ typedef struct _options
     /* Visual */
     int                     video_bpp;
     int                     fullscreen;
-    uint8                 use_TextwinSplit;
-    uint8                 use_TextwinAlpha;
+    int                   use_TextwinSplit;
+    int                   use_TextwinAlpha;
     int                     textwin_alpha;
     int                     resolution;
     int                     mapstart_x;
     int                     mapstart_y;
     int                     zoom;
-    uint8                 smooth;
+    int                   smooth;
 
     /* Look & Feel */
     int                     player_names;
@@ -207,25 +207,25 @@ typedef struct _options
     int                     heartbeat;
     int                     warning_hp;
     int                     warning_weight;
-    uint8                 show_tooltips;
-    uint8                 show_d_key_infos; /* key-infos in dialog-wins. */
-    uint8                 smileys;
+    int                   show_tooltips;
+    int                   show_d_key_infos; /* key-infos in dialog-wins. */
+    int                   smileys;
     int                     channelformat;
-    uint8                 collectAll;
-    uint8                 chatfilter;         /* true: filter chatmessages */
-    uint8                 hp_bar;         /* show hp-bar */
-    uint8                 hp_percent;     /* show hp in % */
-    uint8                 hp_color;       /* color bar and % */
+    int                   collectAll;
+    int                   chatfilter;         /* true: filter chatmessages */
+    int                   hp_bar;         /* show hp-bar */
+    int                   hp_percent;     /* show hp in % */
+    int                   hp_color;       /* color bar and % */
     int                     iExpDisplay;    /* robed's extended exp-display */
-    uint8                 kerbholz;       /* use kill stats */
+    int                   kerbholz;       /* use kill stats */
     int                     msglog;         /* log-options */
-    uint8                 playerdoll;
-    uint8                 statometer;
+    int                   playerdoll;
+    int                   statometer;
     int                     statsupdate;
-    uint8                 showqc;
+    int                   showqc;
     int                     itemdmg_limit_orange;
     int                     itemdmg_limit_red;
-    uint8                 shoutoff;
+    int                   shoutoff;
     int                     menu_repeat;
 #ifdef WIDGET_SNAP
     int                     widget_snap;
@@ -233,43 +233,43 @@ typedef struct _options
     int                     keyword_panel;
 
     /* Debug */
-    uint8                 force_redraw;
-    uint8                 show_frame;         /* true: show frame rate */
-    uint8                 use_gl;
+    int                   force_redraw;
+    int                   show_frame;         /* true: show frame rate */
+    int                   use_gl;
     int                     sleep;
-    uint8                 limit_speed;
+    int                   limit_speed;
     int                     speedup;
-    uint8                 auto_bpp_flag;
-    uint8                 use_rect;
+    int                   auto_bpp_flag;
+    int                   use_rect;
 
     /* Fullscreen Flags */
-    uint8                 Full_HWSURFACE;
-    uint8                 Full_SWSURFACE;
-    uint8                 Full_HWACCEL;
-    uint8                 Full_DOUBLEBUF;
-    uint8                 Full_ANYFORMAT;
-    uint8                 Full_ASYNCBLIT;
-    uint8                 Full_HWPALETTE;
-    uint8                 Full_RESIZABLE;
-    uint8                 Full_NOFRAME;
-    uint8                 Full_RLEACCEL;
+    int                   Full_HWSURFACE;
+    int                   Full_SWSURFACE;
+    int                   Full_HWACCEL;
+    int                   Full_DOUBLEBUF;
+    int                   Full_ANYFORMAT;
+    int                   Full_ASYNCBLIT;
+    int                   Full_HWPALETTE;
+    int                   Full_RESIZABLE;
+    int                   Full_NOFRAME;
+    int                   Full_RLEACCEL;
 
     /* Windowed flags */
-    uint8                 Win_HWSURFACE;
-    uint8                 Win_SWSURFACE;
-    uint8                 Win_HWACCEL;
-    uint8                 Win_DOUBLEBUF;
-    uint8                 Win_ANYFORMAT;
-    uint8                 Win_ASYNCBLIT;
-    uint8                 Win_HWPALETTE;
-    uint8                 Win_RESIZABLE;
-    uint8                 Win_NOFRAME;
-    uint8                 Win_RLEACCEL;
+    int                   Win_HWSURFACE;
+    int                   Win_SWSURFACE;
+    int                   Win_HWACCEL;
+    int                   Win_DOUBLEBUF;
+    int                   Win_ANYFORMAT;
+    int                   Win_ASYNCBLIT;
+    int                   Win_HWPALETTE;
+    int                   Win_RESIZABLE;
+    int                   Win_NOFRAME;
+    int                   Win_RLEACCEL;
 
     /* INTERN FLAGS - Setup depends on option settings and selected mode */
-    uint8                 fullscreen_flag;      /* we are in fullscreen mode */
-    uint8                 doublebuf_flag;       /* we doublebuf */
-    uint8                 rleaccel_flag;
+    int                   fullscreen_flag;      /* we are in fullscreen mode */
+    int                   doublebuf_flag;       /* we doublebuf */
+    int                   rleaccel_flag;
     int                     no_meta;
     Uint8                   used_video_bpp;
     Uint8                   real_video_bpp;
@@ -281,12 +281,12 @@ typedef struct _options
     int                     cli_server;
     char                    cli_addons[HUGE_BUF];
 
-    uint8                 firststart;
-    uint8                 sleepcounter;
+    int                   firststart;
+    int                   sleepcounter;
     int                     anim_frame_time;
     int                     anim_check_time;
 
-    uint8                 grid;
+    int                   grid;
 }
 _options;
 
