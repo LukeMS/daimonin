@@ -644,7 +644,7 @@ void load_options_dat(void)
                     txtwin[TW_CHAT].size=atoi(line+4);
                     break;
             }
-            break;
+            continue;
         }
         i = 0;
         while (line[i] && line[i] != ':')
