@@ -77,10 +77,6 @@ CommArray_s Commands[] =
     {"mapinfo",       command_mapinfo,        0.0f, 1},
     {"motd",          command_motd,           0.0f, 0},
     {"time",          command_time,           1.0f, 0},
-/* This will be moved to a help category (/help version) and thus eventually
- * handled client-side.
- * -- Smacky 20090613 */
-    {"version",       command_version,        0.0f, 0},
     {"help",          command_help,           0.0f, 0},
     {"save",          command_save,           0.0f, 1},
     {"use_skill",     command_uskill,         0.1f, 1},

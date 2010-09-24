@@ -680,6 +680,36 @@ static uint8 CommandCheck(char *cmd, char *params)
         return 1;
     }
 #endif
+    else if (!stricmp(cmd, "/version"))
+    {
+        PHYSFS_File *handle;
+        char         buf[TINY_BUF];
+ 
+        sprintf(buf, "update/version");
+        LOG(LOG_MSG, "Trying to read %s... ", buf);
+
+        if (!(handle = PHYSFS_openRead(buf)))
+        {
+            LOG(LOG_ERROR, "FAILED: %s!\n", PHYSFS_getLastError());
+            sprintf(buf, "UNKNOWN!");
+        }
+        else if (PHYSFS_readString(handle, buf, sizeof(buf)) < 0)
+        {
+            LOG(LOG_ERROR, "FAILED: Empty file?!\n");
+            sprintf(buf, "UNKNOWN!");
+        }
+            
+        textwin_showstring(COLOR_WHITE, "~Client version~: %u.%u.%u / %u (%s)",
+                           DAI_VERSION_RELEASE, DAI_VERSION_MAJOR,
+                           DAI_VERSION_MINOR, PROTOCOL_VERSION, buf);
+        textwin_showstring(COLOR_WHITE, "~Server version~: %u.%u.%u / %u",
+                           options.server_version_release,
+                           options.server_version_major,
+                           options.server_version_minor,
+                           options.server_protocol);
+
+        return 1;
+    }
 
     return 0;
 }

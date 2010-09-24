@@ -181,7 +181,6 @@ int                         command_dumpmap(object *op, char *params);
 int                         command_dumpallmaps(object *op, char *params);
 #endif
 int                         command_printlos(object *op, char *params);
-int                         command_version(object *op, char *params);
 void                        bug_report(char *reportstring);
 int                         command_listen(object *op, char *params);
 int                         command_statistics(object *pl, char *params);
