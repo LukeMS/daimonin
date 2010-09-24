@@ -218,9 +218,14 @@ void SetupCmd(char *buf, int len)
 
                 return;
             }
-            else if (rel != DAI_VERSION_RELEASE ||
-                     (rel == DAI_VERSION_RELEASE &&
-                      maj != DAI_VERSION_MAJOR))
+
+            options.server_version_release = rel;
+            options.server_version_major = maj;
+            options.server_version_minor = min;
+
+            if (rel != DAI_VERSION_RELEASE ||
+                (rel == DAI_VERSION_RELEASE &&
+                 maj != DAI_VERSION_MAJOR))
             {
                 textwin_showstring(COLOR_RED, "Mismatched x.y versions (server: %u.%u, client: %u.%u)!",
                                    rel, maj, DAI_VERSION_RELEASE,
@@ -255,9 +260,11 @@ void SetupCmd(char *buf, int len)
         }
         else if (!strcmp(cmd, "pv"))
         {
-            unsigned int pv;
+            uint32 pv = (uint32)strtoul(param, NULL, 10);
+ 
+            options.server_protocol = pv;
 
-            if ((pv = (unsigned int)strtoul(param, (char **)NULL, 10)) != PROTOCOL_VERSION)
+            if (pv != PROTOCOL_VERSION)
             {
                 char tmpbuf[TINY_BUF];
 

@@ -276,6 +276,11 @@ typedef struct _options
     uint32                  videoflags_full;
     uint32                  videoflags_win;
 
+    uint32                  server_version_release;
+    uint32                  server_version_major;
+    uint32                  server_version_minor;
+    uint32                  server_protocol;
+
     char                    cli_account[TINY_BUF];
     char                    cli_pass[TINY_BUF];
     int                     cli_server;
