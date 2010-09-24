@@ -28,9 +28,8 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include "object/object.h"
 #include "object/object_element.h"
 
-///
-/// This singleton class handles all interactive objects.
-/// For non-interactive object the TileManager is used.
+/// @brief This singleton class handles all interactive objects.
+/// @details
 class ObjectManager
 {
 public:
@@ -108,6 +107,7 @@ public:
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
+    /// @brief Get the pointer to this class.
     static ObjectManager &getSingleton()
     {
         static ObjectManager Singleton; return Singleton;
@@ -118,8 +118,14 @@ public:
     void update(const Ogre::FrameEvent& evt);
     void mousePressed(Ogre::MovableObject *mob, bool modifier);
     void Event(std::string &name, int action, int id, int val0=0, int val1=0);
-    void setEquipment(std::string &objName, int bone, int type, int itemID, int particleID);
-    void highlightObject(Ogre::MovableObject *mob, bool highlight);
+    void setEquipment(std::string &objName, int bone, int itemID, int particleID);
+    void setAnimation(std::string &objName,int animGroup, int animNr, bool loop = false, bool force = false, bool random = false, bool freezeLastFrame = false);
+
+    /// @brief Highlights the given object.
+    /// @details Only 1 object can be highlighted at the same time.
+    /// @param mob Switch on highlighting on the given mob, or (if 0) switch off highlighting.
+    void highlightObject(Ogre::MovableObject *mob);
+
 //    void shoot(int missle, ObjectNPC *srcMob, ObjectNPC *dstMob);
 /*
     void readyPrimaryWeapon(int npc, bool ready)
@@ -189,7 +195,7 @@ public:
     void targetObjectAttackNPC(int npcIndex); // just a hack. Server will handle this.
 */
     void setAvatarName(std::string &name) { mAvatarName = name;}
-    std::string getAvatarName() { return mAvatarName;}
+    const std::string getAvatarName() const { return mAvatarName;}
     const Ogre::Vector3 getAvatarPos();
 
 private:
@@ -200,7 +206,6 @@ private:
 //    std::vector<ObjectMissile*> mvMissile;
     int mSelectedType, mSelectedObject;
     Ogre::Vector3 mSelectedPos;
-
     std::string mAvatarName;
     std::map<std::string, class Object*> mObjectMap;
     Ogre::SceneManager *mSceneManager;
@@ -208,11 +213,14 @@ private:
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
+    /// @brief Default constructor.
     ObjectManager() {}
+
+    /// @brief Default destructor.
     ~ObjectManager();
+
     ObjectManager(const ObjectManager&);            ///< disable copy-constructor.
     ObjectManager &operator=(const ObjectManager&); ///< disable assignment operator.
-    void extractObject(Ogre::MovableObject *mob);
 
     /// @brief Get the object by its name.
     /// @details

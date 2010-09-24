@@ -24,20 +24,42 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #ifndef OBJECT_ELEMENT_AVATAR_H
 #define OBJECT_ELEMENT_AVATAR_H
 
-#include "item.h"
+#include "object/object.h"
+//#include "item.h"
+//#define INVITEMBELOWXLEN 8
+//#define INVITEMBELOWYLEN 1
+//#define INVITEMXLEN 7
+//#define INVITEMYLEN 3
 
-#define INVITEMBELOWXLEN 8
-#define INVITEMBELOWYLEN 1
-#define INVITEMXLEN 7
-#define INVITEMYLEN 3
-
-/**
- ** This singleton class is the final object class.
- ** It handles additional functions like weapon and equipment changes.
- *****************************************************************************/
-class ObjectElementAvatar
+/// @brief This class handles the avatar specific functions.
+/// @details
+class ObjectElementAvatar  : public ObjectElement
 {
 public:
+    // ////////////////////////////////////////////////////////////////////
+    // Variables / Constants.
+    // ////////////////////////////////////////////////////////////////////
+
+    // ////////////////////////////////////////////////////////////////////
+    // Functions.
+    // ////////////////////////////////////////////////////////////////////
+    /// @brief Default constructor.
+    ObjectElementAvatar(Object *parent);
+
+    /// @brief Default destructor.
+    ~ObjectElementAvatar();
+
+    /// @brief Get the familyID of the element.
+    Object::familyID getFamilyID() const
+    {
+        return Object::FAMILY_ANIMATE3D;
+    }
+
+    /// @brief Update this element.
+    /// @param event Ogre frame event. Used to get time since last frame.
+    bool update(const Ogre::FrameEvent &event);
+
+private:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
@@ -130,19 +152,8 @@ public:
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    //virtual Object::familyID getFamilyID() const { return Object::FAMILY_AVATAR; }
-private:
-    // ////////////////////////////////////////////////////////////////////
-    // Variables / Constants.
-    // ////////////////////////////////////////////////////////////////////
-
-    // ////////////////////////////////////////////////////////////////////
-    // Functions.
-    // ////////////////////////////////////////////////////////////////////
-    ObjectElementAvatar();
-    ~ObjectElementAvatar() {}
-    ObjectElementAvatar(const ObjectElementAvatar&);            /**< disable copy-constructor. **/
-    ObjectElementAvatar &operator=(const ObjectElementAvatar&); /**< disable assignment operator. **/
+    ObjectElementAvatar(const ObjectElementAvatar&);            ///< disable copy-constructor.
+    ObjectElementAvatar &operator=(const ObjectElementAvatar&); ///< disable assignment operator.
 };
 
 #endif

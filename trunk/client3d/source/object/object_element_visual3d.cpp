@@ -52,6 +52,7 @@ ObjectElementVisual3d::ObjectElementVisual3d(Object *parent, SceneManager *scene
 //================================================================================================
 ObjectElementVisual3d::~ObjectElementVisual3d()
 {
+    PROFILE()
     for (int i = mNode->numAttachedObjects()-1; i>=0; --i)
         mNode->getCreator()->destroyMovableObject(mNode->getAttachedObject(i));
 }
@@ -89,7 +90,6 @@ Ogre::Entity *ObjectElementVisual3d::createEntity(String nickName, const char *m
     blob->setQueryFlags(0);
     blob->setRenderQueueGroup(RENDER_QUEUE_6); // see OgreRenderQueue.h
     mNode->attachObject(blob);
-    //attachParticle( "Particle/SwordGlow"); //Just for Testing.
     // ////////////////////////////////////////////////////////////////////
     // If the entity can be animated, return the entity for adding the animation element.
     // ////////////////////////////////////////////////////////////////////
@@ -138,6 +138,7 @@ void ObjectElementVisual3d::setPosition(Vector3 pos, Real facing)
 //================================================================================================
 void ObjectElementVisual3d::updateYPos()
 {
+    PROFILE()
     mTilePos.y = TileManager::getSingleton().getTileHeight((int)mTilePos.x, (int)mTilePos.z);
     mNode->setPosition(mTilePos);
 }
@@ -170,12 +171,8 @@ bool ObjectElementVisual3d::update(const Ogre::FrameEvent &event)
 {
     PROFILE()
     Vector3 pos = mNode->getPosition();
-    // ////////////////////////////////////////////////////////////////////
-    // Avatar specific code.
-    // ////////////////////////////////////////////////////////////////////
     if (mWalkDirection)
     {
-        //mEnemyObject = 0; // We are no longer looking at the enemy.
         Real distance = event.timeSinceLastFrame * WALK_SPEED * mWalkDirection;
         mTilePos.x+= Math::Sin(Degree(mFacing)) * distance;
         mTilePos.z+= Math::Cos(Degree(mFacing)) * distance;
@@ -184,15 +181,11 @@ bool ObjectElementVisual3d::update(const Ogre::FrameEvent &event)
     }
     if (mTurnDirection)
     {
-        //mEnemyObject = 0; // We are no longer looking at the enemy.
         mNode->yaw(Degree(event.timeSinceLastFrame * TURN_SPEED * mTurnDirection));
         mFacing += Degree(event.timeSinceLastFrame * TURN_SPEED * mTurnDirection);
         if (mFacing.valueDegrees() >= 360.0f) mFacing -= Degree(360.0f);
         if (mFacing.valueDegrees() <    0.0f) mFacing += Degree(360.0f);
     }
-    // ////////////////////////////////////////////////////////////////////
-    // Done.
-    // ////////////////////////////////////////////////////////////////////
     return true;
 }
 
@@ -208,13 +201,12 @@ bool ObjectElementVisual3d::setMapScroll(int deltaX, int deltaZ)
         mTilePos.z += deltaZ * TileManager::TILE_RENDER_SIZE;
         // if (outside the map range) return false; // Delete outranged objects.
         mNode->setPosition(mTilePos);
-        //if (mActHP <=0) mNode->translate(Vector3(0, -mSpawnSize, 0));
     }
     return true;
 }
 
 //================================================================================================
-//
+// Start/stop turning.
 //================================================================================================
 void ObjectElementVisual3d::setTurn(int direction)
 {
@@ -232,8 +224,8 @@ void ObjectElementVisual3d::setMove(int direction)
     if (mElementAnimation)
     {
         if (direction)
-            mElementAnimation->toggleAnimation(ObjectElementAnimate3d::ANIM_GROUP_WALK, 0, true, true);
+            mElementAnimation->setAnimation(ObjectElementAnimate3d::ANIM_GROUP_WALK, 0, true, true);
         else
-            mElementAnimation->toggleAnimation(ObjectElementAnimate3d::ANIM_GROUP_IDLE, 0, true);
+            mElementAnimation->setAnimation(ObjectElementAnimate3d::ANIM_GROUP_IDLE, 0, true);
     }
 }

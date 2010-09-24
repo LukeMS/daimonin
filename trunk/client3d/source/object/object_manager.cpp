@@ -23,19 +23,12 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 
 #include <OgreEntity.h>
 #include <OgreSubEntity.h>
-#include <OgreTechnique.h>
 #include <OgreSceneManager.h>
-#include <OgreRenderTexture.h>
-#include <OgreTextureManager.h>
-#include <OgreMaterialManager.h>
-#include <OgreHardwarePixelBuffer.h>
-#include "option.h"
 #include "logger.h"
 #include "profiler.h"
 #include "sound.h"
 #include "network.h"
 #include "object/object_manager.h"
-#include "object/object_element.h"
 #include "object/object_element_animate3d.h"
 #include "object/object_element_visual3d.h"
 #include "object/object_element_equip3d.h"
@@ -62,6 +55,20 @@ void ObjectManager::init(SceneManager *sceneManager)
 //================================================================================================
 //
 //================================================================================================
+void ObjectManager::freeRecources()
+{
+    PROFILE()
+    for (std::map<std::string, class Object*>::const_iterator i=mObjectMap.begin(); i!=mObjectMap.end(); ++i)
+    {
+        if ((*i).second)
+            delete (*i).second;
+    }
+    mObjectMap.clear();
+}
+
+//================================================================================================
+//
+//================================================================================================
 ObjectManager::~ObjectManager()
 {
     PROFILE()
@@ -72,16 +79,18 @@ ObjectManager::~ObjectManager()
 //================================================================================================
 const Ogre::Vector3 ObjectManager::getAvatarPos()
 {
+    PROFILE()
     ObjectElementVisual3d *element = static_cast<ObjectElementVisual3d*>(mObjectAvatar->getElement(Object::FAMILY_VISUAL3D));
     return element->getPosition();
 }
 
 //================================================================================================
-//
+// Add a creature to the object pool.
 //================================================================================================
 void ObjectManager::addCreature(sObject &obj)
 {
-    Logger::log().headline() << "Add object:";
+    PROFILE()
+    Logger::log().headline() << "Add object (creature):";
     Object *object = new Object();
     mObjectMap.insert(std::pair<std::string, class Object*>(obj.nickName, object));
     ObjectElementVisual3d *objV3d = new ObjectElementVisual3d(object, mSceneManager);
@@ -89,7 +98,8 @@ void ObjectManager::addCreature(sObject &obj)
     if (entityWithSkeleton)
     {
         objV3d->setAnimationElement(new ObjectElementAnimate3d(object, entityWithSkeleton));
-        /*ObjectElementEquip3d *objEquip =*/ new ObjectElementEquip3d(object, entityWithSkeleton);
+        new ObjectElementEquip3d(object, entityWithSkeleton);
+        /*ObjectElementEquip3d *objEquip =*/
     }
     objV3d->setPosition(obj.pos, obj.facing);
     Real spawnSize = 1.0f;
@@ -105,65 +115,6 @@ void ObjectManager::addCreature(sObject &obj)
         objV3d->attachCamera("PlayerCam");
         objV3d->updateYPos();
     }
-    /*
-        mReadyWeaponStatus = 0;
-        mType    = obj.type;
-        mFriendly= obj.friendly;
-        mAttack  = obj.attack;
-        mDefend  = obj.defend;
-        mMaxHP   = obj.maxHP;
-        mActHP   = obj.maxHP;//
-        mMaxMana = obj.maxMana;
-        mActMana = obj.maxMana;
-        mMaxGrace= obj.maxGrace;
-        mActGrace= obj.maxGrace;
-        mBoundingRadius = obj.boundingRadius;
-
-        // ////////////////////////////////////////////////////////////////////
-        // Only players can change equipment.
-        // ////////////////////////////////////////////////////////////////////
-        if (mType == ObjectManager::OBJECT_PLAYER)
-        {
-            mEquip = new ObjectElementVisual3d(mEntity);
-            mEquip->equipItem(ObjectElementVisual3d::BONE_WEAPON_HAND, ObjectElementVisual3d::ITEM_WEAPON, 0, -1);  // Just for test (Sword)
-            //mEquip->equipItem(ObjectElementVisual3d::BONE_SHIELD_HAND, ObjectEquipment::ITEM_WEAPON, 2, -1);  // Just for test (Bow)
-            //mEquip->equipItem(ObjectElementVisual3d::BONE_WEAPON_HAND, ObjectElementVisual3d::ITEM_WEAPON, 0, 0);  // Just for test (Fire Sword)
-            //mEquip->equipItem(ObjectElementVisual3d::BONE_WEAPON_HAND, ObjectElementVisual3d::ITEM_WEAPON, 0, -1);  // Just for test (Sword)
-        }
-
-        // ////////////////////////////////////////////////////////////////////
-        // Attach the blob shadow to the npc.
-        // ////////////////////////////////////////////////////////////////////
-        ManualObject* blob = static_cast<ManualObject*>(Events::getSingleton().getSceneManager()->createMovableObject("Mob_"+ StringConverter::toString(mIndex, 10, '0'), ManualObjectFactory::FACTORY_TYPE_NAME));
-        blob->begin("Material_blob_shadow");
-        const AxisAlignedBox &AABB = mEntity->getBoundingBox();
-        float sizeX = (AABB.getMaximum().x -AABB.getMinimum().x);
-        float sizeY = 0.5f;
-        float sizeZ = (AABB.getMaximum().z -AABB.getMinimum().z);
-        if (sizeX < sizeZ) sizeX = sizeZ;
-        blob->position(-sizeX, sizeY,  sizeX); blob->normal(0,0,1); blob->textureCoord(0.0, 0.0);
-        blob->position( sizeX, sizeY,  sizeX); blob->normal(0,0,1); blob->textureCoord(0.0, 1.0);
-        blob->position(-sizeX, sizeY, -sizeX); blob->normal(0,0,1); blob->textureCoord(1.0, 0.0);
-        blob->position( sizeX, sizeY, -sizeX); blob->normal(0,0,1); blob->textureCoord(1.0, 1.0);
-        blob->triangle(0, 1, 2);
-        blob->triangle(3, 2, 1);
-        blob->end();
-        blob->convertToMesh("Blob_"+ StringConverter::toString(mIndex, 10, '0'));
-        blob->setQueryFlags(0);
-        blob->setRenderQueueGroup(RENDER_QUEUE_6); // see OgreRenderObjectElementVisual3dQueue.h
-        mNode->attachObject(blob);
-
-        setSkinColor(0);
-        mCursorTurning =0;
-        mCursorWalking =0;
-        mAutoTurning = TURN_NONE;
-        mAutoMoving = false;
-        mEnemyObject = 0;
-        mAttacking = ATTACK_NONE;
-        // mNode->showBoundingBox(true); // Remove Me!!!!
-        mOffX =0;
-        mOffZ =0;
-    */
 }
 
 //================================================================================================
@@ -195,6 +146,7 @@ void ObjectManager::syncToMapScroll(int deltaX, int deltaZ)
 //================================================================================================
 Object *ObjectManager::getObject(std::string &name)
 {
+    PROFILE()
     if (name.empty())
         return mObjectAvatar;
     std::map<std::string, class Object*>::const_iterator i= mObjectMap.find(name);
@@ -222,9 +174,9 @@ void ObjectManager::Event(std::string &name, int action, int id, int val1, int v
     }
     if (action == EVT_ANIMATION)
     {
-        ObjectElementAnimate3d *element = static_cast<ObjectElementAnimate3d*>(obj->getElement(Object::FAMILY_ANIMATION3D));
+        ObjectElementAnimate3d *element = static_cast<ObjectElementAnimate3d*>(obj->getElement(Object::FAMILY_ANIMATE3D));
         if (element)
-            element->toggleAnimation(val1, val2);
+            element->setAnimation(val1, val2);
         return;
     }
     /*
@@ -245,61 +197,43 @@ void ObjectManager::Event(std::string &name, int action, int id, int val1, int v
         }
     */
 }
-
+#include "gui/gui_manager.h"
+#include <OgreMaterialManager.h>
 //================================================================================================
-// Highlight the object.
+// Highlight the given object.
 //================================================================================================
-void ObjectManager::highlightObject(MovableObject *mob, bool highlight)
+void ObjectManager::highlightObject(MovableObject *mob)
 {
     PROFILE()
-    /*
-        static String strMaterialBak;
-        static Entity *entity = 0;
-        if (highlight)
-        {
-            if (!mob) return;
-            extractObject(mob);
-            if  (mSelectedType >= OBJECT_NPC)
-            {
-                // If it crashes here, then there is an object without setQueryFlags(0).
-                if (mSelectedObject < 0)
-                {
-                    Logger::log().error() << Logger::ICON_CLIENT << "An object without a defined query flag was found!";
-                    Logger::log().error() << Logger::ICON_CLIENT << "Use setQueryFlags(0) on all objects that needs no mouse picking.";
-                    return;
-                }
-                if (entity || mSelectedObject == ObjectNPC::HERO) return;
-                entity = mvNPC[mSelectedObject]->getEntity();
-                ObjectVisuals::getSingleton().highlight(false, mvNPC[mSelectedObject]->getFriendly(), true);
-            }
-            else
-            {
-                if (entity) return;
-                entity = mvStatic[mSelectedObject]->getEntity();
-                ObjectVisuals::getSingleton().highlight(true, 0, true);
-            }
-            // Set the highlighted material for the model.
-            strMaterialBak = entity->getSubEntity(0)->getMaterialName();
-            MaterialPtr orgMaterial = MaterialManager::getSingleton().getByName(strMaterialBak);
-            MaterialPtr newMaterial = orgMaterial->clone(MATERIAL_HIGHLIGHT);
-            newMaterial->getTechnique(0)->getPass(0)->getTextureUnitState(0)->setColourOperationEx(LBX_MODULATE_X2, LBS_MANUAL, LBS_TEXTURE, ColourValue(1.0, 1.0, 1.0));
-            for (unsigned int i = 0; i < entity->getNumSubEntities(); ++i)
-                entity->getSubEntity(i)->setMaterialName(MATERIAL_HIGHLIGHT);
-            return;
-        }
-        if (!entity) return;
-        for (unsigned int i = 0; i < entity->getNumSubEntities(); ++i)
-            entity->getSubEntity(i)->setMaterialName(strMaterialBak);
-        entity =0;
-        MaterialManager::getSingleton().remove(MATERIAL_HIGHLIGHT);
-        ObjectVisuals::getSingleton().highlight(false, 0, false);
-    */
+    static Entity *highlightedMob = 0;
+    if (mob == highlightedMob) return; // Object is already highlighted.
+    // Switch off the highlighting on the current object.
+    if (highlightedMob)
+    {
+        GuiManager::getSingleton().print(GuiManager::LIST_CHATWIN, "No more highlighting");
+/*
+        for (unsigned int i = 0; i < highlightedMob->getNumSubEntities(); ++i)
+            highlightedMob->getSubEntity(i)->setMaterialName(originalMaterial);
+*/
+        highlightedMob = 0;
+    }
+    // Switch on the highlighting.
+    if (!mob /*|| mob->getName() == getAvatarName()*/) return;
+    highlightedMob = (Entity*)mob;
+    GuiManager::getSingleton().print(GuiManager::LIST_CHATWIN, mob->getName().c_str());
+/*
+    originalMaterial = highlightedMob->getSubEntity(0)->getMaterialName();
+    MaterialPtr newMaterial = ((MaterialPtr)MaterialManager::getSingleton().getByName(originalMaterial))->clone(MATERIAL_HIGHLIGHT);
+    newMaterial->getTechnique(0)->getPass(0)->getTextureUnitState(0)->setColourOperationEx(LBX_MODULATE_X2, LBS_MANUAL, LBS_TEXTURE, ColourValue(1.0, 1.0, 1.0));
+    for (unsigned int i = 0; i < highlightedMob->getNumSubEntities(); ++i)
+        highlightedMob->getSubEntity(i)->setMaterialName(MATERIAL_HIGHLIGHT);
+*/
 }
 
 //================================================================================================
 // Select the (mouse clicked) object.
 //================================================================================================
-void ObjectManager::selectObject(MovableObject *mob)
+void ObjectManager::selectObject(MovableObject * /*mob*/)
 {
     PROFILE()
     /*
@@ -334,7 +268,7 @@ void ObjectManager::selectObject(MovableObject *mob)
 //================================================================================================
 // Mouse button was pressed - lets do the right thing.
 //================================================================================================
-void ObjectManager::mousePressed(MovableObject *mob, bool modifier)
+void ObjectManager::mousePressed(MovableObject * /*mob*/, bool /*modifier*/)
 {
     PROFILE()
     // ////////////////////////////////////////////////////////////////////
@@ -382,69 +316,6 @@ void ObjectManager::mousePressed(MovableObject *mob, bool modifier)
 }
 
 //================================================================================================
-// Extract ObjectType and ObjectNr out of the entity name.
-//================================================================================================
-void ObjectManager::extractObject(MovableObject *mob)
-{
-    PROFILE()
-    /*
-        String strObject = mob->getName();
-        for (mSelectedType=0; mSelectedType < OBJECT_SUM; ++mSelectedType)
-        {
-            if (strObject[0] == *ObjectID[mSelectedType])
-            {
-                mSelectedObject = StringConverter::parseInt(strObject.substr(strObject.find("_")+1, strObject.size()));
-                // ////////////////////////////////////////////////////////////////////
-                // NPC or playe object.
-                // ////////////////////////////////////////////////////////////////////
-                if  (mSelectedType >= OBJECT_NPC)
-                {
-                    int sel =0;
-                    for (std::vector<ObjectNPC*>::iterator i = mvNPC.begin(); i < mvNPC.end(); ++i, ++sel)
-                    {
-                        if ((int)(*i)->getIndex() == mSelectedObject)
-                        {
-                            mSelectedObject = sel;
-                            return;
-                        }
-                    }
-                }
-                // ////////////////////////////////////////////////////////////////////
-                // Static object.
-                // ////////////////////////////////////////////////////////////////////
-                else
-                {
-                    int sel =0;
-                    for (std::vector<ObjectStatic*>::iterator i = mvStatic.begin(); i < mvStatic.end(); ++i, ++sel)
-                    {
-                        if ((int)(*i)->getIndex() == mSelectedObject)
-                        {
-                            mSelectedObject = sel;
-                            return;
-                        }
-                    }
-                }
-            }
-        }
-        Logger::log().error() << Logger::ICON_CLIENT << "Bug in ObjectManager::extractObject(...) : Could not extract object!";
-    */
-}
-
-//================================================================================================
-//
-//================================================================================================
-void ObjectManager::freeRecources()
-{
-    PROFILE()
-    for (std::map<std::string, class Object*>::const_iterator i=mObjectMap.begin(); i!=mObjectMap.end(); ++i)
-    {
-        if ((*i).second)
-            delete (*i).second;
-    }
-    mObjectMap.clear();
-}
-
-//================================================================================================
 //
 //================================================================================================
 /*
@@ -471,7 +342,7 @@ void ObjectManager::targetObjectAttackNPC(int npcIndex)
 //================================================================================================
 //
 //================================================================================================
-void ObjectManager::setEquipment(std::string &objName, int bone, int type, int itemID, int particleID)
+void ObjectManager::setEquipment(std::string &objName, int bone, int itemID, int particleID)
 {
     PROFILE()
     Object *objNPC = getObject(objName);
@@ -479,7 +350,21 @@ void ObjectManager::setEquipment(std::string &objName, int bone, int type, int i
     {
         ObjectElementEquip3d *element = static_cast<ObjectElementEquip3d*>(objNPC->getElement(Object::FAMILY_EQUIP3D));
         if (element)
-            element->equipItem(bone, type, itemID, particleID);
+            element->equipItem(bone, itemID, particleID);
     }
 }
 
+//================================================================================================
+//
+//================================================================================================
+void ObjectManager::setAnimation(std::string &objName, int animGroup, int animNr, bool loop, bool force, bool random, bool freezeLastFrame)
+{
+    PROFILE()
+    Object *objNPC = getObject(objName);
+    if (objNPC)
+    {
+        ObjectElementAnimate3d *element = static_cast<ObjectElementAnimate3d*>(objNPC->getElement(Object::FAMILY_ANIMATE3D));
+        if (element)
+            element->setAnimation(animGroup, animNr, loop, force, random, freezeLastFrame);
+    }
+}

@@ -21,16 +21,40 @@ You should have received a copy of the GNU General Public License along with
 this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
 
-#include "object/object_element_avatar.h"
 #include "logger.h"
 #include "profiler.h"
+#include "object/object_element_avatar.h"
+
+using namespace Ogre;
 
 //================================================================================================
 // Init all static Elemnts.
 //================================================================================================
-ObjectElementAvatar::ObjectElementAvatar()
+
+//================================================================================================
+// Default Constructor.
+//================================================================================================
+ObjectElementAvatar::ObjectElementAvatar(Object *parent): ObjectElement(parent)
 {
     PROFILE()
-
+    parent->addElement(getFamilyID(), this);
 //    RangeFireMode = 0;
 }
+
+//================================================================================================
+// Default Destructor.
+//================================================================================================
+ObjectElementAvatar::~ObjectElementAvatar()
+{
+    PROFILE()
+}
+
+//================================================================================================
+// Update all elements in this object.
+//================================================================================================
+bool ObjectElementAvatar::update(const FrameEvent &/*event*/)
+{
+    PROFILE()
+    return true;
+}
+

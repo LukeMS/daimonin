@@ -21,19 +21,24 @@ You should have received a copy of the GNU General Public License along with
 this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
 
+#include "logger.h"
+#include "profiler.h"
 #include "object/object_element_physical.h"
 
 //================================================================================================
-// Constructor.
+// Default Constructor.
 //================================================================================================
 ObjectElementPhysical::ObjectElementPhysical(class Object *parent):ObjectElement(parent)
 {
+    PROFILE()
+    parent->addElement(getFamilyID(), this);
 }
 
 //================================================================================================
-//
+// Update all elements in this object.
 //================================================================================================
-bool ObjectElementPhysical::update(const Ogre::FrameEvent &event)
+bool ObjectElementPhysical::update(const Ogre::FrameEvent &/*event*/)
 {
+    PROFILE()
     return true;
 }

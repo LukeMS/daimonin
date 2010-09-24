@@ -148,7 +148,6 @@ void Events::checkTileBorderMovement()
     // Player moved over a tile border.
     if (dx || dz)
     {
-        //ParticleManager::getSingleton().pauseAll(true);
         TileManager::getSingleton().scrollMap(dx, dz);
         ObjectManager::getSingleton().syncToMapScroll(dx, dz);
         oldPos = ObjectManager::getSingleton().getAvatarPos()/TileManager::TILE_RENDER_SIZE;
@@ -164,7 +163,6 @@ void Events::checkTileBorderMovement()
                 else if (deltaX <0 && deltaZ==0) strCmd << (char) 6; // e
                 Network::getSingleton().send_command_binary(Network::CLIENT_CMD_MOVE, strCmd);
         */
-        //ParticleManager::getSingleton().pauseAll(false);
     }
 }
 
@@ -624,21 +622,14 @@ bool Events::frameStarted(const FrameEvent& evt)
                 GuiManager::getSingleton().showWindow(GuiManager::WIN_FIRST_STEPS, true);
                 mWindow->resetStatistics();
                 GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Client3d commands:");
-                GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Press ~1 ... 8~ to change cloth.");
-                GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Hold shift for a ranged attack.");
                 GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Press ~!keyg~ for grid. ");
-                GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Press ~!keya~ to change Idle animation.");
-                GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Press ~!keyb~ to change Attack animation.");
-                GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Press ~!keyc~ to change Agility animation.");
-                GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Press ~!keyp~ to ready/unready primary weapon.");
-                GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Press ~!keys~ to ready/unready secondary weapon.");
-                GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Press ~!keyq~ to start attack animation.");
                 GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Press ~PGUP/PGDN~ to rotate camera.");
                 GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Press ~HOME~ to freeze camera rotation.");
                 GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Press ~!keyi~ for Inventory.");
                 GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Example of user defined chars: :( :) :D :P !key-spc");
                 GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "---------------------------------------------------");
                 GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Press ~9~ to (re)load the mask demo!");
+                GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Press ~8~ to change equipment");
                 GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Press ~7~ for grass shader test");
                 GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Press ~6~ for skin shader test");
                 GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "---------------------------------------------------");
@@ -670,12 +661,12 @@ bool Events::frameStarted(const FrameEvent& evt)
                 {
                     // Mouse is over an object.
                     RaySceneQueryResult::iterator itr = result.begin();
-                    ObjectManager::getSingleton().highlightObject(itr->movable, true);
+                    ObjectManager::getSingleton().highlightObject(itr->movable);
                 }
                 else
                 {
                     // Mouse is (no longer) over an object.
-                    ObjectManager::getSingleton().highlightObject(0, false);
+                    ObjectManager::getSingleton().highlightObject(0);
                 }
                 mSceneManager->destroyQuery(mRaySceneQuery);
                 time = Root::getSingleton().getTimer()->getMilliseconds();
