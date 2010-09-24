@@ -267,7 +267,7 @@ int command_who(object *op, char *params)
             }
         }
 
-        new_draw_info(NDI_UNIQUE, 0, op, "%s\n", buf);
+        new_draw_info(NDI_UNIQUE, 0, op, "%s", buf);
     }
 
     it = ip + il + pri; // show whats shown in meta server too, we add login to privacy 
