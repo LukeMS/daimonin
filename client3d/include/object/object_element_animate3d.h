@@ -25,10 +25,11 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #define OBJECT_ELEMENT_ANIMATE3D_H
 
 /// @brief This class handles 3d animation of an object.
+/// @details Every animated model MUST have at least the Idle1 animation.
 /// @todo separate Upper/lower Body animation.
 ///       So it will be possible to walk and shoot arrows at same time
 ///       without generating mixed mode animations.
- class ObjectElementAnimate3d : public ObjectElement
+class ObjectElementAnimate3d : public ObjectElement
 {
 public:
     // ////////////////////////////////////////////////////////////////////
@@ -58,71 +59,91 @@ public:
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
+    /// @brief Default constructor.
     ObjectElementAnimate3d(Object *parent, Ogre::Entity *entity);
+
+    /// @brief Default destructor.
     ~ObjectElementAnimate3d();
-    Object::familyID getFamilyID() const { return Object::FAMILY_ANIMATION3D; }
+
+    /// @brief Get the familyID of the element.
+    Object::familyID getFamilyID() const
+    {
+        return Object::FAMILY_ANIMATE3D;
+    }
+
+    /// @brief Update this element.
+    /// @param event Ogre frame event. Used to get time since last frame.
     bool update(const Ogre::FrameEvent &event);
 
+    /// @brief Does this animation shows a movement?
     bool isMovement() const
     {
         return (mAnimGroup <= ANIM_GROUP_RUN);
     }
+
+    /// @brief Does this animation shows an idle state?
     bool isIdle() const
     {
         return (mAnimGroup <= ANIM_GROUP_IDLE_FUN);
     }
+
+    /// @brief Does this animation shows an attack?
     bool isAttack() const
     {
         return (mAnimGroup == ANIM_GROUP_ATTACK) || (mAnimGroup == ANIM_GROUP_ATTACK_FUN);
     }
+
+    /// @brief Does this animation shows a hit?
     bool isHit() const
     {
         return (mAnimGroup == ANIM_GROUP_HIT);
     }
-    const char *getActiceStateName() const
+
+    /// @brief Get the name of the current animation.
+    const char *getActiveStateName() const
     {
         return mSTATE_NAMES[mAnimGroup];
     }
+
+    /// @brief Get the time left for the current animation.
     Ogre::Real getTimeLeft() const
     {
         return mTimeLeft;
     }
-    Ogre::Real getTimeLeft2() const
-    {
-        return mTimeLeft2;
-    }
+
+    /// @brief Get the number of animations for a given group.
     int getSumAnimsInGroup(int animGroup) const
     {
         return mAnimGroupEntries[animGroup];
     }
-    void pause(bool p);
-    void toggleAnimation(int animGroup, int animNr, bool loop = false, bool force = false, bool random = false, bool freezeLastFrame = false);
-    void toggleAnimation2(int animGroup, int animNr, bool loop = false, bool force = false, bool random = false);
+
+    /// @brief Get the speed of the current animation.
     Ogre::Real getAnimSpeed() const
     {
         return mAnimSpeed;
     }
 
+    /// @brief Set the current animation.
+    void setAnimation(int animGroup, int animNr, bool loop = false, bool force = false, bool random = false, bool freezeLastFrame = false);
+
 private:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
-    int mAnimGroup, mAnimNr;
-    int mAnimGroup2, mAnimNr2;
-    bool mPause;
-    bool mIsAnimated;
-    bool mFreezeLastFrame; /**< false: after current anim is done play idle0, true: last frame of current anim will be freezed. */
-    Ogre::Real mAnimSpeed;
-    Ogre::Real mTimeLeft, mTimeLeft2;
-    Ogre::AnimationState *mActState, *mActState2;
+    Ogre::Real mTimeLeft;  ///< Time left for the current animation.
+    Ogre::Real mAnimSpeed; ///< The current animation speed.
+    int mAnimGroup;        ///< The current animation group number.
+    int mAnimNr;           ///< The current animation number.
+    bool mFreezeLastFrame; ///< False: after current anim is done play idle0, true: last frame of current anim will be freezed.
+    Ogre::AnimationState *mActState;
     std::vector<Ogre::AnimationState*>mAnimState;
     Ogre::uchar mAnimGroupEntries[ANIM_GROUP_SUM];
     static const char *mSTATE_NAMES[ANIM_GROUP_SUM];
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    ObjectElementAnimate3d(const ObjectElementAnimate3d&);            /**< disable copy-constructor. **/
-    ObjectElementAnimate3d &operator=(const ObjectElementAnimate3d&); /**< disable assignment operator. **/
+    ObjectElementAnimate3d(const ObjectElementAnimate3d&);            ///< disable copy-constructor.
+    ObjectElementAnimate3d &operator=(const ObjectElementAnimate3d&); ///< disable assignment operator.
 };
 
 #endif

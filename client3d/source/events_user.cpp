@@ -448,7 +448,7 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
             //ObjectManager::getSingleton().toggleMesh(OBJECT_PLAYER, BONE_HEAD, 1);
             static int toggle1 = 0, toggle2 = 0;
             String name = ObjectManager::getSingleton().getAvatarName();
-            ObjectManager::getSingleton().setEquipment(name, ObjectElementEquip3d::BONE_WEAPON_HAND, ObjectElementEquip3d::ITEM_WEAPON, toggle1, toggle1<0?-1:toggle2);
+            ObjectManager::getSingleton().setEquipment(name, ObjectElementEquip3d::BONE_WEAPON_HAND, toggle1, toggle1<0?-1:toggle2);
             if (++toggle1 >1)
             {
                 toggle1 = -1; // Item

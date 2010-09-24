@@ -27,15 +27,25 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include "object/object.h"
 #include "object/object_element.h"
 
+/// @brief This class handles all physical stuff (live, mana, grace, etc) of an object.
+/// @details
 class ObjectElementPhysical: public ObjectElement
 {
 public:
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
+    /// @brief Default constructor.
     ObjectElementPhysical(Object *parent);
+
+    /// @brief Default destructor.
     ~ObjectElementPhysical() {}
+
+    /// @brief Get the familyID of the element.
     Object::familyID getFamilyID() const { return Object::FAMILY_PHYSICAL; }
+
+    /// @brief Update this element.
+    /// @param event Ogre frame event. Used to get time since last frame.
     bool update(const Ogre::FrameEvent &event);
 
 private:
@@ -46,8 +56,8 @@ private:
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    ObjectElementPhysical(const ObjectElementPhysical&);            /**< disable copy-constructor. **/
-    ObjectElementPhysical &operator=(const ObjectElementPhysical&); /**< disable assignment operator. **/
+    ObjectElementPhysical(const ObjectElementPhysical&);            ///< disable copy-constructor.
+    ObjectElementPhysical &operator=(const ObjectElementPhysical&); ///< disable assignment operator.
 };
 
 #endif

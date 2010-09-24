@@ -1,3 +1,4 @@
+/*
 //================================================================================================
 // Vertex Program (NPC)
 //================================================================================================
@@ -17,7 +18,7 @@ void MainVP_NPC(
 
 //================================================================================================
 // Fragment Program (NPC)
-// This is used to vary tbe skin color of a NPC.
+// This is used to vary the skin color of a NPC.
 //================================================================================================
 float4 MainFP_NPC(
     float2 uv0     : TEXCOORD0,
@@ -27,4 +28,59 @@ float4 MainFP_NPC(
 {
     float4 color = tex2D(texture0, uv0);
     return lerp(color, tex2D(texture0, colorIdx), color.a);
+}
+*/
+//================================================================================================
+// Vertex Program (NPC)
+//================================================================================================
+void MainVP_NPC(
+    float4 inPos : POSITION,
+    float2 inUV  : TEXCOORD0,
+    out float4 outPos     : POSITION,
+    out float2 outUV      : TEXCOORD0,
+    uniform float4x4 worldViewProj)
+{
+    outUV  = inUV;
+    outPos = mul(worldViewProj, inPos);
+}
+
+//================================================================================================
+// Fragment Program (NPC)
+// This is used to vary the skin color of a NPC.
+//================================================================================================
+float4 MainFP_NPC(
+    float2 uv0     : TEXCOORD0,
+    uniform sampler2D texture0
+    ) : COLOR
+{
+    float4 texColor = tex2D(texture0, uv0);
+
+    ////////////////////////////////////////////////////////////////////////////////////////
+    // Skin color.
+    ////////////////////////////////////////////////////////////////////////////////////////
+    float4 color = texColor.b * float4(0.71f, 0.53f, 0.35f, 1.00f);      // Skin color.
+
+    ////////////////////////////////////////////////////////////////////////////////////////
+    // Shading. Darkens the texture.
+    // Uncomment 1 of the lines below to see which one is better.
+    ////////////////////////////////////////////////////////////////////////////////////////
+//  color-= float4(1.00f,  1.00f,  1.00f, 1.00f) * texColor.a;           // Shading color.
+//  color = lerp(color, float4(0.0f, 0.0f, 0.0f, 1.0f), texColor.a);     // Shading color.
+
+    ////////////////////////////////////////////////////////////////////////////////////////
+    // Blood. One line below is for a wounded player, the other for a healty one.
+    // Uncomment 1 of the lines below to use the wanted effect.
+    //
+    // Only 1.0 or -1.0 are allowed for the blood color values (R/G/B)!
+    // 1: Blood contains of this color part (R/G/B).
+    //-1: Blood has none of this color part (R/G/B).
+    ////////////////////////////////////////////////////////////////////////////////////////
+    color += float4(1.00f, -1.00f, -1.00f, 1.00f) * texColor.r;          // Bloody.
+//    color += float4(0.00f,  0.00f,  0.00f, 1.00f) * texColor.r;          // Healty.
+
+    ////////////////////////////////////////////////////////////////////////////////////////
+    // Underwear.
+    ////////////////////////////////////////////////////////////////////////////////////////
+    color = lerp(color, float4(0.00f, 0.00f, 1.00f, 1.00f), texColor.g); // Underwear color.
+    return color;
 }

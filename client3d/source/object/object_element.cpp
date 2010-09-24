@@ -26,14 +26,14 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 // todo: only store values if they differ from the default one (copy on write).
 
 //================================================================================================
-// Init the model from the description file.
+// Default Constructor.
 //================================================================================================
 ObjectElement::ObjectElement(Object *parent):mParent(parent)
 {
 }
 
 //================================================================================================
-// Destructor.
+// Default Destructor.
 //================================================================================================
 ObjectElement::~ObjectElement()
 {

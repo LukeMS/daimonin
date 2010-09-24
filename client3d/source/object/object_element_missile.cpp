@@ -21,47 +21,25 @@ You should have received a copy of the GNU General Public License along with
 this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
 
-#include <OgreSceneManager.h>
 #include "logger.h"
 #include "profiler.h"
-#include "option.h"
-#include "object/object_manager.h"
 #include "object/object_element_missile.h"
-#include "sound.h"
 
 using namespace Ogre;
-/*
+
 //================================================================================================
 // Init all static Elemnts.
 //================================================================================================
-SceneManager *ObjectMissile::msSceneMgr =0;
-unsigned int ObjectMissile::msUnique =0;
 
 //================================================================================================
-// Free all recources.
+// Default Constructor.
 //================================================================================================
-void ObjectMissile::freeRecources()
+ObjectMissile::ObjectMissile(Object *parent, int /*type*/, SceneNode * /*srcNode*/, SceneNode * /*dstNode*/) : ObjectElement(parent)
 {
     PROFILE()
-}
-
-//================================================================================================
-// Destructor.
-//================================================================================================
-ObjectMissile::~ObjectMissile()
-{
-    PROFILE()
-    //delete particles;
-    mNode->getParentSceneNode()->removeAndDestroyChild(mNode->getName());
-}
-
-//================================================================================================
-// Init the object.
-//================================================================================================
-ObjectMissile::ObjectMissile(int type, ObjectNPC *srcMob, ObjectNPC *dstMob)
-{
-    PROFILE()
+    parent->addElement(getFamilyID(), this);
     // Create a missle.
+/*
     mType = type;
     mNode = Events::getSingleton().getSceneManager()->getRootSceneNode()->createChildSceneNode();
     Entity *mEntity = Events::getSingleton().getSceneManager()->createEntity(
@@ -81,13 +59,26 @@ ObjectMissile::ObjectMissile(int type, ObjectNPC *srcMob, ObjectNPC *dstMob)
 
     // If we use ballistic depends on the missle type.
     mHasBallistic = false;
+*/
 }
+
+//================================================================================================
+// Destructor.
+//================================================================================================
+ObjectMissile::~ObjectMissile()
+{
+    PROFILE()
+    //delete particles;
+    //mNode->getParentSceneNode()->removeAndDestroyChild(mNode->getName());
+}
+
 
 //================================================================================================
 // Update object.
 //================================================================================================
-bool ObjectMissile::update(const FrameEvent& event)
+bool ObjectMissile::update(const FrameEvent &/*event*/)
 {
+/*
     PROFILE()
     if (mHasBallistic)
     {
@@ -101,6 +92,7 @@ bool ObjectMissile::update(const FrameEvent& event)
     {
         return false;
     }
+*/
     return true;
 }
-*/
+

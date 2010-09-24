@@ -21,13 +21,14 @@ You should have received a copy of the GNU General Public License along with
 this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
 
-#ifndef OBJ_NISSLE_H
-#define OBJ_NISSLE_H
+#ifndef OBJECT_ELEMENT_MISSLE_H
+#define OBJECT_ELEMENT_MISSLE_H
 
-/**
- ** This class handles all ranged weapon objects.
- *****************************************************************************/
-class ObjectMissile
+#include "object/object.h"
+
+/// @brief This class handles 3d projectiles from ranged weapons.
+/// @details
+class ObjectMissile : public ObjectElement
 {
 public:
     // ////////////////////////////////////////////////////////////////////
@@ -35,26 +36,27 @@ public:
     // ////////////////////////////////////////////////////////////////////
     typedef enum { DART, ARROW, BOLT, SHURIKEN, SPEAR, BOOMERANG, } enumType;
     typedef enum { FIRE, ICE, POISON,  } enumParticle;
-    typedef struct
-    {
-        unsigned int index;
-        enumType     type;
-        enumParticle particle;
-        Ogre::String meshName;
-        Ogre::Real facing;
-        int maxDamage;
-        int minDamage;
-    }
-    sObject;
 
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
+    /// @brief Default constructor.
+    ObjectMissile(Object *parent, int type, Ogre::SceneNode *srcNode, Ogre::SceneNode *dstNode);
+
+    /// @brief Default destructor.
+    ~ObjectMissile();
+
+    /// @brief Get the familyID of the element.
+    Object::familyID getFamilyID() const
+    {
+        return Object::FAMILY_MISSILE3D;
+    }
+
+    /// @brief Update this element.
+    /// @param event Ogre frame event. Used to get time since last frame.
+    bool update(const Ogre::FrameEvent &event);
 /*
     ObjectMissile(int type, ObjectNPC *src, ObjectNPC *dst);
-    ~ObjectMissile();
-    Object::familyID getFamilyID() const { return Object::FAMILY_MISSILE; }
-    bool update(const Ogre::FrameEvent& event);
     const Ogre::Vector3 &getPosition()
     {
         return mNode->getPosition();
@@ -71,11 +73,23 @@ public:
     {
         return mIndex;
     }
-
+*/
 private:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
+    typedef struct
+    {
+        unsigned int index;
+        enumType     type;
+        enumParticle particle;
+        Ogre::String meshName;
+        Ogre::Real facing;
+        int maxDamage;
+        int minDamage;
+    }
+    sObject;
+/*
     static Ogre::SceneManager *msSceneMgr;
     static unsigned int msUnique;
     unsigned int mIndex;
@@ -92,8 +106,8 @@ private:
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    ObjectMissile(const ObjectMissile&);            /**< disable copy-constructor. **/
-    ObjectMissile &operator=(const ObjectMissile&); /**< disable assignment operator. **/
+    ObjectMissile(const ObjectMissile&);            ///< disable copy-constructor.
+    ObjectMissile &operator=(const ObjectMissile&); ///< disable assignment operator.
 };
 
 #endif

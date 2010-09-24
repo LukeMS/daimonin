@@ -26,30 +26,14 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 
 #include "object/object_element.h"
 
-/**
- ** This class handles all equipment of an object like weapon, armour, etc.
- ** Equipment supports particle-effects and color change of the bodyparts.
- *****************************************************************************/
+/// @brief This class handles all 3d equipment of an object.
+/// @details Every bone in the skeleton can attach a single mesh item with or without an additional particleSystem.
 class ObjectElementEquip3d: public ObjectElement
 {
 public:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
-    enum
-    {
-        PARTICLE_FX_FIRE,
-        PARTICLE_FX_SUM
-    };
-    enum
-    {
-        ITEM_WEAPON,
-        ITEM_ARMOR_SHIELD,
-        ITEM_ARMOR_HEAD,
-        ITEM_ARMOR_BODY,
-        ITEM_ARMOR_LEGS,
-        ITEM_SUM
-    };
     enum
     {
         BONE_PELVIS,
@@ -71,12 +55,27 @@ public:
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
+    /// @brief Default constructor.
     ObjectElementEquip3d(Object *parent, Ogre::Entity *entity);
+
+    /// @brief Default destructor.
     ~ObjectElementEquip3d();
+
+    /// @brief Get the familyID of the element.
     Object::familyID getFamilyID() const { return Object::FAMILY_EQUIP3D; }
+
+    /// @brief Update this element.
+    /// @param event Ogre frame event. Used to get time since last frame.
     bool update(const Ogre::FrameEvent &event);
+
+    /// @brief Removes an item from the given bone.
     void dropItem(int bone);
-    void equipItem(unsigned int bone, int type, int itemID, int particleID =-1);
+
+    /// @brief Append an item to the given bone.
+    /// @param bone       The bone to append the item.
+    /// @param itemID     The id of the item.
+    /// @param particleID The id of the particleSystem or -1 for none.
+    void equipItem(unsigned int bone, int itemID, int particleID =-1);
 
 private:
     // ////////////////////////////////////////////////////////////////////

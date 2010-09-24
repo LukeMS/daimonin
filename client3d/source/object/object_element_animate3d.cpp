@@ -21,22 +21,18 @@ You should have received a copy of the GNU General Public License along with
 this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
 
-#include "option.h"
+#include <OgreEntity.h>
+#include <OgreAnimation.h>
+#include <OgreStringConverter.h>
 #include "logger.h"
 #include "profiler.h"
 #include "object/object.h"
 #include "object/object_element_animate3d.h"
-#include <OgreEntity.h>
-#include <OgreAnimation.h>
-#include <OgreFrameListener.h>
-#include <OgreStringConverter.h>
-#include <OgreSkeletonInstance.h>
 
 using namespace Ogre;
 
-/** IMPORTANT: Every animated model MUST have at least the Idle1 animation. **/
 //=================================================================================================
-// Init all static Elemnts.
+// Init all static Elements.
 //=================================================================================================
 const char *ObjectElementAnimate3d::mSTATE_NAMES[ANIM_GROUP_SUM]=
 {
@@ -57,62 +53,48 @@ const char *ObjectElementAnimate3d::mSTATE_NAMES[ANIM_GROUP_SUM]=
 //=================================================================================================
 // Constructor.
 //=================================================================================================
-ObjectElementAnimate3d::ObjectElementAnimate3d(Object *parent, Entity *entity):ObjectElement(parent)
+ObjectElementAnimate3d::ObjectElementAnimate3d(Object *parent, Entity *entity)
+    : ObjectElement(parent), mAnimSpeed(2), mAnimGroup(-1), mActState(0)
 {
     PROFILE()
     parent->addElement(getFamilyID(), this);
-    mAnimSpeed = 2;
-    mAnimGroup =-1;
-    String strTmp, strGroup;
-    // fill the animation states.
-    int j;
-    int sum =0;
+    // Fill the animation states.
+    int validAnimation =0;
     AnimationStateSet *animSet = entity->getAllAnimationStates();
     for (int i=0; i < ANIM_GROUP_SUM; ++i)
     {
         mAnimGroupEntries[i] =0;
-        strGroup = mSTATE_NAMES[i];
-        j =0;
+        String strGroup = mSTATE_NAMES[i];
+        int j =0;
         while (1)
         {
-            strTmp = strGroup + StringConverter::toString(++j);
+            String strTmp = strGroup + StringConverter::toString(++j);
             if (!animSet->hasAnimationState(strTmp))
                 break;
             mAnimState.push_back(animSet->getAnimationState(strTmp));
             mAnimGroupEntries[i]= j;
-            ++sum;
+            ++validAnimation;
         }
     }
-    // We have a animated mesh, but it has not a single valid name.
-    int invalidAnims = entity->getSkeleton()->getNumAnimations()-sum;
-    if (invalidAnims && !sum)
+    // Not a single animation has a compatible name.
+    if (!validAnimation)
     {
-        Logger::log().list() << Logger::ICON_CLIENT << "Object has no valid animation";
-        mIsAnimated = false;
+        Logger::log().warning() << Logger::ICON_CLIENT << "Object has no valid animations.";
         return;
     }
     // Every skeleton MUST have the Idle1 animation.
     if (!animSet->hasAnimationState("Idle1"))
     {
-        Logger::log().error() << Logger::ICON_CLIENT << "The animation 'Idle1' is missing. No animation will be available.";
-        mIsAnimated = false;
+        Logger::log().warning() << Logger::ICON_CLIENT << "The animation 'Idle1' is missing. No animation will be available.";
         return;
     }
-    mIsAnimated = true;
-    Logger::log().list() << Logger::ICON_CLIENT << "Object has " << entity->getSkeleton()->getNumAnimations() << " animations.";
-    if (invalidAnims)
-    {
-        Logger::log().warning() << Logger::ICON_CLIENT << invalidAnims << " of the animations are invalid.";
-    }
+    Logger::log().info() << Logger::ICON_CLIENT << "Object has " << validAnimation << " supported animations.";
     // Set the init-anim to Idle1.
-    mActState= mAnimState[ANIM_GROUP_IDLE + 0];
-    toggleAnimation(ANIM_GROUP_IDLE, 0, true, true, true);
-
-    mActState2= mAnimState[ANIM_GROUP_IDLE + 0];
-    toggleAnimation2(ANIM_GROUP_IDLE, 0, true, true, true);
+    setAnimation(ANIM_GROUP_IDLE, 0, true, true, true);
 }
+
 //=================================================================================================
-// Constructor.
+// Destructor.
 //=================================================================================================
 ObjectElementAnimate3d::~ObjectElementAnimate3d()
 {
@@ -122,7 +104,7 @@ ObjectElementAnimate3d::~ObjectElementAnimate3d()
 //=================================================================================================
 // Update the animation.
 //=================================================================================================
-bool ObjectElementAnimate3d::update(const FrameEvent& event)
+bool ObjectElementAnimate3d::update(const FrameEvent &event)
 {
     PROFILE()
     mActState->addTime(event.timeSinceLastFrame * mAnimSpeed);
@@ -131,25 +113,15 @@ bool ObjectElementAnimate3d::update(const FrameEvent& event)
     if (mActState->getTimePosition() >= mActState->getLength() && !mActState->getLoop())
     {
         if (mAnimGroup != ANIM_GROUP_DEATH && mFreezeLastFrame == false)
-            toggleAnimation(ANIM_GROUP_IDLE, 0, true, true, true);
+            setAnimation(ANIM_GROUP_IDLE, 0, true, true, true);
     }
-    /*
-        mActState2->addTime(event.timeSinceLastFrame * mAnimSpeed);
-        mTimeLeft2 = mActState->getLength() - mActState->getTimePosition();
-        // if an animation ends -> force the idle animation.
-        if (mActState2->getTimePosition() >= mActState2->getLength() && !mActState2->getLoop())
-        {
-            if (mAnimGroup2 != ANIM_GROUP_DEATH)
-                toggleAnimation2(ANIM_GROUP_IDLE, 0, true, true, true);
-        }
-    */
     return true;
 }
 
 //=================================================================================================
-// Toggle the animation.
+// Stops the old and starts the new animation.
 //=================================================================================================
-void ObjectElementAnimate3d::toggleAnimation(int animGroup, int animNr, bool loop, bool force, bool random, bool freezeLastFrame)
+void ObjectElementAnimate3d::setAnimation(int animGroup, int animNr, bool loop, bool force, bool random, bool freezeLastFrame)
 {
     PROFILE()
     // Is the selected animation already running?
@@ -170,82 +142,16 @@ void ObjectElementAnimate3d::toggleAnimation(int animGroup, int animNr, bool loo
         animNr = 0;
     mAnimNr = animNr;
     // If the previous anim was spawn, we cant use random offsets (because of seamless animations).
-
     if (animGroup == ANIM_GROUP_SPAWN) random = false;
     mAnimGroup = animGroup;
     // Find the anim pos in the anim-vector.
     animGroup =0;
     for (int i=0; i< mAnimGroup; ++i)
-    {
         animGroup+= mAnimGroupEntries[i];
-    }
-    // Set the Animation.
-    mActState->setEnabled(false);
+    if (mActState) mActState->setEnabled(false); // Stop the current animation.
     mActState= mAnimState[animGroup+ animNr];
-
     // Set a random offest for the animation start (prevent synchronous "dancing" of all objects).
-    if (random)
-        mActState->setTimePosition(Math::RangeRandom(0.0, mActState->getLength()));
-    else
-        mActState->setTimePosition(0.0);
-
-    mActState->setEnabled(true);
+    mActState->setTimePosition(random?Math::RangeRandom(0.0f, mActState->getLength()):0.0f);
+    mActState->setEnabled(true); // Start the new animation.
     mActState->setLoop(loop);
-}
-
-//=================================================================================================
-// Toggle the animation.
-//=================================================================================================
-void ObjectElementAnimate3d::toggleAnimation2(int animGroup, int animNr, bool loop, bool force, bool random)
-{
-    PROFILE()
-    if (!mIsAnimated)
-        return;
-    // Is the selected animation already running?
-    if (animGroup == mAnimGroup && animNr == mAnimNr)
-        return;
-    // Dont change a running (none-movement) anim without the force-switch.
-    if (!force && !isMovement())
-        return;
-    // On invalid animGroup choose Idle.
-    if (animGroup >= ANIM_GROUP_SUM || !mAnimGroupEntries[animGroup])
-    {
-        animGroup = ANIM_GROUP_IDLE;
-        loop = true;
-    }
-    // On invalid animNr choose 0.
-    if (animNr >= mAnimGroupEntries[animGroup])
-        animNr = 0;
-    mAnimNr2 = animNr;
-    // If the previous anim was spawn, we cant use random offsets (because of seamless animations).
-
-    if (animGroup == ANIM_GROUP_SPAWN) random = false;
-    mAnimGroup2 = animGroup;
-    // Find the anim pos in the anim-vector.
-    animGroup =0;
-    for (int i=0; i< mAnimGroup2; ++i)
-    {
-        animGroup+= mAnimGroupEntries[i];
-    }
-    // Set the Animation.
-    mActState2->setEnabled(false);
-    mActState2= mAnimState[animGroup+ animNr];
-
-    // Set a random offest for the animation start (prevent synchronous "dancing").
-    if (random)
-        mActState2->setTimePosition(Math::RangeRandom(0.0, mActState2->getLength()));
-    else
-        mActState2->setTimePosition(0.0);
-
-    mActState2->setEnabled(true);
-    mActState2->setLoop(loop);
-}
-
-//=================================================================================================
-// Pause an animation.
-//=================================================================================================
-void ObjectElementAnimate3d::pause(bool p)
-{
-    PROFILE()
-    mActState->setEnabled(!p);
 }

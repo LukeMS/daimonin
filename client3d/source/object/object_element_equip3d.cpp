@@ -25,11 +25,10 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include <OgreSceneManager.h>
 #include <OgreParticleSystem.h>
 #include <OgreStringConverter.h>
-#include "object/object_manager.h"
-#include "object/object_element_equip3d.h"
-#include "sound.h"
 #include "logger.h"
 #include "profiler.h"
+#include "object/object_manager.h"
+#include "object/object_element_equip3d.h"
 
 using namespace Ogre;
 
@@ -51,41 +50,24 @@ static const String boneName[ObjectElementEquip3d::BONE_SUM]=
     "LToes",     "RToes"
 };
 
-static const char *particleName[ObjectElementEquip3d::PARTICLE_FX_SUM]=
+static const char *particleName[]=
 {
     "Particle/SwordGlow"
 };
+static const unsigned int SUM_PARTICLES = sizeof(particleName) / sizeof(char*);
 
 // Todo: use pointer to vector for this. and read meshnames from a xml-file.
-static const char *meshName[][ObjectElementEquip3d::ITEM_SUM]=
+static const char *meshName[]=
 {
-    {
-        // ITEM_WEAPON
-        "Sword_Short_01.mesh",
-        "Mace_Small_01.mesh",
-        "Short_Bow.mesh",
-    },
-    {
-        // ITEM_ARMOR_SHIELD
-        "Shield_Round_01.mesh",
-        "Shield_Round_02.mesh"
-    },
-    {
-        // ITEM_ARMOR_HEAD
-        0,
-        0
-    },
-    {
-        // ITEM_ARMOR_BODY
-        0,
-        0
-    },
-    {
-        // ITEM_ARMOR_LEGS
-        0,
-        0
-    }
+    // ITEM_WEAPON
+    "Sword_Short_01.mesh",
+    "Mace_Small_01.mesh",
+    "Short_Bow.mesh",
+    // ITEM_ARMOR_SHIELD
+    "Shield_Round_01.mesh",
+    "Shield_Round_02.mesh"
 };
+static const unsigned int SUM_ITEM = sizeof(meshName) / sizeof(char*);
 
 //================================================================================================
 // Init the model from the description file.
@@ -123,23 +105,22 @@ bool ObjectElementEquip3d::update(const Ogre::FrameEvent &/*event*/)
 //================================================================================================
 // Adds an item (with optionl particle effects) to a bone.
 //================================================================================================
-void ObjectElementEquip3d::equipItem(unsigned int bone, int type, int itemID, int particleID)
+void ObjectElementEquip3d::equipItem(unsigned int bone, int itemID, int particleID)
 {
     PROFILE()
-    if (bone >= BONE_SUM) return;
-    dropItem(bone);
-    if ((unsigned int)itemID >= ITEM_SUM) return;
     static unsigned long itemIndex =0;
+    if (bone >= BONE_SUM || (unsigned int)itemID >= SUM_ITEM) return;
+    dropItem(bone);
     String tmpName = "Item_" + StringConverter::toString(++itemIndex, 8, '0');
     try
     {
         // Add an entity.
-        mItem[bone].entity= mParentEntity->getParentSceneNode()->getCreator()->createEntity(tmpName, meshName[type][itemID]);
+        mItem[bone].entity= mParentEntity->getParentSceneNode()->getCreator()->createEntity(tmpName, meshName[itemID]);
         mItem[bone].entity->setQueryFlags(ObjectManager::QUERY_MASK_NPC);
         mItem[bone].entity->setRenderQueueGroup(Ogre::RENDER_QUEUE_7);
         mParentEntity->attachObjectToBone(boneName[bone], mItem[bone].entity);
         // Add a particle system.
-        if ((unsigned int)particleID < PARTICLE_FX_SUM)
+        if ((unsigned int)particleID < SUM_PARTICLES)
         {
             mItem[bone].particle = mParentEntity->getParentSceneNode()->getCreator()->createParticleSystem(tmpName+"_p", particleName[particleID]);
             mItem[bone].particle->setBoundsAutoUpdated(false);

@@ -25,31 +25,36 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #define OBJECT_ELEMENT_VISUAL2D_H
 
 #include "object/object.h"
-#include "object/object_element.h"
 
-/**
- ** This class handles the 2d specific part of an object.
- ** Remember that a 3d object has often a 2d component e.g:
- ** - the item gfx of the equipped weapon in the equippment window.
- ** - the face of the creature in the trading window.
- *****************************************************************************/
+/// @brief This class handles the 2d specific part of an object.
+/// @details  Even a 3d object has often a 2d component e.g:
+///           - the item gfx of the equipped weapon in the equippment window.
+///           - the face of the creature in the trading window.
 class ObjectElementVisual2d: public ObjectElement
 {
 public:
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
+    /// @brief Default constructor.
     ObjectElementVisual2d(Object *parent);
+
+    /// @brief Default destructor.
     ~ObjectElementVisual2d() {}
+
+    /// @brief Get the familyID of the element.
     Object::familyID getFamilyID() const { return Object::FAMILY_VISUAL2D; }
+
+    /// @brief Update this element.
+    /// @param event Ogre frame event. Used to get time since last frame.
     bool update(const Ogre::FrameEvent &event);
 
 private:
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    ObjectElementVisual2d(const ObjectElementVisual2d&);            /**< disable copy-constructor. **/
-    ObjectElementVisual2d &operator=(const ObjectElementVisual2d&); /**< disable assignment operator. **/
+    ObjectElementVisual2d(const ObjectElementVisual2d&);            ///< disable copy-constructor.
+    ObjectElementVisual2d &operator=(const ObjectElementVisual2d&); ///< disable assignment operator.
 };
 
 #endif

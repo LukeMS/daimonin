@@ -29,19 +29,23 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include "object/object_element.h"
 
 /// @brief This is the main class for an object.
-/// @details
+/// @details The object stores pointers to a function group (so called family).
+///          Every family can only hold a single element.
+
 class Object
 {
 public:
     typedef enum
     {
-        FAMILY_CONTROLS,    ///< All interactive user controls (mouse, keyboard, etc).
-        FAMILY_EQUIP3D,     ///< Equipment for a 3d object (sword, shoes, etc).
-        FAMILY_VISUAL3D,    ///< Renders a 3d object.
-        FAMILY_ANIMATION3D, ///< Skeleton animation for a 3d object.
-        FAMILY_AVATAR,      ///< All stuff related to your avatar.
-        FAMILY_VISUAL2D,    ///< Renders a 2d object (also 2d graphics of a 3d object).
+        FAMILY_ANIMATE3D,  ///< Skeleton animation for a 3d object.
+        FAMILY_AVATAR,     ///< All stuff related to your avatar.
+        FAMILY_EQUIP3D,    ///< Equipment for a 3d object (sword, shoes, etc).
+        FAMILY_MISSILE3D,  ///< Projectiles from ranged weapons (darts, arrows, etc).
         FAMILY_PHYSICAL,    ///< Physical stats (life, speed, att, def, etc).
+        FAMILY_VISUAL2D,    ///< Renders a 2d object (also 2d graphics of a 3d object).
+        FAMILY_VISUAL3D,   ///< Renders a 3d object.
+        // todo:
+        FAMILY_CONTROLS,    ///< All interactive user controls (mouse, keyboard, etc).
         FAMILY_AI,          ///< Artificial intelligence.
         FAMILY_SKILLS,      ///< Skills of a creature.
         FAMILY_SPELLS,      ///< Spells of a creature.
@@ -54,20 +58,26 @@ public:
     /// @brief Default destructor.
     ~Object();
 
-    /// @brief Get an element of this object.
-    /// @param familyID The type of element.
+    /// @brief Get the element of this family.
+    /// @param familyID Type of the element.
     /// @return A pointer to the element, or 0 when no such element exists.
     class ObjectElement *getElement(familyID id);
 
-    /// @brief Add an element to this object.
+    /// @brief Add the element to the given family.
+    /// @details If this family already holds an element, nothing will be done.
+    /// @param familyID Type of the element.
+    /// @param element The element to be added.
     void addElement(familyID id, class ObjectElement *element);
+
+    /// @brief Removes the element from this object, but doesn't delete the element.
+    /// @param familyID Type of the element.
+    void delElement(familyID id);
 
     /// @brief Update all elements of this object.
     /// @param event Ogre frame event. Used to get time since last frame.
     bool update(const Ogre::FrameEvent &event);
 
 private:
-
     /// @brief All elements are stored in a std::map.
     std::map<familyID, class ObjectElement*> mElementMap;
 };

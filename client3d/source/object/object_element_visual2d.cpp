@@ -21,21 +21,26 @@ You should have received a copy of the GNU General Public License along with
 this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
 
+#include "logger.h"
+#include "profiler.h"
 #include "object/object_element_visual2d.h"
 
 // todo: only store values if they differ from the default one (copy on write).
 
 //================================================================================================
-// Constructor.
+// Default Constructor.
 //================================================================================================
 ObjectElementVisual2d::ObjectElementVisual2d(class Object *parent):ObjectElement(parent)
 {
+    PROFILE()
+    parent->addElement(getFamilyID(), this);
 }
 
 //================================================================================================
-//
+// Update all elements in this object.
 //================================================================================================
-bool ObjectElementVisual2d::update(const Ogre::FrameEvent &event)
+bool ObjectElementVisual2d::update(const Ogre::FrameEvent &/*event*/)
 {
+    PROFILE()
     return true;
 }

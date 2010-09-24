@@ -34,7 +34,7 @@ material NPC_001
             }
             fragment_program_ref FP_NPC {}
             texture_unit { texture Smitty.png }
-            texture_unit { texture Smitty.png }
+            //texture_unit { texture Smitty.png }
         }
     }
 }

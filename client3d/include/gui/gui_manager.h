@@ -226,8 +226,7 @@ public:
     /// @brief Get the pointer to this class.
     static GuiManager &getSingleton()
     {
-        static GuiManager singleton;
-        return singleton;
+        static GuiManager singleton; return singleton;
     }
     void Init(int w, int h, bool createMedia, bool printInfo, const char *pathTxt, const char *pathGfx, const char *pathFonts, const char *pathItems);
     void resizeBuildBuffer(size_t size);

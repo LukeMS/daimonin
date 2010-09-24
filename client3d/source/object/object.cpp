@@ -24,7 +24,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include "object/object.h"
 
 //================================================================================================
-// Destructor.
+// Default Destructor.
 //================================================================================================
 Object::~Object()
 {
@@ -37,7 +37,7 @@ Object::~Object()
 }
 
 //================================================================================================
-// Add an element to this object.
+// Add the element to the given family.
 //================================================================================================
 void Object::addElement(familyID id, class ObjectElement *element)
 {
@@ -45,7 +45,15 @@ void Object::addElement(familyID id, class ObjectElement *element)
 }
 
 //================================================================================================
-// Get the element with the given id.
+// Removes the element from this object, but doesn't delete the element.
+//================================================================================================
+void Object::delElement(familyID id)
+{
+    mElementMap.erase(id);
+}
+
+//================================================================================================
+// Get the element of this family.
 //================================================================================================
 class ObjectElement *Object::getElement(familyID id)
 {
