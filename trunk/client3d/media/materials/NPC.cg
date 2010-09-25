@@ -1,17 +1,18 @@
 //================================================================================================
 // Vertex Program (NPC)
+// Shader profile fp20 is very limited, so we can't optimze this!
 //================================================================================================
 void MainVP_NPC(
-    float4 inPos      : POSITION,
-    float2 inUV       : TEXCOORD0,
-    out float4 outPos : POSITION,
-    out float2 outUV  : TEXCOORD0,
-    out float4 outCSkin,
-    out float4 outCWear,
-    out float4 outCBlood,
-    uniform float4 colorSkin,
-    uniform float4 colorWear,
-    uniform float4 colorBlood,
+    float4 inPos         : POSITION,
+    float2 inUV          : TEXCOORD0,
+    out float4 outPos    : POSITION,
+    out float2 outUV     : TEXCOORD0,
+    out float2 outCSkin  : TEXCOORD1,
+    out float2 outCWear  : TEXCOORD2,
+    out float2 outCBlood : TEXCOORD3,
+    uniform float2 colorSkin  : TEXCOORD1,
+    uniform float2 colorWear  : TEXCOORD2,
+    uniform float2 colorBlood : TEXCOORD3,
     uniform float4x4 worldViewProj)
 {
     outUV  = inUV;
@@ -23,23 +24,20 @@ void MainVP_NPC(
 
 //================================================================================================
 // Fragment Program (NPC)
-// This is used to vary the skin color of a NPC.
+// This is used to vary the skin, wear and blood  color of a NPC.
+// Shader profile fp20 is very limited, so we can't optimze this!
 //================================================================================================
 float4 MainFP_NPC(
     float2 uv0        : TEXCOORD0,
-    float4 colorSkin,
-    float4 colorWear,
-    float4 colorBlood,
+    float2 colorSkin  : TEXCOORD1,
+    float2 colorWear  : TEXCOORD2,
+    float2 colorBlood : TEXCOORD3,
     uniform sampler2D texture0
     ) : COLOR
 {
-    float4 texColor = tex2D(texture0, uv0);
-    ////////////////////////////////////////////////////////////////////////////////////////
-    // Skin color.
-    ////////////////////////////////////////////////////////////////////////////////////////
-    float4 color = texColor.b * colorSkin;      // Skin color.
-    // texColor.a;                              // Shading. Darkens the texture.
-    color = lerp(color, colorWear, texColor.g); // Underwear color.
-    color += texColor.r * colorBlood;           // Blood color.
+    float4 texColor = tex2D(texture0, uv0);                       // Texture.
+    float4 color = texColor.b * tex2D(texture0, colorSkin);       // Skin color.
+    color+= texColor.g * tex2D(texture0, colorWear);              // Underwear color.
+    color = lerp(color, tex2D(texture0, colorBlood), texColor.r); // Blood color.
     return color;
 }
