@@ -24,6 +24,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include <OgreEntity.h>
 #include <OgreSubEntity.h>
 #include <OgreSceneManager.h>
+#include <OgreMaterialManager.h>
 #include "logger.h"
 #include "profiler.h"
 #include "sound.h"
@@ -48,7 +49,7 @@ void ObjectManager::init(SceneManager *sceneManager)
     mSelectedType  =-1;
     mSelectedObject=-1;
     // mSelectedEnemy = false;
-    mAvatarName = "";
+    mAvatarName.clear();
     mSceneManager = sceneManager;
 }
 
