@@ -86,7 +86,7 @@ MESSAGE(STATUS "-> done")
 # define all header and source files
 ############################################################
 set (HEADER_FILES
-  3rdParty/caudio/include/IAudio.h
+  3rdParty/caudio/include/cAudio.h
   3rdParty/caudio/include/IAudioDecoder.h
   3rdParty/caudio/include/IAudioDecoderFactory.h
   3rdParty/caudio/include/IAudioManager.h
@@ -117,7 +117,6 @@ set (HEADER_FILES
   include/gui/gui_manager.h
   include/gui/gui_textout.h
   include/gui/gui_window.h
-  include/define.h
   include/tile/tile_chunk.h
   include/tile/tile_decal.h
   include/tile/tile_atlas.h
@@ -218,9 +217,9 @@ INCLUDE_DIRECTORIES(
 
 #Build the executeable
 IF("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
-  add_executable(client3d ${SOURCE_FILES})
+  add_executable(client3d ${SOURCE_FILES} ${HEADER_FILES})
 ELSE()
-  add_executable(client3d_d ${SOURCE_FILES})
+  add_executable(client3d_d ${SOURCE_FILES} ${HEADER_FILES})
 ENDIF()
 
 MESSAGE(STATUS "############################################################")

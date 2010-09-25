@@ -26,6 +26,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include <OgreRenderWindow.h>
 #include <OgreSceneManager.h>
 #include <OgreTextureManager.h>
+#include <OgreMaterialManager.h>
 #include <OgreStringConverter.h>
 #include "logger.h"
 #include "profiler.h"
@@ -110,13 +111,47 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
 
         case OIS::KC_E:
         {
+            MaterialPtr tmpMaterial = MaterialManager::getSingleton().getByName("NPC_001");
+            if (!tmpMaterial.isNull())
+            {
+                Technique *tech = tmpMaterial->getBestTechnique();
+                if (!tech) tmpMaterial->load();
+                tech = tmpMaterial->getBestTechnique();
+                GpuProgramParametersSharedPtr para = tech->getPass(0)->getVertexProgramParameters();
+                static int i= 0;
+                if (i==0) para->setNamedConstant("colorBlood", Vector4( 1.0f, -1.0f, -1.0f, 1.0f));
+                if (i==1) para->setNamedConstant("colorBlood", Vector4(-1.0f,  1.0f, -1.0f, 1.0f));
+                if (i==2) para->setNamedConstant("colorBlood", Vector4(-1.0f, -1.0f,  1.0f, 1.0f));
+                if (i==3) para->setNamedConstant("colorBlood", Vector4( 1.0f,  1.0f, -1.0f, 1.0f));
+                if (i==4) para->setNamedConstant("colorBlood", Vector4(-1.0f,  1.0f,  1.0f, 1.0f));
+                if (i==5) para->setNamedConstant("colorBlood", Vector4( 1.0f, -1.0f,  1.0f, 1.0f));
+                if (i==6) para->setNamedConstant("colorBlood", Vector4(0.7f, 0.5f, 0.4f, 1.0f));
+                if (++i >6) i=0;
+                //if (para->_findNamedConstantDefinition("colorBlood"))
+            }
             //ObjectManager::getSingleton().Event(OBJECT_PLAYER, EVT_ANIMATION, 0,ObjectElementAnimate3d::STATE_DEATH1);
             break;
         }
 
         case OIS::KC_F:
         {
-            TileManager::getSingleton().updateHeighlightVertexPos(1, 0);
+            MaterialPtr tmpMaterial = MaterialManager::getSingleton().getByName("NPC_001");
+            if (!tmpMaterial.isNull())
+            {
+                Technique *tech = tmpMaterial->getBestTechnique();
+                if (!tech) tmpMaterial->load();
+                tech = tmpMaterial->getBestTechnique();
+                GpuProgramParametersSharedPtr para = tech->getPass(0)->getVertexProgramParameters();
+                static int i= 0;
+                if (i==0) para->setNamedConstant("colorWear", Vector4(0.2f, 0.1f, 0.5f, 1.0f));
+                if (i==1) para->setNamedConstant("colorWear", Vector4(0.4f, 0.2f, 0.4f, 1.0f));
+                if (i==2) para->setNamedConstant("colorWear", Vector4(0.7f, 0.5f, 0.4f, 1.0f));
+                if (i==3) para->setNamedConstant("colorWear", Vector4(0.8f, 0.8f, 1.0f, 1.0f));
+                if (i==4) para->setNamedConstant("colorWear", Vector4(1.0f, 0.3f, 0.3f, 1.0f));
+                if (i==5) para->setNamedConstant("colorWear", Vector4(0.0f, 0.6f, 0.4f, 1.0f));
+                if (++i >5) i=0;
+            }
+            //TileManager::getSingleton().updateHeighlightVertexPos(1, 0);
             /*
             static TextureFilterOptions mFiltering = TFO_BILINEAR;
             static int mAniso = 1;
@@ -140,6 +175,27 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
             MaterialManager::getSingleton().setDefaultTextureFiltering(mFiltering);
             MaterialManager::getSingleton().setDefaultAnisotropy(mAniso);
             */
+            break;
+        }
+
+        case OIS::KC_W:
+        {
+            MaterialPtr tmpMaterial = MaterialManager::getSingleton().getByName("NPC_001");
+            if (!tmpMaterial.isNull())
+            {
+                Technique *tech = tmpMaterial->getBestTechnique();
+                if (!tech) tmpMaterial->load();
+                tech = tmpMaterial->getBestTechnique();
+                GpuProgramParametersSharedPtr para = tech->getPass(0)->getVertexProgramParameters();
+                static int i= 0;
+                if (i==0) para->setNamedConstant("colorSkin", Vector4(0.2f, 0.1f, 0.5f, 1.0f));
+                if (i==1) para->setNamedConstant("colorSkin", Vector4(0.4f, 0.2f, 0.4f, 1.0f));
+                if (i==2) para->setNamedConstant("colorSkin", Vector4(0.6f, 0.0f, 0.5f, 1.0f));
+                if (i==3) para->setNamedConstant("colorSkin", Vector4(0.8f, 0.8f, 1.0f, 1.0f));
+                if (i==4) para->setNamedConstant("colorSkin", Vector4(1.0f, 0.3f, 0.3f, 1.0f));
+                if (i==5) para->setNamedConstant("colorSkin", Vector4(0.0f, 0.6f, 0.4f, 1.0f));
+                if (++i >5) i=0;
+            }
             break;
         }
 
@@ -290,15 +346,6 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
                      send_command("/combat", -1, SC_NORMAL);
                      break;
             */
-            break;
-        }
-
-
-        case OIS::KC_W:
-        {
-            GuiManager::getSingleton().print(GuiManager::LIST_CHATWIN, "Client3d commands:");
-            //Network::getSingleton().send_command("/apply", -1, SC_NORMAL);
-            //GuiManager::getSingleton().addTextline(WIN_TEXTWINDOW, LIST_CHATWIN, "apply");
             break;
         }
 
