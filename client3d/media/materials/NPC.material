@@ -30,9 +30,13 @@ material NPC_001
             vertex_program_ref VP_NPC
             {
                 param_named_auto worldViewProj worldviewproj_matrix
-                param_named_auto skinColor custom 0
+                param_named colorSkin  float4 0.71 0.53 0.35 1.00
+                param_named colorWear  float4 0.00 1.00 0.00 1.00
+                param_named colorBlood float4 1.00 1.00 1.00 1.00
             }
-            fragment_program_ref FP_NPC {}
+            fragment_program_ref FP_NPC
+            {
+            }
             texture_unit { texture Smitty.png }
             //texture_unit { texture Smitty.png }
         }
