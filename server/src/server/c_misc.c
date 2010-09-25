@@ -625,8 +625,6 @@ int command_stealth(object *op, char *params)
 
    if (CONTR(op)->stealth)
    {
-       new_draw_info(NDI_UNIQUE | NDI_ALL, 5, NULL, "%s has entered the game.",
-                            query_name(op));
        CONTR(op)->stealth = 0;
    }
    else
