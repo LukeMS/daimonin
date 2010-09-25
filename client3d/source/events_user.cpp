@@ -119,15 +119,9 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
                 tech = tmpMaterial->getBestTechnique();
                 GpuProgramParametersSharedPtr para = tech->getPass(0)->getVertexProgramParameters();
                 static int i= 0;
-                if (i==0) para->setNamedConstant("colorBlood", Vector4( 1.0f, -1.0f, -1.0f, 1.0f));
-                if (i==1) para->setNamedConstant("colorBlood", Vector4(-1.0f,  1.0f, -1.0f, 1.0f));
-                if (i==2) para->setNamedConstant("colorBlood", Vector4(-1.0f, -1.0f,  1.0f, 1.0f));
-                if (i==3) para->setNamedConstant("colorBlood", Vector4( 1.0f,  1.0f, -1.0f, 1.0f));
-                if (i==4) para->setNamedConstant("colorBlood", Vector4(-1.0f,  1.0f,  1.0f, 1.0f));
-                if (i==5) para->setNamedConstant("colorBlood", Vector4( 1.0f, -1.0f,  1.0f, 1.0f));
-                if (i==6) para->setNamedConstant("colorBlood", Vector4(0.7f, 0.5f, 0.4f, 1.0f));
-                if (++i >6) i=0;
                 //if (para->_findNamedConstantDefinition("colorBlood"))
+                para->setNamedConstant("colorBlood", Vector4(0.0078125f, 0.0078125f + 0.015625f *i , 0.0f, 0.0f));
+                if (++i >=64) i=0;
             }
             //ObjectManager::getSingleton().Event(OBJECT_PLAYER, EVT_ANIMATION, 0,ObjectElementAnimate3d::STATE_DEATH1);
             break;
@@ -143,13 +137,9 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
                 tech = tmpMaterial->getBestTechnique();
                 GpuProgramParametersSharedPtr para = tech->getPass(0)->getVertexProgramParameters();
                 static int i= 0;
-                if (i==0) para->setNamedConstant("colorWear", Vector4(0.2f, 0.1f, 0.5f, 1.0f));
-                if (i==1) para->setNamedConstant("colorWear", Vector4(0.4f, 0.2f, 0.4f, 1.0f));
-                if (i==2) para->setNamedConstant("colorWear", Vector4(0.7f, 0.5f, 0.4f, 1.0f));
-                if (i==3) para->setNamedConstant("colorWear", Vector4(0.8f, 0.8f, 1.0f, 1.0f));
-                if (i==4) para->setNamedConstant("colorWear", Vector4(1.0f, 0.3f, 0.3f, 1.0f));
-                if (i==5) para->setNamedConstant("colorWear", Vector4(0.0f, 0.6f, 0.4f, 1.0f));
-                if (++i >5) i=0;
+                //if (para->_findNamedConstantDefinition("colorWear"))
+                para->setNamedConstant("colorWear", Vector4(0.0078125f, 0.0078125f + 0.015625f *i , 0.0f, 0.0f));
+                if (++i >=64) i=0;
             }
             //TileManager::getSingleton().updateHeighlightVertexPos(1, 0);
             /*
@@ -188,13 +178,9 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
                 tech = tmpMaterial->getBestTechnique();
                 GpuProgramParametersSharedPtr para = tech->getPass(0)->getVertexProgramParameters();
                 static int i= 0;
-                if (i==0) para->setNamedConstant("colorSkin", Vector4(0.2f, 0.1f, 0.5f, 1.0f));
-                if (i==1) para->setNamedConstant("colorSkin", Vector4(0.4f, 0.2f, 0.4f, 1.0f));
-                if (i==2) para->setNamedConstant("colorSkin", Vector4(0.6f, 0.0f, 0.5f, 1.0f));
-                if (i==3) para->setNamedConstant("colorSkin", Vector4(0.8f, 0.8f, 1.0f, 1.0f));
-                if (i==4) para->setNamedConstant("colorSkin", Vector4(1.0f, 0.3f, 0.3f, 1.0f));
-                if (i==5) para->setNamedConstant("colorSkin", Vector4(0.0f, 0.6f, 0.4f, 1.0f));
-                if (++i >5) i=0;
+                //if (para->_findNamedConstantDefinition("colorSkin"))
+                para->setNamedConstant("colorSkin", Vector4(0.0078125f, 0.0078125f + 0.015625f *i , 0.0f, 0.0f));
+                if (++i >=64) i=0;
             }
             break;
         }
