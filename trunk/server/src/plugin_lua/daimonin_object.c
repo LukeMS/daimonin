@@ -69,6 +69,7 @@ static struct method_decl GameObject_methods[] =
     {"FindNextObject",         (lua_CFunction) GameObject_FindNextObject},
     {"FindSkill",              (lua_CFunction) GameObject_FindSkill},
     {"Fix",                    (lua_CFunction) GameObject_Fix},
+    {"GetAccountName",         (lua_CFunction) GameObject_GetAccountName},
     {"GetAI",                  (lua_CFunction) GameObject_GetAI},
     {"GetAlignmentForce",      (lua_CFunction) GameObject_GetAlignmentForce},
     {"GetAnimation",           (lua_CFunction) GameObject_GetAnimation},
@@ -4443,6 +4444,35 @@ static int GameObject_GetConnection(lua_State *L)
     return 1;
 }
 
+/*****************************************************************************/
+/* Name   : GameObject_GetAccountName                                        */
+/* Lua    : object:GetAccountName()                                          */
+/* Info   : Returns the account name of the object (player only)             */
+/* Status : Tested/Stable                                                    */
+/*****************************************************************************/
+static int GameObject_GetAccountName(lua_State *L)
+{
+    lua_object     *self;
+    static char    *result;
+
+    get_lua_args(L, "O", &self);
+
+    if (WHO->type != PLAYER)
+        return 0;
+
+    if (CONTR(WHO))
+    {
+         result = CONTR(WHO)->account_name;
+        lua_pushstring(L, result);
+        return 1;
+    }
+    else
+    {
+        LOG(llevDebug, "LUA - Error - This object has no controller\n");
+        lua_pushstring(L, "");
+        return 1;
+    }
+}
 
 /* FUNCTIONEND -- End of the GameObject methods. */
 

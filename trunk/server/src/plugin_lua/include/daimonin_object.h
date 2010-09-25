@@ -70,6 +70,7 @@ static int  GameObject_FindMarkedObject(lua_State *L);
 static int  GameObject_FindNextObject(lua_State *L);
 static int  GameObject_FindSkill(lua_State *L);
 static int  GameObject_Fix(lua_State *L);
+static int  GameObject_GetAccountName(lua_State *L);
 static int  GameObject_GetAI(lua_State *L);
 static int  GameObject_GetAlignmentForce(lua_State *L);
 static int  GameObject_GetAnimation(lua_State *L);
