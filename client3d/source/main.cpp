@@ -232,11 +232,19 @@ int main(int argc, char **argv)
     NewLogListener *logListener = new NewLogListener; // Must be done before creating Ogre::Root.
     try
     {
-#ifdef NDEBUG
-        root = OGRE_NEW Root("plugins.cfg", "ogre.cfg");
-#else
-        root = OGRE_NEW Root("plugins_d.cfg", "ogre.cfg");
+        root = OGRE_NEW Root("", "ogre.cfg");
+        String debugPostfix ="";
+#ifdef _DEBUG
+        debugPostfix = "_d";
 #endif
+        String pluginFolder = PLUGIN_FOLDER;
+        pluginFolder+= "/";
+#if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
+        root->loadPlugin(pluginFolder + "RenderSystem_Direct3D9" + debugPostfix);
+#endif
+        root->loadPlugin(pluginFolder + "RenderSystem_GL"        + debugPostfix);
+        root->loadPlugin(pluginFolder + "Plugin_ParticleFX"      + debugPostfix);
+        root->loadPlugin(pluginFolder + "Plugin_CgProgramManager"+ debugPostfix);
         ConfigFile cf;
         cf.load("resources.cfg");
         setupResources();
@@ -330,25 +338,25 @@ int main(int argc, char **argv)
         {
             root->startRendering();
         }
-/*
-        {
-            // If root->startRendering(); makes trouble on alt+tab use this:
-            root->getRenderSystem()->_initRenderTargets();
-            root->clearEventTimes();
-            while(1)
-            {
-                WindowEventUtilities::messagePump();
-                if(window->isActive())
+        /*
                 {
-                    if (!root->renderOneFrame()) break;
-                }
-                else
-                {
+                    // If root->startRendering(); makes trouble on alt+tab use this:
+                    root->getRenderSystem()->_initRenderTargets();
                     root->clearEventTimes();
+                    while(1)
+                    {
+                        WindowEventUtilities::messagePump();
+                        if(window->isActive())
+                        {
+                            if (!root->renderOneFrame()) break;
+                        }
+                        else
+                        {
+                            root->clearEventTimes();
+                        }
+                    }
                 }
-            }
-        }
-*/
+        */
         // ////////////////////////////////////////////////////////////////////
         // End of mainloop -> Clean up.
         // ////////////////////////////////////////////////////////////////////
