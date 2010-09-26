@@ -128,20 +128,31 @@ bool Sound::Init(const char *filePath, int preferredDevice)
     // If no preferedDevice was defined, use the system default.
     if (preferredDevice < 0) preferredDevice = defaultDevice;
     // Initialize the manager.
+    cAudio::getLogger()->unRegisterLogReceiver("Logger"); // Prevent error msg on every failed device.
     if (!mSoundManager->initialize(mSoundManager->getAvailableDeviceName(preferredDevice)))
     {
-        Logger::log().error() << Logger::ICON_CLIENT << "Failed to initialize the sound manager with device " << mSoundManager->getAvailableDeviceName(preferredDevice);
-        destroyAudioManager(mSoundManager);
-        mSoundManager = 0;
-        return false;
+        Logger::log().info() << Logger::ICON_CLIENT << "Failed to initialize the default playback device. Testing now all available devices.";
+        preferredDevice = mSoundManager->getAvailableDeviceCount();
+        while (--preferredDevice >= 0)
+        {
+            if (mSoundManager->initialize(mSoundManager->getAvailableDeviceName(preferredDevice)))
+                break;
+        }
+        if (preferredDevice <= 0)
+        {
+            Logger::log().error() << Logger::ICON_CLIENT << "Failed to initialize all sound devices. No sound will be available.";
+            destroyAudioManager(mSoundManager);
+            mSoundManager = 0;
+            return false;
+        }
     }
+    cAudio::getLogger()->registerLogReceiver(mLogger, "Logger");
     Logger::log().info() << Logger::ICON_CLIENT << "Playback Device '" << mSoundManager->getAvailableDeviceName(preferredDevice) << "' is active.";
     // Load all samples.
     createDummy();
     Logger::log().info() << Logger::ICON_CLIENT << "Loading all Sounds.";
     for (SampleID i = GUI_WRONG_INPUT; i< SAMPLE_SUM; i=SampleID(i+1))
         openStream(i);
-    //playStream(PLAYER_IDLE); // Just for testing. delete me!
     return true;
 }
 
