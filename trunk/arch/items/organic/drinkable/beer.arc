@@ -3,9 +3,9 @@ name beer
 face beer.101
 last_eat 10
 can_stack 1
-hp 20
+hp 2
 sp 3
-grace 2
+grace 20
 nrof 1
 layer 3
 type 6

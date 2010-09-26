@@ -13,7 +13,7 @@ sys_object 1
 layer 0
 no_pick 1
 walk_on 1
-attack_poison 100
-dam 4
+attack_poison 70
+dam 2
 cha 20
 end

@@ -2,8 +2,8 @@ Object coffee
 name coffee
 face coffee.101
 last_eat 10
-hp 20
-sp 3
+hp 2
+sp 13
 grace 2
 nrof 1
 can_stack 1

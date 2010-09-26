@@ -2,8 +2,8 @@ Object cookie
 name cookie
 face cookie01.101
 last_eat 10
-hp 20
-sp 3
+hp 2
+sp 13
 can_stack 1
 grace 2
 item_quality 0

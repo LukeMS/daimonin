@@ -2,9 +2,9 @@ Object food_generic
 name ration
 face food.101
 last_eat 10
-hp 20
-sp 3
-grace 2
+hp 15
+sp 15
+grace 15
 can_stack 1
 item_quality 0
 nrof 1
