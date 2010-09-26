@@ -5,39 +5,28 @@ cmake_minimum_required(VERSION 2.6)
 
 # Project info
 project(client3d CXX)
-set (client3D_MAJOR_VERSION 0)
-set (client3D_MINOR_VERSION 2)
-set (client3D_PATCH_VERSION 0)
+SET(client3D_MAJOR_VERSION 0)
+SET(client3D_MINOR_VERSION 2)
+SET(client3D_PATCH_VERSION 0)
 
-# Build type can be set by "cmake -DCMAKE_BUILD_TYPE=<Debug|Release|RelWithDebInfo|MinSizeRel>"
-# If the build type is != "Release", "Debug" will be selected.
-IF("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
-  SET(CMAKE_CXX_FLAGS       "-O0 -W -Wall -g0 -DNDEBUG" CACHE STRING "Release build." FORCE)
-  # Linker flags work different from the compiler flags!
-  # CMAKE_EXE_LINKER_FLAGS is ALWAYS used and CMAKE_EXE_LINKER_FLAGS_DEBUG is ADDED on debug version.
-  SET(CMAKE_EXE_LINKER_FLAGS "-s")
-ELSE()
-  SET(CMAKE_BUILD_TYPE Debug CACHE STRING "Default build type is debug." FORCE)
-  SET(CMAKE_CXX_FLAGS_DEBUG "-O0 -W -Wall -g  -DDEBUG -D_DEBUG"  CACHE STRING "Debug build."   FORCE)
-  SET(CMAKE_EXE_LINKER_FLAGS "")
-ENDIF()
+# Set the folder for own cmake stuff.
+SET(MY_CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/make/cmake)
+
+SET(CMAKE_CXX_FLAGS_RELEASE  "-O0 -W -Wall -g0 -DNDEBUG"         CACHE STRING "Release build." FORCE)
+SET(CMAKE_CXX_FLAGS_DEBUG    "-O0 -W -Wall -g  -D_DEBUG -DDEBUG" CACHE STRING "Debug build."   FORCE)
+
+SET(CMAKE_EXE_LINKER_FLAGS "")
+SET(CMAKE_EXE_LINKER_FLAGS_DEBUG "")
+SET(CMAKE_EXE_LINKER_FLAGS_RELEASE "-s")
+
+SET(CMAKE_CONFIGURATION_TYPES "DEBUG;RELEASE" CACHE STRING "Configs" FORCE)
 
 MESSAGE(STATUS "############################################################")
 MESSAGE(STATUS "# Client3d Version: " ${client3D_MAJOR_VERSION} "." ${client3D_MINOR_VERSION})
 MESSAGE(STATUS "############################################################")
 MESSAGE(STATUS "* " ${CMAKE_BUILD_TYPE} " version will be build." )
 MESSAGE(STATUS "* You can set the build type by:")
-MESSAGE(STATUS "  'cmake -DCMAKE_BUILD_TYPE=<Debug|Release>' .")
-
-# Set the folder for own cmake stuff.
-set(MY_CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/make/cmake)
-
-# Header file to pass some of the cmake settings
-#configure_file(
-#  "${PROJECT_SOURCE_DIR}/include/config.h.in"
-#  "${PROJECT_BINARY_DIR}/include/config.h"
-#)
-#include_directories("${PROJECT_BINARY_DIR}")
+MESSAGE(STATUS "  cmake -DCMAKE_BUILD_TYPE=<Debug|Release> .")
 
 MESSAGE(STATUS "############################################################")
 MESSAGE(STATUS "# Looking for all external packages")
@@ -215,55 +204,15 @@ INCLUDE_DIRECTORIES(
   ${OIS_INCLUDE}
 )
 
-#Build the executeable
-IF("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
-  add_executable(client3d ${SOURCE_FILES} ${HEADER_FILES})
-ELSE()
-  add_executable(client3d_d ${SOURCE_FILES} ${HEADER_FILES})
-ENDIF()
-
-MESSAGE(STATUS "############################################################")
-MESSAGE(STATUS "# Create the file: plugins.cfg")
-MESSAGE(STATUS "############################################################")
 IF (UNIX)
-  set(PLUGIN_FOLDER ${OGRE_LIB_PATH})
+  add_definitions(-DPLUGIN_FOLDER="${OGRE_LIB_PATH}")
 ELSE()
-  set(PLUGIN_FOLDER "./")
+  add_definitions(-DPLUGIN_FOLDER=".")
 ENDIF()
 
-IF("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
-  file(WRITE ./plugins.cfg
-  "# Defines plugins to load\n"
-  "# Don't edit this file it will be overwritten by cmake!\n\n"
-  "# Define plugin folder\n"
-  "# Choose your Ogre library path:\n"
-  "PluginFolder=${PLUGIN_FOLDER}\n"
-  "\n"
-  "# Select OpenGL rendering system\n"
-  "Plugin=RenderSystem_GL\n"
-  "Plugin=Plugin_ParticleFX\n"
-  "Plugin=Plugin_CgProgramManager\n"
-)
-ELSE()
-  file(WRITE ./plugins_d.cfg
-  "# Defines plugins to load\n"
-  "# Don't edit this file it will be overwritten by cmake!\n\n"
-  "# Define plugin folder\n"
-  "# Choose your Ogre library path:\n"
-  "PluginFolder=${PLUGIN_FOLDER}\n"
-  "\n"
-  "# Select OpenGL rendering system\n"
-  "Plugin=RenderSystem_GL\n"
-  "Plugin=Plugin_ParticleFX\n"
-  "Plugin=Plugin_CgProgramManager\n"
-)
-ENDIF()
-
-MESSAGE(STATUS "-> done")
+add_executable(client3d ${SOURCE_FILES} ${HEADER_FILES})
+SET_TARGET_PROPERTIES(client3d PROPERTIES DEBUG_POSTFIX _d)
 
 MESSAGE(STATUS "############################################################")
 MESSAGE(STATUS "# You can compile the client with the 'make' command now.")
 MESSAGE(STATUS "############################################################")
-
-MESSAGE(STATUS ${CMAKE_BUILD_TYPE})
-

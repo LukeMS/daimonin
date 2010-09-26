@@ -61,6 +61,7 @@
 			<Add option="-fexceptions" />
 			<Add option="-fident" />
 			<Add option="-pipe" />
+			<Add option='-DPLUGIN_FOLDER=\&quot;.\&quot;' />
 			<Add option="-DWIN32" />
 			<Add option="-DMINGW" />
 			<Add directory="OgreSDK\boost\" />
@@ -78,7 +79,6 @@
 			<Add option="-Wl,--enable-auto-import" />
 			<Add library="ws2_32" />
 			<Add library="cAudio" />
-			<Add directory="fmod_lib" />
 		</Linker>
 		<Unit filename="..\..\..\3rdParty\caudio\include\EAudioFormats.h" />
 		<Unit filename="..\..\..\3rdParty\caudio\include\IAudioCapture.h" />
@@ -254,14 +254,8 @@
 		<Unit filename="..\..\..\source\tile\tile_manager.cpp" />
 		<Unit filename="..\..\..\source\tile\tile_map.cpp" />
 		<Extensions>
-			<code_completion />
-			<envvars />
-			<debugger />
-			<wxsmith version="1">
-				<gui name="wxWidgets" src="" main="" init_handlers="necessary" language="CPP" />
-			</wxsmith>
 			<DoxyBlocks>
-				<comment_style block="0" line="0" />
+				<comment_style block="1" line="1" />
 				<doxyfile_project />
 				<doxyfile_build />
 				<doxyfile_warnings />
@@ -269,6 +263,9 @@
 				<doxyfile_dot />
 				<general />
 			</DoxyBlocks>
+			<code_completion />
+			<envvars />
+			<debugger />
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>
