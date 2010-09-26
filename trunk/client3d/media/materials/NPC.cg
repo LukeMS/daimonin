@@ -3,13 +3,13 @@
 // Shader profile fp20 is very limited, so we can't optimze this!
 //================================================================================================
 void MainVP_NPC(
-    float4 inPos         : POSITION,
-    float2 inUV          : TEXCOORD0,
     out float4 outPos    : POSITION,
     out float2 outUV     : TEXCOORD0,
     out float2 outCSkin  : TEXCOORD1,
     out float2 outCWear  : TEXCOORD2,
     out float2 outCBlood : TEXCOORD3,
+    float4 inPos              : POSITION,
+    float2 inUV               : TEXCOORD0,
     uniform float2 colorSkin  : TEXCOORD1,
     uniform float2 colorWear  : TEXCOORD2,
     uniform float2 colorBlood : TEXCOORD3,
