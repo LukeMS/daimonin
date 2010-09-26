@@ -2,10 +2,10 @@ Object teabag
 name teabag
 face teabag.101
 last_eat 10
-hp 20
+hp 2
 can_stack 1
 sp 3
-grace 2
+grace 10
 nrof 1
 layer 3
 type 6

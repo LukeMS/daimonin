@@ -2,8 +2,8 @@ Object cake_chocolate
 name chocolate cake
 face cake_chocolate.101
 last_eat 10
-hp 10
-sp 8
+hp 12
+sp 18
 can_stack 1
 grace 6
 item_quality 0
@@ -21,8 +21,8 @@ Object cookie_tree
 name christmas tree cookie
 face cookie_tree.101
 last_eat 10
-hp 15
-sp 5
+hp 10
+sp 15
 can_stack 1
 grace 5
 item_quality 0
@@ -41,7 +41,7 @@ name piece of cake
 face cakepiece.101
 last_eat 10
 hp 15
-sp 5
+sp 25
 can_stack 1
 grace 5
 item_quality 0
@@ -59,8 +59,8 @@ Object cake2
 name cake
 face cake2.101
 last_eat 10
-hp 15
-sp 6
+hp 5
+sp 16
 can_stack 1
 grace 4
 item_quality 0
@@ -78,8 +78,8 @@ Object icecake
 name icecake
 face icecake.101
 last_eat 10
-hp 15
-sp 4
+hp 5
+sp 14
 can_stack 1
 grace 6
 item_quality 0

@@ -4,8 +4,8 @@ face booze_winter.101
 last_eat 12
 hp 20
 can_stack 1
-sp 8
-grace 10
+sp 18
+grace 40
 item_quality 0
 nrof 1
 layer 3

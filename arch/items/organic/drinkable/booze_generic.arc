@@ -2,10 +2,10 @@ Object booze_generic
 name booze
 face booze.101
 last_eat 10
-hp 20
+hp 10
 can_stack 1
 sp 3
-grace 10
+grace 20
 item_quality 0
 nrof 1
 layer 3

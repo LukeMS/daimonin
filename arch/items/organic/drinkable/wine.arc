@@ -3,8 +3,8 @@ name white wine
 face whitewine.101
 last_eat 12
 hp 2
-sp 10
-grace 10
+sp 1
+grace 15
 nrof 1
 can_stack 1
 layer 3
@@ -20,8 +20,8 @@ name red wine
 face redwine.101
 last_eat 12
 hp 2
-sp 10
-grace 10
+sp 1
+grace 15
 nrof 1
 can_stack 1
 layer 3
@@ -37,8 +37,8 @@ name champagne
 face champagne.101
 last_eat 12
 hp 2
-sp 10
-grace 10
+sp 1
+grace 18
 nrof 1
 can_stack 1
 layer 3
