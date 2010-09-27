@@ -22,11 +22,11 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
 //================================================================================================
 // Every Shader program MUST have a fp20 fallback version.
-// Some of the fp20 limitations are:
+// Shader profile fp20 is very limited:
 // - Only 4 Texture Units can be used.
 // - The TEXCOORD's can only access their related TEXTURE_UNIT.
 //   (So even if all 4 TEXCOORD's refer to a single atlastexture, all 4 TU's must be defined)
-// - The TEXCOORD's can only hold a float2 datatype.
+// - On texture lookup only swizzle uv is allowed.
 //================================================================================================
 
 //================================================================================================

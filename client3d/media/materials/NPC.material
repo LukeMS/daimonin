@@ -30,10 +30,7 @@ material NPC_001
             vertex_program_ref VP_NPC
             {
                 param_named_auto worldViewProj worldviewproj_matrix
-                //                            0.0078125 0.0078125 + 0.015625 * colorNumber
-                param_named colorSkin  float2 0.0078125 0.0078125
-                param_named colorWear  float2 0.0078125 0.0234375
-                param_named colorBlood float2 0.0078125 0.0390625
+                param_named paramColor  float4 0.0078125 0.0078125 0.0234375 1.0
             }
             fragment_program_ref FP_NPC
             {

@@ -1,33 +1,63 @@
+/*-----------------------------------------------------------------------------
+This source file is part of Daimonin's 3d-Client
+Daimonin is a MMORG. Details can be found at http://daimonin.sourceforge.net
+Copyright (c) 2005 Andreas Seidel
+
+This program is free software; you can redistribute it and/or modify it under
+the terms of the GNU General Public License as published by the Free Software
+Foundation, either version 3 of the License, or (at your option) any later
+version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+In addition, as a special exception, the copyright holder of client3d give
+you permission to combine the client3d program with lgpl libraries of your
+choice. You may copy and distribute such a system following the terms of the
+GNU GPL for 3d-Client and the licenses of the other code concerned.
+
+You should have received a copy of the GNU General Public License along with
+this program; If not, see <http://www.gnu.org/licenses/>.
+-----------------------------------------------------------------------------*/
+//================================================================================================
+// Every Shader program MUST have a fp20 fallback version.
+// Shader profile fp20 is very limited:
+// - Only 4 Texture Units can be used.
+// - The TEXCOORD's can only access their related TEXTURE_UNIT.
+//   (So even if all 4 TEXCOORD's refer to a single atlastexture, all 4 TU's must be defined)
+// - On texture lookup only swizzle uv is allowed.
+//================================================================================================
+
 //================================================================================================
 // Vertex Program (NPC)
-// Shader profile fp20 is very limited, so we can't optimze this!
+// Vary the skin, wear and blood color of a NPC.
 //================================================================================================
 void MainVP_NPC(
+    out float  outLight  : COLOR,
     out float4 outPos    : POSITION,
     out float2 outUV     : TEXCOORD0,
     out float2 outCSkin  : TEXCOORD1,
     out float2 outCWear  : TEXCOORD2,
     out float2 outCBlood : TEXCOORD3,
-    float4 inPos              : POSITION,
-    float2 inUV               : TEXCOORD0,
-    uniform float2 colorSkin  : TEXCOORD1,
-    uniform float2 colorWear  : TEXCOORD2,
-    uniform float2 colorBlood : TEXCOORD3,
+    float4 inPos         : POSITION,
+    float2 inUV          : TEXCOORD0,
+    uniform float4 paramColor,
     uniform float4x4 worldViewProj)
 {
     outUV  = inUV;
     outPos = mul(worldViewProj, inPos);
-    outCSkin = colorSkin;
-    outCWear = colorWear;
-    outCBlood= colorBlood;
+    outLight = paramColor.a;
+    outCSkin = float2(0.0078125, paramColor.r);
+    outCWear = float2(0.0078125, paramColor.g);
+    outCBlood= float2(0.0078125, paramColor.b);
 }
-
 //================================================================================================
 // Fragment Program (NPC)
-// This is used to vary the skin, wear and blood  color of a NPC.
-// Shader profile fp20 is very limited, so we can't optimze this!
+// Vary the skin, wear and blood color of a NPC.
 //================================================================================================
 float4 MainFP_NPC(
+    float  daylight   : COLOR,
     float2 uv0        : TEXCOORD0,
     float2 colorSkin  : TEXCOORD1,
     float2 colorWear  : TEXCOORD2,
@@ -35,9 +65,9 @@ float4 MainFP_NPC(
     uniform sampler2D texture0
     ) : COLOR
 {
-    float4 texColor = tex2D(texture0, uv0);                       // Texture.
-    float4 color = texColor.b * tex2D(texture0, colorSkin);       // Skin color.
-    color+= texColor.g * tex2D(texture0, colorWear);              // Underwear color.
-    color = lerp(color, tex2D(texture0, colorBlood), texColor.r); // Blood color.
-    return color;
+    float4 texColor = tex2D(texture0, uv0);                        // Texture.
+    float4 color = texColor.b * tex2D(texture0, colorSkin);        // Skin color.
+    color+= texColor.g * tex2D(texture0, colorWear);               // Underwear color.
+    color = lerp(color,  tex2D(texture0, colorBlood), texColor.r); // Blood color.
+    return color * daylight;
 }
