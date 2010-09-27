@@ -54,6 +54,7 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
     PROFILE()
     mIdleTime =0;
     static Real fogStart = 450.0f;
+    static Vector4 shaderParamNPC(0.0078125f, 0.0078125f, 0.0234375f, 1.0f);
     // ////////////////////////////////////////////////////////////////////
     // GUI keyEvents.
     // ////////////////////////////////////////////////////////////////////
@@ -104,7 +105,21 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
 
         case OIS::KC_D:
         {
-            TileManager::getSingleton().updateHeighlightVertexPos(-1, 0);
+            MaterialPtr tmpMaterial = MaterialManager::getSingleton().getByName("NPC_001");
+            if (!tmpMaterial.isNull())
+            {
+                Technique *tech = tmpMaterial->getBestTechnique();
+                if (!tech) tmpMaterial->load();
+                tech = tmpMaterial->getBestTechnique();
+                GpuProgramParametersSharedPtr para = tech->getPass(0)->getVertexProgramParameters();
+                static int i= 0;
+                shaderParamNPC.w = 1.0f - 0.1*i;
+                //if (para->_findNamedConstantDefinition("colorWear"))
+                para->setNamedConstant("paramColor",shaderParamNPC);
+                if (++i >=10) i=0;
+            }
+
+            //TileManager::getSingleton().updateHeighlightVertexPos(-1, 0);
             //ObjectManager::getSingleton().Event(OBJECT_PLAYER, EVT_ANIMATION, 0,ObjectElementAnimate3d::STATE_DEATH1);
             break;
         }
@@ -119,8 +134,9 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
                 tech = tmpMaterial->getBestTechnique();
                 GpuProgramParametersSharedPtr para = tech->getPass(0)->getVertexProgramParameters();
                 static int i= 0;
-                //if (para->_findNamedConstantDefinition("colorBlood"))
-                para->setNamedConstant("colorBlood", Vector4(0.0078125f, 0.0078125f + 0.015625f *i , 0.0f, 0.0f));
+                shaderParamNPC.z = 0.0078125f + 0.015625f *i;
+                //if (para->_findNamedConstantDefinition("colorWear"))
+                para->setNamedConstant("paramColor",shaderParamNPC);
                 if (++i >=64) i=0;
             }
             //ObjectManager::getSingleton().Event(OBJECT_PLAYER, EVT_ANIMATION, 0,ObjectElementAnimate3d::STATE_DEATH1);
@@ -137,8 +153,9 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
                 tech = tmpMaterial->getBestTechnique();
                 GpuProgramParametersSharedPtr para = tech->getPass(0)->getVertexProgramParameters();
                 static int i= 0;
+                shaderParamNPC.y = 0.0078125f + 0.015625f *i;
                 //if (para->_findNamedConstantDefinition("colorWear"))
-                para->setNamedConstant("colorWear", Vector4(0.0078125f, 0.0078125f + 0.015625f *i , 0.0f, 0.0f));
+                para->setNamedConstant("paramColor",shaderParamNPC);
                 if (++i >=64) i=0;
             }
             //TileManager::getSingleton().updateHeighlightVertexPos(1, 0);
@@ -178,8 +195,9 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
                 tech = tmpMaterial->getBestTechnique();
                 GpuProgramParametersSharedPtr para = tech->getPass(0)->getVertexProgramParameters();
                 static int i= 0;
-                //if (para->_findNamedConstantDefinition("colorSkin"))
-                para->setNamedConstant("colorSkin", Vector4(0.0078125f, 0.0078125f + 0.015625f *i , 0.0f, 0.0f));
+                shaderParamNPC.x = 0.0078125f + 0.015625f *i;
+                //if (para->_findNamedConstantDefinition("colorWear"))
+                para->setNamedConstant("paramColor",shaderParamNPC);
                 if (++i >=64) i=0;
             }
             break;
