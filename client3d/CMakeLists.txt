@@ -211,6 +211,7 @@ ELSE()
 ENDIF()
 
 add_executable(client3d ${SOURCE_FILES} ${HEADER_FILES})
+SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR})
 SET_TARGET_PROPERTIES(client3d PROPERTIES DEBUG_POSTFIX _d)
 
 MESSAGE(STATUS "############################################################")
