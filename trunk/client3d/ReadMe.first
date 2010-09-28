@@ -1,7 +1,15 @@
-- To run the client3d you need one of the media packs or the actual binary demo.
-  Copy all folders from the package to your client3d folder.
-- To compile the client3d on win you need one of the compiler packs.
+####################################
+# Daimonin Client3d
+####################################
+This program is free software; you can redistribute it and/or modify it under
+the terms of the GNU General Public License as published by the Free Software
+Foundation, either version 3 of the License, or (at your option) any later
+version.
 
-All packages are located on the Sourceforge download page!
+Compiling:
+- To compile the client3d look for informaton in the make folder.
 
-Have fun..
+Starting:
+- Download a media package (or the binary demo) from Sourceforge.
+- Copy the media folder over your current one.
+- Start the client3d and connect to a server.
