@@ -194,7 +194,16 @@ set (SOURCE_FILES
   source/item.cpp
 )
 
-#Set all include direcetories here
+# None build files (used to show up in the IDE).
+set (OTHER_FILES
+  media/materials/NPC.cg
+  media/materials/NPC.material
+  media/materials/Terrain.cg
+  media/materials/Terrain.material
+)
+SET_SOURCE_FILES_PROPERTIES(${OTHER_FILES} PROPERTIES HEADER_FILE_ONLY TRUE)
+
+# Set all include direcetories here
 INCLUDE_DIRECTORIES(
   "3rdParty/caudio/include"
   "3rdParty/tinyxml"
@@ -210,7 +219,7 @@ ELSE()
   add_definitions(-DPLUGIN_FOLDER=".")
 ENDIF()
 
-add_executable(client3d ${SOURCE_FILES} ${HEADER_FILES})
+add_executable(client3d ${SOURCE_FILES} ${HEADER_FILES} ${OTHER_FILES})
 SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR})
 SET_TARGET_PROPERTIES(client3d PROPERTIES DEBUG_POSTFIX _d)
 
