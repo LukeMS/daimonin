@@ -1,8 +1,24 @@
 ##############################################################
 # Daimonin cmake file
 ##############################################################
+
+UNSET(CAUDIO_LIBRARY CACHE)
+#  IF ("${CMAKE_BUILD_TYPE}" MATCHES "Release")
+    set(LIB_NAME cAudio)
+#  ELSE ()
+#   set(LIB_NAME cAudio_d)
+#  ENDIF ()
+
 IF (WIN32)
-  #Todo
+  IF (MINGW)
+    set(IDE_FOLDER CodeBlocks)
+  ELSE (MINGW)
+    set(IDE_FOLDER VisualC)
+  ENDIF (MINGW)
+  FIND_LIBRARY(CAUDIO_LIBRARY ${LIB_NAME}
+    PATHS
+    ./make/win32/${IDE_FOLDER}/Sound
+    )
 ELSE (WIN32)
   IF (CMAKE_SIZEOF_VOID_P MATCHES "8")
     FIND_LIBRARY(CAUDIO_LIBRARY cAudio
@@ -25,13 +41,11 @@ ELSE (WIN32)
   ENDIF (CMAKE_SIZEOF_VOID_P MATCHES "8")
 ENDIF (WIN32)
 
-IF (CAUDIO_LIBRARY) 
-  SET(CAUDIO_FOUND 1)
-  MESSAGE(STATUS "* cAudio was found.")
-ELSE (CAUDIO_LIBRARY)
-  SET(CAUDIO_FOUND 0)
-  MESSAGE(STATUS "* Results for cAudio:")
-  Message(STATUS "library: " ${CAUDIO_LIBRARY})
+IF    (CAUDIO_LIBRARY)
+  GET_FILENAME_COMPONENT(LIB_NAME ${CAUDIO_LIBRARY} NAME)
+  MESSAGE(STATUS "* cAudio library was found: " ${LIB_NAME})
+ELSE  (CAUDIO_LIBRARY)
+  MESSAGE(FATAL_ERROR " * ERROR: cAudio library was not found!")
 ENDIF (CAUDIO_LIBRARY)
 
-MARK_AS_ADVANCED(CAUDIO_LIBRARYY)
+MARK_AS_ADVANCED(CAUDIO_LIBRARY)

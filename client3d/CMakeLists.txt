@@ -25,51 +25,31 @@ MESSAGE(STATUS "############################################################")
 MESSAGE(STATUS "# Client3d Version: " ${client3D_MAJOR_VERSION} "." ${client3D_MINOR_VERSION})
 MESSAGE(STATUS "############################################################")
 MESSAGE(STATUS "* " ${CMAKE_BUILD_TYPE} " version will be build." )
-MESSAGE(STATUS "* You can set the build type by:")
-MESSAGE(STATUS "  cmake -DCMAKE_BUILD_TYPE=<Debug|Release> .")
 
 MESSAGE(STATUS "############################################################")
 MESSAGE(STATUS "# Looking for all external packages")
 MESSAGE(STATUS "############################################################")
 # Looking for package: boost-thread.
-find_package(Boost 1.38 REQUIRED COMPONENTS thread)
-IF   (NOT Boost_THREAD_FOUND)
-  MESSAGE(FATAL_ERROR "Boost-thread was not found.")
-ELSE ()
-  MESSAGE(STATUS "* Boost-thread was found.")
-ENDIF()
-set(LIBS ${LIBS} ${Boost_THREAD_LIBRARY})
+INCLUDE(${MY_CMAKE_MODULE_PATH}/FindBoostThread.cmake)
+set(LIBS ${LIBS} ${BOOST_THREAD_LIBRARY})
 
-# Looking for package: Ogre.
+# Looking for package: Ogre3d.
 INCLUDE(${MY_CMAKE_MODULE_PATH}/FindOGRE.cmake)
-IF (NOT OGRE_FOUND)
-  MESSAGE(FATAL_ERROR "Ogre was not found.")
-ENDIF()
 set(LIBS ${LIBS} ${OGRE_LIBRARY})
 
 # Looking for package: OIS.
 INCLUDE(${MY_CMAKE_MODULE_PATH}/FindOIS.cmake)
-IF (NOT OIS_FOUND)
-  MESSAGE(FATAL_ERROR "OIS was not found.")
-ENDIF()
 set(LIBS ${LIBS} ${OIS_LIBRARY})
 
 # Looking for package: openAL
 INCLUDE(${MY_CMAKE_MODULE_PATH}/FindOpenAL.cmake)
-IF (NOT OPENAL_FOUND)
-  MESSAGE(FATAL_ERROR "openAL was not found.")
-ENDIF()
 set(LIBS ${LIBS} ${OPENAL_LIBRARY})
 
 # Looking for package: cAudio
 INCLUDE(${MY_CMAKE_MODULE_PATH}/FindCAudio.cmake)
-IF (NOT CAUDIO_FOUND)
-  MESSAGE(FATAL_ERROR "cAudio was not found.")
-ENDIF()
 set(LIBS ${LIBS} ${CAUDIO_LIBRARY})
 
 link_libraries(${LIBS})
-MESSAGE(STATUS "-> done")
 
 ############################################################
 # define all header and source files
@@ -114,7 +94,7 @@ set (HEADER_FILES
   include/object/object.h
   include/object/object_element.h
   include/object/object_element_animate3d.h
-  include/object/object_element_avatar.h 
+  include/object/object_element_avatar.h
   include/object/object_element_equip3d.h
   include/object/object_element_missile.h
   include/object/object_element_physical.h
@@ -214,7 +194,7 @@ INCLUDE_DIRECTORIES(
 )
 
 IF (UNIX)
-  add_definitions(-DPLUGIN_FOLDER="${OGRE_LIB_PATH}")
+  add_definitions(-DPLUGIN_FOLDER="${OGRE_PLUGINS}")
 ELSE()
   add_definitions(-DPLUGIN_FOLDER=".")
 ENDIF()

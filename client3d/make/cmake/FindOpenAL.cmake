@@ -1,8 +1,17 @@
 ##############################################################
 # Daimonin cmake file
 ##############################################################
+
+UNSET(OPENAL_LIBRARY CACHE)
+#  IF ("${CMAKE_BUILD_TYPE}" MATCHES "Release")
+    set(LIB_NAME openal)
+#  ELSE ()
+#   set(LIB_NAME openal_d)
+#  ENDIF ()
+
 IF (WIN32)
-  #Todo
+  # OpenAl comes with cAudio...
+    RETURN()
 ELSE (WIN32)
   FIND_LIBRARY(OPENAL_LIBRARY openal
     PATHS
@@ -18,13 +27,11 @@ ELSE (WIN32)
     )
 ENDIF (WIN32)
 
-IF (OPENAL_LIBRARY) 
-  SET(OPENAL_FOUND 1)
-  MESSAGE(STATUS "* openAL was found.")
-ELSE (OPENAL_LIBRARY)
-  SET(OPENAL_FOUND 0)
-  MESSAGE(STATUS "* Results for openAL:")
-  Message(STATUS "library: " ${OPENAL_LIBRARY})
+IF    (OPENAL_LIBRARY)
+  GET_FILENAME_COMPONENT(LIB_NAME ${OPENAL_LIBRARY} NAME)
+  MESSAGE(STATUS "* OpenAL library was found: " ${LIB_NAME})
+ELSE  (OPENAL_LIBRARY)
+  MESSAGE(FATAL_ERROR " * ERROR: OpenAL library was not found!")
 ENDIF (OPENAL_LIBRARY)
 
-MARK_AS_ADVANCED(OPENAL_LIBRARYY)
+MARK_AS_ADVANCED(OPENAL_LIBRARY)
