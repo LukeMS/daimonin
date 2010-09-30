@@ -1,8 +1,41 @@
 ##############################################################
 # Daimonin cmake file
 ##############################################################
+
+UNSET(OGRE_INCLUDE CACHE)
+UNSET(OGRE_LIBRARY CACHE)
+UNSET(OGRE_PLUGINS CACHE)
+
+  IF ("${CMAKE_BUILD_TYPE}" MATCHES "Release")
+    set(LIB_NAME libOgreMain.dll)
+  ELSE ()
+   set(LIB_NAME libOgreMain_d.dll)
+  ENDIF ()
+
 IF (WIN32)
-  #Todo
+  IF (MINGW)
+    set(IDE_FOLDER CodeBlocks)
+  ELSE (MINGW)
+    set(IDE_FOLDER VisualC)
+  ENDIF (MINGW)
+
+  FIND_PATH(OGRE_INCLUDE Ogre.h
+    PATHS
+    ./make/win32/${IDE_FOLDER}/OgreSDK/include/Ogre
+    )
+
+  FIND_PATH(OGRE_PLUGINS libRenderSystem_GL.dll.a
+    PATHS
+    ./make/win32/${IDE_FOLDER}/OgreSDK/lib/debug/opt
+    ./make/win32/${IDE_FOLDER}/OgreSDK/lib/release/opt
+    )
+
+  FIND_LIBRARY(OGRE_LIBRARY ${LIB_NAME}
+    PATHS
+    ./make/win32/${IDE_FOLDER}/OgreSDK/lib/debug
+    ./make/win32/${IDE_FOLDER}/OgreSDK/lib/release
+    )
+
 ELSE (WIN32)
   FIND_PATH(OGRE_INCLUDE Ogre.h
     PATHS
@@ -12,7 +45,7 @@ ELSE (WIN32)
     /opt/local/include/OGRE
     )
 
-  FIND_PATH(OGRE_LIB_PATH RenderSystem_GL.so
+  FIND_PATH(OGRE_PLUGINS RenderSystem_GL.so
     PATHS
     /usr/lib/OGRE
     /opt/lib/OGRE
@@ -37,14 +70,23 @@ ELSE (WIN32)
     )
 ENDIF (WIN32)
 
-IF (OGRE_INCLUDE AND OGRE_LIBRARY) 
-  SET(OGRE_FOUND 1)
-  MESSAGE(STATUS "* Ogre was found.")
-ELSE (OGRE_INCLUDE AND OGRE_LIBRARY)
-  SET(OGRE_FOUND 0)
-  MESSAGE(STATUS "* Results for Ogre:")
-  Message(STATUS "include: " ${OGRE_INCLUDE})
-  Message(STATUS "library: " ${OGRE_LIBRARY})
-ENDIF (OGRE_INCLUDE AND OGRE_LIBRARY)
+IF    (OGRE_INCLUDE)
+  MESSAGE(STATUS "* Ogre include was found.")
+ELSE  (OGRE_INCLUDE)
+  MESSAGE(FATAL_ERROR " * ERROR: Ogre include was not found!")
+ENDIF (OGRE_INCLUDE)
 
-MARK_AS_ADVANCED(OGRE_INCLUDE OGRE_LIBRARY OHRE_LIB_PATH)
+IF    (OGRE_PLUGINS)
+  MESSAGE(STATUS "* Ogre plugins was found.")
+ELSE  (OGRE_PLUGINS)
+  MESSAGE(FATAL_ERROR " * ERROR: Ogre plugins was not found!")
+ENDIF (OGRE_PLUGINS)
+
+IF    (OGRE_LIBRARY)
+  GET_FILENAME_COMPONENT(LIB_NAME ${OGRE_LIBRARY} NAME)
+  MESSAGE(STATUS "* Ogre library was found: " ${LIB_NAME})
+ELSE  (OGRE_LIBRARY)
+  MESSAGE(FATAL_ERROR " * ERROR: Ogre library was not found!")
+ENDIF (OGRE_LIBRARY)
+
+MARK_AS_ADVANCED(OGRE_INCLUDE OGRE_LIBRARY OGRE_PLUGINS)

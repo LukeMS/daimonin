@@ -1,8 +1,33 @@
 ##############################################################
 # Daimonin cmake file
 ##############################################################
+
+UNSET(OIS_LIBRARY CACHE)
+UNSET(OIS_INCLUDE CACHE)
+IF ("${CMAKE_BUILD_TYPE}" MATCHES "Release")
+  set(LIB_NAME OIS)
+ELSE ()
+  set(LIB_NAME OIS_d)
+ENDIF ()
+
 IF (WIN32)
-  #Todo
+  IF (MINGW)
+    set(IDE_FOLDER CodeBlocks)
+  ELSE (MINGW)
+    set(IDE_FOLDER VisualC)
+  ENDIF (MINGW)
+
+  FIND_PATH(OIS_INCLUDE OIS.h
+    PATHS
+    ./make/win32/${IDE_FOLDER}/OgreSDK/include/OIS
+    )
+
+  FIND_LIBRARY(OIS_LIBRARY ${LIB_NAME}
+    PATHS
+    ./make/win32/${IDE_FOLDER}/OgreSDK/lib/debug
+    ./make/win32/${IDE_FOLDER}/OgreSDK/lib/release
+    )
+
 ELSE (WIN32)
   FIND_PATH(OIS_INCLUDE OIS.h
     PATHS
@@ -24,14 +49,17 @@ ELSE (WIN32)
     )
 ENDIF (WIN32)
 
-IF (OIS_INCLUDE AND OIS_LIBRARY) 
-  SET(OIS_FOUND 1)
-  MESSAGE(STATUS "* OIS was found.")
-ELSE (OIS_INCLUDE AND OIS_LIBRARY)
-  SET(OIS_FOUND 0)
-  MESSAGE(STATUS "* Results for OIS:")
-  Message(STATUS "include: " ${OGRE_INCLUDE})
-  Message(STATUS "library: " ${OGRE_LIBRARY})
-ENDIF (OIS_INCLUDE AND OIS_LIBRARY)
+IF    (OIS_INCLUDE)
+  MESSAGE(STATUS "* OIS include was found.")
+ELSE  (OIS_INCLUDE)
+  MESSAGE(FATAL_ERROR " * ERROR: OIS plugins was not found!")
+ENDIF (OIS_INCLUDE)
+
+IF    (OIS_LIBRARY)
+  GET_FILENAME_COMPONENT(LIB_NAME ${OIS_LIBRARY} NAME)
+  MESSAGE(STATUS "* OIS library was found: " ${LIB_NAME})
+ELSE  (OIS_LIBRARY)
+  MESSAGE(FATAL_ERROR " * ERROR: OIS library was not found!")
+ENDIF (OIS_LIBRARY)
 
 MARK_AS_ADVANCED(OIS_INCLUDE OIS_LIBRARY)
