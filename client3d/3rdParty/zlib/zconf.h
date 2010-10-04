@@ -8,13 +8,6 @@
 #ifndef ZCONF_H
 #define ZCONF_H
 
-/* Modified by the daimonin team (start) */
-#define FASTEST
-#define NO_GZCOMPRESS
-#define NO_GZIP
-#define BUILDFIXED
-/* Modified by the daimonin team (stop) */
-
 /*
  * If you *really* need a unique prefix for all types and library functions,
  * compile with -DZ_PREFIX. The "standard" zlib should be compiled without it.

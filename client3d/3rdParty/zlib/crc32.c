@@ -107,11 +107,9 @@ local void make_crc_table OF((void));
 */
 local void make_crc_table()
 {
-/* Modified by the daimonin team (start) */
-/* unsigned long c; */
-/* int n, k; */
-/* unsigned long poly; polynomial exclusive-or pattern */
-/* Modified by the daimonin team (stop) */
+    unsigned long c;
+    int n, k;
+    unsigned long poly;                 /* polynomial exclusive-or pattern */
     /* terms of polynomial defining this crc (except x^32): */
     static volatile int first = 1;      /* flag to limit concurrent making */
     static const unsigned char p[] = {0,1,2,4,5,7,8,10,11,12,16,22,23,26};
@@ -120,11 +118,6 @@ local void make_crc_table()
        than nothing -- significantly reduces duration of vulnerability in
        case the advice about DYNAMIC_CRC_TABLE is ignored) */
     if (first) {
-/* Modified by the daimonin team (start) */
-    unsigned long c;
-    int n, k;
-    unsigned long poly;                 /* polynomial exclusive-or pattern */
-/* Modified by the daimonin team (stop) */
         first = 0;
 
         /* make exclusive-or pattern from polynomial (0xedb88320UL) */
