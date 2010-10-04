@@ -58,6 +58,7 @@ copy .\OgreSDK\bin\debug\Plugin_CgProgramManager_d.dll ..\..\..\Plugin_CgProgram
 copy .\OgreSDK\bin\debug\RenderSystem_GL_d.dll         ..\..\..\RenderSystem_GL_d.dll >nul
 copy  .\OgreSDK\bin\debug\RenderSystem_Direct3D9_D.dll  ..\..\..\RenderSystem_Direct3D9_d.dll >nul
 
+rename .\Sound\libcAudio.a cAudio.a
 copy .\Sound\*.dll ..\..\..\ >nul
 
 rem ========================================
