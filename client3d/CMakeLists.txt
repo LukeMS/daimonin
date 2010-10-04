@@ -80,7 +80,7 @@ INCLUDE_DIRECTORIES("3rdParty/zlib")
 INCLUDE_DIRECTORIES("include")
 INCLUDE_DIRECTORIES("${OIS_INCLUDE}")
 INCLUDE_DIRECTORIES("${OGRE_INCLUDE}")
-INCLUDE_DIRECTORIES("${BOOST_INCLUDE}")
+INCLUDE_DIRECTORIES("${BOOST_THREAD_INCLUDE}")
 
 ############################################################
 # define all header and source files
