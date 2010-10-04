@@ -1,21 +1,22 @@
-///===================================================
-/// Client3d as Code::Blocks project HOWTO
-///===================================================
+//===================================================
+// Client3d as Code::Blocks project HOWTO
+//===================================================
+
+-------------------------------------------------------------
+CMake Download Page (http://www.cmake.org/cmake/resources/software.html)
+-------------------------------------------------------------
+* Install cmake for Windows(Win32 Installer)
 
 -------------------------------------------------------------
 Ogre SDK Download Page (http://www.ogre3d.org/download/sdk)
 -------------------------------------------------------------
 * Install the latest Ogre SDK for MinGW into "client3d/make/win32/CodeBlocks/".
-* Rename the folder    "OgreSDK*" to "OgreSDK".
-* Rename the subfolder "boost*"   to "boost".
-* Rename the boost lib "libboost_thread*.lib"    to "boost_thread.lib"
-* Rename the boost lib "libboost_thread*-d*.lib" to "boost_thread_d.lib"
-* Install the MinGW package.
+* Install the recommended MinGW package.
 
 -------------------------------------------------------------
 CodeBlocks (http://www.codeblocks.org/)
 -------------------------------------------------------------
-Install the latest nightly build of Code::Blocks.
+* Install the latest nightly build of Code::Blocks.
 
 -------------------------------------------------------------
 cAudio (http://sourceforge.net/projects/caudio/)
@@ -31,7 +32,7 @@ download cAudio and copy these files to "client3d/make/win32/CodeBlocks/Sound/"
 -------------------------------------------------------------
 In client3d/make/win32/CodeBlocks/
 -------------------------------------------------------------
-* run the setup.bat
+* run the configure.bat
 * Dblclk on the Code::Blocks project file
 
 -------------------------------------------------------------

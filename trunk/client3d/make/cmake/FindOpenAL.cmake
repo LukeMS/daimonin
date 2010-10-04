@@ -3,11 +3,6 @@
 ##############################################################
 
 UNSET(OPENAL_LIBRARY CACHE)
-#  IF ("${CMAKE_BUILD_TYPE}" MATCHES "Release")
-    set(LIB_NAME openal)
-#  ELSE ()
-#   set(LIB_NAME openal_d)
-#  ENDIF ()
 
 IF (WIN32)
   # OpenAl comes with cAudio...
