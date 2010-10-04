@@ -4,17 +4,12 @@
 
 UNSET(OIS_LIBRARY CACHE)
 UNSET(OIS_INCLUDE CACHE)
-IF ("${CMAKE_BUILD_TYPE}" MATCHES "Release")
-  set(LIB_NAME OIS)
-ELSE ()
-  set(LIB_NAME OIS_d)
-ENDIF ()
 
 IF (WIN32)
   IF (MINGW)
-    set(IDE_FOLDER CodeBlocks)
+    SET(IDE_FOLDER CodeBlocks)
   ELSE (MINGW)
-    set(IDE_FOLDER VisualC)
+    SET(IDE_FOLDER VisualC)
   ENDIF (MINGW)
 
   FIND_PATH(OIS_INCLUDE OIS.h
@@ -22,7 +17,7 @@ IF (WIN32)
     ./make/win32/${IDE_FOLDER}/OgreSDK/include/OIS
     )
 
-  FIND_LIBRARY(OIS_LIBRARY ${LIB_NAME}
+  FIND_LIBRARY(OIS_LIBRARY OIS${POSTFIX_DEBUG}
     PATHS
     ./make/win32/${IDE_FOLDER}/OgreSDK/lib/debug
     ./make/win32/${IDE_FOLDER}/OgreSDK/lib/release

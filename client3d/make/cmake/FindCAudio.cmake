@@ -3,19 +3,14 @@
 ##############################################################
 
 UNSET(CAUDIO_LIBRARY CACHE)
-#  IF ("${CMAKE_BUILD_TYPE}" MATCHES "Release")
-    set(LIB_NAME cAudio)
-#  ELSE ()
-#   set(LIB_NAME cAudio_d)
-#  ENDIF ()
 
 IF (WIN32)
   IF (MINGW)
-    set(IDE_FOLDER CodeBlocks)
+    SET(IDE_FOLDER CodeBlocks)
   ELSE (MINGW)
-    set(IDE_FOLDER VisualC)
+    SET(IDE_FOLDER VisualC)
   ENDIF (MINGW)
-  FIND_LIBRARY(CAUDIO_LIBRARY ${LIB_NAME}
+  FIND_LIBRARY(CAUDIO_LIBRARY cAudio
     PATHS
     ./make/win32/${IDE_FOLDER}/Sound
     )

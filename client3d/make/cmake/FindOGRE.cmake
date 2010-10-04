@@ -6,34 +6,37 @@ UNSET(OGRE_INCLUDE CACHE)
 UNSET(OGRE_LIBRARY CACHE)
 UNSET(OGRE_PLUGINS CACHE)
 
-  IF ("${CMAKE_BUILD_TYPE}" MATCHES "Release")
-    set(LIB_NAME libOgreMain.dll)
-  ELSE ()
-   set(LIB_NAME libOgreMain_d.dll)
-  ENDIF ()
-
 IF (WIN32)
   IF (MINGW)
-    set(IDE_FOLDER CodeBlocks)
+    SET(IDE_FOLDER CodeBlocks)
+    FIND_LIBRARY(OGRE_LIBRARY libOgreMain${POSTFIX_DEBUG}.dll
+      PATHS
+      ./make/win32/${IDE_FOLDER}/OgreSDK/lib/debug
+      ./make/win32/${IDE_FOLDER}/OgreSDK/lib/release
+      )
+    FIND_PATH(OGRE_PLUGINS libRenderSystem_GL${POSTFIX_DEBUG}.dll.a
+      PATHS
+      ./make/win32/${IDE_FOLDER}/OgreSDK/lib/debug/opt
+      ./make/win32/${IDE_FOLDER}/OgreSDK/lib/release/opt
+      )
+
   ELSE (MINGW)
-    set(IDE_FOLDER VisualC)
+    SET(IDE_FOLDER VisualC)
+    FIND_LIBRARY(OGRE_LIBRARY OgreMain${POSTFIX_DEBUG}.lib
+      PATHS
+      ./make/win32/${IDE_FOLDER}/OgreSDK/lib/debug
+      ./make/win32/${IDE_FOLDER}/OgreSDK/lib/release
+      )
+    FIND_PATH(OGRE_PLUGINS RenderSystem_GL${POSTFIX_DEBUG}.lib
+      PATHS
+      ./make/win32/${IDE_FOLDER}/OgreSDK/lib/debug/opt
+      ./make/win32/${IDE_FOLDER}/OgreSDK/lib/release/opt
+      )
   ENDIF (MINGW)
 
   FIND_PATH(OGRE_INCLUDE Ogre.h
     PATHS
     ./make/win32/${IDE_FOLDER}/OgreSDK/include/Ogre
-    )
-
-  FIND_PATH(OGRE_PLUGINS libRenderSystem_GL.dll.a
-    PATHS
-    ./make/win32/${IDE_FOLDER}/OgreSDK/lib/debug/opt
-    ./make/win32/${IDE_FOLDER}/OgreSDK/lib/release/opt
-    )
-
-  FIND_LIBRARY(OGRE_LIBRARY ${LIB_NAME}
-    PATHS
-    ./make/win32/${IDE_FOLDER}/OgreSDK/lib/debug
-    ./make/win32/${IDE_FOLDER}/OgreSDK/lib/release
     )
 
 ELSE (WIN32)

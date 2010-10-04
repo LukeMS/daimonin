@@ -113,7 +113,7 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
                 tech = tmpMaterial->getBestTechnique();
                 GpuProgramParametersSharedPtr para = tech->getPass(0)->getVertexProgramParameters();
                 static int i= 0;
-                shaderParamNPC.w = 1.0f - 0.1*i;
+                shaderParamNPC.w = 1.0f - 0.1f*i;
                 //if (para->_findNamedConstantDefinition("colorWear"))
                 para->setNamedConstant("paramColor",shaderParamNPC);
                 if (++i >=10) i=0;
