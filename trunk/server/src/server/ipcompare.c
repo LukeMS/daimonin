@@ -362,11 +362,11 @@ inet_pton4(src, dst)
 {
         static const char digits[] = "0123456789";
         int saw_digit, octets, ch;
-        unsigned char tmp[NS_INADDRSZ], *tp;
+        unsigned char  tmp[NS_INADDRSZ] = "",
+                      *tp = tmp;
 
         saw_digit = 0;
         octets = 0;
-        *(tp = tmp) = 0;
         while ((ch = *src++) != '\0') {
                  const char *pch;
 
