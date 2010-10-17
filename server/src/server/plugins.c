@@ -476,7 +476,7 @@ void initOnePlugin(const char *pluginfile)
     {
         int j;
         i = 0;
-        HookParm = (CFParm *) (malloc(sizeof(CFParm)));
+        HookParm = (CFParm *) (calloc(1, sizeof(CFParm)));
         HookParm->Value[0] = (int *) (malloc(sizeof(int)));
 
         for (j = 0; j < NR_OF_HOOKS; j++)
@@ -1099,7 +1099,7 @@ CFParm * CFWIdentifyObject(CFParm *PParm)
 /*****************************************************************************/
 CFParm * CFWObjectCreateClone(CFParm *PParm)
 {
-    CFParm *CFP = (CFParm *) malloc(sizeof(CFParm));
+    CFParm *CFP = (CFParm *) calloc(1, sizeof(CFParm));
     if (*(int *) PParm->Value[1] == 0)
         CFP->Value[0] = ObjectCreateClone((object *) PParm->Value[0]);
     else if (*(int *) PParm->Value[1] == 1)
@@ -1182,7 +1182,7 @@ CFParm * CFWCreateObject(CFParm *PParm)
     archetype      *arch;
     object         *newobj;
 
-    CFP = (CFParm *)malloc(sizeof(CFParm));
+    CFP = (CFParm *)calloc(1, sizeof(CFParm));
 
     CFP->Value[0] = NULL;
 
