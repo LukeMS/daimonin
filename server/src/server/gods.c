@@ -457,7 +457,11 @@ const char * determine_god(object *op)
                     break;
                 gl = gl->next;
             }
-            FREE_AND_COPY_HASH(op->title, gl->name);
+
+            if (gl)
+            {
+                FREE_AND_COPY_HASH(op->title, gl->name);
+            }
         }
         return op->title;
     }
