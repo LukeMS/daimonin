@@ -140,7 +140,10 @@ DIR * opendir(const char *dir)
 
     if ((handle = _findfirst(filespec, &(dp->fileinfo))) < 0)
     {
-        free(filespec); free(dp);
+        free(filespec);
+        free(dp->dir);
+        free(dp);
+
         return NULL;
     }
     dp->handle = handle;
