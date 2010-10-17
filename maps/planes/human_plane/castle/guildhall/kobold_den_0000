@@ -175,7 +175,7 @@ arch spawn_point
 x 1
 y 2
 arch kobold_guard
-name kobold fighter leader
+name Kobold Fighter Leader
 type 83
 wis 2
 level 3
@@ -213,7 +213,7 @@ arch spawn_point
 x 1
 y 7
 arch kobold
-name kobold scout
+name Kobold Scout
 type 83
 wis 2
 level 2
@@ -1373,7 +1373,7 @@ arch spawn_point
 x 8
 y 14
 arch kobold
-name kobold sneaker
+name Kobold Sneaker
 type 83
 wis 2
 unaggressive 1
@@ -1557,7 +1557,7 @@ arch spawn_point
 x 9
 y 19
 arch kobold
-name kobold sneaker
+name Kobold Sneaker
 type 83
 wis 2
 unaggressive 1
@@ -2062,7 +2062,7 @@ arch spawn_point
 x 13
 y 4
 arch kobold_fighter
-name kobold clan fighter
+name Kobold Clan Fighter
 type 83
 wis 2
 level 2
@@ -2296,7 +2296,7 @@ arch spawn_point
 x 14
 y 12
 arch kobold
-name kobold mushroom collector
+name Kobold Mushroom Collector
 type 83
 wis 2
 unaggressive 1
@@ -2460,7 +2460,7 @@ arch spawn_point
 x 15
 y 10
 arch kobold
-name kobold mushroom collector
+name Kobold Mushroom Collector
 type 83
 wis 2
 unaggressive 1
@@ -2750,7 +2750,7 @@ arch spawn_point
 x 17
 y 5
 arch kobold_guard
-name kobold clan guard
+name Kobold Clan Guard
 type 83
 wis 2
 level 2
@@ -2773,7 +2773,7 @@ arch spawn_point
 x 17
 y 7
 arch kobold_guard
-name kobold clan guard
+name Kobold Clan Guard
 type 83
 wis 2
 level 2
@@ -2863,7 +2863,7 @@ arch spawn_point
 x 17
 y 19
 arch kobold
-name kobold hunter
+name Kobold Hunter
 type 83
 wis 2
 unaggressive 1
@@ -2950,7 +2950,7 @@ arch spawn_point
 x 18
 y 6
 arch kobold_big
-name kobold clan chief
+name Kobold Clan Chief
 type 83
 wis 2
 level 3
@@ -3315,7 +3315,7 @@ arch spawn_point
 x 20
 y 11
 arch kobold
-name kobold mushroom keeper
+name Kobold Mushroom Keeper
 type 83
 wis 2
 end
@@ -3442,7 +3442,7 @@ arch spawn_point
 x 21
 y 7
 arch kobold_guard
-name kobold guard leader
+name Kobold Guard Leader
 type 83
 wis 2
 level 3
