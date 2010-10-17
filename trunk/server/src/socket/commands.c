@@ -1509,12 +1509,15 @@ void cs_cmd_newchar(char *buf, int len, NewSocket *ns)
              * a new-style player already associated with an account. */
             if (fscanf(fp, "password %s", real_password) != 1)
             {
+                fclose(fp);
                 ret = ADDME_MSG_TAKEN;
             }
             /* Otherwise it must be old-style and therefore reclaimable. */
             else
             {
                 shstr *password = add_string(real_password);
+
+                fclose(fp);
 
                 /* If the password from the client does not match the password
                  * in the save file, the reclaim fails. */
