@@ -527,11 +527,12 @@ void clean_tmp_files(int flag)
          * we certainly don't want the temp maps removed.
          */
         if(flag)
-        {
-
 #ifdef RECYCLE_TMP_MAPS
+        {
             swap_map(m, 0);
+        }
 #else
+        {
             new_save_map(m, 0);
         }
         clean_tmp_map(m);
