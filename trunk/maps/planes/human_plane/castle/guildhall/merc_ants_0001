@@ -245,7 +245,7 @@ last_grace 4
 x 2
 y 1
 arch ant_red
-name ant soldier
+name Ant Soldier
 type 83
 dam 36
 maxhp 47
@@ -842,7 +842,7 @@ last_grace 4
 x 5
 y 22
 arch ant_red
-name ant forager
+name Ant Forager
 type 83
 exp 80
 dam 33
@@ -1637,7 +1637,7 @@ last_grace 4
 x 10
 y 11
 arch ant_red
-name ant worker
+name Ant Worker
 type 83
 exp 80
 dam 33
@@ -1846,7 +1846,7 @@ last_grace 4
 x 12
 y 6
 arch ant_red
-name ant worker
+name Ant Worker
 type 83
 exp 80
 dam 33
@@ -2247,7 +2247,7 @@ last_grace 4
 x 15
 y 6
 arch ant_red
-name ant soldier
+name Ant Soldier
 type 83
 dam 36
 maxhp 47
@@ -2317,7 +2317,7 @@ last_grace 4
 x 15
 y 14
 arch ant_red
-name ant worker
+name Ant Worker
 type 83
 exp 80
 dam 33
@@ -2445,7 +2445,7 @@ last_grace 4
 x 16
 y 11
 arch ant_red
-name ant worker
+name Ant Worker
 type 83
 exp 80
 dam 33
@@ -2638,7 +2638,7 @@ last_grace 4
 x 17
 y 20
 arch ant_red
-name ant worker
+name Ant Worker
 type 83
 exp 80
 dam 33
@@ -2679,7 +2679,7 @@ last_grace 4
 x 18
 y 2
 arch ant_red
-name ant worker
+name Ant Worker
 type 83
 exp 80
 dam 33
@@ -2807,7 +2807,7 @@ last_grace 4
 x 18
 y 18
 arch ant_red
-name ant scout
+name Ant Scout
 type 83
 exp 79
 dam 33
@@ -3141,7 +3141,7 @@ last_grace 4
 x 21
 y 1
 arch ant_red
-name ant worker
+name Ant Worker
 type 83
 exp 80
 dam 33
@@ -3174,7 +3174,7 @@ last_grace 4
 x 21
 y 4
 arch ant_red
-name ant scout
+name Ant Scout
 type 83
 exp 79
 dam 33
