@@ -1378,7 +1378,7 @@ wis 3
 level 2
 end
 arch ant_red
-name royal ant guard
+name Royal Ant Guard
 type 83
 level 4
 object_int1 7500
