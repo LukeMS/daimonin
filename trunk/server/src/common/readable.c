@@ -969,8 +969,17 @@ void change_book(object *book, int msgtype)
                           FREE_AND_COPY_HASH(book->title, old_title);
                       /* Lets give the book a description to individualize it some */
                       if (RANDOM() % 4)
-                          sprintf(old_name, "%s %s", book_descrpt[RANDOM() % nbr], old_name);
-                      FREE_AND_COPY_HASH(book->name, old_name);
+                      {
+                          char buf[MEDIUM_BUF];
+
+                          sprintf(buf, "%s %s",
+                                  book_descrpt[RANDOM() % nbr], old_name);
+                          FREE_AND_COPY_HASH(book->name, buf);
+                      }
+                      else
+                      {
+                          FREE_AND_COPY_HASH(book->name, old_name);
+                      }
                   }
                   else if (book->title && strlen(book->msg) > 5)
                   {
