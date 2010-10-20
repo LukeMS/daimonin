@@ -1546,7 +1546,7 @@ void cs_cmd_newchar(char *buf, int len, NewSocket *ns)
                      ns->pl_account.level[ns->pl_account.nrof_chars] = 1; /* we always start with level 1 */
                      ns->pl_account.race[ns->pl_account.nrof_chars] = race;
                      ns->pl_account.gender[ns->pl_account.nrof_chars] = gender;
-                     strcpy(ns->pl_account.charname[ns->pl_account.nrof_chars], buf);
+                     sprintf(ns->pl_account.charname[ns->pl_account.nrof_chars], "%s", buf);
                      ns->pl_account.nrof_chars += 1;
                      account_save(&ns->pl_account, ns->pl_account.name); /* ignore problems here, we have later a 2nd try perhaps */
 
@@ -1622,7 +1622,7 @@ void cs_cmd_newchar(char *buf, int len, NewSocket *ns)
         ns->pl_account.level[ns->pl_account.nrof_chars] = 1; /* we always start with level 1 */
         ns->pl_account.race[ns->pl_account.nrof_chars] = race;
         ns->pl_account.gender[ns->pl_account.nrof_chars] = gender;
-        strcpy(ns->pl_account.charname[ns->pl_account.nrof_chars], buf);
+        sprintf(ns->pl_account.charname[ns->pl_account.nrof_chars], "%s", buf);
         ns->pl_account.nrof_chars += 1;
 
         /* to ensure valid accounts we save it now */

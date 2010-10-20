@@ -107,7 +107,7 @@ void InitConnection(NewSocket *ns, char *ip)
 
     memset(&ns->lastmap, 0, sizeof(struct Map));
 
-    strcpy(ns->ip_host, ip);
+    sprintf(ns->ip_host, "%s", ip);
 
     socket_info.nconns++;
 }
