@@ -489,6 +489,7 @@ int Game_init(lua_State *L)
     int     i;
     char    buf[TINY_BUF];
     char    string[TINY_BUF];
+    char    name[32];
     char    prefix[32];
     FILE    *sf;
     size_t  size_presets = sizeof(preset_game_constants);
@@ -589,11 +590,13 @@ int Game_init(lua_State *L)
                 sscanf(strtok(buf, "|"), "*%d", &Game_constants[index].value);
 
                 // get the name, uppercase it and prefix with "SOUNDTYPE_"
-                sprintf(string, "SOUNDTYPE_%s", strtok(NULL, "|"));
+                strcpy(name, strtok(NULL, "|"));
+                strcpy(string, "SOUNDTYPE_");
+                strcat(string, name);
                 Game_constants[index++].name = hooks->strdup_local(string); // duplicate into array
 
                 // save the prefix
-                sprintf(prefix, "%s", strtok(NULL, "|"));
+                strcpy(prefix, strtok(NULL, "|"));
             }
             else if (buf[0] == '+')
             {
@@ -602,7 +605,9 @@ int Game_init(lua_State *L)
                 sscanf(strtok(buf, "|"), "+%d", &Game_constants[index].value);
 
                 // get the name, uppercase it and prefix with prefix
-                sprintf(string, "%s%s", prefix, strtok(NULL, "|"));
+                strcpy(name, strtok(NULL, "|"));
+                strcpy(string, prefix);
+                strcat(string, name);
                 Game_constants[index++].name = hooks->strdup_local(string); // duplicate into array
             }
         }
@@ -1184,8 +1189,8 @@ static int Game_RegisterCommand(lua_State *L)
         {
             CustomCommand[i].name = (char *)(malloc(sizeof(char)*strlen(cmdname)));
             CustomCommand[i].script = (char *)(malloc(sizeof(char)*strlen(scriptname)));
-            sprintf(CustomCommand[i].name, "%s", cmdname);
-            sprintf(CustomCommand[i].script, "%s", scriptname);
+            strcpy(CustomCommand[i].name,cmdname);
+            strcpy(CustomCommand[i].script,scriptname);
             CustomCommand[i].speed = cmdspeed;
             i = NR_CUSTOM_CMD;
         }
