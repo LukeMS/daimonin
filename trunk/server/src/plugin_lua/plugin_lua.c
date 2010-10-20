@@ -1032,7 +1032,7 @@ MODULEAPI void init_Daimonin_Lua()
     char    lua_path[MEDIUM_BUF];
     char   *map_path;
 
-    sprintf(lua_path, "%s", hooks->create_mapdir_pathname(LUA_PATH));
+    strcpy(lua_path, hooks->create_mapdir_pathname(LUA_PATH));
     map_path = hooks->create_mapdir_pathname("");
 
     pool_luacontext = hooks->create_mempool("lua contexts", 5, sizeof(struct lua_context), 0, NULL, NULL, NULL, NULL);
