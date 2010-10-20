@@ -172,7 +172,7 @@ account_status account_load(Account *ac, char *name, char *pass)
                 fclose(fp);
                 return ACCOUNT_STATUS_WRONGPWD;
             }
-            strcpy(ac->pwd, buf);
+            sprintf(ac->pwd, "%s", buf);
         }
         else
         {

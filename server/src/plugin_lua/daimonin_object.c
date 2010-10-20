@@ -3475,7 +3475,7 @@ static int GameObject_AddMoneyEx(lua_State *L)
 
     hooks->add_money_to_player(WHO, c, s, g, m);
 
-    strcpy(buf, "You got");
+    sprintf(buf, "You got");
     if(m)
     {
         sprintf(strchr(buf, '\0'), " %d %s", m, "mithril");
