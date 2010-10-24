@@ -467,10 +467,17 @@ void spawn_point(object *op)
     fix_monster(mob); /* fix all the values and add in possible abilities or forces ... */
 
     /* *now* all is done - *now* put it on map */
+    /* I am not 100% sure this change is best, but it seems that sometimes a
+     * mob spawns on the same square as a spell is travelling over which
+     * results in the immediate destruction on the mob (for example, it happens
+     * often in planes/demon_plane/stoneglow/guild_wiz/stoneglow_wiz_novicet
+     * where the 'mobs' (Training Targets) are weak and spawn frequently).
+     * -- Smacky 20101024 */
+#if 0
     if (!insert_ob_in_map(mob, mob->map, op, 0))
         LOG(llevBug, "BUG:: %s/spawn_point(): Could not insert mob (%s[%d]) in map!\n",
             __FILE__, STRING_OBJ_NAME(op), TAG(op));
-
+ 
     /* initialise any beacons in the newly spawned mob's inv */
     next = mob;
     while (next)
@@ -479,6 +486,32 @@ void spawn_point(object *op)
         if (next)
             object_initializers[TYPE_BEACON](next);
     }
+#else
+    /* If the above comment is correct, we hardly need to spam the log with
+     * this message, and even if we do it is INFO not BUG and concerns mob, not
+     * op.
+     * -- Smacky 20101024 */
+#if 0
+    if (!insert_ob_in_map(mob, mob->map, op, 0))
+    {
+        LOG(llevInfo, "INFO:: %s/spawn_point(): Mob (%s[%d] map '%s') was destroyed during spawn!\n",
+            __FILE__, STRING_OBJ_NAME(mob), TAG(mob), mob->map->path);
+    }
+    else
+#else
+    if (insert_ob_in_map(mob, mob->map, op, 0))
+#endif
+    {
+        /* initialise any beacons in the newly spawned mob's inv */
+        next = mob;
+        while (next)
+        {
+            next = find_next_object(next, TYPE_BEACON, FNO_MODE_ALL, mob);
+            if (next)
+                object_initializers[TYPE_BEACON](next);
+        }
+    }
+#endif
 }
 
 /*
