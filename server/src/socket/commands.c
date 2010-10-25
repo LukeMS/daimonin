@@ -1337,6 +1337,13 @@ void cs_cmd_login(char *buf, int len, NewSocket *ns)
     if(ret) /* something is wrong, send a clear account command with status only */
     {
         /* add here a counter with temp ip ban for 30sec to avoid login hammering */
+
+        if (ret == ACCOUNT_STATUS_WRONGPWD &&
+            clogfile != tlogfile)
+        {
+            CHATLOG("LOGIN: IP >%s< Account >%s<... WRONG PASSWORD!\n",
+                ns->ip_host, buf);
+        }
     }
     else /* player is logged in to his account */
     {
@@ -1422,7 +1429,7 @@ void cs_cmd_addme(char *buf, int len, NewSocket *ns)
 
     if (clogfile != tlogfile)
     {
-        CHATLOG("LOGIN: IP >%s< Account >%s< Player >%s<... %s!\n",
+        CHATLOG("ADDME: IP >%s< Account >%s< Player >%s<... %s!\n",
                 ns->ip_host, (!pl) ? ns->pl_account.name : pl->account_name,
                 buf, (error_msg == ADDME_MSG_BANNED) ? "BANNED" :
                 ((error_msg == ADDME_MSG_OK) ? "OK" : "FAILED/ABORTED"));
