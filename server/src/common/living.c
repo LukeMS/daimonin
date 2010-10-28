@@ -598,30 +598,36 @@ int change_abil(object *op, object *tmp)
             }
         }
     }
-    if ((tmp->stats.hp || tmp->stats.maxhp) && op->type == PLAYER)
+
+    if (op->type == PLAYER &&
+        tmp->type != TYPE_FOOD_FORCE)
     {
-        success = 1;
-        if (applied * tmp->stats.hp > 0 || applied * tmp->stats.maxhp > 0)
-            new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, op, "You feel much more healthy!");
-        else
-            new_draw_info(NDI_UNIQUE | NDI_GREY, 0, op, "You feel much less healthy!");
-    }
-    if ((tmp->stats.sp || tmp->stats.maxsp) && op->type == PLAYER && tmp->type != SKILL)
-    {
-        success = 1;
-        if (applied * tmp->stats.sp > 0 || applied * tmp->stats.maxsp > 0)
-            new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, op, "You feel one with the powers of magic!");
-        else
-            new_draw_info(NDI_UNIQUE | NDI_GREY, 0, op, "You suddenly feel very mundane.");
-    }
-    /* for the future when artifacts set this -b.t. */
-    if ((tmp->stats.grace || tmp->stats.maxgrace) && op->type == PLAYER)
-    {
-        success = 1;
-        if (applied * tmp->stats.grace > 0 || applied * tmp->stats.maxgrace)
-            new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, op, "You feel closer to your deity!");
-        else
-            new_draw_info(NDI_UNIQUE | NDI_GREY, 0, op, "You suddenly feel less holy.");
+        if ((tmp->stats.hp || tmp->stats.maxhp))
+        {
+            success = 1;
+            if (applied * tmp->stats.hp > 0 || applied * tmp->stats.maxhp > 0)
+                new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, op, "You feel much more healthy!");
+            else
+                new_draw_info(NDI_UNIQUE | NDI_GREY, 0, op, "You feel much less healthy!");
+        }
+
+        if ((tmp->stats.sp || tmp->stats.maxsp) && tmp->type != SKILL)
+        {
+            success = 1;
+            if (applied * tmp->stats.sp > 0 || applied * tmp->stats.maxsp > 0)
+                new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, op, "You feel one with the powers of magic!");
+            else
+                new_draw_info(NDI_UNIQUE | NDI_GREY, 0, op, "You suddenly feel very mundane.");
+        }
+
+        if ((tmp->stats.grace || tmp->stats.maxgrace))
+        {
+            success = 1;
+            if (applied * tmp->stats.grace > 0 || applied * tmp->stats.maxgrace)
+                new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, op, "You feel closer to your deity!");
+            else
+                new_draw_info(NDI_UNIQUE | NDI_GREY, 0, op, "You suddenly feel less holy.");
+        }
     }
 
     /* Messages for changed resistance */
@@ -1014,6 +1020,8 @@ void fix_player(object *op)
     CLEAR_FLAG(op, FLAG_REFL_MISSILE);
     CLEAR_FLAG(op, FLAG_REFL_SPELL);
 
+    CLEAR_FLAG(op, FLAG_EATING);
+
     if (QUERY_FLAG(op, FLAG_IS_INVISIBLE))
         inv_flag = 1;
     if (QUERY_FLAG(op, FLAG_SEE_INVISIBLE))
@@ -1382,6 +1390,10 @@ void fix_player(object *op)
                   /* i am not 100% sure this is safe for *all* objects - i have used for that
                          * reason not default here.
                          */
+                case TYPE_FOOD_FORCE:
+                  SET_FLAG(op, FLAG_EATING);
+                  goto fix_player_jump_resi;
+
                 case TYPE_AGE_FORCE:
                   pl->age_force = tmp; /* store our age force */
                   pl->age = tmp->stats.hp;
@@ -1392,6 +1404,7 @@ void fix_player(object *op)
                       SET_FLAG(op, FLAG_IS_AGED);
                   else
                       CLEAR_FLAG(op, FLAG_IS_AGED);
+                  goto fix_player_jump_resi;
 
                 case FORCE:
                     if(tmp->sub_type1 == ST1_FORCE_SNARE)
@@ -2128,6 +2141,7 @@ void fix_monster(object *op)
    43,43,44,44,45,45,46,46,47,47,48,48,49,49,50,50,51,51,52,52,53,53,54,54,55,
    55,56,56,57,57,58,58,59,60,6061,61,62,62,63,63,64,64,65,66,67,67,68,68,69,
    70,70};
+
     if (op->head) /* don't adjust tails or player - only single objects or heads */
         return;
 
