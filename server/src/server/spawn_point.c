@@ -395,8 +395,8 @@ void spawn_point(object *op)
     /* loot is a temporary object purely for script convenience. Its only
      * purpose is to temporarily store the mob's default inventory (that is,
      * the items it is specifically given in a map file, *not* randomitems. */
-    sprintf(buf, "%s's loot", mob->name);
-    loot = create_singularity(buf);
+    loot = arch_to_object(archetype_global._loot_container);
+    FREE_AND_COPY_HASH(loot->name, mob->name);
     /* Use insert_spawn_mob_loot() to extract the loot into the loot singularity. */
     insert_spawn_mob_loot(op, loot, mob->inv);
 
