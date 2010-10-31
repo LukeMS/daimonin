@@ -169,7 +169,7 @@
 /doors/wooden/door_wood1
 /doors/wooden/door_wood2
 /doors/wooden/door_wood4
-/masks/doorway/doorway_wood1_1
+/walls/doorway/doorway_wood1_1
 /mobs/dragon/dragon_blk/dragon_black
 /mobs/dragon/dragon_blu/dragon_blu
 /mobs/dragon/dragon_skeletal/dragon_demonic
@@ -228,6 +228,7 @@
 /magic/cold/frostbolt
 /themed/xmas/full_xmas_tree
 /mobs/misc/fungus/fungus
+/walls/fwalls/fwall_marble3a_half
 /themed/halloween/mobs/great_pumpkin/g_pumpkin
 /doors/metal/gate1_locked
 /gates/gates/gateTrg1
@@ -264,7 +265,7 @@
 /intern/player/half_elf/half_elf_female
 /intern/player/half_elf/half_elf_male
 /connectors/handles/handle_lever
-/scenery/bales_and_bundles/haybailsmall
+/scenery/bales_and_bundles/haybalesmall
 /scenery/bales_and_bundles/haypilesmall
 /themed/halloween/mobs/headless/headless_horseman
 /items/organic/bodyparts/heart_beating

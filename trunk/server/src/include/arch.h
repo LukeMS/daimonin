@@ -90,6 +90,7 @@ typedef struct _archetype_global
     archetype *_blindness;
     archetype *_paralyze;
     archetype *_corpse_default;
+    archetype *_loot_container;
 }
 _archetype_global;
 

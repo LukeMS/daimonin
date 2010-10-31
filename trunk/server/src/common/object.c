@@ -3278,7 +3278,7 @@ static void beacon_initializer(object *op)
             return;
     }
 
-    /* No env and no map means the beacon is in a mob's loot singularity
+    /* No env and no map means the beacon is in a mob's loot container
      * (during the spawn process) so ignore it). */
     if (!parent->map)
         return;
