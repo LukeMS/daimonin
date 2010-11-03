@@ -44,9 +44,8 @@ resist_channelling 50
 dam 48
 item_condition 10
 weapon_speed 3.5
-attack_impact 60
-attack_channelling 20
-attack_weaponmagic 20
+attack_impact 90
+attack_channelling 10
 speed -0.049
 level 1
 item_quality 2
