@@ -47,7 +47,10 @@
         <title xml:lang="de">Verbunden</title>
         <title xml:lang="fr">Objets connectés</title>
         <title xml:lang="sv">Anslutna</title>
-        <Attrib name="connected" op="ne" value="" />
+        <And>
+            <Attrib name="connected" op="ne" value="" />
+            <Attrib name="connected" op="ne" value="0" />
+        </And>
     </GameObjectMatcher>
 
     <GameObjectMatcher id="exit">
@@ -65,7 +68,10 @@
         <title xml:lang="sv">Skatter</title>
         <And>
             <TypeNrs numbers="4 5 36 60 85 111 123 124 130" />
-            <Attrib name="no_pick" value="" />
+            <Or>
+                <Attrib name="no_pick" value="" />
+                <Attrib name="no_pick" value="0" />
+            </Or>
         </And>
     </GameObjectMatcher>
 
@@ -84,7 +90,10 @@
         <title xml:lang="sv">Utrustning</title>
         <And>
             <TypeNrs numbers="3 13 14 15 16 33 34 35 39 70 87 99 100 104 109 113 122" />
-            <Attrib name="no_pick" value="" />
+            <Or>
+                <Attrib name="no_pick" value="" />
+                <Attrib name="no_pick" value="0" />
+            </Or>
         </And>
     </GameObjectMatcher>
 
