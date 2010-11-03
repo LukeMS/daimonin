@@ -107,7 +107,7 @@
     <GameObjectMatcher id="system_below_floor" system="true">
         <title xml:lang="en">Below Floor</title>
         <title xml:lang="de">Unter Boden</title>
-            <TypeNrs numbers="-666" />
+        <TypeNrs numbers="-666" />
         <!-- <Attrib name="layer" value="0" /> -->
     </GameObjectMatcher>
 
