@@ -46,8 +46,7 @@ resist_channelling 20
 dam 42
 item_condition 10
 weapon_speed 3.5
-attack_pierce 60
-attack_channelling 30
+attack_pierce 90
 attack_weaponmagic 10
 speed -0.049
 level 1
