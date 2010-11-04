@@ -151,7 +151,6 @@
 #define SET_MAP_OB(M,X,Y,tmp)                   ( (M)->spaces[(X) + (M)->width * (Y)].first = (tmp) )
 #define SET_MAP_OB_LAST(M,X,Y,tmp)              ( (M)->spaces[(X) + (M)->width * (Y)].last = (tmp) )
 #define SET_MAP_OB_LAYER(_M_,_X_,_Y_,_Z_,tmp)   ( (_M_)->spaces[(_X_) + (_M_)->width * (_Y_)].layer[_Z_] = (tmp) )
-#define set_map_ob  SET_MAP_OB
 
 #define SET_MAP_DAMAGE(M,X,Y,tmp)       ( (M)->spaces[(X) + (M)->width * (Y)].last_damage = (uint16) (tmp) )
 #define GET_MAP_DAMAGE(M,X,Y)           ( (M)->spaces[(X) + (M)->width * (Y)].last_damage )
