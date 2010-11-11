@@ -3353,30 +3353,33 @@ static int GameObject_Save(lua_State *L)
 /*****************************************************************************/
 /* Name   : GameObject_GetIP                                                 */
 /* Lua    : object:GetIP()                                                   */
-/* Status : Tested/Stable                                                    */
+/* Info   : Only works for player objects. Other types generate an error.    */
+/*          Returns the IP of the player (as a string). If the object is not */
+/*          controlled by a player, this is logged and the return is nil.    */
+/* Status : Untested/Stable                                                  */
 /*****************************************************************************/
 static int GameObject_GetIP(lua_State *L)
 {
-    lua_object     *self;
-    static char    *result;
+    lua_object  *self;
 
     get_lua_args(L, "O", &self);
 
     if (WHO->type != PLAYER)
-        return 0;
+    {
+        return luaL_error(L, "object:GetIP() can only be called on a player!");
+    }
 
-    if (CONTR(WHO))
+    if (!CONTR(WHO))
     {
-        result = CONTR(WHO)->socket.ip_host;
-        lua_pushstring(L, result);
-        return 1;
+        LOG(llevDebug, "LUA - Error - %s[%d] has no controller!\n",
+            STRING_OBJ_NAME(WHO), TAG(WHO));
+
+        return 0;
     }
-    else
-    {
-        LOG(llevDebug, "LUA - Error - This object has no controller\n");
-        lua_pushstring(L, "");
-        return 1;
-    }
+
+    lua_pushstring(L, CONTR(WHO)->socket.ip_host);
+
+    return 1;
 }
 
 /*****************************************************************************/
@@ -4447,31 +4450,33 @@ static int GameObject_GetConnection(lua_State *L)
 /*****************************************************************************/
 /* Name   : GameObject_GetAccountName                                        */
 /* Lua    : object:GetAccountName()                                          */
-/* Info   : Returns the account name of the object (player only)             */
-/* Status : Tested/Stable                                                    */
+/* Info   : Only works for player objects. Other types generate an error.    */
+/*          Returns the account name of the player. If the object is not     */
+/*          controlled by a player, this is logged and the return is nil.    */
+/* Status : Untested/Stable                                                  */
 /*****************************************************************************/
 static int GameObject_GetAccountName(lua_State *L)
 {
-    lua_object     *self;
-    static char    *result;
+    lua_object  *self;
 
     get_lua_args(L, "O", &self);
 
     if (WHO->type != PLAYER)
-        return 0;
+    {
+        return luaL_error(L, "object:GetAccountName() can only be called on a player!");
+    }
 
-    if (CONTR(WHO))
+    if (!CONTR(WHO))
     {
-         result = CONTR(WHO)->account_name;
-        lua_pushstring(L, result);
-        return 1;
+        LOG(llevDebug, "LUA - Error - %s[%d] has no controller!\n",
+            STRING_OBJ_NAME(WHO), TAG(WHO));
+
+        return 0;
     }
-    else
-    {
-        LOG(llevDebug, "LUA - Error - This object has no controller\n");
-        lua_pushstring(L, "");
-        return 1;
-    }
+
+    lua_pushstring(L, CONTR(WHO)->account_name);
+
+    return 1;
 }
 
 /* FUNCTIONEND -- End of the GameObject methods. */
