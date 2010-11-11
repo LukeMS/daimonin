@@ -87,8 +87,20 @@ elseif (msg == 'matchstring') then
     me:SayTo(activator, "match(foo, bar) = " .. tostring(game:MatchString("foo", "bar")))
     me:SayTo(activator, "match(foo, foo) = " .. tostring(game:MatchString("foo", "foo")))
     me:SayTo(activator, "match(foo, FOO) = " .. tostring(game:MatchString("foo", "FOO")))
-elseif (msg == 'getip') then
-    me:SayTo(activator, "Your IP is " .. activator:GetIP())
+
+-- Test connection
+elseif (msg == 'getip') and
+       activator.type == game.TYPE_PLAYER then
+    local ip = activator:GetIP()
+    if ip then
+        me:SayTo(activator, "Your IP is " .. ip)
+    end
+elseif (msg == 'getaccountname') and
+       activator.type == game.TYPE_PLAYER then
+    local account = activator:GetAccountName()
+    if account then
+        me:SayTo(activator, "Your account is " .. account)
+    end
 
 elseif (words[1] == 'skill') then
     if (words[2] == nil) then
