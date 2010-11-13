@@ -281,9 +281,12 @@ static inline void activelist_remove_inline(object *op)
     if(!QUERY_FLAG(op, FLAG_IN_ACTIVELIST))
         return;
 
-#ifdef DEBUG_ACTIVELIST_LOG
-    LOG(llevDebug,"ACTIVE_rem: %s (%d) @%s (%x - %x - %x)\n", query_name(op), op->count, STRING_MAP_PATH(op->map),
-            op, op->active_prev, op->active_next);
+#ifdef DEBUG_ACTIVELIST
+    LOG(llevDebug, "DEBUG:: activelist_remove(): (%s[%d]) <- %s[%d], type:%d env:%s[%d] map:%s %d, %d -> (%s[%d])\n",
+        STRING_OBJ_NAME(op->active_prev), TAG(op->active_prev),
+        STRING_OBJ_NAME(op), TAG(op), op->type, STRING_OBJ_NAME(op->env),
+        TAG(op->env), STRING_MAP_PATH(op->map), op->x, op->y,
+        STRING_OBJ_NAME(op->active_next), TAG(op->active_next));
 #endif
 
     /* If this happens to be the object we will process next,
@@ -320,11 +323,6 @@ static inline void activelist_insert_inline(object *op)
     if(QUERY_FLAG(op, FLAG_IN_ACTIVELIST))
         return;
 
-#ifdef DEBUG_ACTIVELIST_LOG
-    LOG( llevDebug,"ACTIVE_add: %s (type:%d count:%d) env:%s map:%s (%d,%d) (%x - %x - %x)\n", query_name(op), op->type, op->count,
-         query_name(op->env), op->map?STRING_SAFE(op->map->path):"NULL", op->x, op->y, op, op->active_prev, op->active_next);
-#endif
-
     /* Since we don't want to process objects twice, we make
      * sure to insert the object in a temporary list until the
      * next process_events() call. */
@@ -333,6 +331,14 @@ static inline void activelist_insert_inline(object *op)
         op->active_next->active_prev = op;
     inserted_active_objects = op;
     op->active_prev = NULL;
+
+#ifdef DEBUG_ACTIVELIST
+    LOG(llevDebug, "DEBUG:: activelist_insert(): (%s[%d]) <- %s[%d], type:%d env:%s[%d] map:%s %d, %d -> (%s[%d])\n",
+        STRING_OBJ_NAME(op->active_prev), TAG(op->active_prev),
+        STRING_OBJ_NAME(op), TAG(op), op->type, STRING_OBJ_NAME(op->env),
+        TAG(op->env), STRING_MAP_PATH(op->map), op->x, op->y,
+        STRING_OBJ_NAME(op->active_next), TAG(op->active_next));
+#endif
 
     SET_FLAG(op, FLAG_IN_ACTIVELIST);
 }

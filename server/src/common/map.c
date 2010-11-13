@@ -649,6 +649,7 @@ mapstruct * get_linked_map()
     /* We insert a dummy sentinel first in the activelist. This simplifies
      * work later */
     map->active_objects = get_object();
+    FREE_AND_COPY_HASH(map->active_objects->name, "<map activelist sentinel>");
     insert_ob_in_ob(map->active_objects, &void_container); /* Avoid gc of the sentinel object */
 
     return map;
@@ -1504,6 +1505,24 @@ void free_map(mapstruct *m, int flag)
      * on objects and expect the gc to handle removal from activelists etc.
      * - Gecko 20050731
      */
+    /* I stand to be corrected, but I think the following code is
+     * wrong/unnecessary. For one thing, the query of FLAG_REMOVED is made on
+     * m->active_objects, which is the sentinel so of course not removed.
+     * Therefore, when there are still active objects each one, regardless of
+     * whether /it/ is removed will log as a bug, contributing/causing an
+     * unnecessary bug flood. If we correct that (ie, query
+     * m->active_objects->active_next) then why log that there is a non-removed
+     * active object but not actually take the opportunity to remove it? I am
+     * not clear why maps can end up with leftover active objects on them just
+     * after free_all_objects() -- presumably a timing issue to do with the map
+     * being swapped out while objects are still on the inserted_active_objects
+     * temporary list -- but this frequently happens on maps with arrow-shooting
+     * mobs or mobs that kill other mobs, resulting in large numbers of
+     * spurious BUGs. So my replacement code logs that the freed map does have
+     * active objects, if only as a reminder that this needs to be looked into,
+     * but then quietly removes such leftovers.
+     * -- Smacky 20101113 */
+#if 0
     if(m->active_objects->active_next)
     {
         LOG(llevDebug, "ACTIVEWARNING - free_map(): freed map has still active objects!\n");
@@ -1514,6 +1533,25 @@ void free_map(mapstruct *m, int flag)
             activelist_remove(m->active_objects->active_next);
         }
     }
+#else
+    if(m->active_objects->active_next)
+    {
+        object *next;
+
+        LOG(llevDebug, "DEBUG:: %s/free_map(): freed map (%s) has objects on activelist!\n",
+            __FILE__, STRING_MAP_PATH(m));
+
+        while ((next = m->active_objects->active_next))
+        {
+            activelist_remove(next);
+
+            if (!QUERY_FLAG(next, FLAG_REMOVED))
+            {
+                remove_ob(next);
+            }
+        }
+    }
+#endif
 
     FREE_AND_NULL_PTR(m->spaces);
     FREE_AND_NULL_PTR(m->bitmap);
