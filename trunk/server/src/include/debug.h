@@ -35,8 +35,9 @@
 
 #define ESRV_DEBUG
 
-/* Active list debugging: object.c (activelist_insert_inline()) */
-/* #define DEBUG_ACTIVELIST_LOG */ /* log message when an object is added or removed from an active list */
+/* Active list debugging: object.c/activelist_insert_inline() and
+ * object.c/activelist_remove_inline(). */
+/* #define DEBUG_ACTIVELIST */
 
 /* very have debugging of the whole core server loop - mainly how map data ia send & stored */
 /* #define DEBUG_CORE */
@@ -96,6 +97,7 @@
 /*#define DEBUG_MERGE_OB*/
 
 /*#define DEBUG_CALENDAR*/
+
 #endif /* ifdef DAI_DEVELOPMENT_CODE */
 
 #ifdef DEBUG_FIX_PLAYER
