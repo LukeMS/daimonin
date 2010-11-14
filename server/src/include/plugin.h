@@ -293,7 +293,6 @@ struct plugin_hooklist
 #else
     void (*fix_player)(object *);
 #endif
-    void (*free_map)(mapstruct *, int);
     void (*free_mempool)(struct mempool *);
     void (*free_string_shared)(const char *);
     /* G */

@@ -77,7 +77,6 @@ struct plugin_hooklist  hooklist    =
     find_string,
     FindFace,
     fix_player,
-    free_map,
     free_mempool,
     free_string_shared,
     /* G */
