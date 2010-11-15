@@ -5,7 +5,7 @@ local pinfo = ac:GetPlayerInfo("APARTMENT_INFO")
 local path
 
 if pinfo == nil then
-    ac:SetPosition(game:ReadyMap("/emergency"), -1, -1)
+    ac:SetPosition(game:ReadyMap("/emergency"), 0, 0)
 else
     -- convert exit map path if pre-reorganization:
     -- change /lost_worlds to /planes/demon_plane
