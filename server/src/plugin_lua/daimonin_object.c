@@ -690,7 +690,8 @@ int GameObject_init(lua_State *L)
 static int GameObject_SetPosition(lua_State *L)
 {
     lua_object *self;
-    mapstruct  *new_map;
+    mapstruct  *orig_map,
+               *new_map;
     int         x,
                 y,
                 flags = MAP_STATUS_FIXED_POS,
@@ -703,14 +704,23 @@ static int GameObject_SetPosition(lua_State *L)
         lua_object *where;
 
         get_lua_args(L, "OMii|ii", &self, &where, &x, &y, &flags, &ins_flags);
-        new_map = where->data.map;
+        orig_map = where->data.map;
     }
     else
     {
         get_lua_args(L, "Oii|ii", &self, &x, &y, &flags, &ins_flags);
 
-        if((new_map = WHO->map) == NULL)
+        if (!(orig_map = WHO->map))
             luaL_error(L, "Short-form of SetPosition() used, but the object didn't have a map");
+    }
+
+    /* Find and load  the correct tiled map for extreme values of x and y,
+     * aborting the script with an error where the given values are out of map
+     * (scripter should fix). */
+    if (!(new_map = hooks->out_of_map(orig_map, &x, &y)))
+    {
+        return luaL_error(L, "object:SetPosition() trying to place object (%s) at %s %d, %d which is outside of any map!",
+                          STRING_OBJ_NAME(WHO), x, y, STRING_MAP_PATH(new_map), x, y);
     }
 
     ret = hooks->enter_map(WHO, NULL, new_map, x, y, flags, ins_flags);

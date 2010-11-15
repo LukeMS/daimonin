@@ -370,6 +370,7 @@ struct plugin_hooklist
     char *(*normalize_path)(const char *, const char *, char *);
     char *(*normalize_path_direct)(const char *, const char *, char *);
     /* O */
+    mapstruct *(*out_of_map)(mapstruct *, int *, int *);
     /* P */
     const char *(*path_to_name)(const char *);
     int (*pay_for_amount)(sint64, object *);
