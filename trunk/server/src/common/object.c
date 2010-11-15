@@ -1816,9 +1816,28 @@ static void destroy_ob_inv(object *op)
     for (tmp = op->inv; tmp; tmp = tmp2)
     {
         tmp2 = tmp->below;
+
+        /* For some reason sometimes a dmg info in an aggro history will be
+         * freed with return_poolchunk() in object_gc() above but not entirely
+         * removed by the time we get here (ie, during map swap). We therefore
+         * sometimes try to mark_object_removed() a freed object, which is a
+         * bug. Although IDK why this happens, so it needs investigating, this
+         * *only* happens in this one case so I assume it is a timing glitch.
+         * In any case, it seems pointless to let it happen so here we skip
+         * such freed objects and log a DEBUG.
+         * -- Smacky 20101115 */
+        if (OBJECT_FREE(tmp))
+        {
+            LOG(llevDebug,"DEBUG: Skipping freed object found in inv of %s[%d] during gc!\n",
+                STRING_OBJ_NAME(op),TAG(op));
+
+            continue;
+        }
+
 #if defined DEBUG_GC
         LOG(llevDebug, "    removing %s (%d)\n", STRING_OBJ_NAME(tmp), tmp->count);
 #endif
+
         if (tmp->inv)
             destroy_ob_inv(tmp);
 
