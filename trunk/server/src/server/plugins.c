@@ -139,6 +139,7 @@ struct plugin_hooklist  hooklist    =
     normalize_path,
     normalize_path_direct,
     /* O */
+    out_of_map,
     /* P */
     path_to_name,
     pay_for_amount,
