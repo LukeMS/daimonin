@@ -151,7 +151,17 @@ struct mob_known_obj *register_npc_known_obj(object *npc, object *other, int fri
     }
     else
     {
-        if(! get_rangevector(npc, other, &rv, RV_EUCLIDIAN_DISTANCE) || !rv.part)
+        /* We do a recursive search here because this logs a lot of unnecessary
+         * bugs on maps without tileset_id set. This will avoid those bugs.
+         * However, recursive searching is (comparatively) slow, but the good
+         * news is that on public servers tileset_id is always set meaning the
+         * slow manual recursive search is never done (and this bug will only
+         * be logged for a genuine bug). So this only causes a recursive search
+         * on local servers where speed is not so important and we still want
+         * to avoid spurious bugs.
+         * -- Smacky 20101116 */
+        if (!get_rangevector(npc, other, &rv, RV_EUCLIDIAN_DISTANCE | RV_RECURSIVE_SEARCH) ||
+            !rv.part)
         {
             LOG(llevBug, "BUG: register_npc_known_obj(): '%s' can't get rv to '%s'\n", STRING_OBJ_NAME(npc), STRING_OBJ_NAME(other));
             return NULL;
