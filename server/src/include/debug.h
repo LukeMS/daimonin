@@ -34,6 +34,7 @@
 #ifdef DAI_DEVELOPMENT_CODE
 
 #define ESRV_DEBUG
+#define DEBUG_PROCESS_QUEUE
 
 /* Active list debugging: object.c/activelist_insert_inline() and
  * object.c/activelist_remove_inline(). */
