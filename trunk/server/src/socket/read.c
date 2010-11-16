@@ -25,8 +25,10 @@
 /* attach command buffer to command list of this ns socket */
 void command_buffer_enqueue(NewSocket *ns, command_struct *cmdptr)
 {
-
+#ifdef DEBUG_PROCESS_QUEUE
 	LOG(llevNoLog,"ENQUEUE CMD: cmdptr:%p\n", cmdptr);
+#endif
+
 	if(ns->cmd_start)
 	{
 		ns->cmd_end->next = cmdptr;

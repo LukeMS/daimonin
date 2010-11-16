@@ -287,7 +287,10 @@ static int socket_prepare_commands(NewSocket *ns) // use this for debugging
                 ns->status = Ns_Dead;
                 return TRUE;
             }
+
+#ifdef DEBUG_PROCESS_QUEUE
             LOG(llevDebug,"Found Command: %d\n", rb->cmd);
+#endif
 
             /* there is our command - now lets see we have a data part or not */
             if(cs_commands[rb->cmd].data_len) /* != 0 means there is a data tail */

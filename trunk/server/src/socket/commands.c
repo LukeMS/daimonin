@@ -379,8 +379,6 @@ CommArray_s *find_command_element(char *cmd, CommArray_s *commarray, int commsiz
     return asp;
 }
 
-#define DEBUG_PROCESS_QUEUE
-
 /* We go through the list of queued commands we got from the client */
 void process_command_queue(NewSocket *ns, player *pl)
 {
