@@ -1778,13 +1778,26 @@ void free_object_data(object *ob, int free_static_data)
             case TYPE_BEACON:
               {
                   object *registered = hashtable_find(beacon_table, ob->custom_attrset);
-                  /* the original object name is stored in custom_attrset */
-                  LOG(llevDebug, "Removing beacon (%s)\n", (char *)ob->custom_attrset);
 
-                  if(registered != ob)
-                      LOG(llevDebug, "  Another beacon has replaced it. Not deregistering\n");
+#ifdef DEBUG_BEACONS
+                  /* the original object name is stored in custom_attrset */
+                  LOG(llevDebug, "DEBUG:: %s/free_object_data(): Removing beacon (%s): ",
+                      (char *)ob->custom_attrset);
+#endif
+
+                  if (registered != ob)
+                  {
+#ifdef DEBUG_BEACONS
+                      LOG(llevDebug, "another beacon has replaced it. Not deregistering!\n");
+#endif
+                  }
                   else
+                  {
+#ifdef DEBUG_BEACONS
+                      LOG(llevDebug, "deregistering!\n");
+#endif
                       hashtable_erase(beacon_table, ob->custom_attrset);
+                  }
                   FREE_ONLY_HASH(ob->custom_attrset);
               }
               break;
@@ -3325,25 +3338,30 @@ static void beacon_initializer(object *op)
      * -- Smacky 20091024 */
     if (!MAP_MULTI(parent->map))
     {
-        LOG(llevDebug, "\nDEBUG:: %s/beacon_initializer(): Ignoring beacon on instance (%s[%d]).\n",
-            __FILE__, STRING_OBJ_NAME(op), TAG(op));
+        LOG(llevMapbug, "MAPBUG:: Ignoring beacon on instance (%s[%s %d %d])!\n",
+            STRING_OBJ_NAME(op), STRING_MAP_PATH(parent->map), parent->x,
+            parent->y);
         //remove_ob(op);
         return;
     }
 
-    LOG(llevDebug, "\nDEBUG:: %s/beacon_initializer(): Initializing beacon (%s[%d]).\n",
+#ifdef DEBUG_BEACONS
+    LOG(llevDebug, "DEBUG:: %s/beacon_initializer(): Initializing beacon (%s[%d])!\n",
         __FILE__, STRING_OBJ_NAME(op), TAG(op));
+#endif
 
     if (op->custom_attrset)
     {
-        LOG(llevBug, "  BUG:: Beacon initialized twice (%s[%d])!\n",
-            STRING_OBJ_NAME(op), TAG(op));
+        LOG(llevMapbug, "MAPBUG:: Same beacon initialized twice (%s[%s %d %d])!\n",
+            STRING_OBJ_NAME(op), STRING_MAP_PATH(parent->map), parent->x,
+            parent->y);
         return;
     }
     else if (!op->name)
     {
-        LOG(llevBug, "BUG:: Beacon with NULL name (NULL[%d])!\n",
-            TAG(op));
+        LOG(llevMapbug, "MAPBUG:: Beacon with NULL name (%s[%s %d %d])!\n",
+            STRING_OBJ_NAME(op), STRING_MAP_PATH(parent->map), parent->x,
+            parent->y);
         return;
     }
 
@@ -3356,8 +3374,9 @@ static void beacon_initializer(object *op)
     {
         /* Replace existing entry TODO: speed up with hashtable_replace() or
          * something similar */
-        LOG(llevDebug, "DEBUG:: %s/beacon_initializer(): Replacing already registered beacon (%s[%d]!\n",
-            __FILE__, (char *)op->custom_attrset, TAG(op));
+        LOG(llevMapbug, "MAPBUG:: Replacing already registered beacon (%s[%s %d %d])!\n",
+            STRING_OBJ_NAME(op), STRING_MAP_PATH(parent->map), parent->x,
+            parent->y);
         hashtable_erase(beacon_table, op->custom_attrset);
         hashtable_insert(beacon_table, op->custom_attrset, op);
     }
