@@ -1452,8 +1452,9 @@ void ai_move_towards_waypoint(object *op, struct mob_behaviour_param *params, mo
             }
             else
             {
-                LOG(llevDebug, "ai_move_towards_waypoint(): Couldn't find beacon '%s' for waypoint '%s' used by '%s'\n",
-                        WP_BEACON(wp), STRING_OBJ_NAME(wp), STRING_OBJ_NAME(op));
+                LOG(llevMapbug, "MAPBUG:: Couldn't find beacon %s for waypoint %s of %s[%s %d %d]!\n",
+                    WP_BEACON(wp), STRING_OBJ_NAME(wp), STRING_OBJ_NAME(op),
+                    STRING_MAP_PATH(op->map), op->x, op->y);
                 CLEAR_FLAG(wp, WP_FLAG_ACTIVE); /* disable this waypoint */
                 try_next_wp = 1;
             }
@@ -1489,7 +1490,7 @@ void ai_move_towards_waypoint(object *op, struct mob_behaviour_param *params, mo
                 /* Problem: we couldn't find a relative direction between the
                  * maps. Usually it means that they are in different mapsets
                  * or too far away from each other. */
-                LOG(llevDebug, "BUG: ai_move_towards_waypoint(): No connection between maps: '%s' and '%s'\n",
+                LOG(llevMapbug, "MAPBUG:: No connection between maps: '%s' and '%s'!\n",
                     STRING_MAP_PATH(destmap), STRING_MAP_PATH(op->map));
                 CLEAR_FLAG(wp, WP_FLAG_ACTIVE); /* disable this waypoint */
                 try_next_wp = 1;
@@ -1530,8 +1531,9 @@ void ai_move_towards_waypoint(object *op, struct mob_behaviour_param *params, mo
         }
         else
         {
-            LOG(llevDebug, "BUG: ai_move_towards_waypoint(): '%s' ('%s') no such map: '%s'\n", STRING_OBJ_NAME(op),
-                STRING_OBJ_NAME(wp), STRING_WP_MAP(wp));
+            LOG(llevMapbug, "MAPBUG:: Couldn't find map '%s' for waypoint %s of %s[%s %d %d]!\n",
+                STRING_WP_MAP(wp), STRING_OBJ_NAME(wp), STRING_OBJ_NAME(op),
+                STRING_MAP_PATH(op->map), op->x, op->y);
             CLEAR_FLAG(wp, WP_FLAG_ACTIVE);
             try_next_wp = 1;
         }
