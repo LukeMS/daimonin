@@ -40,6 +40,9 @@
  * object.c/activelist_remove_inline(). */
 /* #define DEBUG_ACTIVELIST */
 
+/* Log info when inserting/removing beacons: object.c */
+/* #define DEBUG_BEACONS */
+
 /* very have debugging of the whole core server loop - mainly how map data ia send & stored */
 /* #define DEBUG_CORE */
 /* #define DEBUG_CORE_MAP*/
