@@ -1545,9 +1545,10 @@ void move_apply(object *const trap_obj, object *const victim, object *const orig
             goto leave;
           */
         default:
-          LOG(llevDebug, "name %s, arch %s, type %d with fly/walk on/off not "
-                         "handled in move_apply()\n", trap->name,
-              trap->arch->name, trap->type);
+          LOG(llevMapbug, "MAPBUG:: %s[%s %d %d]: Type %d with fly/walk on/off not handled!\n",
+              STRING_OBJ_NAME(trap), STRING_MAP_PATH(trap->map), trap->x,
+              trap->y, trap->type);
+
           goto leave;
     }
 
