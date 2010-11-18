@@ -348,8 +348,8 @@ void spawn_point(object *op)
 
     if (!op->inv) /* spawn point without inventory! */
     {
-        LOG(llevBug, "BUG: Spawn point without inventory!! --> map %s (%d,%d)\n",
-            op->map ? (op->map->path ? op->map->path : ">no path<") : ">no map<", op->x, op->y);
+        LOG(llevMapbug, "MAPBUG:: Spawn point[%s %d %d] without inventory!\n",
+            STRING_MAP_PATH(op->map), op->x, op->y);
         /* kill this spawn point - its useless and need to fixed from the map maker/generator */
         remove_ob(op);
         check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
@@ -369,8 +369,12 @@ void spawn_point(object *op)
             continue;
 
         if (tmp->type != SPAWN_POINT_MOB)
-            LOG(llevBug, "BUG: spawn point in map %s (%d,%d) with wrong type object (%d) in inv: %s\n",
-                op->map ? op->map->path : "<no map>", op->x, op->y, tmp->type, query_name(tmp));
+        {
+            LOG(llevMapbug, "MAPBUG:: Spawn point[%s %d %d] with wrong type object (%s type: %d) in inventory!\n",
+                STRING_MAP_PATH(op->map), op->x, op->y, STRING_OBJ_NAME(tmp),
+                tmp->type);
+           remove_ob(tmp);
+        }
         else if ((int) tmp->enemy_count <= op->stats.sp && (int) tmp->enemy_count >= rmt)
         {
             /* we have a possible hit - control special settings now */
