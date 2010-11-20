@@ -63,7 +63,9 @@ int read_socket_buffer(NewSocket *ns)
 	stat_ret = read(ns->fd, sl->buf + tmp, read_bytes);
 #endif
 
+#ifdef DEBUG_PROCESS_QUEUE
     LOG(llevNoLog,"READ(tick: %lu)(FD: %p / %d): %d\n", ROUND_TAG, ns, ns->fd, stat_ret);
+#endif
 
 	if (stat_ret > 0)
 		sl->len += stat_ret;
