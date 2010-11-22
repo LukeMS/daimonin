@@ -3374,9 +3374,10 @@ static void beacon_initializer(object *op)
     {
         /* Replace existing entry TODO: speed up with hashtable_replace() or
          * something similar */
-        LOG(llevMapbug, "MAPBUG:: Replacing already registered beacon (%s[%s %d %d])!\n",
-            STRING_OBJ_NAME(op), STRING_MAP_PATH(parent->map), parent->x,
-            parent->y);
+#ifdef DEBUG_BEACONS
+        LOG(llevDebug, "DEBUG:: %s/beacon_initializer(): Replacing already registered beacon (%s[%d])!\n",
+            __FILE__, STRING_OBJ_NAME(op), TAG(op));
+#endif
         hashtable_erase(beacon_table, op->custom_attrset);
         hashtable_insert(beacon_table, op->custom_attrset, op);
     }
