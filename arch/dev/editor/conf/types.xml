@@ -5292,7 +5292,7 @@
 </type>
 <!--####################################################################-->
 <type number="41" name="Teleporter">
-  <import_type name="Exit" />
+  <import_type name="default_flags" />
   <ignore>
     <ignore_list name="non_pickable" />
     <ignore_list name="default_setting" />
@@ -5320,7 +5320,95 @@
     VERY IMPORTANT: If you want to have your teleporter activated via
     button/handle/magic_ear/etc, you must set &lt;activation speed&gt; to zero!
   </attribute>
+  <attribute arch="connected" editor="connection" type="int">
+    If a non-zero value is set, when that connection network is signalled,
+    the exit will be triggered.
+  </attribute>
 </section>
+<section name="destination">
+  <attribute arch="slaying" editor="exit path" type="map_path">
+    The exit path defines the map that the player is transferred to.
+    You can enter an absolute path, beginning with '/' (for example
+    "/peterm/FireTemple/fire1"). It can also be a relative path, not beginning
+    with '/' (On the map "/peterm/FireTemple/Fire2" for example I could use the
+    relative path "Fire1"). Use relative paths whenever possible! Note that
+    upper/lower case must always be set correctly. However, please use lower
+    case only.
+    It is well possible to have an exit pointing to the same map that the exit
+    is on. If slaying is not set in an exit, the player will see a message like
+    "the exit is closed".
+  </attribute>
+  <attribute arch="hp" editor="destination X" type="int">
+    This defines the X square to which the exit leads.
+    If set to -1, the destination map's &lt;Enter X&gt; value will be
+    substituted.
+  </attribute>
+  <attribute arch="sp" editor="destination Y" type="int">
+    This defines the Y square to which the exit leads.
+    If set to -1, the destination map's &lt;Enter Y&gt; value will be
+    substituted.
+  </attribute>
+  <attribute arch="last_eat" editor="map type" type="list_maptype">
+    This most important setting defines as which type of map the destination map
+    will be handled from the server.
+    The default exit leads to normal multiplayer maps. Which are loaded
+    from the (read only) default /maps folder and saved/swaped to /tmp.
+    Instances are maps which are "unique" for a single player. Means for every
+    player is an own instance is loaded. This kind of maps exists only temporary
+    and if the instance is changed or newly loaded, the old instance is skipped.
+    Unique maps are apartments which are permanent saved inside the players folder
+    and permanent property of the player.
+    Instances and unique maps will be available in later Daimonin version for groups
+    and clans too.
+  </attribute>
+  <attribute arch="is_male" editor="instance: no reenter" type="bool">
+    If set the server will always create a new instance instead of trying to
+    use an old one.
+  </attribute>
+  <attribute arch="is_female" editor="instance: reset instance" type="bool">
+    If set AND when the map is loaded as instance the players instance reseted
+    so he can't reenter this map without restarting the instance.
+    This setting is used for instances which can be reentered. By marking the
+    final exit with it when the instance is done the player will have an real
+    end of the instance.
+  </attribute>
+</section>
+<section name="insertion">
+  <attribute arch="last_heal" editor="fixed location" type="bool">
+    If set, the activator is inserted at the square at &lt;destination x&gt;,
+    &lt;destination y&gt;, whether or not that spot is free (but see also
+    &lt;do not force insertion&gt; below).
+    Overrides &lt;random location, progressive radius&gt;.
+  </attribute>
+  <attribute arch="last_sp" editor="random location, progressive radius" type="bool">
+    If set, first the square at &lt;destination x&gt;, &lt;destination y&gt; is
+    checked. Then, if that is not free, the 8 surrounding squares are checked.
+    Then, if none are free, the 16 surrounding squares are checked. Finally, if
+    none are free, the 24 surrounding squares are checked. The activator is
+    inserted at the first free spot found or the default spot if none are free
+    (but see also &lt;do not force insertion&gt; below).
+    Is overridden by &lt;fixed location&gt;.
+  </attribute>
+  <attribute arch="last_grace" editor="first available location/do not force insertion" type="bool">
+    The interpretation of this flag depends if either &lt;fixed location&gt; or
+    &lt;random location, progressive radius&gt; above are set.
+    If neither are set but this is, first the square at &lt;destination x&gt;,
+    &lt;destination y&gt; is checked. Then, if that is not free, the 8
+    surrounding squares are checked. The activator is inserted at the first
+    free spot found. Insertion fails if none are free.
+    If neither are set and this is also unset, the insertion is as above, but
+    the activator is inserted at the default spot if none are free (insertion
+    never fails).
+    If either are set and so is this, the activator is not inserted at the
+    default spot if no free spot is found.
+  </attribute>
+</section>
+  <attribute arch_begin="msg" arch_end="endmsg" editor="exit message" type="text">
+    If set, this message will be displayed to the player when he applies the exit.
+    This is quite useful to throw in some "role-play feeling": "As you enter the
+    dark cave you hear the sound of rustling dragonscales...". Well, my English
+    is poor, but you get the point. =)
+  </attribute>
 </type>
 
 <!--####################################################################-->
