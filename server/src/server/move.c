@@ -162,6 +162,8 @@ int move_ob(object *op, int dir, object *originator)
  * be used close to each other and not have the player put to the
  * one of another type.
  */
+/* FIXME: Why use the tele_type parameter instead of teleporter->type?
+ * -- Smacky 20101123 */
 int teleport(object *teleporter, uint8 tele_type, object *user)
 {
     object     *altern[120]; /* Better use c/malloc here in the future */
@@ -201,7 +203,11 @@ int teleport(object *teleporter, uint8 tele_type, object *user)
 
     if (!nrofalt)
     {
-        LOG(llevBug, "BUG: No alternative teleporters around!\n");
+        LOG(llevMapbug, "MAPBUG:: %s[%s %d %d]: No destination %s around!\n",
+            STRING_OBJ_NAME(teleporter), STRING_MAP_PATH(teleporter->map),
+            teleporter->x, teleporter->y,
+            (tele_type == SHOP_MAT) ? "shop mats" : "teleporters");
+
         return 0;
     }
 
