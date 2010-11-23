@@ -5307,14 +5307,7 @@
     monsters to different locations on the same map. ]]>
   </description>
   <use><![CDATA[
-    When creating maps, I guess sooner or later you'll want to have
-    an invisible teleporter. And in some cases you can't place it
-    under the floor to prevent this.
-    <br><br>
-    Fortunately, there is a cool trick to make a perfectly invisible
-    teleporter: You simply add teleporter functionality to the floor
-    itself. That means: You take the floor arch (e.g. "flagstone"),
-    set "type 41", and add slaying/hp/sp/connected... everything you need. ]]>
+    This space intentionally left blank. ]]>
   </use>
 <section name="activation">
   <attribute arch="speed" editor="activation speed" type="float">
