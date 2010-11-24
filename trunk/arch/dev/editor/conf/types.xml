@@ -3595,8 +3595,7 @@
   <attribute arch="connected" editor="connection" type="int">
     If a connection value is set, the spawn point will try to spawn
     whenever the connection is triggered.
-    If you set this, you wil should also set &lt;speed&gt; and
-    &lt;spawn chance&gt; to 0.
+    If you set this, you wil should also set &lt;speed&gt; to 0.
   </attribute>
 </section>
 <section name="linked spawn">
