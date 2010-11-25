@@ -1841,8 +1841,10 @@ static void destroy_ob_inv(object *op)
          * -- Smacky 20101115 */
         if (OBJECT_FREE(tmp))
         {
-            LOG(llevDebug,"DEBUG: Skipping freed object found in inv of %s[%d] during gc!\n",
-                STRING_OBJ_NAME(op),TAG(op));
+#if defined DEBUG_GC
+            LOG(llevDebug, "DEBUG:: %s/destroy_ob_inv(): Skipping freed object found in inv of %s[%d] during gc!\n",
+                __FILE__, STRING_OBJ_NAME(op), TAG(op));
+#endif
 
             continue;
         }
