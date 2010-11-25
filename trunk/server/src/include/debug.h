@@ -68,7 +68,8 @@
 /*#define DEBUG_FRIENDSHIP_WARNING*/
 
 /* Debug Link Spawns: spawn_point.c */
-#define DEBUG_LINK_SPAWN /* log message when a linked spawn point is added, removed or called */
+/* log message when a linked spawn point is added, removed or called */
+/* #define DEBUG_LINK_SPAWN */
 
 /* Track & log mempool object using: mempool.c */
 /*#define DEBUG_MEMPOOL_OBJECT_TRACKING*/  /* enables a global list of *all* objects
