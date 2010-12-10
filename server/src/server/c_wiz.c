@@ -1446,7 +1446,7 @@ int command_setskill(object *op, char *params)
     }
 
     /* Constrain level to sensible values. */
-    level = MAX(1, MIN(level, MAXLEVEL));
+    level = MAX(0, MIN(level, MAXLEVEL));
 
     if (!(exp_skill = pl->skill_ptr[snr])) /* we don't have the skill - learn it*/
     {
