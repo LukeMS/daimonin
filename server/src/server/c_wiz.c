@@ -324,7 +324,28 @@ int command_reboot(object *op, char *params)
                sscanf(cp, "%s", stream);
             }
         }
+#else
 
+#ifdef DAI_DEVELOPMENT_CONTENT
+        time = 30;
+#else
+        time = 300;
+#endif
+
+        if (cp)
+        {
+            sscanf(cp, "%d", &time);
+        }
+#endif
+
+        /* Gmasters below SA have a minimum reboot time of 30s. */
+        if (!(CONTR(op)->gmaster_mode & GMASTER_MODE_SA) &&
+            time < 30)
+        {
+            time = 30;
+        }
+
+#ifdef DAI_DEVELOPMENT_CODE
         if (stream[0] &&
             !strpbrk(stream, "\"&*/ "))
         {
@@ -345,13 +366,6 @@ int command_reboot(object *op, char *params)
                 fprintf(fp, "%s", stream);
                 fclose(fp);
             }
-        }
-#else
-        time = 300;
-
-        if (cp)
-        {
-            sscanf(cp, "%d", &time);
         }
 #endif
 
