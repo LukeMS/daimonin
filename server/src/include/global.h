@@ -578,8 +578,8 @@ typedef struct _player_arch_template
 /* these variables are direct initialized in their modules. So we
  * can't use EXTERN.
  */
-extern sint32                   new_levels[MAXLEVEL + 19];
-extern float                    lev_exp[MAXLEVEL + 18];
+extern sint32                   new_levels[MAXLEVEL + 17];
+extern float                    lev_exp[MAXLEVEL + 17];
 extern int                      freearr_x[SIZEOFFREE];
 extern int                      freearr_y[SIZEOFFREE];
 extern int                      maxfree[SIZEOFFREE];
