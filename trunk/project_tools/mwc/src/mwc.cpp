@@ -22,10 +22,11 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. */
 
-
+//#pragma warning (disable:4430)
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <cstring>
 #include <stdlib.h>
 #include <time.h>
 #include "Bitmap.h"
@@ -53,7 +54,8 @@ using namespace std;
                 area_x,
                 area_y,                 // holds the current position of a maparea
                 maps,                   // number of maps
-                terrain;
+                terrain,
+				difficulty;				// Difficulty level of the map
 
     int         help,                   // dummyvariables
                 x,
@@ -313,7 +315,7 @@ bool Bitmap::convert24(char* tempData)
         offset=padWidth-byteWidth;
 
         //count backwards so you start at the front of the image
-        for(int i=0;i<dataSize;i+=3) 
+        for(unsigned int i=0;i<dataSize;i+=3) 
           {
             //jump over the padding at the start of a new line
             if((i+1)%padWidth==0) 
@@ -338,7 +340,7 @@ bool Bitmap::convert24(char* tempData)
         //after the header  The only problem is that some programs
         //will pad not only the data, but also the file size to
         //be divisible by 4 bytes.
-        for(int i=0;i<dataSize;i+=3) 
+        for(unsigned int i=0;i<dataSize;i+=3) 
           {
             //jump over the padding at the start of a new line
             if((i+1)%padWidth==0) 
@@ -380,7 +382,7 @@ bool Bitmap::convert8(char* tempData)
         int j=0;
 
         //count backwards so you start at the front of the image
-        for(int i=0;i<dataSize*RGB_BYTE_SIZE;i+=3) 
+        for(unsigned int i=0;i<dataSize*RGB_BYTE_SIZE;i+=3) 
           {
             //jump over the padding at the start of a new line
             if((i+1)%padWidth==0) 
@@ -402,7 +404,7 @@ bool Bitmap::convert8(char* tempData)
         int j=dataSize-1;
 
         //count backwards so you start at the front of the image
-        for(int i=0;i<dataSize*RGB_BYTE_SIZE;i+=3) 
+        for(unsigned int i=0;i<dataSize*RGB_BYTE_SIZE;i+=3) 
           {
             //jump over the padding at the start of a new line
             if((i+1)%padWidth==0) 
@@ -441,7 +443,7 @@ bool getfeld(char *bitmapname)
         fx = 0;
         fy = image->height-1;
         fz = 0;
-        for(int i=0;i<image->dataSize;i+=3) 
+        for(unsigned int i=0;i<image->dataSize;i+=3) 
           {
             if (*(image->data+i)<0) 
               pic_map[fx][fy][fz] = (256 + *(image->data+i));
@@ -478,8 +480,7 @@ bool getfeld(char *bitmapname)
 
 /* Main routine */
 
-main()
-  {
+int main() {
     /* set the randomize seed according to the systemtime */
     srand(time(NULL));
 
@@ -506,6 +507,9 @@ main()
     cout << endl;
     cout << "Please enter the areasize (max 15) (y * maps) :";
     cin >> area_size_y;
+	cout << endl;
+	cout << "Please enter the difficulty level of the area (1-110) :";
+	cin >> difficulty;
     cout << endl;
     cout << "Is this an outdoor mapset ? (1-yes / 2-no) :";
     cin >> help;
@@ -564,7 +568,7 @@ main()
     cout << "Filename   : " << filename+level << endl;
     cout << "Areasize   : " << area_size_x << "x" << area_size_y << " maps" << endl;
     cout << "Mapsize    : " << map_size_x << "x" << map_size_y << " tiles" << endl;
-    cout << "Difficulty : 1" << endl;    // standard difficulty
+    cout << "Difficulty : " << difficulty << endl;
     if (outdoor)
       cout << "Outdoor    : YES" << endl;
     else
@@ -606,7 +610,7 @@ main()
             dat_aus << "endmsg\n";
             dat_aus << "width " << stringify_int(map_size_x) << "\n";
             dat_aus << "height " << stringify_int(map_size_y) << "\n";
-            dat_aus << "difficulty 1\n";
+            dat_aus << "difficulty " << difficulty << "\n";
             if (outdoor)
               dat_aus << "outdoor 1\n";
 
@@ -672,7 +676,7 @@ main()
 
             if (!map_with_bitmap)      // mapcreation without a bitmap
               {
-                cout << current_filename << " : (1-gras / 2-stone / 3-water / 4-earth / 5-forrest / 6-from file) :";
+                cout << current_filename << " : (1-grass / 2-stone / 3-water / 4-earth / 5-forrest / 6-from file) :";
                 cin >> terrain;
                 cout << endl;
 
