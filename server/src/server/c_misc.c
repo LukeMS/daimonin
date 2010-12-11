@@ -1255,11 +1255,23 @@ char *get_subdir(const char *name)
     return subdir;
 }
 
-
+/* '/stuck' teleports the player to a location near the beginning, just outside
+ * of the unofficial maps lobby.
+ *
+ * '/stuck name' teleports the player to the named MWs private lobby. If name
+ * is not a MW then no map will be found, which goto will handle. */
 int command_stuck(object *op, char *params)
 {
-    if (op->type == PLAYER && CONTR(op))
-        command_goto(op, "/planes/human_plane/castle/castle_030a 5 11");
+    if (params)
+    {
+        char buf[TINY_BUF];
 
-    return 0;
+        sprintf(buf, "/unofficial/%s/private_lobby", params);
+
+        return command_goto(op, buf);
+    }
+    else
+    {
+        return command_goto(op, "/planes/human_plane/castle/castle_030a 5 11");
+    }
 }
