@@ -1491,7 +1491,7 @@ int command_setskill(object *op, char *params)
     }
 
     exp_skill->level = level;
-    exp_skill->stats.exp =  new_levels[level];
+    exp_skill->stats.exp =  new_levels[level] - 1;
 
     /* adjust_exp has adjust the skill and all exp_obj and player exp */
     /* now lets check for level up in all categories */
