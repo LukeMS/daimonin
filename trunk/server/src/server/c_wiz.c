@@ -409,12 +409,13 @@ int command_reboot(object *op, char *params)
 
 int command_goto(object *op, char *params)
 {
-    char   name[MAXPATHLEN] = {"\0"},
-           buf[MAXPATHLEN];
-    shstr *path = NULL;
-    int    x = -1,
-           y = -1,
-           flags = 0;
+    char       name[MAXPATHLEN] = {"\0"},
+               buf[MAXPATHLEN];
+    shstr     *path = NULL;
+    int        x = -1,
+               y = -1,
+               flags = 0;
+    mapstruct *m;
 
     if (!op ||
         op->type != PLAYER ||
@@ -457,7 +458,9 @@ int command_goto(object *op, char *params)
             }
     }
 
-    if (!path)
+    if (!path ||
+        !(m = ready_map_name(path, (path != CONTR(op)->savebed_map) ? path :
+                             CONTR(op)->orig_savebed_map, flags, op->name)))
     {
         new_draw_info(NDI_UNIQUE, 0, op, "Map '%s' does not exist!",
                       buf);
@@ -466,14 +469,18 @@ int command_goto(object *op, char *params)
         return 0;
     }
 
-    if (enter_map_by_name(op, path, (path != CONTR(op)->savebed_map) ? path :
-                          CONTR(op)->orig_savebed_map, x, y, flags))
-            
+    /* Specified coords are not on the map? Default to map entry point. */
+    if (x < 0 ||
+        x >= MAP_WIDTH(m) ||
+        y < 0 ||
+        y >= MAP_HEIGHT(m))
     {
-        new_draw_info(NDI_UNIQUE, 0, op, "Difficulty: %d.",
-                      op->map->difficulty);
-        set_mappath_by_map(op);
+        x = MAP_ENTER_X(m);
+        y = MAP_ENTER_Y(m);
     }
+
+    (void)enter_map(op, NULL, m, x, y, flags, 0); 
+    set_mappath_by_map(op);
 
     FREE_ONLY_HASH(path);
 
