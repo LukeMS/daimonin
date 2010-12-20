@@ -33,10 +33,6 @@
 #include <stdio.h>
 #endif /* !win32 */
 
-#ifdef HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-
 #ifdef HAVE_ARPA_INET_H
 #include <arpa/inet.h>
 #endif

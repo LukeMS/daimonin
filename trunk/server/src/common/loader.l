@@ -224,7 +224,7 @@ WS	[ \t]*{NL}?
 				 * also we adjust here auto_apply.
 				 * This was moved from fix_auto_apply.
 				 * This here only handles inventory items, the "base"
-				 * items are handled in load_objects() .
+				 * items are handled in map.c/LoadObjects() .
 				 */
 					if(QUERY_FLAG(tmp,FLAG_AUTO_APPLY)) /* remember: auto_apply will remove FLAG_AUTO_APPLY */
 						auto_apply(tmp);

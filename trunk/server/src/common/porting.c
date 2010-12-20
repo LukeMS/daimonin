@@ -51,10 +51,6 @@
 #include <stdlib.h>
 #endif
 
-#ifdef HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-
 /* Has to be after above includes so we don't redefine some values */
 #include "global.h"
 

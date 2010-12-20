@@ -71,7 +71,6 @@ SRCS = \
 	spell_effect.c\
 	spell_util.c\
 	swamp.c\
-	swap.c\
 	time.c\
 	pathfinder.c\
 	calendar.c
