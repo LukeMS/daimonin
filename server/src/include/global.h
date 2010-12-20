@@ -589,7 +589,6 @@ extern int                      freeback2[SIZEOFFREE];
 extern Settings                 settings;
 extern player_arch_template     player_arch_list[MAX_PLAYER_ARCH];
 
-extern int                      global_darkness_table[MAX_DARKNESS + 1];
 extern spell                    spells[NROFREALSPELLS];
 
 /* EXTERN is pre-defined in common/init.c as #define EXTERN - so the

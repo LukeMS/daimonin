@@ -714,16 +714,6 @@ void                        stats_event(stats_event_type type, ...);
 /* swamp.c */
 void                        walk_on_deep_swamp(object *op, object *victim);
 void                        move_deep_swamp(object *op);
-/* swap.c */
-void                        read_map_log(void);
-void                        swap_map(mapstruct *map, int force_flag);
-void                        check_active_maps(void);
-mapstruct                  *map_least_timeout(const char *except_level);
-void                        swap_below_max(const char *except_level);
-int                         players_on_map(mapstruct *m);
-void                        flush_old_maps(void);
-void                        set_map_timeout(mapstruct *oldmap);
-void                        set_map_reset_time(mapstruct *map);
 /* time.c */
 object                     *find_key(object *op, object *door);
 int                         open_door(object *op, mapstruct *m, int x, int y, int mode);

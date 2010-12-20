@@ -43,6 +43,9 @@
 /* Log info when inserting/removing beacons: object.c */
 /* #define DEBUG_BEACONS */
 
+/* Map load, save, swap, free, and deleŧe: map.c */
+#define DEBUG_MAP
+
 /* very have debugging of the whole core server loop - mainly how map data ia send & stored */
 /* #define DEBUG_CORE */
 /* #define DEBUG_CORE_MAP*/

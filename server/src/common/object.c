@@ -677,7 +677,7 @@ object * merge_ob(object *op, object *tmp)
 
 /* calculates the weight an object is carrying.
  * its not recursive itself but the caller will take care of it.
- * thats for example the recursive flex loader and load_objects().
+ * thats for example the recursive flex loader and map.c/LoadObjects().
  */
 sint32 sum_weight(object *op)
 {
@@ -3388,7 +3388,7 @@ static void beacon_initializer(object *op)
 static void monster_initializer(object *op)
 {
     /* We only want to initialize monsters inside objects here. Monsters on maps
-     * are handled by map.c:load_objects() after they have been inserted onto the map */
+     * are handled by map.c:map.c/LoadObjects() after they have been inserted onto the map */
     if(op->env)
         fix_monster(op);
 }

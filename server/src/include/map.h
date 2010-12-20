@@ -41,6 +41,14 @@
                                */
 #define MAP_LAYERS      4   /* thats our 4 physical layers we really show */
 
+/* Default values for a few non-zero attributes. */
+#define MAP_DEFAULT_WIDTH      24
+#define MAP_DEFAULT_HEIGHT     24
+#define MAP_DEFAULT_RESET_TIME MIN(MAP_MAXRESET, 7200)
+#define MAP_DEFAULT_SWAP_TIME  MAX(MAP_MINTIMEOUT, 300)
+#define MAP_DEFAULT_DIFFICULTY 1
+#define MAP_DEFAULT_DARKNESS   0
+
 /* This is when the map will reset */
 #define MAP_WHEN_RESET(m)       ((m)->reset_time)
 
@@ -457,7 +465,7 @@ typedef struct rv_vector_s
 #define RV_FAST_EUCLIDIAN_DISTANCE  0x10
 #define RV_NO_DISTANCE             (0x08|0x04|0x10)
 
-extern int      map_tiled_reverse[TILED_MAPS];
+extern int global_darkness_table[MAX_DARKNESS + 1];
 
 /* Maximum number of tiles to search in relative_tile_position() before giving up */
 /* 8 => 1 level deep, 24 => 2 levels, 48 =>3 levels */
