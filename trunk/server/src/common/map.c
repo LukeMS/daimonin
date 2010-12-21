@@ -2615,8 +2615,11 @@ static void LoadObjects(mapstruct *m, FILE *fp, int mapflags)
     m->map_flags |= MAP_FLAG_NO_UPDATE; /* be sure to avoid tile updating in the loop below */
 
     mybuffer = create_loader_buffer(fp);
+
     while ((i = load_object(fp, op, mybuffer, LO_REPEAT, mapflags)))
     {
+        MapSpace *msp;
+
         /* atm, we don't need and handle multi arches saved with tails! */
         if (i == LL_MORE)
         {
@@ -2664,51 +2667,89 @@ static void LoadObjects(mapstruct *m, FILE *fp, int mapflags)
             SET_ANIMATION(op, (NUM_ANIMATIONS(op) / NUM_FACINGS(op)) * op->direction + op->state);
         }
 
-        if (op->type == FLOOR)
+        switch (op->type)
         {
-            /* Be sure that floor is a.) always single arch and b.) always uses
-             * "in map" offsets (no multi arch tricks). */
-            MapSpace *msp = GET_MAP_SPACE_PTR(m,op->x,op->y);
-
-            msp->floor_face = op->face;
-            msp->floor_terrain = op->terrain_type;
-            msp->floor_light = op->last_sp;
-            msp->floor_direction_block = op->block_movement;
+            case FLOOR:
+                /* Be sure that floor is a.) always single arch and b.) always uses
+                 * "in map" offsets (no multi arch tricks). */
+                msp = GET_MAP_SPACE_PTR(m,op->x,op->y);
+                msp->floor_face = op->face;
+                msp->floor_terrain = op->terrain_type;
+                msp->floor_light = op->last_sp;
+                msp->floor_direction_block = op->block_movement;
 #ifdef USE_TILESTRETCHER
-            msp->floor_z = op->z;
+                msp->floor_z = op->z;
 #endif
 
-            if (QUERY_FLAG(op, FLAG_NO_PASS))
-            {
-                msp->floor_flags |= MAP_FLOOR_FLAG_NO_PASS;
-            }
+                if (QUERY_FLAG(op, FLAG_NO_PASS))
+                {
+                    msp->floor_flags |= MAP_FLOOR_FLAG_NO_PASS;
+                }
 
-            if (QUERY_FLAG(op, FLAG_PLAYER_ONLY))
-            {
-                msp->floor_flags |= MAP_FLOOR_FLAG_PLAYER_ONLY;
-            }
+                if (QUERY_FLAG(op, FLAG_PLAYER_ONLY))
+                {
+                    msp->floor_flags |= MAP_FLOOR_FLAG_PLAYER_ONLY;
+                }
 
-            goto next;
-        }
-        else if (op->type == TYPE_FLOORMASK)
-        {
-            /* We save floor masks direct over a generic mask arch/object and
-             * don't need to store the direction. A mask will not turn ingame -
-             * thats just for the editor and to have one arch. */
-            SET_MAP_FACE_MASK(m,op->x,op->y,op->face);
+                goto next;
 
-            goto next;
-        }
+            case TYPE_FLOORMASK:
+                /* We save floor masks direct over a generic mask arch/object
+                 * and don't need to store the direction. A mask will not turn
+                 * ingame - thats just for the editor and to have one arch. */
+                SET_MAP_FACE_MASK(m,op->x,op->y,op->face);
 
-        if (op->type == CONTAINER) /* do some safety for containers */
-        {
-            op->attacked_by = NULL; /* used for containers as link to players viewing it */
-            op->attacked_by_count = 0;
-        }
-        else if (op->type == SPAWN_POINT &&
-                 op->slaying)
-        {
-            add_linked_spawn(op);
+                goto next;
+
+            case CONTAINER:
+                /* Unlink containers. */
+                op->attacked_by = NULL;
+                op->attacked_by_count = 0;
+
+                break;
+
+            case SPAWN_POINT:
+                /* Link spawns where necessary. */
+                if (op->slaying)
+                {
+                    add_linked_spawn(op);
+                }
+
+                break;
+
+            case EXIT:
+            case TELEPORTER:
+            case PIT:
+            case TRAPDOOR:
+                /* Check for invalid exit path. */
+                if (EXIT_PATH(op))
+                {
+                    shstr *path_sh;
+
+                    /* Absolute path? */
+                    if (*op->slaying == '/')
+                    {
+                        path_sh = add_refcount(op->slaying);
+                    }
+                    else
+                    {
+                        char buf[MAXPATHLEN];
+
+                        (void)normalize_path(m->orig_path, op->slaying, buf);
+                        path_sh = add_string(buf);
+                    }
+
+                    if (check_path(path_sh, 1) == -1)
+                    {
+                        LOG(llevMapbug, "MAPBUG:: %s[%s %d %d] destination map %s does not exist!\n",
+                            STRING_OBJ_NAME(op), STRING_MAP_PATH(m), op->x,
+                            op->y, path_sh);
+                    }
+
+                    FREE_ONLY_HASH(path_sh);
+                }
+
+                break;
         }
 
         /* XXX: This means too - NO double use of ->carrying! */
