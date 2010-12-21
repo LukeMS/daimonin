@@ -2335,9 +2335,7 @@ static int LoadMapHeader(FILE *fp, mapstruct *m, int flags)
         }
         else if (!strncmp(key, "tile_path_", 10))
         {
-            int        tile = atoi(key + 10);
-            mapstruct *neighbour;
-            shstr     *path_sh;
+            int tile = atoi(key + 10);
 
             if (tile < 1 ||
                 tile > TILED_MAPS)
@@ -2347,6 +2345,8 @@ static int LoadMapHeader(FILE *fp, mapstruct *m, int flags)
             }
             else
             {
+                shstr *path_sh;
+
                 *end = '\0';
 
                 if (m->tile_path[tile - 1])
@@ -2391,35 +2391,47 @@ static int LoadMapHeader(FILE *fp, mapstruct *m, int flags)
                     path_sh = add_string(value);
                 }
 
-                /* If the neighbouring map tile has been loaded, set up the map pointers */
-                if ((neighbour = has_been_loaded_sh(path_sh)) &&
-                    (neighbour->in_memory == MAP_IN_MEMORY ||
-                     neighbour->in_memory == MAP_LOADING))
+                /* If the specified map does not exist, report this and do not
+                 * set the tile_path. */
+                if (check_path(path_sh, 1) == -1)
                 {
-                    int dest_tile = MapTiledReverse[tile - 1];
-
-                    /* LOG(llevDebug,"add t_map %s (%d). ", path_sh, tile-1); */
-                    if (neighbour->orig_tile_path[dest_tile] != m->orig_path)
-                    {
-                        /* Refuse tiling if anything looks suspicious, since that may leave dangling pointers and crash the server */
-                        LOG(llevMapbug, "MAPBUG: map tiles incorrecly connected: %s->%s but %s->%s. Refusing to connect them!\n",
-                                STRING_MAP_ORIG_PATH(m),
-                                (path_sh) ? path_sh : "(no map)",
-                                STRING_MAP_ORIG_PATH(neighbour),
-                                (neighbour->orig_tile_path[dest_tile]) ? neighbour->orig_tile_path[dest_tile] : "(no map)");
-
-                        /* Disable map linking */
-                        FREE_AND_CLEAR_HASH(path_sh);
-                        FREE_AND_CLEAR_HASH(m->orig_tile_path[tile - 1]);
-                    }
-                    else
-                    {
-                        m->tile_map[tile - 1] = neighbour;
-                        neighbour->tile_map[dest_tile] = m;
-                    }
+                    LOG(llevMapbug, "MAPBUG:: Tile %d of map >%s< refers to non-existent file >%s<!\n",
+                        tile, STRING_MAP_PATH(m), STRING_SAFE(path_sh));
                 }
+                else
+                {
+                    mapstruct *neighbour;
 
-                m->tile_path[tile - 1] = path_sh;
+                    /* If the neighbouring map tile has been loaded, set up the map pointers */
+                    if ((neighbour = has_been_loaded_sh(path_sh)) &&
+                        (neighbour->in_memory == MAP_IN_MEMORY ||
+                         neighbour->in_memory == MAP_LOADING))
+                    {
+                        int dest_tile = MapTiledReverse[tile - 1];
+
+                        /* LOG(llevDebug,"add t_map %s (%d). ", path_sh, tile-1); */
+                        if (neighbour->orig_tile_path[dest_tile] != m->orig_path)
+                        {
+                            /* Refuse tiling if anything looks suspicious, since that may leave dangling pointers and crash the server */
+                            LOG(llevMapbug, "MAPBUG: map tiles incorrecly connected: %s->%s but %s->%s. Refusing to connect them!\n",
+                                    STRING_MAP_ORIG_PATH(m),
+                                    (path_sh) ? path_sh : "(no map)",
+                                    STRING_MAP_ORIG_PATH(neighbour),
+                                    (neighbour->orig_tile_path[dest_tile]) ? neighbour->orig_tile_path[dest_tile] : "(no map)");
+
+                            /* Disable map linking */
+                            FREE_AND_CLEAR_HASH(path_sh);
+                            FREE_AND_CLEAR_HASH(m->orig_tile_path[tile - 1]);
+                        }
+                        else
+                        {
+                            m->tile_map[tile - 1] = neighbour;
+                            neighbour->tile_map[dest_tile] = m;
+                        }
+                    }
+
+                    m->tile_path[tile - 1] = path_sh;
+                }
             }
         }
         else if (!strcmp(key, "tileset_id"))
