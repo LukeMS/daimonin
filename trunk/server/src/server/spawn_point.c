@@ -85,12 +85,6 @@ static object *spawn_monster(object *mob, object *spawn)
         if (OBJECT_FREE(part))
             return NULL;
 
-        /* In fact only the head has a randomitems attribute */
-        if (part->randomitems)
-            create_treasure_list(part->randomitems, part, 0,
-                                 (part->level > 0) ? part->level : diff,
-                                 ART_CHANCE_UNSET, 0);
-
         if (!head)
             head = part;
 
@@ -194,6 +188,21 @@ static object *spawn_monster(object *mob, object *spawn)
                     monster->resist[i] = MAX(-100, MIN(objresist, 100));
                 }
             }
+        }
+
+        if (monster->randomitems)
+        {
+            /* Treasure used to be calculated according to map difficulty when
+             * mob level was 0. However, this makes little sense as mob's must
+             * have (and all do in their arch) positive level.
+             *
+             * The calculation in the fourth param, while unnecessary if
+             * relative level was set (it was basically already done above) is
+             * for mob's where relative level was not set.
+             * -- Smacky 20101222 */
+            create_treasure_list(monster->randomitems, monster, 0,
+                                 MAX(1, MIN(monster->level, 127)),
+                                 ART_CHANCE_UNSET, 0);
         }
     }
 
