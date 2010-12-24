@@ -633,8 +633,6 @@ op->oz= op->z;
 ^has_ready_skill{S}			{};
 	/* end outdate */
 
-^attack_movement{S} LOG(llevMapbug, "MAPBUG: loader(): deprecated attack_movement setting. op=%s\n", STRING_OBJ_NAME(op));
-^move_state{S}	    LOG(llevMapbug, "MAPBUG: loader(): deprecated move_state setting. op=%s\n", STRING_OBJ_NAME(op));
 ^confused{S}	    SET_OR_CLEAR_FLAG(op, FLAG_CONFUSED, IVAL);
 ^paralyzed{S}	    SET_OR_CLEAR_FLAG(op, FLAG_PARALYZED, IVAL);
 ^feared{S}			SET_OR_CLEAR_FLAG(op, FLAG_FEARED, IVAL);
