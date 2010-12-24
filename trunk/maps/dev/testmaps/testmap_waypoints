@@ -1,8 +1,8 @@
 arch map
 name Testmap - Waypoints
 msg
-Created:  2003-06-04 Björn Axelsson <gecko@acc.umu.se>
-Modified: 2008-02-10 gecko
+Created:  2003-06-04 gecko
+Modified: 2010-12-24 smacky
 endmsg
 width 24
 height 24
@@ -461,7 +461,6 @@ end
 arch slime
 speed -0.2
 unaggressive 1
-attack_movement 177
 x 3
 y 15
 arch waypoint
@@ -1058,7 +1057,6 @@ y 22
 end
 arch slime
 unaggressive 1
-attack_movement 176
 x 7
 y 22
 arch waypoint
@@ -1605,7 +1603,6 @@ end
 arch slime
 speed -0.5
 unaggressive 1
-attack_movement 179
 x 12
 y 16
 arch waypoint
@@ -1790,7 +1787,6 @@ end
 arch pudding_red
 speed 0.5
 unaggressive 1
-attack_movement 178
 x 14
 y 3
 arch waypoint
@@ -2826,7 +2822,6 @@ y 5
 end
 arch wyvern
 unaggressive 1
-attack_movement 176
 x 22
 y 5
 arch waypoint
