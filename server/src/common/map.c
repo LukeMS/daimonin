@@ -2393,10 +2393,10 @@ static int LoadMapHeader(FILE *fp, mapstruct *m, int flags)
 
                 /* If the specified map does not exist, report this and do not
                  * set the tile_path. */
-                if (check_path(path_sh, 1) == -1)
+                if (check_path(m->orig_tile_path[tile - 1], 1) == -1)
                 {
                     LOG(llevMapbug, "MAPBUG:: Tile %d of map >%s< refers to non-existent file >%s<!\n",
-                        tile, STRING_MAP_PATH(m), STRING_SAFE(path_sh));
+                        tile, STRING_MAP_PATH(m), STRING_SAFE(m->orig_tile_path[tile - 1]));
                 }
                 else
                 {
