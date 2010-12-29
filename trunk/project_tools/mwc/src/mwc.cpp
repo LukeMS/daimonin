@@ -96,6 +96,26 @@ string stringtolower (string stri)      // sets a string into lowercase
     return stri;
   }
 
+/*
+   Normalize the input string into a compatible map path.
+   E.g. User may name a map "Lost City". So the name for all
+   in the set "Lost City", but the file name should be 
+   "lost_city_0101" or whatever.
+*/
+string normalize_path(string path)
+{
+    path = stringtolower(path);
+
+	for(unsigned int i = 0; i < path.length(); i++)
+	{
+		if(path[i] == ' '){
+			path[i] = '_';
+		}
+	}
+
+	return path;
+  }
+
 string leadingzero (string stri)        // adds a leading "0" in front of stringnumbers < 10
   {
     if (stri.length() == 1)
@@ -495,23 +515,28 @@ int main() {
     cout << endl;
 
     /* datainput */
-    cout << "Please enter the author of the mapset : ";
-    cin >> author;
-    cout << endl;
+	/*
+	  Area and author use getline() because plain ol' cin
+	  Doesn't work with spaces in names. So "The Hills of Rome"
+	  would end up named "the". 
+	*/
     cout << "Please enter the name of the mapset : ";
-    cin >> area;
-    cout << endl;
-    filename = stringtolower(area)+"_";
-    cout << "Please enter the areasize (max 15) (x * maps) :";
+	getline(cin, area);
+	cout << endl;
+    cout << "Please enter the author of the mapset : ";
+	getline(cin, author);
+	cout << endl;
+    filename = normalize_path(area)+"_";
+    cout << "Please enter the areasize (max 15) (x * maps) : ";
     cin >> area_size_x;
     cout << endl;
-    cout << "Please enter the areasize (max 15) (y * maps) :";
+    cout << "Please enter the areasize (max 15) (y * maps) : ";
     cin >> area_size_y;
 	cout << endl;
-	cout << "Please enter the difficulty level of the area (1-110) :";
+	cout << "Please enter the difficulty level of the area (1-110) : ";
 	cin >> difficulty;
     cout << endl;
-    cout << "Is this an outdoor mapset ? (1-yes / 2-no) :";
+    cout << "Is this an outdoor mapset ? (1-yes / 2-no) : ";
     cin >> help;
     cout << endl;
     if (help != 1)
