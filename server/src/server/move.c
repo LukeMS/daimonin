@@ -655,7 +655,10 @@ int enter_map_by_exit(object *op, object *exit_ob)
                 mstatus,
                 x,
                 y;
-    mapstruct  *newmap;
+    object     *tmp;
+    char        tmp_path[MAXPATHLEN];
+    mapstruct  *exit_map,
+               *newmap;
     const char *file_path = NULL,
                *dyn_path = NULL;
     shstr      *reference = NULL;
@@ -681,6 +684,24 @@ int enter_map_by_exit(object *op, object *exit_ob)
         return FALSE;
     }
 
+    /* Get the map the exit is on (or the environment of the exit is on). */
+    for (tmp = exit_ob; tmp->env; tmp = tmp->env)
+    {
+    }
+
+    exit_map = tmp->map;
+
+    /* Always recalculate ->race if we're going to allow exits in envs, as envs
+     * can move and exits can be dropped from envs to maps, etc.
+     *
+     * Potentially we could allow exits to be acquired from maps to envs in the
+     * future too (and of course scripts can already move exits about).
+     *
+     * FIXME: If this is a permanent change then perhaps there is no point
+     * storing it in ->race anyway (just use a temp local var)? (Similarly for
+     * ->title below).
+     * -- Smacky 20101231 */
+#if 0
     /* our target map is in ->slaying in non normalized format, in last_eat the type.
     * Non normalized means, it can be something like "../test/../test/....."
     * To know path/map A is the same like B we need to normalize the path & name.
@@ -692,11 +713,29 @@ int enter_map_by_exit(object *op, object *exit_ob)
         char tmp_path[MAXPATHLEN];
 
         /* note the use of ->orig_path as normalized src path inside /maps */
-        exit_ob->race = add_string(normalize_path(exit_ob->map->orig_path, EXIT_PATH(exit_ob), tmp_path));
+        exit_ob->race = add_string(normalize_path(exit_map->orig_path, EXIT_PATH(exit_ob), tmp_path));
+    }
+#else
+    exit_ob->race = add_string(normalize_path(exit_map->orig_path, EXIT_PATH(exit_ob), tmp_path));
+#endif
+
+    /* Relative exit paths and exits (that have been) in envs can lead to bogus
+     * normalized paths, so check it. Such an exit should always have an
+     * absolute path to guarantee success.
+     *
+     * FIXME: This is not reported as a MAPBUG as a relative path on a mobile
+     * exit may be intentional for a puzzle. However, this area will
+     * undoubtedly need some attention.
+     * -- Smacky 20101231 */
+    if (check_path(exit_ob->race, 1) == -1)
+    {
+        new_draw_info(NDI_UNIQUE, 0, op, "The %s is temporarily closed.", query_name(exit_ob));
+
+        return FALSE;
     }
 
     /* now we have some choices:
-    * If the new map type is inheritanced from exit_ob->map , we can generate
+    * If the new map type is inheritanced from exit_map , we can generate
     * a static path which will not change for this map/exit anymore.
     * For an explicit _INSTANCE and _UNIQUE we have always to use a dynamic path.
     * For MAP_STATUS_MULTI we can simply copy the ob->race ptr.
@@ -738,18 +777,21 @@ int enter_map_by_exit(object *op, object *exit_ob)
             }
             else
                 LOG(llevError, "FATAL ERROR: enter_map_by_exit(): Map %s without valid map status (dynamic) (%d)!\n",
-                    STRING_MAP_PATH(exit_ob->map), exit_ob->map->map_status);
+                    STRING_MAP_PATH(exit_map), exit_map->map_status);
         }
     }
     else /* dst path is static and stored in exit_ob->title */
     {
-        reference = exit_ob->map->reference;
+        reference = exit_map->reference;
 
+        /* See ->race above. */
+#if 0
         if(!exit_ob->title) /* first call, generate the static path first */
         {
-            if(exit_ob->map->map_status & (MAP_STATUS_MULTI|MAP_STATUS_STYLE))
+#endif
+            if(exit_map->map_status & (MAP_STATUS_MULTI|MAP_STATUS_STYLE))
                 exit_ob->title = add_refcount(exit_ob->race); /* multi = original map path */
-            else if(exit_ob->map->map_status & (MAP_STATUS_INSTANCE|MAP_STATUS_UNIQUE) )
+            else if(exit_map->map_status & (MAP_STATUS_INSTANCE|MAP_STATUS_UNIQUE) )
             {
                 char tmp_path[MAXPATHLEN];
 
@@ -760,18 +802,20 @@ int enter_map_by_exit(object *op, object *exit_ob)
                 * and use path_to_name() to exchange all '/' through '$' to have a unique map name.
                 * NOTE: the path to /maps is always part of the unique/instance map name.
                 */
-                exit_ob->title = add_string(normalize_path_direct( exit_ob->map->path,
+                exit_ob->title = add_string(normalize_path_direct( exit_map->path,
                     path_to_name(exit_ob->race), tmp_path));
             }
             else /* this should never happen and will break the inheritance system - so kill the server */
                 LOG(llevError, "FATAL ERROR: enter_map_by_exit(): Map %s loaded without valid map status (%d)!\n",
-                    STRING_MAP_PATH(exit_ob->map),exit_ob->map->map_status);
+                    STRING_MAP_PATH(exit_map),exit_map->map_status);
+#if 0
         }
+#endif
         file_path = exit_ob->title;
     }
 
     /* lets fetch the right map status */
-    mstatus = exit_ob->last_eat ? (int)MAP_STATUS_TYPE(exit_ob->last_eat) : (int)MAP_STATUS_TYPE(exit_ob->map->map_status);
+    mstatus = exit_ob->last_eat ? (int)MAP_STATUS_TYPE(exit_ob->last_eat) : (int)MAP_STATUS_TYPE(exit_map->map_status);
 
     /* get the map ptr - load the map if needed */
     newmap = ready_map_name( file_path, exit_ob->race, mstatus, reference);
@@ -788,13 +832,13 @@ int enter_map_by_exit(object *op, object *exit_ob)
      * IF this exit has the "neutralize instance" flag set AND the old map type
      * was instance and the new one NOT - then neutralize the instance now.
      */
-    if(exit_ob->map->map_status & MAP_STATUS_INSTANCE && QUERY_FLAG(exit_ob, FLAG_IS_FEMALE)
+    if(exit_map->map_status & MAP_STATUS_INSTANCE && QUERY_FLAG(exit_ob, FLAG_IS_FEMALE)
         && !(mstatus & MAP_STATUS_INSTANCE))
         reset_instance_data(CONTR(op));
 
     /* lets play a sound where we have left the map */
-    if (exit_ob->sub_type1 == ST1_EXIT_SOUND && exit_ob->map)
-        play_sound_map(exit_ob->map, exit_ob->x, exit_ob->y, SOUND_TELEPORT, SOUND_NORMAL);
+    if (exit_ob->sub_type1 == ST1_EXIT_SOUND && exit_map)
+        play_sound_map(exit_map, exit_ob->x, exit_ob->y, SOUND_TELEPORT, SOUND_NORMAL);
 
     /* Send any exit message to exiter */
     if (exit_ob->msg)
