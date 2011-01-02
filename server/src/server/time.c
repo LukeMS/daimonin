@@ -551,6 +551,7 @@ void execute_wor(object *op)
 
 void poison_more(object *op)
 {
+    object     *tmp;
     if (op->env == NULL || !IS_LIVE(op->env) || op->env->stats.hp < 0)
     {
         remove_ob(op);
@@ -574,6 +575,13 @@ void poison_more(object *op)
     }
     if (op->env->type == PLAYER)
     {
+        if (!QUERY_FLAG(op, FLAG_APPLIED))
+        {
+            SET_FLAG(op, FLAG_APPLIED);
+            tmp = check_obj_stat_buffs(op, op->env);
+            FIX_PLAYER(op->env ,"poison more");
+            return;
+        }
         op->env->stats.food--;
         new_draw_info(NDI_UNIQUE, 0, op->env, "You feel very sick...");
     }
