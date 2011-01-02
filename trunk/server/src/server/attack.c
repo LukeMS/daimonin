@@ -1479,9 +1479,9 @@ int kill_object(object *op, int dam, object *hitter, int typeX)
             }
 
             /* here "remove" the killed object, drop the items inside and add
-             * quests and quest items/one drops to group of corpse_owner 
+             * quests and quest items/one drops to group of corpse_owner
              */
-            destruct_ob(op); 
+            destruct_ob(op);
         }
    }
 
@@ -1711,7 +1711,6 @@ void poison_player(object *op, object *hitter, float dam)
 
                     tmp = check_obj_stat_buffs(tmp, op);
                     new_draw_info(NDI_UNIQUE, 0, op, "%s has poisoned you!", query_name(hitter));
-                    SET_FLAG(tmp, FLAG_APPLIED);
                     insert_ob_in_ob(tmp, op);
                     FIX_PLAYER(op , "attack - poison");
                 }
