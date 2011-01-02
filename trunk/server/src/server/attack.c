@@ -1598,6 +1598,8 @@ void tear_down_wall(object *op)
     }
 }
 
+void poison_player(object *op, object *hitter, float dam)
+{
 
 /* TODO: i have not the time now - but later we should do this: a marker value
  * in the poison force flags kind of poison - food/poison force or weapon/spell
@@ -1605,9 +1607,11 @@ void tear_down_wall(object *op)
  * by food/poison forces - and food/poison forces can stack. MT-2003
  * NOTE: only poison now insert a poison force - food&drink insert different forces.
  * For Poison objects, we use simply the base dam * level
+ *
+ * _people_: I changed it so that poison foods use the same object as a poison attack.
+ *           Poison object stats are still handled the same way, though.
  */
-void poison_player(object *op, object *hitter, float dam)
-{
+
     archetype  *at  = find_archetype("poisoning");
     object     *tmp = present_arch_in_ob(at, op);
 
@@ -1658,7 +1662,7 @@ void poison_player(object *op, object *hitter, float dam)
             if (hitter->type == POISON)
             {
                 tmp->stats.food = hitter->last_heal; /* # of ticks */
-                tmp->speed = tmp->speed_left; /* speed of ticks */
+                tmp->speed_left = tmp->speed; /* speed of ticks */
             }
 
             if (op->type == PLAYER)
@@ -1667,7 +1671,7 @@ void poison_player(object *op, object *hitter, float dam)
                 /* her we handle consuming poison */
                 if (hitter->type == POISON)
                 {
-                    create_food_buf_force(op, hitter, tmp); /* this calculates the food force and inserts it into the player */
+                    //create_food_buf_force(op, hitter, tmp); /* this calculates the food force and inserts it into the player */
                     new_draw_info(NDI_UNIQUE, 0, op, "You suddenly feel very ill.");
                 }
                 else /* and here we have hit with weapon or something */
@@ -1708,12 +1712,11 @@ void poison_player(object *op, object *hitter, float dam)
                         tmp->stats.Wis = (sint8) (hitter->level / 10 + RANDOM() % (hitter->level * 8) / 100.0f + 2.0f);
                         tmp->stats.Wis *= -1;
                     }
-
-                    tmp = check_obj_stat_buffs(tmp, op);
                     new_draw_info(NDI_UNIQUE, 0, op, "%s has poisoned you!", query_name(hitter));
-                    insert_ob_in_ob(tmp, op);
-                    FIX_PLAYER(op , "attack - poison");
                 }
+                tmp = check_obj_stat_buffs(tmp, op);
+                insert_ob_in_ob(tmp, op);
+                FIX_PLAYER(op , "attack - poison");
             }
             else /* its a mob! */
             {
