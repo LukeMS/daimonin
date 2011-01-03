@@ -510,8 +510,8 @@ static void NewDrawInfo(int flags, player *pl, const char *const buf)
     if (!(pl->state & (ST_DEAD | ST_ZOMBIE)) &&
         pl->socket.status != Ns_Dead)
     {
-        NewSocket    *ns = &pl->socket;
-        const size_t  len = strlen(buf).
+        NewSocket *ns = &pl->socket;
+        const int  len = strlen(buf);
 
         /* Turn off any internal flags. */
         flags &= ~NDI_ALL;
