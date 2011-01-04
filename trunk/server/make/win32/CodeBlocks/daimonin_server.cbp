@@ -368,9 +368,6 @@
 		<Unit filename="..\..\..\src\server\swamp.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\..\..\src\server\swap.c">
-			<Option compilerVar="CC" />
-		</Unit>
 		<Unit filename="..\..\..\src\server\time.c">
 			<Option compilerVar="CC" />
 		</Unit>
