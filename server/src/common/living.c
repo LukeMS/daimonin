@@ -1344,7 +1344,13 @@ void fix_player(object *op)
                   pl->gen_grace += tmp->stats.grace;
                   pl->gen_hp += tmp->stats.hp;
                   temp_fumble += tmp->last_heal; /* spell fumble chance */
-                  pl->spell_fumble = temp_fumble + pl->encumbrance - op->stats.Int;
+
+                  /* I moved a line from here down. Things here ONLY apply when the pl
+                     is actually wearing armour, which means that natural stat boni
+                     are only applied when they have something on. Other issues may
+                     come up with this fact.
+                  */
+
                   thac0 += tmp->stats.thac0;
                   thacm += tmp->stats.thacm;
 
@@ -1896,6 +1902,10 @@ void fix_player(object *op)
     if (op->stats.grace > op->stats.maxgrace)
         op->stats.grace = op->stats.maxgrace;
 
+    /* Calculate the spell fumble here because it is affected by int.
+        read the above by temp_fumble to learn more.
+    */
+    pl->spell_fumble = temp_fumble + pl->encumbrance - op->stats.Int;
 
     /* wc and ac are level independent in the thac system - but Dex effects both now */
     f = get_player_stat_bonus(op->stats.Dex);
