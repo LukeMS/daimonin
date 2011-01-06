@@ -26,6 +26,12 @@
 
 static char log_buf[256*1024];
 
+/* The following is a workaround for FS#61 - sockbuf bug. */
+#ifdef DAI_DEVELOPMENT_CONTENT
+char   mapbug_buf[HUGE_BUF] = "";
+size_t mapbug_len = 0;
+#endif
+
 /* minimum timestamp interval = 10 minutes */
 #define TIMESTAMP_INTERVAL 600
 static struct timeval last_timestamp = {0, 0};
@@ -71,8 +77,29 @@ void LOG(LogLevel logLevel, char *format, ...)
         /* Mapbugs are broadcasted on the test server */
         if (logLevel == llevMapbug)
         {
+/* The following is a workaround for FS#61 - sockbuf bug. */
+#if 0
             new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_ALL | NDI_RED, 5, NULL,
                           "%s", log_buf);
+#else
+            if (mapbug_len < sizeof(mapbug_buf))
+            {
+                size_t log_len = strlen(log_buf);
+
+                if (mapbug_len + log_len < sizeof(mapbug_buf))
+                {
+                    sprintf(mapbug_buf + mapbug_len, "%s", log_buf);
+                    mapbug_len += log_len;
+                }
+                else
+                {
+                    sprintf(mapbug_buf + MIN(mapbug_len,
+                                             sizeof(mapbug_buf) - 7),
+                            "[MORE]");
+                    mapbug_len = sizeof(mapbug_buf);
+                }
+            }
+#endif
         }
 #endif
     }
