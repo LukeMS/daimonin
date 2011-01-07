@@ -109,7 +109,7 @@ static object *spawn_monster(object *mob, object *spawn)
          * appropriate colour for the map difficulty. */
         if (monster->item_quality)
         {
-            int level = MAX(1, MIN(monster->level, 127)),
+            int level = MAX(1, MIN(monster->level, MAXMOBLEVEL)),
                 min,
                 max;
 
@@ -150,15 +150,15 @@ static object *spawn_monster(object *mob, object *spawn)
                     max = min;
             }
 
-            /* The old value of monster->level is the minimum the new value can be.
-             * monster->level can be > MAXLEVEL (but must be < 200). */
+            /* The old value of monster->level is the minimum the new value can
+             * be. */
             /* FIXME: Currently the level cap is 127. This is because for some
              * reason level is sint8 in object.h. Making it unsigned or more
              * bits would seem a more sensible move, but as level is used all
              * over the place for all sorts of things, I can't be bothered to
              * do all the testing such a change would need, hence the cap. */
-            monster->level = random_roll(MAX(level, MIN(min, 127)),
-                                         MAX(level, MIN(max, 127)));
+            monster->level = random_roll(MAX(level, MIN(min, MAXMOBLEVEL)),
+                                         MAX(level, MIN(max, MAXMOBLEVEL)));
         }
 
         /* monster->item_condition modifies the mob's attack_ and resist_
@@ -201,7 +201,7 @@ static object *spawn_monster(object *mob, object *spawn)
              * for mob's where relative level was not set.
              * -- Smacky 20101222 */
             create_treasure_list(monster->randomitems, monster, 0,
-                                 MAX(1, MIN(monster->level, 127)),
+                                 MAX(1, MIN(monster->level, MAXMOBLEVEL)),
                                  ART_CHANCE_UNSET, 0);
         }
     }

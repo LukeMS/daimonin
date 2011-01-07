@@ -1302,6 +1302,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\include\exp.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\include\face.h"
 				>
 			</File>
