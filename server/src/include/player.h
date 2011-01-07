@@ -26,18 +26,6 @@
 #ifndef __PLAYER_H
 #define __PLAYER_H
 
-typedef struct _level_color
-{
-    int                 green;
-    int                 blue;
-    int                 yellow;
-    int                 orange;
-    int                 red;
-    int                 purple;
-}_level_color;
-
-extern _level_color level_color[201];
-
 enum
 {
     /* fire modes submited from client */

@@ -1053,6 +1053,9 @@
 				RelativePath="..\..\..\src\include\define.h">
 			</File>
 			<File
+				RelativePath="..\..\..\src\include\exp.h">
+			</File>
+			<File
 				RelativePath="..\..\..\src\include\face.h">
 			</File>
 			<File
