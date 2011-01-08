@@ -716,6 +716,7 @@ EXTERN struct shstr_constants
     shstr *start_mappath;
     shstr *bind_mappath;
     shstr *nopass;
+    shstr *beacon_default;
 } shstr_cons;
 
 EXTERN Animations              *animations;
