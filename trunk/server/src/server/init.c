@@ -171,6 +171,8 @@ static void init_strings()
     shstr_cons.bind_mappath = add_string(BIND_MAP_MAPPATH);
 
     shstr_cons.nopass = add_string(RECLAIM_NOPASS);
+
+    shstr_cons.beacon_default = add_string("beacon");
 }
 
 void free_strings(void)

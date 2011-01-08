@@ -3354,14 +3354,15 @@ static void beacon_initializer(object *op)
 
     if (op->custom_attrset)
     {
-        LOG(llevMapbug, "MAPBUG:: Same beacon initialized twice (%s[%s %d %d])!\n",
+        LOG(llevMapbug, "MAPBUG:: Ignoring second initialization of single beacon (%s[%s %d %d])!\n",
             STRING_OBJ_NAME(op), STRING_MAP_PATH(parent->map), parent->x,
             parent->y);
         return;
     }
-    else if (!op->name)
+    else if (!op->name ||
+             op->name == shstr_cons.beacon_default)
     {
-        LOG(llevMapbug, "MAPBUG:: Beacon with NULL name (%s[%s %d %d])!\n",
+        LOG(llevMapbug, "MAPBUG:: Ignoring initialization of beacon with NULL/default name (%s[%s %d %d])!\n",
             STRING_OBJ_NAME(op), STRING_MAP_PATH(parent->map), parent->x,
             parent->y);
         return;
