@@ -1322,6 +1322,7 @@ void ai_move_towards_enemy(object *op, struct mob_behaviour_param *params, move_
     if(MOB_PATHDATA(op)->target_obj == op->enemy &&
             QUERY_FLAG(MOB_PATHDATA(op), PATHFINDFLAG_PATH_FAILED))
     {
+#if 0
         LOG(llevDebug, "ai_move_towards_enemy(): %s can't get to %s, downgrading its enemy status\n", STRING_OBJ_NAME(op), STRING_OBJ_NAME(op->enemy));
         /* TODO: The current solution also totally disregards archers
          * and magic users that don't have to reach the target by walking */
@@ -1332,6 +1333,9 @@ void ai_move_towards_enemy(object *op, struct mob_behaviour_param *params, move_
 
         /* Note: this may eventually make the mob forget about the enemy and go home,
          * but e.g. linked spawns will get reaggroed by their friends. */
+#else
+        return;
+#endif
     }
 
     response->type = MOVE_RESPONSE_OBJECT;
