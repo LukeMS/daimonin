@@ -35,6 +35,7 @@ static int  Game_FindPlayer(lua_State *L);
 static int  Game_GetSpellNr(lua_State *L);
 static int  Game_GetSkillNr(lua_State *L);
 static int  Game_GetTimeAndDate(lua_State *L);
+static int  Game_GlobalMessage(lua_State *L);
 static int  Game_IsValid(lua_State *L);
 static int  Game_LoadObject(lua_State *L);
 static int  Game_LocateBeacon(lua_State *L);

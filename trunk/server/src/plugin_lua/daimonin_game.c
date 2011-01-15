@@ -1044,6 +1044,32 @@ static int Game_GetTimeAndDate(lua_State *L)
 }
 
 /*****************************************************************************/
+/* Name   : GameObject_GlobalMessage                                         */
+/* Lua    : object:Write(message, color)                                     */
+/* Info   : Writes a message to every online player.                         */
+/*          color should be one of the game.COLOR_xxx constants.             */
+/*          default color is red.                                            */
+/* Status : Tested/Stable                                                    */
+/*****************************************************************************/
+static int Game_GlobalMessage(lua_State *L)
+{
+    char       *message;
+    int         color = NDI_RED;
+    lua_object *self;
+
+    get_lua_args(L, "Gs|i", &self, &message, &color);
+
+    /* No point mucking about with an empty message. */
+    if (*message)
+    {
+        hooks->new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_ALL | color, 5, NULL,
+                      "%s", message);
+    }
+
+    return 0;
+}
+
+/*****************************************************************************/
 /* Name   : Game_Log                                                         */
 /* Lua    : game:Log(level, text)                                            */
 /* Info   : Write text to the game log                                       */
