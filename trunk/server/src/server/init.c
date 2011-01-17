@@ -574,9 +574,7 @@ static void set_logfile(char *val)
 
 static void call_version()
 {
-    printf("This is Daimonin v%d.%d.%d (protocol version %d)\n\n",
-           DAI_VERSION_RELEASE, DAI_VERSION_MAJOR, DAI_VERSION_MINOR,
-           PROTOCOL_VERSION);
+    printf("This is %s.\n\n", version_string());
     exit(0);
 }
 
@@ -1283,6 +1281,22 @@ static void init_instance_system(void)
     LOG(llevInfo,"Init instance system:  set ID:%ld num:%d\n", global_instance_id, global_instance_num);
 }
 
+/* The first time version_string() is called it puts together a string in a
+ * static buffer and returns it. Subsequently ir just returns the string. */
+char *version_string(void)
+{
+    static char buf[TINY_BUF] = "";
+
+    if (buf[0] == '\0')
+    {
+        sprintf(buf, "Daimonin v%d.%d.%d%s%s (protocol version %d)",
+                DAI_VERSION_RELEASE, DAI_VERSION_MAJOR, DAI_VERSION_MINOR,
+                (DAI_VERSION_INTERIM == "") ? "" : "/", DAI_VERSION_INTERIM,
+                PROTOCOL_VERSION);
+    }
+
+    return buf;
+}
 /*
  * init() is called only once, when starting the program.
  */
@@ -1294,6 +1308,8 @@ void init(int argc, char **argv)
     tlogfile = stderr;
     clogfile = stderr;
 
+    /* Version string is initialised before first call to parse_args(). */
+    version_string();
     parse_args(argc, argv, 1);  /* First arg pass - right now it does
                                  * nothing, but in future specifying the
                                  * LibDir in this pass would be reasonable
@@ -1437,9 +1453,8 @@ void init_library()
     init_mempools();   /* Inits the mempool manager and the object system */
     init_vars();
     init_block();
-    LOG(llevInfo, "Daimonin Server, v%d.%d.%d\n",
-        DAI_VERSION_RELEASE, DAI_VERSION_MAJOR, DAI_VERSION_MINOR);
-    LOG(llevInfo, "Copyright (C) 2002-2009 Michael Toennies.\n");
+    LOG(llevInfo, "%s.\nCopyright (C) 2002-2009 Michael Toennies.\n",
+        version_string());
     ReadBmapNames();
     init_anim();        /* Must be after we read in the bitmaps */
     init_archetypes();  /* Reads all archetypes from file */
