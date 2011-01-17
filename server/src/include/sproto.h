@@ -346,6 +346,7 @@ int                         get_god(object *priest);
 int                         tailor_god_spell(object *spellop, object *caster);
 void                        lose_priest_exp(object *pl, int loss);
 /* init.c */
+char                       *version_string(void);
 void                        init(int argc, char **argv);
 void                        compile_info(void);
 void                        fatal_signal(int make_core, int close_sockets, uint8 status);
@@ -360,7 +361,6 @@ addme_login_msg             player_create(NewSocket *ns,player **pl_ret,char *na
 void                        player_addme_failed(NewSocket *ns, int error_msg);
 void                        show_stream_info(NewSocket *ns);
 /* main.c */
-void                        start_info(object *op);
 char                       *crypt_string(char *str);
 int                         get_new_instance_num(void);
 void                        process_players1(mapstruct *map);

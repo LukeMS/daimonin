@@ -26,6 +26,29 @@
 #ifndef __GLOBAL_H
 #define __GLOBAL_H
 
+/* DAI_VERSION_INTERIM is a string constant ("a", "b", etc -- longer strings,
+ * up to about 16 characters, are possible but it is wisest to stick to single
+ * characters) or the empty string. Where it is a constant, it indicates that
+ * this is an interim server version. This is necessary because the
+ * DAI_VERSION_* defines in protocol.h define the x.y.z version of both client
+ * and server and therefore require a new client release for the autoupdater.
+ * While it has always been possible to independently patch just the server
+ * (so-called 'hotfixes') the problem was that players had no clue, beyond the
+ * actual hotfix -- which of course may not really be player-noticeable, that
+ * anything at all had changed. Thus confusion reigned.
+ *
+ * When a new x.y.z release is made, DAI_VERSION_INTERIM must be reset to "".
+ * In fact, in trunk, this value should always be "". It (and it is the only
+ * bit of code for which this is true) should only ever be directly changed in
+ * main.
+ *
+ * So while trunk is 0.10.6, main may be 0.10.5 or 0.10.5/a to 0.10.5/z. When
+ * server-only changes from trunk are merger to main this interim version is
+ * bumped on main. Trunk remains at 0.10.6. When a new x.y.z is released (so
+ * client too), main is bumped to 0.10.6 (the interim is reset to "") and trunk
+ * is bumped to 0.10.7 and the process repeats. */
+#define DAI_VERSION_INTERIM ""
+
 /* Nicked from glib.h */
 #ifdef __GNUC__
 #define DAI_GNUC_PRINTF(format_idx, arg_idx) \

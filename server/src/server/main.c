@@ -61,8 +61,6 @@ static char     days[7][4]  =
  * -- Smacky 20090613 */
 void version(object *op)
 {
-    start_info(op);;
-
     /* If in a socket, don't print out the list of authors.  It confuses the
      * crossclient program.
      */
@@ -127,12 +125,6 @@ void version(object *op)
     new_draw_info(NDI_UNIQUE, 0, op, "And many more!");
 }
 #endif
-
-void start_info(object *op)
-{
-    new_draw_info(NDI_UNIQUE, 0, op, "This is Daimonin v%d.%d.%d.",
-                  DAI_VERSION_RELEASE, DAI_VERSION_MAJOR, DAI_VERSION_MINOR);
-}
 
 /* here we hook in to crypt the password - this feature is disabled atm */
 char * crypt_string(char *str)

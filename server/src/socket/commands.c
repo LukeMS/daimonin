@@ -1446,7 +1446,7 @@ void cs_cmd_addme(char *buf, int len, NewSocket *ns)
         ns->addme = 1; /* mark the old socket as invalid because mirrored */
 
         /* give out some more initial info */
-        start_info(pl->ob);
+        new_draw_info(NDI_UNIQUE, 0, pl->ob, "This is %s.", version_string());
         display_motd(pl->ob);
 #ifdef USE_CHANNELS
 #ifdef ANNOUNCE_CHANNELS
