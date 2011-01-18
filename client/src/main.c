@@ -851,7 +851,8 @@ uint8 game_status_chain(void)
     else if (GameStatus == GAME_STATUS_SETUP)
     {
         srv_client_files[SRV_CLIENT_SETTINGS].status = SRV_CLIENT_STATUS_OK;
-        srv_client_files[SRV_CLIENT_BMAPS].status = SRV_CLIENT_STATUS_OK;
+        // ALWAYS update the bmaps to avoid bad data.
+        srv_client_files[SRV_CLIENT_BMAPS].status = SRV_CLIENT_STATUS_UPDATE;
         srv_client_files[SRV_CLIENT_ANIMS].status = SRV_CLIENT_STATUS_OK;
         srv_client_files[SRV_CLIENT_SOUNDS].status = SRV_CLIENT_STATUS_OK;
         srv_client_files[SRV_CLIENT_SKILLS].status = SRV_CLIENT_STATUS_OK;
