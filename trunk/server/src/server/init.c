@@ -1291,7 +1291,7 @@ char *version_string(void)
     {
         sprintf(buf, "Daimonin v%d.%d.%d%s%s (protocol version %d)",
                 DAI_VERSION_RELEASE, DAI_VERSION_MAJOR, DAI_VERSION_MINOR,
-                (DAI_VERSION_INTERIM == "") ? "" : "/", DAI_VERSION_INTERIM,
+                (DAI_VERSION_INTERIM == "") ? "" : "-", DAI_VERSION_INTERIM,
                 PROTOCOL_VERSION);
     }
 
