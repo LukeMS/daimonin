@@ -2427,7 +2427,9 @@ int player_apply(object *pl, object *op, int aflag, int quiet)
 
     /* we have applied something which makes us standing up */
     if(CONTR(pl) && CONTR(pl)->rest_sitting && !(tmp & 8))
-        CONTR(pl)->rest_sitting = CONTR(pl)->rest_mode = 0;
+        /* But anyone can read when sitting... */
+        if (op->type != BOOK)
+            CONTR(pl)->rest_sitting = CONTR(pl)->rest_mode = 0;
     if(tmp & 1)
         FIX_PLAYER(pl ,"player apply ");
 
