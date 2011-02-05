@@ -34,6 +34,7 @@ static struct method_decl Game_methods[] =
     {"GetSkillNr",       Game_GetSkillNr},
     {"GetSpellNr",       Game_GetSpellNr},
     {"GetTimeAndDate",   Game_GetTimeAndDate},
+    {"GlobalMessage",    Game_GlobalMessage},
     {"IsValid",          Game_IsValid},
     {"LoadObject",       Game_LoadObject},
     {"LocateBeacon",     Game_LocateBeacon},
