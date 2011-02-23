@@ -364,7 +364,7 @@ char * query_short_name(const object *const op, const object *const caller)
         case RING:
           if (QUERY_FLAG(op, FLAG_IDENTIFIED))
           {
-              if (!op->title && !QUERY_FLAG(FLAG_IS_NAMED))
+              if (!op->title && !QUERY_FLAG(op, FLAG_IS_NAMED))
               {
                   /* If ring has a title or is specially named, full description isn't so useful */
                   char     *s   = describe_item(op);
