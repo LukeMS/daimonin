@@ -546,7 +546,7 @@ static int check_ip_ban(NewSocket *sock, char *ip)
     {
         if (init_sockets[i].status != Ns_Avail && sock != &init_sockets[i] && !strcmp(init_sockets[i].ip_host, ip))
         {
-            if (++count > 1 || init_sockets[i].status <= Ns_Zombie)
+            if(init_sockets[i].status == Ns_Zombie || (init_sockets[i].status != Ns_Dead && ++count >= settings.max_cons_from_one_ip))
             {
                 LOG(llevDebug, "check_ip_ban(): socket flood. mark Ns_Dead: %d (IP %s)\n",
                                 i, init_sockets[i].ip_host );
