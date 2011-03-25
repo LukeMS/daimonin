@@ -261,7 +261,7 @@ void SetupCmd(char *buf, int len)
         else if (!strcmp(cmd, "pv"))
         {
             uint32 pv = (uint32)strtoul(param, NULL, 10);
- 
+
             options.server_protocol = pv;
 
             if (pv != PROTOCOL_VERSION)
@@ -370,7 +370,6 @@ void SetupCmd(char *buf, int len)
             else if (strcmp(param, "OK"))
             {
                 char   *cp;
-
                 srv_client_files[SRV_CLIENT_BMAPS].status = SRV_CLIENT_STATUS_UPDATE;
                 for (cp = param; *cp != 0; cp++)
                 {
@@ -1087,6 +1086,11 @@ void StatsCmd(char *data, int len)
                     break;
                 case CS_STAT_ACTION_TIME:
                     cpl.action_timer = ((float)ABS(GetSINT32_String(data + i)))/1000.0f;
+                    /* If the actiontimer has expired, make a noise to indicate it.
+                     * But only if the player chooses that option. */
+                    if (cpl.action_timer == 0.00f)
+                        if (options.use_timer_sound == 1)
+                            sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICK, 0, 0, 100);
                     i += 4;
                     WIDGET_REDRAW(SKILL_EXP_ID);
                     break;

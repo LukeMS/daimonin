@@ -150,6 +150,7 @@ _option             opt[]                           =
         {"Sound volume:", "The sound volume as a percentage of maximum volume.","Set to ~0~ to disable sound effects.","", "",SEL_RANGE,0,100,5,100, &options.sound_volume,VAL_INT},
         {"Music volume:", "The music volume as a percentage of maximum volume.","Set to ~0~ to disable background music.","", "",SEL_RANGE,0,100,5,80, &options.music_volume,VAL_INT},
         {"Audible heartbeat:", "Whether to hear your heart pumping during combat.","If hitpoints are lower than the given percentage of maximum","you will hear your heartbeat. Set to ~0~ to disable.", "",SEL_RANGE,0,100,5,50, &options.heartbeat,VAL_INT},
+        {"Action timer sound:", "Whether or not to hear a sound when the skill/spell action timer expires.", "", "", "", SEL_CHECKBOX, 0, 0, 1, 1, &options.use_timer_sound, VAL_BOOL},
         {"#", "","","", "",0,0,0,0,0, NULL,0},
         /* End of Page */
 
@@ -2124,9 +2125,28 @@ void show_account(void)
     {
         if(account.name[i][0])
         {
+            char race[10];
             char_count++;
             string_blt(ScreenSurface, &font_large_out, account.name[i], x+120, y+100+i*50, COLOR_WHITE, NULL, NULL);
-            sprintf(buf,"%s %s on Level %d", account.race[i]?"Elfish":"Human", account.gender[i]?"Female":"Male", account.level[i]);
+            switch (account.race[i])
+            {
+                case 0:
+                    sprintf(race, "Human");
+                    break;
+                case 1:
+                    sprintf(race, "Elfish");
+                    break;
+                case 2:
+                    sprintf(race, "Half-elfish");
+                    break;
+                case 3:
+                    sprintf(race, "Dwarven");
+                    break;
+                default:
+                    sprintf(race, "Unknown");
+                    break;
+            }
+            sprintf(buf,"%s %s on Level %d", race, account.gender[i]?"Female":"Male", account.level[i]);
             string_blt(ScreenSurface, &font_small, buf, x+120, y+116+i*50, COLOR_WHITE, NULL, NULL);
         }
     }
