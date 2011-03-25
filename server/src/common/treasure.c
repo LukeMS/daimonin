@@ -1358,40 +1358,53 @@ void set_abs_magic(object *op, int magic)
     }
 }
 
-int roll_ring_bonus_stat(int current, int level, int bonus)
-{
+int roll_ring_bonus_stat(int current, int level, int bonus) {
 
-    int roll;
+     int roll;
 
-    if(level <= 20) {
-    roll = 1;
-    }
-    else if(level <= 50) {
-    roll = random_roll(1,2);
-    }
-    else if(level <= 80) {
-    if (current == 6) {
-        roll = random_roll(1,2);
-        }
-    else {
-        roll = random_roll(1,3);
-        }
-    }
-    else if(level > 80) {
-    if (current >= 7) {
-        roll = random_roll(1,2);
-        }
-    else {
-        roll = random_roll(1,4);
-        }
-    }
-    if (bonus < 0) {
-    return (roll * -1);
-    }
-    else {
-    return roll;
-    }
+     if(level <= 20)
+     {
+          roll = 1;
+     } else if(level <= 50)
+     {
+          roll = random_roll(1,2);
+     } else if(level <= 80)
+     {
+          if (current == 6)
+          {
+               roll = random_roll(1,2);
+          } else
+          {
+               roll = random_roll(1,3);
+          }
+     } else if(level <= 100)
+     {
+          if (current >= 7)
+          {
+               roll = random_roll(1,2);
+          } else
+          {
+               roll = random_roll(1,4);
+          }
+     } else if(level > 100)
+     {
+          if (current >= 7)
+          {
+               roll = random_roll(1,2);
+          } else
+          {
+               roll = random_roll(1,5);
+          }
+     }
+     if (bonus < 0)
+     {
+          return (roll * -1);
+     } else
+     {
+          return roll;
+     }
 }
+
 
 void set_ring_bonus_value_calc(object *op)
 {

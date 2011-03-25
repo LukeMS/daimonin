@@ -647,9 +647,9 @@ char *query_base_name(object *op, object *caller)
         case RING:
           if (QUERY_FLAG(op, FLAG_IDENTIFIED))
           {
-              if (!op->title)
+              if (!op->title && !QUERY_FLAG(op, FLAG_IS_NAMED))
               {
-                  /* If ring has a title, full description isn't so useful */
+                  /* If ring has a title or is specially named, full description isn't so useful */
                   char     *s   = describe_item(op);
                   if (s[0])
                   {

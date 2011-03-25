@@ -1153,6 +1153,20 @@ void ai_avoid_line_of_fire(object *op, struct mob_behaviour_param *params, move_
         if(! QUERY_FLAG(tmp, AI_OBJFLAG_IS_MISSILE))
             continue;
 
+        /* If the mob can't see the player who shot it, or the missile itself, don't dodge. */
+        if (mob_can_see_obj(tmp->obj, op, MOB_DATA(op)->known_objs) == 0 ||
+            mob_can_see_obj(tmp->obj->owner, op, MOB_DATA(op)->known_objs) == 0)
+                return;
+
+        /* Don't always dodge - Put it to a test of WC vs. AC */
+        int roll;
+        roll = random_roll(0, tmp->obj->owner->stats.Dex);
+        if (roll + tmp->obj->stats.wc >= op->stats.ac)
+        {
+            return;
+        }
+
+
         switch(tmp->obj->type) {
             /* Straight-line-like missiles */
             case ARROW:
@@ -1184,7 +1198,11 @@ void ai_avoid_line_of_fire(object *op, struct mob_behaviour_param *params, move_
                     }
                 }
                 break;
-
+/* Currently there is no good way I can think of for cone dodging.
+ * the way it is currently handled causes the mob to freeze if it can't
+ * find a safe way to dodge, which makes it too easy to kill and 
+ * slows the server down.
+#if 0
             /* Area-like "missiles" */
             case CONE:
                 if ((rv = get_known_obj_rv(op, tmp, 0)))
@@ -1209,6 +1227,7 @@ void ai_avoid_line_of_fire(object *op, struct mob_behaviour_param *params, move_
                     }
                 }
                 break;
+#endif
 
             /* Note: untested and probably not very smart... */
             case POISONCLOUD:

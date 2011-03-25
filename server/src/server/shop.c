@@ -106,6 +106,12 @@ sint64 query_cost(object *tmp, object *who, int flag)
     else if (tmp->type == ROD || tmp->type == HORN || tmp->type == POTION || tmp->type == SCROLL)
         val += val * tmp->level;
 
+    /* Because cursed stuff should always be 0, it should have a return statement all
+     * of its own, so that it doesn't use this code and end up as 1.
+     */
+    if (val < 1)
+        val = 1;
+
     return val;
 }
 
