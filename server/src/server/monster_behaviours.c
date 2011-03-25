@@ -1201,7 +1201,7 @@ void ai_avoid_line_of_fire(object *op, struct mob_behaviour_param *params, move_
 /* Currently there is no good way I can think of for cone dodging.
  * the way it is currently handled causes the mob to freeze if it can't
  * find a safe way to dodge, which makes it too easy to kill and 
- * slows the server down.
+ * slows the server down. */
 #if 0
             /* Area-like "missiles" */
             case CONE:
