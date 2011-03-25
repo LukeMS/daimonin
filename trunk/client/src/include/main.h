@@ -57,7 +57,7 @@ typedef enum _login_step {
     LOGIN_STEP_PASS2
 } _login_step;
 
-extern _login_step LoginInputStep; 
+extern _login_step LoginInputStep;
 
 #define BMAPTABLE 19001 /* prime nubmer for hash table */
 /* struct for out bmap data */
@@ -184,6 +184,7 @@ typedef struct _options
     /* Sound */
     int                     sound_volume;
     int                     music_volume;
+    int                     use_timer_sound;
 
     /* Server */
     char                    metaserver[256];
