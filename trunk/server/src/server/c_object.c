@@ -935,7 +935,7 @@ char *examine(object *op, object *tmp, int flag)
             else
             {
                 sprintf(buf, "%s worth %s.\n", tmp->nrof > 1 ? "They are" : "It is",
-                                     query_cost_string(tmp, op, F_BUY, COSTSTRING_SHORT));
+                                     query_cost_string(tmp, op, F_TRUE, COSTSTRING_SHORT));
                 strcat(buf_out, buf);
                 goto dirty_little_jump1;
 			}

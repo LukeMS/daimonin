@@ -163,6 +163,16 @@ int attack_ob(object *target, object *hitter, object *hit_obj)
     hitter_tag = hitter->count;
     hitdam  = hit_obj->stats.dam;
 
+    if (hit_obj->type == ARROW &&
+        target->type == MONSTER &&
+        mob_can_see_obj(target, hitter->owner, MOB_DATA(target)->known_mobs) == 0)
+        {
+            new_draw_info(NDI_ORANGE, 0, hitter->owner, "Stealth attack direct hit! (+50%% damage)");
+            hitdam *= 1.5;
+            play_sound_map(hitter->map, hitter->x, hitter->y, SOUND_ARROW_HIT, SOUND_NORMAL);
+            goto force_direct_hit;
+        }
+
     /* Fight Step 1: Get the random hit value */
     roll = random_roll(0, 100);
 

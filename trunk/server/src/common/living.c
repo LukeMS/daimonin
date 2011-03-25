@@ -2002,7 +2002,14 @@ void fix_player(object *op)
     * and for probing we need to show a better "human readable" value - damage per scond = DPS
     */
     for(tmp_item=i=0;i<=LAST_ATNR_ATTACK;i++) /* we can have more or less 100% damage output by attack modifiers */
-        tmp_item += op->attack[i];
+
+        /* Screen through to make sure we aren't adding corruption attacks to DPS.
+         * Some attacks such as psionic attack for HP and either mana or grace through corruption.
+         * So corruption is the only one that needs to be ignored.
+         */
+        if (i != ATNR_CORRUPTION)
+            tmp_item += op->attack[i];
+
     /* because we transfer dps as INT to the client, we store it right shifted >>1 */
     pl->dps = (int) (( ((float)op->stats.dam*((float)tmp_item/100.0f))/ op->weapon_speed)*10.0f);
 
