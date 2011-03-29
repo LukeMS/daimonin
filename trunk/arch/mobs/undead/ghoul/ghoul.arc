@@ -32,7 +32,7 @@ pow 10
 sp -1
 maxsp 20
 hp -1
-maxhp 65
+maxhp 75
 ac 28
 wc 15
 thac0 85
