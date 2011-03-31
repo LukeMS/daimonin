@@ -164,6 +164,7 @@ CommArray_s EmoteCommands[] =
 CommArray_s CommandsVOL[] =
 {
     {"mutelevel", command_mutelevel, 0.0f, 1},
+	{"ban",       command_ban,       0.0f, 1},
     {"kick",      command_kick,      0.0f, 1},
     {"mute",      command_mute,      0.0f, 1},
     {"ip",        command_ip,        0.0f, 1},
@@ -183,7 +184,6 @@ CommArray_s CommandsGM[] =
     {"inventory",      command_inventory,      0.0f, 1},
     {"summon",         command_summon,         0.0f, 1},
     {"teleport",       command_teleport,       0.0f, 1},
-    {"ban",            command_ban,            0.0f, 1},
     {"silence",        command_silence,        0.0f, 1},
     {"gmasterfile",    command_gmasterfile,    0.0f, 1},
     {"eavesdrop",      command_eavesdrop,      0.0f, 1},
