@@ -73,8 +73,7 @@ VERSION = daimonin-B5
 ARCHIVE = /tmp/$(VERSION)
 
 SUBDIRS = ../../src/common ../../src/zlib ../../src/socket ../../src/tests \
-	../../src/server ../../src/include ../../src/utils  \
-	../../src/lua ../../src/lua/lib \
+	../../src/server ../../src/include ../../src/lua ../../src/lua/lib \
 	../../src/plugin_lua
 
 FILES = configure configure.in
