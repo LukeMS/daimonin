@@ -2944,7 +2944,7 @@ case "$target" in
         CFLAGS="$CFLAGS -DMINGW"
         LIBS="$LIBS -lwsock32"
         COMMON_SYSTEM_SRCS="win32.c"
-        PLUGIN_SYSTEM_SRCS="../server/win32.c"
+        PLUGIN_SYSTEM_SRCS="../porting/win32.c"
         SERVER_SYSTEM_SRCS=""
         INSTALL_SYSTEM_PARAMS="daimonin_server.exe plugin_lua.dll"
         ;;
@@ -8197,7 +8197,7 @@ _ACEOF
 datadir=${ndatadir}
 localstatedir=${nlocaldir}
 
-ac_config_files="$ac_config_files Makefile ../../src/socket/Makefile ../../src/server/Makefile ../../src/include/Makefile ../../src/zlib/Makefile ../../src/tests/Makefile ../../src/lua/config ../../src/plugin_lua/Makefile"
+ac_config_files="$ac_config_files Makefile ../../src/porting/Makefile ../../src/socket/Makefile ../../src/server/Makefile ../../src/include/Makefile ../../src/zlib/Makefile ../../src/tests/Makefile ../../src/lua/config ../../src/plugin_lua/Makefile"
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -8796,6 +8796,7 @@ do
   case $ac_config_target in
     "../../src/include/autoconf.h") CONFIG_HEADERS="$CONFIG_HEADERS ../../src/include/autoconf.h" ;;
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
+    "../../src/porting/Makefile") CONFIG_FILES="$CONFIG_FILES ../../src/porting/Makefile" ;;
     "../../src/socket/Makefile") CONFIG_FILES="$CONFIG_FILES ../../src/socket/Makefile" ;;
     "../../src/server/Makefile") CONFIG_FILES="$CONFIG_FILES ../../src/server/Makefile" ;;
     "../../src/include/Makefile") CONFIG_FILES="$CONFIG_FILES ../../src/include/Makefile" ;;

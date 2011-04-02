@@ -24,7 +24,7 @@
 VPATH = @srcdir@
 srcdir = @srcdir@
 
-LOCAL_LIBRARIES = ../tests/libtest.a ../socket/socket.a ../zlib/zlib.a
+LOCAL_LIBRARIES = ../porting/libporting.a ../tests/libtest.a ../socket/socket.a ../zlib/zlib.a
 
 SRCS = \
 	@SERVER_SYSTEM_SRCS@ \
@@ -53,7 +53,6 @@ SRCS = \
 	mempool.c\
 	missile.c\
 	object.c\
-	porting.c\
 	quest.c\
 	re-cmp.c\
 	readable.c\
@@ -153,6 +152,9 @@ daimonin_server: $(OBJS) $(LOCAL_LIBRARIES)
 	$(AR) $(ARFLAGS) $@ $(OBJS)
 	$(RANLIB) $@
 	$(CC) $(LDFLAGS) -o $@ $(OBJS) $(LOCAL_LIBRARIES) $(LIBS)
+
+../porting/libporting.a:
+	(cd ../porting; $(MAKE) $(MFLAGS) all)
 
 ../socket/socket.a:
 	(cd ../socket; $(MAKE) $(MFLAGS) all)

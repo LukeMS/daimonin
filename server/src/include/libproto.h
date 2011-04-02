@@ -329,16 +329,6 @@ extern int              auto_apply(object *op);
 extern object          *locate_beacon(shstr *id);
 extern void             init_object_initializers();
 extern object          *find_next_object(object *op, uint8 type, uint8 mode, object *root);
-/* porting.c */
-extern char            *tempnam_local_ext(char *dir, char *pfx, char *name);
-extern void             remove_directory(const char *path);
-extern char            *strdup_local(const char *str);
-extern long             strtol_local(register char *str, char **ptr, register int base);
-extern char            *strerror_local(int errnum);
-extern int              isqrt(int n);
-extern char            *ltostr10(signed long n);
-extern void             save_long(char *buf, char *name, long n);
-extern void             make_path_to_file(char *filename);
 /* re-cmp.c */
 extern char            *re_cmp(char *str, char *regexp);
 /* readable.c */

@@ -245,7 +245,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\src\server\win32.c"
+				RelativePath="..\..\..\..\src\porting\win32.c"
 				>
 			</File>
 		</Filter>

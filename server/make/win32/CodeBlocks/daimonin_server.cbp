@@ -61,6 +61,9 @@
 			<Add directory="..\..\..\src\include" />
 		</Compiler>
 		<Unit filename="readme.txt" />
+		<Unit filename="..\..\..\src\porting\porting.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="..\..\..\src\server\aggro.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -136,9 +139,6 @@
 		<Unit filename="..\..\..\src\server\object.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\..\..\src\server\porting.c">
-			<Option compilerVar="CC" />
-		</Unit>
 		<Unit filename="..\..\..\src\server\quest.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -175,7 +175,7 @@
 		<Unit filename="..\..\..\src\server\view_map.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\..\..\src\server\win32.c">
+		<Unit filename="..\..\..\src\porting\win32.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\src\include\aggro.h" />
