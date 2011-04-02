@@ -24,7 +24,7 @@
 					<Add option="-DNDEBUG" />
 					<Add option="-D_LIB" />
 					<Add option="-DLUA_OPNAMES" />
-					<Add directory="../../../../src/lua/include" />
+					<Add directory="../../../../src/3rdparty/lua/include" />
 				</Compiler>
 			</Target>
 			<Target title="Debug">
@@ -41,7 +41,7 @@
 					<Add option="-D_DEBUG" />
 					<Add option="-D_LIB" />
 					<Add option="-DLUA_OPNAMES" />
-					<Add directory="../../../../src/lua/include" />
+					<Add directory="../../../../src/3rdparty/lua/include" />
 				</Compiler>
 			</Target>
 		</Build>
@@ -56,86 +56,86 @@
 		<Linker>
 			<Add library="m" />
 		</Linker>
-		<Unit filename="../../../../src/lua/include/lua.h" />
-		<Unit filename="../../../../src/lua/lapi.c">
+		<Unit filename="../../../../src/3rdparty/lua/include/lua.h" />
+		<Unit filename="../../../../src/3rdparty/lua/lapi.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="../../../../src/lua/lapi.h" />
-		<Unit filename="../../../../src/lua/lcode.c">
+		<Unit filename="../../../../src/3rdparty/lua/lapi.h" />
+		<Unit filename="../../../../src/3rdparty/lua/lcode.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="../../../../src/lua/lcode.h" />
-		<Unit filename="../../../../src/lua/ldebug.c">
+		<Unit filename="../../../../src/3rdparty/lua/lcode.h" />
+		<Unit filename="../../../../src/3rdparty/lua/ldebug.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="../../../../src/lua/ldebug.h" />
-		<Unit filename="../../../../src/lua/ldo.c">
+		<Unit filename="../../../../src/3rdparty/lua/ldebug.h" />
+		<Unit filename="../../../../src/3rdparty/lua/ldo.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="../../../../src/lua/ldo.h" />
-		<Unit filename="../../../../src/lua/ldump.c">
+		<Unit filename="../../../../src/3rdparty/lua/ldo.h" />
+		<Unit filename="../../../../src/3rdparty/lua/ldump.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="../../../../src/lua/lfunc.c">
+		<Unit filename="../../../../src/3rdparty/lua/lfunc.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="../../../../src/lua/lfunc.h" />
-		<Unit filename="../../../../src/lua/lgc.c">
+		<Unit filename="../../../../src/3rdparty/lua/lfunc.h" />
+		<Unit filename="../../../../src/3rdparty/lua/lgc.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="../../../../src/lua/lgc.h" />
-		<Unit filename="../../../../src/lua/llex.c">
+		<Unit filename="../../../../src/3rdparty/lua/lgc.h" />
+		<Unit filename="../../../../src/3rdparty/lua/llex.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="../../../../src/lua/llex.h" />
-		<Unit filename="../../../../src/lua/llimits.h" />
-		<Unit filename="../../../../src/lua/lmem.c">
+		<Unit filename="../../../../src/3rdparty/lua/llex.h" />
+		<Unit filename="../../../../src/3rdparty/lua/llimits.h" />
+		<Unit filename="../../../../src/3rdparty/lua/lmem.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="../../../../src/lua/lmem.h" />
-		<Unit filename="../../../../src/lua/lobject.c">
+		<Unit filename="../../../../src/3rdparty/lua/lmem.h" />
+		<Unit filename="../../../../src/3rdparty/lua/lobject.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="../../../../src/lua/lobject.h" />
-		<Unit filename="../../../../src/lua/lopcodes.c">
+		<Unit filename="../../../../src/3rdparty/lua/lobject.h" />
+		<Unit filename="../../../../src/3rdparty/lua/lopcodes.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="../../../../src/lua/lopcodes.h" />
-		<Unit filename="../../../../src/lua/lparser.c">
+		<Unit filename="../../../../src/3rdparty/lua/lopcodes.h" />
+		<Unit filename="../../../../src/3rdparty/lua/lparser.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="../../../../src/lua/lparser.h" />
-		<Unit filename="../../../../src/lua/lstate.c">
+		<Unit filename="../../../../src/3rdparty/lua/lparser.h" />
+		<Unit filename="../../../../src/3rdparty/lua/lstate.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="../../../../src/lua/lstate.h" />
-		<Unit filename="../../../../src/lua/lstring.c">
+		<Unit filename="../../../../src/3rdparty/lua/lstate.h" />
+		<Unit filename="../../../../src/3rdparty/lua/lstring.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="../../../../src/lua/lstring.h" />
-		<Unit filename="../../../../src/lua/ltable.c">
+		<Unit filename="../../../../src/3rdparty/lua/lstring.h" />
+		<Unit filename="../../../../src/3rdparty/lua/ltable.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="../../../../src/lua/ltable.h" />
-		<Unit filename="../../../../src/lua/ltests.c">
+		<Unit filename="../../../../src/3rdparty/lua/ltable.h" />
+		<Unit filename="../../../../src/3rdparty/lua/ltests.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="../../../../src/lua/ltm.c">
+		<Unit filename="../../../../src/3rdparty/lua/ltm.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="../../../../src/lua/ltm.h" />
-		<Unit filename="../../../../src/lua/lundump.c">
+		<Unit filename="../../../../src/3rdparty/lua/ltm.h" />
+		<Unit filename="../../../../src/3rdparty/lua/lundump.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="../../../../src/lua/lundump.h" />
-		<Unit filename="../../../../src/lua/lvm.c">
+		<Unit filename="../../../../src/3rdparty/lua/lundump.h" />
+		<Unit filename="../../../../src/3rdparty/lua/lvm.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="../../../../src/lua/lvm.h" />
-		<Unit filename="../../../../src/lua/lzio.c">
+		<Unit filename="../../../../src/3rdparty/lua/lvm.h" />
+		<Unit filename="../../../../src/3rdparty/lua/lzio.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="../../../../src/lua/lzio.h" />
+		<Unit filename="../../../../src/3rdparty/lua/lzio.h" />
 		<Extensions>
 			<envvars />
 			<code_completion />

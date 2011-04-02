@@ -17,8 +17,8 @@
 					<Add option="-W" />
 					<Add option="-DNDEBUG" />
 					<Add directory="..\..\..\..\src\include" />
-					<Add directory="..\..\..\..\src\lua" />
-					<Add directory="..\..\..\..\src\lua\include" />
+					<Add directory="..\..\..\..\src\3rdparty\lua" />
+					<Add directory="..\..\..\..\src\3rdparty\lua\include" />
 					<Add directory="..\..\..\..\src\plugin_lua\include" />
 				</Compiler>
 				<Linker>
@@ -44,8 +44,8 @@
 					<Add option="-DDEBUG_MOVEATTACK" />
 					<Add option="-DDEBUG" />
 					<Add directory="..\..\..\..\src\include" />
-					<Add directory="..\..\..\..\src\lua" />
-					<Add directory="..\..\..\..\src\lua\include" />
+					<Add directory="..\..\..\..\src\3rdparty\lua" />
+					<Add directory="..\..\..\..\src\3rdparty\lua\include" />
 					<Add directory="..\..\..\..\src\plugin_lua\include" />
 				</Compiler>
 				<Linker>
@@ -72,7 +72,7 @@
 			<Add option="-DLUA_PLUGIN_EXPORTS" />
 			<Add directory="..\..\..\..\src\include" />
 			<Add directory="..\..\..\..\src\plugin_lua\include" />
-			<Add directory="..\..\..\..\src\lua\include" />
+			<Add directory="..\..\..\..\src\3rdparty\lua\include" />
 		</Compiler>
 		<Unit filename="..\..\..\..\src\porting\win32.c">
 			<Option compilerVar="CC" />

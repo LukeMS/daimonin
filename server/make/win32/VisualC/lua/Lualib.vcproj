@@ -46,7 +46,7 @@
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
-				AdditionalIncludeDirectories="..\..\..\..\src\lua\include"
+				AdditionalIncludeDirectories="..\..\..\..\src\3rdparty\lua\include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;LUA_OPNAMES;_CRT_SECURE_NO_DEPRECATE"
 				StringPooling="true"
 				RuntimeLibrary="0"
@@ -122,7 +122,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				InlineFunctionExpansion="2"
-				AdditionalIncludeDirectories="..\..\..\..\src\lua\include"
+				AdditionalIncludeDirectories="..\..\..\..\src\3rdparty\lua\include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;LUA_OPNAMES;_CRT_SECURE_NO_DEPRECATE"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -177,83 +177,83 @@
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 			>
 			<File
-				RelativePath="..\..\..\..\src\lua\lapi.c"
+				RelativePath="..\..\..\..\src\3rdparty\lua\lapi.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\src\lua\lcode.c"
+				RelativePath="..\..\..\..\src\3rdparty\lua\lcode.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\src\lua\ldebug.c"
+				RelativePath="..\..\..\..\src\3rdparty\lua\ldebug.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\src\lua\ldo.c"
+				RelativePath="..\..\..\..\src\3rdparty\lua\ldo.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\src\lua\ldump.c"
+				RelativePath="..\..\..\..\src\3rdparty\lua\ldump.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\src\lua\lfunc.c"
+				RelativePath="..\..\..\..\src\3rdparty\lua\lfunc.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\src\lua\lgc.c"
+				RelativePath="..\..\..\..\src\3rdparty\lua\lgc.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\src\lua\llex.c"
+				RelativePath="..\..\..\..\src\3rdparty\lua\llex.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\src\lua\lmem.c"
+				RelativePath="..\..\..\..\src\3rdparty\lua\lmem.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\src\lua\lobject.c"
+				RelativePath="..\..\..\..\src\3rdparty\lua\lobject.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\src\lua\lopcodes.c"
+				RelativePath="..\..\..\..\src\3rdparty\lua\lopcodes.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\src\lua\lparser.c"
+				RelativePath="..\..\..\..\src\3rdparty\lua\lparser.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\src\lua\lstate.c"
+				RelativePath="..\..\..\..\src\3rdparty\lua\lstate.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\src\lua\lstring.c"
+				RelativePath="..\..\..\..\src\3rdparty\lua\lstring.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\src\lua\ltable.c"
+				RelativePath="..\..\..\..\src\3rdparty\lua\ltable.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\src\lua\ltests.c"
+				RelativePath="..\..\..\..\src\3rdparty\lua\ltests.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\src\lua\ltm.c"
+				RelativePath="..\..\..\..\src\3rdparty\lua\ltm.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\src\lua\lundump.c"
+				RelativePath="..\..\..\..\src\3rdparty\lua\lundump.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\src\lua\lvm.c"
+				RelativePath="..\..\..\..\src\3rdparty\lua\lvm.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\src\lua\lzio.c"
+				RelativePath="..\..\..\..\src\3rdparty\lua\lzio.c"
 				>
 			</File>
 		</Filter>
@@ -262,83 +262,83 @@
 			Filter="*.h"
 			>
 			<File
-				RelativePath="..\..\..\..\src\lua\lapi.h"
+				RelativePath="..\..\..\..\src\3rdparty\lua\lapi.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\src\lua\lcode.h"
+				RelativePath="..\..\..\..\src\3rdparty\lua\lcode.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\src\lua\ldebug.h"
+				RelativePath="..\..\..\..\src\3rdparty\lua\ldebug.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\src\lua\ldo.h"
+				RelativePath="..\..\..\..\src\3rdparty\lua\ldo.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\src\lua\lfunc.h"
+				RelativePath="..\..\..\..\src\3rdparty\lua\lfunc.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\src\lua\lgc.h"
+				RelativePath="..\..\..\..\src\3rdparty\lua\lgc.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\src\lua\llex.h"
+				RelativePath="..\..\..\..\src\3rdparty\lua\llex.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\src\lua\llimits.h"
+				RelativePath="..\..\..\..\src\3rdparty\lua\llimits.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\src\lua\lmem.h"
+				RelativePath="..\..\..\..\src\3rdparty\lua\lmem.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\src\lua\lobject.h"
+				RelativePath="..\..\..\..\src\3rdparty\lua\lobject.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\src\lua\lopcodes.h"
+				RelativePath="..\..\..\..\src\3rdparty\lua\lopcodes.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\src\lua\lparser.h"
+				RelativePath="..\..\..\..\src\3rdparty\lua\lparser.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\src\lua\lstate.h"
+				RelativePath="..\..\..\..\src\3rdparty\lua\lstate.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\src\lua\lstring.h"
+				RelativePath="..\..\..\..\src\3rdparty\lua\lstring.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\src\lua\ltable.h"
+				RelativePath="..\..\..\..\src\3rdparty\lua\ltable.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\src\lua\ltm.h"
+				RelativePath="..\..\..\..\src\3rdparty\lua\ltm.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\src\lua\include\lua.h"
+				RelativePath="..\..\..\..\src\3rdparty\lua\include\lua.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\src\lua\lundump.h"
+				RelativePath="..\..\..\..\src\3rdparty\lua\lundump.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\src\lua\lvm.h"
+				RelativePath="..\..\..\..\src\3rdparty\lua\lvm.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\src\lua\lzio.h"
+				RelativePath="..\..\..\..\src\3rdparty\lua\lzio.h"
 				>
 			</File>
 		</Filter>

@@ -79,8 +79,8 @@ SUBDIRS = \
 	../../src/tests \
 	../../src/server \
 	../../src/include \
-	../../src/lua \
-	../../src/lua/lib \
+	../../src/3rdparty/lua \
+	../../src/3rdparty/lua/lib \
 	../../src/plugin_lua
 
 FILES = configure configure.in

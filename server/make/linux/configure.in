@@ -230,6 +230,6 @@ AC_OUTPUT(Makefile
 	../../src/include/Makefile
 	../../src/3rdparty/zlib/Makefile
 	../../src/tests/Makefile
-	../../src/lua/config
+	../../src/3rdparty/lua/config
 	../../src/plugin_lua/Makefile
 	)

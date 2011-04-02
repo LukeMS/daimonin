@@ -24,7 +24,7 @@
 					<Add option="-DNDEBUG" />
 					<Add option="-D_LIB" />
 					<Add option="-DLUA_OPNAMES" />
-					<Add directory="../../../../src/lua/include" />
+					<Add directory="../../../../src/3rdparty/lua/include" />
 				</Compiler>
 			</Target>
 			<Target title="Debug">
@@ -41,7 +41,7 @@
 					<Add option="-D_DEBUG" />
 					<Add option="-D_LIB" />
 					<Add option="-DLUA_OPNAMES" />
-					<Add directory="../../../../src/lua/include" />
+					<Add directory="../../../../src/3rdparty/lua/include" />
 				</Compiler>
 			</Target>
 		</Build>
@@ -58,28 +58,28 @@
 		</Linker>
 		<Unit filename="../source/include/lauxlib.h" />
 		<Unit filename="../source/include/lualib.h" />
-		<Unit filename="../../../../src/lua/lib/lauxlib.c">
+		<Unit filename="../../../../src/3rdparty/lua/lib/lauxlib.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="../../../../src/lua/lib/lbaselib.c">
+		<Unit filename="../../../../src/3rdparty/lua/lib/lbaselib.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="../../../../src/lua/lib/ldblib.c">
+		<Unit filename="../../../../src/3rdparty/lua/lib/ldblib.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="../../../../src/lua/lib/liolib.c">
+		<Unit filename="../../../../src/3rdparty/lua/lib/liolib.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="../../../../src/lua/lib/lmathlib.c">
+		<Unit filename="../../../../src/3rdparty/lua/lib/lmathlib.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="../../../../src/lua/lib/loadlib.c">
+		<Unit filename="../../../../src/3rdparty/lua/lib/loadlib.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="../../../../src/lua/lib/lstrlib.c">
+		<Unit filename="../../../../src/3rdparty/lua/lib/lstrlib.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="../../../../src/lua/lib/ltablib.c">
+		<Unit filename="../../../../src/3rdparty/lua/lib/ltablib.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Extensions>

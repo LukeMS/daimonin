@@ -6,8 +6,8 @@ LIBS		= -llua -llualib
 
 # We are using embedded lua sources. Change these if you want to link against
 # another lua library
-LIBROOT = ../lua/lib
-INCLUDEROOT = ../lua/include
+LIBROOT = ../3rdparty/lua/lib
+INCLUDEROOT = ../3rdparty/lua/include
 EXTRA_CFLAGS =
 
 # *****************************************************************************
