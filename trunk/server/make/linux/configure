@@ -8197,7 +8197,7 @@ _ACEOF
 datadir=${ndatadir}
 localstatedir=${nlocaldir}
 
-ac_config_files="$ac_config_files Makefile ../../src/porting/Makefile ../../src/socket/Makefile ../../src/server/Makefile ../../src/include/Makefile ../../src/3rdparty/zlib/Makefile ../../src/tests/Makefile ../../src/lua/config ../../src/plugin_lua/Makefile"
+ac_config_files="$ac_config_files Makefile ../../src/porting/Makefile ../../src/socket/Makefile ../../src/server/Makefile ../../src/include/Makefile ../../src/3rdparty/zlib/Makefile ../../src/tests/Makefile ../../src/3rdparty/lua/config ../../src/plugin_lua/Makefile"
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -8802,7 +8802,7 @@ do
     "../../src/include/Makefile") CONFIG_FILES="$CONFIG_FILES ../../src/include/Makefile" ;;
     "../../src/3rdparty/zlib/Makefile") CONFIG_FILES="$CONFIG_FILES ../../src/3rdparty/zlib/Makefile" ;;
     "../../src/tests/Makefile") CONFIG_FILES="$CONFIG_FILES ../../src/tests/Makefile" ;;
-    "../../src/lua/config") CONFIG_FILES="$CONFIG_FILES ../../src/lua/config" ;;
+    "../../src/3rdparty/lua/config") CONFIG_FILES="$CONFIG_FILES ../../src/3rdparty/lua/config" ;;
     "../../src/plugin_lua/Makefile") CONFIG_FILES="$CONFIG_FILES ../../src/plugin_lua/Makefile" ;;
 
   *) { { $as_echo "$as_me:$LINENO: error: invalid argument: $ac_config_target" >&5

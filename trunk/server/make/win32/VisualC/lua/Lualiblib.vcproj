@@ -46,7 +46,7 @@
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
-				AdditionalIncludeDirectories="..\..\..\..\src\lua\include"
+				AdditionalIncludeDirectories="..\..\..\..\src\3rdparty\lua\include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;_CRT_SECURE_NO_DEPRECATE"
 				StringPooling="true"
 				RuntimeLibrary="0"
@@ -122,7 +122,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				InlineFunctionExpansion="2"
-				AdditionalIncludeDirectories="..\..\..\..\src\lua\include"
+				AdditionalIncludeDirectories="..\..\..\..\src\3rdparty\lua\include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;_CRT_SECURE_NO_DEPRECATE"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -177,35 +177,35 @@
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 			>
 			<File
-				RelativePath="..\..\..\..\src\lua\lib\lauxlib.c"
+				RelativePath="..\..\..\..\src\3rdparty\lua\lib\lauxlib.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\src\lua\lib\lbaselib.c"
+				RelativePath="..\..\..\..\src\3rdparty\lua\lib\lbaselib.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\src\lua\lib\ldblib.c"
+				RelativePath="..\..\..\..\src\3rdparty\lua\lib\ldblib.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\src\lua\lib\liolib.c"
+				RelativePath="..\..\..\..\src\3rdparty\lua\lib\liolib.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\src\lua\lib\lmathlib.c"
+				RelativePath="..\..\..\..\src\3rdparty\lua\lib\lmathlib.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\src\lua\lib\loadlib.c"
+				RelativePath="..\..\..\..\src\3rdparty\lua\lib\loadlib.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\src\lua\lib\lstrlib.c"
+				RelativePath="..\..\..\..\src\3rdparty\lua\lib\lstrlib.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\src\lua\lib\ltablib.c"
+				RelativePath="..\..\..\..\src\3rdparty\lua\lib\ltablib.c"
 				>
 			</File>
 		</Filter>
@@ -214,15 +214,15 @@
 			Filter="h"
 			>
 			<File
-				RelativePath="..\..\..\..\src\lua\include\lauxlib.h"
+				RelativePath="..\..\..\..\src\3rdparty\lua\include\lauxlib.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\src\lua\include\lua.h"
+				RelativePath="..\..\..\..\src\3rdparty\lua\include\lua.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\src\lua\include\lualib.h"
+				RelativePath="..\..\..\..\src\3rdparty\lua\include\lualib.h"
 				>
 			</File>
 		</Filter>
