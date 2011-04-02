@@ -24,10 +24,48 @@
 VPATH = @srcdir@
 srcdir = @srcdir@
 
-LOCAL_LIBRARIES = ../tests/libtest.a ../common/libcross.a ../socket/socket.a ../zlib/zlib.a ../common/libcross.a
+LOCAL_LIBRARIES = ../tests/libtest.a ../socket/socket.a ../zlib/zlib.a
 
 SRCS = \
 	@SERVER_SYSTEM_SRCS@ \
+	aggro.c \
+	anim.c \
+	arch.c\
+	artifact.c\
+	button.c\
+	exp.c\
+	food.c\
+	guild.c\
+	hashtable.c \
+	hashfunc.c \
+	holy.c\
+	image.c \
+	info.c \
+	item.c\
+	links.c\
+	living.c\
+	loader.c\
+	logger.c\
+	los.c\
+	map.c\
+	map_tile.c\
+	material.c\
+	mempool.c\
+	missile.c\
+	object.c\
+	porting.c\
+	quest.c\
+	re-cmp.c\
+	readable.c\
+	recipe.c\
+	request.c\
+	shstr_ng.c\
+	sounds.c\
+	stats.c\
+	treasure.c\
+	utils.c\
+	view_inv.c\
+	view_map.c\
 	aiconfig.c\
 	alchemy.c\
 	apply.c\
@@ -75,9 +113,13 @@ SRCS = \
 	pathfinder.c\
 	calendar.c
 
-ALLFILES = $(SRCS) Makefile.in
+ALLFILES = loader.l $(SRCS) Makefile.in
+
+RANLIB = @RANLIB@
 
 DEPEND = @DEPEND@
+
+FLEX = @FLEX@
 
 SED = @SED@
 
@@ -99,25 +141,31 @@ bindir = @bindir@
 
 INSTALL = @INSTALL@
 
+ARFLAGS = cq
+
+AR = @AR@
 MKDIR = @MKDIR@
 CC = @CC@OC
 RM = @RM@
 
 daimonin_server: $(OBJS) $(LOCAL_LIBRARIES)
 	$(RM) -f $@
+	$(AR) $(ARFLAGS) $@ $(OBJS)
+	$(RANLIB) $@
 	$(CC) $(LDFLAGS) -o $@ $(OBJS) $(LOCAL_LIBRARIES) $(LIBS)
-
-
-../common/libcross.a:
-	(cd ../common; $(MAKE) $(MFLAGS) all)
 
 ../socket/socket.a:
 	(cd ../socket; $(MAKE) $(MFLAGS) all)
 
 depend:
-	$(DEPEND) $(DEPENDFLAGS) -- $(CFLAGS) $(INCLUDES) -I../include -- $(SRCS)
+	$(DEPEND) $(DEPENDFLAGS) -- $(CFLAGS) $(INCLUDES) -- $(SRCS)
 
 proto:
+	cproto -e -o ../include/libproto.h.bak $(INCLUDES) \
+	$(SRCS)
+	$(SED) -e "s/ = {0}//g" -e "s/__signed/signed/g" -e "/inline/d" -e "/YY_BUFFER/d" < ../include/libproto.h.bak > ../include/libproto.h
+	chmod 644 ../include/libproto.h
+	$(RM) -f ../include/libproto.h.bak
 	cproto -D__CEXTRACT__ $(INCLUDES) $(SRCS) >../include/sproto.h.bak
 	$(SED) -e "s/ = {0}//g" -e "s/#if __STDC__/#ifdef __STDC__/" -e "s/__signed/signed/g" -e "/__inline/d" -e "/YY_BUFFER/d" < ../include/sproto.h.bak >../include/sproto.h
 	chmod 644 ../include/sproto.h
@@ -127,11 +175,14 @@ archive:
 	@if [ ! -d $(ARCHIVE)/server ]; then $(MKDIR) $(ARCHIVE)/server; fi
 	$(CP) $(ALLFILES) $(ARCHIVE)/server
 
+loader.c: loader.l
+	$(FLEX) -i -t loader.l > loader.c
+
 clean::
 	$(RM) -f daimonin_server $(OBJS) Makefile.bak
 
 distclean:: clean
-	$(RM) -f Makefile
+	$(RM) -f Makefile loader.c
 
 .c.o:
 	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
