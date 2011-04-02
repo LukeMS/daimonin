@@ -22,7 +22,7 @@
 */
 
 #include <global.h>
-#include "../zlib/zlib.h"
+#include "../3rdparty/zlib/zlib.h"
 
 player_arch_template        player_arch_list[MAX_PLAYER_ARCH];
 

@@ -24,7 +24,7 @@
 VPATH = @srcdir@
 srcdir = @srcdir@
 
-LOCAL_LIBRARIES = ../porting/libporting.a ../tests/libtest.a ../socket/socket.a ../zlib/zlib.a
+LOCAL_LIBRARIES = ../porting/libporting.a ../tests/libtest.a ../socket/socket.a ../3rdparty/zlib/zlib.a
 
 SRCS = \
 	@SERVER_SYSTEM_SRCS@ \

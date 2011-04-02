@@ -228,7 +228,7 @@ AC_OUTPUT(Makefile
 	../../src/socket/Makefile
 	../../src/server/Makefile
 	../../src/include/Makefile
-	../../src/zlib/Makefile
+	../../src/3rdparty/zlib/Makefile
 	../../src/tests/Makefile
 	../../src/lua/config
 	../../src/plugin_lua/Makefile
