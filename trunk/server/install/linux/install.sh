@@ -37,7 +37,6 @@ mmkdir() {
 echo "Copy binaries"
 instbin ./../../src/server/$prgname ./../../$prgname_dst
 instbin ./../../src/plugin_lua/$luaplug ./../../plugins/$luaplug_dst
-instbin $basedir/src/utils/dmonloop $basedir 
 
 echo "Create data folders"
 mmkdir $basedir/$datadir
