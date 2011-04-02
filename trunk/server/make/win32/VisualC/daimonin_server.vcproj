@@ -223,6 +223,14 @@
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 			>
 			<Filter
+				Name="porting"
+				>
+				<File
+					RelativePath="..\..\..\src\porting\porting.c"
+					>
+				</File>
+			</Filter>
+			<Filter
 				Name="socket"
 				>
 				<File
@@ -404,10 +412,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\server\porting.c"
-					>
-				</File>
-				<File
 					RelativePath="..\..\..\src\server\quest.c"
 					>
 				</File>
@@ -456,7 +460,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\server\win32.c"
+					RelativePath="..\..\..\src\porting\win32.c"
 					>
 				</File>
 				<File

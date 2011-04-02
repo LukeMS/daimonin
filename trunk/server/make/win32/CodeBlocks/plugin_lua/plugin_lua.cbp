@@ -74,7 +74,7 @@
 			<Add directory="..\..\..\..\src\plugin_lua\include" />
 			<Add directory="..\..\..\..\src\lua\include" />
 		</Compiler>
-		<Unit filename="..\..\..\..\src\server\win32.c">
+		<Unit filename="..\..\..\..\src\porting\win32.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\..\src\plugin_lua\ai_object.c">

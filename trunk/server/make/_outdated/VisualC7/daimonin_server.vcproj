@@ -144,6 +144,13 @@
 			Name="Source Files"
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat">
 			<Filter
+				Name="porting"
+				Filter="">
+				<File
+					RelativePath="..\..\..\src\porting\porting.c">
+				</File>
+			</Filter>
+			<Filter
 				Name="server"
 				Filter="">
 				<File
@@ -229,9 +236,6 @@
 					RelativePath="..\..\..\src\server\object.c">
 				</File>
 				<File
-					RelativePath="..\..\..\src\server\porting.c">
-				</File>
-				<File
 					RelativePath="..\..\..\src\server\quest.c">
 				</File>
 				<File
@@ -256,7 +260,7 @@
 					RelativePath="..\..\..\src\server\utils.c">
 				</File>
 				<File
-					RelativePath="..\..\..\src\server\win32.c">
+					RelativePath="..\..\..\src\porting\win32.c">
 				</File>
 				<File
 					RelativePath="..\..\..\src\server\aiconfig.c">

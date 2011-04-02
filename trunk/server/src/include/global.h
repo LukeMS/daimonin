@@ -769,6 +769,7 @@ EXTERN hashtable               *beacon_table;
 #include "plugin.h"
 
 #include "libproto.h"
+#include "portproto.h"
 #include "sockproto.h"
 #include "sproto.h"
 #include "testproto.h"

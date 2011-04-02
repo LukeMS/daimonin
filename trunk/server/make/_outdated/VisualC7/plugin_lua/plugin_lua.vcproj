@@ -165,7 +165,7 @@
 				RelativePath="..\..\..\..\src\plugin_lua\plugin_lua.c">
 			</File>
 			<File
-				RelativePath="..\..\..\..\src\server\win32.c">
+				RelativePath="..\..\..\..\src\porting\win32.c">
 			</File>
 		</Filter>
 		<Filter
