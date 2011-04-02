@@ -414,30 +414,30 @@
 		<Unit filename="..\..\..\src\tests\test_shstr.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\..\..\src\zlib\adler32.c">
+		<Unit filename="..\..\..\src\3rdparty\zlib\adler32.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\..\..\src\zlib\compress.c">
+		<Unit filename="..\..\..\src\3rdparty\zlib\compress.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\..\..\src\zlib\crc32.c">
+		<Unit filename="..\..\..\src\3rdparty\zlib\crc32.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\..\..\src\zlib\crc32.h" />
-		<Unit filename="..\..\..\src\zlib\deflate.c">
+		<Unit filename="..\..\..\src\3rdparty\zlib\crc32.h" />
+		<Unit filename="..\..\..\src\3rdparty\zlib\deflate.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\..\..\src\zlib\deflate.h" />
-		<Unit filename="..\..\..\src\zlib\trees.c">
+		<Unit filename="..\..\..\src\3rdparty\zlib\deflate.h" />
+		<Unit filename="..\..\..\src\3rdparty\zlib\trees.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\..\..\src\zlib\trees.h" />
-		<Unit filename="..\..\..\src\zlib\zconf.h" />
-		<Unit filename="..\..\..\src\zlib\zlib.h" />
-		<Unit filename="..\..\..\src\zlib\zutil.c">
+		<Unit filename="..\..\..\src\3rdparty\zlib\trees.h" />
+		<Unit filename="..\..\..\src\3rdparty\zlib\zconf.h" />
+		<Unit filename="..\..\..\src\3rdparty\zlib\zlib.h" />
+		<Unit filename="..\..\..\src\3rdparty\zlib\zutil.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\..\..\src\zlib\zutil.h" />
+		<Unit filename="..\..\..\src\3rdparty\zlib\zutil.h" />
 		<Extensions>
 			<code_completion />
 			<envvars />

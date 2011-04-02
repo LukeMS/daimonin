@@ -1196,51 +1196,51 @@
 				Name="zlib"
 				>
 				<File
-					RelativePath="..\..\..\src\zlib\adler32.c"
+					RelativePath="..\..\..\src\3rdparty\zlib\adler32.c"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\zlib\compress.c"
+					RelativePath="..\..\..\src\3rdparty\zlib\compress.c"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\zlib\crc32.c"
+					RelativePath="..\..\..\src\3rdparty\zlib\crc32.c"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\zlib\crc32.h"
+					RelativePath="..\..\..\src\3rdparty\zlib\crc32.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\zlib\deflate.c"
+					RelativePath="..\..\..\src\3rdparty\zlib\deflate.c"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\zlib\deflate.h"
+					RelativePath="..\..\..\src\3rdparty\zlib\deflate.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\zlib\trees.c"
+					RelativePath="..\..\..\src\3rdparty\zlib\trees.c"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\zlib\trees.h"
+					RelativePath="..\..\..\src\3rdparty\zlib\trees.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\zlib\zconf.h"
+					RelativePath="..\..\..\src\3rdparty\zlib\zconf.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\zlib\zlib.h"
+					RelativePath="..\..\..\src\3rdparty\zlib\zlib.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\zlib\zutil.c"
+					RelativePath="..\..\..\src\3rdparty\zlib\zutil.c"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\zlib\zutil.h"
+					RelativePath="..\..\..\src\3rdparty\zlib\zutil.h"
 					>
 				</File>
 			</Filter>

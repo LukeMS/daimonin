@@ -36,7 +36,7 @@ struct bmappair
 static struct bmappair *xbm = NULL;
 
 #ifdef SERVER_SEND_FACES
-#include "../zlib/zlib.h"
+#include "../3rdparty/zlib/zlib.h"
 
 #define MAX_FACE_SETS   1
 #define MAX_IMAGE_SIZE 200000

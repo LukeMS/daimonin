@@ -49,7 +49,7 @@ DEPEND = @DEPEND@
 
 CFLAGS = -W @CFLAGS@ $(EXTRA_CFLAGS)
 
-INCLUDES= $(EXTRA_INCLUDES) -I. -I../include -I$(srcdir)/../include
+INCLUDES= $(EXTRA_INCLUDES) -I. -I../../include -I$(srcdir)/../../include
 
 SED= @SED@
 
@@ -65,8 +65,9 @@ depend:
 install::
 
 archive:
-	if [ ! -d $(ARCHIVE)/zlib ]; then $(MKDIR) $(ARCHIVE)/zlib; fi
-	$(CP) $(ALLFILES) $(ARCHIVE)/zlib
+	if [ ! -d $(ARCHIVE)/3rdparty ]; then $(MKDIR) $(ARCHIVE)/3rdparty; fi
+	if [ ! -d $(ARCHIVE)/3rdparty/zlib ]; then $(MKDIR) $(ARCHIVE)/3rdparty/zlib; fi
+	$(CP) $(ALLFILES) $(ARCHIVE)/3rdparty/zlib
 
 clean:
 	$(RM) -f $(OBJS) Makefile.bak zlib.a
