@@ -4,25 +4,25 @@
 	<File name="readme.txt" open="0" top="0" tabpos="1">
 		<Cursor position="432" topLine="0" />
 	</File>
-	<File name="..\..\..\src\common\aggro.c" open="0" top="0" tabpos="2">
+	<File name="..\..\..\src\server\aggro.c" open="0" top="0" tabpos="2">
 		<Cursor position="4811" topLine="130" />
 	</File>
-	<File name="..\..\..\src\common\button.c" open="0" top="0" tabpos="11">
+	<File name="..\..\..\src\server\button.c" open="0" top="0" tabpos="11">
 		<Cursor position="27535" topLine="802" />
 	</File>
-	<File name="..\..\..\src\common\image.c" open="0" top="0" tabpos="3">
+	<File name="..\..\..\src\server\image.c" open="0" top="0" tabpos="3">
 		<Cursor position="965" topLine="23" />
 	</File>
-	<File name="..\..\..\src\common\loader.c" open="0" top="0" tabpos="8">
+	<File name="..\..\..\src\server\loader.c" open="0" top="0" tabpos="8">
 		<Cursor position="264204" topLine="6151" />
 	</File>
-	<File name="..\..\..\src\common\map_tile.c" open="0" top="0" tabpos="12">
+	<File name="..\..\..\src\server\map_tile.c" open="0" top="0" tabpos="12">
 		<Cursor position="41565" topLine="1186" />
 	</File>
-	<File name="..\..\..\src\common\object.c" open="0" top="0" tabpos="7">
+	<File name="..\..\..\src\server\object.c" open="0" top="0" tabpos="7">
 		<Cursor position="14244" topLine="420" />
 	</File>
-	<File name="..\..\..\src\common\request.c" open="0" top="0" tabpos="4">
+	<File name="..\..\..\src\server\request.c" open="0" top="0" tabpos="4">
 		<Cursor position="5589" topLine="146" />
 	</File>
 	<File name="..\..\..\src\include\aiconfig.h" open="0" top="0" tabpos="6">
