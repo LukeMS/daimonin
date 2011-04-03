@@ -225,6 +225,7 @@ localstatedir=${nlocaldir}
 
 AC_OUTPUT(Makefile
 	../../src/porting/Makefile
+	../../src/protocol/Makefile
 	../../src/socket/Makefile
 	../../src/server/Makefile
 	../../src/include/Makefile

@@ -8197,7 +8197,7 @@ _ACEOF
 datadir=${ndatadir}
 localstatedir=${nlocaldir}
 
-ac_config_files="$ac_config_files Makefile ../../src/porting/Makefile ../../src/socket/Makefile ../../src/server/Makefile ../../src/include/Makefile ../../src/3rdparty/zlib/Makefile ../../src/tests/Makefile ../../src/3rdparty/lua/config ../../src/plugin_lua/Makefile"
+ac_config_files="$ac_config_files Makefile ../../src/porting/Makefile ../../src/protocol/Makefile ../../src/socket/Makefile ../../src/server/Makefile ../../src/include/Makefile ../../src/3rdparty/zlib/Makefile ../../src/tests/Makefile ../../src/3rdparty/lua/config ../../src/plugin_lua/Makefile"
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -8797,6 +8797,7 @@ do
     "../../src/include/autoconf.h") CONFIG_HEADERS="$CONFIG_HEADERS ../../src/include/autoconf.h" ;;
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
     "../../src/porting/Makefile") CONFIG_FILES="$CONFIG_FILES ../../src/porting/Makefile" ;;
+    "../../src/protocol/Makefile") CONFIG_FILES="$CONFIG_FILES ../../src/protocol/Makefile" ;;
     "../../src/socket/Makefile") CONFIG_FILES="$CONFIG_FILES ../../src/socket/Makefile" ;;
     "../../src/server/Makefile") CONFIG_FILES="$CONFIG_FILES ../../src/server/Makefile" ;;
     "../../src/include/Makefile") CONFIG_FILES="$CONFIG_FILES ../../src/include/Makefile" ;;

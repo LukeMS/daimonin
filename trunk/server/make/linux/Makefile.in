@@ -74,6 +74,7 @@ ARCHIVE = /tmp/$(VERSION)
 
 SUBDIRS = \
 	../../src/porting \
+	../../src/protocol \
 	../../src/3rdparty/zlib \
 	../../src/socket \
 	../../src/tests \
