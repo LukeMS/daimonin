@@ -231,6 +231,30 @@
 				</File>
 			</Filter>
 			<Filter
+				Name="protocol"
+				>
+				<File
+					RelativePath="..\..\..\src\protocol\protocol.c"
+					>
+					<FileConfiguration
+						Name="ReleaseLog|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile=".\ReleaseLog\server/"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile=".\Debug\server/"
+						/>
+					</FileConfiguration>
+				</File>
+			</Filter>
+			<Filter
 				Name="socket"
 				>
 				<File
@@ -969,26 +993,6 @@
 				</File>
 				<File
 					RelativePath="..\..\..\src\server\plugins.c"
-					>
-					<FileConfiguration
-						Name="ReleaseLog|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile=".\ReleaseLog\server/"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile=".\Debug\server/"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\..\..\src\server\protocol.c"
 					>
 					<FileConfiguration
 						Name="ReleaseLog|Win32"

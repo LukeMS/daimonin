@@ -88,6 +88,9 @@
 		<Unit filename="../../../src/porting/porting.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="../../../src/protocol/protocol.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="../../../src/server/aggro.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -364,9 +367,6 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../../../src/server/plugins.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="../../../src/server/protocol.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../../../src/server/resurrection.c">

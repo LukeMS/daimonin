@@ -24,7 +24,7 @@
 VPATH = @srcdir@
 srcdir = @srcdir@
 
-LOCAL_LIBRARIES = ../porting/libporting.a ../tests/libtest.a ../socket/socket.a ../3rdparty/zlib/zlib.a
+LOCAL_LIBRARIES = ../porting/libporting.a ../protocol/libprotocol.a ../tests/libtest.a ../socket/socket.a ../3rdparty/zlib/zlib.a
 
 SRCS = \
 	@SERVER_SYSTEM_SRCS@ \
@@ -98,7 +98,6 @@ SRCS = \
 	pets.c\
 	player.c\
 	plugins.c\
-	protocol.c \
 	resurrection.c\
 	rune.c\
 	shop.c\
@@ -155,6 +154,9 @@ daimonin_server: $(OBJS) $(LOCAL_LIBRARIES)
 
 ../porting/libporting.a:
 	(cd ../porting; $(MAKE) $(MFLAGS) all)
+
+../protocol/libprotocol.a:
+	(cd ../protocol; $(MAKE) $(MFLAGS) all)
 
 ../socket/socket.a:
 	(cd ../socket; $(MAKE) $(MFLAGS) all)
