@@ -1078,9 +1078,6 @@
 				RelativePath="..\..\..\src\include\hashtable.h">
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\includes.h">
-			</File>
-			<File
 				RelativePath="..\..\..\src\include\libproto.h">
 			</File>
 			<File
