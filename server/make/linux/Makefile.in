@@ -115,7 +115,6 @@ distclean:: clean
 	done;
 	$(RM) -f Makefile
 	$(RM) -f config.cache config.log config.status
-	$(RM) -f  ../../dmonloop
 	$(RM) -f  ../../daimonin_server
 	$(RM) -f  ../../lib/*
 
