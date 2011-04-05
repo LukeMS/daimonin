@@ -85,6 +85,9 @@
 			<Add before="flex -i -t ../../../src/server/loader.l &gt; ../../../src/server/loader.c" />
 		</ExtraCommands>
 		<Unit filename="readme.txt" />
+		<Unit filename="../../../src/porting/daemon.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="../../../src/porting/porting.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -306,9 +309,6 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../../../src/server/container.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="../../../src/server/daemon.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../../../src/server/disease.c">
