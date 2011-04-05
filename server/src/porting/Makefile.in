@@ -25,6 +25,7 @@ VPATH = @srcdir@
 srcdir = @srcdir@
 
 SRCS = \
+	@SERVER_SYSTEM_SRCS@ \
 	porting.c
 
 ALLFILES=$(SRCS) Makefile.in

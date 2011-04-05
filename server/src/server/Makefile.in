@@ -27,7 +27,6 @@ srcdir = @srcdir@
 LOCAL_LIBRARIES = ../porting/libporting.a ../protocol/libprotocol.a ../tests/libtest.a ../socket/socket.a ../3rdparty/zlib/zlib.a
 
 SRCS = \
-	@SERVER_SYSTEM_SRCS@ \
 	aggro.c \
 	anim.c \
 	arch.c\
