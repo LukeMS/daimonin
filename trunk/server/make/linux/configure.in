@@ -5,7 +5,7 @@ AC_INIT(info)
 dnl AC_PPREFIX_DEFAULT(./../..)
 
 dnl we want a config.h file instead of -D options.
-AC_CONFIG_HEADER(../../src/include/autoconf.h)
+AC_CONFIG_HEADER(../../src/include/linux.h)
 AC_CONFIG_AUX_DIR(make_utils)
 
 dnl Checks for programs.

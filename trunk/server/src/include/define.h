@@ -44,7 +44,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #endif
 
 #ifndef WIN32 /* ---win32 exclude unix configuration part */
-#include <autoconf.h>
+#include <linux.h>
 #endif
 
 #include <debug.h> /* global & explicit debug settings */

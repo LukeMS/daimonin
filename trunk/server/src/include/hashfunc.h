@@ -28,7 +28,7 @@
 
 #include "hashtable.h"
 #ifndef WIN32
-#include "autoconf.h"
+#include "linux.h"
 #endif
 
 /* Useful special values for pointer keys. See string_key_equals for

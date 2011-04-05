@@ -330,7 +330,7 @@
  * should already find the program to use.  If you set the suffix to
  * something that autoconf did not find, you are likely to have serious
  * problems, so make sure you have the appropriate compression tool installed
- * before you set this.  You can look at the autoconf.h file to see
+ * before you set this.  You can look at the linux.h file to see
  * what compression tools it found (search for COMPRESS).
  * Note that this is used when saving files.  Crossfire will search all
  * methods when loading a file to see if it finds a match

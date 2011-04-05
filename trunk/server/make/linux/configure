@@ -1821,7 +1821,7 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 
 
-ac_config_headers="$ac_config_headers ../../src/include/autoconf.h"
+ac_config_headers="$ac_config_headers ../../src/include/linux.h"
 
 ac_aux_dir=
 for ac_dir in make_utils "$srcdir"/make_utils; do
@@ -8794,7 +8794,7 @@ cat >>$CONFIG_STATUS <<\_ACEOF || ac_write_fail=1
 for ac_config_target in $ac_config_targets
 do
   case $ac_config_target in
-    "../../src/include/autoconf.h") CONFIG_HEADERS="$CONFIG_HEADERS ../../src/include/autoconf.h" ;;
+    "../../src/include/linux.h") CONFIG_HEADERS="$CONFIG_HEADERS ../../src/include/linux.h" ;;
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
     "../../src/porting/Makefile") CONFIG_FILES="$CONFIG_FILES ../../src/porting/Makefile" ;;
     "../../src/protocol/Makefile") CONFIG_FILES="$CONFIG_FILES ../../src/protocol/Makefile" ;;
