@@ -44,7 +44,7 @@ typedef unsigned _int64 uint64_t;
 #endif
 #else
 #include <stdint.h>
-#include <autoconf.h>
+#include <linux.h>
 #endif
 
 #include <string.h>

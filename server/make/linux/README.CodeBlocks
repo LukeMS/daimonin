@@ -3,7 +3,7 @@ Before using CodeBlocks the source must be configured by doing
 sh ./configure
 
 on a cosole in the same way as to when using the normal make.
-That will generate the needed file autoconf.h.
+That will generate the needed file linux.h.
 
 Then CodeBlocks can be started.
 

@@ -1,4 +1,4 @@
-/* autoconf.h.in.  Generated automatically from configure.in by autoheader.  */
+/* linux.h.in.  Generated automatically from configure.in by autoheader.  */
 /*
     Daimonin, the Massive Multiuser Online Role Playing Game
     Server Applicatiom
@@ -24,8 +24,8 @@
     The author can be reached via e-mail to info@daimonin.org
 */
 
-#ifndef __AUTOCONF_H
-#define __AUTOCONF_H
+#ifndef __LINUX_H
+#define __LINUX_H
 
 /* Define to empty if the keyword does not work.  */
 #undef const
@@ -281,4 +281,4 @@
 #undef BUILD_UNIT_TESTS
 #undef BUILD_BENCHMARKS
 
-#endif /* ifndef __AUTOCONF_H */
+#endif /* ifndef __LINUX_H */

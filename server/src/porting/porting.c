@@ -43,7 +43,7 @@
 
 /* Need to pull in the HAVE_... values somehow */
 /* win32 reminder: always put this in a ifndef win32 block */
-#include <autoconf.h>
+#include <linux.h>
 #endif
 
 

@@ -8,7 +8,7 @@ define.h       loader.h       race.h         material.h     spells.h \
 arch.h         face.h         logger.h       re-cmp.h       sproto.h \
 artifact.h     map.h          recipe.h       treasure.h     portproto.h \
 global.h       newclient.h    shstr.h        calendar.h \
-autoconf.h.in  god.h          newserver.h    skillist.h     xdir.h \
+linux.h.in  god.h          newserver.h    skillist.h     xdir.h \
 book.h         object.h       skills.h	     sockproto.h \
 plugin.h       plugproto.h    timers.h       pathfinder.h   behaviourdecl.h \
 monster.h      mempool.h      aiconfig.h     links.h        aggro.h \
@@ -23,7 +23,7 @@ clean::
 proto::
 
 distclean:: clean
-	$(RM) -f autoconf.h
+	$(RM) -f linux.h
 	$(RM) -f Makefile
 
 archive::
