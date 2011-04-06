@@ -12,7 +12,10 @@ test ! -z "$1" && prgname_dst=$1
 test ! -z "$2" && luaplug_dst=$2
 
 basedir="./../.."
-datadir="/data"
+installdir="$basedir/install"
+srcdir="$basedir/src"
+datadir="$basedir/data"
+libdir="$basedir/lib"
 
 fail() {
 	echo "***"
@@ -35,21 +38,22 @@ mmkdir() {
 }
 
 echo "Copy binaries"
-instbin ./../../src/server/$prgname ./../../$prgname_dst
-instbin ./../../src/plugin_lua/$luaplug ./../../plugins/$luaplug_dst
+instbin $srcdir/server/$prgname $basedir/$prgname_dst
+instbin $srcdir/plugin_lua/$luaplug $basedir/plugins/$luaplug_dst
 
 echo "Create data folders"
-mmkdir $basedir/$datadir
-mmkdir $basedir/$datadir/tmp
-mmkdir $basedir/$datadir/log
-mmkdir $basedir/$datadir/players
-mmkdir $basedir/$datadir/unique-items
-mmkdir $basedir/$datadir/global
+mmkdir $datadir
+mmkdir $datadir/tmp
+mmkdir $datadir/log
+mmkdir $datadir/accounts
+mmkdir $datadir/players
+mmkdir $datadir/unique-items
+mmkdir $datadir/global
 
 echo "Copy server data"
-cp $basedir/install/* $basedir/$datadir
+cp $installdir/* $datadir
 
-mmkdir $basedir/lib
+mmkdir $libdir
 echo "Copy arch and lib files"
-cp ./../../../arch/* $basedir/lib
+cp $basedir/../arch/* $libdir
 echo "done."
