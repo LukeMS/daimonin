@@ -1477,10 +1477,6 @@
 				RelativePath="..\..\..\src\include\win32.h"
 				>
 			</File>
-			<File
-				RelativePath="..\..\..\src\include\xdir.h"
-				>
-			</File>
 		</Filter>
 	</Files>
 	<Globals>
