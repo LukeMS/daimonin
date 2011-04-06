@@ -281,4 +281,6 @@
 #undef BUILD_UNIT_TESTS
 #undef BUILD_BENCHMARKS
 
+extern void become_daemon(void);
+
 #endif /* ifndef __LINUX_H */
