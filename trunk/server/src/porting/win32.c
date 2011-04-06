@@ -216,3 +216,8 @@ void rewinddir(DIR *dir_Info)
     dir_Info->handle = handle;
     free(filespec);
 }
+
+void become_daemon(void)
+{
+    LOG(llevError, "The -detach switch does not function under Windows! Re-run the server without this setting.")
+}

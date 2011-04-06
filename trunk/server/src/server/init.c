@@ -1316,7 +1316,6 @@ void init(int argc, char **argv)
                                  */
     parse_args(argc, argv, 2);
 
-#ifndef WIN32 /* ***win32: no BecomeDaemon in windows */
     if (settings.daemonmode)
     {
         CreateLogfiles((!settings.tlogfilename[0]) ? "tlog" : settings.tlogfilename,
@@ -1329,10 +1328,6 @@ void init(int argc, char **argv)
         CreateLogfiles(settings.tlogfilename, settings.clogfilename, "w",
                        llevInfo);
     }
-#else
-    CreateLogfiles(settings.tlogfilename, settings.clogfilename, "w",
-                   llevInfo);
-#endif
 
     init_library();             /* Must be called early */
     load_settings();            /* Load the settings file */

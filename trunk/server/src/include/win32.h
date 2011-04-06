@@ -175,5 +175,6 @@ extern DIR             *opendir(const char *);
 extern struct dirent   *readdir(DIR *);
 extern int              closedir(DIR *);
 extern void             rewinddir(DIR *);
+extern void             become_daemon(void);
 
 #endif /* ifndef __WIN32_H */
