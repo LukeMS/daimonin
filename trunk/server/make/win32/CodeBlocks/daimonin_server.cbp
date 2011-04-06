@@ -224,11 +224,9 @@
 		<Unit filename="..\..\..\src\include\re-cmp.h" />
 		<Unit filename="..\..\..\src\include\recipe.h" />
 		<Unit filename="..\..\..\src\include\shstr_ng.h" />
-		<Unit filename="..\..\..\src\include\skillist.h" />
 		<Unit filename="..\..\..\src\include\skills.h" />
 		<Unit filename="..\..\..\src\include\sockproto.h" />
 		<Unit filename="..\..\..\src\include\sounds.h" />
-		<Unit filename="..\..\..\src\include\spellist.h" />
 		<Unit filename="..\..\..\src\include\spells.h" />
 		<Unit filename="..\..\..\src\include\sproto.h" />
 		<Unit filename="..\..\..\src\include\stats.h" />
