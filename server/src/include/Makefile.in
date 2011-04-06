@@ -3,12 +3,12 @@ RM = @RM@
 
 ALL_FILES = \
 commands.h     libproto.h     sounds.h	     attack.h       exp.h \
-Makefile.in    config.h       living.h       player.h       spellist.h \
+Makefile.in    config.h       living.h       player.h \
 define.h       loader.h       race.h         material.h     spells.h \
 arch.h         face.h         logger.h       re-cmp.h       sproto.h \
 artifact.h     map.h          recipe.h       treasure.h     portproto.h \
 global.h       newclient.h    shstr.h        calendar.h \
-linux.h.in     god.h          newserver.h    skillist.h \
+linux.h.in     god.h          newserver.h \
 book.h         object.h       skills.h	     sockproto.h \
 plugin.h       plugproto.h    timers.h       pathfinder.h   behaviourdecl.h \
 monster.h      mempool.h      aiconfig.h     links.h        aggro.h \

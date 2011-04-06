@@ -1430,10 +1430,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\skillist.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\src\include\skills.h"
 				>
 			</File>
@@ -1443,10 +1439,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\include\sounds.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\include\spellist.h"
 				>
 			</File>
 			<File
