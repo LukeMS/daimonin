@@ -511,7 +511,13 @@ void dump_alchemy_costs(void)
                                 cost = find_ingred_cost(next->name);
                                 if (cost < 0)
                                     num_errors++;
+#ifdef WIN32
+                                LOG(llevInfo, "\t%-33s%5I64d\n", next->name, cost);
+#elif SIZEOF_LONG == 8
                                 LOG(llevInfo, "\t%-33s%5ld\n", next->name, cost);
+#elif SIZEOF_LONG_LONG == 8
+                                LOG(llevInfo, "\t%-33s%5lld\n", next->name, cost);
+#endif
                                 if (cost < 0 || tcost < 0)
                                     tcost = -1;
                                 else
@@ -521,15 +527,33 @@ void dump_alchemy_costs(void)
                                 cost = at->clone.value * art->def_at.clone.value;
                             else
                                 cost = at->clone.value;
+#ifdef WIN32
+                            LOG(llevInfo, "\t\tBuying result costs: %5I64d", cost);
+#elif SIZEOF_LONG == 8
                             LOG(llevInfo, "\t\tBuying result costs: %5ld", cost);
+#elif SIZEOF_LONG_LONG == 8
+                            LOG(llevInfo, "\t\tBuying result costs: %5lld", cost);
+#endif
                             if (formula->yield > 1)
                             {
+#ifdef WIN32
+                                LOG(llevInfo, " to %I64d (max %d items)\n", cost * formula->yield, formula->yield);
+#elif SIZEOF_LONG == 8
                                 LOG(llevInfo, " to %ld (max %d items)\n", cost * formula->yield, formula->yield);
+#elif SIZEOF_LONG_LONG == 8
+                                LOG(llevInfo, " to %lld (max %d items)\n", cost * formula->yield, formula->yield);
+#endif
                                 cost = cost * (formula->yield + 1L) / 2L;
                             }
                             else
                                 LOG(llevInfo, "\n");
+#ifdef WIN32
+                            LOG(llevInfo, "\t\tIngredients cost:    %5I64d\n\t\tComment: ", tcost);
+#elif SIZEOF_LONG == 8
                             LOG(llevInfo, "\t\tIngredients cost:    %5ld\n\t\tComment: ", tcost);
+#elif SIZEOF_LONG_LONG == 8
+                            LOG(llevInfo, "\t\tIngredients cost:    %5lld\n\t\tComment: ", tcost);
+#endif
                             if (tcost < 0)
                                 LOG(llevInfo, "Could not find some ingredients.  Check the formula!\n");
                             else if (tcost > cost)
