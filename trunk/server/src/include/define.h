@@ -47,8 +47,6 @@ error - Your ANSI C compiler should be defining __STDC__;
 #include <linux.h>
 #endif
 
-#include <debug.h> /* global & explicit debug settings */
-
 /* Decstations have trouble with fabs()... */
 #define FABS(x) ((x)<0?-(x):(x))
 #define abs(x) ((x)<0?-(x):(x))

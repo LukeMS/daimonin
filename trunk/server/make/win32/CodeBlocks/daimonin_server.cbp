@@ -192,7 +192,6 @@
 		<Unit filename="..\..\..\src\include\channel.h" />
 		<Unit filename="..\..\..\src\include\commands.h" />
 		<Unit filename="..\..\..\src\include\config.h" />
-		<Unit filename="..\..\..\src\include\debug.h" />
 		<Unit filename="..\..\..\src\include\define.h" />
 		<Unit filename="..\..\..\src\include\exp.h" />
 		<Unit filename="..\..\..\src\include\face.h" />
