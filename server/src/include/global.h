@@ -183,8 +183,8 @@
 #endif /* ifdef DAI_DEVELOPMENT_CODE */
 
 #ifdef DAI_DEVELOPMENT_CONTENT
-#define LUA_DEBUG       /* give us some general infos out */
-#define LUA_DEBUG_ALL   /* give us more infos out */
+#define PLUGIN_LUA_DEBUG       /* give us some general infos out */
+#define PLUGIN_LUA_DEBUG_ALL   /* give us more infos out */
 #endif
 
 /* Include this first, because it lets us know what we are missing */
