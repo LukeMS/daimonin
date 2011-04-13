@@ -429,8 +429,8 @@ typedef struct mapdef
     uint16          difficulty;              /* What level the player should be to play here */
     uint16          height;                  /* Width and height of map. */
     uint16          width;
-    uint16          enter_x;                 /* enter_x and enter_y are default entrance location */
-    uint16          enter_y;                 /* on the map if none are set in the exit */
+    sint16          enter_x;                 /* enter_x and enter_y are default entrance location */
+    sint16          enter_y;                 /* on the map if none are set in the exit */
 
     uint32          tileset_id;              /* All map tiles that are connected to each other with tiling
                                                 are on the same tileset. 0 means unknown */
