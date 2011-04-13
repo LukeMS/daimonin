@@ -194,6 +194,33 @@
 #include <linux.h>
 #endif
 
+/*
+ * Daimonin requires ANSI-C, but some compilers "forget" to define it.
+ * Thus the prototypes made by cextract don't get included correctly.
+ */
+#if !defined(__STDC__)
+/* Removed # from start of following line.  makedepend was picking it up.
+ * The following should still hopefully result in an error.
+ */
+error - Your ANSI C compiler should be defining __STDC__;
+#endif
+
+/** Length of string literal. Don't even think about using this on a pointer */
+#define LSTRLEN(s) ((sizeof(s)/sizeof(char))-1)
+
+#define TINY_BUF      64
+#define SMALL_BUF     128
+#define MEDIUM_BUF    256 /* Used for all kinds of things */
+#define LARGE_BUF     1024
+#define HUGE_BUF      4096 /* Used for messages - some can be quite long */
+
+/* Decstations have trouble with fabs()... */
+#define FABS(x) ((x)<0?-(x):(x))
+
+#define SOCKET_BUFLEN 4096 /* Max length a packet could be */
+
+#define MAX_ANIMATIONS      256
+
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
@@ -230,6 +257,25 @@
 
 #include <sys/types.h>
 #include <sys/stat.h>
+
+#ifndef MIN
+#define MIN(x,y) ((x)<(y)?(x):(y))
+#endif
+#ifndef MAX
+#define MAX(x,y) ((x)>(y)?(x):(y))
+#endif
+#ifndef SGN
+#define SGN(x) ((x)>0?1:((x)<0?-1:0))
+#endif
+#ifndef CLAMP
+#define CLAMP(x, lo, hi) ((x)>(hi)?(hi):((x)<(lo)?(lo):(x)))
+#endif
+#ifndef ABS
+#define ABS(x) ((x)<0?-(x):(x))
+#endif
+#ifndef SQR
+#define SQR(x) ((x)*(x))
+#endif
 
 /* Generic hashtables */
 #include "hashtable.h"
