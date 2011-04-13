@@ -92,6 +92,101 @@
 #  define __ultrix__
 #endif
 
+/*
+ * Central debug control point to turn on/off special debug setting.
+ * debugflags get enabled/disabled by commenting then out or not.
+ */
+
+#ifdef DAI_DEVELOPMENT_CODE
+
+#define ESRV_DEBUG
+#define DEBUG_PROCESS_QUEUE
+
+/* Active list debugging: object.c/activelist_insert_inline() and
+ * object.c/activelist_remove_inline(). */
+/* #define DEBUG_ACTIVELIST */
+
+/* Log info when inserting/removing beacons: object.c */
+/* #define DEBUG_BEACONS */
+
+/* Map load, save, swap, free, and deleŧe: map.c */
+#define DEBUG_MAP
+
+/* very have debugging of the whole core server loop - mainly how map data ia send & stored */
+/* #define DEBUG_CORE */
+/* #define DEBUG_CORE_MAP*/
+
+//#define SEND_BUFFER_DEBUG
+
+/*#define SKILL_UTIL_DEBUG*/
+
+/* debug the fix_xxxxxx flow */
+#define DEBUG_FIX_PLAYER
+#define DEBUG_FIX_PLAYER_SKIPPED
+#define DEBUG_FIX_MONSTER
+
+/* force traverse loading and process of all player files inside /server/data/players */
+/*#define  DEBUG_TRAVERSE_PLAYER_DIR*/
+
+/* Aggro & EXP sharing debugging: aggro.c */
+#define DEBUG_AGGRO /* Warning: ALOT debug log lines with this option - disable it for played server */
+
+#define DEBUG_GROUP
+#define DEBUG_GROUP_UPDATE
+
+/*#define DEBUG_FRIENDSHIP_WARNING*/
+
+/* Debug Link Spawns: spawn_point.c */
+/* log message when a linked spawn point is added, removed or called */
+/* #define DEBUG_LINK_SPAWN */
+
+/* Track & log mempool object using: mempool.c */
+/*#define DEBUG_MEMPOOL_OBJECT_TRACKING*/  /* enables a global list of *all* objects
+                                            * we have allocated. We can browse them to
+                                            * control & debug them. WARNING: Enabling this
+                                            * feature will slow down the server *EXTREMLY* and should
+                                            * only be done in real debug runs
+                                            */
+
+/* Track object garbage collection */
+/* #define DEBUG_GC */
+
+/* This turns the "probe" spell into a powerful charm spell as
+ * an easy way to aquire pets for testing of the pets code */
+/* #define DEBUG_PROBE_IS_CHARM */
+
+/* Controls debugging of the mob behaviours and movement */
+#define DEBUG_AI
+/*#define DEBUG_AI_ALL */ /* some extra info - enable this for debuging */
+/*#define DEBUG_AI_WAYPOINT*/
+/*#define DEBUG_AI_NPC_KNOWN*/
+
+/* Uncomment this to enable some verbose pathfinding debug messages */
+/* #define DEBUG_PATHFINDING */
+
+/* find_next_object(): object.c */
+/*#define DEBUG_FNO*/
+
+/* merge_ob(): object.c */
+/*#define DEBUG_MERGE_OB*/
+
+/*#define DEBUG_CALENDAR*/
+
+/*#define DEBUG_IPCOMPARE*/
+
+#ifdef DEBUG_FIX_PLAYER
+#define FIX_PLAYER(_o_, _m_) fix_player(_o_, _m_)
+#else
+#define FIX_PLAYER(_o_, _m_) fix_player(_o_)
+#endif
+
+#endif /* ifdef DAI_DEVELOPMENT_CODE */
+
+#ifdef DAI_DEVELOPMENT_CONTENT
+#define LUA_DEBUG       /* give us some general infos out */
+#define LUA_DEBUG_ALL   /* give us more infos out */
+#endif
+
 /* Include this first, because it lets us know what we are missing */
 #ifdef WIN32 /* ---win32 exclude this, config comes from VC ide */
 #include "win32.h"

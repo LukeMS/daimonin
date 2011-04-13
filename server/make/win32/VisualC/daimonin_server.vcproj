@@ -1298,10 +1298,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\debug.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\src\include\define.h"
 				>
 			</File>
