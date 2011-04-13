@@ -708,7 +708,7 @@ int ai_only_keep_possible_dirs(int aDirWeight[9], object *op, struct mob_behavio
 object *base;
 mapstruct *basemap;
 rv_vector rv;
-int nXRange, nYRange;
+int nXRange = 0, nYRange = 0;
 unsigned int nLimitXY;
 int nret;
 
