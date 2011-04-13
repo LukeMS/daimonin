@@ -26,6 +26,14 @@
 #ifndef __LIVING_H
 #define __LIVING_H
 
+/* defines the stat range for strength and such for PLAYERS
+ * to avoid the signed 8 bit border, we should assume to
+ * mirror the with fix_player() altered stats to player struct
+ */
+
+#define MAX_STAT        125  /* The maximum legal value of any stat */
+#define MIN_STAT        1   /* The minimum legal value of any stat */
+
 enum
 {
     STR,
