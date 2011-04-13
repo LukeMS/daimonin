@@ -338,7 +338,7 @@ void lua_context_remove(struct lua_context *context)
 
 void detach_lua_context(struct lua_context *context, int resume_time)
 {
-#ifdef LUA_DEBUG
+#ifdef PLUGIN_LUA_DEBUG
     LOG(llevDebug, "LUA - Detaching context (%s)\n", context->file);
 #endif
     context->resume_time = resume_time;
@@ -396,7 +396,7 @@ void resume_detached_contexts()
         if(context->resume_time < 0) {
             lua_State *L = context->state;
             int res;
-#ifdef LUA_DEBUG
+#ifdef PLUGIN_LUA_DEBUG
     LOG(llevDebug, "LUA - Resuming detached script: %s\n", context->file);
 #endif
             res = lua_resume(L, 0);
@@ -419,7 +419,7 @@ void resume_detached_contexts()
             }
 
             if(context->resume_time < 0) {
-#ifdef LUA_DEBUG_ALL
+#ifdef PLUGIN_LUA_DEBUG_ALL
                 LOG(llevDebug, "LUA - Terminating context (%s)\n", context->file);
 #endif
                 terminate_lua_context(context);
@@ -749,7 +749,7 @@ MODULEAPI int HandleEvent(CFParm *PParm)
         }
         hooks->normalize_path(outermost->map->orig_path, (const char *) (PParm->Value[9]), buf);
         context->file = hooks->add_string(buf);
-#ifdef LUA_DEBUG
+#ifdef PLUGIN_LUA_DEBUG
         LOG(llevDebug, "LUA: normalized script path: %s\n", context->file);
 #endif
     }
@@ -765,7 +765,7 @@ MODULEAPI int HandleEvent(CFParm *PParm)
 
     if (res)
     {
-#ifdef LUA_DEBUG_ALL
+#ifdef PLUGIN_LUA_DEBUG_ALL
         LOG(llevDebug, "LUA - Terminating context due to runtime error (%s)\n", context->file);
 #endif
         terminate_lua_context(context);
@@ -804,12 +804,12 @@ MODULEAPI int HandleEvent(CFParm *PParm)
     ret = context->returnvalue;
 
     if(context->resume_time == -1) {
-#ifdef LUA_DEBUG
+#ifdef PLUGIN_LUA_DEBUG
         LOG(llevDebug, "LUA - done and terminated, returncode: %d\n", ret);
 #endif
         terminate_lua_context(context);
     } else {
-#ifdef LUA_DEBUG
+#ifdef PLUGIN_LUA_DEBUG
         LOG(llevDebug, "LUA - backgrounded\n");
 #endif
     }
