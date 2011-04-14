@@ -219,5 +219,6 @@ void rewinddir(DIR *dir_Info)
 
 void become_daemon(void)
 {
-    LOG(llevError, "The -detach switch does not function under Windows! Re-run the server without this setting.")
+    LOG(llevError, "The -detach switch does not function under Windows!\n"
+        "Re-run the server without this setting.");
 }
