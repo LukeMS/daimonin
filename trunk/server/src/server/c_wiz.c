@@ -2050,7 +2050,7 @@ int command_ban(object *op, char *params)
     objectlink *ol,
                *ol_tmp,
                *ob;
-    player     *pl;
+    player     *pl = NULL;
     char       *name,
                 name_buf[MEDIUM_BUF] = "";
     int         ticks = 0;
