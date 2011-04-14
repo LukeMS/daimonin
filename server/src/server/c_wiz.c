@@ -1854,7 +1854,7 @@ int command_check_fd(object *op, char *params)
                 fh, _isatty(fh), buf.st_size);
 #else
             player *pp;
-            char    name1[TINY_BUF];
+            char   *name1 = NULL;
 
             /* collect some senseless handle numbers... */
             for (pp = first_player; pp; pp = pp->next)
@@ -1863,7 +1863,7 @@ int command_check_fd(object *op, char *params)
                     break;
             }
 
-            name1[0] = ttyname(_isatty(fh));
+            name1 = ttyname(_isatty(fh));
 
             LOG(llevSystem, "FH %d ::(%s) (%s) size: %ld\n",
                 fh, (name1) ? name1 : "><",
