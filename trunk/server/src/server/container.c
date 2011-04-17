@@ -22,7 +22,7 @@
 
     The author can be reached via e-mail to info@daimonin.org
 */
-#include "daimonin.h"
+#include <global.h>
 
 /* this file manages container but also pickup and drop handling.
  * One reason is, that every object can have a inventory and
