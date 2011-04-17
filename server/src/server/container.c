@@ -22,7 +22,7 @@
 
     The author can be reached via e-mail to info@daimonin.org
 */
-#include <global.h>
+#include "daimonin.h"
 
 /* this file manages container but also pickup and drop handling.
  * One reason is, that every object can have a inventory and
@@ -303,7 +303,10 @@ static void pick_up_object(object *pl, object *op, object *tmp, uint32 nrof)
     if (QUERY_FLAG(tmp, FLAG_NO_DROP))
         return;
 
-    if (nrof > tmp_nrof || nrof == 0)
+    /* If the user requests more than is in the stack and isn't in a shop (stackable items can be bought in any size),
+     * or they want 0 or far too many of the object, pick up the default stack size.
+     */
+    if ((nrof > tmp_nrof && !QUERY_FLAG(tmp, FLAG_UNPAID)) || nrof == 0 || nrof > MAX_OBJ_NROF)
         nrof = tmp_nrof;
 
     /* Figure out how much weight this object will add to the player */

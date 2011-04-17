@@ -101,7 +101,7 @@ void do_number(int x, int y)
             int     tmp;
 
             tmp = atoi(InputString);
-            if (tmp > 0 && tmp <= cpl.nrof)
+            if (tmp > 0)
             {
                 send_inv_move(cpl.loc, cpl.tag, tmp);
 
