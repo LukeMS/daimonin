@@ -25,7 +25,7 @@
 
 /* define the following for skills utility debuging */
 
-#include "daimonin.h"
+#include <global.h>
 
 /* This is the order of the skills structure:
  *  char *name;
