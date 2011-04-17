@@ -25,7 +25,7 @@
 
 /* define the following for skills utility debuging */
 
-#include <global.h>
+#include "daimonin.h"
 
 /* This is the order of the skills structure:
  *  char *name;
@@ -822,7 +822,7 @@ int change_skill(object *who, int sk_index)
     if (who->chosen_skill && who->chosen_skill->stats.sp == sk_index)
         return 1;
 
-    LOG(llevDebug, "APPLYcs: %s change %s to %s.\n", query_name(who), query_name(who->chosen_skill), 
+    LOG(llevDebug, "APPLYcs: %s change %s to %s.\n", query_name(who), query_name(who->chosen_skill),
                                                                 sk_index>=0?skills[sk_index].name:"INVALID");
 
     if (sk_index >= 0 && sk_index < NROFSKILLS && (tmp = find_skill(who, sk_index)) != NULL)
@@ -1084,7 +1084,6 @@ void set_action_time(object *op, float t)
         return;
 
     CONTR(op)->ob->weapon_speed_left += FABS(t);
-    LOG(llevDebug, "ActionTimer for %s (skill %s): +%2.2f\n", query_name(op), query_name(op->chosen_skill), t);
 
     /* update the value for the client */
     CONTR(op)->action_timer = (int) (CONTR(op)->ob->weapon_speed_left / pticks_second / WEAPON_SWING_TIME * 1000.0f);
