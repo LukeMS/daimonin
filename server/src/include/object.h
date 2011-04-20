@@ -62,6 +62,11 @@
  * and cpu to make aligned access of the members, and can (and will) make things smaller
  * and faster - but this depends on compiler & system too.
  */
+
+// This prevents object stacks from being "too big". When an object stack is larger than this it will cause some problems.
+// TODO: Over time, add code to check against this (i.e. prevent /create-ing stacks larger)
+#define MAX_OBJ_NROF 2147483647
+
 typedef struct obj
 {
     /* These variables are not changed by copy_object(): */
