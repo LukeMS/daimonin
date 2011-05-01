@@ -1,4 +1,4 @@
-van/*
+/*
     Daimonin, the Massive Multiuser Online Role Playing Game
     Server Applicatiom
 
