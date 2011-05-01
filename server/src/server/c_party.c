@@ -571,6 +571,7 @@ void party_client_group_status(object *member)
             SOCKBUF_ADD_TO_SOCKET(&CONTR(tmp)->socket, sockbuf); /* broadcast the sockbuf */
     }
     SOCKBUF_COMPOSE_FREE(sockbuf);
+    force_update_player = 1;
 }
 
 /* tell a member that he has no group! */

@@ -131,7 +131,10 @@
 /* Aggro & EXP sharing debugging: aggro.c */
 #define DEBUG_AGGRO /* Warning: ALOT debug log lines with this option - disable it for played server */
 
-#define DEBUG_GROUP
+/* DEBUG_GROUP oddly causes bugs when enabled, such as the infamous bug described at http://www.daimonin.org/forums/index.php/?topic=9675.msg91212
+ * Primarily the cause is party_dump() in c_party.c
+ */
+//#define DEBUG_GROUP
 #define DEBUG_GROUP_UPDATE
 
 /*#define DEBUG_FRIENDSHIP_WARNING*/
@@ -950,6 +953,11 @@ EXTERN int                      global_race_counter; /* global race counter */
 
 EXTERN struct timeval           last_time;        /* Used for main loop timing */
 
+EXTERN int                      force_player_update; /* Whether or not to force player updating in doeric_server().
+                                                      * If players are always updated then, it creates a lot of work
+                                                      * for the server. But if they are only updated in iterate_main_loop(),
+                                                      * they can get behind, thus causing some bugs.
+                                                      */
 /* constant shared string pointers */
 EXTERN struct shstr_constants
 {
