@@ -953,7 +953,7 @@ EXTERN int                      global_race_counter; /* global race counter */
 
 EXTERN struct timeval           last_time;        /* Used for main loop timing */
 
-EXTERN int                      force_player_update; /* Whether or not to force player updating in doeric_server().
+EXTERN int                      force_update_player; /* Whether or not to force player updating in doeric_server().
                                                       * If players are always updated then, it creates a lot of work
                                                       * for the server. But if they are only updated in iterate_main_loop(),
                                                       * they can get behind, thus causing some bugs.
