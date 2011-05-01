@@ -1,4 +1,4 @@
-/*
+van/*
     Daimonin, the Massive Multiuser Online Role Playing Game
     Server Applicatiom
 
@@ -838,8 +838,9 @@ void doeric_server(int update, struct timeval *timeout)
                  */
                 if (update_client)
                 {
-                    if (update_player && (pl->state & ST_PLAYING))
+                    if ((update_player || force_update_player) && (pl->state & ST_PLAYING))
                     {
+                        force_update_player = 0;
                         esrv_update_stats(pl);
                         if (pl->update_skills)
                         {
