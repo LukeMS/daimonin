@@ -119,7 +119,7 @@ static void init_artifacts(FILE *fp)
             editor_flag = FALSE;
             nrofartifacts++;
             none_flag = FALSE;
-            cp+=7;
+            cp+=8;
             if (!strcasecmp(cp, "all"))
                 continue;
             if (!strcasecmp(cp, "none"))
@@ -583,10 +583,9 @@ int legal_artifact_combination(object *op, artifact *art)
     linked_char    *tmp;
     const char     *name;
 
-    tmp = art->allowed;
-    if (!strcmp(tmp->name, "all"))
+    if (!art->allowed)
         return 1; /* Ie, "all" */
-    for (; tmp; tmp = tmp->next)
+    for (tmp = art->allowed; tmp; tmp = tmp->next)
     {
 #ifdef TREASURE_VERBOSE
         LOG(llevDebug, "legal_art: %s\n", tmp->name);
