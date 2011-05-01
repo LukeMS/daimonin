@@ -48,7 +48,7 @@ int mob_can_see_obj(object *op, object *obj, struct mob_known_obj *known_obj)
 {
     int     aggro_range,
             stealth_range;
-    player *pl = CONTR(obj);
+    player *pl;
 
     /* Cache values */
     static tag_t cached_op_tag, cached_obj_tag;
@@ -73,12 +73,12 @@ int mob_can_see_obj(object *op, object *obj, struct mob_known_obj *known_obj)
     /* Gmaster with stealth? */
 #ifdef DAI_DEVELOPMENT_CONTENT
     if (obj->type == PLAYER &&
-        pl &&
+        (pl = CONTR(obj)) &&
         pl->stealth &&
         (pl->gmaster_mode & (GMASTER_MODE_SA | GMASTER_MODE_MM | GMASTER_MODE_MW)))
 #else
     if (obj->type == PLAYER &&
-        pl &&
+        (pl = CONTR(obj)) &&
         pl->stealth &&
         (pl->gmaster_mode & (GMASTER_MODE_SA | GMASTER_MODE_MM)))
 #endif
