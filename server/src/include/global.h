@@ -135,7 +135,7 @@
  * Primarily the cause is party_dump() in c_party.c
  */
 //#define DEBUG_GROUP
-#define DEBUG_GROUP_UPDATE
+//#define DEBUG_GROUP_UPDATE
 
 /*#define DEBUG_FRIENDSHIP_WARNING*/
 
