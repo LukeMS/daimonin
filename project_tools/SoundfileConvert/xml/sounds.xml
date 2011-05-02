@@ -44,6 +44,7 @@
         <sound id="32"  name="teleport"         file="teleport.wav" />
         <!-- Add new normal sounds below this line -->
         <sound id="33"  name="clock"            file="clock.wav" />
+        <sound id="34"  name="cancan"           file="../media/cancan.ogg" />
         <!-- Add new normal sounds above this line -->
     </soundtype>
     <soundtype id="1"   type="spell"    prefix="SOUND_MAGIC_">
