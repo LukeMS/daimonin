@@ -151,11 +151,6 @@ static int Map_toString(lua_State *L)
     strncpy(buf, obj->data.map->name, sizeof(buf));
     buf[sizeof(buf) - 1] = '\0';
 
-    /* We can't send this special char to the client message thingie,
-     * it will mess the text up */
-    if ((ptr = strchr(buf, '§')))
-        *ptr = '$';
-
     lua_pushfstring(L, "[%s \"%s\"]", obj->data.map->path, buf);
     return 1;
 }
