@@ -4,7 +4,7 @@ Welcome to the Daimonin SDL client
 This client comes in different packages for different OS.
 So called "binary packages" come usually with an installer -
 if you have run an installer before you read this you will
-see a executable file in the same folder you find this
+see an executable file in the same folder as you find this
 README.txt file. Your system should also be configured to run
 the client without problems.
 
@@ -45,5 +45,5 @@ Downloading the source package requires compiling (of course).
 You will see in the folder /client a sub-folder called /make.
 Go into this folder and read the README.txt there. You will be
 guided to your OS and what you need to do to compile the client.
-Note that for some OS you may need to install other libaries
+Note that for some OS you may need to install other libraries
 first.
