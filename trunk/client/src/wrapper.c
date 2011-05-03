@@ -40,9 +40,9 @@ void LOG(int logLevel, char *format, ...)
     {
         return;
     }
-    /* we log all logLevel < LOGLEVEL*/
+    /* we log all logLevel <= LOGLEVEL*/
     else if (LOGLEVEL >= 0 &&
-             logLevel >= LOGLEVEL)
+             logLevel > LOGLEVEL)
     {
         return;
     }

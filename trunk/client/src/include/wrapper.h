@@ -100,7 +100,9 @@ typedef enum _LOGLEVEL
     LOG_ERROR,
     LOG_DEBUG
 }    _LOGLEVEL;
-#define LOGLEVEL LOG_DEBUG
+/* Define LOGLEVEL as highest level required */
+#define LOGLEVEL LOG_ERROR
+
 extern void     LOG(int logLevel, char *format, ...);
 extern void     MSGLOG(char *msg);
 
