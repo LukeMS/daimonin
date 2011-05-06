@@ -2125,27 +2125,28 @@ void show_account(void)
     {
         if(account.name[i][0])
         {
-            char race[10];
+            int           j = 0;
+            _server_char *sc = first_server_char;
+            char          race[16];
+
             char_count++;
-            string_blt(ScreenSurface, &font_large_out, account.name[i], x+120, y+100+i*50, COLOR_WHITE, NULL, NULL);
-            switch (account.race[i])
+
+            while (j < account.race[i] && sc)
             {
-                case 0:
-                    sprintf(race, "Human");
-                    break;
-                case 1:
-                    sprintf(race, "Elfish");
-                    break;
-                case 2:
-                    sprintf(race, "Half-elfish");
-                    break;
-                case 3:
-                    sprintf(race, "Dwarven");
-                    break;
-                default:
-                    sprintf(race, "Unknown");
-                    break;
+                 j++;
+                 sc = sc->next;
             }
+
+            if (sc)
+            {
+                sprintf(race, "%c%s", toupper(*sc->name), sc->name + 1);
+            }
+            else
+            {
+                strcpy(race, "UNKNOWN RACE");
+            }
+
+            string_blt(ScreenSurface, &font_large_out, account.name[i], x+120, y+100+i*50, COLOR_WHITE, NULL, NULL);
             sprintf(buf,"%s %s on Level %d", race, account.gender[i]?"Female":"Male", account.level[i]);
             string_blt(ScreenSurface, &font_small, buf, x+120, y+116+i*50, COLOR_WHITE, NULL, NULL);
         }
