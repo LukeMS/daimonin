@@ -677,39 +677,6 @@ int read_anim_tmp(void)
     return load_anim_tmp(); /* all fine - load file */
 }
 
-void read_anims(void)
-{
-    FILE *stream;
-
-    LOG(LOG_DEBUG, "Loading %s....", FILE_CLIENT_ANIMS);
-    srv_client_files[SRV_CLIENT_ANIMS].len = 0;
-    srv_client_files[SRV_CLIENT_ANIMS].crc = 0;
-
-    if ((stream = fopen_wrapper(FILE_CLIENT_ANIMS, "rb")) != NULL)
-    {
-        struct stat    statbuf;
-        int            i;
-        unsigned char *temp_buf;
-        size_t         dummy; // purely to suppress GCC's warn_unused_result warning
-
-        /* temp load the file and get the data we need for compare with
-         * server */
-        fstat(fileno(stream), &statbuf);
-        i = (int)statbuf.st_size;
-        srv_client_files[SRV_CLIENT_ANIMS].len = i;
-        MALLOC(temp_buf, i);
-        dummy = fread(temp_buf, sizeof(char), i, stream);
-        srv_client_files[SRV_CLIENT_ANIMS].crc = crc32(1L, temp_buf, i);
-        fclose(stream);
-        FREE(temp_buf);
-        LOG(LOG_DEBUG, " found file!(%d/%x)",
-            srv_client_files[SRV_CLIENT_ANIMS].len,
-            srv_client_files[SRV_CLIENT_ANIMS].crc);
-    }
-
-    LOG(LOG_DEBUG, " done.\n");
-}
-
 /* after we tested and/or created bmaps.p0 - load the data from it */
 static void load_bmaps_p0(void)
 {
@@ -950,43 +917,6 @@ create_bmap_tmp:
 }
 
 
-void read_bmaps(void)
-{
-    FILE *stream;
-
-    srv_client_files[SRV_CLIENT_BMAPS].len = 0;
-    srv_client_files[SRV_CLIENT_BMAPS].crc = 0;
-    LOG(LOG_DEBUG, "Reading %s....", FILE_CLIENT_BMAPS);
-
-    if ((stream = fopen_wrapper(FILE_CLIENT_BMAPS, "rb")) != NULL)
-    {
-        struct stat    statbuf;
-        int            i;
-        unsigned char *temp_buf;
-        size_t         dummy; // purely to suppress GCC's warn_unused_result warning
-
-        /* temp load the file and get the data we need for compare with
-         * server. */
-        fstat(fileno(stream), &statbuf);
-        i = (int)statbuf.st_size;
-        srv_client_files[SRV_CLIENT_BMAPS].len = i;
-        MALLOC(temp_buf, i);
-        dummy = fread(temp_buf, sizeof(char), i, stream);
-        srv_client_files[SRV_CLIENT_BMAPS].crc = crc32(1L, temp_buf, i);
-        fclose(stream);
-        FREE(temp_buf);
-        LOG(LOG_DEBUG, " found file!(%d/%x)",
-            srv_client_files[SRV_CLIENT_BMAPS].len,
-            srv_client_files[SRV_CLIENT_BMAPS].crc);
-    }
-    else
-    {
-        unlink(FILE_BMAPS_TMP);
-    }
-
-    LOG(LOG_DEBUG, " done.\n");
-}
-
 /* in the setting files we have a list of chars templates
  * for char building. Delete this list here.
  */
@@ -1206,39 +1136,6 @@ void load_settings(void)
             }
         }
     }
-}
-
-void read_settings(void)
-{
-    FILE *stream;
-
-    LOG(LOG_DEBUG, "Loading %s....", FILE_CLIENT_SETTINGS);
-    srv_client_files[SRV_CLIENT_SETTINGS].len = 0;
-    srv_client_files[SRV_CLIENT_SETTINGS].crc = 0;
-
-    if ((stream = fopen_wrapper(FILE_CLIENT_SETTINGS, "rb")) != NULL)
-    {
-        struct stat    statbuf;
-        int            i;
-        unsigned char *temp_buf;
-        size_t         dummy; // purely to suppress GCC's warn_unused_result warning
-
-        /* temp load the file and get the data we need for compare with
-         * server */
-        fstat(fileno(stream), &statbuf);
-        i = (int)statbuf.st_size;
-        srv_client_files[SRV_CLIENT_SETTINGS].len = i;
-        MALLOC(temp_buf, i);
-        dummy = fread(temp_buf, sizeof(char), i, stream);
-        srv_client_files[SRV_CLIENT_SETTINGS].crc = crc32(1L, temp_buf, i);
-        fclose(stream);
-        FREE(temp_buf);
-        LOG(LOG_DEBUG, " found file!(%d/%x)",
-            srv_client_files[SRV_CLIENT_SETTINGS].len,
-            srv_client_files[SRV_CLIENT_SETTINGS].crc);
-    }
-
-    LOG(LOG_DEBUG, " done.\n");
 }
 
 void read_spells(void)

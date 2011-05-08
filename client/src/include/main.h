@@ -492,7 +492,6 @@ extern uint32       GameTicksSec;       /* ticks since this second frame in ms *
 extern int          metaserver_start, metaserver_sel, metaserver_count;
 
 extern int          request_file_chain;
-extern int          request_file_flags;
 
 extern int          esc_menu_flag;
 extern int          esc_menu_index;
