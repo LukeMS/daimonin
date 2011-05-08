@@ -1511,8 +1511,7 @@ static void list_vid_modes(int videomodes)
     /* Check is there are any modes available */
     if (modes == (SDL_Rect * *) 0)
     {
-        LOG(LOG_MSG, "No modes available!\n");
-        exit(-1);
+        LOG(LOG_FATAL, "No modes available!\n");
     }
 
     /* Check if or resolution is restricted */
@@ -1624,7 +1623,6 @@ int main(int argc, char *argv[])
 #endif
     if (SDL_Init(SDL_INIT_AUDIO | SDL_INIT_VIDEO) < 0)
     {
-        LOG(LOG_ERROR, "Couldn't initialize SDL: %s\n", SDL_GetError());
         if (strstr(SDL_GetError(), "console terminal"))
         {
             LOG(LOG_MSG, "**** NOTE ****\n");
@@ -1633,7 +1631,8 @@ int main(int argc, char *argv[])
             LOG(LOG_MSG, "You should be able to run daimonin as root,\n");
             LOG(LOG_MSG, "but for security reasons - this is not a good idea!\n");
         }
-        exit(1);
+
+        LOG(LOG_FATAL, "Couldn't initialize SDL: %s\n", SDL_GetError());
     }
     print_SDL_versions();
 
@@ -1660,14 +1659,13 @@ int main(int argc, char *argv[])
         /* If we have higher resolution we try the default 800x600 */
         if (Screensize.x > 800 && Screensize.y > 600)
         {
-            LOG(LOG_ERROR, "Try to set to default 800x600...\n");
+            LOG(LOG_MSG, "Try to set to default 800x600...\n");
             Screensize=Screendefs[0];
             options.resolution = 0;
             if ((ScreenSurface = SDL_SetVideoMode(Screensize.x, Screensize.y, options.used_video_bpp, videoflags)) == NULL)
             {
                 /* Now we have a really really big problem */
-                LOG(LOG_ERROR, "Couldn't set %dx%dx%d video mode: %s\n", Screensize.x, Screensize.y, options.used_video_bpp, SDL_GetError());
-                exit(2);
+                LOG(LOG_FATAL, "Couldn't set %dx%dx%d video mode: %s\n", Screensize.x, Screensize.y, options.used_video_bpp, SDL_GetError());
             }
             else
             {
@@ -1678,7 +1676,7 @@ int main(int argc, char *argv[])
         }
         else
         {
-            exit(2);
+            LOG(LOG_FATAL, "Could not set default resolution!\n");
         }
     }
     else
@@ -1760,7 +1758,9 @@ int main(int argc, char *argv[])
     textwin_showstring(COLOR_HGOLD, "~init network...~");
 
     if (!SOCKET_InitSocket()) /* log in function*/
-        exit(1);
+    {
+        LOG(LOG_FATAL, "Could not initialise socket!\n");
+    }
 
     LastTick = tmpGameTick = anim_tick = new_anim_tick = SDL_GetTicks();
     GameTicksSec = 0;       /* ticks since this second frame in ms */
@@ -1884,8 +1884,7 @@ int main(int argc, char *argv[])
         {
             if (!game_status_chain())
             {
-                LOG(LOG_ERROR, "Error connecting: GStatus: %d  SocketError: %d\n", GameStatus, SOCKET_GetError());
-                exit(1);
+                LOG(LOG_FATAL, "Error connecting: GStatus: %d  SocketError: %d\n", GameStatus, SOCKET_GetError());
             }
         }
 
@@ -2293,9 +2292,8 @@ static void ParseInvocationLine(int argc, char *argv[])
 
         if (invalid[0])
         {
-            LOG(LOG_ERROR, "%s: %s -- '%s'\n", argv[0], invalid, argv[argc]);
-            LOG(LOG_ERROR, "Try `%s --help' for more information.\n", argv[0]);
-            exit(EXIT_FAILURE);
+            LOG(LOG_FATAL, "%s: %s -- '%s'\nTry `%s --help' for more information.\n",
+                argv[0], argv[0], invalid, argv[argc]);
         }
     }
 }
@@ -2349,8 +2347,7 @@ static void InitPhysFS(const char *argv0)
     /* Start the PhysFS system */
     if (!PHYSFS_init(argv0))
     {
-        LOG(LOG_ERROR, "FATAL: %s!\n", PHYSFS_getLastError());
-        exit(EXIT_FAILURE);
+        LOG(LOG_FATAL, "FATAL: %s!\n", PHYSFS_getLastError());
     }
 
     PHYSFS_isInitialised = 1;
@@ -2456,9 +2453,8 @@ static void InitPhysFS(const char *argv0)
         // home WILL hold now the home, do the final check
         if (!PHYSFS_setWriteDir(home))
         {
-            LOG(LOG_ERROR, "Could not set write dir ('%s'): %s. Exiting!\n",
+            LOG(LOG_FATAL, "Could not set write dir ('%s'): %s. Exiting!\n",
                 home, PHYSFS_getLastError());
-            exit(EXIT_FAILURE);
         }
     }
 
@@ -2470,9 +2466,8 @@ static void InitPhysFS(const char *argv0)
      * will go to stderr only (as obviously we can't open a file). */
     if (!PHYSFS_setWriteDir(home))
     {
-        LOG(LOG_ERROR, "Could not set write dir (1, '%s'): %s. Exiting!\n",
+        LOG(LOG_FATAL, "Could not set write dir (1, '%s'): %s. Exiting!\n",
             home, PHYSFS_getLastError());
-        exit(EXIT_FAILURE);
     }
 
     if (buf[0])
@@ -2488,9 +2483,8 @@ static void InitPhysFS(const char *argv0)
         {
             if (!PHYSFS_setWriteDir(home))
             {
-                LOG(LOG_ERROR, "Could not set write dir (2, '%s'): %s. Exiting!\n",
+                LOG(LOG_FATAL, "Could not set write dir (2, '%s'): %s. Exiting!\n",
                     home, PHYSFS_getLastError());
-                exit(EXIT_FAILURE);
             }
         }
     } 
@@ -2502,8 +2496,7 @@ static void InitPhysFS(const char *argv0)
         !PHYSFS_mkdir(DIR_SETTINGS) ||
         !PHYSFS_mkdir(DIR_SRV_FILES))
     {
-        LOG(LOG_ERROR, "%s\n", PHYSFS_getLastError());
-        exit(EXIT_FAILURE);
+        LOG(LOG_FATAL, "%s\n", PHYSFS_getLastError());
     }
 
     /* Log that the client has started. */

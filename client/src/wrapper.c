@@ -28,23 +28,28 @@
  * 100% across the board this way, so lets do that. */
 int PHYSFS_isInitialised = 0;
 
-void LOG(int logLevel, char *format, ...)
+void LOG(int loglevel, char *format, ...)
 {
     static PHYSFS_File *handle = NULL;
     va_list             ap;
     char                buf[HUGE_BUF];
 
-    /* we want log exactly ONE logLevel*/
-    if (LOGLEVEL < 0 &&
-        LOGLEVEL * (-1) != logLevel)
+    /* Always log fatal errors and system messages. */
+    if (loglevel != LOG_FATAL &&
+        loglevel != LOG_SYSTEM)
     {
-        return;
-    }
-    /* we log all logLevel <= LOGLEVEL*/
-    else if (LOGLEVEL >= 0 &&
-             logLevel > LOGLEVEL)
-    {
-        return;
+        /* we want log exactly ONE logLevel*/
+        if (LOGLEVEL < 0 &&
+            LOGLEVEL * (-1) != loglevel)
+        {
+            return;
+        }
+        /* we log all loglevel <= LOGLEVEL*/
+        else if (LOGLEVEL >= 0 &&
+                 loglevel > LOGLEVEL)
+        {
+            return;
+        }
     }
 
     va_start(ap, format);
@@ -71,6 +76,13 @@ void LOG(int logLevel, char *format, ...)
         }
 
         PHYSFS_writeString(handle, buf);
+    }
+
+    /* Exit on fatal error. */
+    if (loglevel == LOG_FATAL)
+    {
+        SYSTEM_End();
+        exit(EXIT_FAILURE);
     }
 }
 

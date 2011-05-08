@@ -48,13 +48,13 @@
 #if 0 // Seems Visual C++ cannot handle this style.
 #define MALLOC(_P_, _S_) \
 ((!((_P_) = malloc((_S_)))) ? \
-LOG(LOG_DEBUG, "%s %d: Out of memory!\n", __FILE__, __LINE__) : \
+LOG(LOG_FATAL, "%s %d: Out of memory!\n", __FILE__, __LINE__) : \
 memset((_P_), 0, (_S_)))
 #else
 #define MALLOC(_P_, _S_) \
 if (!((_P_) = malloc((_S_)))) \
 { \
-    LOG(LOG_DEBUG, "%s %d: Out of memory!\n", __FILE__, __LINE__); \
+    LOG(LOG_FATAL, "%s %d: Out of memory!\n", __FILE__, __LINE__); \
 } \
 else \
 { \
@@ -68,13 +68,13 @@ else \
 #if 0 // Seems Visual C++ cannot handle this style.
 #define MALLOC_STRING(_P_, _S_) \
 ((!((_P_) = malloc(strlen((_S_)) + 1))) ? \
-LOG(LOG_DEBUG, "%s %d: Out of memory!\n", __FILE__, __LINE__) : \
+LOG(LOG_FATAL, "%s %d: Out of memory!\n", __FILE__, __LINE__) : \
 sprintf((_P_), "%s", (_S_)))
 #else
 #define MALLOC_STRING(_P_, _S_) \
 if (!((_P_) = malloc(strlen((_S_)) + 1))) \
 { \
-    LOG(LOG_DEBUG, "%s %d: Out of memory!\n", __FILE__, __LINE__); \
+    LOG(LOG_FATAL, "%s %d: Out of memory!\n", __FILE__, __LINE__); \
 } \
 else \
 { \
@@ -96,14 +96,16 @@ while (0)
 
 typedef enum _LOGLEVEL
 {
-    LOG_MSG,
+    LOG_FATAL,  // always logged regardless of LOGLEVEL
+    LOG_SYSTEM, // always logged regardless of LOGLEVEL
     LOG_ERROR,
+    LOG_MSG,
     LOG_DEBUG
 }    _LOGLEVEL;
 /* Define LOGLEVEL as highest level required */
-#define LOGLEVEL LOG_ERROR
+#define LOGLEVEL LOG_MSG
 
-extern void     LOG(int logLevel, char *format, ...);
+extern void     LOG(int loglevel, char *format, ...);
 extern void     MSGLOG(char *msg);
 
 extern char    *GetCacheDirectory(void);

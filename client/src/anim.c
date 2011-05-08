@@ -619,9 +619,7 @@ int load_anim_tmp(void)
 
     if ((stream = fopen_wrapper(FILE_ANIMS_TMP, "rb")) == NULL)
     {
-        LOG(LOG_ERROR, "load_anim_tmp: Error reading anim.tmp!\n");
-        SYSTEM_End(); /* fatal */
-        exit(0);
+        LOG(LOG_FATAL, "load_anim_tmp: Error reading anim.tmp!\n");
     }
 
     while (fread(temp1, 1, 2, stream))
@@ -631,16 +629,9 @@ int load_anim_tmp(void)
         animcmd[count].len = anim_len;
         MALLOC(animcmd[count].anim_cmd, anim_len);
 
-        if (!animcmd[count].anim_cmd)
-        {
-            LOG(LOG_ERROR, "load_anim_tmp: out of memory allocating %d bytes for anim: %d\n",anim_len, count);
-            SYSTEM_End();
-            exit(0);
-        }
         if (!fread(animcmd[count].anim_cmd, 1, anim_len, stream))
         {
-            LOG(LOG_ERROR, "load_anim_tmp: error reading file, wanted: %d, got nothing\n",anim_len);
-            /* TODO: exit... */
+            LOG(LOG_FATAL, "load_anim_tmp: error reading file, wanted: %d, got nothing\n",anim_len);
         }
         count++;
     }
@@ -667,16 +658,12 @@ void create_anim_tmp()
 
     if ((ftmp = fopen_wrapper(FILE_ANIMS_TMP, "wb")) == NULL)
     {
-        LOG(LOG_ERROR, "read_anim_tmp:Error opening anims2.tmp!\n");
-        SYSTEM_End(); /* fatal */
-        exit(0);
+        LOG(LOG_FATAL, "read_anim_tmp:Error opening anims2.tmp!\n");
     }
 
     if ((stream = fopen_wrapper(FILE_CLIENT_ANIMS, "rt")) == NULL)
     {
-        LOG(LOG_ERROR, "read_anim_tmp:Error reading client_anims for anims.tmp!\n");
-        SYSTEM_End(); /* fatal */
-        exit(0);
+        LOG(LOG_FATAL, "read_anim_tmp:Error reading client_anims for anims.tmp!\n");
     }
 
     while (fgets(buf, LARGE_BUF - 1, stream) != NULL)

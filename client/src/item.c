@@ -150,10 +150,6 @@ static item * new_item()
     item *op;
 
     MALLOC(op, sizeof(item));
-
-    if (!op)
-        exit(0);
-
     op->next = op->prev = NULL;
     copy_name(op->d_name, "");
     copy_name(op->s_name, "");

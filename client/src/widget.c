@@ -204,7 +204,6 @@ void init_priority_list()
     /* allocate the head of the list */
     MALLOC(node, sizeof(widget_node));
     priority_list_head = node;
-    if (!node) { exit(0); }
     /* set the members and store a 'link' to this pointer */
     priority_list_head->next = NULL;
     priority_list_head->prev = NULL;
@@ -215,7 +214,6 @@ void init_priority_list()
     {
         /* allocate it */
         MALLOC(node->next, sizeof(widget_node));
-        if (!node->next) { exit(0); }
         node->next->prev = node;
         /* set the members and store a 'link' to this pointer */
         node = node->next;
@@ -1025,7 +1023,6 @@ void SetPriorityWidget(int nWidgetID)
 
     /* move the current highest to second highest priority */
     MALLOC(node, sizeof(widget_node));
-    if(!node) { exit(0); } /* memory error */
     *node = *priority_list_head;
     node->prev = priority_list_head;
     node->next->prev = node;
