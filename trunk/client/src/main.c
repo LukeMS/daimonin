@@ -93,7 +93,7 @@ struct gui_book_struct    *gui_interface_book;
 _bmaptype          *bmap_table[BMAPTABLE];
 
 int                 map_udate_flag, map_transfer_flag, map_redraw_flag;          /* update map area */
-int                 request_file_chain, request_file_flags;
+int                 request_file_chain;
 
 int                 ToggleScreenFlag;
 char                InputString[MAX_INPUT_STRING];
@@ -343,6 +343,7 @@ static const char *GetOption(const char *arg, const char *sopt,
 static void InitPhysFS(const char *argv0);
 static void ShowIntro(char *text, int progress);
 static void DeletePlayerLists(void);
+static void QuerySrvClientFile(const char *filename, uint8 num);
 
 static void DeletePlayerLists(void)
 {
@@ -850,16 +851,14 @@ uint8 game_status_chain(void)
     /* send the setup command to the server, then wait */
     else if (GameStatus == GAME_STATUS_SETUP)
     {
-        srv_client_files[SRV_CLIENT_SETTINGS].status = SRV_CLIENT_STATUS_OK;
-        // ALWAYS update the bmaps to avoid bad data.
-        srv_client_files[SRV_CLIENT_BMAPS].status = SRV_CLIENT_STATUS_UPDATE;
-        srv_client_files[SRV_CLIENT_ANIMS].status = SRV_CLIENT_STATUS_OK;
-        srv_client_files[SRV_CLIENT_SOUNDS].status = SRV_CLIENT_STATUS_OK;
-        srv_client_files[SRV_CLIENT_SKILLS].status = SRV_CLIENT_STATUS_OK;
-        srv_client_files[SRV_CLIENT_SPELLS].status = SRV_CLIENT_STATUS_OK;
+        QuerySrvClientFile(FILE_CLIENT_ANIMS, SRV_CLIENT_ANIMS);
+        QuerySrvClientFile(FILE_CLIENT_BMAPS, SRV_CLIENT_BMAPS);
+        QuerySrvClientFile(FILE_CLIENT_SETTINGS, SRV_CLIENT_SETTINGS);
+        QuerySrvClientFile(FILE_CLIENT_SOUNDS, SRV_CLIENT_SOUNDS);
+        QuerySrvClientFile(FILE_CLIENT_SKILLS, SRV_CLIENT_SKILLS);
+        QuerySrvClientFile(FILE_CLIENT_SPELLS, SRV_CLIENT_SPELLS);
         SendSetupCmd();
         request_file_chain = 0;
-        request_file_flags = 0;
 
         GameStatus = GAME_STATUS_WAITSETUP;
     }
@@ -948,6 +947,9 @@ uint8 game_status_chain(void)
         }
         else if (request_file_chain == 14)
         {
+            /* Temporarily do this here -- both functions need a rewrite anyway. */
+            read_skills();
+            read_spells();
             request_file_chain++; /* this ensure one loop tick and updating the messages */
         }
         else if (request_file_chain == 15)
@@ -1264,6 +1266,69 @@ uint8 game_status_chain(void)
         map_draw_map_clear(); /* draw a clear map */
     }
     return(1);
+}
+
+static void QuerySrvClientFile(const char *filename, uint8 num)
+{
+    PHYSFS_File   *handle;
+    PHYSFS_uint64  len;
+    unsigned char *buf_tmp;
+
+    /* We obviously don't know these values yet so lets reset both to 0. */
+    srv_client_files[num].len = 0;
+    srv_client_files[num].crc = 0;
+
+    /* Log what we're doing. */
+    LOG(LOG_SYSTEM, "Querying server file '%s'... ", filename);
+
+    /* If the file doesn't exist, that's OK. */
+    if (!PHYSFS_exists(filename))
+    {
+        char buf_debug[MEDIUM_BUF] = "";
+
+        /* Extra debug info. */
+        if (LOGLEVEL >= LOG_DEBUG)
+        {
+            sprintf(buf_debug, " but file '%s' does not exist", filename);
+        }
+
+        LOG(LOG_SYSTEM, "OK%s!\n", buf_debug);
+
+        return;
+    }
+
+    /* Open the file for reading.*/
+    if (!(handle = PHYSFS_openRead(filename)))
+    {
+        LOG(LOG_FATAL, "FAILED (%s)!\n", PHYSFS_getLastError());
+    }
+
+    /* Get the filelength. We can't handle big files. */
+    if ((len = PHYSFS_fileLength(handle)) > INT_MAX)
+    {
+        PHYSFS_close(handle);
+        LOG(LOG_FATAL, "FAILED (File too big: %d)!\n", len);
+    }
+
+   /* Read all the data from the file into a temp buffer to get the crc. */
+    MALLOC(buf_tmp, len);
+
+    if ((PHYSFS_read(handle, (unsigned char *)buf_tmp, 1, (PHYSFS_uint32)len)) < len)
+    {
+        FREE(buf_tmp);
+        PHYSFS_close(handle);
+        LOG(LOG_FATAL, "FAILED (%s)!\n", PHYSFS_getLastError());
+    }
+
+    /* Set the values we just got. */
+    srv_client_files[num].len = (int)len;
+    srv_client_files[num].crc = crc32(1L, buf_tmp, len);
+    srv_client_files[num].status = SRV_CLIENT_STATUS_OK;
+
+    /* Cleanup. */
+    FREE(buf_tmp);
+    PHYSFS_close(handle);
+    LOG(LOG_SYSTEM, "OK (len:%d, crc:%x)!\n", len, srv_client_files[num].crc);
 }
 
 
@@ -1704,29 +1769,17 @@ int main(int argc, char *argv[])
     load_skindef();
     load_bitmaps();
     font_init();
-    ShowIntro("start sound system", 9);
+    ShowIntro("start sound system", 0);
     sound_init();
-    ShowIntro("load sounds", 18);
-    read_sounds();
-    ShowIntro("load bitmaps", 27);
+    ShowIntro("load bitmaps", 10);
     for (i = BITMAP_PROGRESS_BACK+1; i < BITMAP_MAX; i++) /* add later better error handling here*/
         load_bitmap(i);
-    ShowIntro("load keys", 36);
+    ShowIntro("load keys", 60);
     read_keybind_file();
-    ShowIntro("load mapdefs", 45);
+    ShowIntro("load mapdefs", 70);
     load_mapdef_dat();
-    ShowIntro("load picture data", 54);
+    ShowIntro("load picture data", 80);
     read_bmaps_p0();
-    ShowIntro("load settings", 63);
-    read_settings();
-    ShowIntro("load spells", 72);
-    read_spells();
-    ShowIntro("load skills", 81);
-    read_skills();
-    ShowIntro("load anims", 90);
-    read_anims();
-    ShowIntro("load bmaps", 99);
-    read_bmaps();
     ShowIntro(NULL, 100);
     sound_play_music("orchestral.ogg", options.music_volume, 0, -1, 0, MUSIC_MODE_DIRECT);
     sprite_init_system();

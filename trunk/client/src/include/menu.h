@@ -142,13 +142,10 @@ extern void     do_npcdialog_input(void);
 
 extern int      read_anim_tmp(void);
 extern int      read_bmap_tmp(void);
-extern void     read_anims(void);
 extern void     read_bmaps_p0(void);
 extern void     delete_bmap_tmp(void);
-extern void     read_bmaps(void);
 extern void     delete_server_chars(void);
 extern void     load_settings(void);
-extern void     read_settings(void);
 extern void     read_spells(void);
 extern void     read_skills(void);
 extern uint8  blt_face_centered(int face, int x, int y);

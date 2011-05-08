@@ -86,6 +86,9 @@ struct CmdMapping commands[]  =
 
 #define NCOMMANDS (sizeof(commands)/sizeof(struct CmdMapping))
 
+static void SaveDataCmdFile(const char *filename, uint8 num,
+                            unsigned char *data, int len);
+
 /* process all sc commands */
 void DoClient(void)
 {
@@ -314,6 +317,12 @@ void SetupCmd(char *buf, int len)
                     }
                 }
             }
+            else
+            {
+                srv_client_files[SRV_CLIENT_SKILLS].status = SRV_CLIENT_STATUS_OK;
+                srv_client_files[SRV_CLIENT_SKILLS].server_len = srv_client_files[SRV_CLIENT_SKILLS].len;
+                srv_client_files[SRV_CLIENT_SKILLS].server_crc = srv_client_files[SRV_CLIENT_SKILLS].crc;
+            }
         }
         else if (!strcmp(cmd, "spf"))
         {
@@ -336,6 +345,12 @@ void SetupCmd(char *buf, int len)
                         break;
                     }
                 }
+            }
+            else
+            {
+                srv_client_files[SRV_CLIENT_SPELLS].status = SRV_CLIENT_STATUS_OK;
+                srv_client_files[SRV_CLIENT_SPELLS].server_len = srv_client_files[SRV_CLIENT_SPELLS].len;
+                srv_client_files[SRV_CLIENT_SPELLS].server_crc = srv_client_files[SRV_CLIENT_SPELLS].crc;
             }
         }
         else if (!strcmp(cmd, "stf"))
@@ -360,6 +375,12 @@ void SetupCmd(char *buf, int len)
                     }
                 }
             }
+            else
+            {
+                srv_client_files[SRV_CLIENT_SETTINGS].status = SRV_CLIENT_STATUS_OK;
+                srv_client_files[SRV_CLIENT_SETTINGS].server_len = srv_client_files[SRV_CLIENT_SETTINGS].len;
+                srv_client_files[SRV_CLIENT_SETTINGS].server_crc = srv_client_files[SRV_CLIENT_SETTINGS].crc;
+            }
         }
         else if (!strcmp(cmd, "bpf"))
         {
@@ -381,6 +402,13 @@ void SetupCmd(char *buf, int len)
                         break;
                     }
                 }
+            }
+            else
+            {
+                // ALWAYS update the bmaps to avoid bad data.
+                srv_client_files[SRV_CLIENT_BMAPS].status = SRV_CLIENT_STATUS_UPDATE;
+                srv_client_files[SRV_CLIENT_BMAPS].server_len = srv_client_files[SRV_CLIENT_BMAPS].len;
+                srv_client_files[SRV_CLIENT_BMAPS].server_crc = srv_client_files[SRV_CLIENT_BMAPS].crc;
             }
         }
         else if (!strcmp(cmd, "amf"))
@@ -405,6 +433,12 @@ void SetupCmd(char *buf, int len)
                     }
                 }
             }
+            else
+            {
+                srv_client_files[SRV_CLIENT_ANIMS].status = SRV_CLIENT_STATUS_OK;
+                srv_client_files[SRV_CLIENT_ANIMS].server_len = srv_client_files[SRV_CLIENT_ANIMS].len;
+                srv_client_files[SRV_CLIENT_ANIMS].server_crc = srv_client_files[SRV_CLIENT_ANIMS].crc;
+            }
         }
         else if (!strcmp(cmd, "sn")) /* sound */
         {
@@ -427,6 +461,12 @@ void SetupCmd(char *buf, int len)
                         break;
                     }
                 }
+            }
+            else
+            {
+                srv_client_files[SRV_CLIENT_SOUNDS].status = SRV_CLIENT_STATUS_OK;
+                srv_client_files[SRV_CLIENT_SOUNDS].server_len = srv_client_files[SRV_CLIENT_SOUNDS].len;
+                srv_client_files[SRV_CLIENT_SOUNDS].server_crc = srv_client_files[SRV_CLIENT_SOUNDS].crc;
             }
         }
         else if (!strcmp(cmd, "mz")) /* mapsize */
@@ -2049,28 +2089,13 @@ void GolemCmd(char *data, int len)
                        "gain", tmp + 1);
 }
 
-
-static void save_data_cmd_file(char *path, unsigned char *data, int len)
-{
-    FILE   *stream;
-
-    if ((stream = fopen_wrapper(path, "wb")) != NULL)
-    {
-        if (fwrite(data, sizeof(char), len, stream) != (size_t) len)
-            LOG(LOG_ERROR, "save data cmd file : write() of %s failed. (len:%d)\n", path);
-        fclose(stream);
-    }
-    else
-        LOG(LOG_ERROR, "save data cmd file : Can't open %s for write. (len:%d)\n", path, len);
-}
-
 /* server has send us a block of data...
  * lets check what we got
  */
 void DataCmd(char *data, int len)
 {
-    uint8   data_type   = (uint8) (*data);
-    uint8   data_comp ;
+    uint8         data_type = (uint8)(*data++),
+                  data_comp = (data_type & DATA_PACKED_CMD);
     /* warning! if the uncompressed size of a incoming compressed(!) file is larger
      * as this dest_len default setting, the file is cutted and
      * the rest skiped. Look at the zlib docu for more info.
@@ -2078,11 +2103,7 @@ void DataCmd(char *data, int len)
     unsigned long dest_len;
     unsigned char *dest = NULL;
 
-
-    data_comp = (data_type & DATA_PACKED_CMD);
-
     len--;
-    data++;
 
     if (data_comp)
     {
@@ -2104,8 +2125,7 @@ void DataCmd(char *data, int len)
                 len = dest_len;
             }
             request_file_chain++;
-            save_data_cmd_file(FILE_CLIENT_SOUNDS, (unsigned char *)data, len);
-            read_sounds();
+            SaveDataCmdFile(FILE_CLIENT_SOUNDS, SRV_CLIENT_SOUNDS, (unsigned char *)data, len);
             break;
         case DATA_CMD_SKILL_LIST:
             /* this is a server send skill list */
@@ -2118,8 +2138,7 @@ void DataCmd(char *data, int len)
                 len = dest_len;
             }
             request_file_chain++;
-            save_data_cmd_file(FILE_CLIENT_SKILLS, (unsigned char *)data, len);
-            read_skills();
+            SaveDataCmdFile(FILE_CLIENT_SKILLS, SRV_CLIENT_SKILLS, (unsigned char *)data, len);
             break;
         case DATA_CMD_SPELL_LIST:
             if (data_comp)
@@ -2130,8 +2149,7 @@ void DataCmd(char *data, int len)
                 len = dest_len;
             }
             request_file_chain++;
-            save_data_cmd_file(FILE_CLIENT_SPELLS, (unsigned char *)data, len);
-            read_spells();
+            SaveDataCmdFile(FILE_CLIENT_SPELLS, SRV_CLIENT_SPELLS, (unsigned char *)data, len);
             break;
         case DATA_CMD_SETTINGS_LIST:
             if (data_comp)
@@ -2142,8 +2160,7 @@ void DataCmd(char *data, int len)
                 len = dest_len;
             }
             request_file_chain++;
-            save_data_cmd_file(FILE_CLIENT_SETTINGS, (unsigned char *)data, len);
-            read_settings();
+            SaveDataCmdFile(FILE_CLIENT_SETTINGS, SRV_CLIENT_SETTINGS, (unsigned char *)data, len);
             break;
 
         case DATA_CMD_BMAP_LIST:
@@ -2155,9 +2172,7 @@ void DataCmd(char *data, int len)
                 len = dest_len;
             }
             request_file_chain++;
-            save_data_cmd_file(FILE_CLIENT_BMAPS, (unsigned char *)data, len);
-            request_file_flags |= SRV_CLIENT_FLAG_BMAP;
-            read_bmaps();
+            SaveDataCmdFile(FILE_CLIENT_BMAPS, SRV_CLIENT_BMAPS, (unsigned char *)data, len);
             break;
 
         case DATA_CMD_ANIM_LIST:
@@ -2169,9 +2184,7 @@ void DataCmd(char *data, int len)
                 len = dest_len;
             }
             request_file_chain++;
-            save_data_cmd_file(FILE_CLIENT_ANIMS, (unsigned char *)data, len);
-            request_file_flags |= SRV_CLIENT_FLAG_ANIM;
-            read_anims();
+            SaveDataCmdFile(FILE_CLIENT_ANIMS, SRV_CLIENT_ANIMS, (unsigned char *)data, len);
             break;
 
         default:
@@ -2180,6 +2193,47 @@ void DataCmd(char *data, int len)
     }
     if (dest!=NULL)
         FREE(dest);
+}
+
+static void SaveDataCmdFile(const char *filename, uint8 num,
+                            unsigned char *data, int len)
+{
+    PHYSFS_File *handle;
+
+    /* Log what we're doing. */
+    LOG(LOG_SYSTEM, "Saving server file '%s'... ", filename);
+
+    /* Open the file for writing.*/
+    if (!(handle = PHYSFS_openWrite(filename)))
+    {
+        LOG(LOG_FATAL, "FAILED (%s)!\n", PHYSFS_getLastError());
+    }
+
+    if (PHYSFS_write(handle, (unsigned char *)data, 1, (PHYSFS_uint32)len) < len)
+    {
+        PHYSFS_close(handle);
+        LOG(LOG_FATAL, "FAILED (%s)!\n", PHYSFS_getLastError());
+    }
+
+    /* Set the values we just got. */
+    srv_client_files[num].len = (int)len;
+    srv_client_files[num].crc = crc32(1L, data, len);
+
+    /* If they don't match what the server has then this is really bad
+     * (because we just got the file from the server). */
+    if (srv_client_files[num].server_len != srv_client_files[num].len ||
+        srv_client_files[num].server_crc != srv_client_files[num].crc)
+    {
+        PHYSFS_close(handle);
+        LOG(LOG_FATAL, "Client and server still disagree on length and crc of '%s' (client has %d/%x, server has %d/%x)!\n",
+            filename, srv_client_files[num].len, srv_client_files[num].crc,
+            srv_client_files[num].server_len, srv_client_files[num].server_crc);
+    }
+
+    /* Cleanup. */
+    srv_client_files[num].status = SRV_CLIENT_STATUS_OK;
+    PHYSFS_close(handle);
+    LOG(LOG_SYSTEM, "OK (len:%d, crc:%x)!\n", len, srv_client_files[num].crc);
 }
 
 #ifdef USE_CHANNELS
