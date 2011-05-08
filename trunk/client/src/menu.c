@@ -646,18 +646,14 @@ int read_anim_tmp(void)
     /* if this fails, we have a urgent problem somewhere before */
     if ((stream = fopen_wrapper(FILE_BMAPS_TMP, "rb")) == NULL)
     {
-        LOG(LOG_ERROR, "read_anim_tmp:Error reading bmap.tmp for anim.tmp!\n");
-        SYSTEM_End(); /* fatal */
-        exit(0);
+        LOG(LOG_FATAL, "read_anim_tmp:Error reading bmap.tmp for anim.tmp!\n");
     }
     fstat(fileno(stream), &stat_bmap);
     fclose(stream);
 
     if ((stream = fopen_wrapper(FILE_CLIENT_ANIMS, "rb")) == NULL)
     {
-        LOG(LOG_ERROR, "read_anim_tmp:Error reading bmap.tmp for anim.tmp!\n");
-        SYSTEM_End(); /* fatal */
-        exit(0);
+        LOG(LOG_FATAL, "read_anim_tmp:Error reading bmap.tmp for anim.tmp!\n");
     }
     fstat(fileno(stream), &stat_anim);
     fclose(stream);
@@ -730,10 +726,8 @@ static void load_bmaps_p0(void)
     /* try to open bmaps_p0 file */
     if ((fbmap = fopen_wrapper(FILE_BMAPS_P0, "rb")) == NULL)
     {
-        LOG(LOG_ERROR, "FATAL: Error loading bmaps.p0!\n");
-        SYSTEM_End(); /* fatal */
         unlink(FILE_BMAPS_P0);
-        exit(0);
+        LOG(LOG_FATAL, "FATAL: Error loading bmaps.p0!\n");
     }
     while (fgets(buf, LARGE_BUF - 1, fbmap) != NULL)
     {
@@ -766,19 +760,15 @@ void read_bmaps_p0(void)
 
     if ((fpic = fopen_wrapper(FILE_DAIMONIN_P0, "rb")) == NULL)
     {
-        LOG(LOG_ERROR, "FATAL: Can't find daimonin.p0 file!\n");
-        SYSTEM_End(); /* fatal */
         unlink(FILE_BMAPS_P0);
-        exit(0);
+        LOG(LOG_FATAL, "FATAL: Can't find daimonin.p0 file!\n");
     }
 
     if ((fbmap = fopen_wrapper(FILE_BMAPS_P0, "w")) == NULL)
     {
-        LOG(LOG_ERROR, "FATAL: Can't create bmaps.p0 file!\n");
-        SYSTEM_End(); /* fatal */
         fclose(fbmap);
         unlink(FILE_BMAPS_P0);
-        exit(0);
+        LOG(LOG_FATAL, "FATAL: Can't create bmaps.p0 file!\n");
     }
 
     bufsize = 24 * 1024;
@@ -790,12 +780,10 @@ void read_bmaps_p0(void)
 
         if (strncmp(buf, "IMAGE ", 6) != 0)
         {
-            LOG(LOG_ERROR, "read_client_images:Bad image line - not IMAGE, instead\n%s", buf);
-            SYSTEM_End(); /* fatal */
             fclose(fbmap);
             fclose(fpic);
             unlink(FILE_BMAPS_P0);
-            exit(0);
+            LOG(LOG_FATAL, "read_client_images:Bad image line - not IMAGE, instead\n%s", buf);
         }
 
         num = atoi(buf + 6);
@@ -812,12 +800,10 @@ void read_bmaps_p0(void)
             /* we assume thats this is nonsense */
             if (len > 128 * 1024)
             {
-                LOG(LOG_ERROR, "read_client_images:Size of picture out of bounds!(len:%d)(pos:%d)\n", len, pos);
-                SYSTEM_End(); /* fatal */
                 fclose(fbmap);
                 fclose(fpic);
                 unlink(FILE_BMAPS_P0);
-                exit(0);
+                LOG(LOG_FATAL, "read_client_images:Size of picture out of bounds!(len:%d)(pos:%d)\n", len, pos);
             }
 
             bufsize = len;
@@ -863,9 +849,7 @@ static int load_bmap_tmp(void)
     delete_bmap_tmp();
     if ((stream = fopen_wrapper(FILE_BMAPS_TMP, "rt")) == NULL)
     {
-        LOG(LOG_ERROR, "bmaptype_table(): error open file <bmap.tmp>\n");
-        SYSTEM_End(); /* fatal */
-        exit(0);
+        LOG(LOG_FATAL, "bmaptype_table(): error open file <bmap.tmp>\n");
     }
     while (fgets(buf, LARGE_BUF - 1, stream) != NULL)
     {

@@ -2752,9 +2752,8 @@ void check_menu_keys(int menu, int key)
                         {
                             /* now we have a problem */
                             textwin_showstring(COLOR_RED, "Couldn't set %dx%dx%d video mode: %s\nFATAL ERROR - exit", Screensize.x, Screensize.y, options.used_video_bpp, SDL_GetError());
-                            LOG(LOG_ERROR, "Couldn't set %dx%dx%d video mode: %s\nFATAL ERROR - exit", Screensize.x, Screensize.y, options.used_video_bpp, SDL_GetError());
+                            LOG(LOG_FATAL, "Couldn't set %dx%dx%d video mode: %s\nFATAL ERROR - exit", Screensize.x, Screensize.y, options.used_video_bpp, SDL_GetError());
                             Screensize=sz_tmp;
-                            exit(2);
                         }
                         else
                             res_change = 1;
