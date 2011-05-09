@@ -937,13 +937,14 @@ uint8 game_status_chain(void)
         }
         else if (request_file_chain == 14)
         {
-            /* Temporarily do this here -- both functions need a rewrite anyway. */
-            load_skills();
-            load_spells();
             request_file_chain++; /* this ensure one loop tick and updating the messages */
         }
         else if (request_file_chain == 15)
-             GameStatus = GAME_STATUS_LOGIN_SELECT; /* now lets start the real login by asking "login" or "create" */
+        {
+            load_skills();
+            load_spells();
+            GameStatus = GAME_STATUS_LOGIN_SELECT; /* now lets start the real login by asking "login" or "create" */
+        }
 // debug GameStatus = GAME_STATUS_ACCOUNT;
     }
     else if (GameStatus == GAME_STATUS_LOGIN_BREAK)
