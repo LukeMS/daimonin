@@ -334,7 +334,7 @@ _face_struct;
 #define GOLEM_CTR_ADD      1
 
 
-#define LIST_ENTRY_UNUSED -1 /* this entry is unused */
+#define LIST_ENTRY_UNUSED  0 /* this entry is unused */
 #define LIST_ENTRY_USED    1 /* entry is used but player don't have it */
 #define LIST_ENTRY_KNOWN   2 /* player know this used entry */
 #define LIST_NAME_MAX 64

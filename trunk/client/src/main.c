@@ -347,7 +347,7 @@ static void QuerySrvClientFile(const char *filename, uint8 num);
 
 static void DeletePlayerLists(void)
 {
-    int i, ii;
+    int i;
 
     for (i = 0; i < FIRE_MODE_INIT; i++)
     {
@@ -358,25 +358,15 @@ static void DeletePlayerLists(void)
         fire_mode_tab[i].name[0] = 0;
     }
 
-    for (i = 0; i < SKILL_LIST_MAX; i++)
-    {
-        for (ii = 0; ii < DIALOG_LIST_ENTRY; ii++)
-        {
-            if (skill_list[i].entry[ii].flag == LIST_ENTRY_KNOWN)
-                skill_list[i].entry[ii].flag = LIST_ENTRY_USED;
-        }
-    }
+    memset(&spell_list, 0, sizeof(_spell_list) * SPELL_LIST_MAX);
+    spell_list_set.class_nr = 0;
+    spell_list_set.entry_nr = 0;
+    spell_list_set.group_nr = 0;
 
-    for (i = 0; i < SPELL_LIST_MAX; i++)
-    {
-        for (ii = 0; ii < DIALOG_LIST_ENTRY; ii++)
-        {
-            if (spell_list[i].entry[0][ii].flag == LIST_ENTRY_KNOWN)
-                spell_list[i].entry[0][ii].flag = LIST_ENTRY_USED;
-            if (spell_list[i].entry[1][ii].flag == LIST_ENTRY_KNOWN)
-                spell_list[i].entry[1][ii].flag = LIST_ENTRY_USED;
-        }
-    }
+    memset(&spell_list, 0, sizeof(_skill_list) * SKILL_LIST_MAX);
+    spell_list_set.class_nr = 0;
+    spell_list_set.entry_nr = 0;
+    spell_list_set.group_nr = 0;
 }
 
 /* pre init, overrule in hardware module if needed */
@@ -948,8 +938,8 @@ uint8 game_status_chain(void)
         else if (request_file_chain == 14)
         {
             /* Temporarily do this here -- both functions need a rewrite anyway. */
-            read_skills();
-            read_spells();
+            load_skills();
+            load_spells();
             request_file_chain++; /* this ensure one loop tick and updating the messages */
         }
         else if (request_file_chain == 15)

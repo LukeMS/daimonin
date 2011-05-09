@@ -1138,235 +1138,259 @@ void load_settings(void)
     }
 }
 
-void read_spells(void)
+
+/* TODO: This maintains 0.10 compatibility. The file format will be reworked for 0.11.0. */
+void load_spells(void)
 {
-    int         i, ii, panel;
-    char        type, nchar, *tmp, *tmp2;
-    struct stat statbuf;
-    FILE       *stream;
-    unsigned char *temp_buf;
-    char        spath[255],line[255], name[255], d1[255], d2[255], d3[255], d4[255], icon[128];
+    PHYSFS_File  *handle;
+    uint8         defn = 0;
 
-    for (i = 0; i < SPELL_LIST_MAX; i++)
+    /* Log what we're doing. */
+    LOG(LOG_SYSTEM, "Loading '%s'... ", FILE_CLIENT_SPELLS);
+
+    /* Open the file for reading.*/
+    if (!(handle = PHYSFS_openRead(FILE_CLIENT_SPELLS)))
     {
-        for (ii = 0; ii < DIALOG_LIST_ENTRY; ii++)
+        LOG(LOG_FATAL, "FAILED (%s)!\n", PHYSFS_getLastError());
+    }
+
+    while (++defn)
+    {
+        char   buf[MEDIUM_BUF],
+              *start,
+              *end,
+               name[TINY_BUF],
+               type,
+               nchar,
+               icon[TINY_BUF],
+               desc[4][TINY_BUF];
+        int    panel;
+        sint8  i,
+               flag = LIST_ENTRY_USED;
+
+        /* Name */
+        if (PHYSFS_readString(handle, buf, sizeof(buf)) < 0)
         {
-            spell_list[i].entry[0][ii].flag = LIST_ENTRY_UNUSED;
-            spell_list[i].entry[1][ii].flag = LIST_ENTRY_UNUSED;
-            spell_list[i].entry[0][ii].name[0] = 0;
-            spell_list[i].entry[1][ii].name[0] = 0;
+            /* EOF here is OK. */
+            break;
+        }
+
+        if (!(start = strchr(buf, '"')))
+        {
+            LOG(LOG_ERROR, "Malformed line for definition %u: %s!\n", defn, buf);
+
+            continue;
+        }
+
+        if (!(end = strchr(start + 1, '"')))
+        {
+            LOG(LOG_ERROR, "Malformed line for definition %u: %s!\n", defn, buf);
+
+            continue;
+        }
+
+        start++;
+        *end = '\0';
+        sprintf(name, "%s", start);
+
+        /* Type Entry Path Icon */
+        if (PHYSFS_readString(handle, buf, sizeof(buf)) < 0)
+        {
+            LOG(LOG_ERROR, "Unexpected EOF!\n");
+            PHYSFS_close(handle);
+
+            return;
+        }
+
+        if (sscanf(buf, "%c %c %d %s", &type, &nchar, &panel, icon) != 4 ||
+            (type != 'w' &&
+             type != 'p') ||
+            (panel <= 0 ||
+             panel > SPELL_LIST_MAX))
+        {
+            LOG(LOG_ERROR, "Malformed line for definition %u: %s!\n", defn, buf);
+
+            continue;
+        }
+
+        /* Desc */
+        for (i = 0; i <= 3; i++)
+        {
+            if (PHYSFS_readString(handle, buf, sizeof(buf)) < 0)
+            {
+                LOG(LOG_ERROR, "Unexpected EOF!\n");
+                PHYSFS_close(handle);
+
+                return;
+            }
+
+            if (!(start = strchr(buf, '"')))
+            {
+                LOG(LOG_ERROR, "Malformed line for definition %u: %s!\n", defn, buf);
+                flag = LIST_ENTRY_UNUSED;
+
+                break;
+            }
+
+            if (!(end = strchr(start + 1, '"')))
+            {
+                LOG(LOG_ERROR, "Malformed line for definition %u: %s!\n", defn, buf);
+                flag = LIST_ENTRY_UNUSED;
+
+                break;
+            }
+
+            start++;
+            *end = '\0';
+            sprintf(desc[i], "%s", start);
+        }
+
+        if (flag == LIST_ENTRY_USED)
+        {
+            _spell_list_entry *sle = &spell_list[panel - 1].entry[(type == 'w') ? 0 : 1][nchar - 'a'];
+
+            sprintf(sle->name, "%s", name);
+            sle->flag = LIST_ENTRY_USED;
+            sprintf(sle->icon_name, "%s", icon);
+            sprintf(buf, "%s%s", GetIconDirectory(), icon);
+            sle->icon = sprite_load_file(buf, SURFACE_FLAG_DISPLAYFORMAT);
+
+            for (i = 0; i <= 3; i++)
+            {
+                sprintf(sle->desc[i], "%s", desc[i]);
+            }
         }
     }
-    spell_list_set.class_nr = 0;
-    spell_list_set.entry_nr = 0;
-    spell_list_set.group_nr = 0;
 
-    srv_client_files[SRV_CLIENT_SPELLS].len = 0;
-    srv_client_files[SRV_CLIENT_SPELLS].crc = 0;
-    LOG(LOG_DEBUG, "Reading %s.... ", FILE_CLIENT_SPELLS);
-    if ((stream = fopen_wrapper(FILE_CLIENT_SPELLS, "rb")) != NULL)
-    {
-        size_t dummy; // purely to suppress GCC's warn_unused_result warning
-
-        /* temp load the file and get the data we need for compare with
-         * server */
-        fstat(fileno(stream), &statbuf);
-        i = (int) statbuf.st_size;
-        srv_client_files[SRV_CLIENT_SPELLS].len = i;
-        MALLOC(temp_buf, i);
-        dummy = fread(temp_buf, sizeof(char), i, stream);
-        srv_client_files[SRV_CLIENT_SPELLS].crc = crc32(1L, temp_buf, i);
-        FREE(temp_buf);
-        rewind(stream);
-
-        for (i = 0; ; i++)
-        {
-            if (fgets(line, 255, stream) == NULL)
-                break;
-            line[250] = 0;
-            tmp = strchr(line, '"');
-            tmp2 = strchr(tmp + 1, '"');
-            *tmp2 = 0;
-            strcpy(name, tmp + 1);
-            if (fgets(line, 255, stream) == NULL)
-                break;
-            sscanf(line, "%c %c %s %s", &type, &nchar, spath, icon);
-            /*LOG(-1,"STRING:(%s) >%s< >%s<\n",line,  spath, icon);*/
-            if (isdigit(spath[0]))
-            {
-                panel = atoi(spath)-1;
-                if (panel >=SPELL_LIST_MAX)
-                {
-                    LOG(LOG_DEBUG,"BUG: spell path out of range (%d) for line %s\n", panel, line);
-                    panel = 0;
-                }
-            }
-            else
-            {
-                int a;
-
-                panel = -1;
-                for (a=0;a<SPELL_LIST_MAX;a++)
-                {
-                    if (!strcmp(spell_tab[a], spath))
-                    {
-                        panel = a;
-                    }
-                }
-                if (panel == -1)
-                {
-                    LOG(LOG_DEBUG,"BUG: spell path out of range/wrong name (%s) for line %s\n", spath, line);
-                    panel = 0;
-                }
-            }
-            if (fgets(line, 255, stream) == NULL)
-                break;
-            line[250] = 0;
-            tmp = strchr(line, '"');
-            tmp2 = strchr(tmp + 1, '"');
-            *tmp2 = 0;
-            strcpy(d1, tmp + 1);
-            if (fgets(line, 255, stream) == NULL)
-                break;
-            line[250] = 0;
-            tmp = strchr(line, '"');
-            tmp2 = strchr(tmp + 1, '"');
-            *tmp2 = 0;
-            strcpy(d2, tmp + 1);
-            if (fgets(line, 255, stream) == NULL)
-                break;
-            line[250] = 0;
-            tmp = strchr(line, '"');
-            tmp2 = strchr(tmp + 1, '"');
-            *tmp2 = 0;
-            strcpy(d3, tmp + 1);
-            if (fgets(line, 255, stream) == NULL)
-                break;
-            line[250] = 0;
-            tmp = strchr(line, '"');
-            tmp2 = strchr(tmp + 1, '"');
-            *tmp2 = 0;
-            strcpy(d4, tmp + 1);
-            spell_list[panel].entry[type == 'w' ? 0 : 1][nchar - 'a'].flag = LIST_ENTRY_USED;
-            strcpy(spell_list[panel].entry[type == 'w' ? 0 : 1][nchar - 'a'].icon_name, icon);
-            sprintf(line, "%s%s", GetIconDirectory(), icon);
-            spell_list[panel].entry[type == 'w' ? 0 : 1][nchar - 'a'].icon = sprite_load_file(line, SURFACE_FLAG_DISPLAYFORMAT);
-
-            strcpy(spell_list[panel].entry[type == 'w' ? 0 : 1][nchar - 'a'].name, name);
-            strcpy(spell_list[panel].entry[type == 'w' ? 0 : 1][nchar - 'a'].desc[0], d1);
-            strcpy(spell_list[panel].entry[type == 'w' ? 0 : 1][nchar - 'a'].desc[1], d2);
-            strcpy(spell_list[panel].entry[type == 'w' ? 0 : 1][nchar - 'a'].desc[2], d3);
-            strcpy(spell_list[panel].entry[type == 'w' ? 0 : 1][nchar - 'a'].desc[3], d4);
-        }
-        fclose(stream);
-        LOG(LOG_DEBUG, " found file!(%d/%x)", srv_client_files[SRV_CLIENT_SPELLS].len,
-            srv_client_files[SRV_CLIENT_SPELLS].crc);
-    }
-    LOG(LOG_DEBUG, "done.\n");
+    /* Cleanup. */
+    PHYSFS_close(handle);
+    LOG(LOG_SYSTEM, "OK!\n");
 }
 
-void read_skills(void)
+/* TODO: This maintains 0.10 compatibility. The file format will be reworked for 0.11.0. */
+void load_skills(void)
 {
-    int         i, ii, panel;
-    unsigned char *temp_buf;
-    char        nchar, *tmp, *tmp2;
-    struct stat statbuf;
-    FILE       *stream;
-    char        line[255], name[255], d1[255], d2[255], d3[255], d4[255], icon[128];
+    PHYSFS_File  *handle;
+    uint8         defn = 0;
 
-    for (i = 0; i < SKILL_LIST_MAX; i++)
+    /* Log what we're doing. */
+    LOG(LOG_SYSTEM, "Loading '%s'... ", FILE_CLIENT_SKILLS);
+
+    /* Open the file for reading.*/
+    if (!(handle = PHYSFS_openRead(FILE_CLIENT_SKILLS)))
     {
-        for (ii = 0; ii < DIALOG_LIST_ENTRY; ii++)
+        LOG(LOG_FATAL, "FAILED (%s)!\n", PHYSFS_getLastError());
+    }
+
+    while (++defn)
+    {
+        char   buf[MEDIUM_BUF],
+              *start,
+              *end,
+               name[TINY_BUF],
+               nchar,
+               icon[TINY_BUF],
+               desc[4][TINY_BUF];
+        int    panel;
+        sint8  i,
+               flag = LIST_ENTRY_USED;
+
+        /* Name */
+        if (PHYSFS_readString(handle, buf, sizeof(buf)) < 0)
         {
-            skill_list[i].entry[ii].flag = LIST_ENTRY_UNUSED;
-            skill_list[i].entry[ii].name[0] = 0;
+            /* EOF here is OK. */
+            break;
+        }
+
+        if (!(start = strchr(buf, '"')))
+        {
+            LOG(LOG_ERROR, "Malformed line for definition %u: %s!\n", defn, buf);
+
+            continue;
+        }
+
+        if (!(end = strchr(start + 1, '"')))
+        {
+            LOG(LOG_ERROR, "Malformed line for definition %u: %s!\n", defn, buf);
+
+            continue;
+        }
+
+        start++;
+        *end = '\0';
+        sprintf(name, "%s", start);
+
+        /* Type Entry Path Icon */
+        if (PHYSFS_readString(handle, buf, sizeof(buf)) < 0)
+        {
+            LOG(LOG_ERROR, "Unexpected EOF!\n");
+            PHYSFS_close(handle);
+
+            return;
+        }
+
+        if (sscanf(buf, "%d %c %s", &panel, &nchar, icon) != 3 ||
+            (panel < 0 ||
+             panel >= SPELL_LIST_MAX))
+        {
+            LOG(LOG_ERROR, "Malformed line for definition %u: %s!\n", defn, buf);
+
+            continue;
+        }
+
+        /* Desc */
+        for (i = 0; i <= 3; i++)
+        {
+            if (PHYSFS_readString(handle, buf, sizeof(buf)) < 0)
+            {
+                LOG(LOG_ERROR, "Unexpected EOF!\n");
+                PHYSFS_close(handle);
+
+                return;
+            }
+
+            if (!(start = strchr(buf, '"')))
+            {
+                LOG(LOG_ERROR, "Malformed line for definition %u: %s!\n", defn, buf);
+                flag = LIST_ENTRY_UNUSED;
+
+                break;
+            }
+
+            if (!(end = strchr(start + 1, '"')))
+            {
+                LOG(LOG_ERROR, "Malformed line for definition %u: %s!\n", defn, buf);
+                flag = LIST_ENTRY_UNUSED;
+
+                break;
+            }
+
+            start++;
+            *end = '\0';
+            sprintf(desc[i], "%s", start);
+        }
+
+        if (flag == LIST_ENTRY_USED)
+        {
+            _skill_list_entry *sle = &skill_list[panel].entry[nchar - 'a'];
+
+            sprintf(sle->name, "%s", name);
+            sle->flag = LIST_ENTRY_USED;
+            sprintf(sle->icon_name, "%s", icon);
+            sprintf(buf, "%s%s", GetIconDirectory(), icon);
+            sle->icon = sprite_load_file(buf, SURFACE_FLAG_DISPLAYFORMAT);
+
+            for (i = 0; i <= 3; i++)
+            {
+                sprintf(sle->desc[i], "%s", desc[i]);
+            }
         }
     }
 
-    skill_list_set.group_nr = 0;
-    skill_list_set.entry_nr = 0;
-
-    srv_client_files[SRV_CLIENT_SKILLS].len = 0;
-    srv_client_files[SRV_CLIENT_SKILLS].crc = 0;
-
-    LOG(LOG_DEBUG, "Reading %s....", FILE_CLIENT_SKILLS);
-    if ((stream = fopen_wrapper(FILE_CLIENT_SKILLS, "rb")) != NULL)
-    {
-        size_t dummy; // purely to suppress GCC's warn_unused_result warning
-
-        /* temp load the file and get the data we need for compare with
-         * server */
-        fstat(fileno(stream), &statbuf);
-        i = (int) statbuf.st_size;
-        srv_client_files[SRV_CLIENT_SKILLS].len = i;
-        MALLOC(temp_buf, i);
-        dummy = fread(temp_buf, sizeof(char), i, stream);
-        srv_client_files[SRV_CLIENT_SKILLS].crc = crc32(1L, temp_buf, i);
-        FREE(temp_buf);
-        rewind(stream);
-
-        for (i = 0; ; i++)
-        {
-            if (fgets(line, 255, stream) == NULL)
-                break;
-            line[250] = 0;
-            tmp = strchr(line, '"');
-            tmp2 = strchr(tmp + 1, '"');
-            *tmp2 = 0;
-            strcpy(name, tmp + 1);
-            if (fgets(line, 255, stream) == NULL)
-                break;
-            sscanf(line, "%d %c %s", &panel, &nchar, icon);
-            if (fgets(line, 255, stream) == NULL)
-                break;
-            line[250] = 0;
-            tmp = strchr(line, '"');
-            tmp2 = strchr(tmp + 1, '"');
-            *tmp2 = 0;
-            strcpy(d1, tmp + 1);
-            if (fgets(line, 255, stream) == NULL)
-                break;
-            line[250] = 0;
-            tmp = strchr(line, '"');
-            tmp2 = strchr(tmp + 1, '"');
-            *tmp2 = 0;
-            strcpy(d2, tmp + 1);
-            if (fgets(line, 255, stream) == NULL)
-                break;
-            line[250] = 0;
-            tmp = strchr(line, '"');
-            tmp2 = strchr(tmp + 1, '"');
-            *tmp2 = 0;
-            strcpy(d3, tmp + 1);
-            if (fgets(line, 255, stream) == NULL)
-                break;
-            line[250] = 0;
-            tmp = strchr(line, '"');
-            tmp2 = strchr(tmp + 1, '"');
-            *tmp2 = 0;
-            strcpy(d4, tmp + 1);
-
-            skill_list[panel].entry[nchar - 'a'].flag = LIST_ENTRY_USED;
-            skill_list[panel].entry[nchar - 'a'].exp = 0;
-            skill_list[panel].entry[nchar - 'a'].exp_level = 0;
-
-            strcpy(skill_list[panel].entry[nchar - 'a'].icon_name, icon);
-            sprintf(line, "%s%s", GetIconDirectory(), icon);
-            skill_list[panel].entry[nchar - 'a'].icon = sprite_load_file(line, SURFACE_FLAG_DISPLAYFORMAT);
-
-            strcpy(skill_list[panel].entry[nchar - 'a'].name, name);
-            strcpy(skill_list[panel].entry[nchar - 'a'].desc[0], d1);
-            strcpy(skill_list[panel].entry[nchar - 'a'].desc[1], d2);
-            strcpy(skill_list[panel].entry[nchar - 'a'].desc[2], d3);
-            strcpy(skill_list[panel].entry[nchar - 'a'].desc[3], d4);
-        }
-        fclose(stream);
-        LOG(LOG_DEBUG, " found file!(%d/%x)", srv_client_files[SRV_CLIENT_SKILLS].len,
-            srv_client_files[SRV_CLIENT_SKILLS].crc);
-    }
-    LOG(LOG_DEBUG, "done.\n");
+    /* Cleanup. */
+    PHYSFS_close(handle);
+    LOG(LOG_SYSTEM, "OK!\n");
 }
-
 
 int get_quickslot(int x, int y)
 {
