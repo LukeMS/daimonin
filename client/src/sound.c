@@ -59,17 +59,6 @@ static _sounds sounds = {0, NULL};
 static void musicDone(void); /* callback function for background music */
 static void sound_start_music(char *fname, int vol, int fade, int loop);
 
-// Helper string function
-// Duplicate string
-char *str_dup(const char *str)
-{
-    char *ret;
-
-    MALLOC_STRING(ret, str);
-
-    return ret;
-}
-
 /* Load the sounds file */
 void load_sounds(void)
 {
@@ -129,7 +118,7 @@ void load_sounds(void)
                 strtok(NULL, "|");  // discard prefix
                 sscanf(strtok(NULL, "|"), "%d", &sound_count);
                 sounds.types[type_index].count = sound_count;
-                sounds.types[type_index].name = str_dup(name);
+                MALLOC_STRING(sounds.types[type_index].name, name);
                 MALLOC(sounds.types[type_index].sounds, sound_count * sizeof(_sound)); // space for sounds
                 sound_index = -1;
                 state++;
@@ -146,8 +135,8 @@ void load_sounds(void)
                 sscanf(strtok(buf, "|"), "+%d", &sounds.types[type_index].sounds[sound_index].id);
                 strcpy(name, strtok(NULL, "|"));
                 strcpy(file, strtok(NULL, "|"));
-                sounds.types[type_index].sounds[sound_index].name = str_dup(name);
-                sounds.types[type_index].sounds[sound_index].file = str_dup(file);
+                MALLOC_STRING(sounds.types[type_index].sounds[sound_index].name, name);
+                MALLOC_STRING(sounds.types[type_index].sounds[sound_index].file, file);
             }
 
             if (sound_count == 0)
