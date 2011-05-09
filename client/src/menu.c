@@ -1165,8 +1165,8 @@ void load_spells(void)
                icon[TINY_BUF],
                desc[4][TINY_BUF];
         int    panel;
-        sint8  i,
-               flag = LIST_ENTRY_USED;
+        uint8  i;
+        _spell_list_entry *sle;
 
         /* Name */
         if (PHYSFS_readString(handle, buf, sizeof(buf)) < 0)
@@ -1177,16 +1177,14 @@ void load_spells(void)
 
         if (!(start = strchr(buf, '"')))
         {
-            LOG(LOG_ERROR, "Malformed line for definition %u: %s!\n", defn, buf);
-
-            continue;
+            PHYSFS_close(handle);
+            LOG(LOG_FATAL, "Malformed line for definition %u: %s!\n", defn, buf);
         }
 
         if (!(end = strchr(start + 1, '"')))
         {
-            LOG(LOG_ERROR, "Malformed line for definition %u: %s!\n", defn, buf);
-
-            continue;
+            PHYSFS_close(handle);
+            LOG(LOG_FATAL, "Malformed line for definition %u: %s!\n", defn, buf);
         }
 
         start++;
@@ -1196,10 +1194,8 @@ void load_spells(void)
         /* Type Entry Path Icon */
         if (PHYSFS_readString(handle, buf, sizeof(buf)) < 0)
         {
-            LOG(LOG_ERROR, "Unexpected EOF!\n");
             PHYSFS_close(handle);
-
-            return;
+            LOG(LOG_FATAL, "Unexpected EOF!\n");
         }
 
         if (sscanf(buf, "%c %c %d %s", &type, &nchar, &panel, icon) != 4 ||
@@ -1208,9 +1204,8 @@ void load_spells(void)
             (panel <= 0 ||
              panel > SPELL_LIST_MAX))
         {
-            LOG(LOG_ERROR, "Malformed line for definition %u: %s!\n", defn, buf);
-
-            continue;
+            PHYSFS_close(handle);
+            LOG(LOG_FATAL, "Malformed line for definition %u: %s!\n", defn, buf);
         }
 
         /* Desc */
@@ -1218,26 +1213,20 @@ void load_spells(void)
         {
             if (PHYSFS_readString(handle, buf, sizeof(buf)) < 0)
             {
-                LOG(LOG_ERROR, "Unexpected EOF!\n");
                 PHYSFS_close(handle);
-
-                return;
+                LOG(LOG_FATAL, "Unexpected EOF!\n");
             }
 
             if (!(start = strchr(buf, '"')))
             {
-                LOG(LOG_ERROR, "Malformed line for definition %u: %s!\n", defn, buf);
-                flag = LIST_ENTRY_UNUSED;
-
-                break;
+                PHYSFS_close(handle);
+                LOG(LOG_FATAL, "Malformed line for definition %u: %s!\n", defn, buf);
             }
 
             if (!(end = strchr(start + 1, '"')))
             {
-                LOG(LOG_ERROR, "Malformed line for definition %u: %s!\n", defn, buf);
-                flag = LIST_ENTRY_UNUSED;
-
-                break;
+                PHYSFS_close(handle);
+                LOG(LOG_FATAL, "Malformed line for definition %u: %s!\n", defn, buf);
             }
 
             start++;
@@ -1245,20 +1234,16 @@ void load_spells(void)
             sprintf(desc[i], "%s", start);
         }
 
-        if (flag == LIST_ENTRY_USED)
+        sle = &spell_list[panel - 1].entry[(type == 'w') ? 0 : 1][nchar - 'a'];
+        sprintf(sle->name, "%s", name);
+        sle->flag = LIST_ENTRY_USED;
+        sprintf(sle->icon_name, "%s", icon);
+        sprintf(buf, "%s%s", GetIconDirectory(), icon);
+        sle->icon = sprite_load_file(buf, SURFACE_FLAG_DISPLAYFORMAT);
+
+        for (i = 0; i <= 3; i++)
         {
-            _spell_list_entry *sle = &spell_list[panel - 1].entry[(type == 'w') ? 0 : 1][nchar - 'a'];
-
-            sprintf(sle->name, "%s", name);
-            sle->flag = LIST_ENTRY_USED;
-            sprintf(sle->icon_name, "%s", icon);
-            sprintf(buf, "%s%s", GetIconDirectory(), icon);
-            sle->icon = sprite_load_file(buf, SURFACE_FLAG_DISPLAYFORMAT);
-
-            for (i = 0; i <= 3; i++)
-            {
-                sprintf(sle->desc[i], "%s", desc[i]);
-            }
+            sprintf(sle->desc[i], "%s", desc[i]);
         }
     }
 
@@ -1292,8 +1277,8 @@ void load_skills(void)
                icon[TINY_BUF],
                desc[4][TINY_BUF];
         int    panel;
-        sint8  i,
-               flag = LIST_ENTRY_USED;
+        uint8  i;
+        _skill_list_entry *sle;
 
         /* Name */
         if (PHYSFS_readString(handle, buf, sizeof(buf)) < 0)
@@ -1304,16 +1289,14 @@ void load_skills(void)
 
         if (!(start = strchr(buf, '"')))
         {
-            LOG(LOG_ERROR, "Malformed line for definition %u: %s!\n", defn, buf);
-
-            continue;
+            PHYSFS_close(handle);
+            LOG(LOG_FATAL, "Malformed line for definition %u: %s!\n", defn, buf);
         }
 
         if (!(end = strchr(start + 1, '"')))
         {
-            LOG(LOG_ERROR, "Malformed line for definition %u: %s!\n", defn, buf);
-
-            continue;
+            PHYSFS_close(handle);
+            LOG(LOG_FATAL, "Malformed line for definition %u: %s!\n", defn, buf);
         }
 
         start++;
@@ -1323,19 +1306,16 @@ void load_skills(void)
         /* Type Entry Path Icon */
         if (PHYSFS_readString(handle, buf, sizeof(buf)) < 0)
         {
-            LOG(LOG_ERROR, "Unexpected EOF!\n");
             PHYSFS_close(handle);
-
-            return;
+            LOG(LOG_FATAL, "Unexpected EOF!\n");
         }
 
         if (sscanf(buf, "%d %c %s", &panel, &nchar, icon) != 3 ||
             (panel < 0 ||
              panel >= SPELL_LIST_MAX))
         {
-            LOG(LOG_ERROR, "Malformed line for definition %u: %s!\n", defn, buf);
-
-            continue;
+            PHYSFS_close(handle);
+            LOG(LOG_FATAL, "Malformed line for definition %u: %s!\n", defn, buf);
         }
 
         /* Desc */
@@ -1343,26 +1323,20 @@ void load_skills(void)
         {
             if (PHYSFS_readString(handle, buf, sizeof(buf)) < 0)
             {
-                LOG(LOG_ERROR, "Unexpected EOF!\n");
                 PHYSFS_close(handle);
-
-                return;
+                LOG(LOG_FATAL, "Unexpected EOF!\n");
             }
 
             if (!(start = strchr(buf, '"')))
             {
-                LOG(LOG_ERROR, "Malformed line for definition %u: %s!\n", defn, buf);
-                flag = LIST_ENTRY_UNUSED;
-
-                break;
+                PHYSFS_close(handle);
+                LOG(LOG_FATAL, "Malformed line for definition %u: %s!\n", defn, buf);
             }
 
             if (!(end = strchr(start + 1, '"')))
             {
-                LOG(LOG_ERROR, "Malformed line for definition %u: %s!\n", defn, buf);
-                flag = LIST_ENTRY_UNUSED;
-
-                break;
+                PHYSFS_close(handle);
+                LOG(LOG_FATAL, "Malformed line for definition %u: %s!\n", defn, buf);
             }
 
             start++;
@@ -1370,20 +1344,16 @@ void load_skills(void)
             sprintf(desc[i], "%s", start);
         }
 
-        if (flag == LIST_ENTRY_USED)
+        sle = &skill_list[panel].entry[nchar - 'a'];
+        sprintf(sle->name, "%s", name);
+        sle->flag = LIST_ENTRY_USED;
+        sprintf(sle->icon_name, "%s", icon);
+        sprintf(buf, "%s%s", GetIconDirectory(), icon);
+        sle->icon = sprite_load_file(buf, SURFACE_FLAG_DISPLAYFORMAT);
+
+        for (i = 0; i <= 3; i++)
         {
-            _skill_list_entry *sle = &skill_list[panel].entry[nchar - 'a'];
-
-            sprintf(sle->name, "%s", name);
-            sle->flag = LIST_ENTRY_USED;
-            sprintf(sle->icon_name, "%s", icon);
-            sprintf(buf, "%s%s", GetIconDirectory(), icon);
-            sle->icon = sprite_load_file(buf, SURFACE_FLAG_DISPLAYFORMAT);
-
-            for (i = 0; i <= 3; i++)
-            {
-                sprintf(sle->desc[i], "%s", desc[i]);
-            }
+            sprintf(sle->desc[i], "%s", desc[i]);
         }
     }
 
