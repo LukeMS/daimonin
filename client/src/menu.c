@@ -973,153 +973,175 @@ int get_bmap_id(char *name)
     return -1;
 }
 
+/* TODO: This maintains 0.10 compatibility. The file format will be reworked for 0.11.0. */
 void load_settings(void)
 {
-    FILE   *stream;
-    char    buf[LARGE_BUF], buf1[LARGE_BUF], buf2[LARGE_BUF];
-    char    cmd[LARGE_BUF];
-    char    para[LARGE_BUF];
-    int     para_count = 0, last_cmd = 0;
-    int     tmp_level   = 0;
+    PHYSFS_File *handle;
+    uint8        defn = 0;
 
-    delete_server_chars();
-    LOG(LOG_DEBUG, "Loading %s....\n", FILE_CLIENT_SETTINGS);
-    if ((stream = fopen_wrapper(FILE_CLIENT_SETTINGS, "rb")) != NULL)
+    /* Log what we're doing. */
+    LOG(LOG_SYSTEM, "Loading '%s'... ", FILE_CLIENT_SETTINGS);
+
+    /* Open the file for reading.*/
+    if (!(handle = PHYSFS_openRead(FILE_CLIENT_SETTINGS)))
     {
-        while (fgets(buf, LARGE_BUF - 1, stream) != NULL)
-        {
-            if (buf[0] == '#' || buf[0] == '\0')
-                continue;
-
-            if (last_cmd == 0)
-            {
-                sscanf(adjust_string(buf), "%s %s", cmd, para);
-                if (!strcmp(cmd, "char"))
-                {
-                    _server_char *serv_char;
-
-                    MALLOC(serv_char, sizeof(_server_char));
-                    MALLOC_STRING(serv_char->name, para);
-
-                    /* get next legal line */
-                    while (fgets(buf, LARGE_BUF - 1, stream) != NULL && (buf[0] == '#' || buf[0] == '\0'))
-                        ;
-                    sscanf(adjust_string(buf), "%s %d %d %d %d %d %d", buf1, &serv_char->bar[0], &serv_char->bar[1],
-                           &serv_char->bar[2], &serv_char->bar_add[0], &serv_char->bar_add[1], &serv_char->bar_add[2]);
-
-                    if ((serv_char->pic_id = get_bmap_id(buf1)) != -1)
-                    {
-                        request_face(serv_char->pic_id);
-                    }
-
-                    while (fgets(buf, LARGE_BUF - 1, stream) != NULL && (buf[0] == '#' || buf[0] == '\0'))
-                        ;
-                    sscanf(adjust_string(buf), "%d %s %s", &serv_char->gender[0], buf1, buf2);
-                    MALLOC_STRING(serv_char->char_arch[0], buf1);
-
-                    if ((serv_char->face_id[0] = get_bmap_id(buf2)) != -1)
-                    {
-                        request_face(serv_char->face_id[0]);
-                    }
-
-                    while (fgets(buf, LARGE_BUF - 1, stream) != NULL && (buf[0] == '#' || buf[0] == '\0'))
-                        ;
-                    sscanf(adjust_string(buf), "%d %s %s", &serv_char->gender[1], buf1, buf2);
-                    MALLOC_STRING(serv_char->char_arch[1], buf1);
-
-                    if ((serv_char->face_id[1] = get_bmap_id(buf2)) != -1)
-                    {
-                        request_face(serv_char->face_id[1]);
-                    }
-
-                    while (fgets(buf, LARGE_BUF - 1, stream) != NULL && (buf[0] == '#' || buf[0] == '\0'))
-                        ;
-                    sscanf(adjust_string(buf), "%d %s %s", &serv_char->gender[2], buf1, buf2);
-                    MALLOC_STRING(serv_char->char_arch[2], buf1);
-
-                    if ((serv_char->face_id[2] = get_bmap_id(buf2)) != -1)
-                    {
-                        request_face(serv_char->face_id[2]);
-                    }
-
-                    while (fgets(buf, LARGE_BUF - 1, stream) != NULL && (buf[0] == '#' || buf[0] == '\0'))
-                        ;
-                    sscanf(adjust_string(buf), "%d %s %s", &serv_char->gender[3], buf1, buf2);
-                    MALLOC_STRING(serv_char->char_arch[3], buf1);
-
-                    if ((serv_char->face_id[3] = get_bmap_id(buf2)) != -1)
-                    {
-                        request_face(serv_char->face_id[3]);
-                    }
-
-                    while (fgets(buf, LARGE_BUF - 1, stream) != NULL && (buf[0] == '#' || buf[0] == '\0'))
-                        ;
-                    sscanf(adjust_string(buf), "%d %d %d %d %d %d %d\n",
-                           &serv_char->stats[0],
-                           &serv_char->stats[1], &serv_char->stats[2], &serv_char->stats[3],
-                           &serv_char->stats[4], &serv_char->stats[5], &serv_char->stats[6]);
-
-                    while (fgets(buf, LARGE_BUF - 1, stream) != NULL && (buf[0] == '#' || buf[0] == '\0'))
-                        ;
-                    adjust_string(buf);
-                    MALLOC_STRING(serv_char->desc[0], buf);
-                    while (fgets(buf, LARGE_BUF - 1, stream) != NULL && (buf[0] == '#' || buf[0] == '\0'))
-                        ;
-                    adjust_string(buf);
-                    MALLOC_STRING(serv_char->desc[1], buf);
-                    while (fgets(buf, LARGE_BUF - 1, stream) != NULL && (buf[0] == '#' || buf[0] == '\0'))
-                        ;
-                    adjust_string(buf);
-                    MALLOC_STRING(serv_char->desc[2], buf);
-                    while (fgets(buf, LARGE_BUF - 1, stream) != NULL && (buf[0] == '#' || buf[0] == '\0'))
-                        ;
-                    adjust_string(buf);
-                    MALLOC_STRING(serv_char->desc[3], buf);
-                    serv_char->skill_selected = 0;
-
-                    /* add this char template to list */
-                    if (!first_server_char)
-                        first_server_char = serv_char;
-                    else
-                    {
-                        _server_char   *tmpc;
-
-                        for (tmpc = first_server_char; tmpc->next; tmpc = tmpc->next)
-                            ;
-                        tmpc->next = serv_char;
-                        serv_char->prev = tmpc;
-                    }
-                }
-                else if (!strcmp(cmd, "level"))
-                {
-                    tmp_level = atoi(para);
-                    if (tmp_level<0 || tmp_level> 450)
-                    {
-                        fclose(stream);
-                        LOG(LOG_ERROR, "client_settings_: level cmd out of bounds! >%s<\n", buf);
-                        return;
-                    }
-                    server_level.level = tmp_level;
-                    last_cmd = 1; /* cmd 'level' */
-                    para_count = 0;
-                }
-                else /* we close here... better we include later a fallback to login */
-                {
-                    fclose(stream);
-                    LOG(LOG_ERROR, "Unknown command in client_settings! >%s<\n", buf);
-                    return;
-                }
-            }
-            else if (last_cmd == 1)
-            {
-                server_level.exp[para_count++] = strtoul(buf, NULL, 16);
-                if (para_count > tmp_level)
-                    last_cmd = 0;
-            }
-        }
-        fclose(stream);
+        LOG(LOG_FATAL, "FAILED (%s)!\n", PHYSFS_getLastError());
     }
 
+    delete_server_chars();
+
+    while (++defn)
+    {
+        char buf[MEDIUM_BUF],
+             key[TINY_BUF],
+             value[TINY_BUF];
+
+        do
+        {
+            if (PHYSFS_readString(handle, buf, sizeof(buf)) < 0)
+            {
+                PHYSFS_close(handle);
+                LOG(LOG_FATAL, "Unexpected EOF!\n");
+            }
+        }
+        while (buf[0] == '#');
+
+        if (sscanf(buf, "%s %s", key, value) != 2)
+        {
+            PHYSFS_close(handle);
+            LOG(LOG_FATAL, "Malformed key/value line for definition %u: %s!\n", defn, buf);
+        }
+
+        if (!strcmp(key, "char"))
+        {
+            char          face[TINY_BUF],
+                          arch[TINY_BUF];
+            _server_char *sc;
+            uint8         i;
+
+            MALLOC(sc, sizeof(_server_char));
+            MALLOC_STRING(sc->name, value);
+
+            if (PHYSFS_readString(handle, buf, sizeof(buf)) < 0)
+            {
+                PHYSFS_close(handle);
+                LOG(LOG_FATAL, "Unexpected EOF!\n");
+            }
+
+            if (sscanf(buf, "%s %d %d %d %d %d %d",
+                       face, &sc->bar[0], &sc->bar[1], &sc->bar[2],
+                       &sc->bar_add[0], &sc->bar_add[1], &sc->bar_add[2]) != 7)
+            {
+                PHYSFS_close(handle);
+                LOG(LOG_FATAL, "Malformed hi line for definition %u: %s!\n", defn, buf);
+            }
+
+            if ((sc->pic_id = get_bmap_id(face)) != -1)
+            {
+                request_face(sc->pic_id);
+            }
+
+            /* 4 genders: male, female, hermaphrodite, neuter. */
+            for (i = 0; i <= 3; i++)
+            {
+                if (PHYSFS_readString(handle, buf, sizeof(buf)) < 0)
+                {
+                    PHYSFS_close(handle);
+                    LOG(LOG_FATAL, "Unexpected EOF!\n");
+                }
+
+                if (sscanf(buf, "%d %s %s", &sc->gender[i], arch, face) != 3)
+                {
+                    PHYSFS_close(handle);
+                    LOG(LOG_FATAL, "Malformed gender %u line for definition %u: %s!\n",
+                        i, defn, buf);
+                }
+
+                MALLOC_STRING(sc->char_arch[i], arch);
+
+                if ((sc->face_id[i] = get_bmap_id(face)) != -1)
+                {
+                    request_face(sc->face_id[i]);
+                }
+            }
+
+            /* Str Dex Con Int Wis Pow Cha */
+            if (PHYSFS_readString(handle, buf, sizeof(buf)) < 0)
+            {
+                PHYSFS_close(handle);
+                LOG(LOG_FATAL, "Unexpected EOF!\n");
+            }
+
+            if (sscanf(buf, "%d %d %d %d %d %d %d",
+                       &sc->stats[0], &sc->stats[1], &sc->stats[2],
+                       &sc->stats[3], &sc->stats[4], &sc->stats[5],
+                       &sc->stats[6]) != 7)
+            {
+                PHYSFS_close(handle);
+                LOG(LOG_FATAL, "Malformed stat line for definition %u: %s!\n", defn, buf);
+            }
+
+            /* 4 lines of description. */
+            for (i = 0; i <= 3; i++)
+            {
+                if (PHYSFS_readString(handle, buf, sizeof(buf)) < 0)
+                {
+                    PHYSFS_close(handle);
+                    LOG(LOG_FATAL, "Unexpected EOF!\n");
+                }
+
+                MALLOC_STRING(sc->desc[i], buf);
+            }
+
+            /* add this char template to list */
+            if (!first_server_char)
+            {
+                first_server_char = sc;
+            }
+            else
+            {
+                _server_char *sc_tmp = first_server_char;
+
+                while (sc_tmp->next)
+                {
+                     sc_tmp = sc_tmp->next;
+                }
+
+                sc_tmp->next = sc;
+                sc->prev = sc_tmp;
+            }
+        }
+        else if (!strcmp(key, "level"))
+        {
+            uint8 i;
+
+            server_level.level = atoi(value);
+
+            for (i = server_level.level; i > 0; i--)
+            {
+                if (PHYSFS_readString(handle, buf, sizeof(buf)) < 0)
+                {
+                    PHYSFS_close(handle);
+                    LOG(LOG_FATAL, "Unexpected EOF!\n");
+                }
+
+                if ((server_level.exp[i] = strtoul(buf, NULL, 16)) == ULONG_MAX)
+                {
+                    PHYSFS_close(handle);
+                    LOG(LOG_FATAL, "Malformed exp line for level %u: %s!\n", i, buf);
+                }
+            }
+
+            break;
+        }
+        else /* we close here... better we include later a fallback to login */
+        {
+            PHYSFS_close(handle);
+            LOG(LOG_FATAL, "Unrecognised key: %s!\n", buf);
+        }
+    }
+
+    /* TODO: Remove, just ugly. */
     if (first_server_char)
     {
         int g;
@@ -1136,8 +1158,11 @@ void load_settings(void)
             }
         }
     }
-}
 
+    /* Cleanup. */
+    PHYSFS_close(handle);
+    LOG(LOG_SYSTEM, "OK!\n");
+}
 
 /* TODO: This maintains 0.10 compatibility. The file format will be reworked for 0.11.0. */
 void load_spells(void)
