@@ -163,6 +163,8 @@ int attack_ob(object *target, object *hitter, object *hit_obj)
     hitter_tag = hitter->count;
     hitdam  = hit_obj->stats.dam;
 
+#if 0
+/* FIXME: Temporarily disabled as it cause frequent SIGSEGVs (line 65 of monster_behaviours.c). */
     if (hit_obj->type == ARROW &&
         target->type == MONSTER &&
         mob_can_see_obj(target, hitter->owner, MOB_DATA(target)->known_mobs) == 0)
@@ -172,6 +174,7 @@ int attack_ob(object *target, object *hitter, object *hit_obj)
             play_sound_map(hitter->map, hitter->x, hitter->y, SOUND_ARROW_HIT, SOUND_NORMAL);
             goto force_direct_hit;
         }
+#endif
 
     /* Fight Step 1: Get the random hit value */
     roll = random_roll(0, 100);
