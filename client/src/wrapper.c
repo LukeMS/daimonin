@@ -630,7 +630,7 @@ int strcasecmp(char *s1, char *s2)
 #endif
 
 /* Similar to fgets(). Reads the next line from handle into s (at most len - 1
- * characters), stopping when it reads \0, \n, or EOF. This terminating
+ * characters), stopping when it reads \0, \n, \r, or EOF. This terminating
  * character is replaced in s with \0. The return is the number of characters
  * read excluuding the terminator (so (PHYSFS_sint64)strlen(s)) or -1 on
  * error. */
@@ -663,6 +663,7 @@ PHYSFS_sint64 PHYSFS_readString(PHYSFS_File *handle, char *s, size_t len)
 
             if (c == '\0' ||
                 c == '\n' ||
+                c == '\r' ||
                 c == EOF)
             {
                 break;

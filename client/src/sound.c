@@ -59,93 +59,109 @@ static _sounds sounds = {0, NULL};
 static void musicDone(void); /* callback function for background music */
 static void sound_start_music(char *fname, int vol, int fade, int loop);
 
-/* Load the sounds file */
+/* TODO: This maintains 0.10 compatibility. The file format will be reworked for 0.11.0. */
 void load_sounds(void)
 {
 #ifdef INSTALL_SOUND
-    char    buf[64];
-    FILE    *stream;
-    int     state = 0;
-    char    name[32];
-    char    file[64];
-    int     type_count  = 0;
-    int     type_index  = -1;
-    int     sound_count = 0;
-    int     sound_index = -1;
+    PHYSFS_File *handle;
+    uint8        defn = 0;
+    char         buf[MEDIUM_BUF],
+                 name[TINY_BUF],
+                 file[TINY_BUF];
+    int          state = 0,
+                 type_count = 0,
+                 type_index = -1,
+                 sound_count = 0,
+                 sound_index = -1;
 
-    if (!(stream = fopen_wrapper(FILE_CLIENT_SOUNDS, "rb")))
+    /* Log what we're doing. */
+    LOG(LOG_SYSTEM, "Loading '%s'... ", FILE_CLIENT_SOUNDS);
+
+    /* Open the file for reading.*/
+    if (!(handle = PHYSFS_openRead(FILE_CLIENT_SOUNDS)))
     {
-        LOG(LOG_ERROR,"ERROR: Can't find file %s.\n", FILE_CLIENT_SOUNDS);
-        return;
+        LOG(LOG_FATAL, "FAILED (%s)!\n", PHYSFS_getLastError());
     }
-    while (fgets(buf, sizeof(buf), stream) != NULL)
-    {
-        // Strip trailing newline character(s) (allow for \r\n or \n)
-        buf[strcspn(buf, "\r\n")] = '\0';
 
-        if ((strlen(buf) == 0) || (buf[0] == '#'))
-            continue;
+    while (++defn)
+    {
+        do
+        {
+            if (PHYSFS_readString(handle, buf, sizeof(buf)) < 0)
+            {
+                PHYSFS_close(handle);
+                LOG(LOG_FATAL, "Unexpected EOF!\n");
+            }
+        }
+        while (buf[0] == '#');
 
         if (!strcmp(buf, "*end"))
+        {
             break;
+        }
 
         switch (state)
         {
-        case 0:
-            // Looking for start line
-            if (strncmp(buf, "*start", 6) == 0)
-            {
-                strtok(buf, "|"); // discard *start
-                sscanf(strtok(NULL, "|"), "%d", &type_count); // count of soundtypes
-                sounds.count = type_count;
+            /* Looking for start line. */
+            case 0:
+                if (!strncmp(buf, "*start", 6))
+                {
+                    strtok(buf, "|"); // discard *start
+                    sscanf(strtok(NULL, "|"), "%d", &type_count); // count of soundtypes
+                    sounds.count = type_count;
+                    MALLOC(sounds.types, type_count * sizeof(_soundtype));
+                    state++;
+                }
 
-                // Allocate memory
-                MALLOC(sounds.types, type_count * sizeof(_soundtype));
+                break;
 
-                state++;
-            }
-            break;
+            /* Looking for soundtype introducer. */
+            case 1:
+                if (type_count > 0 &&
+                    buf[0] == '*')
+                {
+                    type_count--;
+                    type_index++;
+                    sscanf(strtok(buf, "|"), "*%d", &sounds.types[type_index].id);
+                    strcpy(name, strtok(NULL, "|"));
+                    strtok(NULL, "|");  // discard prefix
+                    sscanf(strtok(NULL, "|"), "%d", &sound_count);
+                    sounds.types[type_index].count = sound_count;
+                    MALLOC_STRING(sounds.types[type_index].name, name);
+                    MALLOC(sounds.types[type_index].sounds, sound_count * sizeof(_sound)); // space for sounds
+                    sound_index = -1;
+                    state++;
+                }
 
-        case 1:
-            // Looking for soundtype introducer
-            if ((type_count > 0) && (buf[0] == '*'))
-            {
-                // New soundtype
-                type_count--;
-                type_index++;
-                sscanf(strtok(buf, "|"), "*%d", &sounds.types[type_index].id);
-                strcpy(name, strtok(NULL, "|"));
-                strtok(NULL, "|");  // discard prefix
-                sscanf(strtok(NULL, "|"), "%d", &sound_count);
-                sounds.types[type_index].count = sound_count;
-                MALLOC_STRING(sounds.types[type_index].name, name);
-                MALLOC(sounds.types[type_index].sounds, sound_count * sizeof(_sound)); // space for sounds
-                sound_index = -1;
-                state++;
-            }
-            break;
+                break;
 
-        case 2:
-            // Process sound
-            if ((sound_count > 0) && (buf[0] == '+'))
-            {
-                // Process sound
-                sound_count--;
-                sound_index++;
-                sscanf(strtok(buf, "|"), "+%d", &sounds.types[type_index].sounds[sound_index].id);
-                strcpy(name, strtok(NULL, "|"));
-                strcpy(file, strtok(NULL, "|"));
-                MALLOC_STRING(sounds.types[type_index].sounds[sound_index].name, name);
-                MALLOC_STRING(sounds.types[type_index].sounds[sound_index].file, file);
-            }
+            /* Process sound. */
+            case 2:
+                if (sound_count > 0 &&
+                    buf[0] == '+')
+                {
+                    sound_count--;
+                    sound_index++;
+                    sscanf(strtok(buf, "|"), "+%d", &sounds.types[type_index].sounds[sound_index].id);
+                    strcpy(name, strtok(NULL, "|"));
+                    strcpy(file, strtok(NULL, "|"));
+                    MALLOC_STRING(sounds.types[type_index].sounds[sound_index].name, name);
+                    MALLOC_STRING(sounds.types[type_index].sounds[sound_index].file, file);
+                }
 
-            if (sound_count == 0)
-                state--;            // Look for next soundtype
-            break;
+                // Look for next soundtype
+                if (sound_count == 0)
+                {
+                    state--;
+                }
+
+                break;
         }
     }
 
-    fclose(stream);
+    /* Cleanup. */
+    PHYSFS_close(handle);
+    LOG(LOG_SYSTEM, "OK!\n");
 #endif
 }
 
@@ -205,11 +221,10 @@ void sound_loadall(void)
     {
         for (j = 0; j < sounds.types[i].count; j++)
         {
-            const char *fname = sounds.types[i].sounds[j].file;
             char        buf[MEDIUM_BUF];
             SDL_RWops  *rw;
 
-            sprintf(buf, "%s%s", GetSfxDirectory(), fname);
+            sprintf(buf, "%s/%s", DIR_SOUNDS, sounds.types[i].sounds[j].file);
 
             if ((rw = PHYSFSRWOPS_openRead(buf)))
             {
@@ -218,8 +233,7 @@ void sound_loadall(void)
 
             if (!sounds.types[i].sounds[j].sound)
             {
-                LOG(LOG_ERROR, "sound_loadall: missing sound file %s\n",
-                    fname);
+                LOG(LOG_ERROR, "Missing sound file '%s'!\n", buf);
             }
         }
     }
