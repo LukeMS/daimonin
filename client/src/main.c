@@ -704,13 +704,21 @@ uint8 game_status_chain(void)
 
     if (GameStatus == GAME_STATUS_INIT)
     {
+        uint32 i;
+
         map_transfer_flag = 0;
         cpl.mark_count = -1;
         GameStatusSelect = GAME_STATUS_LOGIN_ACCOUNT;
         LoginInputStep = LOGIN_STEP_NOTHING;
         interface_mode = GUI_NPC_MODE_NO;
+
+        for (i = 0; i < bmaptype_table_size; i++)
+        {
+            FREE(bmaptype_table[i].name);
+            memset(&bmaptype_table[i], 0, sizeof(_bmaptype_table));
+        }
+
         bmaptype_table_size = 0;
-        memset(&bmaptype_table, 0, sizeof(_bmaptype_table) * BMAPTABLE);
         clear_group();
         map_udate_flag = 2;
         DeletePlayerLists();
