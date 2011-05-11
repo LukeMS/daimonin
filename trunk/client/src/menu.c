@@ -813,31 +813,6 @@ static void GetLocalBmaps(void)
     LOG(LOG_SYSTEM, "OK!\n");
 }
 
-/* in the setting files we have a list of chars templates
- * for char building. Delete this list here.
- */
-void delete_server_chars(void)
-{
-    _server_char   *tmp, *tmp1;
-
-    for (tmp1 = tmp = first_server_char; tmp1; tmp = tmp1)
-    {
-        tmp1 = tmp->next;
-        FREE(tmp->name);
-        FREE(tmp->desc[0]);
-        FREE(tmp->desc[1]);
-        FREE(tmp->desc[2]);
-        FREE(tmp->desc[3]);
-        FREE(tmp->char_arch[0]);
-        FREE(tmp->char_arch[1]);
-        FREE(tmp->char_arch[2]);
-        FREE(tmp->char_arch[3]);
-        FREE(tmp);
-    }
-    first_server_char = NULL;
-}
-
-
 /* find a face ID by name,
  * request the face (find it, load it or request it)
  * and return the ID
@@ -883,8 +858,6 @@ void load_settings(void)
     {
         LOG(LOG_FATAL, "FAILED (%s)!\n", PHYSFS_getLastError());
     }
-
-    delete_server_chars();
 
     while (++defn)
     {

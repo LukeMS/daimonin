@@ -141,7 +141,6 @@ extern void     do_npcdialog_input(void);
 
 
 extern int      read_anim_tmp(void);
-extern void     delete_server_chars(void);
 extern void     load_bmaps(void);
 extern void     load_settings(void);
 extern void     load_spells(void);
