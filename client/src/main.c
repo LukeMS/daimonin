@@ -90,8 +90,6 @@ uint16    endian_int16;   /* thats the 0x0201 short endian */
 
 struct gui_book_struct    *gui_interface_book;
 
-_bmaptype          *bmap_table[BMAPTABLE];
-
 int                 map_udate_flag, map_transfer_flag, map_redraw_flag;          /* update map area */
 int                 request_file_chain;
 
@@ -692,6 +690,8 @@ uint8 game_status_chain(void)
         GameStatusSelect = GAME_STATUS_LOGIN_ACCOUNT;
         LoginInputStep = LOGIN_STEP_NOTHING;
         interface_mode = GUI_NPC_MODE_NO;
+        bmaptype_table_size = 0;
+        memset(&bmaptype_table, 0, sizeof(_bmaptype_table) * BMAPTABLE);
         clear_group();
         map_udate_flag = 2;
         DeletePlayerLists();
@@ -929,7 +929,7 @@ uint8 game_status_chain(void)
         else if (request_file_chain == 13)
         {
             /* ok... now we check for bmap & anims processing... */
-            read_bmap_tmp();
+            load_bmaps();
             read_anim_tmp();
             sound_loadall();
             load_settings();
@@ -1765,12 +1765,10 @@ int main(int argc, char *argv[])
     ShowIntro("load bitmaps", 10);
     for (i = BITMAP_PROGRESS_BACK+1; i < BITMAP_MAX; i++) /* add later better error handling here*/
         load_bitmap(i);
-    ShowIntro("load keys", 60);
+    ShowIntro("load keys", 70);
     read_keybind_file();
-    ShowIntro("load mapdefs", 70);
+    ShowIntro("load mapdefs", 80);
     load_mapdef_dat();
-    ShowIntro("load picture data", 80);
-    read_bmaps_p0();
     ShowIntro(NULL, 100);
     sound_play_music("orchestral.ogg", options.music_volume, 0, -1, 0, MUSIC_MODE_DIRECT);
     sprite_init_system();

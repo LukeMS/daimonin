@@ -405,8 +405,7 @@ void SetupCmd(char *buf, int len)
             }
             else
             {
-                // ALWAYS update the bmaps to avoid bad data.
-                srv_client_files[SRV_CLIENT_BMAPS].status = SRV_CLIENT_STATUS_UPDATE;
+                srv_client_files[SRV_CLIENT_BMAPS].status = SRV_CLIENT_STATUS_OK;
                 srv_client_files[SRV_CLIENT_BMAPS].server_len = srv_client_files[SRV_CLIENT_BMAPS].len;
                 srv_client_files[SRV_CLIENT_BMAPS].server_crc = srv_client_files[SRV_CLIENT_BMAPS].crc;
             }

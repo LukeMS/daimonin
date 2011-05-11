@@ -61,17 +61,19 @@ extern _login_step LoginInputStep;
 
 #define BMAPTABLE 19001 /* prime nubmer for hash table */
 /* struct for out bmap data */
-typedef struct _bmaptype
-{
-    char               *name;
-    int                 num;
-    int                 len;
-    int                 pos;
-    unsigned int        crc;
-}
-_bmaptype;
 
-extern _bmaptype   *bmap_table[BMAPTABLE];
+typedef struct  _bmaptype_table
+{
+    char           *name;
+    int             pos;
+    int             len;
+    unsigned int    crc;
+}
+_bmaptype_table;
+
+_bmaptype_table bmaptype_table[BMAPTABLE];
+
+extern int              bmaptype_table_size;
 
 typedef struct _keymap
 {
@@ -108,19 +110,6 @@ _vimmsg;
 #define MAX_NROF_VIM 32
 
 extern _vimmsg vim[MAX_NROF_VIM];
-
-typedef struct  _bmaptype_table
-{
-    char           *name;
-    int             pos;
-    int             len;
-    unsigned int    crc;
-}
-_bmaptype_table;
-
-_bmaptype_table bmaptype_table[BMAPTABLE];
-
-extern int              bmaptype_table_size;
 
 enum
 {

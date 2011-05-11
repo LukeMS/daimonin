@@ -71,8 +71,6 @@
 #define DIR_SRV_FILES "srv_files"
 
 #define FILE_DAIMONIN_P0 "daimonin.p0"
-#define FILE_BMAPS_P0 "bmaps.p0"
-#define FILE_BMAPS_TMP "srv_files/bmaps.tmp"
 #define FILE_ANIMS_TMP "srv_files/anims.tmp"
 #define FILE_ANIMS_TMP2 "srv_files/newanims.tmp"
 #define FILE_CLIENT_SOUNDS "srv_files/client_sounds"
