@@ -346,6 +346,25 @@ static void QuerySrvClientFile(const char *filename, uint8 num);
 static void DeletePlayerLists(void)
 {
     int i;
+    _server_char *sc,
+                 *next = first_server_char;
+
+    while ((sc = next))
+    {
+        next = sc->next;
+        FREE(sc->name);
+        FREE(sc->desc[0]);
+        FREE(sc->desc[1]);
+        FREE(sc->desc[2]);
+        FREE(sc->desc[3]);
+        FREE(sc->char_arch[0]);
+        FREE(sc->char_arch[1]);
+        FREE(sc->char_arch[2]);
+        FREE(sc->char_arch[3]);
+        FREE(sc);
+    }
+
+    first_server_char = NULL;
 
     for (i = 0; i < FIRE_MODE_INIT; i++)
     {
