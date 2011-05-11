@@ -48,6 +48,8 @@ int                     quickslots_pos[MAX_QUICK_SLOTS][2]  =
         {17,1}, {50,1}, {83,1}, {116,1}, {149,1}, {182,1}, {215,1}, {248,1}
     };
 
+static void GetLocalBmaps(void);
+
 void do_console(int x, int y)
 {
     if (InputStringEscFlag == 1)
@@ -640,16 +642,9 @@ int blt_window_slider(_Sprite *slider, int maxlen, int winlen, int startoff, int
 
 int read_anim_tmp(void)
 {
-    FILE       *stream;
-    struct stat stat_bmap, stat_anim, stat_tmp;
-
-    /* if this fails, we have a urgent problem somewhere before */
-    if ((stream = fopen_wrapper(FILE_BMAPS_TMP, "rb")) == NULL)
-    {
-        LOG(LOG_FATAL, "read_anim_tmp:Error reading bmap.tmp for anim.tmp!\n");
-    }
-    fstat(fileno(stream), &stat_bmap);
-    fclose(stream);
+    FILE        *stream;
+    struct stat  stat_anim,
+                 stat_tmp;
 
     if ((stream = fopen_wrapper(FILE_CLIENT_ANIMS, "rb")) == NULL)
     {
@@ -666,9 +661,7 @@ int read_anim_tmp(void)
         /* our anim file must be newer as our default anim file */
         if (difftime(stat_tmp.st_mtime, stat_anim.st_mtime) > 0.0f)
         {
-            /* our anim file must be newer as our bmaps.tmp */
-            if (difftime(stat_tmp.st_mtime, stat_bmap.st_mtime) > 0.0f)
-                return load_anim_tmp(); /* all fine - load file */
+            return load_anim_tmp(); /* all fine - load file */
         }
     }
 
@@ -677,245 +670,148 @@ int read_anim_tmp(void)
     return load_anim_tmp(); /* all fine - load file */
 }
 
-/* after we tested and/or created bmaps.p0 - load the data from it */
-static void load_bmaps_p0(void)
+void load_bmaps(void)
 {
-    char    buf[LARGE_BUF];
-    char    name[LARGE_BUF];
-    int     len, pos, num;
-    unsigned int crc;
-    _bmaptype  *at;
-    FILE       *fbmap;
+    PHYSFS_File *handle;
+    char         buf[MEDIUM_BUF];
+    int          i = 0;
 
-    /* clear bmap hash table */
-    memset((void *) bmap_table, 0, BMAPTABLE * sizeof(_bmaptype *));
-
-    /* try to open bmaps_p0 file */
-    if ((fbmap = fopen_wrapper(FILE_BMAPS_P0, "rb")) == NULL)
+    if (!PHYSFS_exists(FILE_CLIENT_BMAPS))
     {
-        unlink(FILE_BMAPS_P0);
-        LOG(LOG_FATAL, "FATAL: Error loading bmaps.p0!\n");
-    }
-    while (fgets(buf, LARGE_BUF - 1, fbmap) != NULL)
-    {
-        sscanf(buf, "%d %d %x %d %s", &num, &pos, &crc, &len, name);
+       LOG(LOG_SYSTEM, "Could not find '%s'. This means that the server will not send images so all images must be sourced locally!\n",
+           FILE_CLIENT_BMAPS);
+       GetLocalBmaps();
 
-        MALLOC(at, sizeof(_bmaptype));
-        MALLOC_STRING(at->name, name);
-        at->crc = crc;
-        at->num = num;
-        at->len = len;
-        at->pos = pos;
-        add_bmap(at);
-        /*LOG(LOG_DEBUG,"%d %d %d %x >%s<\n", num, pos, len, crc, name);*/
-    }
-    fclose(fbmap);
-}
-
-
-/* read and/or create the bmaps.p0 file out of the
- * daimonin.p0 file
- */
-void read_bmaps_p0(void)
-{
-    FILE   *fbmap, *fpic;
-    unsigned char *temp_buf;
-    char *cp;
-    int     bufsize, len, num, pos;
-    unsigned int crc;
-    char   buf[LARGE_BUF], line_buf[256];
-
-    if ((fpic = fopen_wrapper(FILE_DAIMONIN_P0, "rb")) == NULL)
-    {
-        unlink(FILE_BMAPS_P0);
-        LOG(LOG_FATAL, "FATAL: Can't find daimonin.p0 file!\n");
+       return;
     }
 
-    if ((fbmap = fopen_wrapper(FILE_BMAPS_P0, "w")) == NULL)
+    /* Log what we're doing. */
+    LOG(LOG_SYSTEM, "Loading '%s'... ", FILE_CLIENT_BMAPS);
+
+    /* Open the file for reading. */
+    if (!(handle = PHYSFS_openRead(FILE_CLIENT_BMAPS)))
     {
-        fclose(fbmap);
-        unlink(FILE_BMAPS_P0);
-        LOG(LOG_FATAL, "FATAL: Can't create bmaps.p0 file!\n");
+        LOG(LOG_FATAL, "FAILED (%s)!\n", PHYSFS_getLastError());
     }
 
-    bufsize = 24 * 1024;
-    MALLOC(temp_buf, bufsize);
-
-    while (fgets(buf, LARGE_BUF - 1, fpic) != NULL)
+    while (PHYSFS_readString(handle, buf, sizeof(buf)) > 0)
     {
-        size_t dummy; // purely to suppress GCC's warn_unused_result warning
+        char         name[TINY_BUF];
+        int          len;
+        unsigned int crc;
 
-        if (strncmp(buf, "IMAGE ", 6) != 0)
+        if (sscanf(buf, "%x %x %s", &len, &crc, name) != 3)
         {
-            fclose(fbmap);
-            fclose(fpic);
-            unlink(FILE_BMAPS_P0);
-            LOG(LOG_FATAL, "read_client_images:Bad image line - not IMAGE, instead\n%s", buf);
+            PHYSFS_close(handle);
+            LOG(LOG_FATAL, "FAILED (Malformed string: >%s<)!\n", buf);
         }
 
-        num = atoi(buf + 6);
-        /* Skip accross the number data */
-        for (cp = buf + 6; *cp != '\0' && *cp != ' '; cp++)
-            ;
-        len = atoi(cp);
-
-        pos = (int) ftell(fpic);
-
-        if (len > bufsize) /* dynamic buffer adjustment */
-        {
-            FREE(temp_buf);
-            /* we assume thats this is nonsense */
-            if (len > 128 * 1024)
-            {
-                fclose(fbmap);
-                fclose(fpic);
-                unlink(FILE_BMAPS_P0);
-                LOG(LOG_FATAL, "read_client_images:Size of picture out of bounds!(len:%d)(pos:%d)\n", len, pos);
-            }
-
-            bufsize = len;
-            MALLOC(temp_buf, bufsize);
-        }
-
-        dummy = fread(temp_buf, 1, len, fpic);
-        crc = crc32(1L, temp_buf, len);
-        /* now we got all we needed! */
-        sprintf(line_buf, "%d %d %x %s", num, pos, crc, cp);
-        fputs(line_buf, fbmap);
-        /*      LOG(LOG_DEBUG,"FOUND: %s\n", temp_buf);       */
-    }
-
-
-    FREE(temp_buf);
-    fclose(fbmap);
-    fclose(fpic);
-    load_bmaps_p0();
-    return;
-}
-
-void delete_bmap_tmp(void)
-{
-    int i;
-
-    bmaptype_table_size = 0;
-    for (i = 0; i < BMAPTABLE; i++)
-    {
-        if (bmaptype_table[i].name)
-            FREE(bmaptype_table[i].name);
-        bmaptype_table[i].name = NULL;
-    }
-}
-
-static int load_bmap_tmp(void)
-{
-    FILE   *stream;
-    char    buf[LARGE_BUF], name[LARGE_BUF];
-    int     i = 0, len, pos;
-    unsigned int crc;
-
-    delete_bmap_tmp();
-    if ((stream = fopen_wrapper(FILE_BMAPS_TMP, "rt")) == NULL)
-    {
-        LOG(LOG_FATAL, "bmaptype_table(): error open file <bmap.tmp>\n");
-    }
-    while (fgets(buf, LARGE_BUF - 1, stream) != NULL)
-    {
-        sscanf(buf, "%d %d %x %s\n", &pos, &len, &crc, name);
-        bmaptype_table[i].crc = crc;
-        bmaptype_table[i].len = len;
-        bmaptype_table[i].pos = pos;
         MALLOC_STRING(bmaptype_table[i].name, name);
-        i++;
+        bmaptype_table[i].pos = -1; // not local, updated in GetLocalBmaps()
+        bmaptype_table[i].len = len;
+        bmaptype_table[i].crc = crc;
+        bmaptype_table_size = ++i;
     }
-    bmaptype_table_size = i;
-    fclose(stream);
-    return 0;
+
+    /* Cleanup. */
+    PHYSFS_close(handle);
+    LOG(LOG_SYSTEM, "OK!\n");
+    GetLocalBmaps();
 }
 
-
-int read_bmap_tmp(void)
+static void GetLocalBmaps(void)
 {
-    FILE       *stream, *fbmap0;
-    char        buf[LARGE_BUF], name[LARGE_BUF];
-    struct stat stat_bmap, stat_tmp, stat_bp0;
-    int len;
-    unsigned int crc;
-    _bmaptype  *at;
+    PHYSFS_File *handle;
+    char         buf[MEDIUM_BUF];
+    int          i = 0;
 
-    if ((stream = fopen_wrapper(FILE_CLIENT_BMAPS, "rb")) == NULL)
+    /* Check for existance of local images file. */
+    if (!PHYSFS_exists(FILE_DAIMONIN_P0))
     {
-        /* we can't make bmaps.tmp without this file */
-        unlink(FILE_BMAPS_TMP);
-        return 1;
-    }
-    fstat(fileno(stream), &stat_bmap);
-    fclose(stream);
+       /* If it doesn't exist and the server is not sending us images, give up.
+        * TODO: We should print a client message and go back to server select
+        * rather than exit the client. */
+       if (bmaptype_table_size == 0)
+       {
+           LOG(LOG_FATAL, "Could not find '%s'!\n", FILE_DAIMONIN_P0);
+       }
 
-    if ((stream = fopen_wrapper(FILE_BMAPS_P0, "rb")) == NULL)
-    {
-        /* we can't make bmaps.tmp without this file */
-        unlink(FILE_BMAPS_TMP);
-        return 1;
-    }
-    fstat(fileno(stream), &stat_bp0);
-    fclose(stream);
+       LOG(LOG_SYSTEM, "Could not find '%s'. This means all images will need to be requested from the server!\n",
+           FILE_DAIMONIN_P0);
 
-    if ((stream = fopen_wrapper(FILE_BMAPS_TMP, "rb")) == NULL)
-        goto create_bmap_tmp;
-    fstat(fileno(stream), &stat_tmp);
-    fclose(stream);
-
-    /* ok - client_bmap & bmaps.p0 are there - now check
-     * our bmap_tmp is newer - is not newer as both, we
-     * create it new - then it is newer.
-     */
-
-    if (difftime(stat_tmp.st_mtime, stat_bmap.st_mtime) > 0.0f)
-    {
-        if (difftime(stat_tmp.st_mtime, stat_bp0.st_mtime) > 0.0f)
-            return load_bmap_tmp(); /* all fine */
+       return;
     }
 
-create_bmap_tmp:
-    unlink(FILE_BMAPS_TMP);
+    /* Log what we're doing. */
+    LOG(LOG_SYSTEM, "Loading '%s'... ", FILE_DAIMONIN_P0);
 
-    /* NOW we are sure... we must create us a new bmaps.tmp */
-    if ((stream = fopen_wrapper(FILE_CLIENT_BMAPS, "rb")) != NULL)
+    /* Open the file for reading. */
+    if (!(handle = PHYSFS_openRead(FILE_DAIMONIN_P0)))
     {
-        /* we can use text mode here, its local */
-        if ((fbmap0 = fopen_wrapper(FILE_BMAPS_TMP, "wt")) != NULL)
+        LOG(LOG_FATAL, "FAILED (%s)!\n", PHYSFS_getLastError());
+    }
+
+    while (PHYSFS_readString(handle, buf, sizeof(buf)) > 0)
+    {
+        char          *cp = buf + 6,
+                      *name;
+        unsigned char *buf_tmp;
+        int            pos,
+                       len;
+        unsigned int   crc;
+
+        if (strncmp(buf, "IMAGE ", 6))
         {
-            /* read in the bmaps from the server, check with the
-                     * loaded bmap table (from bmaps.p0) and create with
-                     * this information the bmaps.tmp file.
-                     */
-            while (fgets(buf, LARGE_BUF - 1, stream) != NULL)
-            {
-                sscanf(buf, "%x %x %s", &len, &crc, name);
-                at = find_bmap(name);
-
-                /* now we can check, our local file package has
-                         * the right png - if not, we mark this pictures
-                         * as "in cache". We don't check it here now -
-                         * that will happens at runtime.
-                         * That can change when we include later a forbidden
-                         * flag in the server (no face send) - then we need
-                         * to break and upddate the picture and/or check the cache.
-                         */
-                /* position -1 mark "not i the daimonin.p0 file */
-                if (!at || at->len != len || at->crc != crc) /* is different or not there! */
-                    sprintf(buf, "-1 %d %x %s\n", len, crc, name);
-                else /* we have it */
-                    sprintf(buf, "%d %d %x %s\n", at->pos, len, crc, name);
-                fputs(buf, fbmap0);
-            }
-            fclose(fbmap0);
+            PHYSFS_close(handle);
+            LOG(LOG_FATAL, "FAILED (Bad image line: >%s<)!\n", buf);
         }
-        fclose(stream);
-    }
-    return load_bmap_tmp(); /* all fine */
-}
 
+        /* Skip accross the number data, which we don't even use any more. */
+        while (isdigit(*cp))
+        {
+            cp++;
+        }
+
+        pos = (int)PHYSFS_tell(handle);
+        len = atoi(++cp);
+        MALLOC(buf_tmp, len);
+
+        if (PHYSFS_read(handle, buf_tmp, 1, len) < len)
+        {
+            PHYSFS_close(handle);
+            FREE(buf_tmp);
+            LOG(LOG_FATAL, "FAILED (%s)!\n", PHYSFS_getLastError());
+        }
+
+        crc = crc32(1L, buf_tmp, len);
+        FREE(buf_tmp);
+
+        /* Skip accross the length data. */
+        while (isdigit(*cp))
+        {
+            cp++;
+        }
+
+        name = cp + 1;
+
+        /* If we have an image which the server doesn't have, ignore it. */
+        if ((i = get_bmap_id(name)) == -1)
+        {
+            continue;
+        }
+        /* Only if our image and the server's are identical, update pos to
+         * point to the local one. */
+        else if (bmaptype_table[i].len == len &&
+                 bmaptype_table[i].crc == crc)
+        {
+            bmaptype_table[i].pos = pos;
+        }
+    }
+
+    /* Cleanup. */
+    PHYSFS_close(handle);
+    LOG(LOG_SYSTEM, "OK!\n");
+}
 
 /* in the setting files we have a list of chars templates
  * for char building. Delete this list here.
