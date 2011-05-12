@@ -829,7 +829,7 @@ static void face_flag_extension(int pnum, char *buf)
         if ((i = get_bmap_id(fname)) == -1)
         {
             i = 0;
-            LOG(LOG_MSG, "%s/face_flag_extension(): %s could not be found in bmaptype_table!\n",
+            LOG(LOG_MSG, "%s/face_flag_extension(): %s could not be found in bmap!\n",
                 __FILE__, fname);
         }
 
@@ -864,7 +864,7 @@ static void face_flag_extension(int pnum, char *buf)
         if ((i = get_bmap_id(fname)) == -1)
         {
            i = 0;
-           LOG(LOG_MSG, "%s/face_flag_extension(): %s could not be found in bmaptype_table!\n",
+           LOG(LOG_MSG, "%s/face_flag_extension(): %s could not be found in bmap!\n",
                 __FILE__, fname);
         }
 
@@ -1010,11 +1010,11 @@ static int load_picture_from_pack(int num)
     if ((stream = fopen_wrapper(FILE_DAIMONIN_P0, "rb")) == NULL)
         return 1;
 
-    lseek(fileno(stream), bmaptype_table[num].pos, SEEK_SET);
+    lseek(fileno(stream), bmap[num].pos, SEEK_SET);
 
-    MALLOC(pbuf, bmaptype_table[num].len);
-    dummy = fread(pbuf, bmaptype_table[num].len, 1, stream);
-    rwop = SDL_RWFromMem(pbuf, bmaptype_table[num].len);
+    MALLOC(pbuf, bmap[num].len);
+    dummy = fread(pbuf, bmap[num].len, 1, stream);
+    rwop = SDL_RWFromMem(pbuf, bmap[num].len);
     FaceList[num].sprite = sprite_tryload_file(NULL, 0, rwop);
 
     if (FaceList[num].sprite)
@@ -1044,16 +1044,16 @@ int request_face(int pnum)
     }
 
     /* Is the facenum too big? */
-    if (num >= bmaptype_table_size)
+    if (num >= bmap_size)
     {
         LOG(LOG_ERROR, "Image ID too big (%d %d)\n",
-            num, bmaptype_table_size);
+            num, bmap_size);
 
         return 0;
     }
 
     /* Check this name in DIR_GFX_USER. Perhaps we have a custom face here. */
-    sprintf(buf, "%s/%s.png", DIR_GFX_USER, bmaptype_table[num].name);
+    sprintf(buf, "%s/%s.png", DIR_GFX_USER, bmap[num].name);
 
     if ((handle = PHYSFS_openRead(buf)))
     {
@@ -1109,11 +1109,11 @@ int request_face(int pnum)
 
     /* ok - at this point we hook in our client stored png lib. */
     /* Best case - we have it in daimonin.p0! */
-    if (bmaptype_table[num].pos != -1)
+    if (bmap[num].pos != -1)
     {
-        sprintf(buf, "%s.png", bmaptype_table[num].name);
+        sprintf(buf, "%s.png", bmap[num].name);
         MALLOC_STRING(FaceList[num].name, buf);
-        FaceList[num].checksum = bmaptype_table[num].crc;
+        FaceList[num].checksum = bmap[num].crc;
         load_picture_from_pack(num);
     }
     /* Check client /cache folder. If it's not there, finish_face_cmd() will
@@ -1121,7 +1121,7 @@ int request_face(int pnum)
     else
     {
         FaceList[num].flags |= FACE_REQUESTED;
-        finish_face_cmd(num, bmaptype_table[num].crc, bmaptype_table[num].name);
+        finish_face_cmd(num, bmap[num].crc, bmap[num].name);
     }
 
     return 1;

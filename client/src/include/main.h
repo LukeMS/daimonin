@@ -62,18 +62,17 @@ extern _login_step LoginInputStep;
 #define BMAPTABLE 19001 /* prime nubmer for hash table */
 /* struct for out bmap data */
 
-typedef struct  _bmaptype_table
+typedef struct bmap_t
 {
-    char           *name;
-    int             pos;
-    int             len;
-    unsigned int    crc;
+    char   *name;
+    int     pos;
+    int     len;
+    uint32  crc;
 }
-_bmaptype_table;
+bmap_t;
 
-_bmaptype_table bmaptype_table[BMAPTABLE];
-
-extern int              bmaptype_table_size;
+extern bmap_t bmap[BMAPTABLE];
+extern int    bmap_size;
 
 typedef struct _keymap
 {

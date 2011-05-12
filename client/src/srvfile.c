@@ -506,11 +506,11 @@ static void LoadBmaps(void)
             LOG(LOG_FATAL, "FAILED (Malformed string: >%s<)!\n", buf);
         }
 
-        MALLOC_STRING(bmaptype_table[i].name, name);
-        bmaptype_table[i].pos = -1; // not local, updated in CheckLocalBmaps()
-        bmaptype_table[i].len = len;
-        bmaptype_table[i].crc = crc;
-        bmaptype_table_size = ++i;
+        MALLOC_STRING(bmap[i].name, name);
+        bmap[i].pos = -1; // not local, updated in CheckLocalBmaps()
+        bmap[i].len = len;
+        bmap[i].crc = crc;
+        bmap_size = ++i;
     }
 
     /* Cleanup. */
@@ -531,7 +531,7 @@ static void CheckLocalBmaps(void)
        /* If it doesn't exist and the server is not sending us images, give up.
         * TODO: We should print a client message and go back to server select
         * rather than exit the client. */
-       if (bmaptype_table_size == 0)
+       if (bmap_size == 0)
        {
            LOG(LOG_FATAL, "Could not find '%s'!\n", FILE_DAIMONIN_P0);
        }
@@ -601,10 +601,10 @@ static void CheckLocalBmaps(void)
         }
         /* Only if our image and the server's are identical, update pos to
          * point to the local one. */
-        else if (bmaptype_table[i].len == len &&
-                 bmaptype_table[i].crc == crc)
+        else if (bmap[i].len == len &&
+                 bmap[i].crc == crc)
         {
-            bmaptype_table[i].pos = pos;
+            bmap[i].pos = pos;
         }
     }
 

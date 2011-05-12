@@ -49,7 +49,9 @@ static uint8      newplayer = 0;
 int                    interface_mode;
 
 int                 debug_layer[MAXFACES];
-int                 bmaptype_table_size;
+
+bmap_t bmap[BMAPTABLE];
+int bmap_size;
 
 struct _options     options;
 Uint32              videoflags_full, videoflags_win;
@@ -400,7 +402,7 @@ void init_game_data(void)
 
     memset(animcmd, 0, sizeof(animcmd));
     memset(animation, 0, sizeof(animation));
-    memset(bmaptype_table, 0, sizeof(bmaptype_table));
+    memset(bmap, 0, sizeof(bmap));
     ToggleScreenFlag = 0;
     KeyScanFlag = 0;
     memset(&fire_mode_tab, 0, sizeof(fire_mode_tab));
@@ -710,13 +712,13 @@ uint8 game_status_chain(void)
         LoginInputStep = LOGIN_STEP_NOTHING;
         interface_mode = GUI_NPC_MODE_NO;
 
-        for (i = 0; i < bmaptype_table_size; i++)
+        for (i = 0; i < bmap_size; i++)
         {
-            FREE(bmaptype_table[i].name);
-            memset(&bmaptype_table[i], 0, sizeof(_bmaptype_table));
+            FREE(bmap[i].name);
+            memset(&bmap[i], 0, sizeof(bmap_t));
         }
 
-        bmaptype_table_size = 0;
+        bmap_size = 0;
         anim_init();
         clear_group();
         map_udate_flag = 2;

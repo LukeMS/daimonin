@@ -645,12 +645,12 @@ int blt_window_slider(_Sprite *slider, int maxlen, int winlen, int startoff, int
 int get_bmap_id(char *name)
 {
     int l = 0,
-        r = bmaptype_table_size - 1,
+        r = bmap_size - 1,
         x = r / 2;
 
     for (; r >= l; x = (l + r) / 2)
     {
-        int diff = strcmp(name, bmaptype_table[x].name);
+        int diff = strcmp(name, bmap[x].name);
 
         if (diff < 0)
         {
