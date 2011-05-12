@@ -101,6 +101,7 @@ typedef signed char     sint8;
 #include <widget.h>
 #include <physfs.h>
 #include <physfsrwops.h>
+#include <srvfile.h>
 
 /* some older physfs libs need that */
 #ifndef PHYSFS_File

@@ -111,30 +111,6 @@ _vimmsg;
 
 extern _vimmsg vim[MAX_NROF_VIM];
 
-enum
-{
-    SRV_CLIENT_STATUS_OK,
-    SRV_CLIENT_STATUS_UPDATE
-};
-
-#define SRV_CLIENT_FLAG_BMAP 1
-#define SRV_CLIENT_FLAG_ANIM 2
-#define SRV_CLIENT_FLAG_SETTING 4
-#define SRV_CLIENT_FLAG_SKILL 8
-#define SRV_CLIENT_FLAG_SPELL 16
-#define SRV_CLIENT_FLAG_SOUND 32
-
-typedef struct _srv_client_files
-{
-    int                         status;                     /* is set from setup exchange */
-    int                         len;
-    uint32                      crc;
-    int                         server_len;
-    uint32                      server_crc;
-}
-_srv_client_files;
-
-extern _srv_client_files    srv_client_files[SRV_CLIENT_FILES];
 extern  Uint32              sdl_dgreen, sdl_dred, sdl_gray1, sdl_gray2, sdl_gray3, sdl_gray4;
 extern int                  mb_clicked;
 

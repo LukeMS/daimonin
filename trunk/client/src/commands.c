@@ -86,9 +86,6 @@ struct CmdMapping commands[]  =
 
 #define NCOMMANDS (sizeof(commands)/sizeof(struct CmdMapping))
 
-static void SaveDataCmdFile(const char *filename, uint8 num,
-                            unsigned char *data, int len);
-
 /* process all sc commands */
 void DoClient(void)
 {
@@ -305,23 +302,22 @@ void SetupCmd(char *buf, int len)
             {
                 char   *cp;
 
-                srv_client_files[SRV_CLIENT_SKILLS].status = SRV_CLIENT_STATUS_UPDATE;
                 for (cp = param; *cp != 0; cp++)
                 {
                     if (*cp == '|')
                     {
                         *cp = 0;
-                        srv_client_files[SRV_CLIENT_SKILLS].server_len = atoi(param);
-                        srv_client_files[SRV_CLIENT_SKILLS].server_crc = strtoul(cp + 1, NULL, 16);
+                        srvfile_set_status(SRV_CLIENT_SKILLS,
+                                           SRVFILE_STATUS_UPDATE, atoi(param),
+                                           strtoul(cp + 1, NULL, 16));
+
                         break;
                     }
                 }
             }
             else
             {
-                srv_client_files[SRV_CLIENT_SKILLS].status = SRV_CLIENT_STATUS_OK;
-                srv_client_files[SRV_CLIENT_SKILLS].server_len = srv_client_files[SRV_CLIENT_SKILLS].len;
-                srv_client_files[SRV_CLIENT_SKILLS].server_crc = srv_client_files[SRV_CLIENT_SKILLS].crc;
+                srvfile_set_status(SRV_CLIENT_SKILLS, SRVFILE_STATUS_OK, 0, 0);
             }
         }
         else if (!strcmp(cmd, "spf"))
@@ -334,23 +330,22 @@ void SetupCmd(char *buf, int len)
             {
                 char   *cp;
 
-                srv_client_files[SRV_CLIENT_SPELLS].status = SRV_CLIENT_STATUS_UPDATE;
                 for (cp = param; *cp != 0; cp++)
                 {
                     if (*cp == '|')
                     {
                         *cp = 0;
-                        srv_client_files[SRV_CLIENT_SPELLS].server_len = atoi(param);
-                        srv_client_files[SRV_CLIENT_SPELLS].server_crc = strtoul(cp + 1, NULL, 16);
+                        srvfile_set_status(SRV_CLIENT_SPELLS,
+                                           SRVFILE_STATUS_UPDATE, atoi(param),
+                                           strtoul(cp + 1, NULL, 16));
+
                         break;
                     }
                 }
             }
             else
             {
-                srv_client_files[SRV_CLIENT_SPELLS].status = SRV_CLIENT_STATUS_OK;
-                srv_client_files[SRV_CLIENT_SPELLS].server_len = srv_client_files[SRV_CLIENT_SPELLS].len;
-                srv_client_files[SRV_CLIENT_SPELLS].server_crc = srv_client_files[SRV_CLIENT_SPELLS].crc;
+                srvfile_set_status(SRV_CLIENT_SPELLS, SRVFILE_STATUS_OK, 0, 0);
             }
         }
         else if (!strcmp(cmd, "stf"))
@@ -363,23 +358,22 @@ void SetupCmd(char *buf, int len)
             {
                 char   *cp;
 
-                srv_client_files[SRV_CLIENT_SETTINGS].status = SRV_CLIENT_STATUS_UPDATE;
                 for (cp = param; *cp != 0; cp++)
                 {
                     if (*cp == '|')
                     {
                         *cp = 0;
-                        srv_client_files[SRV_CLIENT_SETTINGS].server_len = atoi(param);
-                        srv_client_files[SRV_CLIENT_SETTINGS].server_crc = strtoul(cp + 1, NULL, 16);
+                        srvfile_set_status(SRV_CLIENT_SETTINGS,
+                                           SRVFILE_STATUS_UPDATE, atoi(param),
+                                           strtoul(cp + 1, NULL, 16));
+
                         break;
                     }
                 }
             }
             else
             {
-                srv_client_files[SRV_CLIENT_SETTINGS].status = SRV_CLIENT_STATUS_OK;
-                srv_client_files[SRV_CLIENT_SETTINGS].server_len = srv_client_files[SRV_CLIENT_SETTINGS].len;
-                srv_client_files[SRV_CLIENT_SETTINGS].server_crc = srv_client_files[SRV_CLIENT_SETTINGS].crc;
+                srvfile_set_status(SRV_CLIENT_SETTINGS, SRVFILE_STATUS_OK, 0, 0);
             }
         }
         else if (!strcmp(cmd, "bpf"))
@@ -391,23 +385,23 @@ void SetupCmd(char *buf, int len)
             else if (strcmp(param, "OK"))
             {
                 char   *cp;
-                srv_client_files[SRV_CLIENT_BMAPS].status = SRV_CLIENT_STATUS_UPDATE;
+
                 for (cp = param; *cp != 0; cp++)
                 {
                     if (*cp == '|')
                     {
                         *cp = 0;
-                        srv_client_files[SRV_CLIENT_BMAPS].server_len = atoi(param);
-                        srv_client_files[SRV_CLIENT_BMAPS].server_crc = strtoul(cp + 1, NULL, 16);
+                        srvfile_set_status(SRV_CLIENT_BMAPS,
+                                           SRVFILE_STATUS_UPDATE, atoi(param),
+                                           strtoul(cp + 1, NULL, 16));
+
                         break;
                     }
                 }
             }
             else
             {
-                srv_client_files[SRV_CLIENT_BMAPS].status = SRV_CLIENT_STATUS_OK;
-                srv_client_files[SRV_CLIENT_BMAPS].server_len = srv_client_files[SRV_CLIENT_BMAPS].len;
-                srv_client_files[SRV_CLIENT_BMAPS].server_crc = srv_client_files[SRV_CLIENT_BMAPS].crc;
+                srvfile_set_status(SRV_CLIENT_BMAPS, SRVFILE_STATUS_OK, 0, 0);
             }
         }
         else if (!strcmp(cmd, "amf"))
@@ -420,23 +414,22 @@ void SetupCmd(char *buf, int len)
             {
                 char   *cp;
 
-                srv_client_files[SRV_CLIENT_ANIMS].status = SRV_CLIENT_STATUS_UPDATE;
                 for (cp = param; *cp != 0; cp++)
                 {
                     if (*cp == '|')
                     {
                         *cp = 0;
-                        srv_client_files[SRV_CLIENT_ANIMS].server_len = atoi(param);
-                        srv_client_files[SRV_CLIENT_ANIMS].server_crc = strtoul(cp + 1, NULL, 16);
+                        srvfile_set_status(SRV_CLIENT_ANIMS,
+                                           SRVFILE_STATUS_UPDATE, atoi(param),
+                                           strtoul(cp + 1, NULL, 16));
+
                         break;
                     }
                 }
             }
             else
             {
-                srv_client_files[SRV_CLIENT_ANIMS].status = SRV_CLIENT_STATUS_OK;
-                srv_client_files[SRV_CLIENT_ANIMS].server_len = srv_client_files[SRV_CLIENT_ANIMS].len;
-                srv_client_files[SRV_CLIENT_ANIMS].server_crc = srv_client_files[SRV_CLIENT_ANIMS].crc;
+                srvfile_set_status(SRV_CLIENT_ANIMS, SRVFILE_STATUS_OK, 0, 0);
             }
         }
         else if (!strcmp(cmd, "sn")) /* sound */
@@ -449,23 +442,22 @@ void SetupCmd(char *buf, int len)
             {
                 char   *cp;
 
-                srv_client_files[SRV_CLIENT_SOUNDS].status = SRV_CLIENT_STATUS_UPDATE;
                 for (cp = param; *cp != 0; cp++)
                 {
                     if (*cp == '|')
                     {
                         *cp = 0;
-                        srv_client_files[SRV_CLIENT_SOUNDS].server_len = atoi(param);
-                        srv_client_files[SRV_CLIENT_SOUNDS].server_crc = strtoul(cp + 1, NULL, 16);
+                        srvfile_set_status(SRV_CLIENT_SOUNDS,
+                                           SRVFILE_STATUS_UPDATE, atoi(param),
+                                           strtoul(cp + 1, NULL, 16));
+
                         break;
                     }
                 }
             }
             else
             {
-                srv_client_files[SRV_CLIENT_SOUNDS].status = SRV_CLIENT_STATUS_OK;
-                srv_client_files[SRV_CLIENT_SOUNDS].server_len = srv_client_files[SRV_CLIENT_SOUNDS].len;
-                srv_client_files[SRV_CLIENT_SOUNDS].server_crc = srv_client_files[SRV_CLIENT_SOUNDS].crc;
+                srvfile_set_status(SRV_CLIENT_SOUNDS, SRVFILE_STATUS_OK, 0, 0);
             }
         }
         else if (!strcmp(cmd, "mz")) /* mapsize */
@@ -2124,7 +2116,7 @@ void DataCmd(char *data, int len)
                 len = dest_len;
             }
             request_file_chain++;
-            SaveDataCmdFile(FILE_CLIENT_SOUNDS, SRV_CLIENT_SOUNDS, (unsigned char *)data, len);
+            srvfile_save(FILE_SRV_SOUNDS, SRV_CLIENT_SOUNDS, (unsigned char *)data, len);
             break;
         case DATA_CMD_SKILL_LIST:
             /* this is a server send skill list */
@@ -2137,7 +2129,7 @@ void DataCmd(char *data, int len)
                 len = dest_len;
             }
             request_file_chain++;
-            SaveDataCmdFile(FILE_CLIENT_SKILLS, SRV_CLIENT_SKILLS, (unsigned char *)data, len);
+            srvfile_save(FILE_SRV_SKILLS, SRV_CLIENT_SKILLS, (unsigned char *)data, len);
             break;
         case DATA_CMD_SPELL_LIST:
             if (data_comp)
@@ -2148,7 +2140,7 @@ void DataCmd(char *data, int len)
                 len = dest_len;
             }
             request_file_chain++;
-            SaveDataCmdFile(FILE_CLIENT_SPELLS, SRV_CLIENT_SPELLS, (unsigned char *)data, len);
+            srvfile_save(FILE_SRV_SPELLS, SRV_CLIENT_SPELLS, (unsigned char *)data, len);
             break;
         case DATA_CMD_SETTINGS_LIST:
             if (data_comp)
@@ -2159,7 +2151,7 @@ void DataCmd(char *data, int len)
                 len = dest_len;
             }
             request_file_chain++;
-            SaveDataCmdFile(FILE_CLIENT_SETTINGS, SRV_CLIENT_SETTINGS, (unsigned char *)data, len);
+            srvfile_save(FILE_SRV_SETTINGS, SRV_CLIENT_SETTINGS, (unsigned char *)data, len);
             break;
 
         case DATA_CMD_BMAP_LIST:
@@ -2171,7 +2163,7 @@ void DataCmd(char *data, int len)
                 len = dest_len;
             }
             request_file_chain++;
-            SaveDataCmdFile(FILE_CLIENT_BMAPS, SRV_CLIENT_BMAPS, (unsigned char *)data, len);
+            srvfile_save(FILE_SRV_BMAPS, SRV_CLIENT_BMAPS, (unsigned char *)data, len);
             break;
 
         case DATA_CMD_ANIM_LIST:
@@ -2183,7 +2175,7 @@ void DataCmd(char *data, int len)
                 len = dest_len;
             }
             request_file_chain++;
-            SaveDataCmdFile(FILE_CLIENT_ANIMS, SRV_CLIENT_ANIMS, (unsigned char *)data, len);
+            srvfile_save(FILE_SRV_ANIMS, SRV_CLIENT_ANIMS, (unsigned char *)data, len);
             break;
 
         default:
@@ -2192,47 +2184,6 @@ void DataCmd(char *data, int len)
     }
     if (dest!=NULL)
         FREE(dest);
-}
-
-static void SaveDataCmdFile(const char *filename, uint8 num,
-                            unsigned char *data, int len)
-{
-    PHYSFS_File *handle;
-
-    /* Log what we're doing. */
-    LOG(LOG_SYSTEM, "Saving server file '%s'... ", filename);
-
-    /* Open the file for writing.*/
-    if (!(handle = PHYSFS_openWrite(filename)))
-    {
-        LOG(LOG_FATAL, "FAILED (%s)!\n", PHYSFS_getLastError());
-    }
-
-    if (PHYSFS_write(handle, (unsigned char *)data, 1, (PHYSFS_uint32)len) < len)
-    {
-        PHYSFS_close(handle);
-        LOG(LOG_FATAL, "FAILED (%s)!\n", PHYSFS_getLastError());
-    }
-
-    /* Set the values we just got. */
-    srv_client_files[num].len = (int)len;
-    srv_client_files[num].crc = crc32(1L, data, len);
-
-    /* If they don't match what the server has then this is really bad
-     * (because we just got the file from the server). */
-    if (srv_client_files[num].server_len != srv_client_files[num].len ||
-        srv_client_files[num].server_crc != srv_client_files[num].crc)
-    {
-        PHYSFS_close(handle);
-        LOG(LOG_FATAL, "Client and server still disagree on length and crc of '%s' (client has %d/%x, server has %d/%x)!\n",
-            filename, srv_client_files[num].len, srv_client_files[num].crc,
-            srv_client_files[num].server_len, srv_client_files[num].server_crc);
-    }
-
-    /* Cleanup. */
-    srv_client_files[num].status = SRV_CLIENT_STATUS_OK;
-    PHYSFS_close(handle);
-    LOG(LOG_SYSTEM, "OK (len:%d, crc:%x)!\n", len, srv_client_files[num].crc);
 }
 
 #ifdef USE_CHANNELS

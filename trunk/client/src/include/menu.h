@@ -138,13 +138,6 @@ extern void     blt_inventory_face_from_tag(int tag, int x, int y);
 extern int      blt_window_slider(_Sprite *slider, int max_win, int winlen, int off, int len, int x, int y);
 extern void     do_keybind_input(void);
 extern void     do_npcdialog_input(void);
-
-
-extern void     load_bmaps(void);
-extern void     load_anims(void);
-extern void     load_settings(void);
-extern void     load_spells(void);
-extern void     load_skills(void);
 extern uint8  blt_face_centered(int face, int x, int y);
 extern int      get_quickslot(int x, int y);
 extern void     show_quickslots(int x, int y);

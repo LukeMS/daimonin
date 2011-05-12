@@ -1722,22 +1722,22 @@ void show_login_server(void)
     string_blt(ScreenSurface, &font_small, "- UPDATING FILES- ", x + 58, y + 1, COLOR_BLACK, NULL, NULL);
     string_blt(ScreenSurface, &font_small, "- UPDATING FILES -", x + 57, y, COLOR_WHITE, NULL, NULL);
     if (request_file_chain >= 0)
-        string_blt(ScreenSurface, &font_small, "Updating settings file from server....", x + 2, y + 20, COLOR_WHITE,
+        string_blt(ScreenSurface, &font_small, "Updating sounds file from server....", x + 2, y + 20, COLOR_WHITE,
                   NULL, NULL);
     if (request_file_chain > 1)
-        string_blt(ScreenSurface, &font_small, "Updating sounds file from server....", x + 2, y + 32, COLOR_WHITE, NULL,
+        string_blt(ScreenSurface, &font_small, "Updating skills file from server....", x + 2, y + 32, COLOR_WHITE, NULL,
                   NULL);
     if (request_file_chain > 3)
         string_blt(ScreenSurface, &font_small, "Updating spells file from server....", x + 2, y + 44, COLOR_WHITE, NULL,
                   NULL);
     if (request_file_chain > 5)
-        string_blt(ScreenSurface, &font_small, "Updating skills file from server....", x + 2, y + 56, COLOR_WHITE, NULL,
+        string_blt(ScreenSurface, &font_small, "Updating settingss file from server....", x + 2, y + 56, COLOR_WHITE, NULL,
                   NULL);
     if (request_file_chain > 7)
-        string_blt(ScreenSurface, &font_small, "Updating bmaps file from server....", x + 2, y + 68, COLOR_WHITE, NULL,
+        string_blt(ScreenSurface, &font_small, "Updating anims file from server....", x + 2, y + 68, COLOR_WHITE, NULL,
                   NULL);
     if (request_file_chain > 9)
-        string_blt(ScreenSurface, &font_small, "Updating anims file from server....", x + 2, y + 80, COLOR_WHITE, NULL,
+        string_blt(ScreenSurface, &font_small, "Updating bmaps file from server....", x + 2, y + 80, COLOR_WHITE, NULL,
                   NULL);
     if (request_file_chain > 11)
         string_blt(ScreenSurface, &font_small, "Sync files...", x + 2, y + 92, COLOR_WHITE, NULL, NULL);

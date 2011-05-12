@@ -210,6 +210,8 @@ typedef struct _sounds
     _soundtype *types;
 } _sounds;
 
+extern _sounds sounds;
+
 typedef struct music_data
 {
     int                 flag;               /* if 1, struct is loaded */
@@ -238,9 +240,6 @@ void    sound_fillerup(void *unused, Uint8 *stream, int len);
 
 void    sound_init(void);
 void    sound_deinit(void);
-
-void    load_sounds(void);
-
 void    sound_loadall(void);
 void    sound_freeall(void);
 

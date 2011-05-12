@@ -175,6 +175,7 @@
 		<Unit filename="..\..\..\src\include\sprite.h">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="..\..\..\src\include\srvfile.h" />
 		<Unit filename="..\..\..\src\include\textwin.h">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -242,6 +243,9 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\src\sprite.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\src\srvfile.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\src\textwin.c">

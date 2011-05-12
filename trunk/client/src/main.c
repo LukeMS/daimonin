@@ -50,7 +50,6 @@ int                    interface_mode;
 
 int                 debug_layer[MAXFACES];
 int                 bmaptype_table_size;
-_srv_client_files   srv_client_files[SRV_CLIENT_FILES];
 
 struct _options     options;
 Uint32              videoflags_full, videoflags_win;
@@ -341,7 +340,6 @@ static const char *GetOption(const char *arg, const char *sopt,
 static void InitPhysFS(const char *argv0);
 static void ShowIntro(char *text, int progress);
 static void DeletePlayerLists(void);
-static void QuerySrvClientFile(const char *filename, uint8 num);
 
 static void DeletePlayerLists(void)
 {
@@ -869,12 +867,7 @@ uint8 game_status_chain(void)
     /* send the setup command to the server, then wait */
     else if (GameStatus == GAME_STATUS_SETUP)
     {
-        QuerySrvClientFile(FILE_CLIENT_ANIMS, SRV_CLIENT_ANIMS);
-        QuerySrvClientFile(FILE_CLIENT_BMAPS, SRV_CLIENT_BMAPS);
-        QuerySrvClientFile(FILE_CLIENT_SETTINGS, SRV_CLIENT_SETTINGS);
-        QuerySrvClientFile(FILE_CLIENT_SOUNDS, SRV_CLIENT_SOUNDS);
-        QuerySrvClientFile(FILE_CLIENT_SKILLS, SRV_CLIENT_SKILLS);
-        QuerySrvClientFile(FILE_CLIENT_SPELLS, SRV_CLIENT_SPELLS);
+        srvfile_check();
         SendSetupCmd();
         request_file_chain = 0;
 
@@ -890,89 +883,31 @@ uint8 game_status_chain(void)
     }
     else if (GameStatus == GAME_STATUS_REQUEST_FILES)
     {
-        if (request_file_chain == 0) /* check setting list */
+        switch (request_file_chain)
         {
-            if (srv_client_files[SRV_CLIENT_SETTINGS].status == SRV_CLIENT_STATUS_UPDATE)
-            {
-                request_file_chain = 1;
-                RequestFile(csocket, SRV_CLIENT_SETTINGS);
-            }
-            else
-                request_file_chain = 2;
+            case 0:
+            case 2:
+            case 4:
+            case 6:
+            case 8:
+            case 10:
+                request_file_chain += srvfile_get_status((uint8)(request_file_chain / 2));
+
+                break;
+
+            case 13:
+                srvfile_load();
+                sound_loadall();
+
+                break;
+
+            case 15:
+                GameStatus = GAME_STATUS_LOGIN_SELECT; /* now lets start the real login by asking "login" or "create" */
+
+                break;
         }
-        else if (request_file_chain == 2) /* check sound list */
-        {
-            if (srv_client_files[SRV_CLIENT_SOUNDS].status == SRV_CLIENT_STATUS_UPDATE)
-            {
-                request_file_chain = 3;
-                RequestFile(csocket, SRV_CLIENT_SOUNDS);
-            }
-            else
-                request_file_chain = 4;
-        }
-        else if (request_file_chain == 4) /* check spell list */
-        {
-            if (srv_client_files[SRV_CLIENT_SPELLS].status == SRV_CLIENT_STATUS_UPDATE)
-            {
-                request_file_chain = 5;
-                RequestFile(csocket, SRV_CLIENT_SPELLS);
-            }
-            else
-                request_file_chain = 6;
-        }
-        else if (request_file_chain == 6) /* check skill list */
-        {
-            if (srv_client_files[SRV_CLIENT_SKILLS].status == SRV_CLIENT_STATUS_UPDATE)
-            {
-                request_file_chain = 7;
-                RequestFile(csocket, SRV_CLIENT_SKILLS);
-            }
-            else
-                request_file_chain = 8;
-        }
-        else if (request_file_chain == 8)
-        {
-            if (srv_client_files[SRV_CLIENT_BMAPS].status == SRV_CLIENT_STATUS_UPDATE)
-            {
-                request_file_chain = 9;
-                RequestFile(csocket, SRV_CLIENT_BMAPS);
-            }
-            else
-                request_file_chain = 10;
-        }
-        else if (request_file_chain == 10)
-        {
-            if (srv_client_files[SRV_CLIENT_ANIMS].status == SRV_CLIENT_STATUS_UPDATE)
-            {
-                request_file_chain = 11;
-                RequestFile(csocket, SRV_CLIENT_ANIMS);
-            }
-            else
-                request_file_chain = 12;
-        }
-        else if (request_file_chain == 12) /* we have all files - start check */
-        {
-            request_file_chain++; /* this ensure one loop tick and updating the messages */
-        }
-        else if (request_file_chain == 13)
-        {
-            /* ok... now we check for bmap & anims processing... */
-            load_bmaps();
-            load_anims();
-            sound_loadall();
-            load_settings();
-            request_file_chain++;
-        }
-        else if (request_file_chain == 14)
-        {
-            request_file_chain++; /* this ensure one loop tick and updating the messages */
-        }
-        else if (request_file_chain == 15)
-        {
-            load_skills();
-            load_spells();
-            GameStatus = GAME_STATUS_LOGIN_SELECT; /* now lets start the real login by asking "login" or "create" */
-        }
+
+        request_file_chain++; /* this ensure one loop tick and updating the messages */
 // debug GameStatus = GAME_STATUS_ACCOUNT;
     }
     else if (GameStatus == GAME_STATUS_LOGIN_BREAK)
@@ -1286,70 +1221,6 @@ uint8 game_status_chain(void)
     }
     return(1);
 }
-
-static void QuerySrvClientFile(const char *filename, uint8 num)
-{
-    PHYSFS_File   *handle;
-    PHYSFS_uint64  len;
-    unsigned char *buf_tmp;
-
-    /* We obviously don't know these values yet so lets reset both to 0. */
-    srv_client_files[num].len = 0;
-    srv_client_files[num].crc = 0;
-
-    /* Log what we're doing. */
-    LOG(LOG_SYSTEM, "Querying server file '%s'... ", filename);
-
-    /* If the file doesn't exist, that's OK. */
-    if (!PHYSFS_exists(filename))
-    {
-        char buf_debug[MEDIUM_BUF] = "";
-
-        /* Extra debug info. */
-        if (LOGLEVEL >= LOG_DEBUG)
-        {
-            sprintf(buf_debug, " but file '%s' does not exist", filename);
-        }
-
-        LOG(LOG_SYSTEM, "OK%s!\n", buf_debug);
-
-        return;
-    }
-
-    /* Open the file for reading.*/
-    if (!(handle = PHYSFS_openRead(filename)))
-    {
-        LOG(LOG_FATAL, "FAILED (%s)!\n", PHYSFS_getLastError());
-    }
-
-    /* Get the filelength. We can't handle big files. */
-    if ((len = PHYSFS_fileLength(handle)) > INT_MAX)
-    {
-        PHYSFS_close(handle);
-        LOG(LOG_FATAL, "FAILED (File too big: %d)!\n", len);
-    }
-
-   /* Read all the data from the file into a temp buffer to get the crc. */
-    MALLOC(buf_tmp, len);
-
-    if ((PHYSFS_read(handle, (unsigned char *)buf_tmp, 1, (PHYSFS_uint32)len)) < len)
-    {
-        FREE(buf_tmp);
-        PHYSFS_close(handle);
-        LOG(LOG_FATAL, "FAILED (%s)!\n", PHYSFS_getLastError());
-    }
-
-    /* Set the values we just got. */
-    srv_client_files[num].len = (int)len;
-    srv_client_files[num].crc = crc32(1L, buf_tmp, len);
-    srv_client_files[num].status = SRV_CLIENT_STATUS_OK;
-
-    /* Cleanup. */
-    FREE(buf_tmp);
-    PHYSFS_close(handle);
-    LOG(LOG_SYSTEM, "OK (len:%d, crc:%x)!\n", len, srv_client_files[num].crc);
-}
-
 
 /* load the skin & standard gfx */
 void load_bitmaps(void)
