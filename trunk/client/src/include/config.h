@@ -71,8 +71,6 @@
 #define DIR_SRV_FILES "srv_files"
 
 #define FILE_DAIMONIN_P0 "daimonin.p0"
-#define FILE_ANIMS_TMP "srv_files/anims.tmp"
-#define FILE_ANIMS_TMP2 "srv_files/newanims.tmp"
 #define FILE_CLIENT_SOUNDS "srv_files/client_sounds"
 #define FILE_CLIENT_SPELLS "srv_files/client_spells"
 #define FILE_CLIENT_SKILLS "srv_files/client_skills"
