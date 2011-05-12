@@ -1137,25 +1137,41 @@ int request_face(int pnum)
  */
 void SendSetupCmd(void)
 {
-    char tmpbuf[TINY_BUF],
-         buf[MEDIUM_BUF];
+    char    tmpbuf[TINY_BUF],
+            buf[MEDIUM_BUF];
+    int     sklen,
+            splen,
+            bplen,
+            stlen,
+            amlen;
+    uint32  skcrc,
+            spcrc,
+            bpcrc,
+            stcrc,
+            amcrc;
 
     if (SoundStatus)
-        sprintf(tmpbuf, "%d|%x",
-                srvfile[SRV_CLIENT_SOUNDS].len,
-                srvfile[SRV_CLIENT_SOUNDS].crc);
-    else
-        strcpy(tmpbuf, "0");
+    {
+        int    snlen;
+        uint32 sncrc;
 
+        (void)srvfile_get_status(SRV_CLIENT_SOUNDS, &snlen, &sncrc);
+        sprintf(tmpbuf, "%d|%x", snlen, sncrc);
+    }
+    else
+    {
+        strcpy(tmpbuf, "0");
+    }
+
+    (void)srvfile_get_status(SRV_CLIENT_SKILLS, &sklen, &skcrc);
+    (void)srvfile_get_status(SRV_CLIENT_SPELLS, &splen, &spcrc);
+    (void)srvfile_get_status(SRV_CLIENT_BMAPS, &bplen, &bpcrc);
+    (void)srvfile_get_status(SRV_CLIENT_SETTINGS, &stlen, &stcrc);
+    (void)srvfile_get_status(SRV_CLIENT_ANIMS, &amlen, &amcrc);
     sprintf(buf, "dv %u.%u.%u pv %u sn %s mz %dx%d skf %d|%x spf %d|%x bpf %d|%x stf %d|%x amf %d|%x",
             DAI_VERSION_RELEASE, DAI_VERSION_MAJOR, DAI_VERSION_MINOR,
             PROTOCOL_VERSION, tmpbuf, MapStatusX, MapStatusY,
-            srvfile[SRV_CLIENT_SKILLS].len, srvfile[SRV_CLIENT_SKILLS].crc,
-            srvfile[SRV_CLIENT_SPELLS].len, srvfile[SRV_CLIENT_SPELLS].crc,
-            srvfile[SRV_CLIENT_BMAPS].len, srvfile[SRV_CLIENT_BMAPS].crc,
-            srvfile[SRV_CLIENT_SETTINGS].len, srvfile[SRV_CLIENT_SETTINGS].crc,
-            srvfile[SRV_CLIENT_ANIMS].len, srvfile[SRV_CLIENT_ANIMS].crc);
-
+            sklen, skcrc, splen, spcrc, bplen, bpcrc, stlen, stcrc, amlen, amcrc);
     send_command_binary(CLIENT_CMD_SETUP, buf, strlen(buf), SEND_CMD_FLAG_STRING);
 }
 
