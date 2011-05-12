@@ -40,13 +40,11 @@ typedef struct srvfile_t
 }
 srvfile_t;
 
-extern srvfile_t srvfile[SRV_CLIENT_FILES];
-
 extern void  srvfile_check(void);
 extern void  srvfile_set_status(uint8 num, uint8 status, int len, uint32 crc);
 extern void  srvfile_save(const char *fname, uint8 num, unsigned char *data,
                           int len);
-extern uint8 srvfile_get_status(uint8 num);
+extern uint8 srvfile_get_status(uint8 num, int *len, uint32 *crc);
 extern void  srvfile_load(void);
 
 #endif /* ifndef __SRVFILE_H */

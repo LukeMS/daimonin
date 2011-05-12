@@ -891,7 +891,8 @@ uint8 game_status_chain(void)
             case 6:
             case 8:
             case 10:
-                request_file_chain += srvfile_get_status((uint8)(request_file_chain / 2));
+                request_file_chain += srvfile_get_status((uint8)(request_file_chain / 2),
+                                                         NULL, NULL);
 
                 break;
 
