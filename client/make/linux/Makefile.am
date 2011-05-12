@@ -33,6 +33,7 @@ daimonin_SOURCES =  \
 	../../src/socket.c \
 	../../src/sound.c \
 	../../src/sprite.c \
+	../../src/srvfile.c \
 	../../src/textwin.c \
 	../../src/tile_stretcher.c \
 	../../src/uncompr.c \

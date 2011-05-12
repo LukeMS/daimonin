@@ -49,7 +49,7 @@ static int          special_sounds[SPECIAL_SOUND_INIT];
 
 #ifdef INSTALL_SOUND
 
-static _sounds sounds = {0, NULL};
+_sounds sounds = {0, NULL};
 
 #endif
 
@@ -58,112 +58,6 @@ static _sounds sounds = {0, NULL};
 
 static void musicDone(void); /* callback function for background music */
 static void sound_start_music(char *fname, int vol, int fade, int loop);
-
-/* TODO: This maintains 0.10 compatibility. The file format will be reworked for 0.11.0. */
-void load_sounds(void)
-{
-#ifdef INSTALL_SOUND
-    PHYSFS_File *handle;
-    uint8        defn = 0;
-    char         buf[MEDIUM_BUF],
-                 name[TINY_BUF],
-                 file[TINY_BUF];
-    int          state = 0,
-                 type_count = 0,
-                 type_index = -1,
-                 sound_count = 0,
-                 sound_index = -1;
-
-    /* Log what we're doing. */
-    LOG(LOG_SYSTEM, "Loading '%s'... ", FILE_CLIENT_SOUNDS);
-
-    /* Open the file for reading.*/
-    if (!(handle = PHYSFS_openRead(FILE_CLIENT_SOUNDS)))
-    {
-        LOG(LOG_FATAL, "FAILED (%s)!\n", PHYSFS_getLastError());
-    }
-
-    while (++defn)
-    {
-        do
-        {
-            if (PHYSFS_readString(handle, buf, sizeof(buf)) < 0)
-            {
-                PHYSFS_close(handle);
-                LOG(LOG_FATAL, "Unexpected EOF!\n");
-            }
-        }
-        while (buf[0] == '#');
-
-        if (!strcmp(buf, "*end"))
-        {
-            break;
-        }
-
-        switch (state)
-        {
-            /* Looking for start line. */
-            case 0:
-                if (!strncmp(buf, "*start", 6))
-                {
-                    strtok(buf, "|"); // discard *start
-                    sscanf(strtok(NULL, "|"), "%d", &type_count); // count of soundtypes
-                    sounds.count = type_count;
-                    MALLOC(sounds.types, type_count * sizeof(_soundtype));
-                    state++;
-                }
-
-                break;
-
-            /* Looking for soundtype introducer. */
-            case 1:
-                if (type_count > 0 &&
-                    buf[0] == '*')
-                {
-                    type_count--;
-                    type_index++;
-                    sscanf(strtok(buf, "|"), "*%d", &sounds.types[type_index].id);
-                    strcpy(name, strtok(NULL, "|"));
-                    strtok(NULL, "|");  // discard prefix
-                    sscanf(strtok(NULL, "|"), "%d", &sound_count);
-                    sounds.types[type_index].count = sound_count;
-                    MALLOC_STRING(sounds.types[type_index].name, name);
-                    MALLOC(sounds.types[type_index].sounds, sound_count * sizeof(_sound)); // space for sounds
-                    sound_index = -1;
-                    state++;
-                }
-
-                break;
-
-            /* Process sound. */
-            case 2:
-                if (sound_count > 0 &&
-                    buf[0] == '+')
-                {
-                    sound_count--;
-                    sound_index++;
-                    sscanf(strtok(buf, "|"), "+%d", &sounds.types[type_index].sounds[sound_index].id);
-                    strcpy(name, strtok(NULL, "|"));
-                    strcpy(file, strtok(NULL, "|"));
-                    MALLOC_STRING(sounds.types[type_index].sounds[sound_index].name, name);
-                    MALLOC_STRING(sounds.types[type_index].sounds[sound_index].file, file);
-                }
-
-                // Look for next soundtype
-                if (sound_count == 0)
-                {
-                    state--;
-                }
-
-                break;
-        }
-    }
-
-    /* Cleanup. */
-    PHYSFS_close(handle);
-    LOG(LOG_SYSTEM, "OK!\n");
-#endif
-}
 
 void sound_init(void)
 {
@@ -214,8 +108,6 @@ void sound_loadall(void)
 
     if (SoundSystem != SOUND_SYSTEM_ON)
         return;
-
-    load_sounds();
 
     for (i = 0; i < sounds.count; i++)
     {

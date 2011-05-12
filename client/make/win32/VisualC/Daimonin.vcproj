@@ -354,6 +354,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\srvfile.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\textwin.c"
 				>
 			</File>
@@ -516,6 +520,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\include\sprite.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\include\srvfile.h"
 				>
 			</File>
 			<File
