@@ -140,8 +140,8 @@ extern void     do_keybind_input(void);
 extern void     do_npcdialog_input(void);
 
 
-extern int      read_anim_tmp(void);
 extern void     load_bmaps(void);
+extern void     load_anims(void);
 extern void     load_settings(void);
 extern void     load_spells(void);
 extern void     load_skills(void);

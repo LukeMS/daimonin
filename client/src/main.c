@@ -719,6 +719,7 @@ uint8 game_status_chain(void)
         }
 
         bmaptype_table_size = 0;
+        anim_init();
         clear_group();
         map_udate_flag = 2;
         DeletePlayerLists();
@@ -957,7 +958,7 @@ uint8 game_status_chain(void)
         {
             /* ok... now we check for bmap & anims processing... */
             load_bmaps();
-            read_anim_tmp();
+            load_anims();
             sound_loadall();
             load_settings();
             request_file_chain++;

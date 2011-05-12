@@ -107,8 +107,8 @@ extern Animations    animation[MAXANIM];
 
 typedef struct AnimCmds
 {
-    int                 len;            /* len of anim_cmd data */
-    char               *anim_cmd;       /* faked animation command */
+    int    len;            /* len of anim_cmd data */
+    uint8 *anim_cmd;       /* faked animation command */
 } AnimCmds;
 
 extern AnimCmds      animcmd[MAXANIM];
@@ -143,12 +143,8 @@ extern void         new_anim_remove_tile(anim_list *al);
 extern void         new_anim_remove_item(item *it);
 extern anim_list *  new_anim_add_item(uint16 anim, uint8 sequence, uint8 dir, uint8 speed, item *it);
 extern uint8      new_anim_load_and_check(uint16 anim, uint8 sequence, uint8 dir);
-
 extern void         new_anim_animate(uint32 curTick);
-
-extern void         create_anim_tmp();
-extern int          load_anim_tmp(void);
-
+extern void         anim_init(void);
 extern void         NewAnimCmd(unsigned char *data, int len);
 
 #endif /* ifndef __ANIM_H */

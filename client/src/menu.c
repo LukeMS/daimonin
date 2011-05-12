@@ -640,36 +640,6 @@ int blt_window_slider(_Sprite *slider, int maxlen, int winlen, int startoff, int
     return 0;
 }
 
-int read_anim_tmp(void)
-{
-    FILE        *stream;
-    struct stat  stat_anim,
-                 stat_tmp;
-
-    if ((stream = fopen_wrapper(FILE_CLIENT_ANIMS, "rb")) == NULL)
-    {
-        LOG(LOG_FATAL, "read_anim_tmp:Error reading bmap.tmp for anim.tmp!\n");
-    }
-    fstat(fileno(stream), &stat_anim);
-    fclose(stream);
-
-    if ((stream = fopen_wrapper(FILE_ANIMS_TMP, "rb")) != NULL)
-    {
-        fstat(fileno(stream), &stat_tmp);
-        fclose(stream);
-
-        /* our anim file must be newer as our default anim file */
-        if (difftime(stat_tmp.st_mtime, stat_anim.st_mtime) > 0.0f)
-        {
-            return load_anim_tmp(); /* all fine - load file */
-        }
-    }
-
-    create_anim_tmp();
-
-    return load_anim_tmp(); /* all fine - load file */
-}
-
 void load_bmaps(void)
 {
     PHYSFS_File *handle;
@@ -842,6 +812,265 @@ int get_bmap_id(char *name)
     }
 
     return -1;
+}
+
+void load_anims(void)
+{
+    PHYSFS_File *handle;
+    char         buf[MEDIUM_BUF];
+    uint16       faces[LARGE_BUF],
+                 count = 1,
+                 anim_len = 0;
+    uint8        anim_cmd[LARGE_BUF],
+                 anim = 0,
+                 dirframepos = 0,
+                 frames = 0,
+                 facings = 0,
+                 numfaces = 0,
+                 delay = 0,
+                 seqnum = 0,
+                 sequence = 0,
+                 old_format = 1,
+                 dirnum = 0,
+                 dir = 0;
+
+    /* Log what we're doing. */
+    LOG(LOG_SYSTEM, "Loading '%s'... ", FILE_CLIENT_ANIMS);
+
+    /* Open the file for reading. */
+    if (!(handle = PHYSFS_openRead(FILE_CLIENT_ANIMS)))
+    {
+        LOG(LOG_FATAL, "FAILED (%s)!\n", PHYSFS_getLastError());
+    }
+
+    while (PHYSFS_readString(handle, buf, sizeof(buf)) > 0)
+    {
+        if (anim == 0) /* we are outside a anim body ? */
+        {
+            if (!strncmp(buf, "anim ", 5))
+            {
+                anim = 1;
+                facings = 0;
+                numfaces = 0;
+                delay = DEFAULT_ANIM_DELAY;
+                anim_cmd[2] = (uint8)((count >> 8) & 0xff);
+                anim_cmd[3] = (uint8)(count & 0xff);
+                anim_cmd[4] = 0;
+                anim_len = 5;
+            }
+            else /* we should never hit this point */
+            {
+                LOG(LOG_FATAL, "FAILED (unknown cmd: >%s<)!\n", buf);
+            }
+        }
+        else /* no, we are inside! */
+        {
+            if (!strncmp(buf, "sequence ", 9))
+            {
+                old_format = 0;
+                seqnum = atoi(buf + 9);
+                sequence = 1;
+
+                if (dir) /* we had a dir command before, now we have a new sequence, lets set the enddir marker */
+                {
+                    anim_cmd[anim_len++] = 0xFF;
+                    dir = 0;
+
+                    if (dirframepos)
+                    {
+                        anim_cmd[dirframepos] = frames;
+                    }
+
+                    dirframepos = 0;
+                }
+
+                anim_cmd[anim_len++] = seqnum; /* one byte sequence num */
+                anim_cmd[anim_len++] = 0;      /* we set now flags to zero, if we got a dirreset or sequencemap we set it later */
+            }
+            else if (!strncmp(buf, "sequencemap ", 12))
+            {
+                old_format = 0;
+                sequence = 1;
+                seqnum = atoi(buf + 12);
+                anim_cmd[(anim_len - 1)] |= ASEQ_MAPPED;
+                anim_cmd[anim_len++] = seqnum;
+            }
+            else if (!strncmp(buf, "dirreset ", 9))
+            {
+                old_format = 0;
+                sequence = 1;
+
+                if (atoi(buf + 9))
+                {
+                    anim_cmd[(anim_len) - 1] |= ASEQ_DIR_RESET;
+                }
+            }
+            else if (!strncmp(buf, "dir ", 4))
+            {
+                if (dir) /* we had a dir command before*/
+                {
+                    if (dirframepos)
+                    {
+                        anim_cmd[dirframepos] = frames;
+                    }
+
+                    dirframepos = 0;
+                }
+
+                dir = 1;
+                dirnum = atoi(buf + 4);
+                anim_cmd[anim_len++] = dirnum;
+                anim_cmd[anim_len++] = 0; /* nrof frames */
+                dirframepos = anim_len - 1;
+                frames = 0;
+            }
+            else if (!strncmp(buf, "dirmap ", 7))
+            {
+                dirnum = atoi(buf + 7);
+                anim_cmd[(anim_len - 2)] |= ASEQ_MAPPED;
+                anim_cmd[(anim_len - 1)] = dirnum;
+                dirframepos = 0;
+            }
+            else if (!strncmp(buf, "delay ", 6))
+            {
+                delay = atoi(buf + 6);
+            }
+            else if (!strncmp(buf, "facings ", 8)) /* we have a old animation */
+            {
+                facings = atoi(buf + 8);
+            }
+            else if (!strncmp(buf, "mina", 4))
+            {
+                if (dir)
+                {
+                    anim_cmd[anim_len++] = 0xFF;
+
+                    if (dirframepos)
+                    {
+                        anim_cmd[dirframepos] = frames;
+                    }
+
+                    dirframepos = 0;
+                }
+
+                if (sequence)
+                {
+                    anim_cmd[anim_len++] = 0xFF;
+                }
+
+                if (old_format)
+                {
+                    /* now convert the temp stored old stuff to the new format */
+                    if (facings == 0)
+                    {
+                        uint8 i;
+
+                        anim_cmd[anim_len++] = 0; /* sequence 0 */
+                        anim_cmd[anim_len++] = 0; /* flags 0 */
+                        anim_cmd[anim_len++] = 0; /* dir 0 */
+                        anim_cmd[anim_len++] = numfaces;
+
+                        for (i = 0; i < numfaces; i++)
+                        {
+                            anim_cmd[anim_len++] = (uint8)((faces[i] >> 8) & 0xff);
+                            anim_cmd[anim_len++] = (uint8)(faces[i] & 0xff);
+                            anim_cmd[anim_len++] = delay;
+                        }
+
+                        anim_cmd[anim_len++] = 0xFF; /* end of dirs */
+                        anim_cmd[anim_len++] = 0xFF; /* end of sequences */
+                    }
+                    else
+                    {
+                        uint8 i,
+                              num = 0;
+
+                        for (i = 0; i < (uint8)((facings - 1) / 8); i++)
+                        {
+                            uint8 j;
+
+                            anim_cmd[anim_len++] = i;
+                            anim_cmd[anim_len++] = 0;
+
+                            if (i == 0)
+                            {
+                                anim_cmd[anim_len++] = 0; /* dir 0 */
+                                anim_cmd[anim_len++] = (uint8)(numfaces / facings);
+
+                                for (j = 0; j < (uint8)(numfaces / facings); j++)
+                                {
+                                    anim_cmd[anim_len++] = (uint8)((faces[num] >> 8) & 0xff);
+                                    anim_cmd[anim_len++] = (uint8)(faces[num++] & 0xff);
+                                    anim_cmd[anim_len++] = delay;
+                                }
+                            }
+
+                            for (j = 1; j < 9; j++)
+                            {
+                                uint8 k;
+
+                                anim_cmd[anim_len++] = j;
+                                anim_cmd[anim_len++] = (uint8)(numfaces / facings);
+
+                                for (k = 0; k < (uint8)(numfaces / facings); k++)
+                                {
+                                    anim_cmd[anim_len++] = (uint8)((faces[num] >> 8) & 0xff);
+                                    anim_cmd[anim_len++] = (uint8)(faces[num++] & 0xff);
+                                    anim_cmd[anim_len++] = delay;
+                                }
+                            }
+
+                            anim_cmd[anim_len++] = 0xFF;
+                        }
+
+                        anim_cmd[anim_len++] = 0xFF;
+                    }
+                }
+
+                MALLOC(animcmd[count].anim_cmd, anim_len);
+                memcpy(animcmd[count].anim_cmd, anim_cmd, anim_len);
+                animcmd[count].len = anim_len;
+
+                anim_cmd[0] = (uint8)(((anim_len - 2) >> 8) & 0xff);
+                anim_cmd[1] = (uint8)((anim_len - 2) & 0xff);
+                memset(faces, 0, sizeof(faces));
+                memset(anim_cmd, 0, sizeof(anim_cmd));
+                count++;
+                anim = 0;
+                old_format = 1;
+                sequence = 0;
+                dir = 0;
+                numfaces = 0;
+            }
+            else
+            {
+                int i = get_bmap_id(buf);
+
+                if (i == -1)
+                {
+                    i = 0;
+                    LOG(LOG_ERROR, "Invalid anim name >%s< - set to #0 (bug.101)!\n",
+                        buf);
+                }
+
+                if (old_format)
+                {
+                    faces[numfaces++] = i;
+                }
+                else
+                {
+                    anim_cmd[anim_len++] = (uint8)((i >> 8) & 0xff);
+                    anim_cmd[anim_len++] = (uint8)(i & 0xff);
+                    anim_cmd[anim_len++] = delay;
+                    frames++;
+                }
+            }
+        }
+    }
+
+    /* Cleanup. */
+    PHYSFS_close(handle);
+    LOG(LOG_SYSTEM, "OK!\n");
 }
 
 /* TODO: This maintains 0.10 compatibility. The file format will be reworked for 0.11.0. */
