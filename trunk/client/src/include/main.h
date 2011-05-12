@@ -47,8 +47,6 @@ extern uint16   endian_int16;   /* thats the 0x0201 short endian */
 #define SDL_DEFAULT_REPEAT_DELAY        500
 #define SDL_DEFAULT_REPEAT_INTERVAL     30
 
-#define MAXHASHSTRING 20 /* for hash table (bmap, ...) */
-
 /* Login step definition for input mask */
 typedef enum _login_step {
     LOGIN_STEP_NOTHING,
