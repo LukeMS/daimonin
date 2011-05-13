@@ -150,21 +150,12 @@ static void Check(const char *fname, uint8 num)
     /* If the file doesn't exist, that's OK. */
     if (!PHYSFS_exists(fname))
     {
-        char buf_debug[MEDIUM_BUF] = "";
-
         /* We obviously don't know length/crc yet so lets reset both to 0 and
          * mark the file as needing an update. */
         srvfile[num].status = SRVFILE_STATUS_UPDATE;
         srvfile[num].len = 0;
         srvfile[num].crc = 0;
-
-        /* Extra debug info. */
-        if (LOGLEVEL >= LOG_DEBUG)
-        {
-            sprintf(buf_debug, " but file '%s' does not exist", fname);
-        }
-
-        LOG(LOG_SYSTEM, "OK%s!\n", buf_debug);
+        LOG(LOG_SYSTEM, "OK (But file does not exist)!\n");
 
         return;
     }
