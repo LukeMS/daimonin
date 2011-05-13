@@ -86,6 +86,7 @@ void srvfile_save(const char *fname, uint8 num, unsigned char *data, int len)
     }
 
     /* Set the values we just got. */
+    srvfile[num].status = SRVFILE_STATUS_OK;
     srvfile[num].len = (int)len;
     srvfile[num].crc = crc32(1L, data, len);
 
@@ -101,7 +102,6 @@ void srvfile_save(const char *fname, uint8 num, unsigned char *data, int len)
     }
 
     /* Cleanup. */
-    srvfile[num].status = SRVFILE_STATUS_OK;
     PHYSFS_close(handle);
     LOG(LOG_SYSTEM, "OK (len:%d, crc:%x)!\n", len, srvfile[num].crc);
 }
@@ -144,10 +144,6 @@ static void Check(const char *fname, uint8 num)
     PHYSFS_uint64  len;
     unsigned char *buf_tmp;
 
-    /* We obviously don't know these values yet so lets reset both to 0. */
-    srvfile[num].len = 0;
-    srvfile[num].crc = 0;
-
     /* Log what we're doing. */
     LOG(LOG_SYSTEM, "Checking server file '%s'... ", fname);
 
@@ -155,6 +151,12 @@ static void Check(const char *fname, uint8 num)
     if (!PHYSFS_exists(fname))
     {
         char buf_debug[MEDIUM_BUF] = "";
+
+        /* We obviously don't know length/crc yet so lets reset both to 0 and
+         * mark the file as needing an update. */
+        srvfile[num].status = SRVFILE_STATUS_UPDATE;
+        srvfile[num].len = 0;
+        srvfile[num].crc = 0;
 
         /* Extra debug info. */
         if (LOGLEVEL >= LOG_DEBUG)
@@ -191,9 +193,9 @@ static void Check(const char *fname, uint8 num)
     }
 
     /* Set the values we just got. */
+    srvfile[num].status = SRVFILE_STATUS_OK;
     srvfile[num].len = (int)len;
     srvfile[num].crc = crc32(1L, buf_tmp, len);
-    srvfile[num].status = SRVFILE_STATUS_OK;
 
     /* Cleanup. */
     FREE(buf_tmp);
