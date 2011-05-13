@@ -1731,7 +1731,7 @@ void show_login_server(void)
         string_blt(ScreenSurface, &font_small, "Updating spells file from server....", x + 2, y + 44, COLOR_WHITE, NULL,
                   NULL);
     if (request_file_chain > 5)
-        string_blt(ScreenSurface, &font_small, "Updating settingss file from server....", x + 2, y + 56, COLOR_WHITE, NULL,
+        string_blt(ScreenSurface, &font_small, "Updating settings file from server....", x + 2, y + 56, COLOR_WHITE, NULL,
                   NULL);
     if (request_file_chain > 7)
         string_blt(ScreenSurface, &font_small, "Updating anims file from server....", x + 2, y + 68, COLOR_WHITE, NULL,
