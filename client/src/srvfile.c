@@ -23,7 +23,7 @@
 
 #include "include.h"
 
-static srvfile_t SrvFile[SRV_CLIENT_FILES];
+srvfile_t srvfile[SRV_CLIENT_FILES];
 
 static void Check(const char *fname, uint8 num);
 static void LoadAnims(void);
@@ -34,7 +34,7 @@ static void LoadSkills(void);
 static void LoadSounds(void);
 static void LoadSpells(void);
 
-/* Check the length and crc of each of the files which we store in SrvFile[]. */
+/* Check the length and crc of each of the files which we store in srvfile[]. */
 void srvfile_check(void)
 {
     Check(FILE_SRV_ANIMS, SRV_CLIENT_ANIMS);
@@ -45,27 +45,27 @@ void srvfile_check(void)
     Check(FILE_SRV_SPELLS, SRV_CLIENT_SPELLS);
 }
 
-/* Set the SrvFile[] status. If this is OK, set the SrvFile[] server length and
- * server crc to the SrvFile[] length and crc. Otherwise, set the SrvFile[]
+/* Set the srvfile[] status. If this is OK, set the srvfile[] server length and
+ * server crc to the srvfile[] length and crc. Otherwise, set the srvfile[]
  * server length and server crc to the appropriate parameters. */
 void srvfile_set_status(uint8 num, uint8 status, int len, uint32 crc)
 {
-    SrvFile[num].status = status;
+    srvfile[num].status = status;
 
     if (status == SRVFILE_STATUS_OK)
     {
-        SrvFile[num].server_len = SrvFile[num].len;
-        SrvFile[num].server_crc = SrvFile[num].crc;
+        srvfile[num].server_len = srvfile[num].len;
+        srvfile[num].server_crc = srvfile[num].crc;
     }
     else
     {
-        SrvFile[num].server_len = len;
-        SrvFile[num].server_crc = crc;
+        srvfile[num].server_len = len;
+        srvfile[num].server_crc = crc;
     }
 }
 
 /* Save the data received from the server with the appropriate filename amd
- * update the length and crc in SrvFile[]. */
+ * update the length and crc in srvfile[]. */
 void srvfile_save(const char *fname, uint8 num, unsigned char *data, int len)
 {
     PHYSFS_File *handle;
@@ -86,45 +86,35 @@ void srvfile_save(const char *fname, uint8 num, unsigned char *data, int len)
     }
 
     /* Set the values we just got. */
-    SrvFile[num].len = (int)len;
-    SrvFile[num].crc = crc32(1L, data, len);
+    srvfile[num].len = (int)len;
+    srvfile[num].crc = crc32(1L, data, len);
 
     /* If they don't match what the server has then this is really bad
      * (because we just got the file from the server). */
-    if (SrvFile[num].server_len != SrvFile[num].len ||
-        SrvFile[num].server_crc != SrvFile[num].crc)
+    if (srvfile[num].server_len != srvfile[num].len ||
+        srvfile[num].server_crc != srvfile[num].crc)
     {
         PHYSFS_close(handle);
         LOG(LOG_FATAL, "Client and server still disagree on length and crc of '%s' (client has %d/%x, server has %d/%x)!\n",
-            fname, SrvFile[num].len, SrvFile[num].crc,
-            SrvFile[num].server_len, SrvFile[num].server_crc);
+            fname, srvfile[num].len, srvfile[num].crc,
+            srvfile[num].server_len, srvfile[num].server_crc);
     }
 
     /* Cleanup. */
-    SrvFile[num].status = SRVFILE_STATUS_OK;
+    srvfile[num].status = SRVFILE_STATUS_OK;
     PHYSFS_close(handle);
-    LOG(LOG_SYSTEM, "OK (len:%d, crc:%x)!\n", len, SrvFile[num].crc);
+    LOG(LOG_SYSTEM, "OK (len:%d, crc:%x)!\n", len, srvfile[num].crc);
 }
 
-/* Request the file from the server if necessary and return the SrvFile[]
- * status. If len/crc are non_NULL, set them to the SrvFile[] length/crc. */
-uint8 srvfile_get_status(uint8 num, int *len, uint32 *crc)
+/* Request the file from the server if necessary and return the srvfile[]
+ * status. */
+uint8 srvfile_get_status(uint8 num)
 {
-    uint8 status = SrvFile[num].status;
+    uint8 status = srvfile[num].status;
 
     if (status == SRVFILE_STATUS_UPDATE)
     {
         RequestFile(csocket, num);
-    }
-
-    if (len)
-    {
-        *len = SrvFile[num].len;
-    }
-
-    if (crc)
-    {
-        *crc = SrvFile[num].crc;
     }
 
     return status;
@@ -155,8 +145,8 @@ static void Check(const char *fname, uint8 num)
     unsigned char *buf_tmp;
 
     /* We obviously don't know these values yet so lets reset both to 0. */
-    SrvFile[num].len = 0;
-    SrvFile[num].crc = 0;
+    srvfile[num].len = 0;
+    srvfile[num].crc = 0;
 
     /* Log what we're doing. */
     LOG(LOG_SYSTEM, "Checking server file '%s'... ", fname);
@@ -201,14 +191,14 @@ static void Check(const char *fname, uint8 num)
     }
 
     /* Set the values we just got. */
-    SrvFile[num].len = (int)len;
-    SrvFile[num].crc = crc32(1L, buf_tmp, len);
-    SrvFile[num].status = SRVFILE_STATUS_OK;
+    srvfile[num].len = (int)len;
+    srvfile[num].crc = crc32(1L, buf_tmp, len);
+    srvfile[num].status = SRVFILE_STATUS_OK;
 
     /* Cleanup. */
     FREE(buf_tmp);
     PHYSFS_close(handle);
-    LOG(LOG_SYSTEM, "OK (len:%d, crc:%x)!\n", len, SrvFile[num].crc);
+    LOG(LOG_SYSTEM, "OK (len:%d, crc:%x)!\n", len, srvfile[num].crc);
 }
 
 static void LoadAnims(void)
