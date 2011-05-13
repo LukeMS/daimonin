@@ -32,7 +32,7 @@ enum
 
 typedef struct srvfile_t
 {
-    int    status;
+    uint8  status;
     int    len;
     uint32 crc;
     int    server_len;
