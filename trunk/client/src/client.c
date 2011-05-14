@@ -1173,6 +1173,20 @@ void RequestFile(ClientSocket csock, int index)
     SockList_COMMAND(&sl, CLIENT_CMD_REQUESTFILE, SEND_CMD_FLAG_FIXED);
     SockList_AddChar(&sl, index);
     send_socklist_binary(&sl);
+
+    /* The following 1 second delay (in fact 900ms seems to be enough but lets
+     * add another 100ms for safety -- hardly human-noticeable) seems to be
+     * necessary to allow the client to 'catch up with itself'. I am not clear
+     * on why it is necessary at this stage (for example, a delay when
+     * receiving the data from the server or writing to disk would seem to make
+     * more sense, but does not work) but whatever, it is needed after r6285 so
+     * I assume the speedups and efficiency improvements are sufficient to
+     * cause the client to get ahead of itself. By addiing a delay here we only
+     * cause that pause for thought when the client is actually getting a file
+     * from the server, which in fact is no bad thing (gives the player a
+     * tangible indication that work is being done).
+     * -- Smacky 20110514 */
+    SDL_Delay(1000);
 }
 
 /* ONLY send this when we are valid connected to our account.
