@@ -1002,29 +1002,67 @@ void finish_face_cmd(int pnum, uint32 checksum, char *face)
 /* we have stored this picture in daimonin.p0 - load it from it! */
 static int load_picture_from_pack(int num)
 {
-    FILE       *stream;
-    char       *pbuf;
-    size_t      dummy; // purely to avoid GCC's warn_unused_result warning
-    SDL_RWops  *rwop;
+    PHYSFS_File *handle;
+    int          len;
+    uint8       *buf;
+    SDL_RWops   *rw;
 
-    if ((stream = fopen_wrapper(FILE_DAIMONIN_P0, "rb")) == NULL)
+    /* If the image pack does not exist, just return 1. */
+    if (!PHYSFS_exists(FILE_DAIMONIN_P0))
+    {
         return 1;
+    }
 
-    lseek(fileno(stream), bmap[num].pos, SEEK_SET);
+    /* If we fail to open the file, log an error and return 1. */
+    if (!(handle = PHYSFS_openRead(FILE_DAIMONIN_P0)))
+    {
+        LOG(LOG_ERROR, "Could not open '%s' for reading!\n", FILE_DAIMONIN_P0);
 
-    MALLOC(pbuf, bmap[num].len);
-    dummy = fread(pbuf, bmap[num].len, 1, stream);
-    rwop = SDL_RWFromMem(pbuf, bmap[num].len);
-    FaceList[num].sprite = sprite_tryload_file(NULL, 0, rwop);
+        return 1;
+    }
 
-    if (FaceList[num].sprite)
+    /* If we fail to set position within the file, log an error and return
+     * 1. */
+    if (!PHYSFS_seek(handle, (PHYSFS_uint64)bmap[num].pos))
+    {
+        LOG(LOG_ERROR, "Could not set position for image %d in file '%s' (%s)!\n",
+            num, FILE_DAIMONIN_P0, PHYSFS_getLastError());
+
+        return 1;
+    }
+
+    len = bmap[num].len;
+    MALLOC(buf, len);
+
+    /* If we can't read the actual image data from the file, log an error and
+     * return 1. */
+    if (PHYSFS_read(handle, buf, 1, len) < len)
+    {
+        LOG(LOG_ERROR, "Could not read image %d data in file '%s'(%s)!\n",
+            num, FILE_DAIMONIN_P0, PHYSFS_getLastError());
+
+        return 1;
+    }
+
+    /* If we can't get the image data back, log an error and return 1. */
+    if (!(rw = SDL_RWFromMem(buf, len)))
+    {
+        LOG(LOG_ERROR, "Could not retrieve image data from memory!\n");
+
+        return 1;
+    }
+
+    if ((FaceList[num].sprite = sprite_tryload_file(NULL, 0, rw))) 
+    {
         face_flag_extension(num, FaceList[num].name);
+    }
 
-    fclose(stream);
-    FREE(pbuf);
+    FREE(buf);
+    PHYSFS_close(handle);
 
     return 0;
 }
+
 /* we got a face - test we have it loaded.
  * if not, say server "send us face cmd "
  * Return: 0 - face not there, requested.
