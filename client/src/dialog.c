@@ -111,7 +111,11 @@ _option             opt[]                           =
         /* Chat & Messages */
         {"Channel format:", "How the channels are shown.","~Prefixed~ prefixes each line with [channel:player], and","~Indented~ only prefixes the first line, indenting subsequent ones.", "Prefixed#Indented",SEL_RANGE,0,1,1,0, &options.channelformat,VAL_INT},
         {"Enable smileys:", "Whether to show smileys graphically.","","", "",SEL_CHECKBOX,0,1,1,1, &options.smileys,VAL_BOOL},
+#ifdef DAI_DEVELOPMENT
+        {"Log messages:", "Whether/which messages are logged.","~None~ turns off logging, ~Only chat~ logs only the chat textwindow, and","~All~ logs everything in both textwindows.", "None#Only chat#All",SEL_RANGE,0,2,1,2, &options.msglog,VAL_INT},
+#else
         {"Log messages:", "Whether/which messages are logged.","~None~ turns off logging, ~Only chat~ logs only the chat textwindow, and","~All~ logs everything in both textwindows.", "None#Only chat#All",SEL_RANGE,0,2,1,1, &options.msglog,VAL_INT},
+#endif
         {"Textwindows use alpha:", "Whether the textwindows are transparent.","","WARNING: Don't check this if you have a VERY slow computer!", "",SEL_CHECKBOX,0,1,1,1, &options.use_TextwinAlpha,VAL_INT},
         {"Textwindows alpha value:", "Transparency value of textwindows.","A higher value means a darker textwindow.","Only has meaning if 'Textwindows use alpha' is checked.", "",SEL_RANGE,0,255,5,110, &options.textwin_alpha,VAL_INT},
         {"Enable chatfilter:", "Whether to filter incoming messages for 'bad' words.","See '/cfilter ?' for more details on this.","", "",SEL_CHECKBOX,0,1,1,0, &options.chatfilter,VAL_BOOL},
@@ -155,7 +159,11 @@ _option             opt[]                           =
         /* End of Page */
 
         /* Client */
+#ifdef DAI_DEVELOPMENT
+        {"Fullscreen:", "Whether to use fullscreen/window mode.","EXPERIMENTAL!!!!!","WARNING: Toggling this checkbox may crash your client!", "",SEL_CHECKBOX,0,1,1,0, &options.fullscreen,VAL_BOOL},
+#else
         {"Fullscreen:", "Whether to use fullscreen/window mode.","EXPERIMENTAL!!!!!","WARNING: Toggling this checkbox may crash your client!", "",SEL_CHECKBOX,0,1,1,1, &options.fullscreen,VAL_BOOL},
+#endif
         {"Resolution:", "The resolution of the screen/window.","If you change to lower resolutions your GUI-windows may be hidden.","WARNING: Some resolutions are NOT for fullscreen!", "800x600#960x600#1024x768#1100x700#1280x720#1280x800#1280x960#1280x1024#1440x900#1400x1050#1600x1200#1680x1050#1920x1080#1920x1200#2048x1536#2560x1600",SEL_RANGE,0,15,1,0, &options.resolution,VAL_INT},
         {"Automatic bpp:", "Whether to use your system's default bits per pixel.","NOTE: You need to restart the client for this option to take effect.","", "",SEL_CHECKBOX,0,1,1,1, &options.auto_bpp_flag,VAL_BOOL},
         {"Colordeep:", "The bpp for fullscreen mode.","This is overruled if 'automatic bpp' is checked.","NOTE: You need to restart the client for this option to take effect.", "8 bpp#16 bpp#32 bpp",SEL_RANGE,0,2,1,2, &options.video_bpp,VAL_INT},
@@ -199,7 +207,11 @@ _option             opt[]                           =
         {"#", "","","", "",0,0,0,0,0, NULL,0},
 
         /* Debug */
+#ifdef DAI_DEVELOPMENT
+        {"Show framerate:", "Whether to show the fps and other details under the map name.","","", "",SEL_CHECKBOX,0,1,1,1, &options.show_frame,VAL_BOOL},
+#else
         {"Show framerate:", "Whether to show the fps and other details under the map name.","","", "",SEL_CHECKBOX,0,1,1,0, &options.show_frame,VAL_BOOL},
+#endif
         {"Force redraw:", "Whether to force the system to redraw EVERY frame.","","", "",SEL_CHECKBOX,0,1,1,0, &options.force_redraw,VAL_BOOL},
         {"Use update rect:", "Whether to use update rect.","","", "",SEL_CHECKBOX,0,1,1,0, &options.use_rect,VAL_BOOL},
 		{"Anim Update Time:", "Check anims every x ms.","","", "",SEL_RANGE,50,500,25,50, &options.anim_check_time,VAL_INT},

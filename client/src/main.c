@@ -511,12 +511,12 @@ void save_options_dat(void)
     char         buf[MEDIUM_BUF];
     PHYSFS_File *handle;
 
-    LOG(LOG_MSG, "Trying to save options... ");
     sprintf(buf, "%s/%s", DIR_SETTINGS, FILE_OPTION);
+    LOG(LOG_SYSTEM, "Saving '%s'... ", buf);
 
     if (!(handle = PHYSFS_openWrite(buf)))
     {
-        LOG(LOG_ERROR, "ERROR: %s!\n", PHYSFS_getLastError());
+        LOG(LOG_ERROR, "ERROR (%s)!\n", PHYSFS_getLastError());
 
         return;
     }
@@ -571,7 +571,7 @@ void save_options_dat(void)
     }
 
     PHYSFS_close(handle);
-    LOG(LOG_MSG, "OK!\n");
+    LOG(LOG_SYSTEM, "OK!\n");
 }
 
 /******************************************************************
@@ -612,14 +612,20 @@ void load_options_dat(void)
     options.metaserver_port = DEFAULT_METASERVER_PORT;
     txtwin_start_size = txtwin[TW_MIX].size;
 //    txtwin[TW_MIX].size=50;
+    sprintf(line, "%s/%s", DIR_SETTINGS, FILE_OPTION);
+
+    /* If there is no options file, that's OK -- we have the defaults. */
+    if (!PHYSFS_exists(line))
+    {
+        return;
+    }
 
     /* Read the options from file */
-    LOG(LOG_MSG, "Tring to load options... ");
-    sprintf(line, "%s/%s", DIR_SETTINGS, FILE_OPTION);
+    LOG(LOG_SYSTEM, "Loading '%s'... ", line);
 
     if (!(handle = PHYSFS_openRead(line)))
     {
-        LOG(LOG_ERROR, "FAILED: %s!\n", PHYSFS_getLastError());
+        LOG(LOG_ERROR, "FAILED (%s)!\n", PHYSFS_getLastError());
 
         return;
     }
@@ -685,7 +691,7 @@ void load_options_dat(void)
     }
 
     PHYSFS_close(handle);
-    LOG(LOG_MSG,"OK!\n");
+    LOG(LOG_SYSTEM, "OK!\n");
 }
 
 
