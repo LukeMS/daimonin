@@ -297,11 +297,14 @@ uint8 new_anim_load_and_check(uint16 anim, uint8 sequence, uint8 dir)
     /* ok, if we are here the animation exists, lets check if the faces for this animation are loaded, if not do it */
     if (!(animation[anim].aSeq[sequence]->dirs[dir].flags & ASEQ_DIR_LOADED))
     {
-        int i;
+        uint8 i;
 
         animation[anim].aSeq[sequence]->dirs[dir].flags |= ASEQ_DIR_LOADED;
-        for (i=0;i<animation[anim].aSeq[sequence]->dirs[dir].frames;i++)
-            request_face(animation[anim].aSeq[sequence]->dirs[dir].faces[i]);
+
+        for (i = 0; i < animation[anim].aSeq[sequence]->dirs[dir].frames; i++)
+        {
+            face_get(animation[anim].aSeq[sequence]->dirs[dir].faces[i]);
+        }
     }
 
     return 1;

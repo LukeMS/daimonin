@@ -585,10 +585,10 @@ uint8 blt_inv_item_centered(item *tmp, int x, int y)
        bltfx.flags=1;
        bltfx.dark_level=0;*/
 
-    if (!FaceList[tmp->face].sprite)
+    if (!face_list[tmp->face].sprite)
         return 0;
 
-    if (FaceList[tmp->face].sprite->status != SPRITE_STATUS_LOADED)
+    if (face_list[tmp->face].sprite->status != SPRITE_STATUS_LOADED)
         return 0;
 
     anim1 = tmp->face;
@@ -605,16 +605,16 @@ uint8 blt_inv_item_centered(item *tmp, int x, int y)
             anim1 = animation[tmp->anim->animnum].aSeq[tmp->anim->sequence]->dirs[tmp->anim->dir].faces[0];
     }
 
-    if (!FaceList[anim1].sprite) /* fallback: first ani bitmap not loaded */
+    if (!face_list[anim1].sprite) /* fallback: first ani bitmap not loaded */
         anim1 = tmp->face;
 
     /* also fallback here */
-    if (FaceList[anim1].sprite->status != SPRITE_STATUS_LOADED)
+    if (face_list[anim1].sprite->status != SPRITE_STATUS_LOADED)
         anim1 = tmp->face;
-    xstart = FaceList[anim1].sprite->border_left;
-    xlen = FaceList[anim1].sprite->bitmap->w - xstart - FaceList[anim1].sprite->border_right;
-    ystart = FaceList[anim1].sprite->border_up;
-    ylen = FaceList[anim1].sprite->bitmap->h - ystart - FaceList[anim1].sprite->border_down;
+    xstart = face_list[anim1].sprite->border_left;
+    xlen = face_list[anim1].sprite->bitmap->w - xstart - face_list[anim1].sprite->border_right;
+    ystart = face_list[anim1].sprite->border_up;
+    ylen = face_list[anim1].sprite->bitmap->h - ystart - face_list[anim1].sprite->border_down;
 
     if (xlen > 32)
     {
@@ -656,18 +656,18 @@ uint8 blt_inv_item_centered(item *tmp, int x, int y)
         temp = xstart - box.x;
 
         box.x = 0;
-        box.w = FaceList[tmp->face].sprite->bitmap->w;
+        box.w = face_list[tmp->face].sprite->bitmap->w;
         xstart = temp;
 
-        temp = ystart - box.y + (FaceList[anim1].sprite->bitmap->h - FaceList[tmp->face].sprite->bitmap->h);
+        temp = ystart - box.y + (face_list[anim1].sprite->bitmap->h - face_list[tmp->face].sprite->bitmap->h);
         box.y = 0;
-        box.h = FaceList[tmp->face].sprite->bitmap->h;
+        box.h = face_list[tmp->face].sprite->bitmap->h;
         ystart = temp;
 
         if (xstart < 0)
         {
             box.x = -xstart;
-            box.w = FaceList[tmp->face].sprite->bitmap->w + xstart;
+            box.w = face_list[tmp->face].sprite->bitmap->w + xstart;
             if (box.w > 32)
                 box.w = 32;
             xstart = 0;
@@ -680,7 +680,7 @@ uint8 blt_inv_item_centered(item *tmp, int x, int y)
         if (ystart < 0)
         {
             box.y = -ystart;
-            box.h = FaceList[tmp->face].sprite->bitmap->h + ystart;
+            box.h = face_list[tmp->face].sprite->bitmap->h + ystart;
             if (box.h > 32)
                 box.h = 32;
             ystart = 0;
@@ -697,7 +697,7 @@ uint8 blt_inv_item_centered(item *tmp, int x, int y)
     if (tmp->flagsval & F_ETHEREAL)
         bltfx.flags = BLTFX_FLAG_SRCALPHA;
 
-    sprite_blt(FaceList[tmp->face].sprite, x + xstart, y + ystart, &box, &bltfx);
+    sprite_blt(face_list[tmp->face].sprite, x + xstart, y + ystart, &box, &bltfx);
 
     if (options.showqc)
     {

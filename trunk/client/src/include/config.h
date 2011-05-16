@@ -70,12 +70,12 @@
 #define DIR_SOUNDS "sfx"
 #define DIR_SRV_FILES "srv_files"
 
-#define FILE_DAIMONIN_P0 "daimonin.p0"
+#define FILE_FACEPACK "daimonin.p0"
 #define FILE_SRV_SOUNDS "srv_files/client_sounds"
 #define FILE_SRV_SPELLS "srv_files/client_spells"
 #define FILE_SRV_SKILLS "srv_files/client_skills"
 #define FILE_SRV_SETTINGS "srv_files/client_settings"
-#define FILE_SRV_BMAPS "srv_files/client_bmap"
+#define FILE_SRV_FACEINFO "srv_files/client_bmap"
 #define FILE_SRV_ANIMS "srv_files/client_anims"
 #define FILE_OPTION "options.dat"
 #define FILE_KEYBIND "keys.dat"
@@ -95,11 +95,6 @@
  */
 #define SCREEN_XLEN 800
 #define SCREEN_YLEN 600
-
-/* Increase when we got MANY new face... Hopefully,we need to increase this
- * in the future...
- */
-#define MAX_FACE_TILES 20000
 
 /* Alderan 2008-04-23:
  * just to be sure i increase that value a bit, with the new client_anim code, anims are only really loaded

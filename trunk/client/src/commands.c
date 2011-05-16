@@ -481,19 +481,16 @@ void SetupCmd(char *buf, int len)
  * a particular number once - at current time, we have no way of knowing
  * if we have already received a face for a particular number.
  */
-
+/* I don't understand the use of the word cacheing here. Why it ever be useful
+ * for the server to send metainfo about an image (which we already have in
+ * FILE_SRV_FACEINFO) but no actual image data? Fortunately, the server never
+ * actually sends this command anyway.
+ * -- Smacky 20110515 */
 void Face1Cmd(char *data, int len)
 {
-    int     pnum;
-    uint32  checksum;
-    char   *face;
-
-    pnum = GetUINT16_String(data);
-    checksum = GetUINT32_String(data + 2);
-    face = (char *) data + 6;
     data[len] = '\0';
-
-    finish_face_cmd(pnum, checksum, face);
+    face_saveinfo(GetUINT16_String(data), GetUINT32_String(data + 2),
+                  (char *)data + 6);
 }
 
 /* Handles when the server says we can't be added.
@@ -631,10 +628,8 @@ void AccNameSuccess(char *data, int len)
 
 void ImageCmd(char *data, int len)
 {
-    int          pnum = GetSINT32_String(data),
-                 plen = GetSINT32_String(data + 4);
-    char         buf[MEDIUM_BUF];
-    PHYSFS_File *handle;
+    int          pnum = GetSINT32_String(data), // only uint16 is needed, save 2 byted
+                 plen = GetSINT32_String(data + 4); // unsigned?
 
     if (len < 8 ||
         (len - 8) < plen)
@@ -645,34 +640,9 @@ void ImageCmd(char *data, int len)
         return;
     }
 
-    sprintf(buf, "%s/", DIR_CACHE);
-
-    if (!PHYSFS_mkdir(buf))
-    {
-        LOG(LOG_ERROR, "%s\n", PHYSFS_getLastError());
-
-        return;
-    }
-
-    /* save picture to cache*/
-    sprintf(buf, "%s/%s", DIR_CACHE, FaceList[pnum].name);
-    LOG(LOG_DEBUG, "ImageFromServer: %s\n", FaceList[pnum].name);
-
-    if (!(handle = PHYSFS_openWrite(buf)))
-    {
-        LOG(LOG_ERROR, "%s\n", PHYSFS_getLastError());
-    }
-    else
-    {
-        PHYSFS_write(handle, (char *)data + 8, 1, plen);
-        PHYSFS_close(handle);
-    }
-
-    /* and load it to FaceList*/
-    FaceList[pnum].sprite = sprite_tryload_file(buf, 0, NULL);
+    face_save((uint16)pnum, (uint8 *)data + 8, (uint32)plen);
     map_udate_flag = 2;
     map_redraw_flag = 1;
-//    textwin_showstring(COLOR_GREEN,"map_draw_update: ImageCmd");
 }
 
 
@@ -1230,6 +1200,7 @@ void StatsCmd(char *data, int len)
  * Set the client in playing mode and wait for the incoming
  * regular server data.
  */
+/* FIXME: Save some bytes here in 0.11.0. */
 void PlayerCmd(char *data, int len)
 {
     char    name[MAX_BUF];
@@ -1245,7 +1216,7 @@ void PlayerCmd(char *data, int len)
     weight = GetSINT32_String(data + i);
     i += 4;
     face = GetSINT32_String(data + i);
-    request_face(face);
+    face_get(face);
     i += 4;
     nlen = data[i++];
     memcpy(name, (const char *) data + i, nlen);
@@ -1285,6 +1256,7 @@ void PlayerCmd(char *data, int len)
 /* this is a bit hacked now - perhaps we should consider
  * in the future a new designed item command.
  */
+/* FIXME: Save some bytes here in 0.11.0. */
 void ItemXYCmd(char *data, int len, int bflag)
 {
     int     weight, loc, tag, face, flags, pos = 0, nlen, anim, nrof, dmode;
@@ -1340,7 +1312,7 @@ void ItemXYCmd(char *data, int len, int bflag)
             flags = GetSINT32_String(data + pos); pos += 4;
             weight = GetSINT32_String(data + pos); pos += 4;
             face = GetSINT32_String(data + pos); pos += 4;
-            request_face(face);
+            face_get(face);
             direction = data[pos++];
 
             if (loc)
@@ -1500,6 +1472,7 @@ void InterfaceCmd(char *data, int len)
 }
 
 /* UpdateItemCmd updates some attributes of an item */
+/* FIXME: Save some bytes here in 0.11.0. */
 void UpdateItemCmd(char *data, int len)
 {
     int     weight, loc, tag, face, sendflags, flags, pos = 0, nlen, anim, nrof, quality=254, condition=254;
@@ -1523,7 +1496,7 @@ void UpdateItemCmd(char *data, int len)
     /*LOG(-1,"UPDATE: loc:%d tag:%d\n",loc, tag); */
     weight = ip->weight;
     face = ip->face;
-    request_face(face);
+    face_get(face);
     flags = ip->flagsval;
     anim = 0;
     animspeed = 0;
@@ -1556,7 +1529,7 @@ if (ip->anim)
     if (sendflags & UPD_FACE)
     {
         face = GetSINT32_String(data + pos);
-        request_face(face);
+        face_get(face);
         pos += 4;
     }
     if (sendflags & UPD_DIRECTION)
@@ -1639,7 +1612,7 @@ void Map2Cmd(char *data, int len)
     char    pname1[64], pname2[64], pname3[64], pname4[64];
     char mapname[SMALL_BUF],
          music[SMALL_BUF];
-    uint16  face;
+    sint32  face;
 
     mapstat = (uint8) (data[pos++]);
     map_transfer_flag = 0;
@@ -1879,11 +1852,12 @@ void Map2Cmd(char *data, int len)
          * we got another byte then which all information we need to display
          * this face in the right way (position and shift offsets)
          */
+        /* Layer 1 */
         if (mask & 0x8)
         {
             sint16  z_height = 0;
             face = GetUINT16_String(data + pos); pos += 2;
-            request_face(face);
+            face_get((face & ~0x8000));
             xdata = 0;
             /* incoming height for floor (this is a sint16 */
 #ifdef USE_TILESTRETCHER
@@ -1892,10 +1866,12 @@ void Map2Cmd(char *data, int len)
             set_map_face(x, y, 0, face, xdata, -1, pname1,z_height);
 
         }
+
+        /* Layer 2 */
         if (mask & 0x4)
         {
             face = GetUINT16_String(data + pos); pos += 2;
-            request_face(face);
+            face_get((face & ~0x8000));
             xdata = 0;
             if (ext_flag & 0x04) /* we have here a multi arch, fetch head offset */
             {
@@ -1904,11 +1880,13 @@ void Map2Cmd(char *data, int len)
             }
             set_map_face(x, y, 1, face, xdata, ext1, pname2,height_2);
         }
+
+        /* Layers 3, 4, 5, and 7 */
         if (mask & 0x2)
         {
             face = GetUINT16_String(data + pos); pos += 2;
-            request_face(face);
-            /* LOG(0,"we got face: %x (%x) ->%s\n", face, face&~0x8000, FaceList[face&~0x8000].name?FaceList[face&~0x8000].name:"(null)" );*/
+            face_get((face & ~0x8000));
+            /* LOG(0,"we got face: %x (%x) ->%s\n", face, face&~0x8000, face_list[face&~0x8000].name?face_list[face&~0x8000].name:"(null)" );*/
             xdata = 0;
             if (ext_flag & 0x02) /* we have here a multi arch, fetch head offset */
             {
@@ -1917,11 +1895,13 @@ void Map2Cmd(char *data, int len)
             }
             set_map_face(x, y, 2, face, xdata, ext2, pname3,height_3);
         }
+
+        /* Layer 6 */
         if (mask & 0x1)
         {
             face = GetUINT16_String(data + pos); pos += 2;
-            request_face(face);
-            /*LOG(0,"we got face2: %x (%x) ->%s\n", face, face&~0x8000, FaceList[face&~0x8000].name?FaceList[face&~0x8000].name:"(null)" );*/
+            face_get((face & ~0x8000));
+            /*LOG(0,"we got face2: %x (%x) ->%s\n", face, face&~0x8000, face_list[face&~0x8000].name?face_list[face&~0x8000].name:"(null)" );*/
             xdata = 0;
             if (ext_flag & 0x01) /* we have here a multi arch, fetch head offset */
             {
@@ -2073,7 +2053,7 @@ void GolemCmd(char *data, int len)
     /* we grap our mode */
     tmp = strchr(data, ' '); /* find start of a name */
     face = atoi(tmp + 1);
-    request_face(face);
+    face_get(face);
     tmp = strchr(tmp + 1, ' '); /* find start of a name */
     textwin_showstring(COLOR_WHITE, "You %s control of %s.",
                        ((mode = atoi(data)) == GOLEM_CTR_RELEASE) ? "lose" :
@@ -2157,13 +2137,13 @@ void DataCmd(char *data, int len)
         case DATA_CMD_BMAP_LIST:
             if (data_comp)
             {
-                LOG(LOG_DEBUG, "data cmd: compressed bmaps file(len:%d)\n", len);
+                LOG(LOG_DEBUG, "data cmd: compressed faces file(len:%d)\n", len);
                 uncompress(dest, &dest_len, (unsigned char *)data, len);
                 data = (char *)dest;
                 len = dest_len;
             }
             request_file_chain++;
-            srvfile_save(FILE_SRV_BMAPS, SRV_CLIENT_BMAPS, (unsigned char *)data, len);
+            srvfile_save(FILE_SRV_FACEINFO, SRV_CLIENT_BMAPS, (unsigned char *)data, len);
             break;
 
         case DATA_CMD_ANIM_LIST:

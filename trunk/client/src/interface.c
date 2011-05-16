@@ -383,31 +383,32 @@ _gui_npc *gui_npc_create(int mode, char *data, int len, int pos)
      */
     if (gui_npc->head)
     {
-        int i = get_bmap_id(gui_npc->head->image.name);
+        sint32 i = face_find(gui_npc->head->image.name);
 
-        /* If the image is not in FaceList, load it from the local icons
+        /* If the image is not in face_list[], load it from the local icons
          * dir. */
         if (i == -1)
         {
-            char     buf[MEDIUM_BUF];
+            char buf[SMALL_BUF];
 
-            sprintf(buf, "%s%s.png",
-                    GetIconDirectory(), gui_npc->head->image.name);
+            sprintf(buf, "%s/%s.png",
+                    DIR_ICONS, gui_npc->head->image.name);
 
              /* Still can't find it? Bug. */
-            if (!(gui_npc->head->image.sprite = sprite_load_file(buf,
-                                                                 SURFACE_FLAG_DISPLAYFORMAT)))
+            if (!(gui_npc->head->image.sprite = sprite_load(buf,
+                                                            SURFACE_FLAG_DISPLAYFORMAT,
+                                                            NULL)))
             {
                 i = 0;
-                LOG(LOG_ERROR, "Can't find image '%s' in FacList or akin!\n",
+                LOG(LOG_ERROR, "Can't find image %s in face_list[] or icons!\n",
                     gui_npc->head->image.name);
             }
         }
 
         if (i != -1)
         {
-            request_face(i);
-            gui_npc->head->image.sprite = FaceList[i].sprite;
+            face_get(i);
+            gui_npc->head->image.sprite = face_list[i].sprite;
         }
 
         gui_npc->head->image.face = i;
@@ -439,7 +440,7 @@ _gui_npc *gui_npc_create(int mode, char *data, int len, int pos)
 
         for (this = gui_npc->icon; this; this = this->next)
         {
-            int i = get_bmap_id(this->image.name);
+            sint32 i = face_find(this->image.name);
 
             /* First split body_text into lines. */
             if (gui_npc->shop)
@@ -454,28 +455,29 @@ _gui_npc *gui_npc_create(int mode, char *data, int len, int pos)
                            GUI_NPC_ICON_MAX_LINE, this);
             }
 
-            /* If the image is not in FaceList, load it from the local icons
+            /* If the image is not in face_list[], load it from the local icons
              * dir. */
             if (i == -1)
             {
-                char buf[MEDIUM_BUF];
+                char buf[SMALL_BUF];
 
-                sprintf(buf, "%s%s.png", GetIconDirectory(), this->image.name);
+                sprintf(buf, "%s/%s.png", DIR_ICONS, this->image.name);
 
                 /* Still can't find it? Bug. */
-                if (!(this->image.sprite = sprite_load_file(buf,
-                                                            SURFACE_FLAG_DISPLAYFORMAT)))
+                if (!(this->image.sprite = sprite_load(buf,
+                                                       SURFACE_FLAG_DISPLAYFORMAT,
+                                                       NULL)))
                 {
                     i = 0;
-                    LOG(LOG_ERROR, "Can't find image '%s' in FacList or akin!\n",
+                    LOG(LOG_ERROR, "Can't find image '%s' in face_list[] or icons!\n",
                         this->image.name);
                 }
             }
 
             if (i != -1)
             {
-                request_face(i);
-                this->image.sprite = FaceList[i].sprite;
+                face_get(i);
+                this->image.sprite = face_list[i].sprite;
             }
 
             this->image.face = i;
@@ -1307,7 +1309,7 @@ void gui_npc_reset(void)
 
             if (gui_npc->head->image.sprite)
             {
-                /* Don't free a sprite from FaceList! */
+                /* Don't free a sprite from face_list! */
                 if (gui_npc->head->image.face == -1)
                 {
                     sprite_free_sprite(gui_npc->head->image.sprite);
@@ -1367,7 +1369,7 @@ void gui_npc_reset(void)
 
                 if (this->image.sprite)
                 {
-                    /* Don't free a sprite from FaceList! */
+                    /* Don't free a sprite from face_list! */
                     if (this->image.face == -1)
                     {
                         sprite_free_sprite(this->image.sprite);
@@ -2292,70 +2294,30 @@ static void ShowGUIContents(uint16 x, uint16 y)
                 gui_npc->reward->mithril)
             {
                 uint8    i = 0;
-                int      coins[DENOMINATIONS],
-                         id;
+                int      coins[DENOMINATIONS];
+                sint32   id;
                 _Sprite *sprites[DENOMINATIONS];
 
                 coins[i] = gui_npc->reward->copper;
                 sprintf(buf, "coppercoin.101");
-                id = get_bmap_id(buf);
-
-                if (id == -1)
-                {
-                    id = 0;
-                    LOG(LOG_ERROR, "Can't find image '%s'!\n", buf);
-                }
-                else
-                {
-                    request_face(id);
-                }
-
-                sprites[i++] = FaceList[id].sprite;
+                id = face_find(buf);
+                face_get(id);
+                sprites[i++] = face_list[id].sprite;
                 coins[i] = gui_npc->reward->silver;
                 sprintf(buf, "silvercoin.101");
-                id = get_bmap_id(buf);
-
-                if (id == -1)
-                {
-                    id = 0;
-                    LOG(LOG_ERROR, "Can't find image '%s'!\n", buf);
-                }
-                else
-                {
-                    request_face(id);
-                }
-
-                sprites[i++] = FaceList[id].sprite;
+                id = face_find(buf);
+                face_get(id);
+                sprites[i++] = face_list[id].sprite;
                 coins[i] = gui_npc->reward->gold;
                 sprintf(buf, "goldcoin.101");
-                id = get_bmap_id(buf);
-
-                if (id == -1)
-                {
-                    id = 0;
-                    LOG(LOG_ERROR, "Can't find image '%s'!\n", buf);
-                }
-                else
-                {
-                    request_face(id);
-                }
-
-                sprites[i++] = FaceList[id].sprite;
+                id = face_find(buf);
+                face_get(id);
+                sprites[i++] = face_list[id].sprite;
                 coins[i] = gui_npc->reward->mithril;
                 sprintf(buf, "mit_coin.101");
-                id = get_bmap_id(buf);
-
-                if (id == -1)
-                {
-                    id = 0;
-                    LOG(LOG_ERROR, "Can't find image '%s'!\n", buf);
-                }
-                else
-                {
-                    request_face(id);
-                }
-
-                sprites[i++] = FaceList[id].sprite;
+                id = face_find(buf);
+                face_get(id);
+                sprites[i++] = face_list[id].sprite;
 
                 if (gui_npc->reward->body.line_count)
                 {

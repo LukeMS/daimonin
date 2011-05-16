@@ -77,6 +77,9 @@
 		<Unit filename="../../../src/event.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="../../../src/face.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="../../../src/filewrap.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -101,6 +104,7 @@
 		<Unit filename="../../../src/include/define.h.in" />
 		<Unit filename="../../../src/include/dialog.h" />
 		<Unit filename="../../../src/include/event.h" />
+		<Unit filename="../../../src/include/face.h" />
 		<Unit filename="../../../src/include/filewrap.h" />
 		<Unit filename="../../../src/include/font.h" />
 		<Unit filename="../../../src/include/group.h" />

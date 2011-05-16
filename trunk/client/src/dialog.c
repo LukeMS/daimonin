@@ -1320,13 +1320,13 @@ void show_keybind()
 
 static void blit_face(int id, int x, int y)
 {
-    if (id == -1 || !FaceList[id].sprite)
+    if (id == -1 || !face_list[id].sprite)
         return;
 
-    if (FaceList[id].sprite->status != SPRITE_STATUS_LOADED)
+    if (face_list[id].sprite->status != SPRITE_STATUS_LOADED)
         return;
 
-    sprite_blt(FaceList[id].sprite, x, y, NULL, NULL);
+    sprite_blt(face_list[id].sprite, x, y, NULL, NULL);
 }
 
 #define CREATE_Y0 120
@@ -1598,7 +1598,7 @@ void show_newplayer_server(void)
 
     /* draw player image */
     EMBOSS(ScreenSurface, &font_small, cpl.name, x + 40, y + 85, COLOR_WHITE, NULL, NULL);
-    blit_face(new_character.face_id[new_character.gender_selected], x + 35, y + 100);
+    blit_face(new_character.face[new_character.gender_selected], x + 35, y + 100);
     sprintf(buf, "HP: ~%d~", new_character.bar[0] * 4 + new_character.bar_add[0]);
     ENGRAVE(ScreenSurface, &font_small, buf, x + 35, y + 145, COLOR_WHITE, NULL, NULL);
     sprintf(buf, "SP: ~%d~", new_character.bar[1] * 2 + new_character.bar_add[1]);
@@ -1746,7 +1746,7 @@ void show_login_server(void)
 
     if (request_file_chain > 9)
     {
-        ENGRAVE(ScreenSurface, &font_small, "Updating bmaps file from server...", x + 2, y + 80, COLOR_WHITE, NULL, NULL);
+        ENGRAVE(ScreenSurface, &font_small, "Updating faces file from server...", x + 2, y + 80, COLOR_WHITE, NULL, NULL);
     }
 
     if (request_file_chain > 11)

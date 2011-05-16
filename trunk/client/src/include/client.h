@@ -60,7 +60,6 @@ typedef struct _server_char
 {
     struct _server_char    *next;
     struct _server_char    *prev;
-    int                     pic_id;
     char                   *name; /* race name: human, elf */
     char                   *desc[4]; /* 4 description strings */
     int                     bar[3];
@@ -69,7 +68,7 @@ typedef struct _server_char
     int                     gender_selected;
     int                     skill_selected;
     char                   *char_arch[4]; /* 4 description strings */
-    int                     face_id[4];
+    sint32                  face[4];
     int                     stats[7];
 }
 _server_char;
@@ -105,7 +104,7 @@ extern ClientSocket csocket;
 
 extern char         *server;
 extern char         *client_libdir;
-extern char         *image_file;
+extern char         *face_file;
 
 typedef enum rangetype
 {
@@ -204,16 +203,13 @@ SockList;
 #define         SockList_AddChar(__sl, __c) (__sl)->buf?*((__sl)->buf+(__sl)->len++):(((__sl)->defbuf[(__sl)->len++])= (unsigned char)(__c))
 
 extern void     send_game_command(const char *command);
-
-extern void     finish_face_cmd(int pnum, uint32 checksum, char *face);
-extern int      request_face(int num);
-
 extern void     SendSetupCmd(void);
 extern void     RequestFile(ClientSocket csock, int index);
 extern void     SendAddMe(char *name);
 extern void     send_new_char(struct _server_char *nc);
 extern void     send_del_char(char *name);
 extern void     client_send_apply(int tag);
+extern void     client_face_cmd(uint16 num);
 extern void     send_move_command(int dir, int mode);
 extern void     client_send_examine(int tag);
 extern void     send_inv_move(int loc, int tag, int nrof);

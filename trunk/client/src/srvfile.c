@@ -27,8 +27,8 @@ srvfile_t srvfile[SRV_CLIENT_FILES];
 
 static void Check(const char *fname, uint8 num);
 static void LoadAnims(void);
-static void LoadBmaps(void);
-static void CheckLocalBmaps(void);
+static void LoadFaceInfo(void);
+static void CheckLocalFaceInfo(void);
 static void LoadSettings(void);
 static void LoadSkills(void);
 static void LoadSounds(void);
@@ -38,7 +38,7 @@ static void LoadSpells(void);
 void srvfile_check(void)
 {
     Check(FILE_SRV_ANIMS, SRV_CLIENT_ANIMS);
-    Check(FILE_SRV_BMAPS, SRV_CLIENT_BMAPS);
+    Check(FILE_SRV_FACEINFO, SRV_CLIENT_BMAPS);
     Check(FILE_SRV_SETTINGS, SRV_CLIENT_SETTINGS);
     Check(FILE_SRV_SKILLS, SRV_CLIENT_SKILLS);
     Check(FILE_SRV_SOUNDS, SRV_CLIENT_SOUNDS);
@@ -123,9 +123,9 @@ uint8 srvfile_get_status(uint8 num)
 /* Load the files into memory in the correct order. */
 void srvfile_load(void)
 {
-    /* Bmaps must be loaded first as they will be referred to in the other
+    /* Face info must be loaded first as they will be referred to in the other
      * srvfiles. */
-    LoadBmaps();
+    LoadFaceInfo();
 
     /* The order of these four doesn't matter so lets go with alphabetical. */
     LoadAnims();
@@ -134,7 +134,7 @@ void srvfile_load(void)
     LoadSpells();
 
     /* Settings (player races) must be loaded last as after 0.11.0 they may
-     * refer to skills and spells (and of course bmaps). */
+     * refer to skills and spells (and of course faces). */
     LoadSettings();
 }
 
@@ -424,7 +424,7 @@ static void LoadAnims(void)
             }
             else
             {
-                int i = get_bmap_id(buf);
+                sint32 i = face_find(buf);
 
                 if (i == -1)
                 {
@@ -435,7 +435,7 @@ static void LoadAnims(void)
 
                 if (old_format)
                 {
-                    faces[numfaces++] = i;
+                    faces[numfaces++] = (uint16)i;
                 }
                 else
                 {
@@ -453,26 +453,26 @@ static void LoadAnims(void)
     LOG(LOG_SYSTEM, "OK!\n");
 }
 
-static void LoadBmaps(void)
+static void LoadFaceInfo(void)
 {
     PHYSFS_File *handle;
     char         buf[MEDIUM_BUF];
     int          i = 0;
 
-    if (!PHYSFS_exists(FILE_SRV_BMAPS))
+    if (!PHYSFS_exists(FILE_SRV_FACEINFO))
     {
-       LOG(LOG_SYSTEM, "Could not find '%s'. This means that the server will not send images so all images must be sourced locally!\n",
-           FILE_SRV_BMAPS);
-       CheckLocalBmaps();
+       LOG(LOG_SYSTEM, "Could not find '%s'. This means that the server will not send faces so all faces must be sourced locally!\n",
+           FILE_SRV_FACEINFO);
+       CheckLocalFaceInfo();
 
        return;
     }
 
     /* Log what we're doing. */
-    LOG(LOG_SYSTEM, "Loading '%s'... ", FILE_SRV_BMAPS);
+    LOG(LOG_SYSTEM, "Loading '%s'... ", FILE_SRV_FACEINFO);
 
     /* Open the file for reading. */
-    if (!(handle = PHYSFS_openRead(FILE_SRV_BMAPS)))
+    if (!(handle = PHYSFS_openRead(FILE_SRV_FACEINFO)))
     {
         LOG(LOG_FATAL, "FAILED (%s)!\n", PHYSFS_getLastError());
     }
@@ -489,47 +489,47 @@ static void LoadBmaps(void)
             LOG(LOG_FATAL, "FAILED (Malformed string: >%s<)!\n", buf);
         }
 
-        MALLOC_STRING(bmap[i].name, name);
-        bmap[i].pos = -1; // not local, updated in CheckLocalBmaps()
-        bmap[i].len = len;
-        bmap[i].crc = crc;
-        bmap_size = ++i;
+        MALLOC_STRING(face_list[i].name, name);
+        face_list[i].pos = -1; // not local, updated in CheckLocalFaceInfo()
+        face_list[i].len = len;
+        face_list[i].crc = crc;
+        face_nrof = ++i;
     }
 
     /* Cleanup. */
     PHYSFS_close(handle);
     LOG(LOG_SYSTEM, "OK!\n");
-    CheckLocalBmaps();
+    CheckLocalFaceInfo();
 }
 
-static void CheckLocalBmaps(void)
+static void CheckLocalFaceInfo(void)
 {
     PHYSFS_File *handle;
     char         buf[MEDIUM_BUF];
-    int          i = 0;
+    sint32       i = 0;
 
     /* Check for existance of local images file. */
-    if (!PHYSFS_exists(FILE_DAIMONIN_P0))
+    if (!PHYSFS_exists(FILE_FACEPACK))
     {
        /* If it doesn't exist and the server is not sending us images, give up.
         * TODO: We should print a client message and go back to server select
         * rather than exit the client. */
-       if (bmap_size == 0)
+       if (face_nrof == 0)
        {
-           LOG(LOG_FATAL, "Could not find '%s'!\n", FILE_DAIMONIN_P0);
+           LOG(LOG_FATAL, "Could not find '%s'!\n", FILE_FACEPACK);
        }
 
-       LOG(LOG_SYSTEM, "Could not find '%s'. This means all images will need to be requested from the server!\n",
-           FILE_DAIMONIN_P0);
+       LOG(LOG_SYSTEM, "Could not find '%s'. This means all faces will need to be requested from the server!\n",
+           FILE_FACEPACK);
 
        return;
     }
 
     /* Log what we're doing. */
-    LOG(LOG_SYSTEM, "Loading local bmaps from '%s'... ", FILE_DAIMONIN_P0);
+    LOG(LOG_SYSTEM, "Loading local face info from '%s'... ", FILE_FACEPACK);
 
     /* Open the file for reading. */
-    if (!(handle = PHYSFS_openRead(FILE_DAIMONIN_P0)))
+    if (!(handle = PHYSFS_openRead(FILE_FACEPACK)))
     {
         LOG(LOG_FATAL, "FAILED (%s)!\n", PHYSFS_getLastError());
     }
@@ -578,16 +578,16 @@ static void CheckLocalBmaps(void)
         name = cp + 1;
 
         /* If we have an image which the server doesn't have, ignore it. */
-        if ((i = get_bmap_id(name)) == -1)
+        if ((i = face_find(name)) == -1)
         {
             continue;
         }
         /* Only if our image and the server's are identical, update pos to
          * point to the local one. */
-        else if (bmap[i].len == len &&
-                 bmap[i].crc == crc)
+        else if (face_list[i].len == len &&
+                 face_list[i].crc == crc)
         {
-            bmap[i].pos = pos;
+            face_list[i].pos = pos;
         }
     }
 
@@ -657,11 +657,6 @@ static void LoadSettings(void)
                 LOG(LOG_FATAL, "Malformed hi line for definition %u: %s!\n", defn, buf);
             }
 
-            if ((sc->pic_id = get_bmap_id(face)) != -1)
-            {
-                request_face(sc->pic_id);
-            }
-
             /* 4 genders: male, female, hermaphrodite, neuter. */
             for (i = 0; i <= 3; i++)
             {
@@ -680,10 +675,8 @@ static void LoadSettings(void)
 
                 MALLOC_STRING(sc->char_arch[i], arch);
 
-                if ((sc->face_id[i] = get_bmap_id(face)) != -1)
-                {
-                    request_face(sc->face_id[i]);
-                }
+                sc->face[i] = face_find(face);
+                face_get(sc->face[i]);
             }
 
             /* Str Dex Con Int Wis Pow Cha */
@@ -882,7 +875,7 @@ static void LoadSkills(void)
         sle->flag = LIST_ENTRY_USED;
         sprintf(sle->icon_name, "%s", icon);
         sprintf(buf, "%s%s", GetIconDirectory(), icon);
-        sle->icon = sprite_load_file(buf, SURFACE_FLAG_DISPLAYFORMAT);
+        sle->icon = sprite_load(buf, SURFACE_FLAG_DISPLAYFORMAT, NULL);
 
         for (i = 0; i <= 3; i++)
         {
@@ -1101,7 +1094,7 @@ static void LoadSpells(void)
         sle->flag = LIST_ENTRY_USED;
         sprintf(sle->icon_name, "%s", icon);
         sprintf(buf, "%s%s", GetIconDirectory(), icon);
-        sle->icon = sprite_load_file(buf, SURFACE_FLAG_DISPLAYFORMAT);
+        sle->icon = sprite_load(buf, SURFACE_FLAG_DISPLAYFORMAT, NULL);
 
         for (i = 0; i <= 3; i++)
         {

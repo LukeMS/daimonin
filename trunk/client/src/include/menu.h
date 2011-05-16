@@ -150,8 +150,6 @@ extern void     save_quickslots_entrys();
 extern void     widget_event_target(int x, int y, SDL_Event event);
 extern void     widget_show_target(int x, int y);
 extern void     reload_icons(void);
-
-extern int get_bmap_id(char *name);
 extern void reset_menu_status(void);
 
 #endif /* ifndef __MENU_H */

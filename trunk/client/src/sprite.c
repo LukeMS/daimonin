@@ -75,21 +75,7 @@ uint8 sprite_deinit_system(void)
     return(1);
 }
 
-_Sprite * sprite_load_file(char *fname, uint32 flags)
-{
-    _Sprite    *sprite;
-
-    sprite = sprite_tryload_file(fname, flags, NULL);
-
-    if (sprite == NULL)
-    {
-        LOG(LOG_ERROR, "ERROR sprite.c: Can't load sprite %s\n", fname);
-        return(NULL);
-    }
-    return(sprite);
-}
-
-_Sprite * sprite_tryload_file(char *fname, uint32 flag, SDL_RWops *rwop)
+_Sprite * sprite_load(char *fname, uint32 flag, SDL_RWops *rwop)
 {
     _Sprite        *sprite;
     SDL_Surface    *bitmap;

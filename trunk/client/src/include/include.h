@@ -72,7 +72,7 @@ typedef signed char     sint8;
 #include <item.h>
 
 #include <protocol.h> /* shared header between server & client */
-
+#include <face.h>
 #include <font.h>
 #include <client.h>
 #include <sdlsocket.h>
