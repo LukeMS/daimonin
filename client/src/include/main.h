@@ -57,21 +57,6 @@ typedef enum _login_step {
 
 extern _login_step LoginInputStep;
 
-#define BMAPTABLE 19001 /* prime nubmer for hash table */
-/* struct for out bmap data */
-
-typedef struct bmap_t
-{
-    char   *name;
-    int     pos;
-    int     len;
-    uint32  crc;
-}
-bmap_t;
-
-extern bmap_t bmap[BMAPTABLE];
-extern int    bmap_size;
-
 typedef struct _keymap
 {
     char    text[256];/*the command text, submited to server when key pressed*/
@@ -272,25 +257,6 @@ typedef struct statometer {
 struct statometer statometer;
 
 extern time_t sleeptime;
-
-#define FACE_FLAG_NO          0
-#define FACE_FLAG_ALTERNATIVE 1  /* this has an alternative image */
-#define FACE_FLAG_DOUBLE      2  /* this is a double wall type */
-#define FACE_FLAG_UP          4  /* this is a upper part of something */
-#define FACE_FLAG_D1          8  /* this is a x1x object (animation or direction) */
-#define FACE_FLAG_D3          16 /* this is a x3x object (animation or direction) */
-#define FACE_REQUESTED        32 /* face requested from server - do it only one time */
-
-typedef struct _face_struct
-{
-    struct _Sprite *sprite;   /* our face data. if != null, face is loaded*/
-    char           *name;     /* our face name. if != null, face is requested*/
-    int             alt_a;    /* index of alternative face */
-    int             alt_b;    /* index of alternative face */
-    uint32          checksum; /* checksum of face */
-    int             flags;
-}
-_face_struct;
 
 #define GOLEM_CTR_RELEASE  0
 #define GOLEM_CTR_ADD      1
@@ -674,8 +640,6 @@ extern int                    interface_mode;
 extern struct _Sprite      *Bitmaps[];
 
 extern struct gui_book_struct    *gui_interface_book;
-
-extern _face_struct         FaceList[MAX_FACE_TILES];   /* face data */
 
 extern SDL_Surface         *ScreenSurface;      /* our main bla and so on surface */
 extern SDL_Surface         *ScreenSurfaceMap;      /* our main bla and so on surface */

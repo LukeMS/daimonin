@@ -12,6 +12,7 @@ daimonin_SOURCES =  \
 	../../src/crc32.c \
 	../../src/dialog.c \
 	../../src/event.c \
+	../../src/face.c \
 	../../src/filewrap.c \
 	../../src/font.c \
 	../../src/group.c \

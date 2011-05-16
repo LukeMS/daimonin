@@ -294,15 +294,15 @@ uint8 blt_face_centered(int face, int x, int y)
     register int temp;
     SDL_Rect    box;
 
-    if (!FaceList[face].sprite)
+    if (!face_list[face].sprite)
         return 0;
 
-    if (FaceList[face].sprite->status != SPRITE_STATUS_LOADED)
+    if (face_list[face].sprite->status != SPRITE_STATUS_LOADED)
         return 0;
 
-    box.x = FaceList[face].sprite->border_left;
-    box.w = FaceList[face].sprite->bitmap->w;
-    temp = box.w - FaceList[face].sprite->border_left - FaceList[face].sprite->border_right;
+    box.x = face_list[face].sprite->border_left;
+    box.w = face_list[face].sprite->bitmap->w;
+    temp = box.w - face_list[face].sprite->border_left - face_list[face].sprite->border_right;
     if (temp > 32)
     {
         box.w = 32;
@@ -316,9 +316,9 @@ uint8 blt_face_centered(int face, int x, int y)
         box.x -= (temp >> 1);
     }
 
-    box.y = -FaceList[face].sprite->border_up;
-    box.h = FaceList[face].sprite->bitmap->h;
-    temp = box.h - FaceList[face].sprite->border_up - FaceList[face].sprite->border_down;
+    box.y = -face_list[face].sprite->border_up;
+    box.h = face_list[face].sprite->bitmap->h;
+    temp = box.h - face_list[face].sprite->border_up - face_list[face].sprite->border_down;
     if (temp > 32)
     {
         box.h = 32;
@@ -329,9 +329,9 @@ uint8 blt_face_centered(int face, int x, int y)
     else if (temp < 32)
     {
         temp = 32 - temp;
-        box.y = -(temp >> 1) + FaceList[face].sprite->border_up;
+        box.y = -(temp >> 1) + face_list[face].sprite->border_up;
     }
-    sprite_blt(FaceList[face].sprite, x, y, &box, NULL);
+    sprite_blt(face_list[face].sprite, x, y, &box, NULL);
 
     return 1;
 }
@@ -569,19 +569,20 @@ void show_menu(void)
 
 void show_media(int x, int y)
 {
-    _Sprite    *bmap;
-    int         xtemp;
+    _Sprite *sprite;
+    int      xtemp;
 
     if (media_show != MEDIA_SHOW_NO)
     {
         /* we show a png*/
         if (media_file[media_show].type == MEDIA_TYPE_PNG)
         {
-            bmap = (_Sprite *) media_file[media_show].data;
-            if (bmap)
+            sprite = (_Sprite *)media_file[media_show].data;
+
+            if (sprite)
             {
-                xtemp = x - bmap->bitmap->w;
-                sprite_blt(bmap, xtemp, y, NULL, NULL);
+                xtemp = x - sprite->bitmap->w;
+                sprite_blt(sprite, xtemp, y, NULL, NULL);
             }
         }
     }
@@ -636,37 +637,6 @@ int blt_window_slider(_Sprite *slider, int maxlen, int winlen, int startoff, int
 
     sprite_blt(slider, x, y + startpos, &box, NULL);
     return 0;
-}
-
-/* find a face ID by name,
- * request the face (find it, load it or request it)
- * and return the ID
- */
-int get_bmap_id(char *name)
-{
-    int l = 0,
-        r = bmap_size - 1,
-        x = r / 2;
-
-    for (; r >= l; x = (l + r) / 2)
-    {
-        int diff = strcmp(name, bmap[x].name);
-
-        if (diff < 0)
-        {
-            r = x - 1;
-        }
-        else if (diff > 0)
-        {
-            l = x + 1;
-        }
-        else
-        {
-            return x;
-        }
-    }
-
-    return -1;
 }
 
 int get_quickslot(int x, int y)
@@ -1412,14 +1382,14 @@ void reload_icons(void)
                 if (spell_list[i].entry[0][ii].icon)
                     sprite_free_sprite(spell_list[i].entry[0][ii].icon);
                sprintf(buf,"%s%s",GetIconDirectory(),spell_list[i].entry[0][ii].icon_name);
-               spell_list[i].entry[0][ii].icon=sprite_load_file(buf, SURFACE_FLAG_DISPLAYFORMAT);
+               spell_list[i].entry[0][ii].icon=sprite_load(buf, SURFACE_FLAG_DISPLAYFORMAT, NULL);
             }
             if ((spell_list[i].entry[1][ii].flag != LIST_ENTRY_UNUSED) && (spell_list[i].entry[1][ii].icon_name))
             {
                 if (spell_list[i].entry[1][ii].icon)
                     sprite_free_sprite(spell_list[i].entry[1][ii].icon);
                sprintf(buf,"%s%s",GetIconDirectory(),spell_list[i].entry[1][ii].icon_name);
-               spell_list[i].entry[1][ii].icon=sprite_load_file(buf, SURFACE_FLAG_DISPLAYFORMAT);
+               spell_list[i].entry[1][ii].icon=sprite_load(buf, SURFACE_FLAG_DISPLAYFORMAT, NULL);
             }
         }
     }
@@ -1433,7 +1403,7 @@ void reload_icons(void)
                 if (skill_list[i].entry[ii].icon)
                     sprite_free_sprite(skill_list[i].entry[ii].icon);
                sprintf(buf,"%s%s",GetIconDirectory(),skill_list[i].entry[ii].icon_name);
-               skill_list[i].entry[ii].icon=sprite_load_file(buf, SURFACE_FLAG_DISPLAYFORMAT);
+               skill_list[i].entry[ii].icon=sprite_load(buf, SURFACE_FLAG_DISPLAYFORMAT, NULL);
             }
         }
     }

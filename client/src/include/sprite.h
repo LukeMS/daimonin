@@ -136,8 +136,7 @@ extern void             show_tooltip(int mx, int my, char *text);
 extern uint8          sprite_init_system(void);
 extern uint8          sprite_deinit_system(void);
 
-extern _Sprite         *sprite_load_file(char *fname, uint32 flags);
-extern _Sprite         *sprite_tryload_file(char *fname, uint32 flags, SDL_RWops *rwob);
+extern _Sprite         *sprite_load(char *fname, uint32 flags, SDL_RWops *rwob);
 extern void             sprite_free_sprite(_Sprite *sprite);
 extern void             sprite_blt(_Sprite *sprite, int x, int y, SDL_Rect *box, _BLTFX *bltfx);
 extern void             sprite_blt_map(_Sprite *sprite, int x, int y, SDL_Rect *box, _BLTFX *bltfx, Uint32 stretch);

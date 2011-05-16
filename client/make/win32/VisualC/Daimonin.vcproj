@@ -270,6 +270,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\face.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\filewrap.c"
 				>
 			</File>
@@ -428,6 +432,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\include\event.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\include\face.h"
 				>
 			</File>
 			<File

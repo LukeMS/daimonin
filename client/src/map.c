@@ -544,7 +544,7 @@ void map_draw_map(void)
 
     /* we should move this later to a better position, this only for testing here */
     _Sprite     player_dummy;
-    SDL_Surface bmap;
+    SDL_Surface surf;
     int         player_posx, player_posy;
     int         player_pixx, player_pixy;
 
@@ -561,10 +561,10 @@ void map_draw_map(void)
     player_dummy.border_right = 0;
     player_dummy.border_up = 0;
     player_dummy.border_down = -5;
-    player_dummy.bitmap = &bmap;
-    bmap.h = 33;
-    bmap.w = 35;
-    player_pixy = (player_pixy + MAP_TILE_POS_YOFF) - bmap.h;
+    player_dummy.bitmap = &surf;
+    surf.h = 33;
+    surf.w = 35;
+    player_pixy = (player_pixy + MAP_TILE_POS_YOFF) - surf.h;
     bltfx.surface = NULL;
     bltfx.alpha = 128;
 
@@ -613,30 +613,30 @@ void map_draw_map(void)
                     if ((index_tmp = map->faces[k]) > 0)
                     {
                         index = index_tmp & ~0x8000;
-                        face_sprite = FaceList[index].sprite;
+                        face_sprite = face_list[index].sprite;
 
                         /* If it's got an alternative image and it's not in the
                          * bottom quadrant, use the alternative sprite. */
-                        if (FaceList[index].flags & FACE_FLAG_ALTERNATIVE)
+                        if (face_list[index].flags & FACE_FLAG_ALTERNATIVE)
                         {
                             int i;
 
                             if (x < (MAP_MAX_SIZE - 1) / 2 || y < (MAP_MAX_SIZE - 1) / 2)
                             {
-                                if ((i = FaceList[index].alt_a) != -1)
-                                    face_sprite = FaceList[i].sprite;
+                                if ((i = face_list[index].alt_a) != -1)
+                                    face_sprite = face_list[i].sprite;
                             }
                             else
                             {
-                                if ((i = FaceList[index].alt_b) != -1)
-                                    face_sprite = FaceList[i].sprite;
+                                if ((i = face_list[index].alt_b) != -1)
+                                    face_sprite = face_list[i].sprite;
                             }
                         }
 
                         if (!face_sprite)
                         {
-                            index = MAX_FACE_TILES - 1;
-                            face_sprite = FaceList[index].sprite;
+                            index = FACE_MAX_NROF - 1;
+                            face_sprite = face_list[index].sprite;
                         }
                         if (face_sprite)
                         {
@@ -735,13 +735,13 @@ void map_draw_map(void)
 
                             /* These faces have alternative images. This has
                              * already been sorted out above, so just blt it. */
-                            if (FaceList[index].flags & FACE_FLAG_ALTERNATIVE)
+                            if (face_list[index].flags & FACE_FLAG_ALTERNATIVE)
                                 sprite_blt_map(face_sprite, xl, yl, NULL, &bltfx, stretch);
                             /* Double faces are shown twice, one above the
                              * other, when not lower on the screen than the
                              * player. This simulates high walls without
                              * oscuring the user's view. */
-                            else if (FaceList[index].flags & FACE_FLAG_DOUBLE)
+                            else if (face_list[index].flags & FACE_FLAG_DOUBLE)
                             {
                                 /* Blt face once in normal position. */
                                 sprite_blt_map(face_sprite, xl, yl, NULL, &bltfx, stretch);
@@ -754,14 +754,14 @@ void map_draw_map(void)
                             }
                             /* These faces are only shown when they are in a
                              * position which would be visible to the player. */
-                            else if (FaceList[index].flags & FACE_FLAG_UP)
+                            else if (face_list[index].flags & FACE_FLAG_UP)
                             {
                                 int bltflag = 0; // prevents drawing the same face twice
  
                                 /* If the face is dir [0124568] and in the top
                                  * or right quadrant or on the central square,
                                  * blt it. */
-                                if (FaceList[index].flags & FACE_FLAG_D1)
+                                if (face_list[index].flags & FACE_FLAG_D1)
                                 {
                                     if (((x <= (MAP_MAX_SIZE - 1) / 2) && (y <= (MAP_MAX_SIZE - 1) / 2))
                                         || ((x > (MAP_MAX_SIZE - 1) / 2) && (y < (MAP_MAX_SIZE - 1) / 2)))
@@ -774,7 +774,7 @@ void map_draw_map(void)
                                 /* If the face is dir [0234768] and in the top
                                  * or left quadrant or on the central square,
                                  * blt it. */
-                                if (!bltflag && FaceList[index].flags & FACE_FLAG_D3)
+                                if (!bltflag && face_list[index].flags & FACE_FLAG_D3)
                                 {
                                     if (((x <= (MAP_MAX_SIZE - 1) / 2) && (y <= (MAP_MAX_SIZE - 1) / 2))
                                         || ((x < (MAP_MAX_SIZE - 1) / 2) && (y > (MAP_MAX_SIZE - 1) / 2)))

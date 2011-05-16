@@ -50,9 +50,6 @@ int                    interface_mode;
 
 int                 debug_layer[MAXFACES];
 
-bmap_t bmap[BMAPTABLE];
-int bmap_size;
-
 struct _options     options;
 Uint32              videoflags_full, videoflags_win;
 
@@ -132,8 +129,6 @@ _screensize Screendefs[16] =
     {2048, 1536, 1248, 936},
     {2560, 1600, 1760, 1000},
 };
-
-_face_struct        FaceList[MAX_FACE_TILES];   /* face data*/
 
 void    init_game_data(void);
 uint8 game_status_chain(void);
@@ -402,7 +397,6 @@ void init_game_data(void)
 
     memset(animcmd, 0, sizeof(animcmd));
     memset(animation, 0, sizeof(animation));
-    memset(bmap, 0, sizeof(bmap));
     ToggleScreenFlag = 0;
     KeyScanFlag = 0;
     memset(&fire_mode_tab, 0, sizeof(fire_mode_tab));
@@ -416,7 +410,7 @@ void init_game_data(void)
 
     for (i = 0; i < BITMAP_MAX; i++)
         Bitmaps[i] = NULL;
-    memset(FaceList, 0, sizeof(struct _face_struct) * MAX_FACE_TILES);
+    memset(face_list, 0, sizeof(face_list));
     memset(&cpl, 0, sizeof(cpl));
     cpl.ob = player_item();
 
@@ -718,13 +712,13 @@ uint8 game_status_chain(void)
         LoginInputStep = LOGIN_STEP_NOTHING;
         interface_mode = GUI_NPC_MODE_NO;
 
-        for (i = 0; i < bmap_size; i++)
+        for (i = 0; i < face_nrof; i++)
         {
-            FREE(bmap[i].name);
-            memset(&bmap[i], 0, sizeof(bmap_t));
+            FREE(face_list[i].name);
+            memset(&face_list[i], 0, sizeof(face_t));
         }
 
-        bmap_size = 0;
+        face_nrof = 0;
         anim_init();
         clear_group();
         map_udate_flag = 2;
@@ -851,7 +845,7 @@ uint8 game_status_chain(void)
     {
         char    sbuf[256];
         sprintf(sbuf, "%s%s", GetBitmapDirectory(), BitmapName[BITMAP_LOADING].name);
-        FaceList[MAX_FACE_TILES - 1].sprite = sprite_tryload_file(sbuf, 0, NULL);
+        face_list[FACE_MAX_NROF - 1].sprite = sprite_load(sbuf, 0, NULL);
 
         map_udate_flag = 2;
         textwin_showstring(COLOR_GREEN, "trying server %s:%d ...",
@@ -1254,7 +1248,7 @@ uint8 load_bitmap(int index)
     if ((index>=BITMAP_PROGRESS_BACK) && (index!=BITMAP_TEXTWIN_MASK))
         flags |= SURFACE_FLAG_DISPLAYFORMAT;
 
-    Bitmaps[index] = sprite_load_file(buf, flags);
+    Bitmaps[index] = sprite_load(buf, flags, NULL);
     if (!Bitmaps[index] || !Bitmaps[index]->bitmap)
     {
         LOG(LOG_MSG, "load_bitmap(): Can't load bitmap %s\n", buf);
@@ -1276,19 +1270,19 @@ void free_faces(void)
 {
     int i;
 
-    for (i = 0; i < MAX_FACE_TILES; i++)
+    for (i = 0; i < FACE_MAX_NROF; i++)
     {
-        if (FaceList[i].sprite)
+        if (face_list[i].sprite)
         {
-            sprite_free_sprite(FaceList[i].sprite);
-            FaceList[i].sprite = NULL;
+            sprite_free_sprite(face_list[i].sprite);
+            face_list[i].sprite = NULL;
         }
-        if (FaceList[i].name)
+        if (face_list[i].name)
         {
-            void   *tmp_free    = &FaceList[i].name;
+            void   *tmp_free    = &face_list[i].name;
             FreeMemory(tmp_free);
         }
-        FaceList[i].flags = 0;
+        face_list[i].flags = 0;
     }
 }
 

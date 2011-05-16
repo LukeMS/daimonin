@@ -93,6 +93,9 @@
 		<Unit filename="..\..\..\src\event.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="..\..\..\src\face.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="..\..\..\src\filewrap.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -122,6 +125,7 @@
 		<Unit filename="..\..\..\src\include\crc32.h" />
 		<Unit filename="..\..\..\src\include\dialog.h" />
 		<Unit filename="..\..\..\src\include\event.h">
+		<Unit filename="..\..\..\src\include\face.h">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\src\include\filewrap.h" />
