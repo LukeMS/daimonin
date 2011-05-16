@@ -21,6 +21,45 @@
     The author can be reached via e-mail to info@daimonin.org
 */
 
+/* The srvfiles are data files which tell the client some information about the
+ * server.
+ *
+ * There are currently six such srvfiles. They are:
+ *
+ * o FILE_SRV_FACEINFO: A complete list, alphabetically sorted by name (except
+ *   for the special bug face which is always the first entry), of all the
+ *   faces the server knows about. It also lists the length and crc of each
+ *   face. See face.c for more details.
+ * o FILE_SRV_ANIMS: A list (ATM complete but there is the possibility in
+ *   future that the server could create new animations at runtime),
+ *   alphabetically sorted, of all the aniimations the server knows about.
+ * o FILE_SRV_SKILLS: A list of all the *used* skills the server knows about.
+ *   There is also some information, including a brief description, of each
+ *   skill. The format and content of this file is due for a rewrite in 0.11.0.
+ * o FILE_SRV_SOUNDS: A complete list of all the sounds the server knows about.
+ *   The format and content of this file is due for a rewrite in 0.11.0.
+ * o FILE_SRV_SPELLS: A complete list of all the spells and prayers the server
+ *   knows about, There is also some information, including a brief
+ *   description, of each spell/prayer. The format and content of this file is
+ *   due for a rewrite in 0.11.0.
+ * o FILE_SRV_SETTINGS: A complete list of all the player races the server
+ *   knows about, There is also some information, including a brief
+ *   description, of each race. The format and content of this file is due for
+ *   a rewrite in 0.11.0.
+ *
+ * The length and crc of each srvfile that the client already has in
+ * DIR_SRVFILES is compared to what the server expects. If the values are
+ * different, new versions are downloaded from the server. TODO: Save in a
+ * subdir of DIR_SRVFILES by server so that unnecessary downloads (ie,
+ * bandwidth) can be avoided when people switch frequently between multiple
+ * servers.
+ *
+ * When the client has exact mirrors of what the server has, we load the data
+ * from each file into memory. This must be done in the order above as later
+ * srvfiles refer to the data of earlier ones (see srvfile_load()).
+ *
+ * -- Smacky 20110516 */
+
 #include "include.h"
 
 srvfile_t srvfile[SRV_CLIENT_FILES];
@@ -596,7 +635,6 @@ static void CheckLocalFaceInfo(void)
     LOG(LOG_SYSTEM, "OK!\n");
 }
 
-/* TODO: This maintains 0.10 compatibility. The file format will be reworked for 0.11.0. */
 static void LoadSettings(void)
 {
     PHYSFS_File *handle;
@@ -778,7 +816,6 @@ static void LoadSettings(void)
     LOG(LOG_SYSTEM, "OK!\n");
 }
 
-/* TODO: This maintains 0.10 compatibility. The file format will be reworked for 0.11.0. */
 static void LoadSkills(void)
 {
     PHYSFS_File  *handle;
@@ -888,7 +925,6 @@ static void LoadSkills(void)
     LOG(LOG_SYSTEM, "OK!\n");
 }
 
-/* TODO: This maintains 0.10 compatibility. The file format will be reworked for 0.11.0. */
 static void LoadSounds(void)
 {
 #ifdef INSTALL_SOUND
@@ -994,7 +1030,6 @@ static void LoadSounds(void)
 #endif
 }
 
-/* TODO: This maintains 0.10 compatibility. The file format will be reworked for 0.11.0. */
 static void LoadSpells(void)
 {
     PHYSFS_File  *handle;
