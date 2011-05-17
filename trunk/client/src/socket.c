@@ -23,6 +23,8 @@
 #include <include.h>
 #define SOCKET_TIMEOUT_MS 4000
 
+ClientSocket csocket;
+
 static SDL_Thread *input_thread;
 static SDL_mutex *input_buffer_mutex;
 static SDL_cond *input_buffer_cond;

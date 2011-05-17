@@ -65,7 +65,7 @@ void do_console(int x, int y)
         if (InputString[0])
         {
 //            textwin_showstring(COLOR_DGOLD, ":%s", InputString);
-            send_game_command(InputString);
+            client_cmd_generic(InputString);
         }
 
         reset_keys();
@@ -103,7 +103,7 @@ void do_number(int x, int y)
             tmp = atoi(InputString);
             if (tmp > 0)
             {
-                send_inv_move(cpl.loc, cpl.tag, tmp);
+                client_cmd_invmove(cpl.loc, cpl.tag, tmp);
 
                 if (cpl.nummode == NUM_MODE_GET)
                     sound_play_effect(SOUNDTYPE_CLIENT, SOUND_GET, 0, 0, 100);
@@ -172,7 +172,7 @@ void do_npcdialog_input(void)
     {
         if (InputString[0])
         {
-            send_talk_command(GUI_NPC_MODE_NPC, InputString);
+            client_cmd_guitalk(GUI_NPC_MODE_NPC, InputString);
             textwin_addhistory(InputString);
             reset_input_mode();
             gui_npc->status = GUI_NPC_STATUS_WAIT;
@@ -1261,7 +1261,7 @@ void widget_event_target(int x, int y, SDL_Event event)
         {
             char buf[6] = "hello";
 
-            send_talk_command(GUI_NPC_MODE_NPC, buf);
+            client_cmd_guitalk(GUI_NPC_MODE_NPC, buf);
         }
     }
 }

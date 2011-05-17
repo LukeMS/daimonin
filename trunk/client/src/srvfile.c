@@ -153,7 +153,7 @@ uint8 srvfile_get_status(uint8 num)
 
     if (status == SRVFILE_STATUS_UPDATE)
     {
-        RequestFile(csocket, num);
+        client_cmd_requestfile(num);
     }
 
     return status;

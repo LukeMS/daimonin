@@ -58,7 +58,6 @@ typedef signed char     sint8;
 /* ok, here we define for what we want compile */
 /* later this should be insert a makefile */
 
-#include <wrapper.h>
 #ifdef INSTALL_SOUND
 #include <SDL_mixer.h>
 #endif
@@ -68,40 +67,40 @@ typedef signed char     sint8;
 #include <stdio.h>
 #include <limits.h>
 
-#include <zlib.h>
-#include <item.h>
-
-#include <protocol.h> /* shared header between server & client */
-#include <face.h>
-#include <font.h>
-#include <client.h>
-#include <sdlsocket.h>
-#include <chatfilter.h>
-#include <ignore.h>
-#include <buddy.h>
-#include <kerbholz.h>
-#include <commands.h>
-#include <main.h>
-#include <player.h>
-#include <misc.h>
-#include <event.h>
-#include <sound.h>
-#include <map.h>
-#include <anim.h>
-#include <tile_stretcher.h>
-#include <sprite.h>
-#include <interface.h>
-#include <book.h>
-#include <textwin.h>
-#include <inventory.h>
-#include <menu.h>
-#include <dialog.h>
-#include <group.h>
-#include <filewrap.h>
-#include <widget.h>
-#include <physfs.h>
-#include <physfsrwops.h>
-#include <srvfile.h>
+#include "protocol.h" /* shared header between server & client */
+#include "wrapper.h"
+#include "zlib.h"
+#include "socket.h"
+#include "face.h"
+#include "font.h"
+#include "client.h"
+#include "item.h"
+#include "chatfilter.h"
+#include "ignore.h"
+#include "buddy.h"
+#include "kerbholz.h"
+#include "commands.h"
+#include "main.h"
+#include "player.h"
+#include "misc.h"
+#include "event.h"
+#include "sound.h"
+#include "map.h"
+#include "anim.h"
+#include "tile_stretcher.h"
+#include "sprite.h"
+#include "interface.h"
+#include "book.h"
+#include "textwin.h"
+#include "inventory.h"
+#include "menu.h"
+#include "dialog.h"
+#include "group.h"
+#include "filewrap.h"
+#include "widget.h"
+#include "physfs.h"
+#include "physfsrwops.h"
+#include "srvfile.h"
 
 /* some older physfs libs need that */
 #ifndef PHYSFS_File

@@ -3354,7 +3354,7 @@ static void SendCommand(void)
     {
         if (gui_npc->status != GUI_NPC_STATUS_WAIT)
         {
-            send_talk_command(interface_mode, buf);
+            client_cmd_guitalk(interface_mode, buf);
             textwin_addhistory(buf);
             reset_keys();
             reset_input_mode();

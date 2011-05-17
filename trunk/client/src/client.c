@@ -25,63 +25,425 @@
  */
 
 #include <include.h>
-#include <stdio.h>
-
-ClientSocket    csocket;
 
 /* helper array to cast a key num input to a server dir value */
 static int move_dir[] = {0,6,5,4,7,0,3,8,1,2};
 
+static char *SplitCommand(const char *command);
+static uint8 CheckCommand(char *cmd, char *params);
+
 /* helper functions for working with binary parms for the socklist */
 static inline void SockList_AddShort(SockList *const sl, const uint16 data)
 {
-    if(sl->buf)
-    	*((uint16 *)(sl->buf+sl->len)) = adjust_endian_int16(data);
+    if (sl->buf)
+    {
+    	*((uint16 *)(sl->buf + sl->len)) = adjust_endian_int16(data);
+    }
     else
-        *((uint16 *)(sl->defbuf+sl->len)) = adjust_endian_int16(data);
-	sl->len+=2;
+    {
+        *((uint16 *)(sl->defbuf + sl->len)) = adjust_endian_int16(data);
+    }
+
+    sl->len += 2;
 }
+
 static inline void SockList_AddInt(SockList *const sl, const uint32 data)
 {
-    if(sl->buf)
-    	*((uint32 *)(sl->buf+sl->len)) = adjust_endian_int32(data);
+    if (sl->buf)
+    {
+    	*((uint32 *)(sl->buf + sl->len)) = adjust_endian_int32(data);
+    }
     else
-        *((uint32 *)(sl->defbuf+sl->len)) = adjust_endian_int32(data);
-	sl->len+=4;
+    {
+        *((uint32 *)(sl->defbuf + sl->len)) = adjust_endian_int32(data);
+    }
+
+    sl->len += 4;
 }
+
 static inline void SockList_AddBuffer(SockList *const sl, const char *const buf, const int len)
 {
-    if(sl->buf)
-        memcpy(sl->buf+sl->len,buf,len);
+    if (sl->buf)
+    {
+        memcpy(sl->buf + sl->len, buf, len);
+    }
     else
-        memcpy(sl->defbuf+sl->len,buf,len);
-    sl->len+=len;
+    {
+        memcpy(sl->defbuf + sl->len, buf, len);
+    }
+
+    sl->len += len;
 }
 
-static inline void SockList_AddString(SockList *const sl, const char *const buf)
+static inline void SockList_AddString(SockList *const sl, const char *const buf, const int len)
 {
-    int len = strlen(buf);
-
-    if(sl->buf)
+    if (sl->buf)
     {
-        memcpy(sl->buf+sl->len,buf,len);
-        *(sl->buf+sl->len+len++) = 0; /* ensure the string is send with 0 end marker */
+        memcpy(sl->buf + sl->len, buf, len);
+        *(sl->buf + sl->len + len) = '\0';
     }
     else
     {
-        memcpy(sl->defbuf+sl->len,buf,len);
-        *(sl->defbuf+sl->len+len++) = 0;
+        memcpy(sl->defbuf + sl->len, buf, len);
+        *(sl->defbuf + sl->len + len) = '\0';
     }
-    sl->len+=len;
 
+    sl->len += len + 1;
+}
 
+/* send the setup command to the server
+ * This is the handshake command after the client connects
+ * and the first data which are send between server & client
+ * NOTE: Because this is the first command, the data part is 
+ * String only. With the response from the server we get 
+ * endian info which enables us to send binary data (without
+ * fixed shifting)
+ */
+void client_cmd_setup(void)
+{
+    char tmpbuf[TINY_BUF],
+         buf[MEDIUM_BUF];
+
+    if (SoundStatus)
+        sprintf(tmpbuf, "%d|%x",
+                srvfile[SRV_CLIENT_SOUNDS].len,
+                srvfile[SRV_CLIENT_SOUNDS].crc);
+    else
+        strcpy(tmpbuf, "0");
+
+    sprintf(buf, "dv %u.%u.%u pv %u sn %s mz %dx%d skf %d|%x spf %d|%x bpf %d|%x stf %d|%x amf %d|%x",
+            DAI_VERSION_RELEASE, DAI_VERSION_MAJOR, DAI_VERSION_MINOR,
+            PROTOCOL_VERSION, tmpbuf, MapStatusX, MapStatusY,
+            srvfile[SRV_CLIENT_SKILLS].len, srvfile[SRV_CLIENT_SKILLS].crc,
+            srvfile[SRV_CLIENT_SPELLS].len, srvfile[SRV_CLIENT_SPELLS].crc,
+            srvfile[SRV_CLIENT_BMAPS].len, srvfile[SRV_CLIENT_BMAPS].crc,
+            srvfile[SRV_CLIENT_SETTINGS].len, srvfile[SRV_CLIENT_SETTINGS].crc,
+            srvfile[SRV_CLIENT_ANIMS].len, srvfile[SRV_CLIENT_ANIMS].crc);
+
+    send_command_binary(CLIENT_CMD_SETUP, buf, strlen(buf), SEND_CMD_FLAG_STRING);
+}
+
+/* Request a so called "server file" from the server.
+ * Which includes a list of skills the server knows,
+ * spells and such, and how they are described and 
+ * visualized
+ */
+void client_cmd_requestfile(uint8 index)
+{
+    SockList sl;
+
+    /* for binary stuff we better use the socklist system */
+    SockList_INIT(&sl, NULL);
+    SockList_COMMAND(&sl, CLIENT_CMD_REQUESTFILE, SEND_CMD_FLAG_FIXED);
+    SockList_AddChar(&sl, index);
+    send_socklist_binary(&sl);
+
+    /* The following 1 second delay (in fact 900ms seems to be enough but lets
+     * add another 100ms for safety -- hardly human-noticeable) seems to be
+     * necessary to allow the client to 'catch up with itself'. I am not clear
+     * on why it is necessary at this stage (for example, a delay when
+     * receiving the data from the server or writing to disk would seem to make
+     * more sense, but does not work) but whatever, it is needed after r6285 so
+     * I assume the speedups and efficiency improvements are sufficient to
+     * cause the client to get ahead of itself. By addiing a delay here we only
+     * cause that pause for thought when the client is actually getting a file
+     * from the server, which in fact is no bad thing (gives the player a
+     * tangible indication that work is being done).
+     * -- Smacky 20110514 */
+    /* As of r6299 we need about 1100ms to properly load the largest srv_file
+     * (FACEINFO). This implies it is related to file size which obviously we
+     * do not know here, so this is not the best place. For safety we'll give
+     * it a flat 1200ms then.
+     * -- Smacky 20110516 */
+    SDL_Delay(1200);
+}
+
+void client_cmd_checkname(char *name)
+{
+    SockList sl;
+
+    SockList_INIT(&sl, NULL);
+    SockList_COMMAND(&sl, CLIENT_CMD_CHECKNAME, 0);
+    SockList_AddString(&sl, name, strlen(name));
+    send_socklist_binary(&sl);
+}
+
+void client_cmd_login(int mode, char *name, char *pass)
+{
+    SockList sl;
+
+    SockList_INIT(&sl, NULL);
+    SockList_COMMAND(&sl, CLIENT_CMD_LOGIN, 0);
+    SockList_AddChar(&sl, mode);
+    SockList_AddString(&sl, name, strlen(name));
+    SockList_AddString(&sl, pass, strlen(pass));
+    send_socklist_binary(&sl);
+}
+
+/* the server also parsed client_settings. 
+ * We only tell him our name, password (for reclaiming B4
+ * characters), the selected default arch (as gender_selected)
+ * and the weapon skill
+ * The server will grap the other values from the loaded file
+ */
+void client_cmd_newchar(_server_char *nc)
+{
+    _server_char *sc = first_server_char;
+    uint8         i = 0;
+    SockList      sl;
+
+    /* lets find the entry number */
+    while (sc)
+    {
+        /* get our current template */
+        if (!strcmp(sc->name, new_character.name))
+        {
+            break;
+        }
+
+        i++;
+    }
+
+    SockList_INIT(&sl, NULL);
+    SockList_COMMAND(&sl, CLIENT_CMD_NEWCHAR, SEND_CMD_FLAG_DYNAMIC);
+    SockList_AddChar(&sl, i);
+    SockList_AddChar(&sl, nc->gender_selected);
+    SockList_AddChar(&sl, nc->skill_selected);
+    SockList_AddString(&sl, cpl.name, strlen(cpl.name));
+    SockList_AddString(&sl, cpl.reclaim_password, strlen(cpl.reclaim_password));
+    send_socklist_binary(&sl);
+}
+
+/* delete a character */
+void client_cmd_delchar(char *name)
+{
+    SockList sl;
+
+    SockList_INIT(&sl, NULL);
+    SockList_COMMAND(&sl, CLIENT_CMD_DELCHAR, SEND_CMD_FLAG_DYNAMIC);
+    SockList_AddString(&sl, name, strlen(name));
+    send_socklist_binary(&sl);
+}
+
+/* ONLY send this when we are valid connected to our account.
+ * Server will assume a hacking attempt when something is wrong
+ * we are not logged to an account or name don't exists in that
+ * account. Will invoke a hack warning and a temp ban!
+ * This command will invoke the login for char name and put player
+ * in playing mode or invoke an account cmd error msg
+ */
+void client_cmd_addme(char *name)
+{
+    SockList sl;
+
+    SockList_INIT(&sl, NULL);
+    SockList_COMMAND(&sl, CLIENT_CMD_ADDME, SEND_CMD_FLAG_DYNAMIC);
+    SockList_AddString(&sl, name, strlen(name));
+    send_socklist_binary(&sl);
+}
+
+void client_cmd_face(uint16 num)
+{
+    SockList sl;
+
+    SockList_INIT(&sl, NULL);
+    SockList_COMMAND(&sl, CLIENT_CMD_FACE, 0);
+    SockList_AddShort(&sl, num);
+    send_socklist_binary(&sl);
+}
+
+/* THE main move command function */
+void client_cmd_move(int dir, int mode)
+{
+    SockList sl;
+    // remapped to: "idle", "/sw", "/s", "/se", "/w", "/stay", "/e", "/nw", "/n", "/ne" 
+
+    SockList_INIT(&sl, NULL);
+    SockList_COMMAND(&sl, CLIENT_CMD_MOVE, SEND_CMD_FLAG_FIXED);
+    SockList_AddChar(&sl, move_dir[dir]);
+    SockList_AddChar(&sl, mode);
+    send_socklist_binary(&sl);
+}
+
+void client_cmd_apply(int tag)
+{
+    SockList sl;
+
+    SockList_INIT(&sl, NULL);
+    SockList_COMMAND(&sl, CLIENT_CMD_APPLY, SEND_CMD_FLAG_FIXED);
+    SockList_AddInt(&sl, tag);
+    send_socklist_binary(&sl);
+}
+
+void client_cmd_examine(int tag)
+{
+    SockList sl;
+
+    SockList_INIT(&sl, NULL);
+    SockList_COMMAND(&sl, CLIENT_CMD_EXAMINE, SEND_CMD_FLAG_FIXED);
+    SockList_AddInt(&sl, tag);
+    send_socklist_binary(&sl);
+}
+
+/* Requests nrof objects of tag get moved to loc. */
+void client_cmd_invmove(int loc, int tag, int nrof)
+{
+    SockList sl;
+
+    SockList_INIT(&sl, NULL);
+    SockList_COMMAND(&sl, CLIENT_CMD_INVMOVE, SEND_CMD_FLAG_FIXED);
+    SockList_AddInt(&sl, loc);
+    SockList_AddInt(&sl, tag);
+    SockList_AddInt(&sl, nrof);
+    send_socklist_binary(&sl);
+}
+
+void client_cmd_guitalk(sint8 mode, char *topic)
+{
+    uint16   c;
+    SockList sl;
+
+    for (c = 0; *(topic + c); c++)
+    {
+        *(topic + c) = tolower(*(topic + c));
+    }
+
+    textwin_showstring(COLOR_DGOLD, "Topic: %s", topic);
+    SockList_INIT(&sl, NULL);
+    SockList_COMMAND(&sl, CLIENT_CMD_GUITALK, SEND_CMD_FLAG_DYNAMIC);
+    SockList_AddChar(&sl, mode);
+    SockList_AddBuffer(&sl, topic, strlen(topic));
+    send_socklist_binary(&sl);
+}
+
+void client_cmd_lock(int mode, int tag)
+{
+    SockList sl;
+
+    SockList_INIT(&sl, NULL);
+    SockList_COMMAND(&sl, CLIENT_CMD_LOCK, SEND_CMD_FLAG_FIXED);
+    SockList_AddChar(&sl, mode);
+    SockList_AddInt(&sl, tag);
+    send_socklist_binary(&sl);
+}
+
+void client_cmd_mark(int tag)
+{
+    SockList sl;
+
+    SockList_INIT(&sl, NULL);
+    SockList_COMMAND(&sl, CLIENT_CMD_MARK, SEND_CMD_FLAG_FIXED);
+    SockList_AddInt(&sl, tag);
+    send_socklist_binary(&sl);
+}
+
+void client_cmd_fire(int num, int mode, char *tmp_name)
+{
+    SockList sl;
+
+    SockList_INIT(&sl, NULL);
+    SockList_COMMAND(&sl, CLIENT_CMD_FIRE, 0);
+    SockList_AddInt(&sl, move_dir[num]);
+    SockList_AddInt(&sl, mode);
+
+    if (tmp_name)
+    {
+        SockList_AddBuffer(&sl, tmp_name, strlen(tmp_name));
+    }
+
+    SockList_AddChar(&sl, 0); /* be sure we finish with zero - server will check it */
+    send_socklist_binary(&sl);
+}
+
+/* client_cmd_generic() will send a higher level game command like /tell, /say or
+ * other "slash" text commants. Usually, this kind of commands are typed in 
+ * console or are bound to macros. 
+ * The underlaying protocol command is CLIENT_CMD_GENERIC, which means
+ * its a command holding another command.
+ * For realtime or system commands, commands with binary params and such,
+ * not a slash command should be used but a new protocol command.
+ * Only that commands hold real binary params and can be pre-processed
+ * by the server protocol functions.
+ */
+void client_cmd_generic(const char *command)
+{
+    char  buf[LARGE_BUF],
+         *token,
+         *end;
+
+    /* Copy a normalized (leading, trailing, and excess inline whitespace-
+     * stripped) command to buf: */
+    sprintf(buf, "%s", normalize_string(command));
+
+    /* Now go through buf, possibly separating multicommands.
+     * Each command (before separation) is pointed to by token: */
+    for (token = buf; token && *token; token = (end) ? end + 1 : NULL)
+    {
+        char  *p,
+               cmd[MEDIUM_BUF],
+               params[MEDIUM_BUF];
+        uint8  c;
+
+#ifdef USE_CHANNELS
+        if (*token != '/' &&
+            *token != '-') /* if not a command ... its chat  (- is for channel system)*/
+#else
+        if (*token != '/')
+#endif
+        {
+            char tmpbuf[LARGE_BUF];
+
+            sprintf(tmpbuf, "/say %s", token);
+            sprintf(token, "%s", tmpbuf);
+        }
+
+        end = SplitCommand(token);
+
+        /* Now we copy token to cmd... */
+        sprintf(cmd, "%s", token);
+
+        /* And separate the params too. */
+        *params = '\0';
+
+        if ((p = strchr(cmd, ' ')))
+        {
+            *(p++) = '\0';
+
+            if (p)
+            {
+                sprintf(params, "%s", p);
+            }
+        }
+
+        /* Lowercase cmd. */
+        for (c = 0; *(cmd + c); c++)
+        {
+            *(cmd + c) = tolower(*(cmd + c));
+        }
+
+#if 0
+        LOG(LOG_DEBUG,">>>%s<<<\n>>>%s<<<\n", cmd, params);
+#endif
+
+        if (!CheckCommand(cmd, params))
+        {
+            char     tmpbuf[LARGE_BUF];
+            SockList sl;
+
+            sprintf(tmpbuf, "%s%s%s", cmd + 1, (*params) ? " " : "", params);
+            SockList_INIT(&sl, NULL);
+            SockList_COMMAND(&sl, CLIENT_CMD_GENERIC, SEND_CMD_FLAG_STRING);
+            SockList_AddBuffer(&sl, tmpbuf, strlen(tmpbuf));
+            send_socklist_binary(&sl);
+        }
+    }
 }
 
 /* Splits command at the next #,
 * returning a pointer to the occurrence (which is overwritten with \0 first) or
 * NULL if no next multicommand is found or command is chat, etc.
 */
-static char *BreakMulticommand(const char *command)
+static char *SplitCommand(const char *command)
 {
     char *c = NULL;
 
@@ -113,7 +475,7 @@ static char *BreakMulticommand(const char *command)
  * expand or pre process them for the server.
  * Return 0 and update cmd and params as necessary to send the command to the
  * server, or  1 not to (ie, command has been fully handled client-side). */
-static uint8 CommandCheck(char *cmd, char *params)
+static uint8 CheckCommand(char *cmd, char *params)
 {
 #ifdef USE_CHANNELS
     /* i know hardcoding is most of the time bad, but the channel system will
@@ -186,14 +548,14 @@ static uint8 CommandCheck(char *cmd, char *params)
         else
         {
             textwin_showstring(COLOR_DGOLD, "%s %s", cmd, obj->s_name);
-            client_send_apply(tag);
+            client_cmd_apply(tag);
         }
 
         return 1;
     }
     else if (!strcmp(cmd, "/qlist"))
     {
-        send_talk_command(GUI_NPC_MODE_QUEST, params);
+        client_cmd_guitalk(GUI_NPC_MODE_QUEST, params);
 
         return 1;
     }
@@ -219,7 +581,7 @@ static uint8 CommandCheck(char *cmd, char *params)
     {
         if (*params)
         {
-            send_talk_command(GUI_NPC_MODE_NPC, params);
+            client_cmd_guitalk(GUI_NPC_MODE_NPC, params);
         }
 
         return 1;
@@ -713,346 +1075,3 @@ static uint8 CommandCheck(char *cmd, char *params)
 
     return 0;
 }
-
-/* send_game_command() will send a higher level game command like /tell, /say or
- * other "slash" text commants. Usually, this kind of commands are typed in 
- * console or are bound to macros. 
- * The underlaying protocol command is CLIENT_CMD_GENERIC, which means
- * its a command holding another command.
- * For realtime or system commands, commands with binary params and such,
- * not a slash command should be used but a new protocol command.
- * Only that commands hold real binary params and can be pre-processed
- * by the server protocol functions.
- */
-void send_game_command(const char *command)
-{
-    char  buf[LARGE_BUF],
-         *token,
-         *end;
-
-    /* Copy a normalized (leading, trailing, and excess inline whitespace-
-     * stripped) command to buf: */
-    sprintf(buf, "%s", normalize_string(command));
-
-    /* Now go through buf, possibly separating multicommands.
-     * Each command (before separation) is pointed to by token: */
-    for (token = buf; token && *token; token = (end) ? end + 1 : NULL)
-    {
-        char  *p,
-               cmd[MEDIUM_BUF],
-               params[MEDIUM_BUF];
-        uint8  c;
-
-#ifdef USE_CHANNELS
-        if (*token != '/' &&
-            *token != '-') /* if not a command ... its chat  (- is for channel system)*/
-#else
-        if (*token != '/')
-#endif
-        {
-            char tmpbuf[LARGE_BUF];
-
-            sprintf(tmpbuf, "/say %s", token);
-            sprintf(token, "%s", tmpbuf);
-        }
-
-        end = BreakMulticommand(token);
-
-        /* Now we copy token to cmd... */
-        sprintf(cmd, "%s", token);
-
-        /* And separate the params too. */
-        *params = '\0';
-
-        if ((p = strchr(cmd, ' ')))
-        {
-            *(p++) = '\0';
-
-            if (p)
-            {
-                sprintf(params, "%s", p);
-            }
-        }
-
-        /* Lowercase cmd. */
-        for (c = 0; *(cmd + c); c++)
-        {
-            *(cmd + c) = tolower(*(cmd + c));
-        }
-
-#if 0
-        LOG(LOG_DEBUG,">>>%s<<<\n>>>%s<<<\n", cmd, params);
-#endif
-
-        if (!CommandCheck(cmd, params))
-        {
-            char     tmpbuf[LARGE_BUF];
-            SockList sl;
-
-            sprintf(tmpbuf, "%s%s%s", cmd + 1, (*params) ? " " : "", params);
-            SockList_INIT(&sl, NULL);
-            SockList_COMMAND(&sl, CLIENT_CMD_GENERIC, SEND_CMD_FLAG_STRING);
-            SockList_AddBuffer(&sl, tmpbuf, strlen(tmpbuf));
-            send_socklist_binary(&sl);
-        }
-    }
-}
-
-/* send the setup command to the server
- * This is the handshake command after the client connects
- * and the first data which are send between server & client
- * NOTE: Because this is the first command, the data part is 
- * String only. With the response from the server we get 
- * endian info which enables us to send binary data (without
- * fixed shifting)
- */
-void SendSetupCmd(void)
-{
-    char tmpbuf[TINY_BUF],
-         buf[MEDIUM_BUF];
-
-    if (SoundStatus)
-        sprintf(tmpbuf, "%d|%x",
-                srvfile[SRV_CLIENT_SOUNDS].len,
-                srvfile[SRV_CLIENT_SOUNDS].crc);
-    else
-        strcpy(tmpbuf, "0");
-
-    sprintf(buf, "dv %u.%u.%u pv %u sn %s mz %dx%d skf %d|%x spf %d|%x bpf %d|%x stf %d|%x amf %d|%x",
-            DAI_VERSION_RELEASE, DAI_VERSION_MAJOR, DAI_VERSION_MINOR,
-            PROTOCOL_VERSION, tmpbuf, MapStatusX, MapStatusY,
-            srvfile[SRV_CLIENT_SKILLS].len, srvfile[SRV_CLIENT_SKILLS].crc,
-            srvfile[SRV_CLIENT_SPELLS].len, srvfile[SRV_CLIENT_SPELLS].crc,
-            srvfile[SRV_CLIENT_BMAPS].len, srvfile[SRV_CLIENT_BMAPS].crc,
-            srvfile[SRV_CLIENT_SETTINGS].len, srvfile[SRV_CLIENT_SETTINGS].crc,
-            srvfile[SRV_CLIENT_ANIMS].len, srvfile[SRV_CLIENT_ANIMS].crc);
-
-    send_command_binary(CLIENT_CMD_SETUP, buf, strlen(buf), SEND_CMD_FLAG_STRING);
-}
-
-/* Request a so called "server file" from the server.
- * Which includes a list of skills the server knows,
- * spells and such, and how they are described and 
- * visualized
- */
-void RequestFile(ClientSocket csock, int index)
-{
-    SockList    sl;
-
-    /* for binary stuff we better use the socklist system */
-    SockList_INIT(&sl, NULL);
-    SockList_COMMAND(&sl, CLIENT_CMD_REQUESTFILE, SEND_CMD_FLAG_FIXED);
-    SockList_AddChar(&sl, index);
-    send_socklist_binary(&sl);
-
-    /* The following 1 second delay (in fact 900ms seems to be enough but lets
-     * add another 100ms for safety -- hardly human-noticeable) seems to be
-     * necessary to allow the client to 'catch up with itself'. I am not clear
-     * on why it is necessary at this stage (for example, a delay when
-     * receiving the data from the server or writing to disk would seem to make
-     * more sense, but does not work) but whatever, it is needed after r6285 so
-     * I assume the speedups and efficiency improvements are sufficient to
-     * cause the client to get ahead of itself. By addiing a delay here we only
-     * cause that pause for thought when the client is actually getting a file
-     * from the server, which in fact is no bad thing (gives the player a
-     * tangible indication that work is being done).
-     * -- Smacky 20110514 */
-    /* As of r6299 we need about 1100ms to properly load the largest srv_file
-     * (FACEINFO). This implies it is related to file size which obviously we
-     * do not know here, so this is not the best place. For safety we'll give
-     * it a flat 1200ms then.
-     * -- Smacky 20110516 */
-    SDL_Delay(1200);
-}
-
-/* ONLY send this when we are valid connected to our account.
- * Server will assume a hacking attempt when something is wrong
- * we are not logged to an account or name don't exists in that
- * account. Will invoke a hack warning and a temp ban!
- * This command will invoke the login for char name and put player
- * in playing mode or invoke an account cmd error msg
- */
-void SendAddMe(char *name)
-{
-    SockList    sl;
-    SockList_INIT(&sl, NULL);
-    SockList_COMMAND(&sl, CLIENT_CMD_ADDME, SEND_CMD_FLAG_DYNAMIC);
-    SockList_AddString(&sl, name);
-    send_socklist_binary(&sl);
-}
-
-/* the server also parsed client_settings. 
- * We only tell him our name, password (for reclaiming B4
- * characters), the selected default arch (as gender_selected)
- * and the weapon skill
- * The server will grap the other values from the loaded file
- */
-void send_new_char(_server_char *nc)
-{
-    int i =0;
-    SockList    sl;
-    _server_char   *tmpc;
-
-    /* lets find the entry number */
-    for (tmpc = first_server_char; tmpc; tmpc = tmpc->next)
-    {
-        /* get our current template */
-        if (!strcmp(tmpc->name, new_character.name))
-            break;
-        i++;
-    }
-
-    SockList_INIT(&sl, NULL);
-    SockList_COMMAND(&sl, CLIENT_CMD_NEWCHAR, SEND_CMD_FLAG_DYNAMIC);
-    SockList_AddChar(&sl, i);
-    SockList_AddChar(&sl, nc->gender_selected);
-    SockList_AddChar(&sl, nc->skill_selected);
-    SockList_AddString(&sl, cpl.name);
-    SockList_AddString(&sl, cpl.reclaim_password);
-    send_socklist_binary(&sl);
-}
-
-/* delete a character */
-void send_del_char(char *name)
-{
-    SockList    sl;
-
-    SockList_INIT(&sl, NULL);
-    SockList_COMMAND(&sl, CLIENT_CMD_DELCHAR, SEND_CMD_FLAG_DYNAMIC);
-    SockList_AddString(&sl, name);
-    send_socklist_binary(&sl);
-}
-
-
-void client_send_apply(int tag)
-{
-    SockList    sl;
-
-    SockList_INIT(&sl, NULL);
-    SockList_COMMAND(&sl, CLIENT_CMD_APPLY, SEND_CMD_FLAG_FIXED);
-    SockList_AddInt(&sl, tag);
-    send_socklist_binary(&sl);
-}
-
-void client_face_cmd(uint16 num)
-{
-    SockList sl;
-
-    SockList_INIT(&sl, NULL);
-    SockList_COMMAND(&sl, CLIENT_CMD_FACE, 0);
-    SockList_AddShort(&sl, num);
-    send_socklist_binary(&sl);
-}
-
-/* THE main move command function */
-void send_move_command(int dir, int mode)
-{
-    SockList    sl;
-    // remapped to: "idle", "/sw", "/s", "/se", "/w", "/stay", "/e", "/nw", "/n", "/ne" 
-
-    SockList_INIT(&sl, NULL);
-    SockList_COMMAND(&sl, CLIENT_CMD_MOVE, SEND_CMD_FLAG_FIXED);
-    SockList_AddChar(&sl, move_dir[dir]);
-    SockList_AddChar(&sl, mode);
-    send_socklist_binary(&sl);
-}
-
-void client_send_examine(int tag)
-{
-    SockList    sl;
-
-    SockList_INIT(&sl, NULL);
-    SockList_COMMAND(&sl, CLIENT_CMD_EXAMINE, SEND_CMD_FLAG_FIXED);
-    SockList_AddInt(&sl, tag);
-    send_socklist_binary(&sl);
-}
-
-/* Requests nrof objects of tag get moved to loc. */
-void send_inv_move(int loc, int tag, int nrof)
-{
-    SockList    sl;
-
-    SockList_INIT(&sl, NULL);
-    SockList_COMMAND(&sl, CLIENT_CMD_INVMOVE, SEND_CMD_FLAG_FIXED);
-    SockList_AddInt(&sl, loc);
-    SockList_AddInt(&sl, tag);
-    SockList_AddInt(&sl, nrof);
-    send_socklist_binary(&sl);
-}
-
-void send_talk_command(sint8 mode, char *topic)
-{
-    uint16   c;
-    SockList sl;
-
-    for (c = 0; *(topic + c); c++)
-    {
-        *(topic + c) = tolower(*(topic + c));
-    }
-
-    textwin_showstring(COLOR_DGOLD, "Topic: %s", topic);
-    SockList_INIT(&sl, NULL);
-    SockList_COMMAND(&sl, CLIENT_CMD_GUITALK, SEND_CMD_FLAG_DYNAMIC);
-    SockList_AddChar(&sl, mode);
-    SockList_AddBuffer(&sl, topic, strlen(topic));
-    send_socklist_binary(&sl);
-}
-
-void send_lock_command(int mode, int tag)
-{
-    SockList    sl;
-
-    SockList_INIT(&sl, NULL);
-    SockList_COMMAND(&sl, CLIENT_CMD_LOCK, SEND_CMD_FLAG_FIXED);
-    SockList_AddChar(&sl, mode);
-    SockList_AddInt(&sl, tag);
-    send_socklist_binary(&sl);
-}
-
-void send_mark_command(int tag)
-{
-    SockList    sl;
-
-    SockList_INIT(&sl, NULL);
-    SockList_COMMAND(&sl, CLIENT_CMD_MARK, SEND_CMD_FLAG_FIXED);
-    SockList_AddInt(&sl, tag);
-    send_socklist_binary(&sl);
-}
-
-void send_fire_command(int num, int mode, char *tmp_name)
-{
-    SockList    sl;
-
-    SockList_INIT(&sl, NULL);
-    SockList_COMMAND(&sl, CLIENT_CMD_FIRE, 0);
-    SockList_AddInt(&sl, move_dir[num]);
-    SockList_AddInt(&sl, mode);
-    if(tmp_name)
-        SockList_AddBuffer(&sl, tmp_name, strlen(tmp_name));
-    SockList_AddChar(&sl, 0); /* be sure we finish with zero - server will check it */
-    send_socklist_binary(&sl);
-
-}
-
-void client_send_checkname(char *buf)
-{
-    SockList    sl;
-
-    SockList_INIT(&sl, NULL);
-    SockList_COMMAND(&sl, CLIENT_CMD_CHECKNAME, 0);
-    SockList_AddString(&sl, buf);
-    send_socklist_binary(&sl);
-}
-
-void client_send_login(int mode, char *name, char *pass)
-{
-    SockList    sl;
-
-    SockList_INIT(&sl, NULL);
-    SockList_COMMAND(&sl, CLIENT_CMD_LOGIN, 0);
-    SockList_AddChar(&sl, mode);
-    SockList_AddString(&sl, name);
-    SockList_AddString(&sl, pass);
-    send_socklist_binary(&sl);
-}
-

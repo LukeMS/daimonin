@@ -170,7 +170,7 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\src\include\protocol.h" />
-		<Unit filename="..\..\..\src\include\sdlsocket.h">
+		<Unit filename="..\..\..\src\include\socket.h">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\src\include\sound.h">
