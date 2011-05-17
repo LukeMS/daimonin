@@ -26,70 +26,114 @@
 
 #include <include.h>
 
+/* The *_REAL macros are not directly used in the client_cmd_* functions.
+ * Rather, they provide the underlying functionality for the non-_REAL macros,
+ * which are the ones used directly. The purpose of this is so we can log on a
+ * development client when DEBUG_CMD_SENT is defined (see config.h). */
+#define START_REAL(_SL_, _BUF_, _CMD_, _FLAGS_) \
+    memset((_SL_), 0, sizeof(SockList)); \
+    (_SL_)->buf = (_BUF_); \
+    (_SL_)->cmd = (_CMD_); \
+    (_SL_)->flags = (_FLAGS_)
+#define ADDUINT8_REAL(_SL_, _V_) \
+    if ((_SL_)->buf) \
+    { \
+        *((uint8 *)((_SL_)->buf + (_SL_)->len)) = (uint8)(_V_); \
+    } \
+    else \
+    { \
+        *((uint8 *)((_SL_)->defbuf + (_SL_)->len)) = (uint8)(_V_); \
+    } \
+    (_SL_)->len += 1
+#define ADDUINT16_REAL(_SL_, _V_) \
+    if ((_SL_)->buf) \
+    { \
+        *((uint16 *)((_SL_)->buf + (_SL_)->len)) = adjust_endian_int16(_V_); \
+    } \
+    else \
+    { \
+        *((uint16 *)((_SL_)->defbuf + (_SL_)->len)) = adjust_endian_int16(_V_); \
+    } \
+    (_SL_)->len += 2
+#define ADDUINT32_REAL(_SL_, _V_) \
+    if ((_SL_)->buf) \
+    { \
+        *((uint32 *)((_SL_)->buf + (_SL_)->len)) = adjust_endian_int32(_V_); \
+    } \
+    else \
+    { \
+        *((uint32 *)((_SL_)->defbuf + (_SL_)->len)) = adjust_endian_int32(_V_); \
+    } \
+    (_SL_)->len += 4
+#define ADDBUFFER_REAL(_SL_, _BUF_, _LEN_) \
+    if ((_SL_)->buf) \
+    { \
+        memcpy((_SL_)->buf + (_SL_)->len, (_BUF_), (_LEN_)); \
+    } \
+    else \
+    { \
+        memcpy((_SL_)->defbuf + (_SL_)->len, (_BUF_), (_LEN_)); \
+    } \
+    (_SL_)->len += (_LEN_)
+#define ADDSTRING_REAL(_SL_, _BUF_, _LEN_) \
+    if ((_SL_)->buf) \
+    { \
+        memcpy((_SL_)->buf + (_SL_)->len, (_BUF_), (_LEN_)); \
+        *((_SL_)->buf + (_SL_)->len + (_LEN_)) = 0; \
+    } \
+    else \
+    { \
+        memcpy((_SL_)->defbuf + (_SL_)->len, (_BUF_), (_LEN_)); \
+        *((_SL_)->defbuf + (_SL_)->len + (_LEN_)) = 0; \
+    } \
+    (_SL_)->len += (_LEN_) + 1
+#define FINISH_REAL(_SL_) \
+    send_socklist_binary((_SL_))
+
+#if defined DAI_DEVELOPMENT && defined DEBUG_CMD_SENT
+# define START(_SL_, _BUF_, _CMD_, _FLAGS_) \
+    LOG(LOG_MSG, "Sent CMD (%u):%u", (_FLAGS_), (_CMD_)); \
+    START_REAL((_SL_), (_BUF_), (_CMD_), (_FLAGS_))
+# define ADDUINT8(_SL_, _V_) \
+    LOG(LOG_MSG, " U8:%u", (_V_)); \
+    ADDUINT8_REAL((_SL_), (_V_))
+# define ADDUINT16(_SL_, _V_) \
+    LOG(LOG_MSG, " U16:%u", (_V_)); \
+    ADDUINT16_REAL((_SL_), (_V_))
+# define ADDUINT32(_SL_, _V_) \
+    LOG(LOG_MSG, " U32:%u", (_V_)); \
+    ADDUINT32_REAL((_SL_), (_V_))
+# define ADDBUFFER(_SL_, _BUF_, _LEN_, _SSH_) \
+    LOG(LOG_MSG, " BUF (%u):%s", (_LEN_), ((_SSH_)) ? "*****" : (_BUF_)); \
+    ADDBUFFER_REAL((_SL_), (_BUF_), (_LEN_))
+# define ADDSTRING(_SL_, _BUF_, _LEN_, _SSH_) \
+    LOG(LOG_MSG, " STR (%u):%s", (_LEN_), ((_SSH_)) ? "*****" : (_BUF_)); \
+    ADDSTRING_REAL((_SL_), (_BUF_), (_LEN_))
+# define FINISH(_SL_) \
+    LOG(LOG_MSG, "\n"); \
+    FINISH_REAL((_SL_))
+#else
+# define START(_SL_, _BUF_, _CMD_, _FLAGS_) \
+    START_REAL((_SL_), (_BUF_), (_CMD_), (_FLAGS_))
+# define ADDUINT8(_SL_, _V_) \
+    ADDUINT8_REAL((_SL_), (_V_))
+# define ADDUINT16(_SL_, _V_) \
+    ADDUINT16_REAL((_SL_), (_V_))
+# define ADDUINT32(_SL_, _V_) \
+    ADDUINT32_REAL((_SL_), (_V_))
+# define ADDBUFFER(_SL_, _BUF_, _LEN_, _SSH_) \
+    ADDBUFFER_REAL((_SL_), (_BUF_), (_LEN_))
+# define ADDSTRING(_SL_, _BUF_, _LEN_, _SSH_) \
+    ADDSTRING_REAL((_SL_), (_BUF_), (_LEN_))
+# define FINISH(_SL_) \
+    FINISH_REAL((_SL_))
+#endif
+
 /* helper array to cast a key num input to a server dir value */
 static int move_dir[] = {0,6,5,4,7,0,3,8,1,2};
 
 static char *SplitCommand(const char *command);
 static uint8 CheckCommand(char *cmd, char *params);
-
-/* helper functions for working with binary parms for the socklist */
-static inline void SockList_AddShort(SockList *const sl, const uint16 data)
-{
-    if (sl->buf)
-    {
-    	*((uint16 *)(sl->buf + sl->len)) = adjust_endian_int16(data);
-    }
-    else
-    {
-        *((uint16 *)(sl->defbuf + sl->len)) = adjust_endian_int16(data);
-    }
-
-    sl->len += 2;
-}
-
-static inline void SockList_AddInt(SockList *const sl, const uint32 data)
-{
-    if (sl->buf)
-    {
-    	*((uint32 *)(sl->buf + sl->len)) = adjust_endian_int32(data);
-    }
-    else
-    {
-        *((uint32 *)(sl->defbuf + sl->len)) = adjust_endian_int32(data);
-    }
-
-    sl->len += 4;
-}
-
-static inline void SockList_AddBuffer(SockList *const sl, const char *const buf, const int len)
-{
-    if (sl->buf)
-    {
-        memcpy(sl->buf + sl->len, buf, len);
-    }
-    else
-    {
-        memcpy(sl->defbuf + sl->len, buf, len);
-    }
-
-    sl->len += len;
-}
-
-static inline void SockList_AddString(SockList *const sl, const char *const buf, const int len)
-{
-    if (sl->buf)
-    {
-        memcpy(sl->buf + sl->len, buf, len);
-        *(sl->buf + sl->len + len) = '\0';
-    }
-    else
-    {
-        memcpy(sl->defbuf + sl->len, buf, len);
-        *(sl->defbuf + sl->len + len) = '\0';
-    }
-
-    sl->len += len + 1;
-}
 
 /* send the setup command to the server
  * This is the handshake command after the client connects
@@ -133,10 +177,9 @@ void client_cmd_requestfile(uint8 index)
     SockList sl;
 
     /* for binary stuff we better use the socklist system */
-    SockList_INIT(&sl, NULL);
-    SockList_COMMAND(&sl, CLIENT_CMD_REQUESTFILE, SEND_CMD_FLAG_FIXED);
-    SockList_AddChar(&sl, index);
-    send_socklist_binary(&sl);
+    START(&sl, NULL, CLIENT_CMD_REQUESTFILE, SEND_CMD_FLAG_FIXED);
+    ADDUINT8(&sl, index);
+    FINISH(&sl);
 
     /* The following 1 second delay (in fact 900ms seems to be enough but lets
      * add another 100ms for safety -- hardly human-noticeable) seems to be
@@ -161,23 +204,24 @@ void client_cmd_requestfile(uint8 index)
 void client_cmd_checkname(char *name)
 {
     SockList sl;
+    int      len = strlen(name);
 
-    SockList_INIT(&sl, NULL);
-    SockList_COMMAND(&sl, CLIENT_CMD_CHECKNAME, 0);
-    SockList_AddString(&sl, name, strlen(name));
-    send_socklist_binary(&sl);
+    START(&sl, NULL, CLIENT_CMD_CHECKNAME, 0);
+    ADDSTRING(&sl, name, len, 0);
+    FINISH(&sl);
 }
 
 void client_cmd_login(int mode, char *name, char *pass)
 {
     SockList sl;
+    int      len_name = strlen(name),
+             len_pass = strlen(pass);
 
-    SockList_INIT(&sl, NULL);
-    SockList_COMMAND(&sl, CLIENT_CMD_LOGIN, 0);
-    SockList_AddChar(&sl, mode);
-    SockList_AddString(&sl, name, strlen(name));
-    SockList_AddString(&sl, pass, strlen(pass));
-    send_socklist_binary(&sl);
+    START(&sl, NULL, CLIENT_CMD_LOGIN, 0);
+    ADDUINT8(&sl, mode);
+    ADDSTRING(&sl, name, len_name, 0);
+    ADDSTRING(&sl, pass, len_pass, 1);
+    FINISH(&sl);
 }
 
 /* the server also parsed client_settings. 
@@ -191,6 +235,8 @@ void client_cmd_newchar(_server_char *nc)
     _server_char *sc = first_server_char;
     uint8         i = 0;
     SockList      sl;
+    int           len_name = strlen(cpl.name),
+                  len_pass = strlen(cpl.reclaim_password);
 
     /* lets find the entry number */
     while (sc)
@@ -204,25 +250,24 @@ void client_cmd_newchar(_server_char *nc)
         i++;
     }
 
-    SockList_INIT(&sl, NULL);
-    SockList_COMMAND(&sl, CLIENT_CMD_NEWCHAR, SEND_CMD_FLAG_DYNAMIC);
-    SockList_AddChar(&sl, i);
-    SockList_AddChar(&sl, nc->gender_selected);
-    SockList_AddChar(&sl, nc->skill_selected);
-    SockList_AddString(&sl, cpl.name, strlen(cpl.name));
-    SockList_AddString(&sl, cpl.reclaim_password, strlen(cpl.reclaim_password));
-    send_socklist_binary(&sl);
+    START(&sl, NULL, CLIENT_CMD_NEWCHAR, SEND_CMD_FLAG_DYNAMIC);
+    ADDUINT8(&sl, i);
+    ADDUINT8(&sl, nc->gender_selected);
+    ADDUINT8(&sl, nc->skill_selected);
+    ADDSTRING(&sl, cpl.name, len_name, 0);
+    ADDSTRING(&sl, cpl.reclaim_password, len_pass, 1);
+    FINISH(&sl);
 }
 
 /* delete a character */
 void client_cmd_delchar(char *name)
 {
     SockList sl;
+    int      len = strlen(name);
 
-    SockList_INIT(&sl, NULL);
-    SockList_COMMAND(&sl, CLIENT_CMD_DELCHAR, SEND_CMD_FLAG_DYNAMIC);
-    SockList_AddString(&sl, name, strlen(name));
-    send_socklist_binary(&sl);
+    START(&sl, NULL, CLIENT_CMD_DELCHAR, SEND_CMD_FLAG_DYNAMIC);
+    ADDSTRING(&sl, name, len, 0);
+    FINISH(&sl);
 }
 
 /* ONLY send this when we are valid connected to our account.
@@ -235,21 +280,20 @@ void client_cmd_delchar(char *name)
 void client_cmd_addme(char *name)
 {
     SockList sl;
+    int      len = strlen(name);
 
-    SockList_INIT(&sl, NULL);
-    SockList_COMMAND(&sl, CLIENT_CMD_ADDME, SEND_CMD_FLAG_DYNAMIC);
-    SockList_AddString(&sl, name, strlen(name));
-    send_socklist_binary(&sl);
+    START(&sl, NULL, CLIENT_CMD_ADDME, SEND_CMD_FLAG_DYNAMIC);
+    ADDSTRING(&sl, name, len, 0);
+    FINISH(&sl);
 }
 
 void client_cmd_face(uint16 num)
 {
     SockList sl;
 
-    SockList_INIT(&sl, NULL);
-    SockList_COMMAND(&sl, CLIENT_CMD_FACE, 0);
-    SockList_AddShort(&sl, num);
-    send_socklist_binary(&sl);
+    START(&sl, NULL, CLIENT_CMD_FACE, 0);
+    ADDUINT16(&sl, num);
+    FINISH(&sl);
 }
 
 /* THE main move command function */
@@ -258,31 +302,28 @@ void client_cmd_move(int dir, int mode)
     SockList sl;
     // remapped to: "idle", "/sw", "/s", "/se", "/w", "/stay", "/e", "/nw", "/n", "/ne" 
 
-    SockList_INIT(&sl, NULL);
-    SockList_COMMAND(&sl, CLIENT_CMD_MOVE, SEND_CMD_FLAG_FIXED);
-    SockList_AddChar(&sl, move_dir[dir]);
-    SockList_AddChar(&sl, mode);
-    send_socklist_binary(&sl);
+    START(&sl, NULL, CLIENT_CMD_MOVE, SEND_CMD_FLAG_FIXED);
+    ADDUINT8(&sl, move_dir[dir]);
+    ADDUINT8(&sl, mode);
+    FINISH(&sl);
 }
 
 void client_cmd_apply(int tag)
 {
     SockList sl;
 
-    SockList_INIT(&sl, NULL);
-    SockList_COMMAND(&sl, CLIENT_CMD_APPLY, SEND_CMD_FLAG_FIXED);
-    SockList_AddInt(&sl, tag);
-    send_socklist_binary(&sl);
+    START(&sl, NULL, CLIENT_CMD_APPLY, SEND_CMD_FLAG_FIXED);
+    ADDUINT32(&sl, tag);
+    FINISH(&sl);
 }
 
 void client_cmd_examine(int tag)
 {
     SockList sl;
 
-    SockList_INIT(&sl, NULL);
-    SockList_COMMAND(&sl, CLIENT_CMD_EXAMINE, SEND_CMD_FLAG_FIXED);
-    SockList_AddInt(&sl, tag);
-    send_socklist_binary(&sl);
+    START(&sl, NULL, CLIENT_CMD_EXAMINE, SEND_CMD_FLAG_FIXED);
+    ADDUINT32(&sl, tag);
+    FINISH(&sl);
 }
 
 /* Requests nrof objects of tag get moved to loc. */
@@ -290,18 +331,18 @@ void client_cmd_invmove(int loc, int tag, int nrof)
 {
     SockList sl;
 
-    SockList_INIT(&sl, NULL);
-    SockList_COMMAND(&sl, CLIENT_CMD_INVMOVE, SEND_CMD_FLAG_FIXED);
-    SockList_AddInt(&sl, loc);
-    SockList_AddInt(&sl, tag);
-    SockList_AddInt(&sl, nrof);
-    send_socklist_binary(&sl);
+    START(&sl, NULL, CLIENT_CMD_INVMOVE, SEND_CMD_FLAG_FIXED);
+    ADDUINT32(&sl, loc);
+    ADDUINT32(&sl, tag);
+    ADDUINT32(&sl, nrof);
+    FINISH(&sl);
 }
 
 void client_cmd_guitalk(sint8 mode, char *topic)
 {
     uint16   c;
     SockList sl;
+    int      len = strlen(topic);
 
     for (c = 0; *(topic + c); c++)
     {
@@ -309,50 +350,47 @@ void client_cmd_guitalk(sint8 mode, char *topic)
     }
 
     textwin_showstring(COLOR_DGOLD, "Topic: %s", topic);
-    SockList_INIT(&sl, NULL);
-    SockList_COMMAND(&sl, CLIENT_CMD_GUITALK, SEND_CMD_FLAG_DYNAMIC);
-    SockList_AddChar(&sl, mode);
-    SockList_AddBuffer(&sl, topic, strlen(topic));
-    send_socklist_binary(&sl);
+    START(&sl, NULL, CLIENT_CMD_GUITALK, SEND_CMD_FLAG_DYNAMIC);
+    ADDUINT8(&sl, mode);
+    ADDBUFFER(&sl, topic, len, 0);
+    FINISH(&sl);
 }
 
 void client_cmd_lock(int mode, int tag)
 {
     SockList sl;
 
-    SockList_INIT(&sl, NULL);
-    SockList_COMMAND(&sl, CLIENT_CMD_LOCK, SEND_CMD_FLAG_FIXED);
-    SockList_AddChar(&sl, mode);
-    SockList_AddInt(&sl, tag);
-    send_socklist_binary(&sl);
+    START(&sl, NULL, CLIENT_CMD_LOCK, SEND_CMD_FLAG_FIXED);
+    ADDUINT8(&sl, mode);
+    ADDUINT32(&sl, tag);
+    FINISH(&sl);
 }
 
 void client_cmd_mark(int tag)
 {
     SockList sl;
 
-    SockList_INIT(&sl, NULL);
-    SockList_COMMAND(&sl, CLIENT_CMD_MARK, SEND_CMD_FLAG_FIXED);
-    SockList_AddInt(&sl, tag);
-    send_socklist_binary(&sl);
+    START(&sl, NULL, CLIENT_CMD_MARK, SEND_CMD_FLAG_FIXED);
+    ADDUINT32(&sl, tag);
+    FINISH(&sl);
 }
 
-void client_cmd_fire(int num, int mode, char *tmp_name)
+void client_cmd_fire(int num, int mode, char *name)
 {
     SockList sl;
+    int      len = strlen(name);
 
-    SockList_INIT(&sl, NULL);
-    SockList_COMMAND(&sl, CLIENT_CMD_FIRE, 0);
-    SockList_AddInt(&sl, move_dir[num]);
-    SockList_AddInt(&sl, mode);
+    START(&sl, NULL, CLIENT_CMD_FIRE, 0);
+    ADDUINT32(&sl, move_dir[num]);
+    ADDUINT32(&sl, mode);
 
-    if (tmp_name)
+    if (name)
     {
-        SockList_AddBuffer(&sl, tmp_name, strlen(tmp_name));
+        ADDBUFFER(&sl, name, len, 0);
     }
 
-    SockList_AddChar(&sl, 0); /* be sure we finish with zero - server will check it */
-    send_socklist_binary(&sl);
+    ADDUINT8(&sl, 0); /* be sure we finish with zero - server will check it */
+    FINISH(&sl);
 }
 
 /* client_cmd_generic() will send a higher level game command like /tell, /say or
@@ -429,12 +467,13 @@ void client_cmd_generic(const char *command)
         {
             char     tmpbuf[LARGE_BUF];
             SockList sl;
+            int      len;
 
             sprintf(tmpbuf, "%s%s%s", cmd + 1, (*params) ? " " : "", params);
-            SockList_INIT(&sl, NULL);
-            SockList_COMMAND(&sl, CLIENT_CMD_GENERIC, SEND_CMD_FLAG_STRING);
-            SockList_AddBuffer(&sl, tmpbuf, strlen(tmpbuf));
-            send_socklist_binary(&sl);
+            len = strlen(tmpbuf);
+            START(&sl, NULL, CLIENT_CMD_GENERIC, SEND_CMD_FLAG_STRING);
+            ADDBUFFER(&sl, tmpbuf, len, 0);
+            FINISH(&sl);
         }
     }
 }
