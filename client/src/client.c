@@ -147,26 +147,35 @@ static uint8 CheckCommand(char *cmd, char *params);
  */
 void client_cmd_setup(void)
 {
-    char tmpbuf[TINY_BUF],
-         buf[MEDIUM_BUF];
+    SockList sl;
+    char     buf_sound[TINY_BUF],
+             buf[MEDIUM_BUF];
+    int      len;
 
     if (SoundStatus)
-        sprintf(tmpbuf, "%d|%x",
+    {
+        sprintf(buf_sound, "%d|%x",
                 srvfile[SRV_CLIENT_SOUNDS].len,
                 srvfile[SRV_CLIENT_SOUNDS].crc);
+    }
     else
-        strcpy(tmpbuf, "0");
+    {
+        strcpy(buf_sound, "0");
+    }
 
-    sprintf(buf, "dv %u.%u.%u pv %u sn %s mz %dx%d skf %d|%x spf %d|%x bpf %d|%x stf %d|%x amf %d|%x",
+    sprintf(buf, "dv %u.%u.%u pv %u mz %dx%d amf %d|%x bpf %d|%x stf %d|%x skf %d|%x sn %s spf %d|%x",
             DAI_VERSION_RELEASE, DAI_VERSION_MAJOR, DAI_VERSION_MINOR,
-            PROTOCOL_VERSION, tmpbuf, MapStatusX, MapStatusY,
-            srvfile[SRV_CLIENT_SKILLS].len, srvfile[SRV_CLIENT_SKILLS].crc,
-            srvfile[SRV_CLIENT_SPELLS].len, srvfile[SRV_CLIENT_SPELLS].crc,
+            PROTOCOL_VERSION, MapStatusX, MapStatusY,
+            srvfile[SRV_CLIENT_ANIMS].len, srvfile[SRV_CLIENT_ANIMS].crc,
             srvfile[SRV_CLIENT_BMAPS].len, srvfile[SRV_CLIENT_BMAPS].crc,
             srvfile[SRV_CLIENT_SETTINGS].len, srvfile[SRV_CLIENT_SETTINGS].crc,
-            srvfile[SRV_CLIENT_ANIMS].len, srvfile[SRV_CLIENT_ANIMS].crc);
-
-    send_command_binary(CLIENT_CMD_SETUP, buf, strlen(buf), SEND_CMD_FLAG_STRING);
+            srvfile[SRV_CLIENT_SKILLS].len, srvfile[SRV_CLIENT_SKILLS].crc,
+            buf_sound,
+            srvfile[SRV_CLIENT_SPELLS].len, srvfile[SRV_CLIENT_SPELLS].crc);
+    len = strlen(buf);
+    START(&sl, NULL, CLIENT_CMD_SETUP, SEND_CMD_FLAG_STRING);
+    ADDSTRING(&sl, buf, len, 0);
+    FINISH(&sl);
 }
 
 /* Request a so called "server file" from the server.
