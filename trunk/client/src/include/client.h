@@ -181,11 +181,6 @@ typedef struct SockList
 }
 SockList;
 
-/* help define for a clean socklist init */
-#define         SockList_INIT(_sl_, _buf_) {memset( (_sl_), 0, sizeof(SockList) );(_sl_)->buf=(_buf_);}
-#define         SockList_COMMAND(__sl, __cmd, __flags) {(__sl)->cmd=(__cmd);(__sl)->flags=(__flags);}
-#define         SockList_AddChar(__sl, __c) (__sl)->buf?*((__sl)->buf+(__sl)->len++):(((__sl)->defbuf[(__sl)->len++])= (unsigned char)(__c))
-
 extern void client_cmd_setup(void);
 extern void client_cmd_requestfile(uint8 index);
 extern void client_cmd_checkname(char *buf);
