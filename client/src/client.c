@@ -88,7 +88,9 @@
     } \
     (_SL_)->len += (_LEN_) + 1
 #define FINISH_REAL(_SL_) \
-    send_socklist_binary((_SL_))
+    send_command_binary((_SL_)->cmd, \
+                        ((_SL_)->buf) ? (_SL_)->buf : (_SL_)->defbuf, \
+                        (_SL_)->len, (_SL_)->flags)
 
 #if defined DAI_DEVELOPMENT && defined DEBUG_CMD_SENT
 # define START(_SL_, _BUF_, _CMD_, _FLAGS_) \
