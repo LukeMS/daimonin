@@ -628,7 +628,7 @@ void toggle_locked(item *op)
     if (!op || !op->env || op->env->tag == 0)
         return; /* if item is on the ground, don't lock it */
 
-    send_lock_command(op->locked?0:1, op->tag);
+    client_cmd_lock(op->locked?0:1, op->tag);
 }
 
 void send_mark_obj(item *op)
@@ -636,7 +636,7 @@ void send_mark_obj(item *op)
     if (!op || !op->env || op->env->tag == 0)
         return; /* if item is on the ground, don't mark it */
 
-    send_mark_command(op->tag);
+    client_cmd_mark(op->tag);
 }
 
 

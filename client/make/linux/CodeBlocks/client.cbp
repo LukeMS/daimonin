@@ -125,7 +125,7 @@
 		<Unit filename="../../../src/include/physfsrwops.h" />
 		<Unit filename="../../../src/include/player.h" />
 		<Unit filename="../../../src/include/protocol.h" />
-		<Unit filename="../../../src/include/sdlsocket.h" />
+		<Unit filename="../../../src/include/socket.h" />
 		<Unit filename="../../../src/include/sound.h" />
 		<Unit filename="../../../src/include/sprite.h" />
 		<Unit filename="../../../src/include/srvfile.h" />

@@ -86,22 +86,6 @@ extern _screensize Screensize;
 
 extern _screensize Screendefs[16];
 
-/* ClientSocket could probably hold more of the global values - it could
-* probably hold most all socket/communication related values instead
-* of globals.
-*/
-/* with the binary client protocol, ClientSocket only hold ATM the socket identifier.
-* we can safely add here more features like latency counters, pings or statistics.
-* MT/2008
-*/
-typedef struct ClientSocket
-{
-    SOCKET  fd;
-}
-ClientSocket;
-
-extern ClientSocket csocket;
-
 extern char         *server;
 extern char         *client_libdir;
 extern char         *face_file;
@@ -202,22 +186,22 @@ SockList;
 #define         SockList_COMMAND(__sl, __cmd, __flags) {(__sl)->cmd=(__cmd);(__sl)->flags=(__flags);}
 #define         SockList_AddChar(__sl, __c) (__sl)->buf?*((__sl)->buf+(__sl)->len++):(((__sl)->defbuf[(__sl)->len++])= (unsigned char)(__c))
 
-extern void     send_game_command(const char *command);
-extern void     SendSetupCmd(void);
-extern void     RequestFile(ClientSocket csock, int index);
-extern void     SendAddMe(char *name);
-extern void     send_new_char(struct _server_char *nc);
-extern void     send_del_char(char *name);
-extern void     client_send_apply(int tag);
-extern void     client_face_cmd(uint16 num);
-extern void     send_move_command(int dir, int mode);
-extern void     client_send_examine(int tag);
-extern void     send_inv_move(int loc, int tag, int nrof);
-extern void     send_talk_command(sint8 mode, char *cmd);
-extern void     send_lock_command(int mode, int tag);
-extern void     send_mark_command(int tag);
-extern void     send_fire_command(int num, int mode, char *tmp_name);
-extern void     client_send_checkname(char *buf);
-extern void     client_send_login(int mode, char *name, char *pass);
+extern void client_cmd_setup(void);
+extern void client_cmd_requestfile(uint8 index);
+extern void client_cmd_checkname(char *buf);
+extern void client_cmd_login(int mode, char *name, char *pass);
+extern void client_cmd_newchar(struct _server_char *nc);
+extern void client_cmd_delchar(char *name);
+extern void client_cmd_addme(char *name);
+extern void client_cmd_face(uint16 num);
+extern void client_cmd_move(int dir, int mode);
+extern void client_cmd_apply(int tag);
+extern void client_cmd_examine(int tag);
+extern void client_cmd_invmove(int loc, int tag, int nrof);
+extern void client_cmd_guitalk(sint8 mode, char *cmd);
+extern void client_cmd_lock(int mode, int tag);
+extern void client_cmd_mark(int tag);
+extern void client_cmd_fire(int num, int mode, char *tmp_name);
+extern void client_cmd_generic(const char *command);
 
 #endif /* ifndef __CLIENT_H */

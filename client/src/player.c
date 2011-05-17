@@ -205,7 +205,7 @@ void widget_player_data_event(int x, int y)
 
     if (mx>=184 && mx <= 210 && my >=5 && my<=35)
     {
-        send_game_command("/rest");
+        client_cmd_generic("/rest");
     }
 }
 
@@ -454,7 +454,7 @@ void        widget_menubuttons_event(int x, int y, int MEvent)
         else if (dy >= 26 && dy <= 49) /* skill list */
             check_menu_macros("?M_SKILL_LIST");
         else if (dy >= 51 && dy <= 74) /* quest list */
-            send_game_command("/qlist");
+            client_cmd_generic("/qlist");
         else if (dy >= 76 && dy <= 99) /* online help */
             process_macro_keys(KEYFUNC_HELP, 0);
     }

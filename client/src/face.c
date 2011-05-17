@@ -169,7 +169,7 @@ void face_get(sint32 num)
         LoadFromPack(num) != SPRITE_STATUS_LOADED)
     {
         face_list[num].flags = FACE_FLAG_REQUESTED;
-        client_face_cmd(num);
+        client_cmd_face(num);
     }
     else
     {

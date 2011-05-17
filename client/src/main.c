@@ -870,7 +870,7 @@ uint8 game_status_chain(void)
     else if (GameStatus == GAME_STATUS_SETUP)
     {
         srvfile_check();
-        SendSetupCmd();
+        client_cmd_setup();
         request_file_chain = 0;
 
         GameStatus = GAME_STATUS_WAITSETUP;
@@ -949,7 +949,7 @@ uint8 game_status_chain(void)
                     sprintf(cpl.acc_name, "%s", InputString);
                     dialog_login_warning_level = DIALOG_LOGIN_WARNING_NONE;
                     LOG(LOG_MSG,"Account Login: send name %s\n", cpl.acc_name);
-                    client_send_checkname(cpl.acc_name);
+                    client_cmd_checkname(cpl.acc_name);
                     reset_input_mode();
                     GameStatus = GAME_STATUS_LOGIN_WAIT_NAME; /* wait for response of server */
                 }
@@ -976,7 +976,7 @@ uint8 game_status_chain(void)
                     {
                         GameStatus = GAME_STATUS_LOGIN_WAIT;
                         LoginInputStep = LOGIN_STEP_NOTHING;
-                        client_send_login(ACCOUNT_MODE_CREATE, cpl.acc_name, cpl.password);
+                        client_cmd_login(ACCOUNT_MODE_CREATE, cpl.acc_name, cpl.password);
                     }
                 }
                 else
@@ -1079,7 +1079,7 @@ uint8 game_status_chain(void)
                     reset_input_mode();
                     GameStatus = GAME_STATUS_LOGIN_WAIT;
                     LoginInputStep = LOGIN_STEP_NOTHING;
-                    client_send_login(ACCOUNT_MODE_LOGIN, cpl.acc_name, cpl.password);
+                    client_cmd_login(ACCOUNT_MODE_LOGIN, cpl.acc_name, cpl.password);
 
                 }
             }
@@ -1117,7 +1117,7 @@ uint8 game_status_chain(void)
             {
                 /* we have typed the magic words ... now delete */
                 reset_input_mode();
-                send_del_char(account.name[account.selected]);
+                client_cmd_delchar(account.name[account.selected]);
                 GameStatus = GAME_STATUS_ACCOUNT_CHAR_DEL_WAIT;
             }
             else
@@ -1174,7 +1174,7 @@ uint8 game_status_chain(void)
                 /* Now send name & pass to server and wait for the account data */
                 reset_input_mode();
                 GameStatus =  GAME_STATUS_ACCOUNT_CHAR_CREATE_WAIT;
-                send_new_char(&new_character);
+                client_cmd_newchar(&new_character);
             }
         }
     }
@@ -1197,7 +1197,7 @@ uint8 game_status_chain(void)
             /* Now send name & pass to server and wait for the account data */
             reset_input_mode();
             GameStatus = GAME_STATUS_ACCOUNT_CHAR_CREATE_WAIT;
-            send_new_char(&new_character);
+            client_cmd_newchar(&new_character);
         }
     }
     else if (GameStatus == GAME_STATUS_ACCOUNT_CHAR_CREATE_WAIT)

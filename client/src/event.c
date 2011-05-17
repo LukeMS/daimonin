@@ -400,7 +400,7 @@ static int key_account_menu(SDL_KeyboardEvent *key)
             if(account.count)
             {
                 /* tell server that we want play with this char */
-                SendAddMe(account.name[account.selected]);
+                client_cmd_addme(account.name[account.selected]);
                 sprintf(cpl.name, "%s", account.name[account.selected]);
                 GameStatus = GAME_STATUS_WAITFORPLAY;
 
@@ -720,7 +720,7 @@ int Event_PollInputDevice(void)
                     cpl.inventory_win = IWIN_BELOW;
                     get_tile_position(x, y, &tx, &ty);
                     sprintf(tbuf, "/target !%d %d", tx - MAP_MAX_SIZE / 2, ty - MAP_MAX_SIZE / 2);
-                    send_game_command(tbuf);
+                    client_cmd_generic(tbuf);
                 }
                 break;
             }
@@ -1304,7 +1304,7 @@ int key_event(SDL_KeyboardEvent *key)
                 break;
             case SDLK_LALT:
             case SDLK_RALT:
-                send_game_command("/run_stop");
+                client_cmd_generic("/run_stop");
 #ifdef DEBUG_TEXT
                 textwin_showstring(COLOR_DGOLD, "run_stop");
 #endif
@@ -1534,7 +1534,7 @@ void check_keys(int key)
 #ifdef DEBUG_TEXT
                     textwin_showstring(COLOR_DGOLD, "%s", buf);
 #endif
-                    send_game_command(buf);
+                    client_cmd_generic(buf);
                 }
                 return;
             }
@@ -1604,16 +1604,16 @@ uint8 process_macro_keys(int id, int value)
         break;
 
     case KEYFUNC_TARGET_ENEMY:
-        send_game_command("/target 0");
+        client_cmd_generic("/target 0");
         break;
     case KEYFUNC_TARGET_FRIEND:
-        send_game_command("/target 1");
+        client_cmd_generic("/target 1");
         break;
     case KEYFUNC_TARGET_SELF:
-        send_game_command("/target 2");
+        client_cmd_generic("/target 2");
         break;
     case KEYFUNC_COMBAT:
-        send_game_command("/combat");
+        client_cmd_generic("/combat");
         break;
 
     case KEYFUNC_SPELL:
@@ -1688,7 +1688,7 @@ uint8 process_macro_keys(int id, int value)
 
     case KEYFUNC_RUN:
         if (!(cpl.runkey_on = cpl.runkey_on ? 0 : 1))
-            send_game_command("/run_stop");
+            client_cmd_generic("/run_stop");
 #ifdef DEBUG_TEXT
         textwin_showstring(COLOR_DGOLD, "runmode %s",
                            (cpl.runkey_on) ? "on" : "off");
@@ -1734,7 +1734,7 @@ uint8 process_macro_keys(int id, int value)
 #ifdef DEBUG_TEXT
         textwin_showstring(COLOR_DGOLD, "apply %s", locate_item(tag)->s_name);
 #endif
-        client_send_apply(tag);
+        client_cmd_apply(tag);
         return 0;
         break;
     case KEYFUNC_EXAMINE:
@@ -1744,7 +1744,7 @@ uint8 process_macro_keys(int id, int value)
             tag = cpl.win_inv_tag;
         if (tag == -1 || !locate_item(tag))
             return 0;
-        client_send_examine(tag);
+        client_cmd_examine(tag);
 #ifdef DEBUG_TEXT
         textwin_showstring(COLOR_DGOLD, "examine %s", locate_item(tag)->s_name);
 #endif
@@ -1874,7 +1874,7 @@ uint8 process_macro_keys(int id, int value)
 #ifdef DEBUG_TEXT
         textwin_showstring(COLOR_DGOLD, "get %s", it->s_name);
 #endif
-        send_inv_move(loc, tag, nrof);
+        client_cmd_invmove(loc, tag, nrof);
         return 0;
 
         break;
@@ -1990,7 +1990,7 @@ uint8 process_macro_keys(int id, int value)
 #ifdef DEBUG_TEXT
         textwin_showstring(COLOR_DGOLD, "drop %s", it->s_name);
 #endif
-        send_inv_move(loc, tag, nrof);
+        client_cmd_invmove(loc, tag, nrof);
         return 0;
         break;
     case KEYFUNC_SCREENTOGGLE:
@@ -2153,7 +2153,7 @@ void quickslot_key(SDL_KeyboardEvent *key, int slot)
                                    slot + 1,
                                    locate_item(quick_slots[slot].shared.tag)->s_name);
 #endif
-                client_send_apply(quick_slots[slot].shared.tag);
+                client_cmd_apply(quick_slots[slot].shared.tag);
                 return;
             }
         }
@@ -2170,7 +2170,7 @@ static void move_keys(int num)
 
     if (num == 5)
     {
-        send_move_command(num, 0);
+        client_cmd_move(num, 0);
         return;
     }
 
@@ -2180,7 +2180,7 @@ static void move_keys(int num)
     /* but it stops running when released */
     if ((cpl.runkey_on || cpl.run_on) && (!cpl.firekey_on && !cpl.fire_on)) /* runmode on, or ALT key trigger */
     {
-        send_game_command(directionsrun[num]);
+        client_cmd_generic(directionsrun[num]);
 #ifdef DEBUG_TEXT
         sprintf(buf, "run ");
 #endif
@@ -2234,7 +2234,7 @@ static void move_keys(int num)
         }
 
         /* atm we only use direction, mode and the skill/spell name */
-        send_fire_command(num, RangeFireMode, tmp_name);
+        client_cmd_fire(num, RangeFireMode, tmp_name);
 
 #ifdef DEBUG_TEXT
         if (RangeFireMode == FIRE_MODE_SKILL)
@@ -2250,7 +2250,7 @@ static void move_keys(int num)
     }
     else
     {
-        send_move_command(num, 0);
+        client_cmd_move(num, 0);
         buf[0] = '\0';
     }
 #ifdef DEBUG_TEXT
@@ -2309,7 +2309,7 @@ static void key_repeat(void)
 #ifdef DEBUG_TEXT
                                 textwin_showstring(COLOR_DGOLD, "%s", buf);
 #endif
-                                send_game_command(buf);
+                                client_cmd_generic(buf);
                             }
                         }
                     }

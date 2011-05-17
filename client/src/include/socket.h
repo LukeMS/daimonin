@@ -21,8 +21,8 @@
     The author can be reached via e-mail to info@daimonin.org
 */
 
-#ifndef __SDLSOCKET_H
-#define __SDLSOCKET_H
+#ifndef __SOCKET_H
+#define __SOCKET_H
 
 #define SOCKET_NO -1
 
@@ -34,6 +34,22 @@ typedef struct _command_buffer
     uint8 data[0];
 }
 command_buffer;
+
+/* ClientSocket could probably hold more of the global values - it could
+* probably hold most all socket/communication related values instead
+* of globals.
+*/
+/* with the binary client protocol, ClientSocket only hold ATM the socket identifier.
+* we can safely add here more features like latency counters, pings or statistics.
+* MT/2008
+*/
+typedef struct ClientSocket
+{
+    SOCKET  fd;
+}
+ClientSocket;
+
+extern ClientSocket csocket;
 
 /* flags for send_command_binary() */
 #define SEND_CMD_FLAG_DYNAMIC   0 /* data tail length can vary, add 2 length bytes */
@@ -57,4 +73,4 @@ extern uint8  SOCKET_CloseClientSocket(struct ClientSocket *csock);
 extern int      SOCKET_GetError(void);  /* returns socket error */
 extern int      read_metaserver_data(SOCKET fd);
 
-#endif /* ifndef __SDLSOCKET_H */
+#endif /* ifndef __SOCKET_H */
