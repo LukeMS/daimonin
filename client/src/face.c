@@ -164,9 +164,9 @@ void face_get(sint32 num)
     }
 
     if (LoadFromFile(num, DIR_GFX_USER) != SPRITE_STATUS_LOADED &&
-        (face_list[num].pos != -1 || // we already know it's in FILE_FACEPACK
-         LoadFromFile(num, DIR_CACHE) != SPRITE_STATUS_LOADED) &&
-        LoadFromPack(num) != SPRITE_STATUS_LOADED)
+        (face_list[num].pos == -1 || // we already know it's not in FILE_FACEPACK
+         LoadFromPack(num) != SPRITE_STATUS_LOADED) &&
+        LoadFromFile(num, DIR_CACHE) != SPRITE_STATUS_LOADED)
     {
         face_list[num].flags = FACE_FLAG_REQUESTED;
         client_cmd_face(num);
