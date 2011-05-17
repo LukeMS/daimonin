@@ -56,7 +56,6 @@ extern ClientSocket csocket;
 #define SEND_CMD_FLAG_STRING    1 /* add a '\0' to the outbuffer string as sanity set */
 #define SEND_CMD_FLAG_FIXED     2 /* the the command as fixed, without length tag (server knows length) */
 
-#define send_socklist_binary(_sl_) send_command_binary((_sl_)->cmd, (_sl_)->buf?(_sl_)->buf:(_sl_)->defbuf, (_sl_)->len, (_sl_)->flags )
 extern int send_command_binary(int cmd, char *body, int len, int flags);
 
 extern void command_buffer_free(command_buffer *buf);
