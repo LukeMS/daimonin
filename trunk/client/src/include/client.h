@@ -184,7 +184,7 @@ SockList;
 extern void client_cmd_ping(void);
 extern void client_cmd_setup(void);
 extern void client_cmd_requestfile(uint8 index);
-extern void client_cmd_checkname(char *buf);
+extern void client_cmd_checkname(char *name);
 extern void client_cmd_login(int mode, char *name, char *pass);
 extern void client_cmd_newchar(struct _server_char *nc);
 extern void client_cmd_delchar(char *name);
@@ -194,10 +194,10 @@ extern void client_cmd_move(int dir, int mode);
 extern void client_cmd_apply(int tag);
 extern void client_cmd_examine(int tag);
 extern void client_cmd_invmove(int loc, int tag, int nrof);
-extern void client_cmd_guitalk(sint8 mode, char *cmd);
+extern void client_cmd_guitalk(sint8 mode, char *topic);
 extern void client_cmd_lock(int mode, int tag);
 extern void client_cmd_mark(int tag);
-extern void client_cmd_fire(int num, int mode, char *tmp_name);
+extern void client_cmd_fire(int num, int mode, char *name);
 extern void client_cmd_generic(const char *command);
 
 #endif /* ifndef __CLIENT_H */
