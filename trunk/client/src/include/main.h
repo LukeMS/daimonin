@@ -244,6 +244,7 @@ typedef struct _options
     int                     anim_check_time;
 
     int                   grid;
+    uint8                 done_meta;
 }
 _options;
 
