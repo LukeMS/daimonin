@@ -77,8 +77,12 @@ typedef struct _server
     char           *desc1;
     int             player;
     int             port;
+    sint16          ping;
 }
 _server;
+
+extern _server *start_server,
+               *end_server;
 
 typedef struct _vimmsg
 {

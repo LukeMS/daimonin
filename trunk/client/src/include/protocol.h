@@ -76,7 +76,7 @@
 /* List of client to server (cs) binary command tags */
 typedef enum client_cmd {
     /* start of pre-processed cmds */
-    CLIENT_CMD_PING, /* unused */
+    CLIENT_CMD_PING,
     /* Ns_Login mode only commands */
     CLIENT_CMD_SETUP,
     CLIENT_CMD_REQUESTFILE,
@@ -115,7 +115,7 @@ typedef enum client_cmd {
 
 /* List of server to client (sc) binary command tags */
 typedef enum server_client_cmd {
-    BINARY_CMD_PING, /* unused */
+    BINARY_CMD_PING,
     BINARY_CMD_DRAWINFO,
     BINARY_CMD_ADDME_FAIL,
     BINARY_CMD_MAP2,

@@ -26,6 +26,7 @@
 
 extern void DoClient(void);
 
+extern void PingCmd(char *data, int len);
 extern void SoundCmd(char *data, int len);
 extern void SetupCmd(char *buf, int len);
 extern void Face1Cmd(char *data, int len);

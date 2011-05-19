@@ -114,22 +114,18 @@ static char *pre_copy_cmd_data(ReadList *readb)
 * and/or only at ONE time. Lets check we have that and our
 * client does not try to cheat us
 */
+/* This seems an odd function. I'm not sure I see the point of this
+ * pre-processing *and* then duplicating the security checks in the
+ * cs_cmd_*() functions.
+ * -- Smacky 20110519 */
 //static inline int pre_process_command(NewSocket *ns)
 static int pre_process_command(NewSocket *nsock) // use this for debugging
 {
     ReadList *buf = &nsock->readbuf;
     int cmd = buf->cmd;
 
-    /* TODO: disabled and unused commands */
-    if(cmd == CLIENT_CMD_PING)
-    {
-        LOG(llevDebug,"BOGUS CLIENT DATA: Invalid ping command from socket %d: %d\n", nsock->fd, cmd);
-        nsock->status = Ns_Dead;
-        return TRUE;
-    }
-
     /* Login: the simplest reason to pre-process a command */
-    else if(cmd <= CLIENT_CMD_LOGIN)
+    if (cmd <= CLIENT_CMD_LOGIN)
     {
         if(nsock->status != Ns_Login) /* cmds only allowed at this stage! */
         {
@@ -142,14 +138,22 @@ static int pre_process_command(NewSocket *nsock) // use this for debugging
              * They will take care about the right order of calling
              * itself, so we just fire them up here
              */
-            if(cmd == CLIENT_CMD_SETUP)
-                cs_cmd_setup(pre_copy_cmd_data(buf), buf->toread, nsock);
-            else if(cmd == CLIENT_CMD_REQUESTFILE)
-                cs_cmd_file(pre_copy_cmd_data(buf), buf->toread, nsock);
-            else if(cmd == CLIENT_CMD_CHECKNAME)
-                cs_cmd_checkname(pre_copy_cmd_data(buf), buf->toread, nsock);
-            else if(cmd == CLIENT_CMD_LOGIN) /* will set status to Ns_Account */
-                cs_cmd_login(pre_copy_cmd_data(buf), buf->toread, nsock);
+            if (!nsock->setup)
+            {
+                if(cmd == CLIENT_CMD_PING)
+                    cs_cmd_ping(pre_copy_cmd_data(buf), buf->toread, nsock);
+                else if(cmd == CLIENT_CMD_SETUP)
+                    cs_cmd_setup(pre_copy_cmd_data(buf), buf->toread, nsock);
+            }
+            else
+            {
+                if(cmd == CLIENT_CMD_REQUESTFILE)
+                    cs_cmd_file(pre_copy_cmd_data(buf), buf->toread, nsock);
+                else if(cmd == CLIENT_CMD_CHECKNAME)
+                    cs_cmd_checkname(pre_copy_cmd_data(buf), buf->toread, nsock);
+                else if(cmd == CLIENT_CMD_LOGIN) /* will set status to Ns_Account */
+                    cs_cmd_login(pre_copy_cmd_data(buf), buf->toread, nsock);
+            }
         }
 
         return TRUE;

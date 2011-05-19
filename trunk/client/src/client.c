@@ -137,6 +137,15 @@ static int move_dir[] = {0,6,5,4,7,0,3,8,1,2};
 static char *SplitCommand(const char *command);
 static uint8 CheckCommand(char *cmd, char *params);
 
+void client_cmd_ping(void)
+{
+    SockList sl;
+
+    START(&sl, NULL, CLIENT_CMD_PING, SEND_CMD_FLAG_FIXED);
+    ADDUINT8(&sl, 1);
+    FINISH(&sl);
+}
+
 /* send the setup command to the server
  * This is the handshake command after the client connects
  * and the first data which are send between server & client
