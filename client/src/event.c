@@ -872,6 +872,7 @@ int key_meta_menu(SDLKey key)
     switch (key)
     {
         case SDLK_r:
+            options.done_meta = 0;
             GameStatus = GAME_STATUS_META;
 
             break;

@@ -737,7 +737,7 @@ uint8 game_status_chain(void)
     {
         static uint8 ping_servers;
 
-        ping_servers = 1;
+        ping_servers = !options.done_meta;
         clear_metaserver_data();
         interface_mode = GUI_NPC_MODE_NO;
         clear_group();
@@ -832,6 +832,7 @@ uint8 game_status_chain(void)
     }
     else if (GameStatus == GAME_STATUS_START)
     {
+        options.done_meta = 1;
         interface_mode = GUI_NPC_MODE_NO;
         clear_group();
         map_udate_flag = 2;
