@@ -746,7 +746,7 @@ uint8 game_status_chain(void)
         if (ShowLocalServer)
         {
             add_metaserver_data("LOCAL", "127.0.0.1", argServerPort, -1, "UNKNOWN",
-                                "Your local server (if running).");
+                                "Your local server.");
         }
 
         /* skip if --nometa in command line or no metaserver set in options */
@@ -2157,7 +2157,7 @@ static void ParseInvocationLine(int argc, char *argv[])
                 LOG(LOG_MSG, "  -n, --nometa         : do not query the metaserver\n");
                 LOG(LOG_MSG, "  -p, --pass=STRING    : use this password when logging in to an account\n");
                 LOG(LOG_MSG, "  -s, --server=NUMBER  : connect automatically to the specified official server\n");
-                LOG(LOG_MSG, "                           0 - your local server (if running)\n");
+                LOG(LOG_MSG, "                           0 - your local server\n");
                 LOG(LOG_MSG, "                           1 - the main server, which is best for simply playing the game\n");
                 LOG(LOG_MSG, "                           2 - the test server, which is best for testing new content (maps)\n");
                 LOG(LOG_MSG, "                           3 - the dev server, which is best for testing new code (features)\n");
