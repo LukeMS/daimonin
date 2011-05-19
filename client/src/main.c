@@ -729,7 +729,8 @@ uint8 game_status_chain(void)
             sound_play_music("orchestral.ogg", options.music_volume, 0, -1, 0, MUSIC_MODE_DIRECT);
 #endif
         clear_map();
-        GameStatus = GAME_STATUS_META;
+        GameStatus = (options.cli_server >= 0) ? GAME_STATUS_START
+                                               : GAME_STATUS_META;
     }
     /* connect to meta and get server data */
     else if (GameStatus == GAME_STATUS_META)
