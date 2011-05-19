@@ -137,6 +137,9 @@ static int move_dir[] = {0,6,5,4,7,0,3,8,1,2};
 static char *SplitCommand(const char *command);
 static uint8 CheckCommand(char *cmd, char *params);
 
+/* Sends a ping. A ping is a small package of data (here a single byte). By
+ * measuring the time taken for a reply we can provide an estimation of the
+ * connection speed to the server. */
 void client_cmd_ping(void)
 {
     SockList sl;
@@ -146,14 +149,10 @@ void client_cmd_ping(void)
     FINISH(&sl);
 }
 
-/* send the setup command to the server
- * This is the handshake command after the client connects
- * and the first data which are send between server & client
- * NOTE: Because this is the first command, the data part is 
- * String only. With the response from the server we get 
- * endian info which enables us to send binary data (without
- * fixed shifting)
- */
+/* Sends the setup string. This is the handshake command after the client
+ * connects and the first data which is exchanged between client and server
+ * (excluding pings). With the response from the server we get endian info
+ * which enables us to send binary data (without fixed shifting). */
 void client_cmd_setup(void)
 {
     SockList sl;
@@ -187,11 +186,7 @@ void client_cmd_setup(void)
     FINISH(&sl);
 }
 
-/* Request a so called "server file" from the server.
- * Which includes a list of skills the server knows,
- * spells and such, and how they are described and 
- * visualized
- */
+/* Requests a srvfile (see srvfile.c). */
 void client_cmd_requestfile(uint8 index)
 {
     SockList sl;
@@ -221,6 +216,9 @@ void client_cmd_requestfile(uint8 index)
     SDL_Delay(1200);
 }
 
+/* Sends an account name to the server for it to check validity (see
+ * protocol.c) and whether this name exists. This is only used when the client
+ * tries to create a new account. */
 void client_cmd_checkname(char *name)
 {
     SockList sl;
@@ -231,6 +229,8 @@ void client_cmd_checkname(char *name)
     FINISH(&sl);
 }
 
+/* Attempts to login to the named account with the given password. The server
+ * will do the validity/existence checks as for client_cmd_checkname(). */
 void client_cmd_login(int mode, char *name, char *pass)
 {
     SockList sl;
@@ -244,12 +244,13 @@ void client_cmd_login(int mode, char *name, char *pass)
     FINISH(&sl);
 }
 
-/* the server also parsed client_settings. 
- * We only tell him our name, password (for reclaiming B4
- * characters), the selected default arch (as gender_selected)
- * and the weapon skill
- * The server will grap the other values from the loaded file
- */
+/* Sends basic info about a new character that we have created. As well as
+ * checking the stats, etc are legal, the server will also check that the
+ * player name is not already taken. If the name is already taken and the
+ * character is from the pre-account era, the server will reply to that effect
+ * and this cmd will need to be resent, this time with a so-called 'reclaim
+ * password' ini order to move the name into this account (the character will
+ * be wholly new apart from the name). */
 void client_cmd_newchar(_server_char *nc)
 {
     _server_char *sc = first_server_char;
@@ -279,7 +280,7 @@ void client_cmd_newchar(_server_char *nc)
     FINISH(&sl);
 }
 
-/* delete a character */
+/* Tells the server to delete the named character from our account. */
 void client_cmd_delchar(char *name)
 {
     SockList sl;
@@ -290,13 +291,7 @@ void client_cmd_delchar(char *name)
     FINISH(&sl);
 }
 
-/* ONLY send this when we are valid connected to our account.
- * Server will assume a hacking attempt when something is wrong
- * we are not logged to an account or name don't exists in that
- * account. Will invoke a hack warning and a temp ban!
- * This command will invoke the login for char name and put player
- * in playing mode or invoke an account cmd error msg
- */
+/* Tells the server to add the named player to the gameworld. */
 void client_cmd_addme(char *name)
 {
     SockList sl;
@@ -307,6 +302,7 @@ void client_cmd_addme(char *name)
     FINISH(&sl);
 }
 
+/* Requests the numbered face (see face.c). */
 void client_cmd_face(uint16 num)
 {
     SockList sl;
@@ -316,11 +312,10 @@ void client_cmd_face(uint16 num)
     FINISH(&sl);
 }
 
-/* THE main move command function */
-void client_cmd_move(int dir, int mode)
+/* Sends a player move command. */
+void client_cmd_move(uint8 dir, uint8 mode)
 {
     SockList sl;
-    // remapped to: "idle", "/sw", "/s", "/se", "/w", "/stay", "/e", "/nw", "/n", "/ne" 
 
     START(&sl, NULL, CLIENT_CMD_MOVE, SEND_CMD_FLAG_FIXED);
     ADDUINT8(&sl, move_dir[dir]);
@@ -328,6 +323,7 @@ void client_cmd_move(int dir, int mode)
     FINISH(&sl);
 }
 
+/* Sends an apply command. */
 void client_cmd_apply(int tag)
 {
     SockList sl;
@@ -337,6 +333,7 @@ void client_cmd_apply(int tag)
     FINISH(&sl);
 }
 
+/* Sends an examine command. */
 void client_cmd_examine(int tag)
 {
     SockList sl;
@@ -346,7 +343,7 @@ void client_cmd_examine(int tag)
     FINISH(&sl);
 }
 
-/* Requests nrof objects of tag get moved to loc. */
+/* Sends an object move command. */
 void client_cmd_invmove(int loc, int tag, int nrof)
 {
     SockList sl;
@@ -358,6 +355,9 @@ void client_cmd_invmove(int loc, int tag, int nrof)
     FINISH(&sl);
 }
 
+/* Sends a talk command. The topic iis always lowercased before bing sent. This
+ * makes it much easier to deal with server-side (by scripts especially) and
+ * the player needb't worry about capitalisation. */
 void client_cmd_guitalk(sint8 mode, char *topic)
 {
     uint16   c;
@@ -376,6 +376,7 @@ void client_cmd_guitalk(sint8 mode, char *topic)
     FINISH(&sl);
 }
 
+/* Sends an inventory lock command. */
 void client_cmd_lock(int mode, int tag)
 {
     SockList sl;
@@ -386,6 +387,7 @@ void client_cmd_lock(int mode, int tag)
     FINISH(&sl);
 }
 
+/* Sends an inventory mark command. */
 void client_cmd_mark(int tag)
 {
     SockList sl;
@@ -395,6 +397,7 @@ void client_cmd_mark(int tag)
     FINISH(&sl);
 }
 
+/* Sends a fire command. */
 void client_cmd_fire(int num, int mode, char *name)
 {
     SockList sl;
@@ -413,16 +416,8 @@ void client_cmd_fire(int num, int mode, char *name)
     FINISH(&sl);
 }
 
-/* client_cmd_generic() will send a higher level game command like /tell, /say or
- * other "slash" text commants. Usually, this kind of commands are typed in 
- * console or are bound to macros. 
- * The underlaying protocol command is CLIENT_CMD_GENERIC, which means
- * its a command holding another command.
- * For realtime or system commands, commands with binary params and such,
- * not a slash command should be used but a new protocol command.
- * Only that commands hold real binary params and can be pre-processed
- * by the server protocol functions.
- */
+/* Sends a higher level /command (eg, /tell, /say, etc) as a string. IOW this
+ * really a generic wrapper not a binary cmd. */
 void client_cmd_generic(const char *command)
 {
     char  buf[LARGE_BUF],
@@ -498,10 +493,9 @@ void client_cmd_generic(const char *command)
     }
 }
 
-/* Splits command at the next #,
-* returning a pointer to the occurrence (which is overwritten with \0 first) or
-* NULL if no next multicommand is found or command is chat, etc.
-*/
+/* Splits command at the next #, returning a pointer to the occurrence (which
+ * is overwritten with \0 first) or NULL if no next multicommand is found or
+ * command is chat, etc. */
 static char *SplitCommand(const char *command)
 {
     char *c = NULL;
@@ -529,11 +523,9 @@ static char *SplitCommand(const char *command)
     return c;
 }
 
-/* Analyze /<cmd> type commands the player has typed in the console
- * or bound to a key. Sort out the "client intern" commands and
- * expand or pre process them for the server.
- * Return 0 and update cmd and params as necessary to send the command to the
- * server, or  1 not to (ie, command has been fully handled client-side). */
+/* Analyzes /commands to separate commands which are dealt with purely by the
+ * client (return 1) and those which are expanded or preprocessed before being
+ * sent to the server (return 0). */
 static uint8 CheckCommand(char *cmd, char *params)
 {
 #ifdef USE_CHANNELS
