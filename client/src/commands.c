@@ -50,6 +50,7 @@ struct CmdMapping
 struct CmdMapping commands[]  =
 {
     /* Don't change this sorting! Its hardcoded in the server. */
+    { PingCmd },
     { DrawInfoCmd },
     { AddMeFail },
     { Map2Cmd },
@@ -95,7 +96,7 @@ void DoClient(void)
     while ( (cmd = get_next_input_command()) ) /* function has mutex included */
     {
         /* LOG(LOG_MSG,"Command #%d (LT:%d)(len:%d)\n",cmd->data[0], LastTick, cmd->len); */
-        if (!cmd->data[0] || (cmd->data[0]&~0x80) > (uint8) NCOMMANDS)
+        if (cmd->data[0] < 0 || (cmd->data[0]&~0x80) > (uint8) NCOMMANDS)
             LOG(LOG_ERROR, "Bad command from server (%d)\n", cmd->data[0]);
         else
         {
@@ -107,7 +108,7 @@ void DoClient(void)
                 cmd_tag &= ~0x80;
                 header_len = 5;
             }
-            commands[cmd_tag - 1].cmdproc((char *)cmd->data+header_len, cmd->len-header_len);
+            commands[cmd_tag].cmdproc((char *)cmd->data+header_len, cmd->len-header_len);
         }
         command_buffer_free(cmd);
     }
@@ -142,6 +143,23 @@ void SoundCmd(char *data, int len)
     calculate_map_sound(type, num, x, y, 0);
 }
 
+void PingCmd(char *data, int len)
+{
+    _server *node;
+
+    for (node = start_server; node; node = node->next)
+    {
+        if (strcmp(node->nameip, csocket.host) ||
+            node->port != csocket.port)
+        {
+            continue;
+        }
+
+        node->ping = (sint16)(SDL_GetTicks() - csocket.ping);
+
+        break;
+    }
+}
 
 void SetupCmd(char *buf, int len)
 {

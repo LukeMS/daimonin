@@ -578,6 +578,10 @@ uint8 SOCKET_OpenClientSocket(struct ClientSocket *csock, char *host, int port)
         LOG(LOG_ERROR, "ERROR: setsockopt(TCP_NODELAY) failed\n");
     }
 
+    csock->host = host;
+    csock->port = port;
+    csock->ping = SDL_GetTicks();
+
     return 1;
 }
 

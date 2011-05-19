@@ -136,7 +136,8 @@ uint8 load_bitmap(int index);
 
 _vimmsg vim[MAX_NROF_VIM];
 
-_server            *start_server, *end_server;
+_server *start_server,
+        *end_server;
 int                 metaserver_start, metaserver_sel, metaserver_count;
 
 typedef enum _pic_type
@@ -728,12 +729,15 @@ uint8 game_status_chain(void)
             sound_play_music("orchestral.ogg", options.music_volume, 0, -1, 0, MUSIC_MODE_DIRECT);
 #endif
         clear_map();
-        clear_metaserver_data();
         GameStatus = GAME_STATUS_META;
     }
     /* connect to meta and get server data */
     else if (GameStatus == GAME_STATUS_META)
     {
+        static uint8 ping_servers;
+
+        ping_servers = 1;
+        clear_metaserver_data();
         interface_mode = GUI_NPC_MODE_NO;
         clear_group();
         map_udate_flag = 2;
@@ -751,27 +755,20 @@ uint8 game_status_chain(void)
         }
         else
         {
-            int meta_ret = 0;
-            SOCKET fd = SOCKET_NO;
+            SOCKET       meta = SOCKET_NO;
 
-            textwin_showstring(COLOR_GREEN,
-                               "query metaserver...\n"\
-                               "trying %s:%d",
+            textwin_showstring(COLOR_GREEN, "Query metaserver (%s:%d)... ",
                                options.metaserver, options.metaserver_port);
 
-            if (SOCKET_OpenSocket(&fd, options.metaserver, options.metaserver_port))
+            if (SOCKET_OpenSocket(&meta, options.metaserver,
+                                  options.metaserver_port) &&
+                read_metaserver_data(meta))
             {
-                meta_ret = read_metaserver_data(fd);
-                SOCKET_CloseSocket(fd);
-                textwin_showstring(COLOR_GREEN, "done.");
+                textwin_showstring(COLOR_GREEN, "OK!");
             }
             else
             {
-                textwin_showstring(COLOR_GREEN, "metaserver failed! using default list.");
-            }
-
-            if(!meta_ret)
-            {
+                textwin_showstring(COLOR_RED, "FAILED (using default list)!");
                 add_metaserver_data("Main", "daimonin.game-server.cc",
                                     DEFAULT_SERVER_PORT, -1, "UNKNOWN",
                                     "Best for simply playing the game");
@@ -781,6 +778,49 @@ uint8 game_status_chain(void)
                 add_metaserver_data("Dev", "www.daimonin.org",
                                     DEFAULT_SERVER_PORT, -1, "UNKNOWN",
                                     "Best for testing new code (features)");
+            }
+
+            SOCKET_CloseSocket(meta);
+
+            /* We just ping once autoomatically (and then on demand) because
+             * it's not funny (and the server is wise to such tricks) to hammer
+             * the server repeatedly with unnecessary cmds. */
+            if (ping_servers)
+            {
+                _server *node;
+
+                ping_servers = 0;
+
+                for (node = start_server; node; node = node->next)
+                {
+                    uint8 i;
+
+                    node->ping = -1;
+
+                    if (!SOCKET_OpenClientSocket(&csocket, node->nameip,
+                                                 node->port))
+                    {
+                        continue;
+                    }
+
+                    socket_thread_start();
+                    client_cmd_ping();
+
+                    /* We check for a response, which updates node->ping. So
+                     * by doing it in a loop with a 1ms delay each iteration,
+                     * we allow a decent time for a response (quarter of a
+                     * second) but can also wrap up as soon as we get one. This
+                     * means that this process will be significantly faster
+                     * when all servers are updated with CMD_PING. */
+                    for (i = 0; i < 255 && node->ping == -1; i++)
+                    {
+                        DoClient();
+                        SDL_Delay(1);
+                    }
+
+                    SOCKET_CloseClientSocket(&csocket);
+                    handle_socket_shutdown(); // clear threads and abort status
+                }
             }
         }
 

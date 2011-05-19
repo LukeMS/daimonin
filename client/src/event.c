@@ -126,10 +126,7 @@ static uint8  check_macro_keys(char *text);
 static void     move_keys(int num);
 static void     key_repeat(void);
 static void     cursor_keys(int num);
-int             key_meta_menu(SDL_KeyboardEvent *key);
-void            key_connection_event(SDL_KeyboardEvent *key);
 static void     check_esc_menu_keys(int key);
-void            check_menu_keys(int menu, int key);
 
 
 void init_keys(void)
@@ -814,7 +811,8 @@ int Event_PollInputDevice(void)
             else if (!InputStringEndFlag)
             {
                 if (GameStatus <= GAME_STATUS_WAITLOOP)
-                    done = key_meta_menu(&event.key);
+                    done = (event.key.type != SDL_KEYDOWN) ? 0
+                                                           : key_meta_menu(event.key.keysym.sym);
                 else if (GameStatus == GAME_STATUS_LOGIN_SELECT)
                     done = key_login_select_menu(&event.key);
                 else if (GameStatus == GAME_STATUS_ACCOUNT)
@@ -869,41 +867,55 @@ void key_connection_event(SDL_KeyboardEvent *key)
 
 
 /* metaserver menu key */
-int key_meta_menu(SDL_KeyboardEvent *key)
+int key_meta_menu(SDLKey key)
 {
-    if (key->type == SDL_KEYDOWN)
+    switch (key)
     {
-        switch (key->keysym.sym)
-        {
+        case SDLK_r:
+            GameStatus = GAME_STATUS_META;
+
+            break;
+
         case SDLK_UP:
             if (metaserver_sel)
             {
                 metaserver_sel--;
+
                 if (metaserver_start > metaserver_sel)
+                {
                     metaserver_start = metaserver_sel;
+                }
             }
+
             break;
+
         case SDLK_DOWN:
             if (metaserver_sel < metaserver_count - 1)
             {
                 metaserver_sel++;
+
                 if (metaserver_sel >= MAXMETAWINDOW)
+                {
                     metaserver_start = (metaserver_sel + 1) - MAXMETAWINDOW;
+                }
             }
+
             break;
+
         case SDLK_RETURN:
             get_meta_server_data(metaserver_sel, ServerName, &ServerPort);
             GameStatus = GAME_STATUS_STARTCONNECT;
+
             break;
 
         case SDLK_ESCAPE:
-            return(1);
+            return 1;
 
         default:
             break;
-        }
     }
-    return(0);
+
+    return 0;
 }
 
 /* we get TEXT from keyboard. This is for console input */

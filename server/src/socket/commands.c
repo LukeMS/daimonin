@@ -32,8 +32,7 @@
  */
 _CmdMapping cs_commands[]    =
 {
-    {0,         NULL}, /* ping */
-
+    {1,         cs_cmd_ping},
     {-1,        cs_cmd_setup},
     {1,         cs_cmd_file},
     {-1,        cs_cmd_checkname},
@@ -418,6 +417,25 @@ void process_command_queue(NewSocket *ns, player *pl)
         if (cmd_count++ >= 8 || ns->status != Ns_Playing || !(pl->state&ST_PLAYING) || (pl && (!pl->ob || pl->ob->speed_left < 0.0f)))
             return;
     }
+}
+
+void cs_cmd_ping(char *buf, int len, NewSocket *ns)
+{
+    if (ns->setup ||
+        ns->status != Ns_Login ||
+        !buf ||
+        len != 1)
+    {
+        LOG(llevInfo, "HACKBUG:: Received illegal ping from IP >%s<!\n",
+            STRING_SAFE(ns->ip_host));
+        ns->status = Ns_Dead;
+
+        return;
+    }
+
+    /* Bounce the ping back to the client. */
+    SOCKBUF_REQUEST_BUFFER(ns, SOCKET_SIZE_SMALL);
+    SOCKBUF_REQUEST_FINISH(ns, BINARY_CMD_PING, SOCKBUF_DYNAMIC);
 }
 
 /* This command handles slash game commands like /say, /tell or /dm

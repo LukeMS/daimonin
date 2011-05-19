@@ -181,6 +181,7 @@ typedef struct SockList
 }
 SockList;
 
+extern void client_cmd_ping(void);
 extern void client_cmd_setup(void);
 extern void client_cmd_requestfile(uint8 index);
 extern void client_cmd_checkname(char *buf);

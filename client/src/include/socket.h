@@ -45,7 +45,10 @@ command_buffer;
 */
 typedef struct ClientSocket
 {
-    SOCKET  fd;
+    SOCKET      fd;
+    const char *host;
+    uint16      port;
+    uint32      ping;
 }
 ClientSocket;
 

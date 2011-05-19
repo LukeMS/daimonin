@@ -1983,13 +1983,20 @@ void show_meta_server(_server *node, int metaserver_start, int metaserver_sel)
     draw_frame(box.x - 1, box.y + 11, box.w + 1, 313);
     ENGRAVE(ScreenSurface, &font_large_out, "Servers", x + TXT_START_NAME,
             y + TXT_Y_START - 8, COLOR_HGOLD, NULL, NULL);
-    ENGRAVE(ScreenSurface, &font_medium, "Version", x + 365,
+    ENGRAVE(ScreenSurface, &font_medium, "Version", x + 315,
             y + TXT_Y_START - 4, COLOR_HGOLD, NULL, NULL);
-    ENGRAVE(ScreenSurface, &font_medium, "Players", x + 415,
+    ENGRAVE(ScreenSurface, &font_medium, "Players", x + 365,
+            y + TXT_Y_START - 4, COLOR_HGOLD, NULL, NULL);
+    ENGRAVE(ScreenSurface, &font_medium, "Ping", x + 415,
             y + TXT_Y_START - 4, COLOR_HGOLD, NULL, NULL);
     sprintf(buf, "use cursors ~%c%c~ to select server                                  press ~RETURN~ to connect",
             ASCII_UP, ASCII_DOWN);
     string_blt(ScreenSurface, &font_small, buf, x + 140, y + 410, COLOR_WHITE, NULL, NULL);
+
+    if (add_button(x + 25, y + 454, 0, BITMAP_DIALOG_BUTTON_UP, "Refresh", "~R~efresh"))
+    {
+        key_meta_menu(SDLK_r);
+    }
 
     for (i = 0; i < OPTWIN_MAX_OPT; i++)
     {
@@ -2005,6 +2012,8 @@ void show_meta_server(_server *node, int metaserver_start, int metaserver_sel)
 
     for (i = 0; node && i < MAXMETAWINDOW; i++)
     {
+        uint8 colr;
+
         if (i == metaserver_sel - metaserver_start)
         {
             SDL_Rect box2 =
@@ -2020,15 +2029,39 @@ void show_meta_server(_server *node, int metaserver_start, int metaserver_sel)
             SDL_FillRect(ScreenSurface, &box, skindef.dialog_rowsS);
         }
         ENGRAVE(ScreenSurface, &font_small, node->name, x + 137, y + 94 + i * 12, COLOR_WHITE, NULL, NULL);
-        ENGRAVE(ScreenSurface, &font_small, node->version, x + 366, y + 94 + i * 12, COLOR_WHITE, NULL, NULL);
+        ENGRAVE(ScreenSurface, &font_small, node->version, x + 316, y + 94 + i * 12, COLOR_WHITE, NULL, NULL);
         if (node->player >= 0)
             sprintf(buf, "%d", node->player);
         else
             sprintf(buf, "??");
-        ENGRAVE(ScreenSurface, &font_small, buf, x + 416, y + 94 + i * 12, COLOR_WHITE, NULL, NULL);
+        ENGRAVE(ScreenSurface, &font_small, buf, x + 366, y + 94 + i * 12, COLOR_WHITE, NULL, NULL);
+
+        if (node->ping == -1)
+        {
+            sprintf(buf, "??");
+            colr = COLOR_BLUE;
+        }
+        else
+        {
+            sprintf(buf, "%d", node->ping);
+
+            if (node->ping <= 50)
+            {
+                colr = COLOR_GREEN;
+            }
+            else if (node->ping <= 200)
+            {
+                colr = COLOR_YELLOW;
+            }
+            else
+            {
+                colr = COLOR_RED;
+            }
+        }
+
+        ENGRAVE(ScreenSurface, &font_small, buf, x + 416, y + 94 + i * 12, colr, NULL, NULL);
         node = node->next;
     }
-
 }
 
 /******************************************************************
