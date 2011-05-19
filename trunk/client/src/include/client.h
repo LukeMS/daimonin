@@ -190,7 +190,7 @@ extern void client_cmd_newchar(struct _server_char *nc);
 extern void client_cmd_delchar(char *name);
 extern void client_cmd_addme(char *name);
 extern void client_cmd_face(uint16 num);
-extern void client_cmd_move(int dir, int mode);
+extern void client_cmd_move(uint8 dir, uint8 mode);
 extern void client_cmd_apply(int tag);
 extern void client_cmd_examine(int tag);
 extern void client_cmd_invmove(int loc, int tag, int nrof);

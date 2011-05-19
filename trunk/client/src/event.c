@@ -2174,6 +2174,7 @@ void quickslot_key(SDL_KeyboardEvent *key, int slot)
     }
 }
 
+/* TODO: Sort this out re run mode? */
 static void move_keys(int num)
 {
     char buf[MEDIUM_BUF];
