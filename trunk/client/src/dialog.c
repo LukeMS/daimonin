@@ -1983,11 +1983,11 @@ void show_meta_server(_server *node, int metaserver_start, int metaserver_sel)
     draw_frame(box.x - 1, box.y + 11, box.w + 1, 313);
     ENGRAVE(ScreenSurface, &font_large_out, "Servers", x + TXT_START_NAME,
             y + TXT_Y_START - 8, COLOR_HGOLD, NULL, NULL);
-    ENGRAVE(ScreenSurface, &font_medium, "Version", x + 315,
+    ENGRAVE(ScreenSurface, &font_medium, "Version", x + 285,
             y + TXT_Y_START - 4, COLOR_HGOLD, NULL, NULL);
-    ENGRAVE(ScreenSurface, &font_medium, "Players", x + 365,
+    ENGRAVE(ScreenSurface, &font_medium, "Players", x + 335,
             y + TXT_Y_START - 4, COLOR_HGOLD, NULL, NULL);
-    ENGRAVE(ScreenSurface, &font_medium, "Ping", x + 415,
+    ENGRAVE(ScreenSurface, &font_medium, "Ping", x + 385,
             y + TXT_Y_START - 4, COLOR_HGOLD, NULL, NULL);
     sprintf(buf, "use cursors ~%c%c~ to select server                                  press ~RETURN~ to connect",
             ASCII_UP, ASCII_DOWN);
@@ -2028,17 +2028,22 @@ void show_meta_server(_server *node, int metaserver_start, int metaserver_sel)
             box.y = y + TXT_Y_START + 13 + i * 12;
             SDL_FillRect(ScreenSurface, &box, skindef.dialog_rowsS);
         }
-        ENGRAVE(ScreenSurface, &font_small, node->name, x + 137, y + 94 + i * 12, COLOR_WHITE, NULL, NULL);
-        ENGRAVE(ScreenSurface, &font_small, node->version, x + 316, y + 94 + i * 12, COLOR_WHITE, NULL, NULL);
+        ENGRAVE(ScreenSurface, &font_small, node->name, x + TXT_START_NAME, y + 94 + i * 12, COLOR_WHITE, NULL, NULL);
+        ENGRAVE(ScreenSurface, &font_small, node->version, x + 286, y + 94 + i * 12, COLOR_WHITE, NULL, NULL);
         if (node->player >= 0)
             sprintf(buf, "%d", node->player);
         else
             sprintf(buf, "??");
-        ENGRAVE(ScreenSurface, &font_small, buf, x + 366, y + 94 + i * 12, COLOR_WHITE, NULL, NULL);
+        ENGRAVE(ScreenSurface, &font_small, buf, x + 336, y + 94 + i * 12, COLOR_WHITE, NULL, NULL);
 
-        if (node->ping == -1)
+        if (node->ping == -2)
         {
-            sprintf(buf, "??");
+            sprintf(buf, "SERVER DOWN");
+            colr = COLOR_GREY;
+        }
+        else if (node->ping == -1)
+        {
+            sprintf(buf, "UNKNOWN");
             colr = COLOR_BLUE;
         }
         else
@@ -2059,7 +2064,7 @@ void show_meta_server(_server *node, int metaserver_start, int metaserver_sel)
             }
         }
 
-        ENGRAVE(ScreenSurface, &font_small, buf, x + 416, y + 94 + i * 12, colr, NULL, NULL);
+        ENGRAVE(ScreenSurface, &font_small, buf, x + 386, y + 94 + i * 12, colr, NULL, NULL);
         node = node->next;
     }
 }

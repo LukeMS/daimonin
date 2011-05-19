@@ -755,7 +755,7 @@ uint8 game_status_chain(void)
         }
         else
         {
-            SOCKET       meta = SOCKET_NO;
+            SOCKET meta = SOCKET_NO;
 
             textwin_showstring(COLOR_GREEN, "Query metaserver (%s:%d)... ",
                                options.metaserver, options.metaserver_port);
@@ -795,14 +795,15 @@ uint8 game_status_chain(void)
                 {
                     uint8 i;
 
-                    node->ping = -1;
-
                     if (!SOCKET_OpenClientSocket(&csocket, node->nameip,
                                                  node->port))
                     {
+                        node->ping = -2;
+
                         continue;
                     }
 
+                    node->ping = -1;
                     socket_thread_start();
                     client_cmd_ping();
 
