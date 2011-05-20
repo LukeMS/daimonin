@@ -59,20 +59,23 @@ extern ClientSocket csocket;
 #define SEND_CMD_FLAG_STRING    1 /* add a '\0' to the outbuffer string as sanity set */
 #define SEND_CMD_FLAG_FIXED     2 /* the the command as fixed, without length tag (server knows length) */
 
-extern int send_command_binary(int cmd, char *body, int len, int flags);
-
-extern void command_buffer_free(command_buffer *buf);
+extern int             send_command_binary(int cmd, char *body, int len,
+                                           int flags);
+extern void            command_buffer_free(command_buffer *buf);
 extern command_buffer *get_next_input_command(void);
-extern void socket_thread_start(void);
-extern void socket_thread_stop(void);
-extern int handle_socket_shutdown();
-extern uint8  SOCKET_InitSocket(void);
-extern uint8  SOCKET_DeinitSocket(void);
-extern uint8  SOCKET_OpenSocket(SOCKET *socket_temp, char *host, int port);
-extern uint8  SOCKET_OpenClientSocket(struct ClientSocket *csock, char *host, int port);
-extern uint8  SOCKET_CloseSocket(SOCKET socket);
-extern uint8  SOCKET_CloseClientSocket(struct ClientSocket *csock);
-extern int      SOCKET_GetError(void);  /* returns socket error */
-extern int      read_metaserver_data(SOCKET fd);
+extern void            socket_thread_start(void);
+extern void            socket_thread_stop(void);
+extern int             handle_socket_shutdown();
+extern uint8           SOCKET_InitSocket(void);
+extern uint8           SOCKET_DeinitSocket(void);
+extern uint8           SOCKET_OpenSocket(SOCKET *socket_temp, char *host,
+                                         int port);
+extern uint8           SOCKET_OpenClientSocket(struct ClientSocket *csock,
+                                               char *host, int port);
+extern uint8           SOCKET_CloseSocket(SOCKET socket);
+extern uint8           SOCKET_CloseClientSocket(struct ClientSocket *csock);
+extern int             SOCKET_GetError(void);  /* returns socket error */
+extern int             read_metaserver_data(SOCKET fd);
+extern char           *get_ip_from_hostname(char *host, char *ip_buf);
 
 #endif /* ifndef __SOCKET_H */

@@ -1951,7 +1951,7 @@ void show_login_server(void)
 /******************************************************************
  show login: select-server part.
 ******************************************************************/
-void show_meta_server(_server *node, int metaserver_start, int metaserver_sel)
+void show_meta_server(void)
 {
     int         x, y, i;
     char        buf[1024];
@@ -1959,6 +1959,7 @@ void show_meta_server(_server *node, int metaserver_start, int metaserver_sel)
     SDL_Rect    rec_desc;
     SDL_Rect    box;
     int         mx, my, mb;
+    _server    *node = start_server;
 
     mb = SDL_GetMouseState(&mx, &my);
     /* background */
@@ -1989,83 +1990,120 @@ void show_meta_server(_server *node, int metaserver_start, int metaserver_sel)
             y + TXT_Y_START - 4, COLOR_HGOLD, NULL, NULL);
     ENGRAVE(ScreenSurface, &font_medium, "Ping", x + 385,
             y + TXT_Y_START - 4, COLOR_HGOLD, NULL, NULL);
-    sprintf(buf, "use cursors ~%c%c~ to select server                                  press ~RETURN~ to connect",
-            ASCII_UP, ASCII_DOWN);
-    string_blt(ScreenSurface, &font_small, buf, x + 140, y + 410, COLOR_WHITE, NULL, NULL);
 
     if (add_button(x + 25, y + 454, 0, BITMAP_DIALOG_BUTTON_UP, "Refresh", "~R~efresh"))
     {
         key_meta_menu(SDLK_r);
     }
 
-    for (i = 0; i < OPTWIN_MAX_OPT; i++)
-    {
-        box.y += 12;
-        if (i & 1)
-            SDL_FillRect(ScreenSurface, &box, skindef.dialog_rows0);
-        else
-            SDL_FillRect(ScreenSurface, &box, skindef.dialog_rows1);
-    }
-
-    for (i = 0; node && i < metaserver_start; i++)
-        node = node->next;
-
-    for (i = 0; node && i < MAXMETAWINDOW; i++)
+    for (i = 0; i < MAXMETAWINDOW; i++)
     {
         uint8 colr;
 
-        if (i == metaserver_sel - metaserver_start)
-        {
-            SDL_Rect box2 =
-            {
-                x + 160,
-                y + 431,
-                300,
-                55
-            };
+        box.y = y + TXT_Y_START + 13 + i * 12;
 
-            ShowInfo(&font_large_out, &box2, node->desc1);
-            box.y = y + TXT_Y_START + 13 + i * 12;
-            SDL_FillRect(ScreenSurface, &box, skindef.dialog_rowsS);
-        }
-        ENGRAVE(ScreenSurface, &font_small, node->name, x + TXT_START_NAME, y + 94 + i * 12, COLOR_WHITE, NULL, NULL);
-        ENGRAVE(ScreenSurface, &font_small, node->version, x + 286, y + 94 + i * 12, COLOR_WHITE, NULL, NULL);
-        if (node->player >= 0)
-            sprintf(buf, "%d", node->player);
-        else
-            sprintf(buf, "??");
-        ENGRAVE(ScreenSurface, &font_small, buf, x + 336, y + 94 + i * 12, COLOR_WHITE, NULL, NULL);
-
-        if (node->ping == -2)
+        if (node)
         {
-            sprintf(buf, "SERVER DOWN");
-            colr = COLOR_GREY;
-        }
-        else if (node->ping == -1)
-        {
-            sprintf(buf, "UNKNOWN");
-            colr = COLOR_BLUE;
-        }
-        else
-        {
-            sprintf(buf, "%d", node->ping);
-
-            if (node->ping <= 50)
+            if (node == metaserver_sel)
             {
-                colr = COLOR_GREEN;
-            }
-            else if (node->ping <= 200)
-            {
-                colr = COLOR_YELLOW;
+                SDL_Rect box2;
+
+                SDL_FillRect(ScreenSurface, &box, skindef.dialog_rowsS);
+                box2.x = x + 160;
+                box2.y = y + 431;
+                box2.w = 300;
+                box2.h = 55;
+                ShowInfo(&font_large_out, &box2, node->desc1);
+
+                if (locator.server != node)
+                {
+                    locator.server = node;
+
+                    if (node->player >= 0)
+                    {
+                        locator_focus(node->geoloc.lx, node->geoloc.ly);
+                    }
+                    else
+                    {
+                        locator_focus(locator.client.lx, locator.client.ly);
+                    }
+                }
             }
             else
             {
-                colr = COLOR_RED;
+                if ((i & 1))
+                {
+                    SDL_FillRect(ScreenSurface, &box, skindef.dialog_rows0);
+                }
+                else
+                {
+                    SDL_FillRect(ScreenSurface, &box, skindef.dialog_rows1);
+                }
             }
-        }
 
-        ENGRAVE(ScreenSurface, &font_small, buf, x + 386, y + 94 + i * 12, colr, NULL, NULL);
-        node = node->next;
+            ENGRAVE(ScreenSurface, &font_small, node->name, x + TXT_START_NAME, y + 94 + i * 12, COLOR_WHITE, NULL, NULL);
+            ENGRAVE(ScreenSurface, &font_small, node->version, x + 286, y + 94 + i * 12, COLOR_WHITE, NULL, NULL);
+
+            if (node->player >= 0)
+            {
+                sprintf(buf, "%d", node->player);
+            }
+            else
+            {
+                sprintf(buf, "??");
+            }
+
+            ENGRAVE(ScreenSurface, &font_small, buf, x + 336, y + 94 + i * 12, COLOR_WHITE, NULL, NULL);
+
+            if (node->ping == -2)
+            {
+                sprintf(buf, "SERVER DOWN");
+                colr = COLOR_GREY;
+            }
+            else if (node->ping == -1)
+            {
+                sprintf(buf, "UNKNOWN");
+                colr = COLOR_BLUE;
+            }
+            else
+            {
+                sprintf(buf, "%d", node->ping);
+
+                if (node->ping <= 50)
+                {
+                    colr = COLOR_GREEN;
+                }
+                else if (node->ping <= 200)
+                {
+                    colr = COLOR_YELLOW;
+                }
+                else
+                {
+                    colr = COLOR_RED;
+                }
+            }
+
+            ENGRAVE(ScreenSurface, &font_small, buf, x + 386, y + 94 + i * 12, colr, NULL, NULL);
+
+            node = node->next;
+        }
+    }
+
+    if (locator.server)
+    {
+        locator_show(x + 132, y + 158);
+        sprintf(buf, "~%c%c~: select server  |**|  ~SHIFT~/~CONTROL~ + ~%c%c%c%c~: scroll map  |**|  ~RETURN~: connect",
+                ASCII_UP, ASCII_DOWN, ASCII_RIGHT, ASCII_UP, ASCII_DOWN,
+                ASCII_LEFT);
+        string_blt(ScreenSurface, &font_small, buf, x + 130, y + 408,
+                   COLOR_WHITE, NULL, NULL);
+    }
+    else
+    {
+        sprintf(buf, "~%c%c~: select server  |**|  ~RETURN~: connect",
+                ASCII_UP, ASCII_DOWN);
+        string_blt(ScreenSurface, &font_small, buf, x + 200, y + 408,
+                   COLOR_WHITE, NULL, NULL);
     }
 }
 

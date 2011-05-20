@@ -199,12 +199,6 @@ void malloc_info(object *op)
 /* Lists online players, respecting privacy mode. */
 int command_who(object *op, char *params)
 {
-    player *pl;
-    int     ip = 0,
-            il = 0,
-            it,
-            pri = 0;
-
     if (!op)
     {
         return 0;
@@ -215,64 +209,9 @@ int command_who(object *op, char *params)
         return 1;
     }
 
-    for (pl = first_player; pl; pl = pl->next)
-    {
-        char buf[MEDIUM_BUF];
+    new_draw_info(NDI_UNIQUE, 0, op, "%s",
+                  get_online_players_info(CONTR(op), NULL, NULL));
 
-        if (pl->privacy &&
-            ((pl->gmaster_mode & GMASTER_MODE_SA) ||
-             !(CONTR(op)->gmaster_mode & (GMASTER_MODE_SA | GMASTER_MODE_GM | GMASTER_MODE_VOL))))
-        {
-            pri++;
-            // Ensure the SAs can see everything.
-            if (!(CONTR(op)->gmaster_mode & GMASTER_MODE_SA))
-            {
-                continue;
-            }
-        }
-
-        if (!pl->ob->map)
-        {
-            il++;
-
-            continue;
-        }
-
-        ip++;
-
-        if (pl->state & ST_PLAYING)
-        {
-            sprintf(buf, "~%s~ the %s %s (L:%d)",
-                    pl->quick_name,
-                    (QUERY_FLAG(pl->ob, FLAG_IS_MALE)) ?
-                    ((QUERY_FLAG(pl->ob, FLAG_IS_FEMALE)) ? "hermaphrodite" :
-                     "male") :
-                    ((QUERY_FLAG(pl->ob, FLAG_IS_FEMALE)) ? "female" :
-                     "neuter"), pl->ob->race, pl->ob->level);
-
-            if ((CONTR(op)->gmaster_mode & (GMASTER_MODE_SA | GMASTER_MODE_GM | GMASTER_MODE_VOL)))
-            {
-                uint16 len,
-                       off;
-
-                if (pl->privacy)
-                {
-                    sprintf(strchr(buf, '\0'), " ~Privacy mode~");
-                }
-
-                off = ((len = strlen(pl->ob->map->path)) >= 16) ? len - 1 - 12 : 0;
-                sprintf(strchr(buf, '\0'), "\n  ~Map~: %s%s %d,%d\n  ~IP~: %s\n  ~Account~: %s",
-                        (off) ? "..." : "", pl->ob->map->path + off, pl->ob->x,
-                        pl->ob->y, pl->socket.ip_host, pl->account_name);
-            }
-        }
-
-        new_draw_info(NDI_UNIQUE, 0, op, "%s", buf);
-    }
-
-    it = ip + il + pri; // show whats shown in meta server too, we add login to privacy 
-    new_draw_info(NDI_UNIQUE, 0, op, "There %s %d player%s online (%d privacy).",
-                  (it > 1) ? "are" : "is", it, (it > 1) ? "s" : "", pri + il);
 #ifdef DAI_DEVELOPMENT_CODE
     show_stream_info(&CONTR(op)->socket);
 #endif

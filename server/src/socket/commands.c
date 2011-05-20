@@ -421,6 +421,9 @@ void process_command_queue(NewSocket *ns, player *pl)
 
 void cs_cmd_ping(char *buf, int len, NewSocket *ns)
 {
+    char buf_reply[LARGE_BUF];
+    int  len_reply;
+
     if (ns->setup ||
         ns->status != Ns_Login ||
         !buf ||
@@ -433,8 +436,10 @@ void cs_cmd_ping(char *buf, int len, NewSocket *ns)
         return;
     }
 
-    /* Bounce the ping back to the client. */
-    SOCKBUF_REQUEST_BUFFER(ns, SOCKET_SIZE_SMALL);
+    sprintf(buf_reply, "%s", get_online_players_info(NULL, NULL, NULL));
+    len_reply = strlen(buf_reply);
+    SOCKBUF_REQUEST_BUFFER(ns, len_reply + 1);
+    SockBuf_AddString(ACTIVE_SOCKBUF(ns), buf_reply, len_reply);
     SOCKBUF_REQUEST_FINISH(ns, BINARY_CMD_PING, SOCKBUF_DYNAMIC);
 }
 

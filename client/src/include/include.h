@@ -67,6 +67,8 @@ typedef signed char     sint8;
 #include <stdio.h>
 #include <limits.h>
 
+#include <curl/curl.h>
+
 #include "protocol.h" /* shared header between server & client */
 #include "wrapper.h"
 #include "zlib.h"
@@ -101,6 +103,7 @@ typedef signed char     sint8;
 #include "physfs.h"
 #include "physfsrwops.h"
 #include "srvfile.h"
+#include "locator.h"
 
 /* some older physfs libs need that */
 #ifndef PHYSFS_File

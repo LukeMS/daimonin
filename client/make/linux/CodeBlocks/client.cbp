@@ -41,6 +41,7 @@
 			<Add directory="../../../src/include" />
 		</Compiler>
 		<Linker>
+			<Add library="/usr/lib/libcurl.so" />
 			<Add library="/usr/lib/libSDL.so" />
 			<Add library="/usr/lib/libSDL_image.so" />
 			<Add library="/usr/lib/libSDL_mixer.so" />
@@ -117,6 +118,7 @@
 		<Unit filename="../../../src/include/inventory.h" />
 		<Unit filename="../../../src/include/item.h" />
 		<Unit filename="../../../src/include/kerbholz.h" />
+		<Unit filename="../../../src/include/locator.h" />
 		<Unit filename="../../../src/include/main.h" />
 		<Unit filename="../../../src/include/map.h" />
 		<Unit filename="../../../src/include/menu.h" />
@@ -156,6 +158,9 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../../../src/kerbholz.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/locator.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../../../src/main.c">

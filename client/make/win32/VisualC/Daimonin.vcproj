@@ -48,7 +48,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="../../../,../../../src/include,.\sdl_inc,.\sdl_inc\SDL\"
-				PreprocessorDefinitions="WIN32,_DEBUG,__WIN_32, DAI_DEVELOPMENT"
+				PreprocessorDefinitions="WIN32,_DEBUG,__WIN_32,CURL_STATICLIB,, DAI_DEVELOPMENT"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				UsePrecompiledHeader="0"
@@ -149,7 +149,7 @@
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				AdditionalIncludeDirectories="../../../,../../../src/include,.\sdl_inc,.\sdl_inc\SDL\"
-				PreprocessorDefinitions="WIN32,NDEBUG,_WINDOWS,__WIN_32, DAI_DEVELOPMENT"
+				PreprocessorDefinitions="WIN32,NDEBUG,_WINDOWS,__WIN_32,CURL_STATICLIB,, DAI_DEVELOPMENT"
 				ExceptionHandling="0"
 				RuntimeLibrary="0"
 				PrecompiledHeaderThrough=""
@@ -315,6 +315,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\kerbholz.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\locator.c"
 				>
 			</File>
 			<File
@@ -487,6 +491,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\include\locator.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\include\main.h"
 				>
 			</File>
@@ -584,6 +592,10 @@
 				>
 			</File>
 		</Filter>
+		<File
+			RelativePath="..\sdl_lib\static\libcurl.lib"
+			>
+		</File>
 		<File
 			RelativePath=".\sdl_lib\physfs.lib"
 			>

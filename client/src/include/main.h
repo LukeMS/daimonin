@@ -68,9 +68,17 @@ typedef struct _keymap
 }
 _keymap;
 
+typedef struct geolocation_t
+{
+    float lx;
+    float ly;
+}
+geolocation_t;
+
 typedef struct _server
 {
-    struct _server *next;   /* go on in list. NULL: no following this node*/
+    struct _server *next;
+
     char           *name;
     char           *nameip;
     char           *version;
@@ -78,11 +86,13 @@ typedef struct _server
     int             player;
     int             port;
     sint16          ping;
+    char           *online;
+    geolocation_t   geoloc;
 }
 _server;
 
 extern _server *start_server,
-               *end_server;
+               *metaserver_sel;
 
 typedef struct _vimmsg
 {
@@ -124,8 +134,7 @@ _skindef;
 
 extern _skindef     skindef;
 
-
-#define MAXMETAWINDOW 14        /* count max. shown server in meta window*/
+#define MAXMETAWINDOW 5
 
 #define MAXFACES 4
 
@@ -422,7 +431,6 @@ extern int          InputFirstKeyPress;
 
 extern int          map_udate_flag, map_transfer_flag, map_redraw_flag;
 extern uint32       GameTicksSec;       /* ticks since this second frame in ms */
-extern int          metaserver_start, metaserver_sel, metaserver_count;
 
 extern int          request_file_chain;
 
@@ -616,6 +624,12 @@ typedef enum _bitmap_index
     BITMAP_TEXTINPUT,
     BITMAP_STIMER,
     BITMAP_CLOSEBUTTON,
+    BITMAP_LOCATOR_MAP,
+    BITMAP_LOCATOR_CLIENT,
+    BITMAP_LOCATOR_PLAYER_THAT,
+    BITMAP_LOCATOR_PLAYER_THIS,
+    BITMAP_LOCATOR_SERVER_THAT,
+    BITMAP_LOCATOR_SERVER_THIS,
 
     BITMAP_INIT
 }
@@ -655,8 +669,8 @@ extern int                  SocketStatusErrorNr; /* if an socket error, this is 
 extern int  main(int argc, char *argv[]);
 extern void open_input_mode(int maxchar);
 extern void add_metaserver_data(char *name, char *server, int port, int player, char *ver, char *desc);
+extern void show_ping_string(_server *node);
 extern void clear_metaserver_data(void);
-extern void get_meta_server_data(int num, char *server, int *port);
 extern void free_faces(void);
 extern void reload_skin();
 extern void load_skindef();

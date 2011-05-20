@@ -811,8 +811,25 @@ int Event_PollInputDevice(void)
             else if (!InputStringEndFlag)
             {
                 if (GameStatus <= GAME_STATUS_WAITLOOP)
-                    done = (event.key.type != SDL_KEYDOWN) ? 0
-                                                           : key_meta_menu(event.key.keysym.sym);
+                {
+                    SDLKey key = event.key.keysym.sym;
+                    SDLMod mod = event.key.keysym.mod;
+
+                    if (event.key.type != SDL_KEYDOWN)
+                    {
+                        done = 0;
+                    }
+                    else if (locator.server &&
+                             locator.server->player >= 0 &&
+                             ((mod & (KMOD_SHIFT | KMOD_CTRL))))
+                    {
+                        done = locator_scroll(key, mod);
+                    }
+                    else
+                    {
+                        done = key_meta_menu(key);
+                    }
+                }
                 else if (GameStatus == GAME_STATUS_LOGIN_SELECT)
                     done = key_login_select_menu(&event.key);
                 else if (GameStatus == GAME_STATUS_ACCOUNT)
@@ -869,6 +886,8 @@ void key_connection_event(SDL_KeyboardEvent *key)
 /* metaserver menu key */
 int key_meta_menu(SDLKey key)
 {
+    _server *node = start_server;
+
     switch (key)
     {
         case SDLK_r:
@@ -878,33 +897,34 @@ int key_meta_menu(SDLKey key)
             break;
 
         case SDLK_UP:
-            if (metaserver_sel)
+            while (node &&
+                   node->next &&
+                   node->next != metaserver_sel)
             {
-                metaserver_sel--;
-
-                if (metaserver_start > metaserver_sel)
-                {
-                    metaserver_start = metaserver_sel;
-                }
+                node = node->next;
             }
+
+            metaserver_sel = node;
+            show_ping_string(metaserver_sel);
 
             break;
 
         case SDLK_DOWN:
-            if (metaserver_sel < metaserver_count - 1)
+            while (node &&
+                   node != metaserver_sel)
             {
-                metaserver_sel++;
-
-                if (metaserver_sel >= MAXMETAWINDOW)
-                {
-                    metaserver_start = (metaserver_sel + 1) - MAXMETAWINDOW;
-                }
+                node = node->next;
             }
+
+            metaserver_sel = (!node || !node->next)
+                             ? start_server : node->next;
+            show_ping_string(metaserver_sel);
 
             break;
 
         case SDLK_RETURN:
-            get_meta_server_data(metaserver_sel, ServerName, &ServerPort);
+            strcpy(ServerName, metaserver_sel->nameip);
+            ServerPort = metaserver_sel->port;
             GameStatus = GAME_STATUS_STARTCONNECT;
 
             break;

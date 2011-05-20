@@ -1452,3 +1452,127 @@ void kick_player(player *pl)
         }
     }
 }
+
+/* This is called in four circumstances: when a client pings the server; when a
+ * player types /who; when a player enters the game; when a player leaves the
+ * game. Each call will check whether the info needs to be rewritten. This will
+ * definitely be the case the first time it is called (because the buffer is
+ * empty). Each time a player enters or leaves the game the buffer is reset and
+ * the return is NULL. Otherwise, the existing buffer is returned.
+ *
+ * There are actually two buffers, one for gmasters (SA/GM/VOL) and one for
+ * other players and pings.
+ *
+ * As the info is rewritten less frequently than before (when the entire string
+ * was recreated every time anyone typed /who), data such as players' levels
+ * and what map they are on is not included as this changes  frequently.
+ *
+ * Unfortunately whether or not players are in privacy mode is also likely to
+ * change, though less frequently. The in login number is also likely to get
+ * out of date, but does anyone really care about this?
+ *
+ * TODO: Add a force flag so gmasters can always get up to date iinfo from
+ * /who. */
+char *get_online_players_info(player *who, player *in, player *out)
+{
+    player      *pl = first_player;
+    int          ip = 0,
+                 il = 0,
+                 it,
+                 pri = 0;
+    char        *buf;
+    static char  buf_normal[LARGE_BUF] = "",
+                 buf_gmaster[LARGE_BUF] = "";
+
+    /* We decide which buffer to potentially write to. */
+    if (who &&
+        (who->gmaster_mode & (GMASTER_MODE_SA | GMASTER_MODE_GM | GMASTER_MODE_VOL)))
+    {
+        buf = buf_gmaster;
+    }
+    else
+    {
+        buf = buf_normal;
+    }
+
+    /* We decide if writing is necessary at all. */
+    LOG(llevInfo, "INFO:: get_online_players_info was called and ");
+    /* When a player enters or leaves the game, reset both buffers and return
+     * NULL. */
+    if (in ||
+        out)
+    {
+        LOG(llevInfo, "both buffers were reset.\n");
+        buf_normal[0] = '\0';
+        buf_gmaster[0] = '\0';
+
+        return NULL;
+    }
+    /* Otherwise if there is something in the buffer, return it. */
+    else if (*buf)
+    {
+        LOG(llevInfo, "the existing %s buffer was returned.\n",
+            (buf == buf_gmaster) ? "gmaster" : "normal");
+
+        return (char *)buf;
+    }
+
+    /* Lets rewrite the buffer. */
+    LOG(llevInfo, "the %s buffer was rewritten.\n",
+        (buf == buf_gmaster) ? "gmaster" : "normal");
+
+    while (pl)
+    {
+        if (pl->privacy &&
+            ((pl->gmaster_mode & GMASTER_MODE_SA) ||
+             buf == buf_normal))
+        {
+            pri++;
+
+            // Ensure the SAs can see everything.
+            /* FIXME: Huh?
+             * -- Smacky 20110520 */
+//            if (!(who->gmaster_mode & GMASTER_MODE_SA))
+//            {
+//                continue;
+//            }
+        }
+
+        if (!pl->ob->map)
+        {
+            il++;
+
+            continue;
+        }
+
+        ip++;
+
+        if ((pl->state & ST_PLAYING))
+        {
+            sprintf(strchr(buf, '\0'), "~%s~ the %s %s",
+                    pl->quick_name,
+                    (QUERY_FLAG(pl->ob, FLAG_IS_MALE))
+                    ? ((QUERY_FLAG(pl->ob, FLAG_IS_FEMALE)) ? "hermaphrodite"
+                                                            : "male")
+                    : ((QUERY_FLAG(pl->ob, FLAG_IS_FEMALE)) ? "female"
+                                                            : "neuter"),
+                    pl->ob->race);
+
+            if (buf == buf_gmaster)
+            {
+                sprintf(strchr(buf, '\0'), "%s\n  ~IP~: %s\n  ~Account~: %s",
+                        (pl->privacy) ? " ~Privacy mode~" : "",
+                        pl->socket.ip_host, pl->account_name);
+            }
+        }
+
+        strcat(buf, "\n");
+        pl = pl->next;
+    }
+
+    it = ip + il + pri; // show whats shown in meta server too, we add login to privacy
+    sprintf(strchr(buf, '\0'), "There %s %d player%s online (%d privacy).",
+            (it > 1) ? "are" : "is", it, (it > 1) ? "s" : "", pri + il);
+
+    return (char *)buf;
+}

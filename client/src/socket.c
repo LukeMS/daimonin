@@ -964,3 +964,19 @@ int read_metaserver_data(SOCKET fd)
 }
 
 #endif
+
+/* Copies the primary IP of <host> into <ip_buf> (or NULL if <host> is
+ * unrecognised), returning a pointer to it as well.
+ * AIUI gethostbyname() is deprecated and the IP will be v4 only. but this
+ * should work on all platforms. */
+char *get_ip_from_hostname(char *host, char *ip_buf)
+{
+    struct hostent *hostbn;
+
+    if (!(hostbn = gethostbyname(host)))
+    {
+        return NULL;
+    }
+
+    return (char *)inet_ntop(AF_INET, hostbn->h_addr, ip_buf, INET_ADDRSTRLEN);
+}

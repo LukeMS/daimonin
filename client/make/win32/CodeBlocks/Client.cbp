@@ -41,6 +41,7 @@
 			<Add option="-DWIN32" />
 			<Add option="-D__WIN_32" />
 			<Add option="-DMINGW" />
+			<Add option="-DCURL_STATICLIB" />
 			<Add option="-DDAI_DEVELOPMENT" />
 			<Add directory="..\..\..\src\include" />
 			<Add directory="sdl_inc" />
@@ -51,6 +52,7 @@
 		<Linker>
 			<Add library="mingw32" />
 			<Add library="wsock32" />
+			<Add library="sdl_lib\static\libcurl.a" />
 			<Add library="sdl_lib\libSDLmain.a" />
 			<Add library="sdl_lib\libSDL_image.a" />
 			<Add library="sdl_lib\libSDL_mixer.a" />
@@ -152,6 +154,7 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\src\include\kerbholz.h" />
+		<Unit filename="..\..\..\src\include\locator.h" />
 		<Unit filename="..\..\..\src\include\main.h">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -217,6 +220,9 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\src\kerbholz.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\src\locator.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\src\main.c">

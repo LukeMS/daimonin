@@ -73,13 +73,14 @@ enum
     DIALOG_LOGIN_WARNING_ACCOUNT_UNKNOWN
 };
 
-void add_close_button(int x, int y, int menu, uint8 newstyle);
-int add_button(int x, int y, int id, int gfxNr, char *text, char *text_h);
-int add_rangebox(int x, int y, int id, int text_w, int text_x, char *text, int color);
+extern void add_close_button(int x, int y, int menu, uint8 newstyle);
+extern int  add_button(int x, int y, int id, int gfxNr, char *text, char *text_h);
+extern int  add_rangebox(int x, int y, int id, int text_w, int text_x, char *text, int color);
+extern void draw_frame(int x, int y, int w, int h);
 extern void show_optwin(void);
 extern void show_newplayer_server(void);
 extern void show_login_server(void);
-extern void show_meta_server(_server *node, int metaserver_start, int metaserver_sel);
+extern void show_meta_server(void);
 extern void show_account(void);
 
 #endif /* ifndef __DIALOG_H */

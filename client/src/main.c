@@ -137,8 +137,7 @@ uint8 load_bitmap(int index);
 _vimmsg vim[MAX_NROF_VIM];
 
 _server *start_server,
-        *end_server;
-int                 metaserver_start, metaserver_sel, metaserver_count;
+        *metaserver_sel;
 
 typedef enum _pic_type
 {
@@ -320,6 +319,12 @@ static _bitmap_name BitmapName[BITMAP_INIT]    =
     {"textinput.png",PIC_TYPE_DEFAULT},
     {"stimer.png", PIC_TYPE_DEFAULT},
     {"closeb.png", PIC_TYPE_DEFAULT},
+    {"locator/map.png", PIC_TYPE_DEFAULT},
+    {"locator/client.png", PIC_TYPE_TRANS},
+    {"locator/player_that.png", PIC_TYPE_TRANS},
+    {"locator/player_this.png", PIC_TYPE_TRANS},
+    {"locator/server_that.png", PIC_TYPE_TRANS},
+    {"locator/server_this.png", PIC_TYPE_TRANS},
 };
 
 #define BITMAP_MAX (int)(sizeof(BitmapName)/sizeof(struct _bitmap_name))
@@ -330,7 +335,6 @@ static void DisplayLayer2(void);   /* frame (background image) */
 static void DisplayLayer3(void);   /* widgets (graphical user interface) */
 static void DisplayLayer4(void);   /* place for menu later */
 static void DisplayCustomCursor(void);
-static void CountMetaServer(void);
 static void FlipScreen(void);
 static void ParseInvocationLine(int argc, char *argv[]);
 static const char *GetOption(const char *arg, const char *sopt,
@@ -826,8 +830,10 @@ uint8 game_status_chain(void)
             }
         }
 
-        CountMetaServer();
+        metaserver_sel = start_server;
+        locator_init(330, 248);
         textwin_showstring(COLOR_GREEN, "Select a server.");
+        show_ping_string(metaserver_sel);
         GameStatus = GAME_STATUS_START;
     }
     else if (GameStatus == GAME_STATUS_START)
@@ -1267,6 +1273,16 @@ uint8 game_status_chain(void)
     return(1);
 }
 
+void show_ping_string(_server *node)
+{
+    if (node &&
+        node->online &&
+        *node->online)
+    {
+        textwin_showstring(COLOR_WHITE, "%s\n\n", node->online);
+    }
+}
+
 /* load the skin & standard gfx */
 void load_bitmaps(void)
 {
@@ -1353,62 +1369,38 @@ void clear_metaserver_data(void)
         node = tmp;
     }
     start_server = NULL;
-    end_server = NULL;
-    metaserver_start = 0;
-    metaserver_sel = 0;
-    metaserver_count = 0;
+    metaserver_sel = NULL;
 }
 
 void add_metaserver_data(char *name, char *server, int port, int player, char *ver, char *desc)
 {
-    _server *node;
+    _server *node = start_server,
+            *new;
 
-    MALLOC(node, sizeof(_server));
-
-    if (!start_server)
-        start_server = node;
-    if (!end_server)
-        end_server = node;
-    else
-        end_server->next = node;
-
-    end_server = node;
-    node->player = player;
-    node->port = port;
-    MALLOC_STRING(node->name, name);
-    MALLOC_STRING(node->nameip, server);
-    MALLOC_STRING(node->version, ver);
-    MALLOC_STRING(node->desc1, desc);
-}
-
-static void CountMetaServer(void)
-{
-    _server    *node;
-
-    node = start_server;
-    for (metaserver_count = 0; node; metaserver_count++)
-        node = node->next;
-}
-
-void get_meta_server_data(int num, char *server, int *port)
-{
-    _server    *node;
-    int         i;
-
-    node = start_server;
-    for (i = 0; node; i++)
+    while (node &&
+           node->next)
     {
-        if (i == num)
-        {
-            strcpy(server, node->nameip);
-            *port = node->port;
-            return;
-        }
         node = node->next;
     }
+
+    MALLOC(new, sizeof(_server));
+
+    if (!node)
+    {
+        start_server = new;
+    }
+    else
+    {
+        node->next = new;
+    }
+
+    new->player = player;
+    new->port = port;
+    MALLOC_STRING(new->name, name);
+    MALLOC_STRING(new->nameip, server);
+    MALLOC_STRING(new->version, ver);
+    MALLOC_STRING(new->desc1, desc);
 }
-
-
 
 void reset_input_mode(void)
 {
@@ -1917,7 +1909,7 @@ int main(int argc, char *argv[])
             SDL_FillRect(ScreenSurface, &rec, -1);
         }
         if (GameStatus < GAME_STATUS_REQUEST_FILES)
-            show_meta_server(start_server, metaserver_start, metaserver_sel);
+            show_meta_server();
         else if (GameStatus >= GAME_STATUS_REQUEST_FILES && GameStatus < GAME_STATUS_ACCOUNT)
             show_login_server();
         else if (GameStatus >= GAME_STATUS_ACCOUNT && GameStatus <= GAME_STATUS_ACCOUNT_CHAR_DEL_WAIT)
