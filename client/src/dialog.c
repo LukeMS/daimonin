@@ -2002,6 +2002,15 @@ void show_meta_server(void)
 
         box.y = y + TXT_Y_START + 13 + i * 12;
 
+        if ((i & 1))
+        {
+            SDL_FillRect(ScreenSurface, &box, skindef.dialog_rows0);
+        }
+        else
+        {
+            SDL_FillRect(ScreenSurface, &box, skindef.dialog_rows1);
+        }
+
         if (node)
         {
             if (node == metaserver_sel)
@@ -2027,17 +2036,6 @@ void show_meta_server(void)
                     {
                         locator_focus(locator.client.lx, locator.client.ly);
                     }
-                }
-            }
-            else
-            {
-                if ((i & 1))
-                {
-                    SDL_FillRect(ScreenSurface, &box, skindef.dialog_rows0);
-                }
-                else
-                {
-                    SDL_FillRect(ScreenSurface, &box, skindef.dialog_rows1);
                 }
             }
 
