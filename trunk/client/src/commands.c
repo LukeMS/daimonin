@@ -156,6 +156,7 @@ void PingCmd(char *data, int len)
         }
 
         node->ping = (sint16)(SDL_GetTicks() - csocket.ping);
+        MALLOC_STRING(node->online, data);
 
         break;
     }

@@ -476,6 +476,7 @@ int                         atnr_is_dragon_enabled(int attacknr);
 int                         is_dragon_pl(object *op);
 void                        reset_instance_data(player *pl);
 void                        kick_player(player *pl);
+char                       *get_online_players_info(player *who, player *in, player *out);
 /* plugins.c */
 object                     *get_event_object(object *op, int event_nr);
 int                         trigger_object_plugin_event(int event_type,

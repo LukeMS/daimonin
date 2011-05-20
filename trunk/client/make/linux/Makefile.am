@@ -24,6 +24,7 @@ daimonin_SOURCES =  \
 	../../src/inventory.c \
 	../../src/item.c \
 	../../src/kerbholz.c \
+	../../src/locator.c \
 	../../src/main.c \
 	../../src/map.c \
 	../../src/menu.c \
@@ -41,7 +42,7 @@ daimonin_SOURCES =  \
 	../../src/wrapper.c \
 	../../src/widget.c \
 	../../src/zutil.c
-daimonin_LDADD = -lSDL_mixer -lSDL_image @SDL_LIBS@ @EXTRA_LIBS@ @PHYSFS_LIBS@
+daimonin_LDADD = -lSDL_mixer -lSDL_image @SDL_LIBS@ @EXTRA_LIBS@ @PHYSFS_LIBS@ @CURL_LIBS@
 daimonin_OBJDIR = objs
 
 daimonin_updater_SOURCES = \
@@ -85,7 +86,7 @@ install-data-hook:
 	$(CP) ../../sfx/*.* $(d_datadir)/sfx
 	$(CP) -R ../../man/* $(d_datadir)/man
 	$(CP) ../../media/*.* $(d_datadir)/media
-	$(CP) ../../bitmaps/* $(d_datadir)/bitmaps
+	$(CP) -R ../../bitmaps/* $(d_datadir)/bitmaps
 	$(CP) ../../icons/* $(d_datadir)/icons
 	$(CP) -R ../../settings/*.* $(d_datadir)/settings
 	$(CP) ../../update/version $(d_datadir)/update

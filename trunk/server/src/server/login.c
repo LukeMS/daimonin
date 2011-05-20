@@ -885,6 +885,8 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
     /* Report any scheduled shutdown to the new player. */
     shutdown_agent(-1, SERVER_EXIT_NORMAL, pl, NULL);
 
+    (void)get_online_players_info(NULL, pl, NULL);
+
     return ADDME_MSG_OK;
 }
 

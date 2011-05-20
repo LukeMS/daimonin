@@ -511,6 +511,7 @@ void remove_ns_dead_player(player *pl)
     }
 
     free_player(pl); /* we *,must* do this here and not in the memory pool - it needs to be a syncron action */
+    (void)get_online_players_info(NULL, NULL, pl);
 }
 
 /* lets check 2 things:
