@@ -803,7 +803,9 @@ uint8 game_status_chain(void)
                     if (!SOCKET_OpenClientSocket(&csocket, node->nameip,
                                                  node->port))
                     {
+                        node->player = 0;
                         node->ping = -2;
+                        FREE(node->online);
 
                         continue;
                     }
