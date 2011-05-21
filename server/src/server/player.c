@@ -1475,7 +1475,7 @@ void kick_player(player *pl)
  * /who. */
 char *get_online_players_info(player *who, player *in, player *out)
 {
-    player      *pl = first_player;
+    player      *pl;
     int          ip = 0,
                  il = 0,
                  it,
@@ -1521,23 +1521,9 @@ char *get_online_players_info(player *who, player *in, player *out)
     LOG(llevInfo, "the %s buffer was rewritten.\n",
         (buf == buf_gmaster) ? "gmaster" : "normal");
 
-    while (pl)
+    for (pl = first_player; pl; pl = pl->next)
     {
-        if (pl->privacy &&
-            ((pl->gmaster_mode & GMASTER_MODE_SA) ||
-             buf == buf_normal))
-        {
-            pri++;
-
-            // Ensure the SAs can see everything.
-            /* FIXME: Huh?
-             * -- Smacky 20110520 */
-//            if (!(who->gmaster_mode & GMASTER_MODE_SA))
-//            {
-//                continue;
-//            }
-        }
-
+        /* Player is in login? Increment il and skip to the next. */
         if (!pl->ob->map)
         {
             il++;
@@ -1545,10 +1531,25 @@ char *get_online_players_info(player *who, player *in, player *out)
             continue;
         }
 
-        ip++;
+        /* Player has requested privacy? Increment pri and if the normal buffer
+         * is being written or the player is a SA (who can hiide even from
+         * other gmasters), skip to the next. Prior to 0.10.6 other SAs could
+         * see privacy-seeking SAs. Currently this is not possible. */
+        if (pl->privacy)
+        {
+            pri++;
+
+            if (buf == buf_normal ||
+                (pl->gmaster_mode & GMASTER_MODE_SA))
+            {
+                continue;
+            }
+        }
 
         if ((pl->state & ST_PLAYING))
         {
+            ip++;
+
             sprintf(strchr(buf, '\0'), "~%s~ the %s %s",
                     pl->quick_name,
                     (QUERY_FLAG(pl->ob, FLAG_IS_MALE))
@@ -1564,10 +1565,9 @@ char *get_online_players_info(player *who, player *in, player *out)
                         (pl->privacy) ? " ~Privacy mode~" : "",
                         pl->socket.ip_host, pl->account_name);
             }
-        }
 
-        strcat(buf, "\n");
-        pl = pl->next;
+            strcat(buf, "\n");
+        }
     }
 
     it = ip + il + pri; // show whats shown in meta server too, we add login to privacy
