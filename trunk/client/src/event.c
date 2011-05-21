@@ -820,7 +820,6 @@ int Event_PollInputDevice(void)
                         done = 0;
                     }
                     else if (locator.server &&
-                             locator.server->player >= 0 &&
                              ((mod & (KMOD_SHIFT | KMOD_CTRL))))
                     {
                         done = locator_scroll(key, mod);
