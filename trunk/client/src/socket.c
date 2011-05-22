@@ -503,11 +503,11 @@ uint8 SOCKET_CloseClientSocket(struct ClientSocket *csock)
     }
 
     LOG(-1, "CloseClientSocket()\n");
+
     SOCKET_CloseSocket(csock->fd);
+
     csock->fd = SOCKET_NO;
-    FREE(csock->host);
-    csock->port = 0;
-    csock->ping = 0;
+
     abort_thread = 1;
 
     /* Poke anyone waiting at a cond */
@@ -528,12 +528,9 @@ uint8 SOCKET_InitSocket(void)
     int     error;
 
     csocket.fd = SOCKET_NO;
-    FREE(csocket.host);
-    csocket.port = 0;
-    csocket.ping = 0;
+
     SocketStatusErrorNr = 0;
     error = WSAStartup(wVersionRequested, &w);
-
     if (error)
     {
         wVersionRequested = MAKEWORD( 2, 0 );
@@ -581,7 +578,7 @@ uint8 SOCKET_OpenClientSocket(struct ClientSocket *csock, char *host, int port)
         LOG(LOG_ERROR, "ERROR: setsockopt(TCP_NODELAY) failed\n");
     }
 
-    MALLOC_STRING(csock->host, host);
+    csock->host = host;
     csock->port = port;
     csock->ping = SDL_GetTicks();
 
