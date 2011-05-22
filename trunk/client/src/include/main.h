@@ -147,7 +147,7 @@ typedef struct _options
     int                     use_timer_sound;
 
     /* Server */
-    char                    metaserver[256];
+    char                   *metaserver;
     int                     metaserver_port;
 
     /* Visual */

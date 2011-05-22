@@ -342,7 +342,7 @@ static const char *GetOption(const char *arg, const char *sopt,
 static void InitPhysFS(const char *argv0);
 static void ShowIntro(char *text, int progress);
 static void DeletePlayerLists(void);
-
+static void QueryMetaserver(void);
 static void DeletePlayerLists(void)
 {
     int i;
@@ -488,7 +488,10 @@ void init_game_data(void)
 #endif
     options.shoutoff=0;
     options.no_meta=0;
-
+    MALLOC_STRING(options.metaserver, "www.daimonin.org");
+    options.metaserver_port = DEFAULT_METASERVER_PORT;
+    txtwin_start_size = txtwin[TW_MIX].size;
+//    txtwin[TW_MIX].size=50;
     options.anim_frame_time = 50;
     options.anim_check_time = 50;
 
@@ -605,12 +608,6 @@ void load_options_dat(void)
         }
     }
 
-/* we have to have it here, before we junp back because of missing config file */
-
-    strcpy(options.metaserver, "www.daimonin.org");
-    options.metaserver_port = DEFAULT_METASERVER_PORT;
-    txtwin_start_size = txtwin[TW_MIX].size;
-//    txtwin[TW_MIX].size=50;
     sprintf(line, "%s/%s", DIR_SETTINGS, FILE_OPTION);
 
     /* If there is no options file, that's OK -- we have the defaults. */
@@ -741,55 +738,8 @@ uint8 game_status_chain(void)
     /* initialise, connect, and query the meta server */
     else if (GameStatus == GAME_STATUS_META)
     {
-        clear_metaserver_data();
-        interface_mode = GUI_NPC_MODE_NO;
-        clear_group();
-        map_udate_flag = 2;
-
-        if (ShowLocalServer)
-        {
-            add_metaserver_data("LOCAL", "127.0.0.1", argServerPort, -1, "UNKNOWN",
-                                "Your local server.");
-        }
-
-        /* skip if --nometa in command line or no metaserver set in options */
-        if (options.no_meta || !options.metaserver[0])
-        {
-            textwin_showstring(COLOR_GREEN, "Metaserver ignored.");
-        }
-        else
-        {
-            SOCKET meta = SOCKET_NO;
-
-            textwin_showstring(COLOR_GREEN, "Query metaserver (%s:%d)... ",
-                               options.metaserver, options.metaserver_port);
-
-            if (SOCKET_OpenSocket(&meta, options.metaserver,
-                                  options.metaserver_port) &&
-                read_metaserver_data(meta))
-            {
-                textwin_showstring(COLOR_GREEN, "OK!");
-            }
-            else
-            {
-                textwin_showstring(COLOR_RED, "FAILED (using default list)!");
-                add_metaserver_data("Main", "daimonin.game-server.cc",
-                                    DEFAULT_SERVER_PORT, -1, "UNKNOWN",
-                                    "Best for simply playing the game");
-                add_metaserver_data("Test", "62.75.168.180",
-                                    DEFAULT_SERVER_PORT, -1, "UNKNOWN",
-                                    "Best for testing new content (maps), both official and unofficial");
-                add_metaserver_data("Dev", "www.daimonin.org",
-                                    DEFAULT_SERVER_PORT, -1, "UNKNOWN",
-                                    "Best for testing new code (features)");
-            }
-
-            SOCKET_CloseSocket(meta);
-        }
-
-        node_ping = metaserver_sel = start_server;
-        locator_init(330, 248);
-        textwin_showstring(COLOR_GREEN, "Select a server.");
+        QueryMetaserver();
+        node_ping = start_server;
         GameStatus = GAME_STATUS_PINGLOOP;
     }
     /* ping each known server */
@@ -910,21 +860,21 @@ uint8 game_status_chain(void)
         face_list[FACE_MAX_NROF - 1].sprite = sprite_load(sbuf, 0, NULL);
 
         map_udate_flag = 2;
-        textwin_showstring(COLOR_GREEN, "trying server %s:%d ...",
-                           ServerName, ServerPort);
         GameStatus = GAME_STATUS_CONNECT;
     }
     else if (GameStatus == GAME_STATUS_CONNECT)
     {
         if (!SOCKET_OpenClientSocket(&csocket, ServerName, ServerPort))
         {
-            textwin_showstring(COLOR_RED, "connection failed!");
+            textwin_showstring(COLOR_HGOLD, "Connect to server %s:%d... ~FAILED~!",
+                               ServerName, ServerPort);
             GameStatus = GAME_STATUS_START;
         }
         else
         {
             socket_thread_start();
-            textwin_showstring(COLOR_GREEN, "connected. exchange version & setup info.");
+            textwin_showstring(COLOR_HGOLD, "Connect to server %s:%d... ~OK~!",
+                               ServerName, ServerPort);
             GameStatus = GAME_STATUS_SETUP;
         }
     }
@@ -1286,6 +1236,63 @@ uint8 game_status_chain(void)
     return(1);
 }
 
+static void QueryMetaserver(void)
+{
+    if (options.no_meta)
+    {
+        return;
+    }
+
+    clear_metaserver_data();
+    interface_mode = GUI_NPC_MODE_NO;
+    clear_group();
+    map_udate_flag = 2;
+
+    if (ShowLocalServer)
+    {
+        add_metaserver_data("LOCAL", "127.0.0.1", argServerPort, -1, "UNKNOWN",
+                            "Your local server.");
+    }
+
+    /* skip if --nometa in command line */
+    if (!options.metaserver)
+    {
+        textwin_showstring(COLOR_DGOLD, "Metaserver ignored.");
+    }
+    else
+    {
+        SOCKET meta = SOCKET_NO;
+
+        if (SOCKET_OpenSocket(&meta, options.metaserver,
+                              options.metaserver_port) &&
+            read_metaserver_data(meta))
+        {
+            textwin_showstring(COLOR_HGOLD, "Query metaserver (%s:%d)... ~OK~!",
+                               options.metaserver, options.metaserver_port);
+        }
+        else
+        {
+            textwin_showstring(COLOR_HGOLD, "Query metaserver (%s:%d)... ~FAILED~ (using default list)!",
+                               options.metaserver, options.metaserver_port);
+            add_metaserver_data("Main", "daimonin.game-server.cc",
+                                DEFAULT_SERVER_PORT, -1, "UNKNOWN",
+                                "Best for simply playing the game");
+            add_metaserver_data("Test", "62.75.168.180",
+                                DEFAULT_SERVER_PORT, -1, "UNKNOWN",
+                                "Best for testing new content (maps), both official and unofficial");
+            add_metaserver_data("Dev", "www.daimonin.org",
+                                DEFAULT_SERVER_PORT, -1, "UNKNOWN",
+                                "Best for testing new code (features)");
+        }
+
+        SOCKET_CloseSocket(meta);
+    }
+
+    metaserver_sel = start_server;
+    locator_init(330, 248);
+    textwin_showstring(COLOR_HGOLD, "Select a server.");
+}
+
 void show_ping_string(_server *node)
 {
     if (node &&
@@ -1409,6 +1416,7 @@ void add_metaserver_data(char *name, char *server, int port, int player, char *v
 
     new->player = player;
     new->port = port;
+    new->ping = -1; // UNKNOWN
     MALLOC_STRING(new->name, name);
     MALLOC_STRING(new->nameip, server);
     MALLOC_STRING(new->version, ver);
@@ -1721,6 +1729,18 @@ int main(int argc, char *argv[])
     ShowIntro(NULL, 100);
     sound_play_music("orchestral.ogg", options.music_volume, 0, -1, 0, MUSIC_MODE_DIRECT);
     sprite_init_system();
+
+    if (!SOCKET_InitSocket()) /* log in function*/
+    {
+        LOG(LOG_FATAL, "Init network... FAILED!\n");
+    }
+    else
+    {
+        textwin_showstring(COLOR_HGOLD, "Init network... ~OK~!");
+        QueryMetaserver();
+        options.no_meta = 1; // don't do it again in GAME_STATUS_META
+    }
+
     while (1)
     {
         SDL_Event   event;
@@ -1743,15 +1763,6 @@ int main(int argc, char *argv[])
         SDL_Delay(25);      /* force the thread to sleep */
     }
     ; /* wait for keypress */
-
-    textwin_showstring(COLOR_HGOLD, "Welcome to Daimonin v%d.%d.%d",
-                       DAI_VERSION_RELEASE, DAI_VERSION_MAJOR, DAI_VERSION_MINOR);
-    textwin_showstring(COLOR_HGOLD, "~init network...~");
-
-    if (!SOCKET_InitSocket()) /* log in function*/
-    {
-        LOG(LOG_FATAL, "Could not initialise socket!\n");
-    }
 
     LastTick = tmpGameTick = anim_tick = new_anim_tick = SDL_GetTicks();
     GameTicksSec = 0;       /* ticks since this second frame in ms */
@@ -2210,7 +2221,7 @@ static void ParseInvocationLine(int argc, char *argv[])
             }
             else
             {
-                options.no_meta = 1;
+                FREE(options.metaserver);
                 invalid[0] = '\0';
             }
         }
@@ -2579,9 +2590,16 @@ static void ShowIntro(char *text, int progress)
     sprite_blt(Bitmaps[BITMAP_PROGRESS], x + 310, y + 588, &box, NULL);
 
     if (text)
+    {
         string_blt(ScreenSurface, &font_small, text, x+370, y+585, COLOR_DEFAULT, NULL, NULL);
+    }
     else
+    {
         string_blt(ScreenSurface, &font_small, "** Press Key **", x+375, y+585, COLOR_DEFAULT, NULL, NULL);
+        textwin_showstring(COLOR_HGOLD, "Welcome to |Daimonin| ~v%d.%d.%d~",
+                           DAI_VERSION_RELEASE, DAI_VERSION_MAJOR,
+                           DAI_VERSION_MINOR);
+    }
 
     FlipScreen();
 }
