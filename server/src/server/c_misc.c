@@ -212,7 +212,7 @@ int command_who(object *op, char *params)
     new_draw_info(NDI_UNIQUE, 0, op, "There %s %d player%s online.\n\n%s",
                   (player_active == 1) ? "is" : "are", player_active,
                   (player_active == 1) ? "" : "s",
-                  get_online_players_info(CONTR(op), NULL, NULL) + 3);
+                  get_online_players_info(CONTR(op), NULL, NULL, 0) + 3);
 
 #ifdef DAI_DEVELOPMENT_CODE
     show_stream_info(&CONTR(op)->socket);
