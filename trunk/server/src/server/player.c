@@ -1470,15 +1470,40 @@ void kick_player(player *pl)
  * Unfortunately whether or not players are in privacy mode is also likely to
  * change, though less frequently.
  *
- * TODO: Add a force flag so gmasters can always get up to date info from
- * /who. */
-char *get_online_players_info(player *who, player *in, player *out)
+ * If the force flag is non-zero, both buffers are reset before any further
+ * action. */
+char *get_online_players_info(player *who, player *in, player *out,
+                              uint8 force)
 {
     player      *pl;
     uint16       pri = 0;
     char        *buf;
     static char  buf_normal[LARGE_BUF] = "",
                  buf_gmaster[LARGE_BUF] = "";
+
+    LOG(llevInfo, "INFO:: get_online_players_info was called and ");
+
+    /* When force is non-zero or a player enters or leaves the game, reset both
+     * buffers before doing anything else. */
+    if (force)
+    {
+        LOG(llevInfo, "both buffers were reset");
+        buf_normal[0] = '\0';
+        buf_gmaster[0] = '\0';
+
+        /* When a player enters or leaves the game, return NULL. */
+        if (in ||
+            out)
+        {
+            LOG(llevInfo, ".\n");
+
+            return NULL;
+        }
+        else
+        {
+            LOG(llevInfo, " then ");
+        }
+    }
 
     /* We decide which buffer to potentially write to. */
     if (who &&
@@ -1491,21 +1516,9 @@ char *get_online_players_info(player *who, player *in, player *out)
         buf = buf_normal;
     }
 
-    /* We decide if writing is necessary at all. */
-    LOG(llevInfo, "INFO:: get_online_players_info was called and ");
-    /* When a player enters or leaves the game, reset both buffers and return
-     * NULL. */
-    if (in ||
-        out)
-    {
-        LOG(llevInfo, "both buffers were reset.\n");
-        buf_normal[0] = '\0';
-        buf_gmaster[0] = '\0';
-
-        return NULL;
-    }
-    /* Otherwise if there is something in the buffer, return it. */
-    else if (*buf)
+    /* We decide if writing is necessary at all -- if there is something in the
+     * buffer, just return it. */
+    if (*buf)
     {
         LOG(llevInfo, "the existing %s buffer was returned.\n",
             (buf == buf_gmaster) ? "gmaster" : "normal");
