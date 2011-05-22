@@ -43,6 +43,8 @@ static int abort_thread = 0;
 static command_buffer *input_queue_start = NULL, *input_queue_end = NULL;
 static command_buffer *output_queue_start = NULL, *output_queue_end = NULL;
 
+static void ClearClientSocket(struct ClientSocket *csock);
+
 /*
  * Buffer queue management
  */
@@ -503,11 +505,8 @@ uint8 SOCKET_CloseClientSocket(struct ClientSocket *csock)
     }
 
     LOG(-1, "CloseClientSocket()\n");
-
     SOCKET_CloseSocket(csock->fd);
-
-    csock->fd = SOCKET_NO;
-
+    ClearClientSocket(csock);
     abort_thread = 1;
 
     /* Poke anyone waiting at a cond */
@@ -519,7 +518,6 @@ uint8 SOCKET_CloseClientSocket(struct ClientSocket *csock)
     return(1);
 }
 
-
 uint8 SOCKET_InitSocket(void)
 {
 #ifdef WIN32
@@ -527,10 +525,10 @@ uint8 SOCKET_InitSocket(void)
     WORD    wVersionRequested = MAKEWORD( 2, 2 );
     int     error;
 
-    csocket.fd = SOCKET_NO;
-
+    ClearClientSocket(&csocket);
     SocketStatusErrorNr = 0;
     error = WSAStartup(wVersionRequested, &w);
+
     if (error)
     {
         wVersionRequested = MAKEWORD( 2, 0 );
@@ -552,6 +550,11 @@ uint8 SOCKET_InitSocket(void)
     return(1);
 }
 
+static void ClearClientSocket(struct ClientSocket *csock)
+{
+    memset(csock, 0, sizeof(struct ClientSocket));
+    csock->fd = SOCKET_NO;
+}
 
 uint8 SOCKET_DeinitSocket(void)
 {
