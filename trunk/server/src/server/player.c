@@ -1472,8 +1472,7 @@ void kick_player(player *pl)
  *
  * If the force flag is non-zero, both buffers are reset before any further
  * action. */
-char *get_online_players_info(player *who, player *in, player *out,
-                              uint8 force)
+char *get_online_players_info(player *who, player *diff, uint8 force)
 {
     player      *pl;
     uint16       pri = 0;
@@ -1485,15 +1484,15 @@ char *get_online_players_info(player *who, player *in, player *out,
 
     /* When force is non-zero or a player enters or leaves the game, reset both
      * buffers before doing anything else. */
-    if (force)
+    if (force ||
+        diff)
     {
         LOG(llevInfo, "both buffers were reset");
         buf_normal[0] = '\0';
         buf_gmaster[0] = '\0';
 
         /* When a player enters or leaves the game, return NULL. */
-        if (in ||
-            out)
+        if (diff)
         {
             LOG(llevInfo, ".\n");
 
