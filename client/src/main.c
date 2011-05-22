@@ -699,6 +699,8 @@ uint8 game_status_chain(void)
 {
     /* lets drop some status messages for the client logs */
     static int st = -1, lg = -1, gs = -1;
+    static _server *node_ping;
+
     if(st != (int)GameStatus || lg != (int)LoginInputStep || gs != (int)GameStatusSelect)
     {
         LOG(LOG_DEBUG, "GAME STATUS: :%d (gsl:%d lip:%d)\n", GameStatus, GameStatusSelect, LoginInputStep);
@@ -736,12 +738,9 @@ uint8 game_status_chain(void)
         GameStatus = (options.cli_server >= 0) ? GAME_STATUS_START
                                                : GAME_STATUS_META;
     }
-    /* connect to meta and get server data */
+    /* initialise, connect, and query the meta server */
     else if (GameStatus == GAME_STATUS_META)
     {
-        static uint8 ping_servers;
-
-        ping_servers = !options.done_meta;
         clear_metaserver_data();
         interface_mode = GUI_NPC_MODE_NO;
         clear_group();
@@ -786,62 +785,73 @@ uint8 game_status_chain(void)
             }
 
             SOCKET_CloseSocket(meta);
+        }
 
-            /* We just ping once autoomatically (and then on demand) because
-             * it's not funny (and the server is wise to such tricks) to hammer
-             * the server repeatedly with unnecessary cmds. */
-            if (ping_servers)
+        node_ping = metaserver_sel = start_server;
+        locator_init(330, 248);
+        textwin_showstring(COLOR_GREEN, "Select a server.");
+        GameStatus = GAME_STATUS_PINGLOOP;
+    }
+    /* ping each known server */
+    else if (GameStatus == GAME_STATUS_PINGLOOP)
+    {
+        /* We just ping once automatically (and then on demand) because it's
+         * not funny (and the server is wise to such tricks) to hammer the
+         * server repeatedly with unnecessary cmds. */
+        if (!options.no_ping)
+        {
+            if (!node_ping)
             {
-                _server *node;
+                GameStatus = GAME_STATUS_START;
+            }
+            else
+            {
+                static uint32 ticks = 0;
 
-                ping_servers = 0;
-
-                for (node = start_server; node; node = node->next)
+                if (!ticks)
                 {
-                    uint8 i;
+                    FREE(node_ping->online);
 
-                    FREE(node->online);
-
-                    if (!SOCKET_OpenClientSocket(&csocket, node->nameip,
-                                                 node->port))
+                    if (!SOCKET_OpenClientSocket(&csocket, node_ping->nameip,
+                                                 node_ping->port))
                     {
-                        node->player = 0;
-                        node->ping = -2;
+                        node_ping->player = 0;
+                        node_ping->ping = -2; // SERVER DOWN
+                    }
+                    else
+                    {
+//LOG(LOG_MSG,">>>>Open %s\n",csocket.host);
+                        ticks = SDL_GetTicks() + 250;
+                        node_ping->ping = -1; // UNKNOWN
+                        socket_thread_start();
+                        client_cmd_ping(); // ping the server
+                    }
+                }
+                else
+                {
+                    DoClient(); // check for response
+                }
 
-                        continue;
+                if (node_ping->ping != -1 ||
+                    ticks <= SDL_GetTicks())
+                {
+                    if (node_ping->ping != -2)
+                    {
+//LOG(LOG_MSG,">>>>Good close %s\n",csocket.host);
+                        SOCKET_CloseClientSocket(&csocket);
+                        handle_socket_shutdown(); // clear threads
+                        ticks = 0;
                     }
 
-                    node->ping = -1;
-                    socket_thread_start();
-                    client_cmd_ping();
-
-                    /* We check for a response, which updates node->ping. So
-                     * by doing it in a loop with a 1ms delay each iteration,
-                     * we allow a decent time for a response (quarter of a
-                     * second) but can also wrap up as soon as we get one. This
-                     * means that this process will be significantly faster
-                     * when all servers are updated with CMD_PING. */
-                    for (i = 0; i < 255 && node->ping == -1; i++)
-                    {
-                        DoClient();
-                        SDL_Delay(1);
-                    }
-
-                    SOCKET_CloseClientSocket(&csocket);
-                    handle_socket_shutdown(); // clear threads and abort status
+                    node_ping = node_ping->next;
                 }
             }
         }
-
-        metaserver_sel = start_server;
-        locator_init(330, 248);
-        textwin_showstring(COLOR_GREEN, "Select a server.");
-        show_ping_string(metaserver_sel);
-        GameStatus = GAME_STATUS_START;
     }
     else if (GameStatus == GAME_STATUS_START)
     {
-        options.done_meta = 1;
+        options.no_ping = 1;
+        show_ping_string(metaserver_sel);
         interface_mode = GUI_NPC_MODE_NO;
         clear_group();
         map_udate_flag = 2;
@@ -1758,8 +1768,15 @@ int main(int argc, char *argv[])
         done = Event_PollInputDevice();
 
         /* Have we been shutdown? */
-        if (handle_socket_shutdown())
+        /* FIXME: Not entirely sure what is going on here. In theory this check
+         * on GameStatus should not be needed. In practice, without it servers
+         * that do not respond to pings seem to trigger a reinit (for some
+         * reason they are setting abort_threads in socket.c I suppose).
+         * -- Smacky 20110522 */
+        if (GameStatus != GAME_STATUS_PINGLOOP &&
+            handle_socket_shutdown())
         {
+//LOG(LOG_MSG,"i>>>>Bad close\n");
             /* connection closed, so we go back to INIT here*/
             GameStatus = GAME_STATUS_INIT;
             continue;

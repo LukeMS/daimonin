@@ -253,7 +253,7 @@ typedef struct _options
     int                     anim_check_time;
 
     int                   grid;
-    uint8                 done_meta;
+    uint8                 no_ping;
 }
 _options;
 
@@ -370,7 +370,9 @@ typedef enum _game_status
     GAME_STATUS_INIT,
     /* cal this add start to autoinit */
     GAME_STATUS_META,
-    /* to to connect to meta server */
+    /* initialise, connect, and query the meta server */
+    GAME_STATUS_PINGLOOP,
+    /* ping each known server */
     GAME_STATUS_START,
     /* start all up without full reset or meta calling*/
     GAME_STATUS_WAITLOOP,
