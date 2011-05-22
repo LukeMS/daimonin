@@ -1465,21 +1465,17 @@ void kick_player(player *pl)
  *
  * As the info is rewritten less frequently than before (when the entire string
  * was recreated every time anyone typed /who), data such as players' levels
- * and what map they are on is not included as this changes  frequently.
+ * and what map they are on is not included as this changes frequently.
  *
  * Unfortunately whether or not players are in privacy mode is also likely to
- * change, though less frequently. The in login number is also likely to get
- * out of date, but does anyone really care about this?
+ * change, though less frequently.
  *
- * TODO: Add a force flag so gmasters can always get up to date iinfo from
+ * TODO: Add a force flag so gmasters can always get up to date info from
  * /who. */
 char *get_online_players_info(player *who, player *in, player *out)
 {
     player      *pl;
-    int          ip = 0,
-                 il = 0,
-                 it,
-                 pri = 0;
+    uint16       pri = 0;
     char        *buf;
     static char  buf_normal[LARGE_BUF] = "",
                  buf_gmaster[LARGE_BUF] = "";
@@ -1521,13 +1517,14 @@ char *get_online_players_info(player *who, player *in, player *out)
     LOG(llevInfo, "the %s buffer was rewritten.\n",
         (buf == buf_gmaster) ? "gmaster" : "normal");
 
+    /* First 3 characters are number of players (up to 999). */
+    sprintf(buf, "%03d", MIN(999, player_active));
+
     for (pl = first_player; pl; pl = pl->next)
     {
-        /* Player is in login? Increment il and skip to the next. */
+        /* Player is in login? Skip to the next. */
         if (!pl->ob->map)
         {
-            il++;
-
             continue;
         }
 
@@ -1548,8 +1545,6 @@ char *get_online_players_info(player *who, player *in, player *out)
 
         if ((pl->state & ST_PLAYING))
         {
-            ip++;
-
             sprintf(strchr(buf, '\0'), "~%s~ the %s %s",
                     pl->quick_name,
                     (QUERY_FLAG(pl->ob, FLAG_IS_MALE))
@@ -1570,9 +1565,14 @@ char *get_online_players_info(player *who, player *in, player *out)
         }
     }
 
-    it = ip + il + pri; // show whats shown in meta server too, we add login to privacy
-    sprintf(strchr(buf, '\0'), "There %s %d player%s online (%d privacy).",
-            (it > 1) ? "are" : "is", it, (it > 1) ? "s" : "", pri + il);
+    /* Add a short string if anyone has requested privacy and this is the
+     * normal buffer (the gmaster buffer already has the info). */
+    if (pri > 0 &&
+        buf == buf_normal)
+    {
+        sprintf(strchr(buf, '\0'), "%u player%s seek%s privacy.",
+                pri, (pri == 1) ? "" : "s", (pri == 1) ? "s" : "");
+    }
 
     return (char *)buf;
 }
