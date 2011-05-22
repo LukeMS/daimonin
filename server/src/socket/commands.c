@@ -436,9 +436,7 @@ void cs_cmd_ping(char *buf, int len, NewSocket *ns)
         return;
     }
 
-    sprintf(buf_reply, "%03d%s",
-            MIN(999, player_active),
-            get_online_players_info(NULL, NULL, NULL));
+    sprintf(buf_reply, "%s", get_online_players_info(NULL, NULL, NULL));
     len_reply = strlen(buf_reply);
     SOCKBUF_REQUEST_BUFFER(ns, len_reply + 1);
     SockBuf_AddString(ACTIVE_SOCKBUF(ns), buf_reply, len_reply);

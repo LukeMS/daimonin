@@ -1295,11 +1295,12 @@ static void QueryMetaserver(void)
 
 void show_ping_string(_server *node)
 {
-    if (node &&
-        node->online &&
-        *node->online)
+    if (node)
     {
-        textwin_showstring(COLOR_WHITE, "%s\n\n", node->online);
+        textwin_showstring(COLOR_WHITE, "There %s %d player%s online.\n\n%s",
+                           (node->player == 1) ? "is" : "are", node->player,
+                           (node->player == 1) ? "" : "s",
+                           (node->online) ? node->online : "");
     }
 }
 
