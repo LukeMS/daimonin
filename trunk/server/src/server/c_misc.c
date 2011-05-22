@@ -1153,6 +1153,8 @@ int command_privacy(object *op, char *params)
     channel_privacy(CONTR(op), CONTR(op)->privacy);
 #endif
 
+    (void)get_online_players_info(NULL, CONTR(op), NULL, 1);
+
     return 0;
 }
 
