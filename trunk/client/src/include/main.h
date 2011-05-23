@@ -83,9 +83,10 @@ typedef struct _server
     char           *nameip;
     char           *version;
     char           *desc1;
-    int             player;
-    int             port;
+    sint16          player;
+    uint16          port;
     sint16          ping;
+    uint32          ping_server;
     char           *online;
     geolocation_t   geoloc;
 }

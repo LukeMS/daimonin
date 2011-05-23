@@ -156,10 +156,17 @@ void PingCmd(char *data, int len)
         }
 
         node->ping = (sint16)(SDL_GetTicks() - csocket.ping);
-        node->player = atoi(data);
-        MALLOC_STRING(node->online, data + 3);
 
-        break;
+        /* If the server sent an empty string this means our current ping
+         * string is up to date. Otherwise, update it from data. */
+        if (len)
+        {
+            node->ping_server = (uint32)strtoul(data, &data, 16);
+            node->player = (sint16)strtol(data + 1, &data, 16);
+            MALLOC_STRING(node->online, data + 1);
+        }
+
+        return;
     }
 }
 

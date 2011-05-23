@@ -199,6 +199,8 @@ void malloc_info(object *op)
 /* Lists online players, respecting privacy mode. */
 int command_who(object *op, char *params)
 {
+    char *cp;
+
     if (!op)
     {
         return 0;
@@ -209,10 +211,18 @@ int command_who(object *op, char *params)
         return 1;
     }
 
+    cp = get_online_players_info(CONTR(op), NULL, 0);
+
+    /* Skip the time of rewrite and player numbers data. */
+    while (isxdigit(*cp) ||
+           isspace(*cp))
+    {
+        cp++;
+    }
+
     new_draw_info(NDI_UNIQUE, 0, op, "There %s %d player%s online.\n\n%s",
                   (player_active == 1) ? "is" : "are", player_active,
-                  (player_active == 1) ? "" : "s",
-                  get_online_players_info(CONTR(op), NULL, 0) + 3);
+                  (player_active == 1) ? "" : "s", cp);
 
 #ifdef DAI_DEVELOPMENT_CODE
     show_stream_info(&CONTR(op)->socket);

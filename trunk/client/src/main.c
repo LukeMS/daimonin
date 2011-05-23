@@ -774,7 +774,7 @@ uint8 game_status_chain(void)
                         ticks = SDL_GetTicks() + 250;
                         node_ping->ping = -1; // UNKNOWN
                         socket_thread_start();
-                        client_cmd_ping(); // ping the server
+                        client_cmd_ping(node_ping->ping_server);
                     }
                 }
                 else
@@ -1243,7 +1243,6 @@ static void QueryMetaserver(void)
         return;
     }
 
-    clear_metaserver_data();
     interface_mode = GUI_NPC_MODE_NO;
     clear_group();
     map_udate_flag = 2;
@@ -1369,57 +1368,66 @@ void free_faces(void)
 
 void clear_metaserver_data(void)
 {
-    _server    *node, *tmp;
-    void       *tmp_free;
+    _server *node = start_server;
 
-    node = start_server;
-
-    for (; node;)
+    while (node)
     {
-        tmp_free = &node->name;
-        FreeMemory(tmp_free);
-        tmp_free = &node->nameip;
-        FreeMemory(tmp_free);
-        tmp_free = &node->version;
-        FreeMemory(tmp_free);
-        tmp_free = &node->desc1;
-        FreeMemory(tmp_free);
-        tmp = node->next;
-        tmp_free = &node;
-        FreeMemory(tmp_free);
-        node = tmp;
+        _server *next = node->next;
+
+        FREE(node->name);
+        FREE(node->nameip);
+        FREE(node->version);
+        FREE(node->desc1);
+        FREE(node);
+        node = next;
     }
-    start_server = NULL;
-    metaserver_sel = NULL;
+
+    metaserver_sel = start_server = NULL;
 }
 
 void add_metaserver_data(char *name, char *server, int port, int player, char *ver, char *desc)
 {
-    _server *node = start_server,
-            *new;
+    _server *new;
 
-    while (node &&
-           node->next)
+    if (!start_server)
     {
-        node = node->next;
-    }
-
-    MALLOC(new, sizeof(_server));
-
-    if (!node)
-    {
+        MALLOC(new, sizeof(_server));
         start_server = new;
+        MALLOC_STRING(new->nameip, server);
+        new->port = port;
     }
     else
     {
-        node->next = new;
+        _server *node;
+
+        for (node = start_server; node; node = node->next)
+        {
+            if (node->nameip &&
+                !strcmp(node->nameip, server) &&
+                node->port == port)
+            {
+                new = node;
+                FREE(new->name);
+                FREE(new->version);
+                FREE(new->desc1);
+
+                break;
+            }
+            else if (!node->next)
+            {
+                MALLOC(new, sizeof(_server));
+                node->next = new;
+                MALLOC_STRING(new->nameip, server);
+                new->port = port;
+
+                break;
+            }
+        }
     }
 
     new->player = player;
-    new->port = port;
     new->ping = -1; // UNKNOWN
     MALLOC_STRING(new->name, name);
-    MALLOC_STRING(new->nameip, server);
     MALLOC_STRING(new->version, ver);
     MALLOC_STRING(new->desc1, desc);
 }

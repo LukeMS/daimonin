@@ -137,15 +137,22 @@ static int move_dir[] = {0,6,5,4,7,0,3,8,1,2};
 static char *SplitCommand(const char *command);
 static uint8 CheckCommand(char *cmd, char *params);
 
-/* Sends a ping. A ping is a small package of data (here a single byte). By
- * measuring the time taken for a reply we can provide an estimation of the
- * connection speed to the server. */
-void client_cmd_ping(void)
+/* Sends a ping. A ping is a small package of data. By measuring the time taken
+ * for a reply we can provide an estimation of the connection speed to the
+ * server.
+ *
+ * The data pinged to the server is the server tick of the current update of
+ * the so-called 'ping string'. This determines what the server will send in
+ * reply (see commands.c). */
+void client_cmd_ping(uint32 ping)
 {
+    char     buf[TINY_BUF];
+    int      len;
     SockList sl;
 
-    START(&sl, NULL, CLIENT_CMD_PING, SEND_CMD_FLAG_FIXED);
-    ADDUINT8(&sl, 1);
+    len = sprintf(buf, "%x", ping);
+    START(&sl, NULL, CLIENT_CMD_PING, SEND_CMD_FLAG_STRING);
+    ADDSTRING(&sl, buf, len, 0);
     FINISH(&sl);
 }
 

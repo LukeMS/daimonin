@@ -1533,8 +1533,8 @@ char *get_online_players_info(player *who, player *diff, uint8 force)
     LOG(llevInfo, "the %s buffer was rewritten.\n",
         (buf == buf_gmaster) ? "gmaster" : "normal");
 
-    /* First 3 characters are number of players (up to 999). */
-    sprintf(buf, "%03d", MIN(999, player_active));
+    /* Begin string with time of rewrite and player numbers in hex. */
+    sprintf(buf, "%lx %x ", ROUND_TAG, player_active);
 
     for (pl = first_player; pl; pl = pl->next)
     {
