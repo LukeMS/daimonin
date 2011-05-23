@@ -32,7 +32,7 @@
  */
 _CmdMapping cs_commands[]    =
 {
-    {1,         cs_cmd_ping},
+    {-1,        cs_cmd_ping},
     {-1,        cs_cmd_setup},
     {1,         cs_cmd_file},
     {-1,        cs_cmd_checkname},
@@ -421,13 +421,16 @@ void process_command_queue(NewSocket *ns, player *pl)
 
 void cs_cmd_ping(char *buf, int len, NewSocket *ns)
 {
-    char buf_reply[LARGE_BUF];
-    int  len_reply;
+    char          *cp,
+                   buf_reply[LARGE_BUF];
+    int            len_reply;
+    unsigned long  tick_ping,
+                   tick_reply;
 
     if (ns->setup ||
         ns->status != Ns_Login ||
         !buf ||
-        len != 1)
+        !len)
     {
         LOG(llevInfo, "HACKBUG:: Received illegal ping from IP >%s<!\n",
             STRING_SAFE(ns->ip_host));
@@ -436,8 +439,10 @@ void cs_cmd_ping(char *buf, int len, NewSocket *ns)
         return;
     }
 
-    sprintf(buf_reply, "%s", get_online_players_info(NULL, NULL, 0));
-    len_reply = strlen(buf_reply);
+    tick_ping = strtoul(buf, NULL, 16);
+    cp = get_online_players_info(NULL, NULL, 0);
+    tick_reply = strtoul(cp, NULL, 16);
+    len_reply = sprintf(buf_reply, "%s", (tick_reply == tick_ping) ? "" : cp);
     SOCKBUF_REQUEST_BUFFER(ns, len_reply + 1);
     SockBuf_AddString(ACTIVE_SOCKBUF(ns), buf_reply, len_reply);
     SOCKBUF_REQUEST_FINISH(ns, BINARY_CMD_PING, SOCKBUF_DYNAMIC);
