@@ -1453,25 +1453,29 @@ void kick_player(player *pl)
     }
 }
 
-/* This is called in four circumstances: when a client pings the server; when a
+/* This is called in five circumstances: when a client pings the server; when a
  * player types /who; when a player enters the game; when a player leaves the
- * game. Each call will check whether the info needs to be rewritten. This will
- * definitely be the case the first time it is called (because the buffer is
- * empty). Each time a player enters or leaves the game the buffer is reset and
- * the return is NULL. Otherwise, the existing buffer is returned.
+ * game; when a player toggles privacy mode.
  *
- * There are actually two buffers, one for gmasters (SA/GM/VOL) and one for
- * other players and pings.
+ * The function maintains 2 static buffers, one for gmasters (SA/GM/VOL) which
+ * contains additional info and one for other players and pings. A call may
+ * clear both buffers or rewrite either, and may return one buffer or NULL. 
+ *
+ * If the force flag is non-zero, both buffers are reset before any further
+ * action.
+ *
+ * If diff is non-NULL (usually means a player has entered or left the game),
+ * both buffers are reset and NULL is returned.
+ *
+ * If who is non-NULL and is a gmaster, the gmaster buffer is used, else the
+ * normal buffer is used.
+ *
+ * If the buffer is empty, it is rewritten and then returned. Otherwise, the
+ * existing buffer is returned.
  *
  * As the info is rewritten less frequently than before (when the entire string
  * was recreated every time anyone typed /who), data such as players' levels
- * and what map they are on is not included as this changes frequently.
- *
- * Unfortunately whether or not players are in privacy mode is also likely to
- * change, though less frequently.
- *
- * If the force flag is non-zero, both buffers are reset before any further
- * action. */
+ * and what map they are on is not included as this changes frequently. */
 char *get_online_players_info(player *who, player *diff, uint8 force)
 {
     player      *pl;
