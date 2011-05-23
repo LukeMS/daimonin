@@ -97,41 +97,46 @@ void adjust_map_cache(int xpos, int ypos)
     }
 }
 
-
 /* load the multi arch offsets */
 void load_mapdef_dat(void)
 {
-    FILE   *stream;
-    int     i, ii, x, y, d[32];
-    char    line[256];
+    PHYSFS_File *handle;
+    uint8        i;
 
-    if (!(stream = fopen_wrapper(ARCHDEF_FILE, "r")))
+    /* Log what we're doing. */
+    LOG(LOG_SYSTEM, "Loading '%s'... ", FILE_ARCHDEF);
+
+    /* Open the file for reading. */
+    if (!(handle = PHYSFS_openRead(FILE_ARCHDEF)))
     {
-        LOG(LOG_ERROR, "ERROR: Can't find file %s\n", ARCHDEF_FILE);
-        return;
+        LOG(LOG_FATAL, "FAILED (%s)!\n", PHYSFS_getLastError());
     }
+
     for (i = 0; i < 16; i++)
     {
-        if (fgets(line, 255, stream) == NULL)
-            break;
+        char  buf[SMALL_BUF],
+             *cp = buf;
+        uint8 j;
 
-        sscanf(line,
-               "%d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d",
-               &x, &y, &d[0], &d[1], &d[2], &d[3], &d[4], &d[5], &d[6], &d[7], &d[8], &d[9], &d[10], &d[11], &d[12],
-               &d[13], &d[14], &d[15], &d[16], &d[17], &d[18], &d[19], &d[20], &d[21], &d[22], &d[23], &d[24], &d[25],
-               &d[26], &d[27], &d[28], &d[29], &d[30], &d[31]);
-        MultiArchs[i].xlen = x;
-        MultiArchs[i].ylen = y;
-
-        for (ii = 0; ii < 16; ii++)
+        while (PHYSFS_readString(handle, buf, sizeof(buf)) <= 0)
         {
-            MultiArchs[i].part[ii].xoff = d[ii * 2];
-            MultiArchs[i].part[ii].yoff = d[ii * 2 + 1];
+            LOG(LOG_FATAL, "FAILED (Not enough data)!\n");
+        }
+
+        MultiArchs[i].xlen = (int)strtol(cp, &cp, 10);
+        MultiArchs[i].ylen = (int)strtol(cp + 1, &cp, 10);
+
+        for (j = 0; j < 16; j++)
+        {
+            MultiArchs[i].part[j].xoff = (int)strtol(cp + 1, &cp, 10);
+            MultiArchs[i].part[j].yoff = (int)strtol(cp + 1, &cp, 10);
         }
     }
-    fclose(stream);
-}
 
+    /* Cleanup. */
+    PHYSFS_close(handle);
+    LOG(LOG_SYSTEM, "OK!\n");
+}
 
 void clear_map(void)
 {

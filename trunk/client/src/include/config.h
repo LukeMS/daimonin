@@ -73,6 +73,7 @@
 #define DIR_SOUNDS    "sfx"
 #define DIR_SRV_FILES "srv_files"
 
+#define FILE_ARCHDEF      "archdef.dat"
 #define FILE_FACEPACK     "daimonin.p0"
 #define FILE_SRV_ANIMS    DIR_SRV_FILES"/client_anims"
 #define FILE_SRV_FACEINFO DIR_SRV_FILES"/client_bmap"
@@ -82,7 +83,6 @@
 #define FILE_SRV_SPELLS   DIR_SRV_FILES"/client_spells"
 #define FILE_OPTION       "options.dat"
 #define FILE_KEYBIND      "keys.dat"
-#define ARCHDEF_FILE      "archdef.dat"
 #define FILE_INTERFACE    "interface.gui"
 #define FILE_LOG          "client.log"
 
