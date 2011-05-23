@@ -196,7 +196,6 @@ static item * alloc_items(int nrof)
 void free_all_items(item *op)
 {
     item   *tmp;
-    void   *tmp_free;
 
     while (op)
     {
@@ -205,8 +204,7 @@ void free_all_items(item *op)
         if (op->anim)
             new_anim_remove_item(op);
         tmp = op->next;
-        tmp_free = &op;
-        FreeMemory(tmp_free);
+        FREE(op);
         op = tmp;
     }
 }

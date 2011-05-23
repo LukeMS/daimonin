@@ -869,7 +869,6 @@ int read_metaserver_data(SOCKET fd)
 {
     int     stat, temp, ret;
     char   *ptr, *buf;
-    void   *tmp_free;
 
     MALLOC(ptr, MAX_METASTRING_BUFFER);
     MALLOC(buf, MAX_METASTRING_BUFFER);
@@ -905,10 +904,8 @@ int read_metaserver_data(SOCKET fd)
     buf[temp] = 0;
     LOG(0, "GET: %s\n", buf);
     ret = parse_metaserver_data(buf);
-    tmp_free = &buf;
-    FreeMemory(tmp_free);
-    tmp_free = &ptr;
-    FreeMemory(tmp_free);
+    FREE(buf);
+    FREE(ptr);
 
     return ret;
 }
@@ -919,7 +916,6 @@ int read_metaserver_data(SOCKET fd)
 {
     int     stat, temp, ret;
     char   *ptr, *buf;
-    void   *tmp_free;
 
     MALLOC(ptr, MAX_METASTRING_BUFFER);
     MALLOC(buf, MAX_METASTRING_BUFFER);
@@ -958,10 +954,8 @@ int read_metaserver_data(SOCKET fd)
 
     buf[temp] = 0;
     ret = parse_metaserver_data(buf);
-    tmp_free = &buf;
-    FreeMemory(tmp_free);
-    tmp_free = &ptr;
-    FreeMemory(tmp_free);
+    FREE(buf);
+    FREE(ptr);
 
     return ret;
 }

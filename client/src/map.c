@@ -233,8 +233,6 @@ void UpdateMapMusic(char *music)
 
 void InitMapData(int xl, int yl, int px, int py)
 {
-    void   *tmp_free;
-
     if (xl != -1)
         MapData.xlen = xl;
     if (yl != -1)
@@ -247,11 +245,8 @@ void InitMapData(int xl, int yl, int px, int py)
     if (xl > 0)
     {
         clear_map();
-        if (TheMapCache)
-        {
-            tmp_free = &TheMapCache;
-            FreeMemory(tmp_free);
-        }
+        FREE(TheMapCache);
+
         /* we allocate 9 times the map... in tiled maps, we can have 8 connected
         * maps to our map - we want cache a map except its 2 maps aways-
         * WARNING: tiled maps must be of same size... don't attach a 32x32

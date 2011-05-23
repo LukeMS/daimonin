@@ -26,7 +26,6 @@
 
 #define MAX_INPUT_STR 256
 
-void                    FreeMemory(void **p);
 char                    *show_input_string(char *text, _font *font, int wlen);
 int                     read_substr_char(char *srcstr, char *desstr, int *sz, char ct);
 char                    *get_parameter_string(char *data, int *pos, int maxlen);
