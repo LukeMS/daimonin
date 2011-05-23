@@ -22,15 +22,6 @@
 */
 #include <include.h>
 
-void FreeMemory(void **p)
-{
-    if (p == NULL)
-        return;
-    if (*p != NULL)
-        FREE(*p);
-    *p = NULL;
-}
-
 char * show_input_string(char *text, struct _font *font, int wlen)
 {
     register int i, j,len;

@@ -218,8 +218,6 @@ static void fow_scale(_Sprite *sprite)
 
 void sprite_free_sprite(_Sprite *sprite)
 {
-    void   *tmp_free;
-
     if (!sprite)
         return;
     if (sprite->bitmap)
@@ -230,8 +228,7 @@ void sprite_free_sprite(_Sprite *sprite)
         SDL_FreeSurface(sprite->red);
     if (sprite->fog_of_war)
         SDL_FreeSurface(sprite->fog_of_war);
-    tmp_free = sprite;
-    FreeMemory(&tmp_free);
+    FREE(sprite);
 }
 
 /* Calculate the displayed width of the text */
@@ -997,15 +994,13 @@ struct _anim * add_anim(int type, int x, int y, int mapx, int mapy, int value)
 void remove_anim(struct _anim *anim)
 {
     struct _anim   *tmp, *tmp_next;
-    void           *tmp_free;
 
     if (!anim)
         return;
 
     tmp = anim->before;
     tmp_next = anim->next;
-    tmp_free = &anim;
-    FreeMemory(tmp_free); /* free node memory */
+    FREE(anim);
 
     if (tmp)
         tmp->next = tmp_next;
@@ -1019,13 +1014,11 @@ void remove_anim(struct _anim *anim)
 void delete_anim_que(void)
 {
     struct _anim   *tmp, *tmp_next;
-    void           *tmp_free;
 
     for (tmp = start_anim; tmp;)
     {
         tmp_next = tmp->next;
-        tmp_free = &tmp;
-        FreeMemory(tmp_free); /* free node memory */
+        FREE(tmp);
         tmp = tmp_next;
     }
     start_anim = NULL;

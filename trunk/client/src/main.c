@@ -1356,11 +1356,8 @@ void free_faces(void)
             sprite_free_sprite(face_list[i].sprite);
             face_list[i].sprite = NULL;
         }
-        if (face_list[i].name)
-        {
-            void   *tmp_free    = &face_list[i].name;
-            FreeMemory(tmp_free);
-        }
+
+        FREE(face_list[i].name);
         face_list[i].flags = 0;
     }
 }
