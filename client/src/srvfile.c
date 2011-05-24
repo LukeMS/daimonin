@@ -180,7 +180,7 @@ void srvfile_load(void)
 static void Check(const char *fname, uint8 num)
 {
     PHYSFS_File   *handle;
-    PHYSFS_uint64  len;
+    PHYSFS_sint64  len;
     unsigned char *buf_tmp;
 
     /* Log what we're doing. */
@@ -777,11 +777,7 @@ static void LoadSettings(void)
                     LOG(LOG_FATAL, "Unexpected EOF!\n");
                 }
 
-                if ((server_level.exp[i] = strtoul(buf, NULL, 16)) == ULONG_MAX)
-                {
-                    PHYSFS_close(handle);
-                    LOG(LOG_FATAL, "Malformed exp line for level %u: %s!\n", i, buf);
-                }
+                server_level.exp[i] = (uint32)strtoul(buf, NULL, 16);
             }
 
             break;
