@@ -26,7 +26,10 @@
 
 #ifdef __WIN_32
 
-#define STRICT
+#ifndef STRICT
+# define STRICT
+#endif
+
 #define _CRT_SECURE_NO_DEPRECATE
 
 #if _MSC_VER > 1000
