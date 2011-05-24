@@ -1105,20 +1105,21 @@ static uint8 CheckCommand(char *cmd, char *params)
         PHYSFS_File *handle;
         char         buf[TINY_BUF];
  
-        sprintf(buf, "update/version");
-        LOG(LOG_MSG, "Trying to read %s... ", buf);
+        LOG(LOG_SYSTEM, "Loading '%s'... ", FILE_VERSION);
 
-        if (!(handle = PHYSFS_openRead(buf)))
+        if (!(handle = PHYSFS_openRead(FILE_VERSION)))
         {
-            LOG(LOG_ERROR, "FAILED: %s!\n", PHYSFS_getLastError());
-            sprintf(buf, "UNKNOWN!");
+            LOG(LOG_ERROR, "FAILED (%s)!\n", PHYSFS_getLastError());
+            strcpy(buf, "UNKNOWN");
         }
         else if (PHYSFS_readString(handle, buf, sizeof(buf)) < 0)
         {
-            LOG(LOG_ERROR, "FAILED: Empty file?!\n");
-            sprintf(buf, "UNKNOWN!");
+            LOG(LOG_ERROR, "FAILED (Empty file?)!\n");
+            strcpy(buf, "UNKNOWN");
         }
-            
+
+        PHYSFS_close(handle);
+        LOG(LOG_SYSTEM, "OK!\n");
         textwin_showstring(COLOR_WHITE, "~Client version~: %u.%u.%u / %u (%s)",
                            DAI_VERSION_RELEASE, DAI_VERSION_MAJOR,
                            DAI_VERSION_MINOR, PROTOCOL_VERSION, buf);
