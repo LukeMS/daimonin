@@ -178,9 +178,10 @@ void client_cmd_setup(void)
         strcpy(buf_sound, "0");
     }
 
-    sprintf(buf, "dv %u.%u.%u pv %u mz %dx%d amf %d|%x bpf %d|%x stf %d|%x skf %d|%x sn %s spf %d|%x",
+    sprintf(buf, "dv %u.%u.%u pv %u mz %dx%d geo %f|%f amf %d|%x bpf %d|%x stf %d|%x skf %d|%x sn %s spf %d|%x",
             DAI_VERSION_RELEASE, DAI_VERSION_MAJOR, DAI_VERSION_MINOR,
             PROTOCOL_VERSION, MapStatusX, MapStatusY,
+            locator.client.lx, locator.client.ly,
             srvfile[SRV_CLIENT_ANIMS].len, srvfile[SRV_CLIENT_ANIMS].crc,
             srvfile[SRV_CLIENT_BMAPS].len, srvfile[SRV_CLIENT_BMAPS].crc,
             srvfile[SRV_CLIENT_SETTINGS].len, srvfile[SRV_CLIENT_SETTINGS].crc,

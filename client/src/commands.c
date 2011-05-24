@@ -490,7 +490,11 @@ void SetupCmd(char *buf, int len)
             }
         }
         else if (!strcmp(cmd, "mz")) /* mapsize */
-        {}
+        {
+        }
+        else if (!strcmp(cmd,  "geo")) /* geolocation */
+        {
+        }
         else
         {
             LOG(LOG_ERROR, "Got setup for a command we don't understand: %s %s\n", cmd, param);
