@@ -206,6 +206,8 @@ typedef struct NewSocket_struct
         char                ip_host[40];            /* IP as string */
         enum Sock_Status    status;
         ReadList            readbuf;            /* Raw data read in from the socket  */
+        float               lx;                 /* geolocation for client locator */
+        float               ly;                 /* geolocation for client locator */
 
         uint32              below_clear     : 1;        /* marker to map draw/draw below */
         uint32              idle_flag       : 1;        /* idle warning was given and we count for disconnect */

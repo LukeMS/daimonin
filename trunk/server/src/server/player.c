@@ -1457,18 +1457,19 @@ void kick_player(player *pl)
  * player types /who; when a player enters the game; when a player leaves the
  * game; when a player toggles privacy mode.
  *
- * The function maintains 2 static buffers, one for gmasters (SA/GM/VOL) which
- * contains additional info and one for other players and pings. A call may
- * clear both buffers or rewrite either, and may return one buffer or NULL. 
+ * The function maintains 3 static buffers: one for pings; one for gmasters
+ * (SA/GM/VOL); one for other players. A call may clear all buffers or rewrite
+ * one, and may return one buffer or NULL. 
  *
- * If the force flag is non-zero, both buffers are reset before any further
+ * If the force flag is non-zero, all buffers are reset before any further
  * action.
  *
  * If diff is non-NULL (usually means a player has entered or left the game),
- * both buffers are reset and NULL is returned.
+ * all buffers are reset and NULL is returned.
  *
- * If who is non-NULL and is a gmaster, the gmaster buffer is used, else the
- * normal buffer is used.
+ * If both who and diff are NULL, the ping buffer is used. If who is non-NULL
+ * and is a gmaster, the gmaster buffer is used. Otherwise, the normal buffer
+ * is used.
  *
  * If the buffer is empty, it is rewritten and then returned. Otherwise, the
  * existing buffer is returned.
@@ -1481,8 +1482,9 @@ char *get_online_players_info(player *who, player *diff, uint8 force)
     player      *pl;
     uint16       pri = 0;
     char        *buf;
-    static char  buf_normal[LARGE_BUF] = "",
-                 buf_gmaster[LARGE_BUF] = "";
+    static char  buf_ping[HUGE_BUF] = "",
+                 buf_gmaster[HUGE_BUF] = "",
+                 buf_normal[HUGE_BUF] = "";
 
     LOG(llevInfo, "INFO:: get_online_players_info was called and ");
 
@@ -1491,9 +1493,10 @@ char *get_online_players_info(player *who, player *diff, uint8 force)
     if (force ||
         diff)
     {
-        LOG(llevInfo, "both buffers were reset");
-        buf_normal[0] = '\0';
+        LOG(llevInfo, "all buffers were reset");
+        buf_ping[0] = '\0';
         buf_gmaster[0] = '\0';
+        buf_normal[0] = '\0';
 
         /* When a player enters or leaves the game, return NULL. */
         if (diff)
@@ -1509,13 +1512,21 @@ char *get_online_players_info(player *who, player *diff, uint8 force)
     }
 
     /* We decide which buffer to potentially write to. */
-    if (who &&
-        (who->gmaster_mode & (GMASTER_MODE_SA | GMASTER_MODE_GM | GMASTER_MODE_VOL)))
+    if (!who &&
+        !diff)
     {
+        LOG(llevInfo, "the existing ping buffer was ");
+        buf = buf_ping;
+    }
+    else if (who &&
+             (who->gmaster_mode & (GMASTER_MODE_SA | GMASTER_MODE_GM | GMASTER_MODE_VOL)))
+    {
+        LOG(llevInfo, "the existing gmaster buffer was ");
         buf = buf_gmaster;
     }
     else
     {
+        LOG(llevInfo, "the existing normal buffer was ");
         buf = buf_normal;
     }
 
@@ -1523,15 +1534,13 @@ char *get_online_players_info(player *who, player *diff, uint8 force)
      * buffer, just return it. */
     if (*buf)
     {
-        LOG(llevInfo, "the existing %s buffer was returned.\n",
-            (buf == buf_gmaster) ? "gmaster" : "normal");
+        LOG(llevInfo, "returned.\n");
 
         return (char *)buf;
     }
 
     /* Lets rewrite the buffer. */
-    LOG(llevInfo, "the %s buffer was rewritten.\n",
-        (buf == buf_gmaster) ? "gmaster" : "normal");
+    LOG(llevInfo, "rewritten.\n");
 
     /* Begin string with time of rewrite and player numbers in hex. */
     sprintf(buf, "%lx %x ", ROUND_TAG, player_active);
@@ -1561,23 +1570,39 @@ char *get_online_players_info(player *who, player *diff, uint8 force)
 
         if ((pl->state & ST_PLAYING))
         {
-            sprintf(strchr(buf, '\0'), "~%s~ the %s %s",
-                    pl->quick_name,
-                    (QUERY_FLAG(pl->ob, FLAG_IS_MALE))
-                    ? ((QUERY_FLAG(pl->ob, FLAG_IS_FEMALE)) ? "hermaphrodite"
-                                                            : "male")
-                    : ((QUERY_FLAG(pl->ob, FLAG_IS_FEMALE)) ? "female"
-                                                            : "neuter"),
-                    pl->ob->race);
-
-            if (buf == buf_gmaster)
+            /* To conserve bandwidth, just send essentials. */
+            /* TODO: In 0.11.0 when FILE_CLIENT_SETTINGS is sorted out we will
+             * send a number for the race too. */
+            if (buf == buf_ping)
             {
-                sprintf(strchr(buf, '\0'), "%s\n  ~IP~: %s\n  ~Account~: %s",
-                        (pl->privacy) ? " ~Privacy mode~" : "",
-                        pl->socket.ip_host, pl->account_name);
+                sprintf(strchr(buf, '\0'), "%s %u %s %f %f|",
+                        pl->quick_name,
+                        (QUERY_FLAG(pl->ob, FLAG_IS_MALE))
+                        ? ((QUERY_FLAG(pl->ob, FLAG_IS_FEMALE)) ? 3 : 1)
+                        : ((QUERY_FLAG(pl->ob, FLAG_IS_FEMALE)) ? 2 : 4),
+                        pl->ob->race, pl->socket.lx, pl->socket.ly);
             }
+            /* Here we make things a bit prettier. */ 
+            else
+            {
+                sprintf(strchr(buf, '\0'), "~%s~ the %s %s",
+                        pl->quick_name,
+                        (QUERY_FLAG(pl->ob, FLAG_IS_MALE))
+                        ? ((QUERY_FLAG(pl->ob, FLAG_IS_FEMALE)) ? "hermaphrodite"
+                                                                : "male")
+                        : ((QUERY_FLAG(pl->ob, FLAG_IS_FEMALE)) ? "female"
+                                                                : "neuter"),
+                        pl->ob->race);
 
-            strcat(buf, "\n");
+                if (buf == buf_gmaster)
+                {
+                    sprintf(strchr(buf, '\0'), "%s\n  ~IP~: %s\n  ~Account~: %s",
+                            (pl->privacy) ? " ~Privacy mode~" : "",
+                            pl->socket.ip_host, pl->account_name);
+                }
+
+                strcat(buf, "\n");
+            }
         }
     }
 

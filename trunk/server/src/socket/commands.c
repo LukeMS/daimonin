@@ -690,6 +690,14 @@ void cs_cmd_setup(char *buf, int len, NewSocket *ns)
                     strcat(cmdback, tmpbuf);
                 }
         }
+        else if (!strcmp(cmd, "geo"))
+        {
+            char   *cp = param;
+
+            ns->lx = (float)strtod(cp, &cp);
+            ns->ly = (float)strtod(cp + 1, &cp);
+            strcat(cmdback, "OK");
+        }
         else if (!strcmp(cmd, "skf"))
         {
             char   *cp;
