@@ -47,8 +47,33 @@ typedef struct face_t
 }
 face_t;
 
-extern face_t face_list[FACE_MAX_NROF];
-extern uint16 face_nrof;
+/* table of pre definded multi arch objects.
+ * mpart_id and mpart_nr in the arches are commited from server
+ * to analyze the exaclty tile position inside a mpart object.
+ *
+ * The way of determinate the starting and shift points is explained
+ * in the dev/multi_arch folder of the arches, where the multi arch templates &
+ * masks are.
+ */
+
+typedef struct face_mpart_nr_t
+{
+    uint16 xoff;
+    uint16 yoff;
+}
+face_mpart_nr_t;
+
+typedef struct face_mpart_id_t
+{
+    uint16          xlen;
+    uint16          ylen;
+    face_mpart_nr_t part[16];
+}
+face_mpart_id_t;
+
+extern face_t          face_list[FACE_MAX_NROF];
+extern uint16          face_nrof;
+extern face_mpart_id_t face_mpart_id[16];
 
 extern void   face_saveinfo(uint16 num, uint32 crc, const char *name);
 extern void   face_save(uint16 num, uint8 *data, uint32 len);

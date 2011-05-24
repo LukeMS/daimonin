@@ -341,6 +341,7 @@ static const char *GetOption(const char *arg, const char *sopt,
                              const char *lopt, char *key, char *value);
 static void InitPhysFS(const char *argv0);
 static void ShowIntro(char *text, int progress);
+static void LoadArchdef(void);
 static void DeletePlayerLists(void);
 static void QueryMetaserver(void);
 static void DeletePlayerLists(void)
@@ -1730,8 +1731,8 @@ int main(int argc, char *argv[])
         load_bitmap(i);
     ShowIntro("load keys", 70);
     read_keybind_file();
-    ShowIntro("load mapdefs", 80);
-    load_mapdef_dat();
+    ShowIntro("load mpart positioning data", 80);
+    LoadArchdef();
     ShowIntro(NULL, 100);
     sound_play_music("orchestral.ogg", options.music_volume, 0, -1, 0, MUSIC_MODE_DIRECT);
     sprite_init_system();
@@ -2646,6 +2647,47 @@ static void FlipScreen(void)
 #ifdef INSTALL_OPENGL
     }
 #endif
+}
+
+/* TODO: srvfile in 0.11.0? */
+void LoadArchdef(void)
+{
+    PHYSFS_File *handle;
+    uint8        i;
+
+    /* Log what we're doing. */
+    LOG(LOG_SYSTEM, "Loading '%s'... ", FILE_MPART);
+
+    /* Open the file for reading. */
+    if (!(handle = PHYSFS_openRead(FILE_MPART)))
+    {
+        LOG(LOG_FATAL, "FAILED (%s)!\n", PHYSFS_getLastError());
+    }
+
+    for (i = 0; i < 16; i++)
+    {
+        char  buf[SMALL_BUF],
+             *cp = buf;
+        uint8 j;
+
+        while (PHYSFS_readString(handle, buf, sizeof(buf)) <= 0)
+        {
+            LOG(LOG_FATAL, "FAILED (Not enough data)!\n");
+        }
+
+        face_mpart_id[i].xlen = (uint16)strtoul(cp, &cp, 10);
+        face_mpart_id[i].ylen = (uint16)strtoul(cp + 1, &cp, 10);
+
+        for (j = 0; j < 16; j++)
+        {
+            face_mpart_id[i].part[j].xoff = (uint16)strtoul(cp + 1, &cp, 10);
+            face_mpart_id[i].part[j].yoff = (uint16)strtoul(cp + 1, &cp, 10);
+        }
+    }
+
+    /* Cleanup. */
+    PHYSFS_close(handle);
+    LOG(LOG_SYSTEM, "OK!\n");
 }
 
 static void DisplayCustomCursor(void)

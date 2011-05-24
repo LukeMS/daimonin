@@ -73,8 +73,8 @@
 #define DIR_SOUNDS    "sfx"
 #define DIR_SRV_FILES "srv_files"
 
-#define FILE_ARCHDEF      "archdef.dat"
 #define FILE_FACEPACK     "daimonin.p0"
+#define FILE_MPART        "archdef.dat"
 #define FILE_SRV_ANIMS    DIR_SRV_FILES"/client_anims"
 #define FILE_SRV_FACEINFO DIR_SRV_FILES"/client_bmap"
 #define FILE_SRV_SETTINGS DIR_SRV_FILES"/client_settings"
