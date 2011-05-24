@@ -109,10 +109,6 @@
 /* Installation prefix */
 #define PREFIX "../../../client-0.10.0"
 
-/* Use the SDL_mixer sound system. Remove when you have no sound card or slow
-   computer */
-#define INSTALL_SOUND
-
 #endif
 
 #endif /* ifndef __WIN32_H */

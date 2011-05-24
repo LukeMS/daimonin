@@ -38,6 +38,7 @@
 		<Compiler>
 			<Add option="-W" />
 			<Add option='-I&quot;&lt;INCLUDE&gt;\SDL&quot; -Dmain=SDL_main -mms-bitfields' />
+			<Add option="-DINSTALL_SOUND" />
 			<Add option="-DWIN32" />
 			<Add option="-D__WIN_32" />
 			<Add option="-DMINGW" />
