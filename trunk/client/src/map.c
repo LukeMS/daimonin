@@ -43,8 +43,6 @@ _map_object_parse;
 
 struct _map_object_parse   *start_map_object_parse  = NULL;
 
-_multi_part_obj             MultiArchs[16];
-
 static void ShowEffects(uint32 flags, uint16 x, uint16 y);
 static uint16 ShowExclusiveEffect(uint16 x, uint16 y, uint16 xoff, uint16 w,
                                   char *text);
@@ -95,47 +93,6 @@ void adjust_map_cache(int xpos, int ypos)
             */
         }
     }
-}
-
-/* load the multi arch offsets */
-void load_mapdef_dat(void)
-{
-    PHYSFS_File *handle;
-    uint8        i;
-
-    /* Log what we're doing. */
-    LOG(LOG_SYSTEM, "Loading '%s'... ", FILE_ARCHDEF);
-
-    /* Open the file for reading. */
-    if (!(handle = PHYSFS_openRead(FILE_ARCHDEF)))
-    {
-        LOG(LOG_FATAL, "FAILED (%s)!\n", PHYSFS_getLastError());
-    }
-
-    for (i = 0; i < 16; i++)
-    {
-        char  buf[SMALL_BUF],
-             *cp = buf;
-        uint8 j;
-
-        while (PHYSFS_readString(handle, buf, sizeof(buf)) <= 0)
-        {
-            LOG(LOG_FATAL, "FAILED (Not enough data)!\n");
-        }
-
-        MultiArchs[i].xlen = (int)strtol(cp, &cp, 10);
-        MultiArchs[i].ylen = (int)strtol(cp + 1, &cp, 10);
-
-        for (j = 0; j < 16; j++)
-        {
-            MultiArchs[i].part[j].xoff = (int)strtol(cp + 1, &cp, 10);
-            MultiArchs[i].part[j].yoff = (int)strtol(cp + 1, &cp, 10);
-        }
-    }
-
-    /* Cleanup. */
-    PHYSFS_close(handle);
-    LOG(LOG_SYSTEM, "OK!\n");
 }
 
 void clear_map(void)
@@ -645,22 +602,22 @@ void map_draw_map(void)
                                 mnr = map->pos[k];
                                 mid = mnr >> 4;
                                 mnr &= 0x0f;
-                                xml = MultiArchs[mid].xlen;
+                                xml = face_mpart_id[mid].xlen;
                                 yl = ypos
-                                     - MultiArchs[mid].part[mnr].yoff
-                                     + MultiArchs[mid].ylen
+                                     - face_mpart_id[mid].part[mnr].yoff
+                                     + face_mpart_id[mid].ylen
                                      - face_sprite->bitmap->h;
                                 /* we allow overlapping x borders - we simply center then
                                  */
                                 xl = 0;
-                                if (face_sprite->bitmap->w > MultiArchs[mid].xlen)
-                                    xl = (MultiArchs[mid].xlen - face_sprite->bitmap->w) >> 1;
-                                xmpos = xpos - MultiArchs[mid].part[mnr].xoff;
+                                if (face_sprite->bitmap->w > face_mpart_id[mid].xlen)
+                                    xl = (face_mpart_id[mid].xlen - face_sprite->bitmap->w) >> 1;
+                                xmpos = xpos - face_mpart_id[mid].part[mnr].xoff;
                                 xl += xmpos;
 
 //                                textwin_showstring(COLOR_RED, "ID:%d NR:%d yoff:%d yl:%d",
 //                                                   mid, mnr,
-//                                                   MultiArchs[mid].part[mnr].yoff,
+//                                                   face_mpart_id[mid].part[mnr].yoff,
 //                                                   yl);
                             }
                             else /* single tile... */

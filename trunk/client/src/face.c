@@ -58,8 +58,9 @@
 
 #include "include.h"
 
-face_t face_list[FACE_MAX_NROF];
-uint16 face_nrof;
+face_t          face_list[FACE_MAX_NROF];
+uint16          face_nrof;
+face_mpart_id_t face_mpart_id[16];
 
 static _sprite_status LoadFromMemory(uint16 num, uint8 *data, uint32 len);
 static _sprite_status LoadFromFile(uint16 num, const char *dname);
