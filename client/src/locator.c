@@ -98,10 +98,10 @@ void locator_get_hostip_info(char *ip, geolocation_t *geoloc)
 
 /* Parses the ping string, if there is one, for the specified server and, if it
  * is complete, adds a new player to the locator. */
-void locator_parse_ping_string(_server *node)
+void locator_parse_ping_string(_server *server)
 {
-    if (node &&
-        node->online)
+    if (server &&
+        server->online)
     {
         char         *cp,
                       name[TINY_BUF],
@@ -110,24 +110,25 @@ void locator_parse_ping_string(_server *node)
         float         lx,
                       ly;
 
-        for (cp = strtok(node->online, "|"); cp; cp = strtok(NULL, "|"))
+        for (cp = strtok(server->online, "|"); cp; cp = strtok(NULL, "|"))
         {
             if (sscanf(cp, "%s %u %s %f %f",
                 name, &gender, race, &lx, &ly) == 5)
             {
-                locator_add_player(name, (uint8)gender, race, lx, ly);
+                locator_add_player(server, name, (uint8)gender, race, lx, ly);
             }
         }
     }
 }
 
 /* Adds details of a new player. */
-void locator_add_player(const char *name, uint8 gender, const char *race,
-                        float lx, float ly)
+void locator_add_player(_server *server, const char *name, uint8 gender,
+                        const char *race, float lx, float ly)
 {
     locator_player_t *new;
 
     MALLOC(new, sizeof(locator_player_t));
+    new->server = server;
     MALLOC_STRING(new->name, name);
     new->gender = gender;
     MALLOC_STRING(new->race, race);
@@ -199,7 +200,7 @@ void locator_show(sint16 x, sint16 y)
 //    Plot(x, y, -77.02f, 39.91f, BITMAP_LOCATOR_PLAYER_THAT); // Washington DC, USA
 //    Plot(x, y, -160.0f, -21.3f, BITMAP_LOCATOR_PLAYER_THAT); // Rarotonga, Cook Islands
 
-    /* Plot all servers/players EXCEPT the currently selected one. */
+    /* Plot all servers EXCEPT the currently selected one. */
     for (node = start_server; node; node = node->next)
     {
         if (node == locator.server)
@@ -215,15 +216,30 @@ void locator_show(sint16 x, sint16 y)
     Plot(x, y, locator.server->geoloc.lx, locator.server->geoloc.ly,
          BITMAP_LOCATOR_SERVER_THIS);
 
-    /* Plot all the players on this server. */
     if (locator.player)
     {
-        locator_player_t *lp = locator.player;
+        locator_player_t *lp;
 
-        while (lp)
+        /* Plot all the players on non-selected servers. */
+        for (lp = locator.player; lp; lp = lp->next)
         {
+            if (lp->server == metaserver_sel)
+            {
+                continue;
+            }
+
+            Plot(x, y, lp->geoloc.lx, lp->geoloc.ly, BITMAP_LOCATOR_PLAYER_THAT);
+        }
+
+        /* Plot all the players on this server. */
+        for (lp = locator.player; lp; lp = lp->next)
+        {
+            if (lp->server != metaserver_sel)
+            {
+                continue;
+            }
+
             Plot(x, y, lp->geoloc.lx, lp->geoloc.ly, BITMAP_LOCATOR_PLAYER_THIS);
-            lp = lp->next;
         }
     }
 
