@@ -72,9 +72,14 @@
 #define DIR_SETTINGS  "settings"
 #define DIR_SOUNDS    "sfx"
 #define DIR_SRV_FILES "srv_files"
+#define DIR_UPDATES   "update"
 
 #define FILE_FACEPACK     "daimonin.p0"
+#define FILE_INTERFACE    "interface.gui"
+#define FILE_KEYBIND      "keys.dat"
+#define FILE_LOG          "client.log"
 #define FILE_MPART        "archdef.dat"
+#define FILE_OPTION       "options.dat"
 #define FILE_SKINDEF      DIR_SETTINGS"/skin.def"
 #define FILE_SRV_ANIMS    DIR_SRV_FILES"/client_anims"
 #define FILE_SRV_FACEINFO DIR_SRV_FILES"/client_bmap"
@@ -82,10 +87,7 @@
 #define FILE_SRV_SKILLS   DIR_SRV_FILES"/client_skills"
 #define FILE_SRV_SOUNDS   DIR_SRV_FILES"/client_sounds"
 #define FILE_SRV_SPELLS   DIR_SRV_FILES"/client_spells"
-#define FILE_OPTION       "options.dat"
-#define FILE_KEYBIND      "keys.dat"
-#define FILE_INTERFACE    "interface.gui"
-#define FILE_LOG          "client.log"
+#define FILE_VERSION      DIR_UPDATES"/version"
 
 #define CLIENT_ICON_NAME "icon.png"
 
