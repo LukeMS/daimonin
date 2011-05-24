@@ -802,8 +802,6 @@ uint8 game_status_chain(void)
     else if (GameStatus == GAME_STATUS_START)
     {
         options.no_ping = 1;
-        locator_clear_players();
-        locator_parse_ping_string(metaserver_sel);
         show_ping_string(metaserver_sel);
         interface_mode = GUI_NPC_MODE_NO;
         clear_group();
@@ -1246,6 +1244,7 @@ static void QueryMetaserver(void)
         return;
     }
 
+    locator_clear_players();
     interface_mode = GUI_NPC_MODE_NO;
     clear_group();
     map_udate_flag = 2;
