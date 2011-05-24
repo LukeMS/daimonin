@@ -96,8 +96,10 @@ void DoClient(void)
     while ( (cmd = get_next_input_command()) ) /* function has mutex included */
     {
         /* LOG(LOG_MSG,"Command #%d (LT:%d)(len:%d)\n",cmd->data[0], LastTick, cmd->len); */
-        if (cmd->data[0] < 0 || (cmd->data[0]&~0x80) > (uint8) NCOMMANDS)
+        if ((cmd->data[0]&~0x80) > (uint8) NCOMMANDS)
+        {
             LOG(LOG_ERROR, "Bad command from server (%d)\n", cmd->data[0]);
+        }
         else
         {
             int header_len = 3;
@@ -217,20 +219,20 @@ void SetupCmd(char *buf, int len)
             char   *cp1 = NULL,
                    *cp2 = NULL,
                     tmpbuf[TINY_BUF];
-            uint32  rel = 0,
+            sint16  rel = 0,
                     maj = 0,
                     min = 0;
 
             if ((cp1 = strchr(param, '.')))
             {
                 *cp1++ = '\0';
-                rel = (uint32)strtoul(param, NULL, 10);
+                rel = (sint16)strtol(param, NULL, 10);
 
                 if ((cp2 = strchr(cp1, '.')))
                 {
                     *cp2++ = '\0';
-                    maj = (uint32)strtoul(cp1, NULL, 10);
-                    min = (uint32)strtoul(cp2, NULL, 10);
+                    maj = (sint16)strtol(cp1, NULL, 10);
+                    min = (sint16)strtol(cp2, NULL, 10);
                 }
             }
 
@@ -246,9 +248,9 @@ void SetupCmd(char *buf, int len)
                 return;
             }
 
-            options.server_version_release = rel;
-            options.server_version_major = maj;
-            options.server_version_minor = min;
+            options.server_version_release = (uint32)rel;
+            options.server_version_major = (uint32)maj;
+            options.server_version_minor = (uint32)min;
 
             if (rel != DAI_VERSION_RELEASE ||
                 (rel == DAI_VERSION_RELEASE &&
