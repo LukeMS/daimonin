@@ -2840,7 +2840,7 @@ void reload_skin()
 void load_skindef()
 {
     PHYSFS_File *handle;
-    char         buf[MEDIUM_BUF];
+    char         buf[SMALL_BUF];
 
     /* first we fill with default values */
     skindef.newclosebutton = 1; // TODO: Remove.
@@ -2854,19 +2854,18 @@ void load_skindef()
     skindef.item_size = 32;
     skindef.icon_size = 8;
 
-    /* lets try to load the skin.def */
-    LOG(LOG_MSG, "Trying to load skin definition... ");
-    sprintf(buf, "%s/skin.def", DIR_SETTINGS);
+    /* Log what we're doing. */
+    LOG(LOG_MSG, "Loading '%s'... ", FILE_SKINDEF);
 
-    if (!(handle = PHYSFS_openRead(buf)))
+    /* Open the file for reading. */
+    if (!(handle = PHYSFS_openRead(FILE_SKINDEF)))
     {
-        LOG(LOG_ERROR, "FAILED: %s!\n", PHYSFS_getLastError());
+        LOG(LOG_ERROR, "FAILED (%s)!\n", PHYSFS_getLastError());
 
         return;
     }
 
-    PHYSFS_setBuffer(handle, HUGE_BUF);
-
+    /* Read line by line. */
     while (PHYSFS_readString(handle, buf, sizeof(buf)) >= 0)
     {
         char   *key,
@@ -2881,8 +2880,7 @@ void load_skindef()
 
         if (!(val = strchr(buf, ':')))
         {
-            LOG(LOG_ERROR, "Ignoring malformed entry in skin.def: '%s'\n",
-                buf);
+            LOG(LOG_ERROR, "Ignoring malformed entry: '%s'\n", buf);
 
             continue;
         }
@@ -2953,6 +2951,7 @@ void load_skindef()
         }
     }
 
+    /* Cleanup. */
     PHYSFS_close(handle);
-    LOG(LOG_MSG, "OK!\n");
+    LOG(LOG_SYSTEM, "OK!\n");
 }
