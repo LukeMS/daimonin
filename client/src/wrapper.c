@@ -102,7 +102,7 @@ void MSGLOG (char *msg)
         fflush(msglog);
 }
 
-uint8 SYSTEM_Start(void)
+void SYSTEM_Start(void)
 {
     char         buf[MEDIUM_BUF];
     SDL_RWops   *rw;
@@ -121,13 +121,28 @@ uint8 SYSTEM_Start(void)
     sprintf(buf, "Daimonin SDL Client v%d.%d.%d",
             DAI_VERSION_RELEASE, DAI_VERSION_MAJOR, DAI_VERSION_MINOR);
     SDL_WM_SetCaption(buf, buf);
-
-    return 1;
 }
 
-uint8 SYSTEM_End(void)
+void SYSTEM_End(void)
 {
-    return 1;
+    uint16 i;
+
+    save_interface_file();
+    kill_widgets();
+    save_options_dat();   /* save options at exit */
+    SOCKET_DeinitSocket();
+    PHYSFS_deinit();
+    PHYSFS_isInitialised = 0;
+
+    for (i = 0; i < FACE_MAX_NROF; i++)
+    {
+        face_free(i);
+    }
+
+    sound_freeall();
+    sound_deinit();
+    free_bitmaps();
+    locator_clear_players(NULL);
 }
 
 char * GetBitmapDirectory(void)
