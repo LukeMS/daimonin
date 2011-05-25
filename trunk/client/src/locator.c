@@ -109,28 +109,23 @@ void locator_parse_ping_string(_server *server)
             char *cp_start,
                  *cp_end;
 
-            for (cp_start = server->online; *cp_start; cp_start = cp_end)
+            for (cp_start = server->online; *cp_start; cp_start = cp_end + 1)
             {
-                char          buf[SMALL_BUF],
-                              name[TINY_BUF],
+                char          name[TINY_BUF],
                               race[TINY_BUF];
                 size_t        i = 0;
                 unsigned int  gender;
                 float         lx,
                               ly;
-
-                for (cp_end = cp_start; *cp_end != '\0' &&
-                                        *cp_end != '\n'; cp_end++)
+                
+                if ((cp_end = strchr(cp_start, '\n')))
                 {
-                    i++;
-                }
-
-                snprintf(buf, i, "%s", cp_start);
-
-                if (sscanf(buf, "%s %u %s %f %f",
-                    name, &gender, race, &lx, &ly) == 5)
-                {
-                    locator_add_player(server, name, (uint8)gender, race, lx, ly);
+                    if (sscanf(cp_start, "%s %u %s %f %f",
+                        name, &gender, race, &lx, &ly) == 5)
+                    {
+                        locator_add_player(server, name, (uint8)gender, race,
+                                           lx, ly);
+                    }
                 }
             }
         }
