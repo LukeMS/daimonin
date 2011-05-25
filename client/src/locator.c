@@ -23,13 +23,6 @@
 
 #include "include.h"
 
-typedef struct locator_hostip_info_t
-{
-    sint16 lx;
-    sint16 ly;
-}
-locator_hostip_info_t;
-
 locator_t locator;
 
 static size_t ParseHostIP(void *ptr, size_t size, size_t nmemb, void *data);
