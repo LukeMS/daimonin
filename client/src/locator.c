@@ -100,24 +100,62 @@ void locator_get_hostip_info(char *ip, geolocation_t *geoloc)
  * is complete, adds a new player to the locator. */
 void locator_parse_ping_string(_server *server)
 {
-    if (server &&
-        server->online)
+    if (server)
     {
-        char         *cp,
-                      name[TINY_BUF],
-                      race[TINY_BUF];
-        unsigned int  gender;
-        float         lx,
-                      ly;
+        locator_clear_players(server);
 
-        for (cp = strtok(server->online, "|"); cp; cp = strtok(NULL, "|"))
+        if (server->online)
         {
-            if (sscanf(cp, "%s %u %s %f %f",
-                name, &gender, race, &lx, &ly) == 5)
+            char *cp_start,
+                 *cp_end;
+
+            for (cp_start = server->online; *cp_start; cp_start = cp_end)
             {
-                locator_add_player(server, name, (uint8)gender, race, lx, ly);
+                char          buf[SMALL_BUF],
+                              name[TINY_BUF],
+                              race[TINY_BUF];
+                size_t        i = 0;
+                unsigned int  gender;
+                float         lx,
+                              ly;
+
+                for (cp_end = cp_start; *cp_end != '\0' &&
+                                        *cp_end != '\n'; cp_end++)
+                {
+                    i++;
+                }
+
+                snprintf(buf, i, "%s", cp_start);
+
+                if (sscanf(buf, "%s %u %s %f %f",
+                    name, &gender, race, &lx, &ly) == 5)
+                {
+                    locator_add_player(server, name, (uint8)gender, race, lx, ly);
+                }
             }
         }
+    }
+}
+
+/* Clears player details. If server is non-NULL, then only for that server. If
+ * it is NULL, then all player details are cleared. */
+void locator_clear_players(_server *server)
+{
+    locator_player_t *lp = locator.player;
+
+    while (lp)
+    {
+        locator_player_t *next = lp->next;
+
+        if (server == NULL ||
+            lp->server == server)
+        {
+            FREE(lp->name);
+            FREE(lp->race);
+            FREE(lp);
+        }
+
+        lp = next;
     }
 }
 
@@ -149,22 +187,6 @@ void locator_add_player(_server *server, const char *name, uint8 gender,
         }
 
         lp->next = new;
-    }
-}
-
-/* Clears all player details. */
-void locator_clear_players(void)
-{
-    locator_player_t *lp = locator.player;
-
-    while (lp)
-    {
-        locator_player_t *next = lp->next;
-
-        FREE(lp->name);
-        FREE(lp->race);
-        FREE(lp);
-        lp = next;
     }
 }
 
