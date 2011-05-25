@@ -33,6 +33,7 @@ void LOG(int loglevel, char *format, ...)
     static PHYSFS_File *handle = NULL;
     va_list             ap;
     char                buf[HUGE_BUF];
+    static uint8        system_end = 0;
 
     /* Always log fatal errors and system messages. */
     if (loglevel != LOG_FATAL &&
@@ -79,8 +80,10 @@ void LOG(int loglevel, char *format, ...)
     }
 
     /* Exit on fatal error. */
-    if (loglevel == LOG_FATAL)
+    if (!system_end &&
+        loglevel == LOG_FATAL)
     {
+        system_end = 1;
         SYSTEM_End();
         exit(EXIT_FAILURE);
     }
@@ -143,6 +146,12 @@ void SYSTEM_End(void)
     sound_deinit();
     free_bitmaps();
     locator_clear_players(NULL);
+
+    if (options.show_frame)
+    {
+        LOG(LOG_MSG, "FPS: Best (%u), Worst (%u)\n",
+            options.best_fps, options.worst_fps);
+    }
 }
 
 char * GetBitmapDirectory(void)
