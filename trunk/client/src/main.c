@@ -495,6 +495,7 @@ void init_game_data(void)
 //    txtwin[TW_MIX].size=50;
     options.anim_frame_time = 50;
     options.anim_check_time = 50;
+    options.worst_fps = 666;
 
     memset(media_file, 0, sizeof(_media_file) * MEDIA_MAX);
     media_count = 0;    /* buffered media files*/
@@ -1600,8 +1601,6 @@ int main(int argc, char *argv[])
     uint8         showtimer = 0;
     uint32          speeduptick = 0;
     uint32          new_anim_tick = 0;
-    uint16          BestFPS = 0,
-                    WorstFPS = 16000;
 
 #ifdef PROFILING
     Uint32   ts;
@@ -2006,19 +2005,19 @@ int main(int argc, char *argv[])
 
                 if (fps > 0)
                 {
-                    if (fps > BestFPS)
+                    if (fps > options.best_fps)
                     {
-                        BestFPS = fps;
+                        options.best_fps = fps;
                     }
 
-                    if (fps < WorstFPS)
+                    if (fps < options.worst_fps)
                     {
-                        WorstFPS = fps;
+                        options.worst_fps = fps;
                     }
                 }
 
-                sprintf(buf, "fps %d (%d) [%d/%d] %s%s%s%s%s%s%s%s%s%s (%d %d) %d %d",
-                        fps, fpt, BestFPS, WorstFPS,
+                sprintf(buf, "fps %u (%u) [%u/%u] %s%s%s%s%s%s%s%s%s%s (%d %d) %d %d",
+                        fps, fpt, options.best_fps, options.worst_fps,
                         ((ScreenSurface->flags & SDL_FULLSCREEN)) ? "F" : "",
                         ((ScreenSurface->flags & SDL_HWSURFACE)) ? "H" : "S",
                         ((ScreenSurface->flags & SDL_HWACCEL)) ? "A" : "",
@@ -2096,13 +2095,8 @@ int main(int argc, char *argv[])
         if (options.limit_speed)
             SDL_Delay(options.sleep);       /* force the thread to sleep */
     }
+
     /* we have leaved main loop and shut down the client */
-
-    if (options.show_frame)
-    {
-        LOG(LOG_MSG, "FPS: Best (%d), Worst (%d)\n", BestFPS, WorstFPS);
-    }
-
     LOG(LOG_MSG, "\n^^^^^^^^^ CLIENT ENDS ^^^^^^^^^\n");
     SYSTEM_End();
 
