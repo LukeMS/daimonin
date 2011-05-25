@@ -222,16 +222,16 @@ void locator_show(sint16 x, sint16 y)
     SDL_SetClipRect(ScreenSurface, &box);
     sprite_blt(Bitmaps[BITMAP_LOCATOR_MAP], x, y, &locator.box, NULL);
 
-//    Plot(x, y, 2.20f, 48.50f, BITMAP_LOCATOR_PLAYER_THAT); // Paris, France
-//    Plot(x, y, 13.25f, 52.30f, BITMAP_LOCATOR_PLAYER_THAT); // Berlin, Germany
-//    Plot(x, y, -21.57f, 64.10f, BITMAP_LOCATOR_PLAYER_THAT); // Reykjavik, Iceland
-//    Plot(x, y, 12.29f, 41.54f, BITMAP_LOCATOR_PLAYER_THAT); // Rome, Italy
-//    Plot(x, y, 37.35f, 55.45f, BITMAP_LOCATOR_PLAYER_THAT); // Moskva, Russian Federation
-//    Plot(x, y, -3.45f, 40.25f, BITMAP_LOCATOR_PLAYER_THAT); // Madrid, Spain
-//    Plot(x, y, 18.03f, 59.20f, BITMAP_LOCATOR_PLAYER_THAT); // Stockholm, Sweden
-//    Plot(x, y, -0.05f, 51.36f, BITMAP_LOCATOR_PLAYER_THAT); // London, UK
-//    Plot(x, y, -77.02f, 39.91f, BITMAP_LOCATOR_PLAYER_THAT); // Washington DC, USA
-//    Plot(x, y, -160.0f, -21.3f, BITMAP_LOCATOR_PLAYER_THAT); // Rarotonga, Cook Islands
+//    Plot(x, y, 22, 485, BITMAP_LOCATOR_PLAYER_THAT); // Paris, France
+//    Plot(x, y, 132, 523, BITMAP_LOCATOR_PLAYER_THAT); // Berlin, Germany
+//    Plot(x, y, -216, 641, BITMAP_LOCATOR_PLAYER_THAT); // Reykjavik, Iceland
+//    Plot(x, y, 123, 415, BITMAP_LOCATOR_PLAYER_THAT); // Rome, Italy
+//    Plot(x, y, 373, 554, BITMAP_LOCATOR_PLAYER_THAT); // Moskva, Russian Federation
+//    Plot(x, y, -34, 402, BITMAP_LOCATOR_PLAYER_THAT); // Madrid, Spain
+//    Plot(x, y, 180, 592, BITMAP_LOCATOR_PLAYER_THAT); // Stockholm, Sweden
+//    Plot(x, y, -0, 514, BITMAP_LOCATOR_PLAYER_THAT); // London, UK
+//    Plot(x, y, -770, 399, BITMAP_LOCATOR_PLAYER_THAT); // Washington DC, USA
+//    Plot(x, y, -1600, -213, BITMAP_LOCATOR_PLAYER_THAT); // Rarotonga, Cook Islands
 
     /* Plot all servers EXCEPT the currently selected one. */
     for (node = start_server; node; node = node->next)
@@ -338,19 +338,11 @@ static size_t ParseHostIP(void *ptr, size_t size, size_t nmemb, void *data)
 
     if ((cp = strstr((char *)ptr, "Longitude")))
     {
-//        char buf[TINY_BUF];
-
-//        sprintf(buf, "%.1f", atof(cp + 11));
-//        geoloc->lx = (sint16)(atof(buf) * 10);
         geoloc->lx = (sint16)(atof(cp + 11) * 10);
     }
 
     if ((cp = strstr((char *)ptr, "Latitude")))
     {
-//        char buf[TINY_BUF];
-
-//        sprintf(buf, "%.1f", atof(cp + 10));
-//        geoloc->ly = (sint16)(atof(buf) * 10);
         geoloc->ly = (sint16)(atof(cp + 10) * 10);
     }
 
@@ -361,7 +353,6 @@ static size_t ParseHostIP(void *ptr, size_t size, size_t nmemb, void *data)
 static sint16 GetX(sint16 lx)
 {
     sint16 x = (sint16)((180.0f + (float)(lx * 0.1)) *
-//                      (float)cos(0.0f) *
                         ((float)locator.map_wh / 360.0f));
 
     return x;
