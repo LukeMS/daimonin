@@ -113,7 +113,6 @@ void locator_parse_ping_string(_server *server)
             {
                 char          name[TINY_BUF],
                               race[TINY_BUF];
-                size_t        i = 0;
                 unsigned int  gender;
                 float         lx,
                               ly;
