@@ -26,13 +26,14 @@
 
 typedef struct locator_player_t
 {
-    struct locator_player_t *next;
+    struct locator_player_t *prev,
+                            *next;
 
-    _server                 *server;
-    char                    *name;
-    uint8                    gender;
-    char                    *race;
-    geolocation_t            geoloc;
+    _server       *server;
+    char          *name;
+    uint8          gender;
+    char          *race;
+    geolocation_t  geoloc;
 }
 locator_player_t;
 
