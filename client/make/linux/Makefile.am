@@ -7,7 +7,7 @@ daimonin_SOURCES =  \
 	../../src/book.c \
 	../../src/buddy.c \
 	../../src/chatfilter.c \
-	../../src/client.c \
+	../../src/client_cmd.c \
 	../../src/commands.c \
 	../../src/crc32.c \
 	../../src/dialog.c \
