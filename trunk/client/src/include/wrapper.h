@@ -115,8 +115,8 @@ extern char    *GetSfxDirectory(void);
 extern char    *GetMediaDirectory(void);
 extern char    *GetIconDirectory(void);
 
-extern uint8  SYSTEM_Start(void);
-extern uint8  SYSTEM_End(void);
+extern void     SYSTEM_Start(void);
+extern void     SYSTEM_End(void);
 extern int      attempt_fullscreen_toggle(SDL_Surface **surface, uint32 *flags);
 extern uint32   get_video_flags(void);
 extern int      parse_metaserver_data(char *info);

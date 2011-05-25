@@ -1635,25 +1635,25 @@ int main(int argc, char *argv[])
 
         LOG(LOG_FATAL, "Couldn't initialize SDL: %s\n", SDL_GetError());
     }
-    print_SDL_versions();
 
+    print_SDL_versions();
     atexit(SDL_Quit);
     signal(SIGSEGV, SIG_DFL); /* allows better debugging under linux by removing SDL parachute for this signal */
-
     load_options_dat(); /* now load options, allowing the user to override the presetings */
     Screensize = Screendefs[options.resolution];
     init_widgets_fromCurrent();
     SYSTEM_Start(); /* start the system AFTER start SDL */
-
     videoflags = get_video_flags();
     list_vid_modes(videoflags);
     options.used_video_bpp = 16;//2^(options.video_bpp+3);
+
     if (options.auto_bpp_flag)
     {
         const SDL_VideoInfo    *info    = NULL;
         info = SDL_GetVideoInfo();
         options.used_video_bpp = info->vfmt->BitsPerPixel;
     }
+
     if ((ScreenSurface = SDL_SetVideoMode(Screensize.x, Screensize.y, options.used_video_bpp, videoflags)) == NULL)
     {
         /* We have a problem, not supportet screensize */
@@ -1729,29 +1729,31 @@ int main(int argc, char *argv[])
         options.no_meta = 1; // don't do it again in GAME_STATUS_META
     }
 
+    /* Wait for keypress. */
     while (1)
     {
-        SDL_Event   event;
+        SDL_Event event;
+
         SDL_PollEvent(&event);
 
         if (event.type == SDL_QUIT)
         {
-            sound_freeall();
-            sound_deinit();
-            free_bitmaps();
-            locator_clear_players(NULL);
             SYSTEM_End();
-            return(0);
+
+            return 0;
         }
-        if (event.type == SDL_KEYUP || event.type == SDL_KEYDOWN || event.type == SDL_MOUSEBUTTONDOWN || options.cli_server > -1)
+        else if (event.type == SDL_KEYUP ||
+                 event.type == SDL_KEYDOWN ||
+                 event.type == SDL_MOUSEBUTTONDOWN ||
+                 options.cli_server > -1)
         {
             reset_keys();
+
             break;
         }
 
         SDL_Delay(25);      /* force the thread to sleep */
     }
-    ; /* wait for keypress */
 
     LastTick = tmpGameTick = anim_tick = new_anim_tick = SDL_GetTicks();
     GameTicksSec = 0;       /* ticks since this second frame in ms */
@@ -2095,13 +2097,6 @@ int main(int argc, char *argv[])
             SDL_Delay(options.sleep);       /* force the thread to sleep */
     }
     /* we have leaved main loop and shut down the client */
-    save_interface_file();
-    kill_widgets();
-    save_options_dat();   /* save options at exit */
-    SOCKET_DeinitSocket();
-    sound_freeall();
-    sound_deinit();
-    free_bitmaps();
 
     if (options.show_frame)
     {
@@ -2109,11 +2104,9 @@ int main(int argc, char *argv[])
     }
 
     LOG(LOG_MSG, "\n^^^^^^^^^ CLIENT ENDS ^^^^^^^^^\n");
-    PHYSFS_deinit();
-    PHYSFS_isInitialised = 0;
-    locator_clear_players(NULL);
     SYSTEM_End();
-    return(0);
+
+    return 0;
 }
 
 /* Does what it says, helpfully printing an error when you give it a wrong
