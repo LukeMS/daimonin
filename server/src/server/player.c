@@ -1575,7 +1575,7 @@ char *get_online_players_info(player *who, player *diff, uint8 force)
              * send a number for the race too. */
             if (buf == buf_ping)
             {
-                sprintf(strchr(buf, '\0'), "%s %u %s %f %f\n",
+                sprintf(strchr(buf, '\0'), "%s %u %s %d %d\n",
                         pl->quick_name,
                         (QUERY_FLAG(pl->ob, FLAG_IS_MALE))
                         ? ((QUERY_FLAG(pl->ob, FLAG_IS_FEMALE)) ? 2 : 0)
