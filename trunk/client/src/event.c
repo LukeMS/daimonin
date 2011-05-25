@@ -390,8 +390,8 @@ static int key_account_menu(SDL_KeyboardEvent *key)
             sound_play_effect(SOUNDTYPE_CLIENT, SOUND_PAGE, 0, 0, 100);
 
             /* put client in wait modus... 2 choices:
-            * a.) login fails - we will get a BINARY_CMD_ACCOUNT with error msg
-            * b.) server is adding <name> - we get a BINARY_CMD_PLAYER and then regular playing data
+            * a.) login fails - we will get a SERVER_CMD_ACCOUNT with error msg
+            * b.) server is adding <name> - we get a SERVER_CMD_PLAYER and then regular playing data
             * Option a.) will move us back to character selection with an error message in the status
             */
             if(account.count)

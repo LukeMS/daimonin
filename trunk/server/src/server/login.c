@@ -986,7 +986,7 @@ void player_addme_failed(NewSocket *ns, int error_msg)
     SOCKBUF_REQUEST_BUFFER(ns, SOCKET_SIZE_SMALL);
     sbptr = ACTIVE_SOCKBUF(ns);
     SockBuf_AddChar(sbptr, error_msg);
-    SOCKBUF_REQUEST_FINISH(ns, BINARY_CMD_ADDME_FAIL, SOCKBUF_DYNAMIC);
+    SOCKBUF_REQUEST_FINISH(ns, SERVER_CMD_ADDME_FAIL, SOCKBUF_DYNAMIC);
 }
 
 /* Message ns with details of the stream this server is built from. */

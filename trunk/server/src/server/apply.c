@@ -1615,7 +1615,7 @@ static void apply_book(object *op, object *tmp)
     SockBuf_AddInt(sptr, tmp->weight_limit);
     SockBuf_AddString(sptr, buf, len);
 
-    SOCKBUF_REQUEST_FINISH(&CONTR(op)->socket, BINARY_CMD_BOOK, SOCKBUF_DYNAMIC);
+    SOCKBUF_REQUEST_FINISH(&CONTR(op)->socket, SERVER_CMD_BOOK, SOCKBUF_DYNAMIC);
     /*new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, op, "%s", tmp->msg);*/
 
     /* identify the book - successful reading will do it always */

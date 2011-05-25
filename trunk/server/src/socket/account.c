@@ -160,7 +160,7 @@ account_status account_load(Account *ac, char *name, char *pass)
                         "3 You entered 3 times a wrong password.\nTry new login in 1 minute!\nConnection closed.";
                     LOG(llevInfo,"PWD GUESS BAN (1min): IP %s (tried name: %s).\n", ns->ip_host, name);
                     add_ban_entry(NULL, ns->ip_host, 8*60, 8*60);
-                    Write_String_To_Socket(ns, BINARY_CMD_DRAWINFO,password_warning , strlen(password_warning));
+                    Write_String_To_Socket(ns, SERVER_CMD_DRAWINFO,password_warning , strlen(password_warning));
                     player_addme_failed(ns, ADDME_MSG_DISCONNECT);
                     ns->login_count = ROUND_TAG+(uint32)(10.0f * pticks_second);
                     ns->status = Ns_Zombie;
@@ -251,7 +251,7 @@ void account_create_msg(NewSocket *ns, int msg)
     SOCKBUF_REQUEST_BUFFER(ns, SOCKET_SIZE_SMALL);
     sbptr = ACTIVE_SOCKBUF(ns);
     SockBuf_AddChar(sbptr, msg);
-    SOCKBUF_REQUEST_FINISH(ns, BINARY_CMD_ACCNAME_SUC, SOCKBUF_DYNAMIC);
+    SOCKBUF_REQUEST_FINISH(ns, SERVER_CMD_ACCNAME_SUC, SOCKBUF_DYNAMIC);
 }
 
 /* send our account data to the client or tell client why its not possible
@@ -283,7 +283,7 @@ void account_send_client(NewSocket *ns, int stats)
         }
     }
 
-    SOCKBUF_REQUEST_FINISH(ns, BINARY_CMD_ACCOUNT, SOCKBUF_DYNAMIC);
+    SOCKBUF_REQUEST_FINISH(ns, SERVER_CMD_ACCOUNT, SOCKBUF_DYNAMIC);
 }
 
 /* remove a player from an account by moving the player dir inside the account

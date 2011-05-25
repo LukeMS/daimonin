@@ -178,7 +178,7 @@ void play_sound_player_only(player *pl, int soundnum, int soundtype, int x, int 
     SockBuf_AddChar(ACTIVE_SOCKBUF(ns), (char) y);
     SockBuf_AddShort(ACTIVE_SOCKBUF(ns), (uint16) soundnum);
     SockBuf_AddChar(ACTIVE_SOCKBUF(ns), (char) soundtype);
-    SOCKBUF_REQUEST_FINISH(ns, BINARY_CMD_SOUND, SOCKBUF_DYNAMIC);
+    SOCKBUF_REQUEST_FINISH(ns, SERVER_CMD_SOUND, SOCKBUF_DYNAMIC);
 
 }
 

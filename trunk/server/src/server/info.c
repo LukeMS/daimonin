@@ -519,6 +519,6 @@ static void NewDrawInfo(int flags, player *pl, const char *const buf)
         SOCKBUF_REQUEST_BUFFER(ns, len + 3);
         SockBuf_AddShort(ACTIVE_SOCKBUF(ns), (flags & NDI_FLAG_MASK));
         SockBuf_AddString(ACTIVE_SOCKBUF(ns), buf, len);
-        SOCKBUF_REQUEST_FINISH(ns, BINARY_CMD_DRAWINFO2, SOCKBUF_DYNAMIC);
+        SOCKBUF_REQUEST_FINISH(ns, SERVER_CMD_DRAWINFO2, SOCKBUF_DYNAMIC);
     }
 }

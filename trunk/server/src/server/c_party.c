@@ -206,7 +206,7 @@ int command_party_invite(object *pl, char *params)
     target->group_leader_count = pl->count;
 
     /* send the /invite to our player */
-    Write_String_To_Socket(&target->socket, BINARY_CMD_INVITE, pl->name, strlen(pl->name));
+    Write_String_To_Socket(&target->socket, SERVER_CMD_INVITE, pl->name, strlen(pl->name));
     new_draw_info(NDI_YELLOW, 0,pl, "You invited %s to join the group.", query_name(target->ob));
 
     return 0;
@@ -550,7 +550,7 @@ void party_client_group_status(object *member)
     }
 
     /* broadcast command to all members */
-    sockbuf = SOCKBUF_COMPOSE( BINARY_CMD_GROUP, NULL, buf, SOCKBUF_DYNAMIC, 0);
+    sockbuf = SOCKBUF_COMPOSE( SERVER_CMD_GROUP, NULL, buf, SOCKBUF_DYNAMIC, 0);
     for(tmp=CONTR(member)->group_leader;tmp;tmp=CONTR(tmp)->group_next)
     {
         /* Alderan, 2009-04-17:
@@ -565,7 +565,7 @@ void party_client_group_status(object *member)
         {
             SOCKBUF_REQUEST_BUFFER(&CONTR(member)->socket, strlen(buf)+1);
             SockBuf_AddString(ACTIVE_SOCKBUF(&CONTR(member)->socket), buf, strlen(buf)+1);
-            SOCKBUF_REQUEST_FINISH(&CONTR(member)->socket, BINARY_CMD_GROUP, SOCKBUF_DYNAMIC);
+            SOCKBUF_REQUEST_FINISH(&CONTR(member)->socket, SERVER_CMD_GROUP, SOCKBUF_DYNAMIC);
         }
         else
             SOCKBUF_ADD_TO_SOCKET(&CONTR(tmp)->socket, sockbuf); /* broadcast the sockbuf */
@@ -577,7 +577,7 @@ void party_client_group_status(object *member)
 /* tell a member that he has no group! */
 void party_client_group_kill(object *member)
 {
-    Write_Command_To_Socket(&CONTR(member)->socket, BINARY_CMD_GROUP);
+    Write_Command_To_Socket(&CONTR(member)->socket, SERVER_CMD_GROUP);
 }
 
 /* TODO: optimize update handling
@@ -643,7 +643,7 @@ void party_client_group_update(object *member, int flag)
     }
 
     /* broadcast command to all members */
-    sockbuf = SOCKBUF_COMPOSE( BINARY_CMD_GROUP_UPDATE, NULL, buf, SOCKBUF_DYNAMIC, 0);
+    sockbuf = SOCKBUF_COMPOSE( SERVER_CMD_GROUP_UPDATE, NULL, buf, SOCKBUF_DYNAMIC, 0);
     for(tmp=plm->group_leader;tmp;tmp=CONTR(tmp)->group_next)
     {
         /* Alderan, 2009-04-17:
@@ -658,7 +658,7 @@ void party_client_group_update(object *member, int flag)
         {
             SOCKBUF_REQUEST_BUFFER(&CONTR(member)->socket, strlen(buf)+1);
             SockBuf_AddString(ACTIVE_SOCKBUF(&CONTR(member)->socket), buf, strlen(buf)+1);
-            SOCKBUF_REQUEST_FINISH(&CONTR(member)->socket, BINARY_CMD_GROUP_UPDATE, SOCKBUF_DYNAMIC);
+            SOCKBUF_REQUEST_FINISH(&CONTR(member)->socket, SERVER_CMD_GROUP_UPDATE, SOCKBUF_DYNAMIC);
         }
         else
             SOCKBUF_ADD_TO_SOCKET(&CONTR(tmp)->socket, sockbuf); /* broadcast the sockbuf */

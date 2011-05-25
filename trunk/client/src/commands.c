@@ -34,7 +34,7 @@ static int  scrolldx = 0, scrolldy = 0;
 
 /* Command function pointer list and main incoming command dispatcher
  * NOTE: the enum server_client_cmd list with
- * the BINARY COMMAND TAGS for commands[] are in protocol.h
+ * the SERVER_CMD_* are defined in protocol.h
  * which is a shared header between server and client.
  */
 

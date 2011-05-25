@@ -445,7 +445,7 @@ void cs_cmd_ping(char *buf, int len, NewSocket *ns)
     len_reply = sprintf(buf_reply, "%s", (tick_reply == tick_ping) ? "" : cp);
     SOCKBUF_REQUEST_BUFFER(ns, len_reply + 1);
     SockBuf_AddString(ACTIVE_SOCKBUF(ns), buf_reply, len_reply);
-    SOCKBUF_REQUEST_FINISH(ns, BINARY_CMD_PING, SOCKBUF_DYNAMIC);
+    SOCKBUF_REQUEST_FINISH(ns, SERVER_CMD_PING, SOCKBUF_DYNAMIC);
 }
 
 /* This command handles slash game commands like /say, /tell or /dm
@@ -843,7 +843,7 @@ void cs_cmd_setup(char *buf, int len, NewSocket *ns)
     } /* for processing all the setup commands */
 
     LOG(llevInfo, "SEND SETUP: %s\n",cmdback);
-    SOCKBUF_REQUEST_FINISH(ns, BINARY_CMD_SETUP, strlen(cmdback));
+    SOCKBUF_REQUEST_FINISH(ns, SERVER_CMD_SETUP, strlen(cmdback));
 
     /* lets check the client version is ok. If not, we send back the setup command
     * but then we go in zombie mode
@@ -1154,7 +1154,7 @@ void cs_cmd_mark(char *data, int len, NewSocket *ns)
     /*LOG(llevNoLog,"MARKITEM2 (%d) (%d)\n", tag, op->count);*/
     SOCKBUF_REQUEST_BUFFER(&pl->socket, SOCKET_SIZE_SMALL);
     SockBuf_AddInt(ACTIVE_SOCKBUF(&pl->socket),  pl->mark_count);
-    SOCKBUF_REQUEST_FINISH(&pl->socket, BINARY_CMD_MARK, SOCKBUF_DYNAMIC);
+    SOCKBUF_REQUEST_FINISH(&pl->socket, SERVER_CMD_MARK, SOCKBUF_DYNAMIC);
 }
 
 void cs_cmd_talk(char *data, int len, NewSocket *ns)
@@ -1434,7 +1434,7 @@ void cs_cmd_addme(char *buf, int len, NewSocket *ns)
                 ptmp->ob->name == hash_name)
             {
                 LOG(llevInfo, "Double login! Kicking older instance!");
-                Write_String_To_Socket(ns, BINARY_CMD_DRAWINFO,
+                Write_String_To_Socket(ns, SERVER_CMD_DRAWINFO,
                                        double_login_warning,
                                        strlen(double_login_warning));
                 ptmp->state &= ~ST_PLAYING;

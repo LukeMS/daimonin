@@ -296,7 +296,7 @@ int esrv_send_face(NewSocket *ns, short face_num, int nocache)
 
     if (!nocache)
     {
-        cmdmode = BINARY_CMD_FACE1;
+        cmdmode = SERVER_CMD_FACE1;
 
         SOCKBUF_REQUEST_BUFFER(ns, SOCKET_SIZE_MEDIUM);
 
@@ -312,7 +312,7 @@ int esrv_send_face(NewSocket *ns, short face_num, int nocache)
     }
     else
     {
-        cmdmode = BINARY_CMD_IMAGE;
+        cmdmode = SERVER_CMD_IMAGE;
 
         SOCKBUF_REQUEST_BUFFER(ns, SOCKET_SIZE_MEDIUM);
 
