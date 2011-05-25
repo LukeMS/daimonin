@@ -762,6 +762,7 @@ uint8 game_status_chain(void)
                 if (!ticks)
                 {
                     FREE(node_ping->online);
+                    locator_clear_players(node_ping);
 
                     if (!SOCKET_OpenClientSocket(&csocket, node_ping->nameip,
                                                  node_ping->port))
@@ -1244,7 +1245,6 @@ static void QueryMetaserver(void)
         return;
     }
 
-    locator_clear_players();
     interface_mode = GUI_NPC_MODE_NO;
     clear_group();
     map_udate_flag = 2;
@@ -1759,6 +1759,7 @@ int main(int argc, char *argv[])
             sound_freeall();
             sound_deinit();
             free_bitmaps();
+            locator_clear_players(NULL);
             SYSTEM_End();
             return(0);
         }
@@ -2130,6 +2131,7 @@ int main(int argc, char *argv[])
     LOG(LOG_MSG, "\n^^^^^^^^^ CLIENT ENDS ^^^^^^^^^\n");
     PHYSFS_deinit();
     PHYSFS_isInitialised = 0;
+    locator_clear_players(NULL);
     SYSTEM_End();
     return(0);
 }
