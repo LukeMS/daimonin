@@ -140,14 +140,30 @@ void locator_clear_players(_server *server)
 
     while (lp)
     {
-        locator_player_t *next = lp->next;
+        locator_player_t *prev = lp->prev,
+                         *next = lp->next;
 
-        if (server == NULL ||
+        if (!server ||
             lp->server == server)
         {
+            if (lp == locator.player)
+            {
+                locator.player = NULL;
+            }
+
             FREE(lp->name);
             FREE(lp->race);
             FREE(lp);
+
+            if (prev)
+            {
+                prev->next = next;
+            }
+
+            if (next)
+            {
+                next->prev = prev;
+            }
         }
 
         lp = next;
@@ -181,6 +197,7 @@ void locator_add_player(_server *server, const char *name, uint8 gender,
             lp = lp->next;
         }
 
+        new->prev = lp;
         lp->next = new;
     }
 }
