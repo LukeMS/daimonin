@@ -178,6 +178,25 @@ void face_get(sint32 num)
     }
 }
 
+/* Free face_list[num]. */
+void face_free(uint16 num)
+{
+    if (num >= FACE_MAX_NROF ||
+        !(face_list[num].flags & FACE_FLAG_LOADED))
+    {
+        return;
+    }
+
+    if (face_list[num].sprite)
+    {
+        sprite_free_sprite(face_list[num].sprite);
+        face_list[num].sprite = NULL;
+    }
+
+    FREE(face_list[num].name);
+    face_list[num].flags = 0;
+}
+
 static _sprite_status LoadFromMemory(uint16 num, uint8 *data, uint32 len)
 {
     SDL_RWops *rw;

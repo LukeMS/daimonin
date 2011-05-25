@@ -79,5 +79,6 @@ extern void   face_saveinfo(uint16 num, uint32 crc, const char *name);
 extern void   face_save(uint16 num, uint8 *data, uint32 len);
 extern sint32 face_find(const char *name);
 extern void   face_get(sint32 num);
+extern void   face_free(uint16 num);
 
 #endif /* ifndef __FACE_H */

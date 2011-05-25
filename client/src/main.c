@@ -709,7 +709,7 @@ uint8 game_status_chain(void)
 
     if (GameStatus == GAME_STATUS_INIT)
     {
-        uint32 i;
+        uint16 i;
 
         map_transfer_flag = 0;
         cpl.mark_count = -1;
@@ -717,10 +717,9 @@ uint8 game_status_chain(void)
         LoginInputStep = LOGIN_STEP_NOTHING;
         interface_mode = GUI_NPC_MODE_NO;
 
-        for (i = 0; i < face_nrof; i++)
+        for (i = 0; i < FACE_MAX_NROF; i++)
         {
-            FREE(face_list[i].name);
-            memset(&face_list[i], 0, sizeof(face_t));
+            face_free(i);
         }
 
         face_nrof = 0;
@@ -811,7 +810,6 @@ uint8 game_status_chain(void)
         map_redraw_flag=1;
         clear_player();
         reset_keys();
-        free_faces();
         sprite_clear_backbuffer();
         SOCKET_CloseClientSocket(&csocket);
         GameStatus = GAME_STATUS_WAITLOOP;
@@ -1346,24 +1344,6 @@ void free_bitmaps(void)
     for (i = 0; i < BITMAP_MAX; i++)
         sprite_free_sprite(Bitmaps[i]);
 }
-
-void free_faces(void)
-{
-    int i;
-
-    for (i = 0; i < FACE_MAX_NROF; i++)
-    {
-        if (face_list[i].sprite)
-        {
-            sprite_free_sprite(face_list[i].sprite);
-            face_list[i].sprite = NULL;
-        }
-
-        FREE(face_list[i].name);
-        face_list[i].flags = 0;
-    }
-}
-
 
 void clear_metaserver_data(void)
 {
