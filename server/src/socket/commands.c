@@ -548,6 +548,11 @@ void cs_cmd_setup(char *buf, int len, NewSocket *ns)
     }
     ns->setup = 1; /* all ok, mark setup as already send */
 
+    /* Default geolocation. If the client sends a geo tag (below) these will be
+     * reset to 'true' values. */
+    ns->lx = 0.0;
+    ns->ly = 0.0;
+
     /* run through the cmds of setup
     * syntax is setup <cmdname1> <parameter> <cmdname2> <parameter> ...
     *
