@@ -324,7 +324,7 @@ void esrv_draw_look(object *pl)
 
     if (got_one || (!got_one && !ns->below_clear))
     {
-        SOCKBUF_REQUEST_FINISH(ns, BINARY_CMD_ITEMY, SOCKBUF_DYNAMIC);
+        SOCKBUF_REQUEST_FINISH(ns, SERVER_CMD_ITEMY, SOCKBUF_DYNAMIC);
         ns->below_clear=0;
     }
     else
@@ -464,7 +464,7 @@ void esrv_close_container(object *op)
     SOCKBUF_REQUEST_BUFFER(ns, SOCKET_SIZE_SMALL);
     SockBuf_AddInt(ACTIVE_SOCKBUF(ns), -1); /* container mode flag */
     SockBuf_AddInt(ACTIVE_SOCKBUF(ns), -1);
-    SOCKBUF_REQUEST_FINISH(ns, BINARY_CMD_ITEMX, SOCKBUF_DYNAMIC);
+    SOCKBUF_REQUEST_FINISH(ns, SERVER_CMD_ITEMX, SOCKBUF_DYNAMIC);
 }
 
 
@@ -704,7 +704,7 @@ void esrv_send_inventory(object *pl, object *op)
     }
 
     if (got_one || pl != op) /* container can be empty... */
-        SOCKBUF_REQUEST_FINISH(ns, BINARY_CMD_ITEMY, SOCKBUF_DYNAMIC);
+        SOCKBUF_REQUEST_FINISH(ns, SERVER_CMD_ITEMY, SOCKBUF_DYNAMIC);
     else
         SOCKBUF_REQUEST_RESET(ns);
 }
@@ -816,7 +816,7 @@ static void esrv_update_item_send(int flags, object *pl, object *op)
         SockBuf_AddChar(sbptr, op->item_condition);
     }
 
-    SOCKBUF_REQUEST_FINISH(ns, BINARY_CMD_UPITEM, SOCKBUF_DYNAMIC);
+    SOCKBUF_REQUEST_FINISH(ns, SERVER_CMD_UPITEM, SOCKBUF_DYNAMIC);
 }
 
 /* Updates object *op for player *pl.  flags is a list of values to update
@@ -958,7 +958,7 @@ static void esrv_send_item_send(object *pl, object *op)
     SockBuf_AddChar(sbptr, anim_speed);
     SockBuf_AddInt(sbptr, op->nrof);
 
-    SOCKBUF_REQUEST_FINISH(ns, BINARY_CMD_ITEMX, SOCKBUF_DYNAMIC);
+    SOCKBUF_REQUEST_FINISH(ns, SERVER_CMD_ITEMX, SOCKBUF_DYNAMIC);
 }
 
 void esrv_send_item(object *pl, object *op)
@@ -991,7 +991,7 @@ static inline void esrv_del_item_send(player *pl, int tag)
 {
     SOCKBUF_REQUEST_BUFFER(&pl->socket, SOCKET_SIZE_SMALL);
     SockBuf_AddInt(ACTIVE_SOCKBUF(&pl->socket), tag);
-    SOCKBUF_REQUEST_FINISH(&pl->socket, BINARY_CMD_DELITEM, SOCKBUF_DYNAMIC);
+    SOCKBUF_REQUEST_FINISH(&pl->socket, SERVER_CMD_DELITEM, SOCKBUF_DYNAMIC);
 }
 
 /* Tells the client to delete an item.

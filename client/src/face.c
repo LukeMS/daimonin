@@ -67,7 +67,7 @@ static _sprite_status LoadFromFile(uint16 num, const char *dname);
 static _sprite_status LoadFromPack(uint16 num);
 static void           SetFlags(uint16 num);
 
-/* We have received BINARY_CMD_FACE1 (but see commands.c:Face1Cmd(). */
+/* We have received SERVER_CMD_FACE1 (but see commands.c:Face1Cmd(). */
 void face_saveinfo(uint16 num, uint32 crc, const char *name)
 {
     FREE(face_list[num].name);
@@ -75,7 +75,7 @@ void face_saveinfo(uint16 num, uint32 crc, const char *name)
     face_list[num].crc = crc;
 }
 
-/* We have received BINARY_CMD_IMAGE (see commands.c:ImageCmd()). */
+/* We have received SERVER_CMD_IMAGE (see commands.c:ImageCmd()). */
 void face_save(uint16 num, uint8 *data, uint32 len)
 {
     char         buf[SMALL_BUF];

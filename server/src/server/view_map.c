@@ -897,7 +897,7 @@ void draw_client_map2(object *pl)
 #ifdef DEBUG_CORE_MAP
         LOG(llevDebug, "MAP2: (%d) %d %d send tiles: %d \n", SOCKBUF_REQUEST_BUFSIZE(sbptr), sbptr->len, sbptr->request_len, tile_count);
 #endif
-        SOCKBUF_REQUEST_FINISH(ns, BINARY_CMD_MAP2, SOCKBUF_DYNAMIC);
+        SOCKBUF_REQUEST_FINISH(ns, SERVER_CMD_MAP2, SOCKBUF_DYNAMIC);
     }
     else
         SOCKBUF_REQUEST_RESET(ns);

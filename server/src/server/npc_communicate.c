@@ -289,5 +289,5 @@ void gui_npc(object *who, uint8 mode, const char *text)
         }
     }
 
-    SOCKBUF_REQUEST_FINISH(ns, BINARY_CMD_INTERFACE, SOCKBUF_DYNAMIC);
+    SOCKBUF_REQUEST_FINISH(ns, SERVER_CMD_INTERFACE, SOCKBUF_DYNAMIC);
 }

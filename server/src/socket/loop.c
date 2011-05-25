@@ -684,11 +684,11 @@ void doeric_server(int update, struct timeval *timeout)
                 {
                     pl->socket.login_count = ROUND_TAG + pticks_player_idle2;
                     pl->socket.idle_flag = 1;
-                    Write_String_To_Socket(&pl->socket, BINARY_CMD_DRAWINFO, _idle_warn_text, strlen(_idle_warn_text));
+                    Write_String_To_Socket(&pl->socket, SERVER_CMD_DRAWINFO, _idle_warn_text, strlen(_idle_warn_text));
                 }
                 else if (pl->socket.login_count < ROUND_TAG && !QUERY_FLAG(pl->ob, FLAG_WIZ))
                 {
-                    Write_String_To_Socket(&pl->socket, BINARY_CMD_DRAWINFO, _idle_warn_text2, strlen(_idle_warn_text2));
+                    Write_String_To_Socket(&pl->socket, SERVER_CMD_DRAWINFO, _idle_warn_text2, strlen(_idle_warn_text2));
                     pl->socket.login_count = ROUND_TAG+(uint32)(2.0f * pticks_second);
                     pl->socket.status = Ns_Zombie; /* we hold the socket open for a *bit* */
                     pl->socket.idle_flag = 1;

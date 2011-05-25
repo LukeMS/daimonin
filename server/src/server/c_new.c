@@ -176,7 +176,7 @@ void send_target_command(player *pl)
         strcat(tmp + 3, buf);
     }
     pl->target_level = pl->target_object->level;
-    Write_String_To_Socket(&pl->socket, BINARY_CMD_TARGET, tmp, strlen(tmp+3)+3);
+    Write_String_To_Socket(&pl->socket, SERVER_CMD_TARGET, tmp, strlen(tmp+3)+3);
 }
 
 int command_combat(object *op, char *params)
@@ -553,7 +553,7 @@ void send_spelllist_cmd(object *op, char *spellname, int mode)
             strcat(tmp, spells[spnum].name);
         }
     }
-    Write_String_To_Socket(&CONTR(op)->socket, BINARY_CMD_SPELL_LIST, tmp, strlen(tmp));
+    Write_String_To_Socket(&CONTR(op)->socket, SERVER_CMD_SPELL_LIST, tmp, strlen(tmp));
 }
 
 void send_skilllist_cmd(object *op, object *skillp, int mode)
@@ -589,7 +589,7 @@ void send_skilllist_cmd(object *op, object *skillp, int mode)
             }
         }
     }
-    Write_String_To_Socket(&CONTR(op)->socket, BINARY_CMD_SKILL_LIST, tmp, strlen(tmp));
+    Write_String_To_Socket(&CONTR(op)->socket, SERVER_CMD_SKILL_LIST, tmp, strlen(tmp));
 }
 
 /* all this functions are not really bulletproof. filling tmp[] can be easily produce
@@ -598,7 +598,7 @@ void send_skilllist_cmd(object *op, object *skillp, int mode)
 
 void send_ready_skill(object *op, char *skillname)
 {
-    Write_String_To_Socket(&CONTR(op)->socket, BINARY_CMD_SKILLRDY, skillname, strlen(skillname));
+    Write_String_To_Socket(&CONTR(op)->socket, SERVER_CMD_SKILLRDY, skillname, strlen(skillname));
 }
 
 /* send to the client the golem face & name. Note, that this is only cosmetical
@@ -612,7 +612,7 @@ void send_golem_control(object *golem, int mode)
         sprintf(tmp, "%d %d %s", mode, 0, golem->name);
     else
         sprintf(tmp, "%d %d %s", mode, golem->face->number, golem->name);
-    Write_String_To_Socket(&CONTR(golem->owner)->socket, BINARY_CMD_GOLEMCMD, tmp, strlen(tmp));
+    Write_String_To_Socket(&CONTR(golem->owner)->socket, SERVER_CMD_GOLEMCMD, tmp, strlen(tmp));
 }
 
 /* generate_ext_title() - get name and grap race/gender/profession from force objects */
