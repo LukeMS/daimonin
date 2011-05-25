@@ -342,15 +342,17 @@ static const char *GetOption(const char *arg, const char *sopt,
 static void InitPhysFS(const char *argv0);
 static void ShowIntro(char *text, int progress);
 static void LoadArchdef(void);
-static void DeletePlayerLists(void);
 static void QueryMetaserver(void);
-static void DeletePlayerLists(void)
-{
-    int i;
-    _server_char *sc,
-                 *next = first_server_char;
 
-    while ((sc = next))
+/* TODO: This is just for conveniience. Eventually this will be split to the
+ * appropriate modules. */
+void clear_lists(void)
+{
+    _server_char *sc,
+                 *next;
+    uint8         i;
+
+    for (sc = first_server_char; sc; sc = next)
     {
         next = sc->next;
         FREE(sc->name);
@@ -502,7 +504,6 @@ void init_game_data(void)
     media_show = MEDIA_SHOW_NO; /* show this media file*/
 
     textwin_clearhistory();
-    DeletePlayerLists();
     server_level.exp[1]=2500; /* dummy value for startup */
 }
 
@@ -727,7 +728,7 @@ uint8 game_status_chain(void)
         anim_init();
         clear_group();
         map_udate_flag = 2;
-        DeletePlayerLists();
+        clear_lists();
 #ifdef INSTALL_SOUND
         if (!music.flag || strcmp(music.name, "orchestral.ogg"))
             sound_play_music("orchestral.ogg", options.music_volume, 0, -1, 0, MUSIC_MODE_DIRECT);
