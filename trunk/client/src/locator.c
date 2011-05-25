@@ -25,17 +25,17 @@
 
 typedef struct locator_hostip_info_t
 {
-    float lx;
-    float ly;
+    sint16 lx;
+    sint16 ly;
 }
 locator_hostip_info_t;
 
 locator_t locator;
 
 static size_t ParseHostIP(void *ptr, size_t size, size_t nmemb, void *data);
-static sint16 GetX(float lx);
-static sint16 GetY(float ly);
-static void   Plot(sint16 x, sint16 y, float lx, float ly, int marker);
+static sint16 GetX(sint16 lx);
+static sint16 GetY(sint16 ly);
+static void   Plot(sint16 x, sint16 y, sint16 lx, sint16 ly, int marker);
 
 /* Initialises the locator structure. The width <w> and height <h> specify the
  * size of the locator window. It is actually positioned and drawn with
@@ -114,16 +114,16 @@ void locator_parse_ping_string(_server *server)
                 char          name[TINY_BUF],
                               race[TINY_BUF];
                 unsigned int  gender;
-                float         lx,
+                int           lx,
                               ly;
                 
                 if ((cp_end = strchr(cp_start, '\n')))
                 {
-                    if (sscanf(cp_start, "%s %u %s %f %f",
+                    if (sscanf(cp_start, "%s %u %s %d %d",
                         name, &gender, race, &lx, &ly) == 5)
                     {
                         locator_add_player(server, name, (uint8)gender, race,
-                                           lx, ly);
+                                           (sint16)lx, (sint16)ly);
                     }
                 }
             }
@@ -171,7 +171,7 @@ void locator_clear_players(_server *server)
 
 /* Adds details of a new player. */
 void locator_add_player(_server *server, const char *name, uint8 gender,
-                        const char *race, float lx, float ly)
+                        const char *race, sint16 lx, sint16 ly)
 {
     locator_player_t *new;
 
@@ -202,7 +202,7 @@ void locator_add_player(_server *server, const char *name, uint8 gender,
 }
 
 /* Centers the locator window on <lx>, <ly>. */
-void locator_focus(float lx, float ly)
+void locator_focus(sint16 lx, sint16 ly)
 {
     locator.box.x = (sint16)(GetX(lx) - locator.box.w / 2);
     locator.box.y = (sint16)(GetY(ly) - locator.box.h / 2);
@@ -333,26 +333,34 @@ uint8 locator_scroll(SDLKey key, SDLMod mod)
 /* Actually parses the data provided by hostip.info. */
 static size_t ParseHostIP(void *ptr, size_t size, size_t nmemb, void *data)
 {
-    char             *cp;
+    char          *cp;
     geolocation_t *geoloc = (geolocation_t *)data;
 
     if ((cp = strstr((char *)ptr, "Longitude")))
     {
-        geoloc->lx = atof(cp + 11);
+//        char buf[TINY_BUF];
+
+//        sprintf(buf, "%.1f", atof(cp + 11));
+//        geoloc->lx = (sint16)(atof(buf) * 10);
+        geoloc->lx = (sint16)(atof(cp + 11) * 10);
     }
 
     if ((cp = strstr((char *)ptr, "Latitude")))
     {
-        geoloc->ly = atof(cp + 10);
+//        char buf[TINY_BUF];
+
+//        sprintf(buf, "%.1f", atof(cp + 10));
+//        geoloc->ly = (sint16)(atof(buf) * 10);
+        geoloc->ly = (sint16)(atof(cp + 10) * 10);
     }
 
     return size * nmemb;
 }
 
 /* Returns a longitude <lx> as an pixel coordinate <x>. */
-static sint16 GetX(float lx)
+static sint16 GetX(sint16 lx)
 {
-    sint16 x = (sint16)((180.0f + lx) *
+    sint16 x = (sint16)((180.0f + (float)(lx * 0.1)) *
 //                      (float)cos(0.0f) *
                         ((float)locator.map_wh / 360.0f));
 
@@ -360,28 +368,28 @@ static sint16 GetX(float lx)
 }
 
 /* Returns a latitude <ly> as an pixel coordinate <y>. */
-static sint16 GetY(float ly)
+static sint16 GetY(sint16 ly)
 {
     sint16 y = (locator.map_ht -
-                (sint16)((90.0f + ly) *
+                (sint16)((90.0f + (float)(ly * 0.1)) *
                          ((float)locator.map_ht / 180.0f)));
 
     return y;
 }
 
 /* Plots the image <marker> on the locator map. */
-static void Plot(sint16 x, sint16 y, float lx, float ly, int marker)
+static void Plot(sint16 x, sint16 y, sint16 lx, sint16 ly, int marker)
 {
     sint16 xx,
            yy;
 
-    if (lx < -180.0f ||
-        lx > 180.0f ||
-        ly < -90.0f ||
-        ly > 90.0f)
+    if (lx < -1800 ||
+        lx > 1800 ||
+        ly < -900 ||
+        ly > 900)
     {
         LOG(LOG_ERROR, "Longitude/latitude out of range: longitude is %f, must be -180:180 / Latitude is %f, must be -90:90!\n",
-            lx, ly);
+            (float)(lx * 0.1), (float)(ly * 0.1));
 
         return;
     }

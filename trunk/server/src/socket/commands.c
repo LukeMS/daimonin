@@ -550,8 +550,8 @@ void cs_cmd_setup(char *buf, int len, NewSocket *ns)
 
     /* Default geolocation. If the client sends a geo tag (below) these will be
      * reset to 'true' values. */
-    ns->lx = 0.0;
-    ns->ly = 0.0;
+    ns->lx = 0;
+    ns->ly = 0;
 
     /* run through the cmds of setup
     * syntax is setup <cmdname1> <parameter> <cmdname2> <parameter> ...
@@ -699,8 +699,8 @@ void cs_cmd_setup(char *buf, int len, NewSocket *ns)
         {
             char   *cp = param;
 
-            ns->lx = (float)strtod(cp, &cp);
-            ns->ly = (float)strtod(cp + 1, &cp);
+            ns->lx = (sint16)strtol(cp, &cp, 10);
+            ns->ly = (sint16)strtol(cp + 1, &cp, 10);
             strcat(cmdback, "OK");
         }
         else if (!strcmp(cmd, "skf"))

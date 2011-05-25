@@ -70,8 +70,8 @@ _keymap;
 
 typedef struct geolocation_t
 {
-    float lx;
-    float ly;
+    sint16 lx;
+    sint16 ly;
 }
 geolocation_t;
 
