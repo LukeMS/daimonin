@@ -81,7 +81,7 @@
 		<Unit filename="..\..\..\src\chatfilter.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\..\..\src\client.c">
+		<Unit filename="..\..\..\src\client_cmd.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\src\commands.c">
@@ -116,7 +116,7 @@
 		<Unit filename="..\..\..\src\include\buddy.h" />
 		<Unit filename="..\..\..\src\include\cflinux.h" />
 		<Unit filename="..\..\..\src\include\chatfilter.h" />
-		<Unit filename="..\..\..\src\include\client.h">
+		<Unit filename="..\..\..\src\include\client_cmd.h">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\src\include\commands.h">

@@ -75,7 +75,7 @@ typedef signed char     sint8;
 #include "socket.h"
 #include "face.h"
 #include "font.h"
-#include "client.h"
+#include "client_cmd.h"
 #include "item.h"
 #include "chatfilter.h"
 #include "ignore.h"

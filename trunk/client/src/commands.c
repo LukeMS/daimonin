@@ -36,7 +36,6 @@ static int  scrolldx = 0, scrolldy = 0;
  * NOTE: the enum server_client_cmd list with
  * the BINARY COMMAND TAGS for commands[] are in protocol.h
  * which is a shared header between server and client.
- * The protocol level cs commands are in client.c
  */
 
 typedef void (*CmdProc) (char*, int);
