@@ -146,6 +146,7 @@ void SYSTEM_End(void)
     sound_deinit();
     free_bitmaps();
     locator_clear_players(NULL);
+    clear_lists();
 
     if (options.show_frame)
     {
