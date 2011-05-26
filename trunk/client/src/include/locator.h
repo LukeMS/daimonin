@@ -51,7 +51,6 @@ locator_t;
 extern locator_t locator;
 
 extern void  locator_init(uint16 w, uint16 h);
-extern void  locator_get_hostip_info(char *ip, geolocation_t *geoloc);
 extern void  locator_parse_ping_string(_server *server);
 extern void  locator_clear_players(_server *server);
 extern void  locator_add_player(_server *server, const char *name,

@@ -25,6 +25,7 @@
 
 locator_t locator;
 
+static void   GetHostIP(char *ip, geolocation_t *geoloc);
 static size_t ParseHostIP(void *ptr, size_t size, size_t nmemb, void *data);
 static sint16 GetX(sint16 lx);
 static sint16 GetY(sint16 ly);
@@ -40,7 +41,7 @@ void locator_init(uint16 w, uint16 h)
     locator.map_wh = Bitmaps[BITMAP_LOCATOR_MAP]->bitmap->w;
     locator.map_ht = Bitmaps[BITMAP_LOCATOR_MAP]->bitmap->h; 
     /* Get the location of THIS client. */
-    locator_get_hostip_info(NULL, &locator.client);
+    GetHostIP(NULL, &locator.client);
 
     for (node = start_server; node; node = node->next)
     {
@@ -48,45 +49,12 @@ void locator_init(uint16 w, uint16 h)
 
         locator.server = node;
         get_ip_from_hostname(node->nameip, ip);
-        locator_get_hostip_info(ip, &node->geoloc);
+        GetHostIP(ip, &node->geoloc);
     }
 
     locator.box.w = w;
     locator.box.h = h;
     locator_focus(locator.client.lx, locator.client.ly);
-}
-
-/* Gets data from hostip.info for IP <ip>, returning longitude and latitude in
- * <lx> and <ly>. */
-void locator_get_hostip_info(char *ip, geolocation_t *geoloc)
-{
-    CURL *curlp;
-    char  buf[TINY_BUF],
-          url[SMALL_BUF];
-
-    if (!(curlp = curl_easy_init()))
-    {
-        LOG(LOG_ERROR, "%s/curl_easy_init() failed!\n", __FILE__);
-
-        return;
-    }
-
-    if (!ip)
-    {
-        buf[0] = '\0';
-    }
-    else
-    {
-        sprintf(buf, "ip=%s&", ip);
-    }
-
-    curl_easy_reset(curlp);
-    sprintf(url, "http://api.hostip.info/get_html.php?%sposition=true", buf);
-    curl_easy_setopt(curlp, CURLOPT_URL, url);
-    curl_easy_setopt(curlp, CURLOPT_WRITEFUNCTION, ParseHostIP);
-    curl_easy_setopt(curlp, CURLOPT_WRITEDATA, (void *)geoloc);
-    (void)curl_easy_perform(curlp);
-    curl_easy_cleanup(curlp);
 }
 
 /* Parses the ping string, if there is one, for the specified server and, if it
@@ -321,6 +289,39 @@ uint8 locator_scroll(SDLKey key, SDLMod mod)
     }
 
     return 0;
+}
+
+/* Gets data from hostip.info for IP <ip>, returning longitude and latitude in
+ * <lx> and <ly>. */
+static void GetHostIP(char *ip, geolocation_t *geoloc)
+{
+    CURL *curlp;
+    char  buf[TINY_BUF],
+          url[SMALL_BUF];
+
+    if (!(curlp = curl_easy_init()))
+    {
+        LOG(LOG_ERROR, "%s/curl_easy_init() failed!\n", __FILE__);
+
+        return;
+    }
+
+    if (!ip)
+    {
+        buf[0] = '\0';
+    }
+    else
+    {
+        sprintf(buf, "ip=%s&", ip);
+    }
+
+    curl_easy_reset(curlp);
+    sprintf(url, "http://api.hostip.info/get_html.php?%sposition=true", buf);
+    curl_easy_setopt(curlp, CURLOPT_URL, url);
+    curl_easy_setopt(curlp, CURLOPT_WRITEFUNCTION, ParseHostIP);
+    curl_easy_setopt(curlp, CURLOPT_WRITEDATA, (void *)geoloc);
+    (void)curl_easy_perform(curlp);
+    curl_easy_cleanup(curlp);
 }
 
 /* Actually parses the data provided by hostip.info. */
