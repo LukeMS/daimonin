@@ -97,54 +97,59 @@ void buddy_list_clear(void)
 /* clear the list and load it clean from file */
 void buddy_list_load(void)
 {
-	int i;
-	char buf[64];
-	char filename[255];
-	FILE   *stream;
+    char         buf[SMALL_BUF];
+    PHYSFS_File *handle;
 
-    sprintf(filename,"settings/%s.buddy.list",cpl.name);
-    LOG(LOG_DEBUG,"Trying to open buddy file: %s\n",filename);
+    sprintf(buf, "%s/%s.%s", DIR_SETTINGS, cpl.name, FILE_BUDDY);
 
-	buddy_list_clear();
+    if (!(handle = load_client_file(buf)))
+    {
+        return;
+    }
 
-	if (!(stream = fopen_wrapper(filename, "r")))
-		return; /* no list - no buddys - no problem */
+    buddy_list_clear();
 
-	while (fgets(buf, 60, stream) != NULL)
-	{
-		i = strlen(buf)-1;
-		while (isspace(buf[i--]))
-			buf[i+1]=0;
-		buddy_entry_add(buf);
-	}
+    while (PHYSFS_readString(handle, buf, sizeof(buf)) > 0)
+    {
+        if (buf[0] == '#')
+        {
+            continue;
+        }
+        else if (!player_name_valid(buf))
+        {
+            LOG(LOG_ERROR, "Ignoring malformed line >%s<!\n", buf);
 
-	fclose(stream);
+            continue;
+        }
+
+        buddy_entry_add(buf);
+    }
+
+    PHYSFS_close(handle);
 }
 
 /* save the list to the buddy file. Overwrite it */
 void buddy_list_save(void)
 {
-	struct buddy_list *node;
-	char filename[255];
+    char                buf[SMALL_BUF];
+    PHYSFS_File        *handle;
+    struct buddy_list  *bl;
 
-	FILE *stream;
+    sprintf(buf, "%s/%s.%s", DIR_SETTINGS, cpl.name, FILE_BUDDY);
 
-    sprintf(filename,"settings/%s.buddy.list",cpl.name);
-    LOG(LOG_DEBUG,"Trying to open buddy file: %s\n",filename);
+    if (!(handle = save_client_file(buf)))
+    {
+        return;
+    }
 
-	if (!(stream = fopen_wrapper(filename, "w")))
-		return;
+    for (bl = buddy_list_start; bl; bl = bl->next)
+    {
+        sprintf(buf, "%s\n", bl->name);
+        PHYSFS_writeString(handle, buf);
+    }
 
-	for(node = buddy_list_start;node;node = node->next)
-	{
-		fputs(node->name, stream);
-		fputs("\n", stream);
-	}
-
-	fclose(stream);
-
+    PHYSFS_close(handle);
 }
-
 
 /* check player <name> is on the buddy list.
  * return 1: player is on the buddy list
