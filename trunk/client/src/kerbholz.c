@@ -147,57 +147,66 @@ void kill_list_clear(void)
 /* clear the list and load it clean from file */
 void kill_list_load(void)
 {
-    char buf[128];
-	char filename[255];
-	FILE   *stream;
-	unsigned int kills;
-	char *name;
-	char *kill;
+    char         buf[SMALL_BUF];
+    PHYSFS_File *handle;
 
-    sprintf(filename,"settings/%s.kills.list",cpl.name);
-    LOG(LOG_DEBUG,"Trying to open kill file: %s\n",filename);
+    sprintf(buf, "%s/%s.%s", DIR_SETTINGS, cpl.name, FILE_KILL);
 
+    if (!(handle = load_client_file(buf)))
+    {
+        return;
+    }
 
     kill_list_clear();
 
-    if (!(stream = fopen_wrapper(filename, "r")))
-        return; /* no list - no kills - no problem */
-
-    while (fgets(buf, 128, stream) != NULL)
+    while (PHYSFS_readString(handle, buf, sizeof(buf)) > 0)
     {
-        name=buf;
-        if (!(kill=strchr(buf,'#'))) continue;
-        kill[0]='\0';
-        kill++;
-        kills=atoi(kill);
-        addNewKill(name, kills, 0);
+        char *cp;
+
+        if (buf[0] == '#')
+        {
+            continue;
+        }
+        else if (!(cp = strchr(buf, '|')))
+        {
+            /* Unfortunately pre-0.10.6 clients used the standard comment
+             * introducer as a separator! */
+            if (!(cp = strchr(buf, '#')))
+            {
+                LOG(LOG_ERROR, "Ignoring malformed line >%s<!\n", buf);
+
+                continue;
+            }
+        }
+
+        *cp++ = '\0';
+        addNewKill(buf, atoi(cp), 0);
     }
 
-    fclose(stream);
+    PHYSFS_close(handle);
 }
 
 /* save the list to the kill file. Overwrite it */
 void kill_list_save(void)
 {
-    struct kills_list *node;
-    FILE *stream;
-    char buf[512];
-    char filename[255];
+    char               buf[SMALL_BUF];
+    PHYSFS_File       *handle;
+    struct kills_list *kl;
 
-    sprintf(filename,"settings/%s.kills.list",cpl.name);
-    LOG(LOG_DEBUG,"Trying to open kill file: %s\n",filename);
+    sprintf(buf, "%s/%s.%s", DIR_SETTINGS, cpl.name, FILE_KILL);
 
-    if (!(stream = fopen_wrapper(filename, "w")))
-        return;
-
-    for(node = kills_list_start;node;node = node->next)
+    if (!(handle = save_client_file(buf)))
     {
-        sprintf(buf,"%s#%d\n",node->name, node->kills);
-        fputs(buf, stream);
+        return;
     }
 
-    fclose(stream);
+    for (kl = kills_list_start; kl; kl = kl->next)
+    {
+        sprintf(buf, "%s|%d\n", kl->name, kl->kills);
+        PHYSFS_writeString(handle, buf);
+    }
 
+    PHYSFS_close(handle);
 }
 
 /* parse a /kill <cmd> part (without "/kill " part) */
