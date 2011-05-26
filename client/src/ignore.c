@@ -100,66 +100,62 @@ void ignore_list_clear(void)
 /* clear the list and load it clean from file */
 void ignore_list_load(void)
 {
-    char buf[128];
-    char name[64];
-    char type[64];
-	char filename[255];
-	FILE   *stream;
+    char         buf[SMALL_BUF];
+    PHYSFS_File *handle;
 
-    sprintf(filename,"settings/%s.ignore.list",cpl.name);
-    LOG(LOG_DEBUG,"Trying to open ignore file: %s\n",filename);
+    sprintf(buf, "%s/%s.%s", DIR_SETTINGS, cpl.name, FILE_IGNORE);
 
-    name[0]='\0';
-    type[0]='\0';
+    if (!(handle = load_client_file(buf)))
+    {
+        return;
+    }
 
     ignore_list_clear();
 
-    if (!(stream = fopen_wrapper(filename, "r")))
-        return; /* no list - no ignores - no problem */
-
-    while (fgets(buf, 128, stream) != NULL)
+    while (PHYSFS_readString(handle, buf, sizeof(buf)) > 0)
     {
-        if (sscanf(buf,"%s %s\n",name, type)!=EOF)
+        char *cp;
+
+        if (buf[0] == '#')
         {
-            if (type[0]=='*')
-                type[0]='\0';
-            ignore_entry_add(name, type);
+            continue;
         }
-        name[0]='\0';
-        type[0]='\0';
+        else if (!(cp = strchr(buf, ' ')))
+        {
+            LOG(LOG_ERROR, "Ignoring malformed line >%s<!\n", buf);
+
+            continue;
+        }
+
+        *cp++ = '\0';
+        ignore_entry_add(buf, (*cp == '*') ? "" : cp);
     }
 
-    fclose(stream);
+    PHYSFS_close(handle);
 }
 
 /* save the list to the ignore file. Overwrite it */
 void ignore_list_save(void)
 {
-    struct ignore_list *node;
-	char filename[255];
-	FILE   *stream;
+    char                buf[SMALL_BUF];
+    PHYSFS_File        *handle;
+    struct ignore_list *il;
 
-    sprintf(filename,"settings/%s.ignore.list",cpl.name);
-    LOG(LOG_DEBUG,"Trying to open ignore file: %s\n",filename);
+    sprintf(buf, "%s/%s.%s", DIR_SETTINGS, cpl.name, FILE_IGNORE);
 
-    if (!(stream = fopen_wrapper(filename, "w")))
-        return;
-
-    for (node = ignore_list_start;node;node = node->next)
+    if (!(handle = save_client_file(buf)))
     {
-        fputs(node->name, stream);
-        fputs(" ",stream);
-        if (!node->type[0])
-            fputs("*",stream);
-        else
-            fputs(node->type,stream);
-        fputs("\n", stream);
+        return;
     }
 
-    fclose(stream);
+    for (il = ignore_list_start; il; il = il->next)
+    {
+        sprintf(buf, "%s %s\n", il->name, (!il->type[0]) ? "*" : il->type);
+        PHYSFS_writeString(handle, buf);
+    }
 
+    PHYSFS_close(handle);
 }
-
 
 /* check player <name> is on the ignore list.
  * return 1: player is on the ignore list
