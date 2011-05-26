@@ -104,59 +104,61 @@ void chatfilter_list_clear(void)
 /* clear the list and load it clean from file */
 void chatfilter_list_load(void)
 {
-    int i;
-    char buf[64];
-	char filename[255];
-    FILE   *stream;
+    char         buf[SMALL_BUF];
+    PHYSFS_File *handle;
 
-    sprintf(filename,"settings/%s.cfilter.list",cpl.name);
-    LOG(LOG_DEBUG,"Trying to open cfilter file: %s\n",filename);
+    sprintf(buf, "%s/%s.%s", DIR_SETTINGS, cpl.name, FILE_CHATFILTER);
+
+    if (!(handle = load_client_file(buf)))
+    {
+        return;
+    }
 
     chatfilter_list_clear();
 
-    if (!(stream = fopen_wrapper(filename, "r")))
-        return; /* no list - no words - no problem */
+    PHYSFS_readString(handle, buf, sizeof(buf));
+    replacechar = buf[0];
 
-    /* first line is replacementchar */
-    if (fgets(buf, 60, stream) != NULL)
+    while (PHYSFS_readString(handle, buf, sizeof(buf)) > 0)
     {
-        replacechar=buf[0];
-    }
-    while (fgets(buf, 60, stream) != NULL)
-    {
-        i = strlen(buf)-1;
-        while (isspace(buf[i--]))
-            buf[i+1]=0;
+        if (buf[0] == '#')
+        {
+            continue;
+        }
+
+        /* Strangely, pre-0.10.6 clients would chop multi-word lines off at
+         * the last space -- so 'this is a bad phrase' would be censored to
+         * '************* phrase'. 0.10.6 censors the whole phrase. */
         chatfilter_entry_add(buf);
     }
 
-    fclose(stream);
+    PHYSFS_close(handle);
 }
 
 /* save the list to the chatfilterlist file. Overwrite it */
 void chatfilter_list_save(void)
 {
-    struct chatfilter_list *node;
-    char filename[255];
-    FILE *stream;
+    char                    buf[SMALL_BUF];
+    PHYSFS_File            *handle;
+    struct chatfilter_list *cl;
 
-    sprintf(filename,"settings/%s.cfilter.list",cpl.name);
-    LOG(LOG_DEBUG,"Trying to open cfilter file: %s\n",filename);
+    sprintf(buf, "%s/%s.%s", DIR_SETTINGS, cpl.name, FILE_CHATFILTER);
 
-    if (!(stream = fopen_wrapper(filename, "w")))
-        return;
-
-    fputc(replacechar,stream);
-    fputs(" <- Replacement Char, change if you want.\n",stream);
-
-    for (node = chatfilter_list_start;node;node = node->next)
+    if (!(handle = save_client_file(buf)))
     {
-        fputs(node->word, stream);
-        fputs("\n", stream);
+        return;
     }
 
-    fclose(stream);
+    sprintf(buf, "%c # Replacement Char, change if you want.\n", replacechar);
+    PHYSFS_writeString(handle, buf);
 
+    for (cl = chatfilter_list_start; cl; cl = cl->next)
+    {
+        sprintf(buf, "%s\n", cl->word);
+        PHYSFS_writeString(handle, buf);
+    }
+
+    PHYSFS_close(handle);
 }
 
 /* replace all f*words with replacechar
