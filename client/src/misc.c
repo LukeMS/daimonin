@@ -480,3 +480,54 @@ char * adjust_string(char *buf)
     }
     return buf;
 }
+
+PHYSFS_File *load_client_file(const char *fname)
+{
+    PHYSFS_File *handle;
+
+    /* Log what we're doing. */
+    LOG(LOG_SYSTEM, "Loading '%s'... ", fname);
+
+    /* If the file doesn't exist, that's OK. */
+    if (!PHYSFS_exists(fname))
+    {
+        LOG(LOG_SYSTEM, "OK (But file does not exist)!\n");
+
+        return NULL;
+    }
+
+    /* Open the file for reading.*/
+    if (!(handle = PHYSFS_openRead(fname)))
+    {
+        LOG(LOG_ERROR, "FAILED (%s)!\n", PHYSFS_getLastError());
+    }
+    else
+    {
+        LOG(LOG_SYSTEM, "OK!\n");
+    }
+
+    return handle;
+}
+
+PHYSFS_File *save_client_file(const char *fname)
+{
+    PHYSFS_File *handle;
+
+    /* Log what we're doing. */
+    LOG(LOG_SYSTEM, "Saving '%s'... ", fname);
+
+    /* Open the file for writing.*/
+    if (!(handle = PHYSFS_openWrite(fname)))
+    {
+        LOG(LOG_ERROR, "FAILED (%s)!\n", PHYSFS_getLastError());
+    }
+    else
+    {
+#if 0 // TODO: Enable in 0.11.0
+        PHYSFS_writeString(handle, HDR_CLIENT);
+#endif
+        LOG(LOG_SYSTEM, "OK!\n");
+    }
+
+    return handle;
+}

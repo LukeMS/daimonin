@@ -37,5 +37,7 @@ extern int              setup_endian_sync(const char *const buf);
 extern uint32           adjust_endian_int32(const uint32 buf);
 extern uint16           adjust_endian_int16(const uint16 buf);
 extern char             *adjust_string(char *buf);
+extern PHYSFS_File      *load_client_file(const char *fname);
+extern PHYSFS_File      *save_client_file(const char *fname);
 
 #endif /* ifndef __MISC_H */
