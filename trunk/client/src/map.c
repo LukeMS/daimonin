@@ -563,7 +563,7 @@ void map_draw_map(void)
 
                     if (xreal < 0 || yreal < 0 || xreal >= MapData.xlen * 3 || yreal >= MapData.ylen * 3)
                         continue;
-                    /*LOG(-1,"MAPCACHE: x:%d y:%d l:%d\n", xreal,yreal,(yreal*MapData.xlen*3)+xreal);*/
+                    /*LOG(LOG_DEBUG,"MAPCACHE: x:%d y:%d l:%d\n", xreal,yreal,(yreal*MapData.xlen*3)+xreal);*/
 //                    map = TheMapCache + (yreal * MapData.xlen * 3) + xreal;
 
                     map = &the_map.cells[x][y];

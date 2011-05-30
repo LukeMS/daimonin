@@ -279,7 +279,7 @@ static int reader_thread_loop(void *nix)
                 FREE(tmp);
             }
 
-//            LOG(-1,"CMD_LEN: toread:%d len:%d (%x)\n", toread, cmd_len, (*((char *)readbuf))&~0x80);
+//            LOG(LOG_DEBUG,"CMD_LEN: toread:%d len:%d (%x)\n", toread, cmd_len, (*((char *)readbuf))&~0x80);
 
         }
         if(toread)
@@ -404,7 +404,7 @@ out:
  */
 void socket_thread_start(void)
 {
-    LOG(-1,"START THREADS\n");
+    LOG(LOG_DEBUG,"START THREADS\n");
 
     if (input_buffer_cond == NULL)
     {
@@ -430,7 +430,7 @@ void socket_thread_start(void)
  * Closes the socket first, if it hasn't already been done. */
 void socket_thread_stop(void)
 {
-    LOG(-1,"STOP THREADS\n");
+    LOG(LOG_DEBUG,"STOP THREADS\n");
 
     SOCKET_CloseClientSocket(&csocket);
 
@@ -504,7 +504,7 @@ uint8 SOCKET_CloseClientSocket(struct ClientSocket *csock)
         return(1);
     }
 
-    LOG(-1, "CloseClientSocket()\n");
+    LOG(LOG_DEBUG, "CloseClientSocket()\n");
     SOCKET_CloseSocket(csock->fd);
     ClearClientSocket(csock);
     abort_thread = 1;

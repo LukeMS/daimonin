@@ -553,7 +553,7 @@ void set_item_values(item *op, char *name, sint32 weight, uint16 face, int flags
 {
     if (!op)
     {
-        LOG(-1, "Error in set_item_values(): item pointer is NULL.\n");
+        LOG(LOG_DEBUG, "Error in set_item_values(): item pointer is NULL.\n");
         return;
     }
     if (nrof < 0)
