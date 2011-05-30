@@ -1928,23 +1928,51 @@ void show_login_server(void)
     y += 157;
     if (GameStatusSelect == GAME_STATUS_LOGIN_ACCOUNT) /* Login */
     {
-        ENGRAVE(ScreenSurface, &font_small, "REMEMBER: You must have first ~created a character~ to login!",
-                x - 11, y, COLOR_WHITE, NULL, NULL);
-        ENGRAVE(ScreenSurface, &font_small, "1.) Enter the ~name~ of your character and press RETURN.",
-                x - 11, y + 12, COLOR_WHITE, NULL, NULL);
-        ENGRAVE(ScreenSurface, &font_small, "2.) Then enter the ~password~ of your character.",
-                x - 11, y + 24, COLOR_WHITE, NULL, NULL);
+        ENGRAVE(ScreenSurface, &font_small, "REMEMBER: You must have first ~created an account~ to login!",
+                x - 11, y, COLOR_ORANGE, NULL, NULL);
+
+        if (LoginInputStep == LOGIN_STEP_NAME)
+        {
+            ENGRAVE(ScreenSurface, &font_small, "Enter the ~name~ of your account. Then press RETURN.",
+                    x - 11, y + 12, COLOR_WHITE, NULL, NULL);
+        }
+        else
+        {
+            ENGRAVE(ScreenSurface, &font_small, "Enter the ~password~ of your account. Then press RETURN.",
+                    x - 11, y + 12, COLOR_WHITE, NULL, NULL);
+        }
     }
-    else /* Create Char */
+    else /* Create account */
     {
-        ENGRAVE(ScreenSurface, &font_small, "1.) Enter a ~name~ WITHOUT any numbers and special chars. Press RETURN.",
-                  x - 11, y, COLOR_WHITE, NULL, NULL);
-        ENGRAVE(ScreenSurface, &font_small, "2.) Enter a ~password~ WITH at least one special chars. Press RETURN." ,
-                  x - 11, y + 12, COLOR_WHITE, NULL, NULL);
-        ENGRAVE(ScreenSurface, &font_small, "3.) Enter the ~password~ again to ~verify~ it. Press RETURN." ,
-                  x - 11, y + 24, COLOR_WHITE, NULL, NULL);
+        if (LoginInputStep == LOGIN_STEP_NAME)
+        {
+            sprintf(buf, "Enter a ~name~ (%u to %u characters). Then press RETURN.",
+                    MIN_ACCOUNT_NAME, MAX_ACCOUNT_NAME);
+            ENGRAVE(ScreenSurface, &font_small, buf, x - 11, y + 6, COLOR_WHITE,
+                    NULL, NULL);
+        }
+        else if (LoginInputStep == LOGIN_STEP_PASS1)
+        {
+            sprintf(buf, "Enter a ~password~ (%u to %u characters). Then press RETURN.",
+                    MIN_ACCOUNT_PASSWORD, MAX_ACCOUNT_PASSWORD);
+            ENGRAVE(ScreenSurface, &font_small, buf, x - 11, y + 6,
+                    COLOR_WHITE, NULL, NULL);
+        }
+        else
+        {
+            ENGRAVE(ScreenSurface, &font_small, "Enter the ~password~ again to verify it. Then press RETURN." ,
+                      x - 11, y + 6, COLOR_WHITE, NULL, NULL);
+        }
     }
 
+    if ((LoginInputStep == LOGIN_STEP_PASS1 ||
+         LoginInputStep == LOGIN_STEP_PASS2) &&
+       (LastTick % 500) > 400 &&
+       (SDL_GetModState() & KMOD_CAPS))
+    {
+        ENGRAVE(ScreenSurface, &font_small, "CAPS LOCK is on!", x + 64, y + 24,
+                COLOR_ORANGE, NULL, NULL);
+    }
 }
 
 
