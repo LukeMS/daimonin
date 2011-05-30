@@ -854,7 +854,7 @@ void DrawInfoCmd2(char *data, int len)
         if (flags & NDI_TELL)
             strcpy(cpl.player_reply, data);
 
-        /*LOG(-1,"IGNORE?: player >%s<\n", data);*/
+        /*LOG(LOG_DEBUG,"IGNORE?: player >%s<\n", data);*/
         if (flags & NDI_EMOTE)
             flags &= ~NDI_PLAYER;
 
@@ -1303,7 +1303,7 @@ void ItemXYCmd(char *data, int len, int bflag)
     dmode = GetSINT32_String(data);
     pos += 4;
 
-    /*LOG(-1,"ITEMXY:(%d) %s\n", dmode, locate_item(dmode)?(locate_item(dmode)->d_name?locate_item(dmode)->s_name:"no name"):"no LOC");*/
+    /*LOG(LOG_DEBUG,"ITEMXY:(%d) %s\n", dmode, locate_item(dmode)?(locate_item(dmode)->d_name?locate_item(dmode)->s_name:"no name"):"no LOC");*/
 
     loc = GetSINT32_String(data + pos);
 
@@ -1405,7 +1405,7 @@ void GroupCmd(char *data, int len)
             sscanf(tmp, "%s %d %d %d %d %d %d %d", name, &hp, &mhp, &sp, &msp, &gr, &mgr, &level);
             set_group(group_count, name, level, hp, mhp, sp, msp, gr, mgr);
 
-            /*LOG(-1, "GROUP: %s [(%x)]\n", tmp, tmp);*/
+            /*LOG(LOG_DEBUG, "GROUP: %s [(%x)]\n", tmp, tmp);*/
             group_count++;
             tmp = strchr(tmp, '|');
         }
@@ -1449,7 +1449,7 @@ void GroupUpdateCmd(char *data, int len)
         sscanf(tmp, "%d %d %d %d %d %d %d %d", &slot, &hp, &mhp, &sp, &msp, &gr, &mgr, &level);
         set_group(slot, NULL, level, hp, mhp, sp, msp, gr, mgr);
 
-        /*LOG(-1, "UPDATE: %s :: %d %d %d %d %d %d %d %d\n", tmp, slot, level, hp, mhp, sp, msp, gr, mgr);*/
+        /*LOG(LOG_DEBUG, "UPDATE: %s :: %d %d %d %d %d %d %d %d\n", tmp, slot, level, hp, mhp, sp, msp, gr, mgr);*/
         tmp = strchr(tmp, '|');
     }
 }
@@ -1526,7 +1526,7 @@ void UpdateItemCmd(char *data, int len)
     }
     *name = '\0';
     loc = ip->env ? ip->env->tag : 0;
-    /*LOG(-1,"UPDATE: loc:%d tag:%d\n",loc, tag); */
+    /*LOG(LOG_DEBUG,"UPDATE: loc:%d tag:%d\n",loc, tag); */
     weight = ip->weight;
     face = ip->face;
     face_get(face);
@@ -1718,7 +1718,7 @@ void Map2Cmd(char *data, int len)
 
     MapData.posx = xpos; /* map windows is from range to +MAPWINSIZE_X */
     MapData.posy = ypos;
-    /*LOG(-1,"MAPPOS: x:%d y:%d (nflag:%x)\n",xpos,ypos,map_new_flag);*/
+    /*LOG(LOG_DEBUG,"MAPPOS: x:%d y:%d (nflag:%x)\n",xpos,ypos,map_new_flag);*/
     while (pos < len)
     {
         ext_flag = 0;
@@ -1919,7 +1919,7 @@ void Map2Cmd(char *data, int len)
         {
             face = GetUINT16_String(data + pos); pos += 2;
             face_get((face & ~0x8000));
-            /* LOG(0,"we got face: %x (%x) ->%s\n", face, face&~0x8000, face_list[face&~0x8000].name?face_list[face&~0x8000].name:"(null)" );*/
+            /* LOG(LOG_DEBUG,"we got face: %x (%x) ->%s\n", face, face&~0x8000, face_list[face&~0x8000].name?face_list[face&~0x8000].name:"(null)" );*/
             xdata = 0;
             if (ext_flag & 0x02) /* we have here a multi arch, fetch head offset */
             {
@@ -1934,7 +1934,7 @@ void Map2Cmd(char *data, int len)
         {
             face = GetUINT16_String(data + pos); pos += 2;
             face_get((face & ~0x8000));
-            /*LOG(0,"we got face2: %x (%x) ->%s\n", face, face&~0x8000, face_list[face&~0x8000].name?face_list[face&~0x8000].name:"(null)" );*/
+            /*LOG(LOG_DEBUG,"we got face2: %x (%x) ->%s\n", face, face&~0x8000, face_list[face&~0x8000].name?face_list[face&~0x8000].name:"(null)" );*/
             xdata = 0;
             if (ext_flag & 0x01) /* we have here a multi arch, fetch head offset */
             {
@@ -1956,7 +1956,7 @@ void SkilllistCmd(char *data, int len)
     int     l, e, i, ii, mode;
     char    name[256];
 
-    /*LOG(-1,"sklist: %s\n", data);*/
+    /*LOG(LOG_DEBUG,"sklist: %s\n", data);*/
 
     /* we grap our mode */
     mode = atoi(data);
@@ -1979,7 +1979,7 @@ void SkilllistCmd(char *data, int len)
         else
             strcpy(name, data);
 
-        /*LOG(-1,"sname (%d): >%s<\n", mode, name);*/
+        /*LOG(LOG_DEBUG,"sname (%d): >%s<\n", mode, name);*/
         tmp3 = strchr(name, '|');
         *tmp3 = 0;
         tmp4 = strchr(tmp3 + 1, '|');
@@ -1998,7 +1998,7 @@ void SkilllistCmd(char *data, int len)
                     /* and it is the one we searched for? */
                     if (!strcmp(skill_list[ii].entry[i].name, name))
                     {
-                        /*LOG(-1,"skill found (%d): >%s< %d | %d\n", mode, name, l, e);*/
+                        /*LOG(LOG_DEBUG,"skill found (%d): >%s< %d | %d\n", mode, name, l, e);*/
                         if (mode == SPLIST_MODE_REMOVE) /* remove? */
                             skill_list[ii].entry[i].flag = LIST_ENTRY_USED;
                         else
