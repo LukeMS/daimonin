@@ -24,15 +24,6 @@
 #ifndef __WRAPPER_H
 #define __WRAPPER_H
 
-#include <physfs.h>
-
-/* include here the hardware depend headers */
-#ifdef __WIN_32
-#include "win32.h"
-#elif __LINUX
-#include <cflinux.h>
-#endif
-
 #if !defined(HAVE_STRICMP)
 #include <strings.h>
 #define stricmp(_s1_,_s2_) strcasecmp(_s1_,_s2_)

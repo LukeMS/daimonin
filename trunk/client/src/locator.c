@@ -48,8 +48,16 @@ void locator_init(uint16 w, uint16 h)
         char ip[TINY_BUF];
 
         locator.server = node;
-        get_ip_from_hostname(node->nameip, ip);
-        GetHostIP(ip, &node->geoloc);
+
+        if (!get_ip_from_hostname(node->nameip, ip))
+        {
+            node->geoloc.lx = 0;
+            node->geoloc.ly = 0;
+        }
+        else
+        {
+            GetHostIP(ip, &node->geoloc);
+        }
     }
 
     locator.box.w = w;
