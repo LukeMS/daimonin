@@ -20,6 +20,7 @@
 
     The author can be reached via e-mail to info@daimonin.org
 */
+
 /*
  * This code provides a glue layer between PhysicsFS and Simple Directmedia
  *  Layer's (SDL) RWops i/o abstraction.
@@ -44,9 +45,6 @@
 
 #ifndef __PHYSFSRWOPS_H
 #define __PHYSFSRWOPS_H
-
-#include "physfs.h"
-#include "SDL.h"
 
 /* some older physfs libs need that */
 #ifndef PHYSFS_File

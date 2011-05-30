@@ -24,8 +24,18 @@
 #ifndef __INCLUDE_H
 #define __INCLUDE_H
 
-#if defined(__LINUX) || defined(__linux__) || defined(__unix__)
-#include "define.h"
+/* This is for the DevCpp IDE */
+#ifndef __WIN_32
+#ifdef WIN32
+#define __WIN_32
+#endif
+#endif
+
+#if WIN32
+# include "win32.h"
+#else // elif LINUX
+# include "define.h"
+# include "cflinux.h"
 #endif
 
 #include "config.h"
@@ -41,13 +51,6 @@
 #define MIN(x,y) ((x) < (y) ? (x) : (y))
 #endif
 
-/* This is for the DevCpp IDE */
-#ifndef __WIN_32
-#ifdef WIN32
-#define __WIN_32
-#endif
-#endif
-
 typedef unsigned int    uint32;
 typedef signed int      sint32;
 typedef unsigned short  uint16;
@@ -57,17 +60,18 @@ typedef signed char     sint8;
 
 /* ok, here we define for what we want compile */
 /* later this should be insert a makefile */
-
-#ifdef INSTALL_SOUND
-#include <SDL_mixer.h>
-#endif
-
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <limits.h>
 
 #include <curl/curl.h>
+#include <physfs.h>
+#include <SDL/SDL.h>
+#include <SDL/SDL_image.h>
+#ifdef INSTALL_SOUND
+#include <SDL/SDL_mixer.h>
+#endif
 
 #include "protocol.h" /* shared header between server & client */
 #include "wrapper.h"
@@ -100,14 +104,8 @@ typedef signed char     sint8;
 #include "group.h"
 #include "filewrap.h"
 #include "widget.h"
-#include "physfs.h"
 #include "physfsrwops.h"
 #include "srvfile.h"
 #include "locator.h"
-
-/* some older physfs libs need that */
-#ifndef PHYSFS_File
-#define PHYSFS_File PHYSFS_file
-#endif
 
 #endif /* ifndef __INCLUDE_H */

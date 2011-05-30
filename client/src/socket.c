@@ -968,12 +968,14 @@ int read_metaserver_data(SOCKET fd)
  * should work on all platforms. */
 char *get_ip_from_hostname(char *host, char *ip_buf)
 {
-    struct hostent *hostbn;
+    struct hostent *hostbn = gethostbyname(host);
 
-    if (!(hostbn = gethostbyname(host)))
+    if (!(hostbn))
     {
         return NULL;
     }
 
-    return (char *)inet_ntop(AF_INET, hostbn->h_addr, ip_buf, INET_ADDRSTRLEN);
+    memcpy(ip_buf, hostbn->h_addr, hostbn->h_length);
+
+    return ip_buf;
 }
