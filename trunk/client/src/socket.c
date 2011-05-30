@@ -902,7 +902,7 @@ int read_metaserver_data(SOCKET fd)
         }
     }
     buf[temp] = 0;
-    LOG(0, "GET: %s\n", buf);
+    LOG(LOG_DEBUG, "GET: %s\n", buf);
     ret = parse_metaserver_data(buf);
     FREE(buf);
     FREE(ptr);
