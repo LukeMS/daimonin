@@ -40,16 +40,24 @@ void locator_init(uint16 w, uint16 h)
 
     locator.map_wh = Bitmaps[BITMAP_LOCATOR_MAP]->bitmap->w;
     locator.map_ht = Bitmaps[BITMAP_LOCATOR_MAP]->bitmap->h; 
-    /* Get the location of THIS client. */
+
+    /* Get the location of the client. */
     GetHostIP(NULL, &locator.client);
 
+    /* Get the locations of all known servers. */
     for (node = start_server; node; node = node->next)
     {
         char ip[TINY_BUF];
 
         locator.server = node;
 
-        if (!get_ip_from_hostname(node->nameip, ip))
+        /* Local server must be where the client is. */
+        if (!strcmp(node->nameip, "127.0.0.1"))
+        {
+            node->geoloc.lx = locator.client.lx;
+            node->geoloc.ly = locator.client.ly;
+        }
+        else if (!get_ip_from_hostname(node->nameip, ip))
         {
             node->geoloc.lx = 0;
             node->geoloc.ly = 0;
