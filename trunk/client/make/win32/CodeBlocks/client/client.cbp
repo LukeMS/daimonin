@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="client" />
+		<Option platforms="Windows;" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Release">
+				<Option output="..\..\..\..\daimonin" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj\Release" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O3" />
+					<Add option="-ffast-math" />
+					<Add option="-funroll-loops" />
+					<Add option="-DNDEBUG" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+			<Target title="Debug">
+				<Option output="..\..\..\..\daimonin" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj\Debug" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-W" />
+			<Add option="-mms-bitfields" />
+			<Add option="-Dmain=SDL_main" />
+			<Add option="-DINSTALL_SOUND" />
+			<Add option="-DWIN32" />
+			<Add option="-D__WIN_32" />
+			<Add option="-DMINGW" />
+			<Add option="-DCURL_STATICLIB" />
+			<Add option="-DDAI_DEVELOPMENT" />
+			<Add directory="..\..\..\..\src\include" />
+			<Add directory="..\..\include" />
+		</Compiler>
+		<Linker>
+			<Add library="..\..\lib\static\libcurl.a" />
+			<Add library="mingw32" />
+			<Add library="winmm" />
+			<Add library="wsock32" />
+			<Add library="..\..\lib\libSDLmain.a" />
+			<Add library="..\..\lib\libSDL.dll.a" />
+			<Add library="..\..\lib\libSDL_image.a" />
+			<Add library="..\..\lib\libSDL_mixer.a" />
+			<Add library="..\..\lib\libphysfs.a" />
+		</Linker>
+		<Unit filename="..\..\daimonin.rc">
+			<Option compilerVar="WINDRES" />
+		</Unit>
+		<Unit filename="..\..\..\..\src\adler32.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\..\src\anim.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\..\src\book.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\..\src\buddy.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\..\src\chatfilter.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\..\src\client_cmd.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\..\src\commands.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\..\src\crc32.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\..\src\dialog.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\..\src\event.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\..\src\face.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\..\src\filewrap.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\..\src\font.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\..\src\group.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\..\src\ignore.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\..\src\include\anim.h" />
+		<Unit filename="..\..\..\..\src\include\book.h" />
+		<Unit filename="..\..\..\..\src\include\buddy.h" />
+		<Unit filename="..\..\..\..\src\include\chatfilter.h" />
+		<Unit filename="..\..\..\..\src\include\client_cmd.h" />
+		<Unit filename="..\..\..\..\src\include\commands.h" />
+		<Unit filename="..\..\..\..\src\include\config.h" />
+		<Unit filename="..\..\..\..\src\include\crc32.h" />
+		<Unit filename="..\..\..\..\src\include\dialog.h" />
+		<Unit filename="..\..\..\..\src\include\event.h" />
+		<Unit filename="..\..\..\..\src\include\face.h" />
+		<Unit filename="..\..\..\..\src\include\filewrap.h" />
+		<Unit filename="..\..\..\..\src\include\font.h" />
+		<Unit filename="..\..\..\..\src\include\group.h" />
+		<Unit filename="..\..\..\..\src\include\ignore.h" />
+		<Unit filename="..\..\..\..\src\include\include.h" />
+		<Unit filename="..\..\..\..\src\include\inffast.h" />
+		<Unit filename="..\..\..\..\src\include\inflate.h" />
+		<Unit filename="..\..\..\..\src\include\inftrees.h" />
+		<Unit filename="..\..\..\..\src\include\interface.h" />
+		<Unit filename="..\..\..\..\src\include\inventory.h" />
+		<Unit filename="..\..\..\..\src\include\item.h" />
+		<Unit filename="..\..\..\..\src\include\kerbholz.h" />
+		<Unit filename="..\..\..\..\src\include\locator.h" />
+		<Unit filename="..\..\..\..\src\include\main.h" />
+		<Unit filename="..\..\..\..\src\include\map.h" />
+		<Unit filename="..\..\..\..\src\include\menu.h" />
+		<Unit filename="..\..\..\..\src\include\misc.h" />
+		<Unit filename="..\..\..\..\src\include\physfsrwops.h" />
+		<Unit filename="..\..\..\..\src\include\player.h" />
+		<Unit filename="..\..\..\..\src\include\protocol.h" />
+		<Unit filename="..\..\..\..\src\include\socket.h" />
+		<Unit filename="..\..\..\..\src\include\sound.h" />
+		<Unit filename="..\..\..\..\src\include\sprite.h" />
+		<Unit filename="..\..\..\..\src\include\srvfile.h" />
+		<Unit filename="..\..\..\..\src\include\textwin.h" />
+		<Unit filename="..\..\..\..\src\include\tile_stretcher.h" />
+		<Unit filename="..\..\..\..\src\include\widget.h" />
+		<Unit filename="..\..\..\..\src\include\win32.h" />
+		<Unit filename="..\..\..\..\src\include\wrapper.h" />
+		<Unit filename="..\..\..\..\src\include\zconf.h" />
+		<Unit filename="..\..\..\..\src\include\zlib.h" />
+		<Unit filename="..\..\..\..\src\include\zutil.h" />
+		<Unit filename="..\..\..\..\src\inffast.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\..\src\inflate.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\..\src\inftrees.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\..\src\interface.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\..\src\inventory.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\..\src\item.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\..\src\kerbholz.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\..\src\locator.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\..\src\main.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\..\src\map.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\..\src\menu.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\..\src\misc.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\..\src\physfsrwops.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\..\src\player.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\..\src\protocol.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\..\src\socket.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\..\src\sound.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\..\src\sprite.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\..\src\srvfile.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\..\src\textwin.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\..\src\tile_stretcher.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\..\src\uncompr.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\..\src\widget.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\..\src\wrapper.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\..\src\zutil.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
