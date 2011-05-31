@@ -962,20 +962,21 @@ int read_metaserver_data(SOCKET fd)
 
 #endif
 
-/* Copies the primary IP of <host> into <ip_buf> (or NULL if <host> is
- * unrecognised), returning a pointer to it as well.
- * AIUI gethostbyname() is deprecated and the IP will be v4 only. but this
- * should work on all platforms. */
-char *get_ip_from_hostname(char *host, char *ip_buf)
+/* Returns a pointer to the primary IP of <host> (or NULL if <host> is
+ * unrecognised). gethostbyname() and inet_ntoa() are deprecated but this should
+ * work on all platforms. */
+char *get_ip_from_hostname(char *host)
 {
-    struct hostent *hostbn = gethostbyname(host);
+    struct hostent     *hostbn = gethostbyname(host);
+    struct sockaddr_in  in;
 
-    if (!(hostbn))
+    if (!hostbn)
     {
         return NULL;
     }
 
-    memcpy(ip_buf, hostbn->h_addr, hostbn->h_length);
+    in.sin_family = AF_INET;
+    memcpy(&in.sin_addr, hostbn->h_addr, hostbn->h_length);
 
-    return ip_buf;
+    return inet_ntoa(in.sin_addr);
 }
