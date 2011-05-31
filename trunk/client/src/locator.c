@@ -47,7 +47,7 @@ void locator_init(uint16 w, uint16 h)
     /* Get the locations of all known servers. */
     for (node = start_server; node; node = node->next)
     {
-        char ip[TINY_BUF];
+        char *cp;
 
         locator.server = node;
 
@@ -57,14 +57,14 @@ void locator_init(uint16 w, uint16 h)
             node->geoloc.lx = locator.client.lx;
             node->geoloc.ly = locator.client.ly;
         }
-        else if (!get_ip_from_hostname(node->nameip, ip))
+        else if (!(cp = get_ip_from_hostname(node->nameip)))
         {
             node->geoloc.lx = 0;
             node->geoloc.ly = 0;
         }
         else
         {
-            GetHostIP(ip, &node->geoloc);
+            GetHostIP(cp, &node->geoloc);
         }
     }
 
