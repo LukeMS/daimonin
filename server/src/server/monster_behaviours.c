@@ -1153,6 +1153,12 @@ void ai_avoid_line_of_fire(object *op, struct mob_behaviour_param *params, move_
         if(! QUERY_FLAG(tmp, AI_OBJFLAG_IS_MISSILE))
             continue;
 
+#if 0
+/* FIXME: Temporarily disabled as the random_roll() line causes frequent
+ * SIGSEGVs. Clearly missiles do not always have owners, but rather than just
+ * checking I have disabled this entirely as I suspect this fact is itself a
+ * bug that needs fixing. See also line 65 of server/attack.c @ r6379.
+ * -- Smacky 20110601 */
         /* If the mob can't see the player who shot it, or the missile itself, don't dodge. */
         if (mob_can_see_obj(tmp->obj, op, MOB_DATA(op)->known_objs) == 0 ||
             mob_can_see_obj(tmp->obj->owner, op, MOB_DATA(op)->known_objs) == 0)
@@ -1165,7 +1171,7 @@ void ai_avoid_line_of_fire(object *op, struct mob_behaviour_param *params, move_
         {
             return;
         }
-
+#endif
 
         switch(tmp->obj->type) {
             /* Straight-line-like missiles */
