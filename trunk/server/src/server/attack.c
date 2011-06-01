@@ -164,7 +164,10 @@ int attack_ob(object *target, object *hitter, object *hit_obj)
     hitdam  = hit_obj->stats.dam;
 
 #if 0
-/* FIXME: Temporarily disabled as it cause frequent SIGSEGVs (line 65 of monster_behaviours.c). */
+/* FIXME: Temporarily disabled as it cause frequent SIGSEGVs (line 65 of
+ * server/monster_behaviours.c @ r6379). For further details see line 1156 of
+ * server/monster_behaviours.c @ r6379.
+ * Smacky 2010601 */
     if (hit_obj->type == ARROW &&
         target->type == MONSTER &&
         mob_can_see_obj(target, hitter->owner, MOB_DATA(target)->known_mobs) == 0)
