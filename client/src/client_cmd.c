@@ -885,35 +885,48 @@ static uint8 CheckCommand(char *cmd, char *params)
         }
         else if (!stricmp(params, "widgetstatus"))
         {
-            int nID;
+            widget_id_t id;
+
             textwin_showstring(COLOR_WHITE, "Resetting widgetstatus!");
-            for (nID = 0; nID < TOTAL_WIDGETS; nID++)
+
+            for (id = 0; id < WIDGET_NROF; id++)
             {
-                switch (nID)
+                switch (id)
                 {
-                    case 10: // MIXWIN
+                    case WIDGET_MIXWIN_ID:
                         break;
-                    case 12: // PLAYERDOLL, actually this shouldn't be necessary as we can't override the option with mouse-hiding, but JIC
+
+                    case WIDGET_PDOLL_ID:
                         if (options.playerdoll)
-                            cur_widget[nID].show = 1;
+                        {
+                            WIDGET_SHOW(id) = 1;
+                        }
+
                         break;
-                    case 17: // MAININV
-                    case 19: // CONSOLE
-                    case 20: // NUMBER
+
+                    case WIDGET_MAIN_INV_ID:
+                    case WIDGET_IN_CONSOLE_ID:
+                    case WIDGET_IN_NUMBER_ID:
+
                         break;
-                    case 21: // STATOMETER, actually this shouldn't be necessary as we can't override the option with mouse-hiding, but JIC
+
+                    case WIDGET_STATOMETER_ID:
                         if (options.statsupdate)
-                            cur_widget[nID].show = 1;
+                        {
+                            WIDGET_SHOW(id) = 1;
+                        }
+
                         break;
+
                     default:
-                        cur_widget[nID].show = 1;
+                        WIDGET_SHOW(id) = 1;
                 }
             }
         }
         else if (!stricmp(params, "widgets"))
         {
             textwin_showstring(COLOR_WHITE, "Resetting widgets!");
-            init_widgets_fromDefault();
+            widget_init();
         }
 #if 0
         else

@@ -78,7 +78,6 @@
 #define FILE_BUDDY        "buddy.list"
 #define FILE_CHATFILTER   "cfilter.list"
 #define FILE_IGNORE       "ignore.list"
-#define FILE_INTERFACE    "interface.gui"
 #define FILE_KEYBIND      "keys.dat"
 #define FILE_KILL         "kills.list"
 #define FILE_LOG          "client.log"
@@ -92,17 +91,18 @@
 #define FILE_SRV_SOUNDS   DIR_SRV_FILES"/client_sounds"
 #define FILE_SRV_SPELLS   DIR_SRV_FILES"/client_spells"
 #define FILE_VERSION      DIR_UPDATES"/version"
+#define FILE_WIDGET       DIR_SETTINGS"/interface.gui"
 
 /* This is a standard header for files written by the client:
  *   FILE_BUDDY
  *   FILE_CHATFILTER
  *   FILE_IGNORE
- *   FILE_INTERFACE (TODO)
  *   FILE_KEYBIND (TODO)
  *   FILE_KILL
  *   FILE_LOG (TODO)
  *   FILE_OPTION (TODO)
- *   FILE_QUICKSLOT (TODO) */
+ *   FILE_QUICKSLOT (TODO)
+ *   FILE_WIDGET */
 /* TODO: Not used until 0.11.0 as clients earlier than 0.10.6 do not handle
  * comments/blank lines when readinig some of the above files. */
 #define HDR_CLIENT \

@@ -216,8 +216,8 @@ static void mouse_InputNumber()
         delta = 0;
         return;
     }
-    mx = x - cur_widget[IN_NUMBER_ID].x1;
-    my = y - cur_widget[IN_NUMBER_ID].y1;
+    mx = x - widget_data[WIDGET_IN_NUMBER_ID].x1;
+    my = y - widget_data[WIDGET_IN_NUMBER_ID].y1;
 
     if (mx <230 || mx> 237 || my < 5 || delta++ & 15)
         return;
@@ -254,8 +254,12 @@ static void mouse_moveHero()
     if (delta++ & 7)
         return; /* dont move to fast */
     SDL_GetMouseState(&x, &y);
-    if (get_widget_owner(x,y)!=-1)
+
+    if (widget_get_owner(x, y) < WIDGET_NROF)
+    {
         return;
+    }
+
     if (draggingInvItem(DRAG_GET_STATUS))
         return; /* still dragging an item */
     if (cpl.input_mode == INPUT_MODE_NUMBER)
@@ -751,40 +755,53 @@ int Event_PollInputDevice(void)
             else if (cpl.menustatus == MENU_NO && (!InputStringFlag || cpl.input_mode != INPUT_MODE_NUMBER))
             {
 #ifdef DAI_DEVELOPMENT
-                if (widget_mouse_event.owner > -1 && f_custom_cursor == MSCURSOR_MOVE && (event.key.keysym.sym == SDLK_DELETE || event.key.keysym.sym == SDLK_BACKSPACE))
+                if (widget_mouse_event.id < WIDGET_NROF &&
+                    f_custom_cursor == MSCURSOR_MOVE &&
+                    (event.key.keysym.sym == SDLK_DELETE ||
+                     event.key.keysym.sym == SDLK_BACKSPACE))
                 {
-                    switch (widget_mouse_event.owner)
+                    switch (widget_mouse_event.id)
                     {
-                        case 12: // PLAYERDOLL
-                            if (!options.playerdoll) // Actually this shouldn't be necessary as the widget should already be hidden, but JIC
+                        case WIDGET_PDOLL_ID:
+                            if (!options.playerdoll)
                             {
                                 sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICK, 0, 0, MENU_SOUND_VOL);
-                                cur_widget[widget_mouse_event.owner].show = 0;
+                                WIDGET_SHOW(widget_mouse_event.id) = 0;
                                 f_custom_cursor = 0;
                                 SDL_ShowCursor(1);
                             }
                             else
+                            {
                                 sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
+                            }
+
                             break;
-                        case 17: // MAININV
-                        case 19: // CONSOLE
-                        case 20: // NUMBER
+
+                        case WIDGET_MAIN_INV_ID:
+                        case WIDGET_IN_CONSOLE_ID:
+                        case WIDGET_IN_NUMBER_ID:
                             sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
+
                             break;
-                        case 21: // STATOMETER
-                            if (!options.statsupdate) // Actually this shouldn't be necessary as the widget should already be hidden, but JIC
+
+                        case WIDGET_STATOMETER_ID:
+                            if (!options.statsupdate)
                             {
                                 sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICK, 0, 0, MENU_SOUND_VOL);
-                                cur_widget[widget_mouse_event.owner].show = 0;
+                                WIDGET_SHOW(widget_mouse_event.id) = 0;
                                 f_custom_cursor = 0;
                                 SDL_ShowCursor(1);
                             }
                             else
+                            {
                                 sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
+                            }
+
                             break;
+
                         default:
                             sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICK, 0, 0, MENU_SOUND_VOL);
-                            cur_widget[widget_mouse_event.owner].show = 0;
+                            WIDGET_SHOW(widget_mouse_event.id) = 0;
                             f_custom_cursor = 0;
                             SDL_ShowCursor(1);
                     }
@@ -1414,9 +1431,9 @@ int key_event(SDL_KeyboardEvent *key)
                 break;
             case SDLK_LSHIFT:
             case SDLK_RSHIFT:
-                SetPriorityWidget(MAIN_INV_ID);
+                widget_set_priority(WIDGET_MAIN_INV_ID);
                 if (!options.playerdoll)
-                    SetPriorityWidget(PDOLL_ID);
+                    widget_set_priority(WIDGET_PDOLL_ID);
                 cpl.inventory_win = IWIN_INV;
                 break;
             case SDLK_RALT:
@@ -1613,7 +1630,7 @@ uint8 process_macro_keys(int id, int value)
         if (options.use_TextwinSplit)
         {
             txtwin[TW_CHAT].scroll++;
-            WIDGET_REDRAW(CHATWIN_ID);
+            WIDGET_REDRAW(WIDGET_CHATWIN_ID) = 1;
         }
         else
             txtwin[TW_MIX].scroll++;
@@ -1622,18 +1639,18 @@ uint8 process_macro_keys(int id, int value)
         if (options.use_TextwinSplit)
         {
             txtwin[TW_CHAT].scroll--;
-            WIDGET_REDRAW(CHATWIN_ID);
+            WIDGET_REDRAW(WIDGET_CHATWIN_ID) = 1;
         }
         else
             txtwin[TW_MIX].scroll--;
         break;
     case KEYFUNC_PAGEUP_TOP:
         txtwin[TW_MSG].scroll++;
-        WIDGET_REDRAW(MSGWIN_ID);
+        WIDGET_REDRAW(WIDGET_MSGWIN_ID) = 1;
         break;
     case KEYFUNC_PAGEDOWN_TOP:
         txtwin[TW_MSG].scroll--;
-        WIDGET_REDRAW(MSGWIN_ID);
+        WIDGET_REDRAW(WIDGET_MSGWIN_ID) = 1;
         break;
 
     case KEYFUNC_TARGET_ENEMY:
@@ -1711,7 +1728,7 @@ uint8 process_macro_keys(int id, int value)
         if (cpl.input_mode == INPUT_MODE_NO)
         {
             cpl.input_mode = INPUT_MODE_CONSOLE;
-            SetPriorityWidget(IN_CONSOLE_ID);
+            widget_set_priority(WIDGET_IN_CONSOLE_ID);
             open_input_mode(253);
         }
         else if (cpl.input_mode == INPUT_MODE_CONSOLE)
@@ -1890,7 +1907,7 @@ uint8 process_macro_keys(int id, int value)
 
             reset_keys();
             cpl.input_mode = INPUT_MODE_NUMBER;
-            SetPriorityWidget(IN_NUMBER_ID);
+            widget_set_priority(WIDGET_IN_NUMBER_ID);
             open_input_mode(22);
             cpl.loc = loc;
             cpl.tag = tag;
@@ -2007,7 +2024,7 @@ uint8 process_macro_keys(int id, int value)
         {
             reset_keys();
             cpl.input_mode = INPUT_MODE_NUMBER;
-            SetPriorityWidget(IN_NUMBER_ID);
+            widget_set_priority(WIDGET_IN_NUMBER_ID);
             open_input_mode(22);
             cpl.loc = loc;
             cpl.tag = tag;
@@ -2734,7 +2751,7 @@ void check_menu_keys(int menu, int key)
             save_options_dat();
             Mix_VolumeMusic(options.music_volume);
             if (options.playerdoll)
-                cur_widget[PDOLL_ID].show = 1;
+                WIDGET_SHOW(WIDGET_PDOLL_ID) = 1;
 
             /* ToggleScreenFlag sets changes this option in the main loop
              * so we revert this setting, also if a resolution change occurs

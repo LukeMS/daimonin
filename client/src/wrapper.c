@@ -130,8 +130,8 @@ void SYSTEM_End(void)
 {
     uint16 i;
 
-    save_interface_file();
-    kill_widgets();
+    widget_save();
+    widget_deinit();
     save_options_dat();   /* save options at exit */
     SOCKET_DeinitSocket();
     PHYSFS_deinit();

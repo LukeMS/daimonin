@@ -74,6 +74,7 @@ typedef signed char     sint8;
 #endif
 
 #include "protocol.h" /* shared header between server & client */
+#include "widget.h"
 #include "wrapper.h"
 #include "zlib.h"
 #include "socket.h"
@@ -103,7 +104,6 @@ typedef signed char     sint8;
 #include "dialog.h"
 #include "group.h"
 #include "filewrap.h"
-#include "widget.h"
 #include "physfsrwops.h"
 #include "srvfile.h"
 #include "locator.h"

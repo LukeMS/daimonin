@@ -142,8 +142,8 @@ static void show_inventory_item_stats(item *tmp, int x, int y)
 void widget_inventory_event(int x, int y, SDL_Event event)
 {
     int mx=0, my=0;
-    mx = x - cur_widget[MAIN_INV_ID].x1;
-    my = y - cur_widget[MAIN_INV_ID].y1;
+    mx = x - widget_data[WIDGET_MAIN_INV_ID].x1;
+    my = y - widget_data[WIDGET_MAIN_INV_ID].y1;
 
     switch (event.type)
     {
@@ -276,8 +276,8 @@ void widget_show_inventory_window(int x, int y)
     if (cpl.inventory_win != IWIN_INV)
     {
         if (!options.playerdoll)
-            cur_widget[PDOLL_ID].show = 0;
-        cur_widget[MAIN_INV_ID].ht = 32;
+            WIDGET_SHOW(WIDGET_PDOLL_ID) = 0;
+        widget_data[WIDGET_MAIN_INV_ID].ht = 32;
         sprite_blt(Bitmaps[BITMAP_INV_BG], x, y, NULL, NULL);
         string_blt(ScreenSurface, &font_small, "Carry", x+140, y+4, COLOR_HGOLD, NULL, NULL);
         sprintf(buf, "%4.3f kg", (float)cpl.real_weight/1000.0f);
@@ -290,8 +290,8 @@ void widget_show_inventory_window(int x, int y)
     }
 
     if (!options.playerdoll)
-       cur_widget[PDOLL_ID].show = 1;
-    cur_widget[MAIN_INV_ID].ht = 129;
+       WIDGET_SHOW(WIDGET_PDOLL_ID) = 1;
+    widget_data[WIDGET_MAIN_INV_ID].ht = 129;
 
 
     invxlen = INVITEMXLEN;
@@ -418,14 +418,14 @@ void widget_below_window_event(int x, int y, int MEvent)
 
         case MOUSE_DOWN:
             /* ground ( IWIN_BELOW )  */
-            if (y >= cur_widget[BELOW_INV_ID].y1+19 &&
-                y <= cur_widget[BELOW_INV_ID].y1 + cur_widget[BELOW_INV_ID].ht - 4 &&
-                x > cur_widget[BELOW_INV_ID].x1+4 &&
-                x < cur_widget[BELOW_INV_ID].x1 + cur_widget[BELOW_INV_ID].wd - 12)
+            if (y >= widget_data[WIDGET_BELOW_INV_ID].y1+19 &&
+                y <= widget_data[WIDGET_BELOW_INV_ID].y1 + widget_data[WIDGET_BELOW_INV_ID].ht - 4 &&
+                x > widget_data[WIDGET_BELOW_INV_ID].x1+4 &&
+                x < widget_data[WIDGET_BELOW_INV_ID].x1 + widget_data[WIDGET_BELOW_INV_ID].wd - 12)
             {
 //                if (cpl.inventory_win == IWIN_INV)
 //                    cpl.inventory_win = IWIN_BELOW;
-                cpl.win_below_slot = (x-cur_widget[BELOW_INV_ID].x1 - 5) / 32;
+                cpl.win_below_slot = (x-widget_data[WIDGET_BELOW_INV_ID].x1 - 5) / 32;
                 cpl.win_below_tag = get_inventory_data(cpl.below, &cpl.win_below_ctag, &cpl.win_below_slot,
                                                        &cpl.win_below_start, &cpl.win_below_count, INVITEMBELOWXLEN,
                                                        INVITEMBELOWYLEN);
@@ -438,10 +438,10 @@ void widget_below_window_event(int x, int y, int MEvent)
                         process_macro_keys(KEYFUNC_APPLY, 0);
                 }
             }
-            else if (y >= cur_widget[BELOW_INV_ID].y1+20 &&
-                    y <= cur_widget[BELOW_INV_ID].y1+29 &&
-                    x > cur_widget[BELOW_INV_ID].x1+262 &&
-                    x < cur_widget[BELOW_INV_ID].x1+269 &&
+            else if (y >= widget_data[WIDGET_BELOW_INV_ID].y1+20 &&
+                    y <= widget_data[WIDGET_BELOW_INV_ID].y1+29 &&
+                    x > widget_data[WIDGET_BELOW_INV_ID].x1+262 &&
+                    x < widget_data[WIDGET_BELOW_INV_ID].x1+269 &&
                     MEvent == MOUSE_DOWN)
             {
 //                if (cpl.inventory_win == IWIN_INV)
@@ -453,10 +453,10 @@ void widget_below_window_event(int x, int y, int MEvent)
                                                        &cpl.win_below_start, &cpl.win_below_count, INVITEMBELOWXLEN,
                                                        INVITEMBELOWYLEN);
             }
-            else if (y >= cur_widget[BELOW_INV_ID].y1+42 &&
-                    y <= cur_widget[BELOW_INV_ID].y1+51 &&
-                    x > cur_widget[BELOW_INV_ID].x1+262 &&
-                    x < cur_widget[BELOW_INV_ID].x1+269 &&
+            else if (y >= widget_data[WIDGET_BELOW_INV_ID].y1+42 &&
+                    y <= widget_data[WIDGET_BELOW_INV_ID].y1+51 &&
+                    x > widget_data[WIDGET_BELOW_INV_ID].x1+262 &&
+                    x < widget_data[WIDGET_BELOW_INV_ID].x1+269 &&
                     MEvent == MOUSE_DOWN)
             {
 //                if (cpl.inventory_win == IWIN_INV)
