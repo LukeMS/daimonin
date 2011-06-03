@@ -1382,14 +1382,14 @@ void reload_icons(void)
                 if (spell_list[i].entry[0][ii].icon)
                     sprite_free_sprite(spell_list[i].entry[0][ii].icon);
                sprintf(buf,"%s%s",GetIconDirectory(),spell_list[i].entry[0][ii].icon_name);
-               spell_list[i].entry[0][ii].icon=sprite_load(buf, SURFACE_FLAG_DISPLAYFORMAT, NULL);
+               spell_list[i].entry[0][ii].icon=sprite_load(buf, NULL);
             }
             if ((spell_list[i].entry[1][ii].flag != LIST_ENTRY_UNUSED) && (spell_list[i].entry[1][ii].icon_name))
             {
                 if (spell_list[i].entry[1][ii].icon)
                     sprite_free_sprite(spell_list[i].entry[1][ii].icon);
                sprintf(buf,"%s%s",GetIconDirectory(),spell_list[i].entry[1][ii].icon_name);
-               spell_list[i].entry[1][ii].icon=sprite_load(buf, SURFACE_FLAG_DISPLAYFORMAT, NULL);
+               spell_list[i].entry[1][ii].icon=sprite_load(buf, NULL);
             }
         }
     }
@@ -1403,7 +1403,7 @@ void reload_icons(void)
                 if (skill_list[i].entry[ii].icon)
                     sprite_free_sprite(skill_list[i].entry[ii].icon);
                sprintf(buf,"%s%s",GetIconDirectory(),skill_list[i].entry[ii].icon_name);
-               skill_list[i].entry[ii].icon=sprite_load(buf, SURFACE_FLAG_DISPLAYFORMAT, NULL);
+               skill_list[i].entry[ii].icon=sprite_load(buf, NULL);
             }
         }
     }

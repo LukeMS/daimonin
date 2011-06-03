@@ -75,12 +75,12 @@ uint8 sprite_deinit_system(void)
     return(1);
 }
 
-_Sprite * sprite_load(char *fname, uint32 flag, SDL_RWops *rwop)
+_Sprite * sprite_load(char *fname, SDL_RWops *rwop)
 {
-    _Sprite        *sprite;
-    SDL_Surface    *bitmap;
-    uint32          ckflags, tmp=0;
-    SDL_RWops       *rw;
+    _Sprite     *sprite;
+    SDL_Surface *bitmap;
+    SDL_RWops   *rw;
+    uint32       ck = 0;
 
     if (fname)
     {
@@ -105,49 +105,32 @@ _Sprite * sprite_load(char *fname, uint32 flag, SDL_RWops *rwop)
     }
 
     MALLOC(sprite, sizeof(_Sprite));
-
-    if (!sprite)
-    {
-        return NULL;
-    }
-
     sprite->status = SPRITE_STATUS_LOADED;
     sprite->type = SPRITE_TYPE_NORMAL;
 
-    /* hm, must test this is used from displayformat too?*/
-    /* we set colorkey stuff. depends and video hardware and how we need to store this*/
-    ckflags = SDL_SRCCOLORKEY | SDL_ANYFORMAT;
-
-    if (options.rleaccel_flag)
-        ckflags |= SDL_RLEACCEL;
-
     if (bitmap->format->palette)
-        SDL_SetColorKey(bitmap, ckflags, (tmp = bitmap->format->colorkey));
-    else if (flag & SURFACE_FLAG_COLKEY_16M) /* we force a true color png to colorkey */
-        SDL_SetColorKey(bitmap, ckflags, 0); /* default colkey is black (0) */
+    {
+        uint32 ckflags = SDL_SRCCOLORKEY | SDL_ANYFORMAT;
 
+        if (options.rleaccel_flag)
+        {
+            ckflags |= SDL_RLEACCEL;
+        }
 
-    GetBitmapBorders(bitmap, &sprite->border_up, &sprite->border_down, &sprite->border_left, &sprite->border_right, tmp);
-
-    if (!bitmap->format->palette)
+        ck = bitmap->format->colorkey;
+        SDL_SetColorKey(bitmap, ckflags, ck);
+    }
+    else
+    {
         ImageStats.truecolors++;
+    }
 
-    /* we store our original bitmap */
+    GetBitmapBorders(bitmap, &sprite->border_up, &sprite->border_down,
+                     &sprite->border_left, &sprite->border_right, ck);
     sprite->bitmap = bitmap;
-
-    if (flag & SURFACE_FLAG_DISPLAYFORMAT)
-    {
-        sprite->bitmap = SDL_DisplayFormat(bitmap);
-        SDL_FreeSurface(bitmap);
-    }
-
-    if (!(flag & SURFACE_FLAG_PALETTE))
-    {
-//        sprite->bitmap = SDL_DisplayFormatAlpha(bitmap);
-//        SDL_FreeSurface(bitmap);
-    }
     ImageStats.loadedsprites++;
-    return(sprite);
+
+    return sprite;
 }
 
 
