@@ -55,7 +55,7 @@ void do_console(int x, int y)
         sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CONSOLE, 0, 0, 100);
         reset_keys();
         cpl.input_mode = INPUT_MODE_NO;
-        cur_widget[IN_CONSOLE_ID].show = 0;
+        WIDGET_SHOW(WIDGET_IN_CONSOLE_ID) = 0;
         map_udate_flag = 2;
     }
     /* if set, we got a finished input!*/
@@ -71,10 +71,10 @@ void do_console(int x, int y)
         reset_keys();
         cpl.input_mode = INPUT_MODE_NO;
         map_udate_flag = 2;
-        cur_widget[IN_CONSOLE_ID].show = 0;
+        WIDGET_SHOW(WIDGET_IN_CONSOLE_ID) = 0;
     }
     else
-        cur_widget[IN_CONSOLE_ID].show = 1;
+        WIDGET_SHOW(WIDGET_IN_CONSOLE_ID) = 1;
 }
 
 void widget_show_console(int x, int y)
@@ -90,7 +90,7 @@ void do_number(int x, int y)
     {
         reset_keys();
         cpl.input_mode = INPUT_MODE_NO;
-        cur_widget[IN_NUMBER_ID].show = 0;
+        WIDGET_SHOW(WIDGET_IN_NUMBER_ID) = 0;
         map_udate_flag = 2;
     }
     /* if set, we got a finished input!*/
@@ -118,10 +118,10 @@ void do_number(int x, int y)
         reset_keys();
         cpl.input_mode = INPUT_MODE_NO;
         map_udate_flag = 2;
-        cur_widget[IN_NUMBER_ID].show = 0;
+        WIDGET_SHOW(WIDGET_IN_NUMBER_ID) = 0;
     }
     else
-        cur_widget[IN_NUMBER_ID].show = 1;
+        WIDGET_SHOW(WIDGET_IN_NUMBER_ID) = 1;
 }
 
 void do_keybind_input(void)
@@ -188,8 +188,8 @@ void do_npcdialog_input(void)
 void widget_number_event(int x, int y, SDL_Event event)
 {
     int mx=0, my=0;
-    mx = x - cur_widget[IN_NUMBER_ID].x1;
-    my = y - cur_widget[IN_NUMBER_ID].y1;
+    mx = x - widget_data[WIDGET_IN_NUMBER_ID].x1;
+    my = y - widget_data[WIDGET_IN_NUMBER_ID].y1;
 
     /* close number input */
     if (InputStringFlag && cpl.input_mode == INPUT_MODE_NUMBER)
@@ -222,9 +222,9 @@ static inline void print_resist(char *name, int x, int y, int num)
 {
     char    buf[16];
 
-    string_blt(widgetSF[RESIST_ID], &font_small, name, x+5, y, (num>ATNR_GODPOWER)?COLOR_DGOLD:COLOR_HGOLD, NULL, NULL);
+    string_blt(widget_surface[WIDGET_RESIST_ID], &font_small, name, x+5, y, (num>ATNR_GODPOWER)?COLOR_DGOLD:COLOR_HGOLD, NULL, NULL);
     sprintf(buf, "%02d", cpl.stats.protection[num]);
-    string_blt(widgetSF[RESIST_ID], &font_small, buf, x + 17, y, cpl.stats.protection[num] ? (cpl.stats.protection[num]<0?COLOR_RED:(cpl.stats.protection[num]>=100?COLOR_ORANGE:COLOR_WHITE)) : COLOR_GREY,NULL, NULL);
+    string_blt(widget_surface[WIDGET_RESIST_ID], &font_small, buf, x + 17, y, cpl.stats.protection[num] ? (cpl.stats.protection[num]<0?COLOR_RED:(cpl.stats.protection[num]>=100?COLOR_ORANGE:COLOR_WHITE)) : COLOR_GREY,NULL, NULL);
 }
 
 void widget_show_resist(int x, int y)
@@ -232,19 +232,19 @@ void widget_show_resist(int x, int y)
     _BLTFX bltfx;
     SDL_Rect box;
 
-    if (!widgetSF[RESIST_ID])
-        widgetSF[RESIST_ID]=SDL_ConvertSurface(Bitmaps[BITMAP_RESIST_BG]->bitmap,Bitmaps[BITMAP_RESIST_BG]->bitmap->format,Bitmaps[BITMAP_RESIST_BG]->bitmap->flags);
+    if (!widget_surface[WIDGET_RESIST_ID])
+        widget_surface[WIDGET_RESIST_ID]=SDL_ConvertSurface(Bitmaps[BITMAP_RESIST_BG]->bitmap,Bitmaps[BITMAP_RESIST_BG]->bitmap->format,Bitmaps[BITMAP_RESIST_BG]->bitmap->flags);
 
-    if (cur_widget[RESIST_ID].redraw)
+    if (widget_data[WIDGET_RESIST_ID].redraw)
     {
-        cur_widget[RESIST_ID].redraw=0;
+        widget_data[WIDGET_RESIST_ID].redraw=0;
 
-        bltfx.surface=widgetSF[RESIST_ID];
+        bltfx.surface=widget_surface[WIDGET_RESIST_ID];
         bltfx.flags = 0;
         bltfx.alpha=0;
 
         sprite_blt(Bitmaps[BITMAP_RESIST_BG], 0, 0, NULL, &bltfx);
-        string_blt(widgetSF[RESIST_ID], &font_tiny_out, "Resistance Table", 5,  1, COLOR_HGOLD, NULL, NULL);
+        string_blt(widget_surface[WIDGET_RESIST_ID], &font_tiny_out, "Resistance Table", 5,  1, COLOR_HGOLD, NULL, NULL);
 
         print_resist("IM", 68, 3, ATNR_PHYSICAL);
         print_resist("SL", 98, 3, ATNR_SLASH);
@@ -285,7 +285,7 @@ void widget_show_resist(int x, int y)
     }
     box.x=x;
     box.y=y;
-    SDL_BlitSurface(widgetSF[RESIST_ID], NULL, ScreenSurface, &box);
+    SDL_BlitSurface(widget_surface[WIDGET_RESIST_ID], NULL, ScreenSurface, &box);
 }
 
 #define ICONDEFLEN 32
@@ -338,10 +338,10 @@ uint8 blt_face_centered(int face, int x, int y)
 
 void widget_range_event(int x, int y, SDL_Event event, int MEvent)
 {
-    if (x > cur_widget[RANGE_ID].x1 + 5 &&
-        x < cur_widget[RANGE_ID].x1 + 38 &&
-        y >= cur_widget[RANGE_ID].y1 + 3 &&
-        y <= cur_widget[RANGE_ID].y1 + 33)
+    if (x > widget_data[WIDGET_RANGE_ID].x1 + 5 &&
+        x < widget_data[WIDGET_RANGE_ID].x1 + 38 &&
+        y >= widget_data[WIDGET_RANGE_ID].y1 + 3 &&
+        y <= widget_data[WIDGET_RANGE_ID].y1 + 33)
     {
         if (MEvent==MOUSE_DOWN)
         {
@@ -366,10 +366,10 @@ void widget_range_event(int x, int y, SDL_Event event, int MEvent)
 
                 /* range field */
                 if (draggingInvItem(DRAG_GET_STATUS) == DRAG_IWIN_INV &&
-                    x >= cur_widget[RANGE_ID].x1 &&
-                    x <= cur_widget[RANGE_ID].x1 + 78 &&
-                    y >= cur_widget[RANGE_ID].y1 &&
-                    y <= cur_widget[RANGE_ID].y1 + 35)
+                    x >= widget_data[WIDGET_RANGE_ID].x1 &&
+                    x <= widget_data[WIDGET_RANGE_ID].x1 + 78 &&
+                    y >= widget_data[WIDGET_RANGE_ID].y1 &&
+                    y <= widget_data[WIDGET_RANGE_ID].y1 + 35)
                 {
                     RangeFireMode = 4;
                     process_macro_keys(KEYFUNC_APPLY, 0); /* drop to player-doll */
@@ -643,7 +643,7 @@ int get_quickslot(int x, int y)
 {
     int i;
     int qsx, qsy, xoff;
-    if (cur_widget[QUICKSLOT_ID].ht > 34)
+    if (widget_data[WIDGET_QUICKSLOT_ID].ht > 34)
     {
         qsx = 1;
         qsy = 0;
@@ -658,10 +658,10 @@ int get_quickslot(int x, int y)
 
     for (i = 0; i < MAX_QUICK_SLOTS; i++)
     {
-        if (x >= cur_widget[QUICKSLOT_ID].x1 + quickslots_pos[i][qsx]+xoff
-                && x <= cur_widget[QUICKSLOT_ID].x1 + quickslots_pos[i][qsx]+xoff + 32
-                && y >= cur_widget[QUICKSLOT_ID].y1 + quickslots_pos[i][qsy]
-                && y <= cur_widget[QUICKSLOT_ID].y1 + quickslots_pos[i][qsy] + 32)
+        if (x >= widget_data[WIDGET_QUICKSLOT_ID].x1 + quickslots_pos[i][qsx]+xoff
+                && x <= widget_data[WIDGET_QUICKSLOT_ID].x1 + quickslots_pos[i][qsx]+xoff + 32
+                && y >= widget_data[WIDGET_QUICKSLOT_ID].y1 + quickslots_pos[i][qsy]
+                && y <= widget_data[WIDGET_QUICKSLOT_ID].y1 + quickslots_pos[i][qsy] + 32)
             return i;
     }
     return -1;
@@ -693,7 +693,7 @@ void show_quickslots(int x, int y)
                         && mx < x + quickslots_pos[i][qsx]+xoff + 33
                         && my >= y + quickslots_pos[i][qsy]
                         && my < y + quickslots_pos[i][qsy] + 33
-                        && GetMouseState(&mx,&my,QUICKSLOT_ID))
+                        && widget_get_mouse_state(&mx,&my,WIDGET_QUICKSLOT_ID))
                     show_tooltip(mx, my,
                                  spell_list[quick_slots[i].spell.groupNr].entry[quick_slots[i].spell.classNr][quick_slots[i].shared.tag].name);
             }
@@ -710,7 +710,7 @@ void show_quickslots(int x, int y)
                             && mx < x + quickslots_pos[i][qsx]+xoff + 33
                             && my >= y + quickslots_pos[i][qsy]
                             && my < y + quickslots_pos[i][qsy] + 33
-                            && GetMouseState(&mx,&my,QUICKSLOT_ID))
+                            && widget_get_mouse_state(&mx,&my,WIDGET_QUICKSLOT_ID))
                     {
                         sprintf(buf,"%s (q/c: %d/%d)",tmp->s_name, tmp->item_qua, tmp->item_con);
                         show_tooltip(mx, my, buf);
@@ -729,7 +729,7 @@ void widget_quickslots(int x, int y)
     char    buf[512];
     int     qsx, qsy, xoff;
 
-    if (cur_widget[QUICKSLOT_ID].ht > 34)
+    if (widget_data[WIDGET_QUICKSLOT_ID].ht > 34)
     {
         qsx = 1;
         qsy = 0;
@@ -760,7 +760,7 @@ void widget_quickslots(int x, int y)
                         && mx < x + quickslots_pos[i][qsx]+xoff + 33
                         && my >= y + quickslots_pos[i][qsy]
                         && my < y + quickslots_pos[i][qsy] + 33
-                        && GetMouseState(&mx,&my,QUICKSLOT_ID))
+                        && widget_get_mouse_state(&mx,&my,WIDGET_QUICKSLOT_ID))
                     show_tooltip(mx, my,
                                  spell_list[quick_slots[i].spell.groupNr].entry[quick_slots[i].spell.classNr][quick_slots[i].shared.tag].name);
             }
@@ -777,7 +777,7 @@ void widget_quickslots(int x, int y)
                             && mx < x + quickslots_pos[i][qsx]+xoff + 33
                             && my >= y + quickslots_pos[i][qsy]
                             && my < y + quickslots_pos[i][qsy] + 33
-                            && GetMouseState(&mx,&my,QUICKSLOT_ID))
+                            && widget_get_mouse_state(&mx,&my,WIDGET_QUICKSLOT_ID))
                     {
                         sprintf(buf,"%s (QC: %d/%d)",tmp->s_name, tmp->item_qua, tmp->item_con);
                         show_tooltip(mx, my, buf);
@@ -871,25 +871,25 @@ void widget_quickslots_mouse_event(int x, int y, int MEvent)
                 cpl.win_inv_tag = itemp;
             }
         }
-        else if (x >= cur_widget[QUICKSLOT_ID].x1+266
-                 && x <= cur_widget[QUICKSLOT_ID].x1 + 282
-                 && y >= cur_widget[QUICKSLOT_ID].y1
-                 && y <= cur_widget[QUICKSLOT_ID].y1 + 34
-                 && (cur_widget[QUICKSLOT_ID].ht <= 34))
+        else if (x >= widget_data[WIDGET_QUICKSLOT_ID].x1+266
+                 && x <= widget_data[WIDGET_QUICKSLOT_ID].x1 + 282
+                 && y >= widget_data[WIDGET_QUICKSLOT_ID].y1
+                 && y <= widget_data[WIDGET_QUICKSLOT_ID].y1 + 34
+                 && (widget_data[WIDGET_QUICKSLOT_ID].ht <= 34))
         {
-            cur_widget[QUICKSLOT_ID].wd = 34;
-            cur_widget[QUICKSLOT_ID].ht = 282;
-            cur_widget[QUICKSLOT_ID].x1 +=266;
+            widget_data[WIDGET_QUICKSLOT_ID].wd = 34;
+            widget_data[WIDGET_QUICKSLOT_ID].ht = 282;
+            widget_data[WIDGET_QUICKSLOT_ID].x1 +=266;
         }
-        else if (x >= cur_widget[QUICKSLOT_ID].x1
-                 && x <= cur_widget[QUICKSLOT_ID].x1 + 34
-                 && y >= cur_widget[QUICKSLOT_ID].y1
-                 && y <= cur_widget[QUICKSLOT_ID].y1 + 15
-                 && (cur_widget[QUICKSLOT_ID].ht > 34))
+        else if (x >= widget_data[WIDGET_QUICKSLOT_ID].x1
+                 && x <= widget_data[WIDGET_QUICKSLOT_ID].x1 + 34
+                 && y >= widget_data[WIDGET_QUICKSLOT_ID].y1
+                 && y <= widget_data[WIDGET_QUICKSLOT_ID].y1 + 15
+                 && (widget_data[WIDGET_QUICKSLOT_ID].ht > 34))
         {
-            cur_widget[QUICKSLOT_ID].wd = 282;
-            cur_widget[QUICKSLOT_ID].ht = 34;
-            cur_widget[QUICKSLOT_ID].x1 -=266;
+            widget_data[WIDGET_QUICKSLOT_ID].wd = 282;
+            widget_data[WIDGET_QUICKSLOT_ID].ht = 34;
+            widget_data[WIDGET_QUICKSLOT_ID].x1 -=266;
         }
     }
 
@@ -1244,18 +1244,18 @@ void save_quickslots_entrys()
 void widget_event_target(int x, int y, SDL_Event event)
 {
     /* combat modus */
-    if (y > cur_widget[TARGET_ID].y1+3 &&
-        y < cur_widget[TARGET_ID].y1+38 &&
-        x > cur_widget[TARGET_ID].x1+3 &&
-        x < cur_widget[TARGET_ID].x1+30)
+    if (y > widget_data[WIDGET_TARGET_ID].y1+3 &&
+        y < widget_data[WIDGET_TARGET_ID].y1+38 &&
+        x > widget_data[WIDGET_TARGET_ID].x1+3 &&
+        x < widget_data[WIDGET_TARGET_ID].x1+30)
     {
         check_keys(SDLK_c);
     }
     /* talk button */
-    if (y > cur_widget[TARGET_ID].y1 + 7 &&
-        y < cur_widget[TARGET_ID].y1 + 25 &&
-        x > cur_widget[TARGET_ID].x1 + 223 &&
-        x < cur_widget[TARGET_ID].x1 + 259)
+    if (y > widget_data[WIDGET_TARGET_ID].y1 + 7 &&
+        y < widget_data[WIDGET_TARGET_ID].y1 + 25 &&
+        x > widget_data[WIDGET_TARGET_ID].x1 + 223 &&
+        x < widget_data[WIDGET_TARGET_ID].x1 + 259)
     {
         if (cpl.target_code)
         {

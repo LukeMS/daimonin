@@ -1642,7 +1642,6 @@ int main(int argc, char *argv[])
     signal(SIGSEGV, SIG_DFL); /* allows better debugging under linux by removing SDL parachute for this signal */
     load_options_dat(); /* now load options, allowing the user to override the presetings */
     Screensize = Screendefs[options.resolution];
-    init_widgets_fromCurrent();
     SYSTEM_Start(); /* start the system AFTER start SDL */
     videoflags = get_video_flags();
     list_vid_modes(videoflags);
@@ -1985,7 +1984,7 @@ int main(int argc, char *argv[])
         {
             if (options.statsupdate)
             {
-                cur_widget[STATOMETER_ID].show = 1;
+                WIDGET_SHOW(WIDGET_STATOMETER_ID) = 1;
 
                 if ((int)(LastTick - statometer.lastupdate) >
                     (options.statsupdate * 1000))
@@ -2760,7 +2759,7 @@ static void DisplayLayer3(void)
     /* process the widgets */
     if(GameStatus  >= GAME_STATUS_WAITFORPLAY)
     {
-        process_widgets();
+        widget_process();
     }
 }
 
@@ -2771,13 +2770,13 @@ static void DisplayLayer4(void)
     if (GameStatus >= GAME_STATUS_WAITFORPLAY)
     {
         /* we have to make sure that this two windows get closed/hidden right */
-        cur_widget[IN_CONSOLE_ID].show = 0;
-        cur_widget[IN_NUMBER_ID].show = 0;
+        WIDGET_SHOW(WIDGET_IN_CONSOLE_ID) = 0;
+        WIDGET_SHOW(WIDGET_IN_NUMBER_ID) = 0;
 
         if (cpl.input_mode == INPUT_MODE_CONSOLE)
-            do_console(cur_widget[IN_CONSOLE_ID].x1, cur_widget[IN_CONSOLE_ID].y1);
+            do_console(widget_data[WIDGET_IN_CONSOLE_ID].x1, widget_data[WIDGET_IN_CONSOLE_ID].y1);
         else if (cpl.input_mode == INPUT_MODE_NUMBER)
-            do_number(cur_widget[IN_NUMBER_ID].x1, cur_widget[IN_NUMBER_ID].y1);
+            do_number(widget_data[WIDGET_IN_NUMBER_ID].x1, widget_data[WIDGET_IN_NUMBER_ID].y1);
         else if (cpl.input_mode == INPUT_MODE_GETKEY)
             do_keybind_input();
         else if (cpl.input_mode == INPUT_MODE_NPCDIALOG)

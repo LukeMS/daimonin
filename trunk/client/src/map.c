@@ -161,8 +161,8 @@ void UpdateMapName(char *name)
     if (name == NULL)
         return;
 
-    cur_widget[MAPNAME_ID].wd = string_width(&font_large_out, name);
-    cur_widget[MAPNAME_ID].ht = font_large_out.c[0].h;
+    widget_data[WIDGET_MAPNAME_ID].wd = string_width(&font_large_out, name);
+    widget_data[WIDGET_MAPNAME_ID].ht = font_large_out.c[0].h;
     strcpy(MapData.name, name);
 }
 

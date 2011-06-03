@@ -358,10 +358,10 @@ void textwin_showstring(int flags, char *format, ...)
                 if (mode & NDI_PLAYER)
                 {
                     actWin++; /* next window => MSG_CHAT */
-                    WIDGET_REDRAW(CHATWIN_ID);
+                    WIDGET_REDRAW(WIDGET_CHATWIN_ID) = 1;
                 }
                 else
-                    WIDGET_REDRAW(MSGWIN_ID);
+                    WIDGET_REDRAW(WIDGET_MSGWIN_ID) = 1;
             }
 
             /* hack: because of autoclip we must scan every line again */
@@ -563,9 +563,9 @@ void widget_textwin_show(int x, int y, int actWin)
     _BLTFX      bltfx;
 
     if (actWin==TW_CHAT)
-        wID=CHATWIN_ID;
+        wID=WIDGET_CHATWIN_ID;
     else if (actWin==TW_MSG)
-        wID=MSGWIN_ID;
+        wID=WIDGET_MSGWIN_ID;
 
     box.x = box.y = 0;
     box.w = Bitmaps[BITMAP_TEXTWIN]->bitmap->w;
@@ -602,23 +602,23 @@ void widget_textwin_show(int x, int y, int actWin)
         sprite_blt(Bitmaps[BITMAP_TEXTWIN], x, y, &box, NULL);
     }
     /* if we don't have a backbuffer, create it */
-    if (!widgetSF[wID])
+    if (!widget_surface[wID])
     {
-        widgetSF[wID]=SDL_ConvertSurface(Bitmaps[BITMAP_TEXTWIN_MASK]->bitmap,
+        widget_surface[wID]=SDL_ConvertSurface(Bitmaps[BITMAP_TEXTWIN_MASK]->bitmap,
                                          Bitmaps[BITMAP_TEXTWIN_MASK]->bitmap->format,
                                          Bitmaps[BITMAP_TEXTWIN_MASK]->bitmap->flags);
-        SDL_SetColorKey(widgetSF[wID], SDL_SRCCOLORKEY | SDL_RLEACCEL, SDL_MapRGB(widgetSF[wID]->format, 0, 0, 0));
+        SDL_SetColorKey(widget_surface[wID], SDL_SRCCOLORKEY | SDL_RLEACCEL, SDL_MapRGB(widget_surface[wID]->format, 0, 0, 0));
     }
 
     /* lets draw the widgets in the backbuffer */
-    if (cur_widget[wID].redraw)
+    if (widget_data[wID].redraw)
     {
 
-        cur_widget[wID].redraw=0;
+        widget_data[wID].redraw=0;
 
-        SDL_FillRect(widgetSF[wID],NULL, SDL_MapRGBA(widgetSF[wID]->format, 0, 0, 0, options.textwin_alpha));
+        SDL_FillRect(widget_surface[wID],NULL, SDL_MapRGBA(widget_surface[wID]->format, 0, 0, 0, options.textwin_alpha));
 
-        bltfx.surface=widgetSF[wID];
+        bltfx.surface=widget_surface[wID];
         bltfx.flags = 0;
         bltfx.alpha = 0;
         if (options.use_TextwinAlpha)
@@ -627,23 +627,23 @@ void widget_textwin_show(int x, int y, int actWin)
             box.y = 0;
             box.h = 1;
             box.w = Bitmaps[BITMAP_TEXTWIN]->bitmap->w;
-            SDL_FillRect(widgetSF[wID], &box, SDL_MapRGBA(widgetSF[wID]->format, 0x60, 0x60, 0x60, 255));
+            SDL_FillRect(widget_surface[wID], &box, SDL_MapRGBA(widget_surface[wID]->format, 0x60, 0x60, 0x60, 255));
             box.y = len;
             box.h = 1;
             box.x = 0;
             box.w = Bitmaps[BITMAP_TEXTWIN]->bitmap->w;
-            SDL_FillRect(widgetSF[wID], &box, SDL_MapRGBA(widgetSF[wID]->format, 0x60, 0x60, 0x60, 255));
+            SDL_FillRect(widget_surface[wID], &box, SDL_MapRGBA(widget_surface[wID]->format, 0x60, 0x60, 0x60, 255));
             box.w = Bitmaps[BITMAP_TEXTWIN]->bitmap->w;
             box.x = box.w-1;
             box.w = 1;
             box.y = 0;
             box.h = len;
-            SDL_FillRect(widgetSF[wID], &box, SDL_MapRGBA(widgetSF[wID]->format, 0x60, 0x60, 0x60, 255));
+            SDL_FillRect(widget_surface[wID], &box, SDL_MapRGBA(widget_surface[wID]->format, 0x60, 0x60, 0x60, 255));
             box.x = 0;
             box.y = 0;
             box.h = len;
             box.w = 1;
-            SDL_FillRect(widgetSF[wID], &box, SDL_MapRGBA(widgetSF[wID]->format, 0x60, 0x60, 0x60, 255));
+            SDL_FillRect(widget_surface[wID], &box, SDL_MapRGBA(widget_surface[wID]->format, 0x60, 0x60, 0x60, 255));
         }
         show_window(actWin, x, y - 2, &bltfx);
 
@@ -655,32 +655,25 @@ void widget_textwin_show(int x, int y, int actWin)
     box2.w = Bitmaps[BITMAP_TEXTWIN]->bitmap->w;
     box2.h = len = txtwin[actWin].size * 10 + 14;
 
-    SDL_BlitSurface(widgetSF[wID], &box2, ScreenSurface, &box);
+    SDL_BlitSurface(widget_surface[wID], &box2, ScreenSurface, &box);
 }
 
 
 /******************************************************************
  mouse-button event in the textwindow.
 *****************************************************************/
-void textwin_button_event(int actWin, SDL_Event event)
+void textwin_button_event(int actWin, widget_id_t id, SDL_Event *event)
 {
-    int wID = 0;
-
-    if (actWin==TW_CHAT)
-        wID=CHATWIN_ID;
-    else if (actWin==TW_MSG)
-        wID=MSGWIN_ID;
-
-    if (event.motion.x < cur_widget[wID].x1 || (textwin_flags & (TW_SCROLL | TW_RESIZE) && (textwin_flags & actWin))) /* scrolling || resising */
+    if (event->motion.x < widget_data[id].x1 || (textwin_flags & (TW_SCROLL | TW_RESIZE) && (textwin_flags & actWin))) /* scrolling || resising */
         return;
 
-    WIDGET_REDRAW(wID);
+    WIDGET_REDRAW(id) = 1;
 
-    if (event.button.button == 4) /* mousewheel up */
+    if (event->button.button == 4) /* mousewheel up */
         txtwin[actWin].scroll++;
-    else if (event.button.button == 5) /* mousewheel down */
+    else if (event->button.button == 5) /* mousewheel down */
         txtwin[actWin].scroll--;
-    else if (event.button.button == SDL_BUTTON_LEFT)
+    else if (event->button.button == SDL_BUTTON_LEFT)
     {
         if (txtwin[actWin].highlight == TW_HL_UP) /* clicked scroller-button up */
             txtwin[actWin].scroll++;
@@ -690,44 +683,35 @@ void textwin_button_event(int actWin, SDL_Event event)
         {
             /* clicked on the slider */
             textwin_flags |= (actWin | TW_SCROLL);
-            old_slider_pos = event.motion.y - txtwin[actWin].slider_y;
+            old_slider_pos = event->motion.y - txtwin[actWin].slider_y;
         }
         else if (txtwin[actWin].highlight == TW_UNDER) /* clicked under the slider */
             txtwin[actWin].scroll -= txtwin[actWin].size;
         else if (txtwin[actWin].highlight == TW_HL_DOWN) /* clicked scroller-button down */
             txtwin[actWin].scroll--;
-        else if (event.motion.x<cur_widget[wID].x1+246
-                 && event.motion.y>cur_widget[wID].y1 + 2
-                 && event.motion.y < cur_widget[wID].y1 + 7
+        else if (event->motion.x<widget_data[id].x1+246
+                 && event->motion.y>widget_data[id].y1 + 2
+                 && event->motion.y < widget_data[id].y1 + 7
                  && cursor_type == 1)
             textwin_flags |= (actWin | TW_RESIZE);      /* size-change */
-        else if (event.motion.x < cur_widget[wID].x1 + 250)
-            say_clickedKeyword(actWin, event.motion.x, event.motion.y);
+        else if (event->motion.x < widget_data[id].x1 + 250)
+            say_clickedKeyword(actWin, event->motion.x, event->motion.y);
     }
 }
 
 /******************************************************************
  mouse-move event in the textwindow.
 *****************************************************************/
-int textwin_move_event(int actWin, SDL_Event event)
+int textwin_move_event(int actWin, widget_id_t id, SDL_Event *event)
 {
-
-    int wID = 0;
-
     txtwin[actWin].highlight = TW_HL_NONE;
-
-    if (actWin==TW_CHAT)
-        wID=CHATWIN_ID;
-    else if (actWin==TW_MSG)
-        wID=MSGWIN_ID;
-
-    WIDGET_REDRAW(wID);
+    WIDGET_REDRAW(id) = 1;
 
     /* show resize-cursor */
-    if ((event.motion.y > cur_widget[wID].y1 + 2 && event.motion.y < cur_widget[wID].y1 + 7 && (event.motion.x < cur_widget[wID].x1+246))
-            || (event.button.button == SDL_BUTTON_LEFT && (textwin_flags & (TW_SCROLL | TW_RESIZE))))
+    if ((event->motion.y > widget_data[id].y1 + 2 && event->motion.y < widget_data[id].y1 + 7 && (event->motion.x < widget_data[id].x1+246))
+            || (event->button.button == SDL_BUTTON_LEFT && (textwin_flags & (TW_SCROLL | TW_RESIZE))))
     {
-        if (!(textwin_flags & TW_SCROLL) && event.motion.x > cur_widget[wID].x1)
+        if (!(textwin_flags & TW_SCROLL) && event->motion.x > widget_data[id].x1)
             cursor_type = 1;
     }
     else
@@ -738,30 +722,30 @@ int textwin_move_event(int actWin, SDL_Event event)
 
     /* mouse out of window */
     /* we have to leave this here!!! for sanity, also the widgetstuff does some area checking */
-    if (event.motion.y < cur_widget[wID].y1
-            || event.motion.x > cur_widget[wID].x1 + Bitmaps[BITMAP_TEXTWIN]->bitmap->w
-            || event.motion.y > cur_widget[wID].y1 + txtwin[actWin].size * 10 + 13 + Bitmaps[BITMAP_SLIDER_UP]->bitmap->h)
+    if (event->motion.y < widget_data[id].y1
+            || event->motion.x > widget_data[id].x1 + Bitmaps[BITMAP_TEXTWIN]->bitmap->w
+            || event->motion.y > widget_data[id].y1 + txtwin[actWin].size * 10 + 13 + Bitmaps[BITMAP_SLIDER_UP]->bitmap->h)
     {
         if (!(textwin_flags & TW_RESIZE))
             return 1;
     }
 
     /* highlighting */
-    if (event.motion.x > cur_widget[wID].x1 + 250
-            && event.motion.y > cur_widget[wID].y1
-            && event.button.button != SDL_BUTTON_LEFT
-            && event.motion.x < cur_widget[wID].x1 + Bitmaps[BITMAP_TEXTWIN]->bitmap->w)
+    if (event->motion.x > widget_data[id].x1 + 250
+            && event->motion.y > widget_data[id].y1
+            && event->button.button != SDL_BUTTON_LEFT
+            && event->motion.x < widget_data[id].x1 + Bitmaps[BITMAP_TEXTWIN]->bitmap->w)
     {
 #define OFFSET (txtwin[actWin].y + Bitmaps[BITMAP_SLIDER_UP]->bitmap->h)
-        if (event.motion.y < OFFSET)
+        if (event->motion.y < OFFSET)
             txtwin[actWin].highlight = TW_HL_UP;
-        else if (event.motion.y < OFFSET + txtwin[actWin].slider_y)
+        else if (event->motion.y < OFFSET + txtwin[actWin].slider_y)
             txtwin[actWin].highlight = TW_ABOVE;
-        else if (event.motion.y < OFFSET + txtwin[actWin].slider_y + txtwin[actWin].slider_h + 3)
+        else if (event->motion.y < OFFSET + txtwin[actWin].slider_y + txtwin[actWin].slider_h + 3)
             txtwin[actWin].highlight = TW_HL_SLIDER;
-        else if (event.motion.y < cur_widget[wID].y1 + txtwin[actWin].size * 10 + 4)
+        else if (event->motion.y < widget_data[id].y1 + txtwin[actWin].size * 10 + 4)
             txtwin[actWin].highlight = TW_UNDER;
-        else if (event.motion.y < cur_widget[wID].y1 + txtwin[actWin].size * 10 + 13)
+        else if (event->motion.y < widget_data[id].y1 + txtwin[actWin].size * 10 + 13)
             txtwin[actWin].highlight = TW_HL_DOWN;
 #undef OFFSET
         return 0;
@@ -771,12 +755,12 @@ int textwin_move_event(int actWin, SDL_Event event)
     if (textwin_flags & TW_SCROLL)
     {
         actWin = textwin_flags & TW_ACTWIN;
-        txtwin[actWin].slider_y = event.motion.y - old_slider_pos;
+        txtwin[actWin].slider_y = event->motion.y - old_slider_pos;
         txtwin[actWin].scroll = txtwin[actWin].act_bufsize
                                 - (txtwin[actWin].size + 1)
                                 - (txtwin[actWin].act_bufsize * txtwin[actWin].slider_y)
                                 / (txtwin[actWin].size * 10 - 1);
-        WIDGET_REDRAW(wID);
+        WIDGET_REDRAW(id) = 1;
         return 0;
     }
 
@@ -787,75 +771,38 @@ int textwin_move_event(int actWin, SDL_Event event)
         if (actWin == TW_CHAT)
         {
             int newsize;
-            newsize = ((cur_widget[CHATWIN_ID].y1+cur_widget[CHATWIN_ID].ht)-event.motion.y) / 10;
+            newsize = ((widget_data[WIDGET_CHATWIN_ID].y1+widget_data[WIDGET_CHATWIN_ID].ht)-event->motion.y) / 10;
             if (newsize < 3)
                 newsize = 3;
             /* we need to calc thenew x for the widget, and set the new size */
-            cur_widget[CHATWIN_ID].y1+=(txtwin[actWin].size-newsize)*10;
-            cur_widget[CHATWIN_ID].ht=newsize*10+13;
+            widget_data[WIDGET_CHATWIN_ID].y1+=(txtwin[actWin].size-newsize)*10;
+            widget_data[WIDGET_CHATWIN_ID].ht=newsize*10+13;
             txtwin[actWin].size=newsize;
         }
         else if (actWin == TW_MSG)
         {
             int newsize;
-            newsize = ((cur_widget[MSGWIN_ID].y1+cur_widget[MSGWIN_ID].ht)-event.motion.y) / 10;
+            newsize = ((widget_data[WIDGET_MSGWIN_ID].y1+widget_data[WIDGET_MSGWIN_ID].ht)-event->motion.y) / 10;
             if (newsize < 9)
                 newsize = 9;
             /* we need to calc thenew x for the widget, and set the new size */
-            cur_widget[MSGWIN_ID].y1+=(txtwin[actWin].size-newsize)*10;
-            cur_widget[MSGWIN_ID].ht=newsize*10+13;
+            widget_data[WIDGET_MSGWIN_ID].y1+=(txtwin[actWin].size-newsize)*10;
+            widget_data[WIDGET_MSGWIN_ID].ht=newsize*10+13;
             txtwin[actWin].size=newsize;
         }
         else
         {
             int newsize;
-            newsize = ((cur_widget[MIXWIN_ID].y1+cur_widget[MIXWIN_ID].ht)-event.motion.y) / 10;
+            newsize = ((widget_data[WIDGET_MIXWIN_ID].y1+widget_data[WIDGET_MIXWIN_ID].ht)-event->motion.y) / 10;
             if (newsize < 9)
                 newsize = 9;
             /* we need to calc thenew x for the widget, and set the new size */
-            cur_widget[MIXWIN_ID].y1+=(txtwin[actWin].size-newsize)*10;
-            cur_widget[MIXWIN_ID].ht=newsize*10+13;
+            widget_data[WIDGET_MIXWIN_ID].y1+=(txtwin[actWin].size-newsize)*10;
+            widget_data[WIDGET_MIXWIN_ID].ht=newsize*10+13;
             txtwin[actWin].size=newsize;
         }
     }
     return 0;
-}
-
-/******************************************************************
- textwin-events.
-*****************************************************************/
-void textwin_event(int e, SDL_Event *event, int WidgetID)
-{
-    if (e == TW_CHECK_BUT_DOWN)
-    {
-        switch (WidgetID)
-        {
-            case CHATWIN_ID:
-                textwin_button_event(TW_CHAT, *event);
-                break;
-            case MSGWIN_ID:
-                textwin_button_event(TW_MSG, *event);
-                break;
-            case MIXWIN_ID:
-                textwin_button_event(TW_MIX, *event);
-                break;
-        }
-    }
-    else
-    {
-        switch (WidgetID)
-        {
-            case CHATWIN_ID:
-                textwin_move_event(TW_CHAT, *event);
-                break;
-            case MSGWIN_ID:
-                textwin_move_event(TW_MSG, *event);
-                break;
-            case MIXWIN_ID:
-                textwin_move_event(TW_MIX, *event);
-                break;
-        }
-    }
 }
 
 void textwin_addhistory(char *text)

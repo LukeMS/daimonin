@@ -54,7 +54,7 @@ void widget_show_group(int x, int y)
     else
         box.h = (group_count*24)+31;
 
-    cur_widget[GROUP_ID].ht = box.h+4;
+    widget_data[WIDGET_GROUP_ID].ht = box.h+4;
     sprite_blt(Bitmaps[BITMAP_GROUP_BG], x, y, &box, NULL);
     sprite_blt(Bitmaps[BITMAP_GROUP_BG_BOTTOM],x,y+box.h, NULL, NULL);
 

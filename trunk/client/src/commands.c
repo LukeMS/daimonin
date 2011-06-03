@@ -684,7 +684,7 @@ void SkillRdyCmd(char *data, int len)
     int i, ii;
 
     strcpy(cpl.skill_name, (const char *)data);
-    WIDGET_REDRAW(SKILL_EXP_ID);
+    WIDGET_REDRAW(WIDGET_SKILL_EXP_ID) = 1;
 
     /* lets find the skill... and setup the shortcuts to the exp values*/
     for (ii = 0; ii < SKILL_LIST_MAX; ii++)
@@ -898,7 +898,7 @@ void StatsCmd(char *data, int len)
         {
             cpl.stats.protection[c - CS_STAT_RES_START] = GetSINT8_String(data + i++);
             cpl.stats.protection_change = 1;
-            WIDGET_REDRAW(RESIST_ID);
+            WIDGET_REDRAW(WIDGET_RESIST_ID) = 1;
         }
         else
         {
@@ -910,17 +910,17 @@ void StatsCmd(char *data, int len)
                 case CS_STAT_REG_HP:
                     cpl.gen_hp = ((float) GetUINT16_String(data + i)) / 10.0f;
                     i += 2;
-                    WIDGET_REDRAW(REGEN_ID);
+                    WIDGET_REDRAW(WIDGET_REGEN_ID) = 1;
                     break;
                 case CS_STAT_REG_MANA:
                     cpl.gen_sp = ((float) GetUINT16_String(data + i)) / 10.0f;
                     i += 2;
-                    WIDGET_REDRAW(REGEN_ID);
+                    WIDGET_REDRAW(WIDGET_REGEN_ID) = 1;
                     break;
                 case CS_STAT_REG_GRACE:
                     cpl.gen_grace = ((float) GetUINT16_String(data + i)) / 10.0f;
                     i += 2;
-                    WIDGET_REDRAW(REGEN_ID);
+                    WIDGET_REDRAW(WIDGET_REGEN_ID) = 1;
                     break;
 
                 case CS_STAT_HP:
@@ -935,13 +935,13 @@ void StatsCmd(char *data, int len)
                     cpl.stats.hptick=LastTick;
                     cpl.stats.hp = temp;
                     i += 4;
-                    WIDGET_REDRAW(STATS_ID);
+                    WIDGET_REDRAW(WIDGET_STATS_ID) = 1;
                     break;
                 case CS_STAT_MAXHP:
 
                     cpl.stats.maxhp = GetSINT32_String(data + i);
                     i += 4;
-                    WIDGET_REDRAW(STATS_ID);
+                    WIDGET_REDRAW(WIDGET_STATS_ID) = 1;
                     break;
                 case CS_STAT_SP:
                     temp = GetUINT16_String(data + i);
@@ -949,12 +949,12 @@ void StatsCmd(char *data, int len)
                     cpl.stats.sptick = LastTick;
                     cpl.stats.sp = temp;
                     i += 2;
-                    WIDGET_REDRAW(STATS_ID);
+                    WIDGET_REDRAW(WIDGET_STATS_ID) = 1;
                     break;
                 case CS_STAT_MAXSP:
                     cpl.stats.maxsp = GetUINT16_String(data + i);
                     i += 2;
-                    WIDGET_REDRAW(STATS_ID);
+                    WIDGET_REDRAW(WIDGET_STATS_ID) = 1;
                     break;
                 case CS_STAT_GRACE:
                     temp = GetUINT16_String(data + i);
@@ -962,12 +962,12 @@ void StatsCmd(char *data, int len)
                     cpl.stats.gracetick = LastTick;
                     cpl.stats.grace = temp;
                     i += 2;
-                    WIDGET_REDRAW(STATS_ID);
+                    WIDGET_REDRAW(WIDGET_STATS_ID) = 1;
                     break;
                 case CS_STAT_MAXGRACE:
                     cpl.stats.maxgrace = GetUINT16_String(data + i);
                     i += 2;
-                    WIDGET_REDRAW(STATS_ID);
+                    WIDGET_REDRAW(WIDGET_STATS_ID) = 1;
                     break;
                 case CS_STAT_STR:
                     temp = (int) * (data + i++);
@@ -977,7 +977,7 @@ void StatsCmd(char *data, int len)
                         cpl.warn_statdown = 1;
 
                     cpl.stats.Str = temp;
-                    WIDGET_REDRAW(STATS_ID);
+                    WIDGET_REDRAW(WIDGET_STATS_ID) = 1;
                     break;
                 case CS_STAT_INT:
                     temp = (int) * (data + i++);
@@ -987,7 +987,7 @@ void StatsCmd(char *data, int len)
                         cpl.warn_statdown = 1;
 
                     cpl.stats.Int = temp;
-                    WIDGET_REDRAW(STATS_ID);
+                    WIDGET_REDRAW(WIDGET_STATS_ID) = 1;
                     break;
                 case CS_STAT_POW:
                     temp = (int) * (data + i++);
@@ -997,7 +997,7 @@ void StatsCmd(char *data, int len)
                         cpl.warn_statdown = 1;
 
                     cpl.stats.Pow = temp;
-                    WIDGET_REDRAW(STATS_ID);
+                    WIDGET_REDRAW(WIDGET_STATS_ID) = 1;
 
                     break;
                 case CS_STAT_WIS:
@@ -1009,7 +1009,7 @@ void StatsCmd(char *data, int len)
 
                     cpl.stats.Wis = temp;
 
-                    WIDGET_REDRAW(STATS_ID);
+                    WIDGET_REDRAW(WIDGET_STATS_ID) = 1;
                     break;
                 case CS_STAT_DEX:
                     temp = (int) * (data + i++);
@@ -1019,7 +1019,7 @@ void StatsCmd(char *data, int len)
                         cpl.warn_statdown = 1;
 
                     cpl.stats.Dex = temp;
-                    WIDGET_REDRAW(STATS_ID);
+                    WIDGET_REDRAW(WIDGET_STATS_ID) = 1;
                     break;
                 case CS_STAT_CON:
                     temp = (int) * (data + i++);
@@ -1029,7 +1029,7 @@ void StatsCmd(char *data, int len)
                         cpl.warn_statdown = 1;
 
                     cpl.stats.Con = temp;
-                    WIDGET_REDRAW(STATS_ID);
+                    WIDGET_REDRAW(WIDGET_STATS_ID) = 1;
                     break;
                 case CS_STAT_CHA:
                     temp = (int) * (data + i++);
@@ -1039,7 +1039,7 @@ void StatsCmd(char *data, int len)
                         cpl.warn_statdown = 1;
 
                     cpl.stats.Cha = temp;
-                    WIDGET_REDRAW(STATS_ID);
+                    WIDGET_REDRAW(WIDGET_STATS_ID) = 1;
                     break;
                 case CS_STAT_EXP:
                     temp = GetSINT32_String(data + i);
@@ -1057,7 +1057,7 @@ void StatsCmd(char *data, int len)
                         }
                     }
                     i += 4;
-                    WIDGET_REDRAW(MAIN_LVL_ID);
+                    WIDGET_REDRAW(WIDGET_MAIN_LVL_ID) = 1;
                     break;
                 case CS_STAT_LEVEL:
                     cpl.stats.level = (sint8) * (data + i++);
@@ -1065,7 +1065,7 @@ void StatsCmd(char *data, int len)
                     {
                         cpl.warn_drain = 1;
                     }
-                    WIDGET_REDRAW(MAIN_LVL_ID);
+                    WIDGET_REDRAW(WIDGET_MAIN_LVL_ID) = 1;
                     break;
                 case CS_STAT_WC:
                     cpl.stats.wc = GetUINT16_String(data + i);
@@ -1104,7 +1104,7 @@ void StatsCmd(char *data, int len)
                 case CS_STAT_FOOD:
                     cpl.stats.food = GetSINT16_String(data + i);
                     i += 2;
-                    WIDGET_REDRAW(STATS_ID);
+                    WIDGET_REDRAW(WIDGET_STATS_ID) = 1;
                     break;
                 case CS_STAT_WEAP_SP:
                     cpl.stats.weapon_sp = ((float)GetUINT32_String(data + i))/1000.0f;
@@ -1126,7 +1126,7 @@ void StatsCmd(char *data, int len)
                         if (options.use_timer_sound == 1)
                             sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICK, 0, 0, 100);
                     i += 4;
-                    WIDGET_REDRAW(SKILL_EXP_ID);
+                    WIDGET_REDRAW(WIDGET_SKILL_EXP_ID) = 1;
                     break;
                 case CS_STAT_SKILLEXP_AGILITY:
                 case CS_STAT_SKILLEXP_PERSONAL:
@@ -1136,7 +1136,7 @@ void StatsCmd(char *data, int len)
                 case CS_STAT_SKILLEXP_WISDOM:
                     cpl.stats.skill_exp[(c - CS_STAT_SKILLEXP_START) / 2] = GetUINT32_String(data + i);
                     i += 4;
-                    WIDGET_REDRAW(SKILL_LVL_ID);
+                    WIDGET_REDRAW(WIDGET_SKILL_LVL_ID) = 1;
                     break;
                 case CS_STAT_SKILLEXP_AGLEVEL:
                 case CS_STAT_SKILLEXP_PELEVEL:
@@ -1145,7 +1145,7 @@ void StatsCmd(char *data, int len)
                 case CS_STAT_SKILLEXP_MALEVEL:
                 case CS_STAT_SKILLEXP_WILEVEL:
                     cpl.stats.skill_level[(c - CS_STAT_SKILLEXP_START - 1) / 2] = (sint16) * (data + i++);
-                    WIDGET_REDRAW(SKILL_LVL_ID);
+                    WIDGET_REDRAW(WIDGET_SKILL_LVL_ID) = 1;
                     break;
                 case CS_STAT_RANGE:
                 {
@@ -1253,7 +1253,6 @@ void PlayerCmd(char *data, int len)
     i += 4;
     nlen = data[i++];
     memcpy(name, (const char *) data + i, nlen);
-
     name[nlen] = '\0';
     i += nlen;
 
@@ -1261,14 +1260,14 @@ void PlayerCmd(char *data, int len)
     {
         fprintf(stderr, "PlayerCmd: lengths do not match (%d!=%d)\n", len, i);
     }
+
     new_player(tag, name, weight, (short) face);
     map_draw_map_clear();
     map_transfer_flag = 1;
     map_udate_flag = 2;
     map_redraw_flag=1;
 //    textwin_showstring(COLOR_GREEN,"map_draw_update: PlayerCmd");
-
-
+    widget_load();
     ignore_list_load();
     chatfilter_list_load();
     kill_list_load();
@@ -2006,7 +2005,7 @@ void SkilllistCmd(char *data, int len)
                             skill_list[ii].entry[i].flag = LIST_ENTRY_KNOWN;
                             skill_list[ii].entry[i].exp = e;
                             skill_list[ii].entry[i].exp_level = l;
-                            WIDGET_REDRAW(SKILL_EXP_ID);
+                            WIDGET_REDRAW(WIDGET_SKILL_EXP_ID) = 1;
                         }
                     }
                 }
