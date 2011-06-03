@@ -121,7 +121,7 @@ sint32 face_find(const char *name)
     /* The faces in face_list[] are conveniently pre-sorted into alphabetical
      * order server-side so we can do a quick binary search to find the named
      * face. */
-    for (l = 0, r = face_nrof - 1, x = r / 2; r >= l; x = (l + r) / 2)
+    for (l = 0, r = face_nrof - 1, x = r / 2; x > 0 && r >= l; x = (l + r) / 2)
     {
         sint8 diff = strcmp(name, face_list[x].name);
 
