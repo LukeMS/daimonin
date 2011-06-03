@@ -908,7 +908,7 @@ static void LoadSkills(void)
         sle->flag = LIST_ENTRY_USED;
         sprintf(sle->icon_name, "%s", icon);
         sprintf(buf, "%s%s", GetIconDirectory(), icon);
-        sle->icon = sprite_load(buf, SURFACE_FLAG_DISPLAYFORMAT, NULL);
+        sle->icon = sprite_load(buf, NULL);
 
         for (i = 0; i <= 3; i++)
         {
@@ -1125,7 +1125,7 @@ static void LoadSpells(void)
         sle->flag = LIST_ENTRY_USED;
         sprintf(sle->icon_name, "%s", icon);
         sprintf(buf, "%s%s", GetIconDirectory(), icon);
-        sle->icon = sprite_load(buf, SURFACE_FLAG_DISPLAYFORMAT, NULL);
+        sle->icon = sprite_load(buf, NULL);
 
         for (i = 0; i <= 3; i++)
         {

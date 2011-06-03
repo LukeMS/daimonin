@@ -139,196 +139,181 @@ _vimmsg vim[MAX_NROF_VIM];
 _server *start_server,
         *metaserver_sel;
 
-typedef enum _pic_type
-{
-    PIC_TYPE_DEFAULT,
-    PIC_TYPE_PALETTE,
-    PIC_TYPE_TRANS
-}    _pic_type;
-
-typedef struct _bitmap_name
-{
-    char               *name;
-    _pic_type           type;
-}
-_bitmap_name ;
-
 /* for loading, use BITMAP_xx in the other modules*/
-static _bitmap_name BitmapName[BITMAP_INIT]    =
+static char *BitmapName[BITMAP_INIT] =
 {
-    {"palette.png", PIC_TYPE_PALETTE},
-    {"font7x4.png", PIC_TYPE_PALETTE},
-    {"font6x3out.png", PIC_TYPE_PALETTE},
-    {"font_big.png", PIC_TYPE_PALETTE},
-    {"font7x4out.png", PIC_TYPE_PALETTE},
-    {"font11x15.png", PIC_TYPE_PALETTE},
-    {"font11x15out.png", PIC_TYPE_PALETTE},
-    {"intro.png", PIC_TYPE_DEFAULT},
-    {"progress.png", PIC_TYPE_DEFAULT},
-    {"progress_back.png", PIC_TYPE_DEFAULT},
-    {"black_tile.png", PIC_TYPE_DEFAULT},
-    {"grid.png", PIC_TYPE_DEFAULT},
-    {"textwin.png", PIC_TYPE_DEFAULT},
-    {"login_inp.png", PIC_TYPE_DEFAULT},
-    {"invslot.png", PIC_TYPE_TRANS},
-    {"hp.png", PIC_TYPE_TRANS},
-    {"sp.png", PIC_TYPE_TRANS},
-    {"grace.png", PIC_TYPE_TRANS},
-    {"food.png", PIC_TYPE_TRANS},
-    {"hp_back.png", PIC_TYPE_DEFAULT},
-    {"sp_back.png", PIC_TYPE_DEFAULT},
-    {"grace_back.png", PIC_TYPE_DEFAULT},
-    {"food_back.png", PIC_TYPE_DEFAULT},
-    {"apply.png", PIC_TYPE_DEFAULT},
-    {"food2.png", PIC_TYPE_TRANS},
-    {"unpaid.png", PIC_TYPE_DEFAULT},
-    {"cursed.png", PIC_TYPE_DEFAULT},
-    {"damned.png", PIC_TYPE_DEFAULT},
-    {"lock.png", PIC_TYPE_DEFAULT},
-    {"magic.png", PIC_TYPE_DEFAULT},
-    {"unidentified.png", PIC_TYPE_DEFAULT},
-    {"range.png", PIC_TYPE_TRANS},
-    {"range_marker.png", PIC_TYPE_TRANS},
-    {"range_ctrl.png", PIC_TYPE_TRANS},
-    {"range_ctrl_no.png", PIC_TYPE_TRANS},
-    {"range_skill.png", PIC_TYPE_TRANS},
-    {"range_skill_no.png", PIC_TYPE_TRANS},
-    {"range_throw.png", PIC_TYPE_TRANS},
-    {"range_throw_no.png", PIC_TYPE_TRANS},
-    {"range_tool.png", PIC_TYPE_TRANS},
-    {"range_tool_no.png", PIC_TYPE_TRANS},
-    {"range_wizard.png", PIC_TYPE_TRANS},
-    {"range_wizard_no.png", PIC_TYPE_TRANS},
-    {"range_priest.png", PIC_TYPE_TRANS},
-    {"range_priest_no.png", PIC_TYPE_TRANS},
-    {"cmark_start.png", PIC_TYPE_TRANS},
-    {"cmark_end.png", PIC_TYPE_TRANS},
-    {"cmark_middle.png", PIC_TYPE_TRANS},
-    {"textwin_scroll.png", PIC_TYPE_DEFAULT},
-    {"inv_scroll.png", PIC_TYPE_DEFAULT},
-    {"below_scroll.png", PIC_TYPE_DEFAULT},
-    {"number.png", PIC_TYPE_DEFAULT},
-    {"invslot_u.png", PIC_TYPE_TRANS},
-    {"death.png", PIC_TYPE_TRANS},
-    {"confused.png", PIC_TYPE_TRANS},
-    {"paralyzed.png", PIC_TYPE_TRANS},
-    {"scared.png", PIC_TYPE_TRANS},
-    {"blind.png", PIC_TYPE_TRANS},
-    {"exclusive_effect.png", PIC_TYPE_DEFAULT},
-    {"enemy1.png", PIC_TYPE_TRANS},
-    {"enemy2.png", PIC_TYPE_TRANS},
-    {"probe.png", PIC_TYPE_TRANS},
-    {"quickslots.png", PIC_TYPE_DEFAULT},
-    {"quickslotsv.png", PIC_TYPE_DEFAULT},
-    {"inventory.png", PIC_TYPE_DEFAULT},
-    {"group.png", PIC_TYPE_DEFAULT},
-    {"exp_border.png", PIC_TYPE_DEFAULT},
-    {"exp_line.png", PIC_TYPE_DEFAULT},
-    {"exp_bubble.png", PIC_TYPE_TRANS},
-    {"exp_bubble2.png", PIC_TYPE_TRANS},
-    {"below.png", PIC_TYPE_DEFAULT},
-    {"frame_line.png", PIC_TYPE_DEFAULT},
-    {"target_attack.png", PIC_TYPE_TRANS},
-    {"target_talk.png", PIC_TYPE_TRANS},
-    {"target_normal.png", PIC_TYPE_TRANS},
-    {"loading.png", PIC_TYPE_TRANS},
-    {"warn_hp.png", PIC_TYPE_DEFAULT},
-    {"main_stats.png", PIC_TYPE_DEFAULT},
-    {"warn_weight.png", PIC_TYPE_DEFAULT},
-    {"logo270.png", PIC_TYPE_DEFAULT},
-    {"dialog_bg.png", PIC_TYPE_DEFAULT},
-    {"dialog_title_options.png", PIC_TYPE_DEFAULT},
-    {"dialog_title_keybind.png", PIC_TYPE_DEFAULT},
-    {"dialog_title_skill.png", PIC_TYPE_DEFAULT},
-    {"dialog_title_spell.png", PIC_TYPE_DEFAULT},
-    {"dialog_title_creation.png", PIC_TYPE_DEFAULT},
-    {"dialog_title_login.png", PIC_TYPE_DEFAULT},
-    {"dialog_icon_bg_active.png", PIC_TYPE_DEFAULT},
-    {"dialog_icon_bg_inactive.png", PIC_TYPE_DEFAULT},
-    {"dialog_icon_bg_negative.png", PIC_TYPE_DEFAULT},
-    {"dialog_icon_bg_positive.png", PIC_TYPE_DEFAULT},
-    {"dialog_icon_fg_active.png", PIC_TYPE_TRANS},
-    {"dialog_icon_fg_inactive.png", PIC_TYPE_TRANS},
-    {"dialog_icon_fg_selected.png", PIC_TYPE_TRANS},
-    {"dialog_button_selected.png", PIC_TYPE_TRANS},
-    {"dialog_button_up_prefix.png", PIC_TYPE_DEFAULT},
-    {"dialog_button_down_prefix.png", PIC_TYPE_DEFAULT},
-    {"dialog_button_up.png", PIC_TYPE_DEFAULT},
-    {"dialog_button_down.png", PIC_TYPE_DEFAULT},
-    {"dialog_tab_start.png", PIC_TYPE_DEFAULT},
-    {"dialog_tab.png", PIC_TYPE_DEFAULT},
-    {"dialog_tab_stop.png", PIC_TYPE_DEFAULT},
-    {"dialog_tab_sel.png", PIC_TYPE_DEFAULT},
-    {"dialog_checker.png", PIC_TYPE_DEFAULT},
-    {"dialog_range_off.png", PIC_TYPE_DEFAULT},
-    {"dialog_range_l.png", PIC_TYPE_DEFAULT},
-    {"dialog_range_r.png", PIC_TYPE_DEFAULT},
-    {"target_hp.png", PIC_TYPE_DEFAULT},
-    {"target_hp_b.png", PIC_TYPE_DEFAULT},
-    {"textwin_mask.png", PIC_TYPE_DEFAULT},
-    {"slider_up.png", PIC_TYPE_TRANS},
-    {"slider_down.png", PIC_TYPE_TRANS},
-    {"slider.png", PIC_TYPE_TRANS},
-    {"group_clear.png", PIC_TYPE_DEFAULT},
-    {"exp_skill_border.png", PIC_TYPE_DEFAULT},
-    {"exp_skill_line.png", PIC_TYPE_DEFAULT},
-    {"exp_skill_bubble.png", PIC_TYPE_TRANS},
-    {"options_head.png", PIC_TYPE_TRANS},
-    {"options_keys.png", PIC_TYPE_TRANS},
-    {"options_settings.png", PIC_TYPE_TRANS},
-    {"options_logout.png", PIC_TYPE_TRANS},
-    {"options_back.png", PIC_TYPE_TRANS},
-    {"options_mark_left.png", PIC_TYPE_TRANS},
-    {"options_mark_right.png", PIC_TYPE_TRANS},
-    {"options_alpha.png", PIC_TYPE_DEFAULT},
-    {"pentagram.png", PIC_TYPE_DEFAULT},
-    {"quad_button_up.png", PIC_TYPE_DEFAULT},
-    {"quad_button_down.png", PIC_TYPE_DEFAULT},
-    {"nchar_marker.png", PIC_TYPE_TRANS},
-    {"traped.png", PIC_TYPE_TRANS},
-    {"pray.png", PIC_TYPE_TRANS},
-    {"wand.png", PIC_TYPE_TRANS},
-    {"invite.png", PIC_TYPE_DEFAULT},
-    {"dialog_button_black_up.png", PIC_TYPE_DEFAULT},
-    {"dialog_button_black_down.png", PIC_TYPE_DEFAULT},
-    {"button_small_up.png", PIC_TYPE_DEFAULT},
-    {"button_small_down.png", PIC_TYPE_DEFAULT},
-    {"group_mana.png", PIC_TYPE_DEFAULT},
-    {"group_grace.png", PIC_TYPE_DEFAULT},
-    {"group_hp.png", PIC_TYPE_DEFAULT},
-    {"npc_interface_top.png", PIC_TYPE_TRANS},
-    {"npc_interface_middle.png", PIC_TYPE_TRANS},
-    {"npc_interface_bottom.png", PIC_TYPE_TRANS},
-    {"npc_interface_panel.png", PIC_TYPE_TRANS},
-    {"npc_int_slider.png", PIC_TYPE_DEFAULT},
-    {"journal.png", PIC_TYPE_TRANS},
-    {"invslot_marked.png", PIC_TYPE_TRANS},
-    {"mouse_cursor_move.png", PIC_TYPE_TRANS},
-    {"resist_bg.png", PIC_TYPE_DEFAULT},
-    {"main_level_bg.png",PIC_TYPE_DEFAULT},
-    {"skill_exp_bg.png",PIC_TYPE_DEFAULT},
-    {"regen_bg.png",PIC_TYPE_DEFAULT},
-    {"skill_lvl_bg.png",PIC_TYPE_DEFAULT},
-    {"menu_buttons.png",PIC_TYPE_DEFAULT},
-    {"group_bg2.png",PIC_TYPE_DEFAULT},
-    {"group_bg2_bottom.png",PIC_TYPE_DEFAULT},
-    {"player_doll_bg.png",PIC_TYPE_DEFAULT},
-    {"player_info_bg.png",PIC_TYPE_DEFAULT},
-    {"target_bg.png",PIC_TYPE_DEFAULT},
-    {"inventory_bg.png",PIC_TYPE_DEFAULT},
-    {"textinput.png",PIC_TYPE_DEFAULT},
-    {"stimer.png", PIC_TYPE_DEFAULT},
-    {"closeb.png", PIC_TYPE_DEFAULT},
-    {"locator/map.png", PIC_TYPE_DEFAULT},
-    {"locator/client.png", PIC_TYPE_TRANS},
-    {"locator/player_that.png", PIC_TYPE_TRANS},
-    {"locator/player_this.png", PIC_TYPE_TRANS},
-    {"locator/server_that.png", PIC_TYPE_TRANS},
-    {"locator/server_this.png", PIC_TYPE_TRANS},
+    "palette.png",
+    "font7x4.png",
+    "font6x3out.png",
+    "font_big.png",
+    "font7x4out.png",
+    "font11x15.png",
+    "font11x15out.png",
+    "intro.png",
+    "progress.png",
+    "progress_back.png",
+    "black_tile.png",
+    "grid.png",
+    "textwin.png",
+    "login_inp.png",
+    "invslot.png",
+    "hp.png",
+    "sp.png",
+    "grace.png",
+    "food.png",
+    "hp_back.png",
+    "sp_back.png",
+    "grace_back.png",
+    "food_back.png",
+    "apply.png",
+    "food2.png",
+    "unpaid.png",
+    "cursed.png",
+    "damned.png",
+    "lock.png",
+    "magic.png",
+    "unidentified.png",
+    "range.png",
+    "range_marker.png",
+    "range_ctrl.png",
+    "range_ctrl_no.png",
+    "range_skill.png",
+    "range_skill_no.png",
+    "range_throw.png",
+    "range_throw_no.png",
+    "range_tool.png",
+    "range_tool_no.png",
+    "range_wizard.png",
+    "range_wizard_no.png",
+    "range_priest.png",
+    "range_priest_no.png",
+    "cmark_start.png",
+    "cmark_end.png",
+    "cmark_middle.png",
+    "textwin_scroll.png",
+    "inv_scroll.png",
+    "below_scroll.png",
+    "number.png",
+    "invslot_u.png",
+    "death.png",
+    "confused.png",
+    "paralyzed.png",
+    "scared.png",
+    "blind.png",
+    "exclusive_effect.png",
+    "enemy1.png",
+    "enemy2.png",
+    "probe.png",
+    "quickslots.png",
+    "quickslotsv.png",
+    "inventory.png",
+    "group.png",
+    "exp_border.png",
+    "exp_line.png",
+    "exp_bubble.png",
+    "exp_bubble2.png",
+    "below.png",
+    "frame_line.png",
+    "target_attack.png",
+    "target_talk.png",
+    "target_normal.png",
+    "loading.png",
+    "warn_hp.png",
+    "main_stats.png",
+    "warn_weight.png",
+    "logo270.png",
+    "dialog_bg.png",
+    "dialog_title_options.png",
+    "dialog_title_keybind.png",
+    "dialog_title_skill.png",
+    "dialog_title_spell.png",
+    "dialog_title_creation.png",
+    "dialog_title_login.png",
+    "dialog_icon_bg_active.png",
+    "dialog_icon_bg_inactive.png",
+    "dialog_icon_bg_negative.png",
+    "dialog_icon_bg_positive.png",
+    "dialog_icon_fg_active.png",
+    "dialog_icon_fg_inactive.png",
+    "dialog_icon_fg_selected.png",
+    "dialog_button_selected.png",
+    "dialog_button_up_prefix.png",
+    "dialog_button_down_prefix.png",
+    "dialog_button_up.png",
+    "dialog_button_down.png",
+    "dialog_tab_start.png",
+    "dialog_tab.png",
+    "dialog_tab_stop.png",
+    "dialog_tab_sel.png",
+    "dialog_checker.png",
+    "dialog_range_off.png",
+    "dialog_range_l.png",
+    "dialog_range_r.png",
+    "target_hp.png",
+    "target_hp_b.png",
+    "textwin_mask.png",
+    "slider_up.png",
+    "slider_down.png",
+    "slider.png",
+    "group_clear.png",
+    "exp_skill_border.png",
+    "exp_skill_line.png",
+    "exp_skill_bubble.png",
+    "options_head.png",
+    "options_keys.png",
+    "options_settings.png",
+    "options_logout.png",
+    "options_back.png",
+    "options_mark_left.png",
+    "options_mark_right.png",
+    "options_alpha.png",
+    "pentagram.png",
+    "quad_button_up.png",
+    "quad_button_down.png",
+    "nchar_marker.png",
+    "traped.png",
+    "pray.png",
+    "wand.png",
+    "invite.png",
+    "dialog_button_black_up.png",
+    "dialog_button_black_down.png",
+    "button_small_up.png",
+    "button_small_down.png",
+    "group_mana.png",
+    "group_grace.png",
+    "group_hp.png",
+    "npc_interface_top.png",
+    "npc_interface_middle.png",
+    "npc_interface_bottom.png",
+    "npc_interface_panel.png",
+    "npc_int_slider.png",
+    "journal.png",
+    "invslot_marked.png",
+    "mouse_cursor_move.png",
+    "resist_bg.png",
+    "main_level_bg.png",
+    "skill_exp_bg.png",
+    "regen_bg.png",
+    "skill_lvl_bg.png",
+    "menu_buttons.png",
+    "group_bg2.png",
+    "group_bg2_bottom.png",
+    "player_doll_bg.png",
+    "player_info_bg.png",
+    "target_bg.png",
+    "inventory_bg.png",
+    "textinput.png",
+    "stimer.png",
+    "closeb.png",
+    "locator/map.png",
+    "locator/client.png",
+    "locator/player_that.png",
+    "locator/player_this.png",
+    "locator/server_that.png",
+    "locator/server_this.png",
 };
 
-#define BITMAP_MAX (int)(sizeof(BitmapName)/sizeof(struct _bitmap_name))
-_Sprite            *Bitmaps[BITMAP_MAX];
+_Sprite            *Bitmaps[BITMAP_INIT];
 
 static void DisplayLayer1(void);   /* map & player */
 static void DisplayLayer2(void);   /* frame (background image) */
@@ -416,7 +401,7 @@ void init_game_data(void)
     InitMapData(0, 0, 0, 0);
     UpdateMapName("");
 
-    for (i = 0; i < BITMAP_MAX; i++)
+    for (i = 0; i < BITMAP_INIT; i++)
         Bitmaps[i] = NULL;
     memset(face_list, 0, sizeof(face_list));
     memset(&cpl, 0, sizeof(cpl));
@@ -858,8 +843,8 @@ uint8 game_status_chain(void)
     else if (GameStatus == GAME_STATUS_STARTCONNECT)
     {
         char    sbuf[256];
-        sprintf(sbuf, "%s%s", GetBitmapDirectory(), BitmapName[BITMAP_LOADING].name);
-        face_list[FACE_MAX_NROF - 1].sprite = sprite_load(sbuf, 0, NULL);
+        sprintf(sbuf, "%s%s", GetBitmapDirectory(), BitmapName[BITMAP_LOADING]);
+        face_list[FACE_MAX_NROF - 1].sprite = sprite_load(sbuf, NULL);
 
         map_udate_flag = 2;
         GameStatus = GAME_STATUS_CONNECT;
@@ -1317,26 +1302,20 @@ void load_bitmaps(void)
 
 uint8 load_bitmap(int index)
 {
-    char    buf[2048];
-    uint32  flags   = 0;
+    char buf[SMALL_BUF];
 
-    sprintf(buf, "%s%s", GetBitmapDirectory(), BitmapName[index].name);
+    sprintf(buf, "%s/%s", DIR_BITMAPS, BitmapName[index]);
+    Bitmaps[index] = sprite_load(buf, NULL);
 
-    if (BitmapName[index].type == PIC_TYPE_PALETTE)
-        flags |= SURFACE_FLAG_PALETTE;
-    if (BitmapName[index].type == PIC_TYPE_TRANS)
-        flags |= SURFACE_FLAG_COLKEY_16M;
-
-    if ((index>=BITMAP_PROGRESS_BACK) && (index!=BITMAP_TEXTWIN_MASK))
-        flags |= SURFACE_FLAG_DISPLAYFORMAT;
-
-    Bitmaps[index] = sprite_load(buf, flags, NULL);
-    if (!Bitmaps[index] || !Bitmaps[index]->bitmap)
+    if (!Bitmaps[index] ||
+        !Bitmaps[index]->bitmap)
     {
-        LOG(LOG_MSG, "load_bitmap(): Can't load bitmap %s\n", buf);
-        return(0);
+        LOG(LOG_ERROR, "Couldn't load bitmap '%s'!\n", buf);
+
+        return 0;
     }
-    return(1);
+
+    return 1;
 }
 
 /* free the skin & standard gfx */
@@ -1344,7 +1323,7 @@ void free_bitmaps(void)
 {
     int i;
 
-    for (i = 0; i < BITMAP_MAX; i++)
+    for (i = 0; i < BITMAP_INIT; i++)
         sprite_free_sprite(Bitmaps[i]);
 }
 
@@ -1557,12 +1536,11 @@ static void show_option(int mark, int x, int y)
     bltfx.alpha = 128;
     bltfx.flags = BLTFX_FLAG_SRCALPHA;
     sprite_blt(Bitmaps[BITMAP_OPTIONS_ALPHA], x - Bitmaps[BITMAP_OPTIONS_ALPHA]->bitmap->w / 2, y, NULL, &bltfx);
-    sprite_blt(Bitmaps[BITMAP_OPTIONS_HEAD], x - Bitmaps[BITMAP_OPTIONS_HEAD]->bitmap->w / 2, y, NULL, NULL);
-    sprite_blt(Bitmaps[BITMAP_OPTIONS_KEYS], x - Bitmaps[BITMAP_OPTIONS_KEYS]->bitmap->w / 2, y + 100, NULL, NULL);
-    sprite_blt(Bitmaps[BITMAP_OPTIONS_SETTINGS], x - Bitmaps[BITMAP_OPTIONS_SETTINGS]->bitmap->w / 2, y + 165, NULL,
-               NULL);
-    sprite_blt(Bitmaps[BITMAP_OPTIONS_LOGOUT], x - Bitmaps[BITMAP_OPTIONS_LOGOUT]->bitmap->w / 2, y + 235, NULL, NULL);
-    sprite_blt(Bitmaps[BITMAP_OPTIONS_BACK], x - Bitmaps[BITMAP_OPTIONS_BACK]->bitmap->w / 2, y + 305, NULL, NULL);
+    sprite_blt(Bitmaps[BITMAP_OPTIONS_HEAD], x - Bitmaps[BITMAP_OPTIONS_HEAD]->bitmap->w / 2, y, NULL, &bltfx);
+    sprite_blt(Bitmaps[BITMAP_OPTIONS_KEYS], x - Bitmaps[BITMAP_OPTIONS_KEYS]->bitmap->w / 2, y + 100, NULL, &bltfx);
+    sprite_blt(Bitmaps[BITMAP_OPTIONS_SETTINGS], x - Bitmaps[BITMAP_OPTIONS_SETTINGS]->bitmap->w / 2, y + 165, NULL, &bltfx);
+    sprite_blt(Bitmaps[BITMAP_OPTIONS_LOGOUT], x - Bitmaps[BITMAP_OPTIONS_LOGOUT]->bitmap->w / 2, y + 235, NULL, &bltfx);
+    sprite_blt(Bitmaps[BITMAP_OPTIONS_BACK], x - Bitmaps[BITMAP_OPTIONS_BACK]->bitmap->w / 2, y + 305, NULL, &bltfx);
 
     if (esc_menu_index == ESC_MENU_KEYS)
     {
@@ -1588,8 +1566,8 @@ static void show_option(int mark, int x, int y)
     x1 = x - Bitmaps[index]->bitmap->w / 2 - 6;
     x2 = x + Bitmaps[index]->bitmap->w / 2 + 6;
 
-    sprite_blt(Bitmaps[BITMAP_OPTIONS_MARK_LEFT], x1 - Bitmaps[BITMAP_OPTIONS_MARK_LEFT]->bitmap->w, y1, NULL, NULL);
-    sprite_blt(Bitmaps[BITMAP_OPTIONS_MARK_RIGHT], x2, y2, NULL, NULL);
+    sprite_blt(Bitmaps[BITMAP_OPTIONS_MARK_LEFT], x1 - Bitmaps[BITMAP_OPTIONS_MARK_LEFT]->bitmap->w, y1, NULL, &bltfx);
+    sprite_blt(Bitmaps[BITMAP_OPTIONS_MARK_RIGHT], x2, y2, NULL, &bltfx);
 }
 
 int main(int argc, char *argv[])
@@ -1645,7 +1623,7 @@ int main(int argc, char *argv[])
     SYSTEM_Start(); /* start the system AFTER start SDL */
     videoflags = get_video_flags();
     list_vid_modes(videoflags);
-    options.used_video_bpp = 16;//2^(options.video_bpp+3);
+    options.used_video_bpp = 32;//16;//2^(options.video_bpp+3);
 
     if (options.auto_bpp_flag)
     {
@@ -1687,7 +1665,7 @@ int main(int argc, char *argv[])
         options.used_video_bpp = info->vfmt->BitsPerPixel;
     }
 
-    ScreenSurfaceMap=SDL_CreateRGBSurface(videoflags, 850, 600, options.used_video_bpp, 0,0,0,0);
+    ScreenSurfaceMap = SDL_CreateRGBSurface(videoflags, 850, 600, options.used_video_bpp, 0,0,0,0);
 
 
     SDL_VideoDriverName(buf, 255);
@@ -1708,7 +1686,7 @@ int main(int argc, char *argv[])
     ShowIntro("start sound system", 0);
     sound_init();
     ShowIntro("load bitmaps", 10);
-    for (i = BITMAP_PROGRESS_BACK+1; i < BITMAP_MAX; i++) /* add later better error handling here*/
+    for (i = BITMAP_PROGRESS_BACK+1; i < BITMAP_INIT; i++) /* add later better error handling here*/
         load_bitmap(i);
     ShowIntro("load keys", 70);
     read_keybind_file();
@@ -2703,7 +2681,7 @@ static void DisplayLayer1(void)
         ts = SDL_GetTicks();
 #endif
         if (options.zoom==100)
-            zoomed=SDL_DisplayFormat(ScreenSurfaceMap);
+            zoomed=SDL_DisplayFormatAlpha(ScreenSurfaceMap);
         else
             zoomed=zoomSurface(ScreenSurfaceMap, options.zoom/100.0, options.zoom/100.0, options.smooth);
 #ifdef PROFILING
@@ -2801,7 +2779,7 @@ void reload_skin()
     free_bitmaps();
     load_bitmaps();
     font_init();
-    for (i = BITMAP_PROGRESS_BACK+1; i < BITMAP_MAX; i++) /* add later better error handling here*/
+    for (i = BITMAP_PROGRESS_BACK+1; i < BITMAP_INIT; i++) /* add later better error handling here*/
         load_bitmap(i);
     load_skindef();
 

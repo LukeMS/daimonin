@@ -209,7 +209,7 @@ static _sprite_status LoadFromMemory(uint16 num, uint8 *data, uint32 len)
         return SPRITE_STATUS_UNLOADED;
     }
 
-    face_list[num].sprite = sprite_load(NULL, 0, rw);
+    face_list[num].sprite = sprite_load(NULL, rw);
 
     return face_list[num].sprite->status;
 }
@@ -271,7 +271,7 @@ static _sprite_status LoadFromFile(uint16 num, const char *dname)
 
     PHYSFS_close(handle);
     FREE(data);
-    face_list[num].sprite = sprite_load(buf, 0, NULL);
+    face_list[num].sprite = sprite_load(buf, NULL);
 
     return face_list[num].sprite->status;
 }

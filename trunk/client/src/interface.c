@@ -395,9 +395,7 @@ _gui_npc *gui_npc_create(int mode, char *data, int len, int pos)
                     DIR_ICONS, gui_npc->head->image.name);
 
              /* Still can't find it? Bug. */
-            if (!(gui_npc->head->image.sprite = sprite_load(buf,
-                                                            SURFACE_FLAG_DISPLAYFORMAT,
-                                                            NULL)))
+            if (!(gui_npc->head->image.sprite = sprite_load(buf, NULL)))
             {
                 i = 0;
                 LOG(LOG_ERROR, "Can't find image %s in face_list[] or icons!\n",
@@ -464,9 +462,7 @@ _gui_npc *gui_npc_create(int mode, char *data, int len, int pos)
                 sprintf(buf, "%s/%s.png", DIR_ICONS, this->image.name);
 
                 /* Still can't find it? Bug. */
-                if (!(this->image.sprite = sprite_load(buf,
-                                                       SURFACE_FLAG_DISPLAYFORMAT,
-                                                       NULL)))
+                if (!(this->image.sprite = sprite_load(buf, NULL)))
                 {
                     i = 0;
                     LOG(LOG_ERROR, "Can't find image '%s' in face_list[] or icons!\n",
