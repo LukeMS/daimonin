@@ -130,6 +130,10 @@ void SYSTEM_End(void)
 {
     uint16 i;
 
+    buddy_list_save();
+    chatfilter_list_save();
+    ignore_list_save();
+    kill_list_save();
     widget_save();
     widget_deinit();
     save_options_dat();   /* save options at exit */
