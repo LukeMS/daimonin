@@ -41,8 +41,8 @@ typedef struct face_t
     int             len;
     uint32          crc;
     struct _Sprite *sprite;
-    uint16          alt_a;    /* index of alternative face */
-    uint16          alt_b;    /* index of alternative face */
+    sint32          alt_a;    /* index of alternative face */
+    sint32          alt_b;    /* index of alternative face */
     uint8           flags;
 }
 face_t;
