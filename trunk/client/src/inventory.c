@@ -331,9 +331,12 @@ void widget_show_inventory_window(int x, int y)
 
     for (; tmp && i < invxlen*invylen; tmp = tmp->next)
     {
-        if ((int) tmp->tag == cpl.mark_count)
-            sprite_blt(Bitmaps[BITMAP_INVSLOT_MARKED], x + (i % invxlen) * 32, y + (i / invxlen) * 32, NULL, NULL);
         blt_inv_item(tmp, x + (i % invxlen) * 32 + 1, y + (i / invxlen) * 32 + 1);
+
+        if ((int) tmp->tag == cpl.mark_count)
+        {
+            sprite_blt(Bitmaps[BITMAP_INVSLOT_MARKED], x + (i % invxlen) * 32, y + (i / invxlen) * 32, NULL, NULL);
+        }
 
         if (cpl.inventory_win != IWIN_BELOW && i + cpl.win_inv_start == cpl.win_inv_slot)
         {
@@ -351,10 +354,13 @@ void widget_show_inventory_window(int x, int y)
 jump_in_container1:
             for (; tmpc && i < invxlen*invylen; tmpc = tmpc->next)
             {
-                if ((int)tmpc->tag == cpl.mark_count)
-                    sprite_blt(Bitmaps[BITMAP_INVSLOT_MARKED], x + (i % invxlen) * 32, y + (i / invxlen) * 32, NULL, NULL);
-
                 blt_inv_item(tmpc, x + (i % invxlen) * 32 + 1, y + (i / invxlen) * 32 + 1);
+
+                if ((int)tmpc->tag == cpl.mark_count)
+                {
+                    sprite_blt(Bitmaps[BITMAP_INVSLOT_MARKED], x + (i % invxlen) * 32, y + (i / invxlen) * 32, NULL, NULL);
+                }
+
                 if (cpl.inventory_win != IWIN_BELOW && i + cpl.win_inv_start == cpl.win_inv_slot)
                 {
                     sprite_blt(Bitmaps[BITMAP_INVSLOT], x + (i % invxlen) * 32, y + (i / invxlen) * 32, NULL, NULL);
