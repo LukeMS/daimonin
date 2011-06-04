@@ -287,12 +287,6 @@ int widget_event_mousedn(int x, int y, SDL_Event *event)
     widget_mouse_event.moving = 0;
     widget_mouse_event.id = id;
 
-    /* sanity check */
-    if (id < 0)
-    {
-        return 0;
-    }
-
     /* setup the event structure in response */
     widget_mouse_event.x = x;
     widget_mouse_event.y = y;
@@ -450,12 +444,6 @@ int widget_event_mouseup(int x, int y, SDL_Event *event)
         widget_mouse_event.id = id;
 
         /* handler(s) for miscellanous mouse movement(s) go here */
-
-        /* sanity check.. return if mouse is not in a widget */
-        if (id < 0)
-        {
-            return 0;
-        }
 
         /* setup the event structure in response */
         widget_mouse_event.x = x;
@@ -653,15 +641,11 @@ int widget_event_mousemv(int x,int y, SDL_Event *event)
             txtwin[TW_CHAT].highlight = TW_HL_NONE;
             WIDGET_REDRAW(WIDGET_CHATWIN_ID) = 1;
         }
+
         if (txtwin[TW_MSG].highlight != TW_HL_NONE)
         {
             txtwin[TW_MSG].highlight = TW_HL_NONE;
             WIDGET_REDRAW(WIDGET_MSGWIN_ID) = 1;
-        }
-        /* sanity check.. return if mouse is not in a widget */
-        if (id < 0)
-        {
-            return 0;
         }
 
         /* setup the event structure in response */
@@ -988,13 +972,6 @@ void widget_set_priority(widget_id_t id)
     widget_node_t *node;
 
 //    LOG(LOG_MSG,"Entering widget_set_priority(id=%d)..\n",id);
-
-    /* sanity check */
-    if (id < 0 ||
-        id >= WIDGET_NROF)
-    {
-        return;
-    }
 
     /* exit, if already highest priority */
     if (PriorityListHead->id == id)
