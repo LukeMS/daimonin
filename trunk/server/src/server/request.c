@@ -97,7 +97,7 @@ void esrv_update_skills(player *pl)
         }
     }
 
-    Write_String_To_Socket(&pl->socket, BINARY_CMD_SKILL_LIST, tmp, strlen(tmp));
+    Write_String_To_Socket(&pl->socket, SERVER_CMD_SKILL_LIST, tmp, strlen(tmp));
 }
 
 /*
@@ -213,7 +213,7 @@ void esrv_update_stats(player *pl)
 
     /* Only send it away if we have some actual data */
     if (SOCKBUF_REQUEST_BUFSIZE(sb))
-        SOCKBUF_REQUEST_FINISH(&pl->socket, BINARY_CMD_STATS, SOCKBUF_DYNAMIC);
+        SOCKBUF_REQUEST_FINISH(&pl->socket, SERVER_CMD_STATS, SOCKBUF_DYNAMIC);
     else
         SOCKBUF_REQUEST_RESET(&pl->socket);
 
@@ -237,5 +237,5 @@ void esrv_new_player(player *pl, uint32 weight)
     SockBuf_AddChar(sptr,(len=strlen(pl->ob->name)));
     SockBuf_AddString(sptr, pl->ob->name, len);
 
-    SOCKBUF_REQUEST_FINISH(&pl->socket, BINARY_CMD_PLAYER, SOCKBUF_DYNAMIC);
+    SOCKBUF_REQUEST_FINISH(&pl->socket, SERVER_CMD_PLAYER, SOCKBUF_DYNAMIC);
 }
