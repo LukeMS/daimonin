@@ -665,6 +665,7 @@ extern SDL_Surface         *zoomed;                /* tem surface for zoomed dat
 extern struct sockaddr_in   insock;       /* Server's attributes*/
 extern int                  SocketStatusErrorNr; /* if an socket error, this is it */
 
+extern void save_user_settings(void);
 extern void clear_lists(void);
 extern int  main(int argc, char *argv[]);
 extern void open_input_mode(int maxchar);
