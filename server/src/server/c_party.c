@@ -206,7 +206,7 @@ int command_party_invite(object *pl, char *params)
     target->group_leader_count = pl->count;
 
     /* send the /invite to our player */
-    Write_String_To_Socket(&target->socket, SERVER_CMD_INVITE, pl->name, strlen(pl->name));
+    Write_String_To_Socket(&target->socket, BINARY_CMD_INVITE, pl->name, strlen(pl->name));
     new_draw_info(NDI_YELLOW, 0,pl, "You invited %s to join the group.", query_name(target->ob));
 
     return 0;
@@ -297,7 +297,7 @@ int command_party_leave(object *pl, char *params)
 
     party_message(0,NDI_YELLOW, 0, activator->group_leader, pl, "%s left the group.", query_name(pl));
     new_draw_info(NDI_YELLOW, 0,pl, "You left the group.");
-    party_remove_member(CONTR(pl), FALSE);
+    party_remove_member(CONTR(pl), 0);
 
     return 0;
 }
@@ -337,7 +337,7 @@ int command_party_remove(object *pl, char *params)
     party_message(0, NDI_YELLOW, 0, pl, target->ob, "%s was removed from the group.",
                   query_name(target->ob));
     new_draw_info(NDI_YELLOW, 0, target->ob, "You were removed from the group.");
-    party_remove_member(target, FALSE);
+    party_remove_member(target, 0);
 
     return 0;
 }
@@ -413,7 +413,7 @@ void party_add_member(player *leader, player *member)
         new_draw_info(NDI_YELLOW, 0, leader->ob, "Use /gsay for group speak or /help group for help.");
     new_draw_info(NDI_YELLOW, 0, member->ob, "You joined the group.");
     new_draw_info(NDI_YELLOW, 0, member->ob, "Use /gsay for group speak or /help group for help.");
-    party_client_group_status(member->ob);
+    party_client_group_update(member->ob);
 
 }
 
@@ -502,7 +502,7 @@ void party_remove_member(player *member, int flag)
 #ifdef DEBUG_GROUP
     party_dump(leader);
 #endif
-    party_client_group_status(leader);
+    party_client_group_update(leader);
 }
 
 /* send a message to every group member of group of leader.
@@ -529,55 +529,10 @@ void party_message(int mode, int flags, int pri,object *leader, object *source, 
  * interface of the client to show & update the group information.
  */
 
-/* give the client of ALL group members the command "you are in a group, here are the data".
- * The client can create out of this the group status window.
- * This is used for start a group but also for changes.
- * This is normally only called once when a member is added or one left.
- */
-void party_client_group_status(object *member)
-{
-    sockbuf_struct *sockbuf;
-    object *tmp;
-    char buf[HUGE_BUF]= "";
-    char buf2[HUGE_BUF];
-
-    /* create group status data - change to binary after testing*/
-    for(tmp=CONTR(member)->group_leader;tmp;tmp=CONTR(tmp)->group_next)
-    {
-        sprintf(buf2,"|%s %d %d %d %d %d %d %d", tmp->name, tmp->stats.hp,tmp->stats.maxhp,
-            tmp->stats.sp,tmp->stats.maxsp, tmp->stats.grace,tmp->stats.maxgrace, tmp->level);
-        strcat(buf, buf2);
-    }
-
-    /* broadcast command to all members */
-    sockbuf = SOCKBUF_COMPOSE( SERVER_CMD_GROUP, NULL, buf, SOCKBUF_DYNAMIC, 0);
-    for(tmp=CONTR(member)->group_leader;tmp;tmp=CONTR(tmp)->group_next)
-    {
-        /* Alderan, 2009-04-17:
-         * don't ask me why, but if we have a WorkingBuffer, and after that attach a
-         * Broadcast Buffer, the working buffer isn't send to the client.
-         * So we have to make this difference here
-         * It seems that problem is only in esrv_update_stats(), which is called in
-         * THE main socket loop doeric_server.
-         * MT please have a look
-         */
-        if (tmp==member)
-        {
-            SOCKBUF_REQUEST_BUFFER(&CONTR(member)->socket, strlen(buf)+1);
-            SockBuf_AddString(ACTIVE_SOCKBUF(&CONTR(member)->socket), buf, strlen(buf)+1);
-            SOCKBUF_REQUEST_FINISH(&CONTR(member)->socket, SERVER_CMD_GROUP, SOCKBUF_DYNAMIC);
-        }
-        else
-            SOCKBUF_ADD_TO_SOCKET(&CONTR(tmp)->socket, sockbuf); /* broadcast the sockbuf */
-    }
-    SOCKBUF_COMPOSE_FREE(sockbuf);
-    force_update_player = 1;
-}
-
 /* tell a member that he has no group! */
 void party_client_group_kill(object *member)
 {
-    Write_Command_To_Socket(&CONTR(member)->socket, SERVER_CMD_GROUP);
+    Write_Command_To_Socket(&CONTR(member)->socket, BINARY_CMD_GROUP);
 }
 
 /* TODO: optimize update handling
@@ -588,13 +543,13 @@ void party_client_group_kill(object *member)
  */
 
 /* update a member data for all group members */
-void party_client_group_update(object *member, int flag)
+void party_client_group_update(object *member)
 {
     sockbuf_struct *sockbuf;
     object *tmp;
     player *pl, *plm;
     char buf2[HUGE_BUF];
-    char buf[HUGE_BUF];
+    char sndbuf[HUGE_BUF] = "";
 
     /* TODO: change to binary data/cmd after testing using GROUP_UPDATE_xxx */
 
@@ -603,65 +558,46 @@ void party_client_group_update(object *member, int flag)
     LOG(llevNoLog,"GROUP UPDATE: %s (id:%d nr:%d)\n", query_name(member), plm->group_id, plm->group_nr);
     party_dump(member);
 #endif
-    sprintf(buf2,"|%d %d %d %d %d %d %d %d\n",plm->group_nr,
-            member->stats.hp, member->stats.maxhp,
-            member->stats.sp, member->stats.maxsp,
-            member->stats.grace, member->stats.maxgrace, member->level);
-
-    strcpy(buf,buf2);
-    plm->update_ticker = ROUND_TAG;
 
     for(tmp=plm->group_leader;tmp;tmp=pl->group_next)
     {
-        if((pl = CONTR(tmp))->update_ticker != ROUND_TAG)
-        {
-#ifdef DEBUG_GROUP_UPDATE
-            LOG(llevNoLog,"GROUP UPDATE (tag): %s (id:%d nr:%d)\n", query_name(tmp), CONTR(tmp)->group_id, CONTR(tmp)->group_nr);
-#endif
-            /* TODO: use GROUP_UPDATE_xxx for a binary cmd which really holds
-             * only the different data!
-             * ATM we transer alot redundant data.
-             * (but the "tricky update" thingy works usinf update_ticker)
-             */
-            if( pl->last_stats.hp != pl->ob->stats.hp ||
-                    pl->last_stats.maxhp != pl->ob->stats.maxhp ||
-                    pl->last_stats.sp != pl->ob->stats.sp ||
-                    pl->last_stats.maxsp != pl->ob->stats.maxsp ||
-                    pl->last_stats.grace != pl->ob->stats.grace ||
-                    pl->last_stats.maxgrace != pl->ob->stats.maxgrace ||
-                    pl->last_level != pl->ob->level)
-            {
-                sprintf(buf2,"|%d %d %d %d %d %d %d %d\n", pl->group_nr,
-                        tmp->stats.hp, tmp->stats.maxhp,
-                        tmp->stats.sp, tmp->stats.maxsp,
-                        tmp->stats.grace, tmp->stats.maxgrace,tmp->level);
+        pl = CONTR(tmp);
 
-                strcat(buf,buf2);
-                pl->update_ticker = ROUND_TAG;
-            }
-        }
+#ifdef DEBUG_GROUP_UPDATE
+        LOG(llevNoLog,"GROUP UPDATE (tag): %s (id:%d nr:%d)\n", query_name(tmp), pl->group_id, pl->group_nr);
+#endif
+        /* TODO: use GROUP_UPDATE_xxx for a binary cmd which really holds
+         * only the different data!
+         * ATM we transer alot redundant data.
+         * (but the "tricky update" thingy works usinf update_ticker)
+         */
+        sprintf(buf2,"|%s %d %d %d %d %d %d %d\n", pl->ob->name,
+                tmp->stats.hp, tmp->stats.maxhp,
+                tmp->stats.sp, tmp->stats.maxsp,
+                tmp->stats.grace, tmp->stats.maxgrace,tmp->level);
+        strcat(sndbuf,buf2);
+        pl->update_ticker = ROUND_TAG;
     }
 
     /* broadcast command to all members */
-    sockbuf = SOCKBUF_COMPOSE( SERVER_CMD_GROUP_UPDATE, NULL, buf, SOCKBUF_DYNAMIC, 0);
+    sockbuf = SOCKBUF_COMPOSE(BINARY_CMD_GROUP, NULL, sndbuf, SOCKBUF_DYNAMIC, 0);
+
     for(tmp=plm->group_leader;tmp;tmp=CONTR(tmp)->group_next)
-    {
-        /* Alderan, 2009-04-17:
-         * don't ask me why, but if we have a WorkingBuffer, and after that attach a
-         * Broadcast Buffer, the working buffer isn't send to the client.
-         * So we have to make this difference here
-         * It seems that problem is only in esrv_update_stats(), which is called in
-         * THE main socket loop doeric_server.
-         * MT please have a look
-         */
-        if (tmp==member)
-        {
-            SOCKBUF_REQUEST_BUFFER(&CONTR(member)->socket, strlen(buf)+1);
-            SockBuf_AddString(ACTIVE_SOCKBUF(&CONTR(member)->socket), buf, strlen(buf)+1);
-            SOCKBUF_REQUEST_FINISH(&CONTR(member)->socket, SERVER_CMD_GROUP_UPDATE, SOCKBUF_DYNAMIC);
-        }
-        else
-            SOCKBUF_ADD_TO_SOCKET(&CONTR(tmp)->socket, sockbuf); /* broadcast the sockbuf */
-    }
+        SOCKBUF_ADD_TO_SOCKET(&CONTR(tmp)->socket, sockbuf); /* broadcast the sockbuf */
     SOCKBUF_COMPOSE_FREE(sockbuf);
+
+}
+
+int check_for_group_updates(player *pl)
+{
+    if (pl->last_stats.hp != pl->ob->stats.hp ||
+        pl->last_stats.maxhp != pl->ob->stats.maxhp ||
+        pl->last_stats.sp != pl->ob->stats.sp ||
+        pl->last_stats.maxsp != pl->ob->stats.maxsp ||
+        pl->last_stats.grace != pl->ob->stats.grace ||
+        pl->last_stats.maxgrace != pl->ob->stats.maxgrace ||
+        pl->last_level != pl->ob->level)
+            return 1;
+
+    return 0;
 }

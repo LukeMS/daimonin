@@ -237,7 +237,7 @@ void                        party_remove_member(player *member, int flag);
 void                        party_message(int mode, int flags, int pri,object *leader, object *source, char *format, ...) DAI_GNUC_PRINTF(6, 7);
 void                        party_client_group_status(object *member);
 void                        party_client_group_kill(object *member);
-void                        party_client_group_update(object *member, int flag);
+void                        party_client_group_update(object *member);
 /* c_range.c */
 void                        fire(object *op, int dir);
 float                       fire_magic_tool(object *owner, object *op, int dir);
@@ -369,7 +369,7 @@ void                        leave(player *pl, int draw_exit);
 void                        dequeue_path_requests(void);
 void                        do_specials(void);
 void                        shutdown_agent(int timer, int ret, player *pl, char *reason);
-int                         main(int argc, char **argv);
+int                         main(int argc, char *argv[]);
 void                        process_events();
 void                        iterate_main_loop();
 /* monster.c */
@@ -476,8 +476,6 @@ int                         atnr_is_dragon_enabled(int attacknr);
 int                         is_dragon_pl(object *op);
 void                        reset_instance_data(player *pl);
 void                        kick_player(player *pl);
-char                       *get_online_players_info(player *who, player *diff,
-                                                    uint8 force);
 /* plugins.c */
 object                     *get_event_object(object *op, int event_nr);
 int                         trigger_object_plugin_event(int event_type,
@@ -583,7 +581,6 @@ object                     *find_skill(object *op, int skillnr);
 int                         do_skill(object *op, int dir, char *string);
 int                         get_weighted_skill_stat_sum(object *who, int sk);
 void                        dump_skills(void);
-void                        read_skill_params(void);
 int                         lookup_skill_by_name(char *string);
 int                         check_skill_to_apply(object *who, object *item);
 void                        unlink_skill(object *skillop);
