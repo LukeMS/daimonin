@@ -130,13 +130,8 @@ void SYSTEM_End(void)
 {
     uint16 i;
 
-    buddy_list_save();
-    chatfilter_list_save();
-    ignore_list_save();
-    kill_list_save();
-    widget_save();
+    save_user_settings();
     widget_deinit();
-    save_options_dat();   /* save options at exit */
     SOCKET_DeinitSocket();
     PHYSFS_deinit();
     PHYSFS_isInitialised = 0;

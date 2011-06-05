@@ -329,6 +329,23 @@ static void ShowIntro(char *text, int progress);
 static void LoadArchdef(void);
 static void QueryMetaserver(void);
 
+/* TODO: Eventually various user settings will be savedd by account and/or
+ * player. ATM its a bit messy with most by player only (althhough the file
+ * naming is also wrong) and options and widgets not even saved per player!
+ * -- Smacky 20110605 */
+void save_user_settings(void)
+{
+    if (cpl.name[0] != '\0')
+    {
+        buddy_list_save();
+        chatfilter_list_save();
+        ignore_list_save();
+        kill_list_save();
+        save_options_dat();
+        widget_save();
+    }
+}
+
 /* TODO: This is just for conveniience. Eventually this will be split to the
  * appropriate modules. */
 void clear_lists(void)
@@ -698,6 +715,9 @@ uint8 game_status_chain(void)
     {
         uint16 i;
 
+        save_user_settings();
+        cpl.acc_name[0] = '\0';
+        cpl.name[0] = '\0';
         map_transfer_flag = 0;
         cpl.mark_count = -1;
         GameStatusSelect = GAME_STATUS_LOGIN_ACCOUNT;
