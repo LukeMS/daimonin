@@ -92,6 +92,7 @@ void                        remove_ban_entry(struct oblnk *entry);
 int                         check_banned(NewSocket *ns, const char *name, char *ip);
 int                         ip_compare(const char *ban_tmp, const char *ip_temp);
 /* c_chat.c */
+int                         command_describe(object *op, char *params);
 int                         command_say(object *op, char *params);
 int                         command_gsay(object *op, char *params);
 int                         command_shout(object *op, char *params);
