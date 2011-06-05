@@ -296,6 +296,49 @@ int command_shout(object *op, char *params)
     return 0;
 }
 
+int command_describe(object *op, char *params)
+{
+    /* TODO: Make this support channels, like "/describe tell XYZ", "/describe auction".
+     * ATM shout is all that's supported.
+     */
+    char buf[HUGE_BUF];
+    char levelstring[SMALL_BUF];
+
+    if(!check_mute(op, MUTE_MODE_SHOUT))
+        return 0;
+
+    object *targetob = CONTR(op)->mark;
+
+    if (!targetob) // Don't do anything if there is no marked item.
+        return 0;
+
+    if (targetob->item_level)
+    {
+        if (targetob->item_skill)
+        {
+            sprintf(levelstring, "(req. level %d in %s)", targetob->item_level,
+                STRING_SAFE(CONTR(op)->exp_obj_ptr[targetob->item_skill-1]->name));
+        }
+        else
+        {
+            sprintf(levelstring, "(req. level %d)", targetob->item_level);
+        }
+    }
+
+    if (targetob->item_level)
+        sprintf(buf, "~%s~ -- %s%s(examine worth: %s)", query_name_full(targetob, op), describe_item(targetob),
+               levelstring, cost_string_from_value(targetob->value, COSTSTRING_SHORT));
+    else
+
+        sprintf(buf, "~%s~ -- %s(examine worth: %s)", query_name_full(targetob, op), describe_item(targetob),
+               cost_string_from_value(targetob->value, COSTSTRING_SHORT));
+
+    new_draw_info(NDI_SHOUT | NDI_PLAYER | NDI_UNIQUE | NDI_ALL | NDI_ORANGE,
+                  1, NULL, "%s describes: %s", query_name(op), buf);
+
+    return 0;
+}
+
 int command_tell(object *op, char *params)
 {
     const char *name_hash;
@@ -306,7 +349,7 @@ int command_tell(object *op, char *params)
     if(!check_mute(op, MUTE_MODE_SHOUT))
         return 0;
 
-    
+
     /* this happens when whitespace only string was submited */
     if (!params || !(params = cleanup_chat_string(params)))
         return 1;
@@ -744,7 +787,7 @@ static int basic_emote(object *op, char *params, int emotion)
       : "NO CTRL!!",
         emotion);
 
-    
+
     if (!params || (params = cleanup_chat_string(params)))
     {
         /* name is ok but be sure we have something like "Xxxxx" */
@@ -1017,7 +1060,7 @@ static int basic_emote(object *op, char *params, int emotion)
             CHATLOG("EMOTE:%s >%s<\n", STRING_OBJ_NAME(op), params);
             new_info_map(NDI_EMOTE | NDI_PLAYER | NDI_YELLOW, op->map, op->x,
                          op->y, MAP_INFO_NORMAL, "%s %s", query_name(op),
-                         params); 
+                         params);
 
             return 0;
         }

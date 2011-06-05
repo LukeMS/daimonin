@@ -71,6 +71,7 @@ CommArray_s Commands[] =
     {"say",           command_say,            1.0f, 0},
     {"gsay",          command_gsay,           1.0f, 0},
     {"shout",         command_shout,          1.0f, 0},
+    {"describe",      command_describe,       1.0f, 0},
     {"tell",          command_tell,           1.0f, 0},
     {"who",           command_who,            0.0f, 1},
     {"mapinfo",       command_mapinfo,        0.0f, 1},
@@ -320,7 +321,7 @@ void init_commands()
     subcommands.shutdown = add_string("shutdown");
 }
 
-/* Finds cmd if it exists for pl (determined by gmaster_mode). 
+/* Finds cmd if it exists for pl (determined by gmaster_mode).
  * If so, the particular command element is returned. Otherwise, NULL is
  * returned. */
 CommArray_s *find_command(char *cmd, player *pl)
