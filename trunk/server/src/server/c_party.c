@@ -587,17 +587,3 @@ void party_client_group_update(object *member)
     SOCKBUF_COMPOSE_FREE(sockbuf);
 
 }
-
-int check_for_group_updates(player *pl)
-{
-    if (pl->last_stats.hp != pl->ob->stats.hp ||
-        pl->last_stats.maxhp != pl->ob->stats.maxhp ||
-        pl->last_stats.sp != pl->ob->stats.sp ||
-        pl->last_stats.maxsp != pl->ob->stats.maxsp ||
-        pl->last_stats.grace != pl->ob->stats.grace ||
-        pl->last_stats.maxgrace != pl->ob->stats.maxgrace ||
-        pl->last_level != pl->ob->level)
-            return 1;
-
-    return 0;
-}
