@@ -149,67 +149,64 @@ typedef struct _srv_client_files
  * They also will fail in if(..) GetShort_Buffer().
  * There must be explicit set {}!
  */
-#define GetChar_Buffer(_data_)			*((uint8*) (_data_));(_data_)++ 
+#define GetChar_Buffer(_data_)			*((uint8*) (_data_));(_data_)++
 #define GetShort_Buffer(_data_)			*((uint16*) (_data_));(_data_)+=2
 #define GetInt_Buffer(_data_)			*((uint32*) (_data_));(_data_)+=4
 
-/* thats a bit hard coded but well... */
-#define AddIf_SOCKBUF_PTR _sockbufptr
-
 /* Sends the stats to the client - only sends them if they have changed */
 
-#define AddIfInt(Old,New,Type) if (Old != New) {\
+#define AddIfInt(Socket, Old,New,Type) if (Old != New) {\
 	Old = New; \
-	SockBuf_AddChar(AddIf_SOCKBUF_PTR, (Type)); \
-	SockBuf_AddInt(AddIf_SOCKBUF_PTR, (New)); \
+	SockBuf_AddChar(Socket, (Type)); \
+	SockBuf_AddInt(Socket, (New)); \
 	}
 
-#define AddIfShort(Old,New,Type) if (Old != New) {\
+#define AddIfShort(Socket, Old,New,Type) if (Old != New) {\
 	Old = New; \
-	SockBuf_AddChar(AddIf_SOCKBUF_PTR, (Type)); \
-	SockBuf_AddShort(AddIf_SOCKBUF_PTR, (New)); \
+	SockBuf_AddChar(Socket, (Type)); \
+	SockBuf_AddShort(Socket, (New)); \
 	}
 
-#define AddIfChar(Old,New,Type) if (Old != New) {\
+#define AddIfChar(Socket, Old,New,Type) if (Old != New) {\
 	Old = New; \
-	SockBuf_AddChar(AddIf_SOCKBUF_PTR, (Type)); \
-	SockBuf_AddChar(AddIf_SOCKBUF_PTR, (New)); \
+	SockBuf_AddChar(Socket, (Type)); \
+	SockBuf_AddChar(Socket, (New)); \
 	}
 
-#define AddIfIntFlag(Old,New, Flag,Value, Type) if (Old != New) {\
+#define AddIfIntFlag(Socket, Old,New, Flag,Value, Type) if (Old != New) {\
 	Old = New; \
-	SockBuf_AddChar(AddIf_SOCKBUF_PTR, (Type)); \
-	SockBuf_AddInt(AddIf_SOCKBUF_PTR, (New)); \
+	SockBuf_AddChar(Socket, (Type)); \
+	SockBuf_AddInt(Socket, (New)); \
 	Flag |= Value; \
 	}
 
-#define AddIfShortFlag(Old,New, Flag,Value,Type) if (Old != New) {\
+#define AddIfShortFlag(Socket, Old,New, Flag,Value,Type) if (Old != New) {\
 	Old = New; \
-	SockBuf_AddChar(AddIf_SOCKBUF_PTR, (Type)); \
-	SockBuf_AddShort(AddIf_SOCKBUF_PTR, (New)); \
+	SockBuf_AddChar(Socket, (Type)); \
+	SockBuf_AddShort(Socket, (New)); \
 	Flag |= Value; \
 	}
 
-#define AddIfCharFlag(Old,New, Flag,Value, Type) if (Old != New) {\
+#define AddIfCharFlag(Socket, Old,New, Flag,Value, Type) if (Old != New) {\
 	Old = New; \
-	SockBuf_AddChar(AddIf_SOCKBUF_PTR, (Type)); \
-	SockBuf_AddChar(AddIf_SOCKBUF_PTR, (New)); \
+	SockBuf_AddChar(Socket, (Type)); \
+	SockBuf_AddChar(Socket, (New)); \
 	Flag |= Value; \
 	}
 
-#define AddIfFloat(Old,New,Type) if ((Old) != (New)) {\
+#define AddIfFloat(Socket, Old,New,Type) if ((Old) != (New)) {\
 	(Old) = (New); \
-	SockBuf_AddChar(AddIf_SOCKBUF_PTR, (Type)); \
-	SockBuf_AddInt(AddIf_SOCKBUF_PTR,((New)*FLOAT_MULTI));\
+	SockBuf_AddChar(Socket, (Type)); \
+	SockBuf_AddInt(Socket,((New)*FLOAT_MULTI));\
 	}
 
-#define AddIfString(Old,New,Type) if (Old == NULL || strcmp(Old,New)) {\
+#define AddIfString(Socket, Old,New,Type) if (Old == NULL || strcmp(Old,New)) {\
 	int _len;\
 	if (Old) free(Old);\
 	Old = strdup_local(New);\
-	SockBuf_AddChar(AddIf_SOCKBUF_PTR, (Type)); \
-	SockBuf_AddChar(AddIf_SOCKBUF_PTR, (_len = strlen(New))); \
-	SockBuf_AddString(AddIf_SOCKBUF_PTR, (New), len); \
+	SockBuf_AddChar(Socket, (Type)); \
+	SockBuf_AddChar(Socket, (_len = strlen(New))); \
+	SockBuf_AddString(Socket, (New), len); \
 	}
 
 
