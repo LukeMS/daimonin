@@ -185,6 +185,7 @@ void esrv_draw_look(object *pl)
 
         /* skip map mask, sys_objects and invisible objects when we can't see them */
         if (tmp->layer <= 0
+         || tmp->layer == 7 // Layer 7 isn't "below" the player, so it shouldn't be in the "below" window.
          || IS_SYS_INVISIBLE(tmp)
          || (!QUERY_FLAG(pl, FLAG_SEE_INVISIBLE) && QUERY_FLAG(tmp, FLAG_IS_INVISIBLE)))
         {
