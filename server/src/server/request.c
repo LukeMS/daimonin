@@ -36,20 +36,21 @@
 
 #include <global.h>
 
- /* This block is basically taken from socket.c - I assume if it works there, 	 
-	  * it should work here. 	 
-	  */ 	 
-	 #ifndef WIN32 /* ---win32 exclude unix headers */ 	 
-	 #include <sys/types.h> 	 
-	 #include <sys/time.h> 	 
-	 #include <sys/socket.h> 	 
-	 #include <netinet/in.h> 	 
-	 #include <netdb.h> 	 
-	 #endif /* win32 */ 	 
-	  	 
-	 #ifdef HAVE_SYS_TIME_H 	 
-	 #include <sys/time.h> 	 
-	 #endif
+/* This block is basically taken from socket.c - I assume if it works there,
+ * it should work here.
+ */
+#ifndef WIN32 /* ---win32 exclude unix headers */
+#include <sys/types.h>
+#include <sys/time.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <netdb.h>
+#endif /* win32 */
+
+#ifdef HAVE_SYS_TIME_H
+#include <sys/time.h>
+#endif
+
 static int  cs_stat_skillexp[]    =
 {
     CS_STAT_SKILLEXP_AGILITY, CS_STAT_SKILLEXP_PERSONAL, CS_STAT_SKILLEXP_MENTAL, CS_STAT_SKILLEXP_PHYSIQUE,
@@ -109,11 +110,11 @@ void esrv_update_skills(player *pl)
 void esrv_update_stats(player *pl)
 {
     int         i, group_update = 0; /* set to true when a group update stat has changed */
-    sockbuf_struct *sb;
+    sockbuf_struct * AddIf_SOCKBUF_PTR;
     uint16      flags;
 
-    SOCKBUF_REQUEST_BUFFER(&pl->socket, SOCKET_SIZE_SMALL);
-    sb = ACTIVE_SOCKBUF(&pl->socket);
+    SOCKBUF_REQUEST_BUFFER(&pl->socket, 128);
+    AddIf_SOCKBUF_PTR = ACTIVE_SOCKBUF(&pl->socket);
 
     /* small trick: we want send the hp bar of our target to the player.
      * We want send a char with x% the target has of full hp.
@@ -130,54 +131,54 @@ void esrv_update_stats(player *pl)
             /* well, i would like to avoid this calc here but we won't give the player the true hp value of target */
             char hp = (char) (((float) pl->target_object->stats.hp / (float) pl->target_object->stats.maxhp) * 100.0f);
             pl->target_hp = pl->target_object->stats.hp;
-            AddIfChar(sb, pl->target_hp_p, hp, CS_STAT_TARGET_HP);
+            AddIfChar(pl->target_hp_p, hp, CS_STAT_TARGET_HP);
         }
     }
 
-    AddIfShort(sb, pl->last_gen_hp, pl->gen_hp, CS_STAT_REG_HP);
-    AddIfShort(sb, pl->last_gen_sp, pl->gen_sp, CS_STAT_REG_MANA);
-    AddIfShort(sb, pl->last_gen_grace, pl->gen_grace, CS_STAT_REG_GRACE);
-    AddIfChar(sb, pl->last_level, pl->ob->level, CS_STAT_LEVEL);
-    AddIfInt(sb, pl->last_weight_limit, pl->weight_limit, CS_STAT_WEIGHT_LIM);
-    AddIfInt(sb, pl->last_weapon_sp, pl->weapon_sp, CS_STAT_WEAP_SP);
-    AddIfInt(sb, pl->last_speed_enc, pl->speed_enc, CS_STAT_SPEED);
-    AddIfInt(sb, pl->last_spell_fumble, pl->spell_fumble, CS_STAT_SPELL_FUMBLE);
+    AddIfShort(pl->last_gen_hp, pl->gen_hp, CS_STAT_REG_HP);
+    AddIfShort(pl->last_gen_sp, pl->gen_sp, CS_STAT_REG_MANA);
+    AddIfShort(pl->last_gen_grace, pl->gen_grace, CS_STAT_REG_GRACE);
+    AddIfCharFlag(pl->last_level, pl->ob->level, group_update, GROUP_UPDATE_LEVEL, CS_STAT_LEVEL);
+    AddIfInt(pl->last_weight_limit, pl->weight_limit, CS_STAT_WEIGHT_LIM);
+    AddIfInt(pl->last_weapon_sp, pl->weapon_sp, CS_STAT_WEAP_SP);
+    AddIfInt(pl->last_speed_enc, pl->speed_enc, CS_STAT_SPEED);
+    AddIfInt(pl->last_spell_fumble, pl->spell_fumble, CS_STAT_SPELL_FUMBLE);
 
     if (pl->ob != NULL)
     {
+        /* these will update too when we are in a group */
+        AddIfIntFlag(pl->last_stats.hp, pl->ob->stats.hp, group_update, GROUP_UPDATE_HP, CS_STAT_HP);
+        AddIfIntFlag(pl->last_stats.maxhp, pl->ob->stats.maxhp, group_update, GROUP_UPDATE_MAXHP, CS_STAT_MAXHP);
+        AddIfShortFlag(pl->last_stats.sp, pl->ob->stats.sp, group_update, GROUP_UPDATE_SP, CS_STAT_SP);
+        AddIfShortFlag(pl->last_stats.maxsp, pl->ob->stats.maxsp, group_update, GROUP_UPDATE_MAXSP, CS_STAT_MAXSP);
+        AddIfShortFlag(pl->last_stats.grace, pl->ob->stats.grace, group_update, GROUP_UPDATE_GRACE, CS_STAT_GRACE);
+        AddIfShortFlag(pl->last_stats.maxgrace, pl->ob->stats.maxgrace, group_update, GROUP_UPDATE_MAXGRACE,CS_STAT_MAXGRACE);
 
-        AddIfInt(sb, pl->last_stats.hp, pl->ob->stats.hp, CS_STAT_HP);
-        AddIfInt(sb, pl->last_stats.maxhp, pl->ob->stats.maxhp, CS_STAT_MAXHP);
-        AddIfShort(sb, pl->last_stats.sp, pl->ob->stats.sp, CS_STAT_SP);
-        AddIfShort(sb, pl->last_stats.maxsp, pl->ob->stats.maxsp, CS_STAT_MAXSP);
-        AddIfShort(sb, pl->last_stats.grace, pl->ob->stats.grace, CS_STAT_GRACE);
-        AddIfShort(sb, pl->last_stats.maxgrace, pl->ob->stats.maxgrace, CS_STAT_MAXGRACE);
+        AddIfChar(pl->last_stats.Str, pl->ob->stats.Str, CS_STAT_STR);
+        AddIfChar(pl->last_stats.Int, pl->ob->stats.Int, CS_STAT_INT);
+        AddIfChar(pl->last_stats.Pow, pl->ob->stats.Pow, CS_STAT_POW);
+        AddIfChar(pl->last_stats.Wis, pl->ob->stats.Wis, CS_STAT_WIS);
+        AddIfChar(pl->last_stats.Dex, pl->ob->stats.Dex, CS_STAT_DEX);
+        AddIfChar(pl->last_stats.Con, pl->ob->stats.Con, CS_STAT_CON);
+        AddIfChar(pl->last_stats.Cha, pl->ob->stats.Cha, CS_STAT_CHA);
 
-        AddIfChar(sb, pl->last_stats.Str, pl->ob->stats.Str, CS_STAT_STR);
-        AddIfChar(sb, pl->last_stats.Int, pl->ob->stats.Int, CS_STAT_INT);
-        AddIfChar(sb, pl->last_stats.Pow, pl->ob->stats.Pow, CS_STAT_POW);
-        AddIfChar(sb, pl->last_stats.Wis, pl->ob->stats.Wis, CS_STAT_WIS);
-        AddIfChar(sb, pl->last_stats.Dex, pl->ob->stats.Dex, CS_STAT_DEX);
-        AddIfChar(sb, pl->last_stats.Con, pl->ob->stats.Con, CS_STAT_CON);
-        AddIfChar(sb, pl->last_stats.Cha, pl->ob->stats.Cha, CS_STAT_CHA);
+        AddIfInt(pl->last_stats.exp, pl->ob->stats.exp, CS_STAT_EXP);
+        AddIfShort(pl->last_stats.wc, pl->ob->stats.wc, CS_STAT_WC);
+        AddIfShort(pl->last_stats.ac, pl->ob->stats.ac, CS_STAT_AC);
+        AddIfShort(pl->last_dps, pl->dps, CS_STAT_DAM);
+        AddIfShort(pl->last_food_status, pl->food_status, CS_STAT_FOOD);
 
-        AddIfInt(sb, pl->last_stats.exp, pl->ob->stats.exp, CS_STAT_EXP);
-        AddIfShort(sb, pl->last_stats.wc, pl->ob->stats.wc, CS_STAT_WC);
-        AddIfShort(sb, pl->last_stats.ac, pl->ob->stats.ac, CS_STAT_AC);
-        AddIfShort(sb, pl->last_dps, pl->dps, CS_STAT_DAM);
-        AddIfShort(sb, pl->last_food_status, pl->food_status, CS_STAT_FOOD);
-
-        AddIfShort(sb, pl->dist_last_wc, pl->dist_wc, CS_STAT_DIST_WC);
-        AddIfShort(sb, pl->dist_last_dps, pl->dist_dps, CS_STAT_DIST_DPS);
-        AddIfInt(sb, pl->dist_last_action_time, pl->dist_action_time, CS_STAT_DIST_TIME);
-
-        AddIfInt(sb, pl->last_action_timer, pl->action_timer, CS_STAT_ACTION_TIME);
+        AddIfShort(pl->dist_last_wc, pl->dist_wc, CS_STAT_DIST_WC);
+        AddIfShort(pl->dist_last_dps, pl->dist_dps, CS_STAT_DIST_DPS);
+        AddIfInt(pl->dist_last_action_time, pl->dist_action_time, CS_STAT_DIST_TIME);
+        
+        AddIfInt(pl->last_action_timer, pl->action_timer, CS_STAT_ACTION_TIME);
     }
 
     for (i = 0; i < NROFSKILLGROUPS_ACTIVE; i++)
     {
-        AddIfInt(sb, pl->last_exp_obj_exp[i], pl->exp_obj_ptr[i]->stats.exp, cs_stat_skillexp[i]);
-        AddIfChar(sb, pl->last_exp_obj_level[i], pl->exp_obj_ptr[i]->level, cs_stat_skillexp[i]+1);
+        AddIfInt(pl->last_exp_obj_exp[i], pl->exp_obj_ptr[i]->stats.exp, cs_stat_skillexp[i]);
+        AddIfChar(pl->last_exp_obj_level[i], pl->exp_obj_ptr[i]->level, cs_stat_skillexp[i]+1);
     }
 
     flags = 0;
@@ -195,33 +196,32 @@ void esrv_update_stats(player *pl)
         flags |= SF_XRAYS;
     if (QUERY_FLAG(pl->ob, FLAG_SEE_IN_DARK)) /* player has infravision */
         flags |= SF_INFRAVISION;
-    AddIfShort(sb, pl->last_flags, flags, CS_STAT_FLAGS);
+    AddIfShort(pl->last_flags, flags, CS_STAT_FLAGS);
 
     /* TODO: Add a fix_player marker here for all values who MUST be altered in fix_player */
     for (i = 0; i < NROFATTACKS; i++)
-        AddIfChar(sb, pl->last_resist[i], pl->ob->resist[i], CS_STAT_RES_START+i);
+        AddIfChar(pl->last_resist[i], pl->ob->resist[i], CS_STAT_RES_START+i);
 
     if (pl->socket.ext_title_flag)
     {
         generate_ext_title(pl);
-        SockBuf_AddChar(sb, CS_STAT_EXT_TITLE);
+        SockBuf_AddChar( AddIf_SOCKBUF_PTR , CS_STAT_EXT_TITLE);
         i = (int) strlen(pl->ext_title);
-        SockBuf_AddChar(sb, i+1);
-        SockBuf_AddString(sb, pl->ext_title, i);
+        SockBuf_AddChar( AddIf_SOCKBUF_PTR , i+1);
+        SockBuf_AddString( AddIf_SOCKBUF_PTR, pl->ext_title, i);
         pl->socket.ext_title_flag = 0;
     }
-
     /* Only send it away if we have some actual data */
-    if (SOCKBUF_REQUEST_BUFSIZE(sb))
+    if (SOCKBUF_REQUEST_BUFSIZE( AddIf_SOCKBUF_PTR ))
         SOCKBUF_REQUEST_FINISH(&pl->socket, SERVER_CMD_STATS, SOCKBUF_DYNAMIC);
     else
         SOCKBUF_REQUEST_RESET(&pl->socket);
 
-    if (pl->group_status & GROUP_STATUS_GROUP && pl->update_ticker != ROUND_TAG)
-        party_client_group_update(pl->ob);
-
+    if(group_update && pl->group_status & GROUP_STATUS_GROUP && pl->update_ticker != ROUND_TAG)
+        party_client_group_update(pl->ob, group_update);
     pl->update_ticker = ROUND_TAG;
 }
+
 
 void esrv_new_player(player *pl, uint32 weight)
 {
