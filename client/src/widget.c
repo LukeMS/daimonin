@@ -283,6 +283,11 @@ int widget_event_mousedn(int x, int y, SDL_Event *event)
 {
     widget_id_t id = widget_get_owner(x,y);
 
+    if (id == WIDGET_NROF)
+    {
+        return 0;
+    }
+
     /* setup the event structure in response */
     widget_mouse_event.moving = 0;
     widget_mouse_event.id = id;
@@ -439,6 +444,11 @@ int widget_event_mouseup(int x, int y, SDL_Event *event)
     else
     {
         widget_id_t id = widget_get_owner(x,y);
+
+        if (id == WIDGET_NROF)
+        {
+            return 0;
+        }
 
         /* setup the event structure in response */
         widget_mouse_event.id = id;
@@ -628,6 +638,11 @@ int widget_event_mousemv(int x,int y, SDL_Event *event)
     else
     {
         widget_id_t id = widget_get_owner(x,y);
+
+        if (id == WIDGET_NROF)
+        {
+            return 0;
+        }
 
         /* setup the event structure in response */
         widget_mouse_event.moving = 0;
