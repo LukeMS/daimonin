@@ -26,18 +26,18 @@
 
 #define MAX_INPUT_STR 256
 
-char                    *show_input_string(char *text, _font *font, int wlen);
-int                     read_substr_char(char *srcstr, char *desstr, int *sz, char ct);
-char                    *get_parameter_string(char *data, int *pos, int maxlen);
-int                     isqrt(int n);
-void                    smiley_convert(char *msg);
-extern void             markdmbuster();
-extern char             *normalize_string(const char *string);
-extern int              setup_endian_sync(const char *const buf);
-extern uint32           adjust_endian_int32(const uint32 buf);
-extern uint16           adjust_endian_int16(const uint16 buf);
-extern char             *adjust_string(char *buf);
-extern PHYSFS_File      *load_client_file(const char *fname);
-extern PHYSFS_File      *save_client_file(const char *fname);
+extern void         show_input_string(_font *font, SDL_Rect *box, char repl);
+extern int          read_substr_char(char *srcstr, char *desstr, int *sz, char ct);
+extern char        *get_parameter_string(char *data, int *pos, int maxlen);
+extern int          isqrt(int n);
+extern void         smiley_convert(char *msg);
+extern void         markdmbuster();
+extern char        *normalize_string(const char *string);
+extern int          setup_endian_sync(const char *const buf);
+extern uint32       adjust_endian_int32(const uint32 buf);
+extern uint16       adjust_endian_int16(const uint16 buf);
+extern char        *adjust_string(char *buf);
+extern PHYSFS_File *load_client_file(const char *fname);
+extern PHYSFS_File *save_client_file(const char *fname);
 
 #endif /* ifndef __MISC_H */

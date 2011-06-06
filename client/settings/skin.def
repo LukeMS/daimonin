@@ -6,6 +6,8 @@ newclosebutton: 1
 dialog_row0: 0x64391e
 dialog_row1: 0x393b27
 dialog_rowS: 0x0000ef
+input_string: 0xffffff
+input_caret: 0xff0000
 effect_width: 9
 effect_height: 16
 effect_eating: Nyom! 

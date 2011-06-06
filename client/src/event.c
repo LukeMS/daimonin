@@ -382,9 +382,6 @@ static int key_account_menu(SDL_KeyboardEvent *key)
                 sound_play_effect(SOUNDTYPE_CLIENT, SOUND_PAGE, 0, 0, 100);
                 GameStatus = GAME_STATUS_ACCOUNT_CHAR_DEL;
                 /* the player must write "delete" , then we allow deletion of the selected char name */
-                reset_input_mode();
-                InputStringFlag=1;
-                InputStringEndFlag=0;
                 open_input_mode(MAX_PLAYER_NAME);
                 cpl.menustatus = MENU_NO;
             }
@@ -1100,14 +1097,12 @@ static void key_string_event(SDL_KeyboardEvent *key)
                 strcpy(InputString, InputHistory[HistoryPos] + 6);
                 InputCount =CurrentCursorPos = strlen(InputString);
                 InputStringFlag = 1;
-
                 box.x = gui_npc->startx + 95;
                 box.y = gui_npc->starty + 449;
-                box.h = 12;
+                box.h = font_small.line_height;
                 box.w = 180;
-
                 SDL_FillRect(ScreenSurface, &box, 0);
-                string_blt(ScreenSurface, &font_small, show_input_string(InputString, &font_small,box.w-10),box.x+5 ,box.y, COLOR_WHITE, NULL, NULL);
+                show_input_string(&font_small, &box, 0);
             }
             break;
 
@@ -1140,11 +1135,15 @@ static void key_string_event(SDL_KeyboardEvent *key)
                 InputStringFlag = 1;
                 box.x = gui_npc->startx + 95;
                 box.y = gui_npc->starty + 449;
-                box.h = 12;
+                box.h = font_small.line_height;
                 box.w = 180;
                 SDL_FillRect(ScreenSurface, &box, 0);
-                string_blt(ScreenSurface, &font_small, show_input_string(InputString, &font_small,box.w-10),box.x+5 ,box.y, COLOR_WHITE, NULL, NULL);
+                show_input_string(&font_small, &box, 0);
             }
+            break;
+
+        case SDLK_INSERT:
+            InputMode = !InputMode;
             break;
 
         case SDLK_DELETE:
@@ -1314,15 +1313,36 @@ static void key_string_event(SDL_KeyboardEvent *key)
                     sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
                 else
                 {
-                    for (i = InputCount; i >= CurrentCursorPos; i--)
-                        InputString[i + 1] = InputString[i];
-                    InputString[CurrentCursorPos++] = c;
-                    InputString[++InputCount] = 0;
+                    if (!InputMode) // insert
+                    {
+                        for (i = InputCount; i >= CurrentCursorPos; i--)
+                        {
+                            InputString[i + 1] = InputString[i];
+                        }
+
+                        InputString[CurrentCursorPos++] = c;
+                        InputString[++InputCount] = '\0';
+                    }
+                    else // overtype
+                    {
+                        if (InputString[CurrentCursorPos] == '\0')
+                        {
+                            InputString[CurrentCursorPos + 1] = '\0';
+                        }
+
+                        InputString[CurrentCursorPos++] = c;
+
+                        if (CurrentCursorPos > InputCount)
+                        {
+                            InputCount++;
+                        }
+                    }
                 }
             }
             break;
         }
         InputFirstKeyPress = 0;
+        InputCaretBlinkFlag = 0;
     }
 }
 
@@ -3113,10 +3133,7 @@ void check_menu_keys(int menu, int key)
                 break;
             }
             dialog_new_char_warn = 0;
-            reset_input_mode();
             cpl.name[0] = 0;
-            InputStringFlag=1;
-            InputStringEndFlag=0;
             open_input_mode(MAX_PLAYER_NAME);
             GameStatus = GAME_STATUS_ACCOUNT_CHAR_NAME;
             cpl.menustatus = MENU_NO;

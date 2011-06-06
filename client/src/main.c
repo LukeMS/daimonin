@@ -101,6 +101,8 @@ int                 InputCount, InputMax;
 uint8             InputStringFlag;    /* if true keyboard and game is in input str mode*/
 uint8             InputStringEndFlag; /* if true, we had entered some in text mode and its ready*/
 uint8             InputStringEscFlag;
+uint8             InputMode = 0; // 0=insert, 1=overtype
+uint8             InputCaretBlinkFlag = 1;
 
 _game_status        GameStatus; /* the global status identifier */
 int                 GameStatusSelect;
@@ -960,8 +962,7 @@ uint8 game_status_chain(void)
                 if (!account_name_valid(InputString))
                 {
                     dialog_login_warning_level = DIALOG_LOGIN_WARNING_NAME_WRONG;
-                    InputStringFlag = 1;
-                    InputStringEndFlag = 0;
+                    open_input_mode(MAX_ACCOUNT_NAME);
                 }
                 else
                 {
@@ -1011,7 +1012,6 @@ uint8 game_status_chain(void)
                         dialog_login_warning_level = DIALOG_LOGIN_WARNING_PWD_NAME;
                         cpl.password[0] = 0;
                         LoginInputStep = LOGIN_STEP_PASS1;
-                        open_input_mode(MAX_ACCOUNT_PASSWORD);
                     }
                     else
                     {
@@ -1020,6 +1020,7 @@ uint8 game_status_chain(void)
                         LoginInputStep = LOGIN_STEP_PASS2;
                         dialog_login_warning_level = DIALOG_LOGIN_WARNING_NONE;
                     }
+
                     open_input_mode(MAX_ACCOUNT_PASSWORD);
                 }
             }
@@ -2816,6 +2817,8 @@ void load_skindef()
     skindef.dialog_rows0 = SDL_MapRGB(ScreenSurface->format, 100, 57, 30);
     skindef.dialog_rows1 = SDL_MapRGB(ScreenSurface->format, 57, 59, 39);
     skindef.dialog_rowsS = SDL_MapRGB(ScreenSurface->format, 0, 0, 239);
+    skindef.input_string = SDL_MapRGB(ScreenSurface->format, 255, 255, 255);
+    skindef.input_caret = SDL_MapRGB(ScreenSurface->format, 255, 0, 0);
     skindef.effect_width = 9;
     skindef.effect_height = 16;
     MALLOC_STRING(skindef.effect_eating, "Nyom! ");
@@ -2891,6 +2894,24 @@ void load_skindef()
                                               (n >> 16) & 0xff,
                                               (n >> 8) & 0xff,
                                               n & 0xff);
+        }
+        else if (!strcmp(key, "input_string"))
+        {
+            uint32 n = (uint32)strtoul(val, NULL, 16);
+
+            skindef.input_string = SDL_MapRGB(ScreenSurface->format,
+                                              (n >> 16) & 0xff,
+                                              (n >> 8) & 0xff,
+                                              n & 0xff);
+        }
+        else if (!strcmp(key, "input_caret"))
+        {
+            uint32 n = (uint32)strtoul(val, NULL, 16);
+
+            skindef.input_caret = SDL_MapRGB(ScreenSurface->format,
+                                             (n >> 16) & 0xff,
+                                             (n >> 8) & 0xff,
+                                             n & 0xff);
         }
         else if (!strcmp(key, "effect_width"))
         {

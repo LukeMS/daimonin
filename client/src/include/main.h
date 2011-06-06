@@ -124,6 +124,8 @@ typedef struct _skindef
     uint32  dialog_rows0;
     uint32  dialog_rows1;
     uint32  dialog_rowsS;
+    uint32  input_string;
+    uint32  input_caret;
     uint8   effect_width;
     uint8   effect_height;
     char   *effect_eating;
@@ -647,6 +649,8 @@ extern int                  InputCount, InputMax;                   /* nr. of ch
 extern uint8              InputStringFlag;    /* if true keyboard and game is in input str mode*/
 extern uint8              InputStringEndFlag; /* if true, we had entered some in text mode and its ready*/
 extern uint8              InputStringEscFlag;
+extern uint8              InputMode; // 0=insert, 1=overtype
+extern uint8              InputCaretBlinkFlag;
 
 extern struct _fire_mode    fire_mode_tab[FIRE_MODE_INIT]; /* range table */
 extern int                  RangeFireMode;

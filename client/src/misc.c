@@ -22,45 +22,78 @@
 */
 #include <include.h>
 
-char * show_input_string(char *text, struct _font *font, int wlen)
+/* Shows InputString and an appropriate caret. */
+void show_input_string(_font *font, SDL_Rect *box, char repl)
 {
-    register int i, j,len;
+    uint16 i;
+    char   buf[MAX_INPUT_STRING];
+    int    len;
+    sint16 xoff;
 
-    static char buf[MAX_INPUT_STR];
-    strcpy(buf, text);
-
-    len = strlen(buf);
-    while (len >= CurrentCursorPos)
+    for (i = 0; i < MAX_INPUT_STRING && InputString[i]; i++)
     {
-        buf[len + 1] = buf[len];
-        len--;
+        buf[i] = (repl) ? repl : InputString[i];
     }
-    buf[CurrentCursorPos] = '_';
 
-    for (len = 25,i = CurrentCursorPos; i >= 0; i--)
+    buf[i] = '\0';
+
+    /* Replace the character at CurrentCursorPos with \0. */
+    buf[CurrentCursorPos] = '\0';
+
+    /* Get the pixel length of this first part of buf. */
+    len = string_width(font, buf);
+
+    /* Calculate any needed offset so the caret and context is always
+     * visible. */
+    if ((xoff = len - box->w * 0.8) < 0)
     {
-        if (!buf[i])
-            continue;
-        if (len + font->c[(int) (buf[i])].w + font->char_offset >= wlen)
+        xoff = 0;
+    }
+
+    /* Set the clipping rectangle. */
+    SDL_SetClipRect(ScreenSurface, box);
+
+    /* Draw buf up to that point. */
+    string_blt(ScreenSurface, font, buf, box->x - xoff, box->y,
+               COLOR_WHITE, NULL, NULL);
+
+    /* Restore the character at CurrentCursorPos. */
+    if (InputString[CurrentCursorPos])
+    {
+        buf[CurrentCursorPos] = (repl) ? repl : InputString[CurrentCursorPos];
+    }
+
+    /* Draw buf from that point. */
+    string_blt(ScreenSurface, font, &buf[CurrentCursorPos],
+               box->x - xoff + len, box->y, COLOR_WHITE, NULL, NULL);
+
+    /* Draw the caret. */
+    if (InputCaretBlinkFlag &&
+        LastTick % 500 >= 250)
+    {
+        SDL_Rect caret;
+
+        caret.y = box->y;
+        caret.h = font->line_height;
+
+        if (!InputMode)
         {
-            i--;
-            break;
+            caret.x = MAX(box->x, box->x - xoff + len - font->char_offset);
+            caret.w = 1;
         }
-        len += font->c[(int) (buf[i])].w + font->char_offset;
-    }
-
-    len -= 25;
-    for (j = CurrentCursorPos; j <= (int) strlen(buf); j++)
-    {
-        if (len + font->c[(int) (buf[j])].w + font->char_offset >= wlen)
+        else
         {
-            break;
+            caret.x = box->x - xoff + len;
+            caret.w = font->c[(int)buf[CurrentCursorPos]].w;
         }
-        len += font->c[(int) (buf[j])].w + font->char_offset;
-    }
-    buf[j] = 0;
 
-    return(&buf[++i]);
+        SDL_FillRect(ScreenSurface, &caret, skindef.input_caret);
+    }
+
+    InputCaretBlinkFlag = 1;
+
+    /* Remove the clipping rectangle. */
+    SDL_SetClipRect(ScreenSurface, NULL);
 }
 
 int read_substr_char(char *srcstr, char *desstr, int *sz, char ct)
