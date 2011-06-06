@@ -1303,8 +1303,7 @@ void show_keybind()
     {
         box.w = X_COL2 - X_COL1;
         SDL_FillRect(ScreenSurface, &box, 0);
-        EMBOSS(ScreenSurface, &font_small, show_input_string(InputString, &font_small, box.w), x + X_COL1, y2,
-               COLOR_WHITE, NULL, NULL);
+        show_input_string(&font_small, &box, 0);
     }
     else if (keybind_status == KEYBIND_STATUS_EDITKEY)
     {
@@ -1617,33 +1616,31 @@ void show_newplayer_server(void)
     }
     else
     {
+        SDL_Rect box;
+
+        box.x = x + 136;
+        box.w = Bitmaps[BITMAP_LOGIN_INP]->bitmap->w - 4;
+        box.h = font_small.line_height;
+
         if (GameStatus == GAME_STATUS_ACCOUNT_CHAR_NAME)
         {
             ENGRAVE(ScreenSurface, &font_large_out, "Try Character Name", x + 134, y + 323, COLOR_WHITE, NULL, NULL);
             sprite_blt(Bitmaps[BITMAP_LOGIN_INP], x + 132, y + 345, NULL, NULL);
-            sprintf(buf, "%s%c", InputString, '_');
-            buf[0] = toupper(buf[0]);
-            EMBOSS(ScreenSurface, &font_small, buf, x + 138, y + 347, COLOR_WHITE, NULL, NULL);
+            box.y = y + 347;
+            show_input_string(&font_small, &box, 0);
         }
         else if (GameStatus == GAME_STATUS_ACCOUNT_CHAR_RECLAIM)
         {
             ENGRAVE(ScreenSurface, &font_large_out, "Try Character Name", x + 134, y + 323, COLOR_WHITE, NULL, NULL);
             sprite_blt(Bitmaps[BITMAP_LOGIN_INP], x + 132, y + 345, NULL, NULL);
-            EMBOSS(ScreenSurface, &font_small, cpl.name, x + 138, y + 347, COLOR_WHITE, NULL, NULL);
+            string_blt(ScreenSurface, &font_small, cpl.name, x + 138, y + 347, COLOR_WHITE, NULL, NULL);
             ENGRAVE(ScreenSurface, &font_large_out, "Try Reclaim Password", x + 134, y + 370, COLOR_WHITE, NULL, NULL);
             sprite_blt(Bitmaps[BITMAP_LOGIN_INP], x + 132, y + 392, NULL, NULL);
-            sprintf(buf, "%s", InputString);
-            for (i = 0; buf[i]; i++)
-            {
-                buf[i] = '*';
-            }
-            strcat(buf, "_");
-            EMBOSS(ScreenSurface, &font_small, buf, x + 138, y + 394, COLOR_WHITE, NULL, NULL);
+            box.y = y + 394;
+            show_input_string(&font_small, &box, '*');
         }
         else
         {
-            SDL_Rect box;
-
             box.x= x+132;
             box.y= y+345;
             box.w= 250;
@@ -1835,10 +1832,11 @@ void show_login_server(void)
          GameStatus == GAME_STATUS_LOGIN_NEW) &&
         LoginInputStep == LOGIN_STEP_NAME)
     {
-        ENGRAVE(ScreenSurface, &font_small,
-                show_input_string(InputString, &font_small,
-                                  Bitmaps[BITMAP_LOGIN_INP]->bitmap->w - 16),
-                x + 2, y + 37, COLOR_WHITE, NULL, NULL);
+        box.x = x + 2;
+        box.y = y + 37;
+        box.w = Bitmaps[BITMAP_LOGIN_INP]->bitmap->w - 4;
+        box.h = font_small.line_height;
+        show_input_string(&font_small, &box, 0);
     }
     else
     {
@@ -1852,11 +1850,11 @@ void show_login_server(void)
 
         if (LoginInputStep == LOGIN_STEP_PASS1)
         {
-            for (i = 0; i < (int)strlen(InputString); i++)
-                buf[i] = '*';
-            buf[i++] = '_';
-            buf[i] = 0;
-            EMBOSS(ScreenSurface, &font_small, buf, x + 2, y + 77, COLOR_WHITE, NULL, NULL);
+            box.x = x + 2;
+            box.y = y + 77;
+            box.w = Bitmaps[BITMAP_LOGIN_INP]->bitmap->w - 4;
+            box.h = font_small.line_height;
+            show_input_string(&font_small, &box, '*');
         }
         else if (LoginInputStep == LOGIN_STEP_PASS2)
         {
@@ -1870,11 +1868,11 @@ void show_login_server(void)
         {
             ENGRAVE(ScreenSurface, &font_small, "New Account: Verify Password", x + 2, y + 100, COLOR_HGOLD, NULL, NULL);
             sprite_blt(Bitmaps[BITMAP_LOGIN_INP], x - 2, y + 115, NULL, NULL);
-            for (i = 0; i < (int)strlen(InputString); i++)
-                buf[i] = '*';
-            buf[i++] = '_';
-            buf[i] = 0;
-            EMBOSS(ScreenSurface, &font_small, buf, x + 2, y + 117, COLOR_WHITE, NULL, NULL);
+            box.x = x + 2;
+            box.y = y + 117;
+            box.w = Bitmaps[BITMAP_LOGIN_INP]->bitmap->w - 4;
+            box.h = font_small.line_height;
+            show_input_string(&font_small, &box, '*');
         }
     }
 

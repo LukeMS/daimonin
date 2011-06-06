@@ -1834,9 +1834,7 @@ static void ShowGUIFurniture(uint16 x, uint16 y)
                                   string_width(&font_small, buf)) / 2,
                       yoff - 2, COLOR_WHITE, NULL, NULL);
             SDL_FillRect(ScreenSurface, &box, 0);
-            string_blt(ScreenSurface, &font_medium,
-                      show_input_string(InputString, &font_medium, box.w - 1),
-                      box.x, box.y, COLOR_WHITE, NULL, NULL);
+            show_input_string(&font_medium, &box, 0);
         }
         else if (interface_mode == GUI_NPC_MODE_NPC &&
                  !gui_npc->keyword_selected &&

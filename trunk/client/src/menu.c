@@ -79,9 +79,14 @@ void do_console(int x, int y)
 
 void widget_show_console(int x, int y)
 {
+    SDL_Rect box;
+
     sprite_blt(Bitmaps[BITMAP_TEXTINPUT],x, y, NULL, NULL);
-    string_blt(ScreenSurface, &font_small, show_input_string(InputString, &font_small, 239), x+9, y+7, COLOR_WHITE, NULL,
-              NULL);
+    box.x = x + 8;
+    box.y = y + 6;
+    box.w = Bitmaps[BITMAP_TEXTINPUT]->bitmap->w - 22;
+    box.h = font_small.line_height;
+    show_input_string(&font_small, &box, 0);
 }
 
 void do_number(int x, int y)
@@ -205,17 +210,18 @@ void widget_number_event(int x, int y, SDL_Event event)
 
 void widget_show_number(int x, int y)
 {
-    SDL_Rect    tmp;
-    char        buf[512];
+    SDL_Rect box;
+    char     buf[TINY_BUF];
 
-    tmp.w = 238;
-
+    box.x = x + 8;
+    box.y = y + 6;
+    box.w = Bitmaps[BITMAP_NUMBER]->bitmap->w - 22;
+    box.h = font_small.line_height;
     sprite_blt(Bitmaps[BITMAP_NUMBER], x, y, NULL, NULL);
     sprintf(buf, "%s how many from %d %s", cpl.nummode == NUM_MODE_GET ? "get" : "drop", cpl.nrof, cpl.num_text);
-    string_blt(ScreenSurface, &font_small, buf, x + 8, y + 6, COLOR_HGOLD, &tmp, NULL);
-    string_blt(ScreenSurface, &font_small,
-              show_input_string(InputString, &font_small, Bitmaps[BITMAP_NUMBER]->bitmap->w - 22), x + 8, y + 25,
-              COLOR_WHITE, &tmp, NULL);
+    string_blt(ScreenSurface, &font_small, buf, x + 8, y + 6, COLOR_HGOLD, NULL, NULL);
+    box.y = y + 25;
+    show_input_string(&font_small, &box, 0);
 }
 
 static inline void print_resist(char *name, int x, int y, int num)
