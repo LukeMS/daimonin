@@ -2867,7 +2867,7 @@ void load_skindef()
         }
         else if (!strcmp(key, "dialog_rows0"))
         {
-            uint32 n = (uint32)strtoul(val, NULL, 10);
+            uint32 n = (uint32)strtoul(val, NULL, 16);
 
             skindef.dialog_rows0 = SDL_MapRGB(ScreenSurface->format,
                                               (n >> 16) & 0xff,
@@ -2876,7 +2876,7 @@ void load_skindef()
         }
         else if (!strcmp(key, "dialog_rows1"))
         {
-            uint32 n = (uint32)strtoul(val, NULL, 10);
+            uint32 n = (uint32)strtoul(val, NULL, 16);
 
             skindef.dialog_rows1 = SDL_MapRGB(ScreenSurface->format,
                                               (n >> 16) & 0xff,
@@ -2885,7 +2885,7 @@ void load_skindef()
         }
         else if (!strcmp(key, "dialog_rowsS"))
         {
-            uint32 n = (uint32)strtoul(val, NULL, 10);
+            uint32 n = (uint32)strtoul(val, NULL, 16);
 
             skindef.dialog_rowsS = SDL_MapRGB(ScreenSurface->format,
                                               (n >> 16) & 0xff,
