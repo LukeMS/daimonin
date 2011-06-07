@@ -272,7 +272,6 @@ static char *BitmapName[BITMAP_INIT] =
     "pentagram.png",
     "quad_button_up.png",
     "quad_button_down.png",
-    "nchar_marker.png",
     "traped.png",
     "pray.png",
     "wand.png",
