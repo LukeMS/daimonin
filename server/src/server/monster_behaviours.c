@@ -62,7 +62,7 @@ int mob_can_see_obj(object *op, object *obj, struct mob_known_obj *known_obj)
         return TRUE;
 
     /* Pets can always see their owners */
-    if (op->owner == obj && op->owner_count == obj->count)
+    if (get_owner(op) == obj)
         return TRUE;
 
     /* Try using cache */
@@ -451,6 +451,7 @@ int get_npc_object_attraction(object *op, object *other)
 int get_npc_attitude(object *op, object *other)
 {
     int friendship = 0;
+    object *owner;
     struct mob_behaviour_param *attitudes;
     struct mob_behaviour_param *tmp;
 
@@ -481,10 +482,18 @@ int get_npc_attitude(object *op, object *other)
     }
 
     /* pet to pet and pet to owner attitude */
-    if(op->owner && op->owner == other->owner && op->owner_count == other->owner_count)
-        friendship += FRIENDSHIP_HELP;
-    else if(op->owner == other && op->owner_count == other->count)
-        friendship += FRIENDSHIP_PET;
+    if ((owner = get_owner(op)))
+    {
+        if (owner == get_owner(other))
+        {
+            friendship += FRIENDSHIP_HELP;
+        }
+        else if  (owner == other &&
+                  owner->count == other->count)
+        {
+            friendship += FRIENDSHIP_PET;
+        }
+    }
 
     attitudes = MOB_DATA(op)->behaviours->attitudes;
 
@@ -1148,30 +1157,38 @@ void ai_avoid_line_of_fire(object *op, struct mob_behaviour_param *params, move_
     /* Find relevant missiles */
     for(tmp = MOB_DATA(op)->known_objs; tmp; tmp = tmp->next)
     {
+        object *missile,
+               *owner;
         int i;
         rv_vector *rv;
         if(! QUERY_FLAG(tmp, AI_OBJFLAG_IS_MISSILE))
             continue;
 
-#if 0
-/* FIXME: Temporarily disabled as the random_roll() line causes frequent
- * SIGSEGVs. Clearly missiles do not always have owners, but rather than just
- * checking I have disabled this entirely as I suspect this fact is itself a
- * bug that needs fixing. See also line 65 of server/attack.c @ r6379.
- * -- Smacky 20110601 */
-        /* If the mob can't see the player who shot it, or the missile itself, don't dodge. */
-        if (mob_can_see_obj(tmp->obj, op, MOB_DATA(op)->known_objs) == 0 ||
-            mob_can_see_obj(tmp->obj->owner, op, MOB_DATA(op)->known_objs) == 0)
-                return;
+        missile = tmp->obj;
+        owner = get_owner(missile);
 
-        /* Don't always dodge - Put it to a test of WC vs. AC */
-        int roll;
-        roll = random_roll(0, tmp->obj->owner->stats.Dex);
-        if (roll + tmp->obj->stats.wc >= op->stats.ac)
+        /* Temp debug log. */
+        if (!owner)
+        {
+            LOG(llevMapbug, "Missile (%s[%d]) on map %s has no owner!\n",
+                STRING_OBJ_NAME(missile), TAG(missile),
+                STRING_MAP_PATH(missile->map));
+
+            return;
+        }
+
+        /* If the mob can't see the player who shot it, or the missile itself, don't dodge. */
+        if (!mob_can_see_obj(missile, op, MOB_DATA(op)->known_objs) ||
+            !mob_can_see_obj(owner, op, MOB_DATA(op)->known_objs))
         {
             return;
         }
-#endif
+
+        /* Don't always dodge - Put it to a test of WC vs. AC */
+        if (random_roll(0, owner->stats.Dex) + missile->stats.wc >= op->stats.ac)
+        {
+            return;
+        }
 
         switch(tmp->obj->type) {
             /* Straight-line-like missiles */

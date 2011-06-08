@@ -163,21 +163,17 @@ int attack_ob(object *target, object *hitter, object *hit_obj)
     hitter_tag = hitter->count;
     hitdam  = hit_obj->stats.dam;
 
-#if 0
-/* FIXME: Temporarily disabled as it cause frequent SIGSEGVs (line 65 of
- * server/monster_behaviours.c @ r6379). For further details see line 1156 of
- * server/monster_behaviours.c @ r6379.
- * Smacky 2010601 */
     if (hit_obj->type == ARROW &&
+        get_owner(hit_obj) == hitter &&
         target->type == MONSTER &&
-        mob_can_see_obj(target, hitter->owner, MOB_DATA(target)->known_mobs) == 0)
+        mob_can_see_obj(target, hitter, MOB_DATA(target)->known_mobs) == 0)
         {
-            new_draw_info(NDI_ORANGE, 0, hitter->owner, "Stealth attack direct hit! (+50%% damage)");
+            new_draw_info(NDI_ORANGE, 0, hitter, "Stealth attack direct hit! (+50%% damage)");
             hitdam *= 1.5;
-            play_sound_map(hitter->map, hitter->x, hitter->y, SOUND_ARROW_HIT, SOUND_NORMAL);
+            play_sound_map(hit_obj->map, hit_obj->x, hit_obj->y, SOUND_ARROW_HIT, SOUND_NORMAL);
+
             goto force_direct_hit;
         }
-#endif
 
     /* Fight Step 1: Get the random hit value */
     roll = random_roll(0, 100);
