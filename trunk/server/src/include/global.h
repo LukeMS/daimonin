@@ -177,13 +177,13 @@
 
 /*#define DEBUG_IPCOMPARE*/
 
+#endif /* ifdef DAI_DEVELOPMENT_CODE */
+
 #ifdef DEBUG_FIX_PLAYER
 #define FIX_PLAYER(_o_, _m_) fix_player(_o_, _m_)
 #else
 #define FIX_PLAYER(_o_, _m_) fix_player(_o_)
 #endif
-
-#endif /* ifdef DAI_DEVELOPMENT_CODE */
 
 #ifdef DAI_DEVELOPMENT_CONTENT
 #define PLUGIN_LUA_DEBUG       /* give us some general infos out */
