@@ -364,9 +364,11 @@ char * query_short_name(const object *const op, const object *const caller)
         case RING:
           if (QUERY_FLAG(op, FLAG_IDENTIFIED))
           {
-              if (!op->title && !QUERY_FLAG(op, FLAG_IS_NAMED))
+ 
+              if (!op->title)
               {
                   /* If ring has a title or is specially named, full description isn't so useful */
+
                   char     *s   = describe_item(op);
                   if (s[0])
                   {
@@ -647,7 +649,7 @@ char *query_base_name(object *op, object *caller)
         case RING:
           if (QUERY_FLAG(op, FLAG_IDENTIFIED))
           {
-              if (!op->title && !QUERY_FLAG(op, FLAG_IS_NAMED))
+              if (!op->title )
               {
                   /* If ring has a title or is specially named, full description isn't so useful */
                   char     *s   = describe_item(op);
