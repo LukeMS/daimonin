@@ -252,6 +252,20 @@ void move_missile(object *op)
     int             was_reflected;
     mapstruct      *m   = op->map;
 
+    /* Mobs are removed when the map they (or their spawn point) is on is
+     * saved. Thus when a mob archer we can have a situation where a missile
+     * has no owner (presumably this is also possible when a player logs out
+     * having just fired a missile, but because of the short time of a flying
+     * missile's existence, this is probably only theoretical). Lets remove it
+     * before it does any harm. */
+    if (!(hitter = get_owner(op)))
+    {
+        remove_ob(op);
+        check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
+
+        return;
+    }
+
     if (op->map == NULL)
     {
         LOG(llevBug, "BUG: Arrow %s had no map.\n", query_name(op));
@@ -319,9 +333,6 @@ void move_missile(object *op)
         stop_missile(op); /* out of map... here is the end */
         return;
     }
-
-    if (!(hitter = get_owner(op)))
-        hitter = op;
 
     /* ok, lets check there is something we can hit */
     if ((flag_tmp = GET_MAP_FLAGS(m, new_x, new_y)) & (P_IS_ALIVE | P_IS_PLAYER))
