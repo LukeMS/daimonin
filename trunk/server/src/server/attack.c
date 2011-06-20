@@ -145,6 +145,7 @@ int attack_ob(object *target, object *hitter, object *hit_obj)
 {
     int     hitdam, env_attack, roll;
     tag_t   op_tag, hitter_tag;
+    object *owner;
 
     /* GetAttackMode will pre-check and adjust *ANY* topic.
      * Including setting ->head objects and checking maps
@@ -163,17 +164,21 @@ int attack_ob(object *target, object *hitter, object *hit_obj)
     hitter_tag = hitter->count;
     hitdam  = hit_obj->stats.dam;
 
-    if (hit_obj->type == ARROW &&
-        get_owner(hit_obj) == hitter &&
+    /* Missile hits on mobs who are looking the other way are stealth hits and
+     * do 1.5 damage. */
+    /* TODO: To prevent exploits (A lures the mob so B can follow behind
+     * scoring multiple stealth hits) we should only allow a stealth hit when
+     * the mob is not alert. */
+    if (is_aimed_missile(hit_obj) &&
         target->type == MONSTER &&
-        mob_can_see_obj(target, hitter, MOB_DATA(target)->known_mobs) == 0)
-        {
-            new_draw_info(NDI_ORANGE, 0, hitter, "Stealth attack direct hit! (+50%% damage)");
-            hitdam *= 1.5;
-            play_sound_map(hit_obj->map, hit_obj->x, hit_obj->y, SOUND_ARROW_HIT, SOUND_NORMAL);
+        (owner = get_owner(hit_obj)) &&
+        !mob_can_see_obj(target, owner, MOB_DATA(target)->known_mobs))
+    {
+        new_draw_info(NDI_ORANGE, 0, owner, "Stealth attack direct hit! (+50%% damage)");
+        hitdam *= 1.5;
 
-            goto force_direct_hit;
-        }
+        goto force_direct_hit;
+    }
 
     /* Fight Step 1: Get the random hit value */
     roll = random_roll(0, 100);
