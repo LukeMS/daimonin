@@ -58,9 +58,9 @@ _key_macro      defkey_macro[]          =
         {"?M_RIGHT",          "right",            KEYFUNC_CURSOR,3, MENU_NO},
         {"?M_RANGE",          "cycle fire mode forwards",     KEYFUNC_RANGE,0, MENU_NO},
         {"?M_RANGE_BACK",     "cycle fire mode backwards",    KEYFUNC_RANGE_BACK,0, MENU_NO},
-        {"?M_RANGE_BOW",      "fire mode: bow",     KEYFUNC_RANGE_SELECT,FIRE_MODE_BOW, MENU_NO},
-        {"?M_RANGE_SPELL",    "fire mode: spell",   KEYFUNC_RANGE_SELECT,FIRE_MODE_SPELL, MENU_NO},
-        {"?M_RANGE_SKILL",    "fire mode: skill",   KEYFUNC_RANGE_SELECT,FIRE_MODE_SKILL, MENU_NO},
+        {"?M_RANGE_BOW",      "fire mode: bow",     KEYFUNC_RANGE_SELECT,FIRE_MODE_ARCHERY_ID, MENU_NO},
+        {"?M_RANGE_SPELL",    "fire mode: spell",   KEYFUNC_RANGE_SELECT,FIRE_MODE_SPELL_ID, MENU_NO},
+        {"?M_RANGE_SKILL",    "fire mode: skill",   KEYFUNC_RANGE_SELECT,FIRE_MODE_SKILL_ID, MENU_NO},
         {"?M_APPLY",          "apply <tag>",      KEYFUNC_APPLY,0,  MENU_NO},
         {"?M_EXAMINE",      "examine <tag>",    KEYFUNC_EXAMINE,0,  MENU_NO},
         {"?M_DROP",           "drop <tag>",       KEYFUNC_DROP,0, MENU_NO},
@@ -1779,15 +1779,15 @@ uint8 process_macro_keys(int id, int value)
         switch (id)
         {
         case KEYFUNC_RANGE:
-            if (++RangeFireMode > FIRE_MODE_INIT - 1)
-                RangeFireMode = 0;
+            if (++fire_mode.mode >= FIRE_MODE_NROF)
+                fire_mode.mode = 0;
             break;
         case KEYFUNC_RANGE_BACK:
-            if (--RangeFireMode < 0)
-                RangeFireMode = FIRE_MODE_INIT - 1;
+            if (--fire_mode.mode < 0)
+                fire_mode.mode = FIRE_MODE_NROF - 1;
             break;
         case KEYFUNC_RANGE_SELECT:
-            RangeFireMode = value;
+            fire_mode.mode = value;
         }
         map_udate_flag = 2;
         return 0;
@@ -2209,8 +2209,8 @@ void quickslot_key(SDL_KeyboardEvent *key, int slot)
         {
             if (quick_slots[slot].shared.is_spell == 1)
             {
-                fire_mode_tab[FIRE_MODE_SPELL].spell = &spell_list[quick_slots[slot].spell.groupNr].entry[quick_slots[slot].spell.classNr][quick_slots[slot].shared.tag];
-                RangeFireMode = FIRE_MODE_SPELL;
+                fire_mode.spell = &spell_list[quick_slots[slot].spell.groupNr].entry[quick_slots[slot].spell.classNr][quick_slots[slot].shared.tag];
+                fire_mode.mode = FIRE_MODE_SPELL_ID;
                 spell_list_set.group_nr = quick_slots[slot].spell.groupNr;
                 spell_list_set.class_nr = quick_slots[slot].spell.classNr;
                 spell_list_set.entry_nr = quick_slots[slot].shared.tag;
@@ -2234,103 +2234,111 @@ void quickslot_key(SDL_KeyboardEvent *key, int slot)
 /* TODO: Sort this out re run mode? */
 static void move_keys(int num)
 {
-    char buf[MEDIUM_BUF];
-
     if (cpl.menustatus != MENU_NO)
+    {
         reset_menu_status();
+    }
 
+    /* Stand still */
     if (num == 5)
     {
         client_cmd_move(num, 0);
+
         return;
     }
-
     /* move will overruled from fire */
     /* because real toggle mode don't work, this works a bit different */
     /* pressing alt will not set move mode until unpressed when firemode is on */
     /* but it stops running when released */
-    if ((cpl.runkey_on || cpl.run_on) && (!cpl.firekey_on && !cpl.fire_on)) /* runmode on, or ALT key trigger */
+    else if ((cpl.runkey_on ||
+              cpl.run_on) &&
+             (!cpl.firekey_on &&
+              !cpl.fire_on)) /* runmode on, or ALT key trigger */
     {
-        client_cmd_generic(directionsrun[num]);
 #ifdef DEBUG_TEXT
-        sprintf(buf, "run ");
+        textwin_showstring(COLOR_DGOLD, "run %s", directions_name[num]);
 #endif
+        client_cmd_generic(directionsrun[num]);
     }
     /* thats the range menu - we handle it messages unique */
-    else if (cpl.firekey_on || cpl.fire_on)
+    else if (cpl.firekey_on ||
+             cpl.fire_on)
     {
-        int itemid = -1;
-        char *tmp_name = NULL;
+        item *weapon;
 
-        if (RangeFireMode == FIRE_MODE_SKILL)
+        switch (fire_mode.mode)
         {
-            if (!fire_mode_tab[FIRE_MODE_SKILL].skill || fire_mode_tab[FIRE_MODE_SKILL].skill->flag == -1)
-            {
-                textwin_showstring(COLOR_WHITE, "no skill selected.");
-                return;
-            }
-            tmp_name = fire_mode_tab[RangeFireMode].skill->name;
+            case FIRE_MODE_ARCHERY_ID:
+                weapon = (fire_mode.weapon != FIRE_ITEM_NO)
+                         ? locate_item(fire_mode.weapon) : NULL;
 
-/*            sprintf(buf, "/%s %d %d %s", directionsfire[num], RangeFireMode, -1,
-                    fire_mode_tab[RangeFireMode].skill->name);
-*/
-        }
-        else if (RangeFireMode == FIRE_MODE_SPELL)
-        {
-            if (!fire_mode_tab[FIRE_MODE_SPELL].spell || fire_mode_tab[FIRE_MODE_SPELL].spell->flag == -1)
-            {
-                textwin_showstring(COLOR_WHITE, "no spell selected.");
-                return;
-            }
-            tmp_name = fire_mode_tab[RangeFireMode].spell->name;
-/*            sprintf(buf, "/%s %d %d %s", directionsfire[num], RangeFireMode, -1,
-                    fire_mode_tab[RangeFireMode].spell->name);
-*/
-        }
-        else
-        {
-            itemid = fire_mode_tab[RangeFireMode].item;
-
-/*            sprintf(buf, "/%s %d %d %d", directionsfire[num], RangeFireMode, fire_mode_tab[RangeFireMode].item,
-                    fire_mode_tab[RangeFireMode].amun);
-*/
-            if (RangeFireMode == FIRE_MODE_BOW)
-            {
-                if (fire_mode_tab[FIRE_MODE_BOW].item == FIRE_ITEM_NO)
+                if (!weapon)
                 {
-                    textwin_showstring(COLOR_WHITE, "no range weapon selected.");
-                    return;
+                    textwin_showstring(COLOR_WHITE, "No weapon selected!");
+                    fire_mode.weapon = FIRE_ITEM_NO;
+                    fire_mode.ammo = FIRE_ITEM_NO;
                 }
-            }
-        }
-
-        /* atm we only use direction, mode and the skill/spell name */
-        client_cmd_fire(num, RangeFireMode, tmp_name);
-
+                else
+                {
 #ifdef DEBUG_TEXT
-        if (RangeFireMode == FIRE_MODE_SKILL)
-            sprintf(buf, "use %s %s", fire_mode_tab[RangeFireMode].skill->name, directions_name[num]);
-        else if (RangeFireMode == FIRE_MODE_SPELL)
-            sprintf(buf, "cast %s %s", fire_mode_tab[RangeFireMode].spell->name, directions_name[num]);
-        else if (RangeFireMode == FIRE_MODE_BOW)
-            sprintf(buf, "fire %s", directions_name[num]);
-
-        textwin_showstring(COLOR_DGOLD, "%s", buf);
+                    textwin_showstring(COLOR_DGOLD, "fire %s %s",
+                                       weapon->s_name, direction_name[num]);
 #endif
-        return;
+                    client_cmd_fire(num, FIRE_MODE_ARCHERY_ID, "");
+                }
+
+                break;
+
+            case FIRE_MODE_SPELL_ID:
+                if (!fire_mode.spell ||
+                     fire_mode.spell->flag == -1)
+                {
+                    textwin_showstring(COLOR_WHITE, "No spell selected!");
+                }
+                else
+                {
+#ifdef DEBUG_TEXT
+                    textwin_showstring(COLOR_DGOLD, "cast %s %s",
+                                       fire_mode.spell->name,
+                                       directions_name[num]);
+#endif
+                    client_cmd_fire(num, FIRE_MODE_SPELL_ID,
+                                    fire_mode.spell->name);
+                }
+
+                break;
+
+            case FIRE_MODE_SKILL_ID:
+                if (!fire_mode.skill ||
+                     fire_mode.skill->flag == -1)
+                {
+                    textwin_showstring(COLOR_WHITE, "No skill selected!");
+                }
+                else
+                {
+#ifdef DEBUG_TEXT
+                    textwin_showstring(COLOR_DGOLD, "use %s %s",
+                                       fire_mode.skill->name,
+                                       directions_name[num]);
+#endif
+                    client_cmd_fire(num, FIRE_MODE_SKILL_ID,
+                                    fire_mode.skill->name);
+                }
+
+                break;
+
+            default:
+                LOG(LOG_ERROR, "Unknown fire mode %u\n", fire_mode.mode);
+        }
     }
     else
     {
-        client_cmd_move(num, 0);
-        buf[0] = '\0';
-    }
 #ifdef DEBUG_TEXT
-    textwin_showstring(COLOR_DGOLD, "%s", directions_name[num]);
+        textwin_showstring(COLOR_DGOLD, "move %s", directions_name[num]);
 #endif
+        client_cmd_move(num, 0);
+    }
 }
-
-
-
 
 /******************************************************************
  Handle key repeating.
@@ -2856,8 +2864,8 @@ void check_menu_keys(int menu, int key)
         case SDLK_RETURN:
             if (skill_list[skill_list_set.group_nr].entry[skill_list_set.entry_nr].flag == LIST_ENTRY_KNOWN)
             {
-                fire_mode_tab[FIRE_MODE_SKILL].skill = &skill_list[skill_list_set.group_nr].entry[skill_list_set.entry_nr];
-                RangeFireMode = FIRE_MODE_SKILL;
+                fire_mode.skill = &skill_list[skill_list_set.group_nr].entry[skill_list_set.entry_nr];
+                fire_mode.mode = FIRE_MODE_SKILL_ID;
                 sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICK, 0, 0, MENU_SOUND_VOL);
             }
             else
@@ -2948,8 +2956,8 @@ void check_menu_keys(int menu, int key)
             if (spell_list[spell_list_set.group_nr].entry[spell_list_set.class_nr][spell_list_set.entry_nr].flag
                     == LIST_ENTRY_KNOWN)
             {
-                fire_mode_tab[FIRE_MODE_SPELL].spell = &spell_list[spell_list_set.group_nr].entry[spell_list_set.class_nr][spell_list_set.entry_nr];
-                RangeFireMode = FIRE_MODE_SPELL;
+                fire_mode.spell = &spell_list[spell_list_set.group_nr].entry[spell_list_set.class_nr][spell_list_set.entry_nr];
+                fire_mode.mode = FIRE_MODE_SPELL_ID;
                 sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICK, 0, 0, MENU_SOUND_VOL);
             }
             else

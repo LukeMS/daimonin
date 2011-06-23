@@ -349,26 +349,29 @@ typedef struct _spell_list
 }
 _spell_list;
 
+#define FIRE_ITEM_NO -1
 
-typedef struct _fire_mode
+typedef enum fire_mode_id_t
 {
-    int                 item;
-    int                 amun;
-    _spell_list_entry  *spell;
-    _skill_list_entry  *skill;
-    char                name[128];
+    FIRE_MODE_ARCHERY_ID,
+    FIRE_MODE_SPELL_ID,
+    FIRE_MODE_SKILL_ID,
+
+    FIRE_MODE_NROF
 }
-_fire_mode;
+fire_mode_id_t;
 
-typedef enum _fire_mode_id
+typedef struct fire_mode_t
 {
-    FIRE_MODE_BOW,
-    FIRE_MODE_SPELL,
-    FIRE_MODE_SKILL,
-    FIRE_MODE_INIT
-}   _fire_mode_id;
+    fire_mode_id_t     mode;
+    int                weapon;
+    int                ammo;
+    _spell_list_entry *spell;
+    _skill_list_entry *skill;
+}
+fire_mode_t;
 
-#define FIRE_ITEM_NO (-1)
+extern fire_mode_t fire_mode;
 
 typedef enum _game_status
 {
@@ -650,9 +653,6 @@ extern uint8              InputStringEndFlag; /* if true, we had entered some in
 extern uint8              InputStringEscFlag;
 extern uint8              InputMode; // 0=insert, 1=overtype
 extern uint8              InputCaretBlinkFlag;
-
-extern struct _fire_mode    fire_mode_tab[FIRE_MODE_INIT]; /* range table */
-extern int                  RangeFireMode;
 
 extern int                  ToggleScreenFlag;
 

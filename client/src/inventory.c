@@ -813,15 +813,15 @@ void examine_range_inv(void)
     op = cpl.ob;
     if (!op->inv)
         return;
-    fire_mode_tab[FIRE_MODE_BOW].item = FIRE_ITEM_NO;
-    fire_mode_tab[FIRE_MODE_BOW].amun = FIRE_ITEM_NO;
+    fire_mode.weapon = FIRE_ITEM_NO;
+    fire_mode.ammo = FIRE_ITEM_NO;
 
     for (tmp = op->inv; tmp; tmp = tmp->next)
     {
         if (tmp->applied && (tmp->itype == TYPE_BOW || (tmp->itype == TYPE_ARROW && tmp->stype >= 128)
             || tmp->itype == TYPE_WAND || tmp->itype == TYPE_ROD || tmp->itype == TYPE_HORN))
-            fire_mode_tab[FIRE_MODE_BOW].item = tmp->tag;
+            fire_mode.weapon = tmp->tag;
         else if(tmp->applied && tmp->itype == TYPE_ARROW && tmp->stype < 128)
-            fire_mode_tab[FIRE_MODE_BOW].amun = tmp->tag;
+            fire_mode.ammo = tmp->tag;
     }
 }

@@ -805,8 +805,8 @@ static uint8 CheckCommand(char *cmd, char *params)
                     {
                         if (spell_list[i].entry[0][j].flag == LIST_ENTRY_KNOWN)
                         {
-                            fire_mode_tab[FIRE_MODE_SPELL].spell = &spell_list[i].entry[0][j];
-                            RangeFireMode = FIRE_MODE_SPELL;
+                            fire_mode.spell = &spell_list[i].entry[0][j];
+                            fire_mode.mode = FIRE_MODE_SPELL_ID;
                             sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICK, 0,
                                               0, MENU_SOUND_VOL);
                             textwin_showstring(COLOR_WHITE, "Spell readied");
@@ -822,8 +822,8 @@ static uint8 CheckCommand(char *cmd, char *params)
                     {
                         if (spell_list[i].entry[1][j].flag == LIST_ENTRY_KNOWN)
                         {
-                            fire_mode_tab[FIRE_MODE_SPELL].spell = &spell_list[i].entry[1][j];
-                            RangeFireMode = FIRE_MODE_SPELL;
+                            fire_mode.spell = &spell_list[i].entry[1][j];
+                            fire_mode.mode = FIRE_MODE_SPELL_ID;
                             sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICK, 0,
                                               0, MENU_SOUND_VOL);
                             textwin_showstring(COLOR_WHITE, "Prayer readied");
