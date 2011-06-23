@@ -53,8 +53,7 @@ int                 debug_layer[MAXFACES];
 struct _options     options;
 Uint32              videoflags_full, videoflags_win;
 
-struct _fire_mode   fire_mode_tab[FIRE_MODE_INIT];
-int                 RangeFireMode;
+fire_mode_t fire_mode;
 
 int                 SoundStatus;            /* SoundStatus 0=no 1= yes */
 int                 MapStatusX;             /* map x,y len */
@@ -353,7 +352,6 @@ void clear_lists(void)
 {
     _server_char *sc,
                  *next;
-    uint8         i;
 
     for (sc = first_server_char; sc; sc = next)
     {
@@ -372,14 +370,10 @@ void clear_lists(void)
 
     first_server_char = NULL;
 
-    for (i = 0; i < FIRE_MODE_INIT; i++)
-    {
-        fire_mode_tab[i].amun = FIRE_ITEM_NO;
-        fire_mode_tab[i].item = FIRE_ITEM_NO;
-        fire_mode_tab[i].skill = NULL;
-        fire_mode_tab[i].spell = NULL;
-        fire_mode_tab[i].name[0] = 0;
-    }
+    fire_mode.ammo = FIRE_ITEM_NO;
+    fire_mode.weapon = FIRE_ITEM_NO;
+    fire_mode.skill = NULL;
+    fire_mode.spell = NULL;
 
     memset(&spell_list, 0, sizeof(_spell_list) * SPELL_LIST_MAX);
     spell_list_set.class_nr = 0;
@@ -410,7 +404,7 @@ void init_game_data(void)
     memset(animation, 0, sizeof(animation));
     ToggleScreenFlag = 0;
     KeyScanFlag = 0;
-    memset(&fire_mode_tab, 0, sizeof(fire_mode_tab));
+    memset(&fire_mode, 0, sizeof(fire_mode));
 
     for (i = 0; i < MAXFACES; i++)
         debug_layer[i] = 1;
@@ -462,7 +456,6 @@ void init_game_data(void)
     InputStringEndFlag = 0;
     InputStringEscFlag = 0;
     csocket.fd = SOCKET_NO;
-    RangeFireMode = 0;
     gui_npc = NULL;
     gui_interface_book = NULL;
     LoginInputStep = LOGIN_STEP_NAME;

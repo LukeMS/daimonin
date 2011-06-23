@@ -193,8 +193,6 @@ void init_player_data(void)
     cpl.container_tag = -997;
     cpl.container = NULL;
     cpl.magicmap = NULL;
-
-    RangeFireMode = 0;
 }
 /* temp handler for prayerbutton in player data */
 void widget_player_data_event(int x, int y)

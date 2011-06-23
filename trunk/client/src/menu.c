@@ -40,7 +40,6 @@ int                     media_count;        /* buffered media files*/
 int                     media_show; /* show this media file*/
 int                     media_show_update;
 int                     keybind_startoff    = 0;
-static char            *get_range_item_name(int id);
 
 _quickslot              quick_slots[MAX_QUICK_SLOTS];
 int                     quickslots_pos[MAX_QUICK_SLOTS][2]  =
@@ -377,7 +376,6 @@ void widget_range_event(int x, int y, SDL_Event event, int MEvent)
                     y >= widget_data[WIDGET_RANGE_ID].y1 &&
                     y <= widget_data[WIDGET_RANGE_ID].y1 + 35)
                 {
-                    RangeFireMode = 4;
                     process_macro_keys(KEYFUNC_APPLY, 0); /* drop to player-doll */
                 }
                 cpl.inventory_win = old_inv_win;
@@ -400,12 +398,12 @@ void widget_show_range(int x, int y)
 
     sprite_blt(Bitmaps[BITMAP_RANGE], x, y, NULL, NULL);
 
-    switch (RangeFireMode)
+    switch (fire_mode.mode)
     {
-        case FIRE_MODE_BOW:
-            if (fire_mode_tab[FIRE_MODE_BOW].item != FIRE_ITEM_NO)
+        case FIRE_MODE_ARCHERY_ID:
+            if (fire_mode.weapon != FIRE_ITEM_NO)
             {
-                tmp2=locate_item(fire_mode_tab[FIRE_MODE_BOW].item);
+                tmp2=locate_item(fire_mode.weapon);
                 if (!tmp2)
                 {
                     LOG(LOG_DEBUG,"BUG: applied range weapon don't exist\n");
@@ -414,24 +412,24 @@ void widget_show_range(int x, int y)
                 else
                 {
                     sprintf(buf, "using %s", tmp2->s_name);
-                    blt_inventory_face_from_tag(fire_mode_tab[FIRE_MODE_BOW].item, x + 5, y + 2);
+                    blt_inventory_face_from_tag(fire_mode.weapon, x + 5, y + 2);
 
                     string_blt(ScreenSurface, &font_small, buf, x + 5, y + 36, COLOR_WHITE, &rec_range, NULL);
                 }
 
-                if (fire_mode_tab[FIRE_MODE_BOW].amun != FIRE_ITEM_NO)
+                if (fire_mode.ammo != FIRE_ITEM_NO)
                 {
-                    tmp = locate_item_from_item(cpl.ob, fire_mode_tab[FIRE_MODE_BOW].amun);
+                    tmp = locate_item_from_item(cpl.ob, fire_mode.ammo);
                     if (tmp)
                     {
                         if (tmp->itype == TYPE_ARROW)
-                            sprintf(buf, "ammo %s (%d)", get_range_item_name(fire_mode_tab[FIRE_MODE_BOW].amun), tmp->nrof);
+                            sprintf(buf, "ammo %s (%d)", tmp->s_name, tmp->nrof);
                         else
-                            sprintf(buf, "ammo %s", get_range_item_name(fire_mode_tab[FIRE_MODE_BOW].amun));
+                            sprintf(buf, "ammo %s", tmp->s_name);
                     }
                     else
                         strcpy(buf, "ammo not selected");
-                    blt_inventory_face_from_tag(fire_mode_tab[FIRE_MODE_BOW].amun, x + 45, y + 2);
+                    blt_inventory_face_from_tag(fire_mode.ammo, x + 45, y + 2);
                 }
                 else if (tmp2->itype==TYPE_BOW)
                 {
@@ -456,43 +454,19 @@ void widget_show_range(int x, int y)
             sprite_blt(Bitmaps[BITMAP_RANGE_MARKER], x + 5, y + 2, NULL, NULL);
             break;
 
-            /* these are client only, no server signal needed */
-        case FIRE_MODE_SKILL:
-            if (fire_mode_tab[FIRE_MODE_SKILL].skill)
-            {
-                sprite_blt(Bitmaps[BITMAP_RANGE_SKILL], x + 5, y + 2, NULL, NULL);
-                if (fire_mode_tab[FIRE_MODE_SKILL].skill->flag != -1)
-                {
-                    sprite_blt(fire_mode_tab[FIRE_MODE_SKILL].skill->icon, x + 45, y + 2, NULL, NULL);
-                    string_blt(ScreenSurface, &font_small, fire_mode_tab[FIRE_MODE_SKILL].skill->name, x + 5, y + 47,
-                              COLOR_WHITE, &rec_item, NULL);
-                }
-                else
-                    fire_mode_tab[FIRE_MODE_SKILL].skill = NULL;
-            }
-            else
-            {
-                sprite_blt(Bitmaps[BITMAP_RANGE_SKILL_NO], x + 5, y + 2, NULL, NULL);
-                sprintf(buf, "no skill selected");
-                string_blt(ScreenSurface, &font_small, buf, x + 5, y + 47, COLOR_WHITE, &rec_item, NULL);
-            }
-            sprintf(buf, "use skill");
-            string_blt(ScreenSurface, &font_small, buf, x + 5, y + 36, COLOR_WHITE, &rec_range, NULL);
-
-            break;
-        case FIRE_MODE_SPELL:
-            if (fire_mode_tab[FIRE_MODE_SPELL].spell)
+        case FIRE_MODE_SPELL_ID:
+            if (fire_mode.spell)
             {
                 /* we use wiz spells as default */
                 sprite_blt(Bitmaps[BITMAP_RANGE_WIZARD], x + 5, y + 2, NULL, NULL);
-                if (fire_mode_tab[FIRE_MODE_SPELL].spell->flag != -1)
+                if (fire_mode.spell->flag != -1)
                 {
-                    sprite_blt(fire_mode_tab[FIRE_MODE_SPELL].spell->icon, x + 45, y + 2, NULL, NULL);
-                    string_blt(ScreenSurface, &font_small, fire_mode_tab[FIRE_MODE_SPELL].spell->name, x + 5, y + 47,
+                    sprite_blt(fire_mode.spell->icon, x + 45, y + 2, NULL, NULL);
+                    string_blt(ScreenSurface, &font_small, fire_mode.spell->name, x + 5, y + 47,
                               COLOR_WHITE, &rec_item, NULL);
                 }
                 else
-                    fire_mode_tab[FIRE_MODE_SPELL].spell = NULL;
+                    fire_mode.spell = NULL;
             }
             else
             {
@@ -504,20 +478,34 @@ void widget_show_range(int x, int y)
             string_blt(ScreenSurface, &font_small, buf, x + 5, y + 36, COLOR_WHITE, &rec_range, NULL);
 
             break;
-    };
-}
 
-static char * get_range_item_name(int tag)
-{
-    item   *tmp;
+        case FIRE_MODE_SKILL_ID:
+            if (fire_mode.skill)
+            {
+                sprite_blt(Bitmaps[BITMAP_RANGE_SKILL], x + 5, y + 2, NULL, NULL);
+                if (fire_mode.skill->flag != -1)
+                {
+                    sprite_blt(fire_mode.skill->icon, x + 45, y + 2, NULL, NULL);
+                    string_blt(ScreenSurface, &font_small, fire_mode.skill->name, x + 5, y + 47,
+                              COLOR_WHITE, &rec_item, NULL);
+                }
+                else
+                    fire_mode.skill = NULL;
+            }
+            else
+            {
+                sprite_blt(Bitmaps[BITMAP_RANGE_SKILL_NO], x + 5, y + 2, NULL, NULL);
+                sprintf(buf, "no skill selected");
+                string_blt(ScreenSurface, &font_small, buf, x + 5, y + 47, COLOR_WHITE, &rec_item, NULL);
+            }
+            sprintf(buf, "use skill");
+            string_blt(ScreenSurface, &font_small, buf, x + 5, y + 36, COLOR_WHITE, &rec_range, NULL);
 
-    if (tag != FIRE_ITEM_NO)
-    {
-        tmp = locate_item(tag);
-        if (tmp)
-            return tmp->s_name;
+            break;
+
+        default:
+            LOG(LOG_ERROR, "Unknown fire mode %u\n", fire_mode.mode);
     }
-    return("Nothing");
 }
 
 void blt_inventory_face_from_tag(int tag, int x, int y)
