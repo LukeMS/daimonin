@@ -27,8 +27,8 @@
 <bmentry bit="5" name="Protection"/>
 <bmentry bit="6" name="Light"/>
 <bmentry bit="7" name="Nether"/>
-<bmentry bit="8" name="Shadow"/>
-<bmentry bit="9" name="Nature"/>
+<bmentry bit="8" name="Nature"/>
+<bmentry bit="9" name="Shadow"/>
 <bmentry bit="10" name="Chaos"/>
 <bmentry bit="11" name="Earth"/>
 <bmentry bit="12" name="Conjuration"/>
