@@ -682,6 +682,109 @@ Uint32 GetSurfacePixel(SDL_Surface *Surface, Sint32 X, Sint32 Y)
     return -1;
 }
 
+void sprite_blt_as_icon(_Sprite *sprite, sint16 x, sint16 y,
+                        sprite_icon_type_t type, uint8 selected,
+                        sint32 quantity, _BLTFX *bltfx)
+{
+    _Sprite *bg = NULL,
+            *fg = NULL;
+
+    /* Set bg and fg according to type. */
+    if (type != SPRITE_ICON_TYPE_NONE)
+    {
+        if (type == SPRITE_ICON_TYPE_INACTIVE)
+        {
+            bg = Bitmaps[BITMAP_DIALOG_ICON_BG_INACTIVE];
+            fg = Bitmaps[BITMAP_DIALOG_ICON_FG_INACTIVE];
+        }
+        else if (type == SPRITE_ICON_TYPE_ACTIVE)
+        {
+            bg = Bitmaps[BITMAP_DIALOG_ICON_BG_ACTIVE];
+            fg = Bitmaps[BITMAP_DIALOG_ICON_FG_ACTIVE];
+        }
+        else if (type == SPRITE_ICON_TYPE_POSITIVE)
+        {
+            bg = Bitmaps[BITMAP_DIALOG_ICON_BG_POSITIVE];
+            fg = Bitmaps[BITMAP_DIALOG_ICON_FG_ACTIVE];
+        }
+        else if (type == SPRITE_ICON_TYPE_NEGATIVE)
+        {
+            bg = Bitmaps[BITMAP_DIALOG_ICON_BG_NEGATIVE];
+            fg = Bitmaps[BITMAP_DIALOG_ICON_FG_ACTIVE];
+        }
+        else
+        {
+            LOG(LOG_ERROR, "Unhandled icon type %u!\n", type);
+        }
+    }
+
+    /* If selected, override fg. */
+    if (selected)
+    {
+        fg = Bitmaps[BITMAP_DIALOG_ICON_FG_SELECTED];
+    }
+
+    /* Blt bg. */
+    sprite_blt(bg, x, y, NULL, bltfx);
+
+    /* Blt sprite, centered. */
+    if (sprite)
+    {
+        SDL_Rect  box;
+        _BLTFX   *bltfx_local;
+
+        box.x = 0;
+        box.y = 0;
+        box.w = 32;//skindef.iconsize;
+        box.h = 32;//skindef.iconsize;
+        MALLOC(bltfx_local, sizeof(_BLTFX));
+
+        if (bltfx)
+        {
+            memcpy(bltfx_local, bltfx, sizeof(_BLTFX));
+        }
+
+        if (type == SPRITE_ICON_TYPE_INACTIVE)
+        {
+            bltfx_local->flags |= BLTFX_FLAG_GREY;
+        }
+
+        sprite_blt(sprite, x + box.w / 2 -
+                   (sprite->bitmap->w - sprite->border_left) / 2 -
+                   sprite->border_left, y + box.h / 2 -
+                   (sprite->bitmap->h - sprite->border_down) / 2, &box,
+                   bltfx_local);
+        FREE(bltfx_local);
+    }
+
+    /* Blt fg. */
+    sprite_blt(fg, x - 2, y - 2, NULL, bltfx);
+
+    /* Icon quantity. */
+    if (quantity)
+    {
+        char         buf[TINY_BUF];
+        uint8        w;
+        SDL_Surface *surface = (bltfx && bltfx->surface)
+                               ? bltfx->surface : ScreenSurface;
+        uint8        colr = (quantity > 0) ? COLOR_GREEN : COLOR_RED;
+
+        if (quantity > 9999 ||
+            quantity < -9999)
+        {
+            sprintf(buf, "many");
+        }
+        else
+        {
+            sprintf(buf, "%d", quantity);
+        }
+
+        w = string_width(&font_tiny_out, buf);
+        string_blt(surface, &font_tiny_out, buf, x + 24 - w / 2, y + 16, colr,
+                   NULL, NULL);
+    }
+}
+
 /* Alderan 2007-11-03: i reworked that a bit:
  * we dont need for every blit check for all the map drawing stuff
  * so the mapdrawing gets its own function. */
