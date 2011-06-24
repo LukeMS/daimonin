@@ -2558,116 +2558,40 @@ static void ShowIcon(_gui_npc_element *this)
     const uint16 xoff = gui_npc->startx + GUI_NPC_LEFTMARGIN + this->box.x,
                  yoff = gui_npc->starty + GUI_NPC_TOPMARGIN + this->box.y -
                         gui_npc->yoff;
-    char         buf[SMALL_BUF];
-    int          len;
-    uint8        i;
+    sprite_icon_type_t type = SPRITE_ICON_TYPE_INACTIVE;
+    uint8              selected = (gui_npc->icon_selected == this &&
+                                   !gui_npc->keyword_selected) ? 1 : 0;
 
-    /* Icon box bg. */
-    if (this->mode == 's' ||
-        this->mode == 'g')
-    {
-        sprite_blt(Bitmaps[BITMAP_DIALOG_ICON_BG_INACTIVE], xoff + 3, yoff + 3,
-                   NULL, NULL);
-    }
-    else if (this->mode == 'S' ||
-             this->mode == 'G')
+    if (this->mode == 'S' ||
+        this->mode == 'G')
     {
         if (this->quantity > 0)
         {
-            sprite_blt(Bitmaps[BITMAP_DIALOG_ICON_BG_POSITIVE], xoff + 3,
-                       yoff + 3, NULL, NULL);
+            type = SPRITE_ICON_TYPE_POSITIVE;
         }
         else if (this->quantity < 0)
         {
-            sprite_blt(Bitmaps[BITMAP_DIALOG_ICON_BG_NEGATIVE], xoff + 3,
-                       yoff + 3, NULL, NULL);
+            type = SPRITE_ICON_TYPE_NEGATIVE;
         }
         else
         {
-            sprite_blt(Bitmaps[BITMAP_DIALOG_ICON_BG_ACTIVE], xoff + 3,
-                       yoff + 3, NULL, NULL);
+            type = SPRITE_ICON_TYPE_ACTIVE;
         }
     }
 
-    /* Icon face. */
-    if (this->image.sprite)
-    {
-        SDL_Rect  box;
-        _Sprite  *sprite = this->image.sprite;
-        _BLTFX    bltfx;
-
-        box.x = xoff;
-        box.y = yoff;
-        box.w = GUI_NPC_ICONSIZE;
-        box.h = GUI_NPC_ICONSIZE;
-        memset(&bltfx, 0, sizeof(_BLTFX));
-
-        if (this->mode == 'g' ||
-            this->mode == 's')
-        {
-            bltfx.flags |= BLTFX_FLAG_GREY;
-        }
-
-//        SDL_SetClipRect(ScreenSurface, &box);
-        sprite_blt(sprite, box.x + box.w / 2 - (sprite->bitmap->w -
-                   sprite->border_left) / 2 - sprite->border_left,
-                   box.y + box.h / 2 - (sprite->bitmap->h -
-                   sprite->border_down) / 2, NULL, &bltfx);
-//        SDL_SetClipRect(ScreenSurface, &box);
-    }
-
-    /* Icon box fg. */
-    if (this->mode == 's' ||
-        this->mode == 'g')
-    {
-        sprite_blt(Bitmaps[BITMAP_DIALOG_ICON_FG_INACTIVE], xoff, yoff, NULL,
-                   NULL);
-    }
-    else if (gui_npc->icon_selected == this &&
-             !gui_npc->keyword_selected)
-    {
-        sprite_blt(Bitmaps[BITMAP_DIALOG_ICON_FG_SELECTED], xoff, yoff, NULL,
-                   NULL);
-    }
-    else
-    {
-        sprite_blt(Bitmaps[BITMAP_DIALOG_ICON_FG_ACTIVE], xoff, yoff, NULL,
-                   NULL);
-    }
-
-    /* Icon quantity. */
-    if (this->quantity > 9999 ||
-        this->quantity < -9999)
-    {
-        sprintf(buf, "many");
-    }
-    else
-    {
-        sprintf(buf, "%d", this->quantity);
-    }
-
-    if (this->quantity > 0)
-    {
-        uint8 w = string_width(&font_tiny_out, buf);
-
-        string_blt(ScreenSurface, &font_tiny_out, buf, xoff + 28 - w / 2,
-                  yoff + 18, COLOR_GREEN, NULL, NULL);
-    }
-    else if (this->quantity < 0)
-    {
-        uint8 w = string_width(&font_tiny_out, buf);
-
-        string_blt(ScreenSurface, &font_tiny_out, buf, xoff + 28 - w / 2,
-                  yoff + 18, COLOR_RED, NULL, NULL);
-    }
+    sprite_blt_as_icon(this->image.sprite, xoff + 2, yoff + 2, type,
+                       selected, this->quantity, NULL);
 
     if (gui_npc->shop)
     {
-        uint16 xoff2 = xoff,
-               yoff2 = gui_npc->starty + Bitmaps[BITMAP_GUI_NPC_TOP]->bitmap->h;
-
         if (gui_npc->icon_selected == this)
         {
+            uint16 xoff2 = xoff,
+                   yoff2 = gui_npc->starty + Bitmaps[BITMAP_GUI_NPC_TOP]->bitmap->h;
+            char   buf[SMALL_BUF];
+            int    len;
+            uint8  i;
+
             /* Icon title. */
             sprintf(buf, "%s", this->title);
 
@@ -2695,6 +2619,9 @@ static void ShowIcon(_gui_npc_element *this)
         /* Icon title. */
         uint16 xoff2 = xoff + GUI_NPC_ICONSIZE,
                yoff2 = yoff;
+        char   buf[SMALL_BUF];
+        int    len;
+        uint8  i;
 
         sprintf(buf, "%s", this->title);
 
