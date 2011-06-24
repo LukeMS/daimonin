@@ -125,6 +125,15 @@ _imagestats;
 
 extern struct _imagestats ImageStats;
 
+typedef enum sprite_icon_type_t
+{
+    SPRITE_ICON_TYPE_NONE,
+    SPRITE_ICON_TYPE_INACTIVE,
+    SPRITE_ICON_TYPE_ACTIVE,
+    SPRITE_ICON_TYPE_NEGATIVE,
+    SPRITE_ICON_TYPE_POSITIVE,
+}
+sprite_icon_type_t;
 
 extern struct _anim    *start_anim; /* anim queue of current active map */
 
@@ -138,6 +147,9 @@ extern uint8          sprite_deinit_system(void);
 
 extern _Sprite         *sprite_load(char *fname, SDL_RWops *rwob);
 extern void             sprite_free_sprite(_Sprite *sprite);
+extern void sprite_blt_as_icon(_Sprite *sprite, sint16 x, sint16 y,
+                               sprite_icon_type_t type, uint8 selected,
+                               sint32 quantity, _BLTFX *bltfx);
 extern void             sprite_blt(_Sprite *sprite, int x, int y, SDL_Rect *box, _BLTFX *bltfx);
 extern void             sprite_blt_map(_Sprite *sprite, int x, int y, SDL_Rect *box, _BLTFX *bltfx, Uint32 stretch);
 
