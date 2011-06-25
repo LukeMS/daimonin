@@ -730,13 +730,17 @@ void sprite_blt_as_icon(_Sprite *sprite, sint16 x, sint16 y,
     /* Blt sprite, centered. */
     if (sprite)
     {
+        sint16    bw = (sprite->bitmap->w - sprite->border_right) -
+                       sprite->border_left,
+                  bh = (sprite->bitmap->h - sprite->border_down) -
+                       sprite->border_up;
         SDL_Rect  box;
         _BLTFX   *bltfx_local;
 
-        box.x = 0;
-        box.y = 0;
-        box.w = 32;//skindef.iconsize;
-        box.h = 32;//skindef.iconsize;
+        box.x = sprite->border_left + ((bw > 32) ? (bw - 32) / 2 : 0);//skindef.iconsize;
+        box.y = sprite->border_up + ((bh > 32) ? (bh - 32) / 2 : 0);//skindef.iconsize;
+        box.w = (bw > 32) ? 32 : (uint16)bw;//skindef.iconsize;
+        box.h = (bh > 32) ? 32 : (uint16)bh;//skindef.iconsize;
         MALLOC(bltfx_local, sizeof(_BLTFX));
 
         if (bltfx)
@@ -749,11 +753,10 @@ void sprite_blt_as_icon(_Sprite *sprite, sint16 x, sint16 y,
             bltfx_local->flags |= BLTFX_FLAG_GREY;
         }
 
-        sprite_blt(sprite, x + box.w / 2 -
-                   (sprite->bitmap->w - sprite->border_left) / 2 -
-                   sprite->border_left, y + box.h / 2 -
-                   (sprite->bitmap->h - sprite->border_down) / 2, &box,
-                   bltfx_local);
+        sprite_blt(sprite,
+                   x + ((bw <= 32) ? (32 - bw) / 2 : 0),//skindef.iconsize,
+                   y + ((bh <= 32) ? (32 - bh) / 2 : 0),//skindef.iconsize,
+                   &box, bltfx_local);
         FREE(bltfx_local);
     }
 
