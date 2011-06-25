@@ -684,10 +684,12 @@ Uint32 GetSurfacePixel(SDL_Surface *Surface, Sint32 X, Sint32 Y)
 
 void sprite_blt_as_icon(_Sprite *sprite, sint16 x, sint16 y,
                         sprite_icon_type_t type, uint8 selected,
-                        sint32 quantity, _BLTFX *bltfx)
+                        uint8 quacon, sint32 quantity, _BLTFX *bltfx)
 {
-    _Sprite *bg = NULL,
-            *fg = NULL;
+    _Sprite     *bg = NULL,
+                *fg = NULL;
+    SDL_Surface *surface = (bltfx && bltfx->surface)
+                           ? bltfx->surface : ScreenSurface;
 
     /* Set bg and fg according to type. */
     if (type != SPRITE_ICON_TYPE_NONE)
@@ -763,14 +765,32 @@ void sprite_blt_as_icon(_Sprite *sprite, sint16 x, sint16 y,
     /* Blt fg. */
     sprite_blt(fg, x - 2, y - 2, NULL, bltfx);
 
+    /* Show quacon. */
+    if (options.showqc &&
+        quacon)
+    {
+        SDL_Rect box;
+        sint8    con = MAX(0, MIN((float)quacon / 100.0 * 30, 30));//skindef.iconsize - 2
+        uint32   colr = ((quacon >= 100)
+                         ? 0x00ff00 : ((quacon >= options.itemdmg_limit_orange)
+                         ? 0xffff00 : ((quacon >= options.itemdmg_limit_red)
+                         ? 0xff6d00 : 0xff0000)));
+
+        box.x = x + 30;//skindef.iconsize - 2
+        box.y = y + (30 - con);//skindef.iconsize - 2
+        box.w = 1;
+        box.h = (uint16)con;
+        colr = SDL_MapRGB(surface->format, (colr >> 16) & 0xff,
+                          (colr >> 8) & 0xff, colr & 0xff);
+        SDL_FillRect(surface, &box, colr);
+    }
+
     /* Icon quantity. */
     if (quantity)
     {
-        char         buf[TINY_BUF];
-        uint8        w;
-        SDL_Surface *surface = (bltfx && bltfx->surface)
-                               ? bltfx->surface : ScreenSurface;
-        uint8        colr = (quantity > 0) ? COLOR_GREEN : COLOR_RED;
+        char  buf[TINY_BUF];
+        uint8 w,
+              colr = (quantity > 0) ? COLOR_GREEN : COLOR_RED;
 
         if (quantity > 9999 ||
             quantity < -9999)
@@ -783,7 +803,8 @@ void sprite_blt_as_icon(_Sprite *sprite, sint16 x, sint16 y,
         }
 
         w = string_width(&font_tiny_out, buf);
-        string_blt(surface, &font_tiny_out, buf, x + 24 - w / 2, y + 16, colr,
+        string_blt(surface, &font_tiny_out, buf,
+                   x + ((options.showqc) ? 22 : 24) - w / 2, y + 18, colr,
                    NULL, NULL);
     }
 }
