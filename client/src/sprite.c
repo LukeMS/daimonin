@@ -684,7 +684,8 @@ Uint32 GetSurfacePixel(SDL_Surface *Surface, Sint32 X, Sint32 Y)
 
 void sprite_blt_as_icon(_Sprite *sprite, sint16 x, sint16 y,
                         sprite_icon_type_t type, uint8 selected,
-                        uint8 quacon, sint32 quantity, _BLTFX *bltfx)
+                        uint32 flags, uint8 quacon, sint32 quantity,
+                        _BLTFX *bltfx)
 {
     _Sprite     *bg = NULL,
                 *fg = NULL;
@@ -765,9 +766,67 @@ void sprite_blt_as_icon(_Sprite *sprite, sint16 x, sint16 y,
     /* Blt fg. */
     sprite_blt(fg, x - 2, y - 2, NULL, bltfx);
 
+    /* Show flags. */
+    if (flags)
+    {
+        /* bottom left */
+        if ((flags & F_LOCKED))
+        {
+            sprite_blt(Bitmaps[BITMAP_LOCK], x, y + skindef.item_size -
+                       skindef.icon_size, NULL, bltfx);
+        }
+
+        /* top left */
+        /* applied and unpaid some spot - can't apply unpaid items */
+        if ((flags & F_APPLIED))
+        {
+            sprite_blt(Bitmaps[BITMAP_APPLY], x, y, NULL, bltfx);
+        }
+        else if ((flags & F_UNPAID))
+        {
+            sprite_blt(Bitmaps[BITMAP_UNPAID], x, y, NULL, bltfx);
+        }
+
+        /* right side, top to bottom */
+        if (quacon == 255)
+        {
+            sprite_blt(Bitmaps[BITMAP_UNIDENTIFIED],
+                       x + skindef.item_size - skindef.icon_size - 2, y, NULL,
+                       bltfx);
+        }
+
+        if ((flags & F_MAGIC))
+        {
+            sprite_blt(Bitmaps[BITMAP_MAGIC],
+                       x + skindef.item_size - skindef.icon_size - 2,
+                       y + skindef.icon_size, NULL, bltfx);
+        }
+
+        if ((flags & F_CURSED))
+        {
+            sprite_blt(Bitmaps[BITMAP_CURSED],
+                       x + skindef.item_size - skindef.icon_size - 2,
+                       y + skindef.icon_size * 2, NULL, bltfx);
+        }
+
+        if ((flags & F_DAMNED))
+        {
+            sprite_blt(Bitmaps[BITMAP_DAMNED],
+                       x + skindef.item_size - skindef.icon_size - 2,
+                       y + skindef.icon_size * 3, NULL, bltfx);
+        }
+
+        /* central */
+        if ((flags & F_TRAPED))
+        {
+            sprite_blt(Bitmaps[BITMAP_TRAPED], x + 8, y + 7, NULL, bltfx);
+        }
+    }
+
     /* Show quacon. */
     if (options.showqc &&
-        quacon)
+        quacon > 0 &&
+        quacon <= 100)
     {
         SDL_Rect box;
         sint8    con = MAX(0, MIN((float)quacon / 100.0 * 30, 30));//skindef.iconsize - 2
