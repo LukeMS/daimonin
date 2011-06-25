@@ -2580,7 +2580,7 @@ static void ShowIcon(_gui_npc_element *this)
     }
 
     sprite_blt_as_icon(this->image.sprite, xoff + 2, yoff + 2, type,
-                       selected, 0, this->quantity, NULL);
+                       selected, 0, 0, this->quantity, NULL);
 
     if (gui_npc->shop)
     {
