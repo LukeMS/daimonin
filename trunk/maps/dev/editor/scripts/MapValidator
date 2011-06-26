@@ -5,10 +5,10 @@
 import java.io.File;
 import java.io.FileWriter;
 import java.util.Iterator;
-import net.sf.gridarta.gameobject.GameObject;
-import net.sf.gridarta.io.RecursiveFileIterator;
-import net.sf.gridarta.map.validation.ErrorCollector;
-import net.sf.gridarta.map.validation.ValidationError;
+import net.sf.gridarta.model.gameobject.GameObject;
+import net.sf.gridarta.model.io.RecursiveFileIterator;
+import net.sf.gridarta.model.validation.ErrorCollector;
+import net.sf.gridarta.model.validation.errors.ValidationError;
 
 void log(String message) {
     print(message);
@@ -19,7 +19,12 @@ void log(String message) {
 }
 
 void checkMap(File mapFile, String mapPath) {
-    map = mapManager.openMapFile(mapFile, false);
+    try {
+        map = mapManager.openMapFile(mapFile, false);
+    } catch (IOException ex) {
+        print("Cannot load map '"+mapFile+"': "+ex.getMessage());
+        return;
+    }
     if (map == null) {
         log(mapPath + ":");
         log("- cannot load map file");
