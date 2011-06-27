@@ -478,7 +478,6 @@ typedef enum _bitmap_index
     BITMAP_GRID,
     BITMAP_TEXTWIN,
     BITMAP_LOGIN_INP,
-    BITMAP_INVSLOT,
     /* Status bars */
     BITMAP_HP,
     BITMAP_SP,
@@ -517,7 +516,6 @@ typedef enum _bitmap_index
     BITMAP_INV_SCROLL,
     BITMAP_BELOW_SCROLL,
     BITMAP_NUMBER,
-    BITMAP_INVSLOT_U,
     BITMAP_DEATH,
     BITMAP_CONFUSE,
     BITMAP_PARALYZE,
@@ -610,7 +608,6 @@ typedef enum _bitmap_index
     BITMAP_GUI_NPC_PANEL,
     BITMAP_NPC_INT_SLIDER,
     BITMAP_JOURNAL,
-    BITMAP_INVSLOT_MARKED,
     BITMAP_MSCURSOR_MOVE,
     BITMAP_RESIST_BG,
     BITMAP_MAIN_LVL_BG,
