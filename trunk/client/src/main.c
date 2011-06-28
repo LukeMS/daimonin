@@ -1882,27 +1882,35 @@ int main(int argc, char *argv[])
         /* show the current dragged item */
         if (cpl.menustatus == MENU_NO && (drag = draggingInvItem(DRAG_GET_STATUS)))
         {
-            item   *Item = NULL;
-            if (drag == DRAG_IWIN_INV)
-                Item = locate_item(cpl.win_inv_tag);
-            else if (drag == DRAG_IWIN_BELOW)
-                Item = locate_item(cpl.win_below_tag);
-            else if (drag == DRAG_QUICKSLOT)
-                Item = locate_item(cpl.win_quick_tag);
-            else if (drag == DRAG_PDOLL)
-                Item = locate_item(cpl.win_pdoll_tag);
-            /*  else Item = locate_item(cpl.win_quick_tag); */
-            if (Item)
+            item *ip = ((drag == DRAG_IWIN_INV)
+                        ? locate_item(cpl.win_inv_tag)
+                        : ((drag == DRAG_IWIN_BELOW)
+                        ? locate_item(cpl.win_below_tag)
+                        : ((drag == DRAG_QUICKSLOT)
+                        ? locate_item(cpl.win_quick_tag)
+                        : ((drag == DRAG_PDOLL)
+                        ? locate_item(cpl.win_pdoll_tag)
+                        : NULL))));
+
+            SDL_GetMouseState(&x, &y);
+
+            if (ip)
             {
-                SDL_GetMouseState(&x, &y);
-                if (drag == DRAG_QUICKSLOT_SPELL)
+                uint8 quacon = (ip->item_qua == 255) ? 255
+                               : (float)ip->item_con / (float)ip->item_qua * 100;
+
+                sprite_blt_as_icon(face_list[ip->face].sprite, x, y,
+                                   SPRITE_ICON_TYPE_NONE, 0, ip->flagsval,
+                                   (quacon == 100) ? 0 : quacon,
+                                   (ip->nrof == 1) ? 0 : ip->nrof, NULL);
+            }
+            else if (drag == DRAG_QUICKSLOT_SPELL)
+            {
                     sprite_blt(spell_list[quick_slots[cpl.win_quick_tag].spell.groupNr].entry[quick_slots[cpl.win_quick_tag].spell.classNr][quick_slots[cpl.win_quick_tag].spell.spellNr].icon,
                                x, y, NULL, NULL);
-                else
-                    blt_inv_item_centered(Item, x, y);
-
-                map_udate_flag = 2;
             }
+
+            map_udate_flag = 2;
         }
 
         /* we have a non-standard mouse-pointer (win-size changer, etc.) */
