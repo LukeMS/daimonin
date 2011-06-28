@@ -343,44 +343,56 @@ uint8 blt_face_centered(int face, int x, int y)
 
 void widget_range_event(int x, int y, SDL_Event event, int MEvent)
 {
-    if (x > widget_data[WIDGET_RANGE_ID].x1 + 5 &&
-        x < widget_data[WIDGET_RANGE_ID].x1 + 38 &&
-        y >= widget_data[WIDGET_RANGE_ID].y1 + 3 &&
-        y <= widget_data[WIDGET_RANGE_ID].y1 + 33)
+    if (MEvent == MOUSE_DOWN)
     {
-        if (MEvent==MOUSE_DOWN)
-        {
-            if (event.button.button == SDL_BUTTON_LEFT)
-                process_macro_keys(KEYFUNC_RANGE, 0);
-            else if (event.button.button == 4) /* mousewheel up */
-                process_macro_keys(KEYFUNC_RANGE, 0);
-            else if (event.button.button == 5) /* mousewheel down */
-                process_macro_keys(KEYFUNC_RANGE_BACK, 0);
-            else
-                process_macro_keys(KEYFUNC_RANGE_BACK, 0);
-        }
-        else if (MEvent==MOUSE_UP)
-        {
-            if (draggingInvItem(DRAG_GET_STATUS) > DRAG_IWIN_BELOW)
-            {
-                /* KEYFUNC_APPLY and KEYFUNC_DROP works only if cpl.inventory_win = IWIN_INV. The tag must
-                            be placed in cpl.win_inv_tag. So we do this and after DnD we restore the old values. */
-                int   old_inv_win = cpl.inventory_win;
-                int   old_inv_tag = cpl.win_inv_tag;
-                cpl.inventory_win = IWIN_INV;
+        uint8 button = event.button.button;
 
-                /* range field */
-                if (draggingInvItem(DRAG_GET_STATUS) == DRAG_IWIN_INV &&
-                    x >= widget_data[WIDGET_RANGE_ID].x1 &&
-                    x <= widget_data[WIDGET_RANGE_ID].x1 + 78 &&
-                    y >= widget_data[WIDGET_RANGE_ID].y1 &&
-                    y <= widget_data[WIDGET_RANGE_ID].y1 + 35)
+        if (button == SDL_BUTTON_LEFT)
+        {
+            process_macro_keys(KEYFUNC_RANGE, 0);
+        }
+        else if (button == SDL_BUTTON_WHEELUP)
+        {
+            process_macro_keys(KEYFUNC_RANGE, 0);
+        }
+        else if (button == SDL_BUTTON_WHEELDOWN)
+        {
+            process_macro_keys(KEYFUNC_RANGE_BACK, 0);
+        }
+        else
+        {
+            process_macro_keys(KEYFUNC_RANGE_BACK, 0);
+        }
+    }
+    else if (MEvent == MOUSE_UP)
+    {
+        sint8  drag = draggingInvItem(DRAG_GET_STATUS);
+        int    tag = (drag == DRAG_IWIN_INV)
+                     ? cpl.win_inv_tag : cpl.win_quick_tag;
+        item  *ip;
+
+        switch (drag)
+        {
+            case DRAG_IWIN_INV:
+            case DRAG_QUICKSLOT:
+                if ((ip = (tag == -1) ? NULL : locate_item(tag)) &&
+                    (ip->itype == TYPE_ARROW ||
+                     ip->itype == TYPE_BOW ||
+                     ip->itype == TYPE_WAND ||
+                     ip->itype == TYPE_ROD ||
+                     ip->itype == TYPE_HORN) &&
+                    !ip->applied)
                 {
-                    process_macro_keys(KEYFUNC_APPLY, 0); /* drop to player-doll */
+                    client_cmd_apply(tag);
                 }
-                cpl.inventory_win = old_inv_win;
-                cpl.win_inv_tag = old_inv_tag;
-            }
+
+                break;
+
+            case DRAG_QUICKSLOT_SPELL:
+                fire_mode.spell = &spell_list[quick_slots[tag].spell.groupNr].entry[quick_slots[tag].spell.classNr][quick_slots[tag].spell.spellNr];
+                fire_mode.mode = FIRE_MODE_SPELL_ID;
+
+                break;
         }
     }
 }
