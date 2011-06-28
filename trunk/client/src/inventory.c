@@ -30,7 +30,7 @@ char   *skill_level_name[]  =
 
 static void ShowIcons(sint16 ox, sint16 oy, sint16 x, sint16 y, uint8 invxlen, uint8 invylen,
                       _inventory_win iwin, _BLTFX *bltfx);
-static void PrintInfo(sint16 x, sint16 y, item *tmp, _inventory_win iwin);
+static void PrintInfo(sint16 x, sint16 y, item *ip, _inventory_win iwin);
 
 /* this function returns number of items and adjust the inventory windows data */
 int get_inventory_data(item *op, int *ctag, int *slot, int *start, int *count, int wxlen, int wylen)
@@ -500,7 +500,7 @@ jump_in_container:
     }
 }
 
-static void PrintInfo(sint16 x, sint16 y, item *tmp, _inventory_win iwin)
+static void PrintInfo(sint16 x, sint16 y, item *ip, _inventory_win iwin)
 {
     char         buf[MEDIUM_BUF];
     SDL_Surface *surface = ScreenSurface;
@@ -508,13 +508,13 @@ static void PrintInfo(sint16 x, sint16 y, item *tmp, _inventory_win iwin)
     x += ((iwin == IWIN_INV) ? 36 : 4);
 
     /* Print 'nrof name'. */
-    if (tmp->nrof == 1)
+    if (ip->nrof == 1)
     {
-        sprintf(buf, "%s", tmp->s_name);
+        sprintf(buf, "%s", ip->s_name);
     }
     else
     {
-        sprintf(buf, "%d %s", tmp->nrof, tmp->s_name);
+        sprintf(buf, "%d %s", ip->nrof, ip->s_name);
     }
 
     string_blt(surface, &font_small, buf, x, y + 4, COLOR_HGOLD, NULL, NULL);
@@ -533,11 +533,11 @@ static void PrintInfo(sint16 x, sint16 y, item *tmp, _inventory_win iwin)
     sprintf(buf, "weight: ");
     string_blt(surface, &font_small, buf, x, y + 16, COLOR_HGOLD, NULL, NULL);
     x += string_width(&font_small, buf);
-    sprintf(buf, "%4.3f ", (float)tmp->weight / 1000.0);
+    sprintf(buf, "%4.3f ", (float)ip->weight / 1000.0);
     string_blt(surface, &font_small, buf, x, y + 16, COLOR_DGOLD, NULL, NULL);
     x += string_width(&font_small, buf);
 
-    if (tmp->item_qua == 255) /* this comes from server when not identified */
+    if (ip->item_qua == 255) /* this comes from server when not identified */
     {
         string_blt(surface, &font_small, "(not identified)", x, y + 16,
                    COLOR_RED, NULL, NULL);
@@ -548,7 +548,7 @@ static void PrintInfo(sint16 x, sint16 y, item *tmp, _inventory_win iwin)
         string_blt(surface, &font_small, buf, x, y + 16, COLOR_HGOLD, NULL,
                    NULL);
         x += string_width(&font_small, buf);
-        sprintf(buf, "%d / %d ", tmp->item_con, tmp->item_qua);
+        sprintf(buf, "%d / %d ", ip->item_con, ip->item_qua);
         string_blt(surface, &font_small, buf, x, y + 16, COLOR_DGOLD,
                    NULL, NULL);
         x += string_width(&font_small, buf);
@@ -557,14 +557,14 @@ static void PrintInfo(sint16 x, sint16 y, item *tmp, _inventory_win iwin)
                    NULL);
         x += string_width(&font_small, buf);
 
-        if (tmp->item_level)
+        if (ip->item_level)
         {
-            sprintf(buf, "lvl %d %s", tmp->item_level, skill_level_name[tmp->item_skill]);
+            sprintf(buf, "lvl %d %s", ip->item_level, skill_level_name[ip->item_skill]);
 
-            if ((!tmp->item_skill &&
-                 tmp->item_level <= cpl.stats.level) ||
-                (tmp->item_skill &&
-                 tmp->item_level <= cpl.stats.skill_level[tmp->item_skill - 1]))
+            if ((!ip->item_skill &&
+                 ip->item_level <= cpl.stats.level) ||
+                (ip->item_skill &&
+                 ip->item_level <= cpl.stats.skill_level[ip->item_skill - 1]))
             {
                 string_blt(surface, &font_small, buf, x, y + 16,
                            COLOR_DGOLD, NULL, NULL);
