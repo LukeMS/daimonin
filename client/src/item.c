@@ -24,11 +24,13 @@
 #include <include.h>
 #include <ctype.h>      /* needed for isdigit */
 
+#define NROF_ITEMS 50   /* how many items are reserved initially */
+/* for the item spool */
+
 static item    *free_items;        /* the list of free (unused) items */
 static item    *player;
 
-#define NROF_ITEMS 50   /* how many items are reserved initially */
-/* for the item spool */
+static void SetFlags(item *ip, int flags);
 
 /* This should be modified to read the definition from a file */
 void init_item_types()
@@ -464,47 +466,6 @@ static char    *apply_string[]  =
         "", " (readied)", " (wielded)", " (worn)", " (active)", " (applied)"
     };
 
-static void set_flag_string(item *op)
-{
-    op->flags[0] = 0;
-
-    if (op->locked)
-        strcat(op->flags, " *");
-    if (op->apply_type)
-    {
-        if (op->apply_type < sizeof(apply_string) / sizeof(apply_string[0]))
-            strcat(op->flags, apply_string[op->apply_type]);
-        else
-            strcat(op->flags, " (undefined)");
-    }
-    if (op->open)
-        strcat(op->flags, " (open)");
-    if (op->damned)
-        strcat(op->flags, " (damned)");
-    if (op->cursed)
-        strcat(op->flags, " (cursed)");
-    if (op->magical)
-        strcat(op->flags, " (magic)");
-    if (op->unpaid)
-        strcat(op->flags, " (unpaid)");
-}
-
-static void get_flags(item *op, int flags)
-{
-    op->open = flags & F_OPEN ? 1 : 0;
-    op->damned = flags & F_DAMNED ? 1 : 0;
-    op->cursed = flags & F_CURSED ? 1 : 0;
-    op->magical = flags & F_MAGIC ? 1 : 0;
-    op->unpaid = flags & F_UNPAID ? 1 : 0;
-    op->applied = flags & F_APPLIED ? 1 : 0;
-    op->locked = flags & F_LOCKED ? 1 : 0;
-    op->traped = flags & F_TRAPED ? 1 : 0;
-    op->flagsval = flags;
-    op->apply_type = flags & F_APPLIED;
-    set_flag_string(op);
-}
-
-
 /*
  *  get_nrof() functions tries to get number of items from the item name
  */
@@ -614,7 +575,7 @@ void set_item_values(item *op, char *name, sint32 weight, uint16 face, int flags
     else /* we don't care here is the item has already an anim, the remove will check */
         new_anim_remove_item(op);
 
-    get_flags(op, flags);
+    SetFlags(op, flags);
     /* We don't sort the map, so lets not do this either */
     if (op->env != cpl.below)
         op->type = get_type_from_name(op->s_name);
@@ -676,7 +637,7 @@ void update_item(int tag, int loc, char *name, int weight, int face, int flags, 
         player->nrof = get_nrof(name);
         player->weight = weight;
         player->face = face;
-        get_flags(player, flags);
+        SetFlags(player, flags);
         if (player->inv)
             player->inv->inv_updated = 1;
 /* This player as item animation stuff will later with smooth movement remooved when whe have moveing-objects */
@@ -702,6 +663,114 @@ void update_item(int tag, int loc, char *name, int weight, int face, int flags, 
     }
 }
 
+static void SetFlags(item *ip, int flags)
+{
+    ip->flagsval = flags;
+    ip->flags[0] = '\0';
+
+    /* XXX: The separated handling of ranged types might not appears sensible
+     * ATM but this is because the client's fire_mode handling is currently
+     * lacking. */
+    if ((ip->applied = ((flags & F_APPLIED)) ? 1 : 0))
+    {
+        if (ip->itype == TYPE_ARROW)
+        {
+            if (ip->stype >= 128)
+            {
+                fire_mode.ammo = ip->tag;
+                fire_mode.mode = FIRE_MODE_ARCHERY_ID;
+            }
+            else
+            {
+                fire_mode.ammo = ip->tag;
+                fire_mode.mode = FIRE_MODE_ARCHERY_ID;
+            }
+        }
+        else if (ip->itype == TYPE_BOW)
+        {
+            fire_mode.weapon = ip->tag;
+            fire_mode.mode = FIRE_MODE_ARCHERY_ID;
+        }
+        else if (ip->itype == TYPE_WAND ||
+                 ip->itype == TYPE_ROD ||
+                 ip->itype == TYPE_HORN)
+        {
+            fire_mode.ammo = ip->tag;
+            fire_mode.mode = FIRE_MODE_ARCHERY_ID;
+        }
+    }
+    else
+    {
+        if (ip->itype == TYPE_ARROW)
+        {
+            if (ip->stype >= 128 &&
+                fire_mode.ammo == ip->tag)
+            {
+                fire_mode.ammo = FIRE_ITEM_NO;
+            }
+            else if (fire_mode.ammo == ip->tag)
+            {
+                fire_mode.ammo = FIRE_ITEM_NO;
+            }
+        }
+        else if (ip->itype == TYPE_BOW &&
+                 fire_mode.weapon == ip->tag)
+        {
+            fire_mode.weapon = FIRE_ITEM_NO;
+        }
+        else if ((ip->itype == TYPE_WAND ||
+                  ip->itype == TYPE_ROD ||
+                  ip->itype == TYPE_HORN) &&
+                 fire_mode.ammo == ip->tag)
+        {
+            fire_mode.ammo = FIRE_ITEM_NO;
+        }
+    }
+
+    ip->traped = ((flags & F_TRAPED)) ? 1 : 0;
+
+    if ((ip->locked = ((flags & F_LOCKED)) ? 1 : 0))
+    {
+        strcat(ip->flags, " *");
+    }
+
+    if ((ip->apply_type = (flags & F_APPLIED)))
+    {
+        if (ip->apply_type < sizeof(apply_string) / sizeof(apply_string[0]))
+        {
+            strcat(ip->flags, apply_string[ip->apply_type]);
+        }
+        else
+        {
+            strcat(ip->flags, " (undefined)");
+        }
+    }
+
+    if ((ip->open = ((flags & F_OPEN)) ? 1 : 0))
+    {
+        strcat(ip->flags, " (open)");
+    }
+
+    if ((ip->damned = ((flags & F_DAMNED)) ? 1 : 0))
+    {
+        strcat(ip->flags, " (damned)");
+    }
+
+    if ((ip->cursed = ((flags & F_CURSED)) ? 1 : 0))
+    {
+        strcat(ip->flags, " (cursed)");
+    }
+
+    if ((ip->magical = ((flags & F_MAGIC)) ? 1 : 0))
+    {
+        strcat(ip->flags, " (magic)");
+    }
+
+    if ((ip->unpaid = ((flags & F_UNPAID)) ? 1 : 0))
+    {
+        strcat(ip->flags, " (unpaid)");
+    }
+}
 
 /*
  *  Prints players inventory, contain extra information for debugging purposes
