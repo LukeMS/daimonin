@@ -24,7 +24,8 @@
 #                                                                    #
 # about the 'type' elements:                                         #
 #                                                                    #
-# <type number="15" name="Type Name">                                #
+# <type number="15" name="Type Name" map="no" inv="1,2"              #
+#                                              allows_all_inv="yes"> #
 # <import_type name="Type Name" />   import attributes of this type; #
 #    Attributes explicitly defined in a type are not imported.       #
 # <required>                                                         #
@@ -41,6 +42,19 @@
 # </use>                                                             #
 # ... attributes ...                                                 #
 # </type>                                                            #
+#                                                                    #
+# map="yes|no" is optional and defaults to "yes". If set to "no", a  #
+# validator warning is generated if this this game object is         #
+# directly on the map.                                               #
+#                                                                    #
+# inv="type,type,...|*" is optional and defaults to "*". If this     #
+# game object is in the inventory of another game object and this    #
+# other game object has a type not in the list "type,type,...", a    #
+# validator warning is generated.                                    #
+#                                                                    #
+# allows_all_inv="yes" is optional and defaults to "no". If set to   #
+# "yes", this type number is implicitly added to all "inv"           #
+# attributes.                                                        #
 #                                                                    #
 # about the 'attribute' type: <attribute ... type="XXX" >            #
 #                                                                    #
