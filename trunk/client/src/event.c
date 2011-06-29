@@ -1783,8 +1783,10 @@ uint8 process_macro_keys(int id, int value)
                 fire_mode.mode = 0;
             break;
         case KEYFUNC_RANGE_BACK:
-            if (--fire_mode.mode < 0)
+            if (fire_mode.mode == 0)
                 fire_mode.mode = FIRE_MODE_NROF - 1;
+            else
+                fire_mode.mode--;
             break;
         case KEYFUNC_RANGE_SELECT:
             fire_mode.mode = value;
