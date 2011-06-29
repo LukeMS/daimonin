@@ -1032,7 +1032,7 @@ void iterate_main_loop()
     /* Only call this every second. More precision is unnecessary.
      * We assume it won't be called in the first second of the server's life,
      * to save a check. */
-    if (!(ROUND_TAG % (long unsigned int)pticks_second))
+    if (!(ROUND_TAG % (long unsigned int)MAX(1, pticks_second)))
     {
         shutdown_agent(-1, SERVER_EXIT_NORMAL, NULL, NULL);
     }
