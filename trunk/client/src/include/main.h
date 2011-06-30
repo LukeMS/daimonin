@@ -124,6 +124,10 @@ typedef struct _skindef
     uint32  dialog_rows0;
     uint32  dialog_rows1;
     uint32  dialog_rowsS;
+    uint32  ecc_emphasis;
+    uint32  ecc_strong;
+    uint32  ecc_intertitle;
+    uint32  ecc_hypertext;
     uint32  input_string;
     uint32  input_caret;
     uint8   effect_width;

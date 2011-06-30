@@ -2814,6 +2814,10 @@ void load_skindef()
     skindef.dialog_rows0 = 0x64391e;
     skindef.dialog_rows1 = 0x393b27;
     skindef.dialog_rowsS = 0x0000ef;
+    skindef.ecc_emphasis = 0x90ee90;
+    skindef.ecc_strong = 0xffff00;
+    skindef.ecc_intertitle = 0xdaa520;
+    skindef.ecc_hypertext = 0x0000ff;
     skindef.input_string = 0xffffff;
     skindef.input_caret = 0xff0000;
     skindef.effect_width = 9;
@@ -2876,6 +2880,22 @@ void load_skindef()
         else if (!strcmp(key, "dialog_rowsS"))
         {
             skindef.dialog_rowsS = (uint32)strtoul(val, NULL, 16);
+        }
+        else if (!strcmp(key, "ecc_emphasis"))
+        {
+            skindef.ecc_emphasis = (uint32)strtoul(val, NULL, 16);
+        }
+        else if (!strcmp(key, "ecc_strong"))
+        {
+            skindef.ecc_strong = (uint32)strtoul(val, NULL, 16);
+        }
+        else if (!strcmp(key, "ecc_intertitle"))
+        {
+            skindef.ecc_intertitle = (uint32)strtoul(val, NULL, 16);
+        }
+        else if (!strcmp(key, "ecc_hypertext"))
+        {
+            skindef.ecc_hypertext = (uint32)strtoul(val, NULL, 16);
         }
         else if (!strcmp(key, "input_string"))
         {
