@@ -921,12 +921,30 @@ void show_skilllist(void)
         if (i != skill_list_set.entry_nr)
         {
             if (i & 1)
-                SDL_FillRect(ScreenSurface, &box, skindef.dialog_rows0);
+            {
+                uint32 colr = SDL_MapRGB(ScreenSurface->format,
+                                         (skindef.dialog_rows0 >> 16) & 0xff,
+                                         (skindef.dialog_rows0 >> 8) & 0xff,
+                                         skindef.dialog_rows0 & 0xff);
+                SDL_FillRect(ScreenSurface, &box, colr);
+            }
             else
-                SDL_FillRect(ScreenSurface, &box, skindef.dialog_rows1);
+            {
+                uint32 colr = SDL_MapRGB(ScreenSurface->format,
+                                         (skindef.dialog_rows1 >> 16) & 0xff,
+                                         (skindef.dialog_rows1 >> 8) & 0xff,
+                                         skindef.dialog_rows1 & 0xff);
+                SDL_FillRect(ScreenSurface, &box, colr);
+            }
         }
         else
-            SDL_FillRect(ScreenSurface, &box, skindef.dialog_rowsS);
+        {
+            uint32 colr = SDL_MapRGB(ScreenSurface->format,
+                                     (skindef.dialog_rowsS >> 16) & 0xff,
+                                     (skindef.dialog_rowsS >> 8) & 0xff,
+                                     skindef.dialog_rowsS & 0xff);
+            SDL_FillRect(ScreenSurface, &box, colr);
+        }
 
         if (skill_list[skill_list_set.group_nr].entry[i].flag == LIST_ENTRY_KNOWN)
         {
@@ -1077,12 +1095,30 @@ void show_spelllist(void)
         if (i != spell_list_set.entry_nr)
         {
             if (i & 1)
-                SDL_FillRect(ScreenSurface, &box, skindef.dialog_rows0);
+            {
+                uint32 colr = SDL_MapRGB(ScreenSurface->format,
+                                         (skindef.dialog_rows0 >> 16) & 0xff,
+                                         (skindef.dialog_rows0 >> 8) & 0xff,
+                                         skindef.dialog_rows0 & 0xff);
+                SDL_FillRect(ScreenSurface, &box, colr);
+            }
             else
-                SDL_FillRect(ScreenSurface, &box, skindef.dialog_rows1);
+            {
+                uint32 colr = SDL_MapRGB(ScreenSurface->format,
+                                         (skindef.dialog_rows1 >> 16) & 0xff,
+                                         (skindef.dialog_rows1 >> 8) & 0xff,
+                                         skindef.dialog_rows1 & 0xff);
+                SDL_FillRect(ScreenSurface, &box, colr);
+            }
         }
         else
-            SDL_FillRect(ScreenSurface, &box, skindef.dialog_rowsS);
+        {
+            uint32 colr = SDL_MapRGB(ScreenSurface->format,
+                                     (skindef.dialog_rowsS >> 16) & 0xff,
+                                     (skindef.dialog_rowsS >> 8) & 0xff,
+                                     skindef.dialog_rowsS & 0xff);
+            SDL_FillRect(ScreenSurface, &box, colr);
+        }
 
         if (spell_list[spell_list_set.group_nr].entry[spell_list_set.class_nr][i].flag == LIST_ENTRY_KNOWN)
         {
@@ -1271,12 +1307,30 @@ void show_keybind()
         if (i != bindkey_list_set.entry_nr)
         {
             if (i & 1)
-                SDL_FillRect(ScreenSurface, &box, skindef.dialog_rows0);
+            {
+                uint32 colr = SDL_MapRGB(ScreenSurface->format,
+                                         (skindef.dialog_rows0 >> 16) & 0xff,
+                                         (skindef.dialog_rows0 >> 8) & 0xff,
+                                         skindef.dialog_rows0 & 0xff);
+                SDL_FillRect(ScreenSurface, &box, colr);
+            }
             else
-                SDL_FillRect(ScreenSurface, &box, skindef.dialog_rows1);
+            {
+                uint32 colr = SDL_MapRGB(ScreenSurface->format,
+                                         (skindef.dialog_rows1 >> 16) & 0xff,
+                                         (skindef.dialog_rows1 >> 8) & 0xff,
+                                         skindef.dialog_rows1 & 0xff);
+                SDL_FillRect(ScreenSurface, &box, colr);
+            }
         }
         else
-            SDL_FillRect(ScreenSurface, &box, skindef.dialog_rowsS);
+        {
+            uint32 colr = SDL_MapRGB(ScreenSurface->format,
+                                     (skindef.dialog_rowsS >> 16) & 0xff,
+                                     (skindef.dialog_rowsS >> 8) & 0xff,
+                                     skindef.dialog_rowsS & 0xff);
+            SDL_FillRect(ScreenSurface, &box, colr);
+        }
 
         if (bindkey_list[bindkey_list_set.group_nr].entry[i].text[0])
         {
@@ -1681,6 +1735,7 @@ void show_login_server(void)
     int         x, y, i;
     int         mx, my, mb, t;
     int         progress;
+    uint32      colr;
 
     mb = SDL_GetMouseState(&mx, &my);
     /* background */
@@ -1710,10 +1765,18 @@ void show_login_server(void)
 
     t -= string_width(&font_large_out, buf) / 2;
     EMBOSS(ScreenSurface, &font_large_out, buf, t, y - 22, COLOR_HGOLD, NULL, NULL);
-    SDL_FillRect(ScreenSurface, &box, skindef.dialog_rows0);
+    colr = SDL_MapRGB(ScreenSurface->format,
+                             (skindef.dialog_rows0 >> 16) & 0xff,
+                             (skindef.dialog_rows0 >> 8) & 0xff,
+                             skindef.dialog_rows0 & 0xff);
+    SDL_FillRect(ScreenSurface, &box, colr);
     box.y = y + 15;
     box.h = 150;
-    SDL_FillRect(ScreenSurface, &box, skindef.dialog_rows1);
+    colr = SDL_MapRGB(ScreenSurface->format,
+                             (skindef.dialog_rows1 >> 16) & 0xff,
+                             (skindef.dialog_rows1 >> 8) & 0xff,
+                             skindef.dialog_rows1 & 0xff);
+    SDL_FillRect(ScreenSurface, &box, colr);
     ENGRAVE(ScreenSurface, &font_small, "- UPDATING FILES -", x + 57, y, COLOR_WHITE, NULL, NULL);
 
     if (request_file_chain >= 0)
@@ -2024,17 +2087,25 @@ void show_meta_server(void)
 
     for (i = 0; i < MAXMETAWINDOW; i++)
     {
-        uint8 colr;
+        uint32 colr;
 
         box.y = y + TXT_Y_START + 13 + i * 12;
 
-        if ((i & 1))
+        if (i & 1)
         {
-            SDL_FillRect(ScreenSurface, &box, skindef.dialog_rows0);
+            colr = SDL_MapRGB(ScreenSurface->format,
+                              (skindef.dialog_rows0 >> 16) & 0xff,
+                              (skindef.dialog_rows0 >> 8) & 0xff,
+                              skindef.dialog_rows0 & 0xff);
+            SDL_FillRect(ScreenSurface, &box, colr);
         }
         else
         {
-            SDL_FillRect(ScreenSurface, &box, skindef.dialog_rows1);
+            colr = SDL_MapRGB(ScreenSurface->format,
+                              (skindef.dialog_rows1 >> 16) & 0xff,
+                              (skindef.dialog_rows1 >> 8) & 0xff,
+                              skindef.dialog_rows1 & 0xff);
+            SDL_FillRect(ScreenSurface, &box, colr);
         }
 
         if (node)
@@ -2043,7 +2114,11 @@ void show_meta_server(void)
             {
                 SDL_Rect box2;
 
-                SDL_FillRect(ScreenSurface, &box, skindef.dialog_rowsS);
+                colr = SDL_MapRGB(ScreenSurface->format,
+                                  (skindef.dialog_rowsS >> 16) & 0xff,
+                                  (skindef.dialog_rowsS >> 8) & 0xff,
+                                 skindef.dialog_rowsS & 0xff);
+                SDL_FillRect(ScreenSurface, &box, colr);
                 box2.x = x + 160;
                 box2.y = y + 431;
                 box2.w = 300;
