@@ -332,25 +332,25 @@ void string_blt(SDL_Surface *surf, _font *font, char *text, int x, int y, uint8 
      
                     if (strong)
                     {
-                        color.r = 0xff;
-                        color.g = 0xff;
-                        color.b = 0x00;
+                        color.r = (skindef.ecc_strong >> 16) & 0xff;
+                        color.g = (skindef.ecc_strong >> 8) & 0xff;
+                        color.b = skindef.ecc_strong & 0xff;
                     }
                     else
                     {
                         if (emphasis)
                         {
-                            color.r = 0x00;
-                            color.g = 0xff;
-                            color.b = 0x00;
+                            color.r = (skindef.ecc_emphasis >> 16) & 0xff;
+                            color.g = (skindef.ecc_emphasis >> 8) & 0xff;
+                            color.b = skindef.ecc_emphasis & 0xff;
                         }
                         else if (intertitle &&
                                  (cpl.menustatus == MENU_NPC ||
                                   cpl.menustatus == MENU_BOOK))
                         {
-                            color.r = Bitmaps[BITMAP_PALETTE]->bitmap->format->palette->colors[COLOR_HGOLD].r;
-                            color.g = Bitmaps[BITMAP_PALETTE]->bitmap->format->palette->colors[COLOR_HGOLD].g;
-                            color.b = Bitmaps[BITMAP_PALETTE]->bitmap->format->palette->colors[COLOR_HGOLD].b;
+                            color.r = (skindef.ecc_intertitle >> 16) & 0xff;
+                            color.g = (skindef.ecc_intertitle >> 8) & 0xff;
+                            color.b = skindef.ecc_intertitle & 0xff;
                         }
                         else
                         {
@@ -374,25 +374,25 @@ void string_blt(SDL_Surface *surf, _font *font, char *text, int x, int y, uint8 
      
                     if (emphasis)
                     {
-                        color.r = 0x00;
-                        color.g = 0xff;
-                        color.b = 0x00;
+                        color.r = (skindef.ecc_emphasis >> 16) & 0xff;
+                        color.g = (skindef.ecc_emphasis >> 8) & 0xff;
+                        color.b = skindef.ecc_emphasis & 0xff;
                     }
                     else
                     {
                         if (strong)
                         {
-                            color.r = 0xff;
-                            color.g = 0xff;
-                            color.b = 0x00;
+                            color.r = (skindef.ecc_strong >> 16) & 0xff;
+                            color.g = (skindef.ecc_strong >> 8) & 0xff;
+                            color.b = skindef.ecc_strong & 0xff;
                         }
                         else if (intertitle &&
                                  (cpl.menustatus == MENU_NPC ||
                                   cpl.menustatus == MENU_BOOK))
                         {
-                            color.r = Bitmaps[BITMAP_PALETTE]->bitmap->format->palette->colors[COLOR_HGOLD].r;
-                            color.g = Bitmaps[BITMAP_PALETTE]->bitmap->format->palette->colors[COLOR_HGOLD].g;
-                            color.b = Bitmaps[BITMAP_PALETTE]->bitmap->format->palette->colors[COLOR_HGOLD].b;
+                            color.r = (skindef.ecc_intertitle >> 16) & 0xff;
+                            color.g = (skindef.ecc_intertitle >> 8) & 0xff;
+                            color.b = skindef.ecc_intertitle & 0xff;
                         }
                         else
                         {
@@ -418,23 +418,23 @@ void string_blt(SDL_Surface *surf, _font *font, char *text, int x, int y, uint8 
                         (cpl.menustatus == MENU_NPC ||
                          cpl.menustatus == MENU_BOOK))
                     {
-                        color.r = Bitmaps[BITMAP_PALETTE]->bitmap->format->palette->colors[COLOR_HGOLD].r;
-                        color.g = Bitmaps[BITMAP_PALETTE]->bitmap->format->palette->colors[COLOR_HGOLD].g;
-                        color.b = Bitmaps[BITMAP_PALETTE]->bitmap->format->palette->colors[COLOR_HGOLD].b;
+                        color.r = (skindef.ecc_intertitle >> 16) & 0xff;
+                        color.g = (skindef.ecc_intertitle >> 8) & 0xff;
+                        color.b = skindef.ecc_intertitle & 0xff;
                     }
                     else
                     {
                         if (strong)
                         {
-                            color.r = 0xff;
-                            color.g = 0xff;
-                            color.b = 0x00;
+                            color.r = (skindef.ecc_strong >> 16) & 0xff;
+                            color.g = (skindef.ecc_strong >> 8) & 0xff;
+                            color.b = skindef.ecc_strong & 0xff;
                         }
                         else if (emphasis)
                         {
-                            color.r = 0x00;
-                            color.g = 0xff;
-                            color.b = 0x00;
+                            color.r = (skindef.ecc_emphasis >> 16) & 0xff;
+                            color.g = (skindef.ecc_emphasis >> 8) & 0xff;
+                            color.b = skindef.ecc_emphasis & 0xff;
                         }
                         else
                         {
@@ -471,24 +471,24 @@ void string_blt(SDL_Surface *surf, _font *font, char *text, int x, int y, uint8 
                         }
                         else
                         {
-                            color.r = 0x00;
-                            color.g = 0xff;
-                            color.b = 0xff;
+                            color.r = (skindef.ecc_hypertext >> 16) & 0xff;
+                            color.g = (skindef.ecc_hypertext >> 8) & 0xff;
+                            color.b = skindef.ecc_hypertext & 0xff;
                         }
                     }
                     else
                     {
                         if (strong)
                         {
-                            color.r = 0xff;
-                            color.g = 0xff;
-                            color.b = 0x00;
+                            color.r = (skindef.ecc_strong >> 16) & 0xff;
+                            color.g = (skindef.ecc_strong >> 8) & 0xff;
+                            color.b = skindef.ecc_strong & 0xff;
                         }
                         else if (emphasis)
                         {
-                            color.r = 0x00;
-                            color.g = 0xff;
-                            color.b = 0x00;
+                            color.r = (skindef.ecc_emphasis >> 16) & 0xff;
+                            color.g = (skindef.ecc_emphasis >> 8) & 0xff;
+                            color.b = skindef.ecc_emphasis & 0xff;
                         }
                         else
                         {

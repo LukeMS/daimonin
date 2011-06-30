@@ -6,6 +6,10 @@ newclosebutton: 1
 dialog_rows0: 0x64391e
 dialog_rows1: 0x393b27
 dialog_rowsS: 0x0000ef
+ecc_emphasis: 0x90ee90
+ecc_strong: 0xffff00
+ecc_intertitle: 0xdaa520
+ecc_hypertext: 0x0000ff
 input_string: 0xffffff
 input_caret: 0xff0000
 effect_width: 9
