@@ -72,6 +72,7 @@ void show_input_string(_font *font, SDL_Rect *box, char repl)
         LastTick % 500 >= 250)
     {
         SDL_Rect caret;
+        uint32   colr;
 
         caret.y = box->y;
         caret.h = font->line_height;
@@ -87,7 +88,11 @@ void show_input_string(_font *font, SDL_Rect *box, char repl)
             caret.w = font->c[(int)buf[CurrentCursorPos]].w;
         }
 
-        SDL_FillRect(ScreenSurface, &caret, skindef.input_caret);
+        colr = SDL_MapRGB(ScreenSurface->format,
+                          (skindef.input_caret >> 16) & 0xff,
+                          (skindef.input_caret >> 8) & 0xff,
+                          skindef.input_caret & 0xff);
+        SDL_FillRect(ScreenSurface, &caret, colr);
     }
 
     InputCaretBlinkFlag = 1;

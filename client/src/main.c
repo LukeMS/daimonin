@@ -2811,11 +2811,11 @@ void load_skindef()
 
     /* first we fill with default values */
     skindef.newclosebutton = 1; // TODO: Remove.
-    skindef.dialog_rows0 = SDL_MapRGB(ScreenSurface->format, 100, 57, 30);
-    skindef.dialog_rows1 = SDL_MapRGB(ScreenSurface->format, 57, 59, 39);
-    skindef.dialog_rowsS = SDL_MapRGB(ScreenSurface->format, 0, 0, 239);
-    skindef.input_string = SDL_MapRGB(ScreenSurface->format, 255, 255, 255);
-    skindef.input_caret = SDL_MapRGB(ScreenSurface->format, 255, 0, 0);
+    skindef.dialog_rows0 = 0x64391e;
+    skindef.dialog_rows1 = 0x393b27;
+    skindef.dialog_rowsS = 0x0000ef;
+    skindef.input_string = 0xffffff;
+    skindef.input_caret = 0xff0000;
     skindef.effect_width = 9;
     skindef.effect_height = 16;
     MALLOC_STRING(skindef.effect_eating, "Nyom! ");
@@ -2867,48 +2867,23 @@ void load_skindef()
         }
         else if (!strcmp(key, "dialog_rows0"))
         {
-            uint32 n = (uint32)strtoul(val, NULL, 16);
-
-            skindef.dialog_rows0 = SDL_MapRGB(ScreenSurface->format,
-                                              (n >> 16) & 0xff,
-                                              (n >> 8) & 0xff,
-                                              n & 0xff);
+            skindef.dialog_rows0 = (uint32)strtoul(val, NULL, 16);
         }
         else if (!strcmp(key, "dialog_rows1"))
         {
-            uint32 n = (uint32)strtoul(val, NULL, 16);
-
-            skindef.dialog_rows1 = SDL_MapRGB(ScreenSurface->format,
-                                              (n >> 16) & 0xff,
-                                              (n >> 8) & 0xff,
-                                              n & 0xff);
+            skindef.dialog_rows1 = (uint32)strtoul(val, NULL, 16);
         }
         else if (!strcmp(key, "dialog_rowsS"))
         {
-            uint32 n = (uint32)strtoul(val, NULL, 16);
-
-            skindef.dialog_rowsS = SDL_MapRGB(ScreenSurface->format,
-                                              (n >> 16) & 0xff,
-                                              (n >> 8) & 0xff,
-                                              n & 0xff);
+            skindef.dialog_rowsS = (uint32)strtoul(val, NULL, 16);
         }
         else if (!strcmp(key, "input_string"))
         {
-            uint32 n = (uint32)strtoul(val, NULL, 16);
-
-            skindef.input_string = SDL_MapRGB(ScreenSurface->format,
-                                              (n >> 16) & 0xff,
-                                              (n >> 8) & 0xff,
-                                              n & 0xff);
+            skindef.input_string = (uint32)strtoul(val, NULL, 16);
         }
         else if (!strcmp(key, "input_caret"))
         {
-            uint32 n = (uint32)strtoul(val, NULL, 16);
-
-            skindef.input_caret = SDL_MapRGB(ScreenSurface->format,
-                                             (n >> 16) & 0xff,
-                                             (n >> 8) & 0xff,
-                                             n & 0xff);
+            skindef.input_caret = (uint32)strtoul(val, NULL, 16);
         }
         else if (!strcmp(key, "effect_width"))
         {
