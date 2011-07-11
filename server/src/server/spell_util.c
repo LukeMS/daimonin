@@ -52,7 +52,7 @@ spell spells[NROFREALSPELLS]          =
     }, 
 
     {"minor healing",               SPELL_TYPE_PRIEST, 1, 
-    4, 8, 3, 6,3,1.0,
+    6, 8, 3, 6,3,1.0,
     0,       0,     0,      0, 
     0, 0, 0, 0, SOUND_MAGIC_STAT,
     SPELL_USE_CAST | SPELL_USE_BALM | SPELL_USE_SCROLL | SPELL_USE_ROD | SPELL_USE_POTION | SPELL_USE_BOOK,
