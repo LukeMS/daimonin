@@ -771,7 +771,9 @@ int cast_heal(object *op, int level, object *target, int spell_type)
     {
         case SP_MINOR_HEAL:
           success = 1;
-          heal = random_roll(2, 5 + level) + 6;
+
+          heal = random_roll(level / 2, (level + 3) / 4 * 3) + 5;
+
           /* give bonus or malus to damage depending on if the player/mob is attuned/repelled to that spell path */
           heal *= (int) (PATH_DMG_MULT(op, find_spell(spell_type)));
           if (op->type == PLAYER)
