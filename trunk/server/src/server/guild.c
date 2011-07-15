@@ -105,7 +105,7 @@ object *guild_join(player *pl, char *name, int s1_group, int s1_value, int s2_gr
 
     guild->sub_type1 = ST1_GUILD_IN;
     pl->socket.ext_title_flag = 1;
-
+    FIX_PLAYER(pl->ob, "guild join");
     return guild;
 }
 
@@ -150,5 +150,8 @@ void guild_leave(player *pl)
     walk->last_grace = 25;
     walk->magic = 15;
     walk->state = 10;
+    walk->level = 1;
+    SET_FLAG(walk, FLAG_RUN_AWAY);
     pl->socket.ext_title_flag = 1;
+    FIX_PLAYER(pl->ob, "guild leave");
 }

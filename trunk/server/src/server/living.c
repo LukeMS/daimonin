@@ -1131,15 +1131,44 @@ void fix_player(object *op)
              || tmp->type == TYPE_LIGHT_REFILL
              || tmp->type == MONSTER)
             continue;
-        else if(tmp->type == TYPE_GUILD_FORCE)
+        else if(tmp->type == TYPE_GUILD_FORCE && tmp->sub_type1 == ST1_GUILD_IN)
         {
             pl->guild_force = tmp;
+            op->stats.Str += tmp->stats.Str;
+            op->stats.Int += tmp->stats.Int;
+            op->stats.Dex += tmp->stats.Dex;
+            op->stats.Con += tmp->stats.Con;
+            op->stats.Wis += tmp->stats.Wis;
+            op->stats.Pow += tmp->stats.Pow;
+            op->stats.Cha += tmp->stats.Cha;
+            op->stats.ac += tmp->stats.ac;
+            op->stats.dam += tmp->stats.dam;
+            op->stats.wc += tmp->stats.wc;
+            op->stats.maxhp += tmp->stats.maxhp;
+            op->stats.maxsp += tmp->stats.maxsp;
+            op->stats.maxgrace += tmp->stats.maxgrace;
+            pl->gen_hp += tmp->stats.hp;
+            pl->gen_sp += tmp->stats.sp;
+            pl->gen_grace += tmp->stats.grace;
+            op->weapon_speed -= tmp->weapon_speed;
+            pl->weapon_sp -= tmp->weapon_speed;
+            op->stats.thac0 -= tmp->stats.thac0;
+            op->stats.thacm += tmp->stats.thacm;
             pl->base_skill_group[0] = tmp->last_eat;
             pl->base_skill_group[1] = tmp->last_sp;
             pl->base_skill_group[2] = tmp->last_heal;
             pl->base_skill_group_exp[0] = tmp->last_grace;
             pl->base_skill_group_exp[1] = tmp->magic;
             pl->base_skill_group_exp[2] = tmp->state;
+            
+            for (i=0; i<NROFATTACKS; i++)
+            {
+                if (tmp->resist[i] > 0)
+                    resists_boni[i] += tmp->resist[i];
+                else
+                    resists_mali[i] -= tmp->resist[i];
+                op->attack[i] += tmp->attack[i];
+            }
         }
         else if(tmp->type == TYPE_QUEST_CONTAINER)
         {
@@ -1630,6 +1659,8 @@ void fix_player(object *op)
             tmp_dam += tmp->stats.dam + tmp->magic;
             tmp_wc += tmp->stats.wc + tmp->magic;
             tmp_time += tmp->last_grace;
+            if(pl->guild_force->weapon_speed)
+               tmp_time -= pl->guild_force->weapon_speed;
 
             /* we don't add op->stats.wc here because its melee.... our wc modifier comes from the skill.
              * but we add in wc modifier from equipment - means ATM a ring wc+2 will add wc to melee AND
@@ -1687,6 +1718,9 @@ void fix_player(object *op)
         {
             pl->skill_weapon = skill_weapon;
 
+            if(pl->guild_force->weapon_speed)
+                op->weapon_speed = skill_weapon->weapon_speed - pl->guild_force->weapon_speed;
+            else
             op->weapon_speed = skill_weapon->weapon_speed;
 
             if (skill_weapon->slaying != NULL)
