@@ -533,35 +533,52 @@ int check_skill_to_apply(object *who, object *item)
 {
     int skill = 0, tmp;
     int add_skill   = NO_SKILL_READY; /* perhaps we need a additional skill to use */
-
+    player *pl;
     if (who->type != PLAYER)
         return 1; /* this fctn only for players */
-
+    pl = CONTR(who);
     /* first figure out the required skills from the item */
     switch (item->type)
     {
         case WEAPON:
           tmp = item->sub_type1;
-          if (tmp >= WEAP_POLE_IMPACT) /* we have a polearm! */
+          if (tmp >= WEAP_POLE_IMPACT && !pl->guild_force->run_away) /* we have a polearm! */
           {
               tmp = item->sub_type1 - WEAP_POLE_IMPACT; /* lets select the right weapon type */
               add_skill = SK_POLEARMS;
           }
-          else if (tmp >= WEAP_2H_IMPACT) /* no, we have a 2h! */
+          else if (tmp >= WEAP_2H_IMPACT && !QUERY_FLAG(pl->guild_force, FLAG_PLAYER_ONLY)) /* no, we have a 2h! */
           {
               tmp = item->sub_type1 - WEAP_2H_IMPACT; /* lets select the right weapon type */
               add_skill = SK_TWOHANDS;
           }
-
-          if (tmp == WEAP_1H_IMPACT)
+          if(CONTR(who)->guild_force->value)
+          {
+          if (tmp == WEAP_1H_IMPACT && (item->item_level < pl->guild_force->value))
               skill = SK_MELEE_WEAPON;
-          else if (tmp == WEAP_1H_SLASH)
+          else if (tmp == WEAP_1H_SLASH && (item->item_level < pl->guild_force->value))
               skill = SK_SLASH_WEAP;
-          else if (tmp == WEAP_1H_CLEAVE)
+          else if (tmp == WEAP_1H_CLEAVE && (item->item_level < pl->guild_force->value))
               skill = SK_CLEAVE_WEAP;
-          else if (tmp == WEAP_1H_PIERCE)
+          else if (tmp == WEAP_1H_PIERCE && (item->item_level < pl->guild_force->value))
               skill = SK_PIERCE_WEAP;
-          break;
+          else
+          {
+              new_draw_info(NDI_UNIQUE, 0, who, "That weapon is not permitted by your guild");
+          }
+          }
+          else
+          {
+              if (tmp == WEAP_1H_IMPACT)
+                  skill = SK_MELEE_WEAPON;
+              else if (tmp == WEAP_1H_SLASH)
+                  skill = SK_SLASH_WEAP;
+              else if (tmp == WEAP_1H_CLEAVE)
+                  skill = SK_CLEAVE_WEAP;
+              else if (tmp == WEAP_1H_PIERCE)
+                  skill = SK_PIERCE_WEAP;
+              break;
+          }
         case ARROW:
             if(item->sub_type1 > 127)
             {
@@ -570,13 +587,18 @@ int check_skill_to_apply(object *who, object *item)
             }
 
         case BOW:
-          tmp = item->sub_type1;
-          if (tmp == RANGE_WEAP_BOW)
-              skill = SK_MISSILE_WEAPON;
-          else if (tmp == RANGE_WEAP_XBOWS)
-              skill = SK_XBOW_WEAP;
+          if(!QUERY_FLAG(CONTR(who)->guild_force, FLAG_NO_PICK))
+          {
+            tmp = item->sub_type1;
+            if (tmp == RANGE_WEAP_BOW)
+                skill = SK_MISSILE_WEAPON;
+            else if (tmp == RANGE_WEAP_XBOWS)
+                skill = SK_XBOW_WEAP;
+            else
+                skill = SK_SLING_WEAP;
+          }
           else
-              skill = SK_SLING_WEAP;
+            new_draw_info(NDI_UNIQUE, 0, who, "That weapon is not permitted by your guild");
           break;
         case POTION:
           skill = SK_USE_MAGIC_ITEM; /* hm, this can be tricky when a player kills himself
@@ -822,7 +844,7 @@ int change_skill(object *who, int sk_index)
     if (who->chosen_skill && who->chosen_skill->stats.sp == sk_index)
         return 1;
 
-    LOG(llevDebug, "APPLYcs: %s change %s to %s.\n", query_name(who), query_name(who->chosen_skill),
+    LOG(llevDebug, "APPLYcs: %s change %s to %s.\n", query_name(who), query_name(who->chosen_skill), 
                                                                 sk_index>=0?skills[sk_index].name:"INVALID");
 
     if (sk_index >= 0 && sk_index < NROFSKILLS && (tmp = find_skill(who, sk_index)) != NULL)
@@ -834,16 +856,18 @@ int change_skill(object *who, int sk_index)
         }
         return 1;
     }
-
+    if(sk_index)
+    {
     if (who->chosen_skill)
     {
         if (apply_special(who, who->chosen_skill, AP_UNAPPLY))
             LOG(llevBug, "BUG: change_skill(): can't unapply old skill (%s - %d)\n", who->name, sk_index);
         FIX_PLAYER(who, "change_skill AP_UNAPPLY");
     }
-    if (sk_index >= 0)
+    else if (sk_index >= 0)
         new_draw_info(NDI_UNIQUE, 0, who, "You have no knowledge of %s.", skills[sk_index].name);
     return 0;
+    }
 }
 
 /* This is like change_skill above, but it is given that

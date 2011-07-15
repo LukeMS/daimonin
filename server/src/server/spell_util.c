@@ -33,7 +33,7 @@ extern int  errno;
 
 spell spells[NROFREALSPELLS]          =
 {
-    {"firestorm",                   SPELL_TYPE_WIZARD, 1, 
+    {"firestorm",                   SPELL_TYPE_WIZARD, 2, 
     4, 12, 3, 6,0, 1.0,
     65,      7,      4,      0,  
     1, 4, 0, 5, SOUND_MAGIC_FIRE,
@@ -42,7 +42,7 @@ spell spells[NROFREALSPELLS]          =
     PATH_ELEMENTAL, "firebreath",SPELL_ACTIVE
     },
 
-    {"icestorm",                    SPELL_TYPE_WIZARD, 1, 
+    {"icestorm",                    SPELL_TYPE_WIZARD, 2, 
     4, 12, 3, 6,0,1.0,
     65,      7,      4,      0,  
     1, 4, 0, 5, SOUND_MAGIC_ICE,
@@ -60,7 +60,7 @@ spell spells[NROFREALSPELLS]          =
     PATH_LIFE, "meffect_green",SPELL_ACTIVE
     }, 
 
-    {"cure poison",                 SPELL_TYPE_PRIEST, 1, 
+    {"cure poison",                 SPELL_TYPE_PRIEST, 2, 
     5, 16, 3, 6,4, 1.0,/* potion only */
     0,       0,     0,      0,
     0, 0, 0, 0,   SOUND_MAGIC_STAT,
@@ -69,7 +69,7 @@ spell spells[NROFREALSPELLS]          =
     PATH_LIFE, "meffect_purple",SPELL_ACTIVE
     }, 
 
-    {"cure disease",                SPELL_TYPE_PRIEST, 1, 
+    {"cure disease",                SPELL_TYPE_PRIEST, 2, 
     5, 16, 3, 6,4, 1.0,/* balm only */
     0,       0,     0,      0,
     0, 0, 0, 0,   SOUND_MAGIC_STAT,
@@ -87,7 +87,7 @@ spell spells[NROFREALSPELLS]          =
     PATH_NATURE, "meffect_yellow",SPELL_ACTIVE
     }, 
 
-    {"identify",                    SPELL_TYPE_WIZARD, 1, 
+    {"identify",                    SPELL_TYPE_WIZARD, 2, 
     5, 24, 3, 6,2,1.0,
     0,       0,     0,      0,
     0, 0, 0, 3,  SOUND_MAGIC_DEFAULT,
@@ -96,7 +96,7 @@ spell spells[NROFREALSPELLS]          =
     PATH_TRANSMUTATION, "meffect_pink",SPELL_ACTIVE
     }, 
 
-    {"detect magic",                SPELL_TYPE_WIZARD, 1, 
+    {"detect magic",                SPELL_TYPE_WIZARD, 2, 
     5, 8, 3, 6,0,1.0,
     0,       0,     0,      0,
     0, 0, 0, 3,   SOUND_MAGIC_DEFAULT,
@@ -105,7 +105,7 @@ spell spells[NROFREALSPELLS]          =
     PATH_ABJURATION, "meffect_pink",SPELL_ACTIVE
     }, 
 
-    {"detect curse",                SPELL_TYPE_PRIEST, 1, 
+    {"detect curse",                SPELL_TYPE_PRIEST, 2, 
     5, 8, 3, 6,0,1.0,
     0,       0,     0,      0,
     0, 0, 0, 0,   SOUND_MAGIC_DEFAULT,
@@ -114,7 +114,7 @@ spell spells[NROFREALSPELLS]          =
     PATH_ABJURATION, "meffect_pink",SPELL_ACTIVE
     },
 
-    {"remove curse",                SPELL_TYPE_PRIEST, 1, 
+    {"remove curse",                SPELL_TYPE_PRIEST, 2, 
     5, 24, 3, 6,2,1.0,
     0,       0,     0,      0,
     0, 0, 0, 0, SOUND_MAGIC_DEFAULT,
@@ -123,7 +123,7 @@ spell spells[NROFREALSPELLS]          =
     PATH_ARCANE, "meffect_blue",SPELL_ACTIVE
     }, 
 
-    {"remove damnation",            SPELL_TYPE_PRIEST, 1, 
+    {"remove damnation",            SPELL_TYPE_PRIEST, 2, 
     5, 36, 3, 6,2,1.0,
     0,       0,     0,      0,
     0, 0, 0, 0, SOUND_MAGIC_DEFAULT,
@@ -141,7 +141,7 @@ spell spells[NROFREALSPELLS]          =
     PATH_DEATH,"cause_wounds",SPELL_ACTIVE
     },
 
-    {"firebolt",                   SPELL_TYPE_WIZARD, 1, 
+    {"firebolt",                   SPELL_TYPE_WIZARD, 2, 
     6, 12, 3, 6,0, 1.0,
     108,      8,      4,      0,  
     1, 3, 0, 5, SOUND_MAGIC_FIRE,
@@ -159,7 +159,7 @@ spell spells[NROFREALSPELLS]          =
     PATH_CHAOS, "bullet",SPELL_ACTIVE
     },
 
-    {"frostbolt",                   SPELL_TYPE_WIZARD, 1, 
+    {"frostbolt",                   SPELL_TYPE_WIZARD, 2, 
     6, 12, 3, 6,0, 1.0,
     108,      8,      4,      0,  
     1, 3, 0, 5, SOUND_MAGIC_ICE,
@@ -168,7 +168,7 @@ spell spells[NROFREALSPELLS]          =
     PATH_ELEMENTAL, "frostbolt", SPELL_ACTIVE
     },
 
-    {"remove depletion",            SPELL_TYPE_PRIEST, 1, 
+    {"remove depletion",            SPELL_TYPE_PRIEST, 2, 
     5, 24, 3, 6,4, 1.0,
     0,       0,     0,      0,
     0, 0, 0, 0,    SOUND_MAGIC_STAT,
@@ -186,7 +186,7 @@ spell spells[NROFREALSPELLS]          =
     PATH_SPIRIT, "probebullet",SPELL_ACTIVE
     },
 
-    {"remove death sickness",            SPELL_TYPE_PRIEST, 1, 
+    {"remove death sickness",            SPELL_TYPE_PRIEST, 2, 
     5, 24, 3, 6,0, 1.0,
     0,       0,     0,      0,
     0,  0, 0, 0, SOUND_MAGIC_STAT,
@@ -195,7 +195,7 @@ spell spells[NROFREALSPELLS]          =
     PATH_LIFE, "meffect_purple",SPELL_ACTIVE
     },
 
-    {"restoration",            SPELL_TYPE_PRIEST, 1, 
+    {"restoration",            SPELL_TYPE_PRIEST, 2, 
     5, 16, 3, 6,3, 1.0,
     0,       0,     0,      0,
     0, 0, 0, 0, SOUND_MAGIC_STAT,
@@ -204,7 +204,7 @@ spell spells[NROFREALSPELLS]          =
     PATH_LIFE, "meffect_purple",SPELL_ACTIVE
     },
 
-    {"lightning",                   SPELL_TYPE_WIZARD, 1, 
+    {"lightning",                   SPELL_TYPE_WIZARD, 2, 
     6, 12, 3, 6,0, 1.0,
     108,      8,      4,      0,  
     1, 3, 0, 5, SOUND_MAGIC_ELEC,
@@ -213,7 +213,7 @@ spell spells[NROFREALSPELLS]          =
     PATH_ELEMENTAL, "lightning", SPELL_ACTIVE
     },
 
-    {"remove slow",            SPELL_TYPE_PRIEST, 1, 
+    {"remove slow",            SPELL_TYPE_PRIEST, 2, 
     5, 16, 3, 6,3, 1.0,
     0,       0,     0,      0,
     0, 0, 0, 0, SOUND_MAGIC_STAT,
@@ -222,7 +222,7 @@ spell spells[NROFREALSPELLS]          =
     PATH_LIFE, "meffect_purple",SPELL_ACTIVE
     },
 
-    {"remove fear",            SPELL_TYPE_PRIEST, 1, 
+    {"remove fear",            SPELL_TYPE_PRIEST, 2, 
     5, 16, 3, 6,3, 1.0,
     0,       0,     0,      0,
     0, 0, 0, 0, SOUND_MAGIC_STAT,
@@ -231,7 +231,7 @@ spell spells[NROFREALSPELLS]          =
     PATH_LIFE, "meffect_purple",SPELL_ACTIVE
     },
 
-    {"remove snare",            SPELL_TYPE_PRIEST, 1, 
+    {"remove snare",            SPELL_TYPE_PRIEST, 2, 
     5, 16, 3, 6,3, 1.0,
     0,       0,     0,      0,
     0, 0, 0, 0, SOUND_MAGIC_STAT,
@@ -240,7 +240,7 @@ spell spells[NROFREALSPELLS]          =
     PATH_LIFE, "meffect_purple",SPELL_ACTIVE
     },
 
-    {"remove paralysis",            SPELL_TYPE_PRIEST, 1, 
+    {"remove paralysis",            SPELL_TYPE_PRIEST, 2, 
     5, 16, 3, 6,3, 1.0,
     0,       0,     0,      0,
     0, 0, 0, 0, SOUND_MAGIC_STAT,
@@ -249,7 +249,7 @@ spell spells[NROFREALSPELLS]          =
     PATH_LIFE, "meffect_purple",SPELL_ACTIVE
     },
 
-    {"remove confusion",            SPELL_TYPE_PRIEST, 1, 
+    {"remove confusion",            SPELL_TYPE_PRIEST, 2, 
     5, 16, 3, 6,3, 1.0,
     0,       0,     0,      0,
     0, 0, 0, 0, SOUND_MAGIC_STAT,
@@ -258,7 +258,7 @@ spell spells[NROFREALSPELLS]          =
     PATH_LIFE, "meffect_purple",SPELL_ACTIVE
     },
 
-    {"remove blindness",            SPELL_TYPE_PRIEST, 1, 
+    {"remove blindness",            SPELL_TYPE_PRIEST, 2, 
     5, 16, 3, 6,3, 1.0,
     0,       0,     0,      0,
     0, 0, 0, 0, SOUND_MAGIC_STAT,
@@ -1072,6 +1072,16 @@ int cast_spell(object *op, object *caster, int dir, int type, int ability, Spell
             new_draw_info(NDI_UNIQUE, 0, op, "Powerful countermagic cancels all summoning here!");
         return 0;
     }
+    if (op->type == PLAYER && QUERY_FLAG(CONTR(op)->guild_force, FLAG_NO_STEAL) && !(spells[type].flags & SPELL_DESC_WIS))
+    {
+        new_draw_info(NDI_UNIQUE, 0, op, "Your Guild membership prevents casting spells!");
+        return 0;
+    }
+    if (op->type == PLAYER && QUERY_FLAG(CONTR(op)->guild_force, FLAG_INV_LOCKED) && (spells[type].flags & SPELL_DESC_WIS))
+    {
+        new_draw_info(NDI_UNIQUE, 0, op, "Your Guild membership prevents casting prayers!");
+        return 0;
+    }
 
     /* ok... its item == spellNPC then op is the target of this spell  */
     if (op->type == PLAYER)
@@ -1085,6 +1095,12 @@ int cast_spell(object *op, object *caster, int dir, int type, int ability, Spell
                 new_draw_info(NDI_UNIQUE, 0, op, "It is denied for you to cast that spell.");
                 return 0;
             }
+            if (CONTR(caster)->guild_force->direction < s->level && !QUERY_FLAG(op, FLAG_WIZ))
+            {
+                new_draw_info(NDI_UNIQUE, 0, op, "That spell is too difficult for you to cast.");
+                return 0;
+            }
+
             if (!(QUERY_FLAG(op, FLAG_WIZ)))
             {
                 if (!(spells[type].flags & SPELL_DESC_WIS)
@@ -3749,3 +3765,5 @@ int SP_lvl_dam_adjust(int level, int spell_type, int base_dam, int stats_bonus)
 
     return dam_adj;
 }
+
+
