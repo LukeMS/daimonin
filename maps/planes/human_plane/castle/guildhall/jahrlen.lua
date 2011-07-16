@@ -1,6 +1,6 @@
--- merc_jahrlen.lua
+-- jahrlen.lua
 
--- Jahrlen offers quests to Mercenary guild members only:
+-- Jahrlen offers quests to Wizard guild members and guildless players only:
 -- 1. (Currently merged with second quest due to lack of time) Reward: wizardry skill
 -- 2. Kill Rat King. Location: Rat infested well. Lvl: 2-3. Reward: probe spell.
 -- 3. Retrieve Rusty Rod. Location: Beneath Guild Hall. Lvl: 4-5. Reward: Magic Bullet
@@ -8,6 +8,9 @@
 require("topic_list")
 require("quest_builder")
 require("interface_builder")
+if not module_guildsLOADED then
+    require("modules/guilds")
+end
 
 local pl        = event.activator
 local me        = event.me
@@ -35,14 +38,8 @@ local qstat_1 = qb:GetStatus(1)
 local qstat_2 = qb:GetStatus(2)
 
 -- Guild checks
-local guild_tag = "Mercenary"
-local guild_stat = game.GUILD_NO
-local guild_force = nil
-guild_force = pl:GetGuild(guild_tag)
-if guild_force ~= nil then
-    guild_stat = guild_force.sub_type_1
-end
-
+local guild_tag = "Wizard"
+local guild_stat = module_guildsGetStatus(guild_tag, pl)
 -- 
 -- Helper functions
 --
@@ -98,15 +95,10 @@ end
 --
 
 function topicGreeting()
-    if guild_stat ~= game.GUILD_IN then
-        ib:SetHeader("st_001", me)
-        -- Refuse to talk to non-members.
-        local join = "join"
-        ib:SetMsg("This place is only for members of the "..guild_tag.." guild!\n\n")
-        if guild_stat == game.GUILD_OLD then
-            join = "rejoin"
-        end
-        ib:AddMsg("Go back upstairs and see Cashin to "..join.." the guild.\n\nThen we will talk again.")
+    if guild_stat ~= game.GUILD_IN and module_guildsPlayerGuildless(pl) == false then
+        -- They are not in the guild and they are not guildless.
+            ib:SetHeader("st_001", me)
+            ib:SetMsg("I'm sorry, but I cannot teach members of your guild these spells.\n\n")
     elseif qstat_1 == game.QSTAT_NO then
         -- First real welcome text.
         ib:SetHeader("st_001", me)
@@ -135,7 +127,7 @@ end
 
 -- The player asks about available quests
 function topicQuest()
-    if qstat_1 == game.QSTAT_ACTIVE or qstat_2 == game.QSTAT_ACTIVE then
+    if unfinished_q then
         quest_reminder()
     elseif qstat_1 == game.QSTAT_NO then
         ib:SetHeader("st_003", me)
@@ -171,13 +163,13 @@ end
 -- The player claims to have completed a quest. Double check and
 -- possibly give out rewards
 function topicQuestComplete()
-    if qstat_1 == game.QSTAT_ACTIVE or qstat_2 == game.QSTAT_ACTIVE then
+    if unfinished_q then
         quest_reminder()
     elseif qstat_1 == game.QSTAT_SOLVED then
         ib:SetHeader("st_003", me)
         ib:SetTitle("Quest Complete")
         ib:SetMsg("Very well done. Hopefully we won't have any more rat trouble for some time.\n\n")
-        ib:AddMsg("I'll now teach you the ~Wizardry Spells~ skill and the ^Probe^ spell")
+        --ib:AddMsg("I'll now teach you the ~Wizardry Spells~ skill and the ^Probe^ spell")
         teachSpell("probe") 
         ib:SetButton("Back", "hello")
         qb:Finish(questnr)
@@ -216,6 +208,7 @@ local function topRangaron()
     ib:SetTitle("Rangaron")
     ib:SetMsg("\n\nI said 'Don't ask me more now'! You have problems with your ears??\n\n")
     ib:AddMsg("If you meet Rangaron, and I'm sure you will, then tell him what I told you.")
+    ib:AddMsg("\nHis assistant Lon'Li'Uni'Sm may know where he is.")
     ib:SetButton("Back", "hi")
 end
 
@@ -249,7 +242,7 @@ local function topMahch()
     ib:SetMsg("\n\nYes, he is a nasty little hobgoblin.\n\n")
     ib:AddMsg("He creeps around at night stealing things.\n\n")
     ib:AddMsg("We have tried to see where his bolt hole is, and we think it might be somewhere ")
-    ib:AddMsg("close to some boxes outside.")
+    ib:AddMsg("close to some boxes outside of the Mercenery guild.")
     ib:SetButton("Back", "hi")
 end
 
@@ -257,7 +250,7 @@ tl = TopicList()
 tl:AddGreeting(nil, topicGreeting)
 tl:SetDefault(topicGreeting)
 
-if guild_stat == game.GUILD_IN then
+if guild_stat == game.GUILD_IN or module_guildsPlayerGuildless(pl) == true then
     tl:AddTopics({"quest", "explain%s+quest"}, topicQuest)
     tl:AddTopics({"accept", "accept%s+quest"}, topicAccept)
     tl:AddTopics({"complete", "quest%s+complete"}, topicQuestComplete)
