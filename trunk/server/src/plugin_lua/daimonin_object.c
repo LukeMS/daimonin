@@ -4041,7 +4041,8 @@ static int GameObject_GetGroup(lua_State *L)
 /*****************************************************************************/
 /* Name   : GameObject_GetTarget                                             */
 /* Lua    : object:GetTarget()                                               */
-/* Info   : Only works for player objects. Other types generate an error.    */
+/* Info   : Only works for player or monster objects. Other types generate   */
+/*          an error.                                                        */
 /*          The function takes no arguments.                                 */
 /*          The return is the object that is the current target.             */
 /* Status : Untested/Stable                                                  */
@@ -4056,9 +4057,12 @@ static int GameObject_GetTarget(lua_State *L)
     /* Only players can have targets */
     if (WHO->type == PLAYER && CONTR(WHO))
         return push_object(L, &GameObject, CONTR(WHO)->target_object);
+    else if (WHO->type == MONSTER && WHO->enemy) // But if a monster has an enemy, that's close enough to a target.
+        return push_object(L, &GameObject, WHO->enemy);
     else
         return luaL_error(L, "GetTarget() can only be called on a player!");
 }
+
 
 /*****************************************************************************/
 /* Name   : GameObject_SetTarget                                             */
