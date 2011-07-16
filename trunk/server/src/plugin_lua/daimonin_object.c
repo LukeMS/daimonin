@@ -4057,8 +4057,11 @@ static int GameObject_GetTarget(lua_State *L)
     /* Only players can have targets */
     if (WHO->type == PLAYER && CONTR(WHO))
         return push_object(L, &GameObject, CONTR(WHO)->target_object);
-    else if (WHO->type == MONSTER && WHO->enemy) // But if a monster has an enemy, that's close enough to a target.
-        return push_object(L, &GameObject, WHO->enemy);
+    else if (WHO->type == MONSTER)
+        if (WHO->enemy) // But if a monster has an enemy, that's close enough to a target.
+            return push_object(L, &GameObject, WHO->enemy);
+        else
+            lua_pushnil(L);
     else
         return luaL_error(L, "GetTarget() can only be called on a player!");
 }
