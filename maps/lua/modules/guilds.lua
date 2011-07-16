@@ -298,11 +298,11 @@ if _guilds[guildnr].stats.maxgrace ~= nil then    guild_force.max_grace     = _g
 if _guilds[guildnr].stats.grace ~= nil then    guild_force.grace        = _guilds[guildnr].stats.grace end
 if _guilds[guildnr].flags.weapon_max_level ~= nil then    guild_force.value        = _guilds[guildnr].flags.weapon_max_level end
 if _guilds[guildnr].flags.spell_max_difficulty ~= nil then    guild_force.level        = _guilds[guildnr].flags.spell_max_difficulty end
-if _guilds[guildnr].flags.no_wiz_spells ~= nil then    guild_force.f_no_steal     = _guilds[guildnr].flags.no_wiz_spells end
-if _guilds[guildnr].flags.no_prayers ~= nil then    guild_force.f_inv_locked   = _guilds[guildnr].flags.no_prayers end
-if _guilds[guildnr].flags.no_pole ~= nil then    guild_force.f_run_away     = _guilds[guildnr].flags.no_pole end
-if _guilds[guildnr].stats.no_archery ~= nil then    guild_force.f_no_pick      = _guilds[guildnr].flags.no_archery end
-if _guilds[guildnr].stats.no_2h ~= nil then    guild_force.f_player_only      = _guilds[guildnr].flags.no_2h end
+if _guilds[guildnr].flags.no_wiz_spells ~= nil then    guild_force.f_no_steal     = 1 end
+if _guilds[guildnr].flags.no_prayers ~= nil then    guild_force.f_inv_locked   = 1 end
+if _guilds[guildnr].flags.no_pole ~= nil then    guild_force.f_run_away     = 1 end
+if _guilds[guildnr].stats.no_archery ~= nil then    guild_force.f_no_pick      = 1 end
+if _guilds[guildnr].stats.no_2h ~= nil then    guild_force.f_player_only      = 1 end
 if _guilds[guildnr].stats.resists.impact ~= nil then    guild_force.resist_impact= _guilds[guildnr].stats.resists.impact end
 if _guilds[guildnr].stats.resists.cleave ~= nil then    guild_force.resist_cleave= _guilds[guildnr].stats.resists.cleave end
 if _guilds[guildnr].stats.resists.slash ~= nil then    guild_force.resist_slash = _guilds[guildnr].stats.resists.slash end
@@ -373,6 +373,7 @@ local function _RemoveGuildStats(guild, player)
     local guildnr = _isvalid(guild)
     local guild_force = _GetGuildForce(guild, player)
     -- Go through all stats and change them appropriately.
+
 if _guilds[guildnr].stats.Str ~= nil then guild_force.strength =  0 end
 if _guilds[guildnr].stats.Dex ~= nil then guild_force.dexterity          = 0 end
 if _guilds[guildnr].stats.Con ~= nil then guild_force.constitution       = 0 end
@@ -385,7 +386,7 @@ if _guilds[guildnr].stats.ac ~= nil then guild_force.weapon_class       = 0 end
 if _guilds[guildnr].stats.dam ~= nil then guild_force.damage             = 0 end
 if _guilds[guildnr].stats.thacnil ~= nil then    guild_force.thacnil              = 0 end
 if _guilds[guildnr].stats.thacm ~= nil then    guild_force.thacm        = 0 end
-if _guilds[guildnr].stats.weapon_speed ~= nil then    guild_force.weapon_speed = 0 end-- guild_force.weapon_speed end
+if _guilds[guildnr].stats.weapon_speed ~= nil then    guild_force.weapon_speed = 0 end
 if _guilds[guildnr].stats.maxhp ~= nil then    guild_force.max_hitpoints        = 0 end
 if _guilds[guildnr].stats.hp ~= nil then    guild_force.hitpoints           = 0 end
 if _guilds[guildnr].stats.maxsp ~= nil then    guild_force.max_spellpoints        = 0 end
@@ -638,4 +639,3 @@ function module_guildsJoin(guild, player)
 
     return true
 end
-
