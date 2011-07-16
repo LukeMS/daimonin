@@ -2,7 +2,7 @@ Object treant_ancient
 name Ancient Treant
 face treant_ancient.251
 race tree
-randomitems loot;wealth_normal&D65;loot_base&D17;loot_magic&d27;loot_melee&d22
+randomitems loot;wealth_rich&D65;loot_base&D17;loot_magic&d27;loot_melee&d22
 type 80
 layer 6
 identified 1
@@ -28,15 +28,16 @@ pow 10
 sp -1
 maxsp 20
 hp -1
-maxhp 71
+maxhp 82
 ac 28
 wc 15
 thac0 85
 thacm 5
 dam 53
 item_condition 10
-weapon_speed 3.5
+weapon_speed 3.4
 attack_impact 100
+resist_fire -20
 speed -0.048
 level 1
 item_quality 3
