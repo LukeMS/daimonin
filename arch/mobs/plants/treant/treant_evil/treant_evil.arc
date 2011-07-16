@@ -28,7 +28,7 @@ pow 10
 sp -1
 maxsp 20
 hp -1
-maxhp 71
+maxhp 78
 ac 28
 wc 15
 thac0 85
@@ -37,6 +37,7 @@ dam 53
 item_condition 10
 weapon_speed 3.5
 attack_impact 100
+resist_fire -25
 speed -0.048
 level 1
 item_quality 2
