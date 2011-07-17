@@ -1095,7 +1095,7 @@ int cast_spell(object *op, object *caster, int dir, int type, int ability, Spell
                 new_draw_info(NDI_UNIQUE, 0, op, "It is denied for you to cast that spell.");
                 return 0;
             }
-            if (CONTR(caster)->guild_force->direction < s->level && !QUERY_FLAG(op, FLAG_WIZ))
+            if (CONTR(caster)->guild_force->level != 0 && CONTR(caster)->guild_force->level < s->level && !QUERY_FLAG(op, FLAG_WIZ))
             {
                 new_draw_info(NDI_UNIQUE, 0, op, "That spell is too difficult for you to cast.");
                 return 0;
