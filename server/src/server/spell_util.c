@@ -1072,12 +1072,12 @@ int cast_spell(object *op, object *caster, int dir, int type, int ability, Spell
             new_draw_info(NDI_UNIQUE, 0, op, "Powerful countermagic cancels all summoning here!");
         return 0;
     }
-    if (op->type == PLAYER && QUERY_FLAG(CONTR(op)->guild_force, FLAG_NO_STEAL) && !(spells[type].flags & SPELL_DESC_WIS))
+    if (op->type == PLAYER && QUERY_FLAG(CONTR(op)->guild_force, FLAG_NO_STEAL) && !(spells[type].flags & SPELL_DESC_WIS) && item != spellPotion)
     {
         new_draw_info(NDI_UNIQUE, 0, op, "Your Guild membership prevents casting spells!");
         return 0;
     }
-    if (op->type == PLAYER && QUERY_FLAG(CONTR(op)->guild_force, FLAG_INV_LOCKED) && (spells[type].flags & SPELL_DESC_WIS))
+    if (op->type == PLAYER && QUERY_FLAG(CONTR(op)->guild_force, FLAG_INV_LOCKED) && (spells[type].flags & SPELL_DESC_WIS) && item != spellPotion)
     {
         new_draw_info(NDI_UNIQUE, 0, op, "Your Guild membership prevents casting prayers!");
         return 0;
