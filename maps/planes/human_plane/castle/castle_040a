@@ -3,7 +3,7 @@ name Guild Hall
 msg
 Creator: Daimonin Map Editor
 Date:    7/16/2004
-Modified: 2010-01-09 smacky
+Modified: 2010-09-18 Franklin Barnett (aka _person_)
 endmsg
 width 24
 height 24
@@ -808,6 +808,22 @@ arch chair1_111
 direction 7
 x 4
 y 18
+end
+arch spawn_point
+x 4
+y 18
+arch mage_old
+name Jahrlen
+type 83
+title the War Chronomancer
+level 91
+direction 2
+arch event_obj
+name Lua
+sub_type 13
+race guildhall/jahrlen.lua
+end
+end
 end
 arch floor_ostone10
 x 4
