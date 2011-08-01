@@ -74,7 +74,10 @@ _guilds = {
         flags = {
             no_wiz_spells = 1,
             no_prayers = 1,
-            value = 100,
+            no_2h = 0,
+            no_pole = 0,
+            no_archery = 0,
+            weapon_max_level = 100,
         },
     },
     [2] = {
@@ -122,6 +125,7 @@ _guilds = {
             weapon_max_level = 7,
             no_2h = 1,
             no_pole = 1,
+            no_wiz_spells = 0,
             no_prayers = 1,
             no_archery = 1,
         },
@@ -170,9 +174,11 @@ _guilds = {
         flags = {
             weapon_max_level = 10,
             no_archery = 1,
+            no_prayers = 0,
             no_wiz_spells = 1,
             no_2h = 1,
             no_pole = 1,
+            spell_max_difficulty = 2, -- TODO: Add a prayer max difficulty.
         },
     },
 }
@@ -298,11 +304,11 @@ if _guilds[guildnr].stats.maxgrace ~= nil then    guild_force.max_grace     = _g
 if _guilds[guildnr].stats.grace ~= nil then    guild_force.grace        = _guilds[guildnr].stats.grace end
 if _guilds[guildnr].flags.weapon_max_level ~= nil then    guild_force.value        = _guilds[guildnr].flags.weapon_max_level end
 if _guilds[guildnr].flags.spell_max_difficulty ~= nil then    guild_force.level        = _guilds[guildnr].flags.spell_max_difficulty end
-if _guilds[guildnr].flags.no_wiz_spells then    guild_force.f_no_steal     = 1 end
-if _guilds[guildnr].flags.no_prayers then    guild_force.f_inv_locked   = 1 end
-if _guilds[guildnr].flags.no_pole then    guild_force.f_run_away     = 1 end
-if _guilds[guildnr].stats.no_archery then    guild_force.f_no_pick      = 1 end
-if _guilds[guildnr].stats.no_2h then    guild_force.f_player_only      = 1 end
+if _guilds[guildnr].flags.no_wiz_spells ~= 0 then    guild_force.f_no_steal     = 1 end
+if _guilds[guildnr].flags.no_prayers ~= 0 then    guild_force.f_inv_locked   = 1 end
+if _guilds[guildnr].flags.no_pole ~= 0 then    guild_force.f_run_away     = 1 end
+if _guilds[guildnr].stats.no_archery ~= 0 then    guild_force.f_no_pick      = 1 end
+if _guilds[guildnr].stats.no_2h ~= 0 then    guild_force.f_player_only      = 1 end
 if _guilds[guildnr].stats.resists.impact ~= nil then    guild_force.resist_impact= _guilds[guildnr].stats.resists.impact end
 if _guilds[guildnr].stats.resists.cleave ~= nil then    guild_force.resist_cleave= _guilds[guildnr].stats.resists.cleave end
 if _guilds[guildnr].stats.resists.slash ~= nil then    guild_force.resist_slash = _guilds[guildnr].stats.resists.slash end
