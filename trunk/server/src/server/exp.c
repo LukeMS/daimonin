@@ -872,4 +872,23 @@ int calc_skill_exp(object *who, object *op, float mod, int level, int *real)
     return op_exp;
 }
 
+int exp_from_base_skill(player *pl, int base_exp, int sk)
+{
+    int i;
+    float percent;
 
+    for (i = 0; i <= 2; i++)
+    {
+        if (pl->base_skill_group[i] == skills[sk].category)
+        {
+            /* Let's say a mob gives 250 exp. And the player's guild gives them a 50%
+             * exp boost in the skill they used. (250 * (50 / 100 + 1)) = 250 * 1.5.
+             */
+            percent = (float)pl->base_skill_group_exp[i] / 100 + 1;
+            return base_exp * percent;
+        }
+    }
+
+    // No bonus. :(
+    return base_exp;
+}

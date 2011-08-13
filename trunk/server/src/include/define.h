@@ -32,6 +32,13 @@
 #ifndef __DEFINE_H
 #define __DEFINE_H
 
+// Guild flags to restrict certain skill usages.
+#define GUILD_NO_MAGIC   1
+#define GUILD_NO_PRAYER  2
+#define GUILD_NO_ARCHERY 4
+#define GUILD_NO_2H      8
+#define GUILD_NO_POLEARM 16
+
 /* modes for cast_identify() */
 #define IDENTIFY_MODE_NORMAL 0
 #define IDENTIFY_MODE_ALL 1
@@ -828,7 +835,7 @@
  * Use of the state-variable in player objects:
  */
 /* static player state flags */
-#define ST_BORN                 0x01 /* this char was never played before and is new */ 
+#define ST_BORN                 0x01 /* this char was never played before and is new */
 #define ST_RESURRECT            0x02 /* player is dead but can be resurrected */
 /* these state flags are dynamic and not saved */
 #define ST_PLAYING              0x20

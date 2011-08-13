@@ -58,6 +58,8 @@
  * in skill_util.c
  */
 
+/* TODO: The caregory of some skills have been left as "SKILLGROUP_MISC". So as these skills become available,
+ * their skillgroup should be updated. */
 skill   skills[NROFSKILLS]  =
 {
     /* 0 */
@@ -70,47 +72,47 @@ skill   skills[NROFSKILLS]  =
     { "jeweler lore",       NULL, 2, 10, 0, 0.0f,    NO_STAT_VAL,     NO_STAT_VAL,     NO_STAT_VAL },
     { "alchemy",            NULL, SKILLGROUP_MISC, 11, 1, 1.0f,    INTELLIGENCE,    WIS,     DEX },
     { "magic lore",         NULL, 2, 11, 0, 0.0f,    NO_STAT_VAL,     NO_STAT_VAL,     NO_STAT_VAL },
-    { "common literacy",    NULL, SKILLGROUP_MISC, 11, 1, 1.0f,    INTELLIGENCE,    WIS, NO_STAT_VAL },
+    { "common literacy",    NULL, SKILLGROUP_MENTAL, 11, 1, 1.0f,    INTELLIGENCE,    WIS, NO_STAT_VAL },
     { "bargaining",         NULL, SKILLGROUP_MISC, 11, 0, 0.0f,  NO_STAT_VAL, NO_STAT_VAL, NO_STAT_VAL },
     /* 10 */
-    { "jumping",            NULL, SKILLGROUP_MISC, 11, 5, 2.5f,      NO_STAT_VAL,     NO_STAT_VAL, NO_STAT_VAL },
-    { "sense magic",        NULL, SKILLGROUP_MISC, 11, 10, 1.0f,   POW,     INTELLIGENCE, NO_STAT_VAL },
-    { "oratory",            NULL, SKILLGROUP_MISC, 11, 1, 2.0f,      CHA,     INTELLIGENCE, NO_STAT_VAL },
-    { "singing",            NULL, SKILLGROUP_MISC, 11, 1, 2.0f,      CHA,     INTELLIGENCE, NO_STAT_VAL },
-    { "sense curse",        NULL, SKILLGROUP_MISC, 11, 10, 1.0f,   WIS,     POW, NO_STAT_VAL },
+    { "jumping",            NULL, SKILLGROUP_AGILITY, 11, 5, 2.5f,      NO_STAT_VAL,     NO_STAT_VAL, NO_STAT_VAL },
+    { "sense magic",        NULL, SKILLGROUP_MENTAL, 11, 10, 1.0f,   POW,     INTELLIGENCE, NO_STAT_VAL },
+    { "oratory",            NULL, SKILLGROUP_PERSONAL, 11, 1, 2.0f,      CHA,     INTELLIGENCE, NO_STAT_VAL },
+    { "singing",            NULL, SKILLGROUP_PERSONAL, 11, 1, 2.0f,      CHA,     INTELLIGENCE, NO_STAT_VAL },
+    { "sense curse",        NULL, SKILLGROUP_MENTAL, 11, 10, 1.0f,   WIS,     POW, NO_STAT_VAL },
     /* 15 */
-    { "find traps",         NULL, SKILLGROUP_MISC, 11, 0, 0.0f,  DEX, NO_STAT_VAL, NO_STAT_VAL },
+    { "find traps",         NULL, SKILLGROUP_AGILITY, 11, 0, 0.0f,  DEX, NO_STAT_VAL, NO_STAT_VAL },
     { "meditation",         NULL, SKILLGROUP_MISC, 11, 0, 0.0f, WIS,      POW,     INTELLIGENCE },
-    { "punching",           NULL, SKILLGROUP_MISC, 11, 0, 1.0f,      STR,      DEX, NO_STAT_VAL },
+    { "punching",           NULL, SKILLGROUP_PHYSIQUE, 11, 0, 1.0f,      STR,      DEX, NO_STAT_VAL },
     { "flame touch",        NULL, SKILLGROUP_MISC, 11, 0, 1.0f,      STR,      DEX,     INTELLIGENCE },
-    { "karate",             NULL, SKILLGROUP_MISC, 11, 0, 1.0f,      STR,      DEX, NO_STAT_VAL },
+    { "karate",             NULL, SKILLGROUP_PHYSIQUE, 11, 0, 1.0f,      STR,      DEX, NO_STAT_VAL },
     /* 20 */
-    { "mountaineer",        NULL, SKILLGROUP_MISC, 11, 0, 0.0f,  NO_STAT_VAL, NO_STAT_VAL, NO_STAT_VAL },
+    { "mountaineer",        NULL, SKILLGROUP_PHYSIQUE, 11, 0, 0.0f,  NO_STAT_VAL, NO_STAT_VAL, NO_STAT_VAL },
     { "ranger lore",        NULL, 6, 11, 0, 0.0f,    NO_STAT_VAL,     NO_STAT_VAL, NO_STAT_VAL },
     { "inscription",        NULL, SKILLGROUP_MISC, 11, 1, 5.0f,      POW,      INTELLIGENCE,  NO_STAT_VAL },
-    { "impact weapons",     NULL, SKILLGROUP_MISC, 11, 0, 1.0f,      STR,      DEX, NO_STAT_VAL },
-    { "bow archery",        NULL, SKILLGROUP_MISC, 11, 0, 1.0f,     DEX,      STR, NO_STAT_VAL },
+    { "impact weapons",     NULL, SKILLGROUP_PHYSIQUE, 11, 0, 1.0f,      STR,      DEX, NO_STAT_VAL },
+    { "bow archery",        NULL, SKILLGROUP_AGILITY, 11, 0, 1.0f,     DEX,      STR, NO_STAT_VAL },
     /* 25 */
-    { "throwing",           NULL, SKILLGROUP_MISC, 11, 0, 1.0f,      DEX,      DEX, NO_STAT_VAL },
-    { "wizardry spells",    NULL, SKILLGROUP_MISC, 11, 0, 0.0f,      POW,      INTELLIGENCE,       WIS },
-    { "remove traps",       NULL, SKILLGROUP_MISC, 11, 1, 0.5f,    DEX,      INTELLIGENCE, NO_STAT_VAL },
-    { "set traps",          NULL, SKILLGROUP_MISC, 11, 1, 0.5f,    INTELLIGENCE,      DEX, NO_STAT_VAL },
-    { "magic devices",      NULL, SKILLGROUP_MISC, 11, 0, 1.0f,   POW, DEX, NO_STAT_VAL },
+    { "throwing",           NULL, SKILLGROUP_AGILITY, 11, 0, 1.0f,      DEX,      DEX, NO_STAT_VAL },
+    { "wizardry spells",    NULL, SKILLGROUP_MAGIC, 11, 0, 0.0f,      POW,      INTELLIGENCE,       WIS },
+    { "remove traps",       NULL, SKILLGROUP_AGILITY, 11, 1, 0.5f,    DEX,      INTELLIGENCE, NO_STAT_VAL },
+    { "set traps",          NULL, SKILLGROUP_AGILITY, 11, 1, 0.5f,    INTELLIGENCE,      DEX, NO_STAT_VAL },
+    { "magic devices",      NULL, SKILLGROUP_MAGIC, 11, 0, 1.0f,   POW, DEX, NO_STAT_VAL },
     /* 30 */
-    { "divine prayers",     NULL, SKILLGROUP_MISC, 11, 0, 0.0f,      WIS,      POW,     INTELLIGENCE },
-    { "clawing",            NULL, SKILLGROUP_MISC, 11, 0, 0.0f,      STR,      DEX, NO_STAT_VAL },
+    { "divine prayers",     NULL, SKILLGROUP_WISDOM, 11, 0, 0.0f,      WIS,      POW,     INTELLIGENCE },
+    { "clawing",            NULL, SKILLGROUP_PHYSIQUE, 11, 0, 0.0f,      STR,      DEX, NO_STAT_VAL },
     { "levitation",         NULL, SKILLGROUP_MISC, 11, 0, 0.0f, NO_STAT_VAL, NO_STAT_VAL, NO_STAT_VAL },
-    { "disarm traps",       NULL, SKILLGROUP_MISC, 11, 1, 0.5f,      DEX,      INTELLIGENCE,     INTELLIGENCE },
-    { "crossbow archery",   NULL, SKILLGROUP_MISC, 11, 0, 1.0f,     DEX,      STR, NO_STAT_VAL },
+    { "disarm traps",       NULL, SKILLGROUP_AGILITY, 11, 1, 0.5f,      DEX,      INTELLIGENCE,     INTELLIGENCE },
+    { "crossbow archery",   NULL, SKILLGROUP_AGILITY, 11, 0, 1.0f,     DEX,      STR, NO_STAT_VAL },
     /* 35 */
-    { "sling archery",      NULL, SKILLGROUP_MISC, 11, 0, 1.0f,     DEX,      STR, NO_STAT_VAL },
-    { "identify items",     NULL, SKILLGROUP_MISC, 11, 1, 1.0f,      INTELLIGENCE,      DEX,     WIS },
-    { "slash weapons",      NULL, SKILLGROUP_MISC, 11, 0, 1.0f,      STR,      DEX, NO_STAT_VAL },
-    { "cleave weapons",     NULL, SKILLGROUP_MISC, 11, 0, 1.0f,      STR,      DEX, NO_STAT_VAL },
-    { "pierce weapons",     NULL, SKILLGROUP_MISC, 11, 0, 1.0f,      STR,      DEX, NO_STAT_VAL },
+    { "sling archery",      NULL, SKILLGROUP_AGILITY, 11, 0, 1.0f,     DEX,      STR, NO_STAT_VAL },
+    { "identify items",     NULL, SKILLGROUP_MENTAL, 11, 1, 1.0f,      INTELLIGENCE,      DEX,     WIS },
+    { "slash weapons",      NULL, SKILLGROUP_PHYSIQUE, 11, 0, 1.0f,      STR,      DEX, NO_STAT_VAL },
+    { "cleave weapons",     NULL, SKILLGROUP_PHYSIQUE, 11, 0, 1.0f,      STR,      DEX, NO_STAT_VAL },
+    { "pierce weapons",     NULL, SKILLGROUP_PHYSIQUE, 11, 0, 1.0f,      STR,      DEX, NO_STAT_VAL },
     /* 40 */
-    { "two-hand mastery",   NULL, SKILLGROUP_MISC, 11, 0, 0.0f,      STR,      DEX, NO_STAT_VAL },
-    { "polearm mastery",    NULL, SKILLGROUP_MISC, 11, 0, 0.0f,      STR,      DEX, NO_STAT_VAL }
+    { "two-hand mastery",   NULL, SKILLGROUP_PHYSIQUE, 11, 0, 0.0f,      STR,      DEX, NO_STAT_VAL },
+    { "polearm mastery",    NULL, SKILLGROUP_PHYSIQUE, 11, 0, 0.0f,      STR,      DEX, NO_STAT_VAL }
 };
 
 static char *exp_group_arch_name[NROFSKILLGROUPS] = {
@@ -541,45 +543,41 @@ int check_skill_to_apply(object *who, object *item)
     switch (item->type)
     {
         case WEAPON:
-          tmp = item->sub_type1;
-          if (tmp >= WEAP_POLE_IMPACT && !pl->guild_force->run_away) /* we have a polearm! */
+          if (pl->guild_force->value && item->item_level > pl->guild_force->value)
           {
+              new_draw_info(NDI_UNIQUE, 0, who, "That weapon is not permitted by your guild.");
+              return 0;
+          }
+          tmp = item->sub_type1;
+          if (tmp >= WEAP_POLE_IMPACT) /* we have a polearm! */
+          {
+              if (pl->guild_force->weight_limit && pl->guild_force->weight_limit & GUILD_NO_POLEARM)
+              {
+                  new_draw_info(NDI_UNIQUE, 0, who, "That weapon is not permitted by your guild.");
+                  return 0;
+              }
               tmp = item->sub_type1 - WEAP_POLE_IMPACT; /* lets select the right weapon type */
               add_skill = SK_POLEARMS;
           }
-          else if (tmp >= WEAP_2H_IMPACT && !QUERY_FLAG(pl->guild_force, FLAG_PLAYER_ONLY)) /* no, we have a 2h! */
+          else if (tmp >= WEAP_2H_IMPACT) /* no, we have a 2h! */
           {
+              if (pl->guild_force->weight_limit && pl->guild_force->weight_limit & GUILD_NO_2H)
+              {
+                  new_draw_info(NDI_UNIQUE, 0, who, "That weapon is not permitted by your guild.");
+                  return 0;
+              }
               tmp = item->sub_type1 - WEAP_2H_IMPACT; /* lets select the right weapon type */
               add_skill = SK_TWOHANDS;
           }
-          if(CONTR(who)->guild_force->value)
-          {
-          if (tmp == WEAP_1H_IMPACT && (item->item_level < pl->guild_force->value))
+          if (tmp == WEAP_1H_IMPACT)
               skill = SK_MELEE_WEAPON;
-          else if (tmp == WEAP_1H_SLASH && (item->item_level < pl->guild_force->value))
+          else if (tmp == WEAP_1H_SLASH)
               skill = SK_SLASH_WEAP;
-          else if (tmp == WEAP_1H_CLEAVE && (item->item_level < pl->guild_force->value))
+          else if (tmp == WEAP_1H_CLEAVE)
               skill = SK_CLEAVE_WEAP;
-          else if (tmp == WEAP_1H_PIERCE && (item->item_level < pl->guild_force->value))
+          else if (tmp == WEAP_1H_PIERCE)
               skill = SK_PIERCE_WEAP;
-          else
-          {
-              new_draw_info(NDI_UNIQUE, 0, who, "That weapon is not permitted by your guild");
-              return 0;
-          }
-          }
-          else
-          {
-              if (tmp == WEAP_1H_IMPACT)
-                  skill = SK_MELEE_WEAPON;
-              else if (tmp == WEAP_1H_SLASH)
-                  skill = SK_SLASH_WEAP;
-              else if (tmp == WEAP_1H_CLEAVE)
-                  skill = SK_CLEAVE_WEAP;
-              else if (tmp == WEAP_1H_PIERCE)
-                  skill = SK_PIERCE_WEAP;
-              break;
-          }
+          break;
         case ARROW:
             if(item->sub_type1 > 127)
             {
@@ -588,7 +586,7 @@ int check_skill_to_apply(object *who, object *item)
             }
 
         case BOW:
-          if(!QUERY_FLAG(CONTR(who)->guild_force, FLAG_NO_PICK))
+          if(!CONTR(who)->guild_force & GUILD_NO_ARCHERY)
           {
             tmp = item->sub_type1;
             if (tmp == RANGE_WEAP_BOW)
@@ -599,7 +597,7 @@ int check_skill_to_apply(object *who, object *item)
                 skill = SK_SLING_WEAP;
           }
           else
-            new_draw_info(NDI_UNIQUE, 0, who, "That weapon is not permitted by your guild");
+            new_draw_info(NDI_UNIQUE, 0, who, "That weapon is not permitted by your guild.");
             return 0;
         case POTION:
           skill = SK_USE_MAGIC_ITEM; /* hm, this can be tricky when a player kills himself
@@ -845,7 +843,7 @@ int change_skill(object *who, int sk_index)
     if (who->chosen_skill && who->chosen_skill->stats.sp == sk_index)
         return 1;
 
-    LOG(llevDebug, "APPLYcs: %s change %s to %s.\n", query_name(who), query_name(who->chosen_skill), 
+    LOG(llevDebug, "APPLYcs: %s change %s to %s.\n", query_name(who), query_name(who->chosen_skill),
                                                                 sk_index>=0?skills[sk_index].name:"INVALID");
 
     if (sk_index >= 0 && sk_index < NROFSKILLS && (tmp = find_skill(who, sk_index)) != NULL)

@@ -33,43 +33,43 @@ extern int  errno;
 
 spell spells[NROFREALSPELLS]          =
 {
-    {"firestorm",                   SPELL_TYPE_WIZARD, 2, 
+    {"firestorm",                   SPELL_TYPE_WIZARD, 2,
     4, 12, 3, 6,0, 1.0,
-    65,      7,      4,      0,  
+    65,      7,      4,      0,
     1, 4, 0, 5, SOUND_MAGIC_FIRE,
     SPELL_USE_CAST | SPELL_USE_HORN | SPELL_USE_WAND | SPELL_USE_ROD | SPELL_USE_DUST | SPELL_USE_BOOK | SPELL_USE_POTION,
     SPELL_DESC_DIRECTION,
     PATH_ELEMENTAL, "firebreath",SPELL_ACTIVE
     },
 
-    {"icestorm",                    SPELL_TYPE_WIZARD, 2, 
+    {"icestorm",                    SPELL_TYPE_WIZARD, 2,
     4, 12, 3, 6,0,1.0,
-    65,      7,      4,      0,  
+    65,      7,      4,      0,
     1, 4, 0, 5, SOUND_MAGIC_ICE,
     SPELL_USE_CAST | SPELL_USE_HORN | SPELL_USE_WAND | SPELL_USE_ROD | SPELL_USE_BOOK | SPELL_USE_POTION | SPELL_USE_DUST,
     SPELL_DESC_DIRECTION,
     PATH_ELEMENTAL, "icestorm",SPELL_ACTIVE
-    }, 
+    },
 
-    {"minor healing",               SPELL_TYPE_PRIEST, 1, 
+    {"minor healing",               SPELL_TYPE_PRIEST, 1,
     6, 8, 3, 6,3,1.0,
-    0,       0,     0,      0, 
+    0,       0,     0,      0,
     0, 0, 0, 0, SOUND_MAGIC_STAT,
     SPELL_USE_CAST | SPELL_USE_BALM | SPELL_USE_SCROLL | SPELL_USE_ROD | SPELL_USE_POTION | SPELL_USE_BOOK,
     SPELL_DESC_SELF | SPELL_DESC_FRIENDLY | SPELL_DESC_WIS | SPELL_DESC_TOWN,
     PATH_LIFE, "meffect_green",SPELL_ACTIVE
-    }, 
+    },
 
-    {"cure poison",                 SPELL_TYPE_PRIEST, 2, 
+    {"cure poison",                 SPELL_TYPE_PRIEST, 2,
     5, 16, 3, 6,4, 1.0,/* potion only */
     0,       0,     0,      0,
     0, 0, 0, 0,   SOUND_MAGIC_STAT,
     SPELL_USE_CAST | SPELL_USE_POTION | SPELL_USE_BOOK,
     SPELL_DESC_SELF | SPELL_DESC_FRIENDLY | SPELL_DESC_WIS | SPELL_DESC_TOWN,
     PATH_LIFE, "meffect_purple",SPELL_ACTIVE
-    }, 
+    },
 
-    {"cure disease",                SPELL_TYPE_PRIEST, 2, 
+    {"cure disease",                SPELL_TYPE_PRIEST, 2,
     5, 16, 3, 6,4, 1.0,/* balm only */
     0,       0,     0,      0,
     0, 0, 0, 0,   SOUND_MAGIC_STAT,
@@ -78,34 +78,34 @@ spell spells[NROFREALSPELLS]          =
     PATH_LIFE,"meffect_purple",SPELL_ACTIVE
     },
 
-    {"strength self",               SPELL_TYPE_WIZARD, 1, 
+    {"strength self",               SPELL_TYPE_WIZARD, 1,
     5, 12, 3, 6,0,1.0,
-    0,       0,     0,      4, 
+    0,       0,     0,      4,
     0, 0, 0, 3,  SOUND_MAGIC_STAT,
     SPELL_USE_CAST | SPELL_USE_HORN | SPELL_USE_WAND | SPELL_USE_POTION | SPELL_USE_ROD | SPELL_USE_SCROLL | SPELL_USE_BOOK,
     SPELL_DESC_SELF | SPELL_DESC_TOWN,
     PATH_NATURE, "meffect_yellow",SPELL_ACTIVE
-    }, 
+    },
 
-    {"identify",                    SPELL_TYPE_WIZARD, 2, 
+    {"identify",                    SPELL_TYPE_WIZARD, 2,
     5, 24, 3, 6,2,1.0,
     0,       0,     0,      0,
     0, 0, 0, 3,  SOUND_MAGIC_DEFAULT,
     SPELL_USE_CAST | SPELL_USE_HORN | SPELL_USE_WAND | SPELL_USE_ROD | SPELL_USE_SCROLL | SPELL_USE_BOOK,
     SPELL_DESC_SELF | SPELL_DESC_TOWN,
     PATH_TRANSMUTATION, "meffect_pink",SPELL_ACTIVE
-    }, 
+    },
 
-    {"detect magic",                SPELL_TYPE_WIZARD, 2, 
+    {"detect magic",                SPELL_TYPE_WIZARD, 2,
     5, 8, 3, 6,0,1.0,
     0,       0,     0,      0,
     0, 0, 0, 3,   SOUND_MAGIC_DEFAULT,
     SPELL_USE_CAST | SPELL_USE_HORN | SPELL_USE_WAND | SPELL_USE_ROD | SPELL_USE_SCROLL | SPELL_USE_BOOK,
     SPELL_DESC_SELF | SPELL_DESC_TOWN,
     PATH_ABJURATION, "meffect_pink",SPELL_ACTIVE
-    }, 
+    },
 
-    {"detect curse",                SPELL_TYPE_PRIEST, 2, 
+    {"detect curse",                SPELL_TYPE_PRIEST, 2,
     5, 8, 3, 6,0,1.0,
     0,       0,     0,      0,
     0, 0, 0, 0,   SOUND_MAGIC_DEFAULT,
@@ -114,61 +114,61 @@ spell spells[NROFREALSPELLS]          =
     PATH_ABJURATION, "meffect_pink",SPELL_ACTIVE
     },
 
-    {"remove curse",                SPELL_TYPE_PRIEST, 2, 
+    {"remove curse",                SPELL_TYPE_PRIEST, 2,
     5, 24, 3, 6,2,1.0,
     0,       0,     0,      0,
     0, 0, 0, 0, SOUND_MAGIC_DEFAULT,
     SPELL_USE_CAST | SPELL_USE_SCROLL | SPELL_USE_BOOK,     /* scroll */
     SPELL_DESC_SELF | SPELL_DESC_TOWN | SPELL_DESC_FRIENDLY | SPELL_DESC_WIS,
     PATH_ARCANE, "meffect_blue",SPELL_ACTIVE
-    }, 
+    },
 
-    {"remove damnation",            SPELL_TYPE_PRIEST, 2, 
+    {"remove damnation",            SPELL_TYPE_PRIEST, 2,
     5, 36, 3, 6,2,1.0,
     0,       0,     0,      0,
     0, 0, 0, 0, SOUND_MAGIC_DEFAULT,
     SPELL_USE_CAST | SPELL_USE_SCROLL | SPELL_USE_BOOK, /* scroll*/
     SPELL_DESC_SELF | SPELL_DESC_TOWN | SPELL_DESC_FRIENDLY | SPELL_DESC_WIS,
     PATH_ARCANE, "meffect_blue",SPELL_ACTIVE
-    }, 
+    },
 
-    {"cause light wounds",          SPELL_TYPE_PRIEST, 1, 
+    {"cause light wounds",          SPELL_TYPE_PRIEST, 1,
     3, 14, 3, 6,0,  1.0,/* scroll*/
-    95,      5,      4,      4,  
+    95,      5,      4,      4,
     1, 6, 0, 5,  SOUND_MAGIC_WOUND,
     SPELL_USE_CAST | SPELL_USE_SCROLL | SPELL_USE_BOOK,
     SPELL_DESC_DIRECTION | SPELL_DESC_WIS,
     PATH_DEATH,"cause_wounds",SPELL_ACTIVE
     },
 
-    {"firebolt",                   SPELL_TYPE_WIZARD, 2, 
+    {"firebolt",                   SPELL_TYPE_WIZARD, 2,
     6, 12, 3, 6,0, 1.0,
-    108,      8,      4,      0,  
+    108,      8,      4,      0,
     1, 3, 0, 5, SOUND_MAGIC_FIRE,
     SPELL_USE_CAST | SPELL_USE_HORN | SPELL_USE_WAND | SPELL_USE_ROD | SPELL_USE_DUST | SPELL_USE_BOOK | SPELL_USE_POTION,
     SPELL_DESC_DIRECTION,
     PATH_ELEMENTAL, "firebolt", SPELL_ACTIVE
     },
 
-    {"magic bullet",                SPELL_TYPE_WIZARD, 1, 
+    {"magic bullet",                SPELL_TYPE_WIZARD, 1,
     3, 14, 3, 6,0,1.0,
-    95,      5,      4,      4, 
+    95,      5,      4,      4,
     1, 6, 0, 5,   SOUND_MAGIC_BULLET1,
     SPELL_USE_CAST | SPELL_USE_SCROLL | SPELL_USE_HORN | SPELL_USE_WAND | SPELL_USE_ROD | SPELL_USE_BOOK,
     SPELL_DESC_DIRECTION,
     PATH_CHAOS, "bullet",SPELL_ACTIVE
     },
 
-    {"frostbolt",                   SPELL_TYPE_WIZARD, 2, 
+    {"frostbolt",                   SPELL_TYPE_WIZARD, 2,
     6, 12, 3, 6,0, 1.0,
-    108,      8,      4,      0,  
+    108,      8,      4,      0,
     1, 3, 0, 5, SOUND_MAGIC_ICE,
     SPELL_USE_CAST | SPELL_USE_HORN | SPELL_USE_WAND | SPELL_USE_ROD | SPELL_USE_DUST | SPELL_USE_BOOK | SPELL_USE_POTION,
     SPELL_DESC_DIRECTION,
     PATH_ELEMENTAL, "frostbolt", SPELL_ACTIVE
     },
 
-    {"remove depletion",            SPELL_TYPE_PRIEST, 2, 
+    {"remove depletion",            SPELL_TYPE_PRIEST, 2,
     5, 24, 3, 6,4, 1.0,
     0,       0,     0,      0,
     0, 0, 0, 0,    SOUND_MAGIC_STAT,
@@ -177,16 +177,16 @@ spell spells[NROFREALSPELLS]          =
     PATH_LIFE, "meffect_purple",SPELL_ACTIVE
     },
 
-    {"probe",                       SPELL_TYPE_WIZARD, 1, 
+    {"probe",                       SPELL_TYPE_WIZARD, 1,
     5, 8, 3, 6,0,1.0,
-    1,      5,      4,      4, 
+    1,      5,      4,      4,
     0, 0, 0, 1, SOUND_MAGIC_DEFAULT,
     SPELL_USE_CAST | SPELL_USE_SCROLL | SPELL_USE_HORN | SPELL_USE_WAND | SPELL_USE_ROD | SPELL_USE_BOOK,
     SPELL_DESC_TOWN | SPELL_DESC_DIRECTION,
     PATH_SPIRIT, "probebullet",SPELL_ACTIVE
     },
 
-    {"remove death sickness",            SPELL_TYPE_PRIEST, 2, 
+    {"remove death sickness",            SPELL_TYPE_PRIEST, 2,
     5, 24, 3, 6,0, 1.0,
     0,       0,     0,      0,
     0,  0, 0, 0, SOUND_MAGIC_STAT,
@@ -195,7 +195,7 @@ spell spells[NROFREALSPELLS]          =
     PATH_LIFE, "meffect_purple",SPELL_ACTIVE
     },
 
-    {"restoration",            SPELL_TYPE_PRIEST, 2, 
+    {"restoration",            SPELL_TYPE_PRIEST, 2,
     5, 16, 3, 6,3, 1.0,
     0,       0,     0,      0,
     0, 0, 0, 0, SOUND_MAGIC_STAT,
@@ -204,16 +204,16 @@ spell spells[NROFREALSPELLS]          =
     PATH_LIFE, "meffect_purple",SPELL_ACTIVE
     },
 
-    {"lightning",                   SPELL_TYPE_WIZARD, 2, 
+    {"lightning",                   SPELL_TYPE_WIZARD, 2,
     6, 12, 3, 6,0, 1.0,
-    108,      8,      4,      0,  
+    108,      8,      4,      0,
     1, 3, 0, 5, SOUND_MAGIC_ELEC,
     SPELL_USE_CAST | SPELL_USE_HORN | SPELL_USE_WAND | SPELL_USE_ROD | SPELL_USE_DUST | SPELL_USE_BOOK | SPELL_USE_POTION,
     SPELL_DESC_DIRECTION,
     PATH_ELEMENTAL, "lightning", SPELL_ACTIVE
     },
 
-    {"remove slow",            SPELL_TYPE_PRIEST, 2, 
+    {"remove slow",            SPELL_TYPE_PRIEST, 2,
     5, 16, 3, 6,3, 1.0,
     0,       0,     0,      0,
     0, 0, 0, 0, SOUND_MAGIC_STAT,
@@ -222,7 +222,7 @@ spell spells[NROFREALSPELLS]          =
     PATH_LIFE, "meffect_purple",SPELL_ACTIVE
     },
 
-    {"remove fear",            SPELL_TYPE_PRIEST, 2, 
+    {"remove fear",            SPELL_TYPE_PRIEST, 2,
     5, 16, 3, 6,3, 1.0,
     0,       0,     0,      0,
     0, 0, 0, 0, SOUND_MAGIC_STAT,
@@ -231,7 +231,7 @@ spell spells[NROFREALSPELLS]          =
     PATH_LIFE, "meffect_purple",SPELL_ACTIVE
     },
 
-    {"remove snare",            SPELL_TYPE_PRIEST, 2, 
+    {"remove snare",            SPELL_TYPE_PRIEST, 2,
     5, 16, 3, 6,3, 1.0,
     0,       0,     0,      0,
     0, 0, 0, 0, SOUND_MAGIC_STAT,
@@ -240,7 +240,7 @@ spell spells[NROFREALSPELLS]          =
     PATH_LIFE, "meffect_purple",SPELL_ACTIVE
     },
 
-    {"remove paralysis",            SPELL_TYPE_PRIEST, 2, 
+    {"remove paralysis",            SPELL_TYPE_PRIEST, 2,
     5, 16, 3, 6,3, 1.0,
     0,       0,     0,      0,
     0, 0, 0, 0, SOUND_MAGIC_STAT,
@@ -249,7 +249,7 @@ spell spells[NROFREALSPELLS]          =
     PATH_LIFE, "meffect_purple",SPELL_ACTIVE
     },
 
-    {"remove confusion",            SPELL_TYPE_PRIEST, 2, 
+    {"remove confusion",            SPELL_TYPE_PRIEST, 2,
     5, 16, 3, 6,3, 1.0,
     0,       0,     0,      0,
     0, 0, 0, 0, SOUND_MAGIC_STAT,
@@ -258,7 +258,7 @@ spell spells[NROFREALSPELLS]          =
     PATH_LIFE, "meffect_purple",SPELL_ACTIVE
     },
 
-    {"remove blindness",            SPELL_TYPE_PRIEST, 2, 
+    {"remove blindness",            SPELL_TYPE_PRIEST, 2,
     5, 16, 3, 6,3, 1.0,
     0,       0,     0,      0,
     0, 0, 0, 0, SOUND_MAGIC_STAT,
@@ -1072,12 +1072,12 @@ int cast_spell(object *op, object *caster, int dir, int type, int ability, Spell
             new_draw_info(NDI_UNIQUE, 0, op, "Powerful countermagic cancels all summoning here!");
         return 0;
     }
-    if (op->type == PLAYER && QUERY_FLAG(CONTR(op)->guild_force, FLAG_NO_STEAL) && !(spells[type].flags & SPELL_DESC_WIS) && item != spellPotion)
+    if (op->type == PLAYER && CONTR(op)->guild_force->weight_limit & GUILD_NO_MAGIC && !(spells[type].flags & SPELL_DESC_WIS) && item != spellPotion)
     {
         new_draw_info(NDI_UNIQUE, 0, op, "Your Guild membership prevents casting spells!");
         return 0;
     }
-    if (op->type == PLAYER && QUERY_FLAG(CONTR(op)->guild_force, FLAG_INV_LOCKED) && (spells[type].flags & SPELL_DESC_WIS) && item != spellPotion)
+    if (op->type == PLAYER && CONTR(op)->guild_force->weight_limit & GUILD_NO_PRAYER && (spells[type].flags & SPELL_DESC_WIS) && item != spellPotion)
     {
         new_draw_info(NDI_UNIQUE, 0, op, "Your Guild membership prevents casting prayers!");
         return 0;
@@ -1170,7 +1170,7 @@ int cast_spell(object *op, object *caster, int dir, int type, int ability, Spell
         {
             if(op->type == PLAYER)
                 new_draw_info(NDI_UNIQUE, 0, op, "Your target is out of range!");
-            /* 
+            /*
             else
                 LOG(llevInfo,"cast_spell: %s out of range for %s from %s", STRING_OBJ_NAME(target), spells[type].name, STRING_OBJ_NAME(op));
             */
@@ -1214,7 +1214,7 @@ int cast_spell(object *op, object *caster, int dir, int type, int ability, Spell
         int fumble = CONTR(op)->spell_fumble
             - (op->chosen_skill->level / 10)
             + s->fumble_factor;
-        
+
         if (random_roll(0,99) < fumble)
         {
             new_draw_info(NDI_UNIQUE, 0, op, "You bungle the spell because you have too much heavy equipment in use.");
@@ -1865,7 +1865,7 @@ int summon_monster(object *op, object *caster, int dir, archetype *at, int spell
 }
 
 /* moved from ok_to_put_more()
- * This function ensures that a AoE spell only put *one* instance/object of 
+ * This function ensures that a AoE spell only put *one* instance/object of
  * themself in a tile.
  */
 static inline int check_spell_instance(mapstruct *m, int x, int y, object *op)
@@ -3424,7 +3424,7 @@ int SP_level_spellpoint_cost(object *op, object *caster, int spell_type)
         /* we add every spl_level spl points to the spell costs */
         level -= s->level;
         level /= s->spl_level;
-        
+
         sp += level * s->spl;
         /* spl_max defines a upper border of sp costs */
         if(s->spl_max>0 && sp > s->spl_max)

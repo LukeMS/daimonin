@@ -1160,7 +1160,7 @@ void fix_player(object *op)
             pl->base_skill_group_exp[0] = tmp->last_grace;
             pl->base_skill_group_exp[1] = tmp->magic;
             pl->base_skill_group_exp[2] = tmp->state;
-            
+
             for (i=0; i<NROFATTACKS; i++)
             {
                 if (tmp->resist[i] > 0)
@@ -1169,6 +1169,7 @@ void fix_player(object *op)
                     resists_mali[i] -= tmp->resist[i];
                 op->attack[i] += tmp->attack[i];
             }
+            continue;
         }
         else if(tmp->type == TYPE_QUEST_CONTAINER)
         {
