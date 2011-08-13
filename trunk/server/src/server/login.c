@@ -68,7 +68,7 @@ int player_save(object *op)
     if((tmp = (pl->state&~(ST_PLAYING|ST_ZOMBIE|ST_DEAD))))
         fprintf(fp, "state %d\n",  tmp);
 
-    fprintf(fp, "SENTInce %d\n", pl->SENTInce);
+    fprintf(fp, "guild_updated %d\n", pl->guild_updated);
 
     if (pl->gmaster_mode != GMASTER_MODE_NO)
     {
@@ -433,8 +433,8 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
         sscanf(bufall, "%s %d\n", buf, &value);
         if (!strcmp(buf, "endplst"))
             break;
-        else if (!strcmp(buf, "SENTInce"))
-            pl->SENTInce = value;
+        else if (!strcmp(buf, "guild_updated"))
+            pl->guild_updated = value;
         else if (!strcmp(buf, "dm_SA"))
             mode_id = GMASTER_MODE_SA;
         else if (!strcmp(buf, "dm_MM"))
@@ -689,36 +689,30 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
     }
     */
 
+    /* A little hack to remove guild forces from players which were created before new
+     * guild system, which may cause bugs with backwards-incompatibility. This
+     * code and pl->guild_updated should be removed when we have another player wipe.
+     */
+    if (!pl->guild_updated)
+    {
+        object *obj;
+        archetype *arch;
+
+        while (obj = present_arch_in_ob(archetype_global._guild_force, op))
+            if (obj)
+                remove_ob(obj);
+
+        arch = archetype_global._guild_force;
+        obj = arch_to_object(arch);
+        pl->guild_force = insert_ob_in_ob(obj, pl->ob);
+
+        pl->guild_updated = 1;
+        LOG(llevInfo, "INFO:: %s/player_load(): Guild forces removed and replaced for the new guild system for %s.\n",
+            __FILE__, STRING_OBJ_NAME(op));
+    }
 
     CLEAR_FLAG(op, FLAG_NO_FIX_PLAYER);
     FIX_PLAYER(op ,"check login - first fix");
-
-    /* A little hack to skip all active quests that were started pre-SENTInce.
-     * This is because they won't work with a SENTince-aware quest list. This
-     * potentially calls fix_player twice, which is a big overhead, but as it's
-     * only ever called once per player and is temporary, we won't worry. This
-     * code and pl->SENTInce should be removed when we have a player wipe. */
-    if (!pl->SENTInce)
-    {
-        if (pl->quests_type_normal)
-        {
-            remove_ob(pl->quests_type_normal);
-            pl->quests_type_normal = NULL;
-            pl->quests_type_normal_count = 0;
-        }
-
-        if (pl->quests_type_kill)
-        {
-            remove_ob(pl->quests_type_kill);
-            pl->quests_type_kill = NULL;
-            pl->quests_type_kill_count = 0;
-        }
-
-        add_quest_containers(pl->ob);
-        pl->SENTInce = 1;
-        LOG(llevInfo, "INFO:: %s/player_load(): All active quests removed and player file made SENTInce-aware for %s.\n",
-            __FILE__, STRING_OBJ_NAME(op));
-    }
 
 #ifdef AUTOSAVE
     pl->last_save_tick = ROUND_TAG;
@@ -861,7 +855,7 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
         sprintf(strchr(buf, '\0'), "  ~IP~: %s.\n", pl->socket.ip_host);
         sprintf(strchr(buf, '\0'), "  ~Account~: %s.\n", pl->account_name);
         sprintf(strchr(buf, '\0'), "Players now playing: %d.", player_active);
- 
+
         for (ol = gmaster_list_VOL; ol; ol = ol->next)
         {
             new_draw_info(NDI_UNIQUE, 0, ol->objlink.ob, "%s", buf);
@@ -969,7 +963,7 @@ addme_login_msg player_create(NewSocket *ns, player **pl_ret, char *name, int ra
     /* this is more or less a fake flagging - ensure you delete it before object release */
     SET_FLAG(pl->ob, FLAG_FRIENDLY);
 
-    pl->SENTInce = 1;
+    pl->guild_updated = 1;
 
  return ADDME_MSG_OK;
 }
