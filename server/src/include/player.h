@@ -226,7 +226,7 @@ typedef struct pl_player
 
     int                 action_timer;               /* weapon_speed_left * 1000 and cast from float to int for client */
     int                 last_action_timer;          /* previous value sent to the client */
-    int                 SENTInce;                   /* See login.c */
+    int                 guild_updated;                   /* See login.c */
     object               *quest_one_drop;
     object               *quests_done;
     object               *quests_type_normal;
