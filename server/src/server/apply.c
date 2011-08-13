@@ -247,7 +247,7 @@ int apply_potion(object *op, object *tmp)
                 play_sound_map(op->map, op->x, op->y, SOUND_DRINK_POISON, SOUND_NORMAL);
                 return 1;
             }
-            if ((at = find_archetype("depletion")) == NULL)
+            if ((at = find_archetype("drain")) == NULL)
             {
                 LOG(llevBug, "BUG: Could not find archetype depletion");
                 return 0;

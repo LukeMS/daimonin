@@ -719,7 +719,6 @@ typedef struct linked_char
 #include "aggro.h"
 #include "quest.h"
 #include "attack.h" /* needs to be before material.h */
-#include "exp.h"
 #include "material.h"
 #include "living.h"
 #include "mempool.h"
@@ -745,6 +744,8 @@ typedef struct linked_char
 
 /* Pull in the player structure */
 #include "player.h"
+
+#include "exp.h"
 
 /* pull in treasure structure */
 #include "treasure.h"
