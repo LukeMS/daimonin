@@ -599,7 +599,7 @@ local function topic_servicesJoin()
     -- Player is not a guildmember and never has been (means he can not have
     -- done the first quest).
     ---------
-    if gstat == game.GUILD_NO then
+    if gstat == game.GUILD_NO and questnr ~= 0 then
         ib:SetMsg("So you want to join the guild?\n")
         ib:AddMsg("\n|** " .. npc.name .. " gives you the once over " ..
                   "again **|\n")
@@ -612,9 +612,16 @@ local function topic_servicesJoin()
         ib:SetRHSButton("Services")
     else
         ---------
+        -- Player has already completed the quest, but somehow isn't in the guild.
+        ---------
+        if questnr == 0 and gstat == game.GUILD_NO then
+            ib:SetMsg("Well, I must say that I am still very grateful for your services.")
+            ib:AddMsg("\nI'm not sure why you aren't in the guild, but you're welcome to join us!")
+            module_guildsJoin("Mercenary", player)
+        ---------
         -- Player used to be a guildmember but left.
         ---------
-        if gstat == game.GUILD_OLD then
+        elseif gstat == game.GUILD_OLD then
             ib:SetMsg("|** " .. npc.name .. " frowns, but then his face " ..
                       "relaxes **|\n")
             ib:AddMsg("\nWell times are tough and good mercenaries don't " ..
