@@ -586,7 +586,12 @@ int check_skill_to_apply(object *who, object *item)
             }
 
         case BOW:
-          if(!CONTR(who)->guild_force & GUILD_NO_ARCHERY)
+          if(CONTR(who)->guild_force->weight_limit & GUILD_NO_ARCHERY)
+          {
+            new_draw_info(NDI_UNIQUE, 0, who, "That weapon is not permitted by your guild.");
+            return 0;
+          }
+          else
           {
             tmp = item->sub_type1;
             if (tmp == RANGE_WEAP_BOW)
@@ -595,10 +600,8 @@ int check_skill_to_apply(object *who, object *item)
                 skill = SK_XBOW_WEAP;
             else
                 skill = SK_SLING_WEAP;
+            break;
           }
-          else
-            new_draw_info(NDI_UNIQUE, 0, who, "That weapon is not permitted by your guild.");
-            return 0;
         case POTION:
           skill = SK_USE_MAGIC_ITEM; /* hm, this can be tricky when a player kills himself
                                      * applying a bomb potion... must watch it */
