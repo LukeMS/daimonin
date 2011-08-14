@@ -13,7 +13,7 @@ local ib        = InterfaceBuilder()
 if not module_guildsLOADED then
     require("modules/guilds")
 end
-local gstat = module_guildsGetStatus("Mercenery", pl)
+local gstat = module_guildsGetStatus("Mercenary", pl)
 
 local skill_bow = game:GetSkillNr("bow archery")
 local skill_cbow = game:GetSkillNr("crossbow archery")
