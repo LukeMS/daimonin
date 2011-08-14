@@ -8,6 +8,18 @@
 module_guildsLOADED = true
 ---------------------------------------
 ---------------------------------------
+-- Use bitmasks for flags such as no_archery and no_magic.
+---------------------------------------
+require "bitmasks"
+
+local F_NO_MAGIC = 1
+local F_NO_PRAYER = 2
+local F_NO_ARCHERY = 4
+local F_NO_2H = 8
+local F_NO_POLEARM = 16
+
+---------------------------------------
+---------------------------------------
 -- _guilds{} contains details about all guilds in the game.
 -- name is the guild name.
 -- primary, secondary, and tertiary are the base_skill_groups for members of
@@ -71,14 +83,8 @@ _guilds = {
             },
             path_attuned = 0,
         },
-        flags = {
-            no_wiz_spells = 1,
-            no_prayers = 1,
-            no_2h = 0,
-            no_pole = 0,
-            no_archery = 0,
-            weapon_max_level = 100,
-        },
+        flags = mask(0, F_NO_MAGIC, F_NO_PRAYER),
+        weapon_max_level = 100,
     },
     [2] = {
         name = "Wizard",
@@ -121,14 +127,7 @@ _guilds = {
             },
             path_attuned = 4,
         },
-        flags = {
-            weapon_max_level = 7,
-            no_2h = 1,
-            no_pole = 1,
-            no_wiz_spells = 0,
-            no_prayers = 1,
-            no_archery = 1,
-        },
+        flags = mask(0, F_NO_2H, F_NO_POLEARM, F_NO_PRAYER, F_NO_ARCHERY),
     },
     [3] = {
         name = "Priest",
@@ -171,15 +170,9 @@ _guilds = {
             },
             path_attuned = 3,
         },
-        flags = {
-            weapon_max_level = 10,
-            no_archery = 1,
-            no_prayers = 0,
-            no_wiz_spells = 1,
-            no_2h = 1,
-            no_pole = 1,
-            spell_max_difficulty = 2, -- TODO: Add a prayer max difficulty.
-        },
+        flags = mask(0, F_NO_ARCHERY, F_NO_MAGIC, F_NO_2H, F_NO_POLEARM),
+        weapon_max_level = 10,
+        spell_max_difficulty = 2, -- TODO: Add a prayer max difficulty.
     },
 }
 
@@ -302,13 +295,9 @@ if _guilds[guildnr].stats.maxsp ~= nil then    guild_force.max_spellpoints      
 if _guilds[guildnr].stats.sp ~= nil then    guild_force.spellpoints           = _guilds[guildnr].stats.sp end
 if _guilds[guildnr].stats.maxgrace ~= nil then    guild_force.max_grace     = _guilds[guildnr].stats.maxgrace end
 if _guilds[guildnr].stats.grace ~= nil then    guild_force.grace        = _guilds[guildnr].stats.grace end
-if _guilds[guildnr].flags.weapon_max_level ~= nil then    guild_force.value        = _guilds[guildnr].flags.weapon_max_level end
-if _guilds[guildnr].flags.spell_max_difficulty ~= nil then    guild_force.level        = _guilds[guildnr].flags.spell_max_difficulty end
-if _guilds[guildnr].flags.no_wiz_spells ~= 0 then    guild_force.f_no_steal     = 1 end
-if _guilds[guildnr].flags.no_prayers ~= 0 then    guild_force.f_inv_locked   = 1 end
-if _guilds[guildnr].flags.no_pole ~= 0 then    guild_force.f_run_away     = 1 end
-if _guilds[guildnr].stats.no_archery ~= 0 then    guild_force.f_no_pick      = 1 end
-if _guilds[guildnr].stats.no_2h ~= 0 then    guild_force.f_player_only      = 1 end
+if _guilds[guildnr].weapon_max_level ~= nil then guild_force.value        = _guilds[guildnr].weapon_max_level end
+if _guilds[guildnr].spell_max_difficulty ~= nil then guild_force.level        = _guilds[guildnr].spell_max_difficulty end
+if _guilds[guildnr].flags ~= nil then guild_force.weight_limit = _guilds[guildnr].flags end
 if _guilds[guildnr].stats.resists.impact ~= nil then    guild_force.resist_impact= _guilds[guildnr].stats.resists.impact end
 if _guilds[guildnr].stats.resists.cleave ~= nil then    guild_force.resist_cleave= _guilds[guildnr].stats.resists.cleave end
 if _guilds[guildnr].stats.resists.slash ~= nil then    guild_force.resist_slash = _guilds[guildnr].stats.resists.slash end
@@ -399,13 +388,9 @@ if _guilds[guildnr].stats.maxsp ~= nil then    guild_force.max_spellpoints      
 if _guilds[guildnr].stats.sp ~= nil then    guild_force.spellpoints           = 0 end
 if _guilds[guildnr].stats.maxgrace ~= nil then    guild_force.max_grace     = 0 end
 if _guilds[guildnr].stats.grace ~= nil then    guild_force.grace        = 0 end
-if _guilds[guildnr].flags.weapon_max_level ~= nil then    guild_force.value        = 0 end
-if _guilds[guildnr].flags.spell_max_difficulty ~= nil then    guild_force.level        = 0 end
-if _guilds[guildnr].flags.no_wiz_spells ~= nil then    guild_force.f_no_steal     = 0 end
-if _guilds[guildnr].flags.no_prayers ~= nil then    guild_force.f_inv_locked   = 0 end
-if _guilds[guildnr].flags.no_pole ~= nil then    guild_force.f_run_away     = 0 end
-if _guilds[guildnr].stats.no_archery ~= nil then    guild_force.f_no_pick      = 0 end
-if _guilds[guildnr].stats.no_2h ~= nil then    guild_force.f_player_only      = 0 end
+guild_force.value        = 0
+guild_force.level        = 0
+guild_force.weight_limit = 0
 if _guilds[guildnr].stats.resists.impact ~= nil then    guild_force.resist_impact= 0 end
 if _guilds[guildnr].stats.resists.cleave ~= nil then    guild_force.resist_cleave= 0 end
 if _guilds[guildnr].stats.resists.slash ~= nil then    guild_force.resist_slash = 0 end
