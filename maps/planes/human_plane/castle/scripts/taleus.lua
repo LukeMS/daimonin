@@ -59,7 +59,7 @@ function topicDefault()
     if gstat == game.GUILD_IN or module_guildsPlayerGuildless(pl) then
         if pl:FindSkill(skill_bow) ~= nil or pl:FindSkill(skill_cbow) ~= nil or pl:FindSkill(skill_sling) ~= nil or QStatus == game.QSTAT_DONE then
             ib:SetTitle("Hello again")
-            ib:AddMsg("Your basic mercenery training is probably almost finished by now.")
+            ib:AddMsg("Your basic mercenary training is probably almost finished by now.")
         elseif QStatus == game.QSTAT_NO then
             ib:SetTitle("Greetings")
             ib:AddMsg("\n\nHello, mercenary. I am Archery Commander Taleus.")
@@ -77,7 +77,7 @@ function topicDefault()
     else
         ib:SetTitle("Hello")
         ib:SetMsg("I'm sorry, but I cannot teach you an archery skill due to your guild.")
-        ib:AddMsg(" You can either join the Mercenery guild or leave your current guild.")
+        ib:AddMsg(" You can either join the Mercenary guild or leave your current guild.")
     end
 end
 
@@ -121,7 +121,7 @@ function topArchery()
     ib:AddMsg("\nBow Archery is the most common, firing arrows.\n")
     ib:AddMsg("\nSling Archery allows fast firing stones with less damage.\n")
     ib:AddMsg("\nCrossbow Archery uses x-bows and bolts. Slow but powerful.\n")
-    if guild_stat ~= game.GUILD_IN then
+    if gstat ~= game.GUILD_IN and not module_guildsPlayerGuildless(pl) then
         ib:AddMsg("\nI teach archery for the mercenary guild, but I can see that you're not a member.\n")
         ib:AddMsg("You should talk to Cashin, who is in the Guildhall southeast of this castle, about joining the mercenary guild.")
     else
@@ -171,11 +171,8 @@ tl:AddGreeting(nil, topicDefault)
 tl:SetDefault(topicDefault)
 if gstat == game.GUILD_IN or module_guildsPlayerGuildless(pl) then
     if qb:GetStatus(1) < game.QSTAT_DONE then
-        -- Can only take the quest if guildmember
-        if guild_stat == game.GUILD_IN then
-            tl:AddTopics({"quest", "explain%s+quest"}, topQuest)
-            tl:AddTopics({"accept", "accept%s+quest"}, topAccept) 
-        end
+        tl:AddTopics({"quest", "explain%s+quest"}, topQuest)
+        tl:AddTopics({"accept", "accept%s+quest"}, topAccept) 
         if qb:GetStatus(1) == game.QSTAT_SOLVED then
             tl:AddTopics({"complete", "quest%s+complete"}, topicQuestComplete) 
             tl:AddTopics({"complete", "quest%s+complete%s*#?(%d*)"}, topicQuestComplete)
