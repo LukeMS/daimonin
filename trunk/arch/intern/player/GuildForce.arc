@@ -12,6 +12,9 @@ last_eat 3
 last_sp 0
 last_heal 5
 last_grace 25
+container 24
+value 20
+level 1
 magic 15
 state 10
 layer 0
