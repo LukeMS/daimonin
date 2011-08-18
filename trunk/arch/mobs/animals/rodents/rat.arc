@@ -21,7 +21,7 @@ int 10
 wis 6
 dex 3
 con 5
-exp 102
+exp 61
 magic 1
 pow 10
 sp -1
@@ -71,7 +71,7 @@ int 10
 wis 6
 dex 3
 con 5
-exp 102
+exp 61
 magic 1
 pow 10
 sp -1
@@ -121,7 +121,7 @@ int 10
 wis 6
 dex 3
 con 5
-exp 102
+exp 61
 magic 1
 pow 10
 sp -1
@@ -171,7 +171,7 @@ int 10
 wis 6
 dex 3
 con 5
-exp 102
+exp 61
 magic 1
 pow 10
 sp -1
