@@ -640,11 +640,11 @@ static inline int aggro_exp_group(object *victim, object *aggro, char *kill_msg)
             new_draw_info(NDI_YELLOW, 0, tmp, "%s", kill_msg);
 
         pl->group_status &= ~GROUP_STATUS_NOQUEST;
-        //if(pl->exp_calc_tag == exp_calc_tag)
-        //{
+        if(pl->exp_calc_tag == exp_calc_tag)
+        {
             /* aggo_exp_single() checks for check_kill_quest_event() */
             aggro_exp_single(victim, pl->exp_calc_obj, exp);
-        //}
+        }
     }
 
     return TRUE;
