@@ -160,6 +160,7 @@
 * USE_GRAVESTONES - enables gravestones when players die.
 * USE_LIGHTING - enable light/darkness & light sources
 * USE_TILESTRETCHER - enables tilestretcher for uneven ground surface
+* USE_PVP - Enables players to attack each other in certain maps.
 *
 ***********************************************************************/
 
@@ -314,6 +315,14 @@
 #define USE_GRAVESTONES
 
 #define USE_TILESTRETCHER
+
+/*
+ * With USE_PVP defined, players can attack each other on maps with 'pvp 1' in their header.
+ * ATM PvP is still very untested and likely buggy, so we only want it on code dev servers.
+ */
+#ifdef DAI_DEVELOPMENT_CODE
+  #define USE_PVP
+#endif
 
 /***********************************************************************
  * SECTION 2 - Machine/Compiler specific stuff.

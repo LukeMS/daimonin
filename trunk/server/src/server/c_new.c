@@ -100,6 +100,7 @@ void send_target_command(player *pl)
     /* target still legal? */
     if (!pl->target_object || !OBJECT_ACTIVE(pl->target_object) || pl->target_object == pl->ob) /* thats we self */
         aim_self_flag = TRUE;
+
     else if (pl->target_object_count == pl->target_object->count)
     {
         /* ok, a last check... i put it here to have clear code:
@@ -199,6 +200,13 @@ int command_combat(object *op, char *params)
     return 0;
 }
 
+void target_self(object *op)
+{
+    CONTR(op)->target_object = op;
+    CONTR(op)->target_level = op->level;
+    CONTR(op)->target_object_count = op->count;
+    CONTR(op)->target_map_pos = 0;
+}
 
 /** Filter for valid targets */
 static int valid_new_target(object *op, object *candidate)
@@ -235,6 +243,12 @@ static int valid_new_target(object *op, object *candidate)
  * but exempts player. BTW this entire targetting system, this function
  * particularly, needs a rewrite.
  * -- Smacky 20090502 */
+/* The "target friend" code works differently on PvP maps only - After the target
+ * moves to the furthest away friend, it'll begin the loop again, whereas in the other 
+ * code, it'll target self. The target friend code is very odd anyway. I'll add to the 
+ * clamor and say that this function needs a rewrite (and also possibly moved to the client),
+ * but I can't do it now, too much other stuff I want to work on. -- _people_*/
+
 int command_target(object *op, char *params)
 {
     mapstruct  *m;
@@ -251,6 +265,7 @@ int command_target(object *op, char *params)
     /* !x y = mouse map target */
     if (params[0] == '!')
     {
+
         int     xstart, ystart;
         char   *ctmp;
 
@@ -258,6 +273,7 @@ int command_target(object *op, char *params)
         ctmp = strchr(params + 1, ' ');
         if (!ctmp) /* bad format.. skip */
             return 0;
+
         ystart = atoi(ctmp + 1);
 
         for (n = 0; n < SIZEOFFREE; n++)
@@ -290,7 +306,8 @@ int command_target(object *op, char *params)
             {
                 /* this is a possible target */
                 tmp->head != NULL ? (head = tmp->head) : (head = tmp); /* ensure we have head */
-                if (valid_new_target(op, head))
+                if (valid_new_target(op, head) &&
+                    head != CONTR(op)->target_object)
                 {
                     CONTR(op)->target_object = head;
                     CONTR(op)->target_level = head->level;
@@ -303,33 +320,25 @@ int command_target(object *op, char *params)
     }
     else if (params[0] == '0')
     {
-        /* if our target before was a non enemy, start new search
-         * if it was an enemy, use old value.
-         */
-        n = 0;
-        nt = -1;
-
-        /* lets search for enemy object! */
-        if(OBJECT_VALID(CONTR(op)->target_object, CONTR(op)->target_object_count)
-                && get_friendship(op, CONTR(op)->target_object) < FRIENDSHIP_HELP)
-            n = CONTR(op)->target_map_pos;
-        else
-            CONTR(op)->target_object = NULL;
-
-        for (; n < NROF_MAP_NODE && n != nt; n++)
+        n = CONTR(op)->target_map_pos;
+        // Loop through the map_pos_array and try to find the nearest enemy to the op.
+        for (; n < NROF_MAP_NODE; n++)
         {
             int xx, yy;
-            if (nt == -1)
-                nt = n;
+
             xt = op->x + (xx = map_pos_array[n][MAP_POS_X]);
             yt = op->y + (yy = map_pos_array[n][MAP_POS_Y]);
+
+            if (xx <-(int) (CONTR(op)->socket.mapx_2)
+             || xx>(int)(CONTR(op)->socket.mapx_2)
+             || yy <-(int) (CONTR(op)->socket.mapy_2)
+             || yy>(int)(CONTR(op)->socket.mapy_2))
+                continue;
+
             block = CONTR(op)->blocked_los[xx + CONTR(op)->socket.mapx_2][yy + CONTR(op)->socket.mapy_2];
             if (block > BLOCKED_LOS_BLOCKSVIEW || !(m = out_of_map(op->map, &xt, &yt)))
-            {
-                if ((n + 1) == NROF_MAP_NODE)
-                    n = -1;
                 continue;
-            }
+
             /* we can have more as one possible target
              * on a square - but i try this first without
              * handle it.
@@ -338,10 +347,10 @@ int command_target(object *op, char *params)
             {
                 /* this is a possible target */
                 tmp->head != NULL ? (head = tmp->head) : (head = tmp); /* ensure we have head */
-                if((valid_new_target(op, head) || op == head)
-                        && get_friendship(op, head) < FRIENDSHIP_HELP)
+                if (valid_new_target(op, head)
+                    && get_friendship(op, head) <= FRIENDSHIP_ATTACK
+                    && head != CONTR(op)->target_object)
                 {
-                    /* this can happen when our old target has moved to next position */
                     CONTR(op)->target_object = head;
                     CONTR(op)->target_level = head->level;
                     CONTR(op)->target_object_count = head->count;
@@ -349,8 +358,6 @@ int command_target(object *op, char *params)
                     goto found_target;
                 }
             }
-            if ((n + 1) == NROF_MAP_NODE) /* force a full loop */
-                n = -1;
         }
     }
     else if (params[0] == '1') /* friend */
@@ -358,12 +365,7 @@ int command_target(object *op, char *params)
         /* if /target friend but old target was enemy - target self first */
         if(OBJECT_VALID(CONTR(op)->target_object, CONTR(op)->target_object_count)
                 && get_friendship(op, CONTR(op)->target_object) < FRIENDSHIP_HELP)
-        {
-            CONTR(op)->target_object = op;
-            CONTR(op)->target_level = op->level;
-            CONTR(op)->target_object_count = op->count;
-            CONTR(op)->target_map_pos = 0;
-        }
+            target_self(op);
         else /* ok - search for a friendly object now! */
         {
             /* if our target before was a non enemy, start new search
@@ -421,7 +423,8 @@ int command_target(object *op, char *params)
                     /* this is a possible target */
                     tmp->head != NULL ? (head = tmp->head) : (head = tmp); /* ensure we have head */
                     if(valid_new_target(op, head)
-                            && get_friendship(op, head) >= FRIENDSHIP_HELP)
+                            && get_friendship(op, head) >= FRIENDSHIP_HELP
+                            && head != CONTR(op)->target_object)
                     {
                         CONTR(op)->target_object = head;
                         CONTR(op)->target_level = head->level;
@@ -446,13 +449,7 @@ int command_target(object *op, char *params)
             }
         }
     }
-    else if (params[0] == '2') /* self */
-    {
-        CONTR(op)->target_object = op;
-        CONTR(op)->target_level = op->level;
-        CONTR(op)->target_object_count = op->count;
-        CONTR(op)->target_map_pos = 0;
-    }
+    // If params[0] == '2', then someone wants to target themself. This is ignored until the bottom of the code, which catches all cases.
     else if (params[0] == '3') /* talk */
     {
         /* If we have a valid target already, search from there, else start
@@ -515,11 +512,9 @@ int command_target(object *op, char *params)
                 n = -1;
         }
     }
-    else /* TODO: ok... try to use params as a name */
-    {
-        /* still not sure we need this.. perhaps for groups? */
-        CONTR(op)->target_object = NULL; /* dummy */
-    }
+
+    // Haven't found a target yet, so target self.
+    target_self(op);
 
 found_target:
     send_target_command(CONTR(op));
