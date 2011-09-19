@@ -410,7 +410,11 @@ int blocked(object *op, mapstruct *m, int x, int y, int terrain)
         * a.) op == NULL (because we can't check for op==PLAYER then)
         * b.) P_IS_PVP or MAP_FLAG_PVP
         */
-        if (!op || flags & P_IS_PVP || m->map_flags & MAP_FLAG_PVP)
+        if (!op 
+#ifdef USE_PVP
+            || flags & P_IS_PVP || m->map_flags & MAP_FLAG_PVP
+#endif
+           )
             return ((flags & (P_DOOR_CLOSED | P_IS_PLAYER | P_CHECK_INV))|P_IS_PVP);
 
         /* when we are here: no player pvp stuff was triggered. But:

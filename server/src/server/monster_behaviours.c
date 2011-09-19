@@ -660,7 +660,14 @@ int get_friendship(object *op, object *other)
             /* Check for PvP. TODO: group PvP */
             if ((GET_MAP_FLAGS(op->map, op->x, op->y) & P_IS_PVP || op->map->map_flags & MAP_FLAG_PVP)
                     && ((GET_MAP_FLAGS(other->map, other->x, other->y) & P_IS_PVP) || (other->map->map_flags & MAP_FLAG_PVP)))
-                return FRIENDSHIP_NEUTRAL;
+
+// If PvP is enabled, op wants to attack other. Otherwise, treat the other as a friend.
+//#define USE_PVP
+#ifdef USE_PVP
+                return FRIENDSHIP_ATTACK;
+#else
+                return FRIENDSHIP_HELP;
+#endif
             else
                 return FRIENDSHIP_HELP;
         }
