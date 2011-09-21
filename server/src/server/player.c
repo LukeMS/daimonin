@@ -1182,14 +1182,23 @@ int pvp_area(object *attacker, object *victim)
 {
     if (attacker)
     {
-        if (!(attacker->map->map_flags & MAP_FLAG_PVP)
-         || !(GET_MAP_FLAGS(attacker->map, attacker->x, attacker->y) & P_IS_PVP))
+/* Not positive what the intention behind both of these checks is, and the latter doesn't work anyway.
+ * So I'll comment them out for now and put my own in. :) -- _people_
+ */
+
+/*
+      if (!(attacker->map->map_flags & MAP_FLAG_PVP)) ||
+            !(GET_MAP_FLAGS(attacker->map, attacker->x, attacker->y) & P_IS_PVP))
+*/
+        if (!MAP_PVP(attacker->map))
             return FALSE;
     }
-
     if (victim)
     {
+/*
         if (!(victim->map->map_flags & MAP_FLAG_PVP) || !(GET_MAP_FLAGS(victim->map, victim->x, victim->y) & P_IS_PVP))
+*/
+        if (!MAP_PVP(victim->map))
             return FALSE;
     }
 
