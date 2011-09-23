@@ -278,8 +278,8 @@ static inline void calc_active_skill_dmg(object *op, int *skill1, int *skill2, i
     int d1=0,d2=0,d3=0;
 
     *skill1 = *skill2 = *skill3 = -1;
-
     op->level = 0;
+
     for(skilldmg=op->inv;skilldmg;skilldmg=skilldmg->below)
     {
         if(! hitter->skill_ptr[skilldmg->last_heal])
@@ -372,31 +372,7 @@ static inline int aggro_exp_single(object *victim, object *aggro, int base)
 #endif
     if(s1 == -1) /* we have not found any skill dmg - assign exp to guild base skills */
     {
-#ifdef DEBUG_AGGRO
-        LOG(llevNoLog,".. no skill dmg - use guild base dmg\n");
-#endif
-        new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, hitter, "You didn't fight this time.\nYou trained your default guild skills.");
-
-        if (tmp = pl->highest_skill[pl->base_skill_group[0]])
-        {
-            e1 = calc_skill_exp(hitter, victim, 0.55f, tmp->level, &exp);
-            e1 = exp_from_base_skill(pl, e1, tmp->stats.sp);
-            ret |= add_aggro_exp(hitter, e1, tmp->stats.sp);
-        }
-
-        if (tmp = pl->highest_skill[pl->base_skill_group[1]])
-        {
-            e2 = calc_skill_exp(hitter, victim, 0.30f, tmp->level, &exp);
-            e2 = exp_from_base_skill(pl, e2, tmp->stats.sp);
-            ret |= add_aggro_exp(hitter, e2, tmp->stats.sp);
-        }
-
-        if (tmp = pl->highest_skill[pl->base_skill_group[2]])
-        {
-            e3 = calc_skill_exp(hitter, victim, 0.15f, tmp->level, &exp);
-            e3 = exp_from_base_skill(pl, e3, tmp->stats.sp);
-            ret |= add_aggro_exp(hitter, e3, tmp->stats.sp);
-        }
+        give_default_guild_exp(pl, exp);
     }
     else if(s2 == -1) /* 100% exp in skill s1 */
     {
@@ -640,11 +616,16 @@ static inline int aggro_exp_group(object *victim, object *aggro, char *kill_msg)
             new_draw_info(NDI_YELLOW, 0, tmp, "%s", kill_msg);
 
         pl->group_status &= ~GROUP_STATUS_NOQUEST;
+
+       if(pl->quests_type_kill && pl->quests_type_kill->inv)
+            check_kill_quest_event(tmp, victim);
+
+        // If the pl has not contributed damage to the slaughter of this mob, only give them 75% exp.
         if(pl->exp_calc_tag == exp_calc_tag)
-        {
-            /* aggo_exp_single() checks for check_kill_quest_event() */
-            aggro_exp_single(victim, pl->exp_calc_obj, exp);
-        }
+            give_default_guild_exp(pl, exp);
+        else
+            give_default_guild_exp(pl, (int)((float)exp * 0.75f));
+
     }
 
     return TRUE;
@@ -796,4 +777,35 @@ object *aggro_calculate_exp(struct obj *victim, struct obj *slayer, char *kill_m
         SET_FLAG(victim, FLAG_STARTEQUIP);
 
     return highest_hitter->enemy; /* used to create the corpse bounty */
+}
+
+int give_default_guild_exp(player *pl, int base_exp)
+{
+    object *skill;
+    int e1, e2, e3;
+
+    new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, pl->ob, "You didn't fight this time.\nYou trained your default guild skills.");
+
+        if (skill = pl->highest_skill[pl->base_skill_group[0]])
+        {
+            e1 = (int) ((float) base_exp * 0.55f);
+            e1 = exp_from_base_skill(pl, e1, skill->stats.sp);
+            add_aggro_exp(pl->ob, e1, skill->stats.sp);
+        }
+
+        if (skill = pl->highest_skill[pl->base_skill_group[1]])
+        {
+            e2 = (int) ((float) base_exp * 0.30f);
+            e2 = exp_from_base_skill(pl, e2, skill->stats.sp);
+            add_aggro_exp(pl->ob, e2, skill->stats.sp);
+        }
+
+        if (skill = pl->highest_skill[pl->base_skill_group[2]])
+        {
+            e3 = (int) ((float) base_exp * 0.15f);
+            e3 = exp_from_base_skill(pl, e3, skill->stats.sp);
+            add_aggro_exp(pl->ob, e3, skill->stats.sp);
+        }
+
+    return 1;
 }
