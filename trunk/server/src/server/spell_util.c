@@ -3011,7 +3011,7 @@ int find_target_for_spell(object *op, object *item, object **target, int dir, ui
             /* Friend spells are allowed on friends, neutrals and other players */
             if (flags & SPELL_DESC_FRIENDLY)
             {
-                if (tmp->type == PLAYER || get_friendship(op, tmp) > FRIENDSHIP_ATTACK)
+                if (get_friendship(op, tmp) > FRIENDSHIP_ATTACK)
                 {
                     *target = tmp;
                     return TRUE;
