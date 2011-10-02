@@ -284,6 +284,7 @@ WS	[ \t]*{NL}?
 		    }
 ^race{S}	    FREE_AND_COPY_HASH(op->race,yval());
 ^slaying{S}	    FREE_AND_COPY_HASH(op->slaying, yval());
+^buffs{S}           FREE_AND_COPY_HASH(op->buffs, yval());
 
 ^other_arch{S}        op->other_arch=find_archetype(yval());
 ^animation{S}	    {
@@ -1025,7 +1026,7 @@ char *get_ob_diff(const object *op, const object *op2) {
      * /Gecko
      */
   static char buf2[HUGE_BUF];
-  static char buf[HUGE_BUF * 6]; /* There can be up to 5 HUGE_BUF long strings AFAIK */
+  static char buf[HUGE_BUF * 7]; /* There can be up to 5 HUGE_BUF long strings AFAIK */
   char *buf_end;
   int tmp;
 
@@ -1039,6 +1040,8 @@ char *get_ob_diff(const object *op, const object *op2) {
     buf_end = append_simple(append_line(append_simple(buf_end, "race "), op->race), "\n");
   if(op->slaying && op->slaying!=op2->slaying)
     buf_end = append_simple(append_line(append_simple(buf_end, "slaying "), op->slaying), "\n");
+  if(op->buffs && op->buffs!=op2->buffs)
+    buf_end = append_simple(append_line(append_simple(buf_end, "buffs "), op->buffs), "\n");
   if(op->msg && op->msg!=op2->msg)
   {
     /* Books can have extremely long msg blocks which overflow buf and crash

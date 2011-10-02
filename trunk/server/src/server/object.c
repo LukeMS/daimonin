@@ -535,6 +535,7 @@ static inline int can_merge(object *ob1, object *ob2)
      || ob1->title != ob2->title
      || ob1->race != ob2->race
      || ob1->slaying != ob2->slaying
+     || ob1->buffs != ob2->buffs
      || ob1->msg != ob2->msg)
         return 0;
 
@@ -1057,7 +1058,7 @@ void copy_owner(object *op, object *clone)
 void initialize_object(object *op)
 {
     memset(op, 0, sizeof(object));
-    op->name = op->title = op->race = op->slaying = op->msg = NULL;
+    op->name = op->title = op->race = op->slaying = op->buffs = op->msg = NULL;
     /* Set some values that should not be 0 by default */
     op->anim_enemy_dir = -1;      /* control the facings 25 animations */
     op->anim_moving_dir = -1;     /* the same for movement */
@@ -1091,6 +1092,7 @@ void copy_object(object *op2, object *op)
     FREE_ONLY_HASH(op->title);
     FREE_ONLY_HASH(op->race);
     FREE_ONLY_HASH(op->slaying);
+    FREE_ONLY_HASH(op->buffs);
     FREE_ONLY_HASH(op->msg);
 
     /* unlink old treasurelist if needed */
@@ -1107,6 +1109,7 @@ void copy_object(object *op2, object *op)
     ADD_REF_NOT_NULL_HASH(op->title);
     ADD_REF_NOT_NULL_HASH(op->race);
     ADD_REF_NOT_NULL_HASH(op->slaying);
+    ADD_REF_NOT_NULL_HASH(op->buffs);
     ADD_REF_NOT_NULL_HASH(op->msg);
 
 #if 0
@@ -1813,6 +1816,7 @@ void free_object_data(object *ob, int free_static_data)
     FREE_AND_CLEAR_HASH2(ob->title);
     FREE_AND_CLEAR_HASH2(ob->race);
     FREE_AND_CLEAR_HASH2(ob->slaying);
+    FREE_AND_CLEAR_HASH2(ob->buffs);
     FREE_AND_CLEAR_HASH2(ob->msg);
 }
 

@@ -107,6 +107,7 @@ typedef struct obj
     const char     *slaying;        /* Which race to do double damage to
                                      * If this is an exit, this is the filename */
     const char     *msg;            /* If this is a book/sign/magic mouth/etc */
+    const char     *buffs;          /* Keep track of enhancements to prevent players from getting the same one twice. */
 
     /* here starts copy_object() releated data */
 

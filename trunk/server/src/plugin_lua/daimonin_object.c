@@ -32,6 +32,7 @@ static struct method_decl GameObject_methods[] =
     {"AcquireSkill",           (lua_CFunction) GameObject_AcquireSkill},
     {"AcquireSpell",           (lua_CFunction) GameObject_AcquireSpell},
     {"ActivateRune",           (lua_CFunction) GameObject_ActivateRune},
+    {"AddBuff",                (lua_CFunction) GameObject_AddBuff},
     {"AddMoney",               (lua_CFunction) GameObject_AddMoney},
     {"AddMoneyEx",             (lua_CFunction) GameObject_AddMoneyEx},
     {"AddOneDropQuest",        (lua_CFunction) GameObject_AddOneDropQuest},
@@ -44,6 +45,7 @@ static struct method_decl GameObject_methods[] =
 #ifdef USE_CHANNELS
     {"ChannelMsg",             (lua_CFunction) GameObject_ChannelMsg},
 #endif
+    {"CheckBuff",              (lua_CFunction) GameObject_CheckBuff},
     {"CheckGuild",             (lua_CFunction) GameObject_CheckGuild},
     {"CheckInstance",          (lua_CFunction) GameObject_CheckInstance},
     {"CheckInventory",         (lua_CFunction) GameObject_CheckInventory},
@@ -162,6 +164,7 @@ struct attribute_decl GameObject_attributes[] =
     {"title",                 FIELDTYPE_SHSTR,     offsetof(object, title),                     0,                  0},
     {"race",                  FIELDTYPE_SHSTR,     offsetof(object, race),                      0,                  0},
     {"slaying",               FIELDTYPE_SHSTR,     offsetof(object, slaying),                   0,                  0},
+    {"buffs",                 FIELDTYPE_SHSTR,     offsetof(object, buffs),                     0,                  0},
     {"message",               FIELDTYPE_SHSTR,     offsetof(object, msg),                       0,                  0},
     /* TODO: limited to >=0 */
     {"weight",                FIELDTYPE_SINT32,    offsetof(object, weight),                    0,                  0},
@@ -4495,6 +4498,70 @@ static int GameObject_GetAccountName(lua_State *L)
 
     return 1;
 }
+
+/*****************************************************************************/
+/* Name   : GameObject_AddBuff                                               */
+/* Lua    : object:AddBuff(buffname)                                         */
+/* Info   : Add a string to the item's buff list. obj:CheckBuff() can then   */
+/*          check to see if that buff is already on the item.                */
+/* Status : Tested/Stable                                                    */
+/*****************************************************************************/
+static int GameObject_AddBuff(lua_State *L)
+{
+    lua_object     *self = NULL;
+    char           *buff = NULL;
+    object         *obj;
+
+    get_lua_args(L, "Os", &self, &buff);
+
+    obj = self->data.object;
+
+    char *result = malloc(strlen(obj->buffs) + strlen(buff) + 1);
+    memcpy(result, obj->buffs, strlen(obj->buffs));
+    strcat(result, ";");
+    strcat(result, buff);
+    obj->buffs = result;
+
+    return 1;
+}
+
+/*****************************************************************************/
+/* Name   : GameObject_CheckBuff                                             */
+/* Lua    : object:CheckBuff(buffname)                                       */
+/* Info   : Check to see if the specified buff is already on the item. This  */
+/*          will ensure that the item cannot get more buffs than what is     */
+/*          allowed.                                                         */
+/* Returns: The number of times a buff has been placed on an item. Some buffs*/
+/*          may be placed more than once.                                    */
+/* TODO   : Atm this function only uses a basic check for the buff. If the   */
+/*          buff is anywhere in the string, it will return true. For example,*/
+/*          if the object's buff string is "111example222;" and the function */
+/*          checks for "example", it will return true.                       */
+/* Status : Tested/Stable                                                    */
+/*****************************************************************************/
+static int GameObject_CheckBuff(lua_State *L)
+{
+    lua_object     *self = NULL;
+    char           *buff = NULL;
+    object         *obj;
+
+    get_lua_args(L, "Os", &self, &buff);
+
+    obj = self->data.object;
+
+    char *result = strstr(obj->buffs, buff);
+
+    if (result)
+    {
+        lua_pushboolean(L, TRUE);
+    } else
+    {
+        lua_pushboolean(L, FALSE);
+    }
+
+    return 1;
+}
+
 
 /* FUNCTIONEND -- End of the GameObject methods. */
 
