@@ -658,8 +658,11 @@ static const char *CreateGravestone(object *op, mapstruct *m, int x, int y)
  * op is the player in jeopardy.  If the player can not be saved (not
  * permadeath, no lifesave), this will take care of removing the player
  * file.
+ *
+ * Returns 0 if the player didn't really die, 1 if they did. This is used for PvP
+ * stat tracking.
  */
-void kill_player(object *op)
+int kill_player(object *op)
 {
     player      *pl=CONTR(op);
     char        buf[MEDIUM_BUF];
@@ -670,7 +673,7 @@ void kill_player(object *op)
     uint8       lost_a_stat = 0;
 
     if (save_life(op))
-        return;
+        return 0;
 
     /* If player dies on BATTLEGROUND, no stat/exp loss! For Combat-Arenas
      * in cities ONLY!!! It is very important that this doesn't get abused.
@@ -707,12 +710,12 @@ void kill_player(object *op)
 
         /* teleport defeated player to new destination*/
         enter_map(op, NULL, op->map, x, y, 0, 0);
-        return;
+        return 1;
     }
 
     if(trigger_object_plugin_event(EVENT_DEATH,
                 op, NULL, op, NULL, NULL, NULL, NULL, SCRIPT_FIX_ALL))
-        return; /* Cheat death */
+        return 0; /* Cheat death */
 
 #if 0 /* Disabled global events */
     CFParm      CFP;
@@ -892,7 +895,7 @@ void kill_player(object *op)
     /*STATS_EVENT(STATS_EVENT_PLAYER_DEATH, op->name);*/
     new_draw_info(NDI_UNIQUE, 0, op, "YOU HAVE DIED.");
     player_save(op);
-    return;
+    return 1;
 #endif
 }
 
@@ -1626,3 +1629,95 @@ char *get_online_players_info(player *who, player *diff, uint8 force)
 
     return (char *)buf;
 }
+
+/* 
+ * Keep track of certain stats for a player's PvP career. Stats are stored in a pvp_stat_force (see archetype_global).
+ * The stats and their respective attributes are as follows:
+ * Total kills - maxhp
+ * Total deaths - hp
+ * Kills in this round - maxsp
+ * Deaths in this round - sp
+ * The logic behind these is that the total kills should end up higher than round kills (even round kills can get over 65k).
+ */
+void increment_pvp_counter(object *op, int counter)
+{
+    // Probably not needed, but usually won't hurt.
+    if (!op)
+        return;
+
+    object *pvp_force;
+
+    if (!(pvp_force = present_arch_in_ob(archetype_global._pvp_stat_force, op)))
+        // The PvP stat-tracking force doesn't exist in op's inv, so create it.
+        pvp_force = insert_ob_in_ob(arch_to_object(archetype_global._pvp_stat_force), op);
+
+    if (!pvp_force)
+        return;
+
+    if (counter & PVP_STATFLAG_KILLS_TOTAL)
+        pvp_force->stats.maxhp++;
+
+    if (counter & PVP_STATFLAG_KILLS_ROUND)
+        pvp_force->stats.maxsp++;
+
+    /* In theory, we can't have DEATH and KILL flags in the same instance of this function. But I'll give room for
+     * clever MW's and MM's to thwart my theory. */
+    if (counter & PVP_STATFLAG_DEATH_TOTAL)
+        pvp_force->stats.hp++;
+
+    if (counter & PVP_STATFLAG_DEATH_ROUND)
+        pvp_force->stats.sp++;
+}
+
+int command_pvp_stats(object *op, char *params)
+{
+    char       *name = params;
+    const char *name_hash;
+    char       *buf;
+    player     *pl;
+
+    // Query op since no-one else was specified.
+    if (!name)
+    {
+        object *pvp_force = present_arch_in_ob(archetype_global._pvp_stat_force, op);
+
+        if (pvp_force)
+            new_draw_info(NDI_UNIQUE, 0, op, "You  have killed ~%u~ player%s in PvP. You have been killed by a player in PvP ~%u~ time%s.",
+                                         pvp_force->stats.maxhp, pvp_force->stats.maxhp != 1 ? "s":"",
+                                         pvp_force->stats.hp, pvp_force->stats.hp != 1 ? "s":"");
+        else
+            new_draw_info(NDI_UNIQUE, 0, op, "You have not participated in any PvP.");
+
+        return 0;
+    }
+
+    // Make sure the specified character is logged in.
+    transform_player_name_string(name);
+
+    if (!(name_hash = find_string(name)))
+    {
+        new_draw_info(NDI_UNIQUE, 0, op, "No such player.");
+        return 0;
+    }
+
+    for (pl = first_player; pl != NULL; pl = pl->next)
+    {
+        if (pl->ob->name == name_hash)
+        {
+            object *pvp_force = present_arch_in_ob(archetype_global._pvp_stat_force, pl->ob);
+
+            if (pvp_force)
+                new_draw_info(NDI_UNIQUE, 0, op, "Player: ~%s~\nTotal PvP kills: ~%u~\nTotal PvP deaths: ~%u~",
+                                                  query_name(pl->ob), pvp_force->stats.maxhp, pvp_force->stats.hp);
+            else
+                new_draw_info(NDI_UNIQUE, 0, op, "That player has not participated in PvP.");
+
+            return 0;
+        }
+    }
+
+    new_draw_info(NDI_UNIQUE, 0, op, "No such player.");
+
+    return 0;
+}
+

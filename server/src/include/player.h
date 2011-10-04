@@ -365,6 +365,8 @@ typedef struct pl_player
     objectlink         *pets;
 } player;
 
+void increment_pvp_counter(object *op, int counter);
+int command_pvp_stats(object *op, char *params);
 
 #ifdef WIN32
 #pragma pack(pop)

@@ -88,6 +88,7 @@ CommArray_s Commands[] =
     {"deny",          command_party_deny,     0.1f, 1},
     {"leave",         command_party_leave,    4.0f, 1},
     {"remove",        command_party_remove,   4.0f, 1},
+    {"pvp",           command_pvp_stats,      0.0f, 0},
 #ifdef USE_CHANNELS
     {"channel",       command_channel,        1.0f, 0}, /* channel system */
 #endif
