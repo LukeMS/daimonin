@@ -91,6 +91,7 @@ typedef struct _archetype_global
     archetype *_paralyze;
     archetype *_corpse_default;
     archetype *_loot_container;
+    archetype *_pvp_stat_force;
 }
 _archetype_global;
 

@@ -957,5 +957,13 @@ enum apply_flag
 #define RANDOM() MTRand_randComp()
 #define SRANDOM(xyz) MTRand_init(xyz)
 
+/* PvP stat flags are used on the archetype_global.pvp_stat_force object in a player's inventory to keep track of PvP stats such as total
+ * kills, kills per PvP match, and possibly a rank system.
+ */
+#define PVP_STATFLAG_KILLS_TOTAL  1 // All players killed by this player during this player's existence.
+#define PVP_STATFLAG_KILLS_ROUND  2 // The players killed during this PvP match.
+#define PVP_STATFLAG_DEATH_TOTAL  4 // How many times this player has died in PvP.
+#define PVP_STATFLAG_DEATH_ROUND  8 // How many times this player has died during this PvP match.
+
 #define PLUGINS
 #endif /* ifndef __DEFINE_H */

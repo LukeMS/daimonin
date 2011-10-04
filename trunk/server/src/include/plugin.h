@@ -338,7 +338,7 @@ struct plugin_hooklist
     /* J */
     /* K */
     int (*kill_object)(object *, int, object *, int);
-    void (*kill_player)(object *);
+    int (*kill_player)(object *);
     /* L */
     object *(*load_object_str)(char *);
     object *(*locate_beacon)(shstr *);
