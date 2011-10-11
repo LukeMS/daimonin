@@ -460,7 +460,7 @@ int                         handle_newcs_player(player *pl);
 int                         save_life(object *op);
 void                        remove_unpaid_objects(object *op, object *env);
 void                        do_some_living(object *op);
-int                         kill_player(object *op);
+void                        kill_player(object *op);
 void                        loot_object(object *op);
 void                        cast_dust(object *op, object *throw_ob, int dir);
 void                        make_visible(object *op);
