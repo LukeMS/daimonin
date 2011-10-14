@@ -21,7 +21,7 @@ int 10
 wis 6
 dex 3
 con 15
-exp 59
+exp 47
 magic 1
 pow 10
 sp -1
