@@ -8,7 +8,9 @@ LIBS		= -llua -llualib
 # another lua library
 LIBROOT = ../3rdparty/lua/lib
 INCLUDEROOT = ../3rdparty/lua/include
-EXTRA_CFLAGS = -fPIC
+EXTRA_CFLAGS = 
+# Main has come down with chronic crashing syndrome, possibly due to this addition.
+#EXTRA_CFLAGS = -fPIC
 
 # *****************************************************************************
 # End of user configuration part. Don't change anything after this line,
