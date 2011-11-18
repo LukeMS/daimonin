@@ -1,6 +1,8 @@
 local ac = event.activator
 local me = event.me
 
+local ap = me.map
+
 local pinfo = ac:GetPlayerInfo("APARTMENT_INFO")
 local path
 
@@ -20,6 +22,6 @@ else
     ac:SetPosition(game:ReadyMap(pinfo.race), pinfo.last_sp, pinfo.last_grace)
 end
 
-game:ReadyMap(pinfo.race):Save()
+ap:Save()
 
 event.returnvalue = 1
