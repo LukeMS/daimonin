@@ -20,4 +20,6 @@ else
     ac:SetPosition(game:ReadyMap(pinfo.race), pinfo.last_sp, pinfo.last_grace)
 end
 
+game:ReadyMap(pinfo.race):Save()
+
 event.returnvalue = 1
