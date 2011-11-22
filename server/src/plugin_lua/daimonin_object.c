@@ -4064,7 +4064,11 @@ static int GameObject_GetTarget(lua_State *L)
         if (WHO->enemy) // But if a monster has an enemy, that's close enough to a target.
             return push_object(L, &GameObject, WHO->enemy);
         else
+        {
             lua_pushnil(L);
+
+            return 0;
+        }
     else
         return luaL_error(L, "GetTarget() can only be called on a player!");
 }
