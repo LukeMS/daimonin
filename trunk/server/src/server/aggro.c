@@ -380,7 +380,7 @@ static int give_default_guild_exp(player *pl, int base_exp)
  */
 static inline int aggro_exp_single(object *victim, object *aggro, int base)
 {
-    object *hitter = aggro->enemy, *tmp;
+    object *hitter = aggro->enemy;
     player *pl = CONTR(hitter);
     int s1=-1,s2,s3, e1, e2, e3, ret=FALSE, exp=0;
 
@@ -545,7 +545,7 @@ static inline int in_group_exp_range(object *victim, object *hitter, object *mem
 static inline int aggro_exp_group(object *victim, object *aggro, char *kill_msg)
 {
     object *leader = CONTR(aggro->enemy)->group_leader;
-    object *high = leader, *tmp, *member;
+    object *high = leader, *tmp;
     int exp=0, t;
     object *force;
     int tmp_drain_level = 0, high_drain_level = 0;
