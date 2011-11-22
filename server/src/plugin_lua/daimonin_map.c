@@ -143,7 +143,7 @@ static int Map_eq(struct lua_State *L)
 static int Map_toString(lua_State *L)
 {
     lua_object *obj = lua_touserdata(L, 1);
-    char        buf[HUGE_BUF], *ptr;
+    char        buf[HUGE_BUF];
 
     if (obj == NULL || obj->class->type != LUATYPE_MAP)
         luaL_error(L, "Not a Map object");
