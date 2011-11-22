@@ -345,6 +345,37 @@ static inline int add_aggro_exp(object *hitter, int exp, int skillnr)
     return FALSE;
 }
 
+static int give_default_guild_exp(player *pl, int base_exp)
+{
+    object *skill;
+    int e1, e2, e3;
+
+    new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, pl->ob, "You didn't fight this time.\nYou trained your default guild skills.");
+
+        if (skill = pl->highest_skill[pl->base_skill_group[0]])
+        {
+            e1 = (int) ((float) base_exp * 0.55f);
+            e1 = exp_from_base_skill(pl, e1, skill->stats.sp);
+            add_aggro_exp(pl->ob, e1, skill->stats.sp);
+        }
+
+        if (skill = pl->highest_skill[pl->base_skill_group[1]])
+        {
+            e2 = (int) ((float) base_exp * 0.30f);
+            e2 = exp_from_base_skill(pl, e2, skill->stats.sp);
+            add_aggro_exp(pl->ob, e2, skill->stats.sp);
+        }
+
+        if (skill = pl->highest_skill[pl->base_skill_group[2]])
+        {
+            e3 = (int) ((float) base_exp * 0.15f);
+            e3 = exp_from_base_skill(pl, e3, skill->stats.sp);
+            add_aggro_exp(pl->ob, e3, skill->stats.sp);
+        }
+
+    return 1;
+}
+
 /* calc exp for a single player.
  */
 static inline int aggro_exp_single(object *victim, object *aggro, int base)
@@ -777,35 +808,4 @@ object *aggro_calculate_exp(struct obj *victim, struct obj *slayer, char *kill_m
         SET_FLAG(victim, FLAG_STARTEQUIP);
 
     return highest_hitter->enemy; /* used to create the corpse bounty */
-}
-
-int give_default_guild_exp(player *pl, int base_exp)
-{
-    object *skill;
-    int e1, e2, e3;
-
-    new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, pl->ob, "You didn't fight this time.\nYou trained your default guild skills.");
-
-        if (skill = pl->highest_skill[pl->base_skill_group[0]])
-        {
-            e1 = (int) ((float) base_exp * 0.55f);
-            e1 = exp_from_base_skill(pl, e1, skill->stats.sp);
-            add_aggro_exp(pl->ob, e1, skill->stats.sp);
-        }
-
-        if (skill = pl->highest_skill[pl->base_skill_group[1]])
-        {
-            e2 = (int) ((float) base_exp * 0.30f);
-            e2 = exp_from_base_skill(pl, e2, skill->stats.sp);
-            add_aggro_exp(pl->ob, e2, skill->stats.sp);
-        }
-
-        if (skill = pl->highest_skill[pl->base_skill_group[2]])
-        {
-            e3 = (int) ((float) base_exp * 0.15f);
-            e3 = exp_from_base_skill(pl, e3, skill->stats.sp);
-            add_aggro_exp(pl->ob, e3, skill->stats.sp);
-        }
-
-    return 1;
 }
