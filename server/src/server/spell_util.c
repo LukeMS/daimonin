@@ -1183,7 +1183,7 @@ int cast_spell(object *op, object *caster, int dir, int type, int ability, Spell
 
     /*  ban removed on clerical spells in no-magic areas */
     if (!ability
-     && (((!s->flags & SPELL_DESC_WIS) && blocks_magic(op->map, op->x, op->y))
+     && ((!(s->flags & SPELL_DESC_WIS) && blocks_magic(op->map, op->x, op->y))
       || ((s->flags & SPELL_DESC_WIS) && blocks_cleric(op->map, op->x, op->y))))
     {
         if (op->type != PLAYER)
