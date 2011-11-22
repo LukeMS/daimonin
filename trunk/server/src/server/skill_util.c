@@ -870,6 +870,13 @@ int change_skill(object *who, int sk_index)
         new_draw_info(NDI_UNIQUE, 0, who, "You have no knowledge of %s.", skills[sk_index].name);
     return 0;
     }
+
+    /* I *think* 0 means failure and 1 means success so the above block
+     * checks for failures and if none are found it must be a success. I have
+     * no idea why thiis function is written in such a spawling manner though
+     * (IOW I think the two top-level if blocks could be merged together.
+     * -- Smacky 20111122 */
+    return 1;
 }
 
 /* This is like change_skill above, but it is given that
