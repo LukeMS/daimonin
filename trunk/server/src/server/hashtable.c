@@ -1,3 +1,28 @@
+/*
+    Daimonin, the Massive Multiuser Online Role Playing Game
+    Server Applicatiom
+
+    Copyright (C) 2001-2006 Michael Toennies
+
+    A split from Crossfire, a Multiplayer game for X-windows.
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+
+    The author can be reached via e-mail to info@daimonin.org
+*/
+
 // Copyright (c) 2005, Google Inc.
 // All rights reserved.
 //
@@ -76,8 +101,7 @@
 //    probes/successful lookup    1.06  1.5   1.75  2.5   3.0   5.5   50.5
 //    probes/unsuccessful lookup  1.12  2.5   3.6   8.5   13.0  50.0  5000.0
 
-#include "hashtable.h"
-#include <assert.h>
+#include "global.h"
 
 // The probing method
 // Linear probing

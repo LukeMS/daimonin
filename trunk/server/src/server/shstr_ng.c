@@ -56,7 +56,7 @@ static struct statistics
 // #define SECURE_SHSTR_HASH
 
 struct shared_string {
-    uintptr_t refcount; /* By using intptr_t we don't have to pad */
+    uint32 refcount;
     shstr string[0];    /* Area for storing the actual string */
 };
 
