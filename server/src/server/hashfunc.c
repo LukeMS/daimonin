@@ -1,4 +1,29 @@
 /*
+    Daimonin, the Massive Multiuser Online Role Playing Game
+    Server Applicatiom
+
+    Copyright (C) 2001-2006 Michael Toennies
+
+    A split from Crossfire, a Multiplayer game for X-windows.
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+
+    The author can be reached via e-mail to info@daimonin.org
+*/
+
+/*
  * A collection of useful hash functions
  * Please read the license notes of each functions, since not all are
  * GPL-compatible.
@@ -7,8 +32,7 @@
  * (C) Copyright 2005-2006 Björn Axelsson
  */
 
-#include "hashtable.h"
-#include "hashfunc.h"
+#include "global.h"
 
 #if defined NO_REDISTRIBUTION
 /*
@@ -62,7 +86,7 @@
 #if (defined(__GNUC__) && defined(__i386__)) || defined(__WATCOMC__) \
   || defined(OS2) || defined(WINDOWS) || defined(WIN32) \
   || defined(_MSC_VER) || defined (__BORLANDC__) || defined (__TURBOC__)
-#define get16bits(d) (*((const uint16_t *) (d)))
+#define get16bits(d) (*((const uint16 *) (d)))
 #endif
 
 #if !defined (get16bits)
@@ -70,8 +94,8 @@
                       +((const uint8_t *)(d))[0])
 #endif
 
-uint32_t generic_hash (const char *data, uint32_t len) {
-    uint32_t hash=len, tmp;
+uint32 generic_hash (const char *data, uint32 len) {
+    uint32 hash=len, tmp;
     int rem;
 
 //    if (len <= 0 || data == NULL) return 0;
@@ -85,7 +109,7 @@ uint32_t generic_hash (const char *data, uint32_t len) {
         hash  += get16bits (data);
         tmp    = (get16bits (data+2) << 11) ^ hash;
         hash   = (hash << 16) ^ tmp;
-        data  += 2*sizeof (uint16_t);
+        data  += 2*sizeof (uint16);
         hash  += hash >> 11;
     }
 
@@ -93,7 +117,7 @@ uint32_t generic_hash (const char *data, uint32_t len) {
     switch (rem) {
         case 3: hash += get16bits (data);
                 hash ^= hash << 16;
-                hash ^= data[sizeof (uint16_t)] << 18;
+                hash ^= data[sizeof (uint16)] << 18;
                 hash += hash >> 11;
                 break;
         case 2: hash += get16bits (data);
@@ -122,10 +146,12 @@ uint32_t generic_hash (const char *data, uint32_t len) {
  * more relaxed license
  */
 
-typedef  uint32_t ub4;    /* unsigned 4-byte quantities */
-typedef  unsigned char ub1;   /* unsigned 1-byte quantities */
+#if 0
+typedef  uint32 uint32;    /* unsigned 4-byte quantities */
+typedef  unsigned char uint8;   /* unsigned 1-byte quantities */
+#endif
 
-#define hashsize(n) ((ub4)1<<(n))
+#define hashsize(n) ((uint32)1<<(n))
 #define hashmask(n) (hashsize(n)-1)
 
 /*
@@ -183,7 +209,7 @@ use a bitmask.  For example, if you need only 10 bits, do
   h = (h & hashmask(10));
 In which case, the hash table should have hashsize(10) elements.
 
-If you are hashing n strings (ub1 **)k, do it like this:
+If you are hashing n strings (uint8 **)k, do it like this:
   for (i=0, h=0; i<n; ++i) h = hash( k[i], len[i], h);
 
 By Bob Jenkins, 1996.  bob_jenkins@burtleburtle.net.  You may use this
@@ -195,10 +221,10 @@ acceptable.  Do NOT use for cryptographic purposes.
 --------------------------------------------------------------------
 */
 
-uint32_t generic_hash (const char *k, uint32_t length)
+uint32 generic_hash (const char *k, uint32 length)
 {
-//    static ub4 initval = 0xdeadbeef; // Just a semi-random initialization
-    register ub4 a,b,c, len;
+//    static uint32 initval = 0xdeadbeef; // Just a semi-random initialization
+    register uint32 a,b,c, len;
 
     /* Set up the internal state */
     len = length;
@@ -209,9 +235,9 @@ uint32_t generic_hash (const char *k, uint32_t length)
     /*---------------------------------------- handle most of the key */
     while (len >= 12)
     {
-        a += (k[0] +((ub4)k[1]<<8) +((ub4)k[2]<<16) +((ub4)k[3]<<24));
-        b += (k[4] +((ub4)k[5]<<8) +((ub4)k[6]<<16) +((ub4)k[7]<<24));
-        c += (k[8] +((ub4)k[9]<<8) +((ub4)k[10]<<16)+((ub4)k[11]<<24));
+        a += (k[0] +((uint32)k[1]<<8) +((uint32)k[2]<<16) +((uint32)k[3]<<24));
+        b += (k[4] +((uint32)k[5]<<8) +((uint32)k[6]<<16) +((uint32)k[7]<<24));
+        c += (k[8] +((uint32)k[9]<<8) +((uint32)k[10]<<16)+((uint32)k[11]<<24));
         mix(a,b,c);
         k += 12; len -= 12;
     }
@@ -220,17 +246,17 @@ uint32_t generic_hash (const char *k, uint32_t length)
     c += length;
     switch(len)              /* all the case statements fall through */
     {
-        case 11: c+=((ub4)k[10]<<24);
-        case 10: c+=((ub4)k[9]<<16);
-        case 9 : c+=((ub4)k[8]<<8);
+        case 11: c+=((uint32)k[10]<<24);
+        case 10: c+=((uint32)k[9]<<16);
+        case 9 : c+=((uint32)k[8]<<8);
                  /* the first byte of c is reserved for the length */
-        case 8 : b+=((ub4)k[7]<<24);
-        case 7 : b+=((ub4)k[6]<<16);
-        case 6 : b+=((ub4)k[5]<<8);
+        case 8 : b+=((uint32)k[7]<<24);
+        case 7 : b+=((uint32)k[6]<<16);
+        case 6 : b+=((uint32)k[5]<<8);
         case 5 : b+=k[4];
-        case 4 : a+=((ub4)k[3]<<24);
-        case 3 : a+=((ub4)k[2]<<16);
-        case 2 : a+=((ub4)k[1]<<8);
+        case 4 : a+=((uint32)k[3]<<24);
+        case 3 : a+=((uint32)k[2]<<16);
+        case 2 : a+=((uint32)k[1]<<8);
         case 1 : a+=k[0];
                  /* case 0: nothing left to add */
     }
@@ -295,9 +321,9 @@ int string_key_equals(const hashtable_const_key_t key1, const hashtable_const_ke
 hashtable_size_t int32_hash(const hashtable_const_key_t key_store)
 {
 #if SIZEOF_VOID_P == 4
-    uint32_t key = (uint32_t)key_store;
+    uint32 key = (uint32)key_store;
 #elif SIZEOF_VOID_P == 8
-    uint32_t key = (uint32_t)((uint64_t)key_store);
+    uint32 key = (uint32)((uint64)key_store);
 #endif
     key += ~(key << 15);
     key ^=  (key >> 10);
@@ -319,7 +345,8 @@ int int32_key_equals(const hashtable_const_key_t key1, const hashtable_const_key
  */
 hashtable_size_t int64_hash(const hashtable_const_key_t ptr)
 {
-    uint64_t key = *(uint64_t *)ptr;
+    uint64 key = (uint64)ptr;
+
     key += ~(key << 32);
     key ^= (key >> 22);
     key += ~(key << 13);
@@ -334,7 +361,7 @@ hashtable_size_t int64_hash(const hashtable_const_key_t ptr)
 /* Key equality for 64 bit keys */
 int int64_key_equals(const hashtable_const_key_t key1, const hashtable_const_key_t key2)
 {
-    return *(uint64_t *)key1 == *(uint64_t *)key2;
+    return *(uint64 *)key1 == *(uint64 *)key2;
 }
 
 /* Convenience function to get a hash table with pointer keys */

@@ -30,26 +30,6 @@
 #ifndef __HASHTABLE_H
 #define __HASHTABLE_H
 
-#ifdef WIN32
-#include <win32.h>
-#include <stddef.h>
-#define SIZEOF_VOID_P 4
-#ifndef MINGW
-typedef unsigned short uint16_t;
-typedef unsigned int uint32_t;
-typedef uint32_t ub4;    /* unsigned 4-byte quantities */
-typedef unsigned _int64 uint64_t;
-#else
-#include <stdint.h>
-#endif
-#else
-#include <stdint.h>
-#include <linux.h>
-#endif
-
-#include <string.h>
-#include <stdlib.h>
-
 typedef size_t hashtable_size_t;
 typedef void * hashtable_key_t;
 typedef const void *hashtable_const_key_t;

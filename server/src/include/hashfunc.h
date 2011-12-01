@@ -26,17 +26,12 @@
 #ifndef __HASHFUNC_H
 #define __HASHFUNC_H
 
-#include "hashtable.h"
-#ifndef WIN32
-#include "linux.h"
-#endif
-
 /* Useful special values for pointer keys. See string_key_equals for
  * how they can be used to speed up the equals functions */
 #define HASH_EMPTY_KEY ((void *)0)
 #define HASH_DELETED_KEY ((void *)~0)
 
-uint32_t generic_hash (const char * data, uint32_t len);
+uint32 generic_hash (const char * data, uint32 len);
 
 hashtable *string_hashtable_new(hashtable_size_t num_buckets);
 hashtable *pointer_hashtable_new(hashtable_size_t num_buckets);

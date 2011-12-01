@@ -224,6 +224,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 
 #define MAX_ANIMATIONS      256
 
+#include <assert.h>
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
@@ -279,17 +280,6 @@ error - Your ANSI C compiler should be defining __STDC__;
 #ifndef SQR
 #define SQR(x) ((x)*(x))
 #endif
-
-/* Generic hashtables */
-#include "hashtable.h"
-#include "hashfunc.h"
-
-#include "shstr_ng.h"
-
-#include "config.h"
-#include "define.h"
-#include "logger.h"
-#include "ipcompare.h"
 
 #ifndef TRUE
 #define TRUE 1
@@ -713,6 +703,13 @@ typedef struct linked_char
     struct linked_char *next;
 } linked_char;
 
+#include "hashtable.h"
+#include "hashfunc.h"
+#include "shstr_ng.h"
+#include "config.h"
+#include "define.h"
+#include "logger.h"
+#include "ipcompare.h"
 #include "protocol.h" /* this is a shared header between server & client! defines & macros only! */
 #include "loader.h"
 #include "face.h"
