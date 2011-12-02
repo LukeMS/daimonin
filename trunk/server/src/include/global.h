@@ -97,6 +97,8 @@
  * debugflags get enabled/disabled by commenting then out or not.
  */
 
+#define SEND_BUFFER_DEBUG
+
 #ifdef DAI_DEVELOPMENT_CODE
 
 #define ESRV_DEBUG
@@ -115,8 +117,6 @@
 /* very have debugging of the whole core server loop - mainly how map data ia send & stored */
 /* #define DEBUG_CORE */
 /* #define DEBUG_CORE_MAP*/
-
-//#define SEND_BUFFER_DEBUG
 
 /*#define SKILL_UTIL_DEBUG*/
 
