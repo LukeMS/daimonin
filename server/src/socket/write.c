@@ -67,7 +67,7 @@ char *socket_buffer_request(NewSocket *ns, int data_len)
 	tmp->len+=header_len;
 
 #ifdef SEND_BUFFER_DEBUG
-	LOG(llevDebug,"SOCKBUF: Requested buffer %x for %d + %d bytes\n", tmp, data_len, header_len);
+	LOG(llevDebug,"SOCKBUF: Requested buffer %p for %d + %d bytes\n", tmp, data_len, header_len);
 #endif
 	return (char *)(tmp->buf+tmp->len); /* for direct access we return the <data> of this buffer part */
 }
@@ -97,7 +97,7 @@ sockbuf_struct *socket_buffer_adjust(sockbuf_struct *sbuf, int len)
 	tmp->flags = sbuf->flags;
 
 #ifdef SEND_BUFFER_DEBUG
-	LOG(llevDebug,"SOCKBUF: Adjusted buffer %x to %x from %d to %d bytes (%d)\n", sbuf, tmp, sbuf->bufsize, tmp->bufsize, len);
+	LOG(llevDebug,"SOCKBUF: Adjusted buffer %p to %p from %d to %d bytes (%d)\n", sbuf, tmp, sbuf->bufsize, tmp->bufsize, len);
 #endif
 
 	/* we remove the old buffer now - all is copied
@@ -120,7 +120,7 @@ void socket_buffer_request_reset(NewSocket *ns)
 	sockbuf_struct *tmp = ns->sockbuf;
 
 #ifdef SEND_BUFFER_DEBUG
-	LOG(llevDebug,"SOCKBUF: Reseted buffer %x\n", tmp);
+	LOG(llevDebug,"SOCKBUF: Reseted buffer %p\n", tmp);
 #endif
 	tmp->len = tmp->request_len;
 	tmp->request_len = SOCKBUF_DYNAMIC;
@@ -184,7 +184,7 @@ void socket_buffer_request_finish(NewSocket *ns, int cmd, int len)
 		{
 			uint8 cc;
 			cc= *(tmp->buf+tmp->request_len);
-			LOG(llevDebug,"SOCKBUF: Finish buffer %x for cmd %x(%d) with %d bytes (dynamic)\n", tmp, cmd, cmd, len);
+			LOG(llevDebug,"SOCKBUF: Finish buffer %p for cmd %x(%d) with %d bytes (dynamic)\n", tmp, cmd, cmd, len);
 		}
 #endif
 		tmp->request_len = SOCKBUF_DYNAMIC;
@@ -215,7 +215,7 @@ void socket_buffer_request_finish(NewSocket *ns, int cmd, int len)
 		{
 			uint8 cc;
 			cc= *(tmp->buf+tmp->request_len);
-			LOG(llevDebug,"SOCKBUF: Finish buffer %x for cmd %x(%d) with %d bytes\n", tmp, cmd, cmd, len);
+			LOG(llevDebug,"SOCKBUF: Finish buffer %p for cmd %x(%d) with %d bytes\n", tmp, cmd, cmd, len);
 		}
 #endif
 		tmp->request_len = SOCKBUF_DYNAMIC;
@@ -255,7 +255,7 @@ sockbuf_struct *socket_buffer_get(int len)
 		if(!tmp->buf)
 			LOG(llevError, "dynamic sockbuf: malloc returned zero for %d(%d) bytes\n", len, tmp->bufsize);
 #ifdef SEND_BUFFER_DEBUG
-		LOG(llevDebug, "Allocated overzised dynamic sockbuf (%x) for: %d(%d) bytes\n", tmp, len, tmp->bufsize);
+		LOG(llevDebug, "Allocated overzised dynamic sockbuf (%p) for: %d(%d) bytes\n", tmp, len, tmp->bufsize);
 #endif
 	}
 	tmp->ns = tmp->last = tmp->next = NULL;
