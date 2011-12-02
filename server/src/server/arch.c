@@ -258,6 +258,7 @@ void init_archetypes()
     SET_GLOBAL_ARCHETYPE(paralyze);
     SET_GLOBAL_ARCHETYPE(corpse_default);
     SET_GLOBAL_ARCHETYPE(loot_container);
+    SET_GLOBAL_ARCHETYPE(pvp_stat_force);
 }
 
 #undef SET_GLOBAL_ARCHETYPE
