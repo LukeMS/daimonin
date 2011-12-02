@@ -548,7 +548,31 @@ int damage_ob(object *op, int dam, object *hitter, int env_attack)
         char buf[SMALL_BUF];
         strcpy(buf, query_name(hitter));
         FREE_AND_COPY_HASH(CONTR(op)->killer, buf);
-        kill_player(op);
+
+        // TODO: Add some more checks here to ensure that the player isn't trying to cheat the system (killing alts).
+        // If op really died (and wasn't saved by save_life, Lua triggers, etc.)...
+        if (kill_player(op))
+        {
+            /* And was in a PvP area...
+             * Although this is cheating a bit. Because we called kill_player() earlier, the player has already been moved.
+             * Now the map data will change and may not be a pvp area anymore. Because of this, we have to check the hitter
+             * instead, but most likely (100% of the time with players, not so much with mobs) they will be on a PvP map too,
+             * and if not, the death was not technically a result of PvP.
+             */
+            if (pvp_area(hit_obj, NULL))
+            {
+                // And was killed by a player, increment their total/round death counts and their killer's total/round kill counts.
+                if (hit_obj->type == PLAYER)
+                {
+                    increment_pvp_counter(op, (PVP_STATFLAG_DEATH_TOTAL | PVP_STATFLAG_DEATH_ROUND));
+                    increment_pvp_counter(hit_obj, (PVP_STATFLAG_KILLS_TOTAL | PVP_STATFLAG_KILLS_ROUND));
+                } else // But if op wasn't killed by a player (or an object whose owner is a player), only increment their temporary round count.
+                {
+                    increment_pvp_counter(op, PVP_STATFLAG_DEATH_ROUND);
+                }
+            }
+        }
+
         return maxdam;  /* nothing more to do for wall */
     }
     /* Eneq(@csd.uu.se): Check to see if monster runs away. */

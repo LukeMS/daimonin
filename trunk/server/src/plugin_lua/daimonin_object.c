@@ -2122,13 +2122,17 @@ static int GameObject_Kill(lua_State *L)
     if (WHO->type == PLAYER)
     {
         /* The player has a way to save his life? Use it up and return
-         * false. */
-        if (hooks->save_life(WHO))
+         * false. 
+         *
+         * NOTE: This should no longer be necessary, as kill_player() now returns the success value.
+         */
+/*        if (hooks->save_life(WHO))
         {
             lua_pushboolean(L, 0);
 
             return 1;
         }
+*/
 
         /* Note the player's killer. */
         if (whatptr)
@@ -2140,10 +2144,8 @@ static int GameObject_Kill(lua_State *L)
             FREE_AND_COPY_HASH(CONTR(WHO)->killer, STRING_SAFE(killer));
         }
 
-        /* Kill him and return true. */
-        hooks->kill_player(WHO);
-
-        lua_pushboolean(L, 1);
+        // Attempt to kill and return whether or not they died.
+        lua_pushboolean(L, hooks->kill_player(WHO));
 
         return 1;
     }
