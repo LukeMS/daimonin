@@ -97,7 +97,7 @@ sockbuf_struct *socket_buffer_adjust(sockbuf_struct *sbuf, int len)
 	tmp->flags = sbuf->flags;
 
 #ifdef SEND_BUFFER_DEBUG
-	LOG(llevDebug,"SOCKBUF: Adjusted buffer %p to %p from %d to %d bytes (%d)\n", sbuf, tmp, sbuf->bufsize, tmp->bufsize, len);
+	LOG(llevDebug,"SOCKBUF: Adjusted buffer %p to %p from %d(%d) to %d bytes (%d)\n", sbuf, tmp, sbuf->bufsize, sbuf->len, tmp->bufsize, len);
 #endif
 
 	/* we remove the old buffer now - all is copied
