@@ -668,7 +668,7 @@ int get_friendship(object *op, object *other)
                 {
                     player *tmp = CONTR(CONTR(op)->group_leader);
 
-                    for (; tmp->group_next; tmp = CONTR(tmp->group_next))
+                    for (; tmp; tmp = CONTR(tmp->group_next))
                         if (tmp && tmp->ob == other)
                             return FRIENDSHIP_HELP;
                 }
