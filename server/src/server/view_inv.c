@@ -772,7 +772,7 @@ static void esrv_update_item_send(int flags, object *pl, object *op)
         strncpy(item_n, query_base_name(op, pl), 127);
         item_n[127] = 0;
         len = strlen(item_n);
-        SockBuf_AddChar(sbptr, len);
+        SockBuf_AddChar(sbptr, len + 1);
         SockBuf_AddString(sbptr, item_n, len);
     }
     if (flags & UPD_ANIM)
