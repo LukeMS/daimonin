@@ -97,9 +97,9 @@
  * debugflags get enabled/disabled by commenting then out or not.
  */
 
-#define SEND_BUFFER_DEBUG
-
 #ifdef DAI_DEVELOPMENT_CODE
+
+//#define SEND_BUFFER_DEBUG
 
 #define ESRV_DEBUG
 #define DEBUG_PROCESS_QUEUE
