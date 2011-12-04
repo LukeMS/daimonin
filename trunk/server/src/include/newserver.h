@@ -122,6 +122,36 @@ typedef struct _sockbuf_struct
 } sockbuf_struct;
 
 /* help functions to write in requested socket buffers */
+#ifdef SEND_BUFFER_DEBUG
+#define SockBuf_AddChar(_sl_,_c_) \
+	{LOG(llevDebug,"SOCKBUF: Add Char to %p(%d)\n",(_sl_),(_sl_)->len); \
+	if((int)((_sl_)->len+1)>=(_sl_)->bufsize) \
+	(_sl_)=socket_buffer_adjust((_sl_),1); \
+	( *((uint8 *)((_sl_)->buf+(_sl_)->len++)) =(char)(_c_) );}
+#define SockBuf_AddShort(_sl_,_c_) \
+	{LOG(llevDebug,"SOCKBUF: Add Short to %p(%d)\n",(_sl_),(_sl_)->len); \
+	if((int)((_sl_)->len+2)>=(_sl_)->bufsize) \
+	(_sl_)=socket_buffer_adjust((_sl_),2); \
+	*((uint16 *)((_sl_)->buf+(_sl_)->len))=(uint16)(_c_);(_sl_)->len+=2;}
+#define SockBuf_AddInt(_sl_,_c_) \
+	{LOG(llevDebug,"SOCKBUF: Add Int to %p(%d)\n",(_sl_),(_sl_)->len); \
+	if((int)((_sl_)->len+4)>=(_sl_)->bufsize) \
+	(_sl_)=socket_buffer_adjust((_sl_),4); \
+	*((uint32 *)((_sl_)->buf+(_sl_)->len))=(uint32)(_c_);(_sl_)->len+=4;}
+#define SockBuf_AddString(_sl,_data,_len) \
+	{LOG(llevDebug,"SOCKBUF: Add String of length %d to %p(%d)\n",(int)(_len),(_sl),(_sl)->len); \
+	if((int)((_sl)->len+(_len)+1)>=(_sl)->bufsize) \
+	(_sl)=socket_buffer_adjust((_sl),(_len)+1); \
+	memcpy((_sl)->buf+(_sl)->len,(_data),(_len)); \
+	(_sl)->len+=(_len); \
+	(_sl)->buf[(_sl)->len++] = (char) 0;}
+#define SockBuf_AddStringNonTerminated(_sl,_data,_len) \
+	{LOG(llevDebug,"SOCKBUF: Add StringNT of length %d to %p(%d)\n",(int)(_len),(_sl),(_sl)->len); \
+	if((int)((_sl)->len+(_len)+1)>=(_sl)->bufsize) \
+	(_sl)=socket_buffer_adjust((_sl),(_len)+1); \
+	memcpy((_sl)->buf+(_sl)->len,(_data),(_len)); \
+	(_sl)->len+=(_len);}
+#else
 #define SockBuf_AddChar(_sl_,_c_) \
 	{if((int)((_sl_)->len+1)>=(_sl_)->bufsize) \
 	(_sl_)=socket_buffer_adjust((_sl_),1); \
@@ -145,6 +175,7 @@ typedef struct _sockbuf_struct
 	(_sl)=socket_buffer_adjust((_sl),(_len)+1); \
 	memcpy((_sl)->buf+(_sl)->len,(_data),(_len)); \
 	(_sl)->len+=(_len);}
+#endif
 
 /* helper macro to add a single command to a socket */
 #define Write_Command_To_Socket(_ns_,_cmd_) \

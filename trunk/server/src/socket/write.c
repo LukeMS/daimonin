@@ -56,6 +56,9 @@ char *socket_buffer_request(NewSocket *ns, int data_len)
 		ns->sockbuf = socket_buffer_get(data_len + header_len);
 	}
 	tmp = ns->sockbuf;
+#ifdef SEND_BUFFER_DEBUG
+	LOG(llevDebug,"SOCKBUF: Requested buffer %p(%d) for %d + %d bytes\n", tmp, tmp->len, data_len, header_len);
+#endif
 	tmp->ns = ns; /* tell the sockbuf its direct connected to this socket */
 
 	/* we first save the current buffer position - perhaps there is something already in */
@@ -66,9 +69,6 @@ char *socket_buffer_request(NewSocket *ns, int data_len)
 		*(tmp->buf+tmp->len) = 0x80;
 	tmp->len+=header_len;
 
-#ifdef SEND_BUFFER_DEBUG
-	LOG(llevDebug,"SOCKBUF: Requested buffer %p for %d + %d bytes\n", tmp, data_len, header_len);
-#endif
 	return (char *)(tmp->buf+tmp->len); /* for direct access we return the <data> of this buffer part */
 }
 
