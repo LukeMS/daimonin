@@ -43,7 +43,7 @@ char *socket_buffer_request(NewSocket *ns, int data_len)
 	if(!tmp)
 		ns->sockbuf = socket_buffer_get(data_len + header_len);
 	/* the buffer is already there... lets check there is enough space for data_len */
-	else if(tmp->bufsize < data_len + header_len)
+	else if(tmp->bufsize - tmp->len < data_len + header_len)
 	{
 		/* we must request a new buffer - lets throw the old one in our send queue */
         if(tmp->len)/* enqueue if there is anything in the buffer */
