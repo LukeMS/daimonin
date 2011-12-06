@@ -32,12 +32,10 @@
  */
 char *socket_buffer_request(NewSocket *ns, int data_len)
 {
-	int 		header_len = 3;
+	int 		header_len = (data_len <= 0xffff)
+	                             ? SOCKBUF_HEADER_DEFAULT
+	                             : SOCKBUF_HEADER_EXTENDED;
 	sockbuf_struct *tmp = ns->sockbuf;
-
-	/* lets adjust data_len by a the header. */
-	if(data_len > 0xffff)
-		header_len = 5;
 
 	/* lets check we already have a "working buffer" */
 	if(!tmp)
@@ -155,8 +153,8 @@ void socket_buffer_request_finish(NewSocket *ns, int cmd, int len)
 		}
 
 		/* lets calc now len - it was increased by the SockBuf_xx functions */
-		header_len = ((*(char *)(tmp->buf+tmp->request_len))&0x80)?SOCKBUF_HEADER_EXTENDED:SOCKBUF_HEADER_DEFAULT;
-		len = tmp->len - tmp->request_len - header_len;
+		header_len = SOCKBUF_REQUEST_HDRSIZE(tmp);
+		len = SOCKBUF_REQUEST_BUFSIZE(tmp);
 
 		if(len < 0)
 		{
@@ -300,12 +298,12 @@ sockbuf_struct *compose_socklist_buffer(int cmd, sockbuf_struct *out_buf, char *
 	{
 		*((uint32*)(tmp_buf->buf+tmp_buf->len+1)) = (uint32)len;
 		*tmp_buf->buf |= 0x80; /* mark the command its followed by a 4 byte length header */
-		tmp_buf->len += 5;
+		tmp_buf->len += SOCKBUF_HEADER_EXTENDED;
 	}
 	else
 	{
 		*((uint16*)(tmp_buf->buf+tmp_buf->len+1)) = (uint16)len;
-		tmp_buf->len += 3;
+		tmp_buf->len += SOCKBUF_HEADER_DEFAULT;
 	}
 
 	memcpy(tmp_buf->buf+tmp_buf->len, cmd_buf, len);

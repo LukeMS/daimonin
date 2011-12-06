@@ -90,8 +90,13 @@ typedef struct ReadList_struct
 #define SOCKBUF_REQUEST_BUFFER(_ns_,_len_) socket_buffer_request((_ns_),(_len_))
 #define SOCKBUF_REQUEST_FINISH(_ns_,_cmd_,_len_) socket_buffer_request_finish((_ns_),(_cmd_),(_len_))
 #define SOCKBUF_REQUEST_RESET(_ns_) socket_buffer_request_reset((_ns_))
+
 /* sometimes we want know how much there is in <data> */
-#define SOCKBUF_REQUEST_BUFSIZE(_sb_) ((_sb_)->len -(_sb_)->request_len-((*((char *)((_sb_)->buf+(_sb_)->request_len)))&0x80?5:3))
+#define SOCKBUF_REQUEST_HDRSIZE(_sb_) \
+    (((*((char *)((_sb_)->buf + (_sb_)->request_len))) & 0x80) \
+     ? SOCKBUF_HEADER_EXTENDED : SOCKBUF_HEADER_DEFAULT)
+#define SOCKBUF_REQUEST_BUFSIZE(_sb_) \
+    ((_sb_)->len - (_sb_)->request_len - SOCKBUF_REQUEST_HDRSIZE((_sb_)))
 
 /* helper function for SockBuf_xxx to get the right sockbuf */
 #define ACTIVE_SOCKBUF(_ns_) ((_ns_)->sockbuf)
