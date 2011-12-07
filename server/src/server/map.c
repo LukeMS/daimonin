@@ -2723,29 +2723,24 @@ static void LoadObjects(mapstruct *m, FILE *fp, int mapflags)
                 /* Check for invalid exit path. */
                 if (EXIT_PATH(op))
                 {
-                    shstr *path_sh;
+                    char buf[MAXPATHLEN];
 
                     /* Absolute path? */
                     if (*op->slaying == '/')
                     {
-                        path_sh = add_refcount(op->slaying);
+                        sprintf(buf, "%s", op->slaying);
                     }
                     else
                     {
-                        char buf[MAXPATHLEN];
-
                         (void)normalize_path(m->orig_path, op->slaying, buf);
-                        path_sh = add_string(buf);
                     }
 
-                    if (check_path(path_sh, 1) == -1)
+                    if (check_path(buf, 1) == -1)
                     {
                         LOG(llevMapbug, "MAPBUG:: %s[%s %d %d] destination map %s does not exist!\n",
                             STRING_OBJ_NAME(op), STRING_MAP_PATH(m), op->x,
-                            op->y, path_sh);
+                            op->y, buf);
                     }
-
-                    FREE_ONLY_HASH(path_sh);
                 }
 
                 break;
