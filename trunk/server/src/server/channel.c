@@ -713,7 +713,7 @@ void sendChannelMessage(player *pl,struct player_channel *pl_channel, char *para
 
     for (cpl=pl_channel->channel->players;cpl;cpl=cpl->next_player)
         if (cpl->pl->channels_on)
-            SOCKBUF_ADD_TO_SOCKET(&cpl->pl->socket, sockbuf);
+            SOCKBUF_ADD_TO_SOCKET(&(cpl->pl->socket), sockbuf);
 
     SOCKBUF_COMPOSE_FREE(sockbuf);
     return;
@@ -743,7 +743,7 @@ void sendChannelEmote(player *pl,struct player_channel *pl_channel, char *params
 
     for (cpl=pl_channel->channel->players;cpl;cpl=cpl->next_player)
         if (cpl->pl->channels_on)
-            SOCKBUF_ADD_TO_SOCKET(ns, sockbuf);
+            SOCKBUF_ADD_TO_SOCKET(&(cpl->pl->socket), sockbuf);
 
     SOCKBUF_COMPOSE_FREE(sockbuf);
     return;
