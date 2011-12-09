@@ -127,7 +127,7 @@ sockbuf_struct	*socket_buffer_adjust(sockbuf_struct *sbuf, int len);
 void			socket_buffer_request_finish(NewSocket *ns, int cmd, int len);
 void			socket_buffer_request_reset(NewSocket *ns);
 sockbuf_struct	*socket_buffer_get(int len);
-sockbuf_struct	*compose_socklist_buffer(int cmd, sockbuf_struct *out_buf, char *cmd_buf, int len, int flags);
+sockbuf_struct	*compose_socklist_buffer(int cmd, char *data, int data_len, int flags);
 void			socket_buffer_enqueue(NewSocket *ns, sockbuf_struct *sockbufptr);
 void			socket_buffer_dequeue(NewSocket *ns);
 void			socket_buffer_queue_clear(NewSocket *ns);
@@ -135,6 +135,8 @@ void			initialize_socket_buffer_small(sockbuf_struct *sockbuf);
 void			initialize_socket_buffer_medium(sockbuf_struct *sockbuf);
 void			initialize_socket_buffer_huge(sockbuf_struct *sockbuf);
 void			initialize_socket_buffer_dynamic(sockbuf_struct *sockbuf);
+void			initialize_socket_buffer_broadcast(sockbuf_struct *sockbuf);
 void			free_socket_buffer_dynamic(sockbuf_struct* sb);
+void			free_socket_buffer_broadcast(sockbuf_struct* sb);
 
 #endif /* ifndef __SOCKPROTO_H */

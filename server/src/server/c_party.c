@@ -580,7 +580,7 @@ void party_client_group_update(object *member)
     }
 
     /* broadcast command to all members */
-    sockbuf = SOCKBUF_COMPOSE( SERVER_CMD_GROUP, NULL, sndbuf, SOCKBUF_DYNAMIC, 0);
+    sockbuf = SOCKBUF_COMPOSE(SERVER_CMD_GROUP, sndbuf, SOCKBUF_DYNAMIC, 0);
 
     for(tmp=plm->group_leader;tmp;tmp=CONTR(tmp)->group_next)
         SOCKBUF_ADD_TO_SOCKET(&CONTR(tmp)->socket, sockbuf); /* broadcast the sockbuf */

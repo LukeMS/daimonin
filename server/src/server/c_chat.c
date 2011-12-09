@@ -244,8 +244,7 @@ int command_gsay(object *op, char *params)
 #ifdef USE_CHANNELS
     sprintf(buf, "%c%c%s %s:%s", 2, NDI_YELLOW, "Group", query_name(op),
             params);
-    sockbuf = SOCKBUF_COMPOSE(SERVER_CMD_CHANNELMSG, NULL, buf,
-                              strlen(buf + 2) + 2, 0);
+    sockbuf = SOCKBUF_COMPOSE(SERVER_CMD_CHANNELMSG, buf, strlen(buf + 2) + 2, 0);
 #endif
 	for(tmp=CONTR(op)->group_leader;tmp;tmp=CONTR(tmp)->group_next)
 	{
