@@ -99,20 +99,6 @@ static void init_defaults()
     nroferrors = 0;
 }
 
-/* we create some static write buffers we "broadcast" to fixed events to the clients */
-static void init_global_sockbufs(void)
-{
-    /*
-    char buf[1024];
-    */
-
-    /* thats used in socket/loop.c right after we have a connect */
-    /*
-    sprintf(buf, "%d %d %s", VERSION_CS, VERSION_SC, VERSION_INFO);
-    global_sockbuf_version = SOCKBUF_COMPOSE(SERVER_CMD_VERSION, buf,SOCKBUF_DYNAMIC,SOCKBUF_FLAG_STATIC);
-    */
-}
-
 /*
  * Initialises global shared strings that we can use in comparisions
  */
@@ -1455,9 +1441,5 @@ void init_library()
     init_archetypes();  /* Reads all archetypes from file */
     init_clocks();
     init_sounds();
-
     init_lists_and_tables(); /* Initializes some global lists and tables */
-    init_global_sockbufs();
-
 }
-
