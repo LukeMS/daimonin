@@ -78,13 +78,19 @@ typedef struct ReadList_struct
 #define SOCKET_SIZE_MEDIUM (2048-SOCKBUF_HEADER_DEFAULT)
 #define SOCKET_SIZE_HUGE (4096-SOCKBUF_HEADER_DEFAULT)
 
-/* when we assemble and broadcast a non static sockbuf, SOCKBUF_ASSEMBLE_FREE() must be called
- * in the case the sockbuf is not inserted in any queue - or we never free it!
- */
-#define SOCKBUF_COMPOSE(_c_,_ob_,_cb_,_l_,_f_) compose_socklist_buffer((_c_),(_ob_),(_cb_),(_l_),(_f_));
-#define SOCKBUF_COMPOSE_FREE(_sb) \
-	{if(!((_sb)->instance) && !((_sb)->flags & SOCKBUF_FLAG_STATIC)) \
-	return_poolchunk((_sb), (_sb)->pool);}
+/* when we compose a non static broadcast sockbuf, SOCKBUF_COMPOSE_FREE() must
+ * be called in the case the sockbuf is not inserted in any queue - or we never
+ * free it! */
+#define SOCKBUF_COMPOSE(_cmd_, _data_, _data_len_, _flags_) \
+    compose_socklist_buffer((_cmd_), (_data_), (_data_len_), (_flags_));
+#define SOCKBUF_COMPOSE_FREE(_sb_) \
+    { \
+        if (!(_sb_)->instance && \
+            !((_sb_)->flags & SOCKBUF_FLAG_STATIC)) \
+        { \
+            return_poolchunk((_sb_), (_sb_)->pool); \
+        } \
+    }
 
 /* we define this as macros so we can easily add stuff like for example a multiplexer */
 #define SOCKBUF_REQUEST_BUFFER(_ns_,_len_) socket_buffer_request((_ns_),(_len_))

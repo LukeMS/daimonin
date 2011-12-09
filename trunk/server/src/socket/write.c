@@ -272,46 +272,51 @@ sockbuf_struct *socket_buffer_get(int len)
 * if length is >0xffff use 4 bytes instead of 2 for <length of data>
 * and set the high bit of cmd
 * paramter:
-* out_buf != NULL: use it as buffer
-* (WARNING: we assume an already allocated ->buf in the right size
-* out_buf == NULL: allocate a fitting command buffer
-* len >= 0: copy len bytes from cmd_buf to out_buf (binary data or string collection)
-* len == -1: cmd_buf is a C string ('\0' terminated), use strlen() to get length
+* data_len >= 0: copy data_len bytes from data to sb (binary data or string collection)
+* data_len == -1: data is a C string ('\0' terminated), use strlen() to get length
 */
-sockbuf_struct *compose_socklist_buffer(int cmd, sockbuf_struct *out_buf, char *cmd_buf, int len, int flags)
+sockbuf_struct *compose_socklist_buffer(int cmd, char *data, int data_len, int flags)
 {
-	sockbuf_struct *tmp_buf = out_buf;
+	int 		header_len;
+	sockbuf_struct *sb = get_poolchunk(pool_sockbuf_broadcast);
 
-	if(len < 0) /* ensure a valid length value */
-		len = strlen(cmd_buf);
-
-	if(!tmp_buf) /* allocate command buffer first */
-		tmp_buf = socket_buffer_get(len);
-
-	/* note: ->pos is not used - we never, ever attach something to a sockbuf
-	 * which is already partly transfered by the socket func. tmp_buf->pos is always zero here
-	 */
-	*(tmp_buf->buf+tmp_buf->len) = (uint8)cmd;
-
-	/* setup the <1 byte cmd><2/4 bytes length> header */
-	if(len > 0xffff)
+	/* Calculate data and header lengths. */
+	if (data_len == SOCKBUF_DYNAMIC)
 	{
-		*((uint32*)(tmp_buf->buf+tmp_buf->len+1)) = (uint32)len;
-		*tmp_buf->buf |= 0x80; /* mark the command its followed by a 4 byte length header */
-		tmp_buf->len += SOCKBUF_HEADER_EXTENDED;
-	}
-	else
-	{
-		*((uint16*)(tmp_buf->buf+tmp_buf->len+1)) = (uint16)len;
-		tmp_buf->len += SOCKBUF_HEADER_DEFAULT;
+		data_len = strlen(data) + 1;
 	}
 
-	memcpy(tmp_buf->buf+tmp_buf->len, cmd_buf, len);
-	tmp_buf->len += len;
-	tmp_buf->flags |= flags;
+	header_len = (data_len > 0xffff)
+	             ? SOCKBUF_HEADER_EXTENDED : SOCKBUF_HEADER_DEFAULT;
 
-	return tmp_buf;
+	/* Allocate sockbuf. */
+	sb->pool = pool_sockbuf_broadcast;
+	MALLOC(sb->buf, header_len + data_len);
+#ifdef SEND_BUFFER_DEBUG
+	LOG(llevDebug, "SOCKBUF: Allocated broadcast sockbuf (%p) of %d bytes\n",
+	    sb, header_len + data_len);
+#endif
+	sb->ns = sb->last = sb->next = NULL;
+	sb->request_len = sb->instance = sb->pos = 0;
+	sb->bufsize = sb->len = header_len + data_len;
+	sb->flags = flags;
 
+	/* Setup header. */
+	if (header_len == SOCKBUF_HEADER_EXTENDED)
+	{
+		*sb->buf = (uint8)cmd | 0x80;
+		*((uint32*)(sb->buf + 1)) = (uint32)data_len;
+	}
+	else // if (header_len == SOCKBUF_HEADER_DEFAULT)
+	{
+		*sb->buf = (uint8)cmd;
+		*((uint16*)(sb->buf + 1)) = (uint16)data_len;
+	}
+
+	/* Copy data. */
+	memcpy(sb->buf + header_len, data, data_len);
+
+	return sb;
 }
 
 /* attach socket buffer to outgoing list of this ns socket
@@ -413,6 +418,11 @@ void initialize_socket_buffer_dynamic(sockbuf_struct *sockbuf)
 	sockbuf->buf = NULL;
 	sockbuf->instance = 0;
 }
+void initialize_socket_buffer_broadcast(sockbuf_struct *sockbuf)
+{
+	sockbuf->buf = NULL;
+	sockbuf->instance = 0;
+}
 
 /* destructor called from mempool */
 void free_socket_buffer_dynamic(sockbuf_struct* sb)
@@ -422,3 +432,8 @@ void free_socket_buffer_dynamic(sockbuf_struct* sb)
 	sb->instance = 0;
 }
 
+void free_socket_buffer_broadcast(sockbuf_struct* sb)
+{
+	FREE(sb->buf);
+	sb->instance = 0;
+}

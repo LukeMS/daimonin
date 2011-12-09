@@ -109,7 +109,7 @@ static void init_global_sockbufs(void)
     /* thats used in socket/loop.c right after we have a connect */
     /*
     sprintf(buf, "%d %d %s", VERSION_CS, VERSION_SC, VERSION_INFO);
-    global_sockbuf_version = SOCKBUF_COMPOSE( SERVER_CMD_VERSION, NULL,buf,SOCKBUF_DYNAMIC,SOCKBUF_FLAG_STATIC);
+    global_sockbuf_version = SOCKBUF_COMPOSE(SERVER_CMD_VERSION, buf,SOCKBUF_DYNAMIC,SOCKBUF_FLAG_STATIC);
     */
 }
 
