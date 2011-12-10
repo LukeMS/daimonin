@@ -33,6 +33,7 @@ SOCKSRCS = \
 	lowlevel.c\
 	metaserver.c\
 	read.c\
+	request.c\
 	startup.c\
 	write.c
 
