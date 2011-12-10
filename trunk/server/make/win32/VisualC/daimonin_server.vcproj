@@ -290,6 +290,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\..\src\socket\request.c"
+					>
+				</File>
+				<File
 					RelativePath="..\..\..\src\socket\startup.c"
 					>
 				</File>
@@ -449,10 +453,6 @@
 				</File>
 				<File
 					RelativePath="..\..\..\src\server\recipe.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\..\src\server\request.c"
 					>
 				</File>
 				<File

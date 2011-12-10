@@ -185,9 +185,6 @@
 		<Unit filename="../../../src/server/recipe.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="../../../src/server/request.c">
-			<Option compilerVar="CC" />
-		</Unit>
 		<Unit filename="../../../src/server/shstr_ng.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -417,6 +414,9 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../../../src/socket/read.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/socket/request.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../../../src/socket/startup.c">

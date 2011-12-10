@@ -56,7 +56,6 @@ SRCS = \
 	re-cmp.c\
 	readable.c\
 	recipe.c\
-	request.c\
 	shstr_ng.c\
 	sounds.c\
 	stats.c\
