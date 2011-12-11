@@ -510,7 +510,6 @@ static void NewDrawInfo(int flags, player *pl, const char *const buf)
     if (!(pl->state & (ST_DEAD | ST_ZOMBIE)) &&
         pl->socket.status != Ns_Dead)
     {
-#if 1
         NewSocket *ns = &pl->socket;
         const int  len = strlen(buf);
 
@@ -521,17 +520,5 @@ static void NewDrawInfo(int flags, player *pl, const char *const buf)
         SockBuf_AddShort(ACTIVE_SOCKBUF(ns), (flags & NDI_FLAG_MASK));
         SockBuf_AddString(ACTIVE_SOCKBUF(ns), buf, len);
         SOCKBUF_REQUEST_FINISH(ns, SERVER_CMD_DRAWINFO2, SOCKBUF_DYNAMIC);
-#else
-        sockbuf_struct *sbptr;
-        char sendbuf[2048];
-
-        /* Turn off any internal flags. */
-        flags &= ~NDI_ALL;
-
-        sprintf(sendbuf, "%s", buf);
-        sbptr = SOCKBUF_COMPOSE(SERVER_CMD_DRAWINFO2, sendbuf, SOCKBUF_DYNAMIC, 0);
-        SOCKBUF_ADD_TO_SOCKET(&pl->socket, sbptr);
-        SOCKBUF_COMPOSE_FREE(sbptr);
-#endif
     }
 }
