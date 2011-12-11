@@ -843,7 +843,7 @@ void doeric_server(int update, struct timeval *timeout)
                  */
                 if (update_client)
                 {
-                    if ((update_player) && (pl->state & ST_PLAYING))
+                    if (update_player && (pl->state & ST_PLAYING))
                     {
                         esrv_update_stats(pl);
                         if (pl->update_skills)
@@ -852,9 +852,6 @@ void doeric_server(int update, struct timeval *timeout)
                             pl->update_skills = 0;
                         }
                         draw_client_map(pl->ob);
-
-                        if (pl->group_status & GROUP_STATUS_GROUP && pl->update_ticker != ROUND_TAG)
-                            party_client_group_update(pl->ob);
 
                         if ( pl->ob->map && (update_below = GET_MAP_UPDATE_COUNTER(pl->ob->map, pl->ob->x, pl->ob->y))
                              != pl->socket.update_tile)
