@@ -346,9 +346,12 @@ void socket_buffer_enqueue(NewSocket *ns, sockbuf_struct *sockbufptr)
     if(sockbufptr->len == 0) /* sanity check. will do no harm but should not happen */
         LOG(llevDebug, "BUG: socket_buffer_enqueue() found buffer without data!\n"); 
 
-    /* ensure to reset the "working buffer" pointers */
-	sockbufptr->ns = NULL;
-	ns->sockbuf = NULL;
+	/* ensure to reset the "working buffer" pointers */
+	if (sockbufptr->pool != pool_sockbuf_broadcast)
+	{
+		sockbufptr->ns = NULL;
+		ns->sockbuf = NULL;
+	}
 
 	sockbufptr->instance++; /* mark the buffer as enqueued */
 	/* lets collect some statistic */
