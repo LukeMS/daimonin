@@ -72,9 +72,4 @@ typedef enum LogLevel
 #endif
 #endif
 
-/* The following is a workaround for FS#61 - sockbuf bug. */
-#ifdef DAI_DEVELOPMENT_CONTENT
-extern char   mapbug_buf[HUGE_BUF];
-extern size_t mapbug_len;
-#endif
 #endif /* ifndef __LOGGER_H */

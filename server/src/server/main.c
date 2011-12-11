@@ -1068,15 +1068,6 @@ void iterate_main_loop()
 
     object_gc();                /* Clean up the object pool */
     sleep_delta();              /* Sleep proper amount of time before next tick but poll the socket */
-/* The following is a workaround for FS#61 - sockbuf bug. */
-#ifdef DAI_DEVELOPMENT_CONTENT
-    if (mapbug_len)
-    {
-        new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_ALL | NDI_RED, 5, NULL,
-                      "%s", mapbug_buf);
-        mapbug_len = 0;
-    }
-#endif
 }
 
 #define AUTO_MSG_COUNTER (8*60*30) /* all 30 minutes */
