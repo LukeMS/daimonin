@@ -238,7 +238,7 @@ void                        party_remove_member(player *member, int flag);
 void                        party_message(int mode, int flags, int pri,object *leader, object *source, char *format, ...) DAI_GNUC_PRINTF(6, 7);
 void                        party_client_group_status(object *member);
 void                        party_client_group_kill(object *member);
-void                        party_client_group_update(object *member);
+void                        party_client_group_update(object *member, int flag);
 /* c_range.c */
 void                        fire(object *op, int dir);
 float                       fire_magic_tool(object *owner, object *op, int dir);
