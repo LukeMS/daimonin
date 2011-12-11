@@ -23,7 +23,8 @@ function InterfaceBuilder:New()
         links,
         lhsbutton,
         rhsbutton,
-        textfield
+        textfield,
+        hidden
     }
 
     setmetatable(ib, { __metatable = InterfaceBuilder,
@@ -502,10 +503,19 @@ function InterfaceBuilder:ShowSENTInce(mode, ev, data)
     end
 
     ---------
+    -- The 'hidden' element will ensure that this isn't called twice if it was
+    -- called with GUI_NPC_MODE_NO before.
+    ---------
+    if self.hidden == true then
+        return
+    end
+
+    ---------
     -- If mode is 0 or data is true, close the GUI.
     ---------
     if mode == game.GUI_NPC_MODE_NO or
        data == true then
+        self.hidden = true
         ev.activator:Interface(game.GUI_NPC_MODE_NO)
     ---------
     -- Otherwise open a new GUI according to self.
