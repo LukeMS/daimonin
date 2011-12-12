@@ -131,94 +131,62 @@ void socket_buffer_request_reset(NewSocket *ns)
 void socket_buffer_request_finish(NewSocket *ns, int cmd, int len)
 {
 	sockbuf_struct *tmp = ns->sockbuf;
+	int             header_len;
 
 	/* sanity check: is there a valid buffer? */
-	if(!tmp)
+	if (!tmp)
 	{
-		LOG(llevBug,"BUG: Called socket_buffer_add() without valid sockbuf\n");
+		LOG(llevBug, "BUG: Called socket_buffer_add() without valid sockbuf\n");
+
 		return;
 	}
 
-	if(len == SOCKBUF_DYNAMIC)
+	/* some sanity checks - this bugs should only happens when testing & debugging */
+	if (tmp->request_len == SOCKBUF_DYNAMIC ||
+	    tmp->request_len >= tmp->len)
 	{
-		int header_len;
+		/* the buffer is really messed up... */
+		LOG(llevBug, "BUG: Called socket_buffer_add() with invalid request buffer length len:%d rlen:%d\n",
+		    tmp->len, tmp->request_len);
 
-		/* some sanity checks - this bugs should only happens when testing & debugging */
-		if(tmp->request_len == SOCKBUF_DYNAMIC || tmp->request_len >= tmp->len)
-		{
-			/* the buffer is really messed up... */
-			LOG(llevBug,"BUG: Called socket_buffer_add() with invalid request buffer length len:%d rlen:%d\n",
-				tmp->len, tmp->request_len);
-			return;
-		}
+		return;
+	}
 
+	if (len == SOCKBUF_DYNAMIC)
+	{
 		/* lets calc now len - it was increased by the SockBuf_xx functions */
-		header_len = SOCKBUF_REQUEST_HDRSIZE(tmp);
 		len = SOCKBUF_REQUEST_BUFSIZE(tmp);
 
 		if(len < 0)
 		{
-			LOG(llevBug,"Debug: Called socket_buffer_add() with invalid length len:%d rlen:%d\n",
-				tmp->len, tmp->request_len);
+			LOG(llevBug, "Debug: Called socket_buffer_add() with invalid length len:%d rlen:%d\n",
+			    tmp->len, tmp->request_len);
 			tmp->len = tmp->request_len; /* its a try to restore a valid buffer */
+
 			return;
 		}
-
-		/* the data is filled up and ready, the ->len value is ok...
-		 * just rewrite now the command tag and the length
-		 */
-		if(header_len == SOCKBUF_HEADER_DEFAULT)
-		{
-			*(tmp->buf+tmp->request_len) = cmd;
-			*((uint16*)(tmp->buf+tmp->request_len+1)) = (uint16)len;
-		}
-		else
-		{
-			*(tmp->buf+tmp->request_len) = cmd|0x80;
-			*((uint32*)(tmp->buf+tmp->request_len+1)) = (uint32)len;
-		}
-
-#ifdef SEND_BUFFER_DEBUG
-		{
-			uint8 cc;
-			cc= *(tmp->buf+tmp->request_len);
-			LOG(llevDebug,"SOCKBUF: Finish buffer %p for cmd %x(%d) with %d bytes (dynamic)\n", tmp, cmd, cmd, len);
-		}
-#endif
-		tmp->request_len = SOCKBUF_DYNAMIC;
 	}
 	else
 	{
-
-		/* lets check our dummy cmd we have a 2 or 4 byte length header */
-		if((*(tmp->buf+tmp->request_len) & 0x80))
-		{
-			*(tmp->buf+tmp->request_len) = cmd|0x80;
-			*((uint32*)(tmp->buf+tmp->request_len+1)) = (uint32)len;
-		}
-		else
-		{
-			*(tmp->buf+tmp->request_len) = cmd;
-			if(len > 0xFFFF)
-			{
-				/* this should really not happens - our buffer controller should take care about
-				* it as we filled the data in. This usually means we had an overflow!
-				*/
-				LOG(llevBug,"WARNING: Called socket_buffer_add() with short length but len:%d\n", len);
-				return;
-			}
-			*((uint16*)(tmp->buf+tmp->request_len+1)) = (uint16)len;
-		}
-#ifdef SEND_BUFFER_DEBUG
-		{
-			uint8 cc;
-			cc= *(tmp->buf+tmp->request_len);
-			LOG(llevDebug,"SOCKBUF: Finish buffer %p for cmd %x(%d) with %d bytes\n", tmp, cmd, cmd, len);
-		}
-#endif
-		tmp->request_len = SOCKBUF_DYNAMIC;
 		tmp->len += len;
 	}
+
+	if ((header_len = SOCKBUF_REQUEST_HDRSIZE(tmp)) == SOCKBUF_HEADER_EXTENDED)
+	{
+		*(tmp->buf + tmp->request_len) = cmd | 0x80;
+		*((uint32*)(tmp->buf + tmp->request_len + 1)) = (uint32)len;
+	}
+	else // if (header_len == SOCKBUF_HEADER_DEFAULT)
+	{
+		*(tmp->buf + tmp->request_len) = cmd;
+		*((uint16*)(tmp->buf + tmp->request_len + 1)) = (uint16)len;
+	}
+
+	tmp->request_len = SOCKBUF_DYNAMIC;
+#ifdef SEND_BUFFER_DEBUG
+	LOG(llevDebug, "SOCKBUF: Finish buffer %p for cmd %d with %d + %d bytes%s\n",
+	    tmp, cmd, header_len, len, (len == SOCKBUF_DYNAMIC) ? " (dynamic)" : "");
+#endif
 }
 
 /* setup the socket buffers (using mempool) */
