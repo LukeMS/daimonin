@@ -105,7 +105,7 @@ void write_socket_buffer(NewSocket *ns)
 		max = ns->sockbuf_len - ns->sockbuf_pos;
 		if(max > 0) /* break if we have something here */
 			break;
-        LOG(llevDebug,"WriteSockbuf with no data. skipped. fd:%d (%d :: %d)\n", ns->fd, ns->sockbuf_len, ns->sockbuf_pos);
+//		LOG(llevDebug,"WriteSockbuf with no data. skipped. fd:%d (%d :: %d)\n", ns->fd, ns->sockbuf_len, ns->sockbuf_pos);
 		socket_buffer_dequeue(ns);
 	}
 
@@ -113,24 +113,30 @@ void write_socket_buffer(NewSocket *ns)
 	{
 		/* is there something in our working buffer? */
 		if(!ns->sockbuf || !ns->sockbuf->len)
-        {
-          //  LOG(llevDebug,"WriteSockbuf - nothing\n"); 
-            return; /* there is really nothing to do! */
-        }
-//        LOG(llevDebug,"write:  using workbuffer\n"); 
+		{
+//			LOG(llevDebug,"WriteSockbuf - nothing\n"); 
+			return; /* there is really nothing to do! */
+		}
+
+//		LOG(llevDebug,"write:  using workbuffer\n"); 
 		socket_buffer_enqueue(ns, ns->sockbuf);
-		ns->sockbuf = NULL;
 		max = ns->sockbuf_len - ns->sockbuf_pos; /* its a fresh buffer, pos MUST be zero */
 	}
 
 	/* with this settings we can adjust in a hard way the maximum bytes written per round per socket */
 	/*
 	if(max >256)
-	max = 256;
+		max = 256;
 	*/
 
 	amt = send(ns->fd, ns->sockbuf_end->buf + ns->sockbuf_pos, max, MSG_DONTWAIT);
-//	LOG(llevNoLog,"WRITE(%d)(%d): %d (%d)\n", ROUND_TAG, ns->fd, amt, max);
+#ifdef SEND_BUFFER_DEBUG
+	LOG(llevDebug, "SOCKBUF WRITE (%p[%c %d], %s): %d/%d\n",
+	    ns->sockbuf_end,
+	    (ns->sockbuf_end->pool == pool_sockbuf_broadcast) ? 'b' : 'w',
+	    ns->sockbuf_end->instance, (ns->pl) ? ns->pl->ob->name : "NULL",
+	    amt, max);
+#endif
 
 	/* following this link: http://www-128.ibm.com/developerworks/linux/library/l-sockpit/#N1019D
 	* send() with MSG_DONTWAIT under linux can return 0 which means the data
