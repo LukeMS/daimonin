@@ -129,14 +129,26 @@ void write_socket_buffer(NewSocket *ns)
 		max = 256;
 	*/
 
-	amt = send(ns->fd, ns->sockbuf_end->buf + ns->sockbuf_pos, max, MSG_DONTWAIT);
+	if (ns->sockbuf_end->broadcast)
+	{
+		amt = send(ns->fd, ns->sockbuf_end->broadcast->buf + ns->sockbuf_pos, max,
+		           MSG_DONTWAIT);
 #ifdef SEND_BUFFER_DEBUG
-	LOG(llevDebug, "SOCKBUF WRITE (%p[%c %d], %s): %d/%d\n",
-	    ns->sockbuf_end,
-	    (ns->sockbuf_end->pool == pool_sockbuf_broadcast) ? 'b' : 'w',
-	    ns->sockbuf_end->instance, (ns->pl) ? ns->pl->ob->name : "NULL",
-	    amt, max);
+		LOG(llevDebug, "SOCKBUF WRITE (%p/%p[b %d/%d], %s): %d of %d bytes\n",
+		    ns->sockbuf_end, ns->sockbuf_end->broadcast,
+		    ns->sockbuf_end->instance, ns->sockbuf_end->broadcast->instance,
+		    (ns->pl) ? ns->pl->ob->name : "NULL", amt, max);
 #endif
+	}
+	else
+	{
+		amt = send(ns->fd, ns->sockbuf_end->buf + ns->sockbuf_pos, max, MSG_DONTWAIT);
+#ifdef SEND_BUFFER_DEBUG
+		LOG(llevDebug, "SOCKBUF WRITE (%p[w %d], %s): %d of %d bytes\n",
+		    ns->sockbuf_end, ns->sockbuf_end->instance,
+		     (ns->pl) ? ns->pl->ob->name : "NULL", amt, max);
+#endif
+	}
 
 	/* following this link: http://www-128.ibm.com/developerworks/linux/library/l-sockpit/#N1019D
 	* send() with MSG_DONTWAIT under linux can return 0 which means the data
