@@ -23,6 +23,8 @@
 
 #include <global.h>
 
+static void Dequeue(sockbuf_struct *sb);
+
 /* Dynamically request and setup a "global working" socket buffer for a socket/player
  * This functions also returns from the <cmd><length><data> part the pointer to data[0]
  * The buffer can be setup indirect by SockBuf_xxx functions increasing the buffers len
@@ -221,10 +223,10 @@ sockbuf_struct *socket_buffer_get(int len)
 		if(!tmp->buf)
 			LOG(llevError, "dynamic sockbuf: malloc returned zero for %d(%d) bytes\n", len, tmp->bufsize);
 #ifdef SEND_BUFFER_DEBUG
-		LOG(llevDebug, "Allocated overzised dynamic sockbuf (%p) for: %d(%d) bytes\n", tmp, len, tmp->bufsize);
+		LOG(llevDebug, "Allocated oversized dynamic sockbuf (%p) for: %d(%d) bytes\n", tmp, len, tmp->bufsize);
 #endif
 	}
-	tmp->ns = tmp->last = tmp->next = NULL;
+	tmp->ns = tmp->last = tmp->next = tmp->broadcast = NULL;
 	tmp->request_len = tmp->instance = tmp->len = tmp->pos = tmp->flags = 0;
 
 	return(tmp);
@@ -261,10 +263,10 @@ sockbuf_struct *compose_socklist_buffer(int cmd, char *data, int data_len, int f
 	sb->pool = pool_sockbuf_broadcast;
 	MALLOC(sb->buf, header_len + data_len);
 #ifdef SEND_BUFFER_DEBUG
-	LOG(llevDebug, "SOCKBUF: Allocated broadcast sockbuf (%p) of %d bytes\n",
-	    sb, header_len + data_len);
+	LOG(llevDebug, "SOCKBUF: Composed broadcast sockbuf (%p) of %d + %d bytes\n",
+	    sb, header_len, data_len);
 #endif
-	sb->ns = sb->last = sb->next = NULL;
+	sb->ns = sb->last = sb->next = sb->broadcast = NULL;
 	sb->request_len = sb->instance = sb->pos = 0;
 	sb->bufsize = sb->len = header_len + data_len;
 	sb->flags = flags;
@@ -290,12 +292,42 @@ sockbuf_struct *compose_socklist_buffer(int cmd, char *data, int data_len, int f
 /* attach socket buffer to outgoing list of this ns socket
  * Its a FIFO list, start means here "newest"
  */
-void socket_buffer_enqueue(NewSocket *ns, sockbuf_struct *sockbufptr)
+void socket_buffer_enqueue(NewSocket *ns, sockbuf_struct *sb)
 {
-	if(!sockbufptr)
-		return;
+	sockbuf_struct *sockbufptr = sb;
 
-	if(ns->sockbuf_start)
+	if (!sb)
+	{
+		return;
+	}
+
+	/* When we enqueue a sockbuf we are going to write values to its next
+	 * and last fields in order to create a linked list of sockbufs in an
+	 * individual player's socket. This obviously chains the sockbuf to
+	 * that particular player/socket. This is contrary to the whole idea of
+	 * broadcast sockbufs which are 'free floating' and accessible by
+	 * multiple players/sockets. To address this, when we ask to enqueue a
+	 * broadcast sockbuf the following creates a 'dummy' which points to
+	 * the real broadcast. It is this dummy which is chained, leaving the
+	 * real broadcast (where the actual data is) free floating. */
+	if (sb->pool == pool_sockbuf_broadcast)
+	{
+		sockbufptr = get_poolchunk(pool_sockbuf_broadcast);
+		sockbufptr->broadcast = sb;
+		sockbufptr->pool = pool_sockbuf_broadcast;
+		sockbufptr->pos = sb->pos;
+		sockbufptr->len = sb->len;
+
+		/* Bump the real broadcast instance. */
+		sb->instance++;
+	}
+	else
+	{
+		sockbufptr->ns = NULL;
+		ns->sockbuf = NULL;
+	}
+
+	if (ns->sockbuf_start)
 	{
 		ns->sockbuf_start->last = sockbufptr;
 		sockbufptr->next = ns->sockbuf_start;
@@ -311,20 +343,11 @@ void socket_buffer_enqueue(NewSocket *ns, sockbuf_struct *sockbufptr)
 		ns->sockbuf_len = sockbufptr->len;
 	}
 
-    if(sockbufptr->len == 0) /* sanity check. will do no harm but should not happen */
-        LOG(llevDebug, "BUG: socket_buffer_enqueue() found buffer without data!\n"); 
-
-	/* ensure to reset the "working buffer" pointers */
-	if (sockbufptr->pool != pool_sockbuf_broadcast)
-	{
-		sockbufptr->ns = NULL;
-		ns->sockbuf = NULL;
-	}
-
-	sockbufptr->instance++; /* mark the buffer as enqueued */
-	/* lets collect some statistic */
 	ns->sockbuf_bytes += sockbufptr->len;
 	ns->sockbuf_nrof++;
+
+	/* Bump the dummy broadcast OR actual working instance. */
+	sockbufptr->instance++;
 }
 
 /* NOTE: we have a FIFO queue here - we remove from the end
@@ -335,12 +358,9 @@ void socket_buffer_dequeue(NewSocket *ns)
 {
 	sockbuf_struct *tmp = ns->sockbuf_end;
 
-	if(tmp)
+	if (tmp)
 	{
-		ns->sockbuf_end = ns->sockbuf_end->last;
-
-		if(ns->sockbuf_end)
-
+		if ((ns->sockbuf_end = ns->sockbuf_end->last))
 		{
 			ns->sockbuf_end->next = NULL;
 			/* most important settings so we can send the buffers data */
@@ -348,16 +368,37 @@ void socket_buffer_dequeue(NewSocket *ns)
 			ns->sockbuf_len = ns->sockbuf_end->len;
 		}
 		else /* the removed buffer is also start */
+		{
 			ns->sockbuf_start = NULL;
+		}
 
-		ns->sockbuf_nrof--;
 		ns->sockbuf_bytes -= tmp->len;
+		ns->sockbuf_nrof--;
 
-		if(--tmp->instance < 0)
-			LOG(llevBug,"socket_buffer_dequeue(): instance counter < 0 (%x)\n", tmp->instance);
+		/* When we dequeue a dummy broadcast, we first need to do the 
+		 * real broadcast. */
+		if (tmp->broadcast)
+		{
+			Dequeue(tmp->broadcast);
+		}
 
-		if(!tmp->instance && !(tmp->flags & SOCKBUF_FLAG_STATIC))
-			return_poolchunk(tmp, tmp->pool);
+		/* Now dequeue the dummy broadcast OR working sockbuf. */
+		Dequeue(tmp);
+	}
+}
+
+static void Dequeue(sockbuf_struct *sb)
+{
+	if (--sb->instance < 0)
+	{
+		LOG(llevBug, "BUG:: %s:Dequeue(): %p instance < 0 (%d)!\n",
+		    __FILE__, sb, sb->instance);
+	}
+
+	if (!sb->instance &&
+	    !(sb->flags & SOCKBUF_FLAG_STATIC))
+	{
+		return_poolchunk(sb, sb->pool);
 	}
 }
 

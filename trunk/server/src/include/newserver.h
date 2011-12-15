@@ -83,6 +83,7 @@ typedef struct ReadList_struct
  * free it! */
 #define SOCKBUF_COMPOSE(_cmd_, _data_, _data_len_, _flags_) \
     compose_socklist_buffer((_cmd_), (_data_), (_data_len_), (_flags_));
+#define SOCKBUF_ADD_TO_SOCKET(_ns_, _sb_) socket_buffer_enqueue((_ns_), (_sb_))
 #define SOCKBUF_COMPOSE_FREE(_sb_) \
     { \
         if (!(_sb_)->instance && \
@@ -107,9 +108,6 @@ typedef struct ReadList_struct
 /* helper function for SockBuf_xxx to get the right sockbuf */
 #define ACTIVE_SOCKBUF(_ns_) ((_ns_)->sockbuf)
 
-/* help define to hide the exactly handling inside the write module */
-#define SOCKBUF_ADD_TO_SOCKET(_ns_, _sbuf_) socket_buffer_enqueue((_ns_),(_sbuf_))
-
 /* flag to tell sockbuf functions that len is not set or used */
 #define SOCKBUF_DYNAMIC (-1)
 
@@ -119,17 +117,18 @@ typedef struct ReadList_struct
 /* Contains the base information we use to make up a packet we want to send. */
 typedef struct _sockbuf_struct
 {
-	void            *next;
-	void            *last;
-	struct mempool  *pool;		/* intern: memory pool maker for mempool */
-	void			*ns;
-	int				request_len; /* the len/start position after request BEFORE header & cms part */
-	int				instance;	/* counter for mempool for multi enqueued buffers */
-	int				bufsize;	/* size of buf */
-	int				len;		/* length of data i buf */
-	int             pos;		/* start point of unsend data in buf */
-	int				flags;		/* status flags */
-	unsigned char	*buf;
+    struct _sockbuf_struct  *next;
+    struct _sockbuf_struct  *last;
+    struct _sockbuf_struct  *broadcast;   // b only=if !NULL, we are a dummy and this points to the real buffer
+    struct mempool          *pool;        // intern: memory pool maker for mempool
+    struct NewSocket_struct *ns;          // b=NULL only, w=if !NULL, socket to which we are chained
+    int                      request_len; // the len/start position after request BEFORE header & cmd part
+    int                      instance;    // counter for mempool for multi enqueued buffers
+    int                      bufsize;     // size of buf
+    int                      len;         // length of data in buf
+    int                      pos;         // start point of unsent data in buf
+    int	                     flags;       // status flags
+    unsigned char           *buf;         // data
 } sockbuf_struct;
 
 /* help functions to write in requested socket buffers */
