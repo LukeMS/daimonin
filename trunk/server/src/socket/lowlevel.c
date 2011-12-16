@@ -136,7 +136,7 @@ void write_socket_buffer(NewSocket *ns)
 #ifdef SEND_BUFFER_DEBUG
 		LOG(llevDebug, "SOCKBUF WRITE (%p/%p[b %d/%d], %s): %d of %d bytes\n",
 		    ns->sockbuf_end, ns->sockbuf_end->broadcast,
-		    ns->sockbuf_end->instance, ns->sockbuf_end->broadcast->instance,
+		    ns->sockbuf_end->queued, ns->sockbuf_end->broadcast->queued,
 		    (ns->pl) ? ns->pl->ob->name : "NULL", amt, max);
 #endif
 	}
@@ -145,7 +145,7 @@ void write_socket_buffer(NewSocket *ns)
 		amt = send(ns->fd, ns->sockbuf_end->buf + ns->sockbuf_pos, max, MSG_DONTWAIT);
 #ifdef SEND_BUFFER_DEBUG
 		LOG(llevDebug, "SOCKBUF WRITE (%p[w %d], %s): %d of %d bytes\n",
-		    ns->sockbuf_end, ns->sockbuf_end->instance,
+		    ns->sockbuf_end, ns->sockbuf_end->queued,
 		     (ns->pl) ? ns->pl->ob->name : "NULL", amt, max);
 #endif
 	}

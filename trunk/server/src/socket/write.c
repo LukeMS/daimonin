@@ -48,7 +48,7 @@ char *socket_buffer_request(NewSocket *ns, int data_len)
 		/* we must request a new buffer - lets throw the old one in our send queue */
         if(tmp->len)/* enqueue if there is anything in the buffer */
     		socket_buffer_enqueue(ns, tmp);
-        else if(!tmp->instance && !(tmp->flags & SOCKBUF_FLAG_STATIC)) /* when not, release it! */
+        else if(!tmp->queued && !(tmp->flags & SOCKBUF_FLAG_STATIC)) /* when not, release it! */
             return_poolchunk(tmp, tmp->pool);
         else /* this should not be happen - tell the devs */
             LOG(llevBug,"BUG: Blocked working socket_buffer not released in socket_buffer_request()\n");
@@ -92,7 +92,7 @@ sockbuf_struct *socket_buffer_adjust(sockbuf_struct *sbuf, int len)
 	tmp->len = sbuf->len;
 	tmp->request_len = sbuf->request_len;
 	tmp->pos = sbuf->pos;
-	tmp->instance = sbuf->instance;
+	tmp->queued = sbuf->queued;
 	tmp->ns = sbuf->ns;
 	tmp->flags = sbuf->flags;
 
@@ -228,7 +228,7 @@ sockbuf_struct *socket_buffer_get(int len)
 	}
 	tmp->ns = NULL;
 	tmp->last = tmp->next = tmp->broadcast = NULL;
-	tmp->request_len = tmp->instance = tmp->len = tmp->pos = tmp->flags = 0;
+	tmp->request_len = tmp->queued = tmp->len = tmp->pos = tmp->flags = 0;
 
 	return(tmp);
 }
@@ -269,7 +269,7 @@ sockbuf_struct *compose_socklist_buffer(int cmd, char *data, int data_len, int f
 #endif
 	sb->ns = NULL;
 	sb->last = sb->next = sb->broadcast = NULL;
-	sb->request_len = sb->instance = sb->pos = 0;
+	sb->request_len = sb->queued = sb->pos = 0;
 	sb->bufsize = sb->len = header_len + data_len;
 	sb->flags = flags;
 
@@ -321,7 +321,7 @@ void socket_buffer_enqueue(NewSocket *ns, sockbuf_struct *sb)
 		sockbufptr->len = sb->len;
 
 		/* Bump the real broadcast instance. */
-		sb->instance++;
+		sb->queued++;
 	}
 	else
 	{
@@ -349,7 +349,7 @@ void socket_buffer_enqueue(NewSocket *ns, sockbuf_struct *sb)
 	ns->sockbuf_nrof++;
 
 	/* Bump the dummy broadcast OR actual working instance. */
-	sockbufptr->instance++;
+	sockbufptr->queued++;
 }
 
 /* NOTE: we have a FIFO queue here - we remove from the end
@@ -391,13 +391,13 @@ void socket_buffer_dequeue(NewSocket *ns)
 
 static void Dequeue(sockbuf_struct *sb)
 {
-	if (--sb->instance < 0)
+	if (--sb->queued < 0)
 	{
 		LOG(llevBug, "BUG:: %s:Dequeue(): %p instance < 0 (%d)!\n",
-		    __FILE__, sb, sb->instance);
+		    __FILE__, sb, sb->queued);
 	}
 
-	if (!sb->instance &&
+	if (!sb->queued &&
 	    !(sb->flags & SOCKBUF_FLAG_STATIC))
 	{
 		return_poolchunk(sb, sb->pool);
@@ -415,27 +415,27 @@ void socket_buffer_queue_clear(NewSocket *ns)
 void initialize_socket_buffer_small(sockbuf_struct *sockbuf)
 {
 	sockbuf->buf = malloc(256);
-	sockbuf->instance = 0;
+	sockbuf->queued = 0;
 }
 void initialize_socket_buffer_medium(sockbuf_struct *sockbuf)
 {
 	sockbuf->buf = malloc(2048);
-	sockbuf->instance = 0;
+	sockbuf->queued = 0;
 }
 void initialize_socket_buffer_huge(sockbuf_struct *sockbuf)
 {
 	sockbuf->buf = malloc(4096);
-	sockbuf->instance = 0;
+	sockbuf->queued = 0;
 }
 void initialize_socket_buffer_dynamic(sockbuf_struct *sockbuf)
 {
 	sockbuf->buf = NULL;
-	sockbuf->instance = 0;
+	sockbuf->queued = 0;
 }
 void initialize_socket_buffer_broadcast(sockbuf_struct *sockbuf)
 {
 	sockbuf->buf = NULL;
-	sockbuf->instance = 0;
+	sockbuf->queued = 0;
 }
 
 /* destructor called from mempool */
@@ -443,11 +443,11 @@ void free_socket_buffer_dynamic(sockbuf_struct* sb)
 {
 	if(sb->buf)
 		FREE_AND_NULL_PTR(sb->buf);
-	sb->instance = 0;
+	sb->queued = 0;
 }
 
 void free_socket_buffer_broadcast(sockbuf_struct* sb)
 {
 	FREE(sb->buf);
-	sb->instance = 0;
+	sb->queued = 0;
 }
