@@ -86,7 +86,7 @@ typedef struct ReadList_struct
 #define SOCKBUF_ADD_TO_SOCKET(_ns_, _sb_) socket_buffer_enqueue((_ns_), (_sb_))
 #define SOCKBUF_COMPOSE_FREE(_sb_) \
     { \
-        if (!(_sb_)->instance && \
+        if (!(_sb_)->queued && \
             !((_sb_)->flags & SOCKBUF_FLAG_STATIC)) \
         { \
             return_poolchunk((_sb_), (_sb_)->pool); \
@@ -123,7 +123,7 @@ typedef struct _sockbuf_struct
     struct mempool          *pool;        // intern: memory pool maker for mempool
     struct NewSocket_struct *ns;          // b=NULL only, w=if !NULL, socket to which we are chained
     int                      request_len; // the len/start position after request BEFORE header & cmd part
-    int                      instance;    // counter for mempool for multi enqueued buffers
+    int                      queued;      // counter for mempool for multi enqueued buffers
     int                      bufsize;     // size of buf
     int                      len;         // length of data in buf
     int                      pos;         // start point of unsent data in buf
