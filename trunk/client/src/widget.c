@@ -615,7 +615,7 @@ int widget_event_mousemv(int x,int y, SDL_Event *event)
                     }
                     if (done)
                     {
-    //                    textwin_showstring(COLOR_RED, "%s l=%d r=%d t=%d b=%d", widget_data[id].name, LEFT(id), RIGHT(id), TOP(id), BOTTOM(id));
+    //                    textwin_showstring(0, NDI_COLR_RED, "%s l=%d r=%d t=%d b=%d", widget_data[id].name, LEFT(id), RIGHT(id), TOP(id), BOTTOM(id));
                         sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICK, 0, 0, 10);
                         event->motion.xrel = event->motion.yrel = 0; // acts as a brake, preventing id_e from 'skipping' through a stack of nodes
                         SDL_PushEvent(event);

@@ -55,7 +55,7 @@ void show_input_string(_font *font, SDL_Rect *box, char repl)
 
     /* Draw buf up to that point. */
     string_blt(ScreenSurface, font, buf, box->x - xoff, box->y,
-               COLOR_WHITE, NULL, NULL);
+               NDI_COLR_WHITE, NULL, NULL);
 
     /* Restore the character at CurrentCursorPos. */
     if (InputString[CurrentCursorPos])
@@ -65,7 +65,7 @@ void show_input_string(_font *font, SDL_Rect *box, char repl)
 
     /* Draw buf from that point. */
     string_blt(ScreenSurface, font, &buf[CurrentCursorPos],
-               box->x - xoff + len, box->y, COLOR_WHITE, NULL, NULL);
+               box->x - xoff + len, box->y, NDI_COLR_WHITE, NULL, NULL);
 
     /* Draw the caret. */
     if (InputCaretBlinkFlag &&
@@ -180,7 +180,7 @@ char *get_parameter_string(char *data, int *pos, int maxlen)
     {
 #ifdef DAI_DEVELOPMENT
         if ((int)strlen(buf)>maxlen)
-            textwin_showstring(COLOR_RED,"FixMe: Interface parameter string out of bounds!");
+            textwin_showstring(0, NDI_COLR_RED,"FixMe: Interface parameter string out of bounds!");
 #endif
         buf[maxlen-1]='\0';
     }
@@ -327,7 +327,7 @@ extern void     markdmbuster()
     send_mark_obj((it = locate_item(tag)));
     if (it)
     {
-        textwin_showstring(COLOR_DGOLD, "%s %s",
+        textwin_showstring(0, NDI_COLR_OLIVE, "%s %s",
                            (cpl.mark_count == (int)it->tag) ? "unmark" : "mark",
                            it->s_name);
     }

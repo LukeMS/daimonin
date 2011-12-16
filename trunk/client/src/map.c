@@ -615,7 +615,7 @@ void map_draw_map(void)
                                 xmpos = xpos - face_mpart_id[mid].part[mnr].xoff;
                                 xl += xmpos;
 
-//                                textwin_showstring(COLOR_RED, "ID:%d NR:%d yoff:%d yl:%d",
+//                                textwin_showstring(0, NDI_COLR_RED, "ID:%d NR:%d yoff:%d yl:%d",
 //                                                   mid, mnr,
 //                                                   face_mpart_id[mid].part[mnr].yoff,
 //                                                   yl);
@@ -794,7 +794,7 @@ void map_draw_map(void)
                                                                 map->pname[k]) / 2,
                                                    yl - skindef.effect_height -
                                                    font_small_out.line_height - 8,
-                                                   COLOR_WHITE, NULL, NULL);
+                                                   NDI_COLR_WHITE, NULL, NULL);
                                     }
                                 }
                             }
@@ -831,7 +831,7 @@ void map_draw_map(void)
         {
             string_blt(ScreenSurfaceMap, &font_small_out, cpl.rankandname,
                        p_xl - string_width(&font_small_out, cpl.rankandname) / 2,
-                       p_yl - font_small_out.line_height - 8, COLOR_HGOLD,
+                       p_yl - font_small_out.line_height - 8, NDI_COLR_SILVER,
                        NULL, NULL);
         }
     }
@@ -841,69 +841,42 @@ void map_draw_map(void)
      * etc. */
     if (t >= 0)
     {
-        uint8   hp_col;
-        uint32  sdl_col;
+        uint32 colr = SDL_MapRGB(ScreenSurfaceMap->format,
+                                 (NDI_COLR_GREEN << 16) & 0xff,
+                                 (NDI_COLR_GREEN << 8) & 0xff,
+                                 NDI_COLR_GREEN & 0xff);
 
-        if (cpl.target_hp > 90)
-        {
-            hp_col = COLOR_GREEN;
-        }
-        else if (cpl.target_hp > 75)
-        {
-            hp_col = COLOR_DGOLD;
-        }
-        else if (cpl.target_hp > 50)
-        {
-            hp_col = COLOR_HGOLD;
-        }
-        else if (cpl.target_hp > 25)
-        {
-            hp_col = COLOR_ORANGE;
-        }
-        else if (cpl.target_hp > 10)
-        {
-            hp_col = COLOR_YELLOW;
-        }
-        else
-        {
-            hp_col = COLOR_RED;
-        }
-
-        sdl_col = SDL_MapRGB(ScreenSurfaceMap->format,
-                             Bitmaps[BITMAP_PALETTE]->bitmap->format->palette->colors[hp_col].r,
-                             Bitmaps[BITMAP_PALETTE]->bitmap->format->palette->colors[hp_col].g,
-                             Bitmaps[BITMAP_PALETTE]->bitmap->format->palette->colors[hp_col].b);
         ShowEffects(t_flags, t_xl, t_yl);
         // hp% line
         rect.x = t_left;
         rect.y = t_yl - 5;
         rect.w = t_bar;
         rect.h = 1;
-        SDL_FillRect(ScreenSurfaceMap, &rect, sdl_col);
+        SDL_FillRect(ScreenSurfaceMap, &rect, colr);
         // top horizontal line of left bracket
         rect.x = t_left - 2;
         rect.y = t_yl - 7;
         rect.w = 3;
         rect.h = 1;
-        SDL_FillRect(ScreenSurfaceMap, &rect, sdl_col);
+        SDL_FillRect(ScreenSurfaceMap, &rect, colr);
         // bottom horizontal line of left bracket
         rect.y = t_yl - 3;
-        SDL_FillRect(ScreenSurfaceMap, &rect, sdl_col);
+        SDL_FillRect(ScreenSurfaceMap, &rect, colr);
         // bottom horizontal line of right bracket
         rect.x = t_right;
-        SDL_FillRect(ScreenSurfaceMap, &rect, sdl_col);
+        SDL_FillRect(ScreenSurfaceMap, &rect, colr);
         // top horizontal line of right bracket
         rect.y = t_yl - 7;
-        SDL_FillRect(ScreenSurfaceMap, &rect, sdl_col);
+        SDL_FillRect(ScreenSurfaceMap, &rect, colr);
         // vertical line of left bracket
         rect.x = t_left - 2;
         rect.y = t_yl - 7;
         rect.w = 1;
         rect.h = 5;
-        SDL_FillRect(ScreenSurfaceMap, &rect, sdl_col);
+        SDL_FillRect(ScreenSurfaceMap, &rect, colr);
         // vertical line of right bracket
         rect.x = t_right + 2;
-        SDL_FillRect(ScreenSurfaceMap, &rect, sdl_col);
+        SDL_FillRect(ScreenSurfaceMap, &rect, colr);
         string_blt(ScreenSurfaceMap, &font_small_out, cpl.target_name,
                    t_xl - string_width(&font_small_out, cpl.target_name) / 2,
                    t_yl - font_small_out.line_height - 8, cpl.target_color,
@@ -1011,9 +984,9 @@ static uint16 ShowExclusiveEffect(uint16 x, uint16 y, uint16 xoff, uint16 w,
     }
 
     string_blt(ScreenSurfaceMap, &font_small_out, text, box.x - xoff, box.y,
-               COLOR_RED, NULL, NULL);
+               NDI_COLR_RED, NULL, NULL);
     string_blt(ScreenSurfaceMap, &font_small_out, text, box.x - xoff + w,
-               box.y, COLOR_RED, NULL, NULL);
+               box.y, NDI_COLR_RED, NULL, NULL);
     SDL_SetClipRect(ScreenSurfaceMap, NULL);
 
     return xoff;

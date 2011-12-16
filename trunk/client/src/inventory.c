@@ -234,13 +234,13 @@ void widget_show_inventory_window(int x, int y)
             WIDGET_SHOW(WIDGET_PDOLL_ID) = 0;
         widget_data[WIDGET_MAIN_INV_ID].ht = 32;
         sprite_blt(Bitmaps[BITMAP_INV_BG], x, y, NULL, NULL);
-        string_blt(ScreenSurface, &font_small, "Carry", x+140, y+4, COLOR_HGOLD, NULL, NULL);
+        string_blt(ScreenSurface, &font_small, "Carry", x+140, y+4, NDI_COLR_SILVER, NULL, NULL);
         sprintf(buf, "%4.3f kg", (float)cpl.real_weight/1000.0f);
-        string_blt(ScreenSurface, &font_small, buf, x+140 + 35, y+4, COLOR_DEFAULT, NULL, NULL);
-        string_blt(ScreenSurface, &font_small, "Limit", x+140, y+15, COLOR_HGOLD, NULL, NULL);
+        string_blt(ScreenSurface, &font_small, buf, x+140 + 35, y+4, NDI_COLR_WHITE, NULL, NULL);
+        string_blt(ScreenSurface, &font_small, "Limit", x+140, y+15, NDI_COLR_SILVER, NULL, NULL);
         sprintf(buf, "%4.3f kg", (float) cpl.weight_limit / 1000.0);
-        string_blt(ScreenSurface, &font_small, buf, x+140 + 35, y+15, COLOR_DEFAULT, NULL, NULL);
-        string_blt(ScreenSurface, &font_tiny_out, "(SHIFT for inventory)", x+32, y+ 9, COLOR_DEFAULT, NULL, NULL);
+        string_blt(ScreenSurface, &font_small, buf, x+140 + 35, y+15, NDI_COLR_WHITE, NULL, NULL);
+        string_blt(ScreenSurface, &font_tiny_out, "(SHIFT for inventory)", x+32, y+ 9, NDI_COLR_WHITE, NULL, NULL);
         return;
     }
 
@@ -517,7 +517,7 @@ static void PrintInfo(sint16 x, sint16 y, item *ip, _inventory_win iwin)
         sprintf(buf, "%d %s", ip->nrof, ip->s_name);
     }
 
-    string_blt(surface, &font_small, buf, x, y + 4, COLOR_HGOLD, NULL, NULL);
+    string_blt(surface, &font_small, buf, x, y + 4, NDI_COLR_SILVER, NULL, NULL);
 
     /* In the below inv this is all the info we get. This is simply a real
      * estate issue. There just isn't space to squeeze in more info. This could
@@ -531,29 +531,29 @@ static void PrintInfo(sint16 x, sint16 y, item *ip, _inventory_win iwin)
     }
 
     sprintf(buf, "weight: ");
-    string_blt(surface, &font_small, buf, x, y + 16, COLOR_HGOLD, NULL, NULL);
+    string_blt(surface, &font_small, buf, x, y + 16, NDI_COLR_SILVER, NULL, NULL);
     x += string_width(&font_small, buf);
     sprintf(buf, "%4.3f ", (float)ip->weight / 1000.0);
-    string_blt(surface, &font_small, buf, x, y + 16, COLOR_DGOLD, NULL, NULL);
+    string_blt(surface, &font_small, buf, x, y + 16, NDI_COLR_OLIVE, NULL, NULL);
     x += string_width(&font_small, buf);
 
     if (ip->item_qua == 255) /* this comes from server when not identified */
     {
         string_blt(surface, &font_small, "(not identified)", x, y + 16,
-                   COLOR_RED, NULL, NULL);
+                   NDI_COLR_RED, NULL, NULL);
     }
     else
     {
         sprintf(buf, "con: ");
-        string_blt(surface, &font_small, buf, x, y + 16, COLOR_HGOLD, NULL,
+        string_blt(surface, &font_small, buf, x, y + 16, NDI_COLR_SILVER, NULL,
                    NULL);
         x += string_width(&font_small, buf);
         sprintf(buf, "%d / %d ", ip->item_con, ip->item_qua);
-        string_blt(surface, &font_small, buf, x, y + 16, COLOR_DGOLD,
+        string_blt(surface, &font_small, buf, x, y + 16, NDI_COLR_OLIVE,
                    NULL, NULL);
         x += string_width(&font_small, buf);
         sprintf(buf, "allowed: ");
-        string_blt(surface, &font_small, buf, x, y + 16, COLOR_HGOLD, NULL,
+        string_blt(surface, &font_small, buf, x, y + 16, NDI_COLR_SILVER, NULL,
                    NULL);
         x += string_width(&font_small, buf);
 
@@ -567,18 +567,18 @@ static void PrintInfo(sint16 x, sint16 y, item *ip, _inventory_win iwin)
                  ip->item_level <= cpl.stats.skill_level[ip->item_skill - 1]))
             {
                 string_blt(surface, &font_small, buf, x, y + 16,
-                           COLOR_DGOLD, NULL, NULL);
+                           NDI_COLR_OLIVE, NULL, NULL);
             }
             else
             {
-                string_blt(surface, &font_small, buf, x, y + 16, COLOR_RED,
+                string_blt(surface, &font_small, buf, x, y + 16, NDI_COLR_RED,
                            NULL, NULL);
             }
         }
         else
         {
             string_blt(surface, &font_small, "all", x, y + 16,
-                       COLOR_DGOLD, NULL, NULL);
+                       NDI_COLR_OLIVE, NULL, NULL);
         }
     }
 }
@@ -757,7 +757,7 @@ void blt_inv_item(item *tmp, int x, int y)
 
         string_blt(ScreenSurface, &font_tiny_out, buf, x +
                    skindef.item_size / 2 -
-                   string_width(&font_tiny_out, buf) / 2, y + 18, COLOR_WHITE,
+                   string_width(&font_tiny_out, buf) / 2, y + 18, NDI_COLR_WHITE,
                    NULL, NULL);
     }
 

@@ -270,7 +270,7 @@ int string_width_offset(_font *font, char *text, int *line, int len)
     return flag;
 }
 
-void string_blt(SDL_Surface *surf, _font *font, char *text, int x, int y, uint8 col, SDL_Rect *area, _BLTFX *bltfx)
+void string_blt(SDL_Surface *surf, _font *font, char *text, int x, int y, uint32 colr, SDL_Rect *area, _BLTFX *bltfx)
 {
     register int w,
                  line_clip = -1,
@@ -293,6 +293,7 @@ void string_blt(SDL_Surface *surf, _font *font, char *text, int x, int y, uint8 
                  hyper = 0;
 
     if (!text ||
+        !*text ||
         !font ||
         !surf) /* sanity check */
     {
@@ -304,9 +305,9 @@ void string_blt(SDL_Surface *surf, _font *font, char *text, int x, int y, uint8 
         line_clip = area->w;
     }
 
-    real_color.r = color.r = Bitmaps[BITMAP_PALETTE]->bitmap->format->palette->colors[col].r;
-    real_color.g = color.g = Bitmaps[BITMAP_PALETTE]->bitmap->format->palette->colors[col].g;
-    real_color.b = color.b = Bitmaps[BITMAP_PALETTE]->bitmap->format->palette->colors[col].b;
+    real_color.r = color.r = (colr >> 16) & 0xff;
+    real_color.g = color.g = (colr >> 8) & 0xff;
+    real_color.b = color.b = colr & 0xff;
     SDL_SetPalette(font->sprite->bitmap, SDL_LOGPAL | SDL_PHYSPAL, &real_color,
                    1, 1);
 
@@ -315,10 +316,6 @@ void string_blt(SDL_Surface *surf, _font *font, char *text, int x, int y, uint8 
     {
         SDL_SetAlpha(font->sprite->bitmap, SDL_SRCALPHA, bltfx->alpha);
     }
-    else
-    {
-        SDL_SetAlpha(font->sprite->bitmap, SDL_RLEACCEL, 255);
-    }
 
     for (c = text; *c; c++)
     {
@@ -326,7 +323,7 @@ void string_blt(SDL_Surface *surf, _font *font, char *text, int x, int y, uint8 
         {
             case ECC_STRONG:
                 if (!hyper &&
-                    col != COLOR_BLACK)
+                    colr)
                 {
                     strong = !strong;
      
@@ -368,7 +365,7 @@ void string_blt(SDL_Surface *surf, _font *font, char *text, int x, int y, uint8 
 
             case ECC_EMPHASIS:
                 if (!hyper &&
-                    col != COLOR_BLACK)
+                    colr)
                 {
                     emphasis = !emphasis;
      
@@ -410,7 +407,7 @@ void string_blt(SDL_Surface *surf, _font *font, char *text, int x, int y, uint8 
 
             case ECC_UNDERLINE:
                 if (!hyper &&
-                    col != COLOR_BLACK)
+                    colr)
                 {
                     intertitle = !intertitle;
      
@@ -575,7 +572,7 @@ void show_tooltip(int mx, int my, char *text)
         rec.x -= (rec.x + rec.w + 1) - Screensize.x;
 
     SDL_FillRect(ScreenSurface, &rec, -1);
-    string_blt(ScreenSurface, &font_small, tooltip, rec.x + 2, rec.y - 1, COLOR_BLACK, NULL, NULL);
+    string_blt(ScreenSurface, &font_small, tooltip, rec.x + 2, rec.y - 1, NDI_COLR_BLACK, NULL, NULL);
 }
 
 static uint8 GetBitmapBorders(SDL_Surface *Surface, int *up, int *down, int *left, int *right, uint32 ckey)
@@ -849,7 +846,7 @@ void sprite_blt_as_icon(_Sprite *sprite, sint16 x, sint16 y,
     {
         char  buf[TINY_BUF];
         uint8 w,
-              colr = (quantity > 0) ? COLOR_GREEN : COLOR_RED;
+              colr = (quantity > 0) ? NDI_COLR_GREEN : NDI_COLR_RED;
 
         if (quantity > 9999 ||
             quantity < -9999)
@@ -1232,13 +1229,13 @@ void play_anims(int mx, int my)
                         if (anim->value<0)
                         {
                             sprintf(buf, "%d", abs(anim->value));
-                            string_blt(ScreenSurface, &font_small_out, buf, xpos + anim->x, ypos + tmp_y, COLOR_GREEN, NULL,
+                            string_blt(ScreenSurface, &font_small_out, buf, xpos + anim->x, ypos + tmp_y, NDI_COLR_GREEN, NULL,
                                           NULL);
                         }
                         else
                         {
                             sprintf(buf, "%d", anim->value);
-                            string_blt(ScreenSurface, &font_small_out, buf, xpos + anim->x, ypos + tmp_y, COLOR_ORANGE, NULL,
+                            string_blt(ScreenSurface, &font_small_out, buf, xpos + anim->x, ypos + tmp_y, NDI_COLR_ORANGE, NULL,
                                           NULL);
                         }
                     }
@@ -1274,7 +1271,7 @@ void play_anims(int mx, int my)
                             tmp_off = -12;
 
                         string_blt(ScreenSurface, &font_small_out, buf, xpos + anim->x + tmp_off, ypos + tmp_y,
-                                  COLOR_ORANGE, NULL, NULL);
+                                  NDI_COLR_ORANGE, NULL, NULL);
                     }
                     break;
                 case ANIM_SELF_DAMAGE:
@@ -1282,13 +1279,13 @@ void play_anims(int mx, int my)
                     if (anim->value<0)
                     {
                         sprintf(buf, "%d", abs(anim->value));
-                        string_blt(ScreenSurface, &font_small_out, buf, anim->mapx + anim->x, anim->mapy + tmp_y, COLOR_GREEN, NULL,
+                        string_blt(ScreenSurface, &font_small_out, buf, anim->mapx + anim->x, anim->mapy + tmp_y, NDI_COLR_GREEN, NULL,
                                 NULL);
                     }
                     else
                     {
                         sprintf(buf, "%d", anim->value);
-                        string_blt(ScreenSurface, &font_small_out, buf, anim->mapx + anim->x, anim->mapy + tmp_y, COLOR_RED, NULL,
+                        string_blt(ScreenSurface, &font_small_out, buf, anim->mapx + anim->x, anim->mapy + tmp_y, NDI_COLR_RED, NULL,
                                           NULL);
                     }
                 break;

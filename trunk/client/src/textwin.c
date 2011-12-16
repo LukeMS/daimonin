@@ -176,12 +176,12 @@ void textwin_init()
 /******************************************************************
  add string to the text-window (perform auto-clipping).
 ******************************************************************/
-void textwin_showstring(int flags, char *format, ...)
+void textwin_showstring(uint32 flags, uint32 colr, char *format, ...)
 {
     va_list ap;
     static int  key_start   = 0;
     static int  key_count   = 0;
-    int         i, len, a, color, mode;
+    int         i, len, a;
     int         winlen      = 244;
     char        buf[HUGE_BUF];
     char       *text;
@@ -236,7 +236,7 @@ void textwin_showstring(int flags, char *format, ...)
                 if (newkill==1)
                 {
                     strcat(buf, " for the first time!");
-                    flags=flags | COLOR_GREEN;
+                    colr = NDI_COLR_GREEN;
                 }
                 else
                 {
@@ -253,16 +253,14 @@ void textwin_showstring(int flags, char *format, ...)
         }
     }
 
-    color = flags & 0xff;
-    mode = flags;
-
-    if (mode & NDI_GSAY)
+    if ((flags & NDI_FLAG_GSAY))
     {
-        color = COLOR_HGOLD;
+        colr = NDI_COLR_SILVER;
     }
-    if (mode & NDI_EMOTE)
+
+    if ((flags & NDI_FLAG_EMOTE))
     {
-        color = COLOR_HGOLD;
+        colr = NDI_COLR_SILVER;
     }
 
     /* Create a modifiable version of buf */
@@ -345,8 +343,8 @@ void textwin_showstring(int flags, char *format, ...)
             {
                 /* add messages to mixed-textwin and either to msg OR chat-textwin */
                 strcpy(txtwin[actWin].text[txtwin[actWin].bot_drawLine % TEXT_WIN_MAX].buf, buf);
-                txtwin[actWin].text[txtwin[actWin].bot_drawLine % TEXT_WIN_MAX].color = color;
-                txtwin[actWin].text[txtwin[actWin].bot_drawLine % TEXT_WIN_MAX].flags = mode;
+                txtwin[actWin].text[txtwin[actWin].bot_drawLine % TEXT_WIN_MAX].colr = colr;
+                txtwin[actWin].text[txtwin[actWin].bot_drawLine % TEXT_WIN_MAX].flags = flags;
                 txtwin[actWin].text[txtwin[actWin].bot_drawLine % TEXT_WIN_MAX].key_clipped = key_start;
                 if (txtwin[actWin].scroll)
                     txtwin[actWin].scroll++;
@@ -355,7 +353,7 @@ void textwin_showstring(int flags, char *format, ...)
                 txtwin[actWin].bot_drawLine++;
                 txtwin[actWin].bot_drawLine %= TEXT_WIN_MAX;
                 actWin++; /* next window => MSG_WIN */
-                if (mode & NDI_PLAYER)
+                if ((flags & NDI_FLAG_PLAYER))
                 {
                     actWin++; /* next window => MSG_CHAT */
                     WIDGET_REDRAW(WIDGET_CHATWIN_ID) = 1;
@@ -418,7 +416,7 @@ static void show_window(int actWin, int x, int y, _BLTFX *bltfx)
                 temp = TEXT_WIN_MAX + temp;
         }
         string_blt(bltfx->surface, &font_small, &txtwin[actWin].text[temp].buf[0], x + 2,
-                  (y + 1 + i * 10) | txtwin[actWin].text[temp].key_clipped, txtwin[actWin].text[temp].color, NULL, NULL);
+                  (y + 1 + i * 10) | txtwin[actWin].text[temp].key_clipped, txtwin[actWin].text[temp].colr, NULL, NULL);
     }
 
     /* only draw scrollbar if needed */

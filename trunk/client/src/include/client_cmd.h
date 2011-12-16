@@ -113,19 +113,6 @@ typedef enum rangetype
 #define SF_XRAYS            8
 #define SF_INFRAVISION      16
 
-#define NDI_SAY     0x0100  /* its a say command */
-#define NDI_SHOUT   0x0200
-#define NDI_TELL    0x0400
-#define NDI_GSAY    0x0800
-#define NDI_EMOTE   0x01000
-#define NDI_GM  0x02000 /* Its from a staff member */
-#define NDI_PLAYER  0x04000 /* this comes from a player */
-#define NDI_VIM     0x08000 /* VIM-Message */
-
-
-#define NDI_UNIQUE  0x10000 /* Print this out immediately, don't buffer */
-#define NDI_ALL     0x20000 /* Inform all players of this message */
-
 /* Flags for the item command */
 enum
 {
@@ -149,25 +136,6 @@ enum
 
 #define SOUND_NORMAL    0
 #define SOUND_SPELL 1
-
-#define COLOR_DEFAULT 0 /* white */
-#define COLOR_WHITE  0
-#define COLOR_ORANGE 1
-#define COLOR_LBLUE  2 /* navy... */
-#define COLOR_RED   3
-#define COLOR_GREEN 4
-#define COLOR_BLUE  5
-#define COLOR_GREY  6
-#define COLOR_YELLOW  7
-#define COLOR_DK_NAVY  8
-
-#define COLOR_HGOLD 64 /* client only colors */
-#define COLOR_DGOLD 65
-#define COLOR_DBROWN  44
-
-#define COLOR_TURQUOISE 210
-
-#define COLOR_BLACK 255
 
 /* Contains the base information we use to make up a packet we want to send. */
 typedef struct SockList

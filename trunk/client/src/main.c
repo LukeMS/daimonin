@@ -143,7 +143,6 @@ _server *start_server,
 /* for loading, use BITMAP_xx in the other modules*/
 static char *BitmapName[BITMAP_INIT] =
 {
-    "palette.png",
     "font7x4.png",
     "font6x3out.png",
     "font_big.png",
@@ -447,8 +446,6 @@ void init_game_data(void)
     MapStatusY = MAP_MAX_SIZE;
     map_udate_flag = 2;
     map_redraw_flag=1;
-//        textwin_showstring(COLOR_GREEN,"map_draw_update: InitGameData");
-
     InputStringFlag = 0;    /* if true keyboard and game is in input str mode*/
     InputStringEndFlag = 0;
     InputStringEscFlag = 0;
@@ -845,7 +842,7 @@ uint8 game_status_chain(void)
                     break;
 
                 default:
-                    textwin_showstring(COLOR_RED, "Unknown server! See --help for a list of valid server numbers.");
+                    textwin_showstring(0, NDI_COLR_RED, "Unknown server! See --help for a list of valid server numbers.");
             }
         }
 
@@ -864,14 +861,14 @@ uint8 game_status_chain(void)
     {
         if (!SOCKET_OpenClientSocket(&csocket, ServerName, ServerPort))
         {
-            textwin_showstring(COLOR_HGOLD, "Connect to server %s:%d... ~FAILED~!",
+            textwin_showstring(0, NDI_COLR_SILVER, "Connect to server %s:%d... ~FAILED~!",
                                ServerName, ServerPort);
             GameStatus = GAME_STATUS_START;
         }
         else
         {
             socket_thread_start();
-            textwin_showstring(COLOR_HGOLD, "Connect to server %s:%d... ~OK~!",
+            textwin_showstring(0, NDI_COLR_SILVER, "Connect to server %s:%d... ~OK~!",
                                ServerName, ServerPort);
             GameStatus = GAME_STATUS_SETUP;
         }
@@ -1253,7 +1250,7 @@ static void QueryMetaserver(void)
     /* skip if --nometa in command line */
     if (!options.metaserver)
     {
-        textwin_showstring(COLOR_DGOLD, "Metaserver ignored.");
+        textwin_showstring(0, NDI_COLR_OLIVE, "Metaserver ignored.");
     }
     else
     {
@@ -1263,12 +1260,12 @@ static void QueryMetaserver(void)
                               options.metaserver_port) &&
             read_metaserver_data(meta))
         {
-            textwin_showstring(COLOR_HGOLD, "Query metaserver (%s:%d)... ~OK~!",
+            textwin_showstring(0, NDI_COLR_SILVER, "Query metaserver (%s:%d)... ~OK~!",
                                options.metaserver, options.metaserver_port);
         }
         else
         {
-            textwin_showstring(COLOR_HGOLD, "Query metaserver (%s:%d)... ~FAILED~ (using default list)!",
+            textwin_showstring(0, NDI_COLR_SILVER, "Query metaserver (%s:%d)... ~FAILED~ (using default list)!",
                                options.metaserver, options.metaserver_port);
             add_metaserver_data("Main", "daimonin.game-server.cc",
                                 DEFAULT_SERVER_PORT, -1, "UNKNOWN",
@@ -1286,14 +1283,14 @@ static void QueryMetaserver(void)
 
     metaserver_sel = start_server;
     locator_init(330, 248);
-    textwin_showstring(COLOR_HGOLD, "Select a server.");
+    textwin_showstring(0, NDI_COLR_SILVER, "Select a server.");
 }
 
 void show_ping_string(_server *node)
 {
     if (node)
     {
-        textwin_showstring(COLOR_WHITE, "There %s %d player%s online.\n\n%s",
+        textwin_showstring(0, NDI_COLR_WHITE, "There %s %d player%s online.\n\n%s",
                            (node->player == 1) ? "is" : "are",
                            MAX(0, node->player),
                            (node->player == 1) ? "" : "s",
@@ -1447,11 +1444,11 @@ static void play_heartbeat_sound(void)
     if (LastTick - tick >= interval)
     {
         // Volume depends on enemy's 'colour'
-             if (cpl.target_color == COLOR_GREEN)  volume = 50;
-        else if (cpl.target_color == COLOR_BLUE)   volume = 60;
-        else if (cpl.target_color == COLOR_YELLOW) volume = 70;
-        else if (cpl.target_color == COLOR_ORANGE) volume = 80;
-        else if (cpl.target_color == COLOR_RED)    volume = 90;
+             if (cpl.target_color == NDI_COLR_GREEN)  volume = 50;
+        else if (cpl.target_color == NDI_COLR_BLUE)   volume = 60;
+        else if (cpl.target_color == NDI_COLR_YELLOW) volume = 70;
+        else if (cpl.target_color == NDI_COLR_ORANGE) volume = 80;
+        else if (cpl.target_color == NDI_COLR_RED)    volume = 90;
         else                                       volume = 100;
         sound_play_effect(SOUNDTYPE_CLIENT, SOUND_HEARTBEAT, 0, 0, volume);
         tick = LastTick;
@@ -1464,7 +1461,7 @@ static void play_action_sounds(void)
     // Heartbeat only audible if player's hp% is below threshold set in options,
     //  an enemy is targetted, player is in attack mode, and mob is not grey
     if (((float) cpl.stats.hp / (float) cpl.stats.maxhp) * 100 < options.heartbeat &&
-        cpl.target_code == 1 && cpl.target_mode && cpl.target_color != COLOR_GREY)
+        cpl.target_code == 1 && cpl.target_mode && cpl.target_color != NDI_COLR_GREY)
         play_heartbeat_sound();
     if (cpl.warn_hp)
     {
@@ -1712,7 +1709,7 @@ int main(int argc, char *argv[])
     }
     else
     {
-        textwin_showstring(COLOR_HGOLD, "Init network... ~OK~!");
+        textwin_showstring(0, NDI_COLR_SILVER, "Init network... ~OK~!");
         QueryMetaserver();
         options.no_meta = 1; // don't do it again in GAME_STATUS_META
     }
@@ -1877,7 +1874,7 @@ int main(int argc, char *argv[])
         }
 
         if (map_transfer_flag)
-                string_blt(ScreenSurface, &font_small, "Transfer Character to Map...", 300, 300, COLOR_DEFAULT, NULL, NULL);
+                string_blt(ScreenSurface, &font_small, "Transfer Character to Map...", 300, 300, NDI_COLR_WHITE, NULL, NULL);
 
         /* show the current dragged item */
         if (cpl.menustatus == MENU_NO && (drag = draggingInvItem(DRAG_GET_STATUS)))
@@ -1950,7 +1947,7 @@ int main(int argc, char *argv[])
         if (GameStatus == GAME_STATUS_PLAY && newplayer == 1)
         {
             newplayer = 0;
-            textwin_showstring(COLOR_DEFAULT,
+            textwin_showstring(0, NDI_COLR_WHITE,
                                "|Welcome to Daimonin, %s -- WHAT NOW?|\n"\
                                "As this is your first time playing, you may be asking this question.\n"\
                                "The character nearby is called ~Fanrir~. His job is to help new players get started in the game. You should talk to him. Do this by pressing the ~T key.\n"\
@@ -2033,7 +2030,7 @@ int main(int argc, char *argv[])
                 rec.w = string_width(&font_small, buf);
                 SDL_FillRect(ScreenSurface, &rec, 0);
                 string_blt(ScreenSurface, &font_small, buf, rec.x, rec.y,
-                           COLOR_DEFAULT, NULL, NULL);
+                           NDI_COLR_WHITE, NULL, NULL);
             }
         }
 
@@ -2081,7 +2078,7 @@ int main(int argc, char *argv[])
                 map_udate_flag = 2;
                 EMBOSS(ScreenSurface, &font_large_out, vim[i].msg,
                        400 - (string_width(&font_large_out, vim[i].msg) / 2),
-                       300 - bmoff, vim[i].color, NULL, &bmbltfx);
+                       300 - bmoff, vim[i].colr, NULL, &bmbltfx);
             }
         }
 
@@ -2565,12 +2562,12 @@ static void ShowIntro(char *text, int progress)
 
     if (text)
     {
-        string_blt(ScreenSurface, &font_small, text, x+370, y+585, COLOR_DEFAULT, NULL, NULL);
+        string_blt(ScreenSurface, &font_small, text, x+370, y+585, NDI_COLR_WHITE, NULL, NULL);
     }
     else
     {
-        string_blt(ScreenSurface, &font_small, "** Press Key **", x+375, y+585, COLOR_DEFAULT, NULL, NULL);
-        textwin_showstring(COLOR_HGOLD, "Welcome to |Daimonin| ~v%d.%d.%d~",
+        string_blt(ScreenSurface, &font_small, "** Press Key **", x+375, y+585, NDI_COLR_WHITE, NULL, NULL);
+        textwin_showstring(0, NDI_COLR_SILVER, "Welcome to |Daimonin| ~v%d.%d.%d~",
                            DAI_VERSION_RELEASE, DAI_VERSION_MAJOR,
                            DAI_VERSION_MINOR);
     }
@@ -2597,7 +2594,7 @@ static void FlipScreen(void)
                 ""
 #endif
                 );
-        string_blt(ScreenSurface, &font_small, buf, (Screensize.xoff/2)+10, (Screensize.yoff/2)+585, COLOR_DEFAULT, NULL, NULL);
+        string_blt(ScreenSurface, &font_small, buf, (Screensize.xoff/2)+10, (Screensize.yoff/2)+585, NDI_COLR_WHITE, NULL, NULL);
     }
 
 #ifdef INSTALL_OPENGL
