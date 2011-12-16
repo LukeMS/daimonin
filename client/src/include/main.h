@@ -98,7 +98,7 @@ extern _server *start_server,
 typedef struct _vimmsg
 {
     char    *msg;
-    uint32   color;
+    uint32   colr;
     uint32   starttick;
     uint8    active;
 }
@@ -468,7 +468,6 @@ enum
 
 typedef enum _bitmap_index
 {
-    BITMAP_PALETTE,
     BITMAP_FONTSMALL,
     BITMAP_FONTTINYOUT,
     BITMAP_FONTBIGOUT,

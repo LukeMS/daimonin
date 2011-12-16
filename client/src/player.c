@@ -218,14 +218,14 @@ void widget_show_player_data(int x, int y)
         sprintf(buf, "%s %s\n", cpl.rank, cpl.pname);
     else
         strcpy(buf, cpl.pname);
-    string_blt(ScreenSurface, &font_small, buf, x+6, y+2, COLOR_HGOLD, NULL, NULL);
+    string_blt(ScreenSurface, &font_small, buf, x+6, y+2, NDI_COLR_SILVER, NULL, NULL);
     sprintf(buf, "%s %s %s", cpl.gender, cpl.race, cpl.title);
-    string_blt(ScreenSurface, &font_small, buf, x+6, y+14, COLOR_HGOLD, NULL, NULL);
+    string_blt(ScreenSurface, &font_small, buf, x+6, y+14, NDI_COLR_SILVER, NULL, NULL);
     if (strcmp(cpl.godname, "none"))
         sprintf(buf, "%s follower of %s", cpl.alignment, cpl.godname);
     else
         strcpy(buf, cpl.alignment);
-    string_blt(ScreenSurface, &font_small, buf, x+6, y+26, COLOR_HGOLD, NULL, NULL);
+    string_blt(ScreenSurface, &font_small, buf, x+6, y+26, NDI_COLR_SILVER, NULL, NULL);
 
     /* temp prayer button */
     sprite_blt(Bitmaps[BITMAP_PRAY], x+184, y+5, NULL, NULL);
@@ -261,47 +261,47 @@ void widget_player_stats(int x, int y)
 
         sprite_blt(Bitmaps[BITMAP_STATS_BG], 0, 0, NULL, &bltfx);
 
-        string_blt(widget_surface[WIDGET_STATS_ID], &font_tiny_out, "Stats", 8, 1, COLOR_HGOLD, NULL, NULL);
+        string_blt(widget_surface[WIDGET_STATS_ID], &font_tiny_out, "Stats", 8, 1, NDI_COLR_SILVER, NULL, NULL);
         sprintf(buf, "%02d", cpl.stats.Str);
-        string_blt(widget_surface[WIDGET_STATS_ID], &font_small, "Str", 8, 17, COLOR_WHITE, NULL, NULL);
-        string_blt(widget_surface[WIDGET_STATS_ID], &font_small, buf, 30, 17, COLOR_GREEN, NULL, NULL);
+        string_blt(widget_surface[WIDGET_STATS_ID], &font_small, "Str", 8, 17, NDI_COLR_WHITE, NULL, NULL);
+        string_blt(widget_surface[WIDGET_STATS_ID], &font_small, buf, 30, 17, NDI_COLR_GREEN, NULL, NULL);
         sprintf(buf, "%02d", cpl.stats.Dex);
-        string_blt(widget_surface[WIDGET_STATS_ID], &font_small, "Dex", 8, 28, COLOR_WHITE, NULL, NULL);
-        string_blt(widget_surface[WIDGET_STATS_ID], &font_small, buf, 30, 28, COLOR_GREEN, NULL, NULL);
+        string_blt(widget_surface[WIDGET_STATS_ID], &font_small, "Dex", 8, 28, NDI_COLR_WHITE, NULL, NULL);
+        string_blt(widget_surface[WIDGET_STATS_ID], &font_small, buf, 30, 28, NDI_COLR_GREEN, NULL, NULL);
         sprintf(buf, "%02d", cpl.stats.Con);
-        string_blt(widget_surface[WIDGET_STATS_ID], &font_small, "Con", 8, 39, COLOR_WHITE, NULL, NULL);
-        string_blt(widget_surface[WIDGET_STATS_ID], &font_small, buf, 30, 39, COLOR_GREEN, NULL, NULL);
+        string_blt(widget_surface[WIDGET_STATS_ID], &font_small, "Con", 8, 39, NDI_COLR_WHITE, NULL, NULL);
+        string_blt(widget_surface[WIDGET_STATS_ID], &font_small, buf, 30, 39, NDI_COLR_GREEN, NULL, NULL);
         sprintf(buf, "%02d", cpl.stats.Int);
-        string_blt(widget_surface[WIDGET_STATS_ID], &font_small, "Int", 8, 50, COLOR_WHITE, NULL, NULL);
-        string_blt(widget_surface[WIDGET_STATS_ID], &font_small, buf, 30, 50, COLOR_GREEN, NULL, NULL);
+        string_blt(widget_surface[WIDGET_STATS_ID], &font_small, "Int", 8, 50, NDI_COLR_WHITE, NULL, NULL);
+        string_blt(widget_surface[WIDGET_STATS_ID], &font_small, buf, 30, 50, NDI_COLR_GREEN, NULL, NULL);
         sprintf(buf, "%02d", cpl.stats.Wis);
-        string_blt(widget_surface[WIDGET_STATS_ID], &font_small, "Wis", 8, 61, COLOR_WHITE, NULL, NULL);
-        string_blt(widget_surface[WIDGET_STATS_ID], &font_small, buf, 30, 61, COLOR_GREEN, NULL, NULL);
+        string_blt(widget_surface[WIDGET_STATS_ID], &font_small, "Wis", 8, 61, NDI_COLR_WHITE, NULL, NULL);
+        string_blt(widget_surface[WIDGET_STATS_ID], &font_small, buf, 30, 61, NDI_COLR_GREEN, NULL, NULL);
         sprintf(buf, "%02d", cpl.stats.Pow);
-        string_blt(widget_surface[WIDGET_STATS_ID], &font_small, "Pow", 8, 72, COLOR_WHITE, NULL, NULL);
-        string_blt(widget_surface[WIDGET_STATS_ID], &font_small, buf, 30, 72, COLOR_GREEN, NULL, NULL);
+        string_blt(widget_surface[WIDGET_STATS_ID], &font_small, "Pow", 8, 72, NDI_COLR_WHITE, NULL, NULL);
+        string_blt(widget_surface[WIDGET_STATS_ID], &font_small, buf, 30, 72, NDI_COLR_GREEN, NULL, NULL);
         sprintf(buf, "%02d", cpl.stats.Cha);
-        string_blt(widget_surface[WIDGET_STATS_ID], &font_small, "Cha", 8, 83, COLOR_WHITE, NULL, NULL);
-        string_blt(widget_surface[WIDGET_STATS_ID], &font_small, buf, 30, 83, COLOR_GREEN, NULL, NULL);
+        string_blt(widget_surface[WIDGET_STATS_ID], &font_small, "Cha", 8, 83, NDI_COLR_WHITE, NULL, NULL);
+        string_blt(widget_surface[WIDGET_STATS_ID], &font_small, buf, 30, 83, NDI_COLR_GREEN, NULL, NULL);
 
 
-        string_blt(widget_surface[WIDGET_STATS_ID], &font_small, "HP", 58, 10, COLOR_WHITE, NULL, NULL);
+        string_blt(widget_surface[WIDGET_STATS_ID], &font_small, "HP", 58, 10, NDI_COLR_WHITE, NULL, NULL);
         sprintf(buf, "%d (%d)", cpl.stats.hp, cpl.stats.maxhp);
         string_blt(widget_surface[WIDGET_STATS_ID], &font_small, buf, 160 - string_width(&font_small, buf), 10,
-                  COLOR_GREEN, NULL, NULL);
+                  NDI_COLR_GREEN, NULL, NULL);
         sprite_blt(Bitmaps[BITMAP_HP_BACK], 57, 23, NULL, &bltfx);
 
 
-        string_blt(widget_surface[WIDGET_STATS_ID], &font_small, "Mana", 58, 34, COLOR_WHITE, NULL, NULL);
+        string_blt(widget_surface[WIDGET_STATS_ID], &font_small, "Mana", 58, 34, NDI_COLR_WHITE, NULL, NULL);
         sprintf(buf, "%d (%d)", cpl.stats.sp, cpl.stats.maxsp);
         string_blt(widget_surface[WIDGET_STATS_ID], &font_small, buf, 160 - string_width(&font_small, buf), 34,
-                  COLOR_GREEN, NULL, NULL);
+                  NDI_COLR_GREEN, NULL, NULL);
         sprite_blt(Bitmaps[BITMAP_SP_BACK], 57, 47, NULL, &bltfx);
 
-        string_blt(widget_surface[WIDGET_STATS_ID], &font_small, "Grace", 58, 58, COLOR_WHITE, NULL, NULL);
+        string_blt(widget_surface[WIDGET_STATS_ID], &font_small, "Grace", 58, 58, NDI_COLR_WHITE, NULL, NULL);
         sprintf(buf, "%d (%d)", cpl.stats.grace, cpl.stats.maxgrace);
         string_blt(widget_surface[WIDGET_STATS_ID], &font_small, buf, 160 - string_width(&font_small, buf), 58,
-                  COLOR_GREEN, NULL, NULL);
+                  NDI_COLR_GREEN, NULL, NULL);
         sprite_blt(Bitmaps[BITMAP_GRACE_BACK], 57, 71, NULL, &bltfx);
 
         sprite_blt(Bitmaps[BITMAP_FOOD_BACK], 87, 88, NULL, &bltfx);
@@ -314,17 +314,17 @@ void widget_player_stats(int x, int y)
 
             if (tmp < 1)
             {
-                string_blt(widget_surface[WIDGET_STATS_ID], &font_small, "Food", 58, 84, COLOR_WHITE, NULL, NULL);
+                string_blt(widget_surface[WIDGET_STATS_ID], &font_small, "Food", 58, 84, NDI_COLR_WHITE, NULL, NULL);
                 tmp *= -1;
             }
             else if (tmp == 999)
             {
-                string_blt(widget_surface[WIDGET_STATS_ID], &font_small, "Rest", 58, 84, COLOR_WHITE, NULL, NULL);
+                string_blt(widget_surface[WIDGET_STATS_ID], &font_small, "Rest", 58, 84, NDI_COLR_WHITE, NULL, NULL);
             }
             else
             {
                 bar = BITMAP_FOOD;
-                string_blt(widget_surface[WIDGET_STATS_ID], &font_small, "Wait", 58, 84, COLOR_WHITE, NULL, NULL);
+                string_blt(widget_surface[WIDGET_STATS_ID], &font_small, "Wait", 58, 84, NDI_COLR_WHITE, NULL, NULL);
             }
 
             tmp++; /* adjust in order to draw the bar correctly */
@@ -477,31 +477,31 @@ void widget_skillgroups(int x, int y)
         bltfx.alpha=0;
         sprite_blt(Bitmaps[BITMAP_SKILL_LVL_BG], 0, 0, NULL, &bltfx);
 
-        string_blt(widget_surface[WIDGET_SKILL_LVL_ID], &font_tiny_out, "Skill Groups", 3, 1, COLOR_HGOLD, NULL, NULL);
-        string_blt(widget_surface[WIDGET_SKILL_LVL_ID], &font_tiny_out, "name / level", 3, 13, COLOR_HGOLD, NULL, NULL);
+        string_blt(widget_surface[WIDGET_SKILL_LVL_ID], &font_tiny_out, "Skill Groups", 3, 1, NDI_COLR_SILVER, NULL, NULL);
+        string_blt(widget_surface[WIDGET_SKILL_LVL_ID], &font_tiny_out, "name / level", 3, 13, NDI_COLR_SILVER, NULL, NULL);
         sprintf(buf, " %d", cpl.stats.skill_level[0]);
-        string_blt(widget_surface[WIDGET_SKILL_LVL_ID], &font_small, "Ag:", 6, 26, COLOR_HGOLD, NULL, NULL);
-        string_blt(widget_surface[WIDGET_SKILL_LVL_ID], &font_small, buf, 44 - string_width(&font_small, buf), 26, COLOR_WHITE,
+        string_blt(widget_surface[WIDGET_SKILL_LVL_ID], &font_small, "Ag:", 6, 26, NDI_COLR_SILVER, NULL, NULL);
+        string_blt(widget_surface[WIDGET_SKILL_LVL_ID], &font_small, buf, 44 - string_width(&font_small, buf), 26, NDI_COLR_WHITE,
                   NULL, NULL);
         sprintf(buf, " %d", cpl.stats.skill_level[2]);
-        string_blt(widget_surface[WIDGET_SKILL_LVL_ID], &font_small, "Me:", 6, 38, COLOR_HGOLD, NULL, NULL);
-        string_blt(widget_surface[WIDGET_SKILL_LVL_ID], &font_small, buf, 44 - string_width(&font_small, buf), 38, COLOR_WHITE,
+        string_blt(widget_surface[WIDGET_SKILL_LVL_ID], &font_small, "Me:", 6, 38, NDI_COLR_SILVER, NULL, NULL);
+        string_blt(widget_surface[WIDGET_SKILL_LVL_ID], &font_small, buf, 44 - string_width(&font_small, buf), 38, NDI_COLR_WHITE,
                   NULL, NULL);
         sprintf(buf, " %d", cpl.stats.skill_level[4]);
-        string_blt(widget_surface[WIDGET_SKILL_LVL_ID], &font_small, "Ma:", 6, 49, COLOR_HGOLD, NULL, NULL);
-        string_blt(widget_surface[WIDGET_SKILL_LVL_ID], &font_small, buf, 44 - string_width(&font_small, buf), 49, COLOR_WHITE,
+        string_blt(widget_surface[WIDGET_SKILL_LVL_ID], &font_small, "Ma:", 6, 49, NDI_COLR_SILVER, NULL, NULL);
+        string_blt(widget_surface[WIDGET_SKILL_LVL_ID], &font_small, buf, 44 - string_width(&font_small, buf), 49, NDI_COLR_WHITE,
                   NULL, NULL);
         sprintf(buf, " %d", cpl.stats.skill_level[1]);
-        string_blt(widget_surface[WIDGET_SKILL_LVL_ID], &font_small, "Pe:", 6, 62, COLOR_HGOLD, NULL, NULL);
-        string_blt(widget_surface[WIDGET_SKILL_LVL_ID], &font_small, buf, 44 - string_width(&font_small, buf), 62, COLOR_WHITE,
+        string_blt(widget_surface[WIDGET_SKILL_LVL_ID], &font_small, "Pe:", 6, 62, NDI_COLR_SILVER, NULL, NULL);
+        string_blt(widget_surface[WIDGET_SKILL_LVL_ID], &font_small, buf, 44 - string_width(&font_small, buf), 62, NDI_COLR_WHITE,
                   NULL, NULL);
         sprintf(buf, " %d", cpl.stats.skill_level[3]);
-        string_blt(widget_surface[WIDGET_SKILL_LVL_ID], &font_small, "Ph:", 6, 74, COLOR_HGOLD, NULL, NULL);
-        string_blt(widget_surface[WIDGET_SKILL_LVL_ID], &font_small, buf, 44 - string_width(&font_small, buf), 74, COLOR_WHITE,
+        string_blt(widget_surface[WIDGET_SKILL_LVL_ID], &font_small, "Ph:", 6, 74, NDI_COLR_SILVER, NULL, NULL);
+        string_blt(widget_surface[WIDGET_SKILL_LVL_ID], &font_small, buf, 44 - string_width(&font_small, buf), 74, NDI_COLR_WHITE,
                   NULL, NULL);
         sprintf(buf, " %d", cpl.stats.skill_level[5]);
-        string_blt(widget_surface[WIDGET_SKILL_LVL_ID], &font_small, "Wi:", 6, 86, COLOR_HGOLD, NULL, NULL);
-        string_blt(widget_surface[WIDGET_SKILL_LVL_ID], &font_small, buf, 44 - string_width(&font_small, buf), 86, COLOR_WHITE,
+        string_blt(widget_surface[WIDGET_SKILL_LVL_ID], &font_small, "Wi:", 6, 86, NDI_COLR_SILVER, NULL, NULL);
+        string_blt(widget_surface[WIDGET_SKILL_LVL_ID], &font_small, buf, 44 - string_width(&font_small, buf), 86, NDI_COLR_WHITE,
                   NULL, NULL);
     }
     box.x=x;
@@ -524,7 +524,7 @@ void widget_show_player_doll_event(int x, int y, int MEvent)
     else if (draggingInvItem(DRAG_GET_STATUS) == DRAG_IWIN_INV)
     {
         if ((locate_item(cpl.win_inv_tag))->applied)
-            textwin_showstring(COLOR_WHITE, "This is applied already!");
+            textwin_showstring(0, NDI_COLR_WHITE, "This is applied already!");
         else
             process_macro_keys(KEYFUNC_APPLY, 0); /* drop to player-doll */
     }
@@ -567,53 +567,53 @@ void widget_show_player_doll(int x, int y)
     if (!cpl.ob)
         return;
 
-	string_blt(ScreenSurface, &font_tiny_out, "Melee", x + 5, y + 40, COLOR_HGOLD, NULL, NULL);
-	string_blt(ScreenSurface, &font_small, "WC", x + 5, y + 53, COLOR_HGOLD, NULL, NULL);
-    string_blt(ScreenSurface, &font_small, "DPS", x + 5, y + 63, COLOR_HGOLD, NULL, NULL);
-    string_blt(ScreenSurface, &font_small, "WS", x + 5, y + 73, COLOR_HGOLD, NULL, NULL);
+	string_blt(ScreenSurface, &font_tiny_out, "Melee", x + 5, y + 40, NDI_COLR_SILVER, NULL, NULL);
+	string_blt(ScreenSurface, &font_small, "WC", x + 5, y + 53, NDI_COLR_SILVER, NULL, NULL);
+    string_blt(ScreenSurface, &font_small, "DPS", x + 5, y + 63, NDI_COLR_SILVER, NULL, NULL);
+    string_blt(ScreenSurface, &font_small, "WS", x + 5, y + 73, NDI_COLR_SILVER, NULL, NULL);
     sprintf(buf, "%02d", cpl.stats.wc);
-    string_blt(ScreenSurface, &font_small, buf, x + 25, y + 53, COLOR_WHITE, NULL, NULL);
+    string_blt(ScreenSurface, &font_small, buf, x + 25, y + 53, NDI_COLR_WHITE, NULL, NULL);
     sprintf(buf, "%.1f", cpl.stats.dps);
-    string_blt(ScreenSurface, &font_small, buf, x + 25, y + 63, COLOR_WHITE, NULL, NULL);
+    string_blt(ScreenSurface, &font_small, buf, x + 25, y + 63, NDI_COLR_WHITE, NULL, NULL);
     sprintf(buf, "%1.2f", cpl.stats.weapon_sp);
-    string_blt(ScreenSurface, &font_small, buf, x + 25, y + 73, COLOR_WHITE, NULL, NULL);
+    string_blt(ScreenSurface, &font_small, buf, x + 25, y + 73, NDI_COLR_WHITE, NULL, NULL);
 
-    string_blt(ScreenSurface, &font_small, "AC", x + 180, y + 95, COLOR_HGOLD, NULL, NULL);
+    string_blt(ScreenSurface, &font_small, "AC", x + 180, y + 95, NDI_COLR_SILVER, NULL, NULL);
     sprintf(buf, "%02d", cpl.stats.ac);
-    string_blt(ScreenSurface, &font_small, buf, x + 195, y + 95, COLOR_WHITE, NULL, NULL);
-    string_blt(ScreenSurface, &font_small, "SF", x + 5, y + 95, COLOR_HGOLD, NULL, NULL);
+    string_blt(ScreenSurface, &font_small, buf, x + 195, y + 95, NDI_COLR_WHITE, NULL, NULL);
+    string_blt(ScreenSurface, &font_small, "SF", x + 5, y + 95, NDI_COLR_SILVER, NULL, NULL);
     sprintf(buf, "%.1f", cpl.stats.spell_fumble);
-    string_blt(ScreenSurface, &font_small, buf, x + 20, y + 95, COLOR_WHITE, NULL, NULL);
+    string_blt(ScreenSurface, &font_small, buf, x + 20, y + 95, NDI_COLR_WHITE, NULL, NULL);
 
-	string_blt(ScreenSurface, &font_small, "Speed", x + 60, y + 167, COLOR_HGOLD, NULL, NULL);
+	string_blt(ScreenSurface, &font_small, "Speed", x + 60, y + 167, NDI_COLR_SILVER, NULL, NULL);
 	sprintf(buf, "%.1f%%", cpl.stats.speed);
-	string_blt(ScreenSurface, &font_small, buf, x + 130, y + 167, COLOR_WHITE, NULL, NULL);
+	string_blt(ScreenSurface, &font_small, buf, x + 130, y + 167, NDI_COLR_WHITE, NULL, NULL);
 
-	string_blt(ScreenSurface, &font_tiny_out, "Distance", x + 170, y + 40, COLOR_HGOLD, NULL, NULL);
-	string_blt(ScreenSurface, &font_small, "WC", x + 170, y + 53, COLOR_HGOLD, NULL, NULL);
-    string_blt(ScreenSurface, &font_small, "DPS", x + 170, y + 63, COLOR_HGOLD, NULL, NULL);
-    string_blt(ScreenSurface, &font_small, "WS", x + 170, y + 73, COLOR_HGOLD, NULL, NULL);
+	string_blt(ScreenSurface, &font_tiny_out, "Distance", x + 170, y + 40, NDI_COLR_SILVER, NULL, NULL);
+	string_blt(ScreenSurface, &font_small, "WC", x + 170, y + 53, NDI_COLR_SILVER, NULL, NULL);
+    string_blt(ScreenSurface, &font_small, "DPS", x + 170, y + 63, NDI_COLR_SILVER, NULL, NULL);
+    string_blt(ScreenSurface, &font_small, "WS", x + 170, y + 73, NDI_COLR_SILVER, NULL, NULL);
 
 	if(cpl.stats.dist_dps == -0.1f)
 	{
-		string_blt(ScreenSurface, &font_small, "--", x + 190, y + 53, COLOR_WHITE, NULL, NULL);
-		string_blt(ScreenSurface, &font_small, "--", x + 190, y + 63, COLOR_WHITE, NULL, NULL);
+		string_blt(ScreenSurface, &font_small, "--", x + 190, y + 53, NDI_COLR_WHITE, NULL, NULL);
+		string_blt(ScreenSurface, &font_small, "--", x + 190, y + 63, NDI_COLR_WHITE, NULL, NULL);
 	}
 	else if(cpl.stats.dist_dps == -0.2f) /* marks rods/wands/horns */
 	{
-		string_blt(ScreenSurface, &font_small, "**", x + 190, y + 53, COLOR_WHITE, NULL, NULL);
-		string_blt(ScreenSurface, &font_small, "**", x + 190, y + 63, COLOR_WHITE, NULL, NULL);
+		string_blt(ScreenSurface, &font_small, "**", x + 190, y + 53, NDI_COLR_WHITE, NULL, NULL);
+		string_blt(ScreenSurface, &font_small, "**", x + 190, y + 63, NDI_COLR_WHITE, NULL, NULL);
 		sprintf(buf, "%1.2f", cpl.stats.dist_time);
-		string_blt(ScreenSurface, &font_small, buf, x + 190, y + 73, COLOR_WHITE, NULL, NULL);
+		string_blt(ScreenSurface, &font_small, buf, x + 190, y + 73, NDI_COLR_WHITE, NULL, NULL);
 	}
 	else
 	{
 		sprintf(buf, "%02d", cpl.stats.dist_wc);
-		string_blt(ScreenSurface, &font_small, buf, x + 190, y + 53, COLOR_WHITE, NULL, NULL);
+		string_blt(ScreenSurface, &font_small, buf, x + 190, y + 53, NDI_COLR_WHITE, NULL, NULL);
 		sprintf(buf, "%.1f", cpl.stats.dist_dps);
-		string_blt(ScreenSurface, &font_small, buf, x + 190, y + 63, COLOR_WHITE, NULL, NULL);
+		string_blt(ScreenSurface, &font_small, buf, x + 190, y + 63, NDI_COLR_WHITE, NULL, NULL);
 		sprintf(buf, "%1.2f", cpl.stats.dist_time);
-		string_blt(ScreenSurface, &font_small, buf, x + 190, y + 73, COLOR_WHITE, NULL, NULL);
+		string_blt(ScreenSurface, &font_small, buf, x + 190, y + 73, NDI_COLR_WHITE, NULL, NULL);
 	}
 
 
@@ -707,16 +707,16 @@ void widget_show_main_lvl(int x, int y)
 
         sprite_blt(Bitmaps[BITMAP_MAIN_LVL_BG], 0, 0, NULL, &bltfx);
 
-        string_blt(widget_surface[WIDGET_MAIN_LVL_ID], &font_tiny_out, "Level / Exp", 4, 1, COLOR_HGOLD, NULL, NULL);
+        string_blt(widget_surface[WIDGET_MAIN_LVL_ID], &font_tiny_out, "Level / Exp", 4, 1, NDI_COLR_SILVER, NULL, NULL);
         sprintf(buf, "%d", cpl.stats.level);
         if (cpl.stats.exp_level != cpl.stats.level)
-            string_blt(widget_surface[WIDGET_MAIN_LVL_ID], &font_large_out, buf, 91 - string_width(&font_large_out, buf), 4, COLOR_RED, NULL, NULL);
+            string_blt(widget_surface[WIDGET_MAIN_LVL_ID], &font_large_out, buf, 91 - string_width(&font_large_out, buf), 4, NDI_COLR_RED, NULL, NULL);
         else if (cpl.stats.level == MAXLEVEL)
-            string_blt(widget_surface[WIDGET_MAIN_LVL_ID], &font_large_out, buf, 91 - string_width(&font_large_out, buf), 4, COLOR_HGOLD, NULL, NULL);
+            string_blt(widget_surface[WIDGET_MAIN_LVL_ID], &font_large_out, buf, 91 - string_width(&font_large_out, buf), 4, NDI_COLR_SILVER, NULL, NULL);
         else
-            string_blt(widget_surface[WIDGET_MAIN_LVL_ID], &font_large_out, buf, 91 - string_width(&font_large_out, buf), 4, COLOR_WHITE, NULL, NULL);
+            string_blt(widget_surface[WIDGET_MAIN_LVL_ID], &font_large_out, buf, 91 - string_width(&font_large_out, buf), 4, NDI_COLR_WHITE, NULL, NULL);
         sprintf(buf, "%d", cpl.stats.exp);
-        string_blt(widget_surface[WIDGET_MAIN_LVL_ID], &font_small, buf, 5, 20, COLOR_WHITE, NULL, NULL);
+        string_blt(widget_surface[WIDGET_MAIN_LVL_ID], &font_small, buf, 5, 20, NDI_COLR_WHITE, NULL, NULL);
 
         /* calc the exp bubbles */
         level_exp = cpl.stats.exp - server_level.exp[cpl.stats.exp_level];
@@ -794,8 +794,8 @@ void widget_show_skill_exp(int x, int y)
 
         sprite_blt(Bitmaps[BITMAP_SKILL_EXP_BG], 0, 0, NULL, &bltfx);
 
-        string_blt(widget_surface[WIDGET_SKILL_EXP_ID], &font_tiny_out, "Used", 4, -1, COLOR_HGOLD, NULL, NULL);
-        string_blt(widget_surface[WIDGET_SKILL_EXP_ID], &font_tiny_out, "Skill", 4, 7, COLOR_HGOLD, NULL, NULL);
+        string_blt(widget_surface[WIDGET_SKILL_EXP_ID], &font_tiny_out, "Used", 4, -1, NDI_COLR_SILVER, NULL, NULL);
+        string_blt(widget_surface[WIDGET_SKILL_EXP_ID], &font_tiny_out, "Skill", 4, 7, NDI_COLR_SILVER, NULL, NULL);
 
         if (cpl.skill_name[0] != 0)
         {
@@ -816,7 +816,7 @@ void widget_show_skill_exp(int x, int y)
                         sprintf(buf, "%s - level: **", cpl.skill_name);
                 break;
             }
-            string_blt(widget_surface[WIDGET_SKILL_EXP_ID], &font_small, buf, 28, -1, COLOR_WHITE, NULL, NULL);
+            string_blt(widget_surface[WIDGET_SKILL_EXP_ID], &font_small, buf, 28, -1, NDI_COLR_WHITE, NULL, NULL);
 
             if (skill_list[cpl.skill_g].entry[cpl.skill_e].exp >= 0)
             {
@@ -880,9 +880,9 @@ void widget_show_skill_exp(int x, int y)
             }
             if (skill_list[cpl.skill_g].entry[cpl.skill_e].exp_level==MAXLEVEL)
                 sprintf(buf, "more levels in 2 weeks (tm)");
-            string_blt(widget_surface[WIDGET_SKILL_EXP_ID], &font_small, buf, 28, 9, COLOR_WHITE, NULL, NULL);
+            string_blt(widget_surface[WIDGET_SKILL_EXP_ID], &font_small, buf, 28, 9, NDI_COLR_WHITE, NULL, NULL);
             sprintf(buf, "%1.2f sec", cpl.action_timer);
-            string_blt(widget_surface[WIDGET_SKILL_EXP_ID], &font_small, buf, 160, -1, COLOR_WHITE, NULL, NULL);
+            string_blt(widget_surface[WIDGET_SKILL_EXP_ID], &font_small, buf, 160, -1, NDI_COLR_WHITE, NULL, NULL);
             /* END robed's exp-display-Patch */
         }
         sprite_blt(Bitmaps[BITMAP_EXP_SKILL_BORDER], 143, 11, NULL, &bltfx);
@@ -975,17 +975,17 @@ void widget_show_regeneration(int x, int y)
 
         sprite_blt(Bitmaps[BITMAP_REGEN_BG], 0, 0, NULL, &bltfx);
 
-        string_blt(widget_surface[WIDGET_REGEN_ID], &font_tiny_out, "Regeneration", 4, 1, COLOR_HGOLD, NULL, NULL);
-        string_blt(widget_surface[WIDGET_REGEN_ID], &font_small, "HP", 61, 13, COLOR_HGOLD, NULL, NULL);
+        string_blt(widget_surface[WIDGET_REGEN_ID], &font_tiny_out, "Regeneration", 4, 1, NDI_COLR_SILVER, NULL, NULL);
+        string_blt(widget_surface[WIDGET_REGEN_ID], &font_small, "HP", 61, 13, NDI_COLR_SILVER, NULL, NULL);
         sprintf(buf, "%2.1f", cpl.gen_hp);
-        string_blt(widget_surface[WIDGET_REGEN_ID], &font_small, buf, 75, 13, COLOR_WHITE, NULL, NULL);
+        string_blt(widget_surface[WIDGET_REGEN_ID], &font_small, buf, 75, 13, NDI_COLR_WHITE, NULL, NULL);
 
-        string_blt(widget_surface[WIDGET_REGEN_ID], &font_small, "Mana", 5, 13, COLOR_HGOLD, NULL, NULL);
-        string_blt(widget_surface[WIDGET_REGEN_ID], &font_small, "Grace", 5, 24, COLOR_HGOLD, NULL, NULL);
+        string_blt(widget_surface[WIDGET_REGEN_ID], &font_small, "Mana", 5, 13, NDI_COLR_SILVER, NULL, NULL);
+        string_blt(widget_surface[WIDGET_REGEN_ID], &font_small, "Grace", 5, 24, NDI_COLR_SILVER, NULL, NULL);
         sprintf(buf, "%2.1f", cpl.gen_sp);
-        string_blt(widget_surface[WIDGET_REGEN_ID], &font_small, buf, 35, 13, COLOR_WHITE, NULL, NULL);
+        string_blt(widget_surface[WIDGET_REGEN_ID], &font_small, buf, 35, 13, NDI_COLR_WHITE, NULL, NULL);
         sprintf(buf, "%2.1f", cpl.gen_grace);
-        string_blt(widget_surface[WIDGET_REGEN_ID], &font_small, buf, 35, 24, COLOR_WHITE, NULL, NULL);
+        string_blt(widget_surface[WIDGET_REGEN_ID], &font_small, buf, 35, 24, NDI_COLR_WHITE, NULL, NULL);
     }
     box.x=x;
     box.y=y;
@@ -1002,13 +1002,13 @@ void widget_show_statometer(int x, int y)
         return;
     }
 
-    string_blt(ScreenSurface, &font_large_out, "Stat-O-Meter:", x+2, y+2, COLOR_BLUE,NULL,NULL);
+    string_blt(ScreenSurface, &font_large_out, "Stat-O-Meter:", x+2, y+2, NDI_COLR_BLUE,NULL,NULL);
     sprintf(statbuf,"EXP: %d",statometer.exp);
-    string_blt(ScreenSurface, &font_small,statbuf,x+2,y+15,COLOR_WHITE,NULL,NULL);
+    string_blt(ScreenSurface, &font_small,statbuf,x+2,y+15,NDI_COLR_WHITE,NULL,NULL);
     sprintf(statbuf,"(%.2f/hour)",statometer.exphour);
-    string_blt(ScreenSurface, &font_small,statbuf,x+82,y+15,COLOR_WHITE,NULL,NULL);
+    string_blt(ScreenSurface, &font_small,statbuf,x+82,y+15,NDI_COLR_WHITE,NULL,NULL);
     sprintf(statbuf,"Kills: %d",statometer.kills);
-    string_blt(ScreenSurface, &font_small,statbuf,x+2,y+25,COLOR_WHITE,NULL,NULL);
+    string_blt(ScreenSurface, &font_small,statbuf,x+2,y+25,NDI_COLR_WHITE,NULL,NULL);
     sprintf(statbuf,"(%.2f/hour)",statometer.killhour);
-    string_blt(ScreenSurface, &font_small,statbuf,x+82,y+25,COLOR_WHITE,NULL,NULL);
+    string_blt(ScreenSurface, &font_small,statbuf,x+82,y+25,NDI_COLR_WHITE,NULL,NULL);
 }

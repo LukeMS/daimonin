@@ -552,7 +552,7 @@ _gui_npc *gui_npc_create(int mode, char *data, int len, int pos)
 
 static void BadInterfaceString(char *data, uint16 pos)
 {
-    textwin_showstring(COLOR_RED, "ERROR: bad interface string (flag start error)");
+    textwin_showstring(0, NDI_COLR_RED, "ERROR: bad interface string (flag start error)");
     LOG(LOG_ERROR, "ERROR: bad command tag: %s\n", data + pos);
     gui_npc_reset();
 }
@@ -1685,12 +1685,12 @@ static void ShowGUIPanel(uint16 x, uint16 y)
         if (gui_npc->keyword_selected == this)
         {
             string_blt(ScreenSurface, &font_medium, buf, x + cw / 2,
-                       y + ch / 2 + ch * i, COLOR_DK_NAVY, NULL, NULL);
+                       y + ch / 2 + ch * i, NDI_COLR_PURPLE, NULL, NULL);
         }
         else
         {
             string_blt(ScreenSurface, &font_medium, buf, x + cw / 2,
-                      y + ch / 2 + ch * i, COLOR_TURQUOISE, NULL, NULL);
+                      y + ch / 2 + ch * i, NDI_COLR_AQUA, NULL, NULL);
         }
     }
 }
@@ -1716,7 +1716,7 @@ static void ShowGUIFurniture(uint16 x, uint16 y)
             }
 
             string_blt(ScreenSurface, &font_medium, buf, x + 80, y + 50,
-                      COLOR_WHITE, NULL, NULL);
+                      NDI_COLR_WHITE, NULL, NULL);
         }
 
         if (gui_npc->head->image.sprite)
@@ -1832,7 +1832,7 @@ static void ShowGUIFurniture(uint16 x, uint16 y)
             string_blt(ScreenSurface, &font_small, buf,
                       xoff + 4 + (GUI_NPC_TEXTFIELDWIDTH -
                                   string_width(&font_small, buf)) / 2,
-                      yoff - 2, COLOR_WHITE, NULL, NULL);
+                      yoff - 2, NDI_COLR_WHITE, NULL, NULL);
             SDL_FillRect(ScreenSurface, &box, 0);
             show_input_string(&font_medium, &box, 0);
         }
@@ -1846,7 +1846,7 @@ static void ShowGUIFurniture(uint16 x, uint16 y)
             string_blt(ScreenSurface, &font_small, buf,
                       xoff + 4 + (GUI_NPC_TEXTFIELDWIDTH -
                                   string_width(&font_small, buf)) / 2,
-                      yoff - 2, COLOR_WHITE, NULL, NULL);
+                      yoff - 2, NDI_COLR_WHITE, NULL, NULL);
         }
         else
         {
@@ -1856,7 +1856,7 @@ static void ShowGUIFurniture(uint16 x, uint16 y)
                 string_blt(ScreenSurface, &font_small, buf,
                           xoff + 4 + (GUI_NPC_TEXTFIELDWIDTH -
                                       string_width(&font_small, buf)) / 2,
-                          yoff - 2, COLOR_WHITE, NULL, NULL);
+                          yoff - 2, NDI_COLR_WHITE, NULL, NULL);
             }
             else
             {
@@ -1864,7 +1864,7 @@ static void ShowGUIFurniture(uint16 x, uint16 y)
                 string_blt(ScreenSurface, &font_small, buf,
                           xoff + 4 + (GUI_NPC_TEXTFIELDWIDTH -
                                       string_width(&font_small, buf)) / 2,
-                          yoff - 2, COLOR_WHITE, NULL, NULL);
+                          yoff - 2, NDI_COLR_WHITE, NULL, NULL);
             }
 
             /* TODO: the rest of this function is in severe need of tidying! */
@@ -1890,12 +1890,12 @@ static void ShowGUIFurniture(uint16 x, uint16 y)
                     buf_tmp[len - 2] = '\0';
                     strcat(buf_tmp, "...");
                     string_blt(ScreenSurface, &font_medium, buf_tmp, box.x,
-                               box.y, COLOR_DK_NAVY, &box, NULL);
+                               box.y, NDI_COLR_PURPLE, &box, NULL);
                 }
                 else
                 {
                     string_blt(ScreenSurface, &font_medium, buf, box.x, box.y,
-                               COLOR_DK_NAVY, &box, NULL);
+                               NDI_COLR_PURPLE, &box, NULL);
                 }
             }
             else
@@ -2115,13 +2115,13 @@ static void ShowGUIFurniture(uint16 x, uint16 y)
                         button)
                     {
                         string_blt(ScreenSurface, &font_medium, buf_tmp, box.x,
-                                  box.y, COLOR_GREY, &box, NULL);
+                                  box.y, NDI_COLR_GREY, &box, NULL);
                     }
                     else if (gui_npc->button_selected ||
                              button)
                     {
                         string_blt(ScreenSurface, &font_medium, buf_tmp, box.x,
-                                  box.y, COLOR_DK_NAVY, &box, NULL);
+                                  box.y, NDI_COLR_PURPLE, &box, NULL);
                     }
                 }
                 else
@@ -2135,13 +2135,13 @@ static void ShowGUIFurniture(uint16 x, uint16 y)
                         button)
                     {
                         string_blt(ScreenSurface, &font_medium, btn, box.x, box.y,
-                                  COLOR_GREY, &box, NULL);
+                                  NDI_COLR_GREY, &box, NULL);
                     }
                     else if (gui_npc->button_selected ||
                              button)
                     {
                         string_blt(ScreenSurface, &font_medium, btn, box.x, box.y,
-                                  COLOR_DK_NAVY, &box, NULL);
+                                  NDI_COLR_PURPLE, &box, NULL);
                     }
 
                     if (cmd[0])
@@ -2161,13 +2161,13 @@ static void ShowGUIFurniture(uint16 x, uint16 y)
                             buf_tmp[len - 2] = '\0';
                             strcat(buf_tmp, "...");
                             string_blt(ScreenSurface, &font_medium, buf_tmp,
-                                      box.x + xoff2, box.y, COLOR_DK_NAVY,
+                                      box.x + xoff2, box.y, NDI_COLR_PURPLE,
                                       &box, NULL);
                         }
                         else
                         {
                             string_blt(ScreenSurface, &font_medium, cmd,
-                                      box.x + xoff2, box.y, COLOR_DK_NAVY,
+                                      box.x + xoff2, box.y, NDI_COLR_PURPLE,
                                       &box, NULL);
                         }
                     }
@@ -2214,7 +2214,7 @@ static void ShowGUIContents(uint16 x, uint16 y)
                 }
 
                 string_blt(ScreenSurface, &font_large_out, buf, xoff, yoff,
-                          COLOR_HGOLD, NULL, NULL);
+                          NDI_COLR_SILVER, NULL, NULL);
                 yoff += font_large_out.line_height + FONT_BLANKLINE;
             }
 
@@ -2228,7 +2228,7 @@ static void ShowGUIContents(uint16 x, uint16 y)
                 {
                     string_blt(ScreenSurface, &font_medium,
                               gui_npc->message->body.line[i], xoff, yoff,
-                              COLOR_WHITE, NULL, NULL);
+                              NDI_COLR_WHITE, NULL, NULL);
                     yoff += font_medium.line_height;
                 }
             }
@@ -2259,7 +2259,7 @@ static void ShowGUIContents(uint16 x, uint16 y)
             }
 
             string_blt(ScreenSurface, &font_large_out, buf, xoff, yoff,
-                      COLOR_HGOLD, NULL, NULL);
+                      NDI_COLR_SILVER, NULL, NULL);
             yoff += font_large_out.line_height + FONT_BLANKLINE;
 
             if (gui_npc->reward->body.text)
@@ -2276,7 +2276,7 @@ static void ShowGUIContents(uint16 x, uint16 y)
                     {
                         string_blt(ScreenSurface, &font_medium,
                                   gui_npc->reward->body.line[i], xoff, yoff,
-                                  COLOR_WHITE, NULL, NULL);
+                                  NDI_COLR_WHITE, NULL, NULL);
                         yoff += font_medium.line_height;
                     }
                 }
@@ -2367,7 +2367,7 @@ static void ShowGUIContents(uint16 x, uint16 y)
                             uint16 w = string_width(&font_small_out, buf);
 
                             string_blt(ScreenSurface, &font_small_out, buf,
-                                      xoff + 28 - w / 2, yoff + 18, COLOR_RED, NULL,
+                                      xoff + 28 - w / 2, yoff + 18, NDI_COLR_RED, NULL,
                                       NULL);
                         }
                         else
@@ -2375,7 +2375,7 @@ static void ShowGUIContents(uint16 x, uint16 y)
                             uint16 w = string_width(&font_small_out, buf);
 
                             string_blt(ScreenSurface, &font_small_out, buf,
-                                      xoff + 28 - w / 2, yoff + 18, COLOR_GREEN, NULL,
+                                      xoff + 28 - w / 2, yoff + 18, NDI_COLR_GREEN, NULL,
                                       NULL);
                         }
                     }
@@ -2437,7 +2437,7 @@ static void ShowGUIContents(uint16 x, uint16 y)
             yoff = y + this->box.y - guitop - font_tiny_out.line_height -
                    FONT_BLANKLINE;
             string_blt(ScreenSurface, &font_tiny_out, buf, xoff, yoff,
-                      COLOR_GREEN, NULL, NULL);
+                      NDI_COLR_GREEN, NULL, NULL);
 
             for (; this; this = this->next)
             {
@@ -2455,7 +2455,7 @@ static void ShowGUIContents(uint16 x, uint16 y)
             yoff = y + gui_npc->icon->last->box.y - guitop + GUI_NPC_ICONSIZE +
                    FONT_BLANKLINE;
             string_blt(ScreenSurface, &font_tiny_out, buf, xoff, yoff,
-                      COLOR_GREEN, NULL, NULL);
+                      NDI_COLR_GREEN, NULL, NULL);
         }
     }
 
@@ -2485,12 +2485,12 @@ static void ShowGUIContents(uint16 x, uint16 y)
                 !gui_npc->keyword_selected)
             {
                 string_blt(ScreenSurface, &font_medium, buf, xoff, yoff,
-                          COLOR_DK_NAVY, NULL, NULL);
+                          NDI_COLR_PURPLE, NULL, NULL);
             }
             else
             {
                 string_blt(ScreenSurface, &font_medium, buf, xoff, yoff,
-                          COLOR_TURQUOISE, NULL, NULL);
+                          NDI_COLR_AQUA, NULL, NULL);
             }
 
             yoff += font_medium.line_height + FONT_BLANKLINE;
@@ -2524,7 +2524,7 @@ static void ShowGUIContents(uint16 x, uint16 y)
             }
 
             string_blt(ScreenSurface, &font_large_out, buf, xoff, yoff,
-                      COLOR_HGOLD, NULL, NULL);
+                      NDI_COLR_SILVER, NULL, NULL);
             yoff += font_large_out.line_height + FONT_BLANKLINE;
 
             for (i = 0; i < this->body.line_count; i++)
@@ -2536,7 +2536,7 @@ static void ShowGUIContents(uint16 x, uint16 y)
                 else
                 {
                     string_blt(ScreenSurface, &font_medium, this->body.line[i],
-                              xoff, yoff, COLOR_WHITE, NULL, NULL);
+                              xoff, yoff, NDI_COLR_WHITE, NULL, NULL);
                     yoff += font_medium.line_height;
                 }
             }
@@ -2601,7 +2601,7 @@ static void ShowIcon(_gui_npc_element *this)
                 strcat(buf, "...");
             }
 
-            string_blt(ScreenSurface, &font_small, buf, xoff2, yoff2, COLOR_HGOLD,
+            string_blt(ScreenSurface, &font_small, buf, xoff2, yoff2, NDI_COLR_SILVER,
                       NULL, NULL);
             yoff2 += font_small.line_height;
 
@@ -2609,7 +2609,7 @@ static void ShowIcon(_gui_npc_element *this)
             for (i = 0; i < this->body.line_count; i++)
             {
                 string_blt(ScreenSurface, &font_small, this->body.line[i], xoff2,
-                          yoff2, COLOR_WHITE, NULL, NULL);
+                          yoff2, NDI_COLR_WHITE, NULL, NULL);
                 yoff2 += font_small.line_height;
             }
         }
@@ -2632,7 +2632,7 @@ static void ShowIcon(_gui_npc_element *this)
             strcat(buf, "...");
         }
 
-        string_blt(ScreenSurface, &font_small, buf, xoff2, yoff2, COLOR_HGOLD,
+        string_blt(ScreenSurface, &font_small, buf, xoff2, yoff2, NDI_COLR_SILVER,
                   NULL, NULL);
         yoff2 += font_small.line_height;
 
@@ -2640,7 +2640,7 @@ static void ShowIcon(_gui_npc_element *this)
         for (i = 0; i < this->body.line_count; i++)
         {
             string_blt(ScreenSurface, &font_tiny_out, this->body.line[i], xoff2,
-                      yoff2, COLOR_WHITE, NULL, NULL);
+                      yoff2, NDI_COLR_WHITE, NULL, NULL);
             yoff2 += font_small.line_height;
         }
     }

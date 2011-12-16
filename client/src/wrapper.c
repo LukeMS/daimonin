@@ -286,7 +286,7 @@ int attempt_fullscreen_toggle(SDL_Surface **surface, uint32 *flags)
 
     if ((*surface = SDL_SetVideoMode(w, h, bpp, *flags)) == NULL)
     {
-        textwin_showstring(COLOR_RED, "Couldn't toggle fullscreen: %s\n", SDL_GetError());
+        textwin_showstring(0, NDI_COLR_RED, "Couldn't toggle fullscreen: %s\n", SDL_GetError());
         sdldebug("Set it back...");
         *surface = SDL_SetVideoMode(w, h, bpp, tmpflags);
         if (*surface == NULL)

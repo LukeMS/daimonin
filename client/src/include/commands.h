@@ -24,6 +24,45 @@
 #ifndef __COMMANDS_H
 #define __COMMANDS_H
 
+/* TODO: In 0.11.0 the server will send 24bit colour info so the NDI_* defines
+ * should be moved to protocol.h then and NDI_MASK_* will not be needed.
+ * Currently it sends both in one uint16, the low bit being colour and the high
+ * bit being flags (meaning we only have space for 8 flags [UNIQUE and ALL are
+ * unused client-side] and 256 colours. */
+#define NDI_MASK_COLRS 0xFF
+#define NDI_MASK_FLAGS 0xFFFF
+
+/* These 17 named colours (the CSS 2 standards) are just for convenience
+ * really. Any of the 255^3 0xRRGGBB combinations can be used. */
+#define NDI_COLR_AQUA    0x00ffff
+#define NDI_COLR_BLACK   0x000000
+#define NDI_COLR_BLUE    0x0000ff
+#define NDI_COLR_FUSCHIA 0xff00ff
+#define NDI_COLR_GREY    0x808080
+#define NDI_COLR_GREEN   0x008000
+#define NDI_COLR_LIME    0x00ff00
+#define NDI_COLR_MAROON  0x800000
+#define NDI_COLR_NAVY    0x000080
+#define NDI_COLR_OLIVE   0x808000
+#define NDI_COLR_ORANGE  0xffa500
+#define NDI_COLR_PURPLE  0x800080
+#define NDI_COLR_RED     0xff0000
+#define NDI_COLR_SILVER  0xc0c0c0
+#define NDI_COLR_TEAL    0x008080
+#define NDI_COLR_WHITE   0xffffff
+#define NDI_COLR_YELLOW  0xffff00
+
+#define NDI_FLAG_SAY    (1 << 8)
+#define NDI_FLAG_SHOUT  (1 << 9)
+#define NDI_FLAG_TELL   (1 << 10)
+#define NDI_FLAG_GSAY   (1 << 11)
+#define NDI_FLAG_EMOTE  (1 << 12)
+#define NDI_FLAG_GM     (1 << 13) // from VOL/GM/SA
+#define NDI_FLAG_PLAYER (1 << 14) // from a player
+#define NDI_FLAG_VIM    (1 << 15) // Very Important Message (eg, quest completion)
+#define NDI_FLAG_UNIQUE (1 << 16) // print immediately, don't buffer
+#define NDI_FLAG_ALL    (1 << 17) // to all players
+
 extern void DoClient(void);
 
 extern void PingCmd(char *data, int len);

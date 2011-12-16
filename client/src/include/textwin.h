@@ -61,8 +61,8 @@ typedef struct _text_buf
 {
     char    buf[128];    /* text */
     int     channel;         /* which channel */
-    int     flags;           /* some flags */
-    int     color;           /* color of text */
+    uint32  flags;           /* some flags */
+    uint32  colr;           /* color of text */
     int     key_clipped; /* 1= key begin in row before 2= no key end */
 }
 _text_buf;
@@ -90,7 +90,7 @@ extern void         textwin_button_event(int actWin, widget_id_t id, SDL_Event *
 extern int          textwin_move_event(int actWin, widget_id_t id, SDL_Event *event);
 extern void         textwin_show(int x, int y);
 extern void         textwin_init();
-extern void         textwin_showstring(int flags, char *format, ...);
+extern void         textwin_showstring(uint32 flags, uint32 colr, char *format, ...);
 extern void         textwin_addhistory(char *text);
 extern void         textwin_clearhistory();
 extern void         textwin_putstring(char *text);

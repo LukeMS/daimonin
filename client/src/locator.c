@@ -398,7 +398,7 @@ static void Plot(sint16 x, sint16 y, sint16 lx, sint16 ly, int marker)
     xx = GetX(lx);
     yy = GetY(ly);
 
-    // draw_info_format(COLOR_WHITE, "%f,%f = %d,%d", lx, ly, xx, yy);
+    // draw_info_format(NDI_COLR_WHITE, "%f,%f = %d,%d", lx, ly, xx, yy);
 
     if (xx >= locator.box.x &&
         xx <= locator.box.x + locator.box.w &&

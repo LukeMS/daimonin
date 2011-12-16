@@ -58,12 +58,12 @@ void widget_show_group(int x, int y)
     sprite_blt(Bitmaps[BITMAP_GROUP_BG], x, y, &box, NULL);
     sprite_blt(Bitmaps[BITMAP_GROUP_BG_BOTTOM],x,y+box.h, NULL, NULL);
 
-    string_blt(ScreenSurface, &font_tiny_out, "Group:", x +50, y+2 , COLOR_HGOLD, NULL, NULL);
+    string_blt(ScreenSurface, &font_tiny_out, "Group:", x +50, y+2 , NDI_COLR_SILVER, NULL, NULL);
 
 
     if (global_group_status < GROUP_INVITE)
     {
-        string_blt(ScreenSurface, &font_tiny_out, "type '/help group' for info", x+13, y+13, COLOR_WHITE, NULL, NULL);
+        string_blt(ScreenSurface, &font_tiny_out, "type '/help group' for info", x+13, y+13, NDI_COLR_WHITE, NULL, NULL);
         return;
     }
 
@@ -72,11 +72,11 @@ void widget_show_group(int x, int y)
     if (global_group_status == GROUP_INVITE || global_group_status == GROUP_WAIT)
     {
         sprite_blt(Bitmaps[BITMAP_GROUP_INVITE], x + 10, y +32, NULL, NULL);
-        string_blt(ScreenSurface, &font_small, "GROUP INVITE", x+30, y+13,COLOR_GREEN, NULL, NULL);
+        string_blt(ScreenSurface, &font_small, "GROUP INVITE", x+30, y+13,NDI_COLR_GREEN, NULL, NULL);
         len =  string_width(&font_small, group_invite);
-        string_blt(ScreenSurface, &font_small, group_invite, x + 60-len/2, y + 45, COLOR_HGOLD, NULL, NULL);
-        string_blt(ScreenSurface, &font_small, "has invited you", x + 28, y +65, COLOR_DEFAULT, NULL, NULL);
-        string_blt(ScreenSurface, &font_small, "to join a group.", x + 28, y +78, COLOR_DEFAULT, NULL, NULL);
+        string_blt(ScreenSurface, &font_small, group_invite, x + 60-len/2, y + 45, NDI_COLR_SILVER, NULL, NULL);
+        string_blt(ScreenSurface, &font_small, "has invited you", x + 28, y +65, NDI_COLR_WHITE, NULL, NULL);
+        string_blt(ScreenSurface, &font_small, "to join a group.", x + 28, y +78, NDI_COLR_WHITE, NULL, NULL);
 
         if (global_group_status == GROUP_INVITE)
         {
@@ -109,9 +109,9 @@ void widget_show_group(int x, int y)
             if (group[s].name[0] != '\0')
             {
                 sprite_blt(Bitmaps[BITMAP_GROUP], x + group_pos[s][0] + 2, y + group_pos[s][1] + 1, NULL, NULL);
-                string_blt(ScreenSurface, &font_small, group[s].name, x + group_pos[s][0] + 33, y + group_pos[s][1] + 1,COLOR_DEFAULT, NULL, NULL);
+                string_blt(ScreenSurface, &font_small, group[s].name, x + group_pos[s][0] + 33, y + group_pos[s][1] + 1,NDI_COLR_WHITE, NULL, NULL);
                 sprintf(buf, "%3d", group[s].level);
-                string_blt(ScreenSurface, &font_tiny_out, buf, x + group_pos[s][0] + 8, y + group_pos[s][1], COLOR_DEFAULT, NULL, NULL);
+                string_blt(ScreenSurface, &font_tiny_out, buf, x + group_pos[s][0] + 8, y + group_pos[s][1], NDI_COLR_WHITE, NULL, NULL);
 
                 if (group[s].maxhp)
                 {
@@ -197,7 +197,7 @@ void show_group(int x, int y)
 
     if (global_group_status < GROUP_INVITE)
     {
-        string_blt(ScreenSurface, &font_tiny_out, "type '/help group' for info", 40, Screensize.yoff+585, COLOR_WHITE, NULL, NULL);
+        string_blt(ScreenSurface, &font_tiny_out, "type '/help group' for info", 40, Screensize.yoff+585, NDI_COLR_WHITE, NULL, NULL);
         return;
     }
 
@@ -206,10 +206,10 @@ void show_group(int x, int y)
     if (global_group_status == GROUP_INVITE || global_group_status == GROUP_WAIT)
     {
         sprite_blt(Bitmaps[BITMAP_GROUP_INVITE], x + group_pos[0][0] + 2, y + group_pos[0][1] + 1, NULL, NULL);
-        string_blt(ScreenSurface, &font_small, "GROUP INVITE", x + group_pos[0][0] + 76, y + group_pos[0][1] + 5,COLOR_GREEN, NULL, NULL);
+        string_blt(ScreenSurface, &font_small, "GROUP INVITE", x + group_pos[0][0] + 76, y + group_pos[0][1] + 5,NDI_COLR_GREEN, NULL, NULL);
         len =  string_width(&font_small, group_invite);
-        string_blt(ScreenSurface, &font_small, group_invite, x + group_pos[0][0]+107-len/2, y + group_pos[0][1] + 19,COLOR_HGOLD, NULL, NULL);
-        string_blt(ScreenSurface, &font_small, " has invited you to join a group.", x + group_pos[0][0] + 40, y + group_pos[0][1] + 31,COLOR_DEFAULT, NULL, NULL);
+        string_blt(ScreenSurface, &font_small, group_invite, x + group_pos[0][0]+107-len/2, y + group_pos[0][1] + 19,NDI_COLR_SILVER, NULL, NULL);
+        string_blt(ScreenSurface, &font_small, " has invited you to join a group.", x + group_pos[0][0] + 40, y + group_pos[0][1] + 31,NDI_COLR_WHITE, NULL, NULL);
 
         if (global_group_status == GROUP_INVITE)
         {
@@ -242,9 +242,9 @@ void show_group(int x, int y)
             if (group[s].name[0] != '\0')
             {
 //                sprite_blt(Bitmaps[BITMAP_GROUP], x + group_pos[s][0] + 2, y + group_pos[s][1] + 1, NULL, NULL);
-                string_blt(ScreenSurface, &font_small, group[s].name, x + group_pos[s][0] + 33, y + group_pos[s][1] + 1,COLOR_DEFAULT, NULL, NULL);
+                string_blt(ScreenSurface, &font_small, group[s].name, x + group_pos[s][0] + 33, y + group_pos[s][1] + 1,NDI_COLR_WHITE, NULL, NULL);
                 sprintf(buf, "%3d", group[s].level);
-                string_blt(ScreenSurface, &font_tiny_out, buf, x + group_pos[s][0] + 8, y + group_pos[s][1], COLOR_DEFAULT, NULL, NULL);
+                string_blt(ScreenSurface, &font_tiny_out, buf, x + group_pos[s][0] + 8, y + group_pos[s][1], NDI_COLR_WHITE, NULL, NULL);
 
                 if (group[s].maxhp)
                 {

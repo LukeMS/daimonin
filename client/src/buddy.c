@@ -71,14 +71,14 @@ static void buddy_list_show(void)
 	struct buddy_list *node;
 	int i=0;
 
-	textwin_showstring(COLOR_WHITE, "\nBUDDY LIST");
-	textwin_showstring(COLOR_WHITE, "--------------------------");
+	textwin_showstring(0, NDI_COLR_WHITE, "\nBUDDY LIST");
+	textwin_showstring(0, NDI_COLR_WHITE, "--------------------------");
 	for(node = buddy_list_start;node;i++, node = node->next)
 	{
-		textwin_showstring(COLOR_WHITE, "%s", node->name);
+		textwin_showstring(0, NDI_COLR_WHITE, "%s", node->name);
 	}
 
-	textwin_showstring(COLOR_WHITE, "\n%d name(s) on your list.", i);
+	textwin_showstring(0, NDI_COLR_WHITE, "\n%d name(s) on your list.", i);
 }
 
 /* clear the list, free all memory */
@@ -160,7 +160,7 @@ int buddy_check(char *name)
 
 	for(node = buddy_list_start;node;node = node->next)
 	{
-		/*textwin_showstring(COLOR_WHITE, "compare >%s< with >%s<", name, node->name);*/
+		/*textwin_showstring(0, NDI_COLR_WHITE, "compare >%s< with >%s<", name, node->name);*/
 		if(!stricmp(name, node->name))
 			return 1;
 	}
@@ -193,12 +193,12 @@ void buddy_command(char *cmd)
 		if(buddy_check(cmd) )
 		{
 			buddy_entry_remove(cmd);
-			textwin_showstring(COLOR_WHITE, "removed %s from buddy list.", cmd);
+			textwin_showstring(0, NDI_COLR_WHITE, "removed %s from buddy list.", cmd);
 		}
 		else
 		{
 			buddy_entry_add(cmd);
-			textwin_showstring(COLOR_WHITE, "added %s to buddy list.", cmd);
+			textwin_showstring(0, NDI_COLR_WHITE, "added %s to buddy list.", cmd);
 		}
 
 		buddy_list_save();
