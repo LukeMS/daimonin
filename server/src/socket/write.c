@@ -226,7 +226,8 @@ sockbuf_struct *socket_buffer_get(int len)
 		LOG(llevDebug, "Allocated oversized dynamic sockbuf (%p) for: %d(%d) bytes\n", tmp, len, tmp->bufsize);
 #endif
 	}
-	tmp->ns = tmp->last = tmp->next = tmp->broadcast = NULL;
+	tmp->ns = NULL;
+	tmp->last = tmp->next = tmp->broadcast = NULL;
 	tmp->request_len = tmp->instance = tmp->len = tmp->pos = tmp->flags = 0;
 
 	return(tmp);
@@ -266,7 +267,8 @@ sockbuf_struct *compose_socklist_buffer(int cmd, char *data, int data_len, int f
 	LOG(llevDebug, "SOCKBUF: Composed broadcast sockbuf (%p) of %d + %d bytes\n",
 	    sb, header_len, data_len);
 #endif
-	sb->ns = sb->last = sb->next = sb->broadcast = NULL;
+	sb->ns = NULL;
+	sb->last = sb->next = sb->broadcast = NULL;
 	sb->request_len = sb->instance = sb->pos = 0;
 	sb->bufsize = sb->len = header_len + data_len;
 	sb->flags = flags;
