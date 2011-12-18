@@ -46,7 +46,7 @@ int command_channel(object *ob, char *params)
     }
 
     /* Command Parser */
-    if ((channelnamelen = strcspn(params, "-+ :?*!%")) > MAX_CHANNEL_NAME)
+    if ((channelnamelen = strcspn(params, "-+ :?*!%$")) > MAX_CHANNEL_NAME)
     {
         new_draw_info(NDI_UNIQUE, 0, ob, "Channelname is too long!");
 
@@ -263,7 +263,7 @@ int command_channel(object *ob, char *params)
             new_draw_info(NDI_UNIQUE, 0, ob, "Shortcut can only be one char or number!");
             return 0;
         }
-        if ((params[0]=='+') || (params[0]=='-') || (params[0]==' ') || (params[0]=='*') || (params[0]=='%') || (params[0]=='!') || (params[0]==':') || (params[0]=='#'))
+        if ((params[0]=='+') || (params[0]=='-') || (params[0]==' ') || (params[0]=='*') || (params[0]=='%') || (params[0]=='!') || (params[0]==':') || (params[0]=='#') || (params[0]=='$'))
         {
             new_draw_info(NDI_UNIQUE, 0, ob, "This Shortcut can't be used!");
             return 0;
@@ -272,9 +272,58 @@ int command_channel(object *ob, char *params)
         new_draw_info(NDI_UNIQUE, 0, ob, "Shortcut for channel %s changed to %c.",pl_channel->channel->name,pl_channel->shortcut);
         return 0;
     }
+    else if (mode == '$')
+    {
+        char buf[HUGE_BUF];
+        char levelstring[SMALL_BUF];
+
+        object *targetob = CONTR(ob)->mark;
+
+        if (!targetob) // Don't do anything if there is no marked item.
+        {
+            new_draw_info(NDI_UNIQUE, 0, ob, "You must ~M~ark an item to describe it.");
+            return 0;
+        }
+
+        if (!QUERY_FLAG(targetob, FLAG_IDENTIFIED))
+        {
+            new_draw_info(NDI_UNIQUE, 0, ob, "Unidentified items cannot be described.");
+            return 0;
+        }
+
+        if (targetob->item_level)
+        {
+            if (targetob->item_skill)
+            {
+                sprintf(levelstring, "(req. level %d in %s)", targetob->item_level,
+                    STRING_SAFE(CONTR(ob)->exp_obj_ptr[targetob->item_skill-1]->name));
+            }
+            else
+            {
+                sprintf(levelstring, "(req. level %d)", targetob->item_level);
+            }
+        }
+
+        if (targetob->item_level)
+        {
+            sprintf(buf, "%s -- %s%s(examine worth: %s)", query_name_full(targetob, ob), describe_item(targetob),
+                   levelstring, cost_string_from_value(targetob->value * targetob->nrof, COSTSTRING_SHORT));
+        }
+        else
+        {
+            sprintf(buf, "%s -- %s(examine worth: %s)", query_name_full(targetob, ob), describe_item(targetob),
+                   cost_string_from_value(targetob->value * targetob->nrof, COSTSTRING_SHORT));
+        }
+
+        if (check_channel_mute(pl_channel))
+        {
+            sendChannelMessage(CONTR(ob),pl_channel, buf);
+        }
+    }
 
     return 0;
 }
+
 /**
  * Add Player To a Channel with the player-channel-linklist
  * Checks if player is already on that channel, and so on

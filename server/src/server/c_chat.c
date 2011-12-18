@@ -198,7 +198,7 @@ int command_gsay(object *op, char *params)
     objectlink     *ol;
     object         *tmp;
 #ifdef USE_CHANNELS
-    sockbuf_struct *sockbuf;
+    sockbuf_struct *sockbuf;comma
 #endif
 
     if(!check_mute(op, MUTE_MODE_SAY))
@@ -262,6 +262,7 @@ int command_gsay(object *op, char *params)
     return 0;
 }
 
+#ifndef USE_CHANNELS
 int command_shout(object *op, char *params)
 {
 //    char    buf[MEDIUM_BUF];
@@ -294,7 +295,24 @@ int command_shout(object *op, char *params)
 
     return 0;
 }
+#else
+// Redirect /shouts to the new B5 channel system.
+int command_shout(object *op, char *params)
+{
+    char *newparams = malloc(strlen(params) + 9);
 
+    strcpy(newparams, "general ");
+    strcat(newparams, params);
+
+    command_channel(op, newparams);
+
+    free(newparams);
+
+    return 0;
+}
+#endif
+
+#ifndef USE_CHANNELS
 int command_describe(object *op, char *params)
 {
     /* TODO: Make this support channels, like "/describe tell XYZ", "/describe auction".
@@ -337,6 +355,7 @@ int command_describe(object *op, char *params)
 
     return 0;
 }
+#endif
 
 int command_tell(object *op, char *params)
 {

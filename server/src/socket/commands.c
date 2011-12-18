@@ -71,7 +71,9 @@ CommArray_s Commands[] =
     {"say",           command_say,            1.0f, 0},
     {"gsay",          command_gsay,           1.0f, 0},
     {"shout",         command_shout,          1.0f, 0},
+#ifndef USE_CHANNELS
     {"describe",      command_describe,       1.0f, 0},
+#endif
     {"tell",          command_tell,           1.0f, 0},
     {"who",           command_who,            0.0f, 1},
     {"mapinfo",       command_mapinfo,        0.0f, 1},
