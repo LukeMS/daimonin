@@ -1730,109 +1730,100 @@ void show_newplayer_server(void)
 ******************************************************************/
 void show_login_server(void)
 {
+    uint8       i;
+    uint16      x = 25,
+                y = Screensize.y / 2 - Bitmaps[BITMAP_DIALOG_BG]->bitmap->h / 2,
+                x2 = 300;
+    char       *request_string[17][3] =
+    {
+        { "Updating '", FILE_SRV_SOUNDS, "'... ", },
+        { "OK!\n", NULL, NULL, },
+        { "Updating '", FILE_SRV_SKILLS, "'... ", },
+        { "OK!\n", NULL, NULL, },
+        { "Updating '", FILE_SRV_SPELLS, "'... ", },
+        { "OK!\n", NULL, NULL, },
+        { "Updating '", FILE_SRV_SETTINGS, "'... ", },
+        { "OK!\n", NULL, NULL, },
+        { "Updating '", FILE_SRV_FACEINFO, "'... ", },
+        { "OK!\n", NULL, NULL, },
+        { "Updating '", FILE_SRV_ANIMS, "'... ", },
+        { "OK!\n", NULL, NULL, },
+        { "Sync files... ", NULL, NULL, },
+        { NULL, NULL, NULL, },
+        { "Wait for it... ", NULL, NULL, },
+        { NULL, NULL, NULL, },
+        { "DONE!", NULL, NULL, },
+    };
     SDL_Rect    box;
-    char        buf[MEDIUM_BUF];
-    int         x, y, i;
-    int         mx, my, mb, t;
+    char        buf[LARGE_BUF];
     int         progress;
-    uint32      colr;
 
-    mb = SDL_GetMouseState(&mx, &my);
-    /* background */
-    /*x= Screensize.x/2-Bitmaps[BITMAP_DIALOG_BG]->bitmap->w/2;*/
-    x = 25;
-    y = Screensize.y / 2 - Bitmaps[BITMAP_DIALOG_BG]->bitmap->h / 2;
     sprite_blt(Bitmaps[BITMAP_DIALOG_BG], x, y, NULL, NULL);
     sprite_blt(Bitmaps[BITMAP_LOGO270], x + 20, y + 85, NULL, NULL);
     sprite_blt(Bitmaps[BITMAP_DIALOG_TITLE_LOGIN], x + 250 - Bitmaps[BITMAP_DIALOG_TITLE_LOGIN]->bitmap->w / 2, y + 20,
                NULL, NULL);
     /*  add_close_button(x, y, MENU_LOGIN); */
-
-    t = x + 275;
     x += 170;
     y += 100;
-    draw_frame(x - 3, y - 3, 211, 168);
+    EMBOSS(ScreenSurface, &font_small, "Server", x2 - 21, y - 36,
+           NDI_COLR_WHITE, NULL, NULL);
+    sprintf(buf, "%s",
+            (!strcmp(ServerName, "127.0.0.1")) ? "local host" : ServerName);
+    x2 -= string_width(&font_large_out, buf) / 2;
+    ENGRAVE(ScreenSurface, &font_large_out, buf, x2, y - 22, NDI_COLR_SILVER,
+            NULL, NULL);
     box.x = x - 2;
     box.y = y - 2;
     box.w = 210;
     box.h = 17;
-    ENGRAVE(ScreenSurface, &font_small, "Server", t - 21, y - 36, NDI_COLR_WHITE, NULL, NULL);
-
-    if (!strcmp(ServerName, "127.0.0.1"))
-        strcpy(buf, "local host");
-    else
-        sprintf(buf, "%s", ServerName);
-
-    t -= string_width(&font_large_out, buf) / 2;
-    EMBOSS(ScreenSurface, &font_large_out, buf, t, y - 22, NDI_COLR_SILVER, NULL, NULL);
-    colr = SDL_MapRGB(ScreenSurface->format,
-                             (skindef.dialog_rows0 >> 16) & 0xff,
-                             (skindef.dialog_rows0 >> 8) & 0xff,
-                             skindef.dialog_rows0 & 0xff);
-    SDL_FillRect(ScreenSurface, &box, colr);
+    SDL_FillRect(ScreenSurface, &box, skindef.dialog_rows0);
     box.y = y + 15;
     box.h = 150;
-    colr = SDL_MapRGB(ScreenSurface->format,
-                             (skindef.dialog_rows1 >> 16) & 0xff,
-                             (skindef.dialog_rows1 >> 8) & 0xff,
-                             skindef.dialog_rows1 & 0xff);
-    SDL_FillRect(ScreenSurface, &box, colr);
-    ENGRAVE(ScreenSurface, &font_small, "- UPDATING FILES -", x + 57, y, NDI_COLR_WHITE, NULL, NULL);
+    SDL_FillRect(ScreenSurface, &box, skindef.dialog_rows1);
+    draw_frame(x - 3, y - 3, 211, 168);
 
-    if (request_file_chain >= 0)
-    {
-        ENGRAVE(ScreenSurface, &font_small, "Updating sounds file from server...", x + 2, y + 20, NDI_COLR_WHITE, NULL, NULL);
-    }
-
-    if (request_file_chain > 1)
-    {
-        ENGRAVE(ScreenSurface, &font_small, "Updating skills file from server...", x + 2, y + 32, NDI_COLR_WHITE, NULL, NULL);
-    }
-
-    if (request_file_chain > 3)
-    {
-        ENGRAVE(ScreenSurface, &font_small, "Updating spells file from server...", x + 2, y + 44, NDI_COLR_WHITE, NULL, NULL);
-    }
-
-    if (request_file_chain > 5)
-    {
-        ENGRAVE(ScreenSurface, &font_small, "Updating settings file from server...", x + 2, y + 56, NDI_COLR_WHITE, NULL, NULL);
-    }
-
-    if (request_file_chain > 7)
-    {
-        ENGRAVE(ScreenSurface, &font_small, "Updating anims file from server...", x + 2, y + 68, NDI_COLR_WHITE, NULL, NULL);
-    }
-
-    if (request_file_chain > 9)
-    {
-        ENGRAVE(ScreenSurface, &font_small, "Updating faces file from server...", x + 2, y + 80, NDI_COLR_WHITE, NULL, NULL);
-    }
-
-    if (request_file_chain > 11)
-    {
-        ENGRAVE(ScreenSurface, &font_small, "Sync files...", x + 2, y + 92, NDI_COLR_WHITE, NULL, NULL);
-    }
-
-   /* Update the progress. This is essentially eye-candy, but also will calm
-    * impatient players ('it said updating but nothing happened for 30 seconds.
-    * It's broken!'). */
+    /* Update the progress. This is essentially eye-candy, but also will calm
+     * impatient players ('it said updating but nothing happened for 30 seconds.
+     * It's broken!'). */
     sprite_blt(Bitmaps[BITMAP_PROGRESS_BACK], x + 4,
-               y + (168 - Bitmaps[BITMAP_PROGRESS_BACK]->bitmap->h - 5), NULL,
-               NULL);
-    progress = MIN(100, request_file_chain * 9);
+               y + (Bitmaps[BITMAP_PROGRESS_BACK]->bitmap->h - 5), NULL, NULL);
+    progress = (float)request_file_chain / 17.0f * 100;
     box.x = 0;
     box.y = 0;
     box.h = Bitmaps[BITMAP_PROGRESS]->bitmap->h;
     box.w = (int)(Bitmaps[BITMAP_PROGRESS]->bitmap->w / 100 * progress);
     sprite_blt(Bitmaps[BITMAP_PROGRESS], x + 4,
-               y + (168 - Bitmaps[BITMAP_PROGRESS]->bitmap->h - 5), &box,
-               NULL);
+               y + (Bitmaps[BITMAP_PROGRESS]->bitmap->h - 5), &box, NULL);
+    ENGRAVE(ScreenSurface, &font_small, "- UPDATING FILES -", x + 57, y,
+            NDI_COLR_WHITE, NULL, NULL);
+    buf[0] = '\0';
+
+    for (i = 0; i <= request_file_chain; i++)
+    {
+        if (request_string[i][0])
+        {
+            strcat(buf, request_string[i][0]);
+
+            if (request_string[i][1])
+            {
+                strcat(buf, request_string[i][1]);
+
+                if (request_string[i][2])
+                {
+                    strcat(buf, request_string[i][2]);
+                }
+            }
+        }
+    }
+
+    string_blt(ScreenSurface, &font_small, buf, x + 2,
+               y + 20 + font_small.line_height, percentage_colr(progress),
+               NULL, NULL);
 
     /* login user part */
     if (GameStatus == GAME_STATUS_REQUEST_FILES)
         return;
-    ENGRAVE(ScreenSurface, &font_small, "done.", x + 2, y + 104, NDI_COLR_WHITE, NULL, NULL);
+
     y += 180;
     if (GameStatus <= GAME_STATUS_LOGIN_BREAK)
     {

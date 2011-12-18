@@ -569,3 +569,27 @@ PHYSFS_File *save_client_file(const char *fname)
 
     return handle;
 }
+
+/* Returns a green/yellow/red value depending on the percentage passed (higher
+ * is green, lower is red). */
+uint32 percentage_colr(sint8 percentage)
+{
+    uint8 r,
+          g;
+
+    /* constrain percentage to 0-100 */
+    percentage = MAX(0, MIN(percentage, 100));
+
+    if (percentage >= 50)
+    {
+        r = 5.1 * (100 - percentage);
+        g = 255;
+    }
+    else
+    {
+        r = 255;
+        g = 5.1 * percentage;
+    }
+
+    return (r << 16) + (g << 8);
+}

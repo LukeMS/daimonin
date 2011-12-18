@@ -1334,32 +1334,26 @@ void widget_show_target(int x, int y)
 
         if (ptr)
         {
-            /* BEGIN modified robed's HP-%-patch */
             /* Draw the name of the target */
-             string_blt(ScreenSurface, &font_small, cpl.target_name, x + 35, y+3, cpl.target_color, NULL, NULL);
+            string_blt(ScreenSurface, &font_small, cpl.target_name, x + 35,
+                       y + 3, cpl.target_color, NULL, NULL);
             /* Either draw HP remaining percent and description... */
             if (hp_tmp)
             {
                 char hp_text[9];
-                int hp_color;
-                int xhpoffset=0;
-                sprintf((char *)hp_text, "HP: %d%%", hp_tmp);
-                     if (hp_tmp > 90) hp_color = NDI_COLR_GREEN;
-                else if (hp_tmp > 75) hp_color = NDI_COLR_OLIVE;
-                else if (hp_tmp > 50) hp_color = NDI_COLR_SILVER;
-                else if (hp_tmp > 25) hp_color = NDI_COLR_ORANGE;
-                else if (hp_tmp > 10) hp_color = NDI_COLR_YELLOW;
-                else                  hp_color = NDI_COLR_RED;
 
-               string_blt(ScreenSurface, &font_small, hp_text, x + 35, y + 14, hp_color, NULL, NULL);
-               xhpoffset=50;
-
-                string_blt(ScreenSurface, &font_small, ptr, x + 35 + xhpoffset, y + 14, cpl.target_color, NULL, NULL);
+                sprintf(hp_text, "HP: %d%%", hp_tmp);
+                string_blt(ScreenSurface, &font_small, hp_text, x + 35, y + 14,
+                           percentage_colr(cpl.target_hp), NULL, NULL);
+                string_blt(ScreenSurface, &font_small, ptr, x + 85, y + 14,
+                           cpl.target_color, NULL, NULL);
             }
             /* ...or draw just the description */
             else
-                string_blt(ScreenSurface, &font_small, ptr, x + 35, y + 14, cpl.target_color, NULL, NULL);
-            /* END modified robed's HP-%-patch */
+            {
+                string_blt(ScreenSurface, &font_small, ptr, x + 35, y + 14,
+                           cpl.target_color, NULL, NULL);
+            }
         }
     }
 }

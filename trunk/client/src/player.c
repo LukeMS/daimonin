@@ -182,6 +182,7 @@ void init_player_data(void)
     cpl.stats.speed = 100.0f;
     cpl.stats.spell_fumble = 0.0f;
     cpl.stats.weapon_sp = 0;
+    cpl.action_time_max = 0.0f;
     cpl.action_timer = 0.0f;
     cpl.input_text[0] = '\0';
     cpl.range[0] = '\0';
@@ -249,6 +250,8 @@ void widget_player_stats(int x, int y)
     /* we have a backbuffer SF, test for the redrawing flag and do the redrawing */
     if (widget_data[WIDGET_STATS_ID].redraw)
     {
+        uint16 x2;
+
         widget_data[WIDGET_STATS_ID].redraw=0;
 
         /* we redraw here only all halfway static stuff */
@@ -261,6 +264,7 @@ void widget_player_stats(int x, int y)
 
         sprite_blt(Bitmaps[BITMAP_STATS_BG], 0, 0, NULL, &bltfx);
 
+        /* Primary stats */
         string_blt(widget_surface[WIDGET_STATS_ID], &font_tiny_out, "Stats", 8, 1, NDI_COLR_SILVER, NULL, NULL);
         sprintf(buf, "%02d", cpl.stats.Str);
         string_blt(widget_surface[WIDGET_STATS_ID], &font_small, "Str", 8, 17, NDI_COLR_WHITE, NULL, NULL);
@@ -284,24 +288,42 @@ void widget_player_stats(int x, int y)
         string_blt(widget_surface[WIDGET_STATS_ID], &font_small, "Cha", 8, 83, NDI_COLR_WHITE, NULL, NULL);
         string_blt(widget_surface[WIDGET_STATS_ID], &font_small, buf, 30, 83, NDI_COLR_GREEN, NULL, NULL);
 
-
-        string_blt(widget_surface[WIDGET_STATS_ID], &font_small, "HP", 58, 10, NDI_COLR_WHITE, NULL, NULL);
-        sprintf(buf, "%d (%d)", cpl.stats.hp, cpl.stats.maxhp);
-        string_blt(widget_surface[WIDGET_STATS_ID], &font_small, buf, 160 - string_width(&font_small, buf), 10,
-                  NDI_COLR_GREEN, NULL, NULL);
+        /* Health indicators */
+        string_blt(widget_surface[WIDGET_STATS_ID], &font_small, "HP", 58, 10,
+                   NDI_COLR_WHITE, NULL, NULL);
+        sprintf(buf, "/ %d", cpl.stats.maxhp);
+        x2 = 160 - string_width(&font_small, buf);
+        string_blt(widget_surface[WIDGET_STATS_ID], &font_small, buf, x2, 10,
+                   NDI_COLR_LIME, NULL, NULL);
+        sprintf(buf, "%d ", cpl.stats.hp);
+        x2 -= string_width(&font_small, buf);
+        string_blt(widget_surface[WIDGET_STATS_ID], &font_small, buf, x2, 10,
+                   percentage_colr((float)cpl.stats.hp /
+                                   (float)cpl.stats.maxhp * 100), NULL, NULL);
         sprite_blt(Bitmaps[BITMAP_HP_BACK], 57, 23, NULL, &bltfx);
-
-
-        string_blt(widget_surface[WIDGET_STATS_ID], &font_small, "Mana", 58, 34, NDI_COLR_WHITE, NULL, NULL);
-        sprintf(buf, "%d (%d)", cpl.stats.sp, cpl.stats.maxsp);
-        string_blt(widget_surface[WIDGET_STATS_ID], &font_small, buf, 160 - string_width(&font_small, buf), 34,
-                  NDI_COLR_GREEN, NULL, NULL);
+        string_blt(widget_surface[WIDGET_STATS_ID], &font_small, "Mana", 58, 35,
+                   NDI_COLR_WHITE, NULL, NULL);
+        sprintf(buf, "/ %d", cpl.stats.maxsp);
+        x2 = 160 - string_width(&font_small, buf);
+        string_blt(widget_surface[WIDGET_STATS_ID], &font_small, buf, x2, 35,
+                   NDI_COLR_LIME, NULL, NULL);
+        sprintf(buf, "%d ", cpl.stats.sp);
+        x2 -= string_width(&font_small, buf);
+        string_blt(widget_surface[WIDGET_STATS_ID], &font_small, buf, x2, 35,
+                   percentage_colr((float)cpl.stats.sp /
+                                   (float)cpl.stats.maxsp * 100), NULL, NULL);
         sprite_blt(Bitmaps[BITMAP_SP_BACK], 57, 47, NULL, &bltfx);
-
-        string_blt(widget_surface[WIDGET_STATS_ID], &font_small, "Grace", 58, 58, NDI_COLR_WHITE, NULL, NULL);
-        sprintf(buf, "%d (%d)", cpl.stats.grace, cpl.stats.maxgrace);
-        string_blt(widget_surface[WIDGET_STATS_ID], &font_small, buf, 160 - string_width(&font_small, buf), 58,
-                  NDI_COLR_GREEN, NULL, NULL);
+        string_blt(widget_surface[WIDGET_STATS_ID], &font_small, "Grace", 58, 59,
+                   NDI_COLR_WHITE, NULL, NULL);
+        sprintf(buf, "/ %d", cpl.stats.maxgrace);
+        x2 = 160 - string_width(&font_small, buf);
+        string_blt(widget_surface[WIDGET_STATS_ID], &font_small, buf, x2, 59,
+                   NDI_COLR_LIME, NULL, NULL);
+        sprintf(buf, "%d ", cpl.stats.grace);
+        x2 -= string_width(&font_small, buf);
+        string_blt(widget_surface[WIDGET_STATS_ID], &font_small, buf, x2, 59,
+                   percentage_colr((float)cpl.stats.grace /
+                                   (float)cpl.stats.maxgrace * 100), NULL, NULL);
         sprite_blt(Bitmaps[BITMAP_GRACE_BACK], 57, 71, NULL, &bltfx);
 
         sprite_blt(Bitmaps[BITMAP_FOOD_BACK], 87, 88, NULL, &bltfx);
@@ -585,12 +607,12 @@ void widget_show_player_doll(int x, int y)
     sprintf(buf, "%.1f", cpl.stats.spell_fumble);
     string_blt(ScreenSurface, &font_small, buf, x + 20, y + 95, NDI_COLR_WHITE, NULL, NULL);
 
-	string_blt(ScreenSurface, &font_small, "Speed", x + 60, y + 167, NDI_COLR_SILVER, NULL, NULL);
-	sprintf(buf, "%.1f%%", cpl.stats.speed);
-	string_blt(ScreenSurface, &font_small, buf, x + 130, y + 167, NDI_COLR_WHITE, NULL, NULL);
-
-	string_blt(ScreenSurface, &font_tiny_out, "Distance", x + 170, y + 40, NDI_COLR_SILVER, NULL, NULL);
-	string_blt(ScreenSurface, &font_small, "WC", x + 170, y + 53, NDI_COLR_SILVER, NULL, NULL);
+    string_blt(ScreenSurface, &font_small, "Speed", x + 60, y + 167, NDI_COLR_SILVER, NULL, NULL);
+    sprintf(buf, "%.1f%%", cpl.stats.speed);
+    string_blt(ScreenSurface, &font_small, buf, x + 130, y + 167, percentage_colr(cpl.stats.speed), NULL, NULL);
+    
+    string_blt(ScreenSurface, &font_tiny_out, "Distance", x + 170, y + 40, NDI_COLR_SILVER, NULL, NULL);
+    string_blt(ScreenSurface, &font_small, "WC", x + 170, y + 53, NDI_COLR_SILVER, NULL, NULL);
     string_blt(ScreenSurface, &font_small, "DPS", x + 170, y + 63, NDI_COLR_SILVER, NULL, NULL);
     string_blt(ScreenSurface, &font_small, "WS", x + 170, y + 73, NDI_COLR_SILVER, NULL, NULL);
 
@@ -687,11 +709,13 @@ void widget_show_player_doll(int x, int y)
 
 void widget_show_main_lvl(int x, int y)
 {
-    char        buf[256];
-    double      multi, line;
-    SDL_Rect    box;
-    int         s, level_exp;
-    _BLTFX      bltfx;
+    char     buf[MEDIUM_BUF];
+    double   multi,
+             line;
+    SDL_Rect box;
+    int      s,
+             level_exp;
+    _BLTFX   bltfx;
 
     if (!widget_surface[WIDGET_MAIN_LVL_ID])
         widget_surface[WIDGET_MAIN_LVL_ID]=SDL_ConvertSurface(Bitmaps[BITMAP_MAIN_LVL_BG]->bitmap,
@@ -716,7 +740,12 @@ void widget_show_main_lvl(int x, int y)
         else
             string_blt(widget_surface[WIDGET_MAIN_LVL_ID], &font_large_out, buf, 91 - string_width(&font_large_out, buf), 4, NDI_COLR_WHITE, NULL, NULL);
         sprintf(buf, "%d", cpl.stats.exp);
-        string_blt(widget_surface[WIDGET_MAIN_LVL_ID], &font_small, buf, 5, 20, NDI_COLR_WHITE, NULL, NULL);
+        level_exp = cpl.stats.exp - server_level.exp[cpl.stats.exp_level];
+        multi = (float)level_exp /
+                (float)(server_level.exp[cpl.stats.exp_level + 1] -
+                        server_level.exp[cpl.stats.exp_level]);
+        string_blt(widget_surface[WIDGET_MAIN_LVL_ID], &font_small, buf, 5, 20,
+                   percentage_colr(multi * 100), NULL, NULL);
 
         /* calc the exp bubbles */
         level_exp = cpl.stats.exp - server_level.exp[cpl.stats.exp_level];
@@ -771,8 +800,13 @@ void widget_show_skill_exp(int x, int y)
         if (LastTick - action_tick > 125)
         {
             cpl.action_timer -= (float) (LastTick - action_tick) / 1000.0f;
-            if (cpl.action_timer < 0)
+
+            if (cpl.action_timer <= 0)
+            {
+                cpl.action_time_max = 0;
                 cpl.action_timer = 0;
+            }
+
             action_tick = LastTick;
             WIDGET_REDRAW(WIDGET_SKILL_EXP_ID) = 1;
         }
@@ -882,7 +916,11 @@ void widget_show_skill_exp(int x, int y)
                 sprintf(buf, "more levels in 2 weeks (tm)");
             string_blt(widget_surface[WIDGET_SKILL_EXP_ID], &font_small, buf, 28, 9, NDI_COLR_WHITE, NULL, NULL);
             sprintf(buf, "%1.2f sec", cpl.action_timer);
-            string_blt(widget_surface[WIDGET_SKILL_EXP_ID], &font_small, buf, 160, -1, NDI_COLR_WHITE, NULL, NULL);
+            string_blt(widget_surface[WIDGET_SKILL_EXP_ID], &font_small, buf,
+                       160, -1, (cpl.action_timer)
+                       ? percentage_colr(100 - (cpl.action_timer * 100.0f /
+                                                cpl.action_time_max))
+                       : NDI_COLR_WHITE, NULL, NULL);
             /* END robed's exp-display-Patch */
         }
         sprite_blt(Bitmaps[BITMAP_EXP_SKILL_BORDER], 143, 11, NULL, &bltfx);

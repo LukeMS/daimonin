@@ -841,10 +841,7 @@ void map_draw_map(void)
      * etc. */
     if (t >= 0)
     {
-        uint32 colr = SDL_MapRGB(ScreenSurfaceMap->format,
-                                 (NDI_COLR_GREEN << 16) & 0xff,
-                                 (NDI_COLR_GREEN << 8) & 0xff,
-                                 NDI_COLR_GREEN & 0xff);
+        uint32 colr = percentage_colr(cpl.target_hp);
 
         ShowEffects(t_flags, t_xl, t_yl);
         // hp% line

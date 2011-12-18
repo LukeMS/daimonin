@@ -179,7 +179,8 @@ typedef struct Player_Struct
     float                   gen_sp;
     float                   gen_grace;
 
-    float                   action_timer; /* skill cooldown time */
+    float                   action_time_max; /* skill cooldown time */
+    float                   action_timer;    /* skill cooldown time */
 
     uint32                  no_echo             : 1;    /* If 1, don't echo keystrokes */
     uint32                  fire_on             : 1;    /* True if fire key is pressed = action key (ALT;CTRL)*/
