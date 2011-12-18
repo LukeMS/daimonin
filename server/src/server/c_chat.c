@@ -198,7 +198,7 @@ int command_gsay(object *op, char *params)
     objectlink     *ol;
     object         *tmp;
 #ifdef USE_CHANNELS
-    sockbuf_struct *sockbuf;comma
+    sockbuf_struct *sockbuf;
 #endif
 
     if(!check_mute(op, MUTE_MODE_SAY))
@@ -265,7 +265,6 @@ int command_gsay(object *op, char *params)
 #ifndef USE_CHANNELS
 int command_shout(object *op, char *params)
 {
-//    char    buf[MEDIUM_BUF];
 #ifdef PLUGINS
     int     evtid;
     CFParm  CFP;
