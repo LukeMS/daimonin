@@ -39,5 +39,6 @@ extern uint16       adjust_endian_int16(const uint16 buf);
 extern char        *adjust_string(char *buf);
 extern PHYSFS_File *load_client_file(const char *fname);
 extern PHYSFS_File *save_client_file(const char *fname);
+extern uint32       percentage_colr(sint8 percentage);
 
 #endif /* ifndef __MISC_H */

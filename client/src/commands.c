@@ -1245,7 +1245,8 @@ void StatsCmd(char *data, int len)
                     i += 4;
                     break;
                 case CS_STAT_ACTION_TIME:
-                    cpl.action_timer = ((float)ABS(GetSINT32_String(data + i)))/1000.0f;
+                    cpl.action_time_max = ((float)ABS(GetSINT32_String(data + i))) / 1000.0f;
+                    cpl.action_timer = cpl.action_time_max;
                     /* If the actiontimer has expired, make a noise to indicate it.
                      * But only if the player chooses that option. */
                     if (cpl.action_timer == 0.00f)

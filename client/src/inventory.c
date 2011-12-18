@@ -236,7 +236,10 @@ void widget_show_inventory_window(int x, int y)
         sprite_blt(Bitmaps[BITMAP_INV_BG], x, y, NULL, NULL);
         string_blt(ScreenSurface, &font_small, "Carry", x+140, y+4, NDI_COLR_SILVER, NULL, NULL);
         sprintf(buf, "%4.3f kg", (float)cpl.real_weight/1000.0f);
-        string_blt(ScreenSurface, &font_small, buf, x+140 + 35, y+4, NDI_COLR_WHITE, NULL, NULL);
+        string_blt(ScreenSurface, &font_small, buf, x + 140 + 35, y + 4,
+                   percentage_colr(100 - ((float)cpl.real_weight /
+                                          (float)cpl.weight_limit * 100)),
+                   NULL, NULL);
         string_blt(ScreenSurface, &font_small, "Limit", x+140, y+15, NDI_COLR_SILVER, NULL, NULL);
         sprintf(buf, "%4.3f kg", (float) cpl.weight_limit / 1000.0);
         string_blt(ScreenSurface, &font_small, buf, x+140 + 35, y+15, NDI_COLR_WHITE, NULL, NULL);
@@ -548,7 +551,12 @@ static void PrintInfo(sint16 x, sint16 y, item *ip, _inventory_win iwin)
         string_blt(surface, &font_small, buf, x, y + 16, NDI_COLR_SILVER, NULL,
                    NULL);
         x += string_width(&font_small, buf);
-        sprintf(buf, "%d / %d ", ip->item_con, ip->item_qua);
+        sprintf(buf, "%d ", ip->item_con);
+        string_blt(ScreenSurface, &font_small, buf, x, y + 16,
+                   percentage_colr((float)ip->item_con /
+                                   (float)ip->item_qua * 100), NULL, NULL);
+        x += string_width(&font_small, buf);
+        sprintf(buf, "/ %d", ip->item_qua);
         string_blt(surface, &font_small, buf, x, y + 16, NDI_COLR_OLIVE,
                    NULL, NULL);
         x += string_width(&font_small, buf);
