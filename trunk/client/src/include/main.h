@@ -120,7 +120,6 @@ extern int                  mb_clicked;
 /* TODO: don't clutter this stuff over all files, instead make a structure for all that stuff */
 typedef struct _skindef
 {
-    uint8   newclosebutton;
     uint32  chat_admin;
     uint32  chat_buddy;
     uint32  chat_eavesdrop;

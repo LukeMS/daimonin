@@ -503,7 +503,7 @@ void show_book(int x, int y)
     global_book_data.xlen = Bitmaps[BITMAP_JOURNAL]->bitmap->w;
     global_book_data.ylen = Bitmaps[BITMAP_JOURNAL]->bitmap->h;
 
-    add_close_button(x+27, y+2, MENU_BOOK, 0);
+    add_close_button(x, y, MENU_BOOK);
 
     if (!gui_interface_book)
         return;
