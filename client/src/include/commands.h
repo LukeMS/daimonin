@@ -52,16 +52,18 @@
 #define NDI_COLR_WHITE   0xffffff
 #define NDI_COLR_YELLOW  0xffff00
 
-#define NDI_FLAG_SAY    (1 << 8)
-#define NDI_FLAG_SHOUT  (1 << 9)
-#define NDI_FLAG_TELL   (1 << 10)
-#define NDI_FLAG_GSAY   (1 << 11)
-#define NDI_FLAG_EMOTE  (1 << 12)
-#define NDI_FLAG_GM     (1 << 13) // from VOL/GM/SA
-#define NDI_FLAG_PLAYER (1 << 14) // from a player
-#define NDI_FLAG_VIM    (1 << 15) // Very Important Message (eg, quest completion)
-#define NDI_FLAG_UNIQUE (1 << 16) // print immediately, don't buffer
-#define NDI_FLAG_ALL    (1 << 17) // to all players
+#define NDI_FLAG_SAY       (1 << 8)
+#define NDI_FLAG_SHOUT     (1 << 9)
+#define NDI_FLAG_TELL      (1 << 10)
+#define NDI_FLAG_GSAY      (1 << 11)
+#define NDI_FLAG_EMOTE     (1 << 12)
+#define NDI_FLAG_ADMIN     (1 << 13) // from VOL/GM/SA
+#define NDI_FLAG_PLAYER    (1 << 14) // from a player
+#define NDI_FLAG_VIM       (1 << 15) // Very Important Message (eg, quest completion)
+#define NDI_FLAG_UNIQUE    (1 << 16) // print immediately, don't buffer
+#define NDI_FLAG_ALL       (1 << 17) // to all players
+#define NDI_FLAG_EAVESDROP (1 << 18) // GM/SA listening in
+#define NDI_FLAG_BUDDY     (1 << 19) // from buddy
 
 extern void DoClient(void);
 

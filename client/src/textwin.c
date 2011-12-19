@@ -236,7 +236,7 @@ void textwin_showstring(uint32 flags, uint32 colr, char *format, ...)
                 if (newkill==1)
                 {
                     strcat(buf, " for the first time!");
-                    colr = NDI_COLR_GREEN;
+                    colr = NDI_COLR_LIME;
                 }
                 else
                 {
@@ -248,19 +248,8 @@ void textwin_showstring(uint32 flags, uint32 colr, char *format, ...)
                                 node->session, node->kills);
                     }
                 }
-
             }
         }
-    }
-
-    if ((flags & NDI_FLAG_GSAY))
-    {
-        colr = NDI_COLR_SILVER;
-    }
-
-    if ((flags & NDI_FLAG_EMOTE))
-    {
-        colr = NDI_COLR_SILVER;
     }
 
     /* Create a modifiable version of buf */

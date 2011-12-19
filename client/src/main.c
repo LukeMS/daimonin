@@ -2808,15 +2808,35 @@ void load_skindef()
 
     /* first we fill with default values */
     skindef.newclosebutton = 1; // TODO: Remove.
-    skindef.dialog_rows0 = 0x64391e;
-    skindef.dialog_rows1 = 0x393b27;
-    skindef.dialog_rowsS = 0x0000ef;
-    skindef.ecc_emphasis = 0x90ee90;
-    skindef.ecc_strong = 0xffff00;
-    skindef.ecc_intertitle = 0xdaa520;
-    skindef.ecc_hypertext = 0x0000ff;
-    skindef.input_string = 0xffffff;
-    skindef.input_caret = 0xff0000;
+    skindef.chat_admin = NDI_COLR_RED;
+    skindef.chat_buddy = NDI_COLR_SILVER;
+    skindef.chat_eavesdrop = NDI_COLR_FUSCHIA;
+    skindef.chat_emote = NDI_COLR_TEAL;
+    skindef.chat_gsay = NDI_COLR_YELLOW;
+    skindef.chat_say = NDI_COLR_WHITE;
+    skindef.chat_shout = NDI_COLR_ORANGE;
+    skindef.chat_tell = NDI_COLR_AQUA;
+    skindef.dialog_rows0 = NDI_COLR_OLIVE;
+    skindef.dialog_rows1 = NDI_COLR_MAROON;
+    skindef.dialog_rowsS = NDI_COLR_BLUE;
+    skindef.ecc_emphasis = NDI_COLR_GREEN;
+    skindef.ecc_strong = NDI_COLR_YELLOW;
+    skindef.ecc_intertitle = NDI_COLR_ORANGE;
+    skindef.target_grey = NDI_COLR_GREY;
+    skindef.target_green = NDI_COLR_LIME;
+    skindef.target_blue = NDI_COLR_BLUE;
+    skindef.target_yellow = NDI_COLR_YELLOW;
+    skindef.target_orange = NDI_COLR_ORANGE;
+    skindef.target_red = NDI_COLR_RED;
+    skindef.target_purple = NDI_COLR_PURPLE;
+    skindef.widget_info = NDI_COLR_ORANGE;
+    skindef.widget_key = NDI_COLR_AQUA;
+    skindef.widget_title = NDI_COLR_SILVER;
+    skindef.widget_valueEq = NDI_COLR_WHITE;
+    skindef.widget_valueHi = NDI_COLR_LIME;
+    skindef.widget_valueLo = NDI_COLR_RED;
+    skindef.input_string = NDI_COLR_WHITE;
+    skindef.input_caret = NDI_COLR_RED;
     skindef.effect_width = 9;
     skindef.effect_height = 16;
     MALLOC_STRING(skindef.effect_eating, "Nyom! ");
@@ -2866,6 +2886,38 @@ void load_skindef()
                 skindef.newclosebutton = 0;
             }
         }
+        else if (!strcmp(key, "chat_admin"))
+        {
+            skindef.chat_admin = (uint32)strtoul(val, NULL, 16);
+        }
+        else if (!strcmp(key, "chat_buddy"))
+        {
+            skindef.chat_buddy = (uint32)strtoul(val, NULL, 16);
+        }
+        else if (!strcmp(key, "chat_eavesdrop"))
+        {
+            skindef.chat_eavesdrop = (uint32)strtoul(val, NULL, 16);
+        }
+        else if (!strcmp(key, "chat_emote"))
+        {
+            skindef.chat_emote = (uint32)strtoul(val, NULL, 16);
+        }
+        else if (!strcmp(key, "chat_gsay"))
+        {
+            skindef.chat_gsay = (uint32)strtoul(val, NULL, 16);
+        }
+        else if (!strcmp(key, "chat_say"))
+        {
+            skindef.chat_say = (uint32)strtoul(val, NULL, 16);
+        }
+        else if (!strcmp(key, "chat_shout"))
+        {
+            skindef.chat_shout = (uint32)strtoul(val, NULL, 16);
+        }
+        else if (!strcmp(key, "chat_tell"))
+        {
+            skindef.chat_tell = (uint32)strtoul(val, NULL, 16);
+        }
         else if (!strcmp(key, "dialog_rows0"))
         {
             skindef.dialog_rows0 = (uint32)strtoul(val, NULL, 16);
@@ -2893,6 +2945,58 @@ void load_skindef()
         else if (!strcmp(key, "ecc_hypertext"))
         {
             skindef.ecc_hypertext = (uint32)strtoul(val, NULL, 16);
+        }
+        else if (!strcmp(key, "target_grey"))
+        {
+            skindef.target_grey = (uint32)strtoul(val, NULL, 16);
+        }
+        else if (!strcmp(key, "target_green"))
+        {
+            skindef.target_green = (uint32)strtoul(val, NULL, 16);
+        }
+        else if (!strcmp(key, "target_blue"))
+        {
+            skindef.target_blue = (uint32)strtoul(val, NULL, 16);
+        }
+        else if (!strcmp(key, "target_yellow"))
+        {
+            skindef.target_yellow = (uint32)strtoul(val, NULL, 16);
+        }
+        else if (!strcmp(key, "target_orange"))
+        {
+            skindef.target_orange = (uint32)strtoul(val, NULL, 16);
+        }
+        else if (!strcmp(key, "target_red"))
+        {
+            skindef.target_red = (uint32)strtoul(val, NULL, 16);
+        }
+        else if (!strcmp(key, "target_purple"))
+        {
+            skindef.target_purple = (uint32)strtoul(val, NULL, 16);
+        }
+        else if (!strcmp(key, "widget_info"))
+        {
+            skindef.widget_info = (uint32)strtoul(val, NULL, 16);
+        }
+        else if (!strcmp(key, "widget_key"))
+        {
+            skindef.widget_key = (uint32)strtoul(val, NULL, 16);
+        }
+        else if (!strcmp(key, "widget_title"))
+        {
+            skindef.widget_title = (uint32)strtoul(val, NULL, 16);
+        }
+        else if (!strcmp(key, "widget_valueEq"))
+        {
+            skindef.widget_valueEq = (uint32)strtoul(val, NULL, 16);
+        }
+        else if (!strcmp(key, "widget_valueHi"))
+        {
+            skindef.widget_valueHi = (uint32)strtoul(val, NULL, 16);
+        }
+        else if (!strcmp(key, "widgetog_valueLo"))
+        {
+            skindef.widget_valueLo = (uint32)strtoul(val, NULL, 16);
         }
         else if (!strcmp(key, "input_string"))
         {

@@ -737,7 +737,6 @@ void DrawInfoCmd2(char *data, int len)
             colr = mode & NDI_MASK_COLRS;
     char   *tmp = NULL,
             buf[HUGE_BUF];
-    uint8   buddy = 0;
  
     /* TODO: We translate the 8-bit server colour to a 32/24-bit client colour.
      * This will be unnecessary in 0.11.0. */
@@ -774,12 +773,22 @@ void DrawInfoCmd2(char *data, int len)
             break;
 
         case 7: 
-            colr = NDI_COLR_YELLOW;
+            colr = NDI_COLR_MAROON;
 
             break;
 
         case 8: 
             colr = NDI_COLR_PURPLE;
+
+            break;
+
+        case 9:
+            colr = NDI_COLR_FUSCHIA;
+
+            break;
+
+        case 10:
+            colr = NDI_COLR_YELLOW;
 
             break;
 
@@ -894,7 +903,7 @@ void DrawInfoCmd2(char *data, int len)
         (flags & (NDI_FLAG_PLAYER | NDI_FLAG_SAY | NDI_FLAG_SHOUT |
                   NDI_FLAG_TELL | NDI_FLAG_GSAY | NDI_FLAG_EMOTE)))
     {
-        if (!(flags & NDI_FLAG_GM))
+        if (!(flags & NDI_FLAG_ADMIN))
         {
             if ((flags & NDI_FLAG_SAY) &&
                 ignore_check(data, "say"))
@@ -927,23 +936,64 @@ void DrawInfoCmd2(char *data, int len)
             chatfilter_filter(buf);
         }
 
+        /* Pick the skin's colour for the method of chat. */
+        /* TODO: In 0.11.0 the server will send the NDI_FLAG_EAVESDROP flag
+         * on tells which a GM is listening in on. Currently it colours them
+         * flesh (translated to fuschia). */
+        /* TODO: Eventually we'll be able to set fg and bg colour independenty.
+         * NDI_FLAG_BUDDY and NDI_FLAG_EAVESDROP will set the bg, leaving the
+         * fg as set by other flags. */
+        if ((flags & NDI_FLAG_SAY))
+        {
+            colr = skindef.chat_say;
+        }
+        else if ((flags & NDI_FLAG_SHOUT))
+        {
+            colr = skindef.chat_shout;
+        }
+        else if ((flags & NDI_FLAG_TELL))
+        {
+            if (colr == NDI_COLR_FUSCHIA)
+            {
+                flags |= NDI_FLAG_EAVESDROP;
+                colr = skindef.chat_eavesdrop;
+            }
+            else
+            {
+                colr = skindef.chat_tell;
+            }
+        }
+        else if ((flags & NDI_FLAG_GSAY))
+        {
+            colr = skindef.chat_gsay;
+        }
+        else if ((flags & NDI_FLAG_EMOTE))
+        {
+            colr = skindef.chat_emote;
+        }
+        else if ((flags & NDI_FLAG_ADMIN))
+        {
+            colr = skindef.chat_admin;
+        }
+
         /* Color messages from buddys */
         if (buddy_check(data))
         {
-            buddy = 1;
-            colr = NDI_COLR_BLUE;
+            flags |= NDI_FLAG_BUDDY;
+            colr = skindef.chat_buddy;
         }
 
         /* Only see shouts from buddies. */
         if ((flags & NDI_FLAG_SHOUT) &&
             options.shoutoff &&
-            !buddy)
+            (flags & NDI_FLAG_BUDDY))
         {
             return;
         }
 
         /* save last incomming tell player for client sided /reply */
-        if ((flags & NDI_FLAG_TELL))
+        if ((flags & NDI_FLAG_TELL) &&
+            !(flags & NDI_FLAG_EAVESDROP))
         {
             strcpy(cpl.player_reply, data);
         }
@@ -974,33 +1024,34 @@ void TargetObject(char *data, int len)
         sound_play_effect(SOUNDTYPE_CLIENT, SOUND_WEAPON_HOLD, 0, 0, 100);
     }
 
+    /* Translate target's colour to the skin's preference. */
     if (*data == 6)
     {
-        cpl.target_color = NDI_COLR_GREY;
+        cpl.target_color = skindef.target_grey;
     }
     else if (*data == 4)
     {
-        cpl.target_color = NDI_COLR_LIME;
+        cpl.target_color = skindef.target_green;
     }
     else if (*data == 5)
     {
-        cpl.target_color = NDI_COLR_BLUE;
+        cpl.target_color = skindef.target_blue;
     }
     else if (*data == 8)
     {
-        cpl.target_color = NDI_COLR_PURPLE;
+        cpl.target_color = skindef.target_purple;
     }
     else if (*data == 3)
     {
-        cpl.target_color = NDI_COLR_RED;
+        cpl.target_color = skindef.target_red;
     }
     else if (*data == 1)
     {
-        cpl.target_color = NDI_COLR_ORANGE;
+        cpl.target_color = skindef.target_orange;
     }
     else
     {
-        cpl.target_color = NDI_COLR_YELLOW;
+        cpl.target_color = skindef.target_yellow;
     }
 
     cpl.target_code = *++data;
@@ -2481,12 +2532,22 @@ void ChannelMsgCmd(char *data, int len)
             break;
 
         case 7: 
-            colr = NDI_COLR_YELLOW;
+            colr = NDI_COLR_MAROON;
 
             break;
 
         case 8: 
             colr = NDI_COLR_PURPLE;
+
+            break;
+
+        case 9:
+            colr = NDI_COLR_FUSCHIA;
+
+            break;
+
+        case 10:
+            colr = NDI_COLR_YELLOW;
 
             break;
 
