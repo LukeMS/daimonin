@@ -1631,8 +1631,7 @@ void gui_npc_show(void)
         }
     }
 
-    add_close_button(gui_npc->startx - 116, gui_npc->starty + 5, MENU_NPC,
-                     skindef.newclosebutton);
+    add_close_button(gui_npc->startx - 116, gui_npc->starty + 5, MENU_NPC);
 
 
     /* When clicked, the close button obviously closes the GUI which frees the

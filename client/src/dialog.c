@@ -342,36 +342,16 @@ char * get_value(void *value, int type)
 /******************************************************************
  add the close button and handle mouse events on it.
 ******************************************************************/
-void add_close_button(int x, int y, int menu, uint8 newstyle)
+void add_close_button(int x, int y, int menu)
 {
     int mx, my, mb;
     mb = SDL_GetMouseState(&mx, &my) & SDL_BUTTON(SDL_BUTTON_LEFT);
 
-    if (newstyle)
+    if (mx > x + 460 && mx <x + 474 && my> y + 26 && my < y + 40)
     {
-        if (mx > x + 460 && mx <x + 474 && my> y + 26 && my < y + 40)
-        {
-            sprite_blt(Bitmaps[BITMAP_CLOSEBUTTON], x+463, y+28, NULL,NULL);
-            if (mb && mb_clicked)
-                check_menu_keys(menu, SDLK_ESCAPE);
-        }
-    }
-    else
-    {
-        if (mx > x + 459 && mx <x + 469 && my> y + 27 && my < y + 39)
-        {
-            EMBOSS(ScreenSurface, &font_small, "X", x + 462, y + 27, NDI_COLR_SILVER, NULL, NULL);
-
-            if (mb &&
-                mb_clicked)
-            {
-                check_menu_keys(menu, SDLK_ESCAPE);
-            }
-        }
-        else
-        {
-            ENGRAVE(ScreenSurface, &font_small, "X", x + 463, y + 28, NDI_COLR_WHITE, NULL, NULL);
-        }
+        sprite_blt(Bitmaps[BITMAP_CLOSEBUTTON], x+463, y+28, NULL,NULL);
+        if (mb && mb_clicked)
+            check_menu_keys(menu, SDLK_ESCAPE);
     }
 }
 
@@ -850,7 +830,7 @@ void show_skilllist(void)
     sprite_blt(Bitmaps[BITMAP_DIALOG_BG], x, y, NULL, NULL);
     sprite_blt(Bitmaps[BITMAP_DIALOG_TITLE_SKILL], x + 250 - Bitmaps[BITMAP_DIALOG_TITLE_SKILL]->bitmap->w / 2, y + 20,
                NULL, NULL);
-    add_close_button(x, y, MENU_SKILL, skindef.newclosebutton);
+    add_close_button(x, y, MENU_SKILL);
 
     /* tabs */
     draw_tabs(skill_tab, &skill_list_set.group_nr, "Skill Group", x + 8, y + 70);
@@ -1015,7 +995,7 @@ void show_spelllist(void)
     sprite_blt(Bitmaps[BITMAP_DIALOG_TITLE_SPELL], x + 250 - Bitmaps[BITMAP_DIALOG_TITLE_SPELL]->bitmap->w / 2, y + 20,
                NULL, NULL);
     sprite_blt(Bitmaps[BITMAP_PENTAGRAM], x + 25, y + 430, NULL, NULL);
-    add_close_button(x, y, MENU_SPELL, skindef.newclosebutton);
+    add_close_button(x, y, MENU_SPELL);
 
     /* tabs */
     draw_tabs(spell_tab, &spell_list_set.group_nr, "Spell Path", x + 8, y + 70);
@@ -1175,7 +1155,7 @@ void show_optwin()
     sprite_blt(Bitmaps[BITMAP_DIALOG_BG], x, y, NULL, NULL);
     sprite_blt(Bitmaps[BITMAP_DIALOG_TITLE_OPTIONS], x + 250 - Bitmaps[BITMAP_DIALOG_TITLE_OPTIONS]->bitmap->w / 2,
                y + 20, NULL, NULL);
-    add_close_button(x, y, MENU_OPTION, skindef.newclosebutton);
+    add_close_button(x, y, MENU_OPTION);
 
     draw_tabs(opt_tab, &option_list_set.group_nr, "Option Group", x + 8, y + 70);
     optwin_draw_options(x + 130, y + 90);
@@ -1213,7 +1193,7 @@ void show_keybind()
     sprite_blt(Bitmaps[BITMAP_DIALOG_BG], x, y, NULL, NULL);
     sprite_blt(Bitmaps[BITMAP_DIALOG_TITLE_KEYBIND], x + 250 - Bitmaps[BITMAP_DIALOG_TITLE_KEYBIND]->bitmap->w / 2,
                y + 20, NULL, NULL);
-    add_close_button(x, y, MENU_KEYBIND, skindef.newclosebutton);
+    add_close_button(x, y, MENU_KEYBIND);
 
     sprintf(buf, "~SHIFT~ + ~%c%c~ to select group         ~%c%c~ to select macro          ~RETURN~ to change/create",
             ASCII_UP, ASCII_DOWN, ASCII_UP, ASCII_DOWN);
@@ -1410,7 +1390,7 @@ void show_newplayer_server(void)
     sprite_blt(Bitmaps[BITMAP_DIALOG_TITLE_CREATION], x + 250 - Bitmaps[BITMAP_DIALOG_TITLE_CREATION]->bitmap->w / 2,
                y + 20, NULL, NULL);
     sprite_blt(Bitmaps[BITMAP_PENTAGRAM], x + 25, y + 430, NULL, NULL);
-    add_close_button(x, y, MENU_CREATE, skindef.newclosebutton);
+    add_close_button(x, y, MENU_CREATE);
 
     /* print all attributes */
     ENGRAVE(ScreenSurface, &font_small, "Welcome!", x + 130, y + 63, NDI_COLR_WHITE, NULL, NULL);

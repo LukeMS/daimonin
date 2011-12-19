@@ -2807,7 +2807,6 @@ void load_skindef()
     char         buf[SMALL_BUF];
 
     /* first we fill with default values */
-    skindef.newclosebutton = 1; // TODO: Remove.
     skindef.chat_admin = NDI_COLR_RED;
     skindef.chat_buddy = NDI_COLR_SILVER;
     skindef.chat_eavesdrop = NDI_COLR_FUSCHIA;
@@ -2879,14 +2878,7 @@ void load_skindef()
         *val = '\0';
         val += 2;
 
-        if (!strcmp(key, "newclosebutton"))
-        {
-            if (*val == '0')
-            {
-                skindef.newclosebutton = 0;
-            }
-        }
-        else if (!strcmp(key, "chat_admin"))
+        if (!strcmp(key, "chat_admin"))
         {
             skindef.chat_admin = (uint32)strtoul(val, NULL, 16);
         }

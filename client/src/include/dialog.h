@@ -73,7 +73,7 @@ enum
     DIALOG_LOGIN_WARNING_ACCOUNT_UNKNOWN
 };
 
-extern void add_close_button(int x, int y, int menu, uint8 newstyle);
+extern void add_close_button(int x, int y, int menu);
 extern int  add_button(int x, int y, int id, int gfxNr, char *text, char *text_h);
 extern int  add_rangebox(int x, int y, int id, int text_w, int text_x, char *text, int color);
 extern void draw_frame(int x, int y, int w, int h);
