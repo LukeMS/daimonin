@@ -114,7 +114,7 @@ void do_number(int x, int y)
                 else
                     sound_play_effect(SOUNDTYPE_NORMAL, SOUND_DROP, 0, 0, 100);
 
-                textwin_showstring(0, NDI_COLR_OLIVE, "%s %d from %d %s",
+                textwin_showstring(0, skindef.widget_info, "%s %d from %d %s",
                                    (cpl.nummode == NUM_MODE_GET) ? "get" :
                                    "drop", tmp, cpl.nrof, cpl.num_text);
             }
@@ -218,7 +218,7 @@ void widget_show_number(int x, int y)
     box.h = font_small.line_height;
     sprite_blt(Bitmaps[BITMAP_NUMBER], x, y, NULL, NULL);
     sprintf(buf, "%s how many from %d %s", cpl.nummode == NUM_MODE_GET ? "get" : "drop", cpl.nrof, cpl.num_text);
-    string_blt(ScreenSurface, &font_small, buf, x + 8, y + 6, NDI_COLR_SILVER, NULL, NULL);
+    string_blt(ScreenSurface, &font_small, buf, x + 8, y + 6, skindef.widget_title, NULL, NULL);
     box.y = y + 25;
     show_input_string(&font_small, &box, 0);
 }
@@ -227,9 +227,25 @@ static inline void print_resist(char *name, int x, int y, int num)
 {
     char    buf[16];
 
-    string_blt(widget_surface[WIDGET_RESIST_ID], &font_small, name, x+5, y, (num>ATNR_GODPOWER)?NDI_COLR_OLIVE:NDI_COLR_SILVER, NULL, NULL);
+    string_blt(widget_surface[WIDGET_RESIST_ID], &font_small, name, x + 5, y,
+               skindef.widget_key, NULL, NULL);
     sprintf(buf, "%02d", cpl.stats.protection[num]);
-    string_blt(widget_surface[WIDGET_RESIST_ID], &font_small, buf, x + 17, y, cpl.stats.protection[num] ? (cpl.stats.protection[num]<0?NDI_COLR_RED:(cpl.stats.protection[num]>=100?NDI_COLR_ORANGE:NDI_COLR_WHITE)) : NDI_COLR_GREY,NULL, NULL);
+
+    if (cpl.stats.protection[num] < 0)
+    {
+        string_blt(widget_surface[WIDGET_RESIST_ID], &font_small, buf, x + 17,
+                   y, skindef.widget_valueLo, NULL, NULL);
+    }
+    else if (cpl.stats.protection[num] >= 100)
+    {
+        string_blt(widget_surface[WIDGET_RESIST_ID], &font_small, buf, x + 17,
+                   y, skindef.widget_valueHi, NULL, NULL);
+    }
+    else
+    {
+        string_blt(widget_surface[WIDGET_RESIST_ID], &font_small, buf, x + 17,
+                   y, skindef.widget_valueEq, NULL, NULL);
+    }
 }
 
 void widget_show_resist(int x, int y)
@@ -249,7 +265,7 @@ void widget_show_resist(int x, int y)
         bltfx.alpha=0;
 
         sprite_blt(Bitmaps[BITMAP_RESIST_BG], 0, 0, NULL, &bltfx);
-        string_blt(widget_surface[WIDGET_RESIST_ID], &font_tiny_out, "Resistance Table", 5,  1, NDI_COLR_SILVER, NULL, NULL);
+        string_blt(widget_surface[WIDGET_RESIST_ID], &font_tiny_out, "Resistance Table", 5,  1, skindef.widget_title, NULL, NULL);
 
         print_resist("IM", 68, 3, ATNR_PHYSICAL);
         print_resist("SL", 98, 3, ATNR_SLASH);
@@ -419,14 +435,14 @@ void widget_show_range(int x, int y)
                 if (!tmp2)
                 {
                     LOG(LOG_DEBUG,"BUG: applied range weapon don't exist\n");
-                    string_blt(ScreenSurface, &font_small, "using Nothing", x + 5, y + 36, NDI_COLR_WHITE, &rec_range, NULL);
+                    string_blt(ScreenSurface, &font_small, "using Nothing", x + 5, y + 36, skindef.widget_info, &rec_range, NULL);
                 }
                 else
                 {
                     sprintf(buf, "using %s", tmp2->s_name);
                     blt_inventory_face_from_tag(fire_mode.weapon, x + 5, y + 2);
 
-                    string_blt(ScreenSurface, &font_small, buf, x + 5, y + 36, NDI_COLR_WHITE, &rec_range, NULL);
+                    string_blt(ScreenSurface, &font_small, buf, x + 5, y + 36, skindef.widget_valueEq, &rec_range, NULL);
                 }
 
                 if (fire_mode.ammo != FIRE_ITEM_NO)
@@ -455,12 +471,12 @@ void widget_show_range(int x, int y)
 //                    sprintf(buf, "Type: %d",tmp2->itype);
                     buf[0]=0;
 
-                string_blt(ScreenSurface, &font_small, buf, x + 5, y + 47, NDI_COLR_WHITE, &rec_item, NULL);
+                string_blt(ScreenSurface, &font_small, buf, x + 5, y + 47, skindef.widget_valueEq, &rec_item, NULL);
             }
             else
             {
                 sprintf(buf, "no range weapon applied");
-                string_blt(ScreenSurface, &font_small, buf, x + 5, y + 36, NDI_COLR_WHITE, &rec_range, NULL);
+                string_blt(ScreenSurface, &font_small, buf, x + 5, y + 36, skindef.widget_info, &rec_range, NULL);
             }
 
             sprite_blt(Bitmaps[BITMAP_RANGE_MARKER], x + 5, y + 2, NULL, NULL);
@@ -475,7 +491,7 @@ void widget_show_range(int x, int y)
                 {
                     sprite_blt(fire_mode.spell->icon, x + 45, y + 2, NULL, NULL);
                     string_blt(ScreenSurface, &font_small, fire_mode.spell->name, x + 5, y + 47,
-                              NDI_COLR_WHITE, &rec_item, NULL);
+                              skindef.widget_valueEq, &rec_item, NULL);
                 }
                 else
                     fire_mode.spell = NULL;
@@ -484,10 +500,10 @@ void widget_show_range(int x, int y)
             {
                 sprite_blt(Bitmaps[BITMAP_RANGE_WIZARD_NO], x + 5, y + 2, NULL, NULL);
                 sprintf(buf, "no spell selected");
-                string_blt(ScreenSurface, &font_small, buf, x + 5, y + 47, NDI_COLR_WHITE, &rec_item, NULL);
+                string_blt(ScreenSurface, &font_small, buf, x + 5, y + 47, skindef.widget_info, &rec_item, NULL);
             }
             sprintf(buf, "cast spell");
-            string_blt(ScreenSurface, &font_small, buf, x + 5, y + 36, NDI_COLR_WHITE, &rec_range, NULL);
+            string_blt(ScreenSurface, &font_small, buf, x + 5, y + 36, skindef.widget_info, &rec_range, NULL);
 
             break;
 
@@ -499,7 +515,7 @@ void widget_show_range(int x, int y)
                 {
                     sprite_blt(fire_mode.skill->icon, x + 45, y + 2, NULL, NULL);
                     string_blt(ScreenSurface, &font_small, fire_mode.skill->name, x + 5, y + 47,
-                              NDI_COLR_WHITE, &rec_item, NULL);
+                              skindef.widget_valueEq, &rec_item, NULL);
                 }
                 else
                     fire_mode.skill = NULL;
@@ -508,10 +524,10 @@ void widget_show_range(int x, int y)
             {
                 sprite_blt(Bitmaps[BITMAP_RANGE_SKILL_NO], x + 5, y + 2, NULL, NULL);
                 sprintf(buf, "no skill selected");
-                string_blt(ScreenSurface, &font_small, buf, x + 5, y + 47, NDI_COLR_WHITE, &rec_item, NULL);
+                string_blt(ScreenSurface, &font_small, buf, x + 5, y + 47, skindef.widget_info, &rec_item, NULL);
             }
             sprintf(buf, "use skill");
-            string_blt(ScreenSurface, &font_small, buf, x + 5, y + 36, NDI_COLR_WHITE, &rec_range, NULL);
+            string_blt(ScreenSurface, &font_small, buf, x + 5, y + 36, skindef.widget_info, &rec_range, NULL);
 
             break;
 
@@ -596,7 +612,7 @@ void show_media(int x, int y)
 
 void widget_show_mapname(int x, int y)
 {
-    string_blt(ScreenSurface, &font_large_out, MapData.name, x, y, NDI_COLR_SILVER, NULL, NULL);
+    string_blt(ScreenSurface, &font_large_out, MapData.name, x, y, skindef.widget_title, NULL, NULL);
 }
 
 
@@ -726,7 +742,7 @@ void show_quickslots(int x, int y)
         }
         sprintf(buf, "F%d", i + 1);
         string_blt(ScreenSurface, &font_tiny_out, buf, x + quickslots_pos[i][qsx]+xoff + 12, y + quickslots_pos[i][qsy] - 6,
-                  NDI_COLR_WHITE, NULL, NULL);
+                  skindef.widget_title, NULL, NULL);
     }
 }
 void widget_quickslots(int x, int y)
@@ -793,7 +809,7 @@ void widget_quickslots(int x, int y)
         }
         sprintf(buf, "F%d", i + 1);
         string_blt(ScreenSurface, &font_tiny_out, buf, x + quickslots_pos[i][qsx]+xoff + 12, y + quickslots_pos[i][qsy] - 6,
-                  NDI_COLR_WHITE, NULL, NULL);
+                  skindef.widget_title, NULL, NULL);
     }
 }
 void widget_quickslots_mouse_event(int x, int y, int MEvent)
@@ -831,12 +847,12 @@ void widget_quickslots_mouse_event(int x, int y, int MEvent)
                     if (!locate_item_from_inv(cpl.ob->inv, cpl.win_quick_tag))
                     {
                         sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICKFAIL, 0, 0, 100);
-                        textwin_showstring(0, NDI_COLR_WHITE, "Only items from main inventory allowed in quickbar!");
+                        textwin_showstring(0, skindef.widget_info, "Only items from main inventory allowed in quickbar!");
                     }
                     else
                     {
                         sound_play_effect(SOUNDTYPE_CLIENT, SOUND_GET, 0, 0, 100); /* no bug - we 'get' it in quickslots */
-                        textwin_showstring(0, NDI_COLR_OLIVE, "set F%d to %s",
+                        textwin_showstring(0, skindef.widget_info, "set F%d to %s",
                                            ind + 1,
                                            locate_item(cpl.win_quick_tag)->s_name);
                     }

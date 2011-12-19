@@ -121,6 +121,14 @@ extern int                  mb_clicked;
 typedef struct _skindef
 {
     uint8   newclosebutton;
+    uint32  chat_admin;
+    uint32  chat_buddy;
+    uint32  chat_eavesdrop;
+    uint32  chat_emote;
+    uint32  chat_gsay;
+    uint32  chat_say;
+    uint32  chat_shout;
+    uint32  chat_tell;
     uint32  dialog_rows0;
     uint32  dialog_rows1;
     uint32  dialog_rowsS;
@@ -128,6 +136,19 @@ typedef struct _skindef
     uint32  ecc_strong;
     uint32  ecc_intertitle;
     uint32  ecc_hypertext;
+    uint32  target_grey;
+    uint32  target_green;
+    uint32  target_blue;
+    uint32  target_yellow;
+    uint32  target_orange;
+    uint32  target_red;
+    uint32  target_purple;
+    uint32  widget_info;
+    uint32  widget_key;
+    uint32  widget_title;
+    uint32  widget_valueEq;
+    uint32  widget_valueHi;
+    uint32  widget_valueLo;
     uint32  input_string;
     uint32  input_caret;
     uint8   effect_width;
