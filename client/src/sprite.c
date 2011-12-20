@@ -844,9 +844,9 @@ void sprite_blt_as_icon(_Sprite *sprite, sint16 x, sint16 y,
     /* Icon quantity. */
     if (quantity)
     {
-        char  buf[TINY_BUF];
-        uint8 w,
-              colr = (quantity > 0) ? NDI_COLR_GREEN : NDI_COLR_RED;
+        char   buf[TINY_BUF];
+        uint8  w;
+        uint32 colr = (quantity > 0) ? NDI_COLR_GREEN : NDI_COLR_RED;
 
         if (quantity > 9999 ||
             quantity < -9999)
