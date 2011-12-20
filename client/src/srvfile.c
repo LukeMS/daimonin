@@ -907,7 +907,7 @@ static void LoadSkills(void)
         sprintf(sle->name, "%s", name);
         sle->flag = LIST_ENTRY_USED;
         sprintf(sle->icon_name, "%s", icon);
-        sprintf(buf, "%s%s", GetIconDirectory(), icon);
+        sprintf(buf, "%s/%s", DIR_ICONS, icon);
         sle->icon = sprite_load(buf, NULL);
 
         for (i = 0; i <= 3; i++)
@@ -1124,7 +1124,7 @@ static void LoadSpells(void)
         sprintf(sle->name, "%s", name);
         sle->flag = LIST_ENTRY_USED;
         sprintf(sle->icon_name, "%s", icon);
-        sprintf(buf, "%s%s", GetIconDirectory(), icon);
+        sprintf(buf, "%s/%s", DIR_ICONS, icon);
         sle->icon = sprite_load(buf, NULL);
 
         for (i = 0; i <= 3; i++)
