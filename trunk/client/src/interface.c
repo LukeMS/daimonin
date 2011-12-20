@@ -2374,7 +2374,7 @@ static void ShowGUIContents(uint16 x, uint16 y)
                             uint16 w = string_width(&font_small_out, buf);
 
                             string_blt(ScreenSurface, &font_small_out, buf,
-                                      xoff + 28 - w / 2, yoff + 18, NDI_COLR_GREEN, NULL,
+                                      xoff + 28 - w / 2, yoff + 18, NDI_COLR_LIME, NULL,
                                       NULL);
                         }
                     }
@@ -2436,7 +2436,7 @@ static void ShowGUIContents(uint16 x, uint16 y)
             yoff = y + this->box.y - guitop - font_tiny_out.line_height -
                    FONT_BLANKLINE;
             string_blt(ScreenSurface, &font_tiny_out, buf, xoff, yoff,
-                      NDI_COLR_GREEN, NULL, NULL);
+                      NDI_COLR_LIME, NULL, NULL);
 
             for (; this; this = this->next)
             {
@@ -2454,7 +2454,7 @@ static void ShowGUIContents(uint16 x, uint16 y)
             yoff = y + gui_npc->icon->last->box.y - guitop + GUI_NPC_ICONSIZE +
                    FONT_BLANKLINE;
             string_blt(ScreenSurface, &font_tiny_out, buf, xoff, yoff,
-                      NDI_COLR_GREEN, NULL, NULL);
+                      NDI_COLR_LIME, NULL, NULL);
         }
     }
 
