@@ -682,9 +682,19 @@ void widget_show_player_doll(int x, int y)
                 index += ++ring_flag & 1;
             if (index != -1)
             {
+                uint8 quacon = (tmp->item_qua == 255) ? 255
+                               : (float)tmp->item_con /
+                                 (float)tmp->item_qua * 100;
                 int mb;
-                blt_inv_item_centered(tmp, widget_player_doll[index].xpos + x, widget_player_doll[index].ypos + y);
+
+                sprite_blt_as_icon(face_list[tmp->face].sprite,
+                                   widget_player_doll[index].xpos + x,
+                                   widget_player_doll[index].ypos + y,
+                                   SPRITE_ICON_TYPE_ACTIVE, 0, tmp->flagsval,
+                                   (quacon == 100) ? 0 : quacon,
+                                   (tmp->nrof == 1) ? 0 : tmp->nrof, NULL);
                 mb = SDL_GetMouseState(&mx, &my);
+
                 /* prepare item_name tooltip */
                 if (mx >= x+widget_player_doll[index].xpos
                         && mx < x+widget_player_doll[index].xpos + 33
