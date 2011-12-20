@@ -846,7 +846,7 @@ void sprite_blt_as_icon(_Sprite *sprite, sint16 x, sint16 y,
     {
         char   buf[TINY_BUF];
         uint8  w;
-        uint32 colr = (quantity > 0) ? NDI_COLR_GREEN : NDI_COLR_RED;
+        uint32 colr = (quantity > 0) ? NDI_COLR_LIME : NDI_COLR_RED;
 
         if (quantity > 9999 ||
             quantity < -9999)
@@ -1229,7 +1229,7 @@ void play_anims(int mx, int my)
                         if (anim->value<0)
                         {
                             sprintf(buf, "%d", abs(anim->value));
-                            string_blt(ScreenSurface, &font_small_out, buf, xpos + anim->x, ypos + tmp_y, NDI_COLR_GREEN, NULL,
+                            string_blt(ScreenSurface, &font_small_out, buf, xpos + anim->x, ypos + tmp_y, NDI_COLR_LIME, NULL,
                                           NULL);
                         }
                         else
@@ -1279,7 +1279,7 @@ void play_anims(int mx, int my)
                     if (anim->value<0)
                     {
                         sprintf(buf, "%d", abs(anim->value));
-                        string_blt(ScreenSurface, &font_small_out, buf, anim->mapx + anim->x, anim->mapy + tmp_y, NDI_COLR_GREEN, NULL,
+                        string_blt(ScreenSurface, &font_small_out, buf, anim->mapx + anim->x, anim->mapy + tmp_y, NDI_COLR_LIME, NULL,
                                 NULL);
                     }
                     else
