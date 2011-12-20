@@ -98,14 +98,6 @@ typedef enum _LOGLEVEL
 
 extern void     LOG(int loglevel, char *format, ...);
 extern void     MSGLOG(char *msg);
-
-extern char    *GetCacheDirectory(void);
-extern char    *GetGfxUserDirectory(void);
-extern char    *GetBitmapDirectory(void);
-extern char    *GetSfxDirectory(void);
-extern char    *GetMediaDirectory(void);
-extern char    *GetIconDirectory(void);
-
 extern void     SYSTEM_Start(void);
 extern void     SYSTEM_End(void);
 extern int      attempt_fullscreen_toggle(SDL_Surface **surface, uint32 *flags);
