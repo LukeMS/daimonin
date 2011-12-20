@@ -371,7 +371,7 @@ static void sound_start_music(char *fname, int vol, int fade, int loop)
         music.flag = 0;
     }
 
-    sprintf(buf, "%s%s", GetMediaDirectory(), fname);
+    sprintf(buf, "%s/%s", DIR_MUSIC, fname);
 
     /* try to load the music */
     if ((rw = PHYSFSRWOPS_openRead(buf)))
