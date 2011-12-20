@@ -842,7 +842,7 @@ static uint8 CheckCommand(char *cmd, char *params)
     /* TODO; check and remove/fix. */
     else if (!strcmp(cmd, "/reloadskinnow"))
     {
-        textwin_showstring(0, NDI_COLR_GREEN, "Reloading skin. This function is only for skin creating, and may be removed anytime!");
+        textwin_showstring(0, NDI_COLR_LIME, "Reloading skin. This function is only for skin creating, and may be removed anytime!");
         skin_reload();
     }
     else if (!strcmp(cmd, "/reset"))

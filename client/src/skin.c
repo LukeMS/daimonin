@@ -250,7 +250,7 @@ void skin_load_prefs(void)
     skin_prefs.dialog_rows0 = NDI_COLR_OLIVE;
     skin_prefs.dialog_rows1 = NDI_COLR_MAROON;
     skin_prefs.dialog_rowsS = NDI_COLR_BLUE;
-    skin_prefs.ecc_emphasis = NDI_COLR_GREEN;
+    skin_prefs.ecc_emphasis = NDI_COLR_LIME;
     skin_prefs.ecc_strong = NDI_COLR_YELLOW;
     skin_prefs.ecc_intertitle = NDI_COLR_ORANGE;
     skin_prefs.target_grey = NDI_COLR_GREY;

@@ -758,7 +758,7 @@ void DrawInfoCmd2(char *data, int len)
             break;
 
         case 4: 
-            colr = NDI_COLR_GREEN;
+            colr = NDI_COLR_LIME;
 
             break;
 
@@ -2517,7 +2517,7 @@ void ChannelMsgCmd(char *data, int len)
             break;
 
         case 4: 
-            colr = NDI_COLR_GREEN;
+            colr = NDI_COLR_LIME;
 
             break;
 

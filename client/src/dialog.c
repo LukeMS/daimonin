@@ -612,7 +612,7 @@ inline void optwin_draw_options(int x, int y)
                 }
                 if (mx > x && mx <x + 280 && my> y && my < y + 20)
                 {
-                    tmp = NDI_COLR_GREEN;
+                    tmp = NDI_COLR_LIME;
                     mxy_opt = i; /* remember this tab for later use */
                 }
 
@@ -657,7 +657,7 @@ inline void optwin_draw_options(int x, int y)
                 }
                 if (mx > x && mx <x + 280 && my> y && my < y + 20)
                 {
-                    tmp = NDI_COLR_GREEN;
+                    tmp = NDI_COLR_LIME;
                     mxy_opt = i; /* remember this tab for later use */
                 }
 
@@ -1443,7 +1443,7 @@ void show_newplayer_server(void)
 
         if (create_list_set.entry_nr == i + 2)
         {
-            ENGRAVE(ScreenSurface, &font_small, buf, x + 130, y + CREATE_Y0 + (i + 4) * 17, NDI_COLR_GREEN, NULL, NULL);
+            ENGRAVE(ScreenSurface, &font_small, buf, x + 130, y + CREATE_Y0 + (i + 4) * 17, NDI_COLR_LIME, NULL, NULL);
         }
         else
         {
@@ -1453,7 +1453,7 @@ void show_newplayer_server(void)
         sprintf(buf, "%.2d", new_character.stats[i]);
 
         if (create_list_set.entry_nr == i + 2)
-            delta = add_rangebox(x + 170, y + CREATE_Y0 + (i + 4) * 17, id, 20, 0, buf, NDI_COLR_GREEN);
+            delta = add_rangebox(x + 170, y + CREATE_Y0 + (i + 4) * 17, id, 20, 0, buf, NDI_COLR_LIME);
         else
             delta = add_rangebox(x + 170, y + CREATE_Y0 + (i + 4) * 17, id, 20, 0, buf, NDI_COLR_WHITE);
         /* keyboard event */
@@ -1489,7 +1489,7 @@ void show_newplayer_server(void)
 #endif
     if (create_list_set.entry_nr == 0)
     {
-        ENGRAVE(ScreenSurface, &font_small, "Race:", x + 130, y + CREATE_Y0 + 0 * 17 + 2, NDI_COLR_GREEN, NULL, NULL);
+        ENGRAVE(ScreenSurface, &font_small, "Race:", x + 130, y + CREATE_Y0 + 0 * 17 + 2, NDI_COLR_LIME, NULL, NULL);
     }
     else
     {
@@ -1498,7 +1498,7 @@ void show_newplayer_server(void)
 
     sprintf(buf,"%s %s", gender[new_character.gender_selected], new_character.name);
     if (create_list_set.entry_nr == 0)
-        delta = add_rangebox(x + 170, y + CREATE_Y0 + 0 * 17, ++id, 80, 0, buf, NDI_COLR_GREEN);
+        delta = add_rangebox(x + 170, y + CREATE_Y0 + 0 * 17, ++id, 80, 0, buf, NDI_COLR_LIME);
     else
         delta = add_rangebox(x + 170, y + CREATE_Y0 + 0 * 17, ++id, 80, 0, buf, NDI_COLR_WHITE);
     if (create_list_set.key_change && create_list_set.entry_nr == 0)
@@ -1598,7 +1598,7 @@ void show_newplayer_server(void)
 
     if (create_list_set.entry_nr == 1)
     {
-        ENGRAVE(ScreenSurface, &font_small, "W-Skill:", x + 130, y + CREATE_Y0 + 1 * 17 + 2, NDI_COLR_GREEN, NULL, NULL);
+        ENGRAVE(ScreenSurface, &font_small, "W-Skill:", x + 130, y + CREATE_Y0 + 1 * 17 + 2, NDI_COLR_LIME, NULL, NULL);
     }
     else
     {
@@ -1606,7 +1606,7 @@ void show_newplayer_server(void)
     }
 
     if (create_list_set.entry_nr == 1)
-        delta = add_rangebox(x + 170, y + CREATE_Y0 + 1 * 17, ++id, 80, 0, weapon_skill[new_character.skill_selected+1], NDI_COLR_GREEN);
+        delta = add_rangebox(x + 170, y + CREATE_Y0 + 1 * 17, ++id, 80, 0, weapon_skill[new_character.skill_selected+1], NDI_COLR_LIME);
     else
         delta = add_rangebox(x + 170, y + CREATE_Y0 + 1 * 17, ++id, 80, 0, weapon_skill[new_character.skill_selected+1], NDI_COLR_WHITE);
 
@@ -1681,7 +1681,7 @@ void show_newplayer_server(void)
             box.h= 20;
             SDL_FillRect(ScreenSurface, &box, sdl_gray3);
             sprintf(buf, "*** WAIT: Ask server to create character %s ***", cpl.name);
-            ENGRAVE(ScreenSurface, &font_small, buf, x + 138, y + 347, NDI_COLR_GREEN, NULL, NULL);
+            ENGRAVE(ScreenSurface, &font_small, buf, x + 138, y + 347, NDI_COLR_LIME, NULL, NULL);
         }
     }
 
@@ -1698,7 +1698,7 @@ void show_newplayer_server(void)
     box.h= 100;
     SDL_FillRect(ScreenSurface, &box, sdl_gray1);
     ENGRAVE(ScreenSurface, &font_small, "Portrait:",  x+350, y+CREATE_Y0-13, NDI_COLR_WHITE, NULL, NULL);
-    add_rangebox(x+350, y+CREATE_Y0+101, ++id, 70, 1, "todo ;-)", NDI_COLR_GREEN);
+    add_rangebox(x+350, y+CREATE_Y0+101, ++id, 70, 1, "todo ;-)", NDI_COLR_LIME);
     */
 
     if (!mb)
@@ -1824,13 +1824,13 @@ void show_login_server(void)
     {
         if (GameStatusSelect == GAME_STATUS_LOGIN_ACCOUNT)
         {
-            EMBOSS(ScreenSurface, &font_large_out, ">> Login <<", x+49, y+50, NDI_COLR_GREEN, NULL, NULL);
+            EMBOSS(ScreenSurface, &font_large_out, ">> Login <<", x+49, y+50, NDI_COLR_LIME, NULL, NULL);
             ENGRAVE(ScreenSurface, &font_large_out, "Create Account", x+26, y+30, NDI_COLR_WHITE, NULL, NULL);
         }
         else
         {
             ENGRAVE(ScreenSurface, &font_large_out, "Login", x+70, y+50, NDI_COLR_WHITE, NULL, NULL);
-            EMBOSS(ScreenSurface, &font_large_out, ">> Create Account <<", x+5, y+30, NDI_COLR_GREEN, NULL, NULL);
+            EMBOSS(ScreenSurface, &font_large_out, ">> Create Account <<", x+5, y+30, NDI_COLR_LIME, NULL, NULL);
         }
         y += 160;
         ENGRAVE(ScreenSurface, &font_small, "Select ~Create Account~ for a new or ~Login~ for a existing account.",
@@ -2141,7 +2141,7 @@ void show_meta_server(void)
 
                 if (node->ping <= 50)
                 {
-                    colr = NDI_COLR_GREEN;
+                    colr = NDI_COLR_LIME;
                 }
                 else if (node->ping <= 200)
                 {
@@ -2229,7 +2229,7 @@ void show_account(void)
                 box.h= 20;
                 SDL_FillRect(ScreenSurface, &box, sdl_gray3);
                 sprintf(delbuf, "*** WAIT: Ask server to delete character %s ***", account.name[account.selected]);
-                ENGRAVE(ScreenSurface, &font_small, delbuf, x + 125, y + 458, NDI_COLR_GREEN, NULL, NULL);
+                ENGRAVE(ScreenSurface, &font_small, delbuf, x + 125, y + 458, NDI_COLR_LIME, NULL, NULL);
             }
         }
         else
