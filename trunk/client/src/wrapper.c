@@ -154,49 +154,6 @@ void SYSTEM_End(void)
     }
 }
 
-char * GetBitmapDirectory(void)
-{
-#if defined( __WIN_32)  || defined(__LINUX)
-    return("bitmaps/");
-#endif
-}
-
-char * GetIconDirectory(void)
-{
-#if defined( __WIN_32)  || defined(__LINUX)
-    return("icons/");
-#endif
-}
-
-char * GetSfxDirectory(void)
-{
-#if defined( __WIN_32)  || defined(__LINUX)
-    return("sfx/");
-#endif
-}
-
-char * GetCacheDirectory(void)
-{
-#if defined( __WIN_32)  || defined(__LINUX)
-    return("cache/");
-#endif
-}
-
-char * GetGfxUserDirectory(void)
-{
-#if defined( __WIN_32)  || defined(__LINUX)
-    return("gfx_user/");
-#endif
-}
-
-
-char * GetMediaDirectory(void)
-{
-#if defined( __WIN_32)  || defined(__LINUX)
-    return("media/");
-#endif
-}
-
 #define sdldebug(__s_) LOG(LOG_DEBUG,"%s\n",__s_)
 
 
