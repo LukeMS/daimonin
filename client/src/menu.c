@@ -439,16 +439,30 @@ void widget_show_range(int x, int y)
                 }
                 else
                 {
+                    item  *ip;
+                    uint8  quacon;
+
                     sprintf(buf, "using %s", tmp2->s_name);
-                    blt_inventory_face_from_tag(fire_mode.weapon, x + 5, y + 2);
+
+                    if ((ip = locate_item(fire_mode.weapon)))
+                    {
+                        quacon = (ip->item_qua == 255)
+                                 ? 255 : (float)ip->item_con / (float)ip->item_qua * 100;
+                        sprite_blt_as_icon(face_list[ip->face].sprite, x + 5, y + 2,
+                                           SPRITE_ICON_TYPE_ACTIVE, 0, ip->flagsval,
+                                           (quacon == 100) ? 0 : quacon,
+                                           (ip->nrof == 1) ? 0 : ip->nrof, NULL);
+                    }
 
                     string_blt(ScreenSurface, &font_small, buf, x + 5, y + 36, skin_prefs.widget_valueEq, &rec_range, NULL);
                 }
 
                 if (fire_mode.ammo != FIRE_ITEM_NO)
                 {
-                    tmp = locate_item_from_item(cpl.ob, fire_mode.ammo);
-                    if (tmp)
+                    item  *ip;
+                    uint8  quacon;
+
+                    if ((tmp = locate_item_from_item(cpl.ob, fire_mode.ammo)))
                     {
                         if (tmp->itype == TYPE_ARROW)
                             sprintf(buf, "ammo %s (%d)", tmp->s_name, tmp->nrof);
@@ -457,7 +471,16 @@ void widget_show_range(int x, int y)
                     }
                     else
                         strcpy(buf, "ammo not selected");
-                    blt_inventory_face_from_tag(fire_mode.ammo, x + 45, y + 2);
+
+                    if ((ip = locate_item(fire_mode.ammo)))
+                    {
+                        quacon = (ip->item_qua == 255)
+                                 ? 255 : (float)ip->item_con / (float)ip->item_qua * 100;
+                        sprite_blt_as_icon(face_list[ip->face].sprite, x + 45, y + 2,
+                                           SPRITE_ICON_TYPE_ACTIVE, 0, ip->flagsval,
+                                           (quacon == 100) ? 0 : quacon,
+                                           (ip->nrof == 1) ? 0 : ip->nrof, NULL);
+                    }
                 }
                 else if (tmp2->itype==TYPE_BOW)
                 {
@@ -534,17 +557,6 @@ void widget_show_range(int x, int y)
         default:
             LOG(LOG_ERROR, "Unknown fire mode %u\n", fire_mode.mode);
     }
-}
-
-void blt_inventory_face_from_tag(int tag, int x, int y)
-{
-    item   *tmp;
-
-    /* check item is in inventory and faces are loaded, etc */
-    tmp = locate_item(tag);
-    if (!tmp)
-        return;
-    blt_inv_item_centered(tmp, x, y);
 }
 
 void show_menu(void)
@@ -722,11 +734,21 @@ void show_quickslots(int x, int y)
             /* item in quickslot */
             else
             {
-                item   *tmp;
-                tmp = locate_item_from_item(cpl.ob, quick_slots[i].shared.tag);
-                if (tmp)
+                item *ip;
+
+                if ((ip = locate_item_from_item(cpl.ob, quick_slots[i].shared.tag)))
                 {
-                    blt_inv_item(tmp, x + quickslots_pos[i][qsx]+xoff, y + quickslots_pos[i][qsy]);
+                    uint8 quacon = (ip->item_qua == 255) ? 255
+                                   : (float)ip->item_con /
+                                     (float)ip->item_qua * 100;
+
+                    sprite_blt_as_icon(face_list[ip->face].sprite,
+                                       x + quickslots_pos[i][qsx] + xoff,
+                                       y + quickslots_pos[i][qsy],
+                                       SPRITE_ICON_TYPE_ACTIVE, 0, ip->flagsval,
+                                       (quacon == 100) ? 0 : quacon,
+                                       (ip->nrof == 1) ? 0 : ip->nrof, NULL);
+
                     /* show tooltip */
                     if (mx >= x + quickslots_pos[i][qsx]+xoff
                             && mx < x + quickslots_pos[i][qsx]+xoff + 33
@@ -734,7 +756,7 @@ void show_quickslots(int x, int y)
                             && my < y + quickslots_pos[i][qsy] + 33
                             && widget_get_mouse_state(&mx,&my,WIDGET_QUICKSLOT_ID))
                     {
-                        sprintf(buf,"%s (q/c: %d/%d)",tmp->s_name, tmp->item_qua, tmp->item_con);
+                        sprintf(buf,"%s (q/c: %d/%d)",ip->s_name, ip->item_qua, ip->item_con);
                         show_tooltip(mx, my, buf);
                     }
                 }
@@ -789,11 +811,21 @@ void widget_quickslots(int x, int y)
             /* item in quickslot */
             else
             {
-                item   *tmp;
-                tmp = locate_item_from_item(cpl.ob, quick_slots[i].shared.tag);
-                if (tmp)
+                item *ip;
+
+                if ((ip = locate_item_from_item(cpl.ob, quick_slots[i].shared.tag)))
                 {
-                    blt_inv_item(tmp, x + quickslots_pos[i][qsx]+xoff, y + quickslots_pos[i][qsy]);
+                    uint8 quacon = (ip->item_qua == 255) ? 255
+                                   : (float)ip->item_con /
+                                     (float)ip->item_qua * 100;
+
+                    sprite_blt_as_icon(face_list[ip->face].sprite,
+                                       x + quickslots_pos[i][qsx] + xoff,
+                                       y + quickslots_pos[i][qsy],
+                                       SPRITE_ICON_TYPE_ACTIVE, 0, ip->flagsval,
+                                       (quacon == 100) ? 0 : quacon,
+                                       (ip->nrof == 1) ? 0 : ip->nrof, NULL);
+
                     /* show tooltip */
                     if (mx >= x + quickslots_pos[i][qsx]+xoff
                             && mx < x + quickslots_pos[i][qsx]+xoff + 33
@@ -801,7 +833,7 @@ void widget_quickslots(int x, int y)
                             && my < y + quickslots_pos[i][qsy] + 33
                             && widget_get_mouse_state(&mx,&my,WIDGET_QUICKSLOT_ID))
                     {
-                        sprintf(buf,"%s (QC: %d/%d)",tmp->s_name, tmp->item_qua, tmp->item_con);
+                        sprintf(buf,"%s (QC: %d/%d)",ip->s_name, ip->item_qua, ip->item_con);
                         show_tooltip(mx, my, buf);
                     }
                 }
