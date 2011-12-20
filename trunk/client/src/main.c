@@ -150,6 +150,7 @@ static void InitPhysFS(const char *argv0);
 static void ShowIntro(char *text, int progress);
 static void LoadArchdef(void);
 static void QueryMetaserver(void);
+static void PlayActionSounds(void);
 
 /* TODO: Eventually various user settings will be savedd by account and/or
  * player. ATM its a bit messy with most by player only (althhough the file
@@ -1213,64 +1214,97 @@ void open_input_mode(int maxchar)
     /* if true keyboard and game is in input str mode*/
 }
 
-
-static void play_heartbeat_sound(void)
-{
-    static uint32 tick = 0;
-    uint32 interval;
-    int volume = 0;
-
-    // Interval (ticks) between heartbeats is determined by hp %
-    interval = (uint32) (20 * (((float) cpl.stats.hp / (float) cpl.stats.maxhp) * 100.0f));
-    // 100% hp = 1 beat per 2000 ticks = 30 bpm (mercenaries are fit!)
-    // 1% hp = 1 beat per 500 ticks = 120 bpm
-    if (interval > 2000) interval = 2000;
-    if (interval < 500)  interval = 500;
-
-    // If <interval> ticks have passed since the last beat, do another
-    if (LastTick - tick >= interval)
-    {
-        // Volume depends on enemy's 'colour'
-             if (cpl.target_color == NDI_COLR_GREEN)  volume = 50;
-        else if (cpl.target_color == NDI_COLR_BLUE)   volume = 60;
-        else if (cpl.target_color == NDI_COLR_YELLOW) volume = 70;
-        else if (cpl.target_color == NDI_COLR_ORANGE) volume = 80;
-        else if (cpl.target_color == NDI_COLR_RED)    volume = 90;
-        else                                       volume = 100;
-        sound_play_effect(SOUNDTYPE_CLIENT, SOUND_HEARTBEAT, 0, 0, volume);
-        tick = LastTick;
-    }
-}
-
-
-static void play_action_sounds(void)
+static void PlayActionSounds(void)
 {
     // Heartbeat only audible if player's hp% is below threshold set in options,
-    //  an enemy is targetted, player is in attack mode, and mob is not grey
-    if (((float) cpl.stats.hp / (float) cpl.stats.maxhp) * 100 < options.heartbeat &&
-        cpl.target_code == 1 && cpl.target_mode && cpl.target_color != NDI_COLR_GREY)
-        play_heartbeat_sound();
+    // an enemy is targetted, and player is in attack mode.
+    if (((float) cpl.stats.hp / (float) cpl.stats.maxhp) * 100 <
+        options.heartbeat &&
+        cpl.target_code == 1 &&
+        cpl.target_mode)
+    {
+        static uint32 tick = 0;
+        uint32        interval;
+
+        // Interval (ticks) between heartbeats is determined by hp %
+        interval = (uint32) (20 * (((float) cpl.stats.hp / (float) cpl.stats.maxhp) * 100.0f));
+
+        // 100% hp = 1 beat per 2000 ticks = 30 bpm (mercenaries are fit!)
+        // 1% hp = 1 beat per 500 ticks = 120 bpm
+        interval = MAX(500, MIN(interval, 2000));
+
+        // If <interval> ticks have passed since the last beat, do another
+        if (LastTick - tick >= interval)
+        {
+            uint8 volume;
+
+            // Volume depends on enemy's 'colour'
+            if (cpl.target_color == skin_prefs.target_grey)
+            {
+                volume = 10;
+            }
+            else if (cpl.target_color == skin_prefs.target_green)
+            {
+                volume = 50;
+            }
+            else if (cpl.target_color == skin_prefs.target_blue)
+            {
+                volume = 60;
+            }
+            else if (cpl.target_color == skin_prefs.target_yellow)
+            {
+                volume = 70;
+            }
+            else if (cpl.target_color == skin_prefs.target_orange)
+            {
+                volume = 80;
+            }
+            else if (cpl.target_color == skin_prefs.target_red)
+            {
+                volume = 90;
+            }
+            else // if (cpl.target_color == skin_prefs.target_purple)
+            {
+                volume = 100;
+            }
+
+            sound_play_effect(SOUNDTYPE_CLIENT, SOUND_HEARTBEAT, 0, 0, volume);
+            tick = LastTick;
+        }
+    }
+
     if (cpl.warn_hp)
     {
         if (cpl.warn_hp == 2) /* more as 10% damage */
+        {
             sound_play_effect(SOUNDTYPE_CLIENT, SOUND_WARN_HP2, 0, 0, 100);
+        }
         else
+        {
             sound_play_effect(SOUNDTYPE_CLIENT, SOUND_WARN_HP, 0, 0, 100);
+        }
+
         cpl.warn_hp = 0;
     }
+
     if (cpl.warn_statdown)
     {
-        sound_play_one_repeat(SOUNDTYPE_CLIENT, SOUND_WARN_STATDOWN, SPECIAL_SOUND_STATDOWN);
+        sound_play_one_repeat(SOUNDTYPE_CLIENT, SOUND_WARN_STATDOWN,
+                              SPECIAL_SOUND_STATDOWN);
         cpl.warn_statdown = 0;
     }
+
     if (cpl.warn_statup)
     {
-        sound_play_one_repeat(SOUNDTYPE_CLIENT, SOUND_WARN_STATUP, SPECIAL_SOUND_STATUP);
+        sound_play_one_repeat(SOUNDTYPE_CLIENT, SOUND_WARN_STATUP,
+                              SPECIAL_SOUND_STATUP);
         cpl.warn_statup = 0;
     }
+
     if (cpl.warn_drain)
     {
-        sound_play_one_repeat(SOUNDTYPE_CLIENT, SOUND_WARN_DRAIN, SPECIAL_SOUND_DRAIN);
+        sound_play_one_repeat(SOUNDTYPE_CLIENT, SOUND_WARN_DRAIN,
+                              SPECIAL_SOUND_DRAIN);
         cpl.warn_drain = 0;
     }
 }
@@ -1599,7 +1633,7 @@ int main(int argc, char *argv[])
                 new_anim_tick = LastTick;
                 new_anim_animate(SDL_GetTicks());
             }
-            play_action_sounds();
+            PlayActionSounds();
         }
 
 /* im sorry but atm the widget client needs to redraw the whole screen every frame
