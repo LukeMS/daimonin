@@ -414,15 +414,15 @@ static void show_window(int actWin, int x, int y, _BLTFX *bltfx)
         SDL_Rect    box;
 
         box.x = box.y = 0;
-        box.w = Bitmaps[BITMAP_SLIDER]->bitmap->w;
+        box.w = skin_sprites[SKIN_SPRITE_SLIDER]->bitmap->w;
         box.h = txtwin[actWin].size * 10 + 1;
 //        if (actWin == TW_CHAT)
             temp = -9; /* no textinput-line */
 //        else
 //            temp = 0;
-        sprite_blt(Bitmaps[BITMAP_SLIDER_UP], x + 250, y + 2, NULL, bltfx);
-        sprite_blt(Bitmaps[BITMAP_SLIDER_DOWN], x + 250, y + 13 + temp + txtwin[actWin].size * 10, NULL, bltfx);
-        sprite_blt(Bitmaps[BITMAP_SLIDER], x + 250, y + Bitmaps[BITMAP_SLIDER_UP]->bitmap->h + 2 + temp, &box, bltfx);
+        sprite_blt(skin_sprites[SKIN_SPRITE_SLIDER_UP], x + 250, y + 2, NULL, bltfx);
+        sprite_blt(skin_sprites[SKIN_SPRITE_SLIDER_DOWN], x + 250, y + 13 + temp + txtwin[actWin].size * 10, NULL, bltfx);
+        sprite_blt(skin_sprites[SKIN_SPRITE_SLIDER], x + 250, y + skin_sprites[SKIN_SPRITE_SLIDER_UP]->bitmap->h + 2 + temp, &box, bltfx);
         box.h += temp - 2;
         box.w -= 2;
 
@@ -436,29 +436,29 @@ static void show_window(int actWin, int x, int y, _BLTFX *bltfx)
             txtwin[actWin].slider_y++;
 
         box.h = txtwin[actWin].slider_h;
-        sprite_blt(Bitmaps[BITMAP_TWIN_SCROLL], x + 252,
-                   y + Bitmaps[BITMAP_SLIDER_UP]->bitmap->h + 3 + txtwin[actWin].slider_y, &box, bltfx);
+        sprite_blt(skin_sprites[SKIN_SPRITE_TWIN_SCROLL], x + 252,
+                   y + skin_sprites[SKIN_SPRITE_SLIDER_UP]->bitmap->h + 3 + txtwin[actWin].slider_y, &box, bltfx);
 
         if (txtwin[actWin].highlight == TW_HL_UP)
         {
             box.x = x + 250;
             box.y = y + 2;
-            box.h = Bitmaps[BITMAP_SLIDER_UP]->bitmap->h;
+            box.h = skin_sprites[SKIN_SPRITE_SLIDER_UP]->bitmap->h;
             box.w = 1;
             SDL_FillRect(bltfx->surface, &box, -1);
-            box.x += Bitmaps[BITMAP_SLIDER_UP]->bitmap->w - 1;
+            box.x += skin_sprites[SKIN_SPRITE_SLIDER_UP]->bitmap->w - 1;
             SDL_FillRect(bltfx->surface, &box, -1);
-            box.w = Bitmaps[BITMAP_SLIDER_UP]->bitmap->w - 1;
+            box.w = skin_sprites[SKIN_SPRITE_SLIDER_UP]->bitmap->w - 1;
             box.h = 1;
             box.x = x + 250;
             SDL_FillRect(bltfx->surface, &box, -1);
-            box.y += Bitmaps[BITMAP_SLIDER_UP]->bitmap->h - 1;
+            box.y += skin_sprites[SKIN_SPRITE_SLIDER_UP]->bitmap->h - 1;
             SDL_FillRect(bltfx->surface, &box, -1);
         }
         else if (txtwin[actWin].highlight == TW_ABOVE)
         {
             box.x = x + 252;
-            box.y = y + Bitmaps[BITMAP_SLIDER_UP]->bitmap->h + 2;
+            box.y = y + skin_sprites[SKIN_SPRITE_SLIDER_UP]->bitmap->h + 2;
             box.h = txtwin[actWin].slider_y + 1;
             box.w = 5;
             SDL_FillRect(bltfx->surface, &box, 0);
@@ -466,7 +466,7 @@ static void show_window(int actWin, int x, int y, _BLTFX *bltfx)
         else if (txtwin[actWin].highlight == TW_HL_SLIDER)
         {
             box.x = x + 252;
-            box.y = y + Bitmaps[BITMAP_SLIDER_UP]->bitmap->h + 3 + txtwin[actWin].slider_y;
+            box.y = y + skin_sprites[SKIN_SPRITE_SLIDER_UP]->bitmap->h + 3 + txtwin[actWin].slider_y;
             box.w = 1;
             SDL_FillRect(bltfx->surface, &box, -1);
             box.x += 4;
@@ -481,7 +481,7 @@ static void show_window(int actWin, int x, int y, _BLTFX *bltfx)
         else if (txtwin[actWin].highlight == TW_UNDER)
         {
             box.x = x + 252;
-            box.y = y + Bitmaps[BITMAP_SLIDER_UP]->bitmap->h + 3 + txtwin[actWin].slider_y + box.h;
+            box.y = y + skin_sprites[SKIN_SPRITE_SLIDER_UP]->bitmap->h + 3 + txtwin[actWin].slider_y + box.h;
             box.h = txtwin[actWin].size * 10 - txtwin[actWin].slider_y - txtwin[actWin].slider_h - 10;
             box.w = 5;
             SDL_FillRect(bltfx->surface, &box, 0);
@@ -490,16 +490,16 @@ static void show_window(int actWin, int x, int y, _BLTFX *bltfx)
         {
             box.x = x + 250;
             box.y = y + txtwin[actWin].size * 10 + 4;
-            box.h = Bitmaps[BITMAP_SLIDER_UP]->bitmap->h;
+            box.h = skin_sprites[SKIN_SPRITE_SLIDER_UP]->bitmap->h;
             box.w = 1;
             SDL_FillRect(bltfx->surface, &box, -1);
-            box.x += Bitmaps[BITMAP_SLIDER_UP]->bitmap->w - 1;
+            box.x += skin_sprites[SKIN_SPRITE_SLIDER_UP]->bitmap->w - 1;
             SDL_FillRect(bltfx->surface, &box, -1);
-            box.w = Bitmaps[BITMAP_SLIDER_UP]->bitmap->w - 1;
+            box.w = skin_sprites[SKIN_SPRITE_SLIDER_UP]->bitmap->w - 1;
             box.h = 1;
             box.x = x + 250;
             SDL_FillRect(bltfx->surface, &box, -1);
-            box.y += Bitmaps[BITMAP_SLIDER_UP]->bitmap->h - 1;
+            box.y += skin_sprites[SKIN_SPRITE_SLIDER_UP]->bitmap->h - 1;
             SDL_FillRect(bltfx->surface, &box, -1);
         }
     }
@@ -519,7 +519,7 @@ void textwin_show(int x, int y)
     bltfx.flags = BLTFX_FLAG_SRCALPHA;
     bltfx.surface = NULL;
     box.x = box.y = 0;
-    box.w = Bitmaps[BITMAP_TEXTWIN]->bitmap->w;
+    box.w = skin_sprites[SKIN_SPRITE_TEXTWIN]->bitmap->w;
     y = 599; /* to lazy to work with correct calcs */
 
 
@@ -527,10 +527,10 @@ void textwin_show(int x, int y)
     y -= len;
     if (options.use_TextwinAlpha)
     {
-        sprite_blt(Bitmaps[BITMAP_TEXTWIN_MASK], x, y, &box, &bltfx);
+        sprite_blt(skin_sprites[SKIN_SPRITE_TEXTWIN_MASK], x, y, &box, &bltfx);
     }
     else
-        sprite_blt(Bitmaps[BITMAP_TEXTWIN], x, y, &box, NULL);
+        sprite_blt(skin_sprites[SKIN_SPRITE_TEXTWIN], x, y, &box, NULL);
 
     bltfx.alpha=255;
     bltfx.surface = ScreenSurface;
@@ -555,7 +555,7 @@ void widget_textwin_show(int x, int y, int actWin)
         wID=WIDGET_MSGWIN_ID;
 
     box.x = box.y = 0;
-    box.w = Bitmaps[BITMAP_TEXTWIN]->bitmap->w;
+    box.w = skin_sprites[SKIN_SPRITE_TEXTWIN]->bitmap->w;
     box.h = len = txtwin[actWin].size * 10 + 13;
 
     /* backbuffering is a bit trickier
@@ -574,9 +574,9 @@ void widget_textwin_show(int x, int y, int actWin)
             if (txtwinbg)
                 SDL_FreeSurface(txtwinbg);
 
-            SDL_SetAlpha(Bitmaps[BITMAP_TEXTWIN_MASK]->bitmap, SDL_SRCALPHA|SDL_RLEACCEL, options.textwin_alpha);
-            txtwinbg=SDL_DisplayFormatAlpha(Bitmaps[BITMAP_TEXTWIN_MASK]->bitmap);
-            SDL_SetAlpha(Bitmaps[BITMAP_TEXTWIN_MASK]->bitmap, SDL_SRCALPHA|SDL_RLEACCEL, 255);
+            SDL_SetAlpha(skin_sprites[SKIN_SPRITE_TEXTWIN_MASK]->bitmap, SDL_SRCALPHA|SDL_RLEACCEL, options.textwin_alpha);
+            txtwinbg=SDL_DisplayFormatAlpha(skin_sprites[SKIN_SPRITE_TEXTWIN_MASK]->bitmap);
+            SDL_SetAlpha(skin_sprites[SKIN_SPRITE_TEXTWIN_MASK]->bitmap, SDL_SRCALPHA|SDL_RLEACCEL, 255);
 
             old_txtwin_alpha=options.textwin_alpha;
         }
@@ -586,14 +586,14 @@ void widget_textwin_show(int x, int y, int actWin)
     }
     else
     {
-        sprite_blt(Bitmaps[BITMAP_TEXTWIN], x, y, &box, NULL);
+        sprite_blt(skin_sprites[SKIN_SPRITE_TEXTWIN], x, y, &box, NULL);
     }
     /* if we don't have a backbuffer, create it */
     if (!widget_surface[wID])
     {
-        widget_surface[wID]=SDL_ConvertSurface(Bitmaps[BITMAP_TEXTWIN_MASK]->bitmap,
-                                         Bitmaps[BITMAP_TEXTWIN_MASK]->bitmap->format,
-                                         Bitmaps[BITMAP_TEXTWIN_MASK]->bitmap->flags);
+        widget_surface[wID]=SDL_ConvertSurface(skin_sprites[SKIN_SPRITE_TEXTWIN_MASK]->bitmap,
+                                         skin_sprites[SKIN_SPRITE_TEXTWIN_MASK]->bitmap->format,
+                                         skin_sprites[SKIN_SPRITE_TEXTWIN_MASK]->bitmap->flags);
         SDL_SetColorKey(widget_surface[wID], SDL_SRCCOLORKEY | SDL_RLEACCEL, SDL_MapRGB(widget_surface[wID]->format, 0, 0, 0));
     }
 
@@ -613,14 +613,14 @@ void widget_textwin_show(int x, int y, int actWin)
             box.x = 0;
             box.y = 0;
             box.h = 1;
-            box.w = Bitmaps[BITMAP_TEXTWIN]->bitmap->w;
+            box.w = skin_sprites[SKIN_SPRITE_TEXTWIN]->bitmap->w;
             SDL_FillRect(widget_surface[wID], &box, SDL_MapRGBA(widget_surface[wID]->format, 0x60, 0x60, 0x60, 255));
             box.y = len;
             box.h = 1;
             box.x = 0;
-            box.w = Bitmaps[BITMAP_TEXTWIN]->bitmap->w;
+            box.w = skin_sprites[SKIN_SPRITE_TEXTWIN]->bitmap->w;
             SDL_FillRect(widget_surface[wID], &box, SDL_MapRGBA(widget_surface[wID]->format, 0x60, 0x60, 0x60, 255));
-            box.w = Bitmaps[BITMAP_TEXTWIN]->bitmap->w;
+            box.w = skin_sprites[SKIN_SPRITE_TEXTWIN]->bitmap->w;
             box.x = box.w-1;
             box.w = 1;
             box.y = 0;
@@ -639,7 +639,7 @@ void widget_textwin_show(int x, int y, int actWin)
     box.y=y;
     box2.x=0;
     box2.y=0;
-    box2.w = Bitmaps[BITMAP_TEXTWIN]->bitmap->w;
+    box2.w = skin_sprites[SKIN_SPRITE_TEXTWIN]->bitmap->w;
     box2.h = len = txtwin[actWin].size * 10 + 14;
 
     SDL_BlitSurface(widget_surface[wID], &box2, ScreenSurface, &box);
@@ -710,8 +710,8 @@ int textwin_move_event(int actWin, widget_id_t id, SDL_Event *event)
     /* mouse out of window */
     /* we have to leave this here!!! for sanity, also the widgetstuff does some area checking */
     if (event->motion.y < widget_data[id].y1
-            || event->motion.x > widget_data[id].x1 + Bitmaps[BITMAP_TEXTWIN]->bitmap->w
-            || event->motion.y > widget_data[id].y1 + txtwin[actWin].size * 10 + 13 + Bitmaps[BITMAP_SLIDER_UP]->bitmap->h)
+            || event->motion.x > widget_data[id].x1 + skin_sprites[SKIN_SPRITE_TEXTWIN]->bitmap->w
+            || event->motion.y > widget_data[id].y1 + txtwin[actWin].size * 10 + 13 + skin_sprites[SKIN_SPRITE_SLIDER_UP]->bitmap->h)
     {
         if (!(textwin_flags & TW_RESIZE))
             return 1;
@@ -721,9 +721,9 @@ int textwin_move_event(int actWin, widget_id_t id, SDL_Event *event)
     if (event->motion.x > widget_data[id].x1 + 250
             && event->motion.y > widget_data[id].y1
             && event->button.button != SDL_BUTTON_LEFT
-            && event->motion.x < widget_data[id].x1 + Bitmaps[BITMAP_TEXTWIN]->bitmap->w)
+            && event->motion.x < widget_data[id].x1 + skin_sprites[SKIN_SPRITE_TEXTWIN]->bitmap->w)
     {
-#define OFFSET (txtwin[actWin].y + Bitmaps[BITMAP_SLIDER_UP]->bitmap->h)
+#define OFFSET (txtwin[actWin].y + skin_sprites[SKIN_SPRITE_SLIDER_UP]->bitmap->h)
         if (event->motion.y < OFFSET)
             txtwin[actWin].highlight = TW_HL_UP;
         else if (event->motion.y < OFFSET + txtwin[actWin].slider_y)

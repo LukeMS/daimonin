@@ -143,7 +143,7 @@ void SYSTEM_End(void)
 
     sound_freeall();
     sound_deinit();
-    free_bitmaps();
+    skin_free_bitmaps();
     locator_clear_players(NULL);
     clear_lists();
 

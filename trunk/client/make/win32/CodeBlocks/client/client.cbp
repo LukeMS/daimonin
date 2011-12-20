@@ -135,6 +135,7 @@
 		<Unit filename="..\..\..\..\src\include\physfsrwops.h" />
 		<Unit filename="..\..\..\..\src\include\player.h" />
 		<Unit filename="..\..\..\..\src\include\protocol.h" />
+		<Unit filename="..\..\..\..\src\include\skin.h" />
 		<Unit filename="..\..\..\..\src\include\socket.h" />
 		<Unit filename="..\..\..\..\src\include\sound.h" />
 		<Unit filename="..\..\..\..\src\include\sprite.h" />
@@ -190,6 +191,9 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\..\src\protocol.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\..\src\skin.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\..\src\socket.c">

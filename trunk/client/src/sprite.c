@@ -329,25 +329,25 @@ void string_blt(SDL_Surface *surf, _font *font, char *text, int x, int y, uint32
      
                     if (strong)
                     {
-                        color.r = (skindef.ecc_strong >> 16) & 0xff;
-                        color.g = (skindef.ecc_strong >> 8) & 0xff;
-                        color.b = skindef.ecc_strong & 0xff;
+                        color.r = (skin_prefs.ecc_strong >> 16) & 0xff;
+                        color.g = (skin_prefs.ecc_strong >> 8) & 0xff;
+                        color.b = skin_prefs.ecc_strong & 0xff;
                     }
                     else
                     {
                         if (emphasis)
                         {
-                            color.r = (skindef.ecc_emphasis >> 16) & 0xff;
-                            color.g = (skindef.ecc_emphasis >> 8) & 0xff;
-                            color.b = skindef.ecc_emphasis & 0xff;
+                            color.r = (skin_prefs.ecc_emphasis >> 16) & 0xff;
+                            color.g = (skin_prefs.ecc_emphasis >> 8) & 0xff;
+                            color.b = skin_prefs.ecc_emphasis & 0xff;
                         }
                         else if (intertitle &&
                                  (cpl.menustatus == MENU_NPC ||
                                   cpl.menustatus == MENU_BOOK))
                         {
-                            color.r = (skindef.ecc_intertitle >> 16) & 0xff;
-                            color.g = (skindef.ecc_intertitle >> 8) & 0xff;
-                            color.b = skindef.ecc_intertitle & 0xff;
+                            color.r = (skin_prefs.ecc_intertitle >> 16) & 0xff;
+                            color.g = (skin_prefs.ecc_intertitle >> 8) & 0xff;
+                            color.b = skin_prefs.ecc_intertitle & 0xff;
                         }
                         else
                         {
@@ -371,25 +371,25 @@ void string_blt(SDL_Surface *surf, _font *font, char *text, int x, int y, uint32
      
                     if (emphasis)
                     {
-                        color.r = (skindef.ecc_emphasis >> 16) & 0xff;
-                        color.g = (skindef.ecc_emphasis >> 8) & 0xff;
-                        color.b = skindef.ecc_emphasis & 0xff;
+                        color.r = (skin_prefs.ecc_emphasis >> 16) & 0xff;
+                        color.g = (skin_prefs.ecc_emphasis >> 8) & 0xff;
+                        color.b = skin_prefs.ecc_emphasis & 0xff;
                     }
                     else
                     {
                         if (strong)
                         {
-                            color.r = (skindef.ecc_strong >> 16) & 0xff;
-                            color.g = (skindef.ecc_strong >> 8) & 0xff;
-                            color.b = skindef.ecc_strong & 0xff;
+                            color.r = (skin_prefs.ecc_strong >> 16) & 0xff;
+                            color.g = (skin_prefs.ecc_strong >> 8) & 0xff;
+                            color.b = skin_prefs.ecc_strong & 0xff;
                         }
                         else if (intertitle &&
                                  (cpl.menustatus == MENU_NPC ||
                                   cpl.menustatus == MENU_BOOK))
                         {
-                            color.r = (skindef.ecc_intertitle >> 16) & 0xff;
-                            color.g = (skindef.ecc_intertitle >> 8) & 0xff;
-                            color.b = skindef.ecc_intertitle & 0xff;
+                            color.r = (skin_prefs.ecc_intertitle >> 16) & 0xff;
+                            color.g = (skin_prefs.ecc_intertitle >> 8) & 0xff;
+                            color.b = skin_prefs.ecc_intertitle & 0xff;
                         }
                         else
                         {
@@ -415,23 +415,23 @@ void string_blt(SDL_Surface *surf, _font *font, char *text, int x, int y, uint32
                         (cpl.menustatus == MENU_NPC ||
                          cpl.menustatus == MENU_BOOK))
                     {
-                        color.r = (skindef.ecc_intertitle >> 16) & 0xff;
-                        color.g = (skindef.ecc_intertitle >> 8) & 0xff;
-                        color.b = skindef.ecc_intertitle & 0xff;
+                        color.r = (skin_prefs.ecc_intertitle >> 16) & 0xff;
+                        color.g = (skin_prefs.ecc_intertitle >> 8) & 0xff;
+                        color.b = skin_prefs.ecc_intertitle & 0xff;
                     }
                     else
                     {
                         if (strong)
                         {
-                            color.r = (skindef.ecc_strong >> 16) & 0xff;
-                            color.g = (skindef.ecc_strong >> 8) & 0xff;
-                            color.b = skindef.ecc_strong & 0xff;
+                            color.r = (skin_prefs.ecc_strong >> 16) & 0xff;
+                            color.g = (skin_prefs.ecc_strong >> 8) & 0xff;
+                            color.b = skin_prefs.ecc_strong & 0xff;
                         }
                         else if (emphasis)
                         {
-                            color.r = (skindef.ecc_emphasis >> 16) & 0xff;
-                            color.g = (skindef.ecc_emphasis >> 8) & 0xff;
-                            color.b = skindef.ecc_emphasis & 0xff;
+                            color.r = (skin_prefs.ecc_emphasis >> 16) & 0xff;
+                            color.g = (skin_prefs.ecc_emphasis >> 8) & 0xff;
+                            color.b = skin_prefs.ecc_emphasis & 0xff;
                         }
                         else
                         {
@@ -468,24 +468,24 @@ void string_blt(SDL_Surface *surf, _font *font, char *text, int x, int y, uint32
                         }
                         else
                         {
-                            color.r = (skindef.ecc_hypertext >> 16) & 0xff;
-                            color.g = (skindef.ecc_hypertext >> 8) & 0xff;
-                            color.b = skindef.ecc_hypertext & 0xff;
+                            color.r = (skin_prefs.ecc_hypertext >> 16) & 0xff;
+                            color.g = (skin_prefs.ecc_hypertext >> 8) & 0xff;
+                            color.b = skin_prefs.ecc_hypertext & 0xff;
                         }
                     }
                     else
                     {
                         if (strong)
                         {
-                            color.r = (skindef.ecc_strong >> 16) & 0xff;
-                            color.g = (skindef.ecc_strong >> 8) & 0xff;
-                            color.b = skindef.ecc_strong & 0xff;
+                            color.r = (skin_prefs.ecc_strong >> 16) & 0xff;
+                            color.g = (skin_prefs.ecc_strong >> 8) & 0xff;
+                            color.b = skin_prefs.ecc_strong & 0xff;
                         }
                         else if (emphasis)
                         {
-                            color.r = (skindef.ecc_emphasis >> 16) & 0xff;
-                            color.g = (skindef.ecc_emphasis >> 8) & 0xff;
-                            color.b = skindef.ecc_emphasis & 0xff;
+                            color.r = (skin_prefs.ecc_emphasis >> 16) & 0xff;
+                            color.g = (skin_prefs.ecc_emphasis >> 8) & 0xff;
+                            color.b = skin_prefs.ecc_emphasis & 0xff;
                         }
                         else
                         {
@@ -694,23 +694,23 @@ void sprite_blt_as_icon(_Sprite *sprite, sint16 x, sint16 y,
     {
         if (type == SPRITE_ICON_TYPE_INACTIVE)
         {
-            bg = Bitmaps[BITMAP_DIALOG_ICON_BG_INACTIVE];
-            fg = Bitmaps[BITMAP_DIALOG_ICON_FG_INACTIVE];
+            bg = skin_sprites[SKIN_SPRITE_DIALOG_ICON_BG_INACTIVE];
+            fg = skin_sprites[SKIN_SPRITE_DIALOG_ICON_FG_INACTIVE];
         }
         else if (type == SPRITE_ICON_TYPE_ACTIVE)
         {
-            bg = Bitmaps[BITMAP_DIALOG_ICON_BG_ACTIVE];
-            fg = Bitmaps[BITMAP_DIALOG_ICON_FG_ACTIVE];
+            bg = skin_sprites[SKIN_SPRITE_DIALOG_ICON_BG_ACTIVE];
+            fg = skin_sprites[SKIN_SPRITE_DIALOG_ICON_FG_ACTIVE];
         }
         else if (type == SPRITE_ICON_TYPE_POSITIVE)
         {
-            bg = Bitmaps[BITMAP_DIALOG_ICON_BG_POSITIVE];
-            fg = Bitmaps[BITMAP_DIALOG_ICON_FG_ACTIVE];
+            bg = skin_sprites[SKIN_SPRITE_DIALOG_ICON_BG_POSITIVE];
+            fg = skin_sprites[SKIN_SPRITE_DIALOG_ICON_FG_ACTIVE];
         }
         else if (type == SPRITE_ICON_TYPE_NEGATIVE)
         {
-            bg = Bitmaps[BITMAP_DIALOG_ICON_BG_NEGATIVE];
-            fg = Bitmaps[BITMAP_DIALOG_ICON_FG_ACTIVE];
+            bg = skin_sprites[SKIN_SPRITE_DIALOG_ICON_BG_NEGATIVE];
+            fg = skin_sprites[SKIN_SPRITE_DIALOG_ICON_FG_ACTIVE];
         }
         else
         {
@@ -721,7 +721,7 @@ void sprite_blt_as_icon(_Sprite *sprite, sint16 x, sint16 y,
     /* If selected, override fg. */
     if (selected)
     {
-        fg = Bitmaps[BITMAP_DIALOG_ICON_FG_SELECTED];
+        fg = skin_sprites[SKIN_SPRITE_DIALOG_ICON_FG_SELECTED];
     }
 
     /* Blt bg. */
@@ -737,10 +737,10 @@ void sprite_blt_as_icon(_Sprite *sprite, sint16 x, sint16 y,
         SDL_Rect  box;
         _BLTFX   *bltfx_local;
 
-        box.x = sprite->border_left + ((bw > 32) ? (bw - 32) / 2 : 0);//skindef.iconsize;
-        box.y = sprite->border_up + ((bh > 32) ? (bh - 32) / 2 : 0);//skindef.iconsize;
-        box.w = (bw > 32) ? 32 : (uint16)bw;//skindef.iconsize;
-        box.h = (bh > 32) ? 32 : (uint16)bh;//skindef.iconsize;
+        box.x = sprite->border_left + ((bw > 32) ? (bw - 32) / 2 : 0);//skin_prefs.iconsize;
+        box.y = sprite->border_up + ((bh > 32) ? (bh - 32) / 2 : 0);//skin_prefs.iconsize;
+        box.w = (bw > 32) ? 32 : (uint16)bw;//skin_prefs.iconsize;
+        box.h = (bh > 32) ? 32 : (uint16)bh;//skin_prefs.iconsize;
         MALLOC(bltfx_local, sizeof(_BLTFX));
 
         if (bltfx)
@@ -754,8 +754,8 @@ void sprite_blt_as_icon(_Sprite *sprite, sint16 x, sint16 y,
         }
 
         sprite_blt(sprite,
-                   x + ((bw <= 32) ? (32 - bw) / 2 : 0),//skindef.iconsize,
-                   y + ((bh <= 32) ? (32 - bh) / 2 : 0),//skindef.iconsize,
+                   x + ((bw <= 32) ? (32 - bw) / 2 : 0),//skin_prefs.iconsize,
+                   y + ((bh <= 32) ? (32 - bh) / 2 : 0),//skin_prefs.iconsize,
                    &box, bltfx_local);
         FREE(bltfx_local);
     }
@@ -769,54 +769,54 @@ void sprite_blt_as_icon(_Sprite *sprite, sint16 x, sint16 y,
         /* bottom left */
         if ((flags & F_LOCKED))
         {
-            sprite_blt(Bitmaps[BITMAP_LOCK], x, y + skindef.item_size -
-                       skindef.icon_size, NULL, bltfx);
+            sprite_blt(skin_sprites[SKIN_SPRITE_LOCK], x, y + skin_prefs.item_size -
+                       skin_prefs.icon_size, NULL, bltfx);
         }
 
         /* top left */
         /* applied and unpaid some spot - can't apply unpaid items */
         if ((flags & F_APPLIED))
         {
-            sprite_blt(Bitmaps[BITMAP_APPLY], x, y, NULL, bltfx);
+            sprite_blt(skin_sprites[SKIN_SPRITE_APPLY], x, y, NULL, bltfx);
         }
         else if ((flags & F_UNPAID))
         {
-            sprite_blt(Bitmaps[BITMAP_UNPAID], x, y, NULL, bltfx);
+            sprite_blt(skin_sprites[SKIN_SPRITE_UNPAID], x, y, NULL, bltfx);
         }
 
         /* right side, top to bottom */
         if (quacon == 255)
         {
-            sprite_blt(Bitmaps[BITMAP_UNIDENTIFIED],
-                       x + skindef.item_size - skindef.icon_size - 2, y, NULL,
+            sprite_blt(skin_sprites[SKIN_SPRITE_UNIDENTIFIED],
+                       x + skin_prefs.item_size - skin_prefs.icon_size - 2, y, NULL,
                        bltfx);
         }
 
         if ((flags & F_MAGIC))
         {
-            sprite_blt(Bitmaps[BITMAP_MAGIC],
-                       x + skindef.item_size - skindef.icon_size - 2,
-                       y + skindef.icon_size, NULL, bltfx);
+            sprite_blt(skin_sprites[SKIN_SPRITE_MAGIC],
+                       x + skin_prefs.item_size - skin_prefs.icon_size - 2,
+                       y + skin_prefs.icon_size, NULL, bltfx);
         }
 
         if ((flags & F_CURSED))
         {
-            sprite_blt(Bitmaps[BITMAP_CURSED],
-                       x + skindef.item_size - skindef.icon_size - 2,
-                       y + skindef.icon_size * 2, NULL, bltfx);
+            sprite_blt(skin_sprites[SKIN_SPRITE_CURSED],
+                       x + skin_prefs.item_size - skin_prefs.icon_size - 2,
+                       y + skin_prefs.icon_size * 2, NULL, bltfx);
         }
 
         if ((flags & F_DAMNED))
         {
-            sprite_blt(Bitmaps[BITMAP_DAMNED],
-                       x + skindef.item_size - skindef.icon_size - 2,
-                       y + skindef.icon_size * 3, NULL, bltfx);
+            sprite_blt(skin_sprites[SKIN_SPRITE_DAMNED],
+                       x + skin_prefs.item_size - skin_prefs.icon_size - 2,
+                       y + skin_prefs.icon_size * 3, NULL, bltfx);
         }
 
         /* central */
         if ((flags & F_TRAPED))
         {
-            sprite_blt(Bitmaps[BITMAP_TRAPED], x + 8, y + 7, NULL, bltfx);
+            sprite_blt(skin_sprites[SKIN_SPRITE_TRAPED], x + 8, y + 7, NULL, bltfx);
         }
     }
 
@@ -826,14 +826,14 @@ void sprite_blt_as_icon(_Sprite *sprite, sint16 x, sint16 y,
         quacon <= 100)
     {
         SDL_Rect box;
-        sint8    con = MAX(0, MIN((float)quacon / 100.0 * 30, 30));//skindef.iconsize - 2
+        sint8    con = MAX(0, MIN((float)quacon / 100.0 * 30, 30));//skin_prefs.iconsize - 2
         uint32   colr = ((quacon >= 100)
                          ? 0x00ff00 : ((quacon >= options.itemdmg_limit_orange)
                          ? 0xffff00 : ((quacon >= options.itemdmg_limit_red)
                          ? 0xff6d00 : 0xff0000)));
 
-        box.x = x + 30;//skindef.iconsize - 2
-        box.y = y + (30 - con);//skindef.iconsize - 2
+        box.x = x + 30;//skin_prefs.iconsize - 2
+        box.y = y + (30 - con);//skin_prefs.iconsize - 2
         box.w = 1;
         box.h = (uint16)con;
         colr = SDL_MapRGB(surface->format, (colr >> 16) & 0xff,
@@ -978,8 +978,8 @@ void sprite_blt_map(_Sprite *sprite, int x, int y, SDL_Rect *box, _BLTFX *bltfx,
             /* we create the filter surfaces only when needed, and then store them */
             if (!darkness_filter[bltfx->dark_level])
             {
-                SDL_SetAlpha(Bitmaps[BITMAP_TEXTWIN_MASK]->bitmap,SDL_SRCALPHA,dark_alpha[bltfx->dark_level]);
-                darkness_filter[bltfx->dark_level]=SDL_DisplayFormatAlpha(Bitmaps[BITMAP_TEXTWIN_MASK]->bitmap);
+                SDL_SetAlpha(skin_sprites[SKIN_SPRITE_TEXTWIN_MASK]->bitmap,SDL_SRCALPHA,dark_alpha[bltfx->dark_level]);
+                darkness_filter[bltfx->dark_level]=SDL_DisplayFormatAlpha(skin_sprites[SKIN_SPRITE_TEXTWIN_MASK]->bitmap);
             }
 
             /* we use now the stretch_cache with lru list */
@@ -1256,7 +1256,7 @@ void play_anims(int mx, int my)
                                + (int)(((anim->mapx - MapData.posx) * MAP_TILE_XOFF
                                + (anim->mapy - MapData.posy - 1) * MAP_TILE_XOFF
                                - 26)*(options.zoom/100.0));
-                        sprite_blt(Bitmaps[BITMAP_DEATH], xpos + anim->x - 5, ypos + tmp_y - 4, NULL, NULL);
+                        sprite_blt(skin_sprites[SKIN_SPRITE_DEATH], xpos + anim->x - 5, ypos + tmp_y - 4, NULL, NULL);
                         sprintf(buf, "%d", anim->value);
                         tmp_off = 0;
 

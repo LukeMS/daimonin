@@ -35,12 +35,12 @@ static void CreateNewFont(_Sprite *sprite, _font *font, sint8 xlen, sint8 ylen,
 
 void font_init(void)
 {
-    CreateNewFont(Bitmaps[BITMAP_FONTTINYOUT], &font_tiny_out, 16, 16, -1, 10);
-    CreateNewFont(Bitmaps[BITMAP_FONTSMALL], &font_small, 16, 16, 1, 11);
-    CreateNewFont(Bitmaps[BITMAP_FONTSMALLOUT], &font_small_out, 16, 16, 1, 12);
-    CreateNewFont(Bitmaps[BITMAP_FONTMEDIUM], &font_medium, 16, 16, 1, 15);
-    CreateNewFont(Bitmaps[BITMAP_FONTMEDIUMOUT], &font_medium_out, 16, 16, 0, 16);
-    CreateNewFont(Bitmaps[BITMAP_FONTBIGOUT], &font_large_out, 11, 16, 1, 18);
+    CreateNewFont(skin_sprites[SKIN_SPRITE_FONTTINYOUT], &font_tiny_out, 16, 16, -1, 10);
+    CreateNewFont(skin_sprites[SKIN_SPRITE_FONTSMALL], &font_small, 16, 16, 1, 11);
+    CreateNewFont(skin_sprites[SKIN_SPRITE_FONTSMALLOUT], &font_small_out, 16, 16, 1, 12);
+    CreateNewFont(skin_sprites[SKIN_SPRITE_FONTMEDIUM], &font_medium, 16, 16, 1, 15);
+    CreateNewFont(skin_sprites[SKIN_SPRITE_FONTMEDIUMOUT], &font_medium_out, 16, 16, 0, 16);
+    CreateNewFont(skin_sprites[SKIN_SPRITE_FONTBIGOUT], &font_large_out, 11, 16, 1, 18);
 }
 
 /* init this font structure with gfx data from sprite bitmap */

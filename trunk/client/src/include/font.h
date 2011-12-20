@@ -28,7 +28,7 @@
 
 typedef struct _font
 {
-    struct _Sprite *sprite; /* don't free this, we link here a Bitmaps[x] ptr*/
+    struct _Sprite *sprite; /* don't free this, we link here a skin_sprites[x] ptr*/
     SDL_Rect        c[256];
     sint8           char_offset; /* space in pixel between 2 chars in a word */
     uint8           line_height;

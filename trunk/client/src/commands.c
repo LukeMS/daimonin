@@ -945,42 +945,42 @@ void DrawInfoCmd2(char *data, int len)
          * fg as set by other flags. */
         if ((flags & NDI_FLAG_SAY))
         {
-            colr = skindef.chat_say;
+            colr = skin_prefs.chat_say;
         }
         else if ((flags & NDI_FLAG_SHOUT))
         {
-            colr = skindef.chat_shout;
+            colr = skin_prefs.chat_shout;
         }
         else if ((flags & NDI_FLAG_TELL))
         {
             if (colr == NDI_COLR_FUSCHIA)
             {
                 flags |= NDI_FLAG_EAVESDROP;
-                colr = skindef.chat_eavesdrop;
+                colr = skin_prefs.chat_eavesdrop;
             }
             else
             {
-                colr = skindef.chat_tell;
+                colr = skin_prefs.chat_tell;
             }
         }
         else if ((flags & NDI_FLAG_GSAY))
         {
-            colr = skindef.chat_gsay;
+            colr = skin_prefs.chat_gsay;
         }
         else if ((flags & NDI_FLAG_EMOTE))
         {
-            colr = skindef.chat_emote;
+            colr = skin_prefs.chat_emote;
         }
         else if ((flags & NDI_FLAG_ADMIN))
         {
-            colr = skindef.chat_admin;
+            colr = skin_prefs.chat_admin;
         }
 
         /* Color messages from buddys */
         if (buddy_check(data))
         {
             flags |= NDI_FLAG_BUDDY;
-            colr = skindef.chat_buddy;
+            colr = skin_prefs.chat_buddy;
         }
 
         /* Only see shouts from buddies. */
@@ -1027,31 +1027,31 @@ void TargetObject(char *data, int len)
     /* Translate target's colour to the skin's preference. */
     if (*data == 6)
     {
-        cpl.target_color = skindef.target_grey;
+        cpl.target_color = skin_prefs.target_grey;
     }
     else if (*data == 4)
     {
-        cpl.target_color = skindef.target_green;
+        cpl.target_color = skin_prefs.target_green;
     }
     else if (*data == 5)
     {
-        cpl.target_color = skindef.target_blue;
+        cpl.target_color = skin_prefs.target_blue;
     }
     else if (*data == 8)
     {
-        cpl.target_color = skindef.target_purple;
+        cpl.target_color = skin_prefs.target_purple;
     }
     else if (*data == 3)
     {
-        cpl.target_color = skindef.target_red;
+        cpl.target_color = skin_prefs.target_red;
     }
     else if (*data == 1)
     {
-        cpl.target_color = skindef.target_orange;
+        cpl.target_color = skin_prefs.target_orange;
     }
     else
     {
-        cpl.target_color = skindef.target_yellow;
+        cpl.target_color = skin_prefs.target_yellow;
     }
 
     cpl.target_code = *++data;

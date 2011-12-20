@@ -497,11 +497,11 @@ void show_book(int x, int y)
     int i, ii, yoff;
     _gui_book_page *page1, *page2;
 
-    sprite_blt(Bitmaps[BITMAP_JOURNAL], x, y, NULL, NULL);
+    sprite_blt(skin_sprites[SKIN_SPRITE_JOURNAL], x, y, NULL, NULL);
     global_book_data.x = x;
     global_book_data.y = y;
-    global_book_data.xlen = Bitmaps[BITMAP_JOURNAL]->bitmap->w;
-    global_book_data.ylen = Bitmaps[BITMAP_JOURNAL]->bitmap->h;
+    global_book_data.xlen = skin_sprites[SKIN_SPRITE_JOURNAL]->bitmap->w;
+    global_book_data.ylen = skin_sprites[SKIN_SPRITE_JOURNAL]->bitmap->h;
 
     add_close_button(x, y, MENU_BOOK);
 

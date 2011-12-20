@@ -38,8 +38,8 @@ void locator_init(uint16 w, uint16 h)
 {
     _server *node;
 
-    locator.map_wh = Bitmaps[BITMAP_LOCATOR_MAP]->bitmap->w;
-    locator.map_ht = Bitmaps[BITMAP_LOCATOR_MAP]->bitmap->h; 
+    locator.map_wh = skin_sprites[SKIN_SPRITE_LOCATOR_MAP]->bitmap->w;
+    locator.map_ht = skin_sprites[SKIN_SPRITE_LOCATOR_MAP]->bitmap->h; 
 
     /* Get the location of the client. */
     GetHostIP(NULL, &locator.client);
@@ -197,18 +197,18 @@ void locator_show(sint16 x, sint16 y)
     box.w = locator.box.w;
     box.h = locator.box.h;
     SDL_SetClipRect(ScreenSurface, &box);
-    sprite_blt(Bitmaps[BITMAP_LOCATOR_MAP], x, y, &locator.box, NULL);
+    sprite_blt(skin_sprites[SKIN_SPRITE_LOCATOR_MAP], x, y, &locator.box, NULL);
 
-//    Plot(x, y, 22, 485, BITMAP_LOCATOR_PLAYER_THAT); // Paris, France
-//    Plot(x, y, 132, 523, BITMAP_LOCATOR_PLAYER_THAT); // Berlin, Germany
-//    Plot(x, y, -216, 641, BITMAP_LOCATOR_PLAYER_THAT); // Reykjavik, Iceland
-//    Plot(x, y, 123, 415, BITMAP_LOCATOR_PLAYER_THAT); // Rome, Italy
-//    Plot(x, y, 373, 554, BITMAP_LOCATOR_PLAYER_THAT); // Moskva, Russian Federation
-//    Plot(x, y, -34, 402, BITMAP_LOCATOR_PLAYER_THAT); // Madrid, Spain
-//    Plot(x, y, 180, 592, BITMAP_LOCATOR_PLAYER_THAT); // Stockholm, Sweden
-//    Plot(x, y, -0, 514, BITMAP_LOCATOR_PLAYER_THAT); // London, UK
-//    Plot(x, y, -770, 399, BITMAP_LOCATOR_PLAYER_THAT); // Washington DC, USA
-//    Plot(x, y, -1600, -213, BITMAP_LOCATOR_PLAYER_THAT); // Rarotonga, Cook Islands
+//    Plot(x, y, 22, 485, SKIN_SPRITE_LOCATOR_PLAYER_THAT); // Paris, France
+//    Plot(x, y, 132, 523, SKIN_SPRITE_LOCATOR_PLAYER_THAT); // Berlin, Germany
+//    Plot(x, y, -216, 641, SKIN_SPRITE_LOCATOR_PLAYER_THAT); // Reykjavik, Iceland
+//    Plot(x, y, 123, 415, SKIN_SPRITE_LOCATOR_PLAYER_THAT); // Rome, Italy
+//    Plot(x, y, 373, 554, SKIN_SPRITE_LOCATOR_PLAYER_THAT); // Moskva, Russian Federation
+//    Plot(x, y, -34, 402, SKIN_SPRITE_LOCATOR_PLAYER_THAT); // Madrid, Spain
+//    Plot(x, y, 180, 592, SKIN_SPRITE_LOCATOR_PLAYER_THAT); // Stockholm, Sweden
+//    Plot(x, y, -0, 514, SKIN_SPRITE_LOCATOR_PLAYER_THAT); // London, UK
+//    Plot(x, y, -770, 399, SKIN_SPRITE_LOCATOR_PLAYER_THAT); // Washington DC, USA
+//    Plot(x, y, -1600, -213, SKIN_SPRITE_LOCATOR_PLAYER_THAT); // Rarotonga, Cook Islands
 
     /* Plot all servers EXCEPT the currently selected one. */
     for (node = start_server; node; node = node->next)
@@ -219,12 +219,12 @@ void locator_show(sint16 x, sint16 y)
         }
 
         Plot(x, y, node->geoloc.lx, node->geoloc.ly,
-             BITMAP_LOCATOR_SERVER_THAT);
+             SKIN_SPRITE_LOCATOR_SERVER_THAT);
     }
 
     /* Plot the currently selected server. */
     Plot(x, y, locator.server->geoloc.lx, locator.server->geoloc.ly,
-         BITMAP_LOCATOR_SERVER_THIS);
+         SKIN_SPRITE_LOCATOR_SERVER_THIS);
 
     if (locator.player)
     {
@@ -238,7 +238,7 @@ void locator_show(sint16 x, sint16 y)
                 continue;
             }
 
-            Plot(x, y, lp->geoloc.lx, lp->geoloc.ly, BITMAP_LOCATOR_PLAYER_THAT);
+            Plot(x, y, lp->geoloc.lx, lp->geoloc.ly, SKIN_SPRITE_LOCATOR_PLAYER_THAT);
         }
 
         /* Plot all the players on this server. */
@@ -249,12 +249,12 @@ void locator_show(sint16 x, sint16 y)
                 continue;
             }
 
-            Plot(x, y, lp->geoloc.lx, lp->geoloc.ly, BITMAP_LOCATOR_PLAYER_THIS);
+            Plot(x, y, lp->geoloc.lx, lp->geoloc.ly, SKIN_SPRITE_LOCATOR_PLAYER_THIS);
         }
     }
 
     /* Plot this client. */
-    Plot(x, y, locator.client.lx, locator.client.ly, BITMAP_LOCATOR_CLIENT);
+    Plot(x, y, locator.client.lx, locator.client.ly, SKIN_SPRITE_LOCATOR_CLIENT);
 
     SDL_SetClipRect(ScreenSurface, NULL);
     draw_frame(x - 1, y - 1, locator.box.w + 1, locator.box.h + 1);
@@ -405,9 +405,9 @@ static void Plot(sint16 x, sint16 y, sint16 lx, sint16 ly, int marker)
         yy >= locator.box.y &&
         yy <= locator.box.y + locator.box.h)
     {
-        sprite_blt(Bitmaps[marker],
-                   (x + (xx - locator.box.x) - Bitmaps[marker]->bitmap->w / 2),
-                   (y + (yy - locator.box.y) - Bitmaps[marker]->bitmap->h / 2),
+        sprite_blt(skin_sprites[marker],
+                   (x + (xx - locator.box.x) - skin_sprites[marker]->bitmap->w / 2),
+                   (y + (yy - locator.box.y) - skin_sprites[marker]->bitmap->h / 2),
                    NULL, NULL);
     }
 }

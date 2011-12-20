@@ -107,5 +107,6 @@ typedef signed char     sint8;
 #include "physfsrwops.h"
 #include "srvfile.h"
 #include "locator.h"
+#include "skin.h"
 
 #endif /* ifndef __INCLUDE_H */
