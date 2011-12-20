@@ -116,51 +116,6 @@ extern int                  mb_clicked;
 #define SPLIST_MODE_REMOVE 1
 #define SPLIST_MODE_UPDATE 2
 
-/* This is for the skin-sysem */
-/* TODO: don't clutter this stuff over all files, instead make a structure for all that stuff */
-typedef struct _skindef
-{
-    uint32  chat_admin;
-    uint32  chat_buddy;
-    uint32  chat_eavesdrop;
-    uint32  chat_emote;
-    uint32  chat_gsay;
-    uint32  chat_say;
-    uint32  chat_shout;
-    uint32  chat_tell;
-    uint32  dialog_rows0;
-    uint32  dialog_rows1;
-    uint32  dialog_rowsS;
-    uint32  ecc_emphasis;
-    uint32  ecc_strong;
-    uint32  ecc_intertitle;
-    uint32  ecc_hypertext;
-    uint32  target_grey;
-    uint32  target_green;
-    uint32  target_blue;
-    uint32  target_yellow;
-    uint32  target_orange;
-    uint32  target_red;
-    uint32  target_purple;
-    uint32  widget_info;
-    uint32  widget_key;
-    uint32  widget_title;
-    uint32  widget_valueEq;
-    uint32  widget_valueHi;
-    uint32  widget_valueLo;
-    uint32  input_string;
-    uint32  input_caret;
-    uint8   effect_width;
-    uint8   effect_height;
-    char   *effect_eating;
-    char   *effect_sleeping;
-    uint8   item_size;
-    uint8   icon_size;
-}
-_skindef;
-
-extern _skindef     skindef;
-
 #define MAXMETAWINDOW 5
 
 #define MAXFACES 4
@@ -486,178 +441,6 @@ enum
     ESC_MENU_INDEX /* last index */
 };
 
-typedef enum _bitmap_index
-{
-    BITMAP_FONTSMALL,
-    BITMAP_FONTTINYOUT,
-    BITMAP_FONTBIGOUT,
-    BITMAP_FONTSMALLOUT,
-    BITMAP_FONTMEDIUM,
-    BITMAP_FONTMEDIUMOUT,
-    BITMAP_INTRO,
-    BITMAP_PROGRESS,
-    BITMAP_PROGRESS_BACK,
-    BITMAP_BLACKTILE,
-    BITMAP_GRID,
-    BITMAP_TEXTWIN,
-    BITMAP_LOGIN_INP,
-    /* Status bars */
-    BITMAP_HP,
-    BITMAP_SP,
-    BITMAP_GRACE,
-    BITMAP_FOOD,
-    BITMAP_HP_BACK,
-    BITMAP_SP_BACK,
-    BITMAP_GRACE_BACK,
-    BITMAP_FOOD_BACK,
-    BITMAP_APPLY,
-    BITMAP_FOOD2,
-    BITMAP_UNPAID,
-    BITMAP_CURSED,
-    BITMAP_DAMNED,
-    BITMAP_LOCK,
-    BITMAP_MAGIC,
-    BITMAP_UNIDENTIFIED,
-    BITMAP_RANGE,
-    BITMAP_RANGE_MARKER,
-    BITMAP_RANGE_CTRL,
-    BITMAP_RANGE_CTRL_NO,
-    BITMAP_RANGE_SKILL,
-    BITMAP_RANGE_SKILL_NO,
-    BITMAP_RANGE_THROW,
-    BITMAP_RANGE_THROW_NO,
-    BITMAP_RANGE_TOOL,
-    BITMAP_RANGE_TOOL_NO,
-    BITMAP_RANGE_WIZARD,
-    BITMAP_RANGE_WIZARD_NO,
-    BITMAP_RANGE_PRIEST,
-    BITMAP_RANGE_PRIEST_NO,
-    BITMAP_CMARK_START,
-    BITMAP_CMARK_END,
-    BITMAP_CMARK_MIDDLE,
-    BITMAP_TWIN_SCROLL,
-    BITMAP_INV_SCROLL,
-    BITMAP_BELOW_SCROLL,
-    BITMAP_NUMBER,
-    BITMAP_DEATH,
-    BITMAP_CONFUSE,
-    BITMAP_PARALYZE,
-    BITMAP_SCARED,
-    BITMAP_BLIND,
-    BITMAP_EXCLUSIVE_EFFECT,
-    BITMAP_ENEMY1,
-    BITMAP_ENEMY2,
-    BITMAP_PROBE,
-    BITMAP_QUICKSLOTS,
-    BITMAP_QUICKSLOTSV,
-    BITMAP_INVENTORY,
-    BITMAP_GROUP,
-    BITMAP_EXP_BORDER,
-    BITMAP_EXP_SLIDER,
-    BITMAP_EXP_BUBBLE1,
-    BITMAP_EXP_BUBBLE2,
-    BITMAP_BELOW,
-    BITMAP_FLINE,
-    BITMAP_TARGET_ATTACK,
-    BITMAP_TARGET_TALK,
-    BITMAP_TARGET_NORMAL,
-    BITMAP_LOADING,
-    BITMAP_WARN_HP,
-    BITMAP_STATS_BG,
-    BITMAP_WARN_WEIGHT,
-    BITMAP_LOGO270,
-    BITMAP_DIALOG_BG,
-    BITMAP_DIALOG_TITLE_OPTIONS,
-    BITMAP_DIALOG_TITLE_KEYBIND,
-    BITMAP_DIALOG_TITLE_SKILL,
-    BITMAP_DIALOG_TITLE_SPELL,
-    BITMAP_DIALOG_TITLE_CREATION,
-    BITMAP_DIALOG_TITLE_LOGIN,
-    BITMAP_DIALOG_ICON_BG_ACTIVE,
-    BITMAP_DIALOG_ICON_BG_INACTIVE,
-    BITMAP_DIALOG_ICON_BG_NEGATIVE,
-    BITMAP_DIALOG_ICON_BG_POSITIVE,
-    BITMAP_DIALOG_ICON_FG_ACTIVE,
-    BITMAP_DIALOG_ICON_FG_INACTIVE,
-    BITMAP_DIALOG_ICON_FG_SELECTED,
-    BITMAP_DIALOG_BUTTON_SELECTED,
-    BITMAP_DIALOG_BUTTON_UP_PREFIX,
-    BITMAP_DIALOG_BUTTON_DOWN_PREFIX,
-    BITMAP_DIALOG_BUTTON_UP,
-    BITMAP_DIALOG_BUTTON_DOWN,
-    BITMAP_DIALOG_TAB_START,
-    BITMAP_DIALOG_TAB,
-    BITMAP_DIALOG_TAB_STOP,
-    BITMAP_DIALOG_TAB_SEL,
-    BITMAP_DIALOG_CHECKER,
-    BITMAP_DIALOG_RANGE_OFF,
-    BITMAP_DIALOG_RANGE_L,
-    BITMAP_DIALOG_RANGE_R,
-    BITMAP_TARGET_HP,
-    BITMAP_TARGET_HP_B,
-    BITMAP_TEXTWIN_MASK,
-    BITMAP_SLIDER_UP,
-    BITMAP_SLIDER_DOWN,
-    BITMAP_SLIDER,
-    BITMAP_GROUP_CLEAR,
-    BITMAP_EXP_SKILL_BORDER,
-    BITMAP_EXP_SKILL_LINE,
-    BITMAP_EXP_SKILL_BUBBLE,
-    BITMAP_OPTIONS_HEAD,
-    BITMAP_OPTIONS_KEYS,
-    BITMAP_OPTIONS_SETTINGS,
-    BITMAP_OPTIONS_LOGOUT,
-    BITMAP_OPTIONS_BACK,
-    BITMAP_OPTIONS_MARK_LEFT,
-    BITMAP_OPTIONS_MARK_RIGHT,
-    BITMAP_OPTIONS_ALPHA,
-    BITMAP_PENTAGRAM,
-    BITMAP_BUTTONQ_UP,
-    BITMAP_BUTTONQ_DOWN,
-    BITMAP_TRAPED,
-    BITMAP_PRAY,
-    BITMAP_WAND,
-    BITMAP_GROUP_INVITE,
-    BITMAP_BUTTON_BLACK_UP,
-    BITMAP_BUTTON_BLACK_DOWN,
-    BITMAP_SMALL_UP,
-    BITMAP_SMALL_DOWN,
-    BITMAP_GROUP_MANA,
-    BITMAP_GROUP_GRACE,
-    BITMAP_GROUP_HP,
-    BITMAP_GUI_NPC_TOP,
-    BITMAP_GUI_NPC_MIDDLE,
-    BITMAP_GUI_NPC_BOTTOM,
-    BITMAP_GUI_NPC_PANEL,
-    BITMAP_NPC_INT_SLIDER,
-    BITMAP_JOURNAL,
-    BITMAP_MSCURSOR_MOVE,
-    BITMAP_RESIST_BG,
-    BITMAP_MAIN_LVL_BG,
-    BITMAP_SKILL_EXP_BG,
-    BITMAP_REGEN_BG,
-    BITMAP_SKILL_LVL_BG,
-    BITMAP_MENU_BUTTONS,
-    BITMAP_GROUP_BG,
-    BITMAP_GROUP_BG_BOTTOM,
-    BITMAP_DOLL_BG,
-    BITMAP_PLAYER_INFO,
-    BITMAP_TARGET_BG,
-    BITMAP_INV_BG,
-    BITMAP_TEXTINPUT,
-    BITMAP_STIMER,
-    BITMAP_CLOSEBUTTON,
-    BITMAP_LOCATOR_MAP,
-    BITMAP_LOCATOR_CLIENT,
-    BITMAP_LOCATOR_PLAYER_THAT,
-    BITMAP_LOCATOR_PLAYER_THIS,
-    BITMAP_LOCATOR_SERVER_THAT,
-    BITMAP_LOCATOR_SERVER_THIS,
-
-    BITMAP_INIT
-}
-_bitmap_index;
-
 /* for custom cursors */
 enum {
     MSCURSOR_MOVE = 1,
@@ -678,8 +461,6 @@ extern int                  ToggleScreenFlag;
 
 extern int                    interface_mode;
 
-extern struct _Sprite      *Bitmaps[];
-
 extern struct gui_book_struct    *gui_interface_book;
 
 extern SDL_Surface         *ScreenSurface;      /* our main bla and so on surface */
@@ -695,9 +476,6 @@ extern void open_input_mode(int maxchar);
 extern void add_metaserver_data(char *name, char *server, int port, int player, char *ver, char *desc);
 extern void show_ping_string(_server *node);
 extern void clear_metaserver_data(void);
-extern void free_bitmaps(void);
-extern void reload_skin();
-extern void load_skindef();
 extern void load_options_dat(void);
 extern void save_options_dat(void);
 extern void reset_input_mode(void);

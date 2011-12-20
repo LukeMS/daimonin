@@ -89,9 +89,9 @@ void show_input_string(_font *font, SDL_Rect *box, char repl)
         }
 
         colr = SDL_MapRGB(ScreenSurface->format,
-                          (skindef.input_caret >> 16) & 0xff,
-                          (skindef.input_caret >> 8) & 0xff,
-                          skindef.input_caret & 0xff);
+                          (skin_prefs.input_caret >> 16) & 0xff,
+                          (skin_prefs.input_caret >> 8) & 0xff,
+                          skin_prefs.input_caret & 0xff);
         SDL_FillRect(ScreenSurface, &caret, colr);
     }
 

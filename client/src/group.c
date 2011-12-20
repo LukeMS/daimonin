@@ -55,15 +55,15 @@ void widget_show_group(int x, int y)
         box.h = (group_count*24)+31;
 
     widget_data[WIDGET_GROUP_ID].ht = box.h+4;
-    sprite_blt(Bitmaps[BITMAP_GROUP_BG], x, y, &box, NULL);
-    sprite_blt(Bitmaps[BITMAP_GROUP_BG_BOTTOM],x,y+box.h, NULL, NULL);
+    sprite_blt(skin_sprites[SKIN_SPRITE_GROUP_BG], x, y, &box, NULL);
+    sprite_blt(skin_sprites[SKIN_SPRITE_GROUP_BG_BOTTOM],x,y+box.h, NULL, NULL);
 
-    string_blt(ScreenSurface, &font_tiny_out, "Group:", x +50, y+2 , skindef.widget_title, NULL, NULL);
+    string_blt(ScreenSurface, &font_tiny_out, "Group:", x +50, y+2 , skin_prefs.widget_title, NULL, NULL);
 
 
     if (global_group_status < GROUP_INVITE)
     {
-        string_blt(ScreenSurface, &font_tiny_out, "type '/help group' for info", x+13, y+13, skindef.widget_info, NULL, NULL);
+        string_blt(ScreenSurface, &font_tiny_out, "type '/help group' for info", x+13, y+13, skin_prefs.widget_info, NULL, NULL);
         return;
     }
 
@@ -71,21 +71,21 @@ void widget_show_group(int x, int y)
     mb = SDL_GetMouseState(&mx, &my);
     if (global_group_status == GROUP_INVITE || global_group_status == GROUP_WAIT)
     {
-        sprite_blt(Bitmaps[BITMAP_GROUP_INVITE], x + 10, y +32, NULL, NULL);
-        string_blt(ScreenSurface, &font_small, "GROUP INVITE", x+30, y+13,skindef.widget_key, NULL, NULL);
+        sprite_blt(skin_sprites[SKIN_SPRITE_GROUP_INVITE], x + 10, y +32, NULL, NULL);
+        string_blt(ScreenSurface, &font_small, "GROUP INVITE", x+30, y+13,skin_prefs.widget_key, NULL, NULL);
         len =  string_width(&font_small, group_invite);
-        string_blt(ScreenSurface, &font_small, group_invite, x + 60-len/2, y + 45, skindef.widget_info, NULL, NULL);
-        string_blt(ScreenSurface, &font_small, "has invited you", x + 28, y +65, skindef.widget_info, NULL, NULL);
-        string_blt(ScreenSurface, &font_small, "to join a group.", x + 28, y +78, skindef.widget_info, NULL, NULL);
+        string_blt(ScreenSurface, &font_small, group_invite, x + 60-len/2, y + 45, skin_prefs.widget_info, NULL, NULL);
+        string_blt(ScreenSurface, &font_small, "has invited you", x + 28, y +65, skin_prefs.widget_info, NULL, NULL);
+        string_blt(ScreenSurface, &font_small, "to join a group.", x + 28, y +78, skin_prefs.widget_info, NULL, NULL);
 
         if (global_group_status == GROUP_INVITE)
         {
-            if (add_button(x + 4 , y + 110, 101, BITMAP_BUTTON_BLACK_UP, "join", "join"))
+            if (add_button(x + 4 , y + 110, 101, SKIN_SPRITE_BUTTON_BLACK_UP, "join", "join"))
             {
                 global_group_status = GROUP_WAIT;
                 client_cmd_generic("/join");
             }
-            if (add_button(x + 61, y + 110, 102, BITMAP_BUTTON_BLACK_UP, "deny", "deny"))
+            if (add_button(x + 61, y + 110, 102, SKIN_SPRITE_BUTTON_BLACK_UP, "deny", "deny"))
             {
                 global_group_status = GROUP_NO;
                 client_cmd_generic("/deny");
@@ -94,7 +94,7 @@ void widget_show_group(int x, int y)
     }
     else /* status: GROUP_MEMBER */
     {
-        if (add_button(x+4, y + 7, 103, BITMAP_SMALL_UP, "leave", "leave"))
+        if (add_button(x+4, y + 7, 103, SKIN_SPRITE_SMALL_UP, "leave", "leave"))
         {
             if (global_group_status != GROUP_LEAVE)
             {
@@ -105,13 +105,13 @@ void widget_show_group(int x, int y)
 
         for (s = 0; s < GROUP_MAX_MEMBER; s++)
         {
-            /* sprite_blt(Bitmaps[BITMAP_GROUP], x + group_pos[s][0] + 2, y + group_pos[s][1] + 1, NULL, NULL); */
+            /* sprite_blt(skin_sprites[SKIN_SPRITE_GROUP], x + group_pos[s][0] + 2, y + group_pos[s][1] + 1, NULL, NULL); */
             if (group[s].name[0] != '\0')
             {
-                sprite_blt(Bitmaps[BITMAP_GROUP], x + group_pos[s][0] + 2, y + group_pos[s][1] + 1, NULL, NULL);
-                string_blt(ScreenSurface, &font_small, group[s].name, x + group_pos[s][0] + 33, y + group_pos[s][1] + 1,skindef.widget_key, NULL, NULL);
+                sprite_blt(skin_sprites[SKIN_SPRITE_GROUP], x + group_pos[s][0] + 2, y + group_pos[s][1] + 1, NULL, NULL);
+                string_blt(ScreenSurface, &font_small, group[s].name, x + group_pos[s][0] + 33, y + group_pos[s][1] + 1,skin_prefs.widget_key, NULL, NULL);
                 sprintf(buf, "%3d", group[s].level);
-                string_blt(ScreenSurface, &font_tiny_out, buf, x + group_pos[s][0] + 8, y + group_pos[s][1], skindef.widget_valueEq, NULL, NULL);
+                string_blt(ScreenSurface, &font_tiny_out, buf, x + group_pos[s][0] + 8, y + group_pos[s][1], skin_prefs.widget_valueEq, NULL, NULL);
 
                 if (group[s].maxhp)
                 {
@@ -123,13 +123,13 @@ void widget_show_group(int x, int y)
                     temp = (double) tmp / (double) group[s].maxhp;
                     box.x = 0;
                     box.y = 0;
-                    box.h = Bitmaps[BITMAP_GROUP_HP]->bitmap->h;
-                    box.w = (int) (Bitmaps[BITMAP_GROUP_HP]->bitmap->w * temp);
+                    box.h = skin_sprites[SKIN_SPRITE_GROUP_HP]->bitmap->h;
+                    box.w = (int) (skin_sprites[SKIN_SPRITE_GROUP_HP]->bitmap->w * temp);
                     if (tmp && !box.w)
                         box.w = 1;
-                    if (box.w > Bitmaps[BITMAP_GROUP_HP]->bitmap->w)
-                        box.w = Bitmaps[BITMAP_GROUP_HP]->bitmap->w;
-                    sprite_blt(Bitmaps[BITMAP_GROUP_HP], x + group_pos[s][0] + 2, y + group_pos[s][1] + 17, &box, NULL);
+                    if (box.w > skin_sprites[SKIN_SPRITE_GROUP_HP]->bitmap->w)
+                        box.w = skin_sprites[SKIN_SPRITE_GROUP_HP]->bitmap->w;
+                    sprite_blt(skin_sprites[SKIN_SPRITE_GROUP_HP], x + group_pos[s][0] + 2, y + group_pos[s][1] + 17, &box, NULL);
                 }
                 if (group[s].maxsp)
                 {
@@ -141,13 +141,13 @@ void widget_show_group(int x, int y)
                     temp = (double) tmp / (double) group[s].maxsp;
                     box.x = 0;
                     box.y = 0;
-                    box.h = Bitmaps[BITMAP_GROUP_MANA]->bitmap->h;
-                    box.w = (int) (Bitmaps[BITMAP_GROUP_MANA]->bitmap->w * temp);
+                    box.h = skin_sprites[SKIN_SPRITE_GROUP_MANA]->bitmap->h;
+                    box.w = (int) (skin_sprites[SKIN_SPRITE_GROUP_MANA]->bitmap->w * temp);
                     if (tmp && !box.w)
                         box.w = 1;
-                    if (box.w > Bitmaps[BITMAP_GROUP_MANA]->bitmap->w)
-                        box.w = Bitmaps[BITMAP_GROUP_MANA]->bitmap->w;
-                    sprite_blt(Bitmaps[BITMAP_GROUP_MANA], x + group_pos[s][0] + 2, y + group_pos[s][1] + 19, &box, NULL);
+                    if (box.w > skin_sprites[SKIN_SPRITE_GROUP_MANA]->bitmap->w)
+                        box.w = skin_sprites[SKIN_SPRITE_GROUP_MANA]->bitmap->w;
+                    sprite_blt(skin_sprites[SKIN_SPRITE_GROUP_MANA], x + group_pos[s][0] + 2, y + group_pos[s][1] + 19, &box, NULL);
                 }
                 if (group[s].maxgrace)
                 {
@@ -159,13 +159,13 @@ void widget_show_group(int x, int y)
                     temp = (double) tmp / (double) group[s].maxgrace;
                     box.x = 0;
                     box.y = 0;
-                    box.h = Bitmaps[BITMAP_GROUP_GRACE]->bitmap->h;
-                    box.w = (int) (Bitmaps[BITMAP_GROUP_GRACE]->bitmap->w * temp);
+                    box.h = skin_sprites[SKIN_SPRITE_GROUP_GRACE]->bitmap->h;
+                    box.w = (int) (skin_sprites[SKIN_SPRITE_GROUP_GRACE]->bitmap->w * temp);
                     if (tmp && !box.w)
                         box.w = 1;
-                    if (box.w > Bitmaps[BITMAP_GROUP_GRACE]->bitmap->w)
-                        box.w = Bitmaps[BITMAP_GROUP_GRACE]->bitmap->w;
-                    sprite_blt(Bitmaps[BITMAP_GROUP_GRACE], x + group_pos[s][0] + 2, y + group_pos[s][1] + 21, &box, NULL);
+                    if (box.w > skin_sprites[SKIN_SPRITE_GROUP_GRACE]->bitmap->w)
+                        box.w = skin_sprites[SKIN_SPRITE_GROUP_GRACE]->bitmap->w;
+                    sprite_blt(skin_sprites[SKIN_SPRITE_GROUP_GRACE], x + group_pos[s][0] + 2, y + group_pos[s][1] + 21, &box, NULL);
                 }
             }
         }
@@ -188,16 +188,16 @@ void show_group(int x, int y)
 
     /*
     for (s = 0; s < GROUP_MAX_MEMBER; s++)
-        sprite_blt(Bitmaps[BITMAP_GROUP], x + group_pos[s][0] + 2, y + group_pos[s][1] + 1, NULL, NULL);
+        sprite_blt(skin_sprites[SKIN_SPRITE_GROUP], x + group_pos[s][0] + 2, y + group_pos[s][1] + 1, NULL, NULL);
     s=0;
-    sprite_blt(Bitmaps[BITMAP_GROUP_HP], x + group_pos[s][0] + 2, y + group_pos[s][1] + 17, NULL, NULL);
-    sprite_blt(Bitmaps[BITMAP_GROUP_MANA], x + group_pos[s][0] + 2, y + group_pos[s][1] + 19, NULL, NULL);
-    sprite_blt(Bitmaps[BITMAP_GROUP_GRACE], x + group_pos[s][0] + 2, y + group_pos[s][1] + 21, NULL, NULL);
+    sprite_blt(skin_sprites[SKIN_SPRITE_GROUP_HP], x + group_pos[s][0] + 2, y + group_pos[s][1] + 17, NULL, NULL);
+    sprite_blt(skin_sprites[SKIN_SPRITE_GROUP_MANA], x + group_pos[s][0] + 2, y + group_pos[s][1] + 19, NULL, NULL);
+    sprite_blt(skin_sprites[SKIN_SPRITE_GROUP_GRACE], x + group_pos[s][0] + 2, y + group_pos[s][1] + 21, NULL, NULL);
     */
 
     if (global_group_status < GROUP_INVITE)
     {
-        string_blt(ScreenSurface, &font_tiny_out, "type '/help group' for info", 40, Screensize.yoff+585, skindef.widget_info, NULL, NULL);
+        string_blt(ScreenSurface, &font_tiny_out, "type '/help group' for info", 40, Screensize.yoff+585, skin_prefs.widget_info, NULL, NULL);
         return;
     }
 
@@ -205,20 +205,20 @@ void show_group(int x, int y)
     mb = SDL_GetMouseState(&mx, &my);
     if (global_group_status == GROUP_INVITE || global_group_status == GROUP_WAIT)
     {
-        sprite_blt(Bitmaps[BITMAP_GROUP_INVITE], x + group_pos[0][0] + 2, y + group_pos[0][1] + 1, NULL, NULL);
-        string_blt(ScreenSurface, &font_small, "GROUP INVITE", x + group_pos[0][0] + 76, y + group_pos[0][1] + 5,skindef.widget_key, NULL, NULL);
+        sprite_blt(skin_sprites[SKIN_SPRITE_GROUP_INVITE], x + group_pos[0][0] + 2, y + group_pos[0][1] + 1, NULL, NULL);
+        string_blt(ScreenSurface, &font_small, "GROUP INVITE", x + group_pos[0][0] + 76, y + group_pos[0][1] + 5,skin_prefs.widget_key, NULL, NULL);
         len =  string_width(&font_small, group_invite);
-        string_blt(ScreenSurface, &font_small, group_invite, x + group_pos[0][0]+107-len/2, y + group_pos[0][1] + 19,skindef.widget_info, NULL, NULL);
-        string_blt(ScreenSurface, &font_small, " has invited you to join a group.", x + group_pos[0][0] + 40, y + group_pos[0][1] + 31,skindef.widget_info, NULL, NULL);
+        string_blt(ScreenSurface, &font_small, group_invite, x + group_pos[0][0]+107-len/2, y + group_pos[0][1] + 19,skin_prefs.widget_info, NULL, NULL);
+        string_blt(ScreenSurface, &font_small, " has invited you to join a group.", x + group_pos[0][0] + 40, y + group_pos[0][1] + 31,skin_prefs.widget_info, NULL, NULL);
 
         if (global_group_status == GROUP_INVITE)
         {
-            if (add_button(x + group_pos[0][0] + 40, y + group_pos[0][1] + 48, 101, BITMAP_BUTTON_BLACK_UP, "join", "join"))
+            if (add_button(x + group_pos[0][0] + 40, y + group_pos[0][1] + 48, 101, SKIN_SPRITE_BUTTON_BLACK_UP, "join", "join"))
             {
                 global_group_status = GROUP_WAIT;
                 client_cmd_generic("/join");
             }
-            if (add_button(x + group_pos[0][0] + 120, y + group_pos[0][1] + 48, 102, BITMAP_BUTTON_BLACK_UP, "deny", "deny"))
+            if (add_button(x + group_pos[0][0] + 120, y + group_pos[0][1] + 48, 102, SKIN_SPRITE_BUTTON_BLACK_UP, "deny", "deny"))
             {
                 global_group_status = GROUP_NO;
                 client_cmd_generic("/deny");
@@ -227,7 +227,7 @@ void show_group(int x, int y)
     }
     else /* status: GROUP_MEMBER */
     {
-        if (add_button(x, y + 56, 103, BITMAP_SMALL_UP, "leave", "leave"))
+        if (add_button(x, y + 56, 103, SKIN_SPRITE_SMALL_UP, "leave", "leave"))
         {
             if (global_group_status != GROUP_LEAVE)
             {
@@ -238,13 +238,13 @@ void show_group(int x, int y)
 
         for (s = 0; s < GROUP_MAX_MEMBER; s++)
         {
-            /* sprite_blt(Bitmaps[BITMAP_GROUP], x + group_pos[s][0] + 2, y + group_pos[s][1] + 1, NULL, NULL); */
+            /* sprite_blt(skin_sprites[SKIN_SPRITE_GROUP], x + group_pos[s][0] + 2, y + group_pos[s][1] + 1, NULL, NULL); */
             if (group[s].name[0] != '\0')
             {
-//                sprite_blt(Bitmaps[BITMAP_GROUP], x + group_pos[s][0] + 2, y + group_pos[s][1] + 1, NULL, NULL);
-                string_blt(ScreenSurface, &font_small, group[s].name, x + group_pos[s][0] + 33, y + group_pos[s][1] + 1,skindef.widget_key, NULL, NULL);
+//                sprite_blt(skin_sprites[SKIN_SPRITE_GROUP], x + group_pos[s][0] + 2, y + group_pos[s][1] + 1, NULL, NULL);
+                string_blt(ScreenSurface, &font_small, group[s].name, x + group_pos[s][0] + 33, y + group_pos[s][1] + 1,skin_prefs.widget_key, NULL, NULL);
                 sprintf(buf, "%3d", group[s].level);
-                string_blt(ScreenSurface, &font_tiny_out, buf, x + group_pos[s][0] + 8, y + group_pos[s][1], skindef.widget_valueEq, NULL, NULL);
+                string_blt(ScreenSurface, &font_tiny_out, buf, x + group_pos[s][0] + 8, y + group_pos[s][1], skin_prefs.widget_valueEq, NULL, NULL);
 
                 if (group[s].maxhp)
                 {
@@ -256,13 +256,13 @@ void show_group(int x, int y)
                     temp = (double) tmp / (double) group[s].maxhp;
                     box.x = 0;
                     box.y = 0;
-                    box.h = Bitmaps[BITMAP_GROUP_HP]->bitmap->h;
-                    box.w = (int) (Bitmaps[BITMAP_GROUP_HP]->bitmap->w * temp);
+                    box.h = skin_sprites[SKIN_SPRITE_GROUP_HP]->bitmap->h;
+                    box.w = (int) (skin_sprites[SKIN_SPRITE_GROUP_HP]->bitmap->w * temp);
                     if (tmp && !box.w)
                         box.w = 1;
-                    if (box.w > Bitmaps[BITMAP_GROUP_HP]->bitmap->w)
-                        box.w = Bitmaps[BITMAP_GROUP_HP]->bitmap->w;
-                    sprite_blt(Bitmaps[BITMAP_GROUP_HP], x + group_pos[s][0] + 2, y + group_pos[s][1] + 17, &box, NULL);
+                    if (box.w > skin_sprites[SKIN_SPRITE_GROUP_HP]->bitmap->w)
+                        box.w = skin_sprites[SKIN_SPRITE_GROUP_HP]->bitmap->w;
+                    sprite_blt(skin_sprites[SKIN_SPRITE_GROUP_HP], x + group_pos[s][0] + 2, y + group_pos[s][1] + 17, &box, NULL);
                 }
                 if (group[s].maxsp)
                 {
@@ -274,13 +274,13 @@ void show_group(int x, int y)
                     temp = (double) tmp / (double) group[s].maxsp;
                     box.x = 0;
                     box.y = 0;
-                    box.h = Bitmaps[BITMAP_GROUP_MANA]->bitmap->h;
-                    box.w = (int) (Bitmaps[BITMAP_GROUP_MANA]->bitmap->w * temp);
+                    box.h = skin_sprites[SKIN_SPRITE_GROUP_MANA]->bitmap->h;
+                    box.w = (int) (skin_sprites[SKIN_SPRITE_GROUP_MANA]->bitmap->w * temp);
                     if (tmp && !box.w)
                         box.w = 1;
-                    if (box.w > Bitmaps[BITMAP_GROUP_MANA]->bitmap->w)
-                        box.w = Bitmaps[BITMAP_GROUP_MANA]->bitmap->w;
-                    sprite_blt(Bitmaps[BITMAP_GROUP_MANA], x + group_pos[s][0] + 2, y + group_pos[s][1] + 19, &box, NULL);
+                    if (box.w > skin_sprites[SKIN_SPRITE_GROUP_MANA]->bitmap->w)
+                        box.w = skin_sprites[SKIN_SPRITE_GROUP_MANA]->bitmap->w;
+                    sprite_blt(skin_sprites[SKIN_SPRITE_GROUP_MANA], x + group_pos[s][0] + 2, y + group_pos[s][1] + 19, &box, NULL);
                 }
                 if (group[s].maxgrace)
                 {
@@ -292,13 +292,13 @@ void show_group(int x, int y)
                     temp = (double) tmp / (double) group[s].maxgrace;
                     box.x = 0;
                     box.y = 0;
-                    box.h = Bitmaps[BITMAP_GROUP_GRACE]->bitmap->h;
-                    box.w = (int) (Bitmaps[BITMAP_GROUP_GRACE]->bitmap->w * temp);
+                    box.h = skin_sprites[SKIN_SPRITE_GROUP_GRACE]->bitmap->h;
+                    box.w = (int) (skin_sprites[SKIN_SPRITE_GROUP_GRACE]->bitmap->w * temp);
                     if (tmp && !box.w)
                         box.w = 1;
-                    if (box.w > Bitmaps[BITMAP_GROUP_GRACE]->bitmap->w)
-                        box.w = Bitmaps[BITMAP_GROUP_GRACE]->bitmap->w;
-                    sprite_blt(Bitmaps[BITMAP_GROUP_GRACE], x + group_pos[s][0] + 2, y + group_pos[s][1] + 21, &box, NULL);
+                    if (box.w > skin_sprites[SKIN_SPRITE_GROUP_GRACE]->bitmap->w)
+                        box.w = skin_sprites[SKIN_SPRITE_GROUP_GRACE]->bitmap->w;
+                    sprite_blt(skin_sprites[SKIN_SPRITE_GROUP_GRACE], x + group_pos[s][0] + 2, y + group_pos[s][1] + 21, &box, NULL);
                 }
             }
         }

@@ -39,8 +39,6 @@ int                 SocketStatusErrorNr;        /* if an socket error, this is i
 _login_step          LoginInputStep;
 Uint32              sdl_dgreen, sdl_dred, sdl_gray1, sdl_gray2, sdl_gray3, sdl_gray4;
 
-_skindef            skindef;
-
 int                 music_global_fade   = 0;
 int                 mb_clicked          = 0;
 int        InputFirstKeyPress;
@@ -133,183 +131,11 @@ _screensize Screendefs[16] =
 
 void    init_game_data(void);
 uint8 game_status_chain(void);
-uint8 load_bitmap(int index);
 
 _vimmsg vim[MAX_NROF_VIM];
 
 _server *start_server,
         *metaserver_sel;
-
-/* for loading, use BITMAP_xx in the other modules*/
-static char *BitmapName[BITMAP_INIT] =
-{
-    "font7x4.png",
-    "font6x3out.png",
-    "font_big.png",
-    "font7x4out.png",
-    "font11x15.png",
-    "font11x15out.png",
-    "intro.png",
-    "progress.png",
-    "progress_back.png",
-    "black_tile.png",
-    "grid.png",
-    "textwin.png",
-    "login_inp.png",
-    "hp.png",
-    "sp.png",
-    "grace.png",
-    "food.png",
-    "hp_back.png",
-    "sp_back.png",
-    "grace_back.png",
-    "food_back.png",
-    "apply.png",
-    "food2.png",
-    "unpaid.png",
-    "cursed.png",
-    "damned.png",
-    "lock.png",
-    "magic.png",
-    "unidentified.png",
-    "range.png",
-    "range_marker.png",
-    "range_ctrl.png",
-    "range_ctrl_no.png",
-    "range_skill.png",
-    "range_skill_no.png",
-    "range_throw.png",
-    "range_throw_no.png",
-    "range_tool.png",
-    "range_tool_no.png",
-    "range_wizard.png",
-    "range_wizard_no.png",
-    "range_priest.png",
-    "range_priest_no.png",
-    "cmark_start.png",
-    "cmark_end.png",
-    "cmark_middle.png",
-    "textwin_scroll.png",
-    "inv_scroll.png",
-    "below_scroll.png",
-    "number.png",
-    "death.png",
-    "confused.png",
-    "paralyzed.png",
-    "scared.png",
-    "blind.png",
-    "exclusive_effect.png",
-    "enemy1.png",
-    "enemy2.png",
-    "probe.png",
-    "quickslots.png",
-    "quickslotsv.png",
-    "inventory.png",
-    "group.png",
-    "exp_border.png",
-    "exp_line.png",
-    "exp_bubble.png",
-    "exp_bubble2.png",
-    "below.png",
-    "frame_line.png",
-    "target_attack.png",
-    "target_talk.png",
-    "target_normal.png",
-    "loading.png",
-    "warn_hp.png",
-    "main_stats.png",
-    "warn_weight.png",
-    "logo270.png",
-    "dialog_bg.png",
-    "dialog_title_options.png",
-    "dialog_title_keybind.png",
-    "dialog_title_skill.png",
-    "dialog_title_spell.png",
-    "dialog_title_creation.png",
-    "dialog_title_login.png",
-    "dialog_icon_bg_active.png",
-    "dialog_icon_bg_inactive.png",
-    "dialog_icon_bg_negative.png",
-    "dialog_icon_bg_positive.png",
-    "dialog_icon_fg_active.png",
-    "dialog_icon_fg_inactive.png",
-    "dialog_icon_fg_selected.png",
-    "dialog_button_selected.png",
-    "dialog_button_up_prefix.png",
-    "dialog_button_down_prefix.png",
-    "dialog_button_up.png",
-    "dialog_button_down.png",
-    "dialog_tab_start.png",
-    "dialog_tab.png",
-    "dialog_tab_stop.png",
-    "dialog_tab_sel.png",
-    "dialog_checker.png",
-    "dialog_range_off.png",
-    "dialog_range_l.png",
-    "dialog_range_r.png",
-    "target_hp.png",
-    "target_hp_b.png",
-    "textwin_mask.png",
-    "slider_up.png",
-    "slider_down.png",
-    "slider.png",
-    "group_clear.png",
-    "exp_skill_border.png",
-    "exp_skill_line.png",
-    "exp_skill_bubble.png",
-    "options_head.png",
-    "options_keys.png",
-    "options_settings.png",
-    "options_logout.png",
-    "options_back.png",
-    "options_mark_left.png",
-    "options_mark_right.png",
-    "options_alpha.png",
-    "pentagram.png",
-    "quad_button_up.png",
-    "quad_button_down.png",
-    "traped.png",
-    "pray.png",
-    "wand.png",
-    "invite.png",
-    "dialog_button_black_up.png",
-    "dialog_button_black_down.png",
-    "button_small_up.png",
-    "button_small_down.png",
-    "group_mana.png",
-    "group_grace.png",
-    "group_hp.png",
-    "npc_interface_top.png",
-    "npc_interface_middle.png",
-    "npc_interface_bottom.png",
-    "npc_interface_panel.png",
-    "npc_int_slider.png",
-    "journal.png",
-    "mouse_cursor_move.png",
-    "resist_bg.png",
-    "main_level_bg.png",
-    "skill_exp_bg.png",
-    "regen_bg.png",
-    "skill_lvl_bg.png",
-    "menu_buttons.png",
-    "group_bg2.png",
-    "group_bg2_bottom.png",
-    "player_doll_bg.png",
-    "player_info_bg.png",
-    "target_bg.png",
-    "inventory_bg.png",
-    "textinput.png",
-    "stimer.png",
-    "closeb.png",
-    "locator/map.png",
-    "locator/client.png",
-    "locator/player_that.png",
-    "locator/player_this.png",
-    "locator/server_that.png",
-    "locator/server_this.png",
-};
-
-_Sprite            *Bitmaps[BITMAP_INIT];
 
 static void DisplayLayer1(void);   /* map & player */
 static void DisplayLayer2(void);   /* frame (background image) */
@@ -409,8 +235,8 @@ void init_game_data(void)
     InitMapData(0, 0, 0, 0);
     UpdateMapName("");
 
-    for (i = 0; i < BITMAP_INIT; i++)
-        Bitmaps[i] = NULL;
+    for (i = 0; i < SKIN_SPRITE_NROF; i++)
+        skin_sprites[i] = NULL;
     memset(face_list, 0, sizeof(face_list));
     memset(&cpl, 0, sizeof(cpl));
     cpl.ob = player_item();
@@ -850,10 +676,7 @@ uint8 game_status_chain(void)
     }
     else if (GameStatus == GAME_STATUS_STARTCONNECT)
     {
-        char    sbuf[256];
-        sprintf(sbuf, "%s%s", GetBitmapDirectory(), BitmapName[BITMAP_LOADING]);
-        face_list[FACE_MAX_NROF - 1].sprite = sprite_load(sbuf, NULL);
-
+        face_list[FACE_MAX_NROF - 1].sprite = skin_sprites[SKIN_SPRITE_LOADING];
         map_udate_flag = 2;
         GameStatus = GAME_STATUS_CONNECT;
     }
@@ -1298,42 +1121,6 @@ void show_ping_string(_server *node)
     }
 }
 
-/* load the skin & standard gfx */
-void load_bitmaps(void)
-{
-    int i;
-
-    for (i = 0; i <= BITMAP_PROGRESS_BACK; i++) /* add later better error handling here*/
-        load_bitmap(i);
-}
-
-uint8 load_bitmap(int index)
-{
-    char buf[SMALL_BUF];
-
-    sprintf(buf, "%s/%s", DIR_BITMAPS, BitmapName[index]);
-    Bitmaps[index] = sprite_load(buf, NULL);
-
-    if (!Bitmaps[index] ||
-        !Bitmaps[index]->bitmap)
-    {
-        LOG(LOG_ERROR, "Couldn't load bitmap '%s'!\n", buf);
-
-        return 0;
-    }
-
-    return 1;
-}
-
-/* free the skin & standard gfx */
-void free_bitmaps(void)
-{
-    int i;
-
-    for (i = 0; i < BITMAP_INIT; i++)
-        sprite_free_sprite(Bitmaps[i]);
-}
-
 void clear_metaserver_data(void)
 {
     _server *node = start_server;
@@ -1542,52 +1329,52 @@ static void show_option(int mark, int x, int y)
     bltfx.surface = NULL;
     bltfx.alpha = 128;
     bltfx.flags = BLTFX_FLAG_SRCALPHA;
-    sprite_blt(Bitmaps[BITMAP_OPTIONS_ALPHA], x - Bitmaps[BITMAP_OPTIONS_ALPHA]->bitmap->w / 2, y, NULL, &bltfx);
-    sprite_blt(Bitmaps[BITMAP_OPTIONS_HEAD], x - Bitmaps[BITMAP_OPTIONS_HEAD]->bitmap->w / 2, y, NULL, &bltfx);
-    sprite_blt(Bitmaps[BITMAP_OPTIONS_KEYS], x - Bitmaps[BITMAP_OPTIONS_KEYS]->bitmap->w / 2, y + 100, NULL, &bltfx);
-    sprite_blt(Bitmaps[BITMAP_OPTIONS_SETTINGS], x - Bitmaps[BITMAP_OPTIONS_SETTINGS]->bitmap->w / 2, y + 165, NULL, &bltfx);
-    sprite_blt(Bitmaps[BITMAP_OPTIONS_LOGOUT], x - Bitmaps[BITMAP_OPTIONS_LOGOUT]->bitmap->w / 2, y + 235, NULL, &bltfx);
-    sprite_blt(Bitmaps[BITMAP_OPTIONS_BACK], x - Bitmaps[BITMAP_OPTIONS_BACK]->bitmap->w / 2, y + 305, NULL, &bltfx);
+    sprite_blt(skin_sprites[SKIN_SPRITE_OPTIONS_ALPHA], x - skin_sprites[SKIN_SPRITE_OPTIONS_ALPHA]->bitmap->w / 2, y, NULL, &bltfx);
+    sprite_blt(skin_sprites[SKIN_SPRITE_OPTIONS_HEAD], x - skin_sprites[SKIN_SPRITE_OPTIONS_HEAD]->bitmap->w / 2, y, NULL, &bltfx);
+    sprite_blt(skin_sprites[SKIN_SPRITE_OPTIONS_KEYS], x - skin_sprites[SKIN_SPRITE_OPTIONS_KEYS]->bitmap->w / 2, y + 100, NULL, &bltfx);
+    sprite_blt(skin_sprites[SKIN_SPRITE_OPTIONS_SETTINGS], x - skin_sprites[SKIN_SPRITE_OPTIONS_SETTINGS]->bitmap->w / 2, y + 165, NULL, &bltfx);
+    sprite_blt(skin_sprites[SKIN_SPRITE_OPTIONS_LOGOUT], x - skin_sprites[SKIN_SPRITE_OPTIONS_LOGOUT]->bitmap->w / 2, y + 235, NULL, &bltfx);
+    sprite_blt(skin_sprites[SKIN_SPRITE_OPTIONS_BACK], x - skin_sprites[SKIN_SPRITE_OPTIONS_BACK]->bitmap->w / 2, y + 305, NULL, &bltfx);
 
     if (esc_menu_index == ESC_MENU_KEYS)
     {
-        index = BITMAP_OPTIONS_KEYS;
+        index = SKIN_SPRITE_OPTIONS_KEYS;
         y1 = y2 = y + 105;
     }
     if (esc_menu_index == ESC_MENU_SETTINGS)
     {
-        index = BITMAP_OPTIONS_SETTINGS;
+        index = SKIN_SPRITE_OPTIONS_SETTINGS;
         y1 = y2 = y + 170;
     }
     if (esc_menu_index == ESC_MENU_LOGOUT)
     {
-        index = BITMAP_OPTIONS_LOGOUT;
+        index = SKIN_SPRITE_OPTIONS_LOGOUT;
         y1 = y2 = y + 244;
     }
     if (esc_menu_index == ESC_MENU_BACK)
     {
-        index = BITMAP_OPTIONS_BACK;
+        index = SKIN_SPRITE_OPTIONS_BACK;
         y1 = y2 = y + 310;
     }
 
-    x1 = x - Bitmaps[index]->bitmap->w / 2 - 6;
-    x2 = x + Bitmaps[index]->bitmap->w / 2 + 6;
+    x1 = x - skin_sprites[index]->bitmap->w / 2 - 6;
+    x2 = x + skin_sprites[index]->bitmap->w / 2 + 6;
 
-    sprite_blt(Bitmaps[BITMAP_OPTIONS_MARK_LEFT], x1 - Bitmaps[BITMAP_OPTIONS_MARK_LEFT]->bitmap->w, y1, NULL, &bltfx);
-    sprite_blt(Bitmaps[BITMAP_OPTIONS_MARK_RIGHT], x2, y2, NULL, &bltfx);
+    sprite_blt(skin_sprites[SKIN_SPRITE_OPTIONS_MARK_LEFT], x1 - skin_sprites[SKIN_SPRITE_OPTIONS_MARK_LEFT]->bitmap->w, y1, NULL, &bltfx);
+    sprite_blt(skin_sprites[SKIN_SPRITE_OPTIONS_MARK_RIGHT], x2, y2, NULL, &bltfx);
 }
 
 int main(int argc, char *argv[])
 {
-    char            buf[256];
-    int             x, y;
-    int             drag;
-    uint32          anim_tick;
-    Uint32          videoflags;
-    int             i, done = 0, FrameCount = 0;
-    uint8         showtimer = 0;
-    uint32          speeduptick = 0;
-    uint32          new_anim_tick = 0;
+    char   buf[MEDIUM_BUF];
+    int    x, y;
+    int    drag;
+    uint32 anim_tick;
+    Uint32 videoflags;
+    int    done = 0, FrameCount = 0;
+    uint8  showtimer = 0;
+    uint32 speeduptick = 0;
+    uint32 new_anim_tick = 0;
 
 #ifdef PROFILING
     Uint32   ts;
@@ -1687,14 +1474,17 @@ int main(int argc, char *argv[])
     sdl_gray3 = SDL_MapRGB(ScreenSurface->format, 0x55, 0x55, 0x55);
     sdl_gray4 = SDL_MapRGB(ScreenSurface->format, 0x60, 0x60, 0x60);
     SDL_EnableUNICODE(1);
-    load_skindef();
-    load_bitmaps();
+
+    /* We need to load a few bitmaps and initialise fonts before we call
+     * ShowIntro(). */
+    skin_load_bitmaps(SKIN_SPRITE_PROGRESS_BACK);
     font_init();
-    ShowIntro("start sound system", 0);
-    sound_init();
+    ShowIntro("initialise fonts", 0);
     ShowIntro("load bitmaps", 10);
-    for (i = BITMAP_PROGRESS_BACK+1; i < BITMAP_INIT; i++) /* add later better error handling here*/
-        load_bitmap(i);
+    skin_load_bitmaps(SKIN_SPRITE_NROF);
+    skin_load_prefs();
+    ShowIntro("start sound system", 55);
+    sound_init();
     ShowIntro("load keys", 70);
     read_keybind_file();
     ShowIntro("load mpart positioning data", 80);
@@ -1968,7 +1758,7 @@ int main(int argc, char *argv[])
                 }
             }
         if (showtimer && !esc_menu_flag)
-            sprite_blt(Bitmaps[BITMAP_STIMER], options.mapstart_x+300, options.mapstart_y+150, NULL, NULL);
+            sprite_blt(skin_sprites[SKIN_SPRITE_STIMER], options.mapstart_x+300, options.mapstart_y+150, NULL, NULL);
         }
         if (!options.sleepcounter)
             showtimer = 0;
@@ -2553,12 +2343,12 @@ static void ShowIntro(char *text, int progress)
     y = Screensize.yoff / 2;
     box.x = 0;
     box.y = 0;
-    box.h = Bitmaps[BITMAP_PROGRESS]->bitmap->h;
-    box.w = (int)(Bitmaps[BITMAP_PROGRESS]->bitmap->w / 100 * progress);
+    box.h = skin_sprites[SKIN_SPRITE_PROGRESS]->bitmap->h;
+    box.w = (int)(skin_sprites[SKIN_SPRITE_PROGRESS]->bitmap->w / 100 * progress);
 
-    sprite_blt(Bitmaps[BITMAP_INTRO], x, y, NULL, NULL);
-    sprite_blt(Bitmaps[BITMAP_PROGRESS_BACK], x + 310, y + 588, NULL, NULL);
-    sprite_blt(Bitmaps[BITMAP_PROGRESS], x + 310, y + 588, &box, NULL);
+    sprite_blt(skin_sprites[SKIN_SPRITE_INTRO], x, y, NULL, NULL);
+    sprite_blt(skin_sprites[SKIN_SPRITE_PROGRESS_BACK], x + 310, y + 588, NULL, NULL);
+    sprite_blt(skin_sprites[SKIN_SPRITE_PROGRESS], x + 310, y + 588, &box, NULL);
 
     if (text)
     {
@@ -2659,9 +2449,9 @@ static void DisplayCustomCursor(void)
     if(f_custom_cursor == MSCURSOR_MOVE)
     {
         /* display the cursor */
-        sprite_blt(Bitmaps[BITMAP_MSCURSOR_MOVE],
-                    x_custom_cursor-(Bitmaps[BITMAP_MSCURSOR_MOVE]->bitmap->w/2),
-                    y_custom_cursor-(Bitmaps[BITMAP_MSCURSOR_MOVE]->bitmap->h/2),
+        sprite_blt(skin_sprites[SKIN_SPRITE_MSCURSOR_MOVE],
+                    x_custom_cursor-(skin_sprites[SKIN_SPRITE_MSCURSOR_MOVE]->bitmap->w/2),
+                    y_custom_cursor-(skin_sprites[SKIN_SPRITE_MSCURSOR_MOVE]->bitmap->h/2),
                     NULL,
                     NULL);
     }
@@ -2716,12 +2506,12 @@ static void DisplayLayer1(void)
     {
         if (options.warning_hp
                 && ((float) cpl.stats.hp / (float) cpl.stats.maxhp) * 100 <= options.warning_hp)
-            sprite_blt(Bitmaps[BITMAP_WARN_HP], options.mapstart_x+407, options.mapstart_y+205, NULL, NULL);
+            sprite_blt(skin_sprites[SKIN_SPRITE_WARN_HP], options.mapstart_x+407, options.mapstart_y+205, NULL, NULL);
     }
     else
     {
        if (options.warning_weight && ((float) cpl.real_weight / cpl.weight_limit) * 100 >= options.warning_weight)
-            sprite_blt(Bitmaps[BITMAP_WARN_WEIGHT], options.mapstart_x+400, options.mapstart_y+192, NULL, NULL);
+            sprite_blt(skin_sprites[SKIN_SPRITE_WARN_WEIGHT], options.mapstart_x+400, options.mapstart_y+192, NULL, NULL);
     }
 }
 
@@ -2778,255 +2568,11 @@ static void DisplayLayer4(void)
     /* show main-option menu */
     if(esc_menu_flag == 1)
     {
-        show_option(esc_menu_index, (Screensize.x/2), (Screensize.y/2)-(Bitmaps[BITMAP_OPTIONS_ALPHA]->bitmap->h/2));
+        show_option(esc_menu_index, (Screensize.x/2), (Screensize.y/2)-(skin_sprites[SKIN_SPRITE_OPTIONS_ALPHA]->bitmap->h/2));
     }
     /* show all kind of the big dialog windows */
     show_menu();
 
     /* display a custom cursor, if its enabled */
     if(f_custom_cursor) { DisplayCustomCursor(); }
-}
-
-void reload_skin()
-{
-    int i;
-
-    free_bitmaps();
-    load_bitmaps();
-    font_init();
-    for (i = BITMAP_PROGRESS_BACK+1; i < BITMAP_INIT; i++) /* add later better error handling here*/
-        load_bitmap(i);
-    load_skindef();
-
-}
-
-/* This function is more or less a stub, and has to be greatly improved, and maybe moved to a own file skin.c */
-void load_skindef()
-{
-    PHYSFS_File *handle;
-    char         buf[SMALL_BUF];
-
-    /* first we fill with default values */
-    skindef.chat_admin = NDI_COLR_RED;
-    skindef.chat_buddy = NDI_COLR_SILVER;
-    skindef.chat_eavesdrop = NDI_COLR_FUSCHIA;
-    skindef.chat_emote = NDI_COLR_TEAL;
-    skindef.chat_gsay = NDI_COLR_YELLOW;
-    skindef.chat_say = NDI_COLR_WHITE;
-    skindef.chat_shout = NDI_COLR_ORANGE;
-    skindef.chat_tell = NDI_COLR_AQUA;
-    skindef.dialog_rows0 = NDI_COLR_OLIVE;
-    skindef.dialog_rows1 = NDI_COLR_MAROON;
-    skindef.dialog_rowsS = NDI_COLR_BLUE;
-    skindef.ecc_emphasis = NDI_COLR_GREEN;
-    skindef.ecc_strong = NDI_COLR_YELLOW;
-    skindef.ecc_intertitle = NDI_COLR_ORANGE;
-    skindef.target_grey = NDI_COLR_GREY;
-    skindef.target_green = NDI_COLR_LIME;
-    skindef.target_blue = NDI_COLR_BLUE;
-    skindef.target_yellow = NDI_COLR_YELLOW;
-    skindef.target_orange = NDI_COLR_ORANGE;
-    skindef.target_red = NDI_COLR_RED;
-    skindef.target_purple = NDI_COLR_PURPLE;
-    skindef.widget_info = NDI_COLR_ORANGE;
-    skindef.widget_key = NDI_COLR_AQUA;
-    skindef.widget_title = NDI_COLR_SILVER;
-    skindef.widget_valueEq = NDI_COLR_WHITE;
-    skindef.widget_valueHi = NDI_COLR_LIME;
-    skindef.widget_valueLo = NDI_COLR_RED;
-    skindef.input_string = NDI_COLR_WHITE;
-    skindef.input_caret = NDI_COLR_RED;
-    skindef.effect_width = 9;
-    skindef.effect_height = 16;
-    MALLOC_STRING(skindef.effect_eating, "Nyom! ");
-    MALLOC_STRING(skindef.effect_sleeping, "Zzz! ");
-    skindef.item_size = 32;
-    skindef.icon_size = 8;
-
-    /* Log what we're doing. */
-    LOG(LOG_MSG, "Loading '%s'... ", FILE_SKINDEF);
-
-    /* Open the file for reading. */
-    if (!(handle = PHYSFS_openRead(FILE_SKINDEF)))
-    {
-        LOG(LOG_ERROR, "FAILED (%s)!\n", PHYSFS_getLastError());
-
-        return;
-    }
-
-    /* Read line by line. */
-    while (PHYSFS_readString(handle, buf, sizeof(buf)) >= 0)
-    {
-        char   *key,
-               *val;
-
-        /* Skip comments and blank lines. */
-        if (buf[0]=='#' ||
-            buf[0]=='\0')
-        {
-            continue;
-        }
-
-        if (!(val = strchr(buf, ':')))
-        {
-            LOG(LOG_ERROR, "Ignoring malformed entry: '%s'\n", buf);
-
-            continue;
-        }
-
-        key = buf;
-        *val = '\0';
-        val += 2;
-
-        if (!strcmp(key, "chat_admin"))
-        {
-            skindef.chat_admin = (uint32)strtoul(val, NULL, 16);
-        }
-        else if (!strcmp(key, "chat_buddy"))
-        {
-            skindef.chat_buddy = (uint32)strtoul(val, NULL, 16);
-        }
-        else if (!strcmp(key, "chat_eavesdrop"))
-        {
-            skindef.chat_eavesdrop = (uint32)strtoul(val, NULL, 16);
-        }
-        else if (!strcmp(key, "chat_emote"))
-        {
-            skindef.chat_emote = (uint32)strtoul(val, NULL, 16);
-        }
-        else if (!strcmp(key, "chat_gsay"))
-        {
-            skindef.chat_gsay = (uint32)strtoul(val, NULL, 16);
-        }
-        else if (!strcmp(key, "chat_say"))
-        {
-            skindef.chat_say = (uint32)strtoul(val, NULL, 16);
-        }
-        else if (!strcmp(key, "chat_shout"))
-        {
-            skindef.chat_shout = (uint32)strtoul(val, NULL, 16);
-        }
-        else if (!strcmp(key, "chat_tell"))
-        {
-            skindef.chat_tell = (uint32)strtoul(val, NULL, 16);
-        }
-        else if (!strcmp(key, "dialog_rows0"))
-        {
-            skindef.dialog_rows0 = (uint32)strtoul(val, NULL, 16);
-        }
-        else if (!strcmp(key, "dialog_rows1"))
-        {
-            skindef.dialog_rows1 = (uint32)strtoul(val, NULL, 16);
-        }
-        else if (!strcmp(key, "dialog_rowsS"))
-        {
-            skindef.dialog_rowsS = (uint32)strtoul(val, NULL, 16);
-        }
-        else if (!strcmp(key, "ecc_emphasis"))
-        {
-            skindef.ecc_emphasis = (uint32)strtoul(val, NULL, 16);
-        }
-        else if (!strcmp(key, "ecc_strong"))
-        {
-            skindef.ecc_strong = (uint32)strtoul(val, NULL, 16);
-        }
-        else if (!strcmp(key, "ecc_intertitle"))
-        {
-            skindef.ecc_intertitle = (uint32)strtoul(val, NULL, 16);
-        }
-        else if (!strcmp(key, "ecc_hypertext"))
-        {
-            skindef.ecc_hypertext = (uint32)strtoul(val, NULL, 16);
-        }
-        else if (!strcmp(key, "target_grey"))
-        {
-            skindef.target_grey = (uint32)strtoul(val, NULL, 16);
-        }
-        else if (!strcmp(key, "target_green"))
-        {
-            skindef.target_green = (uint32)strtoul(val, NULL, 16);
-        }
-        else if (!strcmp(key, "target_blue"))
-        {
-            skindef.target_blue = (uint32)strtoul(val, NULL, 16);
-        }
-        else if (!strcmp(key, "target_yellow"))
-        {
-            skindef.target_yellow = (uint32)strtoul(val, NULL, 16);
-        }
-        else if (!strcmp(key, "target_orange"))
-        {
-            skindef.target_orange = (uint32)strtoul(val, NULL, 16);
-        }
-        else if (!strcmp(key, "target_red"))
-        {
-            skindef.target_red = (uint32)strtoul(val, NULL, 16);
-        }
-        else if (!strcmp(key, "target_purple"))
-        {
-            skindef.target_purple = (uint32)strtoul(val, NULL, 16);
-        }
-        else if (!strcmp(key, "widget_info"))
-        {
-            skindef.widget_info = (uint32)strtoul(val, NULL, 16);
-        }
-        else if (!strcmp(key, "widget_key"))
-        {
-            skindef.widget_key = (uint32)strtoul(val, NULL, 16);
-        }
-        else if (!strcmp(key, "widget_title"))
-        {
-            skindef.widget_title = (uint32)strtoul(val, NULL, 16);
-        }
-        else if (!strcmp(key, "widget_valueEq"))
-        {
-            skindef.widget_valueEq = (uint32)strtoul(val, NULL, 16);
-        }
-        else if (!strcmp(key, "widget_valueHi"))
-        {
-            skindef.widget_valueHi = (uint32)strtoul(val, NULL, 16);
-        }
-        else if (!strcmp(key, "widgetog_valueLo"))
-        {
-            skindef.widget_valueLo = (uint32)strtoul(val, NULL, 16);
-        }
-        else if (!strcmp(key, "input_string"))
-        {
-            skindef.input_string = (uint32)strtoul(val, NULL, 16);
-        }
-        else if (!strcmp(key, "input_caret"))
-        {
-            skindef.input_caret = (uint32)strtoul(val, NULL, 16);
-        }
-        else if (!strcmp(key, "effect_width"))
-        {
-            skindef.effect_width = (uint8)strtoul(val, NULL, 10);
-        }
-        else if (!strcmp(key, "effect_height"))
-        {
-            skindef.effect_height = (uint8)strtoul(val, NULL, 10);
-        }
-        else if (!strcmp(key, "effect_eating"))
-        {
-            FREE(skindef.effect_eating);
-            MALLOC_STRING(skindef.effect_eating, val);
-        }
-        else if (!strcmp(key, "effect_sleeping"))
-        {
-            FREE(skindef.effect_sleeping);
-            MALLOC_STRING(skindef.effect_sleeping, val);
-        }
-        else if (!strcmp(key, "item_size"))
-        {
-            skindef.item_size = (uint8)strtoul(val, NULL, 10);
-        }
-        else if (!strcmp(key, "icon_size"))
-        {
-            skindef.icon_size = (uint8)strtoul(val, NULL, 10);
-        }
-    }
-
-    /* Cleanup. */
-    PHYSFS_close(handle);
-    LOG(LOG_SYSTEM, "OK!\n");
 }

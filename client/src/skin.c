@@ -1,0 +1,464 @@
+/*
+    Daimonin SDL client, a client program for the Daimonin MMORPG.
+
+
+  Copyright (C) 2003 Michael Toennies
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+
+    The author can be reached via e-mail to info@daimonin.org
+*/
+
+#include "include.h"
+
+/* for loading, use SKIN_SPRITE_xx in the other modules*/
+static char *BitmapName[SKIN_SPRITE_NROF] =
+{
+    "font7x4.png",
+    "font6x3out.png",
+    "font_big.png",
+    "font7x4out.png",
+    "font11x15.png",
+    "font11x15out.png",
+    "intro.png",
+    "progress.png",
+    "progress_back.png",
+    "black_tile.png",
+    "grid.png",
+    "textwin.png",
+    "login_inp.png",
+    "hp.png",
+    "sp.png",
+    "grace.png",
+    "food.png",
+    "hp_back.png",
+    "sp_back.png",
+    "grace_back.png",
+    "food_back.png",
+    "apply.png",
+    "food2.png",
+    "unpaid.png",
+    "cursed.png",
+    "damned.png",
+    "lock.png",
+    "magic.png",
+    "unidentified.png",
+    "range.png",
+    "range_marker.png",
+    "range_ctrl.png",
+    "range_ctrl_no.png",
+    "range_skill.png",
+    "range_skill_no.png",
+    "range_throw.png",
+    "range_throw_no.png",
+    "range_tool.png",
+    "range_tool_no.png",
+    "range_wizard.png",
+    "range_wizard_no.png",
+    "range_priest.png",
+    "range_priest_no.png",
+    "cmark_start.png",
+    "cmark_end.png",
+    "cmark_middle.png",
+    "textwin_scroll.png",
+    "inv_scroll.png",
+    "below_scroll.png",
+    "number.png",
+    "death.png",
+    "confused.png",
+    "paralyzed.png",
+    "scared.png",
+    "blind.png",
+    "exclusive_effect.png",
+    "enemy1.png",
+    "enemy2.png",
+    "probe.png",
+    "quickslot.png",
+    "quickslotv.png",
+    "inventory.png",
+    "group.png",
+    "exp_border.png",
+    "exp_line.png",
+    "exp_bubble.png",
+    "exp_bubble2.png",
+    "below.png",
+    "frame_line.png",
+    "target_attack.png",
+    "target_talk.png",
+    "target_normal.png",
+    "loading.png",
+    "warn_hp.png",
+    "main_stats.png",
+    "warn_weight.png",
+    "logo270.png",
+    "dialog_bg.png",
+    "dialog_title_options.png",
+    "dialog_title_keybind.png",
+    "dialog_title_skill.png",
+    "dialog_title_spell.png",
+    "dialog_title_creation.png",
+    "dialog_title_login.png",
+    "dialog_icon_bg_active.png",
+    "dialog_icon_bg_inactive.png",
+    "dialog_icon_bg_negative.png",
+    "dialog_icon_bg_positive.png",
+    "dialog_icon_fg_active.png",
+    "dialog_icon_fg_inactive.png",
+    "dialog_icon_fg_selected.png",
+    "dialog_button_selected.png",
+    "dialog_button_up_prefix.png",
+    "dialog_button_down_prefix.png",
+    "dialog_button_up.png",
+    "dialog_button_down.png",
+    "dialog_tab_start.png",
+    "dialog_tab.png",
+    "dialog_tab_stop.png",
+    "dialog_tab_sel.png",
+    "dialog_checker.png",
+    "dialog_range_off.png",
+    "dialog_range_l.png",
+    "dialog_range_r.png",
+    "target_hp.png",
+    "target_hp_b.png",
+    "textwin_mask.png",
+    "slider_up.png",
+    "slider_down.png",
+    "slider.png",
+    "group_clear.png",
+    "exp_skill_border.png",
+    "exp_skill_line.png",
+    "exp_skill_bubble.png",
+    "options_head.png",
+    "options_keys.png",
+    "options_settings.png",
+    "options_logout.png",
+    "options_back.png",
+    "options_mark_left.png",
+    "options_mark_right.png",
+    "options_alpha.png",
+    "pentagram.png",
+    "quad_button_up.png",
+    "quad_button_down.png",
+    "traped.png",
+    "pray.png",
+    "wand.png",
+    "invite.png",
+    "dialog_button_black_up.png",
+    "dialog_button_black_down.png",
+    "button_small_up.png",
+    "button_small_down.png",
+    "group_mana.png",
+    "group_grace.png",
+    "group_hp.png",
+    "npc_interface_top.png",
+    "npc_interface_middle.png",
+    "npc_interface_bottom.png",
+    "npc_interface_panel.png",
+    "npc_int_slider.png",
+    "journal.png",
+    "mouse_cursor_move.png",
+    "resist_bg.png",
+    "main_level_bg.png",
+    "skill_exp_bg.png",
+    "regen_bg.png",
+    "skill_lvl_bg.png",
+    "menu_buttons.png",
+    "group_bg2.png",
+    "group_bg2_bottom.png",
+    "player_doll_bg.png",
+    "player_info_bg.png",
+    "target_bg.png",
+    "inventory_bg.png",
+    "textinput.png",
+    "stimer.png",
+    "closeb.png",
+    "locator/map.png",
+    "locator/client.png",
+    "locator/player_that.png",
+    "locator/player_this.png",
+    "locator/server_that.png",
+    "locator/server_this.png",
+};
+
+_Sprite      *skin_sprites[SKIN_SPRITE_NROF];
+skin_prefs_t  skin_prefs;
+
+void skin_load_bitmaps(skin_sprite_id_t nrof)
+{
+    uint16 i;
+
+    /* add later better error handling here*/
+    for (i = 0; i < nrof; i++)
+    {
+        char buf[SMALL_BUF];
+
+        sprintf(buf, "%s/%s", DIR_BITMAPS, BitmapName[i]);
+        skin_sprites[i] = sprite_load(buf, NULL);
+
+        if (!skin_sprites[i] ||
+            !skin_sprites[i]->bitmap)
+        {
+            LOG(LOG_ERROR, "Couldn't load bitmap '%s'!\n", buf);
+        }
+    }
+}
+
+void skin_free_bitmaps(void)
+{
+    uint16 i;
+
+    for (i = 0; i < SKIN_SPRITE_NROF; i++)
+    {
+        sprite_free_sprite(skin_sprites[i]);
+    }
+}
+
+void skin_reload(void)
+{
+    skin_free_bitmaps();
+    skin_load_bitmaps(SKIN_SPRITE_NROF);
+    font_init();
+    skin_load_prefs();
+}
+
+void skin_load_prefs(void)
+{
+    PHYSFS_File *handle;
+    char         buf[SMALL_BUF];
+
+    /* first we fill with default values */
+    skin_prefs.chat_admin = NDI_COLR_RED;
+    skin_prefs.chat_buddy = NDI_COLR_SILVER;
+    skin_prefs.chat_eavesdrop = NDI_COLR_FUSCHIA;
+    skin_prefs.chat_emote = NDI_COLR_TEAL;
+    skin_prefs.chat_gsay = NDI_COLR_YELLOW;
+    skin_prefs.chat_say = NDI_COLR_WHITE;
+    skin_prefs.chat_shout = NDI_COLR_ORANGE;
+    skin_prefs.chat_tell = NDI_COLR_AQUA;
+    skin_prefs.dialog_rows0 = NDI_COLR_OLIVE;
+    skin_prefs.dialog_rows1 = NDI_COLR_MAROON;
+    skin_prefs.dialog_rowsS = NDI_COLR_BLUE;
+    skin_prefs.ecc_emphasis = NDI_COLR_GREEN;
+    skin_prefs.ecc_strong = NDI_COLR_YELLOW;
+    skin_prefs.ecc_intertitle = NDI_COLR_ORANGE;
+    skin_prefs.target_grey = NDI_COLR_GREY;
+    skin_prefs.target_green = NDI_COLR_LIME;
+    skin_prefs.target_blue = NDI_COLR_BLUE;
+    skin_prefs.target_yellow = NDI_COLR_YELLOW;
+    skin_prefs.target_orange = NDI_COLR_ORANGE;
+    skin_prefs.target_red = NDI_COLR_RED;
+    skin_prefs.target_purple = NDI_COLR_PURPLE;
+    skin_prefs.widget_info = NDI_COLR_ORANGE;
+    skin_prefs.widget_key = NDI_COLR_AQUA;
+    skin_prefs.widget_title = NDI_COLR_SILVER;
+    skin_prefs.widget_valueEq = NDI_COLR_WHITE;
+    skin_prefs.widget_valueHi = NDI_COLR_LIME;
+    skin_prefs.widget_valueLo = NDI_COLR_RED;
+    skin_prefs.input_string = NDI_COLR_WHITE;
+    skin_prefs.input_caret = NDI_COLR_RED;
+    skin_prefs.effect_width = 9;
+    skin_prefs.effect_height = 16;
+    MALLOC_STRING(skin_prefs.effect_eating, "Nyom! ");
+    MALLOC_STRING(skin_prefs.effect_sleeping, "Zzz! ");
+    skin_prefs.item_size = 32;
+    skin_prefs.icon_size = 8;
+
+    /* Log what we're doing. */
+    LOG(LOG_MSG, "Loading '%s'... ", FILE_SKINDEF);
+
+    /* Open the file for reading. */
+    if (!(handle = PHYSFS_openRead(FILE_SKINDEF)))
+    {
+        LOG(LOG_ERROR, "FAILED (%s)!\n", PHYSFS_getLastError());
+
+        return;
+    }
+
+    /* Read line by line. */
+    while (PHYSFS_readString(handle, buf, sizeof(buf)) >= 0)
+    {
+        char   *key,
+               *val;
+
+        /* Skip comments and blank lines. */
+        if (buf[0]=='#' ||
+            buf[0]=='\0')
+        {
+            continue;
+        }
+
+        if (!(val = strchr(buf, ':')))
+        {
+            LOG(LOG_ERROR, "Ignoring malformed entry: '%s'\n", buf);
+
+            continue;
+        }
+
+        key = buf;
+        *val = '\0';
+        val += 2;
+
+        if (!strcmp(key, "chat_admin"))
+        {
+            skin_prefs.chat_admin = (uint32)strtoul(val, NULL, 16);
+        }
+        else if (!strcmp(key, "chat_buddy"))
+        {
+            skin_prefs.chat_buddy = (uint32)strtoul(val, NULL, 16);
+        }
+        else if (!strcmp(key, "chat_eavesdrop"))
+        {
+            skin_prefs.chat_eavesdrop = (uint32)strtoul(val, NULL, 16);
+        }
+        else if (!strcmp(key, "chat_emote"))
+        {
+            skin_prefs.chat_emote = (uint32)strtoul(val, NULL, 16);
+        }
+        else if (!strcmp(key, "chat_gsay"))
+        {
+            skin_prefs.chat_gsay = (uint32)strtoul(val, NULL, 16);
+        }
+        else if (!strcmp(key, "chat_say"))
+        {
+            skin_prefs.chat_say = (uint32)strtoul(val, NULL, 16);
+        }
+        else if (!strcmp(key, "chat_shout"))
+        {
+            skin_prefs.chat_shout = (uint32)strtoul(val, NULL, 16);
+        }
+        else if (!strcmp(key, "chat_tell"))
+        {
+            skin_prefs.chat_tell = (uint32)strtoul(val, NULL, 16);
+        }
+        else if (!strcmp(key, "dialog_rows0"))
+        {
+            skin_prefs.dialog_rows0 = (uint32)strtoul(val, NULL, 16);
+        }
+        else if (!strcmp(key, "dialog_rows1"))
+        {
+            skin_prefs.dialog_rows1 = (uint32)strtoul(val, NULL, 16);
+        }
+        else if (!strcmp(key, "dialog_rowsS"))
+        {
+            skin_prefs.dialog_rowsS = (uint32)strtoul(val, NULL, 16);
+        }
+        else if (!strcmp(key, "ecc_emphasis"))
+        {
+            skin_prefs.ecc_emphasis = (uint32)strtoul(val, NULL, 16);
+        }
+        else if (!strcmp(key, "ecc_strong"))
+        {
+            skin_prefs.ecc_strong = (uint32)strtoul(val, NULL, 16);
+        }
+        else if (!strcmp(key, "ecc_intertitle"))
+        {
+            skin_prefs.ecc_intertitle = (uint32)strtoul(val, NULL, 16);
+        }
+        else if (!strcmp(key, "ecc_hypertext"))
+        {
+            skin_prefs.ecc_hypertext = (uint32)strtoul(val, NULL, 16);
+        }
+        else if (!strcmp(key, "target_grey"))
+        {
+            skin_prefs.target_grey = (uint32)strtoul(val, NULL, 16);
+        }
+        else if (!strcmp(key, "target_green"))
+        {
+            skin_prefs.target_green = (uint32)strtoul(val, NULL, 16);
+        }
+        else if (!strcmp(key, "target_blue"))
+        {
+            skin_prefs.target_blue = (uint32)strtoul(val, NULL, 16);
+        }
+        else if (!strcmp(key, "target_yellow"))
+        {
+            skin_prefs.target_yellow = (uint32)strtoul(val, NULL, 16);
+        }
+        else if (!strcmp(key, "target_orange"))
+        {
+            skin_prefs.target_orange = (uint32)strtoul(val, NULL, 16);
+        }
+        else if (!strcmp(key, "target_red"))
+        {
+            skin_prefs.target_red = (uint32)strtoul(val, NULL, 16);
+        }
+        else if (!strcmp(key, "target_purple"))
+        {
+            skin_prefs.target_purple = (uint32)strtoul(val, NULL, 16);
+        }
+        else if (!strcmp(key, "widget_info"))
+        {
+            skin_prefs.widget_info = (uint32)strtoul(val, NULL, 16);
+        }
+        else if (!strcmp(key, "widget_key"))
+        {
+            skin_prefs.widget_key = (uint32)strtoul(val, NULL, 16);
+        }
+        else if (!strcmp(key, "widget_title"))
+        {
+            skin_prefs.widget_title = (uint32)strtoul(val, NULL, 16);
+        }
+        else if (!strcmp(key, "widget_valueEq"))
+        {
+            skin_prefs.widget_valueEq = (uint32)strtoul(val, NULL, 16);
+        }
+        else if (!strcmp(key, "widget_valueHi"))
+        {
+            skin_prefs.widget_valueHi = (uint32)strtoul(val, NULL, 16);
+        }
+        else if (!strcmp(key, "widgetog_valueLo"))
+        {
+            skin_prefs.widget_valueLo = (uint32)strtoul(val, NULL, 16);
+        }
+        else if (!strcmp(key, "input_string"))
+        {
+            skin_prefs.input_string = (uint32)strtoul(val, NULL, 16);
+        }
+        else if (!strcmp(key, "input_caret"))
+        {
+            skin_prefs.input_caret = (uint32)strtoul(val, NULL, 16);
+        }
+        else if (!strcmp(key, "effect_width"))
+        {
+            skin_prefs.effect_width = (uint8)strtoul(val, NULL, 10);
+        }
+        else if (!strcmp(key, "effect_height"))
+        {
+            skin_prefs.effect_height = (uint8)strtoul(val, NULL, 10);
+        }
+        else if (!strcmp(key, "effect_eating"))
+        {
+            FREE(skin_prefs.effect_eating);
+            MALLOC_STRING(skin_prefs.effect_eating, val);
+        }
+        else if (!strcmp(key, "effect_sleeping"))
+        {
+            FREE(skin_prefs.effect_sleeping);
+            MALLOC_STRING(skin_prefs.effect_sleeping, val);
+        }
+        else if (!strcmp(key, "item_size"))
+        {
+            skin_prefs.item_size = (uint8)strtoul(val, NULL, 10);
+        }
+        else if (!strcmp(key, "icon_size"))
+        {
+            skin_prefs.icon_size = (uint8)strtoul(val, NULL, 10);
+        }
+    }
+
+    /* Cleanup. */
+    PHYSFS_close(handle);
+    LOG(LOG_SYSTEM, "OK!\n");
+}

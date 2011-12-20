@@ -80,10 +80,10 @@ void widget_show_console(int x, int y)
 {
     SDL_Rect box;
 
-    sprite_blt(Bitmaps[BITMAP_TEXTINPUT],x, y, NULL, NULL);
+    sprite_blt(skin_sprites[SKIN_SPRITE_TEXTINPUT],x, y, NULL, NULL);
     box.x = x + 8;
     box.y = y + 6;
-    box.w = Bitmaps[BITMAP_TEXTINPUT]->bitmap->w - 22;
+    box.w = skin_sprites[SKIN_SPRITE_TEXTINPUT]->bitmap->w - 22;
     box.h = font_small.line_height;
     show_input_string(&font_small, &box, 0);
 }
@@ -114,7 +114,7 @@ void do_number(int x, int y)
                 else
                     sound_play_effect(SOUNDTYPE_NORMAL, SOUND_DROP, 0, 0, 100);
 
-                textwin_showstring(0, skindef.widget_info, "%s %d from %d %s",
+                textwin_showstring(0, skin_prefs.widget_info, "%s %d from %d %s",
                                    (cpl.nummode == NUM_MODE_GET) ? "get" :
                                    "drop", tmp, cpl.nrof, cpl.num_text);
             }
@@ -214,11 +214,11 @@ void widget_show_number(int x, int y)
 
     box.x = x + 8;
     box.y = y + 6;
-    box.w = Bitmaps[BITMAP_NUMBER]->bitmap->w - 22;
+    box.w = skin_sprites[SKIN_SPRITE_NUMBER]->bitmap->w - 22;
     box.h = font_small.line_height;
-    sprite_blt(Bitmaps[BITMAP_NUMBER], x, y, NULL, NULL);
+    sprite_blt(skin_sprites[SKIN_SPRITE_NUMBER], x, y, NULL, NULL);
     sprintf(buf, "%s how many from %d %s", cpl.nummode == NUM_MODE_GET ? "get" : "drop", cpl.nrof, cpl.num_text);
-    string_blt(ScreenSurface, &font_small, buf, x + 8, y + 6, skindef.widget_title, NULL, NULL);
+    string_blt(ScreenSurface, &font_small, buf, x + 8, y + 6, skin_prefs.widget_title, NULL, NULL);
     box.y = y + 25;
     show_input_string(&font_small, &box, 0);
 }
@@ -228,23 +228,23 @@ static inline void print_resist(char *name, int x, int y, int num)
     char    buf[16];
 
     string_blt(widget_surface[WIDGET_RESIST_ID], &font_small, name, x + 5, y,
-               skindef.widget_key, NULL, NULL);
+               skin_prefs.widget_key, NULL, NULL);
     sprintf(buf, "%02d", cpl.stats.protection[num]);
 
     if (cpl.stats.protection[num] < 0)
     {
         string_blt(widget_surface[WIDGET_RESIST_ID], &font_small, buf, x + 17,
-                   y, skindef.widget_valueLo, NULL, NULL);
+                   y, skin_prefs.widget_valueLo, NULL, NULL);
     }
     else if (cpl.stats.protection[num] >= 100)
     {
         string_blt(widget_surface[WIDGET_RESIST_ID], &font_small, buf, x + 17,
-                   y, skindef.widget_valueHi, NULL, NULL);
+                   y, skin_prefs.widget_valueHi, NULL, NULL);
     }
     else
     {
         string_blt(widget_surface[WIDGET_RESIST_ID], &font_small, buf, x + 17,
-                   y, skindef.widget_valueEq, NULL, NULL);
+                   y, skin_prefs.widget_valueEq, NULL, NULL);
     }
 }
 
@@ -254,7 +254,7 @@ void widget_show_resist(int x, int y)
     SDL_Rect box;
 
     if (!widget_surface[WIDGET_RESIST_ID])
-        widget_surface[WIDGET_RESIST_ID]=SDL_ConvertSurface(Bitmaps[BITMAP_RESIST_BG]->bitmap,Bitmaps[BITMAP_RESIST_BG]->bitmap->format,Bitmaps[BITMAP_RESIST_BG]->bitmap->flags);
+        widget_surface[WIDGET_RESIST_ID]=SDL_ConvertSurface(skin_sprites[SKIN_SPRITE_RESIST_BG]->bitmap,skin_sprites[SKIN_SPRITE_RESIST_BG]->bitmap->format,skin_sprites[SKIN_SPRITE_RESIST_BG]->bitmap->flags);
 
     if (widget_data[WIDGET_RESIST_ID].redraw)
     {
@@ -264,8 +264,8 @@ void widget_show_resist(int x, int y)
         bltfx.flags = 0;
         bltfx.alpha=0;
 
-        sprite_blt(Bitmaps[BITMAP_RESIST_BG], 0, 0, NULL, &bltfx);
-        string_blt(widget_surface[WIDGET_RESIST_ID], &font_tiny_out, "Resistance Table", 5,  1, skindef.widget_title, NULL, NULL);
+        sprite_blt(skin_sprites[SKIN_SPRITE_RESIST_BG], 0, 0, NULL, &bltfx);
+        string_blt(widget_surface[WIDGET_RESIST_ID], &font_tiny_out, "Resistance Table", 5,  1, skin_prefs.widget_title, NULL, NULL);
 
         print_resist("IM", 68, 3, ATNR_PHYSICAL);
         print_resist("SL", 98, 3, ATNR_SLASH);
@@ -424,7 +424,7 @@ void widget_show_range(int x, int y)
     rec_item.w = 185;
     examine_range_inv();
 
-    sprite_blt(Bitmaps[BITMAP_RANGE], x, y, NULL, NULL);
+    sprite_blt(skin_sprites[SKIN_SPRITE_RANGE], x, y, NULL, NULL);
 
     switch (fire_mode.mode)
     {
@@ -435,14 +435,14 @@ void widget_show_range(int x, int y)
                 if (!tmp2)
                 {
                     LOG(LOG_DEBUG,"BUG: applied range weapon don't exist\n");
-                    string_blt(ScreenSurface, &font_small, "using Nothing", x + 5, y + 36, skindef.widget_info, &rec_range, NULL);
+                    string_blt(ScreenSurface, &font_small, "using Nothing", x + 5, y + 36, skin_prefs.widget_info, &rec_range, NULL);
                 }
                 else
                 {
                     sprintf(buf, "using %s", tmp2->s_name);
                     blt_inventory_face_from_tag(fire_mode.weapon, x + 5, y + 2);
 
-                    string_blt(ScreenSurface, &font_small, buf, x + 5, y + 36, skindef.widget_valueEq, &rec_range, NULL);
+                    string_blt(ScreenSurface, &font_small, buf, x + 5, y + 36, skin_prefs.widget_valueEq, &rec_range, NULL);
                 }
 
                 if (fire_mode.ammo != FIRE_ITEM_NO)
@@ -471,63 +471,63 @@ void widget_show_range(int x, int y)
 //                    sprintf(buf, "Type: %d",tmp2->itype);
                     buf[0]=0;
 
-                string_blt(ScreenSurface, &font_small, buf, x + 5, y + 47, skindef.widget_valueEq, &rec_item, NULL);
+                string_blt(ScreenSurface, &font_small, buf, x + 5, y + 47, skin_prefs.widget_valueEq, &rec_item, NULL);
             }
             else
             {
                 sprintf(buf, "no range weapon applied");
-                string_blt(ScreenSurface, &font_small, buf, x + 5, y + 36, skindef.widget_info, &rec_range, NULL);
+                string_blt(ScreenSurface, &font_small, buf, x + 5, y + 36, skin_prefs.widget_info, &rec_range, NULL);
             }
 
-            sprite_blt(Bitmaps[BITMAP_RANGE_MARKER], x + 5, y + 2, NULL, NULL);
+            sprite_blt(skin_sprites[SKIN_SPRITE_RANGE_MARKER], x + 5, y + 2, NULL, NULL);
             break;
 
         case FIRE_MODE_SPELL_ID:
             if (fire_mode.spell)
             {
                 /* we use wiz spells as default */
-                sprite_blt(Bitmaps[BITMAP_RANGE_WIZARD], x + 5, y + 2, NULL, NULL);
+                sprite_blt(skin_sprites[SKIN_SPRITE_RANGE_WIZARD], x + 5, y + 2, NULL, NULL);
                 if (fire_mode.spell->flag != -1)
                 {
                     sprite_blt(fire_mode.spell->icon, x + 45, y + 2, NULL, NULL);
                     string_blt(ScreenSurface, &font_small, fire_mode.spell->name, x + 5, y + 47,
-                              skindef.widget_valueEq, &rec_item, NULL);
+                              skin_prefs.widget_valueEq, &rec_item, NULL);
                 }
                 else
                     fire_mode.spell = NULL;
             }
             else
             {
-                sprite_blt(Bitmaps[BITMAP_RANGE_WIZARD_NO], x + 5, y + 2, NULL, NULL);
+                sprite_blt(skin_sprites[SKIN_SPRITE_RANGE_WIZARD_NO], x + 5, y + 2, NULL, NULL);
                 sprintf(buf, "no spell selected");
-                string_blt(ScreenSurface, &font_small, buf, x + 5, y + 47, skindef.widget_info, &rec_item, NULL);
+                string_blt(ScreenSurface, &font_small, buf, x + 5, y + 47, skin_prefs.widget_info, &rec_item, NULL);
             }
             sprintf(buf, "cast spell");
-            string_blt(ScreenSurface, &font_small, buf, x + 5, y + 36, skindef.widget_info, &rec_range, NULL);
+            string_blt(ScreenSurface, &font_small, buf, x + 5, y + 36, skin_prefs.widget_info, &rec_range, NULL);
 
             break;
 
         case FIRE_MODE_SKILL_ID:
             if (fire_mode.skill)
             {
-                sprite_blt(Bitmaps[BITMAP_RANGE_SKILL], x + 5, y + 2, NULL, NULL);
+                sprite_blt(skin_sprites[SKIN_SPRITE_RANGE_SKILL], x + 5, y + 2, NULL, NULL);
                 if (fire_mode.skill->flag != -1)
                 {
                     sprite_blt(fire_mode.skill->icon, x + 45, y + 2, NULL, NULL);
                     string_blt(ScreenSurface, &font_small, fire_mode.skill->name, x + 5, y + 47,
-                              skindef.widget_valueEq, &rec_item, NULL);
+                              skin_prefs.widget_valueEq, &rec_item, NULL);
                 }
                 else
                     fire_mode.skill = NULL;
             }
             else
             {
-                sprite_blt(Bitmaps[BITMAP_RANGE_SKILL_NO], x + 5, y + 2, NULL, NULL);
+                sprite_blt(skin_sprites[SKIN_SPRITE_RANGE_SKILL_NO], x + 5, y + 2, NULL, NULL);
                 sprintf(buf, "no skill selected");
-                string_blt(ScreenSurface, &font_small, buf, x + 5, y + 47, skindef.widget_info, &rec_item, NULL);
+                string_blt(ScreenSurface, &font_small, buf, x + 5, y + 47, skin_prefs.widget_info, &rec_item, NULL);
             }
             sprintf(buf, "use skill");
-            string_blt(ScreenSurface, &font_small, buf, x + 5, y + 36, skindef.widget_info, &rec_range, NULL);
+            string_blt(ScreenSurface, &font_small, buf, x + 5, y + 36, skin_prefs.widget_info, &rec_range, NULL);
 
             break;
 
@@ -556,7 +556,7 @@ void show_menu(void)
     if (cpl.menustatus == MENU_KEYBIND)
         show_keybind();
     else if (cpl.menustatus == MENU_BOOK)
-        show_book(400-Bitmaps[BITMAP_JOURNAL]->bitmap->w/2,300-Bitmaps[BITMAP_JOURNAL]->bitmap->h/2);
+        show_book(400-skin_sprites[SKIN_SPRITE_JOURNAL]->bitmap->w/2,300-skin_sprites[SKIN_SPRITE_JOURNAL]->bitmap->h/2);
     else if (cpl.menustatus == MENU_NPC)
     {
         int x,
@@ -574,10 +574,10 @@ void show_menu(void)
     else if (cpl.menustatus == MENU_SPELL)
     {
         show_spelllist();
-        box.x = Screensize.x / 2 - Bitmaps[BITMAP_DIALOG_BG]->bitmap->w / 2;
-        box.y = Screensize.y / 2 - Bitmaps[BITMAP_DIALOG_BG]->bitmap->h / 2 - 42;
+        box.x = Screensize.x / 2 - skin_sprites[SKIN_SPRITE_DIALOG_BG]->bitmap->w / 2;
+        box.y = Screensize.y / 2 - skin_sprites[SKIN_SPRITE_DIALOG_BG]->bitmap->h / 2 - 42;
         box.h = 42;
-        box.w = Bitmaps[BITMAP_DIALOG_BG]->bitmap->w;
+        box.w = skin_sprites[SKIN_SPRITE_DIALOG_BG]->bitmap->w;
         SDL_FillRect(ScreenSurface, &box, 0);
         show_quickslots(box.x + 120, box.y + 3);
     }
@@ -612,7 +612,7 @@ void show_media(int x, int y)
 
 void widget_show_mapname(int x, int y)
 {
-    string_blt(ScreenSurface, &font_large_out, MapData.name, x, y, skindef.widget_title, NULL, NULL);
+    string_blt(ScreenSurface, &font_large_out, MapData.name, x, y, skin_prefs.widget_title, NULL, NULL);
 }
 
 
@@ -620,9 +620,9 @@ void show_status(void)
 {
     /*
             int y, x;
-            x= Screensize.x/2-Bitmaps[BITMAP_STATUS]->bitmap->w/2;
-            y= Screensize.y/2-Bitmaps[BITMAP_STATUS]->bitmap->h/2;
-            sprite_blt(Bitmaps[BITMAP_STATUS],x, y, NULL, NULL);
+            x= Screensize.x/2-skin_sprites[SKIN_SPRITE_STATUS]->bitmap->w/2;
+            y= Screensize.y/2-skin_sprites[SKIN_SPRITE_STATUS]->bitmap->h/2;
+            sprite_blt(skin_sprites[SKIN_SPRITE_STATUS],x, y, NULL, NULL);
     */
 }
 
@@ -697,7 +697,7 @@ void show_quickslots(int x, int y)
         qsx = 0;
         qsy = 1;
         xoff = -17;
-        sprite_blt(Bitmaps[BITMAP_QUICKSLOTS], x, y, NULL, NULL);
+        sprite_blt(skin_sprites[SKIN_SPRITE_QUICKSLOTS], x, y, NULL, NULL);
 
     SDL_GetMouseState(&mx, &my);
     update_quickslots(-1);
@@ -742,7 +742,7 @@ void show_quickslots(int x, int y)
         }
         sprintf(buf, "F%d", i + 1);
         string_blt(ScreenSurface, &font_tiny_out, buf, x + quickslots_pos[i][qsx]+xoff + 12, y + quickslots_pos[i][qsy] - 6,
-                  skindef.widget_title, NULL, NULL);
+                  skin_prefs.widget_title, NULL, NULL);
     }
 }
 void widget_quickslots(int x, int y)
@@ -756,14 +756,14 @@ void widget_quickslots(int x, int y)
         qsx = 1;
         qsy = 0;
         xoff = 0;
-        sprite_blt(Bitmaps[BITMAP_QUICKSLOTSV], x, y, NULL, NULL);
+        sprite_blt(skin_sprites[SKIN_SPRITE_QUICKSLOTSV], x, y, NULL, NULL);
     }
     else
     {
         qsx = 0;
         qsy = 1;
         xoff = -17;
-        sprite_blt(Bitmaps[BITMAP_QUICKSLOTS], x, y, NULL, NULL);
+        sprite_blt(skin_sprites[SKIN_SPRITE_QUICKSLOTS], x, y, NULL, NULL);
     }
 
     SDL_GetMouseState(&mx, &my);
@@ -809,7 +809,7 @@ void widget_quickslots(int x, int y)
         }
         sprintf(buf, "F%d", i + 1);
         string_blt(ScreenSurface, &font_tiny_out, buf, x + quickslots_pos[i][qsx]+xoff + 12, y + quickslots_pos[i][qsy] - 6,
-                  skindef.widget_title, NULL, NULL);
+                  skin_prefs.widget_title, NULL, NULL);
     }
 }
 void widget_quickslots_mouse_event(int x, int y, int MEvent)
@@ -847,12 +847,12 @@ void widget_quickslots_mouse_event(int x, int y, int MEvent)
                     if (!locate_item_from_inv(cpl.ob->inv, cpl.win_quick_tag))
                     {
                         sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICKFAIL, 0, 0, 100);
-                        textwin_showstring(0, skindef.widget_info, "Only items from main inventory allowed in quickbar!");
+                        textwin_showstring(0, skin_prefs.widget_info, "Only items from main inventory allowed in quickbar!");
                     }
                     else
                     {
                         sound_play_effect(SOUNDTYPE_CLIENT, SOUND_GET, 0, 0, 100); /* no bug - we 'get' it in quickslots */
-                        textwin_showstring(0, skindef.widget_info, "set F%d to %s",
+                        textwin_showstring(0, skin_prefs.widget_info, "set F%d to %s",
                                            ind + 1,
                                            locate_item(cpl.win_quick_tag)->s_name);
                     }
@@ -1295,11 +1295,11 @@ void widget_show_target(int x, int y)
     double      temp;
     int         hp_tmp;
 
-    sprite_blt(Bitmaps[BITMAP_TARGET_BG], x, y, NULL, NULL);
+    sprite_blt(skin_sprites[SKIN_SPRITE_TARGET_BG], x, y, NULL, NULL);
 
-    sprite_blt(Bitmaps[cpl.target_mode ? BITMAP_TARGET_ATTACK : BITMAP_TARGET_NORMAL], x+5, y+4, NULL, NULL);
+    sprite_blt(skin_sprites[cpl.target_mode ? SKIN_SPRITE_TARGET_ATTACK : SKIN_SPRITE_TARGET_NORMAL], x+5, y+4, NULL, NULL);
 
-    sprite_blt(Bitmaps[BITMAP_TARGET_HP_B], x+4, y+24, NULL, NULL);
+    sprite_blt(skin_sprites[SKIN_SPRITE_TARGET_HP_B], x+4, y+24, NULL, NULL);
 
     /* redirect target_hp to our hp - server don't send it
      * because we should now our hp exactly
@@ -1330,7 +1330,7 @@ void widget_show_target(int x, int y)
             ptr = "target friend";
     }
     if (cpl.target_code)
-        sprite_blt(Bitmaps[BITMAP_TARGET_TALK], x + 223, y + 7, NULL, NULL);
+        sprite_blt(skin_sprites[SKIN_SPRITE_TARGET_TALK], x + 223, y + 7, NULL, NULL);
 
     if (options.show_target_self || cpl.target_code != 0)
     {
@@ -1339,13 +1339,13 @@ void widget_show_target(int x, int y)
             temp = (double) hp_tmp * 0.01;
             box.x = 0;
             box.y = 0;
-            box.h = Bitmaps[BITMAP_TARGET_HP]->bitmap->h;
-            box.w = (int) (Bitmaps[BITMAP_TARGET_HP]->bitmap->w * temp);
+            box.h = skin_sprites[SKIN_SPRITE_TARGET_HP]->bitmap->h;
+            box.w = (int) (skin_sprites[SKIN_SPRITE_TARGET_HP]->bitmap->w * temp);
             if (!box.w)
                 box.w = 1;
-            if (box.w > Bitmaps[BITMAP_TARGET_HP]->bitmap->w)
-                box.w = Bitmaps[BITMAP_TARGET_HP]->bitmap->w;
-            sprite_blt(Bitmaps[BITMAP_TARGET_HP], x+5, y + 25, &box, NULL);
+            if (box.w > skin_sprites[SKIN_SPRITE_TARGET_HP]->bitmap->w)
+                box.w = skin_sprites[SKIN_SPRITE_TARGET_HP]->bitmap->w;
+            sprite_blt(skin_sprites[SKIN_SPRITE_TARGET_HP], x+5, y + 25, &box, NULL);
         }
 
         if (ptr)
@@ -1383,47 +1383,3 @@ void reset_menu_status(void)
     }
 
 }
-
-void reload_icons(void)
-{
-    int i, ii;
-    char    buf[512];
-
-    for (i = 0; i < SPELL_LIST_MAX; i++)
-    {
-        for (ii = 0; ii < DIALOG_LIST_ENTRY; ii++)
-        {
-            if ((spell_list[i].entry[0][ii].flag != LIST_ENTRY_UNUSED) && (spell_list[i].entry[0][ii].icon_name))
-            {
-                if (spell_list[i].entry[0][ii].icon)
-                    sprite_free_sprite(spell_list[i].entry[0][ii].icon);
-               sprintf(buf,"%s%s",GetIconDirectory(),spell_list[i].entry[0][ii].icon_name);
-               spell_list[i].entry[0][ii].icon=sprite_load(buf, NULL);
-            }
-            if ((spell_list[i].entry[1][ii].flag != LIST_ENTRY_UNUSED) && (spell_list[i].entry[1][ii].icon_name))
-            {
-                if (spell_list[i].entry[1][ii].icon)
-                    sprite_free_sprite(spell_list[i].entry[1][ii].icon);
-               sprintf(buf,"%s%s",GetIconDirectory(),spell_list[i].entry[1][ii].icon_name);
-               spell_list[i].entry[1][ii].icon=sprite_load(buf, NULL);
-            }
-        }
-    }
-
-    for (i = 0; i < SKILL_LIST_MAX; i++)
-    {
-        for (ii = 0; ii < DIALOG_LIST_ENTRY; ii++)
-        {
-            if ((skill_list[i].entry[ii].flag != LIST_ENTRY_UNUSED) && (skill_list[i].entry[ii].icon_name))
-            {
-                if (skill_list[i].entry[ii].icon)
-                    sprite_free_sprite(skill_list[i].entry[ii].icon);
-               sprintf(buf,"%s%s",GetIconDirectory(),skill_list[i].entry[ii].icon_name);
-               skill_list[i].entry[ii].icon=sprite_load(buf, NULL);
-            }
-        }
-    }
-
-}
-
-

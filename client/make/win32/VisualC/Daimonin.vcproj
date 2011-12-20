@@ -350,6 +350,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\skin.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\socket.c"
 				>
 			</File>
@@ -524,6 +528,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\include\protocol.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\include\skin.h"
 				>
 			</File>
 			<File

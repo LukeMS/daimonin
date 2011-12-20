@@ -233,17 +233,17 @@ void widget_show_inventory_window(int x, int y)
         if (!options.playerdoll)
             WIDGET_SHOW(WIDGET_PDOLL_ID) = 0;
         widget_data[WIDGET_MAIN_INV_ID].ht = 32;
-        sprite_blt(Bitmaps[BITMAP_INV_BG], x, y, NULL, NULL);
-        string_blt(ScreenSurface, &font_small, "Carry", x+140, y+4, skindef.widget_key, NULL, NULL);
+        sprite_blt(skin_sprites[SKIN_SPRITE_INV_BG], x, y, NULL, NULL);
+        string_blt(ScreenSurface, &font_small, "Carry", x+140, y+4, skin_prefs.widget_key, NULL, NULL);
         sprintf(buf, "%4.3f kg", (float)cpl.real_weight/1000.0f);
         string_blt(ScreenSurface, &font_small, buf, x + 140 + 35, y + 4,
                    percentage_colr(100 - ((float)cpl.real_weight /
                                           (float)cpl.weight_limit * 100)),
                    NULL, NULL);
-        string_blt(ScreenSurface, &font_small, "Limit", x+140, y+15, skindef.widget_key, NULL, NULL);
+        string_blt(ScreenSurface, &font_small, "Limit", x+140, y+15, skin_prefs.widget_key, NULL, NULL);
         sprintf(buf, "%4.3f kg", (float) cpl.weight_limit / 1000.0);
-        string_blt(ScreenSurface, &font_small, buf, x+140 + 35, y+15, skindef.widget_valueEq, NULL, NULL);
-        string_blt(ScreenSurface, &font_tiny_out, "(SHIFT for inventory)", x+32, y+ 9, skindef.widget_info, NULL, NULL);
+        string_blt(ScreenSurface, &font_small, buf, x+140 + 35, y+15, skin_prefs.widget_valueEq, NULL, NULL);
+        string_blt(ScreenSurface, &font_tiny_out, "(SHIFT for inventory)", x+32, y+ 9, skin_prefs.widget_info, NULL, NULL);
         return;
     }
 
@@ -251,8 +251,8 @@ void widget_show_inventory_window(int x, int y)
        WIDGET_SHOW(WIDGET_PDOLL_ID) = 1;
 
     widget_data[WIDGET_MAIN_INV_ID].ht = 129;
-    sprite_blt(Bitmaps[BITMAP_INVENTORY], x, y, NULL, NULL);
-    blt_window_slider(Bitmaps[BITMAP_INV_SCROLL],
+    sprite_blt(skin_sprites[SKIN_SPRITE_INVENTORY], x, y, NULL, NULL);
+    blt_window_slider(skin_sprites[SKIN_SPRITE_INV_SCROLL],
                       ((cpl.win_inv_count - 1) / INVITEMXLEN) + 1, INVITEMYLEN,
                       cpl.win_inv_start / INVITEMXLEN, -1, x + 229, y + 40);
 
@@ -365,8 +365,8 @@ void widget_below_window_event(int x, int y, int MEvent)
 
 void widget_show_below_window(item *op, int x, int y)
 {
-    sprite_blt(Bitmaps[BITMAP_BELOW], x, y, NULL, NULL);
-    blt_window_slider(Bitmaps[BITMAP_BELOW_SCROLL], ((cpl.win_below_count - 1) / INVITEMBELOWXLEN) + 1,
+    sprite_blt(skin_sprites[SKIN_SPRITE_BELOW], x, y, NULL, NULL);
+    blt_window_slider(skin_sprites[SKIN_SPRITE_BELOW_SCROLL], ((cpl.win_below_count - 1) / INVITEMBELOWXLEN) + 1,
                       INVITEMBELOWYLEN, cpl.win_below_start / INVITEMBELOWXLEN, -1, x + 263, y + 30);
 
     if (cpl.below)
@@ -456,7 +456,7 @@ static void ShowIcons(sint16 ox, sint16 oy, sint16 x, sint16 y, uint8 invxlen, u
         if (cpl.container &&
             cpl.container->tag == ip->tag)
         {
-            sprite_blt(Bitmaps[BITMAP_CMARK_START], xi, yi, NULL, bltfx);
+            sprite_blt(skin_sprites[SKIN_SPRITE_CMARK_START], xi, yi, NULL, bltfx);
 
 jump_in_container:
             for (i += 1; i < invxlen * invylen; i++)
@@ -490,11 +490,11 @@ jump_in_container:
 
                 if ((cip = cip->next))
                 {
-                    sprite_blt(Bitmaps[BITMAP_CMARK_MIDDLE], xi, yi, NULL, bltfx);
+                    sprite_blt(skin_sprites[SKIN_SPRITE_CMARK_MIDDLE], xi, yi, NULL, bltfx);
                 }
                 else
                 {
-                    sprite_blt(Bitmaps[BITMAP_CMARK_END], xi, yi, NULL, bltfx);
+                    sprite_blt(skin_sprites[SKIN_SPRITE_CMARK_END], xi, yi, NULL, bltfx);
                 }
             }
         }
@@ -520,7 +520,7 @@ static void PrintInfo(sint16 x, sint16 y, item *ip, _inventory_win iwin)
         sprintf(buf, "%d %s", ip->nrof, ip->s_name);
     }
 
-    string_blt(surface, &font_small, buf, x, y + 4, skindef.widget_title, NULL, NULL);
+    string_blt(surface, &font_small, buf, x, y + 4, skin_prefs.widget_title, NULL, NULL);
 
     /* In the below inv this is all the info we get. This is simply a real
      * estate issue. There just isn't space to squeeze in more info. This could
@@ -534,21 +534,21 @@ static void PrintInfo(sint16 x, sint16 y, item *ip, _inventory_win iwin)
     }
 
     sprintf(buf, "weight: ");
-    string_blt(surface, &font_small, buf, x, y + 16, skindef.widget_key, NULL, NULL);
+    string_blt(surface, &font_small, buf, x, y + 16, skin_prefs.widget_key, NULL, NULL);
     x += string_width(&font_small, buf);
     sprintf(buf, "%4.3f ", (float)ip->weight / 1000.0);
-    string_blt(surface, &font_small, buf, x, y + 16, skindef.widget_valueEq, NULL, NULL);
+    string_blt(surface, &font_small, buf, x, y + 16, skin_prefs.widget_valueEq, NULL, NULL);
     x += string_width(&font_small, buf);
 
     if (ip->item_qua == 255) /* this comes from server when not identified */
     {
         string_blt(surface, &font_small, "(not identified)", x, y + 16,
-                   skindef.widget_info, NULL, NULL);
+                   skin_prefs.widget_info, NULL, NULL);
     }
     else
     {
         sprintf(buf, "con: ");
-        string_blt(surface, &font_small, buf, x, y + 16, skindef.widget_key, NULL,
+        string_blt(surface, &font_small, buf, x, y + 16, skin_prefs.widget_key, NULL,
                    NULL);
         x += string_width(&font_small, buf);
         sprintf(buf, "%d ", ip->item_con);
@@ -557,11 +557,11 @@ static void PrintInfo(sint16 x, sint16 y, item *ip, _inventory_win iwin)
                                    (float)ip->item_qua * 100), NULL, NULL);
         x += string_width(&font_small, buf);
         sprintf(buf, "/ %d", ip->item_qua);
-        string_blt(surface, &font_small, buf, x, y + 16, skindef.widget_valueHi,
+        string_blt(surface, &font_small, buf, x, y + 16, skin_prefs.widget_valueHi,
                    NULL, NULL);
         x += string_width(&font_small, buf);
         sprintf(buf, "allowed: ");
-        string_blt(surface, &font_small, buf, x, y + 16, skindef.widget_key, NULL,
+        string_blt(surface, &font_small, buf, x, y + 16, skin_prefs.widget_key, NULL,
                    NULL);
         x += string_width(&font_small, buf);
 
@@ -575,18 +575,18 @@ static void PrintInfo(sint16 x, sint16 y, item *ip, _inventory_win iwin)
                  ip->item_level <= cpl.stats.skill_level[ip->item_skill - 1]))
             {
                 string_blt(surface, &font_small, buf, x, y + 16,
-                           skindef.widget_valueEq, NULL, NULL);
+                           skin_prefs.widget_valueEq, NULL, NULL);
             }
             else
             {
                 string_blt(surface, &font_small, buf, x, y + 16,
-                           skindef.widget_valueLo, NULL, NULL);
+                           skin_prefs.widget_valueLo, NULL, NULL);
             }
         }
         else
         {
             string_blt(surface, &font_small, "all", x, y + 16,
-                       skindef.widget_valueHi, NULL, NULL);
+                       skin_prefs.widget_valueHi, NULL, NULL);
         }
     }
 }
@@ -764,61 +764,61 @@ void blt_inv_item(item *tmp, int x, int y)
         }
 
         string_blt(ScreenSurface, &font_tiny_out, buf, x +
-                   skindef.item_size / 2 -
-                   string_width(&font_tiny_out, buf) / 2, y + 18, skindef.widget_valueEq,
+                   skin_prefs.item_size / 2 -
+                   string_width(&font_tiny_out, buf) / 2, y + 18, skin_prefs.widget_valueEq,
                    NULL, NULL);
     }
 
     /* bottom left */
     if (tmp->locked)
     {
-        sprite_blt(Bitmaps[BITMAP_LOCK], x, y + skindef.item_size -
-                   skindef.icon_size, NULL, NULL);
+        sprite_blt(skin_sprites[SKIN_SPRITE_LOCK], x, y + skin_prefs.item_size -
+                   skin_prefs.icon_size, NULL, NULL);
     }
 
     /* top left */
     /* applied and unpaid some spot - can't apply unpaid items */
     if (tmp->applied)
     {
-        sprite_blt(Bitmaps[BITMAP_APPLY], x, y, NULL, NULL);
+        sprite_blt(skin_sprites[SKIN_SPRITE_APPLY], x, y, NULL, NULL);
     }
     else if (tmp->unpaid)
     {
-        sprite_blt(Bitmaps[BITMAP_UNPAID], x, y, NULL, NULL);
+        sprite_blt(skin_sprites[SKIN_SPRITE_UNPAID], x, y, NULL, NULL);
     }
 
     /* right side, top to bottom */
     if (tmp->item_qua == 255)
     {
-        sprite_blt(Bitmaps[BITMAP_UNIDENTIFIED],
-                   x + skindef.item_size - skindef.icon_size - 2, y, NULL, NULL);
+        sprite_blt(skin_sprites[SKIN_SPRITE_UNIDENTIFIED],
+                   x + skin_prefs.item_size - skin_prefs.icon_size - 2, y, NULL, NULL);
     }
 
     if (tmp->magical)
     {
-        sprite_blt(Bitmaps[BITMAP_MAGIC],
-                   x + skindef.item_size - skindef.icon_size - 2,
-                   y + skindef.icon_size, NULL, NULL);
+        sprite_blt(skin_sprites[SKIN_SPRITE_MAGIC],
+                   x + skin_prefs.item_size - skin_prefs.icon_size - 2,
+                   y + skin_prefs.icon_size, NULL, NULL);
     }
 
     if (tmp->cursed)
     {
-        sprite_blt(Bitmaps[BITMAP_CURSED],
-                   x + skindef.item_size - skindef.icon_size - 2,
-                   y + skindef.icon_size * 2, NULL, NULL);
+        sprite_blt(skin_sprites[SKIN_SPRITE_CURSED],
+                   x + skin_prefs.item_size - skin_prefs.icon_size - 2,
+                   y + skin_prefs.icon_size * 2, NULL, NULL);
     }
 
     if (tmp->damned)
     {
-        sprite_blt(Bitmaps[BITMAP_DAMNED],
-                   x + skindef.item_size - skindef.icon_size - 2,
-                   y + skindef.icon_size * 3, NULL, NULL);
+        sprite_blt(skin_sprites[SKIN_SPRITE_DAMNED],
+                   x + skin_prefs.item_size - skin_prefs.icon_size - 2,
+                   y + skin_prefs.icon_size * 3, NULL, NULL);
     }
 
     /* central */
     if (tmp->traped)
     {
-        sprite_blt(Bitmaps[BITMAP_TRAPED], x + 8, y + 7, NULL, NULL);
+        sprite_blt(skin_sprites[SKIN_SPRITE_TRAPED], x + 8, y + 7, NULL, NULL);
     }
 }
 

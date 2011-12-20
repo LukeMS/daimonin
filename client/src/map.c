@@ -151,7 +151,7 @@ void map_draw_map_clear(void)
         {
             xpos = options.mapstart_x + x * MAP_TILE_YOFF - y * MAP_TILE_YOFF;
             ypos = options.mapstart_y + x * MAP_TILE_XOFF + y * MAP_TILE_XOFF;
-            sprite_blt_map(Bitmaps[BITMAP_BLACKTILE], xpos, ypos, NULL, NULL, 0);
+            sprite_blt_map(skin_sprites[SKIN_SPRITE_BLACKTILE], xpos, ypos, NULL, NULL, 0);
         }
     }
 }
@@ -554,7 +554,7 @@ void map_draw_map(void)
                     xpos = MAP_START_XOFF + x * MAP_TILE_YOFF - y * MAP_TILE_YOFF;
                     ypos = 50 + x * MAP_TILE_XOFF + y * MAP_TILE_XOFF;
                  //   if (!k)
-                   //     sprite_blt_map(Bitmaps[BITMAP_BLACKTILE], xpos, ypos, NULL, NULL);
+                   //     sprite_blt_map(skin_sprites[SKIN_SPRITE_BLACKTILE], xpos, ypos, NULL, NULL);
                     if (!debug_layer[k])
                         continue;
 
@@ -757,7 +757,7 @@ void map_draw_map(void)
                                 {
                                     p = k;
                                     p_xl = xmpos + left + right / 2 - 10;
-                                    p_yl = yl - skindef.effect_height;
+                                    p_yl = yl - skin_prefs.effect_height;
                                     p_flags = map->ext[k];
                                 }
                                 else if ((map->ext[k] & FFLAG_PROBE))
@@ -771,7 +771,7 @@ void map_draw_map(void)
                                         t_left = left + (xmpos - 5);
                                         t_right = right + t_left;
                                         t_xl = xmpos + left + right / 2 - 10;
-                                        t_yl = yl - skindef.effect_height;
+                                        t_yl = yl - skin_prefs.effect_height;
                                         t_flags = map->ext[k];
                                     }
                                 }
@@ -779,7 +779,7 @@ void map_draw_map(void)
                                 {
                                     ShowEffects(map->ext[k],
                                                 xmpos + left + right / 2 - 10,
-                                                yl - skindef.effect_height);
+                                                yl - skin_prefs.effect_height);
 
                                     /* have we a playername? then print it! */
                                     if (map->pname[k][0] &&
@@ -792,7 +792,7 @@ void map_draw_map(void)
                                                    xmpos + left + right / 2 - 10 -
                                                    string_width(&font_small_out,
                                                                 map->pname[k]) / 2,
-                                                   yl - skindef.effect_height -
+                                                   yl - skin_prefs.effect_height -
                                                    font_small_out.line_height - 8,
                                                    NDI_COLR_WHITE, NULL, NULL);
                                     }
@@ -814,7 +814,7 @@ void map_draw_map(void)
             {
                 xpos = MAP_START_XOFF + x * MAP_TILE_YOFF - y * MAP_TILE_YOFF;
                 ypos = 50 + x * MAP_TILE_XOFF + y * MAP_TILE_XOFF;
-                sprite_blt_map(Bitmaps[BITMAP_GRID], xpos, ypos, NULL, NULL, 0);
+                sprite_blt_map(skin_sprites[SKIN_SPRITE_GRID], xpos, ypos, NULL, NULL, 0);
             }
         }
     }
@@ -911,25 +911,25 @@ static void ShowEffects(uint32 flags, uint16 x, uint16 y)
     {
         if ((flags & FFLAG_SCARED))
         {
-            sprite_blt_map(Bitmaps[BITMAP_SCARED], x - skindef.effect_width * (i + 1), y,
+            sprite_blt_map(skin_sprites[SKIN_SPRITE_SCARED], x - skin_prefs.effect_width * (i + 1), y,
                            NULL, NULL, 0);
             flags &= ~FFLAG_SCARED;
         }
         else if ((flags & FFLAG_PARALYZED))
         {
-            sprite_blt_map(Bitmaps[BITMAP_PARALYZE], x - skindef.effect_width * (i + 1), y,
+            sprite_blt_map(skin_sprites[SKIN_SPRITE_PARALYZE], x - skin_prefs.effect_width * (i + 1), y,
                            NULL, NULL, 0);
             flags &= ~FFLAG_PARALYZED;
         }
         else if ((flags & FFLAG_CONFUSED))
         {
-            sprite_blt_map(Bitmaps[BITMAP_CONFUSE], x - skindef.effect_width * (i + 1), y,
+            sprite_blt_map(skin_sprites[SKIN_SPRITE_CONFUSE], x - skin_prefs.effect_width * (i + 1), y,
                            NULL, NULL, 0);
             flags &= ~FFLAG_CONFUSED;
         }
 //        else if ((flags & FFLAG_BLINDED))
 //        {
-//            sprite_blt_map(Bitmaps[BITMAP_BLIND], x - skindef.effect_width * (i + 1), y,
+//            sprite_blt_map(skin_sprites[SKIN_SPRITE_BLIND], x - skin_prefs.effect_width * (i + 1), y,
 //                           NULL, NULL, 0);
 //            flags &= ~FFLAG_BLINDED;
 //        }
@@ -943,10 +943,10 @@ static void ShowEffects(uint32 flags, uint16 x, uint16 y)
 
         if (w == 0)
         {
-            w = string_width(&font_small_out, skindef.effect_sleeping);
+            w = string_width(&font_small_out, skin_prefs.effect_sleeping);
         }
 
-        xoff = ShowExclusiveEffect(x, y, xoff, w, skindef.effect_sleeping);
+        xoff = ShowExclusiveEffect(x, y, xoff, w, skin_prefs.effect_sleeping);
     }
     else if ((flags & FFLAG_EATING))
     {
@@ -955,10 +955,10 @@ static void ShowEffects(uint32 flags, uint16 x, uint16 y)
 
         if (w == 0)
         {
-            w = string_width(&font_small_out, skindef.effect_eating);
+            w = string_width(&font_small_out, skin_prefs.effect_eating);
         }
 
-        xoff = ShowExclusiveEffect(x, y, xoff, w, skindef.effect_eating);
+        xoff = ShowExclusiveEffect(x, y, xoff, w, skin_prefs.effect_eating);
     }
 }
 
@@ -967,11 +967,11 @@ static uint16 ShowExclusiveEffect(uint16 x, uint16 y, uint16 xoff, uint16 w,
 {
     SDL_Rect box;
 
-    sprite_blt_map(Bitmaps[BITMAP_EXCLUSIVE_EFFECT], x + skindef.effect_width,
+    sprite_blt_map(skin_sprites[SKIN_SPRITE_EXCLUSIVE_EFFECT], x + skin_prefs.effect_width,
                    y, NULL, NULL, 0);
-    box.x = x + skindef.effect_width + 3;
+    box.x = x + skin_prefs.effect_width + 3;
     box.y = y + 1;
-    box.w = skindef.effect_width * 3;
+    box.w = skin_prefs.effect_width * 3;
     box.h = font_small_out.line_height;
     SDL_SetClipRect(ScreenSurfaceMap, &box);
 

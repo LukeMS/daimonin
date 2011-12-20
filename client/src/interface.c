@@ -543,7 +543,7 @@ _gui_npc *gui_npc_create(int mode, char *data, int len, int pos)
 
     gui_npc->height = PrecalcGUI();
     cpl.menustatus = MENU_NPC;
-    gui_npc->startx = (Screensize.x / 2) - (Bitmaps[BITMAP_GUI_NPC_TOP]->bitmap->w / 2);
+    gui_npc->startx = (Screensize.x / 2) - (skin_sprites[SKIN_SPRITE_GUI_NPC_TOP]->bitmap->w / 2);
     gui_npc->starty = (Screensize.y - 600) / 2 + 50;
     mb_clicked = 0;
 
@@ -1620,13 +1620,13 @@ void gui_npc_show(void)
         if (options.keyword_panel == 1) /* left */
         {
             ShowGUIPanel(gui_npc->startx -
-                         Bitmaps[BITMAP_GUI_NPC_PANEL]->bitmap->w + 23,
+                         skin_sprites[SKIN_SPRITE_GUI_NPC_PANEL]->bitmap->w + 23,
                          gui_npc->starty + GUI_NPC_TOPMARGIN - 6);
         }
         else if (options.keyword_panel == 2) /* right */
         {
             ShowGUIPanel(gui_npc->startx +
-                         Bitmaps[BITMAP_GUI_NPC_TOP]->bitmap->w - 5,
+                         skin_sprites[SKIN_SPRITE_GUI_NPC_TOP]->bitmap->w - 5,
                          gui_npc->starty +  GUI_NPC_TOPMARGIN - 6);
         }
     }
@@ -1646,16 +1646,16 @@ void gui_npc_show(void)
 
 static void ShowGUIBackground(uint16 x, uint16 y)
 {
-    sprite_blt(Bitmaps[BITMAP_GUI_NPC_TOP], x, y, NULL, NULL);
-    y += Bitmaps[BITMAP_GUI_NPC_TOP]->bitmap->h;
+    sprite_blt(skin_sprites[SKIN_SPRITE_GUI_NPC_TOP], x, y, NULL, NULL);
+    y += skin_sprites[SKIN_SPRITE_GUI_NPC_TOP]->bitmap->h;
 
     if (gui_npc->shop)
     {
-        sprite_blt(Bitmaps[BITMAP_GUI_NPC_MIDDLE], x, y, NULL, NULL);
-        y += Bitmaps[BITMAP_GUI_NPC_MIDDLE]->bitmap->h;
+        sprite_blt(skin_sprites[SKIN_SPRITE_GUI_NPC_MIDDLE], x, y, NULL, NULL);
+        y += skin_sprites[SKIN_SPRITE_GUI_NPC_MIDDLE]->bitmap->h;
     }
 
-    sprite_blt(Bitmaps[BITMAP_GUI_NPC_BOTTOM], x, y, NULL, NULL);
+    sprite_blt(skin_sprites[SKIN_SPRITE_GUI_NPC_BOTTOM], x, y, NULL, NULL);
 }
 
 static void ShowGUIPanel(uint16 x, uint16 y)
@@ -1663,7 +1663,7 @@ static void ShowGUIPanel(uint16 x, uint16 y)
     _gui_npc_element *this = gui_npc->hypertext;
     uint8             i = 0;
 
-    sprite_blt(Bitmaps[BITMAP_GUI_NPC_PANEL], x, y, NULL, NULL);
+    sprite_blt(skin_sprites[SKIN_SPRITE_GUI_NPC_PANEL], x, y, NULL, NULL);
 
     for (; this; this = this->next, i++)
     {
@@ -1675,7 +1675,7 @@ static void ShowGUIPanel(uint16 x, uint16 y)
         sprintf(buf, "%s", this->keyword);
 
         if (string_width_offset(&font_medium, buf, &len,
-            Bitmaps[BITMAP_GUI_NPC_PANEL]->bitmap->w - cw))
+            skin_sprites[SKIN_SPRITE_GUI_NPC_PANEL]->bitmap->w - cw))
         {
             buf[len - 2] = '\0';
             strcat(buf, "...");
@@ -1738,14 +1738,14 @@ static void ShowGUIFurniture(uint16 x, uint16 y)
         }
     }
 
-    blt_window_slider(Bitmaps[BITMAP_NPC_INT_SLIDER], gui_npc->height,
+    blt_window_slider(skin_sprites[SKIN_SPRITE_NPC_INT_SLIDER], gui_npc->height,
                       GUI_NPC_HEIGHT, gui_npc->yoff, -1, x + 341, y + 90);
 
     if (gui_npc->lhsbutton)
     {
         xoff = x + GUI_NPC_LEFTMARGIN;
-        yoff = y + Bitmaps[BITMAP_GUI_NPC_TOP]->bitmap->h + ((gui_npc->shop) ?
-               Bitmaps[BITMAP_GUI_NPC_MIDDLE]->bitmap->h : 0) - 1;
+        yoff = y + skin_sprites[SKIN_SPRITE_GUI_NPC_TOP]->bitmap->h + ((gui_npc->shop) ?
+               skin_sprites[SKIN_SPRITE_GUI_NPC_MIDDLE]->bitmap->h : 0) - 1;
 
         /* Button title. */
         sprintf(buf, "%s", gui_npc->lhsbutton->title);
@@ -1761,19 +1761,19 @@ static void ShowGUIFurniture(uint16 x, uint16 y)
             *gui_npc->lhsbutton->command == '#')
         {
             (void)add_button(xoff + 4, yoff + 4, 0,
-                             BITMAP_DIALOG_BUTTON_UP_PREFIX, buf,
+                             SKIN_SPRITE_DIALOG_BUTTON_UP_PREFIX, buf,
                              gui_npc->lhsbutton->title2);
         }
         else
         {
-            (void)add_button(xoff + 4, yoff + 4, 0, BITMAP_DIALOG_BUTTON_UP,
+            (void)add_button(xoff + 4, yoff + 4, 0, SKIN_SPRITE_DIALOG_BUTTON_UP,
                              buf, gui_npc->lhsbutton->title2);
         }
 
         /* Button fg (frame if selected). */
         if (gui_npc->button_selected == gui_npc->lhsbutton)
         {
-            sprite_blt(Bitmaps[BITMAP_DIALOG_BUTTON_SELECTED], xoff, yoff,
+            sprite_blt(skin_sprites[SKIN_SPRITE_DIALOG_BUTTON_SELECTED], xoff, yoff,
                        NULL, NULL);
         }
     }
@@ -1781,8 +1781,8 @@ static void ShowGUIFurniture(uint16 x, uint16 y)
     if (gui_npc->rhsbutton)
     {
         xoff = x + GUI_NPC_LEFTMARGIN + GUI_NPC_WIDTH - GUI_NPC_BUTTONWIDTH;
-        yoff = y + Bitmaps[BITMAP_GUI_NPC_TOP]->bitmap->h + ((gui_npc->shop) ?
-               Bitmaps[BITMAP_GUI_NPC_MIDDLE]->bitmap->h : 0) - 1;
+        yoff = y + skin_sprites[SKIN_SPRITE_GUI_NPC_TOP]->bitmap->h + ((gui_npc->shop) ?
+               skin_sprites[SKIN_SPRITE_GUI_NPC_MIDDLE]->bitmap->h : 0) - 1;
 
         /* Button title. */
         sprintf(buf, "%s", gui_npc->rhsbutton->title);
@@ -1798,19 +1798,19 @@ static void ShowGUIFurniture(uint16 x, uint16 y)
             *gui_npc->rhsbutton->command == '#')
         {
             (void)add_button(xoff + 4, yoff + 4, 0,
-                             BITMAP_DIALOG_BUTTON_UP_PREFIX, buf,
+                             SKIN_SPRITE_DIALOG_BUTTON_UP_PREFIX, buf,
                              gui_npc->rhsbutton->title2);
         }
         else
         {
-            (void)add_button(xoff + 4, yoff + 4, 0, BITMAP_DIALOG_BUTTON_UP,
+            (void)add_button(xoff + 4, yoff + 4, 0, SKIN_SPRITE_DIALOG_BUTTON_UP,
                              buf, gui_npc->rhsbutton->title2);
         }
 
         /* Button fg (frame if selected). */
         if (gui_npc->button_selected == gui_npc->rhsbutton)
         {
-            sprite_blt(Bitmaps[BITMAP_DIALOG_BUTTON_SELECTED], xoff, yoff,
+            sprite_blt(skin_sprites[SKIN_SPRITE_DIALOG_BUTTON_SELECTED], xoff, yoff,
                        NULL, NULL);
         }
     }
@@ -1818,8 +1818,8 @@ static void ShowGUIFurniture(uint16 x, uint16 y)
     if (interface_mode != GUI_NPC_MODE_RHETORICAL)
     {
         xoff = x + GUI_NPC_LEFTMARGIN + GUI_NPC_BUTTONWIDTH;
-        yoff = y + Bitmaps[BITMAP_GUI_NPC_TOP]->bitmap->h + ((gui_npc->shop) ?
-                   Bitmaps[BITMAP_GUI_NPC_MIDDLE]->bitmap->h : 0) - 1;
+        yoff = y + skin_sprites[SKIN_SPRITE_GUI_NPC_TOP]->bitmap->h + ((gui_npc->shop) ?
+                   skin_sprites[SKIN_SPRITE_GUI_NPC_MIDDLE]->bitmap->h : 0) - 1;
         box.x = xoff + 4;
         box.y = yoff - 2 + font_small.line_height;
         box.h = font_medium.line_height;
@@ -2586,7 +2586,7 @@ static void ShowIcon(_gui_npc_element *this)
         if (gui_npc->icon_selected == this)
         {
             uint16 xoff2 = xoff,
-                   yoff2 = gui_npc->starty + Bitmaps[BITMAP_GUI_NPC_TOP]->bitmap->h;
+                   yoff2 = gui_npc->starty + skin_sprites[SKIN_SPRITE_GUI_NPC_TOP]->bitmap->h;
             char   buf[SMALL_BUF];
             int    len;
             uint8  i;
@@ -2672,9 +2672,9 @@ static _gui_npc_element *GetElement(int mx, int my)
               ch = font_medium.line_height;
 
         xoff = (options.keyword_panel == 1) ? /* left */
-               x - Bitmaps[BITMAP_GUI_NPC_PANEL]->bitmap->w + 23 +
+               x - skin_sprites[SKIN_SPRITE_GUI_NPC_PANEL]->bitmap->w + 23 +
                cw / 2 :
-               x + Bitmaps[BITMAP_GUI_NPC_TOP]->bitmap->w - 5 + cw / 2;
+               x + skin_sprites[SKIN_SPRITE_GUI_NPC_TOP]->bitmap->w - 5 + cw / 2;
 
         for (i = 1; this; this = this->next, i++)
         {
@@ -2694,13 +2694,13 @@ static _gui_npc_element *GetElement(int mx, int my)
 
     /* Buttons. */
     xoff = x + GUI_NPC_LEFTMARGIN;
-    yoff = y + Bitmaps[BITMAP_GUI_NPC_TOP]->bitmap->h + ((gui_npc->shop) ?
-           Bitmaps[BITMAP_GUI_NPC_MIDDLE]->bitmap->h : 0) - 1;
+    yoff = y + skin_sprites[SKIN_SPRITE_GUI_NPC_TOP]->bitmap->h + ((gui_npc->shop) ?
+           skin_sprites[SKIN_SPRITE_GUI_NPC_MIDDLE]->bitmap->h : 0) - 1;
     if (gui_npc->lhsbutton &&
         mx >= xoff &&
         mx <= xoff + GUI_NPC_BUTTONWIDTH &&
         my >= yoff &&
-        my <= yoff + Bitmaps[BITMAP_GUI_NPC_BOTTOM]->bitmap->h)
+        my <= yoff + skin_sprites[SKIN_SPRITE_GUI_NPC_BOTTOM]->bitmap->h)
     {
         return gui_npc->lhsbutton;
     }
@@ -2710,7 +2710,7 @@ static _gui_npc_element *GetElement(int mx, int my)
         mx >= xoff &&
         mx <= xoff + GUI_NPC_BUTTONWIDTH &&
         my >= yoff &&
-        my <= yoff + Bitmaps[BITMAP_GUI_NPC_BOTTOM]->bitmap->h)
+        my <= yoff + skin_sprites[SKIN_SPRITE_GUI_NPC_BOTTOM]->bitmap->h)
     {
         return gui_npc->rhsbutton;
     }
@@ -2725,8 +2725,8 @@ static _gui_npc_element *GetElement(int mx, int my)
         ((!gui_npc->shop &&
           my > yoff + GUI_NPC_HEIGHT) ||
          (gui_npc->shop &&
-          my > y + Bitmaps[BITMAP_GUI_NPC_TOP]->bitmap->h +
-          Bitmaps[BITMAP_GUI_NPC_MIDDLE]->bitmap->h)))
+          my > y + skin_sprites[SKIN_SPRITE_GUI_NPC_TOP]->bitmap->h +
+          skin_sprites[SKIN_SPRITE_GUI_NPC_MIDDLE]->bitmap->h)))
     {
         return NULL;
     }

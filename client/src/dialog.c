@@ -349,7 +349,7 @@ void add_close_button(int x, int y, int menu)
 
     if (mx > x + 460 && mx <x + 474 && my> y + 26 && my < y + 40)
     {
-        sprite_blt(Bitmaps[BITMAP_CLOSEBUTTON], x+463, y+28, NULL,NULL);
+        sprite_blt(skin_sprites[SKIN_SPRITE_CLOSEBUTTON], x+463, y+28, NULL,NULL);
         if (mb && mb_clicked)
             check_menu_keys(menu, SDLK_ESCAPE);
     }
@@ -372,23 +372,23 @@ int add_button(int x, int y, int id, int gfxNr, char *text, char *text_h)
     else
         text_sel = text;
 
-    sprite_blt(Bitmaps[gfxNr], x, y, NULL, NULL);
+    sprite_blt(skin_sprites[gfxNr], x, y, NULL, NULL);
 
     // Label centering in button
-    yoff =  (Bitmaps[gfxNr]->bitmap->h - (font_small.c['W'].h+1)) / 2 + 2;
-    xoff =  (Bitmaps[gfxNr]->bitmap->w - (string_width(&font_small, text)+1)) / 2 + 1;
+    yoff =  (skin_sprites[gfxNr]->bitmap->h - (font_small.c['W'].h+1)) / 2 + 2;
+    xoff =  (skin_sprites[gfxNr]->bitmap->w - (string_width(&font_small, text)+1)) / 2 + 1;
 
     if (global_buttons.down!=-1 && global_buttons.mx_down > x && global_buttons.my_down > y &&
-            global_buttons.mx_down < x + Bitmaps[gfxNr]->bitmap->w &&
-            global_buttons.my_down < y + Bitmaps[gfxNr]->bitmap->h)
+            global_buttons.mx_down < x + skin_sprites[gfxNr]->bitmap->w &&
+            global_buttons.my_down < y + skin_sprites[gfxNr]->bitmap->h)
     {
-        sprite_blt(Bitmaps[gfxNr + 1], x, y++, NULL, NULL);
+        sprite_blt(skin_sprites[gfxNr + 1], x, y++, NULL, NULL);
         EMBOSS(ScreenSurface, &font_small, text_sel, x + (xoff-1), y + (yoff-1), NDI_COLR_SILVER, NULL, NULL);
     }
     else if ( global_buttons.valid != -1 && global_buttons.click != -1 &&
               global_buttons.mx_up > x && global_buttons.my_up > y &&
-              global_buttons.mx_up < x + Bitmaps[gfxNr]->bitmap->w &&
-              global_buttons.my_up < y + Bitmaps[gfxNr]->bitmap->h)
+              global_buttons.mx_up < x + skin_sprites[gfxNr]->bitmap->w &&
+              global_buttons.my_up < y + skin_sprites[gfxNr]->bitmap->h)
     {
         global_buttons.valid = -1;
         ret = 1;
@@ -420,23 +420,23 @@ static int add_gfx_button(int x, int y, int id, int gfxNr, int gfx_inner, char *
     else
         text_sel = text;
 
-    sprite_blt(Bitmaps[gfxNr], x, y, NULL, NULL);
-    sprite_blt(Bitmaps[gfx_inner], x + 5, y + 3, NULL, NULL);
-    if (mx > x && my > y && mx < x + Bitmaps[gfxNr]->bitmap->w && my < y + Bitmaps[gfxNr]->bitmap->h)
+    sprite_blt(skin_sprites[gfxNr], x, y, NULL, NULL);
+    sprite_blt(skin_sprites[gfx_inner], x + 5, y + 3, NULL, NULL);
+    if (mx > x && my > y && mx < x + skin_sprites[gfxNr]->bitmap->w && my < y + skin_sprites[gfxNr]->bitmap->h)
     {
         if (mb && mb_clicked && active_button < 0)
             active_button = id;
         if (active_button == id)
         {
-            sprite_blt(Bitmaps[gfxNr + 1], x, y, NULL, NULL);
-            sprite_blt(Bitmaps[gfx_inner], x + 6, y + 4, NULL, NULL);
+            sprite_blt(skin_sprites[gfxNr + 1], x, y, NULL, NULL);
+            sprite_blt(skin_sprites[gfx_inner], x + 6, y + 4, NULL, NULL);
             if (!mb)
                 ret = 1;
         }
         color = NDI_COLR_SILVER;
     }
-    x += Bitmaps[gfxNr]->bitmap->w + 10;
-    y += Bitmaps[gfxNr]->bitmap->h / 2 - 5;
+    x += skin_sprites[gfxNr]->bitmap->w + 10;
+    y += skin_sprites[gfxNr]->bitmap->h / 2 - 5;
     EMBOSS(ScreenSurface, &font_small, text_sel, x, y, color, NULL, NULL);
 
     return ret;
@@ -462,11 +462,11 @@ static int add_gr_button(int x, int y, int id, int gfxNr, char *text, char *text
         text_sel = text;
 
     if (id)
-        sprite_blt(Bitmaps[++gfxNr], x, y++, NULL, NULL);
+        sprite_blt(skin_sprites[++gfxNr], x, y++, NULL, NULL);
     else
-        sprite_blt(Bitmaps[gfxNr], x, y, NULL, NULL);
+        sprite_blt(skin_sprites[gfxNr], x, y, NULL, NULL);
 
-    if (mx > x && my > y && mx < x + Bitmaps[gfxNr]->bitmap->w && my < y + Bitmaps[gfxNr]->bitmap->h)
+    if (mx > x && my > y && mx < x + skin_sprites[gfxNr]->bitmap->w && my < y + skin_sprites[gfxNr]->bitmap->h)
     {
         EMBOSS(ScreenSurface, &font_small, text_sel, x + 11, y + 2, NDI_COLR_SILVER, NULL, NULL);
 
@@ -493,7 +493,7 @@ int add_rangebox(int x, int y, int id, int text_w, int text_x, char *text, int c
     static int  active  = -1;
     SDL_Rect    box;
     int         mx, my, mb;
-    int         width   = Bitmaps[BITMAP_DIALOG_RANGE_OFF]->bitmap->w;
+    int         width   = skin_sprites[SKIN_SPRITE_DIALOG_RANGE_OFF]->bitmap->w;
 
     mb = SDL_GetMouseState(&mx, &my) & SDL_BUTTON(SDL_BUTTON_LEFT);
     if (text_x)
@@ -507,7 +507,7 @@ int add_rangebox(int x, int y, int id, int text_w, int text_x, char *text, int c
         x += text_w;
     }
     /* draw the range gadget */
-    sprite_blt(Bitmaps[BITMAP_DIALOG_RANGE_OFF], x, y, NULL, NULL);
+    sprite_blt(skin_sprites[SKIN_SPRITE_DIALOG_RANGE_OFF], x, y, NULL, NULL);
     box.x = text_x - 2;
     box.y = y + 1;
     box.w = text_w + 2;
@@ -524,7 +524,7 @@ int add_rangebox(int x, int y, int id, int text_w, int text_x, char *text, int c
                 active = id;
             if (active == id)
             {
-                sprite_blt(Bitmaps[BITMAP_DIALOG_RANGE_L], x, y, NULL, NULL);
+                sprite_blt(skin_sprites[SKIN_SPRITE_DIALOG_RANGE_L], x, y, NULL, NULL);
                 if (!mb)
                 {
                     active = -1;
@@ -538,7 +538,7 @@ int add_rangebox(int x, int y, int id, int text_w, int text_x, char *text, int c
                 active = id + 1; /* a rangebox has 2 buttons */
             if (active == id + 1)
             {
-                sprite_blt(Bitmaps[BITMAP_DIALOG_RANGE_R], x + width / 2, y, NULL, NULL);
+                sprite_blt(skin_sprites[SKIN_SPRITE_DIALOG_RANGE_R], x + width / 2, y, NULL, NULL);
                 if (!mb)
                 {
                     active = -1;
@@ -618,7 +618,7 @@ inline void optwin_draw_options(int x, int y)
 
                 string_blt(ScreenSurface, &font_small, opt[i].name, x, y + 2, tmp, NULL, NULL);
 
-                sprite_blt(Bitmaps[BITMAP_DIALOG_CHECKER], x + LEN_NAME, y, NULL, NULL);
+                sprite_blt(skin_sprites[SKIN_SPRITE_DIALOG_CHECKER], x + LEN_NAME, y, NULL, NULL);
                 if (*((uint8 *) opt[i].value) == 1)
                 {
                     EMBOSS(ScreenSurface, &font_small, "X", x + LEN_NAME + 7, y + 1, NDI_COLR_WHITE, NULL, NULL);
@@ -695,7 +695,7 @@ inline void optwin_draw_options(int x, int y)
                     string_blt(ScreenSurface, &font_small, text, box.x + 2, y + 2, NDI_COLR_WHITE, NULL, NULL);
 #undef MAX_LEN
                 }
-                sprite_blt(Bitmaps[BITMAP_DIALOG_RANGE_OFF], x + LEN_NAME + LEN_VALUE, y, NULL, NULL);
+                sprite_blt(skin_sprites[SKIN_SPRITE_DIALOG_RANGE_OFF], x + LEN_NAME + LEN_VALUE, y, NULL, NULL);
 
 
                 /* keyboard event */
@@ -713,7 +713,7 @@ inline void optwin_draw_options(int x, int y)
                         active_button = id + 1; /* 2 buttons per row */
                     if (active_button == id + 1)
                     {
-                        sprite_blt(Bitmaps[BITMAP_DIALOG_RANGE_L], x + LEN_NAME + LEN_VALUE, y, NULL, NULL);
+                        sprite_blt(skin_sprites[SKIN_SPRITE_DIALOG_RANGE_L], x + LEN_NAME + LEN_VALUE, y, NULL, NULL);
                         if (!mb)
                             add_value(opt[i].value, opt[i].value_type, -opt[i].deltaRange, opt[i].minRange,
                                       opt[i].maxRange);
@@ -728,7 +728,7 @@ inline void optwin_draw_options(int x, int y)
                         active_button = id;
                     if (active_button == id)
                     {
-                        sprite_blt(Bitmaps[BITMAP_DIALOG_RANGE_R], x + LEN_NAME + LEN_VALUE + 14, y, NULL, NULL);
+                        sprite_blt(skin_sprites[SKIN_SPRITE_DIALOG_RANGE_R], x + LEN_NAME + LEN_VALUE + 14, y, NULL, NULL);
                         if (!mb)
                             add_value(opt[i].value, opt[i].value_type, opt[i].deltaRange, opt[i].minRange,
                                       opt[i].maxRange);
@@ -739,7 +739,7 @@ inline void optwin_draw_options(int x, int y)
             break;
 
             case SEL_BUTTON:
-                sprite_blt(Bitmaps[BITMAP_DIALOG_BUTTON_UP], x, y, NULL, NULL);
+                sprite_blt(skin_sprites[SKIN_SPRITE_DIALOG_BUTTON_UP], x, y, NULL, NULL);
                 break;
         }
         y += 20;
@@ -772,17 +772,17 @@ static void draw_tabs(char *tabs[], int *act_tab, char *head_text, int x, int y)
     static int  active  = 0;
 
     mb = SDL_GetMouseState(&mx, &my) & SDL_BUTTON(SDL_BUTTON_LEFT);
-    sprite_blt(Bitmaps[BITMAP_DIALOG_TAB_START], x, y - 10, NULL, NULL);
-    sprite_blt(Bitmaps[BITMAP_DIALOG_TAB], x, y, NULL, NULL);
+    sprite_blt(skin_sprites[SKIN_SPRITE_DIALOG_TAB_START], x, y - 10, NULL, NULL);
+    sprite_blt(skin_sprites[SKIN_SPRITE_DIALOG_TAB], x, y, NULL, NULL);
     ENGRAVE(ScreenSurface, &font_small, head_text, x + 15, y + 4, NDI_COLR_WHITE, NULL, NULL);
     y += 17;
-    sprite_blt(Bitmaps[BITMAP_DIALOG_TAB], x, y, NULL, NULL);
+    sprite_blt(skin_sprites[SKIN_SPRITE_DIALOG_TAB], x, y, NULL, NULL);
     y += 17;
     while (tabs[++i])
     {
-        sprite_blt(Bitmaps[BITMAP_DIALOG_TAB], x, y, NULL, NULL);
+        sprite_blt(skin_sprites[SKIN_SPRITE_DIALOG_TAB], x, y, NULL, NULL);
         if (i == *act_tab)
-            sprite_blt(Bitmaps[BITMAP_DIALOG_TAB_SEL], x, y, NULL, NULL);
+            sprite_blt(skin_sprites[SKIN_SPRITE_DIALOG_TAB_SEL], x, y, NULL, NULL);
 
         if (mx > x && mx <x + 100 && my> y && my < y + 17)
         {
@@ -806,7 +806,7 @@ static void draw_tabs(char *tabs[], int *act_tab, char *head_text, int x, int y)
 
         y += 17;
     }
-    sprite_blt(Bitmaps[BITMAP_DIALOG_TAB_STOP], x, y, NULL, NULL);
+    sprite_blt(skin_sprites[SKIN_SPRITE_DIALOG_TAB_STOP], x, y, NULL, NULL);
     if (!mb)
         active = 0;
 }
@@ -825,10 +825,10 @@ void show_skilllist(void)
 
     mb = SDL_GetMouseState(&mx, &my);
     /* background */
-    x = Screensize.x / 2 - Bitmaps[BITMAP_DIALOG_BG]->bitmap->w / 2;
-    y = Screensize.y / 2 - Bitmaps[BITMAP_DIALOG_BG]->bitmap->h / 2;
-    sprite_blt(Bitmaps[BITMAP_DIALOG_BG], x, y, NULL, NULL);
-    sprite_blt(Bitmaps[BITMAP_DIALOG_TITLE_SKILL], x + 250 - Bitmaps[BITMAP_DIALOG_TITLE_SKILL]->bitmap->w / 2, y + 20,
+    x = Screensize.x / 2 - skin_sprites[SKIN_SPRITE_DIALOG_BG]->bitmap->w / 2;
+    y = Screensize.y / 2 - skin_sprites[SKIN_SPRITE_DIALOG_BG]->bitmap->h / 2;
+    sprite_blt(skin_sprites[SKIN_SPRITE_DIALOG_BG], x, y, NULL, NULL);
+    sprite_blt(skin_sprites[SKIN_SPRITE_DIALOG_TITLE_SKILL], x + 250 - skin_sprites[SKIN_SPRITE_DIALOG_TITLE_SKILL]->bitmap->w / 2, y + 20,
                NULL, NULL);
     add_close_button(x, y, MENU_SKILL);
 
@@ -903,26 +903,26 @@ void show_skilllist(void)
             if (i & 1)
             {
                 uint32 colr = SDL_MapRGB(ScreenSurface->format,
-                                         (skindef.dialog_rows0 >> 16) & 0xff,
-                                         (skindef.dialog_rows0 >> 8) & 0xff,
-                                         skindef.dialog_rows0 & 0xff);
+                                         (skin_prefs.dialog_rows0 >> 16) & 0xff,
+                                         (skin_prefs.dialog_rows0 >> 8) & 0xff,
+                                         skin_prefs.dialog_rows0 & 0xff);
                 SDL_FillRect(ScreenSurface, &box, colr);
             }
             else
             {
                 uint32 colr = SDL_MapRGB(ScreenSurface->format,
-                                         (skindef.dialog_rows1 >> 16) & 0xff,
-                                         (skindef.dialog_rows1 >> 8) & 0xff,
-                                         skindef.dialog_rows1 & 0xff);
+                                         (skin_prefs.dialog_rows1 >> 16) & 0xff,
+                                         (skin_prefs.dialog_rows1 >> 8) & 0xff,
+                                         skin_prefs.dialog_rows1 & 0xff);
                 SDL_FillRect(ScreenSurface, &box, colr);
             }
         }
         else
         {
             uint32 colr = SDL_MapRGB(ScreenSurface->format,
-                                     (skindef.dialog_rowsS >> 16) & 0xff,
-                                     (skindef.dialog_rowsS >> 8) & 0xff,
-                                     skindef.dialog_rowsS & 0xff);
+                                     (skin_prefs.dialog_rowsS >> 16) & 0xff,
+                                     (skin_prefs.dialog_rowsS >> 8) & 0xff,
+                                     skin_prefs.dialog_rowsS & 0xff);
             SDL_FillRect(ScreenSurface, &box, colr);
         }
 
@@ -989,12 +989,12 @@ void show_spelllist(void)
 
     mb = SDL_GetMouseState(&mx, &my) & SDL_BUTTON(SDL_BUTTON_LEFT);
     /* background */
-    x = Screensize.x / 2 - Bitmaps[BITMAP_DIALOG_BG]->bitmap->w / 2;
-    y = Screensize.y / 2 - Bitmaps[BITMAP_DIALOG_BG]->bitmap->h / 2;
-    sprite_blt(Bitmaps[BITMAP_DIALOG_BG], x, y, NULL, NULL);
-    sprite_blt(Bitmaps[BITMAP_DIALOG_TITLE_SPELL], x + 250 - Bitmaps[BITMAP_DIALOG_TITLE_SPELL]->bitmap->w / 2, y + 20,
+    x = Screensize.x / 2 - skin_sprites[SKIN_SPRITE_DIALOG_BG]->bitmap->w / 2;
+    y = Screensize.y / 2 - skin_sprites[SKIN_SPRITE_DIALOG_BG]->bitmap->h / 2;
+    sprite_blt(skin_sprites[SKIN_SPRITE_DIALOG_BG], x, y, NULL, NULL);
+    sprite_blt(skin_sprites[SKIN_SPRITE_DIALOG_TITLE_SPELL], x + 250 - skin_sprites[SKIN_SPRITE_DIALOG_TITLE_SPELL]->bitmap->w / 2, y + 20,
                NULL, NULL);
-    sprite_blt(Bitmaps[BITMAP_PENTAGRAM], x + 25, y + 430, NULL, NULL);
+    sprite_blt(skin_sprites[SKIN_SPRITE_PENTAGRAM], x + 25, y + 430, NULL, NULL);
     add_close_button(x, y, MENU_SPELL);
 
     /* tabs */
@@ -1008,7 +1008,7 @@ void show_spelllist(void)
     /* spellClass buttons */
     for (i = 0; i < SPELL_LIST_CLASS; i++)
     {
-        if (add_gr_button(x + 133 + i * 56, y + 75, (spell_list_set.class_nr == i), BITMAP_DIALOG_BUTTON_UP,
+        if (add_gr_button(x + 133 + i * 56, y + 75, (spell_list_set.class_nr == i), SKIN_SPRITE_DIALOG_BUTTON_UP,
                           spell_class[i], NULL))
             spell_list_set.class_nr = i;
     }
@@ -1077,26 +1077,26 @@ void show_spelllist(void)
             if (i & 1)
             {
                 uint32 colr = SDL_MapRGB(ScreenSurface->format,
-                                         (skindef.dialog_rows0 >> 16) & 0xff,
-                                         (skindef.dialog_rows0 >> 8) & 0xff,
-                                         skindef.dialog_rows0 & 0xff);
+                                         (skin_prefs.dialog_rows0 >> 16) & 0xff,
+                                         (skin_prefs.dialog_rows0 >> 8) & 0xff,
+                                         skin_prefs.dialog_rows0 & 0xff);
                 SDL_FillRect(ScreenSurface, &box, colr);
             }
             else
             {
                 uint32 colr = SDL_MapRGB(ScreenSurface->format,
-                                         (skindef.dialog_rows1 >> 16) & 0xff,
-                                         (skindef.dialog_rows1 >> 8) & 0xff,
-                                         skindef.dialog_rows1 & 0xff);
+                                         (skin_prefs.dialog_rows1 >> 16) & 0xff,
+                                         (skin_prefs.dialog_rows1 >> 8) & 0xff,
+                                         skin_prefs.dialog_rows1 & 0xff);
                 SDL_FillRect(ScreenSurface, &box, colr);
             }
         }
         else
         {
             uint32 colr = SDL_MapRGB(ScreenSurface->format,
-                                     (skindef.dialog_rowsS >> 16) & 0xff,
-                                     (skindef.dialog_rowsS >> 8) & 0xff,
-                                     skindef.dialog_rowsS & 0xff);
+                                     (skin_prefs.dialog_rowsS >> 16) & 0xff,
+                                     (skin_prefs.dialog_rowsS >> 8) & 0xff,
+                                     skin_prefs.dialog_rowsS & 0xff);
             SDL_FillRect(ScreenSurface, &box, colr);
         }
 
@@ -1150,10 +1150,10 @@ void show_optwin()
     int     numButton   = 0;
 
     mb = SDL_GetMouseState(&mx, &my) & SDL_BUTTON(SDL_BUTTON_LEFT);
-    x = Screensize.x / 2 - Bitmaps[BITMAP_DIALOG_BG]->bitmap->w / 2;
-    y = Screensize.y / 2 - Bitmaps[BITMAP_DIALOG_BG]->bitmap->h / 2;
-    sprite_blt(Bitmaps[BITMAP_DIALOG_BG], x, y, NULL, NULL);
-    sprite_blt(Bitmaps[BITMAP_DIALOG_TITLE_OPTIONS], x + 250 - Bitmaps[BITMAP_DIALOG_TITLE_OPTIONS]->bitmap->w / 2,
+    x = Screensize.x / 2 - skin_sprites[SKIN_SPRITE_DIALOG_BG]->bitmap->w / 2;
+    y = Screensize.y / 2 - skin_sprites[SKIN_SPRITE_DIALOG_BG]->bitmap->h / 2;
+    sprite_blt(skin_sprites[SKIN_SPRITE_DIALOG_BG], x, y, NULL, NULL);
+    sprite_blt(skin_sprites[SKIN_SPRITE_DIALOG_TITLE_OPTIONS], x + 250 - skin_sprites[SKIN_SPRITE_DIALOG_TITLE_OPTIONS]->bitmap->w / 2,
                y + 20, NULL, NULL);
     add_close_button(x, y, MENU_OPTION);
 
@@ -1168,7 +1168,7 @@ void show_optwin()
            y + 10 + TXT_Y_START + option_list_set.entry_nr * 20, NDI_COLR_SILVER, NULL, NULL);
 
     /* save button */
-    if (add_button(x + 25, y + 454, numButton++, BITMAP_DIALOG_BUTTON_UP, "Done", "~D~one"))
+    if (add_button(x + 25, y + 454, numButton++, SKIN_SPRITE_DIALOG_BUTTON_UP, "Done", "~D~one"))
         check_menu_keys(MENU_OPTION, SDLK_d);
 
     if (!mb)
@@ -1188,10 +1188,10 @@ void show_keybind()
 
     mb = SDL_GetMouseState(&mx, &my);
     /* background */
-    x = Screensize.x / 2 - Bitmaps[BITMAP_DIALOG_BG]->bitmap->w / 2;
-    y = Screensize.y / 2 - Bitmaps[BITMAP_DIALOG_BG]->bitmap->h / 2;
-    sprite_blt(Bitmaps[BITMAP_DIALOG_BG], x, y, NULL, NULL);
-    sprite_blt(Bitmaps[BITMAP_DIALOG_TITLE_KEYBIND], x + 250 - Bitmaps[BITMAP_DIALOG_TITLE_KEYBIND]->bitmap->w / 2,
+    x = Screensize.x / 2 - skin_sprites[SKIN_SPRITE_DIALOG_BG]->bitmap->w / 2;
+    y = Screensize.y / 2 - skin_sprites[SKIN_SPRITE_DIALOG_BG]->bitmap->h / 2;
+    sprite_blt(skin_sprites[SKIN_SPRITE_DIALOG_BG], x, y, NULL, NULL);
+    sprite_blt(skin_sprites[SKIN_SPRITE_DIALOG_TITLE_KEYBIND], x + 250 - skin_sprites[SKIN_SPRITE_DIALOG_TITLE_KEYBIND]->bitmap->w / 2,
                y + 20, NULL, NULL);
     add_close_button(x, y, MENU_KEYBIND);
 
@@ -1203,17 +1203,17 @@ void show_keybind()
     /* draw group tabs */
     i = 0;
     x2 = x + 8; y2 = y + 70;
-    sprite_blt(Bitmaps[BITMAP_DIALOG_TAB_START], x2, y2 - 10, NULL, NULL);
-    sprite_blt(Bitmaps[BITMAP_DIALOG_TAB], x2, y2, NULL, NULL);
+    sprite_blt(skin_sprites[SKIN_SPRITE_DIALOG_TAB_START], x2, y2 - 10, NULL, NULL);
+    sprite_blt(skin_sprites[SKIN_SPRITE_DIALOG_TAB], x2, y2, NULL, NULL);
     ENGRAVE(ScreenSurface, &font_small, "Group", x2 + 14, y2 + 3, NDI_COLR_WHITE, NULL, NULL);
     y2 += 17;
-    sprite_blt(Bitmaps[BITMAP_DIALOG_TAB], x2, y2, NULL, NULL);
+    sprite_blt(skin_sprites[SKIN_SPRITE_DIALOG_TAB], x2, y2, NULL, NULL);
     y2 += 17;
     while (i < BINDKEY_LIST_MAX && bindkey_list[i].name[0])
     {
-        sprite_blt(Bitmaps[BITMAP_DIALOG_TAB], x2, y2, NULL, NULL);
+        sprite_blt(skin_sprites[SKIN_SPRITE_DIALOG_TAB], x2, y2, NULL, NULL);
         if (i == bindkey_list_set.group_nr)
-            sprite_blt(Bitmaps[BITMAP_DIALOG_TAB_SEL], x2, y2, NULL, NULL);
+            sprite_blt(skin_sprites[SKIN_SPRITE_DIALOG_TAB_SEL], x2, y2, NULL, NULL);
 
         if (mx > x2 &&
             mx < x2 + 100 &&
@@ -1236,7 +1236,7 @@ void show_keybind()
         y2 += 17;
         i++;
     }
-    sprite_blt(Bitmaps[BITMAP_DIALOG_TAB_STOP], x2, y2, NULL, NULL);
+    sprite_blt(skin_sprites[SKIN_SPRITE_DIALOG_TAB_STOP], x2, y2, NULL, NULL);
 
     /* Headline */
     ENGRAVE(ScreenSurface, &font_small, "Macro", x + X_COL1, y + TXT_Y_START - 2, NDI_COLR_WHITE, NULL, NULL);
@@ -1244,7 +1244,7 @@ void show_keybind()
     ENGRAVE(ScreenSurface, &font_small, "~R~epeat", x + X_COL3, y + TXT_Y_START - 2, NDI_COLR_WHITE, NULL, NULL);
 
     /* save button */
-    if (add_button(x + 25, y + 454, numButton++, BITMAP_DIALOG_BUTTON_UP, "Done", "~D~one"))
+    if (add_button(x + 25, y + 454, numButton++, SKIN_SPRITE_DIALOG_BUTTON_UP, "Done", "~D~one"))
         check_menu_keys(MENU_KEYBIND, SDLK_d);
 
 
@@ -1289,26 +1289,26 @@ void show_keybind()
             if (i & 1)
             {
                 uint32 colr = SDL_MapRGB(ScreenSurface->format,
-                                         (skindef.dialog_rows0 >> 16) & 0xff,
-                                         (skindef.dialog_rows0 >> 8) & 0xff,
-                                         skindef.dialog_rows0 & 0xff);
+                                         (skin_prefs.dialog_rows0 >> 16) & 0xff,
+                                         (skin_prefs.dialog_rows0 >> 8) & 0xff,
+                                         skin_prefs.dialog_rows0 & 0xff);
                 SDL_FillRect(ScreenSurface, &box, colr);
             }
             else
             {
                 uint32 colr = SDL_MapRGB(ScreenSurface->format,
-                                         (skindef.dialog_rows1 >> 16) & 0xff,
-                                         (skindef.dialog_rows1 >> 8) & 0xff,
-                                         skindef.dialog_rows1 & 0xff);
+                                         (skin_prefs.dialog_rows1 >> 16) & 0xff,
+                                         (skin_prefs.dialog_rows1 >> 8) & 0xff,
+                                         skin_prefs.dialog_rows1 & 0xff);
                 SDL_FillRect(ScreenSurface, &box, colr);
             }
         }
         else
         {
             uint32 colr = SDL_MapRGB(ScreenSurface->format,
-                                     (skindef.dialog_rowsS >> 16) & 0xff,
-                                     (skindef.dialog_rowsS >> 8) & 0xff,
-                                     skindef.dialog_rowsS & 0xff);
+                                     (skin_prefs.dialog_rowsS >> 16) & 0xff,
+                                     (skin_prefs.dialog_rowsS >> 8) & 0xff,
+                                     skin_prefs.dialog_rowsS & 0xff);
             SDL_FillRect(ScreenSurface, &box, colr);
         }
 
@@ -1384,12 +1384,12 @@ void show_newplayer_server(void)
 
     mb = SDL_GetMouseState(&mx, &my) & SDL_BUTTON(SDL_BUTTON_LEFT);
     x = 25;
-    /*x= Screensize.x/2-Bitmaps[BITMAP_DIALOG_BG]->bitmap->w/2;*/
-    y = Screensize.y / 2 - Bitmaps[BITMAP_DIALOG_BG]->bitmap->h / 2;
-    sprite_blt(Bitmaps[BITMAP_DIALOG_BG], x, y, NULL, NULL);
-    sprite_blt(Bitmaps[BITMAP_DIALOG_TITLE_CREATION], x + 250 - Bitmaps[BITMAP_DIALOG_TITLE_CREATION]->bitmap->w / 2,
+    /*x= Screensize.x/2-skin_sprites[SKIN_SPRITE_DIALOG_BG]->bitmap->w/2;*/
+    y = Screensize.y / 2 - skin_sprites[SKIN_SPRITE_DIALOG_BG]->bitmap->h / 2;
+    sprite_blt(skin_sprites[SKIN_SPRITE_DIALOG_BG], x, y, NULL, NULL);
+    sprite_blt(skin_sprites[SKIN_SPRITE_DIALOG_TITLE_CREATION], x + 250 - skin_sprites[SKIN_SPRITE_DIALOG_TITLE_CREATION]->bitmap->w / 2,
                y + 20, NULL, NULL);
-    sprite_blt(Bitmaps[BITMAP_PENTAGRAM], x + 25, y + 430, NULL, NULL);
+    sprite_blt(skin_sprites[SKIN_SPRITE_PENTAGRAM], x + 25, y + 430, NULL, NULL);
     add_close_button(x, y, MENU_CREATE);
 
     /* print all attributes */
@@ -1402,7 +1402,7 @@ void show_newplayer_server(void)
     /* create button */
     if(GameStatus == GAME_STATUS_ACCOUNT_CHAR_CREATE)
     {
-        if (add_button(x + 30, y + 397, id++, BITMAP_DIALOG_BUTTON_UP, "Name", "~N~ame"))
+        if (add_button(x + 30, y + 397, id++, SKIN_SPRITE_DIALOG_BUTTON_UP, "Name", "~N~ame"))
             check_menu_keys(MENU_CREATE, SDLK_n);
     }
 
@@ -1653,23 +1653,23 @@ void show_newplayer_server(void)
         SDL_Rect box;
 
         box.x = x + 136;
-        box.w = Bitmaps[BITMAP_LOGIN_INP]->bitmap->w - 4;
+        box.w = skin_sprites[SKIN_SPRITE_LOGIN_INP]->bitmap->w - 4;
         box.h = font_small.line_height;
 
         if (GameStatus == GAME_STATUS_ACCOUNT_CHAR_NAME)
         {
             ENGRAVE(ScreenSurface, &font_large_out, "Try Character Name", x + 134, y + 323, NDI_COLR_WHITE, NULL, NULL);
-            sprite_blt(Bitmaps[BITMAP_LOGIN_INP], x + 132, y + 345, NULL, NULL);
+            sprite_blt(skin_sprites[SKIN_SPRITE_LOGIN_INP], x + 132, y + 345, NULL, NULL);
             box.y = y + 347;
             show_input_string(&font_small, &box, 0);
         }
         else if (GameStatus == GAME_STATUS_ACCOUNT_CHAR_RECLAIM)
         {
             ENGRAVE(ScreenSurface, &font_large_out, "Try Character Name", x + 134, y + 323, NDI_COLR_WHITE, NULL, NULL);
-            sprite_blt(Bitmaps[BITMAP_LOGIN_INP], x + 132, y + 345, NULL, NULL);
+            sprite_blt(skin_sprites[SKIN_SPRITE_LOGIN_INP], x + 132, y + 345, NULL, NULL);
             string_blt(ScreenSurface, &font_small, cpl.name, x + 138, y + 347, NDI_COLR_WHITE, NULL, NULL);
             ENGRAVE(ScreenSurface, &font_large_out, "Try Reclaim Password", x + 134, y + 370, NDI_COLR_WHITE, NULL, NULL);
-            sprite_blt(Bitmaps[BITMAP_LOGIN_INP], x + 132, y + 392, NULL, NULL);
+            sprite_blt(skin_sprites[SKIN_SPRITE_LOGIN_INP], x + 132, y + 392, NULL, NULL);
             box.y = y + 394;
             show_input_string(&font_small, &box, '*');
         }
@@ -1712,7 +1712,7 @@ void show_login_server(void)
 {
     uint8       i;
     uint16      x = 25,
-                y = Screensize.y / 2 - Bitmaps[BITMAP_DIALOG_BG]->bitmap->h / 2,
+                y = Screensize.y / 2 - skin_sprites[SKIN_SPRITE_DIALOG_BG]->bitmap->h / 2,
                 x2 = 300;
     char       *request_string[17][3] =
     {
@@ -1738,9 +1738,9 @@ void show_login_server(void)
     char        buf[LARGE_BUF];
     int         progress;
 
-    sprite_blt(Bitmaps[BITMAP_DIALOG_BG], x, y, NULL, NULL);
-    sprite_blt(Bitmaps[BITMAP_LOGO270], x + 20, y + 85, NULL, NULL);
-    sprite_blt(Bitmaps[BITMAP_DIALOG_TITLE_LOGIN], x + 250 - Bitmaps[BITMAP_DIALOG_TITLE_LOGIN]->bitmap->w / 2, y + 20,
+    sprite_blt(skin_sprites[SKIN_SPRITE_DIALOG_BG], x, y, NULL, NULL);
+    sprite_blt(skin_sprites[SKIN_SPRITE_LOGO270], x + 20, y + 85, NULL, NULL);
+    sprite_blt(skin_sprites[SKIN_SPRITE_DIALOG_TITLE_LOGIN], x + 250 - skin_sprites[SKIN_SPRITE_DIALOG_TITLE_LOGIN]->bitmap->w / 2, y + 20,
                NULL, NULL);
     /*  add_close_button(x, y, MENU_LOGIN); */
     x += 170;
@@ -1756,24 +1756,24 @@ void show_login_server(void)
     box.y = y - 2;
     box.w = 210;
     box.h = 17;
-    SDL_FillRect(ScreenSurface, &box, skindef.dialog_rows0);
+    SDL_FillRect(ScreenSurface, &box, skin_prefs.dialog_rows0);
     box.y = y + 15;
     box.h = 150;
-    SDL_FillRect(ScreenSurface, &box, skindef.dialog_rows1);
+    SDL_FillRect(ScreenSurface, &box, skin_prefs.dialog_rows1);
     draw_frame(x - 3, y - 3, 211, 168);
 
     /* Update the progress. This is essentially eye-candy, but also will calm
      * impatient players ('it said updating but nothing happened for 30 seconds.
      * It's broken!'). */
-    sprite_blt(Bitmaps[BITMAP_PROGRESS_BACK], x + 4,
-               y + (Bitmaps[BITMAP_PROGRESS_BACK]->bitmap->h - 5), NULL, NULL);
+    sprite_blt(skin_sprites[SKIN_SPRITE_PROGRESS_BACK], x + 4,
+               y + (skin_sprites[SKIN_SPRITE_PROGRESS_BACK]->bitmap->h - 5), NULL, NULL);
     progress = (float)request_file_chain / 17.0f * 100;
     box.x = 0;
     box.y = 0;
-    box.h = Bitmaps[BITMAP_PROGRESS]->bitmap->h;
-    box.w = (int)(Bitmaps[BITMAP_PROGRESS]->bitmap->w / 100 * progress);
-    sprite_blt(Bitmaps[BITMAP_PROGRESS], x + 4,
-               y + (Bitmaps[BITMAP_PROGRESS]->bitmap->h - 5), &box, NULL);
+    box.h = skin_sprites[SKIN_SPRITE_PROGRESS]->bitmap->h;
+    box.w = (int)(skin_sprites[SKIN_SPRITE_PROGRESS]->bitmap->w / 100 * progress);
+    sprite_blt(skin_sprites[SKIN_SPRITE_PROGRESS], x + 4,
+               y + (skin_sprites[SKIN_SPRITE_PROGRESS]->bitmap->h - 5), &box, NULL);
     ENGRAVE(ScreenSurface, &font_small, "- UPDATING FILES -", x + 57, y,
             NDI_COLR_WHITE, NULL, NULL);
     buf[0] = '\0';
@@ -1860,7 +1860,7 @@ void show_login_server(void)
         ENGRAVE(ScreenSurface, &font_small, "Select a Name", x, y+20, NDI_COLR_SILVER, NULL, NULL);
     }
 
-    sprite_blt(Bitmaps[BITMAP_LOGIN_INP], x - 2, y + 35, NULL, NULL);
+    sprite_blt(skin_sprites[SKIN_SPRITE_LOGIN_INP], x - 2, y + 35, NULL, NULL);
 
     if ((GameStatus == GAME_STATUS_LOGIN_ACCOUNT ||
          GameStatus == GAME_STATUS_LOGIN_NEW) &&
@@ -1868,7 +1868,7 @@ void show_login_server(void)
     {
         box.x = x + 2;
         box.y = y + 37;
-        box.w = Bitmaps[BITMAP_LOGIN_INP]->bitmap->w - 4;
+        box.w = skin_sprites[SKIN_SPRITE_LOGIN_INP]->bitmap->w - 4;
         box.h = font_small.line_height;
         show_input_string(&font_small, &box, 0);
     }
@@ -1880,13 +1880,13 @@ void show_login_server(void)
     if (LoginInputStep >= LOGIN_STEP_PASS1)
     {
         ENGRAVE(ScreenSurface, &font_small, "Enter your Password", x + 2, y + 60, NDI_COLR_SILVER, NULL, NULL);
-        sprite_blt(Bitmaps[BITMAP_LOGIN_INP], x - 2, y + 75, NULL, NULL);
+        sprite_blt(skin_sprites[SKIN_SPRITE_LOGIN_INP], x - 2, y + 75, NULL, NULL);
 
         if (LoginInputStep == LOGIN_STEP_PASS1)
         {
             box.x = x + 2;
             box.y = y + 77;
-            box.w = Bitmaps[BITMAP_LOGIN_INP]->bitmap->w - 4;
+            box.w = skin_sprites[SKIN_SPRITE_LOGIN_INP]->bitmap->w - 4;
             box.h = font_small.line_height;
             show_input_string(&font_small, &box, '*');
         }
@@ -1901,10 +1901,10 @@ void show_login_server(void)
         if (LoginInputStep == LOGIN_STEP_PASS2)
         {
             ENGRAVE(ScreenSurface, &font_small, "New Account: Verify Password", x + 2, y + 100, NDI_COLR_SILVER, NULL, NULL);
-            sprite_blt(Bitmaps[BITMAP_LOGIN_INP], x - 2, y + 115, NULL, NULL);
+            sprite_blt(skin_sprites[SKIN_SPRITE_LOGIN_INP], x - 2, y + 115, NULL, NULL);
             box.x = x + 2;
             box.y = y + 117;
-            box.w = Bitmaps[BITMAP_LOGIN_INP]->bitmap->w - 4;
+            box.w = skin_sprites[SKIN_SPRITE_LOGIN_INP]->bitmap->w - 4;
             box.h = font_small.line_height;
             show_input_string(&font_small, &box, '*');
         }
@@ -2023,12 +2023,12 @@ void show_meta_server(void)
 
     mb = SDL_GetMouseState(&mx, &my);
     /* background */
-    /*  x= Screensize.x/2-Bitmaps[BITMAP_DIALOG_BG]->bitmap->w/2;*/
+    /*  x= Screensize.x/2-skin_sprites[SKIN_SPRITE_DIALOG_BG]->bitmap->w/2;*/
     x = 25;
-    y = Screensize.y / 2 - Bitmaps[BITMAP_DIALOG_BG]->bitmap->h / 2;
-    sprite_blt(Bitmaps[BITMAP_DIALOG_BG], x, y, NULL, NULL);
-    sprite_blt(Bitmaps[BITMAP_LOGO270], x + 20, y + 85, NULL, NULL);
-    sprite_blt(Bitmaps[BITMAP_DIALOG_TITLE_LOGIN], x + 250 - Bitmaps[BITMAP_DIALOG_TITLE_LOGIN]->bitmap->w / 2, y + 20,
+    y = Screensize.y / 2 - skin_sprites[SKIN_SPRITE_DIALOG_BG]->bitmap->h / 2;
+    sprite_blt(skin_sprites[SKIN_SPRITE_DIALOG_BG], x, y, NULL, NULL);
+    sprite_blt(skin_sprites[SKIN_SPRITE_LOGO270], x + 20, y + 85, NULL, NULL);
+    sprite_blt(skin_sprites[SKIN_SPRITE_DIALOG_TITLE_LOGIN], x + 250 - skin_sprites[SKIN_SPRITE_DIALOG_TITLE_LOGIN]->bitmap->w / 2, y + 20,
                NULL, NULL);
     /*  add_close_button(x, y, MENU_LOGIN); */
 
@@ -2051,7 +2051,7 @@ void show_meta_server(void)
     ENGRAVE(ScreenSurface, &font_medium, "Ping", x + 385,
             y + TXT_Y_START - 4, NDI_COLR_SILVER, NULL, NULL);
 
-    if (add_button(x + 25, y + 454, 0, BITMAP_DIALOG_BUTTON_UP, "Refresh", "~R~efresh"))
+    if (add_button(x + 25, y + 454, 0, SKIN_SPRITE_DIALOG_BUTTON_UP, "Refresh", "~R~efresh"))
     {
         key_meta_menu(SDLK_r);
     }
@@ -2065,17 +2065,17 @@ void show_meta_server(void)
         if (i & 1)
         {
             colr = SDL_MapRGB(ScreenSurface->format,
-                              (skindef.dialog_rows0 >> 16) & 0xff,
-                              (skindef.dialog_rows0 >> 8) & 0xff,
-                              skindef.dialog_rows0 & 0xff);
+                              (skin_prefs.dialog_rows0 >> 16) & 0xff,
+                              (skin_prefs.dialog_rows0 >> 8) & 0xff,
+                              skin_prefs.dialog_rows0 & 0xff);
             SDL_FillRect(ScreenSurface, &box, colr);
         }
         else
         {
             colr = SDL_MapRGB(ScreenSurface->format,
-                              (skindef.dialog_rows1 >> 16) & 0xff,
-                              (skindef.dialog_rows1 >> 8) & 0xff,
-                              skindef.dialog_rows1 & 0xff);
+                              (skin_prefs.dialog_rows1 >> 16) & 0xff,
+                              (skin_prefs.dialog_rows1 >> 8) & 0xff,
+                              skin_prefs.dialog_rows1 & 0xff);
             SDL_FillRect(ScreenSurface, &box, colr);
         }
 
@@ -2086,9 +2086,9 @@ void show_meta_server(void)
                 SDL_Rect box2;
 
                 colr = SDL_MapRGB(ScreenSurface->format,
-                                  (skindef.dialog_rowsS >> 16) & 0xff,
-                                  (skindef.dialog_rowsS >> 8) & 0xff,
-                                 skindef.dialog_rowsS & 0xff);
+                                  (skin_prefs.dialog_rowsS >> 16) & 0xff,
+                                  (skin_prefs.dialog_rowsS >> 8) & 0xff,
+                                 skin_prefs.dialog_rowsS & 0xff);
                 SDL_FillRect(ScreenSurface, &box, colr);
                 box2.x = x + 160;
                 box2.y = y + 431;
@@ -2190,9 +2190,9 @@ void show_account(void)
     mb = SDL_GetMouseState(&mx, &my);
 
     x = 25;
-    y = Screensize.y / 2 - Bitmaps[BITMAP_DIALOG_BG]->bitmap->h / 2;
-    sprite_blt(Bitmaps[BITMAP_DIALOG_BG], x, y, NULL, NULL);
-    sprite_blt(Bitmaps[BITMAP_LOGO270], x + 20, y + 85, NULL, NULL);
+    y = Screensize.y / 2 - skin_sprites[SKIN_SPRITE_DIALOG_BG]->bitmap->h / 2;
+    sprite_blt(skin_sprites[SKIN_SPRITE_DIALOG_BG], x, y, NULL, NULL);
+    sprite_blt(skin_sprites[SKIN_SPRITE_LOGO270], x + 20, y + 85, NULL, NULL);
     ENGRAVE(ScreenSurface, &font_small, "Welcome on Server Daimonin", x+200, y+20, NDI_COLR_WHITE, NULL, NULL);
     ENGRAVE(ScreenSurface, &font_large_out, "Account Overview", x+180, y+35, NDI_COLR_WHITE, NULL, NULL);
     ENGRAVE(ScreenSurface, &font_large_out, "Character List", x+120, y+70, NDI_COLR_WHITE, NULL, NULL);
@@ -2214,7 +2214,7 @@ void show_account(void)
             if (GameStatus == GAME_STATUS_ACCOUNT_CHAR_DEL )
             {
                 ENGRAVE(ScreenSurface, &font_large_out, "Type 'delete':", x+120, y+455, NDI_COLR_SILVER, NULL, NULL);
-                sprite_blt(Bitmaps[BITMAP_LOGIN_INP], x + 250, y + 455, NULL, NULL);
+                sprite_blt(skin_sprites[SKIN_SPRITE_LOGIN_INP], x + 250, y + 455, NULL, NULL);
                 sprintf(delbuf, "%s%c", InputString, '_');
                 EMBOSS(ScreenSurface, &font_small, delbuf, x + 256, y + 457, NDI_COLR_WHITE, NULL, NULL);
                 ENGRAVE(ScreenSurface, &font_small, "press RETURN or ESC", x + 256, y + 472, NDI_COLR_WHITE, NULL, NULL);
