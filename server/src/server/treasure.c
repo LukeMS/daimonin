@@ -77,6 +77,8 @@ static void init_treasures(FILE *fp)
             if (tl_tmp)
             {
                 LOG(llevError, "ERROR: Treasure list name <%s> double used.\n", STRING_SAFE(tl->listname));
+                FREE(tl);
+
                 return;
             }
 
