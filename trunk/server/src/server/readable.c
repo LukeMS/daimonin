@@ -515,11 +515,13 @@ static void init_book_archive(void)
     int         nroftitle = 0;
     char        buf[MEDIUM_BUF], fname[MEDIUM_BUF], *cp;
     title      *book    = NULL;
-    titlelist  *bl      = get_empty_booklist();
+    titlelist  *bl;
     static int  did_init_barch;
 
     if (did_init_barch)
         return;
+
+    bl  = get_empty_booklist();
     did_init_barch = 1;
 
     if (!booklist)
