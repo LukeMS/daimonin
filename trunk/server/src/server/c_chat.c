@@ -298,14 +298,19 @@ int command_shout(object *op, char *params)
 // Redirect /shouts to the new B5 channel system.
 int command_shout(object *op, char *params)
 {
-    char *newparams = malloc(strlen(params) + 9);
+    char *newparams;
 
-    strcpy(newparams, "general ");
-    strcat(newparams, params);
+    /* this happens when whitespace only string was submited */
+    if (!params ||
+        !(params = cleanup_chat_string(params)))
+    {
+        return 1;
+    }
 
+    MALLOC(newparams, strlen(params) + 9);
+    sprintf(newparams, "general %s", params);
     command_channel(op, newparams);
-
-    free(newparams);
+    FREE(newparams);
 
     return 0;
 }
