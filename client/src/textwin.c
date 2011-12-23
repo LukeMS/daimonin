@@ -775,9 +775,9 @@ static void ShowWindowResizingBorders(textwin_window_t *tw, _BLTFX *bltfx)
     SDL_Rect     box;
     const uint32 rgb = SDL_MapRGB(bltfx->surface->format, 0x00, 0x80, 0x00);
 
-    if (tw->resize == TEXTWIN_RESIZING_DIR_UP ||
-        tw->resize == TEXTWIN_RESIZING_DIR_UPRIGHT ||
-        tw->resize == TEXTWIN_RESIZING_DIR_UPLEFT)
+    if (tw->resize == TEXTWIN_RESIZE_UP ||
+        tw->resize == TEXTWIN_RESIZE_UPRIGHT ||
+        tw->resize == TEXTWIN_RESIZE_UPLEFT)
     {
         box.x = TEXTWIN_ACTIVE_MIN;
         box.y = TEXTWIN_ACTIVE_MIN;
@@ -785,9 +785,9 @@ static void ShowWindowResizingBorders(textwin_window_t *tw, _BLTFX *bltfx)
         box.h = TEXTWIN_ACTIVE_MAX - TEXTWIN_ACTIVE_MIN;
         SDL_FillRect(bltfx->surface, &box, rgb);
     }
-    else if (tw->resize == TEXTWIN_RESIZING_DIR_DOWNRIGHT ||
-             tw->resize == TEXTWIN_RESIZING_DIR_DOWN ||
-             tw->resize == TEXTWIN_RESIZING_DIR_DOWNLEFT)
+    else if (tw->resize == TEXTWIN_RESIZE_DOWNRIGHT ||
+             tw->resize == TEXTWIN_RESIZE_DOWN ||
+             tw->resize == TEXTWIN_RESIZE_DOWNLEFT)
     {
         box.x = TEXTWIN_ACTIVE_MIN;
         box.y = widget_data[tw->widget].ht - TEXTWIN_ACTIVE_MAX - 1;
@@ -796,9 +796,9 @@ static void ShowWindowResizingBorders(textwin_window_t *tw, _BLTFX *bltfx)
         SDL_FillRect(bltfx->surface, &box, rgb);
     }
 
-    if (tw->resize == TEXTWIN_RESIZING_DIR_UPRIGHT ||
-        tw->resize == TEXTWIN_RESIZING_DIR_RIGHT ||
-        tw->resize == TEXTWIN_RESIZING_DIR_DOWNRIGHT)
+    if (tw->resize == TEXTWIN_RESIZE_UPRIGHT ||
+        tw->resize == TEXTWIN_RESIZE_RIGHT ||
+        tw->resize == TEXTWIN_RESIZE_DOWNRIGHT)
     {
         box.x = widget_data[tw->widget].wd - TEXTWIN_ACTIVE_MAX - 1;
         box.y = TEXTWIN_ACTIVE_MIN;
@@ -806,9 +806,9 @@ static void ShowWindowResizingBorders(textwin_window_t *tw, _BLTFX *bltfx)
         box.h = widget_data[tw->widget].ht - TEXTWIN_ACTIVE_MIN * 2;
         SDL_FillRect(bltfx->surface, &box, rgb);
     }
-    else if (tw->resize == TEXTWIN_RESIZING_DIR_DOWNLEFT ||
-             tw->resize == TEXTWIN_RESIZING_DIR_LEFT ||
-             tw->resize == TEXTWIN_RESIZING_DIR_UPLEFT)
+    else if (tw->resize == TEXTWIN_RESIZE_DOWNLEFT ||
+             tw->resize == TEXTWIN_RESIZE_LEFT ||
+             tw->resize == TEXTWIN_RESIZE_UPLEFT)
     {
         box.x = TEXTWIN_ACTIVE_MIN;
         box.y = TEXTWIN_ACTIVE_MIN;
@@ -1132,17 +1132,17 @@ void textwin_event(uint8 e, SDL_Event *event, textwin_id_t id)
                 if (x <= right - TEXTWIN_ACTIVE_MIN &&
                     x >= right - TEXTWIN_ACTIVE_MAX)
                 {
-                    tw->resize = TEXTWIN_RESIZING_DIR_UPRIGHT;
+                    tw->resize = TEXTWIN_RESIZE_UPRIGHT;
                 }
                 else if (x >= left + TEXTWIN_ACTIVE_MIN &&
                          x <= left + TEXTWIN_ACTIVE_MAX)
                 {
-                    tw->resize = TEXTWIN_RESIZING_DIR_UPLEFT;
+                    tw->resize = TEXTWIN_RESIZE_UPLEFT;
                 }
                 else if (x <= right - TEXTWIN_ACTIVE_MAX &&
                          x >= left + TEXTWIN_ACTIVE_MAX)
                 {
-                    tw->resize = TEXTWIN_RESIZING_DIR_UP;
+                    tw->resize = TEXTWIN_RESIZE_UP;
                 }
             }
             else if (y <= bottom - TEXTWIN_ACTIVE_MIN &&
@@ -1151,17 +1151,17 @@ void textwin_event(uint8 e, SDL_Event *event, textwin_id_t id)
                 if (x <= right - TEXTWIN_ACTIVE_MIN &&
                     x >= right - TEXTWIN_ACTIVE_MAX)
                 {
-                    tw->resize = TEXTWIN_RESIZING_DIR_DOWNRIGHT;
+                    tw->resize = TEXTWIN_RESIZE_DOWNRIGHT;
                 }
                 else if (x >= left + TEXTWIN_ACTIVE_MIN &&
                          x <= left + TEXTWIN_ACTIVE_MAX)
                 {
-                    tw->resize = TEXTWIN_RESIZING_DIR_DOWNLEFT;
+                    tw->resize = TEXTWIN_RESIZE_DOWNLEFT;
                 }
                 else if (x <= right - TEXTWIN_ACTIVE_MAX &&
                          x >= left + TEXTWIN_ACTIVE_MAX)
                 {
-                    tw->resize = TEXTWIN_RESIZING_DIR_DOWN;
+                    tw->resize = TEXTWIN_RESIZE_DOWN;
                 }
             }
             else if (y >= top + TEXTWIN_ACTIVE_MAX &&
@@ -1170,12 +1170,12 @@ void textwin_event(uint8 e, SDL_Event *event, textwin_id_t id)
                 if (x <= right - TEXTWIN_ACTIVE_MIN &&
                     x >= right - TEXTWIN_ACTIVE_MAX)
                 {
-                    tw->resize = TEXTWIN_RESIZING_DIR_RIGHT;
+                    tw->resize = TEXTWIN_RESIZE_RIGHT;
                 }
                 else if (x >= left + TEXTWIN_ACTIVE_MIN &&
                          x <= left + TEXTWIN_ACTIVE_MAX)
                 {
-                    tw->resize = TEXTWIN_RESIZING_DIR_LEFT;
+                    tw->resize = TEXTWIN_RESIZE_LEFT;
                 }
             }
 
@@ -1191,7 +1191,7 @@ void textwin_event(uint8 e, SDL_Event *event, textwin_id_t id)
                  button == SDL_BUTTON_LEFT)
         {
             tw->flags &= ~TEXTWIN_FLAG_RESIZE;
-            tw->resize = TEXTWIN_RESIZING_DIR_NONE;
+            tw->resize = TEXTWIN_RESIZE_NONE;
             WIDGET_REDRAW(tw->widget) = 1;
         }
     }
@@ -1246,20 +1246,20 @@ static void ResizeWindow(textwin_window_t *tw, const sint16 xrel, const sint16 y
     const sint32  postwidth = widget_data[tw->widget].wd + xrel,
                   postheight = widget_data[tw->widget].ht + yrel;
 
-    if (tw->resize == TEXTWIN_RESIZING_DIR_UP ||
-        tw->resize == TEXTWIN_RESIZING_DIR_UPRIGHT ||
-        tw->resize == TEXTWIN_RESIZING_DIR_UPLEFT)
+    if (tw->resize == TEXTWIN_RESIZE_UP ||
+        tw->resize == TEXTWIN_RESIZE_UPRIGHT ||
+        tw->resize == TEXTWIN_RESIZE_UPLEFT)
     {
         if (postheight <= TEXTWIN_HEIGHT_MIN &&
             yrel > 0)
         {
-            tw->resize = TEXTWIN_RESIZING_DIR_NONE;
+            tw->resize = TEXTWIN_RESIZE_NONE;
             widget_data[tw->widget].ht = TEXTWIN_HEIGHT_MIN;
         }
         else if (postheight >= TEXTWIN_HEIGHT_MAX &&
                  yrel < 0)
         {
-            tw->resize = TEXTWIN_RESIZING_DIR_NONE;
+            tw->resize = TEXTWIN_RESIZE_NONE;
             widget_data[tw->widget].ht = TEXTWIN_HEIGHT_MAX;
         }
         else if (yrel)
@@ -1268,20 +1268,20 @@ static void ResizeWindow(textwin_window_t *tw, const sint16 xrel, const sint16 y
             widget_data[tw->widget].ht -= yrel;
         }
     }
-    else if (tw->resize == TEXTWIN_RESIZING_DIR_DOWNRIGHT ||
-             tw->resize == TEXTWIN_RESIZING_DIR_DOWN ||
-             tw->resize == TEXTWIN_RESIZING_DIR_DOWNLEFT)
+    else if (tw->resize == TEXTWIN_RESIZE_DOWNRIGHT ||
+             tw->resize == TEXTWIN_RESIZE_DOWN ||
+             tw->resize == TEXTWIN_RESIZE_DOWNLEFT)
     {
         if (postheight <= TEXTWIN_HEIGHT_MIN &&
             yrel < 0)
         {
-            tw->resize = TEXTWIN_RESIZING_DIR_NONE;
+            tw->resize = TEXTWIN_RESIZE_NONE;
             widget_data[tw->widget].ht = TEXTWIN_HEIGHT_MIN;
         }
         else if (postheight >= TEXTWIN_HEIGHT_MAX &&
                  yrel > 0)
         {
-            tw->resize = TEXTWIN_RESIZING_DIR_NONE;
+            tw->resize = TEXTWIN_RESIZE_NONE;
             widget_data[tw->widget].ht = TEXTWIN_HEIGHT_MAX;
         }
         else if (yrel)
@@ -1290,20 +1290,20 @@ static void ResizeWindow(textwin_window_t *tw, const sint16 xrel, const sint16 y
         }
     }
 
-    if (tw->resize == TEXTWIN_RESIZING_DIR_UPRIGHT ||
-        tw->resize == TEXTWIN_RESIZING_DIR_RIGHT ||
-        tw->resize == TEXTWIN_RESIZING_DIR_DOWNRIGHT)
+    if (tw->resize == TEXTWIN_RESIZE_UPRIGHT ||
+        tw->resize == TEXTWIN_RESIZE_RIGHT ||
+        tw->resize == TEXTWIN_RESIZE_DOWNRIGHT)
     {
         if (postwidth <= TEXTWIN_WIDTH_MIN &&
             xrel < 0)
         {
-            tw->resize = TEXTWIN_RESIZING_DIR_NONE;
+            tw->resize = TEXTWIN_RESIZE_NONE;
             widget_data[tw->widget].wd = TEXTWIN_WIDTH_MIN;
         }
         else if (postwidth >= TEXTWIN_WIDTH_MAX &&
                  xrel > 0)
         {
-            tw->resize = TEXTWIN_RESIZING_DIR_NONE;
+            tw->resize = TEXTWIN_RESIZE_NONE;
             widget_data[tw->widget].wd = TEXTWIN_WIDTH_MAX;
         }
         else if (xrel)
@@ -1311,20 +1311,20 @@ static void ResizeWindow(textwin_window_t *tw, const sint16 xrel, const sint16 y
             widget_data[tw->widget].wd += xrel;
         }
     }
-    else if (tw->resize == TEXTWIN_RESIZING_DIR_DOWNLEFT ||
-             tw->resize == TEXTWIN_RESIZING_DIR_LEFT ||
-             tw->resize == TEXTWIN_RESIZING_DIR_UPLEFT)
+    else if (tw->resize == TEXTWIN_RESIZE_DOWNLEFT ||
+             tw->resize == TEXTWIN_RESIZE_LEFT ||
+             tw->resize == TEXTWIN_RESIZE_UPLEFT)
     {
         if (postwidth <= TEXTWIN_WIDTH_MIN &&
             xrel > 0)
         {
-            tw->resize = TEXTWIN_RESIZING_DIR_NONE;
+            tw->resize = TEXTWIN_RESIZE_NONE;
             widget_data[tw->widget].wd = TEXTWIN_WIDTH_MIN;
         }
         else if (postwidth >= TEXTWIN_WIDTH_MAX &&
                  xrel < 0)
         {
-            tw->resize = TEXTWIN_RESIZING_DIR_NONE;
+            tw->resize = TEXTWIN_RESIZE_NONE;
             widget_data[tw->widget].wd = TEXTWIN_WIDTH_MAX;
         }
         else if (xrel)
