@@ -1250,9 +1250,6 @@ static void key_string_event(SDL_KeyboardEvent *key)
 
                 /* These chars are never allowed. */
                 if (c < 32 ||
-                    c == ECC_STRONG ||
-                    c == ECC_EMPHASIS ||
-                    c == ECC_UNDERLINE ||
                     c == ECC_HYPERTEXT)
                 {
                     c = 0;
