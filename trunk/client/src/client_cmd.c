@@ -377,7 +377,7 @@ void client_cmd_guitalk(sint8 mode, char *topic)
         *(topic + c) = tolower(*(topic + c));
     }
 
-    textwin_showstring(0, NDI_COLR_OLIVE, "Topic: %s", topic);
+    textwin_show_string(0, NDI_COLR_OLIVE, "Topic: %s", topic);
     START(&sl, NULL, CLIENT_CMD_GUITALK, SEND_CMD_FLAG_DYNAMIC);
     ADDUINT8(&sl, mode);
     ADDBUFFER(&sl, topic, len, 0);
@@ -598,15 +598,15 @@ static uint8 CheckCommand(char *cmd, char *params)
         {
 //            if (*params)
 //            {
-//                textwin_showstring(0, NDI_COLR_OLIVE, "%s %s", cmd, params);
+//                textwin_show_string(0, NDI_COLR_OLIVE, "%s %s", cmd, params);
 //            }
 
-            textwin_showstring(0, NDI_COLR_WHITE, "No %sitem could be found!",
+            textwin_show_string(0, NDI_COLR_WHITE, "No %sitem could be found!",
                                (*params) ? "such " : "");
         }
         else
         {
-            textwin_showstring(0, NDI_COLR_OLIVE, "%s %s", cmd, obj->s_name);
+            textwin_show_string(0, NDI_COLR_OLIVE, "%s %s", cmd, obj->s_name);
             client_cmd_apply(tag);
         }
 
@@ -622,12 +622,12 @@ static uint8 CheckCommand(char *cmd, char *params)
     {
 //        if (!*params)
 //        {
-//            textwin_showstring(0, NDI_COLR_WHITE, "usage: /reply <message>");
+//            textwin_show_string(0, NDI_COLR_WHITE, "usage: /reply <message>");
 //        }
 
         if (!cpl.player_reply[0])
         {
-            textwin_showstring(0, NDI_COLR_WHITE, "There is no one to whom you can /reply!");
+            textwin_show_string(0, NDI_COLR_WHITE, "There is no one to whom you can /reply!");
 
             return 1;
         }
@@ -738,7 +738,7 @@ static uint8 CheckCommand(char *cmd, char *params)
     }
     else if (!strcmp(cmd, "/imagestats"))
     {
-        textwin_showstring(0, NDI_COLR_WHITE,
+        textwin_show_string(0, NDI_COLR_WHITE,
                            "IMAGE-LOADING-STATISTICS\n"\
                            "==========================================\n"\
                            "Sprites in Memory: %d\n"\
@@ -790,7 +790,7 @@ static uint8 CheckCommand(char *cmd, char *params)
 
 //        if (!*params)
 //        {
-//            textwin_showstring(0, NDI_COLR_WHITE, "usage: /ready_spell <spell name>");
+//            textwin_show_string(0, NDI_COLR_WHITE, "usage: /ready_spell <spell name>");
 //        }
 
         for (i = 0; i < SPELL_LIST_MAX; i++)
@@ -809,7 +809,7 @@ static uint8 CheckCommand(char *cmd, char *params)
                             fire_mode.mode = FIRE_MODE_SPELL_ID;
                             sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICK, 0,
                                               0, MENU_SOUND_VOL);
-                            textwin_showstring(0, NDI_COLR_WHITE, "Spell readied");
+                            textwin_show_string(0, NDI_COLR_WHITE, "Spell readied");
 
                             return 1;
                         }
@@ -826,7 +826,7 @@ static uint8 CheckCommand(char *cmd, char *params)
                             fire_mode.mode = FIRE_MODE_SPELL_ID;
                             sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICK, 0,
                                               0, MENU_SOUND_VOL);
-                            textwin_showstring(0, NDI_COLR_WHITE, "Prayer readied");
+                            textwin_show_string(0, NDI_COLR_WHITE, "Prayer readied");
 
                             return 1;
                         }
@@ -835,46 +835,46 @@ static uint8 CheckCommand(char *cmd, char *params)
             }
         }
 
-        textwin_showstring(0, NDI_COLR_WHITE, "Unknown spell.");
+        textwin_show_string(0, NDI_COLR_WHITE, "Unknown spell.");
 
         return 1;
     }
     /* TODO; check and remove/fix. */
     else if (!strcmp(cmd, "/reloadskinnow"))
     {
-        textwin_showstring(0, NDI_COLR_LIME, "Reloading skin. This function is only for skin creating, and may be removed anytime!");
+        textwin_show_string(0, NDI_COLR_LIME, "Reloading skin. This function is only for skin creating, and may be removed anytime!");
         skin_reload();
     }
     else if (!strcmp(cmd, "/reset"))
     {
         if (!stricmp(params, "buddy"))
         {
-            textwin_showstring(0, NDI_COLR_WHITE, "Resetting buddy list!");
+            textwin_show_string(0, NDI_COLR_WHITE, "Resetting buddy list!");
             buddy_list_clear();
             buddy_list_save();
         }
         else if (!stricmp(params, "ignore"))
         {
-            textwin_showstring(0, NDI_COLR_WHITE, "Resetting ignore list!");
+            textwin_show_string(0, NDI_COLR_WHITE, "Resetting ignore list!");
             ignore_list_clear();
             ignore_list_save();
         }
         else if (!stricmp(params, "chatfilter") ||
                  !stricmp(params, "cfilter"))
         {
-            textwin_showstring(0, NDI_COLR_WHITE, "Resetting chatfilter list!");
+            textwin_show_string(0, NDI_COLR_WHITE, "Resetting chatfilter list!");
             chatfilter_list_clear();
             chatfilter_list_save();
         }
         else if (!stricmp(params, "kills"))
         {
-            textwin_showstring(0, NDI_COLR_WHITE, "Resetting kill list!");
+            textwin_show_string(0, NDI_COLR_WHITE, "Resetting kill list!");
             kill_list_clear();
             kill_list_save();
         }
         else if (!stricmp(params, "stats"))
         {
-            textwin_showstring(0, NDI_COLR_WHITE, "Resetting stat-o-meter!");
+            textwin_show_string(0, NDI_COLR_WHITE, "Resetting stat-o-meter!");
             statometer.exp = 0;
             statometer.kills = 0;
             statometer.starttime = LastTick - 1;
@@ -886,7 +886,7 @@ static uint8 CheckCommand(char *cmd, char *params)
         {
             widget_id_t id;
 
-            textwin_showstring(0, NDI_COLR_WHITE, "Resetting widgetstatus!");
+            textwin_show_string(0, NDI_COLR_WHITE, "Resetting widgetstatus!");
 
             for (id = 0; id < WIDGET_NROF; id++)
             {
@@ -924,13 +924,13 @@ static uint8 CheckCommand(char *cmd, char *params)
         }
         else if (!stricmp(params, "widgets"))
         {
-            textwin_showstring(0, NDI_COLR_WHITE, "Resetting widgets!");
+            textwin_show_string(0, NDI_COLR_WHITE, "Resetting widgets!");
             widget_init();
         }
 #if 0
         else
         {
-            textwin_showstring(0, NDI_COLR_WHITE, "Usage: "\
+            textwin_show_string(0, NDI_COLR_WHITE, "Usage: "\
                 "~/reset buddy~ to reset the buddylist,\n"\
                 "~/reset ignore~ to reset the ignorelist,\n"\
                 "~/reset chatfilter~ to reset the chatfilter list,\n"\
@@ -951,7 +951,7 @@ static uint8 CheckCommand(char *cmd, char *params)
 
         for (i = j = PHYSFS_getSearchPath(); *i; i++)
         {
-            textwin_showstring(0, NDI_COLR_WHITE, "[%s] is in the search path.", *i);
+            textwin_show_string(0, NDI_COLR_WHITE, "[%s] is in the search path.", *i);
         }
 
         PHYSFS_freeList(j);
@@ -959,72 +959,17 @@ static uint8 CheckCommand(char *cmd, char *params)
         return 1;
     }
 #endif
-    else if (!strcmp(cmd, "/setwin"))
-    {
-        int msg,
-            chat;
-
-        if (!*params ||
-            sscanf(params, "%d %d", &msg, &chat) != 2 ||
-            msg < 2 ||
-            msg + chat > 38)
-        {
-            textwin_showstring(0, NDI_COLR_WHITE, "Parameters out of bounds.");
-#if 0
-            textwin_showstring(0, NDI_COLR_WHITE,
-                               "Usage: '/setwin <Msg> <Chat>'\n"\
-                               "Example: /setwin 9 5");
-#endif
-        }
-
-        textwin_showstring(0, NDI_COLR_WHITE, "Set textwin to %d rows.", msg);
-        options.use_TextwinSplit = 0;
-        txtwin[TW_MIX].size = msg - 1;
-
-        return 1;
-    }
-    else if (!strcmp(cmd, "/setwinalpha"))
-    {
-        if (!strnicmp(params, "on", 2))
-        {
-            int alpha;
-
-            if (sscanf(params, "%*s %d", &alpha) == 1)
-            {
-                options.textwin_alpha = alpha;
-            }
-
-            options.use_TextwinAlpha = 1;
-            textwin_showstring(0, NDI_COLR_WHITE, "Set textwin alpha ~on~ (alpha=%d).",
-                               options.textwin_alpha);
-        }
-        else if (!strnicmp(params, "off", 3))
-        {
-            options.use_TextwinAlpha = 0;
-            textwin_showstring(0, NDI_COLR_WHITE, "Set textwin alpha mode ~off~.");
-        }
-#if 0
-        else
-        {
-            textwin_showstring(0, NDI_COLR_WHITE,
-                               "Usage: '/setwinalpha on|off [<alpha>]'\n"\
-                               "Example:  /setwinalpha ON 172\n/setwinalpha OFF");
-        }
-#endif
-
-        return 1;
-    }
     else if (!strcmp(cmd, "/shout_off"))
     {
         options.shoutoff = 1;
-        textwin_showstring(0, NDI_COLR_WHITE, "Shout disabled");
+        textwin_show_string(0, NDI_COLR_WHITE, "Shout disabled");
 
         return 1;
     }
     else if (!strcmp(cmd, "/shout_on"))
     {
         options.shoutoff = 0;
-        textwin_showstring(0, NDI_COLR_WHITE,"Shout enabled");
+        textwin_show_string(0, NDI_COLR_WHITE,"Shout enabled");
 
         return 1;
     }
@@ -1041,7 +986,7 @@ static uint8 CheckCommand(char *cmd, char *params)
             min < 0 ||
             min > 59)
         {
-//                textwin_showstring(0, NDI_COLR_WHITE, "Sleeptimer OFF\nUsage: /sleeptimer HH:MM");
+//                textwin_show_string(0, NDI_COLR_WHITE, "Sleeptimer OFF\nUsage: /sleeptimer HH:MM");
                 options.sleepcounter = 0;
         }
 
@@ -1068,7 +1013,7 @@ static uint8 CheckCommand(char *cmd, char *params)
 
            strftime(tmpbuf, sizeof tmpbuf, "%d-%m-%y %H:%M:%S",
                     localtime(&sleeptime));
-           textwin_showstring(0, NDI_COLR_WHITE, "Sleeptime set to %s", tmpbuf);
+           textwin_show_string(0, NDI_COLR_WHITE, "Sleeptime set to %s", tmpbuf);
         }
 
         return 1;
@@ -1133,10 +1078,10 @@ static uint8 CheckCommand(char *cmd, char *params)
 
         PHYSFS_close(handle);
         LOG(LOG_SYSTEM, "OK!\n");
-        textwin_showstring(0, NDI_COLR_WHITE, "~Client version~: %u.%u.%u / %u (%s)",
+        textwin_show_string(0, NDI_COLR_WHITE, "~Client version~: %u.%u.%u / %u (%s)",
                            DAI_VERSION_RELEASE, DAI_VERSION_MAJOR,
                            DAI_VERSION_MINOR, PROTOCOL_VERSION, buf);
-        textwin_showstring(0, NDI_COLR_WHITE, "~Server version~: %u.%u.%u / %u",
+        textwin_show_string(0, NDI_COLR_WHITE, "~Server version~: %u.%u.%u / %u",
                            options.server_version_release,
                            options.server_version_major,
                            options.server_version_minor,

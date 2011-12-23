@@ -37,7 +37,6 @@ typedef enum skin_sprite_id_t
     SKIN_SPRITE_PROGRESS_BACK,
     SKIN_SPRITE_BLACKTILE,
     SKIN_SPRITE_GRID,
-    SKIN_SPRITE_TEXTWIN,
     SKIN_SPRITE_LOGIN_INP,
     SKIN_SPRITE_HP,
     SKIN_SPRITE_SP,
@@ -132,7 +131,7 @@ typedef enum skin_sprite_id_t
     SKIN_SPRITE_DIALOG_RANGE_R,
     SKIN_SPRITE_TARGET_HP,
     SKIN_SPRITE_TARGET_HP_B,
-    SKIN_SPRITE_TEXTWIN_MASK,
+    SKIN_SPRITE_ALPHA,
     SKIN_SPRITE_SLIDER_UP,
     SKIN_SPRITE_SLIDER_DOWN,
     SKIN_SPRITE_SLIDER,
@@ -199,6 +198,7 @@ typedef struct skin_prefs_t
 {
     uint32  chat_admin;
     uint32  chat_buddy;
+    uint32  chat_channel;
     uint32  chat_eavesdrop;
     uint32  chat_emote;
     uint32  chat_gsay;

@@ -978,8 +978,8 @@ void sprite_blt_map(_Sprite *sprite, int x, int y, SDL_Rect *box, _BLTFX *bltfx,
             /* we create the filter surfaces only when needed, and then store them */
             if (!darkness_filter[bltfx->dark_level])
             {
-                SDL_SetAlpha(skin_sprites[SKIN_SPRITE_TEXTWIN_MASK]->bitmap,SDL_SRCALPHA,dark_alpha[bltfx->dark_level]);
-                darkness_filter[bltfx->dark_level]=SDL_DisplayFormatAlpha(skin_sprites[SKIN_SPRITE_TEXTWIN_MASK]->bitmap);
+                SDL_SetAlpha(skin_sprites[SKIN_SPRITE_ALPHA]->bitmap,SDL_SRCALPHA,dark_alpha[bltfx->dark_level]);
+                darkness_filter[bltfx->dark_level]=SDL_DisplayFormatAlpha(skin_sprites[SKIN_SPRITE_ALPHA]->bitmap);
             }
 
             /* we use now the stretch_cache with lru list */

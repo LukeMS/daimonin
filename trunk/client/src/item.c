@@ -784,14 +784,14 @@ void print_inventory(item *op)
 
     if (l == 0)
     {
-        textwin_showstring(0, NDI_COLR_WHITE, "BB AA %s's inventory (%d): %6.1f kg",
+        textwin_show_string(0, NDI_COLR_WHITE, "BB AA %s's inventory (%d): %6.1f kg",
                            op->d_name, op->tag, (float)op->weight);
     }
 
     l += 2;
     for (tmp = op->inv; tmp; tmp = tmp->next)
     {
-        textwin_showstring(0, NDI_COLR_WHITE, "CC %*s- %d %s%s (%d)",
+        textwin_show_string(0, NDI_COLR_WHITE, "CC %*s- %d %s%s (%d)",
                            l - 2, "", tmp->nrof, tmp->d_name, tmp->flags,
                            tmp->tag);
 

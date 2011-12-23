@@ -349,17 +349,17 @@ int widget_event_mousedn(int x, int y, SDL_Event *event)
                 break;
 
             case WIDGET_CHATWIN_ID:
-                textwin_button_event(TW_CHAT, WIDGET_CHATWIN_ID, event);
+                textwin_event(TW_CHECK_BUT_DOWN, event, TEXTWIN_CHAT_ID);
 
                 break;
 
             case WIDGET_MSGWIN_ID:
-                textwin_button_event(TW_MSG, WIDGET_MSGWIN_ID, event);
+                textwin_event(TW_CHECK_BUT_DOWN, event, TEXTWIN_MSG_ID);
 
                 break;
 
             case WIDGET_MIXWIN_ID:
-                textwin_button_event(TW_MIX, WIDGET_MIXWIN_ID, event);
+//                textwin_event(TW_CHECK_BUT_DOWN, event, TW_MIX);
 
                 break;
 
@@ -470,17 +470,17 @@ int widget_event_mouseup(int x, int y, SDL_Event *event)
                 break;
 
             case WIDGET_CHATWIN_ID:
-                textwin_move_event(TW_CHAT, WIDGET_CHATWIN_ID, event);
+                textwin_event(TW_CHECK_BUT_UP, event, TEXTWIN_CHAT_ID);
 
                 break;
 
             case WIDGET_MSGWIN_ID:
-                textwin_move_event(TW_MSG, WIDGET_MSGWIN_ID, event);
+                textwin_event(TW_CHECK_BUT_UP, event, TEXTWIN_MSG_ID);
 
                 break;
 
             case WIDGET_MIXWIN_ID:
-                textwin_move_event(TW_MIX, WIDGET_MIXWIN_ID, event);
+//                textwin_event(TW_CHECK_BUT_UP, event, TW_MIX);
 
                 break;
 
@@ -538,7 +538,13 @@ int widget_event_mouseup(int x, int y, SDL_Event *event)
 /* drag the widget, if moving                                        */
 int widget_event_mousemv(int x,int y, SDL_Event *event)
 {
-    cursor_type = 0; /* with widgets we have to clear every loop the txtwin cursor */
+    textwin_id_t twid;
+
+    /* With widgets we have to clear every loop the txtwin cursor */
+    for (twid = 0; twid < TEXTWIN_NROF; twid++)
+    {
+        textwin[twid].resize = TEXTWIN_RESIZING_DIR_NONE;
+    }
 
     /* widget moving condition */
     if (widget_mouse_event.moving)
@@ -615,7 +621,7 @@ int widget_event_mousemv(int x,int y, SDL_Event *event)
                     }
                     if (done)
                     {
-    //                    textwin_showstring(0, NDI_COLR_RED, "%s l=%d r=%d t=%d b=%d", widget_data[id].name, LEFT(id), RIGHT(id), TOP(id), BOTTOM(id));
+    //                    textwin_show_string(0, NDI_COLR_RED, "%s l=%d r=%d t=%d b=%d", widget_data[id].name, LEFT(id), RIGHT(id), TOP(id), BOTTOM(id));
                         sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICK, 0, 0, 10);
                         event->motion.xrel = event->motion.yrel = 0; // acts as a brake, preventing id_e from 'skipping' through a stack of nodes
                         SDL_PushEvent(event);
@@ -651,15 +657,15 @@ int widget_event_mousemv(int x,int y, SDL_Event *event)
         /* handler(s) for miscellanous mouse movement(s) go here */
 
         /* textwin special handling */
-        if (txtwin[TW_CHAT].highlight != TW_HL_NONE)
+        if (textwin[TEXTWIN_CHAT_ID].highlight != TW_HL_NONE)
         {
-            txtwin[TW_CHAT].highlight = TW_HL_NONE;
+            textwin[TEXTWIN_CHAT_ID].highlight = TW_HL_NONE;
             WIDGET_REDRAW(WIDGET_CHATWIN_ID) = 1;
         }
 
-        if (txtwin[TW_MSG].highlight != TW_HL_NONE)
+        if (textwin[TEXTWIN_MSG_ID].highlight != TW_HL_NONE)
         {
-            txtwin[TW_MSG].highlight = TW_HL_NONE;
+            textwin[TEXTWIN_MSG_ID].highlight = TW_HL_NONE;
             WIDGET_REDRAW(WIDGET_MSGWIN_ID) = 1;
         }
 
@@ -672,17 +678,17 @@ int widget_event_mousemv(int x,int y, SDL_Event *event)
         switch (id)
         {
             case WIDGET_CHATWIN_ID:
-                textwin_move_event(TW_CHAT, WIDGET_CHATWIN_ID, event);
+                textwin_event(TW_CHECK_MOVE, event, TEXTWIN_CHAT_ID);
 
                 break;
 
             case WIDGET_MSGWIN_ID:
-                textwin_move_event(TW_MSG, WIDGET_MSGWIN_ID, event);
+                textwin_event(TW_CHECK_MOVE, event, TEXTWIN_MSG_ID);
 
                 break;
 
             case WIDGET_MIXWIN_ID:
-                textwin_move_event(TW_MIX, WIDGET_MIXWIN_ID, event);
+//                textwin_event(TW_CHECK_MOVE, event, TW_MIX);
 
                 break;
 
@@ -722,26 +728,18 @@ int widget_event_mousemv(int x,int y, SDL_Event *event)
 /* find the widget with mouse focus on a mouse-hit-test basis */
 widget_id_t widget_get_owner(int x, int y)
 {
+    textwin_id_t   twid;
     widget_node_t *node;
-    widget_id_t id;
+    widget_id_t    id;
 
     /* Priority overide function, we have to have that here for resizing.... */
-    if (textwin_flags & TW_RESIZE)
+    for (twid = 0; twid < TEXTWIN_NROF; twid++)
     {
-        if ((textwin_flags & TW_CHAT))
+        if ((textwin[twid].flags & TEXTWIN_FLAG_RESIZE))
         {
-            return WIDGET_CHATWIN_ID;
-        }
-        else if ((textwin_flags & TW_MSG))
-        {
-            return WIDGET_MSGWIN_ID;
-        }
-        else if ((textwin_flags & TW_MIX))
-        {
-            return WIDGET_MIXWIN_ID;
+            return textwin[twid].widget;
         }
     }
-
    
     if (IsMouseExclusive || // mouse cannot be used by widgets
         !PriorityListHead)  // priority list doesn't exist
@@ -869,17 +867,17 @@ void widget_process(void)
                     break;
 
                 case WIDGET_CHATWIN_ID:
-                    widget_textwin_show(widget_data[id].x1,widget_data[id].y1, TW_CHAT);
+                    textwin_show_window(TEXTWIN_CHAT_ID);
 
                     break;
 
                 case WIDGET_MSGWIN_ID:
-                    widget_textwin_show(widget_data[id].x1,widget_data[id].y1, TW_MSG);
+                    textwin_show_window(TEXTWIN_MSG_ID);
 
                     break;
 
                 case WIDGET_MIXWIN_ID:
-                    widget_textwin_show(widget_data[id].x1,widget_data[id].y1, TW_MIX);
+//                    textwin_show_window(TW_MIX);
 
                     break;
 

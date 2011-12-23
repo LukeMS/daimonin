@@ -615,7 +615,7 @@ void map_draw_map(void)
                                 xmpos = xpos - face_mpart_id[mid].part[mnr].xoff;
                                 xl += xmpos;
 
-//                                textwin_showstring(0, NDI_COLR_RED, "ID:%d NR:%d yoff:%d yl:%d",
+//                                textwin_show_string(0, NDI_COLR_RED, "ID:%d NR:%d yoff:%d yl:%d",
 //                                                   mid, mnr,
 //                                                   face_mpart_id[mid].part[mnr].yoff,
 //                                                   yl);

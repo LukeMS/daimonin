@@ -529,7 +529,7 @@ _gui_npc *gui_npc_create(int mode, char *data, int len, int pos)
         gui_npc->input_flag = 1;
         reset_keys();
         open_input_mode(240);
-        textwin_putstring(gui_npc->textfield->command);
+        textwin_put_string(gui_npc->textfield->command);
         cpl.input_mode = INPUT_MODE_NPCDIALOG;
         HistoryPos = 0;
     }
@@ -552,7 +552,7 @@ _gui_npc *gui_npc_create(int mode, char *data, int len, int pos)
 
 static void BadInterfaceString(char *data, uint16 pos)
 {
-    textwin_showstring(0, NDI_COLR_RED, "ERROR: bad interface string (flag start error)");
+    textwin_show_string(0, NDI_COLR_RED, "ERROR: bad interface string (flag start error)");
     LOG(LOG_ERROR, "ERROR: bad command tag: %s\n", data + pos);
     gui_npc_reset();
 }
@@ -3275,7 +3275,7 @@ static void SendCommand(void)
         if (gui_npc->status != GUI_NPC_STATUS_WAIT)
         {
             client_cmd_guitalk(interface_mode, buf);
-            textwin_addhistory(buf);
+            textwin_add_history(buf);
             reset_keys();
             reset_input_mode();
             cpl.input_mode = INPUT_MODE_NO;
@@ -3778,7 +3778,7 @@ void gui_npc_keypress(int key)
                 reset_keys();
                 reset_input_mode();
                 open_input_mode(240);
-                textwin_putstring("");
+                textwin_put_string("");
                 cpl.input_mode = INPUT_MODE_NPCDIALOG;
                 gui_npc->input_flag = 1;
                 HistoryPos = 0;

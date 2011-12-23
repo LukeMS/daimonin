@@ -180,7 +180,7 @@ char *get_parameter_string(char *data, int *pos, int maxlen)
     {
 #ifdef DAI_DEVELOPMENT
         if ((int)strlen(buf)>maxlen)
-            textwin_showstring(0, NDI_COLR_RED,"FixMe: Interface parameter string out of bounds!");
+            textwin_show_string(0, NDI_COLR_RED,"FixMe: Interface parameter string out of bounds!");
 #endif
         buf[maxlen-1]='\0';
     }
@@ -327,7 +327,7 @@ extern void     markdmbuster()
     send_mark_obj((it = locate_item(tag)));
     if (it)
     {
-        textwin_showstring(0, NDI_COLR_OLIVE, "%s %s",
+        textwin_show_string(0, NDI_COLR_OLIVE, "%s %s",
                            (cpl.mark_count == (int)it->tag) ? "unmark" : "mark",
                            it->s_name);
     }

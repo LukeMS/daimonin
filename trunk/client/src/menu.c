@@ -63,7 +63,7 @@ void do_console(int x, int y)
         sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CONSOLE, 0, 0, 100);
         if (InputString[0])
         {
-//            textwin_showstring(0, NDI_COLR_OLIVE, ":%s", InputString);
+//            textwin_show_string(0, NDI_COLR_OLIVE, ":%s", InputString);
             client_cmd_generic(InputString);
         }
 
@@ -114,7 +114,7 @@ void do_number(int x, int y)
                 else
                     sound_play_effect(SOUNDTYPE_NORMAL, SOUND_DROP, 0, 0, 100);
 
-                textwin_showstring(0, skin_prefs.widget_info, "%s %d from %d %s",
+                textwin_show_string(0, skin_prefs.widget_info, "%s %d from %d %s",
                                    (cpl.nummode == NUM_MODE_GET) ? "get" :
                                    "drop", tmp, cpl.nrof, cpl.num_text);
             }
@@ -177,7 +177,7 @@ void do_npcdialog_input(void)
         if (InputString[0])
         {
             client_cmd_guitalk(GUI_NPC_MODE_NPC, InputString);
-            textwin_addhistory(InputString);
+            textwin_add_history(InputString);
             reset_input_mode();
             gui_npc->status = GUI_NPC_STATUS_WAIT;
         }
@@ -879,12 +879,12 @@ void widget_quickslots_mouse_event(int x, int y, int MEvent)
                     if (!locate_item_from_inv(cpl.ob->inv, cpl.win_quick_tag))
                     {
                         sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICKFAIL, 0, 0, 100);
-                        textwin_showstring(0, skin_prefs.widget_info, "Only items from main inventory allowed in quickbar!");
+                        textwin_show_string(0, skin_prefs.widget_info, "Only items from main inventory allowed in quickbar!");
                     }
                     else
                     {
                         sound_play_effect(SOUNDTYPE_CLIENT, SOUND_GET, 0, 0, 100); /* no bug - we 'get' it in quickslots */
-                        textwin_showstring(0, skin_prefs.widget_info, "set F%d to %s",
+                        textwin_show_string(0, skin_prefs.widget_info, "set F%d to %s",
                                            ind + 1,
                                            locate_item(cpl.win_quick_tag)->s_name);
                     }

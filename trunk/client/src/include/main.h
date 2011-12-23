@@ -135,9 +135,11 @@ typedef struct _options
     /* Visual */
     int                     video_bpp;
     int                     fullscreen;
-    int                   use_TextwinSplit;
-    int                   use_TextwinAlpha;
     int                     textwin_alpha;
+    int                     textwin_msg_font;
+    int                     textwin_chat_font;
+    int                     textwin_indentation;
+    int                     textwin_scrollback;
     int                     resolution;
     int                     mapstart_x;
     int                     mapstart_y;
@@ -152,16 +154,16 @@ typedef struct _options
     int                     warning_weight;
     int                   show_tooltips;
     int                   show_d_key_infos; /* key-infos in dialog-wins. */
-    int                   smileys;
+    int                   textwin_use_smileys;
     int                     channelformat;
     int                   collectAll;
-    int                   chatfilter;         /* true: filter chatmessages */
+    int                   textwin_use_chatfilter;         /* true: filter chatmessages */
     int                   hp_bar;         /* show hp-bar */
     int                   hp_percent;     /* show hp in % */
     int                   hp_color;       /* color bar and % */
     int                     iExpDisplay;    /* robed's extended exp-display */
     int                   kerbholz;       /* use kill stats */
-    int                     msglog;         /* log-options */
+    int                   textwin_use_logging;         /* log-options */
     int                   playerdoll;
     int                   statometer;
     int                     statsupdate;

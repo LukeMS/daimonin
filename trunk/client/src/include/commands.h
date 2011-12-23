@@ -64,6 +64,7 @@
 #define NDI_FLAG_ALL       (1 << 17) // to all players
 #define NDI_FLAG_EAVESDROP (1 << 18) // GM/SA listening in
 #define NDI_FLAG_BUDDY     (1 << 19) // from buddy
+#define NDI_FLAG_CHANNEL   (1 << 20) // channel
 
 extern void DoClient(void);
 

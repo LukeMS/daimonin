@@ -110,15 +110,18 @@ _option             opt[]                           =
     {
         /* Chat & Messages */
         {"Channel format:", "How the channels are shown.","~Prefixed~ prefixes each line with [channel:player], and","~Indented~ only prefixes the first line, indenting subsequent ones.", "Prefixed#Indented",SEL_RANGE,0,1,1,0, &options.channelformat,VAL_INT},
-        {"Enable smileys:", "Whether to show smileys graphically.","","", "",SEL_CHECKBOX,0,1,1,1, &options.smileys,VAL_BOOL},
+        {"Enable smileys:", "Whether to show smileys graphically.","","", "",SEL_CHECKBOX,0,1,1,1, &options.textwin_use_smileys,VAL_BOOL},
 #ifdef DAI_DEVELOPMENT
-        {"Log messages:", "Whether/which messages are logged.","~None~ turns off logging, ~Only chat~ logs only the chat textwindow, and","~All~ logs everything in both textwindows.", "None#Only chat#All",SEL_RANGE,0,2,1,2, &options.msglog,VAL_INT},
+        {"Logging:", "Whether the textwindows are logged.","~None~ turns off logging, ~Only chat~, ~Only messages~, or ~Both, separately~ logs either or both textwindows to separate files, and ~Both, together~ logs both textwindows to a single file.","", "None#Only chat#Only messages#Both, separately#Both, together",SEL_RANGE,0,4,1,3, &options.textwin_use_logging,VAL_INT},
 #else
-        {"Log messages:", "Whether/which messages are logged.","~None~ turns off logging, ~Only chat~ logs only the chat textwindow, and","~All~ logs everything in both textwindows.", "None#Only chat#All",SEL_RANGE,0,2,1,1, &options.msglog,VAL_INT},
+        {"Logging:", "Whether the textwindows are logged.","~None~ turns off logging, ~Only chat~, ~Only messages~, or ~Both, separately~ logs either or both textwindows to separate files, and ~Both, together~ logs both textwindows to a single file.","", "None#Only chat#Only messages#Both, separately#Both, together",SEL_RANGE,0,4,1,1, &options.textwin_use_logging,VAL_INT},
 #endif
-        {"Textwindows use alpha:", "Whether the textwindows are transparent.","","WARNING: Don't check this if you have a VERY slow computer!", "",SEL_CHECKBOX,0,1,1,1, &options.use_TextwinAlpha,VAL_INT},
-        {"Textwindows alpha value:", "Transparency value of textwindows.","A higher value means a darker textwindow.","Only has meaning if 'Textwindows use alpha' is checked.", "",SEL_RANGE,0,255,5,110, &options.textwin_alpha,VAL_INT},
-        {"Enable chatfilter:", "Whether to filter incoming messages for 'bad' words.","See '/cfilter ?' for more details on this.","", "",SEL_CHECKBOX,0,1,1,0, &options.chatfilter,VAL_BOOL},
+        {"Alpha value:", "Transparency value of textwindows.","A higher value means a darker textwindow.","", "",SEL_RANGE,0,255,5,110, &options.textwin_alpha,VAL_INT},
+        {"Message font:", "Font to use in the message textwindow.","The font will be resized when you return to the game. Text currently in","the textwindow will not be reformatted.", "Tiny, outlined#Small#Small, outlined#Medium#Medium, outlined#Large, outlined",SEL_RANGE,0,5,1,1, &options.textwin_msg_font,VAL_INT},
+        {"Chat font:", "Font to use in the chat textwindow.","The font will be resized when you return to the game. Text currently in","the textwindow will not be reformatted.", "Tiny, outlined#Small#Small, outlined#Medium#Medium, outlined#Large, outlined",SEL_RANGE,0,5,1,1, &options.textwin_chat_font,VAL_INT},
+        {"Indentation:", "The number of spaces by which to indent multiple line chat.","","", "",SEL_RANGE,0,32,1,0, &options.textwin_indentation,VAL_INT},
+        {"Scrollback:", "The number of lines of scrollback in ~either~ window.","The higher the value, the more memory is used.","NOTE: You need to restart the client for this option to take effect.", "",SEL_RANGE,1000,50000,1000,1000, &options.textwin_scrollback,VAL_INT},
+        {"Enable chatfilter:", "Whether to filter incoming messages for 'bad' words.","See '/cfilter ?' for more details on this.","", "",SEL_CHECKBOX,0,1,1,0, &options.textwin_use_chatfilter,VAL_BOOL},
         {"NPC GUI keyword panel:", "Whether/where to show a list of clickable keywords.", "", "", "Off#Left#Right", SEL_RANGE, 0, 2, 1, 1, &options.keyword_panel, VAL_INT},
         {"#", "","","", "",0,0,0,0,0, NULL,0},
         /* End of Page */

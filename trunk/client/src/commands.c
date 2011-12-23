@@ -181,7 +181,7 @@ void SetupCmd(char *buf, int len)
     /* setup the endian syncronization */
     if(!setup_endian_sync(buf))
     {
-        textwin_showstring(0, NDI_COLR_RED, "Corrupt endian template!");
+        textwin_show_string(0, NDI_COLR_RED, "Corrupt endian template!");
         LOG(LOG_ERROR, "Corrupt endian template!\n");
         SOCKET_CloseSocket(csocket.fd);
         GameStatus = GAME_STATUS_START;
@@ -240,7 +240,7 @@ void SetupCmd(char *buf, int len)
                 !cp2)
             {
                 sprintf(buf, "The server is broken!\nPlease report it and select a different one!");
-                textwin_showstring(0, NDI_COLR_RED, buf);
+                textwin_show_string(0, NDI_COLR_RED, buf);
                 LOG(LOG_ERROR, "%s\n", buf);
                 SOCKET_CloseSocket(csocket.fd);
                 GameStatus = GAME_STATUS_START;
@@ -256,7 +256,7 @@ void SetupCmd(char *buf, int len)
                 (rel == DAI_VERSION_RELEASE &&
                  maj != DAI_VERSION_MAJOR))
             {
-                textwin_showstring(0, NDI_COLR_RED, "Mismatched x.y versions (server: %u.%u, client: %u.%u)!",
+                textwin_show_string(0, NDI_COLR_RED, "Mismatched x.y versions (server: %u.%u, client: %u.%u)!",
                                    rel, maj, DAI_VERSION_RELEASE,
                                    DAI_VERSION_MAJOR);
 
@@ -272,7 +272,7 @@ void SetupCmd(char *buf, int len)
                 }
 
                 LOG(LOG_ERROR, "%s\n", tmpbuf);
-                textwin_showstring(0, NDI_COLR_RED, tmpbuf);
+                textwin_show_string(0, NDI_COLR_RED, tmpbuf);
                 SOCKET_CloseSocket(csocket.fd);
                 GameStatus = GAME_STATUS_START;
                 SDL_Delay(3250);
@@ -282,9 +282,9 @@ void SetupCmd(char *buf, int len)
 
             if (min != DAI_VERSION_MINOR)
             {
-                textwin_showstring(0, NDI_COLR_ORANGE, "Mismatched z version (server: %u, client: %u)!",
+                textwin_show_string(0, NDI_COLR_ORANGE, "Mismatched z version (server: %u, client: %u)!",
                                    min, DAI_VERSION_MINOR);
-                textwin_showstring(0, NDI_COLR_ORANGE, "You can still connect and play but you might encounter minor problems or new features may not work properly.");
+                textwin_show_string(0, NDI_COLR_ORANGE, "You can still connect and play but you might encounter minor problems or new features may not work properly.");
             }
         }
         else if (!strcmp(cmd, "pv"))
@@ -297,7 +297,7 @@ void SetupCmd(char *buf, int len)
             {
                 char tmpbuf[TINY_BUF];
 
-                textwin_showstring(0, NDI_COLR_RED, "Mismatched protocol versions (server: %u, client: %u)",
+                textwin_show_string(0, NDI_COLR_RED, "Mismatched protocol versions (server: %u, client: %u)",
                                    pv, PROTOCOL_VERSION);
 
                 if (pv < PROTOCOL_VERSION)
@@ -306,7 +306,7 @@ void SetupCmd(char *buf, int len)
                     sprintf(tmpbuf, "Your client is outdated!\nUpdate your client!");
 
                 LOG(LOG_ERROR, "%s\n", tmpbuf);
-                textwin_showstring(0, NDI_COLR_RED, tmpbuf);
+                textwin_show_string(0, NDI_COLR_RED, tmpbuf);
                 SOCKET_CloseSocket(csocket.fd);
                 GameStatus = GAME_STATUS_START;
                 SDL_Delay(3250);
@@ -499,7 +499,7 @@ void SetupCmd(char *buf, int len)
         {
             LOG(LOG_ERROR, "Got setup for a command we don't understand: %s %s\n", cmd, param);
             sprintf(buf, "The server is outdated!\nSelect a different one!");
-            textwin_showstring(0, NDI_COLR_RED, buf);
+            textwin_show_string(0, NDI_COLR_RED, buf);
             LOG(LOG_ERROR, "%s\n", buf);
             SOCKET_CloseSocket(csocket.fd);
             GameStatus = GAME_STATUS_START;
@@ -563,31 +563,31 @@ void AddMeFail(char *data, int len)
          /* something was going wrong when loading the file...
           * player should ask a GM/DM for help
           */
-         textwin_showstring(0, NDI_COLR_ORANGE, "***PLAYER LOGIN FAILED***");
+         textwin_show_string(0, NDI_COLR_ORANGE, "***PLAYER LOGIN FAILED***");
          if(msg == ADDME_MSG_OK || msg == ADDME_MSG_INTERNAL || msg == ADDME_MSG_CORRUPT)
          {
              sprintf(buf,"Can't load player file %s\n Error Code: %d\nCall a game master for help!\n", cpl.name, msg);
-             textwin_showstring(0, NDI_COLR_ORANGE, buf);
+             textwin_show_string(0, NDI_COLR_ORANGE, buf);
          }
          else if(msg == ADDME_MSG_UNKNOWN)
          {
-             textwin_showstring(0, NDI_COLR_ORANGE, "Unknown player name!");
+             textwin_show_string(0, NDI_COLR_ORANGE, "Unknown player name!");
          }
          else if(msg == ADDME_MSG_TAKEN)
          {
-             textwin_showstring(0, NDI_COLR_ORANGE, "Name is already taken!\nChoose a different one.");
+             textwin_show_string(0, NDI_COLR_ORANGE, "Name is already taken!\nChoose a different one.");
          }
          else if(msg == ADDME_MSG_ACCOUNT)
          {
-             textwin_showstring(0, NDI_COLR_ORANGE, "Player owned by different account!");
+             textwin_show_string(0, NDI_COLR_ORANGE, "Player owned by different account!");
          }
          else if(msg == ADDME_MSG_BANNED)
          {
-             textwin_showstring(0, NDI_COLR_ORANGE, "Player is BANNED!");
+             textwin_show_string(0, NDI_COLR_ORANGE, "Player is BANNED!");
          }
          else if (msg == ADDME_MSG_WRONGPWD)
          {
-             textwin_showstring(0, NDI_COLR_ORANGE, "Player exists but is saved in B4 format!\nNow enter the password to reclaim this name.");
+             textwin_show_string(0, NDI_COLR_ORANGE, "Player exists but is saved in B4 format!\nNow enter the password to reclaim this name.");
 
              if(GameStatus == GAME_STATUS_ACCOUNT_CHAR_CREATE_WAIT)
              {
@@ -603,7 +603,7 @@ void AddMeFail(char *data, int len)
          }
          else
          {
-             textwin_showstring(0, NDI_COLR_ORANGE, "Player loading failed!");
+             textwin_show_string(0, NDI_COLR_ORANGE, "Player loading failed!");
          }
          SDL_Delay(1250);
          if(GameStatus == GAME_STATUS_ACCOUNT_CHAR_CREATE_WAIT)
@@ -726,7 +726,7 @@ void DrawInfoCmd(char *data, int len)
         buf++;
     }
 
-    textwin_showstring(flags, colr, "%s", buf);
+    textwin_show_string(flags, colr, "%s", buf);
 }
 
 /* new draw command */
@@ -887,130 +887,7 @@ void DrawInfoCmd2(char *data, int len)
         }
     }
 
-    /* we log even before we ignore, or cfilter */
-    if (options.msglog > 0)
-    {
-        if (options.msglog == 2 ||
-            (flags & (NDI_FLAG_PLAYER | NDI_FLAG_SAY | NDI_FLAG_SHOUT |
-                      NDI_FLAG_TELL | NDI_FLAG_GSAY | NDI_FLAG_EMOTE)))
-        {
-            MSGLOG(buf);
-        }
-    }
-
-    /* we have communication input */
-    if (tmp &&
-        (flags & (NDI_FLAG_PLAYER | NDI_FLAG_SAY | NDI_FLAG_SHOUT |
-                  NDI_FLAG_TELL | NDI_FLAG_GSAY | NDI_FLAG_EMOTE)))
-    {
-        if (!(flags & NDI_FLAG_ADMIN))
-        {
-            if ((flags & NDI_FLAG_SAY) &&
-                ignore_check(data, "say"))
-            {
-                return;
-            }
-
-            if ((flags & NDI_FLAG_SHOUT) &&
-                ignore_check(data, "shout"))
-            {
-                return;
-            }
-
-            if ((flags & NDI_FLAG_TELL) &&
-                ignore_check(data, "tell"))
-            {
-                return;
-            }
-
-            if ((flags & NDI_FLAG_EMOTE) &&
-                ignore_check(data, "emote"))
-            {
-                return;
-            }
-        }
-
-        /* Filter incoming msg for f*words */
-        if (options.chatfilter)
-        {
-            chatfilter_filter(buf);
-        }
-
-        /* Pick the skin's colour for the method of chat. */
-        /* TODO: In 0.11.0 the server will send the NDI_FLAG_EAVESDROP flag
-         * on tells which a GM is listening in on. Currently it colours them
-         * flesh (translated to fuschia). */
-        /* TODO: Eventually we'll be able to set fg and bg colour independenty.
-         * NDI_FLAG_BUDDY and NDI_FLAG_EAVESDROP will set the bg, leaving the
-         * fg as set by other flags. */
-        if ((flags & NDI_FLAG_SAY))
-        {
-            colr = skin_prefs.chat_say;
-        }
-        else if ((flags & NDI_FLAG_SHOUT))
-        {
-            colr = skin_prefs.chat_shout;
-        }
-        else if ((flags & NDI_FLAG_TELL))
-        {
-            if (colr == NDI_COLR_FUSCHIA)
-            {
-                flags |= NDI_FLAG_EAVESDROP;
-                colr = skin_prefs.chat_eavesdrop;
-            }
-            else
-            {
-                colr = skin_prefs.chat_tell;
-            }
-        }
-        else if ((flags & NDI_FLAG_GSAY))
-        {
-            colr = skin_prefs.chat_gsay;
-        }
-        else if ((flags & NDI_FLAG_EMOTE))
-        {
-            colr = skin_prefs.chat_emote;
-        }
-        else if ((flags & NDI_FLAG_ADMIN))
-        {
-            colr = skin_prefs.chat_admin;
-        }
-
-        /* Color messages from buddys */
-        if (buddy_check(data))
-        {
-            flags |= NDI_FLAG_BUDDY;
-            colr = skin_prefs.chat_buddy;
-        }
-
-        /* Only see shouts from buddies. */
-        if ((flags & NDI_FLAG_SHOUT) &&
-            options.shoutoff &&
-            (flags & NDI_FLAG_BUDDY))
-        {
-            return;
-        }
-
-        /* save last incomming tell player for client sided /reply */
-        if ((flags & NDI_FLAG_TELL) &&
-            !(flags & NDI_FLAG_EAVESDROP))
-        {
-            strcpy(cpl.player_reply, data);
-        }
-
-        /*LOG(LOG_DEBUG,"IGNORE?: player >%s<\n", data);*/
-        if ((flags & NDI_FLAG_EMOTE))
-        {
-            flags &= ~NDI_FLAG_PLAYER;
-        }
-
-        if (options.smileys)
-        {
-            smiley_convert(buf);
-        }
-    }
-
-    textwin_showstring(flags, colr, "%s", buf);
+    textwin_show_string(flags, colr, "%s", buf);
 }
 
 void TargetObject(char *data, int len)
@@ -1420,7 +1297,6 @@ void PlayerCmd(char *data, int len)
 
     options.firststart = 0;
     GameStatus = GAME_STATUS_PLAY;
-    txtwin[TW_MIX].size = txtwin_start_size;
     InputStringEndFlag = 0;
     tag = GetSINT32_String(data);
     i += 4;
@@ -1668,7 +1544,7 @@ void InterfaceCmd(char *data, int len)
     {
         if (!gui_npc_create(mode, data, len, 0))
         {
-            textwin_showstring(0, NDI_COLR_RED, "INVALID GUI CMD");
+            textwin_show_string(0, NDI_COLR_RED, "INVALID GUI CMD");
         }
     }
 }
@@ -2255,7 +2131,7 @@ void GolemCmd(char *data, int len)
     face = atoi(tmp + 1);
     face_get(face);
     tmp = strchr(tmp + 1, ' '); /* find start of a name */
-    textwin_showstring(0, NDI_COLR_WHITE, "You %s control of %s.",
+    textwin_show_string(0, NDI_COLR_WHITE, "You %s control of %s.",
                        ((mode = atoi(data)) == GOLEM_CTR_RELEASE) ? "lose" :
                        "gain", tmp + 1);
 }
@@ -2389,8 +2265,10 @@ static inline void break_string(char *text, char *prefix, uint8 one_prefix, char
     */
 
     /* we have to convert to smileys for correct string width calculation */
-    if (options.smileys)
+    if (options.textwin_use_smileys)
+    {
         smiley_convert(text);
+    }
 
     /* lets calculate the space used by the prefix */
     preflen=0;
@@ -2420,7 +2298,7 @@ static inline void break_string(char *text, char *prefix, uint8 one_prefix, char
         break;
     }
 
-    /* lets do some codestealing from client's textwin_showstring() :) */
+    /* lets do some codestealing from client's textwin_show_string() :) */
     len = 0;
     for (a = i = 0; ; i++)
     {
@@ -2577,17 +2455,17 @@ void ChannelMsgCmd(char *data, int len)
     if (mode==1)
     {
         char message2[1024];
-        sprintf(prefix,"[%s:%s ",channelname, playername);
+        sprintf(prefix,"[%s#%s ",channelname, playername);
         sprintf(message2,"%s%c",message,']');
         break_string(message2, prefix, 1, outstring);
     }
     else
     {
-        sprintf(prefix,"[%s:%s] ",channelname, playername);
+        sprintf(prefix,"[%s#%s] ",channelname, playername);
         break_string(message, prefix, 0, outstring);
     }
 
-    textwin_showstring(NDI_FLAG_PLAYER, colr, "%s", outstring);
+    textwin_show_string(NDI_FLAG_PLAYER | NDI_FLAG_CHANNEL, colr, "%s", outstring);
 }
 
 #endif
@@ -2602,7 +2480,7 @@ void AccountCmd(char *data, int len)
     ac_status = GetSINT8_String(data+count++);
     if(ac_status) /* something is wrong when not ACCOUNT_STATUS_OK (0) */
     {
-        textwin_showstring(0, NDI_COLR_RED, "Unknown Account: %s", cpl.acc_name);
+        textwin_show_string(0, NDI_COLR_RED, "Unknown Account: %s", cpl.acc_name);
         GameStatus = GAME_STATUS_LOGIN_ACCOUNT;
         LoginInputStep = LOGIN_STEP_NAME;
         dialog_login_warning_level = DIALOG_LOGIN_WARNING_ACCOUNT_UNKNOWN;
