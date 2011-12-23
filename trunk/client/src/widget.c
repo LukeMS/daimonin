@@ -333,33 +333,33 @@ int widget_event_mousedn(int x, int y, SDL_Event *event)
         {
             case WIDGET_SKILL_EXP_ID:
                 /* Handle the mousedown on the exp area */
-                widget_skill_exp_event(x, y, MOUSE_DOWN);
+                widget_skill_exp_event(x, y, SDL_MOUSEBUTTONDOWN);
 
                 break;
 
             case WIDGET_MENU_B_ID:
                 /* Handle mousedown on the menu buttons... */
-                widget_menubuttons_event(x, y, MOUSE_DOWN);
+                widget_menubuttons_event(x, y, SDL_MOUSEBUTTONDOWN);
 
                 break;
 
             case WIDGET_QUICKSLOT_ID:
-                widget_quickslots_mouse_event(x, y, MOUSE_DOWN);
+                widget_quickslots_mouse_event(x, y, SDL_MOUSEBUTTONDOWN);
 
                 break;
 
             case WIDGET_CHATWIN_ID:
-                textwin_event(TW_CHECK_BUT_DOWN, event, TEXTWIN_CHAT_ID);
+                textwin_event(SDL_MOUSEBUTTONDOWN, event, TEXTWIN_CHAT_ID);
 
                 break;
 
             case WIDGET_MSGWIN_ID:
-                textwin_event(TW_CHECK_BUT_DOWN, event, TEXTWIN_MSG_ID);
+                textwin_event(SDL_MOUSEBUTTONDOWN, event, TEXTWIN_MSG_ID);
 
                 break;
 
             case WIDGET_MIXWIN_ID:
-//                textwin_event(TW_CHECK_BUT_DOWN, event, TW_MIX);
+//                textwin_event(SDL_MOUSEBUTTONDOWN, event, TW_MIX);
 
                 break;
 
@@ -369,12 +369,12 @@ int widget_event_mousedn(int x, int y, SDL_Event *event)
                 break;
 
             case WIDGET_RANGE_ID:
-                widget_range_event(x,y, *event, MOUSE_DOWN);
+                widget_range_event(x,y, *event, SDL_MOUSEBUTTONDOWN);
 
                 break;
 
             case WIDGET_BELOW_INV_ID:
-                widget_below_window_event(x,y,MOUSE_DOWN);
+                widget_below_window_event(x,y,SDL_MOUSEBUTTONDOWN);
 
                 break;
 
@@ -465,22 +465,22 @@ int widget_event_mouseup(int x, int y, SDL_Event *event)
         {
             /* drop to quickslots */
             case WIDGET_QUICKSLOT_ID:
-                widget_quickslots_mouse_event(x,y,MOUSE_UP);
+                widget_quickslots_mouse_event(x,y,SDL_MOUSEBUTTONUP);
 
                 break;
 
             case WIDGET_CHATWIN_ID:
-                textwin_event(TW_CHECK_BUT_UP, event, TEXTWIN_CHAT_ID);
+                textwin_event(SDL_MOUSEBUTTONUP, event, TEXTWIN_CHAT_ID);
 
                 break;
 
             case WIDGET_MSGWIN_ID:
-                textwin_event(TW_CHECK_BUT_UP, event, TEXTWIN_MSG_ID);
+                textwin_event(SDL_MOUSEBUTTONUP, event, TEXTWIN_MSG_ID);
 
                 break;
 
             case WIDGET_MIXWIN_ID:
-//                textwin_event(TW_CHECK_BUT_UP, event, TW_MIX);
+//                textwin_event(SDL_MOUSEBUTTONUP, event, TW_MIX);
 
                 break;
 
@@ -490,17 +490,17 @@ int widget_event_mouseup(int x, int y, SDL_Event *event)
                 break;
 
             case WIDGET_PDOLL_ID:
-                widget_show_player_doll_event(x,y, MOUSE_UP);
+                widget_show_player_doll_event(x,y, SDL_MOUSEBUTTONUP);
 
                 break;
 
             case WIDGET_RANGE_ID:
-                widget_range_event(x,y, *event, MOUSE_UP);
+                widget_range_event(x,y, *event, SDL_MOUSEBUTTONUP);
 
                 break;
 
             case WIDGET_BELOW_INV_ID:
-                widget_below_window_event(x, y, MOUSE_UP);
+                widget_below_window_event(x, y, SDL_MOUSEBUTTONUP);
 
                 break;
 
@@ -678,17 +678,17 @@ int widget_event_mousemv(int x,int y, SDL_Event *event)
         switch (id)
         {
             case WIDGET_CHATWIN_ID:
-                textwin_event(TW_CHECK_MOVE, event, TEXTWIN_CHAT_ID);
+                textwin_event(SDL_MOUSEMOTION, event, TEXTWIN_CHAT_ID);
 
                 break;
 
             case WIDGET_MSGWIN_ID:
-                textwin_event(TW_CHECK_MOVE, event, TEXTWIN_MSG_ID);
+                textwin_event(SDL_MOUSEMOTION, event, TEXTWIN_MSG_ID);
 
                 break;
 
             case WIDGET_MIXWIN_ID:
-//                textwin_event(TW_CHECK_MOVE, event, TW_MIX);
+//                textwin_event(SDL_MOUSEMOTION, event, TW_MIX);
 
                 break;
 

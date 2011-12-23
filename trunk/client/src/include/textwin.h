@@ -50,14 +50,6 @@ typedef enum textwin_id_t
 }
 textwin_id_t;
 
-typedef enum textwin_event_t
-{
-    TW_CHECK_BUT_DOWN,
-    TW_CHECK_BUT_UP,
-    TW_CHECK_MOVE,
-}
-textwin_event_t;
-
 typedef enum textwin_resizing_dir_t
 {
     TEXTWIN_RESIZING_DIR_NONE,
@@ -119,8 +111,7 @@ extern void textwin_init(textwin_id_t id);
 extern void textwin_set_font(textwin_id_t id);
 extern void textwin_show_string(uint32 flags, uint32 colr, char *format, ...);
 extern void textwin_show_window(textwin_id_t id);
-extern void textwin_event(textwin_event_t e, SDL_Event *event,
-                          textwin_id_t id);
+extern void textwin_event(uint8 e, SDL_Event *event, textwin_id_t id);
 extern void textwin_keypress(SDLKey key, textwin_id_t id);
 extern void textwin_add_history(char *text);
 extern void textwin_clear_history(void);

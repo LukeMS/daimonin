@@ -262,11 +262,11 @@ void widget_show_inventory_window(int x, int y)
     }
 }
 
-void widget_below_window_event(int x, int y, int MEvent)
+void widget_below_window_event(int x, int y, uint8 e)
 {
-    switch (MEvent)
+    switch (e)
     {
-        case MOUSE_UP:
+        case SDL_MOUSEBUTTONUP:
             if (draggingInvItem(DRAG_GET_STATUS) > DRAG_IWIN_BELOW)
             {
                 /* KEYFUNC_APPLY and KEYFUNC_DROP works only if cpl.inventory_win = IWIN_INV. The tag must
@@ -306,7 +306,7 @@ void widget_below_window_event(int x, int y, int MEvent)
 
             break;
 
-        case MOUSE_DOWN:
+        case SDL_MOUSEBUTTONDOWN:
             /* ground ( IWIN_BELOW )  */
             if (y >= widget_data[WIDGET_BELOW_INV_ID].y1+19 &&
                 y <= widget_data[WIDGET_BELOW_INV_ID].y1 + widget_data[WIDGET_BELOW_INV_ID].ht - 4 &&
@@ -332,7 +332,7 @@ void widget_below_window_event(int x, int y, int MEvent)
                     y <= widget_data[WIDGET_BELOW_INV_ID].y1+29 &&
                     x > widget_data[WIDGET_BELOW_INV_ID].x1+262 &&
                     x < widget_data[WIDGET_BELOW_INV_ID].x1+269 &&
-                    MEvent == MOUSE_DOWN)
+                    e == SDL_MOUSEBUTTONDOWN)
             {
 //                if (cpl.inventory_win == IWIN_INV)
 //                    cpl.inventory_win = IWIN_BELOW;
@@ -347,7 +347,7 @@ void widget_below_window_event(int x, int y, int MEvent)
                     y <= widget_data[WIDGET_BELOW_INV_ID].y1+51 &&
                     x > widget_data[WIDGET_BELOW_INV_ID].x1+262 &&
                     x < widget_data[WIDGET_BELOW_INV_ID].x1+269 &&
-                    MEvent == MOUSE_DOWN)
+                    e == SDL_MOUSEBUTTONDOWN)
             {
 //                if (cpl.inventory_win == IWIN_INV)
 //                    cpl.inventory_win = IWIN_BELOW;

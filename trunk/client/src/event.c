@@ -585,7 +585,7 @@ int Event_PollInputDevice(void)
 
             }
 
-//            textwin_event(TW_CHECK_MOVE, &event);
+//            textwin_event(SDL_MOUSEMOTION, &event);
 
             /* scrollbar-sliders We have to have it before the widgets cause of the menu*/
             if (event.button.button == SDL_BUTTON_LEFT &&
