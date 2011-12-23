@@ -657,15 +657,15 @@ int widget_event_mousemv(int x,int y, SDL_Event *event)
         /* handler(s) for miscellanous mouse movement(s) go here */
 
         /* textwin special handling */
-        if (textwin[TEXTWIN_CHAT_ID].highlight != TW_HL_NONE)
+        if (textwin[TEXTWIN_CHAT_ID].highlight != TEXTWIN_HIGHLIGHT_NONE)
         {
-            textwin[TEXTWIN_CHAT_ID].highlight = TW_HL_NONE;
+            textwin[TEXTWIN_CHAT_ID].highlight = TEXTWIN_HIGHLIGHT_NONE;
             WIDGET_REDRAW(WIDGET_CHATWIN_ID) = 1;
         }
 
-        if (textwin[TEXTWIN_MSG_ID].highlight != TW_HL_NONE)
+        if (textwin[TEXTWIN_MSG_ID].highlight != TEXTWIN_HIGHLIGHT_NONE)
         {
-            textwin[TEXTWIN_MSG_ID].highlight = TW_HL_NONE;
+            textwin[TEXTWIN_MSG_ID].highlight = TEXTWIN_HIGHLIGHT_NONE;
             WIDGET_REDRAW(WIDGET_MSGWIN_ID) = 1;
         }
 

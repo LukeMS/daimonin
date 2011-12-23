@@ -891,7 +891,7 @@ static void ShowWindowScrollbar(textwin_window_t *tw, _BLTFX *bltfx)
     sprite_blt(skin_sprites[SKIN_SPRITE_TWIN_SCROLL], x2 + 2,
                skin_sprites[SKIN_SPRITE_SLIDER_UP]->bitmap->h + sy + 1, &box, bltfx);
  
-    if (tw->highlight == TW_HL_UP)
+    if (tw->highlight == TEXTWIN_HIGHLIGHT_UP)
     {
         box.x = x2;
         box.y = 0;
@@ -907,7 +907,7 @@ static void ShowWindowScrollbar(textwin_window_t *tw, _BLTFX *bltfx)
         box.y += skin_sprites[SKIN_SPRITE_SLIDER_UP]->bitmap->h - 1;
         SDL_FillRect(bltfx->surface, &box, -1);
     }
-    else if (tw->highlight == TW_ABOVE)
+    else if (tw->highlight == TEXTWIN_HIGHLIGHT_ABOVE)
     {
         box.x = x2 + 2;
         box.y = skin_sprites[SKIN_SPRITE_SLIDER_UP]->bitmap->h + 2;
@@ -915,7 +915,7 @@ static void ShowWindowScrollbar(textwin_window_t *tw, _BLTFX *bltfx)
         box.w = 5;
         SDL_FillRect(bltfx->surface, &box, 0);
     }
-    else if (tw->highlight == TW_HL_SLIDER)
+    else if (tw->highlight == TEXTWIN_HIGHLIGHT_SLIDER)
     {
         box.x = x2 + 2;
         box.y = skin_sprites[SKIN_SPRITE_SLIDER_UP]->bitmap->h + 3 + sy;
@@ -930,7 +930,7 @@ static void ShowWindowScrollbar(textwin_window_t *tw, _BLTFX *bltfx)
         box.y += sh - 1;
         SDL_FillRect(bltfx->surface, &box, -1);
     }
-    else if (tw->highlight == TW_UNDER)
+    else if (tw->highlight == TEXTWIN_HIGHLIGHT_UNDER)
     {
         box.x = x2 + 2;
         box.h = tw->size * tw->font->line_height - sy - sh -
@@ -939,7 +939,7 @@ static void ShowWindowScrollbar(textwin_window_t *tw, _BLTFX *bltfx)
         box.w = 5;
         SDL_FillRect(bltfx->surface, &box, 0);
     }
-    else if (tw->highlight == TW_HL_DOWN)
+    else if (tw->highlight == TEXTWIN_HIGHLIGHT_DOWN)
     {
         box.x = x2;
         box.y = tw->size * tw->font->line_height + 4;
@@ -1037,7 +1037,7 @@ void textwin_event(uint8 e, SDL_Event *event, textwin_id_t id)
                   left = widget_data[tw->widget].x1;
     const uint8   button = event->button.button;
 
-    tw->highlight = TW_HL_NONE;
+    tw->highlight = TEXTWIN_HIGHLIGHT_NONE;
 
     if (!(tw->flags & TEXTWIN_FLAG_RESIZE))
     {
@@ -1053,25 +1053,25 @@ void textwin_event(uint8 e, SDL_Event *event, textwin_id_t id)
 #define OFFSET (tw->y + skin_sprites[SKIN_SPRITE_SLIDER_UP]->bitmap->h)
                 if (y < OFFSET)
                 {
-                    tw->highlight = TW_HL_UP;
+                    tw->highlight = TEXTWIN_HIGHLIGHT_UP;
                 }
                 else if (y < OFFSET + tw->slider_y)
                 {
-                    tw->highlight = TW_ABOVE;
+                    tw->highlight = TEXTWIN_HIGHLIGHT_ABOVE;
                 }
                 else if (y < OFFSET + tw->slider_y + tw->slider_h + 3)
                 {
-                    tw->highlight = TW_HL_SLIDER;
+                    tw->highlight = TEXTWIN_HIGHLIGHT_SLIDER;
                 }
                 else if (y < widget_data[tw->widget].y1 + tw->size *
                              tw->font->line_height + 4)
                 {
-                    tw->highlight = TW_UNDER;
+                    tw->highlight = TEXTWIN_HIGHLIGHT_UNDER;
                 }
                 else if (y < widget_data[tw->widget].y1 +
                              widget_data[tw->widget].ht)
                 {
-                    tw->highlight = TW_HL_DOWN;
+                    tw->highlight = TEXTWIN_HIGHLIGHT_DOWN;
                 }
 #undef OFFSET
             }
@@ -1090,25 +1090,25 @@ void textwin_event(uint8 e, SDL_Event *event, textwin_id_t id)
             }
             else if (button == SDL_BUTTON_LEFT)
             {
-                if (tw->highlight == TW_HL_UP) /* clicked scroller-button up */
+                if (tw->highlight == TEXTWIN_HIGHLIGHT_UP) /* clicked scroller-button up */
                 {
                     ScrollWindow(tw, 1);
                 }
-                else if (tw->highlight == TW_ABOVE) /* clicked above the slider */
+                else if (tw->highlight == TEXTWIN_HIGHLIGHT_ABOVE) /* clicked above the slider */
                 {
                     ScrollWindow(tw, tw->size);
                 }
-                else if (tw->highlight == TW_HL_SLIDER)
+                else if (tw->highlight == TEXTWIN_HIGHLIGHT_SLIDER)
                 {
                     /* clicked on the slider */
                     tw->flags |= TEXTWIN_FLAG_SCROLL;
                     OldSliderPos = y - tw->slider_y;
                 }
-                else if (tw->highlight == TW_UNDER) /* clicked under the slider */
+                else if (tw->highlight == TEXTWIN_HIGHLIGHT_UNDER) /* clicked under the slider */
                 {
                     ScrollWindow(tw, -tw->size);
                 }
-                else if (tw->highlight == TW_HL_DOWN) /* clicked scroller-button down */
+                else if (tw->highlight == TEXTWIN_HIGHLIGHT_DOWN) /* clicked scroller-button down */
                 {
                     ScrollWindow(tw, -1);
                 }
