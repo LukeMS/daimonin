@@ -31,7 +31,7 @@ static void GrepForStatometer(char *message);
 static void ConvertSmileys(char *message);
 static void AddLine(textwin_window_t *tw, const uint32 flags, const uint32 colr,
                     const uint8 indent, const uint8 strong, const uint8 emphasis,
-                    const uint8 intertitle, const char *message);
+                    const uint8 underline, const char *message);
 static void ShowWindowResizingBorders(textwin_window_t *tw, _BLTFX *bltfx);
 static void ShowWindowText(textwin_window_t *tw, _BLTFX *bltfx);
 static void ShowWindowScrollbar(textwin_window_t *tw, _BLTFX *bltfx);
@@ -119,13 +119,13 @@ void textwin_show_string(uint32 flags, uint32 colr, char *format, ...)
     textwin_window_t *tw = &textwin[id];
     uint8     strong = 0,
               emphasis = 0,
-              intertitle = 0,
+              underline = 0,
               strong2 = 0,
               emphasis2 = 0,
-              intertitle2 = 0,
+              underline2 = 0,
               old_strong = 0,
               old_emphasis = 0,
-              old_intertitle = 0,
+              old_underline = 0,
               indent = 0;
     uint16    w = 0;
 
@@ -206,22 +206,22 @@ void textwin_show_string(uint32 flags, uint32 colr, char *format, ...)
         {
             /* toggle strong and do not count width of embedded character
              * code. */
-            case '|':
+            case ECC_STRONG:
                 strong = !strong;
 
                 continue;
 
             /* toggle emphasis and do not count width of embedded character
              * code. */
-            case '~':
+            case ECC_EMPHASIS:
                 emphasis = !emphasis;
 
                 continue;
 
-            /* toggle intertitle and do not count width of embedded character
+            /* toggle underline and do not count width of embedded character
              * code. */
-            case '`':
-                intertitle = !intertitle;
+            case ECC_UNDERLINE:
+                underline = !underline;
 
                 continue;
 
@@ -269,7 +269,7 @@ void textwin_show_string(uint32 flags, uint32 colr, char *format, ...)
                 space = c;
                 strong2 = strong;
                 emphasis2 = emphasis;
-                intertitle2 = intertitle;
+                underline2 = underline;
 
             /* if the line has got too long, find a nice break point. */
             default:
@@ -283,7 +283,7 @@ void textwin_show_string(uint32 flags, uint32 colr, char *format, ...)
                         space = NULL;
                         strong = strong2;
                         emphasis = emphasis2;
-                        intertitle = intertitle2;
+                        underline = underline2;
                     }
                     /* else we'll need to insert one. */
                     else
@@ -292,21 +292,21 @@ void textwin_show_string(uint32 flags, uint32 colr, char *format, ...)
 
                         strong2 = strong;
                         emphasis2 = emphasis;
-                        intertitle2 = intertitle;
+                        underline2 = underline;
 
                         for (; cc > start; cc--)
                         {
-                            if (*cc == '|')
+                            if (*cc == ECC_STRONG)
                             {
                                 strong = !strong;
                             }
-                            else if (*cc == '~')
+                            else if (*cc == ECC_EMPHASIS)
                             {
                                 emphasis = !emphasis;
                             }
-                            else if (*cc == '`')
+                            else if (*cc == ECC_UNDERLINE)
                             {
-                                intertitle = !intertitle;
+                                underline = !underline;
                             }
                             else if (ispunct(*cc))
                             {
@@ -321,7 +321,7 @@ void textwin_show_string(uint32 flags, uint32 colr, char *format, ...)
                         {
                             strong = strong2;
                             emphasis = emphasis2;
-                            intertitle = intertitle2;
+                            underline = underline2;
                             memmove(c + 1, c, strlen(c));
                             *c = '\0';
                         }
@@ -332,7 +332,7 @@ void textwin_show_string(uint32 flags, uint32 colr, char *format, ...)
         if (*c == '\0')
         {
             AddLine(tw, flags, colr, indent, old_strong, old_emphasis,
-                    old_intertitle, start);
+                    old_underline, start);
 
             if ((flags & NDI_FLAG_PLAYER))
             {
@@ -346,13 +346,13 @@ void textwin_show_string(uint32 flags, uint32 colr, char *format, ...)
 
             old_strong = strong;
             old_emphasis = emphasis;
-            old_intertitle = intertitle;
+            old_underline = underline;
             start = c + 1;
         }
     }
 
     /* Add a final line for the end of the string. */
-    AddLine(tw, flags, colr, indent, old_strong, old_emphasis, old_intertitle,
+    AddLine(tw, flags, colr, indent, old_strong, old_emphasis, old_underline,
             start);
     WIDGET_REDRAW(textwin[id].widget) = 1;
 }
@@ -584,10 +584,10 @@ static void ConvertSmileys(char *message)
 /* Add message (already cut down to a single lines worth) to the textwindow structure. */
 static void AddLine(textwin_window_t *tw, const uint32 flags, const uint32 colr,
                     const uint8 indent, const uint8 strong, const uint8 emphasis,
-                    const uint8 intertitle, const char *message)
+                    const uint8 underline, const char *message)
 {
     uint16 line = tw->scroll_pos;
-    char   buf[MEDIUM_BUF];
+    char   buf[TINY_BUF];
 
     if (indent)
     {
@@ -600,10 +600,23 @@ static void AddLine(textwin_window_t *tw, const uint32 flags, const uint32 colr,
     }
 
     buf[indent] = '\0';
-    sprintf(strchr(buf, '\0'), "%s%s%s%s",
-            (strong) ? "|" : "", (emphasis) ? "~" : "",
-            (intertitle) ? "`" : "", message);
-    sprintf((tw->text + line)->buf, "%s", buf);
+
+    if (strong)
+    {
+        sprintf(strchr(buf, '\0'), "%c", ECC_STRONG);
+    }
+
+    if (emphasis)
+    {
+        sprintf(strchr(buf, '\0'), "%c", ECC_EMPHASIS);
+    }
+
+    if (underline)
+    {
+        sprintf(strchr(buf, '\0'), "%c", ECC_UNDERLINE);
+    }
+
+    sprintf((tw->text + line)->buf, "%s%s", buf, message);
     (tw->text + line)->flags = flags;
 
     if (!(flags & NDI_FLAG_PLAYER))
