@@ -1179,7 +1179,7 @@ void textwin_event(textwin_event_t e, SDL_Event *event,
                  button == SDL_BUTTON_LEFT)
         {
             tw->flags &= ~TEXTWIN_FLAG_RESIZE;
-            tw->resize == TEXTWIN_RESIZING_DIR_NONE;
+            tw->resize = TEXTWIN_RESIZING_DIR_NONE;
             WIDGET_REDRAW(tw->widget) = 1;
         }
     }
