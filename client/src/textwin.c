@@ -20,785 +20,1321 @@
 
     The author can be reached via e-mail to info@daimonin.org
 */
-#include <include.h>
 
-/* this depends on the text win png*/
-#define TEXT_WIN_XLEN 265
-#define TEXT_WIN_YLEN 190
+#include "include.h"
 
-int             textwin_flags;
-int             txtwin_start_size = 0;
-_textwin_set    txtwin[TW_SUM];
-static int      old_slider_pos  = 0;
-SDL_Surface     *txtwinbg = NULL;
-int             old_txtwin_alpha = -1;
+static uint16 OldSliderPos = 0;
 
-/* TODO: All this to be removed, please ignore it. Hypertext (keywords) ONLY
- * available in NPC and book GUIs.
- * -- Smacky 20100711 */
-/******************************************************************
-  definition of keyword:
-    a keyword is the text between two '^' chars.
-    the size can vary between a single word and a complete sentence.
-    the max length of a keyword is 1 row (inclusive '^') because only
-    one LF within is allowed.
-******************************************************************/
+textwin_window_t textwin[TEXTWIN_NROF];
 
-/******************************************************************
- returns the startpos of a keyword(-part).
-******************************************************************/
-static char * get_keyword_start(int actWin, int mouseX, int *row)
+static void GrepForStatometer(char *message);
+static void ConvertSmileys(char *message);
+static void AddLine(textwin_window_t *tw, const uint32 flags, const uint32 colr,
+                    const uint8 indent, const uint8 strong, const uint8 emphasis,
+                    const uint8 intertitle, const char *message);
+static void ShowWindowResizingBorders(textwin_window_t *tw, _BLTFX *bltfx);
+static void ShowWindowText(textwin_window_t *tw, _BLTFX *bltfx);
+static void ShowWindowScrollbar(textwin_window_t *tw, _BLTFX *bltfx);
+static void ShowWindowFrame(textwin_window_t *tw, _BLTFX *bltfx);
+static uint8 ScrollWindow(textwin_window_t *tw, const sint16 dist);
+static void ResizeWindow(textwin_window_t *tw, const sint16 xrel, const sint16 yrel);
+
+void textwin_init(textwin_id_t id)
 {
-    int     pos, pos2 = 538, key_start;
-    char   *text;
+    textwin_window_t  *tw = &textwin[id];
+    textwin_text_t *text;
 
-    if (actWin >= TW_SUM)
-        return 0;
-
-    pos = (txtwin[actWin].top_drawLine + (*row)) % TEXT_WIN_MAX - txtwin[actWin].scroll;
-    if (pos < 0)
-        pos += TEXT_WIN_MAX;
-    if (mouseX < 0)
-        goto row2; /* check only for 2. half of keyword */
-    /* check if keyword starts in the row before */
-    if (txtwin[actWin].scroll + 1 != txtwin[actWin].act_bufsize - txtwin[actWin].size /* dont check in first row */
-            && txtwin[actWin].text[pos].key_clipped)
+    if (id == TEXTWIN_CHAT_ID)
     {
-        /* was a clipped keyword clicked? */
-        int index   = -1;
-        text = txtwin[actWin].text[pos].buf;
-        while (text[++index] && pos2 <= mouseX && text[index] != '^')
-            pos2 += font_small.c[(int) text[index]].w + font_small.char_offset;
-        if (text[index] != '^')
-        {
-            /* clipped keyword was clicked, so we must start one row before */
-            /* TODO not start one row before if its the first row in buffer ! */
-            (*row)--;
-            pos = (txtwin[actWin].top_drawLine + (*row)) % TEXT_WIN_MAX - txtwin[actWin].scroll;
-            if (pos < 0)
-                pos += TEXT_WIN_MAX;
-            mouseX = 800; /* detect last keyword in this row */
-        }
+        tw->widget = WIDGET_CHATWIN_ID;
     }
-
-row2 : text = txtwin[actWin].text[pos].buf;
-    /* find the first char of the keyword */
-    if (txtwin[actWin].text[pos].key_clipped)
-        key_start = 0;
+    else if (id == TEXTWIN_MSG_ID)
+    {
+        tw->widget = WIDGET_MSGWIN_ID;
+    }
     else
-        key_start = -1;
-    pos = 0; pos2 = 538;
-    while (text[pos] && pos2 <= mouseX)
     {
-        if (text[pos++] == '^')
-        {
-            if (key_start < 0)
-                key_start = pos; /* start of a key */
-            else
-                key_start = -1; /* end of a key */
-            continue;
-        }
-        pos2 += font_small.c[(int) text[pos]].w + font_small.char_offset;
-    }
-    if (key_start < 0)
-        return NULL; /* no keyword here */
-    (*row)++;
-    return &text[key_start];
-}
-
-/******************************************************************
- check for keyword and send it to server.
-******************************************************************/
-void say_clickedKeyword(int actWin, int mouseX, int mouseY)
-{
-    char    cmdBuf[MAX_KEYWORD_LEN + 1]     =
-        {
-            "/say "
-        };
-    char    cmdBuf2[MAX_KEYWORD_LEN + 1]    =
-        {
-            ""
-        };
-    char   *text;
-    int     clicked_row, pos = 5;
-
-    clicked_row = (mouseY - 588) / 10 + txtwin[actWin].size;
-    text = get_keyword_start(actWin, mouseX, &clicked_row);
-    if (text == NULL)
         return;
-    while (*text && *text != '^')
-        cmdBuf[pos++] = *text++;
-    if (*text != '^')
-    {
-        text = get_keyword_start(actWin, -1, &clicked_row);
-        if (text != NULL)
-            while (*text && *text != '^')
-                cmdBuf[pos++] = *text++;
     }
-    cmdBuf[pos++] = '\0';
 
-    /* Grunt: fix for clickable keywords that
-     * can be commands too. Commands will
-     * get executed instead of /say'ed
-     */
-
-    if (cmdBuf[5] == '/') // get rid of /say
-    {
-        pos = 5;
-        while (cmdBuf[pos] != '\0')
-        {
-            cmdBuf2[pos - 5] = cmdBuf[pos];
-            pos++;
-        }
-        cmdBuf2[pos - 5] = '\0';
-        client_cmd_generic(cmdBuf2);
-    }
-    else
-        client_cmd_generic(cmdBuf);
+    tw->scroll_pos = 0;
+    tw->scroll_off = 0;
+    tw->maxstringlen = widget_data[tw->widget].wd -
+                       (skin_sprites[SKIN_SPRITE_SLIDER]->bitmap->w * 2) -
+                       (TEXTWIN_ACTIVE_MIN * 2);
+    tw->scroll_size = options.textwin_scrollback;
+    tw->scroll_used = 0;
+    MALLOC(text, sizeof(textwin_text_t) * tw->scroll_size);
+    tw->text = text;
+    textwin_set_font(id);
 }
 
-/******************************************************************
- clear the screen of a text-window.
-******************************************************************/
-void textwin_init()
+void textwin_set_font(textwin_id_t id)
 {
-    int i;
+    textwin_window_t *tw = &textwin[id];
 
-    for (i = TW_MIX; i < TW_SUM; i++)
+    switch ((id == TEXTWIN_CHAT_ID) ? options.textwin_chat_font :
+            options.textwin_msg_font)
     {
-        txtwin[i].bot_drawLine = 0;
-        txtwin[i].act_bufsize = 0;
-        txtwin[i].scroll = 0;
-        txtwin[i].size = 9;
+        case 0:
+            tw->font = &font_tiny_out;
+
+            break;
+
+        case 2:
+            tw->font = &font_small_out;
+
+            break;
+
+        case 3:
+            tw->font = &font_medium;
+
+            break;
+
+        case 4:
+            tw->font = &font_medium_out;
+
+            break;
+
+        case 5:
+            tw->font = &font_large_out;
+
+            break;
+
+        default:
+            tw->font = &font_small;
     }
+
+    WIDGET_REDRAW(tw->widget) = 1;
 }
 
-/******************************************************************
- add string to the text-window (perform auto-clipping).
-******************************************************************/
-void textwin_showstring(uint32 flags, uint32 colr, char *format, ...)
+void textwin_show_string(uint32 flags, uint32 colr, char *format, ...)
 {
-    va_list ap;
-    static int  key_start   = 0;
-    static int  key_count   = 0;
-    int         i, len, a;
-    int         winlen      = 244;
-    char        buf[HUGE_BUF];
-    char       *text;
-    int         actWin, z;
-    /* Hmm I'm not 100& sure, if this is the best place for that */
-    char *buf2;
-    char        *enemy1;
-    char        enemy2[MEDIUM_BUF];
-    int         newkill=0;
-    struct kills_list *node=NULL;
-    int tempexp;
-    int tempexp2;
+    const textwin_id_t id = (!(flags & NDI_FLAG_PLAYER)) ? TEXTWIN_MSG_ID : TEXTWIN_CHAT_ID;
+    va_list   ap;
+    char      buf[HUGE_BUF],
+             *start,
+             *c,
+             *space = NULL;
+    textwin_window_t *tw = &textwin[id];
+    uint8     strong = 0,
+              emphasis = 0,
+              intertitle = 0,
+              strong2 = 0,
+              emphasis2 = 0,
+              intertitle2 = 0,
+              old_strong = 0,
+              old_emphasis = 0,
+              old_intertitle = 0,
+              indent = 0;
+    uint16    w = 0;
 
+    /* Copy the formatted string to a working buffer, buf. */
     va_start(ap, format);
     vsprintf(buf, format, ap);
     va_end(ap);
 
-    if (options.statsupdate)
+#ifdef DEVELOPMENT
+    LOG(LOG_MSG, "RAW: >%s<\n", buf);
+#endif
+
+    /* Here we handle chat... */
+    if (id == TEXTWIN_CHAT_ID)
     {
-        tempexp=0;
-        tempexp2=0;
-        if (sscanf(buf,"You got %d exp in skill",&tempexp)!=EOF)
+        /* Log before ignores, chatfilters and so on. */
+        if (options.textwin_use_logging == 1 ||
+            options.textwin_use_logging >= 3)
         {
-            statometer.exp+=tempexp;
+            MSGLOG(buf);
         }
-        else if (sscanf(buf,"You got %d (+%d) exp in skill",&tempexp, &tempexp2)!=EOF)
+
+        /* Unless this is an admin communicating in an official capacity, we
+         * can ignore it. This is of course easy to work around. Just replace
+         * the following expression with 1 and recompile to ignore admins too.
+         * But officially they must be heard. */
+        if (!(flags & NDI_FLAG_ADMIN))
         {
-            statometer.exp+=tempexp;
+            if (((flags & NDI_FLAG_SAY) &&
+                 ignore_check(buf, "say")) ||
+                ((flags & NDI_FLAG_SHOUT) &&
+                 ignore_check(buf, "shout")) ||
+                ((flags & NDI_FLAG_TELL) &&
+                 ignore_check(buf, "tell")) ||
+                ((flags & NDI_FLAG_EMOTE) &&
+                 ignore_check(buf, "emote")))
+            {
+                return;
+            }
+        }
+
+        if (options.textwin_use_chatfilter)
+        {
+            chatfilter_filter(buf); /* Filter incoming msg for f*words */
+        }
+
+        if (buddy_check(buf)) /* Color messages from buddys */
+        {
+            flags |= NDI_FLAG_BUDDY;
+        }
+
+        /* save last incoming tell player for client sided /reply */
+        if ((flags & NDI_FLAG_TELL))
+        {
+            strcpy(cpl.player_reply, buf);
+        }
+
+        /* If the smiley option is on, convert all the smileys. */
+        if (options.textwin_use_smileys)
+        {
+            ConvertSmileys(buf);
+        }
+    }
+    /* ...And here, messages. */
+    else
+    {
+        GrepForStatometer(buf);
+
+        if (options.textwin_use_logging >= 2)
+        {
+            MSGLOG(buf);
         }
     }
 
-    if (options.statsupdate && !strncmp(buf,"You killed ",11))
+    for (start = c = buf; *c; c++)
+    {
+        switch (*c)
+        {
+            /* toggle strong and do not count width of embedded character
+             * code. */
+            case '|':
+                strong = !strong;
+
+                continue;
+
+            /* toggle emphasis and do not count width of embedded character
+             * code. */
+            case '~':
+                emphasis = !emphasis;
+
+                continue;
+
+            /* toggle intertitle and do not count width of embedded character
+             * code. */
+            case '`':
+                intertitle = !intertitle;
+
+                continue;
+
+            /* force a newline. */
+            case '\n':
+                *c = '\0';
+
+                break;
+
+            /* change unprintable characters to space and drop through. */
+            case 0x01:
+            case 0x02:
+            case 0x03:
+            case 0x04:
+            case 0x05:
+            case 0x06:
+            case 0x07:
+            case 0x08:
+            case 0x09:
+            case 0x0b:
+            case 0x0c:
+            case 0x0d:
+            case 0x0e:
+            case 0x0f:
+            case 0x10:
+            case 0x11:
+            case 0x12:
+            case 0x13:
+            case 0x14:
+            case 0x15:
+            case 0x16:
+            case 0x17:
+            case 0x18:
+            case 0x19:
+            case 0x1a:
+            case 0x1b:
+            case 0x1c:
+            case 0x1d:
+            case 0x1e:
+            case 0x1f:
+                 *c = ' ';
+
+            /* remember this position and drop through. */
+            case ' ':
+                space = c;
+                strong2 = strong;
+                emphasis2 = emphasis;
+                intertitle2 = intertitle;
+
+            /* if the line has got too long, find a nice break point. */
+            default:
+                if ((w += tw->font->c[(unsigned char)(*c)].w +
+                     tw->font->char_offset) >= tw->maxstringlen)
+                {
+                    /* If we have found a space above, that's our break point. */
+                    if (space)
+                    {
+                        *(c = space) = '\0';
+                        space = NULL;
+                        strong = strong2;
+                        emphasis = emphasis2;
+                        intertitle = intertitle2;
+                    }
+                    /* else we'll need to insert one. */
+                    else
+                    {
+                        char *cc = c - 1;
+
+                        strong2 = strong;
+                        emphasis2 = emphasis;
+                        intertitle2 = intertitle;
+
+                        for (; cc > start; cc--)
+                        {
+                            if (*cc == '|')
+                            {
+                                strong = !strong;
+                            }
+                            else if (*cc == '~')
+                            {
+                                emphasis = !emphasis;
+                            }
+                            else if (*cc == '`')
+                            {
+                                intertitle = !intertitle;
+                            }
+                            else if (ispunct(*cc))
+                            {
+                                memmove(cc + 2, cc + 1, strlen(cc));
+                                *(c = cc + 1) = '\0';
+
+                                break;
+                            }
+                        }
+
+                        if (cc == start)
+                        {
+                            strong = strong2;
+                            emphasis = emphasis2;
+                            intertitle = intertitle2;
+                            memmove(c + 1, c, strlen(c));
+                            *c = '\0';
+                        }
+                    }
+                }
+        }
+
+        if (*c == '\0')
+        {
+            AddLine(tw, flags, colr, indent, old_strong, old_emphasis,
+                    old_intertitle, start);
+
+            if ((flags & NDI_FLAG_PLAYER))
+            {
+                indent = options.textwin_indentation;
+                w = (tw->font->c[' '].w + tw->font->char_offset) * indent;
+            }
+            else
+            {
+                w = 0;
+            }
+
+            old_strong = strong;
+            old_emphasis = emphasis;
+            old_intertitle = intertitle;
+            start = c + 1;
+        }
+    }
+
+    /* Add a final line for the end of the string. */
+    AddLine(tw, flags, colr, indent, old_strong, old_emphasis, old_intertitle,
+            start);
+    WIDGET_REDRAW(textwin[id].widget) = 1;
+}
+
+/* Extracts exp/kill info from particular messages for the 'statometer'. */
+/* TODO: This is a horrible way to do this (inefficient and relies on exactly
+ * worded server messages) and will be changed in future. But for now, it
+ * works...
+ * -- Smacky  20100120 */
+static void GrepForStatometer(char *message)
+{
+    if (options.statsupdate)
+    {
+        int exp;
+
+        if (sscanf(message, "You got %d exp in skill", &exp) == 1)
+        {
+            statometer.exp += exp;
+        }
+        else if (sscanf(message, "You got %d (+%*d) exp in skill", &exp) == 1)
+        {
+            statometer.exp += exp;
+        }
+    }
+
+    if (options.statsupdate &&
+        !strncmp(message, "You killed ", 11))
+    {
         statometer.kills++;
+    }
 
     if (options.kerbholz)
     {
-        if (!strncmp(buf,"You killed ",11))
+        if (!strncmp(message, "You killed ", 11))
         {
-            enemy1=strstr(buf, " with ");
-            if (enemy1!=0)
+            char *enemy1,
+                  enemy2[MEDIUM_BUF];
+            int   newkill;
+
+            if ((enemy1 = strstr(message, " with ")))
             {
-                strncpy(enemy2,buf+11,enemy1-(buf+11));
-                enemy2[enemy1-(buf+11)]=0;
-            } else {
-                strncpy(enemy2,buf+11,(strlen(buf+11)-1));
-                enemy2[strlen(buf+11)-1]=0;
+                strncpy(enemy2, message + 11, enemy1 - (message + 11));
+                enemy2[enemy1 - (message + 11)] = 0;
             }
-            newkill=addKill(enemy2);
-
-            if (newkill>0)
-            {
-                if (newkill==1)
-                {
-                    strcat(buf, " for the first time!");
-                    colr = NDI_COLR_LIME;
-                }
-                else
-                {
-                    node=getKillEntry(enemy2);
-
-                    if (node)
-                    {
-                        sprintf(strchr(buf, '\0'), " %d/%d times.",
-                                node->session, node->kills);
-                    }
-                }
-            }
-        }
-    }
-
-    /* Create a modifiable version of buf */
-    /* FIXME: Basically unnecessary. */
-    MALLOC_STRING(buf2, buf);
-
-    /*
-     * first: we set all white spaces (char<32) to 32 to remove really all odd stuff.
-     * except 0x0a - this is EOL for us and will be set to
-     * 0 to mark C style end of string
-     */
-    for (i = 0; buf2[i] != 0; i++)
-    {
-        if ((unsigned char)buf2[i] < 32 && buf2[i] != 0x0a)
-        {
-            buf2[i] = 32;
-        }
-    }
-
-#ifdef DAI_DEVELOPMENT
-    LOG(LOG_MSG,">%s<\n", buf2);
-#endif
-
-    /*
-     * ok, here we must cut a string to make it fit in window
-     * for it we must add the char length
-     * we assume this standard font in the windows...
-     */
-    len = 0;
-    for (a = i = 0; ; i++)
-    {
-
-        if (buf2[i] != '^')
-            len += font_small.c[(uint8) (buf2[i])].w + font_small.char_offset;
-
-        if (len >= winlen || buf2[i] == 0x0a || buf2[i] == 0)
-        {
-            /*
-                        if(buf2[i]==0 && !a)
-                            break;
-                     */
-
-            /* now the special part - lets look for a good point to cut */
-            if (len >= winlen && a > 10)
-            {
-                int ii =a, it = i, ix = a, tx = i;
-
-                while (ii >= a / 2)
-                {
-                    if (buf2[it] == ' '
-                            || buf2[it] == ':'
-                            || buf2[it] == '.'
-                            || buf2[it] == ','
-                            || buf2[it] == '('
-                            || buf2[it] == ';'
-                            || buf2[it] == '-'
-                            || buf2[it] == '+'
-                            || buf2[it] == '*'
-                            || buf2[it] == '?'
-                            || buf2[it] == '/'
-                            || buf2[it] == '='
-                            || buf2[it] == '.'
-                            || buf2[it] == 0
-                            || buf2[it] == 0x0a)
-                    {
-                        tx = it;
-                        ix = ii;
-                        break;
-                    }
-                    it--;
-                    ii--;
-                };
-                i = tx;
-                a = ix;
-            }
-            buf[a] = 0;
-
-            actWin = TW_MIX;
-            for (z = 0; z < 2; z++)
-            {
-                /* add messages to mixed-textwin and either to msg OR chat-textwin */
-                strcpy(txtwin[actWin].text[txtwin[actWin].bot_drawLine % TEXT_WIN_MAX].buf, buf);
-                txtwin[actWin].text[txtwin[actWin].bot_drawLine % TEXT_WIN_MAX].colr = colr;
-                txtwin[actWin].text[txtwin[actWin].bot_drawLine % TEXT_WIN_MAX].flags = flags;
-                txtwin[actWin].text[txtwin[actWin].bot_drawLine % TEXT_WIN_MAX].key_clipped = key_start;
-                if (txtwin[actWin].scroll)
-                    txtwin[actWin].scroll++;
-                if (txtwin[actWin].act_bufsize < TEXT_WIN_MAX)
-                    txtwin[actWin].act_bufsize++;
-                txtwin[actWin].bot_drawLine++;
-                txtwin[actWin].bot_drawLine %= TEXT_WIN_MAX;
-                actWin++; /* next window => MSG_WIN */
-                if ((flags & NDI_FLAG_PLAYER))
-                {
-                    actWin++; /* next window => MSG_CHAT */
-                    WIDGET_REDRAW(WIDGET_CHATWIN_ID) = 1;
-                }
-                else
-                    WIDGET_REDRAW(WIDGET_MSGWIN_ID) = 1;
-            }
-
-            /* hack: because of autoclip we must scan every line again */
-            for (text = buf; *text; text++)
-                if (*text == '^')
-                    key_count = (key_count + 1) & 1;
-            if (key_count)
-                key_start = 0x1000;
             else
-                key_start = 0;
+            {
+                strncpy(enemy2, message + 11, (strlen(message + 11) - 1));
+                enemy2[strlen(message + 11) - 1] = 0;
+            }
 
-            a = len = 0;
-            if (buf2[i] == 0)
-                break;
+            if ((newkill = addKill(enemy2)) == 1)
+            {
+                strcat(message, " for the first time!");
+            }
+            else if (newkill > 0)
+            {
+                struct kills_list *node = getKillEntry(enemy2);
+
+                if (node)
+                {
+                    sprintf(strchr(message, '\0'), " %d/%d times.",
+                            node->session, node->kills);
+                }
+            }
         }
-        if (buf2[i] != 0x0a)
-            buf[a++] = buf2[i];
     }
-    FREE(buf2);
 }
 
-/******************************************************************
- draw a text-window.
-******************************************************************/
-static void show_window(int actWin, int x, int y, _BLTFX *bltfx)
+/* Replaces certain character sequences with a single character that is (should
+ * be) defined as a 'graphical' smiley. Note that smileys are only defined for
+ * font_small ATM, so if another font is used, the wrong character will be
+ * displayed. */
+/* TODO: This will be done in a different way, using a skin/user-defined list
+ * of sequences and replacements, a la chatfilter, and possibly a dedicated
+ * smiley 'font'.
+ * -- 20100215 Smacky */
+static void ConvertSmileys(char *message)
 {
-    int i, temp;
+    unsigned char actChar = 0;
+    uint16        i;
 
-    txtwin[actWin].x = x;
-    txtwin[actWin].y = y;
-
-    if (actWin!=TW_MIX)
+    for (i = 0; message[i] != 0; i++)
     {
-        x = y = 0;
+        uint16 j = i + 1;
+        uint8  move = 1;
+
+        if (message[i] == ':')
+        {
+            if (message[j] == '\'' &&
+                message[j + 1] == '(')
+            {
+                move++;
+                actChar = 138;
+            }
+            else if (message[j] == '-')
+            {
+                j++;
+                move++;
+            }
+
+            /* we replace it with the 'ASCII'-code of the smiley in systemfont */
+            switch (message[j])
+            {
+                case ')':
+                    actChar = 128;
+
+                    break;
+
+                case '(':
+                    actChar = 129;
+
+                    break;
+
+                case 'D':
+                    actChar = 130;
+
+                    break;
+
+                case '|':
+                    actChar = 131;
+
+                    break;
+
+                case 'o':
+                case 'O':
+                case '0':
+                    actChar = 132;
+
+                    break;
+
+                case 'p':
+                case 'P':
+                    actChar = 133;
+
+                    break;
+
+                case 's':
+                case 'S':
+                    actChar = 139;
+
+                    break;
+
+                case 'x':
+                case 'X':
+                    actChar = 140;
+
+                    break;
+            }
+        }
+        else if (message[i] == ';')
+        {
+            if (message[j] == '-')
+            {
+                j++;
+                move++;
+            }
+
+            switch (message[j])
+            {
+                case ')':
+                    actChar = 134;
+
+                    break;
+
+                case 'p':
+                    actChar = 137;
+
+                    break;
+
+                case 'P':
+                    actChar = 137;
+
+                    break;
+            }
+        }
+        else if ((message[i] == '8' ||
+                  message[i] == 'B') &&
+                 message[i + 1] == ')')
+        {
+            actChar = 135;
+        }
+        else if ((message[i] == '8' ||
+                  message[i] == 'B') &&
+                 message[i + 1] == '-' &&
+                 message[i + 2] == ')')
+        {
+            move++;
+            actChar = 135;
+        }
+        else if (message[i] == '^' &&
+                 message[i + 2] == '^' &&
+                 (message[i + 1] == '_' ||
+                  message[i + 1] == '-'))
+        {
+            move++;
+            actChar = 136;
+        }
+        else if (message[i] == '>' &&
+                 message[i + 1] == ':')
+        {
+            j++;
+            move++;
+
+            if (message[j] == '-')
+            {
+                j++;
+                move++;
+            }
+
+            if (message[j] == ')')
+            {
+                actChar = 141;
+            }
+            else if (message[j] == 'D')
+            {
+                actChar = 142;
+            }
+        }
+
+        if (actChar != 0)
+        {
+            message[i] = actChar;
+            memmove(&message[i + 1], &message[i + 1 + move],
+                    strlen(&message[i + 1 + move]) + 1);
+        }
     }
-
-    txtwin[actWin].top_drawLine = txtwin[actWin].bot_drawLine - (txtwin[actWin].size + 1);
-    if (txtwin[actWin].top_drawLine < 0 && txtwin[actWin].act_bufsize == TEXT_WIN_MAX)
-        txtwin[actWin].top_drawLine += TEXT_WIN_MAX;
-    else if (txtwin[actWin].top_drawLine < 0)
-        txtwin[actWin].top_drawLine = 0;
-    if (txtwin[actWin].scroll > txtwin[actWin].act_bufsize - (txtwin[actWin].size + 1))
-        txtwin[actWin].scroll = txtwin[actWin].act_bufsize - (txtwin[actWin].size + 1);
-    if (txtwin[actWin].scroll < 0)
-        txtwin[actWin].scroll = 0;
-
-    for (i = 0; i <= txtwin[actWin].size && i < txtwin[actWin].act_bufsize; i++)
-    {
-        temp = (txtwin[actWin].top_drawLine + i) % TEXT_WIN_MAX;
-        if (txtwin[actWin].act_bufsize > txtwin[actWin].size)
-        {
-            temp -= txtwin[actWin].scroll;
-            if (temp < 0)
-                temp = TEXT_WIN_MAX + temp;
-        }
-        string_blt(bltfx->surface, &font_small, &txtwin[actWin].text[temp].buf[0], x + 2,
-                  (y + 1 + i * 10) | txtwin[actWin].text[temp].key_clipped, txtwin[actWin].text[temp].colr, NULL, NULL);
-    }
-
-    /* only draw scrollbar if needed */
-    if (txtwin[actWin].act_bufsize > txtwin[actWin].size)
-    {
-        SDL_Rect    box;
-
-        box.x = box.y = 0;
-        box.w = skin_sprites[SKIN_SPRITE_SLIDER]->bitmap->w;
-        box.h = txtwin[actWin].size * 10 + 1;
-//        if (actWin == TW_CHAT)
-            temp = -9; /* no textinput-line */
-//        else
-//            temp = 0;
-        sprite_blt(skin_sprites[SKIN_SPRITE_SLIDER_UP], x + 250, y + 2, NULL, bltfx);
-        sprite_blt(skin_sprites[SKIN_SPRITE_SLIDER_DOWN], x + 250, y + 13 + temp + txtwin[actWin].size * 10, NULL, bltfx);
-        sprite_blt(skin_sprites[SKIN_SPRITE_SLIDER], x + 250, y + skin_sprites[SKIN_SPRITE_SLIDER_UP]->bitmap->h + 2 + temp, &box, bltfx);
-        box.h += temp - 2;
-        box.w -= 2;
-
-        txtwin[actWin].slider_y = ((txtwin[actWin].act_bufsize - (txtwin[actWin].size + 1) - txtwin[actWin].scroll) * box.h)
-                                  / txtwin[actWin].act_bufsize;
-        txtwin[actWin].slider_h = (box.h * (txtwin[actWin].size + 1)) / txtwin[actWin].act_bufsize; /* between 0.0 <-> 1.0 */
-        if (txtwin[actWin].slider_h < 1)
-            txtwin[actWin].slider_h = 1;
-
-        if (!txtwin[actWin].scroll && txtwin[actWin].slider_y + txtwin[actWin].slider_h < box.h)
-            txtwin[actWin].slider_y++;
-
-        box.h = txtwin[actWin].slider_h;
-        sprite_blt(skin_sprites[SKIN_SPRITE_TWIN_SCROLL], x + 252,
-                   y + skin_sprites[SKIN_SPRITE_SLIDER_UP]->bitmap->h + 3 + txtwin[actWin].slider_y, &box, bltfx);
-
-        if (txtwin[actWin].highlight == TW_HL_UP)
-        {
-            box.x = x + 250;
-            box.y = y + 2;
-            box.h = skin_sprites[SKIN_SPRITE_SLIDER_UP]->bitmap->h;
-            box.w = 1;
-            SDL_FillRect(bltfx->surface, &box, -1);
-            box.x += skin_sprites[SKIN_SPRITE_SLIDER_UP]->bitmap->w - 1;
-            SDL_FillRect(bltfx->surface, &box, -1);
-            box.w = skin_sprites[SKIN_SPRITE_SLIDER_UP]->bitmap->w - 1;
-            box.h = 1;
-            box.x = x + 250;
-            SDL_FillRect(bltfx->surface, &box, -1);
-            box.y += skin_sprites[SKIN_SPRITE_SLIDER_UP]->bitmap->h - 1;
-            SDL_FillRect(bltfx->surface, &box, -1);
-        }
-        else if (txtwin[actWin].highlight == TW_ABOVE)
-        {
-            box.x = x + 252;
-            box.y = y + skin_sprites[SKIN_SPRITE_SLIDER_UP]->bitmap->h + 2;
-            box.h = txtwin[actWin].slider_y + 1;
-            box.w = 5;
-            SDL_FillRect(bltfx->surface, &box, 0);
-        }
-        else if (txtwin[actWin].highlight == TW_HL_SLIDER)
-        {
-            box.x = x + 252;
-            box.y = y + skin_sprites[SKIN_SPRITE_SLIDER_UP]->bitmap->h + 3 + txtwin[actWin].slider_y;
-            box.w = 1;
-            SDL_FillRect(bltfx->surface, &box, -1);
-            box.x += 4;
-            SDL_FillRect(bltfx->surface, &box, -1);
-            box.x -= 4;
-            box.h = 1;
-            box.w = 4;
-            SDL_FillRect(bltfx->surface, &box, -1);
-            box.y += txtwin[actWin].slider_h - 1;
-            SDL_FillRect(bltfx->surface, &box, -1);
-        }
-        else if (txtwin[actWin].highlight == TW_UNDER)
-        {
-            box.x = x + 252;
-            box.y = y + skin_sprites[SKIN_SPRITE_SLIDER_UP]->bitmap->h + 3 + txtwin[actWin].slider_y + box.h;
-            box.h = txtwin[actWin].size * 10 - txtwin[actWin].slider_y - txtwin[actWin].slider_h - 10;
-            box.w = 5;
-            SDL_FillRect(bltfx->surface, &box, 0);
-        }
-        else if (txtwin[actWin].highlight == TW_HL_DOWN)
-        {
-            box.x = x + 250;
-            box.y = y + txtwin[actWin].size * 10 + 4;
-            box.h = skin_sprites[SKIN_SPRITE_SLIDER_UP]->bitmap->h;
-            box.w = 1;
-            SDL_FillRect(bltfx->surface, &box, -1);
-            box.x += skin_sprites[SKIN_SPRITE_SLIDER_UP]->bitmap->w - 1;
-            SDL_FillRect(bltfx->surface, &box, -1);
-            box.w = skin_sprites[SKIN_SPRITE_SLIDER_UP]->bitmap->w - 1;
-            box.h = 1;
-            box.x = x + 250;
-            SDL_FillRect(bltfx->surface, &box, -1);
-            box.y += skin_sprites[SKIN_SPRITE_SLIDER_UP]->bitmap->h - 1;
-            SDL_FillRect(bltfx->surface, &box, -1);
-        }
-    }
-    else
-        txtwin[actWin].slider_h = 0;
 }
 
-/******************************************************************
- display all text-windows - used now only at startup
-******************************************************************/
-void textwin_show(int x, int y)
+/* Add message (already cut down to a single lines worth) to the textwindow structure. */
+static void AddLine(textwin_window_t *tw, const uint32 flags, const uint32 colr,
+                    const uint8 indent, const uint8 strong, const uint8 emphasis,
+                    const uint8 intertitle, const char *message)
 {
-    int         len;
-    SDL_Rect    box;
-    _BLTFX      bltfx;
-    bltfx.alpha = options.textwin_alpha;
-    bltfx.flags = BLTFX_FLAG_SRCALPHA;
-    bltfx.surface = NULL;
-    box.x = box.y = 0;
-    box.w = skin_sprites[SKIN_SPRITE_TEXTWIN]->bitmap->w;
-    y = 599; /* to lazy to work with correct calcs */
+    uint16 line = tw->scroll_pos;
+    char   buf[MEDIUM_BUF];
 
-
-    box.h = len = txtwin[TW_MIX].size * 10 + 23;
-    y -= len;
-    if (options.use_TextwinAlpha)
+    if (indent)
     {
-        sprite_blt(skin_sprites[SKIN_SPRITE_TEXTWIN_MASK], x, y, &box, &bltfx);
-    }
-    else
-        sprite_blt(skin_sprites[SKIN_SPRITE_TEXTWIN], x, y, &box, NULL);
+        uint8 i;
 
-    bltfx.alpha=255;
-    bltfx.surface = ScreenSurface;
-    bltfx.flags=0;
-    show_window(TW_MIX, x, y - 1, &bltfx);
-
-
-}
-
-/******************************************************************
- display widget text-wins
-******************************************************************/
-void widget_textwin_show(int x, int y, int actWin)
-{
-    int         len, wID = 0;
-    SDL_Rect    box, box2;
-    _BLTFX      bltfx;
-
-    if (actWin==TW_CHAT)
-        wID=WIDGET_CHATWIN_ID;
-    else if (actWin==TW_MSG)
-        wID=WIDGET_MSGWIN_ID;
-
-    box.x = box.y = 0;
-    box.w = skin_sprites[SKIN_SPRITE_TEXTWIN]->bitmap->w;
-    box.h = len = txtwin[actWin].size * 10 + 13;
-
-    /* backbuffering is a bit trickier
-     * we always blit the background extra because of the alpha,
-     * for performance reasons we need to do a DisplayFormat (its around 4ms !!! faster on my system)
-     * and keep track of the old txtwin_alpha value
-     * We also need it to seperate because drawing and esp Blitting of Fonts with palettes to a DisplayFormatted
-     * (hardware) surface is slow as hell (i got sometimes 10 seconds (!not milli!) for the simple textdrawings
-     * (ok that could also my integratet on board graphics with bad hardware blitting support)
-     */
-
-    if (options.use_TextwinAlpha)
-    {
-        if (old_txtwin_alpha!=options.textwin_alpha)
+        for (i = 0; i < indent; i++)
         {
-            if (txtwinbg)
-                SDL_FreeSurface(txtwinbg);
-
-            SDL_SetAlpha(skin_sprites[SKIN_SPRITE_TEXTWIN_MASK]->bitmap, SDL_SRCALPHA|SDL_RLEACCEL, options.textwin_alpha);
-            txtwinbg=SDL_DisplayFormatAlpha(skin_sprites[SKIN_SPRITE_TEXTWIN_MASK]->bitmap);
-            SDL_SetAlpha(skin_sprites[SKIN_SPRITE_TEXTWIN_MASK]->bitmap, SDL_SRCALPHA|SDL_RLEACCEL, 255);
-
-            old_txtwin_alpha=options.textwin_alpha;
+            buf[i] = ' ';
         }
-        box2.x = x;
-        box2.y = y;
-        SDL_BlitSurface(txtwinbg, &box, ScreenSurface, &box2);
+    }
+
+    buf[indent] = '\0';
+    sprintf(strchr(buf, '\0'), "%s%s%s%s",
+            (strong) ? "|" : "", (emphasis) ? "~" : "",
+            (intertitle) ? "`" : "", message);
+    sprintf((tw->text + line)->buf, "%s", buf);
+    (tw->text + line)->flags = flags;
+
+    if (!(flags & NDI_FLAG_PLAYER))
+    {
+        (tw->text + line)->fg = colr;
+        (tw->text + line)->bg = 0;
     }
     else
     {
-        sprite_blt(skin_sprites[SKIN_SPRITE_TEXTWIN], x, y, &box, NULL);
-    }
-    /* if we don't have a backbuffer, create it */
-    if (!widget_surface[wID])
-    {
-        widget_surface[wID]=SDL_ConvertSurface(skin_sprites[SKIN_SPRITE_TEXTWIN_MASK]->bitmap,
-                                         skin_sprites[SKIN_SPRITE_TEXTWIN_MASK]->bitmap->format,
-                                         skin_sprites[SKIN_SPRITE_TEXTWIN_MASK]->bitmap->flags);
-        SDL_SetColorKey(widget_surface[wID], SDL_SRCCOLORKEY | SDL_RLEACCEL, SDL_MapRGB(widget_surface[wID]->format, 0, 0, 0));
-    }
-
-    /* lets draw the widgets in the backbuffer */
-    if (widget_data[wID].redraw)
-    {
-
-        widget_data[wID].redraw=0;
-
-        SDL_FillRect(widget_surface[wID],NULL, SDL_MapRGBA(widget_surface[wID]->format, 0, 0, 0, options.textwin_alpha));
-
-        bltfx.surface=widget_surface[wID];
-        bltfx.flags = 0;
-        bltfx.alpha = 0;
-        if (options.use_TextwinAlpha)
+        if ((flags & NDI_FLAG_ADMIN))
         {
-            box.x = 0;
-            box.y = 0;
-            box.h = 1;
-            box.w = skin_sprites[SKIN_SPRITE_TEXTWIN]->bitmap->w;
-            SDL_FillRect(widget_surface[wID], &box, SDL_MapRGBA(widget_surface[wID]->format, 0x60, 0x60, 0x60, 255));
-            box.y = len;
-            box.h = 1;
-            box.x = 0;
-            box.w = skin_sprites[SKIN_SPRITE_TEXTWIN]->bitmap->w;
-            SDL_FillRect(widget_surface[wID], &box, SDL_MapRGBA(widget_surface[wID]->format, 0x60, 0x60, 0x60, 255));
-            box.w = skin_sprites[SKIN_SPRITE_TEXTWIN]->bitmap->w;
-            box.x = box.w-1;
-            box.w = 1;
-            box.y = 0;
-            box.h = len;
-            SDL_FillRect(widget_surface[wID], &box, SDL_MapRGBA(widget_surface[wID]->format, 0x60, 0x60, 0x60, 255));
-            box.x = 0;
-            box.y = 0;
-            box.h = len;
-            box.w = 1;
-            SDL_FillRect(widget_surface[wID], &box, SDL_MapRGBA(widget_surface[wID]->format, 0x60, 0x60, 0x60, 255));
+            (tw->text + line)->fg = skin_prefs.chat_admin;
         }
-        show_window(actWin, x, y - 2, &bltfx);
-
-    }
-    box.x=x;
-    box.y=y;
-    box2.x=0;
-    box2.y=0;
-    box2.w = skin_sprites[SKIN_SPRITE_TEXTWIN]->bitmap->w;
-    box2.h = len = txtwin[actWin].size * 10 + 14;
-
-    SDL_BlitSurface(widget_surface[wID], &box2, ScreenSurface, &box);
-}
-
-
-/******************************************************************
- mouse-button event in the textwindow.
-*****************************************************************/
-void textwin_button_event(int actWin, widget_id_t id, SDL_Event *event)
-{
-    if (event->motion.x < widget_data[id].x1 || (textwin_flags & (TW_SCROLL | TW_RESIZE) && (textwin_flags & actWin))) /* scrolling || resising */
-        return;
-
-    WIDGET_REDRAW(id) = 1;
-
-    if (event->button.button == 4) /* mousewheel up */
-        txtwin[actWin].scroll++;
-    else if (event->button.button == 5) /* mousewheel down */
-        txtwin[actWin].scroll--;
-    else if (event->button.button == SDL_BUTTON_LEFT)
-    {
-        if (txtwin[actWin].highlight == TW_HL_UP) /* clicked scroller-button up */
-            txtwin[actWin].scroll++;
-        else if (txtwin[actWin].highlight == TW_ABOVE) /* clicked above the slider */
-            txtwin[actWin].scroll += txtwin[actWin].size;
-        else if (txtwin[actWin].highlight == TW_HL_SLIDER)
+        else if ((flags & NDI_FLAG_EMOTE))
         {
-            /* clicked on the slider */
-            textwin_flags |= (actWin | TW_SCROLL);
-            old_slider_pos = event->motion.y - txtwin[actWin].slider_y;
+            (tw->text + line)->fg = skin_prefs.chat_emote;
         }
-        else if (txtwin[actWin].highlight == TW_UNDER) /* clicked under the slider */
-            txtwin[actWin].scroll -= txtwin[actWin].size;
-        else if (txtwin[actWin].highlight == TW_HL_DOWN) /* clicked scroller-button down */
-            txtwin[actWin].scroll--;
-        else if (event->motion.x<widget_data[id].x1+246
-                 && event->motion.y>widget_data[id].y1 + 2
-                 && event->motion.y < widget_data[id].y1 + 7
-                 && cursor_type == 1)
-            textwin_flags |= (actWin | TW_RESIZE);      /* size-change */
-        else if (event->motion.x < widget_data[id].x1 + 250)
-            say_clickedKeyword(actWin, event->motion.x, event->motion.y);
-    }
-}
-
-/******************************************************************
- mouse-move event in the textwindow.
-*****************************************************************/
-int textwin_move_event(int actWin, widget_id_t id, SDL_Event *event)
-{
-    txtwin[actWin].highlight = TW_HL_NONE;
-    WIDGET_REDRAW(id) = 1;
-
-    /* show resize-cursor */
-    if ((event->motion.y > widget_data[id].y1 + 2 && event->motion.y < widget_data[id].y1 + 7 && (event->motion.x < widget_data[id].x1+246))
-            || (event->button.button == SDL_BUTTON_LEFT && (textwin_flags & (TW_SCROLL | TW_RESIZE))))
-    {
-        if (!(textwin_flags & TW_SCROLL) && event->motion.x > widget_data[id].x1)
-            cursor_type = 1;
-    }
-    else
-    {
-        cursor_type = 0;
-        textwin_flags &= ~(TW_ACTWIN | TW_SCROLL | TW_RESIZE);
-    }
-
-    /* mouse out of window */
-    /* we have to leave this here!!! for sanity, also the widgetstuff does some area checking */
-    if (event->motion.y < widget_data[id].y1
-            || event->motion.x > widget_data[id].x1 + skin_sprites[SKIN_SPRITE_TEXTWIN]->bitmap->w
-            || event->motion.y > widget_data[id].y1 + txtwin[actWin].size * 10 + 13 + skin_sprites[SKIN_SPRITE_SLIDER_UP]->bitmap->h)
-    {
-        if (!(textwin_flags & TW_RESIZE))
-            return 1;
-    }
-
-    /* highlighting */
-    if (event->motion.x > widget_data[id].x1 + 250
-            && event->motion.y > widget_data[id].y1
-            && event->button.button != SDL_BUTTON_LEFT
-            && event->motion.x < widget_data[id].x1 + skin_sprites[SKIN_SPRITE_TEXTWIN]->bitmap->w)
-    {
-#define OFFSET (txtwin[actWin].y + skin_sprites[SKIN_SPRITE_SLIDER_UP]->bitmap->h)
-        if (event->motion.y < OFFSET)
-            txtwin[actWin].highlight = TW_HL_UP;
-        else if (event->motion.y < OFFSET + txtwin[actWin].slider_y)
-            txtwin[actWin].highlight = TW_ABOVE;
-        else if (event->motion.y < OFFSET + txtwin[actWin].slider_y + txtwin[actWin].slider_h + 3)
-            txtwin[actWin].highlight = TW_HL_SLIDER;
-        else if (event->motion.y < widget_data[id].y1 + txtwin[actWin].size * 10 + 4)
-            txtwin[actWin].highlight = TW_UNDER;
-        else if (event->motion.y < widget_data[id].y1 + txtwin[actWin].size * 10 + 13)
-            txtwin[actWin].highlight = TW_HL_DOWN;
-#undef OFFSET
-        return 0;
-    }
-
-    /* slider scrolling */
-    if (textwin_flags & TW_SCROLL)
-    {
-        actWin = textwin_flags & TW_ACTWIN;
-        txtwin[actWin].slider_y = event->motion.y - old_slider_pos;
-        txtwin[actWin].scroll = txtwin[actWin].act_bufsize
-                                - (txtwin[actWin].size + 1)
-                                - (txtwin[actWin].act_bufsize * txtwin[actWin].slider_y)
-                                / (txtwin[actWin].size * 10 - 1);
-        WIDGET_REDRAW(id) = 1;
-        return 0;
-    }
-
-    /* resizing */
-    if (textwin_flags & TW_RESIZE)
-    {
-        actWin = textwin_flags & TW_ACTWIN;
-        if (actWin == TW_CHAT)
+        else if ((flags & NDI_FLAG_GSAY))
         {
-            int newsize;
-            newsize = ((widget_data[WIDGET_CHATWIN_ID].y1+widget_data[WIDGET_CHATWIN_ID].ht)-event->motion.y) / 10;
-            if (newsize < 3)
-                newsize = 3;
-            /* we need to calc thenew x for the widget, and set the new size */
-            widget_data[WIDGET_CHATWIN_ID].y1+=(txtwin[actWin].size-newsize)*10;
-            widget_data[WIDGET_CHATWIN_ID].ht=newsize*10+13;
-            txtwin[actWin].size=newsize;
+            (tw->text + line)->fg = skin_prefs.chat_gsay;
         }
-        else if (actWin == TW_MSG)
+        else if ((flags & NDI_FLAG_SAY))
         {
-            int newsize;
-            newsize = ((widget_data[WIDGET_MSGWIN_ID].y1+widget_data[WIDGET_MSGWIN_ID].ht)-event->motion.y) / 10;
-            if (newsize < 9)
-                newsize = 9;
-            /* we need to calc thenew x for the widget, and set the new size */
-            widget_data[WIDGET_MSGWIN_ID].y1+=(txtwin[actWin].size-newsize)*10;
-            widget_data[WIDGET_MSGWIN_ID].ht=newsize*10+13;
-            txtwin[actWin].size=newsize;
+            (tw->text + line)->fg = skin_prefs.chat_say;
+        }
+        else if ((flags & NDI_FLAG_SHOUT))
+        {
+            (tw->text + line)->fg = skin_prefs.chat_shout;
+        }
+        else if ((flags & NDI_FLAG_TELL))
+        {
+            (tw->text + line)->fg = skin_prefs.chat_tell;
         }
         else
         {
-            int newsize;
-            newsize = ((widget_data[WIDGET_MIXWIN_ID].y1+widget_data[WIDGET_MIXWIN_ID].ht)-event->motion.y) / 10;
-            if (newsize < 9)
-                newsize = 9;
-            /* we need to calc thenew x for the widget, and set the new size */
-            widget_data[WIDGET_MIXWIN_ID].y1+=(txtwin[actWin].size-newsize)*10;
-            widget_data[WIDGET_MIXWIN_ID].ht=newsize*10+13;
-            txtwin[actWin].size=newsize;
+            (tw->text + line)->fg = colr;
+        }
+
+        if ((flags & NDI_FLAG_EAVESDROP))
+        {
+            (tw->text + line)->bg = skin_prefs.chat_eavesdrop;
+        }
+        else if ((flags & NDI_FLAG_BUDDY))
+        {
+            (tw->text + line)->bg = skin_prefs.chat_buddy;
+        }
+        else if ((flags & NDI_FLAG_CHANNEL))
+        {
+            (tw->text + line)->bg = skin_prefs.chat_channel;
+        }
+        else
+        {
+            (tw->text + line)->bg = 0;
         }
     }
-    return 0;
+
+    if (tw->scroll_off)
+    {
+        tw->scroll_off++;
+    }
+
+    if (tw->scroll_used < tw->scroll_size)
+    {
+        tw->scroll_used++;
+    }
+
+    tw->scroll_pos = (line + 1) % tw->scroll_size;
 }
 
-void textwin_addhistory(char *text)
+void textwin_show_window(textwin_id_t id)
+{
+    textwin_window_t   *tw = &textwin[id];
+    static SDL_Surface *bg = NULL;
+    SDL_Rect            box;
+    _BLTFX              bltfx;
+
+    /* Always blit the background extra because of the alpha, for performance
+     * reasons we need to do a DisplayFormat and keep track of the old
+     * textwin_alpha value. We also need it to separate because drawing and esp
+     * blitting of fonts with palettes to a DisplayFormatted (hardware) surface
+     * is slow as hell. */
+    if (!bg)
+    {
+        SDL_SetAlpha(skin_sprites[SKIN_SPRITE_ALPHA]->bitmap,
+                     SDL_SRCALPHA | SDL_RLEACCEL, 0);
+        bg = SDL_DisplayFormat(skin_sprites[SKIN_SPRITE_ALPHA]->bitmap);
+    }
+
+    /* if we don't have a backbuffer, create it */
+    if (!widget_surface[tw->widget])
+    {
+        widget_surface[tw->widget] = SDL_DisplayFormatAlpha(skin_sprites[SKIN_SPRITE_ALPHA]->bitmap);
+        SDL_SetColorKey(widget_surface[tw->widget], SDL_SRCCOLORKEY | SDL_RLEACCEL,
+                        SDL_MapRGB(widget_surface[tw->widget]->format, 0x00, 0x00,
+                                   0x00));
+    }
+
+    /* lets draw the widgets in the backbuffer */
+    if (WIDGET_REDRAW(tw->widget))
+    {
+        /* Draw a textwindow in this order:
+         *   the background;
+         *   the resizing borders, if necessary;
+         *   the text, if necessary;
+         *   the scrollbar, if necessary; then
+         *   the frame. */
+        WIDGET_REDRAW(tw->widget) = 0;
+        bltfx.surface = widget_surface[tw->widget];
+        bltfx.flags = 0;
+        bltfx.alpha = 0;
+        SDL_FillRect(bltfx.surface, NULL,
+                     SDL_MapRGBA(widget_surface[tw->widget]->format, 0x00, 0x00,
+                                 0x00, 0));
+        tw->x = widget_data[tw->widget].x1;
+        tw->y = widget_data[tw->widget].y1;
+//widget_data[tw->widget].ht = (widget_data[tw->widget].ht / tw->font->line_height + 1) * tw->font->line_height;
+        tw->size = widget_data[tw->widget].ht / tw->font->line_height;
+        tw->maxstringlen = widget_data[tw->widget].wd -
+                           (skin_sprites[SKIN_SPRITE_SLIDER]->bitmap->w * 2) -
+                           (TEXTWIN_ACTIVE_MIN * 2);
+
+        if (tw->resize)
+        {
+            ShowWindowResizingBorders(tw, &bltfx);
+        }
+
+        if (tw->scroll_used)
+        {
+            ShowWindowText(tw, &bltfx);
+        }
+
+        if (tw->scroll_used > tw->size)
+        {
+            ShowWindowScrollbar(tw, &bltfx);
+        }
+        else
+        {
+            tw->slider_h = 0;
+        }
+
+        ShowWindowFrame(tw, &bltfx);
+    }
+
+    box.x = widget_data[tw->widget].x1;
+    box.y = widget_data[tw->widget].y1;
+    box.w = widget_data[tw->widget].wd;
+    box.h = widget_data[tw->widget].ht;
+    SDL_SetClipRect(ScreenSurface, &box);
+    SDL_BlitSurface(bg, NULL, ScreenSurface, &box);
+    SDL_BlitSurface(widget_surface[tw->widget], NULL, ScreenSurface, &box);
+    SDL_SetClipRect(ScreenSurface, NULL);
+}
+
+static void ShowWindowResizingBorders(textwin_window_t *tw, _BLTFX *bltfx)
+{
+    SDL_Rect     box;
+    const uint32 rgb = SDL_MapRGB(bltfx->surface->format, 0x00, 0x80, 0x00);
+
+    if (tw->resize == TEXTWIN_RESIZING_DIR_UP ||
+        tw->resize == TEXTWIN_RESIZING_DIR_UPRIGHT ||
+        tw->resize == TEXTWIN_RESIZING_DIR_UPLEFT)
+    {
+        box.x = TEXTWIN_ACTIVE_MIN;
+        box.y = TEXTWIN_ACTIVE_MIN;
+        box.w = widget_data[tw->widget].wd - TEXTWIN_ACTIVE_MIN * 2;
+        box.h = TEXTWIN_ACTIVE_MAX - TEXTWIN_ACTIVE_MIN;
+        SDL_FillRect(bltfx->surface, &box, rgb);
+    }
+    else if (tw->resize == TEXTWIN_RESIZING_DIR_DOWNRIGHT ||
+             tw->resize == TEXTWIN_RESIZING_DIR_DOWN ||
+             tw->resize == TEXTWIN_RESIZING_DIR_DOWNLEFT)
+    {
+        box.x = TEXTWIN_ACTIVE_MIN;
+        box.y = widget_data[tw->widget].ht - TEXTWIN_ACTIVE_MAX - 1;
+        box.w = widget_data[tw->widget].wd - TEXTWIN_ACTIVE_MIN * 2;
+        box.h = TEXTWIN_ACTIVE_MAX - TEXTWIN_ACTIVE_MIN;
+        SDL_FillRect(bltfx->surface, &box, rgb);
+    }
+
+    if (tw->resize == TEXTWIN_RESIZING_DIR_UPRIGHT ||
+        tw->resize == TEXTWIN_RESIZING_DIR_RIGHT ||
+        tw->resize == TEXTWIN_RESIZING_DIR_DOWNRIGHT)
+    {
+        box.x = widget_data[tw->widget].wd - TEXTWIN_ACTIVE_MAX - 1;
+        box.y = TEXTWIN_ACTIVE_MIN;
+        box.w = TEXTWIN_ACTIVE_MAX - TEXTWIN_ACTIVE_MIN;
+        box.h = widget_data[tw->widget].ht - TEXTWIN_ACTIVE_MIN * 2;
+        SDL_FillRect(bltfx->surface, &box, rgb);
+    }
+    else if (tw->resize == TEXTWIN_RESIZING_DIR_DOWNLEFT ||
+             tw->resize == TEXTWIN_RESIZING_DIR_LEFT ||
+             tw->resize == TEXTWIN_RESIZING_DIR_UPLEFT)
+    {
+        box.x = TEXTWIN_ACTIVE_MIN;
+        box.y = TEXTWIN_ACTIVE_MIN;
+        box.w = TEXTWIN_ACTIVE_MAX - TEXTWIN_ACTIVE_MIN;
+        box.h = widget_data[tw->widget].ht - TEXTWIN_ACTIVE_MIN * 2;
+        SDL_FillRect(bltfx->surface, &box, rgb);
+    }
+} 
+
+static void ShowWindowText(textwin_window_t *tw, _BLTFX *bltfx)
+{
+    sint32    topline = tw->scroll_pos - tw->scroll_off - MIN(tw->size,
+                        tw->scroll_used);
+    uint16    i = 0;
+
+
+    if (topline < 0)
+    {
+        if (tw->scroll_used == tw->scroll_size)
+        {
+            if (tw->size >= tw->scroll_size)
+            {
+                topline = tw->scroll_pos;
+            }
+            else
+            {
+                topline = tw->scroll_size + topline + 1;
+            }
+        }
+        else
+        {
+            topline = 0;
+        }
+    }
+
+    /* TODO: fucking maths */
+
+    /* Blit all the visible lines. */
+    for (; i < tw->size && i < tw->scroll_used; i++)
+    {
+        const uint16   y = tw->font->line_height * i + TEXTWIN_ACTIVE_MIN +
+                           (widget_data[tw->widget].ht % tw->font->line_height);
+        textwin_text_t *text = (tw->text + ((topline + i) % tw->scroll_used));
+
+//LOG(LOG_MSG,">>>>>>>>>>>>>>%d,%d,%d,%d,%d,%s\n", tw->scroll_off, tw->scroll_pos, tw->size, topline, i, text->buf);
+        string_blt(bltfx->surface, tw->font, text->buf, 0 + TEXTWIN_ACTIVE_MIN,
+                   y, text->fg, /*text->bg,*/ NULL, NULL);
+    }
+}
+
+/* Draw scrollbar. */
+static void ShowWindowScrollbar(textwin_window_t *tw, _BLTFX *bltfx)
+{
+    SDL_Rect  box;
+    uint16    x2 = widget_data[tw->widget].wd -
+                   skin_sprites[SKIN_SPRITE_SLIDER]->bitmap->w,
+              h = widget_data[tw->widget].ht - 
+                  skin_sprites[SKIN_SPRITE_SLIDER_UP]->bitmap->h -
+                  skin_sprites[SKIN_SPRITE_SLIDER_DOWN]->bitmap->h,
+              sy = ((tw->scroll_used - tw->size - tw->scroll_off) * h) /
+                   tw->scroll_used,
+              sh = MAX(1, (tw->size * h) / tw->scroll_used); /* between 0.0 <-> 1.0 */
+     
+    box.x = box.y = 0;
+    box.w = skin_sprites[SKIN_SPRITE_SLIDER]->bitmap->w;
+    box.h = h;
+    sprite_blt(skin_sprites[SKIN_SPRITE_SLIDER_UP], x2, 0, NULL, bltfx);
+    sprite_blt(skin_sprites[SKIN_SPRITE_SLIDER], x2,
+               skin_sprites[SKIN_SPRITE_SLIDER_UP]->bitmap->h, &box, bltfx);
+    sprite_blt(skin_sprites[SKIN_SPRITE_SLIDER_DOWN], x2, widget_data[tw->widget].ht -
+               skin_sprites[SKIN_SPRITE_SLIDER_DOWN]->bitmap->h, NULL, bltfx);
+ 
+    if (!tw->scroll_off &&
+        sy + sh < h)
+    {
+        sy++;
+    }
+ 
+    box.h = sh;
+    sprite_blt(skin_sprites[SKIN_SPRITE_TWIN_SCROLL], x2 + 2,
+               skin_sprites[SKIN_SPRITE_SLIDER_UP]->bitmap->h + sy + 1, &box, bltfx);
+ 
+    if (tw->highlight == TW_HL_UP)
+    {
+        box.x = x2;
+        box.y = 0;
+        box.h = skin_sprites[SKIN_SPRITE_SLIDER_UP]->bitmap->h;
+        box.w = 1;
+        SDL_FillRect(bltfx->surface, &box, -1);
+        box.x += skin_sprites[SKIN_SPRITE_SLIDER_UP]->bitmap->w - 1;
+        SDL_FillRect(bltfx->surface, &box, -1);
+        box.w = skin_sprites[SKIN_SPRITE_SLIDER_UP]->bitmap->w - 1;
+        box.h = 1;
+        box.x = x2;
+        SDL_FillRect(bltfx->surface, &box, -1);
+        box.y += skin_sprites[SKIN_SPRITE_SLIDER_UP]->bitmap->h - 1;
+        SDL_FillRect(bltfx->surface, &box, -1);
+    }
+    else if (tw->highlight == TW_ABOVE)
+    {
+        box.x = x2 + 2;
+        box.y = skin_sprites[SKIN_SPRITE_SLIDER_UP]->bitmap->h + 2;
+        box.h = sy + 1;
+        box.w = 5;
+        SDL_FillRect(bltfx->surface, &box, 0);
+    }
+    else if (tw->highlight == TW_HL_SLIDER)
+    {
+        box.x = x2 + 2;
+        box.y = skin_sprites[SKIN_SPRITE_SLIDER_UP]->bitmap->h + 3 + sy;
+        box.w = 1;
+        SDL_FillRect(bltfx->surface, &box, -1);
+        box.x += 4;
+        SDL_FillRect(bltfx->surface, &box, -1);
+        box.x -= 4;
+        box.h = 1;
+        box.w = 4;
+        SDL_FillRect(bltfx->surface, &box, -1);
+        box.y += sh - 1;
+        SDL_FillRect(bltfx->surface, &box, -1);
+    }
+    else if (tw->highlight == TW_UNDER)
+    {
+        box.x = x2 + 2;
+        box.h = tw->size * tw->font->line_height - sy - sh -
+                tw->font->line_height;
+        box.y = skin_sprites[SKIN_SPRITE_SLIDER_UP]->bitmap->h + 3 + sy + box.h;
+        box.w = 5;
+        SDL_FillRect(bltfx->surface, &box, 0);
+    }
+    else if (tw->highlight == TW_HL_DOWN)
+    {
+        box.x = x2;
+        box.y = tw->size * tw->font->line_height + 4;
+        box.h = skin_sprites[SKIN_SPRITE_SLIDER_UP]->bitmap->h;
+        box.w = 1;
+        SDL_FillRect(bltfx->surface, &box, -1);
+        box.x += skin_sprites[SKIN_SPRITE_SLIDER_UP]->bitmap->w - 1;
+        SDL_FillRect(bltfx->surface, &box, -1);
+        box.w = skin_sprites[SKIN_SPRITE_SLIDER_UP]->bitmap->w - 1;
+        box.h = 1;
+        box.x = x2;
+        SDL_FillRect(bltfx->surface, &box, -1);
+        box.y += skin_sprites[SKIN_SPRITE_SLIDER_UP]->bitmap->h - 1;
+        SDL_FillRect(bltfx->surface, &box, -1);
+    }
+ 
+    tw->slider_h = sh;
+    tw->slider_y = sy;
+}
+
+/* draw frame round window. */
+static void ShowWindowFrame(textwin_window_t *tw, _BLTFX *bltfx)
+{
+    SDL_Rect     box;
+    const uint32 rgb = SDL_MapRGB(bltfx->surface->format, 0x60, 0x60, 0x60);
+
+    /* top */
+    box.x = 0;
+    box.y = 0;
+    box.w = widget_data[tw->widget].wd;
+    box.h = 1;
+    SDL_FillRect(bltfx->surface, &box, rgb);
+    /* right */
+    box.x = widget_data[tw->widget].wd - 1;
+    box.y = 0;
+    box.w = 1;
+    box.h = widget_data[tw->widget].ht;
+    SDL_FillRect(bltfx->surface, &box, rgb);
+    /* bottom */
+    box.x = 0;
+    box.y = widget_data[tw->widget].ht - 1;
+    box.w = widget_data[tw->widget].wd;
+    box.h = 1;
+    SDL_FillRect(bltfx->surface, &box, rgb);
+    /* left */
+    box.x = 0;
+    box.y = 0;
+    box.w = 1;
+    box.h = widget_data[tw->widget].ht;
+    SDL_FillRect(bltfx->surface, &box, rgb);
+}
+
+/* Handles keypresses in either textwindow. */
+void textwin_keypress(SDLKey key, textwin_id_t id)
+{
+    textwin_window_t *tw = &textwin[id];
+
+    switch (key)
+    {
+        case SDLK_UP:
+            ScrollWindow(tw, 1);
+
+            break;
+
+        case SDLK_DOWN:
+            ScrollWindow(tw, -1);
+
+            break;
+
+        case SDLK_PAGEUP:
+            ScrollWindow(tw, tw->size);
+
+            break;
+
+        case SDLK_PAGEDOWN:
+            ScrollWindow(tw, -tw->size);
+
+            break;
+
+        default:
+            break;
+    }
+}
+
+void textwin_event(textwin_event_t e, SDL_Event *event,
+                   textwin_id_t id)
+{
+    textwin_window_t *tw = &textwin[id];
+    const uint16  x = event->motion.x,
+                  y = event->motion.y,
+                  top = widget_data[tw->widget].y1,
+                  right = widget_data[tw->widget].x1 +
+                          widget_data[tw->widget].wd - 1,
+                  bottom = widget_data[tw->widget].y1 +
+                           widget_data[tw->widget].ht - 1,
+                  left = widget_data[tw->widget].x1;
+    const uint8   button = event->button.button;
+
+    tw->highlight = TW_HL_NONE;
+
+    if (!(tw->flags & TEXTWIN_FLAG_RESIZE))
+    {
+        if (e == TW_CHECK_MOVE)
+        {
+            if (x >= right - skin_sprites[SKIN_SPRITE_SLIDER]->bitmap->w &&
+                x <= right &&
+                y >= top &&
+                button != SDL_BUTTON_LEFT)
+            {
+                WIDGET_REDRAW(tw->widget) = 1;
+
+#define OFFSET (tw->y + skin_sprites[SKIN_SPRITE_SLIDER_UP]->bitmap->h)
+                if (y < OFFSET)
+                {
+                    tw->highlight = TW_HL_UP;
+                }
+                else if (y < OFFSET + tw->slider_y)
+                {
+                    tw->highlight = TW_ABOVE;
+                }
+                else if (y < OFFSET + tw->slider_y + tw->slider_h + 3)
+                {
+                    tw->highlight = TW_HL_SLIDER;
+                }
+                else if (y < widget_data[tw->widget].y1 + tw->size *
+                             tw->font->line_height + 4)
+                {
+                    tw->highlight = TW_UNDER;
+                }
+                else if (y < widget_data[tw->widget].y1 +
+                             widget_data[tw->widget].ht)
+                {
+                    tw->highlight = TW_HL_DOWN;
+                }
+#undef OFFSET
+            }
+        }
+        else if (e == TW_CHECK_BUT_DOWN)
+        {
+            WIDGET_REDRAW(tw->widget) = 1;
+
+            if (button == SDL_BUTTON_WHEELUP)
+            {
+                ScrollWindow(tw, 1);
+            }
+            else if (button == SDL_BUTTON_WHEELDOWN)
+            {
+                ScrollWindow(tw, -1);
+            }
+            else if (button == SDL_BUTTON_LEFT)
+            {
+                if (tw->highlight == TW_HL_UP) /* clicked scroller-button up */
+                {
+                    ScrollWindow(tw, 1);
+                }
+                else if (tw->highlight == TW_ABOVE) /* clicked above the slider */
+                {
+                    ScrollWindow(tw, tw->size);
+                }
+                else if (tw->highlight == TW_HL_SLIDER)
+                {
+                    /* clicked on the slider */
+                    tw->flags |= TEXTWIN_FLAG_SCROLL;
+                    OldSliderPos = y - tw->slider_y;
+                }
+                else if (tw->highlight == TW_UNDER) /* clicked under the slider */
+                {
+                    ScrollWindow(tw, -tw->size);
+                }
+                else if (tw->highlight == TW_HL_DOWN) /* clicked scroller-button down */
+                {
+                    ScrollWindow(tw, -1);
+                }
+            }
+        }
+        else if (e == TW_CHECK_BUT_UP)
+        {
+            tw->flags &= ~TEXTWIN_FLAG_SCROLL;
+        }
+    }
+
+    if (!(tw->flags & TEXTWIN_FLAG_SCROLL))
+    {
+        if (e == TW_CHECK_MOVE ||
+            (e == TW_CHECK_BUT_DOWN &&
+             button == SDL_BUTTON_LEFT))
+        {
+            if (y >= top + TEXTWIN_ACTIVE_MIN &&
+                y <= top + TEXTWIN_ACTIVE_MAX)
+            {
+                if (x <= right - TEXTWIN_ACTIVE_MIN &&
+                    x >= right - TEXTWIN_ACTIVE_MAX)
+                {
+                    tw->resize = TEXTWIN_RESIZING_DIR_UPRIGHT;
+                }
+                else if (x >= left + TEXTWIN_ACTIVE_MIN &&
+                         x <= left + TEXTWIN_ACTIVE_MAX)
+                {
+                    tw->resize = TEXTWIN_RESIZING_DIR_UPLEFT;
+                }
+                else if (x <= right - TEXTWIN_ACTIVE_MAX &&
+                         x >= left + TEXTWIN_ACTIVE_MAX)
+                {
+                    tw->resize = TEXTWIN_RESIZING_DIR_UP;
+                }
+            }
+            else if (y <= bottom - TEXTWIN_ACTIVE_MIN &&
+                     y >= bottom - TEXTWIN_ACTIVE_MAX)
+            {
+                if (x <= right - TEXTWIN_ACTIVE_MIN &&
+                    x >= right - TEXTWIN_ACTIVE_MAX)
+                {
+                    tw->resize = TEXTWIN_RESIZING_DIR_DOWNRIGHT;
+                }
+                else if (x >= left + TEXTWIN_ACTIVE_MIN &&
+                         x <= left + TEXTWIN_ACTIVE_MAX)
+                {
+                    tw->resize = TEXTWIN_RESIZING_DIR_DOWNLEFT;
+                }
+                else if (x <= right - TEXTWIN_ACTIVE_MAX &&
+                         x >= left + TEXTWIN_ACTIVE_MAX)
+                {
+                    tw->resize = TEXTWIN_RESIZING_DIR_DOWN;
+                }
+            }
+            else if (y >= top + TEXTWIN_ACTIVE_MAX &&
+                     y <= bottom - TEXTWIN_ACTIVE_MAX)
+            {
+                if (x <= right - TEXTWIN_ACTIVE_MIN &&
+                    x >= right - TEXTWIN_ACTIVE_MAX)
+                {
+                    tw->resize = TEXTWIN_RESIZING_DIR_RIGHT;
+                }
+                else if (x >= left + TEXTWIN_ACTIVE_MIN &&
+                         x <= left + TEXTWIN_ACTIVE_MAX)
+                {
+                    tw->resize = TEXTWIN_RESIZING_DIR_LEFT;
+                }
+            }
+
+            if (e == TW_CHECK_BUT_DOWN &&
+                tw->resize)
+            {
+                tw->flags |= TEXTWIN_FLAG_RESIZE;
+            }
+
+            WIDGET_REDRAW(tw->widget) = 1;
+        }
+        else if (e == TW_CHECK_BUT_UP &&
+                 button == SDL_BUTTON_LEFT)
+        {
+            tw->flags &= ~TEXTWIN_FLAG_RESIZE;
+            tw->resize == TEXTWIN_RESIZING_DIR_NONE;
+            WIDGET_REDRAW(tw->widget) = 1;
+        }
+    }
+
+//    if ((tw->flags & TEXTWIN_FLAG_SCROLL))
+//    {
+//        ScrollWindow(tw, x, y);
+//    }
+
+    if ((tw->flags & TEXTWIN_FLAG_RESIZE))
+    {
+        ResizeWindow(tw, event->motion.xrel, event->motion.yrel);
+    }
+}
+
+/* Scroll the visible window by dist lines -- positive for up, negative for
+ * down. 'Scroll' is not really right -- we don't scroll, we reposition. Maybe
+ * in future we can do real scrolling? */
+static uint8 ScrollWindow(textwin_window_t *tw, const sint16 dist)
+{
+    /* No scrolling small windows. */
+    if (tw->scroll_used < tw->size)
+    {
+        return 0;
+    }
+
+    if (dist > 0 &&
+        tw->scroll_off < tw->scroll_used - tw->size)
+    {
+        tw->scroll_off += MIN(dist, tw->scroll_used - tw->size - tw->scroll_off);
+        WIDGET_REDRAW(tw->widget) = 1;
+
+        return 1;
+    }
+    else if (dist < 0 &&
+             tw->scroll_off > 0)
+    {
+        tw->scroll_off += MAX(dist, -tw->scroll_off);
+        WIDGET_REDRAW(tw->widget) = 1;
+
+        return 1;
+    }
+
+    return 0;
+//    tw->slider_y = y - OldSliderPos;
+//    tw->scroll_off = tw->scroll_used - tw->size - (tw->scroll_used *
+//                 tw->slider_y) / (tw->size * tw->font->line_height - 1);
+}
+
+static void ResizeWindow(textwin_window_t *tw, const sint16 xrel, const sint16 yrel)
+{
+    const sint32  postwidth = widget_data[tw->widget].wd + xrel,
+                  postheight = widget_data[tw->widget].ht + yrel;
+
+    if (tw->resize == TEXTWIN_RESIZING_DIR_UP ||
+        tw->resize == TEXTWIN_RESIZING_DIR_UPRIGHT ||
+        tw->resize == TEXTWIN_RESIZING_DIR_UPLEFT)
+    {
+        if (postheight <= TEXTWIN_HEIGHT_MIN &&
+            yrel > 0)
+        {
+            tw->resize = TEXTWIN_RESIZING_DIR_NONE;
+            widget_data[tw->widget].ht = TEXTWIN_HEIGHT_MIN;
+        }
+        else if (postheight >= TEXTWIN_HEIGHT_MAX &&
+                 yrel < 0)
+        {
+            tw->resize = TEXTWIN_RESIZING_DIR_NONE;
+            widget_data[tw->widget].ht = TEXTWIN_HEIGHT_MAX;
+        }
+        else if (yrel)
+        {
+            widget_data[tw->widget].y1 += yrel;
+            widget_data[tw->widget].ht -= yrel;
+        }
+    }
+    else if (tw->resize == TEXTWIN_RESIZING_DIR_DOWNRIGHT ||
+             tw->resize == TEXTWIN_RESIZING_DIR_DOWN ||
+             tw->resize == TEXTWIN_RESIZING_DIR_DOWNLEFT)
+    {
+        if (postheight <= TEXTWIN_HEIGHT_MIN &&
+            yrel < 0)
+        {
+            tw->resize = TEXTWIN_RESIZING_DIR_NONE;
+            widget_data[tw->widget].ht = TEXTWIN_HEIGHT_MIN;
+        }
+        else if (postheight >= TEXTWIN_HEIGHT_MAX &&
+                 yrel > 0)
+        {
+            tw->resize = TEXTWIN_RESIZING_DIR_NONE;
+            widget_data[tw->widget].ht = TEXTWIN_HEIGHT_MAX;
+        }
+        else if (yrel)
+        {
+            widget_data[tw->widget].ht += yrel;
+        }
+    }
+
+    if (tw->resize == TEXTWIN_RESIZING_DIR_UPRIGHT ||
+        tw->resize == TEXTWIN_RESIZING_DIR_RIGHT ||
+        tw->resize == TEXTWIN_RESIZING_DIR_DOWNRIGHT)
+    {
+        if (postwidth <= TEXTWIN_WIDTH_MIN &&
+            xrel < 0)
+        {
+            tw->resize = TEXTWIN_RESIZING_DIR_NONE;
+            widget_data[tw->widget].wd = TEXTWIN_WIDTH_MIN;
+        }
+        else if (postwidth >= TEXTWIN_WIDTH_MAX &&
+                 xrel > 0)
+        {
+            tw->resize = TEXTWIN_RESIZING_DIR_NONE;
+            widget_data[tw->widget].wd = TEXTWIN_WIDTH_MAX;
+        }
+        else if (xrel)
+        {
+            widget_data[tw->widget].wd += xrel;
+        }
+    }
+    else if (tw->resize == TEXTWIN_RESIZING_DIR_DOWNLEFT ||
+             tw->resize == TEXTWIN_RESIZING_DIR_LEFT ||
+             tw->resize == TEXTWIN_RESIZING_DIR_UPLEFT)
+    {
+        if (postwidth <= TEXTWIN_WIDTH_MIN &&
+            xrel > 0)
+        {
+            tw->resize = TEXTWIN_RESIZING_DIR_NONE;
+            widget_data[tw->widget].wd = TEXTWIN_WIDTH_MIN;
+        }
+        else if (postwidth >= TEXTWIN_WIDTH_MAX &&
+                 xrel < 0)
+        {
+            tw->resize = TEXTWIN_RESIZING_DIR_NONE;
+            widget_data[tw->widget].wd = TEXTWIN_WIDTH_MAX;
+        }
+        else if (xrel)
+        {
+            widget_data[tw->widget].x1 += xrel;
+            widget_data[tw->widget].wd -= xrel;
+        }
+    }
+}
+
+/* TODO: the stuff below has nothing to do with the textwindows so needs to be
+ * renamed and moved to another/an own file. */
+void textwin_add_history(char *text)
 {
     register int i;
 
     /* If new line is empty or identical to last inserted one, skip it */
-    if (!text[0] || strcmp(InputHistory[1], text) == 0)
+    if (!text[0] ||
+        strcmp(InputHistory[1], text) == 0)
+    {
         return;
+    }
 
     for (i = MAX_HISTORY_LINES - 1; i > 1; i--) /* shift history lines */
     {
@@ -810,17 +1346,19 @@ void textwin_addhistory(char *text)
     HistoryPos = 0;
 }
 
-void textwin_clearhistory()
+void textwin_clear_history()
 {
     register int i;
+
     for (i = 0; i < MAX_HISTORY_LINES; i++)
     {
         InputHistory[i][0] = 0; /* it's enough to clear only the first byte of each history line */
     }
+
     HistoryPos = 0;
 }
 
-void textwin_putstring(char *text)
+void textwin_put_string(char *text)
 {
     int len;
 

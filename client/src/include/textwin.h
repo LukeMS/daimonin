@@ -24,76 +24,106 @@
 #ifndef __TEXTWIN_H
 #define __TEXTWIN_H
 
-#define TEXT_WIN_MAX 250
-#define MAX_KEYWORD_LEN 256
+#define TEXTWIN_BUFSIZE 250
 
-enum
+/* The size of the resizing borders. */
+#define TEXTWIN_ACTIVE_MIN 2
+#define TEXTWIN_ACTIVE_MAX 16
+
+/* Resizing limits. Min values are arbitrary, max must be <= the size of the
+ * bitmaps. */
+#define TEXTWIN_WIDTH_MIN  100
+#define TEXTWIN_HEIGHT_MIN 50
+#define TEXTWIN_WIDTH_MAX  1280
+#define TEXTWIN_HEIGHT_MAX 1280
+
+/* Flags. */
+#define TEXTWIN_FLAG_RESIZE (1 << 1)
+#define TEXTWIN_FLAG_SCROLL (1 << 2)
+
+typedef enum textwin_id_t
 {
-    TW_MIX,
-    TW_MSG,
-    TW_CHAT,
-    TW_SUM
-}; /* windows */
-enum
+    TEXTWIN_CHAT_ID,
+    TEXTWIN_MSG_ID,
+
+    TEXTWIN_NROF
+}
+textwin_id_t;
+
+typedef enum textwin_event_t
 {
     TW_CHECK_BUT_DOWN,
     TW_CHECK_BUT_UP,
-    TW_CHECK_MOVE
-}; /* events */
-enum
+    TW_CHECK_MOVE,
+}
+textwin_event_t;
+
+typedef enum textwin_resizing_dir_t
+{
+    TEXTWIN_RESIZING_DIR_NONE,
+    TEXTWIN_RESIZING_DIR_UP,
+    TEXTWIN_RESIZING_DIR_UPRIGHT,
+    TEXTWIN_RESIZING_DIR_RIGHT,
+    TEXTWIN_RESIZING_DIR_DOWNRIGHT,
+    TEXTWIN_RESIZING_DIR_DOWN,
+    TEXTWIN_RESIZING_DIR_DOWNLEFT,
+    TEXTWIN_RESIZING_DIR_LEFT,
+    TEXTWIN_RESIZING_DIR_UPLEFT
+}
+textwin_resizing_dir_t;
+
+typedef enum textwin_highlight_t
 {
     TW_HL_NONE,
     TW_HL_UP,
     TW_ABOVE,
     TW_HL_SLIDER,
     TW_UNDER,
-    TW_HL_DOWN
-};
-enum
-{
-    TW_ACTWIN       = 0x0f,
-    TW_SCROLL       = 0x10,
-    TW_RESIZE       = 0x20
-}; /* flags */
-
-
-typedef struct _text_buf
-{
-    char    buf[128];    /* text */
-    int     channel;         /* which channel */
-    uint32  flags;           /* some flags */
-    uint32  colr;           /* color of text */
-    int     key_clipped; /* 1= key begin in row before 2= no key end */
+    TW_HL_DOWN,
 }
-_text_buf;
+textwin_highlight_t;
 
-typedef struct _textwin_set
+typedef struct textwin_text_t
 {
-    int                 x, y;            /* startpos of the window */
-    int                 size;           /* number or printed textlines */
-    int                 scroll;         /* scroll offset */
-    int                 top_drawLine;   /* first printed textline */
-    int                 bot_drawLine;   /* last printed textline */
-    int                 act_bufsize;    /* 0 ... TEXTWIN_MAX */
-    int                 slider_h;       /* height of the scrollbar-slider  */
-    int                 slider_y;       /* start pos of the scrollbar-slider */
-    int                 highlight;      /* which part to highlight */
-    _text_buf           text[TEXT_WIN_MAX];
+    char   buf[MEDIUM_BUF]; // text
+    int    channel;         // which channel
+    uint32 flags;           // some flags
+    uint32 fg;              // color of text
+    uint32 bg;              // color of bg
 }
-_textwin_set;
+textwin_text_t;
 
-extern int          txtwin_start_size;  /* we need a backup of the TW_MIX.size */
-extern _textwin_set txtwin[TW_SUM];
-extern SDL_Surface  *txtwinbg;
-extern int          textwin_flags;
-extern void         textwin_button_event(int actWin, widget_id_t id, SDL_Event *event);
-extern int          textwin_move_event(int actWin, widget_id_t id, SDL_Event *event);
-extern void         textwin_show(int x, int y);
-extern void         textwin_init();
-extern void         textwin_showstring(uint32 flags, uint32 colr, char *format, ...);
-extern void         textwin_addhistory(char *text);
-extern void         textwin_clearhistory();
-extern void         textwin_putstring(char *text);
-extern void         widget_textwin_show(int x, int y, int actWin);
+typedef struct textwin_window_t
+{
+    uint16              x, y;         // startpos of the window
+    uint32              flags;        // flags
+    widget_id_t         widget;       // wID assocoiated with this TW
+    uint16              maxstringlen; // max length of string in pixels
+    int                 slider_h;     // height of the scrollbar-slider
+    int                 slider_y;     // start pos of the scrollbar-slider
+    textwin_resizing_dir_t resize;
+    textwin_highlight_t highlight;    // which part to highlight
+    uint32              scroll_off;   // scroll offset
+    uint32              scroll_size;  // max size of scroll buffer
+    uint32              scroll_used;  // position in scroll buffer
+    uint32              scroll_pos;   // last printed textline
+    uint32              size;         // number or printed textlines
+    _font              *font;         // the font used in this window
+    textwin_text_t     *text;
+}
+textwin_window_t;
+
+extern textwin_window_t textwin[TEXTWIN_NROF];
+
+extern void textwin_init(textwin_id_t id);
+extern void textwin_set_font(textwin_id_t id);
+extern void textwin_show_string(uint32 flags, uint32 colr, char *format, ...);
+extern void textwin_show_window(textwin_id_t id);
+extern void textwin_event(textwin_event_t e, SDL_Event *event,
+                          textwin_id_t id);
+extern void textwin_keypress(SDLKey key, textwin_id_t id);
+extern void textwin_add_history(char *text);
+extern void textwin_clear_history(void);
+extern void textwin_put_string(char *text);
 
 #endif /* ifndef __TEXTWIN_H */

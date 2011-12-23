@@ -117,18 +117,18 @@ void kill_list_show(int type)
     int                i = 0;
     /* trim string - remove all white spaces */
 
-    textwin_showstring(0, NDI_COLR_WHITE,
+    textwin_show_string(0, NDI_COLR_WHITE,
                        "\n       KILLS LIST %s\n"\
                        "------------------------------------------",
                        (type == 1) ? "SESSION" : "TOTAL");
 
     for (; node; i++, node = node->next)
     {
-        textwin_showstring(0, NDI_COLR_WHITE, "%4d/%12d ... %s",
+        textwin_show_string(0, NDI_COLR_WHITE, "%4d/%12d ... %s",
                            node->session, node->kills, node->name);
     }
 
-    textwin_showstring(0, NDI_COLR_WHITE, "\n%d different monsters killed.", i);
+    textwin_show_string(0, NDI_COLR_WHITE, "\n%d different monsters killed.", i);
 }
 
 /* clear the list, free all memory */

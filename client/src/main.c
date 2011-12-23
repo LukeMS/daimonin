@@ -215,14 +215,9 @@ void init_game_data(void)
     int i;
 
     memset(&global_buttons,-1, sizeof(button_status));
-
-    textwin_init();
-    textwin_flags = 0;
     first_server_char = NULL;
-
     esc_menu_flag = 0;
     srand((uint32) time(NULL));
-
     memset(animcmd, 0, sizeof(animcmd));
     memset(animation, 0, sizeof(animation));
     ToggleScreenFlag = 0;
@@ -238,17 +233,15 @@ void init_game_data(void)
 
     for (i = 0; i < SKIN_SPRITE_NROF; i++)
         skin_sprites[i] = NULL;
+
     memset(face_list, 0, sizeof(face_list));
     memset(&cpl, 0, sizeof(cpl));
     cpl.ob = player_item();
-
     init_keys();
     init_player_data();
     clear_metaserver_data();
     reset_input_mode();
-
     start_anim = NULL; /* anim queue of current active map */
-
     clear_group();
     interface_mode = GUI_NPC_MODE_NO;
     map_transfer_flag = 0;
@@ -258,11 +251,9 @@ void init_game_data(void)
     argServerName[0] = 0;
     argServerPort = DEFAULT_SERVER_PORT;
     SoundSystem = SOUND_SYSTEM_OFF;
-
     GameStatus = GAME_STATUS_INIT;
     GameStatusSelect = GAME_STATUS_LOGIN_ACCOUNT;
     LoginInputStep = LOGIN_STEP_NOTHING;
-
 #ifdef DAI_DEVELOPMENT
     ShowLocalServer = 1;
 #else
@@ -280,26 +271,18 @@ void init_game_data(void)
     gui_npc = NULL;
     gui_interface_book = NULL;
     LoginInputStep = LOGIN_STEP_NAME;
-
     options.cli_account[0] = '\0';
     options.cli_pass[0] = '\0';
     options.cli_server = -1;
     options.cli_addons[0] = '\0';
-
     options.resolution = 0;
     options.channelformat=0;
-
     options.playerdoll = 0;
     options.sleepcounter = 0;
     options.zoom=100;
     options.speedup = 0;
     options.mapstart_x = -10;
     options.mapstart_y = 100;
-    options.use_TextwinSplit = 1;
-    txtwin[TW_MIX].size = 50;
-    txtwin[TW_MSG].size = 22;
-    txtwin[TW_CHAT].size = 22;
-
 //    options.statometer=1;
     options.statsupdate=5;
     options.firststart=1;
@@ -310,17 +293,13 @@ void init_game_data(void)
     options.no_meta=0;
     MALLOC_STRING(options.metaserver, "www.daimonin.org");
     options.metaserver_port = DEFAULT_METASERVER_PORT;
-    txtwin_start_size = txtwin[TW_MIX].size;
-//    txtwin[TW_MIX].size=50;
     options.anim_frame_time = 50;
     options.anim_check_time = 50;
     options.worst_fps = 666;
-
     memset(media_file, 0, sizeof(_media_file) * MEDIA_MAX);
     media_count = 0;    /* buffered media files*/
     media_show = MEDIA_SHOW_NO; /* show this media file*/
-
-    textwin_clearhistory();
+    textwin_clear_history();
     server_level.exp[1]=2500; /* dummy value for startup */
 }
 
@@ -354,9 +333,9 @@ void save_options_dat(void)
     }
 
     /* the %-settings are settings which (should) not shown in options win */
-    sprintf(buf, "%%21 %d\n", txtwin[TW_MSG].size);
+    sprintf(buf, "%%21 %d\n", textwin[TEXTWIN_MSG_ID].size);
     PHYSFS_writeString(handle, buf);
-    sprintf(buf, "%%22 %d\n", txtwin[TW_CHAT].size);
+    sprintf(buf, "%%22 %d\n", textwin[TEXTWIN_CHAT_ID].size);
     PHYSFS_writeString(handle, buf);
 
     while (opt_tab[++i])
@@ -468,10 +447,10 @@ void load_options_dat(void)
             switch (line[2])
             {
                 case '1':
-                    txtwin[TW_MSG].size=atoi(line+4);
+                    textwin[TEXTWIN_MSG_ID].size = atoi(line + 4);
                     break;
                 case '2':
-                    txtwin[TW_CHAT].size=atoi(line+4);
+                    textwin[TEXTWIN_CHAT_ID].size = atoi(line + 4);
                     break;
             }
             continue;
@@ -669,7 +648,7 @@ uint8 game_status_chain(void)
                     break;
 
                 default:
-                    textwin_showstring(0, NDI_COLR_RED, "Unknown server! See --help for a list of valid server numbers.");
+                    textwin_show_string(0, NDI_COLR_RED, "Unknown server! See --help for a list of valid server numbers.");
             }
         }
 
@@ -685,14 +664,14 @@ uint8 game_status_chain(void)
     {
         if (!SOCKET_OpenClientSocket(&csocket, ServerName, ServerPort))
         {
-            textwin_showstring(0, NDI_COLR_SILVER, "Connect to server %s:%d... ~FAILED~!",
+            textwin_show_string(0, NDI_COLR_SILVER, "Connect to server %s:%d... ~FAILED~!",
                                ServerName, ServerPort);
             GameStatus = GAME_STATUS_START;
         }
         else
         {
             socket_thread_start();
-            textwin_showstring(0, NDI_COLR_SILVER, "Connect to server %s:%d... ~OK~!",
+            textwin_show_string(0, NDI_COLR_SILVER, "Connect to server %s:%d... ~OK~!",
                                ServerName, ServerPort);
             GameStatus = GAME_STATUS_SETUP;
         }
@@ -787,7 +766,8 @@ uint8 game_status_chain(void)
         }
         else
         {
-            textwin_clearhistory();
+            textwin_clear_history();
+
             if (InputStringEscFlag)
                 GameStatus = GAME_STATUS_LOGIN_BREAK;
             else if (InputStringFlag == 0 && InputStringEndFlag == 1)
@@ -880,7 +860,7 @@ uint8 game_status_chain(void)
         }
         else /* that must be LoginInputStep == LOGIN_STEP_PASS1 */
         {
-            textwin_clearhistory();
+            textwin_clear_history();
 
             /* autologin */
             if (options.cli_pass[0])
@@ -1074,7 +1054,7 @@ static void QueryMetaserver(void)
     /* skip if --nometa in command line */
     if (!options.metaserver)
     {
-        textwin_showstring(0, NDI_COLR_OLIVE, "Metaserver ignored.");
+        textwin_show_string(0, NDI_COLR_OLIVE, "Metaserver ignored.");
     }
     else
     {
@@ -1084,12 +1064,12 @@ static void QueryMetaserver(void)
                               options.metaserver_port) &&
             read_metaserver_data(meta))
         {
-            textwin_showstring(0, NDI_COLR_SILVER, "Query metaserver (%s:%d)... ~OK~!",
+            textwin_show_string(0, NDI_COLR_SILVER, "Query metaserver (%s:%d)... ~OK~!",
                                options.metaserver, options.metaserver_port);
         }
         else
         {
-            textwin_showstring(0, NDI_COLR_SILVER, "Query metaserver (%s:%d)... ~FAILED~ (using default list)!",
+            textwin_show_string(0, NDI_COLR_SILVER, "Query metaserver (%s:%d)... ~FAILED~ (using default list)!",
                                options.metaserver, options.metaserver_port);
             add_metaserver_data("Main", "daimonin.game-server.cc",
                                 DEFAULT_SERVER_PORT, -1, "UNKNOWN",
@@ -1107,14 +1087,14 @@ static void QueryMetaserver(void)
 
     metaserver_sel = start_server;
     locator_init(330, 248);
-    textwin_showstring(0, NDI_COLR_SILVER, "Select a server.");
+    textwin_show_string(0, NDI_COLR_SILVER, "Select a server.");
 }
 
 void show_ping_string(_server *node)
 {
     if (node)
     {
-        textwin_showstring(0, NDI_COLR_WHITE, "There %s %d player%s online.\n\n%s",
+        textwin_show_string(0, NDI_COLR_WHITE, "There %s %d player%s online.\n\n%s",
                            (node->player == 1) ? "is" : "are",
                            MAX(0, node->player),
                            (node->player == 1) ? "" : "s",
@@ -1514,15 +1494,18 @@ int main(int argc, char *argv[])
     skin_load_bitmaps(SKIN_SPRITE_PROGRESS_BACK);
     font_init();
     ShowIntro("initialise fonts", 0);
-    ShowIntro("load bitmaps", 10);
+    ShowIntro("load skin", 10);
     skin_load_bitmaps(SKIN_SPRITE_NROF);
     skin_load_prefs();
-    ShowIntro("start sound system", 55);
+    ShowIntro("initialise sfx & music", 50);
     sound_init();
     ShowIntro("load keys", 70);
     read_keybind_file();
     ShowIntro("load mpart positioning data", 80);
     LoadArchdef();
+    ShowIntro("initialise textwindows", 90);
+    textwin_init(TEXTWIN_MSG_ID);
+    textwin_init(TEXTWIN_CHAT_ID);
     ShowIntro(NULL, 100);
     sound_play_music("orchestral.ogg", options.music_volume, 0, -1, 0, MUSIC_MODE_DIRECT);
     sprite_init_system();
@@ -1533,7 +1516,7 @@ int main(int argc, char *argv[])
     }
     else
     {
-        textwin_showstring(0, NDI_COLR_SILVER, "Init network... ~OK~!");
+        textwin_show_string(0, NDI_COLR_SILVER, "Init network... ~OK~!");
         QueryMetaserver();
         options.no_meta = 1; // don't do it again in GAME_STATUS_META
     }
@@ -1686,7 +1669,19 @@ int main(int argc, char *argv[])
         } /* map update */
 
         if (GameStatus < GAME_STATUS_WAITFORPLAY)
-            textwin_show(539, 485);
+        {
+            const uint16 x1 = widget_data[WIDGET_MSGWIN_ID].x1,
+                         y1 = widget_data[WIDGET_MSGWIN_ID].y1,
+                         ht = widget_data[WIDGET_MSGWIN_ID].ht;
+
+            widget_data[WIDGET_MSGWIN_ID].x1 = 539;
+            widget_data[WIDGET_MSGWIN_ID].y1 = 10;
+            widget_data[WIDGET_MSGWIN_ID].ht = Screensize.y - 10 - 10;
+            textwin_show_window(TEXTWIN_MSG_ID);
+            widget_data[WIDGET_MSGWIN_ID].x1 = x1;
+            widget_data[WIDGET_MSGWIN_ID].y1 = y1;
+            widget_data[WIDGET_MSGWIN_ID].ht = ht;
+        }
 
         /* if not connected, walk through connection chain and/or wait for action */
         if (GameStatus < GAME_STATUS_WAITFORPLAY)
@@ -1771,7 +1766,7 @@ int main(int argc, char *argv[])
         if (GameStatus == GAME_STATUS_PLAY && newplayer == 1)
         {
             newplayer = 0;
-            textwin_showstring(0, NDI_COLR_WHITE,
+            textwin_show_string(0, NDI_COLR_WHITE,
                                "|Welcome to Daimonin, %s -- WHAT NOW?|\n"\
                                "As this is your first time playing, you may be asking this question.\n"\
                                "The character nearby is called ~Fanrir~. His job is to help new players get started in the game. You should talk to him. Do this by pressing the ~T key.\n"\
@@ -2391,7 +2386,7 @@ static void ShowIntro(char *text, int progress)
     else
     {
         string_blt(ScreenSurface, &font_small, "** Press Key **", x+375, y+585, NDI_COLR_WHITE, NULL, NULL);
-        textwin_showstring(0, NDI_COLR_SILVER, "Welcome to |Daimonin| ~v%d.%d.%d~",
+        textwin_show_string(0, NDI_COLR_SILVER, "Welcome to |Daimonin| ~v%d.%d.%d~",
                            DAI_VERSION_RELEASE, DAI_VERSION_MAJOR,
                            DAI_VERSION_MINOR);
     }

@@ -37,7 +37,6 @@ static char *BitmapName[SKIN_SPRITE_NROF] =
     "progress_back.png",
     "black_tile.png",
     "grid.png",
-    "textwin.png",
     "login_inp.png",
     "hp.png",
     "sp.png",
@@ -132,7 +131,7 @@ static char *BitmapName[SKIN_SPRITE_NROF] =
     "dialog_range_r.png",
     "target_hp.png",
     "target_hp_b.png",
-    "textwin_mask.png",
+    "alpha.png",
     "slider_up.png",
     "slider_down.png",
     "slider.png",
@@ -241,6 +240,7 @@ void skin_load_prefs(void)
     /* first we fill with default values */
     skin_prefs.chat_admin = NDI_COLR_RED;
     skin_prefs.chat_buddy = NDI_COLR_SILVER;
+    skin_prefs.chat_channel = NDI_COLR_MAROON;
     skin_prefs.chat_eavesdrop = NDI_COLR_FUSCHIA;
     skin_prefs.chat_emote = NDI_COLR_TEAL;
     skin_prefs.chat_gsay = NDI_COLR_YELLOW;
@@ -317,6 +317,10 @@ void skin_load_prefs(void)
         else if (!strcmp(key, "chat_buddy"))
         {
             skin_prefs.chat_buddy = (uint32)strtoul(val, NULL, 16);
+        }
+        else if (!strcmp(key, "chat_channel"))
+        {
+            skin_prefs.chat_channel = (uint32)strtoul(val, NULL, 16);
         }
         else if (!strcmp(key, "chat_eavesdrop"))
         {

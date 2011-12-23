@@ -17,6 +17,9 @@ chat_admin: 0xff0000
 # 'chat_buddy' is for any chat sent by a player on your buddy list.
 chat_buddy: 0xcc66ff
 
+# 'chat_channel' is for channel chat between players.
+chat_channel: 0xddffdd
+
 # 'chat_eavesdrop' is for a GM/SA who is listening in on someone elses tells.
 chat_eavesdrop: 0xff9999
 

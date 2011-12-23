@@ -382,7 +382,7 @@ static void sound_start_music(char *fname, int vol, int fade, int loop)
     if (!music.data)
     {
 #ifdef DAI_DEVELOPMENT
-        textwin_showstring(0, NDI_COLR_LIME, "mix_loadmus() failed (%s).", buf);
+        textwin_show_string(0, NDI_COLR_LIME, "mix_loadmus() failed (%s).", buf);
 #endif
         return;
     }

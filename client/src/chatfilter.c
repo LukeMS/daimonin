@@ -78,13 +78,13 @@ static void chatfilter_list_show(void)
     struct chatfilter_list *node;
     int i=0;
 
-    textwin_showstring(0, NDI_COLR_WHITE, "\nCHATFILTER LIST");
-    textwin_showstring(0, NDI_COLR_WHITE, "--------------------------");
+    textwin_show_string(0, NDI_COLR_WHITE, "\nCHATFILTER LIST");
+    textwin_show_string(0, NDI_COLR_WHITE, "--------------------------");
     for (node = chatfilter_list_start;node;i++, node = node->next)
     {
-        textwin_showstring(0, NDI_COLR_WHITE, "%s", node->word);
+        textwin_show_string(0, NDI_COLR_WHITE, "%s", node->word);
     }
-    textwin_showstring(0, NDI_COLR_WHITE, "\n%d word(s) ignored\nHELP: see '/cfilter ?'",
+    textwin_show_string(0, NDI_COLR_WHITE, "\n%d word(s) ignored\nHELP: see '/cfilter ?'",
                        i);
 }
 
@@ -227,19 +227,19 @@ void chatfilter_command(char *cmd)
         chatfilter_list_show();
     else if (cmd[0]=='+')
     {
-        options.chatfilter=1;
-        textwin_showstring(0, NDI_COLR_WHITE, "Chatfilter enabled.");
+        options.textwin_use_chatfilter  = 1;
+        textwin_show_string(0, NDI_COLR_WHITE, "Chatfilter enabled.");
         save_options_dat();
     }
     else if (cmd[0]=='-')
     {
-        options.chatfilter=0;
-        textwin_showstring(0, NDI_COLR_WHITE, "Chatfilter disabled.");
+        options.textwin_use_chatfilter = 0;
+        textwin_show_string(0, NDI_COLR_WHITE, "Chatfilter disabled.");
         save_options_dat();
     }
     else if (cmd[0]=='?')
     {
-        textwin_showstring(0, NDI_COLR_WHITE,
+        textwin_show_string(0, NDI_COLR_WHITE,
                            "HELP:\n"\
                            "'/cfilter' - shows list of filtered words.\n"\
                            "'/cfilter <word>' - adds word to list, or if its on list remove it from list.\n"\
@@ -249,7 +249,7 @@ void chatfilter_command(char *cmd)
     else if ((cmd[0]=='!') && (cmd[1]!=0))
     {
         replacechar=cmd[1];
-        textwin_showstring(0, NDI_COLR_WHITE,"Replacement character changed to '%c'.",replacechar);
+        textwin_show_string(0, NDI_COLR_WHITE,"Replacement character changed to '%c'.",replacechar);
         chatfilter_list_save();
     }
     else
@@ -264,12 +264,12 @@ void chatfilter_command(char *cmd)
         if (chatfilter_check(cmd))
         {
             chatfilter_entry_remove(cmd);
-            textwin_showstring(0, NDI_COLR_WHITE, "Removed >%s< from chatfilter list.", cmd);
+            textwin_show_string(0, NDI_COLR_WHITE, "Removed >%s< from chatfilter list.", cmd);
         }
         else
         {
             chatfilter_entry_add(cmd);
-            textwin_showstring(0, NDI_COLR_WHITE, "Added >%s< to chatfilter list.", cmd);
+            textwin_show_string(0, NDI_COLR_WHITE, "Added >%s< to chatfilter list.", cmd);
         }
         chatfilter_list_save();
     }
