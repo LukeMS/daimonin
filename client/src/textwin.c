@@ -134,7 +134,7 @@ void textwin_show_string(uint32 flags, uint32 colr, char *format, ...)
     vsprintf(buf, format, ap);
     va_end(ap);
 
-#ifdef DEVELOPMENT
+#ifdef DAI_DEVELOPMENT
     LOG(LOG_MSG, "RAW: >%s<\n", buf);
 #endif
 
