@@ -212,6 +212,11 @@ typedef struct skin_prefs_t
     uint32  ecc_strong;
     uint32  ecc_intertitle;
     uint32  ecc_hypertext;
+    uint32  pname_admin;
+    uint32  pname_leader;
+    uint32  pname_member;
+    uint32  pname_other;
+    uint32  pname_self;
     uint32  target_grey;
     uint32  target_green;
     uint32  target_blue;

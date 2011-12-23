@@ -786,6 +786,35 @@ void map_draw_map(void)
                                         (options.player_names == 1 ||
                                          options.player_names == 2))
                                     {
+                                        uint8  i;
+                                        uint32 colr = skin_prefs.pname_other;
+
+                                        for (i = 0; i < GROUP_MAX_MEMBER; i++)
+                                        {
+                                            if (group[i].name[0] != '\0')
+                                            {
+                                                uint8 c;
+
+                                                for (c = 0; c < 32; c++)
+                                                {
+                                                    if (map->pname[k][c] == '[' ||
+                                                        map->pname[k][c] == '\0')
+                                                    {
+                                                        break;
+                                                    }
+                                                }
+
+                                                if (!strncmp(map->pname[k], group[i].name, c))
+                                                {
+                                                    colr = (i == 0)
+                                                            ? skin_prefs.pname_leader
+                                                            : skin_prefs.pname_member;
+
+                                                    break;
+                                                }
+                                            }
+                                        }
+
                                         string_blt(ScreenSurfaceMap,
                                                    &font_small_out,
                                                    map->pname[k],
@@ -794,7 +823,7 @@ void map_draw_map(void)
                                                                 map->pname[k]) / 2,
                                                    yl - skin_prefs.effect_height -
                                                    font_small_out.line_height - 8,
-                                                   NDI_COLR_WHITE, NULL, NULL);
+                                                   colr, NULL, NULL);
                                     }
                                 }
                             }
@@ -831,7 +860,7 @@ void map_draw_map(void)
         {
             string_blt(ScreenSurfaceMap, &font_small_out, cpl.rankandname,
                        p_xl - string_width(&font_small_out, cpl.rankandname) / 2,
-                       p_yl - font_small_out.line_height - 8, NDI_COLR_SILVER,
+                       p_yl - font_small_out.line_height - 8, skin_prefs.pname_self,
                        NULL, NULL);
         }
     }

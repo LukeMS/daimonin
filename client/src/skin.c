@@ -253,6 +253,11 @@ void skin_load_prefs(void)
     skin_prefs.ecc_emphasis = NDI_COLR_LIME;
     skin_prefs.ecc_strong = NDI_COLR_YELLOW;
     skin_prefs.ecc_intertitle = NDI_COLR_ORANGE;
+    skin_prefs.pname_admin = NDI_COLR_RED;
+    skin_prefs.pname_leader = NDI_COLR_LIME;
+    skin_prefs.pname_member = NDI_COLR_YELLOW;
+    skin_prefs.pname_other = NDI_COLR_WHITE;
+    skin_prefs.pname_self = NDI_COLR_SILVER;
     skin_prefs.target_grey = NDI_COLR_GREY;
     skin_prefs.target_green = NDI_COLR_LIME;
     skin_prefs.target_blue = NDI_COLR_BLUE;
@@ -373,6 +378,26 @@ void skin_load_prefs(void)
         else if (!strcmp(key, "ecc_hypertext"))
         {
             skin_prefs.ecc_hypertext = (uint32)strtoul(val, NULL, 16);
+        }
+        else if (!strcmp(key, "pname_admin"))
+        {
+            skin_prefs.pname_admin = (uint32)strtoul(val, NULL, 16);
+        }
+        else if (!strcmp(key, "pname_leader"))
+        {
+            skin_prefs.pname_leader = (uint32)strtoul(val, NULL, 16);
+        }
+        else if (!strcmp(key, "pname_member"))
+        {
+            skin_prefs.pname_member = (uint32)strtoul(val, NULL, 16);
+        }
+        else if (!strcmp(key, "pname_other"))
+        {
+            skin_prefs.pname_other = (uint32)strtoul(val, NULL, 16);
+        }
+        else if (!strcmp(key, "pname_self"))
+        {
+            skin_prefs.pname_self = (uint32)strtoul(val, NULL, 16);
         }
         else if (!strcmp(key, "target_grey"))
         {
