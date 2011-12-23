@@ -66,12 +66,12 @@ textwin_resize_t;
 
 typedef enum textwin_highlight_t
 {
-    TW_HL_NONE,
-    TW_HL_UP,
-    TW_ABOVE,
-    TW_HL_SLIDER,
-    TW_UNDER,
-    TW_HL_DOWN,
+    TEXTWIN_HIGHLIGHT_NONE,
+    TEXTWIN_HIGHLIGHT_UP,
+    TEXTWIN_HIGHLIGHT_ABOVE,
+    TEXTWIN_HIGHLIGHT_SLIDER,
+    TEXTWIN_HIGHLIGHT_UNDER,
+    TEXTWIN_HIGHLIGHT_DOWN,
 }
 textwin_highlight_t;
 
