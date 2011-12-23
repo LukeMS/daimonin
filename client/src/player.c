@@ -462,7 +462,7 @@ void		widget_menubuttons(int x, int y)
     sprite_blt(skin_sprites[SKIN_SPRITE_MENU_BUTTONS], x, y, NULL, NULL);
 }
 
-void        widget_menubuttons_event(int x, int y, int MEvent)
+void        widget_menubuttons_event(int x, int y, uint8 e)
 {
     int dx, dy;
     dx=x-widget_data[WIDGET_MENU_B_ID].x1;
@@ -531,7 +531,7 @@ void widget_skillgroups(int x, int y)
     SDL_BlitSurface(widget_surface[WIDGET_SKILL_LVL_ID], NULL, ScreenSurface, &box);
 }
 
-void widget_show_player_doll_event(int x, int y, int MEvent)
+void widget_show_player_doll_event(int x, int y, uint8 e)
 {
     int   old_inv_win = cpl.inventory_win;
     int   old_inv_tag = cpl.win_inv_tag;
@@ -959,7 +959,7 @@ void widget_show_skill_exp(int x, int y)
     SDL_BlitSurface(widget_surface[WIDGET_SKILL_EXP_ID], NULL, ScreenSurface, &box);
 }
 
-void widget_skill_exp_event(int x, int y, int MEvent)
+void widget_skill_exp_event(int x, int y, uint8 e)
 {
    /* make a button for robed's exp-patch */
     int i, ii, j, jj, bFound = 0;

@@ -357,9 +357,9 @@ uint8 blt_face_centered(int face, int x, int y)
     return 1;
 }
 
-void widget_range_event(int x, int y, SDL_Event event, int MEvent)
+void widget_range_event(int x, int y, SDL_Event event, uint8 e)
 {
-    if (MEvent == MOUSE_DOWN)
+    if (e == SDL_MOUSEBUTTONDOWN)
     {
         uint8 button = event.button.button;
 
@@ -380,7 +380,7 @@ void widget_range_event(int x, int y, SDL_Event event, int MEvent)
             process_macro_keys(KEYFUNC_RANGE_BACK, 0);
         }
     }
-    else if (MEvent == MOUSE_UP)
+    else if (e == SDL_MOUSEBUTTONUP)
     {
         sint8  drag = draggingInvItem(DRAG_GET_STATUS);
         int    tag = (drag == DRAG_IWIN_INV)
@@ -844,9 +844,9 @@ void widget_quickslots(int x, int y)
                   skin_prefs.widget_title, NULL, NULL);
     }
 }
-void widget_quickslots_mouse_event(int x, int y, int MEvent)
+void widget_quickslots_mouse_event(int x, int y, uint8 e)
 {
-    if (MEvent==1) /* Mouseup Event */
+    if (e == SDL_MOUSEBUTTONUP)
     {
         if (draggingInvItem(DRAG_GET_STATUS) > DRAG_IWIN_BELOW)
         {

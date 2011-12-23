@@ -1024,8 +1024,7 @@ void textwin_keypress(SDLKey key, textwin_id_t id)
     }
 }
 
-void textwin_event(textwin_event_t e, SDL_Event *event,
-                   textwin_id_t id)
+void textwin_event(uint8 e, SDL_Event *event, textwin_id_t id)
 {
     textwin_window_t *tw = &textwin[id];
     const uint16  x = event->motion.x,
@@ -1042,7 +1041,7 @@ void textwin_event(textwin_event_t e, SDL_Event *event,
 
     if (!(tw->flags & TEXTWIN_FLAG_RESIZE))
     {
-        if (e == TW_CHECK_MOVE)
+        if (e == SDL_MOUSEMOTION)
         {
             if (x >= right - skin_sprites[SKIN_SPRITE_SLIDER]->bitmap->w &&
                 x <= right &&
@@ -1077,7 +1076,7 @@ void textwin_event(textwin_event_t e, SDL_Event *event,
 #undef OFFSET
             }
         }
-        else if (e == TW_CHECK_BUT_DOWN)
+        else if (e == SDL_MOUSEBUTTONDOWN)
         {
             WIDGET_REDRAW(tw->widget) = 1;
 
@@ -1115,7 +1114,7 @@ void textwin_event(textwin_event_t e, SDL_Event *event,
                 }
             }
         }
-        else if (e == TW_CHECK_BUT_UP)
+        else if (e == SDL_MOUSEBUTTONUP)
         {
             tw->flags &= ~TEXTWIN_FLAG_SCROLL;
         }
@@ -1123,8 +1122,8 @@ void textwin_event(textwin_event_t e, SDL_Event *event,
 
     if (!(tw->flags & TEXTWIN_FLAG_SCROLL))
     {
-        if (e == TW_CHECK_MOVE ||
-            (e == TW_CHECK_BUT_DOWN &&
+        if (e == SDL_MOUSEMOTION ||
+            (e == SDL_MOUSEBUTTONDOWN &&
              button == SDL_BUTTON_LEFT))
         {
             if (y >= top + TEXTWIN_ACTIVE_MIN &&
@@ -1180,7 +1179,7 @@ void textwin_event(textwin_event_t e, SDL_Event *event,
                 }
             }
 
-            if (e == TW_CHECK_BUT_DOWN &&
+            if (e == SDL_MOUSEBUTTONDOWN &&
                 tw->resize)
             {
                 tw->flags |= TEXTWIN_FLAG_RESIZE;
@@ -1188,7 +1187,7 @@ void textwin_event(textwin_event_t e, SDL_Event *event,
 
             WIDGET_REDRAW(tw->widget) = 1;
         }
-        else if (e == TW_CHECK_BUT_UP &&
+        else if (e == SDL_MOUSEBUTTONUP &&
                  button == SDL_BUTTON_LEFT)
         {
             tw->flags &= ~TEXTWIN_FLAG_RESIZE;

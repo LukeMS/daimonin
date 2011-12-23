@@ -79,15 +79,6 @@ typedef struct widget_data_t
 }
 widget_data_t;
 
-/* TODO */
-typedef enum _MEvent
-{
-    MOUSE_UP = 1,
-    MOUSE_DOWN,
-    MOUSE_MOVE,
-}
-_MEvent;
-
 /* used for mouse button/move events */
 typedef struct widget_event_t
 {

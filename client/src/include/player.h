@@ -258,7 +258,7 @@ extern void     extended_command(const char *ocommand);
 extern char    *complete_command(char *command);
 void            init_player_data(void);
 void            widget_show_player_doll(int x, int y);
-void            widget_show_player_doll_event(int x, int y, int MEvent);
+void            widget_show_player_doll_event(int x, int y, uint8 e);
 void            widget_player_data_event(int x, int y);
 void            widget_show_player_data(int x, int y);
 void            set_weight_limit(uint32 wlim);
@@ -270,8 +270,8 @@ void        widget_show_skill_exp(int x, int y);
 void        widget_show_regeneration(int x, int y);
 void        widget_skillgroups(int x, int y);
 void        widget_menubuttons(int x, int y);
-void        widget_menubuttons_event(int x, int y, int MEvent);
-void        widget_skill_exp_event(int x, int y, int MEvent);
+void        widget_menubuttons_event(int x, int y, uint8 e);
+void        widget_skill_exp_event(int x, int y, uint8 e);
 
 void        widget_show_statometer(int x, int y);
 
