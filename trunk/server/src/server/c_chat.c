@@ -53,9 +53,7 @@ static char * cleanup_chat_string(char *ustring)
     {
         switch(*ptr)
         {
-            case '~':
-            case '^':
-            case '|':
+            case ECC_HYPERTEXT:
                 *ptr = ' ';
                 break;
             default:
