@@ -543,7 +543,7 @@ int widget_event_mousemv(int x,int y, SDL_Event *event)
     /* With widgets we have to clear every loop the txtwin cursor */
     for (twid = 0; twid < TEXTWIN_NROF; twid++)
     {
-        textwin[twid].resize = TEXTWIN_RESIZING_DIR_NONE;
+        textwin[twid].resize = TEXTWIN_RESIZE_NONE;
     }
 
     /* widget moving condition */

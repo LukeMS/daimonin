@@ -50,19 +50,19 @@ typedef enum textwin_id_t
 }
 textwin_id_t;
 
-typedef enum textwin_resizing_dir_t
+typedef enum textwin_resize_t
 {
-    TEXTWIN_RESIZING_DIR_NONE,
-    TEXTWIN_RESIZING_DIR_UP,
-    TEXTWIN_RESIZING_DIR_UPRIGHT,
-    TEXTWIN_RESIZING_DIR_RIGHT,
-    TEXTWIN_RESIZING_DIR_DOWNRIGHT,
-    TEXTWIN_RESIZING_DIR_DOWN,
-    TEXTWIN_RESIZING_DIR_DOWNLEFT,
-    TEXTWIN_RESIZING_DIR_LEFT,
-    TEXTWIN_RESIZING_DIR_UPLEFT
+    TEXTWIN_RESIZE_NONE,
+    TEXTWIN_RESIZE_UP,
+    TEXTWIN_RESIZE_UPRIGHT,
+    TEXTWIN_RESIZE_RIGHT,
+    TEXTWIN_RESIZE_DOWNRIGHT,
+    TEXTWIN_RESIZE_DOWN,
+    TEXTWIN_RESIZE_DOWNLEFT,
+    TEXTWIN_RESIZE_LEFT,
+    TEXTWIN_RESIZE_UPLEFT
 }
-textwin_resizing_dir_t;
+textwin_resize_t;
 
 typedef enum textwin_highlight_t
 {
@@ -93,7 +93,7 @@ typedef struct textwin_window_t
     uint16              maxstringlen; // max length of string in pixels
     int                 slider_h;     // height of the scrollbar-slider
     int                 slider_y;     // start pos of the scrollbar-slider
-    textwin_resizing_dir_t resize;
+    textwin_resize_t    resize;       // resizing direction
     textwin_highlight_t highlight;    // which part to highlight
     uint32              scroll_off;   // scroll offset
     uint32              scroll_size;  // max size of scroll buffer

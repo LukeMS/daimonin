@@ -492,7 +492,7 @@ int Event_PollInputDevice(void)
 
             for (twid = 0; twid < TEXTWIN_NROF; twid++)
             {
-                textwin[twid].resize = TEXTWIN_RESIZING_DIR_NONE;
+                textwin[twid].resize = TEXTWIN_RESIZE_NONE;
             }
 
             /* no button is down */
