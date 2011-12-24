@@ -11,8 +11,8 @@
 # Colours: define these as 6-digit hexadecimal values in the form RRGGBB (just
 # like HTML).
 
-# 'chat_admin' is for official messages sent by a VOL/GM/SA.
-chat_admin: 0xff0000
+# 'chat_gmaster' is for official messages sent by a VOL/GM/SA.
+chat_gmaster: 0xff0000
 
 # 'chat_buddy' is for any chat sent by a player on your buddy list.
 chat_buddy: 0xcc66ff
@@ -69,8 +69,8 @@ input_string: 0xffffff
 # 'input_caret' is gor the caret as you type in to the console.
 input_caret: 0xff0000
 
-# 'pname_admin' is for the label only of players who are VOL/GM/MW/MM/SA.
-pname_admin: 0xff0000
+# 'pname_gmaster' is for the label only of players who are VOL/GM/MW/MM/SA.
+pname_gmaster: 0xff0000
 
 # 'pname_leader' is for the leader of your group.
 pname_leader: 0x60e46f

@@ -148,11 +148,11 @@ void textwin_show_string(uint32 flags, uint32 colr, char *format, ...)
             MSGLOG(buf);
         }
 
-        /* Unless this is an admin communicating in an official capacity, we
+        /* Unless this is an gmaster communicating in an official capacity, we
          * can ignore it. This is of course easy to work around. Just replace
-         * the following expression with 1 and recompile to ignore admins too.
+         * the following expression with 1 and recompile to ignore gmasters too.
          * But officially they must be heard. */
-        if (!(flags & NDI_FLAG_ADMIN))
+        if (!(flags & NDI_FLAG_GMASTER))
         {
             if (((flags & NDI_FLAG_SAY) &&
                  ignore_check(buf, "say")) ||
@@ -626,9 +626,9 @@ static void AddLine(textwin_window_t *tw, const uint32 flags, const uint32 colr,
     }
     else
     {
-        if ((flags & NDI_FLAG_ADMIN))
+        if ((flags & NDI_FLAG_GMASTER))
         {
-            (tw->text + line)->fg = skin_prefs.chat_admin;
+            (tw->text + line)->fg = skin_prefs.chat_gmaster;
         }
         else if ((flags & NDI_FLAG_EMOTE))
         {

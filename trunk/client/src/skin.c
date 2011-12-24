@@ -238,7 +238,7 @@ void skin_load_prefs(void)
     char         buf[SMALL_BUF];
 
     /* first we fill with default values */
-    skin_prefs.chat_admin = NDI_COLR_RED;
+    skin_prefs.chat_gmaster = NDI_COLR_RED;
     skin_prefs.chat_buddy = NDI_COLR_SILVER;
     skin_prefs.chat_channel = NDI_COLR_MAROON;
     skin_prefs.chat_eavesdrop = NDI_COLR_FUSCHIA;
@@ -253,7 +253,7 @@ void skin_load_prefs(void)
     skin_prefs.ecc_emphasis = NDI_COLR_LIME;
     skin_prefs.ecc_strong = NDI_COLR_YELLOW;
     skin_prefs.ecc_intertitle = NDI_COLR_ORANGE;
-    skin_prefs.pname_admin = NDI_COLR_RED;
+    skin_prefs.pname_gmaster = NDI_COLR_RED;
     skin_prefs.pname_leader = NDI_COLR_LIME;
     skin_prefs.pname_member = NDI_COLR_YELLOW;
     skin_prefs.pname_other = NDI_COLR_WHITE;
@@ -315,9 +315,9 @@ void skin_load_prefs(void)
         *val = '\0';
         val += 2;
 
-        if (!strcmp(key, "chat_admin"))
+        if (!strcmp(key, "chat_gmaster"))
         {
-            skin_prefs.chat_admin = (uint32)strtoul(val, NULL, 16);
+            skin_prefs.chat_gmaster = (uint32)strtoul(val, NULL, 16);
         }
         else if (!strcmp(key, "chat_buddy"))
         {
@@ -379,9 +379,9 @@ void skin_load_prefs(void)
         {
             skin_prefs.ecc_hypertext = (uint32)strtoul(val, NULL, 16);
         }
-        else if (!strcmp(key, "pname_admin"))
+        else if (!strcmp(key, "pname_gmaster"))
         {
-            skin_prefs.pname_admin = (uint32)strtoul(val, NULL, 16);
+            skin_prefs.pname_gmaster = (uint32)strtoul(val, NULL, 16);
         }
         else if (!strcmp(key, "pname_leader"))
         {
