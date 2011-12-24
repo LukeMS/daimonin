@@ -134,7 +134,7 @@ extern anim_list    *AnimListStart;
 
 
 extern void         new_anim_remove(anim_list *al); /* deletes the anim from our animation list */
-extern anim_list *  new_anim_add(uint16 anim, uint8 sequence, uint8 dir, uint8 speed); /* adds a new admin */
+extern anim_list *  new_anim_add(uint16 anim, uint8 sequence, uint8 dir, uint8 speed); /* adds a new gmaster */
 extern anim_list *  new_anim_add_tile(uint16 anim, uint8 sequence, uint8 dir, uint8 speed, int x, int y, uint8 layer);
 extern void         new_anim_change(anim_list *al, uint16 anim, uint8 sequence, uint8 dir, uint8 speed, uint8 restart); /* modify all parameters */
 extern void         new_anim_reset(anim_list *al);

@@ -196,7 +196,7 @@ skin_sprite_id_t;
 
 typedef struct skin_prefs_t
 {
-    uint32  chat_admin;
+    uint32  chat_gmaster;
     uint32  chat_buddy;
     uint32  chat_channel;
     uint32  chat_eavesdrop;
@@ -212,7 +212,7 @@ typedef struct skin_prefs_t
     uint32  ecc_strong;
     uint32  ecc_intertitle;
     uint32  ecc_hypertext;
-    uint32  pname_admin;
+    uint32  pname_gmaster;
     uint32  pname_leader;
     uint32  pname_member;
     uint32  pname_other;

@@ -1019,7 +1019,7 @@ static void ShowPname(char *pname, sint16 x, sint16 y, uint32 colr)
 
     if ((cp = strchr(buf, '[')))
     {
-        string_blt(ScreenSurfaceMap, &font_small_out, buf, x - string_width(&font_small_out, pname) / 2, y - font_small_out.line_height - 8, skin_prefs.pname_admin, NULL, NULL);
+        string_blt(ScreenSurfaceMap, &font_small_out, buf, x - string_width(&font_small_out, pname) / 2, y - font_small_out.line_height - 8, skin_prefs.pname_gmaster, NULL, NULL);
         *cp = '\0';
     }
 
