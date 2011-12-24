@@ -73,8 +73,8 @@ void widget_show_group(int x, int y)
     {
         sprite_blt(skin_sprites[SKIN_SPRITE_GROUP_INVITE], x + 10, y +32, NULL, NULL);
         string_blt(ScreenSurface, &font_small, "GROUP INVITE", x+30, y+13,skin_prefs.widget_key, NULL, NULL);
-        len =  string_width(&font_small, group_invite);
-        string_blt(ScreenSurface, &font_small, group_invite, x + 60-len/2, y + 45, skin_prefs.widget_info, NULL, NULL);
+        len = string_width(&font_small, group_invite);
+        string_blt(ScreenSurface, &font_small, group_invite, x + 60-len/2, y + 45, skin_prefs.pname_other, NULL, NULL);
         string_blt(ScreenSurface, &font_small, "has invited you", x + 28, y +65, skin_prefs.widget_info, NULL, NULL);
         string_blt(ScreenSurface, &font_small, "to join a group.", x + 28, y +78, skin_prefs.widget_info, NULL, NULL);
 
@@ -108,8 +108,10 @@ void widget_show_group(int x, int y)
             /* sprite_blt(skin_sprites[SKIN_SPRITE_GROUP], x + group_pos[s][0] + 2, y + group_pos[s][1] + 1, NULL, NULL); */
             if (group[s].name[0] != '\0')
             {
+                uint32 colr = (s == 0) ? skin_prefs.pname_leader : skin_prefs.pname_member;
+
                 sprite_blt(skin_sprites[SKIN_SPRITE_GROUP], x + group_pos[s][0] + 2, y + group_pos[s][1] + 1, NULL, NULL);
-                string_blt(ScreenSurface, &font_small, group[s].name, x + group_pos[s][0] + 33, y + group_pos[s][1] + 1,skin_prefs.widget_key, NULL, NULL);
+                string_blt(ScreenSurface, &font_small, group[s].name, x + group_pos[s][0] + 33, y + group_pos[s][1] + 1, colr, NULL, NULL);
                 sprintf(buf, "%3d", group[s].level);
                 string_blt(ScreenSurface, &font_tiny_out, buf, x + group_pos[s][0] + 8, y + group_pos[s][1], skin_prefs.widget_valueEq, NULL, NULL);
 
@@ -207,8 +209,8 @@ void show_group(int x, int y)
     {
         sprite_blt(skin_sprites[SKIN_SPRITE_GROUP_INVITE], x + group_pos[0][0] + 2, y + group_pos[0][1] + 1, NULL, NULL);
         string_blt(ScreenSurface, &font_small, "GROUP INVITE", x + group_pos[0][0] + 76, y + group_pos[0][1] + 5,skin_prefs.widget_key, NULL, NULL);
-        len =  string_width(&font_small, group_invite);
-        string_blt(ScreenSurface, &font_small, group_invite, x + group_pos[0][0]+107-len/2, y + group_pos[0][1] + 19,skin_prefs.widget_info, NULL, NULL);
+        len = string_width(&font_small, group_invite);
+        string_blt(ScreenSurface, &font_small, group_invite, x + group_pos[0][0]+107-len/2, y + group_pos[0][1] + 19,skin_prefs.pname_other, NULL, NULL);
         string_blt(ScreenSurface, &font_small, " has invited you to join a group.", x + group_pos[0][0] + 40, y + group_pos[0][1] + 31,skin_prefs.widget_info, NULL, NULL);
 
         if (global_group_status == GROUP_INVITE)
@@ -241,8 +243,10 @@ void show_group(int x, int y)
             /* sprite_blt(skin_sprites[SKIN_SPRITE_GROUP], x + group_pos[s][0] + 2, y + group_pos[s][1] + 1, NULL, NULL); */
             if (group[s].name[0] != '\0')
             {
+                uint32 colr = (s == 0) ? skin_prefs.pname_leader : skin_prefs.pname_member;
+
 //                sprite_blt(skin_sprites[SKIN_SPRITE_GROUP], x + group_pos[s][0] + 2, y + group_pos[s][1] + 1, NULL, NULL);
-                string_blt(ScreenSurface, &font_small, group[s].name, x + group_pos[s][0] + 33, y + group_pos[s][1] + 1,skin_prefs.widget_key, NULL, NULL);
+                string_blt(ScreenSurface, &font_small, group[s].name, x + group_pos[s][0] + 33, y + group_pos[s][1] + 1, colr, NULL, NULL);
                 sprintf(buf, "%3d", group[s].level);
                 string_blt(ScreenSurface, &font_tiny_out, buf, x + group_pos[s][0] + 8, y + group_pos[s][1], skin_prefs.widget_valueEq, NULL, NULL);
 
