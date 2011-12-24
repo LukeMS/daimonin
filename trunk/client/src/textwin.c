@@ -60,8 +60,7 @@ void textwin_init(textwin_id_t id)
     tw->scroll_pos = 0;
     tw->scroll_off = 0;
     tw->maxstringlen = widget_data[tw->widget].wd -
-                       (skin_sprites[SKIN_SPRITE_SLIDER]->bitmap->w * 2) -
-                       (TEXTWIN_ACTIVE_MIN * 2);
+                       (skin_sprites[SKIN_SPRITE_SLIDER]->bitmap->w * 2) - 4;
     tw->scroll_size = options.textwin_scrollback;
     tw->scroll_used = 0;
     MALLOC(text, sizeof(textwin_text_t) * tw->scroll_size);
@@ -736,7 +735,7 @@ void textwin_show_window(textwin_id_t id)
         tw->size = widget_data[tw->widget].ht / tw->font->line_height;
         tw->maxstringlen = widget_data[tw->widget].wd -
                            (skin_sprites[SKIN_SPRITE_SLIDER]->bitmap->w * 2) -
-                           (TEXTWIN_ACTIVE_MIN * 2);
+                           4;
 
         if (tw->resize)
         {
@@ -822,7 +821,7 @@ static void ShowWindowText(textwin_window_t *tw, _BLTFX *bltfx)
 {
     sint32    topline = tw->scroll_pos - tw->scroll_off - MIN(tw->size,
                         tw->scroll_used);
-    uint16    i = 0;
+    uint16    i;
 
 
     if (topline < 0)
@@ -847,15 +846,14 @@ static void ShowWindowText(textwin_window_t *tw, _BLTFX *bltfx)
     /* TODO: fucking maths */
 
     /* Blit all the visible lines. */
-    for (; i < tw->size && i < tw->scroll_used; i++)
+    for (i = 0; i < tw->size && i < tw->scroll_used; i++)
     {
-        const uint16   y = tw->font->line_height * i + TEXTWIN_ACTIVE_MIN +
-                           (widget_data[tw->widget].ht % tw->font->line_height);
         textwin_text_t *text = (tw->text + ((topline + i) % tw->scroll_used));
 
 //LOG(LOG_MSG,">>>>>>>>>>>>>>%d,%d,%d,%d,%d,%s\n", tw->scroll_off, tw->scroll_pos, tw->size, topline, i, text->buf);
-        string_blt(bltfx->surface, tw->font, text->buf, 0 + TEXTWIN_ACTIVE_MIN,
-                   y, text->fg, /*text->bg,*/ NULL, NULL);
+        string_blt(bltfx->surface, tw->font, text->buf, 2,
+                   tw->font->line_height * i, text->fg, /*text->bg,*/ NULL,
+                   NULL);
     }
 }
 
