@@ -1670,17 +1670,42 @@ int main(int argc, char *argv[])
 
         if (GameStatus < GAME_STATUS_WAITFORPLAY)
         {
-            const uint16 x1 = widget_data[WIDGET_MSGWIN_ID].x1,
-                         y1 = widget_data[WIDGET_MSGWIN_ID].y1,
-                         ht = widget_data[WIDGET_MSGWIN_ID].ht;
+            uint16 x1,
+                   y1,
+                   wd,
+                   ht;
 
+            /* Show msg textwindow top right. */
+            x1 = widget_data[WIDGET_MSGWIN_ID].x1,
+            y1 = widget_data[WIDGET_MSGWIN_ID].y1,
+            wd = widget_data[WIDGET_MSGWIN_ID].wd,
+            ht = widget_data[WIDGET_MSGWIN_ID].ht;
             widget_data[WIDGET_MSGWIN_ID].x1 = 539;
             widget_data[WIDGET_MSGWIN_ID].y1 = 10;
-            widget_data[WIDGET_MSGWIN_ID].ht = Screensize.y - 10 - 10;
+            widget_data[WIDGET_MSGWIN_ID].wd = Screensize.x - 539 - 10;
+            widget_data[WIDGET_MSGWIN_ID].ht = Screensize.y / 2 - 10;
+            WIDGET_REDRAW(WIDGET_MSGWIN_ID) = 1;
             textwin_show_window(TEXTWIN_MSG_ID);
             widget_data[WIDGET_MSGWIN_ID].x1 = x1;
             widget_data[WIDGET_MSGWIN_ID].y1 = y1;
+            widget_data[WIDGET_MSGWIN_ID].wd = wd;
             widget_data[WIDGET_MSGWIN_ID].ht = ht;
+
+            /* Show chat textwindow bottom right. */
+            x1 = widget_data[WIDGET_CHATWIN_ID].x1,
+            y1 = widget_data[WIDGET_CHATWIN_ID].y1,
+            wd = widget_data[WIDGET_CHATWIN_ID].wd,
+            ht = widget_data[WIDGET_CHATWIN_ID].ht;
+            widget_data[WIDGET_CHATWIN_ID].x1 = 539;
+            widget_data[WIDGET_CHATWIN_ID].y1 = Screensize.y / 2 + 10;
+            widget_data[WIDGET_CHATWIN_ID].wd = Screensize.x - 539 - 10;
+            widget_data[WIDGET_CHATWIN_ID].ht = Screensize.y / 2 - 10 - 10;
+            WIDGET_REDRAW(WIDGET_CHATWIN_ID) = 1;
+            textwin_show_window(TEXTWIN_CHAT_ID);
+            widget_data[WIDGET_CHATWIN_ID].x1 = x1;
+            widget_data[WIDGET_CHATWIN_ID].y1 = y1;
+            widget_data[WIDGET_CHATWIN_ID].wd = wd;
+            widget_data[WIDGET_CHATWIN_ID].ht = ht;
         }
 
         /* if not connected, walk through connection chain and/or wait for action */
