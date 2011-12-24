@@ -46,6 +46,7 @@ struct _map_object_parse   *start_map_object_parse  = NULL;
 static void ShowEffects(uint32 flags, uint16 x, uint16 y);
 static uint16 ShowExclusiveEffect(uint16 x, uint16 y, uint16 xoff, uint16 w,
                                   char *text);
+static void ShowPname(char *pname, sint16 x, sint16 y, uint32 colr);
 
 /* TODO: do a real adjust... we just clear here the cache.
  */
@@ -795,10 +796,9 @@ void map_draw_map(void)
                                             {
                                                 uint8 c;
 
-                                                for (c = 0; c < 32; c++)
+                                                for (c = 0; c < 32 && map->pname[k][c] != '\0'; c++)
                                                 {
-                                                    if (map->pname[k][c] == '[' ||
-                                                        map->pname[k][c] == '\0')
+                                                    if (map->pname[k][c] == '[')
                                                     {
                                                         break;
                                                     }
@@ -815,15 +815,10 @@ void map_draw_map(void)
                                             }
                                         }
 
-                                        string_blt(ScreenSurfaceMap,
-                                                   &font_small_out,
-                                                   map->pname[k],
-                                                   xmpos + left + right / 2 - 10 -
-                                                   string_width(&font_small_out,
-                                                                map->pname[k]) / 2,
-                                                   yl - skin_prefs.effect_height -
-                                                   font_small_out.line_height - 8,
-                                                   colr, NULL, NULL);
+                                        ShowPname(map->pname[k],
+                                                  xmpos + left + right / 2 - 10,
+                                                  yl - skin_prefs.effect_height,
+                                                  colr);
                                     }
                                 }
                             }
@@ -858,10 +853,7 @@ void map_draw_map(void)
         if (options.player_names == 1 ||
             options.player_names == 3)
         {
-            string_blt(ScreenSurfaceMap, &font_small_out, cpl.rankandname,
-                       p_xl - string_width(&font_small_out, cpl.rankandname) / 2,
-                       p_yl - font_small_out.line_height - 8, skin_prefs.pname_self,
-                       NULL, NULL);
+            ShowPname(cpl.rankandname, p_xl, p_yl, skin_prefs.pname_self);
         }
     }
 
@@ -1018,6 +1010,23 @@ static uint16 ShowExclusiveEffect(uint16 x, uint16 y, uint16 xoff, uint16 w,
     return xoff;
 }
 
+static void ShowPname(char *pname, sint16 x, sint16 y, uint32 colr)
+{
+    char  buf[TINY_BUF],
+         *cp;
+
+    sprintf(buf, "%s", pname);
+
+    if ((cp = strchr(buf, '[')))
+    {
+        string_blt(ScreenSurfaceMap, &font_small_out, buf, x - string_width(&font_small_out, pname) / 2, y - font_small_out.line_height - 8, skin_prefs.pname_admin, NULL, NULL);
+        *cp = '\0';
+    }
+
+    string_blt(ScreenSurfaceMap, &font_small_out, buf,
+               x - string_width(&font_small_out, pname) / 2,
+               y - font_small_out.line_height - 8, colr, NULL, NULL);
+}
 
 #define TILE_ISO_XLEN 48
 /* this +1 is the trick to catch the one pixel line between
