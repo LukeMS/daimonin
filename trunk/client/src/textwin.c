@@ -27,6 +27,7 @@ static uint16 OldSliderPos = 0;
 
 textwin_window_t textwin[TEXTWIN_NROF];
 
+static void TextwinLog(char *message);
 static void GrepForStatometer(char *message);
 static void ConvertSmileys(char *message);
 static void AddLine(textwin_window_t *tw, const uint32 flags, const uint32 colr,
@@ -134,7 +135,7 @@ void textwin_show_string(uint32 flags, uint32 colr, char *format, ...)
     va_end(ap);
 
 #ifdef DAI_DEVELOPMENT
-    LOG(LOG_MSG, "RAW: >%s<\n", buf);
+    LOG(LOG_MSG, "TEXTWIN: >%s<\n", buf);
 #endif
 
     /* Here we handle chat... */
@@ -144,7 +145,7 @@ void textwin_show_string(uint32 flags, uint32 colr, char *format, ...)
         if (options.textwin_use_logging == 1 ||
             options.textwin_use_logging >= 3)
         {
-            MSGLOG(buf);
+            TextwinLog(buf);
         }
 
         /* Unless this is an gmaster communicating in an official capacity, we
@@ -195,7 +196,7 @@ void textwin_show_string(uint32 flags, uint32 colr, char *format, ...)
 
         if (options.textwin_use_logging >= 2)
         {
-            MSGLOG(buf);
+            TextwinLog(buf);
         }
     }
 
@@ -354,6 +355,38 @@ void textwin_show_string(uint32 flags, uint32 colr, char *format, ...)
     AddLine(tw, flags, colr, indent, old_strong, old_emphasis, old_underline,
             start);
     WIDGET_REDRAW(textwin[id].widget) = 1;
+}
+
+static void TextwinLog(char *message)
+{
+    static PHYSFS_File *handle = NULL;
+    time_t              t;
+    char                buf[HUGE_BUF];
+
+    if (PHYSFS_isInitialised &&
+        PHYSFS_getWriteDir())
+    {
+        if (!handle)
+        {
+            char fname[TINY_BUF];
+
+            sprintf(fname, "%s/%s", DIR_LOGS, FILE_TEXTWINLOG);
+
+            /* We only log this stuff when opening the chat log fails. */
+            if (!(handle = PHYSFS_openAppend(fname)))
+            {
+                LOG(LOG_SYSTEM, "Saving '%s'... ", fname);
+                LOG(LOG_ERROR, "FAILED (%s)!\n", PHYSFS_getLastError());
+
+                return;
+            }
+        }
+
+        time(&t);
+        strftime(buf, sizeof(buf), "%d-%m-%y %H:%M:%S", localtime(&t));
+        sprintf(strchr(buf, '\0'),": %s\n", message);
+        PHYSFS_writeString(handle, buf);
+    }
 }
 
 /* Extracts exp/kill info from particular messages for the 'statometer'. */

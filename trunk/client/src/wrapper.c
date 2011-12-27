@@ -89,22 +89,6 @@ void LOG(int loglevel, char *format, ...)
     }
 }
 
-void MSGLOG (char *msg)
-{
-        char timestr[20];
-        if(msglog)      /* secure: we have no open stream*/
-        {
-            time_t now;
-            time(&now);
-
-            strftime(timestr, sizeof timestr, "%d-%m-%y %H:%M:%S", localtime(&now));
-            fprintf(msglog,"%s: %s\n",timestr, msg);
-        }
-        else
-            LOG(LOG_DEBUG,"Error with chatlogfile\n");
-        fflush(msglog);
-}
-
 void SYSTEM_Start(void)
 {
     char         buf[MEDIUM_BUF];
