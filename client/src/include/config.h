@@ -81,6 +81,7 @@
 #define FILE_KEYBIND      "keys.dat"
 #define FILE_KILL         "kills.list"
 #define FILE_LOG          "client.log"
+#define FILE_TEXTWINLOG   "textwin.log"
 #define FILE_MPART        "archdef.dat"
 #define FILE_OPTION       "options.dat"
 #define FILE_SKINDEF      DIR_SETTINGS"/skin.def"

@@ -1293,7 +1293,6 @@ void PlayerCmd(char *data, int len)
 {
     char    name[MAX_BUF];
     int     tag, weight, face, i = 0, nlen;
-    char filename[255];
 
     options.firststart = 0;
     GameStatus = GAME_STATUS_PLAY;
@@ -1325,17 +1324,10 @@ void PlayerCmd(char *data, int len)
     chatfilter_list_load();
     kill_list_load();
     buddy_list_load();
-#if defined( __WIN_32)  || defined(__LINUX)
-            sprintf(filename,"logs/%s.chat.log",cpl.name);
-            LOG(LOG_DEBUG,"trying to open chatlogfile: %s\n",filename);
-            if (!msglog) msglog = fopen_wrapper(filename, "a");
-#endif
     LOG(LOG_MSG, "Loading quickslot settings for server\n");
     load_quickslots_entrys();
     save_options_dat();
 }
-
-
 
 /* no item command, including the delinv... */
 /* this is a bit hacked now - perhaps we should consider
