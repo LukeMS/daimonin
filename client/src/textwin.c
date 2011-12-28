@@ -463,152 +463,143 @@ static void GrepForStatometer(char *message)
  * -- 20100215 Smacky */
 static void ConvertSmileys(char *message)
 {
-    unsigned char actChar = 0;
-    uint16        i;
+    uint16 i;
 
-    for (i = 0; message[i] != 0; i++)
+    for (i = 0; *(message + i); i++)
     {
         uint16 j = i + 1;
-        uint8  move = 1;
+        char   smiley = 0;
 
-        if (message[i] == ':')
+        if (*(message + i) == ':' &&
+            *(message + j) == '\'')
         {
-            if (message[j] == '\'' &&
-                message[j + 1] == '(')
+            switch (*(message + ++j))
             {
-                move++;
-                actChar = 138;
+                case '(':
+                    smiley = 138;
+
+                    break;
             }
-            else if (message[j] == '-')
+        }
+        else if (*(message + i) == ':')
+        {
+            if (*(message + j) == '-')
             {
                 j++;
-                move++;
             }
 
-            /* we replace it with the 'ASCII'-code of the smiley in systemfont */
-            switch (message[j])
+            switch (*(message + j))
             {
                 case ')':
-                    actChar = 128;
+                    smiley = 128;
 
                     break;
 
                 case '(':
-                    actChar = 129;
+                    smiley = 129;
 
                     break;
 
                 case 'D':
-                    actChar = 130;
+                    smiley = 130;
 
                     break;
 
                 case '|':
-                    actChar = 131;
+                    smiley = 131;
 
                     break;
 
                 case 'o':
                 case 'O':
                 case '0':
-                    actChar = 132;
+                    smiley = 132;
 
                     break;
 
                 case 'p':
                 case 'P':
-                    actChar = 133;
+                    smiley = 133;
 
                     break;
 
                 case 's':
                 case 'S':
-                    actChar = 139;
+                    smiley = 139;
 
                     break;
 
                 case 'x':
                 case 'X':
-                    actChar = 140;
+                    smiley = 140;
 
                     break;
             }
         }
-        else if (message[i] == ';')
+        else if (*(message + i) == ';')
         {
-            if (message[j] == '-')
+            if (*(message + j) == '-')
             {
                 j++;
-                move++;
             }
 
-            switch (message[j])
+            switch (*(message + j))
             {
                 case ')':
-                    actChar = 134;
+                    smiley = 134;
 
                     break;
 
                 case 'p':
-                    actChar = 137;
+                    smiley = 137;
 
                     break;
 
                 case 'P':
-                    actChar = 137;
+                    smiley = 137;
 
                     break;
             }
         }
-        else if ((message[i] == '8' ||
-                  message[i] == 'B') &&
-                 message[i + 1] == ')')
+        else if ((*(message + i) == '8' ||
+                  *(message + i) == 'B') &&
+                 *(message + j) == ')')
         {
-            actChar = 135;
+            smiley = 135;
         }
-        else if ((message[i] == '8' ||
-                  message[i] == 'B') &&
-                 message[i + 1] == '-' &&
-                 message[i + 2] == ')')
+        else if ((*(message + i) == '8' ||
+                  *(message + i) == 'B') &&
+                 *(message + j++) == '-' &&
+                 *(message + j) == ')')
         {
-            move++;
-            actChar = 135;
+            smiley = 135;
         }
-        else if (message[i] == '^' &&
-                 message[i + 2] == '^' &&
-                 (message[i + 1] == '_' ||
-                  message[i + 1] == '-'))
+        else if (*(message + i) == '>' &&
+                 *(message + j) == ':')
         {
-            move++;
-            actChar = 136;
-        }
-        else if (message[i] == '>' &&
-                 message[i + 1] == ':')
-        {
-            j++;
-            move++;
-
-            if (message[j] == '-')
+            if (*(message + ++j) == '-')
             {
                 j++;
-                move++;
             }
 
-            if (message[j] == ')')
+            switch (*(message + j))
             {
-                actChar = 141;
-            }
-            else if (message[j] == 'D')
-            {
-                actChar = 142;
+                case ')':
+                    smiley = 141;
+
+                    break;
+
+                case 'D':
+                    smiley = 142;
+
+                    break;
             }
         }
 
-        if (actChar != 0)
+        if (smiley)
         {
-            message[i] = actChar;
-            memmove(&message[i + 1], &message[i + 1 + move],
-                    strlen(&message[i + 1 + move]) + 1);
+            *(message + i) = smiley;
+            memmove(message + i + 1, message + j + 1, strlen(message + j + 1) + 1);
         }
     }
 }
