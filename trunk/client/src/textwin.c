@@ -27,7 +27,7 @@ static uint16 OldSliderPos = 0;
 
 textwin_window_t textwin[TEXTWIN_NROF];
 
-static void TextwinLog(char *message);
+static void LogTextwin(char *message, char *logfile);
 static void GrepForStatometer(char *message);
 static void ConvertSmileys(char *message);
 static void AddLine(textwin_window_t *tw, const uint32 flags, const uint32 colr,
@@ -142,10 +142,18 @@ void textwin_show_string(uint32 flags, uint32 colr, char *format, ...)
     if (id == TEXTWIN_CHAT_ID)
     {
         /* Log before ignores, chatfilters and so on. */
-        if (options.textwin_use_logging == 1 ||
-            options.textwin_use_logging >= 3)
+        switch (options.textwin_use_logging)
         {
-            TextwinLog(buf);
+            case 1: // only chat
+            case 3: // both separately
+                LogTextwin(buf, FILE_CHATLOG);
+
+                break;
+
+            case 4: // both together
+                LogTextwin(buf, FILE_TEXTWINLOG);
+
+                break;
         }
 
         /* Unless this is an gmaster communicating in an official capacity, we
@@ -192,12 +200,22 @@ void textwin_show_string(uint32 flags, uint32 colr, char *format, ...)
     /* ...And here, messages. */
     else
     {
-        GrepForStatometer(buf);
-
-        if (options.textwin_use_logging >= 2)
+        /* Log before ignores, chatfilters and so on. */
+        switch (options.textwin_use_logging)
         {
-            TextwinLog(buf);
+            case 2: // only msgs
+            case 3: // both separately
+                LogTextwin(buf, FILE_MSGLOG);
+
+                break;
+
+            case 4: // both together
+                LogTextwin(buf, FILE_TEXTWINLOG);
+
+                break;
         }
+
+        GrepForStatometer(buf);
     }
 
     for (start = c = buf; *c; c++)
@@ -357,36 +375,35 @@ void textwin_show_string(uint32 flags, uint32 colr, char *format, ...)
     WIDGET_REDRAW(textwin[id].widget) = 1;
 }
 
-static void TextwinLog(char *message)
+static void LogTextwin(char *message, char *logfile)
 {
-    static PHYSFS_File *handle = NULL;
-    time_t              t;
-    char                buf[HUGE_BUF];
+    char         fname[TINY_BUF],
+                 buf[HUGE_BUF];
+    PHYSFS_File *handle;
+    time_t       t;
 
-    if (PHYSFS_isInitialised &&
-        PHYSFS_getWriteDir())
+    if (!PHYSFS_isInitialised ||
+        !PHYSFS_getWriteDir())
     {
-        if (!handle)
-        {
-            char fname[TINY_BUF];
-
-            sprintf(fname, "%s/%s", DIR_LOGS, FILE_TEXTWINLOG);
-
-            /* We only log this stuff when opening the chat log fails. */
-            if (!(handle = PHYSFS_openAppend(fname)))
-            {
-                LOG(LOG_SYSTEM, "Saving '%s'... ", fname);
-                LOG(LOG_ERROR, "FAILED (%s)!\n", PHYSFS_getLastError());
-
-                return;
-            }
-        }
-
-        time(&t);
-        strftime(buf, sizeof(buf), "%d-%m-%y %H:%M:%S", localtime(&t));
-        sprintf(strchr(buf, '\0'),": %s\n", message);
-        PHYSFS_writeString(handle, buf);
+        return;
     }
+
+    sprintf(fname, "%s/%s", DIR_LOGS, logfile);
+
+    /* We only log this stuff when opening the chat log fails. */
+    if (!(handle = PHYSFS_openAppend(fname)))
+    {
+        LOG(LOG_SYSTEM, "Saving '%s'... ", fname);
+        LOG(LOG_ERROR, "FAILED (%s)!\n", PHYSFS_getLastError());
+
+        return;
+    }
+
+    time(&t);
+    strftime(buf, sizeof(buf), "%d-%m-%y %H:%M:%S", localtime(&t));
+    sprintf(strchr(buf, '\0'),": %s\n", message);
+    PHYSFS_writeString(handle, buf);
+    PHYSFS_close(handle);
 }
 
 /* Extracts exp/kill info from particular messages for the 'statometer'. */
