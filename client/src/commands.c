@@ -160,11 +160,13 @@ void PingCmd(char *data, int len)
 
         /* If the server sent an empty string this means our current ping
          * string is up to date. Otherwise, update it from data. */
-        if (len)
+        if (len > 1)
         {
             node->ping_server = (uint32)strtoul(data, &data, 16);
             node->player = (sint16)strtol(data + 1, &data, 16);
+            FREE(node->online);
             MALLOC_STRING(node->online, data + 1);
+            locator_clear_players(node);
             locator_parse_ping_string(node);
         }
 
