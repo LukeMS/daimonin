@@ -1093,11 +1093,24 @@ void show_ping_string(_server *node)
 {
     if (node)
     {
-        textwin_show_string(0, NDI_COLR_WHITE, "There %s %d player%s online.\n\n%s",
+        locator_player_t *lp;
+
+        textwin_show_string(0, NDI_COLR_WHITE, "There %s %d player%s online.\n",
                            (node->player == 1) ? "is" : "are",
                            MAX(0, node->player),
-                           (node->player == 1) ? "" : "s",
-                           (node->online) ? node->online : "");
+                           (node->player == 1) ? "" : "s");
+
+        for (lp = locator.player; lp; lp = lp->next)
+        {
+            if (lp->server != node)
+            {
+                continue;
+            }
+
+            textwin_show_string(0, NDI_COLR_WHITE, "%s %u %s %d %d",
+                                lp->name, lp->gender, lp->race, lp->geoloc.lx,
+                                lp->geoloc.ly);
+        }
     }
 }
 
