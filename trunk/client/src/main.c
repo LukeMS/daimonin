@@ -561,14 +561,13 @@ uint8 game_status_chain(void)
 
                 if (!ticks)
                 {
-                    FREE(node_ping->online);
-                    locator_clear_players(node_ping);
-
                     if (!SOCKET_OpenClientSocket(&csocket, node_ping->nameip,
                                                  node_ping->port))
                     {
                         node_ping->player = 0;
                         node_ping->ping = -2; // SERVER DOWN
+                        FREE(node_ping->online);
+                        locator_clear_players(node_ping);
                     }
                     else
                     {

@@ -77,31 +77,27 @@ void locator_init(uint16 w, uint16 h)
  * is complete, adds a new player to the locator. */
 void locator_parse_ping_string(_server *server)
 {
-    if (server)
+    if (server &&
+        server->online)
     {
-        locator_clear_players(server);
+        char *cp_start,
+             *cp_end;
 
-        if (server->online)
+        for (cp_start = server->online; *cp_start; cp_start = cp_end + 1)
         {
-            char *cp_start,
-                 *cp_end;
-
-            for (cp_start = server->online; *cp_start; cp_start = cp_end + 1)
+            char          name[TINY_BUF],
+                          race[TINY_BUF];
+            unsigned int  gender;
+            int           lx,
+                          ly;
+            
+            if ((cp_end = strchr(cp_start, '\n')))
             {
-                char          name[TINY_BUF],
-                              race[TINY_BUF];
-                unsigned int  gender;
-                int           lx,
-                              ly;
-                
-                if ((cp_end = strchr(cp_start, '\n')))
+                if (sscanf(cp_start, "%s %u %s %d %d",
+                    name, &gender, race, &lx, &ly) == 5)
                 {
-                    if (sscanf(cp_start, "%s %u %s %d %d",
-                        name, &gender, race, &lx, &ly) == 5)
-                    {
-                        locator_add_player(server, name, (uint8)gender, race,
-                                           (sint16)lx, (sint16)ly);
-                    }
+                    locator_add_player(server, name, (uint8)gender, race,
+                                       (sint16)lx, (sint16)ly);
                 }
             }
         }
