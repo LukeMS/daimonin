@@ -940,7 +940,7 @@ int key_meta_menu(SDLKey key)
             }
 
             metaserver_sel = node;
-            show_ping_string(metaserver_sel);
+            locator_show_players(metaserver_sel);
 
             break;
 
@@ -953,7 +953,7 @@ int key_meta_menu(SDLKey key)
 
             metaserver_sel = (!node || !node->next)
                              ? start_server : node->next;
-            show_ping_string(metaserver_sel);
+            locator_show_players(metaserver_sel);
 
             break;
 

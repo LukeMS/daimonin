@@ -602,7 +602,7 @@ uint8 game_status_chain(void)
     else if (GameStatus == GAME_STATUS_START)
     {
         options.no_ping = 1;
-        show_ping_string(metaserver_sel);
+        locator_show_players(metaserver_sel);
         interface_mode = GUI_NPC_MODE_NO;
         clear_group();
         map_udate_flag = 2;
@@ -1087,31 +1087,6 @@ static void QueryMetaserver(void)
     metaserver_sel = start_server;
     locator_init(330, 248);
     textwin_show_string(0, NDI_COLR_SILVER, "Select a server.");
-}
-
-void show_ping_string(_server *node)
-{
-    if (node)
-    {
-        locator_player_t *lp;
-
-        textwin_show_string(0, NDI_COLR_WHITE, "There %s %d player%s online.\n",
-                           (node->player == 1) ? "is" : "are",
-                           MAX(0, node->player),
-                           (node->player == 1) ? "" : "s");
-
-        for (lp = locator.player; lp; lp = lp->next)
-        {
-            if (lp->server != node)
-            {
-                continue;
-            }
-
-            textwin_show_string(0, NDI_COLR_WHITE, "%s %u %s %d %d",
-                                lp->name, lp->gender, lp->race, lp->geoloc.lx,
-                                lp->geoloc.ly);
-        }
-    }
 }
 
 void clear_metaserver_data(void)

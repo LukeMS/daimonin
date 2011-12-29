@@ -182,6 +182,31 @@ void locator_add_player(_server *server, const char *name, uint8 gender,
     }
 }
 
+void locator_show_players(_server *server)
+{
+    if (server)
+    {
+        locator_player_t *lp;
+
+        textwin_show_string(0, NDI_COLR_WHITE, "There %s %d player%s online.\n",
+                           (server->player == 1) ? "is" : "are",
+                           MAX(0, server->player),
+                           (server->player == 1) ? "" : "s");
+
+        for (lp = locator.player; lp; lp = lp->next)
+        {
+            if (lp->server != server)
+            {
+                continue;
+            }
+
+            textwin_show_string(0, NDI_COLR_WHITE, "%s %u %s %d %d",
+                                lp->name, lp->gender, lp->race, lp->geoloc.lx,
+                                lp->geoloc.ly);
+        }
+    }
+}
+
 /* Centers the locator window on <lx>, <ly>. */
 void locator_focus(sint16 lx, sint16 ly)
 {
