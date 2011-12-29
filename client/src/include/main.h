@@ -476,7 +476,6 @@ extern void clear_lists(void);
 extern int  main(int argc, char *argv[]);
 extern void open_input_mode(int maxchar);
 extern void add_metaserver_data(char *name, char *server, int port, int player, char *ver, char *desc);
-extern void show_ping_string(_server *node);
 extern void clear_metaserver_data(void);
 extern void load_options_dat(void);
 extern void save_options_dat(void);
