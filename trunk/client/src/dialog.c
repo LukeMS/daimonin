@@ -2117,13 +2117,14 @@ void show_meta_server(void)
             ENGRAVE(ScreenSurface, &font_small, node->name, x + TXT_START_NAME, y + 94 + i * 12, NDI_COLR_WHITE, NULL, NULL);
             ENGRAVE(ScreenSurface, &font_small, node->version, x + 286, y + 94 + i * 12, NDI_COLR_WHITE, NULL, NULL);
 
-            if (node->player >= 0)
+            if (node->player < 0 ||
+                node->ping == -1)
             {
-                sprintf(buf, "%d", node->player);
+                sprintf(buf, "??");
             }
             else
             {
-                sprintf(buf, "??");
+                sprintf(buf, "%d", node->player);
             }
 
             ENGRAVE(ScreenSurface, &font_small, buf, x + 336, y + 94 + i * 12, NDI_COLR_WHITE, NULL, NULL);
