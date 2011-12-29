@@ -96,6 +96,14 @@ void locator_parse_ping_string(_server *server)
                 if (sscanf(cp_start, "%s %u %s %d %d",
                     name, &gender, race, &lx, &ly) == 5)
                 {
+                    char *cp;
+
+                    /* Strip any gmaster tag from the player name. */
+                    if ((cp = strchr(name, '[')))
+                    {
+                        *cp = '\0';
+                    }
+
                     locator_add_player(server, name, (uint8)gender, race,
                                        (sint16)lx, (sint16)ly);
                 }
