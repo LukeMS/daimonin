@@ -78,6 +78,7 @@ typedef signed char     sint8;
 #include "wrapper.h"
 #include "zlib.h"
 #include "socket.h"
+#include "gameserver.h"
 #include "face.h"
 #include "font.h"
 #include "client_cmd.h"

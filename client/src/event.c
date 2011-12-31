@@ -23,8 +23,6 @@
 
 #include "include.h"
 
-extern char d_ServerName[2048];
-extern int  d_ServerPort;
 static int  get_action_keycode, drop_action_keycode; /* thats the key for G'et command from keybind */
 static int  menuRepeatKey   = -1;
        int  old_mouse_y = 0;
@@ -920,12 +918,11 @@ void key_connection_event(SDL_KeyboardEvent *key)
 /* metaserver menu key */
 int key_meta_menu(SDLKey key)
 {
-    _server *node = start_server;
+    gameserver_t *node = gameserver_1st;
 
     switch (key)
     {
         case SDLK_r:
-            options.no_meta = 0;
             options.no_ping = 0;
             GameStatus = GAME_STATUS_META;
 
@@ -934,32 +931,30 @@ int key_meta_menu(SDLKey key)
         case SDLK_UP:
             while (node &&
                    node->next &&
-                   node->next != metaserver_sel)
+                   node->next != gameserver_sel)
             {
                 node = node->next;
             }
 
-            metaserver_sel = node;
-            locator_show_players(metaserver_sel);
+            gameserver_sel = node;
+            locator_show_players(gameserver_sel);
 
             break;
 
         case SDLK_DOWN:
             while (node &&
-                   node != metaserver_sel)
+                   node != gameserver_sel)
             {
                 node = node->next;
             }
 
-            metaserver_sel = (!node || !node->next)
-                             ? start_server : node->next;
-            locator_show_players(metaserver_sel);
+            gameserver_sel = (!node || !node->next)
+                             ? gameserver_1st : node->next;
+            locator_show_players(gameserver_sel);
 
             break;
 
         case SDLK_RETURN:
-            strcpy(ServerName, metaserver_sel->nameip);
-            ServerPort = metaserver_sel->port;
             GameStatus = GAME_STATUS_STARTCONNECT;
 
             break;

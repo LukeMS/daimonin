@@ -68,33 +68,6 @@ typedef struct _keymap
 }
 _keymap;
 
-typedef struct geolocation_t
-{
-    sint16 lx;
-    sint16 ly;
-}
-geolocation_t;
-
-typedef struct _server
-{
-    struct _server *next;
-
-    char           *name;
-    char           *nameip;
-    char           *version;
-    char           *desc1;
-    sint16          player;
-    uint16          port;
-    sint16          ping;
-    uint32          ping_server;
-    char           *online;
-    geolocation_t   geoloc;
-}
-_server;
-
-extern _server *start_server,
-               *metaserver_sel;
-
 typedef struct _vimmsg
 {
     char    *msg;
@@ -215,7 +188,8 @@ typedef struct _options
     int                   fullscreen_flag;      /* we are in fullscreen mode */
     int                   doublebuf_flag;       /* we doublebuf */
     int                   rleaccel_flag;
-    int                     no_meta;
+    uint8                 gameserver_showlocal;
+    uint8                 gameserver_nometa;
     Uint8                   used_video_bpp;
     Uint8                   real_video_bpp;
     uint32                  videoflags_full;
@@ -415,9 +389,6 @@ extern int          SoundStatus;            /* SoundStatus 0=no 1= yes */
 
 extern uint32       LastTick;           /* system time counter in ms since prg start */
 
-extern char         ServerName[];   /* name of the server we want connect */
-extern int          ServerPort;         /* port addr */
-
 extern int          InputFirstKeyPress;
 
 extern int          map_udate_flag, map_transfer_flag, map_redraw_flag;
@@ -468,15 +439,11 @@ extern struct gui_book_struct    *gui_interface_book;
 extern SDL_Surface         *ScreenSurface;      /* our main bla and so on surface */
 extern SDL_Surface         *ScreenSurfaceMap;      /* our main bla and so on surface */
 extern SDL_Surface         *zoomed;                /* tem surface for zoomed data */
-extern struct sockaddr_in   insock;       /* Server's attributes*/
-extern int                  SocketStatusErrorNr; /* if an socket error, this is it */
 
 extern void save_user_settings(void);
 extern void clear_lists(void);
 extern int  main(int argc, char *argv[]);
 extern void open_input_mode(int maxchar);
-extern void add_metaserver_data(char *name, char *server, int port, int player, char *ver, char *desc);
-extern void clear_metaserver_data(void);
 extern void load_options_dat(void);
 extern void save_options_dat(void);
 extern void reset_input_mode(void);

@@ -15,6 +15,7 @@ daimonin_SOURCES =  \
 	../../src/face.c \
 	../../src/filewrap.c \
 	../../src/font.c \
+	../../src/gameserver.c \
 	../../src/group.c \
 	../../src/ignore.c \
 	../../src/inffast.c \
