@@ -146,11 +146,11 @@ void SoundCmd(char *data, int len)
 
 void PingCmd(char *data, int len)
 {
-    _server *node;
+    gameserver_t *node;
 
-    for (node = start_server; node; node = node->next)
+    for (node = gameserver_1st; node; node = node->next)
     {
-        if (strcmp(node->nameip, csocket.host) ||
+        if (strcmp(node->address, csocket.host) ||
             node->port != csocket.port)
         {
             continue;
@@ -163,11 +163,11 @@ void PingCmd(char *data, int len)
         if (len > 1)
         {
             node->ping_server = (uint32)strtoul(data, &data, 16);
-            node->player = (sint16)strtol(data + 1, &data, 16);
+            node->players = (sint16)strtol(data + 1, &data, 16);
             FREE(node->online);
             MALLOC_STRING(node->online, data + 1);
             locator_clear_players(node);
-            locator_parse_ping_string(node);
+            gameserver_parse_pingstring(node);
         }
 
         return;

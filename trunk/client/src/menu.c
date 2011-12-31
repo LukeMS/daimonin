@@ -1092,7 +1092,7 @@ void load_quickslots_entrys()
     }
     while (readNextQuickSlots(stream, server, &port, name, quickslots))
     {
-        if (!strcmp(ServerName, server) && ServerPort == port)
+        if (!strcmp(gameserver_sel->address, server) && gameserver_sel->port == port)
         {
             uint8 cont = 0;
 
@@ -1215,7 +1215,7 @@ void save_quickslots_entrys()
     fseek(stream,n,SEEK_SET);
     while ((size = readNextQuickSlots(stream, server, &n, name, quickslots)) != 0)
     {
-        if (!strcmp(ServerName, server) && n == ServerPort && !strcmp(cpl.name, name))
+        if (!strcmp(gameserver_sel->address, server) && n == gameserver_sel->port && !strcmp(cpl.name, name))
         {
             if ((n = w - size) != 0)
             {
@@ -1274,8 +1274,8 @@ void save_quickslots_entrys()
         return;
 
     fseek(stream, 0, SEEK_END);
-    fwrite(&ServerName, sizeof(char), strlen(ServerName) + 1, stream);
-    fwrite(&ServerPort, sizeof(int), 1, stream);
+    fwrite(&gameserver_sel->address, sizeof(char), strlen(gameserver_sel->address) + 1, stream);
+    fwrite(&gameserver_sel->port, sizeof(int), 1, stream);
     fwrite(&cpl.name, sizeof(char), strlen(cpl.name) + 1, stream);
     for (n = 0; n != MAX_QUICK_SLOTS; ++n)
     {

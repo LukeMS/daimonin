@@ -29,34 +29,33 @@ typedef struct locator_player_t
     struct locator_player_t *prev,
                             *next;
 
-    _server       *server;
-    char          *name;
-    uint8          gender;
-    char          *race;
-    geolocation_t  geoloc;
+    gameserver_t        *server;
+    char                *name;
+    uint8                gender;
+    char                *race;
+    gameserver_geoloc_t  geoloc;
 }
 locator_player_t;
 
 typedef struct locator_t
 {
-    uint16            map_wh;
-    uint16            map_ht;
-    geolocation_t     client;
-    SDL_Rect          box;
-    _server          *server;
-    locator_player_t *player;
+    uint16               map_wh;
+    uint16               map_ht;
+    gameserver_geoloc_t  client;
+    SDL_Rect             box;
+    gameserver_t        *server;
+    locator_player_t    *player;
 }
 locator_t;
 
 extern locator_t locator;
 
 extern void  locator_init(uint16 w, uint16 h);
-extern void  locator_parse_ping_string(_server *server);
-extern void  locator_clear_players(_server *server);
-extern void  locator_add_player(_server *server, const char *name,
+extern void  locator_clear_players(gameserver_t *server);
+extern void  locator_add_player(gameserver_t *server, const char *name,
                                 uint8 gender, const char *race, sint16 lx,
                                 sint16 ly);
-extern void  locator_show_players(_server *server);
+extern void  locator_show_players(gameserver_t *server);
 extern void  locator_focus(sint16 lx, sint16 ly);
 extern void  locator_show(sint16 x, sint16 y);
 extern uint8 locator_scroll(SDLKey key, SDLMod mod);

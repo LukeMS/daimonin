@@ -1750,8 +1750,7 @@ void show_login_server(void)
     y += 100;
     EMBOSS(ScreenSurface, &font_small, "Server", x2 - 21, y - 36,
            NDI_COLR_WHITE, NULL, NULL);
-    sprintf(buf, "%s",
-            (!strcmp(ServerName, "127.0.0.1")) ? "local host" : ServerName);
+    sprintf(buf, "%s", gameserver_sel->name);
     x2 -= string_width(&font_large_out, buf) / 2;
     ENGRAVE(ScreenSurface, &font_large_out, buf, x2, y - 22, NDI_COLR_SILVER,
             NULL, NULL);
@@ -2022,7 +2021,7 @@ void show_meta_server(void)
     SDL_Rect    rec_desc;
     SDL_Rect    box;
     int         mx, my, mb;
-    _server    *node = start_server;
+    gameserver_t    *node = gameserver_1st;
 
     mb = SDL_GetMouseState(&mx, &my);
     /* background */
@@ -2084,7 +2083,7 @@ void show_meta_server(void)
 
         if (node)
         {
-            if (node == metaserver_sel)
+            if (node == gameserver_sel)
             {
                 SDL_Rect box2;
 
@@ -2097,13 +2096,13 @@ void show_meta_server(void)
                 box2.y = y + 431;
                 box2.w = 300;
                 box2.h = 55;
-                ShowInfo(&font_large_out, &box2, node->desc1);
+                ShowInfo(&font_large_out, &box2, node->info);
 
                 if (locator.server != node)
                 {
                     locator.server = node;
 
-                    if (node->player >= 0)
+                    if (node->players >= 0)
                     {
                         locator_focus(node->geoloc.lx, node->geoloc.ly);
                     }
@@ -2117,14 +2116,14 @@ void show_meta_server(void)
             ENGRAVE(ScreenSurface, &font_small, node->name, x + TXT_START_NAME, y + 94 + i * 12, NDI_COLR_WHITE, NULL, NULL);
             ENGRAVE(ScreenSurface, &font_small, node->version, x + 286, y + 94 + i * 12, NDI_COLR_WHITE, NULL, NULL);
 
-            if (node->player < 0 ||
+            if (node->players < 0 ||
                 node->ping == -1)
             {
                 sprintf(buf, "??");
             }
             else
             {
-                sprintf(buf, "%d", node->player);
+                sprintf(buf, "%d", node->players);
             }
 
             ENGRAVE(ScreenSurface, &font_small, buf, x + 336, y + 94 + i * 12, NDI_COLR_WHITE, NULL, NULL);

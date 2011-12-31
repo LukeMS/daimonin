@@ -75,7 +75,6 @@ extern uint8           SOCKET_OpenClientSocket(struct ClientSocket *csock,
 extern uint8           SOCKET_CloseSocket(SOCKET socket);
 extern uint8           SOCKET_CloseClientSocket(struct ClientSocket *csock);
 extern int             SOCKET_GetError(void);  /* returns socket error */
-extern int             read_metaserver_data(SOCKET fd);
 extern char           *get_ip_from_hostname(char *host);
 
 #endif /* ifndef __SOCKET_H */

@@ -25,6 +25,10 @@
 
 ClientSocket csocket;
 
+#if WIN32
+static int SocketStatusErrorNr; /* if an socket error, this is it */
+#endif
+
 static SDL_Thread *input_thread;
 static SDL_mutex *input_buffer_mutex;
 static SDL_cond *input_buffer_cond;
@@ -591,6 +595,7 @@ uint8 SOCKET_OpenClientSocket(struct ClientSocket *csock, char *host, int port)
 #ifdef __WIN_32
 uint8 SOCKET_OpenSocket(SOCKET *socket_temp, char *host, int port)
 {
+    struct sockaddr_in   insock;
     int             error;
     long            temp;
     struct hostent *hostbn;
@@ -853,111 +858,6 @@ if (*socket_temp == SOCKET_NO)
         }
     }
     return 1;
-}
-
-#endif
-
-/*
- *  Metaserver related functions
- */
-
-/* we used our core connect routine to connect to metaserver, this is the special
-   read one.*/
-
-#ifdef __WIN_32
-int read_metaserver_data(SOCKET fd)
-{
-    int     stat, temp, ret;
-    char   *ptr, *buf;
-
-    MALLOC(ptr, MAX_METASTRING_BUFFER);
-    MALLOC(buf, MAX_METASTRING_BUFFER);
-    temp = 0;
-
-    for (; ;)
-    {
-        /* win32 style input */
-
-        stat = recv(fd, ptr, MAX_METASTRING_BUFFER, 0);
-        if ((stat == -1) && WSAGetLastError() != WSAEWOULDBLOCK)
-        {
-            LOG(LOG_ERROR, "Error reading metaserver data!: %d\n", WSAGetLastError());
-            break;
-        }
-        else if (stat > 0)
-        {
-            if (temp + stat >= MAX_METASTRING_BUFFER)
-            {
-                memcpy(buf + temp, ptr, temp + stat - MAX_METASTRING_BUFFER - 1);
-                temp += stat;
-                break;
-            }
-            memcpy(buf + temp, ptr, stat);
-            temp += stat;
-        }
-        else if (stat == 0)
-        {
-            /* connect closed by meta */
-            break;
-        }
-    }
-    buf[temp] = 0;
-    LOG(LOG_DEBUG, "GET: %s\n", buf);
-    ret = parse_metaserver_data(buf);
-    FREE(buf);
-    FREE(ptr);
-
-    return ret;
-}
-
-#elif __LINUX
-
-int read_metaserver_data(SOCKET fd)
-{
-    int     stat, temp, ret;
-    char   *ptr, *buf;
-
-    MALLOC(ptr, MAX_METASTRING_BUFFER);
-    MALLOC(buf, MAX_METASTRING_BUFFER);
-    temp = 0;
-    for (; ;)
-    {
-        do
-        {
-            /* FIXME: should select on fd instead of this never-ending (in case of error) busy-loop */
-            stat = recv(fd, ptr, MAX_METASTRING_BUFFER, 0);
-        }
-        while (stat == -1);
-
-        if (stat == -1)
-        {
-            LOG(LOG_ERROR, "Error reading metaserver data!\n");
-            break;
-        }
-        else if (stat > 0)
-        {
-            if (temp + stat >= MAX_METASTRING_BUFFER)
-            {
-                memcpy(buf + temp, ptr, temp + stat - MAX_METASTRING_BUFFER - 1);
-                temp += stat;
-                break;
-            }
-            memcpy(buf + temp, ptr, stat);
-            temp += stat;
-        }
-        else if (stat == 0)
-        {
-            /* connect closed by meta */
-            break;
-        }
-    }
-
-    buf[temp] = 0;
-    ret = parse_metaserver_data(buf);
-    FREE(buf);
-    FREE(ptr);
-
-    return ret;
 }
 
 #endif

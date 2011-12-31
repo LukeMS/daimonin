@@ -56,9 +56,6 @@
  */
 //#define ANIM_FRAMESKIP
 
-#define DEFAULT_SERVER_PORT 13327
-#define DEFAULT_METASERVER_PORT 13326
-
 #ifndef SYSPATH
 #define SYSPATH "./"
 #endif

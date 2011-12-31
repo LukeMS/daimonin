@@ -32,10 +32,6 @@ _server_char        new_character; /* if we login as new char, thats the values 
 SDL_Surface        *ScreenSurface; /* THE main surface (backbuffer)*/
 SDL_Surface        *ScreenSurfaceMap; /* THE map surface (backbuffer)*/
 SDL_Surface        *zoomed = NULL;
-struct sockaddr_in  insock; /* Server's attributes */
-ClientSocket        csocket;
-int                 SocketStatusErrorNr;        /* if an socket error, this is it */
-
 _login_step          LoginInputStep;
 Uint32              sdl_dgreen, sdl_dred, sdl_gray1, sdl_gray2, sdl_gray3, sdl_gray4;
 
@@ -56,12 +52,6 @@ fire_mode_t fire_mode;
 int                 SoundStatus;            /* SoundStatus 0=no 1= yes */
 int                 MapStatusX;             /* map x,y len */
 int                 MapStatusY;
-
-char                ServerName[2048];   /* name of the server we want connect */
-int                 ServerPort;         /* port addr */
-
-char                argServerName[2048];    /* name of the server we want connect */
-int                 argServerPort;          /* port addr */
 
 uint32              LastTick;           /* system time counter in ms since prg start */
 uint32              GameTicksSec;       /* ticks since this second frame in ms */
@@ -103,7 +93,6 @@ uint8             InputCaretBlinkFlag = 1;
 
 _game_status        GameStatus; /* the global status identifier */
 int                 GameStatusSelect;
-int                 ShowLocalServer;
 
 time_t sleeptime;
 
@@ -134,9 +123,6 @@ uint8 game_status_chain(void);
 
 _vimmsg vim[MAX_NROF_VIM];
 
-_server *start_server,
-        *metaserver_sel;
-
 static void DisplayLayer1(void);   /* map & player */
 static void DisplayLayer2(void);   /* frame (background image) */
 static void DisplayLayer3(void);   /* widgets (graphical user interface) */
@@ -149,7 +135,6 @@ static const char *GetOption(const char *arg, const char *sopt,
 static void InitPhysFS(const char *argv0);
 static void ShowIntro(char *text, int progress);
 static void LoadArchdef(void);
-static void QueryMetaserver(void);
 static void PlayActionSounds(void);
 
 /* TODO: Eventually various user settings will be savedd by account and/or
@@ -239,25 +224,20 @@ void init_game_data(void)
     cpl.ob = player_item();
     init_keys();
     init_player_data();
-    clear_metaserver_data();
+    gameserver_init();
     reset_input_mode();
     start_anim = NULL; /* anim queue of current active map */
     clear_group();
     interface_mode = GUI_NPC_MODE_NO;
     map_transfer_flag = 0;
-    start_server = NULL;
-    ServerName[0] = 0;
-    ServerPort = DEFAULT_SERVER_PORT;
-    argServerName[0] = 0;
-    argServerPort = DEFAULT_SERVER_PORT;
     SoundSystem = SOUND_SYSTEM_OFF;
     GameStatus = GAME_STATUS_INIT;
     GameStatusSelect = GAME_STATUS_LOGIN_ACCOUNT;
     LoginInputStep = LOGIN_STEP_NOTHING;
 #ifdef DAI_DEVELOPMENT
-    ShowLocalServer = 1;
+    options.gameserver_showlocal = 1;
 #else
-    ShowLocalServer = 0;
+    options.gameserver_showlocal = 0;
 #endif
     SoundStatus = 1;
     MapStatusX = MAP_MAX_SIZE;
@@ -290,9 +270,6 @@ void init_game_data(void)
     options.widget_snap=0;
 #endif
     options.shoutoff=0;
-    options.no_meta=0;
-    MALLOC_STRING(options.metaserver, "www.daimonin.org");
-    options.metaserver_port = DEFAULT_METASERVER_PORT;
     options.anim_frame_time = 50;
     options.anim_check_time = 50;
     options.worst_fps = 666;
@@ -495,7 +472,7 @@ uint8 game_status_chain(void)
 {
     /* lets drop some status messages for the client logs */
     static int st = -1, lg = -1, gs = -1;
-    static _server *node_ping;
+    static gameserver_t *node_ping;
 
     if(st != (int)GameStatus || lg != (int)LoginInputStep || gs != (int)GameStatusSelect)
     {
@@ -539,8 +516,8 @@ uint8 game_status_chain(void)
     /* initialise, connect, and query the meta server */
     else if (GameStatus == GAME_STATUS_META)
     {
-        QueryMetaserver();
-        node_ping = start_server;
+        gameserver_query_meta(0);
+        node_ping = gameserver_1st;
         GameStatus = GAME_STATUS_PINGLOOP;
     }
     /* ping each known server */
@@ -561,10 +538,10 @@ uint8 game_status_chain(void)
 
                 if (!ticks)
                 {
-                    if (!SOCKET_OpenClientSocket(&csocket, node_ping->nameip,
+                    if (!SOCKET_OpenClientSocket(&csocket, node_ping->address,
                                                  node_ping->port))
                     {
-                        node_ping->player = 0;
+                        node_ping->players = 0;
                         node_ping->ping = -2; // SERVER DOWN
                         FREE(node_ping->online);
                         locator_clear_players(node_ping);
@@ -602,7 +579,7 @@ uint8 game_status_chain(void)
     else if (GameStatus == GAME_STATUS_START)
     {
         options.no_ping = 1;
-        locator_show_players(metaserver_sel);
+        locator_show_players(gameserver_sel);
         interface_mode = GUI_NPC_MODE_NO;
         clear_group();
         map_udate_flag = 2;
@@ -612,46 +589,9 @@ uint8 game_status_chain(void)
         reset_keys();
         sprite_clear_backbuffer();
         SOCKET_CloseClientSocket(&csocket);
-        GameStatus = GAME_STATUS_WAITLOOP;
-
-        if (options.cli_server >= 0)
-        {
-            switch (options.cli_server)
-            {
-                case 0: /* Local */
-                    strcpy(ServerName,"127.0.0.1");
-                    ServerPort = argServerPort;
-                    GameStatus = GAME_STATUS_STARTCONNECT;
-
-                    break;
-
-                case 1: /* Main */
-                    strcpy(ServerName,"daimonin.game-server.cc");
-                    ServerPort = argServerPort;
-                    GameStatus = GAME_STATUS_STARTCONNECT;
-
-                    break;
-
-                case 2: /* Test */
-                    strcpy(ServerName,"62.75.168.180");
-                    ServerPort = argServerPort;
-                    GameStatus = GAME_STATUS_STARTCONNECT;
-
-                    break;
-
-                case 3: /* Dev */
-                    strcpy(ServerName,"www.daimonin.org");
-                    ServerPort = argServerPort;
-                    GameStatus = GAME_STATUS_STARTCONNECT;
-
-                    break;
-
-                default:
-                    textwin_show_string(0, NDI_COLR_RED, "Unknown server! See --help for a list of valid server numbers.");
-            }
-        }
-
-        options.cli_server = -1; /* only try once */
+        GameStatus = (options.cli_server == GAMESERVER_META_ID)
+                     ? GAME_STATUS_WAITLOOP : GAME_STATUS_STARTCONNECT;
+        options.cli_server = GAMESERVER_META_ID; // only try once
     }
     else if (GameStatus == GAME_STATUS_STARTCONNECT)
     {
@@ -661,17 +601,18 @@ uint8 game_status_chain(void)
     }
     else if (GameStatus == GAME_STATUS_CONNECT)
     {
-        if (!SOCKET_OpenClientSocket(&csocket, ServerName, ServerPort))
+        if (!SOCKET_OpenClientSocket(&csocket, gameserver_sel->address,
+                                     gameserver_sel->port))
         {
             textwin_show_string(0, NDI_COLR_SILVER, "Connect to server %s:%d... ~FAILED~!",
-                               ServerName, ServerPort);
+                               gameserver_sel->address, gameserver_sel->port);
             GameStatus = GAME_STATUS_START;
         }
         else
         {
             socket_thread_start();
             textwin_show_string(0, NDI_COLR_SILVER, "Connect to server %s:%d... ~OK~!",
-                               ServerName, ServerPort);
+                               gameserver_sel->address, gameserver_sel->port);
             GameStatus = GAME_STATUS_SETUP;
         }
     }
@@ -1033,128 +974,6 @@ uint8 game_status_chain(void)
     return(1);
 }
 
-static void QueryMetaserver(void)
-{
-    if (options.no_meta)
-    {
-        return;
-    }
-
-    interface_mode = GUI_NPC_MODE_NO;
-    clear_group();
-    map_udate_flag = 2;
-
-    if (ShowLocalServer)
-    {
-        add_metaserver_data("LOCAL", "127.0.0.1", argServerPort, -1, "UNKNOWN",
-                            "Your local server.");
-    }
-
-    /* skip if --nometa in command line */
-    if (!options.metaserver)
-    {
-        textwin_show_string(0, NDI_COLR_OLIVE, "Metaserver ignored.");
-    }
-    else
-    {
-        SOCKET meta = SOCKET_NO;
-
-        if (SOCKET_OpenSocket(&meta, options.metaserver,
-                              options.metaserver_port) &&
-            read_metaserver_data(meta))
-        {
-            textwin_show_string(0, NDI_COLR_SILVER, "Query metaserver (%s:%d)... ~OK~!",
-                               options.metaserver, options.metaserver_port);
-        }
-        else
-        {
-            textwin_show_string(0, NDI_COLR_SILVER, "Query metaserver (%s:%d)... ~FAILED~ (using default list)!",
-                               options.metaserver, options.metaserver_port);
-            add_metaserver_data("Main", "daimonin.game-server.cc",
-                                DEFAULT_SERVER_PORT, -1, "UNKNOWN",
-                                "Best for simply playing the game");
-            add_metaserver_data("Test", "62.75.168.180",
-                                DEFAULT_SERVER_PORT, -1, "UNKNOWN",
-                                "Best for testing new content (maps), both official and unofficial");
-            add_metaserver_data("Dev", "www.daimonin.org",
-                                DEFAULT_SERVER_PORT, -1, "UNKNOWN",
-                                "Best for testing new code (features)");
-        }
-
-        SOCKET_CloseSocket(meta);
-    }
-
-    metaserver_sel = start_server;
-    locator_init(330, 248);
-    textwin_show_string(0, NDI_COLR_SILVER, "Select a server.");
-}
-
-void clear_metaserver_data(void)
-{
-    _server *node = start_server;
-
-    while (node)
-    {
-        _server *next = node->next;
-
-        FREE(node->name);
-        FREE(node->nameip);
-        FREE(node->version);
-        FREE(node->desc1);
-        FREE(node);
-        node = next;
-    }
-
-    metaserver_sel = start_server = NULL;
-}
-
-void add_metaserver_data(char *name, char *server, int port, int player, char *ver, char *desc)
-{
-    _server *new;
-
-    if (!start_server)
-    {
-        MALLOC(new, sizeof(_server));
-        start_server = new;
-        MALLOC_STRING(new->nameip, server);
-        new->port = port;
-    }
-    else
-    {
-        _server *node;
-
-        for (node = start_server; node; node = node->next)
-        {
-            if (node->nameip &&
-                !strcmp(node->nameip, server) &&
-                node->port == port)
-            {
-                new = node;
-                FREE(new->name);
-                FREE(new->version);
-                FREE(new->desc1);
-
-                break;
-            }
-            else if (!node->next)
-            {
-                MALLOC(new, sizeof(_server));
-                node->next = new;
-                MALLOC_STRING(new->nameip, server);
-                new->port = port;
-
-                break;
-            }
-        }
-    }
-
-    new->player = player;
-    new->ping = -1; // UNKNOWN
-    MALLOC_STRING(new->name, name);
-    MALLOC_STRING(new->version, ver);
-    MALLOC_STRING(new->desc1, desc);
-}
-
 void reset_input_mode(void)
 {
     InputString[0] = 0;
@@ -1504,8 +1323,7 @@ int main(int argc, char *argv[])
     else
     {
         textwin_show_string(0, NDI_COLR_SILVER, "Init network... ~OK~!");
-        QueryMetaserver();
-        options.no_meta = 1; // don't do it again in GAME_STATUS_META
+        gameserver_query_meta(1);
     }
 
     /* Wait for keypress. */
@@ -1524,7 +1342,7 @@ int main(int argc, char *argv[])
         else if (event.type == SDL_KEYUP ||
                  event.type == SDL_KEYDOWN ||
                  event.type == SDL_MOUSEBUTTONDOWN ||
-                 options.cli_server > -1)
+                 options.cli_server > GAMESERVER_META_ID)
         {
             reset_keys();
 
@@ -2011,7 +1829,7 @@ static void ParseInvocationLine(int argc, char *argv[])
             }
             else
             {
-                ShowLocalServer = 1;
+                options.gameserver_showlocal = 1;
                 invalid[0] = '\0';
             }
         }
@@ -2023,7 +1841,7 @@ static void ParseInvocationLine(int argc, char *argv[])
             }
             else
             {
-                FREE(options.metaserver);
+                options.gameserver_nometa = 1;
                 invalid[0] = '\0';
             }
         }
@@ -2039,23 +1857,6 @@ static void ParseInvocationLine(int argc, char *argv[])
                 invalid[0] = '\0';;
             }
         }
-        /* TODO: Remove. */
-        else if (GetOption(argv[argc], "-P", "--port", key, value))
-        {
-            char          *endp = NULL;
-            unsigned long  nr = strtoul(value, &endp, 10);
-
-            if (!value[0] ||
-                *endp)
-            {
-                sprintf(invalid, "port must be a number");
-            }
-            else
-            {
-                argServerPort = (int)nr;
-                invalid[0] = '\0';
-            }
-        }
         else if (GetOption(argv[argc], "-s", "--server", key, value))
         {
             char          *endp = NULL;
@@ -2066,8 +1867,15 @@ static void ParseInvocationLine(int argc, char *argv[])
             {
                 sprintf(invalid, "server must be a number");
             }
+            else if (nr < GAMESERVER_LOCAL_ID ||
+                     nr >= GAMESERVER_NROF)
+            {
+                sprintf(invalid, "server number invalid");
+            }
             else
             {
+                gameserver_add(nr);
+                gameserver_sel = gameserver_1st;
                 options.cli_server = (int)nr;
                 invalid[0] = '\0';
             }

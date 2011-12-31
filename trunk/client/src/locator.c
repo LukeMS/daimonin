@@ -25,7 +25,7 @@
 
 locator_t locator;
 
-static void   GetHostIP(char *ip, geolocation_t *geoloc);
+static void   GetHostIP(char *ip, gameserver_geoloc_t *geoloc);
 static size_t ParseHostIP(void *ptr, size_t size, size_t nmemb, void *data);
 static sint16 GetX(sint16 lx);
 static sint16 GetY(sint16 ly);
@@ -36,7 +36,7 @@ static void   Plot(sint16 x, sint16 y, sint16 lx, sint16 ly, int marker);
  * locator_show() below. */
 void locator_init(uint16 w, uint16 h)
 {
-    _server *node;
+    gameserver_t *node;
 
     locator.map_wh = skin_sprites[SKIN_SPRITE_LOCATOR_MAP]->bitmap->w;
     locator.map_ht = skin_sprites[SKIN_SPRITE_LOCATOR_MAP]->bitmap->h; 
@@ -45,19 +45,19 @@ void locator_init(uint16 w, uint16 h)
     GetHostIP(NULL, &locator.client);
 
     /* Get the locations of all known servers. */
-    for (node = start_server; node; node = node->next)
+    for (node = gameserver_1st; node; node = node->next)
     {
         char *cp;
 
         locator.server = node;
 
         /* Local server must be where the client is. */
-        if (!strcmp(node->nameip, "127.0.0.1"))
+        if (!strcmp(node->address, "127.0.0.1"))
         {
             node->geoloc.lx = locator.client.lx;
             node->geoloc.ly = locator.client.ly;
         }
-        else if (!(cp = get_ip_from_hostname(node->nameip)))
+        else if (!(cp = get_ip_from_hostname(node->address)))
         {
             node->geoloc.lx = 0;
             node->geoloc.ly = 0;
@@ -73,48 +73,9 @@ void locator_init(uint16 w, uint16 h)
     locator_focus(locator.client.lx, locator.client.ly);
 }
 
-/* Parses the ping string, if there is one, for the specified server and, if it
- * is complete, adds a new player to the locator. */
-void locator_parse_ping_string(_server *server)
-{
-    if (server &&
-        server->online)
-    {
-        char *cp_start,
-             *cp_end;
-
-        for (cp_start = server->online; *cp_start; cp_start = cp_end + 1)
-        {
-            char          name[TINY_BUF],
-                          race[TINY_BUF];
-            unsigned int  gender;
-            int           lx,
-                          ly;
-            
-            if ((cp_end = strchr(cp_start, '\n')))
-            {
-                if (sscanf(cp_start, "%s %u %s %d %d",
-                    name, &gender, race, &lx, &ly) == 5)
-                {
-                    char *cp;
-
-                    /* Strip any gmaster tag from the player name. */
-                    if ((cp = strchr(name, '[')))
-                    {
-                        *cp = '\0';
-                    }
-
-                    locator_add_player(server, name, (uint8)gender, race,
-                                       (sint16)lx, (sint16)ly);
-                }
-            }
-        }
-    }
-}
-
 /* Clears player details. If server is non-NULL, then only for that server. If
  * it is NULL, then all player details are cleared. */
-void locator_clear_players(_server *server)
+void locator_clear_players(gameserver_t *server)
 {
     locator_player_t *lp = locator.player;
 
@@ -151,7 +112,7 @@ void locator_clear_players(_server *server)
 }
 
 /* Adds details of a new player. */
-void locator_add_player(_server *server, const char *name, uint8 gender,
+void locator_add_player(gameserver_t *server, const char *name, uint8 gender,
                         const char *race, sint16 lx, sint16 ly)
 {
     locator_player_t *new;
@@ -182,16 +143,16 @@ void locator_add_player(_server *server, const char *name, uint8 gender,
     }
 }
 
-void locator_show_players(_server *server)
+void locator_show_players(gameserver_t *server)
 {
     if (server)
     {
         locator_player_t *lp;
 
         textwin_show_string(0, NDI_COLR_WHITE, "There %s %d player%s online.\n",
-                           (server->player == 1) ? "is" : "are",
-                           MAX(0, server->player),
-                           (server->player == 1) ? "" : "s");
+                           (server->players == 1) ? "is" : "are",
+                           MAX(0, server->players),
+                           (server->players == 1) ? "" : "s");
 
         for (lp = locator.player; lp; lp = lp->next)
         {
@@ -218,8 +179,8 @@ void locator_focus(sint16 lx, sint16 ly)
  * locator_init() above) with the top left corner at <x>, <y>. */
 void locator_show(sint16 x, sint16 y)
 {
-    SDL_Rect box;
-    _server  *node;
+    SDL_Rect      box;
+    gameserver_t *node;
 
     box.x = x;
     box.y = y;
@@ -240,7 +201,7 @@ void locator_show(sint16 x, sint16 y)
 //    Plot(x, y, -1600, -213, SKIN_SPRITE_LOCATOR_PLAYER_THAT); // Rarotonga, Cook Islands
 
     /* Plot all servers EXCEPT the currently selected one. */
-    for (node = start_server; node; node = node->next)
+    for (node = gameserver_1st; node; node = node->next)
     {
         if (node == locator.server)
         {
@@ -262,7 +223,7 @@ void locator_show(sint16 x, sint16 y)
         /* Plot all the players on non-selected servers. */
         for (lp = locator.player; lp; lp = lp->next)
         {
-            if (lp->server == metaserver_sel)
+            if (lp->server == gameserver_sel)
             {
                 continue;
             }
@@ -273,7 +234,7 @@ void locator_show(sint16 x, sint16 y)
         /* Plot all the players on this server. */
         for (lp = locator.player; lp; lp = lp->next)
         {
-            if (lp->server != metaserver_sel)
+            if (lp->server != gameserver_sel)
             {
                 continue;
             }
@@ -338,7 +299,7 @@ uint8 locator_scroll(SDLKey key, SDLMod mod)
 
 /* Gets data from hostip.info for IP <ip>, returning longitude and latitude in
  * <lx> and <ly>. */
-static void GetHostIP(char *ip, geolocation_t *geoloc)
+static void GetHostIP(char *ip, gameserver_geoloc_t *geoloc)
 {
     CURL *curlp;
     char  buf[TINY_BUF],
@@ -372,8 +333,8 @@ static void GetHostIP(char *ip, geolocation_t *geoloc)
 /* Actually parses the data provided by hostip.info. */
 static size_t ParseHostIP(void *ptr, size_t size, size_t nmemb, void *data)
 {
-    char          *cp;
-    geolocation_t *geoloc = (geolocation_t *)data;
+    char                *cp;
+    gameserver_geoloc_t *geoloc = (gameserver_geoloc_t *)data;
 
     if ((cp = strstr((char *)ptr, "Longitude")))
     {

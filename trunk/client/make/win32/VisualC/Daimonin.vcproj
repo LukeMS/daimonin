@@ -282,6 +282,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\gameserver.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\group.c"
 				>
 			</File>
@@ -452,6 +456,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\include\font.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\include\gameserver.h"
 				>
 			</File>
 			<File
