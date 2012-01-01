@@ -81,6 +81,7 @@ static gameserver_t Default[GAMESERVER_NROF] =
 static uint8 GetMetastring(SOCKET fd);
 static uint8 ParseMetastring(char *metastring);
 static void  CharToSpace(char *str, char c);
+static int   SortPlayservers(const void *a, const void *b);
 static uint8 AddPlayserver(char *name, char *server,
                            uint16 port, sint16 players, char *version,
                            char *info);
@@ -291,9 +292,12 @@ static uint8 GetMetastring(SOCKET fd)
  * and use then sscanf to get the info. */
 static uint8 ParseMetastring(char *metastring)
 {
-    char  *cp_start,
-          *cp_end;
-    uint8  count = 0;
+    char         *cp_start,
+                 *cp_end;
+    uint8         count = 0,
+                  i;
+    gameserver_t  playserver[16]; // 16 should be more than ample (at 20120101
+                                  // there are 3).
 
 #ifdef DEBUG_GAMESERVER
     LOG(LOG_DEBUG, "PARSING METASTRING: %s\n", metastring);
@@ -328,10 +332,28 @@ static uint8 ParseMetastring(char *metastring)
         }
 
         CharToSpace(name, '_');
-        CharToSpace(info, '_');
         CharToSpace(version, '_');
-        count += AddPlayserver(name, address, (uint16)port, (sint16)players,
-                               version, info);
+        CharToSpace(info, '_');
+        MALLOC_STRING(playserver[count].name, name);
+        MALLOC_STRING(playserver[count].address, address);
+        playserver[count].port = (uint16)port;
+        playserver[count].players = (sint16)players;
+        MALLOC_STRING(playserver[count].version, version);
+        MALLOC_STRING(playserver[count].info, info);
+        count++;
+    }
+
+    qsort(playserver, count, sizeof(gameserver_t), SortPlayservers);
+
+    for (i = 0; i < count; i++)
+    {
+        AddPlayserver(playserver[i].name, playserver[i].address,
+                      playserver[i].port, playserver[i].players,
+                      playserver[i].version, playserver[i].info);
+        FREE(playserver[i].name);
+        FREE(playserver[i].address);
+        FREE(playserver[i].version);
+        FREE(playserver[i].info);
     }
 
 #ifdef DEBUG_GAMESERVER
@@ -353,6 +375,40 @@ static void CharToSpace(char *str, char c)
             *(str + i) = ' ';
         }
     }
+}
+
+static int SortPlayservers(const void *a, const void *b)
+{
+    gameserver_id_t id_a,
+                    id_b;
+
+    for (id_a = 0; id_a < GAMESERVER_NROF; id_a++)
+    {
+        if (!strcmp(((gameserver_t *)a)->name, Default[id_a].name))
+        {
+            break;
+        }
+    }
+
+    if (id_a == GAMESERVER_NROF)
+    {
+        return 1;
+    }
+
+    for (id_b = 0; id_b < GAMESERVER_NROF; id_b++)
+    {
+        if (!strcmp(((gameserver_t *)b)->name, Default[id_b].name))
+        {
+            break;
+        }
+    }
+
+    if (id_b == GAMESERVER_NROF)
+    {
+        return -1;
+    }
+
+    return id_a - id_b;
 }
 
 /* Adds a playserver to the end of the gameserver_1st list. */
