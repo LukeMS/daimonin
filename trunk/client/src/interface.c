@@ -535,11 +535,13 @@ _gui_npc *gui_npc_create(int mode, char *data, int len, int pos)
     }
 
     /* Turn any music playing down to 25% volume (relative). */
+#ifdef INSTALL_SOUND
     if (music.data)
     {
         sound_play_music(music.name, music.vol / 4, music.fade, music.loop, 1,
                          0);
     }
+#endif
 
     gui_npc->height = PrecalcGUI();
     cpl.menustatus = MENU_NPC;
@@ -1450,12 +1452,14 @@ void gui_npc_reset(void)
         cpl.menustatus = MENU_NO;
     }
 
+#ifdef INSTALL_SOUND
     /* Restore any music playing to full volume (according to options). */
     if (music.data)
     {
         sound_play_music(music.name, options.music_volume, music.fade,
                          music.loop, 1, 0);
     }
+#endif
 }
 
 static uint16 PrecalcGUI(void)
