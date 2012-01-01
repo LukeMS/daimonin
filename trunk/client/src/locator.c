@@ -156,13 +156,41 @@ void locator_show_players(gameserver_t *server)
 
         for (lp = locator.player; lp; lp = lp->next)
         {
+            char buf[TINY_BUF];
+
             if (lp->server != server)
             {
                 continue;
             }
 
-            textwin_show_string(0, NDI_COLR_WHITE, "%s %u %s %d %d",
-                                lp->name, lp->gender, lp->race, lp->geoloc.lx,
+            switch (lp->gender)
+            {
+                case 0:
+                    sprintf(buf, "%s", "male");
+
+                    break;
+
+                case 1:
+                    sprintf(buf, "%s", "female");
+
+                    break;
+
+                case 2:
+                    sprintf(buf, "%s", "hermaphrodite");
+
+                    break;
+
+                case 3:
+                    sprintf(buf, "%s", "neuter");
+
+                    break;
+
+                default:
+                    sprintf(buf, "%s", "BUGGED GENDER");
+            }
+
+            textwin_show_string(0, NDI_COLR_WHITE, "%s %s %s %d %d",
+                                lp->name, buf, lp->race, lp->geoloc.lx,
                                 lp->geoloc.ly);
         }
     }
