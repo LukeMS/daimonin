@@ -22,6 +22,8 @@
 */
 #include <include.h>
 
+static void PrintResist(char *name, int x, int y, int num);
+
 _media_file             media_file[MEDIA_MAX];
 
 /* keybind menu */
@@ -223,31 +225,6 @@ void widget_show_number(int x, int y)
     show_input_string(&font_small, &box, 0);
 }
 
-static inline void print_resist(char *name, int x, int y, int num)
-{
-    char    buf[16];
-
-    string_blt(widget_surface[WIDGET_RESIST_ID], &font_small, name, x + 5, y,
-               skin_prefs.widget_key, NULL, NULL);
-    sprintf(buf, "%02d", cpl.stats.protection[num]);
-
-    if (cpl.stats.protection[num] < 0)
-    {
-        string_blt(widget_surface[WIDGET_RESIST_ID], &font_small, buf, x + 17,
-                   y, skin_prefs.widget_valueLo, NULL, NULL);
-    }
-    else if (cpl.stats.protection[num] >= 100)
-    {
-        string_blt(widget_surface[WIDGET_RESIST_ID], &font_small, buf, x + 17,
-                   y, skin_prefs.widget_valueHi, NULL, NULL);
-    }
-    else
-    {
-        string_blt(widget_surface[WIDGET_RESIST_ID], &font_small, buf, x + 17,
-                   y, skin_prefs.widget_valueEq, NULL, NULL);
-    }
-}
-
 void widget_show_resist(int x, int y)
 {
     _BLTFX bltfx;
@@ -265,48 +242,57 @@ void widget_show_resist(int x, int y)
         bltfx.alpha=0;
 
         sprite_blt(skin_sprites[SKIN_SPRITE_RESIST_BG], 0, 0, NULL, &bltfx);
-        string_blt(widget_surface[WIDGET_RESIST_ID], &font_tiny_out, "Resistance Table", 5,  1, skin_prefs.widget_title, NULL, NULL);
-
-        print_resist("IM", 68, 3, ATNR_PHYSICAL);
-        print_resist("SL", 98, 3, ATNR_SLASH);
-        print_resist("CL", 128, 3, ATNR_CLEAVE);
-        print_resist("PI", 158, 3, ATNR_PIERCE);
-
-        print_resist("FI", 8, 15, ATNR_FIRE);
-        print_resist("CO", 38, 15, ATNR_COLD);
-        print_resist("EL", 68, 15, ATNR_ELECTRICITY);
-        print_resist("PO", 98, 15, ATNR_POISON);
-        print_resist("AC", 128, 15, ATNR_ACID);
-        print_resist("SO", 158, 15, ATNR_SONIC);
-
-        print_resist("CH", 8, 27, ATNR_CHANNELLING);
-        print_resist("CR", 38, 27, ATNR_CORRUPTION);
-        print_resist("PS", 68, 27, ATNR_PSIONIC);
-        print_resist("LI", 98, 27, ATNR_LIGHT);
-        print_resist("SH", 128, 27, ATNR_SHADOW);
-        print_resist("LS", 158, 27, ATNR_LIFESTEAL);
-
-        print_resist("AE", 8, 39, ATNR_AETHER);
-        print_resist("NE", 38, 39, ATNR_NETHER);
-        print_resist("CH", 68, 39, ATNR_CHAOS);
-        print_resist("DE", 98, 39, ATNR_DEATH);
-        print_resist("WE", 128, 39, ATNR_WEAPONMAGIC);
-        print_resist("GO", 158, 39, ATNR_GODPOWER);
-
-        print_resist("DR", 8, 51, ATNR_DRAIN);
-        print_resist("DE", 38, 51, ATNR_DEPLETION);
-        print_resist("CM", 68, 51, ATNR_COUNTERMAGIC);
-        print_resist("CA", 98, 51, ATNR_CANCELLATION);
-        print_resist("CF", 128, 51, ATNR_CONFUSION);
-        print_resist("FE", 158, 51, ATNR_FEAR);
-
-        print_resist("SL", 8, 63, ATNR_SLOW);
-        print_resist("PA", 38, 63, ATNR_PARALYZE);
-        print_resist("SN", 68, 63, ATNR_SNARE);
+        string_blt(widget_surface[WIDGET_RESIST_ID], &font_tiny_out, "Resistance Table", 4,  1, skin_prefs.widget_title, NULL, NULL);
+        PrintResist("IM", 68, 3, ATNR_PHYSICAL);
+        PrintResist("SL", 100, 3, ATNR_SLASH);
+        PrintResist("CL", 132, 3, ATNR_CLEAVE);
+        PrintResist("PI", 164, 3, ATNR_PIERCE);
+        PrintResist("FI", 4, 15, ATNR_FIRE);
+        PrintResist("CO", 36, 15, ATNR_COLD);
+        PrintResist("EL", 68, 15, ATNR_ELECTRICITY);
+        PrintResist("PO", 100, 15, ATNR_POISON);
+        PrintResist("AC", 132, 15, ATNR_ACID);
+        PrintResist("SO", 164, 15, ATNR_SONIC);
+        PrintResist("CH", 4, 27, ATNR_CHANNELLING);
+        PrintResist("CR", 36, 27, ATNR_CORRUPTION);
+        PrintResist("PS", 68, 27, ATNR_PSIONIC);
+        PrintResist("LI", 100, 27, ATNR_LIGHT);
+        PrintResist("SH", 132, 27, ATNR_SHADOW);
+        PrintResist("LS", 164, 27, ATNR_LIFESTEAL);
+        PrintResist("AE", 4, 39, ATNR_AETHER);
+        PrintResist("NE", 36, 39, ATNR_NETHER);
+        PrintResist("CH", 68, 39, ATNR_CHAOS);
+        PrintResist("DE", 100, 39, ATNR_DEATH);
+        PrintResist("WE", 132, 39, ATNR_WEAPONMAGIC);
+        PrintResist("GO", 164, 39, ATNR_GODPOWER);
+        PrintResist("DR", 4, 51, ATNR_DRAIN);
+        PrintResist("DE", 36, 51, ATNR_DEPLETION);
+        PrintResist("CM", 68, 51, ATNR_COUNTERMAGIC);
+        PrintResist("CA", 100, 51, ATNR_CANCELLATION);
+        PrintResist("CF", 132, 51, ATNR_CONFUSION);
+        PrintResist("FE", 164, 51, ATNR_FEAR);
+        PrintResist("SL", 4, 63, ATNR_SLOW);
+        PrintResist("PA", 36, 63, ATNR_PARALYZE);
+        PrintResist("SN", 68, 63, ATNR_SNARE);
     }
     box.x=x;
     box.y=y;
     SDL_BlitSurface(widget_surface[WIDGET_RESIST_ID], NULL, ScreenSurface, &box);
+}
+
+static void PrintResist(char *name, int x, int y, int num)
+{
+    char   buf[16];
+    sint8  resist = cpl.stats.protection[num];
+    uint32 colr = (!resist)
+                  ? NDI_COLR_GREY
+                  : percentage_colr(((resist + 100) * 0.005 * 100));
+
+    string_blt(widget_surface[WIDGET_RESIST_ID], &font_small, name, x, y,
+               skin_prefs.widget_key, NULL, NULL);
+    sprintf(buf, "%02d", resist);
+    string_blt(widget_surface[WIDGET_RESIST_ID], &font_small, buf, x + 12, y,
+               colr, NULL, NULL);
 }
 
 #define ICONDEFLEN 32
