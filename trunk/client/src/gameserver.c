@@ -100,6 +100,7 @@ void gameserver_init(void)
         FREE(node->address);
         FREE(node->version);
         FREE(node->info);
+        FREE(node->online);
         FREE(node);
     }
 
