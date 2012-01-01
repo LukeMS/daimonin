@@ -106,10 +106,16 @@ function topicGreeting()
         ib:AddMsg("I can teach you the wizardry skill and the ^Probe^ and ^Magic Bullet^ spells.\n\n")
         ib:AddMsg("But you will have to do something for me. Are you interested?")
         ib:AddLink("Please tell me about the quest", "explain quest")
+    elseif qstat_1 == game.QSTAT_ACTIVE then
+        ib:SetHeader("st_001", me)
+        ib:SetMsg("Please come back when you have killed the rat king.")
     elseif qstat_1 == game.QSTAT_DONE and qstat_2 == game.QSTAT_NO then
         ib:SetHeader("st_001", me)
         ib:SetMsg("You have done a good job with the rats. I still have the ^Magic Bullet^ spell to teach you. If you retrieve an item I have lost, I'll teach it to you.")
         ib:AddLink("Tell me about the quest", "explain quest")
+    elseif qstat_1 == game.QSTAT_DONE and qstat_2 == game.QSTAT_ACTIVE then
+        ib:SetHeader("st_001", me)
+        ib:SetMsg("Please come back when you have my rod.")
     elseif qstat_1 == game.QSTAT_DONE and qstat_2 == game.QSTAT_DONE then
         ib:SetHeader("st_001", me)
         ib:SetMsg("Thank you for getting my rod back. I think that soon it will be as good as new again. Two weeks.\n\n")
