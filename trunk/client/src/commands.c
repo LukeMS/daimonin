@@ -164,8 +164,8 @@ void PingCmd(char *data, int len)
         {
             node->ping_server = (uint32)strtoul(data, &data, 16);
             node->players = (sint16)strtol(data + 1, &data, 16);
-            FREE(node->online);
-            MALLOC_STRING(node->online, data + 1);
+            FREE(node->pingstring);
+            MALLOC_STRING(node->pingstring, data + 1);
             locator_clear_players(node);
             gameserver_parse_pingstring(node);
         }

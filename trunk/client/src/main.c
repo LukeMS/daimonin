@@ -543,7 +543,7 @@ uint8 game_status_chain(void)
                     {
                         node_ping->players = 0;
                         node_ping->ping = -2; // SERVER DOWN
-                        FREE(node_ping->online);
+                        FREE(node_ping->pingstring);
                         locator_clear_players(node_ping);
                     }
                     else
