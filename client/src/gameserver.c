@@ -100,7 +100,7 @@ void gameserver_init(void)
         FREE(node->address);
         FREE(node->version);
         FREE(node->info);
-        FREE(node->online);
+        FREE(node->pingstring);
         FREE(node);
     }
 
@@ -181,12 +181,12 @@ void gameserver_query_meta(uint8 force)
 void gameserver_parse_pingstring(gameserver_t *server)
 {
     if (server &&
-        server->online)
+        server->pingstring)
     {
         char *cp_start,
              *cp_end;
 
-        for (cp_start = server->online; *cp_start; cp_start = cp_end + 1)
+        for (cp_start = server->pingstring; *cp_start; cp_start = cp_end + 1)
         {
             char          name[TINY_BUF],
                           race[TINY_BUF];

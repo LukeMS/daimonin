@@ -66,7 +66,7 @@ typedef struct gameserver_t
     char                *info;
     sint16               ping;
     uint32               ping_server;
-    char                *online;
+    char                *pingstring;
     gameserver_geoloc_t  geoloc;
 }
 gameserver_t;
