@@ -124,6 +124,7 @@ void gameserver_add(gameserver_id_t id)
 void gameserver_query_meta(uint8 force)
 {
     static uint8 done = 0;
+    uint8        meta;
 
     if (!force &&
         done)
@@ -142,33 +143,39 @@ void gameserver_query_meta(uint8 force)
 
     if (options.gameserver_nometa)
     {
-        textwin_show_string(0, NDI_COLR_OLIVE, "Metaserver ignored.");
+        textwin_show_string(0, NDI_COLR_OLIVE, "Metaserver ignored (using default list)!");
+        meta = 0;
     }
     else
     {
-        SOCKET meta = SOCKET_NO;
+        SOCKET sock = SOCKET_NO;
 
-        if (SOCKET_OpenSocket(&meta, GAMESERVER_META_ADDRESS,
-                              GAMESERVER_META_PORT) &&
-            GetMetastring(meta))
+        if (!SOCKET_OpenSocket(&sock, GAMESERVER_META_ADDRESS,
+                               GAMESERVER_META_PORT) ||
+            !GetMetastring(sock))
         {
-            textwin_show_string(0, NDI_COLR_SILVER, "Query metaserver (%s:%d)... ~OK~!",
+            textwin_show_string(0, NDI_COLR_SILVER, "Query metaserver (%s:%d)... ~FAILED~ (using default list)!",
                                GAMESERVER_META_ADDRESS, GAMESERVER_META_PORT);
+            meta = 0;
         }
         else
         {
-            gameserver_id_t id;
-
-            textwin_show_string(0, NDI_COLR_SILVER, "Query metaserver (%s:%d)... ~FAILED~ (using default list)!",
+            textwin_show_string(0, NDI_COLR_SILVER, "Query metaserver (%s:%d)... ~OK~!",
                                GAMESERVER_META_ADDRESS, GAMESERVER_META_PORT);
-
-            for (id = GAMESERVER_MAIN_ID; id < GAMESERVER_NROF; id++)
-            {
-                gameserver_add(id);
-            }
+            meta = 1;
         }
 
-        SOCKET_CloseSocket(meta);
+        SOCKET_CloseSocket(sock);
+    }
+
+    if (!meta)
+    {
+        gameserver_id_t id;
+
+        for (id = GAMESERVER_MAIN_ID; id < GAMESERVER_NROF; id++)
+        {
+            gameserver_add(id);
+        }
     }
 
     gameserver_sel = gameserver_1st;
