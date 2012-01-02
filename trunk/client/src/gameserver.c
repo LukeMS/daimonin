@@ -121,16 +121,9 @@ void gameserver_add(gameserver_id_t id)
                   Default[id].players, Default[id].version, Default[id].info);
 }
 
-void gameserver_query_meta(uint8 force)
+void gameserver_query_meta(void)
 {
-    static uint8 done = 0;
     uint8        meta;
-
-    if (!force &&
-        done)
-    {
-        return;
-    }
 
     interface_mode = GUI_NPC_MODE_NO;
     clear_group();
@@ -181,7 +174,6 @@ void gameserver_query_meta(uint8 force)
     gameserver_sel = gameserver_1st;
     locator_init(330, 248);
     textwin_show_string(0, NDI_COLR_SILVER, "Select a server.");
-    done = 1;
 }
 
 /* Parses the ping string, if there is one, for the specified server and, if it
@@ -221,6 +213,32 @@ void gameserver_parse_pingstring(gameserver_t *server)
             }
         }
     }
+}
+
+gameserver_t *gameserver_get_by_id(gameserver_id_t id)
+{
+    gameserver_t *node;
+
+    if (id == GAMESERVER_META_ID ||
+        id >= GAMESERVER_NROF)
+    {
+        LOG(LOG_ERROR, "Playserver ID out of range (%d)!\n", id);
+
+        return NULL;
+    }
+
+    for (node = gameserver_1st; node; node = node->next)
+    {
+        if (!strcmp(node->name, Default[id].name))
+        {
+            return node;
+        }
+    }
+
+    LOG(LOG_ERROR, "Default %s playserver could not be found in active list!\n",
+        Default[id].name);
+
+    return NULL;
 }
 
 /* Gets the metastring from the metaserver. */
@@ -429,8 +447,7 @@ static uint8 AddPlayserver(char *name, char *address,
     {
         MALLOC(new, sizeof(gameserver_t));
         gameserver_1st = new;
-        MALLOC_STRING(new->address, address);
-        new->port = port;
+        MALLOC_STRING(new->name, name);
     }
     else
     {
@@ -438,12 +455,11 @@ static uint8 AddPlayserver(char *name, char *address,
 
         for (node = gameserver_1st; node; node = node->next)
         {
-            if (node->address &&
-                !strcmp(node->address, address) &&
-                node->port == port)
+            if (node->name &&
+                !strcmp(node->name, name))
             {
                 new = node;
-                FREE(new->name);
+                FREE(new->address);
                 FREE(new->version);
                 FREE(new->info);
 
@@ -453,8 +469,7 @@ static uint8 AddPlayserver(char *name, char *address,
             {
                 MALLOC(new, sizeof(gameserver_t));
                 node->next = new;
-                MALLOC_STRING(new->address, address);
-                new->port = port;
+                MALLOC_STRING(new->name, name);
 
                 break;
             }
@@ -463,7 +478,8 @@ static uint8 AddPlayserver(char *name, char *address,
 
     new->players = players;
     new->ping = -1; // UNKNOWN
-    MALLOC_STRING(new->name, name);
+    MALLOC_STRING(new->address, address);
+    new->port = port;
     MALLOC_STRING(new->version, version);
     MALLOC_STRING(new->info, info);
 #ifdef DEBUG_GAMESERVER

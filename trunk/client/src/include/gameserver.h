@@ -74,9 +74,10 @@ gameserver_t;
 extern gameserver_t *gameserver_1st,
                     *gameserver_sel;
 
-extern void gameserver_init(void);
-extern void gameserver_add(gameserver_id_t id);
-extern void gameserver_query_meta(uint8 force);
-extern void gameserver_parse_pingstring(gameserver_t *server);
+extern void          gameserver_init(void);
+extern void          gameserver_add(gameserver_id_t id);
+extern void          gameserver_query_meta(void);
+extern void          gameserver_parse_pingstring(gameserver_t *server);
+extern gameserver_t *gameserver_get_by_id(gameserver_id_t id);
 
 #endif /* ifndef __GAMESERVER_H */
