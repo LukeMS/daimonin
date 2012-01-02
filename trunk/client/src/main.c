@@ -1887,6 +1887,11 @@ static void ParseInvocationLine(int argc, char *argv[])
             }
             else
             {
+                if (nr == 0)
+                {
+                    options.gameserver_showlocal = 1;
+                }
+
                 options.cli_server = (int)nr;
                 invalid[0] = '\0';
             }
