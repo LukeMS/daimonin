@@ -339,8 +339,6 @@ typedef enum _game_status
     /* start all up without full reset or meta calling*/
     GAME_STATUS_WAITLOOP,
     /* we are NOT connected to anything*/
-    GAME_STATUS_STARTCONNECT,
-    /* we have a server+port, init and start*/
     GAME_STATUS_CONNECT,
     /* if this is set, we start connecting*/
     GAME_STATUS_SETUP,
