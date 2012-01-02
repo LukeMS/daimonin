@@ -582,10 +582,20 @@ uint8 game_status_chain(void)
 
         if (options.cli_server != GAMESERVER_META_ID)
         {
-            gameserver_sel = gameserver_get_by_id(options.cli_server);
+            if (!(gameserver_sel = gameserver_get_by_id(options.cli_server)))
+            {
+               textwin_show_string(0, NDI_COLR_RED, "Specified server #%d not in active list! Please select another from the list.",
+                                   options.cli_server);
+               gameserver_sel = gameserver_1st;
+               GameStatus = GAME_STATUS_WAITLOOP;
+            }
+            else
+            {
+                locator_show_players(gameserver_sel);
+                GameStatus = GAME_STATUS_CONNECT;
+            }
+
             options.cli_server = GAMESERVER_META_ID;
-            locator_show_players(gameserver_sel);
-            GameStatus = GAME_STATUS_CONNECT;
         }
         else
         {
