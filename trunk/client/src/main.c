@@ -1084,11 +1084,18 @@ static void PlayActionSounds(void)
         cpl.warn_statup = 0;
     }
 
-    if (cpl.warn_drain)
+    if (cpl.warn_drained == 2)
     {
         sound_play_one_repeat(SOUNDTYPE_CLIENT, SOUND_WARN_DRAIN,
                               SPECIAL_SOUND_DRAIN);
-        cpl.warn_drain = 0;
+        cpl.warn_drained = 1;
+    }
+
+    if (cpl.warn_depleted == 2)
+    {
+        sound_play_one_repeat(SOUNDTYPE_CLIENT, SOUND_WARN_DRAIN,
+                              SPECIAL_SOUND_DRAIN);
+        cpl.warn_depleted = 1;
     }
 }
 

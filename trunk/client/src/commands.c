@@ -1099,8 +1099,7 @@ void StatsCmd(char *data, int len)
                     break;
                 case CS_STAT_EXP:
                     temp = GetSINT32_String(data + i);
-                    if (temp < cpl.stats.exp)
-                        cpl.warn_drain = 1;
+                    cpl.warn_depleted = (temp < cpl.stats.exp) ? 2 : 0;
                     cpl.stats.exp = temp;
                     cpl.stats.exp_level = server_level.level; //we need to set it to max_level as default!!!
                     /* get the real level depending on the exp */
@@ -1117,10 +1116,7 @@ void StatsCmd(char *data, int len)
                     break;
                 case CS_STAT_LEVEL:
                     cpl.stats.level = (sint8) * (data + i++);
-                    if (cpl.stats.level != cpl.stats.exp_level)
-                    {
-                        cpl.warn_drain = 1;
-                    }
+                    cpl.warn_drained = (cpl.stats.level < cpl.stats.exp_level) ? 2 : 0;
                     WIDGET_REDRAW(WIDGET_MAIN_LVL_ID) = 1;
                     break;
                 case CS_STAT_WC:

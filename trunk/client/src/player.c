@@ -733,29 +733,49 @@ void widget_show_main_lvl(int x, int y)
 
     if (widget_data[WIDGET_MAIN_LVL_ID].redraw)
     {
-        widget_data[WIDGET_MAIN_LVL_ID].redraw=0;
+        uint32 colr;
 
+        widget_data[WIDGET_MAIN_LVL_ID].redraw=0;
         bltfx.surface=widget_surface[WIDGET_MAIN_LVL_ID];
         bltfx.flags = 0;
         bltfx.alpha=0;
-
         sprite_blt(skin_sprites[SKIN_SPRITE_MAIN_LVL_BG], 0, 0, NULL, &bltfx);
-
         string_blt(widget_surface[WIDGET_MAIN_LVL_ID], &font_tiny_out, "Level / Exp", 4, 1, skin_prefs.widget_key, NULL, NULL);
         sprintf(buf, "%d", cpl.stats.level);
-        if (cpl.stats.exp_level != cpl.stats.level)
-            string_blt(widget_surface[WIDGET_MAIN_LVL_ID], &font_large_out, buf, 91 - string_width(&font_large_out, buf), 4, skin_prefs.widget_valueLo, NULL, NULL);
+
+        if (cpl.warn_drained)
+        {
+            colr = skin_prefs.widget_valueLo;
+        }
         else if (cpl.stats.level == MAXLEVEL)
-            string_blt(widget_surface[WIDGET_MAIN_LVL_ID], &font_large_out, buf, 91 - string_width(&font_large_out, buf), 4, skin_prefs.widget_valueHi, NULL, NULL);
+        {
+            colr = skin_prefs.widget_valueHi;
+        }
         else
-            string_blt(widget_surface[WIDGET_MAIN_LVL_ID], &font_large_out, buf, 91 - string_width(&font_large_out, buf), 4, skin_prefs.widget_valueEq, NULL, NULL);
+        {
+            colr = skin_prefs.widget_valueEq;
+        }
+
+        string_blt(widget_surface[WIDGET_MAIN_LVL_ID], &font_large_out, buf,
+                   91 - string_width(&font_large_out, buf), 4, colr, NULL,
+                   NULL);
         sprintf(buf, "%d", cpl.stats.exp);
-        level_exp = cpl.stats.exp - server_level.exp[cpl.stats.exp_level];
-        multi = (float)level_exp /
-                (float)(server_level.exp[cpl.stats.exp_level + 1] -
-                        server_level.exp[cpl.stats.exp_level]);
+//        level_exp = cpl.stats.exp - server_level.exp[cpl.stats.exp_level];
+//        multi = (float)level_exp /
+//                (float)(server_level.exp[cpl.stats.exp_level + 1] -
+//                        server_level.exp[cpl.stats.exp_level]);
+
+        if (cpl.warn_depleted)
+        {
+            colr = skin_prefs.widget_valueLo;
+        }
+        else
+        {
+            colr = skin_prefs.widget_valueEq;
+        }
+
         string_blt(widget_surface[WIDGET_MAIN_LVL_ID], &font_small, buf, 5, 20,
-                   percentage_colr(multi * 100), NULL, NULL);
+                   colr, NULL, NULL);
 
         /* calc the exp bubbles */
         level_exp = cpl.stats.exp - server_level.exp[cpl.stats.exp_level];
