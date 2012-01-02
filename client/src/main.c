@@ -234,11 +234,6 @@ void init_game_data(void)
     GameStatus = GAME_STATUS_INIT;
     GameStatusSelect = GAME_STATUS_LOGIN_ACCOUNT;
     LoginInputStep = LOGIN_STEP_NOTHING;
-#ifdef DAI_DEVELOPMENT
-    options.gameserver_showlocal = 1;
-#else
-    options.gameserver_showlocal = 0;
-#endif
     SoundStatus = 1;
     MapStatusX = MAP_MAX_SIZE;
     MapStatusY = MAP_MAX_SIZE;
