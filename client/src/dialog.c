@@ -1769,7 +1769,7 @@ void show_login_server(void)
      * It's broken!'). */
     sprite_blt(skin_sprites[SKIN_SPRITE_PROGRESS_BACK], x + 4,
                y + (skin_sprites[SKIN_SPRITE_PROGRESS_BACK]->bitmap->h - 5), NULL, NULL);
-    progress = (float)request_file_chain / 17.0f * 100;
+    progress = (float)request_file_chain / 16.0f * 100;
     box.x = 0;
     box.y = 0;
     box.h = skin_sprites[SKIN_SPRITE_PROGRESS]->bitmap->h;
