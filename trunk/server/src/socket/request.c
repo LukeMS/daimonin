@@ -137,7 +137,6 @@ void esrv_update_stats(player *pl)
     AddIfShort(pl->last_gen_hp, pl->gen_hp, CS_STAT_REG_HP);
     AddIfShort(pl->last_gen_sp, pl->gen_sp, CS_STAT_REG_MANA);
     AddIfShort(pl->last_gen_grace, pl->gen_grace, CS_STAT_REG_GRACE);
-    AddIfCharFlag(pl->last_level, pl->ob->level, group_update, GROUP_UPDATE_LEVEL, CS_STAT_LEVEL);
     AddIfInt(pl->last_weight_limit, pl->weight_limit, CS_STAT_WEIGHT_LIM);
     AddIfInt(pl->last_weapon_sp, pl->weapon_sp, CS_STAT_WEAP_SP);
     AddIfInt(pl->last_speed_enc, pl->speed_enc, CS_STAT_SPEED);
@@ -145,14 +144,6 @@ void esrv_update_stats(player *pl)
 
     if (pl->ob != NULL)
     {
-        /* these will update too when we are in a group */
-        AddIfIntFlag(pl->last_stats.hp, pl->ob->stats.hp, group_update, GROUP_UPDATE_HP, CS_STAT_HP);
-        AddIfIntFlag(pl->last_stats.maxhp, pl->ob->stats.maxhp, group_update, GROUP_UPDATE_MAXHP, CS_STAT_MAXHP);
-        AddIfShortFlag(pl->last_stats.sp, pl->ob->stats.sp, group_update, GROUP_UPDATE_SP, CS_STAT_SP);
-        AddIfShortFlag(pl->last_stats.maxsp, pl->ob->stats.maxsp, group_update, GROUP_UPDATE_MAXSP, CS_STAT_MAXSP);
-        AddIfShortFlag(pl->last_stats.grace, pl->ob->stats.grace, group_update, GROUP_UPDATE_GRACE, CS_STAT_GRACE);
-        AddIfShortFlag(pl->last_stats.maxgrace, pl->ob->stats.maxgrace, group_update, GROUP_UPDATE_MAXGRACE,CS_STAT_MAXGRACE);
-
         AddIfChar(pl->last_stats.Str, pl->ob->stats.Str, CS_STAT_STR);
         AddIfChar(pl->last_stats.Int, pl->ob->stats.Int, CS_STAT_INT);
         AddIfChar(pl->last_stats.Pow, pl->ob->stats.Pow, CS_STAT_POW);
@@ -172,6 +163,15 @@ void esrv_update_stats(player *pl)
         AddIfInt(pl->dist_last_action_time, pl->dist_action_time, CS_STAT_DIST_TIME);
         
         AddIfInt(pl->last_action_timer, pl->action_timer, CS_STAT_ACTION_TIME);
+
+        /* these will update too when we are in a group */
+        AddIfIntFlag(pl->last_stats.hp, pl->ob->stats.hp, group_update, GROUP_UPDATE_HP, CS_STAT_HP);
+        AddIfIntFlag(pl->last_stats.maxhp, pl->ob->stats.maxhp, group_update, GROUP_UPDATE_MAXHP, CS_STAT_MAXHP);
+        AddIfShortFlag(pl->last_stats.sp, pl->ob->stats.sp, group_update, GROUP_UPDATE_SP, CS_STAT_SP);
+        AddIfShortFlag(pl->last_stats.maxsp, pl->ob->stats.maxsp, group_update, GROUP_UPDATE_MAXSP, CS_STAT_MAXSP);
+        AddIfShortFlag(pl->last_stats.grace, pl->ob->stats.grace, group_update, GROUP_UPDATE_GRACE, CS_STAT_GRACE);
+        AddIfShortFlag(pl->last_stats.maxgrace, pl->ob->stats.maxgrace, group_update, GROUP_UPDATE_MAXGRACE,CS_STAT_MAXGRACE);
+        AddIfCharFlag(pl->last_level, pl->ob->level, group_update, GROUP_UPDATE_LEVEL, CS_STAT_LEVEL);
     }
 
     for (i = 0; i < NROFSKILLGROUPS_ACTIVE; i++)
