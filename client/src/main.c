@@ -253,7 +253,7 @@ void init_game_data(void)
     LoginInputStep = LOGIN_STEP_NAME;
     options.cli_account[0] = '\0';
     options.cli_pass[0] = '\0';
-    options.cli_server = -1;
+    options.cli_server = GAMESERVER_META_ID;
     options.cli_addons[0] = '\0';
     options.resolution = 0;
     options.channelformat=0;
@@ -510,14 +510,14 @@ uint8 game_status_chain(void)
             sound_play_music("orchestral.ogg", options.music_volume, 0, -1, 0, MUSIC_MODE_DIRECT);
 #endif
         clear_map();
-        GameStatus = (options.cli_server >= 0) ? GAME_STATUS_START
-                                               : GAME_STATUS_META;
+        GameStatus = GAME_STATUS_META;
     }
     /* initialise, connect, and query the meta server */
     else if (GameStatus == GAME_STATUS_META)
     {
-        gameserver_query_meta(0);
-        node_ping = gameserver_1st;
+        gameserver_query_meta();
+        node_ping = (options.cli_server == GAMESERVER_META_ID)
+                    ? gameserver_1st : NULL;
         GameStatus = GAME_STATUS_PINGLOOP;
     }
     /* ping each known server */
@@ -526,60 +526,55 @@ uint8 game_status_chain(void)
         /* We just ping once automatically (and then on demand) because it's
          * not funny (and the server is wise to such tricks) to hammer the
          * server repeatedly with unnecessary cmds. */
-        if (!options.no_ping)
+        if (node_ping)
         {
-            if (!node_ping)
-            {
-                GameStatus = GAME_STATUS_START;
-            }
-            else
-            {
-                static uint32 ticks = 0;
+            static uint32 ticks = 0;
 
-                if (!ticks)
+            if (!ticks)
+            {
+                if (!SOCKET_OpenClientSocket(&csocket, node_ping->address,
+                                             node_ping->port))
                 {
-                    if (!SOCKET_OpenClientSocket(&csocket, node_ping->address,
-                                                 node_ping->port))
-                    {
-                        node_ping->players = 0;
-                        node_ping->ping = -2; // SERVER DOWN
-                        FREE(node_ping->pingstring);
-                        locator_clear_players(node_ping);
-                    }
-                    else
-                    {
-//LOG(LOG_MSG,">>>>Open %s\n",csocket.host);
-                        ticks = SDL_GetTicks() + 250;
-                        node_ping->ping = -1; // UNKNOWN
-                        socket_thread_start();
-                        client_cmd_ping(node_ping->ping_server);
-                    }
+                    node_ping->players = 0;
+                    node_ping->ping = -2; // SERVER DOWN
+                    FREE(node_ping->pingstring);
+                    locator_clear_players(node_ping);
                 }
                 else
                 {
-                    DoClient(); // check for response
-                }
-
-                if (node_ping->ping != -1 ||
-                    ticks <= SDL_GetTicks())
-                {
-                    if (node_ping->ping != -2)
-                    {
-//LOG(LOG_MSG,">>>>Good close %s\n",csocket.host);
-                        SOCKET_CloseClientSocket(&csocket);
-                        handle_socket_shutdown(); // clear threads
-                        ticks = 0;
-                    }
-
-                    node_ping = node_ping->next;
+//LOG(LOG_MSG,">>>>Open %s\n",csocket.host);
+                    ticks = SDL_GetTicks() + 250;
+                    node_ping->ping = -1; // UNKNOWN
+                    socket_thread_start();
+                    client_cmd_ping(node_ping->ping_server);
                 }
             }
+            else
+            {
+                DoClient(); // check for response
+            }
+
+            if (node_ping->ping != -1 ||
+                ticks <= SDL_GetTicks())
+            {
+                if (node_ping->ping != -2)
+                {
+//LOG(LOG_MSG,">>>>Good close %s\n",csocket.host);
+                    SOCKET_CloseClientSocket(&csocket);
+                    handle_socket_shutdown(); // clear threads
+                    ticks = 0;
+                }
+
+                node_ping = node_ping->next;
+            }
+        }
+        else
+        {
+            GameStatus = GAME_STATUS_START;
         }
     }
     else if (GameStatus == GAME_STATUS_START)
     {
-        options.no_ping = 1;
-        locator_show_players(gameserver_sel);
         interface_mode = GUI_NPC_MODE_NO;
         clear_group();
         map_udate_flag = 2;
@@ -589,9 +584,19 @@ uint8 game_status_chain(void)
         reset_keys();
         sprite_clear_backbuffer();
         SOCKET_CloseClientSocket(&csocket);
-        GameStatus = (options.cli_server == GAMESERVER_META_ID)
-                     ? GAME_STATUS_WAITLOOP : GAME_STATUS_STARTCONNECT;
-        options.cli_server = GAMESERVER_META_ID; // only try once
+
+        if (options.cli_server != GAMESERVER_META_ID)
+        {
+            gameserver_sel = gameserver_get_by_id(options.cli_server);
+            options.cli_server = GAMESERVER_META_ID;
+            locator_show_players(gameserver_sel);
+            GameStatus = GAME_STATUS_STARTCONNECT;
+        }
+        else
+        {
+            locator_show_players(gameserver_sel);
+            GameStatus = GAME_STATUS_WAITLOOP;
+        }
     }
     else if (GameStatus == GAME_STATUS_STARTCONNECT)
     {
@@ -1323,7 +1328,6 @@ int main(int argc, char *argv[])
     else
     {
         textwin_show_string(0, NDI_COLR_SILVER, "Init network... ~OK~!");
-        gameserver_query_meta(1);
     }
 
     /* Wait for keypress. */
@@ -1874,8 +1878,6 @@ static void ParseInvocationLine(int argc, char *argv[])
             }
             else
             {
-                gameserver_add(nr);
-                gameserver_sel = gameserver_1st;
                 options.cli_server = (int)nr;
                 invalid[0] = '\0';
             }
