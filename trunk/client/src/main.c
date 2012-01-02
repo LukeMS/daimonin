@@ -590,7 +590,7 @@ uint8 game_status_chain(void)
             gameserver_sel = gameserver_get_by_id(options.cli_server);
             options.cli_server = GAMESERVER_META_ID;
             locator_show_players(gameserver_sel);
-            GameStatus = GAME_STATUS_STARTCONNECT;
+            GameStatus = GAME_STATUS_CONNECT;
         }
         else
         {
@@ -598,14 +598,11 @@ uint8 game_status_chain(void)
             GameStatus = GAME_STATUS_WAITLOOP;
         }
     }
-    else if (GameStatus == GAME_STATUS_STARTCONNECT)
+    else if (GameStatus == GAME_STATUS_CONNECT)
     {
         face_list[FACE_MAX_NROF - 1].sprite = skin_sprites[SKIN_SPRITE_LOADING];
         map_udate_flag = 2;
-        GameStatus = GAME_STATUS_CONNECT;
-    }
-    else if (GameStatus == GAME_STATUS_CONNECT)
-    {
+
         if (!SOCKET_OpenClientSocket(&csocket, gameserver_sel->address,
                                      gameserver_sel->port))
         {

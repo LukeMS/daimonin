@@ -954,7 +954,7 @@ int key_meta_menu(SDLKey key)
             break;
 
         case SDLK_RETURN:
-            GameStatus = GAME_STATUS_STARTCONNECT;
+            GameStatus = GAME_STATUS_CONNECT;
 
             break;
 
