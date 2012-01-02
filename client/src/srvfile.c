@@ -769,7 +769,7 @@ static void LoadSettings(void)
 
             server_level.level = atoi(value);
 
-            for (i = server_level.level; i > 0; i--)
+            for (i = 0; i <= server_level.level; i++)
             {
                 if (PHYSFS_readString(handle, buf, sizeof(buf)) < 0)
                 {
