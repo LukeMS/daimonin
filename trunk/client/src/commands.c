@@ -1099,7 +1099,7 @@ void StatsCmd(char *data, int len)
                     break;
                 case CS_STAT_EXP:
                     temp = GetSINT32_String(data + i);
-                    cpl.warn_depleted = (temp < cpl.stats.exp) ? 2 : 0;
+                    cpl.warn_exp_down = (temp < cpl.stats.exp) ? 1 : 0;
                     cpl.stats.exp = temp;
                     cpl.stats.exp_level = server_level.level; //we need to set it to max_level as default!!!
                     /* get the real level depending on the exp */
