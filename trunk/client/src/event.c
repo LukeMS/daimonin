@@ -2686,6 +2686,7 @@ void check_menu_keys(int menu, int key)
           ctrlPressed = (SDL_GetModState() & KMOD_CTRL);
     sint8 n;
     uint8 res_change = 0;
+    widget_id_t wid;
 
     if (cpl.menustatus == MENU_NO ||
         check_keys_menu_status(key))
@@ -2825,10 +2826,14 @@ void check_menu_keys(int menu, int key)
         case SDLK_ESCAPE:
             sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICK, 0, 0, MENU_SOUND_VOL);
             save_options_dat();
+
+            for (wid = 0; wid < WIDGET_NROF; wid++)
+            {
+                WIDGET_REDRAW(wid) = 1;
+            }
+
             textwin_set_font(TEXTWIN_MSG_ID);
             textwin_set_font(TEXTWIN_CHAT_ID);
-            textwin_show_window(TEXTWIN_MSG_ID);
-            textwin_show_window(TEXTWIN_CHAT_ID);
             Mix_VolumeMusic(options.music_volume);
             if (options.playerdoll)
                 WIDGET_SHOW(WIDGET_PDOLL_ID) = 1;
