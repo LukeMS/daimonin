@@ -882,70 +882,79 @@ void widget_show_skill_exp(int x, int y)
             }
             string_blt(widget_surface[WIDGET_SKILL_EXP_ID], &font_small, buf, 28, -1, skin_prefs.widget_valueEq, NULL, NULL);
 
-            if (skill_list[cpl.skill_g].entry[cpl.skill_e].exp >= 0)
-            {
-                level_exp = skill_list[cpl.skill_g].entry[cpl.skill_e].exp - server_level.exp[skill_list[cpl.skill_g].entry[cpl.skill_e].exp_level];
-                multi = modf(((double)level_exp/(double)
-                           (server_level.exp[skill_list[cpl.skill_g].entry[cpl.skill_e].exp_level+1]-server_level.exp[skill_list[cpl.skill_g].entry[cpl.skill_e].exp_level])*10.0), &line);
-
-                liTExp    = skill_list[cpl.skill_g].entry[cpl.skill_e].exp;
-                liTExpTNL = server_level.exp[skill_list[cpl.skill_g].entry[cpl.skill_e].exp_level + 1];
-
-                liLExp    = liTExp    - server_level.exp[skill_list[cpl.skill_g].entry[cpl.skill_e].exp_level];
-                liLExpTNL = liTExpTNL - server_level.exp[skill_list[cpl.skill_g].entry[cpl.skill_e].exp_level];
-
-                fLExpPercent = ((float) liLExp / (float) (liLExpTNL)) * 100.0f;
-            }
-
-            switch (options.iExpDisplay)
-            {
-                /* Default */
-                default:
-                case 0:
-                    if(skill_list[cpl.skill_g].entry[cpl.skill_e].exp >=0)
-                        sprintf(buf, "%d / %-9d", skill_list[cpl.skill_g].entry[cpl.skill_e].exp_level,skill_list[cpl.skill_g].entry[cpl.skill_e].exp );
-                    else if(skill_list[cpl.skill_g].entry[cpl.skill_e].exp == -2)
-                        sprintf(buf, "%d / **", skill_list[cpl.skill_g].entry[cpl.skill_e].exp_level );
-                    else
-                        sprintf(buf, "** / **");
-                break;
-
-                /* LExp% */
-                case 1:
-                    if (skill_list[cpl.skill_g].entry[cpl.skill_e].exp >= 0)
-                        sprintf(buf, "%#05.2f%%", fLExpPercent);
-                    else
-                        sprintf(buf, "**.**%%");
-                break;
-
-                /* LExp/LExp tnl */
-                case 2:
-                    if (skill_list[cpl.skill_g].entry[cpl.skill_e].exp >= 0)
-                        sprintf(buf, "%ld / %ld", liLExp, liLExpTNL);
-                    else
-                        sprintf(buf, "** / **");
-                break;
-
-                /* TExp/TExp tnl */
-                case 3:
-                    if (skill_list[cpl.skill_g].entry[cpl.skill_e].exp >= 0)
-                        sprintf(buf, "%ld / %ld", liTExp, liTExpTNL);
-                    else
-                        sprintf(buf, "** / **");
-                break;
-
-                /* (LExp%) LExp/LExp tnl */
-                case 4:
-                    if (skill_list[cpl.skill_g].entry[cpl.skill_e].exp >= 0)
-                        sprintf(buf, "%#05.2f%% - %ld", fLExpPercent, liLExpTNL - liLExp);
-                    else
-                        sprintf(buf, "(**.**%%) **");
-                break;
-            }
             if (skill_list[cpl.skill_g].entry[cpl.skill_e].exp_level==MAXLEVEL)
-                sprintf(buf, "more levels in 2 weeks (tm)");
-            string_blt(widget_surface[WIDGET_SKILL_EXP_ID], &font_small, buf,
-                       28, 9, skin_prefs.widget_valueEq, NULL, NULL);
+            {
+                string_blt(widget_surface[WIDGET_SKILL_EXP_ID], &font_small,
+                           "MAXIMUM LEVEL REACHED!", 28, 9,
+                           skin_prefs.widget_valueHi, NULL, NULL);
+            }
+            else
+            {
+                if (skill_list[cpl.skill_g].entry[cpl.skill_e].exp >= 0)
+                {
+                    level_exp = skill_list[cpl.skill_g].entry[cpl.skill_e].exp - server_level.exp[skill_list[cpl.skill_g].entry[cpl.skill_e].exp_level];
+                    multi = modf(((double)level_exp/(double)
+                               (server_level.exp[skill_list[cpl.skill_g].entry[cpl.skill_e].exp_level+1]-server_level.exp[skill_list[cpl.skill_g].entry[cpl.skill_e].exp_level])*10.0), &line);
+
+                    liTExp    = skill_list[cpl.skill_g].entry[cpl.skill_e].exp;
+                    liTExpTNL = server_level.exp[skill_list[cpl.skill_g].entry[cpl.skill_e].exp_level + 1];
+
+                    liLExp    = liTExp    - server_level.exp[skill_list[cpl.skill_g].entry[cpl.skill_e].exp_level];
+                    liLExpTNL = liTExpTNL - server_level.exp[skill_list[cpl.skill_g].entry[cpl.skill_e].exp_level];
+
+                    fLExpPercent = ((float) liLExp / (float) (liLExpTNL)) * 100.0f;
+                }
+
+                switch (options.iExpDisplay)
+                {
+                    /* Default */
+                    default:
+                    case 0:
+                        if(skill_list[cpl.skill_g].entry[cpl.skill_e].exp >=0)
+                            sprintf(buf, "%d / %-9d", skill_list[cpl.skill_g].entry[cpl.skill_e].exp_level,skill_list[cpl.skill_g].entry[cpl.skill_e].exp );
+                        else if(skill_list[cpl.skill_g].entry[cpl.skill_e].exp == -2)
+                            sprintf(buf, "%d / **", skill_list[cpl.skill_g].entry[cpl.skill_e].exp_level );
+                        else
+                            sprintf(buf, "** / **");
+                    break;
+
+                    /* LExp% */
+                    case 1:
+                        if (skill_list[cpl.skill_g].entry[cpl.skill_e].exp >= 0)
+                            sprintf(buf, "%#05.2f%%", fLExpPercent);
+                        else
+                            sprintf(buf, "**.**%%");
+                    break;
+
+                    /* LExp/LExp tnl */
+                    case 2:
+                        if (skill_list[cpl.skill_g].entry[cpl.skill_e].exp >= 0)
+                            sprintf(buf, "%ld / %ld", liLExp, liLExpTNL);
+                        else
+                            sprintf(buf, "** / **");
+                    break;
+
+                    /* TExp/TExp tnl */
+                    case 3:
+                        if (skill_list[cpl.skill_g].entry[cpl.skill_e].exp >= 0)
+                            sprintf(buf, "%ld / %ld", liTExp, liTExpTNL);
+                        else
+                            sprintf(buf, "** / **");
+                    break;
+
+                    /* (LExp%) LExp/LExp tnl */
+                    case 4:
+                        if (skill_list[cpl.skill_g].entry[cpl.skill_e].exp >= 0)
+                            sprintf(buf, "%#05.2f%% - %ld", fLExpPercent, liLExpTNL - liLExp);
+                        else
+                            sprintf(buf, "(**.**%%) **");
+                    break;
+                }
+
+                string_blt(widget_surface[WIDGET_SKILL_EXP_ID], &font_small,
+                           buf, 28, 9, skin_prefs.widget_valueEq, NULL, NULL);
+            }
+
             sprintf(buf, "%1.2f sec", cpl.action_timer);
             string_blt(widget_surface[WIDGET_SKILL_EXP_ID], &font_small, buf,
                        160, -1, percentage_colr(100 - (cpl.action_timer *
