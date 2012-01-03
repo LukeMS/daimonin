@@ -723,73 +723,70 @@ void widget_show_main_lvl(int x, int y)
     double   multi,
              line;
     SDL_Rect box;
-    int      s,
-             level_exp;
+    int      s;
     _BLTFX   bltfx;
 
     if (!widget_surface[WIDGET_MAIN_LVL_ID])
         widget_surface[WIDGET_MAIN_LVL_ID]=SDL_ConvertSurface(skin_sprites[SKIN_SPRITE_MAIN_LVL_BG]->bitmap,
                 skin_sprites[SKIN_SPRITE_MAIN_LVL_BG]->bitmap->format,skin_sprites[SKIN_SPRITE_MAIN_LVL_BG]->bitmap->flags);
 
-    if (widget_data[WIDGET_MAIN_LVL_ID].redraw)
+    if (WIDGET_REDRAW(WIDGET_MAIN_LVL_ID))
     {
         uint32 colr;
 
-        widget_data[WIDGET_MAIN_LVL_ID].redraw=0;
+        WIDGET_REDRAW(WIDGET_MAIN_LVL_ID) = 0;
         bltfx.surface=widget_surface[WIDGET_MAIN_LVL_ID];
         bltfx.flags = 0;
         bltfx.alpha=0;
         sprite_blt(skin_sprites[SKIN_SPRITE_MAIN_LVL_BG], 0, 0, NULL, &bltfx);
         string_blt(widget_surface[WIDGET_MAIN_LVL_ID], &font_tiny_out, "Level / Exp", 4, 1, skin_prefs.widget_key, NULL, NULL);
+
+        /* Level. */
         sprintf(buf, "%d", cpl.stats.level);
 
         if (cpl.warn_drained)
         {
-            colr = skin_prefs.widget_valueLo;
-        }
-        else if (cpl.stats.level == server_level.level)
-        {
-            colr = skin_prefs.widget_valueHi;
+            colr = percentage_colr((float)cpl.stats.level /
+                                   (float)cpl.stats.exp_level * 40);
         }
         else
         {
-            colr = skin_prefs.widget_valueEq;
+            colr = percentage_colr((float)cpl.stats.level /
+                                   (float)server_level.level * 50 + 50);
         }
 
         string_blt(widget_surface[WIDGET_MAIN_LVL_ID], &font_large_out, buf,
                    91 - string_width(&font_large_out, buf), 4, colr, NULL,
                    NULL);
-        sprintf(buf, "%d", cpl.stats.exp);
-//        level_exp = cpl.stats.exp - server_level.exp[cpl.stats.exp_level];
-//        multi = (float)level_exp /
-//                (float)(server_level.exp[cpl.stats.exp_level + 1] -
-//                        server_level.exp[cpl.stats.exp_level]);
 
-        if (cpl.warn_depleted)
+        /* Exp. */
+        sprintf(buf, "%d", cpl.stats.exp);
+        multi = (float)(cpl.stats.exp - server_level.exp[cpl.stats.exp_level]) /
+                (float)(server_level.exp[cpl.stats.exp_level + 1] -
+                        server_level.exp[cpl.stats.exp_level]);
+
+        if (multi < 0.90)
         {
-            colr = skin_prefs.widget_valueLo;
+            colr = skin_prefs.widget_valueEq;
         }
         else
         {
-            colr = skin_prefs.widget_valueEq;
+            colr = percentage_colr(multi * 100);
         }
 
         string_blt(widget_surface[WIDGET_MAIN_LVL_ID], &font_small, buf, 5, 20,
                    colr, NULL, NULL);
 
         /* calc the exp bubbles */
-        level_exp = cpl.stats.exp - server_level.exp[cpl.stats.exp_level];
-        multi = modf(((double) level_exp
-                      / (double) (server_level.exp[cpl.stats.exp_level + 1] - server_level.exp[cpl.stats.exp_level]) * 10.0),
-                     &line);
-
         sprite_blt(skin_sprites[SKIN_SPRITE_EXP_BORDER], 9, 49, NULL, &bltfx);
-        if (multi)
+
+        if ((multi = modf((multi * 10.0), &line)))
         {
             box.x = 0;
             box.y = 0;
             box.h = skin_sprites[SKIN_SPRITE_EXP_SLIDER]->bitmap->h;
-            box.w = (int) (skin_sprites[SKIN_SPRITE_EXP_SLIDER]->bitmap->w * multi);
+            box.w = (int)(skin_sprites[SKIN_SPRITE_EXP_SLIDER]->bitmap->w * multi);
+
             if (!box.w)
                 box.w = 1;
             if (box.w > skin_sprites[SKIN_SPRITE_EXP_SLIDER]->bitmap->w)
@@ -814,7 +811,7 @@ void widget_show_skill_exp(int x, int y)
 	char        buf[256];
     double      multi, line;
     SDL_Rect    box;
-    int         s, level_exp;
+    int         s;
     long int liLExp = 0;
     long int liLExpTNL = 0;
     long int liTExp = 0;
@@ -869,15 +866,15 @@ void widget_show_skill_exp(int x, int y)
                 /* Default */
                 default:
                 case 0:
-                    sprintf(buf, "%s", cpl.skill_name);
+                    sprintf(buf, "~%s~", cpl.skill_name);
                 break;
 
                 /* LExp% || LExp/LExp tnl || TExp/TExp tnl || (LExp%) LExp/LExp tnl */
                 case 1: case 2: case 3: case 4:
                     if ((skill_list[cpl.skill_g].entry[cpl.skill_e].exp >= 0) || (skill_list[cpl.skill_g].entry[cpl.skill_e].exp == -2))
-                        sprintf(buf, "%s - level: %d", cpl.skill_name, skill_list[cpl.skill_g].entry[cpl.skill_e].exp_level);
+                        sprintf(buf, "~%s~ - level: %d", cpl.skill_name, skill_list[cpl.skill_g].entry[cpl.skill_e].exp_level);
                     else
-                        sprintf(buf, "%s - level: **", cpl.skill_name);
+                        sprintf(buf, "~%s~ - level: **", cpl.skill_name);
                 break;
             }
             string_blt(widget_surface[WIDGET_SKILL_EXP_ID], &font_small, buf, 28, -1, skin_prefs.widget_valueEq, NULL, NULL);
@@ -892,9 +889,11 @@ void widget_show_skill_exp(int x, int y)
             {
                 if (skill_list[cpl.skill_g].entry[cpl.skill_e].exp >= 0)
                 {
-                    level_exp = skill_list[cpl.skill_g].entry[cpl.skill_e].exp - server_level.exp[skill_list[cpl.skill_g].entry[cpl.skill_e].exp_level];
-                    multi = modf(((double)level_exp/(double)
-                               (server_level.exp[skill_list[cpl.skill_g].entry[cpl.skill_e].exp_level+1]-server_level.exp[skill_list[cpl.skill_g].entry[cpl.skill_e].exp_level])*10.0), &line);
+                    multi = modf(((double)(skill_list[cpl.skill_g].entry[cpl.skill_e].exp -
+                                           server_level.exp[skill_list[cpl.skill_g].entry[cpl.skill_e].exp_level]) /
+                                  (double)(server_level.exp[skill_list[cpl.skill_g].entry[cpl.skill_e].exp_level + 1] -
+                                           server_level.exp[skill_list[cpl.skill_g].entry[cpl.skill_e].exp_level]) * 10.0),
+                                 &line);
 
                     liTExp    = skill_list[cpl.skill_g].entry[cpl.skill_e].exp;
                     liTExpTNL = server_level.exp[skill_list[cpl.skill_g].entry[cpl.skill_e].exp_level + 1];
@@ -954,13 +953,13 @@ void widget_show_skill_exp(int x, int y)
                 string_blt(widget_surface[WIDGET_SKILL_EXP_ID], &font_small,
                            buf, 28, 9, skin_prefs.widget_valueEq, NULL, NULL);
             }
+            /* END robed's exp-display-Patch */
 
             sprintf(buf, "%1.2f sec", cpl.action_timer);
             string_blt(widget_surface[WIDGET_SKILL_EXP_ID], &font_small, buf,
                        160, -1, percentage_colr(100 - (cpl.action_timer *
                                                 100.0f / cpl.action_time_max)),
                        NULL, NULL);
-            /* END robed's exp-display-Patch */
         }
         sprite_blt(skin_sprites[SKIN_SPRITE_EXP_SKILL_BORDER], 143, 11, NULL, &bltfx);
 
