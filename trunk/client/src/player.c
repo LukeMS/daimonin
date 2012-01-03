@@ -747,7 +747,7 @@ void widget_show_main_lvl(int x, int y)
         {
             colr = skin_prefs.widget_valueLo;
         }
-        else if (cpl.stats.level == MAXLEVEL)
+        else if (cpl.stats.level == server_level.level)
         {
             colr = skin_prefs.widget_valueHi;
         }
@@ -882,7 +882,7 @@ void widget_show_skill_exp(int x, int y)
             }
             string_blt(widget_surface[WIDGET_SKILL_EXP_ID], &font_small, buf, 28, -1, skin_prefs.widget_valueEq, NULL, NULL);
 
-            if (skill_list[cpl.skill_g].entry[cpl.skill_e].exp_level==MAXLEVEL)
+            if (skill_list[cpl.skill_g].entry[cpl.skill_e].exp_level == server_level.level)
             {
                 string_blt(widget_surface[WIDGET_SKILL_EXP_ID], &font_small,
                            "MAXIMUM LEVEL REACHED!", 28, 9,
