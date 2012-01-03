@@ -202,8 +202,8 @@ typedef struct Player_Struct
 
     uint8                 warn_statdown;
     uint8                 warn_statup;
+    uint8                   warn_exp_down;
     uint8                   warn_drained;  // 2=sound warning,1=no sound
-    uint8                   warn_depleted; // 2=sound warning,1=no sound
     Stats                   stats;      /* Player stats */
     rangetype               shoottype;  /* What type of range attack player has */
 
