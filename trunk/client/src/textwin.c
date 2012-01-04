@@ -37,7 +37,7 @@ static void ShowWindowResizingBorders(textwin_window_t *tw, _BLTFX *bltfx);
 static void ShowWindowText(textwin_window_t *tw, _BLTFX *bltfx);
 static void ShowWindowScrollbar(textwin_window_t *tw, _BLTFX *bltfx);
 static void ShowWindowFrame(textwin_window_t *tw, _BLTFX *bltfx);
-static uint8 ScrollWindow(textwin_window_t *tw, const sint16 dist);
+static uint8 ScrollTextWindow(textwin_window_t *tw, const sint16 dist);
 static void ResizeWindow(textwin_window_t *tw, const sint16 xrel, const sint16 yrel);
 
 void textwin_init(textwin_id_t id)
@@ -856,7 +856,7 @@ static void ShowWindowResizingBorders(textwin_window_t *tw, _BLTFX *bltfx)
         box.h = widget_data[tw->widget].ht - TEXTWIN_ACTIVE_MIN * 2;
         SDL_FillRect(bltfx->surface, &box, rgb);
     }
-} 
+}
 
 static void ShowWindowText(textwin_window_t *tw, _BLTFX *bltfx)
 {
@@ -904,13 +904,13 @@ static void ShowWindowScrollbar(textwin_window_t *tw, _BLTFX *bltfx)
     SDL_Rect  box;
     uint16    x2 = widget_data[tw->widget].wd -
                    skin_sprites[SKIN_SPRITE_SLIDER]->bitmap->w,
-              h = widget_data[tw->widget].ht - 
+              h = widget_data[tw->widget].ht -
                   skin_sprites[SKIN_SPRITE_SLIDER_UP]->bitmap->h -
                   skin_sprites[SKIN_SPRITE_SLIDER_DOWN]->bitmap->h,
               sy = ((tw->scroll_used - tw->size - tw->scroll_off) * h) /
                    tw->scroll_used,
               sh = MAX(1, (tw->size * h) / tw->scroll_used); /* between 0.0 <-> 1.0 */
-     
+
     box.x = box.y = 0;
     box.w = skin_sprites[SKIN_SPRITE_SLIDER]->bitmap->w;
     box.h = h;
@@ -919,17 +919,17 @@ static void ShowWindowScrollbar(textwin_window_t *tw, _BLTFX *bltfx)
                skin_sprites[SKIN_SPRITE_SLIDER_UP]->bitmap->h, &box, bltfx);
     sprite_blt(skin_sprites[SKIN_SPRITE_SLIDER_DOWN], x2, widget_data[tw->widget].ht -
                skin_sprites[SKIN_SPRITE_SLIDER_DOWN]->bitmap->h, NULL, bltfx);
- 
+
     if (!tw->scroll_off &&
         sy + sh < h)
     {
         sy++;
     }
- 
+
     box.h = sh;
     sprite_blt(skin_sprites[SKIN_SPRITE_TWIN_SCROLL], x2 + 2,
                skin_sprites[SKIN_SPRITE_SLIDER_UP]->bitmap->h + sy + 1, &box, bltfx);
- 
+
     if (tw->highlight == TEXTWIN_HIGHLIGHT_UP)
     {
         box.x = x2;
@@ -994,7 +994,7 @@ static void ShowWindowScrollbar(textwin_window_t *tw, _BLTFX *bltfx)
         box.y += skin_sprites[SKIN_SPRITE_SLIDER_UP]->bitmap->h - 1;
         SDL_FillRect(bltfx->surface, &box, -1);
     }
- 
+
     tw->slider_h = sh;
     tw->slider_y = sy;
 }
@@ -1039,22 +1039,22 @@ void textwin_keypress(SDLKey key, textwin_id_t id)
     switch (key)
     {
         case SDLK_UP:
-            ScrollWindow(tw, 1);
+            ScrollTextWindow(tw, 1);
 
             break;
 
         case SDLK_DOWN:
-            ScrollWindow(tw, -1);
+            ScrollTextWindow(tw, -1);
 
             break;
 
         case SDLK_PAGEUP:
-            ScrollWindow(tw, tw->size);
+            ScrollTextWindow(tw, tw->size);
 
             break;
 
         case SDLK_PAGEDOWN:
-            ScrollWindow(tw, -tw->size);
+            ScrollTextWindow(tw, -tw->size);
 
             break;
 
@@ -1121,21 +1121,21 @@ void textwin_event(uint8 e, SDL_Event *event, textwin_id_t id)
 
             if (button == SDL_BUTTON_WHEELUP)
             {
-                ScrollWindow(tw, 1);
+                ScrollTextWindow(tw, 1);
             }
             else if (button == SDL_BUTTON_WHEELDOWN)
             {
-                ScrollWindow(tw, -1);
+                ScrollTextWindow(tw, -1);
             }
             else if (button == SDL_BUTTON_LEFT)
             {
                 if (tw->highlight == TEXTWIN_HIGHLIGHT_UP) /* clicked scroller-button up */
                 {
-                    ScrollWindow(tw, 1);
+                    ScrollTextWindow(tw, 1);
                 }
                 else if (tw->highlight == TEXTWIN_HIGHLIGHT_ABOVE) /* clicked above the slider */
                 {
-                    ScrollWindow(tw, tw->size);
+                    ScrollTextWindow(tw, tw->size);
                 }
                 else if (tw->highlight == TEXTWIN_HIGHLIGHT_SLIDER)
                 {
@@ -1145,11 +1145,11 @@ void textwin_event(uint8 e, SDL_Event *event, textwin_id_t id)
                 }
                 else if (tw->highlight == TEXTWIN_HIGHLIGHT_UNDER) /* clicked under the slider */
                 {
-                    ScrollWindow(tw, -tw->size);
+                    ScrollTextWindow(tw, -tw->size);
                 }
                 else if (tw->highlight == TEXTWIN_HIGHLIGHT_DOWN) /* clicked scroller-button down */
                 {
-                    ScrollWindow(tw, -1);
+                    ScrollTextWindow(tw, -1);
                 }
             }
         }
@@ -1249,7 +1249,7 @@ void textwin_event(uint8 e, SDL_Event *event, textwin_id_t id)
 /* Scroll the visible window by dist lines -- positive for up, negative for
  * down. 'Scroll' is not really right -- we don't scroll, we reposition. Maybe
  * in future we can do real scrolling? */
-static uint8 ScrollWindow(textwin_window_t *tw, const sint16 dist)
+static uint8 ScrollTextWindow(textwin_window_t *tw, const sint16 dist)
 {
     /* No scrolling small windows. */
     if (tw->scroll_used < tw->size)
