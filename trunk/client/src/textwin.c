@@ -186,7 +186,14 @@ void textwin_show_string(uint32 flags, uint32 colr, char *format, ...)
         /* save last incoming tell player for client sided /reply */
         if ((flags & NDI_FLAG_TELL))
         {
-            strcpy(cpl.player_reply, buf);
+            uint8 max = strcspn(buf, ", ");
+
+            cpl.reply[0] = '\0';
+
+            if (max <= MAX_PLAYER_NAME)
+            {
+                strncpy(cpl.reply, buf, max);
+            }
         }
 
         /* If the smiley option is on, convert all the smileys. */
