@@ -246,7 +246,6 @@ static void mouse_moveHero()
 #define MY_POS 8
     int          x, y, tx, ty;
     static int   delta   = 0;
-    textwin_id_t twid;
 
     if (0)
         return; /* disable until we have smooth moving - people think this IS the real mouse moving */
@@ -265,14 +264,6 @@ static void mouse_moveHero()
         return;
     if (cpl.menustatus != MENU_NO)
         return;
-
-    for (twid = 0; twid < TEXTWIN_NROF; twid++)
-    {
-        if ((textwin[twid].flags & (TEXTWIN_FLAG_RESIZE | TEXTWIN_FLAG_SCROLL)))
-        {
-            return;
-        }
-    }
 
     if (!(SDL_GetMouseState(&x, &y) & SDL_BUTTON(SDL_BUTTON_LEFT)))
     {
@@ -436,7 +427,6 @@ int Event_PollInputDevice(void)
 {
     SDL_Event       event;
     int             x, y, done = 0;
-    textwin_id_t twid;
     static int      active_scrollbar    = 0;
     static Uint32   Ticks               = 0;
 
@@ -450,14 +440,14 @@ int Event_PollInputDevice(void)
             if (InputStringFlag && cpl.input_mode == INPUT_MODE_NUMBER)
                 mouse_InputNumber();
             else if (!active_scrollbar)
-                mouse_moveHero();
-            else
             {
+                textwin_id_t twid;
+
                 for (twid = 0; twid < TEXTWIN_NROF; twid++)
                 {
-                    if ((textwin[twid].flags & TEXTWIN_FLAG_RESIZE))
+                    if (textwin[twid].mode)
                     {
-                        continue;
+                        break;
                     }
 
                     mouse_moveHero();
@@ -487,11 +477,6 @@ int Event_PollInputDevice(void)
                 MouseEvent = RB_UP;
             else
                 MouseEvent = IDLE;
-
-            for (twid = 0; twid < TEXTWIN_NROF; twid++)
-            {
-                textwin[twid].resize = TEXTWIN_RESIZE_NONE;
-            }
 
             /* no button is down */
             MouseState = IDLE;
@@ -582,8 +567,6 @@ int Event_PollInputDevice(void)
                 }
 
             }
-
-//            textwin_event(SDL_MOUSEMOTION, &event);
 
             /* scrollbar-sliders We have to have it before the widgets cause of the menu*/
             if (event.button.button == SDL_BUTTON_LEFT &&

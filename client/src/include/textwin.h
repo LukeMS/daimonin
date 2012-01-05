@@ -37,10 +37,6 @@
 #define TEXTWIN_WIDTH_MAX  1280
 #define TEXTWIN_HEIGHT_MAX 1280
 
-/* Flags. */
-#define TEXTWIN_FLAG_RESIZE (1 << 1)
-#define TEXTWIN_FLAG_SCROLL (1 << 2)
-
 typedef enum textwin_id_t
 {
     TEXTWIN_CHAT_ID,
@@ -49,6 +45,14 @@ typedef enum textwin_id_t
     TEXTWIN_NROF
 }
 textwin_id_t;
+
+typedef enum textwin_mode_t
+{
+    TEXTWIN_MODE_NONE,
+    TEXTWIN_MODE_RESIZE,
+    TEXTWIN_MODE_SCROLL
+}
+textwin_mode_t;
 
 typedef enum textwin_resize_t
 {
@@ -64,16 +68,16 @@ typedef enum textwin_resize_t
 }
 textwin_resize_t;
 
-typedef enum textwin_highlight_t
+typedef enum textwin_scroll_t
 {
-    TEXTWIN_HIGHLIGHT_NONE,
-    TEXTWIN_HIGHLIGHT_UP,
-    TEXTWIN_HIGHLIGHT_ABOVE,
-    TEXTWIN_HIGHLIGHT_SLIDER,
-    TEXTWIN_HIGHLIGHT_UNDER,
-    TEXTWIN_HIGHLIGHT_DOWN,
+    TEXTWIN_SCROLL_NONE,
+    TEXTWIN_SCROLL_UP,
+    TEXTWIN_SCROLL_UPPAGE,
+    TEXTWIN_SCROLL_VERTICAL,
+    TEXTWIN_SCROLL_DOWNPAGE,
+    TEXTWIN_SCROLL_DOWN,
 }
-textwin_highlight_t;
+textwin_scroll_t;
 
 typedef struct textwin_text_t
 {
@@ -87,14 +91,19 @@ textwin_text_t;
 
 typedef struct textwin_window_t
 {
-    uint16              x, y;         // startpos of the window
-    uint32              flags;        // flags
-    widget_id_t         widget;       // wID assocoiated with this TW
+    uint16              x,            // startpos of the window on the x axis in pixels
+                        y;            // startpos of the window on the y axis in pixels
+    textwin_mode_t      mode;         // mode
+    widget_id_t         widget;       // widget assocoiated with this window
     uint16              maxstringlen; // max length of string in pixels
     int                 slider_h;     // height of the scrollbar-slider
     int                 slider_y;     // start pos of the scrollbar-slider
     textwin_resize_t    resize;       // resizing direction
-    textwin_highlight_t highlight;    // which part to highlight
+    sint16              resize_x,     // resizing distance on x axis in pixels
+                        resize_y;     // resizing distance on y axis in pixels
+    textwin_scroll_t    scroll;       // which part to scroll
+    sint16              scroll_x,     // scrolling distance on x axis in pixels
+                        scroll_y;     // scrolling distance on y axis in pixels
     uint32              scroll_off;   // scroll offset
     uint32              scroll_size;  // max size of scroll buffer
     uint32              scroll_used;  // position in scroll buffer
