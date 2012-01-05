@@ -938,7 +938,7 @@ static void ShowWindowScrollbar(textwin_window_t *tw, _BLTFX *bltfx)
                   skin_sprites[index_down]->bitmap->h,
               sy = ((tw->scroll_used - tw->size - tw->scroll_off) * h) /
                    tw->scroll_used,
-              sh = MAX(1, (tw->size * h) / tw->scroll_used); /* between 0.0 <-> 1.0 */
+              sh = MAX(1, (tw->size * h) / tw->scroll_used);
      
     box.x = box.y = 0;
     box.w = skin_sprites[index_vcanal]->bitmap->w;
@@ -958,7 +958,7 @@ static void ShowWindowScrollbar(textwin_window_t *tw, _BLTFX *bltfx)
     box.h = sh;
     sprite_blt(skin_sprites[index_vbarge],
                x2 + (box.w - skin_sprites[index_vbarge]->bitmap->w) / 2,
-               skin_sprites[index_up]->bitmap->h + sy + 1, &box, bltfx);
+               skin_sprites[index_up]->bitmap->h + sy, &box, bltfx);
     tw->slider_h = sh;
     tw->slider_y = sy;
 }
