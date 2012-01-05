@@ -538,14 +538,6 @@ int widget_event_mouseup(int x, int y, SDL_Event *event)
 /* drag the widget, if moving                                        */
 int widget_event_mousemv(int x,int y, SDL_Event *event)
 {
-    textwin_id_t twid;
-
-    /* With widgets we have to clear every loop the txtwin cursor */
-    for (twid = 0; twid < TEXTWIN_NROF; twid++)
-    {
-        textwin[twid].resize = TEXTWIN_RESIZE_NONE;
-    }
-
     /* widget moving condition */
     if (widget_mouse_event.moving)
     {
@@ -656,19 +648,6 @@ int widget_event_mousemv(int x,int y, SDL_Event *event)
 
         /* handler(s) for miscellanous mouse movement(s) go here */
 
-        /* textwin special handling */
-        if (textwin[TEXTWIN_CHAT_ID].highlight != TEXTWIN_HIGHLIGHT_NONE)
-        {
-            textwin[TEXTWIN_CHAT_ID].highlight = TEXTWIN_HIGHLIGHT_NONE;
-            WIDGET_REDRAW(WIDGET_CHATWIN_ID) = 1;
-        }
-
-        if (textwin[TEXTWIN_MSG_ID].highlight != TEXTWIN_HIGHLIGHT_NONE)
-        {
-            textwin[TEXTWIN_MSG_ID].highlight = TEXTWIN_HIGHLIGHT_NONE;
-            WIDGET_REDRAW(WIDGET_MSGWIN_ID) = 1;
-        }
-
         /* setup the event structure in response */
         widget_mouse_event.x = x;
         widget_mouse_event.y = y;
@@ -732,10 +711,9 @@ widget_id_t widget_get_owner(int x, int y)
     widget_node_t *node;
     widget_id_t    id;
 
-    /* Priority overide function, we have to have that here for resizing.... */
     for (twid = 0; twid < TEXTWIN_NROF; twid++)
     {
-        if ((textwin[twid].flags & TEXTWIN_FLAG_RESIZE))
+        if (textwin[twid].mode)
         {
             return textwin[twid].widget;
         }

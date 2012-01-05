@@ -23,8 +23,6 @@
 
 #include "include.h"
 
-static uint16 OldSliderPos = 0;
-
 textwin_window_t textwin[TEXTWIN_NROF];
 
 static void LogTextwin(char *message, char *logfile);
@@ -37,8 +35,8 @@ static void ShowWindowResizingBorders(textwin_window_t *tw, _BLTFX *bltfx);
 static void ShowWindowText(textwin_window_t *tw, _BLTFX *bltfx);
 static void ShowWindowScrollbar(textwin_window_t *tw, _BLTFX *bltfx);
 static void ShowWindowFrame(textwin_window_t *tw, _BLTFX *bltfx);
-static uint8 ScrollTextWindow(textwin_window_t *tw, const sint16 dist);
-static void ResizeWindow(textwin_window_t *tw, const sint16 xrel, const sint16 yrel);
+static void ScrollTextWindow(textwin_window_t *tw);
+static void ResizeTextWindow(textwin_window_t *tw);
 
 void textwin_init(textwin_id_t id)
 {
@@ -808,6 +806,11 @@ void textwin_show_window(textwin_id_t id)
     SDL_BlitSurface(bg, NULL, ScreenSurface, &box);
     SDL_BlitSurface(widget_surface[tw->widget], NULL, ScreenSurface, &box);
     SDL_SetClipRect(ScreenSurface, NULL);
+
+    if (tw->mode == TEXTWIN_MODE_SCROLL)
+    {
+        ScrollTextWindow(tw);
+    }
 }
 
 static void ShowWindowResizingBorders(textwin_window_t *tw, _BLTFX *bltfx)
@@ -856,7 +859,7 @@ static void ShowWindowResizingBorders(textwin_window_t *tw, _BLTFX *bltfx)
         box.h = widget_data[tw->widget].ht - TEXTWIN_ACTIVE_MIN * 2;
         SDL_FillRect(bltfx->surface, &box, rgb);
     }
-}
+} 
 
 static void ShowWindowText(textwin_window_t *tw, _BLTFX *bltfx)
 {
@@ -904,13 +907,13 @@ static void ShowWindowScrollbar(textwin_window_t *tw, _BLTFX *bltfx)
     SDL_Rect  box;
     uint16    x2 = widget_data[tw->widget].wd -
                    skin_sprites[SKIN_SPRITE_SLIDER]->bitmap->w,
-              h = widget_data[tw->widget].ht -
+              h = widget_data[tw->widget].ht - 
                   skin_sprites[SKIN_SPRITE_SLIDER_UP]->bitmap->h -
                   skin_sprites[SKIN_SPRITE_SLIDER_DOWN]->bitmap->h,
               sy = ((tw->scroll_used - tw->size - tw->scroll_off) * h) /
                    tw->scroll_used,
               sh = MAX(1, (tw->size * h) / tw->scroll_used); /* between 0.0 <-> 1.0 */
-
+     
     box.x = box.y = 0;
     box.w = skin_sprites[SKIN_SPRITE_SLIDER]->bitmap->w;
     box.h = h;
@@ -919,18 +922,18 @@ static void ShowWindowScrollbar(textwin_window_t *tw, _BLTFX *bltfx)
                skin_sprites[SKIN_SPRITE_SLIDER_UP]->bitmap->h, &box, bltfx);
     sprite_blt(skin_sprites[SKIN_SPRITE_SLIDER_DOWN], x2, widget_data[tw->widget].ht -
                skin_sprites[SKIN_SPRITE_SLIDER_DOWN]->bitmap->h, NULL, bltfx);
-
+ 
     if (!tw->scroll_off &&
         sy + sh < h)
     {
         sy++;
     }
-
+ 
     box.h = sh;
     sprite_blt(skin_sprites[SKIN_SPRITE_TWIN_SCROLL], x2 + 2,
                skin_sprites[SKIN_SPRITE_SLIDER_UP]->bitmap->h + sy + 1, &box, bltfx);
-
-    if (tw->highlight == TEXTWIN_HIGHLIGHT_UP)
+ 
+    if (tw->scroll == TEXTWIN_SCROLL_UP)
     {
         box.x = x2;
         box.y = 0;
@@ -946,7 +949,7 @@ static void ShowWindowScrollbar(textwin_window_t *tw, _BLTFX *bltfx)
         box.y += skin_sprites[SKIN_SPRITE_SLIDER_UP]->bitmap->h - 1;
         SDL_FillRect(bltfx->surface, &box, -1);
     }
-    else if (tw->highlight == TEXTWIN_HIGHLIGHT_ABOVE)
+    else if (tw->scroll == TEXTWIN_SCROLL_UPPAGE)
     {
         box.x = x2 + 2;
         box.y = skin_sprites[SKIN_SPRITE_SLIDER_UP]->bitmap->h + 2;
@@ -954,7 +957,7 @@ static void ShowWindowScrollbar(textwin_window_t *tw, _BLTFX *bltfx)
         box.w = 5;
         SDL_FillRect(bltfx->surface, &box, 0);
     }
-    else if (tw->highlight == TEXTWIN_HIGHLIGHT_SLIDER)
+    else if (tw->scroll == TEXTWIN_SCROLL_VERTICAL)
     {
         box.x = x2 + 2;
         box.y = skin_sprites[SKIN_SPRITE_SLIDER_UP]->bitmap->h + 3 + sy;
@@ -969,7 +972,7 @@ static void ShowWindowScrollbar(textwin_window_t *tw, _BLTFX *bltfx)
         box.y += sh - 1;
         SDL_FillRect(bltfx->surface, &box, -1);
     }
-    else if (tw->highlight == TEXTWIN_HIGHLIGHT_UNDER)
+    else if (tw->scroll == TEXTWIN_SCROLL_DOWNPAGE)
     {
         box.x = x2 + 2;
         box.h = tw->size * tw->font->line_height - sy - sh -
@@ -978,7 +981,7 @@ static void ShowWindowScrollbar(textwin_window_t *tw, _BLTFX *bltfx)
         box.w = 5;
         SDL_FillRect(bltfx->surface, &box, 0);
     }
-    else if (tw->highlight == TEXTWIN_HIGHLIGHT_DOWN)
+    else if (tw->scroll == TEXTWIN_SCROLL_DOWN)
     {
         box.x = x2;
         box.y = tw->size * tw->font->line_height + 4;
@@ -994,7 +997,7 @@ static void ShowWindowScrollbar(textwin_window_t *tw, _BLTFX *bltfx)
         box.y += skin_sprites[SKIN_SPRITE_SLIDER_UP]->bitmap->h - 1;
         SDL_FillRect(bltfx->surface, &box, -1);
     }
-
+ 
     tw->slider_h = sh;
     tw->slider_y = sy;
 }
@@ -1039,22 +1042,30 @@ void textwin_keypress(SDLKey key, textwin_id_t id)
     switch (key)
     {
         case SDLK_UP:
-            ScrollTextWindow(tw, 1);
+            tw->scroll_y = tw->font->line_height * 1;
+            ScrollTextWindow(tw);
+            tw->scroll_y = 0;
 
             break;
 
         case SDLK_DOWN:
-            ScrollTextWindow(tw, -1);
+            tw->scroll_y = tw->font->line_height * -1;
+            ScrollTextWindow(tw);
+            tw->scroll_y = 0;
 
             break;
 
         case SDLK_PAGEUP:
-            ScrollTextWindow(tw, tw->size);
+            tw->scroll_y = tw->font->line_height * tw->size;
+            ScrollTextWindow(tw);
+            tw->scroll_y = 0;
 
             break;
 
         case SDLK_PAGEDOWN:
-            ScrollTextWindow(tw, -tw->size);
+            tw->scroll_y = tw->font->line_height * -tw->size;
+            ScrollTextWindow(tw);
+            tw->scroll_y = 0;
 
             break;
 
@@ -1076,90 +1087,97 @@ void textwin_event(uint8 e, SDL_Event *event, textwin_id_t id)
                   left = widget_data[tw->widget].x1;
     const uint8   button = event->button.button;
 
-    tw->highlight = TEXTWIN_HIGHLIGHT_NONE;
+    WIDGET_REDRAW(tw->widget) = 1;
 
-    if (!(tw->flags & TEXTWIN_FLAG_RESIZE))
+    if (!(tw->scroll == TEXTWIN_SCROLL_VERTICAL &&
+          tw->mode == TEXTWIN_MODE_SCROLL))
     {
-        if (e == SDL_MOUSEMOTION)
-        {
-            if (x >= right - skin_sprites[SKIN_SPRITE_SLIDER]->bitmap->w &&
-                x <= right &&
-                y >= top &&
-                button != SDL_BUTTON_LEFT)
-            {
-                WIDGET_REDRAW(tw->widget) = 1;
+        tw->scroll = TEXTWIN_SCROLL_NONE;
+    }
 
-#define OFFSET (tw->y + skin_sprites[SKIN_SPRITE_SLIDER_UP]->bitmap->h)
-                if (y < OFFSET)
+    tw->resize = TEXTWIN_RESIZE_NONE;
+
+    /* Scrolling. */
+    if (tw->mode != TEXTWIN_MODE_RESIZE)
+    {
+        if (e == SDL_MOUSEMOTION ||
+            (e == SDL_MOUSEBUTTONDOWN &&
+             button == SDL_BUTTON_LEFT))
+        {
+            if (tw->mode == TEXTWIN_MODE_SCROLL &&
+                tw->scroll == TEXTWIN_SCROLL_VERTICAL)
+            {
+                tw->scroll_y = tw->font->line_height * -event->motion.yrel;
+            }
+            else if (x >= right - skin_sprites[SKIN_SPRITE_SLIDER]->bitmap->w &&
+                     x <= right &&
+                     y >= top)
+            {
+                sint16 offset = tw->y +
+                                skin_sprites[SKIN_SPRITE_SLIDER_UP]->bitmap->h;
+
+                if (y < offset)
                 {
-                    tw->highlight = TEXTWIN_HIGHLIGHT_UP;
+                    tw->scroll = TEXTWIN_SCROLL_UP;
+                    tw->scroll_y = tw->font->line_height * 1;
                 }
-                else if (y < OFFSET + tw->slider_y)
+                else if (y < offset + tw->slider_y)
                 {
-                    tw->highlight = TEXTWIN_HIGHLIGHT_ABOVE;
+                    tw->scroll = TEXTWIN_SCROLL_UPPAGE;
+                    tw->scroll_y = tw->font->line_height * tw->size;
                 }
-                else if (y < OFFSET + tw->slider_y + tw->slider_h + 3)
+                else if (y < offset + tw->slider_y + tw->slider_h + 3)
                 {
-                    tw->highlight = TEXTWIN_HIGHLIGHT_SLIDER;
+                    tw->scroll = TEXTWIN_SCROLL_VERTICAL;
+                    tw->scroll_y = tw->font->line_height * -event->motion.yrel;
                 }
                 else if (y < widget_data[tw->widget].y1 + tw->size *
                              tw->font->line_height + 4)
                 {
-                    tw->highlight = TEXTWIN_HIGHLIGHT_UNDER;
+                    tw->scroll = TEXTWIN_SCROLL_DOWNPAGE;
+                    tw->scroll_y = tw->font->line_height * -tw->size;
                 }
                 else if (y < widget_data[tw->widget].y1 +
                              widget_data[tw->widget].ht)
                 {
-                    tw->highlight = TEXTWIN_HIGHLIGHT_DOWN;
+                    tw->scroll = TEXTWIN_SCROLL_DOWN;
+                    tw->scroll_y = tw->font->line_height * -1;
                 }
-#undef OFFSET
+
+                if (tw->scroll &&
+                    e == SDL_MOUSEBUTTONDOWN)
+                {
+                    tw->mode = TEXTWIN_MODE_SCROLL;
+                }
             }
         }
         else if (e == SDL_MOUSEBUTTONDOWN)
         {
-            WIDGET_REDRAW(tw->widget) = 1;
-
             if (button == SDL_BUTTON_WHEELUP)
             {
-                ScrollTextWindow(tw, 1);
+                tw->scroll_y = tw->font->line_height * 1;
+                ScrollTextWindow(tw);
+                tw->scroll_y = 0;
             }
             else if (button == SDL_BUTTON_WHEELDOWN)
             {
-                ScrollTextWindow(tw, -1);
-            }
-            else if (button == SDL_BUTTON_LEFT)
-            {
-                if (tw->highlight == TEXTWIN_HIGHLIGHT_UP) /* clicked scroller-button up */
-                {
-                    ScrollTextWindow(tw, 1);
-                }
-                else if (tw->highlight == TEXTWIN_HIGHLIGHT_ABOVE) /* clicked above the slider */
-                {
-                    ScrollTextWindow(tw, tw->size);
-                }
-                else if (tw->highlight == TEXTWIN_HIGHLIGHT_SLIDER)
-                {
-                    /* clicked on the slider */
-                    tw->flags |= TEXTWIN_FLAG_SCROLL;
-                    OldSliderPos = y - tw->slider_y;
-                }
-                else if (tw->highlight == TEXTWIN_HIGHLIGHT_UNDER) /* clicked under the slider */
-                {
-                    ScrollTextWindow(tw, -tw->size);
-                }
-                else if (tw->highlight == TEXTWIN_HIGHLIGHT_DOWN) /* clicked scroller-button down */
-                {
-                    ScrollTextWindow(tw, -1);
-                }
+                tw->scroll_y = tw->font->line_height * -1;
+                ScrollTextWindow(tw);
+                tw->scroll_y = 0;
             }
         }
-        else if (e == SDL_MOUSEBUTTONUP)
+        else if (e == SDL_MOUSEBUTTONUP &&
+                 button != SDL_BUTTON_RIGHT)
         {
-            tw->flags &= ~TEXTWIN_FLAG_SCROLL;
+            tw->scroll = TEXTWIN_SCROLL_NONE;
+            tw->scroll_y = 0;
+            tw->mode = TEXTWIN_MODE_NONE;
         }
     }
 
-    if (!(tw->flags & TEXTWIN_FLAG_SCROLL))
+    /* Resizing. */
+    if (tw->mode != TEXTWIN_MODE_SCROLL &&
+        tw->scroll == TEXTWIN_SCROLL_NONE)
     {
         if (e == SDL_MOUSEMOTION ||
             (e == SDL_MOUSEBUTTONDOWN &&
@@ -1218,72 +1236,63 @@ void textwin_event(uint8 e, SDL_Event *event, textwin_id_t id)
                 }
             }
 
-            if (e == SDL_MOUSEBUTTONDOWN &&
-                tw->resize)
+            if (tw->resize)
             {
-                tw->flags |= TEXTWIN_FLAG_RESIZE;
-            }
+                tw->resize_x = event->motion.xrel;
+                tw->resize_y = event->motion.yrel;
 
-            WIDGET_REDRAW(tw->widget) = 1;
+                if (e == SDL_MOUSEBUTTONDOWN)
+                {
+                    tw->mode = TEXTWIN_MODE_RESIZE;
+                }
+            }
         }
         else if (e == SDL_MOUSEBUTTONUP &&
                  button == SDL_BUTTON_LEFT)
         {
-            tw->flags &= ~TEXTWIN_FLAG_RESIZE;
-            tw->resize = TEXTWIN_RESIZE_NONE;
-            WIDGET_REDRAW(tw->widget) = 1;
+            tw->mode = TEXTWIN_MODE_NONE;
         }
     }
 
-//    if ((tw->flags & TEXTWIN_FLAG_SCROLL))
-//    {
-//        ScrollWindow(tw, x, y);
-//    }
-
-    if ((tw->flags & TEXTWIN_FLAG_RESIZE))
+    if (tw->mode == TEXTWIN_MODE_RESIZE)
     {
-        ResizeWindow(tw, event->motion.xrel, event->motion.yrel);
+        ResizeTextWindow(tw);
     }
 }
 
-/* Scroll the visible window by dist lines -- positive for up, negative for
- * down. 'Scroll' is not really right -- we don't scroll, we reposition. Maybe
- * in future we can do real scrolling? */
-static uint8 ScrollTextWindow(textwin_window_t *tw, const sint16 dist)
+/* Scroll tw according to tw->scroll_x and tw->scroll_y. */
+static void ScrollTextWindow(textwin_window_t *tw)
 {
+    const sint16 //x = MIN(1, tw->scroll_x / tw->font->line_height), 
+                 y = MIN(1, tw->scroll_y / tw->font->line_height);
+
     /* No scrolling small windows. */
     if (tw->scroll_used < tw->size)
     {
-        return 0;
+        return;
     }
 
-    if (dist > 0 &&
+    if (y > 0 &&
         tw->scroll_off < tw->scroll_used - tw->size)
     {
-        tw->scroll_off += MIN(dist, tw->scroll_used - tw->size - tw->scroll_off);
         WIDGET_REDRAW(tw->widget) = 1;
-
-        return 1;
+        tw->scroll_off += MIN(y, tw->scroll_used - tw->size - tw->scroll_off);
     }
-    else if (dist < 0 &&
+    else if (y < 0 &&
              tw->scroll_off > 0)
     {
-        tw->scroll_off += MAX(dist, -tw->scroll_off);
         WIDGET_REDRAW(tw->widget) = 1;
-
-        return 1;
+        tw->scroll_off += MAX(y, -tw->scroll_off);
     }
-
-    return 0;
-//    tw->slider_y = y - OldSliderPos;
-//    tw->scroll_off = tw->scroll_used - tw->size - (tw->scroll_used *
-//                 tw->slider_y) / (tw->size * tw->font->line_height - 1);
 }
 
-static void ResizeWindow(textwin_window_t *tw, const sint16 xrel, const sint16 yrel)
+/* Resize tw according to tw->resize_x and tw->resize_y. */
+static void ResizeTextWindow(textwin_window_t *tw)
 {
-    const sint32  postwidth = widget_data[tw->widget].wd + xrel,
-                  postheight = widget_data[tw->widget].ht + yrel;
+    const sint16 xrel = tw->resize_x,
+                 yrel = tw->resize_y;
+    const sint32 postwidth = widget_data[tw->widget].wd + xrel,
+                 postheight = widget_data[tw->widget].ht + yrel;
 
     if (tw->resize == TEXTWIN_RESIZE_UP ||
         tw->resize == TEXTWIN_RESIZE_UPRIGHT ||
@@ -1292,14 +1301,16 @@ static void ResizeWindow(textwin_window_t *tw, const sint16 xrel, const sint16 y
         if (postheight <= TEXTWIN_HEIGHT_MIN &&
             yrel > 0)
         {
-            tw->resize = TEXTWIN_RESIZE_NONE;
             widget_data[tw->widget].ht = TEXTWIN_HEIGHT_MIN;
+
+            return;
         }
         else if (postheight >= TEXTWIN_HEIGHT_MAX &&
                  yrel < 0)
         {
-            tw->resize = TEXTWIN_RESIZE_NONE;
             widget_data[tw->widget].ht = TEXTWIN_HEIGHT_MAX;
+
+            return;
         }
         else if (yrel)
         {
@@ -1314,14 +1325,16 @@ static void ResizeWindow(textwin_window_t *tw, const sint16 xrel, const sint16 y
         if (postheight <= TEXTWIN_HEIGHT_MIN &&
             yrel < 0)
         {
-            tw->resize = TEXTWIN_RESIZE_NONE;
             widget_data[tw->widget].ht = TEXTWIN_HEIGHT_MIN;
+
+            return;
         }
         else if (postheight >= TEXTWIN_HEIGHT_MAX &&
                  yrel > 0)
         {
-            tw->resize = TEXTWIN_RESIZE_NONE;
             widget_data[tw->widget].ht = TEXTWIN_HEIGHT_MAX;
+
+            return;
         }
         else if (yrel)
         {
@@ -1336,14 +1349,16 @@ static void ResizeWindow(textwin_window_t *tw, const sint16 xrel, const sint16 y
         if (postwidth <= TEXTWIN_WIDTH_MIN &&
             xrel < 0)
         {
-            tw->resize = TEXTWIN_RESIZE_NONE;
             widget_data[tw->widget].wd = TEXTWIN_WIDTH_MIN;
+
+            return;
         }
         else if (postwidth >= TEXTWIN_WIDTH_MAX &&
                  xrel > 0)
         {
-            tw->resize = TEXTWIN_RESIZE_NONE;
             widget_data[tw->widget].wd = TEXTWIN_WIDTH_MAX;
+
+            return;
         }
         else if (xrel)
         {
@@ -1357,14 +1372,16 @@ static void ResizeWindow(textwin_window_t *tw, const sint16 xrel, const sint16 y
         if (postwidth <= TEXTWIN_WIDTH_MIN &&
             xrel > 0)
         {
-            tw->resize = TEXTWIN_RESIZE_NONE;
             widget_data[tw->widget].wd = TEXTWIN_WIDTH_MIN;
+
+            return;
         }
         else if (postwidth >= TEXTWIN_WIDTH_MAX &&
                  xrel < 0)
         {
-            tw->resize = TEXTWIN_RESIZE_NONE;
             widget_data[tw->widget].wd = TEXTWIN_WIDTH_MAX;
+
+            return;
         }
         else if (xrel)
         {
