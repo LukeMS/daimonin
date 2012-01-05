@@ -213,7 +213,7 @@ void skin_load_bitmaps(skin_sprite_id_t nrof)
         if (!skin_sprites[i] ||
             !skin_sprites[i]->bitmap)
         {
-            LOG(LOG_ERROR, "Couldn't load bitmap '%s'!\n", buf);
+            LOG(LOG_FATAL, "Couldn't load bitmap '%s'!\n", buf);
         }
     }
 }
