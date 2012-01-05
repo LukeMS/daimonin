@@ -625,14 +625,14 @@ static uint8 CheckCommand(char *cmd, char *params)
 //            textwin_show_string(0, NDI_COLR_WHITE, "usage: /reply <message>");
 //        }
 
-        if (!cpl.player_reply[0])
+        if (cpl.reply[0] == '\0')
         {
             textwin_show_string(0, NDI_COLR_WHITE, "There is no one to whom you can /reply!");
 
             return 1;
         }
 
-        sprintf(cmd, "/tell %s", cpl.player_reply);
+        sprintf(cmd, "/tell %s", cpl.reply);
 
         return 0;
     }
