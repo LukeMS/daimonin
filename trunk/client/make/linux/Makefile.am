@@ -8,7 +8,6 @@ daimonin_SOURCES =  \
 	../../src/buddy.c \
 	../../src/chatfilter.c \
 	../../src/client_cmd.c \
-	../../src/commands.c \
 	../../src/crc32.c \
 	../../src/dialog.c \
 	../../src/event.c \
@@ -33,6 +32,7 @@ daimonin_SOURCES =  \
 	../../src/physfsrwops.c \
 	../../src/player.c \
 	../../src/protocol.c \
+	../../src/server_cmd.c \
 	../../src/skin.c \
 	../../src/socket.c \
 	../../src/sound.c \

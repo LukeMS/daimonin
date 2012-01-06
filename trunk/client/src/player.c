@@ -26,7 +26,7 @@
  * various commands that the player issues.
  *
  *  This file does most of the handling of commands from the client to
- *  server (see commands.c for server->client)
+ *  server (see server_cmd.c for server->client)
  *
  *  does most of the work for sending messages to the server
  *   Again, most of these appear self explanatory.  Most send a bunch of

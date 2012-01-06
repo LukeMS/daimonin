@@ -44,7 +44,7 @@ static void SelectButton(_gui_npc_element *element);
 static void SendCommand(void);
 static uint8 ScrollGUI(sint16 dist);
 
-/* called from commands.c after we got a interface command */
+/* called from server_cmd.c after we got a interface command */
 _gui_npc *gui_npc_create(int mode, char *data, int len, int pos)
 {
     int  flag_start,

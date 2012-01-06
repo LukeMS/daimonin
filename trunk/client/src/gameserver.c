@@ -44,7 +44,7 @@
  * building the list of playservers. The low level business of actually
  * connecting to the servers is handled in the socket module, and
  * communications to and from a playserver are handled in the client_cmd and
- * command modules.
+ * server_cmd modules.
  *
  * -- Smacky 20111231 */
 
