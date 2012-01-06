@@ -900,14 +900,11 @@ static void ShowWindowText(textwin_window_t *tw, _BLTFX *bltfx)
         }
     }
 
-    /* TODO: fucking maths */
-
     /* Blit all the visible lines. */
     for (i = 0; i < tw->visible && i < tw->linebuf_used; i++)
     {
         textwin_linebuf_t *linebuf = (tw->linebuf + ((topline + i) % tw->linebuf_used));
 
-//LOG(LOG_MSG,">>>>>>>>>>>>>>%d,%d,%d,%d,%d,%s\n", tw->linebuf_off, tw->topline, tw->visible, topline, i, linebuf->buf);
         string_blt(bltfx->surface, tw->font, linebuf->buf, 2,
                    tw->font->line_height * i, linebuf->fg, /*linebuf->bg,*/ NULL,
                    NULL);
