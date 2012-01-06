@@ -79,15 +79,15 @@ typedef enum textwin_scroll_t
 }
 textwin_scroll_t;
 
-typedef struct textwin_text_t
+typedef struct textwin_linebuf_t
 {
     char   buf[MEDIUM_BUF]; // text
     int    channel;         // which channel
     uint32 flags;           // some flags
-    uint32 fg;              // color of text
-    uint32 bg;              // color of bg
+    uint32 fg;              // colour of text
+    uint32 bg;              // colour of bg
 }
-textwin_text_t;
+textwin_linebuf_t;
 
 typedef struct textwin_window_t
 {
@@ -95,22 +95,24 @@ typedef struct textwin_window_t
                         y;            // startpos of the window on the y axis in pixels
     textwin_mode_t      mode;         // mode
     widget_id_t         widget;       // widget assocoiated with this window
-    uint16              maxstringlen; // max length of string in pixels
-    int                 slider_h;     // height of the scrollbar-slider
-    int                 slider_y;     // start pos of the scrollbar-slider
+    _font              *font;         // the font used in this window
+    uint16              maxstringlen; // max length of string in pixels given window and vcanal width
+    uint32              visible,      // number or visible lines given window and font size
+                        topline;      // top visible line from linebuf buffer given window size
     textwin_resize_t    resize;       // resizing direction
     sint16              resize_x,     // resizing distance on x axis in pixels
                         resize_y;     // resizing distance on y axis in pixels
     textwin_scroll_t    scroll;       // which part to scroll
     sint16              scroll_x,     // scrolling distance on x axis in pixels
                         scroll_y;     // scrolling distance on y axis in pixels
-    uint32              scroll_off;   // scroll offset
-    uint32              scroll_size;  // max size of scroll buffer
-    uint32              scroll_used;  // position in scroll buffer
-    uint32              scroll_pos;   // last printed textline
-    uint32              size;         // number or printed textlines
-    _font              *font;         // the font used in this window
-    textwin_text_t     *text;
+    uint16              hbarge_w,     // width of the horizontal barge in pixels
+                        hbarge_x,     // start pos of the horizontal barge in pixels
+                        vbarge_h,     // height of the vertical barge in pixels
+                        vbarge_y;     // start pos of the vertical barge in pixels
+    uint32              linebuf_off,  // offset into the linebuf buffer in lines
+                        linebuf_size, // max size of linebuf buffer in lines
+                        linebuf_used; // position in linebuf buffer in lines
+    textwin_linebuf_t  *linebuf;      // the linebuf buffer
 }
 textwin_window_t;
 
