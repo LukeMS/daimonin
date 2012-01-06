@@ -305,9 +305,9 @@ void save_options_dat(void)
     }
 
     /* the %-settings are settings which (should) not shown in options win */
-    sprintf(buf, "%%21 %d\n", textwin[TEXTWIN_MSG_ID].size);
+    sprintf(buf, "%%21 %d\n", textwin[TEXTWIN_MSG_ID].visible);
     PHYSFS_writeString(handle, buf);
-    sprintf(buf, "%%22 %d\n", textwin[TEXTWIN_CHAT_ID].size);
+    sprintf(buf, "%%22 %d\n", textwin[TEXTWIN_CHAT_ID].visible);
     PHYSFS_writeString(handle, buf);
 
     while (opt_tab[++i])
@@ -419,10 +419,10 @@ void load_options_dat(void)
             switch (line[2])
             {
                 case '1':
-                    textwin[TEXTWIN_MSG_ID].size = atoi(line + 4);
+                    textwin[TEXTWIN_MSG_ID].visible = atoi(line + 4);
                     break;
                 case '2':
-                    textwin[TEXTWIN_CHAT_ID].size = atoi(line + 4);
+                    textwin[TEXTWIN_CHAT_ID].visible = atoi(line + 4);
                     break;
             }
             continue;
