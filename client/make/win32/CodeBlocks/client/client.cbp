@@ -77,9 +77,6 @@
 		<Unit filename="..\..\..\..\src\client_cmd.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\..\..\..\src\commands.c">
-			<Option compilerVar="CC" />
-		</Unit>
 		<Unit filename="..\..\..\..\src\crc32.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -112,7 +109,6 @@
 		<Unit filename="..\..\..\..\src\include\buddy.h" />
 		<Unit filename="..\..\..\..\src\include\chatfilter.h" />
 		<Unit filename="..\..\..\..\src\include\client_cmd.h" />
-		<Unit filename="..\..\..\..\src\include\commands.h" />
 		<Unit filename="..\..\..\..\src\include\config.h" />
 		<Unit filename="..\..\..\..\src\include\crc32.h" />
 		<Unit filename="..\..\..\..\src\include\dialog.h" />
@@ -139,6 +135,7 @@
 		<Unit filename="..\..\..\..\src\include\physfsrwops.h" />
 		<Unit filename="..\..\..\..\src\include\player.h" />
 		<Unit filename="..\..\..\..\src\include\protocol.h" />
+		<Unit filename="..\..\..\..\src\include\server_cmd.h" />
 		<Unit filename="..\..\..\..\src\include\skin.h" />
 		<Unit filename="..\..\..\..\src\include\socket.h" />
 		<Unit filename="..\..\..\..\src\include\sound.h" />
@@ -195,6 +192,9 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\..\src\protocol.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\..\src\server_cmd.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\..\src\skin.c">

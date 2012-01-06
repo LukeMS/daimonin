@@ -24,7 +24,7 @@
  * and commands to the server. Most low level functions are in socket.c
  */
 
-#include <include.h>
+#include "include.h"
 
 /* The *_REAL macros are not directly used in the client_cmd_* functions.
  * Rather, they provide the underlying functionality for the non-_REAL macros,
@@ -143,7 +143,7 @@ static uint8 CheckCommand(char *cmd, char *params);
  *
  * The data pinged to the server is the server tick of the current update of
  * the so-called 'ping string'. This determines what the server will send in
- * reply (see commands.c). */
+ * reply (see server_cmd.c). */
 void client_cmd_ping(uint32 ping)
 {
     char     buf[TINY_BUF];

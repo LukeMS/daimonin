@@ -246,18 +246,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\commands.c"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="3"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
 				RelativePath="..\..\..\src\crc32.c"
 				>
 			</File>
@@ -354,6 +342,18 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\server_cmd.c"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WarningLevel="3"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
 				RelativePath="..\..\..\src\skin.c"
 				>
 			</File>
@@ -424,10 +424,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\include\client_cmd.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\include\commands.h"
 				>
 			</File>
 			<File
@@ -536,6 +532,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\include\protocol.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\include\server_cmd.h"
 				>
 			</File>
 			<File

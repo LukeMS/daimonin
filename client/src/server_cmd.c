@@ -26,7 +26,7 @@
  *
  */
 
-#include <include.h>
+#include "include.h"
 
 /* nast but tricky scroll helper */
 static int  scrolldx = 0, scrolldy = 0;
