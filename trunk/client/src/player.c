@@ -860,6 +860,8 @@ void widget_show_skill_exp(int x, int y)
 
         if (cpl.skill_name[0] != 0)
         {
+            uint32 colr;
+
             /* BEGIN robed's exp-Display Patch */
             switch (options.iExpDisplay)
             {
@@ -956,10 +958,12 @@ void widget_show_skill_exp(int x, int y)
             /* END robed's exp-display-Patch */
 
             sprintf(buf, "%1.2f sec", cpl.action_timer);
+            colr = (cpl.action_timer == 0.0)
+                   ? NDI_COLR_LIME
+                   : percentage_colr(100 - (cpl.action_timer * 100.0 /
+                                            cpl.action_time_max));
             string_blt(widget_surface[WIDGET_SKILL_EXP_ID], &font_small, buf,
-                       160, -1, percentage_colr(100 - (cpl.action_timer *
-                                                100.0f / cpl.action_time_max)),
-                       NULL, NULL);
+                       160, -1, colr, NULL, NULL);
         }
         sprite_blt(skin_sprites[SKIN_SPRITE_EXP_SKILL_BORDER], 143, 11, NULL, &bltfx);
 
