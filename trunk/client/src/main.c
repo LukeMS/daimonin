@@ -304,6 +304,9 @@ void save_options_dat(void)
         PHYSFS_writeString(handle, buf);
     }
 
+    /* TODO: This is obsolete in v0.10.6 so will be removed, but during
+     * development it should probably be left for compatibility with the
+     * v0.10.5 client. */
     /* the %-settings are settings which (should) not shown in options win */
     sprintf(buf, "%%21 %d\n", textwin[TEXTWIN_MSG_ID].visible);
     PHYSFS_writeString(handle, buf);
@@ -412,6 +415,10 @@ void load_options_dat(void)
                 options.firststart=0;
             continue;
         }
+
+        /* TODO: This is obsolete in v0.10.6 so will be removed, but during
+         * development it should probably be left for compatibility with the
+         * v0.10.5 client. */
         /* this are special settings which won't show in the options win, this has to be reworked in a general way */
         if (line[0] == '%' &&
             line[1] == '2')
