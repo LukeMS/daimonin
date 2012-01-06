@@ -29,7 +29,7 @@
 /* The *_REAL macros are not directly used in the client_cmd_* functions.
  * Rather, they provide the underlying functionality for the non-_REAL macros,
  * which are the ones used directly. The purpose of this is so we can log on a
- * development client when DEBUG_CMD_SENT is defined (see config.h). */
+ * development client when DEBUG_CLIENT_CMD is defined. */
 #define START_REAL(_SL_, _BUF_, _CMD_, _FLAGS_) \
     memset((_SL_), 0, sizeof(SockList)); \
     (_SL_)->buf = (_BUF_); \
@@ -92,7 +92,7 @@
                         ((_SL_)->buf) ? (_SL_)->buf : (_SL_)->defbuf, \
                         (_SL_)->len, (_SL_)->flags)
 
-#if defined DAI_DEVELOPMENT && defined DEBUG_CMD_SENT
+#ifdef DEBUG_CLIENT_CMD
 # define START(_SL_, _BUF_, _CMD_, _FLAGS_) \
     LOG(LOG_MSG, "Sent CMD (%u):%u", (_FLAGS_), (_CMD_)); \
     START_REAL((_SL_), (_BUF_), (_CMD_), (_FLAGS_))
