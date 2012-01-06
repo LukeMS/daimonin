@@ -37,9 +37,6 @@
 //#define PROFILING_WIDGETS
 
 //#define WIDGET_SNAP
-
-/* Causes sent cmds to be logged. */
-//#define DEBUG_CMD_SENT
 #endif
 
 /* uncomment this to enable the channel support in the client */

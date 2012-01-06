@@ -149,7 +149,7 @@ int send_command_binary(int cmd, char *body, int len, int flags)
 
         if(len >(MAX_DATA_TAIL_LENGTH-1))
         {
-#if defined DAI_DEVELOPMENT && defined DEBUG_SOCKET
+#ifdef DEBUG_SOCKET
             LOG(LOG_DEBUG,"BUG: socket buffer MAX_DATA_TAIL_LENGTH > %d: %d\n", MAX_DATA_TAIL_LENGTH, len);
 #endif
             SOCKET_CloseClientSocket(&csocket);
@@ -166,7 +166,7 @@ int send_command_binary(int cmd, char *body, int len, int flags)
 
             if(flags & SEND_CMD_FLAG_FIXED)
             {
-#if defined DAI_DEVELOPMENT && defined DEBUG_SOCKET
+#ifdef DEBUG_SOCKET
                 /* this makes no sense for our current protocol */
                 if(flags & SEND_CMD_FLAG_STRING)
                     LOG(LOG_DEBUG,"BUG WARNING: send_command_binary() _FLAG_STRING & _FLAG_FIXED set for cmd %d (len:%d)\n", cmd, len);
@@ -181,7 +181,7 @@ int send_command_binary(int cmd, char *body, int len, int flags)
                 buf->data[data_offset++] = ((uint32) (len)) & 0xFF;
             }
 
-#if defined DAI_DEVELOPMENT && defined DEBUG_SOCKET
+#ifdef DEBUG_SOCKET
             LOG(LOG_DEBUG,"SEND: cmd:%d len:%d (blen:%d) (%d %d)\n", cmd, len,buf->len,
                 (flags & SEND_CMD_FLAG_FIXED)?-1:buf->data[1], (flags & SEND_CMD_FLAG_FIXED)?-1:buf->data[2]);
 #endif
@@ -244,7 +244,7 @@ static int reader_thread_loop(void *nix)
     int header_len = 0;
     int cmd_len = -1;
 
-#if defined DAI_DEVELOPMENT && defined DEBUG_SOCKET
+#ifdef DEBUG_SOCKET
     LOG(LOG_DEBUG, "Reader thread started\n");
 #endif
 
@@ -291,7 +291,7 @@ static int reader_thread_loop(void *nix)
                 FREE(tmp);
             }
 
-#if defined DAI_DEVELOPMENT && defined DEBUG_SOCKET
+#ifdef DEBUG_SOCKET
             LOG(LOG_DEBUG,"CMD_LEN: toread:%d len:%d (%x)\n", toread, cmd_len, (*((char *)readbuf))&~0x80);
 #endif
 
@@ -303,7 +303,7 @@ static int reader_thread_loop(void *nix)
             if (ret == 0)
             {
                 /* End of file */
-#if defined DAI_DEVELOPMENT && defined DEBUG_SOCKET
+#ifdef DEBUG_SOCKET
                 LOG(LOG_DEBUG, "Reader got EOF trying to read %d bytes\n", toread);
 #endif
 
@@ -312,7 +312,7 @@ static int reader_thread_loop(void *nix)
             else if (ret == -1)
             {
                 /* IO error */
-#if defined DAI_DEVELOPMENT && defined DEBUG_SOCKET
+#ifdef DEBUG_SOCKET
 # if WIN32
                 LOG(LOG_DEBUG, "Reader got error %d\n", WSAGetLastError());
 # else
@@ -324,7 +324,7 @@ static int reader_thread_loop(void *nix)
             else
             {
                 readbuf_len += ret;
-#if defined DAI_DEVELOPMENT && defined DEBUG_SOCKET
+#ifdef DEBUG_SOCKET
                 LOG(LOG_DEBUG, "Reader got some data (%d bytes total)\n", readbuf_len);
 #endif
             }
@@ -334,7 +334,7 @@ static int reader_thread_loop(void *nix)
         {
             command_buffer *buf;
 
-#if defined DAI_DEVELOPMENT && defined DEBUG_SOCKET
+#ifdef DEBUG_SOCKET
             LOG(LOG_DEBUG," CMD:%x len:%d\n", (*((char *)readbuf))&~0x80,readbuf_len);
             /*LOG(LOG_DEBUG," CMD-DATA:%s\n", readbuf+3);*/
 #endif
@@ -359,7 +359,7 @@ out:
     SOCKET_CloseClientSocket(&csocket);
     FREE(readbuf);
     readbuf = NULL;
-#if defined DAI_DEVELOPMENT && defined DEBUG_SOCKET
+#ifdef DEBUG_SOCKET
     LOG(LOG_DEBUG, "Reader thread stopped\n");
 #endif
 
@@ -374,7 +374,7 @@ out:
 static int writer_thread_loop(void *nix)
 {
     command_buffer *buf = NULL;
-#if defined DAI_DEVELOPMENT && defined DEBUG_SOCKET
+#ifdef DEBUG_SOCKET
     LOG(LOG_DEBUG, "Writer thread started\n");
 #endif
 
@@ -394,7 +394,7 @@ static int writer_thread_loop(void *nix)
 
             if (ret == 0)
             {
-#if defined DAI_DEVELOPMENT && defined DEBUG_SOCKET
+#ifdef DEBUG_SOCKET
                 LOG(LOG_DEBUG, "Writer got EOF\n");
 #endif
 
@@ -403,7 +403,7 @@ static int writer_thread_loop(void *nix)
             else if (ret == -1)
             {
                 /* IO error */
-#if defined DAI_DEVELOPMENT && defined DEBUG_SOCKET
+#ifdef DEBUG_SOCKET
 # if WIN32
                 LOG(LOG_DEBUG, "Writer got error %d\n", WSAGetLastError());
 # else
@@ -421,7 +421,7 @@ static int writer_thread_loop(void *nix)
             buf = NULL;
         }
 
-#if defined DAI_DEVELOPMENT && defined DEBUG_SOCKET
+#ifdef DEBUG_SOCKET
         LOG(LOG_DEBUG, "Writer wrote a command (%d bytes)\n", written);
 #endif
     }
@@ -430,7 +430,7 @@ out:
     if (buf)
         command_buffer_free(buf);
     SOCKET_CloseClientSocket(&csocket);
-#if defined DAI_DEVELOPMENT && defined DEBUG_SOCKET
+#ifdef DEBUG_SOCKET
     LOG(LOG_DEBUG, "Writer thread stopped\n");
 #endif
 
@@ -442,7 +442,7 @@ out:
  */
 void socket_thread_start(void)
 {
-#if defined DAI_DEVELOPMENT && defined DEBUG_SOCKET
+#ifdef DEBUG_SOCKET
     LOG(LOG_DEBUG,"START THREADS\n");
 #endif
 
@@ -470,7 +470,7 @@ void socket_thread_start(void)
  * Closes the socket first, if it hasn't already been done. */
 void socket_thread_stop(void)
 {
-#if defined DAI_DEVELOPMENT && defined DEBUG_SOCKET
+#ifdef DEBUG_SOCKET
     LOG(LOG_DEBUG,"STOP THREADS\n");
 #endif
 
@@ -500,7 +500,7 @@ int handle_socket_shutdown()
         while (output_queue_start)
             command_buffer_free(command_buffer_dequeue(&output_queue_start, &output_queue_end));
 
-#if defined DAI_DEVELOPMENT && defined DEBUG_SOCKET
+#ifdef DEBUG_SOCKET
         LOG(LOG_DEBUG, "Connection lost\n");
 #endif
 
@@ -549,7 +549,7 @@ uint8 SOCKET_CloseClientSocket(struct ClientSocket *csock)
         return(1);
     }
 
-#if defined DAI_DEVELOPMENT && defined DEBUG_SOCKET
+#ifdef DEBUG_SOCKET
     LOG(LOG_DEBUG, "CloseClientSocket()\n");
 #endif
     SOCKET_CloseSocket(csock->fd);
@@ -647,7 +647,7 @@ uint8 SOCKET_OpenSocket(SOCKET *socket_temp, char *host, int port)
     uint32          start_timer;
     struct linger   linger_opt;
 
-#if defined DAI_DEVELOPMENT && defined DEBUG_SOCKET
+#ifdef DEBUG_SOCKET
     LOG(LOG_DEBUG, "OpenSocket: %s\n", host);
 #endif
 
@@ -899,7 +899,7 @@ if (*socket_temp == SOCKET_NO)
     {
         if (setsockopt(*socket_temp, SOL_SOCKET, SO_RCVBUF, (char *) &newbufsize, sizeof(&newbufsize)))
         {
-#if defined DAI_DEVELOPMENT && defined DEBUG_SOCKET
+#ifdef DEBUG_SOCKET
             LOG(LOG_DEBUG, "socket: setsockopt unable to set output buf size to %d\n", newbufsize);
 #endif
             setsockopt(*socket_temp, SOL_SOCKET, SO_RCVBUF, (char *) &oldbufsize, sizeof(&oldbufsize));
