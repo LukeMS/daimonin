@@ -1324,8 +1324,7 @@ int main(int argc, char *argv[])
     ShowIntro("load mpart positioning data", 80);
     LoadArchdef();
     ShowIntro("initialise textwindows", 90);
-    textwin_init(TEXTWIN_MSG_ID);
-    textwin_init(TEXTWIN_CHAT_ID);
+    textwin_init();
     ShowIntro(NULL, 100);
     sound_play_music("orchestral.ogg", options.music_volume, 0, -1, 0, MUSIC_MODE_DIRECT);
     sprite_init_system();

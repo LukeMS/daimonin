@@ -118,7 +118,8 @@ textwin_window_t;
 
 extern textwin_window_t textwin[TEXTWIN_NROF];
 
-extern void textwin_init(textwin_id_t id);
+extern void textwin_init(void);
+extern void textwin_deinit(void);
 extern void textwin_set_font(textwin_id_t id);
 extern void textwin_show_string(uint32 flags, uint32 colr, char *format, ...);
 extern void textwin_show_window(textwin_id_t id);

@@ -38,33 +38,46 @@ static void ShowWindowFrame(textwin_window_t *tw, _BLTFX *bltfx);
 static void ScrollTextWindow(textwin_window_t *tw);
 static void ResizeTextWindow(textwin_window_t *tw);
 
-void textwin_init(textwin_id_t id)
+void textwin_init(void)
 {
-    textwin_window_t  *tw = &textwin[id];
-    textwin_linebuf_t *linebuf;
+    textwin_id_t id;
 
-    if (id == TEXTWIN_CHAT_ID)
+    for (id = 0; id < TEXTWIN_NROF; id++)
     {
-        tw->widget = WIDGET_CHATWIN_ID;
-    }
-    else if (id == TEXTWIN_MSG_ID)
-    {
-        tw->widget = WIDGET_MSGWIN_ID;
-    }
-    else
-    {
-        return;
-    }
+        textwin_window_t  *tw = &textwin[id];
+        textwin_linebuf_t *linebuf;
 
-    tw->topline = 0;
-    tw->linebuf_off = 0;
-    tw->maxstringlen = widget_data[tw->widget].wd -
-                       (skin_sprites[SKIN_SPRITE_SLIDER_VCANAL]->bitmap->w * 2) - 4;
-    tw->linebuf_size = options.textwin_scrollback;
-    tw->linebuf_used = 0;
-    MALLOC(linebuf, sizeof(textwin_linebuf_t) * tw->linebuf_size);
-    tw->linebuf = linebuf;
-    textwin_set_font(id);
+        if (id == TEXTWIN_CHAT_ID)
+        {
+            tw->widget = WIDGET_CHATWIN_ID;
+        }
+        else if (id == TEXTWIN_MSG_ID)
+        {
+            tw->widget = WIDGET_MSGWIN_ID;
+        }
+
+        tw->topline = 0;
+        tw->linebuf_off = 0;
+        tw->maxstringlen = widget_data[tw->widget].wd -
+                           (skin_sprites[SKIN_SPRITE_SLIDER_VCANAL]->bitmap->w * 2) - 4;
+        tw->linebuf_size = options.textwin_scrollback;
+        tw->linebuf_used = 0;
+        MALLOC(linebuf, sizeof(textwin_linebuf_t) * tw->linebuf_size);
+        tw->linebuf = linebuf;
+        textwin_set_font(id);
+    }
+}
+
+void textwin_deinit(void)
+{
+    textwin_id_t id;
+
+    for (id = 0; id < TEXTWIN_NROF; id++)
+    {
+        textwin_window_t *tw = &textwin[id];
+
+        FREE(tw->linebuf);
+    }
 }
 
 void textwin_set_font(textwin_id_t id)

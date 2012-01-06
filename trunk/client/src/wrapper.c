@@ -116,6 +116,7 @@ void SYSTEM_End(void)
 
     save_user_settings();
     gameserver_init();
+    textwin_deinit();
     widget_deinit();
     SOCKET_DeinitSocket();
     PHYSFS_deinit();
