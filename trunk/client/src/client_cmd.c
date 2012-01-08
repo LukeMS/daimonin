@@ -818,7 +818,7 @@ static uint8 CheckCommand(char *cmd, char *params)
 
                 if (spell_list[i].entry[1][j].flag >= LIST_ENTRY_USED)
                 {
-                    if (!strcmp(spell_list[i].entry[1][j].name, cmd))
+                    if (!strcmp(spell_list[i].entry[1][j].name, params))
                     {
                         if (spell_list[i].entry[1][j].flag == LIST_ENTRY_KNOWN)
                         {
