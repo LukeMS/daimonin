@@ -1079,7 +1079,7 @@ int command_channel_create(object *ob, char *params)
         new_draw_info(NDI_UNIQUE, 0, ob, "Syntax: /createchannel <name> <defaultshortcut> <defaultcolor> <postlevel> <enterlevel> <gmastermode>");
         new_draw_info(NDI_UNIQUE, 0, ob, "set defaultshortcut to '#' for no defaultshortcut");
         new_draw_info(NDI_UNIQUE, 0, ob, "set defaultcolor to '-1' for no defaultcolor");
-        return 1;
+        return 0;
     }
 
     if (sscanf(params, "%s %c %d %d %d %d", channelname, &defaultshortcut, &channelcolor, &channelpostlevel, &channelenterlevel, &channelgmastermode) < 6)
@@ -1087,24 +1087,24 @@ int command_channel_create(object *ob, char *params)
         new_draw_info(NDI_UNIQUE, 0, ob, "Syntax: /createchannel <name> <defaultshortcut> <defaultcolor> <postlevel> <enterlevel> <gmastermode>");
         new_draw_info(NDI_UNIQUE, 0, ob, "set defaultshortcut to '#' for no defaultshortcut");
         new_draw_info(NDI_UNIQUE, 0, ob, "set defaultcolor to '-1' for no defaultcolor");
-        return 1;
+        return 0;
     }
     else
     {
         if (strlen(channelname)>MAX_CHANNEL_NAME)
         {
             new_draw_info(NDI_UNIQUE, 0, ob, "Channelname is too long!");
-            return 1;
+            return 0;
         }
         if (!channelname_ok(channelname))
         {
             new_draw_info(NDI_UNIQUE, 0, ob, "This Channelname is not allowed!");
-            return 1;
+            return 0;
         }
         if (strlen(channelname)<3)
         {
             new_draw_info(NDI_UNIQUE, 0, ob, "Channelname must be at least 3 chars long!");
-            return 1;
+            return 0;
         }
 
         for (channel=channel_list_start;channel;channel=channel->next)
@@ -1112,7 +1112,7 @@ int command_channel_create(object *ob, char *params)
             if (!strcasecmp(channel->name,channelname) || ((channel->shortcut==defaultshortcut) && (defaultshortcut!='#')))
             {
                 new_draw_info(NDI_UNIQUE, 0, ob, "Channel with that name or shortcut already exists!");
-                return 1;
+                return 0;
             }
         }
         final_addChannel(channelname,defaultshortcut,channelcolor, channelpostlevel, channelenterlevel, channelgmastermode);
@@ -1121,7 +1121,7 @@ int command_channel_create(object *ob, char *params)
         save_channels();
     }
 
-    return 1;
+    return 0;
 
 }
 
