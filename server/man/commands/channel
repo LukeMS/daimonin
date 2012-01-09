@@ -1,0 +1,21 @@
+~Category~: Players/Chat
+
+~Syntax~: /channel <option>
+~Description~:
+   Option: ~?~: Lists all channels the player can see.
+   Option: ~+~: Player rejoins all of his/her channels.
+   Option: ~-~: Player leaves all of his/her channels until rejoining.
+
+~Syntax~: /channel <channel> <message>
+~Description~:
+    Displays <message> to all players in <channel>.
+
+~Syntax~: /channel <channel><option><params>
+~Description~:
+   Option: ~-~: Player leaves <channel> if he/she is in it.
+   Option: ~+~: Player joins <channel> if he/she meets the requirements.
+   Option: ~?~: Lists all players listening on <channel>.
+   Option: ~*~: Lists the <channel> history for the player, up to <params> lines (defaults to 5).
+   Option: ~:~: Prints <params> as an emote on <channel>.
+   Option: ~%~: Changes the shortcut to <params> for <channel> for that player.
+   Option: ~$~: Prints a string describing the player's marked item to <channel>.
