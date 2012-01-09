@@ -44,11 +44,13 @@ typedef struct player_channel
     struct  player_channel  *next_player;   /* Next player which is on that channel */
     struct  channels        *channel;       /* pointer to channel player is listening */
             player          *pl;            /* pointer back to player struct */
-	        char            shortcut;       /* user defined shortcut, overrules global channel shortcut */
-            unsigned long   mute_freq;
-            unsigned long   mute_counter;
-            unsigned long   mute_msg_count;
-            uint32          mute_flags;
+    char                     shortcut;      /* user defined shortcut, overrules global channel shortcut */
+    unsigned long            mute_freq;
+    unsigned long            mute_counter;
+    unsigned long            mute_msg_count;
+    uint32                   mute_flags;
+    int                      moderator;     // Whether or not the player is a moderator of this channel.
+
 } _player_channel;
 
 /**
@@ -91,8 +93,6 @@ void    addDefaultChannels(player *pl);
 void    load_channels(void);
 void    save_channels(void);
 void    leaveAllChannels(player *pl);
-
-void    printChannelUsage(object *ob);
 
 int     channelname_ok(char *cp);
 
