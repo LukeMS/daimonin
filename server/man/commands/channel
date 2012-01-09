@@ -12,10 +12,15 @@
 
 ~Syntax~: /channel <channel><option><params>
 ~Description~:
-   Option: ~-~: Player leaves <channel> if he/she is in it.
-   Option: ~+~: Player joins <channel> if he/she meets the requirements.
-   Option: ~?~: Lists all players listening on <channel>.
-   Option: ~*~: Lists the <channel> history for the player, up to <params> lines (defaults to 5).
-   Option: ~:~: Prints <params> as an emote on <channel>.
-   Option: ~%~: Changes the shortcut to <params> for <channel> for that player.
-   Option: ~$~: Prints a string describing the player's marked item to <channel>.
+   Option: ~-~ : Player leaves <channel> if he/she is in it.
+   Option: ~+~ : Player joins <channel> if he/she meets the requirements.
+   Option: ~?~ : Lists all players listening on <channel>.
+   Option: ~*~ : Lists the <channel> history for the player, up to <params> lines (defaults to 5).
+   Option: ~:~ : Prints <params> as an emote on <channel>.
+   Option: ~%~ : Changes the shortcut to <params> for <channel> for that player.
+   Option: ~$~ : Prints a string describing the player's marked item to <channel>.
+   Option: ~!~ : Accesses moderation commands (VOLs only).
+      Param: ~mod <postlvl> <enterlvl>~: Restricts <channel> chat level to <postlvl> and entry level to <enterlvl>.
+      Param: ~kick <playername>~: Kicks <playername> out of <channel>.
+      Param: ~mute <playername> <time>~: Mutes <playername> in <channel> for <time>.
+      Param: ~add <playername>~: Adds <playername> to <channel>.
