@@ -40,8 +40,6 @@ int command_channel(object *ob, char *params)
 
     if (!params)
     {
-        printChannelUsage(ob);
-
         return 1;
     }
 
@@ -111,7 +109,6 @@ int command_channel(object *ob, char *params)
             return 0;
         }
         /* no global command...*/
-        printChannelUsage(ob);
         return 1;
     }
 
@@ -603,15 +600,6 @@ struct player_channel *final_addChannelToPlayer(player *pl, struct channels *cha
         channel->pl_count++;
     pl->channel_count++;
     return node;
-}
-
-/* TODO: This will be replaced by online help. */
-void printChannelUsage(object *ob)
-{
-    new_draw_info(NDI_UNIQUE, 0, ob, "Usage:\n       -<channel>[ ][:]<Text>");
-    new_draw_info(NDI_UNIQUE, 0, ob, "       -<channel>[+-?!*%%]");
-    new_draw_info(NDI_UNIQUE, 0, ob, "       -[+-?]");
-    return;
 }
 
 int channelname_ok(char *cp)
