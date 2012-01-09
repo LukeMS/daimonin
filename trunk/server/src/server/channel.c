@@ -209,7 +209,7 @@ int command_channel(object *ob, char *params)
         return 1;
 #endif
     }
-    else if (mode=='!')
+    else if (mode=='!' && (CONTR(ob)->gmaster_mode & GMASTER_MODE_VOL))
     {
         if (strlen(params)==0)
         {
@@ -235,6 +235,7 @@ int command_channel(object *ob, char *params)
         {
             char    buf3[256];
             sprintf(buf3,"%s %s",pl_channel->channel->name,params+5);
+
             return command_channel_mute(ob, buf3);
         }
         else if (!strncasecmp(params, "mod", 3))
@@ -242,9 +243,13 @@ int command_channel(object *ob, char *params)
             modify_channel_params(pl_channel,params+4);
         }
         else if (!strncasecmp(params, "add", 3))
+        {
             forceAddPlayerToChannel(pl_channel, params+4);
+        }
         else if (!strncasecmp(params, "kick", 4))
+        {
             kickPlayerFromChannel(pl_channel, params+5);
+        }
 
         return 0;
     }
