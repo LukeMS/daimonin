@@ -1830,6 +1830,7 @@ static void ParseInvocationLine(int argc, char *argv[])
                 LOG(LOG_MSG, "                           2 - the test server, which is best for testing new content (maps)\n");
                 LOG(LOG_MSG, "                           3 - the dev server, which is best for testing new code (features)\n");
                 LOG(LOG_MSG, "  -v, --version        : output client version number and exit\n");
+                SYSTEM_End();
                 exit(EXIT_SUCCESS);
             }
         }
@@ -1918,6 +1919,7 @@ static void ParseInvocationLine(int argc, char *argv[])
             {
                 LOG(LOG_MSG, "Client version %d.%d.%d\n",
                     DAI_VERSION_RELEASE, DAI_VERSION_MAJOR, DAI_VERSION_MINOR);
+                SYSTEM_End();
 
                 /* EXPERIMENTAL: Should exit with the x.y.z version as a single
                  * 15-bit number as long as we keep to limits, or -1 otherwise.
