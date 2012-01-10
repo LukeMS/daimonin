@@ -119,8 +119,12 @@ void SYSTEM_End(void)
     textwin_deinit();
     widget_deinit();
     SOCKET_DeinitSocket();
-    PHYSFS_deinit();
-    PHYSFS_isInitialised = 0;
+
+    if (PHYSFS_isInitialised)
+    {
+        PHYSFS_deinit();
+        PHYSFS_isInitialised = 0;
+    }
 
     for (i = 0; i < FACE_MAX_NROF; i++)
     {
