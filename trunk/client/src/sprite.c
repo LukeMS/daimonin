@@ -543,7 +543,7 @@ void string_blt(SDL_Surface *surf, _font *font, char *text, int x, int y, uint32
                              &real_color;
 
             box.x = x2;
-            box.y = y2 + font->c[(unsigned char)(*c)].h - 2;
+            box.y = y2 + font->line_height - 1;
             box.w = w;
             box.h = 1;
             SDL_FillRect(surf, &box,
