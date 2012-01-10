@@ -1345,30 +1345,36 @@ int main(int argc, char *argv[])
         textwin_show_string(0, NDI_COLR_SILVER, "Init network... ~OK~!");
     }
 
-    /* Wait for keypress. */
-    while (1)
+    /* Unless  we've given  an --account, --pass, or --server switch wait for
+     * keypress. */
+    if (options.cli_account[0] == '\0' &&
+        options.cli_pass[0] == '\0' &&
+        options.cli_server == GAMESERVER_META_ID)
     {
-        SDL_Event event;
-
-        SDL_PollEvent(&event);
-
-        if (event.type == SDL_QUIT)
+        while (1)
         {
-            SYSTEM_End();
+            SDL_Event event;
 
-            return 0;
+            SDL_PollEvent(&event);
+
+            if (event.type == SDL_QUIT)
+            {
+                SYSTEM_End();
+
+                return 0;
+            }
+            else if (event.type == SDL_KEYUP ||
+                     event.type == SDL_KEYDOWN ||
+                     event.type == SDL_MOUSEBUTTONDOWN ||
+                     options.cli_server > GAMESERVER_META_ID)
+            {
+                reset_keys();
+
+                break;
+            }
+
+            SDL_Delay(25);      /* force the thread to sleep */
         }
-        else if (event.type == SDL_KEYUP ||
-                 event.type == SDL_KEYDOWN ||
-                 event.type == SDL_MOUSEBUTTONDOWN ||
-                 options.cli_server > GAMESERVER_META_ID)
-        {
-            reset_keys();
-
-            break;
-        }
-
-        SDL_Delay(25);      /* force the thread to sleep */
     }
 
     LastTick = tmpGameTick = anim_tick = new_anim_tick = SDL_GetTicks();
