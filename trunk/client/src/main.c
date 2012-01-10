@@ -1940,7 +1940,7 @@ static void ParseInvocationLine(int argc, char *argv[])
         if (invalid[0])
         {
             LOG(LOG_FATAL, "%s: %s -- '%s'\nTry `%s --help' for more information.\n",
-                argv[0], argv[0], invalid, argv[argc]);
+                argv[0], argv[argc], invalid,  argv[0]);
         }
     }
 }
