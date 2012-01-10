@@ -233,7 +233,7 @@ void esrv_new_player(player *pl, uint32 weight)
     SockBuf_AddInt(sptr, pl->ob->count);
     SockBuf_AddInt(sptr, weight);
     SockBuf_AddInt(sptr, pl->ob->face->number);
-    SockBuf_AddChar(sptr,(len=strlen(pl->ob->name)));
+    SockBuf_AddChar(sptr, (len = strlen(pl->ob->name)) + 1);
     SockBuf_AddString(sptr, pl->ob->name, len);
 
     SOCKBUF_REQUEST_FINISH(&pl->socket, SERVER_CMD_PLAYER, SOCKBUF_DYNAMIC);
