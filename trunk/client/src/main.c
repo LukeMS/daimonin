@@ -489,6 +489,10 @@ uint8 game_status_chain(void)
         uint16 i;
 
         save_user_settings();
+        widget_deinit();
+        widget_init();
+        textwin_deinit();
+        textwin_init();
         cpl.acc_name[0] = '\0';
         cpl.name[0] = '\0';
         map_transfer_flag = 0;
@@ -512,6 +516,9 @@ uint8 game_status_chain(void)
             sound_play_music("orchestral.ogg", options.music_volume, 0, -1, 0, MUSIC_MODE_DIRECT);
 #endif
         clear_map();
+        textwin_show_string(0, NDI_COLR_SILVER, "Welcome to |Daimonin| ~v%d.%d.%d~",
+                           DAI_VERSION_RELEASE, DAI_VERSION_MAJOR,
+                           DAI_VERSION_MINOR);
         GameStatus = GAME_STATUS_META;
     }
     /* initialise, connect, and query the meta server */
@@ -1320,30 +1327,26 @@ int main(int argc, char *argv[])
      * ShowIntro(). */
     skin_load_bitmaps(SKIN_SPRITE_PROGRESS_BACK);
     font_init();
-    ShowIntro("initialise fonts", 0);
-    ShowIntro("load skin", 10);
+    ShowIntro("initialise fonts", 10);
+    ShowIntro("load skin", 30);
     skin_load_bitmaps(SKIN_SPRITE_NROF);
     skin_load_prefs();
-    ShowIntro("initialise sfx & music", 50);
+    ShowIntro("initialise sfx & music", 60);
     sound_init();
     ShowIntro("load keys", 70);
     read_keybind_file();
     ShowIntro("load mpart positioning data", 80);
     LoadArchdef();
-    ShowIntro("initialise textwindows", 90);
-    textwin_init();
-    ShowIntro(NULL, 100);
-    sound_play_music("orchestral.ogg", options.music_volume, 0, -1, 0, MUSIC_MODE_DIRECT);
-    sprite_init_system();
+    ShowIntro("initialise network", 90);
 
-    if (!SOCKET_InitSocket()) /* log in function*/
+    if (!SOCKET_InitSocket())
     {
         LOG(LOG_FATAL, "Init network... FAILED!\n");
     }
-    else
-    {
-        textwin_show_string(0, NDI_COLR_SILVER, "Init network... ~OK~!");
-    }
+
+    ShowIntro(NULL, 100);
+    sound_play_music("orchestral.ogg", options.music_volume, 0, -1, 0, MUSIC_MODE_DIRECT);
+    sprite_init_system();
 
     /* Unless  we've given  an --account, --pass, or --server switch wait for
      * keypress. */
@@ -2236,9 +2239,6 @@ static void ShowIntro(char *text, int progress)
     else
     {
         string_blt(ScreenSurface, &font_small, "** Press Key **", x+375, y+585, NDI_COLR_WHITE, NULL, NULL);
-        textwin_show_string(0, NDI_COLR_SILVER, "Welcome to |Daimonin| ~v%d.%d.%d~",
-                           DAI_VERSION_RELEASE, DAI_VERSION_MAJOR,
-                           DAI_VERSION_MINOR);
     }
 
     FlipScreen();
