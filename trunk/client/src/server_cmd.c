@@ -710,25 +710,13 @@ void SkillRdyCmd(char *data, int len)
 
 void DrawInfoCmd(char *data, int len)
 {
-    uint16  mode = GetUINT16_String(data);
-    uint32  flags = mode & NDI_MASK_FLAGS,
-            colr = mode & NDI_MASK_COLRS;
-    char   *buf;
+    char *buf;
 
-    data += 2;
-    buf = strchr(data, ' ');
-
-    if (!buf)
-    {
-        LOG(LOG_ERROR, "DrawInfoCmd - got no data\n");
-        buf = "";
-    }
-    else
-    {
-        buf++;
-    }
-
-    textwin_show_string(flags, colr, "%s", buf);
+    MALLOC(buf, len);
+    *(uint16 *)buf = (uint8)atoi(data);
+    sprintf(buf + 2, "%s", data + 2);
+    DrawInfoCmd2(buf, len);
+    FREE(buf);
 }
 
 /* new draw command */
