@@ -103,16 +103,9 @@ void widget_init(void)
 {
     widget_id_t id;
 
-    widget_deinit();
-
     for (id = 0; id < WIDGET_NROF; id++)
     {
         widget_data[id] = DefaultData[id];
-    }
-
-    if (PriorityListHead)
-    {
-        DeinitPriorityList();
     }
 
     InitPriorityList();
@@ -142,8 +135,6 @@ void widget_load(void)
     PHYSFS_File *handle;
     char         buf[TINY_BUF];
     widget_id_t  id = WIDGET_NROF;
-
-    widget_init();
 
     if (!(handle = load_client_file(FILE_WIDGET)))
     {
