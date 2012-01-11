@@ -43,8 +43,6 @@ extern int  errno;
 #   include <errno.h>
 #endif
 
-char            _idle_warn_text[]    = "4 8 minutes idle warning!\nServer will disconnect you in 2 minutes.";
-char            _idle_warn_text2[]    = "3 Max idle time reached! Server is closing connection.";
 static fd_set   tmp_read, tmp_exceptions, tmp_write;
 
 /* NOTE: i used for the parms of this static inline function different names,
@@ -684,11 +682,11 @@ void doeric_server(int update, struct timeval *timeout)
                 {
                     pl->socket.login_count = ROUND_TAG + pticks_player_idle2;
                     pl->socket.idle_flag = 1;
-                    Write_String_To_Socket(&pl->socket, SERVER_CMD_DRAWINFO, _idle_warn_text, strlen(_idle_warn_text));
+                    new_draw_info(NDI_UNIQUE | NDI_RED, 0, pl->ob, "8 minutes idle warning! Server will disconnect you in 2 minutes.");
                 }
                 else if (pl->socket.login_count < ROUND_TAG && !QUERY_FLAG(pl->ob, FLAG_WIZ))
                 {
-                    Write_String_To_Socket(&pl->socket, SERVER_CMD_DRAWINFO, _idle_warn_text2, strlen(_idle_warn_text2));
+                    new_draw_info(NDI_UNIQUE | NDI_RED, 0, pl->ob, "Max idle time reached! Server is closing connection.");
                     pl->socket.login_count = ROUND_TAG+(uint32)(2.0f * pticks_second);
                     pl->socket.status = Ns_Zombie; /* we hold the socket open for a *bit* */
                     pl->socket.idle_flag = 1;
