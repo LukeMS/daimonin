@@ -92,7 +92,6 @@ _key_macro      defkey_macro[]          =
  */
 char            macro_magic_console[]   = "?M_MCON";
 
-int             KeyScanFlag; /* for debug/alpha , remove later */
 #define KEY_REPEAT_TIME 35
 #define KEY_REPEAT_TIME_INIT 175
 static Uint32   menuRepeatTicks = 0, menuRepeatTime = KEY_REPEAT_TIME_INIT;
@@ -1348,11 +1347,6 @@ int key_event(SDL_KeyboardEvent *key)
 
     if (key->type == SDL_KEYUP)
     {
-        if (KeyScanFlag)
-        {
-            textwin_show_string(0, NDI_COLR_RED, "Scancode: %d", key->keysym.sym);
-        }
-
         if (cpl.menustatus != MENU_NO)
         {
             keys[key->keysym.sym].pressed = 0;
