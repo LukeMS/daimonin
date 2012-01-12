@@ -38,7 +38,6 @@ Uint32              sdl_dgreen, sdl_dred, sdl_gray1, sdl_gray2, sdl_gray3, sdl_g
 int                 music_global_fade   = 0;
 int                 mb_clicked          = 0;
 int        InputFirstKeyPress;
-static uint8      newplayer = 0;
 
 int                    interface_mode;
 
@@ -516,9 +515,6 @@ uint8 game_status_chain(void)
             sound_play_music("orchestral.ogg", options.music_volume, 0, -1, 0, MUSIC_MODE_DIRECT);
 #endif
         clear_map();
-        textwin_show_string(0, NDI_COLR_SILVER, "Welcome to |Daimonin| ~v%d.%d.%d~",
-                           DAI_VERSION_RELEASE, DAI_VERSION_MAJOR,
-                           DAI_VERSION_MINOR);
         GameStatus = GAME_STATUS_META;
     }
     /* initialise, connect, and query the meta server */
@@ -916,7 +912,6 @@ uint8 game_status_chain(void)
          */
         reset_input_mode();
         dialog_new_char_warn = 0;
-        newplayer = 1;
     }
     else if (GameStatus == GAME_STATUS_ACCOUNT_CHAR_NAME)
     {
@@ -1619,18 +1614,6 @@ int main(int argc, char *argv[])
         /* we count always last frame*/
         FrameCount++;
         LastTick = SDL_GetTicks();
-
-        /* Seems a fairly hideous way of doing this but this mimics the show_help_screen_new -- Smacky 20070201 */
-        if (GameStatus == GAME_STATUS_PLAY && newplayer == 1)
-        {
-            newplayer = 0;
-            textwin_show_string(0, NDI_COLR_WHITE,
-                               "|Welcome to Daimonin, %s -- WHAT NOW?|\n"\
-                               "As this is your first time playing, you may be asking this question.\n"\
-                               "The character nearby is called ~Fanrir~. His job is to help new players get started in the game. You should talk to him. Do this by pressing the ~T key.\n"\
-                               "He will tell you how to do a lot of things and give you a lot of things to do, so pay attention to him and good luck! :)",
-                               cpl.name);
-        }
 
         if((GameStatus  >= GAME_STATUS_WAITFORPLAY) && options.sleepcounter )
         {
