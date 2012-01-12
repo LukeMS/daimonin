@@ -134,7 +134,6 @@ extern int itemExamined;
 extern button_status global_buttons;
 
 extern int          KeyScanFlag; /* for debug/alpha , remove later */
-extern int          cursor_type;
 extern _key_macro   defkey_macro[];
 extern const int    DEFAULT_KEYMAP_MACROS;
 extern int  draggingInvItem(int src);

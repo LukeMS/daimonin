@@ -1582,19 +1582,6 @@ int main(int argc, char *argv[])
             map_udate_flag = 2;
         }
 
-        /* we have a non-standard mouse-pointer (win-size changer, etc.) */
-        if (cursor_type)
-        {
-            SDL_Rect    rec;
-            SDL_GetMouseState(&x, &y);
-            rec.w = 14;
-            rec.h = 1;
-            rec.x = x - 7;
-            rec.y = y - 2;
-            SDL_FillRect(ScreenSurface, &rec, -1);
-            rec.y = y - 5;
-            SDL_FillRect(ScreenSurface, &rec, -1);
-        }
         if (GameStatus < GAME_STATUS_REQUEST_FILES)
             show_meta_server();
         else if (GameStatus >= GAME_STATUS_REQUEST_FILES && GameStatus < GAME_STATUS_ACCOUNT)
