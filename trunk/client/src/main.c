@@ -205,7 +205,6 @@ void init_game_data(void)
     memset(animcmd, 0, sizeof(animcmd));
     memset(animation, 0, sizeof(animation));
     ToggleScreenFlag = 0;
-    KeyScanFlag = 0;
     memset(&fire_mode, 0, sizeof(fire_mode));
 
     for (i = 0; i < MAXFACES; i++)
@@ -1805,19 +1804,6 @@ static void ParseInvocationLine(int argc, char *argv[])
                 LOG(LOG_MSG, "  -v, --version        : output client version number and exit\n");
                 SYSTEM_End();
                 exit(EXIT_SUCCESS);
-            }
-        }
-        /* TODO: Remove. */
-        else if (GetOption(argv[argc], "-k", "--key", key, value))
-        {
-            if (value[0])
-            {
-                 sprintf(invalid, "option takes no value");
-            }
-            else
-            {
-                KeyScanFlag = 1;
-                invalid[0] = '\0';
             }
         }
         else if (GetOption(argv[argc], "-l", "--local", key, value))
