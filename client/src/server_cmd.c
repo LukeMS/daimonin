@@ -1087,6 +1087,17 @@ void StatsCmd(char *data, int len)
                     break;
                 case CS_STAT_EXP:
                     temp = GetSINT32_String(data + i);
+
+                    if (temp == 0 &&
+                        cpl.stats.exp == 0)
+                    {
+                        textwin_show_string(0, NDI_COLR_WHITE,
+                                           "\n|WHAT NOW?|\n"\
+                                           "As this is your first time playing, you may be asking this question.\n"\
+                                           "The character nearby is called ~Fanrir~. His job is to help new players get started in the game. You should talk to him. Do this by pressing the ~T~ key.\n"\
+                                           "He will tell you how to do a lot of things and give you a lot of things to do, so pay attention to him and good luck! :)\n");
+                    }
+
                     cpl.warn_exp_down = (temp < cpl.stats.exp) ? 1 : 0;
                     cpl.stats.exp = temp;
                     cpl.stats.exp_level = server_level.level; //we need to set it to max_level as default!!!
