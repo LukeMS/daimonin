@@ -473,6 +473,7 @@ uint8 game_status_chain(void)
     /* lets drop some status messages for the client logs */
     static int st = -1, lg = -1, gs = -1;
     static gameserver_t *node_ping;
+    textwin_id_t         twid;
 
     if(st != (int)GameStatus || lg != (int)LoginInputStep || gs != (int)GameStatusSelect)
     {
@@ -982,8 +983,42 @@ uint8 game_status_chain(void)
     else if (GameStatus == GAME_STATUS_WAITFORPLAY)
     {
         /* ESC will drop the connection to avoid problems */
+        return 1;
     }
-    return(1);
+
+    for (twid = 0; twid < TEXTWIN_NROF; twid++)
+    {
+        sint16 x1 = widget_data[textwin[twid].wid].x1,
+               y1 = widget_data[textwin[twid].wid].y1,
+               wd = widget_data[textwin[twid].wid].wd,
+               ht = widget_data[textwin[twid].wid].ht;
+
+        /* Show msg textwindow top right. */
+        if (twid == TEXTWIN_MSG_ID)
+        {
+            widget_data[WIDGET_MSGWIN_ID].x1 = 539;
+            widget_data[WIDGET_MSGWIN_ID].y1 = 10;
+            widget_data[WIDGET_MSGWIN_ID].wd = Screensize.x - 539 - 10;
+            widget_data[WIDGET_MSGWIN_ID].ht = Screensize.y / 2 - 10;
+        }
+        /* Show chat textwindow bottom right. */
+        else if  (twid == TEXTWIN_CHAT_ID)
+        {
+           widget_data[WIDGET_CHATWIN_ID].x1 = 539;
+           widget_data[WIDGET_CHATWIN_ID].y1 = Screensize.y / 2 + 10;
+           widget_data[WIDGET_CHATWIN_ID].wd = Screensize.x - 539 - 10;
+           widget_data[WIDGET_CHATWIN_ID].ht = Screensize.y / 2 - 10 - 10;
+        }
+
+        WIDGET_REDRAW(textwin[twid].wid) = 1;
+        textwin_show_window(twid);
+        widget_data[textwin[twid].wid].x1 = x1;
+        widget_data[textwin[twid].wid].y1 = y1;
+        widget_data[textwin[twid].wid].wd = wd;
+        widget_data[textwin[twid].wid].ht = ht;
+    }
+
+    return 1;
 }
 
 void reset_input_mode(void)
@@ -1491,46 +1526,6 @@ int main(int argc, char *argv[])
                     map_udate_flag = 0;
             }
         } /* map update */
-
-        if (GameStatus < GAME_STATUS_WAITFORPLAY)
-        {
-            uint16 x1,
-                   y1,
-                   wd,
-                   ht;
-
-            /* Show msg textwindow top right. */
-            x1 = widget_data[WIDGET_MSGWIN_ID].x1,
-            y1 = widget_data[WIDGET_MSGWIN_ID].y1,
-            wd = widget_data[WIDGET_MSGWIN_ID].wd,
-            ht = widget_data[WIDGET_MSGWIN_ID].ht;
-            widget_data[WIDGET_MSGWIN_ID].x1 = 539;
-            widget_data[WIDGET_MSGWIN_ID].y1 = 10;
-            widget_data[WIDGET_MSGWIN_ID].wd = Screensize.x - 539 - 10;
-            widget_data[WIDGET_MSGWIN_ID].ht = Screensize.y / 2 - 10;
-            WIDGET_REDRAW(WIDGET_MSGWIN_ID) = 1;
-            textwin_show_window(TEXTWIN_MSG_ID);
-            widget_data[WIDGET_MSGWIN_ID].x1 = x1;
-            widget_data[WIDGET_MSGWIN_ID].y1 = y1;
-            widget_data[WIDGET_MSGWIN_ID].wd = wd;
-            widget_data[WIDGET_MSGWIN_ID].ht = ht;
-
-            /* Show chat textwindow bottom right. */
-            x1 = widget_data[WIDGET_CHATWIN_ID].x1,
-            y1 = widget_data[WIDGET_CHATWIN_ID].y1,
-            wd = widget_data[WIDGET_CHATWIN_ID].wd,
-            ht = widget_data[WIDGET_CHATWIN_ID].ht;
-            widget_data[WIDGET_CHATWIN_ID].x1 = 539;
-            widget_data[WIDGET_CHATWIN_ID].y1 = Screensize.y / 2 + 10;
-            widget_data[WIDGET_CHATWIN_ID].wd = Screensize.x - 539 - 10;
-            widget_data[WIDGET_CHATWIN_ID].ht = Screensize.y / 2 - 10 - 10;
-            WIDGET_REDRAW(WIDGET_CHATWIN_ID) = 1;
-            textwin_show_window(TEXTWIN_CHAT_ID);
-            widget_data[WIDGET_CHATWIN_ID].x1 = x1;
-            widget_data[WIDGET_CHATWIN_ID].y1 = y1;
-            widget_data[WIDGET_CHATWIN_ID].wd = wd;
-            widget_data[WIDGET_CHATWIN_ID].ht = ht;
-        }
 
         /* if not connected, walk through connection chain and/or wait for action */
         if (GameStatus < GAME_STATUS_PLAY)
