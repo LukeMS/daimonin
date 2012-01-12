@@ -93,7 +93,6 @@ _key_macro      defkey_macro[]          =
 char            macro_magic_console[]   = "?M_MCON";
 
 int             KeyScanFlag; /* for debug/alpha , remove later */
-int             cursor_type             = 0;
 #define KEY_REPEAT_TIME 35
 #define KEY_REPEAT_TIME_INIT 175
 static Uint32   menuRepeatTicks = 0, menuRepeatTime = KEY_REPEAT_TIME_INIT;
