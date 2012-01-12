@@ -142,17 +142,20 @@ void display_mapscroll(int dx, int dy)
     }
 }
 
-void map_draw_map_clear(void)
+void map_overlay(_Sprite *sprite)
 {
-    register int ypos, xpos, x,y;
+    uint8 y;
 
     for (y = 0; y < MapStatusY; y++)
     {
+        uint8 x;
+
         for (x = 0; x < MapStatusX; x++)
         {
-            xpos = options.mapstart_x + x * MAP_TILE_YOFF - y * MAP_TILE_YOFF;
-            ypos = options.mapstart_y + x * MAP_TILE_XOFF + y * MAP_TILE_XOFF;
-            sprite_blt_map(skin_sprites[SKIN_SPRITE_BLACKTILE], xpos, ypos, NULL, NULL, 0);
+            sint16 xpos = MAP_START_XOFF + x * MAP_TILE_YOFF - y * MAP_TILE_YOFF,
+                   ypos = 50 + x * MAP_TILE_XOFF + y * MAP_TILE_XOFF;
+
+            sprite_blt_map(sprite, xpos, ypos, NULL, NULL, 0);
         }
     }
 }
@@ -832,15 +835,7 @@ void map_draw_map(void)
     /* Draw a grid. */
     if (options.grid)
     {
-        for (y = 0; y < MapStatusY; y++)
-        {
-            for (x = 0; x < MapStatusX; x++)
-            {
-                xpos = MAP_START_XOFF + x * MAP_TILE_YOFF - y * MAP_TILE_YOFF;
-                ypos = 50 + x * MAP_TILE_XOFF + y * MAP_TILE_XOFF;
-                sprite_blt_map(skin_sprites[SKIN_SPRITE_GRID], xpos, ypos, NULL, NULL, 0);
-            }
-        }
+        map_overlay(skin_sprites[SKIN_SPRITE_GRID]);
     }
 
     /* Have we drawn the player above? Should have. Now show the name and

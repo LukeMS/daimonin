@@ -1312,7 +1312,7 @@ void PlayerCmd(char *data, int len)
     }
 
     new_player(tag, name, weight, (short) face);
-    map_draw_map_clear();
+    map_overlay(skin_sprites[SKIN_SPRITE_BLACKTILE]);
     map_transfer_flag = 1;
     map_udate_flag = 2;
     map_redraw_flag=1;
