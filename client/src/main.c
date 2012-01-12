@@ -982,8 +982,6 @@ uint8 game_status_chain(void)
     else if (GameStatus == GAME_STATUS_WAITFORPLAY)
     {
         /* ESC will drop the connection to avoid problems */
-        map_udate_flag=2;
-        map_draw_map_clear(); /* draw a clear map */
     }
     return(1);
 }
