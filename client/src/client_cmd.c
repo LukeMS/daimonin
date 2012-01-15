@@ -925,6 +925,7 @@ static uint8 CheckCommand(char *cmd, char *params)
         else if (!stricmp(params, "widgets"))
         {
             textwin_show_string(0, NDI_COLR_WHITE, "Resetting widgets!");
+            widget_deinit();
             widget_init();
         }
 #if 0
