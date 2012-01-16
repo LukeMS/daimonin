@@ -30,7 +30,6 @@ extern void         show_input_string(_font *font, SDL_Rect *box, char repl);
 extern int          read_substr_char(char *srcstr, char *desstr, int *sz, char ct);
 extern char        *get_parameter_string(char *data, int *pos, int maxlen);
 extern int          isqrt(int n);
-extern void         smiley_convert(char *msg);
 extern void         markdmbuster();
 extern char        *normalize_string(const char *string);
 extern int          setup_endian_sync(const char *const buf);

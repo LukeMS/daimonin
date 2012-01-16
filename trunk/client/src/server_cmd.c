@@ -2233,136 +2233,13 @@ void DataCmd(char *data, int len)
 
 #ifdef USE_CHANNELS
 
-/**
-* stringbreak for channelsystem, we have to include the prefix in normal msg
-* and have to add spaces in emotes
-* @param text message to break
-* @param prefix prefix to add to the lines
-* @param one_prefix emotes got only prefix in first line
-* @param result breaked and prefixed string
-*/
-static inline void break_string(char *text, char *prefix, uint8 one_prefix, char *result)
-{
-    char buf[200];
-    char pref[50];
-    int  i, a, len;
-    int winlen=244;
-    int preflen, restlen;
-
-    /*
-    * TODO: some security checks for max string len's
-    */
-
-    /* we have to convert to smileys for correct string width calculation */
-    if (options.textwin_use_smileys)
-    {
-        smiley_convert(text);
-    }
-
-    /* lets calculate the space used by the prefix */
-    preflen=0;
-    buf[0]=0;
-    for (i=0;prefix[i]!=0;i++)
-        preflen += font_small.c[(uint8) (prefix[i])].w + font_small.char_offset;
-
-    restlen=winlen-preflen;
-    result[0]=0;
-    strcat(result,prefix);
-
-    switch (options.channelformat)
-    {
-    case 0:
-        if (one_prefix)
-        {
-            for (i=0;i<(preflen/2);i++)
-                pref[i]=' ';
-            pref[i+1]=0;
-        }
-        else strcpy(pref,prefix);
-        break;
-
-    case 1:
-        one_prefix=1;
-        strcpy(pref,"       ");
-        break;
-    }
-
-    /* lets do some codestealing from client's textwin_show_string() :) */
-    len = 0;
-    for (a = i = 0; ; i++)
-    {
-        len += font_small.c[(uint8) (text[i])].w + font_small.char_offset;
-        if (len >= restlen || text[i] == 0x0a || text[i] == 0)
-        {
-
-            /* now the special part - lets look for a good point to cut */
-            if (len >= restlen && a > 10)
-            {
-                int ii =a, it = i, ix = a, tx = i;
-
-                while (ii >= a / 2)
-                {
-                    if (text[it] == ' '
-                        || text[it] == ':'
-                        || text[it] == '.'
-                        || text[it] == ','
-                        || text[it] == '('
-                        || text[it] == ';'
-                        || text[it] == '-'
-                        || text[it] == '+'
-                        || text[it] == '*'
-                        || text[it] == '?'
-                        || text[it] == '/'
-                        || text[it] == '='
-                        || text[it] == '.'
-                        || text[it] == 0
-                        || text[it] == 0x0a)
-                    {
-                        tx = it;
-                        ix = ii;
-                        break;
-                    }
-                    it--;
-                    ii--;
-                };
-                i = tx;
-                a = ix;
-            }
-            buf[a] = 0x0a;
-            buf[a+1]= 0;
-            strcat(result,buf);
-
-            a = len = 0;
-
-            if (text[i] == 0)
-                break;
-
-            strcat(result,pref);
-
-            /* if we cut on space, space must be removed!!! */
-            if (text[i]==' ')
-                i++;
-
-        }
-        if (text[i] != 0x0a)
-            buf[a++] = text[i];
-    }
-
-    /* remove last newline */
-    result[strlen(result)-1]=0;
-
-    return;
-}
-
+/* TODO: This cmd will be removed entirely in 0.11.0. Server will send
+ * DRAWINFO2 with appropriate flags and colr. */
 void ChannelMsgCmd(char *data, int len)
 {
     uint8  mode = GetUINT8_String(data++);
-    uint32 colr = GetUINT8_String(data++);
-    char   channelname[32];
-    char   playername[32];
-    char   *message=NULL;
-    char   prefix[64];
-    char   outstring[1024];
+    uint32 flags = NDI_FLAG_PLAYER | NDI_FLAG_CHANNEL,
+           colr = GetUINT8_String(data++);
 
     /* TODO: We translate the 8-bit server colour to a 32/24-bit client colour.
      * This will be unnecessary in 0.11.0. */
@@ -2427,34 +2304,12 @@ void ChannelMsgCmd(char *data, int len)
             colr = NDI_COLR_WHITE;
     }
 
-    if (strlen((char *)data)==0)
+    if (mode == 1)
     {
-        LOG(LOG_ERROR,"ChannelMsgCmd: Got no data!\n");
-        return;
-    }
-    message=strchr((char *)data,':');
-    if (!message)
-    {
-        LOG(LOG_ERROR,"ChannelMsgCmd: Empty Message!\n");
-        return;
-    }
-    *(message++) = '\0';
-    sscanf((char *)data,"%s %s",channelname, playername);
-    if (ignore_check(playername, channelname)) return;
-    if (mode==1)
-    {
-        char message2[1024];
-        sprintf(prefix,"[%s#%s ",channelname, playername);
-        sprintf(message2,"%s%c",message,']');
-        break_string(message2, prefix, 1, outstring);
-    }
-    else
-    {
-        sprintf(prefix,"[%s#%s] ",channelname, playername);
-        break_string(message, prefix, 0, outstring);
+        flags |= NDI_FLAG_EMOTE;
     }
 
-    textwin_show_string(NDI_FLAG_PLAYER | NDI_FLAG_CHANNEL, colr, "%s", outstring);
+    textwin_show_string(flags, colr, "%s", data);
 }
 
 #endif

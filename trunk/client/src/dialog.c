@@ -109,7 +109,7 @@ char               *opt_tab[]                       =
 _option             opt[]                           =
     {
         /* Chat & Messages */
-        {"Channel format:", "How the channels are shown.","~Prefixed~ prefixes each line with [channel:player], and","~Indented~ only prefixes the first line, indenting subsequent ones.", "Prefixed#Indented",SEL_RANGE,0,1,1,0, &options.channelformat,VAL_INT},
+        {"Channel format:", "THIS OPTION IS OBSOLETE IN 0.10.6.","PRESERVED ONLY FOR BACKWARDS COMPATIBILITY DURING DEVELOPMENT.","", "Prefixed#Indented",SEL_RANGE,0,1,1,0, &options.channelformat,VAL_INT},
         {"Enable smileys:", "Whether to show smileys graphically.","","", "",SEL_CHECKBOX,0,1,1,1, &options.textwin_use_smileys,VAL_BOOL},
 #ifdef DAI_DEVELOPMENT
         {"Logging:", "Whether the textwindows are logged.","~None~ turns off logging, ~Only chat~, ~Only messages~, or ~Both, separately~ logs either or both textwindows to separate files, and ~Both, together~ logs both textwindows to a single file.","", "None#Only chat#Only messages#Both, separately#Both, together",SEL_RANGE,0,4,1,3, &options.textwin_use_logging,VAL_INT},

@@ -152,6 +152,91 @@ void textwin_show_string(uint32 flags, uint32 colr, char *format, ...)
     /* Here we handle chat... */
     if (id == TEXTWIN_CHAT_ID)
     {
+        char  cname[TINY_BUF] = "",
+              pname[TINY_BUF] = "";
+
+        if ((flags & NDI_FLAG_CHANNEL))
+        {
+            uint8  i,
+                   cn,
+                   pn;
+            uint16 len;
+
+            /* TODO: should be MAX_CHANNEL_NAME. In 0.11.0 move this from
+             * server/include/channel.h to protocol.h. */
+            for (i = 0; buf[i]; i++)
+            {
+                if (i >= 12)
+                {
+                    i = 0;
+
+                    break;
+                }
+
+                if (buf[i] == ' ')
+                {
+                    break;
+                }
+
+                cname[i] = buf[i];
+            }
+
+            cname[i] = '\0';
+            cn = i + 1;
+
+            if (!cname[0])
+            {
+                LOG(LOG_ERROR, "Malformed channel chat: >%s<\n", buf);
+
+                return;
+            }
+
+            for (i = 0; buf[cn + i]; i++)
+            {
+                if (i >= MAX_PLAYER_NAME)
+                {
+                    i = 0;
+
+                    break;
+                }
+
+                if (buf[cn + i] == ':')
+                {
+                    break;
+                }
+
+                pname[i] = buf[cn + i];
+            }
+
+            pname[i] = '\0';
+            pn = i + 1;
+
+            if (!pname[0])
+            {
+                LOG(LOG_ERROR, "Malformed channel chat: >%s<\n", buf);
+
+                return;
+            }
+
+            len = strlen(buf);
+            memmove(buf + 1, buf, len++);
+            buf[0] = '[';
+            buf[cn] = '#';
+            buf[cn + pn] = ' ';
+
+            if ((flags & NDI_FLAG_EMOTE))
+            {
+                buf[len] = ']';
+            }
+            else
+            {
+                memmove(buf + cn + pn + 1, buf + cn + pn, len - cn + pn); 
+                buf[cn + pn] = ']';
+            }
+
+            buf[len + 1] = '\0';
+        }
+
         /* Log before ignores, chatfilters and so on. */
         switch (options.textwin_use_logging)
         {
@@ -167,13 +252,15 @@ void textwin_show_string(uint32 flags, uint32 colr, char *format, ...)
                 break;
         }
 
-        /* Unless this is an gmaster communicating in an official capacity, we
+        /* Unless this is a gmaster communicating in an official capacity, we
          * can ignore it. This is of course easy to work around. Just replace
          * the following expression with 1 and recompile to ignore gmasters too.
          * But officially they must be heard. */
         if (!(flags & NDI_FLAG_GMASTER))
         {
-            if (((flags & NDI_FLAG_SAY) &&
+            if (((flags & NDI_FLAG_CHANNEL) &&
+                 ignore_check(pname, cname)) ||
+                ((flags & NDI_FLAG_SAY) &&
                  ignore_check(buf, "say")) ||
                 ((flags & NDI_FLAG_SHOUT) &&
                  ignore_check(buf, "shout")) ||
@@ -188,10 +275,10 @@ void textwin_show_string(uint32 flags, uint32 colr, char *format, ...)
 
         if (options.textwin_use_chatfilter)
         {
-            chatfilter_filter(buf); /* Filter incoming msg for f*words */
+            chatfilter_filter(buf);
         }
 
-        if (buddy_check(buf)) /* Color messages from buddys */
+        if (buddy_check(buf))
         {
             flags |= NDI_FLAG_BUDDY;
         }
@@ -677,7 +764,8 @@ static void AddLine(textwin_window_t *tw, const uint32 flags, const uint32 colr,
     sprintf((tw->linebuf + line)->buf, "%s%s", buf, message);
     (tw->linebuf + line)->flags = flags;
 
-    if (!(flags & NDI_FLAG_PLAYER))
+    if (!(flags & NDI_FLAG_PLAYER) ||
+         (flags & NDI_FLAG_CHANNEL)) //temporary
     {
         (tw->linebuf + line)->fg = colr;
         (tw->linebuf + line)->bg = 0;
