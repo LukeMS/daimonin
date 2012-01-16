@@ -89,7 +89,7 @@ extern void             InitMapData(int xl, int yl, int px, int py);
 extern void             UpdateMapName(char *name);
 extern void             UpdateMapMusic(char *music);
 extern void             set_map_ext(int x, int y, int layer, int ext, int probe);
-extern void             map_overlay(_Sprite *sprite).
+extern void             map_overlay(_Sprite *sprite);
 extern void             adjust_map_cache(int x, int y);
 extern int              get_tile_position(int mx, int my, int *tx, int *ty);
 
