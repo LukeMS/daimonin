@@ -916,11 +916,11 @@ void dump_me(object *op, char *outstr, size_t bufsize)
             // JRG The 32 here is to allow for the arch/name/end text
             strcat(outstr, ((strlen(cp) + 32) > bufsize) ? "(overflow)" : cp);
         }
-        strcat(outstr, "end\n");
+        strcat(outstr, "end");
     }
     else
     {
-        sprintf(strchr(outstr, '\0'), "Object %s\nend\n", STRING_OBJ_NAME(op));
+        sprintf(strchr(outstr, '\0'), "Object %s\nend", STRING_OBJ_NAME(op));
     }
 }
 
