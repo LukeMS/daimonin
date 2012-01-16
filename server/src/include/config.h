@@ -299,12 +299,10 @@
 #define STAT_LOSS 18
 
 /* you HAVE to also enable this in the lua-plugin (plugin_lua.h)!!! */
-#ifdef DAI_DEVELOPMENT_CODE
 #define USE_CHANNELS
 /* When defined, annouces the channel system at login. Be sure that
  * USE_CHANNELS is defined below! (Screw the alphabetical arrangement) */
-#define ANNOUNCE_CHANNELS
-#endif
+//#define ANNOUNCE_CHANNELS
 
 /* Gravestones mark the spot where a player died (they disappear after a few
  * minutes). They cause damage to players stepping on them if
