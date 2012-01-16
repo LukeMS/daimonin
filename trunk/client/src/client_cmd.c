@@ -445,12 +445,7 @@ void client_cmd_generic(const char *command)
                params[MEDIUM_BUF];
         uint8  c;
 
-#ifdef USE_CHANNELS
-        if (*token != '/' &&
-            *token != '-') /* if not a command ... its chat  (- is for channel system)*/
-#else
         if (*token != '/')
-#endif
         {
             char tmpbuf[LARGE_BUF];
 
@@ -511,7 +506,6 @@ static char *SplitCommand(const char *command)
     /* Only look for a multicommand if the command is not one of these: */
     if (strnicmp(command, "/create ", 8) &&
 #ifdef USE_CHANNELS
-        *command != '-' &&
         strnicmp(command, "/channel ", 9) &&
 #endif
         strnicmp(command, "/gsay ", 6) &&
@@ -536,27 +530,6 @@ static char *SplitCommand(const char *command)
  * sent to the server (return 0). */
 static uint8 CheckCommand(char *cmd, char *params)
 {
-#ifdef USE_CHANNELS
-    /* i know hardcoding is most of the time bad, but the channel system will
-     * be used really often. Also we can type directly the '-' in the
-     * textwin. */
-    if (*cmd == '-')
-    {
-        /* Only send if there is something to send! */
-        if (*params)
-        {
-            char tmpbuf[MEDIUM_BUF];
-
-            sprintf(tmpbuf, "/channel %s", cmd + 1);
-            sprintf(cmd, "%s", tmpbuf);
-
-            return 0;
-        }
-
-        return 1;
-    }
-#endif
-
     /* Commands which require preprocessing before (and to determine if) they
      * are sent to the server, */
     /* This is for /apply commands where the item is specified as a string (eg,
