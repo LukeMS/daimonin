@@ -988,10 +988,10 @@ uint8 game_status_chain(void)
 
     for (twid = 0; twid < TEXTWIN_NROF; twid++)
     {
-        sint16 x1 = widget_data[textwin[twid].wid].x1,
-               y1 = widget_data[textwin[twid].wid].y1,
-               wd = widget_data[textwin[twid].wid].wd,
-               ht = widget_data[textwin[twid].wid].ht;
+        sint16 x1 = widget_data[textwin[twid].widget].x1,
+               y1 = widget_data[textwin[twid].widget].y1,
+               wd = widget_data[textwin[twid].widget].wd,
+               ht = widget_data[textwin[twid].widget].ht;
 
         /* Show msg textwindow top right. */
         if (twid == TEXTWIN_MSG_ID)
@@ -1010,12 +1010,12 @@ uint8 game_status_chain(void)
            widget_data[WIDGET_CHATWIN_ID].ht = Screensize.y / 2 - 10 - 10;
         }
 
-        WIDGET_REDRAW(textwin[twid].wid) = 1;
+        WIDGET_REDRAW(textwin[twid].widget) = 1;
         textwin_show_window(twid);
-        widget_data[textwin[twid].wid].x1 = x1;
-        widget_data[textwin[twid].wid].y1 = y1;
-        widget_data[textwin[twid].wid].wd = wd;
-        widget_data[textwin[twid].wid].ht = ht;
+        widget_data[textwin[twid].widget].x1 = x1;
+        widget_data[textwin[twid].widget].y1 = y1;
+        widget_data[textwin[twid].widget].wd = wd;
+        widget_data[textwin[twid].widget].ht = ht;
     }
 
     return 1;
