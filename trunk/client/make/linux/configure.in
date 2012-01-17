@@ -336,6 +336,20 @@ AC_CHECK_HEADERS([arpa/inet.h fcntl.h limits.h malloc.h netdb.h netinet/in.h std
 #fi
 
 #
+# Check for revision
+#
+
+revision="exported"
+
+if test -e ../../.svn/entries; then
+    # Bootstrapping seems to eat square brackets and I can't seem to escape
+    # them, so no character classes.
+    revision=`egrep -m1 '(0|1|2|3|4|5|6|7|8|9){4}' ../../.svn/entries`
+fi
+
+AC_DEFINE_UNQUOTED(REVISION, "${revision}", [ Revision (for development clients) ])
+
+#
 # Check for stuff needed by the auto-updater
 #
 
@@ -408,6 +422,7 @@ fi
 # Write out setup information
 echo
 echo "** Setup information:"
-echo "  Installation path:       $prefix"
-echo "  Simple directory layout: $simplelayout"
-echo "  Auto-updater:            $autoupdater"
+echo "  Installation path:                  $prefix"
+echo "  Simple directory layout:            $simplelayout"
+echo "  Auto-updater:                       $autoupdater"
+echo "  Revision (for development clients): $revision"
