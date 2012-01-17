@@ -1613,6 +1613,8 @@ int main(int argc, char *argv[])
 
         if (GameStatus == GAME_STATUS_PLAY)
         {
+            SDL_Rect rec;
+
             if (options.statsupdate)
             {
                 WIDGET_SHOW(WIDGET_STATOMETER_ID) = 1;
@@ -1633,7 +1635,6 @@ int main(int argc, char *argv[])
             {
                 uint16   fpt = (LastTick -tmpGameTick) / FrameCount,
                          fps = (fpt) ? 1000 / fpt : 0;
-                SDL_Rect rec;
 
                 if (fps > 0)
                 {
@@ -1670,6 +1671,19 @@ int main(int argc, char *argv[])
                 string_blt(ScreenSurface, &font_small, buf, rec.x, rec.y,
                            NDI_COLR_WHITE, NULL, NULL);
             }
+
+#ifdef DAI_DEVELOPMENT
+# ifdef REVISION
+            sprintf(buf, "Revision: %s", REVISION);
+            rec.x = 228;
+            rec.y = 134;
+            rec.h = font_small.line_height;
+            rec.w = string_width(&font_small, buf);
+            SDL_FillRect(ScreenSurface, &rec, 0);
+            string_blt(ScreenSurface, &font_small, buf, rec.x, rec.y,
+                       NDI_COLR_WHITE, NULL, NULL);
+# endif
+#endif
         }
 
         /* TODO: This should be moved to the anim functions, but for that we
