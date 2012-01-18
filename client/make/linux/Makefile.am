@@ -71,31 +71,4 @@ AM_CFLAGS = @SDL_CFLAGS@ -Wall -DDAI_DEVELOPMENT
 AM_LDFLAGS = @LDFLAGS@ 
 
 install-data-hook:
-#	@if [ x$$UID = 'x0' -o x$$USER = 'xroot' ]; then \
-#		echo '***'; \
-#		echo '*** ROOT INSTALL NOT SUPPORTED YET! Please install as a normal user.'; \
-#		echo '***'; \
-#		exit 42; \
-#	fi;
-	$(MKDIR) -p $(d_datadir)/sfx
-	$(MKDIR) -p $(d_datadir)/man
-	$(MKDIR) -p $(d_datadir)/media
-	$(MKDIR) -p $(d_datadir)/gfx_user
-	$(MKDIR) -p $(d_datadir)/bitmaps
-	$(MKDIR) -p $(d_datadir)/icons
-	$(MKDIR) -p $(d_datadir)/settings
-	$(MKDIR) -p $(d_datadir)/update
-	$(CP) ../../sfx/*.* $(d_datadir)/sfx
-	$(CP) -R ../../man/* $(d_datadir)/man
-	$(CP) ../../media/*.* $(d_datadir)/media
-	$(CP) -R ../../bitmaps/* $(d_datadir)/bitmaps
-	$(CP) ../../icons/* $(d_datadir)/icons
-	$(CP) -R ../../settings/*.* $(d_datadir)/settings
-	$(CP) ../../update/version $(d_datadir)/update
-	$(CP) ../../gfx_user/*.* $(d_datadir)/gfx_user
-	$(CP) ../../daimonin.p0 $(d_datadir)
-	$(CP) ../../License $(d_datadir)
-	$(CP) ../../archdef.dat $(d_datadir)
-	@echo "*** Daimonin client successful installed in $(daimonindir)!"
-	@echo "*** Enter your install folder and type ./daimonin"
-	@echo "*** to start the game!"
+	sh ../../install/linux/install.sh $(d_datadir) $(d_bindir)
