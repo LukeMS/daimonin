@@ -341,10 +341,8 @@ AC_CHECK_HEADERS([arpa/inet.h fcntl.h limits.h malloc.h netdb.h netinet/in.h std
 
 revision="exported"
 
-if test -e ../../.svn/entries; then
-    # Bootstrapping seems to eat square brackets and I can't seem to escape
-    # them, so no character classes.
-    revision=`egrep -m1 '(0|1|2|3|4|5|6|7|8|9){4}' ../../.svn/entries`
+if test -d ../../.svn; then
+    revision=`svn info ../.. |  grep 'Revision:' | cut -d ' ' -f 2`
 fi
 
 AC_DEFINE_UNQUOTED(REVISION, "${revision}", [ Revision (for development clients) ])
