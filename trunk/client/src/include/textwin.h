@@ -97,8 +97,6 @@ typedef struct textwin_window_t
     widget_id_t         widget;       // widget assocoiated with this window
     _font              *font;         // the font used in this window
     uint16              maxstringlen; // max length of string in pixels given window and vcanal width
-    uint32              visible,      // number or visible lines given window and font size
-                        topline;      // top visible line from linebuf buffer given window size
     textwin_resize_t    resize;       // resizing direction
     sint16              resize_x,     // resizing distance on x axis in pixels
                         resize_y;     // resizing distance on y axis in pixels
@@ -109,9 +107,11 @@ typedef struct textwin_window_t
                         hbarge_x,     // start pos of the horizontal barge in pixels
                         vbarge_h,     // height of the vertical barge in pixels
                         vbarge_y;     // start pos of the vertical barge in pixels
-    uint32              linebuf_off,  // offset into the linebuf buffer in lines
-                        linebuf_size, // max size of linebuf buffer in lines
-                        linebuf_used; // position in linebuf buffer in lines
+    uint32              linebuf_size, // max size of linebuf buffer in lines
+                        linebuf_used, // position in linebuf buffer in lines
+                        linebuf_visi, // number or visible lines given window and font height
+                        linebuf_next, // next line from linebuf buffer
+                        linebuf_off;  // offset into the linebuf buffer in lines
     textwin_linebuf_t  *linebuf;      // the linebuf buffer
 }
 textwin_window_t;

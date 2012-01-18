@@ -306,9 +306,9 @@ void save_options_dat(void)
      * development it should probably be left for compatibility with the
      * v0.10.5 client. */
     /* the %-settings are settings which (should) not shown in options win */
-    sprintf(buf, "%%21 %d\n", textwin[TEXTWIN_MSG_ID].visible);
+    sprintf(buf, "%%21 %d\n", textwin[TEXTWIN_MSG_ID].linebuf_visi);
     PHYSFS_writeString(handle, buf);
-    sprintf(buf, "%%22 %d\n", textwin[TEXTWIN_CHAT_ID].visible);
+    sprintf(buf, "%%22 %d\n", textwin[TEXTWIN_CHAT_ID].linebuf_visi);
     PHYSFS_writeString(handle, buf);
 
     while (opt_tab[++i])
@@ -424,10 +424,10 @@ void load_options_dat(void)
             switch (line[2])
             {
                 case '1':
-                    textwin[TEXTWIN_MSG_ID].visible = atoi(line + 4);
+                    textwin[TEXTWIN_MSG_ID].linebuf_visi = atoi(line + 4);
                     break;
                 case '2':
-                    textwin[TEXTWIN_CHAT_ID].visible = atoi(line + 4);
+                    textwin[TEXTWIN_CHAT_ID].linebuf_visi = atoi(line + 4);
                     break;
             }
             continue;
