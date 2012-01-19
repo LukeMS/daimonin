@@ -47,7 +47,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="../,../../../../../,../../../src/updater,../../../../src/updater/include"
+				AdditionalIncludeDirectories="../,../../../../../,../../../src/updater,../../../../src/updater/include,../../include"
 				PreprocessorDefinitions="WIN32,_DEBUG,__WIN_32,_CRT_SECURE_NO_WARNINGS,CURL_STATICLIB, DAI_DEVELOPMENT"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
@@ -147,7 +147,7 @@
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
-				AdditionalIncludeDirectories="../,../../../../../,../../../src/updater,../../../../src/updater/include"
+				AdditionalIncludeDirectories="../,../../../../../,../../../src/updater,../../../../src/updater/include,../../include"
 				PreprocessorDefinitions="WIN32,NDEBUG,_WINDOWS,__WIN_32,_CRT_SECURE_NO_WARNINGS,CURL_STATICLIB, DAI_DEVELOPMENT"
 				ExceptionHandling="0"
 				RuntimeLibrary="0"
@@ -253,10 +253,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\src\updater\include\physfs.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\..\src\updater\include\physfsrwops.h"
 				>
 			</File>
@@ -298,20 +294,20 @@
 				>
 			</File>
 			<File
-				RelativePath=".\resource.h"
+				RelativePath="..\..\resource.h"
 				>
 			</File>
 			<File
-				RelativePath=".\updater.rc"
+				RelativePath="..\..\daimonin.rc"
 				>
 			</File>
 		</Filter>
 		<File
-			RelativePath="..\sdl_lib\static\libcurl.lib"
+			RelativePath="..\..\lib\static\libcurl.lib"
 			>
 		</File>
 		<File
-			RelativePath="..\sdl_lib\static\physfs.lib"
+			RelativePath="..\..\lib\static\physfs.lib"
 			>
 		</File>
 	</Files>
