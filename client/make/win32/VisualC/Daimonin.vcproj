@@ -47,7 +47,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="../../../,../../../src/include,.\sdl_inc,.\sdl_inc\SDL\"
+				AdditionalIncludeDirectories="../../../,../../../src/include,../include"
 				PreprocessorDefinitions="INSTALL_SOUND,WIN32,_DEBUG,__WIN_32,CURL_STATICLIB,DAI_DEVELOPMENT"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -148,7 +148,7 @@
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
-				AdditionalIncludeDirectories="../../../,../../../src/include,.\sdl_inc,.\sdl_inc\SDL\"
+				AdditionalIncludeDirectories="../../../,../../../src/include,../include"
 				PreprocessorDefinitions="INSTALL_SOUND,WIN32,NDEBUG,_WINDOWS,__WIN_32,CURL_STATICLIB,DAI_DEVELOPMENT"
 				ExceptionHandling="0"
 				RuntimeLibrary="0"
@@ -519,10 +519,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\physfs.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\src\include\physfsrwops.h"
 				>
 			</File>
@@ -596,7 +592,7 @@
 			Filter="ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"
 			>
 			<File
-				RelativePath=".\client.rc"
+				RelativePath="..\daimonin.rc"
 				>
 			</File>
 			<File
@@ -604,32 +600,32 @@
 				>
 			</File>
 			<File
-				RelativePath=".\resource.h"
+				RelativePath="..\resource.h"
 				>
 			</File>
 		</Filter>
 		<File
-			RelativePath="..\sdl_lib\static\libcurl.lib"
+			RelativePath="..\lib\static\libcurl.lib"
 			>
 		</File>
 		<File
-			RelativePath=".\sdl_lib\physfs.lib"
+			RelativePath="..\lib\SDLmain.lib"
 			>
 		</File>
 		<File
-			RelativePath=".\sdl_lib\SDL.lib"
+			RelativePath="..\lib\SDL.lib"
 			>
 		</File>
 		<File
-			RelativePath=".\sdl_lib\SDL_image.lib"
+			RelativePath="..\lib\SDL_image.lib"
 			>
 		</File>
 		<File
-			RelativePath=".\sdl_lib\SDL_mixer.lib"
+			RelativePath="..\lib\SDL_mixer.lib"
 			>
 		</File>
 		<File
-			RelativePath=".\sdl_lib\SDLmain.lib"
+			RelativePath="..\lib\physfs.lib"
 			>
 		</File>
 	</Files>
