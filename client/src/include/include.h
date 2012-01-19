@@ -32,6 +32,7 @@
 #endif
 
 #if WIN32
+# include "revision.h"
 # include "win32.h"
 #else // elif LINUX
 # include "define.h"
