@@ -706,7 +706,7 @@ widget_id_t widget_get_owner(int x, int y)
     {
         if (textwin[twid].mode)
         {
-            return textwin[twid].widget;
+            return textwin[twid].wid;
         }
     }
    
