@@ -47,6 +47,8 @@ void textwin_init(void)
         textwin_window_t  *tw = &textwin[id];
         textwin_linebuf_t *linebuf;
 
+        memset(tw, 0, sizeof(textwin_window_t));
+
         if (id == TEXTWIN_CHAT_ID)
         {
             tw->widget = WIDGET_CHATWIN_ID;
@@ -56,12 +58,9 @@ void textwin_init(void)
             tw->widget = WIDGET_MSGWIN_ID;
         }
 
-        tw->linebuf_next = 0;
-        tw->linebuf_off = 0;
         tw->maxstringlen = widget_data[tw->widget].wd -
                            (skin_sprites[SKIN_SPRITE_SLIDER_VCANAL]->bitmap->w * 2) - 4;
         tw->linebuf_size = options.textwin_scrollback;
-        tw->linebuf_used = 0;
         MALLOC(linebuf, sizeof(textwin_linebuf_t) * tw->linebuf_size);
         tw->linebuf = linebuf;
         textwin_set_font(id);
