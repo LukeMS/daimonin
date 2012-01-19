@@ -94,7 +94,7 @@ typedef struct textwin_window_t
     uint16              x,            // startpos of the window on the x axis in pixels
                         y;            // startpos of the window on the y axis in pixels
     textwin_mode_t      mode;         // mode
-    widget_id_t         widget;       // widget assocoiated with this window
+    widget_id_t         wid;          // widget assocoiated with this window
     _font              *font;         // the font used in this window
     uint16              maxstringlen; // max length of string in pixels given window and vcanal width
     textwin_resize_t    resize;       // resizing direction

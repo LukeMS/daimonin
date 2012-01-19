@@ -51,14 +51,14 @@ void textwin_init(void)
 
         if (id == TEXTWIN_CHAT_ID)
         {
-            tw->widget = WIDGET_CHATWIN_ID;
+            tw->wid = WIDGET_CHATWIN_ID;
         }
         else if (id == TEXTWIN_MSG_ID)
         {
-            tw->widget = WIDGET_MSGWIN_ID;
+            tw->wid = WIDGET_MSGWIN_ID;
         }
 
-        tw->maxstringlen = widget_data[tw->widget].wd -
+        tw->maxstringlen = widget_data[tw->wid].wd -
                            (skin_sprites[SKIN_SPRITE_SLIDER_VCANAL]->bitmap->w * 2) - 4;
         tw->linebuf_size = options.textwin_scrollback;
         MALLOC(linebuf, sizeof(textwin_linebuf_t) * tw->linebuf_size);
@@ -115,7 +115,7 @@ void textwin_set_font(textwin_id_t id)
             tw->font = &font_small;
     }
 
-    WIDGET_REDRAW(tw->widget) = 1;
+    WIDGET_REDRAW(tw->wid) = 1;
 }
 
 void textwin_show_string(uint32 flags, uint32 colr, char *format, ...)
@@ -476,7 +476,7 @@ void textwin_show_string(uint32 flags, uint32 colr, char *format, ...)
     /* Add a final line for the end of the string. */
     AddLine(tw, flags, colr, indent, old_strong, old_emphasis, old_underline,
             start);
-    WIDGET_REDRAW(textwin[id].widget) = 1;
+    WIDGET_REDRAW(textwin[id].wid) = 1;
 }
 
 static void LogTextwin(char *message, char *logfile)
@@ -851,16 +851,16 @@ void textwin_show_window(textwin_id_t id)
     }
 
     /* if we don't have a backbuffer, create it */
-    if (!widget_surface[tw->widget])
+    if (!widget_surface[tw->wid])
     {
-        widget_surface[tw->widget] = SDL_DisplayFormatAlpha(skin_sprites[SKIN_SPRITE_ALPHA]->bitmap);
-        SDL_SetColorKey(widget_surface[tw->widget], SDL_SRCCOLORKEY | SDL_RLEACCEL,
-                        SDL_MapRGB(widget_surface[tw->widget]->format, 0x00, 0x00,
+        widget_surface[tw->wid] = SDL_DisplayFormatAlpha(skin_sprites[SKIN_SPRITE_ALPHA]->bitmap);
+        SDL_SetColorKey(widget_surface[tw->wid], SDL_SRCCOLORKEY | SDL_RLEACCEL,
+                        SDL_MapRGB(widget_surface[tw->wid]->format, 0x00, 0x00,
                                    0x00));
     }
 
     /* lets draw the widgets in the backbuffer */
-    if (WIDGET_REDRAW(tw->widget))
+    if (WIDGET_REDRAW(tw->wid))
     {
         /* Draw a textwindow in this order:
          *   the background;
@@ -868,18 +868,18 @@ void textwin_show_window(textwin_id_t id)
          *   the text, if necessary;
          *   the scrollbar, if necessary; then
          *   the frame. */
-        WIDGET_REDRAW(tw->widget) = 0;
-        bltfx.surface = widget_surface[tw->widget];
+        WIDGET_REDRAW(tw->wid) = 0;
+        bltfx.surface = widget_surface[tw->wid];
         bltfx.flags = 0;
         bltfx.alpha = 0;
         SDL_FillRect(bltfx.surface, NULL,
-                     SDL_MapRGBA(widget_surface[tw->widget]->format, 0x00, 0x00,
+                     SDL_MapRGBA(widget_surface[tw->wid]->format, 0x00, 0x00,
                                  0x00, 0));
-        tw->x = widget_data[tw->widget].x1;
-        tw->y = widget_data[tw->widget].y1;
-//widget_data[tw->widget].ht = (widget_data[tw->widget].ht / tw->font->line_height + 1) * tw->font->line_height;
-        tw->linebuf_visi = widget_data[tw->widget].ht / tw->font->line_height;
-        tw->maxstringlen = widget_data[tw->widget].wd -
+        tw->x = widget_data[tw->wid].x1;
+        tw->y = widget_data[tw->wid].y1;
+//widget_data[tw->wid].ht = (widget_data[tw->wid].ht / tw->font->line_height + 1) * tw->font->line_height;
+        tw->linebuf_visi = widget_data[tw->wid].ht / tw->font->line_height;
+        tw->maxstringlen = widget_data[tw->wid].wd -
                            (skin_sprites[SKIN_SPRITE_SLIDER_VCANAL]->bitmap->w * 2) -
                            4;
 
@@ -905,13 +905,13 @@ void textwin_show_window(textwin_id_t id)
         ShowWindowFrame(tw, &bltfx);
     }
 
-    box.x = widget_data[tw->widget].x1;
-    box.y = widget_data[tw->widget].y1;
-    box.w = widget_data[tw->widget].wd;
-    box.h = widget_data[tw->widget].ht;
+    box.x = widget_data[tw->wid].x1;
+    box.y = widget_data[tw->wid].y1;
+    box.w = widget_data[tw->wid].wd;
+    box.h = widget_data[tw->wid].ht;
     SDL_SetClipRect(ScreenSurface, &box);
     SDL_BlitSurface(bg, NULL, ScreenSurface, &box);
-    SDL_BlitSurface(widget_surface[tw->widget], NULL, ScreenSurface, &box);
+    SDL_BlitSurface(widget_surface[tw->wid], NULL, ScreenSurface, &box);
     SDL_SetClipRect(ScreenSurface, NULL);
 
     if (tw->mode == TEXTWIN_MODE_SCROLL)
@@ -931,7 +931,7 @@ static void ShowWindowResizingBorders(textwin_window_t *tw, _BLTFX *bltfx)
     {
         box.x = TEXTWIN_ACTIVE_MIN;
         box.y = TEXTWIN_ACTIVE_MIN;
-        box.w = widget_data[tw->widget].wd - TEXTWIN_ACTIVE_MIN * 2;
+        box.w = widget_data[tw->wid].wd - TEXTWIN_ACTIVE_MIN * 2;
         box.h = TEXTWIN_ACTIVE_MAX - TEXTWIN_ACTIVE_MIN;
         SDL_FillRect(bltfx->surface, &box, rgb);
     }
@@ -940,8 +940,8 @@ static void ShowWindowResizingBorders(textwin_window_t *tw, _BLTFX *bltfx)
              tw->resize == TEXTWIN_RESIZE_DOWNLEFT)
     {
         box.x = TEXTWIN_ACTIVE_MIN;
-        box.y = widget_data[tw->widget].ht - TEXTWIN_ACTIVE_MAX - 1;
-        box.w = widget_data[tw->widget].wd - TEXTWIN_ACTIVE_MIN * 2;
+        box.y = widget_data[tw->wid].ht - TEXTWIN_ACTIVE_MAX - 1;
+        box.w = widget_data[tw->wid].wd - TEXTWIN_ACTIVE_MIN * 2;
         box.h = TEXTWIN_ACTIVE_MAX - TEXTWIN_ACTIVE_MIN;
         SDL_FillRect(bltfx->surface, &box, rgb);
     }
@@ -950,7 +950,7 @@ static void ShowWindowResizingBorders(textwin_window_t *tw, _BLTFX *bltfx)
         tw->resize == TEXTWIN_RESIZE_RIGHT ||
         tw->resize == TEXTWIN_RESIZE_DOWNRIGHT)
     {
-        box.x = widget_data[tw->widget].wd - TEXTWIN_ACTIVE_MAX - 1;
+        box.x = widget_data[tw->wid].wd - TEXTWIN_ACTIVE_MAX - 1;
 
         if (tw->linebuf_used > tw->linebuf_visi)
         {
@@ -959,7 +959,7 @@ static void ShowWindowResizingBorders(textwin_window_t *tw, _BLTFX *bltfx)
 
         box.y = TEXTWIN_ACTIVE_MIN;
         box.w = TEXTWIN_ACTIVE_MAX - TEXTWIN_ACTIVE_MIN;
-        box.h = widget_data[tw->widget].ht - TEXTWIN_ACTIVE_MIN * 2;
+        box.h = widget_data[tw->wid].ht - TEXTWIN_ACTIVE_MIN * 2;
         SDL_FillRect(bltfx->surface, &box, rgb);
     }
     else if (tw->resize == TEXTWIN_RESIZE_DOWNLEFT ||
@@ -969,7 +969,7 @@ static void ShowWindowResizingBorders(textwin_window_t *tw, _BLTFX *bltfx)
         box.x = TEXTWIN_ACTIVE_MIN;
         box.y = TEXTWIN_ACTIVE_MIN;
         box.w = TEXTWIN_ACTIVE_MAX - TEXTWIN_ACTIVE_MIN;
-        box.h = widget_data[tw->widget].ht - TEXTWIN_ACTIVE_MIN * 2;
+        box.h = widget_data[tw->wid].ht - TEXTWIN_ACTIVE_MIN * 2;
         SDL_FillRect(bltfx->surface, &box, rgb);
     }
 } 
@@ -1028,9 +1028,9 @@ static void ShowWindowScrollbar(textwin_window_t *tw, _BLTFX *bltfx)
               index_up = (tw->scroll == TEXTWIN_SCROLL_UP)
                          ? SKIN_SPRITE_SLIDER_HL_UP
                          : SKIN_SPRITE_SLIDER_UP,
-              x2 = widget_data[tw->widget].wd -
+              x2 = widget_data[tw->wid].wd -
                    skin_sprites[index_vcanal]->bitmap->w,
-              h = widget_data[tw->widget].ht - 
+              h = widget_data[tw->wid].ht - 
                   skin_sprites[index_up]->bitmap->h -
                   skin_sprites[index_down]->bitmap->h,
               sy = ((tw->linebuf_used - tw->linebuf_visi - tw->linebuf_off) * h) /
@@ -1042,7 +1042,7 @@ static void ShowWindowScrollbar(textwin_window_t *tw, _BLTFX *bltfx)
     box.h = h;
     sprite_blt(skin_sprites[index_vcanal], x2,
                skin_sprites[index_up]->bitmap->h, &box, bltfx);
-    sprite_blt(skin_sprites[index_down], x2, widget_data[tw->widget].ht -
+    sprite_blt(skin_sprites[index_down], x2, widget_data[tw->wid].ht -
                skin_sprites[index_down]->bitmap->h, NULL, bltfx);
     sprite_blt(skin_sprites[index_up], x2, 0, NULL, bltfx);
  
@@ -1069,26 +1069,26 @@ static void ShowWindowFrame(textwin_window_t *tw, _BLTFX *bltfx)
     /* top */
     box.x = 0;
     box.y = 0;
-    box.w = widget_data[tw->widget].wd;
+    box.w = widget_data[tw->wid].wd;
     box.h = 1;
     SDL_FillRect(bltfx->surface, &box, rgb);
     /* right */
-    box.x = widget_data[tw->widget].wd - 1;
+    box.x = widget_data[tw->wid].wd - 1;
     box.y = 0;
     box.w = 1;
-    box.h = widget_data[tw->widget].ht;
+    box.h = widget_data[tw->wid].ht;
     SDL_FillRect(bltfx->surface, &box, rgb);
     /* bottom */
     box.x = 0;
-    box.y = widget_data[tw->widget].ht - 1;
-    box.w = widget_data[tw->widget].wd;
+    box.y = widget_data[tw->wid].ht - 1;
+    box.w = widget_data[tw->wid].wd;
     box.h = 1;
     SDL_FillRect(bltfx->surface, &box, rgb);
     /* left */
     box.x = 0;
     box.y = 0;
     box.w = 1;
-    box.h = widget_data[tw->widget].ht;
+    box.h = widget_data[tw->wid].ht;
     SDL_FillRect(bltfx->surface, &box, rgb);
 }
 
@@ -1137,15 +1137,15 @@ void textwin_event(uint8 e, SDL_Event *event, textwin_id_t id)
     textwin_window_t *tw = &textwin[id];
     const uint16  x = event->motion.x,
                   y = event->motion.y,
-                  top = widget_data[tw->widget].y1,
-                  right = widget_data[tw->widget].x1 +
-                          widget_data[tw->widget].wd - 1,
-                  bottom = widget_data[tw->widget].y1 +
-                           widget_data[tw->widget].ht - 1,
-                  left = widget_data[tw->widget].x1;
+                  top = widget_data[tw->wid].y1,
+                  right = widget_data[tw->wid].x1 +
+                          widget_data[tw->wid].wd - 1,
+                  bottom = widget_data[tw->wid].y1 +
+                           widget_data[tw->wid].ht - 1,
+                  left = widget_data[tw->wid].x1;
     const uint8   button = event->button.button;
 
-    WIDGET_REDRAW(tw->widget) = 1;
+    WIDGET_REDRAW(tw->wid) = 1;
 
     if (!(tw->scroll == TEXTWIN_SCROLL_VBARGE &&
           tw->mode == TEXTWIN_MODE_SCROLL))
@@ -1191,14 +1191,14 @@ void textwin_event(uint8 e, SDL_Event *event, textwin_id_t id)
                     tw->scroll = TEXTWIN_SCROLL_VBARGE;
                     tw->scroll_y = tw->font->line_height * -event->motion.yrel;
                 }
-                else if (y < widget_data[tw->widget].y1 + tw->linebuf_visi *
+                else if (y < widget_data[tw->wid].y1 + tw->linebuf_visi *
                              tw->font->line_height + 4)
                 {
                     tw->scroll = TEXTWIN_SCROLL_VCANALDOWN;
                     tw->scroll_y = tw->font->line_height * -tw->linebuf_visi;
                 }
-                else if (y < widget_data[tw->widget].y1 +
-                             widget_data[tw->widget].ht)
+                else if (y < widget_data[tw->wid].y1 +
+                             widget_data[tw->wid].ht)
                 {
                     tw->scroll = TEXTWIN_SCROLL_DOWN;
                     tw->scroll_y = tw->font->line_height * -1;
@@ -1339,13 +1339,13 @@ static void ScrollTextWindow(textwin_window_t *tw)
     if (y > 0 &&
         tw->linebuf_off < tw->linebuf_used - tw->linebuf_visi)
     {
-        WIDGET_REDRAW(tw->widget) = 1;
+        WIDGET_REDRAW(tw->wid) = 1;
         tw->linebuf_off += MIN(y, tw->linebuf_used - tw->linebuf_visi - tw->linebuf_off);
     }
     else if (y < 0 &&
              tw->linebuf_off > 0)
     {
-        WIDGET_REDRAW(tw->widget) = 1;
+        WIDGET_REDRAW(tw->wid) = 1;
         tw->linebuf_off += MAX(y, -tw->linebuf_off);
     }
 }
@@ -1355,8 +1355,8 @@ static void ResizeTextWindow(textwin_window_t *tw)
 {
     const sint16 xrel = tw->resize_x,
                  yrel = tw->resize_y;
-    const sint32 postwidth = widget_data[tw->widget].wd + xrel,
-                 postheight = widget_data[tw->widget].ht + yrel;
+    const sint32 postwidth = widget_data[tw->wid].wd + xrel,
+                 postheight = widget_data[tw->wid].ht + yrel;
 
     if (tw->resize == TEXTWIN_RESIZE_UP ||
         tw->resize == TEXTWIN_RESIZE_UPRIGHT ||
@@ -1365,21 +1365,21 @@ static void ResizeTextWindow(textwin_window_t *tw)
         if (postheight <= TEXTWIN_HEIGHT_MIN &&
             yrel > 0)
         {
-            widget_data[tw->widget].ht = TEXTWIN_HEIGHT_MIN;
+            widget_data[tw->wid].ht = TEXTWIN_HEIGHT_MIN;
 
             return;
         }
         else if (postheight >= TEXTWIN_HEIGHT_MAX &&
                  yrel < 0)
         {
-            widget_data[tw->widget].ht = TEXTWIN_HEIGHT_MAX;
+            widget_data[tw->wid].ht = TEXTWIN_HEIGHT_MAX;
 
             return;
         }
         else if (yrel)
         {
-            widget_data[tw->widget].y1 += yrel;
-            widget_data[tw->widget].ht -= yrel;
+            widget_data[tw->wid].y1 += yrel;
+            widget_data[tw->wid].ht -= yrel;
         }
     }
     else if (tw->resize == TEXTWIN_RESIZE_DOWNRIGHT ||
@@ -1389,20 +1389,20 @@ static void ResizeTextWindow(textwin_window_t *tw)
         if (postheight <= TEXTWIN_HEIGHT_MIN &&
             yrel < 0)
         {
-            widget_data[tw->widget].ht = TEXTWIN_HEIGHT_MIN;
+            widget_data[tw->wid].ht = TEXTWIN_HEIGHT_MIN;
 
             return;
         }
         else if (postheight >= TEXTWIN_HEIGHT_MAX &&
                  yrel > 0)
         {
-            widget_data[tw->widget].ht = TEXTWIN_HEIGHT_MAX;
+            widget_data[tw->wid].ht = TEXTWIN_HEIGHT_MAX;
 
             return;
         }
         else if (yrel)
         {
-            widget_data[tw->widget].ht += yrel;
+            widget_data[tw->wid].ht += yrel;
         }
     }
 
@@ -1413,20 +1413,20 @@ static void ResizeTextWindow(textwin_window_t *tw)
         if (postwidth <= TEXTWIN_WIDTH_MIN &&
             xrel < 0)
         {
-            widget_data[tw->widget].wd = TEXTWIN_WIDTH_MIN;
+            widget_data[tw->wid].wd = TEXTWIN_WIDTH_MIN;
 
             return;
         }
         else if (postwidth >= TEXTWIN_WIDTH_MAX &&
                  xrel > 0)
         {
-            widget_data[tw->widget].wd = TEXTWIN_WIDTH_MAX;
+            widget_data[tw->wid].wd = TEXTWIN_WIDTH_MAX;
 
             return;
         }
         else if (xrel)
         {
-            widget_data[tw->widget].wd += xrel;
+            widget_data[tw->wid].wd += xrel;
         }
     }
     else if (tw->resize == TEXTWIN_RESIZE_DOWNLEFT ||
@@ -1436,21 +1436,21 @@ static void ResizeTextWindow(textwin_window_t *tw)
         if (postwidth <= TEXTWIN_WIDTH_MIN &&
             xrel > 0)
         {
-            widget_data[tw->widget].wd = TEXTWIN_WIDTH_MIN;
+            widget_data[tw->wid].wd = TEXTWIN_WIDTH_MIN;
 
             return;
         }
         else if (postwidth >= TEXTWIN_WIDTH_MAX &&
                  xrel < 0)
         {
-            widget_data[tw->widget].wd = TEXTWIN_WIDTH_MAX;
+            widget_data[tw->wid].wd = TEXTWIN_WIDTH_MAX;
 
             return;
         }
         else if (xrel)
         {
-            widget_data[tw->widget].x1 += xrel;
-            widget_data[tw->widget].wd -= xrel;
+            widget_data[tw->wid].x1 += xrel;
+            widget_data[tw->wid].wd -= xrel;
         }
     }
 }
