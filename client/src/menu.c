@@ -845,6 +845,7 @@ void widget_quickslots_mouse_event(int x, int y, uint8 e)
                     quick_slots[ind].spell.groupNr = quick_slots[cpl.win_quick_tag].spell.groupNr;
                     quick_slots[ind].spell.classNr = quick_slots[cpl.win_quick_tag].spell.classNr;
                     quick_slots[ind].shared.tag = quick_slots[cpl.win_quick_tag].spell.spellNr;
+                    quick_slots[cpl.win_quick_tag].shared.tag = -1;
                     cpl.win_quick_tag = -1;
                 }
                 else
@@ -898,8 +899,8 @@ void widget_quickslots_mouse_event(int x, int y, uint8 e)
                 else
                 {
                     draggingInvItem(DRAG_QUICKSLOT);
+                    quick_slots[ind].shared.tag = -1;
                 }
-                quick_slots[ind].shared.tag = -1;
             }
             else
             {
