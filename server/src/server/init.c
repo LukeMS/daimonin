@@ -1304,10 +1304,15 @@ void init(int argc, char **argv)
 
     if (settings.daemonmode)
     {
+#ifndef LINUX
+        LOG(llevError, "The -detach switch only function under Linux!\n"
+            "Re-run the server without this setting.");
+#else
         CreateLogfiles((!settings.tlogfilename[0]) ? "tlog" : settings.tlogfilename,
                        (!settings.clogfilename[0]) ? "clog" : settings.clogfilename,
                        "a", llevError);
         become_daemon();
+#endif
     }
     else
     {
