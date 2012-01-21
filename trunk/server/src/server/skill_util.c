@@ -586,7 +586,8 @@ int check_skill_to_apply(object *who, object *item)
             }
 
         case BOW:
-          if(CONTR(who)->guild_force->weight_limit & GUILD_NO_ARCHERY)
+          if (pl->guild_force->weight_limit &&
+             (pl->guild_force->weight_limit & GUILD_NO_ARCHERY))
           {
             new_draw_info(NDI_UNIQUE, 0, who, "That weapon is not permitted by your guild.");
             return 0;
