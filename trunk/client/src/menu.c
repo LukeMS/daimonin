@@ -435,7 +435,8 @@ void widget_show_range(int x, int y)
                         quacon = (ip->item_qua == 255)
                                  ? 255 : (float)ip->item_con / (float)ip->item_qua * 100;
                         sprite_blt_as_icon(face_list[ip->face].sprite, x + 5, y + 2,
-                                           SPRITE_ICON_TYPE_ACTIVE, 0, ip->flagsval,
+                                           SPRITE_ICON_TYPE_ACTIVE, 0,
+                                           (ip->flagsval & ~(F_LOCKED | F_APPLIED)),
                                            (quacon == 100) ? 0 : quacon,
                                            (ip->nrof == 1) ? 0 : ip->nrof, NULL);
                     }
@@ -463,7 +464,8 @@ void widget_show_range(int x, int y)
                         quacon = (ip->item_qua == 255)
                                  ? 255 : (float)ip->item_con / (float)ip->item_qua * 100;
                         sprite_blt_as_icon(face_list[ip->face].sprite, x + 45, y + 2,
-                                           SPRITE_ICON_TYPE_ACTIVE, 0, ip->flagsval,
+                                           SPRITE_ICON_TYPE_ACTIVE, 0,
+                                           (ip->flagsval & ~(F_LOCKED | F_APPLIED)),
                                            (quacon == 100) ? 0 : quacon,
                                            (ip->nrof == 1) ? 0 : ip->nrof, NULL);
                     }
