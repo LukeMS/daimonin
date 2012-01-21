@@ -690,7 +690,8 @@ void widget_show_player_doll(int x, int y)
                 sprite_blt_as_icon(face_list[tmp->face].sprite,
                                    widget_player_doll[index].xpos + x,
                                    widget_player_doll[index].ypos + y,
-                                   SPRITE_ICON_TYPE_ACTIVE, 0, tmp->flagsval,
+                                   SPRITE_ICON_TYPE_ACTIVE, 0,
+                                   (tmp->flagsval & ~(F_LOCKED | F_APPLIED)),
                                    (quacon == 100) ? 0 : quacon,
                                    (tmp->nrof == 1) ? 0 : tmp->nrof, NULL);
                 mb = SDL_GetMouseState(&mx, &my);
