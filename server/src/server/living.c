@@ -1660,8 +1660,12 @@ void fix_player(object *op)
             tmp_dam += tmp->stats.dam + tmp->magic;
             tmp_wc += tmp->stats.wc + tmp->magic;
             tmp_time += tmp->last_grace;
-            if(pl->guild_force->weapon_speed)
+
+            if (pl->guild_force &&
+                pl->guild_force->weapon_speed)
+            {
                tmp_time -= pl->guild_force->weapon_speed;
+            }
 
             /* we don't add op->stats.wc here because its melee.... our wc modifier comes from the skill.
              * but we add in wc modifier from equipment - means ATM a ring wc+2 will add wc to melee AND
@@ -1719,10 +1723,16 @@ void fix_player(object *op)
         {
             pl->skill_weapon = skill_weapon;
 
-            if(pl->guild_force->weapon_speed)
-                op->weapon_speed = skill_weapon->weapon_speed - pl->guild_force->weapon_speed;
+            if (pl->guild_force &&
+                pl->guild_force->weapon_speed)
+            {
+                op->weapon_speed = skill_weapon->weapon_speed -
+                                   pl->guild_force->weapon_speed;
+            }
             else
-            op->weapon_speed = skill_weapon->weapon_speed;
+            {
+                op->weapon_speed = skill_weapon->weapon_speed;
+            }
 
             if (skill_weapon->slaying != NULL)
                 FREE_AND_COPY_HASH(op->slaying, skill_weapon->slaying);
