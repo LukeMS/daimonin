@@ -536,39 +536,58 @@ int check_skill_to_apply(object *who, object *item)
     int skill = 0, tmp;
     int add_skill   = NO_SKILL_READY; /* perhaps we need a additional skill to use */
     player *pl;
-    if (who->type != PLAYER)
+
+    if (who->type != PLAYER ||
+        !(pl = CONTR(who)))
+    {
         return 1; /* this fctn only for players */
-    pl = CONTR(who);
+    }
+
     /* first figure out the required skills from the item */
     switch (item->type)
     {
         case WEAPON:
-          if (pl->guild_force->value && item->item_level > pl->guild_force->value)
+          if (pl->guild_force &&
+              pl->guild_force->value &&
+              item->item_level > pl->guild_force->value)
           {
               new_draw_info(NDI_UNIQUE, 0, who, "That weapon is not permitted by your guild.");
+
               return 0;
+
           }
+
           tmp = item->sub_type1;
+
           if (tmp >= WEAP_POLE_IMPACT) /* we have a polearm! */
           {
-              if (pl->guild_force->weight_limit && pl->guild_force->weight_limit & GUILD_NO_POLEARM)
+              if (pl->guild_force &&
+                  pl->guild_force->weight_limit &&
+                  (pl->guild_force->weight_limit & GUILD_NO_POLEARM))
               {
                   new_draw_info(NDI_UNIQUE, 0, who, "That weapon is not permitted by your guild.");
+
                   return 0;
               }
+
               tmp = item->sub_type1 - WEAP_POLE_IMPACT; /* lets select the right weapon type */
               add_skill = SK_POLEARMS;
           }
           else if (tmp >= WEAP_2H_IMPACT) /* no, we have a 2h! */
           {
-              if (pl->guild_force->weight_limit && pl->guild_force->weight_limit & GUILD_NO_2H)
+              if (pl->guild_force &&
+                  pl->guild_force->weight_limit &&
+                  (pl->guild_force->weight_limit & GUILD_NO_2H))
               {
                   new_draw_info(NDI_UNIQUE, 0, who, "That weapon is not permitted by your guild.");
-                  return 0;
+
+                 return 0;
               }
+
               tmp = item->sub_type1 - WEAP_2H_IMPACT; /* lets select the right weapon type */
               add_skill = SK_TWOHANDS;
           }
+
           if (tmp == WEAP_1H_IMPACT)
               skill = SK_MELEE_WEAPON;
           else if (tmp == WEAP_1H_SLASH)
@@ -586,10 +605,12 @@ int check_skill_to_apply(object *who, object *item)
             }
 
         case BOW:
-          if (pl->guild_force->weight_limit &&
+          if (pl->guild_force &&
+              pl->guild_force->weight_limit &&
              (pl->guild_force->weight_limit & GUILD_NO_ARCHERY))
           {
             new_draw_info(NDI_UNIQUE, 0, who, "That weapon is not permitted by your guild.");
+
             return 0;
           }
           else

@@ -1072,21 +1072,44 @@ int cast_spell(object *op, object *caster, int dir, int type, int ability, Spell
             new_draw_info(NDI_UNIQUE, 0, op, "Powerful countermagic cancels all summoning here!");
         return 0;
     }
-    if (op->type == PLAYER && CONTR(op)->guild_force->weight_limit & GUILD_NO_MAGIC && !(spells[type].flags & SPELL_DESC_WIS) && item != spellPotion)
+
+    if (op->type == PLAYER)
     {
-        new_draw_info(NDI_UNIQUE, 0, op, "Your Guild membership prevents casting spells!");
-        return 0;
+        player *pl = CONTR(op);
+
+        if (!pl)
+        {
+            return 0;
+        }
+
+        if (pl->guild_force &&
+            item != spellPotion)
+        {
+            if ((pl->guild_force->weight_limit & GUILD_NO_MAGIC) &&
+                !(spells[type].flags & SPELL_DESC_WIS))
+            {
+                new_draw_info(NDI_UNIQUE, 0, op, "Your Guild membership prevents casting spells!");
+
+                return 0;
+            }
+            else if ((pl->guild_force->weight_limit & GUILD_NO_PRAYER) &&
+                     (spells[type].flags & SPELL_DESC_WIS))
+            {
+                new_draw_info(NDI_UNIQUE, 0, op, "Your Guild membership prevents casting prayers!");
+
+                return 0;
+            }
+        }
     }
-    if (op->type == PLAYER && CONTR(op)->guild_force->weight_limit & GUILD_NO_PRAYER && (spells[type].flags & SPELL_DESC_WIS) && item != spellPotion)
-    {
-        new_draw_info(NDI_UNIQUE, 0, op, "Your Guild membership prevents casting prayers!");
-        return 0;
-    }
+
 
     /* ok... its item == spellNPC then op is the target of this spell  */
     if (op->type == PLAYER)
     {
+        player *pl;
+
         CONTR(op)->rest_mode = 0;
+
         /* cancel player spells which are denied - only real spells (not potion, wands, ...) */
         if (item == spellNormal)
         {
@@ -1095,9 +1118,15 @@ int cast_spell(object *op, object *caster, int dir, int type, int ability, Spell
                 new_draw_info(NDI_UNIQUE, 0, op, "It is denied for you to cast that spell.");
                 return 0;
             }
-            if (CONTR(caster)->guild_force->level != 0 && CONTR(caster)->guild_force->level < s->level && !QUERY_FLAG(op, FLAG_WIZ))
+
+            if ((pl = CONTR(caster)) &&
+                pl->guild_force &&
+                pl->guild_force->level &&
+                pl->guild_force->level < s->level &&
+                !QUERY_FLAG(op, FLAG_WIZ))
             {
                 new_draw_info(NDI_UNIQUE, 0, op, "That spell is too difficult for you to cast.");
+
                 return 0;
             }
 
