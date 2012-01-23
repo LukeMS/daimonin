@@ -858,7 +858,7 @@ void textwin_show_window(textwin_id_t id)
     if (!bg)
     {
         SDL_SetAlpha(skin_sprites[SKIN_SPRITE_ALPHA]->bitmap,
-                     SDL_SRCALPHA | SDL_RLEACCEL, 0);
+                     SDL_SRCALPHA | SDL_RLEACCEL, 128);
         bg = SDL_DisplayFormat(skin_sprites[SKIN_SPRITE_ALPHA]->bitmap);
     }
 
