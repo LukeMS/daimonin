@@ -818,13 +818,13 @@ static void AddLine(textwin_window_t *tw, const uint32 flags, const uint32 colr,
         }
     }
 
-    if (tw->linebuf_off)
-    {
-        tw->linebuf_off++;
-    }
-
     if (tw->linebuf_used < tw->linebuf_size)
     {
+        if (tw->linebuf_off)
+        {
+            tw->linebuf_off++;
+        }
+
         tw->linebuf_used++;
     }
 
@@ -882,6 +882,14 @@ void textwin_show_window(textwin_id_t id)
         tw->maxstringlen = widget_data[tw->wid].wd -
                            (skin_sprites[SKIN_SPRITE_SLIDER_VCANAL]->bitmap->w * 2) -
                            4;
+#ifdef DEBUG_TEXTWIN
+        if (tw->wid == WIDGET_MSGWIN_ID)
+        {
+            LOG(LOG_MSG,">>>>lo=%d lu=%d lv=%d ln=%d\n",
+                tw->linebuf_off,
+                tw->linebuf_used, tw->linebuf_visi, tw->linebuf_next);
+        }
+#endif
 
         if (tw->resize)
         {
@@ -976,34 +984,42 @@ static void ShowWindowResizingBorders(textwin_window_t *tw, _BLTFX *bltfx)
 
 static void ShowWindowText(textwin_window_t *tw, _BLTFX *bltfx)
 {
-    sint32    topline = tw->linebuf_next - tw->linebuf_off - MIN(tw->linebuf_visi,
-                        tw->linebuf_used);
-    uint16    i;
-
+    uint32 botline = ((tw->linebuf_next)
+                      ? tw->linebuf_next : tw->linebuf_used) -
+                     tw->linebuf_off - 1;
+    sint32 topline = (tw->linebuf_visi < tw->linebuf_used)
+                     ? botline - tw->linebuf_visi : -1;
+    uint16 i;
 
     if (topline < 0)
     {
-        if (tw->linebuf_used == tw->linebuf_size)
-        {
-            if (tw->linebuf_visi >= tw->linebuf_size)
-            {
-                topline = tw->linebuf_next;
-            }
-            else
-            {
-                topline = tw->linebuf_size + topline + 1;
-            }
-        }
-        else
+        if (tw->linebuf_used != tw->linebuf_size)
         {
             topline = 0;
         }
+        else if (tw->linebuf_visi < tw->linebuf_used)
+        {
+            topline = tw->linebuf_size + 1 + topline;
+        }
+        else
+        {
+            topline = tw->linebuf_next;
+        }
     }
 
+#ifdef DEBUG_TEXTWIN
+        if (tw->wid == WIDGET_MSGWIN_ID)
+        {
+            LOG(LOG_MSG,">>>>top=%d bot=%d\n", topline, botline);
+        }
+#endif
+
     /* Blit all the visible lines. */
-    for (i = 0; i < tw->linebuf_visi && i < tw->linebuf_used; i++)
+    for (i = 0; i < tw->linebuf_visi &&
+                i < tw->linebuf_used; i++)
     {
-        textwin_linebuf_t *linebuf = (tw->linebuf + ((topline + i) % tw->linebuf_used));
+        uint16             line = (topline + i) % tw->linebuf_used;
+        textwin_linebuf_t *linebuf = tw->linebuf + line;
 
         string_blt(bltfx->surface, tw->font, linebuf->buf, 2,
                    tw->font->line_height * i, linebuf->fg, /*linebuf->bg,*/ NULL,
@@ -1327,26 +1343,29 @@ void textwin_event(uint8 e, SDL_Event *event, textwin_id_t id)
 /* Scroll tw according to tw->scroll_x and tw->scroll_y. */
 static void ScrollTextWindow(textwin_window_t *tw)
 {
-    const sint16 //x = MIN(1, tw->scroll_x / tw->font->line_height), 
-                 y = MIN(1, tw->scroll_y / tw->font->line_height);
+    const sint16 //x = tw->scroll_x / tw->font->line_height, 
+                 y = tw->scroll_y / tw->font->line_height;
 
     /* No scrolling small windows. */
-    if (tw->linebuf_used < tw->linebuf_visi)
+    if (tw->linebuf_used <= tw->linebuf_visi)
     {
         return;
     }
 
+    /* Up. */
     if (y > 0 &&
         tw->linebuf_off < tw->linebuf_used - tw->linebuf_visi)
     {
         WIDGET_REDRAW(tw->wid) = 1;
-        tw->linebuf_off += MIN(y, tw->linebuf_used - tw->linebuf_visi - tw->linebuf_off);
+        tw->linebuf_off = MIN(tw->linebuf_used - tw->linebuf_visi,
+                              tw->linebuf_off + y);
     }
+    /* Down. */
     else if (y < 0 &&
              tw->linebuf_off > 0)
     {
         WIDGET_REDRAW(tw->wid) = 1;
-        tw->linebuf_off += MAX(y, -tw->linebuf_off);
+        tw->linebuf_off = MAX(0, tw->linebuf_off + y);
     }
 }
 
