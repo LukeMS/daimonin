@@ -82,7 +82,6 @@ textwin_scroll_t;
 typedef struct textwin_linebuf_t
 {
     char   *buf;      // text
-    int     channel;  // which channel
     uint32  flags;    // some flags
     uint32  fg;       // colour of text
     uint32  bg;       // colour of bg
