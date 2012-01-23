@@ -73,7 +73,13 @@ void textwin_deinit(void)
 
     for (id = 0; id < TEXTWIN_NROF; id++)
     {
+        uint32            i;
         textwin_window_t *tw = &textwin[id];
+
+        for (i = 0; i < tw->linebuf_used; i++)
+        {
+            FREE(tw->linebuf->buf);
+        }
 
         FREE(tw->linebuf);
     }
@@ -760,6 +766,12 @@ static void AddLine(textwin_window_t *tw, const uint32 flags, const uint32 colr,
         sprintf(strchr(buf, '\0'), "%c", ECC_UNDERLINE);
     }
 
+    if ((tw->linebuf + line)->buf)
+    {
+        FREE((tw->linebuf + line)->buf);
+    }
+
+    MALLOC((tw->linebuf + line)->buf, strlen(buf) + strlen(message) + 1);
     sprintf((tw->linebuf + line)->buf, "%s%s", buf, message);
     (tw->linebuf + line)->flags = flags;
 
