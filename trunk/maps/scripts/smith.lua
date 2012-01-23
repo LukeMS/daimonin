@@ -29,13 +29,31 @@ function topicRepair()
     ib:SetMsg("Let me check your equipment...\nPerhaps an item needs a fix.\nI will tell you how much each will cost.")
     tmp = pl:FindMarkedObject()
     if tmp ~= nil and tmp.item_quality > 0 and tmp.item_condition < tmp.item_quality then
-        ib:AddLink("~*M*~ ".. tmp:GetName() .. '  ('.. tmp.item_condition .. '/' ..tmp.item_quality .. ')  costs: ' .. pl:ShowCost(repairCost(tmp), 1), "itemfix ".. -1)
+        local linkstring = "~*M*~ " .. tmp:GetName()
+
+        if string.len(linkstring) >= 48 then
+            linkstring = string.sub(linkstring, 1, 41) .. "..."
+        end
+
+        linkstring = linkstring .. " (".. tmp.item_condition .. "/" ..
+                     tmp.item_quality .. "): " ..
+                     pl:ShowCost(repairCost(tmp), game.COSTSTRING_SHORT)
+        ib:AddLink(linkstring, "itemfix ".. -1)
         flag = true
     end
     for i=0,game.EQUIP_MAX-1 do
         tmp = pl:GetEquipment(i)
         if tmp ~= nil and tmp.item_quality > 0 and tmp.item_condition < tmp.item_quality then
-            ib:AddLink(tmp:GetName() .. '  ('.. tmp.item_condition .. '/' ..tmp.item_quality .. ')  costs: ' .. pl:ShowCost(repairCost(tmp), 1), "itemfix ".. i)
+            local linkstring = tmp:GetName()
+
+            if string.len(linkstring) >= 48 then
+                linkstring = string.sub(linkstring, 1, 41) .. "..."
+            end
+
+            linkstring = linkstring .. " (".. tmp.item_condition .. "/" ..
+                         tmp.item_quality .. "): " ..
+                         pl:ShowCost(repairCost(tmp), game.COSTSTRING_SHORT)
+            ib:AddLink(linkstring, "itemfix ".. i)
             flag = true
         end
     end
@@ -58,10 +76,20 @@ function topicItemFix(what)
     else
         ib:SetTitle("Repairing")
         if tmp.item_quality > 0 and tmp.item_condition < tmp.item_quality then
-            ib:SetMsg("Will cost you " .. pl:ShowCost(repairCost(tmp),0))
-            ib:AddMsg(".\n\nYou have " .. pl:ShowCost(pl:GetMoney()) .. ".\n\n") 
+            ib:SetMsg("Will cost you " ..
+                      pl:ShowCost(repairCost(tmp), game.COSTSTRING_SHORT) ..
+                      ".\n\n")
+            ib:AddMsg("You have " ..
+                      pl:ShowCost(pl:GetMoney(), game.COSTSTRING_SHORT) .. ".\n\n")
             ib:AddMsg("Should i repair it now?")
-            ib:AddIcon(tmp:GetName(), tmp:GetFace(), 'Condition: ~'.. tmp.item_condition .. '~    Quality: ~' ..tmp.item_quality .. '~')
+
+            local icontitle = tmp:GetName()
+
+            if string.len(icontitle) >= 48 then
+                icontitle = string.sub(icontitle, 1, 41) .. "..."
+            end
+
+            ib:AddIcon(icontitle, tmp:GetFace(), 'Condition: ~'.. tmp.item_condition .. '~    Quality: ~' ..tmp.item_quality .. '~')
             ib:SetAccept("Repair", "fix " .. what)
             ib:SetDecline(nil, "repair") 
         else
@@ -104,7 +132,14 @@ function topicFix(what)
         else
             ib:SetMsg("The item doesn't need any repair.")
         end
-        ib:AddIcon(tmp:GetName(), tmp:GetFace(), 'Condition: ~'.. tmp.item_condition .. '~    Quality: ~' .. tmp.item_quality .. '~')
+
+        local icontitle = tmp:GetName()
+
+        if string.len(icontitle) >= 48 then
+            icontitle = string.sub(icontitle, 1, 41) .. "..."
+        end
+
+        ib:AddIcon(icontitle, tmp:GetFace(), 'Condition: ~'.. tmp.item_condition .. '~    Quality: ~' .. tmp.item_quality .. '~')
     end
     ib:SetButton("Back", "repair") 
     pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
@@ -113,19 +148,25 @@ end
 function topicIdentify()
     ib:SetTitle("Item Identification")
     ib:SetMsg("Lets see what i can do for you.\nI can ~identify~ a single item or all.\nI can ~detect magic~ or ~detect curse~.\nRember you must mark the single item first.\n\n")
-    ib:AddMsg(".You have " .. pl:ShowCost(pl:GetMoney()) .. ".\n\n") 
+    ib:AddMsg(".You have " .. pl:ShowCost(pl:GetMoney(), game.COSTSTRING_SHORT) .. ".\n\n") 
     ib:AddMsg("What would you like to do?\n")
     tmp = pl:FindMarkedObject()
     if tmp ~= nil then
         if tmp.f_identified ~= true then
-            ib:AddLink("~*M*~ Identify ".. tmp:GetName() .. " for 150 copper", "detect single")
+            local linkstring = "~*M*~ Identify " .. tmp:GetName()
+
+            if string.len(linkstring) >= 48 then
+                linkstring = string.sub(linkstring, 1, 41) .. "..."
+            end
+
+            ib:AddLink(linkstring .. ": 150c", "detect single")
         else
             ib:AddMsg("\n~*M*~ Your marked item is already identified.")
         end
     end
-    ib:AddLink("Identify all for 5 silver", "detect all")
-    ib:AddLink("Detect magic for 50 copper", "detect magic")
-    ib:AddLink("Detect curse for 50 copper", "detect curse")
+    ib:AddLink("Identify all for 5s", "detect all")
+    ib:AddLink("Detect magic for 50c", "detect magic")
+    ib:AddLink("Detect curse for 50c", "detect curse")
     ib:SetButton("Back", "hi") 
     pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
 end
@@ -133,15 +174,15 @@ end
 function topicDetect(what)
     ib:SetTitle("It will cost you")
     if what=="magic" then
-        ib:SetMsg("I can cast ~Detect Magic~ for 50 copper")
+        ib:SetMsg("I can cast ~Detect Magic~ for 50c")
     elseif what == "all" then
-        ib:SetMsg("I can ~Identify all~ for 5 silver")
+        ib:SetMsg("I can ~Identify all~ for 5s")
     elseif what == "curse" then
-        ib:SetMsg("I can cast ~Detect Curse~ for 50 copper")
+        ib:SetMsg("I can cast ~Detect Curse~ for 50c")
     else
-        ib:SetMsg("I can ~Identify One Item~ for 150 copper")
+        ib:SetMsg("I can ~Identify One Item~ for 150c")
     end
-    ib:AddMsg(" coins.\n\nYou have " .. pl:ShowCost(pl:GetMoney()) .. ".\n\nYou want me to do it now?")
+    ib:AddMsg(" coins.\n\nYou have " .. pl:ShowCost(pl:GetMoney(), game.COSTSTRING_SHORT) .. ".\n\nYou want me to do it now?")
     ib:SetAccept(nil, "cast " .. what) 
     ib:SetDecline(nil, "identify") 
     pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())
