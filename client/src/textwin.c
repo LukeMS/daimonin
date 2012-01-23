@@ -78,7 +78,7 @@ void textwin_deinit(void)
 
         for (i = 0; i < tw->linebuf_used; i++)
         {
-            FREE(tw->linebuf->buf);
+            FREE((tw->linebuf + i)->buf);
         }
 
         FREE(tw->linebuf);
