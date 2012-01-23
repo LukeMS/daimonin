@@ -24,8 +24,6 @@
 #ifndef __TEXTWIN_H
 #define __TEXTWIN_H
 
-#define TEXTWIN_BUFSIZE 250
-
 /* The size of the resizing borders. */
 #define TEXTWIN_ACTIVE_MIN 2
 #define TEXTWIN_ACTIVE_MAX 16
