@@ -1771,7 +1771,28 @@ void Map2Cmd(char *data, int len)
          */
         if ((mask & 0x3f) == 0)
         {
-            display_map_clearcell(x, y);
+            uint8 i;
+
+            the_map.cells[x][y].fog_of_war = 1;
+            the_map.cells[x][y].darkness = 0;
+
+            for (i = 0; i < MAXFACES; i++)
+            {
+                the_map.cells[x][y].pname[i][0] = 0;
+
+                if ((the_map.cells[x][y].faces[i] & 0x8000))
+                {
+                    the_map.cells[x][y].faces[i] = 0;
+                }
+
+                the_map.cells[x][y].ext[i] = 0;
+                the_map.cells[x][y].pos[i] = 0;
+                the_map.cells[x][y].probe[i] = 0;
+            }
+        }
+        else
+        {
+            the_map.cells[x][y].fog_of_war = 0;
         }
 
         ext3 = ext2 = ext1 = -1;

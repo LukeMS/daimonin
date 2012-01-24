@@ -189,8 +189,15 @@ static void fow_scale(_Sprite *sprite)
         for (j=0;j<temp->w;j++)
         {
             SDL_GetRGBA(getpixel(temp,j,k),temp->format,&r, &g, &b, &a);
+#if 0
             r = g = b = (int)((0.212671 * r + 0.715160 * g + 0.072169 * b) * 0.34);
             b=+16;
+#else
+            r += 72;
+            g += 24;
+            r = g = (int)((0.212671 * r + 0.715160 * g + 0.072169 * b) * 0.34);
+	    b = 32;
+#endif
             putpixel(temp,j,k,SDL_MapRGBA(temp->format, r, g, b,a));
         }
     }
