@@ -48,54 +48,6 @@ static uint16 ShowExclusiveEffect(uint16 x, uint16 y, uint16 xoff, uint16 w,
                                   char *text);
 static void ShowPname(char *pname, sint16 x, sint16 y, uint32 colr);
 
-/* TODO: do a real adjust... we just clear here the cache.
- */
-void adjust_map_cache(int xpos, int ypos)
-{
-    int x, y /*, i*/;
-//    register struct MapCell                    *map;
-    int             xreal=0, yreal=0;
-    anim_list   *al, *al2;
-
-    memset(TheMapCache, 0, 9 * (MapData.xlen * MapData.ylen) * sizeof(struct MapCell));
-
-    /* delete all anims */
-    al = AnimListStart;
-    while (al->next)
-    {
-        al2=al;
-        al=al->next;
-        new_anim_remove(al2);
-    }
-
-
-    for (y = 0; y < MapStatusY; y++)
-    {
-        for (x = 0; x < MapStatusX; x++)
-        {
-            xreal = xpos + (x - (MAP_MAX_SIZE - 1) / 2) + MapData.xlen;
-            yreal = ypos + (y - (MAP_MAX_SIZE - 1) / 2) + MapData.ylen;
-            if (xreal < 0 || yreal < 0 || xreal >= MapData.xlen * 3 || xreal >= MapData.ylen * 3)
-                continue;
-
-            /*
-                        map = TheMapCache + (yreal * MapData.xlen * 3) + xreal;
-
-                        map->fog_of_war = 0;
-                        map->darkness = the_map.cells[x][y].darkness;
-
-                        for (i = 0; i < MAXFACES; i++)
-                        {
-                            map->faces[i] = the_map.cells[x][y].faces[i];
-                            map->ext[i] = the_map.cells[x][y].ext[i];
-                            map->pos[i] = the_map.cells[x][y].pos[i];
-                            map->probe[i] = the_map.cells[x][y].probe[i];
-                        }
-            */
-        }
-    }
-}
-
 void clear_map(void)
 {
     memset(&the_map, 0, sizeof(Map));
@@ -225,24 +177,9 @@ void InitMapData(int xl, int yl, int px, int py)
 
 void set_map_ext(int x, int y, int layer, int ext, int probe)
 {
-//    register struct MapCell                    *map;
-    int             xreal, yreal;
-
     the_map.cells[x][y].ext[layer] = ext;
     if (probe != -1)
         the_map.cells[x][y].probe[layer] = probe;
-
-    xreal = MapData.posx + (x - (MAP_MAX_SIZE - 1) / 2) + MapData.xlen;
-    yreal = MapData.posy + (y - (MAP_MAX_SIZE - 1) / 2) + MapData.ylen;
-    if (xreal < 0 || yreal < 0 || xreal >= MapData.xlen * 3 || yreal >= MapData.ylen * 3)
-        return;
-    /*
-        map = TheMapCache + (yreal * MapData.xlen * 3) + xreal;
-
-        map->ext[layer] = ext;
-        if (probe != -1)
-            map->probe[layer] = probe;
-    */
 }
 
 /* tile Stretching */
@@ -360,9 +297,6 @@ void set_map_height(int x, int y, sint16 height)
 
 void set_map_face(int x, int y, int layer, int face, int pos, int ext, char *name, sint16 height)
 {
-//   register struct MapCell                    *map;
-    int             xreal, yreal/*, i*/;
-
     the_map.cells[x][y].faces[layer] = face;
     if (!face)
         ext = 0;
@@ -388,83 +322,12 @@ void set_map_face(int x, int y, int layer, int face, int pos, int ext, char *nam
 
        align_tile_stretch(x  ,y  ); /* HERE */
     }
-
-    xreal = MapData.posx + (x - (MAP_MAX_SIZE - 1) / 2) + MapData.xlen;
-    yreal = MapData.posy + (y - (MAP_MAX_SIZE - 1) / 2) + MapData.ylen;
-    if (xreal < 0 || yreal < 0 || xreal >= MapData.xlen * 3 || yreal >= MapData.ylen * 3)
-        return;
-    /*
-        map = TheMapCache + (yreal * MapData.xlen * 3) + xreal;
-
-        map->fog_of_war = 0;
-        map->darkness = the_map.cells[x][y].darkness;
-
-        for (i = 0; i < MAXFACES; i++)
-        {
-            map->faces[i] = the_map.cells[x][y].faces[i];
-            map->ext[i] = the_map.cells[x][y].ext[i];
-            map->pos[i] = the_map.cells[x][y].pos[i];
-            map->probe[i] = the_map.cells[x][y].probe[i];
-            strcpy(map->pname[i], the_map.cells[x][y].pname[i]);
-        }
-    */
 }
-
-void display_map_clearcell(long x, long y)
-{
-//    register struct MapCell                    *map;
-    int             xreal, yreal, i;
-
-
-    the_map.cells[x][y].darkness = 0;
-    for (i = 0; i < MAXFACES; i++)
-    {
-        the_map.cells[x][y].pname[i][0] = 0;
-        the_map.cells[x][y].faces[i] = 0;
-        the_map.cells[x][y].ext[i] = 0;
-        the_map.cells[x][y].pos[i] = 0;
-        the_map.cells[x][y].probe[i] = 0;
-    }
-
-    xreal = MapData.posx + (x - (MAP_MAX_SIZE - 1) / 2) + MapData.xlen;
-    yreal = MapData.posy + (y - (MAP_MAX_SIZE - 1) / 2) + MapData.ylen;
-    if (xreal < 0 || yreal < 0 || xreal >= MapData.xlen * 3 || yreal >= MapData.ylen * 3)
-        return;
-    /*
-        map = TheMapCache + (yreal * MapData.xlen * 3) + xreal;
-
-        map->fog_of_war = 1;
-        map->darkness = 0;
-        for (i = 0; i < MAXFACES; i++)
-        {
-            if (map->faces[i] & 0x8000)
-                map->faces[i] = 0;
-            map->ext[i] = 0;
-            map->pname[i][0] = 0;
-            map->probe[i] = 0;
-        }
-    */
-}
-
 
 void set_map_darkness(int x, int y, uint8 darkness)
 {
-    //  register struct MapCell                    *map;
-    int             xreal, yreal;
-
     if (darkness != the_map.cells[x][y].darkness)
         the_map.cells[x][y].darkness = darkness;
-
-    xreal = MapData.posx + (x - (MAP_MAX_SIZE - 1) / 2) + MapData.xlen;
-    yreal = MapData.posy + (y - (MAP_MAX_SIZE - 1) / 2) + MapData.ylen;
-    if (xreal < 0 || yreal < 0 || xreal >= MapData.xlen * 3 || yreal >= MapData.ylen * 3)
-        return;
-    /*
-        map = TheMapCache + (yreal * MapData.xlen * 3) + xreal;
-
-        if (darkness != map->darkness)
-            map->darkness = darkness;
-    */
 }
 
 /** Figure out if name is the same as rankandname.

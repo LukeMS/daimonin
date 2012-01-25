@@ -1671,7 +1671,6 @@ void Map2Cmd(char *data, int len)
     static int      step = 0;
     int     mask, x, y, pos = 0, ext_flag, xdata;
     int     mapstat, ext1, ext2, ext3, probe;
-    int     map_new_flag    = 0;
     int     ff0, ff1, ff2, ff3, ff_flag, xpos, ypos;
 
     sint16 height_2, height_3, height_4;
@@ -1691,9 +1690,6 @@ void Map2Cmd(char *data, int len)
         pos += strlen(music)+1;
         if (mapstat == MAP_UPDATE_CMD_NEW)
         {
-            /*
-                    map_new_flag = 1;
-            */
             map_w = (uint8) (data[pos++]);
             map_h = (uint8) (data[pos++]);
             xpos = (uint8) (data[pos++]);
@@ -1745,14 +1741,9 @@ void Map2Cmd(char *data, int len)
         my = ypos;
     }
 
-    if (map_new_flag)
-    {
-        adjust_map_cache(xpos, ypos);
-    }
-
     MapData.posx = xpos; /* map windows is from range to +MAPWINSIZE_X */
     MapData.posy = ypos;
-    /*LOG(LOG_DEBUG,"MAPPOS: x:%d y:%d (nflag:%x)\n",xpos,ypos,map_new_flag);*/
+    /*LOG(LOG_DEBUG,"MAPPOS: x:%d y:%d\n",xpos,ypos);*/
     while (pos < len)
     {
         ext_flag = 0;

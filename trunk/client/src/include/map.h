@@ -79,7 +79,6 @@ MapPos;
 extern _mapdata         MapData;
 
 extern void             clear_map(void);
-extern void             display_map_clearcell(long x, long y);
 extern void             set_map_darkness(int x, int y, uint8 darkness);
 extern void             set_map_face(int x, int y, int layer, int face, int pos, int ext, char *, sint16 height);
 extern void             set_map_height(int x, int y, sint16 height);
@@ -90,7 +89,6 @@ extern void             UpdateMapName(char *name);
 extern void             UpdateMapMusic(char *music);
 extern void             set_map_ext(int x, int y, int layer, int ext, int probe);
 extern void             map_overlay(_Sprite *sprite);
-extern void             adjust_map_cache(int x, int y);
 extern int              get_tile_position(int mx, int my, int *tx, int *ty);
 
 #endif /* ifndef __MAP_H */
