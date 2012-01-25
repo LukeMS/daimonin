@@ -44,15 +44,17 @@ struct _imagestats  ImageStats;
 
 SDL_Surface     *FormatHolder;
 
-static uint8  GetBitmapBorders(SDL_Surface *Surface, int *up, int *down, int *left, int *right, uint32 ckey);
-static void     grey_scale(_Sprite *sprite);
-static void     red_scale(_Sprite *sprite);
-static void     fow_scale(_Sprite *sprite);
-static Uint16   CalcHash(const SDL_Surface * src,Uint32 stretch, Uint32 darkness);
-SDL_Surface *check_stretch_cache(const SDL_Surface *src, Uint32 stretch, Uint32 darkness);
-void add_to_stretch_cache(SDL_Surface *src,SDL_Surface *dest, Uint32 stretch, Uint32 darkness);
-static void stretch_init(void);
-
+static uint8        GetBitmapBorders(SDL_Surface *Surface, int *up, int *down,
+                                     int *left, int *right, uint32 ckey);
+static SDL_Surface *RecolourSurface(SDL_Surface *src, sprite_colrscale_t scale,
+                                    uint32 colr);
+static Uint16       CalcHash(const SDL_Surface *src,
+                             Uint32 stretch, Uint32 darkness);
+static SDL_Surface *check_stretch_cache(const SDL_Surface *src, Uint32 stretch,
+                                        Uint32 darkness);
+static void         add_to_stretch_cache(SDL_Surface *src, SDL_Surface *dest,
+                                         Uint32 stretch, Uint32 darkness);
+static void         stretch_init(void);
 
 /* not much special inside atm */
 uint8 sprite_init_system(void)
@@ -133,70 +135,60 @@ _Sprite * sprite_load(char *fname, SDL_RWops *rwop)
     return sprite;
 }
 
-
-static void red_scale(_Sprite *sprite)
+static SDL_Surface *RecolourSurface(SDL_Surface *src, sprite_colrscale_t scale,
+                                    uint32 colr)
 {
-    int         j, k;
-    Uint8       r, g, b, a;
-    SDL_Surface *temp;
+    uint16              y;
+    SDL_Surface        *orig = SDL_ConvertSurface(src, FormatHolder->format,
+                                                  FormatHolder->flags);
+    static SDL_Surface *dst;
 
-    temp=SDL_ConvertSurface(sprite->bitmap, FormatHolder->format, FormatHolder->flags);
-    for (k=0;k<temp->h;k++)
+    for (y = 0; y < orig->h; y++)
     {
-        for (j=0;j<temp->w;j++)
+        uint16 x;
+
+        for (x = 0; x < orig->w; x++)
         {
-            SDL_GetRGBA(getpixel(temp,j,k),temp->format,&r, &g, &b, &a);
-            r = (int) ((0.212671 * r + 0.715160 * g + 0.072169 * b) + 32);
-            g = b = 0;
-            putpixel(temp,j,k,SDL_MapRGBA(temp->format, r, g, b,a));
+            uint8 r,
+                  g,
+                  b,
+                  a;
+
+            SDL_GetRGBA(getpixel(orig, x, y), orig->format, &r, &g, &b, &a);
+
+            switch (scale)
+            {
+                case SPRITE_COLRSCALE_GREY:
+                    r = g = b = (uint8)(0.3 * r + 0.59 * g + 0.11 * b);
+
+                    break;
+
+                case SPRITE_COLRSCALE_SEPIA:
+                    r = MIN(255, (uint8)(0.393 * r + 0.769 * g + 0.189 * b));
+                    g = MIN(255, (uint8)(0.349 * r + 0.686 * g + 0.168 * b));
+                    b = MIN(255, (uint8)(0.272 * r + 0.534 * g + 0.131 * b));
+
+                    break;
+
+                default:
+                    break;
+            }
+
+            if (colr)
+            {
+                r &= ((colr >> 16) & 0xff);
+                g &= ((colr >> 8) & 0xff);
+                b &= (colr & 0xff);
+            }
+
+            putpixel(orig, x, y, SDL_MapRGBA(orig->format, r, g, b, a));
         }
     }
-    sprite->red = SDL_DisplayFormatAlpha(temp);
-    SDL_FreeSurface(temp);
-    ImageStats.redscales++;
-}
 
-static void grey_scale(_Sprite *sprite)
-{
-    int         j, k;
-    Uint8       r, g, b, a;
-    SDL_Surface *temp;
+    dst = SDL_DisplayFormatAlpha(orig);
+    SDL_FreeSurface(orig);
 
-    temp=SDL_ConvertSurface(sprite->bitmap, FormatHolder->format, FormatHolder->flags);
-    for (k=0;k<temp->h;k++)
-    {
-        for (j=0;j<temp->w;j++)
-        {
-            SDL_GetRGBA(getpixel(temp,j,k),temp->format,&r, &g, &b, &a);
-            r = g = b = (int) (0.212671 * r + 0.715160 * g + 0.072169 * b);
-            putpixel(temp,j,k,SDL_MapRGBA(temp->format, r, g, b,a));
-        }
-    }
-    sprite->grey = SDL_DisplayFormatAlpha(temp);
-    SDL_FreeSurface(temp);
-    ImageStats.greyscales++;
-}
-
-static void fow_scale(_Sprite *sprite)
-{
-    int         j, k;
-    Uint8       r, g, b, a;
-    SDL_Surface *temp;
-
-    temp=SDL_ConvertSurface(sprite->bitmap, FormatHolder->format, FormatHolder->flags);
-    for (k=0;k<temp->h;k++)
-    {
-        for (j=0;j<temp->w;j++)
-        {
-            SDL_GetRGBA(getpixel(temp,j,k),temp->format,&r, &g, &b, &a);
-            b = (int)((0.212671 * r + 0.715160 * g + 0.072169 * b) * 0.34);
-            r = g = 0;
-            putpixel(temp,j,k,SDL_MapRGBA(temp->format, r, g, b,a));
-        }
-    }
-    sprite->fog_of_war = SDL_DisplayFormatAlpha(temp);
-    SDL_FreeSurface(temp);
-    ImageStats.fowscales++;
+    return dst;
 }
 
 void sprite_free_sprite(_Sprite *sprite)
@@ -205,12 +197,12 @@ void sprite_free_sprite(_Sprite *sprite)
         return;
     if (sprite->bitmap)
         SDL_FreeSurface(sprite->bitmap);
-    if (sprite->grey)
-        SDL_FreeSurface(sprite->grey);
-    if (sprite->red)
-        SDL_FreeSurface(sprite->red);
-    if (sprite->fog_of_war)
-        SDL_FreeSurface(sprite->fog_of_war);
+    if (sprite->fogofwar)
+        SDL_FreeSurface(sprite->fogofwar);
+    if (sprite->infravision)
+        SDL_FreeSurface(sprite->infravision);
+    if (sprite->xrayvision)
+        SDL_FreeSurface(sprite->xrayvision);
     FREE(sprite);
 }
 
@@ -750,7 +742,7 @@ void sprite_blt_as_icon(_Sprite *sprite, sint16 x, sint16 y,
 
         if (type == SPRITE_ICON_TYPE_INACTIVE)
         {
-            bltfx_local->flags |= BLTFX_FLAG_GREY;
+            bltfx_local->flags |= BLTFX_FLAG_XRAYVISION;
         }
 
         sprite_blt(sprite,
@@ -870,9 +862,10 @@ void sprite_blt_as_icon(_Sprite *sprite, sint16 x, sint16 y,
  * so the mapdrawing gets its own function. */
 void sprite_blt(_Sprite *sprite, int x, int y, SDL_Rect *box, _BLTFX *bltfx)
 {
-    SDL_Rect        dst;
-    SDL_Surface    *surface, *blt_sprite;
-    uint8         reset_trans = 0;
+    SDL_Rect     dst;
+    SDL_Surface *surface,
+                *blt_sprite = NULL;
+    uint8        reset_trans = 0;
 
     /* Sanity check. */
     if (!sprite)
@@ -880,37 +873,47 @@ void sprite_blt(_Sprite *sprite, int x, int y, SDL_Rect *box, _BLTFX *bltfx)
         return;
     }
 
-    if (bltfx &&
-        (bltfx->flags & BLTFX_FLAG_FOW))
+    if (bltfx)
     {
-        if (!sprite->fog_of_war)
+        if ((bltfx->flags & BLTFX_FLAG_FOGOFWAR))
         {
-            fow_scale(sprite);
-        }
+            if (!sprite->fogofwar)
+            {
+                sprite->fogofwar = RecolourSurface(sprite->bitmap,
+                                                   skin_prefs.scale_fogofwar,
+                                                   skin_prefs.mask_fogofwar);
+                ImageStats.fogofwars++;
+            }
 
-        blt_sprite = sprite->fog_of_war;
-    }
-    else if (bltfx &&
-             (bltfx->flags & BLTFX_FLAG_RED))
-    {
-        if (!sprite->red)
+            blt_sprite = sprite->fogofwar;
+        }
+        else if ((bltfx->flags & BLTFX_FLAG_INFRAVISION))
         {
-            red_scale(sprite);
-        }
+            if (!sprite->infravision)
+            {
+                sprite->infravision = RecolourSurface(sprite->bitmap,
+                                                      skin_prefs.scale_infravision,
+                                                      skin_prefs.mask_infravision);
+                ImageStats.infravisions++;
+            }
 
-        blt_sprite = sprite->red;
-    }
-    else if (bltfx &&
-             (bltfx->flags & BLTFX_FLAG_GREY))
-    {
-        if (!sprite->grey)
+            blt_sprite = sprite->infravision;
+        }
+        else if ((bltfx->flags & BLTFX_FLAG_XRAYVISION))
         {
-            grey_scale(sprite);
-        }
+            if (!sprite->xrayvision)
+            {
+                sprite->xrayvision = RecolourSurface(sprite->bitmap,
+                                                     skin_prefs.scale_xrayvision,
+                                                     skin_prefs.mask_xrayvision);
+                ImageStats.xrayvisions++;
+            }
 
-        blt_sprite = sprite->grey;
+            blt_sprite = sprite->xrayvision;
+        }
     }
-    else
+
+    if (!blt_sprite)
     {
         blt_sprite = sprite->bitmap;
     }
@@ -1024,29 +1027,50 @@ void sprite_blt_map(_Sprite *sprite, int x, int y, SDL_Rect *box, _BLTFX *bltfx,
             }
 
         }
-        else if (bltfx->flags & BLTFX_FLAG_FOW)
+        else if ((bltfx->flags & BLTFX_FLAG_FOGOFWAR))
         {
-            if (!sprite->fog_of_war)
-                fow_scale(sprite);
-            blt_sprite = sprite->fog_of_war;
+            if (!sprite->fogofwar)
+            {
+                sprite->fogofwar = RecolourSurface(sprite->bitmap,
+                                                   skin_prefs.scale_fogofwar,
+                                                   skin_prefs.mask_fogofwar);
+                ImageStats.fogofwars++;
+            }
+
+            blt_sprite = sprite->fogofwar;
             need_stretch = 1;
         }
-        else if (bltfx->flags & BLTFX_FLAG_RED)
+        else if ((bltfx->flags & BLTFX_FLAG_INFRAVISION))
         {
-            if (!sprite->red)
-                red_scale(sprite);
-            blt_sprite = sprite->red;
+            if (!sprite->infravision)
+            {
+                sprite->infravision = RecolourSurface(sprite->bitmap,
+                                                      skin_prefs.scale_infravision,
+                                                      skin_prefs.mask_infravision);
+                ImageStats.infravisions++;
+            }
+
+            blt_sprite = sprite->infravision;
             need_stretch = 1;
         }
-        else if (bltfx->flags & BLTFX_FLAG_GREY)
+        else if ((bltfx->flags & BLTFX_FLAG_XRAYVISION))
         {
-            if (!sprite->grey)
-                grey_scale(sprite);
-            blt_sprite = sprite->grey;
+            if (!sprite->xrayvision)
+            {
+                sprite->xrayvision = RecolourSurface(sprite->bitmap,
+                                                     skin_prefs.scale_xrayvision,
+                                                     skin_prefs.mask_xrayvision);
+                ImageStats.xrayvisions++;
+            }
+
+            blt_sprite = sprite->xrayvision;
             need_stretch = 1;
         }
+
         if (!blt_sprite)
+        {
             return;
+        }
 
         if (need_stretch && bltfx->flags & BLTFX_FLAG_STRETCH)
         {
