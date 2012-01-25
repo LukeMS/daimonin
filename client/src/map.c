@@ -527,21 +527,33 @@ void map_draw_map(void)
                                 }
                             }
 
-                            if (map->fog_of_war == 1)
-                                bltfx.flags |= BLTFX_FLAG_FOW;
-                            else if (cpl.stats.flags & SF_INFRAVISION && index_tmp & 0x8000 && map->darkness < 150)
-                                bltfx.flags |= BLTFX_FLAG_RED;
-                            else if (cpl.stats.flags & SF_XRAYS)
-                                bltfx.flags |= BLTFX_FLAG_GREY;
+                            if (map->fogofwar)
+                            {
+                                bltfx.flags |= BLTFX_FLAG_FOGOFWAR;
+                            }
+                            else if ((cpl.stats.flags & SF_INFRAVISION) &&
+                                     (index_tmp & 0x8000) &&
+                                     map->darkness < 150)
+                            {
+                                bltfx.flags |= BLTFX_FLAG_INFRAVISION;
+                            }
+                            else if ((cpl.stats.flags & SF_XRAYVISION))
+                            {
+                                bltfx.flags |= BLTFX_FLAG_XRAYVISION;
+                            }
                             else
+                            {
                                 bltfx.flags |= BLTFX_FLAG_DARK;
+                            }
 
-                            if (map->ext[k] & FFLAG_INVISIBLE && !(bltfx.flags & BLTFX_FLAG_FOW))
+                            if ((map->ext[k] & FFLAG_INVISIBLE) &&
+                                !(bltfx.flags & BLTFX_FLAG_FOGOFWAR))
                             {
                                 bltfx.flags &= ~BLTFX_FLAG_DARK;
-                                bltfx.flags |= BLTFX_FLAG_SRCALPHA | BLTFX_FLAG_GREY;
+                                bltfx.flags |= BLTFX_FLAG_SRCALPHA | BLTFX_FLAG_XRAYVISION;
                             }
-                            else if (map->ext[k] & FFLAG_ETHEREAL && !(bltfx.flags & BLTFX_FLAG_FOW))
+                            else if ((map->ext[k] & FFLAG_ETHEREAL) &&
+                                     !(bltfx.flags & BLTFX_FLAG_FOGOFWAR))
                             {
                                 bltfx.flags &= ~BLTFX_FLAG_DARK;
                                 bltfx.flags |= BLTFX_FLAG_SRCALPHA;

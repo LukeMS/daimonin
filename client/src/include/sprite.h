@@ -39,14 +39,22 @@ typedef enum _sprite_type
     SPRITE_TYPE_NORMAL
 }    _sprite_type;
 
+typedef enum sprite_colrscale_t
+{
+    SPRITE_COLRSCALE_NONE,
+    SPRITE_COLRSCALE_GREY,
+    SPRITE_COLRSCALE_SEPIA,
+}
+sprite_colrscale_t;
+
 /* use special values from BLTFX structures */
-#define BLTFX_FLAG_NORMAL 0
-#define BLTFX_FLAG_DARK 1
-#define BLTFX_FLAG_SRCALPHA 2
-#define BLTFX_FLAG_FOW 4
-#define BLTFX_FLAG_RED 8
-#define BLTFX_FLAG_GREY 16
-#define BLTFX_FLAG_STRETCH 32
+#define BLTFX_FLAG_NORMAL      0
+#define BLTFX_FLAG_DARK        (1 << 0)
+#define BLTFX_FLAG_SRCALPHA    (1 << 1)
+#define BLTFX_FLAG_FOGOFWAR    (1 << 2)
+#define BLTFX_FLAG_INFRAVISION (1 << 3)
+#define BLTFX_FLAG_XRAYVISION  (1 << 4)
+#define BLTFX_FLAG_STRETCH     (1 << 5)
 
 /* here we can change default blt options or set special options */
 typedef struct _BLTFX
@@ -75,9 +83,9 @@ typedef struct _Sprite
      *Later perhaps a smarter system, using the palettes and switch...
      */
     SDL_Surface    *bitmap;                 /* thats our native, unchanged bitmap*/
-    SDL_Surface    *red;                    /* red (infravision) */
-    SDL_Surface    *grey;                       /* grey (xray) */
-    SDL_Surface    *fog_of_war;             /* thats the fog of war palette */
+    SDL_Surface    *fogofwar;
+    SDL_Surface    *infravision;
+    SDL_Surface    *xrayvision;
 }
 _Sprite;
 
@@ -115,11 +123,11 @@ extern SDL_Surface  *FormatHolder;
 
 typedef struct _imagestats
 {
-    unsigned int redscales;
-    unsigned int greyscales;
-    unsigned int fowscales;
-    unsigned int loadedsprites;
-    unsigned int truecolors;
+    uint32 loadedsprites;
+    uint32 truecolors;
+    uint32 fogofwars;
+    uint32 infravisions;
+    uint32 xrayvisions;
 }
 _imagestats;
 

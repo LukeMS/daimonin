@@ -1764,8 +1764,8 @@ void Map2Cmd(char *data, int len)
         {
             uint8 i;
 
-            the_map.cells[x][y].fog_of_war = 1;
             the_map.cells[x][y].darkness = 0;
+            the_map.cells[x][y].fogofwar = 1;
 
             for (i = 0; i < MAXFACES; i++)
             {
@@ -1783,7 +1783,7 @@ void Map2Cmd(char *data, int len)
         }
         else
         {
-            the_map.cells[x][y].fog_of_war = 0;
+            the_map.cells[x][y].fogofwar = 0;
         }
 
         ext3 = ext2 = ext1 = -1;

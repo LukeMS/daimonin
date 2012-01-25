@@ -50,12 +50,12 @@ struct MapCell
 {
     short   faces[MAXFACES];
     short   pos[MAXFACES];
-    uint8 fog_of_war;
     uint8   ext[MAXFACES];
     char    pname[MAXFACES][32];
     uint8   probe[MAXFACES];
     struct anim_list *anim[MAXFACES];
     uint8   darkness;
+    uint8   fogofwar;
     sint16  height;   /* height of this maptile */
     uint32  stretch;  /* how we stretch this is really 8 char for N S E W */
 }

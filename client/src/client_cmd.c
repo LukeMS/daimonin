@@ -716,13 +716,14 @@ static uint8 CheckCommand(char *cmd, char *params)
                            "==========================================\n"\
                            "Sprites in Memory: %d\n"\
                            "TrueColors: %d\n"\
-                           "Greyscales in Memory: %d\n"\
-                           "Redscales in Memory: %d\n"\
-                           "Fowscales in Memory: %d",
-                           ImageStats.loadedsprites, ImageStats.truecolors,
-                           ImageStats.greyscales, ImageStats.redscales,
-                           ImageStats.fowscales);
-
+                           "Fogofwars in Memory: %d\n"\
+                           "Infravisions in Memory: %d\n"\
+                           "Xrayvisions in Memory: %d",
+                           ImageStats.loadedsprites,
+                           ImageStats.truecolors,
+                           ImageStats.fogofwars,
+                           ImageStats.infravisions,
+                           ImageStats.xrayvisions);
         return 1;
     }
     else if (!strcmp(cmd, "/keybind"))

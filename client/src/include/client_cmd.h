@@ -110,7 +110,7 @@ typedef enum rangetype
 #define SF_FIREON           1
 #define SF_RUNON            2
 #define SF_BLIND            4
-#define SF_XRAYS            8
+#define SF_XRAYVISION            8
 #define SF_INFRAVISION      16
 
 /* Flags for the item command */

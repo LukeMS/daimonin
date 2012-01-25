@@ -236,6 +236,12 @@ typedef struct skin_prefs_t
     uint32  widget_valueLo;
     uint32  input_string;
     uint32  input_caret;
+    uint8   scale_fogofwar;
+    uint32  mask_fogofwar;
+    uint8   scale_infravision;
+    uint32  mask_infravision;
+    uint8   scale_xrayvision;
+    uint32  mask_xrayvision;
     uint8   effect_width;
     uint8   effect_height;
     char   *effect_eating;

@@ -277,6 +277,12 @@ void skin_load_prefs(void)
     skin_prefs.widget_valueLo = NDI_COLR_RED;
     skin_prefs.input_string = NDI_COLR_WHITE;
     skin_prefs.input_caret = NDI_COLR_RED;
+    skin_prefs.scale_fogofwar = SPRITE_COLRSCALE_GREY;
+    skin_prefs.mask_fogofwar = NDI_COLR_BLUE;
+    skin_prefs.scale_infravision = SPRITE_COLRSCALE_GREY;
+    skin_prefs.mask_infravision = NDI_COLR_RED;
+    skin_prefs.scale_xrayvision = SPRITE_COLRSCALE_GREY;
+    skin_prefs.mask_xrayvision = NDI_COLR_BLACK;
     skin_prefs.effect_width = 9;
     skin_prefs.effect_height = 16;
     MALLOC_STRING(skin_prefs.effect_eating, "Nyom! ");
@@ -462,6 +468,30 @@ void skin_load_prefs(void)
         else if (!strcmp(key, "input_caret"))
         {
             skin_prefs.input_caret = (uint32)strtoul(val, NULL, 16);
+        }
+        else if (!strcmp(key, "scale_fogofwar"))
+        {
+            skin_prefs.scale_fogofwar = (uint8)strtoul(val, NULL, 10);
+        }
+        else if (!strcmp(key, "mask_fogofwar"))
+        {
+            skin_prefs.mask_fogofwar = (uint32)strtoul(val, NULL, 16);
+        }
+        else if (!strcmp(key, "scale_infravision"))
+        {
+            skin_prefs.scale_infravision = (uint8)strtoul(val, NULL, 10);
+        }
+        else if (!strcmp(key, "mask_infravision"))
+        {
+            skin_prefs.mask_infravision = (uint32)strtoul(val, NULL, 16);
+        }
+        else if (!strcmp(key, "scale_xrayvision"))
+        {
+            skin_prefs.scale_xrayvision = (uint8)strtoul(val, NULL, 10);
+        }
+        else if (!strcmp(key, "mask_xrayvision"))
+        {
+            skin_prefs.mask_xrayvision = (uint32)strtoul(val, NULL, 16);
         }
         else if (!strcmp(key, "effect_width"))
         {
