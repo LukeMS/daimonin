@@ -454,20 +454,15 @@ static void ShowIcons(sint16 ox, sint16 oy, sint16 x, sint16 y, uint8 invxlen, u
         }
 
         if (cpl.container &&
-            cpl.container->tag == ip->tag)
+            cpl.container->tag == ip->tag &&
+            cip)
         {
             sprite_blt(skin_sprites[SKIN_SPRITE_CMARK_START], xi, yi, NULL, bltfx);
+            i += 1;
 
 jump_in_container:
-            for (i += 1; i < invxlen * invylen; i++)
+            for (; i < invxlen * invylen; i++)
             {
-                if (!cip)
-                {
-                    i--;
-
-                    break;
-                }
-
                 xi = (i % invxlen) * 32 + ox + x;
                 yi = (i / invxlen) * 32 + oy + y;
                 type = (iwin == IWIN_INV &&
@@ -495,6 +490,8 @@ jump_in_container:
                 else
                 {
                     sprite_blt(skin_sprites[SKIN_SPRITE_CMARK_END], xi, yi, NULL, bltfx);
+
+                    break;
                 }
             }
         }
