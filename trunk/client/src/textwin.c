@@ -887,8 +887,6 @@ void textwin_show_window(textwin_id_t id)
         SDL_FillRect(bltfx.surface, NULL,
                      SDL_MapRGBA(widget_surface[tw->wid]->format, 0x00, 0x00,
                                  0x00, 0));
-        tw->x = widget_data[tw->wid].x1;
-        tw->y = widget_data[tw->wid].y1;
 //widget_data[tw->wid].ht = (widget_data[tw->wid].ht / tw->font->line_height + 1) * tw->font->line_height;
         tw->linebuf_visi = widget_data[tw->wid].ht / tw->font->line_height;
         tw->maxstringlen = widget_data[tw->wid].wd -
@@ -1201,7 +1199,7 @@ void textwin_event(uint8 e, SDL_Event *event, textwin_id_t id)
                      x <= right &&
                      y >= top)
             {
-                sint16 offset = tw->y +
+                sint16 offset = widget_data[tw->wid].y1 +
                                 skin_sprites[SKIN_SPRITE_SLIDER_UP]->bitmap->h;
 
                 if (y < offset)
