@@ -164,9 +164,21 @@ static SDL_Surface *RecolourSurface(SDL_Surface *src, sprite_colrscale_t scale,
                     break;
 
                 case SPRITE_COLRSCALE_SEPIA:
-                    r = MIN(255, (uint8)(0.393 * r + 0.769 * g + 0.189 * b));
-                    g = MIN(255, (uint8)(0.349 * r + 0.686 * g + 0.168 * b));
-                    b = MIN(255, (uint8)(0.272 * r + 0.534 * g + 0.131 * b));
+                    r = (uint8)(0.393 * r + 0.769 * g + 0.189 * b);
+                    g = (uint8)(0.349 * r + 0.686 * g + 0.168 * b);
+                    b = (uint8)(0.272 * r + 0.534 * g + 0.131 * b);
+
+                    break;
+
+                case SPRITE_COLRSCALE_NEGATIVE:
+                    r = g = b = 255 - (uint8)(0.3 * r + 0.59 * g + 0.11 * b);
+
+                    break;
+
+                case SPRITE_COLRSCALE_INVERSION:
+                    r = 255 - r;
+                    g = 255 - g;
+                    b = 255 - b;
 
                     break;
 
