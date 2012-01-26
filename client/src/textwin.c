@@ -1098,23 +1098,16 @@ static void ShowWindowFrame(textwin_window_t *tw, _BLTFX *bltfx)
     box.w = widget_data[tw->wid].wd;
     box.h = 1;
     SDL_FillRect(bltfx->surface, &box, rgb);
-    /* right */
-    box.x = widget_data[tw->wid].wd - 1;
-    box.y = 0;
-    box.w = 1;
-    box.h = widget_data[tw->wid].ht;
-    SDL_FillRect(bltfx->surface, &box, rgb);
     /* bottom */
-    box.x = 0;
     box.y = widget_data[tw->wid].ht - 1;
-    box.w = widget_data[tw->wid].wd;
-    box.h = 1;
     SDL_FillRect(bltfx->surface, &box, rgb);
     /* left */
-    box.x = 0;
     box.y = 0;
     box.w = 1;
     box.h = widget_data[tw->wid].ht;
+    SDL_FillRect(bltfx->surface, &box, rgb);
+    /* right */
+    box.x = widget_data[tw->wid].wd - 1;
     SDL_FillRect(bltfx->surface, &box, rgb);
 }
 
