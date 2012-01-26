@@ -118,6 +118,7 @@ typedef struct _options
     int                     mapstart_y;
     int                     zoom;
     int                   smooth;
+    int                     map_fogofwar;
 
     /* Look & Feel */
     int                     player_names;

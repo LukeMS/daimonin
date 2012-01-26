@@ -150,6 +150,7 @@ _option             opt[]                           =
         {"Playfield start Y:", "The Y-position of the playfield.","","", "",SEL_RANGE,0,700,10,60, &options.mapstart_y,VAL_INT},
         {"Playfield zoom:", "The zoom percentage of the playfield.","EXPERIMENTAL!!!!!","", "",SEL_RANGE,50,200,5,100, &options.zoom,VAL_INT},
         {"Smooth zoom:", "Whether to use smooth zoom on the playfield.","EXPERIMENTAL!!!!!","WARNING: VERY VERY VERY CPU intensive!", "",SEL_CHECKBOX,0,1,1,0, &options.smooth,VAL_BOOL},
+        {"Fog of war:", "Whether to show the 'fog of war'.","This is a way to represent the players' short-term memory. Nearby","map features that you have seen before but now can't see are shown.", "",SEL_CHECKBOX,0,1,1,1, &options.map_fogofwar,VAL_BOOL},
         {"#", "","","", "",0,0,0,0,0, NULL,0},
         /* End of Page */
 

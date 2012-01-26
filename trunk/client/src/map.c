@@ -529,7 +529,14 @@ void map_draw_map(void)
 
                             if (map->fogofwar)
                             {
-                                bltfx.flags |= BLTFX_FLAG_FOGOFWAR;
+                                if (options.map_fogofwar)
+                                {
+                                    bltfx.flags |= BLTFX_FLAG_FOGOFWAR;
+                                }
+                                else
+                                {
+                                    continue;
+                                }
                             }
                             else if ((cpl.stats.flags & SF_INFRAVISION) &&
                                      (index_tmp & 0x8000) &&
