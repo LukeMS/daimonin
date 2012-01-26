@@ -129,24 +129,30 @@ widget_valueLo: 0xff0000
 # 'scale_fogofwar' is the colourscale which is first applied to images in the
 # fog of war. It may be 0 for none (the image is used as it normally is), 1
 # for greyscale, or 2 for sepia tones.
-# 'mask_fogofwar' is then masked over images in the fog of war. A mask of 0 is
-# ignored.
+# 'mask_fogofwar' is then masked over images in the fog of war. It is
+# recommended that you leave at least one colour at 0 (eg, 0xff0000 or
+# 0x00ffff). This colour will then be masked out of the final image entirely. A
+# mask of 0x000000 is ignored (no masking takes place).
 scale_fogofwar: 1
-mask_fogofwar: 0x3e2b41
+mask_fogofwar: 0x100030
 
 # 'scale_infravision' is the colourscale which is first applied to images seen
 # with infravision. It may be 0 for none (the image is used as it normally is), 1
 # for greyscale, or 2 for sepia tones.
-# 'mask_infravision' is then masked over images seen with infravision. A mask
-# of 0 is ignored.
+# 'mask_infravision' is then masked over images seen with infravision. It is
+# recommended that you leave at least one colour at 0 (eg, 0xff0000 or
+# 0x00ffff). This colour will then be masked out of the final image entirely. A
+# mask of 0x000000 is ignored (no masking takes place).
 scale_infravision: 1
-mask_infravision: 0xc61414
+mask_infravision: 0x400000
 
 # 'scale_xrayvision' is the colourscale which is first applied to images seen
 # with xrayvision. It may be 0 for none (the image is used as it normally is), 1
 # for greyscale, or 2 for sepia tones.
-# 'mask_xrayvision' is then masked over images seen with xrayvision. A mask of
-# 0 is  ignored.
+# 'mask_xrayvision' is then masked over images seen with xrayvision. It is
+# recommended that you leave at least one colour at 0 (eg, 0xff0000 or
+# 0x00ffff). This colour will then be masked out of the final image entirely. A
+# mask of 0x000000 is ignored (no masking takes place).
 scale_xrayvision: 2
 mask_xrayvision: 0x000000
 
