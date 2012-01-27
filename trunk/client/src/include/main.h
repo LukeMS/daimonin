@@ -389,7 +389,6 @@ extern uint32       LastTick;           /* system time counter in ms since prg s
 
 extern int          InputFirstKeyPress;
 
-extern int          map_udate_flag, map_transfer_flag, map_redraw_flag;
 extern uint32       GameTicksSec;       /* ticks since this second frame in ms */
 
 extern int          request_file_chain;

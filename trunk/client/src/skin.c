@@ -275,10 +275,16 @@ void skin_default_prefs(void)
     skin_prefs.widget_valueLo = NDI_COLR_RED;
     skin_prefs.input_string = NDI_COLR_WHITE;
     skin_prefs.input_caret = NDI_COLR_RED;
+    skin_prefs.scale_fire = SPRITE_COLRSCALE_GREY;
+    skin_prefs.mask_fire = NDI_COLR_RED;
+    skin_prefs.scale_cold = SPRITE_COLRSCALE_GREY;
+    skin_prefs.mask_cold = NDI_COLR_AQUA;
+    skin_prefs.scale_electricity = SPRITE_COLRSCALE_NEGATIVE;
+    skin_prefs.mask_electricity = NDI_COLR_BLACK;
     skin_prefs.scale_fogofwar = SPRITE_COLRSCALE_GREY;
     skin_prefs.mask_fogofwar = NDI_COLR_BLUE;
     skin_prefs.scale_infravision = SPRITE_COLRSCALE_GREY;
-    skin_prefs.mask_infravision = NDI_COLR_RED;
+    skin_prefs.mask_infravision = NDI_COLR_MAROON;
     skin_prefs.scale_xrayvision = SPRITE_COLRSCALE_GREY;
     skin_prefs.mask_xrayvision = NDI_COLR_BLACK;
     skin_prefs.effect_width = 9;

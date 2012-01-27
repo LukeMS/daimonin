@@ -25,6 +25,10 @@
 
 extern _Sprite         *test_sprite;
 
+uint8  map_udate_flag,
+       map_transfer_flag;
+uint32 map_redraw_flag;
+
 struct Map       the_map;
 
 static struct MapCell  *TheMapCache = NULL;

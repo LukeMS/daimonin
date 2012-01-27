@@ -716,11 +716,17 @@ static uint8 CheckCommand(char *cmd, char *params)
                            "==========================================\n"\
                            "Sprites in Memory: %d\n"\
                            "TrueColors: %d\n"\
+                           "Fires: %d\n"\
+                           "Colds: %d\n"\
+                           "Electricities: %d\n"\
                            "Fogofwars in Memory: %d\n"\
                            "Infravisions in Memory: %d\n"\
                            "Xrayvisions in Memory: %d",
                            ImageStats.loadedsprites,
                            ImageStats.truecolors,
+                           ImageStats.fires,
+                           ImageStats.colds,
+                           ImageStats.electricities,
                            ImageStats.fogofwars,
                            ImageStats.infravisions,
                            ImageStats.xrayvisions);
@@ -1028,7 +1034,7 @@ static uint8 CheckCommand(char *cmd, char *params)
         }
 
         map_udate_flag = 1;
-        map_redraw_flag = 1;
+        map_redraw_flag |= MAP_REDRAW_FLAG_NORMAL;
 
         return 1;
     }

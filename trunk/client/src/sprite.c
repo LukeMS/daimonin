@@ -998,21 +998,21 @@ void sprite_blt_map(_Sprite *sprite, int x, int y, SDL_Rect *box, _BLTFX *bltfx,
             }
 
             /* we use now the stretch_cache with lru list */
-            tmp = check_stretch_cache(blt_sprite,stretch, bltfx->dark_level);
+            tmp = check_stretch_cache(blt_sprite, stretch, bltfx->dark_level);
 
             if (tmp)
             {
-                dst.y = dst.y - ( tmp->h - sprite->bitmap->h );
+                dst.y = dst.y - (tmp->h - sprite->bitmap->h);
                 blt_sprite = tmp;
             }
             else /* we create the surface, and put it in hashtable */
             {
                 blt_sprite = SDL_DisplayFormatAlpha(sprite->bitmap);
-                SDL_BlitSurface(darkness_filter[bltfx->dark_level],NULL,blt_sprite,NULL);
+                SDL_BlitSurface(darkness_filter[bltfx->dark_level], NULL,
+                                blt_sprite, NULL);
 
                 /* lets check for stretching... */
-
-                if (bltfx->flags & BLTFX_FLAG_STRETCH)    // We need to stretch, but lets check the cache 1st
+                if ((bltfx->flags & BLTFX_FLAG_STRETCH)) // We need to stretch, but lets check the cache 1st
                 {
                     Uint8 *ht = (Uint8*)&stretch;
                     Uint8 n = *(ht+3);
@@ -1023,13 +1023,11 @@ void sprite_blt_map(_Sprite *sprite, int x, int y, SDL_Rect *box, _BLTFX *bltfx,
 
                     LOG(LOG_MSG,"outcoding stretch=%d N=%d, E=%d, W=%d, S=%d (src1: %p, src2: %p, dark: %d)\n",stretch,n,e,w,s, blt_sprite, sprite->bitmap, bltfx->dark_level);
                     tmp = tile_stretch(blt_sprite,n,e,s,w);
-
                     ht_diff = (tmp->h - sprite->bitmap->h);  // tiles never shrink, just get bigger
 
                     if (tmp==NULL) return;  // we didn't get a bmp back
 
                     SDL_FreeSurface(blt_sprite);
-
                     blt_sprite = tmp;
                     dst.y = dst.y - ht_diff;
                 }
@@ -1038,6 +1036,42 @@ void sprite_blt_map(_Sprite *sprite, int x, int y, SDL_Rect *box, _BLTFX *bltfx,
                 add_to_stretch_cache(sprite->bitmap,blt_sprite,stretch, bltfx->dark_level);
             }
 
+            if ((map_redraw_flag & MAP_REDRAW_FLAG_FIRE))
+            {
+                if (!sprite->fire)
+                {
+                    sprite->fire = RecolourSurface(blt_sprite,
+                                                   skin_prefs.scale_fire,
+                                                   skin_prefs.mask_fire);
+                    ImageStats.fires++;
+                }
+
+                blt_sprite = sprite->fire;
+            }
+            else if ((map_redraw_flag & MAP_REDRAW_FLAG_COLD))
+            {
+                if (!sprite->cold)
+                {
+                    sprite->cold = RecolourSurface(blt_sprite,
+                                                   skin_prefs.scale_cold,
+                                                   skin_prefs.mask_cold);
+                    ImageStats.colds++;
+                }
+
+                blt_sprite = sprite->cold;
+            }
+            else if ((map_redraw_flag & MAP_REDRAW_FLAG_ELECTRICITY))
+            {
+                if (!sprite->electricity)
+                {
+                    sprite->electricity = RecolourSurface(blt_sprite,
+                                                          skin_prefs.scale_electricity,
+                                                          skin_prefs.mask_electricity);
+                    ImageStats.electricities++;
+                }
+
+                blt_sprite = sprite->electricity;
+            }
         }
         else if ((bltfx->flags & BLTFX_FLAG_FOGOFWAR))
         {

@@ -74,7 +74,6 @@ uint16    endian_int16;   /* thats the 0x0201 short endian */
 
 struct gui_book_struct    *gui_interface_book;
 
-int                 map_udate_flag, map_transfer_flag, map_redraw_flag;          /* update map area */
 int                 request_file_chain;
 
 int                 ToggleScreenFlag;
@@ -236,7 +235,7 @@ void init_game_data(void)
     MapStatusX = MAP_MAX_SIZE;
     MapStatusY = MAP_MAX_SIZE;
     map_udate_flag = 2;
-    map_redraw_flag=1;
+    map_redraw_flag = MAP_REDRAW_FLAG_NORMAL;
     InputStringFlag = 0;    /* if true keyboard and game is in input str mode*/
     InputStringEndFlag = 0;
     InputStringEscFlag = 0;
@@ -584,7 +583,7 @@ uint8 game_status_chain(void)
         clear_group();
         map_udate_flag = 2;
         clear_map();
-        map_redraw_flag=1;
+        map_redraw_flag = MAP_REDRAW_FLAG_NORMAL;
         clear_player();
         reset_keys();
         sprite_clear_backbuffer();
@@ -2316,6 +2315,8 @@ static void DisplayLayer1(void)
     /* we recreate the ma only when there is a change (which happens maybe 1-3 times a second) */
     if (map_redraw_flag)
     {
+        static uint32 ticks = 0;
+
         SDL_FillRect(ScreenSurfaceMap, NULL, 0);
 #ifdef PROFILING
         ts = SDL_GetTicks();
@@ -2335,7 +2336,12 @@ static void DisplayLayer1(void)
 #ifdef PROFILING
         LOG(LOG_MSG, "[Prof] DisplayFormat or Map-Zoom: %d\n", SDL_GetTicks() - ts);
 #endif
-        map_redraw_flag=0;
+        if (map_redraw_flag == MAP_REDRAW_FLAG_NORMAL ||
+            ticks <= SDL_GetTicks())
+        {
+            map_redraw_flag = 0;
+            ticks = SDL_GetTicks() + 100;
+        }
     }
     rect.x=options.mapstart_x;
     rect.y=options.mapstart_y;

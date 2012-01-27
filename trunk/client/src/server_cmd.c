@@ -31,7 +31,6 @@
 /* nast but tricky scroll helper */
 static int  scrolldx = 0, scrolldy = 0;
 
-
 /* Command function pointer list and main incoming command dispatcher
  * NOTE: the enum server_client_cmd list with
  * the SERVER_CMD_* are defined in protocol.h
@@ -677,7 +676,7 @@ void ImageCmd(char *data, int len)
 
     face_save((uint16)pnum, (uint8 *)data + 8, (uint32)plen);
     map_udate_flag = 2;
-    map_redraw_flag = 1;
+    map_redraw_flag |= MAP_REDRAW_FLAG_NORMAL;
 }
 
 
@@ -877,6 +876,29 @@ void DrawInfoCmd2(char *data, int len)
         }
     }
 
+    /* TODO: This is a horrid compatibility hack. In 0.11.0 we will do this
+     * properly. */
+    if (strstr(buf, " hits you ") &&
+        (tmp = strstr(buf, "damage with ")))
+    {
+        uint8 i;
+
+        for (i = 0; i < NROFATTACKS; i++)
+        {
+            if (!strncmp(tmp + 12, player_attackredraw[i].name,
+                         strlen(player_attackredraw[i].name)))
+            {
+                if (player_attackredraw[i].flag > MAP_REDRAW_FLAG_NO)
+                {
+                    map_udate_flag = 2;
+                    map_redraw_flag |= player_attackredraw[i].flag;
+                }
+
+                break;
+            }
+        }
+    }
+
     textwin_show_string(flags, colr, "%s", buf);
 }
 
@@ -925,7 +947,7 @@ void TargetObject(char *data, int len)
     strcpy(cpl.target_name, (const char *)++data);
     WIDGET_REDRAW(WIDGET_TARGET_ID) = 1;
     map_udate_flag = 2;
-    map_redraw_flag = 1;
+    map_redraw_flag |= MAP_REDRAW_FLAG_NORMAL;
 }
 
 void StatsCmd(char *data, int len)
@@ -1315,7 +1337,7 @@ void PlayerCmd(char *data, int len)
     map_overlay(skin_sprites[SKIN_SPRITE_BLACKTILE]);
     map_transfer_flag = 1;
     map_udate_flag = 2;
-    map_redraw_flag=1;
+    map_redraw_flag |= MAP_REDRAW_FLAG_NORMAL;
     widget_load();
     ignore_list_load();
     chatfilter_list_load();
@@ -1995,7 +2017,7 @@ void Map2Cmd(char *data, int len)
         }
     } /* more tiles */
     map_udate_flag = 2;
-    map_redraw_flag = 1;
+    map_redraw_flag |= MAP_REDRAW_FLAG_NORMAL;
 }
 
 void SkilllistCmd(char *data, int len)

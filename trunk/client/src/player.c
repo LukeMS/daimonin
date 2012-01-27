@@ -84,6 +84,49 @@ _player_doll_pos    widget_player_doll[PDOLL_INIT] =
         {5,7}, {141,7}, {180,7}, {93,83}, {180,113},
         {132,48}, {5,113}
     };
+
+player_attackredraw_t player_attackredraw[NROFATTACKS] =
+{
+    { "impact", MAP_REDRAW_FLAG_NO },
+    { "slash", MAP_REDRAW_FLAG_NO },
+    { "cleave", MAP_REDRAW_FLAG_NO },
+    { "pierce", MAP_REDRAW_FLAG_NO },
+
+    { "fire", MAP_REDRAW_FLAG_FIRE },
+    { "cold", MAP_REDRAW_FLAG_COLD },
+    { "electricity", MAP_REDRAW_FLAG_ELECTRICITY },
+    { "poison", MAP_REDRAW_FLAG_NO },
+    { "acid", MAP_REDRAW_FLAG_NO },
+    { "sonic", MAP_REDRAW_FLAG_NO },
+
+    { "channelling", MAP_REDRAW_FLAG_NO },
+    { "corruption", MAP_REDRAW_FLAG_NO },
+    { "psionic", MAP_REDRAW_FLAG_NO },
+    { "light", MAP_REDRAW_FLAG_NO },
+    { "shadow", MAP_REDRAW_FLAG_NO },
+    { "lifesteal", MAP_REDRAW_FLAG_NO },
+    
+    { "aether", MAP_REDRAW_FLAG_NO },
+    { "nether", MAP_REDRAW_FLAG_NO },
+    { "chaos", MAP_REDRAW_FLAG_NO },
+    { "death", MAP_REDRAW_FLAG_NO },
+
+    { "weaponmagic", MAP_REDRAW_FLAG_NO },
+    { "godpower", MAP_REDRAW_FLAG_NO },
+
+    { "drain", MAP_REDRAW_FLAG_NO },
+    { "depletion", MAP_REDRAW_FLAG_NO },
+    { "countermagic", MAP_REDRAW_FLAG_NO },
+    { "cancellation", MAP_REDRAW_FLAG_NO },
+    { "confusion", MAP_REDRAW_FLAG_NO },
+    { "fear", MAP_REDRAW_FLAG_NO },
+    { "slow", MAP_REDRAW_FLAG_NO },
+    { "paralyze", MAP_REDRAW_FLAG_NO },
+    { "snare", MAP_REDRAW_FLAG_NO },
+
+    { "internal", MAP_REDRAW_FLAG_NO },
+};
+
 void clear_player(void)
 {
     memset(quick_slots, -1, sizeof(quick_slots));
