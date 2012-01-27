@@ -1336,21 +1336,33 @@ static int HitPlayerAttacktype(object *op, object *hitter, int *flags, int damag
 static void SendAttackMsg(object *op, object *hitter, int attacknum, int dam,
                           int damage)
 {
+    /* TODO: This is a bit hacky because we need to maintain compatibility with
+     * the entire 0.10 series. In 0.11.0 we will just send a small sockbuf of
+     * critical numbers and name strings; the client can then produce a full
+     * message from that. */
+    /* The basic of this is to communicate the attack to 0.10.6 clients. */
+    uint32  colr;
+    object *to;
+    char    buf[MEDIUM_BUF];
+
     if (op->type == PLAYER)
     {
-        new_draw_info(NDI_PURPLE, 0, op, "%s hits you for %d (%d) damage.",
-                      hitter->name, (int)dam, ((int)dam) - damage);
+        colr = NDI_PURPLE;
+        to = op;
+        sprintf(buf, "%s hits you", hitter->name);
     }
 
-    /* i love C... ;) */
     if (hitter->type == PLAYER ||
         ((hitter = get_owner(hitter)) &&
         hitter->type == PLAYER))
     {
-        new_draw_info(NDI_ORANGE, 0, hitter, "You hit %s for %d (%d) with %s.",
-                      op->name, (int)dam, ((int)dam) - damage,
-                      attack_name[attacknum]);
+        colr = NDI_ORANGE;
+        to = hitter;
+        sprintf(buf, "You hit %s", op->name);
     }
+
+    new_draw_info(colr, 0, to, "%s for %d (%d) damage with %s.",
+                  buf, (int)dam, ((int)dam) - damage, attack_name[attacknum]);
 }
 
 /* GROS: This code comes from damage_ob. It has been made external to
