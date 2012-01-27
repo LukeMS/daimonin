@@ -1356,7 +1356,9 @@ int main(int argc, char *argv[])
     ShowIntro("initialise fonts", 10);
     ShowIntro("load skin", 30);
     skin_load_bitmaps(SKIN_SPRITE_NROF);
-    skin_load_prefs();
+    skin_default_prefs();
+    skin_load_prefs(FILE_SKINDEF);
+    skin_load_prefs(FILE_MASTER_SKINDEF);
     ShowIntro("initialise sfx & music", 60);
     sound_init();
     ShowIntro("load keys", 70);
