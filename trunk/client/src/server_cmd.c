@@ -1669,13 +1669,8 @@ void Map2Cmd(char *data, int len)
 {
     static int     map_w=0, map_h=0,mx=0,my=0;
     static int      step = 0;
-    int     mask, x, y, pos = 0, ext_flag, xdata;
-    int     mapstat, ext1, ext2, ext3, probe;
-    int     ff0, ff1, ff2, ff3, ff_flag, xpos, ypos;
-
-    sint16 height_2, height_3, height_4;
-
-    char    pname1[64], pname2[64], pname3[64], pname4[64];
+    int     mapstat, probe,pos = 0;
+     int     ff0, ff1, ff2, ff3, ff_flag, xpos, ypos;
     char mapname[SMALL_BUF],
          music[SMALL_BUF];
     sint32  face;
@@ -1746,13 +1741,24 @@ void Map2Cmd(char *data, int len)
     /*LOG(LOG_DEBUG,"MAPPOS: x:%d y:%d\n",xpos,ypos);*/
     while (pos < len)
     {
-        ext_flag = 0;
-        ext1 = ext2 = ext3 = 0;
-        height_2 = height_3 = height_4 = 0;
         /* first, we get the mask flag - it decribes what we now get */
-        mask = GetUINT16_String(data + pos); pos += 2;
-        x = (mask >> 11) & 0x1f;
-        y = (mask >> 6) & 0x1f;
+        uint16 mask = GetUINT16_String(data + pos),
+               x = (mask >> 11) & 0x1f,
+               y = (mask >> 6) & 0x1f,
+               ext_flag = 0,
+               xdata = 0;
+        char   pname1[TINY_BUF] = "",
+               pname2[TINY_BUF] = "",
+               pname3[TINY_BUF] = "",
+               pname4[TINY_BUF] = "";
+        sint16 ext1 = -1,
+               ext2 = -1,
+               ext3 = -1,
+               height_2 = 0,
+               height_3 = 0,
+               height_4 = 0;
+
+        pos += 2;
 
         /* these are the "damage tags" - shows damage an object got from somewhere.
          * ff_flag hold the layer info and how much we got here.
@@ -1760,7 +1766,7 @@ void Map2Cmd(char *data, int len)
          * this means the object is destroyed.
          * the other flags are assigned to map layer.
          */
-        if ((mask & 0x3f) == 0)
+        if (!(mask & 0x3f))
         {
             uint8 i;
 
@@ -1769,16 +1775,16 @@ void Map2Cmd(char *data, int len)
 
             for (i = 0; i < MAXFACES; i++)
             {
-                the_map.cells[x][y].pname[i][0] = 0;
+                the_map.cells[x][y].pname[i][0] = '\0';
 
-                if ((the_map.cells[x][y].faces[i] & 0x8000))
+                /* A mob/player. */
+                if  ((the_map.cells[x][y].faces[i] & 0x8000))
                 {
                     the_map.cells[x][y].faces[i] = 0;
+                    the_map.cells[x][y].ext[i] = 0;
+                    the_map.cells[x][y].pos[i] = 0;
+                    the_map.cells[x][y].probe[i] = 0;
                 }
-
-                the_map.cells[x][y].ext[i] = 0;
-                the_map.cells[x][y].pos[i] = 0;
-                the_map.cells[x][y].probe[i] = 0;
             }
         }
         else
@@ -1786,8 +1792,6 @@ void Map2Cmd(char *data, int len)
             the_map.cells[x][y].fogofwar = 0;
         }
 
-        ext3 = ext2 = ext1 = -1;
-        pname1[0] = 0;pname2[0] = 0;pname3[0] = 0;pname4[0] = 0;
         /* the ext flag defines special layer object assigned infos.
          * Like the Zzz for sleep, paralyze msg, etc.
          */
