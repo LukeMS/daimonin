@@ -257,6 +257,7 @@ extern skin_prefs_t  skin_prefs;
 extern void skin_load_bitmaps(skin_sprite_id_t nrof);
 extern void skin_free_bitmaps(void);
 extern void skin_reload(void);
-extern void skin_load_prefs(void);
+extern void skin_default_prefs(void);
+extern void skin_load_prefs(const char *filename);
 
 #endif /* ifndef __SKIN_H */

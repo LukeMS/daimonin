@@ -233,15 +233,13 @@ void skin_reload(void)
     skin_free_bitmaps();
     skin_load_bitmaps(SKIN_SPRITE_NROF);
     font_init();
-    skin_load_prefs();
+    skin_default_prefs();
+    skin_load_prefs(FILE_SKINDEF);
+    skin_load_prefs(FILE_MASTER_SKINDEF);
 }
 
-void skin_load_prefs(void)
+void skin_default_prefs(void)
 {
-    PHYSFS_File *handle;
-    char         buf[SMALL_BUF];
-
-    /* first we fill with default values */
     skin_prefs.chat_gmaster = NDI_COLR_RED;
     skin_prefs.chat_buddy = NDI_COLR_SILVER;
     skin_prefs.chat_channel = NDI_COLR_MAROON;
@@ -289,12 +287,24 @@ void skin_load_prefs(void)
     MALLOC_STRING(skin_prefs.effect_sleeping, "Zzz! ");
     skin_prefs.item_size = 32;
     skin_prefs.icon_size = 8;
+}
+
+void skin_load_prefs(const char *filename)
+{
+    PHYSFS_File *handle;
+    char         buf[SMALL_BUF];
+
+    /* No file? Nothing to do. */
+    if (!PHYSFS_exists(filename))
+    {
+        return;
+    }
 
     /* Log what we're doing. */
-    LOG(LOG_MSG, "Loading '%s'... ", FILE_SKINDEF);
+    LOG(LOG_MSG, "Loading '%s'... ", filename);
 
     /* Open the file for reading. */
-    if (!(handle = PHYSFS_openRead(FILE_SKINDEF)))
+    if (!(handle = PHYSFS_openRead(filename)))
     {
         LOG(LOG_ERROR, "FAILED (%s)!\n", PHYSFS_getLastError());
 
