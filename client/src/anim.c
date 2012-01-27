@@ -147,7 +147,7 @@ anim_list *new_anim_add_tile(uint16 anim, uint8 sequence, uint8 dir, uint8 speed
     if (animation[anim].aSeq[sequence]->dirs[dir].frames==1)
     {
         the_map.cells[x][y].faces[layer] = animation[anim].aSeq[sequence]->dirs[dir].faces[0];
-        map_redraw_flag = 1;
+        map_redraw_flag |= MAP_REDRAW_FLAG_NORMAL;
 
         return NULL;
     }
@@ -204,7 +204,7 @@ void new_anim_change(anim_list *al, uint16 anim, uint8 sequence, uint8 dir, uint
             case ATYPE_TILE:
                 ((struct MapCell *)al->obj)->faces[al->layer] =
                     animation[anim].aSeq[sequence]->dirs[dir].faces[0];
-                map_redraw_flag = 1;
+                map_redraw_flag |= MAP_REDRAW_FLAG_NORMAL;
                 new_anim_remove_tile(al);
             break;
             case ATYPE_ITEM:
@@ -326,7 +326,7 @@ void new_anim_reset(anim_list *al)
     {
         case ATYPE_TILE:
             ((struct MapCell *)al->obj)->faces[al->layer] = animation[al->animnum].aSeq[al->sequence]->dirs[al->dir].faces[0];
-            map_redraw_flag = 1;
+            map_redraw_flag |= MAP_REDRAW_FLAG_NORMAL;
         break;
         case ATYPE_ITEM:
             ((item *)al->obj)->face = animation[al->animnum].aSeq[al->sequence]->dirs[al->dir].faces[0];
@@ -532,7 +532,7 @@ void new_anim_animate(uint32 curTick)
     }
 #endif
     if (got_map)
-        map_redraw_flag = 1;
+        map_redraw_flag |= MAP_REDRAW_FLAG_NORMAL;
 
 #ifdef PROFILING
     LOG(LOG_MSG, "[Prof] new_anim_animate: %d\n",SDL_GetTicks() - ts);

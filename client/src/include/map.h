@@ -35,6 +35,16 @@
 #define MAP_TILE_XOFF 12
 #define MAP_TILE_YOFF 24
 
+#define MAP_REDRAW_FLAG_NO          0
+#define MAP_REDRAW_FLAG_NORMAL      (1 << 0)
+#define MAP_REDRAW_FLAG_FIRE        (1 << 1)
+#define MAP_REDRAW_FLAG_COLD        (1 << 2)
+#define MAP_REDRAW_FLAG_ELECTRICITY (1 << 3)
+
+extern uint8  map_udate_flag,
+              map_transfer_flag;
+extern uint32 map_redraw_flag;
+
 typedef struct _mapdata
 {
     char    name[256];

@@ -126,6 +126,39 @@ widget_valueHi: 0x00ff00
 # extremity of its range in a widget -- 'key: value'.
 widget_valueLo: 0xff0000
 
+# 'scale_fire' is the colourscale which is first applied to images when you are
+# hit with a fire attack. It may be 0 for none (the image is used as it
+# normally is), 1 for greyscale, or 2 for sepia tones, 3 for negative greyscale
+# or 4 for inverted colours.
+# 'mask_fire' is then masked over images in the fog of war. It is
+# recommended that you leave at least one colour at 0 (eg, 0xff0000 or
+# 0x00ffff). This colour will then be masked out of the final image entirely. A
+# mask of 0x000000 is ignored (no masking takes place).
+scale_fire: 4
+mask_fire: 0xff3a00
+
+# 'scale_cold' is the colourscale which is first applied to images when you are
+# hit with a cold attack. It may be 0 for none (the image is used as it
+# normally is), 1 for greyscale, or 2 for sepia tones, 3 for negative greyscale
+# or 4 for inverted colours.
+# 'mask_cold' is then masked over images in the fog of war. It is
+# recommended that you leave at least one colour at 0 (eg, 0xff0000 or
+# 0x00ffff). This colour will then be masked out of the final image entirely. A
+# mask of 0x000000 is ignored (no masking takes place).
+scale_cold: 4
+mask_cold: 0xff00ff
+
+# 'scale_electricity' is the colourscale which is first applied to images when
+# you are hit with an electricity attack. It may be 0 for none (the image is
+# used as it normally is), 1 for greyscale, or 2 for sepia tones, 3 for
+# negative greyscale or 4 for inverted colours.
+# 'mask_electricity' is then masked over images in the fog of war. It is
+# recommended that you leave at least one colour at 0 (eg, 0xff0000 or
+# 0x00ffff). This colour will then be masked out of the final image entirely. A
+# mask of 0x000000 is ignored (no masking takes place).
+scale_electricity: 3
+mask_electricity: 0xffff00
+
 # 'scale_fogofwar' is the colourscale which is first applied to images in the
 # fog of war. It may be 0 for none (the image is used as it normally is), 1
 # for greyscale, or 2 for sepia tones, 3 for negative greyscale or 4 for

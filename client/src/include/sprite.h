@@ -85,6 +85,9 @@ typedef struct _Sprite
      *Later perhaps a smarter system, using the palettes and switch...
      */
     SDL_Surface    *bitmap;                 /* thats our native, unchanged bitmap*/
+    SDL_Surface    *fire;
+    SDL_Surface    *cold;
+    SDL_Surface    *electricity;
     SDL_Surface    *fogofwar;
     SDL_Surface    *infravision;
     SDL_Surface    *xrayvision;
@@ -125,11 +128,14 @@ extern SDL_Surface  *FormatHolder;
 
 typedef struct _imagestats
 {
-    uint32 loadedsprites;
-    uint32 truecolors;
-    uint32 fogofwars;
-    uint32 infravisions;
-    uint32 xrayvisions;
+    uint16 loadedsprites;
+    uint16 truecolors;
+    uint16 fires;
+    uint16 colds;
+    uint16 electricities;
+    uint16 fogofwars;
+    uint16 infravisions;
+    uint16 xrayvisions;
 }
 _imagestats;
 

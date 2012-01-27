@@ -76,6 +76,15 @@ typedef enum _attacks
     NROFATTACKS /* index (= 32 ATM) */
 }_attacks;
 
+typedef struct player_attackredraw_t
+{
+    const char *name;
+    uint32       flag;
+}
+player_attackredraw_t;
+
+extern player_attackredraw_t player_attackredraw[NROFATTACKS];
+
 typedef struct Stat_struct
 {
     int   Str, Dex, Con, Wis, Cha, Int, Pow;

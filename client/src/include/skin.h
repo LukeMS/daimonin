@@ -236,6 +236,12 @@ typedef struct skin_prefs_t
     uint32  widget_valueLo;
     uint32  input_string;
     uint32  input_caret;
+    uint8   scale_fire;
+    uint32  mask_fire;
+    uint8   scale_cold;
+    uint32  mask_cold;
+    uint8   scale_electricity;
+    uint32  mask_electricity;
     uint8   scale_fogofwar;
     uint32  mask_fogofwar;
     uint8   scale_infravision;
