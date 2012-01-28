@@ -198,6 +198,19 @@ static char *BitmapName[SKIN_SPRITE_NROF] =
 _Sprite      *skin_sprites[SKIN_SPRITE_NROF];
 skin_prefs_t  skin_prefs;
 
+void skin_deinit(void)
+{
+    uint16 i;
+
+    for (i = 0; i < SKIN_SPRITE_NROF; i++)
+    {
+        sprite_free_sprite(skin_sprites[i]);
+    }
+
+    FREE(skin_prefs.effect_eating);
+    FREE(skin_prefs.effect_sleeping);
+}
+
 void skin_load_bitmaps(skin_sprite_id_t nrof)
 {
     uint16 i;
@@ -218,19 +231,9 @@ void skin_load_bitmaps(skin_sprite_id_t nrof)
     }
 }
 
-void skin_free_bitmaps(void)
-{
-    uint16 i;
-
-    for (i = 0; i < SKIN_SPRITE_NROF; i++)
-    {
-        sprite_free_sprite(skin_sprites[i]);
-    }
-}
-
 void skin_reload(void)
 {
-    skin_free_bitmaps();
+    skin_deinit();
     skin_load_bitmaps(SKIN_SPRITE_NROF);
     font_init();
     skin_default_prefs();

@@ -484,8 +484,6 @@ uint8 game_status_chain(void)
 
     if (GameStatus == GAME_STATUS_INIT)
     {
-        uint16 i;
-
         save_user_settings();
         widget_deinit();
         widget_init();
@@ -498,12 +496,7 @@ uint8 game_status_chain(void)
         GameStatusSelect = GAME_STATUS_LOGIN_ACCOUNT;
         LoginInputStep = LOGIN_STEP_NOTHING;
         interface_mode = GUI_NPC_MODE_NO;
-
-        for (i = 0; i < FACE_MAX_NROF; i++)
-        {
-            face_free(i);
-        }
-
+        face_deinit();
         face_nrof = 0;
         anim_init();
         clear_group();
