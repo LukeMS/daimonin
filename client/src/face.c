@@ -67,6 +67,28 @@ static _sprite_status LoadFromFile(uint16 num, const char *dname);
 static _sprite_status LoadFromPack(uint16 num);
 static void           SetFlags(uint16 num);
 
+void face_deinit(void)
+{
+    uint16 i;
+
+    for (i = 0; i < FACE_MAX_NROF; i++)
+    {
+        if (!(face_list[i].flags & FACE_FLAG_LOADED))
+        {
+            continue;
+        }
+
+        if (face_list[i].sprite)
+        {
+            sprite_free_sprite(face_list[i].sprite);
+            face_list[i].sprite = NULL;
+        }
+
+        FREE(face_list[i].name);
+        face_list[i].flags = 0;
+    }
+}
+
 /* We have received SERVER_CMD_FACE1 (but see server_cmd.c:Face1Cmd(). */
 void face_saveinfo(uint16 num, uint32 crc, const char *name)
 {
@@ -176,25 +198,6 @@ void face_get(sint32 num)
     {
         SetFlags(num);
     }
-}
-
-/* Free face_list[num]. */
-void face_free(uint16 num)
-{
-    if (num >= FACE_MAX_NROF ||
-        !(face_list[num].flags & FACE_FLAG_LOADED))
-    {
-        return;
-    }
-
-    if (face_list[num].sprite)
-    {
-        sprite_free_sprite(face_list[num].sprite);
-        face_list[num].sprite = NULL;
-    }
-
-    FREE(face_list[num].name);
-    face_list[num].flags = 0;
 }
 
 static _sprite_status LoadFromMemory(uint16 num, uint8 *data, uint32 len)

@@ -112,8 +112,6 @@ void SYSTEM_Start(void)
 
 void SYSTEM_End(void)
 {
-    uint16 i;
-
     save_user_settings();
     gameserver_init();
     textwin_deinit();
@@ -126,14 +124,10 @@ void SYSTEM_End(void)
         PHYSFS_isInitialised = 0;
     }
 
-    for (i = 0; i < FACE_MAX_NROF; i++)
-    {
-        face_free(i);
-    }
-
+    face_deinit();
     sound_freeall();
     sound_deinit();
-    skin_free_bitmaps();
+    skin_deinit();
     locator_clear_players(NULL);
     clear_lists();
 
