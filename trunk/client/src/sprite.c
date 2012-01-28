@@ -206,15 +206,45 @@ static SDL_Surface *RecolourSurface(SDL_Surface *src, sprite_colrscale_t scale,
 void sprite_free_sprite(_Sprite *sprite)
 {
     if (!sprite)
+    {
         return;
+    }
+
     if (sprite->bitmap)
+    {
         SDL_FreeSurface(sprite->bitmap);
+    }
+
+    if (sprite->fire)
+    {
+        SDL_FreeSurface(sprite->fire);
+    }
+
+    if (sprite->cold)
+    {
+        SDL_FreeSurface(sprite->cold);
+    }
+
+    if (sprite->electricity)
+    {
+        SDL_FreeSurface(sprite->electricity);
+    }
+
     if (sprite->fogofwar)
+    {
         SDL_FreeSurface(sprite->fogofwar);
+    }
+
     if (sprite->infravision)
+    {
         SDL_FreeSurface(sprite->infravision);
+    }
+
     if (sprite->xrayvision)
+    {
         SDL_FreeSurface(sprite->xrayvision);
+    }
+
     FREE(sprite);
 }
 
