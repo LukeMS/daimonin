@@ -488,6 +488,30 @@ void skin_load_prefs(const char *filename)
         {
             skin_prefs.input_caret = (uint32)strtoul(val, NULL, 16);
         }
+        else if (!strcmp(key, "scale_fire"))
+        {
+            skin_prefs.scale_fire = (uint8)strtoul(val, NULL, 10);
+        }
+        else if (!strcmp(key, "mask_fire"))
+        {
+            skin_prefs.mask_fire = (uint32)strtoul(val, NULL, 16);
+        }
+        else if (!strcmp(key, "scale_cold"))
+        {
+            skin_prefs.scale_cold = (uint8)strtoul(val, NULL, 10);
+        }
+        else if (!strcmp(key, "mask_cold"))
+        {
+            skin_prefs.mask_cold = (uint32)strtoul(val, NULL, 16);
+        }
+        else if (!strcmp(key, "scale_electricity"))
+        {
+            skin_prefs.scale_electricity = (uint8)strtoul(val, NULL, 10);
+        }
+        else if (!strcmp(key, "mask_electricity"))
+        {
+            skin_prefs.mask_electricity = (uint32)strtoul(val, NULL, 16);
+        }
         else if (!strcmp(key, "scale_fogofwar"))
         {
             skin_prefs.scale_fogofwar = (uint8)strtoul(val, NULL, 10);
