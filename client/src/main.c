@@ -2333,7 +2333,7 @@ static void DisplayLayer1(void)
             ticks <= SDL_GetTicks())
         {
             map_redraw_flag = 0;
-            ticks = SDL_GetTicks() + 100;
+            ticks = SDL_GetTicks() + 150;
         }
     }
     rect.x=options.mapstart_x;
