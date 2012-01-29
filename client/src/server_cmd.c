@@ -878,24 +878,42 @@ void DrawInfoCmd2(char *data, int len)
 
     /* TODO: This is a horrid compatibility hack. In 0.11.0 we will do this
      * properly. */
-    if (options.combat_smackvatts &&
-        strstr(buf, " hits you ") &&
-        (tmp = strstr(buf, "damage with ")))
+    if (options.combat_smackvatts)
     {
-        uint8 i;
+        static uint8 doit = 0;
 
-        for (i = 0; i < NROFATTACKS; i++)
+        if (options.combat_smackvatts == 2)
         {
-            if (!strncmp(tmp + 12, player_attackredraw[i].name,
-                         strlen(player_attackredraw[i].name)))
+            if (strstr(buf, "Direct Hit!"))
             {
-                if (player_attackredraw[i].flag > MAP_REDRAW_FLAG_NO)
-                {
-                    map_udate_flag = 2;
-                    map_redraw_flag |= player_attackredraw[i].flag;
-                }
+                doit = 1;
+            }
+        }
+        else
+        {
+            doit = 1;
+        }
 
-                break;
+        if (doit &&
+            strstr(buf, " hits you ") &&
+            (tmp = strstr(buf, "damage with ")))
+        {
+            uint8 i;
+
+            for (i = 0; i < NROFATTACKS; i++)
+            {
+                if (!strncmp(tmp + 12, player_attackredraw[i].name,
+                             strlen(player_attackredraw[i].name)))
+                {
+                    if (player_attackredraw[i].flag > MAP_REDRAW_FLAG_NO)
+                    {
+                        doit = 0;
+                        map_udate_flag = 2;
+                        map_redraw_flag |= player_attackredraw[i].flag;
+                    }
+
+                    break;
+                }
             }
         }
     }
