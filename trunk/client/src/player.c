@@ -102,8 +102,8 @@ player_attackredraw_t player_attackredraw[NROFATTACKS] =
     { "channelling", MAP_REDRAW_FLAG_NO },
     { "corruption", MAP_REDRAW_FLAG_NO },
     { "psionic", MAP_REDRAW_FLAG_NO },
-    { "light", MAP_REDRAW_FLAG_NO },
-    { "shadow", MAP_REDRAW_FLAG_NO },
+    { "light", MAP_REDRAW_FLAG_LIGHT },
+    { "shadow", MAP_REDRAW_FLAG_SHADOW },
     { "lifesteal", MAP_REDRAW_FLAG_NO },
     
     { "aether", MAP_REDRAW_FLAG_NO },

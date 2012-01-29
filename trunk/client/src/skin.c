@@ -284,6 +284,10 @@ void skin_default_prefs(void)
     skin_prefs.mask_cold = NDI_COLR_AQUA;
     skin_prefs.scale_electricity = SPRITE_COLRSCALE_NEGATIVE;
     skin_prefs.mask_electricity = NDI_COLR_BLACK;
+    skin_prefs.scale_light = SPRITE_COLRSCALE_INTENSITY;
+    skin_prefs.mask_light = NDI_COLR_SILVER;
+    skin_prefs.scale_shadow = SPRITE_COLRSCALE_INTENSITY;
+    skin_prefs.mask_shadow = 0x303030; // No suitable NDI_COLR
     skin_prefs.scale_fogofwar = SPRITE_COLRSCALE_GREY;
     skin_prefs.mask_fogofwar = NDI_COLR_BLUE;
     skin_prefs.scale_infravision = SPRITE_COLRSCALE_GREY;
@@ -511,6 +515,22 @@ void skin_load_prefs(const char *filename)
         else if (!strcmp(key, "mask_electricity"))
         {
             skin_prefs.mask_electricity = (uint32)strtoul(val, NULL, 16);
+        }
+        else if (!strcmp(key, "scale_light"))
+        {
+            skin_prefs.scale_light = (uint8)strtoul(val, NULL, 10);
+        }
+        else if (!strcmp(key, "mask_light"))
+        {
+            skin_prefs.mask_light = (uint32)strtoul(val, NULL, 16);
+        }
+        else if (!strcmp(key, "scale_shadow"))
+        {
+            skin_prefs.scale_shadow = (uint8)strtoul(val, NULL, 10);
+        }
+        else if (!strcmp(key, "mask_shadow"))
+        {
+            skin_prefs.mask_shadow = (uint32)strtoul(val, NULL, 16);
         }
         else if (!strcmp(key, "scale_fogofwar"))
         {

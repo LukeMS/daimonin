@@ -89,6 +89,8 @@ typedef struct _Sprite
     SDL_Surface    *fire;
     SDL_Surface    *cold;
     SDL_Surface    *electricity;
+    SDL_Surface    *light;
+    SDL_Surface    *shadow;
     SDL_Surface    *fogofwar;
     SDL_Surface    *infravision;
     SDL_Surface    *xrayvision;
@@ -134,6 +136,8 @@ typedef struct _imagestats
     uint16 fires;
     uint16 colds;
     uint16 electricities;
+    uint16 lights;
+    uint16 shadows;
     uint16 fogofwars;
     uint16 infravisions;
     uint16 xrayvisions;

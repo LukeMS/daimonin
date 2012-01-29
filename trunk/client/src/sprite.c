@@ -1126,6 +1126,30 @@ void sprite_blt_map(_Sprite *sprite, int x, int y, SDL_Rect *box, _BLTFX *bltfx,
 
                 blt_sprite = sprite->electricity;
             }
+            else if ((map_redraw_flag & MAP_REDRAW_FLAG_LIGHT))
+            {
+                if (!sprite->light)
+                {
+                    sprite->light = RecolourSurface(blt_sprite,
+                                                    skin_prefs.scale_light,
+                                                    skin_prefs.mask_light);
+                    ImageStats.lights++;
+                }
+
+                blt_sprite = sprite->light;
+            }
+            else if ((map_redraw_flag & MAP_REDRAW_FLAG_SHADOW))
+            {
+                if (!sprite->shadow)
+                {
+                    sprite->shadow = RecolourSurface(blt_sprite,
+                                                     skin_prefs.scale_shadow,
+                                                     skin_prefs.mask_shadow);
+                    ImageStats.shadows++;
+                }
+
+                blt_sprite = sprite->shadow;
+            }
         }
         else if ((bltfx->flags & BLTFX_FLAG_FOGOFWAR))
         {

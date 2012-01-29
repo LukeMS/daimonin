@@ -156,6 +156,16 @@ mask_cold: 0xff00ff
 scale_electricity: 3
 mask_electricity: 0xffff00
 
+# 'scale_light' and 'mask_light' define you perception of images when you are
+# hit with a light attack.
+scale_light: 5
+mask_light: 0xc0c0c0
+
+# 'scale_shadow' and 'mask_shadow' define you perception of images when you are
+# hit with a shadow attack.
+scale_shadow 5
+mask_shadow: 0x303030
+
 # 'scale_fogofwar' and 'mask_fogofwar' define you perception of images in the
 # fog of war.
 scale_fogofwar: 1
