@@ -719,6 +719,8 @@ static uint8 CheckCommand(char *cmd, char *params)
                            "Fires: %d\n"\
                            "Colds: %d\n"\
                            "Electricities: %d\n"\
+                           "Lights: %d\n"\
+                           "Shadows: %d\n"\
                            "Fogofwars in Memory: %d\n"\
                            "Infravisions in Memory: %d\n"\
                            "Xrayvisions in Memory: %d",
@@ -727,6 +729,8 @@ static uint8 CheckCommand(char *cmd, char *params)
                            ImageStats.fires,
                            ImageStats.colds,
                            ImageStats.electricities,
+                           ImageStats.lights,
+                           ImageStats.shadows,
                            ImageStats.fogofwars,
                            ImageStats.infravisions,
                            ImageStats.xrayvisions);

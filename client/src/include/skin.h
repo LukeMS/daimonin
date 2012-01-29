@@ -242,6 +242,10 @@ typedef struct skin_prefs_t
     uint32  mask_cold;
     uint8   scale_electricity;
     uint32  mask_electricity;
+    uint8   scale_light;
+    uint32  mask_light;
+    uint8   scale_shadow;
+    uint32  mask_shadow;
     uint8   scale_fogofwar;
     uint32  mask_fogofwar;
     uint8   scale_infravision;

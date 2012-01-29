@@ -40,6 +40,8 @@
 #define MAP_REDRAW_FLAG_FIRE        (1 << 1)
 #define MAP_REDRAW_FLAG_COLD        (1 << 2)
 #define MAP_REDRAW_FLAG_ELECTRICITY (1 << 3)
+#define MAP_REDRAW_FLAG_LIGHT       (1 << 4)
+#define MAP_REDRAW_FLAG_SHADOW      (1 << 5)
 
 extern uint8  map_udate_flag,
               map_transfer_flag;
