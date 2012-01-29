@@ -47,7 +47,7 @@ SDL_Surface     *FormatHolder;
 static uint8        GetBitmapBorders(SDL_Surface *Surface, int *up, int *down,
                                      int *left, int *right, uint32 ckey);
 static SDL_Surface *RecolourSurface(SDL_Surface *src, sprite_colrscale_t scale,
-                                    uint32 colr);
+                                    uint32 mask);
 static Uint16       CalcHash(const SDL_Surface *src,
                              Uint32 stretch, Uint32 darkness);
 static SDL_Surface *check_stretch_cache(const SDL_Surface *src, Uint32 stretch,
@@ -135,8 +135,10 @@ _Sprite * sprite_load(char *fname, SDL_RWops *rwop)
     return sprite;
 }
 
+/* Recolours src pixel-by-pixel according to scale and/or mask and returns a
+ * pointer to the recoloured surface. */
 static SDL_Surface *RecolourSurface(SDL_Surface *src, sprite_colrscale_t scale,
-                                    uint32 colr)
+                                    uint32 mask)
 {
     uint16              y;
     SDL_Surface        *orig = SDL_ConvertSurface(src, FormatHolder->format,
@@ -149,36 +151,40 @@ static SDL_Surface *RecolourSurface(SDL_Surface *src, sprite_colrscale_t scale,
 
         for (x = 0; x < orig->w; x++)
         {
-            uint8 r,
-                  g,
-                  b,
-                  a;
+            uint8 or,
+                  og,
+                  ob,
+                  oa,
+                  mr = (mask >> 16) & 0xff,
+                  mg = (mask >> 8) & 0xff,
+                  mb = mask & 0xff;
 
-            SDL_GetRGBA(getpixel(orig, x, y), orig->format, &r, &g, &b, &a);
+            SDL_GetRGBA(getpixel(orig, x, y), orig->format, &or, &og, &ob, &oa);
 
             switch (scale)
             {
                 case SPRITE_COLRSCALE_GREY:
-                    r = g = b = (uint8)(0.3 * r + 0.59 * g + 0.11 * b);
+                case SPRITE_COLRSCALE_INTENSITY:
+                    or = og = ob = (uint8)(0.3 * or + 0.59 * og + 0.11 * ob);
 
                     break;
 
                 case SPRITE_COLRSCALE_SEPIA:
-                    r = (uint8)(0.393 * r + 0.769 * g + 0.189 * b);
-                    g = (uint8)(0.349 * r + 0.686 * g + 0.168 * b);
-                    b = (uint8)(0.272 * r + 0.534 * g + 0.131 * b);
+                    or = (uint8)(0.393 * or + 0.769 * og + 0.189 * ob);
+                    og = (uint8)(0.349 * or + 0.686 * og + 0.168 * ob);
+                    ob = (uint8)(0.272 * or + 0.534 * og + 0.131 * ob);
 
                     break;
 
                 case SPRITE_COLRSCALE_NEGATIVE:
-                    r = g = b = 255 - (uint8)(0.3 * r + 0.59 * g + 0.11 * b);
+                    or = og = ob = 255 - (uint8)(0.3 * or + 0.59 * og + 0.11 * ob);
 
                     break;
 
                 case SPRITE_COLRSCALE_INVERSION:
-                    r = 255 - r;
-                    g = 255 - g;
-                    b = 255 - b;
+                    or = 255 - or;
+                    og = 255 - og;
+                    ob = 255 - ob;
 
                     break;
 
@@ -186,14 +192,32 @@ static SDL_Surface *RecolourSurface(SDL_Surface *src, sprite_colrscale_t scale,
                     break;
             }
 
-            if (colr)
+            if (mask)
             {
-                r &= ((colr >> 16) & 0xff);
-                g &= ((colr >> 8) & 0xff);
-                b &= (colr & 0xff);
+                if (scale == SPRITE_COLRSCALE_INTENSITY)
+                {
+                    if ((mr = mg = mb = (uint8)(0.3 * mr + 0.59 * mg + 0.11 * mb)) >= 128)
+                    {
+                        or = (or + mr >= 255) ? 255 : or + mr;
+                        og = (og + mg >= 255) ? 255 : og + mg;
+                        ob = (ob + mb >= 255) ? 255 : ob + mb;
+                    }
+                    else
+                    {
+                        or = (or - mr <= 0) ? 0 : or - mr;
+                        og = (og - mg <= 0) ? 0 : og - mg;
+                        ob = (ob - mb <= 0) ? 0 : ob - mb;
+                    }
+                }
+                else
+                {
+                    or &= mr;
+                    og &= mg;
+                    ob &= mb;
+                }
             }
 
-            putpixel(orig, x, y, SDL_MapRGBA(orig->format, r, g, b, a));
+            putpixel(orig, x, y, SDL_MapRGBA(orig->format, or, og, ob, oa));
         }
     }
 
