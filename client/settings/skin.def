@@ -126,72 +126,50 @@ widget_valueHi: 0x00ff00
 # extremity of its range in a widget -- 'key: value'.
 widget_valueLo: 0xff0000
 
-# 'scale_fire' is the colourscale which is first applied to images when you are
-# hit with a fire attack. It may be 0 for none (the image is used as it
-# normally is), 1 for greyscale, or 2 for sepia tones, 3 for negative greyscale
-# or 4 for inverted colours.
-# 'mask_fire' is then masked over images in the fog of war. It is
-# recommended that you leave at least one colour at 0 (eg, 0xff0000 or
-# 0x00ffff). This colour will then be masked out of the final image entirely. A
-# mask of 0x000000 is ignored (no masking takes place).
+########
+# Recolours: Certain events and abilities affect how you perceive the world
+# around you. Here we control how this perception is shown.
+# For each perception, first the 'scale_foo' colourscale is applied to relevant
+# map images. It may be 0 for none (the image is used as it
+# normally is), 1 for greyscale, 2 for sepia tones, 3 for negative greyscale, 4
+# for inverted colours, or 5 for intensity (which is also greyscale).
+# Then the 'mask_foo' colour is masked over these images. It is recommended
+# that you leave at least one colour at 0 (eg, 0xff0000 or 0x00ffff). This
+# colour will then be masked out of the final image entirely.
+# Where scale is intensity (5) the mask behaves differently. Here brighter
+# masks cause the image's brightness to be turned up and darker masks cause it
+# to be turned down.
+# In all cases, a mask of 0x000000 is ignored (no masking takes place).
+
+# 'scale_fire' and 'mask_fire' define you perception of images when you are hit
+# with a fire attack.
 scale_fire: 4
 mask_fire: 0xff3a00
 
-# 'scale_cold' is the colourscale which is first applied to images when you are
-# hit with a cold attack. It may be 0 for none (the image is used as it
-# normally is), 1 for greyscale, or 2 for sepia tones, 3 for negative greyscale
-# or 4 for inverted colours.
-# 'mask_cold' is then masked over images in the fog of war. It is
-# recommended that you leave at least one colour at 0 (eg, 0xff0000 or
-# 0x00ffff). This colour will then be masked out of the final image entirely. A
-# mask of 0x000000 is ignored (no masking takes place).
+# 'scale_cold' and 'mask_cold' define you perception of images when you are hit
+# with a cold attack.
 scale_cold: 4
 mask_cold: 0xff00ff
 
-# 'scale_electricity' is the colourscale which is first applied to images when
-# you are hit with an electricity attack. It may be 0 for none (the image is
-# used as it normally is), 1 for greyscale, or 2 for sepia tones, 3 for
-# negative greyscale or 4 for inverted colours.
-# 'mask_electricity' is then masked over images in the fog of war. It is
-# recommended that you leave at least one colour at 0 (eg, 0xff0000 or
-# 0x00ffff). This colour will then be masked out of the final image entirely. A
-# mask of 0x000000 is ignored (no masking takes place).
+# 'scale_electricity' and 'mask_electricity' define you perception of images
+# when you are hit with an electricity attack.
 scale_electricity: 3
 mask_electricity: 0xffff00
 
-# 'scale_fogofwar' is the colourscale which is first applied to images in the
-# fog of war. It may be 0 for none (the image is used as it normally is), 1
-# for greyscale, or 2 for sepia tones, 3 for negative greyscale or 4 for
-# inverted colours.
-# 'mask_fogofwar' is then masked over images in the fog of war. It is
-# recommended that you leave at least one colour at 0 (eg, 0xff0000 or
-# 0x00ffff). This colour will then be masked out of the final image entirely. A
-# mask of 0x000000 is ignored (no masking takes place).
+# 'scale_fogofwar' and 'mask_fogofwar' define you perception of images in the
+# fog of war.
 scale_fogofwar: 1
 mask_fogofwar: 0x100030
 
-# 'scale_infravision' is the colourscale which is first applied to images seen
-# with infravision. It may be 0 for none (the image is used as it normally is), 1
-# for greyscale, or 2 for sepia tones, 3 for negative greyscale or 4 for
-# inverted colours.
-# 'mask_infravision' is then masked over images seen with infravision. It is
-# recommended that you leave at least one colour at 0 (eg, 0xff0000 or
-# 0x00ffff). This colour will then be masked out of the final image entirely. A
-# mask of 0x000000 is ignored (no masking takes place).
+# 'scale_infravision' and 'mask_infravision' define you perception of images
+# seen with infravision.
 scale_infravision: 1
 mask_infravision: 0x400000
 
-# 'scale_xrayvision' is the colourscale which is first applied to images seen
-# with xrayvision. It may be 0 for none (the image is used as it normally is), 1
-# for greyscale, or 2 for sepia tones, 3 for negative greyscale or 4 for
-# inverted colours.
-# 'mask_xrayvision' is then masked over images seen with xrayvision. It is
-# recommended that you leave at least one colour at 0 (eg, 0xff0000 or
-# 0x00ffff). This colour will then be masked out of the final image entirely. A
-# mask of 0x000000 is ignored (no masking takes place).
+# 'scale_xrayvision' and 'mask_xrayvision' define you perception of images seen
+# with xrayvision.
 scale_xrayvision: 2
 mask_xrayvision: 0x000000
-
 
 ########
 # Effects:

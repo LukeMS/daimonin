@@ -46,6 +46,7 @@ typedef enum sprite_colrscale_t
     SPRITE_COLRSCALE_SEPIA,
     SPRITE_COLRSCALE_NEGATIVE,
     SPRITE_COLRSCALE_INVERSION,
+    SPRITE_COLRSCALE_INTENSITY,
 }
 sprite_colrscale_t;
 
