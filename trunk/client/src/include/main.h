@@ -150,6 +150,7 @@ typedef struct _options
     int                     widget_snap;
 #endif
     int                     keyword_panel;
+    int                     combat_smackvatts;
 
     /* Debug */
     int                   force_redraw;
