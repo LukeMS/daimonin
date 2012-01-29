@@ -878,7 +878,8 @@ void DrawInfoCmd2(char *data, int len)
 
     /* TODO: This is a horrid compatibility hack. In 0.11.0 we will do this
      * properly. */
-    if (strstr(buf, " hits you ") &&
+    if (options.combat_smackvatts &&
+        strstr(buf, " hits you ") &&
         (tmp = strstr(buf, "damage with ")))
     {
         uint8 i;

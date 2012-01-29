@@ -1090,65 +1090,68 @@ void sprite_blt_map(_Sprite *sprite, int x, int y, SDL_Rect *box, _BLTFX *bltfx,
                 add_to_stretch_cache(sprite->bitmap,blt_sprite,stretch, bltfx->dark_level);
             }
 
-            if ((map_redraw_flag & MAP_REDRAW_FLAG_FIRE))
+            if (options.combat_smackvatts)
             {
-                if (!sprite->fire)
+                if ((map_redraw_flag & MAP_REDRAW_FLAG_FIRE))
                 {
-                    sprite->fire = RecolourSurface(blt_sprite,
-                                                   skin_prefs.scale_fire,
-                                                   skin_prefs.mask_fire);
-                    ImageStats.fires++;
-                }
+                    if (!sprite->fire)
+                    {
+                        sprite->fire = RecolourSurface(blt_sprite,
+                                                       skin_prefs.scale_fire,
+                                                       skin_prefs.mask_fire);
+                        ImageStats.fires++;
+                    }
 
-                blt_sprite = sprite->fire;
-            }
-            else if ((map_redraw_flag & MAP_REDRAW_FLAG_COLD))
-            {
-                if (!sprite->cold)
+                    blt_sprite = sprite->fire;
+                }
+                else if ((map_redraw_flag & MAP_REDRAW_FLAG_COLD))
                 {
-                    sprite->cold = RecolourSurface(blt_sprite,
-                                                   skin_prefs.scale_cold,
-                                                   skin_prefs.mask_cold);
-                    ImageStats.colds++;
-                }
+                    if (!sprite->cold)
+                    {
+                        sprite->cold = RecolourSurface(blt_sprite,
+                                                       skin_prefs.scale_cold,
+                                                       skin_prefs.mask_cold);
+                        ImageStats.colds++;
+                    }
 
-                blt_sprite = sprite->cold;
-            }
-            else if ((map_redraw_flag & MAP_REDRAW_FLAG_ELECTRICITY))
-            {
-                if (!sprite->electricity)
+                    blt_sprite = sprite->cold;
+                }
+                else if ((map_redraw_flag & MAP_REDRAW_FLAG_ELECTRICITY))
                 {
-                    sprite->electricity = RecolourSurface(blt_sprite,
-                                                          skin_prefs.scale_electricity,
-                                                          skin_prefs.mask_electricity);
-                    ImageStats.electricities++;
-                }
+                    if (!sprite->electricity)
+                    {
+                        sprite->electricity = RecolourSurface(blt_sprite,
+                                                              skin_prefs.scale_electricity,
+                                                              skin_prefs.mask_electricity);
+                        ImageStats.electricities++;
+                    }
 
-                blt_sprite = sprite->electricity;
-            }
-            else if ((map_redraw_flag & MAP_REDRAW_FLAG_LIGHT))
-            {
-                if (!sprite->light)
+                    blt_sprite = sprite->electricity;
+                }
+                else if ((map_redraw_flag & MAP_REDRAW_FLAG_LIGHT))
                 {
-                    sprite->light = RecolourSurface(blt_sprite,
-                                                    skin_prefs.scale_light,
-                                                    skin_prefs.mask_light);
-                    ImageStats.lights++;
-                }
+                    if (!sprite->light)
+                    {
+                        sprite->light = RecolourSurface(blt_sprite,
+                                                        skin_prefs.scale_light,
+                                                        skin_prefs.mask_light);
+                        ImageStats.lights++;
+                    }
 
-                blt_sprite = sprite->light;
-            }
-            else if ((map_redraw_flag & MAP_REDRAW_FLAG_SHADOW))
-            {
-                if (!sprite->shadow)
+                    blt_sprite = sprite->light;
+                }
+                else if ((map_redraw_flag & MAP_REDRAW_FLAG_SHADOW))
                 {
-                    sprite->shadow = RecolourSurface(blt_sprite,
-                                                     skin_prefs.scale_shadow,
-                                                     skin_prefs.mask_shadow);
-                    ImageStats.shadows++;
-                }
+                    if (!sprite->shadow)
+                    {
+                        sprite->shadow = RecolourSurface(blt_sprite,
+                                                         skin_prefs.scale_shadow,
+                                                         skin_prefs.mask_shadow);
+                        ImageStats.shadows++;
+                    }
 
-                blt_sprite = sprite->shadow;
+                    blt_sprite = sprite->shadow;
+                }
             }
         }
         else if ((bltfx->flags & BLTFX_FLAG_FOGOFWAR))
