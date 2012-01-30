@@ -175,12 +175,14 @@ int command_setgod(object *op, char *params)
 
 int command_kick(object *op, char *params)
 {
-    player     *pl;
-    const char *kicker_name,
-               *kickee_name;
-    char        buf[MEDIUM_BUF];
-    objectlink *ol;
-    int         ticks;
+    player                 *pl;
+    const char             *kicker_name,
+                           *kickee_name;
+    char                    buf[MEDIUM_BUF];
+    objectlink             *ol;
+    int                     ticks;
+    struct  player_channel *pl_channel=NULL;
+
 
     if (!op)
         return 0;
@@ -230,24 +232,37 @@ int command_kick(object *op, char *params)
     new_draw_info(NDI_UNIQUE | NDI_ALL, 5, op, "%s is kicked out of the game.",
                   kickee_name);
 
-    /* Tell all VOLs/GMs/SAs particularly. TODO: use VOL channel not individual
-     * NDIs. */
-    for (ol = gmaster_list_VOL; ol; ol = ol->next)
-    {
-        new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ol->objlink.ob,
-                      "%s", buf);
-    }
+    /* Send message to VOL channel, code by Torchwood 29/Jan/2012 */
 
-    for (ol = gmaster_list_GM; ol; ol = ol->next)
+    /* Try to find VOL channel */
+    if(pl_channel=findPlayerChannelFromName(CONTR(op),CONTR(op), "VOL", TRUE))
+        /* We only send a message to the VOL channel (as /kick is listed in
+         * the VOL commands).  SAs and GMs also have access to this channel,
+         * so no need to broadcast to those channels as well */
+        sendChannelMessage(CONTR(op), pl_channel, buf);
+    else
     {
-        new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ol->objlink.ob,
-                      "%s", buf);
-    }
+        /* Maybe channels are not in use for this server build */
+        LOG(llevInfo, "command_kick(): Can't find VOL channel for player %s\n",kickee_name);
 
-    for (ol = gmaster_list_SA; ol; ol = ol->next)
-    {
-        new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ol->objlink.ob,
-                      "%s", buf);
+        /* Tell VOLs/GMs/SAs the old fashioned way */
+        for (ol = gmaster_list_VOL; ol; ol = ol->next)
+        {
+            new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ol->objlink.ob,
+                          "%s", buf);
+        }
+
+        for (ol = gmaster_list_GM; ol; ol = ol->next)
+        {
+            new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ol->objlink.ob,
+                          "%s", buf);
+        }
+
+        for (ol = gmaster_list_SA; ol; ol = ol->next)
+        {
+            new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ol->objlink.ob,
+                          "%s", buf);
+        }
     }
 
     /* we kicked player params succesfull.
@@ -475,7 +490,7 @@ int command_goto(object *op, char *params)
         y = MAP_ENTER_Y(m);
     }
 
-    (void)enter_map(op, NULL, m, x, y, flags, 0); 
+    (void)enter_map(op, NULL, m, x, y, flags, 0);
     set_mappath_by_map(op);
 
     FREE_ONLY_HASH(path);
@@ -942,7 +957,7 @@ int command_teleport(object *op, char *params)
     if (!params)
         return 1;
 
-    
+
 
     if (!(pl = find_player(params)))
     {
@@ -1043,7 +1058,7 @@ int command_create(object *op, char *params)
             if (*cp2 == ' ')
             {
                 *cp2 = '\0';
- 
+
                 break;
             }
 
@@ -1526,7 +1541,7 @@ int command_addexp(object *op, char *params)
         return 0;
     }
 
-    
+
 
     if (!(pl = find_player(buf)))
     {
@@ -1557,7 +1572,7 @@ int command_addexp(object *op, char *params)
     }
 
     pl->update_skills = 1; /* we will sure change skill exp, mark for update */
-    
+
     if (!(exp_ob = exp_skill->exp_obj))
     {
         LOG(llevBug, "BUG: add_exp() skill:%s - no exp_op found!!\n",
@@ -1622,7 +1637,7 @@ int command_stats(object *op, char *params)
         return 0;
     }
 
-    new_draw_info(NDI_UNIQUE, 0, op, 
+    new_draw_info(NDI_UNIQUE, 0, op,
                   "Str : %-2d      H.P. : %-4d  MAX : %d\n"
                   "Dex : %-2d      S.P. : %-4d  MAX : %d\n"
                   "Con : %-2d        AC : %-4d  WC  : %d\n"
@@ -1752,7 +1767,7 @@ int command_reset(object *op, char *params)
         /* remove now all players from this map - flag them so we can
              * put them back later.
              */
-        
+
         for (pl = first_player, count = 0; pl != NULL; pl = pl->next)
         {
             if (pl->ob->map == m)
@@ -1894,7 +1909,7 @@ int command_mute(object *op, char *params)
 
     sscanf(params, "%s %d", name, &seconds);
 
-    
+
     if (!(pl= find_player(name)))
     {
         new_draw_info(NDI_UNIQUE, 0, op, "mute command: can't find player %s",
