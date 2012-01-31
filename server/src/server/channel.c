@@ -170,7 +170,7 @@ int command_channel(object *ob, char *params)
             return 0;
         }
         if (check_channel_mute(pl_channel))
-            sendChannelMessage(CONTR(ob),pl_channel, params);
+            sendChannelMessage(CONTR(ob),pl_channel->channel, params);
         return 0;
     }
     else if (mode==':') /* emoted channelmessage */
@@ -187,7 +187,7 @@ int command_channel(object *ob, char *params)
             return 0;
         }
         if (check_channel_mute(pl_channel))
-            sendChannelEmote(CONTR(ob),pl_channel, params);
+            sendChannelEmote(CONTR(ob), pl_channel->channel, params);
         return 0;
     }
     else if (mode=='*')
@@ -319,7 +319,7 @@ int command_channel(object *ob, char *params)
 
         if (check_channel_mute(pl_channel))
         {
-            sendChannelMessage(CONTR(ob),pl_channel, buf);
+            sendChannelMessage(CONTR(ob),pl_channel->channel, buf);
         }
     }
 
@@ -736,24 +736,24 @@ void removeChannelFromPlayer(player *pl, struct player_channel *pl_channel, char
  * @param pl_channel player_channel-link for that player/channel
  * @param params Message
  */
-void sendChannelMessage(player *pl,struct player_channel *pl_channel, char *params)
+void sendChannelMessage(player *pl,struct channels *channel, char *params)
 {
     struct player_channel *cpl;
     NewSocket *ns = &pl->socket;
     sockbuf_struct *sockbuf;
     char buf[512]; /* Player commands can only be around 250chars, so with this value, we are on the safe side */
 
-    CHATLOG("CH:%s:%s >%s<\n", pl_channel->channel->name, pl->ob->name, params);
+    CHATLOG("CH:%s:%s >%s<\n", channel->name, pl->ob->name, params);
 
 #ifdef CHANNEL_HIST
-    addChannelHist(pl_channel->channel, pl->ob->name, params, 0);
+    addChannelHist(channel, pl->ob->name, params, 0);
 #endif
 
-	sprintf(buf,"%c%c%s %s:%s",0,pl_channel->channel->color, pl_channel->channel->name, pl->ob->name, params);
+	sprintf(buf,"%c%c%s %s:%s",0,channel->color, channel->name, pl->ob->name, params);
 
 	sockbuf = SOCKBUF_COMPOSE(SERVER_CMD_CHANNELMSG, buf, strlen(buf+2)+2, 0);
 
-    for (cpl=pl_channel->channel->players;cpl;cpl=cpl->next_player)
+    for (cpl=channel->players;cpl;cpl=cpl->next_player)
         if (cpl->pl->channels_on)
             SOCKBUF_ADD_TO_SOCKET(&(cpl->pl->socket), sockbuf);
 
@@ -766,24 +766,24 @@ void sendChannelMessage(player *pl,struct player_channel *pl_channel, char *para
  * @param pl_channel player_channel-link for that player/channel
  * @param params Message
  */
-void sendChannelEmote(player *pl,struct player_channel *pl_channel, char *params)
+void sendChannelEmote(player *pl, struct channels *channel, char *params)
 {
     struct player_channel *cpl;
 	NewSocket *ns = &pl->socket;
     sockbuf_struct *sockbuf;
     char buf[512]; /* Player commands can only be around 250chars, so with this value, we are on the safe side */
 
-    CHATLOG("CH:%s:%s >%s<\n", pl_channel->channel->name, pl->ob->name, params);
+    CHATLOG("CH:%s:%s >%s<\n", channel->name, pl->ob->name, params);
 
 #ifdef CHANNEL_HIST
-    addChannelHist(pl_channel->channel, pl->ob->name, params, 1);
+    addChannelHist(channel, pl->ob->name, params, 1);
 #endif
 
-	sprintf(buf,"%c%c%s %s:%s",1,pl_channel->channel->color, pl_channel->channel->name, pl->ob->name, params);
+	sprintf(buf,"%c%c%s %s:%s", 1, channel->color, channel->name, pl->ob->name, params);
 
 	sockbuf = SOCKBUF_COMPOSE(SERVER_CMD_CHANNELMSG, buf, strlen(buf+2)+2, 0);
 
-    for (cpl=pl_channel->channel->players;cpl;cpl=cpl->next_player)
+    for (cpl=channel->players;cpl;cpl=cpl->next_player)
         if (cpl->pl->channels_on)
             SOCKBUF_ADD_TO_SOCKET(&(cpl->pl->socket), sockbuf);
 

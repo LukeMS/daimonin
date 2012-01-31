@@ -98,8 +98,8 @@ int     channelname_ok(char *cp);
 
 void    removeChannelFromPlayer(player *pl, struct player_channel *pl_channel, char *msg);
 
-void    sendChannelMessage(player *pl,struct player_channel *pl_channel, char *params);
-void    sendChannelEmote(player *pl,struct player_channel *pl_channel, char *params);
+void    sendChannelMessage(player *pl, struct channels *channel, char *params);
+void    sendChannelEmote(player *pl, struct channels *channel, char *params);
 #ifdef CHANNEL_HIST
 void    addChannelHist(struct channels *channel, const char *name, char *msg, int mode);
 void    sendChannelHist(struct player_channel *cpl, int lines);
