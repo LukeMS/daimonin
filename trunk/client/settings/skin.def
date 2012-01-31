@@ -163,7 +163,7 @@ mask_light: 0xc0c0c0
 
 # 'scale_shadow' and 'mask_shadow' define you perception of images when you are
 # hit with a shadow attack.
-scale_shadow 5
+scale_shadow: 5
 mask_shadow: 0x303030
 
 # 'scale_fogofwar' and 'mask_fogofwar' define you perception of images in the
