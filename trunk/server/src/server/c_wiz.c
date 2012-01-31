@@ -239,7 +239,7 @@ int command_kick(object *op, char *params)
         /* We only send a message to the VOL channel (as /kick is listed in
          * the VOL commands).  SAs and GMs also have access to this channel,
          * so no need to broadcast to those channels as well */
-        sendChannelMessage(CONTR(op), pl_channel, buf);
+        sendChannelMessage(CONTR(op), pl_channel->channel, buf);
     else
     {
         /* Maybe channels are not in use for this server build */
