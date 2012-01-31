@@ -164,6 +164,12 @@ static SDL_Surface *RecolourSurface(SDL_Surface *src, sprite_colrscale_t scale,
 
             SDL_GetRGBA(getpixel(orig, x, y), orig->format, &or, &og, &ob, &oa);
 
+            /* No point recolouring pixels you can't see anyway. */
+            if (oa == SDL_ALPHA_TRANSPARENT)
+            {
+                continue;
+            }
+
             switch (scale)
             {
                 case SPRITE_COLRSCALE_GREY:
