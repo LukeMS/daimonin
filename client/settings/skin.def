@@ -143,13 +143,13 @@ widget_valueLo: 0xff0000
 
 # 'scale_fire' and 'mask_fire' define you perception of images when you are hit
 # with a fire attack.
-scale_fire: 4
-mask_fire: 0xff3a00
+scale_fire: 1
+mask_fire: 0xffd000
 
 # 'scale_cold' and 'mask_cold' define you perception of images when you are hit
 # with a cold attack.
-scale_cold: 4
-mask_cold: 0xff00ff
+scale_cold: 1
+mask_cold: 0x00ffff
 
 # 'scale_electricity' and 'mask_electricity' define you perception of images
 # when you are hit with an electricity attack.
