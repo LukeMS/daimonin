@@ -182,9 +182,6 @@ extern void             string_blt(SDL_Surface *surf, _font *font, char *text,
                                    int x, int y, uint32 col, SDL_Rect *area,
                                    _BLTFX *bltfx);
 extern int              sprite_collision(int x1, int y1, int x2, int y2, _Sprite *sprite1, _Sprite *sprite2);
-extern Uint32           getpixel(SDL_Surface *surface, int x, int y);
-extern void             putpixel(SDL_Surface *surface, int x, int y, Uint32 pixel);
-
 extern void             sprite_clear_backbuffer(void);
 
 /* Zoom stuff */
