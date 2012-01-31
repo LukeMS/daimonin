@@ -151,13 +151,16 @@ static SDL_Surface *RecolourSurface(SDL_Surface *src, sprite_colrscale_t scale,
 
         for (x = 0; x < orig->w; x++)
         {
-            uint8 or,
+            uint8 or,                       // original values
                   og,
                   ob,
                   oa,
-                  mr = (mask >> 16) & 0xff,
+                  mr = (mask >> 16) & 0xff, // mask values
                   mg = (mask >> 8) & 0xff,
-                  mb = mask & 0xff;
+                  mb = mask & 0xff,
+                  tr,                       // temp values
+                  tg,
+                  tb;
 
             SDL_GetRGBA(getpixel(orig, x, y), orig->format, &or, &og, &ob, &oa);
 
@@ -170,9 +173,12 @@ static SDL_Surface *RecolourSurface(SDL_Surface *src, sprite_colrscale_t scale,
                     break;
 
                 case SPRITE_COLRSCALE_SEPIA:
-                    or = (uint8)(0.393 * or + 0.769 * og + 0.189 * ob);
-                    og = (uint8)(0.349 * or + 0.686 * og + 0.168 * ob);
-                    ob = (uint8)(0.272 * or + 0.534 * og + 0.131 * ob);
+                    tr = (uint8)(0.393 * or + 0.769 * og + 0.189 * ob);
+                    tg = (uint8)(0.349 * or + 0.686 * og + 0.168 * ob);
+                    tb = (uint8)(0.272 * or + 0.534 * og + 0.131 * ob);
+                    or = tr;
+                    og = tg;
+                    ob = tb;
 
                     break;
 
