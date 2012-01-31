@@ -48,6 +48,9 @@ static uint8        GetBitmapBorders(SDL_Surface *Surface, int *up, int *down,
                                      int *left, int *right, uint32 ckey);
 static SDL_Surface *RecolourSurface(SDL_Surface *src, sprite_colrscale_t scale,
                                     uint32 mask);
+static uint32       GetPixel(SDL_Surface *surface, uint16 x, uint16 y);
+static void         PutPixel(SDL_Surface *surface, uint16 x, uint16 y,
+                             uint32 pixel);
 static Uint16       CalcHash(const SDL_Surface *src,
                              Uint32 stretch, Uint32 darkness);
 static SDL_Surface *check_stretch_cache(const SDL_Surface *src, Uint32 stretch,
@@ -162,7 +165,7 @@ static SDL_Surface *RecolourSurface(SDL_Surface *src, sprite_colrscale_t scale,
                   tg,
                   tb;
 
-            SDL_GetRGBA(getpixel(orig, x, y), orig->format, &or, &og, &ob, &oa);
+            SDL_GetRGBA(GetPixel(orig, x, y), orig->format, &or, &og, &ob, &oa);
 
             /* No point recolouring pixels you can't see anyway. */
             if (oa == SDL_ALPHA_TRANSPARENT)
@@ -229,7 +232,7 @@ static SDL_Surface *RecolourSurface(SDL_Surface *src, sprite_colrscale_t scale,
                 }
             }
 
-            putpixel(orig, x, y, SDL_MapRGBA(orig->format, or, og, ob, oa));
+            PutPixel(orig, x, y, SDL_MapRGBA(orig->format, or, og, ob, oa));
         }
     }
 
@@ -237,6 +240,82 @@ static SDL_Surface *RecolourSurface(SDL_Surface *src, sprite_colrscale_t scale,
     SDL_FreeSurface(orig);
 
     return dst;
+}
+
+/* This two helper functions are fast, but be careful:
+ * x,y must be on the surface!
+ * When using with the display surface the surface MUST be locked! */
+static uint32 GetPixel(SDL_Surface *surface, uint16 x, uint16 y)
+{
+    uint8  bpp = surface->format->BytesPerPixel,
+    /* Here p is the address to the pixel we want to retrieve */
+          *p = (uint8 *)surface->pixels + y * surface->pitch + x * bpp;
+
+    switch (bpp)
+    {
+        case 1:
+            return *p;
+
+        case 2:
+            return *(uint16 *)p;
+
+        case 3:
+            if (SDL_BYTEORDER == SDL_BIG_ENDIAN)
+            {
+                return p[0] << 16 | p[1] << 8 | p[2];
+            }
+            else
+            {
+                return p[0] | p[1] << 8 | p[2] << 16;
+            }
+
+        case 4:
+            return *(uint32 *)p;
+
+        default: // shouldn't happen, but avoids warnings
+            return 0;
+    }
+}
+
+static void PutPixel(SDL_Surface *surface, uint16 x, uint16 y, uint32 pixel)
+{
+    uint8  bpp = surface->format->BytesPerPixel,
+    /* Here p is the address to the pixel we want to set */
+          *p = (uint8 *)surface->pixels + y * surface->pitch + x * bpp;
+
+    switch (bpp)
+    {
+        case 1:
+            *p = pixel;
+
+            break;
+
+        case 2:
+            *(uint16 *)p = pixel;
+
+            break;
+
+        case 3:
+            if (SDL_BYTEORDER == SDL_BIG_ENDIAN)
+            {
+                p[0] = (pixel >> 16) & 0xff;
+                p[1] = (pixel >> 8) & 0xff;
+                p[2] = pixel & 0xff;
+            }
+            else
+            {
+                p[0] = pixel & 0xff;
+                p[1] = (pixel >> 8) & 0xff;
+                p[2] = (pixel >> 16) & 0xff;
+            }
+
+            break;
+
+        case 4:
+            *(uint32 *)p = pixel;
+
+            break;
+    }
 }
 
 void sprite_free_sprite(_Sprite *sprite)
@@ -1973,69 +2052,6 @@ int zoomSurfaceRGBA(SDL_Surface * src, SDL_Surface * dst, int flipx, int flipy, 
     return (0);
 }
 
-/* This two helper functions are fast, but be careful:
- * x,y must be on the surface!
- * When using with the display surface the surface MUST be locked!
- */
-Uint32 getpixel(SDL_Surface *surface, int x, int y)
-{
-    int bpp = surface->format->BytesPerPixel;
-    /* Here p is the address to the pixel we want to retrieve */
-    Uint8 *p = (Uint8 *)surface->pixels + y * surface->pitch + x * bpp;
-
-    switch(bpp) {
-    case 1:
-        return *p;
-
-    case 2:
-        return *(Uint16 *)p;
-
-    case 3:
-        if(SDL_BYTEORDER == SDL_BIG_ENDIAN)
-            return p[0] << 16 | p[1] << 8 | p[2];
-        else
-            return p[0] | p[1] << 8 | p[2] << 16;
-
-    case 4:
-        return *(Uint32 *)p;
-
-    default:
-        return 0;       /* shouldn't happen, but avoids warnings */
-    }
-}
-
-void putpixel(SDL_Surface *surface, int x, int y, Uint32 pixel)
-{
-    int bpp = surface->format->BytesPerPixel;
-    /* Here p is the address to the pixel we want to set */
-    Uint8 *p = (Uint8 *)surface->pixels + y * surface->pitch + x * bpp;
-
-    switch(bpp) {
-    case 1:
-        *p = pixel;
-        break;
-
-    case 2:
-        *(Uint16 *)p = pixel;
-        break;
-
-    case 3:
-        if(SDL_BYTEORDER == SDL_BIG_ENDIAN) {
-            p[0] = (pixel >> 16) & 0xff;
-            p[1] = (pixel >> 8) & 0xff;
-            p[2] = pixel & 0xff;
-        } else {
-            p[0] = pixel & 0xff;
-            p[1] = (pixel >> 8) & 0xff;
-            p[2] = (pixel >> 16) & 0xff;
-        }
-        break;
-
-    case 4:
-        *(Uint32 *)p = pixel;
-        break;
-    }
-}
 /* the following was contributed by JotDot */
 /* and adopted to cache also the darkness faces by Alderan */
 #define DEBUG_HASH 0
