@@ -279,7 +279,7 @@ void skin_default_prefs(void)
     skin_prefs.input_string = NDI_COLR_WHITE;
     skin_prefs.input_caret = NDI_COLR_RED;
     skin_prefs.scale_fire = SPRITE_COLRSCALE_GREY;
-    skin_prefs.mask_fire = NDI_COLR_RED;
+    skin_prefs.mask_fire = NDI_COLR_ORANGE;
     skin_prefs.scale_cold = SPRITE_COLRSCALE_GREY;
     skin_prefs.mask_cold = NDI_COLR_AQUA;
     skin_prefs.scale_electricity = SPRITE_COLRSCALE_NEGATIVE;
