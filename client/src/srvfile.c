@@ -543,32 +543,36 @@ static void LoadFaceInfo(void)
 
 static void CheckLocalFaceInfo(void)
 {
+    char         filename[TINY_BUF],
+                 buf[MEDIUM_BUF];
     PHYSFS_File *handle;
-    char         buf[MEDIUM_BUF];
     sint32       i = 0;
 
     /* Check for existance of local images file. */
-    if (!PHYSFS_exists(FILE_FACEPACK))
+    sprintf(filename, "%s.p0", FILE_FACEPACK);
+
+    if (!PHYSFS_exists(filename))
     {
-       /* If it doesn't exist and the server is not sending us images, give up.
-        * TODO: We should print a client message and go back to server select
-        * rather than exit the client. */
-       if (face_nrof == 0)
-       {
-           LOG(LOG_FATAL, "Could not find '%s'!\n", FILE_FACEPACK);
-       }
+        /* If it doesn't exist and the server is not sending us images,
+         * give up.
+         * TODO: We should print a client message and go back to server select
+         * rather than exit the client. */
+        if (face_nrof == 0)
+        {
+            LOG(LOG_FATAL, "Could not find '%s'!\n", filename);
+        }
 
-       LOG(LOG_SYSTEM, "Could not find '%s'. This means all faces will need to be requested from the server!\n",
-           FILE_FACEPACK);
+        LOG(LOG_SYSTEM, "Could not find '%s'. This means all faces will need to be requested from the server!\n",
+            filename);
 
-       return;
+        return;
     }
 
     /* Log what we're doing. */
-    LOG(LOG_SYSTEM, "Loading local face info from '%s'... ", FILE_FACEPACK);
+    LOG(LOG_SYSTEM, "Loading local face info from '%s'... ", filename);
 
     /* Open the file for reading. */
-    if (!(handle = PHYSFS_openRead(FILE_FACEPACK)))
+    if (!(handle = PHYSFS_openRead(filename)))
     {
         LOG(LOG_FATAL, "FAILED (%s)!\n", PHYSFS_getLastError());
     }
