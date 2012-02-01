@@ -232,39 +232,6 @@ int command_kick(object *op, char *params)
     new_draw_info(NDI_UNIQUE | NDI_ALL, 5, op, "%s is kicked out of the game.",
                   kickee_name);
 
-    /* Send message to VOL channel, code by Torchwood 29/Jan/2012 */
-
-    /* Try to find VOL channel */
-    if(pl_channel=findPlayerChannelFromName(CONTR(op),CONTR(op), "VOL", TRUE))
-        /* We only send a message to the VOL channel (as /kick is listed in
-         * the VOL commands).  SAs and GMs also have access to this channel,
-         * so no need to broadcast to those channels as well */
-        sendChannelMessage(CONTR(op), pl_channel->channel, buf);
-    else
-    {
-        /* Maybe channels are not in use for this server build */
-        LOG(llevInfo, "command_kick(): Can't find VOL channel for player %s\n",kickee_name);
-
-        /* Tell VOLs/GMs/SAs the old fashioned way */
-        for (ol = gmaster_list_VOL; ol; ol = ol->next)
-        {
-            new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ol->objlink.ob,
-                          "%s", buf);
-        }
-
-        for (ol = gmaster_list_GM; ol; ol = ol->next)
-        {
-            new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ol->objlink.ob,
-                          "%s", buf);
-        }
-
-        for (ol = gmaster_list_SA; ol; ol = ol->next)
-        {
-            new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ol->objlink.ob,
-                          "%s", buf);
-        }
-    }
-
     /* we kicked player params succesfull.
      * Now we give him a 1min temp ban, so he can
      * think about it.
@@ -871,8 +838,17 @@ int command_dm_connections(object *op, char *params)
     objectlink *ol;
     int nr = 2;
 
-    if (!params || sscanf(params, "%d", &nr) != 1)
-        return 1;
+    if (!params)
+    {
+        new_draw_info(NDI_UNIQUE, 0, op, "Syntax: /dm_connections <numberconnections>");
+        return 0;
+    }
+
+    if (sscanf(params, "%d", &nr) != 1)
+    {
+        new_draw_info(NDI_UNIQUE, 0, op, "Syntax: /dm_connections <numberconnections>");
+        return 0;
+    }
 
     if(nr < 2)
     {
@@ -881,18 +857,6 @@ int command_dm_connections(object *op, char *params)
     }
 
     settings.max_cons_from_one_ip = nr;
-    sprintf(buf, "SET: max connections from single IP set to %d!\n",
-            nr);
-
-    for(ol = gmaster_list_VOL; ol; ol = ol->next)
-        new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ol->objlink.ob, "%s", buf);
-
-    for(ol = gmaster_list_GM; ol; ol = ol->next)
-        new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ol->objlink.ob, "%s", buf);
-
-    for(ol = gmaster_list_SA; ol; ol = ol->next)
-        new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ol->objlink.ob, "%s", buf);
-
     return 0;
 }
 

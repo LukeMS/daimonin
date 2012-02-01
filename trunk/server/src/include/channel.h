@@ -31,6 +31,13 @@
 #define MAX_CHANNEL_HIST_LINES 50
 #define CHANNEL_HIST
 
+/* Names of standard channels */
+#define CHANNEL_NAME_VOL "VOL"
+#define CHANNEL_NAME_GM "GM"
+#define CHANNEL_NAME_MW "MW"
+#define CHANNEL_NAME_MM "MM"
+#define CHANNEL_NAME_SA "SA"
+
 
 /**
  * Channel-Player doubled-links list.
