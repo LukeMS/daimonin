@@ -49,8 +49,9 @@ typedef struct
     /* global list's structure */
     char     *name;
     CommFunc  func;
-    float     time;   /* How long it takes to execute this command */
-    int       notify; /* Whether to print the command name -- ATM 0 or 1 */
+    float     time;     /* How long it takes to execute this command */
+    int       notify;   /* Whether to print the command name -- ATM 0 or 1 */
+    char     *ch_name;  /* Name of channel to print this command to -- used mostly for wiz cmds */
 } CommArray_s;
 
 typedef struct _subcommand

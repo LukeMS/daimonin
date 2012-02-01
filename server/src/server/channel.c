@@ -860,11 +860,11 @@ void load_channels(void)
     if ((channelfile = fopen(buf, "r")) == NULL)
     {
         LOG(llevDebug, "Could not find channel_file. Using default channels.\n");
-        final_addChannel("SA", 'S', 3, 1, 1, GMASTER_MODE_SA);
-        final_addChannel("MM", 'M', 3, 1, 1, GMASTER_MODE_MM);
-        final_addChannel("MW", 'W', 3, 1, 1, GMASTER_MODE_MW);
-        final_addChannel("GM", 'G', 3, 1, 1, GMASTER_MODE_GM);
-        final_addChannel("VOL", 'V', 3, 1, 1, GMASTER_MODE_VOL);
+        final_addChannel(CHANNEL_NAME_SA, 'S', 3, 1, 1, GMASTER_MODE_SA);
+        final_addChannel(CHANNEL_NAME_MM, 'M', 3, 1, 1, GMASTER_MODE_MM);
+        final_addChannel(CHANNEL_NAME_MW, 'W', 3, 1, 1, GMASTER_MODE_MW);
+        final_addChannel(CHANNEL_NAME_GM, 'G', 3, 1, 1, GMASTER_MODE_GM);
+        final_addChannel(CHANNEL_NAME_VOL, 'V', 3, 1, 1, GMASTER_MODE_VOL);
         final_addChannel("Auction", 'a', 2, 2, 1, GMASTER_MODE_NO);
         final_addChannel("General", 'g', -1, 2, 1, GMASTER_MODE_NO);
         final_addChannel("Help", 'h', 4, 1, 1, GMASTER_MODE_NO);
