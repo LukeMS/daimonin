@@ -295,20 +295,23 @@ static _sprite_status LoadFromFile(uint16 num, const char *dname)
 
 static _sprite_status LoadFromPack(uint16 num)
 {
+    char         filename[TINY_BUF];
     PHYSFS_File *handle;
     uint32       len;
     uint8       *data;
 
+    sprintf(filename, "%s.p0", FILE_FACEPACK);
+
     /* If the image pack does not exist, just return SPRITE_STATUS_UNLOADED. */
-    if (!PHYSFS_exists(FILE_FACEPACK))
+    if (!PHYSFS_exists(filename))
     {
         return SPRITE_STATUS_UNLOADED;
     }
 
     /* If we fail to open the file, log an error and return SPRITE_STATUS_UNLOADED. */
-    if (!(handle = PHYSFS_openRead(FILE_FACEPACK)))
+    if (!(handle = PHYSFS_openRead(filename)))
     {
-        LOG(LOG_ERROR, "Could not open '%s' for reading!\n", FILE_FACEPACK);
+        LOG(LOG_ERROR, "Could not open '%s' for reading!\n", filename);
 
         return SPRITE_STATUS_UNLOADED;
     }
@@ -318,7 +321,7 @@ static _sprite_status LoadFromPack(uint16 num)
     if (!PHYSFS_seek(handle, (PHYSFS_uint64)face_list[num].pos))
     {
         LOG(LOG_ERROR, "Could not set position for image %d in file '%s' (%s)!\n",
-            num, FILE_FACEPACK, PHYSFS_getLastError());
+            num, filename, PHYSFS_getLastError());
 
         return SPRITE_STATUS_UNLOADED;
     }
@@ -331,7 +334,7 @@ static _sprite_status LoadFromPack(uint16 num)
     if (PHYSFS_read(handle, data, 1, len) < len)
     {
         LOG(LOG_ERROR, "Could not read image %d data in file '%s'(%s)!\n",
-            num, FILE_FACEPACK, PHYSFS_getLastError());
+            num, filename, PHYSFS_getLastError());
 
         return SPRITE_STATUS_UNLOADED;
     }

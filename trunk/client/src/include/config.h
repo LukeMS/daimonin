@@ -68,7 +68,7 @@
 #define DIR_SRV_FILES "srv_files"
 #define DIR_UPDATES   "update"
 
-#define FILE_FACEPACK       "daimonin.p0"
+#define FILE_FACEPACK       "facepack"
 #define FILE_BUDDY          "buddy.list"
 #define FILE_CHATFILTER     "cfilter.list"
 #define FILE_IGNORE         "ignore.list"

@@ -62,7 +62,7 @@ cp $builddir/License $datadir
 
 echo "### Copy multiarch info & default images to $datadir"
 cp $builddir/archdef.dat $datadir
-cp $builddir/daimonin.p0 $datadir
+cp $builddir/facepack.* $datadir
 
 echo "*** Daimonin client successful installed in $bindir!"
 echo "*** Enter your install folder and type ./daimonin"

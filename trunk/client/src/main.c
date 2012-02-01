@@ -1970,6 +1970,21 @@ static void InitPhysFS(const char *argv0)
         LOG(LOG_MSG, "%s\n", PHYSFS_getLastError());
     }
 
+    /* If FILE_FACEPACK.zip exists, prepend this to the search path. In here
+     * should be the actual face pack. */
+    sprintf(buf, "%s.zip", FILE_FACEPACK);
+
+    if (PHYSFS_exists(buf))
+    {
+        LOG(LOG_SYSTEM, "The face pack inside '%s' will be used but note that this is quite slow.\n",
+            buf);
+
+        if (!PHYSFS_addToSearchPath(buf, 0))
+        { 
+            LOG(LOG_MSG, "%s\n", PHYSFS_getLastError());
+        }
+    }
+
     /* Determine the user dir (ie, ~/.daimonin/0.10). */
 #if __WIN_32
     /* Use APPDATA if defined. */
