@@ -50,11 +50,25 @@
  * -1, the face is loaded from DIR_CACHE if it is there. For other pos values,
  * the face is loaded from FILE_FACEPACK. If we still can't find the face after
  * all this a request is sent to the server (the resulting file will be saved
- * to DIR_CACHE). TODO: It might be useful to add a timer to face_info[] so
- * that image data can be freed when it has not been used for X time -- helpful
- * for small machines, phones, etc?
+ * to DIR_CACHE).
  *
  * -- Smacky 20110516 */
+/* TODO: Q: It might be useful to add a timer to face_info[] so that image data
+ * can be freed when it has not been used for X time -- helpful for small
+ * machines, phones, etc?
+ *
+ * A: Experiments suggest this is probably not worthwhile. I rigged my client
+ * to expire *all* faces after 5 minutes and then ran around the demon plane
+ * and dungeons in SA mode (so I could cover ground fast with no restrictions,
+ * ie equivalent to a much longer session for a normal player). After 5 minutes
+ * the client memory footprint dropped from 69.8MiB to 68.1MiB. So the faces
+ * take up a comparatively small amount of space (plus when you expire them you
+ * then may need to re-request/load them later on which is a more significant
+ * process than just having them sit dormant in memory).
+ *
+ * Still, perhaps revisit this idea when/if we get more/bigger face images?
+ *
+ * -- Smacky 20120201 */
 
 #include "include.h"
 
