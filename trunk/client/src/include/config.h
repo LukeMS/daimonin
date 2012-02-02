@@ -68,6 +68,7 @@
 #define DIR_SRV_FILES "srv_files"
 #define DIR_UPDATES   "update"
 
+#define FILE_DEFAULTS       "defaults.zip"
 #define FILE_FACEPACK       "facepack"
 #define FILE_BUDDY          "buddy.list"
 #define FILE_CHATFILTER     "cfilter.list"
