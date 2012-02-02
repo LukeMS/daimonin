@@ -1964,10 +1964,20 @@ static void InitPhysFS(const char *argv0)
     sep = PHYSFS_getDirSeparator();
 
     /* Add the base dir to the search path. The base dir is where all the
-     * defaults are (or should be). */
+     * defaults are (or should be), but see below. */
     if (!PHYSFS_addToSearchPath(PHYSFS_getBaseDir(), 1))
     {
         LOG(LOG_MSG, "%s\n", PHYSFS_getLastError());
+    }
+
+    /* If FILE_DEFAULTS (an archive) exists, prepend this to the search path.
+     * In here should be the actual defaults. */
+    if (PHYSFS_exists(FILE_DEFAULTS))
+    {
+        if (!PHYSFS_addToSearchPath(FILE_DEFAULTS, 0))
+        { 
+            LOG(LOG_MSG, "%s\n", PHYSFS_getLastError());
+        }
     }
 
     /* If FILE_FACEPACK.zip exists, prepend this to the search path. In here
