@@ -503,16 +503,6 @@ void cs_cmd_generic(char *buf, int len, NewSocket *ns)
         return;
     }
 
-    /* Send a message to the appropriate channel, if defined */
-    if (csp->ch_name)
-    {
-        if (channel=findGlobalChannelFromName(pl, csp->ch_name, TRUE))
-        {
-            sprintf(ch_buf, "%s -- /%s %s", STRING_OBJ_NAME(ob), buf, STRING_SAFE(cp));
-            sendChannelMessage(pl, channel, ch_buf);
-        }
-    }
-
     if (csp->notify)
     {
         /* It'd probably make sense to use the priority flag here, but I don't
@@ -530,6 +520,16 @@ void cs_cmd_generic(char *buf, int len, NewSocket *ns)
                              csp->name);
 
         return;
+    }
+
+    /* Send a message to the appropriate channel, if defined */
+    if (csp->ch_name)
+    {
+        if (channel=findGlobalChannelFromName(pl, csp->ch_name, TRUE))
+        {
+            sprintf(ch_buf, "%s -- /%s %s", STRING_OBJ_NAME(ob), buf, STRING_SAFE(cp));
+            sendChannelMessage(pl, channel, ch_buf);
+        }
     }
 
     ob->speed_left -= csp->time;

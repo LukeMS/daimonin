@@ -838,17 +838,8 @@ int command_dm_connections(object *op, char *params)
     objectlink *ol;
     int nr = 2;
 
-    if (!params)
-    {
-        new_draw_info(NDI_UNIQUE, 0, op, "Syntax: /dm_connections <numberconnections>");
-        return 0;
-    }
-
-    if (sscanf(params, "%d", &nr) != 1)
-    {
-        new_draw_info(NDI_UNIQUE, 0, op, "Syntax: /dm_connections <numberconnections>");
-        return 0;
-    }
+    if (!params || sscanf(params, "%d", &nr) != 1)
+        return 1;
 
     if(nr < 2)
     {
