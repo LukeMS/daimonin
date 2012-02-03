@@ -3362,11 +3362,11 @@ void gui_npc_mouseclick(SDL_Event *e)
                 gui_npc->link_selected ||
                 gui_npc->button_selected)
             {
-                check_menu_keys(MENU_NPC, SDLK_RETURN);
+                gui_npc_keypress(SDLK_RETURN);
             }
             else
             {
-                check_menu_keys(MENU_NPC, SDLK_BACKSPACE);
+                gui_npc_keypress(SDLK_BACKSPACE);
             }
         }
     }
