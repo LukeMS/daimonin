@@ -1551,17 +1551,6 @@ void InterfaceCmd(char *data, int len)
     uint8 mode;
 
     map_udate_flag = 2;
-
-//    if (gui_npc &&
-//        gui_npc->status != GUI_NPC_STATUS_WAIT &&
-//        ((!len &&
-//          cpl.menustatus == MENU_NPC) ||
-//         (len &&
-//          cpl.menustatus != MENU_NPC)))
-//    {
-//        sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICK, 0, 0, 100);
-//    }
-
     mode = *((uint8 *)data++);
     len--;
     reset_keys();

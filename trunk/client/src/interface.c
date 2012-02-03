@@ -2544,11 +2544,6 @@ static void ShowGUIContents(uint16 x, uint16 y)
     }
 
     SDL_SetClipRect(ScreenSurface, NULL);
-
-//    if (gui_npc->status == GUI_NPC_STATUS_WAIT)
-//    {
-//        return;
-//    }
 } 
 
 static void ShowIcon(_gui_npc_element *this)
@@ -3271,15 +3266,11 @@ static void SendCommand(void)
     }
     else
     {
-        if (gui_npc->status != GUI_NPC_STATUS_WAIT)
-        {
-            client_cmd_guitalk(interface_mode, buf);
-            textwin_add_history(buf);
-            reset_keys();
-            reset_input_mode();
-            cpl.input_mode = INPUT_MODE_NO;
-            gui_npc->status = GUI_NPC_STATUS_WAIT;
-        }
+        client_cmd_guitalk(interface_mode, buf);
+        textwin_add_history(buf);
+        reset_keys();
+        reset_input_mode();
+        cpl.input_mode = INPUT_MODE_NO;
     }
 }
 
@@ -3395,11 +3386,6 @@ void gui_npc_mouseclick(SDL_Event *e)
  */
 void gui_npc_keypress(int key)
 {
-//    if (gui_npc->status == GUI_NPC_STATUS_WAIT)
-//    {
-//        return;
-//    }
-
     switch (key)
     {
         /* Selecting previous/next keyword. */
