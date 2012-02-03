@@ -56,13 +56,6 @@ typedef enum _gui_npc_type
 }
 _gui_npc_type;
 
-typedef enum _gui_npc_status
-{
-    GUI_NPC_STATUS_NORMAL,
-    GUI_NPC_STATUS_WAIT
-}
-_gui_npc_status;
-
 typedef struct gui_internal_image
 {
     char    *name;
@@ -107,7 +100,6 @@ typedef struct _gui_npc
     uint16            starty;
     uint16            yoff;
     uint16            height;
-    int               status;
     int               mode;
     uint8             sound : 1;
     uint8             shop : 1;

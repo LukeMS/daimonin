@@ -181,7 +181,6 @@ void do_npcdialog_input(void)
             client_cmd_guitalk(GUI_NPC_MODE_NPC, InputString);
             textwin_add_history(InputString);
             reset_input_mode();
-            gui_npc->status = GUI_NPC_STATUS_WAIT;
         }
 
         reset_keys();
