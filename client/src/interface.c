@@ -3395,10 +3395,10 @@ void gui_npc_mouseclick(SDL_Event *e)
  */
 void gui_npc_keypress(int key)
 {
-    if (gui_npc->status == GUI_NPC_STATUS_WAIT)
-    {
-        return;
-    }
+//    if (gui_npc->status == GUI_NPC_STATUS_WAIT)
+//    {
+//        return;
+//    }
 
     switch (key)
     {
