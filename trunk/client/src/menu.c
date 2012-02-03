@@ -549,44 +549,79 @@ void widget_show_range(int x, int y)
 
 void show_menu(void)
 {
-    SDL_Rect    box;
+    SDL_Rect box;
 
-    if (!cpl.menustatus)
-        return;
-    if (cpl.menustatus == MENU_KEYBIND)
-        show_keybind();
-    else if (cpl.menustatus == MENU_BOOK)
-        show_book(400-skin_sprites[SKIN_SPRITE_JOURNAL]->bitmap->w/2,300-skin_sprites[SKIN_SPRITE_JOURNAL]->bitmap->h/2);
-    else if (cpl.menustatus == MENU_NPC)
+    switch (cpl.menustatus)
     {
-        int x,
-            y;
+        case MENU_KEYBIND:
+            show_keybind();
 
-        gui_npc_show();
+            break;
 
-        /* Force selection of element under pointer. */
-        SDL_PumpEvents();
-        SDL_GetMouseState(&x, &y);
-        gui_npc_mousemove(x, y);
+        case MENU_BOOK:
+            show_book(400 - skin_sprites[SKIN_SPRITE_JOURNAL]->bitmap->w / 2,
+                      300 - skin_sprites[SKIN_SPRITE_JOURNAL]->bitmap->h / 2);
+
+            break;
+
+        case MENU_NPC:
+            if (!gui_npc)
+            {
+                cpl.menustatus = MENU_NO;
+
+                return;
+            }
+            else
+            {
+                int x,
+                    y;
+
+                gui_npc_show();
+
+                /* Force selection of element under pointer. */
+                SDL_PumpEvents();
+                SDL_GetMouseState(&x, &y);
+                gui_npc_mousemove(x, y);
+            }
+
+            break;
+
+       case MENU_STATUS:
+            show_status();
+
+            break;
+
+       case MENU_SPELL:
+            show_spelllist();
+            box.x = Screensize.x / 2 -
+                    skin_sprites[SKIN_SPRITE_DIALOG_BG]->bitmap->w / 2;
+            box.y = Screensize.y / 2 -
+                    skin_sprites[SKIN_SPRITE_DIALOG_BG]->bitmap->h / 2 - 42;
+            box.h = 42;
+            box.w = skin_sprites[SKIN_SPRITE_DIALOG_BG]->bitmap->w;
+            SDL_FillRect(ScreenSurface, &box, 0);
+            show_quickslots(box.x + 120, box.y + 3);
+
+            break;
+
+       case MENU_SKILL:
+            show_skilllist();
+
+            break;
+
+       case MENU_OPTION:
+            show_optwin();
+
+            break;
+
+       case MENU_CREATE:
+            show_newplayer_server();
+
+            break;
+
+       default:
+           return;
     }
-    else if (cpl.menustatus == MENU_STATUS)
-        show_status();
-    else if (cpl.menustatus == MENU_SPELL)
-    {
-        show_spelllist();
-        box.x = Screensize.x / 2 - skin_sprites[SKIN_SPRITE_DIALOG_BG]->bitmap->w / 2;
-        box.y = Screensize.y / 2 - skin_sprites[SKIN_SPRITE_DIALOG_BG]->bitmap->h / 2 - 42;
-        box.h = 42;
-        box.w = skin_sprites[SKIN_SPRITE_DIALOG_BG]->bitmap->w;
-        SDL_FillRect(ScreenSurface, &box, 0);
-        show_quickslots(box.x + 120, box.y + 3);
-    }
-    else if (cpl.menustatus == MENU_SKILL)
-        show_skilllist();
-    else if (cpl.menustatus == MENU_OPTION)
-        show_optwin();
-    else if (cpl.menustatus == MENU_CREATE)
-        show_newplayer_server();
 }
 
 void show_media(int x, int y)
