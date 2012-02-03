@@ -1447,11 +1447,6 @@ void gui_npc_reset(void)
     reset_keys();
     cpl.input_mode = INPUT_MODE_NO;
 
-    if (cpl.menustatus == MENU_NPC)
-    {
-        cpl.menustatus = MENU_NO;
-    }
-
 #ifdef INSTALL_SOUND
     /* Restore any music playing to full volume (according to options). */
     if (music.data)
