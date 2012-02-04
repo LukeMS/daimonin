@@ -67,11 +67,21 @@ void LOG(LogLevel logLevel, char *format, ...)
         DoPrint(buf, tlogfile);
 
 #ifdef DAI_DEVELOPMENT_CONTENT
-        /* Mapbugs are broadcasted on the test server */
         if (logLevel == llevMapbug)
         {
+# ifdef USE_CHANNELS
+            struct channels *channel = findGlobalChannelFromName(NULL,
+                                                                 CHANNEL_NAME_MW,
+                                                                 1);
+
+            if (channel)
+            {
+                sendChannelMessage(NULL, channel, buf);
+            }
+# else
             new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_ALL | NDI_RED, 5, NULL,
                           "%s", buf);
+# endif
         }
 #endif
     }
