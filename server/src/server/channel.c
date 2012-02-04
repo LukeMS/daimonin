@@ -391,76 +391,100 @@ void addPlayerToChannel(player *pl, char *name, char *params)
  * Here we try to find a matching channel in the whole channellist
  * If we find more than one channel, we give the player a message
  * with all matching channels
- * @param pl PlayerStruct of Player
- * @param name Name (or Part of name) from channel
- * @param mute, No 'error' output, useful if we implement some channel_kick commands
- * @return pointer to matching channel
+ * @param pl PlayerStruct of Player or NULL. If NULL, *all* channels are legit,
+ * no NDI feedback is given, and no multiple matches are checked for.
+ * @param name Name (or Part of name) from channel.
+ * @param mute, No 'error' output, useful if we implement some channel_kick
+ * commands. If pl is NULL, this is set to 1.
+ * @return pointer to matching channel or NULL (no match or multiple matches
+ * found).
  */
 struct channels *findGlobalChannelFromName(player *pl, char *name, int mute)
 {
-    struct channels *c, *tmp;
+    struct channels *match,
+                    *duplicate;
 
-    c=channel_list_start;
-    while (c)
+    /* Check for the first match. */
+    for (match = channel_list_start; match; match = match->next)
     {
-                /* We don't display channels we can't get on.
-                 * This may be by level restriction ot gmaster_mode.
-                 * VOLs, GMs, and SAs are not subject to level restrictions. */
-                if (!compare_gmaster_mode(c->gmaster_mode, pl->gmaster_mode) ||
-/* Method stub for later to implement clan system
- * This function should return TRUE if the player is in that clan.
- * channel->clan will be some sort of pointer to the clan info...
- */
-//                  !is_player_in_clan(c->clan) ||
-                    (!(pl->gmaster_mode & (GMASTER_MODE_SA | GMASTER_MODE_GM | GMASTER_MODE_VOL)) &&
-                     pl->ob->level < c->enter_lvl))
-           {
-                c=c->next;
-                continue;
-           }
-        if (!strncasecmp(c->name, name, strlen(name)))
+        if (pl &&
+            /* We don't display channels we can't get on. This may be by level
+             * restriction or gmaster_mode. VOLs, GMs, and SAs are not subject
+             * to level restrictions. */
+            (!compare_gmaster_mode(match->gmaster_mode, pl->gmaster_mode) ||
+            /* Method stub for later to implement clan system. This function
+             * should return 1 if the player is in that clan. channel->clan
+             * will be some sort of pointer to the clan info... */
+//             !is_player_in_clan(match->clan) ||
+             (!(pl->gmaster_mode & (GMASTER_MODE_SA | GMASTER_MODE_GM | GMASTER_MODE_VOL)) &&
+              pl->ob->level < match->enter_lvl)))
+        {
+            continue;
+        }
+
+        if (!strncasecmp(match->name, name, strlen(name)))
+        {
             break;
-        c=c->next;
+        }
     }
-    if (!c)
+
+    /* No match? */
+    if (!match)
     {
-        if (!mute)
+        if (!mute &&
+            pl)
         {
             new_draw_info(NDI_UNIQUE, 0, pl->ob, "There is no channel with that name.");
         }
-        return c;
+
+        return NULL;
     }
-    for (tmp=c->next;tmp;tmp=tmp->next)
+    /* If pl is NULL, just return this first match. */
+    else if (!pl)
     {
-                /* We don't display channels we can't get on.
-                 * This may be by level restriction ot gmaster_mode.
-                 * VOLs, GMs, and SAs are not subject to level restrictions. */
-                if (!compare_gmaster_mode(tmp->gmaster_mode, pl->gmaster_mode) ||
-/* Method stub for later to implement clan system
- * This function should return TRUE if the player is in that clan.
- * channel->clan will be some sort of pointer to the clan info...
- */
-//                  !is_player_in_clan(tmp->clan) ||
-                    (!(pl->gmaster_mode & (GMASTER_MODE_SA | GMASTER_MODE_GM | GMASTER_MODE_VOL)) &&
-                     pl->ob->level < tmp->enter_lvl))
-                continue;
-        if (!strncasecmp(tmp->name, name, strlen(name)))
+        return match;
+    }
+
+    /* Check for any further matches. */
+    for (duplicate = match->next; duplicate; duplicate = duplicate->next)
+    {
+        /* We don't display channels we can't get on. This may be by level
+         * restriction or gmaster_mode. VOLs, GMs, and SAs are not subject to
+         * level restrictions. */
+        if (!compare_gmaster_mode(duplicate->gmaster_mode, pl->gmaster_mode) ||
+            /* Method stub for later to implement clan system. This function
+             * should return 1 if the player is in that clan. channel->clan
+             * will be some sort of pointer to the clan info... */
+//          !is_player_in_clan(match->clan) ||
+            (!(pl->gmaster_mode & (GMASTER_MODE_SA | GMASTER_MODE_GM | GMASTER_MODE_VOL)) &&
+             pl->ob->level < duplicate->enter_lvl))
         {
-            if (c)
+            continue;
+        }
+
+        if (!strncasecmp(duplicate->name, name, strlen(name)))
+        {
+            if (match)
             {
                 if (!mute)
                 {
-                    new_draw_info(NDI_UNIQUE, 0, pl->ob, "That channelname was not unique");
-                    new_draw_info(NDI_UNIQUE, 0, pl->ob, "The following channels match:");
-                    new_draw_info(NDI_UNIQUE, 0, pl->ob, "%s", c->name);
+                    new_draw_info(NDI_UNIQUE, 0, pl->ob, "That channelname was not unique. The following channels match:");
+                    new_draw_info(NDI_UNIQUE, 0, pl->ob, "  ~%s~", match->name);
                 }
-                c=NULL;
+
+                match = NULL;
             }
-            if (!mute) {new_draw_info(NDI_UNIQUE, 0, pl->ob, "%s", tmp->name);}
+
+            if (!mute)
+            {
+                new_draw_info(NDI_UNIQUE, 0, pl->ob, "  ~%s~", duplicate->name);
+            }
         }
     }
-    return c;
+
+    return match;
 }
+
 /**
  * Here we try to find the channel over the players shortcut
  * @param pl PlayerStruct of Player
@@ -730,66 +754,76 @@ void removeChannelFromPlayer(player *pl, struct player_channel *pl_channel, char
 
     return;
 }
+
 /**
  * Sends a normal message to all player who listens
- * @param pl PlayerStruct of Sender
+ * @param pl PlayerStruct of Sender or NULL for a system message.
  * @param pl_channel player_channel-link for that player/channel
  * @param params Message
  */
-void sendChannelMessage(player *pl,struct channels *channel, char *params)
+void sendChannelMessage(player *pl, struct channels *channel, char *params)
 {
     struct player_channel *cpl;
-    NewSocket *ns = &pl->socket;
-    sockbuf_struct *sockbuf;
-    char buf[512]; /* Player commands can only be around 250chars, so with this value, we are on the safe side */
+    sockbuf_struct        *sockbuf;
+    char                   from[MAX_PLAYER_NAME],
+                           buf[LARGE_BUF];
 
-    CHATLOG("CH:%s:%s >%s<\n", channel->name, pl->ob->name, params);
+    sprintf(from, "%s", (pl) ? pl->ob->name : "|Daimonin|");
+    CHATLOG("CH:%s:%s >%s<\n", channel->name, from, params);
+    sprintf(buf, "%c%c%s %s:%s", 0, channel->color, channel->name, from, params);
+    sockbuf = SOCKBUF_COMPOSE(SERVER_CMD_CHANNELMSG, buf, strlen(buf + 2) + 2, 0);
 
-#ifdef CHANNEL_HIST
-    addChannelHist(channel, pl->ob->name, params, 0);
-#endif
-
-	sprintf(buf,"%c%c%s %s:%s",0,channel->color, channel->name, pl->ob->name, params);
-
-	sockbuf = SOCKBUF_COMPOSE(SERVER_CMD_CHANNELMSG, buf, strlen(buf+2)+2, 0);
-
-    for (cpl=channel->players;cpl;cpl=cpl->next_player)
+    for (cpl = channel->players; cpl; cpl = cpl->next_player)
+    {
         if (cpl->pl->channels_on)
+        {
             SOCKBUF_ADD_TO_SOCKET(&(cpl->pl->socket), sockbuf);
+        }
+    }
 
     SOCKBUF_COMPOSE_FREE(sockbuf);
-    return;
+
+#ifdef CHANNEL_HIST
+    addChannelHist(channel, from, params, 0);
+#endif
 }
+
 /**
  * Sends a EMOTE message to all player who listens, in their own configured color
- * @param pl PlayerStruct of Sender
+ * @param pl PlayerStruct of Sender or NULL for a system message.
  * @param pl_channel player_channel-link for that player/channel
  * @param params Message
  */
+/* XXX: Why is this a separate func from semdChannelMessage()? Can't we just
+ * use a fourth 0 or 1 param, emote?
+ * -- Smacky 20120204 */
 void sendChannelEmote(player *pl, struct channels *channel, char *params)
 {
     struct player_channel *cpl;
-	NewSocket *ns = &pl->socket;
-    sockbuf_struct *sockbuf;
-    char buf[512]; /* Player commands can only be around 250chars, so with this value, we are on the safe side */
+    sockbuf_struct        *sockbuf;
+    char                   from[MAX_PLAYER_NAME],
+                           buf[LARGE_BUF];
 
-    CHATLOG("CH:%s:%s >%s<\n", channel->name, pl->ob->name, params);
+    sprintf(from, "%s", (pl) ? pl->ob->name : "|Daimonin|");
+    CHATLOG("CH:%s:%s >%s<\n", channel->name, from, params);
+    sprintf(buf, "%c%c%s %s:%s", 1, channel->color, channel->name, from, params);
+    sockbuf = SOCKBUF_COMPOSE(SERVER_CMD_CHANNELMSG, buf, strlen(buf + 2) + 2, 0);
 
-#ifdef CHANNEL_HIST
-    addChannelHist(channel, pl->ob->name, params, 1);
-#endif
-
-	sprintf(buf,"%c%c%s %s:%s", 1, channel->color, channel->name, pl->ob->name, params);
-
-	sockbuf = SOCKBUF_COMPOSE(SERVER_CMD_CHANNELMSG, buf, strlen(buf+2)+2, 0);
-
-    for (cpl=channel->players;cpl;cpl=cpl->next_player)
+    for (cpl = channel->players; cpl; cpl = cpl->next_player)
+    {
         if (cpl->pl->channels_on)
+        {
             SOCKBUF_ADD_TO_SOCKET(&(cpl->pl->socket), sockbuf);
+        }
+    }
 
     SOCKBUF_COMPOSE_FREE(sockbuf);
-    return;
+
+#ifdef CHANNEL_HIST
+    addChannelHist(channel, from, params, 1);
+#endif
 }
+
 /**
  * New Players, or old savefiles...
  * Add the player to the default channels
