@@ -24,8 +24,6 @@
 */
 #include <global.h>
 
-static char log_buf[256*1024];
-
 /* minimum timestamp interval = 10 minutes */
 #define TIMESTAMP_INTERVAL 600
 static struct timeval last_timestamp = {0, 0};
@@ -61,18 +59,19 @@ void LOG(LogLevel logLevel, char *format, ...)
         logLevel == llevError)
     {
         va_list ap;
+        char    buf[HUGE_BUF];
 
         va_start(ap, format);
-        vsprintf(log_buf, format, ap);
+        vsprintf(buf, format, ap);
         va_end(ap);
-        DoPrint(log_buf, tlogfile);
+        DoPrint(buf, tlogfile);
 
 #ifdef DAI_DEVELOPMENT_CONTENT
         /* Mapbugs are broadcasted on the test server */
         if (logLevel == llevMapbug)
         {
             new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_ALL | NDI_RED, 5, NULL,
-                          "%s", log_buf);
+                          "%s", buf);
         }
 #endif
     }
@@ -98,12 +97,13 @@ void CHATLOG(char *format, ...)
     if (llevInfo <= settings.debug)
     {
         va_list ap;
+        char    buf[LARGE_BUF];
 
-        sprintf(log_buf, "%s", (clogfile == tlogfile) ? "CLOG " : "");
+        sprintf(buf, "%s", (clogfile == tlogfile) ? "CLOG " : "");
         va_start(ap, format);
-        vsprintf(strchr(log_buf, '\0'), format, ap);
+        vsprintf(strchr(buf, '\0'), format, ap);
         va_end(ap);
-        DoPrint(log_buf, clogfile);
+        DoPrint(buf, clogfile);
     }
 }
 
