@@ -516,25 +516,22 @@ void cs_cmd_generic(char *buf, int len, NewSocket *ns)
     /* Execute the command, and check it's return value */
     switch (csp->func(ob, cp))
     {
-        case CMD_OK:
-            /* Command was a success; send message to appropriate channel, if defined
-             * and always to the log file */
-            sprintf(ch_buf, "%s%s -- /%s %s", STRING_OBJ_NAME(ob),
-                    (pl->privacy) ? " (~Privacy mode~)" : "", buf, STRING_SAFE(cp));
-            LOG(llevInfo, "INFO:: %s\n", ch_buf);
-
+        case COMMANDS_RTN_VAL_OK:
+            /* Command was a success; send message to appropriate channel, if defined */
             if (csp->ch_name)
-                if (channel=findGlobalChannelFromName(pl, csp->ch_name, TRUE))
-                    sendChannelMessage(pl, channel, ch_buf);
+                if (channel=findGlobalChannelFromName(NULL, csp->ch_name, TRUE))
+                    sprintf(ch_buf, "%s%s -- /%s %s", STRING_OBJ_NAME(ob),
+                            (pl->privacy) ? " (~Privacy mode~)" : "", buf, STRING_SAFE(cp));
+                    sendChannelMessage(NULL, channel, ch_buf);
             break;
 
-        case CMD_SYNTAX_ERROR:
+        case COMMANDS_RTN_VAL_SYNTAX:
             /* User doesn't know how to use the command properly */
             new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, ob, "Syntax error: Try ~/help /%s~",
                                  csp->name);
             return;
 
-        case CMD_OTHER_ERROR:
+        case COMMANDS_RTN_VAL_OTHER:
             /* User has formatted command properly, but there was some other error
              * Maybe, they got the parameters wrong, e.g. /kick non-existant-player-name
              * The specific function should handle the output to the player */
@@ -542,7 +539,7 @@ void cs_cmd_generic(char *buf, int len, NewSocket *ns)
 
         default:
             // An unknown command return value here ... log it!
-            LOG(llevBug, "Bug: Unknown return value from function %s\n", csp->name);
+            LOG(llevInfo, "INFO:: Unknown return value from function %s\n", csp->name);
             return;
     }
 
