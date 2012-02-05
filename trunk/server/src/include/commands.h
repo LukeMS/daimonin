@@ -143,9 +143,10 @@ extern _subcommand subcommands;
 #define TARGET_FRIEND 1
 #define TARGET_SELF   2
 
-/* Return values from functions; used to determine what to display to user and to channels */
-#define CMD_OK 0
-#define CMD_SYNTAX_ERROR 1
-#define CMD_OTHER_ERROR 2
+/* Return values from command functions
+ * - used to determine what to display to user and to channels */
+#define COMMANDS_RTN_VAL_OK 0
+#define COMMANDS_RTN_VAL_SYNTAX 1
+#define COMMANDS_RTN_VAL_OTHER 2
 
 #endif /* ifndef __COMMANDS_H */
