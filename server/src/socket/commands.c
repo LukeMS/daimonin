@@ -513,23 +513,37 @@ void cs_cmd_generic(char *buf, int len, NewSocket *ns)
                              buf, (cp) ? cp : "");
     }
 
-    /* command_foo() funcs return zero/non-zero to indicate success/failure. */
-    if (csp->func(ob, cp))
+    /* Execute the command, and check it's return value */
+    switch (csp->func(ob, cp))
     {
-        new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, ob, "Syntax error: Try ~/help /%s~",
-                             csp->name);
+        case CMD_OK:
+            /* Command was a success; send message to appropriate channel, if defined
+             * and always to the log file */
+            sprintf(ch_buf, "%s%s -- /%s %s", STRING_OBJ_NAME(ob),
+                    (pl->privacy) ? " (~Privacy mode~)" : "", buf, STRING_SAFE(cp));
+            LOG(llevInfo, "INFO:: %s\n", ch_buf);
 
-        return;
-    }
+            if (csp->ch_name)
+                if (channel=findGlobalChannelFromName(pl, csp->ch_name, TRUE))
+                    sendChannelMessage(pl, channel, ch_buf);
+            break;
 
-    /* Send a message to the appropriate channel, if defined */
-    if (csp->ch_name)
-    {
-        if (channel=findGlobalChannelFromName(pl, csp->ch_name, TRUE))
-        {
-            sprintf(ch_buf, "%s%s -- /%s %s", STRING_OBJ_NAME(ob), (pl->privacy) ? " (~Privacy mode~)" : "", buf, STRING_SAFE(cp));
-            sendChannelMessage(pl, channel, ch_buf);
-        }
+        case CMD_SYNTAX_ERROR:
+            /* User doesn't know how to use the command properly */
+            new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, ob, "Syntax error: Try ~/help /%s~",
+                                 csp->name);
+            return;
+
+        case CMD_OTHER_ERROR:
+            /* User has formatted command properly, but there was some other error
+             * Maybe, they got the parameters wrong, e.g. /kick non-existant-player-name
+             * The specific function should handle the output to the player */
+            return;
+
+        default:
+            // An unknown command return value here ... log it!
+            LOG(llevBug, "Bug: Unknown return value from function %s\n", csp->name);
+            return;
     }
 
     ob->speed_left -= csp->time;

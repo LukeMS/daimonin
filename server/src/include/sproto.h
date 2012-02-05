@@ -273,6 +273,11 @@ int                         command_check_fd(object *op, char *params);
 int                         command_mute(object *op, char *params);
 int                         command_silence(object *op, char *params);
 int                         command_ban(object *op, char *params);
+int                         command_ban_list(object *op); // Some helper functions for command_ban()
+int                         command_ban_add(object *op, char *params);
+int                         command_ban_ip(object *op, char *params);
+int                         command_ban_name(object *op, char *params);
+int                         command_ban_remove(object *op, char *params);
 int                         command_sa(object *op, char *params);
 int                         command_mm(object *op, char *params);
 int                         command_mw(object *op, char *params);
