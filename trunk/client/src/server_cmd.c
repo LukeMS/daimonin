@@ -935,31 +935,31 @@ void TargetObject(char *data, int len)
     /* Translate target's colour to the skin's preference. */
     if (*data == 6)
     {
-        cpl.target_color = skin_prefs.target_grey;
+        cpl.target_colr = skin_prefs.target_grey;
     }
     else if (*data == 4)
     {
-        cpl.target_color = skin_prefs.target_green;
+        cpl.target_colr = skin_prefs.target_green;
     }
     else if (*data == 5)
     {
-        cpl.target_color = skin_prefs.target_blue;
+        cpl.target_colr = skin_prefs.target_blue;
     }
     else if (*data == 8)
     {
-        cpl.target_color = skin_prefs.target_purple;
+        cpl.target_colr = skin_prefs.target_purple;
     }
     else if (*data == 3)
     {
-        cpl.target_color = skin_prefs.target_red;
+        cpl.target_colr = skin_prefs.target_red;
     }
     else if (*data == 1)
     {
-        cpl.target_color = skin_prefs.target_orange;
+        cpl.target_colr = skin_prefs.target_orange;
     }
     else
     {
-        cpl.target_color = skin_prefs.target_yellow;
+        cpl.target_colr = skin_prefs.target_yellow;
     }
 
     cpl.target_code = *++data;

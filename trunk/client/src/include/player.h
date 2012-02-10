@@ -155,7 +155,7 @@ typedef struct Player_Struct
     uint32                  count;      /* Repeat count on command */
     int                     target_mode;
     int                     target_code;
-    int                     target_color;
+    uint32                  target_colr;
     int                     inventory_win;  /* inventory windows */
     int                     menustatus;
     int      mark_count;

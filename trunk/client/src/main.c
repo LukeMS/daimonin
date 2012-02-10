@@ -1064,31 +1064,31 @@ static void PlayActionSounds(void)
             uint8 volume;
 
             // Volume depends on enemy's 'colour'
-            if (cpl.target_color == skin_prefs.target_grey)
+            if (cpl.target_colr == skin_prefs.target_grey)
             {
                 volume = 10;
             }
-            else if (cpl.target_color == skin_prefs.target_green)
+            else if (cpl.target_colr == skin_prefs.target_green)
             {
                 volume = 50;
             }
-            else if (cpl.target_color == skin_prefs.target_blue)
+            else if (cpl.target_colr == skin_prefs.target_blue)
             {
                 volume = 60;
             }
-            else if (cpl.target_color == skin_prefs.target_yellow)
+            else if (cpl.target_colr == skin_prefs.target_yellow)
             {
                 volume = 70;
             }
-            else if (cpl.target_color == skin_prefs.target_orange)
+            else if (cpl.target_colr == skin_prefs.target_orange)
             {
                 volume = 80;
             }
-            else if (cpl.target_color == skin_prefs.target_red)
+            else if (cpl.target_colr == skin_prefs.target_red)
             {
                 volume = 90;
             }
-            else // if (cpl.target_color == skin_prefs.target_purple)
+            else // if (cpl.target_colr == skin_prefs.target_purple)
             {
                 volume = 100;
             }
