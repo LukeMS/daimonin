@@ -998,7 +998,7 @@ static void ShowWindowText(textwin_window_t *tw, _BLTFX *bltfx)
                       ? tw->linebuf_next : tw->linebuf_used) -
                      tw->linebuf_off - 1;
     sint32 topline = (tw->linebuf_visi < tw->linebuf_used)
-                     ? botline - tw->linebuf_visi : -1;
+                     ? (sint32)(botline - tw->linebuf_visi) : -1;
     uint16 i;
 
     if (topline < 0)
@@ -1368,7 +1368,7 @@ static void ScrollTextWindow(textwin_window_t *tw)
              tw->linebuf_off > 0)
     {
         WIDGET_REDRAW(tw->wid) = 1;
-        tw->linebuf_off = MAX(0, tw->linebuf_off + y);
+        tw->linebuf_off = (tw->linebuf_off + y > 0) ? tw->linebuf_off + y : 0;
     }
 }
 
