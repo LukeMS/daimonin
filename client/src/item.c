@@ -704,24 +704,24 @@ static void SetFlags(item *ip, int flags)
         if (ip->itype == TYPE_ARROW)
         {
             if (ip->stype >= 128 &&
-                fire_mode.ammo == ip->tag)
+                fire_mode.ammo == (int)ip->tag)
             {
                 fire_mode.ammo = FIRE_ITEM_NO;
             }
-            else if (fire_mode.ammo == ip->tag)
+            else if (fire_mode.ammo == (int)ip->tag)
             {
                 fire_mode.ammo = FIRE_ITEM_NO;
             }
         }
         else if (ip->itype == TYPE_BOW &&
-                 fire_mode.weapon == ip->tag)
+                 fire_mode.weapon == (int)ip->tag)
         {
             fire_mode.weapon = FIRE_ITEM_NO;
         }
         else if ((ip->itype == TYPE_WAND ||
                   ip->itype == TYPE_ROD ||
                   ip->itype == TYPE_HORN) &&
-                 fire_mode.ammo == ip->tag)
+                 fire_mode.ammo == (int)ip->tag)
         {
             fire_mode.ammo = FIRE_ITEM_NO;
         }
