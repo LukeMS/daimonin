@@ -1407,7 +1407,7 @@ void widget_show_target(int x, int y)
         {
             /* Draw the name of the target */
             string_blt(ScreenSurface, &font_small, cpl.target_name, x + 35,
-                       y + 3, cpl.target_color, NULL, NULL);
+                       y + 3, cpl.target_colr, NULL, NULL);
             /* Either draw HP remaining percent and description... */
             if (hp_tmp)
             {
@@ -1417,13 +1417,13 @@ void widget_show_target(int x, int y)
                 string_blt(ScreenSurface, &font_small, hp_text, x + 35, y + 14,
                            percentage_colr(cpl.target_hp), NULL, NULL);
                 string_blt(ScreenSurface, &font_small, ptr, x + 85, y + 14,
-                           cpl.target_color, NULL, NULL);
+                           cpl.target_colr, NULL, NULL);
             }
             /* ...or draw just the description */
             else
             {
                 string_blt(ScreenSurface, &font_small, ptr, x + 35, y + 14,
-                           cpl.target_color, NULL, NULL);
+                           cpl.target_colr, NULL, NULL);
             }
         }
     }
