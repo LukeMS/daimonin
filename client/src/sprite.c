@@ -48,8 +48,8 @@ static uint8        GetBitmapBorders(SDL_Surface *Surface, int *up, int *down,
                                      int *left, int *right, uint32 ckey);
 static SDL_Surface *RecolourSurface(SDL_Surface *src, sprite_colrscale_t scale,
                                     uint32 mask);
-static uint32       GetPixel(SDL_Surface *surface, uint16 x, uint16 y);
-static void         PutPixel(SDL_Surface *surface, uint16 x, uint16 y,
+static uint32       GetSurfacePixel(SDL_Surface *surface, uint16 x, uint16 y);
+static void         PutSurfacePixel(SDL_Surface *surface, uint16 x, uint16 y,
                              uint32 pixel);
 static Uint16       CalcHash(const SDL_Surface *src,
                              Uint32 stretch, Uint32 darkness);
@@ -165,7 +165,8 @@ static SDL_Surface *RecolourSurface(SDL_Surface *src, sprite_colrscale_t scale,
                   tg,
                   tb;
 
-            SDL_GetRGBA(GetPixel(orig, x, y), orig->format, &or, &og, &ob, &oa);
+            SDL_GetRGBA(GetSurfacePixel(orig, x, y), orig->format, &or, &og,
+                        &ob, &oa);
 
             /* No point recolouring pixels you can't see anyway. */
             if (oa == SDL_ALPHA_TRANSPARENT)
@@ -232,7 +233,8 @@ static SDL_Surface *RecolourSurface(SDL_Surface *src, sprite_colrscale_t scale,
                 }
             }
 
-            PutPixel(orig, x, y, SDL_MapRGBA(orig->format, or, og, ob, oa));
+            PutSurfacePixel(orig, x, y, SDL_MapRGBA(orig->format, or, og, ob,
+                                                    oa));
         }
     }
 
@@ -245,7 +247,7 @@ static SDL_Surface *RecolourSurface(SDL_Surface *src, sprite_colrscale_t scale,
 /* This two helper functions are fast, but be careful:
  * x,y must be on the surface!
  * When using with the display surface the surface MUST be locked! */
-static uint32 GetPixel(SDL_Surface *surface, uint16 x, uint16 y)
+static uint32 GetSurfacePixel(SDL_Surface *surface, uint16 x, uint16 y)
 {
     uint8  bpp = surface->format->BytesPerPixel,
     /* Here p is the address to the pixel we want to retrieve */
@@ -260,6 +262,16 @@ static uint32 GetPixel(SDL_Surface *surface, uint16 x, uint16 y)
             return *(uint16 *)p;
 
         case 3:
+#if 0
+        {
+            /* Format/endian independent*/
+            Uint8     r, g, b;
+            r = *((bits) + Surface->format->Rshift / 8);
+            g = *((bits) + Surface->format->Gshift / 8);
+            b = *((bits) + Surface->format->Bshift / 8);
+            return SDL_MapRGB(Surface->format, r, g, b);
+        }
+#else
             if (SDL_BYTEORDER == SDL_BIG_ENDIAN)
             {
                 return p[0] << 16 | p[1] << 8 | p[2];
@@ -268,6 +280,7 @@ static uint32 GetPixel(SDL_Surface *surface, uint16 x, uint16 y)
             {
                 return p[0] | p[1] << 8 | p[2] << 16;
             }
+#endif
 
         case 4:
             return *(uint32 *)p;
@@ -277,7 +290,8 @@ static uint32 GetPixel(SDL_Surface *surface, uint16 x, uint16 y)
     }
 }
 
-static void PutPixel(SDL_Surface *surface, uint16 x, uint16 y, uint32 pixel)
+static void PutSurfacePixel(SDL_Surface *surface, uint16 x, uint16 y,
+                            uint32 pixel)
 {
     uint8  bpp = surface->format->BytesPerPixel,
     /* Here p is the address to the pixel we want to set */
@@ -791,41 +805,6 @@ down_border:
         }
     }
     return 1;
-}
-
-/* Graps a pixel from a SDL_Surface on the position x,y in the right format & colors */
-Uint32 GetSurfacePixel(SDL_Surface *Surface, Sint32 X, Sint32 Y)
-{
-    Uint8  *bits;
-    Uint32  Bpp;
-
-    Bpp = Surface->format->BytesPerPixel;
-    bits = ((Uint8 *) Surface->pixels) + Y * Surface->pitch + X * Bpp;
-
-    /* Get the pixel*/
-    switch (Bpp)
-    {
-        case 1:
-            return *((Uint8 *) Surface->pixels + Y * Surface->pitch + X);
-            break;
-        case 2:
-            return *((Uint16 *) Surface->pixels + Y * Surface->pitch / 2 + X);
-            break;
-        case 3:
-        {
-            /* Format/endian independent*/
-            Uint8     r, g, b;
-            r = *((bits) + Surface->format->Rshift / 8);
-            g = *((bits) + Surface->format->Gshift / 8);
-            b = *((bits) + Surface->format->Bshift / 8);
-            return SDL_MapRGB(Surface->format, r, g, b);
-        }
-        break;
-        case 4:
-            return *((Uint32 *) Surface->pixels + Y * Surface->pitch / 4 + X);
-            break;
-    }
-    return -1;
 }
 
 void sprite_blt_as_icon(_Sprite *sprite, sint16 x, sint16 y,

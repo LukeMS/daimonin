@@ -174,8 +174,6 @@ extern void sprite_blt_as_icon(_Sprite *sprite, sint16 x, sint16 y,
                                _BLTFX *bltfx);
 extern void             sprite_blt(_Sprite *sprite, int x, int y, SDL_Rect *box, _BLTFX *bltfx);
 extern void             sprite_blt_map(_Sprite *sprite, int x, int y, SDL_Rect *box, _BLTFX *bltfx, Uint32 stretch);
-
-extern Uint32           GetSurfacePixel(SDL_Surface *Surface, Sint32 X, Sint32 Y);
 extern int              string_width(_font *font, char *text);
 extern int              string_width_offset(_font *font, char *text, int *line, int len);
 extern void             string_blt(SDL_Surface *surf, _font *font, char *text,
