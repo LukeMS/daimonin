@@ -30,8 +30,9 @@ _font font_medium;
 _font font_medium_out;
 _font font_large_out;
 
-static void CreateNewFont(_Sprite *sprite, _font *font, sint8 xlen, sint8 ylen,
-                          sint8 off, uint8 line);
+static void   CreateNewFont(_Sprite *sprite, _font *font, sint8 xlen,
+                            sint8 ylen, sint8 off, uint8 line);
+static uint32 GetSurfacePixel(SDL_Surface *surface, uint16 x, uint16 y);
 
 void font_init(void)
 {
@@ -69,8 +70,8 @@ static void CreateNewFont(_Sprite *sprite, _font *font, sint8 xlen, sint8 ylen,
             for (y = font->c[i].h - 1; y >= 0; y--)
             {
                 if (GetSurfacePixel(sprite->bitmap,
-                                    font->c[i].x + font->c[i].w - 1,
-                                    font->c[i].y + y))
+                                    (uint16)(font->c[i].x + font->c[i].w - 1),
+                                    (uint16)(font->c[i].y + y)))
                 {
                     flag = 1;
 
@@ -90,4 +91,47 @@ static void CreateNewFont(_Sprite *sprite, _font *font, sint8 xlen, sint8 ylen,
     SDL_UnlockSurface(sprite->bitmap);
     font->char_offset = off;
     font->line_height = line;
+}
+
+static uint32 GetSurfacePixel(SDL_Surface *surface, uint16 x, uint16 y)
+{
+    uint8  bpp = surface->format->BytesPerPixel,
+    /* Here p is the address to the pixel we want to retrieve */
+          *p = (uint8 *)surface->pixels + y * surface->pitch + x * bpp;
+
+    switch (bpp)
+    {
+        case 1:
+            return *p;
+
+        case 2:
+            return *(uint16 *)p;
+
+        case 3:
+#if 0
+        {
+            /* Format/endian independent*/
+            Uint8     r, g, b;
+            r = *((bits) + Surface->format->Rshift / 8);
+            g = *((bits) + Surface->format->Gshift / 8);
+            b = *((bits) + Surface->format->Bshift / 8);
+            return SDL_MapRGB(Surface->format, r, g, b);
+        }
+#else
+            if (SDL_BYTEORDER == SDL_BIG_ENDIAN)
+            {
+                return p[0] << 16 | p[1] << 8 | p[2];
+            }
+            else
+            {
+                return p[0] | p[1] << 8 | p[2] << 16;
+            }
+#endif
+
+        case 4:
+            return *(uint32 *)p;
+
+        default: // shouldn't happen, but avoids warnings
+            return 0;
+    }
 }
