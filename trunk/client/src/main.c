@@ -1852,8 +1852,7 @@ static void ParseInvocationLine(int argc, char *argv[])
             {
                 sprintf(invalid, "server must be a number");
             }
-            else if (nr < GAMESERVER_LOCAL_ID ||
-                     nr >= GAMESERVER_NROF)
+            else if (nr >= GAMESERVER_NROF)
             {
                 sprintf(invalid, "server number invalid");
             }
