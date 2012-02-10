@@ -122,11 +122,11 @@ typedef struct Stat_struct
 }
 Stats;
 
-typedef enum _inventory_win
+typedef enum inventory_win_t
 {
     IWIN_BELOW,
     IWIN_INV
-}   _inventory_win;
+}   inventory_win_t;
 
 typedef struct Account_Struct
 {
@@ -156,7 +156,7 @@ typedef struct Player_Struct
     int                     target_mode;
     int                     target_code;
     uint32                  target_colr;
-    int                     inventory_win;  /* inventory windows */
+    inventory_win_t         inventory_win;  /* inventory windows */
     int                     menustatus;
     int      mark_count;
     int                     loc;

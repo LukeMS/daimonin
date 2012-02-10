@@ -29,8 +29,8 @@ char   *skill_level_name[]  =
     };
 
 static void ShowIcons(sint16 ox, sint16 oy, sint16 x, sint16 y, uint8 invxlen, uint8 invylen,
-                      _inventory_win iwin, _BLTFX *bltfx);
-static void PrintInfo(sint16 x, sint16 y, item *ip, _inventory_win iwin);
+                      inventory_win_t iwin, _BLTFX *bltfx);
+static void PrintInfo(sint16 x, sint16 y, item *ip, inventory_win_t iwin);
 
 /* this function returns number of items and adjust the inventory windows data */
 int get_inventory_data(item *op, int *ctag, int *slot, int *start, int *count, int wxlen, int wylen)
@@ -377,7 +377,7 @@ void widget_show_below_window(item *op, int x, int y)
 }
 
 static void ShowIcons(sint16 ox, sint16 oy, sint16 x, sint16 y, uint8 invxlen, uint8 invylen,
-                      _inventory_win iwin, _BLTFX *bltfx)
+                      inventory_win_t iwin, _BLTFX *bltfx)
 {
     uint16  i,
             start = (iwin == IWIN_INV)
@@ -500,7 +500,7 @@ jump_in_container:
     }
 }
 
-static void PrintInfo(sint16 x, sint16 y, item *ip, _inventory_win iwin)
+static void PrintInfo(sint16 x, sint16 y, item *ip, inventory_win_t iwin)
 {
     char         buf[MEDIUM_BUF];
     SDL_Surface *surface = ScreenSurface;

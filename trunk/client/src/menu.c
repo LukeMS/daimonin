@@ -940,7 +940,9 @@ void widget_quickslots_mouse_event(int x, int y, uint8 e)
             }
             else
             {
-                int stemp = cpl.      inventory_win, itemp = cpl.win_inv_tag;
+                inventory_win_t stemp = cpl.inventory_win;
+                int             itemp = cpl.win_inv_tag;
+
                 cpl.inventory_win = IWIN_INV;
                 cpl.win_inv_tag = quick_slots[ind].shared.tag;
                 process_macro_keys(KEYFUNC_APPLY, 0);
