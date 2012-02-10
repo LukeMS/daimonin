@@ -67,7 +67,7 @@ daimonin_updater_OBJDIR = updater_objs
 # NOTE: if building xdelta, run its configure with "--disable-shared"
 
 AUTOMAKE_OPTIONS = subdir-objects
-AM_CFLAGS = @SDL_CFLAGS@ -Wall -DDAI_DEVELOPMENT
+AM_CFLAGS = @SDL_CFLAGS@ -Wextra -DDAI_DEVELOPMENT
 AM_LDFLAGS = @LDFLAGS@ 
 
 install-data-hook:
