@@ -22,7 +22,7 @@ rem The author can be reached via e-mail to info@daimonin.org
 setlocal enableextensions
 
 rem Unzip 3rdparty code to current folder.
-..\..\..\project_tools\unxutils\unzip.exe 3rdparty.zip
+unxutils\unzip.exe 3rdparty.zip
 
 rem Move DLs to client root folder.
 move dll\*.dll ..\..
