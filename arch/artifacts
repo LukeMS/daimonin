@@ -8392,6 +8392,29 @@ resist_cleave 20
 type 39
 value 60000
 end
+
+Allowed all
+chance 10
+difficulty 80
+artifact amulet_divinity
+def_arch amulet_generic
+editor 2:items/talisman/amulets
+Object
+title of divinity
+face amulet_lif.101
+ac_add 1
+item_level 70
+item_skill 6
+lifesave 1
+wis 3
+grace 15
+maxgrace 80
+path_attuned 3
+path_denied 1040
+resist_corruption 10
+value 145931
+end
+
 #
 #
 # Arrows/Missiles
@@ -8425,6 +8448,17 @@ wc_add 7
 dam_add 10
 end
 #
+Allowed all
+chance 85
+difficulty 20
+artifact missile_poison_imbued
+def_arch arrow
+editor 2:items/weapon/missile
+Object
+title of poison
+value 400
+attack_poison 8
+end
 #
 Allowed all
 chance 15

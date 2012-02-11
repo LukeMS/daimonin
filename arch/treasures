@@ -390,7 +390,7 @@ treasureone player_starting_wealth
   arch coppercoin
     magic_chance 0
     artifact_chance 0
-    nrof 80
+    nrof 250
     chance 100
 end
 ##############################################################
@@ -681,19 +681,19 @@ end
 treasureone weapon_amun
   arch arrow
     chance 35
-    nrof 7
+    nrof 11
     material_quality 80
     material_range 9
   more
   arch sstone
     chance 35
-    nrof 7
+    nrof 11
     material_quality 80
     material_range 9
   more
   arch bolt
     chance 35
-    nrof 7
+    nrof 11
     material_quality 80
     material_range 9
 end
@@ -3567,18 +3567,6 @@ treasureone loot_base
   list misc_inorganic
     magic 0
     chance 2
-  more
-  arch hat_feather
-    chance 2
-    quality_range 7
-  more
-  arch dress
-    chance 2
-    quality_range 7
-  more
-  arch pants
-    chance 2
-    quality_range 7
   more
   list magic_useup
     chance 3
