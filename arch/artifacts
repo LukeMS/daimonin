@@ -8412,6 +8412,7 @@ maxgrace 80
 path_attuned 3
 path_denied 1040
 resist_corruption 10
+type 39
 value 145931
 end
 
@@ -8458,6 +8459,7 @@ Object
 title of poison
 value 400
 attack_poison 8
+type 13
 end
 #
 Allowed all
