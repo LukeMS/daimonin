@@ -258,7 +258,7 @@ int command_reboot(object *op, char *params)
         op->type != PLAYER ||
         !CONTR(op))
     {
-        return 0;
+        return COMMANDS_RTN_VAL_OTHER;
     }
 
     /* No subcommand? Default to restart. */
@@ -288,7 +288,7 @@ int command_reboot(object *op, char *params)
         FREE_AND_CLEAR_HASH(hash);
         shutdown_agent(-2, SERVER_EXIT_NORMAL, CONTR(op), NULL);
 
-        return 0;
+        return COMMANDS_RTN_VAL_OK;
     }
     /* Restart server. */
     else if (hash == subcommands.restart)
@@ -354,7 +354,7 @@ int command_reboot(object *op, char *params)
         shutdown_agent(time, SERVER_EXIT_RESTART, CONTR(op),
                        "Server will recompile and arches and maps will be updated.");
 
-        return 0;
+        return COMMANDS_RTN_VAL_OK;
     }
     /* Shutdown server. */
     else if (hash == subcommands.shutdown)
@@ -367,7 +367,7 @@ int command_reboot(object *op, char *params)
         {
             new_draw_info(NDI_UNIQUE, 0, op, "You have insufficient permission to shutdown the server.");
 
-           return 0;
+           return COMMANDS_RTN_VAL_OTHER;
         }
 
         time = 0;
@@ -380,13 +380,13 @@ int command_reboot(object *op, char *params)
         shutdown_agent(time, SERVER_EXIT_SHUTDOWN, CONTR(op),
                        "Server will shutdown and not reboot.");
 
-        return 0;
+        return COMMANDS_RTN_VAL_OK;
     }
 
     /* Unknown subcommand. */
     FREE_AND_CLEAR_HASH(hash);
 
-    return 1;
+    return COMMANDS_RTN_VAL_SYNTAX;
 }
 
 int command_goto(object *op, char *params)

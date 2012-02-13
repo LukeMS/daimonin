@@ -1,0 +1,26 @@
+~Category~: System
+
+~Syntax~: /reboot
+~Syntax~: /reboot restart <seconds>
+~Description~:
+   Shuts down the server after <seconds> and automatically reboots.
+   Code, maps and arches will be automatically updated.
+   <seconds> has a minimum value of 30 for less than SAs.
+
+~Syntax~: /reboot cancel
+~Description~:
+   Cancels any existing reboot requests.
+
+~Syntax~: /reboot shutdown <seconds>
+~Description~:
+   Shuts down the server after <seconds>.
+   ~No automatic restart!~
+   <seconds> defaults to 0.
+   Restricted to SAs only.
+
+~Additional for development servers only:~
+
+~Syntax~: /reboot restart <seconds> <stream> 
+~Syntax~: /reboot restart <stream>
+~Description~:
+   Recompiles the server using <stream>.
