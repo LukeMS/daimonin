@@ -37,6 +37,13 @@
 #include <arpa/inet.h>
 #endif
 
+/* Declare some local helper functions for command_ban() */
+static int BanList(object *op, int isIP);
+static int BanAdd(object *op, char *mode, char *str, int seconds);
+static int BanAddToBanList(object* op, char *str, int seconds, int isIP);
+static int BanRemove(object *op, char *str);
+static int BanRemoveFromBanList(object *op, char *str, int isIP, int mute);
+
 #if 0 /* disabled because account patch */
 typedef struct dmload_struct {
     char    name[32];
@@ -175,26 +182,23 @@ int command_setgod(object *op, char *params)
 
 int command_kick(object *op, char *params)
 {
-    player                 *pl;
-    const char             *kicker_name,
-                           *kickee_name;
-    char                    buf[MEDIUM_BUF];
-    objectlink             *ol;
-    int                     ticks;
-    struct  player_channel *pl_channel=NULL;
-
+    player     *pl;
+    const char *kicker_name,
+               *kickee_name;
+    char        buf[MEDIUM_BUF];
+    int         ticks;
 
     if (!op)
-        return 0;
+        return COMMANDS_RTN_VAL_OTHER;
 
     if (!params)
-        return 1;
+        return COMMANDS_RTN_VAL_SYNTAX;
 
     if (!(pl = find_player(params)))
     {
         new_draw_info(NDI_UNIQUE, 0, op, "No such player.");
 
-        return 0;
+        return COMMANDS_RTN_VAL_OTHER;
     }
 
 #if 0 // Kicking yourself is funny, a real votewinner :)
@@ -202,7 +206,7 @@ int command_kick(object *op, char *params)
     {
         new_draw_info(NDI_UNIQUE, 0, op, "You can't kick yourself!");
 
-        return 0;
+        return COMMANDS_RTN_VAL_OTHER;
     }
 #endif
 
@@ -221,7 +225,7 @@ int command_kick(object *op, char *params)
         new_draw_info(NDI_UNIQUE, 0, op, "%s has resisted your kick!",
                              kickee_name);
 
-        return 0;
+        return COMMANDS_RTN_VAL_OTHER;
     }
 
     /* Log it and tell everyone so justice is seen to be done, or at least we
@@ -241,7 +245,7 @@ int command_kick(object *op, char *params)
     ticks = (int)(pticks_second * 60.0f);
     add_ban_entry(params, NULL, ticks, ticks);
 
-    return 0;
+    return COMMANDS_RTN_VAL_OK;
 }
 
 int command_reboot(object *op, char *params)
@@ -784,18 +788,16 @@ int command_generate(object *op, char *params)
     return 0;
 }
 
-
+#ifndef USE_CHANNELS
 int command_mutelevel(object *op, char *params)
 {
-    char buf[MEDIUM_BUF];
     int lvl = 0;
-    objectlink *ol;
 
-    if (op && !params)
-        return 1;
+    if (!op)
+        return COMMANDS_RTN_VAL_OTHER;
 
-    /* set shout/mute level from params */
-    sscanf(params, "%d", &lvl);
+    if (!params || (sscanf(params, "%d", &lvl) != 1))
+        return COMMANDS_RTN_VAL_SYNTAX;
 
     if ((CONTR(op)->gmaster_mode & GMASTER_MODE_VOL) &&
         !(CONTR(op)->gmaster_mode & (GMASTER_MODE_SA | GMASTER_MODE_GM)) &&
@@ -806,28 +808,20 @@ int command_mutelevel(object *op, char *params)
     }
 
     settings.mutelevel = lvl;
-    sprintf(buf,"SET: shout level set to %d!\n", lvl);
-
-    for (ol = gmaster_list_SA; ol; ol = ol->next)
-    {
-        new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ol->objlink.ob,
-                      "%s", buf);
-    }
-
-    for (ol = gmaster_list_GM; ol; ol = ol->next)
-    {
-        new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ol->objlink.ob,
-                      "%s", buf);
-    }
-
-    for (ol = gmaster_list_VOL; ol; ol = ol->next)
-    {
-        new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ol->objlink.ob,
-                      "%s", buf);
-    }
-
-    return 0;
+    return COMMANDS_RTN_VAL_OK;
 }
+#else
+// mutelevel does nothing if channels are in use
+int command_mutelevel(object *op, char *params)
+{
+    if (!op)
+        return COMMANDS_RTN_VAL_OTHER;
+
+    new_draw_info(NDI_UNIQUE, 0, op, "Mutelevel command is non-functional when channels are in use.");
+
+    return COMMANDS_RTN_VAL_OK;
+}
+#endif
 
 /* This command allows a DM to set the max number of connections from a single IP (previously hardcoded to 2),
 * Added by Torchwood, 2009-02-20
@@ -835,11 +829,13 @@ int command_mutelevel(object *op, char *params)
 int command_dm_connections(object *op, char *params)
 {
     char buf[MEDIUM_BUF];
-    objectlink *ol;
     int nr = 2;
 
-    if (!params || sscanf(params, "%d", &nr) != 1)
-        return 1;
+    if (!op)
+        return COMMANDS_RTN_VAL_OTHER;
+
+    if (!params || (sscanf(params, "%d", &nr) != 1))
+        return COMMANDS_RTN_VAL_SYNTAX;
 
     if(nr < 2)
     {
@@ -848,7 +844,7 @@ int command_dm_connections(object *op, char *params)
     }
 
     settings.max_cons_from_one_ip = nr;
-    return 0;
+    return COMMANDS_RTN_VAL_OK;
 }
 
 int command_summon(object *op, char *params)
@@ -1892,10 +1888,10 @@ int command_mute(object *op, char *params)
     }
     else
     {
-        char buf[SMALL_BUF];
+//        char buf[SMALL_BUF];
 
         pl->mute_counter = pticks + seconds * (1000000 / MAX_TIME);
-        sprintf(buf, "MUTE: Player %s has been muted by %s for %d seconds.\n",
+/*        sprintf(buf, "MUTE: Player %s has been muted by %s for %d seconds.\n",
                 query_name(pl->ob), query_name(op), seconds);
 
         for(ol = gmaster_list_VOL; ol; ol = ol->next)
@@ -1905,7 +1901,7 @@ int command_mute(object *op, char *params)
             new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ol->objlink.ob, "%s", buf);
 
         for(ol = gmaster_list_SA; ol; ol = ol->next)
-            new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ol->objlink.ob, "%s", buf);
+            new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ol->objlink.ob, "%s", buf); */
     }
 
     return 0;
@@ -1920,375 +1916,271 @@ int command_silence(object *op, char *params)
     return 0;
 }
 
-static void add_banlist_ip(object* op, char *ip, int ticks)
-{
-    objectlink *ol, *ol_tmp, *ob;
-    char buf[SMALL_BUF];
-
-    for(ol = ban_list_ip; ol; ol = ol_tmp)
-    {
-        if ((CONTR(op)->gmaster_mode & GMASTER_MODE_VOL) &&
-            !(CONTR(op)->gmaster_mode & (GMASTER_MODE_SA | GMASTER_MODE_GM)) &&
-            ol->objlink.ban->ticks_init == -1)
-        {
-            new_draw_info(NDI_UNIQUE, 0, op, "VOLs cannot unban permanently banned!");
-
-            return;
-        }
-
-        ol_tmp = ol->next;
-
-        if (!strcmp(ol->objlink.ban->ip, ip))
-        {
-            remove_ban_entry(ol);
-        }
-    }
-
-    sprintf(buf, "IP %s is now banned for %d seconds.", ip, ticks/8);
-    new_draw_info(NDI_UNIQUE, 0, op, "%s", buf);
-    LOG(llevSystem, "%s", buf);
-    add_ban_entry(NULL, ip, ticks, ticks);
-    sprintf(buf, "BAN: IP %s has been banned by %s for %d seconds.\n",
-            ip, query_name(op), ticks/8);
-
-    for(ob = gmaster_list_VOL;ob;ob=ob->next)
-        new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ob->objlink.ob, "%s", buf);
-
-    for(ob = gmaster_list_GM;ob;ob=ob->next)
-        new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ob->objlink.ob, "%s", buf);
-
-    for(ob = gmaster_list_SA;ob;ob=ob->next)
-        new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ob->objlink.ob, "%s", buf);
-}
-
-static void add_banlist_name(object* op, char *name, int ticks)
-{
-    objectlink *ol, *ol_tmp, *ob;
-    const char *name_hash;
-    char buf[SMALL_BUF];
-
-    transform_player_name_string(name);
-
-    name_hash = find_string(name); /* we need an shared string to check ban list */
-
-    for (ol = ban_list_player; ol; ol = ol_tmp)
-    {
-        if ((CONTR(op)->gmaster_mode & GMASTER_MODE_VOL) &&
-            !(CONTR(op)->gmaster_mode & (GMASTER_MODE_SA | GMASTER_MODE_GM)) &&
-            ol->objlink.ban->ticks_init == -1)
-        {
-            new_draw_info(NDI_UNIQUE, 0, op, "VOLs cannot unban permanently banned!");
-
-            return;
-        }
-
-        ol_tmp = ol->next;
-
-        if (ol->objlink.ban->name == name_hash)
-        {
-            remove_ban_entry(ol);
-        }
-    }
-
-    sprintf(buf, "Player %s is now banned for %d seconds.", name, ticks/8);
-    new_draw_info(NDI_UNIQUE, 0, op, "%s", buf);
-    LOG(llevSystem, "%s", buf);
-    add_ban_entry(name, NULL, ticks, ticks);
-    sprintf(buf, "BAN: Player %s has been banned by %s for %d seconds.\n",
-            name, query_name(op), ticks/8);
-
-    for(ob = gmaster_list_VOL;ob;ob=ob->next)
-        new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ob->objlink.ob, "%s", buf);
-
-    for(ob = gmaster_list_GM;ob;ob=ob->next)
-        new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ob->objlink.ob, "%s", buf);
-
-    for(ob = gmaster_list_SA;ob;ob=ob->next)
-        new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ob->objlink.ob, "%s", buf);
-}
-
-/* a player can be banned forever or for a time.
- * We can ban a player or a IP/host.
- * Format is /ban player <name> <time> or
- * /ban ip <host> <time>.
- * <time> can be 1m, 1h, 3d or *. m= minutes, h=hours, d= days
- * and '*' = permanent.
- * This is something we should move later to the login server.
- */
+/* /ban usage:
+ *    /ban list
+ *    /ban remove <name or ip>
+ *    /ban name <name> <seconds>
+ *    /ban ip <IP> <seconds>
+ *    /ban add <name> <seconds>
+ *    Note:  /ban add will ban ip AND name. Player must be online.
+ *    Note:  <seconds> = -1 means permanent ban (GMs and SAs only) */
 int command_ban(object *op, char *params)
 {
-    objectlink *ol,
-               *ol_tmp,
-               *ob;
-    player     *pl = NULL;
-    char       *name,
-                name_buf[MEDIUM_BUF] = "";
-    int         ticks = 0;
-    char       *str;
+    char *mode,
+         *str,
+          mode_buf[MEDIUM_BUF] = "",
+          str_buf[MEDIUM_BUF] = "";
+    int   seconds = 60;  // Default ban is 1 minute
+
+    if (!op)
+        return COMMANDS_RTN_VAL_OTHER;
 
     if (!params)
-        return 1;
+        return COMMANDS_RTN_VAL_SYNTAX;
 
-    /* list all entries of gmaster_file
-     */
-    if(!strcmp(params,"list"))
+    // TODO - Should really to a tolower() on params first
+
+    sscanf(params, "%s %s %d", mode_buf, str_buf, &seconds);
+
+    mode = cleanup_string((mode = mode_buf));
+    str = cleanup_string((str = str_buf));
+    if (seconds < -1) seconds = -1;
+
+    if (!strcmp(mode, "list"))
     {
-        new_draw_info(NDI_UNIQUE, 0, op, "ban list");
+        new_draw_info(NDI_UNIQUE, 0, op, "Ban List");
         new_draw_info(NDI_UNIQUE, 0, op, "--- --- ---");
 
-        for(ol = ban_list_player; ol; ol = ol_tmp)
-        {
-            ol_tmp = ol->next;
+        BanList(op, FALSE); // Print list of banned names
+        BanList(op, TRUE);  // Print list of banned IPs
 
-            if (ol->objlink.ban->ticks_init != -1 &&
-                pticks >= ol->objlink.ban->ticks)
-                remove_ban_entry(ol); /* is not valid anymore, gc it on the fly */
+        return COMMANDS_RTN_VAL_OK;
+    }
+    else if (!strcmp(mode, "add") || !strcmp(mode, "name") || !strcmp(mode, "ip"))
+        return BanAdd(op, mode, str, seconds);
+
+    else if (!strcmp(mode, "remove"))
+        return BanRemove(op, str);
+
+    else
+        return COMMANDS_RTN_VAL_SYNTAX;
+}
+
+/* Helper functions for the main ban command */
+static int BanList(object *op, int isIP)
+{
+    objectlink *ol;
+
+    for(ol = (isIP ? ban_list_ip : ban_list_player); ol; ol = ol->next)
+    {
+        if (ol->objlink.ban->ticks_init != -1 &&
+            pticks >= ol->objlink.ban->ticks)
+            remove_ban_entry(ol); /* is not valid anymore, gc it on the fly */
+        else
+            if (ol->objlink.ban->ticks_init == -1)
+                new_draw_info(NDI_UNIQUE, 0, op, "%s -> Permanently banned",
+                                     (isIP ? ol->objlink.ban->ip : ol->objlink.ban->name));
             else
                 new_draw_info(NDI_UNIQUE, 0, op, "%s -> %lu left (of %d) sec",
-                                     ol->objlink.ban->name,
+                                     (isIP ? ol->objlink.ban->ip : ol->objlink.ban->name),
                                      (ol->objlink.ban->ticks - pticks) / 8,
                                      ol->objlink.ban->ticks_init / 8);
-        }
-
-        for(ol = ban_list_ip; ol; ol = ol_tmp)
-        {
-            ol_tmp = ol->next;
-
-            if (ol->objlink.ban->ticks_init != -1 &&
-                pticks >= ol->objlink.ban->ticks)
-                remove_ban_entry(ol); /* is not valid anymore, gc it on the fly */
-            else
-                new_draw_info(NDI_UNIQUE, 0, op, "%s :: %lu left (of %d) sec",
-                                     ol->objlink.ban->ip,
-                                     (ol->objlink.ban->ticks - pticks) / 8,
-                                     ol->objlink.ban->ticks_init / 8);
-        }
-
-        return 0;
     }
 
-    if (!(str = strchr(params, ' ')))
-        return 1;
+    return COMMANDS_RTN_VAL_OK;
+}
 
-    /* kill the space, and set string to the next param */
-    *str++ = '\0';
+/* Add a player to the ban list, using name or IP, or add (which does both) */
+static int BanAdd(object *op, char *mode, char *str, int seconds)
+{
+    int     spot,
+            tmp;
+    player *pl;
 
-    if(!strcmp(params, "name")) /* ban name */
+    if (!str || !mode)
+        return COMMANDS_RTN_VAL_SYNTAX;
+
+    /* Check for permanent ban restrictions */
+    if (!(CONTR(op)->gmaster_mode & (GMASTER_MODE_SA | GMASTER_MODE_GM)) &&
+         (seconds == -1))
     {
-        if (sscanf(str, "%s %d", name_buf, &ticks) == 2)
-        {
-            name = cleanup_string((name = name_buf));
-
-            if (name)
-            {
-                if ((CONTR(op)->gmaster_mode & GMASTER_MODE_VOL) &&
-                    !(CONTR(op)->gmaster_mode & (GMASTER_MODE_SA | GMASTER_MODE_GM)) &&
-                    ticks == -1)
-                {
-                    return 1;
-                }
-
-                if (ticks != -1)
-                    ticks *= 8;     /* convert seconds to ticks */
-
-                add_banlist_name(op, name, ticks);
-                save_ban_file();
-
-                if ((pl = find_player(name)))
-                    kick_player(pl);
-
-                return 0;
-            }
-        }
-        else
-            return 1;
+        new_draw_info(NDI_UNIQUE, 0, op, "Only GMs and SAs can permanently ban or unban a player or IP!");
+        return COMMANDS_RTN_VAL_OTHER;
     }
-    else if (!strcmp(params, "ip")) /* ban IP only */
+
+    /* For "add" command, player must be online ... */
+    if (!strcmp(mode, "add"))
     {
-        if (sscanf(str, "%s %d", name_buf, &ticks) == 2)
+        if (str &&
+            (!(pl = find_player(str)) || !pl->ob))
         {
-            name = cleanup_string((name = name_buf));
+            new_draw_info(NDI_UNIQUE, 0, op,
+                          "Can't find the player %s!\nCheck name, or use /ban <name> or /ban <ip> directly.",
+                          STRING_SAFE(str));
 
-            if (name)
-            {
-                int spot;
-
-                if (CONTR(op)->gmaster_mode == GMASTER_MODE_VOL &&
-                    ticks == -1)
-                    return 1;
-
-                for (spot = 0; name[spot] != '\0'; spot++)
-                {
-                    if ((CONTR(op)->gmaster_mode == GMASTER_MODE_VOL &&
-                         name[spot] == '*') ||
-                        (CONTR(op)->gmaster_mode >= GMASTER_MODE_GM &&
-                         name[spot] == '*' &&
-                         spot < 11))
-                        return 1;
-                }
-
-                if (ticks != -1)
-                    ticks *= 8;     /* convert seconds to ticks */
-
-                add_banlist_ip(op, name, ticks);
-                save_ban_file();
-
-                return 0;
-            }
+            return COMMANDS_RTN_VAL_OTHER;
         }
-        else
-            return 1;
     }
-    else if (!strcmp(params, "add")) /* ban name & IP at once */
+
+    // TODO - TW - Figure out how this works, and do some testing, then update message
+
+    if (!strcmp(mode, "ip"))
     {
-        if (sscanf(str, "%s %d", name_buf, &ticks) == 2)
+        for (spot = 0; str[spot] != '\0'; spot++)
         {
-            name = cleanup_string((name = name_buf));
-
-            if (name &&
-                (!(pl = find_player(name)) ||
-                 !pl->ob))
+            if ((CONTR(op)->gmaster_mode == GMASTER_MODE_VOL &&
+                 str[spot] == '*') ||
+                (CONTR(op)->gmaster_mode >= GMASTER_MODE_GM &&
+                 str[spot] == '*' &&
+                 spot < 11))
             {
-                new_draw_info(NDI_UNIQUE, 0, op,
-                                     "/ban: can't find the player %s!\nCheck name or use /ban <name><ip> direct.",
-                                      STRING_SAFE(name));
+                new_draw_info(NDI_UNIQUE, 0, op, "Need a better message here! Something to do with banning all domains?");
+                return COMMANDS_RTN_VAL_OTHER;
             }
-            else
-            {
-                char buf[SMALL_BUF];
-
-                if (CONTR(op)->gmaster_mode == GMASTER_MODE_VOL &&
-                    ticks == -1)
-                    return 1;
-
-                if (ticks != -1)
-                    ticks *= 8;
-
-                /* add name AND ip to the lists */
-                add_banlist_name(op, name, ticks);
-                add_banlist_ip(op, pl->socket.ip_host, ticks);
-                save_ban_file();
-                LOG(llevInfo, "BANCMD: %s issued /ban add %s %s %d seconds\n",
-                    op->name, name, name_buf, ticks / 8);
-                sprintf(buf, "BAN: Player %s and IP %s have been banned by %s for %d seconds.\n",
-                        query_name(pl->ob), pl->socket.ip_host, op->name, ticks / 8);
-
-                for(ob = gmaster_list_VOL; ob; ob = ob->next)
-                    new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ob->objlink.ob, "%s", buf);
-
-                for(ob = gmaster_list_GM; ob; ob = ob->next)
-                    new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ob->objlink.ob, "%s", buf);
-
-                for(ob = gmaster_list_SA; ob; ob = ob->next)
-                    new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ob->objlink.ob, "%s", buf);
-
-                kick_player(pl);
-            }
-
-            return 0;
         }
-        else
-            return 1;
     }
-    else if (!strcmp(params, "remove"))
+
+    /* Syntax checking finished, so now do the actual banning,
+     * then kick player if possible */
+    if (!strcmp(mode, "add"))
     {
-        if ((name = cleanup_string(str)))
+        /* add name to the ban list */
+        tmp = BanAddToBanList(op, str, seconds, FALSE);
+        if ((tmp == COMMANDS_RTN_VAL_SYNTAX) || (tmp == COMMANDS_RTN_VAL_OTHER))
+            return tmp;
+
+        /* add ip to the ban list */
+        tmp = BanAddToBanList(op, pl->socket.ip_host, seconds, TRUE);
+        if ((tmp == COMMANDS_RTN_VAL_SYNTAX) || (tmp == COMMANDS_RTN_VAL_OTHER))
+            return tmp;
+
+        kick_player(pl);
+    }
+    else if (!strcmp(mode, "name"))
+    {
+        /* add name to the ban list */
+        tmp = BanAddToBanList(op, str, seconds, FALSE);
+        if ((tmp == COMMANDS_RTN_VAL_SYNTAX) || (tmp == COMMANDS_RTN_VAL_OTHER))
+            return tmp;
+
+        if ((pl = find_player(str)))
+            kick_player(pl);
+    }
+    else // must be ip mode
+    {
+        tmp = BanAddToBanList(op, str, seconds, TRUE);
+        if ((tmp == COMMANDS_RTN_VAL_SYNTAX) || (tmp == COMMANDS_RTN_VAL_OTHER))
+            return tmp;
+
+        // TODO - We should try and kick all players who have this IP, but no suitable function written
+    }
+
+    save_ban_file();
+
+    return COMMANDS_RTN_VAL_OK;
+}
+
+static int BanAddToBanList(object* op, char *str, int seconds, int isIP)
+{
+    char buf[SMALL_BUF];
+    int  tmp;
+
+    tmp = BanRemoveFromBanList(op, str, isIP, TRUE);
+    if ((tmp == COMMANDS_RTN_VAL_SYNTAX) || (tmp == COMMANDS_RTN_VAL_OTHER))
+        return tmp;
+
+    if (seconds != -1)
+        sprintf(buf, "%s %s is now banned for %d seconds", isIP ? "IP" : "Player", str, seconds);
+    else
+        sprintf(buf, "%s %s is now banned permanently", isIP ? "IP" : "Player", str);
+
+    new_draw_info(NDI_UNIQUE, 0, op, "%s.", buf);
+    LOG(llevSystem, "%s by %s.", buf, STRING_OBJ_NAME(op));
+
+    if (seconds != -1)
+        seconds *= 8;     /* convert seconds to ticks */
+
+    if (isIP)
+        add_ban_entry(NULL, str, seconds, seconds);
+    else
+        add_ban_entry(str, NULL, seconds, seconds);
+
+    return COMMANDS_RTN_VAL_OK;
+}
+
+/* Remove name or IP from ban lists */
+static int BanRemove(object *op, char *str)
+{
+    int success = FALSE,
+        tmp;
+
+    if (!str)
+        return COMMANDS_RTN_VAL_SYNTAX;
+
+    // Remove entries from IP list first
+    tmp = BanRemoveFromBanList(op, str, TRUE, FALSE);
+    if (tmp == COMMANDS_RTN_VAL_OK)
+        success = TRUE;
+    else if ((tmp == COMMANDS_RTN_VAL_SYNTAX) || (tmp == COMMANDS_RTN_VAL_OTHER))
+        return tmp;
+
+    // And Name list second
+    tmp = BanRemoveFromBanList(op, str, FALSE, FALSE);
+    if (tmp == COMMANDS_RTN_VAL_OK)
+        success = TRUE;
+    else if ((tmp == COMMANDS_RTN_VAL_SYNTAX) || (tmp == COMMANDS_RTN_VAL_OTHER))
+        return tmp;
+
+    if(success)
+    {
+        save_ban_file();
+        return COMMANDS_RTN_VAL_OK;
+    }
+    else
+    {
+        // Both calls to BanRemoveFromBanList must have returned COMMANDS_RTN_VAL_OK_NO_ACTION
+        new_draw_info(NDI_UNIQUE, 0, op, "No player or IP found to match %s on ban lists!", str);
+        return COMMANDS_RTN_VAL_OTHER;
+    }
+}
+
+static int BanRemoveFromBanList(object *op, char *str, int isIP, int mute)
+{
+    objectlink *ol;
+    const char *str_hash;
+
+    if (!isIP)
+    {
+        transform_player_name_string(str);
+        str_hash = find_string(str); /* we need an shared string to check ban list */
+    }
+
+    /* Either search the IP or name lists */
+    for(ol = (isIP ? ban_list_ip : ban_list_player); ol; ol = ol->next)
+    {
+        /* Check for IP match or name match */
+        if (isIP ? (!strcmp(ol->objlink.ban->ip, str)) : (ol->objlink.ban->name == str_hash))
         {
-            const char *name_hash;
-            int         success = FALSE; //, sent = FALSE;
-
-            for (ol = ban_list_ip; ol; ol = ol_tmp)
+            if (!(CONTR(op)->gmaster_mode & (GMASTER_MODE_SA | GMASTER_MODE_GM)) &&
+                 (ol->objlink.ban->ticks_init == -1))
             {
-                ol_tmp = ol->next;
-
-                if (!strcmp(ol->objlink.ban->ip, name))
-                {
-                    char buf[SMALL_BUF];
-
-                    if ((CONTR(op)->gmaster_mode != GMASTER_MODE_GM &&
-                         CONTR(op)->gmaster_mode != GMASTER_MODE_SA) &&
-                        ol->objlink.ban->ticks_init == -1)
-                    {
-                        new_draw_info(NDI_UNIQUE, 0, op, "Only GMs and SAs can unban permanently banned!");
-
-                        return 0;
-                    }
-
-                    LOG(llevSystem,"/ban: %s unbanned the IP %s\n",
-                        query_name(op), name);
-                    new_draw_info(NDI_UNIQUE, 0, op, "You unbanned IP %s!",
-                                         name);
-                    sprintf(buf, "BAN: IP %s has been unbanned by %s.\n",
-                            name, op->name);
-
-                    for (ob = gmaster_list_VOL; ob; ob = ob->next)
-                        new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ob->objlink.ob, "%s", buf);
-
-                    for (ob = gmaster_list_GM; ob; ob = ob->next)
-                        new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ob->objlink.ob, "%s", buf);
-
-                    for (ob = gmaster_list_SA; ob; ob = ob->next)
-                        new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ob->objlink.ob, "%s", buf);
-
-                    remove_ban_entry(ol);
-                    success = TRUE;
-                }
+                new_draw_info(NDI_UNIQUE, 0, op, "Only GMs and SAs can ban or unban permanently banned %s", isIP ? "IPs" : "players!");
+                return COMMANDS_RTN_VAL_OTHER;
             }
 
-            transform_player_name_string(name);
-            name_hash = find_string(name); /* we need an shared string to check ban list */
+            remove_ban_entry(ol);
 
-            for (ol = ban_list_player; ol; ol = ol_tmp)
+            if (!mute)
             {
-                ol_tmp = ol->next;
-
-                if (ol->objlink.ban->name == name_hash)
-                {
-                    char buf[SMALL_BUF];
-
-                    if ((CONTR(op)->gmaster_mode != GMASTER_MODE_GM &&
-                         CONTR(op)->gmaster_mode != GMASTER_MODE_SA) &&
-                        ol->objlink.ban->ticks_init == -1)
-                    {
-                        new_draw_info(NDI_UNIQUE, 0, op, "Only GMs and SAs can unban permanently banned!");
-
-                        return 0;
-                    }
-
-                    LOG(llevSystem,"/ban: %s unbanned the player %s\n",
-                        query_name(op), name);
-                    new_draw_info(NDI_UNIQUE, 0, op, "You unbanned player %s!",
-                                         name);
-                    sprintf(buf, "BAN: Player %s has been unbanned by %s.\n",
-                            name, op->name);
-
-                    for (ob = gmaster_list_VOL; ob; ob = ob->next)
-                        new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ob->objlink.ob, "%s", buf);
-
-                    for (ob = gmaster_list_GM; ob; ob = ob->next)
-                        new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ob->objlink.ob, "%s", buf);
-
-                    for (ob = gmaster_list_SA; ob; ob = ob->next)
-                        new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ob->objlink.ob, "%s", buf);
-
-                    remove_ban_entry(ol);
-                    success = TRUE;
-                }
+                new_draw_info(NDI_UNIQUE, 0, op, "You unbanned %s %s.", isIP ? "IP" : "Player", str);
+                LOG(llevSystem,"%s %s is unbanned by %s", isIP ? "IP" : "Player", str, STRING_OBJ_NAME(op));
             }
 
-            if(success)
-                save_ban_file();
+            return COMMANDS_RTN_VAL_OK;  // Player or IP can only be on ban list once
         }
     }
 
-//ban_usage:
-//    new_draw_info(NDI_UNIQUE, 0, op, "Usage: /ban  list");
-//    new_draw_info(NDI_UNIQUE, 0, op, "Usage: /ban  remove <name or ip>");
-//    new_draw_info(NDI_UNIQUE, 0, op, "Usage: /ban  name <name> <second>");
-//    new_draw_info(NDI_UNIQUE, 0, op, "Usage: /ban  ip <IP> <second>");
-//    new_draw_info(NDI_UNIQUE, 0, op, "Usage: /ban  add <player name> <second>");
-//    new_draw_info(NDI_UNIQUE, 0, op, "Note: /ban add will ban ip AND name. Player must be still online.");
-    return 0;
+    return COMMANDS_RTN_VAL_OK_NO_ACTION;
 }
 
 /* become a SA */
