@@ -1,4 +1,0 @@
-~Category~: Server
-
-~Syntax~: /restart[ <time>][ <stream>]
-~Purpose~: Causes the server to reboot in <time> seconds (the default is 30). Rebooting updates arches and maps and recompiles the server. Only available to MWs and MMs.

@@ -1,0 +1,6 @@
+~Category~: System
+
+~Syntax~: /plugin <name>
+~Description~:
+   Load plugin <name> (do not include path in <name>).
+   Note - do not load the same plugin more than once.

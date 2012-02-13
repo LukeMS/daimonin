@@ -1,0 +1,6 @@
+~Category~: System
+
+~Syntax~: /kick <name>
+~Description~:
+   Kicks the player <name> out of the game.
+   Player is also banned for 1min.

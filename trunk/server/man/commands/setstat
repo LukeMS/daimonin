@@ -1,0 +1,13 @@
+~Category~: System
+
+~Syntax~: /setstat <who> <stat name> <value> 
+~Description~:
+   Sets <stat name> to <value> for <who>.
+   Valid stat names are:
+      strength
+      dexterity
+      constitution
+      intelligence
+      wisdom
+      power
+      charisma

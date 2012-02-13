@@ -1,0 +1,6 @@
+~Category~: System
+
+~Syntax~: /connections <number>
+~Description~:
+   Sets the maximum level of concurrent connections allowed from a single IP address.
+   <number> defaults to minimum of 2.

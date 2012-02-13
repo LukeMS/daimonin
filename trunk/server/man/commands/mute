@@ -1,0 +1,7 @@
+~Category~: System
+
+~Syntax~: /mute <who> <seconds> 
+~Description~:
+   Prevents player <who> from shouting or telling for <seconds>.
+   If <seconds> is omitted, player is un-muted.
+   Note - Channels also have their own independant mute settings.
