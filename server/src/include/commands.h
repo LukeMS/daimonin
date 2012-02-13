@@ -144,9 +144,9 @@ extern _subcommand subcommands;
 #define TARGET_SELF   2
 
 /* Return values from command functions */
-#define COMMANDS_RTN_VAL_OK 0            // Action was generally taken here
-#define COMMANDS_RTN_VAL_SYNTAX 1        // Basic syntax error
-#define COMMANDS_RTN_VAL_OTHER 2         // Some other non-syntax error
-#define COMMANDS_RTN_VAL_OK_NO_ACTION 3  // Not an error, but no action taken
+#define COMMANDS_RTN_VAL_OK 0         // Command completed OK
+#define COMMANDS_RTN_VAL_SYNTAX 1     // Basic syntax error
+#define COMMANDS_RTN_VAL_ERROR 2      // Some other non-syntax error
+#define COMMANDS_RTN_VAL_OK_SILENT 3  // Command completed OK, but no need to report on channel
 
 #endif /* ifndef __COMMANDS_H */

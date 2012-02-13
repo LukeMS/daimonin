@@ -44,6 +44,8 @@ static int BanAddToBanList(object* op, char *str, int seconds, int isIP);
 static int BanRemove(object *op, char *str);
 static int BanRemoveFromBanList(object *op, char *str, int isIP, int mute);
 
+static int CommandLearnSpellOrPrayer(object *op, char *params, int special_prayer);
+
 #if 0 /* disabled because account patch */
 typedef struct dmload_struct {
     char    name[32];
@@ -189,7 +191,7 @@ int command_kick(object *op, char *params)
     int         ticks;
 
     if (!op)
-        return COMMANDS_RTN_VAL_OTHER;
+        return COMMANDS_RTN_VAL_ERROR;
 
     if (!params)
         return COMMANDS_RTN_VAL_SYNTAX;
@@ -198,7 +200,7 @@ int command_kick(object *op, char *params)
     {
         new_draw_info(NDI_UNIQUE, 0, op, "No such player.");
 
-        return COMMANDS_RTN_VAL_OTHER;
+        return COMMANDS_RTN_VAL_ERROR;
     }
 
 #if 0 // Kicking yourself is funny, a real votewinner :)
@@ -206,7 +208,7 @@ int command_kick(object *op, char *params)
     {
         new_draw_info(NDI_UNIQUE, 0, op, "You can't kick yourself!");
 
-        return COMMANDS_RTN_VAL_OTHER;
+        return COMMANDS_RTN_VAL_ERROR;
     }
 #endif
 
@@ -225,7 +227,7 @@ int command_kick(object *op, char *params)
         new_draw_info(NDI_UNIQUE, 0, op, "%s has resisted your kick!",
                              kickee_name);
 
-        return COMMANDS_RTN_VAL_OTHER;
+        return COMMANDS_RTN_VAL_ERROR;
     }
 
     /* Log it and tell everyone so justice is seen to be done, or at least we
@@ -258,7 +260,7 @@ int command_reboot(object *op, char *params)
         op->type != PLAYER ||
         !CONTR(op))
     {
-        return COMMANDS_RTN_VAL_OTHER;
+        return COMMANDS_RTN_VAL_ERROR;
     }
 
     /* No subcommand? Default to restart. */
@@ -367,7 +369,7 @@ int command_reboot(object *op, char *params)
         {
             new_draw_info(NDI_UNIQUE, 0, op, "You have insufficient permission to shutdown the server.");
 
-           return COMMANDS_RTN_VAL_OTHER;
+           return COMMANDS_RTN_VAL_ERROR;
         }
 
         time = 0;
@@ -403,7 +405,7 @@ int command_goto(object *op, char *params)
         op->type != PLAYER ||
         !CONTR(op))
     {
-        return 0;
+        return COMMANDS_RTN_VAL_ERROR;
     }
 
     if (params)
@@ -448,7 +450,7 @@ int command_goto(object *op, char *params)
                       buf);
         new_draw_info(NDI_UNIQUE, 0, op, "You're going nowhere!");
 
-        return 0;
+        return COMMANDS_RTN_VAL_ERROR;
     }
 
     /* Specified coords are not on the map? Default to map entry point. */
@@ -466,7 +468,7 @@ int command_goto(object *op, char *params)
 
     FREE_ONLY_HASH(path);
 
-    return 0;
+    return COMMANDS_RTN_VAL_OK_SILENT;
 }
 
 /* is this function called from somewhere ? -Tero */
@@ -794,7 +796,7 @@ int command_mutelevel(object *op, char *params)
     int lvl = 0;
 
     if (!op)
-        return COMMANDS_RTN_VAL_OTHER;
+        return COMMANDS_RTN_VAL_ERROR;
 
     if (!params || (sscanf(params, "%d", &lvl) != 1))
         return COMMANDS_RTN_VAL_SYNTAX;
@@ -815,24 +817,21 @@ int command_mutelevel(object *op, char *params)
 int command_mutelevel(object *op, char *params)
 {
     if (!op)
-        return COMMANDS_RTN_VAL_OTHER;
+        return COMMANDS_RTN_VAL_ERROR;
 
     new_draw_info(NDI_UNIQUE, 0, op, "Mutelevel command is non-functional when channels are in use.");
 
-    return COMMANDS_RTN_VAL_OK;
+    return COMMANDS_RTN_VAL_OK_SILENT;
 }
 #endif
 
-/* This command allows a DM to set the max number of connections from a single IP (previously hardcoded to 2),
-* Added by Torchwood, 2009-02-20
-*/
-int command_dm_connections(object *op, char *params)
+int command_connections(object *op, char *params)
 {
     char buf[MEDIUM_BUF];
     int nr = 2;
 
     if (!op)
-        return COMMANDS_RTN_VAL_OTHER;
+        return COMMANDS_RTN_VAL_ERROR;
 
     if (!params || (sscanf(params, "%d", &nr) != 1))
         return COMMANDS_RTN_VAL_SYNTAX;
@@ -853,30 +852,30 @@ int command_summon(object *op, char *params)
     player *pl;
 
     if (!op)
-        return 0;
+        return COMMANDS_RTN_VAL_ERROR;
 
     if (!params)
-        return 1;
+        return COMMANDS_RTN_VAL_SYNTAX;
 
     if (!(pl = find_player(params)))
     {
         new_draw_info(NDI_UNIQUE, 0, op, "No such player.");
 
-        return 0;
+        return COMMANDS_RTN_VAL_ERROR;
     }
 
     if (pl->ob == op)
     {
         new_draw_info(NDI_UNIQUE, 0, op, "You can't summon yourself next to yourself.");
 
-        return 0;
+        return COMMANDS_RTN_VAL_ERROR;
     }
 
     if (!(pl->state & ST_PLAYING))
     {
         new_draw_info(NDI_UNIQUE, 0, op, "That player can't be summoned right now.");
 
-        return 0;
+        return COMMANDS_RTN_VAL_ERROR;
     }
 
     i = find_free_spot(op->arch, op, op->map, op->x, op->y, 0, 1, SIZEOFFREE1 + 1);
@@ -892,43 +891,39 @@ int command_summon(object *op, char *params)
         new_draw_info(NDI_UNIQUE, 0, op, "OK.");
     }
 
-    return 0;
+    return COMMANDS_RTN_VAL_OK;
 }
 
-/* Teleport next to target player */
-/* mids 01/16/2002 */
 int command_teleport(object *op, char *params)
 {
     int     i;
     player *pl;
 
     if (!op)
-        return 0;
+        return COMMANDS_RTN_VAL_ERROR;
 
     if (!params)
-        return 1;
-
-
+        return COMMANDS_RTN_VAL_SYNTAX;
 
     if (!(pl = find_player(params)))
     {
         new_draw_info(NDI_UNIQUE, 0, op, "No such player.");
 
-        return 0;
+        return COMMANDS_RTN_VAL_ERROR;
     }
 
     if (pl->ob == op)
     {
         new_draw_info(NDI_UNIQUE, 0, op, "You can't teleport yourself next to yourself.");
 
-        return 0;
+        return COMMANDS_RTN_VAL_ERROR;
     }
 
     if (!(pl->state & ST_PLAYING))
     {
         new_draw_info(NDI_UNIQUE, 0, op, "You can't teleport to that player right now.");
 
-        return 0;
+        return COMMANDS_RTN_VAL_ERROR;
     }
 
     i = find_free_spot(pl->ob->arch, pl->ob, pl->ob->map, pl->ob->x, pl->ob->y, 0, 1, SIZEOFFREE1 + 1);
@@ -941,7 +936,7 @@ int command_teleport(object *op, char *params)
                           MAP_STATUS_TYPE(pl->ob->map->map_status)))
         new_draw_info(NDI_UNIQUE, 0, op, "OK.");
 
-    return 0;
+    return COMMANDS_RTN_VAL_OK;
 }
 
 int command_create(object *op, char *params)
@@ -1261,30 +1256,29 @@ int command_create(object *op, char *params)
     return 0;
 }
 
-/* if(<not socket>) */
-
-/*
- * Now follows dm-commands which are also acceptable from sockets
- */
-
 int command_inventory(object *op, char *params)
 {
     object *tmp;
     int     i;
 
+    if (!op)
+        return COMMANDS_RTN_VAL_ERROR;
+
     if (!params)
     {
         inventory(op, NULL);
 
-        return 0;
+        return COMMANDS_RTN_VAL_OK_SILENT;
     }
 
+    // TODO - find_object() is not yet implemented, so will always return NULL
+    // Manual file only shows /inventory, no mention of parameters, until this is done
     if (!sscanf(params, "%d", &i) || (tmp = find_object(i)) == NULL)
-        return 1;
+        return COMMANDS_RTN_VAL_SYNTAX;
 
     inventory(op, tmp);
 
-    return 0;
+    return COMMANDS_RTN_VAL_OK_SILENT;
 }
 
 
@@ -1293,17 +1287,22 @@ int command_dump(object *op, char *params)
     int     i;
     object *tmp;
 
+    if (!op)
+        return COMMANDS_RTN_VAL_ERROR;
+
+    // TODO - find_object() is not yet implemented, so will always return NULL
+    // Manual file only shows /dump me, until this is done
     if (params && !strcmp(params, "me"))
         tmp = op;
     else if (!params ||
              !sscanf(params, "%d", &i) ||
              !(tmp = find_object(i)))
-        return 1;
+        return COMMANDS_RTN_VAL_SYNTAX;
 
     dump_object(tmp);
     new_draw_info(NDI_UNIQUE, 0, op, "%s", errmsg);
 
-    return 0;
+    return COMMANDS_RTN_VAL_OK_SILENT;
 }
 
 int command_patch(object *op, char *params)
@@ -1316,6 +1315,9 @@ int command_patch(object *op, char *params)
 
     if (params)
     {
+        // TODO - find_object() is not yet implemented, so will always return NULL
+        // Manual file only shows /patch me, until this is done
+        // Actually, man file not written, 'cos I don't know what this does - TW
         if (!strncmp(params, "me", 2))
             tmp = op;
         else if (sscanf(params, "%d", &i))
@@ -1323,12 +1325,12 @@ int command_patch(object *op, char *params)
     }
 
     if (!tmp)
-        return 1;
+        return COMMANDS_RTN_VAL_SYNTAX;
 
     arg = strchr(params, ' ');
 
     if (!arg)
-        return 1;
+        return COMMANDS_RTN_VAL_SYNTAX;
 
     if ((arg2 = strchr(++arg, ' ')))
         arg2++;
@@ -1340,7 +1342,7 @@ int command_patch(object *op, char *params)
         new_draw_info(NDI_UNIQUE, 0, op, "(%s#%d)->%s=%s",
                              tmp->name, tmp->count, arg, arg2);
 
-    return 0;
+    return COMMANDS_RTN_VAL_OK;
 }
 
 int command_remove(object *op, char *params)
@@ -1351,12 +1353,12 @@ int command_remove(object *op, char *params)
     if (!params ||
         !sscanf(params, "%d", &i) ||
         !(tmp = find_object(i)))
-        return 1;
+        return COMMANDS_RTN_VAL_SYNTAX;
 
     remove_ob(tmp);
     check_walk_off(tmp, NULL, MOVE_APPLY_VANISHED);
 
-    return 0;
+    return COMMANDS_RTN_VAL_OK;
 }
 
 int command_free(object *op, char *params)
@@ -1367,15 +1369,15 @@ int command_free(object *op, char *params)
     if (!params ||
         !sscanf(params, "%d", &i) ||
         !(tmp = find_object(i)))
-        return 1;
+        return COMMANDS_RTN_VAL_SYNTAX;
 
     /* free_object(tmp); TODO: remove me*/
 
-    return 0;
+    return COMMANDS_RTN_VAL_OK;
 }
 
-/* same like addexp, but we set here the skill level explicit
- * If the player don't has the skill we add it.
+/* Similar to addexp, but we set here the skill level explicit
+ * If the player doesn't have the skill, we add it.
  * if level is 0 we remove the skill (careful!!)
 */
 int command_setskill(object *op, char *params)
@@ -1392,17 +1394,19 @@ int command_setskill(object *op, char *params)
         char buf[HUGE_BUF];
 
         sprintf(buf, "Usage: setskill [who] [skill nr] [level]\nSkills/Nr: ");
+
         for(i=0;i<NROFSKILLS;i++)
             sprintf(strchr(buf, '\0'), ",%s(%d)", skills[i].name,i);
+
         new_draw_info(NDI_UNIQUE, 0, op, "%s", buf);
-        return 0;
+        return COMMANDS_RTN_VAL_OK_SILENT;
     }
 
     if (!(pl = find_player(buf)))
     {
         new_draw_info(NDI_UNIQUE, 0, op, "No such player.");
 
-        return 0;
+        return COMMANDS_RTN_VAL_ERROR;
     }
 
     /* Bug 0000100: /addexp Cher 101 100000 crashes server */
@@ -1411,7 +1415,7 @@ int command_setskill(object *op, char *params)
     {
         new_draw_info(NDI_UNIQUE, 0, op, "No such skill.");
 
-        return 0;
+        return COMMANDS_RTN_VAL_ERROR;
     }
 
     /* Constrain level to sensible values. */
@@ -1432,7 +1436,7 @@ int command_setskill(object *op, char *params)
         player_lvl_adj(op, NULL, TRUE);
         FIX_PLAYER(op, "setskill");
 
-        return 0;
+        return COMMANDS_RTN_VAL_OK;
     }
 
     if (!exp_skill) /* safety check */
@@ -1445,7 +1449,7 @@ int command_setskill(object *op, char *params)
         LOG(llevDebug, "TODO: command_setskill(): called for %s with skill nr %d / %d level - object has not this skill.\n",
             query_name(op), snr, level);
 
-        return 0; /* TODO: groups comes later  - now we skip all times */
+        return COMMANDS_RTN_VAL_ERROR; /* TODO: groups comes later  - now we skip all times */
     }
 
     pl->update_skills = 1; /* we will sure change skill exp, mark for update */
@@ -1456,7 +1460,7 @@ int command_setskill(object *op, char *params)
         LOG(llevBug, "BUG: add_exp() skill:%s - no exp_op found!!\n",
             query_name(exp_skill));
 
-        return 0;
+        return COMMANDS_RTN_VAL_ERROR;
     }
 
     exp_skill->level = level;
@@ -1470,7 +1474,7 @@ int command_setskill(object *op, char *params)
     player_lvl_adj(op, NULL, TRUE);
     FIX_PLAYER(op, "setskill");
 
-    return 0;
+    return COMMANDS_RTN_VAL_OK;
 }
 
 int command_addexp(object *op, char *params)
@@ -1489,16 +1493,14 @@ int command_addexp(object *op, char *params)
         for(i=0;i<NROFSKILLS;i++)
             sprintf(strchr(buf, '\0'), "%s(%d), ", skills[i].name,i);
         new_draw_info(NDI_UNIQUE, 0, op, "%s", buf);
-        return 0;
+        return COMMANDS_RTN_VAL_OK_SILENT;
     }
-
-
 
     if (!(pl = find_player(buf)))
     {
         new_draw_info(NDI_UNIQUE, 0, op, "No such player.");
 
-        return 0;
+        return COMMANDS_RTN_VAL_ERROR;
     }
 
     /* Bug 0000100: /addexp Cher 101 100000 crashes server */
@@ -1507,7 +1509,7 @@ int command_addexp(object *op, char *params)
     {
         new_draw_info(NDI_UNIQUE, 0, op, "No such skill.");
 
-        return 0;
+        return COMMANDS_RTN_VAL_ERROR;
     }
 
     if (!(exp_skill = pl->skill_ptr[snr])) /* safety check */
@@ -1519,7 +1521,7 @@ int command_addexp(object *op, char *params)
         LOG(llevDebug, "TODO: add_exp(): called for %s with skill nr %d / %d exp - object has not this skill.\n",
             query_name(pl->ob), snr, exp);
 
-        return 0; /* TODO: groups comes later  - now we skip all times */
+        return COMMANDS_RTN_VAL_ERROR; /* TODO: groups comes later  - now we skip all times */
     }
 
     pl->update_skills = 1; /* we will sure change skill exp, mark for update */
@@ -1529,7 +1531,7 @@ int command_addexp(object *op, char *params)
         LOG(llevBug, "BUG: add_exp() skill:%s - no exp_op found!!\n",
             query_name(exp_skill));
 
-        return 0;
+        return COMMANDS_RTN_VAL_ERROR;
     }
 
     exp = adjust_exp(pl->ob, exp_skill, exp);   /* first we see what we can add to our skill */
@@ -1540,7 +1542,7 @@ int command_addexp(object *op, char *params)
     player_lvl_adj(pl->ob, exp_ob, TRUE);
     player_lvl_adj(pl->ob, NULL, TRUE);
     FIX_PLAYER(pl->ob, "addexp");
-    return 0;
+    return COMMANDS_RTN_VAL_OK;
 }
 
 /* '/serverspeed' reports the current server speed.
@@ -1554,18 +1556,18 @@ int command_serverspeed(object *op, char *params)
         new_draw_info(NDI_UNIQUE, 0, op, "Current server speed is %ld ums (%f ticks/second)",
                              pticks_ums, pticks_second);
 
-        return 0;
+        return COMMANDS_RTN_VAL_OK_SILENT;
     }
 
     if (!sscanf(params, "%ld", &i))
-        return 1;
+        return COMMANDS_RTN_VAL_SYNTAX;
 
     set_pticks_time(i);
     GETTIMEOFDAY(&last_time);
     new_draw_info(NDI_UNIQUE, 0, op, "Set server speed to %ld ums (%f ticks/second)",
                          pticks_ums, pticks_second);
 
-    return 0;
+    return COMMANDS_RTN_VAL_OK;
 }
 
 /**************************************************************************/
@@ -1576,16 +1578,15 @@ int command_serverspeed(object *op, char *params)
 int command_stats(object *op, char *params)
 {
     player *pl;
-//    char    buf[MEDIUM_BUF];
 
     if (!params)
-        return 1;
+        return COMMANDS_RTN_VAL_SYNTAX;
 
     if (!(pl = find_player(params)))
     {
         new_draw_info(NDI_UNIQUE, 0, op, "No such player.");
 
-        return 0;
+        return COMMANDS_RTN_VAL_ERROR;
     }
 
     new_draw_info(NDI_UNIQUE, 0, op,
@@ -1595,7 +1596,7 @@ int command_stats(object *op, char *params)
                   "Int : %-2d       EXP : %d\n"
                   "Wis : %-2d      Food : %d\n"
                   "Pow : %-2d    Damage : %d\n"
-                  "Cha : %-2d    Grace : %d",
+                  "Cha : %-2d     Grace : %d",
                   pl->ob->stats.Str, pl->ob->stats.hp, pl->ob->stats.maxhp,
                   pl->ob->stats.Dex, pl->ob->stats.sp, pl->ob->stats.maxsp,
                   pl->ob->stats.Con, pl->ob->stats.ac, pl->ob->stats.wc,
@@ -1604,7 +1605,7 @@ int command_stats(object *op, char *params)
                   pl->ob->stats.Pow, pl->ob->stats.dam,
                   pl->ob->stats.Cha, pl->ob->stats.grace);
 
-    return 0;
+    return COMMANDS_RTN_VAL_OK_SILENT;
 }
 
 int command_setstat(object *op, char *params)
@@ -1618,14 +1619,14 @@ int command_setstat(object *op, char *params)
     if (!params ||
         sscanf(params, "%s %s %d", player_name, stat_name, &v) != 3)
     {
-        return 1;
+        return COMMANDS_RTN_VAL_SYNTAX;
     }
 
     if (!(pl = find_player(player_name)))
     {
         new_draw_info(NDI_UNIQUE, 0, op, "No such player!");
 
-        return 0;
+        return COMMANDS_RTN_VAL_ERROR;
     }
 
     hash_name = add_string(stat_name);
@@ -1635,7 +1636,7 @@ int command_setstat(object *op, char *params)
     {
         new_draw_info(NDI_UNIQUE, 0, op, "Illegal range of stat!");
 
-        return 0;
+        return COMMANDS_RTN_VAL_ERROR;
     }
 
     if (hash_name == shstr_cons.stat_strength)
@@ -1671,21 +1672,21 @@ int command_setstat(object *op, char *params)
         new_draw_info(NDI_UNIQUE , 0, op,  "Unrecognised stat!");
         FREE_AND_CLEAR_HASH(hash_name);
 
-        return 1;
+        return COMMANDS_RTN_VAL_ERROR;
     }
 
     FREE_AND_CLEAR_HASH(hash_name);
     new_draw_info(NDI_UNIQUE, 0, op, "%s has been altered.", pl->ob->name);
     FIX_PLAYER(pl->ob, "command setstat");
 
-    return 0;
+    return COMMANDS_RTN_VAL_OK;
 }
 
 int command_reset(object *op, char *params)
 {
-    int             count;
-    mapstruct      *m;
-    player         *pl;
+    int        count;
+    mapstruct *m;
+    player    *pl;
 
     if (!params)
         m = has_been_loaded_sh(op->map->path);
@@ -1701,7 +1702,7 @@ int command_reset(object *op, char *params)
     {
         new_draw_info(NDI_UNIQUE, 0, op, "No such map.");
 
-        return 0;
+        return COMMANDS_RTN_VAL_ERROR;
     }
 
     if (m->in_memory != MAP_SWAPPED)
@@ -1710,7 +1711,7 @@ int command_reset(object *op, char *params)
         {
             LOG(llevBug, "BUG: Tried to swap out map which was not in memory.\n");
 
-            return 0;
+            return COMMANDS_RTN_VAL_ERROR;
         }
 
         new_draw_info(NDI_UNIQUE, 0, op, "Start reseting map %s.",
@@ -1786,7 +1787,7 @@ int command_reset(object *op, char *params)
         new_draw_info(NDI_UNIQUE, 0, op, "Reset failed, couldn't swap map!");
     }
 
-    return 0;
+    return COMMANDS_RTN_VAL_OK;
 }
 
 /* warning: these function is for heavy debugging.
@@ -1839,7 +1840,7 @@ int command_check_fd(object *op, char *params)
         }
     }
 
-    return 0;
+    return COMMANDS_RTN_VAL_OK;
 }
 
 /* a muted player can't shout/say/tell/reply for the
@@ -1847,6 +1848,7 @@ int command_check_fd(object *op, char *params)
  * we have 2 kinds of mute: shout/say & tell/gsay/reply.
  * a player can be muted through this command and/or
  * automatic by the spam agent.
+ * note - this is a 'global' mute; channels also have their own 'local' mutes
  */
 int command_mute(object *op, char *params)
 {
@@ -1856,28 +1858,24 @@ int command_mute(object *op, char *params)
     objectlink *ol;
 
     if (!params)
-        return 1;
+        return COMMANDS_RTN_VAL_SYNTAX;
 
     sscanf(params, "%s %d", name, &seconds);
 
-
-    if (!(pl= find_player(name)))
+    if (!(pl = find_player(name)))
     {
         new_draw_info(NDI_UNIQUE, 0, op, "mute command: can't find player %s",
                              name);
 
-        return 0;
+        return COMMANDS_RTN_VAL_ERROR;
     }
-
-    LOG(llevInfo, "MUTECMD: %s issued /mute %s %d\n",
-        op->name, name, seconds);
 
     if(seconds < 0)
     {
         new_draw_info(NDI_UNIQUE, 0, op, "mute command: illegal seconds parameter (%d)",
                              seconds);
 
-        return 0;
+        return COMMANDS_RTN_VAL_ERROR;
     }
 
     if(!seconds) /* unmute player */
@@ -1887,24 +1885,9 @@ int command_mute(object *op, char *params)
         pl->mute_counter = 0;
     }
     else
-    {
-//        char buf[SMALL_BUF];
-
         pl->mute_counter = pticks + seconds * (1000000 / MAX_TIME);
-/*        sprintf(buf, "MUTE: Player %s has been muted by %s for %d seconds.\n",
-                query_name(pl->ob), query_name(op), seconds);
 
-        for(ol = gmaster_list_VOL; ol; ol = ol->next)
-            new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ol->objlink.ob, "%s", buf);
-
-        for(ol = gmaster_list_GM; ol; ol = ol->next)
-            new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ol->objlink.ob, "%s", buf);
-
-        for(ol = gmaster_list_SA; ol; ol = ol->next)
-            new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ol->objlink.ob, "%s", buf); */
-    }
-
-    return 0;
+    return COMMANDS_RTN_VAL_OK;
 }
 
 /* a silenced player can't shout or tell or say
@@ -1913,7 +1896,7 @@ int command_mute(object *op, char *params)
  */
 int command_silence(object *op, char *params)
 {
-    return 0;
+    return COMMANDS_RTN_VAL_OK;
 }
 
 /* /ban usage:
@@ -1933,7 +1916,7 @@ int command_ban(object *op, char *params)
     int   seconds = 60;  // Default ban is 1 minute
 
     if (!op)
-        return COMMANDS_RTN_VAL_OTHER;
+        return COMMANDS_RTN_VAL_ERROR;
 
     if (!params)
         return COMMANDS_RTN_VAL_SYNTAX;
@@ -1954,7 +1937,7 @@ int command_ban(object *op, char *params)
         BanList(op, FALSE); // Print list of banned names
         BanList(op, TRUE);  // Print list of banned IPs
 
-        return COMMANDS_RTN_VAL_OK_NO_ACTION;
+        return COMMANDS_RTN_VAL_OK_SILENT;
     }
     else if (!strcmp(mode, "add") || !strcmp(mode, "name") || !strcmp(mode, "ip"))
         return BanAdd(op, mode, str, seconds);
@@ -1987,7 +1970,7 @@ static int BanList(object *op, int isIP)
                                      ol->objlink.ban->ticks_init / 8);
     }
 
-    return COMMANDS_RTN_VAL_OK_NO_ACTION;
+    return COMMANDS_RTN_VAL_OK_SILENT;
 }
 
 /* Add a player to the ban list, using name or IP, or add (which does both) */
@@ -2005,7 +1988,7 @@ static int BanAdd(object *op, char *mode, char *str, int seconds)
          (seconds == -1))
     {
         new_draw_info(NDI_UNIQUE, 0, op, "Only GMs and SAs can permanently ban or unban a player or IP!");
-        return COMMANDS_RTN_VAL_OTHER;
+        return COMMANDS_RTN_VAL_ERROR;
     }
 
     /* For "add" command, player must be online ... */
@@ -2018,7 +2001,7 @@ static int BanAdd(object *op, char *mode, char *str, int seconds)
                           "Can't find the player %s!\nCheck name, or use /ban <name> or /ban <ip> directly.",
                           STRING_SAFE(str));
 
-            return COMMANDS_RTN_VAL_OTHER;
+            return COMMANDS_RTN_VAL_ERROR;
         }
     }
 
@@ -2035,7 +2018,7 @@ static int BanAdd(object *op, char *mode, char *str, int seconds)
                  spot < 11))
             {
                 new_draw_info(NDI_UNIQUE, 0, op, "Need a better message here! Something to do with banning all domains?");
-                return COMMANDS_RTN_VAL_OTHER;
+                return COMMANDS_RTN_VAL_ERROR;
             }
         }
     }
@@ -2046,12 +2029,12 @@ static int BanAdd(object *op, char *mode, char *str, int seconds)
     {
         /* add name to the ban list */
         tmp = BanAddToBanList(op, str, seconds, FALSE);
-        if ((tmp == COMMANDS_RTN_VAL_SYNTAX) || (tmp == COMMANDS_RTN_VAL_OTHER))
+        if ((tmp == COMMANDS_RTN_VAL_SYNTAX) || (tmp == COMMANDS_RTN_VAL_ERROR))
             return tmp;
 
         /* add ip to the ban list */
         tmp = BanAddToBanList(op, pl->socket.ip_host, seconds, TRUE);
-        if ((tmp == COMMANDS_RTN_VAL_SYNTAX) || (tmp == COMMANDS_RTN_VAL_OTHER))
+        if ((tmp == COMMANDS_RTN_VAL_SYNTAX) || (tmp == COMMANDS_RTN_VAL_ERROR))
             return tmp;
 
         kick_player(pl);
@@ -2060,7 +2043,7 @@ static int BanAdd(object *op, char *mode, char *str, int seconds)
     {
         /* add name to the ban list */
         tmp = BanAddToBanList(op, str, seconds, FALSE);
-        if ((tmp == COMMANDS_RTN_VAL_SYNTAX) || (tmp == COMMANDS_RTN_VAL_OTHER))
+        if ((tmp == COMMANDS_RTN_VAL_SYNTAX) || (tmp == COMMANDS_RTN_VAL_ERROR))
             return tmp;
 
         if ((pl = find_player(str)))
@@ -2069,7 +2052,7 @@ static int BanAdd(object *op, char *mode, char *str, int seconds)
     else // must be ip mode
     {
         tmp = BanAddToBanList(op, str, seconds, TRUE);
-        if ((tmp == COMMANDS_RTN_VAL_SYNTAX) || (tmp == COMMANDS_RTN_VAL_OTHER))
+        if ((tmp == COMMANDS_RTN_VAL_SYNTAX) || (tmp == COMMANDS_RTN_VAL_ERROR))
             return tmp;
 
         // TODO - We should try and kick all players who have this IP, but no suitable function written
@@ -2086,7 +2069,7 @@ static int BanAddToBanList(object* op, char *str, int seconds, int isIP)
     int  tmp;
 
     tmp = BanRemoveFromBanList(op, str, isIP, TRUE);
-    if ((tmp == COMMANDS_RTN_VAL_SYNTAX) || (tmp == COMMANDS_RTN_VAL_OTHER))
+    if ((tmp == COMMANDS_RTN_VAL_SYNTAX) || (tmp == COMMANDS_RTN_VAL_ERROR))
         return tmp;
 
     if (seconds != -1)
@@ -2121,14 +2104,14 @@ static int BanRemove(object *op, char *str)
     tmp = BanRemoveFromBanList(op, str, TRUE, FALSE);
     if (tmp == COMMANDS_RTN_VAL_OK)
         success = TRUE;
-    else if ((tmp == COMMANDS_RTN_VAL_SYNTAX) || (tmp == COMMANDS_RTN_VAL_OTHER))
+    else if ((tmp == COMMANDS_RTN_VAL_SYNTAX) || (tmp == COMMANDS_RTN_VAL_ERROR))
         return tmp;
 
     // And Name list second
     tmp = BanRemoveFromBanList(op, str, FALSE, FALSE);
     if (tmp == COMMANDS_RTN_VAL_OK)
         success = TRUE;
-    else if ((tmp == COMMANDS_RTN_VAL_SYNTAX) || (tmp == COMMANDS_RTN_VAL_OTHER))
+    else if ((tmp == COMMANDS_RTN_VAL_SYNTAX) || (tmp == COMMANDS_RTN_VAL_ERROR))
         return tmp;
 
     if(success)
@@ -2138,9 +2121,9 @@ static int BanRemove(object *op, char *str)
     }
     else
     {
-        // Both calls to BanRemoveFromBanList must have returned COMMANDS_RTN_VAL_OK_NO_ACTION
+        // Both calls to BanRemoveFromBanList must have returned COMMANDS_RTN_VAL_OK_SILENT
         new_draw_info(NDI_UNIQUE, 0, op, "No player or IP found to match %s on ban lists!", str);
-        return COMMANDS_RTN_VAL_OTHER;
+        return COMMANDS_RTN_VAL_ERROR;
     }
 }
 
@@ -2165,7 +2148,7 @@ static int BanRemoveFromBanList(object *op, char *str, int isIP, int mute)
                  (ol->objlink.ban->ticks_init == -1))
             {
                 new_draw_info(NDI_UNIQUE, 0, op, "Only GMs and SAs can ban or unban permanently banned %s", isIP ? "IPs" : "players!");
-                return COMMANDS_RTN_VAL_OTHER;
+                return COMMANDS_RTN_VAL_ERROR;
             }
 
             remove_ban_entry(ol);
@@ -2180,7 +2163,7 @@ static int BanRemoveFromBanList(object *op, char *str, int isIP, int mute)
         }
     }
 
-    return COMMANDS_RTN_VAL_OK_NO_ACTION;
+    return COMMANDS_RTN_VAL_OK_SILENT;
 }
 
 /* become a SA */
@@ -2201,7 +2184,7 @@ int command_sa(object *op, char *params)
         }
     }
 
-    return 0;
+    return COMMANDS_RTN_VAL_OK_SILENT;
 }
 
 /* become a MM */
@@ -2223,7 +2206,7 @@ int command_mm(object *op, char *params)
         }
     }
 
-    return 0;
+    return COMMANDS_RTN_VAL_OK_SILENT;
 }
 
 /* become a MW */
@@ -2245,7 +2228,7 @@ int command_mw(object *op, char *params)
         }
     }
 
-    return 0;
+    return COMMANDS_RTN_VAL_OK_SILENT;
 }
 
 /* become a GM */
@@ -2267,7 +2250,7 @@ int command_gm(object *op, char *params)
         }
     }
 
-    return 0;
+    return COMMANDS_RTN_VAL_OK_SILENT;
 }
 
 /* become a VOL */
@@ -2289,7 +2272,7 @@ int command_vol(object *op, char *params)
         }
     }
 
-    return 0;
+    return COMMANDS_RTN_VAL_OK_SILENT;
 }
 
 /* Lists online gmasters unless they have requested privacy. */
@@ -2298,7 +2281,7 @@ int command_gmasterlist(object *op, char *params)
     objectlink *ol;
 
     if (params)
-        return 1;
+        return COMMANDS_RTN_VAL_SYNTAX;
 
     for(ol = gmaster_list_VOL; ol; ol = ol->next)
     {
@@ -2345,7 +2328,7 @@ int command_gmasterlist(object *op, char *params)
         }
     }
 
-    return 0;
+    return COMMANDS_RTN_VAL_OK_SILENT;
 }
 
 /* Lists, adds, or removes entries in gmaster_file. */
@@ -2364,7 +2347,7 @@ int command_gmasterfile(object *op, char *params)
         op->type != PLAYER ||
         !(pl = CONTR(op)))
     {
-        return 0;
+        return COMMANDS_RTN_VAL_ERROR;
     }
 
     /* list all entries. */
@@ -2375,7 +2358,7 @@ int command_gmasterfile(object *op, char *params)
             new_draw_info(NDI_UNIQUE, 0, op, "%s", ol->objlink.gm->entry);
         }
 
-        return 0;
+        return COMMANDS_RTN_VAL_OK_SILENT;
     }
 
     /* Find the subcommand. */
@@ -2394,7 +2377,7 @@ int command_gmasterfile(object *op, char *params)
      * params means the player typed nonsense. */
     else
     {
-        return 1;
+        return COMMANDS_RTN_VAL_SYNTAX;
     }
 
     /* Add an entry. */
@@ -2407,14 +2390,14 @@ int command_gmasterfile(object *op, char *params)
         {
             new_draw_info(NDI_UNIQUE, 0, op, "Malformed or missing parameter.");
 
-            return 1;
+            return COMMANDS_RTN_VAL_SYNTAX;
         }
 
         if (!compare_gmaster_mode(mode_id, pl->gmaster_mode))
         {
             new_draw_info(NDI_UNIQUE, 0, op, "You have insufficient permission to add this entry.");
 
-            return 0;
+            return COMMANDS_RTN_VAL_ERROR;
         }
 
         if (name[0] != '*')
@@ -2436,7 +2419,7 @@ int command_gmasterfile(object *op, char *params)
             {
                 new_draw_info(NDI_UNIQUE, 0, op, "There is no account of that name.");
 
-                return 0;
+                return COMMANDS_RTN_VAL_ERROR;
             }
 
             /* Well it looks nicer to capitalise the names once in the
@@ -2450,13 +2433,15 @@ int command_gmasterfile(object *op, char *params)
     /* List subset of entries. */
     else if (hash == subcommands.list)
     {
-        uint8 success = 0;
+        int success = COMMANDS_RTN_VAL_SYNTAX;
 
         FREE_AND_CLEAR_HASH(hash);
 
+        // Note - legal for player to type: /gmasterfile list SA VOL
+        // to get a list of SAs and VOLs
         if (strstr(cp, "SA"))
         {
-            success = 1;
+            success = COMMANDS_RTN_VAL_OK_SILENT;
 
             for (ol = gmaster_list; ol; ol = ol->next)
             {
@@ -2471,7 +2456,7 @@ int command_gmasterfile(object *op, char *params)
 
         if (strstr(cp, "MM"))
         {
-            success = 1;
+            success = COMMANDS_RTN_VAL_OK_SILENT;
 
             for (ol = gmaster_list; ol; ol = ol->next)
             {
@@ -2486,7 +2471,7 @@ int command_gmasterfile(object *op, char *params)
 
         if (strstr(cp, "MW"))
         {
-            success = 1;
+            success = COMMANDS_RTN_VAL_OK_SILENT;
 
             for (ol = gmaster_list; ol; ol = ol->next)
             {
@@ -2501,7 +2486,7 @@ int command_gmasterfile(object *op, char *params)
 
         if (strstr(cp, "GM"))
         {
-            success = 1;
+            success = COMMANDS_RTN_VAL_OK_SILENT;
 
             for (ol = gmaster_list; ol; ol = ol->next)
             {
@@ -2516,7 +2501,7 @@ int command_gmasterfile(object *op, char *params)
 
         if (strstr(cp, "VOL"))
         {
-            success = 1;
+            success = COMMANDS_RTN_VAL_OK_SILENT;
 
             for (ol = gmaster_list; ol; ol = ol->next)
             {
@@ -2529,7 +2514,7 @@ int command_gmasterfile(object *op, char *params)
             }
         }
 
-        return !success;
+        return success;
     }
     /* Remove an entry. */
     else if (hash == subcommands.remove)
@@ -2541,7 +2526,7 @@ int command_gmasterfile(object *op, char *params)
         {
             new_draw_info(NDI_UNIQUE, 0, op, "Malformed or missing parameter.");
 
-            return 1;
+            return COMMANDS_RTN_VAL_SYNTAX;
         }
 
         for (ol = gmaster_list; ol; ol = ol->next)
@@ -2555,7 +2540,7 @@ int command_gmasterfile(object *op, char *params)
                 {
                     new_draw_info(NDI_UNIQUE, 0, op, "You have insufficient permission to remove this entry.");
 
-                    return 0;
+                    return COMMANDS_RTN_VAL_ERROR;
                 }
 
                 remove_gmaster_file_entry(ol);
@@ -2570,7 +2555,7 @@ int command_gmasterfile(object *op, char *params)
         {
             new_draw_info(NDI_UNIQUE, 0, op, "Entry could not be found!");
 
-           return 0;
+           return COMMANDS_RTN_VAL_ERROR;
         }
     }
     /* Unknown subcommand. */
@@ -2578,20 +2563,16 @@ int command_gmasterfile(object *op, char *params)
     {
         FREE_AND_CLEAR_HASH(hash);
 
-        return 1;
+        return COMMANDS_RTN_VAL_SYNTAX;
     }
 
-    /* TODO: Message to relevant fmaster channel. */
-    LOG(llevInfo, "INFO:: /gmasterfile %s %s invoked by %s\n",
-        params, cp, query_name(op));
-
-    return 0;
+    return COMMANDS_RTN_VAL_OK;
 }
 
 int command_invisible(object *op, char *params)
 {
     if (!op)
-        return 0;
+        return COMMANDS_RTN_VAL_ERROR;
 
     if (IS_SYS_INVISIBLE(op))
     {
@@ -2606,37 +2587,40 @@ int command_invisible(object *op, char *params)
 
     update_object(op, UP_OBJ_FACE);
 
-    return 0;
+    return COMMANDS_RTN_VAL_OK_SILENT;
 }
 
-static int command_learn_spell_or_prayer(object *op, char *params, int special_prayer)
+static int CommandLearnSpellOrPrayer(object *op, char *params, int special_prayer)
 {
     int spell;
 
     if (!op ||
         op->type != PLAYER ||
         !CONTR(op))
-        return 0;
+        return COMMANDS_RTN_VAL_ERROR;
 
     if (!params)
-        return 1;
+        return COMMANDS_RTN_VAL_SYNTAX;
 
     if ((spell = look_up_spell_name(params)) <= 0)
+    {
         new_draw_info(NDI_UNIQUE, 0, op, "Unknown spell.");
-    else
-        do_learn_spell(op, spell, special_prayer);
+        return COMMANDS_RTN_VAL_ERROR;
+    }
 
-    return 0;
+    do_learn_spell(op, spell, special_prayer);
+    return COMMANDS_RTN_VAL_OK;
 }
 
+// These 2 are not in the current command list ... don't know why - TW
 int command_learn_spell(object *op, char *params)
 {
-    return command_learn_spell_or_prayer(op, params, 0);
+    return CommandLearnSpellOrPrayer(op, params, 0);
 }
 
 int command_learn_special_prayer(object *op, char *params)
 {
-    return command_learn_spell_or_prayer(op, params, 1);
+    return CommandLearnSpellOrPrayer(op, params, 1);
 }
 
 int command_forget_spell(object *op, char *params)
@@ -2646,21 +2630,21 @@ int command_forget_spell(object *op, char *params)
     if (!op ||
         op->type != PLAYER ||
         !CONTR(op))
-        return 0;
+        return COMMANDS_RTN_VAL_ERROR;
 
     if (!params)
-        return 1;
+        return COMMANDS_RTN_VAL_SYNTAX;
 
     if ((spell = look_up_spell_name(params)) <= 0)
     {
         new_draw_info(NDI_UNIQUE, 0, op, "Unknown spell.");
 
-        return 0;
+        return COMMANDS_RTN_VAL_ERROR;
     }
 
     do_forget_spell(op, spell);
 
-    return 0;
+    return COMMANDS_RTN_VAL_OK;
 }
 
 /* GROS */
@@ -2669,7 +2653,7 @@ int command_listplugins(object *op, char *params)
 {
     displayPluginsList(op);
 
-    return 0;
+    return COMMANDS_RTN_VAL_OK;
 }
 
 /* GROS */
@@ -2680,8 +2664,8 @@ int command_loadplugin(object *op, char *params)
 {
     char buf[MEDIUM_BUF];
 
-    if (!params) /* fix crash bug with no paramaters -- Gramlath 3/30/2007 */
-        return 1;
+    if (!params)
+        return COMMANDS_RTN_VAL_SYNTAX;
 
     sprintf(buf, "%s/../plugins/%s",
             DATADIR, params);
@@ -2689,7 +2673,7 @@ int command_loadplugin(object *op, char *params)
            buf);
     initOnePlugin(buf);
 
-    return 0;
+    return COMMANDS_RTN_VAL_OK;
 }
 
 /* GROS */
@@ -2698,12 +2682,12 @@ int command_loadplugin(object *op, char *params)
 /* are not loaded.                                                           */
 int command_unloadplugin(object *op, char *params)
 {
-    if (!params) /* fix crash bug with no paramaters -- Gramlath 3/30/2007 */
-        return 1;
+    if (!params)
+        return COMMANDS_RTN_VAL_SYNTAX;
 
     removeOnePlugin(params);
 
-    return 0;
+    return COMMANDS_RTN_VAL_OK;
 }
 
 int command_ip(object *op, char *params)
@@ -2711,19 +2695,19 @@ int command_ip(object *op, char *params)
     player *pl;
 
     if (!params)
-        return 1;
+        return COMMANDS_RTN_VAL_SYNTAX;
 
     if (!(pl = find_player(params)))
     {
         new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, op, "No such player!");
 
-        return 0;
+        return COMMANDS_RTN_VAL_ERROR;
     }
 
     new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, op, "IP of %s is %s",
                          params, pl->socket.ip_host);
 
-    return 0;
+    return COMMANDS_RTN_VAL_OK_SILENT;
 }
 
 /* Toggle wizpass (walk through walls, do not move apply, etc). */
@@ -2732,12 +2716,12 @@ int command_wizpass(object *op, char *params)
     uint8 wizpass;
 
     if (!op)
-        return 0;
+        return COMMANDS_RTN_VAL_ERROR;
 
     wizpass = (CONTR(op)->wizpass) ? 0 : 1;
 
     new_draw_info(NDI_UNIQUE, 0, op, "Wizpass set to %d.", wizpass);
     CONTR(op)->wizpass = wizpass;
 
-    return 0;
+    return COMMANDS_RTN_VAL_OK_SILENT;
 }

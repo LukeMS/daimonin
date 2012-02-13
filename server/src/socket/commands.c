@@ -183,7 +183,7 @@ CommArray_s CommandsGM[] =
 #if DAI_DEVELOPMENT_CONTENT
     {"generate",       command_generate,       0.0f, 1, CHANNEL_NAME_GM},
 #endif
-    {"dm_connections", command_dm_connections, 0.0f, 1, CHANNEL_NAME_GM},
+    {"connections",    command_connections,    0.0f, 1, CHANNEL_NAME_GM},
     {"inventory",      command_inventory,      0.0f, 1, NULL},
     {"summon",         command_summon,         0.0f, 1, CHANNEL_NAME_GM},
     {"teleport",       command_teleport,       0.0f, 1, NULL},
@@ -533,13 +533,13 @@ void cs_cmd_generic(char *buf, int len, NewSocket *ns)
                                  csp->name);
             return;
 
-        case COMMANDS_RTN_VAL_OTHER:
+        case COMMANDS_RTN_VAL_ERROR:
             /* User has formatted command properly, but there was some other error
              * Maybe, they got the parameters wrong, e.g. /kick non-existant-player-name
              * The specific function should handle the output to the player */
             return;
 
-        case COMMANDS_RTN_VAL_OK_NO_ACTION:
+        case COMMANDS_RTN_VAL_OK_SILENT:
             /* Command completed with no error, although no action was actually taken */
             break;
 
