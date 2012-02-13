@@ -520,9 +520,11 @@ void cs_cmd_generic(char *buf, int len, NewSocket *ns)
             /* Command was a success; send message to appropriate channel, if defined */
             if (csp->ch_name)
                 if (channel=findGlobalChannelFromName(NULL, csp->ch_name, TRUE))
+                {
                     sprintf(ch_buf, "%s%s -- /%s %s", STRING_OBJ_NAME(ob),
                             (pl->privacy) ? " (~Privacy mode~)" : "", buf, STRING_SAFE(cp));
                     sendChannelMessage(NULL, channel, ch_buf);
+                }
             break;
 
         case COMMANDS_RTN_VAL_SYNTAX:
@@ -536,6 +538,10 @@ void cs_cmd_generic(char *buf, int len, NewSocket *ns)
              * Maybe, they got the parameters wrong, e.g. /kick non-existant-player-name
              * The specific function should handle the output to the player */
             return;
+
+        case COMMANDS_RTN_VAL_OK_NO_ACTION:
+            /* Command completed with no error, although no action was actually taken */
+            break;
 
         default:
             // An unknown command return value here ... log it!
