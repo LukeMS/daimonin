@@ -1954,7 +1954,7 @@ int command_ban(object *op, char *params)
         BanList(op, FALSE); // Print list of banned names
         BanList(op, TRUE);  // Print list of banned IPs
 
-        return COMMANDS_RTN_VAL_OK;
+        return COMMANDS_RTN_VAL_OK_NO_ACTION;
     }
     else if (!strcmp(mode, "add") || !strcmp(mode, "name") || !strcmp(mode, "ip"))
         return BanAdd(op, mode, str, seconds);
