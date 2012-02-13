@@ -522,7 +522,7 @@ void cs_cmd_generic(char *buf, int len, NewSocket *ns)
                 if (channel=findGlobalChannelFromName(NULL, csp->ch_name, TRUE))
                 {
                     sprintf(ch_buf, "%s%s -- /%s %s", STRING_OBJ_NAME(ob),
-                            (pl->privacy) ? " (~Privacy mode~)" : "", buf, STRING_SAFE(cp));
+                            (pl->privacy) ? " (~Privacy mode~)" : "", buf, (cp) ? cp : "");
                     sendChannelMessage(NULL, channel, ch_buf);
                 }
             break;
