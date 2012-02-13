@@ -1,0 +1,5 @@
+~Category~: System
+
+~Syntax~: /summon <name>
+~Description~:
+   Summons the player <name>.  This player is transported from their current location, to a free spot next to you.

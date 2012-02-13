@@ -1,0 +1,5 @@
+~Category~: Player
+
+~Syntax~: /ip <name>
+~Description~:
+   Shows the IP address of player <name>.

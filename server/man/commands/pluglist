@@ -1,0 +1,5 @@
+~Category~: System
+
+~Syntax~: /pluglist
+~Description~:
+   Lists all the currently loaded plugins.

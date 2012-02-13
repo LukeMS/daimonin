@@ -1,0 +1,5 @@
+~Category~: System
+
+~Syntax~: /stats <name>
+~Description~:
+   Prints the current stats for player <name>.

@@ -1,0 +1,5 @@
+~Category~: System
+
+~Syntax~: /plugin <name>
+~Description~:
+   Unload plugin <name> (do not include path in <name>).

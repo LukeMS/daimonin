@@ -1,4 +1,4 @@
 ~Category~: Players/Gmasters
 
 ~Syntax~: /gmasterlist
-~Purpose~: Lists all the gmasters (VOLs, GMs, MWs, and non-stealthed MMs) currently online.
+~Purpose~: Lists all the gmasters (VOLs, GMs, MWs, MMs and SAs) currently online, unless they have requested privacy.

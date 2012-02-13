@@ -1,0 +1,11 @@
+~Category~: System
+
+~Syntax~: /setskill
+~Description~:
+   Gives the usage for setskill, and lists all skill numbers.
+
+~Syntax~: /setskill <who> <skill nr> <level> 
+~Description~:
+   Sets <skill nr> to <level> for <who>.
+   If <who> does not have the skill, they learn it.
+   If <level> is set to 0, player will loose the skill.

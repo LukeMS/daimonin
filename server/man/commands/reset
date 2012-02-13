@@ -1,0 +1,6 @@
+~Category~: System
+
+~Syntax~: /reset <map> 
+~Description~:
+   Causes <map> to be reset back to its orginal state.
+   If <map> is omitted, the current map is reset.

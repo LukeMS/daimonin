@@ -1,0 +1,10 @@
+~Category~: System
+
+~Syntax~: /addexp
+~Description~:
+   Gives the usage for addexp, and lists all skill numbers.
+
+~Syntax~: /addexp <who> <skill nr> <exp> 
+~Description~:
+   Adds <exp> to <skill nr> for <who>.
+   If <who> does not have the skill, nothing happens.

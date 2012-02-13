@@ -1,0 +1,11 @@
+~Category~: System
+
+~Syntax~: /goto
+~Description~:
+   Transports you back to your usual save-bed.
+
+~Syntax~: /goto <map path> <x> <y>
+~Description~:
+   Transports you to <map path> at position <x,y>.
+   <map path> may be absolute (begin with /) or relative.
+   <x> and <y> default to the map's defined entry point.
