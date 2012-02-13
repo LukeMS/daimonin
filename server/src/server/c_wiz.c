@@ -1987,7 +1987,7 @@ static int BanList(object *op, int isIP)
                                      ol->objlink.ban->ticks_init / 8);
     }
 
-    return COMMANDS_RTN_VAL_OK;
+    return COMMANDS_RTN_VAL_OK_NO_ACTION;
 }
 
 /* Add a player to the ban list, using name or IP, or add (which does both) */
