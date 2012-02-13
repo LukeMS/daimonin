@@ -1,0 +1,33 @@
+~Category~: System
+
+~Syntax~: /ban list
+~Description~:
+   Lists all banned player names and IP addresses.
+
+~Syntax~: /ban name <name> <seconds>
+~Description~:
+    Adds the player called <name> to the ban list for <seconds>.
+    <name> need not necessarily be a real player.
+    <seconds> defaults to 60 if omitted.
+
+~Syntax~: /ban ip <ip> <seconds>
+~Description~:
+    Adds the IP address <ip> to the ban list for <seconds>.
+    <ip> need not necessarily be a real IP address.  IP ranges are allowed using *.
+    <seconds> defaults to 60 if omitted. 
+
+~Syntax~: /ban add <name> <seconds>
+~Description~:
+    Adds the player <name> to the ban list for <seconds>.
+    <name> must be an online player.  The player's IP address is also added to the ban list (prevents login by an alt).
+    <seconds> defaults to 60 if omitted. 
+
+~Syntax~: /ban remove <data>
+~Description~:
+    Removes <data> from the ban list.
+    <data> may be a player name, or an IP address range.
+
+General notes:
+    When adding to the ban list, any existing entries on the ban list are removed first.
+    Set the ban time to -1 to permanently ban a player or IP.
+    Only GMs and SAs can permanently ban a player.
