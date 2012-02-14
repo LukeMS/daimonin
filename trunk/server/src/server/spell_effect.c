@@ -775,7 +775,7 @@ int cast_heal(object *op, int level, object *target, int spell_type)
           heal = random_roll(level / 2, (level + 3) / 4 * 3) + 5;
 
           /* give bonus or malus to damage depending on if the player/mob is attuned/repelled to that spell path */
-          heal *= (int) (PATH_DMG_MULT(op, find_spell(spell_type)));
+          heal *= (double) (PATH_DMG_MULT(op, find_spell(spell_type)));
           if (op->type == PLAYER)
           {
               if (heal > 0)
