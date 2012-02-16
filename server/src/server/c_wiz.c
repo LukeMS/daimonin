@@ -45,6 +45,7 @@ static int BanRemove(object *op, char *str);
 static int BanRemoveFromBanList(object *op, char *str, int isIP, int mute);
 
 static int CommandLearnSpellOrPrayer(object *op, char *params, int special_prayer);
+static int CreateObject(object *op, char *params, int isCreate, int isGenerate, int isSpawn);
 
 #if 0 /* disabled because account patch */
 typedef struct dmload_struct {
@@ -471,226 +472,185 @@ int command_goto(object *op, char *params)
     return COMMANDS_RTN_VAL_OK_SILENT;
 }
 
-/* is this function called from somewhere ? -Tero */
+int command_create(object *op, char *params)
+{
+    return CreateObject(op, params, TRUE, FALSE, FALSE);
+}
+
 int command_generate(object *op, char *params)
 {
-    object     *tmp = NULL;
-    int         nrof, i, magic, set_magic = 0, set_nrof = 0, gotquote, gotspace;
-    char        buf[MEDIUM_BUF], *cp, *bp = buf, *bp2, *bp3, *bp4 = NULL, *obp, *cp2;
-    archetype  *at;
-    artifact   *art = NULL;
+    return CreateObject(op, params, FALSE, TRUE, FALSE);
+}
+
+int command_spawn(object *op, char *params)
+{
+    return CreateObject(op, params, FALSE, FALSE, TRUE);
+}
+
+static int CreateObject(object *op, char *params, int isCreate, int isGenerate, int isSpawn)
+{
+    int        nrof = 1, set_nrof = 0,
+               magic = 0, set_magic = 0,
+               i, pos = 0,
+               isMultiPart = TRUE;
+    char      *str,
+               var[SMALL_BUF] = "",
+               buf[MEDIUM_BUF];
+    object    *tmp = NULL;
+    archetype *at;
+    artifact  *art = NULL;
 
     if (!op || op->type != PLAYER)
-        return 0;
+        return COMMANDS_RTN_VAL_ERROR;
 
     if (!params)
-        return 1;
+        return COMMANDS_RTN_VAL_SYNTAX;
 
-    bp = params;
+    // First parameter must be quantity, or blank
+    str = get_param_from_string(params, &pos);
 
-    if (sscanf(bp, "%d ", &nrof))
+    if (sscanf(str, "%d", &nrof))
     {
-        if ((bp = strchr(params, ' ')) == NULL)
-            return 1;
-
-        bp++;
+        // TODO - get rid of set_nrof?
         set_nrof = 1;
-        LOG(llevDebug, "%s creates: (%d) %s\n", op->name, nrof, bp);
-    }
 
-    if (sscanf(bp, "%d ", &magic))
-    {
-        if ((bp = strchr(bp, ' ')) == NULL)
-            return 1;
+        /* Constrain nrof to sensible values (less than 50). */
+        nrof = MAX(1, MIN(nrof, 50));
 
-        bp++;
-        set_magic = 1;
-        LOG(llevDebug, "%s creates: (%d) (%d) %s\n", op->name, nrof, magic, bp);
-    }
+        // Second parameter may be magic bonus (only if quantity was specified), or blank
+        str = get_param_from_string(params, &pos);
 
-    if ((cp = strstr(bp, " amask ")) != NULL)
-    {
-        *cp = '\0';
-        cp += 7;
-    }
-
-    for (bp2 = bp; *bp2; bp2++)
-        if (*bp2 == ' ')
+        if (sscanf(str, "%d", &magic))
         {
-            *bp2 = '\0';
-            bp2++;
+            set_magic = 1;
 
-            break;
+            /* Constrain magic to sensible values (less than 50). */
+            magic = MAX(-10, MIN(magic, 10));
+
+            // Next parameter *must* be arch name
+            str = get_param_from_string(params, &pos);
+        }
+    }
+
+    if (!str)
+        return COMMANDS_RTN_VAL_SYNTAX;
+
+    // Browse the archtypes for the name - perhaps it is a base item
+    if ((at = find_archetype(str)) == NULL)
+    {
+        new_draw_info(NDI_UNIQUE, 0, op, "No such archetype name: %s.", str);
+        return COMMANDS_RTN_VAL_ERROR;
+    }
+
+    if (isGenerate)
+        if (at->clone.type == MONSTER || at->clone.type == PLAYER)
+        {
+            new_draw_info(NDI_UNIQUE, 0, op, "Generate cannot be used to create mobs.");
+            return COMMANDS_RTN_VAL_ERROR;
         }
 
-    /* ok - first step: browse the archtypes for the name - perhaps it is a base item */
-    if ((at = find_archetype(bp)) == NULL)
-    {
-        new_draw_info(NDI_UNIQUE, 0, op, "No such archetype or artifact name.");
-
-        return 0;
-    }
-
-    if (at->clone.type == MONSTER || at->clone.type == PLAYER)
-    {
-        new_draw_info(NDI_UNIQUE, 0, op, "Generate cannot be used to create mobs.");
-
-        return 0;
-    }
-
-    if (cp)
-    {
-        for (cp2 = cp; *cp2; cp2++)
-            if (*cp2 == ' ')
-            {
-                *cp2 = '\0';
-
-                break;
-            }
-
-        if (find_artifactlist(at->clone.type) == NULL)
+    if (isSpawn)
+        if (at->clone.type != MONSTER && at->clone.type != PLAYER)
         {
-            new_draw_info(NDI_UNIQUE, 0, op, "No artifact list for type %d\n",
-                                 at->clone.type);
-        }
-        else
-        {
-            art = find_artifact(cp);
-
-            if (!art)
-            {
-                new_draw_info(NDI_UNIQUE, 0, op, "No such artifact ([%d] of %s)",
-                                     at->clone.type, cp);
-            }
+            new_draw_info(NDI_UNIQUE, 0, op, "Spawn must only be used to create mobs.");
+            return COMMANDS_RTN_VAL_ERROR;
         }
 
-        LOG(llevDebug, "%s creates: (%d) (%d) (%s) of (%s)\n",
-            op->name, (set_nrof) ? nrof : 0, (set_magic) ? magic : 0, bp, cp);
-    } /* if cp */
-
+    // Is this a multi-part object, or simple?
     if (at->clone.nrof)
-    {
-        tmp = arch_to_object(at);
-        tmp->x = op->x,tmp->y = op->y;
+        isMultiPart = FALSE;
 
-        if (set_nrof)
-            tmp->nrof = nrof;
-
-        tmp->map = op->map;
-
-        if (set_magic)
-            set_abs_magic(tmp, magic);
-
-        if (art)
-		if(legal_artifact_combination(tmp, art))
-	            give_artifact_abilities(tmp, art);
-
-        if (need_identify(tmp))
-        {
-            SET_FLAG(tmp, FLAG_IDENTIFIED);
-            CLEAR_FLAG(tmp, FLAG_KNOWN_MAGICAL);
-        }
-
-        while (*bp2)
-        {
-            bp4 = NULL;
-
-            /* find the first quote */
-            for (bp3 = bp2, gotquote = 0, gotspace = 0; *bp3 && gotspace < 2; bp3++)
-            {
-                if (*bp3 == '"')
-                {
-                    *bp3 = ' ';
-                    gotquote++;
-
-                    for (bp4 = ++bp3; *bp4; bp4++)
-                        if (*bp4 == '"')
-                        {
-                            *bp4 = '\0';
-
-                            break;
-                        }
-
-                    break;
-                }
-                else if (*bp3 == ' ')
-                    gotspace++;
-            }
-
-            if (!gotquote)
-            {
-                /* then find the second space */
-                for (bp3 = bp2; *bp3; bp3++)
-                {
-                    if (*bp3 == ' ')
-                    {
-                        for (bp4 = bp3++; *bp4; bp4++)
-                        {
-                            if (*bp4 == ' ')
-                            {
-                                *bp4 = '\0';
-
-                                break;
-                            }
-                        }
-
-                        break;
-                    }
-                }
-            }
-
-            if(bp4 == NULL)
-            {
-                new_draw_info(NDI_UNIQUE, 0, op, "No parameter value for variable %s", bp2);
-
-                break;
-            }
-
-            if (strstr(bp2, "name") || strstr(bp2, "title") || strstr(bp2, "amask"))
-            {
-                /* now bp3 should be the argument, and bp2 the whole command */
-                if (set_variable(tmp, bp2) == -1)
-                  new_draw_info(NDI_UNIQUE, 0, op, "Unknown variable %s", bp2);
-                else
-                    new_draw_info(NDI_UNIQUE, 0, op, "(%s#%d)->%s=%s", tmp->name, tmp->count, bp2, bp3);
-            }
-
-            if (gotquote)
-                bp2 = bp4 + 2;
-            else
-                bp2 = bp4 + 1;
-
-            /* WARNING: got a warning msg by compiler here - using obp without init. */
-            /*if (obp == bp2)
-            break;*/ /* invalid params */
-            obp = bp2;
-        }
-        tmp = insert_ob_in_ob(tmp, op);
-        esrv_send_item(op, tmp);
-
-        return 0;
-    }
-
-    for (i = 0 ; i < (set_nrof ? nrof : 1); i++)
+    // Now, start to create the object ...
+    // For a simple object, we only do this loop once, and set nrof directly inside loop
+    // For multi-part, we repeat the loop nrof times
+    for (i = 0 ; i < (isMultiPart ? (set_nrof ? nrof : 1) : 1); i++)
     {
         archetype      *atmp;
         object*prev =   NULL, *head = NULL;
+
         for (atmp = at; atmp != NULL; atmp = atmp->more)
         {
             tmp = arch_to_object(atmp);
             if (head == NULL)
-                head = tmp;
+                head = tmp;  // For simple objects, we'll only get head
 
             tmp->x = op->x + tmp->arch->clone.x;
             tmp->y = op->y + tmp->arch->clone.y;
             tmp->map = op->map;
 
+            if (!isMultiPart)
+                if (set_nrof)
+                    tmp->nrof = nrof;
+
             if (set_magic)
                 set_abs_magic(tmp, magic);
 
-            if (art)
-		if(legal_artifact_combination(tmp, art))
-	                give_artifact_abilities(tmp, art);
+            // Read the remaining attribute / value pairs
+            while ((str = get_param_from_string(params, &pos)))
+            {
+                // amask is handled differently to other attributes
+                if (!strcmp(str, "amask"))
+                {
+                    str = get_param_from_string(params, &pos);
+
+                    if (!str)
+                        return COMMANDS_RTN_VAL_SYNTAX;
+
+                    // Does this arch actually have any artifacts?
+                    if (find_artifactlist(at->clone.type) == NULL)
+                        new_draw_info(NDI_UNIQUE, 0, op, "No artifact list for type %d\n",
+                                      at->clone.type);
+                    else
+                    {
+                        // Only allowed to apply one amask to each arch (I think)
+                        if (!art)
+                        {
+                            art = find_artifact(str);
+
+                            if (art)
+                                if(legal_artifact_combination(tmp, art))
+                                    give_artifact_abilities(tmp, art);
+                                else
+                                {
+                                    new_draw_info(NDI_UNIQUE, 0, op, "Illegal artifact combination ([%d] of %s)",
+                                                         at->clone.type, str);
+                                    art = NULL;
+                                }
+                            else
+                                new_draw_info(NDI_UNIQUE, 0, op, "No such artifact ([%d] of %s)",
+                                                     at->clone.type, str);
+
+
+                        }
+                    }
+                }  // end of str == amask
+                else
+                {  // any other parameter
+                    strcpy(var, str);  // Save the variable name
+
+                    str = get_param_from_string(params, &pos);  // Read value for this variable
+
+                    if (!str)
+                        return COMMANDS_RTN_VAL_SYNTAX;
+
+                    // Check for restrictions
+                    if (isGenerate && (!strcmp(var, "name") || !strcmp(var, "title")) ||
+                        isSpawn    && (!strcmp(var, "name") || !strcmp(var, "title") || !strcmp(var, "level")) ||
+                        isCreate)
+                    {
+                        // set_variable needs param to look like "param value"
+                        sprintf(buf, "%s %s", var, str);
+
+                        if (set_variable(tmp, buf) == -1)
+                            new_draw_info(NDI_UNIQUE, 0, op, "Unknown variable '%s'", var);
+                        else
+                            new_draw_info(NDI_UNIQUE, 0, op, "(%s#%d)->%s=%s",
+                                          tmp->name, tmp->count, var, str);
+                    }
+                    else
+                        new_draw_info(NDI_UNIQUE, 0, op, "Not allowed to set variable '%s'", var);
+                }
+            }  // end of reading parameter string
 
             if (need_identify(tmp))
             {
@@ -698,96 +658,38 @@ int command_generate(object *op, char *params)
                 CLEAR_FLAG(tmp, FLAG_KNOWN_MAGICAL);
             }
 
-            while (*bp2)
-            {
-                bp4=NULL;
-
-                /* find the first quote */
-                for (bp3 = bp2, gotquote = 0, gotspace = 0; *bp3 && gotspace < 2; bp3++)
-                {
-                    if (*bp3 == '"')
-                    {
-                        *bp3 = ' ';
-                        gotquote++;
-                        bp3++;
-
-                        for (bp4 = bp3; *bp4; bp4++)
-                            if (*bp4 == '"')
-                            {
-                                *bp4 = '\0';
-
-                                break;
-                            }
-
-                        break;
-                    }
-                    else if (*bp3 == ' ')
-                        gotspace++;
-                }
-
-                if (!gotquote)
-                {
-                    /* then find the second space */
-                    for (bp3 = bp2; *bp3; bp3++)
-                    {
-                        if (*bp3 == ' ')
-                        {
-                            bp3++;
-                            for (bp4 = bp3; *bp4; bp4++)
-                            {
-                                if (*bp4 == ' ')
-                                {
-                                    *bp4 = '\0';
-
-                                    break;
-                                }
-                            }
-
-                            break;
-                        }
-                    }
-                }
-
-                if (bp4 == NULL)
-                {
-                    new_draw_info(NDI_UNIQUE, 0, op, "No parameter value for variable %s",
-                                         bp2);
-
-                    break;
-                }
-                if (!cp && (strstr(bp2, "name") || strstr(bp2, "title") || strstr(bp2, "amask")))
-                {
-                    /* now bp3 should be the argument, and bp2 the whole command */
-                    if (set_variable(tmp, bp2) == -1)
-                        new_draw_info(NDI_UNIQUE, 0, op, "Unknown variable '%s'",
-                                             bp2);
-                    else
-                        new_draw_info(NDI_UNIQUE, 0, op, "(%s#%d)->%s=%s",
-                                             tmp->name, tmp->count, bp2, bp3);
-                }
-
-                if (gotquote)
-                    bp2 = bp4 + 2;
-                else
-                    bp2 = bp4 + 1;
-
-                /* WARNING: got a warning msg by compiler here - using obp without init. */
-                /*if (obp == bp2)
-                   break;*/ /* invalid params */
-                obp = bp2;
-            }
-
             if (head != tmp)
                 tmp->head = head,prev->more = tmp;
 
             prev = tmp;
-        }
+        }  // end of for-loop for reading head and ->more objects
 
-        head = insert_ob_in_ob(head, op);
-        esrv_send_item(op, head);
+        if (at->clone.randomitems)
+            create_treasure_list(at->clone.randomitems, head, GT_APPLY,
+                                 (head->type == MONSTER) ? head->level : get_enviroment_level(head),
+                                 ART_CHANCE_UNSET, 0);
+
+        if (IS_LIVE(head))
+        {
+            if(head->type == MONSTER)
+                fix_monster(head);
+
+            insert_ob_in_map(head, op->map, op, INS_NO_MERGE | INS_NO_WALK_ON);
+        }
+        else
+        {
+            if (isMultiPart)
+            {
+                new_draw_info(NDI_UNIQUE, 0, op, "Sorry - can't create multipart items!");
+                COMMANDS_RTN_VAL_ERROR;
+            }
+
+            head = insert_ob_in_ob(head, op);
+            esrv_send_item(op, head);
+        }
     }
 
-    return 0;
+    return COMMANDS_RTN_VAL_OK;
 }
 
 #ifndef USE_CHANNELS
@@ -937,323 +839,6 @@ int command_teleport(object *op, char *params)
         new_draw_info(NDI_UNIQUE, 0, op, "OK.");
 
     return COMMANDS_RTN_VAL_OK;
-}
-
-int command_create(object *op, char *params)
-{
-    object     *tmp = NULL;
-    int         nrof, i, magic, set_magic = 0, set_nrof = 0, gotquote, gotspace;
-    char        buf[MEDIUM_BUF], *cp, *bp = buf, *bp2, *bp3, *bp4 = NULL, *obp, *cp2;
-    archetype  *at;
-    artifact   *art = NULL;
-
-    if (!op || op->type != PLAYER)
-        return 0;
-
-    if (!params)
-        return 1;
-
-    bp = params;
-
-    if (sscanf(bp, "%d ", &nrof))
-    {
-        if (!(bp = strchr(params, ' ')))
-            return 1;
-
-        bp++;
-        set_nrof = 1;
-        LOG(llevDebug, "%s creates: (%d) %s\n", op->name, nrof, bp);
-    }
-
-    if (sscanf(bp, "%d ", &magic))
-    {
-        if (!(bp = strchr(bp, ' ')))
-            return 1;
-
-        bp++;
-        set_magic = 1;
-        LOG(llevDebug, "%s creates: (%d) (%d) %s\n", op->name, nrof, magic, bp);
-    }
-
-    if ((cp = strstr(bp, " amask ")))
-    {
-        *cp = '\0';
-        cp += 7;
-    }
-
-    for (bp2 = bp; *bp2; bp2++)
-        if (*bp2 == ' ')
-        {
-            *bp2 = '\0';
-            bp2++;
-
-            break;
-        }
-
-    /* ok - first step: browse the archtypes for the name - perhaps it is a base item */
-    if (!(at = find_archetype(bp)))
-    {
-        new_draw_info(NDI_UNIQUE, 0, op, "No such archetype or artifact name.");
-
-        return 0;
-    }
-
-    if (cp)
-    {
-        for (cp2 = cp; *cp2; cp2++)
-            if (*cp2 == ' ')
-            {
-                *cp2 = '\0';
-
-                break;
-            }
-
-        if (!find_artifactlist(at->clone.type))
-        {
-            new_draw_info(NDI_UNIQUE, 0, op, "No artifact list for type %d\n", at->clone.type);
-        }
-        else
-        {
-            art = find_artifact(cp);
-
-            if (!art)
-            {
-                new_draw_info(NDI_UNIQUE, 0, op, "No such artifact ([%d] of %s)", at->clone.type, cp);
-            }
-        }
-
-        LOG(llevDebug, "%s creates: (%d) (%d) (%s) of (%s)\n",
-            op->name, set_nrof ? nrof : 0, set_magic ? magic : 0, bp, cp);
-    } /* if cp */
-
-    if (at->clone.nrof)
-    {
-        tmp = arch_to_object(at);
-        tmp->x = op->x,tmp->y = op->y;
-
-        if (set_nrof)
-            tmp->nrof = nrof;
-
-        tmp->map = op->map;
-
-        if (set_magic)
-            set_abs_magic(tmp, magic);
-
-        if (art)
-            give_artifact_abilities(tmp, art);
-
-        if (need_identify(tmp))
-        {
-            SET_FLAG(tmp, FLAG_IDENTIFIED);
-            CLEAR_FLAG(tmp, FLAG_KNOWN_MAGICAL);
-        }
-
-        while (*bp2)
-        {
-            /* find the first quote */
-            for (bp4 = NULL, bp3 = bp2, gotquote = 0, gotspace = 0; *bp3 && gotspace < 2; bp3++)
-            {
-                if (*bp3 == '"')
-                {
-                    *bp3 = ' ';
-                    gotquote++;
-
-                    for (bp4 = ++bp3; *bp4; bp4++)
-                        if (*bp4 == '"')
-                        {
-                            *bp4 = '\0';
-
-                            break;
-                        }
-
-                    break;
-                }
-                else if (*bp3 == ' ')
-                    gotspace++;
-            }
-
-            if (!gotquote)
-            {
-                /* then find the second space */
-                for (bp3 = bp2; *bp3; bp3++)
-                {
-                    if (*bp3 == ' ')
-                    {
-                        for (bp4 = ++bp3; *bp4; bp4++)
-                        {
-                            if (*bp4 == ' ')
-                            {
-                                *bp4 = '\0';
-
-                                break;
-                            }
-                        }
-
-                        break;
-                    }
-                }
-            }
-
-            if(!bp4)
-            {
-                new_draw_info(NDI_UNIQUE, 0, op, "No parameter value for variable %s",
-                                     bp2);
-
-                break;
-            }
-
-            /* now bp3 should be the argument, and bp2 the whole command */
-            if (set_variable(tmp, bp2) == -1)
-                new_draw_info(NDI_UNIQUE, 0, op, "Unknown variable %s",
-                                     bp2);
-            else
-                new_draw_info(NDI_UNIQUE, 0, op, "(%s#%d)->%s=%s",
-                                     tmp->name, tmp->count, bp2, bp3);
-
-            if (gotquote)
-                bp2 = bp4 + 2;
-            else
-                bp2 = bp4 + 1;
-
-            /* WARNING: got a warning msg by compiler here - using obp without init. */
-            /*if (obp == bp2)
-            break;*/ /* invalid params */
-            obp = bp2;
-        }
-
-        tmp = insert_ob_in_ob(tmp, op);
-        esrv_send_item(op, tmp);
-
-        return 0;
-    }
-
-    for (i = 0 ; i < (set_nrof ? nrof : 1); i++)
-    {
-        archetype      *atmp;
-        object*prev =   NULL, *head = NULL;
-
-        for (atmp = at; atmp != NULL; atmp = atmp->more)
-        {
-            tmp = arch_to_object(atmp);
-
-            if (head == NULL)
-                head = tmp;
-
-            tmp->x = op->x + tmp->arch->clone.x;
-            tmp->y = op->y + tmp->arch->clone.y;
-            tmp->map = op->map;
-
-            if (set_magic)
-                set_abs_magic(tmp, magic);
-
-            if (art)
-                give_artifact_abilities(tmp, art);
-
-            if (need_identify(tmp))
-            {
-                SET_FLAG(tmp, FLAG_IDENTIFIED);
-                CLEAR_FLAG(tmp, FLAG_KNOWN_MAGICAL);
-            }
-
-            while (*bp2)
-            {
-                /* find the first quote */
-                for (bp4 = NULL, bp3 = bp2, gotquote = 0, gotspace = 0; *bp3 && gotspace < 2; bp3++)
-                {
-                    if (*bp3 == '"')
-                    {
-                        *bp3 = ' ';
-                        gotquote++;
-
-                        for (bp4 = ++bp3; *bp4; bp4++)
-                            if (*bp4 == '"')
-                            {
-                                *bp4 = '\0';
-
-                                break;
-                            }
-
-                        break;
-                    }
-                    else if (*bp3 == ' ')
-                        gotspace++;
-                }
-
-                if (!gotquote)
-                {
-                    /* then find the second space */
-                    for (bp3 = bp2; *bp3; bp3++)
-                    {
-                        if (*bp3 == ' ')
-                        {
-                            for (bp4 = ++bp3; *bp4; bp4++)
-                            {
-                                if (*bp4 == ' ')
-                                {
-                                    *bp4 = '\0';
-
-                                    break;
-                                }
-                            }
-
-                            break;
-                        }
-                    }
-                }
-
-                if (!bp4)
-                {
-                    new_draw_info(NDI_UNIQUE, 0, op, "No parameter value for variable %s",
-                                         bp2);
-
-                    break;
-                }
-
-                /* now bp3 should be the argument, and bp2 the whole command */
-                if (set_variable(tmp, bp2) == -1)
-                    new_draw_info(NDI_UNIQUE, 0, op, "Unknown variable '%s'",
-                                         bp2);
-                else
-                    new_draw_info(NDI_UNIQUE, 0, op, "(%s#%d)->%s=%s",
-                                         tmp->name, tmp->count, bp2, bp3);
-
-                if (gotquote)
-                    bp2 = bp4 + 2;
-                else
-                    bp2 = bp4 + 1;
-
-                /* WARNING: got a warning msg by compiler here - using obp without init. */
-                /*if (obp == bp2)
-                   break;*/ /* invalid params */
-                obp = bp2;
-            }
-
-            if (head != tmp)
-                tmp->head = head,prev->more = tmp;
-
-            prev = tmp;
-        }
-
-        if (at->clone.randomitems)
-            create_treasure_list(at->clone.randomitems, head, GT_APPLY,
-                                 (head->type == MONSTER) ? head->level : get_enviroment_level(head),
-                                 ART_CHANCE_UNSET, 0);
-
-        if (IS_LIVE(head))
-        {
-            if(head->type == MONSTER)
-                fix_monster(head);
-
-            insert_ob_in_map(head, op->map, op, INS_NO_MERGE | INS_NO_WALK_ON);
-        }
-        else
-        {
-            head = insert_ob_in_ob(head, op);
-            esrv_send_item(op, head);
-        }
-    }
-
-    return 0;
 }
 
 int command_inventory(object *op, char *params)

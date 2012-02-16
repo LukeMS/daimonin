@@ -406,6 +406,7 @@ extern int              look_up_spell_name(const char *spname);
 extern racelink        *find_racelink(const char *name);
 extern char            *cleanup_string(char *ustring);
 extern char            *get_word_from_string(char *str, int *pos);
+extern char            *get_param_from_string(char *str, int *pos);
 extern int              buf_overflow(const char *buf1, const char *buf2, int bufsize);
 extern void             bitstostring(long bits, int num, char *str);
 extern int              clipped_percent(int a, int b);
