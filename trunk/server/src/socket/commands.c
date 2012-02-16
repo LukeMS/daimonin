@@ -182,6 +182,7 @@ CommArray_s CommandsGM[] =
 {
 #if DAI_DEVELOPMENT_CONTENT
     {"generate",       command_generate,       0.0f, 1, CHANNEL_NAME_GM},
+    {"spawn",          command_spawn,          0.0f, 1, CHANNEL_NAME_GM},
 #endif
     {"connections",    command_connections,    0.0f, 1, CHANNEL_NAME_GM},
     {"inventory",      command_inventory,      0.0f, 1, NULL},
@@ -210,6 +211,7 @@ CommArray_s CommandsMW[] =
     {"dm_light",      command_dm_light,    0.0f, 1, NULL},
     {"set_map_light", command_setmaplight, 0.0f, 1, NULL},
     {"generate",      command_generate,    0.0f, 1, CHANNEL_NAME_MW},
+    {"spawn",         command_spawn,       0.0f, 1, CHANNEL_NAME_MW},
 #endif
     {"mspinfo",       command_mspinfo,     0.0f, 1, NULL},
 };
@@ -218,7 +220,6 @@ CommArray_s CommandsMM[] =
 {
 #ifdef DAI_DEVELOPMENT_CONTENT
     {"serverspeed",   command_serverspeed, 0.0f, 1, CHANNEL_NAME_MM},
-    {"create",        command_create,      0.0f, 1, CHANNEL_NAME_MM},
 #else
     {"stealth",       command_stealth,     0.0f, 1, NULL},
     {"wizpass",       command_wizpass,     0.0f, 1, NULL},
@@ -238,12 +239,13 @@ CommArray_s CommandsSA[] =
 {
 #ifndef DAI_DEVELOPMENT_CONTENT
     {"serverspeed",  command_serverspeed,       0.0f, 1, CHANNEL_NAME_SA},
-    {"create",       command_create,            0.0f, 1, CHANNEL_NAME_SA},
     {"addexp",       command_addexp,            0.0f, 1, CHANNEL_NAME_SA},
     {"setskill",     command_setskill,          0.0f, 1, CHANNEL_NAME_SA},
     {"setstat",      command_setstat,           0.0f, 1, CHANNEL_NAME_SA},
-    {"generate",     command_generate,          0.0f, 1, CHANNEL_NAME_SA},
 #endif
+    {"create",       command_create,            0.0f, 1, CHANNEL_NAME_SA},
+    {"generate",     command_generate,          0.0f, 1, CHANNEL_NAME_SA},
+    {"spawn",        command_spawn,             0.0f, 1, CHANNEL_NAME_SA},
     {"plugin",       command_loadplugin,        0.0f, 1, CHANNEL_NAME_SA},
     {"pluglist",     command_listplugins,       0.0f, 1, CHANNEL_NAME_SA},
     {"plugout",      command_unloadplugin,      0.0f, 1, CHANNEL_NAME_SA},

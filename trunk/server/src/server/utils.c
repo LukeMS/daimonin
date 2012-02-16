@@ -97,7 +97,7 @@ char * cleanup_string(char *ustring)
 
 
 /* returns a single word from a string, free from left & right whitespaces.
- * return NULL means that there is word left in str.
+ * return NULL means that there is no word left in str.
  */
 char * get_word_from_string(char *str, int *pos)
 {
@@ -115,6 +115,46 @@ char * get_word_from_string(char *str, int *pos)
     /* copy until end of string nor whitespace */
     while (*(str + (*pos)) != '\0' && (isalnum(*(str + (*pos))) || isalpha(*(str + (*pos)))))
         buf[i++] = *(str + (*pos)++);
+
+    buf[i] = '\0';
+    return buf;
+}
+
+
+/* returns a single parameter from a string, free from left & right whitespaces.
+ * return NULL means that there is no word left in str.
+ * a parameter may be multiple words limited by quote marks
+ * parameter may contain special chars like _
+ * TODO - could this replace the above get_word function?  Torchwood
+ */
+char * get_param_from_string(char *str, int *pos)
+{
+    static char buf[HUGE_BUF]; /* this is used for controled input which never should bigger as this */
+    int         i   = 0;
+    int         gq  = 0;  // got quote
+
+    buf[0] = '\0';
+
+    while ((*(str + (*pos)) != '\0') && (*(str + (*pos)) == ' '))
+        (*pos)++;
+
+    if (*(str + (*pos)) == '\0') /* nothing left! */
+        return NULL;
+
+    if (*(str + (*pos)) == '"') /* found a quote */
+    {
+        gq = 1;
+        (*pos)++;
+    }
+
+    /* copy until end of string or whitespace / quote */
+    while (*(str + (*pos)) != '\0' && (gq ? *(str + (*pos)) != '"' : *(str + (*pos)) != ' '))
+        buf[i++] = *(str + (*pos)++);
+
+    if (*(str + (*pos)) == '"') /* found a quote */
+    {
+        (*pos)++;
+    }
 
     buf[i] = '\0';
     return buf;
@@ -201,4 +241,4 @@ void NDI_LOG(LogLevel logLevel, int flags, int pri, object *ob, char *format, ..
     if (ob &&
         CONTR(ob))
         new_draw_info(flags, pri, ob, "%s", buf);
-} 
+}
