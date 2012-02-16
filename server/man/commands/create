@@ -1,0 +1,29 @@
+~Category~: Players/Gmasters
+
+~Syntax~: /create <qty> <magic> <arch> <attribute> <value> ...
+~Purpose~: Creates an object.  Living objects are placed directly onto the map; non-living into player's inventory.  Non-living multi-part objects may not be generated.
+
+~<qty>~
+Optional: Sets the quantity of created objects (min 1, max 50), default 1
+
+~<magic>~
+Optional: Gives the created item a magic bonus (min -10, max +10), default 0
+Note: Can only be set if <qty> is also set
+
+~<arch>~
+Required: Name of the archetype object to create
+
+~<attribute> <value>~
+Optional: Set <attribute> of object to <value>
+Notes:
+~+~ <value> may be enclosed by " ", to allow included spaces (e.g. title "of doom").
+
+~+~ Multiple attribute/value pairs may be defined as required.
+
+~+~ Attributes are applied to the created object in the order specified.
+
+~+~ /create allows ANY attribute to be set.  WARNING:  There is no error checking for valid / sensible attribute values.  Lack of care WILL result in server crashes and / or corruption of player files.
+
+~Use /create with extreme care, and only if you know exactly what you are doing!~
+
+See also /generate and /spawn.
