@@ -105,6 +105,7 @@ static object *spawn_monster(object *mob, object *spawn)
          *         perfectly possible for a script to change the autogen values
          *         per mob, just an extra step.
          * CONS: * Less flexible to do it per spawnpoint than per mob. */
+
         /* monster->item_quality autogenerates the mob's level as the
          * appropriate colour for the map difficulty. */
         if (monster->item_quality)
@@ -152,6 +153,7 @@ static object *spawn_monster(object *mob, object *spawn)
 
             /* The old value of monster->level is the minimum the new value can
              * be. */
+
             /* FIXME: Currently the level cap is 127. This is because for some
              * reason level is sint8 in object.h. Making it unsigned or more
              * bits would seem a more sensible move, but as level is used all
@@ -161,34 +163,9 @@ static object *spawn_monster(object *mob, object *spawn)
                                          MAX(level, MIN(max, MAXMOBLEVEL)));
         }
 
-        /* monster->item_condition modifies the mob's attack_ and resist_
-         * attributes *that are non-zero in the arch and unchanged in the
-         * obj*. */
-        if (monster->item_condition > 0)
-        {
-            for (i = 0; i < NROFATTACKS; i++)
-            {
-                int arcattack = monster->arch->clone.attack[i],
-                    objattack = monster->attack[i],
-                    arcresist = monster->arch->clone.resist[i],
-                    objresist = monster->resist[i];
-
-                if (arcattack != 0 && objattack == arcattack)
-                {
-                    objattack += random_roll(0 - monster->item_condition,
-                                             monster->item_condition);
-                    monster->attack[i] = MAX(0, MIN(objattack, 200));
-                }
-
-                /* resistances of 100 mean immunity. Don't mess with that. */
-                if (arcresist != 0 && arcresist != 100 && objresist == arcresist)
-                {
-                    objresist += random_roll(0 - monster->item_condition,
-                                             monster->item_condition);
-                    monster->resist[i] = MAX(-100, MIN(objresist, 100));
-                }
-            }
-        }
+        // The code in adjust_monster was directly included in this function
+        // but some of it is useful for command_spawn(), so has been separated out
+        adjust_monster(monster);
 
         if (monster->randomitems)
         {
@@ -207,6 +184,43 @@ static object *spawn_monster(object *mob, object *spawn)
     }
 
     return monster;
+}
+
+void adjust_monster(object *monster)
+{
+    int i;
+
+    if (monster->type != MONSTER)
+        return;
+
+    /* monster->item_condition modifies the mob's attack_ and resist_
+     * attributes *that are non-zero in the arch and unchanged in the
+     * obj*. */
+    if (monster->item_condition > 0)
+    {
+        for (i = 0; i < NROFATTACKS; i++)
+        {
+            int arcattack = monster->arch->clone.attack[i],
+                objattack = monster->attack[i],
+                arcresist = monster->arch->clone.resist[i],
+                objresist = monster->resist[i];
+
+            if (arcattack != 0 && objattack == arcattack)
+            {
+                objattack += random_roll(0 - monster->item_condition,
+                                         monster->item_condition);
+                monster->attack[i] = MAX(0, MIN(objattack, 200));
+            }
+
+            /* resistances of 100 mean immunity. Don't mess with that. */
+            if (arcresist != 0 && arcresist != 100 && objresist == arcresist)
+            {
+                objresist += random_roll(0 - monster->item_condition,
+                                         monster->item_condition);
+                monster->resist[i] = MAX(-100, MIN(objresist, 100));
+            }
+        }
+    }
 }
 
 /* check the current darkness on this map allows to spawn
@@ -489,7 +503,7 @@ void spawn_point(object *op)
     if (!insert_ob_in_map(mob, mob->map, op, 0))
         LOG(llevBug, "BUG:: %s/spawn_point(): Could not insert mob (%s[%d]) in map!\n",
             __FILE__, STRING_OBJ_NAME(op), TAG(op));
- 
+
     /* initialise any beacons in the newly spawned mob's inv */
     next = mob;
     while (next)
