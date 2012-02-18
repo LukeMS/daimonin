@@ -256,6 +256,7 @@ int                         command_goto(object *op, char *params);
 int                         command_create(object *op, char *params);
 int                         command_generate(object *op, char *params);
 int                         command_spawn(object *op, char *params);
+int                         command_listarch(object *op, char *params);
 int                         command_mutelevel(object *op, char *params);
 int                         command_summon(object *op, char *params);
 int                         command_teleport(object *op, char *params);
@@ -423,6 +424,7 @@ void                        talk_to_npc(player *pl, char *topic);
 void                        gui_npc(object *who, uint8 mode, const char *text);
 /* spawn_point.c */
 void                        spawn_point(object *op);
+void                        adjust_monster(object *monster);
 objectlink                 *add_linked_spawn(object *spawn);
 void                        remove_linked_spawn_list(mapstruct *map);
 void                        send_link_spawn_signal(object *spawn, object *target, int signal);

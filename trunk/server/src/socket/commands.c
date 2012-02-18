@@ -183,6 +183,7 @@ CommArray_s CommandsGM[] =
 #if DAI_DEVELOPMENT_CONTENT
     {"generate",       command_generate,       0.0f, 1, CHANNEL_NAME_GM},
     {"spawn",          command_spawn,          0.0f, 1, CHANNEL_NAME_GM},
+    {"listarch",       command_listarch,       0.0f, 1, NULL},
 #endif
     {"connections",    command_connections,    0.0f, 1, CHANNEL_NAME_GM},
     {"inventory",      command_inventory,      0.0f, 1, NULL},
@@ -212,6 +213,7 @@ CommArray_s CommandsMW[] =
     {"set_map_light", command_setmaplight, 0.0f, 1, NULL},
     {"generate",      command_generate,    0.0f, 1, CHANNEL_NAME_MW},
     {"spawn",         command_spawn,       0.0f, 1, CHANNEL_NAME_MW},
+    {"listarch",      command_listarch,    0.0f, 1, NULL},
 #endif
     {"mspinfo",       command_mspinfo,     0.0f, 1, NULL},
 };
@@ -246,8 +248,9 @@ CommArray_s CommandsSA[] =
     {"create",       command_create,            0.0f, 1, CHANNEL_NAME_SA},
     {"generate",     command_generate,          0.0f, 1, CHANNEL_NAME_SA},
     {"spawn",        command_spawn,             0.0f, 1, CHANNEL_NAME_SA},
+    {"listarch",     command_listarch,          0.0f, 1, NULL},
     {"plugin",       command_loadplugin,        0.0f, 1, CHANNEL_NAME_SA},
-    {"pluglist",     command_listplugins,       0.0f, 1, CHANNEL_NAME_SA},
+    {"pluglist",     command_listplugins,       0.0f, 1, NULL},
     {"plugout",      command_unloadplugin,      0.0f, 1, CHANNEL_NAME_SA},
     {"dump",         command_dump,              0.0f, 1, CHANNEL_NAME_SA},
     {"d_active",     command_dumpactivelist,    0.0f, 1, CHANNEL_NAME_SA},
@@ -521,7 +524,7 @@ void cs_cmd_generic(char *buf, int len, NewSocket *ns)
         case COMMANDS_RTN_VAL_OK:
             /* Command was a success; send message to appropriate channel, if defined */
             if (csp->ch_name)
-                if (channel=findGlobalChannelFromName(NULL, csp->ch_name, TRUE))
+                if ((channel=findGlobalChannelFromName(NULL, csp->ch_name, TRUE)))
                 {
                     sprintf(ch_buf, "%s%s -- /%s %s", STRING_OBJ_NAME(ob),
                             (pl->privacy) ? " (~Privacy mode~)" : "", buf, (cp) ? cp : "");

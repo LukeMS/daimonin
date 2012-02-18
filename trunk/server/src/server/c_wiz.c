@@ -46,6 +46,7 @@ static int BanRemoveFromBanList(object *op, char *str, int isIP, int mute);
 
 static int CommandLearnSpellOrPrayer(object *op, char *params, int special_prayer);
 static int CreateObject(object *op, char *params, int isCreate, int isGenerate, int isSpawn);
+static int CheckAttributeValue(char *var, char *val, int isCreate, int isGenerate, int isSpawn);
 
 #if 0 /* disabled because account patch */
 typedef struct dmload_struct {
@@ -495,6 +496,7 @@ static int CreateObject(object *op, char *params, int isCreate, int isGenerate, 
                isMultiPart = TRUE;
     char      *str,
                var[SMALL_BUF] = "",
+               val[SMALL_BUF] = "",
                buf[MEDIUM_BUF];
     object    *tmp = NULL;
     archetype *at;
@@ -511,11 +513,13 @@ static int CreateObject(object *op, char *params, int isCreate, int isGenerate, 
 
     if (sscanf(str, "%d", &nrof))
     {
-        // TODO - get rid of set_nrof?
         set_nrof = 1;
 
-        /* Constrain nrof to sensible values (less than 50). */
-        nrof = MAX(1, MIN(nrof, 50));
+        /* Constrain nrof to sensible values. */
+        if (isGenerate || isSpawn)
+            nrof = MAX(1, MIN(nrof, 100));
+        else
+            nrof = MAX(1, nrof);
 
         // Second parameter may be magic bonus (only if quantity was specified), or blank
         str = get_param_from_string(params, &pos);
@@ -524,8 +528,11 @@ static int CreateObject(object *op, char *params, int isCreate, int isGenerate, 
         {
             set_magic = 1;
 
-            /* Constrain magic to sensible values (less than 50). */
-            magic = MAX(-10, MIN(magic, 10));
+            /* Constrain nrof to sensible values. */
+            if (isGenerate || isSpawn)
+                magic = MAX(-10, MIN(magic, 10));
+            else
+                magic = MAX(-127, MIN(magic, 127));
 
             // Next parameter *must* be arch name
             str = get_param_from_string(params, &pos);
@@ -633,19 +640,19 @@ static int CreateObject(object *op, char *params, int isCreate, int isGenerate, 
                     if (!str)
                         return COMMANDS_RTN_VAL_SYNTAX;
 
+                    strcpy(val, str);  // Save the value
+
                     // Check for restrictions
-                    if (isGenerate && (!strcmp(var, "name") || !strcmp(var, "title")) ||
-                        isSpawn    && (!strcmp(var, "name") || !strcmp(var, "title") || !strcmp(var, "level")) ||
-                        isCreate)
+                    if (CheckAttributeValue(var, val, isCreate, isGenerate, isSpawn))
                     {
                         // set_variable needs param to look like "param value"
-                        sprintf(buf, "%s %s", var, str);
+                        sprintf(buf, "%s %s", var, val);
 
                         if (set_variable(tmp, buf) == -1)
                             new_draw_info(NDI_UNIQUE, 0, op, "Unknown variable '%s'", var);
                         else
                             new_draw_info(NDI_UNIQUE, 0, op, "(%s#%d)->%s=%s",
-                                          tmp->name, tmp->count, var, str);
+                                          tmp->name, tmp->count, var, val);
                     }
                     else
                         new_draw_info(NDI_UNIQUE, 0, op, "Not allowed to set variable '%s'", var);
@@ -672,7 +679,10 @@ static int CreateObject(object *op, char *params, int isCreate, int isGenerate, 
         if (IS_LIVE(head))
         {
             if(head->type == MONSTER)
+            {
+                adjust_monster(head);
                 fix_monster(head);
+            }
 
             insert_ob_in_map(head, op->map, op, INS_NO_MERGE | INS_NO_WALK_ON);
         }
@@ -681,7 +691,7 @@ static int CreateObject(object *op, char *params, int isCreate, int isGenerate, 
             if (isMultiPart)
             {
                 new_draw_info(NDI_UNIQUE, 0, op, "Sorry - can't create multipart items!");
-                COMMANDS_RTN_VAL_ERROR;
+                return COMMANDS_RTN_VAL_ERROR;
             }
 
             head = insert_ob_in_ob(head, op);
@@ -691,6 +701,135 @@ static int CreateObject(object *op, char *params, int isCreate, int isGenerate, 
 
     return COMMANDS_RTN_VAL_OK;
 }
+
+static int CheckAttributeValue(char *var, char *val, int isCreate, int isGenerate, int isSpawn)
+{
+    int i;
+
+    if (!strcmp(var, "name"))
+        return TRUE; // Everyone can do this
+
+    if (!strcmp(var, "title"))
+        return TRUE; // Everyone can do this
+
+    if (!strcmp(var, "level"))
+    {
+        // Level restricted between 1-127
+        // Also checks for actual integer level given ...
+        if (sscanf(val, "%d", &i) == 1)
+        {
+            i = MAX(1, MIN(i, 127));
+            itoa(i, val, 10);
+
+            if (isCreate) return TRUE;
+            if (isSpawn) return TRUE;
+        }
+    }
+
+    if (!strcmp(var, "item_condition"))
+    {
+        // Restricted between 1-200 (used in adjust_monster() in spawn_point.c)
+        // Also checks for actual integer level given ...
+        if (sscanf(val, "%d", &i) == 1)
+        {
+            i = MAX(1, MIN(i, 200));
+            itoa(i, val, 10);
+
+            if (isCreate) return TRUE;
+            if (isSpawn) return TRUE;
+        }
+    }
+
+    if (!strstr(var, "attack_") || !strstr(var, "resist_"))
+    {
+        // We won't bother checking for valid attack/resist types,
+        // as this is done by set_variable() later anyway
+        if (sscanf(val, "%d", &i) == 1)
+        {
+            i = MAX(-100, MIN(i, 100));
+            itoa(i, val, 10);
+
+            if (isCreate) return TRUE;
+            if (isSpawn) return TRUE;
+        }
+    }
+
+    // Anything else can be set by Create command
+    if (isCreate)
+        return TRUE;
+
+    return FALSE;
+}
+
+int command_listarch(object *op, char *params)
+{
+    archetype      *at;
+    artifactlist   *al;
+    artifact       *art = NULL;
+
+    // This code basically copied from the dump_arch code (so maybe directly use, with a flag
+    // for dump all or dump name only ??
+
+    if (!op || op->type != PLAYER)
+        return COMMANDS_RTN_VAL_ERROR;
+
+    return COMMANDS_RTN_VAL_OK; // Not working yet!!!
+
+//    if (!params)
+//        return COMMANDS_RTN_VAL_SYNTAX;
+
+// need to generate a hash table, and then check for duplicates
+// or is there already a hash table of arch names?
+// put this code into arch.c
+
+// add header for real arch list
+    for (at = first_archetype; at != NULL; at = (at->more == NULL) ? at->next : at->more)
+    {
+        new_draw_info(NDI_UNIQUE, 0, op, "%s", at->clone.name);
+    }
+
+// turn into a proper new_draw_info
+//    LOG(llevInfo, "Artifacts fake arch list:\n");
+    for (al = first_artifactlist; al != NULL; al = al->next)
+    {
+        art = al->items;
+        do
+        {
+            if(art->flags&ARTIFACT_FLAG_HAS_DEF_ARCH )
+            {
+                // new_draw_info(NDI_UNIQUE, 0, op, "%s", art->def_at_name);
+            }
+            art = art->next;
+        }
+        while (art != NULL);
+    }
+
+    return COMMANDS_RTN_VAL_OK;
+}
+
+// How to print in batches:
+#if 0
+        new_draw_info(NDI_UNIQUE | NDI_YELLOW, 0, pl->ob, "\n%s", name[i]);
+
+        for (j = 0; j < size[i]; j++)
+        {
+            /* TODO: This calculation can be removed, and the following
+             * new_draw_info() moved to inside this for loop by having the
+             * client handle NDI_UNIQUE properly (well, at all).
+             * -- Smacky 20090604 */
+            if (strlen(buf) + strlen(ap[i][j].name) > 42)
+            {
+                new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, pl->ob, "%s", buf);
+                buf[0] = '\0';
+            }
+
+            sprintf(strchr(buf, '\0'), " /%s ~+~", ap[i][j].name);
+        }
+
+        new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, pl->ob, "%s", buf);
+#endif
+
+
 
 #ifndef USE_CHANNELS
 int command_mutelevel(object *op, char *params)
@@ -729,7 +868,6 @@ int command_mutelevel(object *op, char *params)
 
 int command_connections(object *op, char *params)
 {
-    char buf[MEDIUM_BUF];
     int nr = 2;
 
     if (!op)
@@ -1440,7 +1578,6 @@ int command_mute(object *op, char *params)
     char        name[MEDIUM_BUF] = "";
     int         seconds = 0;
     player     *pl;
-    objectlink *ol;
 
     if (!params)
         return COMMANDS_RTN_VAL_SYNTAX;
@@ -1561,9 +1698,7 @@ static int BanList(object *op, int isIP)
 /* Add a player to the ban list, using name or IP, or add (which does both) */
 static int BanAdd(object *op, char *mode, char *str, int seconds)
 {
-    int     spot,
-            tmp;
-    player *pl;
+    int tmp;
 
     if (!str || !mode)
         return COMMANDS_RTN_VAL_SYNTAX;
@@ -1576,11 +1711,12 @@ static int BanAdd(object *op, char *mode, char *str, int seconds)
         return COMMANDS_RTN_VAL_ERROR;
     }
 
-    /* For "add" command, player must be online ... */
     if (!strcmp(mode, "add"))
     {
-        if (str &&
-            (!(pl = find_player(str)) || !pl->ob))
+        player *pl = find_player(str);
+
+        /* For "add" command, player must be online ... */
+        if (!pl)
         {
             new_draw_info(NDI_UNIQUE, 0, op,
                           "Can't find the player %s!\nCheck name, or use /ban <name> or /ban <ip> directly.",
@@ -1588,30 +1724,7 @@ static int BanAdd(object *op, char *mode, char *str, int seconds)
 
             return COMMANDS_RTN_VAL_ERROR;
         }
-    }
 
-    // TODO - TW - Figure out how this works, and do some testing, then update message
-
-    if (!strcmp(mode, "ip"))
-    {
-        for (spot = 0; str[spot] != '\0'; spot++)
-        {
-            if ((CONTR(op)->gmaster_mode == GMASTER_MODE_VOL &&
-                 str[spot] == '*') ||
-                (CONTR(op)->gmaster_mode >= GMASTER_MODE_GM &&
-                 str[spot] == '*' &&
-                 spot < 11))
-            {
-                new_draw_info(NDI_UNIQUE, 0, op, "Need a better message here! Something to do with banning all domains?");
-                return COMMANDS_RTN_VAL_ERROR;
-            }
-        }
-    }
-
-    /* Syntax checking finished, so now do the actual banning,
-     * then kick player if possible */
-    if (!strcmp(mode, "add"))
-    {
         /* add name to the ban list */
         tmp = BanAddToBanList(op, str, seconds, FALSE);
         if ((tmp == COMMANDS_RTN_VAL_SYNTAX) || (tmp == COMMANDS_RTN_VAL_ERROR))
@@ -1626,6 +1739,8 @@ static int BanAdd(object *op, char *mode, char *str, int seconds)
     }
     else if (!strcmp(mode, "name"))
     {
+        player *pl;
+
         /* add name to the ban list */
         tmp = BanAddToBanList(op, str, seconds, FALSE);
         if ((tmp == COMMANDS_RTN_VAL_SYNTAX) || (tmp == COMMANDS_RTN_VAL_ERROR))
@@ -1634,8 +1749,24 @@ static int BanAdd(object *op, char *mode, char *str, int seconds)
         if ((pl = find_player(str)))
             kick_player(pl);
     }
-    else // must be ip mode
+    else if (!strcmp(mode, "ip"))
     {
+        int spot;
+
+        // TODO - TW - Figure out how this works, and do some testing, then update message
+        for (spot = 0; str[spot] != '\0'; spot++)
+        {
+            if ((CONTR(op)->gmaster_mode == GMASTER_MODE_VOL &&
+                 str[spot] == '*') ||
+                (CONTR(op)->gmaster_mode >= GMASTER_MODE_GM &&
+                 str[spot] == '*' &&
+                 spot < 11))
+            {
+                new_draw_info(NDI_UNIQUE, 0, op, "Need a better message here! Something to do with banning all domains?");
+                return COMMANDS_RTN_VAL_ERROR;
+            }
+        }
+
         tmp = BanAddToBanList(op, str, seconds, TRUE);
         if ((tmp == COMMANDS_RTN_VAL_SYNTAX) || (tmp == COMMANDS_RTN_VAL_ERROR))
             return tmp;
@@ -1715,7 +1846,7 @@ static int BanRemove(object *op, char *str)
 static int BanRemoveFromBanList(object *op, char *str, int isIP, int mute)
 {
     objectlink *ol;
-    const char *str_hash;
+    const char *str_hash = NULL;
 
     if (!isIP)
     {
