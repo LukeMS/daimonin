@@ -26,6 +26,8 @@ Notes:
     amask (sets artifact mask to be applied to base object)
     name
     title
-    level
+    level (limit 1 to 127)
+    attack_*, resist_* (limit -100 to 100) (e.g. resist_cleave 50)
+    item_condition (limit 1 to 200) (this applies some random variation to a mobs ~normal~ attack / resistance values)
 
 See also /create and /generate.
