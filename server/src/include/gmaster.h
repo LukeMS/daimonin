@@ -26,12 +26,12 @@
 #ifndef __GMASTER_H
 #define __GMASTER_H
 
-#define GMASTER_MODE_NO  1 << 0
-#define GMASTER_MODE_MW  1 << 1
-#define GMASTER_MODE_VOL 1 << 2
-#define GMASTER_MODE_GM  1 << 3
-#define GMASTER_MODE_MM  1 << 4
-#define GMASTER_MODE_SA  1 << 5
+#define GMASTER_MODE_NO  0
+#define GMASTER_MODE_MW  (1 << 0)
+#define GMASTER_MODE_VOL (1 << 1)
+#define GMASTER_MODE_GM  (1 << 2)
+#define GMASTER_MODE_MM  (1 << 3)
+#define GMASTER_MODE_SA  (1 << 4)
 
 typedef struct _gmaster_struct
 {
