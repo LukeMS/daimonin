@@ -37,6 +37,12 @@
 #include <arpa/inet.h>
 #endif
 
+typedef enum {
+    CREATE,
+    GENERATE,
+    SPAWN
+} CreateMode_t;
+
 /* Declare some local helper functions for command_ban() */
 static int BanList(object *op, int isIP);
 static int BanAdd(object *op, char *mode, char *str, int seconds);
@@ -45,8 +51,8 @@ static int BanRemove(object *op, char *str);
 static int BanRemoveFromBanList(object *op, char *str, int isIP, int mute);
 
 static int CommandLearnSpellOrPrayer(object *op, char *params, int special_prayer);
-static int CreateObject(object *op, char *params, int isCreate, int isGenerate, int isSpawn);
-static int CheckAttributeValue(char *var, char *val, int isCreate, int isGenerate, int isSpawn);
+static int CreateObject(object *op, char *params, CreateMode_t mode);
+static int CheckAttributeValue(char *var, char *val, CreateMode_t mode);
 
 #if 0 /* disabled because account patch */
 typedef struct dmload_struct {
@@ -475,25 +481,25 @@ int command_goto(object *op, char *params)
 
 int command_create(object *op, char *params)
 {
-    return CreateObject(op, params, TRUE, FALSE, FALSE);
+    return CreateObject(op, params, CREATE);
 }
 
 int command_generate(object *op, char *params)
 {
-    return CreateObject(op, params, FALSE, TRUE, FALSE);
+    return CreateObject(op, params, GENERATE);
 }
 
 int command_spawn(object *op, char *params)
 {
-    return CreateObject(op, params, FALSE, FALSE, TRUE);
+    return CreateObject(op, params, SPAWN);
 }
 
-static int CreateObject(object *op, char *params, int isCreate, int isGenerate, int isSpawn)
+static int CreateObject(object *op, char *params, CreateMode_t mode)
 {
-    int        nrof = 1, set_nrof = 0,
+    int        nrof = 1,
                magic = 0, set_magic = 0,
                i, pos = 0,
-               isMultiPart = TRUE;
+               allow_nrof_set = FALSE;
     char      *str,
                var[SMALL_BUF] = "",
                val[SMALL_BUF] = "",
@@ -513,13 +519,11 @@ static int CreateObject(object *op, char *params, int isCreate, int isGenerate, 
 
     if (sscanf(str, "%d", &nrof))
     {
-        set_nrof = 1;
-
         /* Constrain nrof to sensible values. */
-        if (isGenerate || isSpawn)
-            nrof = MAX(1, MIN(nrof, 100));
-        else
+        if (mode == CREATE)
             nrof = MAX(1, nrof);
+        else
+            nrof = MAX(1, MIN(nrof, 100));
 
         // Second parameter may be magic bonus (only if quantity was specified), or blank
         str = get_param_from_string(params, &pos);
@@ -529,10 +533,10 @@ static int CreateObject(object *op, char *params, int isCreate, int isGenerate, 
             set_magic = 1;
 
             /* Constrain nrof to sensible values. */
-            if (isGenerate || isSpawn)
-                magic = MAX(-10, MIN(magic, 10));
-            else
+            if (mode == CREATE)
                 magic = MAX(-127, MIN(magic, 127));
+            else
+                magic = MAX(-10, MIN(magic, 10));
 
             // Next parameter *must* be arch name
             str = get_param_from_string(params, &pos);
@@ -549,28 +553,28 @@ static int CreateObject(object *op, char *params, int isCreate, int isGenerate, 
         return COMMANDS_RTN_VAL_ERROR;
     }
 
-    if (isGenerate)
+    if (mode == GENERATE)
         if (at->clone.type == MONSTER || at->clone.type == PLAYER)
         {
             new_draw_info(NDI_UNIQUE, 0, op, "Generate cannot be used to create mobs.");
             return COMMANDS_RTN_VAL_ERROR;
         }
 
-    if (isSpawn)
+    if (mode == SPAWN)
         if (at->clone.type != MONSTER && at->clone.type != PLAYER)
         {
             new_draw_info(NDI_UNIQUE, 0, op, "Spawn must only be used to create mobs.");
             return COMMANDS_RTN_VAL_ERROR;
         }
 
-    // Is this a multi-part object, or simple?
+    // Does the arch definition allow direct set of nrof?
     if (at->clone.nrof)
-        isMultiPart = FALSE;
+       allow_nrof_set = TRUE;
 
     // Now, start to create the object ...
     // For a simple object, we only do this loop once, and set nrof directly inside loop
     // For multi-part, we repeat the loop nrof times
-    for (i = 0 ; i < (isMultiPart ? (set_nrof ? nrof : 1) : 1); i++)
+    for (i = 0 ; i < (allow_nrof_set ? 1 : nrof); i++)
     {
         archetype      *atmp;
         object*prev =   NULL, *head = NULL;
@@ -585,9 +589,8 @@ static int CreateObject(object *op, char *params, int isCreate, int isGenerate, 
             tmp->y = op->y + tmp->arch->clone.y;
             tmp->map = op->map;
 
-            if (!isMultiPart)
-                if (set_nrof)
-                    tmp->nrof = nrof;
+            if (allow_nrof_set)
+                tmp->nrof = nrof;
 
             if (set_magic)
                 set_abs_magic(tmp, magic);
@@ -643,7 +646,7 @@ static int CreateObject(object *op, char *params, int isCreate, int isGenerate, 
                     strcpy(val, str);  // Save the value
 
                     // Check for restrictions
-                    if (CheckAttributeValue(var, val, isCreate, isGenerate, isSpawn))
+                    if (CheckAttributeValue(var, val, mode))
                     {
                         // set_variable needs param to look like "param value"
                         sprintf(buf, "%s %s", var, val);
@@ -688,7 +691,7 @@ static int CreateObject(object *op, char *params, int isCreate, int isGenerate, 
         }
         else
         {
-            if (isMultiPart)
+            if (head->more)
             {
                 new_draw_info(NDI_UNIQUE, 0, op, "Sorry - can't create multipart items!");
                 return COMMANDS_RTN_VAL_ERROR;
@@ -702,7 +705,7 @@ static int CreateObject(object *op, char *params, int isCreate, int isGenerate, 
     return COMMANDS_RTN_VAL_OK;
 }
 
-static int CheckAttributeValue(char *var, char *val, int isCreate, int isGenerate, int isSpawn)
+static int CheckAttributeValue(char *var, char *val, CreateMode_t mode)
 {
     int i;
 
@@ -714,29 +717,25 @@ static int CheckAttributeValue(char *var, char *val, int isCreate, int isGenerat
 
     if (!strcmp(var, "level"))
     {
-        // Level restricted between 1-127
-        // Also checks for actual integer level given ...
         if (sscanf(val, "%d", &i) == 1)
         {
-            i = MAX(1, MIN(i, 127));
-            itoa(i, val, 10);
+            i = MAX(1, MIN(i, 127));  // Apply some sensible limits to i
+            sprintf(val, "%d", i);    // and put i back into val, incase i was just changed
 
-            if (isCreate) return TRUE;
-            if (isSpawn) return TRUE;
+            if (mode == CREATE) return TRUE;
+            if (mode == SPAWN) return TRUE;
         }
     }
 
     if (!strcmp(var, "item_condition"))
     {
-        // Restricted between 1-200 (used in adjust_monster() in spawn_point.c)
-        // Also checks for actual integer level given ...
         if (sscanf(val, "%d", &i) == 1)
         {
             i = MAX(1, MIN(i, 200));
-            itoa(i, val, 10);
+            sprintf(val, "%d", i);
 
-            if (isCreate) return TRUE;
-            if (isSpawn) return TRUE;
+            if (mode == CREATE) return TRUE;
+            if (mode == SPAWN) return TRUE;
         }
     }
 
@@ -747,25 +746,31 @@ static int CheckAttributeValue(char *var, char *val, int isCreate, int isGenerat
         if (sscanf(val, "%d", &i) == 1)
         {
             i = MAX(-100, MIN(i, 100));
-            itoa(i, val, 10);
+            sprintf(val, "%d", i);
 
-            if (isCreate) return TRUE;
-            if (isSpawn) return TRUE;
+            if (mode == CREATE) return TRUE;
+            if (mode == SPAWN) return TRUE;
         }
     }
 
     // Anything else can be set by Create command
-    if (isCreate)
+    // Note:  We don't do this check first, as we wanted to do the checks on valid level, etc.
+    if (mode == CREATE) return TRUE;
         return TRUE;
 
     return FALSE;
 }
 
+/* List all the available object names; helps player when using /create
+ * Restrict the print out to objects of a certain type */
 int command_listarch(object *op, char *params)
 {
+    int             atype;
     archetype      *at;
     artifactlist   *al;
     artifact       *art = NULL;
+
+    // Code under development ... Torchwood 19/02/2012
 
     // This code basically copied from the dump_arch code (so maybe directly use, with a flag
     // for dump all or dump name only ??
@@ -773,23 +778,18 @@ int command_listarch(object *op, char *params)
     if (!op || op->type != PLAYER)
         return COMMANDS_RTN_VAL_ERROR;
 
-    return COMMANDS_RTN_VAL_OK; // Not working yet!!!
+    if (!params || (sscanf(params, "%d", &atype) != 1))
+        return COMMANDS_RTN_VAL_SYNTAX;
 
-//    if (!params)
-//        return COMMANDS_RTN_VAL_SYNTAX;
-
-// need to generate a hash table, and then check for duplicates
-// or is there already a hash table of arch names?
-// put this code into arch.c
-
-// add header for real arch list
     for (at = first_archetype; at != NULL; at = (at->more == NULL) ? at->next : at->more)
     {
-        new_draw_info(NDI_UNIQUE, 0, op, "%s", at->clone.name);
+        if (at->clone.type == atype)
+            // This doesn't actually do what I want; I want the actual object name
+            // e.g. axe_small, not "small axe"
+            new_draw_info(NDI_UNIQUE, 0, op, "%s", at->clone.name);
+            // How to print in batches?  Take example code from command_help - list commands
     }
 
-// turn into a proper new_draw_info
-//    LOG(llevInfo, "Artifacts fake arch list:\n");
     for (al = first_artifactlist; al != NULL; al = al->next)
     {
         art = al->items;
@@ -806,30 +806,6 @@ int command_listarch(object *op, char *params)
 
     return COMMANDS_RTN_VAL_OK;
 }
-
-// How to print in batches:
-#if 0
-        new_draw_info(NDI_UNIQUE | NDI_YELLOW, 0, pl->ob, "\n%s", name[i]);
-
-        for (j = 0; j < size[i]; j++)
-        {
-            /* TODO: This calculation can be removed, and the following
-             * new_draw_info() moved to inside this for loop by having the
-             * client handle NDI_UNIQUE properly (well, at all).
-             * -- Smacky 20090604 */
-            if (strlen(buf) + strlen(ap[i][j].name) > 42)
-            {
-                new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, pl->ob, "%s", buf);
-                buf[0] = '\0';
-            }
-
-            sprintf(strchr(buf, '\0'), " /%s ~+~", ap[i][j].name);
-        }
-
-        new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, pl->ob, "%s", buf);
-#endif
-
-
 
 #ifndef USE_CHANNELS
 int command_mutelevel(object *op, char *params)
