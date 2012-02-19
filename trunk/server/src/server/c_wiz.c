@@ -559,6 +559,11 @@ static int CreateObject(object *op, char *params, CreateMode_t mode)
             new_draw_info(NDI_UNIQUE, 0, op, "Generate cannot be used to create mobs.");
             return COMMANDS_RTN_VAL_ERROR;
         }
+        else if (QUERY_FLAG(&at->clone, FLAG_SYS_OBJECT))
+        {
+            new_draw_info(NDI_UNIQUE, 0, op, "Generate cannot be used to create system objects.");
+            return COMMANDS_RTN_VAL_ERROR;
+        }
 
     if (mode == SPAWN)
         if (at->clone.type != MONSTER && at->clone.type != PLAYER)
@@ -769,11 +774,7 @@ int command_listarch(object *op, char *params)
     archetype      *at;
     artifactlist   *al;
     artifact       *art = NULL;
-
-    // Code under development ... Torchwood 19/02/2012
-
-    // This code basically copied from the dump_arch code (so maybe directly use, with a flag
-    // for dump all or dump name only ??
+    char            buf[MEDIUM_BUF] = "";
 
     if (!op || op->type != PLAYER)
         return COMMANDS_RTN_VAL_ERROR;
@@ -781,14 +782,25 @@ int command_listarch(object *op, char *params)
     if (!params || (sscanf(params, "%d", &atype) != 1))
         return COMMANDS_RTN_VAL_SYNTAX;
 
+    // For info: This code was 'inspired' by the dump_arch code
+
     for (at = first_archetype; at != NULL; at = (at->more == NULL) ? at->next : at->more)
     {
         if (at->clone.type == atype)
-            // This doesn't actually do what I want; I want the actual object name
-            // e.g. axe_small, not "small axe"
-            new_draw_info(NDI_UNIQUE, 0, op, "%s", at->clone.name);
-            // How to print in batches?  Take example code from command_help - list commands
+        {
+            // Print the results in batches
+            if (strlen(buf) + strlen(STRING_OBJ_ARCH_NAME(&at->clone)) > 42)
+            {
+                new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, op, "%s", buf);
+                buf[0] = '\0';
+            }
+            sprintf(strchr(buf, '\0'), " %s ~/~", STRING_OBJ_ARCH_NAME(&at->clone));
+        }
     }
+
+    // Print out the last batch ...
+    new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, op, "%s", buf);
+    buf[0] = '\0';
 
     for (al = first_artifactlist; al != NULL; al = al->next)
     {
@@ -797,12 +809,23 @@ int command_listarch(object *op, char *params)
         {
             if(art->flags&ARTIFACT_FLAG_HAS_DEF_ARCH )
             {
-                // new_draw_info(NDI_UNIQUE, 0, op, "%s", art->def_at_name);
+                if (art->def_at.clone.type == atype)
+                {
+                    // Print the results in batches
+                    if (strlen(buf) + strlen(STRING_OBJ_ARCH_NAME(&art->def_at.clone)) > 42)
+                    {
+                        new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, op, "%s", buf);
+                        buf[0] = '\0';
+                    }
+                    sprintf(strchr(buf, '\0'), " %s ~/~", STRING_OBJ_ARCH_NAME(&art->def_at.clone));
+                }
             }
             art = art->next;
         }
         while (art != NULL);
     }
+
+    new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, op, "%s", buf);
 
     return COMMANDS_RTN_VAL_OK;
 }
