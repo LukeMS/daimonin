@@ -30,6 +30,7 @@ void account_clear(Account *ac)
     ac->pwd[0] = 0;
     FREE_AND_CLEAR_HASH(ac->name);
     FREE_AND_CLEAR_HASH(ac->create_name); /* sanity freeing .. should not needed */
+    ac->nrof_chars = 0;
 
     for(i=0;i<ACCOUNT_MAX_PLAYER;i++)
     {
