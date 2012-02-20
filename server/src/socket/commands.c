@@ -1548,14 +1548,6 @@ void cs_cmd_newchar(char *buf, int len, NewSocket *ns)
     shstr  *pass;
     char    filename[MEDIUM_BUF];
 
-int i;
-LOG(llevInfo, ">>>>nrof=%d, status=%d, len=%d\n", ns->pl_account.nrof_chars, ns->status, len);
-for (i = 0; i < len; i++)
-{
-    char c = *(buf + i);
-    LOG(llevInfo, "%c", (c == '\0') ? '|' : c);
-}
-LOG(llevInfo, "\n");
     /* if the cmd isn't perfect, kill the socket. */
     if (ns->pl_account.nrof_chars == ACCOUNT_MAX_PLAYER ||
         !buf ||
@@ -1564,7 +1556,6 @@ LOG(llevInfo, "\n");
         buf[len - 1] ||
         ns->status != Ns_Account)
     {
-LOG(llevInfo, ">>>>Aargh!\n");
         ns->status = Ns_Dead;
 
         return;
