@@ -1,7 +1,7 @@
 ~Category~: Players/Gmasters
 
 ~Syntax~: /generate <qty> <magic> <arch> <attribute> <value> ...
-~Purpose~: Creates an object and places in player's inventory.  Only non-living objects may be generated.  Multi-part objects may not be generated.
+~Purpose~: Creates an object and places in player's inventory.  Only non-living objects may be generated.  Multi-part objects may not be generated.  Generate cannot be used to create sys-objects.
 
 ~<qty>~
 Optional: Sets the quantity of created objects (min 1, max 50), default 1
