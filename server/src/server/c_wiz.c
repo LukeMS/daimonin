@@ -521,7 +521,7 @@ static int CreateObject(object *op, char *params, CreateMode_t mode)
     {
         /* Constrain nrof to sensible values. */
         if (mode == CREATE)
-            nrof = MAX(1, nrof);
+            nrof = MAX(1, nrof); // Only constraint is min qty = 1
         else
             nrof = MAX(1, MIN(nrof, 100));
 
@@ -566,7 +566,7 @@ static int CreateObject(object *op, char *params, CreateMode_t mode)
         }
 
     if (mode == SPAWN)
-        if (at->clone.type != MONSTER && at->clone.type != PLAYER)
+        if (at->clone.type != MONSTER) // Don't allow spawning of PLAYER objects
         {
             new_draw_info(NDI_UNIQUE, 0, op, "Spawn must only be used to create mobs.");
             return COMMANDS_RTN_VAL_ERROR;
@@ -576,14 +576,16 @@ static int CreateObject(object *op, char *params, CreateMode_t mode)
     if (at->clone.nrof)
        allow_nrof_set = TRUE;
 
-    // Now, start to create the object ...
-    // For a simple object, we only do this loop once, and set nrof directly inside loop
-    // For multi-part, we repeat the loop nrof times
+    /* Now, start to create the object ...
+     * If the base arch definition allows direct set of nrof, we only run
+     * the loop once and create an item stack; else we run it nrof times
+     * and create individual objects */
     for (i = 0 ; i < (allow_nrof_set ? 1 : nrof); i++)
     {
         archetype      *atmp;
         object*prev =   NULL, *head = NULL;
 
+        // Create head and, if they exist, tail (more) objects
         for (atmp = at; atmp != NULL; atmp = atmp->more)
         {
             tmp = arch_to_object(atmp);
@@ -776,6 +778,13 @@ int command_listarch(object *op, char *params)
     artifact       *art = NULL;
     char            buf[MEDIUM_BUF] = "";
 
+    /* This command runs too slowly / sends too much data to client in one go,
+     * so is temporarily removed for main servers - I will try to re-write later
+     * ~ Torchwood Feb 2012 */
+#ifndef DAI_DEVELOPMENT_CONTENT
+    return COMMANDS_RTN_VAL_OK_SILENT;
+#else
+
     if (!op || op->type != PLAYER)
         return COMMANDS_RTN_VAL_ERROR;
 
@@ -828,6 +837,7 @@ int command_listarch(object *op, char *params)
     new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, op, "%s", buf);
 
     return COMMANDS_RTN_VAL_OK;
+#endif
 }
 
 #ifndef USE_CHANNELS
