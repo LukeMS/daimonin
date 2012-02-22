@@ -261,7 +261,7 @@ int command_kick(object *op, char *params)
 int command_reboot(object *op, char *params)
 {
     char  *cp = NULL;
-    shstr *hash = NULL;
+    shstr *subcommand = NULL;
     int    time = 300;
 
     if (!op ||
@@ -274,12 +274,17 @@ int command_reboot(object *op, char *params)
     /* No subcommand? Default to restart. */
     if (!params)
     {
-        hash = add_refcount(subcommands.restart);
+        FREE_AND_COPY_HASH(subcommand, subcommands.restart);
     }
+    /* Otherwise we need to make a working copy of params (because we may write
+     * to it), and take the first word as the shstr subcommand. */
     else
     {
-        /* Find the subcommand. */
-        if ((cp = strchr(params, ' ')))
+        char buf[MEDIUM_BUF];
+
+        sprintf(buf, "%s", params);
+
+        if ((cp = strchr(buf, ' ')))
         {
             *(cp++) = '\0';
 
@@ -289,23 +294,23 @@ int command_reboot(object *op, char *params)
             }
         }
 
-        hash = add_string(params);
+        FREE_AND_COPY_HASH(subcommand, buf);
     }
 
     /* Cancel scheduled reboot. */
-    if (hash == subcommands.cancel)
+    if (subcommand == subcommands.cancel)
     {
-        FREE_AND_CLEAR_HASH(hash);
+        FREE_AND_CLEAR_HASH(subcommand);
         shutdown_agent(-2, SERVER_EXIT_NORMAL, CONTR(op), NULL);
 
-        return COMMANDS_RTN_VAL_OK;
+        return COMMANDS_RTN_VAL_OK_SILENT;
     }
     /* Restart server. */
-    else if (hash == subcommands.restart)
+    else if (subcommand == subcommands.restart)
     {
         char stream[TINY_BUF] = "";
 
-        FREE_AND_CLEAR_HASH(hash);
+        FREE_AND_CLEAR_HASH(subcommand);
 #ifdef DAI_DEVELOPMENT_CODE
         time = 30;
 
@@ -364,12 +369,12 @@ int command_reboot(object *op, char *params)
         shutdown_agent(time, SERVER_EXIT_RESTART, CONTR(op),
                        "Server will recompile and arches and maps will be updated.");
 
-        return COMMANDS_RTN_VAL_OK;
+        return COMMANDS_RTN_VAL_OK_SILENT;
     }
     /* Shutdown server. */
-    else if (hash == subcommands.shutdown)
+    else if (subcommand == subcommands.shutdown)
     {
-        FREE_AND_CLEAR_HASH(hash);
+        FREE_AND_CLEAR_HASH(subcommand);
 
         /* Shutdown is special so we restrict it further (hopefully to people
          * who can start it up again). */
@@ -390,11 +395,11 @@ int command_reboot(object *op, char *params)
         shutdown_agent(time, SERVER_EXIT_SHUTDOWN, CONTR(op),
                        "Server will shutdown and not reboot.");
 
-        return COMMANDS_RTN_VAL_OK;
+        return COMMANDS_RTN_VAL_OK_SILENT;
     }
 
     /* Unknown subcommand. */
-    FREE_AND_CLEAR_HASH(hash);
+    FREE_AND_CLEAR_HASH(subcommand);
 
     return COMMANDS_RTN_VAL_SYNTAX;
 }
@@ -2060,8 +2065,9 @@ int command_gmasterlist(object *op, char *params)
 int command_gmasterfile(object *op, char *params)
 {
     player     *pl;
-    char       *cp;
-    shstr      *hash = NULL;
+    char        buf[MEDIUM_BUF],
+               *cp;
+    shstr      *subcommand = NULL;
     objectlink *ol;
     char        name[MEDIUM_BUF],
                 host[MEDIUM_BUF],
@@ -2086,8 +2092,11 @@ int command_gmasterfile(object *op, char *params)
         return COMMANDS_RTN_VAL_OK_SILENT;
     }
 
-    /* Find the subcommand. */
-    if ((cp = strchr(params, ' ')))
+    /* We need to make a working copy of params (because we may write
+     * to it), and take the first word as the shstr subcommand. */
+    sprintf(buf, "%s", params);
+
+    if ((cp = strchr(buf, ' ')))
     {
         *(cp++) = '\0';
 
@@ -2096,7 +2105,7 @@ int command_gmasterfile(object *op, char *params)
             cp++;
         }
 
-        hash = add_string(params);
+        FREE_AND_COPY_HASH(subcommand, buf);
     }
     /* For this command all subcommands have further parmeters, so no space in
      * params means the player typed nonsense. */
@@ -2106,9 +2115,9 @@ int command_gmasterfile(object *op, char *params)
     }
 
     /* Add an entry. */
-    if (hash == subcommands.add)
+    if (subcommand == subcommands.add)
     {
-        FREE_AND_CLEAR_HASH(hash);
+        FREE_AND_CLEAR_HASH(subcommand);
 
         if (sscanf(cp, "%[^/]/%[^/]/%s", name, host, mode) != 3 ||
             (mode_id = check_gmaster_file_entry(name, host, mode)) == GMASTER_MODE_NO)
@@ -2156,11 +2165,11 @@ int command_gmasterfile(object *op, char *params)
         write_gmaster_file();
     }
     /* List subset of entries. */
-    else if (hash == subcommands.list)
+    else if (subcommand == subcommands.list)
     {
         int success = COMMANDS_RTN_VAL_SYNTAX;
 
-        FREE_AND_CLEAR_HASH(hash);
+        FREE_AND_CLEAR_HASH(subcommand);
 
         // Note - legal for player to type: /gmasterfile list SA VOL
         // to get a list of SAs and VOLs
@@ -2242,9 +2251,9 @@ int command_gmasterfile(object *op, char *params)
         return success;
     }
     /* Remove an entry. */
-    else if (hash == subcommands.remove)
+    else if (subcommand == subcommands.remove)
     {
-        FREE_AND_CLEAR_HASH(hash);
+        FREE_AND_CLEAR_HASH(subcommand);
 
         if (sscanf(cp, "%[^/]/%[^/]/%s", name, host, mode) != 3 ||
             (mode_id = check_gmaster_file_entry(name, host, mode)) == GMASTER_MODE_NO)
@@ -2286,7 +2295,7 @@ int command_gmasterfile(object *op, char *params)
     /* Unknown subcommand. */
     else
     {
-        FREE_AND_CLEAR_HASH(hash);
+        FREE_AND_CLEAR_HASH(subcommand);
 
         return COMMANDS_RTN_VAL_SYNTAX;
     }
