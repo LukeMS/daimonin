@@ -1,34 +1,38 @@
 Daimonin Folder and Packages
 
 The Daimonin project has a fixed folder structure to provide simple access to the
-needed files and executables under different OS.
+required files and executables under different OS.
 
-Aside the whole project package there are some other packages for special use.
+Aside from the whole project package there are some other packages for special use
+(e.g. mapmaker and music packages).
 
 The default project structure:
 
 Daimonin/
-	arch/			<- The arch files and server files for server/lib
-	bin/			<- binaries and/or script files to run binaries
+	arch/			<- Arch files and server files for server/lib
+	bin/			<- Binaries and/or script files to run binaries
 	client/			<- The SDL client
-	doc/			<- The whole project docs
+	client3d/		<- The 3D client (under development)
 	dev/			<- OS specific dev tools (DEV team only)
-	editor/			<- unused (goto http://gridarta.sourceforge.net/)
-	maps/			<- The map files (for use with editor or server)
+	doc/			<- Project documentation
+	editor/			<- Available via separate package (http://gridarta.sourceforge.net/)
+	maps/			<- Map files (for use with editor or server)
+	project_tools		<- Various tools for different aspects of the project
 	server/			<- The Daimonin server
 
 
 For the server/ folder you will see this
 	server/
-		data/		<- is generated from /install/
-		install/	<- scripts to install the server and generate folders and files
-		lib/		<- files are generated and copied from /arch with the editor
-		make/		<- make files, only included if this package contents a /src folder
-		man/		<- the online manual of the server commands
-		plugins/	<- plugins. Default plugin is the python script engine
-		src/		<- the source of the server. binary packages hs no /src folder
+		data/		<- Generated from /install/
+		install/	<- Scripts to install the server and generate folders and files
+		lib/		<- Files generated from /arch with the editor
+		make/		<- Make files, only included if this package contains a /src folder
+		man/		<- The online manual for server commands
+		plugins/	<- Plugins. Default plugin is the LUA script engine
+		src/		<- Source files for the server. Binary packages have no /src folder
 
 
 For help ask the dev team:
 
 http://daimonin.sourceforge.net
+http://www.daimonin.org

@@ -1,6 +1,6 @@
-Welcome to Daimonin BETA 4
+Welcome to Daimonin BETA 5
 
-Read first README - it will give you a overview about this package.
+Read first README - it will give you an overview about this package.
 
 In every main folder is usually a README.txt file - read it!
 It will guide you through the specific folders and their content.
@@ -30,10 +30,10 @@ of gaming experience without sound.
 
 
 SERVER:
-To start a Daimon server, you need a installed PYTHON script engine.
-You can download the python script engine from the python homepage:
-http://www.python.org/
+You need to first install the server.  See the README in /server/install.
+To start the server, check for files for your OS in /bin.
 
 For help ask the dev team:
 
 http://daimonin.sourceforge.net
+http://www.daimonin.org

@@ -7616,6 +7616,9 @@
 /scenery/tables/table_lab3.111
 /scenery/tables/table_lab3.171
 /scenery/tables/table_large.101
+/scenery/tables/table_long_b.171
+/scenery/tables/table_long_m.171
+/scenery/tables/table_long_t.171
 /themed/xmas/table_menorah1.101
 /themed/xmas/table_menorah2.101
 /scenery/plants/plant_potted/table_plant1.101
@@ -7676,6 +7679,7 @@
 /scenery/plants/thorns.101
 /scenery/chairs/throne.111
 /scenery/chairs/throne.131
+/scenery/chairs/throne_dead.131
 /items/misc/tiger_eye.101
 /scenery/wagons/tipper.111
 /scenery/wagons/tipper.131
