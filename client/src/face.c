@@ -87,6 +87,8 @@ void face_deinit(void)
 
     for (i = 0; i < FACE_MAX_NROF; i++)
     {
+        FREE(face_list[i].name);
+
         if (!(face_list[i].flags & FACE_FLAG_LOADED))
         {
             continue;
@@ -98,7 +100,6 @@ void face_deinit(void)
             face_list[i].sprite = NULL;
         }
 
-        FREE(face_list[i].name);
         face_list[i].flags = 0;
     }
 }
