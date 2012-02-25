@@ -463,10 +463,18 @@ void map_draw_map(void)
 
                         if (!face_sprite)
                         {
-                            index = FACE_MAX_NROF - 1;
-                            face_sprite = face_list[index].sprite;
+                            face_sprite = skin_sprites[SKIN_SPRITE_LOADING];
+                            yl = (ypos + MAP_TILE_POS_YOFF) - face_sprite->bitmap->h;
+                            xl = xpos;
+
+                            if (face_sprite->bitmap->w > MAP_TILE_POS_XOFF)
+                            {
+                                xl -= (face_sprite->bitmap->w - MAP_TILE_POS_XOFF) / 2;
+                            }
+
+                            sprite_blt_map(face_sprite, xl, yl, NULL, NULL, 0);
                         }
-                        if (face_sprite)
+                        else
                         {
                             if (map->pos[k]) /* we have a set quick_pos = multi tile*/
                             {
