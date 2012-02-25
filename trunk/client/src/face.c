@@ -76,31 +76,55 @@ face_t          face_list[FACE_MAX_NROF];
 uint16          face_nrof;
 face_mpart_id_t face_mpart_id[16];
 
+static void           ResetList(uint8 all);
 static _sprite_status LoadFromMemory(uint16 num, uint8 *data, uint32 len);
 static _sprite_status LoadFromFile(uint16 num, const char *dname);
 static _sprite_status LoadFromPack(uint16 num);
 static void           SetFlags(uint16 num);
 
+void face_init(void)
+{
+    ResetList(1);
+}
+
+void face_reset(void)
+{
+    ResetList(0);
+}
+
 void face_deinit(void)
+{
+    ResetList(1);
+}
+
+static void ResetList(uint8 all)
 {
     uint16 i;
 
     for (i = 0; i < FACE_MAX_NROF; i++)
     {
-        FREE(face_list[i].name);
-
-        if (!(face_list[i].flags & FACE_FLAG_LOADED))
+        if (all)
         {
-            continue;
+            FREE(face_list[i].name);
+            face_list[i].pos = -1;
+            face_list[i].len = 0;
+            face_list[i].crc = 0;
         }
 
-        if (face_list[i].sprite)
+        if ((face_list[i].flags & FACE_FLAG_LOADED))
         {
             sprite_free_sprite(face_list[i].sprite);
             face_list[i].sprite = NULL;
         }
 
-        face_list[i].flags = 0;
+        face_list[i].alt_a = -1;
+        face_list[i].alt_b = -1;
+        face_list[i].flags = FACE_FLAG_NONE;
+    }
+
+    if (all)
+    {
+        face_nrof = 0;
     }
 }
 

@@ -496,8 +496,7 @@ uint8 game_status_chain(void)
         GameStatusSelect = GAME_STATUS_LOGIN_ACCOUNT;
         LoginInputStep = LOGIN_STEP_NOTHING;
         interface_mode = GUI_NPC_MODE_NO;
-        face_deinit();
-        face_nrof = 0;
+        face_init();
         anim_init();
         clear_group();
         map_udate_flag = 2;
