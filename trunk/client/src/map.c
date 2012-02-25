@@ -108,8 +108,12 @@ void map_overlay(_Sprite *sprite)
 
         for (x = 0; x < MapStatusX; x++)
         {
-            sint16 xpos = MAP_START_XOFF + x * MAP_TILE_YOFF - y * MAP_TILE_YOFF,
-                   ypos = 50 + x * MAP_TILE_XOFF + y * MAP_TILE_XOFF;
+            sint16 xpos = MAP_START_XOFF +
+                          x * (MAP_TILE_YOFF * (options.zoom / 100.0)) -
+                          y * (MAP_TILE_YOFF * (options.zoom / 100.0)),
+                   ypos = 50 +
+                          x * (MAP_TILE_XOFF * (options.zoom / 100.0)) +
+                          y * (MAP_TILE_XOFF * (options.zoom / 100.0));
 
             sprite_blt_map(sprite, xpos, ypos, NULL, NULL, 0);
         }
@@ -348,9 +352,8 @@ static int namecmp(const char *name, const char *rankandname)
 void map_draw_map(void)
 {
     register struct MapCell                    *map;
-    _Sprite        *face_sprite;
     register int ypos, xpos;
-    int         x, y, k, xl, yl, temp, kk, kt, yt, xt, alpha;
+    int         x, y, k, temp, kk, kt, yt, xt, alpha;
     int         xml, xmpos;
     uint16      index, index_tmp;
     int         mid, mnr, xreal, yreal;
@@ -383,8 +386,12 @@ void map_draw_map(void)
         return;
     player_posx = MapStatusX - (MapStatusX / 2) - 1;
     player_posy = MapStatusY - (MapStatusY / 2) - 1;
-    player_pixx = MAP_START_XOFF + player_posx * MAP_TILE_YOFF - player_posy * MAP_TILE_YOFF + 20;
-    player_pixy = 0 + player_posx * MAP_TILE_XOFF + player_posy * MAP_TILE_XOFF - 14;
+    player_pixx = MAP_START_XOFF +
+                  player_posx * (MAP_TILE_YOFF * (options.zoom / 100.0)) -
+                  player_posy * (MAP_TILE_YOFF * (options.zoom / 100.0)) + 20;
+    player_pixy = 0 +
+                  player_posx * (MAP_TILE_XOFF * (options.zoom / 100.0)) +
+                  player_posy * (MAP_TILE_XOFF * (options.zoom / 100.0)) - 14;
     player_dummy.border_left = -5;
     player_dummy.border_right = 0;
     player_dummy.border_up = 0;
@@ -392,7 +399,8 @@ void map_draw_map(void)
     player_dummy.bitmap = &surf;
     surf.h = 33;
     surf.w = 35;
-    player_pixy = (player_pixy + MAP_TILE_POS_YOFF) - surf.h;
+    player_pixy = (player_pixy +
+                   (MAP_TILE_POS_YOFF * (options.zoom / 100.0))) - surf.h;
     bltfx.surface = NULL;
     bltfx.alpha = 128;
 
@@ -422,8 +430,12 @@ void map_draw_map(void)
                     kt = kk + 1;
                 for (k = kk; k <= kt; k++)
                 {
-                    xpos = MAP_START_XOFF + x * MAP_TILE_YOFF - y * MAP_TILE_YOFF;
-                    ypos = 50 + x * MAP_TILE_XOFF + y * MAP_TILE_XOFF;
+                    xpos = MAP_START_XOFF +
+                           x * (MAP_TILE_YOFF * (options.zoom / 100.0)) -
+                           y * (MAP_TILE_YOFF * (options.zoom / 100.0));
+                    ypos = 50 +
+                           x * (MAP_TILE_XOFF * (options.zoom / 100.0)) +
+                           y * (MAP_TILE_XOFF * (options.zoom / 100.0));
                  //   if (!k)
                    //     sprite_blt_map(skin_sprites[SKIN_SPRITE_BLACKTILE], xpos, ypos, NULL, NULL);
                     if (!debug_layer[k])
@@ -441,41 +453,53 @@ void map_draw_map(void)
                     if ((index_tmp = map->faces[k]) > 0)
                     {
                         index = index_tmp & ~0x8000;
-                        face_sprite = face_list[index].sprite;
 
-                        /* If it's got an alternative image and it's not in the
-                         * bottom quadrant, use the alternative sprite. */
-                        if (face_list[index].flags & FACE_FLAG_ALTERNATIVE)
+                        if (!(face_list[index].flags & FACE_FLAG_LOADED))
                         {
-                            int i;
+                            _Sprite *face_sprite = skin_sprites[SKIN_SPRITE_LOADING];
+                            int      yl = (ypos +
+                                           (MAP_TILE_POS_YOFF * (options.zoom / 100.0))) -
+                                          face_sprite->bitmap->h,
+                                     xl = xpos;
 
-                            if (x < (MAP_MAX_SIZE - 1) / 2 || y < (MAP_MAX_SIZE - 1) / 2)
+                            if (face_sprite->bitmap->w > (MAP_TILE_POS_XOFF *
+                                                          (options.zoom / 100.0)))
                             {
-                                if ((i = face_list[index].alt_a) != -1)
-                                    face_sprite = face_list[i].sprite;
-                            }
-                            else
-                            {
-                                if ((i = face_list[index].alt_b) != -1)
-                                    face_sprite = face_list[i].sprite;
-                            }
-                        }
-
-                        if (!face_sprite)
-                        {
-                            face_sprite = skin_sprites[SKIN_SPRITE_LOADING];
-                            yl = (ypos + MAP_TILE_POS_YOFF) - face_sprite->bitmap->h;
-                            xl = xpos;
-
-                            if (face_sprite->bitmap->w > MAP_TILE_POS_XOFF)
-                            {
-                                xl -= (face_sprite->bitmap->w - MAP_TILE_POS_XOFF) / 2;
+                                xl -= (face_sprite->bitmap->w -
+                                       (MAP_TILE_POS_XOFF * (options.zoom / 100.0))) / 2;
                             }
 
                             sprite_blt_map(face_sprite, xl, yl, NULL, NULL, 0);
+
+                            if (!(face_list[index].flags & FACE_FLAG_REQUESTED))
+                            {
+                                face_get(index);
+                            }
                         }
                         else
                         {
+                            _Sprite *face_sprite = face_list[index].sprite;
+                            int      yl,
+                                     xl;
+
+                            /* If it's got an alternative image and it's not in the
+                             * bottom quadrant, use the alternative sprite. */
+                            if ((face_list[index].flags & FACE_FLAG_ALTERNATIVE))
+                            {
+                                int i;
+
+                                if (x < (MAP_MAX_SIZE - 1) / 2 || y < (MAP_MAX_SIZE - 1) / 2)
+                                {
+                                    if ((i = face_list[index].alt_a) != -1)
+                                        face_sprite = face_list[i].sprite;
+                                }
+                                else
+                                {
+                                    if ((i = face_list[index].alt_b) != -1)
+                                        face_sprite = face_list[i].sprite;
+                                }
+                            }
+
                             if (map->pos[k]) /* we have a set quick_pos = multi tile*/
                             {
                                 mnr = map->pos[k];
@@ -502,11 +526,18 @@ void map_draw_map(void)
                             else /* single tile... */
                             {
                                 /* first, we calc the shift positions */
-                                xml = MAP_TILE_POS_XOFF;
-                                yl = (ypos + MAP_TILE_POS_YOFF) - face_sprite->bitmap->h;
+                                xml = (MAP_TILE_POS_XOFF * (options.zoom / 100.0));
+                                yl = (ypos +
+                                      (MAP_TILE_POS_YOFF * (options.zoom / 100.0))) -
+                                     face_sprite->bitmap->h;
                                 xmpos = xl = xpos;
-                                if (face_sprite->bitmap->w > MAP_TILE_POS_XOFF)
-                                    xl -= (face_sprite->bitmap->w - MAP_TILE_POS_XOFF) / 2;
+
+                                if (face_sprite->bitmap->w > (MAP_TILE_POS_XOFF *
+                                                              (options.zoom / 100.0)))
+                                {
+                                    xl -= (face_sprite->bitmap->w -
+                                           (MAP_TILE_POS_XOFF * (options.zoom / 100.0))) / 2;
+                                }
                             }
                             /* blt the face in the darkness level, the tile pos has */
                             temp = map->darkness;
@@ -645,8 +676,9 @@ void map_draw_map(void)
                                 map->pname[k][0])
                             {
                                 left = (sint32)(((double)(xml - 10) / 100.0) *
-                                                ((xml == MAP_TILE_POS_XOFF) ?
-                                                 25.0 : 20.0));
+                                                ((xml == (MAP_TILE_POS_XOFF *
+                                                          (options.zoom / 100.0)))
+                                                 ? 25.0 : 20.0));
                                 right = MAX(1, MIN((xml + 10) - (left * 2),
                                                    300));
 
