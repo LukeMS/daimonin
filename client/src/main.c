@@ -606,7 +606,6 @@ uint8 game_status_chain(void)
     }
     else if (GameStatus == GAME_STATUS_CONNECT)
     {
-        face_list[FACE_MAX_NROF - 1].sprite = skin_sprites[SKIN_SPRITE_LOADING];
         map_udate_flag = 2;
 
         if (!SOCKET_OpenClientSocket(&csocket, gameserver_sel->address,
