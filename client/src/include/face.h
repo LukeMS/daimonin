@@ -26,13 +26,14 @@
 
 #define FACE_MAX_NROF 20000
 
-#define FACE_FLAG_LOADED      1 << 1 // face loaded in memory
-#define FACE_FLAG_REQUESTED   1 << 2 // face requested from server - do it only one time
-#define FACE_FLAG_ALTERNATIVE 1 << 3 // this has an alternative image
-#define FACE_FLAG_DOUBLE      1 << 4 // this is a double wall type
-#define FACE_FLAG_UP          1 << 5 // this is a upper part of something
-#define FACE_FLAG_D1          1 << 6 // this is a x1x object (animation or direction)
-#define FACE_FLAG_D3          1 << 7 // this is a x3x object (animation or direction)
+#define FACE_FLAG_NONE        0
+#define FACE_FLAG_LOADED      (1 << 0) // face loaded in memory
+#define FACE_FLAG_REQUESTED   (1 << 1) // face requested from server
+#define FACE_FLAG_ALTERNATIVE (1 << 2) // this has an alternative image
+#define FACE_FLAG_DOUBLE      (1 << 3) // this is a double wall type
+#define FACE_FLAG_UP          (1 << 4) // this is a upper part of something
+#define FACE_FLAG_D1          (1 << 5) // this is a x1x object (animation or direction)
+#define FACE_FLAG_D3          (1 << 6) // this is a x3x object (animation or direction)
 
 typedef struct face_t
 {
