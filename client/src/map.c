@@ -947,16 +947,16 @@ int get_tile_position(int x, int y, int *tx, int *ty)
     x %= (int)(MAP_TILE_POS_XOFF*(options.zoom/100.0));
     y %= (int)(MAP_TILE_YOFF*(options.zoom/100.0));
 
-    if (x < (int)(MAP_TILE_POS_XOFF2*(options.zoom/100.0)))
+    if (x < (int)(MAP_TILE_XOFF*(options.zoom/100.0)))
     {
-        if (x + y + y < (int)(MAP_TILE_POS_XOFF2*(options.zoom/100.0)))
+        if (x + y + y < (int)(MAP_TILE_XOFF*(options.zoom/100.0)))
             --(*tx);
         else if (y - x > 0)
             ++(*ty);
     }
     else
     {
-        x -= (int)(MAP_TILE_POS_XOFF2*(options.zoom/100.0));
+        x -= (int)(MAP_TILE_XOFF*(options.zoom/100.0));
         if (x - y - y > 0)
             --(*ty);
         else if (x + y + y > (int)(MAP_TILE_POS_XOFF*(options.zoom/100.0)))
