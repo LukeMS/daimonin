@@ -1323,9 +1323,7 @@ int main(int argc, char *argv[])
         options.used_video_bpp = info->vfmt->BitsPerPixel;
     }
 
-    ScreenSurfaceMap = SDL_CreateRGBSurface(videoflags, 850, 600, options.used_video_bpp, 0,0,0,0);
-
-
+    ScreenSurfaceMap = SDL_CreateRGBSurface(videoflags, Screensize.x, Screensize.y, options.used_video_bpp, 0,0,0,0);
     SDL_VideoDriverName(buf, 255);
     LOG(LOG_MSG, "Video Driver: %s\n",buf);
 
