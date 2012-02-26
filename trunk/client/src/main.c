@@ -2320,6 +2320,7 @@ static void DisplayLayer1(void)
 #ifdef PROFILING
     Uint32 ts;
 #endif
+    _Sprite *warn = NULL;
 
     /* we clear the screen and start drawing
      * this is done every frame, this should and hopefully can be optimized. */
@@ -2366,14 +2367,32 @@ static void DisplayLayer1(void)
     /* draw warning-icons above player */
     if ((gfx_toggle++ & 63) < 25)
     {
-        if (options.warning_hp
-                && ((float) cpl.stats.hp / (float) cpl.stats.maxhp) * 100 <= options.warning_hp)
-            sprite_blt(skin_sprites[SKIN_SPRITE_WARN_HP], options.mapstart_x+407, options.mapstart_y+205, NULL, NULL);
+        if (options.warning_hp &&
+            ((float) cpl.stats.hp / (float) cpl.stats.maxhp) * 100 <= options.warning_hp)
+        {
+             warn = skin_sprites[SKIN_SPRITE_WARN_HP];
+        }
     }
     else
     {
-       if (options.warning_weight && ((float) cpl.real_weight / cpl.weight_limit) * 100 >= options.warning_weight)
-            sprite_blt(skin_sprites[SKIN_SPRITE_WARN_WEIGHT], options.mapstart_x+400, options.mapstart_y+192, NULL, NULL);
+        if (options.warning_weight &&
+            ((float) cpl.real_weight / cpl.weight_limit) * 100 >= options.warning_weight)
+        {
+             warn = skin_sprites[SKIN_SPRITE_WARN_WEIGHT];
+        }
+    }
+
+    if (warn)
+    {
+         sprite_blt(warn, options.mapstart_x +
+                    (MAP_START_XOFF * (options.zoom / 100.0)) +
+                    9 * (MAP_TILE_YOFF * (options.zoom / 100.0)) -
+                    8 * (MAP_TILE_YOFF * (options.zoom / 100.0)) -
+                    warn->bitmap->w / 2, options.mapstart_y +
+                    (MAP_START_YOFF * (options.zoom / 100.0)) +
+                    6 * (MAP_TILE_XOFF * (options.zoom / 100.0)) +
+                    5 * (MAP_TILE_XOFF * (options.zoom / 100.0)) -
+                    warn->bitmap->h / 2, NULL, NULL);
     }
 }
 
