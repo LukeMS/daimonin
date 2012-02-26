@@ -506,6 +506,7 @@ op->oz= op->z;
 ^only_attack{S}	    SET_OR_CLEAR_FLAG(op, FLAG_ONLY_ATTACK, IVAL);
 ^berserk{S}	    SET_OR_CLEAR_FLAG(op, FLAG_BERSERK, IVAL);
 ^is_magical{S}	    SET_OR_CLEAR_FLAG(op, FLAG_IS_MAGICAL, IVAL);
+^is_donation{S}	    SET_OR_CLEAR_FLAG(op, FLAG_DONATION_ITEM, IVAL);
 
     /* Start of various attacktypes */
 ^attack_impact{S}	SET_ATTACK(op, ATNR_IMPACT, IVAL);
@@ -901,7 +902,7 @@ int set_variable(object *op,char *buf) {
 }
 
 
-/* This is a list of pointers taht correspond to the FLAG_.. values.
+/* This is a list of pointers that correspond to the FLAG_.. values.
  * This is a simple 1:1 mapping - if FLAG_FRIENDLY is 15, then
  * the 15'th element of this array should match that name.
  * If an entry is NULL, that is a flag not to loaded/saved.
@@ -931,7 +932,7 @@ NULL /*free*/, NULL /*free*/, "is_male",
 "no_skill_ident","use_dmg_info", "can_see_in_dark", "is_cauldron",
 "is_dust", "no_steal", "one_hit", NULL /*client_sent*/, "berserk", "no_attack",	/* 100 */
 "invulnerable", "quest_item", "is_traped", "proof_phy",  "proof_ele", /* 105 */
-"proof_mag", "proof_sph", "no_inv", NULL /*free*/, "sys_object", /* 110 */
+"proof_mag", "proof_sph", "no_inv", "is_donation", "sys_object", /* 110 */
 NULL /*script-interrupted spawn*/,"unpaid","is_aged","make_invisible" , "make_ethereal","is_player",
 "is_named",NULL /* spawn mob flag */, "no_teleport", "corpse", "corpse_forced",
 "player_only", "no_cleric", "one_drop", "cursed_perm", "damned_perm", "door_closed",

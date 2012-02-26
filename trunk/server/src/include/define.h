@@ -625,14 +625,14 @@
                                 */
 #define FLAG_CAN_PASS_THRU  47 /* Can pass thru... */
 
-#define FLAG_FEARED          48 /* player or monster is feared - attacks and acts alot more worse */
-#define FLAG_BLIND           49 /* If set, object cannot see (the map) with eyes */
-#define FLAG_NO_DROP         50 /* Object can't be dropped */
-#define FLAG_FIGHT_HPREG     51 /* monster (player - not implemented): mob can reg hp when fighting! */
-#define FLAG_READY_SPELL     52 /* (Monster) can learn and cast spells */
-#define FLAG_SURRENDERED     53 /* (Monster) has surrendered and count not as "targetable enemy" */
-#define FLAG_ROOTED          54 /* monster or player is rooted/snared - can't move but fight */
-#define FLAG_SLOWED          55 /* monster/player is slowed */
+#define FLAG_FEARED         48 /* player or monster is feared - attacks and acts alot more worse */
+#define FLAG_BLIND          49 /* If set, object cannot see (the map) with eyes */
+#define FLAG_NO_DROP        50 /* Object can't be dropped */
+#define FLAG_FIGHT_HPREG    51 /* monster (player - not implemented): mob can reg hp when fighting! */
+#define FLAG_READY_SPELL    52 /* (Monster) can learn and cast spells */
+#define FLAG_SURRENDERED    53 /* (Monster) has surrendered and count not as "targetable enemy" */
+#define FLAG_ROOTED         54 /* monster or player is rooted/snared - can't move but fight */
+#define FLAG_SLOWED         55 /* monster/player is slowed */
 
 #define FLAG_USE_ARMOUR     56 /* (player/deity) INTERNAL flag to allow armour use (for example from the deity) */
 #define FLAG_USE_WEAPON     57 /* (player/deity) INTERNAL same as armour: can wield weapons */
@@ -707,7 +707,7 @@
 #define FLAG_PROOF_MAGICAL      106
 #define FLAG_PROOF_SPHERICAL    107
 #define FLAG_NO_INVENTORY       108 /* special flag to avoid load/save of the inventory of an object */
-/* flag 109 is free */
+#define FLAG_DONATION_ITEM      109 /* checked by /generate command to stop generation of these items */
 #define FLAG_SYS_OBJECT         110 /* thats old invisible - now sys_object (which are invisible) */
 #define FLAG_SCRIPT_MOB         111 /* monsters with this flag are created by a
                                      * spawn point but the process is

@@ -569,6 +569,11 @@ static int CreateObject(object *op, char *params, CreateMode_t mode)
             new_draw_info(NDI_UNIQUE, 0, op, "Generate cannot be used to create system objects.");
             return COMMANDS_RTN_VAL_ERROR;
         }
+        else if (QUERY_FLAG(&at->clone, FLAG_DONATION_ITEM))
+        {
+            new_draw_info(NDI_UNIQUE, 0, op, "Generate cannot be used to create donation items.");
+            return COMMANDS_RTN_VAL_ERROR;
+        }
 
     if (mode == SPAWN)
         if (at->clone.type != MONSTER) // Don't allow spawning of PLAYER objects
