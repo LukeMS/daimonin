@@ -82,21 +82,28 @@ static _sprite_status LoadFromFile(uint16 num, const char *dname);
 static _sprite_status LoadFromPack(uint16 num);
 static void           SetFlags(uint16 num);
 
+/* An init occurs during GAME_STATUS_INIT, */
 void face_init(void)
 {
     ResetList(1);
 }
 
+/* A reset can be done at any point. */
 void face_reset(void)
 {
     ResetList(0);
 }
 
+/* A deinit occurs at client exit. */
 void face_deinit(void)
 {
     ResetList(1);
 }
 
+/* Resets face_list[]. If all is non-zero, everything is reset/freed and the
+ * list must be rebuilt again from the ground up (see the srvfile module).
+ * Otherwise we nust free the surfaces and reseŧ flags so the face must be
+ * requested again. */
 static void ResetList(uint8 all)
 {
     uint16 i;
@@ -109,11 +116,18 @@ static void ResetList(uint8 all)
             face_list[i].pos = -1;
             face_list[i].len = 0;
             face_list[i].crc = 0;
+        }
 
-            if ((face_list[i].flags & FACE_FLAG_LOADED))
+        if (face_list[i].sprite)
+        {
+            if (all)
             {
                 sprite_free_sprite(face_list[i].sprite);
                 face_list[i].sprite = NULL;
+            }
+            else
+            {
+                sprite_free_surfaces(face_list[i].sprite);
             }
         }
 
