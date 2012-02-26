@@ -332,7 +332,15 @@ static void PutSurfacePixel(SDL_Surface *surface, uint16 x, uint16 y,
     }
 }
 
+/* Frees a sprite and all its surfaces. */
 void sprite_free_sprite(_Sprite *sprite)
+{
+    sprite_free_surfaces(sprite);
+    FREE(sprite);
+}
+
+/* Frees all surfaces associated with a sprite, bur not the sprite itself. */
+void sprite_free_surfaces(_Sprite *sprite)
 {
     if (!sprite)
     {
@@ -342,39 +350,44 @@ void sprite_free_sprite(_Sprite *sprite)
     if (sprite->bitmap)
     {
         SDL_FreeSurface(sprite->bitmap);
+        sprite->bitmap = NULL;
     }
 
     if (sprite->fire)
     {
         SDL_FreeSurface(sprite->fire);
+        sprite->fire = NULL;
     }
 
     if (sprite->cold)
     {
         SDL_FreeSurface(sprite->cold);
+        sprite->cold = NULL;
     }
 
     if (sprite->electricity)
     {
         SDL_FreeSurface(sprite->electricity);
+        sprite->electricity = NULL;
     }
 
     if (sprite->fogofwar)
     {
         SDL_FreeSurface(sprite->fogofwar);
+        sprite->fogofwar = NULL;
     }
 
     if (sprite->infravision)
     {
         SDL_FreeSurface(sprite->infravision);
+        sprite->infravision = NULL;
     }
 
     if (sprite->xrayvision)
     {
         SDL_FreeSurface(sprite->xrayvision);
+        sprite->xrayvision = NULL;
     }
-
-    FREE(sprite);
 }
 
 /* Calculate the displayed width of the text */

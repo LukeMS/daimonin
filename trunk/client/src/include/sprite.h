@@ -168,6 +168,7 @@ extern uint8          sprite_deinit_system(void);
 
 extern _Sprite         *sprite_load(char *fname, SDL_RWops *rwob);
 extern void             sprite_free_sprite(_Sprite *sprite);
+extern void             sprite_free_surfaces(_Sprite *sprite);
 extern void sprite_blt_as_icon(_Sprite *sprite, sint16 x, sint16 y,
                                sprite_icon_type_t type, uint8 selected,
                                uint32 flags, uint8 quacon, sint32 quantity,
