@@ -109,12 +109,12 @@ static void ResetList(uint8 all)
             face_list[i].pos = -1;
             face_list[i].len = 0;
             face_list[i].crc = 0;
-        }
 
-        if ((face_list[i].flags & FACE_FLAG_LOADED))
-        {
-            sprite_free_sprite(face_list[i].sprite);
-            face_list[i].sprite = NULL;
+            if ((face_list[i].flags & FACE_FLAG_LOADED))
+            {
+                sprite_free_sprite(face_list[i].sprite);
+                face_list[i].sprite = NULL;
+            }
         }
 
         face_list[i].alt_a = -1;
