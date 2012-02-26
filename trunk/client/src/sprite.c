@@ -1429,24 +1429,28 @@ void play_anims(int mx, int my)
         else
         {
             num_ticks = LastTick - anim->start_tick;
-            switch (anim->type)
-            {
-                case ANIM_DAMAGE:
-                    tmp_y = anim->y - (int) ((float) num_ticks * anim->yoff); /*   * num_ticks ); */
 
-                    if (anim->mapx >= MapData.posx
-                            && anim->mapx < MapData.posx + MapStatusX
-                            && anim->mapy >= MapData.posy
-                            && anim->mapy < MapData.posy + MapStatusY)
-                    {
-                        xpos = options.mapstart_x + (int)((MAP_START_XOFF +
-                               + (anim->mapx - MapData.posx) * MAP_TILE_YOFF
-                               - (anim->mapy - MapData.posy - 1) * MAP_TILE_YOFF
-                               - 4)*(options.zoom/100.0));
-                        ypos = options.mapstart_y + 50
-                               + (int)(((anim->mapx - MapData.posx) * MAP_TILE_XOFF
-                               + (anim->mapy - MapData.posy - 1) * MAP_TILE_XOFF
-                               - 34)*(options.zoom/100.0));
+            if (anim->mapx >= MapData.posx
+                    && anim->mapx < MapData.posx + MapStatusX
+                    && anim->mapy >= MapData.posy
+                    && anim->mapy < MapData.posy + MapStatusY)
+            {
+                tmp_y = anim->y - (int) ((float) num_ticks * anim->yoff); /*   * num_ticks ); */
+                xpos = options.mapstart_x +
+                       (MAP_START_XOFF * (options.zoom / 100.0)) +
+                       (anim->mapx - MapData.posx) * (MAP_TILE_YOFF * (options.zoom / 100.0)) -
+                       (anim->mapy - MapData.posy - 1) * (MAP_TILE_YOFF * (options.zoom / 100.0));
+                ypos = options.mapstart_y +
+                       (MAP_START_YOFF * (options.zoom / 100.0)) +
+                       (anim->mapx - MapData.posx) * (MAP_TILE_XOFF * (options.zoom / 100.0)) +
+                       (anim->mapy - MapData.posy - 1) * (MAP_TILE_XOFF * (options.zoom / 100.0));
+
+                switch (anim->type)
+                {
+                    case ANIM_SELF_DAMAGE:
+                    case ANIM_DAMAGE:
+                        xpos -= 4;
+                        ypos -= 34;
                         if (anim->value<0)
                         {
                             sprintf(buf, "%d", abs(anim->value));
@@ -1459,24 +1463,10 @@ void play_anims(int mx, int my)
                             string_blt(ScreenSurface, &font_small_out, buf, xpos + anim->x, ypos + tmp_y, NDI_COLR_ORANGE, NULL,
                                           NULL);
                         }
-                    }
-                    break;
-                case ANIM_KILL:
-                    tmp_y = anim->y - (int) ((float) num_ticks * anim->yoff); /*   * num_ticks ); */
-
-                    if (anim->mapx >= MapData.posx
-                            && anim->mapx < MapData.posx + MapStatusX
-                            && anim->mapy >= MapData.posy
-                            && anim->mapy < MapData.posy + MapStatusY)
-                    {
-                        xpos = options.mapstart_x + (int)((MAP_START_XOFF +
-                               + (anim->mapx - MapData.posx) * MAP_TILE_YOFF
-                               - (anim->mapy - MapData.posy - 1) * MAP_TILE_YOFF
-                               - 4)*(options.zoom/100.0));
-                        ypos = options.mapstart_y + 50
-                               + (int)(((anim->mapx - MapData.posx) * MAP_TILE_XOFF
-                               + (anim->mapy - MapData.posy - 1) * MAP_TILE_XOFF
-                               - 26)*(options.zoom/100.0));
+                        break;
+                    case ANIM_KILL:
+                        xpos -= 4;
+                        ypos -= 26;
                         sprite_blt(skin_sprites[SKIN_SPRITE_DEATH], xpos + anim->x - 5, ypos + tmp_y - 4, NULL, NULL);
                         sprintf(buf, "%d", anim->value);
                         tmp_off = 0;
@@ -1493,27 +1483,12 @@ void play_anims(int mx, int my)
 
                         string_blt(ScreenSurface, &font_small_out, buf, xpos + anim->x + tmp_off, ypos + tmp_y,
                                   NDI_COLR_ORANGE, NULL, NULL);
-                    }
-                    break;
-                case ANIM_SELF_DAMAGE:
-                    tmp_y = anim->y-(int)( (float)num_ticks * anim->yoff ); /*   * num_ticks ); */
-                    if (anim->value<0)
-                    {
-                        sprintf(buf, "%d", abs(anim->value));
-                        string_blt(ScreenSurface, &font_small_out, buf, anim->mapx + anim->x, anim->mapy + tmp_y, NDI_COLR_LIME, NULL,
-                                NULL);
-                    }
-                    else
-                    {
-                        sprintf(buf, "%d", anim->value);
-                        string_blt(ScreenSurface, &font_small_out, buf, anim->mapx + anim->x, anim->mapy + tmp_y, NDI_COLR_RED, NULL,
-                                          NULL);
-                    }
-                break;
+                        break;
 
-                default:
-                    LOG(LOG_ERROR, "WARNING: Unknown animation type\n");
-                    break;
+                    default:
+                        LOG(LOG_ERROR, "WARNING: Unknown animation type\n");
+                        break;
+                }
             }
         }
     }
