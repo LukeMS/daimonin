@@ -714,8 +714,7 @@ static uint8 CheckCommand(char *cmd, char *params)
         textwin_show_string(0, NDI_COLR_WHITE,
                            "IMAGE-LOADING-STATISTICS\n"\
                            "==========================================\n"\
-                           "Sprites in Memory: %d\n"\
-                           "TrueColors: %d\n"\
+                           "Bitmaps: %d\n"\
                            "Fires: %d\n"\
                            "Colds: %d\n"\
                            "Electricities: %d\n"\
@@ -724,8 +723,7 @@ static uint8 CheckCommand(char *cmd, char *params)
                            "Fogofwars in Memory: %d\n"\
                            "Infravisions in Memory: %d\n"\
                            "Xrayvisions in Memory: %d",
-                           ImageStats.loadedsprites,
-                           ImageStats.truecolors,
+                           ImageStats.bitmaps,
                            ImageStats.fires,
                            ImageStats.colds,
                            ImageStats.electricities,
