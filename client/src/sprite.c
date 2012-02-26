@@ -125,15 +125,11 @@ _Sprite * sprite_load(char *fname, SDL_RWops *rwop)
         ck = bitmap->format->colorkey;
         SDL_SetColorKey(bitmap, ckflags, ck);
     }
-    else
-    {
-        ImageStats.truecolors++;
-    }
 
     GetBitmapBorders(bitmap, &sprite->border_up, &sprite->border_down,
                      &sprite->border_left, &sprite->border_right, ck);
     sprite->bitmap = bitmap;
-    ImageStats.loadedsprites++;
+    ImageStats.bitmaps++;
 
     return sprite;
 }

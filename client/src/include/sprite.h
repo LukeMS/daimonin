@@ -131,8 +131,7 @@ extern SDL_Surface  *FormatHolder;
 
 typedef struct _imagestats
 {
-    uint16 loadedsprites;
-    uint16 truecolors;
+    uint16 bitmaps;
     uint16 fires;
     uint16 colds;
     uint16 electricities;
