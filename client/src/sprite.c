@@ -371,6 +371,20 @@ void sprite_free_surfaces(_Sprite *sprite)
         ImageStats.electricities--;
     }
 
+    if (sprite->light)
+    {
+        SDL_FreeSurface(sprite->light);
+        sprite->light = NULL;
+        ImageStats.lights--;
+    }
+
+    if (sprite->shadow)
+    {
+        SDL_FreeSurface(sprite->shadow);
+        sprite->shadow = NULL;
+        ImageStats.shadows--;
+    }
+
     if (sprite->fogofwar)
     {
         SDL_FreeSurface(sprite->fogofwar);
