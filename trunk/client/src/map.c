@@ -113,7 +113,7 @@ void map_overlay(_Sprite *sprite)
                           x * (MAP_TILE_YOFF * (options.zoom / 100.0)) -
                           y * (MAP_TILE_YOFF * (options.zoom / 100.0)),
                    ypos = options.mapstart_y +
-                          (50 * (options.zoom / 100.0)) +
+                          (MAP_START_YOFF * (options.zoom / 100.0)) +
                           x * (MAP_TILE_XOFF * (options.zoom / 100.0)) +
                           y * (MAP_TILE_XOFF * (options.zoom / 100.0));
 
@@ -439,7 +439,7 @@ void map_draw_map(void)
                            x * (MAP_TILE_YOFF * (options.zoom / 100.0)) -
                            y * (MAP_TILE_YOFF * (options.zoom / 100.0));
                     ypos = options.mapstart_y +
-                           (50 * (options.zoom / 100.0)) +
+                           (MAP_START_YOFF * (options.zoom / 100.0)) +
                            x * (MAP_TILE_XOFF * (options.zoom / 100.0)) +
                            y * (MAP_TILE_XOFF * (options.zoom / 100.0));
                  //   if (!k)
@@ -967,37 +967,39 @@ static void ShowPname(char *pname, sint16 x, sint16 y, uint32 colr)
 ******************************************************************/
 int get_tile_position(int x, int y, int *tx, int *ty)
 {
-//    x +=2*MAP_TILE_POS_XOFF;
-//    y +=142+options.mapstart_y;
+    if (x < options.mapstart_x + (MAP_START_XOFF * (options.zoom / 100.0)))
+    {
+        x -= (int)(MAP_TILE_POS_XOFF * (options.zoom / 100.0));
+    }
 
-    if (x < (int)((options.mapstart_x+384)*(options.zoom/100.0)))
-        x -= (int)(MAP_TILE_POS_XOFF*(options.zoom/100.0));
-    x -= (int)((options.mapstart_x+384)*(options.zoom/100.0));
-    y -= (int)((options.mapstart_y+50)*(options.zoom/100.0));
-    *tx = x / (int)(MAP_TILE_POS_XOFF*(options.zoom/100.0)) + y / (int)(MAP_TILE_YOFF*(options.zoom/100.0));
-    *ty = y / (int)(MAP_TILE_YOFF*(options.zoom/100.0)) - x / (int)(MAP_TILE_POS_XOFF*(options.zoom/100.0));
+    x -= options.mapstart_x + (MAP_START_XOFF * (options.zoom / 100.0));
+    y -= options.mapstart_y + (MAP_START_YOFF * (options.zoom / 100.0));
+    *tx = x / (MAP_TILE_POS_XOFF * (options.zoom / 100.0)) +
+          y / (MAP_TILE_YOFF * (options.zoom / 100.0));
+    *ty = y / (MAP_TILE_YOFF * (options.zoom / 100.0)) -
+          x / (MAP_TILE_POS_XOFF * (options.zoom / 100.0));
 
     if (x < 0)
     {
-        x += ((int)(MAP_TILE_POS_XOFF*(options.zoom/100.0)) << 3) - 1;
+        x += (((int)(MAP_TILE_POS_XOFF * (options.zoom / 100.0))) << 3) - 1;
     }
 
-    x %= (int)(MAP_TILE_POS_XOFF*(options.zoom/100.0));
-    y %= (int)(MAP_TILE_YOFF*(options.zoom/100.0));
+    x %= (int)(MAP_TILE_POS_XOFF * (options.zoom / 100.0));
+    y %= (int)(MAP_TILE_YOFF * (options.zoom / 100.0));
 
-    if (x < (int)(MAP_TILE_XOFF*(options.zoom/100.0)))
+    if (x < (MAP_TILE_XOFF * (options.zoom / 100.0)))
     {
-        if (x + y + y < (int)(MAP_TILE_XOFF*(options.zoom/100.0)))
+        if (x + y + y < (MAP_TILE_XOFF * (options.zoom / 100.0)))
             --(*tx);
         else if (y - x > 0)
             ++(*ty);
     }
     else
     {
-        x -= (int)(MAP_TILE_XOFF*(options.zoom/100.0));
+        x -= (MAP_TILE_XOFF * (options.zoom / 100.0));
         if (x - y - y > 0)
             --(*ty);
-        else if (x + y + y > (int)(MAP_TILE_POS_XOFF*(options.zoom/100.0)))
+        else if (x + y + y > (MAP_TILE_POS_XOFF * (options.zoom / 100.0)))
             ++(*tx);
     }
 
