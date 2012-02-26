@@ -108,12 +108,10 @@ void map_overlay(_Sprite *sprite)
 
         for (x = 0; x < MapStatusX; x++)
         {
-            sint16 xpos = options.mapstart_x +
-                          (MAP_START_XOFF * (options.zoom / 100.0)) +
+            sint16 xpos = (MAP_START_XOFF * (options.zoom / 100.0)) +
                           x * (MAP_TILE_YOFF * (options.zoom / 100.0)) -
                           y * (MAP_TILE_YOFF * (options.zoom / 100.0)),
-                   ypos = options.mapstart_y +
-                          (MAP_START_YOFF * (options.zoom / 100.0)) +
+                   ypos = (MAP_START_YOFF * (options.zoom / 100.0)) +
                           x * (MAP_TILE_XOFF * (options.zoom / 100.0)) +
                           y * (MAP_TILE_XOFF * (options.zoom / 100.0));
 
@@ -388,12 +386,10 @@ void map_draw_map(void)
         return;
     player_posx = MapStatusX - (MapStatusX / 2) - 1;
     player_posy = MapStatusY - (MapStatusY / 2) - 1;
-    player_pixx = options.mapstart_x +
-                  (MAP_START_XOFF * (options.zoom / 100.0)) +
+    player_pixx = (MAP_START_XOFF * (options.zoom / 100.0)) +
                   player_posx * (MAP_TILE_YOFF * (options.zoom / 100.0)) -
                   player_posy * (MAP_TILE_YOFF * (options.zoom / 100.0)) + 20;
-    player_pixy = options.mapstart_y +
-                  0 +
+    player_pixy = 0 +
                   player_posx * (MAP_TILE_XOFF * (options.zoom / 100.0)) +
                   player_posy * (MAP_TILE_XOFF * (options.zoom / 100.0)) - 14;
     player_dummy.border_left = -5;
@@ -434,12 +430,10 @@ void map_draw_map(void)
                     kt = kk + 1;
                 for (k = kk; k <= kt; k++)
                 {
-                    xpos = options.mapstart_x +
-                           (MAP_START_XOFF * (options.zoom / 100.0)) +
+                    xpos = (MAP_START_XOFF * (options.zoom / 100.0)) +
                            x * (MAP_TILE_YOFF * (options.zoom / 100.0)) -
                            y * (MAP_TILE_YOFF * (options.zoom / 100.0));
-                    ypos = options.mapstart_y +
-                           (MAP_START_YOFF * (options.zoom / 100.0)) +
+                    ypos = (MAP_START_YOFF * (options.zoom / 100.0)) +
                            x * (MAP_TILE_XOFF * (options.zoom / 100.0)) +
                            y * (MAP_TILE_XOFF * (options.zoom / 100.0));
                  //   if (!k)
