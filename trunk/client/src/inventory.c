@@ -435,6 +435,7 @@ static void ShowIcons(sint16 ox, sint16 oy, sint16 x, sint16 y, uint8 invxlen, u
             return;
         }
 
+        face_get(ip->face);
         xi = (i % invxlen) * 32 + ox + x;
         yi = (i / invxlen) * 32 + oy + y;
         type = (iwin == IWIN_INV &&
@@ -463,6 +464,7 @@ static void ShowIcons(sint16 ox, sint16 oy, sint16 x, sint16 y, uint8 invxlen, u
 jump_in_container:
             for (; i < invxlen * invylen; i++)
             {
+                face_get(cip->face);
                 xi = (i % invxlen) * 32 + ox + x;
                 yi = (i / invxlen) * 32 + oy + y;
                 type = (iwin == IWIN_INV &&

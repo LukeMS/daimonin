@@ -730,6 +730,7 @@ void widget_show_player_doll(int x, int y)
                                  (float)tmp->item_qua * 100;
                 int mb;
 
+                face_get(tmp->face);
                 sprite_blt_as_icon(face_list[tmp->face].sprite,
                                    widget_player_doll[index].xpos + x,
                                    widget_player_doll[index].ypos + y,

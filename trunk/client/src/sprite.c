@@ -868,6 +868,13 @@ void sprite_blt_as_icon(_Sprite *sprite, sint16 x, sint16 y,
     /* Blt bg. */
     sprite_blt(bg, x, y, NULL, bltfx);
 
+    /* When we have no sprite or bitmap, use SKIN_SPRITE_LOADING. */
+    if (!sprite ||
+        !sprite->bitmap)
+    {
+        sprite = skin_sprites[SKIN_SPRITE_LOADING];
+    }
+
     /* Blt sprite, centered. */
     if (sprite)
     {

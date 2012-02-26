@@ -294,7 +294,11 @@ item * locate_item_from_item(item *op, sint32 tag)
     for (; op != NULL; op = op->next)
     {
         if ((sint32)op->tag == tag)
+        {
+            face_get(op->face);
+
             return op;
+        }
         else if (op->inv)
         {
             if ((tmp = locate_item_from_item(op->inv, tag)))
@@ -310,18 +314,31 @@ item * locate_item_from_item(item *op, sint32 tag)
  */
 item * locate_item(sint32 tag)
 {
-    item   *op;
+    item   *op = NULL;
 
     if (tag == 0)
-        return cpl.below;
-    if (tag == -1)
-        return cpl.sack;
-    if (cpl.below && (op = locate_item_from_item(cpl.below->inv, tag)) != NULL)
+    {
+        op = cpl.below;
+        face_get(op->face);
+
         return op;
-    if (cpl.sack && (op = locate_item_from_item(cpl.sack->inv, tag)) != NULL)
+    }
+    else if (tag == -1)
+    {
+        op = cpl.sack;
+        face_get(op->face);
+
         return op;
-    if ((op = locate_item_from_item(player, tag)) != NULL)
+    }
+    else if ((cpl.below &&
+              (op = locate_item_from_item(cpl.below->inv, tag))) ||
+             (cpl.sack &&
+              (op = locate_item_from_item(cpl.sack->inv, tag))) ||
+             (op = locate_item_from_item(player, tag)))
+    {
         return op;
+    }
+
     return NULL;
 }
 

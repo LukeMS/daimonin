@@ -664,6 +664,7 @@ void ImageCmd(char *data, int len)
 {
     int          pnum = GetSINT32_String(data), // only uint16 is needed, save 2 byted
                  plen = GetSINT32_String(data + 4); // unsigned?
+    widget_id_t wid;
 
     if (len < 8 ||
         (len - 8) < plen)
@@ -677,6 +678,11 @@ void ImageCmd(char *data, int len)
     face_save((uint16)pnum, (uint8 *)data + 8, (uint32)plen);
     map_udate_flag = 2;
     map_redraw_flag |= MAP_REDRAW_FLAG_NORMAL;
+
+    for (wid = 0; wid < WIDGET_NROF; wid++)
+    {
+        WIDGET_REDRAW(wid) = 1;
+    }
 }
 
 
