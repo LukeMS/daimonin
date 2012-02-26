@@ -347,42 +347,49 @@ void sprite_free_surfaces(_Sprite *sprite)
     {
         SDL_FreeSurface(sprite->bitmap);
         sprite->bitmap = NULL;
+        ImageStats.bitmaps--;
     }
 
     if (sprite->fire)
     {
         SDL_FreeSurface(sprite->fire);
         sprite->fire = NULL;
+        ImageStats.fires--;
     }
 
     if (sprite->cold)
     {
         SDL_FreeSurface(sprite->cold);
         sprite->cold = NULL;
+        ImageStats.colds--;
     }
 
     if (sprite->electricity)
     {
         SDL_FreeSurface(sprite->electricity);
         sprite->electricity = NULL;
+        ImageStats.electricities--;
     }
 
     if (sprite->fogofwar)
     {
         SDL_FreeSurface(sprite->fogofwar);
         sprite->fogofwar = NULL;
+        ImageStats.fogofwars--;
     }
 
     if (sprite->infravision)
     {
         SDL_FreeSurface(sprite->infravision);
         sprite->infravision = NULL;
+        ImageStats.infravisions--;
     }
 
     if (sprite->xrayvision)
     {
         SDL_FreeSurface(sprite->xrayvision);
         sprite->xrayvision = NULL;
+        ImageStats.xrayvisions--;
     }
 }
 
