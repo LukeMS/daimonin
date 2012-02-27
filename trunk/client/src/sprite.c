@@ -80,7 +80,7 @@ uint8 sprite_deinit_system(void)
     return(1);
 }
 
-_Sprite * sprite_load(char *fname, SDL_RWops *rwop)
+_Sprite *sprite_load(char *fname, SDL_RWops *rwop)
 {
     _Sprite     *sprite;
     SDL_Surface *bitmap;
@@ -89,20 +89,27 @@ _Sprite * sprite_load(char *fname, SDL_RWops *rwop)
 
     if (fname)
     {
-        if (PHYSFS_exists(fname)==0)
+        if (!PHYSFS_exists(fname))
         {
-            LOG(LOG_MSG,"file: %s does not exist in physfs\n",fname);
-            return(NULL);
+            LOG(LOG_MSG,"file: %s does not exist in physfs\n", fname);
+
+            return NULL;
         }
         else
         {
-            if ((rw=PHYSFSRWOPS_openRead(fname))==NULL)
-                LOG(LOG_MSG,"PHYSFSRWOPS_openRead failed: %s\n",PHYSFS_getLastError());
-            if ((bitmap = IMG_Load_RW(rw,0)) == NULL)
-                return(NULL);
+            if (!(rw = PHYSFSRWOPS_openRead(fname)))
+            {
+                LOG(LOG_ERROR, "PHYSFSRWOPS_openRead failed: %s\n",
+                    PHYSFS_getLastError());
+            }
+
+            if (!(bitmap = IMG_Load_RW(rw, 0)))
+            {
+                return NULL;
+            }
+
             SDL_RWclose(rw);
         }
-
     }
     else
     {
