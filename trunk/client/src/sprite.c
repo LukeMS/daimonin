@@ -338,13 +338,6 @@ static void PutSurfacePixel(SDL_Surface *surface, uint16 x, uint16 y,
 /* Frees a sprite and all its surfaces. */
 void sprite_free_sprite(_Sprite *sprite)
 {
-    sprite_free_surfaces(sprite);
-    FREE(sprite);
-}
-
-/* Frees all surfaces associated with a sprite, bur not the sprite itself. */
-void sprite_free_surfaces(_Sprite *sprite)
-{
     if (!sprite)
     {
         return;
@@ -356,6 +349,19 @@ void sprite_free_surfaces(_Sprite *sprite)
         sprite->bitmap = NULL;
         ImageStats.bitmaps--;
     }
+
+    sprite_free_surfaces(sprite);
+    FREE(sprite);
+}
+
+/* Frees all secondary surfaces associated with a sprite, bur not the sprite
+ * itself. */
+void sprite_free_surfaces(_Sprite *sprite)
+{
+    if (!sprite)
+    {
+        return;
+   }
 
     if (sprite->fire)
     {
