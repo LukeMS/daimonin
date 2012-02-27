@@ -1538,8 +1538,11 @@ void play_anims(int mx, int my)
                         else
                         {
                             sprintf(buf, "%d", anim->value);
-                            string_blt(ScreenSurface, &font_small_out, buf, xpos + anim->x, ypos + tmp_y, NDI_COLR_ORANGE, NULL,
-                                          NULL);
+                            string_blt(ScreenSurface, &font_small_out, buf,
+                                       xpos + anim->x, ypos + tmp_y,
+                                       (anim->type == ANIM_SELF_DAMAGE)
+                                       ? NDI_COLR_RED : NDI_COLR_ORANGE, NULL,
+                                       NULL);
                         }
                         break;
                     case ANIM_KILL:
