@@ -86,6 +86,7 @@ typedef struct _Sprite
      *Later perhaps a smarter system, using the palettes and switch...
      */
     SDL_Surface    *bitmap;                 /* thats our native, unchanged bitmap*/
+    SDL_Surface    *scaled;
     SDL_Surface    *fire;
     SDL_Surface    *cold;
     SDL_Surface    *electricity;
@@ -132,6 +133,7 @@ extern SDL_Surface  *FormatHolder;
 typedef struct _imagestats
 {
     uint16 bitmaps;
+    uint16 scaleds;
     uint16 fires;
     uint16 colds;
     uint16 electricities;
@@ -199,11 +201,6 @@ Uint8 a;
 typedef struct tColorY {
 Uint8 y;
 } tColorY;
-
-extern  SDL_Surface     *zoomSurface(SDL_Surface * src, double zoomx, double zoomy, int smooth);
-extern  void            zoomSurfaceSize(int width, int height, double zoomx, double zoomy, int *dstwidth, int *dstheight);
-int zoomSurfaceRGBA(SDL_Surface * src, SDL_Surface * dst, int flipx, int flipy, int smooth);
-int zoomSurfaceY(SDL_Surface * src, SDL_Surface * dst, int flipx, int flipy);
 
 /* Macros for the oft-used technique of printing strings twice, the first black
  * layer slightly offset from the second coloured layer to give a clearer,

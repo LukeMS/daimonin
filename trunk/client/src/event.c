@@ -157,11 +157,11 @@ int mouseInPlayfield(int x, int y)
 {
     //we simply realc the mousevalues
 
-    x=(int)(x/(options.zoom/100.0f));
-    y=(int)(y/(options.zoom/100.0f));
+    x=(int)(x/((float)Screensize.x / 800.0f));
+    y=(int)(y/((float)Screensize.y / 600.0f));
 
-    x = x - options.mapstart_x -6;
-    y = y - options.mapstart_y - 55;
+    x = x - /*options.mapstart_x - */6;
+    y = y - /*options.mapstart_y - */55;
 
     if (x < 408)
     {
@@ -2883,6 +2883,7 @@ void check_menu_keys(int menu, int key)
                 options.real_video_bpp = info->vfmt->BitsPerPixel;
                 SDL_FreeSurface(ScreenSurfaceMap);
                 ScreenSurfaceMap=SDL_CreateRGBSurface(ScreenSurface->flags, Screensize.x, Screensize.y, options.used_video_bpp, 0,0,0,0);
+                face_reset();
             }
             cpl.menustatus = MENU_NO;
             map_udate_flag = 2;
