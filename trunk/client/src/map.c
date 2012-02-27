@@ -969,16 +969,16 @@ int get_tile_position(int x, int y, int *tx, int *ty)
     x %= (int)(MAP_TILE_POS_XOFF * ((float)Screensize.x / 800.0));
     y %= (int)(MAP_TILE_YOFF * ((float)Screensize.y / 600.0));
 
-    if (x < (MAP_TILE_XOFF * ((float)Screensize.x / 800.0)))
+    if (x < (MAP_TILE_YOFF * ((float)Screensize.x / 800.0)))
     {
-        if (x + y + y < (MAP_TILE_XOFF * ((float)Screensize.x / 800.0)))
+        if (x + y + y < (MAP_TILE_YOFF * ((float)Screensize.x / 800.0)))
             --(*tx);
         else if (y - x > 0)
             ++(*ty);
     }
     else
     {
-        x -= (MAP_TILE_XOFF * ((float)Screensize.x / 800.0));
+        x -= (MAP_TILE_YOFF * ((float)Screensize.x / 800.0));
         if (x - y - y > 0)
             --(*ty);
         else if (x + y + y > (MAP_TILE_POS_XOFF * ((float)Screensize.x / 800.0)))
