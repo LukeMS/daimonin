@@ -76,7 +76,7 @@ face_t          face_list[FACE_MAX_NROF];
 uint16          face_nrof;
 face_mpart_id_t face_mpart_id[16];
 
-static void           ResetList(uint8 all);
+static void           ReinitList(void);
 static _sprite_status LoadFromMemory(uint16 num, uint8 *data, uint32 len);
 static _sprite_status LoadFromFile(uint16 num, const char *dname);
 static _sprite_status LoadFromPack(uint16 num);
@@ -85,50 +85,44 @@ static void           SetFlags(uint16 num);
 /* An init occurs during GAME_STATUS_INIT, */
 void face_init(void)
 {
-    ResetList(1);
+    ReinitList();
 }
 
-/* A reset can be done at any point. */
+/* Resets face_list[]. Free all secondary surfaces. A reset can be done at any
+ * point. */
 void face_reset(void)
-{
-    ResetList(0);
-}
-
-/* A deinit occurs at client exit. */
-void face_deinit(void)
-{
-    ResetList(1);
-}
-
-/* Resets face_list[]. If all is non-zero, everything is reset/freed and the
- * list must be rebuilt again from the ground up (see the srvfile module).
- * Otherwise we nust free the surfaces and reseŧ flags so the face must be
- * requested again. */
-static void ResetList(uint8 all)
 {
     uint16 i;
 
     for (i = 0; i < FACE_MAX_NROF; i++)
     {
-        if (all)
-        {
-            FREE(face_list[i].name);
-            face_list[i].pos = -1;
-            face_list[i].len = 0;
-            face_list[i].crc = 0;
-        }
+        sprite_free_surfaces(face_list[i].sprite);
+    }
+}
+
+/* A deinit occurs at client exit. */
+void face_deinit(void)
+{
+    ReinitList();
+}
+
+/* Reinitialises face_list[]. Everything is reset/freed and the list must be
+ * rebuilt again from the ground up (see the srvfile module). */
+static void ReinitList(void)
+{
+    uint16 i;
+
+    for (i = 0; i < FACE_MAX_NROF; i++)
+    {
+        FREE(face_list[i].name);
+        face_list[i].pos = -1;
+        face_list[i].len = 0;
+        face_list[i].crc = 0;
 
         if (face_list[i].sprite)
         {
-            if (all)
-            {
-                sprite_free_sprite(face_list[i].sprite);
-                face_list[i].sprite = NULL;
-            }
-            else
-            {
-                sprite_free_surfaces(face_list[i].sprite);
-            }
+            sprite_free_sprite(face_list[i].sprite);
+            face_list[i].sprite = NULL;
         }
 
         face_list[i].alt_a = -1;
@@ -136,10 +130,7 @@ static void ResetList(uint8 all)
         face_list[i].flags = FACE_FLAG_NONE;
     }
 
-    if (all)
-    {
-        face_nrof = 0;
-    }
+    face_nrof = 0;
 }
 
 /* We have received SERVER_CMD_FACE1 (but see server_cmd.c:Face1Cmd(). */
