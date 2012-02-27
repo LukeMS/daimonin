@@ -1,0 +1,4 @@
+SPriG - SDL Primitive Generator
+by Jonathan Dearborn
+version 1.0.0
+11-8-08

@@ -39,6 +39,7 @@
 			<Add directory="../CodeBlocks" />
 			<Add directory="../../../src" />
 			<Add directory="../../../src/include" />
+			<Add directory="../../../src/3rdparty/sprig" />
 		</Compiler>
 		<Linker>
 			<Add library="/usr/lib/libcurl.so" />
@@ -48,6 +49,27 @@
 			<Add library="/usr/lib/libphysfs.so" />
 		</Linker>
 		<Unit filename="define.h" />
+		<Unit filename="../../../src/3rdparty/sprig/sprig.h" />
+		<Unit filename="../../../src/3rdparty/sprig/sprig_common.h" />
+		<Unit filename="../../../src/3rdparty/sprig/sprig_inline.h" />
+		<Unit filename="../../../src/3rdparty/sprig/SPG_extended.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/3rdparty/sprig/SPG_misc.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/3rdparty/sprig/SPG_polygon.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/3rdparty/sprig/SPG_primitives.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/3rdparty/sprig/SPG_rotation.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/3rdparty/sprig/SPG_surface.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="../../../src/adler32.c">
 			<Option compilerVar="CC" />
 		</Unit>

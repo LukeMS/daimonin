@@ -74,6 +74,8 @@ typedef signed char     sint8;
 #include <SDL/SDL_mixer.h>
 #endif
 
+#include "sprig.h"
+
 #include "protocol.h" /* shared header between server & client */
 #include "widget.h"
 #include "wrapper.h"

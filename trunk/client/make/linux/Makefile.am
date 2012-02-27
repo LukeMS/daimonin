@@ -43,7 +43,13 @@ daimonin_SOURCES =  \
 	../../src/uncompr.c \
 	../../src/wrapper.c \
 	../../src/widget.c \
-	../../src/zutil.c
+	../../src/zutil.c \
+	../../src/3rdparty/sprig/SPG_extended.c \
+	../../src/3rdparty/sprig/SPG_misc.c \
+	../../src/3rdparty/sprig/SPG_polygon.c \
+	../../src/3rdparty/sprig/SPG_primitives.c \
+	../../src/3rdparty/sprig/SPG_rotation.c \
+	../../src/3rdparty/sprig/SPG_surface.c
 daimonin_LDADD = -lSDL_mixer -lSDL_image @SDL_LIBS@ @EXTRA_LIBS@ @PHYSFS_LIBS@ @CURL_LIBS@
 daimonin_OBJDIR = objs
 
@@ -68,7 +74,8 @@ daimonin_updater_OBJDIR = updater_objs
 
 AUTOMAKE_OPTIONS = subdir-objects
 AM_CFLAGS = @SDL_CFLAGS@ -Wextra -DDAI_DEVELOPMENT
-AM_LDFLAGS = @LDFLAGS@ 
+AM_CPPFLAGS = -I../../src/3rdparty/sprig
+AM_LDFLAGS = @LDFLAGS@
 
 install-data-hook:
 	sh ../../install/linux/install.sh $(d_datadir) $(d_bindir)
