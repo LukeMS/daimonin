@@ -24,14 +24,14 @@
 #ifndef __MAP_H
 #define __MAP_H
 
-#define MAP_START_XOFF 390
-#define MAP_START_YOFF 143
-
 #define MAP_TILE_POS_YOFF 23
 #define MAP_TILE_POS_XOFF 48
 
-#define MAP_TILE_XOFF 12
-#define MAP_TILE_YOFF 24
+#define MAP_TILE_XOFF (MAP_TILE_POS_YOFF / 2)
+#define MAP_TILE_YOFF (MAP_TILE_POS_XOFF / 2)
+
+#define MAP_START_XOFF (MAP_TILE_POS_XOFF * 8)
+#define MAP_START_YOFF (MAP_TILE_POS_YOFF * 8)
 
 #define MAP_REDRAW_FLAG_NO          0
 #define MAP_REDRAW_FLAG_NORMAL      (1 << 0)
@@ -87,6 +87,15 @@ typedef struct
 MapPos;
 
 extern _mapdata         MapData;
+
+#define MAP_XPOS(_x_, _y_) \
+    (MAP_START_XOFF * ((float)Screensize.x / 800.0)) + \
+    (_x_) * (MAP_TILE_YOFF * ((float)Screensize.x / 800.0)) - \
+    (_y_) * (MAP_TILE_YOFF * ((float)Screensize.x / 800.0))
+#define MAP_YPOS(_x_, _y_) \
+    (MAP_START_YOFF * ((float)Screensize.y / 600.0)) + \
+    (_x_) * (MAP_TILE_XOFF * ((float)Screensize.y / 600.0)) + \
+    (_y_) * (MAP_TILE_XOFF * ((float)Screensize.y / 600.0))
 
 extern void             clear_map(void);
 extern void             set_map_darkness(int x, int y, uint8 darkness);
