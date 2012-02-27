@@ -1465,10 +1465,7 @@ void delete_anim_que(void)
 void play_anims(int mx, int my)
 {
     struct _anim   *anim, *tmp;
-    int             xpos, ypos, tmp_off;
-    int             num_ticks;
     char            buf[32];
-    int             tmp_y;
 
     for (anim = start_anim; anim; anim = tmp)
     {
@@ -1478,22 +1475,17 @@ void play_anims(int mx, int my)
             remove_anim(anim);
         else
         {
-            num_ticks = LastTick - anim->start_tick;
-
-            if (anim->mapx >= MapData.posx
-                    && anim->mapx < MapData.posx + MapStatusX
-                    && anim->mapy >= MapData.posy
-                    && anim->mapy < MapData.posy + MapStatusY)
+            if (anim->mapx >= MapData.posx &&
+                anim->mapx < MapData.posx + MapStatusX &&
+                anim->mapy >= MapData.posy &&
+                anim->mapy < MapData.posy + MapStatusY)
             {
-                tmp_y = anim->y - (int) ((float) num_ticks * anim->yoff); /*   * num_ticks ); */
-                xpos = options.mapstart_x +
-                       (MAP_START_XOFF * (options.zoom / 100.0)) +
-                       (anim->mapx - MapData.posx) * (MAP_TILE_YOFF * (options.zoom / 100.0)) -
-                       (anim->mapy - MapData.posy - 1) * (MAP_TILE_YOFF * (options.zoom / 100.0));
-                ypos = options.mapstart_y +
-                       (MAP_START_YOFF * (options.zoom / 100.0)) +
-                       (anim->mapx - MapData.posx) * (MAP_TILE_XOFF * (options.zoom / 100.0)) +
-                       (anim->mapy - MapData.posy - 1) * (MAP_TILE_XOFF * (options.zoom / 100.0));
+                int   tmp_y = anim->y - (int)((float)(LastTick - anim->start_tick) * anim->yoff),
+                      x = (anim->mapx - MapData.posx),
+                      y = (anim->mapx - MapData.posx - 1),
+                      xpos = /*options.mapstart_x + */MAP_XPOS(x, y),
+                      ypos = /*options.mapstart_y + */MAP_YPOS(x, y);
+                sint8 tmp_off = 0;
 
                 switch (anim->type)
                 {
@@ -1519,7 +1511,6 @@ void play_anims(int mx, int my)
                         ypos -= 26;
                         sprite_blt(skin_sprites[SKIN_SPRITE_DEATH], xpos + anim->x - 5, ypos + tmp_y - 4, NULL, NULL);
                         sprintf(buf, "%d", anim->value);
-                        tmp_off = 0;
 
                         /* Lets check the size of the value */
                         if (anim->value < 10)
