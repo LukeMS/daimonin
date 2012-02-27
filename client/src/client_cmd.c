@@ -715,6 +715,7 @@ static uint8 CheckCommand(char *cmd, char *params)
                            "IMAGE-LOADING-STATISTICS\n"\
                            "==========================================\n"\
                            "Bitmaps: %d\n"\
+                           "Scaleds: %d\n"\
                            "Fires: %d\n"\
                            "Colds: %d\n"\
                            "Electricities: %d\n"\
@@ -724,6 +725,7 @@ static uint8 CheckCommand(char *cmd, char *params)
                            "Infravisions in Memory: %d\n"\
                            "Xrayvisions in Memory: %d",
                            ImageStats.bitmaps,
+                           ImageStats.scaleds,
                            ImageStats.fires,
                            ImageStats.colds,
                            ImageStats.electricities,

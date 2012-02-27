@@ -31,7 +31,6 @@ _server_char        new_character; /* if we login as new char, thats the values 
 
 SDL_Surface        *ScreenSurface; /* THE main surface (backbuffer)*/
 SDL_Surface        *ScreenSurfaceMap; /* THE map surface (backbuffer)*/
-SDL_Surface        *zoomed = NULL;
 _login_step          LoginInputStep;
 Uint32              sdl_dgreen, sdl_dred, sdl_gray1, sdl_gray2, sdl_gray3, sdl_gray4;
 
@@ -251,10 +250,10 @@ void init_game_data(void)
     options.channelformat=0;
     options.playerdoll = 0;
     options.sleepcounter = 0;
-    options.zoom=100;
+//    options.zoom=100;
     options.speedup = 0;
-    options.mapstart_x = -10;
-    options.mapstart_y = 100;
+//    options.mapstart_x = -10;
+//    options.mapstart_y = 100;
 //    options.statometer=1;
     options.statsupdate=5;
     options.firststart=1;
@@ -1549,6 +1548,7 @@ int main(int argc, char *argv[])
                 uint8 quacon = (ip->item_qua == 255) ? 255
                                : (float)ip->item_con / (float)ip->item_qua * 100;
 
+                face_get(ip->face);
                 sprite_blt_as_icon(face_list[ip->face].sprite, x, y,
                                    SPRITE_ICON_TYPE_NONE, 0, ip->flagsval,
                                    (quacon == 100) ? 0 : quacon,
@@ -1596,7 +1596,7 @@ int main(int argc, char *argv[])
                 }
             }
         if (showtimer && !esc_menu_flag)
-            sprite_blt(skin_sprites[SKIN_SPRITE_STIMER], options.mapstart_x+300, options.mapstart_y+150, NULL, NULL);
+            sprite_blt(skin_sprites[SKIN_SPRITE_STIMER], /*options.mapstart_x+*/300, /*options.mapstart_y+*/150, NULL, NULL);
         }
         if (!options.sleepcounter)
             showtimer = 0;
@@ -2316,7 +2316,7 @@ static void DisplayCustomCursor(void)
 static void DisplayLayer1(void)
 {
     static int gfx_toggle=0;
-    SDL_Rect    rect;
+//    SDL_Rect    rect;
 #ifdef PROFILING
     Uint32 ts;
 #endif
@@ -2339,17 +2339,6 @@ static void DisplayLayer1(void)
 #ifdef PROFILING
         LOG(LOG_MSG, "[Prof] map_draw_map(): %d\n", SDL_GetTicks() - ts);
 #endif
-        SDL_FreeSurface(zoomed);
-#ifdef PROFILING
-        ts = SDL_GetTicks();
-#endif
-        if (options.zoom==100)
-            zoomed=SDL_DisplayFormatAlpha(ScreenSurfaceMap);
-        else
-            zoomed=zoomSurface(ScreenSurfaceMap, options.zoom/100.0, options.zoom/100.0, options.smooth);
-#ifdef PROFILING
-        LOG(LOG_MSG, "[Prof] DisplayFormat or Map-Zoom: %d\n", SDL_GetTicks() - ts);
-#endif
         if (map_redraw_flag == MAP_REDRAW_FLAG_NORMAL ||
             ticks <= SDL_GetTicks())
         {
@@ -2357,9 +2346,9 @@ static void DisplayLayer1(void)
             ticks = SDL_GetTicks() + 150;
         }
     }
-    rect.x=options.mapstart_x;
-    rect.y=options.mapstart_y;
-    SDL_BlitSurface(zoomed, NULL, ScreenSurface, &rect);
+//    rect.x=options.mapstart_x;
+//    rect.y=options.mapstart_y;
+    SDL_BlitSurface(ScreenSurfaceMap, NULL, ScreenSurface, NULL);//&rect);
 
     /* the damage numbers */
     play_anims(0,0);
@@ -2384,15 +2373,10 @@ static void DisplayLayer1(void)
 
     if (warn)
     {
-         sprite_blt(warn, options.mapstart_x +
-                    (MAP_START_XOFF * (options.zoom / 100.0)) +
-                    9 * (MAP_TILE_YOFF * (options.zoom / 100.0)) -
-                    8 * (MAP_TILE_YOFF * (options.zoom / 100.0)) -
-                    warn->bitmap->w / 2, options.mapstart_y +
-                    (MAP_START_YOFF * (options.zoom / 100.0)) +
-                    6 * (MAP_TILE_XOFF * (options.zoom / 100.0)) +
-                    5 * (MAP_TILE_XOFF * (options.zoom / 100.0)) -
-                    warn->bitmap->h / 2, NULL, NULL);
+         sprite_blt(warn,
+                    /*options.mapstart_x + */MAP_XPOS(9, 8) - warn->bitmap->w / 2,
+                    /*options.mapstart_y + */MAP_YPOS(6, 5) - warn->bitmap->h / 2,
+                    NULL, NULL);
     }
 }
 

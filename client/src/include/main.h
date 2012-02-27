@@ -117,7 +117,7 @@ typedef struct _options
     int                     mapstart_x;
     int                     mapstart_y;
     int                     zoom;
-    int                   smooth;
+    int                     smooth;
     int                     map_fogofwar;
 
     /* Look & Feel */
@@ -436,7 +436,6 @@ extern struct gui_book_struct    *gui_interface_book;
 
 extern SDL_Surface         *ScreenSurface;      /* our main bla and so on surface */
 extern SDL_Surface         *ScreenSurfaceMap;      /* our main bla and so on surface */
-extern SDL_Surface         *zoomed;                /* tem surface for zoomed data */
 
 extern void save_user_settings(void);
 extern void clear_lists(void);

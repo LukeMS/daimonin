@@ -147,10 +147,10 @@ _option             opt[]                           =
 
         /* Map */
         {"Player names:", "Whether/when to show player's names above their heads.","","", "Never#Always#Only others#Only yours",SEL_RANGE,0,3,1,2, &options.player_names,VAL_INT},
-        {"Playfield start X:", "The X-position of the playfield.","","", "",SEL_RANGE,-20,1000,10,-10, &options.mapstart_x,VAL_INT},
-        {"Playfield start Y:", "The Y-position of the playfield.","","", "",SEL_RANGE,0,700,10,60, &options.mapstart_y,VAL_INT},
-        {"Playfield zoom:", "The zoom percentage of the playfield.","EXPERIMENTAL!!!!!","", "",SEL_RANGE,50,200,5,100, &options.zoom,VAL_INT},
-        {"Smooth zoom:", "Whether to use smooth zoom on the playfield.","EXPERIMENTAL!!!!!","WARNING: VERY VERY VERY CPU intensive!", "",SEL_CHECKBOX,0,1,1,0, &options.smooth,VAL_BOOL},
+        {"Playfield start X:", "THIS OPTION IS OBSOLETE IN 0.10.6.","PRESERVED ONLY FOR BACKWARDS COMPATIBILITY DURING DEVELOPMENT.","", "",SEL_RANGE,-20,1000,10,-10, &options.mapstart_x,VAL_INT},
+        {"Playfield start Y:", "THIS OPTION IS OBSOLETE IN 0.10.6.","PRESERVED ONLY FOR BACKWARDS COMPATIBILITY DURING DEVELOPMENT.","", "",SEL_RANGE,0,700,10,60, &options.mapstart_y,VAL_INT},
+        {"Playfield zoom:", "THIS OPTION IS OBSOLETE IN 0.10.6.","PRESERVED ONLY FOR BACKWARDS COMPATIBILITY DURING DEVELOPMENT.","", "",SEL_RANGE,50,200,5,100, &options.zoom,VAL_INT},
+        {"Smooth zoom:", "THIS OPTION IS OBSOLETE IN 0.10.6.","PRESERVED ONLY FOR BACKWARDS COMPATIBILITY DURING DEVELOPMENT.","", "",SEL_CHECKBOX,0,1,1,0, &options.smooth,VAL_BOOL},
         {"Fog of war:", "Whether to show the 'fog of war'.","This is a way to represent the players' short-term memory. Nearby","map features that you have seen before but now can't see are shown.", "",SEL_CHECKBOX,0,1,1,1, &options.map_fogofwar,VAL_BOOL},
         {"#", "","","", "",0,0,0,0,0, NULL,0},
         /* End of Page */
