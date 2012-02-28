@@ -439,6 +439,8 @@ extern SDL_Surface         *ScreenSurfaceMap;      /* our main bla and so on sur
 
 extern void save_user_settings(void);
 extern void clear_lists(void);
+extern uint8 set_video_mode(uint16 x, uint16 y);
+extern void create_map_surface(void);
 extern int  main(int argc, char *argv[]);
 extern void open_input_mode(int maxchar);
 extern void load_options_dat(void);

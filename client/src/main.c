@@ -1227,13 +1227,78 @@ static void show_option(int mark, int x, int y)
     sprite_blt(skin_sprites[SKIN_SPRITE_OPTIONS_MARK_RIGHT], x2, y2, NULL, &bltfx);
 }
 
+/* Sets a new video mode at x,y resolution. Returns 0 on success and
+ * recalculates options.real_video_bpp. Returns 1 on failure, or if the x,y is
+ * the default resolution the client exits. */
+uint8 set_video_mode(uint16 x, uint16 y)
+{
+    uint8                i;
+    const SDL_VideoInfo *info;
+
+    if (!(ScreenSurface = SDL_SetVideoMode(x, y, options.used_video_bpp,
+                                           get_video_flags())))
+    {
+        char buf[MEDIUM_BUF];
+
+        sprintf(buf, "Could not set %ux%ux%d video mode",
+                x, y, options.used_video_bpp);
+
+        if (x == Screendefs[0].x &&
+            y == Screendefs[0].y)
+        {
+            LOG(LOG_FATAL, "%s: %s\n", buf, SDL_GetError());
+        }
+        else
+        {
+            textwin_show_string(0, NDI_COLR_RED, "%s.", buf);
+            LOG(LOG_ERROR, "%s: %s\n", buf, SDL_GetError());
+        }
+
+        return 1;
+    }
+
+    for (i = 0; i < 16; i++)
+    {
+        if (x == Screendefs[i].x &&
+            y == Screendefs[i].y)
+        {
+            Screensize = Screendefs[i];
+
+            break;
+        }
+    }
+
+    info = SDL_GetVideoInfo();
+    options.real_video_bpp = info->vfmt->BitsPerPixel;
+
+    return 0;
+}
+
+/* (Re)creates.ScreenSurfaceMap of appropriate dimensions given Screensize.x
+ * and Screensize.y. Also resets face_list[]. */
+void create_map_surface(void)
+{
+    uint16 x = (MAP_TILE_POS_XOFF * MAP_MAX_SIZE + MAP_TILE_POS_XOFF) *
+               ((float)Screensize.x / 800.0),
+           y = (MAP_TILE_POS_YOFF * MAP_MAX_SIZE + (MAP_TILE_POS_YOFF * 3)) *
+               ((float)Screensize.y / 600.0);
+
+    if (ScreenSurfaceMap)
+    {
+        SDL_FreeSurface(ScreenSurfaceMap);
+    }
+
+    ScreenSurfaceMap = SDL_CreateRGBSurface(get_video_flags(), x, y,
+                                            options.used_video_bpp, 0, 0, 0, 0);
+    face_reset();
+}
+
 int main(int argc, char *argv[])
 {
     char   buf[MEDIUM_BUF];
     int    x, y;
     int    drag;
     uint32 anim_tick;
-    Uint32 videoflags;
     int    done = 0, FrameCount = 0;
     uint8  showtimer = 0;
     uint32 speeduptick = 0;
@@ -1278,8 +1343,7 @@ int main(int argc, char *argv[])
     load_options_dat(); /* now load options, allowing the user to override the presetings */
     Screensize = Screendefs[options.resolution];
     SYSTEM_Start(); /* start the system AFTER start SDL */
-    videoflags = get_video_flags();
-    list_vid_modes(videoflags);
+    list_vid_modes(get_video_flags());
     options.used_video_bpp = 32;//16;//2^(options.video_bpp+3);
 
     if (options.auto_bpp_flag)
@@ -1289,40 +1353,18 @@ int main(int argc, char *argv[])
         options.used_video_bpp = info->vfmt->BitsPerPixel;
     }
 
-    if ((ScreenSurface = SDL_SetVideoMode(Screensize.x, Screensize.y, options.used_video_bpp, videoflags)) == NULL)
+    if (set_video_mode(Screensize.x, Screensize.y))
     {
-        /* We have a problem, not supportet screensize */
-        /* If we have higher resolution we try the default 800x600 */
-        if (Screensize.x > 800 && Screensize.y > 600)
-        {
-            LOG(LOG_MSG, "Try to set to default 800x600...\n");
-            Screensize=Screendefs[0];
-            options.resolution = 0;
-            if ((ScreenSurface = SDL_SetVideoMode(Screensize.x, Screensize.y, options.used_video_bpp, videoflags)) == NULL)
-            {
-                /* Now we have a really really big problem */
-                LOG(LOG_FATAL, "Couldn't set %dx%dx%d video mode: %s\n", Screensize.x, Screensize.y, options.used_video_bpp, SDL_GetError());
-            }
-            else
-            {
-                const SDL_VideoInfo    *info    = NULL;
-                info = SDL_GetVideoInfo();
-                options.real_video_bpp = info->vfmt->BitsPerPixel;
-            }
-        }
-        else
-        {
-            LOG(LOG_FATAL, "Could not set default resolution!\n");
-        }
-    }
-    else
-    {
-        const SDL_VideoInfo    *info    = NULL;
-        info = SDL_GetVideoInfo();
-        options.used_video_bpp = info->vfmt->BitsPerPixel;
+        sprintf(buf, "Try to switch back to default 800x600...");
+        textwin_show_string(0, NDI_COLR_RED, "%s", buf);
+        LOG(LOG_MSG, "%s\n", buf);
+        Screensize = Screendefs[0];
+        options.resolution = 0;
+
+        (void)set_video_mode(Screendefs[0].x, Screendefs[0].y);
     }
 
-    ScreenSurfaceMap = SDL_CreateRGBSurface(videoflags, Screensize.x, Screensize.y, options.used_video_bpp, 0,0,0,0);
+    create_map_surface();
     SDL_VideoDriverName(buf, 255);
     LOG(LOG_MSG, "Video Driver: %s\n",buf);
 
@@ -2339,6 +2381,7 @@ static void DisplayLayer1(void)
 #ifdef PROFILING
         LOG(LOG_MSG, "[Prof] map_draw_map(): %d\n", SDL_GetTicks() - ts);
 #endif
+
         if (map_redraw_flag == MAP_REDRAW_FLAG_NORMAL ||
             ticks <= SDL_GetTicks())
         {
