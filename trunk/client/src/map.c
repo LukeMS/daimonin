@@ -100,7 +100,25 @@ void display_mapscroll(int dx, int dy)
 
 void map_overlay(_Sprite *sprite)
 {
-    uint8 y;
+    uint16 xoff = 0,
+           yoff = 0;
+    uint8  y;
+
+    /* If the bitmap is wider than a tile, center it on
+     * the tile. */
+    if (sprite->bitmap->w > MAP_TILE_POS_XOFF)
+    {
+        xoff = ((sprite->bitmap->w - MAP_TILE_POS_XOFF) *
+                ((float)Screensize.x / 800.0) / 2);
+    }
+
+    /* If the bitmap is taller than a tile, position it
+       sufficently high. */
+    if (sprite->bitmap->h > MAP_TILE_POS_YOFF)
+    {
+        yoff  = ((sprite->bitmap->h - MAP_TILE_POS_YOFF) *
+                 ((float)Screensize.y / 600.0));
+    }
 
     for (y = 0; y < MapStatusY; y++)
     {
@@ -108,8 +126,8 @@ void map_overlay(_Sprite *sprite)
 
         for (x = 0; x < MapStatusX; x++)
         {
-            sint16 xpos = MAP_XPOS(x, y),
-                   ypos = MAP_YPOS(x, y);
+            sint16 xpos = MAP_XPOS(x, y) - (sint16)xoff,
+                   ypos = MAP_YPOS(x, y) - (sint16)yoff;
 
             sprite_blt_map(sprite, xpos, ypos, NULL, NULL, 0);
         }
@@ -444,25 +462,17 @@ void map_draw_map(void)
 
                         if (!(face_list[index].flags & FACE_FLAG_LOADED))
                         {
-                            _Sprite *face_sprite = skin_sprites[SKIN_SPRITE_LOADING];
-                            int      yl = (ypos +
-                                           (MAP_TILE_POS_YOFF * ((float)Screensize.y / 600.0))) -
-                                          face_sprite->bitmap->h,
-                                     xl = xpos;
-
-                            if (face_sprite->bitmap->w > (MAP_TILE_POS_XOFF *
-                                                          ((float)Screensize.x / 800.0)))
-                            {
-                                xl -= (face_sprite->bitmap->w -
-                                       (MAP_TILE_POS_XOFF * ((float)Screensize.x / 800.0))) / 2;
-                            }
-
-                            sprite_blt_map(face_sprite, xpos, ypos, NULL, NULL, 0);
-
+                            /* Request the face now if it has not already been
+                             * requested. */
                             if (!(face_list[index].flags & FACE_FLAG_REQUESTED))
                             {
                                 face_get(index);
                             }
+
+                            /* Assume SKIN_SPRITE_LOADING is exactly tile
+                             * dimensions. */
+                            sprite_blt_map(skin_sprites[SKIN_SPRITE_LOADING],
+                                           xpos, ypos, NULL, NULL, 0);
                         }
                         else
                         {
@@ -493,40 +503,57 @@ void map_draw_map(void)
                                 mnr = map->pos[k];
                                 mid = mnr >> 4;
                                 mnr &= 0x0f;
-                                xml = face_mpart_id[mid].xlen;
-                                yl = ypos
-                                     - face_mpart_id[mid].part[mnr].yoff
-                                     + face_mpart_id[mid].ylen
-                                     - face_sprite->bitmap->h;
-                                /* we allow overlapping x borders - we simply center then
-                                 */
-                                xl = 0;
-                                if (face_sprite->bitmap->w > face_mpart_id[mid].xlen)
-                                    xl = (face_mpart_id[mid].xlen - face_sprite->bitmap->w) >> 1;
-                                xmpos = xpos - face_mpart_id[mid].part[mnr].xoff;
-                                xl += xmpos;
+                                xml = (face_mpart_id[mid].xlen *
+                                       ((float)Screensize.x / 800.0));
+                                xmpos = xl = xpos -
+                                             (face_mpart_id[mid].part[mnr].xoff *
+                                              ((float)Screensize.x / 800.0));
 
-//                                textwin_show_string(0, NDI_COLR_RED, "ID:%d NR:%d yoff:%d yl:%d",
-//                                                   mid, mnr,
-//                                                   face_mpart_id[mid].part[mnr].yoff,
-//                                                   yl);
+                                /* If the bitmap is wider than the footprint,
+                                 * center it on the footprint. */
+                                if (face_sprite->bitmap->w > face_mpart_id[mid].xlen)
+                                {
+                                    xl -= ((face_sprite->bitmap->w - face_mpart_id[mid].xlen) *
+                                           ((float)Screensize.x / 800.0));
+                                }
+
+                                yl = ypos -
+                                     (face_mpart_id[mid].part[mnr].yoff *
+                                      ((float)Screensize.y / 600.0));
+
+                                /* If the bitmap is taller than the footprint,
+                                 * position it sufficently high. */
+                                if (face_sprite->bitmap->h > face_mpart_id[mid].ylen)
+                                {
+                                     yl -=((face_sprite->bitmap->h - face_mpart_id[mid].ylen) *
+                                           ((float)Screensize.y / 600.0));
+                                }
                             }
                             else /* single tile... */
                             {
                                 /* first, we calc the shift positions */
                                 xml = (MAP_TILE_POS_XOFF * ((float)Screensize.x / 800.0));
-                                yl = (ypos +
-                                      (MAP_TILE_POS_YOFF * ((float)Screensize.y / 600.0))) -
-                                     face_sprite->bitmap->h;
                                 xmpos = xl = xpos;
 
-                                if (face_sprite->bitmap->w > (MAP_TILE_POS_XOFF *
-                                                              ((float)Screensize.x / 800.0)))
+                                /* If the bitmap is wider than a tile, center it on
+                                 * the tile. */
+                                if (face_sprite->bitmap->w > MAP_TILE_POS_XOFF)
                                 {
-                                    xl -= (face_sprite->bitmap->w -
-                                           (MAP_TILE_POS_XOFF * ((float)Screensize.x / 800.0))) / 2;
+                                    xl -= ((face_sprite->bitmap->w - MAP_TILE_POS_XOFF) *
+                                           ((float)Screensize.x / 800.0) / 2);
+                                }
+
+                                yl = ypos;
+
+                                /* If the bitmap is taller than a tile, position it
+                                   sufficently high. */
+                                if (face_sprite->bitmap->h > MAP_TILE_POS_YOFF)
+                                {
+                                    yl -= ((face_sprite->bitmap->h - MAP_TILE_POS_YOFF) *
+                                           ((float)Screensize.y / 600.0));
                                 }
                             }
+
                             /* blt the face in the darkness level, the tile pos has */
                             temp = map->darkness;
 
