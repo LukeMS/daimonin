@@ -1280,7 +1280,7 @@ void create_map_surface(void)
 {
     uint16 x = (MAP_TILE_POS_XOFF * MAP_MAX_SIZE + MAP_TILE_POS_XOFF) *
                ((float)Screensize.x / 800.0),
-           y = (MAP_TILE_POS_YOFF * MAP_MAX_SIZE + (MAP_TILE_POS_YOFF * 3)) *
+           y = (MAP_TILE_POS_YOFF * MAP_MAX_SIZE + MAP_START_YOFF) *
                ((float)Screensize.y / 600.0);
 
     if (ScreenSurfaceMap)
