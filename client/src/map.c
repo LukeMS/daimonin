@@ -476,7 +476,7 @@ void map_draw_map(void)
                         }
                         else
                         {
-                            _Sprite *face_sprite = face_list[index].sprite;
+                            _Sprite *sprite = face_list[index].sprite;
                             int      yl,
                                      xl;
 
@@ -489,12 +489,12 @@ void map_draw_map(void)
                                 if (x < (MAP_MAX_SIZE - 1) / 2 || y < (MAP_MAX_SIZE - 1) / 2)
                                 {
                                     if ((i = face_list[index].alt_a) != -1)
-                                        face_sprite = face_list[i].sprite;
+                                        sprite = face_list[i].sprite;
                                 }
                                 else
                                 {
                                     if ((i = face_list[index].alt_b) != -1)
-                                        face_sprite = face_list[i].sprite;
+                                        sprite = face_list[i].sprite;
                                 }
                             }
 
@@ -511,9 +511,9 @@ void map_draw_map(void)
 
                                 /* If the bitmap is wider than the footprint,
                                  * center it on the footprint. */
-                                if (face_sprite->bitmap->w > face_mpart_id[mid].xlen)
+                                if (sprite->bitmap->w > face_mpart_id[mid].xlen)
                                 {
-                                    xl -= ((face_sprite->bitmap->w - face_mpart_id[mid].xlen) *
+                                    xl -= ((sprite->bitmap->w - face_mpart_id[mid].xlen) *
                                            ((float)Screensize.x / 800.0));
                                 }
 
@@ -523,9 +523,9 @@ void map_draw_map(void)
 
                                 /* If the bitmap is taller than the footprint,
                                  * position it sufficently high. */
-                                if (face_sprite->bitmap->h > face_mpart_id[mid].ylen)
+                                if (sprite->bitmap->h > face_mpart_id[mid].ylen)
                                 {
-                                     yl -=((face_sprite->bitmap->h - face_mpart_id[mid].ylen) *
+                                     yl -=((sprite->bitmap->h - face_mpart_id[mid].ylen) *
                                            ((float)Screensize.y / 600.0));
                                 }
                             }
@@ -537,9 +537,9 @@ void map_draw_map(void)
 
                                 /* If the bitmap is wider than a tile, center it on
                                  * the tile. */
-                                if (face_sprite->bitmap->w > MAP_TILE_POS_XOFF)
+                                if (sprite->bitmap->w > MAP_TILE_POS_XOFF)
                                 {
-                                    xl -= ((face_sprite->bitmap->w - MAP_TILE_POS_XOFF) *
+                                    xl -= ((sprite->bitmap->w - MAP_TILE_POS_XOFF) *
                                            ((float)Screensize.x / 800.0) / 2);
                                 }
 
@@ -547,9 +547,9 @@ void map_draw_map(void)
 
                                 /* If the bitmap is taller than a tile, position it
                                    sufficently high. */
-                                if (face_sprite->bitmap->h > MAP_TILE_POS_YOFF)
+                                if (sprite->bitmap->h > MAP_TILE_POS_YOFF)
                                 {
-                                    yl -= ((face_sprite->bitmap->h - MAP_TILE_POS_YOFF) *
+                                    yl -= ((sprite->bitmap->h - MAP_TILE_POS_YOFF) *
                                            ((float)Screensize.y / 600.0));
                                 }
                             }
@@ -578,9 +578,9 @@ void map_draw_map(void)
                             bltfx.flags = 0;
                             if (k && ((x > player_posx && y >= player_posy) || (x >= player_posx && y > player_posy)))
                             {
-                                if (face_sprite && face_sprite->bitmap && k > 1)
+                                if (sprite && sprite->bitmap && k > 1)
                                 {
-                                    if (sprite_collision(player_pixx, player_pixy, xl, yl, &player_dummy, face_sprite))
+                                    if (sprite_collision(player_pixx, player_pixy, xl, yl, &player_dummy, sprite))
                                         bltfx.flags = BLTFX_FLAG_SRCALPHA;
                                 }
                             }
@@ -637,7 +637,7 @@ void map_draw_map(void)
                             /* These faces have alternative images. This has
                              * already been sorted out above, so just blt it. */
                             if (face_list[index].flags & FACE_FLAG_ALTERNATIVE)
-                                sprite_blt_map(face_sprite, xl, yl, NULL, &bltfx, stretch);
+                                sprite_blt_map(sprite, xl, yl, NULL, &bltfx, stretch);
                             /* Double faces are shown twice, one above the
                              * other, when not lower on the screen than the
                              * player. This simulates high walls without
@@ -645,13 +645,13 @@ void map_draw_map(void)
                             else if (face_list[index].flags & FACE_FLAG_DOUBLE)
                             {
                                 /* Blt face once in normal position. */
-                                sprite_blt_map(face_sprite, xl, yl, NULL, &bltfx, stretch);
+                                sprite_blt_map(sprite, xl, yl, NULL, &bltfx, stretch);
  
                                 /* If it's not in the bottom quadrant of the
                                  * map, blt it again 'higher up' on the same
                                  * square. */
                                 if (x < (MAP_MAX_SIZE - 1) / 2 || y < (MAP_MAX_SIZE - 1) / 2)
-                                    sprite_blt_map(face_sprite, xl, yl - 22, NULL, &bltfx, 0);
+                                    sprite_blt_map(sprite, xl, yl - 22, NULL, &bltfx, 0);
                             }
                             /* These faces are only shown when they are in a
                              * position which would be visible to the player. */
@@ -667,7 +667,7 @@ void map_draw_map(void)
                                     if (((x <= (MAP_MAX_SIZE - 1) / 2) && (y <= (MAP_MAX_SIZE - 1) / 2))
                                         || ((x > (MAP_MAX_SIZE - 1) / 2) && (y < (MAP_MAX_SIZE - 1) / 2)))
                                     {
-                                        sprite_blt_map(face_sprite, xl, yl, NULL, &bltfx, 0);
+                                        sprite_blt_map(sprite, xl, yl, NULL, &bltfx, 0);
                                         bltflag = 1;
                                     }
                                 }
@@ -679,12 +679,12 @@ void map_draw_map(void)
                                 {
                                     if (((x <= (MAP_MAX_SIZE - 1) / 2) && (y <= (MAP_MAX_SIZE - 1) / 2))
                                         || ((x < (MAP_MAX_SIZE - 1) / 2) && (y > (MAP_MAX_SIZE - 1) / 2)))
-                                        sprite_blt_map(face_sprite, xl, yl, NULL, &bltfx, 0);
+                                        sprite_blt_map(sprite, xl, yl, NULL, &bltfx, 0);
                                 }
                             }
                             /* Anything else. Just blt it. */
                             else
-                                sprite_blt_map(face_sprite, xl, yl, NULL, &bltfx, stretch);
+                                sprite_blt_map(sprite, xl, yl, NULL, &bltfx, stretch);
 
                             /* perhaps the object has a marked effect, blt it now */
                             if (map->ext[k] ||
@@ -707,7 +707,7 @@ void map_draw_map(void)
                                 }
                                 else if ((map->ext[k] & FFLAG_PROBE))
                                 {
-                                    if (face_sprite)
+                                    if (sprite)
                                     {
                                         t = k;
                                         t_bar = (sint32)((double)right /
