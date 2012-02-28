@@ -664,7 +664,7 @@ int get_friendship(object *op, object *other)
 // If PvP is enabled, see if op and other are friends (same group).
 #ifdef USE_PVP
                 // Loop through the group and if other is in it, op and other are friends.
-                if (CONTR(op)->group_status != GROUP_STATUS_FREE)
+                if (CONTR(op)->group_status & GROUP_STATUS_GROUP)
                 {
                     player *tmp = CONTR(CONTR(op)->group_leader);
 
