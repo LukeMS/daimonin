@@ -2827,64 +2827,44 @@ void check_menu_keys(int menu, int key)
                     options.fullscreen = 1;
                 ToggleScreenFlag = 1;
             }
-            /* lets add on the fly resolution change for testing */
-            /* i know this part is heavy, but we want to make sure we try everything
-             * before we shut down the client
-             */
-            if (Screensize.x!=Screendefs[options.resolution].x || Screensize.y!=Screendefs[options.resolution].y)
-            {
-                Uint32 videoflags = get_video_flags();
-                _screensize sz_tmp = Screensize;
-                Screensize=Screendefs[options.resolution];
 
-                if ((ScreenSurface = SDL_SetVideoMode(Screensize.x, Screensize.y, options.used_video_bpp, videoflags)) == NULL)
+            if (Screensize.x != Screendefs[options.resolution].x ||
+                Screensize.y != Screendefs[options.resolution].y)
+            {
+                if (set_video_mode(Screendefs[options.resolution].x,
+                                   Screendefs[options.resolution].y))
                 {
-                    int i;
-                    textwin_show_string(0, NDI_COLR_RED, "Couldn't set %dx%dx%d video mode: %s\n", Screensize.x, Screensize.y, options.used_video_bpp, SDL_GetError());
-                    LOG(LOG_ERROR, "Couldn't set %dx%dx%d video mode: %s\n", Screensize.x, Screensize.y, options.used_video_bpp, SDL_GetError());
-                    Screensize=sz_tmp;
-                    for (i=0;i<16;i++)
-                        if (Screensize.x==Screendefs[i].x && Screensize.y == Screendefs[i].y)
+                    char  buf[TINY_BUF];
+                    uint8 i;
+
+                    sprintf(buf, "Try to switch back to old setting...");
+                    textwin_show_string(0, NDI_COLR_RED, "%s", buf);
+                    LOG(LOG_MSG, "%s\n", buf);
+
+                    for (i = 0; i < 16; i++)
+                    {
+                        if (Screensize.x == Screendefs[i].x &&
+                            Screensize.y == Screendefs[i].y)
                         {
                             options.resolution = i;
+
                             break;
                         }
-                    textwin_show_string(0, NDI_COLR_RED, "Try to switch back to old setting...");
-                    LOG(LOG_ERROR, "Try to switch back to old setting...\n");
-
-                    if ((ScreenSurface = SDL_SetVideoMode(Screensize.x, Screensize.y, options.used_video_bpp, videoflags)) == NULL)
-                    {
-                        textwin_show_string(0, NDI_COLR_RED, "Couldn't set %dx%dx%d video mode: %s\n", Screensize.x, Screensize.y, options.used_video_bpp, SDL_GetError());
-                        LOG(LOG_ERROR, "Couldn't set %dx%dx%d video mode: %s\n", Screensize.x, Screensize.y, options.used_video_bpp, SDL_GetError());
-                        Screensize=Screendefs[0];
-                        options.resolution = 0;
-                        textwin_show_string(0, NDI_COLR_RED, "Try to switch back to 800x600...");
-                        LOG(LOG_ERROR, "Try to switch back to 800x600...\n");
-                        if ((ScreenSurface = SDL_SetVideoMode(Screensize.x, Screensize.y, options.used_video_bpp, videoflags)) == NULL)
-                        {
-                            /* now we have a problem */
-                            textwin_show_string(0, NDI_COLR_RED, "Couldn't set %dx%dx%d video mode: %s\nFATAL ERROR - exit", Screensize.x, Screensize.y, options.used_video_bpp, SDL_GetError());
-                            LOG(LOG_FATAL, "Couldn't set %dx%dx%d video mode: %s\nFATAL ERROR - exit", Screensize.x, Screensize.y, options.used_video_bpp, SDL_GetError());
-                            Screensize=sz_tmp;
-                        }
-                        else
-                            res_change = 1;
                     }
-                    else
-                        res_change = 1;
+
+                    if (set_video_mode(Screensize.x, Screensize.y))
+                    {
+                        sprintf(buf, "Try to switch back to default 800x600...");
+                        textwin_show_string(0, NDI_COLR_RED, "%s", buf);
+                        LOG(LOG_MSG, "%s\n", buf);
+                        Screensize = Screendefs[0];
+                        options.resolution = 0;
+
+                        (void)set_video_mode(Screendefs[0].x, Screendefs[0].y);
+                    }
                 }
-                else
-                    res_change = 1;
             }
-            if (res_change)
-            {
-                const SDL_VideoInfo    *info    = NULL;
-                info = SDL_GetVideoInfo();
-                options.real_video_bpp = info->vfmt->BitsPerPixel;
-                SDL_FreeSurface(ScreenSurfaceMap);
-                ScreenSurfaceMap=SDL_CreateRGBSurface(ScreenSurface->flags, Screensize.x, Screensize.y, options.used_video_bpp, 0,0,0,0);
-                face_reset();
-            }
+
             cpl.menustatus = MENU_NO;
             map_udate_flag = 2;
             reset_keys();
