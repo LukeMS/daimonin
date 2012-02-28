@@ -157,8 +157,8 @@ int mouseInPlayfield(int x, int y)
 {
     //we simply realc the mousevalues
 
-    x=(int)(x/((float)Screensize.x / 800.0f));
-    y=(int)(y/((float)Screensize.y / 600.0f));
+    x=(int)(x/(options.map_scalex / 100.0f));
+    y=(int)(y/(options.map_scaley / 100.0f));
 
     x = x - /*options.mapstart_x - */6;
     y = y - /*options.mapstart_y - */55;
@@ -2814,6 +2814,9 @@ void check_menu_keys(int menu, int key)
             if (options.playerdoll)
                 WIDGET_SHOW(WIDGET_PDOLL_ID) = 1;
 
+            /* Change map scaling. */
+            create_map_surface();
+
             /* ToggleScreenFlag sets changes this option in the main loop
              * so we revert this setting, also if a resolution change occurs
              * we first change the resolution, without toggling, and after that
@@ -2828,6 +2831,7 @@ void check_menu_keys(int menu, int key)
                 ToggleScreenFlag = 1;
             }
 
+            /* Change resolution. */
             if (Screensize.x != Screendefs[options.resolution].x ||
                 Screensize.y != Screendefs[options.resolution].y)
             {
