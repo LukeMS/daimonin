@@ -1274,14 +1274,28 @@ uint8 set_video_mode(uint16 x, uint16 y)
     return 0;
 }
 
-/* (Re)creates.ScreenSurfaceMap of appropriate dimensions given Screensize.x
- * and Screensize.y. Also resets face_list[]. */
+/* (Re)creates.ScreenSurfaceMap of appropriate dimensions given options.map_scalex
+ * and options.map_scaley. Also resets face_list[]. */
 void create_map_surface(void)
 {
-    uint16 x = (MAP_TILE_POS_XOFF * MAP_MAX_SIZE + MAP_TILE_POS_XOFF) *
-               ((float)Screensize.x / 800.0),
-           y = (MAP_TILE_POS_YOFF * MAP_MAX_SIZE + MAP_START_YOFF) *
-               ((float)Screensize.y / 600.0);
+    static uint16 sx = 0,
+                  sy = 0;
+    uint16        x,
+                  y;
+
+    /* If this is our current scale, nothing to do. */
+    if (options.map_scalex == sx &&
+        options.map_scaley == sy)
+    {
+        return;
+    }
+
+    sx = options.map_scalex;
+    sy = options.map_scaley;
+    x = (MAP_TILE_POS_XOFF * MAP_MAX_SIZE + MAP_TILE_POS_XOFF) *
+        (options.map_scalex / 100.0),
+    y = (MAP_TILE_POS_YOFF * MAP_MAX_SIZE + MAP_START_YOFF) *
+        (options.map_scaley / 100.0);
 
     if (ScreenSurfaceMap)
     {
@@ -2358,7 +2372,7 @@ static void DisplayCustomCursor(void)
 static void DisplayLayer1(void)
 {
     static int gfx_toggle=0;
-//    SDL_Rect    rect;
+    SDL_Rect   box;
 #ifdef PROFILING
     Uint32 ts;
 #endif
@@ -2389,9 +2403,10 @@ static void DisplayLayer1(void)
             ticks = SDL_GetTicks() + 150;
         }
     }
-//    rect.x=options.mapstart_x;
-//    rect.y=options.mapstart_y;
-    SDL_BlitSurface(ScreenSurfaceMap, NULL, ScreenSurface, NULL);//&rect);
+
+    box.x = (ScreenSurface->w - ScreenSurfaceMap->w) / 2;
+    box.y = (ScreenSurface->h - ScreenSurfaceMap->h) / 2;
+    SDL_BlitSurface(ScreenSurfaceMap, NULL, ScreenSurface, &box);
 
     /* the damage numbers */
     play_anims(0,0);

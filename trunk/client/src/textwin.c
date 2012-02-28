@@ -927,6 +927,7 @@ void textwin_show_window(textwin_id_t id)
     box.y = widget_data[tw->wid].y1;
     box.w = widget_data[tw->wid].wd;
     box.h = widget_data[tw->wid].ht;
+//LOG(LOG_MSG,">>>>>>>>>%d,%d %d,%d %d,%d %d,%d\n",box.x,widget_data[tw->wid].x1,box.y,widget_data[tw->wid].y1,box.w,widget_data[tw->wid].wd,box.h,widget_data[tw->wid].ht);
     SDL_SetClipRect(ScreenSurface, &box);
     SDL_BlitSurface(bg, NULL, ScreenSurface, &box);
     SDL_BlitSurface(widget_surface[tw->wid], NULL, ScreenSurface, &box);

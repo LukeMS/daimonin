@@ -109,7 +109,7 @@ void map_overlay(_Sprite *sprite)
     if (sprite->bitmap->w > MAP_TILE_POS_XOFF)
     {
         xoff = ((sprite->bitmap->w - MAP_TILE_POS_XOFF) *
-                ((float)Screensize.x / 800.0) / 2);
+                (options.map_scalex / 100.0) / 2);
     }
 
     /* If the bitmap is taller than a tile, position it
@@ -117,7 +117,7 @@ void map_overlay(_Sprite *sprite)
     if (sprite->bitmap->h > MAP_TILE_POS_YOFF)
     {
         yoff  = ((sprite->bitmap->h - MAP_TILE_POS_YOFF) *
-                 ((float)Screensize.y / 600.0));
+                 (options.map_scaley / 100.0));
     }
 
     for (y = 0; y < MapStatusY; y++)
@@ -410,7 +410,7 @@ void map_draw_map(void)
     surf.h = 33;
     surf.w = 35;
     player_pixy = (player_pixy +
-                   (MAP_TILE_POS_YOFF * ((float)Screensize.y / 600.0))) - surf.h;
+                   (MAP_TILE_POS_YOFF * (options.map_scaley / 100.0))) - surf.h;
     bltfx.surface = NULL;
     bltfx.alpha = 128;
 
@@ -504,35 +504,35 @@ void map_draw_map(void)
                                 mid = mnr >> 4;
                                 mnr &= 0x0f;
                                 xml = (face_mpart_id[mid].xlen *
-                                       ((float)Screensize.x / 800.0));
+                                       (options.map_scalex / 100.0));
                                 xmpos = xl = xpos -
                                              (face_mpart_id[mid].part[mnr].xoff *
-                                              ((float)Screensize.x / 800.0));
+                                              (options.map_scalex / 100.0));
 
                                 /* If the bitmap is wider than the footprint,
                                  * center it on the footprint. */
                                 if (sprite->bitmap->w > face_mpart_id[mid].xlen)
                                 {
                                     xl -= ((sprite->bitmap->w - face_mpart_id[mid].xlen) *
-                                           ((float)Screensize.x / 800.0));
+                                           (options.map_scalex / 100.0));
                                 }
 
                                 yl = ypos -
                                      (face_mpart_id[mid].part[mnr].yoff *
-                                      ((float)Screensize.y / 600.0));
+                                      (options.map_scaley / 100.0));
 
                                 /* If the bitmap is taller than the footprint,
                                  * position it sufficently high. */
                                 if (sprite->bitmap->h > face_mpart_id[mid].ylen)
                                 {
                                      yl -=((sprite->bitmap->h - face_mpart_id[mid].ylen) *
-                                           ((float)Screensize.y / 600.0));
+                                           (options.map_scaley / 100.0));
                                 }
                             }
                             else /* single tile... */
                             {
                                 /* first, we calc the shift positions */
-                                xml = (MAP_TILE_POS_XOFF * ((float)Screensize.x / 800.0));
+                                xml = (MAP_TILE_POS_XOFF * (options.map_scalex / 100.0));
                                 xmpos = xl = xpos;
 
                                 /* If the bitmap is wider than a tile, center it on
@@ -540,7 +540,7 @@ void map_draw_map(void)
                                 if (sprite->bitmap->w > MAP_TILE_POS_XOFF)
                                 {
                                     xl -= ((sprite->bitmap->w - MAP_TILE_POS_XOFF) *
-                                           ((float)Screensize.x / 800.0) / 2);
+                                           (options.map_scalex / 100.0) / 2);
                                 }
 
                                 yl = ypos;
@@ -550,7 +550,7 @@ void map_draw_map(void)
                                 if (sprite->bitmap->h > MAP_TILE_POS_YOFF)
                                 {
                                     yl -= ((sprite->bitmap->h - MAP_TILE_POS_YOFF) *
-                                           ((float)Screensize.y / 600.0));
+                                           (options.map_scaley / 100.0));
                                 }
                             }
 
@@ -692,7 +692,7 @@ void map_draw_map(void)
                             {
                                 left = (sint32)(((double)(xml - 10) / 100.0) *
                                                 ((xml == (MAP_TILE_POS_XOFF *
-                                                          ((float)Screensize.x / 800.0)))
+                                                          (options.map_scalex / 100.0)))
                                                  ? 25.0 : 20.0));
                                 right = MAX(1, MIN((xml + 10) - (left * 2),
                                                    300));
@@ -976,39 +976,39 @@ static void ShowPname(char *pname, sint16 x, sint16 y, uint32 colr)
 ******************************************************************/
 int get_tile_position(int x, int y, int *tx, int *ty)
 {
-    if (x < /*options.mapstart_x + */(MAP_START_XOFF * ((float)Screensize.x / 800.0)))
+    if (x < /*options.mapstart_x + */(MAP_START_XOFF * (options.map_scalex / 100.0)))
     {
-        x -= (int)(MAP_TILE_POS_XOFF * ((float)Screensize.x / 800.0));
+        x -= (int)(MAP_TILE_POS_XOFF * (options.map_scalex / 100.0));
     }
 
-    x -= /*options.mapstart_x + */(MAP_START_XOFF * ((float)Screensize.x / 800.0));
-    y -= /*options.mapstart_y + */(MAP_START_YOFF * ((float)Screensize.y / 600.0));
-    *tx = x / (MAP_TILE_POS_XOFF * ((float)Screensize.x / 800.0)) +
-          y / (MAP_TILE_YOFF * ((float)Screensize.x / 800.0));
-    *ty = y / (MAP_TILE_YOFF * ((float)Screensize.y / 600.0)) -
-          x / (MAP_TILE_POS_XOFF * ((float)Screensize.y / 600.0));
+    x -= /*options.mapstart_x + */(MAP_START_XOFF * (options.map_scalex / 100.0));
+    y -= /*options.mapstart_y + */(MAP_START_YOFF * (options.map_scaley / 100.0));
+    *tx = x / (MAP_TILE_POS_XOFF * (options.map_scalex / 100.0)) +
+          y / (MAP_TILE_YOFF * (options.map_scalex / 100.0));
+    *ty = y / (MAP_TILE_YOFF * (options.map_scaley / 100.0)) -
+          x / (MAP_TILE_POS_XOFF * (options.map_scaley / 100.0));
 
     if (x < 0)
     {
-        x += (((int)(MAP_TILE_POS_XOFF * ((float)Screensize.x / 800.0))) << 3) - 1;
+        x += (((int)(MAP_TILE_POS_XOFF * (options.map_scalex / 100.0))) << 3) - 1;
     }
 
-    x %= (int)(MAP_TILE_POS_XOFF * ((float)Screensize.x / 800.0));
-    y %= (int)(MAP_TILE_YOFF * ((float)Screensize.y / 600.0));
+    x %= (int)(MAP_TILE_POS_XOFF * (options.map_scalex / 100.0));
+    y %= (int)(MAP_TILE_YOFF * (options.map_scaley / 100.0));
 
-    if (x < (MAP_TILE_YOFF * ((float)Screensize.x / 800.0)))
+    if (x < (MAP_TILE_YOFF * (options.map_scalex / 100.0)))
     {
-        if (x + y + y < (MAP_TILE_YOFF * ((float)Screensize.x / 800.0)))
+        if (x + y + y < (MAP_TILE_YOFF * (options.map_scalex / 100.0)))
             --(*tx);
         else if (y - x > 0)
             ++(*ty);
     }
     else
     {
-        x -= (MAP_TILE_YOFF * ((float)Screensize.x / 800.0));
+        x -= (MAP_TILE_YOFF * (options.map_scalex / 100.0));
         if (x - y - y > 0)
             --(*ty);
-        else if (x + y + y > (MAP_TILE_POS_XOFF * ((float)Screensize.x / 800.0)))
+        else if (x + y + y > (MAP_TILE_POS_XOFF * (options.map_scalex / 100.0)))
             ++(*tx);
     }
 

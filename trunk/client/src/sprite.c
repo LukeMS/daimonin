@@ -1157,16 +1157,16 @@ void sprite_blt_map(_Sprite *sprite, int x, int y, SDL_Rect *box, _BLTFX *bltfx,
     if (!sprite)
         return;
 
-    if (Screensize.x != 800 ||
-        Screensize.y != 600)
+    if (options.map_scalex != 100 ||
+        options.map_scaley != 100)
     {
         if (!sprite->scaled)
         {
             SDL_Surface *scaled = SPG_Scale(SDL_ConvertSurface(sprite->bitmap,
                                                                FormatHolder->format,
                                                                FormatHolder->flags),
-                                            (float)Screensize.x / 800.0,
-                                            (float)Screensize.y / 600.0);
+                                            options.map_scalex / 100.0,
+                                            options.map_scaley / 100.0);
 
             sprite->scaled = SDL_DisplayFormatAlpha(scaled);
             SDL_FreeSurface(scaled);
