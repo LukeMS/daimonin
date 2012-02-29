@@ -1183,7 +1183,7 @@ int action_makes_visible(object *op)
  */
 int pvp_area(object *attacker, object *victim)
 {
-    if (attacker)
+    if (attacker && attacker->map)
     {
 /* Not positive what the intention behind both of these checks is, and the latter doesn't work anyway.
  * So I'll comment them out for now and put my own in. :) -- _people_
@@ -1196,7 +1196,7 @@ int pvp_area(object *attacker, object *victim)
         if (!MAP_PVP(attacker->map))
             return FALSE;
     }
-    if (victim)
+    if (victim && victim->map)
     {
 /*
         if (!(victim->map->map_flags & MAP_FLAG_PVP) || !(GET_MAP_FLAGS(victim->map, victim->x, victim->y) & P_IS_PVP))
