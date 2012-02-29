@@ -666,11 +666,15 @@ int get_friendship(object *op, object *other)
                 // Loop through the group and if other is in it, op and other are friends.
                 if (CONTR(op)->group_status & GROUP_STATUS_GROUP)
                 {
-                    player *tmp = CONTR(CONTR(op)->group_leader);
+                    player *tmp;
 
-                    for (; tmp; tmp = CONTR(tmp->group_next))
+                    for (tmp = CONTR(CONTR(op)->group_leader); tmp->group_next; tmp = CONTR(tmp->group_next))
+                    {
                         if (tmp && tmp->ob == other)
+                        {
                             return FRIENDSHIP_HELP;
+                        }
+                    }
                 }
 
                 // Otherwise, let them kill each other.
