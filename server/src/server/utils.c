@@ -129,9 +129,9 @@ char * get_word_from_string(char *str, int *pos)
  */
 char * get_param_from_string(char *str, int *pos)
 {
-    static char buf[HUGE_BUF]; /* this is used for controled input which never should bigger as this */
-    int         i   = 0;
-    int         gq  = 0;  // got quote
+    static char  buf[HUGE_BUF]; /* this is used for controled input which never should bigger as this */
+    int   i   = 0;
+    int   gq  = 0;  // got quote
 
     buf[0] = '\0';
 

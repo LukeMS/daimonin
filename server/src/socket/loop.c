@@ -562,7 +562,7 @@ static int check_ip_ban(NewSocket *sock, char *ip)
     }
 
     /* we first check our ban list. Perhaps this IP is on it */
-    if(check_banned(sock, NULL, ip))
+    if(check_banned(sock, NULL, NULL, ip))
         return FALSE; /* *IF* banned, we have turned the socket to a Ns_Zombie... */
 
     /* now check the players we have */

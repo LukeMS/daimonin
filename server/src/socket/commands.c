@@ -1357,6 +1357,7 @@ void cs_cmd_login(char *buf, int len, NewSocket *ns)
     char           *pass;
     account_status  ret = ACCOUNT_STATUS_OK;
     int             mode;
+    const char     *hash_account;
 
     /* If the command isn't perfect, kill the socket. */
     if (!buf ||
@@ -1401,6 +1402,11 @@ void cs_cmd_login(char *buf, int len, NewSocket *ns)
         }
         ret = account_create(&ns->pl_account, buf, pass);
     }
+
+    hash_account = add_string(buf); /* generate a hash - used for example when we compare account names */
+
+    if(check_banned(ns, hash_account, NULL, 0))
+        ret = ACCOUNT_STATUS_BANNED;
 
     if(ret == ACCOUNT_STATUS_OK) /* still all ok? then load this account */
         ret = account_load(&ns->pl_account, buf, pass);
@@ -1455,7 +1461,7 @@ void cs_cmd_addme(char *buf, int len, NewSocket *ns)
     hash_name = add_string(buf); /* generate a hash - used for example when we compare player names */
 
     /* lets see the player is banned - if so don't even try to log */
-    if (check_banned(ns, hash_name, 0))
+    if (check_banned(ns, NULL, hash_name, 0))
     {
         LOG(llevInfo, "Banned player %s tried to add. [%s]\n", hash_name, ns->ip_host);
         error_msg = ADDME_MSG_BANNED;
