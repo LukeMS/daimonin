@@ -2,32 +2,27 @@
 
 ~Syntax~: /ban list
 ~Description~:
-   Lists all banned player names and IP addresses.
+   Lists all banned accounts, characters and IP addresses.
 
-~Syntax~: /ban name <name> <seconds>
+~Syntax~: /ban <+|-> <pl|ac|ch|ip> <str> <seconds>
 ~Description~:
-    Adds the player called <name> to the ban list for <seconds>.
-    <name> need not necessarily be a real player.
-    <seconds> defaults to 60 if omitted.
+   Adds or removes players, accounts, characters or IP addresses from the ban list.
 
-~Syntax~: /ban ip <ip> <seconds>
-~Description~:
-    Adds the IP address <ip> to the ban list for <seconds>.
-    <ip> need not necessarily be a real IP address.  IP ranges are allowed using *.
-    <seconds> defaults to 60 if omitted. 
+~Options~:
 
-~Syntax~: /ban add <name> <seconds>
-~Description~:
-    Adds the player <name> to the ban list for <seconds>.
-    <name> must be an online player.  The player's IP address is also added to the ban list (prevents login by an alt).
-    <seconds> defaults to 60 if omitted. 
+~<+|->~ (Required) Sets 'add' or 'remove' mode.
 
-~Syntax~: /ban remove <data>
-~Description~:
-    Removes <data> from the ban list.
-    <data> may be a player name, or an IP address range.
+~<pl|ac|ch|ip>~ (Required) Sets 'player', 'account', 'character' or 'IP' mode.
 
-General notes:
-    When adding to the ban list, any existing entries on the ban list are removed first.
-    Set the ban time to -1 to permanently ban a player or IP.
-    Only GMs and SAs can permanently ban a player.
+~<str>~ (Required) Name of player, account, character or IP address.
+
+If <pl> mode, <str> must be an online player.  The player's account, character and IP are all banned.
+
+If <ip> mode, IP ranges are allowed using '*'.
+
+~<seconds>~ (Optional) Defaults to 60 if omitted.  Not required for 'remove' mode.
+
+~General notes~:
+    When adding a ban, any existing entries on the ban list are removed first.
+    Set the ban time to -1 to make a ban permanent.
+    Only GMs and SAs can permanently ban or unban!

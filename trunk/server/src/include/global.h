@@ -652,6 +652,14 @@ typedef enum
     NROFSKILLGROUPS
 } ENUM_SKILL_GROUPS;
 
+typedef enum
+{
+    BANTYPE_PLAYER,
+    BANTYPE_ACCOUNT,
+    BANTYPE_CHAR,
+    BANTYPE_IP
+} ENUM_BAN_TYPE;
+
 /* have a marker to all exp groups which define the real player level */
 #define NROFSKILLGROUPS_ACTIVE SKILLGROUP_MISC
 
@@ -781,7 +789,8 @@ typedef struct _money_block
 /** ban node - see ban.c */
 typedef struct ban_struct
 {
-    const char *name;       /* if != NULL, we have banned an name */
+    const char  *name;       /* if != NULL, we have banned an name */
+    const char  *account;
     int          ticks_init; /* how long is the ban */
     int          ticks_left; /* how long left */
     uint32       ticks;     /* (starting) pticks + ticks_left */
@@ -874,8 +883,9 @@ extern spell                    spells[NROFREALSPELLS];
  * defined as #define EXTERN extern.
  */
 
-EXTERN objectlink               *ban_list_player; /* see ban.c */
-EXTERN objectlink               *ban_list_ip;     /* see ban.c */
+EXTERN objectlink               *ban_list_player;   /* see ban.c */
+EXTERN objectlink               *ban_list_ip;       /* see ban.c */
+EXTERN objectlink               *ban_list_account;  /* see ban.c */
 
 EXTERN object                  *active_objects; /* List of active objects that need to be processed */
 EXTERN object                  *inserted_active_objects; /* List of active objects that will be inserted into active_objects */

@@ -47,8 +47,7 @@
  * of the game server itself. MT-2005
  */
 
-static char *ban_buf_name_def = "3 You are banned from Daimonin.\nGoodbye.";
-static char *ban_buf_ip_def = "3 IP is banned from Daimonin.\nGoodbye.";
+static void ban_inform_client(NewSocket *ns, objectlink *ol, ENUM_BAN_TYPE ban_type, const char *account, const char *name, char *ip);
 
 /* returns a objectlink with ban_struct
  * we use for both the memorypool system
@@ -81,7 +80,7 @@ void load_ban_file(void)
     int     ticks, ticks_left;
     char    ip[40];
     char    buf[HUGE_BUF];
-    char    line_buf[MEDIUM_BUF], name[MEDIUM_BUF];
+    char    line_buf[MEDIUM_BUF], name[MEDIUM_BUF], account[MEDIUM_BUF];
 
     LOG(llevInfo,"loading ban_file....\n");
     sprintf(buf, "%s/%s", settings.localdir, BANFILE);
@@ -94,10 +93,16 @@ void load_ban_file(void)
     {
         if (line_buf[0] == '#')
             continue;
-        if (sscanf(line_buf, "%s %s %d %d", name, ip, &ticks, &ticks_left) < 2)
-            LOG(llevBug, "BUG: malformed banfile file entry: %s\n", line_buf);
+        if (sscanf(line_buf, "%s %s %s %d %d", account, name, ip, &ticks, &ticks_left) < 5)
+        {
+            // Could be an old-level file, with no account support
+            if (sscanf(line_buf, "%s %s %d %d", name, ip, &ticks, &ticks_left) < 4)
+                LOG(llevBug, "BUG: malformed banfile file entry: %s\n", line_buf);
+            else
+                add_ban_entry(NULL, !strcmp(name, "_") ? NULL : name, !strcmp(ip, "_") ? NULL : ip, ticks, ticks_left);
+        }
         else
-            add_ban_entry(!strcmp(name, "_") ? NULL : name, !strcmp(ip, "_") ? NULL : ip, ticks, ticks_left); /* "_" is a placeholder for IP only */
+            add_ban_entry(!strcmp(account, "_") ? NULL : account, !strcmp(name, "_") ? NULL : name, !strcmp(ip, "_") ? NULL : ip, ticks, ticks_left);
     }
 
     fclose(dmfile);
@@ -119,7 +124,8 @@ void save_ban_file(void)
         return;
     }
     fprintf(fp, "# BAN_FILE (file is changed from server at runtime)\n");
-    fprintf(fp, "# entry format is '<name> <ip> <ticks_init> <ticks_left>'\n");
+    fprintf(fp, "# entry format is '<account> <name> <ip> <ticks_init> <ticks_left>'\n");
+    fprintf(fp, "# or '<name> <ip> <ticks_init> <ticks_left>' (depreciated)\n");
 
     for(ol = ban_list_player;ol;ol=ol_tmp)
     {
@@ -128,7 +134,19 @@ void save_ban_file(void)
             remove_ban_entry(ol); /* is not valid anymore, gc it on the fly */
         else
         {
-            fprintf(fp, "%s _ %d %d\n", ol->objlink.ban->name, ol->objlink.ban->ticks_init,
+            fprintf(fp, "_ %s _ %d %d\n", ol->objlink.ban->name, ol->objlink.ban->ticks_init,
+                                        ol->objlink.ban->ticks_init==-1?-1:(int)(ol->objlink.ban->ticks-pticks));
+        }
+    }
+
+    for(ol = ban_list_account;ol;ol=ol_tmp)
+    {
+        ol_tmp = ol->next;
+        if(ol->objlink.ban->ticks_init != -1 &&  pticks >= ol->objlink.ban->ticks)
+            remove_ban_entry(ol); /* is not valid anymore, gc it on the fly */
+        else
+        {
+            fprintf(fp, "%s _ _ %d %d\n", ol->objlink.ban->account, ol->objlink.ban->ticks_init,
                                         ol->objlink.ban->ticks_init==-1?-1:(int)(ol->objlink.ban->ticks-pticks));
         }
     }
@@ -140,7 +158,7 @@ void save_ban_file(void)
             remove_ban_entry(ol);
         else
         {
-            fprintf(fp, "_ %s %d %d\n", ol->objlink.ban->ip?ol->objlink.ban->ip:"_", ol->objlink.ban->ticks_init,
+            fprintf(fp, "_ _ %s %d %d\n", ol->objlink.ban->ip?ol->objlink.ban->ip:"_", ol->objlink.ban->ticks_init,
                 ol->objlink.ban->ticks_init==-1?-1:(int)(ol->objlink.ban->ticks-pticks));
         }
     }
@@ -148,32 +166,39 @@ void save_ban_file(void)
     fclose(fp);
 }
 
-/* add a player or a ip to the ban list with a time
- * value in ticks (which means how long that entry get banned).
+/* add an account, player or IP to the ban list with a time
+ * value in ticks (which means how long that entry get name).
  * tick:-1 = perm. ban
+ * IMPORTANT NOTE - most ban code assumes an account, player name or IP exists
+ * only ONCE in the ban lists; so don't ever add, without first doing a remove
+ * to get rid of the previous entry
  */
-struct objectlink *add_ban_entry(char *banned, char *ip, int ticks, int ticks_left)
+struct objectlink *add_ban_entry(const char *account, const char *name, char *ip, int ticks, int ticks_left)
 {
     objectlink *ol = get_ban_node();
 
-    if(!banned && !ip)
+    if(!account && !name && !ip)
         return NULL;
 
     ol->objlink.ban->ticks_init = ticks;
     ol->objlink.ban->ticks_left = ticks_left;
-    ol->objlink.ban->ticks = pticks+ticks_left;
+    ol->objlink.ban->ticks = pticks + ticks_left;
     if(ip)
         ol->objlink.ban->ip = strdup_local(ip);
-    if(banned)
-        FREE_AND_COPY_HASH(ol->objlink.ban->name, banned);
+    if(name)
+        FREE_AND_COPY_HASH(ol->objlink.ban->name, name);
+    if(account)
+        FREE_AND_COPY_HASH(ol->objlink.ban->account, account);
 
-    LOG(llevNoLog,"Banning: %s (IP: %s) for %d seconds (%d sec left).\n", STRING_SAFE(ol->objlink.ban->name),
-            STRING_SAFE(ip), ticks/8,ol->objlink.ban->ticks_init==-1?-1:(int)(ol->objlink.ban->ticks-pticks)/8);
+    LOG(llevNoLog,"Banning: Account: %s / Player: %s / IP: %s for %d seconds (%d sec left).\n", STRING_SAFE(ol->objlink.ban->account),
+        STRING_SAFE(ol->objlink.ban->name), STRING_SAFE(ip), ticks/8,ol->objlink.ban->ticks_init==-1?-1:(int)(ol->objlink.ban->ticks-pticks)/8);
 
-    if(banned) /* add to name list */
+    if(name) /* add to name list */
         objectlink_link(&ban_list_player, NULL, NULL, ban_list_player, ol);
-    else
-        objectlink_link(&ban_list_ip, NULL, NULL, ban_list_ip, ol); /* IP list */
+    else if(account) /* add to account list */
+        objectlink_link(&ban_list_account, NULL, NULL, ban_list_account, ol);
+    else /* IP list */
+        objectlink_link(&ban_list_ip, NULL, NULL, ban_list_ip, ol);
 
     return (struct objectlink *)ol;
 }
@@ -185,11 +210,16 @@ struct objectlink *add_ban_entry(char *banned, char *ip, int ticks, int ticks_le
 void remove_ban_entry(struct oblnk *entry)
 {
     if(entry->objlink.ban->ip)
-        free(entry->objlink.ban->ip);
+        free(entry->objlink.ban->ip); // TODO - can't this bit of code go below in the last 'else' ??
     if(entry->objlink.ban->name)
     {
         FREE_ONLY_HASH(entry->objlink.ban->name);
         objectlink_unlink(&ban_list_player, NULL, entry);
+    }
+    else if(entry->objlink.ban->account)
+    {
+        FREE_ONLY_HASH(entry->objlink.ban->account);
+        objectlink_unlink(&ban_list_account, NULL, entry);
     }
     else
         objectlink_unlink(&ban_list_ip, NULL, entry);
@@ -197,175 +227,175 @@ void remove_ban_entry(struct oblnk *entry)
     free_ban_node(entry);
 }
 
-/* check the player or IP is banned.
- * if name of player is NULL, check the IP.
- * Note: name is shared hash string
- */
-int check_banned(NewSocket *ns, const char *name, char *ip)
+/* Check if the account, player name or IP is banned.
+ * Note: accout and name are both shared hash strings */
+int check_banned(NewSocket *ns, const char *account, const char *name, char *ip)
 {
-    objectlink *ol, *ol_tmp;
-    int   h;
-    int   m;
-    int   s;
-    char  buf[256];
+    objectlink *ol;
 
     if(name)
     {
-        for(ol = ban_list_player;ol;ol=ol_tmp)
+        for(ol = ban_list_player;ol;ol=ol->next)
         {
-            ol_tmp = ol->next;
             /* lets check the entry is still valid */
-            /*LOG(llevNoLog,"CHECK-NAME: %s with %s (pticks: %d to %d)\n", name, STRING_SAFE(ol->objlink.ban->name),
-              pticks, ol->objlink.ban->ticks);*/
             if(ol->objlink.ban->ticks_init != -1 &&  pticks >= ol->objlink.ban->ticks)
                 remove_ban_entry(ol); /* is not valid anymore, gc it on the fly */
             else
-            {
                 if(ol->objlink.ban->name == name)
                 {
-                    /* because name banning is handled from login procedure,
-                     * we tell here the client how long the name is banned - the
-                     * rest is done by the login procedure.
-                    */
-                    char *ban_buf_name;
-                    s = ol->objlink.ban->ticks_init/8;
-
-                    if(ol->objlink.ban->ticks_init == -1) /* perm ban */
-                    {
-                        ban_buf_name = ban_buf_name_def;
-                    }
-                    else
-                    {
-                        if (s <= 90) /* we are nice for all under 90 seconds (1.5 minutes) */
-                        {
-                            sprintf(buf, "2 Name %s is blocked for %d seconds!\nDon't try to log in to it again!",name, s);
-                            ban_buf_name = buf;
-                        }
-                        else
-                        {
-                            if (s < 60*60)
-                            {
-                                m = s/60;
-                                sprintf(buf, "3 Name %s is banned for %d minutes!\nDon't try to log in to it again!",name, m);
-                                ban_buf_name = buf;
-                            }
-                            else /* must be an ass... */
-                            {
-                                h = s/(60*60);
-                                m = (s-h*(60*60))/60;
-                                sprintf(buf, "3 Name %s is banned for %dh %dm!\nDon't try to log in to it again!",name,h,m);
-                                ban_buf_name = buf;
-                            }
-                        }
-                        Write_String_To_Socket(ns, SERVER_CMD_DRAWINFO, ban_buf_name, strlen(ban_buf_name));
-                        player_addme_failed(ns, ADDME_MSG_BANNED);
-                    }
-
-                    /* someone is trying to login again & again to banned char? Lets teach him to avoid it */
-                    if(++ns->pwd_try == 3)
-                    {
-                        char password_warning[] = "3 Don't login to banned chars!\nTry log in again not before 2 minutes!";
-
-                        LOG(llevInfo,"BANNED NAME: 3 login tries (2min): IP %s (player: %s).\n",ns->ip_host,name);
-                        add_ban_entry(NULL, ns->ip_host, 8*60*2, 8*60*2); /* 2 min temp ban for this ip */
-                        Write_String_To_Socket(ns, SERVER_CMD_DRAWINFO, password_warning , strlen(password_warning));
-                        player_addme_failed(ns, ADDME_MSG_DISCONNECT); /* tell client we failed and kick him away */
-                        ns->login_count = ROUND_TAG+(uint32)(10.0f * pticks_second);
-                        ns->status = Ns_Zombie; /* we hold the socket open for a *bit* */
-                        ns->idle_flag = 1;
-                    }
+                    ban_inform_client(ns, ol, BANTYPE_CHAR, account, name, ip);
                     return TRUE;
                 }
-            }
         }
     }
-    else /* compare ip */
+
+    if(account)
     {
-        char *ban_tmp;
-        char *ban_buf_ip;
-        int   match;    /* should really be bool */
-
-        for(ol = ban_list_ip; ol; ol = ol_tmp)
+        for(ol = ban_list_account;ol;ol=ol->next)
         {
-            ol_tmp = ol->next;
-            LOG(llevInfo, "CHECK-IP: >%s< with >%s< - pticks: %lu left: %d (%d)\n",
-              STRING_SAFE(ip), STRING_SAFE(ol->objlink.ban->ip),
-              pticks, ol->objlink.ban->ticks,ol->objlink.ban->ticks_init);
-
+            /* lets check the entry is still valid */
             if(ol->objlink.ban->ticks_init != -1 &&  pticks >= ol->objlink.ban->ticks)
-            {
                 remove_ban_entry(ol); /* is not valid anymore, gc it on the fly */
-            }
             else
-            {
-                s = ol->objlink.ban->ticks_init/8;
-                ban_tmp = ol->objlink.ban->ip;
-
-                match = ip_compare(ban_tmp,ip);
-
-                if (match)
+                if(ol->objlink.ban->account == account)
                 {
-                    /* match found - ip is banned */
-                    break;      /* break outer loop */
+                    ban_inform_client(ns, ol, BANTYPE_ACCOUNT, account, name, ip);
+                    return TRUE;
                 }
-            }
         }
+    }
 
-        if (match && ol)
+    if (ip)
+    {
+        for(ol = ban_list_ip; ol; ol = ol->next)
         {
-            /* IP is banned */
-            if(ol->objlink.ban->ticks_init == -1) /* perm ban */
-            {
-                ban_buf_ip = ban_buf_ip_def;
-            }
+            if(ol->objlink.ban->ticks_init != -1 &&  pticks >= ol->objlink.ban->ticks)
+                remove_ban_entry(ol); /* is not valid anymore, gc it on the fly */
             else
-            {
-                if (s<=90) /* we are nice for all under 90 seconds (1.5 minutes). Thats most times technical tmp bans */
+                if(ip_compare(ol->objlink.ban->ip,ip))
                 {
-                    sprintf(buf, "2 Login is blocked for %d seconds!\nDon't try to log in before.\nLogin timer reset to %d seconds!",s,s);
-                    ban_buf_ip = buf;
-                    s = ol->objlink.ban->ticks_init;
-
-                    add_ban_entry(NULL, ns->ip_host, s, s);
+                    ban_inform_client(ns, ol, BANTYPE_IP, account, name, ip);
+                    return TRUE;
                 }
-                else
-                {
-                    if (s < 60*60)
-                    {
-                        m = s/60;
-                        sprintf(buf, "3 IP is banned for %d minutes!\nDon't try to log in before.\nLogin timer reset!",m);
-                        ban_buf_ip = buf;
-                        s = ol->objlink.ban->ticks_init;
-                        remove_ban_entry(ol);
-                        add_ban_entry(NULL, ns->ip_host, s, s);
-                    }
-                    else /* must be an ass... */
-                    {
-                        h = s/(60*60);
-                        m = (s-h*(60*60))/60;
-                        sprintf(buf, "3 IP is banned for %dh %dm!\nDon't try to log in before.\nAdding one hour ban time!",h,m);
-                        ban_buf_ip = buf;
-                        s = (ol->objlink.ban->ticks-pticks)+(60*60); /* added one hour */
-                        if(s> 3*ol->objlink.ban->ticks_init)
-                            s = -1; /* ban this guy now permanent */
-                        else
-                        {
-                            remove_ban_entry(ol);
-                            add_ban_entry(NULL, ns->ip_host, s, s);
-                        }
-                    }
-                }
-            }
-
-            LOG(llevNoLog,"***BANNED IP Login: %s\n", ns->ip_host);
-            Write_String_To_Socket(ns, SERVER_CMD_DRAWINFO, ban_buf_ip, strlen(ban_buf_ip));
-            player_addme_failed(ns, ADDME_MSG_DISCONNECT); /* tell client something is wrong and we leave */
-            ns->login_count = ROUND_TAG+(uint32)(5.0f * pticks_second);
-            ns->status = Ns_Zombie; /* we hold the socket open for a *bit* */
-            ns->idle_flag = 1;
-            return TRUE; /* ip matches... kick our friend */
         }
     }
 
     return FALSE;
+}
+
+static void ban_inform_client(NewSocket *ns, objectlink *ol, ENUM_BAN_TYPE ban_type, const char *account, const char *name, char *ip)
+{
+    /* because name banning is handled from login procedure,
+     * we tell here the client how long the name is banned - the
+     * rest is done by the login procedure.
+    */
+    int  h, m, s;
+    char buf[MEDIUM_BUF] = "";
+
+    s = ol->objlink.ban->ticks_init/8;
+
+    if(ol->objlink.ban->ticks_init == -1) /* perm ban */
+    {
+        if (ban_type == BANTYPE_ACCOUNT)
+            sprintf(buf, "3 You are banned from Daimonin.\nGoodbye.");
+        else if (ban_type = BANTYPE_CHAR)
+            sprintf(buf, "3 Your character, %s, is banned from Daimonin.\nGoodbye.", name);
+        else // ban_type = BANTYPE_IP
+            sprintf(buf, "3 Your IP is banned from Daimonin.\nGoodbye.");
+    }
+    else if (s <= 90)
+    {
+        if (ban_type == BANTYPE_IP)
+        {
+            sprintf(buf, "2 Your IP is banned for %d seconds!\nDon't try to log in before this.\nLogin timer reset to %d seconds!", s, s);
+
+            // Reset the ban back to original time
+            s = ol->objlink.ban->ticks_init;
+            remove_ban_entry(ol);
+            add_ban_entry(NULL, NULL, ns->ip_host, s, s);
+        }
+        else
+        {
+            sprintf(buf, "2 Login is banned for %d seconds!\nDon't try to log in before this!", s);
+        }
+    }
+    else if (s < 60*60)
+    {
+        m = s/60;
+
+        if (ban_type == BANTYPE_IP)
+        {
+            sprintf(buf, "2 Your IP is banned for %d minutes!\nDon't try to log in before this.\nLogin timer reset to %d minutes!", m, m);
+
+            // Reset the ban back to original time
+            s = ol->objlink.ban->ticks_init;
+            remove_ban_entry(ol);
+            add_ban_entry(NULL, NULL, ns->ip_host, s, s);
+        }
+        else
+        {
+            sprintf(buf, "2 Login is banned for %d minutes!\nDon't try to log in before this!", m);
+        }
+    }
+    else /* must be an ass... */
+    {
+        h = s/(60*60);
+        m = (s-h*(60*60))/60;
+
+        if (ban_type == BANTYPE_IP)
+        {
+            sprintf(buf, "2 Your IP is banned for %dh %dm!\nDon't try to log in before this.\nAdding one hour ban time!", h, m);
+
+            // Add one hour to remaining ban time
+            s = (ol->objlink.ban->ticks-pticks)+(60*60);
+
+            if(s > 3*ol->objlink.ban->ticks_init)
+                s = -1; /* ban this guy now permanent */
+
+            remove_ban_entry(ol);
+            add_ban_entry(NULL, NULL, ns->ip_host, s, s);
+        }
+        else
+        {
+            sprintf(buf, "2 Login is blocked for %dh %dm!\nDon't try to log in before this!", h, m);
+        }
+    }
+
+    Write_String_To_Socket(ns, SERVER_CMD_DRAWINFO, buf, strlen(buf));
+    player_addme_failed(ns, ADDME_MSG_BANNED);
+
+    /* someone is trying to login again & again to banned account/char/ip? Lets teach him to avoid it */
+    if(++ns->pwd_try == 3)
+    {
+        LOG(llevInfo,"BANNED LOGIN: 3 login tries: Account: %s / Player: %s / IP\n",
+            STRING_SAFE(ol->objlink.ban->account),
+            STRING_SAFE(ol->objlink.ban->name),
+            STRING_SAFE(ns->ip_host));
+
+        s = ol->objlink.ban->ticks_init;
+        if(ol->objlink.ban->ticks_init == -1) /* perm ban */
+            sprintf(buf, "3 Don't try to login when you are banned!");
+        else
+        {
+            sprintf(buf, "3 Don't try to login when you are banned!\nYour ban is doubled!");
+
+            s *= 2;
+
+            remove_ban_entry(ol);
+
+            if (ban_type == BANTYPE_IP)
+                add_ban_entry(NULL, NULL, ip, s, s);
+            else if (ban_type == BANTYPE_ACCOUNT)
+                add_ban_entry(account, NULL, 0, s, s);
+            else if (ban_type == BANTYPE_CHAR)
+                add_ban_entry(NULL, name, 0, s, s);
+        }
+
+        Write_String_To_Socket(ns, SERVER_CMD_DRAWINFO, buf , strlen(buf));
+        player_addme_failed(ns, ADDME_MSG_DISCONNECT); /* tell client we failed and kick him away */
+
+        ns->login_count = ROUND_TAG+(uint32)(10.0f * pticks_second);
+        ns->status = Ns_Zombie; /* we hold the socket open for a *bit* */
+        ns->idle_flag = 1;
+    }
 }
