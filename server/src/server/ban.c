@@ -292,7 +292,7 @@ static void ban_inform_client(NewSocket *ns, objectlink *ol, ENUM_BAN_TYPE ban_t
     int  h, m, s;
     char buf[MEDIUM_BUF] = "";
 
-    s = ol->objlink.ban->ticks_init/8;
+    s = (ol->objlink.ban->ticks - pticks) / 8;
 
     if(ol->objlink.ban->ticks_init == -1) /* perm ban */
     {
@@ -303,68 +303,26 @@ static void ban_inform_client(NewSocket *ns, objectlink *ol, ENUM_BAN_TYPE ban_t
         else // ban_type = BANTYPE_IP
             sprintf(buf, "3 Your IP is banned from Daimonin.\nGoodbye.");
     }
+
     else if (s <= 90)
-    {
-        if (ban_type == BANTYPE_IP)
-        {
-            sprintf(buf, "2 Your IP is banned for %d seconds!\nDon't try to log in before this.\nLogin timer reset to %d seconds!", s, s);
+        sprintf(buf, "2 Login is banned for %d seconds!\nDon't try to log in before this!", s);
 
-            // Reset the ban back to original time
-            s = ol->objlink.ban->ticks_init;
-            remove_ban_entry(ol);
-            add_ban_entry(NULL, NULL, ns->ip_host, s, s);
-        }
-        else
-        {
-            sprintf(buf, "2 Login is banned for %d seconds!\nDon't try to log in before this!", s);
-        }
-    }
     else if (s < 60*60)
-    {
-        m = s/60;
+        sprintf(buf, "2 Login is banned for %d minutes!\nDon't try to log in before this!", s/60);
 
-        if (ban_type == BANTYPE_IP)
-        {
-            sprintf(buf, "2 Your IP is banned for %d minutes!\nDon't try to log in before this.\nLogin timer reset to %d minutes!", m, m);
-
-            // Reset the ban back to original time
-            s = ol->objlink.ban->ticks_init;
-            remove_ban_entry(ol);
-            add_ban_entry(NULL, NULL, ns->ip_host, s, s);
-        }
-        else
-        {
-            sprintf(buf, "2 Login is banned for %d minutes!\nDon't try to log in before this!", m);
-        }
-    }
-    else /* must be an ass... */
+    else
     {
         h = s/(60*60);
         m = (s-h*(60*60))/60;
 
-        if (ban_type == BANTYPE_IP)
-        {
-            sprintf(buf, "2 Your IP is banned for %dh %dm!\nDon't try to log in before this.\nAdding one hour ban time!", h, m);
-
-            // Add one hour to remaining ban time
-            s = (ol->objlink.ban->ticks-pticks)+(60*60);
-
-            if(s > 3*ol->objlink.ban->ticks_init)
-                s = -1; /* ban this guy now permanent */
-
-            remove_ban_entry(ol);
-            add_ban_entry(NULL, NULL, ns->ip_host, s, s);
-        }
-        else
-        {
-            sprintf(buf, "2 Login is blocked for %dh %dm!\nDon't try to log in before this!", h, m);
-        }
+        sprintf(buf, "2 Login is blocked for %dh %dm!\nDon't try to log in before this!", h, m);
     }
 
     Write_String_To_Socket(ns, SERVER_CMD_DRAWINFO, buf, strlen(buf));
     player_addme_failed(ns, ADDME_MSG_BANNED);
 
-    /* someone is trying to login again & again to banned account/char/ip? Lets teach him to avoid it */
+    /* someone is trying to login again & again to banned account/char/ip?
+     * Lets teach them to avoid it */
     if(++ns->pwd_try == 3)
     {
         LOG(llevInfo,"BANNED LOGIN: 3 login tries: Account: %s / Player: %s / IP\n",
