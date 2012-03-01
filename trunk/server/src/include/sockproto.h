@@ -34,6 +34,8 @@ account_status  account_load(Account *ac, char *name, char *pass);
 void            account_create_msg(NewSocket *ns, int msg);
 void            account_send_client(NewSocket *ns, int stats);
 account_status  account_delete_player(NewSocket *ns, shstr *name);
+Account        *account_get_from_object(object *op);
+int             account_update(Account *ac, object *op);
 /* commands.c */
 CommArray_s    *find_command(char *cmd, player *pl);
 CommArray_s    *find_command_element(char *cmd, CommArray_s *commarray, int commsize);

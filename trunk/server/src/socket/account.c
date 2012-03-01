@@ -49,7 +49,7 @@ account_status account_save(Account *ac, const char *name)
     char tmpfilename[MEDIUM_BUF];
 
     sprintf(filepath, "%s/%s/%s/%s", settings.localdir, settings.accountdir, get_subdir(name), name);
-    sprintf(filename, "%s/%s.acc", filepath, name);    
+    sprintf(filename, "%s/%s.acc", filepath, name);
     make_path_to_file(filename); /* sanity pathing */
     LOG(llevInfo, "Save Account: %s\n", filename);
     tempnam_local_ext(filepath, NULL, tmpfilename);
@@ -296,7 +296,7 @@ void account_send_client(NewSocket *ns, int stats)
  * player deleted and account updated: ACCOUNT_STATUS_OK
  * name not part of account: ACCOUNT_STATUS_EXISTS
  * player name don't exists: ACCOUNT_STATUS_NOSAVE (but we removed name from account!!)
- * player name can't be moved/accessed/renamed: ACCOUNT_STATUS_CORRUPT 
+ * player name can't be moved/accessed/renamed: ACCOUNT_STATUS_CORRUPT
  * (we also remove name from account - in this case the player name should be blocked which
  * will effect a newchar with that name but did no harm)
  */
@@ -318,7 +318,7 @@ account_status account_delete_player(NewSocket *ns, shstr *name)
             ac->level[i] = ac->race[i] = ac->gender[i] = 0;
             ac->charname[i][0] = 0;
             ret = ACCOUNT_STATUS_OK;
-            /* to do NOT a break here will delete any entry in the case we have the same name 
+            /* to do NOT a break here will delete any entry in the case we have the same name
              * here more as one time (which should not happen and is a bug. But so we try on
              * the fly to repair it
              */
@@ -363,4 +363,53 @@ account_status account_delete_player(NewSocket *ns, shstr *name)
         ret = ACCOUNT_STATUS_CORRUPT; /* there is *something* wrong with the player files. but account is ok... */
 
     return ret;
+}
+
+Account *account_get_from_object(object *op)
+{
+    player    *pl;
+    NewSocket *ns;
+    Account   *ac;
+
+    if (!op ||
+        !(pl = CONTR(op)))
+        return NULL;
+
+    if (!(ns = &pl->socket))
+        return NULL;
+
+    if (!(ac = &ns->pl_account))
+        return NULL;
+
+    return ac;
+}
+
+int account_update(Account *ac, object *op)
+{
+    int        i;
+    object    *force;
+    int        drain_level = 0;
+
+    if (!ac)
+        return 0;
+
+    // Find correct entry in the account file, corresponding to current player
+    for (i=0; i < ACCOUNT_MAX_PLAYER; i++)
+    {
+        if (ac->level[i]) // we have an entry
+        {
+            if (!strcmp(STRING_OBJ_NAME(op), ac->charname[i]))
+            {
+                /* check for drain so we know the proper level of the player */
+                if ((force = present_arch_in_ob(archetype_global._drain, op)))
+                    drain_level = force->level;
+
+                ac->level[i] = op->level + drain_level;
+                return 1;
+            }
+        }
+    }
+
+    // Didn't find a match!! ??  Must be a bug
+    return 0;
 }
