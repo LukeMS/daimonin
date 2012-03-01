@@ -1906,7 +1906,9 @@ static int BanRemove(object *op, ENUM_BAN_TYPE ban_type, char *str)
         return tmp;
     else
     {
-        new_draw_info(NDI_UNIQUE, 0, op, "No account, character or IP found to match %s on ban lists!", str);
+        new_draw_info(NDI_UNIQUE, 0, op, "No %s found to match %s on ban lists!",
+                      ban_type == BANTYPE_ACCOUNT ? "account" :
+                      ban_type == BANTYPE_CHAR ? "character" : "IP", str);
         return COMMANDS_RTN_VAL_ERROR;
     }
 }
@@ -1917,7 +1919,7 @@ static int BanRemoveFromBanList(object *op, ENUM_BAN_TYPE ban_type, char *str, i
     const char *str_hash = NULL;
 
     if (ban_type == BANTYPE_PLAYER)
-        return COMMANDS_RTN_VAL_ERROR;
+        return COMMANDS_RTN_VAL_SYNTAX;
 
     else if (ban_type == BANTYPE_ACCOUNT)
     {

@@ -214,6 +214,19 @@ int player_save(object *op)
         unlink(backupfile); /* also 100% invalid now */
     chmod(filename, SAVE_MODE);
 
+    // Now, we try to also save the player's account
+    Account *ac;
+
+    if (!(ac = account_get_from_object(op)))
+        return 0;
+
+    // Update the account with level of current character
+    if (!(account_update(ac, op)))
+        return 0;
+
+    if (account_save(ac, ac->name) != ACCOUNT_STATUS_OK)
+        return 0;
+
     return 1;
 }
 
