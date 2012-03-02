@@ -562,7 +562,7 @@ int damage_ob(object *op, int dam, object *hitter, int env_attack)
             if (pvp_area(hit_obj, NULL))
             {
                 // And was killed by a player, increment their total/round death counts and their killer's total/round kill counts.
-                if (hit_obj->type == PLAYER)
+                if (hit_obj->type == PLAYER || (hit_obj->owner != NULL && hit_obj->owner->type == PLAYER))
                 {
                     increment_pvp_counter(op, (PVP_STATFLAG_DEATH_TOTAL | PVP_STATFLAG_DEATH_ROUND));
                     increment_pvp_counter(hit_obj, (PVP_STATFLAG_KILLS_TOTAL | PVP_STATFLAG_KILLS_ROUND));
