@@ -36,6 +36,8 @@ void            account_send_client(NewSocket *ns, int stats);
 account_status  account_delete_player(NewSocket *ns, shstr *name);
 Account        *account_get_from_object(object *op);
 int             account_update(Account *ac, object *op);
+Account        *find_account(char *acname);
+Account        *find_account_hash(const char *acname);
 /* commands.c */
 CommArray_s    *find_command(char *cmd, player *pl);
 CommArray_s    *find_command_element(char *cmd, CommArray_s *commarray, int commsize);
