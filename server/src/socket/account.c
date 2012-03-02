@@ -413,3 +413,40 @@ int account_update(Account *ac, object *op)
     // Didn't find a match!! ??  Must be a bug
     return 0;
 }
+
+// These 2 functions basically copied from their find_player() equivalents
+Account *find_account(char *acname)
+{
+    char name[MAX_ACCOUNT_NAME+1];
+    const char *name_hash;
+
+    int name_len = strlen(acname); /* we assume a legal string */
+    if (name_len <= 1 || name_len > MAX_ACCOUNT_NAME)
+        return NULL;
+
+    strcpy(name, acname); /* we need to copy it because we access the string */
+    transform_account_name_string(name);
+    if (!(name_hash = find_string(name)))
+        return NULL;
+
+    return find_account_hash(name_hash);
+}
+
+/* nearly the same as above except we
+ * have the hash string when we call
+ */
+Account *find_account_hash(const char *acname)
+{
+    int     i;
+    player *pl;
+
+    if(acname)
+    {
+        for (pl = first_player; pl != NULL; pl = pl->next)
+        {
+            if (pl->ob && !QUERY_FLAG(pl->ob, FLAG_REMOVED) && pl->account_name == acname)
+                return &pl->socket.pl_account;
+        }
+    }
+    return NULL;
+}

@@ -1799,16 +1799,27 @@ static int BanAdd(object *op, ENUM_BAN_TYPE ban_type, char *str, int s)
     }
     else if (ban_type == BANTYPE_ACCOUNT)
     {
-        // player *pl;
+        Account *ac;
+        player  *pl;
+        int      i;
 
        /* add account to the ban list */
         tmp = BanAddToBanList(op, BANTYPE_ACCOUNT, str, s);
         if ((tmp == COMMANDS_RTN_VAL_SYNTAX) || (tmp == COMMANDS_RTN_VAL_ERROR))
             return tmp;
 
-        // TODO - find all player names on this account and kick them all!!!
-        // if ((pl = find_player(str)))
-        //    kick_player(pl);
+        // See if this account is online, and if so kick all its characters
+        if ((ac = find_account(str)))
+        {
+            for(i=0; i < ACCOUNT_MAX_PLAYER; i++)
+            {
+                if(ac->level[i])
+                {
+                    if ((pl = find_player(ac->charname[i])))
+                        kick_player(pl);
+                }
+            }
+        }
     }
     else if (ban_type == BANTYPE_CHAR)
     {
