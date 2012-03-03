@@ -936,7 +936,7 @@ void material_attack_damage(object *op, int num, int chance, int base)
             if((item = pl->equipment[(r+i)%PLAYER_EQUIP_MAX]))
             {
                 /* only damage weapons? */
-                if((base & HIT_FLAG_WEAPON) && item->type != WEAPON && item->type != SHIELD)
+                if((base & HIT_FLAG_WEAPON) && item->type != WEAPON)
                     continue;
                 break;
             }
