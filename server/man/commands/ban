@@ -4,7 +4,7 @@
 ~Description~:
    Lists all banned accounts, characters and IP addresses.
 
-~Syntax~: /ban <+/-> <pl/ac/ch/ip> <str> <seconds>
+~Syntax~: /ban <+/-> <pl/ac/ch/ip> <str> <time>
 ~Description~:
    Adds or removes players, accounts, characters or IP addresses from the ban list.
 
@@ -15,7 +15,8 @@
 If <pl> mode, <str> must be an online player.  The player's account, character and IP are all banned.
 <pl> mode is not valid with 'remove' mode.
 If <ip> mode, IP ranges are allowed using '*'.
-~<seconds>~ (Optional) Defaults to 60 if omitted.  Not required for 'remove' mode.
+~<time>~ (Optional) Use '1d' to ban for 1 day, '1h' for 1 hour, '1m' for 1 minute, '1s' or just '1' for 1 second.
+Defaults to 60s if omitted.  Not required for 'remove' mode.
 
 ~General notes~:
     When adding a ban, any existing entries on the ban list are removed first.

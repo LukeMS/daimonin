@@ -1655,7 +1655,8 @@ int command_ban(object *op, char *params)
     char          *str,
                    b_mode[MEDIUM_BUF] = "",
                    b_type[MEDIUM_BUF] = "",
-                   b_str[MEDIUM_BUF] = ""; // ban mode, ban type, etc.
+                   b_str[MEDIUM_BUF] = "", // ban mode, ban type, etc.
+                   t_mod[MEDIUM_BUF] = "";
     ENUM_BAN_TYPE  ban_type;
 
     if (!op)
@@ -1708,7 +1709,21 @@ int command_ban(object *op, char *params)
         // Get time if specified
         if(str = get_param_from_string(params, &pos))
         {
-            sscanf(str, "%d", &s);
+            sscanf(str, "%d%s", &s, t_mod);
+
+            if (!strcmp(t_mod, "d"))
+                s *= 24*60*60;
+            else if (!strcmp(t_mod, "h"))
+                s *= 60*60;
+            else if (!strcmp(t_mod, "m"))
+                s *= 60;
+            else if (!strcmp(t_mod, "s"))
+                s *= 1;
+            else if (t_mod[0] == '\0')
+                s *= 1;
+            else
+                return COMMANDS_RTN_VAL_SYNTAX;
+
             if (s < -1) s = -1;
         }
 
@@ -1875,7 +1890,14 @@ static int BanAddToBanList(object *op, ENUM_BAN_TYPE ban_type, char *str, int s)
         return tmp;
 
     if (s != -1)
-        sprintf(ban_buf, "for %d seconds.", s);
+        if (s < (2*60))
+            sprintf(ban_buf, "for %d seconds.", s);
+        else if (s < (2*60*60))
+            sprintf(ban_buf, "for %d minutes.", s/60);
+        else if (s < (2*60*60*24))
+            sprintf(ban_buf, "for %d hours.", s/(60*60));
+        else
+            sprintf(ban_buf, "for %d days.", s/(60*60*24));
     else
         sprintf(ban_buf, "permanently.");
 
