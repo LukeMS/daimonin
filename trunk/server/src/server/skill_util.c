@@ -229,6 +229,12 @@ int do_skill(object *op, int dir, char *string)
 
     /*LOG(llevNoLog,"DO SKILL: skill %s ->%d\n", op->chosen_skill->name, get_skill_time(op,skill));*/
 
+    if (QUERY_FLAG(op, FLAG_PARALYZED))
+    {
+        success = 0;
+        return success;
+    }
+
     switch (skill)
     {
         case SK_LEVITATION:

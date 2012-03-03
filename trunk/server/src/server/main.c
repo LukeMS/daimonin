@@ -330,7 +330,7 @@ static void process_map_events(mapstruct *map)
         }
 
         /* only players and monsters should have weapon_speed set and be active */
-        if (op->weapon_speed)
+        if (op->weapon_speed && !QUERY_FLAG(op, FLAG_PARALYZED))
         {
             if (op->weapon_speed_left > 0)
                 op->weapon_speed_left -= WEAPON_SWING_TIME;
