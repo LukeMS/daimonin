@@ -1083,7 +1083,7 @@ int cast_spell(object *op, object *caster, int dir, int type, int ability, Spell
         }
 
         if (pl->guild_force &&
-            item != spellPotion)
+            !item)
         {
             if ((pl->guild_force->weight_limit & GUILD_NO_MAGIC) &&
                 !(spells[type].flags & SPELL_DESC_WIS))
