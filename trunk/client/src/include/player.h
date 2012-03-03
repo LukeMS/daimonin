@@ -190,7 +190,7 @@ typedef struct Player_Struct
 
     float                   action_time_max; /* skill cooldown time */
     float                   action_timer;    /* skill cooldown time */
-
+    uint8                   paralyzed           : 1; // if 1, action_timer will not count down
     uint32                  no_echo             : 1;    /* If 1, don't echo keystrokes */
     uint32                  fire_on             : 1;    /* True if fire key is pressed = action key (ALT;CTRL)*/
     uint32                  run_on              : 1;    /* True if run key is on = action key (ALT;CTRL)*/

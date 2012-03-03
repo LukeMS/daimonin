@@ -867,7 +867,8 @@ void widget_show_skill_exp(int x, int y)
 	multi = line = 0;
 
     /* pre-emptively tick down the skill delay timer */
-    if (cpl.action_timer > 0)
+    if (!cpl.paralyzed &&
+        cpl.action_timer > 0)
     {
         if (LastTick - action_tick > 125)
         {

@@ -704,6 +704,8 @@ void map_draw_map(void)
                                     p_xl = xmpos + left + right / 2 - 10;
                                     p_yl = yl - skin_prefs.effect_height;
                                     p_flags = map->ext[k];
+                                    cpl.paralyzed = ((p_flags & FFLAG_PARALYZED))
+                                                    ? 1 : 0;
                                 }
                                 else if ((map->ext[k] & FFLAG_PROBE))
                                 {
