@@ -1642,12 +1642,8 @@ int command_silence(object *op, char *params)
 
 /* /ban usage:
  *    /ban list
- *    /ban remove <account, name or ip>
- *    /ban acc <account> <seconds>
- *    /ban name <name> <seconds>
- *    /ban ip <IP> <seconds>
- *    /ban add <name> <seconds>
- *    Note:  /ban add will ban ip AND name and player's account. Player must be online.
+ *    /ban <+/-> <pl / ac / ch / ip> <str> <time>
+ *    Note:  /ban pl will ban account, character and IP. Player must be online.
  *    Note:  <seconds> = -1 means permanent ban (GMs and SAs only) */
 int command_ban(object *op, char *params)
 {
@@ -1831,7 +1827,10 @@ static int BanAdd(object *op, ENUM_BAN_TYPE ban_type, char *str, int s)
                 if(ac->level[i])
                 {
                     if ((pl = find_player(ac->charname[i])))
-                        kick_player(pl);
+                        {}
+                        // kick_player(pl);
+                        /* We can't kick the player; if there is more than 1 player
+                         * on this IP, and we kick them both, we crash the server! */
                 }
             }
         }
@@ -1850,9 +1849,13 @@ static int BanAdd(object *op, ENUM_BAN_TYPE ban_type, char *str, int s)
     }
     else // ban_type == BANTYPE_IP
     {
-        int spot;
+        int         spot;
+        objectlink *ip_list,
+                   *ol;
+        player     *pl = NULL;
 
-        // TODO - TW - Figure out how this works, and do some testing, then update message
+        // TODO - this only works if IP address looks like xxx.xxx.xxx.*
+        // So, when playing on own server, you can't ban 127.0.0.*
         for (spot = 0; str[spot] != '\0'; spot++)
         {
             if ((CONTR(op)->gmaster_mode == GMASTER_MODE_VOL &&
@@ -1861,7 +1864,7 @@ static int BanAdd(object *op, ENUM_BAN_TYPE ban_type, char *str, int s)
                  str[spot] == '*' &&
                  spot < 11))
             {
-                new_draw_info(NDI_UNIQUE, 0, op, "Problem with banning IP range.");
+                new_draw_info(NDI_UNIQUE, 0, op, "You have insufficient privileges to ban that IP range.");
                 return COMMANDS_RTN_VAL_ERROR;
             }
         }
@@ -1870,7 +1873,22 @@ static int BanAdd(object *op, ENUM_BAN_TYPE ban_type, char *str, int s)
         if ((tmp == COMMANDS_RTN_VAL_SYNTAX) || (tmp == COMMANDS_RTN_VAL_ERROR))
             return tmp;
 
-        // TODO - We should try and kick all players who have this IP, but no suitable function written
+        // Kick all players who have this IP
+        ip_list = find_players_on_ip(str);
+
+        for (ol = ip_list ; ol; ol = ol->next)
+        {
+            pl = CONTR(ol->objlink.ob);
+
+            if (pl)
+                {}
+                // kick_player(pl);
+                /* We can't kick the player; if there is more than 1 player
+                 * on this IP, and we kick them both, we crash the server! */
+        }
+
+        // Now clear out our temporary list
+        free_iplist(ip_list);
     }
 
     save_ban_file();

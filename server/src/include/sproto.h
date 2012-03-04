@@ -90,7 +90,6 @@ void                        save_ban_file(void);
 struct objectlink          *add_ban_entry(const char *account, const char *name, char *ip, int ticks, int ticks_left);
 void                        remove_ban_entry(struct oblnk *entry);
 int                         check_banned(NewSocket *ns, const char *account, const char *name, char *ip);
-int                         ip_compare(const char *ban_tmp, const char *ip_temp);
 /* c_chat.c */
 #ifndef USE_CHANNELS
 int                         command_describe(object *op, char *params);
@@ -357,6 +356,10 @@ void                        init_library(void);
 void                        free_strings(void);
 void                        set_pticks_time(long t);
 void                        free_lists_and_tables(void);
+/* ipcompare.c */
+int                         ip_compare(const char *ban_tmp, const char *ip_temp);
+objectlink                 *find_players_on_ip(char *ipmask);
+void                        free_iplist(objectlink *ip_list);
 /* login.c */
 int                         player_save(object *op);
 addme_login_msg             player_load(NewSocket *ns, const char *name);

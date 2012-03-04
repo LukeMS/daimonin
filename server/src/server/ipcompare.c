@@ -34,6 +34,9 @@
 #define MASK_TENS 2
 #define MASK_ONES 1
 
+static objectlink *add_ip_list(player *pl, objectlink *ip_list);
+static void        free_iplist_node(objectlink *ol);
+
 /* parse a single IP address */
 static int parse_ip(const char * ip, unsigned char ip_terms[], int mask_pos[])
 {
@@ -278,6 +281,59 @@ int ip_compare(const char * ip1, const char * ip2)
     }
 
     return 1;
+}
+
+objectlink *find_players_on_ip(char *ipmask)
+{
+    player     *pl;
+    objectlink *ip_list = NULL;
+
+    if(!ipmask)
+        return NULL;
+
+    for (pl = first_player; pl != NULL; pl = pl->next)
+    {
+        if (pl->ob && !QUERY_FLAG(pl->ob, FLAG_REMOVED) && ip_compare(pl->socket.ip_host, ipmask))
+            ip_list = add_ip_list(pl, ip_list);
+    }
+
+    return ip_list;
+}
+
+static objectlink *add_ip_list(player *pl, objectlink *ip_list)
+{
+    objectlink *ol;
+
+    if(!pl)
+        return NULL;
+
+    ol = get_objectlink(OBJLNK_FLAG_OB);
+    ol->objlink.ob = pl->ob;
+
+    objectlink_link(&ip_list, NULL, NULL, ip_list, ol);
+
+    return ol;
+}
+
+/* Free the whole ip_list list
+ */
+void free_iplist(objectlink *ip_list)
+{
+    objectlink *ol = ip_list;
+
+    LOG(llevDebug, "Freeing all ip-list entries\n");
+
+    for(; ol; ol = ol->next)
+    {
+        free_iplist_node(ol);
+    }
+}
+
+/* free the the used objectlink
+ */
+static void free_iplist_node(objectlink *ol)
+{
+    return_poolchunk(ol, pool_objectlink);
 }
 
 /* Some versions of libc don't do this right, so we need to replicate inet_pton for the victims */
