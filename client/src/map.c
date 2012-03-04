@@ -460,6 +460,28 @@ void map_draw_map(void)
                     {
                         index = index_tmp & ~0x8000;
 
+                        /* If it's got an alternative face and it's not in the
+                         * bottom quadrant, use the alternative. */
+                        if ((face_list[index].flags & FACE_FLAG_ALTERNATIVE))
+                        {
+                            sint32 i;
+
+                            if (x < (MAP_MAX_SIZE - 1) / 2 ||
+                                y < (MAP_MAX_SIZE - 1) / 2)
+                            {
+                                i = face_list[index].alt_a;
+                            }
+                            else
+                            {
+                                i = face_list[index].alt_b;
+                            }
+
+                            if (i >= 0)
+                            {
+                                index = (uint16)i;
+                            }
+                        }
+
                         if (!(face_list[index].flags & FACE_FLAG_LOADED))
                         {
                             /* Request the face now if it has not already been
@@ -479,24 +501,6 @@ void map_draw_map(void)
                             _Sprite *sprite = face_list[index].sprite;
                             int      yl,
                                      xl;
-
-                            /* If it's got an alternative image and it's not in the
-                             * bottom quadrant, use the alternative sprite. */
-                            if ((face_list[index].flags & FACE_FLAG_ALTERNATIVE))
-                            {
-                                int i;
-
-                                if (x < (MAP_MAX_SIZE - 1) / 2 || y < (MAP_MAX_SIZE - 1) / 2)
-                                {
-                                    if ((i = face_list[index].alt_a) != -1)
-                                        sprite = face_list[i].sprite;
-                                }
-                                else
-                                {
-                                    if ((i = face_list[index].alt_b) != -1)
-                                        sprite = face_list[i].sprite;
-                                }
-                            }
 
                             if (map->pos[k]) /* we have a set quick_pos = multi tile*/
                             {
