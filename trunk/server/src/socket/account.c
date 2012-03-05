@@ -410,7 +410,7 @@ int account_update(Account *ac, object *op)
         }
     }
 
-    // Didn't find a match!! ??  Must be a bug
+    // Didn't find a match - probably going through char creation process
     return 0;
 }
 
