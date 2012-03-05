@@ -1417,7 +1417,7 @@ int main(int argc, char *argv[])
 
     ShowIntro(NULL, 100);
     sound_play_music("orchestral.ogg", options.music_volume, 0, -1, 0, MUSIC_MODE_DIRECT);
-    sprite_init_system();
+    sprite_init();
 
     /* Unless  we've given  an --account, --pass, or --server switch wait for
      * keypress. */

@@ -66,13 +66,12 @@ static void         add_to_stretch_cache(SDL_Surface *src, SDL_Surface *dest,
 static void         stretch_init(void);
 
 /* not much special inside atm */
-uint8 sprite_init_system(void)
+void sprite_init(void)
 {
     sprite_clear_backbuffer();
 
     FormatHolder=SDL_CreateRGBSurface(SDL_SRCALPHA,1, 1, 32, 0xFF000000, 0x00FF0000 ,0x0000FF00 ,0x000000FF);
     SDL_SetAlpha(FormatHolder,SDL_SRCALPHA,255);
-    return(1);
 }
 
 void sprite_clear_backbuffer(void)
@@ -81,7 +80,7 @@ void sprite_clear_backbuffer(void)
     stretch_init();
 }
 
-uint8 sprite_deinit_system(void)
+void sprite_deinit(void)
 {
     uint8 i;
 
@@ -90,8 +89,6 @@ uint8 sprite_deinit_system(void)
         SDL_FreeSurface(DarkMask[i]);
         DarkMask[i] = NULL;
     }
-
-    return 1;
 }
 
 _Sprite *sprite_load(char *fname, SDL_RWops *rwop)

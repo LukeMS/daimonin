@@ -164,8 +164,8 @@ extern void             remove_anim(struct _anim *anim);
 extern void             play_anims(int mx, int my);
 extern void             delete_anim_que(void);
 extern void             show_tooltip(int mx, int my, char *text);
-extern uint8          sprite_init_system(void);
-extern uint8          sprite_deinit_system(void);
+extern void             sprite_init(void);
+extern void             sprite_deinit(void);
 
 extern _Sprite         *sprite_load(char *fname, SDL_RWops *rwob);
 extern void             sprite_free_sprite(_Sprite *sprite);
