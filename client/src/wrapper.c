@@ -128,7 +128,7 @@ void SYSTEM_End(void)
     sound_freeall();
     sound_deinit();
     skin_deinit();
-    sprite_deinit_system();
+    sprite_deinit();
     locator_clear_players(NULL);
     clear_lists();
 
