@@ -22,21 +22,27 @@
 */
 #include <include.h>
 
-static int      dark_alpha[DARK_LEVELS] =
-    {
-        0, 44, 80, 117, 153, 190, 226
-    };
-SDL_Surface    *darkness_filter[] =
-    {
-        NULL,
-        NULL,
-        NULL,
-        NULL,
-        NULL,
-        NULL,
-        NULL,
-    };
+static uint8 DarkAlpha[DARK_LEVELS] =
+{
+    0,
+    44,
+    80,
+    117,
+    153,
+    190,
+    226
+};
 
+static SDL_Surface *DarkMask[DARK_LEVELS] =
+{
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+};
 
 struct _anim   *start_anim; /* anim queue of current active map */
 
@@ -1194,10 +1200,10 @@ void sprite_blt_map(_Sprite *sprite, int x, int y, SDL_Rect *box, _BLTFX *bltfx,
                 return;
 
             /* we create the filter surfaces only when needed, and then store them */
-            if (!darkness_filter[bltfx->dark_level])
+            if (!DarkMask[bltfx->dark_level])
             {
-                SDL_SetAlpha(skin_sprites[SKIN_SPRITE_ALPHA]->bitmap,SDL_SRCALPHA,dark_alpha[bltfx->dark_level]);
-                darkness_filter[bltfx->dark_level]=SDL_DisplayFormatAlpha(skin_sprites[SKIN_SPRITE_ALPHA]->bitmap);
+                SDL_SetAlpha(skin_sprites[SKIN_SPRITE_ALPHA]->bitmap,SDL_SRCALPHA,DarkAlpha[bltfx->dark_level]);
+                DarkMask[bltfx->dark_level]=SDL_DisplayFormatAlpha(skin_sprites[SKIN_SPRITE_ALPHA]->bitmap);
             }
 
 // TODO: Remove tilestretcher!
@@ -1213,7 +1219,7 @@ void sprite_blt_map(_Sprite *sprite, int x, int y, SDL_Rect *box, _BLTFX *bltfx,
             else /* we create the surface, and put it in hashtable */
             {
                 blt_sprite = SDL_DisplayFormatAlpha(sprite->bitmap);
-                SDL_BlitSurface(darkness_filter[bltfx->dark_level], NULL,
+                SDL_BlitSurface(DarkMask[bltfx->dark_level], NULL,
                                 blt_sprite, NULL);
 
                 /* lets check for stretching... */
