@@ -214,6 +214,9 @@ int player_save(object *op)
         unlink(backupfile); /* also 100% invalid now */
     chmod(filename, SAVE_MODE);
 
+    return 1;
+
+    // Below causes new-char creation process to fail ... fix later!
     // Now, we try to also save the player's account
     Account *ac;
 
