@@ -416,7 +416,7 @@ void map_draw_map(void)
 
     player_height_offset = the_map.cells[player_posx][player_posy].height;  // this is the height of the tile where the player is standing
 
-    for (kk = 0; kk < MAXFACES - 1; kk++)    /* we draw floor & mask as layer wise (layer 0 & 1) */
+    for (kk = 0; kk < MAXFACES - 1; kk++)
     {
         for (alpha = 0; alpha < MAP_MAX_SIZE; alpha++)
         {
@@ -434,10 +434,15 @@ void map_draw_map(void)
                     x = alpha;
                 }
 
-                if (kk < 2) /* and we draw layer 2 and 3 at once on a node */
+                if (kk < 2) // draw layers 0 & 1 (floor & fmask) consecutively
+                {
                     kt = kk;
-                else
+                }
+                else        // then draw layers 2 & 3 concurrently
+                {
                     kt = kk + 1;
+                }
+
                 for (k = kk; k <= kt; k++)
                 {
                     xpos = MAP_XPOS(x, y);
