@@ -330,19 +330,7 @@ void set_map_face(int x, int y, int layer, int face, int pos, int ext, char *nam
 
     if (layer==0) /* see if we need to stretch this tile */
     {
-       the_map.cells[x][y].height = height;
-
-       align_tile_stretch(x-1,y-1); /* NW */
-       align_tile_stretch(x  ,y-1); /* N  */
-       align_tile_stretch(x+1,y-1); /* NE */
-       align_tile_stretch(x+1,y  ); /* E  */
-
-       align_tile_stretch(x+1,y+1); /* SE */
-       align_tile_stretch(x  ,y+1); /* S */
-       align_tile_stretch(x-1,y+1); /* SW */
-       align_tile_stretch(x-1,y  ); /* W */
-
-       align_tile_stretch(x  ,y  ); /* HERE */
+        set_map_height(x, y, height);
     }
 }
 
