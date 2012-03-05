@@ -743,7 +743,7 @@ void DrawInfoCmd2(char *data, int len)
             break;
 
         case 2: 
-            colr = NDI_COLR_NAVY;
+            colr = NDI_COLR_TEAL;
 
             break;
 
@@ -758,7 +758,7 @@ void DrawInfoCmd2(char *data, int len)
             break;
 
         case 5: 
-            colr = NDI_COLR_BLUE;
+            colr = NDI_COLR_AQUA;
 
             break;
 
@@ -2303,7 +2303,7 @@ void ChannelMsgCmd(char *data, int len)
             break;
 
         case 2: 
-            colr = NDI_COLR_NAVY;
+            colr = NDI_COLR_TEAL;
 
             break;
 
@@ -2318,7 +2318,7 @@ void ChannelMsgCmd(char *data, int len)
             break;
 
         case 5: 
-            colr = NDI_COLR_BLUE;
+            colr = NDI_COLR_AQUA;
 
             break;
 
