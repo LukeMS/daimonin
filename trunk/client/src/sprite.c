@@ -83,7 +83,15 @@ void sprite_clear_backbuffer(void)
 
 uint8 sprite_deinit_system(void)
 {
-    return(1);
+    uint8 i;
+
+    for (i = 0; i < DARK_LEVELS; i++)
+    {
+        SDL_FreeSurface(DarkMask[i]);
+        DarkMask[i] = NULL;
+    }
+
+    return 1;
 }
 
 _Sprite *sprite_load(char *fname, SDL_RWops *rwop)
