@@ -25,11 +25,14 @@ bindir="$2"
 cd ../..
 
 echo "### Create zip of all defaults in $datadir"
-zip -9qr $datadir/defaults.zip bitmaps gfx_user icons
+zip -9qr $datadir/defaults.zip bitmaps icons
 zip -9qr $datadir/defaults.zip man
 zip -9qr $datadir/defaults.zip media sfx
 zip -9qr $datadir/defaults.zip settings
 zip -9qr $datadir/defaults.zip update
+
+echo "### Create local replacement faces directory to $datadir"
+mkdir -p $datadir/gfx_user
 
 echo "### Copy license to $datadir"
 cp License $datadir
