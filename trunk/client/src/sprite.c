@@ -1176,8 +1176,7 @@ void sprite_blt_map(_Sprite *sprite, int x, int y, SDL_Rect *box, _BLTFX *bltfx,
             SDL_Surface *scaled = SPG_Scale(SDL_ConvertSurface(sprite->bitmap,
                                                                FormatHolder->format,
                                                                FormatHolder->flags),
-                                            options.map_scalex / 100.0,
-                                            options.map_scaley / 100.0);
+                                            options.mapsx, options.mapsy);
 
             sprite->scaled = SDL_DisplayFormatAlpha(scaled);
             SDL_FreeSurface(scaled);

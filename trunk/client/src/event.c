@@ -157,8 +157,8 @@ int mouseInPlayfield(int x, int y)
 {
     //we simply realc the mousevalues
 
-    x=(int)(x/(options.map_scalex / 100.0f));
-    y=(int)(y/(options.map_scaley / 100.0f));
+    x=(int)(x/options.mapsx);
+    y=(int)(y/options.mapsy);
 
     x = x - /*options.mapstart_x - */6;
     y = y - /*options.mapstart_y - */55;
