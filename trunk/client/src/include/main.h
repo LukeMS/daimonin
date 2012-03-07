@@ -217,6 +217,8 @@ typedef struct _options
     int                   grid;
     uint16                best_fps,
                           worst_fps;
+    float                 mapsx;
+    float                 mapsy;
 }
 _options;
 
