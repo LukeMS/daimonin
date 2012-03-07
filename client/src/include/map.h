@@ -89,13 +89,13 @@ MapPos;
 extern _mapdata         MapData;
 
 #define MAP_XPOS(_x_, _y_) \
-    (MAP_START_XOFF * (options.map_scalex / 100.0)) + \
-    (_x_) * (MAP_TILE_YOFF * (options.map_scalex / 100.0)) - \
-    (_y_) * (MAP_TILE_YOFF * (options.map_scalex / 100.0))
+    (MAP_START_XOFF * (sint16)options.mapsx) + \
+    (_x_) * (MAP_TILE_YOFF * (sint16)options.mapsx) - \
+    (_y_) * (MAP_TILE_YOFF * (sint16)options.mapsx)
 #define MAP_YPOS(_x_, _y_) \
-    (MAP_START_YOFF * (options.map_scaley / 100.0)) + \
-    (_x_) * (MAP_TILE_XOFF * (options.map_scaley / 100.0)) + \
-    (_y_) * (MAP_TILE_XOFF * (options.map_scaley / 100.0))
+    (MAP_START_YOFF * (sint16)options.mapsy) + \
+    (_x_) * (MAP_TILE_XOFF * (sint16)options.mapsy) + \
+    (_y_) * (MAP_TILE_XOFF * (sint16)options.mapsy)
 
 extern void             clear_map(void);
 extern void             set_map_darkness(int x, int y, uint8 darkness);
