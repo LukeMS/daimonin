@@ -298,7 +298,7 @@ static void ban_inform_client(NewSocket *ns, objectlink *ol, ENUM_BAN_TYPE ban_t
     {
         if (ban_type == BANTYPE_ACCOUNT)
             sprintf(buf, "3 You are banned from Daimonin.\nGoodbye.");
-        else if (ban_type = BANTYPE_CHAR)
+        else if (ban_type == BANTYPE_CHAR)
             sprintf(buf, "3 Your character, %s, is banned from Daimonin.\nGoodbye.", name);
         else // ban_type = BANTYPE_IP
             sprintf(buf, "3 Your IP is banned from Daimonin.\nGoodbye.");
@@ -325,7 +325,7 @@ static void ban_inform_client(NewSocket *ns, objectlink *ol, ENUM_BAN_TYPE ban_t
      * Lets teach them to avoid it */
     if(++ns->pwd_try == 3)
     {
-        LOG(llevInfo,"BANNED LOGIN: 3 login tries: Account: %s / Player: %s / IP\n",
+        LOG(llevInfo,"BANNED LOGIN: 3 login tries: Account: %s / Player: %s / IP: %s\n",
             STRING_SAFE(ol->objlink.ban->account),
             STRING_SAFE(ol->objlink.ban->name),
             STRING_SAFE(ns->ip_host));
