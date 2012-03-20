@@ -348,29 +348,41 @@ static inline int add_aggro_exp(object *hitter, int exp, int skillnr)
 static int give_default_guild_exp(player *pl, int base_exp)
 {
     object *skill;
-    int e1, e2, e3;
+    int e1 = 0;
+    int e2 = 0;
+    int e3 = 0;
+    int skills_leveled;
 
-    new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, pl->ob, "You didn't fight this time.\nYou trained your default guild skills.");
-
-    if ((skill = pl->highest_skill[pl->base_skill_group[0]]))
+    if (pl->base_skill_group[0] >= 0 &&
+        (skill = pl->highest_skill[pl->base_skill_group[0]]) &&
+        skill->level > 1)
     {
         e1 = (int) ((float) base_exp * 0.55f);
         e1 = exp_from_base_skill(pl, e1, skill->stats.sp);
         add_aggro_exp(pl->ob, e1, skill->stats.sp);
     }
 
-    if ((skill = pl->highest_skill[pl->base_skill_group[1]]))
+    if (pl->base_skill_group[1] >= 0 &&
+        (skill = pl->highest_skill[pl->base_skill_group[1]]) &&
+        skill->level > 1)
     {
         e2 = (int) ((float) base_exp * 0.30f);
         e2 = exp_from_base_skill(pl, e2, skill->stats.sp);
         add_aggro_exp(pl->ob, e2, skill->stats.sp);
     }
 
-    if ((skill = pl->highest_skill[pl->base_skill_group[2]]))
+    if (pl->base_skill_group[2] >= 0 &&
+        (skill = pl->highest_skill[pl->base_skill_group[2]]) &&
+        skill->level > 1)
     {
         e3 = (int) ((float) base_exp * 0.15f);
         e3 = exp_from_base_skill(pl, e3, skill->stats.sp);
         add_aggro_exp(pl->ob, e3, skill->stats.sp);
+    }
+
+    if (e1 > 0 || e2 > 0 || e3 > 0)
+    {
+        new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, pl->ob, "You didn't fight this time.\nYou trained your default guild skills.");
     }
 
     return 1;
@@ -653,7 +665,7 @@ static inline int aggro_exp_group(object *victim, object *aggro, char *kill_msg)
 
         // If the pl has not contributed damage to the slaughter of this mob, only give them 75% exp.
         if(pl->exp_calc_tag == exp_calc_tag)
-            give_default_guild_exp(pl, exp);
+            aggro_exp_single(victim, pl->exp_calc_obj, exp);
         else
             give_default_guild_exp(pl, (int)((float)exp * 0.75f));
 
@@ -795,7 +807,7 @@ object *aggro_calculate_exp(struct obj *victim, struct obj *slayer, char *kill_m
         return highest_hitter->enemy;
     }
 
-    if(CONTR(highest_hitter->enemy)->group_id != GROUP_NO)
+    if(CONTR(highest_hitter->enemy)->group_status & GROUP_STATUS_GROUP)
         ret = aggro_exp_group(victim, highest_hitter, kill_msg);
     else
         ret = aggro_exp_single(victim, highest_hitter, -1);
