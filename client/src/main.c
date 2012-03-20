@@ -1401,6 +1401,7 @@ int main(int argc, char *argv[])
     /* We need to load a few bitmaps and initialise fonts before we call
      * ShowIntro(). */
     skin_load_bitmaps(SKIN_SPRITE_PROGRESS_BACK);
+    skin_load_fonts();
     font_init();
     ShowIntro("initialise fonts", 10);
     ShowIntro("load skin", 30);
@@ -1774,14 +1775,14 @@ int main(int argc, char *argv[])
                 }
 
                 bmbltfx.flags = BLTFX_FLAG_SRCALPHA;
-                bmoff = (font_large_out.line_height * i) + (int)((50.0f / 3.0f) *
+                bmoff = (font_large.line_height * i) + (int)((50.0f / 3.0f) *
                         ((float)(LastTick - vim[i].starttick) / 1000.0f) *
                         ((float)(LastTick - vim[i].starttick) / 1000.0f) +
                         ((int)(150.0f * ((float)(LastTick - vim[i].starttick) /
                         3000.0f))));
                 map_udate_flag = 2;
-                EMBOSS(ScreenSurface, &font_large_out, vim[i].msg,
-                       400 - (string_width(&font_large_out, vim[i].msg) / 2),
+                EMBOSS(ScreenSurface, &font_large, vim[i].msg,
+                       400 - (string_width(&font_large, vim[i].msg) / 2),
                        300 - bmoff, vim[i].colr, NULL, &bmbltfx);
             }
         }

@@ -241,7 +241,7 @@ void widget_show_resist(int x, int y)
         bltfx.alpha=0;
 
         sprite_blt(skin_sprites[SKIN_SPRITE_RESIST_BG], 0, 0, NULL, &bltfx);
-        string_blt(widget_surface[WIDGET_RESIST_ID], &font_tiny_out, "Resistance Table", 4,  1, skin_prefs.widget_title, NULL, NULL);
+        string_blt(widget_surface[WIDGET_RESIST_ID], &font_tiny, "Resistance Table", 4,  1, skin_prefs.widget_title, NULL, NULL);
         PrintResist("IM", 68, 3, ATNR_PHYSICAL);
         PrintResist("SL", 100, 3, ATNR_SLASH);
         PrintResist("CL", 132, 3, ATNR_CLEAVE);
@@ -406,7 +406,9 @@ void widget_show_range(int x, int y)
     item       *tmp, *tmp2;
 
     rec_range.w = 160;
+    rec_range.h = font_small.line_height;
     rec_item.w = 185;
+    rec_item.h = font_small.line_height;
     examine_range_inv();
 
     sprite_blt(skin_sprites[SKIN_SPRITE_RANGE], x, y, NULL, NULL);
@@ -646,7 +648,7 @@ void show_media(int x, int y)
 
 void widget_show_mapname(int x, int y)
 {
-    string_blt(ScreenSurface, &font_large_out, MapData.name, x, y, skin_prefs.widget_title, NULL, NULL);
+    string_blt(ScreenSurface, &font_large, MapData.name, x, y, skin_prefs.widget_title, NULL, NULL);
 }
 
 
@@ -785,7 +787,7 @@ void show_quickslots(int x, int y)
             }
         }
         sprintf(buf, "F%d", i + 1);
-        string_blt(ScreenSurface, &font_tiny_out, buf, x + quickslots_pos[i][qsx]+xoff + 12, y + quickslots_pos[i][qsy] - 6,
+        string_blt(ScreenSurface, &font_tiny, buf, x + quickslots_pos[i][qsx]+xoff + 12, y + quickslots_pos[i][qsy] - 6,
                   skin_prefs.widget_title, NULL, NULL);
     }
 }
@@ -862,7 +864,7 @@ void widget_quickslots(int x, int y)
             }
         }
         sprintf(buf, "F%d", i + 1);
-        string_blt(ScreenSurface, &font_tiny_out, buf, x + quickslots_pos[i][qsx]+xoff + 12, y + quickslots_pos[i][qsy] - 6,
+        string_blt(ScreenSurface, &font_tiny, buf, x + quickslots_pos[i][qsx]+xoff + 12, y + quickslots_pos[i][qsy] - 6,
                   skin_prefs.widget_title, NULL, NULL);
     }
 }

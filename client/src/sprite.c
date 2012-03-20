@@ -454,8 +454,7 @@ int string_width(_font *font, char *text)
                 break;
 
             default:
-                w += font->c[(unsigned char) (text[i])].w + font->char_offset;
-                break;
+                w += font->c[(uint8)(text[i])].w + font->char_offset;
         }
     }
 
@@ -477,14 +476,16 @@ int string_width_offset(_font *font, char *text, int *line, int len)
                 break;
 
             default:
-                w += font->c[(unsigned char) (text[i])].w + font->char_offset;
-                if (w>=len && !flag)
+                w += font->c[(uint8)(text[i])].w + font->char_offset;
+
+                if (w >= len && 
+                    !flag)
                 {
                     flag = 1;
                     *line = c;
                 }
-                break;
         }
+
         c++;
     }
 
@@ -496,21 +497,10 @@ int string_width_offset(_font *font, char *text, int *line, int len)
 
 void string_blt(SDL_Surface *surf, _font *font, char *text, int x, int y, uint32 colr, SDL_Rect *area, _BLTFX *bltfx)
 {
-    register int w,
-                 line_clip = -1,
-                 line_count = 0,
-                 x2 = x,
-                 y2 = y;
-    SDL_Color    real_color,
-                 color;
+    register int cx = x,
+                 cy = y;
+    uint32       colr_used = colr;
     char        *c;
-    /* Strong (|), emphasis (~), and intertitle (`) can be used together.
-     * Intertitles simply underline text, except in GUIs where it also changes
-     * text colour and forces a linebreak (this last is handled in the specific
-     * modules).
-     * Hyper (^) only works as markup in GUIs. The actual hypertexting is
-     * handled in the specidic modules. In all other cases it is a normal
-     * character. */
     uint8        intertitle = 0,
                  strong = 0,
                  emphasis = 0,
@@ -524,25 +514,105 @@ void string_blt(SDL_Surface *surf, _font *font, char *text, int x, int y, uint32
         return;
     }
 
-    if (area)
-    {
-        line_clip = area->w;
-    }
-
-    real_color.r = color.r = (colr >> 16) & 0xff;
-    real_color.g = color.g = (colr >> 8) & 0xff;
-    real_color.b = color.b = colr & 0xff;
-    SDL_SetPalette(font->sprite->bitmap, SDL_LOGPAL | SDL_PHYSPAL, &real_color,
-                   1, 1);
-
-    if (bltfx &&
-        (bltfx->flags & BLTFX_FLAG_SRCALPHA))
-    {
-        SDL_SetAlpha(font->sprite->bitmap, SDL_SRCALPHA, bltfx->alpha);
-    }
-
     for (c = text; *c; c++)
     {
+        sint16 cw;
+
+        /* A newline does just that. */
+        if (*c == '\n')
+        {
+            cx = x;
+            cy += font->line_height;
+
+            continue;
+        }
+        /* A tab is remapped to a space. */
+        else if (*c == '\t')
+        {
+            *c = ' ';
+        }
+        /* Other characters <= 27 are non-printable.
+         * 28: up arrow
+         * 29: down arrow
+         * 30: right arrow
+         * 31: left arrow */
+        else if (*c <= 27)
+        {
+            continue;
+        }
+
+        /* Set character width. The ECCs are never blitted. */
+        cw = (*c == ECC_EMPHASIS ||
+              *c == ECC_STRONG ||
+              *c == ECC_UNDERLINE ||
+              (*c == ECC_HYPERTEXT &&
+               !InputStringFlag &&
+               gui_npc))
+             ? 0
+             : font->c[(uint8)(*c)].w + font->char_offset;
+
+        /* We have a clipping rectangle? */
+        if (area)
+        {
+            /* If the next char would overreach the width, drop to the start
+             * start of a new line. */
+            if (cx + cw > x + area->w)
+            {
+                cx = x;
+                cy += font->line_height;
+            }
+
+            /* Now if this line would overreach the height, bail out. */
+            if (cy + font->line_height > y + area->h)
+            {
+                return;
+            }
+        }
+
+        /* Check for ECC_HYPERTEXT. */
+        if (*c == ECC_HYPERTEXT)
+        {
+            /* Hypertext is only allowed in the NPC GUI (TODO: and book GUI). */
+            if (!InputStringFlag &&
+                gui_npc)
+            {
+                if ((hyper = !hyper))
+                {
+                    _gui_npc_element *k;
+     
+                    if ((k = gui_npc->keyword_selected) &&
+                        !strnicmp(c + 1, k->keyword, strlen(k->keyword)))
+                    {
+                        colr_used = 0xcc66ff;
+                    }
+                    else
+                    {
+                        colr_used = skin_prefs.ecc_hypertext;
+                    }
+                }
+                else
+                {
+                    if (strong)
+                    {
+                        colr_used = skin_prefs.ecc_strong;
+                    }
+                    else if (emphasis)
+                    {
+                        colr_used = skin_prefs.ecc_emphasis;
+                    }
+                    else
+                    {
+                        colr_used = colr;
+                    }
+                }
+
+                continue;
+            }
+        }
+
+        /* Check for ECC_EMPHASIS, ECC_STRONG, and ECC_UNDERLINE. Again, these
+         * are never blitted and if colr is 0x000000 or we're in hypertext
+         * mode, we don't do anything at all. */
         switch (*c)
         {
             case ECC_STRONG:
@@ -553,36 +623,25 @@ void string_blt(SDL_Surface *surf, _font *font, char *text, int x, int y, uint32
      
                     if (strong)
                     {
-                        color.r = (skin_prefs.ecc_strong >> 16) & 0xff;
-                        color.g = (skin_prefs.ecc_strong >> 8) & 0xff;
-                        color.b = skin_prefs.ecc_strong & 0xff;
+                        colr_used = skin_prefs.ecc_strong;
                     }
                     else
                     {
                         if (emphasis)
                         {
-                            color.r = (skin_prefs.ecc_emphasis >> 16) & 0xff;
-                            color.g = (skin_prefs.ecc_emphasis >> 8) & 0xff;
-                            color.b = skin_prefs.ecc_emphasis & 0xff;
+                            colr_used = skin_prefs.ecc_emphasis;
                         }
                         else if (intertitle &&
                                  (cpl.menustatus == MENU_NPC ||
                                   cpl.menustatus == MENU_BOOK))
                         {
-                            color.r = (skin_prefs.ecc_intertitle >> 16) & 0xff;
-                            color.g = (skin_prefs.ecc_intertitle >> 8) & 0xff;
-                            color.b = skin_prefs.ecc_intertitle & 0xff;
+                            colr_used = skin_prefs.ecc_intertitle;
                         }
                         else
                         {
-                            color.r = real_color.r;
-                            color.g = real_color.g;
-                            color.b = real_color.b;
+                            colr_used = colr;
                         }
                     }
-     
-                    SDL_SetPalette(font->sprite->bitmap,
-                                   SDL_LOGPAL | SDL_PHYSPAL, &color, 1, 1);
                 }
 
                 continue;
@@ -595,36 +654,25 @@ void string_blt(SDL_Surface *surf, _font *font, char *text, int x, int y, uint32
      
                     if (emphasis)
                     {
-                        color.r = (skin_prefs.ecc_emphasis >> 16) & 0xff;
-                        color.g = (skin_prefs.ecc_emphasis >> 8) & 0xff;
-                        color.b = skin_prefs.ecc_emphasis & 0xff;
+                        colr_used = skin_prefs.ecc_emphasis;
                     }
                     else
                     {
                         if (strong)
                         {
-                            color.r = (skin_prefs.ecc_strong >> 16) & 0xff;
-                            color.g = (skin_prefs.ecc_strong >> 8) & 0xff;
-                            color.b = skin_prefs.ecc_strong & 0xff;
+                            colr_used = skin_prefs.ecc_strong;
                         }
                         else if (intertitle &&
                                  (cpl.menustatus == MENU_NPC ||
                                   cpl.menustatus == MENU_BOOK))
                         {
-                            color.r = (skin_prefs.ecc_intertitle >> 16) & 0xff;
-                            color.g = (skin_prefs.ecc_intertitle >> 8) & 0xff;
-                            color.b = skin_prefs.ecc_intertitle & 0xff;
+                            colr_used = skin_prefs.ecc_intertitle;
                         }
                         else
                         {
-                            color.r = real_color.r;
-                            color.g = real_color.g;
-                            color.b = real_color.b;
+                            colr_used = colr;
                         }
                     }
-     
-                    SDL_SetPalette(font->sprite->bitmap,
-                                   SDL_LOGPAL | SDL_PHYSPAL, &color, 1, 1);
                 }
 
                 continue;
@@ -639,142 +687,76 @@ void string_blt(SDL_Surface *surf, _font *font, char *text, int x, int y, uint32
                         (cpl.menustatus == MENU_NPC ||
                          cpl.menustatus == MENU_BOOK))
                     {
-                        color.r = (skin_prefs.ecc_intertitle >> 16) & 0xff;
-                        color.g = (skin_prefs.ecc_intertitle >> 8) & 0xff;
-                        color.b = skin_prefs.ecc_intertitle & 0xff;
+                        colr_used = skin_prefs.ecc_intertitle;
                     }
                     else
                     {
                         if (strong)
                         {
-                            color.r = (skin_prefs.ecc_strong >> 16) & 0xff;
-                            color.g = (skin_prefs.ecc_strong >> 8) & 0xff;
-                            color.b = skin_prefs.ecc_strong & 0xff;
+                            colr_used = skin_prefs.ecc_strong;
                         }
                         else if (emphasis)
                         {
-                            color.r = (skin_prefs.ecc_emphasis >> 16) & 0xff;
-                            color.g = (skin_prefs.ecc_emphasis >> 8) & 0xff;
-                            color.b = skin_prefs.ecc_emphasis & 0xff;
+                            colr_used = skin_prefs.ecc_emphasis;
                         }
                         else
                         {
-                            color.r = real_color.r;
-                            color.g = real_color.g;
-                            color.b = real_color.b;
+                            colr_used = colr;
                         }
                     }
-     
-                    SDL_SetPalette(font->sprite->bitmap,
-                                   SDL_LOGPAL | SDL_PHYSPAL, &color, 1, 1);
                 }
-
-                continue;
-
-            case ECC_HYPERTEXT:
-                /* Only allow in NPC GUI (TODO: and book GUI). */
-                if (gui_npc &&
-                    (cpl.menustatus == MENU_NPC ||
-                     cpl.menustatus == MENU_BOOK))
-                {
-                    hyper = !hyper;
-     
-                    if (hyper)
-                    {
-                        _gui_npc_element *k;
-     
-                        if ((k = gui_npc->keyword_selected) &&
-                            !strnicmp(c + 1, k->keyword, strlen(k->keyword)))
-                        {
-                            color.r = 0xcc;
-                            color.g = 0x66;
-                            color.b = 0xff;
-                        }
-                        else
-                        {
-                            color.r = (skin_prefs.ecc_hypertext >> 16) & 0xff;
-                            color.g = (skin_prefs.ecc_hypertext >> 8) & 0xff;
-                            color.b = skin_prefs.ecc_hypertext & 0xff;
-                        }
-                    }
-                    else
-                    {
-                        if (strong)
-                        {
-                            color.r = (skin_prefs.ecc_strong >> 16) & 0xff;
-                            color.g = (skin_prefs.ecc_strong >> 8) & 0xff;
-                            color.b = skin_prefs.ecc_strong & 0xff;
-                        }
-                        else if (emphasis)
-                        {
-                            color.r = (skin_prefs.ecc_emphasis >> 16) & 0xff;
-                            color.g = (skin_prefs.ecc_emphasis >> 8) & 0xff;
-                            color.b = skin_prefs.ecc_emphasis & 0xff;
-                        }
-                        else
-                        {
-                            color.r = real_color.r;
-                            color.g = real_color.g;
-                            color.b = real_color.b;
-                        }
-                    }
-     
-                    SDL_SetPalette(font->sprite->bitmap,
-                                   SDL_LOGPAL | SDL_PHYSPAL, &color, 1, 1);
-
-                    continue;
-                }
-
-               break;
-
-            case '\n':
-                x2 = x;
-                y2 += font->line_height;
 
                 continue;
         }
 
-        w = font->c[(unsigned char)(*c)].w + font->char_offset;
-
-        /* if set, we have a clipping line */
-        if (line_clip >= 0)
-        {
-            if ((line_count += w) > line_clip)
-            {
-                return;
-            }
-        }
-
+        /* Spaces are not drawn, for obvious reasons, but other characters
+         * are. */
         if (*c != ' ')
         {
-            SDL_Rect src,
-                     dst;
+            SDL_Surface *bitmap = font->sprite->bitmap;
+            int          n = MIN(5, bitmap->format->palette->ncolors - 2);
+            SDL_Color    color[5];
+            float        l = 1.00 - (0.15 * (n - 1));
+            uint8        r = (colr_used >> 16) & 0xff,
+                         g = (colr_used >> 8) & 0xff,
+                         b = colr_used & 0xff,
+                         i;
+            SDL_Rect     box;
 
-            src.x = font->c[(unsigned char)(*c)].x;
-            src.y = font->c[(unsigned char)(*c)].y;
-            src.w = font->c[(unsigned char)(*c)].w;
-            src.h = font->c[(unsigned char)(*c)].h;
-            dst.x = x2;
-            dst.y = y2;
-            SDL_BlitSurface(font->sprite->bitmap, &src, surf, &dst);
+            /* 5  0.40  0.70  1.00  1.30  1.70
+             * 4  0.55  0.85  1.15  1.45  ----
+             * 3  0.70  1.00  1.30  ----  ----
+             * 2  0.85  1.15  ----  ----  ----
+             * 1  1.00  ----  ----  ----  ---- */
+            for (i = 0; i < n; i++)
+            {
+                color[i].r = (uint8)MIN(255, ((l + (0.30 * i)) * r));
+                color[i].g = (uint8)MIN(255, ((l + (0.30 * i)) * g));
+                color[i].b = (uint8)MIN(255, ((l + (0.30 * i)) * b));
+            }
+
+            SDL_SetPalette(bitmap, SDL_LOGPAL, color, 3, n);
+            box.x = cx;
+            box.y = cy;
+            SDL_BlitSurface(bitmap, &font->c[(uint8)(*c)], surf, &box);
         }
 
+        /* Underline. */
         if (intertitle)
         {
-            SDL_Rect   box;
-            SDL_Color *clr = (cpl.menustatus == MENU_NPC ||
-                              cpl.menustatus == MENU_BOOK) ? &color :
-                             &real_color;
+            SDL_Rect box;
 
-            box.x = x2;
-            box.y = y2 + font->line_height - 1;
-            box.w = w;
+            box.x = cx;
+            box.y = cy + font->line_height - 1;
+            box.w = cw;
             box.h = 1;
-            SDL_FillRect(surf, &box,
-                         SDL_MapRGB(surf->format, clr->r, clr->g, clr->b));
+            SDL_FillRect(surf, &box, SDL_MapRGB(surf->format,
+                                                (colr_used >> 16) & 0xff,
+                                                (colr_used >> 8) & 0xff,
+                                                colr_used & 0xff));
         }
 
-        x2 += w;
+        cx += cw;
     }
 }
 
@@ -1054,8 +1036,8 @@ void sprite_blt_as_icon(_Sprite *sprite, sint16 x, sint16 y,
             sprintf(buf, "%d", quantity);
         }
 
-        w = string_width(&font_tiny_out, buf);
-        string_blt(surface, &font_tiny_out, buf,
+        w = string_width(&font_tiny, buf);
+        string_blt(surface, &font_tiny, buf,
                    x + ((options.showqc) ? 22 : 24) - w / 2, y + 18, colr,
                    NULL, NULL);
     }
@@ -1542,13 +1524,13 @@ void play_anims(int mx, int my)
                         if (anim->value<0)
                         {
                             sprintf(buf, "%d", abs(anim->value));
-                            string_blt(ScreenSurface, &font_small_out, buf, xpos + anim->x, ypos + tmp_y, NDI_COLR_LIME, NULL,
+                            string_blt(ScreenSurface, &font_small, buf, xpos + anim->x, ypos + tmp_y, NDI_COLR_LIME, NULL,
                                           NULL);
                         }
                         else
                         {
                             sprintf(buf, "%d", anim->value);
-                            string_blt(ScreenSurface, &font_small_out, buf,
+                            string_blt(ScreenSurface, &font_small, buf,
                                        xpos + anim->x, ypos + tmp_y,
                                        (anim->type == ANIM_SELF_DAMAGE)
                                        ? NDI_COLR_RED : NDI_COLR_ORANGE, NULL,
@@ -1571,7 +1553,7 @@ void play_anims(int mx, int my)
                         else if (anim->value < 10000)
                             tmp_off = -12;
 
-                        string_blt(ScreenSurface, &font_small_out, buf, xpos + anim->x + tmp_off, ypos + tmp_y,
+                        string_blt(ScreenSurface, &font_small, buf, xpos + anim->x + tmp_off, ypos + tmp_y,
                                   NDI_COLR_ORANGE, NULL, NULL);
                         break;
 

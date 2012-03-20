@@ -308,7 +308,7 @@ void widget_player_stats(int x, int y)
         sprite_blt(skin_sprites[SKIN_SPRITE_STATS_BG], 0, 0, NULL, &bltfx);
 
         /* Primary stats */
-        string_blt(widget_surface[WIDGET_STATS_ID], &font_tiny_out, "Stats", 8, 1, skin_prefs.widget_title, NULL, NULL);
+        string_blt(widget_surface[WIDGET_STATS_ID], &font_tiny, "Stats", 8, 1, skin_prefs.widget_title, NULL, NULL);
         sprintf(buf, "%02d", cpl.stats.Str);
         string_blt(widget_surface[WIDGET_STATS_ID], &font_small, "Str", 8, 17, skin_prefs.widget_key, NULL, NULL);
         string_blt(widget_surface[WIDGET_STATS_ID], &font_small, buf, 30, 17, skin_prefs.widget_valueEq, NULL, NULL);
@@ -542,8 +542,8 @@ void widget_skillgroups(int x, int y)
         bltfx.alpha=0;
         sprite_blt(skin_sprites[SKIN_SPRITE_SKILL_LVL_BG], 0, 0, NULL, &bltfx);
 
-        string_blt(widget_surface[WIDGET_SKILL_LVL_ID], &font_tiny_out, "Skill Groups", 3, 1, skin_prefs.widget_title, NULL, NULL);
-        string_blt(widget_surface[WIDGET_SKILL_LVL_ID], &font_tiny_out, "name / level", 3, 13, skin_prefs.widget_key, NULL, NULL);
+        string_blt(widget_surface[WIDGET_SKILL_LVL_ID], &font_tiny, "Skill Groups", 3, 1, skin_prefs.widget_title, NULL, NULL);
+        string_blt(widget_surface[WIDGET_SKILL_LVL_ID], &font_tiny, "name / level", 3, 13, skin_prefs.widget_key, NULL, NULL);
         sprintf(buf, " %d", cpl.stats.skill_level[0]);
         string_blt(widget_surface[WIDGET_SKILL_LVL_ID], &font_small, "Ag:", 6, 26, skin_prefs.widget_key, NULL, NULL);
         string_blt(widget_surface[WIDGET_SKILL_LVL_ID], &font_small, buf, 44 - string_width(&font_small, buf), 26, skin_prefs.widget_valueEq,
@@ -632,7 +632,7 @@ void widget_show_player_doll(int x, int y)
     if (!cpl.ob)
         return;
 
-	string_blt(ScreenSurface, &font_tiny_out, "Melee", x + 5, y + 40, skin_prefs.widget_key, NULL, NULL);
+	string_blt(ScreenSurface, &font_tiny, "Melee", x + 5, y + 40, skin_prefs.widget_key, NULL, NULL);
 	string_blt(ScreenSurface, &font_small, "WC", x + 5, y + 53, skin_prefs.widget_key, NULL, NULL);
     string_blt(ScreenSurface, &font_small, "DPS", x + 5, y + 63, skin_prefs.widget_key, NULL, NULL);
     string_blt(ScreenSurface, &font_small, "WS", x + 5, y + 73, skin_prefs.widget_key, NULL, NULL);
@@ -654,7 +654,7 @@ void widget_show_player_doll(int x, int y)
     sprintf(buf, "%.1f%%", cpl.stats.speed);
     string_blt(ScreenSurface, &font_small, buf, x + 130, y + 167, percentage_colr(cpl.stats.speed), NULL, NULL);
     
-    string_blt(ScreenSurface, &font_tiny_out, "Distance", x + 170, y + 40, skin_prefs.widget_key, NULL, NULL);
+    string_blt(ScreenSurface, &font_tiny, "Distance", x + 170, y + 40, skin_prefs.widget_key, NULL, NULL);
     string_blt(ScreenSurface, &font_small, "WC", x + 170, y + 53, skin_prefs.widget_key, NULL, NULL);
     string_blt(ScreenSurface, &font_small, "DPS", x + 170, y + 63, skin_prefs.widget_key, NULL, NULL);
     string_blt(ScreenSurface, &font_small, "WS", x + 170, y + 73, skin_prefs.widget_key, NULL, NULL);
@@ -784,7 +784,7 @@ void widget_show_main_lvl(int x, int y)
         bltfx.flags = 0;
         bltfx.alpha=0;
         sprite_blt(skin_sprites[SKIN_SPRITE_MAIN_LVL_BG], 0, 0, NULL, &bltfx);
-        string_blt(widget_surface[WIDGET_MAIN_LVL_ID], &font_tiny_out, "Level / Exp", 4, 1, skin_prefs.widget_key, NULL, NULL);
+        string_blt(widget_surface[WIDGET_MAIN_LVL_ID], &font_tiny, "Level / Exp", 4, 1, skin_prefs.widget_key, NULL, NULL);
 
         /* Level. */
         sprintf(buf, "%d", cpl.stats.level);
@@ -800,8 +800,8 @@ void widget_show_main_lvl(int x, int y)
                                    (float)server_level.level * 50 + 50);
         }
 
-        string_blt(widget_surface[WIDGET_MAIN_LVL_ID], &font_large_out, buf,
-                   91 - string_width(&font_large_out, buf), 4, colr, NULL,
+        string_blt(widget_surface[WIDGET_MAIN_LVL_ID], &font_large, buf,
+                   91 - string_width(&font_large, buf), 4, colr, NULL,
                    NULL);
 
         /* Exp. */
@@ -901,8 +901,8 @@ void widget_show_skill_exp(int x, int y)
 
         sprite_blt(skin_sprites[SKIN_SPRITE_SKILL_EXP_BG], 0, 0, NULL, &bltfx);
 
-        string_blt(widget_surface[WIDGET_SKILL_EXP_ID], &font_tiny_out, "Used", 4, -1, skin_prefs.widget_title, NULL, NULL);
-        string_blt(widget_surface[WIDGET_SKILL_EXP_ID], &font_tiny_out, "Skill", 4, 7, skin_prefs.widget_title, NULL, NULL);
+        string_blt(widget_surface[WIDGET_SKILL_EXP_ID], &font_tiny, "Used", 4, -1, skin_prefs.widget_title, NULL, NULL);
+        string_blt(widget_surface[WIDGET_SKILL_EXP_ID], &font_tiny, "Skill", 4, 7, skin_prefs.widget_title, NULL, NULL);
 
         if (cpl.skill_name[0] != 0)
         {
@@ -1101,7 +1101,7 @@ void widget_show_regeneration(int x, int y)
 
         sprite_blt(skin_sprites[SKIN_SPRITE_REGEN_BG], 0, 0, NULL, &bltfx);
 
-        string_blt(widget_surface[WIDGET_REGEN_ID], &font_tiny_out, "Regeneration", 4, 1, skin_prefs.widget_title, NULL, NULL);
+        string_blt(widget_surface[WIDGET_REGEN_ID], &font_tiny, "Regeneration", 4, 1, skin_prefs.widget_title, NULL, NULL);
         string_blt(widget_surface[WIDGET_REGEN_ID], &font_small, "HP", 61, 13, skin_prefs.widget_key, NULL, NULL);
         sprintf(buf, "%2.1f", cpl.gen_hp);
         string_blt(widget_surface[WIDGET_REGEN_ID], &font_small, buf, 75, 13, skin_prefs.widget_valueEq, NULL, NULL);
@@ -1128,7 +1128,7 @@ void widget_show_statometer(int x, int y)
         return;
     }
 
-    string_blt(ScreenSurface, &font_large_out, "Stat-O-Meter:", x+2, y+2, skin_prefs.widget_title,NULL,NULL);
+    string_blt(ScreenSurface, &font_large, "Stat-O-Meter:", x+2, y+2, skin_prefs.widget_title,NULL,NULL);
     sprintf(statbuf,"EXP: %d",statometer.exp);
     string_blt(ScreenSurface, &font_small,statbuf,x+2,y+15,skin_prefs.widget_key,NULL,NULL);
     sprintf(statbuf,"(%.2f/hour)",statometer.exphour);

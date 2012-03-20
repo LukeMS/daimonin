@@ -59,6 +59,7 @@
 
 #define DIR_BITMAPS   "bitmaps"
 #define DIR_CACHE     "cache"
+#define DIR_FONTS     "fonts"
 #define DIR_GFX_USER  "gfx_user"
 #define DIR_ICONS     "icons"
 #define DIR_LOGS      "logs"

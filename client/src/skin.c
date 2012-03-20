@@ -23,15 +23,19 @@
 
 #include "include.h"
 
-/* for loading, use SKIN_SPRITE_xx in the other modules*/
+/* For loading, use SKIN_FONT_xx in the other modules. */
+static char *FontName[SKIN_FONT_NROF] =
+{
+    "tiny.png",
+    "small.png",
+    "medium.png",
+    "large.png",
+    "huge.png",
+};
+
+/* For loading, use SKIN_SPRITE_xx in the other modules. */
 static char *BitmapName[SKIN_SPRITE_NROF] =
 {
-    "font7x4.png",
-    "font6x3out.png",
-    "font_big.png",
-    "font7x4out.png",
-    "font11x15.png",
-    "font11x15out.png",
     "intro.png",
     "progress.png",
     "progress_back.png",
@@ -195,12 +199,18 @@ static char *BitmapName[SKIN_SPRITE_NROF] =
     "locator/server_this.png",
 };
 
-_Sprite      *skin_sprites[SKIN_SPRITE_NROF];
+_Sprite      *skin_fonts[SKIN_FONT_NROF],
+             *skin_sprites[SKIN_SPRITE_NROF];
 skin_prefs_t  skin_prefs;
 
 void skin_deinit(void)
 {
     uint16 i;
+
+    for (i = 0; i < SKIN_FONT_NROF; i++)
+    {
+        sprite_free_sprite(skin_fonts[i]);
+    }
 
     for (i = 0; i < SKIN_SPRITE_NROF; i++)
     {
@@ -211,9 +221,29 @@ void skin_deinit(void)
     FREE(skin_prefs.effect_sleeping);
 }
 
+void skin_load_fonts (void)
+{
+    skin_font_id_t i;
+
+    /* add later better error handling here*/
+    for (i = 0; i < SKIN_FONT_NROF; i++)
+    {
+        char buf[SMALL_BUF];
+
+        sprintf(buf, "%s/%s", DIR_FONTS, FontName[i]);
+        skin_fonts[i] = sprite_load(buf, NULL);
+
+        if (!skin_fonts[i] ||
+            !skin_fonts[i]->bitmap)
+        {
+            LOG(LOG_FATAL, "Couldn't load font '%s'!\n", buf);
+        }
+    }
+}
+
 void skin_load_bitmaps(skin_sprite_id_t nrof)
 {
-    uint16 i;
+    skin_sprite_id_t i;
 
     /* add later better error handling here*/
     for (i = 0; i < nrof; i++)
@@ -234,6 +264,7 @@ void skin_load_bitmaps(skin_sprite_id_t nrof)
 void skin_reload(void)
 {
     skin_deinit();
+    skin_load_fonts();
     skin_load_bitmaps(SKIN_SPRITE_NROF);
     font_init();
     skin_default_prefs();

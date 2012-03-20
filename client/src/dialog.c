@@ -117,8 +117,8 @@ _option             opt[]                           =
         {"Logging:", "Whether the textwindows are logged.","~None~ turns off logging, ~Only chat~, ~Only messages~, or ~Both, separately~ logs either or both textwindows to separate files, and ~Both, together~ logs both textwindows to a single file.","", "None#Only chat#Only messages#Both, separately#Both, together",SEL_RANGE,0,4,1,1, &options.textwin_use_logging,VAL_INT},
 #endif
         {"Alpha value:", "Transparency value of textwindows.","A higher value means a darker textwindow.","", "",SEL_RANGE,0,255,5,110, &options.textwin_alpha,VAL_INT},
-        {"Message font:", "Font to use in the message textwindow.","The font will be resized when you return to the game. Text currently in","the textwindow will not be reformatted.", "Tiny, outlined#Small#Small, outlined#Medium#Medium, outlined#Large, outlined",SEL_RANGE,0,5,1,1, &options.textwin_msg_font,VAL_INT},
-        {"Chat font:", "Font to use in the chat textwindow.","The font will be resized when you return to the game. Text currently in","the textwindow will not be reformatted.", "Tiny, outlined#Small#Small, outlined#Medium#Medium, outlined#Large, outlined",SEL_RANGE,0,5,1,1, &options.textwin_chat_font,VAL_INT},
+        {"Message font:", "Font to use in the message textwindow.","The font will be resized when you return to the game. Text currently in","the textwindow will not be reformatted.", "Tiny#Small#Medium#Large#Huge",SEL_RANGE,0,4,1,1, &options.textwin_msg_font,VAL_INT},
+        {"Chat font:", "Font to use in the chat textwindow.","The font will be resized when you return to the game. Text currently in","the textwindow will not be reformatted.", "Tiny#Small#Medium#Large#Huge",SEL_RANGE,0,4,1,1, &options.textwin_chat_font,VAL_INT},
         {"Indentation:", "The number of spaces by which to indent multiple line chat.","","", "",SEL_RANGE,0,8,1,2, &options.textwin_indentation,VAL_INT},
         {"Scrollback:", "The number of lines of scrollback in ~either~ window.","The higher the value, the more memory is used.","NOTE: You need to restart the client for this option to take effect.", "",SEL_RANGE,100,100000,100,100, &options.textwin_scrollback,VAL_INT},
         {"Enable chatfilter:", "Whether to filter incoming messages for 'bad' words.","See '/cfilter ?' for more details on this.","", "",SEL_CHECKBOX,0,1,1,0, &options.textwin_use_chatfilter,VAL_BOOL},
@@ -1665,17 +1665,17 @@ void show_newplayer_server(void)
 
         if (GameStatus == GAME_STATUS_ACCOUNT_CHAR_NAME)
         {
-            ENGRAVE(ScreenSurface, &font_large_out, "Try Character Name", x + 134, y + 323, NDI_COLR_WHITE, NULL, NULL);
+            ENGRAVE(ScreenSurface, &font_large, "Try Character Name", x + 134, y + 323, NDI_COLR_WHITE, NULL, NULL);
             sprite_blt(skin_sprites[SKIN_SPRITE_LOGIN_INP], x + 132, y + 345, NULL, NULL);
             box.y = y + 347;
             show_input_string(&font_small, &box, 0);
         }
         else if (GameStatus == GAME_STATUS_ACCOUNT_CHAR_RECLAIM)
         {
-            ENGRAVE(ScreenSurface, &font_large_out, "Try Character Name", x + 134, y + 323, NDI_COLR_WHITE, NULL, NULL);
+            ENGRAVE(ScreenSurface, &font_large, "Try Character Name", x + 134, y + 323, NDI_COLR_WHITE, NULL, NULL);
             sprite_blt(skin_sprites[SKIN_SPRITE_LOGIN_INP], x + 132, y + 345, NULL, NULL);
             string_blt(ScreenSurface, &font_small, cpl.name, x + 138, y + 347, NDI_COLR_WHITE, NULL, NULL);
-            ENGRAVE(ScreenSurface, &font_large_out, "Try Reclaim Password", x + 134, y + 370, NDI_COLR_WHITE, NULL, NULL);
+            ENGRAVE(ScreenSurface, &font_large, "Try Reclaim Password", x + 134, y + 370, NDI_COLR_WHITE, NULL, NULL);
             sprite_blt(skin_sprites[SKIN_SPRITE_LOGIN_INP], x + 132, y + 392, NULL, NULL);
             box.y = y + 394;
             show_input_string(&font_small, &box, '*');
@@ -1755,8 +1755,8 @@ void show_login_server(void)
     EMBOSS(ScreenSurface, &font_small, "Server", x2 - 21, y - 36,
            NDI_COLR_WHITE, NULL, NULL);
     sprintf(buf, "%s", gameserver_sel->name);
-    x2 -= string_width(&font_large_out, buf) / 2;
-    ENGRAVE(ScreenSurface, &font_large_out, buf, x2, y - 22, NDI_COLR_SILVER,
+    x2 -= string_width(&font_large, buf) / 2;
+    ENGRAVE(ScreenSurface, &font_large, buf, x2, y - 22, NDI_COLR_SILVER,
             NULL, NULL);
     box.x = x - 2;
     box.y = y - 2;
@@ -1830,13 +1830,13 @@ void show_login_server(void)
     {
         if (GameStatusSelect == GAME_STATUS_LOGIN_ACCOUNT)
         {
-            EMBOSS(ScreenSurface, &font_large_out, ">> Login <<", x+49, y+50, NDI_COLR_LIME, NULL, NULL);
-            ENGRAVE(ScreenSurface, &font_large_out, "Create Account", x+26, y+30, NDI_COLR_WHITE, NULL, NULL);
+            EMBOSS(ScreenSurface, &font_large, ">> Login <<", x+49, y+50, NDI_COLR_LIME, NULL, NULL);
+            ENGRAVE(ScreenSurface, &font_large, "Create Account", x+26, y+30, NDI_COLR_WHITE, NULL, NULL);
         }
         else
         {
-            ENGRAVE(ScreenSurface, &font_large_out, "Login", x+70, y+50, NDI_COLR_WHITE, NULL, NULL);
-            EMBOSS(ScreenSurface, &font_large_out, ">> Create Account <<", x+5, y+30, NDI_COLR_LIME, NULL, NULL);
+            ENGRAVE(ScreenSurface, &font_large, "Login", x+70, y+50, NDI_COLR_WHITE, NULL, NULL);
+            EMBOSS(ScreenSurface, &font_large, ">> Create Account <<", x+5, y+30, NDI_COLR_LIME, NULL, NULL);
         }
         y += 160;
         ENGRAVE(ScreenSurface, &font_small, "Select ~Create Account~ for a new or ~Login~ for a existing account.",
@@ -1850,11 +1850,11 @@ void show_login_server(void)
 
     if (GameStatusSelect == GAME_STATUS_LOGIN_ACCOUNT)
     {
-        ENGRAVE(ScreenSurface, &font_large_out, "Login", x+70, y+0, NDI_COLR_WHITE, NULL, NULL);
+        ENGRAVE(ScreenSurface, &font_large, "Login", x+70, y+0, NDI_COLR_WHITE, NULL, NULL);
     }
     else
     {
-        ENGRAVE(ScreenSurface, &font_large_out, "Create Account", x+16, y+0, NDI_COLR_WHITE, NULL, NULL);
+        ENGRAVE(ScreenSurface, &font_large, "Create Account", x+16, y+0, NDI_COLR_WHITE, NULL, NULL);
     }
 
     if (GameStatusSelect == GAME_STATUS_LOGIN_ACCOUNT)
@@ -2048,7 +2048,7 @@ void show_meta_server(void)
 
     /* frame for selection field */
     draw_frame(box.x - 1, box.y + 11, box.w + 1, 313);
-    ENGRAVE(ScreenSurface, &font_large_out, "Servers", x + TXT_START_NAME,
+    ENGRAVE(ScreenSurface, &font_large, "Servers", x + TXT_START_NAME,
             y + TXT_Y_START - 8, NDI_COLR_SILVER, NULL, NULL);
     ENGRAVE(ScreenSurface, &font_medium, "Version", x + 285,
             y + TXT_Y_START - 4, NDI_COLR_SILVER, NULL, NULL);
@@ -2100,7 +2100,7 @@ void show_meta_server(void)
                 box2.y = y + 431;
                 box2.w = 300;
                 box2.h = 55;
-                ShowInfo(&font_large_out, &box2, node->info);
+                ShowInfo(&font_large, &box2, node->info);
 
                 if (locator.server != node)
                 {
@@ -2201,9 +2201,9 @@ void show_account(void)
     sprite_blt(skin_sprites[SKIN_SPRITE_DIALOG_BG], x, y, NULL, NULL);
     sprite_blt(skin_sprites[SKIN_SPRITE_LOGO270], x + 20, y + 85, NULL, NULL);
     ENGRAVE(ScreenSurface, &font_small, "Welcome on Server Daimonin", x+200, y+20, NDI_COLR_WHITE, NULL, NULL);
-    ENGRAVE(ScreenSurface, &font_large_out, "Account Overview", x+180, y+35, NDI_COLR_WHITE, NULL, NULL);
-    ENGRAVE(ScreenSurface, &font_large_out, "Character List", x+120, y+70, NDI_COLR_WHITE, NULL, NULL);
-    ENGRAVE(ScreenSurface, &font_large_out, "_____________________________", x+120, y+80, NDI_COLR_WHITE, NULL, NULL);
+    ENGRAVE(ScreenSurface, &font_large, "Account Overview", x+180, y+35, NDI_COLR_WHITE, NULL, NULL);
+    ENGRAVE(ScreenSurface, &font_large, "Character List", x+120, y+70, NDI_COLR_WHITE, NULL, NULL);
+    ENGRAVE(ScreenSurface, &font_large, "_____________________________", x+120, y+80, NDI_COLR_WHITE, NULL, NULL);
 
     if(account.count) /* show selected player */
     {
@@ -2216,11 +2216,11 @@ void show_account(void)
             char delbuf[MAX_BUF];
 
             sprintf(delbuf, "Delete Character %s", account.name[account.selected]);
-            ENGRAVE(ScreenSurface, &font_large_out, delbuf, x+120, y+435, NDI_COLR_SILVER, NULL, NULL);
+            ENGRAVE(ScreenSurface, &font_large, delbuf, x+120, y+435, NDI_COLR_SILVER, NULL, NULL);
 
             if (GameStatus == GAME_STATUS_ACCOUNT_CHAR_DEL )
             {
-                ENGRAVE(ScreenSurface, &font_large_out, "Type 'delete':", x+120, y+455, NDI_COLR_SILVER, NULL, NULL);
+                ENGRAVE(ScreenSurface, &font_large, "Type 'delete':", x+120, y+455, NDI_COLR_SILVER, NULL, NULL);
                 sprite_blt(skin_sprites[SKIN_SPRITE_LOGIN_INP], x + 250, y + 455, NULL, NULL);
                 sprintf(delbuf, "%s%c", InputString, '_');
                 EMBOSS(ScreenSurface, &font_small, delbuf, x + 256, y + 457, NDI_COLR_WHITE, NULL, NULL);
@@ -2241,8 +2241,8 @@ void show_account(void)
         }
         else
         {
-            string_blt(ScreenSurface, &font_large_out, "Press ~RETURN~ to play", x+120, y+435, NDI_COLR_SILVER, NULL, NULL);
-            string_blt(ScreenSurface, &font_large_out, "Press '~D~' to delete this Character", x+120, y+452, NDI_COLR_SILVER, NULL, NULL);
+            string_blt(ScreenSurface, &font_large, "Press ~RETURN~ to play", x+120, y+435, NDI_COLR_SILVER, NULL, NULL);
+            string_blt(ScreenSurface, &font_large, "Press '~D~' to delete this Character", x+120, y+452, NDI_COLR_SILVER, NULL, NULL);
             sprintf(buf, "Use ~%c%c~ cursor keys for selection", ASCII_UP, ASCII_DOWN);
             string_blt(ScreenSurface, &font_small, buf, x+120, y + 470, NDI_COLR_WHITE, NULL, NULL);
         }
@@ -2273,7 +2273,7 @@ void show_account(void)
                 strcpy(race, "UNKNOWN RACE");
             }
 
-            EMBOSS(ScreenSurface, &font_large_out, account.name[i], x+120, y+100+i*50, NDI_COLR_WHITE, NULL, NULL);
+            EMBOSS(ScreenSurface, &font_large, account.name[i], x+120, y+100+i*50, NDI_COLR_WHITE, NULL, NULL);
             sprintf(buf,"%s %s on Level %d", race, account.gender[i]?"Female":"Male", account.level[i]);
             ENGRAVE(ScreenSurface, &font_small, buf, x+120, y+116+i*50, NDI_COLR_WHITE, NULL, NULL);
         }
@@ -2281,7 +2281,7 @@ void show_account(void)
 
     if(char_count < ACCOUNT_MAX_PLAYER)
     {
-        ENGRAVE(ScreenSurface, &font_large_out, "Press '~C~' for a new Character", x+120, y+100+char_count*50, NDI_COLR_SILVER, NULL, NULL);
+        ENGRAVE(ScreenSurface, &font_large, "Press '~C~' for a new Character", x+120, y+100+char_count*50, NDI_COLR_SILVER, NULL, NULL);
     }
 }
 

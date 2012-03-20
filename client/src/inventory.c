@@ -243,7 +243,7 @@ void widget_show_inventory_window(int x, int y)
         string_blt(ScreenSurface, &font_small, "Limit", x+140, y+15, skin_prefs.widget_key, NULL, NULL);
         sprintf(buf, "%4.3f kg", (float) cpl.weight_limit / 1000.0);
         string_blt(ScreenSurface, &font_small, buf, x+140 + 35, y+15, skin_prefs.widget_valueEq, NULL, NULL);
-        string_blt(ScreenSurface, &font_tiny_out, "(SHIFT for inventory)", x+32, y+ 9, skin_prefs.widget_info, NULL, NULL);
+        string_blt(ScreenSurface, &font_tiny, "(SHIFT for inventory)", x+32, y+ 9, skin_prefs.widget_info, NULL, NULL);
         return;
     }
 

@@ -34,6 +34,7 @@
 		</Build>
 		<Compiler>
 			<Add option="-W" />
+			<Add option="-funsigned-char" />
 			<Add option="-mms-bitfields" />
 			<Add option="-Dmain=SDL_main" />
 			<Add option="-DINSTALL_SOUND" />

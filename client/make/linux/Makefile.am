@@ -73,7 +73,7 @@ daimonin_updater_OBJDIR = updater_objs
 # NOTE: if building xdelta, run its configure with "--disable-shared"
 
 AUTOMAKE_OPTIONS = subdir-objects
-AM_CFLAGS = @SDL_CFLAGS@ -Wextra -DDAI_DEVELOPMENT
+AM_CFLAGS = @SDL_CFLAGS@ -Wextra -funsigned-char -DDAI_DEVELOPMENT
 AM_CPPFLAGS = -I../../src/3rdparty/sprig
 AM_LDFLAGS = @LDFLAGS@
 

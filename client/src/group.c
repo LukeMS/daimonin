@@ -58,12 +58,12 @@ void widget_show_group(int x, int y)
     sprite_blt(skin_sprites[SKIN_SPRITE_GROUP_BG], x, y, &box, NULL);
     sprite_blt(skin_sprites[SKIN_SPRITE_GROUP_BG_BOTTOM],x,y+box.h, NULL, NULL);
 
-    string_blt(ScreenSurface, &font_tiny_out, "Group:", x +50, y+2 , skin_prefs.widget_title, NULL, NULL);
+    string_blt(ScreenSurface, &font_tiny, "Group:", x +50, y+2 , skin_prefs.widget_title, NULL, NULL);
 
 
     if (global_group_status < GROUP_INVITE)
     {
-        string_blt(ScreenSurface, &font_tiny_out, "type '/help group' for info", x+13, y+13, skin_prefs.widget_info, NULL, NULL);
+        string_blt(ScreenSurface, &font_tiny, "type '/help group' for info", x+13, y+13, skin_prefs.widget_info, NULL, NULL);
         return;
     }
 
@@ -113,7 +113,7 @@ void widget_show_group(int x, int y)
                 sprite_blt(skin_sprites[SKIN_SPRITE_GROUP], x + group_pos[s][0] + 2, y + group_pos[s][1] + 1, NULL, NULL);
                 string_blt(ScreenSurface, &font_small, group[s].name, x + group_pos[s][0] + 33, y + group_pos[s][1] + 1, colr, NULL, NULL);
                 sprintf(buf, "%3d", group[s].level);
-                string_blt(ScreenSurface, &font_tiny_out, buf, x + group_pos[s][0] + 8, y + group_pos[s][1], skin_prefs.widget_valueEq, NULL, NULL);
+                string_blt(ScreenSurface, &font_tiny, buf, x + group_pos[s][0] + 8, y + group_pos[s][1], skin_prefs.widget_valueEq, NULL, NULL);
 
                 if (group[s].maxhp)
                 {
@@ -199,7 +199,7 @@ void show_group(int x, int y)
 
     if (global_group_status < GROUP_INVITE)
     {
-        string_blt(ScreenSurface, &font_tiny_out, "type '/help group' for info", 40, Screensize.yoff+585, skin_prefs.widget_info, NULL, NULL);
+        string_blt(ScreenSurface, &font_tiny, "type '/help group' for info", 40, Screensize.yoff+585, skin_prefs.widget_info, NULL, NULL);
         return;
     }
 
@@ -248,7 +248,7 @@ void show_group(int x, int y)
 //                sprite_blt(skin_sprites[SKIN_SPRITE_GROUP], x + group_pos[s][0] + 2, y + group_pos[s][1] + 1, NULL, NULL);
                 string_blt(ScreenSurface, &font_small, group[s].name, x + group_pos[s][0] + 33, y + group_pos[s][1] + 1, colr, NULL, NULL);
                 sprintf(buf, "%3d", group[s].level);
-                string_blt(ScreenSurface, &font_tiny_out, buf, x + group_pos[s][0] + 8, y + group_pos[s][1], skin_prefs.widget_valueEq, NULL, NULL);
+                string_blt(ScreenSurface, &font_tiny, buf, x + group_pos[s][0] + 8, y + group_pos[s][1], skin_prefs.widget_valueEq, NULL, NULL);
 
                 if (group[s].maxhp)
                 {

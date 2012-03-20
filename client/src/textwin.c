@@ -93,32 +93,29 @@ void textwin_set_font(textwin_id_t id)
             options.textwin_msg_font)
     {
         case 0:
-            tw->font = &font_tiny_out;
+            tw->font = &font_tiny;
+
+            break;
+
+        case 1:
+            tw->font = &font_small;
 
             break;
 
         case 2:
-            tw->font = &font_small_out;
-
-            break;
-
-        case 3:
             tw->font = &font_medium;
 
             break;
 
+        case 3:
+            tw->font = &font_large;
+
+            break;
+
         case 4:
-            tw->font = &font_medium_out;
+            tw->font = &font_huge;
 
             break;
-
-        case 5:
-            tw->font = &font_large_out;
-
-            break;
-
-        default:
-            tw->font = &font_small;
     }
 
     WIDGET_REDRAW(tw->wid) = 1;

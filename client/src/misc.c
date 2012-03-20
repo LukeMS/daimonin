@@ -25,7 +25,8 @@
 /* Shows InputString and an appropriate caret. */
 void show_input_string(_font *font, SDL_Rect *box, char repl)
 {
-    uint16 i;
+    uint16 i,
+           hyper = 0;
     char   buf[MAX_INPUT_STRING];
     int    len;
     sint16 xoff;
@@ -33,6 +34,11 @@ void show_input_string(_font *font, SDL_Rect *box, char repl)
     for (i = 0; i < MAX_INPUT_STRING && InputString[i]; i++)
     {
         buf[i] = (repl) ? repl : InputString[i];
+
+        if (buf[i] == ECC_HYPERTEXT)
+        {
+            hyper++;
+        }
     }
 
     buf[i] = '\0';
@@ -41,7 +47,7 @@ void show_input_string(_font *font, SDL_Rect *box, char repl)
     buf[CurrentCursorPos] = '\0';
 
     /* Get the pixel length of this first part of buf. */
-    len = string_width(font, buf);
+    len = string_width(font, buf) + font->c[ECC_HYPERTEXT].w * hyper;
 
     /* Calculate any needed offset so the caret and context is always
      * visible. */

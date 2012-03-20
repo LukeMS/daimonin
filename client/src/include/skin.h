@@ -24,14 +24,20 @@
 #ifndef __SKIN_H
 #define __SKIN_H
 
+typedef enum skin_font_id_t
+{
+    SKIN_FONT_TINY,
+    SKIN_FONT_SMALL,
+    SKIN_FONT_MEDIUM,
+    SKIN_FONT_LARGE,
+    SKIN_FONT_HUGE,
+
+    SKIN_FONT_NROF // must be last element
+}
+skin_font_id_t;
+
 typedef enum skin_sprite_id_t
 {
-    SKIN_SPRITE_FONTSMALL,
-    SKIN_SPRITE_FONTTINYOUT,
-    SKIN_SPRITE_FONTBIGOUT,
-    SKIN_SPRITE_FONTSMALLOUT,
-    SKIN_SPRITE_FONTMEDIUM,
-    SKIN_SPRITE_FONTMEDIUMOUT,
     SKIN_SPRITE_INTRO,
     SKIN_SPRITE_PROGRESS,
     SKIN_SPRITE_PROGRESS_BACK,
@@ -261,10 +267,12 @@ typedef struct skin_prefs_t
 }
 skin_prefs_t;
 
+extern _Sprite      *skin_fonts[SKIN_FONT_NROF];
 extern _Sprite      *skin_sprites[SKIN_SPRITE_NROF];
 extern skin_prefs_t  skin_prefs;
 
 extern void skin_deinit(void);
+extern void skin_load_fonts(void);
 extern void skin_load_bitmaps(skin_sprite_id_t nrof);
 extern void skin_reload(void);
 extern void skin_default_prefs(void);
