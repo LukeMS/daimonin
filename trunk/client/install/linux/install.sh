@@ -25,7 +25,7 @@ bindir="$2"
 cd ../..
 
 echo "### Create zip of all defaults in $datadir"
-zip -9qr $datadir/defaults.zip bitmaps icons
+zip -9qr $datadir/defaults.zip bitmaps fonts icons
 zip -9qr $datadir/defaults.zip man
 zip -9qr $datadir/defaults.zip media sfx
 zip -9qr $datadir/defaults.zip settings

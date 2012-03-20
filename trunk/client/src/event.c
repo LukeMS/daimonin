@@ -1224,8 +1224,7 @@ static void key_string_event(SDL_KeyboardEvent *key)
                     c = toupper(c);
 
                 /* These chars are never allowed. */
-                if (c < 32 ||
-                    c == ECC_HYPERTEXT)
+                if (c < 32)
                 {
                     c = 0;
                 }

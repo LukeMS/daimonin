@@ -487,8 +487,7 @@ PHYSFS_sint64 PHYSFS_readString(PHYSFS_File *handle, char *s, size_t len)
 
             if (c == '\0' ||
                 c == '\n' ||
-                c == '\r' ||
-                c == EOF)
+                c == '\r')
             {
                 break;
             }
