@@ -2347,13 +2347,13 @@ void LoadArchdef(void)
             LOG(LOG_FATAL, "FAILED (Not enough data)!\n");
         }
 
-        face_mpart_id[i].xlen = (uint16)strtoul(cp, &cp, 10);
-        face_mpart_id[i].ylen = (uint16)strtoul(cp + 1, &cp, 10);
+        face_mpart_id[i].xlen = (sint16)strtol(cp, &cp, 10);
+        face_mpart_id[i].ylen = (sint16)strtol(cp + 1, &cp, 10);
 
         for (j = 0; j < 16; j++)
         {
-            face_mpart_id[i].part[j].xoff = (uint16)strtoul(cp + 1, &cp, 10);
-            face_mpart_id[i].part[j].yoff = (uint16)strtoul(cp + 1, &cp, 10);
+            face_mpart_id[i].part[j].xoff = (sint16)strtol(cp + 1, &cp, 10);
+            face_mpart_id[i].part[j].yoff = (sint16)strtol(cp + 1, &cp, 10);
         }
     }
 
