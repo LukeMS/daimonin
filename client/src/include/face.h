@@ -59,15 +59,15 @@ face_t;
 
 typedef struct face_mpart_nr_t
 {
-    uint16 xoff;
-    uint16 yoff;
+    sint16 xoff;
+    sint16 yoff;
 }
 face_mpart_nr_t;
 
 typedef struct face_mpart_id_t
 {
-    uint16          xlen;
-    uint16          ylen;
+    sint16          xlen;
+    sint16          ylen;
     face_mpart_nr_t part[16];
 }
 face_mpart_id_t;

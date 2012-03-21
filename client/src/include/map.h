@@ -27,8 +27,8 @@
 #define MAP_TILE_POS_YOFF 23
 #define MAP_TILE_POS_XOFF 48
 
-#define MAP_TILE_XOFF (MAP_TILE_POS_YOFF / 2 + 1)
-#define MAP_TILE_YOFF (MAP_TILE_POS_XOFF / 2)
+#define MAP_TILE_XOFF 12
+#define MAP_TILE_YOFF 24
 
 #define MAP_START_XOFF (MAP_TILE_POS_XOFF * 8)
 #define MAP_START_YOFF (MAP_TILE_POS_XOFF * 3)
@@ -89,13 +89,13 @@ MapPos;
 extern _mapdata         MapData;
 
 #define MAP_XPOS(_x_, _y_) \
-    (MAP_START_XOFF * (sint16)options.mapsx) + \
-    (_x_) * (MAP_TILE_YOFF * (sint16)options.mapsx) - \
-    (_y_) * (MAP_TILE_YOFF * (sint16)options.mapsx)
+    ((MAP_START_XOFF * options.mapsx) + \
+    (_x_) * (MAP_TILE_YOFF * options.mapsx) - \
+    (_y_) * (MAP_TILE_YOFF * options.mapsx))
 #define MAP_YPOS(_x_, _y_) \
-    (MAP_START_YOFF * (sint16)options.mapsy) + \
-    (_x_) * (MAP_TILE_XOFF * (sint16)options.mapsy) + \
-    (_y_) * (MAP_TILE_XOFF * (sint16)options.mapsy)
+    ((MAP_START_YOFF * options.mapsy) + \
+    (_x_) * (MAP_TILE_XOFF * options.mapsy) + \
+    (_y_) * (MAP_TILE_XOFF * options.mapsy))
 
 extern void             clear_map(void);
 extern void             set_map_darkness(int x, int y, uint8 darkness);

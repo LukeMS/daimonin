@@ -100,25 +100,21 @@ void display_mapscroll(int dx, int dy)
 
 void map_overlay(_Sprite *sprite)
 {
-    uint16 xoff = 0,
+    sint16 xoff = 0,
            yoff = 0;
     uint8  y;
 
-    /* If the bitmap is wider than a tile, center it on
-     * the tile. */
+    /* If the image is wider than a tile, center it
+     * on the tile. */
     if (sprite->bitmap->w > MAP_TILE_POS_XOFF)
     {
-        xoff = ((sprite->bitmap->w - MAP_TILE_POS_XOFF) *
-                (sint16)options.mapsx / 2);
+        xoff -= (sint16)((sprite->bitmap->w - MAP_TILE_POS_XOFF) *
+                         options.mapsx) >> 1;
     }
 
-    /* If the bitmap is taller than a tile, position it
-       sufficently high. */
-    if (sprite->bitmap->h > MAP_TILE_POS_YOFF)
-    {
-        yoff  = ((sprite->bitmap->h - MAP_TILE_POS_YOFF) *
-                 (sint16)options.mapsy);
-    }
+    /* Position the image so it's bottom edge is
+     * flush with the bottom of the tile. */
+    yoff -= (sint16)((sprite->bitmap->h - MAP_TILE_POS_YOFF) * options.mapsy);
 
     for (y = 0; y < MapStatusY; y++)
     {
@@ -126,8 +122,8 @@ void map_overlay(_Sprite *sprite)
 
         for (x = 0; x < MapStatusX; x++)
         {
-            sint16 xpos = MAP_XPOS(x, y) - (sint16)xoff,
-                   ypos = MAP_YPOS(x, y) - (sint16)yoff;
+            sint16 xpos = MAP_XPOS(x, y) - xoff,
+                   ypos = MAP_YPOS(x, y) - yoff;
 
             sprite_blt_map(sprite, xpos, ypos, NULL, NULL, 0);
         }
@@ -354,11 +350,11 @@ static int namecmp(const char *name, const char *rankandname)
 void map_draw_map(void)
 {
     register struct MapCell                    *map;
-    register int ypos, xpos;
-    int         x, y, k, temp, kk, kt, yt, xt, alpha;
-    int         xml, xmpos;
+    register sint16 ypos, xpos;
+    sint16      x, y, k, temp, kk, kt, yt, xt, alpha;
+    sint16      xml, xmpos;
     uint16      index, index_tmp;
-    int         mid, mnr, xreal, yreal;
+    sint16      xreal, yreal;
     _BLTFX      bltfx;
     SDL_Rect    rect;
     sint16      left = 0,
@@ -492,63 +488,58 @@ void map_draw_map(void)
                         else
                         {
                             _Sprite *sprite = face_list[index].sprite;
-                            int      yl,
+                            sint16   yl,
                                      xl;
 
                             if (map->pos[k]) /* we have a set quick_pos = multi tile*/
                             {
-                                mnr = map->pos[k];
-                                mid = mnr >> 4;
-                                mnr &= 0x0f;
-                                xml = (face_mpart_id[mid].xlen *
-                                       (sint16)options.mapsx);
-                                xmpos = xl = xpos -
-                                             (face_mpart_id[mid].part[mnr].xoff *
-                                              (sint16)options.mapsx);
+                                uint8 mid = map->pos[k] >> 4,
+                                      mnr = map->pos[k] & 0x0f;
 
-                                /* If the bitmap is wider than the footprint,
+                                xml = (sint16)(face_mpart_id[mid].xlen *
+                                               options.mapsx);
+                                xmpos = xl = xpos -
+                                             (sint16)(face_mpart_id[mid].part[mnr].xoff *
+                                                      options.mapsx);
+
+                                /* If the image is wider than the footprint,
                                  * center it on the footprint. */
                                 if (sprite->bitmap->w > face_mpart_id[mid].xlen)
                                 {
-                                    xl -= ((sprite->bitmap->w - face_mpart_id[mid].xlen) *
-                                           (sint16)options.mapsx);
+                                    xl -= (sint16)((sprite->bitmap->w -
+                                                    face_mpart_id[mid].xlen) *
+                                                   options.mapsx) >> 1;
                                 }
 
+                                /* Position the image so it's bottom edge is
+                                 * flush with the bottom of the footprint. */
                                 yl = ypos -
-                                     (face_mpart_id[mid].part[mnr].yoff *
-                                      (sint16)options.mapsy);
-
-                                /* If the bitmap is taller than the footprint,
-                                 * position it sufficently high. */
-                                if (sprite->bitmap->h > face_mpart_id[mid].ylen)
-                                {
-                                     yl -=((sprite->bitmap->h - face_mpart_id[mid].ylen) *
-                                           (sint16)options.mapsy);
-                                }
+                                     (sint16)(face_mpart_id[mid].part[mnr].yoff *
+                                              options.mapsy) -
+                                     (sint16)((sprite->bitmap->h -
+                                               face_mpart_id[mid].ylen) *
+                                              options.mapsy);
                             }
                             else /* single tile... */
                             {
                                 /* first, we calc the shift positions */
-                                xml = (MAP_TILE_POS_XOFF * (sint16)options.mapsx);
+                                xml = (sint16)(MAP_TILE_POS_XOFF * options.mapsx);
                                 xmpos = xl = xpos;
 
-                                /* If the bitmap is wider than a tile, center it on
-                                 * the tile. */
+                                /* If the image is wider than a tile, center it
+                                 * on the tile. */
                                 if (sprite->bitmap->w > MAP_TILE_POS_XOFF)
                                 {
-                                    xl -= ((sprite->bitmap->w - MAP_TILE_POS_XOFF) *
-                                           (sint16)options.mapsx / 2);
+                                    xl -= (sint16)((sprite->bitmap->w -
+                                                    MAP_TILE_POS_XOFF) *
+                                                   options.mapsx) >> 1;
                                 }
 
-                                yl = ypos;
-
-                                /* If the bitmap is taller than a tile, position it
-                                   sufficently high. */
-                                if (sprite->bitmap->h > MAP_TILE_POS_YOFF)
-                                {
-                                    yl -= ((sprite->bitmap->h - MAP_TILE_POS_YOFF) *
-                                           (sint16)options.mapsy);
-                                }
+                                /* Position the image so it's bottom edge is
+                                 * flush with the bottom of the tile. */
+                                yl = ypos - (sint16)((sprite->bitmap->h -
+                                                      MAP_TILE_POS_YOFF) *
+                                                     options.mapsy);
                             }
 
                             /* blt the face in the darkness level, the tile pos has */
