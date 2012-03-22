@@ -33,12 +33,6 @@ typedef enum _sprite_status
     SPRITE_STATUS_LOADED
 }    _sprite_status;
 
-/* some other infos */
-typedef enum _sprite_type
-{
-    SPRITE_TYPE_NORMAL
-}    _sprite_type;
-
 typedef enum sprite_colrscale_t
 {
     SPRITE_COLRSCALE_NONE,
@@ -74,7 +68,6 @@ _BLTFX;
 typedef struct _Sprite
 {
     _sprite_status  status;
-    _sprite_type    type;
     int             border_up;                          /* rows of blank pixels before first color information */
     int             border_down;                        /* a blank sprite has borders = 0 */
     int             border_left;

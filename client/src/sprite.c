@@ -128,7 +128,6 @@ _Sprite *sprite_load(char *fname, SDL_RWops *rwop)
 
     MALLOC(sprite, sizeof(_Sprite));
     sprite->status = SPRITE_STATUS_LOADED;
-    sprite->type = SPRITE_TYPE_NORMAL;
     GetBitmapBorders(bitmap, &sprite->border_up, &sprite->border_down,
                      &sprite->border_left, &sprite->border_right, 0);
     sprite->bitmap = bitmap;
