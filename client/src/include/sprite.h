@@ -117,12 +117,6 @@ _anim;
 #define ASCII_LEFT 30
 #define ASCII_RIGHT 31
 
-/* this surface is only 1x1 pixel, and only used to not
- * everytime recreate a certain pixelformat
- */
-extern SDL_Surface  *FormatHolder;
-
-
 typedef struct _imagestats
 {
     uint16 bitmaps;
