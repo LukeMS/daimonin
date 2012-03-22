@@ -1033,10 +1033,9 @@ void sprite_blt_as_icon(_Sprite *sprite, sint16 x, sint16 y,
  * so the mapdrawing gets its own function. */
 void sprite_blt(_Sprite *sprite, int x, int y, SDL_Rect *box, _BLTFX *bltfx)
 {
+    SDL_Surface *blt,
+                *surface;
     SDL_Rect     dst;
-    SDL_Surface *surface,
-                *blt_sprite = NULL;
-    uint8        reset_trans = 0;
 
     /* Sanity check. */
     if (!sprite)
@@ -1044,67 +1043,9 @@ void sprite_blt(_Sprite *sprite, int x, int y, SDL_Rect *box, _BLTFX *bltfx)
         return;
     }
 
-    if (bltfx)
-    {
-        if ((bltfx->flags & BLTFX_FLAG_FOGOFWAR))
-        {
-            if (!sprite->fogofwar)
-            {
-                sprite->fogofwar = RecolourSurface(sprite->bitmap,
-                                                   skin_prefs.scale_fogofwar,
-                                                   skin_prefs.mask_fogofwar);
-                ImageStats.fogofwars++;
-            }
-
-            blt_sprite = sprite->fogofwar;
-        }
-        else if ((bltfx->flags & BLTFX_FLAG_INFRAVISION))
-        {
-            if (!sprite->infravision)
-            {
-                sprite->infravision = RecolourSurface(sprite->bitmap,
-                                                      skin_prefs.scale_infravision,
-                                                      skin_prefs.mask_infravision);
-                ImageStats.infravisions++;
-            }
-
-            blt_sprite = sprite->infravision;
-        }
-        else if ((bltfx->flags & BLTFX_FLAG_XRAYVISION))
-        {
-            if (!sprite->xrayvision)
-            {
-                sprite->xrayvision = RecolourSurface(sprite->bitmap,
-                                                     skin_prefs.scale_xrayvision,
-                                                     skin_prefs.mask_xrayvision);
-                ImageStats.xrayvisions++;
-            }
-
-            blt_sprite = sprite->xrayvision;
-        }
-    }
-
-    if (!blt_sprite)
-    {
-        blt_sprite = sprite->bitmap;
-    }
-
-    /* Sanity check. */
-    if (!blt_sprite)
-    {
-        return;
-    }
-
-    if (bltfx &&
-        bltfx->surface)
-    {
-        surface = bltfx->surface;
-    }
-    else
-    {
-        surface = ScreenSurface;
-    }
-
+    blt = sprite->bitmap;
+    surface = (bltfx &&
+               bltfx->surface) ? bltfx->surface : ScreenSurface;
     dst.x = x;
     dst.y = y;
 
@@ -1112,15 +1053,13 @@ void sprite_blt(_Sprite *sprite, int x, int y, SDL_Rect *box, _BLTFX *bltfx)
         (bltfx->flags & BLTFX_FLAG_SRCALPHA) &&
         !(ScreenSurface->flags & SDL_HWSURFACE))
     {
-        SDL_SetAlpha(blt_sprite, SDL_SRCALPHA, bltfx->alpha);
-        reset_trans = 1;
+        SDL_SetAlpha(blt, SDL_SRCALPHA, bltfx->alpha);
+        SDL_BlitSurface(blt, box, surface, &dst);
+        SDL_SetAlpha(blt, SDL_SRCALPHA, SDL_ALPHA_OPAQUE);
     }
-
-    SDL_BlitSurface(blt_sprite, box, surface, &dst);
-
-    if (reset_trans)
+    else
     {
-        SDL_SetAlpha(blt_sprite, SDL_SRCALPHA, SDL_ALPHA_OPAQUE);
+        SDL_BlitSurface(blt, box, surface, &dst);
     }
 }
 
