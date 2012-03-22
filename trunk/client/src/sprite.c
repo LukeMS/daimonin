@@ -48,8 +48,6 @@ struct _anim   *start_anim; /* anim queue of current active map */
 
 struct _imagestats  ImageStats;
 
-SDL_Surface     *FormatHolder;
-
 static uint8        GetBitmapBorders(SDL_Surface *Surface, int *up, int *down,
                                      int *left, int *right, uint32 ckey);
 static SDL_Surface *RecolourSurface(SDL_Surface *src, sprite_colrscale_t scale,
@@ -69,9 +67,6 @@ static void         stretch_init(void);
 void sprite_init(void)
 {
     sprite_clear_backbuffer();
-
-    FormatHolder=SDL_CreateRGBSurface(SDL_SRCALPHA,1, 1, 32, 0xFF000000, 0x00FF0000 ,0x0000FF00 ,0x000000FF);
-    SDL_SetAlpha(FormatHolder,SDL_SRCALPHA,255);
 }
 
 void sprite_clear_backbuffer(void)
@@ -1146,8 +1141,8 @@ void sprite_blt_map(_Sprite *sprite, int x, int y, SDL_Rect *box, _BLTFX *bltfx,
         if (!sprite->scaled)
         {
             SDL_Surface *scaled = SPG_Scale(SDL_ConvertSurface(sprite->bitmap,
-                                                               FormatHolder->format,
-                                                               FormatHolder->flags),
+                                                               ScreenSurface->format,
+                                                               ScreenSurface->flags),
                                             options.mapsx, options.mapsy);
 
             sprite->scaled = SDL_DisplayFormatAlpha(scaled);
