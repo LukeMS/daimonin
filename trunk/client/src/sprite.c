@@ -136,38 +136,41 @@ _Sprite *sprite_load(char *fname, SDL_RWops *rwop)
     return sprite;
 }
 
-/* Recolours src pixel-by-pixel according to scale and/or mask and returns a
- * pointer to the recoloured surface. */
+/* Recolours src pixel-by-pixel according to scale and/or mask and
+ * returns a pointer to the recoloured surface. */
 static SDL_Surface *RecolourSurface(SDL_Surface *src, sprite_colrscale_t scale,
                                     uint32 mask)
 {
-    uint16              y;
-    SDL_Surface        *orig = SDL_ConvertSurface(src, FormatHolder->format,
-                                                  FormatHolder->flags);
-    static SDL_Surface *dst;
+    uint16       y;
+    SDL_Surface *dst;
 
-    for (y = 0; y < orig->h; y++)
+    if (!src)
+    {
+        return NULL;
+    }
+
+    dst = SDL_DisplayFormatAlpha(src);
+    SDL_LockSurface(dst);
+
+    for (y = 0; y < dst->h; y++)
     {
         uint16 x;
 
-        for (x = 0; x < orig->w; x++)
+        for (x = 0; x < dst->w; x++)
         {
-            uint8 or,                       // original values
-                  og,
-                  ob,
-                  oa,
-                  mr = (mask >> 16) & 0xff, // mask values
-                  mg = (mask >> 8) & 0xff,
-                  mb = mask & 0xff,
-                  tr,                       // temp values
-                  tg,
-                  tb;
+            uint32 p = GetSurfacePixel(dst, x, y);
+            uint8  r,
+                   g,
+                   b,
+                   a,
+                   tr,
+                   tg,
+                   tb;
 
-            SDL_GetRGBA(GetSurfacePixel(orig, x, y), orig->format, &or, &og,
-                        &ob, &oa);
+            SDL_GetRGBA(p, dst->format, &r, &g, &b, &a);
 
             /* No point recolouring pixels you can't see anyway. */
-            if (oa == SDL_ALPHA_TRANSPARENT)
+            if (a == SDL_ALPHA_TRANSPARENT)
             {
                 continue;
             }
@@ -176,29 +179,29 @@ static SDL_Surface *RecolourSurface(SDL_Surface *src, sprite_colrscale_t scale,
             {
                 case SPRITE_COLRSCALE_GREY:
                 case SPRITE_COLRSCALE_INTENSITY:
-                    or = og = ob = (uint8)(0.3 * or + 0.59 * og + 0.11 * ob);
+                    r = g = b = (uint8)(0.3 * r + 0.59 * g + 0.11 * b);
 
                     break;
 
                 case SPRITE_COLRSCALE_SEPIA:
-                    tr = (uint8)(0.393 * or + 0.769 * og + 0.189 * ob);
-                    tg = (uint8)(0.349 * or + 0.686 * og + 0.168 * ob);
-                    tb = (uint8)(0.272 * or + 0.534 * og + 0.131 * ob);
-                    or = tr;
-                    og = tg;
-                    ob = tb;
+                    tr = (uint8)(0.393 * r + 0.769 * g + 0.189 * b);
+                    tg = (uint8)(0.349 * r + 0.686 * g + 0.168 * b);
+                    tb = (uint8)(0.272 * r + 0.534 * g + 0.131 * b);
+                    r = tr;
+                    g = tg;
+                    b = tb;
 
                     break;
 
                 case SPRITE_COLRSCALE_NEGATIVE:
-                    or = og = ob = 255 - (uint8)(0.3 * or + 0.59 * og + 0.11 * ob);
+                    r = g = b = 255 - (uint8)(0.3 * r + 0.59 * g + 0.11 * b);
 
                     break;
 
                 case SPRITE_COLRSCALE_INVERSION:
-                    or = 255 - or;
-                    og = 255 - og;
-                    ob = 255 - ob;
+                    r = 255 - r;
+                    g = 255 - g;
+                    b = 255 - b;
 
                     break;
 
@@ -208,36 +211,39 @@ static SDL_Surface *RecolourSurface(SDL_Surface *src, sprite_colrscale_t scale,
 
             if (mask)
             {
+                uint8 mr = (mask >> 16) & 0xff,
+                      mg = (mask >> 8) & 0xff,
+                      mb = mask & 0xff;
+
                 if (scale == SPRITE_COLRSCALE_INTENSITY)
                 {
                     if ((mr = mg = mb = (uint8)(0.3 * mr + 0.59 * mg + 0.11 * mb)) >= 128)
                     {
-                        or = (or + mr >= 255) ? 255 : or + mr;
-                        og = (og + mg >= 255) ? 255 : og + mg;
-                        ob = (ob + mb >= 255) ? 255 : ob + mb;
+                        r = (r + mr >= 255) ? 255 : r + mr;
+                        g = (g + mg >= 255) ? 255 : g + mg;
+                        b = (b + mb >= 255) ? 255 : b + mb;
                     }
                     else
                     {
-                        or = (or - mr <= 0) ? 0 : or - mr;
-                        og = (og - mg <= 0) ? 0 : og - mg;
-                        ob = (ob - mb <= 0) ? 0 : ob - mb;
+                        r = (r - mr <= 0) ? 0 : r - mr;
+                        g = (g - mg <= 0) ? 0 : g - mg;
+                        b = (b - mb <= 0) ? 0 : b - mb;
                     }
                 }
                 else
                 {
-                    or &= mr;
-                    og &= mg;
-                    ob &= mb;
+                    r &= mr;
+                    g &= mg;
+                    b &= mb;
                 }
             }
 
-            PutSurfacePixel(orig, x, y, SDL_MapRGBA(orig->format, or, og, ob,
-                                                    oa));
+            p = SDL_MapRGBA(dst->format, r, g, b, a);
+            PutSurfacePixel(dst, x, y, p);
         }
     }
 
-    dst = SDL_DisplayFormatAlpha(orig);
-    SDL_FreeSurface(orig);
+    SDL_UnlockSurface(dst);
 
     return dst;
 }
