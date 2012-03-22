@@ -112,11 +112,6 @@ typedef struct _anim
 }
 _anim;
 
-#define ASCII_UP 28
-#define ASCII_DOWN 29
-#define ASCII_LEFT 30
-#define ASCII_RIGHT 31
-
 typedef struct _imagestats
 {
     uint16 bitmaps;
