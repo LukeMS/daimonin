@@ -844,7 +844,7 @@ void show_skilllist(void)
 
     sprintf(buf,
             "~SHIFT~ + ~%c%c~ to select group                  ~%c%c~ to select skill                    ~RETURN~ for use",
-            ASCII_UP, ASCII_DOWN, ASCII_UP, ASCII_DOWN);
+            FONT_ARROWUP, FONT_ARROWDOWN, FONT_ARROWUP, FONT_ARROWDOWN);
     string_blt(ScreenSurface, &font_small, buf, x + 135, y + 410, NDI_COLR_WHITE, NULL, NULL);
 
     /* Headline */
@@ -1009,7 +1009,7 @@ void show_spelllist(void)
 
     sprintf(buf,
             "~SHIFT~ + ~%c%c~ to select path                   ~%c%c~ to select spell                    ~RETURN~ for use",
-            ASCII_UP, ASCII_DOWN, ASCII_UP, ASCII_DOWN);
+            FONT_ARROWUP, FONT_ARROWDOWN, FONT_ARROWUP, FONT_ARROWDOWN);
     string_blt(ScreenSurface, &font_small, buf, x + 135, y + 410, NDI_COLR_WHITE, NULL, NULL);
 
     /* spellClass buttons */
@@ -1022,7 +1022,7 @@ void show_spelllist(void)
 
     sprintf(buf, "use ~F1-F8~ for spell to quickbar");
     string_blt(ScreenSurface, &font_small, buf, x + 340, y + 69, NDI_COLR_WHITE, NULL, NULL);
-    sprintf(buf, "use ~%c%c~ to select spell group", ASCII_RIGHT, ASCII_LEFT);
+    sprintf(buf, "use ~%c%c~ to select spell group", FONT_ARROWRIGHT, FONT_ARROWLEFT);
     string_blt(ScreenSurface, &font_small, buf, x + 340, y + 80, NDI_COLR_WHITE, NULL, NULL);
 
     box.x = x + 133;
@@ -1168,7 +1168,7 @@ void show_optwin()
     optwin_draw_options(x + 130, y + 90);
 
     sprintf(buf, "~SHIFT~ + ~%c%c~ to select group            ~%c%c~ to select option          ~%c%c~ to change option",
-            ASCII_UP, ASCII_DOWN, ASCII_UP, ASCII_DOWN, ASCII_RIGHT, ASCII_LEFT);
+            FONT_ARROWUP, FONT_ARROWDOWN, FONT_ARROWUP, FONT_ARROWDOWN, FONT_ARROWRIGHT, FONT_ARROWLEFT);
     string_blt(ScreenSurface, &font_small, buf, x + 135, y + 410, NDI_COLR_WHITE, NULL, NULL);
     /* mark active entry */
     EMBOSS(ScreenSurface, &font_small, ">", x + TXT_START_NAME - 15,
@@ -1203,7 +1203,7 @@ void show_keybind()
     add_close_button(x, y, MENU_KEYBIND);
 
     sprintf(buf, "~SHIFT~ + ~%c%c~ to select group         ~%c%c~ to select macro          ~RETURN~ to change/create",
-            ASCII_UP, ASCII_DOWN, ASCII_UP, ASCII_DOWN);
+            FONT_ARROWUP, FONT_ARROWDOWN, FONT_ARROWUP, FONT_ARROWDOWN);
     string_blt(ScreenSurface, &font_small, buf, x + 125, y + 410, NDI_COLR_WHITE, NULL, NULL);
 
 
@@ -1401,7 +1401,7 @@ void show_newplayer_server(void)
 
     /* print all attributes */
     ENGRAVE(ScreenSurface, &font_small, "Welcome!", x + 130, y + 63, NDI_COLR_WHITE, NULL, NULL);
-    sprintf(buf, "Use ~%c%c~ and ~%c%c~ cursor keys to setup your stats.", ASCII_UP, ASCII_DOWN, ASCII_RIGHT, ASCII_LEFT);
+    sprintf(buf, "Use ~%c%c~ and ~%c%c~ cursor keys to setup your stats.", FONT_ARROWUP, FONT_ARROWDOWN, FONT_ARROWRIGHT, FONT_ARROWLEFT);
     string_blt(ScreenSurface, &font_small, buf, x + 130, y + 75, NDI_COLR_WHITE, NULL, NULL);
     ENGRAVE(ScreenSurface, &font_small, "Press ~N~ to name your new chararcter", x + 130, y + 100, NDI_COLR_WHITE,
               NULL, NULL);
@@ -1842,7 +1842,7 @@ void show_login_server(void)
         ENGRAVE(ScreenSurface, &font_small, "Select ~Create Account~ for a new or ~Login~ for a existing account.",
                 x - 11, y, NDI_COLR_WHITE, NULL, NULL);
         y+=12;
-        sprintf(buf,"Use ~%c,%c~ to select and press then ~Return~", ASCII_UP, ASCII_DOWN);
+        sprintf(buf,"Use ~%c,%c~ to select and press then ~Return~", FONT_ARROWUP, FONT_ARROWDOWN);
         string_blt(ScreenSurface, &font_small, buf, x - 11, y, NDI_COLR_WHITE, NULL, NULL);
 
         return;
@@ -2170,15 +2170,15 @@ void show_meta_server(void)
     {
         locator_show(x + 132, y + 158);
         sprintf(buf, "~%c%c~: select server  |**|  ~SHIFT~/~CONTROL~ + ~%c%c%c%c~: scroll map  |**|  ~RETURN~: connect",
-                ASCII_UP, ASCII_DOWN, ASCII_RIGHT, ASCII_UP, ASCII_DOWN,
-                ASCII_LEFT);
+                FONT_ARROWUP, FONT_ARROWDOWN, FONT_ARROWRIGHT, FONT_ARROWUP, FONT_ARROWDOWN,
+                FONT_ARROWLEFT);
         string_blt(ScreenSurface, &font_small, buf, x + 130, y + 408,
                    NDI_COLR_WHITE, NULL, NULL);
     }
     else
     {
         sprintf(buf, "~%c%c~: select server  |**|  ~RETURN~: connect",
-                ASCII_UP, ASCII_DOWN);
+                FONT_ARROWUP, FONT_ARROWDOWN);
         string_blt(ScreenSurface, &font_small, buf, x + 200, y + 408,
                    NDI_COLR_WHITE, NULL, NULL);
     }
@@ -2243,7 +2243,7 @@ void show_account(void)
         {
             string_blt(ScreenSurface, &font_large, "Press ~RETURN~ to play", x+120, y+435, NDI_COLR_SILVER, NULL, NULL);
             string_blt(ScreenSurface, &font_large, "Press '~D~' to delete this Character", x+120, y+452, NDI_COLR_SILVER, NULL, NULL);
-            sprintf(buf, "Use ~%c%c~ cursor keys for selection", ASCII_UP, ASCII_DOWN);
+            sprintf(buf, "Use ~%c%c~ cursor keys for selection", FONT_ARROWUP, FONT_ARROWDOWN);
             string_blt(ScreenSurface, &font_small, buf, x+120, y + 470, NDI_COLR_WHITE, NULL, NULL);
         }
     }
