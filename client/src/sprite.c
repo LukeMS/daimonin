@@ -96,7 +96,6 @@ _Sprite *sprite_load(char *fname, SDL_RWops *rwop)
     _Sprite     *sprite;
     SDL_Surface *bitmap;
     SDL_RWops   *rw;
-    uint32       ck = 0;
 
     if (fname)
     {
@@ -130,22 +129,8 @@ _Sprite *sprite_load(char *fname, SDL_RWops *rwop)
     MALLOC(sprite, sizeof(_Sprite));
     sprite->status = SPRITE_STATUS_LOADED;
     sprite->type = SPRITE_TYPE_NORMAL;
-
-    if (bitmap->format->palette)
-    {
-        uint32 ckflags = SDL_SRCCOLORKEY | SDL_ANYFORMAT;
-
-        if (options.rleaccel_flag)
-        {
-            ckflags |= SDL_RLEACCEL;
-        }
-
-        ck = bitmap->format->colorkey;
-        SDL_SetColorKey(bitmap, ckflags, ck);
-    }
-
     GetBitmapBorders(bitmap, &sprite->border_up, &sprite->border_down,
-                     &sprite->border_left, &sprite->border_right, ck);
+                     &sprite->border_left, &sprite->border_right, 0);
     sprite->bitmap = bitmap;
     ImageStats.bitmaps++;
 
