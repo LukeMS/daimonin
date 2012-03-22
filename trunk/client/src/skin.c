@@ -31,6 +31,8 @@ static char *FontName[SKIN_FONT_NROF] =
     "medium.png",
     "large.png",
     "huge.png",
+    "booknormal.png",
+    "booktitle.png",
 };
 
 /* For loading, use SKIN_SPRITE_xx in the other modules. */

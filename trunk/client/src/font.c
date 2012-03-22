@@ -28,6 +28,8 @@ _font font_small;
 _font font_medium;
 _font font_large;
 _font font_huge;
+_font font_booknormal;
+_font font_booktitle;
 
 static void   CreateNewFont(_Sprite *sprite, _font *font);
 static uint32 GetSurfacePixel(SDL_Surface *surface, uint16 x, uint16 y);
@@ -39,6 +41,8 @@ void font_init(void)
     CreateNewFont(skin_fonts[SKIN_FONT_MEDIUM], &font_medium);
     CreateNewFont(skin_fonts[SKIN_FONT_LARGE], &font_large);
     CreateNewFont(skin_fonts[SKIN_FONT_HUGE], &font_huge);
+    CreateNewFont(skin_fonts[SKIN_FONT_BOOKNORMAL], &font_booknormal);
+    CreateNewFont(skin_fonts[SKIN_FONT_BOOKTITLE], &font_booktitle);
 }
 
 /* init this font structure with gfx data from sprite bitmap */
