@@ -84,6 +84,8 @@ void sprite_deinit(void)
         SDL_FreeSurface(DarkMask[i]);
         DarkMask[i] = NULL;
     }
+
+    delete_anims();
 }
 
 _Sprite *sprite_load(char *fname, SDL_RWops *rwop)
@@ -1320,171 +1322,183 @@ void sprite_blt_map(_Sprite *sprite, int x, int y, SDL_Rect *box, _BLTFX *bltfx,
     }
 }
 
-
-struct _anim * add_anim(int type, int x, int y, int mapx, int mapy, int value)
+struct _anim *add_anim(uint8 type, uint8 mapx, uint8 mapy, sint16 value)
 {
-    struct _anim   *tmp, *anim;
+    struct _anim *new,
+                 *last;
+    uint16        num_ticks = 850;
 
-    int             num_ticks;
+    /* Allocate and assign a new anim. */
+    MALLOC(new, sizeof(struct _anim));
+    new->type = type;
+    new->x = 0;
+    new->y = -5;
+    new->xoff = 0;
+    new->yoff = (25.0 / (float)num_ticks); /* 850 ticks 25 pixel move up */
+    new->mapx = mapx;
+    new->mapy = mapy;
+    new->value = value;
+    new->start_tick = LastTick;
+    new->last_tick = new->start_tick + num_ticks;
 
-    for (tmp = start_anim; tmp; tmp = tmp->next)
+    /* Add it to the end of the queue. */
+    for (last = start_anim; last; last = last->next)
     {
-        if (!tmp->next)
+        if (!last->next)
+        {
             break;
+        }
     }
 
-    /* tmp == null - no anim in que, else tmp = last anim */
-    MALLOC(anim, sizeof(struct _anim));
-
-    if (!tmp)
-        start_anim = anim;
+    if (!last)
+    {
+        start_anim = new;
+    }
     else
-        tmp->next = anim;
-
-    anim->before = tmp;
-    anim->next = NULL;
-
-    anim->type = type;
-    anim->x = 0;                  /* starting X position */
-    anim->y = -5;                 /* starting Y position */
-    anim->xoff = 0;
-    anim->yoff = 1;  /* this looks like it makes it move up the screen -- was 0*/
-    anim->mapx = mapx;            /* Map cordinates */
-    anim->mapy = mapy;
-    anim->value = value;          /* Amount of damage */
-    anim->start_tick = LastTick;  /* current time in MilliSeconds */
-
-
-
-    switch (type)
     {
-        case ANIM_DAMAGE:
-            num_ticks = 850;  /* how many ticks to display */
-            anim->last_tick = anim->start_tick + num_ticks;
-            anim->yoff = (25.0f / 850.0f); /* 850 ticks 25 pixel move up */
-            break;
-        case ANIM_SELF_DAMAGE:
-            num_ticks = 850;  /* how many ticks to display */
-            anim->last_tick = anim->start_tick + num_ticks;
-            anim->yoff = (25.0f / 850.0f); /* 850 ticks 25 pixel move up */
-            break;
-        case ANIM_KILL:
-            num_ticks = 850;  /* how many ticks to display */
-            anim->last_tick = anim->start_tick + num_ticks;
-            anim->yoff = (25.0f / 850.0f); /* 850 ticks 25 pixel move up */
-            break;
+        last->next = new;
     }
 
+    new->before = last;
+    new->next = NULL;
 
-
-    return(anim);
+    return new;
 }
 
-void remove_anim(struct _anim *anim)
+void remove_anim(struct _anim *this)
 {
-    struct _anim   *tmp, *tmp_next;
+    struct _anim *prev,
+                 *next;
 
-    if (!anim)
+    /* Sanity check. */
+    if (!this)
+    {
         return;
+    }
 
-    tmp = anim->before;
-    tmp_next = anim->next;
-    FREE(anim);
+    /* Remove anim and stitch up any hole. */
+    prev = this->before;
+    next = this->next;
+    FREE(this);
 
-    if (tmp)
-        tmp->next = tmp_next;
+    if (prev)
+    {
+        prev->next = next;
+    }
     else
-        start_anim = tmp_next;
-    if (tmp_next)
-        tmp_next->before = tmp;
+    {
+        start_anim = next;
+    }
+
+    if (next)
+    {
+        next->before = prev;
+    }
 }
 
-
-void delete_anim_que(void)
+void delete_anims(void)
 {
-    struct _anim   *tmp, *tmp_next;
+    struct _anim *this,
+                 *next;
 
-    for (tmp = start_anim; tmp;)
+    for (this = start_anim; this; this = next)
     {
-        tmp_next = tmp->next;
-        FREE(tmp);
-        tmp = tmp_next;
+        next = this->next;
+        FREE(this);
     }
+
     start_anim = NULL;
 }
 
 /* walk through the map anim list */
 void play_anims(int mx, int my)
 {
-    struct _anim   *anim, *tmp;
-    char            buf[32];
+    struct _anim *this,
+                 *next;
+    char          buf[TINY_BUF];
 
-    for (anim = start_anim; anim; anim = tmp)
+    for (this = start_anim; this; this = next)
     {
-        tmp = anim->next;
+        next = this->next;
 
-        if (LastTick > anim->last_tick)  /* have we passed the last tick */
-            remove_anim(anim);
+        if (LastTick > this->last_tick)  /* have we passed the last tick */
+        {
+            remove_anim(this);
+        }
         else
         {
-            if (anim->mapx >= MapData.posx &&
-                anim->mapx < MapData.posx + MapStatusX &&
-                anim->mapy >= MapData.posy &&
-                anim->mapy < MapData.posy + MapStatusY)
+            uint32  lifetime = this->last_tick - this->start_tick,
+                    now = LastTick - this->start_tick;
+            sint16  tmp_x = 0,
+                    tmp_y = this->y - (sint16)(now * this->yoff),
+                    xpos = MAP_XPOS(this->mapx, this->mapy),
+                    ypos = MAP_YPOS(this->mapx, this->mapy);
+            _font  *font;
+
+            if (now <= lifetime * 0.25)
             {
-                int   tmp_y = anim->y - (int)((float)(LastTick - anim->start_tick) * anim->yoff),
-                      x = (anim->mapx - MapData.posx),
-                      y = (anim->mapx - MapData.posx - 1),
-                      xpos = /*options.mapstart_x + */MAP_XPOS(x, y),
-                      ypos = /*options.mapstart_y + */MAP_YPOS(x, y);
-                sint8 tmp_off = 0;
+               font = &font_large;
+            }
+            else if (now <= lifetime * 0.50)
+            {
+               font = &font_medium;
+            }
+            else if (now <= lifetime * 0.75)
+            {
+               font = &font_small;
+            }
+            else
+            {
+               font = &font_tiny;
+            }
 
-                switch (anim->type)
-                {
-                    case ANIM_SELF_DAMAGE:
-                    case ANIM_DAMAGE:
-                        xpos -= 4;
-                        ypos -= 34;
-                        if (anim->value<0)
-                        {
-                            sprintf(buf, "%d", abs(anim->value));
-                            string_blt(ScreenSurface, &font_small, buf, xpos + anim->x, ypos + tmp_y, NDI_COLR_LIME, NULL,
-                                          NULL);
-                        }
-                        else
-                        {
-                            sprintf(buf, "%d", anim->value);
-                            string_blt(ScreenSurface, &font_small, buf,
-                                       xpos + anim->x, ypos + tmp_y,
-                                       (anim->type == ANIM_SELF_DAMAGE)
-                                       ? NDI_COLR_RED : NDI_COLR_ORANGE, NULL,
-                                       NULL);
-                        }
-                        break;
-                    case ANIM_KILL:
-                        xpos -= 4;
-                        ypos -= 26;
-                        sprite_blt(skin_sprites[SKIN_SPRITE_DEATH], xpos + anim->x - 5, ypos + tmp_y - 4, NULL, NULL);
-                        sprintf(buf, "%d", anim->value);
+            switch (this->type)
+            {
+                case ANIM_KILL:
+                    sprite_blt(skin_sprites[SKIN_SPRITE_DEATH],
+                               xpos + this->x - 5, ypos + tmp_y - 4, NULL,
+                               NULL);
 
-                        /* Lets check the size of the value */
-                        if (anim->value < 10)
-                            tmp_off = 6;
-                        else if (anim->value < 100)
-                            tmp_off = 0;
-                        else if (anim->value < 1000)
-                            tmp_off = -6;
-                        else if (anim->value < 10000)
-                            tmp_off = -12;
+                    if (this->value < 10)
+                    {
+                        tmp_x = 6;
+                    }
+                    else if (this->value < 100)
+                    {
+                        tmp_x = 0;
+                    }
+                    else if (this->value < 1000)
+                    {
+                        tmp_x = -6;
+                    }
+                    else if (this->value < 10000)
+                    {
+                        tmp_x = -12;
+                    }
 
-                        string_blt(ScreenSurface, &font_small, buf, xpos + anim->x + tmp_off, ypos + tmp_y,
-                                  NDI_COLR_ORANGE, NULL, NULL);
-                        break;
+                case ANIM_SELF_DAMAGE:
+                case ANIM_DAMAGE:
+                    sprintf(buf, "%d", 0 - this->value);
 
-                    default:
-                        LOG(LOG_ERROR, "WARNING: Unknown animation type\n");
-                        break;
-                }
+                    if (this->value < 0)
+                    {
+                        string_blt(ScreenSurface, font, buf,
+                                   xpos + this->x, ypos + tmp_y,
+                                   NDI_COLR_LIME, NULL, NULL);
+                    }
+                    else
+                    {
+                        string_blt(ScreenSurface, font, buf,
+                                   xpos + this->x + tmp_x, ypos + tmp_y,
+                                   (this->type == ANIM_SELF_DAMAGE)
+                                   ? NDI_COLR_RED : NDI_COLR_ORANGE, NULL,
+                                   NULL);
+                    }
+
+                    break;
+
+                default:
+                    LOG(LOG_ERROR, "WARNING: Unknown animation type\n");
             }
         }
     }
