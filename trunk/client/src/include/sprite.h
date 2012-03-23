@@ -99,16 +99,16 @@ typedef struct _anim
 {
     struct _anim           *next;         /* pointer to next anim in que */
     struct _anim           *before;       /* pointer to anim before */
-    int                     type;
+    uint8                   type;
     uint32                  start_tick;          /* The time we started this anim */
     uint32                  last_tick;           /* This is the end-tick */
-    int                     value;                  /* this is the number to display */
+    sint16                  value;                  /* this is the number to display */
     int                     x;                      /* where we are X */
     int                     y;                      /* where we are Y */
     int                     xoff;                   /* movement in X per tick */
     float                   yoff;                   /* movement in y per tick */
-    int                     mapx;                   /* map position X */
-    int                     mapy;                   /* map position Y */
+    uint8                   mapx;                   /* map position X */
+    uint8                   mapy;                   /* map position Y */
 }
 _anim;
 
@@ -141,10 +141,10 @@ sprite_icon_type_t;
 
 extern struct _anim    *start_anim; /* anim queue of current active map */
 
-extern struct _anim    *add_anim(int type, int x, int y, int mapx, int mapy, int value);
-extern void             remove_anim(struct _anim *anim);
+extern struct _anim    *add_anim(uint8 type, uint8 mapx, uint8 mapy, sint16 value);
+extern void             remove_anim(struct _anim *this);
+extern void             delete_anims(void);
 extern void             play_anims(int mx, int my);
-extern void             delete_anim_que(void);
 extern void             show_tooltip(int mx, int my, char *text);
 extern void             sprite_init(void);
 extern void             sprite_deinit(void);

@@ -1706,7 +1706,7 @@ void Map2Cmd(char *data, int len)
     static int     map_w=0, map_h=0,mx=0,my=0;
     static int      step = 0;
     int     mapstat, probe,pos = 0;
-     int     ff0, ff1, ff2, ff3, ff_flag, xpos, ypos;
+    int     xpos, ypos;
     char mapname[SMALL_BUF],
          music[SMALL_BUF];
     sint32  face;
@@ -1796,12 +1796,6 @@ void Map2Cmd(char *data, int len)
 
         pos += 2;
 
-        /* these are the "damage tags" - shows damage an object got from somewhere.
-         * ff_flag hold the layer info and how much we got here.
-         * 0x08 means a damage comes from unknown or vanished source.
-         * this means the object is destroyed.
-         * the other flags are assigned to map layer.
-         */
         if (!(mask & 0x3f))
         {
             uint8 i;
@@ -1901,32 +1895,46 @@ void Map2Cmd(char *data, int len)
 
 
             }
-            if (ext_flag & 0x40) /* damage add on the map */
+
+            /* These are the "damage tags". */
+            if (ext_flag & 0x40)
             {
-                ff0 = ff1 = ff2 = ff3 = -1;
-                ff_flag = (uint8) (data[pos++]);
-                if (ff_flag & 0x8)
+                uint8  dmg_flag = data[pos++];
+                sint16 dmg0 = 0,
+                       dmg1 = 0,
+                       dmg2 = 0,
+                       dmg3 = 0;
+
+                if ((dmg_flag & 0x8))
                 {
-                    ff0 = GetUINT16_String(data + pos); pos += 2;
-                    add_anim(ANIM_KILL, 0, 0, xpos + x, ypos + y, ff0);
+                    dmg0 = GetUINT16_String(data + pos);
+                    pos += 2;
+                    add_anim(ANIM_KILL, x, y, dmg0);
                 }
-                if (ff_flag & 0x4)
+
+                if ((dmg_flag & 0x4))
                 {
-                    ff1 = GetSINT16_String(data + pos); pos += 2;
-                    add_anim(ANIM_SELF_DAMAGE, 0, 0, xpos + x, ypos + y, ff1);
+                    dmg1 = GetSINT16_String(data + pos);
+                    pos += 2;
+                    add_anim(ANIM_SELF_DAMAGE, x, y, dmg1);
                 }
-                if (ff_flag & 0x2)
+
+                if ((dmg_flag & 0x2))
                 {
-                    ff2 = GetSINT16_String(data + pos); pos += 2;
-                    add_anim(ANIM_DAMAGE, 0, 0, xpos + x, ypos + y, ff2);
+                    dmg2 = GetSINT16_String(data + pos);
+                    pos += 2;
+                    add_anim(ANIM_DAMAGE, x, y, dmg2);
                 }
-                if (ff_flag & 0x1)
+
+                if ((dmg_flag & 0x1))
                 {
-                    ff3 = GetSINT16_String(data + pos); pos += 2;
-                    add_anim(ANIM_DAMAGE, 0, 0, xpos + x, ypos + y, ff3);
+                    dmg3 = GetSINT16_String(data + pos);
+                    pos += 2;
+                    add_anim(ANIM_DAMAGE, x, y, dmg3);
                 }
-//                LOG(LOG_DEBUG,"Damage: ff_flag %x, (%d, %d, %d, %d)",ff_flag, ff0, ff1, ff2, ff3);
+//                LOG(LOG_DEBUG,"Damage: dmg_flag %x, (%d, %d, %d, %d)",dmg_flag, dmg0, dmg1, dmg2, dmg3);
             }
+
             if (ext_flag & 0x08)
             {
                 probe = 0;
