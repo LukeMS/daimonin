@@ -1891,9 +1891,6 @@ void Map2Cmd(char *data, int len)
                     pos += 2;
                     c = (data[pos++]);
                 }
-
-
-
             }
 
             /* These are the "damage tags". */

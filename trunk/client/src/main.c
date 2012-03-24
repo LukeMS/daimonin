@@ -1235,13 +1235,16 @@ uint8 set_video_mode(uint16 x, uint16 y)
     uint8                i;
     const SDL_VideoInfo *info;
 
-    if (!(ScreenSurface = SDL_SetVideoMode(x, y, options.used_video_bpp,
-                                           get_video_flags())))
+    if (!(ScreenSurface = SDL_SetVideoMode(x, y, 0,
+                                           ((options.fullscreen)
+                                            ? SDL_FULLSCREEN : 0) |
+                                           SDL_SWSURFACE | SDL_ANYFORMAT |
+                                           SDL_DOUBLEBUF)))
     {
         char buf[MEDIUM_BUF];
 
-        sprintf(buf, "Could not set %ux%ux%d video mode",
-                x, y, options.used_video_bpp);
+        sprintf(buf, "Could not set %ux%u @ 32bpp video mode",
+                x, y);
 
         if (x == Screendefs[0].x &&
             y == Screendefs[0].y)
@@ -1279,27 +1282,30 @@ uint8 set_video_mode(uint16 x, uint16 y)
  * internal options.mapsx and options.mapsy). Also resets face_list[]. */
 void create_map_surface(void)
 {
-    static uint16  sx = 0,
-                   sy = 0;
+    static sint16  sx = -1,
+                   sy = -1;
+    static sint8   saa = -1;
     uint16         x,
                    y;
     SDL_Surface   *surface;
 
     /* If this is our current scale and aa, nothing to do. */
     if (options.map_scalex == sx &&
-        options.map_scaley == sy)
+        options.map_scaley == sy &&
+        options.map_aa == saa)
     {
         return;
     }
 
     sx = options.map_scalex;
     sy = options.map_scaley;
+    saa = options.map_aa;
     options.mapsx = (float)sx / 100.0;
     options.mapsy = (float)sy / 100.0;
-    x = (MAP_TILE_POS_XOFF * MAP_MAX_SIZE + MAP_TILE_POS_XOFF) *
-        (uint16)options.mapsx,
-    y = (MAP_TILE_POS_YOFF * MAP_MAX_SIZE + MAP_START_YOFF) *
-        (uint16)options.mapsy;
+    x = (uint16)((MAP_TILE_POS_XOFF * MAP_MAX_SIZE + MAP_TILE_POS_XOFF) *
+                 options.mapsx);
+    y = (uint16)((MAP_TILE_POS_YOFF * MAP_MAX_SIZE + MAP_START_YOFF) *
+                 options.mapsy);
 
     if (ScreenSurfaceMap)
     {
@@ -1496,12 +1502,9 @@ int main(int argc, char *argv[])
 #if (1) /* unused. Toggle is still buggy in SDL */
         if (ToggleScreenFlag)
         {
-            uint32  flags, tf;
-            if (options.fullscreen)
-                options.fullscreen = 0;
-            else
-                options.fullscreen = 1;
-            tf = flags = get_video_flags();
+            uint32 flags = get_video_flags();
+
+            options.fullscreen = !options.fullscreen;
             attempt_fullscreen_toggle(&ScreenSurface, &flags);
             ToggleScreenFlag = 0;
         }
