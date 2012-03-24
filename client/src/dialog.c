@@ -153,6 +153,7 @@ _option             opt[]                           =
         {"Smooth zoom:", "THIS OPTION IS OBSOLETE IN 0.10.6.","PRESERVED ONLY FOR BACKWARDS COMPATIBILITY DURING DEVELOPMENT.","", "",SEL_CHECKBOX,0,1,1,0, &options.smooth,VAL_BOOL},
         {"Width scaling:", "The percentage scale of the map width.","","", "",SEL_RANGE,5,1000,5,100, &options.map_scalex,VAL_INT},
         {"Height scaling:", "The percentage scale of the map height.","","", "",SEL_RANGE,5,1000,5,100, &options.map_scaley,VAL_INT},
+        {"Map anti-aliasing:", "Whether to anti-alias the map.",".","", "",SEL_CHECKBOX,0,1,1,0, &options.map_aa,VAL_BOOL},
         {"Fog of war:", "Whether to show the 'fog of war'.","This is a way to represent the players' short-term memory. Nearby","map features that you have seen before but now can't see are shown.", "",SEL_CHECKBOX,0,1,1,1, &options.map_fogofwar,VAL_BOOL},
         {"#", "","","", "",0,0,0,0,0, NULL,0},
         /* End of Page */
