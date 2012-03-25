@@ -1408,17 +1408,20 @@ void set_traped_flag(object *op)
  * magical container. This function returns FALSE when op can be
  * put in env of TRUE when both are magical.
  */
-int check_magical_container(object *op, object *env)
+int check_magical_container(const object *op, const object *env)
 {
-
     /* is op a magical container? */
     if(!op || op->type != CONTAINER || op->weapon_speed == 1.0f)
+    {
         return FALSE;
+    }
 
     for(;env;env = env->env)
     {
-        if((env->type == CONTAINER && env->weapon_speed != 1.0f) || (op->type == CONTAINER && op->weapon_speed != 1.0f))
+        if (env->type == CONTAINER && env->weapon_speed != 1.0f)
+        {
             return TRUE;
+        }
     }
 
     return FALSE;
