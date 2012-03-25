@@ -2199,11 +2199,22 @@ int manual_apply(object *op, object *tmp, int aflag)
 
         case EXIT:
           if (op->type != PLAYER)
+          {
               return 0;
+          }
+
+          if (QUERY_FLAG(op, FLAG_PARALYZED))
+          {
+              new_draw_info(NDI_UNIQUE, 0, op, "You try to use the %s, but are unable to move your legs.", tmp->name);
+              return 1;
+          }
+
           if(trigger_object_plugin_event(
                       EVENT_APPLY, tmp, op, NULL,
                       NULL, &aflag, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
+          {
               return 4; /* 1 = do not write an error message to the player */
+          }
               enter_map_by_exit(op, tmp);
           return 4;
 
