@@ -630,6 +630,11 @@ int get_friendship(object *op, object *other)
     if(other->head)
         other = other->head;
 
+    if (op == other)
+    {
+        return FRIENDSHIP_HELP;
+    }
+
     if(op->type == MONSTER)
     {
         struct mob_known_obj *known;
