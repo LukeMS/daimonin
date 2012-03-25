@@ -118,8 +118,6 @@ _screensize Screendefs[16] =
 void    init_game_data(void);
 uint8 game_status_chain(void);
 
-_vimmsg vim[MAX_NROF_VIM];
-
 static void DisplayLayer1(void);   /* map & player */
 static void DisplayLayer2(void);   /* frame (background image) */
 static void DisplayLayer3(void);   /* widgets (graphical user interface) */
@@ -222,7 +220,7 @@ void init_game_data(void)
     init_player_data();
     gameserver_init();
     reset_input_mode();
-    start_anim = NULL; /* anim queue of current active map */
+    delete_vims();
     clear_group();
     interface_mode = GUI_NPC_MODE_NO;
     map_transfer_flag = 0;
@@ -1742,54 +1740,6 @@ int main(int argc, char *argv[])
 #endif
         }
 
-        /* TODO: This should be moved to the anim functions, but for that we
-         * have to rewrite the anim stuff to handle strings, and different
-         * speeds, and so on... */
-        if (GameStatus == GAME_STATUS_PLAY)
-        {
-            uint8 i;
-
-            for (i = 0; i < MAX_NROF_VIM; i++)
-            {
-                _BLTFX bmbltfx;
-                int    bmoff;
-
-                if (!vim[i].active)
-                {
-                    continue;
-                }
-
-                if (LastTick - vim[i].starttick >= 3000)
-                {
-                    FREE(vim[i].msg);
-                    vim[i].active = 0;
-
-                    continue;
-                }
-
-                if (LastTick - vim[i].starttick <= 2000)
-                {
-                    bmbltfx.alpha = 255;
-                }
-                else
-                {
-                    bmbltfx.alpha -= (int)(255.0f * ((float)(LastTick -
-                                     vim[i].starttick - 2000) / 1000.0f));
-                }
-
-                bmbltfx.flags = BLTFX_FLAG_SRCALPHA;
-                bmoff = (font_large.line_height * i) + (int)((50.0f / 3.0f) *
-                        ((float)(LastTick - vim[i].starttick) / 1000.0f) *
-                        ((float)(LastTick - vim[i].starttick) / 1000.0f) +
-                        ((int)(150.0f * ((float)(LastTick - vim[i].starttick) /
-                        3000.0f))));
-                map_udate_flag = 2;
-                EMBOSS(ScreenSurface, &font_large, vim[i].msg,
-                       400 - (string_width(&font_large, vim[i].msg) / 2),
-                       300 - bmoff, vim[i].colr, NULL, &bmbltfx);
-            }
-        }
-
         FlipScreen();
 #ifdef PROFILING
         LOG(LOG_MSG, "[Prof] mainloop: %d\n", SDL_GetTicks() - ts);
@@ -2417,9 +2367,7 @@ static void DisplayLayer1(void)
     box.x = (ScreenSurface->w - ScreenSurfaceMap->w) / 2;
     box.y = (ScreenSurface->h - ScreenSurfaceMap->h) / 2;
     SDL_BlitSurface(ScreenSurfaceMap, NULL, ScreenSurface, &box);
-
-    /* the damage numbers */
-    play_anims(0,0);
+    play_vims();
 
     /* draw warning-icons above player */
     if ((gfx_toggle++ & 63) < 25)

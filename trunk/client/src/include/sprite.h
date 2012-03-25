@@ -91,27 +91,6 @@ typedef struct _Sprite
 }
 _Sprite;
 
-#define ANIM_DAMAGE         1
-#define ANIM_KILL           2
-#define ANIM_SELF_DAMAGE    3
-
-typedef struct _anim
-{
-    struct _anim           *next;         /* pointer to next anim in que */
-    struct _anim           *before;       /* pointer to anim before */
-    uint8                   type;
-    uint32                  start_tick;          /* The time we started this anim */
-    uint32                  last_tick;           /* This is the end-tick */
-    sint16                  value;                  /* this is the number to display */
-    int                     x;                      /* where we are X */
-    int                     y;                      /* where we are Y */
-    int                     xoff;                   /* movement in X per tick */
-    float                   yoff;                   /* movement in y per tick */
-    uint8                   mapx;                   /* map position X */
-    uint8                   mapy;                   /* map position Y */
-}
-_anim;
-
 typedef struct _imagestats
 {
     uint16 bitmaps;
@@ -139,12 +118,41 @@ typedef enum sprite_icon_type_t
 }
 sprite_icon_type_t;
 
-extern struct _anim    *start_anim; /* anim queue of current active map */
+typedef enum vim_mode_t
+{
+    VIM_MODE_KILL,
+    VIM_MODE_DAMAGE_OTHER,
+    VIM_MODE_DAMAGE_SELF,
+    VIM_MODE_ARBITRARY,
+}
+vim_mode_t;
 
-extern struct _anim    *add_anim(uint8 type, uint8 mapx, uint8 mapy, sint16 value);
-extern void             remove_anim(struct _anim *this);
-extern void             delete_anims(void);
-extern void             play_anims(int mx, int my);
+typedef struct vim_t
+{
+    struct vim_t *next;
+    struct vim_t *prev;
+
+    vim_mode_t    mode;
+    uint8         mapx;
+    uint8         mapy;
+    char         *text;
+    uint32        colr;
+    uint16        lifetime;
+    uint32        start;
+    int           x;
+    int           y;
+    int           xoff;
+    float         yoff;
+}
+vim_t;
+
+extern vim_t *vims;
+
+extern vim_t *add_vim(vim_mode_t mode, uint8 mapx, uint8 mapy, char *text,
+                      uint32 colr, uint16 lifetime);
+extern void   remove_vim(vim_t *this);
+extern void   delete_vims(void);
+extern void   play_vims(void);
 extern void             show_tooltip(int mx, int my, char *text);
 extern void             sprite_init(void);
 extern void             sprite_deinit(void);

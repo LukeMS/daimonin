@@ -68,19 +68,6 @@ typedef struct _keymap
 }
 _keymap;
 
-typedef struct _vimmsg
-{
-    char    *msg;
-    uint32   colr;
-    uint32   starttick;
-    uint8    active;
-}
-_vimmsg;
-
-#define MAX_NROF_VIM 32
-
-extern _vimmsg vim[MAX_NROF_VIM];
-
 extern  Uint32              sdl_dgreen, sdl_dred, sdl_gray1, sdl_gray2, sdl_gray3, sdl_gray4;
 extern int                  mb_clicked;
 
