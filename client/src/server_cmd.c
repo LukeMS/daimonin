@@ -821,38 +821,7 @@ void DrawInfoCmd2(char *data, int len)
     /* Do we have a VIM? */
     if ((flags & NDI_FLAG_VIM))
     {
-        char *vimbuf;
-
-        MALLOC_STRING(vimbuf, buf);
-
-        if (vimbuf)
-        {
-            char *p;
-
-            for (p = strrchr(vimbuf, '\n'); ;
-                 p = strrchr(vimbuf, '\n'))
-            {
-                uint8 i;
-
-                if (p)
-                {
-                    *(p++) = '\0';
-                }
-                else
-                {
-                    p = vimbuf;
-                }
-
-                add_vim(VIM_MODE_ARBITRARY, 8, 8, p, colr, 3000);
-
-                if (p == vimbuf)
-                {
-                    break;
-                }
-            }
-
-            FREE(vimbuf);
-        }
+        add_vim(VIM_MODE_ARBITRARY, 8, 8, buf, colr, 3000);
     }
 
     /* TODO: This is a horrid compatibility hack. In 0.11.0 we will do this
