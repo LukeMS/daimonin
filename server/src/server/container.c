@@ -434,15 +434,27 @@ static void pick_up_object(object *pl, object *op, object *tmp, uint32 nrof)
 int sack_can_hold(const object *const pl, const object *const sack, const object *const op, const uint32 nrof)
 {
     if (!QUERY_FLAG(sack, FLAG_APPLIED))
+    {
         new_draw_info(NDI_UNIQUE, 0, pl, "The %s is not active.", query_short_name(sack, pl));
+    }
     else if (sack == op)
+    {
         new_draw_info(NDI_UNIQUE, 0, pl, "You can't put the %s into itself.", query_short_name(sack, pl));
+    }
     else if ((sack->race && (sack->sub_type1 & 1) != ST1_CONTAINER_CORPSE)
         && (sack->race != op->race || op->type == CONTAINER || (sack->stats.food && sack->stats.food != op->type)))
+    {
         new_draw_info(NDI_UNIQUE, 0, pl, "You can put only %s into the %s.", sack->race,
                              query_short_name(sack, pl));
+    }
     else if (op->type == SPECIAL_KEY && sack->slaying && op->slaying)
+    {
         new_draw_info(NDI_UNIQUE, 0, pl, "You don't want put the key into %s.", query_short_name(sack, pl));
+    }
+    else if (check_magical_container(op, sack))
+    {
+        new_draw_info(NDI_UNIQUE, 0, pl, "You can't put a magical container in another!");
+    }
     else
     {
         if(sack->weight_limit == 0 || (sack->weight_limit > 0 && sack->weight_limit > sack->carrying + (sint32)
@@ -498,7 +510,9 @@ void pick_up(object *const op, object *const ori)
     }
 
     if (tmp->type == CONTAINER)
+    {
         container_unlink(NULL, tmp);
+    }
 
     /* Try to catch it. */
     tmp_map = tmp->map;
@@ -520,7 +534,9 @@ void pick_up(object *const op, object *const ori)
     {
         alt = CONTR(op)->container;
         if (alt != tmp->env && !sack_can_hold(op, alt, tmp, count))
+        {
             goto leave;
+        }
     }
     else
     {
@@ -601,15 +617,9 @@ void put_object_in_sack(object *const op, object *const sack, object *tmp, const
             return;
         }
     }
+
     if (sack == tmp)
         return;
-
-    if (check_magical_container(tmp,sack))
-    {
-        if(op->type == PLAYER)
-            new_draw_info (NDI_UNIQUE, 0, op, "You can't put a magical container in another!");
-        return; /* Can't put an object in itself */
-    }
 
     if (sack->type != CONTAINER)
     {
