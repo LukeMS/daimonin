@@ -44,7 +44,7 @@ static SDL_Surface *DarkMask[DARK_LEVELS] =
     NULL,
 };
 
-struct _anim   *start_anim; /* anim queue of current active map */
+struct vim_t *vims;
 
 struct _imagestats  ImageStats;
 
@@ -94,7 +94,7 @@ void sprite_deinit(void)
         DarkMask[i] = NULL;
     }
 
-    delete_anims();
+    delete_vims();
 }
 
 _Sprite *sprite_load(char *fname, SDL_RWops *rwop)
@@ -1842,27 +1842,28 @@ static int zoomSurfaceRGBA(SDL_Surface * src, SDL_Surface * dst, int flipx, int 
     return (0); 	 
 }
 
-struct _anim *add_anim(uint8 type, uint8 mapx, uint8 mapy, sint16 value)
+vim_t *add_vim(vim_mode_t mode, uint8 mapx, uint8 mapy, char *text,
+               uint32 colr, uint16 lifetime)
 {
-    struct _anim *new,
-                 *last;
-    uint16        num_ticks = 850;
+    vim_t *new,
+          *last;
 
-    /* Allocate and assign a new anim. */
-    MALLOC(new, sizeof(struct _anim));
-    new->type = type;
+    /* Allocate and assign a new vim. */
+    MALLOC(new, sizeof(vim_t));
+    new->mode = mode;
+    new->mapx = mapx;
+    new->mapy = mapy;
+    MALLOC_STRING(new->text, text);
+    new->colr = colr;
+    new->lifetime = lifetime;
+    new->start = LastTick;
     new->x = 0;
     new->y = -5;
     new->xoff = 0;
-    new->yoff = (25.0 / (float)num_ticks); /* 850 ticks 25 pixel move up */
-    new->mapx = mapx;
-    new->mapy = mapy;
-    new->value = value;
-    new->start_tick = LastTick;
-    new->last_tick = new->start_tick + num_ticks;
+    new->yoff = 25.0 / lifetime;
 
     /* Add it to the end of the queue. */
-    for (last = start_anim; last; last = last->next)
+    for (last = vims; last; last = last->next)
     {
         if (!last->next)
         {
@@ -1872,23 +1873,23 @@ struct _anim *add_anim(uint8 type, uint8 mapx, uint8 mapy, sint16 value)
 
     if (!last)
     {
-        start_anim = new;
+        vims = new;
     }
     else
     {
         last->next = new;
     }
 
-    new->before = last;
+    new->prev = last;
     new->next = NULL;
 
     return new;
 }
 
-void remove_anim(struct _anim *this)
+void remove_vim(vim_t *this)
 {
-    struct _anim *prev,
-                 *next;
+    vim_t *prev,
+          *next;
 
     /* Sanity check. */
     if (!this)
@@ -1896,9 +1897,10 @@ void remove_anim(struct _anim *this)
         return;
     }
 
-    /* Remove anim and stitch up any hole. */
-    prev = this->before;
+    /* Remove vim and stitch up any hole. */
+    prev = this->prev;
     next = this->next;
+    FREE(this->text);
     FREE(this);
 
     if (prev)
@@ -1907,119 +1909,92 @@ void remove_anim(struct _anim *this)
     }
     else
     {
-        start_anim = next;
+        vims = next;
     }
 
     if (next)
     {
-        next->before = prev;
+        next->prev = prev;
     }
 }
 
-void delete_anims(void)
+void delete_vims(void)
 {
-    struct _anim *this,
-                 *next;
+    vim_t *this,
+          *next;
 
-    for (this = start_anim; this; this = next)
+    for (this = vims; this; this = next)
     {
         next = this->next;
+        FREE(this->text);
         FREE(this);
     }
 
-    start_anim = NULL;
+    vims = NULL;
 }
 
-/* walk through the map anim list */
-void play_anims(int mx, int my)
+void play_vims(void)
 {
-    struct _anim *this,
-                 *next;
-    char          buf[TINY_BUF];
+    vim_t *this,
+          *next;
+    char   buf[TINY_BUF];
 
-    for (this = start_anim; this; this = next)
+    for (this = vims; this; this = next)
     {
+        uint16  now;
+        sint16  tmp_x,
+                tmp_y,
+                xpos,
+                ypos;
+        _font  *font;
+
         next = this->next;
 
-        if (LastTick > this->last_tick)  /* have we passed the last tick */
+        if (LastTick > this->start + this->lifetime)
         {
-            remove_anim(this);
+            remove_vim(this);
+
+            continue;
+        }
+
+        now = LastTick - this->start;
+        tmp_x = 0;
+        tmp_y = this->y - (sint16)(now * this->yoff);
+        xpos = MAP_XPOS(this->mapx, this->mapy);
+        ypos = MAP_YPOS(this->mapx, this->mapy);
+
+        if (now <= this->lifetime * 0.25)
+        {
+           font = &font_large;
+        }
+        else if (now <= this->lifetime * 0.50)
+        {
+           font = &font_medium;
+        }
+        else if (now <= this->lifetime * 0.75)
+        {
+           font = &font_small;
         }
         else
         {
-            uint32  lifetime = this->last_tick - this->start_tick,
-                    now = LastTick - this->start_tick;
-            sint16  tmp_x = 0,
-                    tmp_y = this->y - (sint16)(now * this->yoff),
-                    xpos = MAP_XPOS(this->mapx, this->mapy),
-                    ypos = MAP_YPOS(this->mapx, this->mapy);
-            _font  *font;
+           font = &font_tiny;
+        }
 
-            if (now <= lifetime * 0.25)
-            {
-               font = &font_large;
-            }
-            else if (now <= lifetime * 0.50)
-            {
-               font = &font_medium;
-            }
-            else if (now <= lifetime * 0.75)
-            {
-               font = &font_small;
-            }
-            else
-            {
-               font = &font_tiny;
-            }
+        switch (this->mode)
+        {
+            case VIM_MODE_KILL:
+                sprite_blt(skin_sprites[SKIN_SPRITE_DEATH],
+                           xpos + this->x - 5, ypos + tmp_y - 4, NULL,
+                           NULL);
 
-            switch (this->type)
-            {
-                case ANIM_KILL:
-                    sprite_blt(skin_sprites[SKIN_SPRITE_DEATH],
-                               xpos + this->x - 5, ypos + tmp_y - 4, NULL,
-                               NULL);
+            case VIM_MODE_DAMAGE_OTHER:
+            case VIM_MODE_DAMAGE_SELF:
+            case VIM_MODE_ARBITRARY:
+                string_blt(ScreenSurface, font, this->text,
+                           xpos + this->x + tmp_x, ypos + tmp_y,
+                           this->colr, NULL, NULL);
 
-                    if (this->value < 10)
-                    {
-                        tmp_x = 6;
-                    }
-                    else if (this->value < 100)
-                    {
-                        tmp_x = 0;
-                    }
-                    else if (this->value < 1000)
-                    {
-                        tmp_x = -6;
-                    }
-                    else if (this->value < 10000)
-                    {
-                        tmp_x = -12;
-                    }
-
-                case ANIM_SELF_DAMAGE:
-                case ANIM_DAMAGE:
-                    sprintf(buf, "%d", 0 - this->value);
-
-                    if (this->value < 0)
-                    {
-                        string_blt(ScreenSurface, font, buf,
-                                   xpos + this->x, ypos + tmp_y,
-                                   NDI_COLR_LIME, NULL, NULL);
-                    }
-                    else
-                    {
-                        string_blt(ScreenSurface, font, buf,
-                                   xpos + this->x + tmp_x, ypos + tmp_y,
-                                   (this->type == ANIM_SELF_DAMAGE)
-                                   ? NDI_COLR_RED : NDI_COLR_ORANGE, NULL,
-                                   NULL);
-                    }
-
-                    break;
-
-                default:
-                    LOG(LOG_ERROR, "WARNING: Unknown animation type\n");
-            }
+                break;
         }
     }
 }

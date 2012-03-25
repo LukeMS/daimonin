@@ -818,10 +818,7 @@ void DrawInfoCmd2(char *data, int len)
         buf[0] = '\0';
     }
 
-    /* Do we have a VIM? Put it into a non-active vimmsg. */
-    /* TODO: This should be moved to the anim functions, but for that we have
-     * to rewrite the anim stuff to handle strings, and different speeds, and
-     * so on... */
+    /* Do we have a VIM? */
     if ((flags & NDI_FLAG_VIM))
     {
         char *vimbuf;
@@ -846,31 +843,7 @@ void DrawInfoCmd2(char *data, int len)
                     p = vimbuf;
                 }
 
-                for (i = 0; i < MAX_NROF_VIM; i++)
-                {
-                    if (vim[i].active)
-                    {
-                        continue;
-                    }
-
-                    MALLOC_STRING(vim[i].msg, p);
-
-                    if (vim[i].msg)
-                    {
-                        vim[i].colr = colr;
-                        vim[i].starttick = LastTick;
-                        vim[i].active = 1;
-                    }
-
-                    break;
-                }
-
-                if (i == MAX_NROF_VIM)
-                {
-                    LOG(LOG_DEBUG, "DEBUG:: Not enough VIM space, please report!\n");
-
-                    break;
-                }
+                add_vim(VIM_MODE_ARBITRARY, 8, 8, p, colr, 3000);
 
                 if (p == vimbuf)
                 {
@@ -1901,33 +1874,42 @@ void Map2Cmd(char *data, int len)
                        dmg1 = 0,
                        dmg2 = 0,
                        dmg3 = 0;
+                char   dmg_buf[TINY_BUF];
 
                 if ((dmg_flag & 0x8))
                 {
                     dmg0 = GetUINT16_String(data + pos);
+                    sprintf(dmg_buf, "%d", dmg0);
                     pos += 2;
-                    add_anim(ANIM_KILL, x, y, dmg0);
+                    add_vim(VIM_MODE_KILL, x, y, dmg_buf, NDI_COLR_ORANGE,
+                            850);
                 }
 
                 if ((dmg_flag & 0x4))
                 {
                     dmg1 = GetSINT16_String(data + pos);
+                    sprintf(dmg_buf, "%d", dmg1);
                     pos += 2;
-                    add_anim(ANIM_SELF_DAMAGE, x, y, dmg1);
+                    add_vim(VIM_MODE_DAMAGE_SELF, x, y, dmg_buf,
+                            (dmg1 >= 0) ? NDI_COLR_RED : NDI_COLR_LIME, 850);
                 }
 
                 if ((dmg_flag & 0x2))
                 {
                     dmg2 = GetSINT16_String(data + pos);
+                    sprintf(dmg_buf, "%d", dmg2);
                     pos += 2;
-                    add_anim(ANIM_DAMAGE, x, y, dmg2);
+                    add_vim(VIM_MODE_DAMAGE_OTHER, x, y, dmg_buf,
+                            NDI_COLR_YELLOW, 850);
                 }
 
                 if ((dmg_flag & 0x1))
                 {
                     dmg3 = GetSINT16_String(data + pos);
+                    sprintf(dmg_buf, "%d", dmg3);
                     pos += 2;
-                    add_anim(ANIM_DAMAGE, x, y, dmg3);
+                    add_vim(VIM_MODE_DAMAGE_OTHER, x, y, dmg_buf,
+                            NDI_COLR_ORANGE, 850);
                 }
 //                LOG(LOG_DEBUG,"Damage: dmg_flag %x, (%d, %d, %d, %d)",dmg_flag, dmg0, dmg1, dmg2, dmg3);
             }
