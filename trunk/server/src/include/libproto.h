@@ -124,7 +124,7 @@ extern char            *describe_item(const object *const op);
 extern int              need_identify(const object *const op);
 extern void             identify(object *op);
 extern void             set_traped_flag(object *op);
-extern int              check_magical_container(object *op, object *env);
+extern int              check_magical_container(const object *op, const object *env);
 /* links.c */
 extern objectlink      *get_objectlink(int id);
 extern oblinkpt        *get_objectlinkpt(void);
