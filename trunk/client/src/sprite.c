@@ -1859,7 +1859,7 @@ vim_t *add_vim(vim_mode_t mode, uint8 mapx, uint8 mapy, char *text,
     new->start = LastTick;
     new->x = MAP_XPOS(mapx, mapy);
     new->y = MAP_YPOS(mapx, mapy);
-    new->xoff = 0;
+    new->xoff = 0.0;
     new->yoff = 25.0 / lifetime;
 
     /* Add it to the end of the queue. */
@@ -1942,8 +1942,8 @@ void play_vims(void)
     for (this = vims; this; this = next)
     {
         uint16  now;
-        sint16  tmp_x,
-                tmp_y;
+        sint16  xoff,
+                yoff;
         _font  *font;
 
         next = this->next;
@@ -1956,8 +1956,8 @@ void play_vims(void)
         }
 
         now = LastTick - this->start;
-        tmp_x = 0;
-        tmp_y = -5- (sint16)(now * this->yoff);
+        xoff = 0;
+        yoff = (sint16)(now * this->yoff);
 
         if (now <= this->lifetime * 0.25)
         {
@@ -1980,13 +1980,13 @@ void play_vims(void)
         {
             case VIM_MODE_KILL:
                 sprite_blt(skin_sprites[SKIN_SPRITE_DEATH],
-                           this->x, this->y + tmp_y, NULL, NULL);
+                           this->x + xoff, this->y - yoff, NULL, NULL);
 
             case VIM_MODE_DAMAGE_OTHER:
             case VIM_MODE_DAMAGE_SELF:
             case VIM_MODE_ARBITRARY:
                 string_blt(ScreenSurface, font, this->text,
-                           this->x + tmp_x, this->y + tmp_y, this->colr, NULL,
+                           this->x + xoff, this->y - yoff, this->colr, NULL,
                            NULL);
         }
     }

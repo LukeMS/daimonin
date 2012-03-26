@@ -141,7 +141,7 @@ typedef struct vim_t
     uint32        start;
     sint16        x;
     sint16        y;
-    int           xoff;
+    float         xoff;
     float         yoff;
 }
 vim_t;
