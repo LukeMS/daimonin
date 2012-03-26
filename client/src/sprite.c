@@ -2029,12 +2029,12 @@ void play_vims(void)
         }
 
         now = LastTick - this->start;
+        sf = 1 - 1 / ((float)this->lifetime / (float)now);
+        surface = zoomSurface(this->surface, sf, sf, 0);
         xoff = (sint16)(now * this->xoff);
         yoff = (sint16)(now * this->yoff);
-        dst.x = this->x + xoff;
-        dst.y = this->y + yoff;
-        sf = 1 - 1 / ((float)this->lifetime / (float)now);
-        surface = SPG_Scale(this->surface, sf, sf);
+        dst.x = (sint16)(this->x + xoff + (this->surface->w - surface->w) * 0.5);
+        dst.y = (sint16)(this->y + yoff + (this->surface->h - surface->h) * 0.5);
         SDL_BlitSurface(surface, NULL, ScreenSurface, &dst);
         SDL_FreeSurface(surface);
     }
