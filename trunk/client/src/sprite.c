@@ -1859,8 +1859,21 @@ vim_t *add_vim(vim_mode_t mode, uint8 mapx, uint8 mapy, char *text,
     new->start = LastTick;
     new->x = MAP_XPOS(mapx, mapy);
     new->y = MAP_YPOS(mapx, mapy);
-    new->xoff = 0.0;
-    new->yoff = 25.0 / lifetime;
+
+    /* Arbitrary VIMs never deviate horizontally. */
+    if (new->mode == VIM_MODE_ARBITRARY)
+    {
+        new->xoff = 0.0;
+    }
+    /* But others (ie, damage) may drift left or right. */
+    else
+    {
+        new->xoff = (float)(((rand() % 21) + 5) * ((rand() % 3) - 1)) /
+                    (float)lifetime;
+    }
+
+    /* VIMs always float up but by how much is semi-random. */
+    new->yoff = -(float)((rand() % 21) + 5) / (float)lifetime;
 
     /* Add it to the end of the queue. */
     for (last = vims; last; last = last->next)
@@ -1956,7 +1969,7 @@ void play_vims(void)
         }
 
         now = LastTick - this->start;
-        xoff = 0;
+        xoff = (sint16)(now * this->xoff);
         yoff = (sint16)(now * this->yoff);
 
         if (now <= this->lifetime * 0.25)
@@ -1980,13 +1993,13 @@ void play_vims(void)
         {
             case VIM_MODE_KILL:
                 sprite_blt(skin_sprites[SKIN_SPRITE_DEATH],
-                           this->x + xoff, this->y - yoff, NULL, NULL);
+                           this->x + xoff, this->y + yoff, NULL, NULL);
 
             case VIM_MODE_DAMAGE_OTHER:
             case VIM_MODE_DAMAGE_SELF:
             case VIM_MODE_ARBITRARY:
                 string_blt(ScreenSurface, font, this->text,
-                           this->x + xoff, this->y - yoff, this->colr, NULL,
+                           this->x + xoff, this->y + yoff, this->colr, NULL,
                            NULL);
         }
     }
