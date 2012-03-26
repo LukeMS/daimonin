@@ -139,8 +139,8 @@ typedef struct vim_t
     uint32        colr;
     uint16        lifetime;
     uint32        start;
-    int           x;
-    int           y;
+    sint16        x;
+    sint16        y;
     int           xoff;
     float         yoff;
 }
