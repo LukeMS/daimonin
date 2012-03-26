@@ -1857,7 +1857,7 @@ void Map2Cmd(char *data, int len)
                 if ((dmg_flag & 0x4))
                 {
                     dmg1 = GetSINT16_String(data + pos);
-                    sprintf(dmg_buf, "%d", dmg1);
+                    sprintf(dmg_buf, "%d", ABS(dmg1));
                     pos += 2;
                     add_vim(VIM_MODE_DAMAGE_SELF, x, y, dmg_buf,
                             (dmg1 >= 0) ? NDI_COLR_RED : NDI_COLR_LIME, 850);
