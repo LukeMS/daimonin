@@ -1845,20 +1845,81 @@ static int zoomSurfaceRGBA(SDL_Surface * src, SDL_Surface * dst, int flipx, int 
 vim_t *add_vim(vim_mode_t mode, uint8 mapx, uint8 mapy, char *text,
                uint32 colr, uint16 lifetime)
 {
-    vim_t *new,
-          *last;
+    vim_t       *new,
+                *last;
+    uint16       w = 0,
+                 h = 0,
+                 drift;
+    SDL_Surface *surface;
 
     /* Allocate and assign a new vim. */
     MALLOC(new, sizeof(vim_t));
     new->mode = mode;
     new->mapx = mapx;
     new->mapy = mapy;
-    MALLOC_STRING(new->text, text);
-    new->colr = colr;
+
+    /* Kill VIMs have a bg bitmap. */
+    if (mode == VIM_MODE_KILL)
+    {
+        uint16   len = (uint16)string_width(&font_large, text);
+        SDL_Rect dst;
+
+        w = (uint16)MAX(len, skin_sprites[SKIN_SPRITE_DEATH]->bitmap->w);
+        h = (uint16)MAX(font_large.line_height,
+                        skin_sprites[SKIN_SPRITE_DEATH]->bitmap->h);
+        surface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_SRCALPHA, w, h, 32,
+                                       0x000000ff, 0x0000ff00, 0x00ff0000,
+                                       0xff000000);
+        dst.x = (w - skin_sprites[SKIN_SPRITE_DEATH]->bitmap->w) / 2;
+        dst.y = (h - skin_sprites[SKIN_SPRITE_DEATH]->bitmap->h) / 2;
+        SDL_BlitSurface(skin_sprites[SKIN_SPRITE_DEATH]->bitmap, NULL, surface,
+                        &dst);
+        dst.x = (w - len) / 2;
+        dst.y = (h - font_large.line_height) / 2;
+        string_blt(surface, &font_large, text, dst.x, dst.y, colr, NULL, NULL);
+    }
+    else
+    {
+        /* Arbitrary VIMS may be multiple lines. */
+        if (mode == VIM_MODE_ARBITRARY)
+        {
+            char  buf[MEDIUM_BUF],
+                 *cp;
+
+            sprintf(buf, "%s", text);
+
+            for (cp = strtok(buf, "\n"); cp; cp = strtok(NULL, "\n"))
+            {
+                uint16 len = (uint16)string_width(&font_large, cp);
+
+                if (len > w)
+                {
+                    w = len;
+                }
+
+                h += (uint16)font_large.line_height;
+            }
+        }
+        else
+        {
+            w = (uint16)string_width(&font_large, text);
+            h = (uint16)font_large.line_height;
+        }
+
+        surface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_SRCALPHA, w, h, 32,
+                                       0x000000ff, 0x0000ff00, 0x00ff0000,
+                                       0xff000000);
+        string_blt(surface, &font_large, text, 0, 0, colr, NULL, NULL);
+    }
+
+    new->surface = surface;
     new->lifetime = lifetime;
     new->start = LastTick;
-    new->x = MAP_XPOS(mapx, mapy);
+    new->x = MAP_XPOS(mapx, mapy) - w * 0.5;
     new->y = MAP_YPOS(mapx, mapy);
+
+    /* The number of pixeos drift (both x and y) per cycle. */
+    drift = rand() % (uint16)(lifetime * 0.03) + 10;
 
     /* Arbitrary VIMs never deviate horizontally. */
     if (new->mode == VIM_MODE_ARBITRARY)
@@ -1868,12 +1929,11 @@ vim_t *add_vim(vim_mode_t mode, uint8 mapx, uint8 mapy, char *text,
     /* But others (ie, damage) may drift left or right. */
     else
     {
-        new->xoff = (float)(((rand() % 21) + 5) * ((rand() % 3) - 1)) /
-                    (float)lifetime;
+        new->xoff = (float)(drift * ((rand() % 3) - 1)) / (float)lifetime;
     }
 
     /* VIMs always float up but by how much is semi-random. */
-    new->yoff = -(float)((rand() % 21) + 5) / (float)lifetime;
+    new->yoff = -(float)drift / (float)lifetime;
 
     /* Add it to the end of the queue. */
     for (last = vims; last; last = last->next)
@@ -1913,7 +1973,7 @@ void remove_vim(vim_t *this)
     /* Remove vim and stitch up any hole. */
     prev = this->prev;
     next = this->next;
-    FREE(this->text);
+    SDL_FreeSurface(this->surface);
     FREE(this);
 
     if (prev)
@@ -1939,11 +1999,9 @@ void delete_vims(void)
     for (this = vims; this; this = next)
     {
         next = this->next;
-        FREE(this->text);
+        SDL_FreeSurface(this->surface);
         FREE(this);
     }
-
-    vims = NULL;
 }
 
 void play_vims(void)
@@ -1954,10 +2012,12 @@ void play_vims(void)
 
     for (this = vims; this; this = next)
     {
-        uint16  now;
-        sint16  xoff,
-                yoff;
-        _font  *font;
+        uint16       now;
+        sint16       xoff,
+                     yoff;
+        SDL_Rect     dst;
+        float        sf;
+        SDL_Surface *surface;
 
         next = this->next;
 
@@ -1971,37 +2031,12 @@ void play_vims(void)
         now = LastTick - this->start;
         xoff = (sint16)(now * this->xoff);
         yoff = (sint16)(now * this->yoff);
-
-        if (now <= this->lifetime * 0.25)
-        {
-           font = &font_large;
-        }
-        else if (now <= this->lifetime * 0.50)
-        {
-           font = &font_medium;
-        }
-        else if (now <= this->lifetime * 0.75)
-        {
-           font = &font_small;
-        }
-        else
-        {
-           font = &font_tiny;
-        }
-
-        switch (this->mode)
-        {
-            case VIM_MODE_KILL:
-                sprite_blt(skin_sprites[SKIN_SPRITE_DEATH],
-                           this->x + xoff, this->y + yoff, NULL, NULL);
-
-            case VIM_MODE_DAMAGE_OTHER:
-            case VIM_MODE_DAMAGE_SELF:
-            case VIM_MODE_ARBITRARY:
-                string_blt(ScreenSurface, font, this->text,
-                           this->x + xoff, this->y + yoff, this->colr, NULL,
-                           NULL);
-        }
+        dst.x = this->x + xoff;
+        dst.y = this->y + yoff;
+        sf = 1 - 1 / ((float)this->lifetime / (float)now);
+        surface = SPG_Scale(this->surface, sf, sf);
+        SDL_BlitSurface(surface, NULL, ScreenSurface, &dst);
+        SDL_FreeSurface(surface);
     }
 }
 

@@ -135,8 +135,7 @@ typedef struct vim_t
     vim_mode_t    mode;
     uint8         mapx;
     uint8         mapy;
-    char         *text;
-    uint32        colr;
+    SDL_Surface  *surface;
     uint16        lifetime;
     uint32        start;
     sint16        x;
