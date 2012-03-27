@@ -1843,12 +1843,12 @@ static int zoomSurfaceRGBA(SDL_Surface * src, SDL_Surface * dst, int flipx, int 
 }
 
 vim_t *add_vim(vim_mode_t mode, uint8 mapx, uint8 mapy, char *text,
-               uint32 colr, uint16 lifetime)
+               uint32 colr, uint16 lifetime, uint16 delay)
 {
     vim_t       *new,
                 *last;
-    uint16       w = 0,
-                 h = 0,
+    uint16       w,
+                 h,
                  drift;
     SDL_Surface *surface;
 
@@ -1880,32 +1880,8 @@ vim_t *add_vim(vim_mode_t mode, uint8 mapx, uint8 mapy, char *text,
     }
     else
     {
-        /* Arbitrary VIMS may be multiple lines. */
-        if (mode == VIM_MODE_ARBITRARY)
-        {
-            char  buf[MEDIUM_BUF],
-                 *cp;
-
-            sprintf(buf, "%s", text);
-
-            for (cp = strtok(buf, "\n"); cp; cp = strtok(NULL, "\n"))
-            {
-                uint16 len = (uint16)string_width(&font_large, cp);
-
-                if (len > w)
-                {
-                    w = len;
-                }
-
-                h += (uint16)font_large.line_height;
-            }
-        }
-        else
-        {
-            w = (uint16)string_width(&font_large, text);
-            h = (uint16)font_large.line_height;
-        }
-
+        w = (uint16)string_width(&font_large, text);
+        h = (uint16)font_large.line_height;
         surface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_SRCALPHA, w, h, 32,
                                        0x000000ff, 0x0000ff00, 0x00ff0000,
                                        0xff000000);
@@ -1914,7 +1890,7 @@ vim_t *add_vim(vim_mode_t mode, uint8 mapx, uint8 mapy, char *text,
 
     new->surface = surface;
     new->lifetime = lifetime;
-    new->start = LastTick;
+    new->start = LastTick + delay;
     new->x = MAP_XPOS(mapx, mapy) - w * 0.5;
     new->y = MAP_YPOS(mapx, mapy);
 
@@ -2021,7 +1997,13 @@ void play_vims(void)
 
         next = this->next;
 
-        if (LastTick > this->start + this->lifetime)
+        /* Some VIMs have a delayed start. */
+        if (LastTick < this->start)
+        {
+            continue;
+        }
+        /* Or maybe we're past it's lifetime. */
+        else if (LastTick > this->start + this->lifetime)
         {
             remove_vim(this);
 
