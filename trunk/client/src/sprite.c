@@ -1919,7 +1919,7 @@ vim_t *add_vim(vim_mode_t mode, uint8 mapx, uint8 mapy, char *text,
     new->y = MAP_YPOS(mapx, mapy);
 
     /* The number of pixeos drift (both x and y) per cycle. */
-    drift = rand() % (uint16)(lifetime * 0.03) + 10;
+    drift = rand() % (uint16)(lifetime * 0.02) + 20;
 
     /* Arbitrary VIMs never deviate horizontally. */
     if (new->mode == VIM_MODE_ARBITRARY)
