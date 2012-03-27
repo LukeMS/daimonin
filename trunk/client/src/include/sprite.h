@@ -148,7 +148,7 @@ vim_t;
 extern vim_t *vims;
 
 extern vim_t *add_vim(vim_mode_t mode, uint8 mapx, uint8 mapy, char *text,
-                      uint32 colr, uint16 lifetime);
+                      uint32 colr, uint16 lifetime, uint16 delay);
 extern void   remove_vim(vim_t *this);
 extern void   delete_vims(void);
 extern void   play_vims(void);

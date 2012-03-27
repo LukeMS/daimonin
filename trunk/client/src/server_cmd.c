@@ -821,7 +821,17 @@ void DrawInfoCmd2(char *data, int len)
     /* Do we have a VIM? */
     if ((flags & NDI_FLAG_VIM))
     {
-        add_vim(VIM_MODE_ARBITRARY, 8, 8, buf, colr, 3000);
+        char  *vimbuf;
+        uint8  i = 0;
+
+        MALLOC_STRING(vimbuf, buf);
+
+        /* Split the string at newlines, sending each substring as a separate
+         * arbitrary VIM with suitable delay. */
+        for (tmp = strtok(vimbuf, "\n"); tmp; tmp = strtok(NULL, "\n"))
+        {
+            add_vim(VIM_MODE_ARBITRARY, 8, 8, tmp, colr, 3000, 450 * i++);
+        }
     }
 
     /* TODO: This is a horrid compatibility hack. In 0.11.0 we will do this
@@ -1851,7 +1861,7 @@ void Map2Cmd(char *data, int len)
                     sprintf(dmg_buf, "%d", dmg0);
                     pos += 2;
                     add_vim(VIM_MODE_KILL, x, y, dmg_buf, NDI_COLR_ORANGE,
-                            1500);
+                            1500, 0);
                 }
 
                 if ((dmg_flag & 0x4))
@@ -1860,7 +1870,7 @@ void Map2Cmd(char *data, int len)
                     sprintf(dmg_buf, "%d", ABS(dmg1));
                     pos += 2;
                     add_vim(VIM_MODE_DAMAGE_SELF, x, y, dmg_buf,
-                            (dmg1 >= 0) ? NDI_COLR_RED : NDI_COLR_LIME, 1250);
+                            (dmg1 >= 0) ? NDI_COLR_RED : NDI_COLR_LIME, 1250, 0);
                 }
 
                 if ((dmg_flag & 0x2))
@@ -1869,7 +1879,7 @@ void Map2Cmd(char *data, int len)
                     sprintf(dmg_buf, "%d", dmg2);
                     pos += 2;
                     add_vim(VIM_MODE_DAMAGE_OTHER, x, y, dmg_buf,
-                            NDI_COLR_YELLOW, 1000);
+                            NDI_COLR_YELLOW, 1000, 0);
                 }
 
                 if ((dmg_flag & 0x1))
@@ -1878,7 +1888,7 @@ void Map2Cmd(char *data, int len)
                     sprintf(dmg_buf, "%d", dmg3);
                     pos += 2;
                     add_vim(VIM_MODE_DAMAGE_OTHER, x, y, dmg_buf,
-                            NDI_COLR_ORANGE, 1000);
+                            NDI_COLR_ORANGE, 1000, 0);
                 }
 //                LOG(LOG_DEBUG,"Damage: dmg_flag %x, (%d, %d, %d, %d)",dmg_flag, dmg0, dmg1, dmg2, dmg3);
             }
