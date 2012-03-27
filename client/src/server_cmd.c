@@ -1851,7 +1851,7 @@ void Map2Cmd(char *data, int len)
                     sprintf(dmg_buf, "%d", dmg0);
                     pos += 2;
                     add_vim(VIM_MODE_KILL, x, y, dmg_buf, NDI_COLR_ORANGE,
-                            1150);
+                            1500);
                 }
 
                 if ((dmg_flag & 0x4))
@@ -1860,7 +1860,7 @@ void Map2Cmd(char *data, int len)
                     sprintf(dmg_buf, "%d", ABS(dmg1));
                     pos += 2;
                     add_vim(VIM_MODE_DAMAGE_SELF, x, y, dmg_buf,
-                            (dmg1 >= 0) ? NDI_COLR_RED : NDI_COLR_LIME, 1000);
+                            (dmg1 >= 0) ? NDI_COLR_RED : NDI_COLR_LIME, 1250);
                 }
 
                 if ((dmg_flag & 0x2))
@@ -1869,7 +1869,7 @@ void Map2Cmd(char *data, int len)
                     sprintf(dmg_buf, "%d", dmg2);
                     pos += 2;
                     add_vim(VIM_MODE_DAMAGE_OTHER, x, y, dmg_buf,
-                            NDI_COLR_YELLOW, 850);
+                            NDI_COLR_YELLOW, 1000);
                 }
 
                 if ((dmg_flag & 0x1))
@@ -1878,7 +1878,7 @@ void Map2Cmd(char *data, int len)
                     sprintf(dmg_buf, "%d", dmg3);
                     pos += 2;
                     add_vim(VIM_MODE_DAMAGE_OTHER, x, y, dmg_buf,
-                            NDI_COLR_ORANGE, 850);
+                            NDI_COLR_ORANGE, 1000);
                 }
 //                LOG(LOG_DEBUG,"Damage: dmg_flag %x, (%d, %d, %d, %d)",dmg_flag, dmg0, dmg1, dmg2, dmg3);
             }
