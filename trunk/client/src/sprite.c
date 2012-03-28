@@ -1894,22 +1894,21 @@ vim_t *add_vim(vim_mode_t mode, uint8 mapx, uint8 mapy, char *text,
     new->x = MAP_XPOS(mapx, mapy) - w * 0.5;
     new->y = MAP_YPOS(mapx, mapy);
 
-    /* The number of pixeos drift (both x and y) per cycle. */
-    drift = rand() % (uint16)(lifetime * 0.02) + 20;
-
-    /* Arbitrary VIMs never deviate horizontally. */
+    /* Arbitrary VIMs have a fixed drift and never deviate horizontally. */
     if (new->mode == VIM_MODE_ARBITRARY)
     {
+        drift = (uint16)(lifetime * 0.02) + 20;
         new->xoff = 0.0;
+        new->yoff = -(float)drift / (float)lifetime;
     }
-    /* But others (ie, damage) may drift left or right. */
+    /* For others, the number of pixels drift (both x and y) per cycle is
+     * semi-random and they may drift left or right. */
     else
     {
+        drift = rand() % (uint16)(lifetime * 0.02) + 20;
         new->xoff = (float)(drift * ((rand() % 3) - 1)) / (float)lifetime;
+        new->yoff = -(float)drift / (float)lifetime;
     }
-
-    /* VIMs always float up but by how much is semi-random. */
-    new->yoff = -(float)drift / (float)lifetime;
 
     /* Add it to the end of the queue. */
     for (last = vims; last; last = last->next)
@@ -1988,12 +1987,10 @@ void play_vims(void)
 
     for (this = vims; this; this = next)
     {
-        uint16       now;
-        sint16       xoff,
-                     yoff;
-        SDL_Rect     dst;
-        float        sf;
-        SDL_Surface *surface;
+        uint16   now;
+        sint16   xoff,
+                 yoff;
+        SDL_Rect dst;
 
         next = this->next;
 
@@ -2011,14 +2008,28 @@ void play_vims(void)
         }
 
         now = LastTick - this->start;
-        sf = 1 - 1 / ((float)this->lifetime / (float)now);
-        surface = zoomSurface(this->surface, sf, sf, 0);
         xoff = (sint16)(now * this->xoff);
         yoff = (sint16)(now * this->yoff);
-        dst.x = (sint16)(this->x + xoff + (this->surface->w - surface->w) * 0.5);
-        dst.y = (sint16)(this->y + yoff + (this->surface->h - surface->h) * 0.5);
-        SDL_BlitSurface(surface, NULL, ScreenSurface, &dst);
-        SDL_FreeSurface(surface);
+        dst.x = (sint16)(this->x + xoff);
+        dst.y = (sint16)(this->y + yoff);
+
+        /* Arbitrary VIMs are 1+ lines of text which need to be readable so
+         * just blit this->surface. */
+        if (this->mode == VIM_MODE_ARBITRARY)
+        {
+            SDL_BlitSurface(this->surface, NULL, ScreenSurface, &dst);
+        }
+        /* But others are just a number solets do some processing. */
+        else
+        {
+            float        sf = 1 - 1 / ((float)this->lifetime / (float)now);
+            SDL_Surface *surface = zoomSurface(this->surface, sf, sf, 0);
+
+            dst.x += (sint16)((this->surface->w - surface->w) * 0.5);
+            dst.y += (sint16)((this->surface->h - surface->h) * 0.5);
+            SDL_BlitSurface(surface, NULL, ScreenSurface, &dst);
+            SDL_FreeSurface(surface);
+        }
     }
 }
 
