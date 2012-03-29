@@ -119,8 +119,10 @@ static void CreateNewFont(_Sprite *sprite, _font *font)
             font->c[i].h--;
         }
 
-        /* If this is the tallest character yet, remember that height. */
-        if (font->c[i].h > maxh)
+        /* If this is the tallest non-internal, non-whitespace character yet,
+         * remember that height. */
+        if (i > 32 &&
+            font->c[i].h > maxh)
         {
             maxh = font->c[i].h;
         }
