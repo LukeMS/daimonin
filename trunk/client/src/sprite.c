@@ -710,25 +710,20 @@ void string_blt(SDL_Surface *surf, _font *font, char *text, int x, int y, uint32
         if (*c != ' ')
         {
             SDL_Surface *bitmap = font->sprite->bitmap;
-            int          n = MIN(5, bitmap->format->palette->ncolors - 2);
-            SDL_Color    color[5];
-            float        l = 1.00 - (0.15 * (n - 1));
+            int          n = bitmap->format->palette->ncolors - 2;
+            SDL_Color    color[n];
+            float        l = 1.0 / n;
             uint8        r = (colr_used >> 16) & 0xff,
                          g = (colr_used >> 8) & 0xff,
                          b = colr_used & 0xff,
                          i;
             SDL_Rect     box;
 
-            /* 5  0.40  0.70  1.00  1.30  1.70
-             * 4  0.55  0.85  1.15  1.45  ----
-             * 3  0.70  1.00  1.30  ----  ----
-             * 2  0.85  1.15  ----  ----  ----
-             * 1  1.00  ----  ----  ----  ---- */
             for (i = 0; i < n; i++)
             {
-                color[i].r = (uint8)MIN(255, ((l + (0.30 * i)) * r));
-                color[i].g = (uint8)MIN(255, ((l + (0.30 * i)) * g));
-                color[i].b = (uint8)MIN(255, ((l + (0.30 * i)) * b));
+                color[i].r = (uint8)MIN(255, (l * (i + n / 2 + 1)) * r);
+                color[i].g = (uint8)MIN(255, (l * (i + n / 2 + 1)) * g);
+                color[i].b = (uint8)MIN(255, (l * (i + n / 2 + 1)) * b);
             }
 
             SDL_SetPalette(bitmap, SDL_LOGPAL, color, 3, n);
