@@ -49,6 +49,9 @@ extern _font font_large;
 extern _font font_huge;
 extern _font font_booknormal;
 extern _font font_booktitle;
+extern _font font_npcicon;
+extern _font font_npcnormal;
+extern _font font_npctitle;
 
 extern void font_init(void);
 
