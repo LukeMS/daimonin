@@ -33,6 +33,9 @@ typedef enum skin_font_id_t
     SKIN_FONT_HUGE,
     SKIN_FONT_BOOKNORMAL,
     SKIN_FONT_BOOKTITLE,
+    SKIN_FONT_NPCICON,
+    SKIN_FONT_NPCNORMAL,
+    SKIN_FONT_NPCTITLE,
 
     SKIN_FONT_NROF // must be last element
 }
