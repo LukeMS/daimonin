@@ -1450,7 +1450,7 @@ void kick_player(player *pl)
 
             /* Kick the player. */
             activelist_remove(tmp->ob);
-            remove_ob(tmp->ob);
+            /* remove_ob(tmp->ob); */
             check_walk_off(tmp->ob, NULL, MOVE_APPLY_VANISHED);
             tmp->ob->direction = 0;
             LOG(llevInfo, "%s is kicked out of the game.\n",

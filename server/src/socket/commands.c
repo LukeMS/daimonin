@@ -180,7 +180,7 @@ CommArray_s CommandsVOL[] =
 
 CommArray_s CommandsGM[] =
 {
-#if DAI_DEVELOPMENT_CONTENT
+#ifdef DAI_DEVELOPMENT_CONTENT
     {"generate",       command_generate,       0.0f, 1, CHANNEL_NAME_GM},
     {"spawn",          command_spawn,          0.0f, 1, CHANNEL_NAME_GM},
     {"listarch",       command_listarch,       0.0f, 1, NULL},

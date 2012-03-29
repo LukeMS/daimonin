@@ -559,6 +559,7 @@ static int CreateObject(object *op, char *params, CreateMode_t mode)
     }
 
     if (mode == GENERATE)
+    {
         if (at->clone.type == MONSTER || at->clone.type == PLAYER)
         {
             new_draw_info(NDI_UNIQUE, 0, op, "Generate cannot be used to create mobs.");
@@ -574,6 +575,7 @@ static int CreateObject(object *op, char *params, CreateMode_t mode)
             new_draw_info(NDI_UNIQUE, 0, op, "Generate cannot be used to create donation items.");
             return COMMANDS_RTN_VAL_ERROR;
         }
+    }
 
     if (mode == SPAWN)
         if (at->clone.type != MONSTER) // Don't allow spawning of PLAYER objects
@@ -1703,7 +1705,7 @@ int command_ban(object *op, char *params)
     if (!strcmp(b_mode, "+"))
     {
         // Get time if specified
-        if(str = get_param_from_string(params, &pos))
+        if ((str = get_param_from_string(params, &pos)))
         {
             sscanf(str, "%d%s", &s, t_mod);
 
@@ -1827,8 +1829,8 @@ static int BanAdd(object *op, ENUM_BAN_TYPE ban_type, char *str, int s)
                 if(ac->level[i])
                 {
                     if ((pl = find_player(ac->charname[i])))
-                        {}
-                        // kick_player(pl);
+                        // {}
+                        kick_player(pl);
                         /* We can't kick the player; if there is more than 1 player
                          * on this IP, and we kick them both, we crash the server! */
                 }
@@ -1849,20 +1851,24 @@ static int BanAdd(object *op, ENUM_BAN_TYPE ban_type, char *str, int s)
     }
     else // ban_type == BANTYPE_IP
     {
-        int         spot;
+        int         spot, dot = 0;
         objectlink *ip_list,
                    *ol;
         player     *pl = NULL;
 
-        // TODO - this only works if IP address looks like xxx.xxx.xxx.*
-        // So, when playing on own server, you can't ban 127.0.0.*
+        // VOL can only ban specific address, GM can ban x.x.x.*,
+        // SA can ban x.x.*
         for (spot = 0; str[spot] != '\0'; spot++)
         {
+            if (str[spot] = '.')
+                dot++;
+
             if ((CONTR(op)->gmaster_mode == GMASTER_MODE_VOL &&
                  str[spot] == '*') ||
                 (CONTR(op)->gmaster_mode >= GMASTER_MODE_GM &&
-                 str[spot] == '*' &&
-                 spot < 11))
+                 str[spot] == '*' && dot < 3) ||
+                (CONTR(op)->gmaster_mode >= GMASTER_MODE_SA &&
+                 str[spot] == '*' && dot < 2))
             {
                 new_draw_info(NDI_UNIQUE, 0, op, "You have insufficient privileges to ban that IP range.");
                 return COMMANDS_RTN_VAL_ERROR;
@@ -1881,8 +1887,8 @@ static int BanAdd(object *op, ENUM_BAN_TYPE ban_type, char *str, int s)
             pl = CONTR(ol->objlink.ob);
 
             if (pl)
-                {}
-                // kick_player(pl);
+                // {}
+                kick_player(pl);
                 /* We can't kick the player; if there is more than 1 player
                  * on this IP, and we kick them both, we crash the server! */
         }
