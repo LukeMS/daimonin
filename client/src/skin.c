@@ -240,6 +240,17 @@ void skin_load_fonts (void)
         {
             LOG(LOG_FATAL, "Couldn't load font '%s'!\n", buf);
         }
+
+        if (!skin_fonts[i]->bitmap->format->palette)
+        {
+            LOG(LOG_FATAL, "Font '%s' has no palette!\n", buf);
+        }
+
+        if (skin_fonts[i]->bitmap->format->palette->ncolors < 3)
+        {
+            LOG(LOG_FATAL, "Font '%s' has too few colours (must be >= 3) %d!\n",
+                buf);
+        }
     }
 }
 
