@@ -498,9 +498,9 @@ void strout_tooltip(sint16 x, sint16 y, char *text)
         box.x -= (box.x + box.w + 1) - Screensize.x;
     }
 
-    SDL_FillRect(ScreenSurface, &box, NDI_COLR_WHITE);
+    SDL_FillRect(ScreenSurface, &box, NDI_COLR_BLACK);
     strout_blt(ScreenSurface, &font_small, text, box.x + 2, box.y + 2,
-               NDI_COLR_BLACK, NULL, NULL);
+               NDI_COLR_WHITE, NULL, NULL);
 }
 
 /* A Very Important Message (VIM) is text which appears on the map for a short
