@@ -483,7 +483,7 @@ void strout_tooltip(sint16 x, sint16 y, char *text)
     box.h = font_small.line_height;
 
     /* Calculate extra height for multilines. */
-    for (cp = strchr(text, '\n'); cp; cp = strchr(cp, '\n'))
+    for (cp = strchr(text, '\n'); cp && *++cp; cp = strchr(cp, '\n'))
     {
         box.h += font_small.line_height;
     }
