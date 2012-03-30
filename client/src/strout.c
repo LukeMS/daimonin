@@ -473,7 +473,7 @@ void strout_input(_font *font, SDL_Rect *box, char repl)
 void strout_tooltip(sint16 x, sint16 y, char *text)
 {
     SDL_Rect  box;
-    char     *cp;
+    char     *body;
 
     /* We might have opted out. */
     if (!options.show_tooltips)
@@ -481,15 +481,31 @@ void strout_tooltip(sint16 x, sint16 y, char *text)
         return;
     }
 
+    /* If a multiline, decapitate it. */
+    if ((body = strchr(text, '\n')))
+    {
+        *body++ = '\0';
+    }
+
     box.x = x + 9;
     box.y = y + 17;
-    box.w = (uint16)strout_width(&font_small, text) + 4;
-    box.h = font_small.line_height + 4;
 
-    /* Calculate extra height for multilines. */
-    for (cp = strchr(text, '\n'); cp && *++cp; cp = strchr(cp, '\n'))
+    /* The first/only line is in medium. */
+    box.w = (uint16)strout_width(&font_medium, text) + 4;
+    box.h = font_medium.line_height + 4;
+
+    /* Subsequent lines are in small. */
+    if (body)
     {
+        char *cp;
+
+        box.w = MAX(box.w, (uint16)strout_width(&font_small, body) + 4);
         box.h += font_small.line_height;
+
+        for (cp = strchr(body, '\n'); cp && *++cp; cp = strchr(cp, '\n'))
+        {
+            box.h += font_small.line_height;
+        }
     }
 
     /* If it would extend off the screen, truncate it. */
@@ -499,8 +515,15 @@ void strout_tooltip(sint16 x, sint16 y, char *text)
     }
 
     SDL_FillRect(ScreenSurface, &box, NDI_COLR_BLACK);
-    strout_blt(ScreenSurface, &font_small, text, box.x + 2, box.y + 2,
+    strout_blt(ScreenSurface, &font_medium, text, box.x + 2, box.y + 2,
                NDI_COLR_WHITE, NULL, NULL);
+
+    if (body)
+    {
+        strout_blt(ScreenSurface, &font_small, body, box.x + 2,
+                   box.y + font_medium.line_height + 2, NDI_COLR_WHITE, NULL,
+                   NULL);
+    }
 }
 
 /* A Very Important Message (VIM) is text which appears on the map for a short
