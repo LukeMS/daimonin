@@ -483,8 +483,8 @@ void strout_tooltip(sint16 x, sint16 y, char *text)
 
     box.x = x + 9;
     box.y = y + 17;
-    box.w = (uint16)strout_width(&font_small, text);
-    box.h = font_small.line_height;
+    box.w = (uint16)strout_width(&font_small, text) + 4;
+    box.h = font_small.line_height + 4;
 
     /* Calculate extra height for multilines. */
     for (cp = strchr(text, '\n'); cp && *++cp; cp = strchr(cp, '\n'))
@@ -499,7 +499,7 @@ void strout_tooltip(sint16 x, sint16 y, char *text)
     }
 
     SDL_FillRect(ScreenSurface, &box, NDI_COLR_WHITE);
-    strout_blt(ScreenSurface, &font_small, text, box.x + 2, box.y - 1,
+    strout_blt(ScreenSurface, &font_small, text, box.x + 2, box.y + 2,
                NDI_COLR_BLACK, NULL, NULL);
 }
 
