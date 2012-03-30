@@ -466,10 +466,10 @@ void strout_input(_font *font, SDL_Rect *box, char repl)
 }
 
 /* Display text as a tooltip. */
-void strout_tooltip(sint16 mx, sint16 my, char *text)
+void strout_tooltip(sint16 x, sint16 y, char *text)
 {
     SDL_Rect  box;
-    char     *tooltip = text;
+    char     *cp;
 
     /* We might have opted out. */
     if (!options.show_tooltips)
@@ -477,28 +477,25 @@ void strout_tooltip(sint16 mx, sint16 my, char *text)
         return;
     }
 
-    box.x = mx + 9;
-    box.y = my + 17;
-    box.w = 3;
+    box.x = x + 9;
+    box.y = y + 17;
+    box.w = (uint16)strout_width(&font_small, text);
     box.h = font_small.line_height;
 
-    /* Calc width of tooltip. */
-    while (*text)
+    /* Calculate extra height for multilines. */
+    for (cp = strchr(text, '\n'); cp; cp = strchr(cp, '\n'))
     {
-        box.w += font_small.c[(uint8)*text++].w + font_small.char_offset;
+        box.h += font_small.line_height;
     }
 
     /* If it would extend off the screen, truncate it. */
-    /* TODO: This is very basic, we should wrap longer lines to a multiline
-     * tooltip.
-     * -- Smacky 20120330 */
     if (box.x + box.w >= Screensize.x)
     {
         box.x -= (box.x + box.w + 1) - Screensize.x;
     }
 
-    SDL_FillRect(ScreenSurface, &box, -1);
-    strout_blt(ScreenSurface, &font_small, tooltip, box.x + 2, box.y - 1,
+    SDL_FillRect(ScreenSurface, &box, NDI_COLR_WHITE);
+    strout_blt(ScreenSurface, &font_small, text, box.x + 2, box.y - 1,
                NDI_COLR_BLACK, NULL, NULL);
 }
 
