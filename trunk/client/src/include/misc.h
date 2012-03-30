@@ -26,7 +26,6 @@
 
 #define MAX_INPUT_STR 256
 
-extern void         show_input_string(_font *font, SDL_Rect *box, char repl);
 extern int          read_substr_char(char *srcstr, char *desstr, int *sz, char ct);
 extern char        *get_parameter_string(char *data, int *pos, int maxlen);
 extern int          isqrt(int n);

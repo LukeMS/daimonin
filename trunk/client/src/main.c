@@ -218,7 +218,7 @@ void init_game_data(void)
     init_player_data();
     gameserver_init();
     reset_input_mode();
-    delete_vims();
+    strout_vim_reset();
     clear_group();
     interface_mode = GUI_NPC_MODE_NO;
     map_transfer_flag = 0;
@@ -1576,7 +1576,7 @@ int main(int argc, char *argv[])
         }
 
         if (map_transfer_flag)
-                string_blt(ScreenSurface, &font_small, "Transfer Character to Map...", 300, 300, NDI_COLR_WHITE, NULL, NULL);
+                strout_blt(ScreenSurface, &font_small, "Transfer Character to Map...", 300, 300, NDI_COLR_WHITE, NULL, NULL);
 
         /* show the current dragged item */
         if (cpl.menustatus == MENU_NO && (drag = draggingInvItem(DRAG_GET_STATUS)))
@@ -1706,9 +1706,9 @@ int main(int argc, char *argv[])
                 rec.x = 228;
                 rec.y = 122;
                 rec.h = font_small.line_height;
-                rec.w = string_width(&font_small, buf);
+                rec.w = strout_width(&font_small, buf);
                 SDL_FillRect(ScreenSurface, &rec, 0);
-                string_blt(ScreenSurface, &font_small, buf, rec.x, rec.y,
+                strout_blt(ScreenSurface, &font_small, buf, rec.x, rec.y,
                            NDI_COLR_WHITE, NULL, NULL);
             }
 
@@ -1718,9 +1718,9 @@ int main(int argc, char *argv[])
             rec.x = 228;
             rec.y = 134;
             rec.h = font_small.line_height;
-            rec.w = string_width(&font_small, buf);
+            rec.w = strout_width(&font_small, buf);
             SDL_FillRect(ScreenSurface, &rec, 0);
-            string_blt(ScreenSurface, &font_small, buf, rec.x, rec.y,
+            strout_blt(ScreenSurface, &font_small, buf, rec.x, rec.y,
                        NDI_COLR_WHITE, NULL, NULL);
 # endif
 #endif
@@ -2212,11 +2212,11 @@ static void ShowIntro(char *text, int progress)
 
     if (text)
     {
-        string_blt(ScreenSurface, &font_small, text, x+370, y+585, NDI_COLR_WHITE, NULL, NULL);
+        strout_blt(ScreenSurface, &font_small, text, x+370, y+585, NDI_COLR_WHITE, NULL, NULL);
     }
     else
     {
-        string_blt(ScreenSurface, &font_small, "** Press Key **", x+375, y+585, NDI_COLR_WHITE, NULL, NULL);
+        strout_blt(ScreenSurface, &font_small, "** Press Key **", x+375, y+585, NDI_COLR_WHITE, NULL, NULL);
     }
 
     FlipScreen();
@@ -2241,7 +2241,7 @@ static void FlipScreen(void)
                 ""
 #endif
                 );
-        string_blt(ScreenSurface, &font_small, buf, (Screensize.xoff/2)+10, (Screensize.yoff/2)+585, NDI_COLR_WHITE, NULL, NULL);
+        strout_blt(ScreenSurface, &font_small, buf, (Screensize.xoff/2)+10, (Screensize.yoff/2)+585, NDI_COLR_WHITE, NULL, NULL);
     }
 
 #ifdef INSTALL_OPENGL
@@ -2353,7 +2353,7 @@ static void DisplayLayer1(void)
     box.x = (ScreenSurface->w - ScreenSurfaceMap->w) / 2;
     box.y = (ScreenSurface->h - ScreenSurfaceMap->h) / 2;
     SDL_BlitSurface(ScreenSurfaceMap, NULL, ScreenSurface, &box);
-    play_vims();
+    strout_vim_play();
 
     /* draw warning-icons above player */
     if ((gfx_toggle++ & 63) < 25)

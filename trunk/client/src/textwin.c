@@ -1029,7 +1029,7 @@ static void ShowWindowText(textwin_window_t *tw, _BLTFX *bltfx)
         uint16             line = (topline + i) % tw->linebuf_used;
         textwin_linebuf_t *linebuf = tw->linebuf + line;
 
-        string_blt(bltfx->surface, tw->font, linebuf->buf, 2,
+        strout_blt(bltfx->surface, tw->font, linebuf->buf, 2,
                    tw->font->line_height * i, linebuf->fg, /*linebuf->bg,*/ NULL,
                    NULL);
     }

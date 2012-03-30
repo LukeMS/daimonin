@@ -135,7 +135,7 @@ void UpdateMapName(char *name)
     if (name == NULL)
         return;
 
-    widget_data[WIDGET_MAPNAME_ID].wd = string_width(&font_large, name);
+    widget_data[WIDGET_MAPNAME_ID].wd = strout_width(&font_large, name);
     widget_data[WIDGET_MAPNAME_ID].ht = font_large.c[0].h;
     strcpy(MapData.name, name);
 }
@@ -821,8 +821,8 @@ void map_draw_map(void)
         // vertical line of right bracket
         rect.x = t_right + 2;
         SDL_FillRect(ScreenSurfaceMap, &rect, colr);
-        string_blt(ScreenSurfaceMap, &font_small, cpl.target_name,
-                   t_xl - string_width(&font_small, cpl.target_name) / 2,
+        strout_blt(ScreenSurfaceMap, &font_small, cpl.target_name,
+                   t_xl - strout_width(&font_small, cpl.target_name) / 2,
                    t_yl - font_small.line_height - 8, cpl.target_colr,
                    NULL, NULL);
     }
@@ -890,7 +890,7 @@ static void ShowEffects(uint32 flags, uint16 x, uint16 y)
 
         if (w == 0)
         {
-            w = string_width(&font_small, skin_prefs.effect_sleeping);
+            w = strout_width(&font_small, skin_prefs.effect_sleeping);
         }
 
         xoff = ShowExclusiveEffect(x, y, xoff, w, skin_prefs.effect_sleeping);
@@ -902,7 +902,7 @@ static void ShowEffects(uint32 flags, uint16 x, uint16 y)
 
         if (w == 0)
         {
-            w = string_width(&font_small, skin_prefs.effect_eating);
+            w = strout_width(&font_small, skin_prefs.effect_eating);
         }
 
         xoff = ShowExclusiveEffect(x, y, xoff, w, skin_prefs.effect_eating);
@@ -927,9 +927,9 @@ static uint16 ShowExclusiveEffect(uint16 x, uint16 y, uint16 xoff, uint16 w,
         xoff = 0;
     }
 
-    string_blt(ScreenSurfaceMap, &font_small, text, box.x - xoff, box.y,
+    strout_blt(ScreenSurfaceMap, &font_small, text, box.x - xoff, box.y,
                NDI_COLR_RED, NULL, NULL);
-    string_blt(ScreenSurfaceMap, &font_small, text, box.x - xoff + w,
+    strout_blt(ScreenSurfaceMap, &font_small, text, box.x - xoff + w,
                box.y, NDI_COLR_RED, NULL, NULL);
     SDL_SetClipRect(ScreenSurfaceMap, NULL);
 
@@ -945,12 +945,12 @@ static void ShowPname(char *pname, sint16 x, sint16 y, uint32 colr)
 
     if ((cp = strchr(buf, '[')))
     {
-        string_blt(ScreenSurfaceMap, &font_small, buf, x - string_width(&font_small, pname) / 2, y - font_small.line_height - 8, skin_prefs.pname_gmaster, NULL, NULL);
+        strout_blt(ScreenSurfaceMap, &font_small, buf, x - strout_width(&font_small, pname) / 2, y - font_small.line_height - 8, skin_prefs.pname_gmaster, NULL, NULL);
         *cp = '\0';
     }
 
-    string_blt(ScreenSurfaceMap, &font_small, buf,
-               x - string_width(&font_small, pname) / 2,
+    strout_blt(ScreenSurfaceMap, &font_small, buf,
+               x - strout_width(&font_small, pname) / 2,
                y - font_small.line_height - 8, colr, NULL, NULL);
 }
 

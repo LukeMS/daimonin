@@ -1098,7 +1098,7 @@ static void key_string_event(SDL_KeyboardEvent *key)
                 box.h = font_small.line_height;
                 box.w = 180;
                 SDL_FillRect(ScreenSurface, &box, 0);
-                show_input_string(&font_small, &box, 0);
+                strout_input(&font_small, &box, 0);
             }
             break;
 
@@ -1134,7 +1134,7 @@ static void key_string_event(SDL_KeyboardEvent *key)
                 box.h = font_small.line_height;
                 box.w = 180;
                 SDL_FillRect(ScreenSurface, &box, 0);
-                show_input_string(&font_small, &box, 0);
+                strout_input(&font_small, &box, 0);
             }
             break;
 

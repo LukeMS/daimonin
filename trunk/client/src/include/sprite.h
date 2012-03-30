@@ -63,7 +63,6 @@ typedef struct _BLTFX
 }
 _BLTFX;
 
-
 /* the structure */
 typedef struct _Sprite
 {
@@ -118,60 +117,22 @@ typedef enum sprite_icon_type_t
 }
 sprite_icon_type_t;
 
-typedef enum vim_mode_t
-{
-    VIM_MODE_KILL,
-    VIM_MODE_DAMAGE_OTHER,
-    VIM_MODE_DAMAGE_SELF,
-    VIM_MODE_ARBITRARY,
-}
-vim_mode_t;
-
-typedef struct vim_t
-{
-    struct vim_t *next;
-    struct vim_t *prev;
-
-    vim_mode_t    mode;
-    uint8         mapx;
-    uint8         mapy;
-    SDL_Surface  *surface;
-    uint16        lifetime;
-    uint32        start;
-    sint16        x;
-    sint16        y;
-    float         xoff;
-    float         yoff;
-}
-vim_t;
-
-extern vim_t *vims;
-
-extern vim_t *add_vim(vim_mode_t mode, uint8 mapx, uint8 mapy, char *text,
-                      uint32 colr, uint16 lifetime, uint16 delay);
-extern void   remove_vim(vim_t *this);
-extern void   delete_vims(void);
-extern void   play_vims(void);
-extern void             show_tooltip(int mx, int my, char *text);
-extern void             sprite_init(void);
-extern void             sprite_deinit(void);
-
-extern _Sprite         *sprite_load(char *fname, SDL_RWops *rwob);
-extern void             sprite_free_sprite(_Sprite *sprite);
-extern void             sprite_free_surfaces(_Sprite *sprite);
-extern void sprite_blt_as_icon(_Sprite *sprite, sint16 x, sint16 y,
-                               sprite_icon_type_t type, uint8 selected,
-                               uint32 flags, uint8 quacon, sint32 quantity,
-                               _BLTFX *bltfx);
-extern void             sprite_blt(_Sprite *sprite, int x, int y, SDL_Rect *box, _BLTFX *bltfx);
-extern void             sprite_blt_map(_Sprite *sprite, int x, int y, SDL_Rect *box, _BLTFX *bltfx, Uint32 stretch);
-extern int              string_width(_font *font, char *text);
-extern int              string_width_offset(_font *font, char *text, int *line, int len);
-extern void             string_blt(SDL_Surface *surf, _font *font, char *text,
-                                   int x, int y, uint32 col, SDL_Rect *area,
+extern void     sprite_init(void);
+extern void     sprite_deinit(void);
+extern _Sprite *sprite_load(char *fname, SDL_RWops *rwob);
+extern void     sprite_free_sprite(_Sprite *sprite);
+extern void     sprite_free_surfaces(_Sprite *sprite);
+extern void     sprite_blt_as_icon(_Sprite *sprite, sint16 x, sint16 y,
+                                   sprite_icon_type_t type, uint8 selected,
+                                   uint32 flags, uint8 quacon, sint32 quantity,
                                    _BLTFX *bltfx);
-extern int              sprite_collision(int x1, int y1, int x2, int y2, _Sprite *sprite1, _Sprite *sprite2);
-extern void             sprite_clear_backbuffer(void);
+extern void    sprite_blt(_Sprite *sprite, int x, int y, SDL_Rect *box,
+                          _BLTFX *bltfx);
+extern void    sprite_blt_map(_Sprite *sprite, int x, int y, SDL_Rect *box,
+                              _BLTFX *bltfx, Uint32 stretch);
+extern int     sprite_collision(int x1, int y1, int x2, int y2,
+                                _Sprite *sprite1, _Sprite *sprite2);
+extern void    sprite_clear_backbuffer(void);
 
 /* Zoom stuff */
 #ifndef M_PI
@@ -190,17 +151,5 @@ Uint8 a;
 typedef struct tColorY {
 Uint8 y;
 } tColorY;
-
-/* Macros for the oft-used technique of printing strings twice, the first black
- * layer slightly offset from the second coloured layer to give a clearer,
- * slightly 3d 'shadow' effect. */
-/* EMBOSS prints the string with the shadow on the bottom and right. */
-#define EMBOSS(surf, font, text, x, y, colr, area, bltfx) \
-        string_blt((surf), (font), (text), (x) + 1, (y) + 1, NDI_COLR_BLACK, (area), (bltfx)); \
-        string_blt((surf), (font), (text), (x), (y), (colr), (area), (bltfx));
-/* ENGRAVE prints the string with the shadow on the top and left. */
-#define ENGRAVE(surf, font, text, x, y, colr, area, bltfx) \
-        string_blt((surf), (font), (text), (x), (y), NDI_COLR_BLACK, (area), (bltfx)); \
-        string_blt((surf), (font), (text), (x) + 1, (y) + 1, (colr), (area), (bltfx));
 
 #endif /* ifndef __SPRITE_H */
