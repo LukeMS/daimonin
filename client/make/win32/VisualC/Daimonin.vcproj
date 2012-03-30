@@ -398,6 +398,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\strout.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\textwin.c"
 				>
 			</File>
@@ -588,6 +592,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\include\srvfile.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\include\strout.h"
 				>
 			</File>
 			<File

@@ -87,7 +87,7 @@ void widget_show_console(int x, int y)
     box.y = y + 6;
     box.w = skin_sprites[SKIN_SPRITE_TEXTINPUT]->bitmap->w - 22;
     box.h = font_small.line_height;
-    show_input_string(&font_small, &box, 0);
+    strout_input(&font_small, &box, 0);
 }
 
 void do_number(int x, int y)
@@ -219,9 +219,9 @@ void widget_show_number(int x, int y)
     box.h = font_small.line_height;
     sprite_blt(skin_sprites[SKIN_SPRITE_NUMBER], x, y, NULL, NULL);
     sprintf(buf, "%s how many from %d %s", cpl.nummode == NUM_MODE_GET ? "get" : "drop", cpl.nrof, cpl.num_text);
-    string_blt(ScreenSurface, &font_small, buf, x + 8, y + 6, skin_prefs.widget_title, NULL, NULL);
+    strout_blt(ScreenSurface, &font_small, buf, x + 8, y + 6, skin_prefs.widget_title, NULL, NULL);
     box.y = y + 25;
-    show_input_string(&font_small, &box, 0);
+    strout_input(&font_small, &box, 0);
 }
 
 void widget_show_resist(int x, int y)
@@ -241,7 +241,7 @@ void widget_show_resist(int x, int y)
         bltfx.alpha=0;
 
         sprite_blt(skin_sprites[SKIN_SPRITE_RESIST_BG], 0, 0, NULL, &bltfx);
-        string_blt(widget_surface[WIDGET_RESIST_ID], &font_tiny, "Resistance Table", 4,  1, skin_prefs.widget_title, NULL, NULL);
+        strout_blt(widget_surface[WIDGET_RESIST_ID], &font_tiny, "Resistance Table", 4,  1, skin_prefs.widget_title, NULL, NULL);
         PrintResist("IM", 68, 3, ATNR_PHYSICAL);
         PrintResist("SL", 100, 3, ATNR_SLASH);
         PrintResist("CL", 132, 3, ATNR_CLEAVE);
@@ -287,10 +287,10 @@ static void PrintResist(char *name, int x, int y, int num)
                   ? NDI_COLR_GREY
                   : percentage_colr(((resist + 100) * 0.005 * 100));
 
-    string_blt(widget_surface[WIDGET_RESIST_ID], &font_small, name, x, y,
+    strout_blt(widget_surface[WIDGET_RESIST_ID], &font_small, name, x, y,
                skin_prefs.widget_key, NULL, NULL);
     sprintf(buf, "%02d", resist);
-    string_blt(widget_surface[WIDGET_RESIST_ID], &font_small, buf, x + 12, y,
+    strout_blt(widget_surface[WIDGET_RESIST_ID], &font_small, buf, x + 12, y,
                colr, NULL, NULL);
 }
 
@@ -422,7 +422,7 @@ void widget_show_range(int x, int y)
                 if (!tmp2)
                 {
                     LOG(LOG_DEBUG,"BUG: applied range weapon don't exist\n");
-                    string_blt(ScreenSurface, &font_small, "using Nothing", x + 5, y + 36, skin_prefs.widget_info, &rec_range, NULL);
+                    strout_blt(ScreenSurface, &font_small, "using Nothing", x + 5, y + 36, skin_prefs.widget_info, &rec_range, NULL);
                 }
                 else
                 {
@@ -442,7 +442,7 @@ void widget_show_range(int x, int y)
                                            (ip->nrof == 1) ? 0 : ip->nrof, NULL);
                     }
 
-                    string_blt(ScreenSurface, &font_small, buf, x + 5, y + 36, skin_prefs.widget_valueEq, &rec_range, NULL);
+                    strout_blt(ScreenSurface, &font_small, buf, x + 5, y + 36, skin_prefs.widget_valueEq, &rec_range, NULL);
                 }
 
                 if (fire_mode.ammo != FIRE_ITEM_NO)
@@ -483,12 +483,12 @@ void widget_show_range(int x, int y)
 //                    sprintf(buf, "Type: %d",tmp2->itype);
                     buf[0]=0;
 
-                string_blt(ScreenSurface, &font_small, buf, x + 5, y + 47, skin_prefs.widget_valueEq, &rec_item, NULL);
+                strout_blt(ScreenSurface, &font_small, buf, x + 5, y + 47, skin_prefs.widget_valueEq, &rec_item, NULL);
             }
             else
             {
                 sprintf(buf, "no range weapon applied");
-                string_blt(ScreenSurface, &font_small, buf, x + 5, y + 36, skin_prefs.widget_info, &rec_range, NULL);
+                strout_blt(ScreenSurface, &font_small, buf, x + 5, y + 36, skin_prefs.widget_info, &rec_range, NULL);
             }
 
             sprite_blt(skin_sprites[SKIN_SPRITE_RANGE_MARKER], x + 5, y + 2, NULL, NULL);
@@ -502,7 +502,7 @@ void widget_show_range(int x, int y)
                 if (fire_mode.spell->flag != -1)
                 {
                     sprite_blt(fire_mode.spell->icon, x + 45, y + 2, NULL, NULL);
-                    string_blt(ScreenSurface, &font_small, fire_mode.spell->name, x + 5, y + 47,
+                    strout_blt(ScreenSurface, &font_small, fire_mode.spell->name, x + 5, y + 47,
                               skin_prefs.widget_valueEq, &rec_item, NULL);
                 }
                 else
@@ -512,10 +512,10 @@ void widget_show_range(int x, int y)
             {
                 sprite_blt(skin_sprites[SKIN_SPRITE_RANGE_WIZARD_NO], x + 5, y + 2, NULL, NULL);
                 sprintf(buf, "no spell selected");
-                string_blt(ScreenSurface, &font_small, buf, x + 5, y + 47, skin_prefs.widget_info, &rec_item, NULL);
+                strout_blt(ScreenSurface, &font_small, buf, x + 5, y + 47, skin_prefs.widget_info, &rec_item, NULL);
             }
             sprintf(buf, "cast spell");
-            string_blt(ScreenSurface, &font_small, buf, x + 5, y + 36, skin_prefs.widget_info, &rec_range, NULL);
+            strout_blt(ScreenSurface, &font_small, buf, x + 5, y + 36, skin_prefs.widget_info, &rec_range, NULL);
 
             break;
 
@@ -526,7 +526,7 @@ void widget_show_range(int x, int y)
                 if (fire_mode.skill->flag != -1)
                 {
                     sprite_blt(fire_mode.skill->icon, x + 45, y + 2, NULL, NULL);
-                    string_blt(ScreenSurface, &font_small, fire_mode.skill->name, x + 5, y + 47,
+                    strout_blt(ScreenSurface, &font_small, fire_mode.skill->name, x + 5, y + 47,
                               skin_prefs.widget_valueEq, &rec_item, NULL);
                 }
                 else
@@ -536,10 +536,10 @@ void widget_show_range(int x, int y)
             {
                 sprite_blt(skin_sprites[SKIN_SPRITE_RANGE_SKILL_NO], x + 5, y + 2, NULL, NULL);
                 sprintf(buf, "no skill selected");
-                string_blt(ScreenSurface, &font_small, buf, x + 5, y + 47, skin_prefs.widget_info, &rec_item, NULL);
+                strout_blt(ScreenSurface, &font_small, buf, x + 5, y + 47, skin_prefs.widget_info, &rec_item, NULL);
             }
             sprintf(buf, "use skill");
-            string_blt(ScreenSurface, &font_small, buf, x + 5, y + 36, skin_prefs.widget_info, &rec_range, NULL);
+            strout_blt(ScreenSurface, &font_small, buf, x + 5, y + 36, skin_prefs.widget_info, &rec_range, NULL);
 
             break;
 
@@ -648,7 +648,7 @@ void show_media(int x, int y)
 
 void widget_show_mapname(int x, int y)
 {
-    string_blt(ScreenSurface, &font_large, MapData.name, x, y, skin_prefs.widget_title, NULL, NULL);
+    strout_blt(ScreenSurface, &font_large, MapData.name, x, y, skin_prefs.widget_title, NULL, NULL);
 }
 
 
@@ -752,7 +752,7 @@ void show_quickslots(int x, int y)
                         && my >= y + quickslots_pos[i][qsy]
                         && my < y + quickslots_pos[i][qsy] + 33
                         && widget_get_mouse_state(&mx,&my,WIDGET_QUICKSLOT_ID))
-                    show_tooltip(mx, my,
+                    strout_tooltip(mx, my,
                                  spell_list[quick_slots[i].spell.groupNr].entry[quick_slots[i].spell.classNr][quick_slots[i].shared.tag].name);
             }
             /* item in quickslot */
@@ -781,13 +781,13 @@ void show_quickslots(int x, int y)
                             && widget_get_mouse_state(&mx,&my,WIDGET_QUICKSLOT_ID))
                     {
                         sprintf(buf,"%s (q/c: %d/%d)",ip->s_name, ip->item_qua, ip->item_con);
-                        show_tooltip(mx, my, buf);
+                        strout_tooltip(mx, my, buf);
                     }
                 }
             }
         }
         sprintf(buf, "F%d", i + 1);
-        string_blt(ScreenSurface, &font_tiny, buf, x + quickslots_pos[i][qsx]+xoff + 12, y + quickslots_pos[i][qsy] - 6,
+        strout_blt(ScreenSurface, &font_tiny, buf, x + quickslots_pos[i][qsx]+xoff + 12, y + quickslots_pos[i][qsy] - 6,
                   skin_prefs.widget_title, NULL, NULL);
     }
 }
@@ -829,7 +829,7 @@ void widget_quickslots(int x, int y)
                         && my >= y + quickslots_pos[i][qsy]
                         && my < y + quickslots_pos[i][qsy] + 33
                         && widget_get_mouse_state(&mx,&my,WIDGET_QUICKSLOT_ID))
-                    show_tooltip(mx, my,
+                    strout_tooltip(mx, my,
                                  spell_list[quick_slots[i].spell.groupNr].entry[quick_slots[i].spell.classNr][quick_slots[i].shared.tag].name);
             }
             /* item in quickslot */
@@ -858,13 +858,13 @@ void widget_quickslots(int x, int y)
                             && widget_get_mouse_state(&mx,&my,WIDGET_QUICKSLOT_ID))
                     {
                         sprintf(buf,"%s (QC: %d/%d)",ip->s_name, ip->item_qua, ip->item_con);
-                        show_tooltip(mx, my, buf);
+                        strout_tooltip(mx, my, buf);
                     }
                 }
             }
         }
         sprintf(buf, "F%d", i + 1);
-        string_blt(ScreenSurface, &font_tiny, buf, x + quickslots_pos[i][qsx]+xoff + 12, y + quickslots_pos[i][qsy] - 6,
+        strout_blt(ScreenSurface, &font_tiny, buf, x + quickslots_pos[i][qsx]+xoff + 12, y + quickslots_pos[i][qsy] - 6,
                   skin_prefs.widget_title, NULL, NULL);
     }
 }
@@ -1410,7 +1410,7 @@ void widget_show_target(int x, int y)
         if (ptr)
         {
             /* Draw the name of the target */
-            string_blt(ScreenSurface, &font_small, cpl.target_name, x + 35,
+            strout_blt(ScreenSurface, &font_small, cpl.target_name, x + 35,
                        y + 3, cpl.target_colr, NULL, NULL);
             /* Either draw HP remaining percent and description... */
             if (hp_tmp)
@@ -1418,15 +1418,15 @@ void widget_show_target(int x, int y)
                 char hp_text[9];
 
                 sprintf(hp_text, "HP: %d%%", hp_tmp);
-                string_blt(ScreenSurface, &font_small, hp_text, x + 35, y + 14,
+                strout_blt(ScreenSurface, &font_small, hp_text, x + 35, y + 14,
                            percentage_colr(cpl.target_hp), NULL, NULL);
-                string_blt(ScreenSurface, &font_small, ptr, x + 85, y + 14,
+                strout_blt(ScreenSurface, &font_small, ptr, x + 85, y + 14,
                            cpl.target_colr, NULL, NULL);
             }
             /* ...or draw just the description */
             else
             {
-                string_blt(ScreenSurface, &font_small, ptr, x + 35, y + 14,
+                strout_blt(ScreenSurface, &font_small, ptr, x + 35, y + 14,
                            cpl.target_colr, NULL, NULL);
             }
         }

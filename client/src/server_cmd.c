@@ -830,7 +830,7 @@ void DrawInfoCmd2(char *data, int len)
          * arbitrary VIM with suitable delay. */
         for (tmp = strtok(vimbuf, "\n"); tmp; tmp = strtok(NULL, "\n"))
         {
-            add_vim(VIM_MODE_ARBITRARY, 8, 8, tmp, colr, 3000, 450 * i++);
+            strout_vim_add(VIM_MODE_ARBITRARY, 8, 8, tmp, colr, 3000, 450 * i++);
         }
     }
 
@@ -1860,7 +1860,7 @@ void Map2Cmd(char *data, int len)
                     dmg0 = GetUINT16_String(data + pos);
                     sprintf(dmg_buf, "%d", dmg0);
                     pos += 2;
-                    add_vim(VIM_MODE_KILL, x, y, dmg_buf, NDI_COLR_ORANGE,
+                    strout_vim_add(VIM_MODE_KILL, x, y, dmg_buf, NDI_COLR_ORANGE,
                             1500, 0);
                 }
 
@@ -1869,7 +1869,7 @@ void Map2Cmd(char *data, int len)
                     dmg1 = GetSINT16_String(data + pos);
                     sprintf(dmg_buf, "%d", ABS(dmg1));
                     pos += 2;
-                    add_vim(VIM_MODE_DAMAGE_SELF, x, y, dmg_buf,
+                    strout_vim_add(VIM_MODE_DAMAGE_SELF, x, y, dmg_buf,
                             (dmg1 >= 0) ? NDI_COLR_RED : NDI_COLR_LIME, 1250, 0);
                 }
 
@@ -1878,7 +1878,7 @@ void Map2Cmd(char *data, int len)
                     dmg2 = GetSINT16_String(data + pos);
                     sprintf(dmg_buf, "%d", dmg2);
                     pos += 2;
-                    add_vim(VIM_MODE_DAMAGE_OTHER, x, y, dmg_buf,
+                    strout_vim_add(VIM_MODE_DAMAGE_OTHER, x, y, dmg_buf,
                             NDI_COLR_YELLOW, 1000, 0);
                 }
 
@@ -1887,7 +1887,7 @@ void Map2Cmd(char *data, int len)
                     dmg3 = GetSINT16_String(data + pos);
                     sprintf(dmg_buf, "%d", dmg3);
                     pos += 2;
-                    add_vim(VIM_MODE_DAMAGE_OTHER, x, y, dmg_buf,
+                    strout_vim_add(VIM_MODE_DAMAGE_OTHER, x, y, dmg_buf,
                             NDI_COLR_ORANGE, 1000, 0);
                 }
 //                LOG(LOG_DEBUG,"Damage: dmg_flag %x, (%d, %d, %d, %d)",dmg_flag, dmg0, dmg1, dmg2, dmg3);

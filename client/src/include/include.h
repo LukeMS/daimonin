@@ -97,6 +97,7 @@ typedef signed char     sint8;
 #include "event.h"
 #include "sound.h"
 #include "sprite.h"
+#include "strout.h"
 #include "map.h"
 #include "anim.h"
 #include "tile_stretcher.h"

@@ -234,16 +234,16 @@ void widget_show_inventory_window(int x, int y)
             WIDGET_SHOW(WIDGET_PDOLL_ID) = 0;
         widget_data[WIDGET_MAIN_INV_ID].ht = 32;
         sprite_blt(skin_sprites[SKIN_SPRITE_INV_BG], x, y, NULL, NULL);
-        string_blt(ScreenSurface, &font_small, "Carry", x+140, y+4, skin_prefs.widget_key, NULL, NULL);
+        strout_blt(ScreenSurface, &font_small, "Carry", x+140, y+4, skin_prefs.widget_key, NULL, NULL);
         sprintf(buf, "%4.3f kg", (float)cpl.real_weight/1000.0f);
-        string_blt(ScreenSurface, &font_small, buf, x + 140 + 35, y + 4,
+        strout_blt(ScreenSurface, &font_small, buf, x + 140 + 35, y + 4,
                    percentage_colr(100 - ((float)cpl.real_weight /
                                           (float)cpl.weight_limit * 100)),
                    NULL, NULL);
-        string_blt(ScreenSurface, &font_small, "Limit", x+140, y+15, skin_prefs.widget_key, NULL, NULL);
+        strout_blt(ScreenSurface, &font_small, "Limit", x+140, y+15, skin_prefs.widget_key, NULL, NULL);
         sprintf(buf, "%4.3f kg", (float) cpl.weight_limit / 1000.0);
-        string_blt(ScreenSurface, &font_small, buf, x+140 + 35, y+15, skin_prefs.widget_valueEq, NULL, NULL);
-        string_blt(ScreenSurface, &font_tiny, "(SHIFT for inventory)", x+32, y+ 9, skin_prefs.widget_info, NULL, NULL);
+        strout_blt(ScreenSurface, &font_small, buf, x+140 + 35, y+15, skin_prefs.widget_valueEq, NULL, NULL);
+        strout_blt(ScreenSurface, &font_tiny, "(SHIFT for inventory)", x+32, y+ 9, skin_prefs.widget_info, NULL, NULL);
         return;
     }
 
@@ -519,7 +519,7 @@ static void PrintInfo(sint16 x, sint16 y, item *ip, inventory_win_t iwin)
         sprintf(buf, "%d %s", ip->nrof, ip->s_name);
     }
 
-    string_blt(surface, &font_small, buf, x, y + 4, skin_prefs.widget_title, NULL, NULL);
+    strout_blt(surface, &font_small, buf, x, y + 4, skin_prefs.widget_title, NULL, NULL);
 
     /* In the below inv this is all the info we get. This is simply a real
      * estate issue. There just isn't space to squeeze in more info. This could
@@ -533,36 +533,36 @@ static void PrintInfo(sint16 x, sint16 y, item *ip, inventory_win_t iwin)
     }
 
     sprintf(buf, "weight: ");
-    string_blt(surface, &font_small, buf, x, y + 16, skin_prefs.widget_key, NULL, NULL);
-    x += string_width(&font_small, buf);
+    strout_blt(surface, &font_small, buf, x, y + 16, skin_prefs.widget_key, NULL, NULL);
+    x += strout_width(&font_small, buf);
     sprintf(buf, "%4.3f ", (float)ip->weight / 1000.0);
-    string_blt(surface, &font_small, buf, x, y + 16, skin_prefs.widget_valueEq, NULL, NULL);
-    x += string_width(&font_small, buf);
+    strout_blt(surface, &font_small, buf, x, y + 16, skin_prefs.widget_valueEq, NULL, NULL);
+    x += strout_width(&font_small, buf);
 
     if (ip->item_qua == 255) /* this comes from server when not identified */
     {
-        string_blt(surface, &font_small, "(not identified)", x, y + 16,
+        strout_blt(surface, &font_small, "(not identified)", x, y + 16,
                    skin_prefs.widget_info, NULL, NULL);
     }
     else
     {
         sprintf(buf, "con: ");
-        string_blt(surface, &font_small, buf, x, y + 16, skin_prefs.widget_key, NULL,
+        strout_blt(surface, &font_small, buf, x, y + 16, skin_prefs.widget_key, NULL,
                    NULL);
-        x += string_width(&font_small, buf);
+        x += strout_width(&font_small, buf);
         sprintf(buf, "%d ", ip->item_con);
-        string_blt(ScreenSurface, &font_small, buf, x, y + 16,
+        strout_blt(ScreenSurface, &font_small, buf, x, y + 16,
                    percentage_colr((float)ip->item_con /
                                    (float)ip->item_qua * 100), NULL, NULL);
-        x += string_width(&font_small, buf);
+        x += strout_width(&font_small, buf);
         sprintf(buf, "/ %d", ip->item_qua);
-        string_blt(surface, &font_small, buf, x, y + 16, skin_prefs.widget_valueHi,
+        strout_blt(surface, &font_small, buf, x, y + 16, skin_prefs.widget_valueHi,
                    NULL, NULL);
-        x += string_width(&font_small, buf);
+        x += strout_width(&font_small, buf);
         sprintf(buf, "allowed: ");
-        string_blt(surface, &font_small, buf, x, y + 16, skin_prefs.widget_key, NULL,
+        strout_blt(surface, &font_small, buf, x, y + 16, skin_prefs.widget_key, NULL,
                    NULL);
-        x += string_width(&font_small, buf);
+        x += strout_width(&font_small, buf);
 
         if (ip->item_level)
         {
@@ -573,18 +573,18 @@ static void PrintInfo(sint16 x, sint16 y, item *ip, inventory_win_t iwin)
                 (ip->item_skill &&
                  ip->item_level <= cpl.stats.skill_level[ip->item_skill - 1]))
             {
-                string_blt(surface, &font_small, buf, x, y + 16,
+                strout_blt(surface, &font_small, buf, x, y + 16,
                            skin_prefs.widget_valueEq, NULL, NULL);
             }
             else
             {
-                string_blt(surface, &font_small, buf, x, y + 16,
+                strout_blt(surface, &font_small, buf, x, y + 16,
                            skin_prefs.widget_valueLo, NULL, NULL);
             }
         }
         else
         {
-            string_blt(surface, &font_small, "all", x, y + 16,
+            strout_blt(surface, &font_small, "all", x, y + 16,
                        skin_prefs.widget_valueHi, NULL, NULL);
         }
     }

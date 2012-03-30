@@ -164,6 +164,7 @@
 		<Unit filename="..\..\..\..\src\include\sound.h" />
 		<Unit filename="..\..\..\..\src\include\sprite.h" />
 		<Unit filename="..\..\..\..\src\include\srvfile.h" />
+		<Unit filename="..\..\..\..\src\include\strout.h" />
 		<Unit filename="..\..\..\..\src\include\textwin.h" />
 		<Unit filename="..\..\..\..\src\include\tile_stretcher.h" />
 		<Unit filename="..\..\..\..\src\include\widget.h" />
@@ -233,6 +234,9 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\..\src\srvfile.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\..\src\strout.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\..\src\textwin.c">
