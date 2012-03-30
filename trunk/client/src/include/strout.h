@@ -72,7 +72,7 @@ extern void   strout_blt(SDL_Surface *surface, _font *font, char *text,
                          sint16 x, sint16 y, uint32 col, SDL_Rect *area,
                          _BLTFX *bltfx);
 extern void   strout_input(_font *font, SDL_Rect *box, char repl);
-extern void   strout_tooltip(sint16 mx, sint16 my, char *text);
+extern void   strout_tooltip(sint16 x, sint16 y, char *text);
 extern strout_vim_t *strout_vim_add(strout_vim_mode_t mode, uint8 mapx,
                                     uint8 mapy, char *text, uint32 colr,
                                     uint16 lifetime, uint16 delay);
