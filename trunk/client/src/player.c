@@ -747,7 +747,9 @@ void widget_show_player_doll(int x, int y)
                         && my < y+widget_player_doll[index].ypos + 33)
                 {
                     tooltip_index = index;
-                    sprintf(buf,"%s (QC: %d/%d)",tmp->s_name, tmp->item_qua, tmp->item_con);
+                    sprintf(buf, "~%s~\n~Quality:~ %d\n~Condition:~ %d",
+                            tmp->s_name, tmp->item_qua, tmp->item_con);
+
                     if ((mb & SDL_BUTTON(SDL_BUTTON_LEFT)) && !draggingInvItem(DRAG_GET_STATUS))
                     {
                         cpl.win_pdoll_tag = tmp->tag;

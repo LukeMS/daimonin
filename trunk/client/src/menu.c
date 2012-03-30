@@ -752,8 +752,11 @@ void show_quickslots(int x, int y)
                         && my >= y + quickslots_pos[i][qsy]
                         && my < y + quickslots_pos[i][qsy] + 33
                         && widget_get_mouse_state(&mx,&my,WIDGET_QUICKSLOT_ID))
-                    strout_tooltip(mx, my,
-                                 spell_list[quick_slots[i].spell.groupNr].entry[quick_slots[i].spell.classNr][quick_slots[i].shared.tag].name);
+                {
+                    sprintf(buf, "~%s~\n~Class:~ TODO\n~Group:~ TODO",
+                            spell_list[quick_slots[i].spell.groupNr].entry[quick_slots[i].spell.classNr][quick_slots[i].shared.tag].name);
+                    strout_tooltip(mx, my, buf);
+                }
             }
             /* item in quickslot */
             else
@@ -780,7 +783,8 @@ void show_quickslots(int x, int y)
                             && my < y + quickslots_pos[i][qsy] + 33
                             && widget_get_mouse_state(&mx,&my,WIDGET_QUICKSLOT_ID))
                     {
-                        sprintf(buf,"%s (q/c: %d/%d)",ip->s_name, ip->item_qua, ip->item_con);
+                        sprintf(buf, "~%s~\n~Quality:~ %d\n~Condition:~ %d",
+                                ip->s_name, ip->item_qua, ip->item_con);
                         strout_tooltip(mx, my, buf);
                     }
                 }
@@ -829,8 +833,11 @@ void widget_quickslots(int x, int y)
                         && my >= y + quickslots_pos[i][qsy]
                         && my < y + quickslots_pos[i][qsy] + 33
                         && widget_get_mouse_state(&mx,&my,WIDGET_QUICKSLOT_ID))
-                    strout_tooltip(mx, my,
-                                 spell_list[quick_slots[i].spell.groupNr].entry[quick_slots[i].spell.classNr][quick_slots[i].shared.tag].name);
+                {
+                    sprintf(buf, "~%s~\n~Class:~ TODO\n~Group:~ TODO",
+                            spell_list[quick_slots[i].spell.groupNr].entry[quick_slots[i].spell.classNr][quick_slots[i].shared.tag].name);
+                    strout_tooltip(mx, my, buf);
+                }
             }
             /* item in quickslot */
             else
@@ -857,7 +864,8 @@ void widget_quickslots(int x, int y)
                             && my < y + quickslots_pos[i][qsy] + 33
                             && widget_get_mouse_state(&mx,&my,WIDGET_QUICKSLOT_ID))
                     {
-                        sprintf(buf,"%s (QC: %d/%d)",ip->s_name, ip->item_qua, ip->item_con);
+                        sprintf(buf, "~%s~\n~Quality:~ %d\n~Condition:~ %d",
+                                ip->s_name, ip->item_qua, ip->item_con);
                         strout_tooltip(mx, my, buf);
                     }
                 }
