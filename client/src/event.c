@@ -2087,8 +2087,17 @@ uint8 process_macro_keys(int id, int value)
         return 0;
         break;
     case KEYFUNC_SCREENTOGGLE:
-        if (!ToggleScreenFlag)
-            ToggleScreenFlag = 1;
+        if (set_video_mode(Screensize.x, Screensize.y))
+        {
+            sprintf(buf, "Try to switch back to default 800x600...");
+            textwin_show_string(0, NDI_COLR_RED, "%s", buf);
+            LOG(LOG_MSG, "%s\n", buf);
+            Screensize = Screendefs[0];
+            options.resolution = 0;
+
+            (void)set_video_mode(Screendefs[0].x, Screendefs[0].y);
+        }
+
         return 0;
         break;
 
@@ -2816,22 +2825,12 @@ void check_menu_keys(int menu, int key)
             /* Change map scaling. */
             create_map_surface();
 
-            /* ToggleScreenFlag sets changes this option in the main loop
-             * so we revert this setting, also if a resolution change occurs
-             * we first change the resolution, without toggling, and after that
-             * succeeds we use the specialized attempt_fullscreentoggle
-             */
-            if (options.fullscreen_flag != options.fullscreen)
-            {
-                if (options.fullscreen)
-                    options.fullscreen = 0;
-                else
-                    options.fullscreen = 1;
-                ToggleScreenFlag = 1;
-            }
-
-            /* Change resolution. */
-            if (Screensize.x != Screendefs[options.resolution].x ||
+            /* Toggle fullscreen/Change resolution. */
+            if ((options.fullscreen &&
+                 !(ScreenSurface->flags & SDL_FULLSCREEN)) ||
+                (!options.fullscreen &&
+                 (ScreenSurface->flags & SDL_FULLSCREEN)) ||
+                Screensize.x != Screendefs[options.resolution].x ||
                 Screensize.y != Screendefs[options.resolution].y)
             {
                 if (set_video_mode(Screendefs[options.resolution].x,
