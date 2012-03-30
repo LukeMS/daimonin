@@ -30,15 +30,17 @@
 
 strout_vim_t *strout_vim_queue;
 
-/* Calculate the displayed width of the text */
+/* Calculate the displayed width of the text. Newlines will reset the count so
+ * you may want to split the string at newlines first then call this on each
+ * substring. */
 sint16 strout_width(_font *font, char *text)
 {
-    uint16 i;
-    sint16 w = 0;
+    sint16 maxw = 0,
+           w = 0;
 
-    for (i = 0; text[i]; i++)
+    while (*text)
     {
-        switch (text[i])
+        switch (*text)
         {
             case ECC_STRONG:
             case ECC_EMPHASIS:
@@ -46,24 +48,39 @@ sint16 strout_width(_font *font, char *text)
             case ECC_HYPERTEXT:
                 break;
 
+            case '\n':
+                maxw = w;
+                w = 0;
+
+                break;
+
             default:
-                w += font->c[(uint8)(text[i])].w + font->char_offset;
+                w += font->c[(uint8)*text].w + font->char_offset;
         }
+
+        text++;
     }
 
-    return w;
+    if (w > maxw)
+    {
+        maxw = w;
+    }
+
+    return maxw;
 }
 
-/* Calculate the displayed chars for a given width*/
+/* Calculate the displayed chars for a given width. Newlines will reset the
+ * count so you may want to split the string at newlines first then call this
+ * on each substring. */
 uint8 strout_width_offset(_font *font, char *text, sint16 *line, sint16 len)
 {
-    uint16 i;
-    sint16 w = 0;
+    sint16 i,
+           w = 0;
     uint8  flag = 0;
 
-    for (i = 0; text[i]; i++)
+    for (i = 0; *text; i++)
     {
-        switch (text[i])
+        switch (*text)
         {
             case ECC_STRONG:
             case ECC_EMPHASIS:
@@ -71,16 +88,25 @@ uint8 strout_width_offset(_font *font, char *text, sint16 *line, sint16 len)
             case ECC_HYPERTEXT:
                 break;
 
+            case '\n':
+                w = 0;
+
+                break;
+
             default:
-                w += font->c[(uint8)(text[i])].w + font->char_offset;
+                w += font->c[(uint8)*text].w + font->char_offset;
 
                 if (w >= len && 
                     !flag)
                 {
                     flag = 1;
-                    *line = i - 1;
+                    *line = i;
+
+                    break;
                 }
         }
+
+        text++;
     }
 
     if (!flag) /* line is in limit */
