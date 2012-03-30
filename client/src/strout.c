@@ -49,7 +49,11 @@ sint16 strout_width(_font *font, char *text)
                 break;
 
             case '\n':
-                maxw = w;
+                if (w > maxw)
+                {
+                    maxw = w;
+                }
+
                 w = 0;
 
                 break;
