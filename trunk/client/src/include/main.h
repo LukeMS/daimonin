@@ -177,7 +177,6 @@ typedef struct _options
     int                   Win_RLEACCEL;
 
     /* INTERN FLAGS - Setup depends on option settings and selected mode */
-    int                   fullscreen_flag;      /* we are in fullscreen mode */
     int                   doublebuf_flag;       /* we doublebuf */
     int                   rleaccel_flag;
     uint8                 gameserver_showlocal;
@@ -419,8 +418,6 @@ extern uint8              InputStringEndFlag; /* if true, we had entered some in
 extern uint8              InputStringEscFlag;
 extern uint8              InputMode; // 0=insert, 1=overtype
 extern uint8              InputCaretBlinkFlag;
-
-extern int                  ToggleScreenFlag;
 
 extern int                    interface_mode;
 

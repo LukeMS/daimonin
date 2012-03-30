@@ -75,7 +75,6 @@ struct gui_book_struct    *gui_interface_book;
 
 int                 request_file_chain;
 
-int                 ToggleScreenFlag;
 char                InputString[MAX_INPUT_STRING];
 char                InputHistory[MAX_HISTORY_LINES][MAX_INPUT_STRING];
 int                 HistoryPos;
@@ -200,7 +199,6 @@ void init_game_data(void)
     srand((uint32) time(NULL));
     memset(animcmd, 0, sizeof(animcmd));
     memset(animation, 0, sizeof(animation));
-    ToggleScreenFlag = 0;
     memset(&fire_mode, 0, sizeof(fire_mode));
 
     for (i = 0; i < MAXFACES; i++)
@@ -1496,18 +1494,6 @@ int main(int argc, char *argv[])
         if (music_global_fade)
             sound_fadeout_music(music_new.flag);
 #endif
-
-#if (1) /* unused. Toggle is still buggy in SDL */
-        if (ToggleScreenFlag)
-        {
-            uint32 flags = get_video_flags();
-
-            options.fullscreen = !options.fullscreen;
-            attempt_fullscreen_toggle(&ScreenSurface, &flags);
-            ToggleScreenFlag = 0;
-        }
-#endif
-
 
         /* get our ticks */
         if ((LastTick - tmpGameTick) > 1000)
