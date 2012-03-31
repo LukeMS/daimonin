@@ -508,10 +508,15 @@ void strout_tooltip(sint16 x, sint16 y, char *text)
         }
     }
 
-    /* If it would extend off the screen, truncate it. */
+    /* If it would extend off the screen, move it within the boundaries. */
     if (box.x + box.w >= Screensize.x)
     {
         box.x -= (box.x + box.w + 1) - Screensize.x;
+    }
+
+    if (box.y + box.h >= Screensize.y)
+    {
+        box.y -= (box.y + box.h + 1) - Screensize.y;
     }
 
     SDL_FillRect(ScreenSurface, &box, NDI_COLR_BLACK);
