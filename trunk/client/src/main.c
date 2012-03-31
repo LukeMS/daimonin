@@ -2353,7 +2353,7 @@ static void DisplayLayer1(void)
     box.x = (ScreenSurface->w - ScreenSurfaceMap->w) / 2;
     box.y = (ScreenSurface->h - ScreenSurfaceMap->h) / 2;
     SDL_BlitSurface(ScreenSurfaceMap, NULL, ScreenSurface, &box);
-    strout_vim_play();
+    strout_vim_show();
 
     /* draw warning-icons above player */
     if ((gfx_toggle++ & 63) < 25)

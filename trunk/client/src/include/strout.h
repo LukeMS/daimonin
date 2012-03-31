@@ -78,6 +78,6 @@ extern strout_vim_t *strout_vim_add(strout_vim_mode_t mode, uint8 mapx,
                                     uint16 lifetime, uint16 delay);
 extern void   strout_vim_remove(strout_vim_t *this);
 extern void   strout_vim_reset(void);
-extern void   strout_vim_play(void);
+extern void   strout_vim_show(void);
 
 #endif /* ifndef __STROUT_H */
