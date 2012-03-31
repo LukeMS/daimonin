@@ -498,6 +498,15 @@ jump_in_container:
                     PrintInfo(ox, oy, cip, iwin);
                 }
 
+                if (mx >= xi &&
+                    mx < xi + 33 &&
+                    my >= yi &&
+                    my < yi + 33)
+                {
+                    sprintf(buf, "~%s~\n~Quality:~ %d\n~Condition:~ %d",
+                            cip->s_name, cip->item_qua, cip->item_con);
+                }
+
                 if ((cip = cip->next))
                 {
                     sprite_blt(skin_sprites[SKIN_SPRITE_CMARK_MIDDLE], xi, yi, NULL, bltfx);
@@ -507,15 +516,6 @@ jump_in_container:
                     sprite_blt(skin_sprites[SKIN_SPRITE_CMARK_END], xi, yi, NULL, bltfx);
 
                     break;
-                }
-
-                if (mx >= xi &&
-                    mx < xi + 33 &&
-                    my >= yi &&
-                    my < yi + 33)
-                {
-                    sprintf(buf, "~%s~\n~Quality:~ %d\n~Condition:~ %d",
-                            cip->s_name, cip->item_qua, cip->item_con);
                 }
             }
         }
