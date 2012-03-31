@@ -678,9 +678,9 @@ void strout_vim_reset(void)
     }
 }
 
-/* Goes through the queue, playing each VIM or removing ones at the end of
+/* Goes through the queue, showing each VIM or removing ones at the end of
  * their life. */
-void strout_vim_play(void)
+void strout_vim_show(void)
 {
     strout_vim_t *this,
                  *next;
