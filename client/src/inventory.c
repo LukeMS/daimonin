@@ -387,6 +387,10 @@ static void ShowIcons(sint16 ox, sint16 oy, sint16 x, sint16 y, uint8 invxlen, u
            *ip = wp->inv,
            *cip = cpl.sack->inv,
            *tmp = NULL;
+    int     mx,
+            my;
+    uint8   mb = SDL_GetMouseState(&mx, &my);
+    char    buf[MEDIUM_BUF] = "";
 
     for (i = 0; i < start; i++)
     {
@@ -454,6 +458,15 @@ static void ShowIcons(sint16 ox, sint16 oy, sint16 x, sint16 y, uint8 invxlen, u
             PrintInfo(ox, oy, ip, iwin);
         }
 
+        if (mx >= xi &&
+            mx < xi + 33 &&
+            my >= yi &&
+            my < yi + 33)
+        {
+            sprintf(buf, "~%s~\n~Quality:~ %d\n~Condition:~ %d",
+                    ip->s_name, ip->item_qua, ip->item_con);
+        }
+
         if (cpl.container &&
             cpl.container->tag == ip->tag &&
             cip)
@@ -495,10 +508,24 @@ jump_in_container:
 
                     break;
                 }
+
+                if (mx >= xi &&
+                    mx < xi + 33 &&
+                    my >= yi &&
+                    my < yi + 33)
+                {
+                    sprintf(buf, "~%s~\n~Quality:~ %d\n~Condition:~ %d",
+                            cip->s_name, cip->item_qua, cip->item_con);
+                }
             }
         }
 
         ip = ip->next;
+    }
+
+    if (*buf)
+    {
+        strout_tooltip(mx, my, buf);
     }
 }
 
