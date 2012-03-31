@@ -601,7 +601,7 @@ void show_menu(void)
             box.h = 42;
             box.w = skin_sprites[SKIN_SPRITE_DIALOG_BG]->bitmap->w;
             SDL_FillRect(ScreenSurface, &box, 0);
-            show_quickslots(box.x + 120, box.y + 3);
+            widget_quickslots(box.x + 120, box.y + 3);
 
             break;
 
@@ -724,77 +724,7 @@ int get_quickslot(int x, int y)
     }
     return -1;
 }
-void show_quickslots(int x, int y)
-{
-    int     i, mx, my;
-    char    buf[512];
-    int     qsx, qsy, xoff;
 
-        qsx = 0;
-        qsy = 1;
-        xoff = -17;
-        sprite_blt(skin_sprites[SKIN_SPRITE_QUICKSLOTS], x, y, NULL, NULL);
-
-    SDL_GetMouseState(&mx, &my);
-    update_quickslots(-1);
-
-    for (i = MAX_QUICK_SLOTS - 1; i >= 0; i--)
-    {
-        if (quick_slots[i].shared.tag != -1)
-        {
-            /* spell in quickslot */
-            if (quick_slots[i].shared.is_spell == 1)
-            {
-                sprite_blt(spell_list[quick_slots[i].spell.groupNr].entry[quick_slots[i].spell.classNr][quick_slots[i].shared.tag].icon,
-                           x + quickslots_pos[i][qsx]+xoff, y + quickslots_pos[i][qsy], NULL, NULL);
-                if (mx >= x + quickslots_pos[i][qsx]+xoff
-                        && mx < x + quickslots_pos[i][qsx]+xoff + 33
-                        && my >= y + quickslots_pos[i][qsy]
-                        && my < y + quickslots_pos[i][qsy] + 33
-                        && widget_get_mouse_state(&mx,&my,WIDGET_QUICKSLOT_ID))
-                {
-                    sprintf(buf, "~%s~\n~Class:~ TODO\n~Group:~ TODO",
-                            spell_list[quick_slots[i].spell.groupNr].entry[quick_slots[i].spell.classNr][quick_slots[i].shared.tag].name);
-                    strout_tooltip(mx, my, buf);
-                }
-            }
-            /* item in quickslot */
-            else
-            {
-                item *ip;
-
-                if ((ip = locate_item_from_item(cpl.ob, quick_slots[i].shared.tag)))
-                {
-                    uint8 quacon = (ip->item_qua == 255) ? 255
-                                   : (float)ip->item_con /
-                                     (float)ip->item_qua * 100;
-
-                    sprite_blt_as_icon(face_list[ip->face].sprite,
-                                       x + quickslots_pos[i][qsx] + xoff,
-                                       y + quickslots_pos[i][qsy],
-                                       SPRITE_ICON_TYPE_ACTIVE, 0, ip->flagsval,
-                                       (quacon == 100) ? 0 : quacon,
-                                       (ip->nrof == 1) ? 0 : ip->nrof, NULL);
-
-                    /* show tooltip */
-                    if (mx >= x + quickslots_pos[i][qsx]+xoff
-                            && mx < x + quickslots_pos[i][qsx]+xoff + 33
-                            && my >= y + quickslots_pos[i][qsy]
-                            && my < y + quickslots_pos[i][qsy] + 33
-                            && widget_get_mouse_state(&mx,&my,WIDGET_QUICKSLOT_ID))
-                    {
-                        sprintf(buf, "~%s~\n~Quality:~ %d\n~Condition:~ %d",
-                                ip->s_name, ip->item_qua, ip->item_con);
-                        strout_tooltip(mx, my, buf);
-                    }
-                }
-            }
-        }
-        sprintf(buf, "F%d", i + 1);
-        strout_blt(ScreenSurface, &font_tiny, buf, x + quickslots_pos[i][qsx]+xoff + 12, y + quickslots_pos[i][qsy] - 6,
-                  skin_prefs.widget_title, NULL, NULL);
-    }
-}
 void widget_quickslots(int x, int y)
 {
     int     i, mx, my;

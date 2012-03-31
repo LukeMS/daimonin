@@ -139,7 +139,6 @@ extern void     do_keybind_input(void);
 extern void     do_npcdialog_input(void);
 extern uint8  blt_face_centered(int face, int x, int y);
 extern int      get_quickslot(int x, int y);
-extern void     show_quickslots(int x, int y);
 extern void     widget_quickslots(int x, int y);
 extern void     widget_quickslots_mouse_event(int x, int y, uint8 e);
 extern void     update_quickslots(int del_item);
