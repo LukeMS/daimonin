@@ -727,6 +727,18 @@ char *strout_tooltip_detail_item(item *ip)
     return buf;
 }
 
+/* Return a string with details of a spell, suitable for a tooltip. */
+char *strout_tooltip_detail_spell(char *name, uint8 class, uint8 group)
+{
+    static char buf[MEDIUM_BUF];
+
+    sprintf(buf, "~%c%s~\n~Class:~ %s\n~Group:~ %s",
+            toupper(*name), name + 1, (!class) ? "Spell" : "Prayer",
+            player_spell_group[group].name);
+
+    return buf;
+}
+
 /* Prepare a new tooltip when there is no current one or it is different to
  * what we want. Otherwise update the current one. */
 void strout_tooltip_prepare(char *text)

@@ -763,8 +763,11 @@ void widget_quickslots(int x, int y)
                     global_buttons.my >= y + quickslots_pos[i][qsy] &&
                     global_buttons.my < y + quickslots_pos[i][qsy] + 33)
                 {
-                    sprintf(buf, "~%s~\n~Class:~ TODO\n~Group:~ TODO",
-                            spell_list[quick_slots[i].spell.groupNr].entry[quick_slots[i].spell.classNr][quick_slots[i].shared.tag].name);
+                    uint8  class = quick_slots[i].spell.classNr,
+                           group = quick_slots[i].spell.groupNr;
+                    char  *name = spell_list[group].entry[class][quick_slots[i].shared.tag].name;
+
+                    sprintf(buf, "%s", strout_tooltip_detail_spell(name, class, group));
                     strout_tooltip_prepare(buf);
                 }
             }
