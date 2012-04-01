@@ -791,8 +791,7 @@ void widget_quickslots(int x, int y)
                         global_buttons.my >= y + quickslots_pos[i][qsy] &&
                         global_buttons.my < y + quickslots_pos[i][qsy] + 33)
                     {
-                        sprintf(buf, "~%s~\n~Quality:~ %d\n~Condition:~ %d",
-                                ip->s_name, ip->item_qua, ip->item_con);
+                        sprintf(buf, "%s", strout_tooltip_detail_item(ip));
                         strout_tooltip_prepare(buf);
                     }
                 }

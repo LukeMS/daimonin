@@ -775,8 +775,7 @@ void widget_show_player_doll(int x, int y)
                     global_buttons.my >= y + widget_player_doll[index].ypos &&
                     global_buttons.my < y + widget_player_doll[index].ypos + 33)
                 {
-                    sprintf(buf, "~%s~\n~Quality:~ %d\n~Condition:~ %d",
-                            tmp->s_name, tmp->item_qua, tmp->item_con);
+                    sprintf(buf, "%s", strout_tooltip_detail_item(tmp));
                     strout_tooltip_prepare(buf);
 
                     /* Start a drag. */

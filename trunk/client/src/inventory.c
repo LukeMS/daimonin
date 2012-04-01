@@ -455,8 +455,7 @@ static void ShowIcons(sint16 ox, sint16 oy, sint16 x, sint16 y, uint8 invxlen, u
             global_buttons.my >= yi &&
             global_buttons.my < yi + 33)
         {
-            sprintf(buf, "~%s~\n~Quality:~ %d\n~Condition:~ %d",
-                    ip->s_name, ip->item_qua, ip->item_con);
+            sprintf(buf, "%s", strout_tooltip_detail_item(ip));
         }
 
         if (cpl.container &&
@@ -495,8 +494,7 @@ jump_in_container:
                     global_buttons.my >= yi &&
                     global_buttons.my < yi + 33)
                 {
-                    sprintf(buf, "~%s~\n~Quality:~ %d\n~Condition:~ %d",
-                            cip->s_name, cip->item_qua, cip->item_con);
+                    sprintf(buf, "%s", strout_tooltip_detail_item(cip));
                 }
 
                 if ((cip = cip->next))
