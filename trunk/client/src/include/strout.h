@@ -89,6 +89,7 @@ extern void          strout_vim_reset(void);
 extern void          strout_vim_show(void);
 extern void          strout_tooltip_reset(void);
 extern char         *strout_tooltip_detail_item(item *ip);
+extern char         *strout_tooltip_detail_spell(char *name, uint8 class, uint8 group);
 extern void          strout_tooltip_prepare(char *text);
 extern void          strout_tooltip_show(void);
 
