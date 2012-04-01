@@ -23,11 +23,6 @@
 #include "include.h"
 #include "math.h"
 
-char   *skill_level_name[]  =
-    {
-        "", "Ag", "Pe", "Me", "Ph", "Ma", "Wi"
-    };
-
 static void ShowIcons(sint16 ox, sint16 oy, sint16 x, sint16 y, uint8 invxlen, uint8 invylen,
                       inventory_win_t iwin, _BLTFX *bltfx);
 static void PrintInfo(sint16 x, sint16 y, item *ip, inventory_win_t iwin);
@@ -590,7 +585,9 @@ static void PrintInfo(sint16 x, sint16 y, item *ip, inventory_win_t iwin)
 
         if (ip->item_level)
         {
-            sprintf(buf, "lvl %d %s", ip->item_level, skill_level_name[ip->item_skill]);
+            sprintf(buf, "lvl %d %s",
+                    ip->item_level,
+                    player_skill_group[ip->item_skill - 1].abbr);
 
             if ((!ip->item_skill &&
                  ip->item_level <= cpl.stats.level) ||

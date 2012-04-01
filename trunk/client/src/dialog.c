@@ -101,10 +101,19 @@ int                 gen                             = 0;
 /******************************************************************
  Option Menue
 ******************************************************************/
-char               *opt_tab[]                       =
-    {
-        "Communication", "Combat", "Inventory", "Map", "Sound", "Client", "Fullscreen flags", "Windowed flags", "Debug", 0
-    };
+player_groupnames_t opt_tab[] =
+{
+    { "", "Communication" },
+    { "", "Combat" },
+    { "", "Inventory" },
+    { "", "Map" },
+    { "", "Sound" },
+    { "", "Client" },
+    { "", "Fullscreen flags" },
+    { "", "Windowed flags" },
+    { "", "Debug" },
+    { NULL, NULL }
+};
 
 _option             opt[]                           =
     {
@@ -229,27 +238,6 @@ _option             opt[]                           =
         {NULL, NULL,NULL,NULL, NULL,0,0,0,0,0, NULL,0},
         /* End of Options */
     };
-
-/******************************************************************
- Skill Menue
-******************************************************************/
-static char        *skill_tab[]                     =
-    {
-        "Agility", "Mental", "Magic", "Person", "Physique", "Wisdom", "Misc", 0
-    };
-#define SKILL_TAB_SIZE (sizeof(skill_tab)/sizeof(char*))
-
-/******************************************************************
- Spell Menue
-******************************************************************/
-char        *spell_tab[]                     =
-    {
-        "Life", "Death", "Elemental", "Energy",
-        "Spirit", "Protection", "Light", "Nether",
-        "Nature", "Shadow", "Chaos", "Earth",
-        "Conjuration", "Abjuration", "Transmutation", "Arcane",0
-    };
-#define SPELL_TAB_SIZE (sizeof(spell_tab)/sizeof(char*))
 
 static char        *spell_class[SPELL_LIST_CLASS]   =
     {
@@ -773,7 +761,7 @@ inline void optwin_draw_options(int x, int y)
 /******************************************************************
  draws all tabs on the left side of window.
 ******************************************************************/
-static void draw_tabs(char *tabs[], int *act_tab, char *head_text, int x, int y)
+static void draw_tabs(player_groupnames_t tabs[], int *act_tab, char *head_text, int x, int y)
 {
     int         i       = -1;
     int         mx, my, mb;
@@ -786,7 +774,7 @@ static void draw_tabs(char *tabs[], int *act_tab, char *head_text, int x, int y)
     y += 17;
     sprite_blt(skin_sprites[SKIN_SPRITE_DIALOG_TAB], x, y, NULL, NULL);
     y += 17;
-    while (tabs[++i])
+    while (tabs[++i].name)
     {
         sprite_blt(skin_sprites[SKIN_SPRITE_DIALOG_TAB], x, y, NULL, NULL);
         if (i == *act_tab)
@@ -794,7 +782,7 @@ static void draw_tabs(char *tabs[], int *act_tab, char *head_text, int x, int y)
 
         if (mx > x && mx <x + 100 && my> y && my < y + 17)
         {
-            EMBOSS(ScreenSurface, &font_small, tabs[i], x + 24, y + 3, NDI_COLR_SILVER, NULL, NULL);
+            EMBOSS(ScreenSurface, &font_small, tabs[i].name, x + 24, y + 3, NDI_COLR_SILVER, NULL, NULL);
 
             if (mb &&
                 mb_clicked)
@@ -809,7 +797,7 @@ static void draw_tabs(char *tabs[], int *act_tab, char *head_text, int x, int y)
         }
         else
         {
-            ENGRAVE(ScreenSurface, &font_small, tabs[i], x + 24, y + 3, NDI_COLR_WHITE, NULL, NULL);
+            ENGRAVE(ScreenSurface, &font_small, tabs[i].name, x + 24, y + 3, NDI_COLR_WHITE, NULL, NULL);
         }
 
         y += 17;
@@ -841,7 +829,7 @@ void show_skilllist(void)
     add_close_button(x, y, MENU_SKILL);
 
     /* tabs */
-    draw_tabs(skill_tab, &skill_list_set.group_nr, "Skill Group", x + 8, y + 70);
+    draw_tabs(player_skill_group, &skill_list_set.group_nr, "Skill Group", x + 8, y + 70);
 
     sprintf(buf,
             "~SHIFT~ + ~%c%c~ to select group                  ~%c%c~ to select skill                    ~RETURN~ for use",
@@ -1006,7 +994,7 @@ void show_spelllist(void)
     add_close_button(x, y, MENU_SPELL);
 
     /* tabs */
-    draw_tabs(spell_tab, &spell_list_set.group_nr, "Spell Path", x + 8, y + 70);
+    draw_tabs(player_spell_group, &spell_list_set.group_nr, "Spell Path", x + 8, y + 70);
 
     sprintf(buf,
             "~SHIFT~ + ~%c%c~ to select path                   ~%c%c~ to select spell                    ~RETURN~ for use",

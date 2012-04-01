@@ -2796,7 +2796,7 @@ void check_menu_keys(int menu, int key)
             }
             else
             {
-                if (opt_tab[option_list_set.group_nr + 1])
+                if (opt_tab[option_list_set.group_nr + 1].name)
                 {
                     option_list_set.group_nr++;
                     option_list_set.entry_nr = 0;
