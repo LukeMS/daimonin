@@ -685,6 +685,48 @@ void strout_tooltip_reset(void)
     strout_tooltip.surface = NULL;
 }
 
+/* Return a string with details of ip, suitable for a tooltip. */
+char *strout_tooltip_detail_item(item *ip)
+{
+    static char buf[MEDIUM_BUF];
+
+    if (ip->nrof == 1)
+    {
+        sprintf(buf, "~%c%s~\n", toupper(*ip->s_name), ip->s_name + 1);
+    }
+    else
+    {
+        sprintf(buf, "~%d %c%s~\n",
+                ip->nrof, toupper(*ip->s_name), ip->s_name + 1);
+    }
+
+    sprintf(strchr(buf, '\0'), "~Weight:~ %4.3fkg\n",
+            (float)ip->weight / 1000.0);
+
+    if (ip->item_qua == 255)
+    {
+        sprintf(strchr(buf, '\0'), "(not identified)");
+    }
+    else
+    {
+        sprintf(strchr(buf, '\0'), "~Condition:~ %u\n~Quality:~ %u\n",
+                ip->item_con, ip->item_qua);
+
+        if (!ip->item_level)
+        {
+            sprintf(strchr(buf, '\0'), "~Allowed:~ All");
+        }
+        else
+        {
+            sprintf(strchr(buf, '\0'), "~Allowed:~ %u in %s",
+                    ip->item_level,
+                    player_skill_group[ip->item_skill - 1].name);
+        }
+    }
+
+    return buf;
+}
+
 /* Prepare a new tooltip when there is no current one or it is different to
  * what we want. Otherwise update the current one. */
 void strout_tooltip_prepare(char *text)
