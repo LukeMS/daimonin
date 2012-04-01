@@ -10,7 +10,7 @@ material 2
 material_real 65
 value 10
 weight 50
-container 2500
+container 5000
 weapon_speed 1.0
 nrof 1
 end
