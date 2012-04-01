@@ -85,6 +85,16 @@ player_attackredraw_t;
 
 extern player_attackredraw_t player_attackredraw[NROFATTACKS];
 
+typedef struct player_groupnames_t
+{
+    char *abbr;
+    char *name;
+}
+player_groupnames_t;
+
+player_groupnames_t player_skill_group[8];
+player_groupnames_t player_spell_group[17];
+
 typedef struct Stat_struct
 {
     int   Str, Dex, Con, Wis, Cha, Int, Pow;

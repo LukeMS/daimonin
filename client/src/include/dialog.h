@@ -53,7 +53,7 @@ extern enum
         VAL_U32
     }
     value_type;
-extern char    *opt_tab[];
+extern player_groupnames_t opt_tab[10];
 extern int      dialog_new_char_warn;
 extern int dialog_login_warning_level;
 extern char        *spell_tab[];

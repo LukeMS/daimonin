@@ -305,9 +305,9 @@ void save_options_dat(void)
     sprintf(buf, "%%22 %d\n", textwin[TEXTWIN_CHAT_ID].linebuf_visi);
     PHYSFS_writeString(handle, buf);
 
-    while (opt_tab[++i])
+    while (opt_tab[++i].name)
     {
-        sprintf(buf, "\n# %s\n", opt_tab[i]);
+        sprintf(buf, "\n# %s\n", opt_tab[i].name);
         PHYSFS_writeString(handle, buf);
 
         while (opt[++j].name && opt[j].name[0] != '#')

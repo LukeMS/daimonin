@@ -127,6 +127,39 @@ player_attackredraw_t player_attackredraw[NROFATTACKS] =
     { "internal", MAP_REDRAW_FLAG_NO },
 };
 
+player_groupnames_t player_skill_group[] =
+{
+    { "Ag", "Agility" },
+    { "Pe", "Personal" },
+    { "Me", "Mental" },
+    { "Ph", "Physical" },
+    { "Ma", "Magical" },
+    { "Wi", "Wisdom" },
+    { "Mi", "Misc"},
+    { NULL, NULL }
+};
+
+player_groupnames_t player_spell_group[] =
+{
+    { "Lf", "Life" },
+    { "De", "Death" },
+    { "El", "Elemental" },
+    { "En", "Energy" },
+    { "Sp", "Spirit" },
+    { "Pr", "Protection" },
+    { "Lg", "Light" },
+    { "Ne", "Nether" },
+    { "Na", "Nature" },
+    { "Sh", "Shadow" },
+    { "Ch", "Chaos" },
+    { "Ea", "Earth" },
+    { "Co", "Conjuration" },
+    { "Ab", "Abjuration" },
+    { "Tr", "Transmutation" },
+    { "Ar", "Arcane" },
+    { NULL, NULL }
+};
+
 void clear_player(void)
 {
     memset(quick_slots, -1, sizeof(quick_slots));
