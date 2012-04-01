@@ -28,8 +28,6 @@
 
 #include "include.h"
 
-strout_vim_t *strout_vim_queue;
-
 /* Calculate the displayed width of the text. Newlines will reset the count so
  * you may want to split the string at newlines first then call this on each
  * substring. */
@@ -469,74 +467,14 @@ void strout_input(_font *font, SDL_Rect *box, char repl)
     SDL_SetClipRect(ScreenSurface, NULL);
 }
 
-/* Display text as a tooltip. */
-void strout_tooltip(sint16 x, sint16 y, char *text)
-{
-    SDL_Rect  box;
-    char     *body;
-
-    /* We might have opted out. */
-    if (!options.show_tooltips)
-    {
-        return;
-    }
-
-    /* If a multiline, decapitate it. */
-    if ((body = strchr(text, '\n')))
-    {
-        *body++ = '\0';
-    }
-
-    box.x = x + 9;
-    box.y = y + 17;
-
-    /* The first/only line is in medium. */
-    box.w = (uint16)strout_width(&font_medium, text) + 4;
-    box.h = font_medium.line_height + 4;
-
-    /* Subsequent lines are in small. */
-    if (body)
-    {
-        char *cp;
-
-        box.w = MAX(box.w, (uint16)strout_width(&font_small, body) + 4);
-        box.h += font_small.line_height;
-
-        for (cp = strchr(body, '\n'); cp && *++cp; cp = strchr(cp, '\n'))
-        {
-            box.h += font_small.line_height;
-        }
-    }
-
-    /* If it would extend off the screen, move it within the boundaries. */
-    if (box.x + box.w >= Screensize.x)
-    {
-        box.x -= (box.x + box.w + 1) - Screensize.x;
-    }
-
-    if (box.y + box.h >= Screensize.y)
-    {
-        box.y -= (box.y + box.h + 1) - Screensize.y;
-    }
-
-    SDL_FillRect(ScreenSurface, &box, NDI_COLR_BLACK);
-    strout_blt(ScreenSurface, &font_medium, text, box.x + 2, box.y + 2,
-               NDI_COLR_WHITE, NULL, NULL);
-
-    if (body)
-    {
-        strout_blt(ScreenSurface, &font_small, body, box.x + 2,
-                   box.y + font_medium.line_height + 2, NDI_COLR_WHITE, NULL,
-                   NULL);
-    }
-}
-
 /* A Very Important Message (VIM) is text which appears on the map for a short
  * time to indicate some event has happened to the player (or at least nearby
  * and which may be relevant to him). An arbitrary VIM is sent from the server
  * and is also printed permanently in the textwindow. It could be anything
  * though most often it is when a quest has been completed. Other VIMs are
  * about damage or healing received (by the player or another/a mob). */
+strout_vim_t *strout_vim_queue;
+
 /* Adds a new VIM to the queue. */
 strout_vim_t *strout_vim_add(strout_vim_mode_t mode, uint8 mapx, uint8 mapy,
                              char *text, uint32 colr, uint16 lifetime,
@@ -668,7 +606,7 @@ void strout_vim_remove(strout_vim_t *this)
 void strout_vim_reset(void)
 {
     strout_vim_t *this,
-          *next;
+                 *next;
 
     for (this = strout_vim_queue; this; this = next)
     {
@@ -732,4 +670,120 @@ void strout_vim_show(void)
             SDL_FreeSurface(surface);
         }
     }
+}
+
+/* Tooltips provide a brief description of the item/spell/skill the mouse
+ * hovers over. */
+strout_tooltip_t strout_tooltip;
+
+/* Clear the tooltip. */
+void strout_tooltip_reset(void)
+{
+    strout_tooltip.tick = 0;
+    FREE(strout_tooltip.text);
+    SDL_FreeSurface(strout_tooltip.surface);
+    strout_tooltip.surface = NULL;
+}
+
+/* Prepare a new tooltip when there is no current one or it is different to
+ * what we want. Otherwise update the current one. */
+void strout_tooltip_prepare(char *text)
+{
+    char        *body;
+    uint16       w,
+                 h;
+    SDL_Surface *surface;
+
+    /* If not 0, we have a tooltip already. */
+    if (strout_tooltip.tick)
+    {
+        /* Update tick so the tooltip will be shown. */
+        strout_tooltip.tick = LastTick;
+
+        /* If this text is already our tooltip, nothing more to do. */
+        if (strout_tooltip.text &&
+            !strcmp(strout_tooltip.text, text))
+        {
+            return;
+        }
+    }
+
+    /* If a multiline, decapitate it. */
+    if ((body = strchr(text, '\n')))
+    {
+        *body++ = '\0';
+    }
+
+    /* The first/only line is in medium. */
+    w = (uint16)strout_width(&font_medium, text) + 4;
+    h = font_medium.line_height + 4;
+
+    /* Subsequent lines are in small. */
+    if (body)
+    {
+        char *cp;
+
+        w = MAX(w, (uint16)strout_width(&font_small, body) + 4);
+        h += font_small.line_height;
+
+        for (cp = strchr(body, '\n'); cp && *++cp; cp = strchr(cp, '\n'))
+        {
+            h += font_small.line_height;
+        }
+    }
+
+    surface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_SRCALPHA, w, h, 32,
+                                   0x000000ff, 0x0000ff00, 0x00ff0000,
+                                   0);
+//    SDL_FillRect(surface, NULL, NDI_COLR_BLACK);
+    strout_blt(surface, &font_medium, text, 2, 2, NDI_COLR_WHITE, NULL, NULL);
+
+    if (body)
+    {
+        strout_blt(surface, &font_small, body, 2, font_medium.line_height + 2,
+                   NDI_COLR_WHITE, NULL, NULL);
+        *(body - 1) = '\n';
+    }
+
+    strout_tooltip.tick = LastTick;
+    FREE(strout_tooltip.text);
+    MALLOC_STRING(strout_tooltip.text, text);
+    strout_tooltip.surface = surface;
+}
+
+/* Show the current tooltip if it is up to date. Otherwise, reset it. */
+void strout_tooltip_show(void)
+{
+    SDL_Rect box;
+
+    if (strout_tooltip.tick < LastTick)
+    {
+        strout_tooltip_reset();
+
+        return;
+    }
+
+    /* We might have opted out. */
+    if (!options.show_tooltips)
+    {
+        return;
+    }
+
+    box.x = global_buttons.mx + 9;
+    box.y = global_buttons.my + 17;
+    box.w = strout_tooltip.surface->w;
+    box.h = strout_tooltip.surface->h;
+
+    /* If it would extend off the screen, move it within the boundaries. */
+    if (box.x + box.w >= Screensize.x)
+    {
+        box.x -= (box.x + box.w + 1) - Screensize.x;
+    }
+
+    if (box.y + box.h >= Screensize.y)
+    {
+        box.y -= (box.y + box.h + 1) - Screensize.y;
+    }
+
+    SDL_BlitSurface(strout_tooltip.surface, NULL, ScreenSurface, &box);
 }

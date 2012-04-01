@@ -114,6 +114,8 @@ void SYSTEM_End(void)
 {
     save_user_settings();
     gameserver_init();
+    strout_vim_reset();
+    strout_tooltip_reset();
     textwin_deinit();
     widget_deinit();
     SOCKET_DeinitSocket();

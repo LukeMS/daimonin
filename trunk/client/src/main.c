@@ -480,6 +480,7 @@ uint8 game_status_chain(void)
     if (GameStatus == GAME_STATUS_INIT)
     {
         save_user_settings();
+        strout_tooltip_reset();
         widget_deinit();
         widget_init();
         textwin_deinit();
@@ -2411,6 +2412,8 @@ static void DisplayLayer3(void)
     {
         widget_process();
     }
+
+    strout_tooltip_show();
 }
 
 
