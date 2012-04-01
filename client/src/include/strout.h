@@ -50,34 +50,45 @@ typedef struct strout_vim_t
     struct strout_vim_t *next;
     struct strout_vim_t *prev;
 
-    strout_vim_mode_t    mode;
-    uint8         mapx;
-    uint8         mapy;
-    SDL_Surface  *surface;
-    uint16        lifetime;
-    uint32        start;
-    sint16        x;
-    sint16        y;
-    float         xoff;
-    float         yoff;
+    strout_vim_mode_t  mode;
+    uint8              mapx;
+    uint8              mapy;
+    SDL_Surface       *surface;
+    uint16             lifetime;
+    uint32             start;
+    sint16             x;
+    sint16             y;
+    float              xoff;
+    float              yoff;
 }
 strout_vim_t;
 
-extern strout_vim_t *strout_vim_queue;
+typedef struct strout_tooltip_t
+{
+    uint32       tick;
+    char        *text;
+    SDL_Surface *surface;
+}
+strout_tooltip_t;
 
-extern sint16 strout_width(_font *font, char *text);
-extern uint8  strout_width_offset(_font *font, char *text, sint16 *line,
-                                  sint16 len);
-extern void   strout_blt(SDL_Surface *surface, _font *font, char *text,
-                         sint16 x, sint16 y, uint32 col, SDL_Rect *area,
-                         _BLTFX *bltfx);
-extern void   strout_input(_font *font, SDL_Rect *box, char repl);
-extern void   strout_tooltip(sint16 x, sint16 y, char *text);
+extern strout_vim_t     *strout_vim_queue;
+extern strout_tooltip_t  strout_tooltip;
+
+extern sint16        strout_width(_font *font, char *text);
+extern uint8         strout_width_offset(_font *font, char *text, sint16 *line,
+                                         sint16 len);
+extern void          strout_blt(SDL_Surface *surface, _font *font, char *text,
+                                sint16 x, sint16 y, uint32 col, SDL_Rect *area,
+                                _BLTFX *bltfx);
+extern void          strout_input(_font *font, SDL_Rect *box, char repl);
 extern strout_vim_t *strout_vim_add(strout_vim_mode_t mode, uint8 mapx,
-                                    uint8 mapy, char *text, uint32 colr,
-                                    uint16 lifetime, uint16 delay);
-extern void   strout_vim_remove(strout_vim_t *this);
-extern void   strout_vim_reset(void);
-extern void   strout_vim_show(void);
+                                           uint8 mapy, char *text, uint32 colr,
+                                           uint16 lifetime, uint16 delay);
+extern void          strout_vim_remove(strout_vim_t *this);
+extern void          strout_vim_reset(void);
+extern void          strout_vim_show(void);
+extern void          strout_tooltip_reset(void);
+extern void          strout_tooltip_prepare(char *text);
+extern void          strout_tooltip_show(void);
 
 #endif /* ifndef __STROUT_H */

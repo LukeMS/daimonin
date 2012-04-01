@@ -727,7 +727,7 @@ int get_quickslot(int x, int y)
 
 void widget_quickslots(int x, int y)
 {
-    int     i, mx, my;
+    int     i;
     char    buf[512];
     int     qsx, qsy, xoff;
 
@@ -746,7 +746,6 @@ void widget_quickslots(int x, int y)
         sprite_blt(skin_sprites[SKIN_SPRITE_QUICKSLOTS], x, y, NULL, NULL);
     }
 
-    SDL_GetMouseState(&mx, &my);
     update_quickslots(-1);
 
     for (i = MAX_QUICK_SLOTS - 1; i >= 0; i--)
@@ -759,14 +758,14 @@ void widget_quickslots(int x, int y)
                 sprite_blt(spell_list[quick_slots[i].spell.groupNr].entry[quick_slots[i].spell.classNr][quick_slots[i].shared.tag].icon,
                            x + quickslots_pos[i][qsx]+xoff, y + quickslots_pos[i][qsy], NULL, NULL);
 
-                if (mx >= x + quickslots_pos[i][qsx] + xoff &&
-                    mx < x + quickslots_pos[i][qsx] + xoff + 33 &&
-                    my >= y + quickslots_pos[i][qsy] &&
-                    my < y + quickslots_pos[i][qsy] + 33)
+                if (global_buttons.mx >= x + quickslots_pos[i][qsx] + xoff &&
+                    global_buttons.mx < x + quickslots_pos[i][qsx] + xoff + 33 &&
+                    global_buttons.my >= y + quickslots_pos[i][qsy] &&
+                    global_buttons.my < y + quickslots_pos[i][qsy] + 33)
                 {
                     sprintf(buf, "~%s~\n~Class:~ TODO\n~Group:~ TODO",
                             spell_list[quick_slots[i].spell.groupNr].entry[quick_slots[i].spell.classNr][quick_slots[i].shared.tag].name);
-                    strout_tooltip(mx, my, buf);
+                    strout_tooltip_prepare(buf);
                 }
             }
             /* item in quickslot */
@@ -787,15 +786,14 @@ void widget_quickslots(int x, int y)
                                        (quacon == 100) ? 0 : quacon,
                                        (ip->nrof == 1) ? 0 : ip->nrof, NULL);
 
-                    /* show tooltip */
-                    if (mx >= x + quickslots_pos[i][qsx] + xoff &&
-                        mx < x + quickslots_pos[i][qsx] + xoff + 33 &&
-                        my >= y + quickslots_pos[i][qsy] &&
-                        my < y + quickslots_pos[i][qsy] + 33)
+                    if (global_buttons.mx >= x + quickslots_pos[i][qsx] + xoff &&
+                        global_buttons.mx < x + quickslots_pos[i][qsx] + xoff + 33 &&
+                        global_buttons.my >= y + quickslots_pos[i][qsy] &&
+                        global_buttons.my < y + quickslots_pos[i][qsy] + 33)
                     {
                         sprintf(buf, "~%s~\n~Quality:~ %d\n~Condition:~ %d",
                                 ip->s_name, ip->item_qua, ip->item_con);
-                        strout_tooltip(mx, my, buf);
+                        strout_tooltip_prepare(buf);
                     }
                 }
             }

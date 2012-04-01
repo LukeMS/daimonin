@@ -624,8 +624,7 @@ void widget_show_player_doll(int x, int y)
 {
     item   *tmp;
     char    buf[512];
-    int     index, tooltip_index = -1, ring_flag = 0;
-    int     mx, my;
+    int     index, ring_flag = 0;
 
     sprite_blt(skin_sprites[SKIN_SPRITE_DOLL_BG], x, y, NULL, NULL);
 
@@ -728,7 +727,6 @@ void widget_show_player_doll(int x, int y)
                 uint8 quacon = (tmp->item_qua == 255) ? 255
                                : (float)tmp->item_con /
                                  (float)tmp->item_qua * 100;
-                int mb;
 
                 face_get(tmp->face);
                 sprite_blt_as_icon(face_list[tmp->face].sprite,
@@ -738,19 +736,19 @@ void widget_show_player_doll(int x, int y)
                                    (tmp->flagsval & ~(F_LOCKED | F_APPLIED)),
                                    (quacon == 100) ? 0 : quacon,
                                    (tmp->nrof == 1) ? 0 : tmp->nrof, NULL);
-                mb = SDL_GetMouseState(&mx, &my);
 
-                /* prepare item_name tooltip */
-                if (mx >= x+widget_player_doll[index].xpos
-                        && mx < x+widget_player_doll[index].xpos + 33
-                        && my >= y+widget_player_doll[index].ypos
-                        && my < y+widget_player_doll[index].ypos + 33)
+                if (global_buttons.mx >= x + widget_player_doll[index].xpos &&
+                    global_buttons.mx < x + widget_player_doll[index].xpos + 33 &&
+                    global_buttons.my >= y + widget_player_doll[index].ypos &&
+                    global_buttons.my < y + widget_player_doll[index].ypos + 33)
                 {
-                    tooltip_index = index;
                     sprintf(buf, "~%s~\n~Quality:~ %d\n~Condition:~ %d",
                             tmp->s_name, tmp->item_qua, tmp->item_con);
+                    strout_tooltip_prepare(buf);
 
-                    if ((mb & SDL_BUTTON(SDL_BUTTON_LEFT)) && !draggingInvItem(DRAG_GET_STATUS))
+                    /* Start a drag. */
+                    if (MouseEvent == LB_DN &&
+                        !draggingInvItem(DRAG_GET_STATUS))
                     {
                         cpl.win_pdoll_tag = tmp->tag;
                         draggingInvItem(DRAG_PDOLL);
@@ -759,9 +757,6 @@ void widget_show_player_doll(int x, int y)
             }
         }
     }
-    /* draw a item_name tooltip */
-    if (tooltip_index != -1)
-        strout_tooltip(mx, my, buf);
 }
 
 void widget_show_main_lvl(int x, int y)
