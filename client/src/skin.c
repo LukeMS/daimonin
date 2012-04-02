@@ -202,6 +202,7 @@ static char *BitmapName[SKIN_SPRITE_NROF] =
     "locator/player_this.png",
     "locator/server_that.png",
     "locator/server_this.png",
+    "vim.png",
     "tooltip.png",
 };
 
