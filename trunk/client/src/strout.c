@@ -499,16 +499,11 @@ strout_vim_t *strout_vim_add(strout_vim_mode_t mode, uint8 mapx, uint8 mapy,
         uint16   len = (uint16)strout_width(&font_large, text);
         SDL_Rect dst;
 
-        w = (uint16)MAX(len, skin_sprites[SKIN_SPRITE_DEATH]->bitmap->w);
-        h = (uint16)MAX(font_large.line_height,
-                        skin_sprites[SKIN_SPRITE_DEATH]->bitmap->h);
-        surface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_SRCALPHA, w, h, 32,
-                                       0x000000ff, 0x0000ff00, 0x00ff0000,
-                                       0xff000000);
-        dst.x = (w - skin_sprites[SKIN_SPRITE_DEATH]->bitmap->w) / 2;
-        dst.y = (h - skin_sprites[SKIN_SPRITE_DEATH]->bitmap->h) / 2;
-        SDL_BlitSurface(skin_sprites[SKIN_SPRITE_DEATH]->bitmap, NULL, surface,
-                        &dst);
+        surface = skin_sprites[SKIN_SPRITE_DEATH]->bitmap;
+        w = (uint16)MAX(len, surface->w);
+        h = (uint16)MAX(font_large.line_height, surface->h);
+        surface = SPG_Scale(surface, (float)w / (float)surface->w,
+                            (float)h / (float)surface->h);
         dst.x = (w - len) / 2;
         dst.y = (h - font_large.line_height) / 2;
         strout_blt(surface, &font_large, text, dst.x, dst.y, colr, NULL, NULL);
@@ -517,9 +512,9 @@ strout_vim_t *strout_vim_add(strout_vim_mode_t mode, uint8 mapx, uint8 mapy,
     {
         w = (uint16)strout_width(&font_large, text);
         h = (uint16)font_large.line_height;
-        surface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_SRCALPHA, w, h, 32,
-                                       0x000000ff, 0x0000ff00, 0x00ff0000,
-                                       0xff000000);
+        surface = skin_sprites[SKIN_SPRITE_VIM]->bitmap;
+        surface = SPG_Scale(surface, (float)w / (float)surface->w,
+                            (float)h / (float)surface->h);
         strout_blt(surface, &font_large, text, 0, 0, colr, NULL, NULL);
     }
 
