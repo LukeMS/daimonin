@@ -769,15 +769,15 @@ void strout_tooltip_prepare(char *text)
     }
 
     /* The first/only line is in medium. */
-    w = (uint16)strout_width(&font_medium, text) + 4;
-    h = font_medium.line_height + 4;
+    w = (uint16)strout_width(&font_medium, text) + 20;
+    h = font_medium.line_height + 20;
 
     /* Subsequent lines are in small. */
     if (body)
     {
         char *cp;
 
-        w = MAX(w, (uint16)strout_width(&font_small, body) + 4);
+        w = MAX(w, (uint16)strout_width(&font_small, body) + 20);
         h += font_small.line_height;
 
         for (cp = strchr(body, '\n'); cp && *++cp; cp = strchr(cp, '\n'))
@@ -786,15 +786,14 @@ void strout_tooltip_prepare(char *text)
         }
     }
 
-    surface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_SRCALPHA, w, h, 32,
-                                   0x000000ff, 0x0000ff00, 0x00ff0000,
-                                   0);
-//    SDL_FillRect(surface, NULL, NDI_COLR_BLACK);
-    strout_blt(surface, &font_medium, text, 2, 2, NDI_COLR_WHITE, NULL, NULL);
+    surface = skin_sprites[SKIN_SPRITE_TOOLTIP]->bitmap;
+    surface = SPG_Scale(surface, (float)w / (float)surface->w,
+                        (float)h / (float)surface->h);
+    strout_blt(surface, &font_medium, text, 10, 10, NDI_COLR_WHITE, NULL, NULL);
 
     if (body)
     {
-        strout_blt(surface, &font_small, body, 2, font_medium.line_height + 2,
+        strout_blt(surface, &font_small, body, 10, font_medium.line_height + 10,
                    NDI_COLR_WHITE, NULL, NULL);
         *(body - 1) = '\n';
     }
