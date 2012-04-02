@@ -204,6 +204,7 @@ typedef enum skin_sprite_id_t
     SKIN_SPRITE_LOCATOR_PLAYER_THIS,
     SKIN_SPRITE_LOCATOR_SERVER_THAT,
     SKIN_SPRITE_LOCATOR_SERVER_THIS,
+    SKIN_SPRITE_TOOLTIP,
 
     SKIN_SPRITE_NROF // must be last element
 }
