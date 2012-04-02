@@ -382,7 +382,6 @@ static void ShowIcons(sint16 ox, sint16 oy, sint16 x, sint16 y, uint8 invxlen, u
            *ip = wp->inv,
            *cip = cpl.sack->inv,
            *tmp = NULL;
-    char    buf[MEDIUM_BUF] = "";
 
     for (i = 0; i < start; i++)
     {
@@ -452,7 +451,7 @@ static void ShowIcons(sint16 ox, sint16 oy, sint16 x, sint16 y, uint8 invxlen, u
 
         if (STROUT_TOOLTIP_HOVER_TEST(xi, yi))
         {
-            sprintf(buf, "%s", strout_tooltip_detail_item(ip));
+            strout_tooltip_prepare(strout_tooltip_detail_item(ip));
         }
 
         if (cpl.container &&
@@ -488,7 +487,7 @@ jump_in_container:
 
                 if (STROUT_TOOLTIP_HOVER_TEST(xi, yi))
                 {
-                    sprintf(buf, "%s", strout_tooltip_detail_item(cip));
+                    strout_tooltip_prepare(strout_tooltip_detail_item(cip));
                 }
 
                 if ((cip = cip->next))
@@ -505,11 +504,6 @@ jump_in_container:
         }
 
         ip = ip->next;
-    }
-
-    if (*buf)
-    {
-        strout_tooltip_prepare(buf);
     }
 }
 

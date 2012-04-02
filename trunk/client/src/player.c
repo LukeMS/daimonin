@@ -773,8 +773,7 @@ void widget_show_player_doll(int x, int y)
                 if (STROUT_TOOLTIP_HOVER_TEST(x + widget_player_doll[index].xpos,
                                               y + widget_player_doll[index].ypos))
                 {
-                    sprintf(buf, "%s", strout_tooltip_detail_item(tmp));
-                    strout_tooltip_prepare(buf);
+                    strout_tooltip_prepare(strout_tooltip_detail_item(tmp));
 
                     /* Start a drag. */
                     if (MouseEvent == LB_DN &&

@@ -728,7 +728,7 @@ int get_quickslot(int x, int y)
 void widget_quickslots(int x, int y)
 {
     int     i;
-    char    buf[512];
+    char    buf[3];
     int     qsx, qsy, xoff;
 
     if (widget_data[WIDGET_QUICKSLOT_ID].ht > 34)
@@ -765,8 +765,7 @@ void widget_quickslots(int x, int y)
                            group = quick_slots[i].spell.groupNr;
                     char  *name = spell_list[group].entry[class][quick_slots[i].shared.tag].name;
 
-                    sprintf(buf, "%s", strout_tooltip_detail_spell(name, class, group));
-                    strout_tooltip_prepare(buf);
+                    strout_tooltip_prepare(strout_tooltip_detail_spell(name, class, group));
                 }
             }
             /* item in quickslot */
@@ -790,8 +789,7 @@ void widget_quickslots(int x, int y)
                     if (STROUT_TOOLTIP_HOVER_TEST(x + quickslots_pos[i][qsx] + xoff,
                                                   y + quickslots_pos[i][qsy]))
                     {
-                        sprintf(buf, "%s", strout_tooltip_detail_item(ip));
-                        strout_tooltip_prepare(buf);
+                        strout_tooltip_prepare(strout_tooltip_detail_item(ip));
                     }
                 }
             }
