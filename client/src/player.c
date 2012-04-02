@@ -770,10 +770,8 @@ void widget_show_player_doll(int x, int y)
                                    (quacon == 100) ? 0 : quacon,
                                    (tmp->nrof == 1) ? 0 : tmp->nrof, NULL);
 
-                if (global_buttons.mx >= x + widget_player_doll[index].xpos &&
-                    global_buttons.mx < x + widget_player_doll[index].xpos + 33 &&
-                    global_buttons.my >= y + widget_player_doll[index].ypos &&
-                    global_buttons.my < y + widget_player_doll[index].ypos + 33)
+                if (STROUT_TOOLTIP_HOVER_TEST(x + widget_player_doll[index].xpos,
+                                              y + widget_player_doll[index].ypos))
                 {
                     sprintf(buf, "%s", strout_tooltip_detail_item(tmp));
                     strout_tooltip_prepare(buf);

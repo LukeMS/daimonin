@@ -758,10 +758,8 @@ void widget_quickslots(int x, int y)
                 sprite_blt(spell_list[quick_slots[i].spell.groupNr].entry[quick_slots[i].spell.classNr][quick_slots[i].shared.tag].icon,
                            x + quickslots_pos[i][qsx]+xoff, y + quickslots_pos[i][qsy], NULL, NULL);
 
-                if (global_buttons.mx >= x + quickslots_pos[i][qsx] + xoff &&
-                    global_buttons.mx < x + quickslots_pos[i][qsx] + xoff + 33 &&
-                    global_buttons.my >= y + quickslots_pos[i][qsy] &&
-                    global_buttons.my < y + quickslots_pos[i][qsy] + 33)
+                if (STROUT_TOOLTIP_HOVER_TEST(x + quickslots_pos[i][qsx] + xoff,
+                                              y + quickslots_pos[i][qsy]))
                 {
                     uint8  class = quick_slots[i].spell.classNr,
                            group = quick_slots[i].spell.groupNr;
@@ -789,10 +787,8 @@ void widget_quickslots(int x, int y)
                                        (quacon == 100) ? 0 : quacon,
                                        (ip->nrof == 1) ? 0 : ip->nrof, NULL);
 
-                    if (global_buttons.mx >= x + quickslots_pos[i][qsx] + xoff &&
-                        global_buttons.mx < x + quickslots_pos[i][qsx] + xoff + 33 &&
-                        global_buttons.my >= y + quickslots_pos[i][qsy] &&
-                        global_buttons.my < y + quickslots_pos[i][qsy] + 33)
+                    if (STROUT_TOOLTIP_HOVER_TEST(x + quickslots_pos[i][qsx] + xoff,
+                                                  y + quickslots_pos[i][qsy]))
                     {
                         sprintf(buf, "%s", strout_tooltip_detail_item(ip));
                         strout_tooltip_prepare(buf);

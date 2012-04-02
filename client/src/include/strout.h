@@ -36,6 +36,13 @@
 	strout_blt((surface), (font), (text), (x), (y), NDI_COLR_BLACK, (area), (bltfx)); \
 	strout_blt((surface), (font), (text), (x) + 1, (y) + 1, (colr), (area), (bltfx));
 
+/* Queries if the mouse is over an item/skill/spell at x,y. */
+#define STROUT_TOOLTIP_HOVER_TEST(x, y) \
+    (global_buttons.mx >= (x) && \
+     global_buttons.mx <= (x) + skin_prefs.item_size && \
+     global_buttons.my >= (y) && \
+     global_buttons.my <= (y) + skin_prefs.item_size)
+
 typedef enum strout_vim_mode_t
 {
     VIM_MODE_KILL,

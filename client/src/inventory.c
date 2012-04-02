@@ -450,10 +450,7 @@ static void ShowIcons(sint16 ox, sint16 oy, sint16 x, sint16 y, uint8 invxlen, u
             PrintInfo(ox, oy, ip, iwin);
         }
 
-        if (global_buttons.mx >= xi &&
-            global_buttons.mx < xi + 33 &&
-            global_buttons.my >= yi &&
-            global_buttons.my < yi + 33)
+        if (STROUT_TOOLTIP_HOVER_TEST(xi, yi))
         {
             sprintf(buf, "%s", strout_tooltip_detail_item(ip));
         }
@@ -489,10 +486,7 @@ jump_in_container:
                     PrintInfo(ox, oy, cip, iwin);
                 }
 
-                if (global_buttons.mx >= xi &&
-                    global_buttons.mx < xi + 33 &&
-                    global_buttons.my >= yi &&
-                    global_buttons.my < yi + 33)
+                if (STROUT_TOOLTIP_HOVER_TEST(xi, yi))
                 {
                     sprintf(buf, "%s", strout_tooltip_detail_item(cip));
                 }
