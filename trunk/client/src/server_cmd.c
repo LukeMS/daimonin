@@ -1289,6 +1289,7 @@ void PlayerCmd(char *data, int len)
 {
     char    name[MAX_BUF];
     int     tag, weight, face, i = 0, nlen;
+    textwin_id_t twid;
 
     options.firststart = 0;
     GameStatus = GAME_STATUS_PLAY;
@@ -1316,6 +1317,13 @@ void PlayerCmd(char *data, int len)
     map_udate_flag = 2;
     map_redraw_flag |= MAP_REDRAW_FLAG_NORMAL;
     widget_load();
+
+    for (twid = 0; twid < TEXTWIN_NROF; twid++)
+    {
+        WIDGET_REDRAW(textwin[twid].wid) = 1;
+        textwin_calculate_dimensions(&textwin[twid]);
+    }
+
     ignore_list_load();
     chatfilter_list_load();
     kill_list_load();
