@@ -713,9 +713,13 @@ char *strout_tooltip_detail_item(item *ip)
         }
         else
         {
-            sprintf(strchr(buf, '\0'), "~Allowed:~ %u in %s",
-                    ip->item_level,
+            sprintf(strchr(buf, '\0'), "~Allowed:~ %u", ip->item_level);
+
+            if (ip->item_skill)
+            {
+                sprintf(strchr(buf, '\0'), " in %s",
                     player_skill_group[ip->item_skill - 1].name);
+            }
         }
     }
 
