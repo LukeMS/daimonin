@@ -571,9 +571,13 @@ static void PrintInfo(sint16 x, sint16 y, item *ip, inventory_win_t iwin)
 
         if (ip->item_level)
         {
-            sprintf(buf, "lvl %d %s",
-                    ip->item_level,
-                    player_skill_group[ip->item_skill - 1].abbr);
+            sprintf(buf, "lvl %d", ip->item_level);
+
+            if (ip->item_skill)
+            {
+                sprintf(strchr(buf, '\0'), " %s",
+                        player_skill_group[ip->item_skill - 1].abbr);
+            }
 
             if ((!ip->item_skill &&
                  ip->item_level <= cpl.stats.level) ||
