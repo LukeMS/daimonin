@@ -26,12 +26,6 @@
 
 #define FONT_BLANKLINE 5
 
-/* Internal remaps */
-#define FONT_ARROWUP    28
-#define FONT_ARROWDOWN  29
-#define FONT_ARROWLEFT  30
-#define FONT_ARROWRIGHT 31
-
 typedef struct _font
 {
     struct _Sprite *sprite;       // the sprite

@@ -145,7 +145,7 @@ void strout_blt(SDL_Surface *surface, _font *font, char *text, sint16 x, sint16 
         sint16 cw;
 
         /* A newline does just that. */
-        if (*c == '\n')
+        if (*c == ECC_INTERNAL_NEWLINE)
         {
             cx = x;
             cy += font->line_height;
@@ -153,7 +153,7 @@ void strout_blt(SDL_Surface *surface, _font *font, char *text, sint16 x, sint16 
             continue;
         }
         /* A tab is remapped to a space. */
-        else if (*c == '\t')
+        else if (*c == ECC_INTERNAL_TAB)
         {
             *c = ' ';
         }

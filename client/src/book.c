@@ -555,7 +555,7 @@ void show_book(int x, int y)
 
     if (gui_interface_book->pages)
     {
-        sprintf(buf,"%c and %c to turn page",FONT_ARROWRIGHT, FONT_ARROWLEFT);
+        sprintf(buf,"%c and %c to turn page",ECC_INTERNAL_ARROWRIGHT, ECC_INTERNAL_ARROWLEFT);
         strout_blt(ScreenSurface, &font_tiny, buf, box.x-59, box.y+300, NDI_COLR_LIME, NULL, NULL);
     }
 
