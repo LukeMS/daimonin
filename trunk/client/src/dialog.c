@@ -833,7 +833,7 @@ void show_skilllist(void)
 
     sprintf(buf,
             "~SHIFT~ + ~%c%c~ to select group                  ~%c%c~ to select skill                    ~RETURN~ for use",
-            FONT_ARROWUP, FONT_ARROWDOWN, FONT_ARROWUP, FONT_ARROWDOWN);
+            ECC_INTERNAL_ARROWUP, ECC_INTERNAL_ARROWDOWN, ECC_INTERNAL_ARROWUP, ECC_INTERNAL_ARROWDOWN);
     strout_blt(ScreenSurface, &font_small, buf, x + 135, y + 410, NDI_COLR_WHITE, NULL, NULL);
 
     /* Headline */
@@ -998,7 +998,7 @@ void show_spelllist(void)
 
     sprintf(buf,
             "~SHIFT~ + ~%c%c~ to select path                   ~%c%c~ to select spell                    ~RETURN~ for use",
-            FONT_ARROWUP, FONT_ARROWDOWN, FONT_ARROWUP, FONT_ARROWDOWN);
+            ECC_INTERNAL_ARROWUP, ECC_INTERNAL_ARROWDOWN, ECC_INTERNAL_ARROWUP, ECC_INTERNAL_ARROWDOWN);
     strout_blt(ScreenSurface, &font_small, buf, x + 135, y + 410, NDI_COLR_WHITE, NULL, NULL);
 
     /* spellClass buttons */
@@ -1011,7 +1011,7 @@ void show_spelllist(void)
 
     sprintf(buf, "use ~F1-F8~ for spell to quickbar");
     strout_blt(ScreenSurface, &font_small, buf, x + 340, y + 69, NDI_COLR_WHITE, NULL, NULL);
-    sprintf(buf, "use ~%c%c~ to select spell group", FONT_ARROWRIGHT, FONT_ARROWLEFT);
+    sprintf(buf, "use ~%c%c~ to select spell group", ECC_INTERNAL_ARROWRIGHT, ECC_INTERNAL_ARROWLEFT);
     strout_blt(ScreenSurface, &font_small, buf, x + 340, y + 80, NDI_COLR_WHITE, NULL, NULL);
 
     box.x = x + 133;
@@ -1157,7 +1157,7 @@ void show_optwin()
     optwin_draw_options(x + 130, y + 90);
 
     sprintf(buf, "~SHIFT~ + ~%c%c~ to select group            ~%c%c~ to select option          ~%c%c~ to change option",
-            FONT_ARROWUP, FONT_ARROWDOWN, FONT_ARROWUP, FONT_ARROWDOWN, FONT_ARROWRIGHT, FONT_ARROWLEFT);
+            ECC_INTERNAL_ARROWUP, ECC_INTERNAL_ARROWDOWN, ECC_INTERNAL_ARROWUP, ECC_INTERNAL_ARROWDOWN, ECC_INTERNAL_ARROWRIGHT, ECC_INTERNAL_ARROWLEFT);
     strout_blt(ScreenSurface, &font_small, buf, x + 135, y + 410, NDI_COLR_WHITE, NULL, NULL);
     /* mark active entry */
     EMBOSS(ScreenSurface, &font_small, ">", x + TXT_START_NAME - 15,
@@ -1192,7 +1192,7 @@ void show_keybind()
     add_close_button(x, y, MENU_KEYBIND);
 
     sprintf(buf, "~SHIFT~ + ~%c%c~ to select group         ~%c%c~ to select macro          ~RETURN~ to change/create",
-            FONT_ARROWUP, FONT_ARROWDOWN, FONT_ARROWUP, FONT_ARROWDOWN);
+            ECC_INTERNAL_ARROWUP, ECC_INTERNAL_ARROWDOWN, ECC_INTERNAL_ARROWUP, ECC_INTERNAL_ARROWDOWN);
     strout_blt(ScreenSurface, &font_small, buf, x + 125, y + 410, NDI_COLR_WHITE, NULL, NULL);
 
 
@@ -1390,7 +1390,7 @@ void show_newplayer_server(void)
 
     /* print all attributes */
     ENGRAVE(ScreenSurface, &font_small, "Welcome!", x + 130, y + 63, NDI_COLR_WHITE, NULL, NULL);
-    sprintf(buf, "Use ~%c%c~ and ~%c%c~ cursor keys to setup your stats.", FONT_ARROWUP, FONT_ARROWDOWN, FONT_ARROWRIGHT, FONT_ARROWLEFT);
+    sprintf(buf, "Use ~%c%c~ and ~%c%c~ cursor keys to setup your stats.", ECC_INTERNAL_ARROWUP, ECC_INTERNAL_ARROWDOWN, ECC_INTERNAL_ARROWRIGHT, ECC_INTERNAL_ARROWLEFT);
     strout_blt(ScreenSurface, &font_small, buf, x + 130, y + 75, NDI_COLR_WHITE, NULL, NULL);
     ENGRAVE(ScreenSurface, &font_small, "Press ~N~ to name your new chararcter", x + 130, y + 100, NDI_COLR_WHITE,
               NULL, NULL);
@@ -1831,7 +1831,7 @@ void show_login_server(void)
         ENGRAVE(ScreenSurface, &font_small, "Select ~Create Account~ for a new or ~Login~ for a existing account.",
                 x - 11, y, NDI_COLR_WHITE, NULL, NULL);
         y+=12;
-        sprintf(buf,"Use ~%c,%c~ to select and press then ~Return~", FONT_ARROWUP, FONT_ARROWDOWN);
+        sprintf(buf,"Use ~%c,%c~ to select and press then ~Return~", ECC_INTERNAL_ARROWUP, ECC_INTERNAL_ARROWDOWN);
         strout_blt(ScreenSurface, &font_small, buf, x - 11, y, NDI_COLR_WHITE, NULL, NULL);
 
         return;
@@ -2159,15 +2159,15 @@ void show_meta_server(void)
     {
         locator_show(x + 132, y + 158);
         sprintf(buf, "~%c%c~: select server  |**|  ~SHIFT~/~CONTROL~ + ~%c%c%c%c~: scroll map  |**|  ~RETURN~: connect",
-                FONT_ARROWUP, FONT_ARROWDOWN, FONT_ARROWRIGHT, FONT_ARROWUP, FONT_ARROWDOWN,
-                FONT_ARROWLEFT);
+                ECC_INTERNAL_ARROWUP, ECC_INTERNAL_ARROWDOWN, ECC_INTERNAL_ARROWRIGHT, ECC_INTERNAL_ARROWUP, ECC_INTERNAL_ARROWDOWN,
+                ECC_INTERNAL_ARROWLEFT);
         strout_blt(ScreenSurface, &font_small, buf, x + 130, y + 408,
                    NDI_COLR_WHITE, NULL, NULL);
     }
     else
     {
         sprintf(buf, "~%c%c~: select server  |**|  ~RETURN~: connect",
-                FONT_ARROWUP, FONT_ARROWDOWN);
+                ECC_INTERNAL_ARROWUP, ECC_INTERNAL_ARROWDOWN);
         strout_blt(ScreenSurface, &font_small, buf, x + 200, y + 408,
                    NDI_COLR_WHITE, NULL, NULL);
     }
@@ -2232,7 +2232,7 @@ void show_account(void)
         {
             strout_blt(ScreenSurface, &font_large, "Press ~RETURN~ to play", x+120, y+435, NDI_COLR_SILVER, NULL, NULL);
             strout_blt(ScreenSurface, &font_large, "Press '~D~' to delete this Character", x+120, y+452, NDI_COLR_SILVER, NULL, NULL);
-            sprintf(buf, "Use ~%c%c~ cursor keys for selection", FONT_ARROWUP, FONT_ARROWDOWN);
+            sprintf(buf, "Use ~%c%c~ cursor keys for selection", ECC_INTERNAL_ARROWUP, ECC_INTERNAL_ARROWDOWN);
             strout_blt(ScreenSurface, &font_small, buf, x+120, y + 470, NDI_COLR_WHITE, NULL, NULL);
         }
     }

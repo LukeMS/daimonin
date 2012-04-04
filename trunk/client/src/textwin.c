@@ -631,7 +631,7 @@ static void ConvertSmileys(char *message)
             switch (*(message + ++j))
             {
                 case '(':
-                    smiley = 138;
+                    smiley = ECC_SMILEY_CRY;
 
                     break;
             }
@@ -646,47 +646,33 @@ static void ConvertSmileys(char *message)
             switch (*(message + j))
             {
                 case ')':
-                    smiley = 128;
+                    smiley = ECC_SMILEY_SMILE;
 
                     break;
 
                 case '(':
-                    smiley = 129;
+                    smiley = ECC_SMILEY_FROWN;
 
                     break;
 
                 case 'D':
-                    smiley = 130;
-
-                    break;
-
-                case '|':
-                    smiley = 131;
-
-                    break;
-
-                case 'o':
-                case 'O':
-                case '0':
-                    smiley = 132;
-
-                    break;
+                    smiley = ECC_SMILEY_GRIN;
 
                 case 'p':
                 case 'P':
-                    smiley = 133;
+                    smiley = ECC_SMILEY_RASPBERRY;
 
                     break;
 
                 case 's':
                 case 'S':
-                    smiley = 139;
+                    smiley = ECC_SMILEY_PERPLEXITY;
 
                     break;
 
                 case 'x':
                 case 'X':
-                    smiley = 140;
+                    smiley = ECC_SMILEY_SUCKALEMON;
 
                     break;
             }
@@ -701,17 +687,13 @@ static void ConvertSmileys(char *message)
             switch (*(message + j))
             {
                 case ')':
-                    smiley = 134;
+                    smiley = ECC_SMILEY_WINK;
 
                     break;
 
                 case 'p':
-                    smiley = 137;
-
-                    break;
-
                 case 'P':
-                    smiley = 137;
+                    smiley = ECC_SMILEY_WINKRASPBERRY;
 
                     break;
             }
@@ -720,14 +702,14 @@ static void ConvertSmileys(char *message)
                   *(message + i) == 'B') &&
                  *(message + j) == ')')
         {
-            smiley = 135;
+            smiley = ECC_SMILEY_COOL;
         }
         else if ((*(message + i) == '8' ||
                   *(message + i) == 'B') &&
                  *(message + j++) == '-' &&
                  *(message + j) == ')')
         {
-            smiley = 135;
+            smiley = ECC_SMILEY_COOL;
         }
         else if (*(message + i) == '>' &&
                  *(message + j) == ':')
@@ -740,12 +722,12 @@ static void ConvertSmileys(char *message)
             switch (*(message + j))
             {
                 case ')':
-                    smiley = 141;
+                    smiley = ECC_SMILEY_NAUGHTY;
 
                     break;
 
                 case 'D':
-                    smiley = 142;
+                    smiley = ECC_SMILEY_WICKED;
 
                     break;
             }
