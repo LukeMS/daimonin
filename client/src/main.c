@@ -996,12 +996,14 @@ uint8 game_status_chain(void)
            widget_data[WIDGET_CHATWIN_ID].ht = Screensize.y / 2 - 10 - 10;
         }
 
+        textwin_calculate_dimensions(&textwin[twid]);
         WIDGET_REDRAW(textwin[twid].wid) = 1;
         textwin_show_window(twid);
         widget_data[textwin[twid].wid].x1 = x1;
         widget_data[textwin[twid].wid].y1 = y1;
         widget_data[textwin[twid].wid].wd = wd;
         widget_data[textwin[twid].wid].ht = ht;
+        textwin_calculate_dimensions(&textwin[twid]);
     }
 
     return 1;
