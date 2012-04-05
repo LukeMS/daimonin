@@ -69,6 +69,12 @@ input_string: 0xffffff
 # 'input_caret' is gor the caret as you type in to the console.
 input_caret: 0xff0000
 
+# 'magic_prayer' is for prayers.
+magic_prayer: 0x0cca02
+
+# 'magic_spell' is for spells.
+magic_spell: 0x0c02ca
+
 # 'pname_gmaster' is for the label only of players who are VOL/GM/MW/MM/SA.
 pname_gmaster: 0xff0000
 
