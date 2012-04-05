@@ -57,7 +57,7 @@
  * for a number, and some are both. */
 #define ECC_INTERNAL_CHAROFFSET  0
 #define ECC_INTERNAL_LINEHEIGHT  1
-#define ECC_INTERNAL_TAB         8
+#define ECC_INTERNAL_TAB         9
 #define ECC_INTERNAL_NEWLINE     10
 #define ECC_INTERNAL_ARROWUP     28
 #define ECC_INTERNAL_ARROWDOWN   29
