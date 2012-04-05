@@ -770,12 +770,16 @@ char *strout_tooltip_detail_item(item *ip)
     }
     else
     {
-        sprintf(strchr(buf, '\0'), "%c%06xCondition: %c%06x%u\n%c%06xQuality: %c%06x%u\n",
-                ECC_INTERNAL_NEWCOLR, skin_prefs.widget_key,
-                ECC_INTERNAL_NEWCOLR,
-                percentage_colr((float)ip->item_con / (float)ip->item_qua * 100),
-                ip->item_con, ECC_INTERNAL_NEWCOLR, skin_prefs.widget_key,
-                ECC_INTERNAL_NEWCOLR, skin_prefs.widget_valueHi, ip->item_qua);
+        if (ip->item_qua)
+        {
+            sprintf(strchr(buf, '\0'), "%c%06xCondition: %c%06x%u\n%c%06xQuality: %c%06x%u\n",
+                    ECC_INTERNAL_NEWCOLR, skin_prefs.widget_key,
+                    ECC_INTERNAL_NEWCOLR,
+                    percentage_colr((float)ip->item_con / (float)ip->item_qua * 100),
+                    ip->item_con, ECC_INTERNAL_NEWCOLR, skin_prefs.widget_key,
+                    ECC_INTERNAL_NEWCOLR, skin_prefs.widget_valueHi,
+                    ip->item_qua);
+        }
 
         sprintf(strchr(buf, '\0'), "%c%06xAllowed: ",
                 ECC_INTERNAL_NEWCOLR, skin_prefs.widget_key);
