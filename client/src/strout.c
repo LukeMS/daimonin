@@ -40,13 +40,7 @@ sint16 strout_width(_font *font, char *text)
     {
         switch (*text)
         {
-            case ECC_STRONG:
-            case ECC_EMPHASIS:
-            case ECC_UNDERLINE:
-            case ECC_HYPERTEXT:
-                break;
-
-            case '\n':
+            case ECC_INTERNAL_NEWLINE:
                 if (w > maxw)
                 {
                     maxw = w;
@@ -54,6 +48,12 @@ sint16 strout_width(_font *font, char *text)
 
                 w = 0;
 
+                break;
+
+            case ECC_STRONG:
+            case ECC_EMPHASIS:
+            case ECC_UNDERLINE:
+            case ECC_HYPERTEXT:
                 break;
 
             default:
@@ -84,15 +84,15 @@ uint8 strout_width_offset(_font *font, char *text, sint16 *line, sint16 len)
     {
         switch (*text)
         {
+            case ECC_INTERNAL_NEWLINE:
+                w = 0;
+
+                break;
+
             case ECC_STRONG:
             case ECC_EMPHASIS:
             case ECC_UNDERLINE:
             case ECC_HYPERTEXT:
-                break;
-
-            case '\n':
-                w = 0;
-
                 break;
 
             default:
@@ -762,7 +762,7 @@ void strout_tooltip_prepare(char *text)
     }
 
     /* If a multiline, decapitate it. */
-    if ((body = strchr(text, '\n')))
+    if ((body = strchr(text, ECC_INTERNAL_NEWLINE)))
     {
         *body++ = '\0';
     }
@@ -779,7 +779,8 @@ void strout_tooltip_prepare(char *text)
         w = MAX(w, (uint16)strout_width(&font_small, body) + 20);
         h += font_small.line_height;
 
-        for (cp = strchr(body, '\n'); cp && *++cp; cp = strchr(cp, '\n'))
+        for (cp = strchr(body, ECC_INTERNAL_NEWLINE); cp && *++cp;
+             cp = strchr(cp, ECC_INTERNAL_NEWLINE))
         {
             h += font_small.line_height;
         }
@@ -794,7 +795,7 @@ void strout_tooltip_prepare(char *text)
     {
         strout_blt(surface, &font_small, body, 10, font_medium.line_height + 10,
                    NDI_COLR_WHITE, NULL, NULL);
-        *(body - 1) = '\n';
+        *(body - 1) = ECC_INTERNAL_NEWLINE;
     }
 
     strout_tooltip.tick = LastTick;
