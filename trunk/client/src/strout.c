@@ -755,25 +755,44 @@ char *strout_tooltip_detail_item(item *ip)
                 ip->nrof, toupper(*ip->s_name), ip->s_name + 1);
     }
 
-    sprintf(strchr(buf, '\0'), "~Weight:~ %4.3fkg\n",
-            (float)ip->weight / 1000.0);
+    sprintf(strchr(buf, '\0'), "%c%06xWeight: %c%06x%4.3fkg\n",
+            ECC_INTERNAL_NEWCOLR, skin_prefs.widget_key, ECC_INTERNAL_NEWCOLR,
+            skin_prefs.widget_valueEq, (float)ip->weight / 1000.0);
 
     if (ip->item_qua == 255)
     {
-        sprintf(strchr(buf, '\0'), "(not identified)");
+        sprintf(strchr(buf, '\0'), "%c%06x(not identified)",
+                ECC_INTERNAL_NEWCOLR, skin_prefs.widget_info);
     }
     else
     {
-        sprintf(strchr(buf, '\0'), "~Condition:~ %u\n~Quality:~ %u\n",
-                ip->item_con, ip->item_qua);
+        sprintf(strchr(buf, '\0'), "%c%06xCondition: %c%06x%u\n%c%06xQuality: %c%06x%u\n",
+                ECC_INTERNAL_NEWCOLR, skin_prefs.widget_key,
+                ECC_INTERNAL_NEWCOLR,
+                percentage_colr((float)ip->item_con / (float)ip->item_qua * 100),
+                ip->item_con, ECC_INTERNAL_NEWCOLR, skin_prefs.widget_key,
+                ECC_INTERNAL_NEWCOLR, skin_prefs.widget_valueHi, ip->item_qua);
+
+        sprintf(strchr(buf, '\0'), "%c%06xAllowed: ",
+                ECC_INTERNAL_NEWCOLR, skin_prefs.widget_key);
 
         if (!ip->item_level)
         {
-            sprintf(strchr(buf, '\0'), "~Allowed:~ All");
+            sprintf(strchr(buf, '\0'), "%c%06xAll",
+                    ECC_INTERNAL_NEWCOLR, skin_prefs.widget_valueHi);
+
         }
         else
         {
-            sprintf(strchr(buf, '\0'), "~Allowed:~ %u", ip->item_level);
+            uint32 colr = ((!ip->item_skill &&
+                            ip->item_level <= cpl.stats.level) ||
+                           (ip->item_skill &&
+                            ip->item_level <= cpl.stats.skill_level[ip->item_skill - 1]))
+                          ? skin_prefs.widget_valueEq
+                          : skin_prefs.widget_valueLo;
+
+            sprintf(strchr(buf, '\0'), "%c%06x%u",
+                    ECC_INTERNAL_NEWCOLR, colr, ip->item_level);
 
             if (ip->item_skill)
             {
