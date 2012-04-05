@@ -816,11 +816,18 @@ char *strout_tooltip_detail_item(item *ip)
 /* Return a string with details of a spell, suitable for a tooltip. */
 char *strout_tooltip_detail_spell(char *name, uint8 class, uint8 group)
 {
+    uint32      colr = (!class)
+                       ? skin_prefs.magic_spell
+                       : skin_prefs.magic_prayer;
     static char buf[MEDIUM_BUF];
 
-    sprintf(buf, "~%c%s~\n~Class:~ %s\n~Group:~ %s",
-            toupper(*name), name + 1, (!class) ? "Spell" : "Prayer",
-            player_spell_group[group].name);
+    sprintf(buf, "~%c%s~\n", toupper(*name), name + 1);
+    sprintf(strchr(buf, '\0'), "%c%06xClass: %c%06x%s\n",
+            ECC_INTERNAL_NEWCOLR, skin_prefs.widget_key,
+            ECC_INTERNAL_NEWCOLR, colr, (!class) ? "Spell" : "Prayer");
+    sprintf(strchr(buf, '\0'), "%c%06xGroup: %c%06x%s",
+            ECC_INTERNAL_NEWCOLR, skin_prefs.widget_key,
+            ECC_INTERNAL_NEWCOLR, colr, player_spell_group[group].name);
 
     return buf;
 }
