@@ -315,6 +315,8 @@ void skin_default_prefs(void)
     skin_prefs.ecc_emphasis = NDI_COLR_LIME;
     skin_prefs.ecc_strong = NDI_COLR_YELLOW;
     skin_prefs.ecc_intertitle = NDI_COLR_ORANGE;
+    skin_prefs.magic_prayer = NDI_COLR_GREEN;
+    skin_prefs.magic_spell = NDI_COLR_BLUE;
     skin_prefs.pname_gmaster = NDI_COLR_RED;
     skin_prefs.pname_leader = NDI_COLR_LIME;
     skin_prefs.pname_member = NDI_COLR_YELLOW;
@@ -468,6 +470,14 @@ void skin_load_prefs(const char *filename)
         else if (!strcmp(key, "ecc_hypertext"))
         {
             skin_prefs.ecc_hypertext = (uint32)strtoul(val, NULL, 16);
+        }
+        else if (!strcmp(key, "magic_prayer"))
+        {
+            skin_prefs.magic_prayer = (uint32)strtoul(val, NULL, 16);
+        }
+        else if (!strcmp(key, "magic_spell"))
+        {
+            skin_prefs.magic_spell = (uint32)strtoul(val, NULL, 16);
         }
         else if (!strcmp(key, "pname_gmaster"))
         {

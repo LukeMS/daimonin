@@ -237,6 +237,8 @@ typedef struct skin_prefs_t
     uint32  ecc_strong;
     uint32  ecc_intertitle;
     uint32  ecc_hypertext;
+    uint32  magic_prayer;
+    uint32  magic_spell;
     uint32  pname_gmaster;
     uint32  pname_leader;
     uint32  pname_member;
