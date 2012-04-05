@@ -40,6 +40,20 @@ sint16 strout_width(_font *font, char *text)
     {
         switch (*text)
         {
+            case ECC_INTERNAL_NEWCOLR:
+                if (*(text + 1) == '0' &&
+                    (*(text + 2) == 'x' ||
+                     *(text + 2) == 'X'))
+                {
+                    text += 2;
+                }
+
+                text += 6;
+
+            case ECC_INTERNAL_DEFCOLR:
+
+                break;
+
             case ECC_INTERNAL_NEWLINE:
                 if (w > maxw)
                 {
@@ -84,6 +98,20 @@ uint8 strout_width_offset(_font *font, char *text, sint16 *line, sint16 len)
     {
         switch (*text)
         {
+            case ECC_INTERNAL_NEWCOLR:
+                if (*(text + 1) == '0' &&
+                    (*(text + 2) == 'x' ||
+                     *(text + 2) == 'X'))
+                {
+                    text += 2;
+                }
+
+                text += 6;
+
+            case ECC_INTERNAL_DEFCOLR:
+
+                break;
+
             case ECC_INTERNAL_NEWLINE:
                 w = 0;
 
@@ -149,6 +177,38 @@ void strout_blt(SDL_Surface *surface, _font *font, char *text, sint16 x, sint16 
         {
             cx = x;
             cy += font->line_height;
+
+            continue;
+        }
+        /* Change colour midstring -- ECC must be followed by a hex number in
+         * rrggbb format, with or without leading 0x/0X. */
+        else if (*c == ECC_INTERNAL_NEWCOLR)
+        {
+            char buf[7];
+
+            /* Skip any leading 0x/0X -- although strtoul() will cope, printf()
+             * functions may not have put one in in the first place for %x (ie,
+             * the # flag is not required) but hardwired values (ie, the string
+             * "0xffffff") may have one for clarity. When using %x the 0 flag,
+             * to pad with leading 0s, and a min field with of 6 are required
+             * (ie, %06x). */
+            if (*(c + 1) == '0' &&
+                (*(c + 2) == 'x' ||
+                 *(c + 2) == 'X'))
+            {
+                c += 2;
+            }
+
+            strncpy(buf, c + 1, 6);
+            colr_used = (uint32)strtoul(buf, NULL, 16);
+            c += 6;
+
+            continue;
+        }
+        /* Reset colour to default midstring. */
+        else if (*c == ECC_INTERNAL_DEFCOLR)
+        {
+            colr_used = colr;
 
             continue;
         }
