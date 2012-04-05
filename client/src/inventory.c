@@ -532,6 +532,11 @@ static void PrintInfo(sint16 x, sint16 y, item *ip, inventory_win_t iwin)
      * though it makes little sense that the player inherently know the weight,
      * condition, etc of items on the floor, but note that this info IS
      * available to the client, so the current restriction is insecure. */
+    /* The above is not entirely true. 0.10.6 HAS tooltips. Quacon info is not
+     * sent by the server for objects not in a player inv and it seems that
+     * weight is not sent for objects that have never been in some kind of inv
+     * (ie, map objects directly on the floor).
+     * -- Smacky 20120405 */
     if (iwin == IWIN_BELOW)
     {
        return;
