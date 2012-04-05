@@ -755,9 +755,13 @@ char *strout_tooltip_detail_item(item *ip)
                 ip->nrof, toupper(*ip->s_name), ip->s_name + 1);
     }
 
-    sprintf(strchr(buf, '\0'), "%c%06xWeight: %c%06x%4.3fkg\n",
-            ECC_INTERNAL_NEWCOLR, skin_prefs.widget_key, ECC_INTERNAL_NEWCOLR,
-            skin_prefs.widget_valueEq, (float)ip->weight / 1000.0);
+    if (ip->weight > 0)
+    {
+        sprintf(strchr(buf, '\0'), "%c%06xWeight: %c%06x%4.3fkg\n",
+                ECC_INTERNAL_NEWCOLR, skin_prefs.widget_key,
+                ECC_INTERNAL_NEWCOLR, skin_prefs.widget_valueEq,
+                (float)ip->weight / 1000.0);
+    }
 
     if (ip->item_qua == 255)
     {
