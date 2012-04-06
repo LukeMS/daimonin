@@ -640,19 +640,15 @@ treasureone weapon_misc
     chance 30
   more
   list weapon_slash
-    artifact_chance 3
     chance 20
   more
   list weapon_cleave
-    artifact_chance 3
     chance 20
   more
   list weapon_pierce
-    artifact_chance 3
     chance 20
   more
   list weapon_impact
-    artifact_chance 3
     chance 20
   more
   list weapon_throw
@@ -3587,11 +3583,9 @@ end
 treasureone loot_melee
   list armour_misc
     chance 65
-    artifact_chance 5
   more
   list weapon_misc
     chance 35
-    artifact_chance 5
 end
 #
 treasureone loot_range
