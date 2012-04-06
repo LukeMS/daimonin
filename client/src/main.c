@@ -1579,7 +1579,7 @@ int main(int argc, char *argv[])
         }
 
         if (map_transfer_flag)
-                strout_blt(ScreenSurface, &font_small, "Transfer Character to Map...", 300, 300, NDI_COLR_WHITE, NULL, NULL);
+                strout_blt(ScreenSurface, &font_small, "Transfer Character to Map...", 300, 300, NDI_COLR_WHITE, NULL);
 
         /* show the current dragged item */
         if (cpl.menustatus == MENU_NO && (drag = draggingInvItem(DRAG_GET_STATUS)))
@@ -1712,7 +1712,7 @@ int main(int argc, char *argv[])
                 rec.w = strout_width(&font_small, buf);
                 SDL_FillRect(ScreenSurface, &rec, 0);
                 strout_blt(ScreenSurface, &font_small, buf, rec.x, rec.y,
-                           NDI_COLR_WHITE, NULL, NULL);
+                           NDI_COLR_WHITE, NULL);
             }
 
 #ifdef DAI_DEVELOPMENT
@@ -1724,7 +1724,7 @@ int main(int argc, char *argv[])
             rec.w = strout_width(&font_small, buf);
             SDL_FillRect(ScreenSurface, &rec, 0);
             strout_blt(ScreenSurface, &font_small, buf, rec.x, rec.y,
-                       NDI_COLR_WHITE, NULL, NULL);
+                       NDI_COLR_WHITE, NULL);
 # endif
 #endif
         }
@@ -2215,11 +2215,11 @@ static void ShowIntro(char *text, int progress)
 
     if (text)
     {
-        strout_blt(ScreenSurface, &font_small, text, x+370, y+585, NDI_COLR_WHITE, NULL, NULL);
+        strout_blt(ScreenSurface, &font_small, text, x+370, y+585, NDI_COLR_WHITE, NULL);
     }
     else
     {
-        strout_blt(ScreenSurface, &font_small, "** Press Key **", x+375, y+585, NDI_COLR_WHITE, NULL, NULL);
+        strout_blt(ScreenSurface, &font_small, "** Press Key **", x+375, y+585, NDI_COLR_WHITE, NULL);
     }
 
     FlipScreen();
@@ -2244,7 +2244,7 @@ static void FlipScreen(void)
                 ""
 #endif
                 );
-        strout_blt(ScreenSurface, &font_small, buf, (Screensize.xoff/2)+10, (Screensize.yoff/2)+585, NDI_COLR_WHITE, NULL, NULL);
+        strout_blt(ScreenSurface, &font_small, buf, (Screensize.xoff/2)+10, (Screensize.yoff/2)+585, NDI_COLR_WHITE, NULL);
     }
 
 #ifdef INSTALL_OPENGL

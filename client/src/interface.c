@@ -1683,12 +1683,12 @@ static void ShowGUIPanel(uint16 x, uint16 y)
         if (gui_npc->keyword_selected == this)
         {
             strout_blt(ScreenSurface, &font_npcnormal, buf, x + cw / 2,
-                       y + ch / 2 + ch * i, NDI_COLR_PURPLE, NULL, NULL);
+                       y + ch / 2 + ch * i, NDI_COLR_PURPLE, NULL);
         }
         else
         {
             strout_blt(ScreenSurface, &font_npcnormal, buf, x + cw / 2,
-                      y + ch / 2 + ch * i, NDI_COLR_AQUA, NULL, NULL);
+                      y + ch / 2 + ch * i, NDI_COLR_AQUA, NULL);
         }
     }
 }
@@ -1714,7 +1714,7 @@ static void ShowGUIFurniture(uint16 x, uint16 y)
             }
 
             strout_blt(ScreenSurface, &font_large, buf, x + 80, y + 45,
-                      NDI_COLR_WHITE, NULL, NULL);
+                      NDI_COLR_WHITE, NULL);
         }
 
         if (gui_npc->head->image.sprite)
@@ -1830,7 +1830,7 @@ static void ShowGUIFurniture(uint16 x, uint16 y)
             strout_blt(ScreenSurface, &font_small, buf,
                       xoff + 4 + (GUI_NPC_TEXTFIELDWIDTH -
                                   strout_width(&font_small, buf)) / 2,
-                      yoff - 2, NDI_COLR_WHITE, NULL, NULL);
+                      yoff - 2, NDI_COLR_WHITE, NULL);
             SDL_FillRect(ScreenSurface, &box, 0);
             strout_input(&font_medium, &box, 0);
         }
@@ -1844,7 +1844,7 @@ static void ShowGUIFurniture(uint16 x, uint16 y)
             strout_blt(ScreenSurface, &font_small, buf,
                       xoff + 4 + (GUI_NPC_TEXTFIELDWIDTH -
                                   strout_width(&font_small, buf)) / 2,
-                      yoff - 2, NDI_COLR_WHITE, NULL, NULL);
+                      yoff - 2, NDI_COLR_WHITE, NULL);
         }
         else
         {
@@ -1854,7 +1854,7 @@ static void ShowGUIFurniture(uint16 x, uint16 y)
                 strout_blt(ScreenSurface, &font_small, buf,
                           xoff + 4 + (GUI_NPC_TEXTFIELDWIDTH -
                                       strout_width(&font_small, buf)) / 2,
-                          yoff - 2, NDI_COLR_WHITE, NULL, NULL);
+                          yoff - 2, NDI_COLR_WHITE, NULL);
             }
             else
             {
@@ -1862,7 +1862,7 @@ static void ShowGUIFurniture(uint16 x, uint16 y)
                 strout_blt(ScreenSurface, &font_small, buf,
                           xoff + 4 + (GUI_NPC_TEXTFIELDWIDTH -
                                       strout_width(&font_small, buf)) / 2,
-                          yoff - 2, NDI_COLR_WHITE, NULL, NULL);
+                          yoff - 2, NDI_COLR_WHITE, NULL);
             }
 
             /* TODO: the rest of this function is in severe need of tidying! */
@@ -1888,12 +1888,12 @@ static void ShowGUIFurniture(uint16 x, uint16 y)
                     buf_tmp[len - 2] = '\0';
                     strcat(buf_tmp, "...");
                     strout_blt(ScreenSurface, &font_npcnormal, buf_tmp, box.x,
-                               box.y, NDI_COLR_PURPLE, &box, NULL);
+                               box.y, NDI_COLR_PURPLE, &box);
                 }
                 else
                 {
                     strout_blt(ScreenSurface, &font_npcnormal, buf, box.x, box.y,
-                               NDI_COLR_PURPLE, &box, NULL);
+                               NDI_COLR_PURPLE, &box);
                 }
             }
             else
@@ -2113,13 +2113,13 @@ static void ShowGUIFurniture(uint16 x, uint16 y)
                         button)
                     {
                         strout_blt(ScreenSurface, &font_medium, buf_tmp, box.x,
-                                  box.y, NDI_COLR_GREY, &box, NULL);
+                                  box.y, NDI_COLR_GREY, &box);
                     }
                     else if (gui_npc->button_selected ||
                              button)
                     {
                         strout_blt(ScreenSurface, &font_medium, buf_tmp, box.x,
-                                  box.y, NDI_COLR_PURPLE, &box, NULL);
+                                  box.y, NDI_COLR_PURPLE, &box);
                     }
                 }
                 else
@@ -2133,13 +2133,13 @@ static void ShowGUIFurniture(uint16 x, uint16 y)
                         button)
                     {
                         strout_blt(ScreenSurface, &font_medium, btn, box.x, box.y,
-                                  NDI_COLR_GREY, &box, NULL);
+                                  NDI_COLR_GREY, &box);
                     }
                     else if (gui_npc->button_selected ||
                              button)
                     {
                         strout_blt(ScreenSurface, &font_medium, btn, box.x, box.y,
-                                  NDI_COLR_PURPLE, &box, NULL);
+                                  NDI_COLR_PURPLE, &box);
                     }
 
                     if (cmd[0])
@@ -2160,13 +2160,13 @@ static void ShowGUIFurniture(uint16 x, uint16 y)
                             strcat(buf_tmp, "...");
                             strout_blt(ScreenSurface, &font_medium, buf_tmp,
                                       box.x + xoff2, box.y, NDI_COLR_PURPLE,
-                                      &box, NULL);
+                                      &box);
                         }
                         else
                         {
                             strout_blt(ScreenSurface, &font_medium, cmd,
                                       box.x + xoff2, box.y, NDI_COLR_PURPLE,
-                                      &box, NULL);
+                                      &box);
                         }
                     }
                 }
@@ -2212,7 +2212,7 @@ static void ShowGUIContents(uint16 x, uint16 y)
                 }
 
                 strout_blt(ScreenSurface, &font_npctitle, buf, xoff, yoff,
-                          NDI_COLR_SILVER, NULL, NULL);
+                          NDI_COLR_SILVER, NULL);
                 yoff += font_npctitle.line_height + FONT_BLANKLINE;
             }
 
@@ -2226,7 +2226,7 @@ static void ShowGUIContents(uint16 x, uint16 y)
                 {
                     strout_blt(ScreenSurface, &font_npcnormal,
                               gui_npc->message->body.line[i], xoff, yoff,
-                              NDI_COLR_WHITE, NULL, NULL);
+                              NDI_COLR_WHITE, NULL);
                     yoff += font_npcnormal.line_height;
                 }
             }
@@ -2257,7 +2257,7 @@ static void ShowGUIContents(uint16 x, uint16 y)
             }
 
             strout_blt(ScreenSurface, &font_npctitle, buf, xoff, yoff,
-                      NDI_COLR_SILVER, NULL, NULL);
+                      NDI_COLR_SILVER, NULL);
             yoff += font_npctitle.line_height + FONT_BLANKLINE;
 
             if (gui_npc->reward->body.text)
@@ -2274,7 +2274,7 @@ static void ShowGUIContents(uint16 x, uint16 y)
                     {
                         strout_blt(ScreenSurface, &font_npcnormal,
                                   gui_npc->reward->body.line[i], xoff, yoff,
-                                  NDI_COLR_WHITE, NULL, NULL);
+                                  NDI_COLR_WHITE, NULL);
                         yoff += font_npcnormal.line_height;
                     }
                 }
@@ -2365,7 +2365,7 @@ static void ShowGUIContents(uint16 x, uint16 y)
                             uint16 w = strout_width(&font_small, buf);
 
                             strout_blt(ScreenSurface, &font_small, buf,
-                                      xoff + 28 - w / 2, yoff + 18, NDI_COLR_RED, NULL,
+                                      xoff + 28 - w / 2, yoff + 18, NDI_COLR_RED,
                                       NULL);
                         }
                         else
@@ -2373,7 +2373,7 @@ static void ShowGUIContents(uint16 x, uint16 y)
                             uint16 w = strout_width(&font_small, buf);
 
                             strout_blt(ScreenSurface, &font_small, buf,
-                                      xoff + 28 - w / 2, yoff + 18, NDI_COLR_LIME, NULL,
+                                      xoff + 28 - w / 2, yoff + 18, NDI_COLR_LIME,
                                       NULL);
                         }
                     }
@@ -2435,7 +2435,7 @@ static void ShowGUIContents(uint16 x, uint16 y)
             yoff = y + this->box.y - guitop - font_tiny.line_height -
                    FONT_BLANKLINE;
             strout_blt(ScreenSurface, &font_tiny, buf, xoff, yoff,
-                      NDI_COLR_LIME, NULL, NULL);
+                      NDI_COLR_LIME, NULL);
 
             for (; this; this = this->next)
             {
@@ -2453,7 +2453,7 @@ static void ShowGUIContents(uint16 x, uint16 y)
             yoff = y + gui_npc->icon->last->box.y - guitop + GUI_NPC_ICONSIZE +
                    FONT_BLANKLINE;
             strout_blt(ScreenSurface, &font_tiny, buf, xoff, yoff,
-                      NDI_COLR_LIME, NULL, NULL);
+                      NDI_COLR_LIME, NULL);
         }
     }
 
@@ -2483,12 +2483,12 @@ static void ShowGUIContents(uint16 x, uint16 y)
                 !gui_npc->keyword_selected)
             {
                 strout_blt(ScreenSurface, &font_npcnormal, buf, xoff, yoff,
-                          NDI_COLR_PURPLE, NULL, NULL);
+                          NDI_COLR_PURPLE, NULL);
             }
             else
             {
                 strout_blt(ScreenSurface, &font_npcnormal, buf, xoff, yoff,
-                          NDI_COLR_AQUA, NULL, NULL);
+                          NDI_COLR_AQUA, NULL);
             }
 
             yoff += font_npcnormal.line_height + FONT_BLANKLINE;
@@ -2522,7 +2522,7 @@ static void ShowGUIContents(uint16 x, uint16 y)
             }
 
             strout_blt(ScreenSurface, &font_npctitle, buf, xoff, yoff,
-                      NDI_COLR_SILVER, NULL, NULL);
+                      NDI_COLR_SILVER, NULL);
             yoff += font_npctitle.line_height + FONT_BLANKLINE;
 
             for (i = 0; i < this->body.line_count; i++)
@@ -2534,7 +2534,7 @@ static void ShowGUIContents(uint16 x, uint16 y)
                 else
                 {
                     strout_blt(ScreenSurface, &font_npcnormal, this->body.line[i],
-                              xoff, yoff, NDI_COLR_WHITE, NULL, NULL);
+                              xoff, yoff, NDI_COLR_WHITE, NULL);
                     yoff += font_npcnormal.line_height;
                 }
             }
@@ -2595,14 +2595,14 @@ static void ShowIcon(_gui_npc_element *this)
             }
 
             strout_blt(ScreenSurface, &font_npcicon, buf, xoff2, yoff2, NDI_COLR_SILVER,
-                      NULL, NULL);
+                      NULL);
             yoff2 += font_npcicon.line_height;
 
             /* Icon body text. */
             for (i = 0; i < this->body.line_count; i++)
             {
                 strout_blt(ScreenSurface, &font_npcicon, this->body.line[i], xoff2,
-                          yoff2, NDI_COLR_WHITE, NULL, NULL);
+                          yoff2, NDI_COLR_WHITE, NULL);
                 yoff2 += font_npcicon.line_height;
             }
         }
@@ -2626,14 +2626,14 @@ static void ShowIcon(_gui_npc_element *this)
         }
 
         strout_blt(ScreenSurface, &font_npcicon, buf, xoff2, yoff2, NDI_COLR_SILVER,
-                  NULL, NULL);
+                  NULL);
         yoff2 += font_npcicon.line_height;
 
         /* Icon body text. */
         for (i = 0; i < this->body.line_count; i++)
         {
             strout_blt(ScreenSurface, &font_npcicon, this->body.line[i], xoff2,
-                      yoff2, NDI_COLR_WHITE, NULL, NULL);
+                      yoff2, NDI_COLR_WHITE, NULL);
             yoff2 += font_npcicon.line_height;
         }
     }

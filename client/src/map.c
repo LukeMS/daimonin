@@ -824,7 +824,7 @@ void map_draw_map(void)
         strout_blt(ScreenSurfaceMap, &font_small, cpl.target_name,
                    t_xl - strout_width(&font_small, cpl.target_name) / 2,
                    t_yl - font_small.line_height - 8, cpl.target_colr,
-                   NULL, NULL);
+                   NULL);
     }
 }
 
@@ -928,9 +928,9 @@ static uint16 ShowExclusiveEffect(uint16 x, uint16 y, uint16 xoff, uint16 w,
     }
 
     strout_blt(ScreenSurfaceMap, &font_small, text, box.x - xoff, box.y,
-               NDI_COLR_RED, NULL, NULL);
+               NDI_COLR_RED, NULL);
     strout_blt(ScreenSurfaceMap, &font_small, text, box.x - xoff + w,
-               box.y, NDI_COLR_RED, NULL, NULL);
+               box.y, NDI_COLR_RED, NULL);
     SDL_SetClipRect(ScreenSurfaceMap, NULL);
 
     return xoff;
@@ -945,13 +945,13 @@ static void ShowPname(char *pname, sint16 x, sint16 y, uint32 colr)
 
     if ((cp = strchr(buf, '[')))
     {
-        strout_blt(ScreenSurfaceMap, &font_small, buf, x - strout_width(&font_small, pname) / 2, y - font_small.line_height - 8, skin_prefs.pname_gmaster, NULL, NULL);
+        strout_blt(ScreenSurfaceMap, &font_small, buf, x - strout_width(&font_small, pname) / 2, y - font_small.line_height - 8, skin_prefs.pname_gmaster, NULL);
         *cp = '\0';
     }
 
     strout_blt(ScreenSurfaceMap, &font_small, buf,
                x - strout_width(&font_small, pname) / 2,
-               y - font_small.line_height - 8, colr, NULL, NULL);
+               y - font_small.line_height - 8, colr, NULL);
 }
 
 #define TILE_ISO_XLEN 48
