@@ -147,26 +147,52 @@ uint8 strout_width_offset(_font *font, char *text, sint16 *line, sint16 len)
     return flag;
 }
 
-/* Blit text to surface. */
-void strout_blt(SDL_Surface *surface, _font *font, char *text, sint16 x, sint16 y,
-                uint32 colr, SDL_Rect *area)
+/* Blit text to x,y of surface in colr font.
+ *
+ * If area is non-NULL (only w and h are used and both are required), the text
+ * is first blitted to a new surface of those dimensions which is then blitted
+ * to surface. */
+void strout_blt(SDL_Surface *surface, _font *font, char *text, sint16 x,
+                sint16 y, uint32 colr, SDL_Rect *area)
 {
-    sint16  cx = x,
-            cy = y;
-    uint32  colr_used = colr;
-    char   *c;
-    uint8   intertitle = 0,
-            strong = 0,
-            emphasis = 0,
-            hyper = 0;
+    SDL_Surface *new;
+    sint16       nx,
+                 ny,
+                 cx,
+                 cy;
+    uint32       colr_used = colr;
+    char        *c;
+    uint8        intertitle = 0,
+                 strong = 0,
+                 emphasis = 0,
+                 hyper = 0;
 
+    /* Sanity check/ */
     if (!text ||
         !*text ||
         !font ||
-        !surface) /* sanity check */
+        !surface)
     {
         return;
     }
+
+    if (area)
+    {
+        new = SDL_CreateRGBSurface(SDL_SWSURFACE, area->w, area->h, 32,
+                                   0x000000ff, 0x0000ff00, 0x00ff0000,
+                                   0xff000000);
+        nx = 0;
+        ny = 0;
+    }
+    else
+    {
+        new = NULL;
+        nx = x;
+        ny = y;
+    }
+
+    cx = nx;
+    cy = ny;
 
     for (c = text; *c; c++)
     {
@@ -175,7 +201,7 @@ void strout_blt(SDL_Surface *surface, _font *font, char *text, sint16 x, sint16 
         /* A newline does just that. */
         if (*c == ECC_INTERNAL_NEWLINE)
         {
-            cx = x;
+            cx = nx;
             cy += font->line_height;
 
             continue;
@@ -242,15 +268,23 @@ void strout_blt(SDL_Surface *surface, _font *font, char *text, sint16 x, sint16 
         {
             /* If the next char would overreach the width, drop to the start
              * start of a new line. */
-            if (cx + cw > x + area->w)
+            if (cx + cw > area->w)
             {
-                cx = x;
+                cx = 0;
                 cy += font->line_height;
             }
 
-            /* Now if this line would overreach the height, bail out. */
-            if (cy + font->line_height > y + area->h)
+            /* Now if this line would overreach the height, blit and free new
+             * and return. */
+            if (cy + font->line_height > area->h)
             {
+                SDL_Rect box;
+
+                box.x = x;
+                box.y = y;
+                SDL_BlitSurface(new, NULL, surface, &box);
+                SDL_FreeSurface(new);
+
                 return;
             }
         }
@@ -419,14 +453,16 @@ void strout_blt(SDL_Surface *surface, _font *font, char *text, sint16 x, sint16 
             SDL_SetPalette(bitmap, SDL_LOGPAL, color, 3, n);
             box.x = cx;
             box.y = cy;
-            SDL_BlitSurface(bitmap, &font->c[(uint8)(*c)], surface, &box);
+            SDL_BlitSurface(bitmap, &font->c[(uint8)(*c)],
+                            (new) ? new : surface, &box);
         }
 
         /* Underline. */
         if (intertitle)
         {
             SDL_Rect box;
-            uint32   colr_mapped = SDL_MapRGB(surface->format,
+            uint32   colr_mapped = SDL_MapRGB((new)
+                                              ? new->format : surface->format,
                                               (colr_used >> 16) & 0xff,
                                               (colr_used >> 8) & 0xff,
                                               colr_used & 0xff);
@@ -435,10 +471,21 @@ void strout_blt(SDL_Surface *surface, _font *font, char *text, sint16 x, sint16 
             box.y = cy + font->line_height - 1;
             box.w = cw;
             box.h = 1;
-            SDL_FillRect(surface, &box, colr_mapped);
+            SDL_FillRect((new) ? new : surface, &box, colr_mapped);
         }
 
         cx += cw;
+    }
+
+    /* If we've been printing to an intermediary surface, blit and free it. */
+    if (new)
+    {
+        SDL_Rect box;
+
+        box.x = x;
+        box.y = y;
+        SDL_BlitSurface(new, NULL, surface, &box);
+        SDL_FreeSurface(new);
     }
 }
 
