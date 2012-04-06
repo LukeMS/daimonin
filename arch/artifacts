@@ -6778,10 +6778,1399 @@ end
 # Weapons
 #
 #
+#
+# NEW WEAPONS
 Allowed all
-chance 30
-artifact weapon_fools
 def_arch sword
+chance 50
+difficulty 2
+artifact 1_weapon_1_weapon-item
+editor 2:items/weapon
+Object
+title of inferior strength
+item_level_art 5
+str 1
+type 15
+is_magical 1
+value 5800
+end
+#
+Allowed all
+def_arch sword
+chance 45
+difficulty 9
+artifact 2_weapon_2_weapon-item
+editor 2:items/weapon
+Object
+title of lesser strength
+item_level_art 11
+str 2
+type 15
+is_magical 1
+value 9100
+end
+#
+Allowed all
+def_arch sword
+chance 40
+difficulty 15
+artifact 3_weapon_3_weapon-item
+editor 2:items/weapon
+Object
+title of small strength
+item_level_art 18
+str 3
+type 15
+is_magical 1
+value 12000
+end
+#
+Allowed all
+def_arch sword
+chance 35
+difficulty 23
+artifact 4_weapon_4_weapon-item
+editor 2:items/weapon
+Object
+title of medium strength
+item_level_art 26
+str 4
+type 15
+is_magical 1
+value 13960
+end
+#
+Allowed all
+def_arch sword
+chance 30
+difficulty 31
+artifact 5_weapon_5_weapon-item
+editor 2:items/weapon
+Object
+title of large strength
+item_level_art 36
+str 5
+type 15
+is_magical 1
+value 15220
+end
+#
+Allowed all
+def_arch sword
+chance 25
+difficulty 40
+artifact 6_weapon_6_weapon-item
+editor 2:items/weapon
+Object
+title of small strength
+item_level_art 47
+str 6
+type 15
+is_magical 1
+value 16800
+end
+#
+Allowed all
+def_arch sword
+chance 20
+difficulty 49
+artifact 7_weapon_7_weapon-item
+editor 2:items/weapon
+Object
+title of superior strength
+item_level_art 58
+str 7
+type 15
+is_magical 1
+value 17800
+end
+#
+Allowed all
+def_arch sword
+chance 50
+difficulty 2
+artifact 8_weapon_1_weapon-item
+editor 2:items/weapon
+Object
+title of inferior dexterity
+item_level_art 5
+dex 1
+type 15
+is_magical 1
+value 5800
+end
+#
+Allowed all
+def_arch sword
+chance 45
+difficulty 9
+artifact 9_weapon_2_weapon-item
+editor 2:items/weapon
+Object
+title of lesser dexterity
+item_level_art 11
+dex 2
+type 15
+is_magical 1
+value 9100
+end
+#
+Allowed all
+def_arch sword
+chance 40
+difficulty 15
+artifact 10_weapon_3_weapon-item
+editor 2:items/weapon
+Object
+title of small dexterity
+item_level_art 18
+dex 3
+type 15
+is_magical 1
+value 12000
+end
+#
+Allowed all
+def_arch sword
+chance 35
+difficulty 23
+artifact 11_weapon_4_weapon-item
+editor 2:items/weapon
+Object
+title of medium dexterity
+item_level_art 26
+dex 4
+type 15
+is_magical 1
+value 13960
+end
+#
+Allowed all
+def_arch sword
+chance 30
+difficulty 31
+artifact 12_weapon_5_weapon-item
+editor 2:items/weapon
+Object
+title of large dexterity
+item_level_art 36
+dex 5
+type 15
+is_magical 1
+value 15220
+end
+#
+Allowed all
+def_arch sword
+chance 25
+difficulty 40
+artifact 13_weapon_6_weapon-item
+editor 2:items/weapon
+Object
+title of small dexterity
+item_level_art 47
+dex 6
+type 15
+is_magical 1
+value 16800
+end
+#
+Allowed all
+def_arch sword
+chance 20
+difficulty 49
+artifact 14_weapon_7_weapon-item
+editor 2:items/weapon
+Object
+title of superior dexterity
+item_level_art 58
+dex 7
+type 15
+is_magical 1
+value 17800
+end
+#
+Allowed all
+def_arch sword
+chance 50
+difficulty 2
+artifact 15_weapon_1_weapon-item
+editor 2:items/weapon
+Object
+title of inferior constitution
+item_level_art 5
+con 1
+type 15
+is_magical 1
+value 5800
+end
+#
+Allowed all
+def_arch sword
+chance 45
+difficulty 9
+artifact 16_weapon_2_weapon-item
+editor 2:items/weapon
+Object
+title of lesser constitution
+item_level_art 11
+con 2
+type 15
+is_magical 1
+value 9100
+end
+#
+Allowed all
+def_arch sword
+chance 40
+difficulty 15
+artifact 17_weapon_3_weapon-item
+editor 2:items/weapon
+Object
+title of small constitution
+item_level_art 18
+con 3
+type 15
+is_magical 1
+value 12000
+end
+#
+Allowed all
+def_arch sword
+chance 35
+difficulty 23
+artifact 18_weapon_4_weapon-item
+editor 2:items/weapon
+Object
+title of medium constitution
+item_level_art 26
+con 4
+type 15
+is_magical 1
+value 13960
+end
+#
+Allowed all
+def_arch sword
+chance 30
+difficulty 31
+artifact 19_weapon_5_weapon-item
+editor 2:items/weapon
+Object
+title of large constitution
+item_level_art 36
+con 5
+type 15
+is_magical 1
+value 15220
+end
+#
+Allowed all
+def_arch sword
+chance 25
+difficulty 40
+artifact 20_weapon_6_weapon-item
+editor 2:items/weapon
+Object
+title of small constitution
+item_level_art 47
+con 6
+type 15
+is_magical 1
+value 16800
+end
+#
+Allowed all
+def_arch sword
+chance 20
+difficulty 49
+artifact 21_weapon_7_weapon-item
+editor 2:items/weapon
+Object
+title of superior constitution
+item_level_art 58
+con 7
+type 15
+is_magical 1
+value 17800
+end
+#
+Allowed all
+def_arch sword
+chance 50
+difficulty 2
+artifact 22_weapon_1_weapon-item
+editor 2:items/weapon
+Object
+title of inferior intelligence
+item_level_art 5
+int 1
+type 15
+is_magical 1
+value 5800
+end
+#
+Allowed all
+def_arch sword
+chance 45
+difficulty 9
+artifact 23_weapon_2_weapon-item
+editor 2:items/weapon
+Object
+title of lesser intelligence
+item_level_art 11
+int 2
+type 15
+is_magical 1
+value 9100
+end
+#
+Allowed all
+def_arch sword
+chance 40
+difficulty 15
+artifact 24_weapon_3_weapon-item
+editor 2:items/weapon
+Object
+title of small intelligence
+item_level_art 18
+int 3
+type 15
+is_magical 1
+value 12000
+end
+#
+Allowed all
+def_arch sword
+chance 35
+difficulty 23
+artifact 25_weapon_4_weapon-item
+editor 2:items/weapon
+Object
+title of medium intelligence
+item_level_art 26
+int 4
+type 15
+is_magical 1
+value 13960
+end
+#
+Allowed all
+def_arch sword
+chance 30
+difficulty 31
+artifact 26_weapon_5_weapon-item
+editor 2:items/weapon
+Object
+title of large intelligence
+item_level_art 36
+int 5
+type 15
+is_magical 1
+value 15220
+end
+#
+Allowed all
+def_arch sword
+chance 25
+difficulty 40
+artifact 27_weapon_6_weapon-item
+editor 2:items/weapon
+Object
+title of small intelligence
+item_level_art 47
+int 6
+type 15
+is_magical 1
+value 16800
+end
+#
+Allowed all
+def_arch sword
+chance 20
+difficulty 49
+artifact 28_weapon_7_weapon-item
+editor 2:items/weapon
+Object
+title of superior intelligence
+item_level_art 58
+int 7
+type 15
+is_magical 1
+value 17800
+end
+#
+Allowed all
+def_arch sword
+chance 50
+difficulty 2
+artifact 29_weapon_1_weapon-item
+editor 2:items/weapon
+Object
+title of inferior wisdom
+item_level_art 5
+wis 1
+type 15
+is_magical 1
+value 5800
+end
+#
+Allowed all
+def_arch sword
+chance 45
+difficulty 9
+artifact 30_weapon_2_weapon-item
+editor 2:items/weapon
+Object
+title of lesser wisdom
+item_level_art 11
+wis 2
+type 15
+is_magical 1
+value 9100
+end
+#
+Allowed all
+def_arch sword
+chance 40
+difficulty 15
+artifact 31_weapon_3_weapon-item
+editor 2:items/weapon
+Object
+title of small wisdom
+item_level_art 18
+wis 3
+type 15
+is_magical 1
+value 12000
+end
+#
+Allowed all
+def_arch sword
+chance 35
+difficulty 23
+artifact 32_weapon_4_weapon-item
+editor 2:items/weapon
+Object
+title of medium wisdom
+item_level_art 26
+wis 4
+type 15
+is_magical 1
+value 13960
+end
+#
+Allowed all
+def_arch sword
+chance 30
+difficulty 31
+artifact 33_weapon_5_weapon-item
+editor 2:items/weapon
+Object
+title of large wisdom
+item_level_art 36
+wis 5
+type 15
+is_magical 1
+value 15220
+end
+#
+Allowed all
+def_arch sword
+chance 25
+difficulty 40
+artifact 34_weapon_6_weapon-item
+editor 2:items/weapon
+Object
+title of small wisdom
+item_level_art 47
+wis 6
+type 15
+is_magical 1
+value 16800
+end
+#
+Allowed all
+def_arch sword
+chance 20
+difficulty 49
+artifact 35_weapon_7_weapon-item
+editor 2:items/weapon
+Object
+title of superior wisdom
+item_level_art 58
+wis 7
+type 15
+is_magical 1
+value 17800
+end
+#
+Allowed all
+def_arch sword
+chance 50
+difficulty 2
+artifact 36_weapon_1_weapon-item
+editor 2:items/weapon
+Object
+title of inferior power
+item_level_art 5
+pow 1
+type 15
+is_magical 1
+value 5800
+end
+#
+Allowed all
+def_arch sword
+chance 45
+difficulty 9
+artifact 37_weapon_2_weapon-item
+editor 2:items/weapon
+Object
+title of lesser power
+item_level_art 11
+pow 2
+type 15
+is_magical 1
+value 9100
+end
+#
+Allowed all
+def_arch sword
+chance 40
+difficulty 15
+artifact 38_weapon_3_weapon-item
+editor 2:items/weapon
+Object
+title of small power
+item_level_art 18
+pow 3
+type 15
+is_magical 1
+value 12000
+end
+#
+Allowed all
+def_arch sword
+chance 35
+difficulty 23
+artifact 39_weapon_4_weapon-item
+editor 2:items/weapon
+Object
+title of medium power
+item_level_art 26
+pow 4
+type 15
+is_magical 1
+value 13960
+end
+#
+Allowed all
+def_arch sword
+chance 30
+difficulty 31
+artifact 40_weapon_5_weapon-item
+editor 2:items/weapon
+Object
+title of large power
+item_level_art 36
+pow 5
+type 15
+is_magical 1
+value 15220
+end
+#
+Allowed all
+def_arch sword
+chance 25
+difficulty 40
+artifact 41_weapon_6_weapon-item
+editor 2:items/weapon
+Object
+title of small power
+item_level_art 47
+pow 6
+type 15
+is_magical 1
+value 16800
+end
+#
+Allowed all
+def_arch sword
+chance 20
+difficulty 49
+artifact 42_weapon_7_weapon-item
+editor 2:items/weapon
+Object
+title of superior power
+item_level_art 58
+pow 7
+type 15
+is_magical 1
+value 17800
+end
+#
+Allowed all
+def_arch sword
+chance 50
+difficulty 2
+artifact 43_weapon_1_weapon-item
+editor 2:items/weapon
+Object
+title of inferior charisma
+item_level_art 5
+cha 1
+type 15
+is_magical 1
+value 5800
+end
+#
+Allowed all
+def_arch sword
+chance 45
+difficulty 9
+artifact 44_weapon_2_weapon-item
+editor 2:items/weapon
+Object
+title of lesser charisma
+item_level_art 11
+cha 2
+type 15
+is_magical 1
+value 9100
+end
+#
+Allowed all
+def_arch sword
+chance 40
+difficulty 15
+artifact 45_weapon_3_weapon-item
+editor 2:items/weapon
+Object
+title of small charisma
+item_level_art 18
+cha 3
+type 15
+is_magical 1
+value 12000
+end
+#
+Allowed all
+def_arch sword
+chance 35
+difficulty 23
+artifact 46_weapon_4_weapon-item
+editor 2:items/weapon
+Object
+title of medium charisma
+item_level_art 26
+cha 4
+type 15
+is_magical 1
+value 13960
+end
+#
+Allowed all
+def_arch sword
+chance 30
+difficulty 31
+artifact 47_weapon_5_weapon-item
+editor 2:items/weapon
+Object
+title of large charisma
+item_level_art 36
+cha 5
+type 15
+is_magical 1
+value 15220
+end
+#
+Allowed all
+def_arch sword
+chance 25
+difficulty 40
+artifact 48_weapon_6_weapon-item
+editor 2:items/weapon
+Object
+title of small charisma
+item_level_art 47
+cha 6
+type 15
+is_magical 1
+value 16800
+end
+#
+Allowed all
+def_arch sword
+chance 20
+difficulty 49
+artifact 49_weapon_7_weapon-item
+editor 2:items/weapon
+Object
+title of superior charisma
+item_level_art 58
+cha 7
+type 15
+is_magical 1
+value 17800
+end
+#
+#
+Allowed all
+def_arch sword
+chance 35
+t_style 1
+difficulty 3
+artifact 50_weapon_1_weapon-item
+editor 2:items/weapon
+Object
+title of inferior fire
+attack_fire 5
+item_level_art 8
+type 15
+is_magical 1
+value 4200
+end
+#
+Allowed all
+def_arch sword
+chance 30
+t_style 1
+difficulty 10
+artifact 51_weapon_2_weapon-item
+editor 2:items/weapon
+Object
+title of medium fire
+attack_fire 10
+item_level_art 16
+type 15
+is_magical 1
+value 6800
+end
+#
+Allowed all
+def_arch sword
+chance 25
+t_style 1
+difficulty 20
+artifact 52_weapon_3_weapon-item
+editor 2:items/weapon
+Object
+title of small fire
+attack_fire 15
+item_level_art 24
+type 15
+is_magical 1
+value 7600
+end
+#
+Allowed all
+def_arch sword
+chance 20
+t_style 1
+difficulty 30
+artifact 53_weapon_4_weapon-item
+editor 2:items/weapon
+Object
+title of medium fire
+attack_fire 20
+item_level_art 35
+type 15
+is_magical 1
+value 8700
+end
+#
+Allowed all
+def_arch sword
+chance 15
+t_style 1
+difficulty 35
+artifact 54_weapon_5_weapon-item
+editor 2:items/weapon
+Object
+title of large fire
+attack_fire 25
+item_level_art 44
+type 15
+is_magical 1
+value 9600
+end
+#
+Allowed all
+def_arch sword
+chance 10
+t_style 1
+difficulty 42
+artifact 55_weapon_6_weapon-item
+editor 2:items/weapon
+Object
+title of greater fire
+attack_fire 30
+item_level_art 51
+type 15
+is_magical 1
+value 10800
+end
+#
+Allowed all
+def_arch sword
+chance 5
+t_style 1
+difficulty 50
+artifact 56_weapon_7_weapon-item
+editor 2:items/weapon
+Object
+title of medium fire
+attack_fire 35
+item_level_art 59
+type 15
+is_magical 1
+value 12200
+end
+#
+Allowed all
+def_arch sword
+chance 35
+t_style 2
+difficulty 3
+artifact 57_weapon_1_weapon-item
+editor 2:items/weapon
+Object
+title of inferior cold
+attack_cold 5
+item_level_art 8
+type 15
+is_magical 1
+value 4200
+end
+#
+Allowed all
+def_arch sword
+chance 30
+t_style 2
+difficulty 10
+artifact 58_weapon_2_weapon-item
+editor 2:items/weapon
+Object
+title of medium cold
+attack_cold 10
+item_level_art 16
+type 15
+is_magical 1
+value 6800
+end
+#
+Allowed all
+def_arch sword
+chance 25
+t_style 2
+difficulty 20
+artifact 59_weapon_3_weapon-item
+editor 2:items/weapon
+Object
+title of small cold
+attack_cold 15
+item_level_art 24
+type 15
+is_magical 1
+value 7600
+end
+#
+Allowed all
+def_arch sword
+chance 20
+t_style 2
+difficulty 30
+artifact 60_weapon_4_weapon-item
+editor 2:items/weapon
+Object
+title of medium cold
+attack_cold 20
+item_level_art 35
+type 15
+is_magical 1
+value 8700
+end
+#
+Allowed all
+def_arch sword
+chance 15
+t_style 2
+difficulty 35
+artifact 61_weapon_5_weapon-item
+editor 2:items/weapon
+Object
+title of large cold
+attack_cold 25
+item_level_art 44
+type 15
+is_magical 1
+value 9600
+end
+#
+Allowed all
+def_arch sword
+chance 10
+t_style 2
+difficulty 42
+artifact 62_weapon_6_weapon-item
+editor 2:items/weapon
+Object
+title of greater cold
+attack_cold 30
+item_level_art 51
+type 15
+is_magical 1
+value 10800
+end
+#
+Allowed all
+def_arch sword
+chance 5
+t_style 2
+difficulty 50
+artifact 63_weapon_7_weapon-item
+editor 2:items/weapon
+Object
+title of medium cold
+attack_cold 35
+item_level_art 59
+type 15
+is_magical 1
+value 12200
+end
+#
+Allowed all
+def_arch sword
+chance 35
+t_style 3
+difficulty 3
+artifact 64_weapon_1_weapon-item
+editor 2:items/weapon
+Object
+title of inferior electricity
+attack_electricity 5
+item_level_art 8
+type 15
+is_magical 1
+value 4200
+end
+#
+Allowed all
+def_arch sword
+chance 30
+t_style 3
+difficulty 10
+artifact 65_weapon_2_weapon-item
+editor 2:items/weapon
+Object
+title of medium electricity
+attack_electricity 10
+item_level_art 16
+type 15
+is_magical 1
+value 6800
+end
+#
+Allowed all
+def_arch sword
+chance 25
+t_style 3
+difficulty 20
+artifact 66_weapon_3_weapon-item
+editor 2:items/weapon
+Object
+title of small electricity
+attack_electricity 15
+item_level_art 24
+type 15
+is_magical 1
+value 7600
+end
+#
+Allowed all
+def_arch sword
+chance 20
+t_style 3
+difficulty 30
+artifact 67_weapon_4_weapon-item
+editor 2:items/weapon
+Object
+title of medium electricity
+attack_electricity 20
+item_level_art 35
+type 15
+is_magical 1
+value 8700
+end
+#
+Allowed all
+def_arch sword
+chance 15
+t_style 3
+difficulty 35
+artifact 68_weapon_5_weapon-item
+editor 2:items/weapon
+Object
+title of large electricity
+attack_electricity 25
+item_level_art 44
+type 15
+is_magical 1
+value 9600
+end
+#
+Allowed all
+def_arch sword
+chance 10
+t_style 3
+difficulty 42
+artifact 69_weapon_6_weapon-item
+editor 2:items/weapon
+Object
+title of greater electricity
+attack_electricity 30
+item_level_art 51
+type 15
+is_magical 1
+value 10800
+end
+#
+Allowed all
+def_arch sword
+chance 5
+t_style 3
+difficulty 50
+artifact 70_weapon_7_weapon-item
+editor 2:items/weapon
+Object
+title of medium electricity
+attack_electricity 35
+item_level_art 59
+type 15
+is_magical 1
+value 12200
+end
+#
+Allowed all
+def_arch sword
+chance 40
+difficulty 2
+artifact 71_weapon_1_weapon-item
+editor 2:items/weapon
+Object
+title of inferior precision
+wc_add 1
+item_level_art 6
+type 15
+is_magical 1
+value 4500
+end
+#
+Allowed all
+def_arch sword
+chance 35
+difficulty 7
+artifact 72_weapon_2_weapon-item
+editor 2:items/weapon
+Object
+title of lesser precision
+wc_add 2
+item_level_art 19
+type 15
+is_magical 1
+value 5600
+end
+#
+Allowed all
+def_arch sword
+chance 30
+difficulty 11
+artifact 73_weapon_3_weapon-item
+editor 2:items/weapon
+Object
+title of small precision
+wc_add 3
+item_level_art 13
+type 15
+is_magical 1
+value 6700
+end
+#
+Allowed all
+def_arch sword
+chance 25
+difficulty 15
+artifact 74_weapon_4_weapon-item
+editor 2:items/weapon
+Object
+title of medium precision
+wc_add 4
+item_level_art 18
+type 15
+is_magical 1
+value 7700
+end
+#
+Allowed all
+def_arch sword
+chance 20
+difficulty 22
+artifact 75_weapon_5_weapon-item
+editor 2:items/weapon
+Object
+title of large precision
+wc_add 5
+item_level_art 25
+type 15
+is_magical 1
+value 8800
+end
+#
+Allowed all
+def_arch sword
+chance 15
+difficulty 29
+artifact 76_weapon_6_weapon-item
+editor 2:items/weapon
+Object
+title of greater precision
+wc_add 6
+item_level_art 32
+type 15
+is_magical 1
+value 10000
+end
+#
+Allowed all
+def_arch sword
+chance 10
+difficulty 38
+artifact 77_weapon_7_weapon-item
+editor 2:items/weapon
+Object
+title of superior precision
+wc_add 7
+item_level_art 40
+type 15
+is_magical 1
+value 11200
+end
+#
+Allowed all
+def_arch sword
+chance 40
+difficulty 2
+artifact 78_weapon_1_weapon-item
+editor 2:items/weapon
+Object
+title of inferior defense
+ac_add 1
+item_level_art 6
+type 15
+is_magical 1
+value 4500
+end
+#
+Allowed all
+def_arch sword
+chance 35
+difficulty 7
+artifact 79_weapon_2_weapon-item
+editor 2:items/weapon
+Object
+title of lesser defense
+ac_add 2
+item_level_art 19
+type 15
+is_magical 1
+value 5600
+end
+#
+Allowed all
+def_arch sword
+chance 30
+difficulty 11
+artifact 80_weapon_3_weapon-item
+editor 2:items/weapon
+Object
+title of small defense
+ac_add 3
+item_level_art 13
+type 15
+is_magical 1
+value 6700
+end
+#
+Allowed all
+def_arch sword
+chance 25
+difficulty 15
+artifact 81_weapon_4_weapon-item
+editor 2:items/weapon
+Object
+title of medium defense
+ac_add 4
+item_level_art 18
+type 15
+is_magical 1
+value 7700
+end
+#
+Allowed all
+def_arch sword
+chance 20
+difficulty 22
+artifact 82_weapon_5_weapon-item
+editor 2:items/weapon
+Object
+title of large defense
+ac_add 5
+item_level_art 25
+type 15
+is_magical 1
+value 8800
+end
+#
+Allowed all
+def_arch sword
+chance 15
+difficulty 29
+artifact 83_weapon_6_weapon-item
+editor 2:items/weapon
+Object
+title of greater defense
+ac_add 6
+item_level_art 32
+type 15
+is_magical 1
+value 10000
+end
+#
+Allowed all
+def_arch sword
+chance 10
+difficulty 38
+artifact 84_weapon_7_weapon-item
+editor 2:items/weapon
+Object
+title of superior defense
+ac_add 7
+item_level_art 40
+type 15
+is_magical 1
+value 11200
+end
+#
+Allowed all
+def_arch sword
+chance 40
+difficulty 4
+artifact 85_weapon_1_weapon-item
+editor 2:items/weapon
+Object
+title of inferior damage
+dam_add 4
+item_level_art 5
+type 15
+is_magical 1
+value 7500
+end
+#
+Allowed all
+def_arch sword
+chance 35
+difficulty 10
+artifact 86_weapon_2_weapon-item
+editor 2:items/weapon
+Object
+title of lesser damage
+dam_add 8
+item_level_art 10
+type 15
+is_magical 1
+value 8600
+end
+#
+Allowed all
+def_arch sword
+chance 30
+difficulty 17
+artifact 87_weapon_3_weapon-item
+editor 2:items/weapon
+Object
+title of small damage
+dam_add 12
+item_level_art 16
+type 15
+is_magical 1
+value 9800
+end
+#
+Allowed all
+def_arch sword
+chance 25
+difficulty 26
+artifact 88_weapon_4_weapon-item
+editor 2:items/weapon
+Object
+title of medium damage
+dam_add 16
+item_level_art 26
+type 15
+is_magical 1
+value 11000
+end
+#
+Allowed all
+def_arch sword
+chance 20
+difficulty 34
+artifact 89_weapon_5_weapon-item
+editor 2:items/weapon
+Object
+title of large damage
+dam_add 20
+item_level_art 36
+type 15
+is_magical 1
+value 12200
+end
+#
+Allowed all
+def_arch sword
+chance 15
+difficulty 40
+artifact 90_weapon_6_weapon-item
+editor 2:items/weapon
+Object
+title of greater damage
+dam_add 24
+item_level_art 45
+type 15
+is_magical 1
+value 13400
+end
+#
+Allowed all
+def_arch sword
+chance 10
+difficulty 50
+artifact 91_weapon_7_weapon-item
+editor 2:items/weapon
+Object
+title of superior damage
+dam_add 28
+item_level_art 55
+type 15
+is_magical 1
+value 15000
+end
+#
+Allowed all
+def_arch sword
+chance 30
+artifact 92_weapon_1_weapon-item
 editor 2:items/weapon
 Object
 title of fools
@@ -6793,798 +8182,6 @@ is_magical 1
 cursed_perm 1
 cursed 1
 value 500
-end
-#
-Allowed all
-chance 40
-difficulty 5
-artifact weapon_min_defense
-def_arch sword
-editor 2:items/weapon
-Object
-title of minor defense
-ac_add 1
-item_level_art 5
-type 15
-is_magical 1
-value 4500
-end
-#
-Allowed all
-chance 40
-difficulty 5
-artifact weapon_min_precision
-def_arch sword
-editor 2:items/weapon
-Object
-title of minor precision
-item_level_art 5
-wc_add 1
-type 15
-is_magical 1
-value 5500
-end
-#
-Allowed all
-chance 40
-difficulty 5
-artifact weapon_min_damage
-def_arch sword
-editor 2:items/weapon
-Object
-title of minor damage
-dam_add 5
-item_level_art 5
-type 15
-is_magical 1
-value 7500
-end
-#
-Allowed all
-chance 40
-difficulty 2
-artifact weapon_min_strength
-def_arch sword
-editor 2:items/weapon
-Object
-title of minor strength
-item_level_art 2
-str 1
-type 15
-is_magical 1
-value 4500
-end
-#
-Allowed all
-chance 40
-difficulty 2
-artifact weapon_min_dexterity
-def_arch sword
-editor 2:items/weapon
-Object
-title of minor dexterity
-item_level_art 2
-dex 1
-type 15
-is_magical 1
-value 4500
-end
-#
-Allowed all
-chance 40
-difficulty 2
-artifact weapon_min_const
-def_arch sword
-editor 2:items/weapon
-Object
-title of minor constitution
-item_level_art 2
-con 1
-type 15
-is_magical 1
-value 4500
-end
-#
-Allowed all
-chance 40
-difficulty 2
-artifact weapon_min_wisdom
-def_arch sword
-editor 2:items/weapon
-Object
-title of minor wisdom
-item_level_art 2
-wis 1
-type 15
-is_magical 1
-value 4500
-end
-#
-Allowed all
-chance 40
-difficulty 2
-artifact weapon_min_int
-def_arch sword
-editor 2:items/weapon
-Object
-title of minor intelligence
-item_level_art 2
-int 1
-type 15
-is_magical 1
-value 4500
-end
-#
-Allowed all
-chance 40
-difficulty 2
-artifact weapon_min_power
-def_arch sword
-editor 2:items/weapon
-Object
-title of minor power
-item_level_art 2
-pow 1
-type 15
-is_magical 1
-value 4500
-end
-#
-Allowed all
-chance 40
-difficulty 2
-artifact weapon_min_charisma
-def_arch sword
-editor 2:items/weapon
-Object
-title of minor charisma
-item_level_art 2
-cha 1
-type 15
-is_magical 1
-value 4500
-end
-#
-Allowed all
-chance 40
-t_style 1
-difficulty 5
-artifact weapon_min_fire
-def_arch sword
-editor 2:items/weapon
-Object
-title of minor fire
-attack_fire 5
-item_level_art 5
-type 15
-is_magical 1
-value 5000
-end
-#
-Allowed all
-chance 40
-t_style 2
-difficulty 5
-artifact weapon_min_cold
-def_arch sword
-editor 2:items/weapon
-Object
-title of minor cold
-attack_cold 5
-type 15
-item_level_art 5
-is_magical 1
-value 5000
-end
-#
-Allowed all
-chance 40
-t_style 3
-difficulty 5
-artifact weapon_min_elec
-def_arch sword
-editor 2:items/weapon
-Object
-title of minor electricity
-attack_electricity 5
-type 15
-is_magical 1
-item_level_art 5
-value 5000
-end
-#
-Allowed all
-chance 20
-difficulty 11
-artifact weapon_less_defense
-def_arch sword
-editor 2:items/weapon
-Object
-title of lesser defense
-ac_add 2
-item_level_art 11
-type 15
-is_magical 1
-value 4950
-end
-#
-Allowed all
-chance 20
-difficulty 11
-artifact weapon_less_precision
-def_arch sword
-editor 2:items/weapon
-Object
-title of lesser precision
-item_level_art 11
-wc_add 2
-type 15
-is_magical 1
-value 6050
-end
-#
-Allowed all
-chance 20
-difficulty 11
-artifact weapon_less_damage
-def_arch sword
-editor 2:items/weapon
-Object
-title of lesser damage
-dam_add 10
-item_level_art 11
-type 15
-is_magical 1
-value 8250
-end
-#
-Allowed all
-chance 20
-difficulty 7
-artifact weapon_less_strength
-def_arch sword
-editor 2:items/weapon
-Object
-title of lesser strength
-item_level_art 7
-str 2
-type 15
-is_magical 1
-value 4950
-end
-#
-Allowed all
-chance 20
-difficulty 7
-artifact weapon_less_dexterity
-def_arch sword
-editor 2:items/weapon
-Object
-title of lesser dexterity
-item_level_art 7
-dex 2
-type 15
-is_magical 1
-value 4950
-end
-#
-Allowed all
-chance 20
-difficulty 7
-artifact weapon_less_const
-def_arch sword
-editor 2:items/weapon
-Object
-title of lesser constitution
-item_level_art 7
-con 2
-type 15
-is_magical 1
-value 4950
-end
-#
-Allowed all
-chance 20
-difficulty 7
-artifact weapon_less_wisdom
-def_arch sword
-editor 2:items/weapon
-Object
-title of lesser wisdom
-item_level_art 7
-wis 2
-type 15
-is_magical 1
-value 4950
-end
-#
-Allowed all
-chance 20
-difficulty 7
-artifact weapon_less_int
-def_arch sword
-editor 2:items/weapon
-Object
-title of lesser intelligence
-item_level_art 7
-int 2
-type 15
-is_magical 1
-value 4950
-end
-#
-Allowed all
-chance 20
-difficulty 7
-artifact weapon_less_power
-def_arch sword
-editor 2:items/weapon
-Object
-title of lesser power
-item_level_art 7
-pow 2
-type 15
-is_magical 1
-value 4950
-end
-#
-Allowed all
-chance 20
-difficulty 7
-artifact weapon_less_charisma
-def_arch sword
-editor 2:items/weapon
-Object
-title of lesser charisma
-item_level_art 7
-cha 2
-type 15
-is_magical 1
-value 4950
-end
-#
-Allowed all
-chance 20
-t_style 1
-difficulty 11
-artifact weapon_less_fire
-def_arch sword
-editor 2:items/weapon
-Object
-title of lesser fire
-attack_fire 10
-item_level_art 11
-type 15
-is_magical 1
-value 5500
-end
-#
-Allowed all
-chance 20
-t_style 2
-difficulty 11
-artifact weapon_less_cold
-def_arch sword
-editor 2:items/weapon
-Object
-title of lesser cold
-attack_cold 10
-type 15
-item_level_art 11
-is_magical 1
-value 5500
-end
-#
-Allowed all
-chance 20
-t_style 3
-difficulty 11
-artifact weapon_less_elec
-def_arch sword
-editor 2:items/weapon
-Object
-title of lesser electricity
-attack_electricity 10
-type 15
-is_magical 1
-item_level_art 11
-value 5500
-end
-#
-Allowed all
-chance 10
-difficulty 20
-artifact weapon_sm_defense
-def_arch sword
-editor 2:items/weapon
-Object
-title of small defense
-ac_add 3
-item_level_art 20
-type 15
-is_magical 1
-value 5500
-end
-#
-Allowed all
-chance 10
-difficulty 20
-artifact weapon_sm_precision
-def_arch sword
-editor 2:items/weapon
-Object
-title of small precision
-item_level_art 20
-wc_add 3
-type 15
-is_magical 1
-value 6500
-end
-#
-Allowed all
-chance 10
-difficulty 20
-artifact weapon_sm_damage
-def_arch sword
-editor 2:items/weapon
-Object
-title of small damage
-dam_add 15
-item_level_art 20
-type 15
-is_magical 1
-value 8500
-end
-#
-Allowed all
-chance 10
-difficulty 15
-artifact weapon_sm_strength
-def_arch sword
-editor 2:items/weapon
-Object
-title of small strength
-item_level_art 15
-str 3
-type 15
-is_magical 1
-value 5500
-end
-#
-Allowed all
-chance 10
-difficulty 15
-artifact weapon_sm_dexterity
-def_arch sword
-editor 2:items/weapon
-Object
-title of small dexterity
-item_level_art 15
-dex 3
-type 15
-is_magical 1
-value 5500
-end
-#
-Allowed all
-chance 10
-difficulty 15
-artifact weapon_sm_const
-def_arch sword
-editor 2:items/weapon
-Object
-title of small constitution
-item_level_art 15
-con 3
-type 15
-is_magical 1
-value 5500
-end
-#
-Allowed all
-chance 10
-difficulty 15
-artifact weapon_sm_wisdom
-def_arch sword
-editor 2:items/weapon
-Object
-title of small wisdom
-item_level_art 15
-wis 3
-type 15
-is_magical 1
-value 5500
-end
-#
-Allowed all
-chance 10
-difficulty 15
-artifact weapon_sm_int
-def_arch sword
-editor 2:items/weapon
-Object
-title of small intelligence
-item_level_art 15
-int 3
-type 15
-is_magical 1
-value 5500
-end
-#
-Allowed all
-chance 10
-difficulty 15
-artifact weapon_sm_power
-def_arch sword
-editor 2:items/weapon
-Object
-title of small power
-item_level_art 15
-pow 3
-type 15
-is_magical 1
-value 5500
-end
-#
-Allowed all
-chance 10
-difficulty 15
-artifact weapon_sm_charisma
-def_arch sword
-editor 2:items/weapon
-Object
-title of small charisma
-item_level_art 15
-cha 3
-type 15
-is_magical 1
-value 5500
-end
-#
-Allowed all
-chance 10
-t_style 1
-difficulty 20
-artifact weapon_sm_fire
-def_arch sword
-editor 2:items/weapon
-Object
-title of small fire
-attack_fire 15
-item_level_art 20
-type 15
-is_magical 1
-value 5500
-end
-#
-Allowed all
-chance 10
-t_style 2
-difficulty 20
-artifact weapon_sm_cold
-def_arch sword
-editor 2:items/weapon
-Object
-title of small cold
-attack_cold 15
-type 15
-item_level_art 20
-is_magical 1
-value 5500
-end
-#
-Allowed all
-chance 10
-t_style 3
-difficulty 20
-artifact weapon_sm_elec
-def_arch sword
-editor 2:items/weapon
-Object
-title of small electricity
-attack_electricity 15
-type 15
-is_magical 1
-item_level_art 20
-value 5500
-end
-#
-Allowed all
-chance 5
-difficulty 30
-artifact weapon_med_defense
-def_arch sword
-editor 2:items/weapon
-Object
-title of medium defense
-ac_add 4
-item_level_art 30
-type 15
-is_magical 1
-value 6000
-end
-#
-Allowed all
-chance 5
-difficulty 30
-artifact weapon_med_precision
-def_arch sword
-editor 2:items/weapon
-Object
-title of medium precision
-item_level_art 30
-wc_add 4
-type 15
-is_magical 1
-value 7000
-end
-#
-Allowed all
-chance 5
-difficulty 30
-artifact weapon_med_damage
-def_arch sword
-editor 2:items/weapon
-Object
-title of medium damage
-dam_add 20
-item_level_art 30
-type 15
-is_magical 1
-value 10500
-end
-#
-Allowed all
-chance 5
-difficulty 25
-artifact weapon_med_strength
-def_arch sword
-editor 2:items/weapon
-Object
-title of medium strength
-item_level_art 25
-str 4
-type 15
-is_magical 1
-value 6500
-end
-#
-Allowed all
-chance 5
-difficulty 25
-artifact weapon_med_dexterity
-def_arch sword
-editor 2:items/weapon
-Object
-title of medium dexterity
-item_level_art 25
-dex 4
-type 15
-is_magical 1
-value 6500
-end
-#
-Allowed all
-chance 5
-difficulty 25
-artifact weapon_med_const
-def_arch sword
-editor 2:items/weapon
-Object
-title of medium constitution
-item_level_art 25
-con 4
-type 15
-is_magical 1
-value 6500
-end
-#
-Allowed all
-chance 5
-difficulty 25
-artifact weapon_med_wisdom
-def_arch sword
-editor 2:items/weapon
-Object
-title of medium wisdom
-item_level_art 25
-wis 4
-type 15
-is_magical 1
-value 6500
-end
-#
-Allowed all
-chance 5
-difficulty 25
-artifact weapon_med_int
-def_arch sword
-editor 2:items/weapon
-Object
-title of medium intelligence
-item_level_art 25
-int 4
-type 15
-is_magical 1
-value 6500
-end
-#
-Allowed all
-chance 5
-difficulty 25
-artifact weapon_med_power
-def_arch sword
-editor 2:items/weapon
-Object
-title of medium power
-item_level_art 25
-pow 4
-type 15
-is_magical 1
-value 6500
-end
-#
-Allowed all
-chance 5
-difficulty 25
-artifact weapon_med_charisma
-def_arch sword
-editor 2:items/weapon
-Object
-title of medium charisma
-item_level_art 25
-cha 4
-type 15
-is_magical 1
-value 6500
-end
-#
-Allowed all
-chance 5
-t_style 1
-difficulty 30
-artifact weapon_med_fire
-def_arch sword
-editor 2:items/weapon
-Object
-title of medium fire
-attack_fire 20
-item_level_art 30
-type 15
-is_magical 1
-value 7000
-end
-#
-Allowed all
-chance 5
-t_style 2
-difficulty 30
-artifact weapon_med_cold
-def_arch sword
-editor 2:items/weapon
-Object
-title of medium cold
-attack_cold 20
-type 15
-item_level_art 30
-is_magical 1
-value 7000
-end
-#
-Allowed all
-chance 5
-t_style 3
-difficulty 30
-artifact weapon_med_elec
-def_arch sword
-editor 2:items/weapon
-Object
-title of medium electricity
-attack_electricity 20
-type 15
-is_magical 1
-item_level_art 30
-value 7000
 end
 #
 #
