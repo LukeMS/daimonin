@@ -149,7 +149,7 @@ uint8 strout_width_offset(_font *font, char *text, sint16 *line, sint16 len)
 
 /* Blit text to surface. */
 void strout_blt(SDL_Surface *surface, _font *font, char *text, sint16 x, sint16 y,
-                uint32 colr, SDL_Rect *area, _BLTFX *bltfx)
+                uint32 colr, SDL_Rect *area)
 {
     sint16  cx = x,
             cy = y;
@@ -481,7 +481,7 @@ void strout_input(_font *font, SDL_Rect *box, char repl)
 
     /* Draw buf up to that point. */
     strout_blt(ScreenSurface, font, buf, box->x - xoff, box->y,
-               NDI_COLR_WHITE, NULL, NULL);
+               NDI_COLR_WHITE, NULL);
 
     /* Restore the character at CurrentCursorPos. */
     if (InputString[CurrentCursorPos])
@@ -491,7 +491,7 @@ void strout_input(_font *font, SDL_Rect *box, char repl)
 
     /* Draw buf from that point. */
     strout_blt(ScreenSurface, font, &buf[CurrentCursorPos],
-               box->x - xoff + len, box->y, NDI_COLR_WHITE, NULL, NULL);
+               box->x - xoff + len, box->y, NDI_COLR_WHITE, NULL);
 
     /* Draw the caret. */
     if (InputCaretBlinkFlag &&
@@ -566,7 +566,7 @@ strout_vim_t *strout_vim_add(strout_vim_mode_t mode, uint8 mapx, uint8 mapy,
                             (float)h / (float)surface->h);
         dst.x = (w - len) / 2;
         dst.y = (h - font_large.line_height) / 2;
-        strout_blt(surface, &font_large, text, dst.x, dst.y, colr, NULL, NULL);
+        strout_blt(surface, &font_large, text, dst.x, dst.y, colr, NULL);
     }
     else
     {
@@ -575,7 +575,7 @@ strout_vim_t *strout_vim_add(strout_vim_mode_t mode, uint8 mapx, uint8 mapy,
         surface = skin_sprites[SKIN_SPRITE_VIM]->bitmap;
         surface = SPG_Scale(surface, (float)w / (float)surface->w,
                             (float)h / (float)surface->h);
-        strout_blt(surface, &font_large, text, 0, 0, colr, NULL, NULL);
+        strout_blt(surface, &font_large, text, 0, 0, colr, NULL);
     }
 
     new->surface = surface;
@@ -883,12 +883,12 @@ void strout_tooltip_prepare(char *text)
     surface = skin_sprites[SKIN_SPRITE_TOOLTIP]->bitmap;
     surface = SPG_Scale(surface, (float)w / (float)surface->w,
                         (float)h / (float)surface->h);
-    strout_blt(surface, &font_medium, text, 10, 10, NDI_COLR_WHITE, NULL, NULL);
+    strout_blt(surface, &font_medium, text, 10, 10, NDI_COLR_WHITE, NULL);
 
     if (body)
     {
         strout_blt(surface, &font_small, body, 10, font_medium.line_height + 10,
-                   NDI_COLR_WHITE, NULL, NULL);
+                   NDI_COLR_WHITE, NULL);
         *(body - 1) = ECC_INTERNAL_NEWLINE;
     }
 

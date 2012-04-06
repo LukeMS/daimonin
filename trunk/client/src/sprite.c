@@ -690,7 +690,7 @@ void sprite_blt_as_icon(_Sprite *sprite, sint16 x, sint16 y,
         w = strout_width(&font_tiny, buf);
         strout_blt(surface, &font_tiny, buf,
                    x + ((options.showqc) ? 22 : 24) - w / 2, y + 18, colr,
-                   NULL, NULL);
+                   NULL);
     }
 }
 

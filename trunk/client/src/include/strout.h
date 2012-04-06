@@ -28,13 +28,13 @@
  * layer slightly offset from the second coloured layer to give a clearer,
  * slightly 3d 'shadow' effect. */
 /* EMBOSS prints the string with the shadow on the bottom and right. */
-#define EMBOSS(surface, font, text, x, y, colr, area, bltfx) \
-	strout_blt((surface), (font), (text), (x) + 1, (y) + 1, NDI_COLR_BLACK, (area), (bltfx)); \
-	strout_blt((surface), (font), (text), (x), (y), (colr), (area), (bltfx));
+#define EMBOSS(surface, font, text, x, y, colr, area) \
+	strout_blt((surface), (font), (text), (x) + 1, (y) + 1, NDI_COLR_BLACK, (area)); \
+	strout_blt((surface), (font), (text), (x), (y), (colr), (area));
 /* ENGRAVE prints the string with the shadow on the top and left. */
-#define ENGRAVE(surface, font, text, x, y, colr, area, bltfx) \
-	strout_blt((surface), (font), (text), (x), (y), NDI_COLR_BLACK, (area), (bltfx)); \
-	strout_blt((surface), (font), (text), (x) + 1, (y) + 1, (colr), (area), (bltfx));
+#define ENGRAVE(surface, font, text, x, y, colr, area) \
+	strout_blt((surface), (font), (text), (x), (y), NDI_COLR_BLACK, (area)); \
+	strout_blt((surface), (font), (text), (x) + 1, (y) + 1, (colr), (area));
 
 /* Queries if the mouse is over an item/skill/spell at x,y. */
 #define STROUT_TOOLTIP_HOVER_TEST(x, y) \
@@ -85,8 +85,8 @@ extern sint16        strout_width(_font *font, char *text);
 extern uint8         strout_width_offset(_font *font, char *text, sint16 *line,
                                          sint16 len);
 extern void          strout_blt(SDL_Surface *surface, _font *font, char *text,
-                                sint16 x, sint16 y, uint32 col, SDL_Rect *area,
-                                _BLTFX *bltfx);
+                                sint16 x, sint16 y, uint32 col,
+                                SDL_Rect *area);
 extern void          strout_input(_font *font, SDL_Rect *box, char repl);
 extern strout_vim_t *strout_vim_add(strout_vim_mode_t mode, uint8 mapx,
                                            uint8 mapy, char *text, uint32 colr,
