@@ -26,15 +26,18 @@
 
 /* Macros for the oft-used technique of printing strings twice, the first black
  * layer slightly offset from the second coloured layer to give a clearer,
- * slightly 3d 'shadow' effect. */
+ * slightly 3d 'shadow' effect.
+ *
+ * NOTE: These macros blit directly to surface (strout_blt() returns NULL). */
 /* EMBOSS prints the string with the shadow on the bottom and right. */
-#define EMBOSS(surface, font, text, x, y, colr, area) \
-	strout_blt((surface), (font), (text), (x) + 1, (y) + 1, NDI_COLR_BLACK, (area)); \
-	strout_blt((surface), (font), (text), (x), (y), (colr), (area));
+#define EMBOSS(surface, font, text, x, y, colr) \
+    strout_blt((surface), (font), (text), (x) + 1, (y) + 1, NDI_COLR_BLACK, \
+               NULL); \
+    strout_blt((surface), (font), (text), (x), (y), (colr), NULL);
 /* ENGRAVE prints the string with the shadow on the top and left. */
-#define ENGRAVE(surface, font, text, x, y, colr, area) \
-	strout_blt((surface), (font), (text), (x), (y), NDI_COLR_BLACK, (area)); \
-	strout_blt((surface), (font), (text), (x) + 1, (y) + 1, (colr), (area));
+#define ENGRAVE(surface, font, text, x, y, colr) \
+    strout_blt((surface), (font), (text), (x), (y), NDI_COLR_BLACK, NULL); \
+    strout_blt((surface), (font), (text), (x) + 1, (y) + 1, (colr), NULL);
 
 /* Queries if the mouse is over an item/skill/spell at x,y. */
 #define STROUT_TOOLTIP_HOVER_TEST(x, y) \
