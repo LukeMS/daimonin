@@ -59,6 +59,9 @@ void textwin_init(void)
             tw->wid = WIDGET_MSGWIN_ID;
         }
 
+        tw->bg = SDL_DisplayFormat(skin_sprites[SKIN_SPRITE_ALPHA]->bitmap);
+        SDL_SetAlpha(tw->bg, SDL_SRCALPHA | SDL_RLEACCEL,
+                     MIN(255, options.textwin_alpha));
         tw->linebuf_size = options.textwin_scrollback;
         MALLOC(linebuf, sizeof(textwin_linebuf_t) * tw->linebuf_size);
         tw->linebuf = linebuf;
@@ -80,6 +83,7 @@ void textwin_deinit(void)
             FREE((tw->linebuf + i)->buf);
         }
 
+        SDL_FreeSurface(tw->bg);
         FREE(tw->linebuf);
     }
 }
@@ -785,11 +789,10 @@ static void AddLine(textwin_window_t *tw, const uint32 flags, const uint32 colr,
     sprintf((tw->linebuf + line)->buf, "%s%s", buf, message);
     (tw->linebuf + line)->flags = flags;
 
-    if (!(flags & NDI_FLAG_PLAYER) ||
-         (flags & NDI_FLAG_CHANNEL)) //temporary
+    if (!(flags & NDI_FLAG_PLAYER))
     {
         (tw->linebuf + line)->fg = colr;
-        (tw->linebuf + line)->bg = 0;
+        (tw->linebuf + line)->bg = NDI_COLR_BLACK;
     }
     else
     {
@@ -817,6 +820,10 @@ static void AddLine(textwin_window_t *tw, const uint32 flags, const uint32 colr,
         {
             (tw->linebuf + line)->fg = skin_prefs.chat_tell;
         }
+        else if ((flags & NDI_FLAG_CHANNEL))
+        {
+            (tw->linebuf + line)->fg = skin_prefs.chat_channel;
+        }
         else
         {
             (tw->linebuf + line)->fg = colr;
@@ -832,11 +839,11 @@ static void AddLine(textwin_window_t *tw, const uint32 flags, const uint32 colr,
         }
         else if ((flags & NDI_FLAG_CHANNEL))
         {
-            (tw->linebuf + line)->bg = skin_prefs.chat_channel;
+            (tw->linebuf + line)->bg = colr;
         }
         else
         {
-            (tw->linebuf + line)->bg = 0;
+            (tw->linebuf + line)->bg = NDI_COLR_BLACK;
         }
     }
 
@@ -859,21 +866,8 @@ static void AddLine(textwin_window_t *tw, const uint32 flags, const uint32 colr,
 void textwin_show_window(textwin_id_t id)
 {
     textwin_window_t   *tw = &textwin[id];
-    static SDL_Surface *bg = NULL;
     SDL_Rect            box;
     _BLTFX              bltfx;
-
-    /* Always blit the background extra because of the alpha, for performance
-     * reasons we need to do a DisplayFormat and keep track of the old
-     * textwin_alpha value. We also need it to separate because drawing and esp
-     * blitting of fonts with palettes to a DisplayFormatted (hardware) surface
-     * is slow as hell. */
-    if (!bg)
-    {
-        SDL_SetAlpha(skin_sprites[SKIN_SPRITE_ALPHA]->bitmap,
-                     SDL_SRCALPHA | SDL_RLEACCEL, 128);
-        bg = SDL_DisplayFormat(skin_sprites[SKIN_SPRITE_ALPHA]->bitmap);
-    }
 
     /* if we don't have a backbuffer, create it */
     if (!widget_surface[tw->wid])
@@ -948,7 +942,7 @@ void textwin_show_window(textwin_id_t id)
     box.h = widget_data[tw->wid].ht;
 //LOG(LOG_MSG,">>>>>>>>>%d,%d %d,%d %d,%d %d,%d\n",box.x,widget_data[tw->wid].x1,box.y,widget_data[tw->wid].y1,box.w,widget_data[tw->wid].wd,box.h,widget_data[tw->wid].ht);
     SDL_SetClipRect(ScreenSurface, &box);
-    SDL_BlitSurface(bg, NULL, ScreenSurface, &box);
+    SDL_BlitSurface(tw->bg, NULL, ScreenSurface, &box);
     SDL_BlitSurface(widget_surface[tw->wid], NULL, ScreenSurface, &box);
     SDL_SetClipRect(ScreenSurface, NULL);
 
@@ -1026,12 +1020,13 @@ static void ShowWindowResizingBorders(textwin_window_t *tw, _BLTFX *bltfx)
 
 static void ShowWindowText(textwin_window_t *tw, _BLTFX *bltfx)
 {
-    uint32 botline = ((tw->linebuf_next)
-                      ? tw->linebuf_next : tw->linebuf_used) -
-                      (tw->scroll_yoff / tw->font->line_height) - 1;
-    sint32 topline = (tw->linebuf_visi < tw->linebuf_used)
-                     ? (sint32)(botline - tw->linebuf_visi) : -1;
-    uint16 i;
+    uint32   botline = ((tw->linebuf_next)
+                        ? tw->linebuf_next : tw->linebuf_used) -
+                        (tw->scroll_yoff / tw->font->line_height) - 1;
+    sint32   topline = (tw->linebuf_visi < tw->linebuf_used)
+                       ? (sint32)(botline - tw->linebuf_visi) : -1;
+    uint16   i;
+    SDL_Rect box;
 
     if (topline < 0)
     {
@@ -1056,6 +1051,10 @@ static void ShowWindowText(textwin_window_t *tw, _BLTFX *bltfx)
         }
 #endif
 
+    box.x = 0;
+    box.w = tw->maxcontentwd;
+    box.h = tw->font->line_height;
+
     /* Blit all the visible lines. */
     for (i = 0; i < tw->linebuf_visi &&
                 i < tw->linebuf_used; i++)
@@ -1064,9 +1063,13 @@ static void ShowWindowText(textwin_window_t *tw, _BLTFX *bltfx)
         textwin_linebuf_t *linebuf = tw->linebuf + line;
 
         strout_blt(bltfx->surface, tw->font, linebuf->buf, -tw->scroll_xoff + 2,
-                   tw->font->line_height * i, linebuf->fg, /*linebuf->bg,*/
-                   NULL);
+                   tw->font->line_height * i, linebuf->fg, &box);
+        box.y = tw->font->line_height * i;
+        SDL_FillRect(tw->bg, &box, linebuf->bg);
     }
+
+    SDL_SetAlpha(tw->bg, SDL_SRCALPHA | SDL_RLEACCEL,
+                 MIN(255, options.textwin_alpha));
 }
 
 /* Draw horizontal scrollbar. */

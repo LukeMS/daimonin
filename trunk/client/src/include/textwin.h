@@ -95,6 +95,7 @@ textwin_linebuf_t;
 typedef struct textwin_window_t
 {
     widget_id_t        wid;          // widget associated with this window
+    SDL_Surface       *bg;           // the bg surface
     _font             *font;         // the font used in this window
     sint16             contentwd,    // width of content in pixels given window and vcanal width
                        maxcontentwd, // max width of content in pixels given max window and vcanal width

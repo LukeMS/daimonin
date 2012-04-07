@@ -125,7 +125,7 @@ _option             opt[]                           =
 #else
         {"Logging:", "Whether the textwindows are logged.","~None~ turns off logging, ~Only chat~, ~Only messages~, or ~Both, separately~ logs either or both textwindows to separate files, and ~Both, together~ logs both textwindows to a single file.","", "None#Only chat#Only messages#Both, separately#Both, together",SEL_RANGE,0,4,1,1, &options.textwin_use_logging,VAL_INT},
 #endif
-        {"Alpha value:", "Transparency value of textwindows.","A higher value means a darker textwindow.","", "",SEL_RANGE,0,255,5,110, &options.textwin_alpha,VAL_INT},
+        {"Alpha value:", "Transparency value of textwindows.","","", "Transparent#Light#Medium#Dark#Opaque",SEL_RANGE,0,256,64,128, &options.textwin_alpha,VAL_INT},
         {"Message font:", "Font to use in the message textwindow.","The font will be resized when you return to the game. Text currently in","the textwindow will not be reformatted.", "Tiny#Small#Medium#Large#Huge",SEL_RANGE,0,4,1,1, &options.textwin_msg_font,VAL_INT},
         {"Chat font:", "Font to use in the chat textwindow.","The font will be resized when you return to the game. Text currently in","the textwindow will not be reformatted.", "Tiny#Small#Medium#Large#Huge",SEL_RANGE,0,4,1,1, &options.textwin_chat_font,VAL_INT},
         {"Indentation:", "The number of spaces by which to indent multiple line chat.","","", "",SEL_RANGE,0,8,1,2, &options.textwin_indentation,VAL_INT},
