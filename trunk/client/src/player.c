@@ -580,27 +580,27 @@ void widget_skillgroups(int x, int y)
         sprintf(buf, " %d", cpl.stats.skill_level[0]);
         strout_blt(widget_surface[WIDGET_SKILL_LVL_ID], &font_small, "Ag:", 6, 26, skin_prefs.widget_key, NULL);
         strout_blt(widget_surface[WIDGET_SKILL_LVL_ID], &font_small, buf, 44 - strout_width(&font_small, buf), 26, skin_prefs.widget_valueEq,
-                  NULL);
+                   NULL);
         sprintf(buf, " %d", cpl.stats.skill_level[2]);
         strout_blt(widget_surface[WIDGET_SKILL_LVL_ID], &font_small, "Me:", 6, 38, skin_prefs.widget_key, NULL);
         strout_blt(widget_surface[WIDGET_SKILL_LVL_ID], &font_small, buf, 44 - strout_width(&font_small, buf), 38, skin_prefs.widget_valueEq,
-                  NULL);
+                   NULL);
         sprintf(buf, " %d", cpl.stats.skill_level[4]);
         strout_blt(widget_surface[WIDGET_SKILL_LVL_ID], &font_small, "Ma:", 6, 49, skin_prefs.widget_key, NULL);
         strout_blt(widget_surface[WIDGET_SKILL_LVL_ID], &font_small, buf, 44 - strout_width(&font_small, buf), 49, skin_prefs.widget_valueEq,
-                  NULL);
+                   NULL);
         sprintf(buf, " %d", cpl.stats.skill_level[1]);
         strout_blt(widget_surface[WIDGET_SKILL_LVL_ID], &font_small, "Pe:", 6, 62, skin_prefs.widget_key, NULL);
         strout_blt(widget_surface[WIDGET_SKILL_LVL_ID], &font_small, buf, 44 - strout_width(&font_small, buf), 62, skin_prefs.widget_valueEq,
-                  NULL);
+                   NULL);
         sprintf(buf, " %d", cpl.stats.skill_level[3]);
         strout_blt(widget_surface[WIDGET_SKILL_LVL_ID], &font_small, "Ph:", 6, 74, skin_prefs.widget_key, NULL);
         strout_blt(widget_surface[WIDGET_SKILL_LVL_ID], &font_small, buf, 44 - strout_width(&font_small, buf), 74, skin_prefs.widget_valueEq,
-                  NULL);
+                   NULL);
         sprintf(buf, " %d", cpl.stats.skill_level[5]);
         strout_blt(widget_surface[WIDGET_SKILL_LVL_ID], &font_small, "Wi:", 6, 86, skin_prefs.widget_key, NULL);
         strout_blt(widget_surface[WIDGET_SKILL_LVL_ID], &font_small, buf, 44 - strout_width(&font_small, buf), 86, skin_prefs.widget_valueEq,
-                  NULL);
+                   NULL);
     }
     box.x=x;
     box.y=y;
@@ -1153,13 +1153,18 @@ void widget_show_statometer(int x, int y)
         return;
     }
 
-    strout_blt(ScreenSurface, &font_large, "Stat-O-Meter:", x+2, y+2, skin_prefs.widget_title,NULL);
-    sprintf(statbuf,"EXP: %d",statometer.exp);
-    strout_blt(ScreenSurface, &font_small,statbuf,x+2,y+15,skin_prefs.widget_key,NULL);
-    sprintf(statbuf,"(%.2f/hour)",statometer.exphour);
-    strout_blt(ScreenSurface, &font_small,statbuf,x+82,y+15,skin_prefs.widget_valueEq,NULL);
-    sprintf(statbuf,"Kills: %d",statometer.kills);
-    strout_blt(ScreenSurface, &font_small,statbuf,x+2,y+25,skin_prefs.widget_key,NULL);
-    sprintf(statbuf,"(%.2f/hour)",statometer.killhour);
-    strout_blt(ScreenSurface, &font_small,statbuf,x+82,y+25,skin_prefs.widget_valueEq,NULL);
+    strout_blt(ScreenSurface, &font_large, "Stat-O-Meter:", x + 2, y + 2,
+               skin_prefs.widget_title, NULL);
+    sprintf(statbuf, "EXP: %d", statometer.exp);
+    strout_blt(ScreenSurface, &font_small, statbuf, x + 2, y + 15,
+               skin_prefs.widget_key, NULL);
+    sprintf(statbuf, "(%.2f/hour)", statometer.exphour);
+    strout_blt(ScreenSurface, &font_small, statbuf, x + 82, y + 15,
+               skin_prefs.widget_valueEq, NULL);
+    sprintf(statbuf, "Kills: %d", statometer.kills);
+    strout_blt(ScreenSurface, &font_small, statbuf, x + 2, y + 25,
+               skin_prefs.widget_key, NULL);
+    sprintf(statbuf, "(%.2f/hour)", statometer.killhour);
+    strout_blt(ScreenSurface, &font_small, statbuf, x + 82, y + 25,
+               skin_prefs.widget_valueEq, NULL);
 }

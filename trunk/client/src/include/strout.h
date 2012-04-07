@@ -28,7 +28,7 @@
  * layer slightly offset from the second coloured layer to give a clearer,
  * slightly 3d 'shadow' effect.
  *
- * NOTE: These macros blit directly to surface (strout_blt() returns NULL). */
+ * NOTE: These macros blit directly to surface. */
 /* EMBOSS prints the string with the shadow on the bottom and right. */
 #define EMBOSS(surface, font, text, x, y, colr) \
     strout_blt((surface), (font), (text), (x) + 1, (y) + 1, NDI_COLR_BLACK, \
@@ -88,7 +88,7 @@ extern sint16        strout_width(_font *font, char *text);
 extern uint8         strout_width_offset(_font *font, char *text, sint16 *line,
                                          sint16 len);
 extern void          strout_blt(SDL_Surface *surface, _font *font, char *text,
-                                sint16 x, sint16 y, uint32 col,
+                                sint16 x, sint16 y, uint32 colr,
                                 SDL_Rect *area);
 extern void          strout_input(_font *font, SDL_Rect *box, char repl);
 extern strout_vim_t *strout_vim_add(strout_vim_mode_t mode, uint8 mapx,

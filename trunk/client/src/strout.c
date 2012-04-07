@@ -179,8 +179,8 @@ void strout_blt(SDL_Surface *surface, _font *font, char *text, sint16 x,
     if (area)
     {
         new = SDL_CreateRGBSurface(SDL_SWSURFACE, area->w, area->h, 32,
-                                   0x000000ff, 0x0000ff00, 0x00ff0000,
-                                   0xff000000);
+                                   0x00ff0000, 0x0000ff00, 0x000000ff, 0);
+        SDL_SetColorKey(new, SDL_SRCCOLORKEY, 0);
         nx = 0;
         ny = 0;
     }
@@ -274,8 +274,8 @@ void strout_blt(SDL_Surface *surface, _font *font, char *text, sint16 x,
                 cy += font->line_height;
             }
 
-            /* Now if this line would overreach the height, blit and free new
-             * and return. */
+            /* Now if this line would overreach the height, blit and free
+             * new and return. */
             if (cy + font->line_height > area->h)
             {
                 SDL_Rect box;
@@ -477,7 +477,7 @@ void strout_blt(SDL_Surface *surface, _font *font, char *text, sint16 x,
         cx += cw;
     }
 
-    /* If we've been printing to an intermediary surface, blit and free it. */
+    /* Blit and free new if necessary. */
     if (new)
     {
         SDL_Rect box;

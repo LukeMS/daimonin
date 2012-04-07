@@ -2365,16 +2365,16 @@ static void ShowGUIContents(uint16 x, uint16 y)
                             uint16 w = strout_width(&font_small, buf);
 
                             strout_blt(ScreenSurface, &font_small, buf,
-                                      xoff + 28 - w / 2, yoff + 18, NDI_COLR_RED,
-                                      NULL);
+                                      xoff + 28 - w / 2, yoff + 18,
+                                      NDI_COLR_RED, NULL);
                         }
                         else
                         {
                             uint16 w = strout_width(&font_small, buf);
 
                             strout_blt(ScreenSurface, &font_small, buf,
-                                      xoff + 28 - w / 2, yoff + 18, NDI_COLR_LIME,
-                                      NULL);
+                                      xoff + 28 - w / 2, yoff + 18,
+                                      NDI_COLR_LIME, NULL);
                         }
                     }
                 }
@@ -2594,8 +2594,8 @@ static void ShowIcon(_gui_npc_element *this)
                 strcat(buf, "...");
             }
 
-            strout_blt(ScreenSurface, &font_npcicon, buf, xoff2, yoff2, NDI_COLR_SILVER,
-                      NULL);
+            strout_blt(ScreenSurface, &font_npcicon, buf, xoff2, yoff2,
+                       NDI_COLR_SILVER, NULL);
             yoff2 += font_npcicon.line_height;
 
             /* Icon body text. */
@@ -2625,8 +2625,8 @@ static void ShowIcon(_gui_npc_element *this)
             strcat(buf, "...");
         }
 
-        strout_blt(ScreenSurface, &font_npcicon, buf, xoff2, yoff2, NDI_COLR_SILVER,
-                  NULL);
+        strout_blt(ScreenSurface, &font_npcicon, buf, xoff2, yoff2,
+                   NDI_COLR_SILVER, NULL);
         yoff2 += font_npcicon.line_height;
 
         /* Icon body text. */

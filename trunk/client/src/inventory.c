@@ -233,8 +233,7 @@ void widget_show_inventory_window(int x, int y)
         sprintf(buf, "%4.3f kg", (float)cpl.real_weight/1000.0f);
         strout_blt(ScreenSurface, &font_small, buf, x + 140 + 35, y + 4,
                    percentage_colr(100 - ((float)cpl.real_weight /
-                                          (float)cpl.weight_limit * 100)),
-                   NULL);
+                                          (float)cpl.weight_limit * 100)), NULL);
         strout_blt(ScreenSurface, &font_small, "Limit", x+140, y+15, skin_prefs.widget_key, NULL);
         sprintf(buf, "%4.3f kg", (float) cpl.weight_limit / 1000.0);
         strout_blt(ScreenSurface, &font_small, buf, x+140 + 35, y+15, skin_prefs.widget_valueEq, NULL);

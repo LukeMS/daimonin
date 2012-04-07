@@ -823,8 +823,7 @@ void map_draw_map(void)
         SDL_FillRect(ScreenSurfaceMap, &rect, colr);
         strout_blt(ScreenSurfaceMap, &font_small, cpl.target_name,
                    t_xl - strout_width(&font_small, cpl.target_name) / 2,
-                   t_yl - font_small.line_height - 8, cpl.target_colr,
-                   NULL);
+                   t_yl - font_small.line_height - 8, cpl.target_colr, NULL);
     }
 }
 
