@@ -3031,6 +3031,12 @@ end
 # food
 #
 ##################
+treasureone easter
+  arch egg
+    chance 100
+    artifact_chance 100
+end
+
 treasureone food_misc
   list food_drink
     magic 0
@@ -3064,6 +3070,9 @@ treasureone food_misc
     magic 0
     chance 10
     quality_range 7
+  more
+  list easter
+    chance 39
 end
 #
 treasureone food_vegetable
