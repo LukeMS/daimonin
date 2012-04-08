@@ -173,6 +173,12 @@ void widget_load(void)
             }
         }
 
+        /* Ignore leading '.'s. */
+        while (*key == '.')
+        {
+            key++;
+        }
+
         if (id == WIDGET_NROF &&
             !strcmp(key, "Widget"))
         {
@@ -198,31 +204,31 @@ void widget_load(void)
            continue;
         }
 
-        if (!strcmp(key, "....X1"))
+        if (!strcmp(key, "X1"))
         {
             widget_data[id].x1 = atoi(value);
         }
-        else if (!strcmp(key, "....Moveable"))
+        else if (!strcmp(key, "Moveable"))
         {
             widget_data[id].moveable = atoi(value);
         }
-        else if (!strcmp(key, "....Active"))
+        else if (!strcmp(key, "Active"))
         {
             widget_data[id].show = atoi(value);
         }
-        else if (!strcmp(key, "....Y1"))
+        else if (!strcmp(key, "Y1"))
         {
             widget_data[id].y1 = atoi(value);
         }
-        else if (!strcmp(key, "....Wd"))
+        else if (!strcmp(key, "Wd"))
         {
             widget_data[id].wd = atoi(value);
         }
-        else if (!strcmp(key, "....Ht"))
+        else if (!strcmp(key, "Ht"))
         {
             widget_data[id].ht = atoi(value);
         }
-        else if (!strcmp(key, "....END"))
+        else if (!strcmp(key, "END"))
         {
             id = WIDGET_NROF;
         }
@@ -246,21 +252,21 @@ void widget_save(void)
     {
         char buf[TINY_BUF];
 
-        sprintf(buf, "\nWidget: %s\n", widget_data[id].name);
+        sprintf(buf, "\n\nWidget: %s\n", widget_data[id].name);
         PHYSFS_writeString(handle, buf);
-        sprintf(buf, "....Moveable: %d\n", widget_data[id].moveable);
+        sprintf(buf, "Moveable: %d\n", widget_data[id].moveable);
         PHYSFS_writeString(handle, buf);
-        sprintf(buf, "....Active: %d\n", widget_data[id].show);
+        sprintf(buf, "Active: %d\n", widget_data[id].show);
         PHYSFS_writeString(handle, buf);
-        sprintf(buf, "....X1: %d\n", widget_data[id].x1);
+        sprintf(buf, "X1: %d\n", widget_data[id].x1);
         PHYSFS_writeString(handle, buf);
-        sprintf(buf, "....Y1: %d\n", widget_data[id].y1);
+        sprintf(buf, "Y1: %d\n", widget_data[id].y1);
         PHYSFS_writeString(handle, buf);
-        sprintf(buf, "....Wd: %d\n", widget_data[id].wd);
+        sprintf(buf, "Wd: %d\n", widget_data[id].wd);
         PHYSFS_writeString(handle, buf);
-        sprintf(buf, "....Ht: %d\n", widget_data[id].ht);
+        sprintf(buf, "Ht: %d\n", widget_data[id].ht);
         PHYSFS_writeString(handle, buf);
-        PHYSFS_writeString(handle, "....END\n");
+        PHYSFS_writeString(handle, "END");
     }
 
     PHYSFS_close(handle);
