@@ -56,31 +56,30 @@ SDL_Surface *widget_surface[WIDGET_NROF] = { NULL };
 widget_event_t widget_mouse_event = { 0, 0, 0, 0, 0, 0 };
 
 /* Default (default) data-list of all widgets */
-/* {name,priority_index,x1,y1,width,height,moveable?, active?} */
 static const widget_data_t DefaultData[WIDGET_NROF] =
 {
-    { "STATS",       NULL, 227, 0,   172, 102, 1, 1, 1 },
-    { "RESIST",      NULL, 497, 0,   198, 79,  1, 1, 1 },
-    { "MAIN_LVL",    NULL, 399, 39,  98,  62,  1, 1, 1 },
-    { "SKILL_EXP",   NULL, 497, 79,  198, 22,  1, 1, 1 },
-    { "REGEN",       NULL, 399, 0,   98,  39,  1, 1, 1 },
-    { "SKILL_LVL",   NULL, 695, 0,   52,  101, 1, 1, 1 },
-    { "MENUBUTTONS", NULL, 747, 0,   47,  101, 1, 1, 1 },
-    { "QUICKSLOTS",  NULL, 513, 107, 282, 34,  1, 1, 1 },
-    { "CHATWIN",     NULL, 0,   366, 261, 233, 1, 1, 1 },
-    { "MSGWIN",      NULL, 537, 366, 261, 233, 1, 1, 1 },
-    { "MIXWIN",      NULL, 539, 420, 261, 233, 1, 0, 1 },
-    { "GROUP",       NULL, 658, 187, 120, 31,  1, 1, 1 },
-    { "PLAYERDOLL",  NULL, 0,   41,  221, 224, 1, 1, 1 },
-    { "BELOWINV",    NULL, 262, 545, 274, 55,  1, 1, 1 },
-    { "PLAYERINFO",  NULL, 0,   0,   219, 41,  1, 1, 1 },
-    { "RANGEBOX",    NULL, 6,   100, 94,  60,  1, 1, 1 },
-    { "TARGET",      NULL, 267, 514, 264, 31,  1, 1, 1 },
-    { "MAININV",     NULL, 539, 147, 239, 32,  1, 1, 1 },
-    { "MAPNAME",     NULL, 228, 106, 36,  12,  1, 1, 1 },
-    { "CONSOLE",     NULL, 271, 517, 256, 25,  1, 0, 1 },
-    { "NUMBER",      NULL, 271, 465, 256, 43,  1, 0, 1 },
-    { "STATOMETER",  NULL, 8,   50,  160, 40,  1, 1, 1 },
+    { "STATS",       1, 1, 227, 0,   172, 102, NULL, 1 },
+    { "RESIST",      1, 1, 497, 0,   198, 79,  NULL, 1 },
+    { "MAIN_LVL",    1, 1, 399, 39,  98,  62,  NULL, 1 },
+    { "SKILL_EXP",   1, 1, 497, 79,  198, 22,  NULL, 1 },
+    { "REGEN",       1, 1, 399, 0,   98,  39,  NULL, 1 },
+    { "SKILL_LVL",   1, 1, 695, 0,   52,  101, NULL, 1 },
+    { "MENUBUTTONS", 1, 1, 747, 0,   47,  101, NULL, 1 },
+    { "QUICKSLOTS",  1, 1, 513, 107, 282, 34,  NULL, 1 },
+    { "CHATWIN",     1, 1, 0,   366, 261, 233, NULL, 1 },
+    { "MSGWIN",      1, 1, 537, 366, 261, 233, NULL, 1 },
+    { "MIXWIN",      1, 0, 539, 420, 261, 233, NULL, 1 },
+    { "GROUP",       1, 1, 658, 187, 120, 31,  NULL, 1 },
+    { "PLAYERDOLL",  1, 1, 0,   41,  221, 224, NULL, 1 },
+    { "BELOWINV",    1, 1, 262, 545, 274, 55,  NULL, 1 },
+    { "PLAYERINFO",  1, 1, 0,   0,   219, 41,  NULL, 1 },
+    { "RANGEBOX",    1, 1, 6,   100, 94,  60,  NULL, 1 },
+    { "TARGET",      1, 1, 267, 514, 264, 31,  NULL, 1 },
+    { "MAININV",     1, 1, 539, 147, 239, 32,  NULL, 1 },
+    { "MAPNAME",     1, 1, 228, 106, 36,  12,  NULL, 1 },
+    { "CONSOLE",     1, 0, 271, 517, 256, 25,  NULL, 1 },
+    { "NUMBER",      1, 0, 271, 465, 256, 43,  NULL, 1 },
+    { "STATOMETER",  1, 1, 8,   50,  160, 40,  NULL, 1 },
 };
 
 /* default overall priority list.. will change during runtime */
@@ -204,29 +203,29 @@ void widget_load(void)
            continue;
         }
 
-        if (!strcmp(key, "X1"))
+        if (!strcmp(key, "Moveable"))
         {
-            widget_data[id].x1 = atoi(value);
-        }
-        else if (!strcmp(key, "Moveable"))
-        {
-            widget_data[id].moveable = atoi(value);
+            widget_data[id].moveable = (uint8)atoi(value);
         }
         else if (!strcmp(key, "Active"))
         {
-            widget_data[id].show = atoi(value);
+            widget_data[id].show = (uint8)atoi(value);
+        }
+        else if (!strcmp(key, "X1"))
+        {
+            widget_data[id].x1 = (sint16)atoi(value);
         }
         else if (!strcmp(key, "Y1"))
         {
-            widget_data[id].y1 = atoi(value);
+            widget_data[id].y1 = (sint16)atoi(value);
         }
         else if (!strcmp(key, "Wd"))
         {
-            widget_data[id].wd = atoi(value);
+            widget_data[id].wd = (uint16)atoi(value);
         }
         else if (!strcmp(key, "Ht"))
         {
-            widget_data[id].ht = atoi(value);
+            widget_data[id].ht = (uint16)atoi(value);
         }
         else if (!strcmp(key, "END"))
         {
@@ -254,17 +253,17 @@ void widget_save(void)
 
         sprintf(buf, "\n\nWidget: %s\n", widget_data[id].name);
         PHYSFS_writeString(handle, buf);
-        sprintf(buf, "Moveable: %d\n", widget_data[id].moveable);
+        sprintf(buf, "Moveable: %u\n", widget_data[id].moveable);
         PHYSFS_writeString(handle, buf);
-        sprintf(buf, "Active: %d\n", widget_data[id].show);
+        sprintf(buf, "Active: %u\n", widget_data[id].show);
         PHYSFS_writeString(handle, buf);
         sprintf(buf, "X1: %d\n", widget_data[id].x1);
         PHYSFS_writeString(handle, buf);
         sprintf(buf, "Y1: %d\n", widget_data[id].y1);
         PHYSFS_writeString(handle, buf);
-        sprintf(buf, "Wd: %d\n", widget_data[id].wd);
+        sprintf(buf, "Wd: %u\n", widget_data[id].wd);
         PHYSFS_writeString(handle, buf);
-        sprintf(buf, "Ht: %d\n", widget_data[id].ht);
+        sprintf(buf, "Ht: %u\n", widget_data[id].ht);
         PHYSFS_writeString(handle, buf);
         PHYSFS_writeString(handle, "END");
     }
