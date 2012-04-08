@@ -91,7 +91,7 @@
 #define FILE_SRV_SOUNDS     DIR_SRV_FILES"/client_sounds"
 #define FILE_SRV_SPELLS     DIR_SRV_FILES"/client_spells"
 #define FILE_VERSION        DIR_UPDATES"/version"
-#define FILE_WIDGET         DIR_SETTINGS"/interface.gui"
+#define FILE_WIDGET         DIR_SETTINGS"/widgets.dat"
 
 /* This is a standard header for files written by the client:
  *   FILE_BUDDY
