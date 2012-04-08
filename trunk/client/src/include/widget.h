@@ -67,15 +67,18 @@ widget_node_t;
 /* information about a widget - used for current/default list */
 typedef struct widget_data_t
 {
-    char          *name;
+    /* These are saved to FILE_WIDGET. */
+    char          *name;           // name
+    uint8          moveable;       // draggable?
+    uint8          show;           // active?
+    sint16         x1;             // x screen posiition in pixels
+    sint16         y1;             // y screen posiition in pixels
+    uint16         wd;             // width in pixels
+    uint16         ht;             // height in pixels
+
+    /* These are not saved. */
     widget_node_t *priority_index; // internal use only
-    int            x1;
-    int            y1;
-    int            wd;
-    int            ht;
-    uint8          moveable; // can you drag it?
-    uint8          show; // hidden and inactive or shown
-    uint8          redraw; // widget must be redrawn
+    uint8          redraw;         // redraw?
 }
 widget_data_t;
 
@@ -84,10 +87,10 @@ typedef struct widget_event_t
 {
     uint8       moving;
     widget_id_t id;
-    int         x;
-    int         y;
-    int         xoff;
-    int         yoff;
+    sint16      x;
+    sint16      y;
+    sint16      xoff;
+    sint16      yoff;
 }
 widget_event_t;
 
