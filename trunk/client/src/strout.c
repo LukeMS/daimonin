@@ -180,7 +180,8 @@ void strout_blt(SDL_Surface *surface, _font *font, char *text, sint16 x,
     {
         new = SDL_CreateRGBSurface(SDL_SWSURFACE, area->w, area->h, 32,
                                    0x00ff0000, 0x0000ff00, 0x000000ff, 0);
-        SDL_SetColorKey(new, SDL_SRCCOLORKEY, 0);
+        SDL_FillRect(new, NULL, NDI_COLR_HOTPINK);
+        SDL_SetColorKey(new, SDL_SRCCOLORKEY, NDI_COLR_HOTPINK);
         nx = 0;
         ny = 0;
     }

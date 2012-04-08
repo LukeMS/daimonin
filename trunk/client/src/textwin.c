@@ -872,10 +872,14 @@ void textwin_show_window(textwin_id_t id)
     /* if we don't have a backbuffer, create it */
     if (!widget_surface[tw->wid])
     {
-        widget_surface[tw->wid] = SDL_DisplayFormatAlpha(skin_sprites[SKIN_SPRITE_ALPHA]->bitmap);
-        SDL_SetColorKey(widget_surface[tw->wid], SDL_SRCCOLORKEY | SDL_RLEACCEL,
-                        SDL_MapRGB(widget_surface[tw->wid]->format, 0x00, 0x00,
-                                   0x00));
+        SDL_Surface *new = SDL_CreateRGBSurface(SDL_SWSURFACE,
+                                                TEXTWIN_WIDTH_MAX,
+                                                TEXTWIN_HEIGHT_MAX, 32,
+                                                0x00ff0000, 0x0000ff00,
+                                                0x000000ff, 0);
+        SDL_FillRect(new, NULL, NDI_COLR_HOTPINK);
+        SDL_SetColorKey(new, SDL_SRCCOLORKEY, NDI_COLR_HOTPINK);
+        widget_surface[tw->wid] = new;
     }
 
     /* lets draw the widgets in the backbuffer */
@@ -888,12 +892,7 @@ void textwin_show_window(textwin_id_t id)
          *   the scrollbar, if necessary; then
          *   the frame. */
         WIDGET_REDRAW(tw->wid) = 0;
-        bltfx.surface = widget_surface[tw->wid];
-        bltfx.flags = 0;
-        bltfx.alpha = 0;
-        SDL_FillRect(bltfx.surface, NULL,
-                     SDL_MapRGBA(widget_surface[tw->wid]->format, 0x00, 0x00,
-                                 0x00, 0));
+        SDL_FillRect(widget_surface[tw->wid], NULL, NDI_COLR_HOTPINK);
 //widget_data[tw->wid].ht = (widget_data[tw->wid].ht / tw->font->line_height + 1) * tw->font->line_height;
 #ifdef DEBUG_TEXTWIN
         if (tw->wid == WIDGET_MSGWIN_ID)
@@ -904,6 +903,10 @@ void textwin_show_window(textwin_id_t id)
                 tw->linebuf_used, tw->linebuf_visi, tw->linebuf_next);
         }
 #endif
+
+        bltfx.surface = widget_surface[tw->wid];
+        bltfx.flags = 0;
+        bltfx.alpha = 0;
 
         if (tw->resize)
         {

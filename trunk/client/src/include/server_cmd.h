@@ -52,6 +52,10 @@
 #define NDI_COLR_WHITE   0xffffff
 #define NDI_COLR_YELLOW  0xffff00
 
+/* A special colour for colour keying, etc. Pixels of this colour will never be
+ * seen. */
+#define NDI_COLR_HOTPINK 0xff69b4
+
 #define NDI_FLAG_SAY       (1 << 8)
 #define NDI_FLAG_SHOUT     (1 << 9)
 #define NDI_FLAG_TELL      (1 << 10)
