@@ -3072,7 +3072,7 @@ treasureone food_misc
     quality_range 7
   more
   list easter
-    chance 39
+    chance 47
 end
 #
 treasureone food_vegetable
