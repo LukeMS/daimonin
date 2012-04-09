@@ -824,8 +824,9 @@ void show_skilllist(void)
     x = Screensize.x / 2 - skin_sprites[SKIN_SPRITE_DIALOG_BG]->bitmap->w / 2;
     y = Screensize.y / 2 - skin_sprites[SKIN_SPRITE_DIALOG_BG]->bitmap->h / 2;
     sprite_blt(skin_sprites[SKIN_SPRITE_DIALOG_BG], x, y, NULL, NULL);
-    sprite_blt(skin_sprites[SKIN_SPRITE_DIALOG_TITLE_SKILL], x + 250 - skin_sprites[SKIN_SPRITE_DIALOG_TITLE_SKILL]->bitmap->w / 2, y + 20,
-               NULL, NULL);
+    box.w = 500;
+    box.h = font_heading.line_height;
+    strout_blt(ScreenSurface, &font_heading, STROUT_CENTER, "Skills", x + 50, y + 25, NDI_COLR_RED, &box);
     add_close_button(x, y, MENU_SKILL);
 
     /* tabs */
@@ -988,8 +989,9 @@ void show_spelllist(void)
     x = Screensize.x / 2 - skin_sprites[SKIN_SPRITE_DIALOG_BG]->bitmap->w / 2;
     y = Screensize.y / 2 - skin_sprites[SKIN_SPRITE_DIALOG_BG]->bitmap->h / 2;
     sprite_blt(skin_sprites[SKIN_SPRITE_DIALOG_BG], x, y, NULL, NULL);
-    sprite_blt(skin_sprites[SKIN_SPRITE_DIALOG_TITLE_SPELL], x + 250 - skin_sprites[SKIN_SPRITE_DIALOG_TITLE_SPELL]->bitmap->w / 2, y + 20,
-               NULL, NULL);
+    box.w = 500;
+    box.h = font_heading.line_height;
+    strout_blt(ScreenSurface, &font_heading, STROUT_CENTER, "Spells", x + 50, y + 25, NDI_COLR_RED, &box);
     sprite_blt(skin_sprites[SKIN_SPRITE_PENTAGRAM], x + 25, y + 430, NULL, NULL);
     add_close_button(x, y, MENU_SPELL);
 
@@ -1140,17 +1142,19 @@ void show_spelllist(void)
 ******************************************************************/
 void show_optwin()
 {
-    char    buf[128];
-    int     x, y;
-    int     mx, my, mb;
-    int     numButton   = 0;
+    SDL_Rect box;
+    char     buf[128];
+    int      x, y;
+    int      mx, my, mb;
+    int      numButton   = 0;
 
     mb = SDL_GetMouseState(&mx, &my) & SDL_BUTTON(SDL_BUTTON_LEFT);
     x = Screensize.x / 2 - skin_sprites[SKIN_SPRITE_DIALOG_BG]->bitmap->w / 2;
     y = Screensize.y / 2 - skin_sprites[SKIN_SPRITE_DIALOG_BG]->bitmap->h / 2;
     sprite_blt(skin_sprites[SKIN_SPRITE_DIALOG_BG], x, y, NULL, NULL);
-    sprite_blt(skin_sprites[SKIN_SPRITE_DIALOG_TITLE_OPTIONS], x + 250 - skin_sprites[SKIN_SPRITE_DIALOG_TITLE_OPTIONS]->bitmap->w / 2,
-               y + 20, NULL, NULL);
+    box.w = 500;
+    box.h = font_heading.line_height;
+    strout_blt(ScreenSurface, &font_heading, STROUT_CENTER, "Options", x + 50, y + 25, NDI_COLR_RED, &box);
     add_close_button(x, y, MENU_OPTION);
 
     draw_tabs(opt_tab, &option_list_set.group_nr, "Option Group", x + 8, y + 70);
@@ -1187,8 +1191,9 @@ void show_keybind()
     x = Screensize.x / 2 - skin_sprites[SKIN_SPRITE_DIALOG_BG]->bitmap->w / 2;
     y = Screensize.y / 2 - skin_sprites[SKIN_SPRITE_DIALOG_BG]->bitmap->h / 2;
     sprite_blt(skin_sprites[SKIN_SPRITE_DIALOG_BG], x, y, NULL, NULL);
-    sprite_blt(skin_sprites[SKIN_SPRITE_DIALOG_TITLE_KEYBIND], x + 250 - skin_sprites[SKIN_SPRITE_DIALOG_TITLE_KEYBIND]->bitmap->w / 2,
-               y + 20, NULL, NULL);
+    box.w = 500;
+    box.h = font_heading.line_height;
+    strout_blt(ScreenSurface, &font_heading, STROUT_CENTER, "Key bindings", x + 50, y + 25, NDI_COLR_RED, &box);
     add_close_button(x, y, MENU_KEYBIND);
 
     sprintf(buf, "~SHIFT~ + ~%c%c~ to select group         ~%c%c~ to select macro          ~RETURN~ to change/create",
@@ -1371,6 +1376,7 @@ static void blit_face(int id, int x, int y)
  */
 void show_newplayer_server(void)
 {
+    SDL_Rect        box;
     int             id  = 0;
     int             x, y, i;
     char            buf[MEDIUM_BUF];
@@ -1383,8 +1389,9 @@ void show_newplayer_server(void)
     /*x= Screensize.x/2-skin_sprites[SKIN_SPRITE_DIALOG_BG]->bitmap->w/2;*/
     y = Screensize.y / 2 - skin_sprites[SKIN_SPRITE_DIALOG_BG]->bitmap->h / 2;
     sprite_blt(skin_sprites[SKIN_SPRITE_DIALOG_BG], x, y, NULL, NULL);
-    sprite_blt(skin_sprites[SKIN_SPRITE_DIALOG_TITLE_CREATION], x + 250 - skin_sprites[SKIN_SPRITE_DIALOG_TITLE_CREATION]->bitmap->w / 2,
-               y + 20, NULL, NULL);
+    box.w = 500;
+    box.h = font_heading.line_height;
+    strout_blt(ScreenSurface, &font_heading, STROUT_CENTER, "Character creation", x + 50, y + 25, NDI_COLR_RED, &box);
     sprite_blt(skin_sprites[SKIN_SPRITE_PENTAGRAM], x + 25, y + 430, NULL, NULL);
     add_close_button(x, y, MENU_CREATE);
 
@@ -1735,8 +1742,9 @@ void show_login_server(void)
 
     sprite_blt(skin_sprites[SKIN_SPRITE_DIALOG_BG], x, y, NULL, NULL);
     sprite_blt(skin_sprites[SKIN_SPRITE_LOGO270], x + 20, y + 85, NULL, NULL);
-    sprite_blt(skin_sprites[SKIN_SPRITE_DIALOG_TITLE_LOGIN], x + 250 - skin_sprites[SKIN_SPRITE_DIALOG_TITLE_LOGIN]->bitmap->w / 2, y + 20,
-               NULL, NULL);
+    box.w = 500;
+    box.h = font_heading.line_height;
+    strout_blt(ScreenSurface, &font_heading, STROUT_CENTER, "Connection", x + 50, y + 25, NDI_COLR_RED, &box);
     /*  add_close_button(x, y, MENU_LOGIN); */
     x += 170;
     y += 100;
@@ -2021,8 +2029,9 @@ void show_meta_server(void)
     y = Screensize.y / 2 - skin_sprites[SKIN_SPRITE_DIALOG_BG]->bitmap->h / 2;
     sprite_blt(skin_sprites[SKIN_SPRITE_DIALOG_BG], x, y, NULL, NULL);
     sprite_blt(skin_sprites[SKIN_SPRITE_LOGO270], x + 20, y + 85, NULL, NULL);
-    sprite_blt(skin_sprites[SKIN_SPRITE_DIALOG_TITLE_LOGIN], x + 250 - skin_sprites[SKIN_SPRITE_DIALOG_TITLE_LOGIN]->bitmap->w / 2, y + 20,
-               NULL, NULL);
+    box.w = 500;
+    box.h = font_heading.line_height;
+    strout_blt(ScreenSurface, &font_heading, STROUT_CENTER, "Server selection", x + 50, y + 25, NDI_COLR_RED, &box);
     /*  add_close_button(x, y, MENU_LOGIN); */
 
     rec_name.w = 272;
@@ -2187,8 +2196,9 @@ void show_account(void)
     y = Screensize.y / 2 - skin_sprites[SKIN_SPRITE_DIALOG_BG]->bitmap->h / 2;
     sprite_blt(skin_sprites[SKIN_SPRITE_DIALOG_BG], x, y, NULL, NULL);
     sprite_blt(skin_sprites[SKIN_SPRITE_LOGO270], x + 20, y + 85, NULL, NULL);
-    ENGRAVE(ScreenSurface, &font_small, "Welcome on Server Daimonin", x+200, y+20, NDI_COLR_WHITE);
-    ENGRAVE(ScreenSurface, &font_large, "Account Overview", x+180, y+35, NDI_COLR_WHITE);
+    box.w = 500;
+    box.h = font_heading.line_height;
+    strout_blt(ScreenSurface, &font_heading, STROUT_CENTER, "Account overview", x + 50, y + 25, NDI_COLR_RED, &box);
     ENGRAVE(ScreenSurface, &font_large, "Character List", x+120, y+70, NDI_COLR_WHITE);
     ENGRAVE(ScreenSurface, &font_large, "_____________________________", x+120, y+80, NDI_COLR_WHITE);
 
