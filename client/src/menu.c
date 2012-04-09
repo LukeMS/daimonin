@@ -219,7 +219,7 @@ void widget_show_number(int x, int y)
     box.h = font_small.line_height;
     sprite_blt(skin_sprites[SKIN_SPRITE_NUMBER], x, y, NULL, NULL);
     sprintf(buf, "%s how many from %d %s", cpl.nummode == NUM_MODE_GET ? "get" : "drop", cpl.nrof, cpl.num_text);
-    strout_blt(ScreenSurface, &font_small, buf, x + 8, y + 6, skin_prefs.widget_title, NULL);
+    strout_blt(ScreenSurface, &font_small, STROUT_LEFT, buf, x + 8, y + 6, skin_prefs.widget_title, NULL);
     box.y = y + 25;
     strout_input(&font_small, &box, 0);
 }
@@ -241,7 +241,7 @@ void widget_show_resist(int x, int y)
         bltfx.alpha=0;
 
         sprite_blt(skin_sprites[SKIN_SPRITE_RESIST_BG], 0, 0, NULL, &bltfx);
-        strout_blt(widget_data[WIDGET_RESIST_ID].surface, &font_tiny, "Resistance Table", 4,  1, skin_prefs.widget_title, NULL);
+        strout_blt(widget_data[WIDGET_RESIST_ID].surface, &font_tiny, STROUT_LEFT, "Resistance Table", 4,  1, skin_prefs.widget_title, NULL);
         PrintResist("IM", 68, 3, ATNR_PHYSICAL);
         PrintResist("SL", 100, 3, ATNR_SLASH);
         PrintResist("CL", 132, 3, ATNR_CLEAVE);
@@ -287,10 +287,10 @@ static void PrintResist(char *name, int x, int y, int num)
                   ? NDI_COLR_GREY
                   : percentage_colr(((resist + 100) * 0.005 * 100));
 
-    strout_blt(widget_data[WIDGET_RESIST_ID].surface, &font_small, name, x, y,
+    strout_blt(widget_data[WIDGET_RESIST_ID].surface, &font_small, STROUT_LEFT, name, x, y,
                skin_prefs.widget_key, NULL);
     sprintf(buf, "%02d", resist);
-    strout_blt(widget_data[WIDGET_RESIST_ID].surface, &font_small, buf, x + 12, y,
+    strout_blt(widget_data[WIDGET_RESIST_ID].surface, &font_small, STROUT_LEFT, buf, x + 12, y,
                colr, NULL);
 }
 
@@ -422,7 +422,7 @@ void widget_show_range(int x, int y)
                 if (!tmp2)
                 {
                     LOG(LOG_DEBUG,"BUG: applied range weapon don't exist\n");
-                    strout_blt(ScreenSurface, &font_small, "using Nothing", x + 5, y + 36, skin_prefs.widget_info, &rec_range);
+                    strout_blt(ScreenSurface, &font_small, STROUT_LEFT, "using Nothing", x + 5, y + 36, skin_prefs.widget_info, &rec_range);
                 }
                 else
                 {
@@ -442,7 +442,7 @@ void widget_show_range(int x, int y)
                                            (ip->nrof == 1) ? 0 : ip->nrof, NULL);
                     }
 
-                    strout_blt(ScreenSurface, &font_small, buf, x + 5, y + 36, skin_prefs.widget_valueEq, &rec_range);
+                    strout_blt(ScreenSurface, &font_small, STROUT_LEFT, buf, x + 5, y + 36, skin_prefs.widget_valueEq, &rec_range);
                 }
 
                 if (fire_mode.ammo != FIRE_ITEM_NO)
@@ -483,12 +483,12 @@ void widget_show_range(int x, int y)
 //                    sprintf(buf, "Type: %d",tmp2->itype);
                     buf[0]=0;
 
-                strout_blt(ScreenSurface, &font_small, buf, x + 5, y + 47, skin_prefs.widget_valueEq, &rec_item);
+                strout_blt(ScreenSurface, &font_small, STROUT_LEFT, buf, x + 5, y + 47, skin_prefs.widget_valueEq, &rec_item);
             }
             else
             {
                 sprintf(buf, "no range weapon applied");
-                strout_blt(ScreenSurface, &font_small, buf, x + 5, y + 36, skin_prefs.widget_info, &rec_range);
+                strout_blt(ScreenSurface, &font_small, STROUT_LEFT, buf, x + 5, y + 36, skin_prefs.widget_info, &rec_range);
             }
 
             sprite_blt(skin_sprites[SKIN_SPRITE_RANGE_MARKER], x + 5, y + 2, NULL, NULL);
@@ -502,7 +502,7 @@ void widget_show_range(int x, int y)
                 if (fire_mode.spell->flag != -1)
                 {
                     sprite_blt(fire_mode.spell->icon, x + 45, y + 2, NULL, NULL);
-                    strout_blt(ScreenSurface, &font_small, fire_mode.spell->name, x + 5, y + 47,
+                    strout_blt(ScreenSurface, &font_small, STROUT_LEFT, fire_mode.spell->name, x + 5, y + 47,
                               skin_prefs.widget_valueEq, &rec_item);
                 }
                 else
@@ -512,10 +512,10 @@ void widget_show_range(int x, int y)
             {
                 sprite_blt(skin_sprites[SKIN_SPRITE_RANGE_WIZARD_NO], x + 5, y + 2, NULL, NULL);
                 sprintf(buf, "no spell selected");
-                strout_blt(ScreenSurface, &font_small, buf, x + 5, y + 47, skin_prefs.widget_info, &rec_item);
+                strout_blt(ScreenSurface, &font_small, STROUT_LEFT, buf, x + 5, y + 47, skin_prefs.widget_info, &rec_item);
             }
             sprintf(buf, "cast spell");
-            strout_blt(ScreenSurface, &font_small, buf, x + 5, y + 36, skin_prefs.widget_info, &rec_range);
+            strout_blt(ScreenSurface, &font_small, STROUT_LEFT, buf, x + 5, y + 36, skin_prefs.widget_info, &rec_range);
 
             break;
 
@@ -526,7 +526,7 @@ void widget_show_range(int x, int y)
                 if (fire_mode.skill->flag != -1)
                 {
                     sprite_blt(fire_mode.skill->icon, x + 45, y + 2, NULL, NULL);
-                    strout_blt(ScreenSurface, &font_small, fire_mode.skill->name, x + 5, y + 47,
+                    strout_blt(ScreenSurface, &font_small, STROUT_LEFT, fire_mode.skill->name, x + 5, y + 47,
                               skin_prefs.widget_valueEq, &rec_item);
                 }
                 else
@@ -536,10 +536,10 @@ void widget_show_range(int x, int y)
             {
                 sprite_blt(skin_sprites[SKIN_SPRITE_RANGE_SKILL_NO], x + 5, y + 2, NULL, NULL);
                 sprintf(buf, "no skill selected");
-                strout_blt(ScreenSurface, &font_small, buf, x + 5, y + 47, skin_prefs.widget_info, &rec_item);
+                strout_blt(ScreenSurface, &font_small, STROUT_LEFT, buf, x + 5, y + 47, skin_prefs.widget_info, &rec_item);
             }
             sprintf(buf, "use skill");
-            strout_blt(ScreenSurface, &font_small, buf, x + 5, y + 36, skin_prefs.widget_info, &rec_range);
+            strout_blt(ScreenSurface, &font_small, STROUT_LEFT, buf, x + 5, y + 36, skin_prefs.widget_info, &rec_range);
 
             break;
 
@@ -648,7 +648,7 @@ void show_media(int x, int y)
 
 void widget_show_mapname(int x, int y)
 {
-    strout_blt(ScreenSurface, &font_large, MapData.name, x, y, skin_prefs.widget_title, NULL);
+    strout_blt(ScreenSurface, &font_large, STROUT_LEFT, MapData.name, x, y, skin_prefs.widget_title, NULL);
 }
 
 
@@ -795,7 +795,7 @@ void widget_quickslots(int x, int y)
             }
         }
         sprintf(buf, "F%d", i + 1);
-        strout_blt(ScreenSurface, &font_tiny, buf, x + quickslots_pos[i][qsx]+xoff + 12, y + quickslots_pos[i][qsy] - 6,
+        strout_blt(ScreenSurface, &font_tiny, STROUT_LEFT, buf, x + quickslots_pos[i][qsx]+xoff + 12, y + quickslots_pos[i][qsy] - 6,
                   skin_prefs.widget_title, NULL);
     }
 }
@@ -1341,7 +1341,7 @@ void widget_show_target(int x, int y)
         if (ptr)
         {
             /* Draw the name of the target */
-            strout_blt(ScreenSurface, &font_small, cpl.target_name, x + 35,
+            strout_blt(ScreenSurface, &font_small, STROUT_LEFT, cpl.target_name, x + 35,
                        y + 3, cpl.target_colr, NULL);
             /* Either draw HP remaining percent and description... */
             if (hp_tmp)
@@ -1349,15 +1349,15 @@ void widget_show_target(int x, int y)
                 char hp_text[9];
 
                 sprintf(hp_text, "HP: %d%%", hp_tmp);
-                strout_blt(ScreenSurface, &font_small, hp_text, x + 35, y + 14,
+                strout_blt(ScreenSurface, &font_small, STROUT_LEFT, hp_text, x + 35, y + 14,
                            percentage_colr(cpl.target_hp), NULL);
-                strout_blt(ScreenSurface, &font_small, ptr, x + 85, y + 14,
+                strout_blt(ScreenSurface, &font_small, STROUT_LEFT, ptr, x + 85, y + 14,
                            cpl.target_colr, NULL);
             }
             /* ...or draw just the description */
             else
             {
-                strout_blt(ScreenSurface, &font_small, ptr, x + 35, y + 14,
+                strout_blt(ScreenSurface, &font_small, STROUT_LEFT, ptr, x + 35, y + 14,
                            cpl.target_colr, NULL);
             }
         }

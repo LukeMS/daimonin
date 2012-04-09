@@ -454,7 +454,7 @@ force_line_jump:
                 lc = strlen(current_book_line.line);
                 if (force_line)
                 {
-                    //if(strout_width_offset((tmp_line->mode == BOOK_LINE_TITLE) ?&font_booktitle:&font_booknormal, tmp_line->line, &l_len, 186))
+                    //if(strout_width_offset((tmp_line->mode == BOOK_LINE_TITLE) ?&font_booktitle:&font_booknormal, STROUT_LEFT, tmp_line->line, &l_len, 186))
                     if (strout_width((tmp_line->mode == BOOK_LINE_TITLE) ?&font_booktitle:&font_booknormal, current_book_line.line) < 186)
                     {
                         goto force_line_jump_out;
@@ -509,7 +509,7 @@ void show_book(int x, int y)
         return;
 
     if (gui_interface_book->name)
-        strout_blt( ScreenSurface, &font_large, gui_interface_book->name , x+global_book_data.xlen/2-
+        strout_blt( ScreenSurface, &font_large, STROUT_LEFT, gui_interface_book->name , x+global_book_data.xlen/2-
                    strout_width(&font_large, gui_interface_book->name)/2,y+9, NDI_COLR_WHITE, NULL);
 
     box.x=x+47;
@@ -526,7 +526,7 @@ void show_book(int x, int y)
     if (page1)
     {
         sprintf(buf,"Page %d of %d",gui_interface_book->page_show+1,gui_interface_book->pages);
-        strout_blt(ScreenSurface, &font_tiny, buf, box.x+70, box.y+295, NDI_COLR_WHITE, NULL);
+        strout_blt(ScreenSurface, &font_tiny, STROUT_LEFT, buf, box.x+70, box.y+295, NDI_COLR_WHITE, NULL);
 
         SDL_SetClipRect(ScreenSurface, &box);
         /*SDL_FillRect(ScreenSurface, &box, 35325);*/
@@ -536,11 +536,11 @@ void show_book(int x, int y)
                 break;
             if (page1->line[i]->mode == BOOK_LINE_NORMAL)
             {
-                strout_blt(ScreenSurface, &font_booknormal, page1->line[i]->line , box.x+2, box.y+2+yoff, NDI_COLR_BLACK, NULL);
+                strout_blt(ScreenSurface, &font_booknormal, STROUT_LEFT, page1->line[i]->line , box.x+2, box.y+2+yoff, NDI_COLR_BLACK, NULL);
             }
             else if (page1->line[i]->mode == BOOK_LINE_TITLE)
             {
-                strout_blt(ScreenSurface, &font_booktitle, page1->line[i]->line, box.x+2, box.y+2+yoff, NDI_COLR_MAROON, NULL);
+                strout_blt(ScreenSurface, &font_booktitle, STROUT_LEFT, page1->line[i]->line, box.x+2, box.y+2+yoff, NDI_COLR_MAROON, NULL);
             }
             i++;
         }
@@ -556,13 +556,13 @@ void show_book(int x, int y)
     if (gui_interface_book->pages)
     {
         sprintf(buf,"%c and %c to turn page",ECC_INTERNAL_ARROWRIGHT, ECC_INTERNAL_ARROWLEFT);
-        strout_blt(ScreenSurface, &font_tiny, buf, box.x-59, box.y+300, NDI_COLR_LIME, NULL);
+        strout_blt(ScreenSurface, &font_tiny, STROUT_LEFT, buf, box.x-59, box.y+300, NDI_COLR_LIME, NULL);
     }
 
     if (page2)
     {
         sprintf(buf,"Page %d of %d",gui_interface_book->page_show+2,gui_interface_book->pages);
-        strout_blt(ScreenSurface, &font_tiny, buf, box.x+76, box.y+295, NDI_COLR_WHITE, NULL);
+        strout_blt(ScreenSurface, &font_tiny, STROUT_LEFT, buf, box.x+76, box.y+295, NDI_COLR_WHITE, NULL);
 
         SDL_SetClipRect(ScreenSurface, &box);
         /*SDL_FillRect(ScreenSurface, &box, 35325);*/
@@ -572,11 +572,11 @@ void show_book(int x, int y)
                 break;
             if (page2->line[i]->mode == BOOK_LINE_NORMAL)
             {
-                strout_blt(ScreenSurface, &font_booknormal, page2->line[i]->line , box.x+2, box.y+2+yoff, NDI_COLR_BLACK, NULL);
+                strout_blt(ScreenSurface, &font_booknormal, STROUT_LEFT, page2->line[i]->line , box.x+2, box.y+2+yoff, NDI_COLR_BLACK, NULL);
             }
             else if (page2->line[i]->mode == BOOK_LINE_TITLE)
             {
-                strout_blt(ScreenSurface, &font_booktitle, page2->line[i]->line, box.x+2, box.y+2+yoff, NDI_COLR_MAROON, NULL);
+                strout_blt(ScreenSurface, &font_booktitle, STROUT_LEFT, page2->line[i]->line, box.x+2, box.y+2+yoff, NDI_COLR_MAROON, NULL);
             }
             i++;
         }
