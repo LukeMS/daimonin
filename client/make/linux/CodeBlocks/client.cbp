@@ -159,6 +159,7 @@
 		<Unit filename="../../../src/include/strout.h" />
 		<Unit filename="../../../src/include/textwin.h" />
 		<Unit filename="../../../src/include/tile_stretcher.h" />
+		<Unit filename="../../../src/include/wdh.h" />
 		<Unit filename="../../../src/include/widget.h" />
 		<Unit filename="../../../src/include/win32.h" />
 		<Unit filename="../../../src/include/wrapper.h" />
@@ -238,6 +239,9 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../../../src/uncompr.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/wdh.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../../../src/widget.c">

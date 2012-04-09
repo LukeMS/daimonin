@@ -414,6 +414,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\wdh.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\widget.c"
 				>
 			</File>
@@ -604,6 +608,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\include\tile_stretcher.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\include\wdh.h"
 				>
 			</File>
 			<File
