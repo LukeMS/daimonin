@@ -595,7 +595,7 @@ inline void optwin_draw_options(int x, int y)
     while (opt[++i].name && opt[i].name[0] != '#')
     {
         max++;
-        strout_blt(ScreenSurface, &font_small, opt[i].name, x + 1, y + 3, NDI_COLR_BLACK, NULL);
+        strout_blt(ScreenSurface, &font_small, STROUT_LEFT, opt[i].name, x + 1, y + 3, NDI_COLR_BLACK, NULL);
         switch (opt[i].sel_type)
         {
             case SEL_CHECKBOX:
@@ -612,7 +612,7 @@ inline void optwin_draw_options(int x, int y)
                     mxy_opt = i; /* remember this tab for later use */
                 }
 
-                strout_blt(ScreenSurface, &font_small, opt[i].name, x, y + 2, tmp, NULL);
+                strout_blt(ScreenSurface, &font_small, STROUT_LEFT, opt[i].name, x, y + 2, tmp, NULL);
 
                 sprite_blt(skin_sprites[SKIN_SPRITE_DIALOG_CHECKER], x + LEN_NAME, y, NULL, NULL);
                 if (*((uint8 *) opt[i].value) == 1)
@@ -657,20 +657,20 @@ inline void optwin_draw_options(int x, int y)
                     mxy_opt = i; /* remember this tab for later use */
                 }
 
-                strout_blt(ScreenSurface, &font_small, opt[i].name, x, y + 2, tmp, NULL);
+                strout_blt(ScreenSurface, &font_small, STROUT_LEFT, opt[i].name, x, y + 2, tmp, NULL);
                 /*
                           if (option_list_set.entry_nr == max-1 || (mx > x && mx < x+280 && my > y && my < y+20) ){
-                              strout_blt(ScreenSurface, &font_small, opt[i].name, x, y+2, NDI_COLR_SILVER, NULL);
+                              strout_blt(ScreenSurface, &font_small, STROUT_LEFT, opt[i].name, x, y+2, NDI_COLR_SILVER, NULL);
                               mxy_opt = i;
                           }
                           else
-                              strout_blt(ScreenSurface, &font_small, opt[i].name, x, y+2, NDI_COLR_WHITE, NULL);
+                              strout_blt(ScreenSurface, &font_small, STROUT_LEFT, opt[i].name, x, y+2, NDI_COLR_WHITE, NULL);
                           */
 
                 SDL_FillRect(ScreenSurface, &box, 0);
                 if (*opt[i].val_text == 0)
                 {
-                    strout_blt(ScreenSurface, &font_small, get_value(opt[i].value, opt[i].value_type), box.x + 2,
+                    strout_blt(ScreenSurface, &font_small, STROUT_LEFT, get_value(opt[i].value, opt[i].value_type), box.x + 2,
                               y + 2, NDI_COLR_WHITE, NULL);
                 }
                 else
@@ -688,7 +688,7 @@ inline void optwin_draw_options(int x, int y)
                         if ((text[q] = opt[i].val_text[p++]) == '#')
                             break;
                     text[q] = 0;
-                    strout_blt(ScreenSurface, &font_small, text, box.x + 2, y + 2, NDI_COLR_WHITE, NULL);
+                    strout_blt(ScreenSurface, &font_small, STROUT_LEFT, text, box.x + 2, y + 2, NDI_COLR_WHITE, NULL);
 #undef MAX_LEN
                 }
                 sprite_blt(skin_sprites[SKIN_SPRITE_DIALOG_RANGE_OFF], x + LEN_NAME + LEN_VALUE, y, NULL, NULL);
@@ -834,7 +834,7 @@ void show_skilllist(void)
     sprintf(buf,
             "~SHIFT~ + ~%c%c~ to select group                  ~%c%c~ to select skill                    ~RETURN~ for use",
             ECC_INTERNAL_ARROWUP, ECC_INTERNAL_ARROWDOWN, ECC_INTERNAL_ARROWUP, ECC_INTERNAL_ARROWDOWN);
-    strout_blt(ScreenSurface, &font_small, buf, x + 135, y + 410, NDI_COLR_WHITE, NULL);
+    strout_blt(ScreenSurface, &font_small, STROUT_LEFT, buf, x + 135, y + 410, NDI_COLR_WHITE, NULL);
 
     /* Headline */
     ENGRAVE(ScreenSurface, &font_small, "Name", x + TXT_START_NAME, y + TXT_Y_START - 2, NDI_COLR_WHITE);
@@ -932,7 +932,7 @@ void show_skilllist(void)
             else
                 sprintf(buf, "%d", skill_list[skill_list_set.group_nr].entry[i].exp_level);
 
-            strout_blt(ScreenSurface, &font_small, buf, x + TXT_START_LEVEL, y + TXT_Y_START, NDI_COLR_WHITE, NULL);
+            strout_blt(ScreenSurface, &font_small, STROUT_LEFT, buf, x + TXT_START_LEVEL, y + TXT_Y_START, NDI_COLR_WHITE, NULL);
 
             if (skill_list[skill_list_set.group_nr].entry[i].exp == -1)
                 strcpy(buf, "**");
@@ -940,7 +940,7 @@ void show_skilllist(void)
                 strcpy(buf, "**");
             else
                 sprintf(buf, "%d", skill_list[skill_list_set.group_nr].entry[i].exp);
-            strout_blt(ScreenSurface, &font_small, buf, x + TXT_START_EXP, y + TXT_Y_START, NDI_COLR_WHITE, NULL);
+            strout_blt(ScreenSurface, &font_small, STROUT_LEFT, buf, x + TXT_START_EXP, y + TXT_Y_START, NDI_COLR_WHITE, NULL);
         }
     }
     x += 160; y += 120;
@@ -999,7 +999,7 @@ void show_spelllist(void)
     sprintf(buf,
             "~SHIFT~ + ~%c%c~ to select path                   ~%c%c~ to select spell                    ~RETURN~ for use",
             ECC_INTERNAL_ARROWUP, ECC_INTERNAL_ARROWDOWN, ECC_INTERNAL_ARROWUP, ECC_INTERNAL_ARROWDOWN);
-    strout_blt(ScreenSurface, &font_small, buf, x + 135, y + 410, NDI_COLR_WHITE, NULL);
+    strout_blt(ScreenSurface, &font_small, STROUT_LEFT, buf, x + 135, y + 410, NDI_COLR_WHITE, NULL);
 
     /* spellClass buttons */
     for (i = 0; i < SPELL_LIST_CLASS; i++)
@@ -1010,9 +1010,9 @@ void show_spelllist(void)
     }
 
     sprintf(buf, "use ~F1-F8~ for spell to quickbar");
-    strout_blt(ScreenSurface, &font_small, buf, x + 340, y + 69, NDI_COLR_WHITE, NULL);
+    strout_blt(ScreenSurface, &font_small, STROUT_LEFT, buf, x + 340, y + 69, NDI_COLR_WHITE, NULL);
     sprintf(buf, "use ~%c%c~ to select spell group", ECC_INTERNAL_ARROWRIGHT, ECC_INTERNAL_ARROWLEFT);
-    strout_blt(ScreenSurface, &font_small, buf, x + 340, y + 80, NDI_COLR_WHITE, NULL);
+    strout_blt(ScreenSurface, &font_small, STROUT_LEFT, buf, x + 340, y + 80, NDI_COLR_WHITE, NULL);
 
     box.x = x + 133;
     box.y = y + TXT_Y_START + 1;
@@ -1158,7 +1158,7 @@ void show_optwin()
 
     sprintf(buf, "~SHIFT~ + ~%c%c~ to select group            ~%c%c~ to select option          ~%c%c~ to change option",
             ECC_INTERNAL_ARROWUP, ECC_INTERNAL_ARROWDOWN, ECC_INTERNAL_ARROWUP, ECC_INTERNAL_ARROWDOWN, ECC_INTERNAL_ARROWRIGHT, ECC_INTERNAL_ARROWLEFT);
-    strout_blt(ScreenSurface, &font_small, buf, x + 135, y + 410, NDI_COLR_WHITE, NULL);
+    strout_blt(ScreenSurface, &font_small, STROUT_LEFT, buf, x + 135, y + 410, NDI_COLR_WHITE, NULL);
     /* mark active entry */
     EMBOSS(ScreenSurface, &font_small, ">", x + TXT_START_NAME - 15,
            y + 10 + TXT_Y_START + option_list_set.entry_nr * 20, NDI_COLR_SILVER);
@@ -1193,7 +1193,7 @@ void show_keybind()
 
     sprintf(buf, "~SHIFT~ + ~%c%c~ to select group         ~%c%c~ to select macro          ~RETURN~ to change/create",
             ECC_INTERNAL_ARROWUP, ECC_INTERNAL_ARROWDOWN, ECC_INTERNAL_ARROWUP, ECC_INTERNAL_ARROWDOWN);
-    strout_blt(ScreenSurface, &font_small, buf, x + 125, y + 410, NDI_COLR_WHITE, NULL);
+    strout_blt(ScreenSurface, &font_small, STROUT_LEFT, buf, x + 125, y + 410, NDI_COLR_WHITE, NULL);
 
 
     /* draw group tabs */
@@ -1391,7 +1391,7 @@ void show_newplayer_server(void)
     /* print all attributes */
     ENGRAVE(ScreenSurface, &font_small, "Welcome!", x + 130, y + 63, NDI_COLR_WHITE);
     sprintf(buf, "Use ~%c%c~ and ~%c%c~ cursor keys to setup your stats.", ECC_INTERNAL_ARROWUP, ECC_INTERNAL_ARROWDOWN, ECC_INTERNAL_ARROWRIGHT, ECC_INTERNAL_ARROWLEFT);
-    strout_blt(ScreenSurface, &font_small, buf, x + 130, y + 75, NDI_COLR_WHITE, NULL);
+    strout_blt(ScreenSurface, &font_small, STROUT_LEFT, buf, x + 130, y + 75, NDI_COLR_WHITE, NULL);
     ENGRAVE(ScreenSurface, &font_small, "Press ~N~ to name your new chararcter", x + 130, y + 100, NDI_COLR_WHITE);
 
     /* create button */
@@ -1662,7 +1662,7 @@ void show_newplayer_server(void)
         {
             ENGRAVE(ScreenSurface, &font_large, "Try Character Name", x + 134, y + 323, NDI_COLR_WHITE);
             sprite_blt(skin_sprites[SKIN_SPRITE_LOGIN_INP], x + 132, y + 345, NULL, NULL);
-            strout_blt(ScreenSurface, &font_small, cpl.name, x + 138, y + 347, NDI_COLR_WHITE, NULL);
+            strout_blt(ScreenSurface, &font_small, STROUT_LEFT, cpl.name, x + 138, y + 347, NDI_COLR_WHITE, NULL);
             ENGRAVE(ScreenSurface, &font_large, "Try Reclaim Password", x + 134, y + 370, NDI_COLR_WHITE);
             sprite_blt(skin_sprites[SKIN_SPRITE_LOGIN_INP], x + 132, y + 392, NULL, NULL);
             box.y = y + 394;
@@ -1789,7 +1789,7 @@ void show_login_server(void)
         }
     }
 
-    strout_blt(ScreenSurface, &font_small, buf, x + 2,
+    strout_blt(ScreenSurface, &font_small, STROUT_LEFT, buf, x + 2,
                y + 20 + font_small.line_height, percentage_colr(progress),
                NULL);
 
@@ -1830,7 +1830,7 @@ void show_login_server(void)
                 x - 11, y, NDI_COLR_WHITE);
         y+=12;
         sprintf(buf,"Use ~%c,%c~ to select and press then ~Return~", ECC_INTERNAL_ARROWUP, ECC_INTERNAL_ARROWDOWN);
-        strout_blt(ScreenSurface, &font_small, buf, x - 11, y, NDI_COLR_WHITE, NULL);
+        strout_blt(ScreenSurface, &font_small, STROUT_LEFT, buf, x - 11, y, NDI_COLR_WHITE, NULL);
 
         return;
     }
@@ -2159,14 +2159,14 @@ void show_meta_server(void)
         sprintf(buf, "~%c%c~: select server  |**|  ~SHIFT~/~CONTROL~ + ~%c%c%c%c~: scroll map  |**|  ~RETURN~: connect",
                 ECC_INTERNAL_ARROWUP, ECC_INTERNAL_ARROWDOWN, ECC_INTERNAL_ARROWRIGHT, ECC_INTERNAL_ARROWUP, ECC_INTERNAL_ARROWDOWN,
                 ECC_INTERNAL_ARROWLEFT);
-        strout_blt(ScreenSurface, &font_small, buf, x + 130, y + 408,
+        strout_blt(ScreenSurface, &font_small, STROUT_LEFT, buf, x + 130, y + 408,
                    NDI_COLR_WHITE, NULL);
     }
     else
     {
         sprintf(buf, "~%c%c~: select server  |**|  ~RETURN~: connect",
                 ECC_INTERNAL_ARROWUP, ECC_INTERNAL_ARROWDOWN);
-        strout_blt(ScreenSurface, &font_small, buf, x + 200, y + 408,
+        strout_blt(ScreenSurface, &font_small, STROUT_LEFT, buf, x + 200, y + 408,
                    NDI_COLR_WHITE, NULL);
     }
 }
@@ -2228,10 +2228,10 @@ void show_account(void)
         }
         else
         {
-            strout_blt(ScreenSurface, &font_large, "Press ~RETURN~ to play", x+120, y+435, NDI_COLR_SILVER, NULL);
-            strout_blt(ScreenSurface, &font_large, "Press '~D~' to delete this Character", x+120, y+452, NDI_COLR_SILVER, NULL);
+            strout_blt(ScreenSurface, &font_large, STROUT_LEFT, "Press ~RETURN~ to play", x+120, y+435, NDI_COLR_SILVER, NULL);
+            strout_blt(ScreenSurface, &font_large, STROUT_LEFT, "Press '~D~' to delete this Character", x+120, y+452, NDI_COLR_SILVER, NULL);
             sprintf(buf, "Use ~%c%c~ cursor keys for selection", ECC_INTERNAL_ARROWUP, ECC_INTERNAL_ARROWDOWN);
-            strout_blt(ScreenSurface, &font_small, buf, x+120, y + 470, NDI_COLR_WHITE, NULL);
+            strout_blt(ScreenSurface, &font_small, STROUT_LEFT, buf, x+120, y + 470, NDI_COLR_WHITE, NULL);
         }
     }
 

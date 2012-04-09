@@ -1065,8 +1065,9 @@ static void ShowWindowText(textwin_window_t *tw, _BLTFX *bltfx)
         uint16             line = (topline + i) % tw->linebuf_used;
         textwin_linebuf_t *linebuf = tw->linebuf + line;
 
-        strout_blt(bltfx->surface, tw->font, linebuf->buf, -tw->scroll_xoff + 2,
-                   tw->font->line_height * i, linebuf->fg, &box);
+        strout_blt(bltfx->surface, tw->font, STROUT_LEFT, linebuf->buf,
+                   -tw->scroll_xoff + 2, tw->font->line_height * i,
+                   linebuf->fg, &box);
         box.y = tw->font->line_height * i;
         SDL_FillRect(tw->bg, &box, linebuf->bg);
     }

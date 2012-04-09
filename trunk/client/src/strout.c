@@ -149,10 +149,14 @@ uint8 strout_width_offset(_font *font, char *text, sint16 *line, sint16 len)
 
 /* Blit text to x,y of surface in colr font.
  *
+ * justification determines the horizontal justification, but area must be
+ * non-NULL or this is ignored (and defaults to left).
+ *
  * If area is non-NULL (only w and h are used and both are required), the text
  * is first blitted to a new surface of those dimensions which is then blitted
  * to surface. */
-void strout_blt(SDL_Surface *surface, _font *font, char *text, sint16 x,
+void strout_blt(SDL_Surface *surface, _font *font,
+                strout_justification_t justification, char *text, sint16 x,
                 sint16 y, uint32 colr, SDL_Rect *area)
 {
     SDL_Surface *new;
@@ -182,7 +186,22 @@ void strout_blt(SDL_Surface *surface, _font *font, char *text, sint16 x,
                                    0x00ff0000, 0x0000ff00, 0x000000ff, 0);
         SDL_FillRect(new, NULL, NDI_COLR_HOTPINK);
         SDL_SetColorKey(new, SDL_SRCCOLORKEY, NDI_COLR_HOTPINK);
-        nx = 0;
+
+        /* TODO: Only centered and left justified text are implemented.
+         * Other justifications just do left. */
+        /* FIXME: Not sure how well, if at all, this copes with multiline
+         * text. */
+        if (justification == STROUT_CENTER)
+        {
+            sint16 len = strout_width(font, text);
+
+            nx = (sint16)((float)(area->w - MAX(0, len)) * 0.5);
+        }
+        else
+        {
+            nx = 0;
+        }
+
         ny = 0;
     }
     else
@@ -528,7 +547,7 @@ void strout_input(_font *font, SDL_Rect *box, char repl)
     SDL_SetClipRect(ScreenSurface, box);
 
     /* Draw buf up to that point. */
-    strout_blt(ScreenSurface, font, buf, box->x - xoff, box->y,
+    strout_blt(ScreenSurface, font, STROUT_LEFT, buf, box->x - xoff, box->y,
                NDI_COLR_WHITE, NULL);
 
     /* Restore the character at CurrentCursorPos. */
@@ -538,7 +557,7 @@ void strout_input(_font *font, SDL_Rect *box, char repl)
     }
 
     /* Draw buf from that point. */
-    strout_blt(ScreenSurface, font, &buf[CurrentCursorPos],
+    strout_blt(ScreenSurface, font, STROUT_LEFT, &buf[CurrentCursorPos],
                box->x - xoff + len, box->y, NDI_COLR_WHITE, NULL);
 
     /* Draw the caret. */
@@ -614,7 +633,7 @@ strout_vim_t *strout_vim_add(strout_vim_mode_t mode, uint8 mapx, uint8 mapy,
                             (float)h / (float)surface->h);
         dst.x = (w - len) / 2;
         dst.y = (h - font_large.line_height) / 2;
-        strout_blt(surface, &font_large, text, dst.x, dst.y, colr, NULL);
+        strout_blt(surface, &font_large, STROUT_LEFT, text, dst.x, dst.y, colr, NULL);
     }
     else
     {
@@ -623,7 +642,7 @@ strout_vim_t *strout_vim_add(strout_vim_mode_t mode, uint8 mapx, uint8 mapy,
         surface = skin_sprites[SKIN_SPRITE_VIM]->bitmap;
         surface = SPG_Scale(surface, (float)w / (float)surface->w,
                             (float)h / (float)surface->h);
-        strout_blt(surface, &font_large, text, 0, 0, colr, NULL);
+        strout_blt(surface, &font_large, STROUT_LEFT, text, 0, 0, colr, NULL);
     }
 
     new->surface = surface;
@@ -931,11 +950,11 @@ void strout_tooltip_prepare(char *text)
     surface = skin_sprites[SKIN_SPRITE_TOOLTIP]->bitmap;
     surface = SPG_Scale(surface, (float)w / (float)surface->w,
                         (float)h / (float)surface->h);
-    strout_blt(surface, &font_medium, text, 10, 10, NDI_COLR_WHITE, NULL);
+    strout_blt(surface, &font_medium, STROUT_LEFT, text, 10, 10, NDI_COLR_WHITE, NULL);
 
     if (body)
     {
-        strout_blt(surface, &font_small, body, 10, font_medium.line_height + 10,
+        strout_blt(surface, &font_small, STROUT_LEFT, body, 10, font_medium.line_height + 10,
                    NDI_COLR_WHITE, NULL);
         *(body - 1) = ECC_INTERNAL_NEWLINE;
     }
