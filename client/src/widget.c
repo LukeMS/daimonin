@@ -48,9 +48,6 @@
 /* Current (working) data-list of all widgets */
 widget_data_t widget_data[WIDGET_NROF];
 
-/* Surfaces for all widgets. */
-SDL_Surface *widget_surface[WIDGET_NROF] = { NULL };
-
 /* Determines which widget has mouse focus */
 /* This value is determined in the mouse routines for the widgets */
 widget_event_t widget_mouse_event = { 0, 0, 0, 0, 0, 0 };
@@ -58,28 +55,28 @@ widget_event_t widget_mouse_event = { 0, 0, 0, 0, 0, 0 };
 /* Default (default) data-list of all widgets */
 static const widget_data_t DefaultData[WIDGET_NROF] =
 {
-    { "STATS",       1, 1, 227, 0,   172, 102, NULL, 1 },
-    { "RESIST",      1, 1, 497, 0,   198, 79,  NULL, 1 },
-    { "MAIN_LVL",    1, 1, 399, 39,  98,  62,  NULL, 1 },
-    { "SKILL_EXP",   1, 1, 497, 79,  198, 22,  NULL, 1 },
-    { "REGEN",       1, 1, 399, 0,   98,  39,  NULL, 1 },
-    { "SKILL_LVL",   1, 1, 695, 0,   52,  101, NULL, 1 },
-    { "MENUBUTTONS", 1, 1, 747, 0,   47,  101, NULL, 1 },
-    { "QUICKSLOTS",  1, 1, 513, 107, 282, 34,  NULL, 1 },
-    { "CHATWIN",     1, 1, 0,   366, 261, 233, NULL, 1 },
-    { "MSGWIN",      1, 1, 537, 366, 261, 233, NULL, 1 },
-    { "MIXWIN",      1, 0, 539, 420, 261, 233, NULL, 1 },
-    { "GROUP",       1, 1, 658, 187, 120, 31,  NULL, 1 },
-    { "PLAYERDOLL",  1, 1, 0,   41,  221, 224, NULL, 1 },
-    { "BELOWINV",    1, 1, 262, 545, 274, 55,  NULL, 1 },
-    { "PLAYERINFO",  1, 1, 0,   0,   219, 41,  NULL, 1 },
-    { "RANGEBOX",    1, 1, 6,   100, 94,  60,  NULL, 1 },
-    { "TARGET",      1, 1, 267, 514, 264, 31,  NULL, 1 },
-    { "MAININV",     1, 1, 539, 147, 239, 32,  NULL, 1 },
-    { "MAPNAME",     1, 1, 228, 106, 36,  12,  NULL, 1 },
-    { "CONSOLE",     1, 0, 271, 517, 256, 25,  NULL, 1 },
-    { "NUMBER",      1, 0, 271, 465, 256, 43,  NULL, 1 },
-    { "STATOMETER",  1, 1, 8,   50,  160, 40,  NULL, 1 },
+    { "STATS",       1, 1, 227, 0,   172, 102, NULL, NULL, 1 },
+    { "RESIST",      1, 1, 497, 0,   198, 79,  NULL, NULL, 1 },
+    { "MAIN_LVL",    1, 1, 399, 39,  98,  62,  NULL, NULL, 1 },
+    { "SKILL_EXP",   1, 1, 497, 79,  198, 22,  NULL, NULL, 1 },
+    { "REGEN",       1, 1, 399, 0,   98,  39,  NULL, NULL, 1 },
+    { "SKILL_LVL",   1, 1, 695, 0,   52,  101, NULL, NULL, 1 },
+    { "MENUBUTTONS", 1, 1, 747, 0,   47,  101, NULL, NULL, 1 },
+    { "QUICKSLOTS",  1, 1, 513, 107, 282, 34,  NULL, NULL, 1 },
+    { "CHATWIN",     1, 1, 0,   366, 261, 233, NULL, NULL, 1 },
+    { "MSGWIN",      1, 1, 537, 366, 261, 233, NULL, NULL, 1 },
+    { "MIXWIN",      1, 0, 539, 420, 261, 233, NULL, NULL, 1 },
+    { "GROUP",       1, 1, 658, 187, 120, 31,  NULL, NULL, 1 },
+    { "PLAYERDOLL",  1, 1, 0,   41,  221, 224, NULL, NULL, 1 },
+    { "BELOWINV",    1, 1, 262, 545, 274, 55,  NULL, NULL, 1 },
+    { "PLAYERINFO",  1, 1, 0,   0,   219, 41,  NULL, NULL, 1 },
+    { "RANGEBOX",    1, 1, 6,   100, 94,  60,  NULL, NULL, 1 },
+    { "TARGET",      1, 1, 267, 514, 264, 31,  NULL, NULL, 1 },
+    { "MAININV",     1, 1, 539, 147, 239, 32,  NULL, NULL, 1 },
+    { "MAPNAME",     1, 1, 228, 106, 36,  12,  NULL, NULL, 1 },
+    { "CONSOLE",     1, 0, 271, 517, 256, 25,  NULL, NULL, 1 },
+    { "NUMBER",      1, 0, 271, 465, 256, 43,  NULL, NULL, 1 },
+    { "STATOMETER",  1, 1, 8,   50,  160, 40,  NULL, NULL, 1 },
 };
 
 /* default overall priority list.. will change during runtime */
@@ -117,10 +114,10 @@ void widget_deinit(void)
 
     for(id = 0; id < WIDGET_NROF; id++)
     {
-        if (widget_surface[id])
+        if (widget_data[id].surface)
         {
-            SDL_FreeSurface(widget_surface[id]);
-            widget_surface[id] = NULL;
+            SDL_FreeSurface(widget_data[id].surface);
+            widget_data[id].surface = NULL;
         }
     }
 

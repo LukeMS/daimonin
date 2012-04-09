@@ -77,6 +77,7 @@ typedef struct widget_data_t
     uint16         ht;             // height in pixels
 
     /* These are not saved. */
+    SDL_Surface   *surface;        // backbuffer
     widget_node_t *priority_index; // internal use only
     uint8          redraw;         // redraw?
 }
@@ -98,7 +99,6 @@ widget_event_t;
 #define WIDGET_SHOW(_ID_) widget_data[(_ID_)].show
 #define WIDGET_REDRAW(_ID_) widget_data[(_ID_)].redraw
 
-extern SDL_Surface    *widget_surface[WIDGET_NROF];
 extern widget_data_t   widget_data[WIDGET_NROF];
 extern widget_event_t  widget_mouse_event;
 

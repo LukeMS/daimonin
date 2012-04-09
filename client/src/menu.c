@@ -229,19 +229,19 @@ void widget_show_resist(int x, int y)
     _BLTFX bltfx;
     SDL_Rect box;
 
-    if (!widget_surface[WIDGET_RESIST_ID])
-        widget_surface[WIDGET_RESIST_ID]=SDL_ConvertSurface(skin_sprites[SKIN_SPRITE_RESIST_BG]->bitmap,skin_sprites[SKIN_SPRITE_RESIST_BG]->bitmap->format,skin_sprites[SKIN_SPRITE_RESIST_BG]->bitmap->flags);
+    if (!widget_data[WIDGET_RESIST_ID].surface)
+        widget_data[WIDGET_RESIST_ID].surface=SDL_ConvertSurface(skin_sprites[SKIN_SPRITE_RESIST_BG]->bitmap,skin_sprites[SKIN_SPRITE_RESIST_BG]->bitmap->format,skin_sprites[SKIN_SPRITE_RESIST_BG]->bitmap->flags);
 
     if (widget_data[WIDGET_RESIST_ID].redraw)
     {
         widget_data[WIDGET_RESIST_ID].redraw=0;
 
-        bltfx.surface=widget_surface[WIDGET_RESIST_ID];
+        bltfx.surface=widget_data[WIDGET_RESIST_ID].surface;
         bltfx.flags = 0;
         bltfx.alpha=0;
 
         sprite_blt(skin_sprites[SKIN_SPRITE_RESIST_BG], 0, 0, NULL, &bltfx);
-        strout_blt(widget_surface[WIDGET_RESIST_ID], &font_tiny, "Resistance Table", 4,  1, skin_prefs.widget_title, NULL);
+        strout_blt(widget_data[WIDGET_RESIST_ID].surface, &font_tiny, "Resistance Table", 4,  1, skin_prefs.widget_title, NULL);
         PrintResist("IM", 68, 3, ATNR_PHYSICAL);
         PrintResist("SL", 100, 3, ATNR_SLASH);
         PrintResist("CL", 132, 3, ATNR_CLEAVE);
@@ -276,7 +276,7 @@ void widget_show_resist(int x, int y)
     }
     box.x=x;
     box.y=y;
-    SDL_BlitSurface(widget_surface[WIDGET_RESIST_ID], NULL, ScreenSurface, &box);
+    SDL_BlitSurface(widget_data[WIDGET_RESIST_ID].surface, NULL, ScreenSurface, &box);
 }
 
 static void PrintResist(char *name, int x, int y, int num)
@@ -287,10 +287,10 @@ static void PrintResist(char *name, int x, int y, int num)
                   ? NDI_COLR_GREY
                   : percentage_colr(((resist + 100) * 0.005 * 100));
 
-    strout_blt(widget_surface[WIDGET_RESIST_ID], &font_small, name, x, y,
+    strout_blt(widget_data[WIDGET_RESIST_ID].surface, &font_small, name, x, y,
                skin_prefs.widget_key, NULL);
     sprintf(buf, "%02d", resist);
-    strout_blt(widget_surface[WIDGET_RESIST_ID], &font_small, buf, x + 12, y,
+    strout_blt(widget_data[WIDGET_RESIST_ID].surface, &font_small, buf, x + 12, y,
                colr, NULL);
 }
 
