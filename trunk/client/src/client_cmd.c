@@ -876,9 +876,6 @@ static uint8 CheckCommand(char *cmd, char *params)
             {
                 switch (id)
                 {
-                    case WIDGET_MIXWIN_ID:
-                        break;
-
                     case WIDGET_PDOLL_ID:
                         if (options.playerdoll)
                         {
