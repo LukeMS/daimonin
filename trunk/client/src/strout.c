@@ -189,8 +189,6 @@ void strout_blt(SDL_Surface *surface, _font *font,
 
         /* TODO: Only centered and left justified text are implemented.
          * Other justifications just do left. */
-        /* FIXME: Not sure how well, if at all, this copes with multiline
-         * text. */
         if (justification == STROUT_CENTER)
         {
             sint16 len = strout_width(font, text);
