@@ -36,6 +36,7 @@ static char *FontName[SKIN_FONT_NROF] =
     "npcicon.png",
     "npcnormal.png",
     "npctitle.png",
+    "heading.png",
 };
 
 /* For loading, use SKIN_SPRITE_xx in the other modules. */

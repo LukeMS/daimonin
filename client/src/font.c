@@ -33,6 +33,7 @@ _font font_booktitle;
 _font font_npcicon;
 _font font_npcnormal;
 _font font_npctitle;
+_font font_heading;
 
 static void   CreateNewFont(_Sprite *sprite, _font *font);
 static uint32 GetSurfacePixel(SDL_Surface *surface, uint16 x, uint16 y);
@@ -49,6 +50,7 @@ void font_init(void)
     CreateNewFont(skin_fonts[SKIN_FONT_NPCICON], &font_npcicon);
     CreateNewFont(skin_fonts[SKIN_FONT_NPCNORMAL], &font_npcnormal);
     CreateNewFont(skin_fonts[SKIN_FONT_NPCTITLE], &font_npctitle);
+    CreateNewFont(skin_fonts[SKIN_FONT_HEADING], &font_heading);
 }
 
 /* init this font structure with gfx data from sprite bitmap */
