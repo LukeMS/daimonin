@@ -42,8 +42,9 @@ daimonin_SOURCES =  \
 	../../src/textwin.c \
 	../../src/tile_stretcher.c \
 	../../src/uncompr.c \
-	../../src/wrapper.c \
+	../../src/wdh.c \
 	../../src/widget.c \
+	../../src/wrapper.c \
 	../../src/zutil.c \
 	../../src/3rdparty/sprig/SPG_extended.c \
 	../../src/3rdparty/sprig/SPG_misc.c \
