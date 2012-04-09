@@ -65,7 +65,6 @@ static const widget_data_t DefaultData[WIDGET_NROF] =
     { "QUICKSLOTS",  1, 1, 513, 107, 282, 34,  NULL, NULL, 1 },
     { "CHATWIN",     1, 1, 0,   366, 261, 233, NULL, NULL, 1 },
     { "MSGWIN",      1, 1, 537, 366, 261, 233, NULL, NULL, 1 },
-    { "MIXWIN",      1, 0, 539, 420, 261, 233, NULL, NULL, 1 },
     { "GROUP",       1, 1, 658, 187, 120, 31,  NULL, NULL, 1 },
     { "PLAYERDOLL",  1, 1, 0,   41,  221, 224, NULL, NULL, 1 },
     { "BELOWINV",    1, 1, 262, 545, 274, 55,  NULL, NULL, 1 },
@@ -351,11 +350,6 @@ int widget_event_mousedn(int x, int y, SDL_Event *event)
 
                 break;
 
-            case WIDGET_MIXWIN_ID:
-//                textwin_event(SDL_MOUSEBUTTONDOWN, event, TW_MIX);
-
-                break;
-
             case WIDGET_GROUP_ID:
 //                group_event();
 
@@ -469,11 +463,6 @@ int widget_event_mouseup(int x, int y, SDL_Event *event)
 
             case WIDGET_MSGWIN_ID:
                 textwin_event(SDL_MOUSEBUTTONUP, event, TEXTWIN_MSG_ID);
-
-                break;
-
-            case WIDGET_MIXWIN_ID:
-//                textwin_event(SDL_MOUSEBUTTONUP, event, TW_MIX);
 
                 break;
 
@@ -659,11 +648,6 @@ int widget_event_mousemv(int x,int y, SDL_Event *event)
 
                 break;
 
-            case WIDGET_MIXWIN_ID:
-//                textwin_event(SDL_MOUSEMOTION, event, TW_MIX);
-
-                break;
-
             case WIDGET_MAIN_INV_ID:
                 widget_inventory_event(x, y, *event);
 
@@ -844,11 +828,6 @@ void widget_process(void)
 
                 case WIDGET_MSGWIN_ID:
                     textwin_show_window(TEXTWIN_MSG_ID);
-
-                    break;
-
-                case WIDGET_MIXWIN_ID:
-//                    textwin_show_window(TW_MIX);
 
                     break;
 
