@@ -320,8 +320,8 @@ void widget_player_stats(int x, int y)
     SDL_GetMouseState(&mx, &my);
 
     /* lets look if we have a backbuffer SF, if not create one from the background */
-    if (!widget_surface[WIDGET_STATS_ID])
-        widget_surface[WIDGET_STATS_ID]=SDL_ConvertSurface(skin_sprites[SKIN_SPRITE_STATS_BG]->bitmap,skin_sprites[SKIN_SPRITE_STATS_BG]->bitmap->format,skin_sprites[SKIN_SPRITE_STATS_BG]->bitmap->flags);
+    if (!widget_data[WIDGET_STATS_ID].surface)
+        widget_data[WIDGET_STATS_ID].surface=SDL_ConvertSurface(skin_sprites[SKIN_SPRITE_STATS_BG]->bitmap,skin_sprites[SKIN_SPRITE_STATS_BG]->bitmap->format,skin_sprites[SKIN_SPRITE_STATS_BG]->bitmap->flags);
 
     /* we have a backbuffer SF, test for the redrawing flag and do the redrawing */
     if (widget_data[WIDGET_STATS_ID].redraw)
@@ -333,7 +333,7 @@ void widget_player_stats(int x, int y)
         /* we redraw here only all halfway static stuff */
         /* we simply don't need to redraw that stuff every frame, how often the stats change? */
 
-        bltfx.surface=widget_surface[WIDGET_STATS_ID];
+        bltfx.surface=widget_data[WIDGET_STATS_ID].surface;
         bltfx.flags = 0;
         bltfx.dark_level = 0;
         bltfx.alpha=0;
@@ -341,63 +341,63 @@ void widget_player_stats(int x, int y)
         sprite_blt(skin_sprites[SKIN_SPRITE_STATS_BG], 0, 0, NULL, &bltfx);
 
         /* Primary stats */
-        strout_blt(widget_surface[WIDGET_STATS_ID], &font_tiny, "Stats", 8, 1, skin_prefs.widget_title, NULL);
+        strout_blt(widget_data[WIDGET_STATS_ID].surface, &font_tiny, "Stats", 8, 1, skin_prefs.widget_title, NULL);
         sprintf(buf, "%02d", cpl.stats.Str);
-        strout_blt(widget_surface[WIDGET_STATS_ID], &font_small, "Str", 8, 17, skin_prefs.widget_key, NULL);
-        strout_blt(widget_surface[WIDGET_STATS_ID], &font_small, buf, 30, 17, skin_prefs.widget_valueEq, NULL);
+        strout_blt(widget_data[WIDGET_STATS_ID].surface, &font_small, "Str", 8, 17, skin_prefs.widget_key, NULL);
+        strout_blt(widget_data[WIDGET_STATS_ID].surface, &font_small, buf, 30, 17, skin_prefs.widget_valueEq, NULL);
         sprintf(buf, "%02d", cpl.stats.Dex);
-        strout_blt(widget_surface[WIDGET_STATS_ID], &font_small, "Dex", 8, 28, skin_prefs.widget_key, NULL);
-        strout_blt(widget_surface[WIDGET_STATS_ID], &font_small, buf, 30, 28, skin_prefs.widget_valueEq, NULL);
+        strout_blt(widget_data[WIDGET_STATS_ID].surface, &font_small, "Dex", 8, 28, skin_prefs.widget_key, NULL);
+        strout_blt(widget_data[WIDGET_STATS_ID].surface, &font_small, buf, 30, 28, skin_prefs.widget_valueEq, NULL);
         sprintf(buf, "%02d", cpl.stats.Con);
-        strout_blt(widget_surface[WIDGET_STATS_ID], &font_small, "Con", 8, 39, skin_prefs.widget_key, NULL);
-        strout_blt(widget_surface[WIDGET_STATS_ID], &font_small, buf, 30, 39, skin_prefs.widget_valueEq, NULL);
+        strout_blt(widget_data[WIDGET_STATS_ID].surface, &font_small, "Con", 8, 39, skin_prefs.widget_key, NULL);
+        strout_blt(widget_data[WIDGET_STATS_ID].surface, &font_small, buf, 30, 39, skin_prefs.widget_valueEq, NULL);
         sprintf(buf, "%02d", cpl.stats.Int);
-        strout_blt(widget_surface[WIDGET_STATS_ID], &font_small, "Int", 8, 50, skin_prefs.widget_key, NULL);
-        strout_blt(widget_surface[WIDGET_STATS_ID], &font_small, buf, 30, 50, skin_prefs.widget_valueEq, NULL);
+        strout_blt(widget_data[WIDGET_STATS_ID].surface, &font_small, "Int", 8, 50, skin_prefs.widget_key, NULL);
+        strout_blt(widget_data[WIDGET_STATS_ID].surface, &font_small, buf, 30, 50, skin_prefs.widget_valueEq, NULL);
         sprintf(buf, "%02d", cpl.stats.Wis);
-        strout_blt(widget_surface[WIDGET_STATS_ID], &font_small, "Wis", 8, 61, skin_prefs.widget_key, NULL);
-        strout_blt(widget_surface[WIDGET_STATS_ID], &font_small, buf, 30, 61, skin_prefs.widget_valueEq, NULL);
+        strout_blt(widget_data[WIDGET_STATS_ID].surface, &font_small, "Wis", 8, 61, skin_prefs.widget_key, NULL);
+        strout_blt(widget_data[WIDGET_STATS_ID].surface, &font_small, buf, 30, 61, skin_prefs.widget_valueEq, NULL);
         sprintf(buf, "%02d", cpl.stats.Pow);
-        strout_blt(widget_surface[WIDGET_STATS_ID], &font_small, "Pow", 8, 72, skin_prefs.widget_key, NULL);
-        strout_blt(widget_surface[WIDGET_STATS_ID], &font_small, buf, 30, 72, skin_prefs.widget_valueEq, NULL);
+        strout_blt(widget_data[WIDGET_STATS_ID].surface, &font_small, "Pow", 8, 72, skin_prefs.widget_key, NULL);
+        strout_blt(widget_data[WIDGET_STATS_ID].surface, &font_small, buf, 30, 72, skin_prefs.widget_valueEq, NULL);
         sprintf(buf, "%02d", cpl.stats.Cha);
-        strout_blt(widget_surface[WIDGET_STATS_ID], &font_small, "Cha", 8, 83, skin_prefs.widget_key, NULL);
-        strout_blt(widget_surface[WIDGET_STATS_ID], &font_small, buf, 30, 83, skin_prefs.widget_valueEq, NULL);
+        strout_blt(widget_data[WIDGET_STATS_ID].surface, &font_small, "Cha", 8, 83, skin_prefs.widget_key, NULL);
+        strout_blt(widget_data[WIDGET_STATS_ID].surface, &font_small, buf, 30, 83, skin_prefs.widget_valueEq, NULL);
 
         /* Health indicators */
-        strout_blt(widget_surface[WIDGET_STATS_ID], &font_small, "HP", 58, 10,
+        strout_blt(widget_data[WIDGET_STATS_ID].surface, &font_small, "HP", 58, 10,
                    skin_prefs.widget_key, NULL);
         sprintf(buf, "/ %d", cpl.stats.maxhp);
         x2 = 160 - strout_width(&font_small, buf);
-        strout_blt(widget_surface[WIDGET_STATS_ID], &font_small, buf, x2, 10,
+        strout_blt(widget_data[WIDGET_STATS_ID].surface, &font_small, buf, x2, 10,
                    skin_prefs.widget_valueHi, NULL);
         sprintf(buf, "%d ", cpl.stats.hp);
         x2 -= strout_width(&font_small, buf);
-        strout_blt(widget_surface[WIDGET_STATS_ID], &font_small, buf, x2, 10,
+        strout_blt(widget_data[WIDGET_STATS_ID].surface, &font_small, buf, x2, 10,
                    percentage_colr((float)cpl.stats.hp /
                                    (float)cpl.stats.maxhp * 100), NULL);
         sprite_blt(skin_sprites[SKIN_SPRITE_HP_BACK], 57, 23, NULL, &bltfx);
-        strout_blt(widget_surface[WIDGET_STATS_ID], &font_small, "Mana", 58, 35,
+        strout_blt(widget_data[WIDGET_STATS_ID].surface, &font_small, "Mana", 58, 35,
                    skin_prefs.widget_key, NULL);
         sprintf(buf, "/ %d", cpl.stats.maxsp);
         x2 = 160 - strout_width(&font_small, buf);
-        strout_blt(widget_surface[WIDGET_STATS_ID], &font_small, buf, x2, 35,
+        strout_blt(widget_data[WIDGET_STATS_ID].surface, &font_small, buf, x2, 35,
                    skin_prefs.widget_valueHi, NULL);
         sprintf(buf, "%d ", cpl.stats.sp);
         x2 -= strout_width(&font_small, buf);
-        strout_blt(widget_surface[WIDGET_STATS_ID], &font_small, buf, x2, 35,
+        strout_blt(widget_data[WIDGET_STATS_ID].surface, &font_small, buf, x2, 35,
                    percentage_colr((float)cpl.stats.sp /
                                    (float)cpl.stats.maxsp * 100), NULL);
         sprite_blt(skin_sprites[SKIN_SPRITE_SP_BACK], 57, 47, NULL, &bltfx);
-        strout_blt(widget_surface[WIDGET_STATS_ID], &font_small, "Grace", 58, 59,
+        strout_blt(widget_data[WIDGET_STATS_ID].surface, &font_small, "Grace", 58, 59,
                    skin_prefs.widget_key, NULL);
         sprintf(buf, "/ %d", cpl.stats.maxgrace);
         x2 = 160 - strout_width(&font_small, buf);
-        strout_blt(widget_surface[WIDGET_STATS_ID], &font_small, buf, x2, 59,
+        strout_blt(widget_data[WIDGET_STATS_ID].surface, &font_small, buf, x2, 59,
                    skin_prefs.widget_valueHi, NULL);
         sprintf(buf, "%d ", cpl.stats.grace);
         x2 -= strout_width(&font_small, buf);
-        strout_blt(widget_surface[WIDGET_STATS_ID], &font_small, buf, x2, 59,
+        strout_blt(widget_data[WIDGET_STATS_ID].surface, &font_small, buf, x2, 59,
                    percentage_colr((float)cpl.stats.grace /
                                    (float)cpl.stats.maxgrace * 100), NULL);
         sprite_blt(skin_sprites[SKIN_SPRITE_GRACE_BACK], 57, 71, NULL, &bltfx);
@@ -412,17 +412,17 @@ void widget_player_stats(int x, int y)
 
             if (tmp < 1)
             {
-                strout_blt(widget_surface[WIDGET_STATS_ID], &font_small, "Food", 58, 84, skin_prefs.widget_key, NULL);
+                strout_blt(widget_data[WIDGET_STATS_ID].surface, &font_small, "Food", 58, 84, skin_prefs.widget_key, NULL);
                 tmp *= -1;
             }
             else if (tmp == 999)
             {
-                strout_blt(widget_surface[WIDGET_STATS_ID], &font_small, "Rest", 58, 84, skin_prefs.widget_key, NULL);
+                strout_blt(widget_data[WIDGET_STATS_ID].surface, &font_small, "Rest", 58, 84, skin_prefs.widget_key, NULL);
             }
             else
             {
                 bar = SKIN_SPRITE_FOOD;
-                strout_blt(widget_surface[WIDGET_STATS_ID], &font_small, "Wait", 58, 84, skin_prefs.widget_key, NULL);
+                strout_blt(widget_data[WIDGET_STATS_ID].surface, &font_small, "Wait", 58, 84, skin_prefs.widget_key, NULL);
             }
 
             tmp++; /* adjust in order to draw the bar correctly */
@@ -448,7 +448,7 @@ void widget_player_stats(int x, int y)
     /* now we blit our backbuffer SF */
     box.x=x;
     box.y=y;
-    SDL_BlitSurface(widget_surface[WIDGET_STATS_ID], NULL, ScreenSurface, &box);
+    SDL_BlitSurface(widget_data[WIDGET_STATS_ID].surface, NULL, ScreenSurface, &box);
 
 
 
@@ -562,49 +562,49 @@ void widget_skillgroups(int x, int y)
     _BLTFX bltfx;
     SDL_Rect box;
 
-    if (!widget_surface[WIDGET_SKILL_LVL_ID])
-        widget_surface[WIDGET_SKILL_LVL_ID]=SDL_ConvertSurface(skin_sprites[SKIN_SPRITE_SKILL_LVL_BG]->bitmap,
+    if (!widget_data[WIDGET_SKILL_LVL_ID].surface)
+        widget_data[WIDGET_SKILL_LVL_ID].surface=SDL_ConvertSurface(skin_sprites[SKIN_SPRITE_SKILL_LVL_BG]->bitmap,
                 skin_sprites[SKIN_SPRITE_SKILL_LVL_BG]->bitmap->format,skin_sprites[SKIN_SPRITE_SKILL_LVL_BG]->bitmap->flags);
 
     if (widget_data[WIDGET_SKILL_LVL_ID].redraw)
     {
         widget_data[WIDGET_SKILL_LVL_ID].redraw=0;
 
-        bltfx.surface=widget_surface[WIDGET_SKILL_LVL_ID];
+        bltfx.surface=widget_data[WIDGET_SKILL_LVL_ID].surface;
         bltfx.flags = 0;
         bltfx.alpha=0;
         sprite_blt(skin_sprites[SKIN_SPRITE_SKILL_LVL_BG], 0, 0, NULL, &bltfx);
 
-        strout_blt(widget_surface[WIDGET_SKILL_LVL_ID], &font_tiny, "Skill Groups", 3, 1, skin_prefs.widget_title, NULL);
-        strout_blt(widget_surface[WIDGET_SKILL_LVL_ID], &font_tiny, "name / level", 3, 13, skin_prefs.widget_key, NULL);
+        strout_blt(widget_data[WIDGET_SKILL_LVL_ID].surface, &font_tiny, "Skill Groups", 3, 1, skin_prefs.widget_title, NULL);
+        strout_blt(widget_data[WIDGET_SKILL_LVL_ID].surface, &font_tiny, "name / level", 3, 13, skin_prefs.widget_key, NULL);
         sprintf(buf, " %d", cpl.stats.skill_level[0]);
-        strout_blt(widget_surface[WIDGET_SKILL_LVL_ID], &font_small, "Ag:", 6, 26, skin_prefs.widget_key, NULL);
-        strout_blt(widget_surface[WIDGET_SKILL_LVL_ID], &font_small, buf, 44 - strout_width(&font_small, buf), 26, skin_prefs.widget_valueEq,
+        strout_blt(widget_data[WIDGET_SKILL_LVL_ID].surface, &font_small, "Ag:", 6, 26, skin_prefs.widget_key, NULL);
+        strout_blt(widget_data[WIDGET_SKILL_LVL_ID].surface, &font_small, buf, 44 - strout_width(&font_small, buf), 26, skin_prefs.widget_valueEq,
                    NULL);
         sprintf(buf, " %d", cpl.stats.skill_level[2]);
-        strout_blt(widget_surface[WIDGET_SKILL_LVL_ID], &font_small, "Me:", 6, 38, skin_prefs.widget_key, NULL);
-        strout_blt(widget_surface[WIDGET_SKILL_LVL_ID], &font_small, buf, 44 - strout_width(&font_small, buf), 38, skin_prefs.widget_valueEq,
+        strout_blt(widget_data[WIDGET_SKILL_LVL_ID].surface, &font_small, "Me:", 6, 38, skin_prefs.widget_key, NULL);
+        strout_blt(widget_data[WIDGET_SKILL_LVL_ID].surface, &font_small, buf, 44 - strout_width(&font_small, buf), 38, skin_prefs.widget_valueEq,
                    NULL);
         sprintf(buf, " %d", cpl.stats.skill_level[4]);
-        strout_blt(widget_surface[WIDGET_SKILL_LVL_ID], &font_small, "Ma:", 6, 49, skin_prefs.widget_key, NULL);
-        strout_blt(widget_surface[WIDGET_SKILL_LVL_ID], &font_small, buf, 44 - strout_width(&font_small, buf), 49, skin_prefs.widget_valueEq,
+        strout_blt(widget_data[WIDGET_SKILL_LVL_ID].surface, &font_small, "Ma:", 6, 49, skin_prefs.widget_key, NULL);
+        strout_blt(widget_data[WIDGET_SKILL_LVL_ID].surface, &font_small, buf, 44 - strout_width(&font_small, buf), 49, skin_prefs.widget_valueEq,
                    NULL);
         sprintf(buf, " %d", cpl.stats.skill_level[1]);
-        strout_blt(widget_surface[WIDGET_SKILL_LVL_ID], &font_small, "Pe:", 6, 62, skin_prefs.widget_key, NULL);
-        strout_blt(widget_surface[WIDGET_SKILL_LVL_ID], &font_small, buf, 44 - strout_width(&font_small, buf), 62, skin_prefs.widget_valueEq,
+        strout_blt(widget_data[WIDGET_SKILL_LVL_ID].surface, &font_small, "Pe:", 6, 62, skin_prefs.widget_key, NULL);
+        strout_blt(widget_data[WIDGET_SKILL_LVL_ID].surface, &font_small, buf, 44 - strout_width(&font_small, buf), 62, skin_prefs.widget_valueEq,
                    NULL);
         sprintf(buf, " %d", cpl.stats.skill_level[3]);
-        strout_blt(widget_surface[WIDGET_SKILL_LVL_ID], &font_small, "Ph:", 6, 74, skin_prefs.widget_key, NULL);
-        strout_blt(widget_surface[WIDGET_SKILL_LVL_ID], &font_small, buf, 44 - strout_width(&font_small, buf), 74, skin_prefs.widget_valueEq,
+        strout_blt(widget_data[WIDGET_SKILL_LVL_ID].surface, &font_small, "Ph:", 6, 74, skin_prefs.widget_key, NULL);
+        strout_blt(widget_data[WIDGET_SKILL_LVL_ID].surface, &font_small, buf, 44 - strout_width(&font_small, buf), 74, skin_prefs.widget_valueEq,
                    NULL);
         sprintf(buf, " %d", cpl.stats.skill_level[5]);
-        strout_blt(widget_surface[WIDGET_SKILL_LVL_ID], &font_small, "Wi:", 6, 86, skin_prefs.widget_key, NULL);
-        strout_blt(widget_surface[WIDGET_SKILL_LVL_ID], &font_small, buf, 44 - strout_width(&font_small, buf), 86, skin_prefs.widget_valueEq,
+        strout_blt(widget_data[WIDGET_SKILL_LVL_ID].surface, &font_small, "Wi:", 6, 86, skin_prefs.widget_key, NULL);
+        strout_blt(widget_data[WIDGET_SKILL_LVL_ID].surface, &font_small, buf, 44 - strout_width(&font_small, buf), 86, skin_prefs.widget_valueEq,
                    NULL);
     }
     box.x=x;
     box.y=y;
-    SDL_BlitSurface(widget_surface[WIDGET_SKILL_LVL_ID], NULL, ScreenSurface, &box);
+    SDL_BlitSurface(widget_data[WIDGET_SKILL_LVL_ID].surface, NULL, ScreenSurface, &box);
 }
 
 void widget_show_player_doll_event(int x, int y, uint8 e)
@@ -797,8 +797,8 @@ void widget_show_main_lvl(int x, int y)
     int      s;
     _BLTFX   bltfx;
 
-    if (!widget_surface[WIDGET_MAIN_LVL_ID])
-        widget_surface[WIDGET_MAIN_LVL_ID]=SDL_ConvertSurface(skin_sprites[SKIN_SPRITE_MAIN_LVL_BG]->bitmap,
+    if (!widget_data[WIDGET_MAIN_LVL_ID].surface)
+        widget_data[WIDGET_MAIN_LVL_ID].surface=SDL_ConvertSurface(skin_sprites[SKIN_SPRITE_MAIN_LVL_BG]->bitmap,
                 skin_sprites[SKIN_SPRITE_MAIN_LVL_BG]->bitmap->format,skin_sprites[SKIN_SPRITE_MAIN_LVL_BG]->bitmap->flags);
 
     if (WIDGET_REDRAW(WIDGET_MAIN_LVL_ID))
@@ -806,11 +806,11 @@ void widget_show_main_lvl(int x, int y)
         uint32 colr;
 
         WIDGET_REDRAW(WIDGET_MAIN_LVL_ID) = 0;
-        bltfx.surface=widget_surface[WIDGET_MAIN_LVL_ID];
+        bltfx.surface=widget_data[WIDGET_MAIN_LVL_ID].surface;
         bltfx.flags = 0;
         bltfx.alpha=0;
         sprite_blt(skin_sprites[SKIN_SPRITE_MAIN_LVL_BG], 0, 0, NULL, &bltfx);
-        strout_blt(widget_surface[WIDGET_MAIN_LVL_ID], &font_tiny, "Level / Exp", 4, 1, skin_prefs.widget_key, NULL);
+        strout_blt(widget_data[WIDGET_MAIN_LVL_ID].surface, &font_tiny, "Level / Exp", 4, 1, skin_prefs.widget_key, NULL);
 
         /* Level. */
         sprintf(buf, "%d", cpl.stats.level);
@@ -826,7 +826,7 @@ void widget_show_main_lvl(int x, int y)
                                    (float)server_level.level * 50 + 50);
         }
 
-        strout_blt(widget_surface[WIDGET_MAIN_LVL_ID], &font_large, buf,
+        strout_blt(widget_data[WIDGET_MAIN_LVL_ID].surface, &font_large, buf,
                    91 - strout_width(&font_large, buf), 4, colr, NULL);
 
         /* Exp. */
@@ -844,7 +844,7 @@ void widget_show_main_lvl(int x, int y)
             colr = percentage_colr(multi * 100);
         }
 
-        strout_blt(widget_surface[WIDGET_MAIN_LVL_ID], &font_small, buf, 5, 20,
+        strout_blt(widget_data[WIDGET_MAIN_LVL_ID].surface, &font_small, buf, 5, 20,
                    colr, NULL);
 
         /* calc the exp bubbles */
@@ -872,7 +872,7 @@ void widget_show_main_lvl(int x, int y)
     }
     box.x=x;
     box.y=y;
-    SDL_BlitSurface(widget_surface[WIDGET_MAIN_LVL_ID], NULL, ScreenSurface, &box);
+    SDL_BlitSurface(widget_data[WIDGET_MAIN_LVL_ID].surface, NULL, ScreenSurface, &box);
 }
 
 void widget_show_skill_exp(int x, int y)
@@ -912,22 +912,22 @@ void widget_show_skill_exp(int x, int y)
     else
         action_tick = LastTick;
 
-    if (!widget_surface[WIDGET_SKILL_EXP_ID])
-        widget_surface[WIDGET_SKILL_EXP_ID]=SDL_ConvertSurface(skin_sprites[SKIN_SPRITE_SKILL_EXP_BG]->bitmap,
+    if (!widget_data[WIDGET_SKILL_EXP_ID].surface)
+        widget_data[WIDGET_SKILL_EXP_ID].surface=SDL_ConvertSurface(skin_sprites[SKIN_SPRITE_SKILL_EXP_BG]->bitmap,
                 skin_sprites[SKIN_SPRITE_SKILL_EXP_BG]->bitmap->format,skin_sprites[SKIN_SPRITE_SKILL_EXP_BG]->bitmap->flags);
 
     if (widget_data[WIDGET_SKILL_EXP_ID].redraw)
     {
         widget_data[WIDGET_SKILL_EXP_ID].redraw=0;
 
-        bltfx.surface=widget_surface[WIDGET_SKILL_EXP_ID];
+        bltfx.surface=widget_data[WIDGET_SKILL_EXP_ID].surface;
         bltfx.flags = 0;
         bltfx.alpha=0;
 
         sprite_blt(skin_sprites[SKIN_SPRITE_SKILL_EXP_BG], 0, 0, NULL, &bltfx);
 
-        strout_blt(widget_surface[WIDGET_SKILL_EXP_ID], &font_tiny, "Used", 4, -1, skin_prefs.widget_title, NULL);
-        strout_blt(widget_surface[WIDGET_SKILL_EXP_ID], &font_tiny, "Skill", 4, 7, skin_prefs.widget_title, NULL);
+        strout_blt(widget_data[WIDGET_SKILL_EXP_ID].surface, &font_tiny, "Used", 4, -1, skin_prefs.widget_title, NULL);
+        strout_blt(widget_data[WIDGET_SKILL_EXP_ID].surface, &font_tiny, "Skill", 4, 7, skin_prefs.widget_title, NULL);
 
         if (cpl.skill_name[0] != 0)
         {
@@ -950,11 +950,11 @@ void widget_show_skill_exp(int x, int y)
                         sprintf(buf, "~%s~ - level: **", cpl.skill_name);
                 break;
             }
-            strout_blt(widget_surface[WIDGET_SKILL_EXP_ID], &font_small, buf, 28, -1, skin_prefs.widget_valueEq, NULL);
+            strout_blt(widget_data[WIDGET_SKILL_EXP_ID].surface, &font_small, buf, 28, -1, skin_prefs.widget_valueEq, NULL);
 
             if (skill_list[cpl.skill_g].entry[cpl.skill_e].exp_level == server_level.level)
             {
-                strout_blt(widget_surface[WIDGET_SKILL_EXP_ID], &font_small,
+                strout_blt(widget_data[WIDGET_SKILL_EXP_ID].surface, &font_small,
                            "MAXIMUM LEVEL REACHED!", 28, 9,
                            skin_prefs.widget_valueHi, NULL);
             }
@@ -1023,7 +1023,7 @@ void widget_show_skill_exp(int x, int y)
                     break;
                 }
 
-                strout_blt(widget_surface[WIDGET_SKILL_EXP_ID], &font_small,
+                strout_blt(widget_data[WIDGET_SKILL_EXP_ID].surface, &font_small,
                            buf, 28, 9, skin_prefs.widget_valueEq, NULL);
             }
             /* END robed's exp-display-Patch */
@@ -1033,7 +1033,7 @@ void widget_show_skill_exp(int x, int y)
                    ? NDI_COLR_LIME
                    : percentage_colr(100 - (cpl.action_timer * 100.0 /
                                             cpl.action_time_max));
-            strout_blt(widget_surface[WIDGET_SKILL_EXP_ID], &font_small, buf,
+            strout_blt(widget_data[WIDGET_SKILL_EXP_ID].surface, &font_small, buf,
                        160, -1, colr, NULL);
         }
         sprite_blt(skin_sprites[SKIN_SPRITE_EXP_SKILL_BORDER], 143, 11, NULL, &bltfx);
@@ -1059,7 +1059,7 @@ void widget_show_skill_exp(int x, int y)
     }
     box.x=x;
     box.y=y;
-    SDL_BlitSurface(widget_surface[WIDGET_SKILL_EXP_ID], NULL, ScreenSurface, &box);
+    SDL_BlitSurface(widget_data[WIDGET_SKILL_EXP_ID].surface, NULL, ScreenSurface, &box);
 }
 
 void widget_skill_exp_event(int x, int y, uint8 e)
@@ -1112,35 +1112,35 @@ void widget_show_regeneration(int x, int y)
     SDL_Rect    box;
     _BLTFX      bltfx;
 
-    if (!widget_surface[WIDGET_REGEN_ID])
-        widget_surface[WIDGET_REGEN_ID]=SDL_ConvertSurface(skin_sprites[SKIN_SPRITE_REGEN_BG]->bitmap,
+    if (!widget_data[WIDGET_REGEN_ID].surface)
+        widget_data[WIDGET_REGEN_ID].surface=SDL_ConvertSurface(skin_sprites[SKIN_SPRITE_REGEN_BG]->bitmap,
                 skin_sprites[SKIN_SPRITE_REGEN_BG]->bitmap->format,skin_sprites[SKIN_SPRITE_REGEN_BG]->bitmap->flags);
 
     if (widget_data[WIDGET_REGEN_ID].redraw)
     {
         widget_data[WIDGET_REGEN_ID].redraw=0;
 
-        bltfx.surface=widget_surface[WIDGET_REGEN_ID];
+        bltfx.surface=widget_data[WIDGET_REGEN_ID].surface;
         bltfx.flags = 0;
         bltfx.alpha=0;
 
         sprite_blt(skin_sprites[SKIN_SPRITE_REGEN_BG], 0, 0, NULL, &bltfx);
 
-        strout_blt(widget_surface[WIDGET_REGEN_ID], &font_tiny, "Regeneration", 4, 1, skin_prefs.widget_title, NULL);
-        strout_blt(widget_surface[WIDGET_REGEN_ID], &font_small, "HP", 61, 13, skin_prefs.widget_key, NULL);
+        strout_blt(widget_data[WIDGET_REGEN_ID].surface, &font_tiny, "Regeneration", 4, 1, skin_prefs.widget_title, NULL);
+        strout_blt(widget_data[WIDGET_REGEN_ID].surface, &font_small, "HP", 61, 13, skin_prefs.widget_key, NULL);
         sprintf(buf, "%2.1f", cpl.gen_hp);
-        strout_blt(widget_surface[WIDGET_REGEN_ID], &font_small, buf, 75, 13, skin_prefs.widget_valueEq, NULL);
+        strout_blt(widget_data[WIDGET_REGEN_ID].surface, &font_small, buf, 75, 13, skin_prefs.widget_valueEq, NULL);
 
-        strout_blt(widget_surface[WIDGET_REGEN_ID], &font_small, "Mana", 5, 13, skin_prefs.widget_key, NULL);
-        strout_blt(widget_surface[WIDGET_REGEN_ID], &font_small, "Grace", 5, 24, skin_prefs.widget_key, NULL);
+        strout_blt(widget_data[WIDGET_REGEN_ID].surface, &font_small, "Mana", 5, 13, skin_prefs.widget_key, NULL);
+        strout_blt(widget_data[WIDGET_REGEN_ID].surface, &font_small, "Grace", 5, 24, skin_prefs.widget_key, NULL);
         sprintf(buf, "%2.1f", cpl.gen_sp);
-        strout_blt(widget_surface[WIDGET_REGEN_ID], &font_small, buf, 35, 13, skin_prefs.widget_valueEq, NULL);
+        strout_blt(widget_data[WIDGET_REGEN_ID].surface, &font_small, buf, 35, 13, skin_prefs.widget_valueEq, NULL);
         sprintf(buf, "%2.1f", cpl.gen_grace);
-        strout_blt(widget_surface[WIDGET_REGEN_ID], &font_small, buf, 35, 24, skin_prefs.widget_valueEq, NULL);
+        strout_blt(widget_data[WIDGET_REGEN_ID].surface, &font_small, buf, 35, 24, skin_prefs.widget_valueEq, NULL);
     }
     box.x=x;
     box.y=y;
-    SDL_BlitSurface(widget_surface[WIDGET_REGEN_ID], NULL, ScreenSurface, &box);
+    SDL_BlitSurface(widget_data[WIDGET_REGEN_ID].surface, NULL, ScreenSurface, &box);
 }
 
 void widget_show_statometer(int x, int y)

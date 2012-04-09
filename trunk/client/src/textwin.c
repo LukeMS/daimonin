@@ -870,7 +870,7 @@ void textwin_show_window(textwin_id_t id)
     _BLTFX              bltfx;
 
     /* if we don't have a backbuffer, create it */
-    if (!widget_surface[tw->wid])
+    if (!widget_data[tw->wid].surface)
     {
         SDL_Surface *new = SDL_CreateRGBSurface(SDL_SWSURFACE,
                                                 TEXTWIN_WIDTH_MAX,
@@ -879,7 +879,7 @@ void textwin_show_window(textwin_id_t id)
                                                 0x000000ff, 0);
         SDL_FillRect(new, NULL, NDI_COLR_HOTPINK);
         SDL_SetColorKey(new, SDL_SRCCOLORKEY, NDI_COLR_HOTPINK);
-        widget_surface[tw->wid] = new;
+        widget_data[tw->wid].surface = new;
     }
 
     /* lets draw the widgets in the backbuffer */
@@ -892,7 +892,7 @@ void textwin_show_window(textwin_id_t id)
          *   the scrollbar, if necessary; then
          *   the frame. */
         WIDGET_REDRAW(tw->wid) = 0;
-        SDL_FillRect(widget_surface[tw->wid], NULL, NDI_COLR_HOTPINK);
+        SDL_FillRect(widget_data[tw->wid].surface, NULL, NDI_COLR_HOTPINK);
 //widget_data[tw->wid].ht = (widget_data[tw->wid].ht / tw->font->line_height + 1) * tw->font->line_height;
 #ifdef DEBUG_TEXTWIN
         if (tw->wid == WIDGET_MSGWIN_ID)
@@ -904,7 +904,7 @@ void textwin_show_window(textwin_id_t id)
         }
 #endif
 
-        bltfx.surface = widget_surface[tw->wid];
+        bltfx.surface = widget_data[tw->wid].surface;
         bltfx.flags = 0;
         bltfx.alpha = 0;
 
@@ -946,7 +946,7 @@ void textwin_show_window(textwin_id_t id)
 //LOG(LOG_MSG,">>>>>>>>>%d,%d %d,%d %d,%d %d,%d\n",box.x,widget_data[tw->wid].x1,box.y,widget_data[tw->wid].y1,box.w,widget_data[tw->wid].wd,box.h,widget_data[tw->wid].ht);
     SDL_SetClipRect(ScreenSurface, &box);
     SDL_BlitSurface(tw->bg, NULL, ScreenSurface, &box);
-    SDL_BlitSurface(widget_surface[tw->wid], NULL, ScreenSurface, &box);
+    SDL_BlitSurface(widget_data[tw->wid].surface, NULL, ScreenSurface, &box);
     SDL_SetClipRect(ScreenSurface, NULL);
 
     if (tw->mode == TEXTWIN_MODE_SCROLL)
