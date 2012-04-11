@@ -3070,9 +3070,6 @@ treasureone food_misc
     magic 0
     chance 10
     quality_range 7
-  more
-  list easter
-    chance 47
 end
 #
 treasureone food_vegetable
