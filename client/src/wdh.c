@@ -2037,12 +2037,16 @@ void wdh_event_pinfo(widget_id_t id, SDL_Event *e)
     sint16 mx = e->motion.x - widget_data[id].x1,
            my = e->motion.y - widget_data[id].y1;
 
-    if (mx >= 184 &&
-        mx <= 210 &&
-        my >= 5 &&
-        my <= 35)
+    if (e->type == SDL_MOUSEBUTTONDOWN &&
+        e->button.button == SDL_BUTTON_LEFT)
     {
-        client_cmd_generic("/rest");
+        if (mx >= 184 &&
+            mx <= 210 &&
+            my >= 5 &&
+            my <= 35)
+        {
+            client_cmd_generic("/rest");
+        }
     }
 }
 
@@ -2051,28 +2055,32 @@ void wdh_event_menu_b(widget_id_t id, SDL_Event *e)
     sint16 mx = e->motion.x - widget_data[id].x1,
            my = e->motion.y - widget_data[id].y1;
 
-    if (mx >= 3 &&
-        mx <= 44)
+    if (e->type == SDL_MOUSEBUTTONDOWN &&
+        e->button.button == SDL_BUTTON_LEFT)
     {
-        if (my >= 1 &&
-            my <= 24) /* spell list */
+        if (mx >= 3 &&
+            mx <= 44)
         {
-            check_menu_macros("?M_SPELL_LIST");
-        }
-        else if (my >= 26 &&
-                 my <= 49) /* skill list */
-        {
-            check_menu_macros("?M_SKILL_LIST");
-        }
-        else if (my >= 51 &&
-                 my <= 74) /* quest list */
-        {
-            client_cmd_generic("/qlist");
-        }
-        else if (my >= 76 &&
-                 my <= 99) /* online help */
-        {
-            process_macro_keys(KEYFUNC_HELP, 0);
+            if (my >= 1 &&
+                my <= 24) /* spell list */
+            {
+                check_menu_macros("?M_SPELL_LIST");
+            }
+            else if (my >= 26 &&
+                     my <= 49) /* skill list */
+            {
+                check_menu_macros("?M_SKILL_LIST");
+            }
+            else if (my >= 51 &&
+                     my <= 74) /* quest list */
+            {
+                client_cmd_generic("/qlist");
+            }
+            else if (my >= 76 &&
+                     my <= 99) /* online help */
+            {
+                process_macro_keys(KEYFUNC_HELP, 0);
+            }
         }
     }
 }
@@ -2510,25 +2518,29 @@ void wdh_event_target(widget_id_t id, SDL_Event *e)
     sint16 mx = e->motion.x - widget_data[id].x1,
            my = e->motion.y - widget_data[id].y1;
 
-    /* combat modus */
-    if (mx >= 4 &&
-        mx <= 37 &&
-        my >= 4 &&
-        my <= 37)
+    if (e->type == SDL_MOUSEBUTTONDOWN &&
+        e->button.button == SDL_BUTTON_LEFT)
     {
-        check_keys(SDLK_c);
-    }
-    /* talk button */
-    else if (mx >= 224 &&
-             mx <= 258 &&
-             my >= 8 &&
-             my <= 24)
-    {
-        if (cpl.target_code)
+        /* combat modus */
+        if (mx >= 4 &&
+            mx <= 37 &&
+            my >= 4 &&
+            my <= 37)
         {
-            char buf[6] = "hello";
+            check_keys(SDLK_c);
+        }
+        /* talk button */
+        else if (mx >= 224 &&
+                 mx <= 258 &&
+                 my >= 8 &&
+                 my <= 24)
+        {
+            if (cpl.target_code)
+            {
+                char buf[6] = "hello";
 
-            client_cmd_guitalk(GUI_NPC_MODE_NPC, buf);
+                client_cmd_guitalk(GUI_NPC_MODE_NPC, buf);
+            }
         }
     }
 }
@@ -2538,18 +2550,22 @@ void wdh_event_number(widget_id_t id, SDL_Event *e)
     sint16 mx = e->motion.x - widget_data[id].x1,
            my = e->motion.y - widget_data[id].y1;
 
-    /* close number input */
-    if (InputStringFlag &&
-        cpl.input_mode == INPUT_MODE_NUMBER)
+    if (e->type == SDL_MOUSEBUTTONDOWN &&
+        e->button.button == SDL_BUTTON_LEFT)
     {
-        if (mx >= 240 &&
-            mx <= 248 &&
-            my >= 6 &&
-            my <= 16)
+        /* close number input */
+        if (InputStringFlag &&
+            cpl.input_mode == INPUT_MODE_NUMBER)
         {
-            SDL_EnableKeyRepeat(0, SDL_DEFAULT_REPEAT_INTERVAL);
-            InputStringFlag = 0;
-            InputStringEndFlag = 1;
+            if (mx >= 240 &&
+                mx <= 248 &&
+                my >= 6 &&
+                my <= 16)
+            {
+                SDL_EnableKeyRepeat(0, SDL_DEFAULT_REPEAT_INTERVAL);
+                InputStringFlag = 0;
+                InputStringEndFlag = 1;
+            }
         }
     }
 }
