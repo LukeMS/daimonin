@@ -1532,7 +1532,7 @@ void wdh_process_below_inv(widget_id_t id)
     sint16 x = widget_data[id].x1,
            y = widget_data[id].y1;
 
-    sprite_blt(skin_sprites[SKIN_SPRITE_BELOW], x, y, NULL, NULL);
+    SDL_FillRect(widget_data[id].surface, NULL, NDI_COLR_HOTPINK);
     blt_window_slider(skin_sprites[SKIN_SPRITE_BELOW_SCROLL],
                       ((cpl.win_below_count - 1) / INVITEMBELOWXLEN) + 1, INVITEMBELOWYLEN,
                       cpl.win_below_start / INVITEMBELOWXLEN, -1, x + 263, y + 30);

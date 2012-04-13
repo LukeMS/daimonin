@@ -116,7 +116,7 @@ static const widget_data_t DefaultData[WIDGET_NROF] =
         NULL, NULL, 1
     },
     {
-        "BELOW", 1, 1, 262, 545, 274, 55, -1,
+        "BELOW", 1, 1, 262, 545, 274, 55, SKIN_SPRITE_BELOW,
         wdh_process_below_inv, wdh_event_below_inv,
         NULL, NULL, 1
     },
