@@ -53,34 +53,34 @@
 
 /* The embedded character codes are used to markup text, mainly in the textwindows
  * and GUIs. */
-/* 0-31 are internal. Some are genuine remaps, some are simply meaningful names
- * for a number, and some are both. */
-#define ECC_INTERNAL_CHAROFFSET  0
-#define ECC_INTERNAL_LINEHEIGHT  1
-#define ECC_INTERNAL_NEWCOLR     2
-#define ECC_INTERNAL_DEFCOLR     3
-#define ECC_INTERNAL_TAB         9
-#define ECC_INTERNAL_NEWLINE     10
-#define ECC_INTERNAL_ARROWUP     28
-#define ECC_INTERNAL_ARROWDOWN   29
-#define ECC_INTERNAL_ARROWLEFT   30
-#define ECC_INTERNAL_ARROWRIGHT  31
-/* 128-159 are smileys. */
-#define ECC_SMILEY_SMILE         128
-#define ECC_SMILEY_FROWN         129
-#define ECC_SMILEY_GRIN          130
-#define ECC_SMILEY_POKERFACE     131
-#define ECC_SMILEY_OOH           132
-#define ECC_SMILEY_RASPBERRY     133
-#define ECC_SMILEY_WINK          134
-#define ECC_SMILEY_COOL          135
-/* No idea what 136 is meant to be and it's unused anyway. */
-#define ECC_SMILEY_WINKRASPBERRY 137
-#define ECC_SMILEY_CRY           138
-#define ECC_SMILEY_PERPLEXITY    139
-#define ECC_SMILEY_SUCKALEMON    140
-#define ECC_SMILEY_NAUGHTY       141
-#define ECC_SMILEY_WICKED        142
+/* 0x00-0x1f are internal. Some are genuine remaps, some are simply meaningful
+ * names for a number, and some are both. */
+#define ECC_CHAROFFSET    0x00
+#define ECC_LINEHEIGHT    0x01
+#define ECC_NEWCOLR       0x02
+#define ECC_DEFCOLR       0x03
+#define ECC_TAB           0x09
+#define ECC_NEWLINE       0x0a
+#define ECC_ARROWUP       0x1c
+#define ECC_ARROWDOWN     0x1d
+#define ECC_ARROWLEFT     0x1e
+#define ECC_ARROWRIGHT    0x1f
+/* 0x80-0x95 are smileys. */
+#define ECC_SMILE         0x80
+#define ECC_FROWN         0x81
+#define ECC_GRIN          0x82
+#define ECC_POKERFACE     0x83
+#define ECC_OOH           0x84
+#define ECC_RASPBERRY     0x85
+#define ECC_WINK          0x86
+#define ECC_COOL          0x87
+/* No idea what 0x88 is meant to be and it's unused anyway. */
+#define ECC_WINKRASPBERRY 0x89
+#define ECC_CRY           0x8a
+#define ECC_PERPLEXITY    0x8b
+#define ECC_SUCKALEMON    0x8c
+#define ECC_NAUGHTY       0x8d
+#define ECC_WICKED        0x8e
 /* The rest are 'normal'. These are easily typeable, but seldom used,
  * characters so players/scripters can use them.
  *

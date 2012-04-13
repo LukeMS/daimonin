@@ -40,7 +40,7 @@ sint16 strout_width(_font *font, char *text)
     {
         switch (*text)
         {
-            case ECC_INTERNAL_NEWCOLR:
+            case ECC_NEWCOLR:
                 if (*(text + 1) == '0' &&
                     (*(text + 2) == 'x' ||
                      *(text + 2) == 'X'))
@@ -50,11 +50,11 @@ sint16 strout_width(_font *font, char *text)
 
                 text += 6;
 
-            case ECC_INTERNAL_DEFCOLR:
+            case ECC_DEFCOLR:
 
                 break;
 
-            case ECC_INTERNAL_NEWLINE:
+            case ECC_NEWLINE:
                 if (w > maxw)
                 {
                     maxw = w;
@@ -98,7 +98,7 @@ uint8 strout_width_offset(_font *font, char *text, sint16 *line, sint16 len)
     {
         switch (*text)
         {
-            case ECC_INTERNAL_NEWCOLR:
+            case ECC_NEWCOLR:
                 if (*(text + 1) == '0' &&
                     (*(text + 2) == 'x' ||
                      *(text + 2) == 'X'))
@@ -108,11 +108,11 @@ uint8 strout_width_offset(_font *font, char *text, sint16 *line, sint16 len)
 
                 text += 6;
 
-            case ECC_INTERNAL_DEFCOLR:
+            case ECC_DEFCOLR:
 
                 break;
 
-            case ECC_INTERNAL_NEWLINE:
+            case ECC_NEWLINE:
                 w = 0;
 
                 break;
@@ -217,7 +217,7 @@ void strout_blt(SDL_Surface *surface, _font *font,
         sint16 cw;
 
         /* A newline does just that. */
-        if (*c == ECC_INTERNAL_NEWLINE)
+        if (*c == ECC_NEWLINE)
         {
             cx = nx;
             cy += font->line_height;
@@ -226,7 +226,7 @@ void strout_blt(SDL_Surface *surface, _font *font,
         }
         /* Change colour midstring -- ECC must be followed by a hex number in
          * rrggbb format, with or without leading 0x/0X. */
-        else if (*c == ECC_INTERNAL_NEWCOLR)
+        else if (*c == ECC_NEWCOLR)
         {
             char buf[7];
 
@@ -250,14 +250,14 @@ void strout_blt(SDL_Surface *surface, _font *font,
             continue;
         }
         /* Reset colour to default midstring. */
-        else if (*c == ECC_INTERNAL_DEFCOLR)
+        else if (*c == ECC_DEFCOLR)
         {
             colr_used = colr;
 
             continue;
         }
         /* A tab is remapped to a space. */
-        else if (*c == ECC_INTERNAL_TAB)
+        else if (*c == ECC_TAB)
         {
             *c = ' ';
         }
@@ -825,36 +825,36 @@ char *strout_tooltip_detail_item(item *ip)
     if (ip->weight > 0)
     {
         sprintf(strchr(buf, '\0'), "%c%06xWeight: %c%06x%4.3f kg\n",
-                ECC_INTERNAL_NEWCOLR, skin_prefs.widget_key,
-                ECC_INTERNAL_NEWCOLR, skin_prefs.widget_valueEq,
+                ECC_NEWCOLR, skin_prefs.widget_key,
+                ECC_NEWCOLR, skin_prefs.widget_valueEq,
                 (float)ip->weight / 1000.0);
     }
 
     if (ip->item_qua == 255)
     {
         sprintf(strchr(buf, '\0'), "%c%06x(not identified)",
-                ECC_INTERNAL_NEWCOLR, skin_prefs.widget_info);
+                ECC_NEWCOLR, skin_prefs.widget_info);
     }
     else
     {
         if (ip->item_qua)
         {
             sprintf(strchr(buf, '\0'), "%c%06xCondition: %c%06x%u\n%c%06xQuality: %c%06x%u\n",
-                    ECC_INTERNAL_NEWCOLR, skin_prefs.widget_key,
-                    ECC_INTERNAL_NEWCOLR,
+                    ECC_NEWCOLR, skin_prefs.widget_key,
+                    ECC_NEWCOLR,
                     percentage_colr((float)ip->item_con / (float)ip->item_qua * 100),
-                    ip->item_con, ECC_INTERNAL_NEWCOLR, skin_prefs.widget_key,
-                    ECC_INTERNAL_NEWCOLR, skin_prefs.widget_valueHi,
+                    ip->item_con, ECC_NEWCOLR, skin_prefs.widget_key,
+                    ECC_NEWCOLR, skin_prefs.widget_valueHi,
                     ip->item_qua);
         }
 
         sprintf(strchr(buf, '\0'), "%c%06xAllowed: ",
-                ECC_INTERNAL_NEWCOLR, skin_prefs.widget_key);
+                ECC_NEWCOLR, skin_prefs.widget_key);
 
         if (!ip->item_level)
         {
             sprintf(strchr(buf, '\0'), "%c%06xAll",
-                    ECC_INTERNAL_NEWCOLR, skin_prefs.widget_valueHi);
+                    ECC_NEWCOLR, skin_prefs.widget_valueHi);
 
         }
         else
@@ -867,7 +867,7 @@ char *strout_tooltip_detail_item(item *ip)
                           : skin_prefs.widget_valueLo;
 
             sprintf(strchr(buf, '\0'), "%c%06x%u",
-                    ECC_INTERNAL_NEWCOLR, colr, ip->item_level);
+                    ECC_NEWCOLR, colr, ip->item_level);
 
             if (ip->item_skill)
             {
@@ -890,11 +890,11 @@ char *strout_tooltip_detail_spell(char *name, uint8 class, uint8 group)
 
     sprintf(buf, "~%c%s~\n", toupper(*name), name + 1);
     sprintf(strchr(buf, '\0'), "%c%06xClass: %c%06x%s\n",
-            ECC_INTERNAL_NEWCOLR, skin_prefs.widget_key,
-            ECC_INTERNAL_NEWCOLR, colr, (!class) ? "Spell" : "Prayer");
+            ECC_NEWCOLR, skin_prefs.widget_key,
+            ECC_NEWCOLR, colr, (!class) ? "Spell" : "Prayer");
     sprintf(strchr(buf, '\0'), "%c%06xGroup: %c%06x%s",
-            ECC_INTERNAL_NEWCOLR, skin_prefs.widget_key,
-            ECC_INTERNAL_NEWCOLR, colr, player_spell_group[group].name);
+            ECC_NEWCOLR, skin_prefs.widget_key,
+            ECC_NEWCOLR, colr, player_spell_group[group].name);
 
     return buf;
 }
@@ -923,7 +923,7 @@ void strout_tooltip_prepare(char *text)
     }
 
     /* If a multiline, decapitate it. */
-    if ((body = strchr(text, ECC_INTERNAL_NEWLINE)))
+    if ((body = strchr(text, ECC_NEWLINE)))
     {
         *body++ = '\0';
     }
@@ -940,8 +940,8 @@ void strout_tooltip_prepare(char *text)
         w = MAX(w, (uint16)strout_width(&font_small, body) + 20);
         h += font_small.line_height;
 
-        for (cp = strchr(body, ECC_INTERNAL_NEWLINE); cp && *++cp;
-             cp = strchr(cp, ECC_INTERNAL_NEWLINE))
+        for (cp = strchr(body, ECC_NEWLINE); cp && *++cp;
+             cp = strchr(cp, ECC_NEWLINE))
         {
             h += font_small.line_height;
         }
@@ -956,7 +956,7 @@ void strout_tooltip_prepare(char *text)
     {
         strout_blt(surface, &font_small, STROUT_LEFT, body, 10, font_medium.line_height + 10,
                    NDI_COLR_WHITE, NULL);
-        *(body - 1) = ECC_INTERNAL_NEWLINE;
+        *(body - 1) = ECC_NEWLINE;
     }
 
     strout_tooltip.tick = LastTick;
