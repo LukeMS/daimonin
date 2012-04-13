@@ -85,8 +85,7 @@ void wdh_process_pinfo(widget_id_t id)
            y = widget_data[id].y1;
     char   buf[SMALL_BUF];
 
-    /* BG. */
-    sprite_blt(skin_sprites[SKIN_SPRITE_PLAYER_INFO], x, y, NULL, NULL);
+    SDL_FillRect(widget_data[id].surface, NULL, NDI_COLR_HOTPINK);
 
     /* [Rank] Name. */
     if (cpl.rank[0])
@@ -130,15 +129,6 @@ void wdh_process_stats(widget_id_t id)
     char     buf[SMALL_BUF];
     SDL_Rect box;
 
-    if (!widget_data[id].surface)
-    {
-        SDL_Surface *surface = skin_sprites[SKIN_SPRITE_STATS_BG]->bitmap;
-
-        widget_data[id].surface = SDL_ConvertSurface(surface,
-                                                                  surface->format,
-                                                                  surface->flags);
-    }
-
     if (WIDGET_REDRAW(id))
     {
         SDL_Surface *surface = widget_data[id].surface;
@@ -150,9 +140,7 @@ void wdh_process_stats(widget_id_t id)
         bltfx.flags = 0;
         bltfx.dark_level = 0;
         bltfx.alpha = 0;
-
-        /* BG. */
-        sprite_blt(skin_sprites[SKIN_SPRITE_STATS_BG], 0, 0, NULL, &bltfx);
+        SDL_FillRect(surface, NULL, NDI_COLR_HOTPINK);
 
         /* Primary stats */
         strout_blt(surface, &font_tiny, STROUT_LEFT, "Stats", 8, 1,
@@ -423,15 +411,6 @@ void wdh_process_skill_lvl(widget_id_t id)
     _BLTFX bltfx;
     SDL_Rect box;
 
-    if (!widget_data[id].surface)
-    {
-        SDL_Surface *surface = skin_sprites[SKIN_SPRITE_SKILL_LVL_BG]->bitmap;
-
-        widget_data[id].surface = SDL_ConvertSurface(surface,
-                                                                      surface->format,
-                                                                      surface->flags);
-    }
-
     if (WIDGET_REDRAW(id))
     {
         SDL_Surface *surface = widget_data[id].surface;
@@ -440,10 +419,7 @@ void wdh_process_skill_lvl(widget_id_t id)
         bltfx.surface = surface;
         bltfx.flags = 0;
         bltfx.alpha = 0;
-
-        /* BG. */
-        sprite_blt(skin_sprites[SKIN_SPRITE_SKILL_LVL_BG], 0, 0, NULL, &bltfx);
-
+        SDL_FillRect(surface, NULL, NDI_COLR_HOTPINK);
         strout_blt(surface, &font_tiny, STROUT_LEFT, "Skill groups", 3, 1,
                    skin_prefs.widget_title, NULL);
         strout_blt(surface, &font_small, STROUT_LEFT, "Ag:", 6, 26,
@@ -529,15 +505,6 @@ void wdh_process_skill_exp(widget_id_t id)
         action_tick = LastTick;
     }
 
-    if (!widget_data[id].surface)
-    {
-        SDL_Surface *surface = skin_sprites[SKIN_SPRITE_SKILL_EXP_BG]->bitmap;
-
-        widget_data[id].surface = SDL_ConvertSurface(surface,
-                                                                      surface->format,
-                                                                      surface->flags);
-    }
-
     if (WIDGET_REDRAW(id))
     {
         SDL_Surface *surface = widget_data[id].surface;
@@ -546,10 +513,7 @@ void wdh_process_skill_exp(widget_id_t id)
         bltfx.surface = surface;
         bltfx.flags = 0;
         bltfx.alpha = 0;
-
-        /* BG. */
-        sprite_blt(skin_sprites[SKIN_SPRITE_SKILL_EXP_BG], 0, 0, NULL, &bltfx);
-
+        SDL_FillRect(surface, NULL, NDI_COLR_HOTPINK);
         strout_blt(surface, &font_tiny, STROUT_LEFT, "Used", 4, -1,
                    skin_prefs.widget_title, NULL);
         strout_blt(surface, &font_tiny, STROUT_LEFT, "Skill", 4, 7,
@@ -727,15 +691,6 @@ void wdh_process_main_lvl(widget_id_t id)
     SDL_Rect box;
     _BLTFX   bltfx;
 
-    if (!widget_data[id].surface)
-    {
-        SDL_Surface *surface = skin_sprites[SKIN_SPRITE_MAIN_LVL_BG]->bitmap;
-
-        widget_data[id].surface = SDL_ConvertSurface(surface,
-                                                                     surface->format,
-                                                                     surface->flags);
-    }
-
     if (WIDGET_REDRAW(id))
     {
         SDL_Surface *surface = widget_data[id].surface;
@@ -746,9 +701,7 @@ void wdh_process_main_lvl(widget_id_t id)
         bltfx.surface = surface;
         bltfx.flags = 0;
         bltfx.alpha = 0;
-
-        /* BG. */
-        sprite_blt(skin_sprites[SKIN_SPRITE_MAIN_LVL_BG], 0, 0, NULL, &bltfx);
+        SDL_FillRect(surface, NULL, NDI_COLR_HOTPINK);
         strout_blt(surface, &font_tiny, STROUT_LEFT, "Level / Exp", 4, 1,
                    skin_prefs.widget_key, NULL);
 
@@ -827,15 +780,6 @@ void wdh_process_regen(widget_id_t id)
     SDL_Rect    box;
     _BLTFX      bltfx;
 
-    if (!widget_data[id].surface)
-    {
-        SDL_Surface *surface = skin_sprites[SKIN_SPRITE_REGEN_BG]->bitmap;
-
-        widget_data[id].surface = SDL_ConvertSurface(surface,
-                                                                  surface->format,
-                                                                  surface->flags);
-    }
-
     if (WIDGET_REDRAW(id))
     {
         SDL_Surface *surface = widget_data[id].surface;
@@ -844,10 +788,7 @@ void wdh_process_regen(widget_id_t id)
         bltfx.surface = surface;
         bltfx.flags = 0;
         bltfx.alpha = 0;
-
-        /* BG. */
-        sprite_blt(skin_sprites[SKIN_SPRITE_REGEN_BG], 0, 0, NULL, &bltfx);
-
+        SDL_FillRect(surface, NULL, NDI_COLR_HOTPINK);
         strout_blt(surface, &font_tiny, STROUT_LEFT, "Regeneration", 4, 1,
                    skin_prefs.widget_title, NULL);
         strout_blt(surface, &font_small, STROUT_LEFT, "HP", 61, 13,
@@ -881,7 +822,7 @@ void wdh_process_pdoll(widget_id_t id)
     item   *ip;
     uint8   ring_flag = 0;
 
-    sprite_blt(skin_sprites[SKIN_SPRITE_DOLL_BG], x, y, NULL, NULL);
+    SDL_FillRect(widget_data[id].surface, NULL, NDI_COLR_HOTPINK);
 
     if (!cpl.ob)
     {
@@ -1031,7 +972,7 @@ void wdh_process_target(widget_id_t id)
               hp_tmp = cpl.target_hp;
     char     *cp = NULL;
 
-    sprite_blt(skin_sprites[SKIN_SPRITE_TARGET_BG], x, y, NULL, NULL);
+    SDL_FillRect(widget_data[id].surface, NULL, NDI_COLR_HOTPINK);
 
     if (cpl.target_mode)
     {
@@ -1412,15 +1353,6 @@ void wdh_process_resist(widget_id_t id)
     _BLTFX bltfx;
     SDL_Rect box;
 
-    if (!widget_data[id].surface)
-    {
-        SDL_Surface *surface = skin_sprites[SKIN_SPRITE_RESIST_BG]->bitmap;
-
-        widget_data[id].surface = SDL_ConvertSurface(surface,
-                                                                   surface->format,
-                                                                   surface->flags);
-    }
-
     if (WIDGET_REDRAW(id))
     {
         SDL_Surface *surface = widget_data[id].surface;
@@ -1435,7 +1367,7 @@ void wdh_process_resist(widget_id_t id)
         bltfx.surface = surface;
         bltfx.flags = 0;
         bltfx.alpha = 0;
-        sprite_blt(skin_sprites[SKIN_SPRITE_RESIST_BG], 0, 0, NULL, &bltfx);
+        SDL_FillRect(surface, NULL, NDI_COLR_HOTPINK);
         strout_blt(surface, &font_tiny, STROUT_LEFT, "Resistance Table", 4,  1,
                    skin_prefs.widget_title, NULL);
 
@@ -1561,7 +1493,7 @@ void wdh_process_main_inv(widget_id_t id)
         }
 
         widget_data[id].ht = 32;
-        sprite_blt(skin_sprites[SKIN_SPRITE_INV_BG], x, y, NULL, NULL);
+        SDL_FillRect(widget_data[id].surface, NULL, NDI_COLR_HOTPINK);
         sprintf(buf, "Carry %c%06x%4.3f%c kg",
                 ECC_NEWCOLR, percentage_colr(100 - (weight / limit * 100)),
                 weight / 1000.0, ECC_DEFCOLR);
@@ -1873,7 +1805,7 @@ void wdh_process_group(widget_id_t id)
     }
 
     widget_data[id].ht = box.h + 4;
-    sprite_blt(skin_sprites[SKIN_SPRITE_GROUP_BG], x, y, &box, NULL);
+    SDL_FillRect(widget_data[id].surface, NULL, NDI_COLR_HOTPINK);
     sprite_blt(skin_sprites[SKIN_SPRITE_GROUP_BG_BOTTOM], x, y + box.h,
                NULL, NULL);
 

@@ -55,27 +55,111 @@ widget_event_t widget_mouse_event = { 0, 0, 0, 0, 0, 0 };
 /* Default (default) data-list of all widgets */
 static const widget_data_t DefaultData[WIDGET_NROF] =
 {
-    { "STATS",   1, 1, 227, 0,   172, 102, wdh_process_stats,      NULL,                 NULL, NULL, 1 },
-    { "RESIST",  1, 1, 497, 0,   198, 79,  wdh_process_resist,     NULL,                 NULL, NULL, 1 },
-    { "MALVL",   1, 1, 399, 39,  98,  62,  wdh_process_main_lvl,   NULL,                 NULL, NULL, 1 },
-    { "SKEXP",   1, 1, 497, 79,  198, 22,  wdh_process_skill_exp,  wdh_event_skill_exp,  NULL, NULL, 1 },
-    { "REGEN",   1, 1, 399, 0,   98,  39,  wdh_process_regen,      NULL,                 NULL, NULL, 1 },
-    { "SKLVL",   1, 1, 695, 0,   52,  101, wdh_process_skill_lvl,  NULL,                 NULL, NULL, 1 },
-    { "MENUB",   1, 1, 747, 0,   47,  101, wdh_process_menu_b,     wdh_event_menu_b,     NULL, NULL, 1 },
-    { "QSLOTS",  1, 1, 513, 107, 282, 34,  wdh_process_quickslots, wdh_event_quickslots, NULL, NULL, 1 },
-    { "CHATWIN", 1, 1, 0,   366, 261, 233, wdh_process_chatwin,    wdh_event_chatwin,    NULL, NULL, 1 },
-    { "MSGWIN",  1, 1, 537, 366, 261, 233, wdh_process_msgwin,     wdh_event_msgwin,     NULL, NULL, 1 },
-    { "GROUP",   1, 1, 658, 187, 120, 31,  wdh_process_group,      NULL,                 NULL, NULL, 1 },
-    { "PDOLL",   1, 1, 0,   41,  221, 224, wdh_process_pdoll,      wdh_event_pdoll,      NULL, NULL, 1 },
-    { "BELOW",   1, 1, 262, 545, 274, 55,  wdh_process_below_inv,  wdh_event_below_inv,  NULL, NULL, 1 },
-    { "PINFO",   1, 1, 0,   0,   219, 41,  wdh_process_pinfo,      wdh_event_pinfo,      NULL, NULL, 1 },
-    { "RANGE",   1, 1, 6,   100, 94,  60,  wdh_process_range,      wdh_event_range,      NULL, NULL, 1 },
-    { "TARGET",  1, 1, 267, 514, 264, 31,  wdh_process_target,     wdh_event_target,     NULL, NULL, 1 },
-    { "INV",     1, 1, 539, 147, 239, 32,  wdh_process_main_inv,   wdh_event_main_inv,   NULL, NULL, 1 },
-    { "MAPNAME", 1, 1, 228, 106, 36,  12,  wdh_process_mapname,    NULL,                 NULL, NULL, 1 },
-    { "CONSOLE", 1, 0, 271, 517, 256, 25,  wdh_process_console,    NULL,                 NULL, NULL, 1 },
-    { "NUMBER",  1, 0, 271, 465, 256, 43,  wdh_process_number,     wdh_event_number,     NULL, NULL, 1 },
-    { "SMETER",  1, 1, 8,   50,  160, 40,  wdh_process_statometer, NULL,                 NULL, NULL, 1 },
+    {
+        "STATS", 1, 1, 227, 0, 172, 102, SKIN_SPRITE_STATS_BG,
+        wdh_process_stats, NULL,
+        NULL, NULL, 1
+    },
+    {
+        "RESIST", 1, 1, 497, 0, 198, 79, SKIN_SPRITE_RESIST_BG,
+        wdh_process_resist, NULL,
+        NULL, NULL, 1
+    },
+    {
+        "MALVL", 1, 1, 399, 39, 98, 62, SKIN_SPRITE_MAIN_LVL_BG,
+        wdh_process_main_lvl, NULL,
+        NULL, NULL, 1
+    },
+    {
+        "SKEXP", 1, 1, 497, 79, 198, 22, SKIN_SPRITE_SKILL_EXP_BG,
+        wdh_process_skill_exp, wdh_event_skill_exp,
+        NULL, NULL, 1
+    },
+    {
+        "REGEN", 1, 1, 399, 0, 98, 39, SKIN_SPRITE_REGEN_BG,
+        wdh_process_regen, NULL,
+        NULL, NULL, 1
+    },
+    {
+        "SKLVL", 1, 1, 695, 0, 52, 101, SKIN_SPRITE_SKILL_LVL_BG,
+        wdh_process_skill_lvl, NULL,
+        NULL, NULL, 1
+    },
+    {
+        "MENUB", 1, 1, 747, 0, 47, 101, -1,
+        wdh_process_menu_b, wdh_event_menu_b,
+        NULL, NULL, 1
+    },
+    {
+        "QSLOTS", 1, 1, 513, 107, 282, 34, -1,
+        wdh_process_quickslots, wdh_event_quickslots,
+        NULL, NULL, 1
+    },
+    {
+        "CHATWIN", 1, 1, 0, 366, 261, 233, -1,
+        wdh_process_chatwin, wdh_event_chatwin,
+        NULL, NULL, 1
+    },
+    {
+        "MSGWIN", 1, 1, 537, 366, 261, 233, -1,
+        wdh_process_msgwin, wdh_event_msgwin,
+        NULL, NULL, 1
+    },
+    {
+        "GROUP", 1, 1, 658, 187, 120, 31, SKIN_SPRITE_GROUP_BG,
+        wdh_process_group, NULL,
+        NULL, NULL, 1
+    },
+    {
+        "PDOLL", 1, 1, 0, 41, 221, 224, SKIN_SPRITE_DOLL_BG,
+        wdh_process_pdoll, wdh_event_pdoll,
+        NULL, NULL, 1
+    },
+    {
+        "BELOW", 1, 1, 262, 545, 274, 55, -1,
+        wdh_process_below_inv, wdh_event_below_inv,
+        NULL, NULL, 1
+    },
+    {
+        "PINFO", 1, 1, 0, 0, 219, 41, SKIN_SPRITE_PLAYER_INFO,
+        wdh_process_pinfo, wdh_event_pinfo,
+        NULL, NULL, 1
+    },
+    {
+        "RANGE", 1, 1, 6, 100, 94, 60, -1,
+        wdh_process_range, wdh_event_range,
+        NULL, NULL, 1
+    },
+    {
+        "TARGET", 1, 1, 267, 514, 264, 31, SKIN_SPRITE_TARGET_BG,
+        wdh_process_target, wdh_event_target,
+        NULL, NULL, 1
+    },
+    {
+        "INV", 1, 1, 539, 147, 239, 32, SKIN_SPRITE_INV_BG,
+        wdh_process_main_inv, wdh_event_main_inv,
+        NULL, NULL, 1
+    },
+    {
+        "MAPNAME", 1, 1, 228, 106, 36, 12, -1,
+        wdh_process_mapname, NULL,
+        NULL, NULL, 1
+    },
+    {
+        "CONSOLE", 1, 0, 271, 517, 256, 25, -1,
+        wdh_process_console, NULL,
+        NULL, NULL, 1
+    },
+    {
+        "NUMBER", 1, 0, 271, 465, 256, 43, -1,
+        wdh_process_number, wdh_event_number,
+        NULL, NULL, 1
+    },
+    {
+        "SMETER", 1, 1, 8, 50, 160, 40, -1,
+        wdh_process_statometer, NULL,
+        NULL, NULL, 1
+    },
 };
 
 /* default overall priority list.. will change during runtime */
@@ -101,6 +185,15 @@ void widget_init(void)
     for (id = 0; id < WIDGET_NROF; id++)
     {
         widget_data[id] = DefaultData[id];
+
+        if (widget_data[id].bg >= 0)
+        {
+            sint16       i = widget_data[id].bg;
+            SDL_Surface *df = SDL_DisplayFormat(skin_sprites[i]->bitmap);
+
+            SDL_FreeSurface(skin_sprites[i]->bitmap);
+            skin_sprites[i]->bitmap = df;
+        }
     }
 
     InitPriorityList();
@@ -608,6 +701,31 @@ void widget_process(void)
 
         if (widget_data[id].show)
         {
+            if (widget_data[id].bg >= 0)
+            {
+                SDL_Rect box;
+
+                SDL_SetAlpha(skin_sprites[widget_data[id].bg]->bitmap,
+                             SDL_SRCALPHA | SDL_RLEACCEL, 
+                             MIN(255, options.textwin_alpha));
+                box.x = widget_data[id].x1; 
+                box.y = widget_data[id].y1; 
+                SDL_BlitSurface(skin_sprites[widget_data[id].bg]->bitmap, NULL,
+                                ScreenSurface, &box);
+
+                if (!widget_data[id].surface)
+                {
+                    SDL_Surface *new;
+
+                    new = SDL_CreateRGBSurface(SDL_SWSURFACE,
+                                               widget_data[id].wd, widget_data[id].ht,
+                                               32, 0x00ff0000, 0x0000ff00, 0x000000ff, 0);
+                    SDL_FillRect(new, NULL, NDI_COLR_HOTPINK);
+                    SDL_SetColorKey(new, SDL_SRCCOLORKEY, NDI_COLR_HOTPINK);
+                    widget_data[id].surface = new;
+                }
+            }
+
             widget_data[id].process(id);
         }
 

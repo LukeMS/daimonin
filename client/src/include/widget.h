@@ -76,6 +76,7 @@ typedef struct widget_data_t
     uint16         ht;       // height in pixels
 
     /* These are not saved. */
+    sint16        bg;                                 // index of skin sprite to use as bg
     void          (*process)(widget_id_t);            // redraw handler
     void          (*event)(widget_id_t, SDL_Event *); // mouse event handler
     SDL_Surface   *surface;                           // backbuffer
