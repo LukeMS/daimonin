@@ -884,13 +884,13 @@ static uint8 CheckCommand(char *cmd, char *params)
 
                         break;
 
-                    case WIDGET_MAIN_INV_ID:
-                    case WIDGET_IN_CONSOLE_ID:
-                    case WIDGET_IN_NUMBER_ID:
+                    case WIDGET_INV_ID:
+                    case WIDGET_CONSOLE_ID:
+                    case WIDGET_NUMBER_ID:
 
                         break;
 
-                    case WIDGET_STATOMETER_ID:
+                    case WIDGET_SMETER_ID:
                         if (options.statsupdate)
                         {
                             WIDGET_SHOW(id) = 1;

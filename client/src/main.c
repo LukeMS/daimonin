@@ -1660,7 +1660,7 @@ int main(int argc, char *argv[])
 
             if (options.statsupdate)
             {
-                WIDGET_SHOW(WIDGET_STATOMETER_ID) = 1;
+                WIDGET_SHOW(WIDGET_SMETER_ID) = 1;
 
                 if ((int)(LastTick - statometer.lastupdate) >
                     (options.statsupdate * 1000))
@@ -2425,13 +2425,13 @@ static void DisplayLayer4(void)
     if (GameStatus >= GAME_STATUS_WAITFORPLAY)
     {
         /* we have to make sure that this two windows get closed/hidden right */
-        WIDGET_SHOW(WIDGET_IN_CONSOLE_ID) = 0;
-        WIDGET_SHOW(WIDGET_IN_NUMBER_ID) = 0;
+        WIDGET_SHOW(WIDGET_CONSOLE_ID) = 0;
+        WIDGET_SHOW(WIDGET_NUMBER_ID) = 0;
 
         if (cpl.input_mode == INPUT_MODE_CONSOLE)
-            do_console(widget_data[WIDGET_IN_CONSOLE_ID].x1, widget_data[WIDGET_IN_CONSOLE_ID].y1);
+            do_console(widget_data[WIDGET_CONSOLE_ID].x1, widget_data[WIDGET_CONSOLE_ID].y1);
         else if (cpl.input_mode == INPUT_MODE_NUMBER)
-            do_number(widget_data[WIDGET_IN_NUMBER_ID].x1, widget_data[WIDGET_IN_NUMBER_ID].y1);
+            do_number(widget_data[WIDGET_NUMBER_ID].x1, widget_data[WIDGET_NUMBER_ID].y1);
         else if (cpl.input_mode == INPUT_MODE_GETKEY)
             do_keybind_input();
         else if (cpl.input_mode == INPUT_MODE_NPCDIALOG)
