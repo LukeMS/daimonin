@@ -24,4 +24,43 @@
 #ifndef __WDH_H
 #define __WDH_H
 
+/* Process handlers. */
+
+extern void wdh_process_pdoll(widget_id_t id);
+extern void wdh_process_pinfo(widget_id_t id);
+extern void wdh_process_stats(widget_id_t id);
+extern void wdh_process_main_lvl(widget_id_t id);
+extern void wdh_process_skill_exp(widget_id_t id);
+extern void wdh_process_regen(widget_id_t id);
+extern void wdh_process_skill_lvl(widget_id_t id);
+extern void wdh_process_menu_b(widget_id_t id);
+extern void wdh_process_statometer(widget_id_t id);
+extern void wdh_process_chatwin(widget_id_t id);
+extern void wdh_process_msgwin(widget_id_t id);
+extern void wdh_process_number(widget_id_t id);
+extern void wdh_process_console(widget_id_t id);
+extern void wdh_process_resist(widget_id_t id);
+extern void wdh_process_mapname(widget_id_t id);
+extern void wdh_process_range(widget_id_t id);
+extern void wdh_process_quickslots(widget_id_t id);
+extern void wdh_process_target(widget_id_t id);
+extern void wdh_process_main_inv(widget_id_t id);
+extern void wdh_process_below_inv(widget_id_t id);
+extern void wdh_process_group(widget_id_t id);
+
+/* Event handlers. */
+
+extern void wdh_event_pdoll(widget_id_t id, SDL_Event *e);
+extern void wdh_event_pinfo(widget_id_t id, SDL_Event *e);
+extern void wdh_event_menu_b(widget_id_t id, SDL_Event *e);
+extern void wdh_event_skill_exp(widget_id_t id, SDL_Event *e);
+extern void wdh_event_chatwin(widget_id_t id, SDL_Event *e);
+extern void wdh_event_msgwin(widget_id_t id, SDL_Event *e);
+extern void wdh_event_quickslots(widget_id_t id, SDL_Event *e);
+extern void wdh_event_main_inv(widget_id_t id, SDL_Event *e);
+extern void wdh_event_below_inv(widget_id_t id, SDL_Event *e);
+extern void wdh_event_range(widget_id_t id, SDL_Event *e);
+extern void wdh_event_target(widget_id_t id, SDL_Event *e);
+extern void wdh_event_number(widget_id_t id, SDL_Event *e);
+
 #endif /* ifndef __WDH_H */

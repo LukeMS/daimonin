@@ -782,7 +782,7 @@ static void draw_tabs(player_groupnames_t tabs[], int *act_tab, char *head_text,
 
         if (mx > x && mx <x + 100 && my> y && my < y + 17)
         {
-            EMBOSS(ScreenSurface, &font_small, tabs[i].name, x + 24, y + 3, NDI_COLR_SILVER);
+            EMBOSS(ScreenSurface, &font_small, (char *)tabs[i].name, x + 24, y + 3, NDI_COLR_SILVER);
 
             if (mb &&
                 mb_clicked)
@@ -797,7 +797,7 @@ static void draw_tabs(player_groupnames_t tabs[], int *act_tab, char *head_text,
         }
         else
         {
-            ENGRAVE(ScreenSurface, &font_small, tabs[i].name, x + 24, y + 3, NDI_COLR_WHITE);
+            ENGRAVE(ScreenSurface, &font_small, (char *)tabs[i].name, x + 24, y + 3, NDI_COLR_WHITE);
         }
 
         y += 17;

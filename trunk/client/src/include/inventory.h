@@ -30,10 +30,6 @@
 #define INVITEMXLEN 7
 #define INVITEMYLEN 3
 
-extern void     widget_show_inventory_window(int x, int y);
-extern void     widget_inventory_event(int x, int y, SDL_Event event);
-extern void     widget_show_below_window(item *op, int x, int y);
-extern void     widget_below_window_event(int x, int y, uint8 e);
 extern int      get_inventory_data(item *op, int *cflag, int *slot, int *start, int *count, int wxlen, int wylen);
 extern void     examine_range_inv(void);
 

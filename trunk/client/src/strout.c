@@ -824,7 +824,7 @@ char *strout_tooltip_detail_item(item *ip)
 
     if (ip->weight > 0)
     {
-        sprintf(strchr(buf, '\0'), "%c%06xWeight: %c%06x%4.3fkg\n",
+        sprintf(strchr(buf, '\0'), "%c%06xWeight: %c%06x%4.3f kg\n",
                 ECC_INTERNAL_NEWCOLR, skin_prefs.widget_key,
                 ECC_INTERNAL_NEWCOLR, skin_prefs.widget_valueEq,
                 (float)ip->weight / 1000.0);

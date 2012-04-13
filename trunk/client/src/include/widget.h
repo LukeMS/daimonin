@@ -67,18 +67,20 @@ widget_node_t;
 typedef struct widget_data_t
 {
     /* These are saved to FILE_WIDGET. */
-    char          *name;           // name
-    uint8          moveable;       // draggable?
-    uint8          show;           // active?
-    sint16         x1;             // x screen posiition in pixels
-    sint16         y1;             // y screen posiition in pixels
-    uint16         wd;             // width in pixels
-    uint16         ht;             // height in pixels
+    char          *name;     // name
+    uint8          moveable; // draggable?
+    uint8          show;     // active?
+    sint16         x1;       // x screen posiition in pixels
+    sint16         y1;       // y screen posiition in pixels
+    uint16         wd;       // width in pixels
+    uint16         ht;       // height in pixels
 
     /* These are not saved. */
-    SDL_Surface   *surface;        // backbuffer
-    widget_node_t *priority_index; // internal use only
-    uint8          redraw;         // redraw?
+    void          (*process)(widget_id_t);            // redraw handler
+    void          (*event)(widget_id_t, SDL_Event *); // mouse event handler
+    SDL_Surface   *surface;                           // backbuffer
+    widget_node_t *priority_index;                    // internal use only
+    uint8          redraw;                            // redraw?
 }
 widget_data_t;
 

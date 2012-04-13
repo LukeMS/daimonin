@@ -55,27 +55,27 @@ widget_event_t widget_mouse_event = { 0, 0, 0, 0, 0, 0 };
 /* Default (default) data-list of all widgets */
 static const widget_data_t DefaultData[WIDGET_NROF] =
 {
-    { "STATS",       1, 1, 227, 0,   172, 102, NULL, NULL, 1 },
-    { "RESIST",      1, 1, 497, 0,   198, 79,  NULL, NULL, 1 },
-    { "MAIN_LVL",    1, 1, 399, 39,  98,  62,  NULL, NULL, 1 },
-    { "SKILL_EXP",   1, 1, 497, 79,  198, 22,  NULL, NULL, 1 },
-    { "REGEN",       1, 1, 399, 0,   98,  39,  NULL, NULL, 1 },
-    { "SKILL_LVL",   1, 1, 695, 0,   52,  101, NULL, NULL, 1 },
-    { "MENUBUTTONS", 1, 1, 747, 0,   47,  101, NULL, NULL, 1 },
-    { "QUICKSLOTS",  1, 1, 513, 107, 282, 34,  NULL, NULL, 1 },
-    { "CHATWIN",     1, 1, 0,   366, 261, 233, NULL, NULL, 1 },
-    { "MSGWIN",      1, 1, 537, 366, 261, 233, NULL, NULL, 1 },
-    { "GROUP",       1, 1, 658, 187, 120, 31,  NULL, NULL, 1 },
-    { "PLAYERDOLL",  1, 1, 0,   41,  221, 224, NULL, NULL, 1 },
-    { "BELOWINV",    1, 1, 262, 545, 274, 55,  NULL, NULL, 1 },
-    { "PLAYERINFO",  1, 1, 0,   0,   219, 41,  NULL, NULL, 1 },
-    { "RANGEBOX",    1, 1, 6,   100, 94,  60,  NULL, NULL, 1 },
-    { "TARGET",      1, 1, 267, 514, 264, 31,  NULL, NULL, 1 },
-    { "MAININV",     1, 1, 539, 147, 239, 32,  NULL, NULL, 1 },
-    { "MAPNAME",     1, 1, 228, 106, 36,  12,  NULL, NULL, 1 },
-    { "CONSOLE",     1, 0, 271, 517, 256, 25,  NULL, NULL, 1 },
-    { "NUMBER",      1, 0, 271, 465, 256, 43,  NULL, NULL, 1 },
-    { "STATOMETER",  1, 1, 8,   50,  160, 40,  NULL, NULL, 1 },
+    { "STATS",       1, 1, 227, 0,   172, 102, wdh_process_stats,      NULL,                 NULL, NULL, 1 },
+    { "RESIST",      1, 1, 497, 0,   198, 79,  wdh_process_resist,     NULL,                 NULL, NULL, 1 },
+    { "MAIN_LVL",    1, 1, 399, 39,  98,  62,  wdh_process_main_lvl,   NULL,                 NULL, NULL, 1 },
+    { "SKILL_EXP",   1, 1, 497, 79,  198, 22,  wdh_process_skill_exp,  wdh_event_skill_exp,  NULL, NULL, 1 },
+    { "REGEN",       1, 1, 399, 0,   98,  39,  wdh_process_regen,      NULL,                 NULL, NULL, 1 },
+    { "SKILL_LVL",   1, 1, 695, 0,   52,  101, wdh_process_skill_lvl,  NULL,                 NULL, NULL, 1 },
+    { "MENUBUTTONS", 1, 1, 747, 0,   47,  101, wdh_process_menu_b,     wdh_event_menu_b,     NULL, NULL, 1 },
+    { "QUICKSLOTS",  1, 1, 513, 107, 282, 34,  wdh_process_quickslots, wdh_event_quickslots, NULL, NULL, 1 },
+    { "CHATWIN",     1, 1, 0,   366, 261, 233, wdh_process_chatwin,    wdh_event_chatwin,    NULL, NULL, 1 },
+    { "MSGWIN",      1, 1, 537, 366, 261, 233, wdh_process_msgwin,     wdh_event_msgwin,     NULL, NULL, 1 },
+    { "GROUP",       1, 1, 658, 187, 120, 31,  wdh_process_group,      NULL,                 NULL, NULL, 1 },
+    { "PLAYERDOLL",  1, 1, 0,   41,  221, 224, wdh_process_pdoll,      wdh_event_pdoll,      NULL, NULL, 1 },
+    { "BELOWINV",    1, 1, 262, 545, 274, 55,  wdh_process_below_inv,  wdh_event_below_inv,  NULL, NULL, 1 },
+    { "PLAYERINFO",  1, 1, 0,   0,   219, 41,  wdh_process_pinfo,      wdh_event_pinfo,      NULL, NULL, 1 },
+    { "RANGEBOX",    1, 1, 6,   100, 94,  60,  wdh_process_range,      wdh_event_range,      NULL, NULL, 1 },
+    { "TARGET",      1, 1, 267, 514, 264, 31,  wdh_process_target,     wdh_event_target,     NULL, NULL, 1 },
+    { "MAININV",     1, 1, 539, 147, 239, 32,  wdh_process_main_inv,   wdh_event_main_inv,   NULL, NULL, 1 },
+    { "MAPNAME",     1, 1, 228, 106, 36,  12,  wdh_process_mapname,    NULL,                 NULL, NULL, 1 },
+    { "CONSOLE",     1, 0, 271, 517, 256, 25,  wdh_process_console,    NULL,                 NULL, NULL, 1 },
+    { "NUMBER",      1, 0, 271, 465, 256, 43,  wdh_process_number,     wdh_event_number,     NULL, NULL, 1 },
+    { "STATOMETER",  1, 1, 8,   50,  160, 40,  wdh_process_statometer, NULL,                 NULL, NULL, 1 },
 };
 
 /* default overall priority list.. will change during runtime */
@@ -320,84 +320,9 @@ int widget_event_mousedn(int x, int y, SDL_Event *event)
     /* NORMAL CONDITION - RESPOND TO MOUSEDOWN EVENT */
     else
     {
-    /* Place here all the mousedown Handlers */
-        switch (id)
+        if (widget_data[id].event)
         {
-            case WIDGET_SKILL_EXP_ID:
-                /* Handle the mousedown on the exp area */
-                widget_skill_exp_event(x, y, SDL_MOUSEBUTTONDOWN);
-
-                break;
-
-            case WIDGET_MENU_B_ID:
-                /* Handle mousedown on the menu buttons... */
-                widget_menubuttons_event(x, y, SDL_MOUSEBUTTONDOWN);
-
-                break;
-
-            case WIDGET_QUICKSLOT_ID:
-                widget_quickslots_mouse_event(x, y, SDL_MOUSEBUTTONDOWN);
-
-                break;
-
-            case WIDGET_CHATWIN_ID:
-                textwin_event(SDL_MOUSEBUTTONDOWN, event, TEXTWIN_CHAT_ID);
-
-                break;
-
-            case WIDGET_MSGWIN_ID:
-                textwin_event(SDL_MOUSEBUTTONDOWN, event, TEXTWIN_MSG_ID);
-
-                break;
-
-            case WIDGET_GROUP_ID:
-//                group_event();
-
-                break;
-
-            case WIDGET_RANGE_ID:
-                widget_range_event(x,y, *event, SDL_MOUSEBUTTONDOWN);
-
-                break;
-
-            case WIDGET_BELOW_INV_ID:
-                widget_below_window_event(x,y,SDL_MOUSEBUTTONDOWN);
-
-                break;
-
-            case WIDGET_TARGET_ID:
-                widget_event_target(x, y, *event);
-
-                break;
-
-            case WIDGET_MAIN_INV_ID:
-                widget_inventory_event(x, y, *event);
-
-                break;
-
-            case WIDGET_PLAYER_INFO_ID:
-                widget_player_data_event(x, y);
-
-                break;
-
-            case WIDGET_IN_NUMBER_ID:
-                widget_number_event(x, y, *event);
-
-                break;
-
-            case WIDGET_STATS_ID:
-            case WIDGET_RESIST_ID:
-            case WIDGET_MAIN_LVL_ID:
-            case WIDGET_REGEN_ID:
-            case WIDGET_SKILL_LVL_ID:
-            case WIDGET_PDOLL_ID:
-            case WIDGET_MAPNAME_ID:
-            case WIDGET_IN_CONSOLE_ID:
-            case WIDGET_STATOMETER_ID:
-                break;
-
-            case WIDGET_NROF:
-                break;
+            widget_data[id].event(id, event);
         }
 
         return 1;
@@ -447,67 +372,9 @@ int widget_event_mouseup(int x, int y, SDL_Event *event)
         widget_mouse_event.y = y;
 
         /* handler(s) for the widgets go here */
-
-        switch (id)
+        if (widget_data[id].event)
         {
-            /* drop to quickslots */
-            case WIDGET_QUICKSLOT_ID:
-                widget_quickslots_mouse_event(x,y,SDL_MOUSEBUTTONUP);
-
-                break;
-
-            case WIDGET_CHATWIN_ID:
-                textwin_event(SDL_MOUSEBUTTONUP, event, TEXTWIN_CHAT_ID);
-
-                break;
-
-            case WIDGET_MSGWIN_ID:
-                textwin_event(SDL_MOUSEBUTTONUP, event, TEXTWIN_MSG_ID);
-
-                break;
-
-            case WIDGET_GROUP_ID:
-//                group_event();
-
-                break;
-
-            case WIDGET_PDOLL_ID:
-                widget_show_player_doll_event(x,y, SDL_MOUSEBUTTONUP);
-
-                break;
-
-            case WIDGET_RANGE_ID:
-                widget_range_event(x,y, *event, SDL_MOUSEBUTTONUP);
-
-                break;
-
-            case WIDGET_BELOW_INV_ID:
-                widget_below_window_event(x, y, SDL_MOUSEBUTTONUP);
-
-                break;
-
-            case WIDGET_MAIN_INV_ID:
-                widget_inventory_event(x, y, *event);
-
-                break;
-
-            case WIDGET_STATS_ID:
-            case WIDGET_RESIST_ID:
-            case WIDGET_MAIN_LVL_ID:
-            case WIDGET_SKILL_EXP_ID:
-            case WIDGET_REGEN_ID:
-            case WIDGET_SKILL_LVL_ID:
-            case WIDGET_MENU_B_ID:
-            case WIDGET_PLAYER_INFO_ID:
-            case WIDGET_TARGET_ID:
-            case WIDGET_MAPNAME_ID:
-            case WIDGET_IN_CONSOLE_ID:
-            case WIDGET_IN_NUMBER_ID:
-            case WIDGET_STATOMETER_ID:
-                break;
-
-            case WIDGET_NROF:
-                break;
+            widget_data[id].event(id, event);
         }
 
         return 1;
@@ -635,46 +502,9 @@ int widget_event_mousemv(int x,int y, SDL_Event *event)
         widget_mouse_event.y = y;
 
         /* handler(s) for the widgets move go here */
-
-        switch (id)
+        if (widget_data[id].event)
         {
-            case WIDGET_CHATWIN_ID:
-                textwin_event(SDL_MOUSEMOTION, event, TEXTWIN_CHAT_ID);
-
-                break;
-
-            case WIDGET_MSGWIN_ID:
-                textwin_event(SDL_MOUSEMOTION, event, TEXTWIN_MSG_ID);
-
-                break;
-
-            case WIDGET_MAIN_INV_ID:
-                widget_inventory_event(x, y, *event);
-
-                break;
-
-            case WIDGET_STATS_ID:
-            case WIDGET_RESIST_ID:
-            case WIDGET_MAIN_LVL_ID:
-            case WIDGET_SKILL_EXP_ID:
-            case WIDGET_REGEN_ID:
-            case WIDGET_SKILL_LVL_ID:
-            case WIDGET_MENU_B_ID:
-            case WIDGET_QUICKSLOT_ID:
-            case WIDGET_GROUP_ID:
-            case WIDGET_PDOLL_ID:
-            case WIDGET_BELOW_INV_ID:
-            case WIDGET_PLAYER_INFO_ID:
-            case WIDGET_RANGE_ID:
-            case WIDGET_TARGET_ID:
-            case WIDGET_MAPNAME_ID:
-            case WIDGET_IN_CONSOLE_ID:
-            case WIDGET_IN_NUMBER_ID:
-            case WIDGET_STATOMETER_ID:
-                break;
-
-            case WIDGET_NROF:
-                break;
+            widget_data[id].event(id, event);
         }
 
         return 1;
@@ -778,118 +608,7 @@ void widget_process(void)
 
         if (widget_data[id].show)
         {
-            /* Doesn't matter which order the case statements follow */
-            switch (id)
-            {
-                case WIDGET_STATS_ID:
-                    widget_player_stats(widget_data[id].x1,widget_data[id].y1);
-
-                    break;
-
-                case WIDGET_RESIST_ID:
-                    widget_show_resist(widget_data[id].x1,widget_data[id].y1);
-
-                    break;
-
-                case WIDGET_MAIN_LVL_ID:
-                    widget_show_main_lvl(widget_data[id].x1,widget_data[id].y1);
-
-                    break;
-
-                case WIDGET_SKILL_EXP_ID:
-                    widget_show_skill_exp(widget_data[id].x1,widget_data[id].y1);
-
-                    break;
-
-                case WIDGET_REGEN_ID:
-                    widget_show_regeneration(widget_data[id].x1,widget_data[id].y1);
-
-                    break;
-
-                case WIDGET_SKILL_LVL_ID:
-                    widget_skillgroups(widget_data[id].x1,widget_data[id].y1);
-
-                    break;
-
-                case WIDGET_MENU_B_ID:
-                    widget_menubuttons(widget_data[id].x1,widget_data[id].y1);
-
-                    break;
-
-                case WIDGET_QUICKSLOT_ID:
-                    widget_quickslots(widget_data[id].x1,widget_data[id].y1);
-
-                    break;
-
-                case WIDGET_CHATWIN_ID:
-                    textwin_show_window(TEXTWIN_CHAT_ID);
-
-                    break;
-
-                case WIDGET_MSGWIN_ID:
-                    textwin_show_window(TEXTWIN_MSG_ID);
-
-                    break;
-
-                case WIDGET_GROUP_ID:
-                    widget_show_group(widget_data[id].x1,widget_data[id].y1);
-
-                    break;
-
-                case WIDGET_PDOLL_ID:
-                    widget_show_player_doll(widget_data[id].x1,widget_data[id].y1);
-
-                    break;
-
-                case WIDGET_BELOW_INV_ID:
-                    widget_show_below_window(cpl.below, widget_data[id].x1,widget_data[id].y1);
-
-                    break;
-
-                case WIDGET_PLAYER_INFO_ID:
-                    widget_show_player_data(widget_data[id].x1,widget_data[id].y1);
-
-                    break;
-
-                case WIDGET_RANGE_ID:
-                    widget_show_range(widget_data[id].x1,widget_data[id].y1);
-
-                    break;
-
-                case WIDGET_TARGET_ID:
-                    widget_show_target(widget_data[id].x1,widget_data[id].y1);
-
-                    break;
-
-                case WIDGET_MAIN_INV_ID:
-                    widget_show_inventory_window(widget_data[id].x1,widget_data[id].y1);
-
-                    break;
-
-                case WIDGET_MAPNAME_ID:
-                    widget_show_mapname(widget_data[id].x1,widget_data[id].y1);
-
-                    break;
-
-                case WIDGET_IN_CONSOLE_ID:
-                    widget_show_console(widget_data[id].x1,widget_data[id].y1);
-
-                    break;
-
-                case WIDGET_IN_NUMBER_ID:
-                    widget_show_number(widget_data[id].x1,widget_data[id].y1);
-
-                    break;
-
-                case WIDGET_STATOMETER_ID:
-                    widget_show_statometer(widget_data[id].x1, widget_data[id].y1);
-
-                    break;
-
-                default:
-                    LOG(LOG_ERROR, "Widget %d unhandled in widget_process()!\n",
-                        id);
-            }
+            widget_data[id].process(id);
         }
 
 #ifdef PROFILING_WIDGETS
