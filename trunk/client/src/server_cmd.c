@@ -691,7 +691,7 @@ void SkillRdyCmd(char *data, int len)
     int i, ii;
 
     strcpy(cpl.skill_name, (const char *)data);
-    WIDGET_REDRAW(WIDGET_SKILL_EXP_ID) = 1;
+    WIDGET_REDRAW(WIDGET_SKEXP_ID) = 1;
 
     /* lets find the skill... and setup the shortcuts to the exp values*/
     for (ii = 0; ii < SKILL_LIST_MAX; ii++)
@@ -1110,12 +1110,12 @@ void StatsCmd(char *data, int len)
                         }
                     }
                     i += 4;
-                    WIDGET_REDRAW(WIDGET_MAIN_LVL_ID) = 1;
+                    WIDGET_REDRAW(WIDGET_MALVL_ID) = 1;
                     break;
                 case CS_STAT_LEVEL:
                     cpl.stats.level = (sint8) * (data + i++);
                     cpl.warn_drained = (cpl.stats.level < cpl.stats.exp_level) ? 2 : 0;
-                    WIDGET_REDRAW(WIDGET_MAIN_LVL_ID) = 1;
+                    WIDGET_REDRAW(WIDGET_MALVL_ID) = 1;
                     break;
                 case CS_STAT_WC:
                     cpl.stats.wc = GetUINT16_String(data + i);
@@ -1177,7 +1177,7 @@ void StatsCmd(char *data, int len)
                         if (options.use_timer_sound == 1)
                             sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICK, 0, 0, 100);
                     i += 4;
-                    WIDGET_REDRAW(WIDGET_SKILL_EXP_ID) = 1;
+                    WIDGET_REDRAW(WIDGET_SKEXP_ID) = 1;
                     break;
                 case CS_STAT_SKILLEXP_AGILITY:
                 case CS_STAT_SKILLEXP_PERSONAL:
@@ -1187,7 +1187,7 @@ void StatsCmd(char *data, int len)
                 case CS_STAT_SKILLEXP_WISDOM:
                     cpl.stats.skill_exp[(c - CS_STAT_SKILLEXP_START) / 2] = GetUINT32_String(data + i);
                     i += 4;
-                    WIDGET_REDRAW(WIDGET_SKILL_LVL_ID) = 1;
+                    WIDGET_REDRAW(WIDGET_SKLVL_ID) = 1;
                     break;
                 case CS_STAT_SKILLEXP_AGLEVEL:
                 case CS_STAT_SKILLEXP_PELEVEL:
@@ -1196,7 +1196,7 @@ void StatsCmd(char *data, int len)
                 case CS_STAT_SKILLEXP_MALEVEL:
                 case CS_STAT_SKILLEXP_WILEVEL:
                     cpl.stats.skill_level[(c - CS_STAT_SKILLEXP_START - 1) / 2] = (sint16) * (data + i++);
-                    WIDGET_REDRAW(WIDGET_SKILL_LVL_ID) = 1;
+                    WIDGET_REDRAW(WIDGET_SKLVL_ID) = 1;
                     break;
                 case CS_STAT_RANGE:
                 {
@@ -2064,7 +2064,7 @@ void SkilllistCmd(char *data, int len)
                             skill_list[ii].entry[i].flag = LIST_ENTRY_KNOWN;
                             skill_list[ii].entry[i].exp = e;
                             skill_list[ii].entry[i].exp_level = l;
-                            WIDGET_REDRAW(WIDGET_SKILL_EXP_ID) = 1;
+                            WIDGET_REDRAW(WIDGET_SKEXP_ID) = 1;
                         }
                     }
                 }

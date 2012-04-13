@@ -212,8 +212,8 @@ static void mouse_InputNumber()
         delta = 0;
         return;
     }
-    mx = x - widget_data[WIDGET_IN_NUMBER_ID].x1;
-    my = y - widget_data[WIDGET_IN_NUMBER_ID].y1;
+    mx = x - widget_data[WIDGET_NUMBER_ID].x1;
+    my = y - widget_data[WIDGET_NUMBER_ID].y1;
 
     if (mx <230 || mx> 237 || my < 5 || delta++ & 15)
         return;
@@ -774,14 +774,14 @@ int Event_PollInputDevice(void)
 
                             break;
 
-                        case WIDGET_MAIN_INV_ID:
-                        case WIDGET_IN_CONSOLE_ID:
-                        case WIDGET_IN_NUMBER_ID:
+                        case WIDGET_INV_ID:
+                        case WIDGET_CONSOLE_ID:
+                        case WIDGET_NUMBER_ID:
                             sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
 
                             break;
 
-                        case WIDGET_STATOMETER_ID:
+                        case WIDGET_SMETER_ID:
                             if (!options.statsupdate)
                             {
                                 sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICK, 0, 0, MENU_SOUND_VOL);
@@ -1438,7 +1438,7 @@ int key_event(SDL_KeyboardEvent *key)
                 break;
             case SDLK_LSHIFT:
             case SDLK_RSHIFT:
-                widget_set_priority(WIDGET_MAIN_INV_ID);
+                widget_set_priority(WIDGET_INV_ID);
                 if (!options.playerdoll)
                     widget_set_priority(WIDGET_PDOLL_ID);
                 cpl.inventory_win = IWIN_INV;
@@ -1769,7 +1769,7 @@ uint8 process_macro_keys(int id, int value)
         if (cpl.input_mode == INPUT_MODE_NO)
         {
             cpl.input_mode = INPUT_MODE_CONSOLE;
-            widget_set_priority(WIDGET_IN_CONSOLE_ID);
+            widget_set_priority(WIDGET_CONSOLE_ID);
             open_input_mode(253);
         }
         else if (cpl.input_mode == INPUT_MODE_CONSOLE)
@@ -1950,7 +1950,7 @@ uint8 process_macro_keys(int id, int value)
 
             reset_keys();
             cpl.input_mode = INPUT_MODE_NUMBER;
-            widget_set_priority(WIDGET_IN_NUMBER_ID);
+            widget_set_priority(WIDGET_NUMBER_ID);
             open_input_mode(22);
             cpl.loc = loc;
             cpl.tag = tag;
@@ -2067,7 +2067,7 @@ uint8 process_macro_keys(int id, int value)
         {
             reset_keys();
             cpl.input_mode = INPUT_MODE_NUMBER;
-            widget_set_priority(WIDGET_IN_NUMBER_ID);
+            widget_set_priority(WIDGET_NUMBER_ID);
             open_input_mode(22);
             cpl.loc = loc;
             cpl.tag = tag;

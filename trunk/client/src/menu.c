@@ -54,7 +54,7 @@ void do_console(int x, int y)
         sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CONSOLE, 0, 0, 100);
         reset_keys();
         cpl.input_mode = INPUT_MODE_NO;
-        WIDGET_SHOW(WIDGET_IN_CONSOLE_ID) = 0;
+        WIDGET_SHOW(WIDGET_CONSOLE_ID) = 0;
         map_udate_flag = 2;
     }
     /* if set, we got a finished input!*/
@@ -70,10 +70,10 @@ void do_console(int x, int y)
         reset_keys();
         cpl.input_mode = INPUT_MODE_NO;
         map_udate_flag = 2;
-        WIDGET_SHOW(WIDGET_IN_CONSOLE_ID) = 0;
+        WIDGET_SHOW(WIDGET_CONSOLE_ID) = 0;
     }
     else
-        WIDGET_SHOW(WIDGET_IN_CONSOLE_ID) = 1;
+        WIDGET_SHOW(WIDGET_CONSOLE_ID) = 1;
 }
 
 void do_number(int x, int y)
@@ -82,7 +82,7 @@ void do_number(int x, int y)
     {
         reset_keys();
         cpl.input_mode = INPUT_MODE_NO;
-        WIDGET_SHOW(WIDGET_IN_NUMBER_ID) = 0;
+        WIDGET_SHOW(WIDGET_NUMBER_ID) = 0;
         map_udate_flag = 2;
     }
     /* if set, we got a finished input!*/
@@ -110,10 +110,10 @@ void do_number(int x, int y)
         reset_keys();
         cpl.input_mode = INPUT_MODE_NO;
         map_udate_flag = 2;
-        WIDGET_SHOW(WIDGET_IN_NUMBER_ID) = 0;
+        WIDGET_SHOW(WIDGET_NUMBER_ID) = 0;
     }
     else
-        WIDGET_SHOW(WIDGET_IN_NUMBER_ID) = 1;
+        WIDGET_SHOW(WIDGET_NUMBER_ID) = 1;
 }
 
 void do_keybind_input(void)
@@ -371,7 +371,7 @@ int get_quickslot(int x, int y)
 {
     int i;
     int qsx, qsy, xoff;
-    if (widget_data[WIDGET_QUICKSLOT_ID].ht > 34)
+    if (widget_data[WIDGET_QSLOTS_ID].ht > 34)
     {
         qsx = 1;
         qsy = 0;
@@ -386,10 +386,10 @@ int get_quickslot(int x, int y)
 
     for (i = 0; i < MAX_QUICK_SLOTS; i++)
     {
-        if (x >= widget_data[WIDGET_QUICKSLOT_ID].x1 + quickslots_pos[i][qsx]+xoff
-                && x <= widget_data[WIDGET_QUICKSLOT_ID].x1 + quickslots_pos[i][qsx]+xoff + 32
-                && y >= widget_data[WIDGET_QUICKSLOT_ID].y1 + quickslots_pos[i][qsy]
-                && y <= widget_data[WIDGET_QUICKSLOT_ID].y1 + quickslots_pos[i][qsy] + 32)
+        if (x >= widget_data[WIDGET_QSLOTS_ID].x1 + quickslots_pos[i][qsx]+xoff
+                && x <= widget_data[WIDGET_QSLOTS_ID].x1 + quickslots_pos[i][qsx]+xoff + 32
+                && y >= widget_data[WIDGET_QSLOTS_ID].y1 + quickslots_pos[i][qsy]
+                && y <= widget_data[WIDGET_QSLOTS_ID].y1 + quickslots_pos[i][qsy] + 32)
             return i;
     }
     return -1;
