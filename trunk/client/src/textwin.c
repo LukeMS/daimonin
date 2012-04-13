@@ -635,7 +635,7 @@ static void ConvertSmileys(char *message)
             switch (*(message + ++j))
             {
                 case '(':
-                    smiley = ECC_SMILEY_CRY;
+                    smiley = ECC_CRY;
 
                     break;
             }
@@ -650,33 +650,33 @@ static void ConvertSmileys(char *message)
             switch (*(message + j))
             {
                 case ')':
-                    smiley = ECC_SMILEY_SMILE;
+                    smiley = ECC_SMILE;
 
                     break;
 
                 case '(':
-                    smiley = ECC_SMILEY_FROWN;
+                    smiley = ECC_FROWN;
 
                     break;
 
                 case 'D':
-                    smiley = ECC_SMILEY_GRIN;
+                    smiley = ECC_GRIN;
 
                 case 'p':
                 case 'P':
-                    smiley = ECC_SMILEY_RASPBERRY;
+                    smiley = ECC_RASPBERRY;
 
                     break;
 
                 case 's':
                 case 'S':
-                    smiley = ECC_SMILEY_PERPLEXITY;
+                    smiley = ECC_PERPLEXITY;
 
                     break;
 
                 case 'x':
                 case 'X':
-                    smiley = ECC_SMILEY_SUCKALEMON;
+                    smiley = ECC_SUCKALEMON;
 
                     break;
             }
@@ -691,13 +691,13 @@ static void ConvertSmileys(char *message)
             switch (*(message + j))
             {
                 case ')':
-                    smiley = ECC_SMILEY_WINK;
+                    smiley = ECC_WINK;
 
                     break;
 
                 case 'p':
                 case 'P':
-                    smiley = ECC_SMILEY_WINKRASPBERRY;
+                    smiley = ECC_WINKRASPBERRY;
 
                     break;
             }
@@ -706,14 +706,14 @@ static void ConvertSmileys(char *message)
                   *(message + i) == 'B') &&
                  *(message + j) == ')')
         {
-            smiley = ECC_SMILEY_COOL;
+            smiley = ECC_COOL;
         }
         else if ((*(message + i) == '8' ||
                   *(message + i) == 'B') &&
                  *(message + j++) == '-' &&
                  *(message + j) == ')')
         {
-            smiley = ECC_SMILEY_COOL;
+            smiley = ECC_COOL;
         }
         else if (*(message + i) == '>' &&
                  *(message + j) == ':')
@@ -726,12 +726,12 @@ static void ConvertSmileys(char *message)
             switch (*(message + j))
             {
                 case ')':
-                    smiley = ECC_SMILEY_NAUGHTY;
+                    smiley = ECC_NAUGHTY;
 
                     break;
 
                 case 'D':
-                    smiley = ECC_SMILEY_WICKED;
+                    smiley = ECC_WICKED;
 
                     break;
             }

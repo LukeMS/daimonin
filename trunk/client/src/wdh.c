@@ -197,10 +197,10 @@ void wdh_process_stats(widget_id_t id)
         strout_blt(surface, &font_small, STROUT_LEFT, "HP", 58, 10,
                    skin_prefs.widget_key, NULL);
         sprintf(buf, "%c%06x%d%c / %c%06x%d",
-                ECC_INTERNAL_NEWCOLR,
+                ECC_NEWCOLR,
                 percentage_colr((float)cpl.stats.hp / (float)cpl.stats.maxhp * 100),
-                cpl.stats.hp, ECC_INTERNAL_DEFCOLR,
-                ECC_INTERNAL_NEWCOLR, skin_prefs.widget_valueHi, cpl.stats.maxhp);
+                cpl.stats.hp, ECC_DEFCOLR,
+                ECC_NEWCOLR, skin_prefs.widget_valueHi, cpl.stats.maxhp);
         strout_blt(surface, &font_small, STROUT_LEFT, buf,
                    160 - strout_width(&font_small, buf), 10,
                    skin_prefs.widget_valueEq, NULL);
@@ -208,10 +208,10 @@ void wdh_process_stats(widget_id_t id)
         strout_blt(surface, &font_small, STROUT_LEFT, "Mana", 58, 35,
                    skin_prefs.widget_key, NULL);
         sprintf(buf, "%c%06x%d%c / %c%06x%d",
-                ECC_INTERNAL_NEWCOLR,
+                ECC_NEWCOLR,
                 percentage_colr((float)cpl.stats.sp / (float)cpl.stats.maxsp * 100),
-                cpl.stats.sp, ECC_INTERNAL_DEFCOLR,
-                ECC_INTERNAL_NEWCOLR, skin_prefs.widget_valueHi, cpl.stats.maxsp);
+                cpl.stats.sp, ECC_DEFCOLR,
+                ECC_NEWCOLR, skin_prefs.widget_valueHi, cpl.stats.maxsp);
         strout_blt(surface, &font_small, STROUT_LEFT, buf,
                    160 - strout_width(&font_small, buf), 35,
                    skin_prefs.widget_valueEq, NULL);
@@ -219,10 +219,10 @@ void wdh_process_stats(widget_id_t id)
         strout_blt(surface, &font_small, STROUT_LEFT, "Grace", 58, 59,
                    skin_prefs.widget_key, NULL);
         sprintf(buf, "%c%06x%d%c / %c%06x%d",
-                ECC_INTERNAL_NEWCOLR,
+                ECC_NEWCOLR,
                 percentage_colr((float)cpl.stats.grace / (float)cpl.stats.maxgrace * 100),
-                cpl.stats.grace, ECC_INTERNAL_DEFCOLR,
-                ECC_INTERNAL_NEWCOLR, skin_prefs.widget_valueHi, cpl.stats.maxgrace);
+                cpl.stats.grace, ECC_DEFCOLR,
+                ECC_NEWCOLR, skin_prefs.widget_valueHi, cpl.stats.maxgrace);
         strout_blt(surface, &font_small, STROUT_LEFT, buf,
                    160 - strout_width(&font_small, buf), 59,
                    skin_prefs.widget_valueEq, NULL);
@@ -1563,13 +1563,13 @@ void wdh_process_main_inv(widget_id_t id)
         widget_data[id].ht = 32;
         sprite_blt(skin_sprites[SKIN_SPRITE_INV_BG], x, y, NULL, NULL);
         sprintf(buf, "Carry %c%06x%4.3f%c kg",
-                ECC_INTERNAL_NEWCOLR, percentage_colr(100 - (weight / limit * 100)),
-                weight / 1000.0, ECC_INTERNAL_DEFCOLR);
+                ECC_NEWCOLR, percentage_colr(100 - (weight / limit * 100)),
+                weight / 1000.0, ECC_DEFCOLR);
         strout_blt(ScreenSurface, &font_small, STROUT_LEFT, buf, x + 140, y + 4,
                    skin_prefs.widget_key, NULL);
         sprintf(buf, "Limit %c%06x%4.3f%c kg",
-                ECC_INTERNAL_NEWCOLR, skin_prefs.widget_valueEq, limit / 1000.0,
-                ECC_INTERNAL_DEFCOLR);
+                ECC_NEWCOLR, skin_prefs.widget_valueEq, limit / 1000.0,
+                ECC_DEFCOLR);
         strout_blt(ScreenSurface, &font_small, STROUT_LEFT, buf, x + 140, y + 15,
                    skin_prefs.widget_key, NULL);
         strout_blt(ScreenSurface, &font_tiny, STROUT_LEFT, "(SHIFT for inventory)",
@@ -1894,8 +1894,8 @@ void wdh_process_group(widget_id_t id)
         sprite_blt(skin_sprites[SKIN_SPRITE_GROUP_INVITE], x + 10, y + 32,
                    NULL, NULL);
         sprintf(buf, "%c%06xGROUP INVITE\n\n\n%c%06x%s%c\n\nhas invited you\nto join a group.",
-                ECC_INTERNAL_NEWCOLR, skin_prefs.widget_key,
-                ECC_INTERNAL_NEWCOLR, skin_prefs.pname_other, group_invite, ECC_INTERNAL_DEFCOLR);
+                ECC_NEWCOLR, skin_prefs.widget_key,
+                ECC_NEWCOLR, skin_prefs.pname_other, group_invite, ECC_DEFCOLR);
         box.x = x + 28;
         box.y = y + 13;
         box.w = strout_width(&font_small, buf);
