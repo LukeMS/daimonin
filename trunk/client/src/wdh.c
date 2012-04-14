@@ -480,30 +480,6 @@ void wdh_process_skill_exp(widget_id_t id)
     long int liTExp = 0;
     long int liTExpTNL = 0;
     float fLExpPercent = 0;
-    static int action_tick = 0;
-
-    /* pre-emptively tick down the skill delay timer */
-    if (!cpl.paralyzed &&
-        cpl.action_timer > 0)
-    {
-        if (LastTick - action_tick > 125)
-        {
-            cpl.action_timer -= (float)(LastTick - action_tick) / 1000.0;
-
-            if (cpl.action_timer <= 0)
-            {
-                cpl.action_time_max = 0;
-                cpl.action_timer = 0;
-            }
-
-            action_tick = LastTick;
-            WIDGET_REDRAW(id) = 1;
-        }
-    }
-    else
-    {
-        action_tick = LastTick;
-    }
 
     if (WIDGET_REDRAW(id))
     {

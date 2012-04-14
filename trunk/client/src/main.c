@@ -1328,10 +1328,6 @@ int main(int argc, char *argv[])
     uint8  showtimer = 0;
     uint32 speeduptick = 0;
     uint32 new_anim_tick = 0;
-
-#ifdef PROFILING
-    Uint32   ts;
-#endif
     //fd_set          tmp_read, tmp_write, tmp_exceptions;
     //struct timeval  timeout;
     // pollret;
@@ -1472,9 +1468,32 @@ int main(int argc, char *argv[])
     */
     while (!done)
     {
+        static uint32 action_tick = 0;
 #ifdef PROFILING
-        ts = SDL_GetTicks();
+        uint32        ts = SDL_GetTicks();
 #endif
+
+        /* Pre-emptively tick down the skill delay timer. */
+        if (!cpl.paralyzed &&
+            cpl.action_timer > 0)
+        {
+            if (LastTick - action_tick > 125)
+            {
+                if ((cpl.action_timer -= (float)(LastTick - action_tick) / 1000.0) <= 0)
+                {
+                    cpl.action_time_max = 0;
+                    cpl.action_timer = 0;
+                }
+
+                action_tick = LastTick;
+                WIDGET_REDRAW(WIDGET_SKEXP_ID) = 1;
+            }
+        }
+        else
+        {
+            action_tick = LastTick;
+        }
+
         done = Event_PollInputDevice();
 
         /* Have we been shutdown? */
