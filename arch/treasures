@@ -3220,6 +3220,7 @@ end
 treasureone food_natural
   arch egg
     magic 0
+    artifact_chance 0
     chance 50
     quality_range 7
   more
