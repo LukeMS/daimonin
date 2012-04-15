@@ -3031,12 +3031,6 @@ end
 # food
 #
 ##################
-treasureone easter
-  arch egg
-    chance 100
-    artifact_chance 100
-end
-
 treasureone food_misc
   list food_drink
     magic 0
