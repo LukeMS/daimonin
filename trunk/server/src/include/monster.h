@@ -170,6 +170,7 @@ struct mobdata
     hashtable                  *known_objs_ht; /**< another view of known_objs. @note can be NULL */
 
     struct mob_known_obj       *owner, *enemy; /**< Important other mobs */
+    struct mob_known_obj       *best_friend;   /**< The mob's best friend. :) */
 
     struct mob_behaviourset    *behaviours;    /**< This mob's behaviours */
 
