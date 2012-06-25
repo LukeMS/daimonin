@@ -160,6 +160,8 @@ void initialize_mob_data(struct mobdata *data)
     data->owner = NULL;
     data->enemy = NULL;
 
+    data->best_friend = NULL;
+
     data->behaviours = NULL;
 
     data->spawn_info = NULL;
