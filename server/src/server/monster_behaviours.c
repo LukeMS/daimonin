@@ -150,7 +150,7 @@ void npc_call_for_help(object *op) {
               register_npc_known_obj(friend->ob, op->enemy, FRIENDSHIP_ATTACK, 0);
           }
       }
-
+  
 }
 #endif
 
@@ -755,7 +755,7 @@ int nret;
 		nXRange = params[AIPARAM_MOVE_RANDOMLY_XLIMIT].intvalue;
 		nLimitXY = 2;
 	}
-
+	
 	if(params[AIPARAM_MOVE_RANDOMLY_YLIMIT].flags & AI_PARAM_PRESENT){
 		nYRange = params[AIPARAM_MOVE_RANDOMLY_YLIMIT].intvalue;
 		nLimitXY |= 1;
@@ -835,7 +835,7 @@ int nret;
 					aDirWeight[dir_turn(op->direction, 4)] = 1;
 					return 1;
 				}
-				break;
+				break;				
 			case 7:
 				if(	op->map->tile_map[TILED_MAPS_EAST] &&
 					((op->map->tile_map[TILED_MAPS_EAST] == basemap->tile_map[TILED_MAPS_WEST]) ||
@@ -900,7 +900,7 @@ int nret;
 	return nret;
 }
 
-/*	fill aDirWeight[9] with possible directions
+/*	fill aDirWeight[9] with possible directions 
 	returns the max random number + 1
 */
 int ai_move_randomly_behaviour(int aDirWeight[9], object *op, struct mob_behaviour_param *params){
@@ -935,7 +935,7 @@ int nret;
 		nret += aDirWeight[dir_turn(nLastDir, 1)] *= 32;  /* turn on the right once */
 
 		nret += aDirWeight[dir_turn(nLastDir, -1)] *= 32; /* turn on the left once */
-
+		
 		nret += aDirWeight[dir_turn(nLastDir, 2)] *= 4; /* turn on the right twice */
 
 		nret += aDirWeight[dir_turn(nLastDir, -2)] *= 4; /* turn on the left twice */
@@ -947,7 +947,7 @@ int nret;
 		nret += aDirWeight[dir_turn(nLastDir, 4)] *= 1; /* turn on the right 4 times */
 
 		nret += aDirWeight[0] *= 4; /* don't move */
-
+		
 		return nret;
 	}
 }
@@ -1249,7 +1249,7 @@ void ai_avoid_line_of_fire(object *op, struct mob_behaviour_param *params, move_
                 break;
 /* Currently there is no good way I can think of for cone dodging.
  * the way it is currently handled causes the mob to freeze if it can't
- * find a safe way to dodge, which makes it too easy to kill and
+ * find a safe way to dodge, which makes it too easy to kill and 
  * slows the server down. */
 #if 0
             /* Area-like "missiles" */
@@ -1447,29 +1447,6 @@ void ai_keep_distance_to_enemy(object *op, struct mob_behaviour_param *params, m
                 response->forbidden |= (1 << absdir(rv->direction-1));
                 op->anim_enemy_dir = rv->direction;
                 op->speed_left-=0.5f; /* we move backwards - do it a bit slower */
-            }
-        }
-    }
-}
-
-/* Make a NPC keep close to a player. If the NPC is already within MAX_DIST away, don't bother. Also,
- * only follow a friend if best_friend is within sight. This limitation may prove problematic, however.
- */
-void ai_follow_friend(object *op, struct mob_behaviour_param *params, move_response *response)
-{
-    if (MOB_DATA(op)->best_friend &&
-        OBJECT_VALID(MOB_DATA(op)->best_friend->obj, MOB_DATA(op)->best_friend->obj->count) &&
-        mob_can_see_obj(op, MOB_DATA(op)->best_friend->obj, MOB_DATA(op)->best_friend))
-    {
-        rv_vector  *rv  = get_known_obj_rv(op, MOB_DATA(op)->best_friend, MAX_KNOWN_OBJ_RV_AGE);
-
-        if (rv)
-        {
-            if (rv->distance > (unsigned int) AIPARAM_INT(AIPARAM_FOLLOW_FRIEND_MAX_DIST))
-            {
-                response->type = MOVE_RESPONSE_DIR;
-                response->data.direction = absdir(rv->direction);
-
             }
         }
     }
@@ -2102,7 +2079,6 @@ void ai_friendship(object *op, struct mob_behaviour_param *params)
     struct mob_known_obj   *tmp;
     object *owner_enemy = NULL;
     struct mob_known_obj   *known_owner_enemy = NULL;
-    struct mob_known_obj   *temp_best_friend;
 
     if(OBJECT_VALID(op->owner, op->owner_count) && op->owner->enemy)
         owner_enemy = op->owner->enemy;
@@ -2124,19 +2100,9 @@ void ai_friendship(object *op, struct mob_behaviour_param *params)
         {
             tmp->tmp_friendship += (FRIENDSHIP_DIST_MAX / (int) MAX(tmp->rv.distance, 1.0)) * SGN(tmp->tmp_friendship);
         }
-
-        if (!temp_best_friend || tmp->friendship > temp_best_friend->friendship)
-        {
-            temp_best_friend = tmp;
-        }
         /* TODO: test last_seen aging */
         //        tmp->tmp_friendship /= MAX(global_round_tag - tmp->last_seen, 1);
         //        LOG(llevDebug,"ai_friendship(): '%s' -> '%s'. friendship: %d\n",  STRING_OBJ_NAME(op), STRING_OBJ_NAME(tmp->obj), tmp->tmp_friendship);
-    }
-
-    if (temp_best_friend)
-    {
-        MOB_DATA(op)->best_friend = temp_best_friend;
     }
 
     /* Learn about owner's enemy if we didn't know of it */

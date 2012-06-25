@@ -216,7 +216,7 @@ BehaviourClass(MOVES,
         /** Become scared if current_hp < HP_THRESHOLD % of max_hp */
         Parameter(RUN_AWAY_FROM_ENEMY, HP_THRESHOLD, INTEGER, OPTIONAL, 10)
     )
-
+    
     /** Runs away from the most repulsive object if scared. */
     Behaviour(RUN_AWAY_FROM_REPULSIVE_OBJECT, ai_run_away_from_repulsive_object,
         /** Become scared if at least this close to the object */
@@ -230,12 +230,6 @@ BehaviourClass(MOVES,
     Behaviour(KEEP_DISTANCE_TO_ENEMY, ai_keep_distance_to_enemy,
         Parameter(KEEP_DISTANCE_TO_ENEMY, MIN_DIST, INTEGER, OPTIONAL, 4)
         Parameter(KEEP_DISTANCE_TO_ENEMY, MAX_DIST, INTEGER, OPTIONAL, 6)
-    )
-
-    /** Keep close to a friend. This works similarly to keep_distance_to_enemy
-     * only it works for friends. :) */
-    Behaviour(FOLLOW_FRIEND, ai_follow_friend,
-        Parameter(FOLLOW_FRIEND, MAX_DIST, INTEGER, MANDATORY, NULL)
     )
 
     /** To be removed, or renamed to "hit and run" */
@@ -255,7 +249,7 @@ BehaviourClass(MOVES,
     Behaviour(STAY_NEAR_HOME, ai_stay_near_home,
             /** Maximum allowed distance from home. */
             Parameter(STAY_NEAR_HOME, MAX_DIST, INTEGER, OPTIONAL, 12)
-            /** Enables true eucilidian distance (default is diagonal distance).
+            /** Enables true eucilidian distance (default is diagonal distance). 
              * Uses more CPU resources.  */
             Parameter(STAY_NEAR_HOME, EUCLIDIAN_DISTANCE, INTEGER, OPTIONAL, 0)
     )
