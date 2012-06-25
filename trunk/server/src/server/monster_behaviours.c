@@ -1411,57 +1411,6 @@ void ai_move_towards_enemy(object *op, struct mob_behaviour_param *params, move_
     response->data.target.obj_count = op->enemy_count;
 }
 
-void ai_move_towards_friend(object *op, struct mob_behaviour_param *params, move_response *response)
-{
-    rv_vector  *rv;
-    object *friend = MOB_DATA(op)->best_friend->obj;
-
-    if (!OBJECT_VALID(friend, friend->count) ||
-        !mob_can_see_obj(op, friend, MOB_DATA(op)->best_friend))
-    {
-            return;
-    }
-
-    rv = get_known_obj_rv(op, MOB_DATA(op)->best_friend, MAX_KNOWN_OBJ_RV_AGE);
-    if(rv == NULL)
-        return;
-
-    // Don't need to face anyone, do we?
-    //op->anim_enemy_dir = rv->direction;
-
-    if (rv->distance <= 1)
-    {
-        /* Stay where we are */
-        response->type = MOVE_RESPONSE_DIR;
-        response->data.direction = 0;
-        return;
-    }
-
-    // Ignore friend if we can't reach it.
-    if(MOB_PATHDATA(op)->target_obj == friend &&
-            QUERY_FLAG(MOB_PATHDATA(op), PATHFINDFLAG_PATH_FAILED))
-    {
-#if 0
-        LOG(llevDebug, "ai_move_towards_enemy(): %s can't get to %s, downgrading its enemy status\n", STRING_OBJ_NAME(op), STRING_OBJ_NAME(op->enemy));
-        /* TODO: The current solution also totally disregards archers
-         * and magic users that don't have to reach the target by walking */
-        /* TODO: this gives some crazy results together with attitudes,
-         * see the group test in the AI testmap for an example. */
-        MOB_DATA(op)->enemy->friendship /= 2;
-        MOB_DATA(op)->enemy->tmp_friendship = 0;
-
-        /* Note: this may eventually make the mob forget about the enemy and go home,
-         * but e.g. linked spawns will get reaggroed by their friends. */
-#else
-        return;
-#endif
-    }
-
-    response->type = MOVE_RESPONSE_OBJECT;
-    response->data.target.obj = friend;
-    response->data.target.obj_count = friend->count;
-}
-
 void ai_keep_distance_to_enemy(object *op, struct mob_behaviour_param *params, move_response *response)
 {
     if (OBJECT_VALID(op->enemy, op->enemy_count) && mob_can_see_obj(op, op->enemy, MOB_DATA(op)->enemy))
