@@ -1508,7 +1508,8 @@ void ai_keep_distance_to_enemy(object *op, struct mob_behaviour_param *params, m
  */
 void ai_follow_friend(object *op, struct mob_behaviour_param *params, move_response *response)
 {
-    if (OBJECT_VALID(MOB_DATA(op)->best_friend->obj, MOB_DATA(op)->best_friend->obj->count) &&
+    if (MOB_DATA(op)->best_friend &&
+        OBJECT_VALID(MOB_DATA(op)->best_friend->obj, MOB_DATA(op)->best_friend->obj->count) &&
         mob_can_see_obj(op, MOB_DATA(op)->best_friend->obj, MOB_DATA(op)->best_friend))
     {
         rv_vector  *rv  = get_known_obj_rv(op, MOB_DATA(op)->best_friend, MAX_KNOWN_OBJ_RV_AGE);
