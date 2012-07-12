@@ -65,7 +65,15 @@ function topicDeposit(what)
     if pinfo == nil then
         pinfo = pl:CreatePlayerInfo(pinfo_tag)
     end
+    local oldbalance = pinfo.value
     local dpose = pl:Deposit(pinfo, what)
+    
+    -- Did  pl deposit 2m or more? If so, log it.
+    if pinfo.value - oldbalance >= 2 * 100 * 100 * 1000 then
+        game:Log(game.LOG_INFO, "BANKINFO: player >" .. pl:GetName() .. "< deposited an amount of " .. oldbalance - pinfo.value ..
+                    ", which leaves: " .. pinfo.value .. " in account.")
+    end
+    
     if dpose == 1 and pinfo.value ~= 0 then
         ib:SetMsg( "You " .. what .. ".\n\n" )
         ib:AddMsg("Your new balance is " .. pl:ShowCost(pinfo.value) .. ".\n\n")
@@ -105,15 +113,23 @@ function topicWithdraw(what)
     ib:SetHeader("st_005", me)
     ib:SetTitle( "Withdraw - New Balance" )
     local pinfo = pl:GetPlayerInfo(pinfo_tag)
+    local old_balance = 0
     if pinfo == nil then
         ib:SetMsg(pl.name .. ", you have no money in your account.")
         ib:SetButton("Back", "hi")
     else
+        oldbalance = pinfo.value
         local wdraw = pl:Withdraw(pinfo, what)
         if wdraw == 1 then
             ib:SetMsg( "You " .. what .. ".\n\n" )
             ib:AddMsg("Your new balance is " .. pl:ShowCost(pinfo.value) .. ".\n\n")
             ib:SetButton("Ok", "hi")
+          
+            -- Did  pl withdraw 2m or more? If so, log it.
+            if oldbalance - pinfo.value >= 2 * 100 * 100 * 1000 then
+                game:Log(game.LOG_INFO, "BANKINFO: player >" .. pl:GetName() .. "< withdrew an amount of " .. oldbalance - pinfo.value ..
+                            ", which leaves: " .. pinfo.value .. " left.")
+            end
         else
             ib:SetMsg( "You try to " .. what .. ".\n\n" )
             ib:AddMsg("You can't withdraw that amount of money.\n\n")
