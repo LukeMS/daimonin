@@ -576,9 +576,10 @@ void poison_more(object *op)
     if (op->env->type == PLAYER)
     {
         /* This is here so that nothing happens instantaneously.
-        Everything happens progressively, like real poison. Poison originally
-        dropped stats and hit with a DOT along with the hitter's other attack type(s)
-        instantly after the hit, which made it way too strong against players.*/
+         * Everything happens progressively, like real poison. Poison originally
+         * dropped stats and hit with a DOT along with the hitter's other attack type(s)
+         * instantly after the hit, which made it way too strong against players.
+         */
         if (!QUERY_FLAG(op, FLAG_APPLIED))
         {
             SET_FLAG(op, FLAG_APPLIED);
@@ -589,8 +590,9 @@ void poison_more(object *op)
         op->env->stats.food--;
         new_draw_info(NDI_UNIQUE, 0, op->env, "You feel very sick...");
     }
+
     damage_ob(op->env, op->stats.dam, op, ENV_ATTACK_CHECK);
-    op->stats.dam *= 1.5;
+    op->stats.dam *= 1 + (float)op->env->level / (MAXLEVEL * 2);
 }
 
 /* TODO: i have not included damage to mobs/player on reverse up going gates!
