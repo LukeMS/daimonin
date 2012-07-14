@@ -224,6 +224,16 @@ int player_save(object *op)
             if (account_save(ac, ac->name) != ACCOUNT_STATUS_OK)
                 return 0;
 
+    /* Finally save the unique map (ie, apt) the player is on. This is a bit of
+     * extra work for the server so ideally another way would be found, but
+     * prevents the player and map files getting out of sync so prevents
+     * duping. */
+    if (op->map &&
+        MAP_UNIQUE(op->map))
+    {
+        (void)new_save_map(op->map, 0);
+    }
+
     return 1;
 }
 
