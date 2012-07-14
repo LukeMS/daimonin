@@ -211,7 +211,7 @@ sub normalize_path
     # Relative paths requires a little work
     $path = "$basedir/$path";
     # Handle parent directory references "/../"
-    while($path =~ /(.*)\/[^\/]+\/\.\.\/(.*)/) {
+    while($path =~ /(.*)\/[^\/\.]+\/\.\.\/(.*)/) {
         $path = "$1/$2";
     }
     # Handle current directory references "/./"
