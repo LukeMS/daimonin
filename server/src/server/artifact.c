@@ -91,7 +91,7 @@ static void init_artifacts(FILE *fp)
 {
     archetype      *atemp;
     long            old_pos, file_pos;
-    char            buf[MEDIUM_BUF], *cp, *next;
+    char            buf[LARGE_BUF], *cp, *next; // buf must be large so we can have a big Allowed line.
     artifact       *art             = NULL;
     linked_char    *tmp;
     int             lcount, value, none_flag = 0, editor_flag = 0;
@@ -100,7 +100,7 @@ static void init_artifacts(FILE *fp)
     object            *dummy_obj=get_object(), *parse_obj;
 
     /* start read in the artifact list */
-    while (fgets(buf, MEDIUM_BUF, fp) != NULL)
+    while (fgets(buf, LARGE_BUF, fp) != NULL)
     {
         if (*buf == '#')
             continue;
