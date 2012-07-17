@@ -653,6 +653,13 @@ static int CreateObject(object *op, char *params, CreateMode_t mode)
                         }
                     }
                 }  // end of str == amask
+                // Type cannot be set with these commands.
+                else if (!strcmp(str, "type"))
+                {
+                    new_draw_info(NDI_UNIQUE, 0, op, "Cannot set type -- choose a different archetype instead!");
+
+                    return COMMANDS_RTN_VAL_ERROR;
+                }
                 else
                 {  // any other parameter
                     strcpy(var, str);  // Save the variable name
