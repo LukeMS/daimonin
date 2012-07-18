@@ -782,7 +782,6 @@ static int CheckAttributeValue(char *var, char *val, CreateMode_t mode)
     // Anything else can be set by Create command
     // Note:  We don't do this check first, as we wanted to do the checks on valid level, etc.
     if (mode == CREATE) return TRUE;
-        return TRUE;
 
     return FALSE;
 }
