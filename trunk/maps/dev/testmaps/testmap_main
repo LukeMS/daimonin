@@ -1,9 +1,8 @@
 arch map
 name Testmaps - Main
-background_music rainthunder.ogg
 msg
 Created:  2003-04-13 Daimonin Map Editor
-Modified: 2008-09-25 smacky
+Modified: 2012-07-19 franklinb
 endmsg
 width 17
 height 17
@@ -11,6 +10,7 @@ enter_x 1
 enter_y 1
 difficulty 1
 darkness -1
+background_music rainthunder.ogg
 end
 arch floor_ostone1
 end
@@ -312,10 +312,10 @@ x 2
 y 7
 end
 arch sign
-name Misc. Objects
 msg
 Some unsorted interesting objects
 endmsg
+name Misc. Objects
 x 2
 y 7
 end
@@ -374,11 +374,11 @@ x 2
 y 15
 end
 arch sign
-name unofficial maps
 msg
 To the unofficial map lobby.
 Requires an extra download!
 endmsg
+name unofficial maps
 x 2
 y 15
 end
@@ -428,10 +428,10 @@ x 3
 y 4
 end
 arch stairs_stone_down
-name map model (instances/unique maps)
 msg
 Testing exit messages
 endmsg
+name map model (instances/unique maps)
 slaying map_load/testmap_map_load
 hp 1
 sp 1
@@ -893,6 +893,17 @@ arch floor_ostone1
 x 7
 y 9
 end
+arch teddy
+msg
+This teddy was made when a bug caused doors in apartments to be duplicated, which made players unable to leave. It can be used for other things, but be careful. There isn't much error checking. Apply it to remove the lowest object on a square.
+endmsg
+x 7
+y 9
+arch event_obj
+sub_type 1
+race /dev/testmaps/delete_bottom_object.lua
+end
+end
 arch floor_ostone1
 x 7
 y 10
@@ -1018,10 +1029,16 @@ x 8
 y 12
 end
 arch shortsword
+max_buffs 4
 dam 400
 wc 40
 x 8
 y 12
+arch event_obj
+name Lua
+sub_type 1
+race /bufftest.lua
+end
 end
 arch floor_ostone1
 x 8
@@ -1437,10 +1454,10 @@ x 12
 y 14
 end
 arch sign
-name plugin testmap
 msg
 Plugin (Lua) testmap
 endmsg
+name plugin testmap
 x 12
 y 14
 end
@@ -1486,12 +1503,12 @@ x 13
 y 2
 end
 arch sign
-name food, flesh and poison
 msg
 Test of food, flesh and poison.
 This includes poison DOT force and
 food buff/debuff force.
 endmsg
+name food, flesh and poison
 x 13
 y 2
 end
@@ -1658,11 +1675,11 @@ x 14
 y 14
 end
 arch sign
-name bug testmap
 msg
 Here are test cases for some reported bugs.
 Warning - might crash server on entry!
 endmsg
+name bug testmap
 x 14
 y 14
 end
