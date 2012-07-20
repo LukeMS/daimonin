@@ -60,7 +60,7 @@ static int        LoadMapHeader(FILE *fp, mapstruct *m, int flags);
 static void       FreeMap(mapstruct *m);
 static void       LoadObjects(mapstruct *m, FILE *fp, int mapflags);
 static void       UpdateMapTiles(mapstruct *m);
-static void       SaveObjects(mapstruct *m, FILE *fp, int flag);
+static uint16     SaveObjects(mapstruct *m, FILE *fp, int flag);
 static void       FreeAllObjects(mapstruct *m);
 #ifdef RECYCLE_TMP_MAPS
 static void       WriteMapLog(void);
@@ -1119,7 +1119,14 @@ int new_save_map(mapstruct *m, int flag)
     }
 
     fprintf(fp, "end\n");
-    SaveObjects(m, fp, 0);
+
+    /* Returns a count of the nrof player objects on the map (which are not
+     * saved). When there are any, put the map back in memory. */
+    if (SaveObjects(m, fp, 0))
+    {
+        m->in_memory = MAP_IN_MEMORY;
+    }
+
     fclose(fp);
     chmod(filename, SAVE_MODE);
 
@@ -2900,12 +2907,13 @@ static void UpdateMapTiles(mapstruct *m)
 * The function/engine is now multi arch/tiled map save - put on the
 * map what you like. MT-07.02.04
 */
-static void SaveObjects(mapstruct *m, FILE *fp, int flag)
+static uint16 SaveObjects(mapstruct *m, FILE *fp, int flag)
 {
     static object *floor_g=NULL, *fmask_g=NULL;
     int    yl=MAP_HEIGHT(m), xl=MAP_WIDTH(m);
     int     i, j = 0;
     object *head, *op, *otmp, *tmp, *last_valid;
+    uint16 players_on_map = 0;
 
     /* FIXME: These 2 checks should/could probably be done once at server
      * init with global_archetypes. */
@@ -3244,6 +3252,8 @@ static void SaveObjects(mapstruct *m, FILE *fp, int flag)
                  * -- Smacky 20120720 */
                 if (op->type == PLAYER)
                 {
+                    players_on_map++;
+
                     continue;
                 }
 
@@ -3314,6 +3324,8 @@ static void SaveObjects(mapstruct *m, FILE *fp, int flag)
             } /* for this space */
         } /* for this j */
     }
+
+    return players_on_map;
 }
 
 /* function will remove all player from a map and set a marker.
