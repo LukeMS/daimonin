@@ -231,30 +231,19 @@ int player_save(object *op)
     /* TODO: Loop through all players on that map in case it's an apartment
      * in which other players can enter.
      */
+    /* This would be unnecessary overhead (check every object on up to 576
+     * squares (which is already done twice each map save). The solution is we
+     * allow map saving when players are on it but skip the objects (see
+     * map.c:SaveObjects()).
+     * -- Smacky 20120720 */
 
     if (op->map &&
         MAP_UNIQUE(op->map)) // TODO: Possibly other instance types?
     {
-        // Save oldmap for later because IIRC op->map is nulled in remove_ob.
-        mapstruct *oldmap = op->map;
-
-        // Tell the upcoming functions that the player was temporarily removed.
-        pl->dm_removed_from_map = 1;
-        activelist_remove(op);
-
-        // Take the player off the map to avoid issues while saving the map.
-        remove_ob(op);
-
-        // Save the map to keep the player and the map in sync.
         (void)new_save_map(op->map, 0);
-
-        // Now the map isn't in memory, so reload it.
-        oldmap = ready_map_name(oldmap->path, oldmap->orig_path,
-                           MAP_STATUS_TYPE(oldmap->map_status), oldmap->reference);
-
-        // Replace the player.
-        activelist_insert(op);
-        insert_ob_in_map(op, oldmap, NULL, 0);
+        (void)ready_map_name(op->map->path, op->map->orig_path,
+                             MAP_STATUS_TYPE(op->map->map_status),
+                             op->map->reference);
     }
 
     return 1;
