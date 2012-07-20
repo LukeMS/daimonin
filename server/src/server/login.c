@@ -241,9 +241,6 @@ int player_save(object *op)
         MAP_UNIQUE(op->map)) // TODO: Possibly other instance types?
     {
         (void)new_save_map(op->map, 0);
-        (void)ready_map_name(op->map->path, op->map->orig_path,
-                             MAP_STATUS_TYPE(op->map->map_status),
-                             op->map->reference);
     }
 
     return 1;
