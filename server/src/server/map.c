@@ -60,7 +60,7 @@ static int        LoadMapHeader(FILE *fp, mapstruct *m, int flags);
 static void       FreeMap(mapstruct *m);
 static void       LoadObjects(mapstruct *m, FILE *fp, int mapflags);
 static void       UpdateMapTiles(mapstruct *m);
-static uint16     SaveObjects(mapstruct *m, FILE *fp, int flag);
+static uint16     SaveObjects(mapstruct *m, FILE *fp);
 static void       FreeAllObjects(mapstruct *m);
 #ifdef RECYCLE_TMP_MAPS
 static void       WriteMapLog(void);
@@ -1122,7 +1122,7 @@ int new_save_map(mapstruct *m, int flag)
 
     /* Returns a count of the nrof player objects on the map (which are not
      * saved). When there are any, put the map back in memory. */
-    if (SaveObjects(m, fp, 0))
+    if (SaveObjects(m, fp))
     {
         m->in_memory = MAP_IN_MEMORY;
     }
@@ -2907,7 +2907,7 @@ static void UpdateMapTiles(mapstruct *m)
 * The function/engine is now multi arch/tiled map save - put on the
 * map what you like. MT-07.02.04
 */
-static uint16 SaveObjects(mapstruct *m, FILE *fp, int flag)
+static uint16 SaveObjects(mapstruct *m, FILE *fp)
 {
     static object *floor_g=NULL, *fmask_g=NULL;
     int    yl=MAP_HEIGHT(m), xl=MAP_WIDTH(m);
