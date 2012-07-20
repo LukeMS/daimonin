@@ -2959,12 +2959,28 @@ static void SaveObjects(mapstruct *m, FILE *fp, int flag)
             for (op = GET_MAP_OB(m, i, j); op; op = otmp)
             {
                 otmp = op->above;
-                last_valid = op->below; /* thats NULL OR a valid ptr - it CAN'T be a non valid
-                                        * or we had remove it before AND reseted the ptr then right.
-                                        */
-                if (op->type == PLAYER) /* ok, we will *never* save maps with player on */
+
+                /* thats NULL OR a valid ptr - it CAN'T be a non valid or we
+                 * had remove it before AND reseted the ptr then right. */
+                /* Must be explicitly NULL when op->below->type = PLAYER else
+                 * we get an infinite loop.
+                 * -- Smacky 20120720 */
+                last_valid = (op->below &&
+                              op->below->type != PLAYER) ? op->below : NULL;
+
+                /* ok, we will *never* save maps with player on */
+                /* Actually we can/de. Lua can call map:Save() at any time and
+                 * this does not check for players first (that would be a large
+                 * overhead). And we also save the apt if a player /saves in it
+                 * (and again, no guarantee he's not invited friends round for
+                 * tea). We still don't save players as map objects but equally
+                 * there's no need to log this as it's a reasonable occurrence.
+                 * -- Smacky 20120720 */
+                if (op->type == PLAYER)
                 {
-                    LOG(llevDebug, "SemiBUG: Tried to save map with player on!(%s (%s))\n", query_name(op), m->path);
+//                    LOG(llevDebug, "SemiBUG: Tried to save map with player on!(%s (%s))\n",
+//                        query_name(op), m->path);
+//
                     continue;
                 }
 
@@ -3106,7 +3122,7 @@ static void SaveObjects(mapstruct *m, FILE *fp, int flag)
                     activelist_remove(head);
                     continue;
                 }
-                
+
                 /* we will delete here all temporary owner objects.
                 * We talk here about spell effects, pets, golems and
                 * other "dynamic" objects.
@@ -3210,13 +3226,26 @@ static void SaveObjects(mapstruct *m, FILE *fp, int flag)
             for (op = mp->first; op; op = otmp)
             {
                 otmp = op->above;
-                last_valid = op->below; /* thats NULL OR a valid ptr - it CAN'T be a non valid
-                                        * or we had remove it before AND reseted the ptr then right.
-                                        */
 
-                /* do some testing... */
-                if (op->type == PLAYER) /* ok, we will *never* save maps with player on */
-                    continue; /* warning was given before */
+                /* thats NULL OR a valid ptr - it CAN'T be a non valid or we
+                 * had remove it before AND reseted the ptr then right. */
+                /* Must be explicitly NULL when op->below->type = PLAYER else
+                 * we get an infinite loop.
+                 * -- Smacky 20120720 */
+                last_valid = (op->below &&
+                              op->below->type != PLAYER) ? op->below : NULL;
+
+                /* ok, we will *never* save maps with player on */
+                /* Actually we can/de. Lua can call map:Save() at any time and
+                 * this does not check for players first (that would be a large
+                 * overhead). And we also save the apt if a player /saves in it
+                 * (and again, no guarantee he's not invited friends round for
+                 * tea). We still don't save players as map objects.
+                 * -- Smacky 20120720 */
+                if (op->type == PLAYER)
+                {
+                    continue;
+                }
 
                 /* here we do the magic! */
                 if (op->head) /* its a tail... */
