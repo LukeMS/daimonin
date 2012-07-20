@@ -249,7 +249,7 @@ int player_save(object *op)
         (void)new_save_map(op->map, 0);
 
         // Now the map isn't in memory, so reload it.
-        oldmap = ready_map_name(oldmap->path, oldmap->path,
+        oldmap = ready_map_name(oldmap->path, oldmap->orig_path,
                            MAP_STATUS_TYPE(oldmap->map_status), oldmap->reference);
 
         // Replace the player.

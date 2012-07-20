@@ -3097,6 +3097,16 @@ static void SaveObjects(mapstruct *m, FILE *fp, int flag)
                     }
                 }
 
+                /* I don't know if this is a workaround or a fix, but currently
+                 * doors don't play nicely with this function. Without this if-statement
+                 * they would duplicate themselves when unique maps were saved.
+                 */
+                else if (head->type == DOOR || head->type == LOCKED_DOOR)
+                {
+                    activelist_remove(head);
+                    continue;
+                }
+                
                 /* we will delete here all temporary owner objects.
                 * We talk here about spell effects, pets, golems and
                 * other "dynamic" objects.
