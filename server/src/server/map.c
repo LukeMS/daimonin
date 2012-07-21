@@ -2907,7 +2907,7 @@ static void UpdateMapTiles(mapstruct *m)
 * The function/engine is now multi arch/tiled map save - put on the
 * map what you like. MT-07.02.04
 */
-#define INVALID_NEXT(_togo_, _check_, _this_, _next_, _prev_, _last_resort_) \
+#define DO_NOT_SAVE_OBJECT(_togo_, _check_, _this_, _next_, _prev_, _last_resort_) \
     activelist_remove((_togo_)); \
     remove_ob((_togo_)); \
     if ((_check_)) \
@@ -3027,7 +3027,7 @@ static void SaveObjects(mapstruct *m, FILE *fp)
                 */
                 if (QUERY_FLAG(head, FLAG_NO_SAVE))
                 {
-                    INVALID_NEXT(head, 1, op, otmp, last_valid, mp->first);
+                    DO_NOT_SAVE_OBJECT(head, 1, op, otmp, last_valid, mp->first);
 
                     continue;
                 }
@@ -3069,7 +3069,7 @@ static void SaveObjects(mapstruct *m, FILE *fp)
                     }
 
                     /* and remove the mob itself */
-                    INVALID_NEXT(head, 1, op, otmp, last_valid, mp->first);
+                    DO_NOT_SAVE_OBJECT(head, 1, op, otmp, last_valid, mp->first);
 
                     continue;
                 }
@@ -3077,7 +3077,7 @@ static void SaveObjects(mapstruct *m, FILE *fp)
                  * script so do not have SPAWN_INFO. */
                 else if (QUERY_FLAG(head, FLAG_SCRIPT_MOB))
                 {
-                    INVALID_NEXT(head, 1, op, otmp, last_valid, mp->first);
+                    DO_NOT_SAVE_OBJECT(head, 1, op, otmp, last_valid, mp->first);
 
                     continue;
                 }
@@ -3099,7 +3099,7 @@ static void SaveObjects(mapstruct *m, FILE *fp)
                             /* note: because a spawn point always is on a map, its safe to
                             * have the activelist_remove() inside here
                             */
-                            INVALID_NEXT(op->enemy, 1, op, otmp, last_valid, mp->first);
+                            DO_NOT_SAVE_OBJECT(op->enemy, 1, op, otmp, last_valid, mp->first);
                             op->enemy = NULL;
                         }
                     }
@@ -3140,7 +3140,7 @@ static void SaveObjects(mapstruct *m, FILE *fp)
                     if (head->type == GOLEM) /* a golem needs a valid release from the player... */
                     {
                         send_golem_control(head, GOLEM_CTR_RELEASE);
-                        INVALID_NEXT(head, 1, op, otmp, last_valid, mp->first);
+                        DO_NOT_SAVE_OBJECT(head, 1, op, otmp, last_valid, mp->first);
 
                         continue;
                     }
@@ -3258,7 +3258,7 @@ static void SaveObjects(mapstruct *m, FILE *fp)
                     /* remember: if we have remove for example 2 or more objects above, the
                      * op->above WILL be still valid - remove_ob() will handle it right.
                      * IF we get here a valid ptr, ->above WILL be valid too. Always. */
-                    INVALID_NEXT(tmp, 0, op, otmp, last_valid, mp->first);
+                    DO_NOT_SAVE_OBJECT(tmp, 0, op, otmp, last_valid, mp->first);
 
                     continue;
                 }
@@ -3267,14 +3267,14 @@ static void SaveObjects(mapstruct *m, FILE *fp)
 
                 if (op->more) /* its a head (because we had tails tested before) */
                 {
-                    INVALID_NEXT(op, 0, op, otmp, last_valid, mp->first);
+                    DO_NOT_SAVE_OBJECT(op, 0, op, otmp, last_valid, mp->first);
                 }
             } /* for this space */
         } /* for this j */
     }
 }
 
-#undef INVALID_NEXT
+#undef DO_NOT_SAVE_OBJECT
 
 /* function will remove all player from a map and set a marker.
  * use CAREFUL - this is called from functions who do a forced
