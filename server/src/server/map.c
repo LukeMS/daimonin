@@ -2907,7 +2907,13 @@ static void UpdateMapTiles(mapstruct *m)
 * The function/engine is now multi arch/tiled map save - put on the
 * map what you like. MT-07.02.04
 */
-#define INVALID_NEXT(_this_, _next_, _prev_, _last_resort_) \
+#define INVALID_NEXT(_togo_, _check_, _this_, _next_, _prev_, _last_resort_) \
+    activelist_remove((_togo_)); \
+    remove_ob((_togo_)); \
+    if ((_check_)) \
+    { \
+        check_walk_off((_togo_), NULL, MOVE_APPLY_VANISHED | MOVE_APPLY_SAVING); \
+    } \
     if ((_next_) && \
         (QUERY_FLAG((_next_), FLAG_REMOVED) || \
          OBJECT_FREE((_next_)))) \
@@ -3021,10 +3027,7 @@ static void SaveObjects(mapstruct *m, FILE *fp)
                 */
                 if (QUERY_FLAG(head, FLAG_NO_SAVE))
                 {
-                    activelist_remove(head);
-                    remove_ob(head);
-                    check_walk_off(head, NULL, MOVE_APPLY_VANISHED | MOVE_APPLY_SAVING);
-                    INVALID_NEXT(op, otmp, last_valid, mp->first);
+                    INVALID_NEXT(head, 1, op, otmp, last_valid, mp->first);
 
                     continue;
                 }
@@ -3066,10 +3069,7 @@ static void SaveObjects(mapstruct *m, FILE *fp)
                     }
 
                     /* and remove the mob itself */
-                    activelist_remove(head);
-                    remove_ob(head);
-                    check_walk_off(head, NULL, MOVE_APPLY_VANISHED | MOVE_APPLY_SAVING);
-                    INVALID_NEXT(op, otmp, last_valid, mp->first);
+                    INVALID_NEXT(head, 1, op, otmp, last_valid, mp->first);
 
                     continue;
                 }
@@ -3077,10 +3077,7 @@ static void SaveObjects(mapstruct *m, FILE *fp)
                  * script so do not have SPAWN_INFO. */
                 else if (QUERY_FLAG(head, FLAG_SCRIPT_MOB))
                 {
-                    activelist_remove(head);
-                    remove_ob(head);
-                    check_walk_off(head, NULL, MOVE_APPLY_VANISHED | MOVE_APPLY_SAVING);
-                    INVALID_NEXT(op, otmp, last_valid, mp->first);
+                    INVALID_NEXT(head, 1, op, otmp, last_valid, mp->first);
 
                     continue;
                 }
@@ -3102,11 +3099,8 @@ static void SaveObjects(mapstruct *m, FILE *fp)
                             /* note: because a spawn point always is on a map, its safe to
                             * have the activelist_remove() inside here
                             */
-                            activelist_remove(op->enemy);
-                            remove_ob(op->enemy);
-                            check_walk_off(op->enemy, NULL, MOVE_APPLY_VANISHED | MOVE_APPLY_SAVING);
+                            INVALID_NEXT(op->enemy, 1, op, otmp, last_valid, mp->first);
                             op->enemy = NULL;
-                            INVALID_NEXT(op, otmp, last_valid, mp->first);
                         }
                     }
                 }
@@ -3146,10 +3140,7 @@ static void SaveObjects(mapstruct *m, FILE *fp)
                     if (head->type == GOLEM) /* a golem needs a valid release from the player... */
                     {
                         send_golem_control(head, GOLEM_CTR_RELEASE);
-                        activelist_remove(head);
-                        remove_ob(head);
-                        check_walk_off(head, NULL, MOVE_APPLY_VANISHED | MOVE_APPLY_SAVING);
-                        INVALID_NEXT(op, otmp, last_valid, mp->first);
+                        INVALID_NEXT(head, 1, op, otmp, last_valid, mp->first);
 
                         continue;
                     }
@@ -3263,15 +3254,11 @@ static void SaveObjects(mapstruct *m, FILE *fp)
 
                     tmp->x = xt;
                     tmp->y = yt;
-                    activelist_remove(tmp);
-                    remove_ob(tmp); /* this is only a "trick" remove - no walk off check.
-                                    * Remember: don't put important triggers near tiled map borders!
-                                    */
 
                     /* remember: if we have remove for example 2 or more objects above, the
                      * op->above WILL be still valid - remove_ob() will handle it right.
                      * IF we get here a valid ptr, ->above WILL be valid too. Always. */
-                    INVALID_NEXT(op, otmp, last_valid, mp->first);
+                    INVALID_NEXT(tmp, 0, op, otmp, last_valid, mp->first);
 
                     continue;
                 }
@@ -3280,9 +3267,7 @@ static void SaveObjects(mapstruct *m, FILE *fp)
 
                 if (op->more) /* its a head (because we had tails tested before) */
                 {
-                    activelist_remove(op);
-                    remove_ob(op); /* only a "trick" remove - no move_apply() changes or something */
-                    INVALID_NEXT(op, otmp, last_valid, mp->first);
+                    INVALID_NEXT(op, 0, op, otmp, last_valid, mp->first);
                 }
             } /* for this space */
         } /* for this j */
