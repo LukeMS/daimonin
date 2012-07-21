@@ -2907,6 +2907,26 @@ static void UpdateMapTiles(mapstruct *m)
 * The function/engine is now multi arch/tiled map save - put on the
 * map what you like. MT-07.02.04
 */
+#define INVALID_NEXT(_this_, _next_, _prev_, _last_resort_) \
+    if ((_next_) && \
+        (QUERY_FLAG((_next_), FLAG_REMOVED) || \
+         OBJECT_FREE((_next_)))) \
+    { \
+        if (!QUERY_FLAG((_this_), FLAG_REMOVED) && \
+            !OBJECT_FREE((_this_))) \
+        { \
+            (_next_) = (_this_)->above; \
+        } \
+        else if ((_prev_)) \
+        { \
+            (_next_) = (_prev_)->above; \
+        } \
+        else \
+        { \
+            (_next_) = (_last_resort_); /* should be really rare */ \
+        } \
+    }
+
 static uint16 SaveObjects(mapstruct *m, FILE *fp)
 {
     static object *floor_g=NULL, *fmask_g=NULL;
@@ -3003,16 +3023,8 @@ static uint16 SaveObjects(mapstruct *m, FILE *fp)
                     activelist_remove(head);
                     remove_ob(head);
                     check_walk_off(head, NULL, MOVE_APPLY_VANISHED | MOVE_APPLY_SAVING);
+                    INVALID_NEXT(op, otmp, last_valid, GET_MAP_OB(m, i, j));
 
-                    if (otmp && (QUERY_FLAG(otmp, FLAG_REMOVED) || OBJECT_FREE(otmp))) /* invalid next ptr! */
-                    {
-                        if (!QUERY_FLAG(op, FLAG_REMOVED) && !OBJECT_FREE(op))
-                            otmp = op->above;
-                        else if (last_valid)
-                            otmp = last_valid->above;
-                        else
-                            otmp = GET_MAP_OB(m, i, j); /* should be really rare */
-                    }
                     continue;
                 }
                 /* here we handle the mobs of a spawn point - called spawn mobs.
@@ -3056,15 +3068,8 @@ static uint16 SaveObjects(mapstruct *m, FILE *fp)
                     activelist_remove(head);
                     remove_ob(head);
                     check_walk_off(head, NULL, MOVE_APPLY_VANISHED | MOVE_APPLY_SAVING);
-                    if (otmp && (QUERY_FLAG(otmp, FLAG_REMOVED) || OBJECT_FREE(otmp))) /* invalid next ptr! */
-                    {
-                        if (!QUERY_FLAG(op, FLAG_REMOVED) && !OBJECT_FREE(op))
-                            otmp = op->above;
-                        else if (last_valid)
-                            otmp = last_valid->above;
-                        else
-                            otmp = GET_MAP_OB(m, i, j); /* should be really rare */
-                    }
+                    INVALID_NEXT(op, otmp, last_valid, GET_MAP_OB(m, i, j));
+
                     continue;
                 }
                 /* This is for mobs whose spawn has been interrupted by a
@@ -3074,15 +3079,8 @@ static uint16 SaveObjects(mapstruct *m, FILE *fp)
                     activelist_remove(head);
                     remove_ob(head);
                     check_walk_off(head, NULL, MOVE_APPLY_VANISHED | MOVE_APPLY_SAVING);
-                    if (otmp && (QUERY_FLAG(otmp, FLAG_REMOVED) || OBJECT_FREE(otmp))) /* invalid next ptr! */
-                    {
-                        if (!QUERY_FLAG(op, FLAG_REMOVED) && !OBJECT_FREE(op))
-                            otmp = op->above;
-                        else if (last_valid)
-                            otmp = last_valid->above;
-                        else
-                            otmp = GET_MAP_OB(m, i, j); /* should be really rare */
-                    }
+                    INVALID_NEXT(op, otmp, last_valid, GET_MAP_OB(m, i, j));
+
                     continue;
                 }
                 else if (op->type == SPAWN_POINT)
@@ -3107,16 +3105,7 @@ static uint16 SaveObjects(mapstruct *m, FILE *fp)
                             remove_ob(op->enemy);
                             check_walk_off(op->enemy, NULL, MOVE_APPLY_VANISHED | MOVE_APPLY_SAVING);
                             op->enemy = NULL;
-
-                            if (otmp && (QUERY_FLAG(otmp, FLAG_REMOVED) || OBJECT_FREE(otmp))) /* invalid next ptr! */
-                            {
-                                if (!QUERY_FLAG(op, FLAG_REMOVED) && !OBJECT_FREE(op))
-                                    otmp = op->above;
-                                else if (last_valid)
-                                    otmp = last_valid->above;
-                                else
-                                    otmp = GET_MAP_OB(m, i, j); /* should be really rare */
-                            }
+                            INVALID_NEXT(op, otmp, last_valid, GET_MAP_OB(m, i, j));
                         }
                     }
                 }
@@ -3159,16 +3148,8 @@ static uint16 SaveObjects(mapstruct *m, FILE *fp)
                         activelist_remove(head);
                         remove_ob(head);
                         check_walk_off(head, NULL, MOVE_APPLY_VANISHED | MOVE_APPLY_SAVING);
+                        INVALID_NEXT(op, otmp, last_valid, GET_MAP_OB(m, i, j));
 
-                        if (otmp && (QUERY_FLAG(otmp, FLAG_REMOVED) || OBJECT_FREE(otmp))) /* invalid next ptr! */
-                        {
-                            if (!QUERY_FLAG(op, FLAG_REMOVED) && !OBJECT_FREE(op))
-                                otmp = op->above;
-                            else if (last_valid)
-                                otmp = last_valid->above;
-                            else
-                                otmp = GET_MAP_OB(m, i, j); /* should be really rare */
-                        }
                         continue;
                     }
 
@@ -3288,19 +3269,11 @@ static uint16 SaveObjects(mapstruct *m, FILE *fp)
                                     * Remember: don't put important triggers near tiled map borders!
                                     */
 
-                    if (otmp && (QUERY_FLAG(otmp, FLAG_REMOVED) || OBJECT_FREE(otmp))) /* invalid next ptr! */
-                    {
-                        /* remember: if we have remove for example 2 or more objects above, the
-                        * op->above WILL be still valid - remove_ob() will handle it right.
-                        * IF we get here a valid ptr, ->above WILL be valid too. Always.
-                        */
-                        if (!QUERY_FLAG(op, FLAG_REMOVED) && !OBJECT_FREE(op))
-                            otmp = op->above;
-                        else if (last_valid)
-                            otmp = last_valid->above;
-                        else
-                            otmp = mp->first; /* should be really rare */
-                    }
+                    /* remember: if we have remove for example 2 or more objects above, the
+                     * op->above WILL be still valid - remove_ob() will handle it right.
+                     * IF we get here a valid ptr, ->above WILL be valid too. Always. */
+                    INVALID_NEXT(op, otmp, last_valid, mp->first);
+
                     continue;
                 }
 
@@ -3310,16 +3283,7 @@ static uint16 SaveObjects(mapstruct *m, FILE *fp)
                 {
                     activelist_remove(op);
                     remove_ob(op); /* only a "trick" remove - no move_apply() changes or something */
-
-                    if (otmp && (QUERY_FLAG(otmp, FLAG_REMOVED) || OBJECT_FREE(otmp))) /* invalid next ptr! */
-                    {
-                        if (!QUERY_FLAG(op, FLAG_REMOVED) && !OBJECT_FREE(op))
-                            otmp = op->above;
-                        else if (last_valid)
-                            otmp = last_valid->above;
-                        else
-                            otmp = mp->first; /* should be really rare */
-                    }
+                    INVALID_NEXT(op, otmp, last_valid, mp->first);
                 }
             } /* for this space */
         } /* for this j */
@@ -3327,6 +3291,8 @@ static uint16 SaveObjects(mapstruct *m, FILE *fp)
 
     return players_on_map;
 }
+
+#undef INVALID_NEXT
 
 /* function will remove all player from a map and set a marker.
  * use CAREFUL - this is called from functions who do a forced
