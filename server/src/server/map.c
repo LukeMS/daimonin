@@ -2984,7 +2984,9 @@ static uint16 SaveObjects(mapstruct *m, FILE *fp)
     {
         for (j = 0; j < yl; j++)
         {
-            for (op = GET_MAP_OB(m, i, j); op; op = otmp)
+            MapSpace *mp = &m->spaces[i + m->width * j];
+
+            for (op = mp->first; op; op = otmp)
             {
                 otmp = op->above;
 
@@ -3023,7 +3025,7 @@ static uint16 SaveObjects(mapstruct *m, FILE *fp)
                     activelist_remove(head);
                     remove_ob(head);
                     check_walk_off(head, NULL, MOVE_APPLY_VANISHED | MOVE_APPLY_SAVING);
-                    INVALID_NEXT(op, otmp, last_valid, GET_MAP_OB(m, i, j));
+                    INVALID_NEXT(op, otmp, last_valid, mp->first);
 
                     continue;
                 }
@@ -3068,7 +3070,7 @@ static uint16 SaveObjects(mapstruct *m, FILE *fp)
                     activelist_remove(head);
                     remove_ob(head);
                     check_walk_off(head, NULL, MOVE_APPLY_VANISHED | MOVE_APPLY_SAVING);
-                    INVALID_NEXT(op, otmp, last_valid, GET_MAP_OB(m, i, j));
+                    INVALID_NEXT(op, otmp, last_valid, mp->first);
 
                     continue;
                 }
@@ -3079,7 +3081,7 @@ static uint16 SaveObjects(mapstruct *m, FILE *fp)
                     activelist_remove(head);
                     remove_ob(head);
                     check_walk_off(head, NULL, MOVE_APPLY_VANISHED | MOVE_APPLY_SAVING);
-                    INVALID_NEXT(op, otmp, last_valid, GET_MAP_OB(m, i, j));
+                    INVALID_NEXT(op, otmp, last_valid, mp->first);
 
                     continue;
                 }
@@ -3105,7 +3107,7 @@ static uint16 SaveObjects(mapstruct *m, FILE *fp)
                             remove_ob(op->enemy);
                             check_walk_off(op->enemy, NULL, MOVE_APPLY_VANISHED | MOVE_APPLY_SAVING);
                             op->enemy = NULL;
-                            INVALID_NEXT(op, otmp, last_valid, GET_MAP_OB(m, i, j));
+                            INVALID_NEXT(op, otmp, last_valid, mp->first);
                         }
                     }
                 }
@@ -3148,7 +3150,7 @@ static uint16 SaveObjects(mapstruct *m, FILE *fp)
                         activelist_remove(head);
                         remove_ob(head);
                         check_walk_off(head, NULL, MOVE_APPLY_VANISHED | MOVE_APPLY_SAVING);
-                        INVALID_NEXT(op, otmp, last_valid, GET_MAP_OB(m, i, j));
+                        INVALID_NEXT(op, otmp, last_valid, mp->first);
 
                         continue;
                     }
