@@ -236,6 +236,9 @@ int player_save(object *op)
      * allow map saving when players are on it but skip the objects (see
      * map.c:SaveObjects()).
      * -- Smacky 20120720 */
+    /* The first sentence is wrong -- we would actually just loop through
+     * m->player_first.
+     * -- Smacky 20120721 */
 
     if (op->map &&
         MAP_UNIQUE(op->map)) // TODO: Possibly other instance types?
