@@ -2997,11 +2997,7 @@ static void SaveObjects(mapstruct *m, FILE *fp)
 
                 /* thats NULL OR a valid ptr - it CAN'T be a non valid or we
                  * had remove it before AND reseted the ptr then right. */
-                /* Must be explicitly NULL when op->below->type = PLAYER else
-                 * we get an infinite loop.
-                 * -- Smacky 20120720 */
-                last_valid = (op->below &&
-                              op->below->type != PLAYER) ? op->below : NULL;
+                last_valid = op->below;
 
                 /* ok, we will *never* save maps with player on */
                 /* Actually we can/de. Lua can call map:Save() at any time and
@@ -3210,11 +3206,7 @@ static void SaveObjects(mapstruct *m, FILE *fp)
 
                 /* thats NULL OR a valid ptr - it CAN'T be a non valid or we
                  * had remove it before AND reseted the ptr then right. */
-                /* Must be explicitly NULL when op->below->type = PLAYER else
-                 * we get an infinite loop.
-                 * -- Smacky 20120720 */
-                last_valid = (op->below &&
-                              op->below->type != PLAYER) ? op->below : NULL;
+                last_valid = op->below;
 
                 /* ok, we will *never* save maps with player on */
                 /* Actually we can/de. Lua can call map:Save() at any time and
