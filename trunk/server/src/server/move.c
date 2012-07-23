@@ -495,18 +495,31 @@ int missile_reflection_adjust(object *op, int flag)
 /* All this really is is a glorified remove_object that also updates
 * the counts on the map if needed.
 */
-void leave_map(object *op)
+uint8 leave_map(object *op)
 {
-    mapstruct  *oldmap  = op->map;
+    mapstruct *oldmap  = op->map;
+    uint8      r;
 
-    activelist_remove(op);
     remove_ob(op); /* TODO: hmm... never drop inv here? */
-    check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
+    r = check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
 
-    if (oldmap && !oldmap->player_first && !oldmap->perm_load)
-        set_map_timeout(oldmap);
+    if (oldmap &&
+        !oldmap->perm_load)
+    {
+        if (MAP_INSTANCE(oldmap) ||
+            MAP_UNIQUE(oldmap))
+        {
+           (void)new_save_map(oldmap, 0);
+        }
+
+        if (!oldmap->player_first)
+        {
+            set_map_timeout(oldmap);
+        }
+    }
+
+    return r;
 }
-
 
 /* same as enter_map_by_exit() but without exit_ob().
 * Function is used from player loader, scripts and other "direct access" situations.
@@ -1061,9 +1074,22 @@ int enter_map(object *op, object *originator, mapstruct *newmap, int x, int y, i
     */
     if (!QUERY_FLAG(op, FLAG_REMOVED))
     {
-        remove_ob(op);
-        if (check_walk_off(op, originator, MOVE_APPLY_DEFAULT) != CHECK_WALK_OK)
-            return 1; // object destroyed
+        if (op->type == PLAYER)
+        {
+            if (leave_map(op) != CHECK_WALK_OK)
+            {
+                return 1; // object destroyed
+            }
+        }
+        else
+        {
+            remove_ob(op);
+
+            if (check_walk_off(op, originator, MOVE_APPLY_DEFAULT) != CHECK_WALK_OK)
+            {
+                return 1; // object destroyed
+            }
+        }
     }
 
 #if 0

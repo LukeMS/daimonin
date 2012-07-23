@@ -439,7 +439,7 @@ void                        recursive_roll(object *op, int dir, object *pusher);
 int                         roll_ob(object *op, int dir, object *pusher);
 int                         push_ob(object *who, int dir, object *pusher);
 int                         missile_reflection_adjust(object *op, int flag);
-void                        leave_map(object *op);
+uint8                       leave_map(object *op);
 mapstruct                  *enter_map_by_name(object *op, const char *path, const char *src_path, int x, int y, int flags);
 int                         enter_map_by_exit(object *op, object *exit_ob);
 int                         check_insertion_allowed(object *op, mapstruct *map, int x, int y, int mode, int ins_flags);

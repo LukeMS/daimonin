@@ -1143,6 +1143,16 @@ int command_save(object *op, char *params)
             new_save_map(op->map,0);
             op->map->in_memory=MAP_IN_MEMORY;
         }*/
+
+        /* Finally save the unique map (ie, apt) or instance the player is on.
+         * The previous comment warrants observation, though there are changes
+         * soon to come to hopefully fix any problems. */
+        if (op->map &&
+            MAP_INSTANCE(op->map) ||
+            MAP_UNIQUE(op->map))
+        {
+            (void)new_save_map(op->map, 0);
+        }
     }
 
     return 0;
