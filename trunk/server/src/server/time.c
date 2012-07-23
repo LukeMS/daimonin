@@ -592,7 +592,12 @@ void poison_more(object *op)
     }
 
     damage_ob(op->env, op->stats.dam, op, ENV_ATTACK_CHECK);
-    op->stats.dam *= 1 + (float)op->env->level / (MAXLEVEL * 2);
+
+    // Someone may have died after damage_ob, so make sure they're still alive.
+    if (op && op->env)
+    {
+        op->stats.dam *= 1 + (float)op->env->level / (MAXLEVEL * 2);
+    }
 }
 
 /* TODO: i have not included damage to mobs/player on reverse up going gates!
