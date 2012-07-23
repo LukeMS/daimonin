@@ -224,28 +224,6 @@ int player_save(object *op)
             if (account_save(ac, ac->name) != ACCOUNT_STATUS_OK)
                 return 0;
 
-    /* Finally save the unique map (ie, apt) the player is on. This is a bit of
-     * extra work for the server so ideally another way would be found, but
-     * prevents the player and map files getting out of sync so prevents
-     * duping. */
-    /* TODO: Loop through all players on that map in case it's an apartment
-     * in which other players can enter.
-     */
-    /* This would be unnecessary overhead (check every object on up to 576
-     * squares (which is already done twice each map save). The solution is we
-     * allow map saving when players are on it but skip the objects (see
-     * map.c:SaveObjects()).
-     * -- Smacky 20120720 */
-    /* The first sentence is wrong -- we would actually just loop through
-     * m->player_first.
-     * -- Smacky 20120721 */
-
-    if (op->map &&
-        MAP_UNIQUE(op->map)) // TODO: Possibly other instance types?
-    {
-        (void)new_save_map(op->map, 0);
-    }
-
     return 1;
 }
 
