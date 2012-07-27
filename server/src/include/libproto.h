@@ -219,11 +219,9 @@ extern void             map_to_player_link(mapstruct *m, int x, int y, int flag)
 extern const char      *create_safe_mapname_sh(char const *mapname);
 extern void             read_map_log(void);
 extern void             swap_map(mapstruct *map, int force_flag);
-extern void             check_active_maps(void);
+extern void             map_check_active(void);
 extern void             swap_below_max(const char *except_level);
 extern int              players_on_map(mapstruct *m);
-extern void             flush_old_maps(void);
-extern void             set_map_timeout(mapstruct *m);
 /* map_tile.c */
 extern void             update_position(mapstruct *m, MapSpace *mspace,int x, int y);
 extern int              map_brightness(mapstruct *m, int x, int y);

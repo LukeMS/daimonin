@@ -502,7 +502,7 @@ void remove_ns_dead_player(player *pl)
         {
             terminate_all_pets(pl->ob);
             activelist_remove(pl->ob);
-            (void)leave_map(pl->ob);
+            (void)leave_map(pl, NULL);
         }
 
         LOG(llevDebug, "remove_ns_dead_player(): %s leaving\n", STRING_OBJ_NAME(pl->ob));
