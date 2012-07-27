@@ -1155,6 +1155,14 @@ int command_save(object *op, char *params)
         }
     }
 
+    /* Finally save the unique map (ie, apt) or instance the player is on. */
+    if (op->map &&
+        MAP_INSTANCE(op->map) ||
+        MAP_UNIQUE(op->map))
+    {
+        (void)new_save_map(op->map, 0);
+    }
+
     return 0;
 }
 

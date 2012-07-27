@@ -493,18 +493,18 @@ int missile_reflection_adjust(object *op, int flag)
 }
 
 /* All this really is is a glorified remove_object that also updates
-* the counts on the map if needed.
-*/
-uint8 leave_map(object *op)
+ * the counts on the map if needed. newmap is the map pl is going to, or NULL
+ * if pl is logging out. */
+uint8 leave_map(player *pl, mapstruct *newmap)
 {
-    mapstruct *oldmap  = op->map;
+    mapstruct *oldmap = pl->ob->map;
     uint8      r;
 
-    remove_ob(op); /* TODO: hmm... never drop inv here? */
-    r = check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
+    remove_ob(pl->ob); /* TODO: hmm... never drop inv here? */
+    r = check_walk_off(pl->ob, NULL, MOVE_APPLY_VANISHED);
 
     if (oldmap &&
-        !oldmap->perm_load)
+        oldmap != newmap)
     {
         if (MAP_INSTANCE(oldmap) ||
             MAP_UNIQUE(oldmap))
@@ -512,9 +512,12 @@ uint8 leave_map(object *op)
            (void)new_save_map(oldmap, 0);
         }
 
-        if (!oldmap->player_first)
+        /* When there are still players or (TODO) permanently loading mobs on
+         * the map, mark it as still in memory. */
+        if (oldmap->player_first ||
+            oldmap->perm_load)
         {
-            set_map_timeout(oldmap);
+            oldmap->in_memory = MAP_IN_MEMORY;
         }
     }
 
@@ -1076,7 +1079,7 @@ int enter_map(object *op, object *originator, mapstruct *newmap, int x, int y, i
     {
         if (op->type == PLAYER)
         {
-            if (leave_map(op) != CHECK_WALK_OK)
+            if (leave_map(CONTR(op), newmap) != CHECK_WALK_OK)
             {
                 return 1; // object destroyed
             }
@@ -1119,8 +1122,6 @@ int enter_map(object *op, object *originator, mapstruct *newmap, int x, int y, i
     if (!insert_ob_in_map(op, newmap, originator, 0))
         return 1; // object destroyed
 
-    newmap->timeout = 0;
-
     /* do some action special for players after we have inserted them */
     if (op->type == PLAYER && (pl = CONTR(op)))
     {
@@ -1159,14 +1160,6 @@ int enter_map(object *op, object *originator, mapstruct *newmap, int x, int y, i
         }
 
         op->direction = 0;
-
-        /* If the player is changing maps, we need to do some special things
-        * Do this after the player is on the new map - otherwise the force swap of the
-        * old map does not work.
-        */
-        if (oldmap != newmap && oldmap && !oldmap->player_first && !oldmap->perm_load)
-            set_map_timeout(oldmap);
-
 #ifdef MAX_OBJECTS_LWM
         swap_below_max(newmap->path);
 #endif

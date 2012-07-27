@@ -65,8 +65,8 @@ static void       FreeAllObjects(mapstruct *m);
 #ifdef RECYCLE_TMP_MAPS
 static void       WriteMapLog(void);
 #endif
-static long       Seconds(void);
 static void       SetResetTime(mapstruct *m);
+static void       SetSwapTime(mapstruct *m);
 
 /* Returns the mapstruct which has a name matching the given argument oe NULL
  * if no match is found. */
@@ -350,11 +350,13 @@ char *normalize_path_direct(const char *src, const char *dst, char *path)
  *
  * MWs/MMs/SAs/NULL also gets the number of players on the map.
  *
- * TODO: Map status, rest time, swap time.
  * TODO: Finish listing layout. */
 void dump_map(mapstruct *m, player *pl, int list, char *ref)
 {
     object *ob = (pl) ? pl->ob : NULL;
+    uint32  seconds = (ROUND_TAG - ROUND_TAG %
+                       (long unsigned int)MAX(1, pticks_second)) /
+                      pticks_second;
 
     if (list <= 0)
     {
@@ -380,10 +382,28 @@ void dump_map(mapstruct *m, player *pl, int list, char *ref)
         if (!pl ||
             (pl->gmaster_mode & (GMASTER_MODE_MW | GMASTER_MODE_MM | GMASTER_MODE_SA)))
         {
-            NDI_LOG(llevSystem, NDI_UNIQUE, 0, ob, "~Type~: %s",
+            NDI_LOG(llevSystem, NDI_UNIQUE, 0, ob, "~Type~: %s (%u)",
                     ((MAP_MULTI(m)) ? "Multiplayer" :
                      ((MAP_UNIQUE(m)) ? "Unique" :
-                      ((MAP_INSTANCE(m)) ? "Instance" : "UNKNOWN"))));
+                      ((MAP_INSTANCE(m)) ? "Instance" : "UNKNOWN"))),
+                    m->in_memory);
+            NDI_LOG(llevSystem, NDI_UNIQUE, 0, ob, "~Swap~: %d (%u)",
+                    (sint32)(MAP_WHEN_SWAP(m) - seconds), MAP_SWAP_TIMEOUT(m));
+#ifdef MAP_RESET
+
+            if (MAP_WHEN_RESET(m) == 0)
+            {
+                NDI_LOG(llevSystem, NDI_UNIQUE, 0, ob, "~Reset~: Never");
+            }
+            else
+            {
+                NDI_LOG(llevSystem, NDI_UNIQUE, 0, ob, "~Reset~: %d (%u)",
+                        (sint32)(MAP_WHEN_RESET(m) - seconds), MAP_RESET_TIMEOUT(m));
+            }
+
+#else
+            NDI_LOG(llevSystem, NDI_UNIQUE, 0, ob, "~Reset~: Never");
+#endif
             NDI_LOG(llevSystem, NDI_UNIQUE, 0, ob, "~Size~: %dx%d (%d, %d)",
                     MAP_WIDTH(m), MAP_HEIGHT(m), MAP_ENTER_X(m), MAP_ENTER_Y(m));
             NDI_LOG(llevSystem, NDI_UNIQUE, 0, ob, "~Darkness/Light~: %d/%d%s",
@@ -429,10 +449,27 @@ void dump_map(mapstruct *m, player *pl, int list, char *ref)
             sprintf(strchr(buf, '\0'), "%s", STRING_MAP_PATH(m));
         }
 
-        sprintf(strchr(buf, '\0'), ": %s",
+        sprintf(strchr(buf, '\0'), ": %s (%u)",
                 ((MAP_MULTI(m)) ? "M" :
                  ((MAP_UNIQUE(m)) ? "U" :
-                  ((MAP_INSTANCE(m)) ? "I" : "X"))));
+                  ((MAP_INSTANCE(m)) ? "I" : "X"))), m->in_memory);
+        sprintf(strchr(buf, '\0'), ", %d (%u)",
+                (sint32)(MAP_WHEN_SWAP(m) - seconds), MAP_SWAP_TIMEOUT(m));
+#ifdef MAP_RESET
+
+        if (MAP_WHEN_RESET(m) == 0)
+        {
+            sprintf(strchr(buf, '\0'), ", x (x)");
+        }
+        else
+        {
+            sprintf(strchr(buf, '\0'), ", %d (%u)",
+                    (sint32)(MAP_WHEN_RESET(m) - seconds), MAP_RESET_TIMEOUT(m));
+        }
+
+#else
+        sprintf(strchr(buf, '\0'), ", x (x)");
+#endif
         sprintf(strchr(buf, '\0'), ", %d", MAP_DIFFICULTY(m));
         sprintf(strchr(buf, '\0'), ", %d/%d/%d",
                 m->tileset_id, m->tileset_x, m->tileset_y);
@@ -440,53 +477,6 @@ void dump_map(mapstruct *m, player *pl, int list, char *ref)
         sprintf(strchr(buf, '\0'), ", @%d", players_on_map(m));
         NDI_LOG(llevSystem, NDI_UNIQUE, 0, ob, "%s", buf);
     }
-
-#if 0
-#ifdef MAP_RESET
-    LOG(llevSystem, "Current time is: %02ld:%02ld:%02ld.\n", (sec % 86400) / 3600, (sec % 3600) / 60, sec % 60);
-
-    new_draw_info(NDI_UNIQUE, 0, op, "Current time is: %02ld:%02ld:%02ld.", (sec % 86400) / 3600,
-                         (sec % 3600) / 60, sec % 60);
-    new_draw_info(NDI_UNIQUE, 0, op, "Path               Pl PlM IM   TO Dif Reset");
-#else
-    new_draw_info(NDI_UNIQUE, 0, op, "Pl Pl-M IM   TO Dif");
-#endif
-
-    for (m = first_map; m != NULL; m = m->next)
-    {
-#ifndef MAP_RESET
-        if (m->in_memory == MAP_SWAPPED)
-            continue;
-#endif
-
-        /* Print out the last 18 characters of the map name... */
-        if (strlen(m->path) <= 18)
-            strcpy(map_path, m->path);
-        else
-            strcpy(map_path, m->path + strlen(m->path) - 18);
-
-#ifndef MAP_RESET
-        sprintf(buf, "%-18.18s %c %2d   %c %4ld %2ld", map_path,
-                m->in_memory ? (m->in_memory == MAP_IN_MEMORY ? 'm' : 's') : 'X', players_on_map(m), m->in_memory,
-                m->timeout, m->difficulty);
-#else
-        LOG(llevSystem, "%s (%s) pom:%d status:%c timeout:%d diff:%d  reset:%02d:%02d:%02d\n",
-            m->path, m->orig_path, players_on_map(m),
-            m->in_memory ? (m->in_memory == MAP_IN_MEMORY ? 'm' : 's') : 'X', m->timeout, m->difficulty,
-            (MAP_WHEN_RESET(m) % 86400) / 3600, (MAP_WHEN_RESET(m) % 3600) / 60, MAP_WHEN_RESET(m) % 60);
-/*        sprintf(buf, "%-18.18s %2d   %c %4d %2d  %02d:%02d:%02d", map_path, players_on_map(m),*/
-
-        if (!strcmp(m->path, m->orig_path))
-            new_draw_info(NDI_UNIQUE, 0, op, "%s %2d   %c %4d %2d  %02d:%02d:%02d", m->path, players_on_map(m),
-                    m->in_memory ? (m->in_memory == MAP_IN_MEMORY ? 'm' : 's') : 'X', m->timeout, m->difficulty,
-                    (MAP_WHEN_RESET(m) % 86400) / 3600, (MAP_WHEN_RESET(m) % 3600) / 60, MAP_WHEN_RESET(m) % 60);
-        else
-            new_draw_info(NDI_UNIQUE, 0, op, "%s (%s) %2d   %c %4d %2d  %02d:%02d:%02d", m->path, m->orig_path, players_on_map(m),
-                    m->in_memory ? (m->in_memory == MAP_IN_MEMORY ? 'm' : 's') : 'X', m->timeout, m->difficulty,
-                    (MAP_WHEN_RESET(m) % 86400) / 3600, (MAP_WHEN_RESET(m) % 3600) / 60, MAP_WHEN_RESET(m) % 60);
-#endif
-    }
-#endif
 }
 
 static char *ShowMapFlags(mapstruct *m)
@@ -768,10 +758,8 @@ static mapstruct *GetLinkedMap(void)
      * map archetype. Mimic that behaviour. */
     MAP_WIDTH(map) = MAP_DEFAULT_WIDTH;
     MAP_HEIGHT(map) = MAP_DEFAULT_HEIGHT;
-    MAP_WHEN_RESET(map) = MAP_DEFAULT_RESET_TIME;
-    MAP_RESET_TIMEOUT(map) = MAP_DEFAULT_RESET_TIME;
-    MAP_SWAP_TIME(map) = MAP_DEFAULT_SWAP_TIME;
-    MAP_TIMEOUT(map) = MAP_DEFAULT_SWAP_TIME;
+    MAP_RESET_TIMEOUT(map) = MAP_DEFRESET;
+    MAP_SWAP_TIMEOUT(map) = MAP_DEFSWAP;
     MAP_DIFFICULTY(map) = MAP_DEFAULT_DIFFICULTY;
     set_map_darkness(map, MAP_DEFAULT_DARKNESS);
 
@@ -960,12 +948,12 @@ int new_save_map(mapstruct *m, int flag)
 
     if (!flag)
     {
-        fprintf(fp, "swap_time %d\n", m->swap_time);
+        fprintf(fp, "swap_time %d\n", MAP_SWAP_TIMEOUT(m));
     }
 
-    if (m->reset_timeout)
+    if (MAP_RESET_TIMEOUT(m))
     {
-        fprintf(fp, "reset_timeout %d\n", m->reset_timeout);
+        fprintf(fp, "reset_timeout %d\n", MAP_RESET_TIMEOUT(m));
     }
 
     if (MAP_FIXED_RESETTIME(m))
@@ -1121,8 +1109,10 @@ int new_save_map(mapstruct *m, int flag)
     fprintf(fp, "end\n");
     SaveObjects(m, fp);
 
-    /* When there are players on the map, put the map back in memory. */
-    if (m->player_first)
+    /* When there are players or (TODO) permanently loaded mobs on the map, put
+     * the map back in memory. */
+    if (m->player_first ||
+        m->perm_load)
     {
         m->in_memory = MAP_IN_MEMORY;
     }
@@ -1922,7 +1912,6 @@ static mapstruct *LoadMap(const char *filename, const char *src_name, int flags,
     LOG(llevInfo, "Buttons.\n");
 #endif
     update_buttons(m);
-    SetResetTime(m);
     fclose(fp);
 
     return m;
@@ -2115,54 +2104,45 @@ static int LoadMapHeader(FILE *fp, mapstruct *m, int flags)
             int v = atoi(value);
 
 #ifdef MAP_RESET
-#ifdef MAP_MAXRESET
-            if (v < 0 || v > MAP_MAXRESET)
+            if (v == -1) // never reset
+            {
+                v = 0;
+            }
+            else if (v < 0 ||
+                     v > MAP_MAXRESET) // specific time within server limits
             {
                 /* Don't log temp maps. */
                 if (!m->tmpname)
                 {
                     LOG(llevMapbug, "MAPBUG:: >%s<: Illegal map reset time %d (must be 0 to %d, defaulting to %d)!\n",
                         STRING_MAP_ORIG_PATH(m), v, MAP_MAXRESET,
-                        MAP_DEFAULT_RESET_TIME);
+                         MAP_DEFRESET);
                 }
+
+                v = MAP_DEFRESET;
             }
-#else // ifdef MAP_MAXRESET
-            if (v < 0)
-            {
-                /* Don't log temp maps. */
-                if (!m->tmpname)
-                {
-                    LOG(llevMapbug, "MAPBUG:: >%s<: Illegal map reset time %d (must be positive, defaulting to %d)!\n",
-                        STRING_MAP_ORIG_PATH(m), v, MAP_DEFAULT_RESET_TIME);
-                }
-            }
-#endif // ifdef MAP_MAXRESET
-            else
-#endif // ifddef MAP_RESET
-            {
-                m->reset_time = v;
-                m->reset_timeout = v;
-            }
+#endif
+            MAP_RESET_TIMEOUT(m) = v;
         }
         else if (!strcmp(key, "swap_time"))
         {
             int v = atoi(value);
 
-            if (v < MAP_MINTIMEOUT || v > MAP_MAXTIMEOUT)
+            if (v < MAP_MINSWAP ||
+                v > MAP_MAXSWAP) // specific time within server limits
             {
                 /* Don't log temp maps. */
                 if (!m->tmpname)
                 {
                     LOG(llevMapbug, "MAPBUG:: >%s<: Illegal map swap time %d (must be %d to %d, defaulting to %d)!\n",
-                        STRING_MAP_ORIG_PATH(m), v, MAP_MINTIMEOUT,
-                        MAP_MAXTIMEOUT, MAP_DEFAULT_SWAP_TIME);
+                        STRING_MAP_ORIG_PATH(m), v, MAP_MINSWAP, MAP_MAXSWAP,
+                        MAP_DEFSWAP);
                 }
+
+                v = MAP_DEFSWAP;
             }
-            else
-            {
-                m->swap_time = v;
-                m->timeout = v;
-            }
+
+            MAP_SWAP_TIMEOUT(m) = v;
         }
         /* difficulty is a 'recommended player level' for that map *for a
          * single player*, so follows the same restriction (1 to MAXLEVEL). It
@@ -2480,6 +2460,10 @@ static int LoadMapHeader(FILE *fp, mapstruct *m, int flags)
             STRING_MAP_ORIG_PATH(m), MAP_ENTER_Y(m), MAP_HEIGHT(m) - 1);
         MAP_ENTER_Y(m) = 0;
     }
+
+    /* Set times to swap/reset. */
+    SetSwapTime(m);
+    SetResetTime(m);
 
 #ifdef DAI_DEVELOPMENT_CONTENT
     /* Verify tileset_id after linking. */
@@ -2936,238 +2920,46 @@ static void UpdateMapTiles(mapstruct *m)
 * map what you like. MT-07.02.04 */
 static void SaveObjects(mapstruct *m, FILE *fp)
 {
-    static object *floor_g=NULL, *fmask_g=NULL;
-    int    yl=MAP_HEIGHT(m), xl=MAP_WIDTH(m);
-    int     i, j = 0;
-    object *head, *op, *otmp, *tmp, *last_valid;
+    static object *floor_g = NULL,
+                  *fmask_g = NULL;
+    uint16         x,
+                   y;
+    uint8          keep = (m->player_first ||
+                           m->perm_load) ? 1 : 0;
 
     /* FIXME: These 2 checks should/could probably be done once at server
      * init with global_archetypes. */
     /* ensure we have our "template" objects for saving floors & masks */
     if(!floor_g)
     {
-        floor_g = get_archetype("floor_g");
-        if(!floor_g)
-            LOG(llevError, "ERROR: Cant'find 'floor_g' arch\n");
+        if (!(floor_g = get_archetype("floor_g")))
+        {
+            LOG(llevError, "ERROR:: Can't find 'floor_g' arch\n");
+        }
+
         insert_ob_in_ob(floor_g, &void_container); /* Avoid gc */
         FREE_AND_CLEAR_HASH(floor_g->name);
     }
+
     if(!fmask_g)
     {
-        fmask_g = get_archetype("fmask_g");
+        if (!(fmask_g = get_archetype("fmask_g")))
+        {
+            LOG(llevError, "ERROR:: Cant'find 'fmask_g' arch\n");
+        }
+
         insert_ob_in_ob(fmask_g, &void_container); /* Avoid gc */
-        if(!fmask_g)
-            LOG(llevError, "ERROR: Cant'find 'fmask_g' arch\n");
     }
 
-    /* first, we have to remove all dynamic objects from this map.
-    * from spell effects with owners (because the owner can't
-    * be restored after a save) or from spawn points generated mobs.
-    * We need to remove them in a right way - perhaps our spawn mob
-    * was sitting on a button and we need to save then the unpressed
-    * button - when not removed right our map get messed up when reloaded.
-    *
-    * We need to be a bit careful here.
-    *
-    * We will give the move_apply() code (which handles object changes when
-    * something is removed) the MOVE_APPLY_VANISHED flag - we MUST
-    * take care in all called function about it.
-    *
-    * a example: A button which is pressed will call a spawn point "remove object x"
-    * and unpressed "spawn onject x".
-    * This is ok in the way, the button only set a flag/value in the spawn point
-    * so in the next game tick the spawn point can do action. Because we will save
-    * now, that action will be called when the map is reloaded. All ok.
-    * NOT ok is, that the button then (or any other from move apply called object)
-    * does an action IMMEDIATELY unless it is a static effect (like we put a wall
-    * in somewhere).
-    * Absolutely forbidden are dynamic effect like instant spawns of mobs on other maps
-    * point - then our map will get messed up again. Teleporters are a bit critical here
-    * and i fear the code and callings in move_apply() will need some more carefully
-    * examination.
-    */
-    for (i = 0; i < xl; i++)
+    for (x = 0; x < MAP_WIDTH(m); x++)
     {
-        for (j = 0; j < yl; j++)
+        for (y = 0; y < MAP_HEIGHT(m); y++)
         {
-            MapSpace *mp = &m->spaces[i + m->width * j];
-
-            for (op = mp->first; op; op = otmp)
-            {
-                otmp = op->above;
-
-                /* thats NULL OR a valid ptr - it CAN'T be a non valid or we
-                 * had remove it before AND reseted the ptr then right. */
-                last_valid = op->below;
-
-                /* ok, we will *never* save maps with player on */
-                /* Actually we can/de. Lua can call map:Save() at any time and
-                 * this does not check for players first (that would be a large
-                 * overhead). And we also save the apt if a player /saves in it
-                 * (and again, no guarantee he's not invited friends round for
-                 * tea). We still don't save players as map objects but equally
-                 * there's no need to log this as it's a reasonable occurrence.
-                 * -- Smacky 20120720 */
-                if (op->type == PLAYER)
-                {
-//                    LOG(llevDebug, "SemiBUG: Tried to save map with player on!(%s (%s))\n",
-//                        query_name(op), m->path);
-//
-                    continue;
-                }
-
-                head = op->head ? op->head : op;
-                /* here we remove all "dynamic" content which are around on the map.
-                * ATM i remove some spell effects with it.
-                * For things like permanent counterspell walls or something we should
-                * use and create special objects.
-                */
-                if (QUERY_FLAG(head, FLAG_NO_SAVE))
-                {
-                    REMOVE_OBJECT(head, 1);
-                    VALIDATE_NEXT(op, otmp, last_valid, mp->first);
-
-                    continue;
-                }
-                /* here we handle the mobs of a spawn point - called spawn mobs.
-                * We *never* save spawn mobs - not even if they are on the same map.
-                * We remove them and tell the spawn point to generate them new in the next tick.
-                * (In case of the saved map it is the reloading).
-                * If reloaded, the spawn point will restore a new mob of same kind on
-                * the default position.
-                */
-                else if (QUERY_FLAG(head, FLAG_SPAWN_MOB))
-                {
-                    /* sanity check for the mob structures & ptr */
-                    if(!MOB_DATA(head) || !MOB_DATA(head)->spawn_info)
-                    {
-                        LOG( llevBug, "BUG: Spawn mob (%s %s) without SPAWN INFO (%s) or MOB_DATA(%p).\n",
-                            STRING_SAFE(head->arch->name), query_name(head),
-                            MOB_DATA(head)?query_name(MOB_DATA(head)->spawn_info):"NULL",
-                            MOB_DATA(head)?MOB_DATA(head):NULL);
-                    }
-                    else
-                    {
-                        tmp = MOB_DATA(head)->spawn_info;
-                        /* spawn info is ok - check the spawn point attached to it */
-                        if (tmp->owner && tmp->owner->type == SPAWN_POINT)
-                        {
-                            /* Found spawn point. Tell the source spawn point to respawn this deleted object.
-                            * It can be here OR on a different map.
-                            */
-                            tmp->owner->stats.sp = tmp->owner->last_sp; /* force a pre spawn setting */
-                            tmp->owner->speed_left += 1.0f; /* we force a active spawn point */
-                            tmp->owner->enemy = NULL;
-                        }
-                        else
-                        {
-                            LOG( llevBug, "BUG: Spawn mob (%s (%s)) has SPAWN INFO with illegal owner: (%s)!\n",
-                                STRING_SAFE(head->arch->name), query_name(head), query_name(tmp->owner));
-                        }
-                    }
-
-                    /* and remove the mob itself */
-                    REMOVE_OBJECT(head, 1);
-                    VALIDATE_NEXT(op, otmp, last_valid, mp->first);
-
-                    continue;
-                }
-                /* This is for mobs whose spawn has been interrupted by a
-                 * script so do not have SPAWN_INFO. */
-                else if (QUERY_FLAG(head, FLAG_SCRIPT_MOB))
-                {
-                    REMOVE_OBJECT(head, 1);
-                    VALIDATE_NEXT(op, otmp, last_valid, mp->first);
-
-                    continue;
-                }
-                else if (op->type == SPAWN_POINT)
-                {
-                    /* Handling of the spawn points is much easier as handling the mob.
-                    * if the spawn point still control some mobs, we delete the mob  - where ever
-                    * it is. Also, set pre spawn value to last mob - so we restore our creature
-                    * when we reload this map.
-                    */
-                    if (op->enemy)
-                    {
-                        if (op->enemy_count == op->enemy->count &&  /* we have a legal spawn? */
-                            !QUERY_FLAG(op->enemy, FLAG_REMOVED) && !OBJECT_FREE(op->enemy))
-                        {
-                            op->stats.sp = op->last_sp; /* force a pre spawn setting */
-                            op->speed_left += 1.0f;
-                            /* and delete the spawn */
-                            /* note: because a spawn point always is on a map, its safe to
-                            * have the activelist_remove() inside here
-                            */
-                            REMOVE_OBJECT(op->enemy, 1);
-                            VALIDATE_NEXT(op, otmp, last_valid, mp->first);
-                            op->enemy = NULL;
-                        }
-                    }
-                }
-
-                /* I don't know if this is a workaround or a fix, but currently
-                 * doors don't play nicely with this function. Without this if-statement
-                 * they would duplicate themselves when unique maps were saved.
-                 */
-                else if (head->type == DOOR || head->type == LOCKED_DOOR)
-                {
-                    activelist_remove(head);
-                    continue;
-                }
-
-                /* we will delete here all temporary owner objects.
-                * We talk here about spell effects, pets, golems and
-                * other "dynamic" objects.
-                * What NOT should be deleted are throw objects and other
-                * permanent items which has a owner setting! (if they have)
-                */
-                if (head->owner)
-                {
-                    /* perhaps we should add here a flag for pets...
-                    * But the pet code needs a rework so or so.
-                    * ATM we simply delete GOLEMS and clearing
-                    * from all other spells/stuff the owner tags.
-                    * SPAWN MOBS are not here so we only speak about
-                    * spell effects
-                    * we *can* delete them here too - but then i would
-                    * prefer a no_save flag. Only reason to save them is
-                    * to reset for example buttons or avoiding side effects
-                    * like a fireball saved with neutral owner which does then
-                    * something evil - but that CAN always catched in the code
-                    * and scripts so lets go the easy way here - as less we
-                    * manipulate the map here as more secure we are!
-                    */
-                    if (head->type == GOLEM) /* a golem needs a valid release from the player... */
-                    {
-                        send_golem_control(head, GOLEM_CTR_RELEASE);
-                        REMOVE_OBJECT(head, 1);
-                        VALIDATE_NEXT(op, otmp, last_valid, mp->first);
-
-                        continue;
-                    }
-
-                    LOG(llevDebug, "WARNING (only debug): save_obj(): obj w. owner. map:%s obj:%s (%s) (%d,%d)\n",
-                        m->path, query_name(op), op->arch->name ? op->arch->name : "<no arch name>", op->x, op->y);
-                    head->owner = NULL;
-                    continue;
-                }
-            } /* for this space */
-        } /* for this j */
-    }
-
-
-    /* The map is now cleared from non static objects on this or other maps
-    * (when the source was from this map). Now all can be saved as a legal
-    * snapshot of the map state mashine.
-    * That means all button/mashine relations are correct.
-    */
-
-    for (i = 0; i < xl; i++)
-    {
-        for (j = 0; j < yl; j++)
-        {
-            MapSpace *mp = &m->spaces[i + m->width * j];
+            MapSpace *mp = &m->spaces[x + m->width * y];
+            object   *this,
+                     *next,
+                     *prev,
+                     *head;
 
             /* save first the floor and mask from the node */
             if(mp->floor_face)
@@ -3175,21 +2967,29 @@ static void SaveObjects(mapstruct *m, FILE *fp)
                 floor_g->terrain_type = mp->floor_terrain;
                 floor_g->last_sp = mp->floor_light;
                 floor_g->face = mp->floor_face;
-                floor_g->x = i;
-                floor_g->y = j;
+                floor_g->x = x;
+                floor_g->y = y;
 #ifdef USE_TILESTRETCHER
                 floor_g->z = mp->floor_z;
 #endif
 
-                if(mp->floor_flags & MAP_FLOOR_FLAG_NO_PASS )
+                if ((mp->floor_flags & MAP_FLOOR_FLAG_NO_PASS))
+                {
                     SET_FLAG(floor_g, FLAG_NO_PASS);
+                }
                 else
+                {
                     CLEAR_FLAG(floor_g, FLAG_NO_PASS);
+                }
 
-                if(mp->floor_flags & MAP_FLOOR_FLAG_PLAYER_ONLY)
+                if ((mp->floor_flags & MAP_FLOOR_FLAG_PLAYER_ONLY))
+                {
                     SET_FLAG(floor_g, FLAG_PLAYER_ONLY);
+                }
                 else
+                {
                     CLEAR_FLAG(floor_g, FLAG_PLAYER_ONLY);
+                }
 
                 /* black object magic... don't do this in the "normal" server code */
                 save_object(fp, floor_g, 3);
@@ -3198,79 +2998,286 @@ static void SaveObjects(mapstruct *m, FILE *fp)
             if(mp->mask_face)
             {
                 fmask_g->face = mp->mask_face;
-                fmask_g->x = i;
-                fmask_g->y = j;
+                fmask_g->x = x;
+                fmask_g->y = y;
 #ifdef USE_TILESTRETCHER
                 floor_g->z = mp->floor_z;
 #endif
                 save_object(fp, fmask_g, 3);
             }
 
-            for (op = mp->first; op; op = otmp)
+
+            /* Now we go through every object on the square. Each object falls
+             * into one of three categories:
+             *
+             * (1) player objects;
+             * (2) 'dynamic' objects such as spell effects or mobs; or
+             * (3) other objects. */
+            for (this = mp->first; this; this = next)
             {
-                otmp = op->above;
+                next = this->above;
+                prev = this->below;
+                head = (this->head) ? this->head : this;
 
-                /* thats NULL OR a valid ptr - it CAN'T be a non valid or we
-                 * had remove it before AND reseted the ptr then right. */
-                last_valid = op->below;
-
-                /* ok, we will *never* save maps with player on */
-                /* Actually we can/de. Lua can call map:Save() at any time and
-                 * this does not check for players first (that would be a large
-                 * overhead). And we also save the apt if a player /saves in it
-                 * (and again, no guarantee he's not invited friends round for
-                 * tea). We still don't save players as map objects.
-                 * -- Smacky 20120720 */
-                if (op->type == PLAYER)
+                /* Category (1) player objects.
+                 *
+                 * The server performs periodic scheduled saves (ie, when no
+                 * player has been on the map for X time). Therefore we should
+                 * not find such an object. But if we do, no matter, simply
+                 * skip over it.
+                 *
+                 * Scripts can call map:Save() at any time, and we also save a
+                 * unique/instanced map if a player /saves in it or when he
+                 * leaves (no guarantee he's not invited friends round for tea
+                 * and they're still there). So these unscheduled saves are
+                 * likely to have players on the map. Again, no matter, we
+                 * simply skip. */
+                if (this->type == PLAYER)
                 {
                     continue;
                 }
 
-                /* here we do the magic! */
-                if (op->head) /* its a tail... */
+                /* Category (2) 'dynamic' objects.
+                 *
+                 * When a map is saved with no players on it it is subsequently
+                 * deleted from memory so we'll remove these objects now too.
+                 *
+                 * We need to remove them in a right way - perhaps our spawn mob
+                 * was sitting on a button and we need to save then the unpressed
+                 * button - when not removed right our map get messed up when reloaded.
+                 *
+                 * We need to be a bit careful here.
+                 *
+                 * We will give the move_apply() code (which handles object changes when
+                 * something is removed) the MOVE_APPLY_VANISHED flag - we MUST
+                 * take care in all called function about it.
+                 *
+                 * a example: A button which is pressed will call a spawn point "remove object x"
+                 * and unpressed "spawn onject x".
+                 * This is ok in the way, the button only set a flag/value in the spawn point
+                 * so in the next game tick the spawn point can do action. Because we will save
+                 * now, that action will be called when the map is reloaded. All ok.
+                 * NOT ok is, that the button then (or any other from move apply called object)
+                 * does an action IMMEDIATELY unless it is a static effect (like we put a wall
+                 * in somewhere).
+                 *
+                 * Absolutely forbidden are dynamic effect like instant spawns of mobs on other maps
+                 * point - then our map will get messed up again. Teleporters are a bit critical here
+                 * and i fear the code and callings in move_apply() will need some more carefully
+                 * examination.
+                 *
+                 * But when there are players on the map we simply skip over these
+                 * object (so they are not saved but do remain in memory). */
+                if (!keep)
                 {
-                    int xt, yt;
+                    /* here we remove all "dynamic" content which are around on the map.
+                    * ATM i remove some spell effects with it.
+                    * For things like permanent counterspell walls or something we should
+                    * use and create special objects. */
+                    if (QUERY_FLAG(head, FLAG_NO_SAVE))
+                    {
+                        REMOVE_OBJECT(head, 1);
+                        VALIDATE_NEXT(this, next, prev, mp->first);
 
-                    /* the magic is, that we have a tail here, but we
-                    * save the head now and give it the x/y
-                    * position basing on this tail position and its
-                    * x/y clone arch default multi tile offsets!
-                    * With this trick, we even can generate negative
-                    * map positions - and thats exactly what we want
-                    * when our head is on a different map as this tail!
-                    * insert_ob() and the map loader will readjust map and
-                    * positions and load the other map when needed!
-                    * we must save x/y or remove_ob() will fail.
-                    */
-                    tmp = op->head;
-                    xt = tmp->x;
-                    yt = tmp->y;
-                    tmp->x = op->x - op->arch->clone.x;
-                    tmp->y = op->y - op->arch->clone.y;
+                        continue;
+                    }
+                    /* here we handle the mobs of a spawn point - called spawn mobs.
+                    * We *never* save spawn mobs - not even if they are on the same map.
+                    * We remove them and tell the spawn point to generate them new in the next tick.
+                    * (In case of the saved map it is the reloading).
+                    * If reloaded, the spawn point will restore a new mob of same kind on
+                    * the default position. */
+                    else if (QUERY_FLAG(head, FLAG_SPAWN_MOB))
+                    {
+                        /* sanity check for the mob structures & ptr */
+                        if (!MOB_DATA(head) ||
+                            !MOB_DATA(head)->spawn_info)
+                        {
+                            LOG(llevBug, "BUG:: %s:SaveObjects(): Spawn mob %s %s [%d] without SPAWN INFO %s or MOB_DATA %p.\n",
+                                __FILE__, STRING_OBJ_ARCH_NAME(head),
+                                STRING_OBJ_NAME(head), TAG(head),
+                                (MOB_DATA(head)) ? query_name(MOB_DATA(head)->spawn_info) : ">NULL<",
+                                (MOB_DATA(head)) ? MOB_DATA(head) : NULL);
+                        }
+                        else
+                        {
+                            object *info = MOB_DATA(head)->spawn_info;
 
-                    save_object(fp, tmp, 3);
+                            /* spawn info is ok - check the spawn point attached to it */
+                            if (info->owner &&
+                                info->owner->type == SPAWN_POINT)
+                            {
+                                /* Found spawn point. Tell the source spawn point to respawn this deleted object.
+                                * It can be here OR on a different map. */
+                                info->owner->stats.sp = info->owner->last_sp; /* force a pre spawn setting */
+                                info->owner->speed_left += 1.0f; /* we force a active spawn point */
+                                info->owner->enemy = NULL;
+                            }
+                            else
+                            {
+                                LOG(llevBug, "BUG:: %s:SaveObjects(): Spawn mob %s %s [%d] has SPAWN INFO with illegal owner: %s [%d]!\n",
+                                    __FILE__, STRING_OBJ_ARCH_NAME(head),
+                                    STRING_OBJ_NAME(head), TAG(head),
+                                    STRING_OBJ_NAME(info->owner), TAG(info->owner));
+                            }
+                        }
 
-                    tmp->x = xt;
-                    tmp->y = yt;
+                        /* and remove the mob itself */
+                        REMOVE_OBJECT(head, 1);
+                        VALIDATE_NEXT(this, next, prev, mp->first);
 
-                    /* remember: if we have remove for example 2 or more objects above, the
-                     * op->above WILL be still valid - remove_ob() will handle it right.
-                     * IF we get here a valid ptr, ->above WILL be valid too. Always. */
-                    REMOVE_OBJECT(tmp, 0);
-                    VALIDATE_NEXT(op, otmp, last_valid, mp->first);
+                        continue;
+                    }
+                    /* This is for mobs whose spawn has been interrupted by a
+                     * script so do not have SPAWN_INFO. */
+                    else if (QUERY_FLAG(head, FLAG_SCRIPT_MOB))
+                    {
+                        REMOVE_OBJECT(head, 1);
+                        VALIDATE_NEXT(this, next, prev, mp->first);
 
-                    continue;
+                        continue;
+                    }
+                    else if (head->type == SPAWN_POINT)
+                    {
+                        /* Handling of the spawn points is much easier as handling the mob.
+                        * if the spawn point still control some mobs, we delete the mob  - where ever
+                        * it is. Also, set pre spawn value to last mob - so we restore our creature
+                        * when we reload this map. */
+                        if (head->enemy)
+                        {
+                            if (head->enemy_count == head->enemy->count &&  /* we have a legal spawn? */
+                                !QUERY_FLAG(head->enemy, FLAG_REMOVED) &&
+                                !OBJECT_FREE(head->enemy))
+                            {
+                                head->stats.sp = head->last_sp; /* force a pre spawn setting */
+                                head->speed_left += 1.0f;
+                                REMOVE_OBJECT(head->enemy, 1);
+                                VALIDATE_NEXT(this, next, prev, mp->first);
+                                head->enemy = NULL;
+                            }
+                        }
+                    }
+
+                    /* TODO: Needs thought.
+                     * -- Smacky 20120725 */
+                    /* we will delete here all temporary owner objects.
+                    * We talk here about spell effects, pets, golems and
+                    * other "dynamic" objects.
+                    * What NOT should be deleted are throw objects and other
+                    * permanent items which has a owner setting! (if they have) */
+                    if (head->owner)
+                    {
+                        /* perhaps we should add here a flag for pets...
+                        * But the pet code needs a rework so or so.
+                        * ATM we simply delete GOLEMS and clearing
+                        * from all other spells/stuff the owner tags.
+                        * SPAWN MOBS are not here so we only speak about
+                        * spell effects
+                        * we *can* delete them here too - but then i would
+                        * prefer a no_save flag. Only reason to save them is
+                        * to reset for example buttons or avoiding side effects
+                        * like a fireball saved with neutral owner which does then
+                        * something evil - but that CAN always catched in the code
+                        * and scripts so lets go the easy way here - as less we
+                        * manipulate the map here as more secure we are! */
+                        if (head->type == GOLEM) /* a golem needs a valid release from the player... */
+                        {
+                            send_golem_control(head, GOLEM_CTR_RELEASE);
+                            REMOVE_OBJECT(head, 1);
+                            VALIDATE_NEXT(this, next, prev, mp->first);
+
+                            continue;
+                        }
+
+                        LOG(llevDebug, "DEBUG:: %s:SaveObjects(): obj with owner (%s [%d]) on map %s (%d %d)\n",
+                            __FILE__, STRING_OBJ_NAME(this), TAG(this),
+                            STRING_MAP_PATH(m), this->x, this->y);
+                        head->owner = NULL;
+
+                        continue;
+                    }
+                }
+                else
+                {
+                    if (QUERY_FLAG(head, FLAG_NO_SAVE) ||
+                        QUERY_FLAG(head, FLAG_SPAWN_MOB) ||
+                        QUERY_FLAG(head, FLAG_SCRIPT_MOB) ||
+                        head->owner)
+                    {
+                        continue;
+                    }
                 }
 
-                save_object(fp, op, 3);
-
-                if (op->more) /* its a head (because we had tails tested before) */
+                /* Category (3) other objects.
+                 *
+                 * These objects can be saved, although for multiparts we
+                 * first do some magic.
+                 *
+                 * The magic is, that when we find a tail, we
+                 * save the head and give it the x/y
+                 * position basing on this tail position and its
+                 * x/y clone arch default multi tile offsets!
+                 * With this trick, we even can generate negative
+                 * map positions - and thats exactly what we want
+                 * when our head is on a different map as this tail!
+                 * insert_ob() and the map loader will readjust map and
+                 * positions and load the other map when needed!
+                 * we must save x/y or remove_ob() will fail.
+                 * */
+                if (!keep)
                 {
-                    REMOVE_OBJECT(op, 0);
-                    VALIDATE_NEXT(op, otmp, last_valid, mp->first);
+                    if (this->head) // its a tail...
+                    {
+                        int xt,
+                            yt;
+
+                        xt = head->x;
+                        yt = head->y;
+                        head->x = this->x - this->arch->clone.x;
+                        head->y = this->y - this->arch->clone.y;
+                        save_object(fp, head, 3);
+                        head->x = xt;
+                        head->y = yt;
+
+                        /* remember: if we have remove for example 2 or more objects above, the
+                         * this->above WILL be still valid - remove_ob() will handle it right.
+                         * IF we get here a valid ptr, ->above WILL be valid too. Always. */
+                        REMOVE_OBJECT(head, 0);
+                        VALIDATE_NEXT(this, next, prev, mp->first);
+
+                        continue;
+                    }
+
+                    save_object(fp, this, 3);
+
+                    if (this->more) // its a head (because we had tails tested before)
+                    {
+                        REMOVE_OBJECT(this, 0);
+                        VALIDATE_NEXT(this, next, prev, mp->first);
+                    }
+                }
+                else
+                {
+                    if (this->head) // its a tail...
+                    {
+                        int xt,
+                            yt;
+
+                        xt = head->x;
+                        yt = head->y;
+                        head->x = this->x - this->arch->clone.x;
+                        head->y = this->y - this->arch->clone.y;
+                        save_object(fp, head, 3);
+                        head->x = xt;
+                        head->y = yt;
+
+                        continue;
+                    }
+
+                    save_object(fp, this, 3);
                 }
             } /* for this space */
-        } /* for this j */
+        } /* for this y */
     }
 }
 
@@ -3387,12 +3394,13 @@ const char* create_safe_mapname_sh(char const *mapname)
 #ifdef RECYCLE_TMP_MAPS
 /* This writes out information on all the temporary maps.  It is called by
  * swap_map below. */
+/* TODO: Don't know if thid works (current servers do not recycle).
+ * -- Smacky 20120726 */
 static void WriteMapLog(void)
 {
     FILE       *fp;
     mapstruct  *map;
     char        buf[MEDIUM_BUF];
-    long        current_time    = time(NULL);
 
     sprintf(buf, "%s/temp.maps", settings.localdir);
     if (!(fp = fopen(buf, "w")))
@@ -3412,8 +3420,9 @@ static void WriteMapLog(void)
                * Keep using it so that old temp files continue
                * to work.
                */
-            fprintf(fp, "%s:%s:%ld:0:0:%d:0:%d\n", map->path, map->tmpname,
-                    (map->reset_time == -1 ? -1 : map->reset_time - current_time), map->difficulty, map->darkness);
+            fprintf(fp, "%s:%s:%ld:0:0:%d:0:%d\n",
+                    map->path, map->tmpname, MAP_RESET_TIMEOUT(map),
+                    map->difficulty, map->darkness);
         }
     }
     fclose(fp);
@@ -3458,7 +3467,7 @@ void read_map_log(void)
          * We use it twice - second one is from encounter, but as we
          * don't care about the value, this works fine. */
         sscanf(cp1, "%d:%d:%d:%d:%d:%d\n",
-               &m->reset_time, &lock, &lock, &difficulty, &do_los, &darkness);
+               &MAP_RESET_TIMEOUT(m), &lock, &lock, &difficulty, &do_los, &darkness);
 
         m->in_memory = MAP_SWAPPED;
         m->darkness = darkness;
@@ -3473,15 +3482,6 @@ void read_map_log(void)
     }
 
     fclose(fp);
-}
-
-static long Seconds(void)
-{
-    struct timeval now;
-
-    (void)GETTIMEOFDAY(&now);
-
-    return now.tv_sec;
 }
 
 /* if on the map and the direct attached maps no player and no perm_load
@@ -3546,7 +3546,8 @@ void swap_map(mapstruct *map, int force_flag)
 
     /* If it is immediate reset time, don't bother saving it - just get
      * rid of it right away. */
-    if (map->reset_time <= (uint32)Seconds())
+    if (MAP_WHEN_RESET(map) &&
+        MAP_WHEN_RESET(map) <= (ROUND_TAG - ROUND_TAG % (long unsigned int)MAX(1, pticks_second)) / pticks_second)
     {
         mapstruct *oldmap = map;
 
@@ -3590,30 +3591,6 @@ void swap_map(mapstruct *map, int force_flag)
 #endif
 }
 
-void check_active_maps(void)
-{
-    mapstruct *map = first_map,
-              *next;
-
-    for (; map; map = next)
-    {
-        next = map->next;
-
-        if (map->in_memory != MAP_IN_MEMORY ||
-            !map->timeout ||
-            --(map->timeout) > 0)
-        {
-            continue;
-        }
-
-        /* This is called when MAX_OBJECTS_LWM is *NOT* defined.
-         * If LWM is set, we only swap maps out when we run out of objects. */
-#ifndef MAX_OBJECTS_LWM
-        swap_map(map, 0);
-#endif
-    }
-}
-
 /* swap_below_max() tries to swap out maps which are still in memory because
  * of MAP_TIMEOUT until used objects is below MAX_OBJECTS or there are
  * no more maps to swap. */
@@ -3627,9 +3604,9 @@ void swap_below_max(const char *except_level)
 
     for (; ;)
     {
-        mapstruct *map = first_map,
+        mapstruct *map,
                   *chosen = NULL; 
-        int        timeout = MAP_MAXTIMEOUT + 1;
+        uint32     swap_time = MAP_MAXSWAP + 1;
 
 #ifdef MAX_OBJECTS_LWM
         if ((pool_object->nrof_allocated - pool_object->nrof_free) <
@@ -3645,15 +3622,14 @@ void swap_below_max(const char *except_level)
         }
 #endif
 
-        for (; map; map = map->next)
+        for (map = first_map; map; map = map->next)
         {
             if (map->in_memory == MAP_IN_MEMORY &&
                 strcmp(map->path, except_level) &&
-                map->timeout &&
-                map->timeout < timeout)
+                MAP_WHEN_SWAP(map) < swap_time)
             {
                 chosen = map;
-                timeout = map->timeout;
+                swap_time = MAP_WHEN_SWAP(map);
             }
         }
 
@@ -3666,7 +3642,6 @@ void swap_below_max(const char *except_level)
         LOG(llevDebug, "DEBUG:: %s/swap_below_max(): Trying to swap out >%s< before its time.\n", 
             __FILE__, STRING_MAP_PATH(chosen));
 #endif
-        chosen->timeout = 0;
         swap_map(chosen, 0);
     }
 }
@@ -3685,122 +3660,28 @@ int players_on_map(mapstruct *m)
     return count;
 }
 
-/* Removes tmp-files of maps which are going to be reset next time they are
- * visited. This is very useful if the tmp-disk is very full. */
-void flush_old_maps()
+static void SetSwapTime(mapstruct *m)
 {
-    mapstruct *m = first_map,
-              *oldmap;
-/*
-#ifdef PLUGINS
-    int evtid;
-    CFParm CFP;
-#endif
-*/
-
-    while (m)
-    {
-        /* There can be cases (ie death) where a player leaves a map and the timeout
-         * is not set so it isn't swapped out. */
-        if (m->in_memory == MAP_IN_MEMORY &&
-            m->timeout == 0 &&
-            !m->player_first)
-        {
-            set_map_timeout(m);
-        }
-
-        /* per player unique maps are never really reset.  However, we do want
-         * to perdiocially remove the entries in the list of active maps - this
-         * generates a cleaner listing if a player issues the map commands, and
-         * keeping all those swapped out per player unique maps also has some
-         * memory and cpu consumption.
-         * We do the cleanup here because there are lots of places that call
-         * swap map, and doing it within swap map may cause problems as
-         * the functions calling it may not expect the map list to change
-         * underneath them. */
-        if ((MAP_UNIQUE(m) ||
-             MAP_INSTANCE(m)) &&
-            m->in_memory == MAP_SWAPPED)
-        {
-#ifdef DEBUG_MAP
-            LOG(llevDebug, "DEBUG:: %s/flush_old_maps(): Flushing %s map >%s<!\n",
-                __FILE__, (MAP_UNIQUE(m)) ? "unique" : "instanced",
-                STRING_MAP_PATH(m));
-#endif
-            oldmap = m;
-            m = m->next;
-            delete_map(oldmap);
-        }
-#ifdef MAP_RESET /* No need to flush them if there are no resets */
-        else if (m->in_memory != MAP_SWAPPED ||
-                 !m->tmpname ||
-                 (uint32)Seconds() < m->reset_time)
-        {
-            m = m->next;
-        }
-        else
-        {
-#ifdef DEBUG_MAP
-            LOG(llevDebug, "DEBUG:: %s/flush_old_maps(): Flushing multi map >%s<!\n",
-                __FILE__, STRING_MAP_PATH(m));
-#endif
-
-            /* GROS : Here we handle the MAPRESET global event */
-            /*
-#ifdef PLUGINS
-            evtid = EVENT_MAPRESET;
-            CFP.Value[0] = (void *)(&evtid);
-            CFP.Value[1] = (void *)(m->path);
-            GlobalEvent(&CFP);
-#endif
-            */
-            clean_tmp_map(m);
-            oldmap = m;
-            m = m->next;
-            delete_map(oldmap);
-        }
-#endif
-    }
-}
-
-void set_map_timeout(mapstruct *m)
-{
-#if MAP_MAXTIMEOUT
-    m->timeout = MAP_TIMEOUT(m); // FIXME: Remove? Does nothing.
-
-    /* Do MINTIMEOUT first, so that MAXTIMEOUT is used if that is
-     * lower than the min value. */
-#if MAP_MINTIMEOUT
-    if (m->timeout < MAP_MINTIMEOUT)
-    {
-        m->timeout = MAP_MINTIMEOUT;
-    }
-#endif
-
-    if (m->timeout > MAP_MAXTIMEOUT)
-    {
-        m->timeout = MAP_MAXTIMEOUT;
-    }
-#else
-
-    /* save out the map */
-    swap_map(m, 0);
-#endif /* MAP_MAXTIMEOUT */
+    MAP_WHEN_SWAP(m) = (ROUND_TAG - ROUND_TAG %
+                        (long unsigned int)MAX(1, pticks_second)) /
+                       pticks_second + MAP_SWAP_TIMEOUT(m);
 }
 
 static void SetResetTime(mapstruct *m)
 {
 #ifdef MAP_RESET
-#ifdef MAP_MAXRESET
-    if (MAP_RESET_TIMEOUT(m) > MAP_MAXRESET)
+    if (MAP_RESET_TIMEOUT(m) == 0)
     {
-        MAP_WHEN_RESET(m) = Seconds() + MAP_MAXRESET;
+        MAP_WHEN_RESET(m) = 0; // never reset
     }
     else
-#endif /* MAP_MAXRESET */
-        MAP_WHEN_RESET(m) = Seconds() + MAP_RESET_TIMEOUT(m);
+    {
+        MAP_WHEN_RESET(m) = (ROUND_TAG - ROUND_TAG %
+                             (long unsigned int)MAX(1, pticks_second)) /
+                            pticks_second + MAP_RESET_TIMEOUT(m);
+    }
 #else
-    MAP_WHEN_RESET(m) = -1; /* Will never be reset */
+    MAP_WHEN_RESET(m) = 0; // never reset
 #endif
 }
 
@@ -3816,4 +3697,82 @@ void set_map_darkness(mapstruct *m, int value)
 
     MAP_DARKNESS(m) = (sint32)value;
     MAP_LIGHT_VALUE(m) = (sint32)global_darkness_table[value];
+}
+
+/* Go through the list of maps, swapping or resetting those that need it. */
+void map_check_active(void)
+{
+    mapstruct *this,
+              *next;
+
+    for (this = first_map; this; this = next)
+    {
+        next = this->next;
+
+        /* When there are players or (TODO) permanently loading mobs on the
+         * map, do not swap/reset but reset the times. */
+        if (this->player_first ||
+            this->perm_load)
+        {
+            SetSwapTime(this);
+
+            if (!MAP_FIXED_RESETTIME(this))
+            {
+                SetResetTime(this);
+            }
+
+            continue;
+        }
+
+        /* This is called when MAX_OBJECTS_LWM is *NOT* defined.
+         * If LWM is set, we only swap maps out when we run out of objects. */
+#ifndef MAX_OBJECTS_LWM
+        if (this->in_memory == MAP_IN_MEMORY)
+        {
+            if (MAP_WHEN_SWAP(this) <= (ROUND_TAG - ROUND_TAG %
+                                        (long unsigned int)MAX(1, pticks_second)) /
+                                       pticks_second)
+            {
+                swap_map(this, 0);
+            }
+        }
+        else
+#endif
+        /* per player unique maps are never really reset.  However, we do want
+         * to perdiocially remove the entries in the list of active maps - this
+         * generates a cleaner listing if a player issues the map commands, and
+         * keeping all those swapped out per player unique maps also has some
+         * memory and cpu consumption.
+         * We do the cleanup here because there are lots of places that call
+         * swap map, and doing it within swap map may cause problems as
+         * the functions calling it may not expect the map list to change
+         * underneath them. */
+        if ((MAP_UNIQUE(this) ||
+             MAP_INSTANCE(this)) &&
+            this->in_memory == MAP_SWAPPED)
+        {
+#ifdef DEBUG_MAP
+            LOG(llevDebug, "DEBUG:: map_check_active(): Deleting %s map >%s<!\n",
+                __FILE__, (MAP_UNIQUE(this)) ? "unique" : "instanced",
+                STRING_MAP_PATH(this));
+#endif
+            delete_map(this);
+        }
+#ifdef MAP_RESET /* No need to flush them if there are no resets */
+        else if (this->in_memory == MAP_SWAPPED &&
+                 this->tmpname &&
+                 MAP_WHEN_RESET(this) &&
+                 MAP_WHEN_RESET(this) <= (ROUND_TAG - ROUND_TAG %
+                                          (long unsigned int)MAX(1, pticks_second)) /
+                                         pticks_second)
+        {
+# ifdef DEBUG_MAP
+            LOG(llevDebug, "DEBUG:: %s/map_check_active(): Resetting multi map >%s<!\n",
+                __FILE__, STRING_MAP_PATH(this));
+# endif
+            clean_tmp_map(this);
+            delete_map(this);
+        }
+#endif
+    }
 }

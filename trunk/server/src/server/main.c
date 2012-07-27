@@ -604,8 +604,6 @@ void leave(player *pl, int draw_exit)
 
         if (pl->ob->map)
         {
-            if (pl->ob->map->in_memory == MAP_IN_MEMORY)
-                pl->ob->map->timeout = MAP_TIMEOUT(pl->ob->map);
             pl->ob->map = NULL;
         }
         pl->ob->type = DEAD_OBJECT; /* To avoid problems with inventory window */
@@ -685,8 +683,11 @@ void do_specials()
 
     /*   if (!(ROUND_TAG % 20)) */ /*use this for debuging */
 
-    if (!(ROUND_TAG % 509))
-        flush_old_maps();    /* Clears the tmp-files of maps which have reset */
+    /* We only check for maps needing swap/reset every second. */
+    if (!(ROUND_TAG % (long unsigned int)MAX(1, pticks_second)))
+    {
+        map_check_active();
+    }
 
     if (!(ROUND_TAG % 2521))
         metaserver_update();    /* 2500 ticks is about 5 minutes */
@@ -1063,7 +1064,6 @@ void iterate_main_loop()
     GlobalEvent(&CFP);
 #endif
 
-    check_active_maps();        /* Removes unused maps after a certain timeout */
     do_specials();              /* Routines called from time to time. */
 
     object_gc();                /* Clean up the object pool */
