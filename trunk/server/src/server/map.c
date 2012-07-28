@@ -3137,6 +3137,14 @@ static void SaveObjects(mapstruct *m, FILE *fp)
 
                         continue;
                     }
+                    /* Fired/thrown items are not saved. */
+                    else if (QUERY_FLAG(head, FLAG_IS_MISSILE))
+                    {
+                        REMOVE_OBJECT(head, 1);
+                        VALIDATE_NEXT(this, next, prev, mp->first);
+
+                        continue;
+                    }
                     else if (head->type == SPAWN_POINT)
                     {
                         /* Handling of the spawn points is much easier as handling the mob.
@@ -3202,6 +3210,7 @@ static void SaveObjects(mapstruct *m, FILE *fp)
                     if (QUERY_FLAG(head, FLAG_NO_SAVE) ||
                         QUERY_FLAG(head, FLAG_SPAWN_MOB) ||
                         QUERY_FLAG(head, FLAG_SCRIPT_MOB) ||
+                        QUERY_FLAG(head, FLAG_IS_MISSILE) ||
                         head->owner)
                     {
                         continue;
