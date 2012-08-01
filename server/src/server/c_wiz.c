@@ -1857,7 +1857,7 @@ static int BanAdd(object *op, ENUM_BAN_TYPE ban_type, char *str, int s)
     }
     else // ban_type == BANTYPE_IP
     {
-        int         spot, dot = 0;
+        int         spot, dot = 0, allowed = TRUE;
         objectlink *ip_list,
                    *ol;
         player     *pl = NULL;
@@ -1866,19 +1866,49 @@ static int BanAdd(object *op, ENUM_BAN_TYPE ban_type, char *str, int s)
         // SA can ban x.x.*
         for (spot = 0; str[spot] != '\0'; spot++)
         {
-            if (str[spot] = '.')
-                dot++;
-
-            if ((CONTR(op)->gmaster_mode == GMASTER_MODE_VOL &&
-                 str[spot] == '*') ||
-                (CONTR(op)->gmaster_mode >= GMASTER_MODE_GM &&
-                 str[spot] == '*' && dot < 3) ||
-                (CONTR(op)->gmaster_mode >= GMASTER_MODE_SA &&
-                 str[spot] == '*' && dot < 2))
+            if (str[spot] == '.')
             {
-                new_draw_info(NDI_UNIQUE, 0, op, "You have insufficient privileges to ban that IP range.");
+                dot++;
+            }
+            else if (str[spot] == '*')
+            {
+                if (CONTR(op)->gmaster_mode & GMASTER_MODE_SA)
+                {
+                    if (dot < 2) allowed = FALSE;
+                }
+                else if (CONTR(op)->gmaster_mode & GMASTER_MODE_GM)
+                {
+                    if (dot < 3) allowed = FALSE;
+                }
+                else
+                {
+                    allowed = FALSE;
+                }
+
+                if (!allowed)
+                {
+                    new_draw_info(NDI_UNIQUE, 0, op, "You have insufficient privileges to ban that IP range.");
+                    return COMMANDS_RTN_VAL_ERROR;
+                }
+
+                /* Ignore anything after '*' */
+                str[spot+1] = '\0';
+
+                break;
+            }
+            else if (!isdigit(str[spot]))
+            {
+                new_draw_info(NDI_UNIQUE, 0, op, "Error: Invalid character in IP address.");
                 return COMMANDS_RTN_VAL_ERROR;
             }
+        }
+
+        if ((dot > 3) ||
+            (dot == 3 && (str[spot] != '*' && str[spot] != '\0')) ||
+            (dot < 3 && str[spot] != '*'))
+        {
+            new_draw_info(NDI_UNIQUE, 0, op, "Error: Malformed IP address.");
+            return COMMANDS_RTN_VAL_ERROR;
         }
 
         tmp = BanAddToBanList(op, BANTYPE_IP, str, s);
