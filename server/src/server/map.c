@@ -382,10 +382,11 @@ void dump_map(mapstruct *m, player *pl, int list, char *ref)
         if (!pl ||
             (pl->gmaster_mode & (GMASTER_MODE_MW | GMASTER_MODE_MM | GMASTER_MODE_SA)))
         {
-            NDI_LOG(llevSystem, NDI_UNIQUE, 0, ob, "~Type~: %s (%u)",
+            NDI_LOG(llevSystem, NDI_UNIQUE, 0, ob, "~Status~: %s%s%s (%u)",
                     ((MAP_MULTI(m)) ? "Multiplayer" :
                      ((MAP_UNIQUE(m)) ? "Unique" :
                       ((MAP_INSTANCE(m)) ? "Instance" : "UNKNOWN"))),
+                    (m->reference) ? "/" : "", (m->reference) ? m->reference : "",
                     m->in_memory);
             NDI_LOG(llevSystem, NDI_UNIQUE, 0, ob, "~Swap~: %d (%u)",
                     (sint32)(MAP_WHEN_SWAP(m) - seconds), MAP_SWAP_TIMEOUT(m));
@@ -449,10 +450,12 @@ void dump_map(mapstruct *m, player *pl, int list, char *ref)
             sprintf(strchr(buf, '\0'), "%s", STRING_MAP_PATH(m));
         }
 
-        sprintf(strchr(buf, '\0'), ": %s (%u)",
+        sprintf(strchr(buf, '\0'), ": %s%s%s (%u)",
                 ((MAP_MULTI(m)) ? "M" :
                  ((MAP_UNIQUE(m)) ? "U" :
-                  ((MAP_INSTANCE(m)) ? "I" : "X"))), m->in_memory);
+                  ((MAP_INSTANCE(m)) ? "I" : "X"))),
+                (m->reference) ? "/" : "", (m->reference) ? m->reference : "",
+                m->in_memory);
         sprintf(strchr(buf, '\0'), ", %d (%u)",
                 (sint32)(MAP_WHEN_SWAP(m) - seconds), MAP_SWAP_TIMEOUT(m));
 #ifdef MAP_RESET
