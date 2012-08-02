@@ -3513,7 +3513,8 @@ void swap_map(mapstruct *map, int force_flag)
     /*LOG(llevDebug,"Check map for swapping: %s. (players:%d) (%d)\n", map->path,players_on_map(map) , force_flag);*/
 
     /* lets check some legal things... */
-    if (map->in_memory != MAP_IN_MEMORY)
+    if (map->in_memory != MAP_IN_MEMORY &&
+        map->in_memory != MAP_SAVING)
     {
         LOG(llevBug, "BUG:: %s/swap_map(): Tried to swap out map which was not in memory: >%s<!\n",
             __FILE__, STRING_MAP_PATH(map));
@@ -3584,7 +3585,8 @@ void swap_map(mapstruct *map, int force_flag)
         return;
     }
 
-    if (new_save_map(map, 0) == -1)
+    if (map->in_memory != MAP_SAVING && // do not save twice
+        new_save_map(map, 0) == -1)
     {
         LOG(llevBug, "BUG:: %s/swap_map(): Failed to swap map >%s<!\n",
             __FILE__, STRING_MAP_PATH(map));
@@ -3636,7 +3638,8 @@ void swap_below_max(const char *except_level)
 
         for (map = first_map; map; map = map->next)
         {
-            if (map->in_memory == MAP_IN_MEMORY &&
+            if ((map->in_memory == MAP_IN_MEMORY ||
+                 map->in_memory == MAP_SAVING) &&
                 strcmp(map->path, except_level) &&
                 MAP_WHEN_SWAP(map) < swap_time)
             {
@@ -3739,11 +3742,12 @@ void map_check_active(void)
         /* This is called when MAX_OBJECTS_LWM is *NOT* defined.
          * If LWM is set, we only swap maps out when we run out of objects. */
 #ifndef MAX_OBJECTS_LWM
-        if (this->in_memory == MAP_IN_MEMORY)
+        if ((this->in_memory == MAP_IN_MEMORY ||
+             this->in_memory == MAP_SAVING))
         {
             if (MAP_WHEN_SWAP(this) <= (ROUND_TAG - ROUND_TAG %
                                         (long unsigned int)MAX(1, pticks_second)) /
-                                       pticks_second)
+                                        pticks_second)
             {
                 swap_map(this, 0);
             }
@@ -3759,32 +3763,24 @@ void map_check_active(void)
          * swap map, and doing it within swap map may cause problems as
          * the functions calling it may not expect the map list to change
          * underneath them. */
-        if ((MAP_UNIQUE(this) ||
-             MAP_INSTANCE(this)) &&
-            this->in_memory == MAP_SWAPPED)
+        if (this->in_memory == MAP_SWAPPED)
         {
-#ifdef DEBUG_MAP
-            LOG(llevDebug, "DEBUG:: map_check_active(): Deleting %s map >%s<!\n",
-                __FILE__, (MAP_UNIQUE(this)) ? "unique" : "instanced",
-                STRING_MAP_PATH(this));
-#endif
-            delete_map(this);
-        }
+            if ((MAP_UNIQUE(this) ||
+                 MAP_INSTANCE(this)))
+            {
+                delete_map(this);
+            }
 #ifdef MAP_RESET /* No need to flush them if there are no resets */
-        else if (this->in_memory == MAP_SWAPPED &&
-                 this->tmpname &&
-                 MAP_WHEN_RESET(this) &&
-                 MAP_WHEN_RESET(this) <= (ROUND_TAG - ROUND_TAG %
-                                          (long unsigned int)MAX(1, pticks_second)) /
-                                         pticks_second)
-        {
-# ifdef DEBUG_MAP
-            LOG(llevDebug, "DEBUG:: %s/map_check_active(): Resetting multi map >%s<!\n",
-                __FILE__, STRING_MAP_PATH(this));
-# endif
-            clean_tmp_map(this);
-            delete_map(this);
-        }
+            else if (this->tmpname &&
+                     MAP_WHEN_RESET(this) &&
+                     MAP_WHEN_RESET(this) <= (ROUND_TAG - ROUND_TAG %
+                                              (long unsigned int)MAX(1, pticks_second)) /
+                                              pticks_second)
+            {
+                clean_tmp_map(this);
+                delete_map(this);
+            }
 #endif
+        }
     }
 }
