@@ -36,7 +36,7 @@ local F_NO_POLEARM = 16
 -- excluded.was is the same but members past and current are excluded from
 -- joining.
 -- TODO: Obviously most of it. For example, excluded and ranks are undeveloped
--- and all (both!) guilds are rejoinable ATM).
+-- and all guilds are rejoinable ATM).
 ---------------------------------------------------
 _guilds = {
     [1] = {
@@ -83,7 +83,8 @@ _guilds = {
             },
             path_attuned = 0,
         },
-        flags = mask(0, F_NO_MAGIC, F_NO_PRAYER),
+
+        flags = Byte():Mask(F_NO_MAGIC, F_NO_PRAYER):ToNumber(),
         weapon_max_level = 100,
     },
     [2] = {
@@ -127,7 +128,7 @@ _guilds = {
             },
             path_attuned = 4,
         },
-        flags = mask(0, F_NO_2H, F_NO_POLEARM, F_NO_PRAYER, F_NO_ARCHERY),
+        flags = Byte():Mask(F_NO_2H, F_NO_POLEARM, F_NO_PRAYER, F_NO_ARCHERY):ToNumber(),
     },
     [3] = {
         name = "Priest",
@@ -170,7 +171,7 @@ _guilds = {
             },
             path_attuned = 3,
         },
-        flags = mask(0, F_NO_ARCHERY, F_NO_MAGIC, F_NO_2H, F_NO_POLEARM),
+        flags = Byte():Mask(F_NO_ARCHERY, F_NO_MAGIC, F_NO_2H, F_NO_POLEARM):ToNumber(),
         weapon_max_level = 10,
         spell_max_difficulty = 2, -- TODO: Add a prayer max difficulty.
     },
