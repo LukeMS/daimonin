@@ -1278,40 +1278,68 @@ void fix_player(object *op)
                     break;
 
                 case WEAPON:
-                  if(!set_player_equipment(pl, tmp, PLAYER_EQUIP_WEAPON1))
+                  /* Weapons need weapon speed. If it has none, lets unapply
+                   * it. We could use a default value but if it fails this
+                   * basic requirement, who knows what else is wrong with
+                   * it? */
+                  if (!tmp->weapon_speed)
+                  {
+                      LOG(llevBug, "BUG:: %s:fix_player(): %s applied weapon %s[%d] without weapon speed -- unapplying!\n",
+                          __FILE__, STRING_OBJ_NAME(op), STRING_OBJ_NAME(tmp), TAG(tmp));
+                      new_draw_info(NDI_UNIQUE | NDI_RED, 0, op, "You sense that your weapon is bugged so you unapply it!");
+                      (void)apply_special(op, tmp, AP_UNAPPLY | AP_IGNORE_CURSE);
+                      pl->equipment[PLAYER_EQUIP_WEAPON1] = NULL;
+
                       continue;
-                  pl->selected_weapon = tmp; /* thats our weapon */
-                  i = tmp->sub_type1 % 4;
-                  if (i == WEAP_1H_IMPACT)
-                      pl->set_skill_weapon = SK_MELEE_WEAPON;
-                  else if (i == WEAP_1H_SLASH)
-                      pl->set_skill_weapon = SK_SLASH_WEAP;
-                  else if (i == WEAP_1H_CLEAVE)
-                      pl->set_skill_weapon = SK_CLEAVE_WEAP;
+                  }
                   else
-                      pl->set_skill_weapon = SK_PIERCE_WEAP;
+                  {
+                      if (!set_player_equipment(pl, tmp, PLAYER_EQUIP_WEAPON1))
+                      {
+                          continue;
+                      }
 
-                  op->weapon_speed = tmp->weapon_speed;
-                  if (!op->weapon_speed)
-                      LOG(llevBug, "BUG: monster/player %s applied weapon %s without weapon speed!\n", op->name, tmp->name);
+                      pl->selected_weapon = tmp; /* thats our weapon */
+                      pl->encumbrance += (sint16) (3 * tmp->weight / 1000);
 
-                  /* wc and damage of a melee weapon only count for melee! */
-                  op->stats.wc += (tmp->stats.wc + tmp->magic); /* add the weapon wc direct to the player wc */
-                  op->stats.dam = (tmp->stats.dam + tmp->magic);
-                  ac += tmp->stats.ac;
+                      if ((i = tmp->sub_type1 % 4) == WEAP_1H_IMPACT)
+                      {
+                          pl->set_skill_weapon = SK_MELEE_WEAPON;
+                      }
+                      else if (i == WEAP_1H_SLASH)
+                      {
+                          pl->set_skill_weapon = SK_SLASH_WEAP;
+                      }
+                      else if (i == WEAP_1H_CLEAVE)
+                      {
+                          pl->set_skill_weapon = SK_CLEAVE_WEAP;
+                      }
+                      else
+                      {
+                          pl->set_skill_weapon = SK_PIERCE_WEAP;
+                      }
 
-                  if (tmp->slaying != NULL)
-                      FREE_AND_COPY_HASH(op->slaying, tmp->slaying);
+                      /* wc and damage of a melee weapon only count for melee! */
+                      op->stats.wc += (tmp->stats.wc + tmp->magic); /* add the weapon wc direct to the player wc */
+                      op->stats.dam = (tmp->stats.dam + tmp->magic);
+                      op->weapon_speed = tmp->weapon_speed;
 
-                  pl->encumbrance += (sint16) (3 * tmp->weight / 1000);
+                      if (tmp->slaying)
+                      {
+                          FREE_AND_COPY_HASH(op->slaying, tmp->slaying);
+                      }
 
-                  temp_fumble += tmp->last_heal;
+                      ac += tmp->stats.ac;
+                      temp_fumble += tmp->last_heal;
+                      thac0 += tmp->stats.thac0;
+                      thacm += tmp->stats.thacm;
 
-                  thac0 += tmp->stats.thac0;
-                  thacm += tmp->stats.thacm;
+                      for (i = 0; i < NUM_STATS; i++)
+                      {
+                          change_stat_value(&(op->stats), i, get_stat_value(&(tmp->stats), i));
+                      }
+                  }
 
-                  for (i = 0; i < NUM_STATS; i++)
-                      change_stat_value(&(op->stats), i, get_stat_value(&(tmp->stats), i));
                   break;
 
                 case TYPE_LIGHT_APPLY:
@@ -1690,7 +1718,7 @@ void fix_player(object *op)
             for(tmp_item=i=0;i<=LAST_ATNR_ATTACK;i++) /* collect the dmg parts */
                 tmp_item += tmp->attack[i];
 
-            f = (float) (tmp_time + skill_ptr->last_grace) * SKILL_DELAY_TIME; /* the action time */
+            f = (float) (tmp_time + skill_ptr->last_grace) * WEAPON_SWING_TIME; /* the action time */
 
             /* because we transfer dps as INT to the client, we store it right shifted >>1 */
             pl->dist_dps = (int) (( ((float)pl->dist_dps*((float)tmp_item/100.0f))/ f)*10.0f);

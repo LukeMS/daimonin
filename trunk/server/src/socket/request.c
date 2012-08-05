@@ -161,9 +161,8 @@ void esrv_update_stats(player *pl)
         AddIfShort(pl->dist_last_wc, pl->dist_wc, CS_STAT_DIST_WC);
         AddIfShort(pl->dist_last_dps, pl->dist_dps, CS_STAT_DIST_DPS);
         AddIfInt(pl->dist_last_action_time, pl->dist_action_time, CS_STAT_DIST_TIME);
-
+        
         AddIfInt(pl->last_action_timer, pl->action_timer, CS_STAT_ACTION_TIME);
-        AddIfInt(pl->last_action_timer2, pl->action_timer2, CS_STAT_ACTION_TIME2);
 
         /* these will update too when we are in a group */
         AddIfIntFlag(pl->last_stats.hp, pl->ob->stats.hp, group_update, GROUP_UPDATE_HP, CS_STAT_HP);

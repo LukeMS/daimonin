@@ -406,9 +406,11 @@ int command_reboot(object *op, char *params)
 
 int command_goto(object *op, char *params)
 {
+    player    *pl;
     char       name[MAXPATHLEN] = {"\0"},
                buf[MAXPATHLEN];
-    shstr     *path = NULL;
+    shstr     *orig_path_sh = NULL,
+              *path_sh = NULL;
     int        x = -1,
                y = -1,
                flags = 0;
@@ -416,7 +418,7 @@ int command_goto(object *op, char *params)
 
     if (!op ||
         op->type != PLAYER ||
-        !CONTR(op))
+        !(pl = CONTR(op)))
     {
         return COMMANDS_RTN_VAL_ERROR;
     }
@@ -426,44 +428,100 @@ int command_goto(object *op, char *params)
         sscanf(params, "%s %d %d", name, &x, &y);
     }
 
-    switch (name[0])
+    if (name[0] == '@')
+    {
+        player *other = find_player(name + 1);
+        object *walk;
+
+        if (!other)
+        {
+            new_draw_info(NDI_UNIQUE, 0, op, "No such player!");
+
+            return COMMANDS_RTN_VAL_OK_SILENT;
+        }
+
+        for (walk = other->ob->inv; walk; walk = walk->below)
+        {
+            if (walk->name &&
+                walk->arch == archetype_global._player_info &&
+                !strcmp(walk->name, "APARTMENT_INFO"))
+            {
+                break;
+            }
+        }
+
+        if (!walk)
+        {
+            new_draw_info(NDI_UNIQUE, 0, op, "~%s~ has no apartment so you're not going there!",
+                          other->ob->name);
+
+            return COMMANDS_RTN_VAL_OK_SILENT;
+        }
+
+        orig_path_sh = create_safe_mapname_sh(walk->title);
+        path_sh = create_unique_path_sh(other->ob, orig_path_sh);
+        flags = MAP_STATUS_UNIQUE;
+
+        if (!(m = ready_map_name(path_sh, orig_path_sh, flags, op->name)))
+        {
+            new_draw_info(NDI_UNIQUE, 0, op, "Map '%s' does not exist! You're going nowhere!",
+                          buf);
+            FREE_ONLY_HASH(orig_path_sh);
+            FREE_ONLY_HASH(path_sh);
+
+            return COMMANDS_RTN_VAL_ERROR;
+        }
+        else if (MAP_UNIQUE(m) &&
+                 strcmp(m->reference, op->name) &&
+                 !(pl->gmaster_mode & (GMASTER_MODE_SA | GMASTER_MODE_GM | GMASTER_MODE_MM)))
+        {
+            new_draw_info(NDI_UNIQUE, 0, op, "You don't have permission to enter someone else's apartment!");
+
+            return COMMANDS_RTN_VAL_OK_SILENT;
+        }
+    }
+    else
     {
         /* No path: Goto savebed. */
-        case '\0': // none given
-            path = add_string(CONTR(op)->savebed_map);
+        if (name[0] == '\0')
+        {
+            FREE_AND_COPY_HASH(orig_path_sh, CONTR(op)->orig_savebed_map);
+            FREE_AND_COPY_HASH(path_sh, CONTR(op)->savebed_map);
             flags = CONTR(op)->bed_status;
             x = CONTR(op)->bed_x;
             y = CONTR(op)->bed_y;
-
-            break;
-
+        }
         /* Absolute. */
-        case '/':
+        else if (name[0] == '/')
+        {
             if (check_path(normalize_path("/", name, buf), 1) != -1)
             {
-                path = add_string(buf);
+                orig_path_sh = create_safe_mapname_sh(buf);
+                FREE_AND_ADD_REF_HASH(path_sh, orig_path_sh);
+                flags = MAP_STATUS_MULTI;
             }
-
-            break;
-
+        }
         /* Relative. */
-        default: // relative
-            if (check_path(normalize_path(CONTR(op)->orig_map, name, buf),
-                           1) != -1)
+        else
+        {
+            if (check_path(normalize_path(CONTR(op)->orig_map, name, buf), 1) != -1)
             {
-                path = add_string(buf);
+                orig_path_sh = create_safe_mapname_sh(buf);
+                FREE_AND_ADD_REF_HASH(path_sh, orig_path_sh);
+                flags = MAP_STATUS_MULTI;
             }
-    }
+        }
 
-    if (!path ||
-        !(m = ready_map_name(path, (path != CONTR(op)->savebed_map) ? path :
-                             CONTR(op)->orig_savebed_map, flags, op->name)))
-    {
-        new_draw_info(NDI_UNIQUE, 0, op, "Map '%s' does not exist!",
-                      buf);
-        new_draw_info(NDI_UNIQUE, 0, op, "You're going nowhere!");
+        if (!path_sh ||
+            !(m = ready_map_name(path_sh, orig_path_sh, flags, op->name)))
+        {
+            new_draw_info(NDI_UNIQUE, 0, op, "Map '%s' does not exist! You're going nowhere!",
+                          buf);
+            FREE_ONLY_HASH(orig_path_sh);
+            FREE_ONLY_HASH(path_sh);
 
-        return COMMANDS_RTN_VAL_ERROR;
+            return COMMANDS_RTN_VAL_ERROR;
+        }
     }
 
     /* Specified coords are not on the map? Default to map entry point. */
@@ -478,8 +536,8 @@ int command_goto(object *op, char *params)
 
     (void)enter_map(op, NULL, m, x, y, flags, 0);
     set_mappath_by_map(op);
-
-    FREE_ONLY_HASH(path);
+    FREE_ONLY_HASH(orig_path_sh);
+    FREE_ONLY_HASH(path_sh);
 
     return COMMANDS_RTN_VAL_OK_SILENT;
 }
@@ -653,6 +711,13 @@ static int CreateObject(object *op, char *params, CreateMode_t mode)
                         }
                     }
                 }  // end of str == amask
+                // Type cannot be set with these commands.
+                else if (!strcmp(str, "type"))
+                {
+                    new_draw_info(NDI_UNIQUE, 0, op, "Cannot set type -- choose a different archetype instead!");
+
+                    return COMMANDS_RTN_VAL_ERROR;
+                }
                 else
                 {  // any other parameter
                     strcpy(var, str);  // Save the variable name
@@ -775,7 +840,6 @@ static int CheckAttributeValue(char *var, char *val, CreateMode_t mode)
     // Anything else can be set by Create command
     // Note:  We don't do this check first, as we wanted to do the checks on valid level, etc.
     if (mode == CREATE) return TRUE;
-        return TRUE;
 
     return FALSE;
 }
@@ -958,46 +1022,61 @@ int command_summon(object *op, char *params)
 int command_teleport(object *op, char *params)
 {
     int     i;
-    player *pl;
+    player *pl,
+           *other;
 
-    if (!op)
+    if (!op ||
+        op->type != PLAYER ||
+        !(pl = CONTR(op)))
+    {
         return COMMANDS_RTN_VAL_ERROR;
-
-    if (!params)
+    }
+    else if (!params)
+    {
         return COMMANDS_RTN_VAL_SYNTAX;
-
-    if (!(pl = find_player(params)))
+    }
+    else if (!(other = find_player(params)))
     {
-        new_draw_info(NDI_UNIQUE, 0, op, "No such player.");
+        new_draw_info(NDI_UNIQUE, 0, op, "No such player!");
 
-        return COMMANDS_RTN_VAL_ERROR;
+        return COMMANDS_RTN_VAL_OK_SILENT;
+    }
+    else if (other->ob == op)
+    {
+        new_draw_info(NDI_UNIQUE, 0, op, "You can't teleport yourself next to yourself!");
+
+        return COMMANDS_RTN_VAL_OK_SILENT;
+    }
+    else if (!(other->state & ST_PLAYING))
+    {
+        new_draw_info(NDI_UNIQUE, 0, op, "You can't teleport to that player right now!");
+
+        return COMMANDS_RTN_VAL_OK_SILENT;
+    }
+    else if (MAP_UNIQUE(other->ob->map) &&
+             strcmp(other->ob->map->reference, op->name) &&
+             !(pl->gmaster_mode & (GMASTER_MODE_SA | GMASTER_MODE_GM | GMASTER_MODE_MM)))
+    {
+        new_draw_info(NDI_UNIQUE, 0, op, "You don't have permission to enter someone else's apartment!");
+
+        return COMMANDS_RTN_VAL_OK_SILENT;
     }
 
-    if (pl->ob == op)
+    if ((i = find_free_spot(other->ob->arch, other->ob, other->ob->map,
+                            other->ob->x, other->ob->y, 0, 1,
+                            SIZEOFFREE1 + 1)) == -1)
     {
-        new_draw_info(NDI_UNIQUE, 0, op, "You can't teleport yourself next to yourself.");
-
-        return COMMANDS_RTN_VAL_ERROR;
-    }
-
-    if (!(pl->state & ST_PLAYING))
-    {
-        new_draw_info(NDI_UNIQUE, 0, op, "You can't teleport to that player right now.");
-
-        return COMMANDS_RTN_VAL_ERROR;
-    }
-
-    i = find_free_spot(pl->ob->arch, pl->ob, pl->ob->map, pl->ob->x, pl->ob->y, 0, 1, SIZEOFFREE1 + 1);
-
-    if (i == -1)
         i = 0;
+    }
 
-    if (enter_map_by_name(op, pl->ob->map->path, pl->ob->map->orig_path,
-                          pl->ob->x + freearr_x[i], pl->ob->y + freearr_y[i],
-                          MAP_STATUS_TYPE(pl->ob->map->map_status)))
+    if (enter_map_by_name(op, other->ob->map->path, other->ob->map->orig_path,
+                          other->ob->x + freearr_x[i], other->ob->y + freearr_y[i],
+                          MAP_STATUS_TYPE(other->ob->map->map_status)))
+    {
         new_draw_info(NDI_UNIQUE, 0, op, "OK.");
+    }
 
-    return COMMANDS_RTN_VAL_OK;
+    return COMMANDS_RTN_VAL_OK_SILENT;
 }
 
 int command_inventory(object *op, char *params)
@@ -1851,7 +1930,7 @@ static int BanAdd(object *op, ENUM_BAN_TYPE ban_type, char *str, int s)
     }
     else // ban_type == BANTYPE_IP
     {
-        int         spot, dot = 0;
+        int         spot, dot = 0, allowed = TRUE;
         objectlink *ip_list,
                    *ol;
         player     *pl = NULL;
@@ -1860,19 +1939,49 @@ static int BanAdd(object *op, ENUM_BAN_TYPE ban_type, char *str, int s)
         // SA can ban x.x.*
         for (spot = 0; str[spot] != '\0'; spot++)
         {
-            if (str[spot] = '.')
-                dot++;
-
-            if ((CONTR(op)->gmaster_mode == GMASTER_MODE_VOL &&
-                 str[spot] == '*') ||
-                (CONTR(op)->gmaster_mode >= GMASTER_MODE_GM &&
-                 str[spot] == '*' && dot < 3) ||
-                (CONTR(op)->gmaster_mode >= GMASTER_MODE_SA &&
-                 str[spot] == '*' && dot < 2))
+            if (str[spot] == '.')
             {
-                new_draw_info(NDI_UNIQUE, 0, op, "You have insufficient privileges to ban that IP range.");
+                dot++;
+            }
+            else if (str[spot] == '*')
+            {
+                if (CONTR(op)->gmaster_mode & GMASTER_MODE_SA)
+                {
+                    if (dot < 2) allowed = FALSE;
+                }
+                else if (CONTR(op)->gmaster_mode & GMASTER_MODE_GM)
+                {
+                    if (dot < 3) allowed = FALSE;
+                }
+                else
+                {
+                    allowed = FALSE;
+                }
+
+                if (!allowed)
+                {
+                    new_draw_info(NDI_UNIQUE, 0, op, "You have insufficient privileges to ban that IP range.");
+                    return COMMANDS_RTN_VAL_ERROR;
+                }
+
+                /* Ignore anything after '*' */
+                str[spot+1] = '\0';
+
+                break;
+            }
+            else if (!isdigit(str[spot]))
+            {
+                new_draw_info(NDI_UNIQUE, 0, op, "Error: Invalid character in IP address.");
                 return COMMANDS_RTN_VAL_ERROR;
             }
+        }
+
+        if ((dot > 3) ||
+            (dot == 3 && (str[spot] != '*' && str[spot] != '\0')) ||
+            (dot < 3 && str[spot] != '*'))
+        {
+            new_draw_info(NDI_UNIQUE, 0, op, "Error: Malformed IP address.");
+            return COMMANDS_RTN_VAL_ERROR;
         }
 
         tmp = BanAddToBanList(op, BANTYPE_IP, str, s);

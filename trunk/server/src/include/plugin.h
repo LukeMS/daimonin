@@ -152,7 +152,7 @@
 /* Gecko 2005-05-14: This old hook system is being phased out, use the
  * plugin_hooklist struct below instead */
 enum
-{
+{	
     HOOK_SENDCUSTOMCOMMAND,
     HOOK_CREATEOBJECT,
     HOOK_OUTOFMAP,
@@ -243,7 +243,6 @@ struct plugin_hooklist
 {
     /* FUNCTIONS */
     /* A */
-    int (*add_item_buff)(object *, object *, short);
     void (*add_money_to_player)(object *, int, int, int, int);
     int (*add_pet)(object *, object *, int);
     void (*add_quest_containers)(object *);
@@ -394,7 +393,6 @@ struct plugin_hooklist
     void  (*reload_behaviours)(object *);
     sint64 (*remove_money_type)(object *, object *, sint64, sint64);
     void (*remove_ob)(object *);
-    int  (*remove_item_buff)(object *, char *, int);
     void (*reset_instance_data)(player *pl);
     void (*return_poolchunk_array_real)(void *, uint32, struct mempool *);
     /* S */

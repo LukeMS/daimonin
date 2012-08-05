@@ -284,6 +284,7 @@ WS	[ \t]*{NL}?
 		    }
 ^race{S}	    FREE_AND_COPY_HASH(op->race,yval());
 ^slaying{S}	    FREE_AND_COPY_HASH(op->slaying, yval());
+^buffs{S}           FREE_AND_COPY_HASH(op->buffs, yval());
 
 ^other_arch{S}        op->other_arch=find_archetype(yval());
 ^animation{S}	    {
@@ -384,7 +385,6 @@ op->oz= op->z;
 							op->nrof = 1;
 						SET_OR_CLEAR_FLAG(op, FLAG_CAN_STACK, IVAL);
 					}
-^max_buffs{S}               op->max_buffs = IVAL;
 ^nrof{S}					op->nrof= atol(yval());
 ^level{S}					op->level = IVAL;
 ^direction{S}				op->facing=op->anim_last_facing =op->direction = (IVAL%9);
@@ -1041,6 +1041,8 @@ char *get_ob_diff(const object *op, const object *op2) {
     buf_end = append_simple(append_line(append_simple(buf_end, "race "), op->race), "\n");
   if(op->slaying && op->slaying!=op2->slaying)
     buf_end = append_simple(append_line(append_simple(buf_end, "slaying "), op->slaying), "\n");
+  if(op->buffs && op->buffs!=op2->buffs)
+    buf_end = append_simple(append_line(append_simple(buf_end, "buffs "), op->buffs), "\n");
   if(op->msg && op->msg!=op2->msg)
   {
     /* Books can have extremely long msg blocks which overflow buf and crash
@@ -1215,8 +1217,6 @@ char *get_ob_diff(const object *op, const object *op2) {
     strcat(buf,buf2);
   }
 
-  if(op->max_buffs!=op2->max_buffs)
-    save_long(buf, "max_buffs", op->max_buffs);
   if(op->nrof!=op2->nrof)
     save_long(buf, "nrof", op->nrof);
   if(op->level!=op2->level)

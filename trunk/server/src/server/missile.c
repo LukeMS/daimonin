@@ -59,7 +59,7 @@ float do_throw(object *op, int dir)
 
     /* used action time - hotfix for possible action timer bug */
     LOG(llevDebug, "AC-TICKS: item %s ->%d for skill %s ->%d.\n", query_name(throw_arrow),throw_arrow->last_grace,query_name(op->chosen_skill),op->chosen_skill->last_grace);
-    ticks = (float) (throw_arrow->last_grace + op->chosen_skill->last_grace) * SKILL_DELAY_TIME;
+    ticks = (float) (throw_arrow->last_grace + op->chosen_skill->last_grace) * RANGED_DELAY_TIME;
     if(!ticks)
     {
         LOG(llevDebug, "ACBUG: ticks = 0\n");
@@ -115,10 +115,10 @@ float fire_bow(object *op, int dir)
     }
 
     /* used action time */
-    LOG(llevDebug, "AC-TICKS: bow %s ->%2.2f arrow %s ->%2.2f for skill %s ->%2.2f.\n",
-        query_name(bow),(float) (bow->last_grace) * SKILL_DELAY_TIME,query_name(arrow),(float) (arrow->last_grace) * SKILL_DELAY_TIME,
-        query_name(op->chosen_skill),(float) (op->chosen_skill->last_grace) * SKILL_DELAY_TIME);
-    ticks = (float) (arrow->last_grace + bow->last_grace + op->chosen_skill->last_grace) * SKILL_DELAY_TIME;
+    LOG(llevDebug, "AC-TICKS: bow %s ->%2.2f arrow %s ->%2.2f for skill %s ->%2.2f.\n", 
+        query_name(bow),(float) (bow->last_grace) * RANGED_DELAY_TIME,query_name(arrow),(float) (arrow->last_grace) * RANGED_DELAY_TIME,
+        query_name(op->chosen_skill),(float) (op->chosen_skill->last_grace) * RANGED_DELAY_TIME);
+    ticks = (float) (arrow->last_grace + bow->last_grace + op->chosen_skill->last_grace) * RANGED_DELAY_TIME;
     if(!ticks)
     {
         LOG(llevDebug, "ACBUG: ticks = 0\n");
@@ -194,20 +194,20 @@ object *create_missile(object * const owner, const object * const bow, object * 
         arrow->stats.dam = (sint16) ((float) arrow->stats.dam * LEVEL_DAMAGE(owner->chosen_skill->level));
         /* boni for throwing are 50% str + 50% dex (archery 100% dex, melee 100% str) + equipment bonus */
         arrow->stats.dam = (int)(((float)arrow->stats.dam
-                        * (get_player_stat_bonus(owner->stats.Str)/2.0f
+                        * (get_player_stat_bonus(owner->stats.Str)/2.0f 
                            + get_player_stat_bonus(owner->stats.Dex)/2.0f)) /10.0f)+CONTR(owner)->dam_bonus;
     }
     else /* its a mob or other "living" threaded object */
     {
-        arrow->level = owner->level;
+        arrow->level = owner->level; 
         /* for mobs we simply get the mob level for the dmg adjustment AND, to cover the stats increase
          * of players, we use the level+10 (to avoid negative values) as stat bonus! */
-        arrow->stats.dam = (sint16) ((float) (arrow->stats.dam * LEVEL_DAMAGE(arrow->level) *
+        arrow->stats.dam = (sint16) ((float) (arrow->stats.dam * LEVEL_DAMAGE(arrow->level) * 
                                                 get_player_stat_bonus(arrow->level+10))/10.0f);
     }
 
     /* and finally the item condition! (mob & players) */
-    arrow->stats.dam = (sint16)((float) arrow->stats.dam * ((float)arrow->item_condition/100.0f));
+    arrow->stats.dam = (sint16)((float) arrow->stats.dam * ((float)arrow->item_condition/100.0f)); 
 
     if (arrow->stats.dam < 0)
         arrow->stats.dam = 0;
@@ -458,7 +458,7 @@ void move_missile(object *op)
     }
 }
 
-/* add/clear settings and flags to transform a flying missile to
+/* add/clear settings and flags to transform a flying missile to 
  * a normal item again. Only called from stop_missile() now, which
  * is the only function to handle neutralizing missiles after
  * fired.
@@ -474,7 +474,7 @@ static inline object * fix_stopped_missile(object *op)
         op, NULL, NULL, NULL, NULL, NULL, NULL, SCRIPT_FIX_ALL);
 
     /* restore original values */
-    op->last_sp = op->stats.sp;
+    op->last_sp = op->stats.sp; 
     op->stats.wc = op->stats.maxhp;
     op->stats.dam = op->stats.hp;
 
@@ -491,9 +491,9 @@ static inline object * fix_stopped_missile(object *op)
     CLEAR_FLAG(op, FLAG_FLY_ON);
     CLEAR_MULTI_FLAG(op, FLAG_FLYING);
     CLEAR_FLAG(op, FLAG_IS_MISSILE);
-
+    
     /* food is a self destruct marker - that long the item will need to be destruct! */
-    if (!QUERY_FLAG(op, FLAG_NO_DROP) &&
+    if (!QUERY_FLAG(op, FLAG_NO_DROP) && 
         ((!(tmp = get_owner(op)) || tmp->type != PLAYER) && op->stats.food && op->type == ARROW))
     {
         SET_FLAG(op, FLAG_IS_USED_UP);
@@ -735,7 +735,7 @@ int do_throw(object *thrower, object *toss_item, int dir)
         throw_ob->stats.dam = (sint16) ((float) toss_item->stats.dam * LEVEL_DAMAGE(thrower->chosen_skill->level));
 
         /* boni for throwing are 50% str + 50% dex (archery 100% dex, melee 100% str) */
-        throw_ob->stats.dam = (int)(((float)throw_ob->stats.dam *
+        throw_ob->stats.dam = (int)(((float)throw_ob->stats.dam * 
             (get_player_stat_bonus(thrower->stats.Str)/2.0f + get_player_stat_bonus(thrower->stats.Dex)/2.0f)) /10.0f);
 
         /* thats the damage bonus from equipment like rings */

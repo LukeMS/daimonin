@@ -1708,12 +1708,23 @@ int process_object(object *op)
         case SPAWN_POINT:
           spawn_point(op);
           return 0;
+/* Temp fix because diseases cause crashes. */
+#if 0
         case DISEASE:
           move_disease(op);
           return 0;
         case SYMPTOM:
           move_symptom(op);
           return 0;
+#else
+        case DISEASE:
+        case SYMPTOM:
+          if (!QUERY_FLAG(op, FLAG_REMOVED))
+          {
+                remove_ob(op);
+          }
+          return 0;
+#endif
           /*
         case WORD_OF_RECALL:
           execute_wor(op);
