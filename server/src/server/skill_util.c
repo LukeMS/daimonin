@@ -36,7 +36,6 @@
  *  short stat1;     - primary stat, for linking to exp cat.
  *  short stat2;     - secondary stat ...
  *  short stat3;     - tertiary stat ...
- *  short type;      - Which skill timer/type this skill is. See skills.h for more info.
  *
  * About time - this  number is the base for the use of the skill. Level
  * and associated stats can modify the amound of time to use the skill.
@@ -64,59 +63,56 @@
 skill   skills[NROFSKILLS]  =
 {
     /* 0 */
-    { "stealing",           NULL, SKILLGROUP_MISC,   11, 0, 0.1f,      DEX,     INTELLIGENCE, NO_STAT_VAL, SKILL_TYPE_BOTH },
-    { "pick locks",         NULL, SKILLGROUP_MISC,   11, 50, 1.5f,   DEX,     INTELLIGENCE, NO_STAT_VAL, SKILL_TYPE_BOTH },
-    { "hide in shadows",    NULL, SKILLGROUP_MISC,   11, 10, 2.5f,   DEX,     CHA, NO_STAT_VAL, SKILL_TYPE_BOTH },
-    { "smithery lore",      NULL, SKILLGROUP_MENTAL, 10, 0, 0.0f,     NO_STAT_VAL,   NO_STAT_VAL, NO_STAT_VAL, SKILL_TYPE_BOTH },
-    { "bowyer lore",        NULL, SKILLGROUP_MENTAL, 10, 0, 0.0f,     NO_STAT_VAL,   NO_STAT_VAL, NO_STAT_VAL, SKILL_TYPE_BOTH },
+    { "stealing",           NULL, SKILLGROUP_MISC, 11, 0, 0.1f,      DEX,     INTELLIGENCE, NO_STAT_VAL },
+    { "pick locks",         NULL, SKILLGROUP_MISC, 11, 50, 1.5f,   DEX,     INTELLIGENCE, NO_STAT_VAL },
+    { "hide in shadows",    NULL, SKILLGROUP_MISC, 11, 10, 2.5f,   DEX,     CHA, NO_STAT_VAL },
+    { "smithery lore",      NULL, 2, 10, 0, 0.0f,     NO_STAT_VAL,   NO_STAT_VAL, NO_STAT_VAL },
+    { "bowyer lore",        NULL, 2, 10, 0, 0.0f,     NO_STAT_VAL,   NO_STAT_VAL, NO_STAT_VAL },
     /* 5 */
-    { "jeweler lore",       NULL, SKILLGROUP_MENTAL, 10, 0, 0.0f,    NO_STAT_VAL,     NO_STAT_VAL,     NO_STAT_VAL, SKILL_TYPE_BOTH },
-    { "alchemy",            NULL, SKILLGROUP_MISC, 11, 1, 1.0f,    INTELLIGENCE,    WIS,     DEX, SKILL_TYPE_BOTH },
-    { "magic lore",         NULL, SKILLGROUP_MENTAL, 11, 0, 0.0f,    NO_STAT_VAL,     NO_STAT_VAL,     NO_STAT_VAL, SKILL_TYPE_BOTH },
-    { "common literacy",    NULL, SKILLGROUP_MENTAL, 11, 1, 1.0f,    INTELLIGENCE,    WIS, NO_STAT_VAL, SKILL_TYPE_NEITHER },
-    { "bargaining",         NULL, SKILLGROUP_MISC, 11, 0, 0.0f,  NO_STAT_VAL, NO_STAT_VAL, NO_STAT_VAL, SKILL_TYPE_BOTH },
+    { "jeweler lore",       NULL, 2, 10, 0, 0.0f,    NO_STAT_VAL,     NO_STAT_VAL,     NO_STAT_VAL },
+    { "alchemy",            NULL, SKILLGROUP_MISC, 11, 1, 1.0f,    INTELLIGENCE,    WIS,     DEX },
+    { "magic lore",         NULL, 2, 11, 0, 0.0f,    NO_STAT_VAL,     NO_STAT_VAL,     NO_STAT_VAL },
+    { "common literacy",    NULL, SKILLGROUP_MENTAL, 11, 1, 1.0f,    INTELLIGENCE,    WIS, NO_STAT_VAL },
+    { "bargaining",         NULL, SKILLGROUP_MISC, 11, 0, 0.0f,  NO_STAT_VAL, NO_STAT_VAL, NO_STAT_VAL },
     /* 10 */
-    { "jumping",            NULL, SKILLGROUP_AGILITY, 11, 5, 2.5f,      NO_STAT_VAL,     NO_STAT_VAL, NO_STAT_VAL, SKILL_TYPE_BOTH },
-    { "sense magic",        NULL, SKILLGROUP_MENTAL, 11, 10, 1.0f,   POW,     INTELLIGENCE, NO_STAT_VAL, SKILL_TYPE_BOTH },
-    { "oratory",            NULL, SKILLGROUP_PERSONAL, 11, 1, 2.0f,      CHA,     INTELLIGENCE, NO_STAT_VAL, SKILL_TYPE_BOTH },
-    { "singing",            NULL, SKILLGROUP_PERSONAL, 11, 1, 2.0f,      CHA,     INTELLIGENCE, NO_STAT_VAL, SKILL_TYPE_BOTH },
-    { "sense curse",        NULL, SKILLGROUP_MENTAL, 11, 10, 1.0f,   WIS,     POW, NO_STAT_VAL, SKILL_TYPE_BOTH },
+    { "jumping",            NULL, SKILLGROUP_AGILITY, 11, 5, 2.5f,      NO_STAT_VAL,     NO_STAT_VAL, NO_STAT_VAL },
+    { "sense magic",        NULL, SKILLGROUP_MENTAL, 11, 10, 1.0f,   POW,     INTELLIGENCE, NO_STAT_VAL },
+    { "oratory",            NULL, SKILLGROUP_PERSONAL, 11, 1, 2.0f,      CHA,     INTELLIGENCE, NO_STAT_VAL },
+    { "singing",            NULL, SKILLGROUP_PERSONAL, 11, 1, 2.0f,      CHA,     INTELLIGENCE, NO_STAT_VAL },
+    { "sense curse",        NULL, SKILLGROUP_MENTAL, 11, 10, 1.0f,   WIS,     POW, NO_STAT_VAL },
     /* 15 */
-    { "find traps",         NULL, SKILLGROUP_AGILITY, 11, 0, 0.0f,  DEX, NO_STAT_VAL, NO_STAT_VAL, SKILL_TYPE_BOTH },
-    { "meditation",         NULL, SKILLGROUP_MISC, 11, 0, 0.0f, WIS,      POW,     INTELLIGENCE, SKILL_TYPE_BOTH },
-    { "punching",           NULL, SKILLGROUP_PHYSIQUE, 11, 0, 1.0f,      STR,      DEX, NO_STAT_VAL, SKILL_TYPE_PRIMARY },
-    { "flame touch",        NULL, SKILLGROUP_MISC, 11, 0, 1.0f,      STR,      DEX,     INTELLIGENCE, SKILL_TYPE_SECONDARY },
-    { "karate",             NULL, SKILLGROUP_PHYSIQUE, 11, 0, 1.0f,      STR,      DEX, NO_STAT_VAL, SKILL_TYPE_PRIMARY },
+    { "find traps",         NULL, SKILLGROUP_AGILITY, 11, 0, 0.0f,  DEX, NO_STAT_VAL, NO_STAT_VAL },
+    { "meditation",         NULL, SKILLGROUP_MISC, 11, 0, 0.0f, WIS,      POW,     INTELLIGENCE },
+    { "punching",           NULL, SKILLGROUP_PHYSIQUE, 11, 0, 1.0f,      STR,      DEX, NO_STAT_VAL },
+    { "flame touch",        NULL, SKILLGROUP_MISC, 11, 0, 1.0f,      STR,      DEX,     INTELLIGENCE },
+    { "karate",             NULL, SKILLGROUP_PHYSIQUE, 11, 0, 1.0f,      STR,      DEX, NO_STAT_VAL },
     /* 20 */
-    { "mountaineer",        NULL, SKILLGROUP_PHYSIQUE, 11, 0, 0.0f,  NO_STAT_VAL, NO_STAT_VAL, NO_STAT_VAL, SKILL_TYPE_NEITHER },
-    { "ranger lore",        NULL, SKILLGROUP_MENTAL, 11, 0, 0.0f,    NO_STAT_VAL,     NO_STAT_VAL, NO_STAT_VAL, SKILL_TYPE_BOTH },
-    { "inscription",        NULL, SKILLGROUP_MISC, 11, 1, 5.0f,      POW,      INTELLIGENCE,  NO_STAT_VAL, SKILL_TYPE_BOTH },
-    { "impact weapons",     NULL, SKILLGROUP_PHYSIQUE, 11, 0, 1.0f,      STR,      DEX, NO_STAT_VAL, SKILL_TYPE_PRIMARY },
-    { "bow archery",        NULL, SKILLGROUP_AGILITY, 11, 0, 1.0f,     DEX,      STR, NO_STAT_VAL, SKILL_TYPE_PRIMARY },
+    { "mountaineer",        NULL, SKILLGROUP_PHYSIQUE, 11, 0, 0.0f,  NO_STAT_VAL, NO_STAT_VAL, NO_STAT_VAL },
+    { "ranger lore",        NULL, 6, 11, 0, 0.0f,    NO_STAT_VAL,     NO_STAT_VAL, NO_STAT_VAL },
+    { "inscription",        NULL, SKILLGROUP_MISC, 11, 1, 5.0f,      POW,      INTELLIGENCE,  NO_STAT_VAL },
+    { "impact weapons",     NULL, SKILLGROUP_PHYSIQUE, 11, 0, 1.0f,      STR,      DEX, NO_STAT_VAL },
+    { "bow archery",        NULL, SKILLGROUP_AGILITY, 11, 0, 1.0f,     DEX,      STR, NO_STAT_VAL },
     /* 25 */
-    { "throwing",           NULL, SKILLGROUP_AGILITY, 11, 0, 1.0f,      DEX,      DEX, NO_STAT_VAL, SKILL_TYPE_PRIMARY },
-    { "wizardry spells",    NULL, SKILLGROUP_MAGIC, 11, 0, 0.0f,      POW,      INTELLIGENCE,       WIS, SKILL_TYPE_PRIMARY },
-    { "remove traps",       NULL, SKILLGROUP_AGILITY, 11, 1, 0.5f,    DEX,      INTELLIGENCE, NO_STAT_VAL, SKILL_TYPE_BOTH },
-    { "set traps",          NULL, SKILLGROUP_AGILITY, 11, 1, 0.5f,    INTELLIGENCE,      DEX, NO_STAT_VAL, SKILL_TYPE_BOTH },
-    { "magic devices",      NULL, SKILLGROUP_MAGIC, 11, 0, 1.0f,   POW, DEX, NO_STAT_VAL, SKILL_TYPE_PRIMARY },
+    { "throwing",           NULL, SKILLGROUP_AGILITY, 11, 0, 1.0f,      DEX,      DEX, NO_STAT_VAL },
+    { "wizardry spells",    NULL, SKILLGROUP_MAGIC, 11, 0, 0.0f,      POW,      INTELLIGENCE,       WIS },
+    { "remove traps",       NULL, SKILLGROUP_AGILITY, 11, 1, 0.5f,    DEX,      INTELLIGENCE, NO_STAT_VAL },
+    { "set traps",          NULL, SKILLGROUP_AGILITY, 11, 1, 0.5f,    INTELLIGENCE,      DEX, NO_STAT_VAL },
+    { "magic devices",      NULL, SKILLGROUP_MAGIC, 11, 0, 1.0f,   POW, DEX, NO_STAT_VAL },
     /* 30 */
-    { "divine prayers",     NULL, SKILLGROUP_WISDOM, 11, 0, 0.0f,      WIS,      POW,     INTELLIGENCE, SKILL_TYPE_PRIMARY },
-    { "clawing",            NULL, SKILLGROUP_PHYSIQUE, 11, 0, 0.0f,      STR,      DEX, NO_STAT_VAL, SKILL_TYPE_PRIMARY },
-    { "levitation",         NULL, SKILLGROUP_MISC, 11, 0, 0.0f, NO_STAT_VAL, NO_STAT_VAL, NO_STAT_VAL, SKILL_TYPE_PRIMARY },
-    { "disarm traps",       NULL, SKILLGROUP_AGILITY, 11, 1, 0.5f,      DEX,      INTELLIGENCE,     INTELLIGENCE, SKILL_TYPE_BOTH },
-    { "crossbow archery",   NULL, SKILLGROUP_AGILITY, 11, 0, 1.0f,     DEX,      STR, NO_STAT_VAL, SKILL_TYPE_PRIMARY },
+    { "divine prayers",     NULL, SKILLGROUP_WISDOM, 11, 0, 0.0f,      WIS,      POW,     INTELLIGENCE },
+    { "clawing",            NULL, SKILLGROUP_PHYSIQUE, 11, 0, 0.0f,      STR,      DEX, NO_STAT_VAL },
+    { "levitation",         NULL, SKILLGROUP_MISC, 11, 0, 0.0f, NO_STAT_VAL, NO_STAT_VAL, NO_STAT_VAL },
+    { "disarm traps",       NULL, SKILLGROUP_AGILITY, 11, 1, 0.5f,      DEX,      INTELLIGENCE,     INTELLIGENCE },
+    { "crossbow archery",   NULL, SKILLGROUP_AGILITY, 11, 0, 1.0f,     DEX,      STR, NO_STAT_VAL },
     /* 35 */
-    { "sling archery",      NULL, SKILLGROUP_AGILITY, 11, 0, 1.0f,     DEX,      STR, NO_STAT_VAL, SKILL_TYPE_PRIMARY },
-    { "identify items",     NULL, SKILLGROUP_MENTAL, 11, 1, 1.0f,      INTELLIGENCE,      DEX,     WIS, SKILL_TYPE_BOTH },
-    { "slash weapons",      NULL, SKILLGROUP_PHYSIQUE, 11, 0, 1.0f,      STR,      DEX, NO_STAT_VAL, SKILL_TYPE_PRIMARY },
-    { "cleave weapons",     NULL, SKILLGROUP_PHYSIQUE, 11, 0, 1.0f,      STR,      DEX, NO_STAT_VAL, SKILL_TYPE_PRIMARY },
-    { "pierce weapons",     NULL, SKILLGROUP_PHYSIQUE, 11, 0, 1.0f,      STR,      DEX, NO_STAT_VAL, SKILL_TYPE_PRIMARY },
+    { "sling archery",      NULL, SKILLGROUP_AGILITY, 11, 0, 1.0f,     DEX,      STR, NO_STAT_VAL },
+    { "identify items",     NULL, SKILLGROUP_MENTAL, 11, 1, 1.0f,      INTELLIGENCE,      DEX,     WIS },
+    { "slash weapons",      NULL, SKILLGROUP_PHYSIQUE, 11, 0, 1.0f,      STR,      DEX, NO_STAT_VAL },
+    { "cleave weapons",     NULL, SKILLGROUP_PHYSIQUE, 11, 0, 1.0f,      STR,      DEX, NO_STAT_VAL },
+    { "pierce weapons",     NULL, SKILLGROUP_PHYSIQUE, 11, 0, 1.0f,      STR,      DEX, NO_STAT_VAL },
     /* 40 */
-    { "two-hand mastery",   NULL, SKILLGROUP_PHYSIQUE, 11, 0, 0.0f,      STR,      DEX, NO_STAT_VAL, SKILL_TYPE_NEITHER },
-    { "polearm mastery",    NULL, SKILLGROUP_PHYSIQUE, 11, 0, 0.0f,      STR,      DEX, NO_STAT_VAL, SKILL_TYPE_NEITHER },
-    { "shield bash",        NULL, SKILLGROUP_PHYSIQUE, 15, 0, 1.0f,      STR, NO_STAT_VAL, NO_STAT_VAL, SKILL_TYPE_SECONDARY },
-    { "life force",         NULL, SKILLGROUP_PHYSIQUE, 960, 0, 1.0f,      CON, NO_STAT_VAL, NO_STAT_VAL, SKILL_TYPE_SECONDARY },
-    { "woodcutting",        NULL, SKILLGROUP_MISC,     16, 0, 1.0f,      STR, NO_STAT_VAL, NO_STAT_VAL, SKILL_TYPE_BOTH },
+    { "two-hand mastery",   NULL, SKILLGROUP_PHYSIQUE, 11, 0, 0.0f,      STR,      DEX, NO_STAT_VAL },
+    { "polearm mastery",    NULL, SKILLGROUP_PHYSIQUE, 11, 0, 0.0f,      STR,      DEX, NO_STAT_VAL }
 };
 
 static char *exp_group_arch_name[NROFSKILLGROUPS] = {
@@ -128,8 +124,6 @@ static char *exp_group_arch_name[NROFSKILLGROUPS] = {
     "experience_wis",
     "experience_misc"
 };
-
-float get_skill_use_speed(object *op, int sk);
 
 /* link_player_skills() - linking skills with experience objects
  * and creating a linked list of skills for later fast access.
@@ -230,7 +224,7 @@ object * find_skill(object *op, int skillnr)
 int do_skill(object *op, int dir, char *string)
 {
     int success = 0;        /* needed for monster_skill_use() too */
-    int sk   = op->chosen_skill->stats.sp;
+    int skill   = op->chosen_skill->stats.sp;
     float ticks = 0.0f;
 
     /*LOG(llevNoLog,"DO SKILL: skill %s ->%d\n", op->chosen_skill->name, get_skill_time(op,skill));*/
@@ -241,7 +235,7 @@ int do_skill(object *op, int dir, char *string)
         return success;
     }
 
-    switch (sk)
+    switch (skill)
     {
         case SK_LEVITATION:
           if (QUERY_FLAG(op, FLAG_LEVITATE))
@@ -276,22 +270,22 @@ int do_skill(object *op, int dir, char *string)
           break;
           /* note that the following 'attack' skills gain exp through hit_player() */
         case SK_KARATE:
-          (void) attack_hth(op, op->enemy, dir, "karate-chopped");
+          (void) attack_hth(op, dir, "karate-chopped");
           break;
         case SK_BOXING:
-          (void) attack_hth(op, op->enemy, dir, "punched");
+          (void) attack_hth(op, dir, "punched");
           break;
         case SK_FLAME_TOUCH:
-          (void) attack_hth(op, op->enemy, dir, "flamed");
+          (void) attack_hth(op, dir, "flamed");
           break;
         case SK_CLAWING:
-          (void) attack_hth(op, op->enemy, dir, "clawed");
+          (void) attack_hth(op, dir, "clawed");
           break;
         case SK_MELEE_WEAPON:
         case SK_SLASH_WEAP:
         case SK_CLEAVE_WEAP:
         case SK_PIERCE_WEAP:
-          (void) attack_melee_weapon(op, op->enemy, dir, NULL);
+          (void) attack_melee_weapon(op, dir, NULL);
           break;
         case SK_FIND_TRAPS:
           success = find_traps(op, op->chosen_skill->level);
@@ -341,15 +335,6 @@ int do_skill(object *op, int dir, char *string)
           new_draw_info(NDI_UNIQUE, 0, op, "This skill is already in effect.");
           return success;
           break;
-        case SK_SHIELD_BASH:
-          success = attack_shield_bash(op, dir);
-          break;
-        case SK_LIFE_FORCE:
-          success = life_force(op);
-          break;
-        case SK_WOODCUTTING:
-          success = woodcutting(op, dir);
-          break;
         default:
           LOG(llevDebug, "%s attempted to use unknown skill: %d\n", query_name(op), op->chosen_skill->stats.sp);
           return success;
@@ -363,8 +348,9 @@ int do_skill(object *op, int dir, char *string)
 
     if (op->type == PLAYER)
     {
-        ticks = get_skill_use_speed(op, sk);
-        set_action_time(skills[sk].type, op, ticks);
+        ticks = (float) (skills[skill].time) * RANGED_DELAY_TIME;
+        LOG(llevDebug, "AC-skills(%d): %2.2f\n", skill, ticks);
+        set_action_time(op, ticks);
     }
 
     /* this is a good place to add experience for successfull use of skills.
@@ -372,7 +358,7 @@ int do_skill(object *op, int dir, char *string)
      * gain problems.
      */
 
-    if (success && skills[sk].category < NROFSKILLGROUPS_ACTIVE)
+    if (success && skills[skill].category < NROFSKILLGROUPS_ACTIVE)
         add_exp(op, success, op->chosen_skill->stats.sp);
 
     return success;
@@ -493,11 +479,6 @@ void read_skill_params()
         skills[skillindex].stat1 = stat1;
         skills[skillindex].stat2 = stat2;
         skills[skillindex].stat3 = stat3;
-
-        /* I'm not sure why but setting type via skill_params here causes
-         * the type to become stupid values like 132421 which causes issues.
-         * I'm not even sure we need skill_params, but at the least we don't need type in it.
-         */
     }
     fclose(skill_params);
 
@@ -868,6 +849,7 @@ int use_skill(object *op, char *string)
         {
             if (!check_skill_action_time(op, op->chosen_skill)) /* are we idle from other action? */
                 return 0;
+
             if (do_skill(op, op->facing, string))
             return 1;
         }
@@ -966,13 +948,7 @@ int change_skill_to_skill(object *who, object *skl)
  * weapon type.
  */
 
-/* TODO:: attack_melee_weapon and attack_hth may not ever be used.
- * in main.c the code does some checking and skips ahead to skill_attack()
- * which will find the best skill to use. These are only called in
- * do_skill(), which is called only when /use_skill is issued.
- */
-
-int attack_melee_weapon(object *op, object *target, int dir, char *string)
+int attack_melee_weapon(object *op, int dir, char *string)
 {
     if (!QUERY_FLAG(op, FLAG_READY_WEAPON))
     {
@@ -981,7 +957,7 @@ int attack_melee_weapon(object *op, object *target, int dir, char *string)
         return 0;
     }
 
-    return skill_attack(target, op, dir, string);
+    return skill_attack(NULL, op, dir, string);
 }
 
 /* attack_hth() - this handles all hand-to-hand attacks -b.t. */
@@ -991,32 +967,27 @@ int attack_melee_weapon(object *op, object *target, int dir, char *string)
  * function skill_attack() we actually attack.
  */
 
-int attack_hth(object *op, object *target, int dir, char *string)
+int attack_hth(object *pl, int dir, char *string)
 {
-    object *weapon;
+    object*enemy =  NULL, *weapon;
 
-    if (QUERY_FLAG(op, FLAG_READY_WEAPON))
-        for (weapon = op->inv; weapon; weapon = weapon->below)
+    if (QUERY_FLAG(pl, FLAG_READY_WEAPON))
+        for (weapon = pl->inv; weapon; weapon = weapon->below)
         {
             if (weapon->type != WEAPON || !QUERY_FLAG(weapon, FLAG_APPLIED))
-            {
                 continue;
-            }
-
             CLEAR_FLAG(weapon, FLAG_APPLIED);
-            CLEAR_FLAG(op, FLAG_READY_WEAPON);
-            FIX_PLAYER(op, "attack hth");
-
-            if (op->type == PLAYER)
+            CLEAR_FLAG(pl, FLAG_READY_WEAPON);
+            FIX_PLAYER(pl ,"attack hth");
+            if (pl->type == PLAYER)
             {
-                new_draw_info(NDI_UNIQUE, 0, op, "You unwield your weapon in order to attack.");
-                esrv_update_item(UPD_FLAGS, op, weapon);
+                new_draw_info(NDI_UNIQUE, 0, pl, "You unwield your weapon in order to attack.");
+                esrv_update_item(UPD_FLAGS, pl, weapon);
             }
-
             break;
         }
 
-    return skill_attack(target, op, dir, string);
+    return skill_attack(enemy, pl, dir, string);
 }
 
 /* skill_attack() - Core routine for use when we attack using a skills
@@ -1073,42 +1044,6 @@ int skill_attack(object *tmp, object *pl, int dir, char *string)
     return 0;
 }
 
-/* Choose which melee skill to use. If the player has no ready weapon, then it will
- * find their HTH skill and switch to it. If they do have a weapon, it will use
- * their weapon skill (slash, cleave...).
- */
-
-int choose_melee_skill(object *op)
-{
-    if (!CONTR(op)->selected_weapon) /* ok... lets change to our hth skill */
-    {
-        if (CONTR(op)->skill_weapon)
-        {
-            if (change_skill_to_skill(op, CONTR(op)->skill_weapon))
-            {
-                LOG(llevBug, "BUG: do_skill_attack() could'nt give new hth skill to %s\n", query_name(op));
-                return 0;
-            }
-        }
-        else
-        {
-            LOG(llevBug, "BUG: do_skill_attack(): no hth skill in player %s\n", query_name(op));
-            return 0;
-        }
-    }
-    /* if we have 'ready weapon' but no 'melee weapons' skill readied
-     * this will flip to that skill. This is only window dressing for
-     * the players--no need to do this for monsters.
-     */
-    if (QUERY_FLAG(op, FLAG_READY_WEAPON)
-         && (!op->chosen_skill || op->chosen_skill->stats.sp != CONTR(op)->set_skill_weapon))
-    {
-        change_skill(op, CONTR(op)->set_skill_weapon);
-    }
-
-    return 1;
-}
-
 /* do_skill_attack() - We have got an appropriate opponent from either
  * move_player() or skill_attack(). In this part we get on with
  * attacking, take care of messages from the attack and changes in invisible.
@@ -1122,6 +1057,35 @@ int do_skill_attack(object *tmp, object *op, char *string)
     char    buf[MEDIUM_BUF], *name = query_name(tmp);
     float   ticks = 0.0f;
 
+    if (op->type == PLAYER)
+    {
+        if (!CONTR(op)->selected_weapon) /* ok... lets change to our hth skill */
+        {
+            if (CONTR(op)->skill_weapon)
+            {
+                if (change_skill_to_skill(op, CONTR(op)->skill_weapon))
+                {
+                    LOG(llevBug, "BUG: do_skill_attack() could'nt give new hth skill to %s\n", query_name(op));
+                    return 0;
+                }
+            }
+            else
+            {
+                LOG(llevBug, "BUG: do_skill_attack(): no hth skill in player %s\n", query_name(op));
+                return 0;
+            }
+        }
+        /* if we have 'ready weapon' but no 'melee weapons' skill readied
+         * this will flip to that skill. This is only window dressing for
+         * the players--no need to do this for monsters.
+         */
+        if (QUERY_FLAG(op, FLAG_READY_WEAPON)
+             && (!op->chosen_skill || op->chosen_skill->stats.sp != CONTR(op)->set_skill_weapon))
+        {
+            change_skill(op, CONTR(op)->set_skill_weapon);
+        }
+    }
+
     success = attack_ob(tmp, op, NULL);
 
     /* print appropriate  messages to the player */
@@ -1133,6 +1097,14 @@ int do_skill_attack(object *tmp, object *op, char *string)
             new_draw_info(NDI_UNIQUE, 0, op, "You %s %s!", buf, name);
         else if (tmp->type == PLAYER)
             new_draw_info(NDI_UNIQUE, 0, tmp, "%s %s you!", query_name(op), buf);
+    }
+
+    /* set the skill delay from the attack so we can't use other skills during the cooldown time */
+    if (op->type == PLAYER)
+    {
+        ticks = FABS(CONTR(op)->ob->weapon_speed);
+        LOG(llevDebug, "AC-melee: %2.2f\n", ticks);
+        set_action_time(op, ticks);
     }
 
     return success;
@@ -1167,42 +1139,22 @@ int SK_level(object *op)
 }
 
 /* sets the action timer for skills like throwing, archery, casting... */
-void set_action_time(short timer, object *op, float t)
+void set_action_time(object *op, float t)
 {
     if (op->type != PLAYER)
-    {
         return;
-    }
 
-    if (timer == 0)
-    {
-        return;
-    }
+    CONTR(op)->ob->weapon_speed_left += FABS(t);
 
-    if (timer == SKILL_TYPE_PRIMARY || timer == SKILL_TYPE_BOTH)
-    {
-        op->weapon_speed_left += FABS(t);
+    /* update the value for the client */
+    CONTR(op)->action_timer = (int) (CONTR(op)->ob->weapon_speed_left / pticks_second / WEAPON_SWING_TIME * 1000.0f);
 
-        /* update the value for the client */
-        CONTR(op)->action_timer = (int) (op->weapon_speed_left / pticks_second / SKILL_DELAY_TIME * 1000.0f);
-
-        /* a little trick here, we want the server to always update the client with the new skill delay time,
-         * even if the value is identical to the one sent before. this is because the client pre-emptively ticks
-         * this down, so the client would need to be updated again that there is a new delay time.
-         * to do this, we make it negative if the last value sent was positive, and the client uses ABS on it */
-        if (CONTR(op)->last_action_timer > 0)
-            CONTR(op)->action_timer *= -1;
-    }
-
-    if (timer == SKILL_TYPE_SECONDARY || timer == SKILL_TYPE_BOTH)
-    {
-
-        op->secondary_skill_speed_left += FABS(t);
-        CONTR(op)->action_timer2 = (int) (op->secondary_skill_speed_left / pticks_second / SKILL_DELAY_TIME * 1000.0f);
-
-        if (CONTR(op)->last_action_timer2 > 0)
-            CONTR(op)->action_timer2 *= -1;
-    }
+    /* a little trick here, we want the server to always update the client with the new skill delay time,
+     * even if the value is identical to the one sent before. this is because the client pre-emptively ticks
+     * this down, so the client would need to be updated again that there is a new delay time.
+     * to do this, we make it negative if the last value sent was positive, and the client uses ABS on it */
+    if (CONTR(op)->last_action_timer > 0)
+        CONTR(op)->action_timer *= -1;
 }
 
 /* player only: we check the action time for a skill.
@@ -1212,35 +1164,17 @@ void set_action_time(short timer, object *op, float t)
  */
 int check_skill_action_time(object *op, object *skill)
 {
-    int pass = TRUE;
-    short type;
-
     if(!skill)
+        return FALSE;
+
+    if (CONTR(op)->ob->weapon_speed_left > 0.0f)
     {
+        /* update the value for the client */
+        CONTR(op)->action_timer = (int) (CONTR(op)->ob->weapon_speed_left / pticks_second / WEAPON_SWING_TIME * 1000.0f);
         return FALSE;
     }
 
-    type = skills[skill->stats.sp].type;
-
-    if (skill->type == SKILL_TYPE_NEITHER)
-    {
-        return TRUE;
-    }
-
-    if (op->weapon_speed_left > 0.0f && (type == SKILL_TYPE_PRIMARY || type == SKILL_TYPE_BOTH))
-    {
-        /* update the value for the client */
-        CONTR(op)->action_timer = (int) (op->weapon_speed_left / pticks_second / SKILL_DELAY_TIME * 1000.0f);
-        pass = FALSE;
-    }
-
-    if (op->secondary_skill_speed_left > 0.0f && (type == SKILL_TYPE_SECONDARY || type == SKILL_TYPE_BOTH))
-    {
-        CONTR(op)->action_timer2 = (int) (op->secondary_skill_speed_left / pticks_second / SKILL_DELAY_TIME * 1000.0f);
-        pass = FALSE;
-    }
-
-    return pass;
+    return TRUE;
 }
 
 /* get_skill_stat1() - returns the value of the primary skill
@@ -1285,6 +1219,8 @@ int get_skill_stat3(object *op)
     return stat_value;
 }
 
+/*get_weighted_skill_stats() - */
+
 int get_weighted_skill_stats(object *op)
 {
     int value   = 0;
@@ -1292,31 +1228,4 @@ int get_weighted_skill_stats(object *op)
     value = (get_skill_stat1(op) / 2) + (get_skill_stat2(op) / 4) + (get_skill_stat3(op) / 4);
 
     return value;
-}
-
-/* See what the recharge time for a skill will be. This factors in both the skill's default speed
- * and the speed of any factors that affect it such as weapons.
- *
- * TODO: Integrate all set_action_time calls with this. ATM some skills like archery and magic
- * don't use this because they use their own unique system to determine speed, like different
- * spells have different speeds for magic.
- */
-float get_skill_use_speed(object *op, int sk)
-{
-    float   ticks = 0.0f;
-
-    switch (sk)
-    {
-        case SK_CLEAVE_WEAP:
-        case SK_SLASH_WEAP:
-        case SK_PIERCE_WEAP:
-        case SK_MELEE_WEAPON:
-            ticks = FABS(op->weapon_speed);
-            break;
-        default:
-            ticks = (float) skills[sk].time * SKILL_DELAY_TIME;
-            break;
-    }
-
-    return ticks;
 }

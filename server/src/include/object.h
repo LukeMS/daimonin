@@ -107,6 +107,7 @@ typedef struct obj
     const char     *slaying;        /* Which race to do double damage to
                                      * If this is an exit, this is the filename */
     const char     *msg;            /* If this is a book/sign/magic mouth/etc */
+    const char     *buffs;          /* Keep track of enhancements to prevent players from getting the same one twice. */
 
     /* here starts copy_object() releated data */
 
@@ -191,8 +192,6 @@ typedef struct obj
                                          * warning: change this when include > 15x15 monster
                                          */
 
-    sint8           max_buffs;          // How many buffs can this item support?
-
     uint8           type;               /* PLAYER, BULLET, etc.  See define.h - must be < ARCH_MAX_TYPES */
     uint8           sub_type1;          /* sub type definition - this will be send to client too */
     uint8           item_quality;       /* quality of a item in range from 0-100 */
@@ -231,8 +230,6 @@ typedef struct obj
     float           speed_left;         /* How much speed is left to spend this round */
     float           weapon_speed;       /* new weapon speed system. swing of weapon */
     float           weapon_speed_left;
-
-    float           secondary_skill_speed_left; // Recharge time for secondary skill.
 
     living          stats;              /* object stats like hp, sp, grace ... */
 
@@ -315,13 +312,5 @@ typedef struct obj
  * or NULL if I has no inv. */
 #define GET_INV_BOTTOM(I, O) \
         for ((O) = (I)->inv; (O) && (O)->below; (O) = (O)->below)
-
-#define BUFF_ADD_SUCCESS      1  // Nothing went wrong.
-#define BUFF_ADD_EXISTS       2  // The buff exists, but that does not mean it failed.
-#define BUFF_ADD_LIMITED      4  // Too many of the same item.
-#define BUFF_ADD_MAX_EXCEEDED 8  // item->max_buffs exceeded.
-#define BUFF_ADD_BAD_PARAMS   16 // item or buff == NULL
-#define BUFF_ADD_NO_INSERT    32 // Something went wrong in insert_ob_in_ob
-
 
 #endif /* ifndef __OBJECT_H */

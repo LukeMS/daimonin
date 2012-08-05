@@ -465,16 +465,6 @@ static struct constant_decl preset_game_constants[] =
     {"TAD_SHOWSEASON", TAD_SHOWSEASON},
     {"TAD_LONGFORM",   TAD_LONGFORM},
 
-    /* Bitflags to help describe what happens while buffing an object.
-     * Because they are bitmasks, bitmasks.lua should be included for
-     * easy use of these constants.
-     */
-    {"BUFF_ADD_SUCCESS", BUFF_ADD_SUCCESS},
-    {"BUFF_ADD_EXISTS", BUFF_ADD_EXISTS},
-    {"BUFF_ADD_LIMITED", BUFF_ADD_LIMITED},
-    {"BUFF_ADD_MAX_EXCEEDED", BUFF_ADD_MAX_EXCEEDED},
-    {"BUFF_ADD_BAD_PARAMS", BUFF_ADD_BAD_PARAMS},
-    {"BUFF_ADD_NO_INSERT", BUFF_ADD_NO_INSERT},
 };
 
 lua_class Game =

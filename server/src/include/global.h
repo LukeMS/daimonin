@@ -471,8 +471,10 @@ enum
 
 #define ROUND_TAG            pticks /* put this here because the DIFF */
 
-// Skill timers are based on ticks instead of real time, so this converts it to real time.
-#define SKILL_DELAY_TIME (0.125f)
+#define WEAPON_SWING_TIME (0.125f)
+
+/* the last_grace attribute is based on ticks instead of real time, so this converts it here */
+#define RANGED_DELAY_TIME (0.125f)
 
 #define query_name(_op_) query_name_full(_op_, NULL)
 
