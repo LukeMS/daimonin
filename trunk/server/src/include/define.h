@@ -93,7 +93,7 @@
 #define ARMOUR                  16
 #define PEDESTAL                17
 #define ALTAR                   18
-/*removed: CONFUSION               19*/
+#define BUFF_FORCE              19
 #define LOCKED_DOOR             20
 #define SPECIAL_KEY             21
 #define MAP                     22

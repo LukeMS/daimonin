@@ -535,7 +535,6 @@ static inline int can_merge(object *ob1, object *ob2)
      || ob1->title != ob2->title
      || ob1->race != ob2->race
      || ob1->slaying != ob2->slaying
-     || ob1->buffs != ob2->buffs
      || ob1->msg != ob2->msg)
         return 0;
 
@@ -579,7 +578,8 @@ static inline int can_merge(object *ob1, object *ob2)
      || ob1->magic != ob2->magic
      || ob1->item_level != ob2->item_level
      || ob1->item_skill != ob2->item_skill
-     || ob1->level != ob2->level)
+     || ob1->level != ob2->level
+     || ob1->max_buffs != ob2->max_buffs)
         return 0;
 
     /* face can be difficult - but inv_face should never different or obj is different! */
@@ -1058,7 +1058,7 @@ void copy_owner(object *op, object *clone)
 void initialize_object(object *op)
 {
     memset(op, 0, sizeof(object));
-    op->name = op->title = op->race = op->slaying = op->buffs = op->msg = NULL;
+    op->name = op->title = op->race = op->slaying = op->msg = NULL;
     /* Set some values that should not be 0 by default */
     op->anim_enemy_dir = -1;      /* control the facings 25 animations */
     op->anim_moving_dir = -1;     /* the same for movement */
@@ -1092,7 +1092,6 @@ void copy_object(object *op2, object *op)
     FREE_ONLY_HASH(op->title);
     FREE_ONLY_HASH(op->race);
     FREE_ONLY_HASH(op->slaying);
-    FREE_ONLY_HASH(op->buffs);
     FREE_ONLY_HASH(op->msg);
 
     /* unlink old treasurelist if needed */
@@ -1109,7 +1108,6 @@ void copy_object(object *op2, object *op)
     ADD_REF_NOT_NULL_HASH(op->title);
     ADD_REF_NOT_NULL_HASH(op->race);
     ADD_REF_NOT_NULL_HASH(op->slaying);
-    ADD_REF_NOT_NULL_HASH(op->buffs);
     ADD_REF_NOT_NULL_HASH(op->msg);
 
 #if 0
@@ -1816,7 +1814,6 @@ void free_object_data(object *ob, int free_static_data)
     FREE_AND_CLEAR_HASH2(ob->title);
     FREE_AND_CLEAR_HASH2(ob->race);
     FREE_AND_CLEAR_HASH2(ob->slaying);
-    FREE_AND_CLEAR_HASH2(ob->buffs);
     FREE_AND_CLEAR_HASH2(ob->msg);
 }
 
@@ -3524,4 +3521,286 @@ object *find_next_object(object *op, uint8 type, uint8 mode, object *root)
     while (next);
 
     return next;
+}
+
+/* Copy stats from all BUFF_FORCEs in item's inventory to the item. It will also
+ * create a duplicate of the original object if one doesn't already exist for
+ * easy comparison and to make it easier to have multiple kinds of buffs. This
+ * loop may be a bit sub-optimal but this function shouldn't be called very
+ * often - only when an item is buffed or debuffed.
+ *
+ * Kinda wish I'd used the lexer instead of this...
+ * Maybe I will someday. I may have missed some stats here -- update if I do. ;)
+ * -- _people_ 7/29/12
+ */
+
+void fix_buff_stats(object *item)
+{
+    int i = 0;
+    uint32 n = 0;
+    object *orig;
+    object *inv;
+
+    if (!item)
+    {
+        LOG(llevBug, "fix_buff_stats() called without item!\n");
+        return;
+    }
+
+    orig = present_arch_in_ob(item->arch, item);
+
+    // Try to create a duplicate of the object to make changing stats relative to the original.
+    if (!orig)
+    {
+        orig = get_object();
+        copy_object(item, orig);
+
+        if (!orig)
+        {
+            LOG(llevDebug, "fix_buff_stats() failed - could not copy original object\n");
+        }
+    } else
+    {
+        // If orig was found, item should be different than orig, so revert item to orig.
+        copy_object(orig, item);
+    }
+
+    GET_INV_BOTTOM(item, inv)
+    {
+
+        if (inv->type != BUFF_FORCE)
+        {
+            continue;
+        }
+
+        // Buff is disabled?
+        if (!QUERY_FLAG(inv, FLAG_APPLIED))
+        {
+            continue;
+        }
+
+        n = inv->nrof;
+
+        item->stats.ac += inv->stats.ac * n;
+        item->stats.Cha += inv->stats.Cha * n;
+        item->stats.Con += inv->stats.Con * n;
+        item->stats.dam += inv->stats.dam * n;
+        item->stats.Dex += inv->stats.Dex * n;
+        item->stats.food += inv->stats.food * n;
+        item->stats.grace += inv->stats.grace * n;
+        item->stats.hp += inv->stats.hp * n;
+        item->stats.Int += inv->stats.Int * n;
+        item->stats.maxgrace += inv->stats.maxgrace * n;
+        item->stats.maxhp += inv->stats.maxhp * n;
+        item->stats.maxsp += inv->stats.maxsp * n;
+        item->stats.Pow += inv->stats.Pow * n;
+        item->stats.sp += inv->stats.sp * n;
+        item->stats.Str += inv->stats.Str * n;
+        item->stats.thac0 += inv->stats.thac0 * n;
+        item->stats.thacm += inv->stats.thacm * n;
+        item->stats.wc += inv->stats.wc * n;
+        item->stats.Wis += inv->stats.Wis * n;
+
+        item->item_condition += inv->item_condition * n;
+        item->item_quality += inv->item_quality * n;
+
+        item->item_level += inv->item_level;
+        item->item_skill = inv->item_skill;
+
+        item->level += inv->level;
+        item->magic += inv->magic * n;
+
+        item->path_attuned |= inv->path_attuned;
+        item->path_denied |= inv->path_denied;
+        item->path_repelled |= inv->path_repelled;
+        item->terrain_flag |= inv->terrain_flag;
+
+        item->value += inv->value * n;
+        item->weapon_speed += inv->weapon_speed * n;
+        item->weight += inv->weight * n;
+        item->weight_limit += inv->weight_limit * n;
+
+        for (i = 0; i < NROFATTACKS; i++)
+        {
+            item->attack[i] += inv->attack[i] * n;
+            item->resist[i] += inv->resist[i] * n;
+        }
+    }
+}
+
+/*
+ * See if the item will exceed its buff limit when we add a buff.
+ * This takes buff->nrof and op->max_buffs into account. Returns
+ * FALSE when the object cannot accept this buff, TRUE when it can.
+ * This does not take into account if the object has already taken
+ * this buff.
+ */
+uint8 check_buff_limit(object *op, int nr)
+{
+    sint8 real_max = 0; // The max after considering item_condition
+    sint8 buffs = 0;
+    object *inv;
+
+    // -1 always means this item can never be buffed.
+    if (op->max_buffs == -1)
+    {
+        return FALSE;
+    }
+
+    if (op->max_buffs == 0)
+    {
+        // Items with a higher condition are already powerful enough, so
+        // they shouldn't be as enhanceable.
+        real_max = (88 - op->item_condition) / 2;
+
+        if (real_max <= 0)
+        {
+            // But give it at least 1 slot.
+            real_max = 1;
+        }
+
+    } else
+    {
+        real_max = op->max_buffs;
+    }
+
+    if (op->inv)
+    {
+        for (inv = op->inv; inv; inv = inv->below)
+        {
+            if (inv->type == BUFF_FORCE)
+            {
+                buffs += inv->nrof;
+            }
+        }
+
+    }
+
+    if (buffs + nr > real_max)
+    {
+        return FALSE;
+    }
+
+    return TRUE;
+
+}
+
+object * check_buff_exists(object *item, const char *name)
+{
+    object *inv;
+
+    if (!item || !name)
+    {
+        LOG(llevDebug, "check_buff_exists() called without item or name!\n");
+        return;
+    }
+
+    for (inv = item->inv; inv; inv = inv->below)
+    {
+        if (inv->type == BUFF_FORCE && inv->name == name)
+        {
+            return inv;
+        }
+    }
+
+    return NULL;
+}
+
+/*
+ * Returns: 0 = success
+ *          1 = item or buff == NULL
+ *          2 = max_buffs exceeded
+ *          3 = max of that particular buff exceeded
+ *          4 = for whatever reason we can't put the buff in the item
+ */
+int add_item_buff(object *item, object *buff, short just_checking)
+{
+    object *oldbuff;
+    uint8 ret = BUFF_ADD_SUCCESS;
+
+    if (!item || !buff)
+    {
+        ret &= BUFF_ADD_BAD_PARAMS;
+        return ret; // No point in going on, only bad things will come.
+    }
+
+    // Make sure the item won't exceed its numerical buff limit.
+    if (!check_buff_limit(item, buff->nrof))
+    {
+        ret &= BUFF_ADD_LIMITED;
+        ret &= ~BUFF_ADD_SUCCESS;
+    }
+
+    oldbuff = check_buff_exists(item, buff->name);
+
+    if (oldbuff)
+    {
+        ret &= BUFF_ADD_EXISTS;
+
+        if (oldbuff->nrof + buff->nrof > (uint32) oldbuff->carrying)
+        {
+            ret &= BUFF_ADD_MAX_EXCEEDED;
+            ret &= ~BUFF_ADD_SUCCESS;
+        }
+
+        // If we are actually adding the buff and it's still successful
+        // Just increase the nrof since we already have the buff force.
+        if (!just_checking && ret & BUFF_ADD_SUCCESS)
+        {
+            oldbuff->nrof += buff->nrof;
+        }
+    } else
+    {
+        if (!just_checking && ret & BUFF_ADD_SUCCESS)
+        {
+            buff = insert_ob_in_ob(buff, item);
+
+            // Something has gone wrong - insert_ob_in_ob() will
+            // return null if it shouldn't happen.
+            if (!buff)
+            {
+                ret &= BUFF_ADD_NO_INSERT;
+            }
+        }
+    }
+
+    if (!just_checking)
+    {
+        /* Copy stat boni from the buff force to the object. This uses buff
+         * instead of oldbuff so that we can just merge the changes instead
+         * of unmerging all and then remerging all.
+         */
+        fix_buff_stats(item);
+
+        // Apply it in case someday we implement "disabling" buffs.
+        SET_FLAG(buff, FLAG_APPLIED);
+    }
+
+    if (ret == 0 || ret == BUFF_ADD_EXISTS)
+    {
+        ret &= BUFF_ADD_SUCCESS;
+    }
+
+    return ret;
+}
+
+int remove_item_buff(object *item, char *name, int nrof)
+{
+    object *oldbuff;
+
+    if (!item || !name)
+    {
+        return 1;
+    }
+
+    oldbuff = check_buff_exists(item, name);
+
+    if (!oldbuff)
+    {
+        return 2;
+    }
+
+    decrease_ob_nr(oldbuff, nrof);
+
+    fix_buff_stats(item);
 }
