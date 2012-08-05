@@ -327,6 +327,11 @@ extern int              auto_apply(object *op);
 extern object          *locate_beacon(shstr *id);
 extern void             init_object_initializers();
 extern object          *find_next_object(object *op, uint8 type, uint8 mode, object *root);
+extern void             fix_buff_stats(object *item);
+extern object          *check_buff_exists(object *item, const char *name);
+extern int              add_item_buff(object *item, object *buff, short just_checking);
+extern int              remove_item_buff(object *item, char *name, int nrof);
+
 /* re-cmp.c */
 extern char            *re_cmp(char *str, char *regexp);
 /* readable.c */
