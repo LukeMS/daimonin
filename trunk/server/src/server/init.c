@@ -1033,7 +1033,7 @@ void compile_info()
     LOG(llevInfo, "Instancedir:\t%s/%s\n", settings.localdir, settings.instancedir);
     LOG(llevInfo, "Itemsdir:\t%s/%s\n", settings.localdir, settings.uniquedir);
     LOG(llevInfo, "Tmpdir:\t\t%s\n", settings.tmpdir);
-    LOG(llevInfo, "Map timeout:\t%d\n", MAP_DEFSWAP);
+    LOG(llevInfo, "Map timeout:\t%d\n", MAP_MAXTIMEOUT);
 #ifdef MAP_RESET
     LOG(llevInfo, "Map reset:\t<true>\n");
 #else

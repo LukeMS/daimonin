@@ -165,6 +165,11 @@ enum skillnrs
     SK_PIERCE_WEAP,
     SK_TWOHANDS,
     SK_POLEARMS,
+
+    SK_SHIELD_BASH,
+    SK_LIFE_FORCE,
+    SK_WOODCUTTING,
+
     NROFSKILLS,
     /* always last index! */
 };
@@ -179,10 +184,24 @@ typedef struct skill_struct
     short           stat1;      /* primary stat effecting use of this skill */
     short           stat2;      /* secondary stat for this skill */
     short           stat3;      /* tertiary stat for this skill */
+    short           type;       // Skill type - primary, secondary, both, neither.
 } skill;
 
 
 extern skill    skills[];
+
+/*
+ * Skill types essentially dictate which ActionTimer the skill uses. Primary skills are
+ * meant to be used directly in combat and should recharge quickly. Secondary skills
+ * are meant to enhance primary skills or stats. Stats which use both timers shouldn't
+ * be used in combat, like set traps or lore skills. Skills which aren't on a timer
+ * are time-insensitive like common literacy or mountaneering.
+ *
+ */
+#define SKILL_TYPE_NEITHER 0
+#define SKILL_TYPE_PRIMARY 1
+#define SKILL_TYPE_SECONDARY 2
+#define SKILL_TYPE_BOTH 3
 
 /* yet more convenience macros. */
 

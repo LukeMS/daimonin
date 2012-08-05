@@ -202,13 +202,20 @@ void process_players2(mapstruct *map)
         /* look our target is still valid - if not, update client
              * we handle op->enemy for the player here too!
              */
-        if (pl->ob->map
-         && (!pl->target_object
-          || (pl->target_object != pl->ob && pl->target_object_count != pl->target_object->count)
-          || !OBJECT_ACTIVE(pl->target_object)
-          || QUERY_FLAG(pl->target_object, FLAG_SYS_OBJECT) || pl->target_object->level != pl->target_level
-          || (QUERY_FLAG(pl->target_object, FLAG_IS_INVISIBLE) && !QUERY_FLAG(pl->ob, FLAG_SEE_INVISIBLE))))
-            send_target_command(pl);
+        if (pl->ob->map &&
+            (!pl->target_object ||
+            (pl->target_object != pl->ob && pl->target_object_count != pl->target_object->count) ||
+            !OBJECT_ACTIVE(pl->target_object) ||
+            QUERY_FLAG(pl->target_object, FLAG_SYS_OBJECT) || pl->target_object->level != pl->target_level ||
+            (QUERY_FLAG(pl->target_object, FLAG_IS_INVISIBLE) && !QUERY_FLAG(pl->ob, FLAG_SEE_INVISIBLE))))
+            {
+                send_target_command(pl);
+            }
+
+        if (pl->ob->secondary_skill_speed_left <= 0)
+        {
+            pl->action_timer2 = 0;
+        }
 
         if (pl->ob->weapon_speed_left <= 0)
         {
@@ -241,10 +248,13 @@ void process_players2(mapstruct *map)
                         pl->ob->enemy = NULL;
                     else if (is_melee_range(pl->ob, pl->ob->enemy))
                     {
-                        /* tell our enemy we swing at him now */
-                        update_npc_knowledge(pl->ob->enemy, pl->ob, FRIENDSHIP_TRY_ATTACK, 0);
-                        pl->rest_mode = 0;
-                        skill_attack(pl->ob->enemy, pl->ob, 0, NULL);
+                        if (choose_melee_skill(pl->ob) && check_skill_action_time(pl->ob, pl->ob->chosen_skill))
+                        {
+                            /* tell our enemy we swing at him now */
+                            update_npc_knowledge(pl->ob->enemy, pl->ob, FRIENDSHIP_TRY_ATTACK, 0);
+                            pl->rest_mode = 0;
+                            do_skill(pl->ob, 0, NULL);
+                        }
                     }
             }
         }
@@ -333,9 +343,14 @@ static void process_map_events(mapstruct *map)
         if (op->weapon_speed && !QUERY_FLAG(op, FLAG_PARALYZED))
         {
             if (op->weapon_speed_left > 0)
-                op->weapon_speed_left -= WEAPON_SWING_TIME;
+                op->weapon_speed_left -= SKILL_DELAY_TIME;
 
             /* PLAYER swings - monster swing will be done implicit in process_object() */
+        }
+
+        if (op->secondary_skill_speed_left > 0)
+        {
+            op->secondary_skill_speed_left -= SKILL_DELAY_TIME;
         }
 
         if (op->speed_left > 0)
@@ -604,6 +619,8 @@ void leave(player *pl, int draw_exit)
 
         if (pl->ob->map)
         {
+            if (pl->ob->map->in_memory == MAP_IN_MEMORY)
+                pl->ob->map->timeout = MAP_TIMEOUT(pl->ob->map);
             pl->ob->map = NULL;
         }
         pl->ob->type = DEAD_OBJECT; /* To avoid problems with inventory window */
@@ -683,11 +700,8 @@ void do_specials()
 
     /*   if (!(ROUND_TAG % 20)) */ /*use this for debuging */
 
-    /* We only check for maps needing swap/reset every second. */
-    if (!(ROUND_TAG % (long unsigned int)MAX(1, pticks_second)))
-    {
-        map_check_active();
-    }
+    if (!(ROUND_TAG % 509))
+        flush_old_maps();    /* Clears the tmp-files of maps which have reset */
 
     if (!(ROUND_TAG % 2521))
         metaserver_update();    /* 2500 ticks is about 5 minutes */
@@ -1064,6 +1078,7 @@ void iterate_main_loop()
     GlobalEvent(&CFP);
 #endif
 
+    check_active_maps();        /* Removes unused maps after a certain timeout */
     do_specials();              /* Routines called from time to time. */
 
     object_gc();                /* Clean up the object pool */

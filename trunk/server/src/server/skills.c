@@ -1309,7 +1309,7 @@ int find_traps(object *op, int level)
         /* Ensure the square isn't out of bounds. */
         if (!(m = out_of_map(op->map, &xt, &yt)))
             continue;
- 
+
         next = GET_MAP_OB(m, xt, yt);
         while ((this = next))
         {
@@ -1409,3 +1409,92 @@ int remove_trap(object *op, int dir, int level)
     return 0;
 }
 
+int attack_shield_bash(object *op, int dir)
+{
+    if (!CONTR(op)->equipment[PLAYER_EQUIP_SHIELD])
+    {
+        if (op->type == PLAYER)
+        {
+            new_draw_info(NDI_UNIQUE, 0, op, "You do not have a shield to bash with!");
+        }
+
+        return 0;
+    }
+
+    return skill_attack(NULL, op, dir, "bashed");
+}
+
+#if 0
+int beckoning(object *op)
+{
+    int radius = 3;
+    int dist = 1; // Start at 1 because the player shouldn't be standing on a mob.
+    object *obj;
+
+    // Tweak the distance at which the player can aggro mobs based on their skill level.
+    radius += op->chosen_skill->level / 20;
+
+    for (dist = 1; dist <= radius; dist++)
+    {
+        //for (obj = GET_MAP_OB(op->map, freearr_x[, yt); tmp != NULL; tmp = tmp->above)
+    }
+
+    return 0;
+}
+#endif
+
+int life_force(object *op)
+{
+    object *force;
+
+    force = arch_to_object(archetype_global._force);
+    force = insert_ob_in_ob(force, op);
+
+    force->stats.maxhp = -(op->stats.maxhp * .25);
+    force->stats.dam = 3 * (op->chosen_skill->level / 11 + 1);
+
+    force->speed = 0.125f;
+    force->speed_left = -90.0f;
+
+    SET_FLAG(force, FLAG_APPLIED);
+
+    fix_player(op, "life force skill used");
+
+    return 0;
+}
+
+int woodcutting(object *op, int dir)
+{
+    int xt = op->x + freearr_x[dir];
+    int yt = op->y + freearr_y[dir];
+    mapstruct *map = out_of_map(op->map, &xt, &yt);
+    object *obj;
+    object *axe;
+
+    axe = CONTR(op)->mark;
+
+    if (!axe || axe->type != SKILL_ITEM || axe->sub_type1 != ST1_SKOBJ_AXE)
+    {
+        new_draw_info(NDI_UNIQUE, 0, op, "You do not have a marked axe to chop with!");
+        return 0;
+    }
+
+    for (obj = GET_MAP_OB(map, xt, yt); obj != NULL; obj = obj->above)
+    {
+        // We have a tree! :) Get out of this nasty loop.
+        if (obj->type == TREE)
+        {
+            break;
+        }
+    }
+
+    if (!obj)
+    {
+        new_draw_info(NDI_UNIQUE, 0, op, "There is no tree there!");
+        return 0;
+    }
+
+    // TODO: Random roll for success based on level and maybe tree difficulty?
+
+    return 0;
+}

@@ -501,8 +501,7 @@ void remove_ns_dead_player(player *pl)
         if (!QUERY_FLAG(pl->ob, FLAG_REMOVED))
         {
             terminate_all_pets(pl->ob);
-            activelist_remove(pl->ob);
-            (void)leave_map(pl, NULL);
+            leave_map(pl->ob);
         }
 
         LOG(llevDebug, "remove_ns_dead_player(): %s leaving\n", STRING_OBJ_NAME(pl->ob));

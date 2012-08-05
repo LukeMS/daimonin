@@ -93,11 +93,12 @@
 #define ARMOUR                  16
 #define PEDESTAL                17
 #define ALTAR                   18
-/*removed: CONFUSION               19*/
+#define BUFF_FORCE              19
 #define LOCKED_DOOR             20
 #define SPECIAL_KEY             21
 #define MAP                     22
 #define DOOR                    23
+#define TREE                    24
 /*#define KEY                     24*/
 #define MMISSILE                25
 #define TIMED_GATE              26
@@ -206,7 +207,7 @@
                                      */
 #define CONVERTER               103
 #define BRACERS                 104
-/* 105 is free. */
+#define SKILL_ITEM              105
 #define SAVEBED                 106
 #define POISONCLOUD             107
 #define FIREHOLES               108
@@ -373,6 +374,11 @@
 
 #define ST1_CONTAINER_NORMAL_clan           192
 #define ST1_CONTAINER_CORPSE_clan           193
+
+/* Skill object defines. Skill objects are required for trade skills such as woodcutting.
+ * they could be an axe a cauldron, etc.
+ */
+#define ST1_SKOBJ_AXE                       1
 
 /* sub type for EXIT objects - if set, a teleport sound is played */
 #define ST1_EXIT_SOUND_NO                   0

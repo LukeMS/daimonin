@@ -117,6 +117,7 @@ static struct method_decl GameObject_methods[] =
     {"PlayerSave",             (lua_CFunction) GameObject_PlayerSave},
     {"ReadyUniqueMap",         (lua_CFunction) GameObject_ReadyUniqueMap},
     {"Remove",                 (lua_CFunction) GameObject_Remove},
+    {"RemoveBuff",             (lua_CFunction) GameObject_RemoveBuff},
     {"RemoveQuestItem",        (lua_CFunction) GameObject_RemoveQuestItem},
     {"Repair",                 (lua_CFunction) GameObject_Repair},
     {"Save",                   (lua_CFunction) GameObject_Save},
@@ -164,7 +165,6 @@ struct attribute_decl GameObject_attributes[] =
     {"title",                 FIELDTYPE_SHSTR,     offsetof(object, title),                     0,                  0},
     {"race",                  FIELDTYPE_SHSTR,     offsetof(object, race),                      0,                  0},
     {"slaying",               FIELDTYPE_SHSTR,     offsetof(object, slaying),                   0,                  0},
-    {"buffs",                 FIELDTYPE_SHSTR,     offsetof(object, buffs),                     0,                  0},
     {"message",               FIELDTYPE_SHSTR,     offsetof(object, msg),                       0,                  0},
     /* TODO: limited to >=0 */
     {"weight",                FIELDTYPE_SINT32,    offsetof(object, weight),                    0,                  0},
@@ -197,6 +197,7 @@ struct attribute_decl GameObject_attributes[] =
     {"last_grace",            FIELDTYPE_SINT16,    offsetof(object, last_grace),                0,                  0},
     {"last_eat",              FIELDTYPE_SINT16,    offsetof(object, last_eat),                  0,                  0},
     /* TODO: will require animation lookup function. How about face, is that a special anim? */
+    {"max_buffs",             FIELDTYPE_UINT8,     offsetof(object, max_buffs),                 0,                  0},
     {"magic",                 FIELDTYPE_SINT8,     offsetof(object, magic),                     0,                  0},
     {"state",                 FIELDTYPE_UINT8,     offsetof(object, state),                     0,                  0},
     {"level",                 FIELDTYPE_SINT8,     offsetof(object, level),                     FIELDFLAG_PLAYER_READONLY, 0},
@@ -1363,7 +1364,7 @@ static int GameObject_InsertInside(lua_State *L)
 
     WHO = hooks->insert_ob_in_ob(WHO, WHAT);
 
-    /* TODO: incorporate in insert_ob_in_ob() */					
+    /* TODO: incorporate in insert_ob_in_ob() */
     hooks->esrv_send_item(hooks->is_player_inv(WHAT), WHO);
 
     if ((tmp = hooks->is_player_inv(obenv)))
@@ -2122,7 +2123,7 @@ static int GameObject_Kill(lua_State *L)
     if (WHO->type == PLAYER)
     {
         /* The player has a way to save his life? Use it up and return
-         * false. 
+         * false.
          *
          * NOTE: This should no longer be necessary, as kill_player() now returns the success value.
          */
@@ -3211,7 +3212,7 @@ static int GameObject_DecreaseNrOf(lua_State *L)
 
     get_lua_args(L, "O|i", &self, &nrof);
 
-    if (nrof == 0)                             
+    if (nrof == 0)
     {
         nrof = 1;
     }
@@ -4061,18 +4062,26 @@ static int GameObject_GetTarget(lua_State *L)
 
     /* Only players can have targets */
     if (WHO->type == PLAYER && CONTR(WHO))
+    {
         return push_object(L, &GameObject, CONTR(WHO)->target_object);
+    }
     else if (WHO->type == MONSTER)
+    {
         if (WHO->enemy) // But if a monster has an enemy, that's close enough to a target.
+        {
             return push_object(L, &GameObject, WHO->enemy);
+        }
         else
         {
             lua_pushnil(L);
 
             return 0;
         }
+    }
     else
+    {
         return luaL_error(L, "GetTarget() can only be called on a player!");
+    }
 }
 
 
@@ -4507,26 +4516,27 @@ static int GameObject_GetAccountName(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : GameObject_AddBuff                                               */
-/* Lua    : object:AddBuff(buffname)                                         */
-/* Info   : Add a string to the item's buff list. obj:CheckBuff() can then   */
-/*          check to see if that buff is already on the item.                */
-/* Status : Tested/Stable                                                    */
+/* Lua    : object:AddBuff(buffname, buffstring)                             */
+/* Info   : Create a force with specified stats that is added to the object. */
+/*          The stats of that force are then added to the object.            */
+/* Returns: Whether or not the buff was successfully added. 0 = success,     */
+/*          1 = that buff already exists, 2 = too many buffs on that object, */
+/*          3 = you didn't make a valid object with that buff string.        */
+/* Status : Untested                                                         */
 /*****************************************************************************/
 static int GameObject_AddBuff(lua_State *L)
 {
     lua_object     *self = NULL;
     char           *buff = NULL;
-    object         *obj;
+    char            buff_str[LARGE_BUF];
+    object         *obj  = NULL;
 
     get_lua_args(L, "Os", &self, &buff);
 
-    obj = self->data.object;
+    sprintf(buff_str, "arch buff_force\n%s\nend", buff);
+    obj = hooks->load_object_str(buff_str);
 
-    char *result = malloc(strlen(obj->buffs) + strlen(buff) + 1);
-    memcpy(result, obj->buffs, strlen(obj->buffs));
-    strcat(result, ";");
-    strcat(result, buff);
-    obj->buffs = result;
+    lua_pushnumber(L, hooks->add_item_buff(WHO, obj, 0));
 
     return 1;
 }
@@ -4549,25 +4559,45 @@ static int GameObject_CheckBuff(lua_State *L)
 {
     lua_object     *self = NULL;
     char           *buff = NULL;
-    object         *obj;
+    char            buff_str[LARGE_BUF];
+    object         *obj  = NULL;
 
     get_lua_args(L, "Os", &self, &buff);
 
-    obj = self->data.object;
+    sprintf(buff_str, "arch buff_force\nname %s\nend", buff);
+    obj = hooks->load_object_str(buff_str);
 
-    char *result = strstr(obj->buffs, buff);
-
-    if (result)
-    {
-        lua_pushboolean(L, TRUE);
-    } else
-    {
-        lua_pushboolean(L, FALSE);
-    }
+    lua_pushnumber(L, hooks->add_item_buff(WHO, obj, 1));
 
     return 1;
 }
 
+/*****************************************************************************/
+/* Name   : GameObject_CheckBuff                                             */
+/* Lua    : object:CheckBuff(buffname)                                       */
+/* Info   : Check to see if the specified buff is already on the item. This  */
+/*          will ensure that the item cannot get more buffs than what is     */
+/*          allowed.                                                         */
+/* Returns: The number of times a buff has been placed on an item. Some buffs*/
+/*          may be placed more than once.                                    */
+/* TODO   : Atm this function only uses a basic check for the buff. If the   */
+/*          buff is anywhere in the string, it will return true. For example,*/
+/*          if the object's buff string is "111example222;" and the function */
+/*          checks for "example", it will return true.                       */
+/* Status : Tested/Stable                                                    */
+/*****************************************************************************/
+static int GameObject_RemoveBuff(lua_State *L)
+{
+    lua_object     *self = NULL;
+    char           *name = NULL;
+    int             nrof = 1;
+
+    get_lua_args(L, "Os|i", &self, &name, &nrof);
+
+    lua_pushnumber(L, hooks->remove_item_buff(WHO, name, nrof));
+
+    return 1;
+}
 
 /* FUNCTIONEND -- End of the GameObject methods. */
 

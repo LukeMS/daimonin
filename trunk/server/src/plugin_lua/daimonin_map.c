@@ -476,20 +476,24 @@ static int Map_MapTileAt(lua_State *L)
 /*****************************************************************************/
 /* Name   : Map_Save                                                         */
 /* Lua    : map:Save(flag)                                                   */
-/* Info   : Save the map.                                                    */
+/* Info   : Save the map. If flag is 1, unload map from memory               */
 /* Status : Tested/Stable                                                    */
 /*****************************************************************************/
 static int Map_Save(lua_State *L)
 {
     lua_object *self;
+    int         flags = 0;
 
-    get_lua_args(L, "M", &self);
+    get_lua_args(L, "M|i", &self, &flags);
 
     if (!WHERE || WHERE->in_memory != MAP_IN_MEMORY)
         return 0;
 
     if (hooks->new_save_map(WHERE, 0) == -1)
         LOG(llevDebug, "MapSave(): failed to save map %s\n", STRING_SAFE(WHERE->path));
+
+    if (flags)
+        WHERE->in_memory = MAP_IN_MEMORY;
 
     return 0;
 }

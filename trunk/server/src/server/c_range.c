@@ -107,7 +107,8 @@ void fire(object *op, int dir)
 
     /* finally, our action above has cost time... */
     LOG(llevDebug, "AC-fire: %2.2f\n", ticks);
-    set_action_time(op, ticks);
+    LOG(llevInfo, "SKILL::: %d\n", op->chosen_skill);
+    set_action_time(skills[op->chosen_skill->stats.sp].type, op, ticks);
 }
 
 /* owner fires op (which is a rod, horn or wand)
@@ -170,7 +171,7 @@ float fire_magic_tool(object *op, object *weap, int dir)
         break;
     }
 
-    ticks = (float) (weap->last_grace) * RANGED_DELAY_TIME;
+    ticks = (float) (weap->last_grace) * SKILL_DELAY_TIME;
 
     return ticks;
 }
@@ -339,9 +340,9 @@ int command_cast_spell(object *op, char *params)
 
     if (value)
     {
-        ticks = (float) (spells[spnum].time) * RANGED_DELAY_TIME;
+        ticks = (float) (spells[spnum].time) * SKILL_DELAY_TIME;
         LOG(llevDebug, "AC-spells(%d): %2.2f\n", spnum, ticks);
-        set_action_time(op, ticks);
+        set_action_time(skills[op->chosen_skill->stats.sp].type, op, ticks);
 
         if (spells[spnum].flags & SPELL_DESC_WIS)
             op->stats.grace -= value;

@@ -2228,6 +2228,7 @@ void move_cone(object *op)
     }
 
     /* If no owner left, the spell dies out. */
+    // Should it? --_people_ '12
     if (get_owner(op) == NULL)
     {
         remove_ob(op);
@@ -2240,6 +2241,7 @@ void move_cone(object *op)
      */
     tag = op->count;
     op->stats.food |= hit_map(op, 0);
+    op->stats.dam *= .8;
     /* Check to see if we should push anything.
      * Cones with AT_PHYSICAL push whatever is in them to some
      * degree.  */

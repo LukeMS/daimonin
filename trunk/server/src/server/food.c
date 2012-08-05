@@ -65,6 +65,12 @@ void apply_food(object *op, object *tmp)
                 return;
             }
 
+            if (present_in_ob(TYPE_FOOD_FORCE, op))
+            {
+                new_draw_info(NDI_UNIQUE, 0, op, "You have too much food in your mouth, that won't fit!");
+                return;
+            }
+
             if(trigger_object_plugin_event(
                         EVENT_APPLY, tmp, op, NULL,
                         NULL, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
