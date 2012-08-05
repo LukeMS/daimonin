@@ -135,11 +135,6 @@ char * get_param_from_string(char *str, int *pos)
 
     buf[0] = '\0';
 
-    if (!str)
-    {
-        return NULL;
-    }
-
     while ((*(str + (*pos)) != '\0') && (*(str + (*pos)) == ' '))
         (*pos)++;
 

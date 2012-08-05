@@ -51,52 +51,27 @@
  * the server logs. */
 #define RECLAIM_NOPASS "NOPASS" // must be >= 6 characters
 
-/* The embedded character codes are used to markup text, mainly in the textwindows
- * and GUIs. */
-/* 0x00-0x1f are internal. Some are genuine remaps, some are simply meaningful
- * names for a number, and some are both. */
-#define ECC_CHAROFFSET    0x00
-#define ECC_LINEHEIGHT    0x01
-#define ECC_NEWCOLR       0x02
-#define ECC_DEFCOLR       0x03
-#define ECC_TAB           0x09
-#define ECC_NEWLINE       0x0a
-#define ECC_ARROWUP       0x1c
-#define ECC_ARROWDOWN     0x1d
-#define ECC_ARROWLEFT     0x1e
-#define ECC_ARROWRIGHT    0x1f
-/* 0x80-0x95 are smileys. */
-#define ECC_SMILE         0x80
-#define ECC_FROWN         0x81
-#define ECC_GRIN          0x82
-#define ECC_POKERFACE     0x83
-#define ECC_OOH           0x84
-#define ECC_RASPBERRY     0x85
-#define ECC_WINK          0x86
-#define ECC_COOL          0x87
-/* No idea what 0x88 is meant to be and it's unused anyway. */
-#define ECC_WINKRASPBERRY 0x89
-#define ECC_CRY           0x8a
-#define ECC_PERPLEXITY    0x8b
-#define ECC_SUCKALEMON    0x8c
-#define ECC_NAUGHTY       0x8d
-#define ECC_WICKED        0x8e
-/* The rest are 'normal'. These are easily typeable, but seldom used,
- * characters so players/scripters can use them.
+/* The embedded character codes used to markup text, mainly in the textwindows
+ * and GUIs (but theoretically anywhere).
  *
  * Underline has extra meaning in the NPC GUI (and eventually also the book
  * GUI). Here it will render a so-called intertitle, basically a sub-title.
  *
- * Hypertext is only available in the NPC GUI (and eventually probably the book
+ * Hypertext is only available in the NPC GUI (and eventually probably thr book
  * GUI too). Otherwise it will just print the character.
  *
  * Emphasis, strong, and underline can be combined to apply any combination of
- * two or three markups to the text. Hypertext negates any existing strong,
- * emphasis, or underline. */
-#define ECC_STRONG              '|'
-#define ECC_EMPHASIS            '~'
-#define ECC_UNDERLINE           '`'
-#define ECC_HYPERTEXT           '^'
+ * two or three markups to the text (TODO: not sure if this works 100% in
+ * current SVN). Hypertext negates any existing strong, emphasis, or underline.
+ *
+ * NOTE: While the client still uses bitmaps and not real fonts, bold and
+ * italics are not available so strong and emphasis are shown by changing the
+ * text  colour (by default to yellow and green). As such, it is not currently
+ * possible to display both markups at the same time. */
+#define ECC_STRONG    '|'
+#define ECC_EMPHASIS  '~'
+#define ECC_UNDERLINE '`'
+#define ECC_HYPERTEXT '^'
 
 /* List of client to server (cs) binary command tags */
 typedef enum client_cmd {
@@ -290,6 +265,7 @@ enum
 #define CS_STAT_DIST_TIME   35
 
 #define CS_STAT_ACTION_TIME   36
+#define CS_STAT_ACTION_TIME2  37
 
 /* Start & end of skill experience + skill level, inclusive. */
 #define CS_STAT_SKILLEXP_START      118

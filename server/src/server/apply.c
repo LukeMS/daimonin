@@ -2020,6 +2020,12 @@ void apply_poison(object *op, object *tmp)
 
 static void ApplySavebed(player *pl, object *bed)
 {
+//    if (!p_ptr || !p_ptr->name_changed)
+//    {
+//        new_draw_info(NDI_UNIQUE, 0, pl, "You don't deserve to save your character yet.");
+//        return;
+//    }
+
     if (trigger_object_plugin_event(EVENT_APPLY, bed, pl->ob, NULL, NULL, NULL,
                                     NULL, NULL, SCRIPT_FIX_ACTIVATOR))
     {
@@ -2029,6 +2035,7 @@ static void ApplySavebed(player *pl, object *bed)
     /* update respawn position */
     set_bindpath_by_name(pl, pl->ob->map->path, pl->ob->map->orig_path,
                          pl->ob->map->map_status, pl->ob->x, pl->ob->y);
+    new_draw_info(NDI_UNIQUE, 0, pl->ob, "You have saved!");
     new_draw_info(NDI_UNIQUE, 0, pl->ob, "In future you will respawn here.");
 }
 

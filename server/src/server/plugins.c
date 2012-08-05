@@ -36,6 +36,7 @@ struct plugin_hooklist  hooklist    =
 {
     /* FUNCTIONS */
     /* A */
+    add_item_buff,
     add_money_to_player,
     add_pet,
     add_quest_containers,
@@ -162,6 +163,7 @@ struct plugin_hooklist  hooklist    =
     reload_behaviours,
     remove_money_type,
     remove_ob,
+    remove_item_buff,
     reset_instance_data,
     return_poolchunk_array_real,
     /* S */

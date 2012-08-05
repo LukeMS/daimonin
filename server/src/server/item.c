@@ -364,7 +364,7 @@ char * query_short_name(const object *const op, const object *const caller)
         case RING:
           if (QUERY_FLAG(op, FLAG_IDENTIFIED))
           {
- 
+
               if (!op->title)
               {
                   /* If ring has a title or is specially named, full description isn't so useful */
@@ -928,7 +928,7 @@ char * describe_item(const object *const op)
                   float dps_swing = 0.0f;
 
                   if (op->type == BOW || op->type == ARROW)
-                      dps_swing = ((float) op->last_grace * WEAPON_SWING_TIME);
+                      dps_swing = ((float) op->last_grace * SKILL_DELAY_TIME);
 
                   if (op->stats.dam)
                   {

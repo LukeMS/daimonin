@@ -446,68 +446,52 @@
 #ifndef LOGFILE
 #define LOGFILE "./data/log/daimonin.log"
 #endif
-
-/* MAP_MAXSWAP tells the maximum seconds until a map is swapped out
+/*
+ * MAP_MAXTIMEOUT tells the maximum of ticks until a map is swapped out
  * after a player has left it.  If it is set to 0, maps are
  * swapped out the instant the last player leaves it.
  * If you are low on memory, you should set this to 0.
- *
  * Note that depending on the map timeout variable, the number of
  * objects can get quite high.  This is because depending on the maps,
  * a player could be having the objects of several maps in memory
  * (the map he is in right now, and the ones he left recently.)
- * Each map has it's own swap_time value and value field.
+ * Each map has it's own TIMEOUT value and value field and it is
+ * defaulted to 300
  *
  * Having a nonzero value can be useful: If a player leaves a map (and thus
  * is on a new map), and realizes they want to go back pretty quickly, the
  * old map is still in memory, so don't need to go disk and get it.
  *
- * MAP_MINSWAP is used as a minimum timeout value.
- *
- * MAP_DEFSWAP is the default value for maps which have not set their own
- * swap_time. */
+ * MAP_MINTIMEOUT is used as a minimum timeout value - if the map is set
+ * to swap out in less than that many ticks, we use the MINTIMEOUT value
+ * velow.  If MINTIMEOUT > MAXTIMEOUT, MAXTIMEOUT will be used for all
+ * maps.
+ */
 
-/* All three must have a positive integer value. If MAX is 0 then MIN ahd DEF
- * should also be 0. Otherwise, MAX >= DEF >= MIN. */
-#define MAP_MAXSWAP 1800
-#define MAP_MINSWAP 1
-#define MAP_DEFSWAP 600
+/* How many ticks till maps are swapped out */
+#define MAP_MAXTIMEOUT  1000
+/* At least that many ticks before swapout */
+#define MAP_MINTIMEOUT  500
 
-#if MAP_MAXSWAP == 0
-# if MAP_MINSWAP != 0 || MAP_DEFSWAP != 0
-#  error MAP_MAXSWAP = 0 so MAP_MINSWAP and MAP_DEFSWAP must too!
-# endif
-#elif MAP_MAXSWAP < MAP_DEFSWAP || MAP_MAXSWAP < MAP_MINSWAP || MAP_DEFSWAP < MAP_MINSWAP
-# error MAP_MAXSWAP must be >= MAP_DEFSWAP which must be >= MAP_MINSWAP!
-#endif
-
-/* MAP_RESET tells whether map is reset after some time.  If it is defined,
+/*
+ * MAP_RESET tells whether map is reset after some time.  If it is defined,
  * the game uses weight variable of map object to tell, after how many seconds
  * the map will be reset.  If MAP_RESET is undefined, maps will never reset.
  *
  * MAP_MAXRESET is the maximum time a map can have before being reset.  It
  * will override the time value set in the map, if that time is longer than
  * MAP_MAXRESET.  This value is in seconds.  If you are low on space on the
- * TMPDIR device, set this value to something small.
- *
- * MAP_DEFRESET is the default value for maps which have not set their own
- * reset_timeout. */
+ * TMPDIR device, set this value to somethign small.  The default
+ * value in the map object is 7200 (2 hours)
+ * I personally like 1 hour myself, for solo play.  It is long enough that
+ * maps won't be resetting as a solve a quest, but short enough that some
+ * maps (like shops and inns) will be reset during the time I play.
+ * Comment out MAP_MAXRESET time if you always want to use the value
+ * in the map archetype.
+ */
 
-/* If undefined, the other two are unused, */
 #define MAP_RESET
-
-/* Both must have a positive integer value. If MAX is 0 then DEF should also be
- * 0. Otherwise, MAX >= DEF. */
-#define MAP_MAXRESET 7200
-#define MAP_DEFRESET 7200
-
-#if MAP_MAXRESET == 0
-# if MAP_DEFRESET != 0
-#  error MAP_MAXRESET = 0 so MAP_DEFRESET must too!
-# endif
-#elif MAP_MAXRESET < MAP_DEFRESET
-# error MAP_MAXRESET must be >= MAP_DEFRESET!
-#endif
+#define MAP_MAXRESET    7200
 
 /*
  * MAX_OBJECTS is no hard limit.  If this limit is exceeded, crossfire

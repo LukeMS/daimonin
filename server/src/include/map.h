@@ -44,16 +44,22 @@
 /* Default values for a few non-zero attributes. */
 #define MAP_DEFAULT_WIDTH      24
 #define MAP_DEFAULT_HEIGHT     24
+#define MAP_DEFAULT_RESET_TIME MIN(MAP_MAXRESET, 7200)
+#define MAP_DEFAULT_SWAP_TIME  MAX(MAP_MINTIMEOUT, 300)
 #define MAP_DEFAULT_DIFFICULTY 1
 #define MAP_DEFAULT_DARKNESS   0
+
+/* This is when the map will reset */
+#define MAP_WHEN_RESET(m)       ((m)->reset_time)
+
 #define MAP_MULTI(m)            ((m)->map_status & MAP_STATUS_MULTI)
 #define MAP_UNIQUE(m)           ((m)->map_status & MAP_STATUS_UNIQUE)
 #define MAP_INSTANCE(m)         ((m)->map_status & MAP_STATUS_INSTANCE)
-#define MAP_WHEN_RESET(m)       ((m)->reset_time)
+
 #define MAP_RESET_TIMEOUT(m)    ((m)->reset_timeout)
 #define MAP_DIFFICULTY(m)       ((m)->difficulty)
-#define MAP_WHEN_SWAP(m)        ((m)->swap_time)
-#define MAP_SWAP_TIMEOUT(m)     ((m)->swap_timeout)
+#define MAP_TIMEOUT(m)          ((m)->timeout)
+#define MAP_SWAP_TIME(m)        ((m)->swap_time)
 #define MAP_OUTDOORS(m)         ((m)->map_flags & MAP_FLAG_OUTDOOR)
 #define MAP_FIXED_RESETTIME(m)  ((m)->map_flags & MAP_FLAG_FIXED_RTIME)
 #define MAP_NOSAVE(m)           ((m)->map_flags & MAP_FLAG_NO_SAVE)
@@ -403,10 +409,12 @@ typedef struct mapdef
     uint32          map_status;             /* flags for the internal status and use of the map */
     uint32          map_flags;              /* mag flags for various map settings (set from outside) */
     uint32          reset_time;             /* when this map should reset */
-    uint32          reset_timeout;          /* How many seconds must elapse before this map should be reset */
+    uint32          reset_timeout;          /* How many seconds must elapse before this map
+                                             * should be reset
+                                             */
     uint32          map_tag;                /* to identify maps for fixed_login */
-    uint32          swap_time;              /* when this map should be swapped */
-    uint32          swap_timeout;           /* How many seconds must elapse before this map should be swapped */
+    sint32          timeout;                /* swapout is set to this */
+    sint32          swap_time;              /* When it reaches 0, the map will be swapped out */
     uint32          in_memory;              /* If not true, the map has been freed and must
                                              * be loaded before used.  The map,omap and map_ob
                                              * arrays will be allocated when the map is loaded */
