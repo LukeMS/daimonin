@@ -390,7 +390,7 @@ struct plugin_hooklist
     struct obj *(*quest_find_name)(const struct obj *, const char *);
     /* R */
     char *(*re_cmp)(char *, char *);
-    mapstruct *(*ready_map_name)(const char *,const char *, int, shstr *);
+    mapstruct *(*ready_map_name)(shstr *, shstr *, uint32, shstr *);
     void  (*reload_behaviours)(object *);
     sint64 (*remove_money_type)(object *, object *, sint64, sint64);
     void (*remove_ob)(object *);
