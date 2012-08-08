@@ -471,7 +471,7 @@
  * should also be 0. Otherwise, MAX >= DEF >= MIN. */
 #define MAP_MAXSWAP 1800
 #define MAP_MINSWAP 1
-#define MAP_DEFSWAP 600
+#define MAP_DEFSWAP 10
 
 #if MAP_MAXSWAP == 0
 # if MAP_MINSWAP != 0 || MAP_DEFSWAP != 0
@@ -499,7 +499,7 @@
 /* Both must have a positive integer value. If MAX is 0 then DEF should also be
  * 0. Otherwise, MAX >= DEF. */
 #define MAP_MAXRESET 7200
-#define MAP_DEFRESET 7200
+#define MAP_DEFRESET 20
 
 #if MAP_MAXRESET == 0
 # if MAP_DEFRESET != 0

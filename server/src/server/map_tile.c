@@ -667,21 +667,25 @@ int arch_out_of_map(archetype *at, mapstruct *m, int x, int y)
 static inline mapstruct * load_and_link_tiled_map(mapstruct *orig_map, int tile_num)
 {
     /* Nowadays the loader keeps track of tiling. Gecko 2006-12-31 */
-    mapstruct *map = ready_map_name( orig_map->tile_path[tile_num],
-           orig_map->orig_tile_path[tile_num], MAP_STATUS_TYPE(orig_map->map_status),
-           orig_map->reference);
+    mapstruct *m = ready_map_name(orig_map->tile_path[tile_num],
+                                  orig_map->orig_tile_path[tile_num],
+                                  MAP_STATUS_TYPE(orig_map->map_status),
+                                  orig_map->reference);
 
     /* If loading or linking failed */
-    if(map == NULL || map != orig_map->tile_map[tile_num])
+    if (!m ||
+        m != orig_map->tile_map[tile_num])
     {
         /* ensure we don't get called again over and over */
-        LOG(llevMapbug, "MAPBUG: failed to connect map %s with tile no %d (%s).\n", STRING_SAFE(orig_map->orig_path), tile_num, STRING_SAFE(orig_map->orig_tile_path[tile_num]));
+        LOG(llevMapbug, "MAPBUG: failed to connect map %s with tile no %d (%s).\n",
+            STRING_MAP_PATH(orig_map), tile_num,
+            STRING_MAP_TILE_PATH(orig_map, tile_num));
         FREE_AND_CLEAR_HASH(orig_map->orig_tile_path[tile_num]);
         FREE_AND_CLEAR_HASH(orig_map->tile_path[tile_num]);
-        return NULL;
+        m = NULL;
     }
 
-    return map;
+    return m;
 }
 
 /* Find the distance between two map tiles on a tiled map.
