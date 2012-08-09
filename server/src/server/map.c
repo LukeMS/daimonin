@@ -3535,21 +3535,9 @@ void read_map_log(void)
 }
 
 /* if on the map and the direct attached maps no player and no perm_load
- * flag set, we can safely swap them out!
- * thats rewritten for beta 2.
- */
+ * flag set, we can safely swap them out! */
 void swap_map(mapstruct *map, int force_flag)
 {
-    int i;
-/*
-#ifdef PLUGINS
-    int evtid;
-    CFParm CFP;
-#endif
-*/
-
-    /*LOG(llevDebug,"Check map for swapping: %s. (players:%d) (%d)\n", map->path,players_on_map(map) , force_flag);*/
-
     /* lets check some legal things... */
     if (map->in_memory != MAP_IN_MEMORY &&
         map->in_memory != MAP_SAVING)
@@ -3565,19 +3553,36 @@ void swap_map(mapstruct *map, int force_flag)
         if (map->player_first ||
             map->perm_load) /* player nor perm_loaded marked */
         {
-            return;
+            force_flag = 1;
+        }
+        else
+        {
+            uint8 i;
+
+            for (i = 0; i < TILED_MAPS; i++)
+            {
+                /* if there is a map, is load AND in memory and players on OR perm_load flag set, then... */
+                if (map->tile_map[i] &&
+                    map->tile_map[i]->in_memory == MAP_IN_MEMORY &&
+                    (map->tile_map[i]->player_first ||
+                     map->tile_map[i]->perm_load))
+                {
+                    force_flag = 1;
+
+                    break;
+                }
+            }
         }
 
-        for (i = 0; i < TILED_MAPS; i++)
+        /* If force_flag has been set, do not swap the map. */
+        if (force_flag)
         {
-            /* if there is a map, is load AND in memory and players on OR perm_load flag set, then... */
-            if (map->tile_map[i] &&
-                map->tile_map[i]->in_memory == MAP_IN_MEMORY &&
-                (map->tile_map[i]->player_first ||
-                 map->tile_map[i]->perm_load))
-            {
-                return; /* no swap */
-            }
+#ifdef MAP_DEBUG
+            LOG(llevDebug, "DEBUG:: %s/swap_map(): Map >%s< is still busy so will not be swapped!\n",
+                __FILE__, STRING_MAP_PATH(map));
+
+#endif
+            return;
         }
     }
 
@@ -3590,52 +3595,37 @@ void swap_map(mapstruct *map, int force_flag)
         SetResetTime(map);
     }
 
-    /* If it is immediate reset time, don't bother saving it - just get
-     * rid of it right away. */
-    if (MAP_WHEN_RESET(map) &&
-        MAP_WHEN_RESET(map) <= (ROUND_TAG - ROUND_TAG % (long unsigned int)MAX(1, pticks_second)) / pticks_second)
-    {
-        mapstruct *oldmap = map;
-
-        /* GROS : Here we handle the MAPRESET global event */
-        /* I really dislike the idea to call for critical engine part
-         * always the plugin system.
-         * we should add a map flag - if set, we do a MAPRESET event
-         * if we want add something like a logger, we can easily add
-         * some internal counters - thats work of 10 minutes and 10 times
-         * faster. MT-2004 */
-/*
-#ifdef PLUGINS
-        evtid = EVENT_MAPRESET;
-        CFP.Value[0] = (void *)(&evtid);
-        CFP.Value[1] = (void *)(map->path);
-        GlobalEvent(&CFP);
+    /* Only save the map if we do reset maps and it is immediate reset time, or
+     * if we don't reset maps at all (so saved maps are very important to
+     * persistency). */
+    if (
+#ifdef MAP_RESET
+        !MAP_WHEN_RESET(map) ||
+         MAP_WHEN_RESET(map) > (ROUND_TAG - ROUND_TAG % (long unsigned int)MAX(1, pticks_second)) / pticks_second
+#else
+        1
 #endif
-*/
-        map = map->next;
-        delete_map(oldmap);
-
-        return;
-    }
-
-    if (map->in_memory != MAP_SAVING && // do not save twice
-        new_save_map(map, 0) == -1)
+        )
     {
-        LOG(llevBug, "BUG:: %s/swap_map(): Failed to swap map %s!\n",
-            __FILE__, STRING_MAP_PATH(map));
-        /* Reset the in_memory flag so that delete map will also free the
-         * objects with it. */
-        map->in_memory = MAP_IN_MEMORY;
-        delete_map(map);
-    }
-    else
-    {
-        FreeMap(map);
-    }
+        if (map->in_memory != MAP_SAVING && // do not save twice
+            new_save_map(map, 0) == -1)
+        {
+            LOG(llevBug, "BUG:: %s/swap_map(): Failed to swap map %s!\n",
+                __FILE__, STRING_MAP_PATH(map));
+            /* Reset the in_memory flag so that delete map will also free the
+             * objects with it. */
+            map->in_memory = MAP_IN_MEMORY;
+            delete_map(map);
+        }
+        else
+        {
+            FreeMap(map);
+        }
 
 #ifdef RECYCLE_TMP_MAPS
-    WriteMapLog();
+        WriteMapLog();
 #endif
+    }
 }
 
 /* swap_below_max() tries to swap out maps which are still in memory because
