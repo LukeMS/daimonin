@@ -829,18 +829,20 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
     }
 #endif
 
+    /* If pl is new, announce the newpl login to all players else if the pl has not requested privacy, announce the login to all players. */
+    if (!pl->privacy)
+    {
+        new_draw_info(NDI_UNIQUE | NDI_ALL, 0, NULL, "~%s~ has entered the game %s.",
+                      query_name(pl->ob), ((pl->state & ST_BORN)) ? "for the first time" : "");
+    }
+	
     /* if we add more BORN, "first time used / first time loaded" stuff, do it before this line */
     pl->state &= ~ST_BORN;
 
     /* and finally the player appears on the map */
     enter_map_by_name(op, pl->maplevel, pl->orig_map, pl->map_x, pl->map_y, pl->map_status);
 
-    /* If pl has not requested privacy, announcethe login to all players. */
-    if (!pl->privacy)
-    {
-        new_draw_info(NDI_UNIQUE | NDI_ALL, 0, NULL, "~%s~ has entered the game.",
-                             query_name(pl->ob));
-    }
+
 
     /* Extra info for VOLs, GMs, and SAs (if any are online), but not if pl is
      * a privacy-seeking SA*/
