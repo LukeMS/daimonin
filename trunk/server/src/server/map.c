@@ -3577,7 +3577,7 @@ void swap_map(mapstruct *map, int force_flag)
         /* If force_flag has been set, do not swap the map. */
         if (force_flag)
         {
-#ifdef MAP_DEBUG
+#ifdef DEBUG_MAP
             LOG(llevDebug, "DEBUG:: %s/swap_map(): Map >%s< is still busy so will not be swapped!\n",
                 __FILE__, STRING_MAP_PATH(map));
 
@@ -3738,6 +3738,10 @@ void set_map_darkness(mapstruct *m, int value)
 }
 
 /* Go through the list of maps, swapping or resetting those that need it. */
+/*TODO: This will be the one and only function to handle map swaps/resets, but
+ * ATM this functionality is still scattered through the code a bit.
+ *
+ * -- Smacky 20120810 */
 void map_check_active(void)
 {
     mapstruct *this,
@@ -3768,16 +3772,39 @@ void map_check_active(void)
         if ((this->in_memory == MAP_IN_MEMORY ||
              this->in_memory == MAP_SAVING))
         {
+            /* So it's swap time. */
             if (MAP_WHEN_SWAP(this) <= (ROUND_TAG - ROUND_TAG %
                                         (long unsigned int)MAX(1, pticks_second)) /
                                         pticks_second)
             {
+                uint8 noswap = 0,
+                      i;
+
+                /* Check adjacent maps for players or (TODO) permanently
+                 * loading mobs. */
+                for (i = 0; i < TILED_MAPS; i++)
+                {
+                    if (this->tile_map[i] &&
+                        this->tile_map[i]->in_memory == MAP_IN_MEMORY &&
+                        (this->tile_map[i]->player_first ||
+                         this->tile_map[i]->perm_load))
+                    {
+                        noswap = 1;
+
+                        break;
+                    }
+                }
+
+                /* Now swap the map. */
+                if (!noswap)
+                {
 #ifdef DEBUG_MAP
-                LOG(llevDebug, "DEBUG:: %s/map_check_active(): Swapping map %s!\n",
-                    __FILE__, STRING_MAP_PATH(this));
+                    LOG(llevDebug, "DEBUG:: %s/map_check_active(): Swapping map >%s< (%u)!\n",
+                        __FILE__, STRING_MAP_PATH(this), this->in_memory);
 #endif
 
-                swap_map(this, 0);
+                    swap_map(this, 1);
+                }
             }
         }
         else
@@ -3807,7 +3834,7 @@ void map_check_active(void)
                )
             {
 #ifdef DEBUG_MAP
-                LOG(llevDebug, "DEBUG:: %s/map_check_active(): Resetting map %s!\n",
+                LOG(llevDebug, "DEBUG:: %s/map_check_active(): Resetting map >%s<!\n",
                     __FILE__, STRING_MAP_PATH(this));
 #endif
                 clean_tmp_map(this);
