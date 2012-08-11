@@ -14,7 +14,7 @@
 ~<str>~ (Required) Name of player, account, character or IP address.
 If <pl> mode, <str> must be an online player.  The player's account, character and IP are all banned.
 <pl> mode is not valid with 'remove' mode.
-If <ip> mode, IP ranges are allowed using '*'.
+If <ip> mode, IP ranges are allowed using '*'.  Only the first '*' is evaluated; the rest of the IP address is ignored.  However, all 4 parts of the IP address must always be given.  VOL cannot use '*'.  GM can only ban x.x.x.*.  SA can ban x.x.*.x.
 ~<time>~ (Optional) Use '1d' to ban for 1 day, '1h' for 1 hour, '1m' for 1 minute, '1s' or just '1' for 1 second.
 Defaults to 60s if omitted.  Not required for 'remove' mode.
 

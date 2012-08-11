@@ -1928,67 +1928,52 @@ static int BanAdd(object *op, ENUM_BAN_TYPE ban_type, char *str, int s)
         if ((pl = find_player(str)))
             kick_player(pl);
     }
-    else // ban_type == BANTYPE_IP
+    else /* ban_type == BANTYPE_IP */
     {
-        int         spot, dot = 0, allowed = TRUE;
-        objectlink *ip_list,
-                   *ol;
-        player     *pl = NULL;
+        unsigned char  ip_terms[16];
+        int            mask_pos[2];
+        int            allowed = TRUE;
+        objectlink    *ip_list,
+                      *ol;
+        player        *pl = NULL;
 
-        // VOL can only ban specific address, GM can ban x.x.x.*,
-        // SA can ban x.x.*
-        for (spot = 0; str[spot] != '\0'; spot++)
+        if (!parse_ip(str, ip_terms, mask_pos))
+            return COMMANDS_RTN_VAL_SYNTAX;
+
+        /* VOL can only ban specific address,
+         * GM can ban x.x.x.*,
+         * SA can ban x.x.*.x
+         */
+
+        /* Do we have a mask set? */
+        if (mask_pos[0] != -1)
         {
-            if (str[spot] == '.')
+            if (CONTR(op)->gmaster_mode & GMASTER_MODE_SA)
             {
-                dot++;
+                /* This only works for IPv4 !! */
+                if (mask_pos[0] < 14) allowed = FALSE;
             }
-            else if (str[spot] == '*')
+            else if (CONTR(op)->gmaster_mode & GMASTER_MODE_GM)
             {
-                if (CONTR(op)->gmaster_mode & GMASTER_MODE_SA)
-                {
-                    if (dot < 2) allowed = FALSE;
-                }
-                else if (CONTR(op)->gmaster_mode & GMASTER_MODE_GM)
-                {
-                    if (dot < 3) allowed = FALSE;
-                }
-                else
-                {
-                    allowed = FALSE;
-                }
-
-                if (!allowed)
-                {
-                    new_draw_info(NDI_UNIQUE, 0, op, "You have insufficient privileges to ban that IP range.");
-                    return COMMANDS_RTN_VAL_ERROR;
-                }
-
-                /* Ignore anything after '*' */
-                str[spot+1] = '\0';
-
-                break;
+                if (mask_pos[0] < 15) allowed = FALSE;
             }
-            else if (!isdigit(str[spot]))
+            else
             {
-                new_draw_info(NDI_UNIQUE, 0, op, "Error: Invalid character in IP address.");
+                allowed = FALSE;
+            }
+
+            if (!allowed)
+            {
+                new_draw_info(NDI_UNIQUE, 0, op, "You have insufficient privileges to ban that IP range.");
                 return COMMANDS_RTN_VAL_ERROR;
             }
-        }
-
-        if ((dot > 3) ||
-            (dot == 3 && (str[spot] != '*' && str[spot] != '\0')) ||
-            (dot < 3 && str[spot] != '*'))
-        {
-            new_draw_info(NDI_UNIQUE, 0, op, "Error: Malformed IP address.");
-            return COMMANDS_RTN_VAL_ERROR;
         }
 
         tmp = BanAddToBanList(op, BANTYPE_IP, str, s);
         if ((tmp == COMMANDS_RTN_VAL_SYNTAX) || (tmp == COMMANDS_RTN_VAL_ERROR))
             return tmp;
 
-        // Kick all players who have this IP
+        /* Kick all players who have this IP */
         ip_list = find_players_on_ip(str);
 
         for (ol = ip_list ; ol; ol = ol->next)
@@ -2002,7 +1987,7 @@ static int BanAdd(object *op, ENUM_BAN_TYPE ban_type, char *str, int s)
                  * on this IP, and we kick them both, we crash the server! */
         }
 
-        // Now clear out our temporary list
+        /* Now clear out our temporary list */
         free_iplist(ip_list);
     }
 

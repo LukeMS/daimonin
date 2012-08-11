@@ -357,6 +357,7 @@ void                        free_strings(void);
 void                        set_pticks_time(long t);
 void                        free_lists_and_tables(void);
 /* ipcompare.c */
+int                         parse_ip(const char * ip, unsigned char ip_terms[], int mask_pos[]);
 int                         ip_compare(const char *ban_tmp, const char *ip_temp);
 objectlink                 *find_players_on_ip(char *ipmask);
 void                        free_iplist(objectlink *ip_list);
