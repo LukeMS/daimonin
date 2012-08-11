@@ -1160,9 +1160,6 @@ int enter_map(object *op, object *originator, mapstruct *newmap, int x, int y, i
         }
 
         op->direction = 0;
-#ifdef MAX_OBJECTS_LWM
-        swap_below_max(newmap->path);
-#endif
     }
 
     return 0; // success!

@@ -1033,18 +1033,20 @@ void compile_info()
     LOG(llevInfo, "Instancedir:\t%s/%s\n", settings.localdir, settings.instancedir);
     LOG(llevInfo, "Itemsdir:\t%s/%s\n", settings.localdir, settings.uniquedir);
     LOG(llevInfo, "Tmpdir:\t\t%s\n", settings.tmpdir);
-    LOG(llevInfo, "Map timeout:\t%d\n", MAP_DEFSWAP);
-#ifdef MAP_RESET
-    LOG(llevInfo, "Map reset:\t<true>\n");
+#ifdef MAP_MAXOBJECTS
+    LOG(llevInfo, "Maps swap when too many objects are in memory:\t%u\n",
+        MAP_MAXOBJECTS);
 #else
-    LOG(llevInfo, "Map reset:\t<false>\n");
+    LOG(llevInfo, "Maps swap when a timeout is reached:\t%u/%u/%u\n",
+         MAP_MINSWAP, MAP_DEFSWAP, MAP_MAXSWAP);
 #endif
-    LOG(llevInfo, "Max objects:\t%d (allocated:%u free:%u)\n", MAX_OBJECTS, *pool_object->nrof_allocated,
-        *pool_object->nrof_free);
-
-
+#ifdef MAP_RESET
+    LOG(llevInfo, "Maps reset when a timeout is reached:\t%u/%u\n",
+        MAP_DEFRESET, MAP_MAXRESET);
+#else
+    LOG(llevInfo, "Maps never reset.");
+#endif
     LOG(llevInfo, "Max_time:\t%ld (%f)\n", pticks_ums, pticks_second);
-
     LOG(llevInfo, "Tlogfilename:\t%s, Clogfilename:\t%s (llev:%d)\n", settings.tlogfilename, settings.clogfilename, settings.debug);
     LOG(llevInfo, "ObjectSize:\t%lu (living: %lu)\n", sizeof(object), sizeof(living));
     LOG(llevInfo, "MapStructSize:\t%lu\n", sizeof(mapstruct));

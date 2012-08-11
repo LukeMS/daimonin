@@ -377,8 +377,6 @@
  * LIBDIR - location of archetypes & other data.
  * LOGFILE - where to log if using -daemon option
  * MAP_ - various map timeout and swapping parameters
- * MAX_OBJECTS - how many objects to keep in memory.
- * MAX_OBJECTS_LWM - only swap maps out if below that value
  * MOTD - message of the day - printed each time someone joins the game
  * SHUTDOWN - used when shutting down the server
  ***********************************************************************
@@ -481,6 +479,39 @@
 # error MAP_MAXSWAP must be >= MAP_DEFSWAP which must be >= MAP_MINSWAP!
 #endif
 
+/* If defined, MAP_MAXOBJECTS specifies that maps will be swapped when there
+ * are > that number of objects in memory, *not* according to individual map
+ * swap times. Swapping will continue until either there are no eligible maps
+ * left, or the number of objects in memory < MAP_MINOBJECTS.
+ *
+ *(No idea how accurate these paragraphs are, they're CF legacy.
+ *
+ * -- Smacky 20120811):
+ *
+ * If playing only by yourself, this number can probably be as low as
+ * 3000.  If in server mode, probably figure about 1000-2000 objects per
+ * active player (if they typically play on different maps), for some guess
+ * on how many to define.  If it is too low, maps just get swapped out
+ * immediately, causing a performance hit.  If it is too high, the program
+ * consumes more memory.  If you have gobs of free memory, a high number
+ * might not be a bad idea.  Each object is around 350 bytes right now.
+ * 25000 is about 8.5 MB.
+ *
+ * Note:  While this will prevent the pauses noticed when saving maps, there
+ * can instead be cpu performance penalties - any objects in memory get
+ * processed.  So if there are 4000 objects in memory, and 1000 of them
+ * are living objects, the system will process all 1000 objects each tick.
+ * With swapping enable, maybe 600 of the objects would have gotten swapped
+ * out.  This is less likely a problem with a smaller number of MAP_MAXOBJECTS
+ * than if it is very large.
+ *
+ * Also, the pauses you do get can be worse, as if you enter a map with
+ * a lot of new objects and go above MAP_MAXOBJECTS, it may have to swap out
+ * many maps to get below the low water mark. */
+
+#define MAP_MAXOBJECTS 10000
+#define MAP_MINOBJECTS (MAP_MAXOBJECTS / 2)
+
 /* MAP_RESET tells whether map is reset after some time.  If it is defined,
  * the game uses weight variable of map object to tell, after how many seconds
  * the map will be reset.  If MAP_RESET is undefined, maps will never reset.
@@ -508,47 +539,6 @@
 #elif MAP_MAXRESET < MAP_DEFRESET
 # error MAP_MAXRESET must be >= MAP_DEFRESET!
 #endif
-
-/*
- * MAX_OBJECTS is no hard limit.  If this limit is exceeded, crossfire
- * will look for maps which are already scheldued for swapping, and
- * promptly swap them out before new maps are being loaded.
- * If playing only by yourself, this number can probably be as low as
- * 3000.  If in server mode, probably figure about 1000-2000 objects per
- * active player (if they typically play on different maps), for some guess
- * on how many to define.  If it is too low, maps just get swapped out
- * immediately, causing a performance hit.  If it is too high, the program
- * consumes more memory.  If you have gobs of free memory, a high number
- * might not be a bad idea.  Each object is around 350 bytes right now.
- * 25000 is about 8.5 MB
- */
-
-#define MAX_OBJECTS 100000
-
-/*
- * Max objects low water mark (lwm).  If defined, the map swapping strategy
- * is a bit different:
- * 1) We only start swapping maps if the number of objects in use is
- *    greater than MAX_OBJECTS above.
- * 2) We keep swapping maps until there are no more maps to swap or the number
- *    of used objects drop below this low water mark value.
- *
- * If this is not defined, maps are swapped out on the timeout value above,
- * or if the number of objects used is greater than MAX_OBJECTS above.
- *
- * Note:  While this will prevent the pauses noticed when saving maps, there
- * can instead be cpu performance penalties - any objects in memory get
- * processed.  So if there are 4000 objects in memory, and 1000 of them
- * are living objects, the system will process all 1000 objects each tick.
- * With swapping enable, maybe 600 of the objects would have gotten swapped
- * out.  This is less likely a problem with a smaller number of MAX_OBJECTS
- * than if it is very large.
- * Also, the pauses you do get can be worse, as if you enter a map with
- * a lot of new objects and go above MAX_OBJECTS, it may have to swap out
- * many maps to get below the low water mark.
- */
-
-/*#define MAX_OBJECTS_LWM   MAX_OBJECTS/2*/
 
 /*
  * If you want to have a Message Of The Day file, define MOTD to be
