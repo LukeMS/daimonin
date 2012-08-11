@@ -1063,7 +1063,8 @@ static int basic_emote(object *op, char *params, int emotion)
                 /* do nothing, since we specified nothing to do */
               return 1;
             default:
-              sprintf(buf, "%s looks nuts - you get the distinct feeling %s is nuts!", op->name);
+              sprintf(buf, "%s looks nuts - you get the distinct feeling %s is nuts!",
+                      op->name, op->name);
               sprintf(buf2, "You are a nut.");
               break;
         } /*case*/
