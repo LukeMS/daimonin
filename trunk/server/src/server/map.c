@@ -3628,62 +3628,6 @@ void swap_map(mapstruct *map, int force_flag)
     }
 }
 
-/* swap_below_max() tries to swap out maps which are still in memory because
- * of MAP_TIMEOUT until used objects is below MAX_OBJECTS or there are
- * no more maps to swap. */
-void swap_below_max(const char *except_level)
-{
-    if ((pool_object->nrof_allocated - pool_object->nrof_free) <
-        (uint32)MAX_OBJECTS)
-    {
-        return;
-    }
-
-    for (; ;)
-    {
-        mapstruct *map,
-                  *chosen = NULL; 
-        uint32     swap_time = MAP_MAXSWAP + 1;
-
-#ifdef MAX_OBJECTS_LWM
-        if ((pool_object->nrof_allocated - pool_object->nrof_free) <
-            (uint32)MAX_OBJECTS_LWM)
-        {
-            return;
-        }
-#else
-        if ((pool_object->nrof_allocated - pool_object->nrof_free) <
-            (uint32)MAX_OBJECTS)
-        {
-            return;
-        }
-#endif
-
-        for (map = first_map; map; map = map->next)
-        {
-            if ((map->in_memory == MAP_IN_MEMORY ||
-                 map->in_memory == MAP_SAVING) &&
-                strcmp(map->path, except_level) &&
-                MAP_WHEN_SWAP(map) < swap_time)
-            {
-                chosen = map;
-                swap_time = MAP_WHEN_SWAP(map);
-            }
-        }
-
-        if (!chosen)
-        {
-            return;
-        }
-
-#ifdef DEBUG_MAP
-        LOG(llevDebug, "DEBUG:: %s/swap_below_max(): Trying to swap out >%s< before its time.\n", 
-            __FILE__, STRING_MAP_PATH(chosen));
-#endif
-        swap_map(chosen, 0);
-    }
-}
-
 /* Count the player on a map, using the local map player list. */
 int players_on_map(mapstruct *m)
 {
@@ -3746,6 +3690,9 @@ void map_check_active(void)
 {
     mapstruct *this,
               *next;
+#ifdef MAP_MAXOBJECTS
+    static uint32 threshold = MAP_MAXOBJECTS;
+#endif
 
     for (this = first_map; this; this = next)
     {
@@ -3766,12 +3713,32 @@ void map_check_active(void)
             continue;
         }
 
-        /* This is called when MAX_OBJECTS_LWM is *NOT* defined.
-         * If LWM is set, we only swap maps out when we run out of objects. */
-#ifndef MAX_OBJECTS_LWM
         if ((this->in_memory == MAP_IN_MEMORY ||
              this->in_memory == MAP_SAVING))
         {
+#ifdef MAP_MAXOBJECTS
+            sint32 objs = (sint32)(pool_object->nrof_allocated[0] - pool_object->nrof_free[0]);
+
+            if (objs <= (sint32)threshold)
+            {
+                threshold = MAP_MAXOBJECTS;
+            }
+            else
+            {
+                uint8 noswap = 0,
+                      i;
+
+                threshold = MAP_MINOBJECTS;
+
+                /* TODO: The old code used to loop through the map list again
+                 * to try to find the map nearest it's actual swap time and
+                 * swap that one out. Perhaps more sensibly, given the intent
+                 * here, we should swap out the map with the most objects on it
+                 * first (though ATM mapstruct does not keep a tally). For now
+                 * anyway we just swap out this.
+                 *
+                 * -- Smacky 20120811 */
+#else
             /* So it's swap time. */
             if (MAP_WHEN_SWAP(this) <= (ROUND_TAG - ROUND_TAG %
                                         (long unsigned int)MAX(1, pticks_second)) /
@@ -3780,6 +3747,7 @@ void map_check_active(void)
                 uint8 noswap = 0,
                       i;
 
+#endif
                 /* Check adjacent maps for players or (TODO) permanently
                  * loading mobs. */
                 for (i = 0; i < TILED_MAPS; i++)
@@ -3798,17 +3766,25 @@ void map_check_active(void)
                 /* Now swap the map. */
                 if (!noswap)
                 {
-#ifdef DEBUG_MAP
+#ifdef MAP_MAXOBJECTS
+# ifdef DEBUG_MAP
+                    LOG(llevDebug, "DEBUG:: %s/map_check_active(): Swapping map >%s< (%u) before its time (%u of %u).\n", 
+                        __FILE__, STRING_MAP_PATH(this), this->in_memory, objs,
+                        threshold);
+# endif
+                    swap_map(this, 1);
+                    object_gc(); // keep mempool uptodate
+#else
+# ifdef DEBUG_MAP
                     LOG(llevDebug, "DEBUG:: %s/map_check_active(): Swapping map >%s< (%u)!\n",
                         __FILE__, STRING_MAP_PATH(this), this->in_memory);
-#endif
 
+# endif
                     swap_map(this, 1);
+#endif
                 }
             }
         }
-        else
-#endif
         /* per player unique maps are never really reset.  However, we do want
          * to perdiocially remove the entries in the list of active maps - this
          * generates a cleaner listing if a player issues the map commands, and
@@ -3818,7 +3794,7 @@ void map_check_active(void)
          * swap map, and doing it within swap map may cause problems as
          * the functions calling it may not expect the map list to change
          * underneath them. */
-        if (this->in_memory == MAP_SWAPPED)
+        else if (this->in_memory == MAP_SWAPPED)
         {
             if ((MAP_UNIQUE(this) ||
                  MAP_INSTANCE(this)) ||
