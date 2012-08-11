@@ -27,34 +27,35 @@
 
 #include "global.h"
 
-#define BUF_SZ 100
-
-#define MASK_ALL 4
+#define MASK_ALL      4
 #define MASK_HUNDREDS 3
-#define MASK_TENS 2
-#define MASK_ONES 1
+#define MASK_TENS     2
+#define MASK_ONES     1
+#define MASK_NONE     0
+
+/* #define DEBUG_IPCOMPARE */
 
 static objectlink *add_ip_list(player *pl, objectlink *ip_list);
 static void        free_iplist_node(objectlink *ol);
 
-/* parse a single IP address */
-static int parse_ip(const char * ip, unsigned char ip_terms[], int mask_pos[])
+/* Parse a single IP address
+ * Updated by Torchwood, Aug 2012 */
+int parse_ip(const char * ip, unsigned char ip_terms[], int mask_pos[])
 {
-    char buffer[BUF_SZ];
-    int index = 0;
-    int pos = 0;
-    int len = 0;
-    int temp = 0;
+    char buffer[SMALL_BUF];
+    int  term_start = 0, term_end = 0, term_numb = 0;
+    int  pos = 0;
 
     if (!ip)
     {
         LOG(llevDebug, "parse_ip: IP address is null.\n");
-        return 1; // NULL IP!
+        return FALSE;
     }
 
-    mask_pos[0] = -1;
-    mask_pos[1] = 0;
-    memset(ip_terms,0,sizeof(char)*16); /* set the IP to all zeros */
+    mask_pos[0] = -1; /* Term containing a mask */
+    mask_pos[1] = MASK_NONE;  /* Mask in hundreds, tens, ones, or all */
+
+    memset(ip_terms, 0, sizeof(char) * 16); /* set the IP to all zeros */
 
     /* predefined special case */
     if (!strcmp(ip, "::1"))
@@ -63,38 +64,45 @@ static int parse_ip(const char * ip, unsigned char ip_terms[], int mask_pos[])
         ip_terms[11] = 255;
         ip_terms[12] = 127;
         ip_terms[15] = 1;
-        return 0;
+        return TRUE;
     }
 
     strcpy(buffer,ip);
+
+    /* Strip out wild-cards from our temporary copy of the IP string */
     while (buffer[pos] != '\0')
     {
         if (buffer[pos] == '*')
         {
 #ifdef DEBUG_IPCOMPARE
-            LOG(llevDebug,"parse_ip: replaced * at %d with 0.\n",pos);
+            LOG(llevDebug,"parse_ip: replaced * at %d with 1.\n",pos);
 #endif
-            if (pos)
-                buffer[pos] = '0';
-            else
-                buffer[pos] = '1';
+
+            /* We can't 'parse' and address containing a '*' so temporarily
+             * replace it.  Note - don't replace with '0' as per previous code
+             * else *12 will turn into 12
+             */
+            buffer[pos] = '1';
         }
         pos++;
     }
+
 #ifdef DEBUG_IPCOMPARE
     LOG(llevDebug,"parse_ip: buffer = %s.\n",buffer);
 #endif
-    len = pos;
 
+    /* Split the IP string into separate terms ... */
     if (strchr(buffer, ':'))
     {
         if (!inet_pton(AF_INET6, buffer, ip_terms))
-            return 0;
+            return FALSE;
     }
     else
     {
         if (!inet_pton(AF_INET, buffer, ip_terms))
-            return 0;
+            return FALSE;
+
+        /* IPv4 only uses 4 terms ... */
         ip_terms[10] = 255;
         ip_terms[11] = 255;
         ip_terms[12] = ip_terms[0];
@@ -104,72 +112,88 @@ static int parse_ip(const char * ip, unsigned char ip_terms[], int mask_pos[])
         ip_terms[0] = ip_terms[1] = ip_terms[2] = ip_terms[3] = 0;
     }
 
+    /* Did original IP string contain any wild-cards? */
     if (strchr(ip, '*'))
     {
         pos = 0;
+
+        /* Find the position of the first '*' character.  Note: any later '*' are ignored */
         while (ip[pos] != '\0' && ip[pos] != '*')
-        {
             pos++;
-        }
-        temp = index = pos;
-        /* find the end of this term */
-        while (ip[pos] != '.' &&  ip[pos] != '\0')
-            pos++;
-        /* find the start of the term */
-        while (ip[index] != ':' && ip[index] != '.' && index)
-            index--;
+
+        term_end = term_start = pos;
+
+        /* Find the end of this term */
+        while (ip[term_end] != ':' && ip[term_end] != '.' &&  ip[term_end] != '\0')
+            term_end++;
+
+        /* Find the start of this term */
+        while (ip[term_start] != ':' && ip[term_start] != '.' && term_start != -1)
+            term_start--;
+
 #ifdef DEBUG_IPCOMPARE
-        LOG(llevDebug, "temp=%d; index=%d; pos=%d\n",temp, index, pos);
+        LOG(llevDebug, "pos=%d; term_start=%d; term_end=%d\n",pos, term_start, term_end);
 #endif
-        /* xx* = 1; x*x = 2; *xx = 3; x* = 1; *x = 2; * = 3; x = 0 */
-        switch (pos-index)
+
+        switch (term_end - term_start)
         {
-            case 1:
+            case 2: /* Term is 1 character long */
                 mask_pos[1] = MASK_ALL;
                 break;
-            case 2:
-                if (temp-index == 1)
+
+            case 3: /* Term is 2 characters long */
+                if (pos - term_start == 2)
                     mask_pos[1] = MASK_ONES;
                 else
                     mask_pos[1] = MASK_TENS;
                 break;
-            case 3:
-                if (temp-index == 2)
+
+            case 4: /* Term is 3 characters long */
+                if (pos - term_start == 3)
                     mask_pos[1] = MASK_ONES;
-                else if (temp-index == 1)
+                else if (pos - term_start == 2)
                     mask_pos[1] = MASK_TENS;
                 else
                     mask_pos[1] = MASK_HUNDREDS;
                 break;
-            case 4: /* "boundary conditions are annoying": last term includes \0 */
-                if (temp-index == 3)
-                    mask_pos[1] = MASK_ONES;
-                else if (temp-index == 2)
-                    mask_pos[1] = MASK_TENS;
-                else if (temp-index == 1)
-                    mask_pos[1] = MASK_HUNDREDS;
+
+            default: /* TW: Not sure this is possible? */
+                mask_pos[1] = MASK_ALL;
                 break;
         }
-        temp=12; /* start at the end, count the dots until the masked term */
+
+        /* Now find which particular term contains the first wildcard */
+
+        /* For IPv4 data is only contained in terms 12 onwards */
+        if (strchr(buffer, '.'))
+            term_numb = 12;
+
         pos = 0;
+
+        /* Search through the IP string again, looking for '*' */
         while (ip[pos] != '*' && ip[pos] != '\0')
         {
-#ifdef DEBUG_IPCOMPARE
-            LOG(llevDebug, "pos_finder: temp=%d; index=%d; pos=%d\n",temp, index, pos);
-#endif
-            if (ip[pos] == '.')
-                temp++;
+            /* Check if we've reached the next term yet */
+            if (ip[pos] == '.' || ip[pos] == ':')
+                term_numb++;
+
             pos++;
         }
+
 #ifdef DEBUG_IPCOMPARE
-        LOG(llevDebug, "pos_finder: temp=%d; index=%d; pos=%d\n",temp, index, pos);
-        mask_pos[0] = temp;
+        LOG(llevDebug, "term_finder: term_numb=%d; term_start=%d; pos=%d\n",term_numb, term_start, pos);
 #endif
+
+        mask_pos[0] = term_numb;
+
     }
-    return 0;
+
+    return TRUE;
 }
 
-/* compare IP address strings */
+/* Compare IP address strings
+ * returns TRUE if a match is found
+ * Updated by Torchwood, Aug 2012 */
 int ip_compare(const char * ip1, const char * ip2)
 {
     unsigned char ip1_terms[16], ip2_terms[16];
@@ -179,44 +203,66 @@ int ip_compare(const char * ip1, const char * ip2)
     LOG(llevDebug, "ip_compare: Comparing %s to %s.\n", ip1, ip2);
 
     if (!ip1 || !ip2)
-        return 0;
-    if (parse_ip(ip1, ip1_terms, mask_pos1))
-        return 0;
-    if (parse_ip(ip2, ip2_terms, mask_pos2))
-        return 0;
+        return FALSE;
+
+    /* Check we have valid IP address strings, and find the position of the FIRST wildcard */
+    if (!parse_ip(ip1, ip1_terms, mask_pos1))
+        return FALSE;
+    if (!parse_ip(ip2, ip2_terms, mask_pos2))
+        return FALSE;
 
 #ifdef DEBUG_IPCOMPARE
-    for (i=0;i<16;i++)
-        LOG(llevDebug,"%d,",ip1_terms[i]);
-    LOG(llevDebug,"\n");
-    for (i=0;i<16;i++)
-        LOG(llevDebug,"%d,",ip2_terms[i]);
-    LOG(llevDebug,"\n");
+    for (i=0; i<16; i++)
+        LOG(llevDebug, "%d,", ip1_terms[i]);
+    LOG(llevDebug, "\n");
+
+    for (i=0; i<16; i++)
+        LOG(llevDebug, "%d,", ip2_terms[i]);
+    LOG(llevDebug, "\n");
 #endif
 
+    /* If one or both IP strings contains a mask, work out which mask to 'use' */
+
+    /* IP1 has mask, IP2 does not ... */
     if (mask_pos1[0] != -1 && mask_pos2[0] == -1)
     {
         mask_pos = mask_pos1[0];
         mask_power = mask_pos1[1];
     }
+
+    /* IP1 does not, IP2 has mask ... */
     else if (mask_pos1[0] == -1 && mask_pos2[0] != -1)
     {
         mask_pos = mask_pos2[0];
         mask_power = mask_pos2[1];
     }
+
+    /* Both terms have a mask */
     else if (mask_pos1[0] != -1 && mask_pos2[0] != -1)
     {
-        if (mask_pos1[0] > mask_pos2[0])
+        /* Now figure out which mask is more significant
+         * Note:  A higher term number is LESS significant - i.e. term 0 is the
+         * first, most important term!
+         */
+
+        /* IP1 term number < IP2 term number */
+        if (mask_pos1[0] < mask_pos2[0])
         {
             mask_pos = mask_pos1[0];
             mask_power = mask_pos1[1];
         }
-        else if (mask_pos1[0] < mask_pos2[0])
+
+        /* IP1 term number > IP2 term number */
+        else if (mask_pos1[0] > mask_pos2[0])
         {
             mask_pos = mask_pos2[0];
             mask_power = mask_pos2[1];
         }
-        else if (mask_pos1[1] < mask_pos2[1])
+
+        /* Term numbers are equal, so look at the position of the mask within the term */
+
+        /* Higher value of [1] means a more significant 'bit' */
+        else if (mask_pos1[1] > mask_pos2[1])
         {
             mask_pos = mask_pos1[0];
             mask_power = mask_pos1[1];
@@ -228,21 +274,25 @@ int ip_compare(const char * ip1, const char * ip2)
         }
     }
 
+    /* Compare each term of the IP strings in turn */
+    /* TW: How does an IPv4 address get compared to an IPv6 address ??? */
     for (i = 0; i < 16; i++)
     {
 #ifdef DEBUG_IPCOMPARE
-        LOG(llevDebug, "%d vs %d\n",ip1_terms[i], ip2_terms[i]);
+        LOG(llevDebug, "comparing term %d: %d vs. %d\n",i, ip1_terms[i], ip2_terms[i]);
 #endif
+
+        /* Are terms different, and is there no mask? */
         if (ip1_terms[i] != ip2_terms[i] && i != mask_pos)
-        {
-            return 0;
-        }
+            return FALSE;
+
+        /* If we do have a mask, then we only compare this term, and not anything beyond */
         else if (i == mask_pos)
         {
 #ifdef DEBUG_IPCOMPARE
-            LOG(llevDebug, "mask test: %d %d\n", mask_pos, mask_power);
-            LOG(llevDebug, "mask test: %d %d\n", ip1_terms[i], ip2_terms[i]);
+            LOG(llevDebug, "mask test: pos=%d power=%d\n", mask_pos, mask_power);
 #endif
+
             switch (mask_power)
             {
                 case MASK_ALL:
@@ -251,36 +301,51 @@ int ip_compare(const char * ip1, const char * ip2)
 #endif
                     /* Tests: NONE! */
                     break;
+
                 case MASK_HUNDREDS:
 #ifdef DEBUG_IPCOMPARE
                     LOG(llevDebug, "(* in hundreds)\n");
 #endif
                     /* Tests: 100s term is non-zero in both, match in tens term, match in ones term */
-                    if (!(ip1_terms[i] / 100) || !(ip2_terms[i] / 100) || ip1_terms[i] % 10 != ip2_terms[i] % 10 || (ip1_terms[i] / 10) % 10 != (ip2_terms[i] / 10) % 10)
-                        return 0;
+                    if (!(ip1_terms[i] / 100) ||
+                        !(ip2_terms[i] / 100) ||
+                        ip1_terms[i] % 10 != ip2_terms[i] % 10 ||
+                        (ip1_terms[i] / 10) % 10 != (ip2_terms[i] / 10) % 10)
+                        return FALSE;
                     break;
+
                 case MASK_TENS:
 #ifdef DEBUG_IPCOMPARE
                     LOG(llevDebug, "%d %d; (* in tens)\n",ip1_terms[i]/100, ip2_terms[i]/100);
 #endif
                     /* Tests: 10s term is non-zero in both, match in hundreds term, match in ones term */
-                    if (!(ip1_terms[i] / 10) || !(ip2_terms[i] / 10) ||ip1_terms[i] / 100 != ip2_terms[i] / 100 || ip1_terms[i] % 10 != ip2_terms[i] % 10)
-                        return 0;
+                    if (!(ip1_terms[i] / 10) ||
+                        !(ip2_terms[i] / 10) ||
+                        ip1_terms[i] / 100 != ip2_terms[i] / 100 ||
+                        ip1_terms[i] % 10 != ip2_terms[i] % 10)
+                        return FALSE;
                     break;
+
                 case MASK_ONES:
 #ifdef DEBUG_IPCOMPARE
                     LOG(llevDebug, "%d %d; (* in ones)\n",ip1_terms[i]/10, ip2_terms[i]/10);
 #endif
                     /* Tests: 100s terms match and tens terms match */
-                    if (ip1_terms[i] / 100 != ip2_terms[i] / 100 || ip1_terms[i] / 10 != ip2_terms[i] / 10)
-                        return 0;
+                    if (ip1_terms[i] / 100 != ip2_terms[i] / 100 ||
+                        ip1_terms[i] / 10 != ip2_terms[i] / 10)
+                        return FALSE;
                     break;
             }
-            return 1;
+
+            /* We don't compare any more terms past the first mask,
+             * so 123.*.123.123 will match 123.9.9.9
+             */
+            return TRUE;
         }
     }
 
-    return 1;
+    /* No masks found, and all individual IP terms matched */
+    return TRUE;
 }
 
 objectlink *find_players_on_ip(char *ipmask)
