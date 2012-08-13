@@ -65,8 +65,6 @@ static void       FreeAllObjects(mapstruct *m);
 #ifdef RECYCLE_TMP_MAPS
 static void       WriteMapLog(void);
 #endif
-static void       SetResetTime(mapstruct *m);
-static void       SetSwapTime(mapstruct *m);
 
 /* Returns the mapstruct which has a name matching the given argument oe NULL
  * if no match is found. */
@@ -2503,8 +2501,8 @@ static int LoadMapHeader(FILE *fp, mapstruct *m, uint32 flags)
     }
 
     /* Set times to swap/reset. */
-    SetSwapTime(m);
-    SetResetTime(m);
+    MAP_SET_WHEN_SWAP(m, MAP_SWAP_TIMEOUT(m));
+    MAP_SET_WHEN_RESET(m, MAP_RESET_TIMEOUT(m));
 
 #ifdef DAI_DEVELOPMENT_CONTENT
     /* Verify tileset_id after linking. */
@@ -3334,57 +3332,68 @@ static void SaveObjects(mapstruct *m, FILE *fp)
 #undef REMOVE_OBJECT
 #undef VALIDATE_NEXT
 
-/* function will remove all player from a map and set a marker.
- * use CAREFUL - this is called from functions who do a forced
- * map resets and such. map_to_player_link() MUST be called after
- * this or the server has a problem.
- */
-int map_to_player_unlink(mapstruct *m)
+/* Remove all players from a map and set a marker.
+ *
+ * XXX: map_player_link() MUST be called after this or the server has a
+ * problem. */
+uint16 map_player_unlink(mapstruct *m)
 {
     player *pl;
-    int num = 0;
+    uint16  num = 0;
 
-    if(m)
+    if (!m)
     {
-        for (pl = first_player; pl != NULL; pl = pl->next)
-        {
-            if (pl->ob->map == m)
-            {
-                num++;
-
-                /* With the new activelist, any player on a reset map
-                * was somehow forgotten. This seems to fix it. The
-                * problem isn't analyzed, though. Gecko 20050713 */
-                activelist_remove(pl->ob);
-                remove_ob(pl->ob); /* no walk off check */
-
-                pl->dm_removed_from_map = 1;
-            }
-        }
-
+        return 0;
     }
+
+    for (pl = first_player; pl; pl = pl->next)
+    {
+        if (pl->ob->map == m)
+        {
+            /* With the new activelist, any player on a reset map
+            * was somehow forgotten. This seems to fix it. The
+            * problem isn't analyzed, though. Gecko 20050713 */
+            activelist_remove(pl->ob);
+            remove_ob(pl->ob); /* no walk off check */
+            pl->dm_removed_from_map = 1;
+            num++;
+        }
+    }
+
     return num;
 }
 
-/* Reinsert players on a map which was removed with
- * map_to_player_unlink(). If m is NULL use the bind point.
- * if x or y != -1 they will overrule the player map position.
- */
-void map_to_player_link(mapstruct *m, int x, int y, int flag)
+/* Reinsert players on a map after they were removed with map_player_unlink().
+ * If m is NULL use the savebed (or if flag, the emergency map). Otherwise, if
+ * x or y == -1 they will overrule the player map position. */
+void map_player_link(mapstruct *m, sint16 x, sint16 y, uint8 flag)
 {
     player *pl;
 
-   for (pl = first_player; pl != NULL; pl = pl->next)
+    for (pl = first_player; pl; pl = pl->next)
     {
         if (pl->dm_removed_from_map)
         {
+            if (m)
+            {
+                enter_map(pl->ob, NULL, m, (x == -1) ? pl->ob->x : x,
+                          (y == -1) ? pl->ob->y : y, m->map_status, 0);
+            }
+            else if (!flag)
+            {
+                enter_map_by_name(pl->ob, pl->savebed_map,
+                                  pl->orig_savebed_map, pl->bed_x, pl->bed_y,
+                                  pl->bed_status);
+            }
+            else
+            {
+                enter_map_by_name(pl->ob, shstr_cons.emergency_mappath,
+                                  shstr_cons.emergency_mappath, -1, -1,
+                                  MAP_STATUS_MULTI);
+            }
+
             pl->dm_removed_from_map = 0;
-            if(m)
-                enter_map(pl->ob, NULL, m, (x == -1) ? pl->ob->x :x, (y == -1) ? pl->ob->y : y, m->map_status, 0);
-            else if(!flag)
-                enter_map_by_name(pl->ob, pl->savebed_map, pl->orig_savebed_map, pl->bed_x, pl->bed_y, pl->bed_status);
-            else /* if flag == TRUE move to emergency map! */
-                enter_map_by_name(pl->ob, pl->savebed_map, pl->orig_savebed_map, pl->bed_x, pl->bed_y, pl->bed_status);
+            new_draw_info(NDI_UNIQUE, 0, pl->ob, "You have a distinct feeling of deja vu.");
         }
     }
 }
@@ -3592,7 +3601,7 @@ void swap_map(mapstruct *map, int force_flag)
     /* Update the reset time.  Only do this is STAND_STILL is not set */
     if (!MAP_FIXED_RESETTIME(map))
     {
-        SetResetTime(map);
+        MAP_SET_WHEN_RESET(map, MAP_RESET_TIMEOUT(map));
     }
 
     /* Only save the map if we do reset maps and it is immediate reset time, or
@@ -3642,31 +3651,6 @@ int players_on_map(mapstruct *m)
     return count;
 }
 
-static void SetSwapTime(mapstruct *m)
-{
-    MAP_WHEN_SWAP(m) = (ROUND_TAG - ROUND_TAG %
-                        (long unsigned int)MAX(1, pticks_second)) /
-                       pticks_second + MAP_SWAP_TIMEOUT(m);
-}
-
-static void SetResetTime(mapstruct *m)
-{
-#ifdef MAP_RESET
-    if (MAP_RESET_TIMEOUT(m) == 0)
-    {
-        MAP_WHEN_RESET(m) = 0; // never reset
-    }
-    else
-    {
-        MAP_WHEN_RESET(m) = (ROUND_TAG - ROUND_TAG %
-                             (long unsigned int)MAX(1, pticks_second)) /
-                            pticks_second + MAP_RESET_TIMEOUT(m);
-    }
-#else
-    MAP_WHEN_RESET(m) = 0; // never reset
-#endif
-}
-
 /* Sets m->darkness to 0 <= value <= MAX_DARKNESS and m->light_value to
  * global_darkness_table[value]. */
 void set_map_darkness(mapstruct *m, int value)
@@ -3698,123 +3682,207 @@ void map_check_active(void)
     {
         next = this->next;
 
-        /* When there are players or (TODO) permanently loading mobs on the
-         * map, do not swap/reset but reset the times. */
-        if (this->player_first ||
-            this->perm_load)
+        /* When doing a manual reset no need to look at player activity or swap
+         * the maps. */
+        if (!MAP_MANUAL_RESET(this))
         {
-            SetSwapTime(this);
-
-            if (!MAP_FIXED_RESETTIME(this))
+            /* When there are players or (TODO) permanently loading mobs on the
+             * map, do not swap/reset but reset the times. */
+            if (this->player_first ||
+                this->perm_load)
             {
-                SetResetTime(this);
+                MAP_SET_WHEN_SWAP(this, MAP_SWAP_TIMEOUT(this));
+
+                if (!MAP_FIXED_RESETTIME(this))
+                {
+                    MAP_SET_WHEN_RESET(this, MAP_RESET_TIMEOUT(this));
+                }
+
+                continue;
             }
 
-            continue;
-        }
-
-        if ((this->in_memory == MAP_IN_MEMORY ||
-             this->in_memory == MAP_SAVING))
-        {
+            if (this->in_memory == MAP_IN_MEMORY ||
+                this->in_memory == MAP_SAVING)
+            {
 #ifdef MAP_MAXOBJECTS
-            sint32 objs = (sint32)(pool_object->nrof_allocated[0] - pool_object->nrof_free[0]);
+                sint32 objs = (sint32)(pool_object->nrof_allocated[0] - pool_object->nrof_free[0]);
 
-            if (objs <= (sint32)threshold)
-            {
-                threshold = MAP_MAXOBJECTS;
-            }
-            else
-            {
-                uint8 noswap = 0,
-                      i;
+                if (objs <= (sint32)threshold)
+                {
+                    threshold = MAP_MAXOBJECTS;
+                }
+                else
+                {
+                    uint8 i,
+                          noswap = 0;
 
-                threshold = MAP_MINOBJECTS;
+                    threshold = MAP_MINOBJECTS;
 
-                /* TODO: The old code used to loop through the map list again
-                 * to try to find the map nearest it's actual swap time and
-                 * swap that one out. Perhaps more sensibly, given the intent
-                 * here, we should swap out the map with the most objects on it
-                 * first (though ATM mapstruct does not keep a tally). For now
-                 * anyway we just swap out this.
-                 *
-                 * -- Smacky 20120811 */
+                    /* TODO: The old code used to loop through the map list again
+                     * to try to find the map nearest it's actual swap time and
+                     * swap that one out. Perhaps more sensibly, given the intent
+                     * here, we should swap out the map with the most objects on it
+                     * first (though ATM mapstruct does not keep a tally). For now
+                     * anyway we just swap out this.
+                     *
+                     * -- Smacky 20120811 */
 #else
-            /* So it's swap time. */
-            if (MAP_WHEN_SWAP(this) <= (ROUND_TAG - ROUND_TAG %
-                                        (long unsigned int)MAX(1, pticks_second)) /
-                                        pticks_second)
-            {
-                uint8 noswap = 0,
-                      i;
+                /* So it's swap time. */
+                if (MAP_WHEN_SWAP(this) <= (ROUND_TAG - ROUND_TAG %
+                                            (long unsigned int)MAX(1, pticks_second)) /
+                                            pticks_second)
+                {
+                    uint8 i,
+                          noswap = 0;
 
 #endif
-                /* Check adjacent maps for players or (TODO) permanently
-                 * loading mobs. */
-                for (i = 0; i < TILED_MAPS; i++)
-                {
-                    if (this->tile_map[i] &&
-                        this->tile_map[i]->in_memory == MAP_IN_MEMORY &&
-                        (this->tile_map[i]->player_first ||
-                         this->tile_map[i]->perm_load))
+                    /* Check adjacent maps for players or (TODO) permanently
+                     * loading mobs. */
+                    for (i = 0; i < TILED_MAPS; i++)
                     {
-                        noswap = 1;
+                        if (this->tile_map[i] &&
+                            this->tile_map[i]->in_memory == MAP_IN_MEMORY &&
+                            (this->tile_map[i]->player_first ||
+                             this->tile_map[i]->perm_load))
+                        {
+                            noswap = 1;
 
-                        break;
+                            break;
+                        }
+                    }
+
+                    /* Now swap the map. */
+                    if (!noswap)
+                    {
+#ifdef MAP_MAXOBJECTS
+# ifdef DEBUG_MAP
+                        LOG(llevDebug, "DEBUG:: %s/map_check_active(): Swapping map >%s< (%u) before its time (%u of %u).\n", 
+                            __FILE__, STRING_MAP_PATH(this), this->in_memory, objs,
+                            threshold);
+# endif
+                        swap_map(this, 1);
+                        object_gc(); // keep mempool uptodate
+#else
+# ifdef DEBUG_MAP
+                        LOG(llevDebug, "DEBUG:: %s/map_check_active(): Swapping map >%s< (%u)!\n",
+                            __FILE__, STRING_MAP_PATH(this), this->in_memory);
+# endif
+                        swap_map(this, 1);
+#endif
                     }
                 }
-
-                /* Now swap the map. */
-                if (!noswap)
-                {
-#ifdef MAP_MAXOBJECTS
-# ifdef DEBUG_MAP
-                    LOG(llevDebug, "DEBUG:: %s/map_check_active(): Swapping map >%s< (%u) before its time (%u of %u).\n", 
-                        __FILE__, STRING_MAP_PATH(this), this->in_memory, objs,
-                        threshold);
-# endif
-                    swap_map(this, 1);
-                    object_gc(); // keep mempool uptodate
-#else
-# ifdef DEBUG_MAP
-                    LOG(llevDebug, "DEBUG:: %s/map_check_active(): Swapping map >%s< (%u)!\n",
-                        __FILE__, STRING_MAP_PATH(this), this->in_memory);
-
-# endif
-                    swap_map(this, 1);
-#endif
-                }
             }
         }
-        /* per player unique maps are never really reset.  However, we do want
-         * to perdiocially remove the entries in the list of active maps - this
-         * generates a cleaner listing if a player issues the map commands, and
-         * keeping all those swapped out per player unique maps also has some
-         * memory and cpu consumption.
-         * We do the cleanup here because there are lots of places that call
-         * swap map, and doing it within swap map may cause problems as
-         * the functions calling it may not expect the map list to change
-         * underneath them. */
-        else if (this->in_memory == MAP_SWAPPED)
+
+        if (MAP_MANUAL_RESET(this) &&
+            MAP_WHEN_RESET(this))
         {
+            sint32 countdown = MAP_WHEN_RESET(this) - (ROUND_TAG - ROUND_TAG %
+                                                       (uint32)MAX(1, pticks_second)) /
+                                                      pticks_second;
+
+             if (countdown > 0 &&
+                 (!(countdown % 30) ||
+                  countdown <= 10))
+            {
+                new_info_map(NDI_UNIQUE | NDI_NAVY, this, 0, 0, MAP_INFO_ALL, "Only ~%u~ second%s to map reset!",
+                             countdown, (countdown != 1) ? "s" : "");
+            }
+        }
+
+        if (MAP_MANUAL_RESET(this) ||
+            this->in_memory == MAP_SWAPPED)
+        {
+            /* per player unique maps are never really reset.  However, we do want
+             * to perdiocially remove the entries in the list of active maps - this
+             * generates a cleaner listing if a player issues the map commands, and
+             * keeping all those swapped out per player unique maps also has some
+             * memory and cpu consumption.
+             * We do the cleanup here because there are lots of places that call
+             * swap map, and doing it within swap map may cause problems as
+             * the functions calling it may not expect the map list to change
+             * underneath them. */
             if ((MAP_UNIQUE(this) ||
                  MAP_INSTANCE(this)) ||
-#ifdef MAP_RESET /* No need to flush them if there are no resets */
-                (this->tmpname &&
-                 MAP_WHEN_RESET(this) &&
-                 MAP_WHEN_RESET(this) <= (ROUND_TAG - ROUND_TAG %
+                (MAP_MANUAL_RESET(this) ||
+                 this->tmpname) &&
+                MAP_WHEN_RESET(this) &&
+                MAP_WHEN_RESET(this) <= (ROUND_TAG - ROUND_TAG %
                                           (long unsigned int)MAX(1, pticks_second)) /
                                           pticks_second)
-#else
-               0
-#endif
-               )
             {
 #ifdef DEBUG_MAP
                 LOG(llevDebug, "DEBUG:: %s/map_check_active(): Resetting map >%s<!\n",
                     __FILE__, STRING_MAP_PATH(this));
 #endif
                 clean_tmp_map(this);
-                delete_map(this);
+
+                /* On a manual reset we want to immediately reload the source
+                 * map which also means we need to juggle any players on it. */
+                if (MAP_MANUAL_RESET(this))
+                {
+                    uint8  anyplayers = (this->player_first) ? 1 : 0;
+                    shstr *path_sh = NULL,
+                          *orig_path_sh = NULL,
+                          *reference_sh = NULL;
+                    uint32 status;
+
+                    /* If there are any players on the map, temp remove them. */
+                    if (anyplayers)
+                    {
+                        (void)map_player_unlink(this);
+                    }
+
+                    /* We now need to 'save' the objects on map so spawns from
+                     * other maps disappear and the spawn point on the other
+                     * map knows to respawn, etc. On uniques/instances we in
+                     * fact do save the map to disk to prevent item loss. But
+                     * on multis there is no need for slow disk access (we're
+                     * resetting to source remember) so in fact we're just
+                     * pruning such dynamic objects. */
+                    if (MAP_UNIQUE(this) ||
+                        MAP_INSTANCE(this))
+                    {
+                        new_save_map(this, 0);
+                    }
+                    else
+                    {
+                        SaveObjects(this, NULL);
+                    }
+
+                    /* Remember a few details so we can reload the map. */
+                    FREE_AND_ADD_REF_HASH(path_sh, this->path);
+                    FREE_AND_ADD_REF_HASH(orig_path_sh, this->orig_path);
+
+                    if (this->reference)
+                    {
+                        FREE_AND_ADD_REF_HASH(reference_sh, this->reference);
+                    }
+
+                    status = MAP_STATUS_TYPE(this->map_status);
+
+                    /* Delete the map from memory and reload it. */
+                    delete_map(this);
+                    this = ready_map_name(path_sh, orig_path_sh, status,
+                                          reference_sh);
+
+                    /* Put any removed players back on the map (or emergency if
+                     * for some reason it has failed to be ready).*/
+                    if (anyplayers)
+                    {
+                        map_player_link(this, -1, -1, 1);
+                    }
+
+                    /* Tidy up. */
+                    FREE_ONLY_HASH(path_sh);
+                    FREE_ONLY_HASH(orig_path_sh);
+                    FREE_ONLY_HASH(reference_sh);
+                }
+                /* Otherwise we know there's no-one here, so just delete it. */
+                else
+                {
+                    delete_map(this);
+                }
             }
         }
     }
