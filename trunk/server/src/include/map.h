@@ -56,6 +56,7 @@
 #define MAP_SWAP_TIMEOUT(m)     ((m)->swap_timeout)
 #define MAP_OUTDOORS(m)         ((m)->map_flags & MAP_FLAG_OUTDOOR)
 #define MAP_FIXED_RESETTIME(m)  ((m)->map_flags & MAP_FLAG_FIXED_RTIME)
+#define MAP_MANUAL_RESET(m)     ((m)->map_flags & MAP_FLAG_MANUAL_RESET)
 #define MAP_NOSAVE(m)           ((m)->map_flags & MAP_FLAG_NO_SAVE)
 #define MAP_NOMAGIC(m)          ((m)->map_flags & MAP_FLAG_NOMAGIC)
 #define MAP_NOPRIEST(m)         ((m)->map_flags & MAP_FLAG_NOPRIEST)
@@ -159,6 +160,30 @@
 
 #define SET_MAP_RTAG(M,X,Y,tmp)         ( (M)->spaces[(X) + (M)->width * (Y)].round_tag = (uint32) (tmp) )
 #define GET_MAP_RTAG(M,X,Y)             ( (M)->spaces[(X) + (M)->width * (Y)].round_tag )
+
+#define MAP_SET_WHEN_SWAP(_M_, _T_) \
+    MAP_WHEN_SWAP((_M_)) = (ROUND_TAG - ROUND_TAG % \
+                            (long unsigned int)MAX(1, pticks_second)) / \
+                           pticks_second + (_T_)
+
+#ifdef MAP_RESET // _T_ > 0, _T_ secs from now, _T_ == 0:  never, _T_ < 0: now
+# define MAP_SET_WHEN_RESET(_M_, _T_) \
+    if ((_T_) > 0) \
+    { \
+        MAP_WHEN_RESET((_M_)) = (ROUND_TAG - ROUND_TAG % (long unsigned int)MAX(1, pticks_second)) / pticks_second + (_T_); \
+    } \
+    else if ((_T_) == 0) \
+    { \
+        MAP_WHEN_RESET((_M_)) = 0; \
+    } \
+    else \
+    { \
+        MAP_WHEN_RESET((_M_)) = (ROUND_TAG - ROUND_TAG % (long unsigned int)MAX(1, pticks_second)) / pticks_second; \
+    }
+#else // maps never reset so ignore _T_
+# define MAP_SET_WHEN_RESET(_M_, _T_) \
+    MAP_WHEN_RESET((_M_)) = 0
+#endif
 
 /* These are the 'face flags' we grap out of the flags object structure 1:1.
  * I user a macro to get them from the object, doing a fast AND to mask the bigger
@@ -310,33 +335,21 @@ typedef struct MapSpace_s
 #endif
 
 /* map flags for global map settings - used in ->map_flags */
-#define MAP_FLAG_NOTHING            0
-
-#define MAP_FLAG_OUTDOOR            (1<<0)      /* map is outdoor map - daytime effects are on */
-#define MAP_FLAG_NO_SAVE            (1<<1)      /* don't save maps - atm only used with unique maps */
-#define MAP_FLAG_FIXED_RTIME        (1<<2)      /* if true, reset time is not affected by
-                                                 * players entering/exiting map
-                                                 */
-#define MAP_FLAG_NOMAGIC            (1<<3)      /* no sp based spells */
-#define MAP_FLAG_NOPRIEST           (1<<4)      /* no grace baes spells allowed */
-#define MAP_FLAG_NOHARM             (1<<5)      /* allow only no attack, no debuff spells
-                                             * this is city default setting - heal for example
-                                             * is allowed on you and others but no curse or
-                                             * fireball or abusing stuff like darkness or create walls
-                                             */
-#define MAP_FLAG_NOSUMMON           (1<<6)      /* don't allow any summon/pet summon spell.
-                                             * this includes "call summons" for calling pets from other maps
-                                             */
-#define MAP_FLAG_FIXED_LOGIN        (1<<7)     /* when set, a player login on this map will forced
-                                             * to default enter_x/enter_y of this map.
-                                             * this avoid map stucking and treasure camping
-                                             */
-#define MAP_FLAG_PERMDEATH          (1<<8)     /* this map is a perm death. */
-#define MAP_FLAG_ULTRADEATH         (1<<9)    /* this map is a ultra death map */
-#define MAP_FLAG_ULTIMATEDEATH      (1<<10)    /* this map is a ultimate death map */
-#define MAP_FLAG_PVP                (1<<11)    /* PvP is possible on this map */
-
-#define MAP_FLAG_NO_UPDATE          (1<<31)    /* don't save maps - atm only used with unique maps */
+#define MAP_FLAG_NOTHING       0
+#define MAP_FLAG_OUTDOOR       (1 << 0)  // outdoor map - daytime effects are on
+#define MAP_FLAG_NO_SAVE       (1 << 1)  // don't save maps - atm only used with unique maps
+#define MAP_FLAG_FIXED_RTIME   (1 << 2)  // reset time is not affected by players entering/exiting map
+#define MAP_FLAG_MANUAL_RESET  (1 << 3)  // a gmaster has scheduled this map to reset
+#define MAP_FLAG_NOMAGIC       (1 << 4)  // no spells
+#define MAP_FLAG_NOPRIEST      (1 << 5)  // no prayers
+#define MAP_FLAG_NOHARM        (1 << 6)  // no harmful spells/prayers
+#define MAP_FLAG_NOSUMMON      (1 << 7)  // no summoning spells/prayers
+#define MAP_FLAG_FIXED_LOGIN   (1 << 8)  // player login forced to enter_x/enter_y
+#define MAP_FLAG_PERMDEATH     (1 << 9)  // perm death map
+#define MAP_FLAG_ULTRADEATH    (1 << 10) // ultra death map
+#define MAP_FLAG_ULTIMATEDEATH (1 << 11) // ultimate death map
+#define MAP_FLAG_PVP           (1 << 12) // PvP is possible on this map
+#define MAP_FLAG_NO_UPDATE     (1 << 31) // ?
 
 #define SET_MAP_TILE_VISITED(m, x, y, id) { \
     if((m)->pathfinding_id != (id)) { \

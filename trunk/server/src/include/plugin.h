@@ -351,8 +351,8 @@ struct plugin_hooklist
 #endif
     /* M */
     int (*map_brightness)(mapstruct *, int, int);
-    void (*map_to_player_link)(mapstruct *, int, int, int);
-    int (*map_to_player_unlink)(mapstruct *);
+    void (*map_player_link)(mapstruct *, sint16, sint16, uint8);
+    uint16 (*map_player_unlink)(mapstruct *);
     void (*map_transfer_apartment_items)(mapstruct *, mapstruct *, int, int);
     sint64 (*material_repair_cost)(object *, object *);
     void (*material_repair_item)(object *, int);

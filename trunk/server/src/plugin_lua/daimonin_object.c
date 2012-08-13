@@ -778,7 +778,7 @@ static int GameObject_ReadyUniqueMap(lua_State *L)
             int num = 0;
 
             if(map->player_first)
-                num = hooks->map_to_player_unlink(map); /* remove player from map */
+                num = hooks->map_player_unlink(map); /* remove player from map */
 
             hooks->clean_tmp_map(map); /* remove map from memory */
             hooks->delete_map(map);
@@ -787,7 +787,7 @@ static int GameObject_ReadyUniqueMap(lua_State *L)
             map = hooks->ready_map_name(path_sh, orig_path_sh, MAP_STATUS_UNIQUE, WHO->name);
 
             if(num) /* and kick player back to map - note: if map is NULL its bind point redirect */
-                hooks->map_to_player_link(map, -1, -1, FALSE);
+                hooks->map_player_link(map, -1, -1, FALSE);
         }
         else if (!(flags & PLUGIN_MAP_CHECK))/* normal ready_map_name() with checking loaded & original maps */
             map = hooks->ready_map_name(path_sh, orig_path_sh, MAP_STATUS_UNIQUE, WHO->name);

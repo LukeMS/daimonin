@@ -125,8 +125,8 @@ struct plugin_hooklist  hooklist    =
 #endif
     /* M */
     map_brightness,
-    map_to_player_link,
-    map_to_player_unlink,
+    map_player_link,
+    map_player_unlink,
     map_transfer_apartment_items,
     material_repair_cost,
     material_repair_item,

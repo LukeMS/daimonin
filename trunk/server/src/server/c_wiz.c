@@ -1505,109 +1505,50 @@ int command_setstat(object *op, char *params)
     return COMMANDS_RTN_VAL_OK;
 }
 
-int command_reset(object *op, char *params)
+/* Resets (reloads from source) a map. A countdown (seconds) and the absolute
+ * path of the map to be reset may be specified. DDefaults are 0 and the map op
+ * is on. */
+int command_resetmap(object *op, char *params)
 {
-    int        count;
     mapstruct *m;
-    player    *pl;
+    sint32     secs = 0;
+    char       path[MAXPATHLEN] = "";
+    shstr     *path_sh = NULL;
 
-    if (!params)
-        m = has_been_loaded_sh(op->map->path);
+    if (params)
+    {
+        if (sscanf(params, "%d %s", &secs, path) != 2)
+        {
+            if (sscanf(params, "%d", &secs) != 1)
+            {
+                sscanf(params, "%s", path);
+            }
+        }
+    }
+
+    if (path[0])
+    {
+        FREE_AND_COPY_HASH(path_sh, path);
+    }
     else
     {
-        const char *mapfile_sh = add_string(params);
-
-        m = has_been_loaded_sh(mapfile_sh);
-        free_string_shared(mapfile_sh);
+        FREE_AND_ADD_REF_HASH(path_sh, op->map->path);
     }
+
+    m = has_been_loaded_sh(path_sh);
+    FREE_ONLY_HASH(path_sh);
 
     if (!m)
     {
         new_draw_info(NDI_UNIQUE, 0, op, "No such map.");
 
-        return COMMANDS_RTN_VAL_ERROR;
+        return COMMANDS_RTN_VAL_OK_SILENT;
     }
 
-    if (m->in_memory != MAP_SWAPPED)
+    if (m->in_memory == MAP_IN_MEMORY)
     {
-        if (m->in_memory != MAP_IN_MEMORY)
-        {
-            LOG(llevBug, "BUG: Tried to swap out map which was not in memory.\n");
-
-            return COMMANDS_RTN_VAL_ERROR;
-        }
-
-        new_draw_info(NDI_UNIQUE, 0, op, "Start reseting map %s.",
-                             STRING_SAFE(m->path));
-        /* remove now all players from this map - flag them so we can
-             * put them back later.
-             */
-
-        for (pl = first_player, count = 0; pl != NULL; pl = pl->next)
-        {
-            if (pl->ob->map == m)
-            {
-                count++;
-                /* With the new activelist, any player on a reset map
-                 * was somehow forgotten. This seems to fix it. The
-                 * problem isn't analyzed, though. Gecko 20050713 */
-                activelist_remove(pl->ob);
-                remove_ob(pl->ob); /* no walk off check */
-                pl->dm_removed_from_map = 1;
-                /*tmp=op;*/
-            }
-            else
-                pl->dm_removed_from_map = 0;
-        }
-
-        new_draw_info(NDI_UNIQUE, 0, op, "removed %d players from map. Swap map.",
-                             count);
-        swap_map(m, 1);
-    }
-
-    if (m->in_memory == MAP_SWAPPED)
-    {
-        LOG(llevDebug, "Resetting map %s.\n", m->path);
-        clean_tmp_map(m);
-        FREE_AND_NULL_PTR(m->tmpname);
-        /* setting this effectively causes an immediate reload */
-        m->reset_time = 1;
-        new_draw_info(NDI_UNIQUE, 0, op, "Swap successful. Inserting players.");
-
-        m = ready_map_name(m->path, m->orig_path,
-                           MAP_STATUS_TYPE(m->map_status), m->reference);
-
-        for (pl = first_player; pl; pl = pl->next)
-        {
-            if (pl->dm_removed_from_map)
-            {
-                insert_ob_in_map(pl->ob, m, NULL, INS_NO_MERGE);
-                activelist_insert(pl->ob); /* See activelist comment above */
-
-                if (pl->ob != op)
-                {
-                    if (QUERY_FLAG(pl->ob, FLAG_WIZ))
-                        new_draw_info(NDI_UNIQUE, 0, pl->ob, "Map reset by %s.",
-                                             op->name);
-                    else /* Write a nice little confusing message to the players */
-                        new_draw_info(NDI_UNIQUE, 0, pl->ob,
-                                      "Your surroundings seem different but still familiar. Haven't you been here before?");
-                }
-            }
-        }
-
-        new_draw_info(NDI_UNIQUE, 0, op, "resetmap done.");
-    }
-    else
-    {
-        /* Need to re-insert player if swap failed for some reason */
-        for (pl = first_player; pl; pl = pl->next)
-        {
-            if (pl->dm_removed_from_map)
-                insert_ob_in_map(pl->ob, m, NULL, INS_NO_MERGE | INS_NO_WALK_ON);
-        }
-
-        new_draw_info(NDI_UNIQUE, 0, op, "Reset failed, couldn't swap map!");
+        m->map_flags |= MAP_FLAG_MANUAL_RESET;
+        MAP_SET_WHEN_RESET(m, (secs) ? secs : -1);
     }
 
     return COMMANDS_RTN_VAL_OK;

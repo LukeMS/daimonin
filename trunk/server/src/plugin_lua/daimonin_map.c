@@ -290,7 +290,7 @@ static int Map_Delete(lua_State *L)
 
     if(WHERE->player_first) /* we have players on the map? */
     {
-        hooks->map_to_player_unlink(WHERE); /* remove player from map */
+        hooks->map_player_unlink(WHERE); /* remove player from map */
         map_player = TRUE;
     }
 
@@ -302,7 +302,7 @@ static int Map_Delete(lua_State *L)
      * because our bind point CAN be the same map we killed above!
      */
     if(map_player)
-        hooks->map_to_player_link(NULL, -1, -1, TRUE);
+        hooks->map_player_link(NULL, -1, -1, TRUE);
 
     /* handle the file delete */
     if(flags && path_sh)
