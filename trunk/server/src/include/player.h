@@ -117,6 +117,7 @@ typedef struct pl_player
     const char          *savebed_map;           /* map where player will respawn after death */
     const char          *orig_savebed_map;      /* map where player will respawn after death (original map) */
     const char          *orig_map;              /* Name of the map the player is on (original map) */
+    const char          *temp_removal_map;      /* map the player is 'on', but temp removed from */
     /* we store the account name here too so we can later load player from dm accounts */
     const char          *account_name;          /* name of the account this player is part of */
     /* hash strings end*/
@@ -131,7 +132,6 @@ typedef struct pl_player
     uint32              wizpass             : 1;    /* 1= pass through walls, over move apply objects, etc */
     uint32              dm_invis            : 1;    /* 1= is invisible, see invisible */
     uint32              stealth             : 1;    /* 1= player undetectable to mobs */
-    uint32              dm_removed_from_map : 1;    /* internal dm flag: player was removed from a map */
 
     uint32              personal_light      : 3;   /* must be enough bits to hold MAX_DARKNESS */
     uint32              known_spell         : 1;   /* True if you know the spell of the wand */

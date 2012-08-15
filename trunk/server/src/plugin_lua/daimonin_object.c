@@ -777,8 +777,10 @@ static int GameObject_ReadyUniqueMap(lua_State *L)
         {
             int num = 0;
 
-            if(map->player_first)
-                num = hooks->map_player_unlink(map); /* remove player from map */
+            if (map->player_first)
+            {
+                num = hooks->map_player_unlink(map, NULL);
+            }
 
             hooks->clean_tmp_map(map); /* remove map from memory */
             hooks->delete_map(map);

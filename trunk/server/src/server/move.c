@@ -814,12 +814,11 @@ int enter_map_by_exit(object *op, object *exit_ob)
                 /* we have now this:
                 * - in map->path a normalized path to /players or /instance
                 * - in exit_ob->race the normalized path + name to the original map
-                * we create now a new path out of it by using the root from ->path
-                * and use path_to_name() to exchange all '/' through '$' to have a unique map name.
-                * NOTE: the path to /maps is always part of the unique/instance map name.
-                */
-                exit_ob->title = add_string(normalize_path_direct( exit_map->path,
-                    path_to_name(exit_ob->race), tmp_path));
+                * we create now a new path out of it by using the root from ->path.
+                * NOTE: the path to /maps is always part of the unique/instance map name. */
+                FREE_AND_COPY_HASH(exit_ob->title,
+                                   normalize_path_direct(exit_map->path,
+                                   exit_ob->race, tmp_path));
             }
             else /* this should never happen and will break the inheritance system - so kill the server */
                 LOG(llevError, "FATAL ERROR: enter_map_by_exit(): Map %s loaded without valid map status (%d)!\n",
@@ -1119,8 +1118,10 @@ int enter_map(object *op, object *originator, mapstruct *newmap, int x, int y, i
         tmp->y = y + tmp->arch->clone.y;
     }
 
-    if (!insert_ob_in_map(op, newmap, originator, 0))
+    if (!insert_ob_in_map(op, newmap, originator, ins_flags))
+    {
         return 1; // object destroyed
+    }
 
     /* do some action special for players after we have inserted them */
     if (op->type == PLAYER && (pl = CONTR(op)))

@@ -208,13 +208,12 @@ extern const char      *create_instance_path_sh(player * const pl, const char * 
 extern mapstruct       *ready_map_name(shstr *name_path, shstr *src_path, uint32 flags, shstr *reference);
 extern void             clean_tmp_map(mapstruct *m);
 extern void             free_all_maps(void);
-extern const char      *path_to_name(const char *file);
 extern void             set_bindpath_by_name(player *pl, const char *dst, const char *src, int status, int x, int y);
 extern void             set_bindpath_by_default(player *pl);
 extern void             set_mappath_by_name(player *pl, const char *dst, const char *src, int status, int x, int y);
 extern void             set_mappath_by_map(object* op);
 extern void             set_mappath_by_default(player *pl);
-extern uint16           map_player_unlink(mapstruct *m);
+extern uint16           map_player_unlink(mapstruct *m, shstr *path_sh);
 extern void             map_player_link(mapstruct *m, sint16 x, sint16 y, uint8 flag);
 extern const char      *create_safe_mapname_sh(char const *mapname);
 extern void             read_map_log(void);

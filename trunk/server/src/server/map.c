@@ -50,6 +50,7 @@ static int MapTiledReverse[TILED_MAPS] =
     5
 };
 
+static char      *PathToName(shstr *path_sh);
 static char      *ShowMapFlags(mapstruct *m);
 static mapstruct *GetLinkedMap(void);
 static void       AllocateMap(mapstruct *m);
@@ -287,10 +288,8 @@ char *normalize_path(const char *src, const char *dst, char *path)
 
 /* Same as above but here we know that src & dst was normalized before - so we
  * can just merge them without checking for ".." again. */
-char *normalize_path_direct(const char *src, const char *dst, char *path)
+char *normalize_path_direct(shstr *src, shstr *dst, char *path)
 {
-    /*LOG(llevDebug,"path before normalization >%s< >%s<\n", src, dst?dst:"<no dst>");*/
-
     if (!src)
     {
         LOG(llevBug, "BUG:: %s/normalize_path_direct(): Called with src path = NULL! (dst:%s)\n",
@@ -299,35 +298,38 @@ char *normalize_path_direct(const char *src, const char *dst, char *path)
     }
     else
     {
+        const char *cp;
+
         if (!dst)
         {
-            dst = src;
-        }
-
-        /* First, make the dst path absolute */
-        if (*dst == '/')
-        {
-            /* Already absolute path */
-            strcpy(path, dst);
+            cp = dst = src;
+            *path = '\0';
         }
         else
         {
+            cp = PathToName(dst);
+        }
+
+        /* cp is not absolute (guaranteed if dst != NULL). */
+        if (*cp != '/')
+        {
             char *p;
 
-           /* Combine directory part of src with dst to create absolute path */
-            strcpy(path, src);
+            /* Combine directory part of src with dst to create abs path. */
+            sprintf(path, "%s", src);
 
             if ((p = strrchr(path, '/')))
             {
-                p[1] = '\0';
+                *(p + 1) = '\0';
             }
             else
             {
-                strcpy(path, "/");
+                *path = '/';
+                *(path + 1) = '\0';
             }
-
-            strcat(path, dst);
         }
+
+        sprintf(strchr(path, '\0'), "%s", cp);
     }
 
     return path;
@@ -1386,11 +1388,15 @@ void free_all_maps(void)
  */
 const char *create_unique_path_sh(const object * const op, const char * const name)
 {
-     char path[1024];
+     char   path[LARGE_BUF];
+     shstr *path_sh = NULL;
 
-     sprintf(path, "%s/%s/%s/%s/%s", settings.localdir, settings.playerdir, get_subdir(op->name), op->name, path_to_name(name));
+     sprintf(path, "%s/%s/%s/%s/%s",
+             settings.localdir, settings.playerdir, get_subdir(op->name),
+             op->name, PathToName(name));
+     FREE_AND_COPY_HASH(path_sh, path);
 
-     return add_string(path);
+     return path_sh;
 }
 
 /* same as above but more complex: helper function to create from a normal map a instanced map.
@@ -1403,44 +1409,49 @@ const char *create_unique_path_sh(const object * const op, const char * const na
  */
 const char *create_instance_path_sh(player * const pl, const char * const name, int flags)
 {
-    int instance_num = pl->instance_num;
-    const char *mapname, *path_sh = NULL;
-    char path[1024];
-
-    mapname = path_to_name(name); /* create the instance map name with '$' instead of '/' */
+    char   path[LARGE_BUF];
+    int    instance_num = pl->instance_num;
+    shstr *path_sh = NULL;
 
     /* REENTER PART: we have valid instance data ... remember: the important one is the directory, not the map */
     if (instance_num != MAP_INSTANCE_NUM_INVALID)
     {
         /* just a very last sanity check... never EVER use a illegal ID */
-        if(pl->instance_id != global_instance_id || flags & INSTANCE_FLAG_NO_REENTER)
+        if (pl->instance_id != global_instance_id ||
+            (flags & INSTANCE_FLAG_NO_REENTER))
+        {
             instance_num = MAP_INSTANCE_NUM_INVALID;
+        }
         else
         {
-            sprintf(path, "%s/%s/%ld/%d/%d/%s", settings.localdir, settings.instancedir, pl->instance_id,
-                instance_num/10000, instance_num, mapname);
+            sprintf(path, "%s/%s/%ld/%d/%d/%s",
+                    settings.localdir, settings.instancedir, pl->instance_id,
+                    instance_num / 10000, instance_num, PathToName(name));
         }
     }
 
     if (instance_num == MAP_INSTANCE_NUM_INVALID)
     {
         instance_num = get_new_instance_num();
-        /* create new instance directory for this instance */
-        sprintf(path, "%s/%s/%ld/%d/%d/%s", settings.localdir, settings.instancedir, global_instance_id,
-            instance_num/10000, instance_num, mapname);
 
-        /* store the instance information for the player */
+        /* create new instance directory for this instance */
+        sprintf(path, "%s/%s/%ld/%d/%d/%s",
+                settings.localdir, settings.instancedir, global_instance_id,
+                instance_num / 10000, instance_num, PathToName(name));
+
+        /* Store the instance information for the player. */
         pl->instance_flags = flags;
         pl->instance_id = global_instance_id;
         pl->instance_num = instance_num;
-        FREE_AND_COPY_HASH(pl->instance_name, name); /* important: our instance NAME is the real original path name */
+        FREE_AND_COPY_HASH(pl->instance_name, name); // XXX: instance_name is the original path name
     }
 
     FREE_AND_COPY_HASH(path_sh, path);
-    /* thats the most important part... to garantie we have the directory!
-     * if its not there, we will run in bad problems when we try to save or load the instance!
-     */
-    make_path_to_file (path); /* use mkdir to pre create it physical */
+
+    /* Thats the most important part... to guarantee we have the directory!
+     * If it's not there, we will run into bad problems when we try to save or
+     * load the instance! */
+    make_path_to_file(path);
 
     return path_sh;
 }
@@ -1518,7 +1529,7 @@ mapstruct *ready_inherited_map(mapstruct *orig_map, shstr *new_map_path,
     if(orig_map->map_status & (MAP_STATUS_UNIQUE|MAP_STATUS_INSTANCE))
     {
         new_path = add_string(normalize_path_direct(orig_map->path,
-                    path_to_name(normalized_path), tmp_path));
+                    normalized_path, tmp_path));
     }
 #else
     if (orig_map->map_status & (MAP_STATUS_UNIQUE | MAP_STATUS_INSTANCE))
@@ -1530,9 +1541,7 @@ mapstruct *ready_inherited_map(mapstruct *orig_map, shstr *new_map_path,
         }
         else
         {
-            (void)normalize_path_direct(orig_map->path,
-                                        path_to_name(new_map_path), tmp_path);
-
+            (void)normalize_path_direct(orig_map->path, new_map_path, tmp_path);
             normalized_path = add_string(tmp_path);
         }
     }
@@ -2414,7 +2423,7 @@ static int LoadMapHeader(FILE *fp, mapstruct *m, uint32 flags)
                     if ((flags & (MAP_STATUS_UNIQUE | MAP_STATUS_INSTANCE)))
                     {
                         normalize_path_direct(m->path,
-                                              path_to_name(m->orig_tile_path[tile - 1]),
+                                              m->orig_tile_path[tile - 1],
                                               msgbuf);
                         path_sh = add_string(msgbuf);
                     }
@@ -2545,22 +2554,26 @@ static int LoadMapHeader(FILE *fp, mapstruct *m, uint32 flags)
     return 0;
 }
 
-
-/* path_to_name() takes a path and replaces all / with '$'
-* We do a strcpy so that we do not change the original string.
-*/
-const char *path_to_name(const char *file)
+/* Converts path_sh from a path to a filename. To do this, we copy path_sh to a
+ * static local buffer, replace all '/' with '$' in this buffer, and return it
+ * (thus the original is unchanged). */
+static char *PathToName(shstr *path_sh)
 {
-    static char newpath[MAXPATHLEN], *cp;
+    static char  buf[MAXPATHLEN];
+    char        *cp;
 
-    strncpy(newpath, file, MAXPATHLEN - 1);
-    newpath[MAXPATHLEN - 1] = '\0';
-    for (cp = newpath; *cp != '\0'; cp++)
+    strncpy(buf, path_sh, MAXPATHLEN - 1);
+    buf[MAXPATHLEN - 1] = '\0';
+
+    for (cp = buf; *cp != '\0'; cp++)
     {
         if (*cp == '/')
+        {
             *cp = '$';
+        }
     }
-    return newpath;
+
+    return buf;
 }
 
 /* initialize the player struct map & bind pathes */
@@ -3332,13 +3345,14 @@ static void SaveObjects(mapstruct *m, FILE *fp)
 #undef REMOVE_OBJECT
 #undef VALIDATE_NEXT
 
-/* Remove all players from a map and set a marker.
+/* Remove all players from a map and set a marker. If path_sh is non-NULL, this
+ * is the path of the map the player will subsequently be linked to.
  *
  * XXX: map_player_link() MUST be called after this or the server has a
  * problem. */
-uint16 map_player_unlink(mapstruct *m)
+uint16 map_player_unlink(mapstruct *m, shstr *path_sh)
 {
-    player *pl;
+    object *op;
     uint16  num = 0;
 
     if (!m)
@@ -3346,18 +3360,16 @@ uint16 map_player_unlink(mapstruct *m)
         return 0;
     }
 
-    for (pl = first_player; pl; pl = pl->next)
+    while ((op = m->player_first))
     {
-        if (pl->ob->map == m)
-        {
-            /* With the new activelist, any player on a reset map
-            * was somehow forgotten. This seems to fix it. The
-            * problem isn't analyzed, though. Gecko 20050713 */
-            activelist_remove(pl->ob);
-            remove_ob(pl->ob); /* no walk off check */
-            pl->dm_removed_from_map = 1;
-            num++;
-        }
+        /* With the new activelist, any player on a reset map
+         * was somehow forgotten. This seems to fix it. The
+         * problem isn't analyzed, though. Gecko 20050713 */
+        activelist_remove(op);
+        remove_ob(op); // changes m->player_first
+        FREE_AND_ADD_REF_HASH(CONTR(op)->temp_removal_map,
+                              (path_sh) ? path_sh : m->path);
+        num++;
     }
 
     return num;
@@ -3365,35 +3377,49 @@ uint16 map_player_unlink(mapstruct *m)
 
 /* Reinsert players on a map after they were removed with map_player_unlink().
  * If m is NULL use the savebed (or if flag, the emergency map). Otherwise, if
- * x or y == -1 they will overrule the player map position. */
+ * x or y == -1 they will overrule the player map position.
+ *
+ * If m is NULL then *all* temp removed players, regardless of where they were
+ * removed from, will be restored to their savebed or the emergency map. */
 void map_player_link(mapstruct *m, sint16 x, sint16 y, uint8 flag)
 {
     player *pl;
 
     for (pl = first_player; pl; pl = pl->next)
     {
-        if (pl->dm_removed_from_map)
+        uint8 relinked = 0;
+
+        if (pl->temp_removal_map)
         {
             if (m)
             {
-                enter_map(pl->ob, NULL, m, (x == -1) ? pl->ob->x : x,
-                          (y == -1) ? pl->ob->y : y, m->map_status, 0);
+                if (pl->temp_removal_map == m->path)
+                {
+                    enter_map(pl->ob, NULL, m, (x == -1) ? pl->ob->x : x,
+                              (y == -1) ? pl->ob->y : y, m->map_status,
+                              INS_NO_MERGE | INS_NO_WALK_ON);
+                    relinked = 1;
+                }
             }
             else if (!flag)
             {
-                enter_map_by_name(pl->ob, pl->savebed_map,
-                                  pl->orig_savebed_map, pl->bed_x, pl->bed_y,
-                                  pl->bed_status);
+                enter_map_by_name(pl->ob, pl->savebed_map, pl->orig_savebed_map,
+                                  pl->bed_x, pl->bed_y, pl->bed_status);
+                relinked = 1;
             }
             else
             {
                 enter_map_by_name(pl->ob, shstr_cons.emergency_mappath,
                                   shstr_cons.emergency_mappath, -1, -1,
                                   MAP_STATUS_MULTI);
+                relinked = 1;
             }
 
-            pl->dm_removed_from_map = 0;
-            new_draw_info(NDI_UNIQUE, 0, pl->ob, "You have a distinct feeling of deja vu.");
+            if (relinked)
+            {
+                FREE_AND_CLEAR_HASH(pl->temp_removal_map);
+                new_draw_info(NDI_UNIQUE, 0, pl->ob, "You have a distinct feeling of deja vu.");
+            }
         }
     }
 }
@@ -3811,26 +3837,25 @@ void map_check_active(void)
                                           (long unsigned int)MAX(1, pticks_second)) /
                                           pticks_second)
             {
-#ifdef DEBUG_MAP
-                LOG(llevDebug, "DEBUG:: %s/map_check_active(): Resetting map >%s<!\n",
-                    __FILE__, STRING_MAP_PATH(this));
-#endif
-                clean_tmp_map(this);
-
                 /* On a manual reset we want to immediately reload the source
                  * map which also means we need to juggle any players on it. */
                 if (MAP_MANUAL_RESET(this))
                 {
-                    uint8  anyplayers = (this->player_first) ? 1 : 0;
+                    uint8  anyplayers;
                     shstr *path_sh = NULL,
                           *orig_path_sh = NULL,
                           *reference_sh = NULL;
                     uint32 status;
 
+#ifdef DEBUG_MAP
+                    LOG(llevDebug, "DEBUG:: %s/map_check_active(): Manually resetting map >%s<!\n",
+                        __FILE__, STRING_MAP_PATH(this));
+
+#endif
                     /* If there are any players on the map, temp remove them. */
-                    if (anyplayers)
+                    if ((anyplayers = (this->player_first) ? 1 : 0))
                     {
-                        (void)map_player_unlink(this);
+                        (void)map_player_unlink(this, NULL);
                     }
 
                     /* We now need to 'save' the objects on map so spawns from
@@ -3862,6 +3887,7 @@ void map_check_active(void)
                     status = MAP_STATUS_TYPE(this->map_status);
 
                     /* Delete the map from memory and reload it. */
+                    clean_tmp_map(this);
                     delete_map(this);
                     this = ready_map_name(path_sh, orig_path_sh, status,
                                           reference_sh);
@@ -3881,6 +3907,11 @@ void map_check_active(void)
                 /* Otherwise we know there's no-one here, so just delete it. */
                 else
                 {
+#ifdef DEBUG_MAP
+                    LOG(llevDebug, "DEBUG:: %s/map_check_active(): Resetting map >%s<!\n",
+                        __FILE__, STRING_MAP_PATH(this));
+#endif
+                    clean_tmp_map(this);
                     delete_map(this);
                 }
             }
