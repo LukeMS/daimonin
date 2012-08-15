@@ -233,8 +233,8 @@ static int Map_ReadyInheritedMap(lua_State *L)
         {
             char tmp_path[MAXPATHLEN];
 
-            path_sh = hooks->add_string( hooks->normalize_path_direct(WHERE->path,
-                                         hooks->path_to_name(orig_path_sh), tmp_path));
+            FREE_AND_COPY_HASH(path_sh, hooks->normalize_path_direct(WHERE->path,
+                               orig_path_sh, tmp_path));
         }
 
         new_map = hooks->ready_map_name(path_sh?path_sh:orig_path_sh, orig_path_sh, MAP_STATUS_TYPE(WHERE->map_status), WHERE->reference);
@@ -260,7 +260,7 @@ static int Map_Delete(lua_State *L)
 {
     lua_object *self;
     char const *path_sh = NULL;
-    int         map_player = FALSE,
+    int         map_player = 0,
                 flags = 0;
 
     get_lua_args(L, "M|i", &self, &flags);
@@ -288,21 +288,29 @@ static int Map_Delete(lua_State *L)
         }
     }
 
-    if(WHERE->player_first) /* we have players on the map? */
+    if (WHERE->player_first)
     {
-        hooks->map_player_unlink(WHERE); /* remove player from map */
-        map_player = TRUE;
+        hooks->map_player_unlink(WHERE, hooks->shstr_cons->emergency_mappath);
+        map_player = 1;
     }
 
     /* remove map from /tmp and from memory */
     hooks->clean_tmp_map(WHERE);
     hooks->delete_map(WHERE);
 
-    /* transfer players to the emergency map - why emergency?
+    /* Transfer players to the emergency map - why emergency?
      * because our bind point CAN be the same map we killed above!
-     */
-    if(map_player)
-        hooks->map_player_link(NULL, -1, -1, TRUE);
+     *
+     * By explicitly readying emegency here we ensure that only THESE players
+     * are relinked. */
+    if (map_player)
+    {
+        mapstruct *m = hooks->ready_map_name(hooks->shstr_cons->emergency_mappath,
+                                             hooks->shstr_cons->emergency_mappath,
+                                             MAP_STATUS_MULTI, NULL);
+
+        hooks->map_player_link(m, -1, -1, 1);
+    }
 
     /* handle the file delete */
     if(flags && path_sh)

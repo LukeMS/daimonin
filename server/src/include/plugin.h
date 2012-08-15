@@ -352,7 +352,7 @@ struct plugin_hooklist
     /* M */
     int (*map_brightness)(mapstruct *, int, int);
     void (*map_player_link)(mapstruct *, sint16, sint16, uint8);
-    uint16 (*map_player_unlink)(mapstruct *);
+    uint16 (*map_player_unlink)(mapstruct *, shstr *);
     void (*map_transfer_apartment_items)(mapstruct *, mapstruct *, int, int);
     sint64 (*material_repair_cost)(object *, object *);
     void (*material_repair_item)(object *, int);
@@ -373,7 +373,6 @@ struct plugin_hooklist
     /* O */
     mapstruct *(*out_of_map)(mapstruct *, int *, int *);
     /* P */
-    const char *(*path_to_name)(const char *);
     int (*pay_for_amount)(sint64, object *);
     int (*pay_for_item)(object *, object *);
     void (*play_sound_map)(mapstruct *, int, int, int, int);

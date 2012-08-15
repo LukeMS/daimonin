@@ -142,7 +142,6 @@ struct plugin_hooklist  hooklist    =
     /* O */
     out_of_map,
     /* P */
-    path_to_name,
     pay_for_amount,
     pay_for_item,
     play_sound_map,
