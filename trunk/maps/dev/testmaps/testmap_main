@@ -2,7 +2,7 @@ arch map
 name Testmaps - Main
 msg
 Created:  2003-04-13 Daimonin Map Editor
-Modified: 2012-07-19 franklinb
+Modified: 2012-08-20 smacky
 endmsg
 width 17
 height 17
@@ -1613,7 +1613,9 @@ x 14
 y 5
 end
 arch sign
-name tiled maps testmap (multi arch)
+msg
+To map tiling and multipart objects testmap
+endmsg
 x 14
 y 5
 end
@@ -1713,25 +1715,7 @@ arch floor_ostone1
 x 15
 y 1
 end
-arch stairs_stone_down
-name Connected Maps Test1 (spawns)
-slaying testmap_maps1
-hp 1
-sp 1
-x 15
-y 1
-end
 arch floor_ostone1
-x 15
-y 2
-end
-arch sign
-msg
-Some tests for connected maps.
-Includes a multi arch spawn on
-map borders with possible
-swapout.
-endmsg
 x 15
 y 2
 end
@@ -1740,7 +1724,6 @@ x 15
 y 3
 end
 arch stairs_stone_down
-name Weapons
 slaying testmap_weapon
 hp 1
 sp 1
@@ -1756,7 +1739,6 @@ x 15
 y 5
 end
 arch stairs_stone_down
-name Tiled maps and multitle archs
 slaying testmap_tiled1
 hp 1
 sp 1
