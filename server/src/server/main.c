@@ -445,7 +445,7 @@ void process_events()
                 /* In case the map was swapped out with an object in the insertion list
                  * (This probably doesn't happen, since all objects are removed when the map
                  * is swapped out) */
-                if(obj->map->in_memory != MAP_IN_MEMORY)
+                if(obj->map->in_memory != MAP_ACTIVE)
                 {
                     /* FIXME: for now we'll just see if this happens */
                     LOG( llevDebug, "ACTIVEBUG: object on map not in memory! obj %s in %s\n",
@@ -476,7 +476,7 @@ void process_events()
     /* TODO: only go through maps in special list of maps with active objects */
     for (map = first_map; map; map = map->next)
     {
-        if (map->active_objects->active_next && map->in_memory == MAP_IN_MEMORY)
+        if (map->active_objects->active_next && map->in_memory == MAP_ACTIVE)
             process_map_events(map);
     }
 
@@ -511,7 +511,7 @@ void clean_tmp_files(int flag)
     for (m = first_map; m != NULL; m = next)
     {
         next = m->next;
-        if (m->in_memory == MAP_IN_MEMORY)
+        if (m->in_memory == MAP_ACTIVE)
         /* If we want to reuse the temp maps, swap it out (note that will also
          * update the log file.  Otherwise, save the map (mostly for unique item
          * stuff).  Note that the clean_tmp_map is called after the end of
@@ -525,7 +525,7 @@ void clean_tmp_files(int flag)
         }
 #else
         {
-            new_save_map(m, 0);
+            map_save(m);
         }
         clean_tmp_map(m);
 #endif
@@ -686,7 +686,7 @@ void do_specials()
     /* We only check for maps needing swap/reset every second. */
     if (!(ROUND_TAG % (long unsigned int)MAX(1, pticks_second)))
     {
-        map_check_active();
+        map_check_in_memory(NULL);
     }
 
     if (!(ROUND_TAG % 2521))

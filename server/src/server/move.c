@@ -506,18 +506,16 @@ uint8 leave_map(player *pl, mapstruct *newmap)
     if (oldmap &&
         oldmap != newmap)
     {
-        if (MAP_INSTANCE(oldmap) ||
-            MAP_UNIQUE(oldmap))
+        if (MAP_MULTI(oldmap) ||
+            map_save(oldmap))
         {
-           (void)new_save_map(oldmap, 0);
-        }
-
-        /* When there are still players or (TODO) permanently loading mobs on
-         * the map, mark it as still in memory. */
-        if (oldmap->player_first ||
-            oldmap->perm_load)
-        {
-            oldmap->in_memory = MAP_IN_MEMORY;
+            /* When there are still players or (TODO) permanently loading mobs on
+             * the map, mark it as still in memory. */
+            if (oldmap->player_first ||
+                oldmap->perm_load)
+            {
+                oldmap->in_memory = MAP_ACTIVE;
+            }
         }
     }
 

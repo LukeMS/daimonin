@@ -470,7 +470,7 @@ void check_use_object_list(void)
 
             if (tmp->map) /* we are on a map */
             {
-                if (tmp->map->in_memory != MAP_IN_MEMORY)
+                if (tmp->map->in_memory != MAP_ACTIVE)
                     LOG(llevDebug, "BUG:DEBUG_OBJ:: object >%s< (%d) has invalid map! >%d<!\n", query_name(tmp),
                         tmp->map->name ? tmp->map->name : "NONE", chunk->id);
                 else

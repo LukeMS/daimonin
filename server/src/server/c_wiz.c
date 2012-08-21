@@ -458,7 +458,7 @@ int command_goto(object *op, char *params)
             return COMMANDS_RTN_VAL_OK_SILENT;
         }
 
-        orig_path_sh = create_safe_mapname_sh(walk->title);
+        orig_path_sh = create_safe_path_sh(walk->title);
         path_sh = create_unique_path_sh(other->ob, orig_path_sh);
         flags = MAP_STATUS_UNIQUE;
 
@@ -496,7 +496,7 @@ int command_goto(object *op, char *params)
         {
             if (check_path(normalize_path("/", name, buf), 1) != -1)
             {
-                orig_path_sh = create_safe_mapname_sh(buf);
+                orig_path_sh = create_safe_path_sh(buf);
                 FREE_AND_ADD_REF_HASH(path_sh, orig_path_sh);
                 flags = MAP_STATUS_MULTI;
             }
@@ -506,7 +506,7 @@ int command_goto(object *op, char *params)
         {
             if (check_path(normalize_path(CONTR(op)->orig_map, name, buf), 1) != -1)
             {
-                orig_path_sh = create_safe_mapname_sh(buf);
+                orig_path_sh = create_safe_path_sh(buf);
                 FREE_AND_ADD_REF_HASH(path_sh, orig_path_sh);
                 flags = MAP_STATUS_MULTI;
             }
@@ -1535,7 +1535,7 @@ int command_resetmap(object *op, char *params)
         FREE_AND_ADD_REF_HASH(path_sh, op->map->path);
     }
 
-    m = has_been_loaded_sh(path_sh);
+    m = map_is_in_memory(path_sh);
     FREE_ONLY_HASH(path_sh);
 
     if (!m)
@@ -1545,10 +1545,16 @@ int command_resetmap(object *op, char *params)
         return COMMANDS_RTN_VAL_OK_SILENT;
     }
 
-    if (m->in_memory == MAP_IN_MEMORY)
+     m->map_flags |= MAP_FLAG_MANUAL_RESET | MAP_FLAG_RELOAD;
+
+    if (!secs)
     {
-        m->map_flags |= MAP_FLAG_MANUAL_RESET;
-        MAP_SET_WHEN_RESET(m, (secs) ? secs : -1);
+        MAP_SET_WHEN_RESET(m, -1);
+        map_check_in_memory(m);
+    }
+    else
+    {
+        MAP_SET_WHEN_RESET(m, secs);
     }
 
     return COMMANDS_RTN_VAL_OK;

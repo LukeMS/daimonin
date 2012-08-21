@@ -48,7 +48,7 @@ struct plugin_hooklist  hooklist    =
     /* B */
     /* C */
     cast_spell,
-    clean_tmp_map,
+    check_path,
     clear_mob_knowns,
     command_combat,
     command_target,
@@ -56,11 +56,10 @@ struct plugin_hooklist  hooklist    =
     create_instance_path_sh,
     create_mapdir_pathname,
     create_mempool,
-    create_safe_mapname_sh,
+    create_safe_path_sh,
     create_unique_path_sh,
     /* D */
     decrease_ob_nr,
-    delete_map,
     destruct_ob,
     /* E */
     enter_map,
@@ -125,8 +124,11 @@ struct plugin_hooklist  hooklist    =
 #endif
     /* M */
     map_brightness,
+    map_check_in_memory,
+    map_is_in_memory,
     map_player_link,
     map_player_unlink,
+    map_save,
     map_transfer_apartment_items,
     material_repair_cost,
     material_repair_item,
@@ -136,7 +138,6 @@ struct plugin_hooklist  hooklist    =
     new_draw_info,
     new_info_map,
     new_info_map_except,
-    new_save_map,
     normalize_path,
     normalize_path_direct,
     /* O */
@@ -198,6 +199,7 @@ struct plugin_hooklist  hooklist    =
     &global_instance_id,
     &new_faces,
     &pticks,
+    &pticks_second,
     &settings,
     &shstr_cons,
     spells,

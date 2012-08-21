@@ -56,7 +56,6 @@
 #define MAP_SWAP_TIMEOUT(m)     ((m)->swap_timeout)
 #define MAP_OUTDOORS(m)         ((m)->map_flags & MAP_FLAG_OUTDOOR)
 #define MAP_FIXED_RESETTIME(m)  ((m)->map_flags & MAP_FLAG_FIXED_RTIME)
-#define MAP_MANUAL_RESET(m)     ((m)->map_flags & MAP_FLAG_MANUAL_RESET)
 #define MAP_NOSAVE(m)           ((m)->map_flags & MAP_FLAG_NO_SAVE)
 #define MAP_NOMAGIC(m)          ((m)->map_flags & MAP_FLAG_NOMAGIC)
 #define MAP_NOPRIEST(m)         ((m)->map_flags & MAP_FLAG_NOPRIEST)
@@ -67,6 +66,8 @@
 #define MAP_ULTRADEATH(m)       ((m)->map_flags & MAP_FLAG_ULTRADEATH)
 #define MAP_ULTIMATEDEATH(m)    ((m)->map_flags & MAP_FLAG_ULTIMATEDEATH)
 #define MAP_PVP(m)              ((m)->map_flags & MAP_FLAG_PVP)
+#define MAP_MANUAL_RESET(m)     ((m)->map_flags & MAP_FLAG_MANUAL_RESET)
+#define MAP_RELOAD(m)           ((m)->map_flags & MAP_FLAG_RELOAD)
 
 /* mape darkness used to enforce the MAX_DARKNESS value.
  * but IMO, if it is beyond max value, that should be fixed
@@ -111,7 +112,7 @@
 #define MAP_STATUS_TYPE(_f)     (_f&(MAP_STATUS_MULTI|MAP_STATUS_UNIQUE|MAP_STATUS_INSTANCE|MAP_STATUS_STYLE))
 
 /* Values for in_memory below.  Should probably be an enumerations */
-#define MAP_IN_MEMORY   1
+#define MAP_ACTIVE   1
 #define MAP_SWAPPED     2
 #define MAP_LOADING     3
 #define MAP_SAVING      4
@@ -339,16 +340,17 @@ typedef struct MapSpace_s
 #define MAP_FLAG_OUTDOOR       (1 << 0)  // outdoor map - daytime effects are on
 #define MAP_FLAG_NO_SAVE       (1 << 1)  // don't save maps - atm only used with unique maps
 #define MAP_FLAG_FIXED_RTIME   (1 << 2)  // reset time is not affected by players entering/exiting map
-#define MAP_FLAG_MANUAL_RESET  (1 << 3)  // a gmaster has scheduled this map to reset
-#define MAP_FLAG_NOMAGIC       (1 << 4)  // no spells
-#define MAP_FLAG_NOPRIEST      (1 << 5)  // no prayers
-#define MAP_FLAG_NOHARM        (1 << 6)  // no harmful spells/prayers
-#define MAP_FLAG_NOSUMMON      (1 << 7)  // no summoning spells/prayers
-#define MAP_FLAG_FIXED_LOGIN   (1 << 8)  // player login forced to enter_x/enter_y
-#define MAP_FLAG_PERMDEATH     (1 << 9)  // perm death map
-#define MAP_FLAG_ULTRADEATH    (1 << 10) // ultra death map
-#define MAP_FLAG_ULTIMATEDEATH (1 << 11) // ultimate death map
-#define MAP_FLAG_PVP           (1 << 12) // PvP is possible on this map
+#define MAP_FLAG_NOMAGIC       (1 << 3)  // no spells
+#define MAP_FLAG_NOPRIEST      (1 << 4)  // no prayers
+#define MAP_FLAG_NOHARM        (1 << 5)  // no harmful spells/prayers
+#define MAP_FLAG_NOSUMMON      (1 << 6)  // no summoning spells/prayers
+#define MAP_FLAG_FIXED_LOGIN   (1 << 7)  // player login forced to enter_x/enter_y
+#define MAP_FLAG_PERMDEATH     (1 << 8)  // perm death map
+#define MAP_FLAG_ULTRADEATH    (1 << 9) // ultra death map
+#define MAP_FLAG_ULTIMATEDEATH (1 << 10) // ultimate death map
+#define MAP_FLAG_PVP           (1 << 11) // PvP is possible on this map
+#define MAP_FLAG_MANUAL_RESET  (1 << 12) // a gmaster/script has scheduled this map to reset
+#define MAP_FLAG_RELOAD        (1 << 13) // this map will reload (only has meaning on a manual reset)
 #define MAP_FLAG_NO_UPDATE     (1 << 31) // ?
 
 #define SET_MAP_TILE_VISITED(m, x, y, id) { \

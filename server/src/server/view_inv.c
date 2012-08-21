@@ -145,7 +145,7 @@ void esrv_draw_look(object *pl)
     /* change out_of_map to OUT_OF_REAL_MAP(). we don't even think here about map crossing */
     if (QUERY_FLAG(pl, FLAG_REMOVED)
      || pl->map == NULL
-     || pl->map->in_memory != MAP_IN_MEMORY
+     || pl->map->in_memory != MAP_ACTIVE
      || OUT_OF_REAL_MAP(pl->map,pl->x,pl->y))
         return;
 

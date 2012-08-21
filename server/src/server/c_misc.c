@@ -137,7 +137,7 @@ void malloc_info(object *op)
         anims += animations[i].num_animations;
 
     for (m = first_map,nrofmaps = 0; m != NULL; m = m->next,nrofmaps++)
-        if (m->in_memory == MAP_IN_MEMORY)
+        if (m->in_memory == MAP_ACTIVE)
         {
             mapmem += MAP_WIDTH(m) * MAP_HEIGHT(m) * (sizeof(object *) + sizeof(MapSpace));
             nrm++;
@@ -1135,23 +1135,13 @@ int command_save(object *op, char *params)
         else
             new_draw_info(NDI_UNIQUE, 0, op, "SAVE FAILED!");
 
-        /* with the new code we should NOT save "active" maps.
-         * we do a kind of neutralizing when we save now that can have
-         * strange effects when saving!
-        if(op->map && !strncmp(op->map->path, settings.localdir, strlen(settings.localdir)))
-        {
-            new_save_map(op->map,0);
-            op->map->in_memory=MAP_IN_MEMORY;
-        }*/
-
-        /* Finally save the unique map (ie, apt) or instance the player is on.
-         * The previous comment warrants observation, though there are changes
-         * soon to come to hopefully fix any problems. */
+        /* Finally save the unique map (ie, apt) or instance the player is
+         * on. */
         if (op->map &&
             MAP_INSTANCE(op->map) ||
             MAP_UNIQUE(op->map))
         {
-            (void)new_save_map(op->map, 0);
+            (void)map_save(op->map);
         }
     }
 

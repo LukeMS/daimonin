@@ -46,17 +46,17 @@ START_TEST (map_loading)
     mapstruct *map;
 
 
-    fail_unless(has_been_loaded_sh(path) == NULL, "Map already loaded");
+    fail_unless(map_is_in_memory(path) == NULL, "Map already loaded");
 
     map = ready_map_name(NULL, path, MAP_STATUS_MULTI, NULL);
-    fail_unless(has_been_loaded_sh(path) != NULL, "Map not loaded");
+    fail_unless(map_is_in_memory(path) != NULL, "Map not loaded");
     fail_unless(map != NULL, "Couldn't load %s", path);
     fail_unless(strcmp(map->path, path) == 0, "Wierd path");
     fail_unless(map->path == path, "non-shared path");
     fail_if(strcmp(map->name, "Testmap") != 0, "Not the testmap");
 
     delete_map(map);
-    fail_unless(has_been_loaded_sh(path) == NULL, "Map still loaded");
+    fail_unless(map_is_in_memory(path) == NULL, "Map still loaded");
     FREE_ONLY_HASH(path);
 
     fail_if(memleak_detected(), "Memory leak detected");

@@ -778,7 +778,7 @@ static int relative_tile_position(mapstruct *map1, mapstruct *map2, int *x, int 
             if (curr->map->tile_path[i]
             && (curr->map->tile_map[i] == NULL || curr->map->tile_map[i]->traversed != traversal_id))
             {
-                if (!curr->map->tile_map[i] || curr->map->tile_map[i]->in_memory != MAP_IN_MEMORY)
+                if (!curr->map->tile_map[i] || curr->map->tile_map[i]->in_memory != MAP_ACTIVE)
                 {
                     if(!load_and_link_tiled_map(curr->map, i))
                         continue; /* invalid path - we don't found the map */
@@ -883,7 +883,7 @@ mapstruct * out_of_map(mapstruct *m, int *x, int *y)
         {
             if (!m->tile_path[TILED_MAPS_NORTHWEST])
                 return NULL;
-            if (!m->tile_map[TILED_MAPS_NORTHWEST] || m->tile_map[TILED_MAPS_NORTHWEST]->in_memory != MAP_IN_MEMORY)
+            if (!m->tile_map[TILED_MAPS_NORTHWEST] || m->tile_map[TILED_MAPS_NORTHWEST]->in_memory != MAP_ACTIVE)
             {
                 if(!load_and_link_tiled_map(m, TILED_MAPS_NORTHWEST))
                     return NULL;
@@ -897,7 +897,7 @@ mapstruct * out_of_map(mapstruct *m, int *x, int *y)
         {
             if (!m->tile_path[TILED_MAPS_SOUTHWEST])
                 return NULL;
-            if (!m->tile_map[TILED_MAPS_SOUTHWEST] || m->tile_map[TILED_MAPS_SOUTHWEST]->in_memory != MAP_IN_MEMORY)
+            if (!m->tile_map[TILED_MAPS_SOUTHWEST] || m->tile_map[TILED_MAPS_SOUTHWEST]->in_memory != MAP_ACTIVE)
             {
                 if(!load_and_link_tiled_map(m, TILED_MAPS_SOUTHWEST))
                     return NULL;
@@ -910,7 +910,7 @@ mapstruct * out_of_map(mapstruct *m, int *x, int *y)
 
         if (!m->tile_path[TILED_MAPS_WEST]) /* it MUST be west */
             return NULL;
-        if (!m->tile_map[TILED_MAPS_WEST] || m->tile_map[TILED_MAPS_WEST]->in_memory != MAP_IN_MEMORY)
+        if (!m->tile_map[TILED_MAPS_WEST] || m->tile_map[TILED_MAPS_WEST]->in_memory != MAP_ACTIVE)
         {
             if(!load_and_link_tiled_map(m, TILED_MAPS_WEST))
                 return NULL;
@@ -925,7 +925,7 @@ mapstruct * out_of_map(mapstruct *m, int *x, int *y)
         {
             if (!m->tile_path[TILED_MAPS_NORTHEAST])
                 return NULL;
-            if (!m->tile_map[TILED_MAPS_NORTHEAST] || m->tile_map[TILED_MAPS_NORTHEAST]->in_memory != MAP_IN_MEMORY)
+            if (!m->tile_map[TILED_MAPS_NORTHEAST] || m->tile_map[TILED_MAPS_NORTHEAST]->in_memory != MAP_ACTIVE)
             {
                 if(!load_and_link_tiled_map(m, TILED_MAPS_NORTHEAST))
                     return NULL;
@@ -939,7 +939,7 @@ mapstruct * out_of_map(mapstruct *m, int *x, int *y)
         {
             if (!m->tile_path[TILED_MAPS_SOUTHEAST])
                 return NULL;
-            if (!m->tile_map[TILED_MAPS_SOUTHEAST] || m->tile_map[TILED_MAPS_SOUTHEAST]->in_memory != MAP_IN_MEMORY)
+            if (!m->tile_map[TILED_MAPS_SOUTHEAST] || m->tile_map[TILED_MAPS_SOUTHEAST]->in_memory != MAP_ACTIVE)
             {
                 if(!load_and_link_tiled_map(m, TILED_MAPS_SOUTHEAST))
                     return NULL;
@@ -951,7 +951,7 @@ mapstruct * out_of_map(mapstruct *m, int *x, int *y)
 
         if (!m->tile_path[TILED_MAPS_EAST])
             return NULL;
-        if (!m->tile_map[TILED_MAPS_EAST] || m->tile_map[TILED_MAPS_EAST]->in_memory != MAP_IN_MEMORY)
+        if (!m->tile_map[TILED_MAPS_EAST] || m->tile_map[TILED_MAPS_EAST]->in_memory != MAP_ACTIVE)
         {
             if(!load_and_link_tiled_map(m, TILED_MAPS_EAST))
                 return NULL;
@@ -967,7 +967,7 @@ mapstruct * out_of_map(mapstruct *m, int *x, int *y)
     {
         if (!m->tile_path[TILED_MAPS_NORTH])
             return NULL;
-        if (!m->tile_map[TILED_MAPS_NORTH] || m->tile_map[TILED_MAPS_NORTH]->in_memory != MAP_IN_MEMORY)
+        if (!m->tile_map[TILED_MAPS_NORTH] || m->tile_map[TILED_MAPS_NORTH]->in_memory != MAP_ACTIVE)
         {
             if(!load_and_link_tiled_map(m, TILED_MAPS_NORTH))
                 return NULL;
@@ -979,7 +979,7 @@ mapstruct * out_of_map(mapstruct *m, int *x, int *y)
     {
         if (!m->tile_path[TILED_MAPS_SOUTH])
             return NULL;
-        if (!m->tile_map[TILED_MAPS_SOUTH] || m->tile_map[TILED_MAPS_SOUTH]->in_memory != MAP_IN_MEMORY)
+        if (!m->tile_map[TILED_MAPS_SOUTH] || m->tile_map[TILED_MAPS_SOUTH]->in_memory != MAP_ACTIVE)
         {
             if(!load_and_link_tiled_map(m, TILED_MAPS_SOUTH))
                 return NULL;
@@ -1020,7 +1020,7 @@ mapstruct * out_of_map2(mapstruct *m, int *x, int *y)
                 *x = 0;
                 return NULL;
             }
-            if (!m->tile_map[TILED_MAPS_NORTHWEST] || m->tile_map[TILED_MAPS_NORTHWEST]->in_memory != MAP_IN_MEMORY)
+            if (!m->tile_map[TILED_MAPS_NORTHWEST] || m->tile_map[TILED_MAPS_NORTHWEST]->in_memory != MAP_ACTIVE)
             {
                 *x = -1;
                 return NULL;
@@ -1037,7 +1037,7 @@ mapstruct * out_of_map2(mapstruct *m, int *x, int *y)
                 *x = 0;
                 return NULL;
             }
-            if (!m->tile_map[TILED_MAPS_SOUTHWEST] || m->tile_map[TILED_MAPS_SOUTHWEST]->in_memory != MAP_IN_MEMORY)
+            if (!m->tile_map[TILED_MAPS_SOUTHWEST] || m->tile_map[TILED_MAPS_SOUTHWEST]->in_memory != MAP_ACTIVE)
             {
                 *x = -1;
                 return NULL;
@@ -1053,7 +1053,7 @@ mapstruct * out_of_map2(mapstruct *m, int *x, int *y)
             *x = 0;
             return NULL;
         }
-        if (!m->tile_map[TILED_MAPS_WEST] || m->tile_map[TILED_MAPS_WEST]->in_memory != MAP_IN_MEMORY)
+        if (!m->tile_map[TILED_MAPS_WEST] || m->tile_map[TILED_MAPS_WEST]->in_memory != MAP_ACTIVE)
         {
             *x = -1;
             return NULL;
@@ -1071,7 +1071,7 @@ mapstruct * out_of_map2(mapstruct *m, int *x, int *y)
                 *x = 0;
                 return NULL;
             }
-            if (!m->tile_map[TILED_MAPS_NORTHEAST] || m->tile_map[TILED_MAPS_NORTHEAST]->in_memory != MAP_IN_MEMORY)
+            if (!m->tile_map[TILED_MAPS_NORTHEAST] || m->tile_map[TILED_MAPS_NORTHEAST]->in_memory != MAP_ACTIVE)
             {
                 *x = -1;
                 return NULL;
@@ -1088,7 +1088,7 @@ mapstruct * out_of_map2(mapstruct *m, int *x, int *y)
                 *x = 0;
                 return NULL;
             }
-            if (!m->tile_map[TILED_MAPS_SOUTHEAST] || m->tile_map[TILED_MAPS_SOUTHEAST]->in_memory != MAP_IN_MEMORY)
+            if (!m->tile_map[TILED_MAPS_SOUTHEAST] || m->tile_map[TILED_MAPS_SOUTHEAST]->in_memory != MAP_ACTIVE)
             {
                 *x = -1;
                 return NULL;
@@ -1103,7 +1103,7 @@ mapstruct * out_of_map2(mapstruct *m, int *x, int *y)
             *x = 0;
             return NULL;
         }
-        if (!m->tile_map[TILED_MAPS_EAST] || m->tile_map[TILED_MAPS_EAST]->in_memory != MAP_IN_MEMORY)
+        if (!m->tile_map[TILED_MAPS_EAST] || m->tile_map[TILED_MAPS_EAST]->in_memory != MAP_ACTIVE)
         {
             *x = -1;
             return NULL;
@@ -1122,7 +1122,7 @@ mapstruct * out_of_map2(mapstruct *m, int *x, int *y)
             *x = 0;
             return NULL;
         }
-        if (!m->tile_map[TILED_MAPS_NORTH] || m->tile_map[TILED_MAPS_NORTH]->in_memory != MAP_IN_MEMORY)
+        if (!m->tile_map[TILED_MAPS_NORTH] || m->tile_map[TILED_MAPS_NORTH]->in_memory != MAP_ACTIVE)
         {
             *x = -1;
             return NULL;
@@ -1137,7 +1137,7 @@ mapstruct * out_of_map2(mapstruct *m, int *x, int *y)
             *x = 0;
             return NULL;
         }
-        if (!m->tile_map[TILED_MAPS_SOUTH] || m->tile_map[TILED_MAPS_SOUTH]->in_memory != MAP_IN_MEMORY)
+        if (!m->tile_map[TILED_MAPS_SOUTH] || m->tile_map[TILED_MAPS_SOUTH]->in_memory != MAP_ACTIVE)
         {
             *x = -1;
             return NULL;
