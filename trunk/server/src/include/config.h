@@ -482,35 +482,35 @@
 /* If defined, MAP_MAXOBJECTS specifies that maps will be swapped when there
  * are > that number of objects in memory, *not* according to individual map
  * swap times. Swapping will continue until either there are no eligible maps
- * left, or the number of objects in memory < MAP_MINOBJECTS.
+ * left, or the number of objects in memory < MAP_MINOBJECTS. Each object
+ * structure is somewhat under 500 bytes right now (eg, 25000 is ~11.5-12 MB).
  *
- *(No idea how accurate these paragraphs are, they're CF legacy.
+ * MAP_MAXOBJECTS can probably be as low as 3000 per active player (if they
+ * typically play on different maps). If it is too low, maps just get swapped
+ * out often, causing a performance hit.  If it is too high, the program
+ * consumes more memory.
  *
- * -- Smacky 20120811):
+ * Similarly, the difference bettween MAP_MAXOBJECTS and MAP_MINOBJECTS needs
+ * consideration -- too wide a gulf and you'll notice periodic pauses during
+ * map swap/saving.
  *
- * If playing only by yourself, this number can probably be as low as
- * 3000.  If in server mode, probably figure about 1000-2000 objects per
- * active player (if they typically play on different maps), for some guess
- * on how many to define.  If it is too low, maps just get swapped out
- * immediately, causing a performance hit.  If it is too high, the program
- * consumes more memory.  If you have gobs of free memory, a high number
- * might not be a bad idea.  Each object is around 350 bytes right now.
- * 25000 is about 8.5 MB.
+ * This may simply be a re-enabled legacy feature from 1990s CF, when memory
+ * was more precious than today, and be of dubious value to 21st century Dai.
+ * OTOH it may be of use for people running a local server on small machines.
  *
- * Note:  While this will prevent the pauses noticed when saving maps, there
- * can instead be cpu performance penalties - any objects in memory get
- * processed.  So if there are 4000 objects in memory, and 1000 of them
- * are living objects, the system will process all 1000 objects each tick.
- * With swapping enable, maybe 600 of the objects would have gotten swapped
- * out.  This is less likely a problem with a smaller number of MAP_MAXOBJECTS
- * than if it is very large.
+ * There can however be CPU performance penalties - any objects in memory get
+ * processed. So if there are 4000 objects in memory, and 1000 of them are
+ * living objects, the server will process all 1000 objects each tick. With
+ * time-based swapping, maybe 600 of the objects would have gotten swapped out.
+ * This is less likely a problem with a smaller number of MAP_MAXOBJECTS than
+ * if it is very large.
  *
  * Also, the pauses you do get can be worse, as if you enter a map with
  * a lot of new objects and go above MAP_MAXOBJECTS, it may have to swap out
  * many maps to get below the low water mark. */
 
-#define MAP_MAXOBJECTS 10000
-#define MAP_MINOBJECTS (MAP_MAXOBJECTS / 2)
+//#define MAP_MAXOBJECTS 10000
+//#define MAP_MINOBJECTS (MAP_MAXOBJECTS / 2)
 
 /* MAP_RESET tells whether map is reset after some time.  If it is defined,
  * the game uses weight variable of map object to tell, after how many seconds

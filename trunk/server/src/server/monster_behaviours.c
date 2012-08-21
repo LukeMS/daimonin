@@ -761,7 +761,12 @@ int nret;
 		nLimitXY |= 1;
 	}
 
-	if((basemap = ready_inherited_map(op->map, base->slaying, 0)) &&
+        if (!(basemap = map_is_ready(base->slaying)))
+        {
+            basemap = ready_inherited_map(op->map, base->slaying);
+        }
+
+        if (basemap &&
 		!get_rangevector_full(NULL, basemap, base->x, base->y, op, op->map, op->x, op->y, &rv, RV_NO_DISTANCE)){ /* the mob is not a controled map */
 			aDirWeight[0] = 0;
 			aDirWeight[1] = 0;
@@ -1064,7 +1069,12 @@ void ai_move_towards_home(object *op, struct mob_behaviour_param *params, move_r
         /* If mob isn't already home */
         if (op->x != base->x || op->y != base->y || op->map->orig_path != base->slaying)
         {
-            mapstruct  *map = ready_inherited_map(op->map, base->slaying, 0);
+            mapstruct *map;
+
+            if (!(map = map_is_ready(base->slaying)))
+            {
+                map = ready_inherited_map(op->map, base->slaying);
+            }
 
             response->type = MOVE_RESPONSE_COORD;
             response->data.coord.x = base->x;
@@ -1458,7 +1468,7 @@ void ai_move_towards_enemy_last_known_pos(object *op, struct mob_behaviour_param
     {
         rv_vector               rv;
         struct mob_known_obj   *enemy   = MOB_DATA(op)->enemy;
-        mapstruct              *map     = ready_inherited_map(op->map, enemy->last_map, 1);
+        mapstruct              *map     = map_is_ready(enemy->last_map);
 
         if (map && get_rangevector_full(op, op->map, op->x, op->y,
                     enemy->obj, map, enemy->last_x, enemy->last_y,
@@ -1537,7 +1547,22 @@ void ai_move_towards_waypoint(object *op, struct mob_behaviour_param *params, mo
             wp_y = WP_Y(wp);
             if(WP_MAP(wp) && *WP_MAP(wp) != '\0')
             {
-                destmap = ready_inherited_map(op->map, WP_MAP(wp), 0);
+                char path[MAXPATHLEN];
+
+                /* map_is_ready() bugs if not fed an absolute path, so
+                 * make one if necessary. */
+                if (*WP_MAP(wp) != '/')
+                {
+                    FREE_AND_COPY_HASH(WP_MAP(wp),
+                                       normalize_path(op->map->path,
+                                                      WP_MAP(wp), path));
+                }
+
+                if (!(destmap = map_is_ready(WP_MAP(wp))))
+                {
+                    destmap = ready_inherited_map(op->map, WP_MAP(wp));
+                }
+
                 if(destmap && destmap->orig_path != WP_MAP(wp))
                     FREE_AND_ADD_REF_HASH(WP_MAP(wp), destmap->orig_path);
             }
@@ -1768,8 +1793,13 @@ void ai_stay_near_home(object *op, struct mob_behaviour_param *params, move_resp
     if (op->x == base->x && op->y == base->y && op->map->orig_path == base->slaying)
         return;
 
-    if(! (map = ready_inherited_map(op->map, base->slaying, 0)))
-        return;
+    if (!(map = map_is_ready(base->slaying)))
+    {
+        if (!(map = ready_inherited_map(op->map, base->slaying)))
+        {
+            return;
+        }
+    }
 
     if(AIPARAM_INT(AIPARAM_STAY_NEAR_HOME_EUCLIDIAN_DISTANCE)) {
         maxdist *= maxdist;
@@ -1951,7 +1981,7 @@ void ai_look_for_enemy_missiles(object *op, struct mob_behaviour_param *params)
         object *obj;
         if(tilenr == TILED_MAPS)
             obj = op->map->active_objects->active_next; /* Always scan op's map */
-        else if (op->map->tile_map[tilenr] && op->map->tile_map[tilenr]->in_memory == MAP_IN_MEMORY && check_maps[tilenr])
+        else if (op->map->tile_map[tilenr] && op->map->tile_map[tilenr]->in_memory == MAP_ACTIVE && check_maps[tilenr])
             obj = op->map->tile_map[tilenr]->active_objects->active_next;
         else
             continue;
@@ -2038,7 +2068,7 @@ void ai_look_for_other_mobs(object *op, struct mob_behaviour_param *params)
         object *obj;
         if(tilenr == TILED_MAPS)
             obj = op->map->active_objects->active_next; /* Always scan op's map */
-        else if (op->map->tile_map[tilenr] && op->map->tile_map[tilenr]->in_memory == MAP_IN_MEMORY && check_maps[tilenr])
+        else if (op->map->tile_map[tilenr] && op->map->tile_map[tilenr]->in_memory == MAP_ACTIVE && check_maps[tilenr])
             obj = op->map->tile_map[tilenr]->active_objects->active_next;
         else
             continue;
@@ -2187,8 +2217,8 @@ void ai_choose_enemy(object *op, struct mob_behaviour_param *params)
         else
         {
             if(base->slaying)
-                if ((base_map = has_been_loaded_sh(base->slaying)))
-                    if (base_map->in_memory != MAP_IN_MEMORY)
+                if ((base_map = map_is_in_memory(base->slaying)))
+                    if (base_map->in_memory != MAP_ACTIVE)
                         base_map = NULL;
 
             /* square distance for fast euclidian distance comparisons */
@@ -2212,7 +2242,7 @@ void ai_choose_enemy(object *op, struct mob_behaviour_param *params)
                     continue;
 
                 /* Ignore enemy if too far from home position */
-                if(base_map && tmp->obj->map && tmp->obj->map->in_memory == MAP_IN_MEMORY)
+                if(base_map && tmp->obj->map && tmp->obj->map->in_memory == MAP_ACTIVE)
                 {
                     rv_vector base_rv;
                     /* TODO: actually use tmp->last_map, last_x, last_y */

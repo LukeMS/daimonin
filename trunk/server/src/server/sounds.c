@@ -195,7 +195,7 @@ void play_sound_map(mapstruct *map, int x, int y, int sound_num, int sound_type)
     int     xt, yt;
     object *tmp;
 
-    if (!map || map->in_memory != MAP_IN_MEMORY)
+    if (!map || map->in_memory != MAP_ACTIVE)
         return;
 
     if (map->player_first) /* any player on this map? */
@@ -207,7 +207,7 @@ void play_sound_map(mapstruct *map, int x, int y, int sound_num, int sound_type)
         }
     }
 
-    if (map->tile_map[TILED_MAPS_NORTH] && map->tile_map[TILED_MAPS_NORTH]->in_memory == MAP_IN_MEMORY && map->tile_map[TILED_MAPS_NORTH]->player_first)
+    if (map->tile_map[TILED_MAPS_NORTH] && map->tile_map[TILED_MAPS_NORTH]->in_memory == MAP_ACTIVE && map->tile_map[TILED_MAPS_NORTH]->player_first)
     {
         yt = y + MAP_HEIGHT(map->tile_map[TILED_MAPS_NORTH]);
         for (tmp = map->tile_map[TILED_MAPS_NORTH]->player_first; tmp; tmp = CONTR(tmp)->map_above)
@@ -216,7 +216,7 @@ void play_sound_map(mapstruct *map, int x, int y, int sound_num, int sound_type)
                 play_sound_player_only(CONTR(tmp), sound_num, sound_type, x - tmp->x, yt - tmp->y);
         }
     }
-    if (map->tile_map[TILED_MAPS_EAST] && map->tile_map[TILED_MAPS_EAST]->in_memory == MAP_IN_MEMORY && map->tile_map[TILED_MAPS_EAST]->player_first)
+    if (map->tile_map[TILED_MAPS_EAST] && map->tile_map[TILED_MAPS_EAST]->in_memory == MAP_ACTIVE && map->tile_map[TILED_MAPS_EAST]->player_first)
     {
         xt = x - MAP_WIDTH(map);
         for (tmp = map->tile_map[TILED_MAPS_EAST]->player_first; tmp; tmp = CONTR(tmp)->map_above)
@@ -225,7 +225,7 @@ void play_sound_map(mapstruct *map, int x, int y, int sound_num, int sound_type)
                 play_sound_player_only(CONTR(tmp), sound_num, sound_type, xt - tmp->x, y - tmp->y);
         }
     }
-    if (map->tile_map[TILED_MAPS_SOUTH] && map->tile_map[TILED_MAPS_SOUTH]->in_memory == MAP_IN_MEMORY && map->tile_map[TILED_MAPS_SOUTH]->player_first)
+    if (map->tile_map[TILED_MAPS_SOUTH] && map->tile_map[TILED_MAPS_SOUTH]->in_memory == MAP_ACTIVE && map->tile_map[TILED_MAPS_SOUTH]->player_first)
     {
         yt = y - MAP_HEIGHT(map);
         for (tmp = map->tile_map[TILED_MAPS_SOUTH]->player_first; tmp; tmp = CONTR(tmp)->map_above)
@@ -234,7 +234,7 @@ void play_sound_map(mapstruct *map, int x, int y, int sound_num, int sound_type)
                 play_sound_player_only(CONTR(tmp), sound_num, sound_type, x - tmp->x, yt - tmp->y);
         }
     }
-    if (map->tile_map[TILED_MAPS_WEST] && map->tile_map[TILED_MAPS_WEST]->in_memory == MAP_IN_MEMORY && map->tile_map[TILED_MAPS_WEST]->player_first)
+    if (map->tile_map[TILED_MAPS_WEST] && map->tile_map[TILED_MAPS_WEST]->in_memory == MAP_ACTIVE && map->tile_map[TILED_MAPS_WEST]->player_first)
     {
         xt = x + MAP_WIDTH(map->tile_map[TILED_MAPS_WEST]);
         for (tmp = map->tile_map[TILED_MAPS_WEST]->player_first; tmp; tmp = CONTR(tmp)->map_above)
@@ -243,7 +243,7 @@ void play_sound_map(mapstruct *map, int x, int y, int sound_num, int sound_type)
                 play_sound_player_only(CONTR(tmp), sound_num, sound_type, xt - tmp->x, y - tmp->y);
         }
     }
-    if (map->tile_map[TILED_MAPS_NORTHEAST] && map->tile_map[TILED_MAPS_NORTHEAST]->in_memory == MAP_IN_MEMORY && map->tile_map[TILED_MAPS_NORTHEAST]->player_first)
+    if (map->tile_map[TILED_MAPS_NORTHEAST] && map->tile_map[TILED_MAPS_NORTHEAST]->in_memory == MAP_ACTIVE && map->tile_map[TILED_MAPS_NORTHEAST]->player_first)
     {
         yt = y + MAP_HEIGHT(map->tile_map[TILED_MAPS_NORTHEAST]);
         xt = x - MAP_WIDTH(map);
@@ -253,7 +253,7 @@ void play_sound_map(mapstruct *map, int x, int y, int sound_num, int sound_type)
                 play_sound_player_only(CONTR(tmp), sound_num, sound_type, xt - tmp->x, yt - tmp->y);
         }
     }
-    if (map->tile_map[TILED_MAPS_SOUTHEAST] && map->tile_map[TILED_MAPS_SOUTHEAST]->in_memory == MAP_IN_MEMORY && map->tile_map[TILED_MAPS_SOUTHEAST]->player_first)
+    if (map->tile_map[TILED_MAPS_SOUTHEAST] && map->tile_map[TILED_MAPS_SOUTHEAST]->in_memory == MAP_ACTIVE && map->tile_map[TILED_MAPS_SOUTHEAST]->player_first)
     {
         xt = x - MAP_WIDTH(map);
         yt = y - MAP_HEIGHT(map);
@@ -263,7 +263,7 @@ void play_sound_map(mapstruct *map, int x, int y, int sound_num, int sound_type)
                 play_sound_player_only(CONTR(tmp), sound_num, sound_type, xt - tmp->x, yt - tmp->y);
         }
     }
-    if (map->tile_map[TILED_MAPS_SOUTHWEST] && map->tile_map[TILED_MAPS_SOUTHWEST]->in_memory == MAP_IN_MEMORY && map->tile_map[TILED_MAPS_SOUTHWEST]->player_first)
+    if (map->tile_map[TILED_MAPS_SOUTHWEST] && map->tile_map[TILED_MAPS_SOUTHWEST]->in_memory == MAP_ACTIVE && map->tile_map[TILED_MAPS_SOUTHWEST]->player_first)
     {
         xt = x + MAP_WIDTH(map->tile_map[TILED_MAPS_SOUTHWEST]);
         yt = y - MAP_HEIGHT(map);
@@ -273,7 +273,7 @@ void play_sound_map(mapstruct *map, int x, int y, int sound_num, int sound_type)
                 play_sound_player_only(CONTR(tmp), sound_num, sound_type, xt - tmp->x, yt - tmp->y);
         }
     }
-    if (map->tile_map[TILED_MAPS_NORTHWEST] && map->tile_map[TILED_MAPS_NORTHWEST]->in_memory == MAP_IN_MEMORY && map->tile_map[TILED_MAPS_NORTHWEST]->player_first)
+    if (map->tile_map[TILED_MAPS_NORTHWEST] && map->tile_map[TILED_MAPS_NORTHWEST]->in_memory == MAP_ACTIVE && map->tile_map[TILED_MAPS_NORTHWEST]->player_first)
     {
         xt = x + MAP_WIDTH(map->tile_map[TILED_MAPS_NORTHWEST]);
         yt = y + MAP_HEIGHT(map->tile_map[TILED_MAPS_NORTHWEST]);

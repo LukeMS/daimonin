@@ -326,7 +326,7 @@ int move_player(object * const op, int dir, const int flag)
 
     pl->rest_sitting = pl->rest_mode = 0;
 
-    if (op->map == NULL || op->map->in_memory != MAP_IN_MEMORY ||
+    if (op->map == NULL || op->map->in_memory != MAP_ACTIVE ||
         QUERY_FLAG(op,FLAG_PARALYZED) || QUERY_FLAG(op,FLAG_ROOTED))
         return -1;
 

@@ -202,7 +202,7 @@ void pet_follow_owner(object *pet)
         return;
     }
 
-    if (pet->owner->map->in_memory != MAP_IN_MEMORY)
+    if (pet->owner->map->in_memory != MAP_ACTIVE)
     {
 //        new_draw_info(NDI_UNIQUE, 0, pet->owner, "Your %s has disappeared (map not loaded).", query_name(pet));
 //        LOG(llevBug, "BUG: Owner of the pet not on a map in memory!?\n");

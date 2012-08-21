@@ -151,6 +151,26 @@ struct plugin_hooklist *hooks;
 #undef ROUND_TAG
 #define ROUND_TAG (*hooks->pticks)
 
+#undef MAP_SET_WHEN_RESET
+#ifdef MAP_RESET // _T_ > 0, _T_ secs from now, _T_ == 0:  never, _T_ < 0: now
+# define MAP_SET_WHEN_RESET(_M_, _T_) \
+    if ((_T_) > 0) \
+    { \
+        MAP_WHEN_RESET((_M_)) = (ROUND_TAG - ROUND_TAG % (long unsigned int)MAX(1, (*hooks->pticks_second))) / (*hooks->pticks_second) + (_T_); \
+    } \
+    else if ((_T_) == 0) \
+    { \
+        MAP_WHEN_RESET((_M_)) = 0; \
+    } \
+    else \
+    { \
+        MAP_WHEN_RESET((_M_)) = (ROUND_TAG - ROUND_TAG % (long unsigned int)MAX(1, (*hooks->pticks_second))) / (*hooks->pticks_second); \
+    }
+#else // maps never reset so ignore _T_
+# define MAP_SET_WHEN_RESET(_M_, _T_) \
+    MAP_WHEN_RESET((_M_)) = 0
+#endif
+
 extern tag_t lua_context_tag_counter;
 
 struct lua_context

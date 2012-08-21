@@ -284,7 +284,7 @@ static int get_attribute(lua_State *L, lua_object *obj, struct attribute_decl *a
           return 1;
         case FIELDTYPE_MAP:
           /* Can return nil */
-          if((*(mapstruct **)field_ptr) == NULL || (*(mapstruct **)field_ptr)->in_memory != MAP_IN_MEMORY )
+          if((*(mapstruct **)field_ptr) == NULL || (*(mapstruct **)field_ptr)->in_memory != MAP_ACTIVE )
           {
               lua_pushnil(L);
               return 1;

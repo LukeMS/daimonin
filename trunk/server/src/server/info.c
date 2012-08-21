@@ -116,7 +116,7 @@ void new_info_map(const int flags, const mapstruct *const map, const int x,
 
     /* No map? Quit */
     if (!map ||
-        map->in_memory != MAP_IN_MEMORY)
+        map->in_memory != MAP_ACTIVE)
     {
         return;
     }
@@ -160,7 +160,7 @@ void new_info_map(const int flags, const mapstruct *const map, const int x,
     }
 
     if (map->tile_map[TILED_MAPS_NORTH] &&
-        map->tile_map[TILED_MAPS_NORTH]->in_memory == MAP_IN_MEMORY &&
+        map->tile_map[TILED_MAPS_NORTH]->in_memory == MAP_ACTIVE &&
         map->tile_map[TILED_MAPS_NORTH]->player_first)
     {
         yt = y + MAP_HEIGHT(map->tile_map[TILED_MAPS_NORTH]);
@@ -180,7 +180,7 @@ void new_info_map(const int flags, const mapstruct *const map, const int x,
     }
 
     if (map->tile_map[TILED_MAPS_EAST] &&
-        map->tile_map[TILED_MAPS_EAST]->in_memory == MAP_IN_MEMORY &&
+        map->tile_map[TILED_MAPS_EAST]->in_memory == MAP_ACTIVE &&
         map->tile_map[TILED_MAPS_EAST]->player_first)
     {
         xt = x - MAP_WIDTH(map);
@@ -200,7 +200,7 @@ void new_info_map(const int flags, const mapstruct *const map, const int x,
     }
 
     if (map->tile_map[TILED_MAPS_SOUTH] &&
-        map->tile_map[TILED_MAPS_SOUTH]->in_memory == MAP_IN_MEMORY &&
+        map->tile_map[TILED_MAPS_SOUTH]->in_memory == MAP_ACTIVE &&
         map->tile_map[TILED_MAPS_SOUTH]->player_first)
     {
         yt = y - MAP_HEIGHT(map);
@@ -220,7 +220,7 @@ void new_info_map(const int flags, const mapstruct *const map, const int x,
     }
 
     if (map->tile_map[TILED_MAPS_WEST] &&
-        map->tile_map[TILED_MAPS_WEST]->in_memory == MAP_IN_MEMORY &&
+        map->tile_map[TILED_MAPS_WEST]->in_memory == MAP_ACTIVE &&
         map->tile_map[TILED_MAPS_WEST]->player_first)
     {
         xt = x + MAP_WIDTH(map->tile_map[TILED_MAPS_WEST]);
@@ -240,7 +240,7 @@ void new_info_map(const int flags, const mapstruct *const map, const int x,
     }
 
     if (map->tile_map[TILED_MAPS_NORTHEAST] &&
-        map->tile_map[TILED_MAPS_NORTHEAST]->in_memory == MAP_IN_MEMORY &&
+        map->tile_map[TILED_MAPS_NORTHEAST]->in_memory == MAP_ACTIVE &&
         map->tile_map[TILED_MAPS_NORTHEAST]->player_first)
     {
         yt = y + MAP_HEIGHT(map->tile_map[TILED_MAPS_NORTHEAST]);
@@ -261,7 +261,7 @@ void new_info_map(const int flags, const mapstruct *const map, const int x,
     }
 
     if (map->tile_map[TILED_MAPS_SOUTHEAST] &&
-        map->tile_map[TILED_MAPS_SOUTHEAST]->in_memory == MAP_IN_MEMORY &&
+        map->tile_map[TILED_MAPS_SOUTHEAST]->in_memory == MAP_ACTIVE &&
         map->tile_map[TILED_MAPS_SOUTHEAST]->player_first)
     {
         xt = x - MAP_WIDTH(map);
@@ -282,7 +282,7 @@ void new_info_map(const int flags, const mapstruct *const map, const int x,
     }
 
     if (map->tile_map[TILED_MAPS_SOUTHWEST] &&
-        map->tile_map[TILED_MAPS_SOUTHWEST]->in_memory == MAP_IN_MEMORY &&
+        map->tile_map[TILED_MAPS_SOUTHWEST]->in_memory == MAP_ACTIVE &&
         map->tile_map[TILED_MAPS_SOUTHWEST]->player_first)
     {
         xt = x + MAP_WIDTH(map->tile_map[TILED_MAPS_SOUTHWEST]);
@@ -303,7 +303,7 @@ void new_info_map(const int flags, const mapstruct *const map, const int x,
     }
 
     if (map->tile_map[TILED_MAPS_NORTHWEST] &&
-        map->tile_map[TILED_MAPS_NORTHWEST]->in_memory == MAP_IN_MEMORY &&
+        map->tile_map[TILED_MAPS_NORTHWEST]->in_memory == MAP_ACTIVE &&
         map->tile_map[TILED_MAPS_NORTHWEST]->player_first)
     {
         xt = x + MAP_WIDTH(map->tile_map[TILED_MAPS_NORTHWEST]);
@@ -349,7 +349,7 @@ void new_info_map_except(const int flags, const mapstruct *const map,
 
     /* No map? Quit */
     if (!map ||
-        map->in_memory != MAP_IN_MEMORY)
+        map->in_memory != MAP_ACTIVE)
     {
         return;
     }
@@ -406,7 +406,7 @@ void new_info_map_except(const int flags, const mapstruct *const map,
     }
 
     if (map->tile_map[TILED_MAPS_NORTH] &&
-        map->tile_map[TILED_MAPS_NORTH]->in_memory == MAP_IN_MEMORY &&
+        map->tile_map[TILED_MAPS_NORTH]->in_memory == MAP_ACTIVE &&
         map->tile_map[TILED_MAPS_NORTH]->player_first)
     {
         yt = y + MAP_HEIGHT(map->tile_map[TILED_MAPS_NORTH]);
@@ -428,7 +428,7 @@ void new_info_map_except(const int flags, const mapstruct *const map,
     }
 
     if (map->tile_map[TILED_MAPS_EAST] &&
-        map->tile_map[TILED_MAPS_EAST]->in_memory == MAP_IN_MEMORY &&
+        map->tile_map[TILED_MAPS_EAST]->in_memory == MAP_ACTIVE &&
         map->tile_map[TILED_MAPS_EAST]->player_first)
     {
         xt = x - MAP_WIDTH(map);
@@ -450,7 +450,7 @@ void new_info_map_except(const int flags, const mapstruct *const map,
     }
 
     if (map->tile_map[TILED_MAPS_SOUTH] &&
-        map->tile_map[TILED_MAPS_SOUTH]->in_memory == MAP_IN_MEMORY &&
+        map->tile_map[TILED_MAPS_SOUTH]->in_memory == MAP_ACTIVE &&
         map->tile_map[TILED_MAPS_SOUTH]->player_first)
     {
         yt = y - MAP_HEIGHT(map);
@@ -472,7 +472,7 @@ void new_info_map_except(const int flags, const mapstruct *const map,
     }
 
     if (map->tile_map[TILED_MAPS_WEST] &&
-        map->tile_map[TILED_MAPS_WEST]->in_memory == MAP_IN_MEMORY &&
+        map->tile_map[TILED_MAPS_WEST]->in_memory == MAP_ACTIVE &&
         map->tile_map[TILED_MAPS_WEST]->player_first)
     {
         xt = x + MAP_WIDTH(map->tile_map[TILED_MAPS_WEST]);
@@ -494,7 +494,7 @@ void new_info_map_except(const int flags, const mapstruct *const map,
     }
 
     if (map->tile_map[TILED_MAPS_NORTHEAST] &&
-        map->tile_map[TILED_MAPS_NORTHEAST]->in_memory == MAP_IN_MEMORY &&
+        map->tile_map[TILED_MAPS_NORTHEAST]->in_memory == MAP_ACTIVE &&
         map->tile_map[TILED_MAPS_NORTHEAST]->player_first)
     {
         yt = y + MAP_HEIGHT(map->tile_map[TILED_MAPS_NORTHEAST]);
@@ -517,7 +517,7 @@ void new_info_map_except(const int flags, const mapstruct *const map,
     }
 
     if (map->tile_map[TILED_MAPS_SOUTHEAST] &&
-        map->tile_map[TILED_MAPS_SOUTHEAST]->in_memory == MAP_IN_MEMORY &&
+        map->tile_map[TILED_MAPS_SOUTHEAST]->in_memory == MAP_ACTIVE &&
         map->tile_map[TILED_MAPS_SOUTHEAST]->player_first)
     {
         xt = x - MAP_WIDTH(map);
@@ -540,7 +540,7 @@ void new_info_map_except(const int flags, const mapstruct *const map,
     }
 
     if (map->tile_map[TILED_MAPS_SOUTHWEST] &&
-        map->tile_map[TILED_MAPS_SOUTHWEST]->in_memory == MAP_IN_MEMORY &&
+        map->tile_map[TILED_MAPS_SOUTHWEST]->in_memory == MAP_ACTIVE &&
         map->tile_map[TILED_MAPS_SOUTHWEST]->player_first)
     {
         xt = x + MAP_WIDTH(map->tile_map[TILED_MAPS_SOUTHWEST]);
@@ -563,7 +563,7 @@ void new_info_map_except(const int flags, const mapstruct *const map,
     }
 
     if (map->tile_map[TILED_MAPS_NORTHWEST] &&
-        map->tile_map[TILED_MAPS_NORTHWEST]->in_memory == MAP_IN_MEMORY &&
+        map->tile_map[TILED_MAPS_NORTHWEST]->in_memory == MAP_ACTIVE &&
         map->tile_map[TILED_MAPS_NORTHWEST]->player_first)
     {
         xt = x + MAP_WIDTH(map->tile_map[TILED_MAPS_NORTHWEST]);

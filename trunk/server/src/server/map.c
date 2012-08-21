@@ -54,7 +54,7 @@ static char      *PathToName(shstr *path_sh);
 static char      *ShowMapFlags(mapstruct *m);
 static mapstruct *GetLinkedMap(void);
 static void       AllocateMap(mapstruct *m);
-static mapstruct *LoadMap(shstr *filename, shstr *src_name,
+static mapstruct *LoadMap(shstr *path_sh, shstr *orig_path_sh,
                           uint32 flags, shstr *reference);
 static mapstruct *LoadTemporaryMap(mapstruct *m);
 static int        LoadMapHeader(FILE *fp, mapstruct *m, uint32 flags);
@@ -69,7 +69,7 @@ static void       WriteMapLog(void);
 
 /* Returns the mapstruct which has a name matching the given argument oe NULL
  * if no match is found. */
-mapstruct *has_been_loaded_sh(shstr *path)
+mapstruct *map_is_in_memory(shstr *path)
 {
     mapstruct *map;
 
@@ -86,7 +86,7 @@ mapstruct *has_been_loaded_sh(shstr *path)
     if (*path != '/' &&
         *path != '.')
     {
-        LOG(llevBug, "BUG:: %s/has_been_loaded_sh(): filename without start '/' or '.' (>%s<)\n",
+        LOG(llevBug, "BUG:: %s/map_is_in_memory(): filename without start '/' or '.' (>%s<)\n",
             __FILE__, path);
 
         return NULL;
@@ -101,6 +101,20 @@ mapstruct *has_been_loaded_sh(shstr *path)
     }
 
     return map;
+}
+
+mapstruct *map_is_ready(shstr *path_sh)
+{
+    mapstruct *m = map_is_in_memory(path_sh);
+
+    if (m &&
+        (m->in_memory != MAP_LOADING &&
+         m->in_memory != MAP_ACTIVE))
+    {
+         m = NULL;
+    }
+
+    return m;
 }
 
 /* This prepends LIBDIR/MAPDIR/ to the given path and returns the pointer to a
@@ -128,7 +142,7 @@ char *create_mapdir_pathname(const char *name)
  *
  * If prepend_dir is set, then we call create_mapdir_pathname (which prepends
  * libdir & mapdir). Otherwise, we assume the name given is fully complete. */
-int check_path(const char *name, int prepend_dir)
+sint8 check_path(const char *name, uint8 prepend_dir)
 {
     if (prepend_dir)
     {
@@ -824,89 +838,71 @@ static void AllocateMap(mapstruct *m)
     MALLOC(m->bitmap, ((MAP_WIDTH(m) + 31) / 32) * MAP_HEIGHT(m) * sizeof(uint32));
 }
 
-/* Saves a map to file.  If flag is set, it is saved into the same
- * file it was (originally) loaded from.  Otherwise a temporary
- * filename will be genarated, and the file will be stored there.
- * The temporary filename will be stored in the mapstructure.
- * If the map is unique, we also save to the filename in the map
- * (this should have been updated when first loaded). */
-int new_save_map(mapstruct *m, int flag)
+/* Saves a map to file.  If flag is set, it is saved into the same file it was
+ * (originally) loaded from. Otherwise a temporary filename will be genarated,
+ * and the file will be stored there. The temporary filename will be stored in
+ * the mapstructure.
+ *
+ * If the map is a unique/instance, we save directly to the map's path (this
+ * should have been updated when first loaded)..
+ *
+ * The return is the mapstruct. This function *can* delete the mapstruct, so it
+ * is important to always check the return. */
+mapstruct *map_save(mapstruct *m)
 {
     FILE   *fp;
     char    filename[MAXPATHLEN];
     int     i;
-
-    if (flag &&
-        (!m->path ||
-         !*m->path))
-    {
-        LOG(llevBug, "BUG:: %s/new_save_map(): Tried to save map without path!\n",
-            __FILE__);
-
-        return -1;
-    }
 
     /* if we don't do this, we leave the light mask part
      * on a possible tiled map and when we reload, the area
      * will be set with wrong light values. */
     remove_light_source_list(m);
 
-    if (flag ||
-        MAP_UNIQUE(m) ||
+    if (MAP_UNIQUE(m) ||
         MAP_INSTANCE(m))
     {
-        if (MAP_UNIQUE(m) ||
-            MAP_INSTANCE(m))
+        char *cp;
+
+        sprintf(filename, "%s", m->path);
+
+        if ((cp = strrchr(filename, '/')))
         {
-            char *cp;
+            *cp = '\0';
 
-            sprintf(filename, "%s", m->path);
-
-            if ((cp = strrchr(filename, '/')))
-            {
-                *cp = '\0';
-
-                /* When the player has been deleted we mustn't try to save the map,
-                 * just delete it too. */
-                if (access(filename, F_OK) == -1)
-                {
-#ifdef DEBUG_MAP
-                    LOG(llevDebug, "DEBUG:: %s/new_save_map(): Player %s no longer exists so deleting %s map >%s<!\n",
-                        __FILE__, m->reference,
-                         (MAP_UNIQUE(m)) ? "unique" : "instanced",
-                         STRING_MAP_PATH(m));
-#endif
-                    delete_map(m);
-
-                    return 0;
-                }
-            }
-            else
-            {
-                LOG(llevBug, "BUG:: %s/new_save_map(): Invalid path >%s<!\n",
-                    __FILE__, STRING_MAP_PATH(m));
-            }
-
-            /* that ensures we always reload from original maps */
-            if (MAP_NOSAVE(m))
+            /* When the player has been deleted we mustn't try to save the map,
+             * just delete it too. */
+            if (access(filename, F_OK) == -1)
             {
 #ifdef DEBUG_MAP
-                LOG(llevDebug, "DEBUG:: %s/new_save_map(): Skip map >%s< (no_save flag)\n",
-                    __FILE__, STRING_MAP_PATH(m));
-
+                LOG(llevDebug, "DEBUG:: %s/map_save(): Player %s no longer exists so deleting %s map >%s<!\n",
+                    __FILE__, m->reference,
+                     (MAP_UNIQUE(m)) ? "unique" : "instanced",
+                     STRING_MAP_PATH(m));
 #endif
-                return 0;
-            }
+                delete_map(m);
 
-            strcpy(filename, m->path);
+                return NULL;
+            }
         }
         else
         {
-            strcpy(filename, create_mapdir_pathname(m->path));
+            LOG(llevBug, "BUG:: %s/map_save(): Invalid path >%s<!\n",
+                __FILE__, STRING_MAP_PATH(m));
         }
 
-        /* /maps, /tmp should always there and player dir is created when player is loaded */
-        /* make_path_to_file(filename); */
+        /* that ensures we always reload from original maps */
+        if (MAP_NOSAVE(m))
+        {
+#ifdef DEBUG_MAP
+            LOG(llevDebug, "DEBUG:: %s/map_save(): Skip map >%s< (no_save flag)\n",
+                __FILE__, STRING_MAP_PATH(m));
+
+#endif
+            return m;
+        }
+
+        strcpy(filename, m->path);
     }
     else
     {
@@ -916,7 +912,7 @@ int new_save_map(mapstruct *m, int flag)
         {
             FREE_AND_NULL_PTR(m->tmpname);
             tempnam_local_ext(settings.tmpdir, NULL, filename);
-            m->tmpname = strdup_local(filename);
+            MALLOC2(m->tmpname, filename);
         }
         else
         {
@@ -930,10 +926,15 @@ int new_save_map(mapstruct *m, int flag)
 
     if (!(fp = fopen(filename, "w")))
     {
-        LOG(llevBug, "BUG:: %s/new_save_map(): Can't open file >%s< for saving!\n",
+        LOG(llevBug, "BUG:: %s/map_save(): Can't open file >%s< for saving!\n",
             __FILE__, filename);
 
-        return -1;
+        /* Reset the in_memory flag so that delete map will also free the
+         * objects with it. */
+        m->in_memory = MAP_ACTIVE;
+        delete_map(m);
+
+        return NULL;
     }
 
     /* legacy */
@@ -949,7 +950,7 @@ int new_save_map(mapstruct *m, int flag)
         fprintf(fp, "background_music %s\n", m->music);
     }
 
-    if (!flag)
+    if (MAP_SWAP_TIMEOUT(m))
     {
         fprintf(fp, "swap_time %d\n", MAP_SWAP_TIMEOUT(m));
     }
@@ -1024,7 +1025,7 @@ int new_save_map(mapstruct *m, int flag)
         }
         else
         {
-            LOG(llevBug, "BUG:: %s/new_save_map(): %s map with NULL reference!\n",
+            LOG(llevBug, "BUG:: %s/map_save(): %s map with NULL reference!\n",
                 __FILE__, (MAP_UNIQUE(m)) ? "Unique" : "Instanced");
         }
     }
@@ -1117,13 +1118,13 @@ int new_save_map(mapstruct *m, int flag)
     if (m->player_first ||
         m->perm_load)
     {
-        m->in_memory = MAP_IN_MEMORY;
+        m->in_memory = MAP_ACTIVE;
     }
 
     fclose(fp);
     chmod(filename, SAVE_MODE);
 
-    return 0;
+    return m;
 }
 
 /* Frees everything allocated by the given mapstructure.
@@ -1271,7 +1272,6 @@ static void FreeAllObjects(mapstruct *m)
     int     yl=MAP_HEIGHT(m), xl=MAP_WIDTH(m);
     object *op;
 
-    /*LOG(llevDebug,"FAO-start: map:%s ->%d\n", m->name?m->name:(m->tmpname?m->tmpname:""),m->in_memory);*/
     for (i = 0; i < xl; i++)
         for (j = 0; j < yl; j++)
         {
@@ -1298,7 +1298,6 @@ static void FreeAllObjects(mapstruct *m)
                 remove_ob(op); /* technical remove - no check off */
             }
         }
-    /*LOG(llevDebug,"FAO-end: map:%s ->%d\n", m->name?m->name:(m->tmpname?m->tmpname:""),m->in_memory);*/
 }
 
 /*
@@ -1315,7 +1314,7 @@ void delete_map(mapstruct *m)
         return;
     }
 
-    if (m->in_memory == MAP_IN_MEMORY)
+    if (m->in_memory == MAP_ACTIVE)
     {
         /* change to MAP_SAVING, even though we are not, so that remove_ob()
          * doesn't do as much work. */
@@ -1348,7 +1347,7 @@ void delete_map(mapstruct *m)
     /* Free our pathnames (we'd like to use it above)*/
     FREE_AND_CLEAR_HASH(m->path);
     FREE_AND_CLEAR_HASH(m->orig_path);
-    FREE_AND_NULL_PTR(m->tmpname); /* malloc() string */
+    FREE(m->tmpname);
 
     m->tag = 0; /* Kill any weak references to this map */
     return_poolchunk(m, pool_map);
@@ -1372,7 +1371,7 @@ void free_all_maps(void)
          * saving, but we still want to free this data. */
         if (first_map->in_memory == MAP_SAVING)
         {
-            first_map->in_memory = MAP_IN_MEMORY;
+            first_map->in_memory = MAP_ACTIVE;
         }
 
         delete_map(first_map);
@@ -1382,32 +1381,96 @@ void free_all_maps(void)
     LOG(llevInfo, "INFO:: Freed %d maps\n", real_maps);
 }
 
+/* Takes path and returns NULL if it is an invalid path to a map or a
+ * normalized shared string otherwise.
+ *
+ * This is called by scripts or any other source where we must ensure that path
+ * path is legal. To this end, we do some (basic) sanity tests.
+ *
+ * path doesn't have to be a shared string (and usually isn't) but must be
+ * absolute or a unique/instance path.
+ *
+ * Note that paths beginning with '.' should already have been normalized so
+ * won't be normalized by this function. */
+shstr *create_safe_path_sh(const char *path)
+{
+    const char *cp;
+    uint16      c;
+    shstr      *path_sh = NULL;
 
-/* helper function to create from a normal map a unique (apartment) like map inside the player directory
- * changed it to return hash strings because we always use the generated string as hash strings.
- */
-const char *create_unique_path_sh(const object * const op, const char * const name)
+    /* Sanity checks. */
+    if (!path ||
+        (*path != '.' &&
+         *path != '/'))
+    {
+        return NULL;
+    }
+
+    /* Do some basic checks. This is NOT foolproof. */
+    for (cp = path, c = 0; *cp; cp++, c++)
+    {
+        if (c >= MAXPATHLEN - 6 && // path is too long
+            *path != '.')          // but unique/instance paths have no limit
+        {
+            return NULL;
+        }
+        else if (isspace(*cp) || // no whitespace
+                 iscntrl(*cp) || // no control chars
+                 *cp == '\\')    // no windows path elements
+        {
+           return NULL;
+        }
+        else if (*cp == '.' && // a path starting with '.' is OK -- we assume
+                 cp != path)   // it to be a unique/instance path
+        {
+            if (*path == '.' ||      // but a further '.' is bad
+                (*(cp + 1) != '.' && // as is any character but another '.' or
+                 *(cp + 1) != '/'))  // a '/'
+            {
+                return NULL;
+            }
+        }
+    }
+
+    /* Create our shared string. */
+    if(*path == '.')
+    {
+        FREE_AND_COPY_HASH(path_sh, path);
+    }
+    else
+    {
+        char buf[MAXPATHLEN];
+
+        FREE_AND_COPY_HASH(path_sh, normalize_path(path, NULL, buf));
+    }
+
+   return path_sh;
+}
+
+/* Returns a unique path_sh based on the arguments. */
+shstr *create_unique_path_sh(object *op, shstr *orig_path_sh)
 {
      char   path[LARGE_BUF];
      shstr *path_sh = NULL;
 
      sprintf(path, "%s/%s/%s/%s/%s",
              settings.localdir, settings.playerdir, get_subdir(op->name),
-             op->name, PathToName(name));
+             op->name, PathToName(orig_path_sh));
      FREE_AND_COPY_HASH(path_sh, path);
 
      return path_sh;
 }
 
-/* same as above but more complex: helper function to create from a normal map a instanced map.
- * ONLY and really only a player can create an instance.
- * To avoid a reenter, set the player->instance_num to MAP_INSTANCE_NUM_INVALID before call.
+/* Returns an instance path_sh based on the arguments.
+ *
+ * To avoid a reenter, set the player->instance_num to MAP_INSTANCE_NUM_INVALID
+ * before the call.
+ *
  * This function does 2 important things:
  * 1.) creating a valid instance file path out of name
  * 2.) ensure that the (temporary) DIRECTORY of this instance exits as long as the
- * server deals with an instance to it
- */
-const char *create_instance_path_sh(player * const pl, const char * const name, int flags)
+ * server deals with an instance to it. */
+shstr *create_instance_path_sh(player *pl, shstr *orig_path_sh, uint32 flags)
 {
     char   path[LARGE_BUF];
     int    instance_num = pl->instance_num;
@@ -1426,7 +1489,7 @@ const char *create_instance_path_sh(player * const pl, const char * const name, 
         {
             sprintf(path, "%s/%s/%ld/%d/%d/%s",
                     settings.localdir, settings.instancedir, pl->instance_id,
-                    instance_num / 10000, instance_num, PathToName(name));
+                    instance_num / 10000, instance_num, PathToName(orig_path_sh));
         }
     }
 
@@ -1437,13 +1500,13 @@ const char *create_instance_path_sh(player * const pl, const char * const name, 
         /* create new instance directory for this instance */
         sprintf(path, "%s/%s/%ld/%d/%d/%s",
                 settings.localdir, settings.instancedir, global_instance_id,
-                instance_num / 10000, instance_num, PathToName(name));
+                instance_num / 10000, instance_num, PathToName(orig_path_sh));
 
         /* Store the instance information for the player. */
         pl->instance_flags = flags;
         pl->instance_id = global_instance_id;
         pl->instance_num = instance_num;
-        FREE_AND_COPY_HASH(pl->instance_name, name); // XXX: instance_name is the original path name
+        FREE_AND_COPY_HASH(pl->instance_name, orig_path_sh);
     }
 
     FREE_AND_COPY_HASH(path_sh, path);
@@ -1456,7 +1519,6 @@ const char *create_instance_path_sh(player * const pl, const char * const name, 
     return path_sh;
 }
 
-
 /** Ready a map of the same type as another map, even for the
  * same instance if applicable.
  *
@@ -1464,12 +1526,9 @@ const char *create_instance_path_sh(player * const pl, const char * const name, 
  * @param new_map_path the path to the map to ready. This can be either an absolute path,
  *        or a path relative to orig_map->path. It must be a true "source" map path,
  *        and not a path into the "./instance" or "./players" directory.
- * @param flags        1 to never load unloaded or swapped map, i.e. only return maps
- *                     already in memory.
  * @return pointer to loaded map, or NULL
  */
-mapstruct *ready_inherited_map(mapstruct *orig_map, shstr *new_map_path,
-                               uint32 flags)
+mapstruct *ready_inherited_map(mapstruct *orig_map, shstr *new_map_path)
 {
     mapstruct *new_map = NULL;
     shstr     *new_path = NULL,
@@ -1486,7 +1545,7 @@ mapstruct *ready_inherited_map(mapstruct *orig_map, shstr *new_map_path,
 
     if (new_map_path == orig_map->path &&
         (orig_map->in_memory == MAP_LOADING ||
-         orig_map->in_memory == MAP_IN_MEMORY))
+         orig_map->in_memory == MAP_ACTIVE))
     {
         return orig_map;
     }
@@ -1563,101 +1622,42 @@ mapstruct *ready_inherited_map(mapstruct *orig_map, shstr *new_map_path,
 
 //     LOG(llevInfo,">>>>>>>>>>>>>>>> orig_map->path=%s\nnew_map_path=%s\nnormalized_path=%s\nnew_path=%s\n", orig_map->path,new_map_path,normalized_path,new_path);
 
-    if ((flags & 1))
-    {
-        /* Just check if it has in memory */
-        if ((new_map = has_been_loaded_sh((new_path) ? new_path : normalized_path)) &&
-            (new_map->in_memory != MAP_LOADING &&
-             new_map->in_memory != MAP_IN_MEMORY))
-        {
-            new_map = NULL;
-        }
-    }
-    else
-    {
-        /* Load map if necesseary */
-        new_map = ready_map_name((new_path) ? new_path : normalized_path,
-                                 normalized_path,
-                                 MAP_STATUS_TYPE(orig_map->map_status),
-                                 orig_map->reference);
-    }
-
+    new_map = ready_map_name((new_path) ? new_path : normalized_path,
+                             normalized_path,
+                             MAP_STATUS_TYPE(orig_map->map_status),
+                             orig_map->reference);
     FREE_ONLY_HASH(normalized_path);
-
-    if (new_path)
-    {
-        FREE_ONLY_HASH(new_path);
-    }
+    FREE_ONLY_HASH(new_path);
 
     return new_map;
 }
 
-/* ready_map_name() attempts to ensure the map indicated by name_path/src_path and flags is ready in memory, (re)loading from various locations depending on flags as necessary.
+/* ready_map_name() attempts to ensure the map indicated by path_sh/orig_path_sh and flags is ready in memory, (re)loading from various locations depending on flags as necessary.
  *
- * name_path and src_path must be genuine path and orig_path respectively or NULL. If both are NULL we simply return NULL (the function should not have been called in the first place).
+ * path_sh and orig_path_sh must be genuine path and orig_path respectively or NULL. If both are NULL we simply return NULL (the function should not have been called in the first place).
  *
  * If a map with a matching path is already loaded into memory, there is nothing to do; it is already ready so return it.
  *
  * 
- * it will return a map pointer to the map name_path/src_path.
+ * it will return a map pointer to the map path_sh/orig_path_sh.
  * If the map was not loaded before, the map will be loaded now.
- * src_path is ALWAYS a path to /maps = the original map path.
- * name_path can be different and pointing to /instance or /players
+ * orig_path_sh is ALWAYS a path to /maps = the original map path.
+ * path_sh can be different and pointing to /instance or /players
  * reference needs to be a player name for UNIQUE or MULTI maps
  *
- * If src_path is NULL we will not load a map from disk, but return NULL
+ * If orig_path_sh is NULL we will not load a map from disk, but return NULL
  * if the map wasn't in memory already.
- * If name_path is NULL we will force a reload of the map even if it already
+ * If path_sh is NULL we will force a reload of the map even if it already
  * was in memory. (caller has to reset the map!) */
-mapstruct *ready_map_name(shstr *name_path, shstr *src_path, uint32 flags,
+mapstruct *ready_map_name(shstr *path_sh, shstr *orig_path_sh, uint32 flags,
                           shstr *reference)
 {
     mapstruct *m;
 
-/* Sanity checks: These extra checks are for debugging/tracking how the map
- * system works in practice. They probably/hopefully will never come up in
- * actuality.
- *
- * -- Smacky 20120807 */
-#ifdef DEBUG_MAP
-    LOG(llevDebug, "DEBUG:: %s/ready_map_name(): >%s< >%s< %u >%s<!\n",
-        __FILE__, STRING_SAFE(name_path), STRING_SAFE(src_path), flags,
-        STRING_SAFE(reference));
-
-    /* No paths = nothing to do. */
-    if (!name_path &&
-        !src_path)
-    {
-        LOG(llevDebug, "  * Both name_path/src_path = NULL!\n");
-    }
-
-    if ((name_path &&
-         (*name_path != '.' &&
-          (flags & (MAP_STATUS_UNIQUE | MAP_STATUS_INSTANCE))) ||
-         (*name_path != '/' &&
-          !(flags & (MAP_STATUS_UNIQUE | MAP_STATUS_INSTANCE)))) ||
-        (src_path &&
-         *src_path != '/'))
-    {
-        LOG(llevDebug, "  * Either name_path or src_path are incorrect according to flags!\n");
-    }
-
-    /* This would not make sense. */
-    if (!name_path &&
-        src_path &&
-        (flags & (MAP_STATUS_UNIQUE | MAP_STATUS_INSTANCE)))
-    {
-        LOG(llevDebug, "  * name_path = NULL and flags indicate we are trying "
-            "to ready a unique or instanced map. However if a multi version "
-            "of this map is already ready we will just return it and not load "
-            "the new status version!\n");
-    }
-#endif
-
     /* Map is good to go? Just return it. */
-    if ((m = has_been_loaded_sh((name_path) ? name_path : src_path)) &&
+    if ((m = map_is_in_memory((path_sh) ? path_sh : orig_path_sh)) &&
         (m->in_memory == MAP_LOADING ||
-         m->in_memory == MAP_IN_MEMORY))
+         m->in_memory == MAP_ACTIVE))
     {
 #ifdef DEBUG_MAP
         LOG(llevDebug, "DEBUG:: %s/ready_map_name(): Map >%s< >%s< (%u/%u) already ready!\n",
@@ -1667,17 +1667,18 @@ mapstruct *ready_map_name(shstr *name_path, shstr *src_path, uint32 flags,
 #endif
         return m;
     }
+
     /* If it's not in memory or is but we want to load it new as unique or
      * instanced -- which always get loaded from data/players/ or
      * data/instances/. */
-    else if (!m ||
-             (flags & (MAP_STATUS_UNIQUE | MAP_STATUS_INSTANCE)))
+    if (!m ||
+        (flags & (MAP_STATUS_UNIQUE | MAP_STATUS_INSTANCE)))
     {
         /* Tricky check - if we have '/' starting part, its a multi map we have here.
-         * if called without src_path, we only check it in memory OR in tmp.
+         * if called without orig_path_sh, we only check it in memory OR in tmp.
          * if we are here its not there or its not an multi map. */
-        if (!src_path &&
-            *name_path == '/')
+        if (!orig_path_sh &&
+            *path_sh == '/')
         {
             return  NULL;
         }
@@ -1688,7 +1689,7 @@ mapstruct *ready_map_name(shstr *name_path, shstr *src_path, uint32 flags,
         {
 #ifdef DEBUG_MAP
             LOG(llevDebug, "DEBUG:: %s/ready_map_name(): Cleaning up  map >%s< >%s< (%u/%u) for reload with as %s!\n",
-                __FILE__, STRING_SAFE(name_path), STRING_SAFE(src_path),
+                __FILE__, STRING_SAFE(path_sh), STRING_SAFE(orig_path_sh),
                  m->in_memory, m->map_status,
                  (flags & MAP_STATUS_UNIQUE) ? "unique" : "instance");
 #endif
@@ -1698,7 +1699,7 @@ mapstruct *ready_map_name(shstr *name_path, shstr *src_path, uint32 flags,
 
         /* We are loading now a src map from maps/ or an unique/instance from
          * data/players/ or data/instances/. */
-        m = LoadMap(name_path, src_path, MAP_STATUS_TYPE(flags), reference);
+        m = LoadMap(path_sh, orig_path_sh, MAP_STATUS_TYPE(flags), reference);
     }
     /* If in this loop, we found a temporary map (so it was, and we are trying
      * to re-ready it as, a multi), so load it up. */
@@ -1710,19 +1711,19 @@ mapstruct *ready_map_name(shstr *name_path, shstr *src_path, uint32 flags,
     return m;
 }
 
-/* Opens the file "filename" or "src_name" and reads information about the map
- * from the given file, and stores it in a newly allocated mapstruct. A pointer
- * to this structure is returned, or NULL on failure.
+/* Opens the file in path_sh or orig_path_sh and reads information about the
+ * map from the given file, and stores it in a newly allocated mapstruct. A
+ * pointer to this structure is returned, or NULL on failure.
  *
  * The function knows if it loads an original map from /maps or a
- * unique/instance by comparing filename and src_name.
+ * unique/instance by comparing path_sh and orig_path_sh.
  *
  * flags correspond to those in map.h. Main ones used are MAP_PLAYER_UNIQUE and
- * MAP_PLAYER_INSTANCE where filename is != src_name. MAP_STYLE: style map -
+ * MAP_PLAYER_INSTANCE where path_sh != orig_path_sh. MAP_STYLE: style map -
  * don't add active objects, don't add to server managed map list.
  *
  * reference needs to be a player name for UNIQUE or MULTI maps. */
-static mapstruct *LoadMap(shstr *filename, shstr *src_name, uint32 flags, shstr *reference)
+static mapstruct *LoadMap(shstr *path_sh, shstr *orig_path_sh, uint32 flags, shstr *reference)
 {
     FILE      *fp;
     mapstruct *m;
@@ -1735,15 +1736,15 @@ static mapstruct *LoadMap(shstr *filename, shstr *src_name, uint32 flags, shstr 
      * a '.' signs unique maps in fixed directories.
      * We don't fix it here anymore - this MUST be done by the calling functions or our
      * inheritanced map system is already broken somewhere before this call. */
-    if ((filename &&
-         *filename != '/' &&
-         *filename != '.') ||
-        (src_name &&
-         *src_name != '/' &&
-         *src_name != '.'))
+    if ((path_sh &&
+         *path_sh != '/' &&
+         *path_sh != '.') ||
+        (orig_path_sh &&
+         *orig_path_sh != '/' &&
+         *orig_path_sh != '.'))
     {
         LOG(llevBug, "BUG:: %s/LoadMap(): Filename without start '/' or '.' (>%s<) (>%s<)\n",
-            __FILE__, STRING_SAFE(filename), STRING_SAFE(src_name));
+            __FILE__, STRING_SAFE(path_sh), STRING_SAFE(orig_path_sh));
 
         return NULL;
     }
@@ -1754,41 +1755,41 @@ static mapstruct *LoadMap(shstr *filename, shstr *src_name, uint32 flags, shstr 
      * IF map_status is zero here, LoadMap() will set it dynamic!
      * Checkup LoadMap() & LoadMapHeader() how it works.
      */
-    if (filename)
+    if (path_sh)
     {
-        if (*filename == '.') /* pathes to /instance and /players always start with a '.'! */
+        if (*path_sh == '.') /* pathes to /instance and /players always start with a '.'! */
         {
-            strcpy(pathname, filename);
+            strcpy(pathname, path_sh);
         }
         else /* we have an normalized map here and the map start ALWAYS with a '/' */
         {
-            strcpy(pathname, create_mapdir_pathname(filename)); /* we add the (...)/maps prefix path part */
+            strcpy(pathname, create_mapdir_pathname(path_sh)); /* we add the (...)/maps prefix path part */
 
-            if (filename == src_name)
+            if (path_sh == orig_path_sh)
             {
                 flags |= MAP_STATUS_ORIGINAL;
             }
         }
     }
 
-    if (!filename ||
+    if (!path_sh ||
         !(fp = fopen(pathname, "r")))
     {
         /* this was usually a try to load a unique or instance map
          * This is RIGHT because we use fopen() here as an implicit access()
          * check. If it fails, we know we have to load the map from /maps! */
-        if (src_name &&
-            filename != src_name &&
-            *src_name == '/')
+        if (orig_path_sh &&
+            path_sh != orig_path_sh &&
+            *orig_path_sh == '/')
         {
-            strcpy(pathname, create_mapdir_pathname(src_name)); /* we add the (...)/maps prefix path part */
+            strcpy(pathname, create_mapdir_pathname(orig_path_sh)); /* we add the (...)/maps prefix path part */
             flags |= MAP_STATUS_ORIGINAL;
 
             if (!(fp = fopen(pathname, "r")))
             {
                 /* ok... NOW we are screwed with an invalid map... because it is not in /maps */
                 LOG(llevBug, "BUG:: %s/LoadMap(): Can't open map file >%s< (>%s<)!\n",
-                    __FILE__, STRING_SAFE(filename), STRING_SAFE(src_name));
+                    __FILE__, STRING_SAFE(path_sh), STRING_SAFE(orig_path_sh));
 
                 return NULL;
             }
@@ -1796,7 +1797,7 @@ static mapstruct *LoadMap(shstr *filename, shstr *src_name, uint32 flags, shstr 
         else
         {
             LOG(llevBug, "BUG:: %s/LoadMap(): Can't open map file >%s< (>%s<)!\n",
-                __FILE__, STRING_SAFE(filename), STRING_SAFE(src_name));
+                __FILE__, STRING_SAFE(path_sh), STRING_SAFE(orig_path_sh));
 
             return NULL;
         }
@@ -1804,18 +1805,18 @@ static mapstruct *LoadMap(shstr *filename, shstr *src_name, uint32 flags, shstr 
 
     m = GetLinkedMap();
 
-    if (filename)
+    if (path_sh)
     {
-        FREE_AND_COPY_HASH(m->path, filename);
+        FREE_AND_COPY_HASH(m->path, path_sh);
     }
     else
     {
-        FREE_AND_COPY_HASH(m->path, src_name);
+        FREE_AND_COPY_HASH(m->path, orig_path_sh);
     }
 
-    if (src_name) /* invalid src_name can happens when we force an explicit load of an unique map! */
+    if (orig_path_sh) /* invalid orig_path_sh can happens when we force an explicit load of an unique map! */
     {
-        FREE_AND_COPY_HASH(m->orig_path, src_name); /* orig_path will be loaded in LoadMapHeader()! */
+        FREE_AND_COPY_HASH(m->orig_path, orig_path_sh); /* orig_path will be loaded in LoadMapHeader()! */
     }
 
     m->map_tag = ++global_map_tag;    /* every map has an unique tag */
@@ -1882,7 +1883,7 @@ static mapstruct *LoadMap(shstr *filename, shstr *src_name, uint32 flags, shstr 
 /* Loads a map, which has been loaded earlier, from file.
  * Return the map object we load into (this can change from the passed
  * option if we can't find the original map)
- * note: LoadMap() is called with (NULL, <src_name>, MAP_STATUS_MULTI, NULL) when
+ * note: LoadMap() is called with (NULL, m->orig_path, MAP_STATUS_MULTI, NULL) when
  * tmp map loading fails because a tmp map is ALWAYS a MULTI map and when fails its
  * reloaded from /maps as new original map. */
 static mapstruct *LoadTemporaryMap(mapstruct *m)
@@ -1923,12 +1924,13 @@ static mapstruct *LoadTemporaryMap(mapstruct *m)
 
     if (fallback)
     {
-        char buf[MEDIUM_BUF];
+        shstr *orig_path_sh = NULL;
 
         LOG(llevInfo, " Fallback to original!\n");
-        sprintf(buf, "%s", m->orig_path);
+        FREE_AND_ADD_REF_HASH(orig_path_sh, m->orig_path);
         delete_map(m);
-        m = LoadMap(NULL, buf, MAP_STATUS_MULTI, NULL);
+        m = LoadMap(NULL, orig_path_sh, MAP_STATUS_MULTI, NULL);
+        FREE_ONLY_HASH(orig_path_sh);
     }
     else
     {
@@ -1944,7 +1946,7 @@ static mapstruct *LoadTemporaryMap(mapstruct *m)
         LOG(llevInfo, "Clean... ");
 #endif
         clean_tmp_map(m);
-        m->in_memory = MAP_IN_MEMORY;
+        m->in_memory = MAP_ACTIVE;
      
 #ifdef DEBUG_MAP
         /* In case other objects press some buttons down. We handle here all
@@ -2337,7 +2339,7 @@ static int LoadMapHeader(FILE *fp, mapstruct *m, uint32 flags)
         else if (!strcmp(key, "orig_path"))
         {
             *end = 0;
-            /* important override - perhaps src_path was setup with the (wrong) dest path!
+            /* important override - perhaps orig_path was setup with the (wrong) dest path!
              * that can happens when we force explicit the load of an old instance or
              * unique map where we want be sure that our map loader don't fallback to
              * a original source map from /maps. Because EVERY map outside /maps has its orig_path
@@ -2438,8 +2440,8 @@ static int LoadMapHeader(FILE *fp, mapstruct *m, uint32 flags)
                 }
 
                 /* If the neighbouring map tile has been loaded, set up the map pointers */
-                if ((neighbour = has_been_loaded_sh(path_sh)) &&
-                    (neighbour->in_memory == MAP_IN_MEMORY ||
+                if ((neighbour = map_is_in_memory(path_sh)) &&
+                    (neighbour->in_memory == MAP_ACTIVE ||
                      neighbour->in_memory == MAP_LOADING))
                 {
                     int dest_tile = MapTiledReverse[tile - 1];
@@ -2910,7 +2912,7 @@ next:
     */
     UpdateMapTiles(m);
     m->map_flags &= ~MAP_FLAG_NO_UPDATE; /* turn tile updating on again */
-    m->in_memory = MAP_IN_MEMORY;
+    m->in_memory = MAP_ACTIVE;
 
     /* this is the only place we can insert this because the
     * recursive nature of LoadObjects().
@@ -3199,22 +3201,41 @@ static void SaveObjects(mapstruct *m, FILE *fp)
                     }
                     else if (head->type == SPAWN_POINT)
                     {
-                        /* Handling of the spawn points is much easier as handling the mob.
-                        * if the spawn point still control some mobs, we delete the mob  - where ever
-                        * it is. Also, set pre spawn value to last mob - so we restore our creature
-                        * when we reload this map. */
-                        if (head->enemy)
+                        /* If the spawn point has spawned... */
+                        if (head->enemy &&
+                            head->enemy_count == head->enemy->count &&
+                            !QUERY_FLAG(head->enemy, FLAG_REMOVED) &&
+                            !OBJECT_FREE(head->enemy))
                         {
-                            if (head->enemy_count == head->enemy->count &&  /* we have a legal spawn? */
-                                !QUERY_FLAG(head->enemy, FLAG_REMOVED) &&
-                                !OBJECT_FREE(head->enemy))
+                             /* ...Set the pre-spawn value to last mob so we
+                              * restore our creature when we reload the map. */
+                            head->stats.sp = head->last_sp;
+                            head->speed_left += 1.0f;
+
+                            /* ...If the spawn is on the same map as the spawn
+                             * point, delete the mob. Otherwise, turn him into
+                             * a script mob (ie, no spawn point). */
+                            /* TODO: This will lead to a situation with
+                             * multiple instances of the 'same' mob -- not an
+                             * issue normally, but perhaps undesirable with
+                             * boss mobs, quest givers/targets, etc. So we
+                             * should have a boolean attribute. If 1, remove
+                             * the mob, don't decouple it.
+                             *
+                             * -- Smacky 20120817 */
+                            if (head->enemy->map == head->map)
                             {
-                                head->stats.sp = head->last_sp; /* force a pre spawn setting */
-                                head->speed_left += 1.0f;
                                 REMOVE_OBJECT(head->enemy, 1);
                                 VALIDATE_NEXT(this, next, prev, mp->first);
-                                head->enemy = NULL;
                             }
+                            {
+                                CLEAR_MULTI_FLAG(head->enemy, FLAG_SPAWN_MOB);
+                                SET_MULTI_FLAG(head->enemy, FLAG_SCRIPT_MOB);
+                                remove_ob(MOB_DATA(head->enemy)->spawn_info);
+                                MOB_DATA(head->enemy)->spawn_info = NULL;
+                            }
+
+                            head->enemy = NULL;
                         }
                     }
 
@@ -3424,58 +3445,6 @@ void map_player_link(mapstruct *m, sint16 x, sint16 y, uint8 flag)
     }
 }
 
-/* FIXME: what is the relevance of the use of the word "mapname" instead
- * of map path here? Gecko 2007-02-03. */
-/** Validate and normalize a map name.
- * This is called by scripts or any other source where we must ensure
- * that our mapname is legal. We do some sanity tests to ensure we
- * have a valid and working name.
- * Note that mapnames beginning with "." should already have been normalized
- * and won't be normalized by this function.
- * @param mapname the mapname to validate and normalize. Doesn't have to be a shared string.
- * Should be an absolute path (or an instance/unique path).
- * @return normalized legal map name as shared string, or NULL if the mapname is illegal
- */
-const char* create_safe_mapname_sh(char const *mapname)
-{
-    char path[MAXPATHLEN];
-    const char *p;
-    int c=0;
-
-    if(mapname)
-    {
-        for(p=mapname;;p++) /* count and check the string */
-        {
-            if(*p=='\0') /* string ends with 0 - all is fine */
-                break;
-
-            if(++c >= MAXPATHLEN-6) /* string is to long */
-                return NULL;
-
-            /* control chars, 0x0a or windows path elements? forget it */
-            if(isspace(*p) || iscntrl(*p) || *p=='\\')
-               return NULL;
-
-            /* check for valid '.' use - we mark as invalid if either:
-             * - in a path starting with '.' another '.' is found ("./xxx" pathes are always normalized)
-             * - after a '.' anything but another '.' or a '/' is found
-             */
-            if(*p == '.' && p != mapname)
-            {
-                if(*mapname == '.' || (*(p+1) != '.' && *(p+1) != '/'))
-                    return NULL;
-            }
-        }
-    }
-
-    if(*mapname == '.') /* direct unique or instance string - should already be normalized */
-        p = add_string(mapname);
-    else
-        p = add_string(normalize_path(mapname, NULL, path));
-
-   return p;
-}
-
 #ifdef RECYCLE_TMP_MAPS
 /* This writes out information on all the temporary maps.  It is called by
  * swap_map below. */
@@ -3498,7 +3467,9 @@ static void WriteMapLog(void)
         /* If tmpname is null, it is probably a unique player map,
          * so don't save information on it.
          */
-        if (map->in_memory != MAP_IN_MEMORY && (map->tmpname != NULL) && (strncmp(map->path, "/random", 7)))
+        if (map->in_memory != MAP_ACTIVE &&
+            map->tmpname &&
+            strncmp(map->path, "/random", 7))
         {
             /* the 0 written out is a leftover from the lock number for
                * unique items and second one is from encounter maps.
@@ -3546,7 +3517,7 @@ void read_map_log(void)
         FREE_AND_COPY_HASH(m->path, buf);
         cp1 = strchr(cp, ':');
         *cp1++ = '\0';
-        m->tmpname = strdup_local(cp);
+        MALLOC2(m->tmpname, cp);
 
         /* Lock is left over from the lock items - we just toss it now.
          * We use it twice - second one is from encounter, but as we
@@ -3574,7 +3545,7 @@ void read_map_log(void)
 void swap_map(mapstruct *map, int force_flag)
 {
     /* lets check some legal things... */
-    if (map->in_memory != MAP_IN_MEMORY &&
+    if (map->in_memory != MAP_ACTIVE &&
         map->in_memory != MAP_SAVING)
     {
         LOG(llevBug, "BUG:: %s/swap_map(): Tried to swap out map which was not in memory: %s!\n",
@@ -3598,7 +3569,7 @@ void swap_map(mapstruct *map, int force_flag)
             {
                 /* if there is a map, is load AND in memory and players on OR perm_load flag set, then... */
                 if (map->tile_map[i] &&
-                    map->tile_map[i]->in_memory == MAP_IN_MEMORY &&
+                    map->tile_map[i]->in_memory == MAP_ACTIVE &&
                     (map->tile_map[i]->player_first ||
                      map->tile_map[i]->perm_load))
                 {
@@ -3643,14 +3614,11 @@ void swap_map(mapstruct *map, int force_flag)
         )
     {
         if (map->in_memory != MAP_SAVING && // do not save twice
-            new_save_map(map, 0) == -1)
+            !map_save(map))
         {
-            LOG(llevBug, "BUG:: %s/swap_map(): Failed to swap map %s!\n",
-                __FILE__, STRING_MAP_PATH(map));
-            /* Reset the in_memory flag so that delete map will also free the
-             * objects with it. */
-            map->in_memory = MAP_IN_MEMORY;
-            delete_map(map);
+            LOG(llevBug, "BUG:: %s/swap_map(): Failed to swap map!\n", __FILE__);
+
+            return;
         }
         else
         {
@@ -3696,7 +3664,7 @@ void set_map_darkness(mapstruct *m, int value)
  * ATM this functionality is still scattered through the code a bit.
  *
  * -- Smacky 20120810 */
-void map_check_active(void)
+void map_check_in_memory(mapstruct *m)
 {
     mapstruct *this,
               *next;
@@ -3704,7 +3672,7 @@ void map_check_active(void)
     static uint32 threshold = MAP_MAXOBJECTS;
 #endif
 
-    for (this = first_map; this; this = next)
+    for (this = (m) ? m : first_map; this; this = (!m) ? next : NULL)
     {
         next = this->next;
 
@@ -3727,7 +3695,8 @@ void map_check_active(void)
                 continue;
             }
 
-            if (this->in_memory == MAP_IN_MEMORY ||
+            /* Map may need swapping. */
+            if (this->in_memory == MAP_ACTIVE ||
                 this->in_memory == MAP_SAVING)
             {
 #ifdef MAP_MAXOBJECTS
@@ -3767,7 +3736,7 @@ void map_check_active(void)
                     for (i = 0; i < TILED_MAPS; i++)
                     {
                         if (this->tile_map[i] &&
-                            this->tile_map[i]->in_memory == MAP_IN_MEMORY &&
+                            this->tile_map[i]->in_memory == MAP_ACTIVE &&
                             (this->tile_map[i]->player_first ||
                              this->tile_map[i]->perm_load))
                         {
@@ -3782,7 +3751,7 @@ void map_check_active(void)
                     {
 #ifdef MAP_MAXOBJECTS
 # ifdef DEBUG_MAP
-                        LOG(llevDebug, "DEBUG:: %s/map_check_active(): Swapping map >%s< (%u) before its time (%u of %u).\n", 
+                        LOG(llevDebug, "DEBUG:: %s/map_check_in_memory(): Swapping map >%s< (%u) before its time (%u of %u).\n", 
                             __FILE__, STRING_MAP_PATH(this), this->in_memory, objs,
                             threshold);
 # endif
@@ -3790,7 +3759,7 @@ void map_check_active(void)
                         object_gc(); // keep mempool uptodate
 #else
 # ifdef DEBUG_MAP
-                        LOG(llevDebug, "DEBUG:: %s/map_check_active(): Swapping map >%s< (%u)!\n",
+                        LOG(llevDebug, "DEBUG:: %s/map_check_in_memory(): Swapping map >%s< (%u)!\n",
                             __FILE__, STRING_MAP_PATH(this), this->in_memory);
 # endif
                         swap_map(this, 1);
@@ -3800,6 +3769,8 @@ void map_check_active(void)
             }
         }
 
+        /* When doing a delayed manual reset, give a countdown to everyone on
+         * the map. */
         if (MAP_MANUAL_RESET(this) &&
             MAP_WHEN_RESET(this))
         {
@@ -3807,15 +3778,16 @@ void map_check_active(void)
                                                        (uint32)MAX(1, pticks_second)) /
                                                       pticks_second;
 
-             if (countdown > 0 &&
-                 (!(countdown % 30) ||
-                  countdown <= 10))
+             if (countdown > 0 &&      // not for 0
+                 (!(countdown % 30) || // every 30s
+                  countdown <= 10))    // every s for the last 10
             {
-                new_info_map(NDI_UNIQUE | NDI_NAVY, this, 0, 0, MAP_INFO_ALL, "Only ~%u~ second%s to map reset!",
+                new_info_map(NDI_UNIQUE | NDI_NAVY, this, 0, 0, MAP_INFO_ALL, "Only ~%d~ second%s to map reset!",
                              countdown, (countdown != 1) ? "s" : "");
             }
         }
 
+        /* Map may need resetting. */
         if (MAP_MANUAL_RESET(this) ||
             this->in_memory == MAP_SWAPPED)
         {
@@ -3837,28 +3809,18 @@ void map_check_active(void)
                                           (long unsigned int)MAX(1, pticks_second)) /
                                           pticks_second)
             {
-                /* On a manual reset we want to immediately reload the source
-                 * map which also means we need to juggle any players on it. */
+                /* On a manual reset we may want to immediately reload the
+                 * source map which also means we need to juggle any players on
+                 * it. */
                 if (MAP_MANUAL_RESET(this))
                 {
-                    uint8  anyplayers;
-                    shstr *path_sh = NULL,
-                          *orig_path_sh = NULL,
-                          *reference_sh = NULL;
-                    uint32 status;
-
 #ifdef DEBUG_MAP
-                    LOG(llevDebug, "DEBUG:: %s/map_check_active(): Manually resetting map >%s<!\n",
-                        __FILE__, STRING_MAP_PATH(this));
+                    LOG(llevDebug, "DEBUG:: %s/map_check_in_memory(): Manually resetting%s map >%s<!\n",
+                        __FILE__, (MAP_RELOAD(this)) ? " and reloading" : "",
+                        STRING_MAP_PATH(this));
 
 #endif
-                    /* If there are any players on the map, temp remove them. */
-                    if ((anyplayers = (this->player_first) ? 1 : 0))
-                    {
-                        (void)map_player_unlink(this, NULL);
-                    }
-
-                    /* We now need to 'save' the objects on map so spawns from
+                    /* We need to 'save' the objects on map so spawns from
                      * other maps disappear and the spawn point on the other
                      * map knows to respawn, etc. On uniques/instances we in
                      * fact do save the map to disk to prevent item loss. But
@@ -3868,47 +3830,95 @@ void map_check_active(void)
                     if (MAP_UNIQUE(this) ||
                         MAP_INSTANCE(this))
                     {
-                        new_save_map(this, 0);
+                        if (!map_save(this))
+                        {
+                            continue;
+                        }
                     }
                     else
                     {
                         SaveObjects(this, NULL);
                     }
 
-                    /* Remember a few details so we can reload the map. */
-                    FREE_AND_ADD_REF_HASH(path_sh, this->path);
-                    FREE_AND_ADD_REF_HASH(orig_path_sh, this->orig_path);
-
-                    if (this->reference)
+                    if (MAP_RELOAD(this))
                     {
-                        FREE_AND_ADD_REF_HASH(reference_sh, this->reference);
+                        uint8  anyplayers;
+                        shstr *path_sh = NULL,
+                              *orig_path_sh = NULL,
+                              *reference_sh = NULL;
+                        uint32 status;
+
+                        /* If there are any players on the map, temp remove them. */
+                        if ((anyplayers = (this->player_first) ? 1 : 0))
+                        {
+                            (void)map_player_unlink(this, NULL);
+                        }
+
+                        /* Remember a few details so we can reload the map. */
+                        FREE_AND_ADD_REF_HASH(path_sh, this->path);
+                        FREE_AND_ADD_REF_HASH(orig_path_sh, this->orig_path);
+
+                        if (this->reference)
+                        {
+                            FREE_AND_ADD_REF_HASH(reference_sh, this->reference);
+                        }
+
+                        status = MAP_STATUS_TYPE(this->map_status);
+
+                        /* Delete the map from memory and reload it. */
+                        clean_tmp_map(this);
+                        delete_map(this);
+                        this = ready_map_name(path_sh, orig_path_sh, status,
+                                              reference_sh);
+
+                        /* Put any removed players back on the map (or emergency if
+                         * for some reason it has failed to be ready).*/
+                        if (anyplayers)
+                        {
+                            map_player_link(this, -1, -1, 1);
+                        }
+
+                        /* Tidy up. */
+                        FREE_ONLY_HASH(path_sh);
+                        FREE_ONLY_HASH(orig_path_sh);
+                        FREE_ONLY_HASH(reference_sh);
                     }
-
-                    status = MAP_STATUS_TYPE(this->map_status);
-
-                    /* Delete the map from memory and reload it. */
-                    clean_tmp_map(this);
-                    delete_map(this);
-                    this = ready_map_name(path_sh, orig_path_sh, status,
-                                          reference_sh);
-
-                    /* Put any removed players back on the map (or emergency if
-                     * for some reason it has failed to be ready).*/
-                    if (anyplayers)
+                    else
                     {
-                        map_player_link(this, -1, -1, 1);
-                    }
+                        uint8 anyplayers;
 
-                    /* Tidy up. */
-                    FREE_ONLY_HASH(path_sh);
-                    FREE_ONLY_HASH(orig_path_sh);
-                    FREE_ONLY_HASH(reference_sh);
+                        /* If there are any players on the map, temp remove them. */
+                        if ((anyplayers = (this->player_first) ? 1 : 0))
+                        {
+                            (void)map_player_unlink(this,
+                                                    shstr_cons.emergency_mappath);
+                        }
+
+                        /* Delete the map from memory. */
+                        clean_tmp_map(this);
+                        delete_map(this);
+
+                        /* Put any removed players back on the emergency map - why
+                         * emergency? Because our bind point CAN be the same map we
+                         * just reset!
+                         *
+                         * By explicitly readying emergency here we ensure that
+                         * only THESE players are relinked. */
+                        if (anyplayers)
+                        {
+                            mapstruct *m = ready_map_name(shstr_cons.emergency_mappath,
+                                                          shstr_cons.emergency_mappath,
+                                                          MAP_STATUS_MULTI, NULL);
+
+                            map_player_link(m, -1, -1, 1);
+                        }
+                    }
                 }
                 /* Otherwise we know there's no-one here, so just delete it. */
                 else
                 {
 #ifdef DEBUG_MAP
-                    LOG(llevDebug, "DEBUG:: %s/map_check_active(): Resetting map >%s<!\n",
+                    LOG(llevDebug, "DEBUG:: %s/map_check_in_memory(): Resetting map >%s<!\n",
                         __FILE__, STRING_MAP_PATH(this));
 #endif
                     clean_tmp_map(this);

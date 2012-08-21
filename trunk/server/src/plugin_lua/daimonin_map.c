@@ -158,7 +158,7 @@ static int Map_toString(lua_State *L)
 /* Tests if a Map object is valid */
 static int Map_isValid(lua_object *obj)
 {
-    return (obj->tag == obj->data.map->tag && obj->data.map->in_memory == MAP_IN_MEMORY);
+    return (obj->tag == obj->data.map->tag);
 }
 
 /* Declare the map class */
@@ -196,132 +196,157 @@ int Map_init(lua_State *s)
 /* FUNCTIONSTART -- Here all the Lua plugin functions come */
 /*****************************************************************************/
 /* Name   : Map_ReadyInheritedMap                                            */
-/* Lua    : map:ReadyInheritedMap(map_path, flags)                           */
-/* Info   : Loads the map from map_path into memory, unless already loaded.  */
-/*          Will load the new map as the same type (multi,unique or instance)*/
-/*          as the old map.                                                  */
-/*          See also object:ReadyUniqueMap(), object:StartNewInstance() and  */
-/*          game:ReadyMap()                                                  */
-/*          flags:                                                           */
+/* Lua    : map:ReadyInheritedMap(path, mode)                                */
+/* Info   : Loads the map pointed to by path into memory with the same status*/
+/*          (multi, unique, or instance) as the old map.                     */
+/*                                                                           */
+/*          path is a required string. TODO: This is likely broken for       */
+/*          for advanced use, for now it should always be an absolute path). */
+/*                                                                           */
+/*          mode is an optional number. Use one of:                          */
 /*            game.MAP_CHECK - don't load the map if it isn't in memory,     */
 /*                             returns nil if the map wasn't in memory.      */
-/*            game.MAP_NEW - delete the map from memory and force a reset    */
-/*                           (if it existed in memory or swap)               */
+/*            game.MAP_NEW - if the map is already in memory, force an       */
+/*                           immediate reset; then (re)load it.              */
 /* Return : map pointer to map, or nil                                       */
-/* Status : Unfinished (flags not handled yet)                               */
+/* Status : Untested/Unstable                                                */
 /*****************************************************************************/
 static int Map_ReadyInheritedMap(lua_State *L)
 {
     lua_object *self;
-    char       *mapname;
-    const char *orig_path_sh,
+    const char *path;
+    int         mode = 0;
+    shstr      *orig_path_sh = NULL,
                *path_sh = NULL;
-    int         flags = 0;
-    mapstruct  *new_map = NULL;
+    mapstruct  *m = NULL;
 
-    get_lua_args(L, "Ms|i", &self, &mapname, &flags);
+    get_lua_args(L, "Ms|i", &self, &path, &mode);
 
-    /* TODO: handle flags like game:ReadyMap() */
-
-    /* we need a valid map status to know how to handle the map file */
-    if(MAP_STATUS_TYPE(WHERE->map_status))
+    if (!MAP_STATUS_TYPE(WHERE->map_status))
     {
-        orig_path_sh = hooks->create_safe_mapname_sh(mapname);
-
-        /* create the path prefix (./players/.. or ./instance/.. ) for non multi maps */
-        if(WHERE->map_status & (MAP_STATUS_UNIQUE|MAP_STATUS_INSTANCE))
-        {
-            char tmp_path[MAXPATHLEN];
-
-            FREE_AND_COPY_HASH(path_sh, hooks->normalize_path_direct(WHERE->path,
-                               orig_path_sh, tmp_path));
-        }
-
-        new_map = hooks->ready_map_name(path_sh?path_sh:orig_path_sh, orig_path_sh, MAP_STATUS_TYPE(WHERE->map_status), WHERE->reference);
-
-        FREE_ONLY_HASH(orig_path_sh);
-        if(path_sh)
-            FREE_ONLY_HASH(path_sh);
+        return luaL_error(L, "map:ReadyInheritedMap(): Self must have a status!");
     }
 
-    return push_object(L, &Map, new_map);
+    /* Absolute (multi). */
+    if (*path == '/')
+    {
+        if (hooks->check_path(path, 1) != -1)
+        {
+            orig_path_sh = hooks->create_safe_path_sh(path);
+        }
+    }
+    /* Unique/instance. */
+    else if (!strncmp(path, LOCALDIR "/" PLAYERDIR, LSTRLEN(LOCALDIR "/" PLAYERDIR)) ||
+             !strncmp(path, LOCALDIR "/" INSTANCEDIR, LSTRLEN(LOCALDIR "/" INSTANCEDIR)))
+    {
+        if (hooks->check_path(path, 0) != -1)
+        {
+            orig_path_sh = hooks->create_safe_path_sh(path);
+        }
+    }
+    /* Relative (multi). */
+    else
+    {
+        char buf[MAXPATHLEN];
+
+        if (hooks->check_path(hooks->normalize_path(WHERE->orig_path, path, buf), 1) != -1)
+        {
+            orig_path_sh = hooks->create_safe_path_sh(buf);
+        }
+    }
+
+    if (!orig_path_sh)
+    {
+        return luaL_error(L, "map:ReadyInheritedMap() could not verify the supplied path: >%s<!",
+                          STRING_SAFE(path));
+    }
+
+    if ((WHERE->map_status & (MAP_STATUS_UNIQUE | MAP_STATUS_INSTANCE)))
+    {
+        char path[MAXPATHLEN];
+
+        FREE_AND_COPY_HASH(path_sh, hooks->normalize_path_direct(WHERE->path,
+                           orig_path_sh, path));
+    }
+
+    m = hooks->map_is_in_memory((path_sh) ? path_sh : orig_path_sh);
+
+    if (mode == PLUGIN_MAP_NEW &&
+        m)
+    {
+        m->map_flags |= MAP_FLAG_MANUAL_RESET | MAP_FLAG_RELOAD;
+        MAP_SET_WHEN_RESET(m, -1);
+        hooks->map_check_in_memory(m);
+    }
+    else if (mode != PLUGIN_MAP_CHECK &&
+             (!m ||
+              (m->in_memory != MAP_LOADING &&
+               m->in_memory != MAP_ACTIVE)))
+    {
+        m = hooks->ready_map_name((path_sh) ? path_sh : orig_path_sh,
+                                  orig_path_sh,
+                                  MAP_STATUS_TYPE(WHERE->map_status),
+                                  WHERE->reference);
+    }
+
+    FREE_ONLY_HASH(orig_path_sh);
+    FREE_ONLY_HASH(path_sh);
+    push_object(L, &Map, m);
+
+    return 1;
 }
 
 /*****************************************************************************/
 /* Name   : Map_Delete                                                       */
-/* Lua    : map:Delete(flags)                                                */
-/* Info   : Remove the map from memory and map list. Release all objects.    */
-/*          if flag is non-zero the map is physically deleted too! For multi */
-/*          the effect is the same as for false but unique or instance maps  */
-/*          are physically deleted.                                          */
-/* Status : Tested/Stable                                                    */
+/* Lua    : map:Delete(seconds, reload)                                      */
+/* Info   : Resets the map (remove it from memory, release all objects,      */
+/*          teleport any players on it back to their respawn).               */
+/*                                                                           */
+/*          seconds is an optional number. A positive value causes the map to*/
+/*          reset in that many seconds (players on the map will get a        */
+/*          countdown every 30s or every s for the last 10). A negative value*/
+/*          causes the map to reset according to it's normal timeout). Zero  */
+/*          (default) causes an immediate reset.                             */
+/*                                                                           */
+/*          reload is an optional boolean. True causes the map to instantly  */
+/*          reload when it resets (and players will not go to their respawn).*/
+/* Return : nil                                                              */
+/* Status : Untested/Stable                                                  */
 /*****************************************************************************/
 static int Map_Delete(lua_State *L)
 {
     lua_object *self;
-    char const *path_sh = NULL;
-    int         map_player = 0,
-                flags = 0;
+    int         secs = 0,
+                reload = 0;
 
-    get_lua_args(L, "M|i", &self, &flags);
+    get_lua_args(L, "M|ib", &self, &secs, &reload);
+    WHERE->map_flags |= MAP_FLAG_MANUAL_RESET;
 
-    /* sanity checks... we don't test "in_memory" because
-     * we want remove perhaps swapped out maps too
-     */
-    if (!WHERE || !MAP_STATUS_TYPE(WHERE->map_status))
-        return 0;
-
-    if(flags) /* caller wants physical remove of the file too */
+    if (reload)
     {
-        /* it only makes sense for unique or instance maps */
-        if(!(WHERE->map_status & (MAP_STATUS_UNIQUE|MAP_STATUS_INSTANCE)) )
-            flags = FALSE; /* no remove for wrong map types */
-        else
-        {
-            if(!WHERE->path || !(*WHERE->path == '.')) /* last sanity test */
-            {
-                LOG(llevDebug, "Map_Delete(): non MULTI map without '.' path = %s\n", STRING_SAFE(WHERE->path));
-                flags = FALSE;
-            }
-            else
-                path_sh = hooks->add_refcount(WHERE->path);
-        }
+        WHERE->map_flags |= MAP_FLAG_RELOAD;
+    }
+    else
+    {
+        WHERE->map_flags &= ~MAP_FLAG_RELOAD;
     }
 
-    if (WHERE->player_first)
+    if (secs > 0) // delay X secs
     {
-        hooks->map_player_unlink(WHERE, hooks->shstr_cons->emergency_mappath);
-        map_player = 1;
+        MAP_SET_WHEN_RESET(WHERE, secs);
     }
-
-    /* remove map from /tmp and from memory */
-    hooks->clean_tmp_map(WHERE);
-    hooks->delete_map(WHERE);
-
-    /* Transfer players to the emergency map - why emergency?
-     * because our bind point CAN be the same map we killed above!
-     *
-     * By explicitly readying emegency here we ensure that only THESE players
-     * are relinked. */
-    if (map_player)
+    else if (secs < 0) // default for that map
     {
-        mapstruct *m = hooks->ready_map_name(hooks->shstr_cons->emergency_mappath,
-                                             hooks->shstr_cons->emergency_mappath,
-                                             MAP_STATUS_MULTI, NULL);
-
-        hooks->map_player_link(m, -1, -1, 1);
+        MAP_SET_WHEN_RESET(WHERE, MAP_RESET_TIMEOUT(WHERE));
     }
-
-    /* handle the file delete */
-    if(flags && path_sh)
+    else // immediate
     {
-        unlink(path_sh);
-        FREE_ONLY_HASH(path_sh);
+        MAP_SET_WHEN_RESET(WHERE, -1);
+        hooks->map_check_in_memory(WHERE);
     }
 
     return 0;
 }
-
 
 /*****************************************************************************/
 /* Name   : Map_GetFirstObjectOnSquare                                       */
@@ -483,9 +508,10 @@ static int Map_MapTileAt(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : Map_Save                                                         */
-/* Lua    : map:Save(flag)                                                   */
+/* Lua    : map:Save()                                                       */
 /* Info   : Save the map.                                                    */
-/* Status : Tested/Stable                                                    */
+/* Return : nil                                                              */
+/* Status : Untested/Stable                                                  */
 /*****************************************************************************/
 static int Map_Save(lua_State *L)
 {
@@ -493,11 +519,12 @@ static int Map_Save(lua_State *L)
 
     get_lua_args(L, "M", &self);
 
-    if (!WHERE || WHERE->in_memory != MAP_IN_MEMORY)
-        return 0;
+    if (!hooks->map_save(WHERE))
+    {
+        return luaL_error(L, "MapSave(): failed!");
+    }
 
-    if (hooks->new_save_map(WHERE, 0) == -1)
-        LOG(llevDebug, "MapSave(): failed to save map %s\n", STRING_SAFE(WHERE->path));
+    WHERE->in_memory = MAP_ACTIVE;
 
     return 0;
 }

@@ -735,74 +735,65 @@ static int Game_MatchString(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : Game_ReadyMap                                                    */
-/* Lua    : game:ReadyMap(map_path, flags)                                   */
-/* Info   : Loads the map from map_path into memory, unless already loaded.  */
-/*          Will normally ONLY create multiplayer maps, not instances.       */
-/*          See also object:ReadyUniqueMap(), object:StartNewInstance() and  */
-/*          map:ReadyInheritedMap()                                          */
-/*          flags:                                                           */
+/* Lua    : game:ReadyMap(path, mode)                                        */
+/* Info   : Loads the map pointed to by path into memory.                    */
+/*                                                                           */
+/*          path is a required string. It may be an absolute path            */
+/*          (recommended, the map will be handled as a multi) or a path to a */
+/*          unique/instance (in which case mode must be game.MAP_CHECK -- ie,*/
+/*          this method cannot load such maps).                              */
+/*                                                                           */
+/*          mode is an optional number. Use one of:                          */
 /*            game.MAP_CHECK - don't load the map if it isn't in memory,     */
 /*                             returns nil if the map wasn't in memory.      */
-/*            game.MAP_NEW - delete the map from memory and force a reset    */
-/*                           (if it existed in memory or swap)               */
-/*          If map_path is taken from the path attribute of a unique or      */
-/*          instance map, this function will actually load the unique map or */
-/*          the instance. This is how e.g. paths to apartment maps are stored*/
-/* Status : Tested/Stable                                                    */
+/*            game.MAP_NEW - if the map is already in memory, force an       */
+/*                           immediate reset; then (re)load it.              */
+/* Return : map pointer to map, or nil                                       */
+/* Status : Untested/Stable                                                  */
 /*****************************************************************************/
 static int Game_ReadyMap(lua_State *L)
 {
-    char       *mapname;
-    int flags = 0;
-    const char *path_sh;
-    mapstruct  *map=NULL;
     lua_object *self;
+    const char *path;
+    int         mode = 0;
+    shstr      *orig_path_sh;
+    mapstruct  *m;
 
-    get_lua_args(L, "Gs|i", &self, &mapname, &flags);
+    get_lua_args(L, "Gs|i", &self, &path, &mode);
 
-    if(mapname)
+    if (!(orig_path_sh = hooks->create_safe_path_sh(path)))
     {
-        path_sh = hooks->create_safe_mapname_sh(mapname);
-
-        if(path_sh) /* we MUST have now a path - we assume first it is the DESTINATION path */
-        {
-            /* NOTE: this call will do this:
-             * - checking loaded maps for path (type independent)
-             * - if non MULTI map try to load from ./player or ./instance
-             * - return then and DON'T create the map from /maps or other sources
-             * The creation is only done when src is != NULL in one of the 2 other
-             * ready_map_name() calls down there
-            */
-            map = hooks->ready_map_name(path_sh, NULL, 0, NULL); /* try load only */
-
-            if(*path_sh != '.')
-            {
-                if(map && (flags & PLUGIN_MAP_NEW)) /* reset the maps - if it loaded */
-                {
-                    int num = 0;
-
-                    if (map->player_first)
-                    {
-                        num = hooks->map_player_unlink(map, NULL);
-                    }
-
-                    hooks->clean_tmp_map(map); /* remove map from memory */
-                    hooks->delete_map(map);
-
-                    /* reload map forced from original /maps */
-                    map = hooks->ready_map_name(NULL, path_sh, MAP_STATUS_MULTI, NULL);
-
-                    if(num) /* and kick player back to map - note: if map is NULL its bind point redirect */
-                        hooks->map_player_link(map, -1, -1, FALSE);
-                }
-                else if (!(flags & PLUGIN_MAP_CHECK))/* normal ready_map_name() with checking loaded & original maps */
-                    map = hooks->ready_map_name(path_sh, path_sh, MAP_STATUS_MULTI, NULL);
-            }
-        }
-        FREE_ONLY_HASH(path_sh);
+        return luaL_error(L, "game:ReadyMap() could not verify the supplied path: >%s<!",
+                          STRING_SAFE(path));
     }
 
-    return push_object(L, &Map, map);
+    if (*orig_path_sh == '.' &&
+        mode != PLUGIN_MAP_CHECK)
+    {
+        return luaL_error(L, "game:ReadyMap() cannot load unique/instanced maps, it can only check if they are already loaded!");
+    }
+
+    m = hooks->map_is_in_memory(orig_path_sh);
+
+    if (mode == PLUGIN_MAP_NEW &&
+        m)
+    {
+        m->map_flags |= MAP_FLAG_MANUAL_RESET | MAP_FLAG_RELOAD;
+        MAP_SET_WHEN_RESET(m, -1);
+        hooks->map_check_in_memory(m);
+    }
+    else if (mode != PLUGIN_MAP_CHECK &&
+             (!m ||
+              (m->in_memory != MAP_LOADING &&
+               m->in_memory != MAP_ACTIVE)))
+    {
+        m = hooks->ready_map_name(NULL, orig_path_sh, MAP_STATUS_MULTI, NULL);
+    }
+
+    FREE_ONLY_HASH(orig_path_sh);
+    push_object(L, &Map, m);
+
+    return 1;
 }
 
 /*****************************************************************************/

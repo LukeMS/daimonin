@@ -254,24 +254,22 @@ struct plugin_hooklist
     object *(*arch_to_object)(archetype *);
     /* B */
     /* C */
-    int  (*cast_spell)(object *, object *, int, int, int, SpellTypeFrom,
-                       char *);
-    void (*clean_tmp_map)(mapstruct *);
+    int (*cast_spell)(object *, object *, int, int, int, SpellTypeFrom,
+                      char *);
+    sint8 (*check_path)(const char *, uint8);
     void (*clear_mob_knowns)(object *, struct mob_known_obj **, hashtable *);
     int (*command_combat)(object *, char *);
     int (*command_target)(object *, char *);
     char *(*cost_string_from_value)(sint64, int);
-    const char *(*create_instance_path_sh)(player * const, const char *const,
-                 int);
+    shstr *(*create_instance_path_sh)(player *, shstr *, uint32);
     char *(*create_mapdir_pathname)(const char *);
     struct mempool *(*create_mempool)(const char *, uint32, uint32,
         uint32, chunk_initialisator, chunk_deinitialisator,
         chunk_constructor, chunk_destructor);
-    const char *(*create_safe_mapname_sh)(char const *);
-    const char *(*create_unique_path_sh)(const object *, const char *);
+    shstr *(*create_safe_path_sh)(const char *);
+    shstr *(*create_unique_path_sh)(object *, shstr *);
     /* D */
     object *(*decrease_ob_nr)(object *, uint32);
-    void (*delete_map)(mapstruct *);
     void (*destruct_ob)(object *);
     /* E */
     int (*enter_map)(object *, object *, mapstruct *, int, int, int, int);
@@ -351,8 +349,11 @@ struct plugin_hooklist
 #endif
     /* M */
     int (*map_brightness)(mapstruct *, int, int);
+    void (*map_check_in_memory)(mapstruct *);
+    mapstruct *(*map_is_in_memory)(shstr *);
     void (*map_player_link)(mapstruct *, sint16, sint16, uint8);
     uint16 (*map_player_unlink)(mapstruct *, shstr *);
+    mapstruct *(*map_save)(mapstruct *);
     void (*map_transfer_apartment_items)(mapstruct *, mapstruct *, int, int);
     sint64 (*material_repair_cost)(object *, object *);
     void (*material_repair_item)(object *, int);
@@ -367,7 +368,6 @@ struct plugin_hooklist
                                 const int, const int, const int,
                                 const object *const, const object *const,
                                 const char *const, ...) DAI_GNUC_PRINTF(8, 9);
-    int (*new_save_map)(mapstruct *, int);
     char *(*normalize_path)(const char *, const char *, char *);
     char *(*normalize_path_direct)(const char *, const char *, char *);
     /* O */
@@ -430,6 +430,7 @@ struct plugin_hooklist
     long *global_instance_id;
     New_Face **new_faces;
     unsigned long *pticks;
+    float *pticks_second;
     Settings *settings;
     struct shstr_constants *shstr_cons;
     spell *spells;

@@ -1489,7 +1489,7 @@ void drop_ob_inv(object *ob)
 
     if (!ob->env &&
         (!ob->map ||
-         ob->map->in_memory != MAP_IN_MEMORY))
+         ob->map->in_memory != MAP_ACTIVE))
     {
         /* TODO */
         LOG(llevDebug, "BUG: drop_ob_inv() - can't drop inventory of objects not in map yet: %s (%s)\n",
@@ -2537,7 +2537,7 @@ object * get_split_ob(object *orig_ob, uint32 nr)
         return NULL;
     }
 
-    if (orig_ob->env == NULL && orig_ob->map->in_memory != MAP_IN_MEMORY)
+    if (orig_ob->env == NULL && orig_ob->map->in_memory != MAP_ACTIVE)
     {
         LOG(llevDebug, "get_split_ob(): Tried to split object whose map is not in memory.\n");
         return NULL;
@@ -2595,7 +2595,7 @@ object * get_split_ob(object *orig_ob, uint32 nr)
         {
             for(tmp = orig_ob->env;tmp;tmp = tmp->env)
             {
-                if(tmp->map && tmp->map->in_memory == MAP_IN_MEMORY) /* we are on a map */
+                if(tmp->map && tmp->map->in_memory == MAP_ACTIVE) /* we are on a map */
                     break;
             }
         }

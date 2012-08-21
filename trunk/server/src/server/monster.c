@@ -142,7 +142,7 @@ static int calc_direction_towards(object *op, object *target, mapstruct *map, in
         return target_rv.direction;
     }
 
-    path_map = ready_inherited_map(op->map, pf->path->map, 1);
+    path_map = map_is_ready(pf->path->map);
 
     /* Walk towards next precomputed coordinate */
     if(path_map == NULL || ! get_rangevector_full(
@@ -233,7 +233,7 @@ static int calc_direction_towards_object(object *op, object *target)
       || target->y != MOB_PATHDATA(op)->goal_y))
     {
         rv_vector   rv_goal, rv_target;
-        mapstruct  *goal_map    = ready_inherited_map(op->map, MOB_PATHDATA(op)->goal_map, 1);
+        mapstruct  *goal_map = map_is_ready(MOB_PATHDATA(op)->goal_map);
 
         /* TODO if we can't see the object, goto its last known position
          * (also have to separate between well-known objects that we can find
@@ -298,7 +298,22 @@ static int calc_direction_towards_waypoint(object *op, object *wp)
 
         if(WP_MAP(wp) && *WP_MAP(wp) != '\0')
         {
-            map = ready_inherited_map(op->map, WP_MAP(wp), 0);
+            char path[MAXPATHLEN];
+
+            /* map_is_ready() bugs if not fed an absolute path, so
+             * make one if necessary. */
+            if (*WP_MAP(wp) != '/')
+            {
+                FREE_AND_COPY_HASH(WP_MAP(wp),
+                                   normalize_path(op->map->path,
+                                                  WP_MAP(wp), path));
+            }
+
+            if (!(map = map_is_ready(WP_MAP(wp))))
+            {
+                map = ready_inherited_map(op->map, WP_MAP(wp));
+            }
+
             if(map && map->orig_path != WP_MAP(wp))
                 FREE_AND_ADD_REF_HASH(WP_MAP(wp), map->orig_path);
         } else
@@ -737,7 +752,11 @@ void object_accept_path(object *op)
         /* Move towards a specific coordinate */
         goal_x = MOB_PATHDATA(op)->target_x;
         goal_y = MOB_PATHDATA(op)->target_y;
-        goal_map = ready_inherited_map(op->map, MOB_PATHDATA(op)->target_map, 0);
+
+        if (!(goal_map = map_is_ready(MOB_PATHDATA(op)->target_map)))
+        {
+            goal_map = ready_inherited_map(op->map, MOB_PATHDATA(op)->target_map);
+        }
     }
     else if (target->type == TYPE_WAYPOINT_OBJECT)
     {
@@ -750,7 +769,22 @@ void object_accept_path(object *op)
             goal_y = WP_Y(target);
             if(WP_MAP(target) && *WP_MAP(target) != '\0')
             {
-                goal_map = ready_inherited_map(op->map, WP_MAP(target), 0);
+                char path[MAXPATHLEN];
+
+                /* map_is_ready() bugs if not fed an absolute path, so
+                 * make one if necessary. */
+                if (*WP_MAP(target) != '/')
+                {
+                    FREE_AND_COPY_HASH(WP_MAP(target),
+                                       normalize_path(op->map->path,
+                                                      WP_MAP(target), path));
+                }
+
+                if (!(goal_map = map_is_ready(WP_MAP(target))))
+                {
+                    goal_map = ready_inherited_map(op->map, WP_MAP(target));
+                }
+
                 if(goal_map && goal_map->orig_path != WP_MAP(target))
                     FREE_AND_ADD_REF_HASH(WP_MAP(target), goal_map->orig_path);
             }
@@ -769,7 +803,11 @@ void object_accept_path(object *op)
     {
         if (goal_object->type == TYPE_BASE_INFO)
         {
-            goal_map = ready_inherited_map(op->map, goal_object->slaying, 0);
+            if (!(goal_map = map_is_ready(goal_object->slaying)))
+            {
+                goal_map = ready_inherited_map(op->map, goal_object->slaying);
+            }
+
 /*            LOG(llevDebug, "source: %s, map %s (%p), target %s map %s (%p)\n",
                     STRING_OBJ_NAME(op), STRING_MAP_PATH(op->map), op->map,
                     STRING_OBJ_NAME(target), STRING_MAP_PATH(goal_map), goal_map);*/

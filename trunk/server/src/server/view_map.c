@@ -108,7 +108,7 @@ void draw_client_map(object *plobj)
     * If so, don't try to send them a map.  All will
      * be OK once they really log in.
      */
-    if (!plobj->map || plobj->map->in_memory != MAP_IN_MEMORY)
+    if (!plobj->map || plobj->map->in_memory != MAP_ACTIVE)
         return;
 
     /* if we has changed somewhere the map - prepare map data */
