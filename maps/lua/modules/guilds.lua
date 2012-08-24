@@ -84,7 +84,7 @@ _guilds = {
             path_attuned = 0,
         },
 
-        flags = Byte():Mask(F_NO_MAGIC, F_NO_PRAYER):ToNumber(),
+        flags = Byte(8, {F_NO_MAGIC, F_NO_PRAYER}):ToNumber(),
         weapon_max_level = 100,
     },
     [2] = {
@@ -128,7 +128,7 @@ _guilds = {
             },
             path_attuned = 4,
         },
-        flags = Byte():Mask(F_NO_2H, F_NO_POLEARM, F_NO_PRAYER, F_NO_ARCHERY):ToNumber(),
+        flags = Byte(8, {F_NO_2H, F_NO_POLEARM, F_NO_PRAYER, F_NO_ARCHERY}):ToNumber(),
     },
     [3] = {
         name = "Priest",
@@ -171,7 +171,7 @@ _guilds = {
             },
             path_attuned = 3,
         },
-        flags = Byte():Mask(F_NO_ARCHERY, F_NO_MAGIC, F_NO_2H, F_NO_POLEARM):ToNumber(),
+        flags = Byte(8, {F_NO_ARCHERY, F_NO_MAGIC, F_NO_2H, F_NO_POLEARM}):ToNumber(),
         weapon_max_level = 10,
         spell_max_difficulty = 2, -- TODO: Add a prayer max difficulty.
     },

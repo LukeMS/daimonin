@@ -38,12 +38,12 @@ local function log2(num)
 end
 
 -- Create a new byte with an optional bitsize (defaults to defualt_bitsize).
-function Byte:New(bitsize)
-
-    local b = {
-                byte = {},
-                size  = default_bitsize
-              }
+function Byte:New(bitsize, bits)
+    
+        local b = {
+                    byte = {},
+                    size  = default_bitsize
+                  }
     
     if bitsize then
     
@@ -52,6 +52,16 @@ function Byte:New(bitsize)
     end
     
     b.byte = new_byte(b.size)
+    
+    if bits then
+    
+        for i = 1, table.getn(bits) do
+
+            b.byte[log2(bits[i])] = 1
+
+        end
+    
+    end
 
     setmetatable(b, { __metatable = Byte,
                       __index = Byte })
