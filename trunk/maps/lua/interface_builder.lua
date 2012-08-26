@@ -1069,8 +1069,9 @@ function InterfaceBuilder:SetButton(title, command)
 end                        
                            
 -------------------
--- ib:SetAccept() sets the LHS button as an accept button and the RHS button as
--- a decline button.
+-- ib:SetAccept() sets the LHS button as an accept button and, if not already
+-- set, the RHS button as a decline button (this may not be appropriate in all
+-- cases and may of course be explicitly reset with ib:SetDecline()).
 -------------------
 function InterfaceBuilder:SetAccept(title, command)
     assert(type(title) == "string" or
@@ -1078,29 +1079,27 @@ function InterfaceBuilder:SetAccept(title, command)
     assert(type(command) == "string" or
            command == nil, "Arg #2 must be string or nil!")
 
-    if command == nil then
-        if title == nil then
-            title = "Accept"
-            command = "accept"
-        else
-            command = title
-
-            if title == "#" or
-               string.find(string.lower(title), "accept") ~= nil then
-                title = "Accept"
-            end
-        end
-    elseif title == nil then
+    if title == "#" or
+       title == nil then
         title = "Accept"
+    end
+
+    if command == nil then
+        command = string.lower(title)
+    else
+        command = string.lower(command)
     end
 
     self:_SetButton(title, command, "lhsbutton")
 
     if type(self.rhsbutton) ~= "table" then
-        command = string.gsub(string.lower(command), "^accept", "decline", 1)
+        local len = string.len(command)
 
-        if command == "decline" then
-            command = ""
+        if len >= 6 and
+           string.sub(command, 1, 6) == "accept" then
+            command = "decline" .. string.sub(command, -(len - 6))
+        else
+            command = "" -- will close the GUI
         end
 
         self:_SetButton("Decline", command, "rhsbutton")
@@ -1108,8 +1107,9 @@ function InterfaceBuilder:SetAccept(title, command)
 end
 
 -------------------
--- ib:SetDecline() sets the RHS button as a decline button and the LHS button
--- as an accept button.
+-- ib:SetDecline() sets the RHS button as a decline button and, if not already
+-- set, the LHS button as an accept button (this may not be appropriate in all
+-- cases and may of course be explicitly reset with ib:SetAccept()).
 -------------------
 function InterfaceBuilder:SetDecline(title, command)
     assert(type(title) == "string" or
@@ -1117,27 +1117,26 @@ function InterfaceBuilder:SetDecline(title, command)
     assert(type(command) == "string" or
            command == nil, "Arg #2 must be string or nil!")
 
-    if command == nil then
-        if title == nil then
-            title = "Decline"
-            command = "decline"
-        else
-            command = title
-
-            if title == "#" or string.find(string.lower(title), "decline") ~= nil then
-                title = "Decline"
-            end
-        end
-    elseif title == nil then
+    if title == "#" or
+       title == nil then
         title = "Decline"
+    end
+
+    if command == nil then
+        command = string.lower(title)
+    else
+        command = string.lower(command)
     end
 
     self:_SetButton(title, command, "rhsbutton")
 
     if type(self.lhsbutton) ~= "table" then
-        command = string.gsub(string.lower(command), "^decline", "accept", 1)
+        local len = string.len(command)
 
-        if command == "" then
+        if len >= 7 and
+           string.sub(command, 1, 7) == "decline" then
+            command = "accept" .. string.sub(command, -(len - 7))
+        else
             command = "accept"
         end
 
