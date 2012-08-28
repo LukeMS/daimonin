@@ -499,6 +499,22 @@ static void emote_other(object *op, object *target, char *str, char *buf, char *
     if (target && target->name)
         name = target->name;
 
+	char *self, *own, *who;
+    if(QUERY_FLAG(op, FLAG_IS_MALE) == QUERY_FLAG(op, FLAG_IS_FEMALE))
+    {
+		who = "it"; /* neuter or hermaphrodite */
+    }
+    else if (QUERY_FLAG(op, FLAG_IS_MALE))
+    {
+		who = "he";
+    }
+    else
+    {
+       who = "she";
+    }
+
+
+
 #if 0
     /* Only GMs and SAs can emote stealthed SAs. */
     if ((target->type == PLAYER &&
@@ -662,13 +678,13 @@ static void emote_other(object *op, object *target, char *str, char *buf, char *
           break;
         default:
           sprintf(buf, "You are still nuts.");
-          sprintf(buf2, "%s looks nuts. You get the distinct feeling that he IS nuts.", op->name);
+          sprintf(buf2, "%s looks nuts. You get the distinct feeling that %s IS nuts.", op->name, who);
           sprintf(buf3, "%s is eyeing %s quizzically.", name, op->name);
           break;
     }
 }
 
-static void emote_self(object *op, char *buf, char *buf2, char *buf3, int emotion)
+static void emote_self(object *op, char *buf, char *buf2, int emotion)
 {
     char *self, *own, *who;
     if(QUERY_FLAG(op, FLAG_IS_MALE) == QUERY_FLAG(op, FLAG_IS_FEMALE))
@@ -1094,7 +1110,7 @@ static int basic_emote(object *op, char *params, int emotion)
 
             if (op->type == PLAYER && op->name == name_hash) /* targeting ourself */
             {
-                emote_self(op, buf, buf2, buf3, emotion);
+                emote_self(op, buf, buf2, emotion);
                 new_draw_info(NDI_UNIQUE, 0, op, "%s", buf);
                 new_info_map_except(NDI_EMOTE | NDI_PLAYER | NDI_YELLOW,
                                     op->map, op->x, op->y, MAP_INFO_NORMAL, op,
@@ -1154,7 +1170,7 @@ static int basic_emote(object *op, char *params, int emotion)
                      */
             if (op->type == PLAYER)
             {
-                emote_self(op, buf, buf2, buf3, -1); /* force neutral default emote */
+                emote_self(op, buf, buf2, -1); /* force neutral default emote */
                 new_draw_info(NDI_UNIQUE, 0, op, "%s", buf);
                 new_info_map_except(NDI_EMOTE | NDI_PLAYER | NDI_YELLOW,
                                     op->map, op->x, op->y, MAP_INFO_NORMAL,
