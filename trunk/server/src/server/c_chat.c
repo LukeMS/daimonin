@@ -668,23 +668,26 @@ static void emote_other(object *op, object *target, char *str, char *buf, char *
     }
 }
 
-static void emote_self(object *op, char *buf, char *buf2, int emotion)
+static void emote_self(object *op, char *buf, char *buf2, char *buf3, int emotion)
 {
-    char *self, *own;
+    char *self, *own, *who;
     if(QUERY_FLAG(op, FLAG_IS_MALE) == QUERY_FLAG(op, FLAG_IS_FEMALE))
     {
         self = "itself"; /* neuter or hermaphrodite */
         own = "its";
+		who = "it";
     }
     else if (QUERY_FLAG(op, FLAG_IS_MALE))
     {
         self = "himself";
         own = "his";
+		who = "he";
     }
     else
     {
         self = "herself";
         own = "her";
+		who = "she";
     }
 
     switch (emotion)
@@ -775,7 +778,7 @@ static void emote_self(object *op, char *buf, char *buf2, int emotion)
           break;
         default:
           sprintf(buf, "My god! is that LEGAL?");
-          sprintf(buf2, "%s looks nuts. You look away.", op->name);
+          sprintf(buf2, "%s looks nuts. You get the distinct feeling %s IS nuts.", op->name, who);
           break;
     }/*case*/
 }
@@ -1091,7 +1094,7 @@ static int basic_emote(object *op, char *params, int emotion)
 
             if (op->type == PLAYER && op->name == name_hash) /* targeting ourself */
             {
-                emote_self(op, buf, buf2, emotion);
+                emote_self(op, buf, buf2, buf3, emotion);
                 new_draw_info(NDI_UNIQUE, 0, op, "%s", buf);
                 new_info_map_except(NDI_EMOTE | NDI_PLAYER | NDI_YELLOW,
                                     op->map, op->x, op->y, MAP_INFO_NORMAL, op,
@@ -1151,7 +1154,7 @@ static int basic_emote(object *op, char *params, int emotion)
                      */
             if (op->type == PLAYER)
             {
-                emote_self(op, buf, buf2, -1); /* force neutral default emote */
+                emote_self(op, buf, buf2, buf3, -1); /* force neutral default emote */
                 new_draw_info(NDI_UNIQUE, 0, op, "%s", buf);
                 new_info_map_except(NDI_EMOTE | NDI_PLAYER | NDI_YELLOW,
                                     op->map, op->x, op->y, MAP_INFO_NORMAL,
