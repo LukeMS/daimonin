@@ -498,22 +498,22 @@ static void emote_other(object *op, object *target, char *str, char *buf, char *
     if(QUERY_FLAG(op, FLAG_IS_MALE) == QUERY_FLAG(op, FLAG_IS_FEMALE))
     {
 	    own = "their";
-	    who = "they";
+	    who = "they ARE";
     }
 	else if (QUERY_FLAG(op, !FLAG_IS_MALE) == QUERY_FLAG(op, !FLAG_IS_FEMALE))
 	{
 	    own = "its";
-		who = "it";
+		who = "it IS";
 	}
     else if (QUERY_FLAG(op, FLAG_IS_MALE))
     {
 	    own = "his";
-        who = "he";
+        who = "he IS";
     }
     else
     {
 	   own = "her";
-       who = "she";
+       who = "she IS";
     }
 
 	 const char *name    = str;
@@ -686,7 +686,7 @@ static void emote_other(object *op, object *target, char *str, char *buf, char *
           break;
         default:
           sprintf(buf, "You are still nuts.");
-          sprintf(buf2, "%s looks nuts. You get the distinct feeling that %s IS nuts.", op->name, who);
+          sprintf(buf2, "%s looks nuts. You get the distinct feeling that %s nuts.", op->name, who);
           sprintf(buf3, "%s is eyeing %s quizzically.", name, op->name);
           break;
     }
@@ -699,25 +699,25 @@ static void emote_self(object *op, char *buf, char *buf2, int emotion)
     {
         self = "themself";
 		own = "their";
-	    who = "they";
+	    who = "they ARE";
     }
 	else if (QUERY_FLAG(op, !FLAG_IS_MALE) == QUERY_FLAG(op, !FLAG_IS_FEMALE))
 	{
 	    self = "itslef";
 		own = "its";
-		who = "it";
+		who = "it IS";
 	}
     else if (QUERY_FLAG(op, FLAG_IS_MALE))
     {
         self = "himself";
         own = "his";
-		who = "he";
+		who = "he IS";
     }
     else
     {
         self = "herself";
         own = "her";
-		who = "she";
+		who = "she IS";
     }
 
     switch (emotion)
@@ -808,7 +808,7 @@ static void emote_self(object *op, char *buf, char *buf2, int emotion)
           break;
         default:
           sprintf(buf, "My god! is that LEGAL?");
-          sprintf(buf2, "%s looks nuts. You get the distinct feeling %s IS nuts.", op->name, who);
+          sprintf(buf2, "%s looks nuts. You get the distinct feeling %s nuts.", op->name, who);
           break;
     }/*case*/
 }
