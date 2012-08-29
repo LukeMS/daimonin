@@ -494,24 +494,32 @@ int command_tell(object *op, char *params)
 
 static void emote_other(object *op, object *target, char *str, char *buf, char *buf2, char *buf3, int emotion)
 {
-    const char *name    = str;
-
-    if (target && target->name)
-        name = target->name;
-
-	char *self, *own, *who;
+    char *who, *own;
     if(QUERY_FLAG(op, FLAG_IS_MALE) == QUERY_FLAG(op, FLAG_IS_FEMALE))
     {
-		who = "it"; /* neuter or hermaphrodite */
+	    own = "their";
+	    who = "they";
     }
+	else if (QUERY_FLAG(op, !FLAG_IS_MALE) == QUERY_FLAG(op, !FLAG_IS_FEMALE))
+	{
+	    own = "its";
+		who = "it";
+	}
     else if (QUERY_FLAG(op, FLAG_IS_MALE))
     {
-		who = "he";
+	    own = "his";
+        who = "he";
     }
     else
     {
+	   own = "her";
        who = "she";
     }
+
+	 const char *name    = str;
+
+    if (target && target->name)
+        name = target->name;
 
 
 
@@ -668,8 +676,8 @@ static void emote_other(object *op, object *target, char *str, char *buf, char *
           break;
         case EMOTE_BLEED:
           sprintf(buf, "You slash your wrist and bleed all over %s", name);
-          sprintf(buf2, "%s slashes his wrist and bleeds all over" " you.", op->name);
-          sprintf(buf3, "%s slashes his wrist and bleeds all " "over %s.", op->name, name);
+          sprintf(buf2, "%s slashes %s wrist and bleeds all over" " you.", op->name, own);
+          sprintf(buf3, "%s slashes %s wrist and bleeds all " "over %s.", op->name, own, name);
           break;
         case EMOTE_CRINGE:
           sprintf(buf, "You cringe away from %s.", name);
@@ -689,10 +697,16 @@ static void emote_self(object *op, char *buf, char *buf2, int emotion)
     char *self, *own, *who;
     if(QUERY_FLAG(op, FLAG_IS_MALE) == QUERY_FLAG(op, FLAG_IS_FEMALE))
     {
-        self = "itself"; /* neuter or hermaphrodite */
-        own = "its";
-		who = "it";
+        self = "themself";
+		own = "their";
+	    who = "they";
     }
+	else if (QUERY_FLAG(op, !FLAG_IS_MALE) == QUERY_FLAG(op, !FLAG_IS_FEMALE))
+	{
+	    self = "itslef";
+		own = "its";
+		who = "it";
+	}
     else if (QUERY_FLAG(op, FLAG_IS_MALE))
     {
         self = "himself";
