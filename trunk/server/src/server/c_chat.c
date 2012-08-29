@@ -703,7 +703,7 @@ static void emote_self(object *op, char *buf, char *buf2, int emotion)
     }
 	else if (QUERY_FLAG(op, !FLAG_IS_MALE) == QUERY_FLAG(op, !FLAG_IS_FEMALE))
 	{
-	    self = "itslef";
+	    self = "itself";
 		own = "its";
 		who = "it IS";
 	}
