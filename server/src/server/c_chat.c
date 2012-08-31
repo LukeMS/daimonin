@@ -244,15 +244,15 @@ int command_gsay(object *op, char *params)
             params);
     sockbuf = SOCKBUF_COMPOSE(SERVER_CMD_CHANNELMSG, buf, strlen(buf + 2) + 2, 0);
 #endif
-	for(tmp=CONTR(op)->group_leader;tmp;tmp=CONTR(tmp)->group_next)
-	{
+    for(tmp=CONTR(op)->group_leader;tmp;tmp=CONTR(tmp)->group_next)
+    {
 #ifdef USE_CHANNELS
         SOCKBUF_ADD_TO_SOCKET(&CONTR(tmp)->socket, sockbuf);
 #else
         new_draw_info(NDI_GSAY | NDI_PLAYER | NDI_UNIQUE | NDI_YELLOW, 0, tmp,
                       "%s gsays: %s", query_short_name(op, tmp), params);
 #endif
-	}
+    }
 #ifdef USE_CHANNELS
     SOCKBUF_COMPOSE_FREE(sockbuf);
 #endif
@@ -497,26 +497,26 @@ static void emote_other(object *op, object *target, char *str, char *buf, char *
     char *who, *own;
     if(QUERY_FLAG(op, FLAG_IS_MALE) == QUERY_FLAG(op, FLAG_IS_FEMALE))
     {
-	    own = "their";
-	    who = "they ARE";
+        own = "their";
+        who = "they ARE";
     }
-	else if (QUERY_FLAG(op, !FLAG_IS_MALE) == QUERY_FLAG(op, !FLAG_IS_FEMALE))
-	{
-	    own = "its";
-		who = "it IS";
-	}
+    else if (QUERY_FLAG(op, !FLAG_IS_MALE) == QUERY_FLAG(op, !FLAG_IS_FEMALE))
+    {
+        own = "its";
+        who = "it IS";
+    }
     else if (QUERY_FLAG(op, FLAG_IS_MALE))
     {
-	    own = "his";
+        own = "his";
         who = "he IS";
     }
     else
     {
-	   own = "her";
+       own = "her";
        who = "she IS";
     }
 
-	 const char *name    = str;
+     const char *name    = str;
 
     if (target && target->name)
         name = target->name;
@@ -698,26 +698,26 @@ static void emote_self(object *op, char *buf, char *buf2, int emotion)
     if(QUERY_FLAG(op, FLAG_IS_MALE) == QUERY_FLAG(op, FLAG_IS_FEMALE))
     {
         self = "themself";
-		own = "their";
-	    who = "they ARE";
+        own = "their";
+        who = "they ARE";
     }
-	else if (QUERY_FLAG(op, !FLAG_IS_MALE) == QUERY_FLAG(op, !FLAG_IS_FEMALE))
-	{
-	    self = "itself";
-		own = "its";
-		who = "it IS";
-	}
+    else if (QUERY_FLAG(op, !FLAG_IS_MALE) == QUERY_FLAG(op, !FLAG_IS_FEMALE))
+    {
+        self = "itself";
+        own = "its";
+        who = "it IS";
+    }
     else if (QUERY_FLAG(op, FLAG_IS_MALE))
     {
         self = "himself";
         own = "his";
-		who = "he IS";
+        who = "he IS";
     }
     else
     {
         self = "herself";
         own = "her";
-		who = "she IS";
+        who = "she IS";
     }
 
     switch (emotion)
