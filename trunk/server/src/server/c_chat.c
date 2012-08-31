@@ -494,7 +494,9 @@ int command_tell(object *op, char *params)
 
 static void emote_other(object *op, object *target, char *str, char *buf, char *buf2, char *buf3, int emotion)
 {
+    const char *name = str;
     char *who, *own;
+
     if(QUERY_FLAG(op, FLAG_IS_MALE) == QUERY_FLAG(op, FLAG_IS_FEMALE))
     {
         own = "their";
@@ -515,8 +517,6 @@ static void emote_other(object *op, object *target, char *str, char *buf, char *
        own = "her";
        who = "she IS";
     }
-
-     const char *name    = str;
 
     if (target && target->name)
         name = target->name;
