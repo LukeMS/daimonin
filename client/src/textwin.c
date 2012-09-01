@@ -1025,7 +1025,7 @@ static void ShowWindowText(textwin_window_t *tw, _BLTFX *bltfx)
 {
     uint32   botline = ((tw->linebuf_next)
                         ? tw->linebuf_next : tw->linebuf_used) -
-                        (tw->scroll_yoff / tw->font->line_height) - 1;
+                        (tw->scroll_yoff / tw->font->line_height);
     sint32   topline = (tw->linebuf_visi < tw->linebuf_used)
                        ? (sint32)(botline - tw->linebuf_visi) : -1;
     uint16   i;
