@@ -57,7 +57,7 @@ function Byte:New(bitsize, bits)
     
         for i = 1, table.getn(bits) do
 
-            b.byte[log2(bits[i])] = 1
+            b.byte[log2(bits[i]) + 1] = 1
 
         end
     

@@ -84,7 +84,7 @@ _guilds = {
             path_attuned = 0,
         },
 
-        flags = Byte(8, {F_NO_MAGIC, F_NO_PRAYER}):ToNumber(),
+        flags = Byte(8, {F_NO_MAGIC, F_NO_PRAYER}),
         weapon_max_level = 100,
     },
     [2] = {
@@ -128,7 +128,7 @@ _guilds = {
             },
             path_attuned = 4,
         },
-        flags = Byte(8, {F_NO_2H, F_NO_POLEARM, F_NO_PRAYER, F_NO_ARCHERY}):ToNumber(),
+        flags = Byte(8, {F_NO_2H, F_NO_POLEARM, F_NO_PRAYER, F_NO_ARCHERY}),
     },
     [3] = {
         name = "Priest",
@@ -171,7 +171,7 @@ _guilds = {
             },
             path_attuned = 3,
         },
-        flags = Byte(8, {F_NO_ARCHERY, F_NO_MAGIC, F_NO_2H, F_NO_POLEARM}):ToNumber(),
+        flags = Byte(8, {F_NO_ARCHERY, F_NO_MAGIC, F_NO_2H, F_NO_POLEARM}),
         weapon_max_level = 10,
         spell_max_difficulty = 2, -- TODO: Add a prayer max difficulty.
     },
@@ -298,7 +298,7 @@ if _guilds[guildnr].stats.maxgrace ~= nil then    guild_force.max_grace     = _g
 if _guilds[guildnr].stats.grace ~= nil then    guild_force.grace        = _guilds[guildnr].stats.grace end
 if _guilds[guildnr].weapon_max_level ~= nil then guild_force.value        = _guilds[guildnr].weapon_max_level end
 if _guilds[guildnr].spell_max_difficulty ~= nil then guild_force.level        = _guilds[guildnr].spell_max_difficulty end
-if _guilds[guildnr].flags ~= nil then guild_force.weight_limit = _guilds[guildnr].flags end
+if _guilds[guildnr].flags ~= nil then guild_force.weight_limit = _guilds[guildnr].flags:ToNumber() end
 if _guilds[guildnr].stats.resists.impact ~= nil then    guild_force.resist_impact= _guilds[guildnr].stats.resists.impact end
 if _guilds[guildnr].stats.resists.cleave ~= nil then    guild_force.resist_cleave= _guilds[guildnr].stats.resists.cleave end
 if _guilds[guildnr].stats.resists.slash ~= nil then    guild_force.resist_slash = _guilds[guildnr].stats.resists.slash end
@@ -625,7 +625,7 @@ function module_guildsJoin(guild, player)
                      _guilds[nr].secondary.group, _guilds[nr].secondary.value,
                      _guilds[nr].tertiary.group, _guilds[nr].tertiary.value)
     player:Write("You join the " .. _guilds[nr].name .. " Guild!")
-
+    
     _AddGuildStats(_guilds[nr].name, player)
     player:Fix()
 
