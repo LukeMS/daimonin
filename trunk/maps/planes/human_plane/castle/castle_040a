@@ -3,7 +3,7 @@ name Guild Hall
 msg
 Creator: Daimonin Map Editor
 Date:    7/16/2004
-Modified: 2012-07-22 John Smith
+Modified: 2010-09-18 Franklin Barnett (aka _person_)
 endmsg
 width 24
 height 24
@@ -57,12 +57,6 @@ arch grassd_8
 y 9
 end
 arch grassd_1
-y 10
-end
-arch exit
-slaying /dev/testmaps/testmap_main
-hp 2
-sp 2
 y 10
 end
 arch floor_flagm1
