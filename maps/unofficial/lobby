@@ -1,13 +1,16 @@
 arch map
-name Unoficiall maps lobby
+name Unofficial maps lobby
 msg
-Created:  2003-06-04 Bjorn Axelsson <gecko@acc.umu.se>
+Creator: Bjorn Axelsson <gecko@acc.umu.se>
+Date:    6/4/2003
 
-Contributions are welcome!
-Modified: 2009-03-30 smacky
+Contributions are Welcome!
+Modified: 2012-07-28 John Smith
 endmsg
 width 24
 height 24
+enter_x 8
+enter_y 19
 difficulty 1
 darkness -1
 end
@@ -163,27 +166,59 @@ end
 arch wall_stone1_1
 x 1
 end
-arch floor_ostone1
+arch shop_floor
 x 1
 y 1
 end
-arch floor_ostone1
+arch goldhammer
+layer 4
+unpaid 1
+no_pick 1
+x 1
+y 1
+end
+arch shop_floor
 x 1
 y 2
 end
-arch floor_ostone1
+arch bloodstream
+layer 4
+unpaid 1
+no_pick 1
+x 1
+y 2
+end
+arch shop_floor
 x 1
 y 3
 end
-arch floor_ostone1
+arch armour_elemental
+layer 4
+unpaid 1
+no_pick 1
+x 1
+y 3
+end
+arch shop_floor
 x 1
 y 4
 end
-arch floor_ostone1
+arch shop_floor
+x 1
+y 5
+end
+arch donate_amu_exp
+layer 4
+unpaid 1
+no_pick 1
 x 1
 y 5
 end
 arch floor_ostone1
+x 1
+y 6
+end
+arch grate1_1
 x 1
 y 6
 end
@@ -237,10 +272,9 @@ x 1
 y 15
 end
 arch stairs_stone_down
-direction 5
-slaying /dev/testmaps/testmap_main
-hp 1
-sp 15
+slaying /planes/human_plane/castle/castle_030a
+hp 21
+sp 11
 x 1
 y 15
 end
@@ -305,27 +339,68 @@ end
 arch wall_stone1_1
 x 2
 end
-arch floor_ostone1
+arch shop_floor
 x 2
 y 1
 end
-arch floor_ostone1
+arch bluerage
+layer 4
+unpaid 1
+no_pick 1
+x 2
+y 1
+end
+arch shop_floor
 x 2
 y 2
 end
-arch floor_ostone1
+arch devilwing
+layer 4
+unpaid 1
+no_pick 1
+x 2
+y 2
+end
+arch shop_floor
 x 2
 y 3
 end
-arch floor_ostone1
+arch boots_energetic
+layer 4
+unpaid 1
+no_pick 1
+x 2
+y 3
+end
+arch shop_floor
 x 2
 y 4
 end
-arch floor_ostone1
+arch powerball
+layer 4
+unpaid 1
+no_pick 1
+x 2
+y 4
+end
+arch shop_floor
+x 2
+y 5
+end
+arch ring_combat
+layer 4
+unpaid 1
+no_pick 1
+identified 1
+value 10000
 x 2
 y 5
 end
 arch floor_ostone1
+x 2
+y 6
+end
+arch grate1_1
 x 2
 y 6
 end
@@ -337,7 +412,21 @@ arch floor_ostone1
 x 2
 y 8
 end
+arch sign
+msg
+This ladder leads to the portal room
+for Torchwood's mob test maps
+endmsg
+name To Mob Test Maps
+x 2
+y 8
+end
 arch floor_ostone1
+x 2
+y 9
+end
+arch ladder_up
+slaying mob_test/private_lobby
 x 2
 y 9
 end
@@ -428,27 +517,68 @@ end
 arch wall_stone1_1
 x 3
 end
-arch floor_ostone1
+arch shop_floor
 x 3
 y 1
 end
-arch floor_ostone1
+arch icemoon
+layer 4
+unpaid 1
+no_pick 1
+x 3
+y 1
+end
+arch shop_floor
 x 3
 y 2
 end
-arch floor_ostone1
+arch executioner
+layer 4
+unpaid 1
+no_pick 1
+x 3
+y 2
+end
+arch shop_floor
 x 3
 y 3
 end
-arch floor_ostone1
+arch helm_power
+layer 4
+unpaid 1
+no_pick 1
+x 3
+y 3
+end
+arch shop_floor
 x 3
 y 4
 end
-arch floor_ostone1
+arch flashcross
+layer 4
+unpaid 1
+no_pick 1
+x 3
+y 4
+end
+arch shop_floor
+x 3
+y 5
+end
+arch ring_strife
+layer 4
+unpaid 1
+no_pick 1
+identified 1
+value 10000
 x 3
 y 5
 end
 arch floor_ostone1
+x 3
+y 6
+end
+arch grate1_1
 x 3
 y 6
 end
@@ -539,27 +669,68 @@ end
 arch wall_stone1_1
 x 4
 end
-arch floor_ostone1
+arch shop_floor
 x 4
 y 1
 end
-arch floor_ostone1
+arch firebird
+layer 4
+unpaid 1
+no_pick 1
+x 4
+y 1
+end
+arch shop_floor
 x 4
 y 2
 end
-arch floor_ostone1
+arch bonecurse
+layer 4
+unpaid 1
+no_pick 1
+x 4
+y 2
+end
+arch shop_floor
 x 4
 y 3
 end
-arch floor_ostone1
+arch gauntlets_warmage
+layer 4
+unpaid 1
+no_pick 1
+x 4
+y 3
+end
+arch shop_floor
 x 4
 y 4
 end
-arch floor_ostone1
+arch wildsting
+layer 4
+unpaid 1
+no_pick 1
+x 4
+y 4
+end
+arch shop_floor
+x 4
+y 5
+end
+arch ring_healer
+layer 4
+unpaid 1
+no_pick 1
+identified 1
+value 10000
 x 4
 y 5
 end
 arch floor_ostone1
+x 4
+y 6
+end
+arch grate1_1
 x 4
 y 6
 end
@@ -645,27 +816,71 @@ end
 arch wall_stone1_1
 x 5
 end
-arch floor_ostone1
+arch shop_floor
 x 5
 y 1
 end
-arch floor_ostone1
+arch donate_amu_expg
+layer 4
+unpaid 1
+no_pick 1
+x 5
+y 1
+end
+arch shop_floor
 x 5
 y 2
 end
-arch floor_ostone1
+arch scroll_generic
+layer 4
+nrof 5
+value 1
+no_pick 1
+level 110
+sp 15
+identified 1
+unpaid 1
+x 5
+y 2
+end
+arch shop_floor
 x 5
 y 3
 end
-arch floor_ostone1
+arch bracers_mind
+layer 4
+unpaid 1
+no_pick 1
+x 5
+y 3
+end
+arch shop_floor
 x 5
 y 4
 end
-arch floor_ostone1
+arch belt_elemental
+layer 4
+unpaid 1
+no_pick 1
+x 5
+y 4
+end
+arch shop_floor
+x 5
+y 5
+end
+arch fan_light
+layer 4
+unpaid 1
+no_pick 1
 x 5
 y 5
 end
 arch floor_ostone1
+x 5
+y 6
+end
+arch grate1_1
 x 5
 y 6
 end
@@ -779,27 +994,70 @@ end
 arch wall_stone1_1
 x 6
 end
-arch floor_ostone1
+arch shop_floor
 x 6
 y 1
 end
-arch floor_ostone1
+arch shop_mat
+x 6
+y 1
+end
+arch shop_floor
 x 6
 y 2
 end
-arch floor_ostone1
+arch scroll_generic
+layer 4
+value 1
+no_pick 1
+level 110
+sp 18
+identified 1
+unpaid 1
+nrof 5
+x 6
+y 2
+end
+arch shop_floor
 x 6
 y 3
 end
-arch floor_ostone1
+arch shield_elemental
+layer 4
+unpaid 1
+no_pick 1
+x 6
+y 3
+end
+arch shop_floor
 x 6
 y 4
 end
-arch floor_ostone1
+arch cloak_energy
+layer 4
+unpaid 1
+no_pick 1
+x 6
+y 4
+end
+arch shop_floor
+x 6
+y 5
+end
+arch ring_thieves
+layer 4
+unpaid 1
+no_pick 1
+identified 1
+value 10000
 x 6
 y 5
 end
 arch floor_ostone1
+x 6
+y 6
+end
+arch grate1_1
 x 6
 y 6
 end
@@ -843,7 +1101,15 @@ arch floor_ostone1
 x 6
 y 16
 end
+arch ped_white_hw1
+x 6
+y 16
+end
 arch floor_ostone1
+x 6
+y 17
+end
+arch ped_white_hw1
 x 6
 y 17
 end
@@ -881,27 +1147,51 @@ end
 arch wall_stone1_1
 x 7
 end
-arch floor_ostone1
+arch shop_floor_normal
 x 7
 y 1
 end
-arch floor_ostone1
+arch grate1_3
+x 7
+y 1
+end
+arch shop_floor_normal
 x 7
 y 2
 end
-arch floor_ostone1
+arch grate1_3
+x 7
+y 2
+end
+arch shop_floor_normal
 x 7
 y 3
 end
-arch floor_ostone1
+arch grate1_3
+x 7
+y 3
+end
+arch shop_floor_normal
 x 7
 y 4
 end
-arch floor_ostone1
+arch grate1_3
+x 7
+y 4
+end
+arch shop_floor_normal
+x 7
+y 5
+end
+arch grate1_3
 x 7
 y 5
 end
 arch floor_ostone1
+x 7
+y 6
+end
+arch grate1_4
 x 7
 y 6
 end
@@ -987,6 +1277,10 @@ arch floor_ostone1
 x 8
 y 1
 end
+arch shop_mat
+x 8
+y 1
+end
 arch floor_ostone1
 x 8
 y 2
@@ -1058,6 +1352,27 @@ end
 arch floor_ostone1
 x 8
 y 19
+end
+arch light9
+x 8
+y 19
+end
+arch magic_mouth
+msg
+This is a magic ear. Say the name of a Map Wizard to go to their lobby. You can also find yourself a suitable ladder.
+endmsg
+x 8
+y 19
+end
+arch magic_ear
+layer 4
+sys_object 0
+x 8
+y 19
+arch event_obj
+sub_type 6
+race LobbyEar.lua
+end
 end
 arch floor_ostone1
 x 8
@@ -1068,7 +1383,11 @@ x 8
 y 21
 end
 arch sign
-name to gecko's maps
+msg
+This ladder leads to the portal room
+for Unislash's maps
+endmsg
+name To Unislash's Maps
 x 8
 y 21
 end
@@ -1077,197 +1396,252 @@ x 8
 y 22
 end
 arch ladder_up
-slaying gecko/lobby
+slaying unislash/private_lobby
+x 8
+y 22
+end
+arch floor_ostone1
+x 8
+y 23
+end
+arch wall_stone1_1
+x 8
+y 23
+end
+arch floor_ostone1
+x 9
+end
+arch wall_stone1_1
+x 9
+end
+arch floor_ostone1
+x 9
+y 1
+end
+arch floor_ostone1
+x 9
+y 2
+end
+arch floor_ostone1
+x 9
+y 3
+end
+arch floor_ostone1
+x 9
+y 4
+end
+arch floor_ostone1
+x 9
+y 5
+end
+arch floor_ostone1
+x 9
+y 6
+end
+arch floor_ostone1
+x 9
+y 7
+end
+arch floor_ostone1
+x 9
+y 8
+end
+arch floor_ostone1
+x 9
+y 9
+end
+arch floor_ostone1
+x 9
+y 10
+end
+arch floor_ostone1
+x 9
+y 11
+end
+arch floor_ostone1
+x 9
+y 12
+end
+arch floor_ostone1
+x 9
+y 13
+end
+arch floor_ostone1
+x 9
+y 14
+end
+arch floor_ostone1
+x 9
+y 15
+end
+arch floor_ostone1
+x 9
+y 16
+end
+arch floor_ostone1
+x 9
+y 17
+end
+arch floor_ostone1
+x 9
+y 18
+end
+arch floor_ostone1
+x 9
+y 19
+end
+arch floor_ostone1
+x 9
+y 20
+end
+arch floor_ostone1
+x 9
+y 21
+end
+arch floor_ostone1
+x 9
+y 22
+end
+arch floor_ostone1
+x 9
+y 23
+end
+arch wall_stone1_1
+x 9
+y 23
+end
+arch floor_ostone1
+x 10
+end
+arch wall_stone1_1
+x 10
+end
+arch floor_ostone1
+x 10
+y 1
+end
+arch floor_ostone1
+x 10
+y 2
+end
+arch floor_ostone1
+x 10
+y 3
+end
+arch floor_ostone1
+x 10
+y 4
+end
+arch floor_ostone1
+x 10
+y 5
+end
+arch sign
+msg
+This ladder leads to the portal room
+for Killest's maps.
+endmsg
+name To Killest's maps
+x 10
+y 5
+end
+arch floor_ostone1
+x 10
+y 6
+end
+arch ladder_up
+slaying killest/private_lobby
 hp 1
 sp 1
-x 8
-y 22
-end
-arch floor_ostone1
-x 8
-y 23
-end
-arch wall_stone1_1
-x 8
-y 23
-end
-arch floor_ostone1
-x 9
-end
-arch wall_stone1_1
-x 9
-end
-arch floor_ostone1
-x 9
-y 1
-end
-arch floor_ostone1
-x 9
-y 2
-end
-arch floor_ostone1
-x 9
-y 3
-end
-arch floor_ostone1
-x 9
-y 4
-end
-arch floor_ostone1
-x 9
-y 5
-end
-arch floor_ostone1
-x 9
+x 10
 y 6
 end
 arch floor_ostone1
-x 9
+x 10
 y 7
 end
 arch floor_ostone1
-x 9
+x 10
 y 8
 end
 arch floor_ostone1
-x 9
+x 10
+y 9
+end
+arch sign
+msg
+This ladder leads to Poidrac's maps.
+endmsg
+name To Poidrac's Maps
+x 10
 y 9
 end
 arch floor_ostone1
-x 9
+x 10
+y 10
+end
+arch ladder_up
+slaying poidrac/private_lobby
+x 10
 y 10
 end
 arch floor_ostone1
-x 9
+x 10
 y 11
 end
 arch floor_ostone1
-x 9
+x 10
 y 12
 end
 arch floor_ostone1
-x 9
+x 10
+y 13
+end
+arch sign
+msg
+This ladder leads to the portal room
+for Obliterator's maps
+endmsg
+name To Obliterator's Maps
+x 10
 y 13
 end
 arch floor_ostone1
-x 9
+x 10
+y 14
+end
+arch ladder_up
+slaying obliterator/private_lobby
+x 10
 y 14
 end
 arch floor_ostone1
-x 9
+x 10
 y 15
 end
 arch floor_ostone1
-x 9
+x 10
 y 16
 end
 arch floor_ostone1
-x 9
+x 10
+y 17
+end
+arch sign
+msg
+This ladder leads to the portal room
+for Trepie's maps
+endmsg
+name To Trepie's maps
+x 10
 y 17
 end
 arch floor_ostone1
-x 9
+x 10
 y 18
 end
-arch floor_ostone1
-x 9
-y 19
-end
-arch floor_ostone1
-x 9
-y 20
-end
-arch floor_ostone1
-x 9
-y 21
-end
-arch floor_ostone1
-x 9
-y 22
-end
-arch floor_ostone1
-x 9
-y 23
-end
-arch wall_stone1_1
-x 9
-y 23
-end
-arch floor_ostone1
-x 10
-end
-arch wall_stone1_1
-x 10
-end
-arch floor_ostone1
-x 10
-y 1
-end
-arch floor_ostone1
-x 10
-y 2
-end
-arch floor_ostone1
-x 10
-y 3
-end
-arch floor_ostone1
-x 10
-y 4
-end
-arch floor_ostone1
-x 10
-y 5
-end
-arch floor_ostone1
-x 10
-y 6
-end
-arch floor_ostone1
-x 10
-y 7
-end
-arch floor_ostone1
-x 10
-y 8
-end
-arch floor_ostone1
-x 10
-y 9
-end
-arch floor_ostone1
-x 10
-y 10
-end
-arch floor_ostone1
-x 10
-y 11
-end
-arch floor_ostone1
-x 10
-y 12
-end
-arch floor_ostone1
-x 10
-y 13
-end
-arch floor_ostone1
-x 10
-y 14
-end
-arch floor_ostone1
-x 10
-y 15
-end
-arch floor_ostone1
-x 10
-y 16
-end
-arch floor_ostone1
-x 10
-y 17
-end
-arch floor_ostone1
+arch ladder_up
+slaying trepie/private_lobby
 x 10
 y 18
 end
@@ -1284,7 +1658,11 @@ x 10
 y 21
 end
 arch sign
-name to Gramlath's maps on Trepkar
+msg
+This ladder leads to the portal room
+for Sherocks maps
+endmsg
+name To Sherock's Maps
 x 10
 y 21
 end
@@ -1293,9 +1671,6 @@ x 10
 y 22
 end
 arch ladder_up
-slaying trepkar/lobby
-hp 12
-sp 12
 x 10
 y 22
 end
@@ -1435,7 +1810,23 @@ arch floor_ostone1
 x 12
 y 5
 end
+arch sign
+msg
+This ladder leads to the portal room
+for Anomandaris' maps
+endmsg
+name To Anomandaris' maps
+x 12
+y 5
+end
 arch floor_ostone1
+x 12
+y 6
+end
+arch ladder_up
+slaying anomandaris/private_lobby
+hp 1
+sp 1
 x 12
 y 6
 end
@@ -1451,7 +1842,20 @@ arch floor_ostone1
 x 12
 y 9
 end
+arch sign
+msg
+This ladder leads to Pyschonaut's maps.
+endmsg
+name To Pyschonaut's Maps
+x 12
+y 9
+end
 arch floor_ostone1
+x 12
+y 10
+end
+arch ladder_up
+slaying pyschonaut/private_lobby
 x 12
 y 10
 end
@@ -1467,7 +1871,20 @@ arch floor_ostone1
 x 12
 y 13
 end
+arch sign
+msg
+This ladder leads to John_smith's maps.
+endmsg
+name To John_smith's Maps
+x 12
+y 13
+end
 arch floor_ostone1
+x 12
+y 14
+end
+arch ladder_up
+slaying john_smith/private_lobby
 x 12
 y 14
 end
@@ -1483,7 +1900,21 @@ arch floor_ostone1
 x 12
 y 17
 end
+arch sign
+msg
+This ladder leads to the portal room
+for Omen's maps
+endmsg
+name To Omen's maps
+x 12
+y 17
+end
 arch floor_ostone1
+x 12
+y 18
+end
+arch ladder_up
+slaying omen/private_lobby
 x 12
 y 18
 end
@@ -1499,7 +1930,20 @@ arch floor_ostone1
 x 12
 y 21
 end
+arch sign
+msg
+This ladder leads to the portal room for BVC_Phantom's maps.
+endmsg
+name To BVC_Phantom's Maps
+x 12
+y 21
+end
 arch floor_ostone1
+x 12
+y 22
+end
+arch ladder_up
+slaying bvc_phantom/private_lobby
 x 12
 y 22
 end
@@ -1639,7 +2083,21 @@ arch floor_ostone1
 x 14
 y 5
 end
+arch sign
+msg
+This ladder leads to the portal room
+for Myths' maps
+endmsg
+name To Myths' maps
+x 14
+y 5
+end
 arch floor_ostone1
+x 14
+y 6
+end
+arch ladder_up
+slaying myths/private_lobby
 x 14
 y 6
 end
@@ -1655,7 +2113,20 @@ arch floor_ostone1
 x 14
 y 9
 end
+arch sign
+msg
+This ladder leads to Clobber's maps.
+endmsg
+name To Clobber's Maps
+x 14
+y 9
+end
 arch floor_ostone1
+x 14
+y 10
+end
+arch ladder_up
+slaying clobber/private_lobby
 x 14
 y 10
 end
@@ -1671,7 +2142,21 @@ arch floor_ostone1
 x 14
 y 13
 end
+arch sign
+msg
+This ladder leads to the portal room
+for ThePlaneskeeper's maps
+endmsg
+name To ThePlaneskeeper's Maps
+x 14
+y 13
+end
 arch floor_ostone1
+x 14
+y 14
+end
+arch ladder_up
+slaying theplaneskeeper/private_lobby
 x 14
 y 14
 end
@@ -1687,7 +2172,21 @@ arch floor_ostone1
 x 14
 y 17
 end
+arch sign
+msg
+This ladder leads to the portal room
+for Immage's maps
+endmsg
+name To Immage's maps
+x 14
+y 17
+end
 arch floor_ostone1
+x 14
+y 18
+end
+arch ladder_up
+slaying immage/private_lobby
 x 14
 y 18
 end
@@ -1703,7 +2202,21 @@ arch floor_ostone1
 x 14
 y 21
 end
+arch sign
+msg
+This ladder leads to the portal room
+for Mysteria's maps
+endmsg
+name To Mysteria's Maps
+x 14
+y 21
+end
 arch floor_ostone1
+x 14
+y 22
+end
+arch ladder_up
+slaying mysteria/private_lobby
 x 14
 y 22
 end
@@ -1843,7 +2356,21 @@ arch floor_ostone1
 x 16
 y 5
 end
+arch sign
+msg
+This ladder leads to the portal room
+for Fatal's maps
+endmsg
+name To Fatal's maps
+x 16
+y 5
+end
 arch floor_ostone1
+x 16
+y 6
+end
+arch ladder_up
+slaying fatal/private_lobby
 x 16
 y 6
 end
@@ -1859,7 +2386,20 @@ arch floor_ostone1
 x 16
 y 9
 end
+arch sign
+msg
+This ladder leads to Ankit's maps.
+endmsg
+name To Ankit's Maps
+x 16
+y 9
+end
 arch floor_ostone1
+x 16
+y 10
+end
+arch ladder_up
+slaying ankit/private_lobby
 x 16
 y 10
 end
@@ -1875,7 +2415,21 @@ arch floor_ostone1
 x 16
 y 13
 end
+arch sign
+msg
+This ladder leads to the portal room
+for Vinhi's maps
+endmsg
+name To Vinhi's Maps
+x 16
+y 13
+end
 arch floor_ostone1
+x 16
+y 14
+end
+arch ladder_up
+slaying vinhi/private_lobby
 x 16
 y 14
 end
@@ -1891,7 +2445,21 @@ arch floor_ostone1
 x 16
 y 17
 end
+arch sign
+msg
+This ladder leads to the portal room
+for Tehill's maps
+endmsg
+name To Tehill's Maps
+x 16
+y 17
+end
 arch floor_ostone1
+x 16
+y 18
+end
+arch ladder_up
+slaying tehill/private_lobby
 x 16
 y 18
 end
@@ -1907,7 +2475,21 @@ arch floor_ostone1
 x 16
 y 21
 end
+arch sign
+msg
+This ladder leads to the portal room
+for Sammy's  maps
+endmsg
+name To Sammy's Maps
+x 16
+y 21
+end
 arch floor_ostone1
+x 16
+y 22
+end
+arch ladder_up
+slaying sammy/private_lobby
 x 16
 y 22
 end
@@ -2047,7 +2629,21 @@ arch floor_ostone1
 x 18
 y 5
 end
+arch sign
+msg
+This ladder leads to the portal room
+for Paradon's maps
+endmsg
+name To Paradon's maps
+x 18
+y 5
+end
 arch floor_ostone1
+x 18
+y 6
+end
+arch ladder_up
+slaying paradon/private_lobby
 x 18
 y 6
 end
@@ -2063,7 +2659,20 @@ arch floor_ostone1
 x 18
 y 9
 end
+arch sign
+msg
+This ladder leads to Joeshmo's maps.
+endmsg
+name To Joeshmo's Maps
+x 18
+y 9
+end
 arch floor_ostone1
+x 18
+y 10
+end
+arch ladder_up
+slaying joeshmo/private_lobby
 x 18
 y 10
 end
@@ -2079,7 +2688,21 @@ arch floor_ostone1
 x 18
 y 13
 end
+arch sign
+msg
+This ladder leads to the portal room
+for Lord Grunt's  maps
+endmsg
+name To Lord Grunt's Maps
+x 18
+y 13
+end
 arch floor_ostone1
+x 18
+y 14
+end
+arch ladder_up
+slaying lordgrunt/private_lobby
 x 18
 y 14
 end
@@ -2095,7 +2718,21 @@ arch floor_ostone1
 x 18
 y 17
 end
+arch sign
+msg
+This ladder leads to the portal room
+for Smacky's maps
+endmsg
+name To Smacky's Maps
+x 18
+y 17
+end
 arch floor_ostone1
+x 18
+y 18
+end
+arch ladder_up
+slaying smacky/private_lobby
 x 18
 y 18
 end
@@ -2111,7 +2748,20 @@ arch floor_ostone1
 x 18
 y 21
 end
+arch sign
+msg
+This ladder leads to the portal room
+for Die's  maps
+endmsg
+name To Die's Maps (not in service)
+x 18
+y 21
+end
 arch floor_ostone1
+x 18
+y 22
+end
+arch ladder_up
 x 18
 y 22
 end
@@ -2251,7 +2901,21 @@ arch floor_ostone1
 x 20
 y 5
 end
+arch sign
+msg
+This ladder leads to the portal room
+for _people_'s maps
+endmsg
+name To _people_'s maps
+x 20
+y 5
+end
 arch floor_ostone1
+x 20
+y 6
+end
+arch ladder_up
+slaying _people_/private_lobby
 x 20
 y 6
 end
@@ -2267,7 +2931,21 @@ arch floor_ostone1
 x 20
 y 9
 end
+arch sign
+msg
+This ladder leads to the portal room
+for Therealfog's  maps
+endmsg
+name To Therealfog's Maps
+x 20
+y 9
+end
 arch floor_ostone1
+x 20
+y 10
+end
+arch ladder_up
+slaying therealfog/private_lobby
 x 20
 y 10
 end
@@ -2283,7 +2961,21 @@ arch floor_ostone1
 x 20
 y 13
 end
+arch sign
+msg
+This ladder leads to the portal room
+for Torchwood's  maps
+endmsg
+name To Torchwood's Maps
+x 20
+y 13
+end
 arch floor_ostone1
+x 20
+y 14
+end
+arch ladder_up
+slaying torchwood/private_lobby
 x 20
 y 14
 end
@@ -2299,7 +2991,21 @@ arch floor_ostone1
 x 20
 y 17
 end
+arch sign
+msg
+This ladder leads to the portal room
+for Grommit's  maps
+endmsg
+name To Grommit's Maps
+x 20
+y 17
+end
 arch floor_ostone1
+x 20
+y 18
+end
+arch ladder_up
+slaying grommit/private_lobby
 x 20
 y 18
 end
@@ -2315,7 +3021,21 @@ arch floor_ostone1
 x 20
 y 21
 end
+arch sign
+msg
+This ladder leads to the portal room
+for Naomeire's  maps
+endmsg
+name To Naomeire's Maps
+x 20
+y 21
+end
 arch floor_ostone1
+x 20
+y 22
+end
+arch ladder_up
+slaying naomeire/private_lobby
 x 20
 y 22
 end
