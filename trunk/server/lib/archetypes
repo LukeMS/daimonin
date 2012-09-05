@@ -6397,7 +6397,7 @@ anim_speed 4
 no_pick 1
 end
 Object aggro_history
-editor_folder intern/intern
+editor_folder intern
 type 127
 layer 0
 no_save 1
@@ -6406,7 +6406,7 @@ face ah.101
 no_drop 1
 end
 Object base_info
-editor_folder intern/intern
+editor_folder intern
 type 101
 layer 0
 sys_object 1
@@ -6414,7 +6414,7 @@ face info.101
 no_drop 1
 end
 Object dmg_info
-editor_folder intern/intern
+editor_folder intern
 type 128
 layer 0
 no_save 1
@@ -6423,12 +6423,12 @@ face dmg.101
 no_drop 1
 end
 Object empty_archetype
-editor_folder intern/intern
+editor_folder intern
 type 79
 sys_object 1
 end
 Object floor_g
-editor_folder intern/intern
+editor_folder intern
 no_teleport 1
 layer 1
 terrain_type 1
@@ -6436,14 +6436,14 @@ type 71
 no_pick 1
 end
 Object fmask_g
-editor_folder intern/intern
+editor_folder intern
 no_teleport 1
 layer 2
 type 28
 no_pick 1
 end
 Object tabernacle_avatar_info
-editor_folder intern/gods
+editor_folder intern
 type 8
 layer 0
 sys_object 1
@@ -6455,7 +6455,7 @@ Object tabernacle_general_info
 msg
 You feel a bond with the powers of the Tabernacle.
 endmsg
-editor_folder intern/gods
+editor_folder intern
 type 8
 layer 0
 sys_object 1
@@ -6463,7 +6463,7 @@ name message
 face power.101
 end
 Object tabernacle_holy_servant_info
-editor_folder intern/gods
+editor_folder intern
 type 8
 layer 0
 sys_object 1
@@ -6472,7 +6472,7 @@ other_arch ant_red
 face power.101
 end
 Object god_cure_blindness
-editor_folder intern/gods
+editor_folder intern
 type 8
 sys_object 1
 name heal spell
@@ -6480,7 +6480,7 @@ slaying cure blindness
 face power.101
 end
 Object god_cure_confusion
-editor_folder intern/gods
+editor_folder intern
 type 8
 sys_object 1
 name heal spell
@@ -6488,7 +6488,7 @@ slaying cure confusion
 face power.101
 end
 Object god_cure_disease
-editor_folder intern/gods
+editor_folder intern
 type 8
 sys_object 1
 name heal spell
@@ -6496,7 +6496,7 @@ slaying cure disease
 face power.101
 end
 Object god_cure_poison
-editor_folder intern/gods
+editor_folder intern
 type 8
 sys_object 1
 name heal spell
@@ -6504,7 +6504,7 @@ slaying cure poison
 face power.101
 end
 Object god_grace_limit_high
-editor_folder intern/gods
+editor_folder intern
 name grace limit
 face power.101
 sys_object 1
@@ -6512,7 +6512,7 @@ type 8
 grace 600
 end
 Object god_grace_limit_insane
-editor_folder intern/gods
+editor_folder intern
 name grace limit
 face power.101
 sys_object 1
@@ -6520,7 +6520,7 @@ type 8
 grace 1000
 end
 Object god_grace_limit_low
-editor_folder intern/gods
+editor_folder intern
 name grace limit
 face power.101
 sys_object 1
@@ -6528,7 +6528,7 @@ type 8
 grace 100
 end
 Object god_grace_limit_medium
-editor_folder intern/gods
+editor_folder intern
 name grace limit
 face power.101
 sys_object 1
@@ -6536,42 +6536,42 @@ type 8
 grace 300
 end
 Object god_remove_curse
-editor_folder intern/gods
+editor_folder intern
 type 8
 sys_object 1
 name remove curse
 face power.101
 end
 Object god_remove_damnation
-editor_folder intern/gods
+editor_folder intern
 type 8
 sys_object 1
 name remove damnation
 face power.101
 end
 Object god_remove_depletion
-editor_folder intern/gods
+editor_folder intern
 type 8
 sys_object 1
 name heal depletion
 face power.101
 end
 Object god_restore_grace
-editor_folder intern/gods
+editor_folder intern
 type 8
 sys_object 1
 name restore grace
 face power.101
 end
 Object god_restore_hitpoints
-editor_folder intern/gods
+editor_folder intern
 type 8
 sys_object 1
 name restore hitpoints
 face power.101
 end
 Object god_restore_spellpoints_high
-editor_folder intern/gods
+editor_folder intern
 type 8
 sys_object 1
 name restore spellpoints
@@ -6579,7 +6579,7 @@ maxsp 150
 face power.101
 end
 Object god_restore_spellpoints_low
-editor_folder intern/gods
+editor_folder intern
 type 8
 sys_object 1
 name restore spellpoints
@@ -6587,7 +6587,7 @@ maxsp 80
 face power.101
 end
 Object god_restore_spellpoints_medium
-editor_folder intern/gods
+editor_folder intern
 type 8
 sys_object 1
 name restore spellpoints
@@ -6595,7 +6595,7 @@ maxsp 100
 face power.101
 end
 Object god_restore_spellpoints_very_high
-editor_folder intern/gods
+editor_folder intern
 type 8
 sys_object 1
 name restore spellpoints
@@ -6603,7 +6603,7 @@ maxsp 200
 face power.101
 end
 Object gravestone
-editor_folder intern/intern
+editor_folder intern
 layer 3
 face gravestone.101
 type 38
@@ -6624,7 +6624,7 @@ dam 1
 terrain_flag 1
 end
 Object close_gift
-editor_folder intern/items
+editor_folder intern
 name rewrap the gift
 face gift_open.111
 layer 3
@@ -6633,7 +6633,7 @@ no_drop 1
 no_pick 1
 end
 Object close_stocking
-editor_folder intern/items
+editor_folder intern
 name close stocking
 face stocking.111
 layer 3
@@ -6642,7 +6642,7 @@ no_drop 1
 no_pick 1
 end
 Object close_stocking_bow
-editor_folder intern/items
+editor_folder intern
 name close stocking
 face stocking_bow.111
 layer 3
@@ -6651,7 +6651,7 @@ no_drop 1
 no_pick 1
 end
 Object close_bag
-editor_folder intern/items
+editor_folder intern
 layer 3
 name close the bag
 face close_bag.101
@@ -6661,7 +6661,7 @@ no_drop 1
 identified 1
 end
 Object cauldron_open
-editor_folder intern/items
+editor_folder intern
 name close the cauldron
 layer 3
 face cauldron_open.101
@@ -6670,7 +6670,7 @@ no_pick 1
 no_drop 1
 end
 Object close_chest1_111
-editor_folder intern/items
+editor_folder intern
 name open chest
 face chest_mm_open.111
 animation close_chest1_111
@@ -6685,7 +6685,7 @@ no_drop 1
 identified 1
 end
 Object close_chest_m1_1
-editor_folder intern/items
+editor_folder intern
 name open chest
 face chest_lm_open.111
 animation close_chest_m1_1
@@ -6700,7 +6700,7 @@ no_drop 1
 identified 1
 end
 Object close_chest_w1_1
-editor_folder intern/items
+editor_folder intern
 name open chest
 face chest_lw_open.111
 animation close_chest_w1_1
@@ -6715,7 +6715,7 @@ no_drop 1
 identified 1
 end
 Object close_chest_4.111
-editor_folder intern/items
+editor_folder intern
 name open chest
 face chest_mw_open.111
 animation close_chest_4.111
@@ -6730,7 +6730,7 @@ no_drop 1
 identified 1
 end
 Object close_chest_sm_1
-editor_folder intern/items
+editor_folder intern
 name open chest
 face chest_sm_open.111
 animation close_chest_sm_1
@@ -6745,7 +6745,7 @@ no_drop 1
 identified 1
 end
 Object close_chest_sw_1
-editor_folder intern/items
+editor_folder intern
 name open chest
 face chest_sw_open.111
 animation close_chest_sw_1
@@ -6760,7 +6760,7 @@ no_drop 1
 identified 1
 end
 Object close_chest7_111
-editor_folder intern/items
+editor_folder intern
 name open chest
 face chest_mm2_open.111
 animation close_chest7_111
@@ -6775,7 +6775,7 @@ no_drop 1
 identified 1
 end
 Object open_christmas_r_sack
-editor_folder intern/items
+editor_folder intern
 name close the rucksack
 face openedchristmasrsack.101
 type 121
@@ -6785,7 +6785,7 @@ no_pick 1
 identified 1
 end
 Object close_dbox
-editor_folder intern/items
+editor_folder intern
 name close the deposit box
 face close_dbox.101
 layer 3
@@ -6795,7 +6795,7 @@ no_pick 1
 identified 1
 end
 Object open_gift_bow
-editor_folder intern/items
+editor_folder intern
 name unwrapped gift
 face gift_bow_open.111
 layer 3
@@ -6804,7 +6804,7 @@ no_drop 1
 no_pick 1
 end
 Object close_key_ring
-editor_folder intern/items
+editor_folder intern
 name close the key ring
 layer 3
 face close_keys.101
@@ -6814,7 +6814,7 @@ no_pick 1
 identified 1
 end
 Object close_luggage
-editor_folder intern/items
+editor_folder intern
 name close the luggage
 layer 3
 face close_lugg.101
@@ -6824,7 +6824,7 @@ no_drop 1
 identified 1
 end
 Object close_mail
-editor_folder intern/items
+editor_folder intern
 name close the mailbox
 face closemail.101
 layer 3
@@ -6834,7 +6834,7 @@ no_drop 1
 identified 1
 end
 Object close_pouch
-editor_folder intern/items
+editor_folder intern
 name close the pouch
 face close_pouch.101
 type 121
@@ -6844,7 +6844,7 @@ no_pick 1
 identified 1
 end
 Object close_quiver_b
-editor_folder intern/items
+editor_folder intern
 name close the quiver
 face close_quiv_b.101
 type 121
@@ -6854,7 +6854,7 @@ no_pick 1
 identified 1
 end
 Object close_quiver_s
-editor_folder intern/items
+editor_folder intern
 name close the quiver
 face close_quiv_s.101
 type 121
@@ -6864,7 +6864,7 @@ no_pick 1
 identified 1
 end
 Object close_quiver
-editor_folder intern/items
+editor_folder intern
 name close the quiver
 face close_quiv.101
 type 121
@@ -6874,7 +6874,7 @@ no_pick 1
 identified 1
 end
 Object close_rsack
-editor_folder intern/items
+editor_folder intern
 name close the rucksack
 face close_rsack.101
 type 121
@@ -6884,7 +6884,7 @@ no_pick 1
 identified 1
 end
 Object close_sack
-editor_folder intern/items
+editor_folder intern
 name close the sack
 face close_sack.101
 type 121
@@ -6894,7 +6894,7 @@ no_pick 1
 identified 1
 end
 Object saddle_close
-editor_folder intern/items
+editor_folder intern
 name close the saddle
 face saddle_close.101
 type 121
@@ -6904,7 +6904,7 @@ no_pick 1
 identified 1
 end
 Object xmas_present_green_open
-editor_folder intern/items
+editor_folder intern
 name close the gift
 face xmas_present_green_open.101
 layer 3
@@ -6913,7 +6913,7 @@ no_drop 1
 no_pick 1
 end
 Object xmas_present_red_open
-editor_folder intern/items
+editor_folder intern
 name close the gift
 face xmas_present_red_open.101
 layer 3
@@ -6922,7 +6922,7 @@ no_drop 1
 no_pick 1
 end
 Object xmas_present_white_open
-editor_folder intern/items
+editor_folder intern
 name close the gift
 face xmas_present_white_open.101
 layer 3
@@ -6931,7 +6931,7 @@ no_drop 1
 no_pick 1
 end
 Object xmas_present_yellow_open
-editor_folder intern/items
+editor_folder intern
 name close the gift
 face xmas_present_yellow_open.101
 layer 3
@@ -6940,49 +6940,49 @@ no_drop 1
 no_pick 1
 end
 Object lamp_post_unlit
-editor_folder intern/items
+editor_folder intern
 type 74
 layer 5
 sub_type 1
 animation lamp_post_unlit
 end
 Object lamp_wall_1_unlit
-editor_folder intern/items
+editor_folder intern
 type 74
 layer 5
 sub_type 1
 animation lamp_wall_1_unlit
 end
 Object lantern2_magic_unlit
-editor_folder intern/items
+editor_folder intern
 type 74
 layer 5
 sub_type 1
 animation lantern2_magic_unlit
 end
 Object lantern_magic_unlit
-editor_folder intern/items
+editor_folder intern
 type 74
 layer 5
 sub_type 1
 animation lantern_magic_unlit
 end
 Object torch_skull_wall_1_unlit
-editor_folder intern/items
+editor_folder intern
 type 74
 layer 5
 sub_type 1
 animation torch_skull_wall_1_unlit
 end
 Object torch_wall_1_unlit
-editor_folder intern/items
+editor_folder intern
 type 74
 layer 5
 sub_type 1
 animation torch_wall_1_unlit
 end
 Object loot_container
-editor_folder intern/intern
+editor_folder intern
 type 79
 sys_object 1
 layer 0
@@ -7005,7 +7005,7 @@ value 300
 weight 7200
 end
 Object alignment_force
-editor_folder intern/player
+editor_folder intern
 name ALIGNMENT_FORCE
 layer 0
 item_quality 100
@@ -7022,7 +7022,7 @@ no_drop 1
 speed 0
 end
 Object guild_force
-editor_folder intern/player
+editor_folder intern
 name GUILD_FORCE
 item_quality 100
 item_condition 100
@@ -7048,7 +7048,7 @@ no_drop 1
 speed 0
 end
 Object player_force
-editor_folder intern/player
+editor_folder intern
 sys_object 1
 applied 1
 item_quality 100
@@ -7064,7 +7064,7 @@ no_drop 1
 speed 0
 end
 Object player_info
-editor_folder intern/player
+editor_folder intern
 sys_object 1
 applied 0
 no_drop 1
@@ -7079,7 +7079,7 @@ known_cursed 1
 face info.101
 end
 Object rank_force
-editor_folder intern/player
+editor_folder intern
 name RANK_FORCE
 sys_object 1
 applied 1
@@ -7096,7 +7096,7 @@ no_drop 1
 speed 0
 end
 Object age_force
-editor_folder intern/player
+editor_folder intern
 name age force
 layer 0
 sys_object 1
@@ -7113,7 +7113,7 @@ no_drop 1
 speed 0
 end
 Object corpse_pl
-editor_folder intern/player
+editor_folder intern
 name player corpse
 layer 3
 face corpse_pl.101
@@ -7128,7 +7128,7 @@ no_pick 1
 invulnerable 1
 end
 Object dwarf_female
-editor_folder intern/player
+editor_folder intern
 race dwarf
 randomitems player_dwarf_female
 layer 6
@@ -7165,7 +7165,7 @@ weight 85000
 food 750
 end
 Object dwarf_male
-editor_folder intern/player
+editor_folder intern
 race dwarf
 face dwarf.151
 randomitems player_dwarf_male
@@ -7202,7 +7202,7 @@ weight 95000
 food 750
 end
 Object elf_female
-editor_folder intern/player
+editor_folder intern
 race elf
 face elf_female.151
 randomitems player_elf_female
@@ -7239,7 +7239,7 @@ weight 70000
 food 750
 end
 Object elf_male
-editor_folder intern/player
+editor_folder intern
 race elf
 face elf_male.151
 randomitems player_elf_male
@@ -7276,7 +7276,7 @@ weight 70000
 food 750
 end
 Object half_elf_female
-editor_folder intern/player
+editor_folder intern
 race half-elf
 randomitems player_half_elf_female
 layer 6
@@ -7313,7 +7313,7 @@ weight 53000
 food 750
 end
 Object half_elf_male
-editor_folder intern/player
+editor_folder intern
 race half-elf
 face half_elf_male.151
 randomitems player_half_elf_male
@@ -7350,7 +7350,7 @@ weight 70000
 food 750
 end
 Object human_female
-editor_folder intern/player
+editor_folder intern
 race human
 randomitems player_human_female
 layer 6
@@ -7387,7 +7387,7 @@ weight 55000
 food 750
 end
 Object human_male
-editor_folder intern/player
+editor_folder intern
 race human
 face human_male.151
 randomitems player_human_male
@@ -7424,7 +7424,7 @@ weight 70000
 food 750
 end
 Object pvp_stat_force
-editor_folder intern/player
+editor_folder intern
 name PVP_STAT_FORCE
 nrof 1
 sys_object 1
@@ -7434,7 +7434,7 @@ face force.101
 speed 0
 end
 Object quest_container
-editor_folder intern/quest
+editor_folder intern
 type 120
 layer 0
 sys_object 1
@@ -7449,7 +7449,7 @@ item_condition 100
 nrof 1
 end
 Object quest_info
-editor_folder intern/quest
+editor_folder intern
 type 136
 layer 0
 sys_object 1
@@ -7461,7 +7461,7 @@ applied 0
 no_drop 1
 end
 Object quest_update
-editor_folder intern/quest
+editor_folder intern
 type 146
 layer 0
 sys_object 1
@@ -7473,7 +7473,7 @@ applied 0
 no_drop 1
 end
 Object skill_alchemy
-editor_folder intern/skills
+editor_folder intern
 name alchemy
 type 43
 face skill.101
@@ -7493,7 +7493,7 @@ level 1
 exp 0
 end
 Object skill_bargaining
-editor_folder intern/skills
+editor_folder intern
 name bargaining
 type 43
 face skill.101
@@ -7512,7 +7512,7 @@ exp 0
 sp 9
 end
 Object skill_bowyer
-editor_folder intern/skills
+editor_folder intern
 name bowyer lore
 type 43
 face skill.101
@@ -7531,7 +7531,7 @@ level 1
 exp 0
 end
 Object skill_clawing
-editor_folder intern/skills
+editor_folder intern
 name clawing
 type 43
 sub_type 0
@@ -7553,7 +7553,7 @@ exp 0
 sp 31
 end
 Object skill_disarm_trap
-editor_folder intern/skills
+editor_folder intern
 name disarm traps
 type 43
 sub_type 1
@@ -7572,7 +7572,7 @@ level 1
 exp 0
 end
 Object experience_agility
-editor_folder intern/skills
+editor_folder intern
 name agility
 type 44
 sub_type 0
@@ -7590,7 +7590,7 @@ exp 0
 dex 1
 end
 Object experience_charisma
-editor_folder intern/skills
+editor_folder intern
 name personality
 type 44
 sub_type 1
@@ -7608,7 +7608,7 @@ exp 0
 cha 1
 end
 Object experience_mental
-editor_folder intern/skills
+editor_folder intern
 name mental
 type 44
 item_quality 100
@@ -7626,7 +7626,7 @@ exp 0
 int 1
 end
 Object experience_misc
-editor_folder intern/skills
+editor_folder intern
 name misc
 type 44
 item_quality 100
@@ -7643,7 +7643,7 @@ level 1
 exp 0
 end
 Object experience_physical
-editor_folder intern/skills
+editor_folder intern
 name physique
 type 44
 sub_type 3
@@ -7662,7 +7662,7 @@ con 1
 str 1
 end
 Object experience_power
-editor_folder intern/skills
+editor_folder intern
 name magic
 type 44
 sub_type 4
@@ -7680,7 +7680,7 @@ exp 0
 pow 1
 end
 Object experience_wis
-editor_folder intern/skills
+editor_folder intern
 name wisdom
 type 44
 sub_type 5
@@ -7698,7 +7698,7 @@ exp 0
 wis 1
 end
 Object skill_find_traps
-editor_folder intern/skills
+editor_folder intern
 name find traps
 type 43
 item_quality 100
@@ -7717,7 +7717,7 @@ level 1
 exp 0
 end
 Object skill_flame_touch
-editor_folder intern/skills
+editor_folder intern
 name flame touch
 type 43
 sub_type 0
@@ -7739,7 +7739,7 @@ level 1
 exp 0
 end
 Object skill_hide
-editor_folder intern/skills
+editor_folder intern
 name hide in shadows
 type 43
 sub_type 1
@@ -7758,7 +7758,7 @@ level 1
 exp 0
 end
 Object skill_identify
-editor_folder intern/skills
+editor_folder intern
 name identify items
 type 43
 sub_type 1
@@ -7778,7 +7778,7 @@ level 1
 exp 0
 end
 Object skill_inscription
-editor_folder intern/skills
+editor_folder intern
 name inscription
 type 43
 sub_type 2
@@ -7798,7 +7798,7 @@ level 1
 exp 0
 end
 Object skill_jeweler
-editor_folder intern/skills
+editor_folder intern
 name jeweler lore
 type 43
 face skill.101
@@ -7817,7 +7817,7 @@ level 1
 exp 0
 end
 Object skill_jumping
-editor_folder intern/skills
+editor_folder intern
 name jumping
 type 43
 sub_type 1
@@ -7837,7 +7837,7 @@ exp 0
 sp 10
 end
 Object skill_karate
-editor_folder intern/skills
+editor_folder intern
 name karate
 weapon_speed 3.0
 attack_impact 100
@@ -7862,7 +7862,7 @@ level 1
 exp 0
 end
 Object skill_levitate
-editor_folder intern/skills
+editor_folder intern
 name levitation
 type 43
 face skill.101
@@ -7883,7 +7883,7 @@ level 1
 exp 0
 end
 Object skill_literacy
-editor_folder intern/skills
+editor_folder intern
 name common literacy
 type 43
 sub_type 2
@@ -7902,7 +7902,7 @@ level 1
 exp 0
 end
 Object skill_lockpick
-editor_folder intern/skills
+editor_folder intern
 name pick locks
 type 43
 face skill.101
@@ -7921,7 +7921,7 @@ level 1
 exp 0
 end
 Object skill_thaumaturgy
-editor_folder intern/skills
+editor_folder intern
 name magic lore
 type 43
 sub_type 2
@@ -7940,7 +7940,7 @@ level 1
 exp 0
 end
 Object skill_meditation
-editor_folder intern/skills
+editor_folder intern
 name meditation
 type 43
 sub_type 1
@@ -7959,7 +7959,7 @@ level 1
 exp 0
 end
 Object skill_climbing
-editor_folder intern/skills
+editor_folder intern
 name mountaineer
 type 43
 sub_type 2
@@ -7978,7 +7978,7 @@ level 1
 exp 0
 end
 Object skill_oratory
-editor_folder intern/skills
+editor_folder intern
 name oratory
 type 43
 sub_type 1
@@ -7998,7 +7998,7 @@ level 1
 exp 0
 end
 Object skill_praying
-editor_folder intern/skills
+editor_folder intern
 name divine prayers
 type 43
 sub_type 2
@@ -8018,7 +8018,7 @@ level 1
 exp 0
 end
 Object skill_punching
-editor_folder intern/skills
+editor_folder intern
 name punching
 weapon_speed 4.0
 face skill.101
@@ -8042,7 +8042,7 @@ level 1
 exp 0
 end
 Object skill_bow_archery
-editor_folder intern/skills
+editor_folder intern
 name bow archery
 type 43
 face skill.101
@@ -8065,7 +8065,7 @@ level 1
 exp 0
 end
 Object skill_sling_archery
-editor_folder intern/skills
+editor_folder intern
 name sling archery
 type 43
 face skill.101
@@ -8088,7 +8088,7 @@ level 1
 exp 0
 end
 Object skill_xbow_archery
-editor_folder intern/skills
+editor_folder intern
 name crossbow archery
 type 43
 sub_type 0
@@ -8111,7 +8111,7 @@ level 1
 exp 0
 end
 Object skill_remove_trap
-editor_folder intern/skills
+editor_folder intern
 name remove traps
 type 43
 sub_type 1
@@ -8130,7 +8130,7 @@ level 1
 exp 0
 end
 Object skill_sense_curse
-editor_folder intern/skills
+editor_folder intern
 name sense curse
 type 43
 sub_type 1
@@ -8150,7 +8150,7 @@ level 1
 exp 0
 end
 Object skill_sense_magic
-editor_folder intern/skills
+editor_folder intern
 name sense magic
 type 43
 sub_type 1
@@ -8170,7 +8170,7 @@ level 1
 exp 0
 end
 Object skill_set_trap
-editor_folder intern/skills
+editor_folder intern
 name set traps
 type 43
 sub_type 1
@@ -8190,7 +8190,7 @@ level 1
 exp 0
 end
 Object skill_singing
-editor_folder intern/skills
+editor_folder intern
 name singing
 type 43
 sub_type 1
@@ -8210,7 +8210,7 @@ level 1
 exp 0
 end
 Object skill_smithery
-editor_folder intern/skills
+editor_folder intern
 name smithery lore
 type 43
 sub_type 2
@@ -8230,7 +8230,7 @@ level 1
 exp 0
 end
 Object skill_spellcasting
-editor_folder intern/skills
+editor_folder intern
 name wizardry spells
 type 43
 sub_type 0
@@ -8250,7 +8250,7 @@ level 1
 exp 0
 end
 Object skill_stealing
-editor_folder intern/skills
+editor_folder intern
 name stealing
 type 43
 face skill.101
@@ -8270,7 +8270,7 @@ level 1
 exp 0
 end
 Object skill_throwing
-editor_folder intern/skills
+editor_folder intern
 name throwing
 type 43
 last_grace 0
@@ -8292,7 +8292,7 @@ level 1
 exp 0
 end
 Object skill_use_magic_item
-editor_folder intern/skills
+editor_folder intern
 name magic devices
 type 43
 sub_type 0
@@ -8312,7 +8312,7 @@ level 1
 exp 0
 end
 Object skill_2h_mastery
-editor_folder intern/skills
+editor_folder intern
 name two-hand mastery
 type 43
 sub_type 2
@@ -8331,7 +8331,7 @@ level 1
 exp 0
 end
 Object skill_pole_mastery
-editor_folder intern/skills
+editor_folder intern
 name polearm mastery
 type 43
 sub_type 2
@@ -8350,7 +8350,7 @@ level 1
 exp 0
 end
 Object skill_cleave_weapon
-editor_folder intern/skills
+editor_folder intern
 name cleave weapons
 type 43
 sub_type 0
@@ -8370,7 +8370,7 @@ level 1
 exp 0
 end
 Object skill_impact_weapon
-editor_folder intern/skills
+editor_folder intern
 name impact weapons
 type 43
 sub_type 0
@@ -8390,7 +8390,7 @@ level 1
 exp 0
 end
 Object skill_pierce_weapon
-editor_folder intern/skills
+editor_folder intern
 name pierce weapons
 type 43
 sub_type 0
@@ -8410,7 +8410,7 @@ level 1
 exp 0
 end
 Object skill_slash_weapon
-editor_folder intern/skills
+editor_folder intern
 name slash weapons
 type 43
 sub_type 0
@@ -8430,7 +8430,7 @@ level 1
 exp 0
 end
 Object skill_woodsman
-editor_folder intern/skills
+editor_folder intern
 name ranger lore
 type 43
 sub_type 2
@@ -8449,7 +8449,7 @@ level 1
 exp 0
 end
 Object spawn_info
-editor_folder intern/intern
+editor_folder intern
 type 84
 layer 0
 identified 1
@@ -8458,21 +8458,21 @@ face info.101
 no_drop 1
 end
 Object jack_unlit
-editor_folder intern/themed
+editor_folder intern
 type 74
 layer 5
 sub_type 1
 animation jack_unlit
 end
 Object cane_pole_unlit
-editor_folder intern/themed
+editor_folder intern
 type 74
 layer 5
 sub_type 1
 animation cane_pole_unlit
 end
 Object wealth
-editor_folder intern/intern
+editor_folder intern
 value 4
 face wealth.101
 sys_object 1
@@ -11938,7 +11938,7 @@ material 2
 material_real 65
 value 10
 weight 50
-container 2500
+container 5000
 weapon_speed 1.0
 nrof 1
 end
