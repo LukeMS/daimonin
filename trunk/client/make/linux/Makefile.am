@@ -52,7 +52,7 @@ daimonin_SOURCES =  \
 	../../src/3rdparty/sprig/SPG_primitives.c \
 	../../src/3rdparty/sprig/SPG_rotation.c \
 	../../src/3rdparty/sprig/SPG_surface.c
-daimonin_LDADD = -lSDL_mixer -lSDL_image @SDL_LIBS@ @EXTRA_LIBS@ @PHYSFS_LIBS@ @CURL_LIBS@
+daimonin_LDADD = -lSDL_mixer -lSDL_image @SDL_LIBS@ @EXTRA_LIBS@ @PHYSFS_LIBS@ @CURL_LIBS@ -lm
 daimonin_OBJDIR = objs
 
 daimonin_updater_SOURCES = \
@@ -69,7 +69,7 @@ daimonin_updater_SOURCES = \
 	../../src/updater/physfsunpack.c \
 	../../src/updater/md5.c
 
-daimonin_updater_LDADD = @PHYSFS_LIBS@ @CURL_LIBS@
+daimonin_updater_LDADD = @PHYSFS_LIBS@ @CURL_LIBS@ -lm
 daimonin_updater_OBJDIR = updater_objs
 
 # NOTE: if building xdelta, run its configure with "--disable-shared"
