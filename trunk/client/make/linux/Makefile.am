@@ -79,5 +79,17 @@ AM_CFLAGS = @SDL_CFLAGS@ -Wextra -funsigned-char -DDAI_DEVELOPMENT
 AM_CPPFLAGS = -I../../src/3rdparty/sprig
 AM_LDFLAGS = @LDFLAGS@
 
+# ./configure adds CFLAGS = "-g -O2" if the compiler is GCC (which it probably
+# is). Unfortuunately it seems that some(?) current Linux installations (ie my
+# Ubuntu 12.04 64bit and my Ubuntu 11.10 32bit) are broken *somewhere* so that
+# compiling the client with -O2 will crash at runtime every time (although it
+# compiles fine and the code is good). Other users of recent Ubuntus (although
+# I cannot definitely say it is a Ubuntu-only issue) have similar crashes. But
+# still others have no problem. See
+# http://www.daimonin.org/forums/daimonin-project/trunk-client-r7147-broken/
+# Removing -O2 'solves' the problem in that it still crashes (for me 30-90% of
+# the time) but not 100% of the time.
+CFLAGS =
+
 install-data-hook:
 	sh ../../install/linux/install.sh $(d_datadir) $(d_bindir)
