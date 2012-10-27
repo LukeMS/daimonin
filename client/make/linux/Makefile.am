@@ -2,13 +2,11 @@ daimonindir=$(d_bindir)
 daimonin_PROGRAMS = daimonin daimonin-updater
 
 daimonin_SOURCES =  \
-	../../src/adler32.c \
 	../../src/anim.c \
 	../../src/book.c \
 	../../src/buddy.c \
 	../../src/chatfilter.c \
 	../../src/client_cmd.c \
-	../../src/crc32.c \
 	../../src/dialog.c \
 	../../src/event.c \
 	../../src/face.c \
@@ -17,9 +15,6 @@ daimonin_SOURCES =  \
 	../../src/gameserver.c \
 	../../src/group.c \
 	../../src/ignore.c \
-	../../src/inffast.c \
-	../../src/inflate.c \
-	../../src/inftrees.c \
 	../../src/interface.c \
 	../../src/inventory.c \
 	../../src/item.c \
@@ -41,28 +36,26 @@ daimonin_SOURCES =  \
 	../../src/strout.c \
 	../../src/textwin.c \
 	../../src/tile_stretcher.c \
-	../../src/uncompr.c \
 	../../src/wdh.c \
 	../../src/widget.c \
 	../../src/wrapper.c \
-	../../src/zutil.c \
 	../../src/3rdparty/sprig/SPG_extended.c \
 	../../src/3rdparty/sprig/SPG_misc.c \
 	../../src/3rdparty/sprig/SPG_polygon.c \
 	../../src/3rdparty/sprig/SPG_primitives.c \
 	../../src/3rdparty/sprig/SPG_rotation.c \
-	../../src/3rdparty/sprig/SPG_surface.c
+	../../src/3rdparty/sprig/SPG_surface.c \
+	../../src/3rdparty/zlib/adler32.c \
+	../../src/3rdparty/zlib/crc32.c \
+	../../src/3rdparty/zlib/inffast.c \
+	../../src/3rdparty/zlib/inflate.c \
+	../../src/3rdparty/zlib/inftrees.c \
+	../../src/3rdparty/zlib/uncompr.c \
+	../../src/3rdparty/zlib/zutil.c
 daimonin_LDADD = -lSDL_mixer -lSDL_image @SDL_LIBS@ @EXTRA_LIBS@ @PHYSFS_LIBS@ @CURL_LIBS@ -lm
 daimonin_OBJDIR = objs
 
 daimonin_updater_SOURCES = \
-	../../src/adler32.c \
-	../../src/crc32.c \
-	../../src/inffast.c \
-	../../src/inflate.c \
-	../../src/inftrees.c \
-	../../src/uncompr.c \
-	../../src/zutil.c \
 	../../src/updater/linux.c \
 	../../src/updater/main.c \
 	../../src/updater/xdelta3.c \
@@ -76,7 +69,7 @@ daimonin_updater_OBJDIR = updater_objs
 
 AUTOMAKE_OPTIONS = subdir-objects
 AM_CFLAGS = @SDL_CFLAGS@ -Wextra -funsigned-char -DDAI_DEVELOPMENT
-AM_CPPFLAGS = -I../../src/3rdparty/sprig
+AM_CPPFLAGS = -I../../src/3rdparty/sprig -I../../src/3rdparty/zlib
 AM_LDFLAGS = @LDFLAGS@
 
 # ./configure adds CFLAGS = "-g -O2" if the compiler is GCC (which it probably
