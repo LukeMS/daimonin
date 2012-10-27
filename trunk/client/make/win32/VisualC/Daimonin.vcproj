@@ -47,7 +47,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="../../../,../../../src/include,../../../src/3rdparty/sprig,../include"
+				AdditionalIncludeDirectories="../../../,../../../src/include,../../../src/3rdparty/sprig,../../../src/3rdparty/zlib,../include"
 				PreprocessorDefinitions="INSTALL_SOUND,WIN32,_DEBUG,__WIN_32,CURL_STATICLIB,DAI_DEVELOPMENT"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -148,7 +148,7 @@
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
-				AdditionalIncludeDirectories="../../../,../../../src/include,../../../src/3rdparty/sprig,../include"
+				AdditionalIncludeDirectories="../../../,../../../src/include,../../../src/3rdparty/sprig,../../../src/3rdparty/zlib,../include"
 				PreprocessorDefinitions="INSTALL_SOUND,WIN32,NDEBUG,_WINDOWS,__WIN_32,CURL_STATICLIB,DAI_DEVELOPMENT"
 				ExceptionHandling="0"
 				RuntimeLibrary="0"
@@ -246,7 +246,31 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\adler32.c"
+				RelativePath="..\..\..\src\3rdparty\zlib\adler32.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\3rdparty\zlib\crc32.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\3rdparty\zlib\inffast.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\3rdparty\zlib\inflate.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\3rdparty\zlib\inftrees.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\3rdparty\zlib\uncompr.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\3rdparty\zlib\zutil.c"
 				>
 			</File>
 			<File
@@ -267,10 +291,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\client_cmd.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\crc32.c"
 				>
 			</File>
 			<File
@@ -303,18 +323,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\ignore.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\inffast.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\inflate.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\inftrees.c"
 				>
 			</File>
 			<File
@@ -410,10 +418,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\uncompr.c"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\src\wdh.c"
 				>
 			</File>
@@ -423,10 +427,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\wrapper.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\zutil.c"
 				>
 			</File>
 		</Filter>
@@ -444,6 +444,34 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\3rdparty\sprig\sprig_inline.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\3rdparty\zlib\crc32.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\3rdparty\zlib\inffast.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\3rdparty\zlib\inflate.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\3rdparty\zlib\inftrees.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\3rdparty\zlib\zconf.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\3rdparty\zlib\zlib.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\3rdparty\zlib\zutil.h"
 				>
 			</File>
 			<File
@@ -472,10 +500,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\include\config.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\include\crc32.h"
 				>
 			</File>
 			<File
@@ -512,18 +536,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\include\include.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\include\inffast.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\include\inflate.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\include\inftrees.h"
 				>
 			</File>
 			<File
@@ -624,18 +636,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\include\wrapper.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\include\zconf.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\include\zlib.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\include\zutil.h"
 				>
 			</File>
 		</Filter>
