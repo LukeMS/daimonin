@@ -243,9 +243,14 @@ void strout_blt(SDL_Surface *surface, _font *font,
                 c += 2;
             }
 
-            strncpy(buf, c + 1, 6);
+            buf[0] = *(++c);
+            buf[1] = *(++c);
+            buf[2] = *(++c);
+            buf[3] = *(++c);
+            buf[4] = *(++c);
+            buf[5] = *(++c);
+            buf[6] = '\0';
             colr_used = (uint32)strtoul(buf, NULL, 16);
-            c += 6;
 
             continue;
         }
