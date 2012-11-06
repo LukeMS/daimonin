@@ -454,14 +454,12 @@ int Event_PollInputDevice(void)
         }
     }
 
-
     global_buttons.valid = -1;
+
     while (SDL_PollEvent(&event))
     {
-        x = global_buttons.mx=event.motion.x;
-        y = global_buttons.my=event.motion.y;
-
         mb_clicked = 0;
+
         switch (event.type)
         {
         case SDL_MOUSEBUTTONUP:
@@ -478,8 +476,8 @@ int Event_PollInputDevice(void)
 
             /* no button is down */
             MouseState = IDLE;
-            global_buttons.mx_up = x;
-            global_buttons.my_up = y;
+            x = global_buttons.mx = global_buttons.mx_up = event.button.x;
+            y = global_buttons.my = global_buttons.my_up = event.button.y;
             global_buttons.down = -1;
             global_buttons.click = 1;
             global_buttons.valid = 0;
@@ -493,14 +491,13 @@ int Event_PollInputDevice(void)
             if (cpl.menustatus == MENU_BOOK)
             {
                 /* no button - we can do a lazy check */
-                if ( global_buttons.mx_up >= global_book_data.x &&
-                        global_buttons.my_up >= global_book_data.y &&
-                        global_buttons.mx_up <= global_book_data.x+global_book_data.xlen &&
-                        global_buttons.my_up <= global_book_data.y+global_book_data.ylen)
+                if (x >= global_book_data.x &&
+                    x <= global_book_data.x+global_book_data.xlen &&
+                    y <= global_book_data.y+global_book_data.ylen)
                 {
                     global_buttons.click = -1;
 
-                    if (global_buttons.mx_up >= global_book_data.x+(global_book_data.xlen/2))
+                    if (x >= global_book_data.x+(global_book_data.xlen/2))
                         check_menu_keys(MENU_BOOK, SDLK_RIGHT);
                     else
                         check_menu_keys(MENU_BOOK, SDLK_LEFT);
@@ -554,13 +551,14 @@ int Event_PollInputDevice(void)
             if (GameStatus < GAME_STATUS_PLAY)
                 break;
 
-            x_custom_cursor = x;
-            y_custom_cursor = y;
+            x = global_buttons.mx = x_custom_cursor = event.motion.x;
+            y = global_buttons.my = y_custom_cursor = event.motion.y;
+
             if (cpl.menustatus == MENU_NPC)
             {
                 if (event.button.button ==0)
                 {
-                    gui_npc_mousemove(event.motion.x, event.motion.y);
+                    gui_npc_mousemove(x, y);
                     break;
                 }
 
@@ -664,8 +662,8 @@ int Event_PollInputDevice(void)
             else
                 MouseEvent = MouseState = IDLE;
 
-            global_buttons.mx_down = x;
-            global_buttons.my_down = y;
+            x = global_buttons.mx = global_buttons.mx_down = event.button.x;
+            y = global_buttons.my = global_buttons.my_down = event.button.y;
             global_buttons.down = 1;
             global_buttons.click = -1;
             global_buttons.valid = -1;
@@ -707,7 +705,7 @@ int Event_PollInputDevice(void)
             /***********************
               mouse in Play-field
             ************************/
-            if (mouseInPlayfield(event.motion.x, event.motion.y))
+            if (mouseInPlayfield(x, y))
             {
                 /* Targetting */
                 if ((SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_RIGHT)))

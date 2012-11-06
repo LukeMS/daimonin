@@ -193,7 +193,6 @@ void init_game_data(void)
 {
     int i;
 
-    memset(&global_buttons,-1, sizeof(button_status));
     first_server_char = NULL;
     esc_menu_flag = 0;
     srand((uint32) time(NULL));
@@ -1461,6 +1460,17 @@ int main(int argc, char *argv[])
 
     LastTick = tmpGameTick = anim_tick = new_anim_tick = SDL_GetTicks();
     GameTicksSec = 0;       /* ticks since this second frame in ms */
+
+    /* Initialise the global_buttons struct. */
+    SDL_WarpMouse(0, 0);
+    (void)SDL_GetMouseState(&global_buttons.mx, &global_buttons.my);
+    global_buttons.valid = -1;
+    global_buttons.down = -1;
+    global_buttons.mx_down = -1;
+    global_buttons.my_down = -1;
+    global_buttons.click = -1;
+    global_buttons.mx_up = -1;
+    global_buttons.my_up = -1;
 
     /* the one and only main loop */
     /* TODO: frame update can be optimized. It uses some cpu time because it
