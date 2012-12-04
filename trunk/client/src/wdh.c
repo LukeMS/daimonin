@@ -472,8 +472,8 @@ void wdh_process_skill_exp(widget_id_t id)
              y = widget_data[id].y1;
     _BLTFX      bltfx;
     char        buf[256];
-    float      multi = 0.0,
-               line = 0.0;
+    float       multi = 0.0;
+    double      line = 0.0; /* A float is 4 bytes, a double is 8! */
     SDL_Rect    box;
     long int liLExp = 0;
     long int liLExpTNL = 0;
@@ -534,7 +534,7 @@ void wdh_process_skill_exp(widget_id_t id)
                                            server_level.exp[skill_list[cpl.skill_g].entry[cpl.skill_e].exp_level]) /
                                   (double)(server_level.exp[skill_list[cpl.skill_g].entry[cpl.skill_e].exp_level + 1] -
                                            server_level.exp[skill_list[cpl.skill_g].entry[cpl.skill_e].exp_level]) * 10.0),
-                                 (double *)&line);
+                                    &line); /* Crash happened here, guess why */
 
                     liTExp = skill_list[cpl.skill_g].entry[cpl.skill_e].exp;
                     liTExpTNL = server_level.exp[skill_list[cpl.skill_g].entry[cpl.skill_e].exp_level + 1];
@@ -1626,7 +1626,7 @@ jump_in_container:
 
                 sprite_blt_as_icon(face_list[cip->face].sprite, xi, yi, type,
                                    selected, cip->flagsval,
-                                   (quacon == 100) ? 0 : quacon, 
+                                   (quacon == 100) ? 0 : quacon,
                                    (cip->nrof == 1) ? 0 : cip->nrof, bltfx);
 
                 if (selected)
@@ -1660,7 +1660,7 @@ static void PrintInfo(sint16 x, sint16 y, item *ip, inventory_win_t iwin)
 {
     char         buf[MEDIUM_BUF];
     SDL_Surface *surface = ScreenSurface;
-    
+
     x += ((iwin == IWIN_INV) ? 36 : 4);
 
     /* Print 'nrof name'. */
@@ -2255,7 +2255,7 @@ void wdh_event_pdoll(widget_id_t id, SDL_Event *e)
     {
         item *ip;
 
-        cpl.inventory_win = IWIN_BELOW; 
+        cpl.inventory_win = IWIN_BELOW;
         sound_play_effect(SOUNDTYPE_CLIENT, SOUND_GET, 0, 0, 100);
         process_macro_keys(KEYFUNC_GET, 0); /* get to inv */
 
