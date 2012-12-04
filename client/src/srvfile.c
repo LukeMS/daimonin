@@ -838,7 +838,8 @@ static void LoadSkills(void)
                name[TINY_BUF],
                nchar,
                icon[TINY_BUF],
-               desc[4][TINY_BUF];
+               desc[4][MEDIUM_BUF]; /*  A crash happened here, look on the other fix for proper
+                                        description (DA)*/
         int    panel;
         uint8  i;
         _skill_list_entry *sle;
@@ -1053,7 +1054,10 @@ static void LoadSpells(void)
                type,
                nchar,
                icon[TINY_BUF],
-               desc[4][TINY_BUF];
+               desc[4][MEDIUM_BUF]; /*  Another crash happened here. I used a larger buffer size, but
+                                        the cause of the error must be investigated (eg. server sending
+                                        data that does not respect client expected data size) and properly
+                                        solved (implementing a safe sprintf, for example)  (DA)*/
         int    panel;
         uint8  i;
         _spell_list_entry *sle;
