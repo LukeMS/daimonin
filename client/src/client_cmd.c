@@ -20,7 +20,7 @@
     The author can be reached via e-mail to info@daimonin.org
 */
 
-/* This file deals with higher level functions for sending informations 
+/* This file deals with higher level functions for sending informations
  * and commands to the server. Most low level functions are in socket.c
  */
 
@@ -72,6 +72,11 @@
     } \
     else \
     { \
+        if ( ((_LEN_) + (_SL_)->len) > MAX_DATA_TAIL_LENGTH ) /* Properly check if array bounds are respected, else truncate (DA) */ \
+        {\
+            (_LEN_) = MAX_DATA_TAIL_LENGTH - (_SL_)->len;\
+            (_BUF_)[(_LEN_) - 1] = '\0';\
+        }\
         memcpy((_SL_)->defbuf + (_SL_)->len, (_BUF_), (_LEN_)); \
     } \
     (_SL_)->len += (_LEN_)
@@ -441,7 +446,7 @@ void client_cmd_generic(const char *command)
     for (token = buf; token && *token; token = (end) ? end + 1 : NULL)
     {
         char  *p,
-               cmd[MEDIUM_BUF],
+               cmd[LARGE_BUF],
                params[MEDIUM_BUF];
         uint8  c;
 
@@ -456,7 +461,9 @@ void client_cmd_generic(const char *command)
         end = SplitCommand(token);
 
         /* Now we copy token to cmd... */
-        sprintf(cmd, "%s", token);
+        sprintf(cmd, "%s", token); /*   A crash happened here when using console to write a message
+                                        without the /say. I enlarged cmd buffer size, but it can be
+                                        fixed in other ways (DA) */
 
         /* And separate the params too. */
         *params = '\0';
@@ -489,9 +496,21 @@ void client_cmd_generic(const char *command)
 
             sprintf(tmpbuf, "%s%s%s", cmd + 1, (*params) ? " " : "", params);
             len = strlen(tmpbuf);
-            START(&sl, NULL, CLIENT_CMD_GENERIC, SEND_CMD_FLAG_STRING);
-            ADDBUFFER(&sl, tmpbuf, len, 0);
-            FINISH(&sl);
+
+            if (len < 210) { /* Based on server.c
+                                If I truncate a server message within the ADDBUFFER_REAL
+                                the server disconnects me anyway if the message fills the
+                                whole buffer. This is a workaround until a proper decision
+                                on how to handle that is taken. Crashes should happen no more
+                                on /reply, /tell (DA)*/
+                START(&sl, NULL, CLIENT_CMD_GENERIC, SEND_CMD_FLAG_STRING);
+                ADDBUFFER(&sl, tmpbuf, len, 0);
+                FINISH(&sl);
+            } else
+               textwin_show_string(0, NDI_COLR_WHITE, "Message too long!"); /*  Warns the player that he wrote too much.
+                                                                                Perhaps that could be handled by the server
+                                                                                like it was done with /shout? (DA)*/
+
         }
     }
 }
@@ -1044,7 +1063,7 @@ static uint8 CheckCommand(char *cmd, char *params)
     {
         PHYSFS_File *handle;
         char         buf[TINY_BUF];
- 
+
         LOG(LOG_SYSTEM, "Loading '%s'... ", FILE_VERSION);
 
         if (!(handle = PHYSFS_openRead(FILE_VERSION)))
