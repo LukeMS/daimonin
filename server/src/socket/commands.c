@@ -1288,13 +1288,16 @@ void cs_cmd_fire(char *params, int len, NewSocket *ns)
     /* TODO: Remove at 0.11.0. Compatibility code for pre-0.10.6 clients. */
     if (mode == ALTACT_MODE_ARCHERY)
     {
-        weapon = pl->equipment[PLAYER_EQUIP_BOW];
+        if (!(weapon = pl->equipment[PLAYER_EQUIP_BOW]))
+        {
+            return;
+        }
 
         if (IS_DEVICE(weapon))
         {
             mode = ALTACT_MODE_DEVICE;
         }
-        if (weapon->type == ARROW)
+        else if (weapon->type == ARROW)
         {
             mode = ALTACT_MODE_THROWING;
         }
@@ -1304,7 +1307,7 @@ void cs_cmd_fire(char *params, int len, NewSocket *ns)
     {
         case ALTACT_MODE_ARCHERY:
             if ((weapon = pl->equipment[PLAYER_EQUIP_BOW]) &&
-                (ammo = pl->equipment[PLAYER_EQUIP_BOW]) &&
+                (ammo = pl->equipment[PLAYER_EQUIP_AMUN]) &&
                 weapon->type == BOW &&
                 ammo->type == ARROW &&
                 ((weapon->sub_type1 == RANGE_WEAP_BOW &&
@@ -1367,8 +1370,9 @@ void cs_cmd_fire(char *params, int len, NewSocket *ns)
     {
         LOG(llevDebug, "AC-fire: %2.2f\n", ticks);
         set_action_time(op, ticks);
-        op->anim_enemy_dir = (dir) ? dir : op->facing;
     }
+
+    op->anim_enemy_dir = (dir) ? dir : op->facing;
 }
 
 
