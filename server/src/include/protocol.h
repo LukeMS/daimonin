@@ -335,6 +335,18 @@ typedef enum _gui_npc_mode
 }
 _gui_npc_mode;
 
+typedef enum altact_mode_t
+{
+    ALTACT_MODE_ARCHERY,
+    ALTACT_MODE_SPELL,
+    ALTACT_MODE_SKILL,
+    ALTACT_MODE_DEVICE,
+    ALTACT_MODE_THROWING,
+
+    ALTACT_NROF // must be last entry
+}
+altact_mode_t;
+
 extern int account_name_valid(char *cp);
 extern int account_char_valid(char c);
 extern int password_valid(char *cp);

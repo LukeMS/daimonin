@@ -26,16 +26,6 @@
 #ifndef __PLAYER_H
 #define __PLAYER_H
 
-enum
-{
-    /* fire modes submited from client */
-    FIRE_MODE_NONE = -1,
-    FIRE_MODE_BOW,
-    FIRE_MODE_SPELL,
-    FIRE_MODE_SKILL,
-    FIRE_MODE_INIT
-};
-
 /* used for item damage system */
 enum
 {

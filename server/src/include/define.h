@@ -538,6 +538,11 @@
 #define IS_AIRBORNE(op) \
     ((QUERY_FLAG(op, FLAG_FLYING) || QUERY_FLAG(op, FLAG_LEVITATE)))
 
+#define IS_DEVICE(op) \
+    (op->type == HORN || \
+     op->type == ROD || \
+     op->type == WAND)
+
 /* the flags */
 
 /* used in blocked() when we only want know about blocked by something */
