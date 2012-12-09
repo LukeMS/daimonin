@@ -1247,41 +1247,113 @@ void cs_cmd_talk(char *data, int len, NewSocket *ns)
 
 void cs_cmd_fire(char *params, int len, NewSocket *ns)
 {
-    int     dir, type;
-    player *pl = ns->pl;
-    object *op;
+    int            dir;
+    altact_mode_t  mode;
+    player        *pl = ns->pl;
+    object        *op,
+                  *weapon = NULL,
+                  *ammo = NULL;
+    float          ticks = -1.0;
 
-    if (!pl || !pl->ob || ns->status != Ns_Playing || !params
-        || len<(2*PARM_SIZE_INT+PARM_SIZE_CHAR) || params[len-1])
+    if (!pl ||
+        !(op = pl->ob) ||
+        ns->status != Ns_Playing ||
+        !params ||
+        len < (2 * PARM_SIZE_INT + PARM_SIZE_CHAR) ||
+        params[len - 1])
     {
         ns->status = Ns_Dead;
+
         return;
     }
 
-    op = pl->ob;
     dir = GetInt_Buffer(params);
-    type = GetInt_Buffer(params);
-    /* third param is a string, params points to it start now - a '\0' is at the end as tested at start */
+    mode = GetInt_Buffer(params);
+    /* third param is a string, params points to it start now - a '\0' is at
+     * the end as tested at start */
 
     /* first, call move_player() to determinate we CAN move.
-    * have in mind we are perhaps confused - so dir can change!
-    */
-    dir =     move_player(op, dir, FALSE);
-
-    if(dir == -1) /* move_player() disallow our move! */
+     * have in mind we are perhaps confused - so dir can change! */
+    if ((dir = move_player(op, dir, FALSE)) == -1)
+    {
         return;
+    }
 
-    if (type == FIRE_MODE_SPELL)
-        command_cast_spell(op, params);
-    else if (type == FIRE_MODE_SKILL)
-        command_uskill(op, params);
-    else /* arrow, rod... */
-        fire(op, dir);
+    /* NOT IMPLEMENTED: check for loss of invisiblity/hide */
+    if (action_makes_visible(op))
+    {
+        make_visible(op);
+    }
 
-    if (dir)
-        op->anim_enemy_dir = dir;
-    else
-        op->anim_enemy_dir = op->facing;
+    switch (mode)
+    {
+        case ALTACT_MODE_ARCHERY:
+            if ((weapon = pl->equipment[PLAYER_EQUIP_BOW]) &&
+                (ammo = pl->equipment[PLAYER_EQUIP_BOW]) &&
+                weapon->type == BOW &&
+                ammo->type == ARROW &&
+                ((weapon->sub_type1 == RANGE_WEAP_BOW &&
+                  ammo->sub_type1 == ST1_MISSILE_BOW &&
+                  change_skill(op, SK_MISSILE_WEAPON)) ||
+                 (weapon->sub_type1 == RANGE_WEAP_XBOWS &&
+                  ammo->sub_type1 == ST1_MISSILE_CBOW &&
+                  change_skill(op, SK_XBOW_WEAP)) ||
+                 (weapon->sub_type1 == RANGE_WEAP_SLINGS &&
+                  ammo->sub_type1 == ST1_MISSILE_SSTONE &&
+                  change_skill(op, SK_SLING_WEAP))))
+            {
+                if (check_skill_action_time(op, op->chosen_skill))
+                {
+                    ticks = fire_bow(op, dir);
+                }
+            }
+
+            break;
+
+        case ALTACT_MODE_SPELL:
+            command_cast_spell(op, params); // handles action_time internally
+
+            break;
+
+        case ALTACT_MODE_SKILL:
+            command_uskill(op, params); // handles action_time internally
+
+            break;
+
+        case ALTACT_MODE_DEVICE:
+            if ((weapon = pl->equipment[PLAYER_EQUIP_BOW]) &&
+                IS_DEVICE(weapon) &&
+                change_skill(op, SK_USE_MAGIC_ITEM))
+            {
+                if (check_skill_action_time(op, op->chosen_skill))
+                {
+                    ticks = fire_magic_tool(op, weapon, dir);
+                }
+            }
+
+            break;
+
+        case ALTACT_MODE_THROWING:
+            if ((weapon = pl->equipment[PLAYER_EQUIP_BOW]) &&
+                weapon->type == ARROW &&
+                weapon->sub_type1 == ST1_MISSILE_THROW &&
+                change_skill(op, SK_THROWING))
+            {
+                if (check_skill_action_time(op, op->chosen_skill))
+                {
+                    ticks = do_throw(op, dir);
+                }
+            }
+
+            break;
+    }
+
+    if (ticks >= 0.0)
+    {
+        LOG(llevDebug, "AC-fire: %2.2f\n", ticks);
+        set_action_time(op, ticks);
+        op->anim_enemy_dir = (dir) ? dir : op->facing;
+    }
 }
 
 
