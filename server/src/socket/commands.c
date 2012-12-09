@@ -1285,6 +1285,21 @@ void cs_cmd_fire(char *params, int len, NewSocket *ns)
         make_visible(op);
     }
 
+    /* TODO: Remove at 0.11.0. Compatibility code for pre-0.10.6 clients. */
+    if (mode == ALTACT_MODE_ARCHERY)
+    {
+        weapon = pl->equipment[PLAYER_EQUIP_BOW];
+
+        if (IS_DEVICE(weapon))
+        {
+            mode = ALTACT_MODE_DEVICE;
+        }
+        if (weapon->type == ARROW)
+        {
+            mode = ALTACT_MODE_THROWING;
+        }
+    }
+
     switch (mode)
     {
         case ALTACT_MODE_ARCHERY:
