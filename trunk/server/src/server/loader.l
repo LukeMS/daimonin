@@ -311,6 +311,7 @@ WS	[ \t]*{NL}?
 ^object_int3{S}		op->owner_count = IVAL;
 ^last_heal{S}	    op->last_heal = IVAL;
 ^last_sp{S}			op->last_sp = IVAL;
+^last_sp_add{S}		op->last_sp += IVAL;
 ^last_grace{S}		op->last_grace = IVAL;
 ^last_eat{S}	    op->last_eat = IVAL;
 ^speed{S}			op->speed = FVAL;
