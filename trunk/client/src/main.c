@@ -1999,6 +1999,16 @@ static void InitPhysFS(const char *argv0)
         LOG(LOG_MSG, "%s\n", PHYSFS_getLastError());
     }
 
+    /* Fix for non-english user crash bug. It adds a reference
+     * to current working directory and avoids the problem
+     * that physfs seems to have with windows + local culture
+     * characters (DA) */
+    if (!PHYSFS_addToSearchPath("./", 1))
+    {
+        LOG(LOG_MSG, "%s\n", PHYSFS_getLastError());
+    }
+
+
     /* If FILE_DEFAULTS (an archive) exists, prepend this to the search path.
      * In here should be the actual defaults. */
     if (PHYSFS_exists(FILE_DEFAULTS))
