@@ -56,7 +56,14 @@ int command_uskill(object *pl, char *params)
     if (pl->type == PLAYER)
         CONTR(pl)->rest_mode = 0;
 
-    return use_skill(pl, params);
+    if (!use_skill(pl, params))
+    {
+        return COMMANDS_RTN_VAL_ERROR;
+    }                      
+    else                   
+    {                      
+        return COMMANDS_RTN_VAL_OK;
+    }
 }
 
 int command_rskill(object *pl, char *params)
@@ -76,7 +83,14 @@ int command_rskill(object *pl, char *params)
         return 0;
     }
 
-    return change_skill(pl, skillno);
+    if (!change_skill(pl, skillno))
+    {
+        return COMMANDS_RTN_VAL_ERROR;
+    }                          
+    else                       
+    {                          
+        return COMMANDS_RTN_VAL_OK;
+    }
 }
 
 
