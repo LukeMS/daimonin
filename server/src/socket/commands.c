@@ -1302,6 +1302,10 @@ void cs_cmd_fire(char *params, int len, NewSocket *ns)
             mode = ALTACT_MODE_THROWING;
         }
     }
+    else if (mode == ALTACT_MODE_PRAYER)
+    {
+        mode = ALTACT_MODE_SPELL;
+    }
 
     switch (mode)
     {
