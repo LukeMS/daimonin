@@ -110,7 +110,6 @@ typedef signed char     sint8;
 #include "menu.h"
 #include "dialog.h"
 #include "group.h"
-#include "filewrap.h"
 #include "physfsrwops.h"
 #include "srvfile.h"
 #include "locator.h"
