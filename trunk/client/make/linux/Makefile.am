@@ -10,7 +10,6 @@ daimonin_SOURCES =  \
 	../../src/dialog.c \
 	../../src/event.c \
 	../../src/face.c \
-	../../src/filewrap.c \
 	../../src/font.c \
 	../../src/gameserver.c \
 	../../src/group.c \

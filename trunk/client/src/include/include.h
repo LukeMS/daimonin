@@ -37,6 +37,7 @@
 #else // elif LINUX
 # include "define.h"
 # include "cflinux.h"
+#define PATH_BACKBUFFER 256 /* Moved here. For PHYSFS_Init. (DA) */
 #endif
 
 #include "config.h"
