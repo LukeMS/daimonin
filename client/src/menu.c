@@ -428,7 +428,7 @@ static void freeQuickSlots(_quickslot *quickslots, int size)
     }
 }
 
-static int readNextQuickSlots(FILE *fp, char *server, int *port, char *name, _quickslot *quickslots)
+static int readNextQuickSlots(PHYSFS_File *fp, char *server, int *port, char *name, _quickslot *quickslots)
 {
     int     ch, i, r;
 
@@ -436,25 +436,25 @@ static int readNextQuickSlots(FILE *fp, char *server, int *port, char *name, _qu
     {
         if (i == 2048)
             return 0;
-        ch = fgetc(fp);
+        PHYSFS_read(fp, &ch, 1, 1);
         if (ch == EOF)
             return 0;
         server[i++] = ch;
     }
-    if (!fread(port, sizeof(int), 1, fp))
+    if (!PHYSFS_read(fp, port, sizeof(int), 1))
         return 0;
     for (ch = 1, i = 0; ch;)
     {
         if (i == 40)
             return 0;
-        ch = fgetc(fp);
+        PHYSFS_read(fp, &ch, 1, 1);
         if (ch == EOF)
             return 0;
         name[i++] = ch;
     }
     for (i = r = 0; i != MAX_QUICK_SLOTS; ++i)
     {
-        if (!fread(&quickslots[i].shared.is_spell, sizeof(uint8), 1, fp))
+        if (!PHYSFS_read(fp, &quickslots[i].shared.is_spell, sizeof(uint8), 1))
         {
             freeQuickSlots(quickslots, i);
             return 0;
@@ -464,7 +464,7 @@ static int readNextQuickSlots(FILE *fp, char *server, int *port, char *name, _qu
         {
             int j;
 
-            if (!fread(&quickslots[i].item.nr, sizeof(int), 1, fp))
+            if (!PHYSFS_read(fp,&quickslots[i].item.nr, sizeof(int), 1))
             {
                 freeQuickSlots(quickslots, i);
                 return 0;
@@ -478,7 +478,7 @@ static int readNextQuickSlots(FILE *fp, char *server, int *port, char *name, _qu
                     freeQuickSlots(quickslots, i + 1);
                     return 0;
                 }
-                ch = fgetc(fp);
+                PHYSFS_read(fp, &ch, 1, 1);
                 if (ch == EOF)
                 {
                     freeQuickSlots(quickslots, i + 1);
@@ -489,17 +489,17 @@ static int readNextQuickSlots(FILE *fp, char *server, int *port, char *name, _qu
         }
         else
         {
-            if (!fread(&quickslots[i].shared.tag, sizeof(int), 1, fp))
+            if (!PHYSFS_read(fp, &quickslots[i].shared.tag, sizeof(int), 1))
             {
                 freeQuickSlots(quickslots, i);
                 return 0;
             }
-            if (!fread(&quickslots[i].spell.groupNr, sizeof(int), 1, fp))
+            if (!PHYSFS_read(fp,&quickslots[i].spell.groupNr, sizeof(int), 1))
             {
                 freeQuickSlots(quickslots, i);
                 return 0;
             }
-            if (!fread(&quickslots[i].spell.classNr, sizeof(int), 1, fp))
+            if (!PHYSFS_read(fp,&quickslots[i].spell.classNr, sizeof(int), 1))
             {
                 freeQuickSlots(quickslots, i);
                 return 0;
@@ -522,16 +522,17 @@ void load_quickslots_entrys()
     int         i, port;
     char        name[40], server[2048];
     _quickslot  quickslots[MAX_QUICK_SLOTS];
-    FILE       *stream;
+    PHYSFS_File *stream;
     size_t      dummy; // purely to suppress GCC's warn_unused_result warning
 
-    if (!(stream = fopen_wrapper(QUICKSLOT_FILE, "rb")))
+    if (!(stream = PHYSFS_openRead(QUICKSLOT_FILE)))
         return;
-    dummy = fread(&header, sizeof(header), 1, stream);
+    dummy = PHYSFS_read(stream, &header, sizeof(header), 1);
     if (header != QUICKSLOT_FILE_HEADER)
     {
-        fclose(stream);
-        remove(file_path(QUICKSLOT_FILE, ""));
+        PHYSFS_close(stream);
+        PHYSFS_delete(QUICKSLOT_FILE);
+
         return;
     }
     while (readNextQuickSlots(stream, server, &port, name, quickslots))
@@ -565,24 +566,28 @@ void load_quickslots_entrys()
                     {
                         if (j == quick_slots[i].item.nr)
                         {
-                            if (!strcmp(ob->s_name, quick_slots[i].name.name))
-                            {
-                                quick_slots[i].item.tag = ob->tag;
-                                match = 1;
-                            }
-                            break;
+                                if (!strcmp(ob->s_name, quickslots[i].name.name))
+								{
+									MALLOC(quick_slots[i].name.name, sizeof(char) * 128);
+									memcpy(&quick_slots[i], &quickslots[i], sizeof(_quickslot));
+	                                quick_slots[i].item.tag = ob->tag;
+		                            match = 1;
+			                    }
+				                break;
                         }
                     }
                     if (match == 0)
                     {
                         for (ob = cpl.ob->inv; ob; ob = ob->next)
                         {
-                            if (!strcmp(ob->s_name, quick_slots[i].name.name))
-                            {
-                                quick_slots[i].item.tag = ob->tag;
-                                match = 1;
-                                break;
-                            }
+                           if (!strcmp(ob->s_name, quickslots[i].name.name))
+								{
+									MALLOC(quick_slots[i].name.name, sizeof(char) * 128);
+									memcpy(&quick_slots[i], &quickslots[i], sizeof(_quickslot));
+									quick_slots[i].item.tag = ob->tag;
+									match = 1;
+									break;
+								}
                         }
                         if (match == 0)
                         {
@@ -606,7 +611,7 @@ void load_quickslots_entrys()
             break;
         }
     }
-    fclose(stream);
+    PHYSFS_close(stream);
     update_quickslots(-1);
 }
 
@@ -619,15 +624,16 @@ void save_quickslots_entrys()
     char        name[40], server[2048];
     int         n, size, w;
     _quickslot  quickslots[MAX_QUICK_SLOTS];
-    FILE       *stream;
+    PHYSFS_File  *stream;
 
-    if (!(stream = fopen_wrapper(QUICKSLOT_FILE, "rb+")))
+    if (!(stream = PHYSFS_openAppend(QUICKSLOT_FILE)))
     {
-        if (!(stream = fopen_wrapper(QUICKSLOT_FILE, "wb+")))
+        if (!(stream = PHYSFS_openWrite(QUICKSLOT_FILE)))
             return;
     }
+    PHYSFS_seek(stream, 0);
     header = QUICKSLOT_FILE_HEADER;
-    fwrite(&header, sizeof(header), 1, stream);
+    PHYSFS_write(stream, &header, sizeof(header), 1);
     for (n = w = 0; n != MAX_QUICK_SLOTS; ++n)
     {
         w += sizeof(uint8);
@@ -651,12 +657,15 @@ void save_quickslots_entrys()
             w += sizeof(int) * 3;
     }
     /* readNextQuickSlots has problems with wb+ and rb+ opened files */
-    n = ftell(stream);
+    n = PHYSFS_tell(stream);
 
-    if (!(freopen(file_path(QUICKSLOT_FILE, "rb"),"rb",stream)))
+    PHYSFS_close(stream);
+
+    if (!(stream=PHYSFS_openRead(QUICKSLOT_FILE)))
         return;
 
-    fseek(stream,n,SEEK_SET);
+    PHYSFS_seek(stream, n);
+
     while ((size = readNextQuickSlots(stream, server, &n, name, quickslots)) != 0)
     {
         if (!strcmp(gameserver_sel->address, server) && n == gameserver_sel->port && !strcmp(cpl.name, name))
@@ -664,79 +673,85 @@ void save_quickslots_entrys()
             if ((n = w - size) != 0)
             {
                 char  *buf;
-                long   pos = ftell(stream);
+                long   pos = PHYSFS_tell(stream);
                 size_t dummy; // purely to suppress GCC's warn_unused_result warning
 
-                if (!(freopen(file_path(QUICKSLOT_FILE, "rb+"),"rb+",stream)))
+                PHYSFS_close(stream);
+                if (!(stream=PHYSFS_openAppend(QUICKSLOT_FILE)))
                     return;
 
-                fseek(stream, 0, SEEK_END);
-                w = ftell(stream) - pos;
+                w = PHYSFS_tell(stream) - pos;
                 MALLOC(buf, w);
-                fseek(stream, pos, SEEK_SET);
-                dummy = fread(buf, 1, w, stream);
-                fseek(stream, pos + n, SEEK_SET);
-                fwrite(buf, 1, w, stream);
+                PHYSFS_seek(stream, pos);
+                dummy = PHYSFS_read(stream, buf, 1, w);
+                PHYSFS_seek(stream, pos + n);
+
+                PHYSFS_write(stream, &buf, 1, w);
                 if (n < 0)
                 {
-                    w = ftell(stream);
-                    rewind(stream);
-                    buf = (char *)realloc(buf, w);
-                    dummy = fread(buf, 1, w, stream);
+                    w = PHYSFS_tell(stream);
 
-                    if (!(freopen(file_path(QUICKSLOT_FILE, "wb+"), "wb+", stream)))
+                    PHYSFS_seek(stream, 0);
+                    buf = (char *)realloc(buf, w);
+                    dummy = PHYSFS_read(stream, buf, 1, w);
+
+                    PHYSFS_close(stream);
+
+                    if (!(stream=PHYSFS_openWrite(QUICKSLOT_FILE)))
                         return;
 
-                    fwrite(buf, 1, w, stream);
+                    PHYSFS_write(stream, &buf, 1, w);
                 }
                 FREE(buf);
-                fseek(stream, pos, SEEK_SET);
+                PHYSFS_seek(stream, pos);
             }
-            fseek(stream, -size, SEEK_CUR);
+            PHYSFS_seek(stream, PHYSFS_tell(stream) - size);
+
             for (n = 0; n != MAX_QUICK_SLOTS; ++n)
             {
-                fwrite(&quick_slots[n].shared.is_spell, sizeof(uint8), 1, stream);
+                PHYSFS_write(stream, &quick_slots[n].shared.is_spell, sizeof(uint8), 1);
                 if (quick_slots[n].shared.is_spell == 0)
                 {
-                    fwrite(&quick_slots[n].item.nr, sizeof(int), 1, stream);
-                    fwrite(quick_slots[n].name.name, sizeof(char), strlen(quick_slots[n].name.name) + 1, stream);
+                    PHYSFS_write(stream, &quick_slots[n].item.nr, sizeof(int), 1);
+                    PHYSFS_write(stream, quick_slots[n].name.name, sizeof(char), strlen(quick_slots[n].name.name) + 1);
                 }
                 else
                 {
-                    fwrite(&quick_slots[n].shared.tag, sizeof(int), 1, stream);
-                    fwrite(&quick_slots[n].spell.groupNr, sizeof(int), 1, stream);
-                    fwrite(&quick_slots[n].spell.classNr, sizeof(int), 1, stream);
+                    PHYSFS_write(stream, &quick_slots[n].shared.tag, sizeof(int), 1);
+                    PHYSFS_write(stream, &quick_slots[n].spell.groupNr, sizeof(int), 1);
+                    PHYSFS_write(stream, &quick_slots[n].spell.classNr, sizeof(int), 1);
                 }
             }
-            fclose(stream);
+            PHYSFS_close(stream);
             freeQuickSlots(quick_slots, MAX_QUICK_SLOTS);
             return;
         }
     }
 
-    if (!(freopen(file_path(QUICKSLOT_FILE, "rb+"),"rb+",stream)))
+    PHYSFS_close(stream);
+
+   if (!(stream=PHYSFS_openAppend(QUICKSLOT_FILE)))
         return;
 
-    fseek(stream, 0, SEEK_END);
-    fwrite(&gameserver_sel->address, sizeof(char), strlen(gameserver_sel->address) + 1, stream);
-    fwrite(&gameserver_sel->port, sizeof(int), 1, stream);
-    fwrite(&cpl.name, sizeof(char), strlen(cpl.name) + 1, stream);
+    PHYSFS_write(stream,&gameserver_sel->address, sizeof(char), strlen(gameserver_sel->address) + 1);
+    PHYSFS_write(stream,&gameserver_sel->port, sizeof(int), 1);
+    PHYSFS_write(stream,&cpl.name, sizeof(char), strlen(cpl.name) + 1);
     for (n = 0; n != MAX_QUICK_SLOTS; ++n)
     {
-        fwrite(&quick_slots[n].shared.is_spell, sizeof(uint8), 1, stream);
+        PHYSFS_write(stream,&quick_slots[n].shared.is_spell, sizeof(uint8), 1);
         if (quick_slots[n].shared.is_spell == 0)
         {
-            fwrite(&quick_slots[n].item.nr, sizeof(int), 1, stream);
-            fwrite(quick_slots[n].name.name, sizeof(char), strlen(quick_slots[n].name.name) + 1, stream);
+            PHYSFS_write(stream, &quick_slots[n].item.nr, sizeof(int), 1);
+            PHYSFS_write(stream, quick_slots[n].name.name, sizeof(char), strlen(quick_slots[n].name.name) + 1);
         }
         else
         {
-            fwrite(&quick_slots[n].shared.tag, sizeof(int), 1, stream);
-            fwrite(&quick_slots[n].spell.groupNr, sizeof(int), 1, stream);
-            fwrite(&quick_slots[n].spell.classNr, sizeof(int), 1, stream);
+            PHYSFS_write(stream,&quick_slots[n].shared.tag, sizeof(int), 1);
+            PHYSFS_write(stream,&quick_slots[n].spell.groupNr, sizeof(int), 1);
+            PHYSFS_write(stream,&quick_slots[n].spell.classNr, sizeof(int), 1);
         }
     }
-    fclose(stream);
+    PHYSFS_close(stream);
     freeQuickSlots(quick_slots, MAX_QUICK_SLOTS);
 }
 

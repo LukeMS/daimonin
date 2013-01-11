@@ -8,8 +8,8 @@
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Release">
-				<Option output="..\..\..\..\daimonin" prefix_auto="1" extension_auto="1" />
-				<Option object_output="obj\Release" />
+				<Option output="../../../../daimonin" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release" />
 				<Option type="0" />
 				<Option compiler="gcc" />
 				<Compiler>
@@ -23,8 +23,8 @@
 				</Linker>
 			</Target>
 			<Target title="Debug">
-				<Option output="..\..\..\..\daimonin" prefix_auto="1" extension_auto="1" />
-				<Option object_output="obj\Debug" />
+				<Option output="../../../../daimonin" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug" />
 				<Option type="0" />
 				<Option compiler="gcc" />
 				<Compiler>
@@ -43,10 +43,10 @@
 			<Add option="-DMINGW" />
 			<Add option="-DCURL_STATICLIB" />
 			<Add option="-DDAI_DEVELOPMENT" />
-			<Add directory="..\..\..\..\src\include" />
-			<Add directory="..\..\..\..\src\3rdparty\sprig" />
-			<Add directory="..\..\..\..\src\3rdparty\zlib" />
-			<Add directory="..\..\include" />
+			<Add directory="../../../../src/include" />
+			<Add directory="../../../../src/3rdparty/sprig" />
+			<Add directory="../../../../src/3rdparty/zlib" />
+			<Add directory="../../include" />
 		</Compiler>
 		<Linker>
 			<Add library="..\..\lib\static\libcurl.a" />
@@ -59,208 +59,208 @@
 			<Add library="..\..\lib\libSDL_mixer.a" />
 			<Add library="..\..\lib\libphysfs.a" />
 		</Linker>
-		<Unit filename="..\..\daimonin.rc">
+		<Unit filename="../../../../src/3rdparty/sprig/SPG_extended.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../../src/3rdparty/sprig/SPG_misc.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../../src/3rdparty/sprig/SPG_polygon.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../../src/3rdparty/sprig/SPG_primitives.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../../src/3rdparty/sprig/SPG_rotation.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../../src/3rdparty/sprig/SPG_surface.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../../src/3rdparty/sprig/sprig.h" />
+		<Unit filename="../../../../src/3rdparty/sprig/sprig_common.h" />
+		<Unit filename="../../../../src/3rdparty/sprig/sprig_inline.h" />
+		<Unit filename="../../../../src/3rdparty/zlib/adler32.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../../src/3rdparty/zlib/crc32.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../../src/3rdparty/zlib/crc32.h" />
+		<Unit filename="../../../../src/3rdparty/zlib/inffast.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../../src/3rdparty/zlib/inffast.h" />
+		<Unit filename="../../../../src/3rdparty/zlib/inflate.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../../src/3rdparty/zlib/inflate.h" />
+		<Unit filename="../../../../src/3rdparty/zlib/inftrees.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../../src/3rdparty/zlib/inftrees.h" />
+		<Unit filename="../../../../src/3rdparty/zlib/uncompr.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../../src/3rdparty/zlib/zconf.h" />
+		<Unit filename="../../../../src/3rdparty/zlib/zlib.h" />
+		<Unit filename="../../../../src/3rdparty/zlib/zutil.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../../src/3rdparty/zlib/zutil.h" />
+		<Unit filename="../../../../src/anim.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../../src/book.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../../src/buddy.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../../src/chatfilter.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../../src/client_cmd.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../../src/dialog.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../../src/event.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../../src/face.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../../src/font.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../../src/gameserver.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../../src/group.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../../src/ignore.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../../src/include/anim.h" />
+		<Unit filename="../../../../src/include/book.h" />
+		<Unit filename="../../../../src/include/buddy.h" />
+		<Unit filename="../../../../src/include/chatfilter.h" />
+		<Unit filename="../../../../src/include/client_cmd.h" />
+		<Unit filename="../../../../src/include/config.h" />
+		<Unit filename="../../../../src/include/dialog.h" />
+		<Unit filename="../../../../src/include/event.h" />
+		<Unit filename="../../../../src/include/face.h" />
+		<Unit filename="../../../../src/include/font.h" />
+		<Unit filename="../../../../src/include/gameserver.h" />
+		<Unit filename="../../../../src/include/group.h" />
+		<Unit filename="../../../../src/include/ignore.h" />
+		<Unit filename="../../../../src/include/include.h" />
+		<Unit filename="../../../../src/include/interface.h" />
+		<Unit filename="../../../../src/include/inventory.h" />
+		<Unit filename="../../../../src/include/item.h" />
+		<Unit filename="../../../../src/include/kerbholz.h" />
+		<Unit filename="../../../../src/include/locator.h" />
+		<Unit filename="../../../../src/include/main.h" />
+		<Unit filename="../../../../src/include/map.h" />
+		<Unit filename="../../../../src/include/menu.h" />
+		<Unit filename="../../../../src/include/misc.h" />
+		<Unit filename="../../../../src/include/p_unicode.h" />
+		<Unit filename="../../../../src/include/physfsrwops.h" />
+		<Unit filename="../../../../src/include/player.h" />
+		<Unit filename="../../../../src/include/protocol.h" />
+		<Unit filename="../../../../src/include/server_cmd.h" />
+		<Unit filename="../../../../src/include/skin.h" />
+		<Unit filename="../../../../src/include/socket.h" />
+		<Unit filename="../../../../src/include/sound.h" />
+		<Unit filename="../../../../src/include/sprite.h" />
+		<Unit filename="../../../../src/include/srvfile.h" />
+		<Unit filename="../../../../src/include/strout.h" />
+		<Unit filename="../../../../src/include/textwin.h" />
+		<Unit filename="../../../../src/include/tile_stretcher.h" />
+		<Unit filename="../../../../src/include/wdh.h" />
+		<Unit filename="../../../../src/include/widget.h" />
+		<Unit filename="../../../../src/include/win32.h" />
+		<Unit filename="../../../../src/include/wrapper.h" />
+		<Unit filename="../../../../src/interface.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../../src/inventory.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../../src/item.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../../src/kerbholz.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../../src/locator.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../../src/main.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../../src/map.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../../src/menu.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../../src/misc.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../../src/p_unicode.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../../src/physfsrwops.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../../src/player.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../../src/protocol.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../../src/server_cmd.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../../src/skin.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../../src/socket.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../../src/sound.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../../src/sprite.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../../src/srvfile.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../../src/strout.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../../src/textwin.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../../src/tile_stretcher.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../../src/wdh.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../../src/widget.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../../src/wrapper.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../daimonin.rc">
 			<Option compilerVar="WINDRES" />
-		</Unit>
-		<Unit filename="..\..\..\..\src\3rdparty\sprig\sprig.h" />
-		<Unit filename="..\..\..\..\src\3rdparty\sprig\sprig_common.h" />
-		<Unit filename="..\..\..\..\src\3rdparty\sprig\sprig_inline.h" />
-		<Unit filename="..\..\..\..\src\3rdparty\sprig\SPG_extended.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\..\..\..\src\3rdparty\sprig\SPG_misc.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\..\..\..\src\3rdparty\sprig\SPG_polygon.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\..\..\..\src\3rdparty\sprig\SPG_primitives.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\..\..\..\src\3rdparty\sprig\SPG_rotation.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\..\..\..\src\3rdparty\sprig\SPG_surface.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\..\..\..\src\3rdparty\zlib\adler32.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\..\..\..\src\3rdparty\zlib\crc32.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\..\..\..\src\3rdparty\zlib\crc32.h" />
-		<Unit filename="..\..\..\..\src\3rdparty\zlib\inffast.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\..\..\..\src\3rdparty\zlib\inffast.h" />
-		<Unit filename="..\..\..\..\src\3rdparty\zlib\inflate.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\..\..\..\src\3rdparty\zlib\inflate.h" />
-		<Unit filename="..\..\..\..\src\3rdparty\zlib\inftrees.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\..\..\..\src\3rdparty\zlib\inftrees.h" />
-		<Unit filename="..\..\..\..\src\3rdparty\zlib\uncompr.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\..\..\..\src\3rdparty\zlib\zconf.h" />
-		<Unit filename="..\..\..\..\src\3rdparty\zlib\zlib.h" />
-		<Unit filename="..\..\..\..\src\3rdparty\zlib\zutil.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\..\..\..\src\3rdparty\zlib\zutil.h" />
-		<Unit filename="..\..\..\..\src\anim.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\..\..\..\src\book.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\..\..\..\src\buddy.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\..\..\..\src\chatfilter.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\..\..\..\src\client_cmd.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\..\..\..\src\dialog.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\..\..\..\src\event.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\..\..\..\src\face.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\..\..\..\src\filewrap.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\..\..\..\src\font.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\..\..\..\src\gameserver.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\..\..\..\src\group.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\..\..\..\src\ignore.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\..\..\..\src\include\anim.h" />
-		<Unit filename="..\..\..\..\src\include\book.h" />
-		<Unit filename="..\..\..\..\src\include\buddy.h" />
-		<Unit filename="..\..\..\..\src\include\chatfilter.h" />
-		<Unit filename="..\..\..\..\src\include\client_cmd.h" />
-		<Unit filename="..\..\..\..\src\include\config.h" />
-		<Unit filename="..\..\..\..\src\include\dialog.h" />
-		<Unit filename="..\..\..\..\src\include\event.h" />
-		<Unit filename="..\..\..\..\src\include\face.h" />
-		<Unit filename="..\..\..\..\src\include\filewrap.h" />
-		<Unit filename="..\..\..\..\src\include\font.h" />
-		<Unit filename="..\..\..\..\src\include\gameserver.h" />
-		<Unit filename="..\..\..\..\src\include\group.h" />
-		<Unit filename="..\..\..\..\src\include\ignore.h" />
-		<Unit filename="..\..\..\..\src\include\include.h" />
-		<Unit filename="..\..\..\..\src\include\interface.h" />
-		<Unit filename="..\..\..\..\src\include\inventory.h" />
-		<Unit filename="..\..\..\..\src\include\item.h" />
-		<Unit filename="..\..\..\..\src\include\kerbholz.h" />
-		<Unit filename="..\..\..\..\src\include\locator.h" />
-		<Unit filename="..\..\..\..\src\include\main.h" />
-		<Unit filename="..\..\..\..\src\include\map.h" />
-		<Unit filename="..\..\..\..\src\include\menu.h" />
-		<Unit filename="..\..\..\..\src\include\misc.h" />
-		<Unit filename="..\..\..\..\src\include\physfsrwops.h" />
-		<Unit filename="..\..\..\..\src\include\player.h" />
-		<Unit filename="..\..\..\..\src\include\protocol.h" />
-		<Unit filename="..\..\..\..\src\include\server_cmd.h" />
-		<Unit filename="..\..\..\..\src\include\skin.h" />
-		<Unit filename="..\..\..\..\src\include\socket.h" />
-		<Unit filename="..\..\..\..\src\include\sound.h" />
-		<Unit filename="..\..\..\..\src\include\sprite.h" />
-		<Unit filename="..\..\..\..\src\include\srvfile.h" />
-		<Unit filename="..\..\..\..\src\include\strout.h" />
-		<Unit filename="..\..\..\..\src\include\textwin.h" />
-		<Unit filename="..\..\..\..\src\include\tile_stretcher.h" />
-		<Unit filename="..\..\..\..\src\include\wdh.h" />
-		<Unit filename="..\..\..\..\src\include\widget.h" />
-		<Unit filename="..\..\..\..\src\include\win32.h" />
-		<Unit filename="..\..\..\..\src\include\wrapper.h" />
-		<Unit filename="..\..\..\..\src\interface.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\..\..\..\src\inventory.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\..\..\..\src\item.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\..\..\..\src\kerbholz.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\..\..\..\src\locator.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\..\..\..\src\main.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\..\..\..\src\map.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\..\..\..\src\menu.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\..\..\..\src\misc.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\..\..\..\src\physfsrwops.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\..\..\..\src\player.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\..\..\..\src\protocol.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\..\..\..\src\server_cmd.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\..\..\..\src\skin.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\..\..\..\src\socket.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\..\..\..\src\sound.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\..\..\..\src\sprite.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\..\..\..\src\srvfile.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\..\..\..\src\strout.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\..\..\..\src\textwin.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\..\..\..\src\tile_stretcher.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\..\..\..\src\wdh.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\..\..\..\src\widget.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\..\..\..\src\wrapper.c">
-			<Option compilerVar="CC" />
 		</Unit>
 		<Extensions>
 			<code_completion />
@@ -269,3 +269,4 @@
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>
+

@@ -90,6 +90,8 @@ uint8             InputCaretBlinkFlag = 1;
 _game_status        GameStatus; /* the global status identifier */
 int                 GameStatusSelect;
 
+int                 quickslotsloaded = 0; /* Sometimes client tries to load quickslots even if inventory is not yet arrived (DA) */
+
 time_t sleeptime;
 
 _screensize Screensize;
@@ -501,6 +503,7 @@ uint8 game_status_chain(void)
             sound_play_music("orchestral.ogg", options.music_volume, 0, -1, 0, MUSIC_MODE_DIRECT);
 #endif
         clear_map();
+        quickslotsloaded = 0;
         GameStatus = GAME_STATUS_META;
     }
     /* initialise, connect, and query the meta server */
@@ -1546,6 +1549,14 @@ int main(int argc, char *argv[])
                 new_anim_tick = LastTick;
                 new_anim_animate(SDL_GetTicks());
             }
+
+            if (!quickslotsloaded) /* Fix for quickslots bug */
+                if (cpl.ob->inv) {
+                    LOG(LOG_MSG, "Loading quickslot settings for server\n");
+                    load_quickslots_entrys();
+                    quickslotsloaded=1;
+                }
+
             PlayActionSounds();
         }
 
@@ -1969,22 +1980,32 @@ static const char *GetOption(const char *arg, const char *sopt,
 
 static void InitPhysFS(const char *argv0)
 {
-    const char *sep,
-               *env;
-    char        home[MEDIUM_BUF],
+    const char *sep;
+    char        home[PATH_BACKBUFFER],
                 buf[LARGE_BUF];
-#if __WIN_32
-    struct stat dir_stat;
-    char        userpath[MEDIUM_BUF],
-                root_buf[SMALL_BUF];
-#endif
-    time_t      tp;
+
+	time_t      tp;
     char      **list;
 
-    /* Start the PhysFS system */
-    if (!PHYSFS_init(argv0))
-    {
-        LOG(LOG_FATAL, "FATAL: %s!\n", PHYSFS_getLastError());
+#ifdef __WIN_32
+
+    char      userpath[PATH_BACKBUFFER], /* Hold, the UTF userpath */
+			  basepath[PATH_BACKBUFFER]; /* Hold the UTF basepath */
+
+    /*  We need an UTF base path (argv[0]) to properly init
+        PHYSFS */
+	UTF_CopyExecutablePath (basepath, PATH_BACKBUFFER);
+
+	 /* Start the PhysFS system */
+	if (!PHYSFS_init(basepath))
+#else
+	const char	*env;
+
+	if (!PHYSFS_init(argv0))
+#endif
+	{
+        LOG(LOG_ERROR, "FATAL: %s!\n", PHYSFS_getLastError());
+        exit(EXIT_FAILURE);
     }
 
     PHYSFS_isInitialised = 1;
@@ -1993,75 +2014,23 @@ static void InitPhysFS(const char *argv0)
     sep = PHYSFS_getDirSeparator();
 
     /* Add the base dir to the search path. The base dir is where all the
-     * defaults are (or should be), but see below. */
+     * defaults are (or should be). */
     if (!PHYSFS_addToSearchPath(PHYSFS_getBaseDir(), 1))
     {
         LOG(LOG_MSG, "%s\n", PHYSFS_getLastError());
     }
 
-    /* Fix for non-english user crash bug. It adds a reference
-     * to current working directory and avoids the problem
-     * that physfs seems to have with windows + local culture
-     * characters (DA) */
-    if (!PHYSFS_addToSearchPath("./", 1))
-    {
-        LOG(LOG_MSG, "%s\n", PHYSFS_getLastError());
-    }
-
-
-    /* If FILE_DEFAULTS (an archive) exists, prepend this to the search path.
-     * In here should be the actual defaults. */
-    if (PHYSFS_exists(FILE_DEFAULTS))
-    {
-        if (!PHYSFS_addToSearchPath(FILE_DEFAULTS, 0))
-        { 
-            LOG(LOG_MSG, "%s\n", PHYSFS_getLastError());
-        }
-    }
-
-    /* If FILE_FACEPACK.zip exists, prepend this to the search path. In here
-     * should be the actual face pack. */
-    sprintf(buf, "%s.zip", FILE_FACEPACK);
-
-    if (PHYSFS_exists(buf))
-    {
-        LOG(LOG_SYSTEM, "The face pack inside '%s' will be used but note that this is quite slow.\n",
-            buf);
-
-        if (!PHYSFS_addToSearchPath(buf, 0))
-        { 
-            LOG(LOG_MSG, "%s\n", PHYSFS_getLastError());
-        }
-    }
-
     /* Determine the user dir (ie, ~/.daimonin/0.10). */
 #if __WIN_32
-    /* Use APPDATA if defined. */
-    if ((env = getenv("APPDATA")))
-    {
-        sprintf(home, "%s", env);
-        sprintf(root_buf, "%s", "Daimonin");
-        sprintf(buf, "%s%s%d.%d",
-                root_buf, sep, DAI_VERSION_RELEASE, DAI_VERSION_MAJOR);
-    }
-    /* Not defined? (May not be on W98, but such an old OS is unsupported anyway.) */
-    else
-    {
-        /* Use WINDIR if defined. */
-        if ((env = getenv("WINDIR")))
-        {
-            sprintf(home, "%s", env);
-            sprintf(root_buf, "Application Data%sDaimonin", sep);
-            sprintf(buf, "%s%s%d.%d",
-                    root_buf, DAI_VERSION_RELEASE, DAI_VERSION_MAJOR);
-        }
-        /* Not defined either? Just use the the base dir. */
-        else
-        {
-            sprintf(home, "%s", PHYSFS_getBaseDir());
-            buf[0] = '\0';
-        }
-    }
+
+    /*  We retrieve the proper home folder, in
+        UTF to feed PHYSFS */
+	UTF_FindUserDir(home, PATH_BACKBUFFER);
+
+	/*  We retrieve the proper writable folder, in
+        UTF to feed PHYSFS */
+	UTF_FindOutputPath(userpath, PATH_BACKBUFFER);
+
 #elif __LINUX
     env = getenv("HOME");
     sprintf(home, "%s", env);
@@ -2076,70 +2045,56 @@ static void InitPhysFS(const char *argv0)
      * set, so if it can't be, we exit straight away. Note that the log here
      * will go to stderr only (as obviously we can't open a file). */
 #if __WIN_32
-    // set the final path to the user specific and fire it up... do not care about errors here
-    // buf can be '\0' the trailing slash will be ignored
-    sprintf(userpath, "%s%s%s", home, sep, buf);
-    PHYSFS_mkdir(userpath);
-    PHYSFS_setWriteDir(userpath);
-    // at this point the home should be there!
-    // Well, except some access control interrupted us WITHOUT GIVE BACK THE RIGHT WARNINGS!
-    // That means that for example some windows versions are simply technical broken because they act
-    // like a virus checker and not telling us "the truth about what our access is doing",
-    // even they tell us by error flow that all is fine.
-    // Not giving back the right error messages to IO functions is simply a hack and some
-    // windows versions are doing it. 
 
-    // simply check our user patch is there
-    // PHYSFS *can* create it, but sometimes access control says no
-    // PHYSFS_setWriteDir() seems to work fine WHEN the dir is there
-    if (stat(userpath, &dir_stat) != 0)
+    /*  First we need to set the home as the
+        PHYSFS WriteDir to create the directory
+        structure */
+    if (!PHYSFS_setWriteDir(home))
     {
-        LOG(LOG_ERROR, "Could not set write dir with PHYSFS_mkdir() ('%s'): %s. Retry with mkdir()!\n",
-                    userpath, PHYSFS_getLastError());
-
-        #ifdef WIN32
-            // to fix physfs problems under different win OS, we force the directory creation here
-            sprintf(userpath, "%s%s%s", env, sep, root_buf);
-            mkdir(userpath, 0777);
-            // now the whole thing with version (mkdir can't create implicit the root directory)
-            sprintf(userpath, "%s%s%s", home, sep, buf);
-            mkdir(userpath, 0777);
-        #else
-            // add here custom fallback code for linux and other OS when needed
-        #endif
-    }
-
-    if (buf[0])
-    {
-        sprintf(strchr(home, '\0'), "%s%s", sep, buf);
-
-        // ok, here we have now a problem...
-        // try an emergency fallback and fire it up... perhaps it will work
-        if (stat(home, &dir_stat) != 0)
-        {
-            LOG(LOG_ERROR, "FAILED to set user dir %s - EMERGENCY fallback to: %s\n", home, PHYSFS_getBaseDir());
-            sprintf(home, "%s", PHYSFS_getBaseDir());
-            buf[0] = '\0';
-        }
-
-        // home WILL hold now the home, do the final check
-        if (!PHYSFS_setWriteDir(home))
-        {
-            LOG(LOG_FATAL, "Could not set write dir ('%s'): %s. Exiting!\n",
+       	LOG(LOG_ERROR, "Could not set write dir ('%s'): %s. Exiting!\n",
                 home, PHYSFS_getLastError());
-        }
     }
 
-    // at this point we should have catched all OS glitches and also a glitch in physfs
-    // the code looks a bit odd, but it works!
+    /* If the basedir is not our home */
+	if (strcmp(PHYSFS_getBaseDir(), home)) {
+
+        /*  We need the directory structure to feed
+            the PHYSFS_mkdir. We need use "/" separator for
+            some PHYSFS calls */
+		GetDaimoninBase(buf, "/", LARGE_BUF);
+
+        /*  Create the directory structure, if that does not
+            exists */
+		if (!PHYSFS_mkdir(buf)) {
+			LOG(LOG_ERROR, "Could not create dir ('%s'): %s. Exiting!\n", buf, PHYSFS_getLastError());
+			exit(EXIT_FAILURE);
+		}
+
+		/* Prepend the user dir to the search path. This means files are read from
+		* this location in preference to the defaults. */
+		if (!PHYSFS_addToSearchPath(userpath, 0))
+        {
+            LOG(LOG_ERROR, "%s\n", PHYSFS_getLastError());
+        }
+
+	}
+
+    /* Now the userpath can be set as WriteDir */
+    if (!PHYSFS_setWriteDir(userpath)) {
+				LOG(LOG_ERROR, "Could not set write dir ('%s'): %s. Exiting!\n",
+                userpath, PHYSFS_getLastError());
+				exit(EXIT_FAILURE);
+    }
+
 #else
     /* The user dir is (the only) place where files are written to. It must be
      * set, so if it can't be, we exit straight away. Note that the log here
      * will go to stderr only (as obviously we can't open a file). */
     if (!PHYSFS_setWriteDir(home))
     {
-        LOG(LOG_FATAL, "Could not set write dir (1, '%s'): %s. Exiting!\n",
+        LOG(LOG_ERROR, "Could not set write dir (1, '%s'): %s. Exiting!\n",
             home, PHYSFS_getLastError());
+        exit(EXIT_FAILURE);
     }
 
     if (buf[0])
@@ -2155,11 +2110,19 @@ static void InitPhysFS(const char *argv0)
         {
             if (!PHYSFS_setWriteDir(home))
             {
-                LOG(LOG_FATAL, "Could not set write dir (2, '%s'): %s. Exiting!\n",
+                LOG(LOG_ERROR, "Could not set write dir (2, '%s'): %s. Exiting!\n",
                     home, PHYSFS_getLastError());
+                exit(EXIT_FAILURE);
+            }
+
+            /* Prepend the user dir to the search path. This means files are read from
+            * this location in preference to the defaults. */
+            if (!PHYSFS_addToSearchPath(home, 0))
+            {
+                LOG(LOG_ERROR, "%s\n", PHYSFS_getLastError());
             }
         }
-    } 
+    }
 #endif
 
     /* Make sure all the dirs that may be written to exist. */
@@ -2168,7 +2131,8 @@ static void InitPhysFS(const char *argv0)
         !PHYSFS_mkdir(DIR_SETTINGS) ||
         !PHYSFS_mkdir(DIR_SRV_FILES))
     {
-        LOG(LOG_FATAL, "%s\n", PHYSFS_getLastError());
+        LOG(LOG_ERROR, "%s\n", PHYSFS_getLastError());
+        exit(EXIT_FAILURE);
     }
 
     /* Log that the client has started. */
@@ -2194,15 +2158,6 @@ static void InitPhysFS(const char *argv0)
     LOG(LOG_MSG, "vvvvvvvv CLIENT STARTS vvvvvvvv\n\n%s\nClient version %d.%d.%d\n",
         buf, DAI_VERSION_RELEASE, DAI_VERSION_MAJOR, DAI_VERSION_MINOR);
 
-    /* Prepend the user dir to the search path. This means files are read from
-     * this location in preference to the defaults. */
-    if (strcmp(PHYSFS_getBaseDir(), home))
-    {
-        if (!PHYSFS_addToSearchPath(home, 0))
-        {
-            LOG(LOG_ERROR, "%s\n", PHYSFS_getLastError());
-        }
-    }
 
     /* Prepend any add-on packs to the search path. This means files are read
      * from these locations in preference to the defaults and the user dir. */

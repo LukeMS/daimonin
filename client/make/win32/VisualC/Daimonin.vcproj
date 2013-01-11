@@ -306,10 +306,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\filewrap.c"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\src\font.c"
 				>
 			</File>
@@ -359,6 +355,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\misc.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\p_unicode.c"
 				>
 			</File>
 			<File
@@ -515,10 +515,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\filewrap.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\src\include\font.h"
 				>
 			</File>
@@ -572,6 +568,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\include\misc.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\include\p_unicode.h"
 				>
 			</File>
 			<File
