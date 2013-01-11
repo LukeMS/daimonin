@@ -1194,7 +1194,26 @@ static void key_string_event(SDL_KeyboardEvent *key)
                 break;
             }
             /* else drop through to default behaviour */
+#ifdef WIN32
+		case SDLK_v:
 
+			if (key->keysym.mod & KMOD_CTRL) {
+
+				if ( OpenClipboard(NULL) )
+					 if(IsClipboardFormatAvailable(CF_TEXT)) {
+
+						HANDLE hCD = GetClipboardData(CF_TEXT);
+						char * buffer = (char*)GlobalLock( hCD );
+						strncpy(InputString + CurrentCursorPos, (char *)hCD, MAX_INPUT_STRING - CurrentCursorPos);
+						CurrentCursorPos = strlen(InputString);
+						InputCount += strlen((char *)hCD);
+						GlobalUnlock( hCD );
+						CloseClipboard();
+						break;
+
+					 }
+			}
+#endif
         default:
             /* if we are in number console mode, use GET as quick enter
              * mode - this is a very handy shortcut
