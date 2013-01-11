@@ -124,9 +124,6 @@
 		<Unit filename="../../../src/face.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="../../../src/filewrap.c">
-			<Option compilerVar="CC" />
-		</Unit>
 		<Unit filename="../../../src/font.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -150,7 +147,6 @@
 		<Unit filename="../../../src/include/dialog.h" />
 		<Unit filename="../../../src/include/event.h" />
 		<Unit filename="../../../src/include/face.h" />
-		<Unit filename="../../../src/include/filewrap.h" />
 		<Unit filename="../../../src/include/font.h" />
 		<Unit filename="../../../src/include/gameserver.h" />
 		<Unit filename="../../../src/include/group.h" />
