@@ -1,11 +1,11 @@
 #!/usr/bin/python
 
-import htmlentitydefs, os, os.path, re, sys, urllib, time
+import html.entities, os, os.path, re, sys, urllib, urllib.parse, time
 
-length = len(sys.argv)
+length = len(sys.argv);
 if length != 2 and length != 3:
-	print 'Usage: create_lua_doc.py <source_directory> [destination]'
-	print 'Example: ./create_lua_doc.py ../../server/src/plugin_lua /tmp'
+	print('Usage: create_lua_doc.py <source_directory> [destination]');
+	print('Example: ./create_lua_doc.py ../../server/src/plugin_lua /tmp')
 	sys.exit(0)
 
 if length is 3:
@@ -14,7 +14,7 @@ else:
 	dest = os.getcwd()
 
 if not os.path.isdir(dest):
-	print dest + " is not a directory"
+	print(dest + " is not a directory")
 	sys.exit(1)
 
 index_items_per_line = 6
@@ -36,7 +36,7 @@ flags_re_obj = re.compile('"(.+?)"|(NULL)')
 flags_block_re_obj = re.compile('const\s+char\s*\*\s*(.*?)_flags\[.*?\]\s*=[\n\r]+(.*?)[\n\r]+\};', re.S)
 func_re_obj = re.compile('/\*.*?[\n\r]+\}', re.S)
 func_body_re_obj = re.compile('\s*static\s+int\s+.+?\(lua_State\s*\*\s*L\).*?\{(.+)\}', re.S)
-game_constants_block_re_obj = re.compile('\s*static\s+struct\s+constant_decl\s+Game_constants\[\]\s+=[\n\r]+\{(.*?)[\n\r]+\};', re.S)
+game_constants_block_re_obj = re.compile('\s*static\s+struct\s+constant_decl\s+preset_game_constants\[\]\s+=[\n\r]+\{(.*?)[\n\r]+\};', re.S)
 gt_re_obj = re.compile('>')
 lt_re_obj = re.compile('<')
 name_prefix_re_obj = re.compile('([A-Za-z_]*):.+')
@@ -58,7 +58,7 @@ return_table_re_obj = re.compile('.*lua_newtable\(L\).*lua_rawset\(L.*.*return\s
 
 def listCFiles(directory):
 	if not os.path.isdir(directory):
-		print directory + " is not a directory"
+		print(directory + " is not a directory")
 		sys.exit(1)
 	lst = os.listdir(directory)
 	r = []
@@ -91,7 +91,7 @@ def extract_class_attributes(classes, doc, code):
 				elif attribute[1] == 'MAP':
 					tp = 'map'
 				else:
-					print "unknown fieldtype '" + attribute[1] + "'"
+					print("unknown fieldtype '" + attribute[1] + "'")
 					
 				spec = attribute[3]
 				if spec == 'FIELDFLAG_READONLY':
@@ -101,7 +101,7 @@ def extract_class_attributes(classes, doc, code):
 				elif spec == 'FIELDFLAG_PLAYER_FIX':
 					special = 'fix():es the player or mob after change'
 				elif spec != '0':
-					print "unknown attribute " + spec
+					print("unknown attribute " + spec)
 					
 				if tp:
 						doc[klass]['attributes'][attribute[0]] = (tp, special, attribute[2])
@@ -142,7 +142,7 @@ doc = {
 map_flags = []
 object_flags = []
 for filename in listCFiles(sys.argv[1]):
-	f = file(filename, 'r')
+	f = open(filename, 'r')
 	code = f.read()
 	f.close()
 	blocks = block_re_obj.findall(code)
@@ -261,7 +261,7 @@ for filename in listCFiles(sys.argv[1]):
 						try:
 							last = return_types[-1]
 						except:
-							print body
+							print(body)
 						return_types = return_types[:-1]
 						if return_types:
 							fields['return'] = ', '.join(return_types) + ' or ' + last
@@ -269,7 +269,7 @@ for filename in listCFiles(sys.argv[1]):
 							fields['return'] = last
 
 					if not prefix in doc:
-						print "Unknown function prefix: '" + prefix + "'"
+						print("Unknown function prefix: '" + prefix + "'")
 						doc[prefix] = {'attributes': {}, 'constants': [], 'flags': {}, 'functions': {}}
 
 					key = name_re_obj.findall(fields['Lua'])
@@ -287,7 +287,7 @@ for filename in listCFiles(sys.argv[1]):
 	extract_class_attributes(classes, doc, code)
 
 def start_html(filename, title):
-	f = file(os.path.join(dest, filename + '.html'), 'w')
+	f = open(os.path.join(dest, filename + '.html'), 'w')
 	f.write('''<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/dtd/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"><head><title>Daimonin Lua Core reference - ''' + title + '</title></head><body><h1>Daimonin Lua Core reference - ' + title + '</h1>')
 	f.write("<i>Automatically generated " + time.strftime("%Y-%m-%d %H:%M:%S") + "</i>")
@@ -303,12 +303,12 @@ def entities(string):
 def output_html(doc):
 	index = start_html('index', 'Index')
 	doc_keys = doc.keys()
-	doc_keys.sort()
+	doc_keys = sorted(doc_keys);
 	first = 1
 	for key in doc_keys:
 		# Class
 		if doc[key]['attributes'] or doc[key]['constants'] or doc[key]['flags'] or doc[key]['functions']:
-			quoted = urllib.quote(key)
+			quoted = urllib.parse.quote(key)
 			if not first:
 				index.write('<hr />')
 			else:
@@ -319,10 +319,10 @@ def output_html(doc):
 				index.write('<h3><a href="' + quoted + '.html#constants">Constants</a></h3><p><code>')
 				f.write('<hr /><h2><a id="constants">Constants</a></h2><p><code>')
 				constants = doc[key]['constants']
-				constants.sort()
+				constants = sorted(constants);
 				count = 0
 				for constant in constants:
-					quoted2 = urllib.quote(constant)
+					quoted2 = urllib.parse.quote(constant)
 					index.write('<a href="' + quoted + '.html#' + quoted2 + '">' + entities(constant) + '</a>')
 					count = count + 1
 					if count == index_items_per_line:
@@ -339,11 +339,11 @@ def output_html(doc):
 				index.write('<h3><a href="' + quoted + '.html#attributes">Attributes</a></h3><p><code>')
 				f.write('<hr /><h2><a id="attributes">Attributes</a></h2><p><code>')
 				keys = doc[key]['attributes'].keys()
-				keys.sort()
+				keys = sorted(keys)
 				count = 0
 				for key2 in keys:
 					attribute = doc[key]['attributes'][key2]
-					quoted2 = urllib.quote(key2)
+					quoted2 = urllib.parse.quote(key2)
 					index.write('<a href="' + quoted + '.html#' + quoted2 + '">' + entities(key2) + '</a>')
 					count = count + 1
 					if count == index_items_per_line:
@@ -363,11 +363,11 @@ def output_html(doc):
 				index.write('<h3><a href="' + quoted + '.html#flags">Flags</a></h3><p><code>')
 				f.write('<hr /><h2><a id="flags">Flags</a></h2><p><code>')
 				keys = doc[key]['flags'].keys()
-				keys.sort()
+				keys = sorted(keys)
 				count = 0
 				for key2 in keys:
 					flag = doc[key]['flags'][key2]
-					quoted2 = urllib.quote(key2)
+					quoted2 = urllib.parse.quote(key2)
 					index.write('<a href="' + quoted + '.html#' + quoted2 + '">' + entities(key2) + '</a>')
 					count = count + 1
 					if count == index_items_per_line:
@@ -388,12 +388,12 @@ def output_html(doc):
 				index.write('<h3><a href="' + quoted + '.html#functions">Functions</a></h3><p><code>')
 				f.write('<hr /><h2><a id="functions">Functions</a></h2>')
 				keys = doc[key]['functions'].keys()
-				keys.sort()
+				keys = sorted(keys)
 				count = 0
 				for key2 in keys:
 					fields = doc[key]['functions'][key2]
 					if 'Lua' in fields and 'Status' in fields:
-						quoted2 = urllib.quote(key2)
+						quoted2 = urllib.parse.quote(key2)
 						index.write('<a href="' + quoted + '.html#' + quoted2 + '">' + entities(key2) + '</a>')
 						count = count + 1
 						if count == index_items_per_line:
@@ -434,7 +434,7 @@ def output_html(doc):
 	end_html(index)
 
 def start_xml(filename, root_tag):
-    f = file(os.path.join(dest, filename + '.xml'), 'w')
+    f = open(os.path.join(dest, filename + '.xml'), 'w')
     f.write("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n")
     f.write("<!-- This is an auto-generated file. Do not modify -->\n");
     f.write("<" + root_tag + ">\n");
