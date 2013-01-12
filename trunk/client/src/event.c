@@ -1209,14 +1209,14 @@ static void key_string_event(SDL_KeyboardEvent *key)
 						HANDLE hCD = GetClipboardData(CF_TEXT);
 
 						/* We get the size of the data present in the clipboard */
-						size_t hLen = GlobalSize(hCD);
+						int hLen = GlobalSize(hCD);
 
 						int i=0,
-							invalid = 0,						/*	If the clipboard contains not printable data, is invalid */
-							LastCursorPos = CurrentCursorPos,	/*	We store the last cursor position */
-							isLen = strlen(InputString),		/*	And we store the initial InputString length */
-							tmpLng=0,							/*	We need to know the length of temporary copy of InputString */
-							bufferlen=0;						/*	And we need to know the clipboard string length */
+						invalid = 0,				/*	If the clipboard contains not printable data, is invalid */
+						LastCursorPos = CurrentCursorPos,	/*	We store the last cursor position */
+						isLen = strlen(InputString),		/*	And we store the initial InputString length */
+						tmpLng=0,				/*	We need to know the length of temporary copy of InputString */
+						bufferlen=0;				/*	And we need to know the clipboard string length */
 
 						/*	We lock the handle and get a pointer to the
 							clipboard data */
