@@ -1197,18 +1197,102 @@ static void key_string_event(SDL_KeyboardEvent *key)
 #ifdef WIN32
 		case SDLK_v:
 
+
+			/*	CTRL is pressed? */
 			if (key->keysym.mod & KMOD_CTRL) {
 
+				/*	Try to open the clipboard */
 				if ( OpenClipboard(NULL) )
-					 if(IsClipboardFormatAvailable(CF_TEXT)) {
+					 if(IsClipboardFormatAvailable(CF_TEXT)) { /* Is there some text available in the clipboard? */
 
+						 /*	We get an handle to the clipboard object */
 						HANDLE hCD = GetClipboardData(CF_TEXT);
-						char * buffer = (char*)GlobalLock( hCD );
-						strncpy(InputString + CurrentCursorPos, (char *)hCD, MAX_INPUT_STRING - CurrentCursorPos);
-						CurrentCursorPos = strlen(InputString);
-						InputCount += strlen((char *)hCD);
+
+						/* We get the size of the data present in the clipboard */
+						size_t hLen = GlobalSize(hCD);
+
+						int i=0,
+							invalid = 0,						/*	If the clipboard contains not printable data, is invalid */
+							LastCursorPos = CurrentCursorPos,	/*	We store the last cursor position */
+							isLen = strlen(InputString),		/*	And we store the initial InputString length */
+							tmpLng=0,							/*	We need to know the length of temporary copy of InputString */
+							bufferlen=0;						/*	And we need to know the clipboard string length */
+
+						/*	We lock the handle and get a pointer to the
+							clipboard data */
+						char * buffer = (char*) GlobalLock( hCD );
+
+						/*	We will hold a copy of old InputString here */
+						char tempstring [256];
+
+						/*	If there is not enough space to accomodate
+							the full clipboard data */
+						if (hLen >= (MAX_INPUT_STRING - isLen)) {
+							hLen = (MAX_INPUT_STRING - isLen) - 1; /* We'll try to get as much data as possible */
+							buffer[hLen] ='\0'; /* and we put a terminator to actually perform the cut */
+						}
+
+						/*	Now we can see how long is the string
+							fetched from the clipboard and eventually
+							cut */
+						bufferlen=strlen(buffer);
+
+
+						/*	Check if data is actually not garbage */
+						for (; i < hLen - 1; i++) {
+							if (!isprint(buffer[i])) {
+								invalid = 1;
+								break;
+							}
+						}
+
+
+						/* If data is not invalid */
+						if (!invalid) {
+
+							/*	Clean the tempstring */
+							memset (tempstring, 0, MAX_INPUT_STRING);
+
+							/*	Eventually copy the data from the last cursor position to the end
+								if actually there is data to copy */
+							if (LastCursorPos < isLen)
+								memcpy (tempstring, InputString + LastCursorPos, strlen(InputString + LastCursorPos));
+
+							/*	Copy the buffer into the InputString. */
+							memcpy(InputString + CurrentCursorPos, buffer, hLen);
+
+							/*	Get the new size of the InputString */
+							isLen=strlen(InputString);
+
+							/*	Move the cursor to the proper position */
+							CurrentCursorPos = LastCursorPos + bufferlen;
+
+							/*	Get how much data is still present on the old
+								inputstring */
+							tmpLng = strlen(tempstring);
+
+							/* If last cursor position was not at the end */
+							if (LastCursorPos < MAX_INPUT_STRING - 1)
+								/*	Perform these checks: tempstring must not be empty, Current cursor position must not be at the end
+									and InputString must not be filled */
+								if ((tempstring[0] != '\0') && (CurrentCursorPos < MAX_INPUT_STRING) && (isLen < MAX_INPUT_STRING)) {
+									/*	Copy the tempstring into the current InputString at Current Cursor Position, respecting the max allowed length */
+									memcpy (InputString + CurrentCursorPos, tempstring, (tmpLng > MAX_INPUT_STRING - CurrentCursorPos ? MAX_INPUT_STRING - CurrentCursorPos : tmpLng));
+									/* Terminate, just in case */
+									InputString[MAX_INPUT_STRING] = '\0';
+								}
+
+							/*	Add the buffer length to simulate an input from the user */
+							InputCount += bufferlen;
+
+						}
+
+						/*	We finished our job. Unlock the handle */
 						GlobalUnlock( hCD );
+
+						/*	Close the clipboard */
 						CloseClipboard();
+
 						break;
 
 					 }
