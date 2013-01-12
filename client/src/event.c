@@ -1279,7 +1279,7 @@ static void key_string_event(SDL_KeyboardEvent *key)
 									/*	Copy the tempstring into the current InputString at Current Cursor Position, respecting the max allowed length */
 									memcpy (InputString + CurrentCursorPos, tempstring, (tmpLng > MAX_INPUT_STRING - CurrentCursorPos ? MAX_INPUT_STRING - CurrentCursorPos : tmpLng));
 									/* Terminate, just in case */
-									InputString[MAX_INPUT_STRING] = '\0';
+									InputString[MAX_INPUT_STRING - 1] = '\0';
 								}
 
 							/*	Add the buffer length to simulate an input from the user */
