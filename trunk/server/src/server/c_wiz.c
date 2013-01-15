@@ -578,7 +578,8 @@ static int CreateObject(object *op, char *params, CreateMode_t mode)
         return COMMANDS_RTN_VAL_SYNTAX;
 
     // First parameter must be quantity, or blank
-    str = get_param_from_string(params, &pos);
+    if (!(str = get_param_from_string(params, &pos)))
+        return COMMANDS_RTN_VAL_SYNTAX;
 
     if (sscanf(str, "%d", &nrof))
     {
@@ -589,7 +590,8 @@ static int CreateObject(object *op, char *params, CreateMode_t mode)
             nrof = MAX(1, MIN(nrof, 100));
 
         // Second parameter may be magic bonus (only if quantity was specified), or blank
-        str = get_param_from_string(params, &pos);
+        if (!(str = get_param_from_string(params, &pos)))
+            return COMMANDS_RTN_VAL_SYNTAX;
 
         if (sscanf(str, "%d", &magic))
         {
@@ -602,12 +604,10 @@ static int CreateObject(object *op, char *params, CreateMode_t mode)
                 magic = MAX(-10, MIN(magic, 10));
 
             // Next parameter *must* be arch name
-            str = get_param_from_string(params, &pos);
+            if (!(str = get_param_from_string(params, &pos)))
+                return COMMANDS_RTN_VAL_SYNTAX;
         }
     }
-
-    if (!str)
-        return COMMANDS_RTN_VAL_SYNTAX;
 
     // Browse the archtypes for the name - perhaps it is a base item
     if ((at = find_archetype(str)) == NULL)
@@ -678,9 +678,7 @@ static int CreateObject(object *op, char *params, CreateMode_t mode)
                 // amask is handled differently to other attributes
                 if (!strcmp(str, "amask"))
                 {
-                    str = get_param_from_string(params, &pos);
-
-                    if (!str)
+                    if (!(str = get_param_from_string(params, &pos)))
                         return COMMANDS_RTN_VAL_SYNTAX;
 
                     // Does this arch actually have any artifacts?
@@ -722,9 +720,7 @@ static int CreateObject(object *op, char *params, CreateMode_t mode)
                 {  // any other parameter
                     strcpy(var, str);  // Save the variable name
 
-                    str = get_param_from_string(params, &pos);  // Read value for this variable
-
-                    if (!str)
+                    if (!(str = get_param_from_string(params, &pos))) // read value for this variable
                         return COMMANDS_RTN_VAL_SYNTAX;
 
                     strcpy(val, str);  // Save the value
