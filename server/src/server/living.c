@@ -923,7 +923,7 @@ void fix_player(object *op)
     object             *tmp, *tmp_ptr, *skill_weapon = NULL, *applied_skill = NULL;
     player             *pl;
     float               f;
-
+    uint32              opflags[NUM_FLAGS_32];
 
     /*LOG(llevDebug,"FIX_PLAYER called (%s} %s\n", query_name(op), QUERY_FLAG(op, FLAG_NO_FIX_PLAYER)?"IGNORED":"");*/
     if (QUERY_FLAG(op, FLAG_NO_FIX_PLAYER))
@@ -966,6 +966,14 @@ void fix_player(object *op)
 #ifdef DEBUG_FIX_PLAYER
     LOG(llevDebug, "FIX_PLAYER(%s [%x]): >> %s\n", query_name(op), op->count, debug_msg);
 #endif
+
+    /* Remember op->flags. They PROBABLY won't be changed here but various
+     * illegalities can force an inv object to be unapplied, etc which
+     * presumably can have knock-on effects. */
+    for (i = 0; i < NUM_FLAGS_32; i++)
+    {
+        opflags[i] = op->flags[i];
+    }
 
     pl = CONTR(op);
     inv_flag = inv_see_flag = ac = 0;
@@ -1119,6 +1127,15 @@ void fix_player(object *op)
      */
     for (tmp = op->inv; tmp != NULL; tmp = tmp_ptr)
     {
+        uint32 tmpflags[NUM_FLAGS_32];
+
+        /* Remember tmp->flags. They PROBABLY won't be changed here but various
+         * illegalities can force an object to be unapplied, etc. */
+        for (i = 0; i < NUM_FLAGS_32; i++)
+        {
+            tmpflags[i] = tmp->flags[i];
+        }
+
         tmp_ptr = tmp->below;
         /*
          * add here more types we can and must skip.
@@ -1199,6 +1216,7 @@ void fix_player(object *op)
             {
                 LOG(llevBug,"BUG: fix_player(): found illegal quest container (st: %d) in player %s\n",
                     tmp->sub_type1, query_name(op));
+                esrv_del_item(pl, tmp->count, tmp); // tell client
                 remove_ob(tmp);
             }
             continue;
@@ -1634,6 +1652,17 @@ void fix_player(object *op)
             op->stats.thacm+=thacm;
 
         } /* if applied */
+
+        /* Update the client if anything has changed about tmp. */
+        for (i = 0; i < NUM_FLAGS_32; i++)
+        {
+            if (tmp->flags[i] != tmpflags[i])
+            {
+                esrv_update_item(UPD_FLAGS, op, tmp);
+
+                break;
+            }
+        }
     } /* Item is equipped - end of for loop going through items. */
 
     /* lets check we have applied an amunition type equal to our distance weapon */
@@ -2110,8 +2139,16 @@ void fix_player(object *op)
     else if (inv_see_flag) /* and !FLAG_SEE_INVISIBLE */
         pl->socket.update_tile = 0;
 
-    /* Update the client. */
-    esrv_send_inventory(pl->ob, op);
+    /* Update the client if anything has changed about op. */
+    for (i = 0; i < NUM_FLAGS_32; i++)
+    {
+        if (op->flags[i] != opflags[i])
+        {
+            esrv_update_item(UPD_FLAGS, op, op);
+
+            break;
+        }
+    }
 }
 
 /*
