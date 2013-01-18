@@ -394,12 +394,25 @@ void set_gmaster_mode(player *pl, int mode_id)
     if ((mode & (GMASTER_MODE_SA | GMASTER_MODE_MM)))
 #endif
     {
+        object *ob;
+
         SET_FLAG(pl->ob, FLAG_WIZ);
         pl->wizpass = 1;
-        esrv_send_inventory(pl->ob, pl->ob);
         clear_los(pl->ob);
         pl->socket.update_tile = 0; /* force a draw_look() */
         pl->update_los = 1;
+
+        /* Go through player's inv and send each previously unknown object to
+         * the client. */
+        for (ob = pl->ob->inv; ob; ob = ob->below)
+        {
+            if (!LOOK_OBJ(ob) ||                            // eg, sys objects
+                (!QUERY_FLAG(pl->ob, FLAG_SEE_INVISIBLE) && // if player could not see invis,
+                 QUERY_FLAG(ob, FLAG_IS_INVISIBLE)))        // item is not in his inv yet
+            {
+                esrv_send_item(pl->ob, ob);
+            }
+        }
     }
 
     pl->socket.ext_title_flag =1;
@@ -464,7 +477,8 @@ void remove_gmaster_mode(player *pl)
     if ((mode & (GMASTER_MODE_SA | GMASTER_MODE_MM)))
 #endif
     {
-        /* remove the power settings */
+        object *ob;
+
         CLEAR_FLAG(pl->ob, FLAG_WIZ);
         pl->wizpass = 0;
         /* bit of a cheat, but by doing this we avoid a fix when going into wiz
@@ -472,8 +486,19 @@ void remove_gmaster_mode(player *pl)
         pl->dm_invis = 0;
         FIX_PLAYER(pl->ob, "remove wiz mode");
         pl->socket.update_tile = 0;
-        esrv_send_inventory(pl->ob, pl->ob);
         pl->update_los = 1;
+
+        /* Go through player's inv and delete each WIZ-only seeable object from
+         * the client. */
+        for (ob = pl->ob->inv; ob; ob = ob->below)
+        {
+            if (!LOOK_OBJ(ob) ||                            // eg, sys objects
+                (!QUERY_FLAG(pl->ob, FLAG_SEE_INVISIBLE) && // if player could not see invis,
+                 QUERY_FLAG(ob, FLAG_IS_INVISIBLE)))        // item should not be in his inv
+            {
+                esrv_del_item(pl, ob->count, ob);
+            }
+        }
     }
 
     pl->socket.ext_title_flag =1;

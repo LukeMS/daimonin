@@ -861,9 +861,12 @@ static void esrv_send_item_send(object *pl, object *op)
     /* If this is not the player object, do some more checks */
     if (op != pl)
     {
-        /* We only send 'visibile' objects to the client */
-        if (!LOOK_OBJ(op))
+        /* We only send 'visible' objects to the client */
+        if (!LOOK_OBJ(op) &&
+            !QUERY_FLAG(pl, FLAG_WIZ))
+        {
             return;
+        }
     }
 
     /*LOG(llevNoLog,"send item: %s\n", query_name(op));*/
