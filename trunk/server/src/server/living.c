@@ -815,6 +815,7 @@ static inline int set_player_equipment(player *pl, object *optr, int num)
     if(pl->equipment[num])
     {
         CLEAR_FLAG(optr, FLAG_APPLIED);
+        esrv_update_item(UPD_FLAGS, pl->ob, optr);
         LOG(llevDebug,"FIX_PLAYER BUG: Item %s for player %s on place %d is already set!\n", query_name(optr), query_name(pl->ob), num);
         return FALSE;
     }
@@ -1608,8 +1609,8 @@ void fix_player(object *op)
                 default:
                   LOG(llevDebug, "DEBUG: fix_player(): unexpected applied object %s (%d)(clear flag now!)\n", query_name(tmp), tmp->type);
                   CLEAR_FLAG(tmp, FLAG_APPLIED);
+                  esrv_update_item(UPD_FLAGS, op, tmp);
                   continue;
-                  break;
             }/*switch*/
 
             op->terrain_flag |= tmp->terrain_type;    /* we just add a given terrain */
