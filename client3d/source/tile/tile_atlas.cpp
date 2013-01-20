@@ -340,7 +340,7 @@ void TileAtlas::copyMaskToAtlas(uchar *dstBuf)
         }
         if ((srcImage.getWidth() != mTileSize) || (srcImage.getHeight() != mTileSize))
         {
-            Logger::log().error() << Logger::ICON_CLIENT << "Gfx " << srcFilename << " has the wrong size! Alle tiles must have the same size than terrain_00_00.png";
+            Logger::log().error() << Logger::ICON_CLIENT << "Gfx " << srcFilename << " has the wrong size! All tiles must have the same size than terrain_00_00.png";
             return;
         }
         if (srcImage.getFormat()!=PF_R8G8B8)
@@ -465,6 +465,7 @@ void TileAtlas::copyMaskToAtlas(uchar *dstBuf)
         // Vertical
         for (int i =0; i < 3; ++i)
         {
+		
             dst = dstBuf + i*(mTileSize/2+mBorderSize*2)* RGB_A;
             for (unsigned int y = 0; y < mBorderSize*2+mTileSize; ++y)
             {
