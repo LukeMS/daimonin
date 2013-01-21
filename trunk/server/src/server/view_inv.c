@@ -1006,17 +1006,27 @@ static inline void esrv_del_item_send(player *pl, int tag)
  */
 void esrv_del_item(player *pl, int tag, object *cont)
 {
-    object *tmp;
-
-    if (cont && cont->type == CONTAINER)
+    /* FIXME: Do we really need this special handling for open containers here?
+     * 
+     * -- Smacky 20130121 */
+    /* Note that this meahs containers must be deleted client-side BEFORE they
+     * are unlinked (closed). */
+    if (cont &&
+        cont->type == CONTAINER &&
+        cont->attacked_by)
     {
-        for (tmp = cont->attacked_by; tmp; tmp = CONTR(tmp)->container_above)
-            esrv_del_item_send(CONTR(tmp), tag);
-        return;
-    }
+        object *whose;
 
-    if(pl)
+        for (whose = cont->attacked_by; whose;
+             whose = CONTR(whose)->container_above)
+        {
+            esrv_del_item_send(CONTR(whose), tag);
+        }
+    }
+    else if (pl)
+    {
         esrv_del_item_send(pl, tag);
+    }
 }
 
 
