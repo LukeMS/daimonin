@@ -29,6 +29,8 @@
 #include <sys/uio.h>
 #endif /* win32 */
 
+static void RemoveFromEnv(object *op);
+static void RemoveFromMap(object *op);
 
 static int static_walk_semaphore = FALSE; /* see walk_off/walk_on functions  */
 
@@ -1951,145 +1953,212 @@ void destruct_ob(object *op)
  */
 void remove_ob(object *op)
 {
-    MapSpace   *msp;
-    object     *otmp;
-
     if (QUERY_FLAG(op, FLAG_REMOVED))
     {
         /*dump_object(op)*/;
-        LOG(llevBug, "BUG: Trying to remove removed object.:%s[%d] map:%s (%d,%d)\n",
-            STRING_OBJ_NAME(op), TAG(op), STRING_OBJ_MAP_PATH(op), op->x, op->y);
+        LOG(llevBug, "BUG:: %s:remove_ob(): Trying to remove removed object %s[%d] at %s (%d,%d)!\n",
+            __FILE__, STRING_OBJ_NAME(op), TAG(op), STRING_OBJ_MAP_PATH(op),
+            op->x, op->y);
+
         return;
     }
 
-    if (op->more != NULL)
-        remove_ob(op->more); /* check off is handled outside here */
+    if (op->more)
+    {
+        remove_ob(op->more); // check off is handled outside here
+    }
 
     mark_object_removed(op);
     SET_FLAG(op, FLAG_OBJECT_WAS_MOVED);
 
-    /*
-     * In this case, the object to be removed is in someones
-     * inventory.
-     */
-    if (op->env != NULL)
+    if (op->env)
     {
-        /* this is not enough... when we for example remove money from a pouch
-         * which is in a sack (which is itself in the player inv) then the weight
-         * of the sack is not calculated right. This is only a temporary effect but
-         * we need to fix it here a recursive ->env chain.
-         */
-        if(! QUERY_FLAG(op, FLAG_SYS_OBJECT))
-                sub_weight(op, op->nrof);
+        RemoveFromEnv(op);
+    }
+    else if (op->map)
+    {
+        RemoveFromMap(op);
+    }
+    else
+    {
+        LOG(llevBug, "BUG:: %s:remove_ob(): object %s[%d] has neither map nor env!\n",
+            __FILE__, STRING_OBJ_NAME(op), TAG(op));
+    }
+}
 
-        otmp = is_player_inv(op->env); /* get first otmp but do fix_player AFTER op is removed! */
+static void RemoveFromEnv(object *op)
+{
+    object *whose = op->env;
+    player *pl = NULL;
 
-        if (op->above != NULL)
-            op->above->below = op->below;
-        else
-            op->env->inv = op->below;
+    /* When op is in an open container or directly in a player inv, get the
+     * player (pl) so we can update the client. */
+    if (op->env->type == CONTAINER)
+    {
+        whose = op->env->attacked_by;
 
-        if (op->below != NULL)
-            op->below->above = op->above;
+        while (whose &&
+               whose != op->env)
+        {
+            whose = CONTR(whose)->container_above;
+        }
+    }
+
+    if (whose &&
+        whose->type == PLAYER)
+    {
+        pl = CONTR(whose);
+    }
+
+    /* When op is being removed from a player's inv/container, update his
+     * client. */
+    if (pl)
+    {
+        /* Delete the item. */
+        esrv_del_item(pl, op->count, op);
+    }
+
+    /* When the object being removed is an open container, close it. */
+    if (op->type == CONTAINER &&
+        op->attacked_by)
+    {
+        container_unlink(NULL, op);
+    }
+
+    /* Recalc the chain of weights. Remember that the above is client info
+     * only -- the object has not actually gone yet. */
+    if (!QUERY_FLAG(op, FLAG_SYS_OBJECT))
+    {
+        sub_weight(op, op->nrof);
+    }
+
+    /* Sort out the revised object chain. */
+    if (op->above)
+    {
+        op->above->below = op->below;
+    }
+    else
+    {
+        op->env->inv = op->below;
+    }
+
+    if (op->below)
+    {
+        op->below->above = op->above;
+    }
 
 #ifdef POSITION_DEBUG
-        op->ox = op->x,op->oy = op->y;
+    op->ox = op->x;
+    op->oy = op->y;
 #endif
+    op->above = op->below = op->env = NULL;
+    op->map = NULL;
 
-        op->above = NULL,op->below = NULL;
-        op->map = NULL;
-        op->env = NULL;
-
-        /* NO_FIX_PLAYER is set when a great many changes are being
-        * made to players inventory.  If set, avoiding the call to save cpu time.
-        * the flag is set from outside... perhaps from a drop_all() function.
-        */
-        if (otmp && CONTR(otmp) && !QUERY_FLAG(otmp, FLAG_NO_FIX_PLAYER))
-            FIX_PLAYER(otmp,"remove_ob: env remove");
-
-        return;
-    }
-
-    /* If we get here, we are removing it from a map */
-    if (!op->map)
+    /* NO_FIX_PLAYER is set when a great many changes are being made to
+     * player's inventory. If set, avoiding the call to save cpu time.
+     * The flag is set from outside... perhaps from a drop_all(). */
+    if (pl &&
+        pl->ob == whose && // true if op is in pl's inv
+        !QUERY_FLAG(pl->ob, FLAG_NO_FIX_PLAYER))
     {
-        LOG(llevBug, "BUG: remove_ob(): object %s (%s) not on map or env.\n", query_short_name(op, NULL),
-            op->arch ? (op->arch->name ? op->arch->name : "<nor arch name!>") : "<no arch!>");
-        return;
+        FIX_PLAYER(pl->ob, "remove_ob: env remove");
     }
+}
 
-    /* lets first unlink this object from map*/
+static void RemoveFromMap(object *op)
+{
+    MapSpace *msp = GET_MAP_SPACE_PTR(op->map, op->x, op->y);
 
-    /* if this is the base layer object, we assign the next object to be it if it is from same layer type */
-    msp = GET_MAP_SPACE_PTR(op->map, op->x, op->y);
-
+    /* Sort out map space/layer. */
     if (op->layer)
     {
         if (GET_MAP_SPACE_LAYER(msp, op->layer - 1) == op)
         {
             /* well, don't kick the inv objects of this layer to normal layer */
-            if (op->above && op->above->layer == op->layer && GET_MAP_SPACE_LAYER(msp, op->layer + 6) != op->above)
+            if (op->above &&
+                op->above->layer == op->layer &&
+                GET_MAP_SPACE_LAYER(msp, op->layer + 6) != op->above)
+            {
                 SET_MAP_SPACE_LAYER(msp, op->layer - 1, op->above);
+            }
             else
+            {
                 SET_MAP_SPACE_LAYER(msp, op->layer - 1, NULL);
+            }
         }
-        else if (GET_MAP_SPACE_LAYER(msp, op->layer + 6) == op) /* inv layer? */
+        else if (GET_MAP_SPACE_LAYER(msp, op->layer + 6) == op) // inv layer?
         {
-            if (op->above && op->above->layer == op->layer)
+            if (op->above &&
+                op->above->layer == op->layer)
+            {
                 SET_MAP_SPACE_LAYER(msp, op->layer + 6, op->above);
+            }
             else
+            {
                 SET_MAP_SPACE_LAYER(msp, op->layer + 6, NULL);
+            }
         }
     }
 
-    /* link the object above us */
+    /* Sort out object chai. Don't NULL op->map (still needed). */
     if (op->above)
+    {
         op->above->below = op->below;
+    }
     else
-        SET_MAP_SPACE_LAST(msp, op->below); /* assign below as last one */
+    {
+        SET_MAP_SPACE_LAST(msp, op->below); // assign below as last one
+    }
 
-    /* Relink the object below us, if there is one */
     if (op->below)
+    {
         op->below->above = op->above;
+    }
     else
-        SET_MAP_SPACE_FIRST(msp, op->above);  /* first object goes on above it. */
+    {
+        SET_MAP_SPACE_FIRST(msp, op->above);  // first object goes on above it
+    }
 
     op->above = NULL;
     op->below = NULL;
 
-    /* this is triggered when a map is swaped out and the objects on it get removed too */
+    /* When a map is swapped out and the objects on it get removed too. */
     if (op->map->in_memory == MAP_SAVING)
+    {
         return;
+    }
 
-    msp->update_tile++; /* we updated something here - mark this tile as changed! */
-
-    /* some player only stuff.
-     * we adjust the ->player map variable and the local map player chain.
-     */
     if (op->type == PLAYER)
     {
-        struct pl_player   *pltemp  = CONTR(op);
+        player *pl = CONTR(op);
 
         /* now we remove us from the local map player chain */
-        if (pltemp->map_below)
-            CONTR(pltemp->map_below)->map_above = pltemp->map_above;
+        if (pl->map_below)
+        {
+            CONTR(pl->map_below)->map_above = pl->map_above;
+        }
         else
-            op->map->player_first = pltemp->map_above;
+        {
+            op->map->player_first = pl->map_above;
+        }
 
-        if (pltemp->map_above)
-            CONTR(pltemp->map_above)->map_below = pltemp->map_below;
+        if (pl->map_above)
+        {
+            CONTR(pl->map_above)->map_below = pl->map_below;
+        }
 
-        pltemp->map_below = pltemp->map_above = NULL;
-
-        pltemp->update_los = 1; /* thats always true when touching the players map pos. */
+        pl->map_below = pl->map_above = NULL;
+        pl->update_los = 1;
 
         /* a open container NOT in our player inventory = unlink (close) when we move */
-        if (pltemp->container && pltemp->container->env != op)
-            container_unlink(pltemp, NULL);
+        if (pl->container &&
+            pl->container->env != op)
+        {
+            container_unlink(pl, NULL);
+        }
     }
 
     update_object(op, UP_OBJ_REMOVE);
-
     op->env = NULL;
 }
 
