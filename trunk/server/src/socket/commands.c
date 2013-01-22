@@ -61,48 +61,47 @@ CommArray_s Commands[] =
 {
     {"target",        command_target,         0.1f, 0, NULL}, /* enter combat and attack object in reach */
     {"combat",        command_combat,         0.1f, 0, NULL}, /* toggle attack mode of player */
-    {"rest",          command_resting,        1.0f, 1, NULL},
-    {"run",           command_run,            1.0f, 0, NULL},
-    {"run_stop",      command_run_stop,       0.0f, 0, NULL},
+    {"rest",          command_resting,        1.0f, 1, NULL}, /* enter resting mode */
     {"cast",          command_cast_spell,     0.0f, 1, NULL}, /* use time comes from spells! */
-    {"push",          command_push_object,    1.0f, 1, NULL},
-    {"right",         command_turn_right,     1.0f, 0, NULL},
-    {"left",          command_turn_left,      1.0f, 0, NULL},
-    {"say",           command_say,            1.0f, 0, NULL},
-    {"gsay",          command_gsay,           1.0f, 0, NULL},
-    {"shout",         command_shout,          1.0f, 0, NULL},
+    {"push",          command_push_object,    1.0f, 1, NULL}, /* move an object you are facing if movable */
+    {"right",         command_turn_right,     1.0f, 0, NULL}, /* player rotates clockwise on same tile*/
+    {"left",          command_turn_left,      1.0f, 0, NULL}, /* player rotates anticlockwise on same tile*/
+    {"say",           command_say,            1.0f, 0, NULL}, /* local chat between players on the map*/
+    {"gsay",          command_gsay,           1.0f, 0, NULL}, /* communicates between members of a group*/
+    {"shout",         command_shout,          1.0f, 0, NULL}, /* global communication on /channel general*/
 #ifndef USE_CHANNELS
-    {"describe",      command_describe,       1.0f, 0, NULL},
+    {"describe",      command_describe,       1.0f, 0, NULL}, /* describes a marked item in inventory */
 #endif
-    {"tell",          command_tell,           1.0f, 0, NULL},
-    {"who",           command_who,            0.0f, 1, NULL},
-    {"mapinfo",       command_mapinfo,        0.0f, 1, NULL},
-    {"motd",          command_motd,           0.0f, 0, NULL},
-    {"time",          command_time,           1.0f, 0, NULL},
-    {"help",          command_help,           0.0f, 0, NULL},
-    {"save",          command_save,           0.0f, 1, NULL},
-    {"use_skill",     command_uskill,         0.1f, 1, NULL},
-    {"ready_skill",   command_rskill,         0.1f, 1, NULL},
-    {"privacy",       command_privacy,        0.0f, 1, NULL},
-    {"egobind",       command_egobind,        1.0f, 1, NULL},
-    {"invite",        command_party_invite,   4.0f, 1, NULL},
-    {"join",          command_party_join,     0.1f, 1, NULL},
-    {"deny",          command_party_deny,     0.1f, 1, NULL},
-    {"leave",         command_party_leave,    4.0f, 1, NULL},
-    {"remove",        command_party_remove,   4.0f, 1, NULL},
-    {"pvp",           command_pvp_stats,      0.0f, 0, NULL},
+    {"tell",          command_tell,           1.0f, 0, NULL}, /* sends message to specified player */
+    {"who",           command_who,            0.0f, 1, NULL}, /* lists all players online*/
+    {"mapinfo",       command_mapinfo,        0.0f, 1, NULL}, /* gives map information for map player is one*/
+    {"motd",          command_motd,           0.0f, 0, NULL}, /* displays message of the day*/
+    {"time",          command_time,           1.0f, 0, NULL}, /* displays in game time*/
+    {"help",          command_help,           0.0f, 0, NULL}, /* displays help topics*/
+    {"save",          command_save,           0.0f, 1, NULL}, /* saves player state*/
+    {"use_skill",     command_uskill,         0.1f, 1, NULL}, /* uses a specified skill*/
+    {"ready_skill",   command_rskill,         0.1f, 1, NULL}, /* readies a specified skill*/
+    {"privacy",       command_privacy,        0.0f, 1, NULL}, /* enters player in privacy mode*/
+    {"egobind",       command_egobind,        1.0f, 1, NULL}, /* egobinds an item to the player*/
+    {"invite",        command_party_invite,   4.0f, 1, NULL}, /* invites specified player to join group*/
+    {"join",          command_party_join,     0.1f, 1, NULL}, /* join a group when invited*/
+    {"deny",          command_party_deny,     0.1f, 1, NULL}, /* deny joining a group when invited*/
+    {"leave",         command_party_leave,    4.0f, 1, NULL}, /* leave a group*/
+    {"remove",        command_party_remove,   4.0f, 1, NULL}, /* remove a specified player from a group*/
+    {"pvp",           command_pvp_stats,      0.0f, 0, NULL}, /* lists pvp stats of specified player*/
+	{"level",         command_level,          0.0f, 0, NULL}, /* states specified player's level*/
 #ifdef USE_CHANNELS
     {"channel",       command_channel,        1.0f, 0, NULL}, /* channel system */
 #endif
 #ifdef DAI_DEVELOPMENT_CONTENT
-    {"stuck",         command_stuck,          0.0f, 1, NULL},
+    {"stuck",         command_stuck,          0.0f, 1, NULL}, /*Moves player to default location*/
 #endif
-    {"vol",           command_vol,            0.0f, 1, NULL},
-    {"gm",            command_gm,             0.0f, 1, NULL},
-    {"mw",            command_mw,             0.0f, 1, NULL},
-    {"mm",            command_mm,             0.0f, 1, NULL},
-    {"sa",            command_sa,             0.0f, 1, NULL},
-    {"gmasterlist",   command_gmasterlist,    0.0f, 1, NULL},
+    {"vol",           command_vol,            0.0f, 1, NULL}, /*enters vol mode*/
+    {"gm",            command_gm,             0.0f, 1, NULL}, /*enters gm mode*/
+    {"mw",            command_mw,             0.0f, 1, NULL}, /*enters mw mode*/
+    {"mm",            command_mm,             0.0f, 1, NULL}, /*enters mm mode*/
+    {"sa",            command_sa,             0.0f, 1, NULL}, /*enters sa mode*/
+    {"gmasterlist",   command_gmasterlist,    0.0f, 1, NULL}, /*lists accounts on gmasterfile*/
 };
 
 CommArray_s EmoteCommands[] =
