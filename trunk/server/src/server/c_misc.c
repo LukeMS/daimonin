@@ -1228,3 +1228,43 @@ int command_stuck(object *op, char *params)
         return command_goto(op, "/planes/human_plane/castle/castle_030a 5 11");
     }
 }
+
+int command_level(object *op, char *params)
+{
+    char       *name = params;
+    const char *name_hash;
+   	char       *buf;
+    player     *pl;
+
+if (!name)
+
+		{
+            new_draw_info(NDI_UNIQUE, 0, op, "You are level ~%u~.",
+                                                op->level);
+            return 0;
+        }
+		
+    transform_player_name_string(name);
+
+if (!(name_hash = find_string(name)))
+
+    {
+        new_draw_info(NDI_UNIQUE, 0, op, "No such player online.");
+        return 0;
+    }
+
+    for (pl = first_player; pl != NULL; pl = pl->next)
+    {
+        if (pl->ob->name == name_hash)
+        {
+
+            new_draw_info(NDI_UNIQUE, 0, op, "~%s~ is level ~%u~.",
+                                            query_name(pl->ob), op->level);
+            return 0;
+        }
+    }
+
+    new_draw_info(NDI_UNIQUE, 0, op, "No such player.");
+
+    return 0;
+}
