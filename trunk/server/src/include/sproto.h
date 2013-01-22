@@ -773,4 +773,6 @@ char                       *print_tad(timeanddate_t *tad, int flags);
 void                        tick_tadclock(void);
 void                        write_tadclock(void);
 
+int command_level(object *op, char *params);
+
 #endif /* ifndef __SPROTO_H */
