@@ -2787,111 +2787,149 @@ object * decrease_ob_nr(object *op, uint32 i)
  *   This function inserts the object op in the linked list
  *   inside the object environment.
  *
- * Eneq(@csd.uu.se): Altered insert_ob_in_ob to make things picked up enter
- * the inventory at the last position or next to other objects of the same
- * type.
- * Frank: Now sorted by type, archetype and magic!
- *
  * The function returns now pointer to inserted item, and return value can
  * be != op, if items are merged. -Tero
  */
 
 object * insert_ob_in_ob(object *op, object *where)
 {
-    object *otmp;
-    mapstruct *old_map = op->map;
+    mapstruct *old_map;
+    player    *pl;
+    object    *whose;
 
+    if (!op)
+    {
+        LOG(llevBug, "BUG:: %s:insert_ob_in_ob(): Attempt to insert nnothing!\n",
+            __FILE__);
+
+        return NULL;
+    }
+    else if (!where)
+    {
+        LOG(llevBug, "BUG:: %s:insert_ob_in_ob(): Attempt to insert object %s[%d] in nowhere!\n",
+            __FILE__, STRING_OBJ_NAME(op), TAG(op));
+
+        return op;
+    }
     if (!QUERY_FLAG(op, FLAG_REMOVED))
     {
-        dump_object(op);
-        LOG(llevBug, "BUG: Trying to insert (ob) inserted object.\n%s\n", errmsg);
+        LOG(llevBug, "BUG:: %s:insert_ob_in_ob(): Attempt to insert non-removed object %s[%d]!\n",
+            __FILE__, STRING_OBJ_NAME(op), TAG(op));
+
         return op;
     }
-
-    if (where == NULL)
+    else if (op->more)
     {
-        dump_object(op);
-        LOG(llevBug, "BUG: Trying to put object in NULL.\n%s\n", errmsg);
+        LOG(llevBug, "BUG:: %s:insert_ob_in_ob(): Attempt to insert multipart object %s[%d]!\n",
+            __FILE__, STRING_OBJ_NAME(op), TAG(op));
+
         return op;
     }
-
-    if (where->head)
+    else if (where->head)
     {
-        LOG(llevBug, "BUG: Tried to insert object wrong part of multipart object.\n");
         where = where->head;
-    }
-
-    if (op->more)
-    {
-        LOG(llevBug, "BUG: Tried to insert multipart object %s (%d) in %s (%d)\n",
-            query_name(op), op->count, query_name(where), where->count);
-        return op;
+        LOG(llevBug, "BUG:: %s:insert_ob_in_ob(): Attempt to insert object %s[%d] in multipart's body, redirecting to head %s[%d]!\n",
+            __FILE__, STRING_OBJ_NAME(op), TAG(op), STRING_OBJ_NAME(where),
+            TAG(where));
     }
 
     /* A stackable object with nrof 0 is junk.
      * We do this because otherwise objects marked for removal by merge_ob()
      * can be un-removed here. */
-    if (QUERY_FLAG(op, FLAG_CAN_STACK) && !op->nrof)
+    if (QUERY_FLAG(op, FLAG_CAN_STACK) &&
+        !op->nrof)
+    {
         return NULL;
+    }
 
+    /* Sort out the revised object chain. */
+    old_map = op->map;
     op->map = NULL;
     op->env = where;
-    op->above = NULL;
-    op->below = NULL;
-    //  op->x=0,op->y=0; XXX clearing these values makes them impossible
-    //  to use for home_x and home_y in base_info objects
+    op->above = op->below = NULL;
 #ifdef POSITION_DEBUG
-    op->ox = 0,op->oy = 0;
+    op->ox = 0;
+    op->oy = 0;
 #endif
-
     (void)merge_ob(op, NULL);
-
     CLEAR_FLAG(op, FLAG_REMOVED);
     SET_FLAG(op, FLAG_OBJECT_WAS_MOVED);
 
-    /* Client has no idea of ordering so lets not bother ordering it here.
-     * It sure simplifies this function...
-     */
-    if (where->inv == NULL)
+    if (!where->inv)
+    {
         where->inv = op;
+    }
     else
     {
         op->below = where->inv;
-        op->below->above = op;
-        where->inv = op;
+        op->below->above = where->inv = op;
     }
 
-    /* See if op moved between maps/containers */
-    if(op->speed && op->map != old_map)
+    /* See if op moved between maps/containers. */
+    if (op->speed &&
+        op->map != old_map)
     {
-        LOG(llevDebug, "Object moved between maps: %s (%s -> %s)\n", STRING_OBJ_NAME(op), STRING_MAP_PATH(old_map), STRING_MAP_PATH(op->map));
         activelist_remove_inline(op);
     }
 
-    if(! QUERY_FLAG(op, FLAG_SYS_OBJECT))
-        add_weight(op, op->nrof);
-
-    /* check for event object and set the owner object
-     * event flags.
-     */
-    if (op->type == TYPE_EVENT_OBJECT && op->sub_type1)
-        where->event_flags |= (1U << (op->sub_type1 - 1));
-    else if( op->type == TYPE_QUEST_TRIGGER
-            && (op->sub_type1 == ST1_QUEST_TRIGGER_NORMAL || op->sub_type1 == ST1_QUEST_TRIGGER_ITEM)
-            && where->type == CONTAINER)
-        where->event_flags |= EVENT_FLAG_SPECIAL_QUEST;
-
-    /* if player, adjust one drop items and fix player if not
-     * marked as no fix.
-     */
-    otmp = is_player_inv(where);
-    if (otmp && CONTR(otmp) != NULL)
+    /* Recalc the chain of weights. */
+    if (!QUERY_FLAG(op, FLAG_SYS_OBJECT))
     {
-        if (!QUERY_FLAG(otmp, FLAG_NO_FIX_PLAYER))
-            FIX_PLAYER(otmp , "insert_ob_in_ob - player inv");
+        add_weight(op, op->nrof);
     }
 
-    /* Make sure the object is on an activelist if needed */
+    /* For event objects set the new env's event flags. */
+    if (op->type == TYPE_EVENT_OBJECT &&
+        op->sub_type1)
+    {
+        where->event_flags |= (1U << (op->sub_type1 - 1));
+    }
+    /* For normal or item quest triggers being inserted into a container set
+     * the container's event flag. */
+    else if (op->type == TYPE_QUEST_TRIGGER &&
+             (op->sub_type1 == ST1_QUEST_TRIGGER_NORMAL ||
+              op->sub_type1 == ST1_QUEST_TRIGGER_ITEM) &&
+             where->type == CONTAINER)
+    {
+        where->event_flags |= EVENT_FLAG_SPECIAL_QUEST;
+    }
+
+    pl = NULL;
+    whose = where->attacked_by;
+
+    /* This loop is so written that it will go through all players looking in a
+     * container or just the single player if it is where. */
+    do
+    {
+        /* When op is being inserted directly into a player's inv. */
+        if (where->type == PLAYER)
+        {
+            whose = (!whose) ? where : NULL;
+        }
+        /* When op is being inserted into an open container, update every
+         * player who is looking. */
+        else if (where->type == CONTAINER &&
+                 whose != where->attacked_by &&
+                 !pl)
+        {
+            whose = (!whose) ? where->attacked_by : CONTR(whose)->container_above;
+        }
+
+        if ((pl = (whose) ? CONTR(whose) : NULL))
+        {
+            /* Update the client (add_weight() above has already taken care of
+             * any weight issues so here just add the actual inserted item). */
+            esrv_send_item(whose, op);
+
+            /* Fix player. */
+            if (!QUERY_FLAG(whose, FLAG_NO_FIX_PLAYER))
+            {
+                FIX_PLAYER(whose, "insert_ob_in_ob - player inv");
+            }
+        }
+    }
+    while (pl);
+
     update_ob_speed(op);
 
     return op;
