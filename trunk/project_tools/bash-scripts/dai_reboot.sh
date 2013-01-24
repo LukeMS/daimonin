@@ -373,7 +373,7 @@ echo "${fromtime},${totime},${reason}" > ${dai_home}/${dai_time_data}
                 cd ${dai_builddir}/server/make/linux
                 chmod +x configure
                 ./configure
-                make CFLAGS="${dai_cflags}" install
+                make EXTRA_CFLAGS="${dai_cflags}" install
             }
 
             if [ -z "${dai_gridarta_repo}" ]
