@@ -1988,35 +1988,9 @@ void remove_ob(object *op)
 
 static void RemoveFromEnv(object *op)
 {
-    object *whose = op->env;
+    object *where = op->env,
+           *whose = NULL;
     player *pl = NULL;
-
-    /* When op is in an open container or directly in a player inv, get the
-     * player (pl) so we can update the client. */
-    if (op->env->type == CONTAINER)
-    {
-        whose = op->env->attacked_by;
-
-        while (whose &&
-               whose != op->env)
-        {
-            whose = CONTR(whose)->container_above;
-        }
-    }
-
-    if (whose &&
-        whose->type == PLAYER)
-    {
-        pl = CONTR(whose);
-    }
-
-    /* When op is being removed from a player's inv/container, update his
-     * client. */
-    if (pl)
-    {
-        /* Delete the item. */
-        esrv_del_item(pl, op->count, op);
-    }
 
     /* When the object being removed is an open container, close it. */
     if (op->type == CONTAINER &&
@@ -2054,15 +2028,38 @@ static void RemoveFromEnv(object *op)
     op->above = op->below = op->env = NULL;
     op->map = NULL;
 
-    /* NO_FIX_PLAYER is set when a great many changes are being made to
-     * player's inventory. If set, avoiding the call to save cpu time.
-     * The flag is set from outside... perhaps from a drop_all(). */
-    if (pl &&
-        pl->ob == whose && // true if op is in pl's inv
-        !QUERY_FLAG(pl->ob, FLAG_NO_FIX_PLAYER))
+    /* This loop is so written that it will go through all players looking in a
+     * container or just the single player if it is where. */
+    do
     {
-        FIX_PLAYER(pl->ob, "remove_ob: env remove");
+        /* When op is being removed directly from a player's inv. */
+        if (where->type == PLAYER)
+        {
+            whose = (!whose) ? where : NULL;
+        }
+        /* When op is being remove from an open container, update every
+         * player who is looking. */
+        else if (where->type == CONTAINER)
+        {
+            whose = (!whose) ? where->attacked_by : CONTR(whose)->container_above;
+        }
+
+        if ((pl = (whose) ? CONTR(whose) : NULL))
+        {
+            /* Update the client (sub_weight() above has already taken care of
+             * any weight issues so here just delete the actual removed item). */
+            esrv_del_item(pl, op->count, op);
+
+            /* Only call fix_player() when op is directly in pl's inv --
+             * fix_player() does not care about nested invs. */
+            if (whose == where ||
+                !QUERY_FLAG(whose, FLAG_NO_FIX_PLAYER))
+            {
+                FIX_PLAYER(whose, "remove_ob: env remove");
+            }
+        }
     }
+    while (pl);
 }
 
 static void RemoveFromMap(object *op)
@@ -2782,20 +2779,14 @@ object * decrease_ob_nr(object *op, uint32 i)
         return NULL;
 }
 
-/*
- * insert_ob_in_ob(op,environment):
- *   This function inserts the object op in the linked list
- *   inside the object environment.
+/* Inserts op in the linked list inside where.
  *
  * The function returns now pointer to inserted item, and return value can
- * be != op, if items are merged. -Tero
- */
-
-object * insert_ob_in_ob(object *op, object *where)
+ * be != op, if items are merged. */
+object *insert_ob_in_ob(object *op, object *where)
 {
-    mapstruct *old_map;
-    player    *pl;
-    object    *whose;
+    player *pl = NULL;
+    object *whose = NULL;
 
     if (!op)
     {
@@ -2843,8 +2834,6 @@ object * insert_ob_in_ob(object *op, object *where)
     }
 
     /* Sort out the revised object chain. */
-    old_map = op->map;
-    op->map = NULL;
     op->env = where;
     op->above = op->below = NULL;
 #ifdef POSITION_DEBUG
@@ -2865,12 +2854,18 @@ object * insert_ob_in_ob(object *op, object *where)
         op->below->above = where->inv = op;
     }
 
+    /* FIXME: Can this ever be true? remove_ob() sets map to NULL and only
+     * removed objects can get this far.
+     *
+     * --Smacky 20130123 */
     /* See if op moved between maps/containers. */
     if (op->speed &&
-        op->map != old_map)
+        op->map)
     {
         activelist_remove_inline(op);
     }
+
+    op->map = NULL;
 
     /* Recalc the chain of weights. */
     if (!QUERY_FLAG(op, FLAG_SYS_OBJECT))
@@ -2894,9 +2889,6 @@ object * insert_ob_in_ob(object *op, object *where)
         where->event_flags |= EVENT_FLAG_SPECIAL_QUEST;
     }
 
-    pl = NULL;
-    whose = where->attacked_by;
-
     /* This loop is so written that it will go through all players looking in a
      * container or just the single player if it is where. */
     do
@@ -2908,9 +2900,7 @@ object * insert_ob_in_ob(object *op, object *where)
         }
         /* When op is being inserted into an open container, update every
          * player who is looking. */
-        else if (where->type == CONTAINER &&
-                 whose != where->attacked_by &&
-                 !pl)
+        else if (where->type == CONTAINER)
         {
             whose = (!whose) ? where->attacked_by : CONTR(whose)->container_above;
         }
@@ -2921,8 +2911,10 @@ object * insert_ob_in_ob(object *op, object *where)
              * any weight issues so here just add the actual inserted item). */
             esrv_send_item(whose, op);
 
-            /* Fix player. */
-            if (!QUERY_FLAG(whose, FLAG_NO_FIX_PLAYER))
+            /* Only call fix_player() when op is directly in pl's inv --
+             * fix_player() does not care about nested invs. */
+            if (whose == where ||
+                !QUERY_FLAG(whose, FLAG_NO_FIX_PLAYER))
             {
                 FIX_PLAYER(whose, "insert_ob_in_ob - player inv");
             }
