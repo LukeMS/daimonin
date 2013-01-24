@@ -1243,7 +1243,7 @@ if (!name)
                                                 op->level);
             return 0;
         }
-		
+
     transform_player_name_string(name);
 
 if (!(name_hash = find_string(name)))
@@ -1259,12 +1259,11 @@ if (!(name_hash = find_string(name)))
         {
 
             new_draw_info(NDI_UNIQUE, 0, op, "~%s~ is level ~%u~.",
-                                            query_name(pl->ob), op->level);
+                                            query_name(pl->ob), pl->ob->level);
             return 0;
         }
     }
 
     new_draw_info(NDI_UNIQUE, 0, op, "No such player.");
-
     return 0;
 }
