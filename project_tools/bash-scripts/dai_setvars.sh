@@ -78,11 +78,10 @@ export dai_use_newarch=""
 # is to be logged.
 export dai_suppress_progress=""
 
-# Any CFLAGS you want to pass to make. Foe example, use -DDAI_DEVELOPMENT_CODE
-# and/or -DDAI_DEVELOPMENT_CONTENT to compile a development server (note that
-# if ${dai_gameserver} == "trunk" both these flags will already be defined by
-# default).
-export dai_cflags=""
+# Any EXTRA_CFLAGS you want to pass to make. For example, use
+# -DDAI_DEVELOPMENT_CODE and/or -DDAI_DEVELOPMENT_CONTENT to compile a
+# development server.
+export dai_cflags="-Wextra -DDAI_DEVELOPMENT_CONTENT -DDAI_DEVELOPMENT_CODE"
 
 # If not null, the server will be run through valgrind, with the valgrind output
 # being logged in the server techlog. If null, valgrind will not be used.
