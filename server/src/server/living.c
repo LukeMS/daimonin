@@ -1811,7 +1811,10 @@ void fix_player(object *op)
             op->stats.dam = (sint16) ((float) op->stats.dam * LEVEL_DAMAGE(skill_weapon->level));
         }
         else
-            LOG(llevBug, "BUG: fix_player(): player %s has no hth skill!\n", op->name);
+        {
+            LOG(llevInfo, "INFO:: %s:fix_player(): Player %s has no HTH skill!\n",
+                __FILE__, STRING_OBJ_NAME(op));
+        }
     }
     else /* weapon in hand */
     {
