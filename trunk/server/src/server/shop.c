@@ -311,6 +311,7 @@ static sint64 pay_from_container(object *op, object *pouch, sint64 to_pay)
             {
                 if (coins_arch[NUM_COINS - 1 - i]->name  == tmp->arch->name && (tmp->value == tmp->arch->clone.value))
                 {
+#if 0
                     /* This should not happen, but if it does, just merge the two */
 					if(tmp->env)
 					{
@@ -321,6 +322,13 @@ static sint64 pay_from_container(object *op, object *pouch, sint64 to_pay)
 					}
 					remove_ob(tmp);
 					if (coin_objs[i] != NULL)
+#else
+                    remove_ob(tmp);
+
+                    /* This should not happen, but if it does, just merge the
+                     * two. */
+                    if (coin_objs[i])
+#endif
                     {
                         LOG(llevBug, "BUG: %s has two money entries of (%s)\n", query_name(pouch),
                             coins_arch[NUM_COINS - 1 - i]->name);
@@ -406,6 +414,7 @@ static sint64 pay_from_container(object *op, object *pouch, sint64 to_pay)
     {
         if (coin_objs[i]->nrof)
         {
+#if 0
             object *tmp = insert_ob_in_ob(coin_objs[i], pouch);
             for (who = pouch; who && who->type != PLAYER && who->env != NULL; who = who->env)
             {
@@ -418,6 +427,9 @@ static sint64 pay_from_container(object *op, object *pouch, sint64 to_pay)
                 esrv_send_item(who, who);
                 esrv_update_item(UPD_WEIGHT, who, who);
             }
+#else
+            (void)insert_ob_in_ob(coin_objs[i], pouch);
+#endif
         }
     }
     return(remain);
@@ -457,6 +469,7 @@ int get_payment2(object *pl, object *op)
         }
         else
         {
+#if 0
             object *tmp;
 
             CLEAR_FLAG(op, FLAG_UNPAID);
@@ -472,6 +485,17 @@ int get_payment2(object *pl, object *op)
                     esrv_del_item(CONTR(pl), tmp->count, tmp->env);
                 esrv_send_item(pl, op);
             }
+#else
+            CLEAR_FLAG(op, FLAG_UNPAID);
+            CLEAR_FLAG(op, FLAG_STARTEQUIP);
+            (void)merge_ob(op, NULL);
+
+            if (pl->type == PLAYER)
+            {
+                new_draw_info(NDI_UNIQUE, 0, pl, "You paid %s for %s.",
+                                     buf, query_name(op));
+            }
+#endif
         }
     }
     return 1;
@@ -561,11 +585,13 @@ void sell_item(object *op, object *pl, sint64 value)
                         tmp->nrof = n;
                         i -= tmp->nrof * tmp->value;
                         tmp = insert_ob_in_ob(tmp, pouch);
+#if 0
                         esrv_send_item(pl, tmp);
                         esrv_send_item(pl, pouch);
                         esrv_update_item(UPD_WEIGHT, pl, pouch);
                         esrv_send_item(pl, pl);
                         esrv_update_item(UPD_WEIGHT, pl, pl);
+#endif
                     }
                 }
             }
@@ -576,9 +602,11 @@ void sell_item(object *op, object *pl, sint64 value)
                 tmp->nrof = (uint32)(i / tmp->value);
                 i -= tmp->nrof * tmp->value;
                 tmp = insert_ob_in_ob(tmp, pl);
+#if 0
                 esrv_send_item(pl, tmp);
                 esrv_send_item(pl, pl);
                 esrv_update_item(UPD_WEIGHT, pl, pl);
+#endif
             }
         }
     }
@@ -702,6 +730,7 @@ int query_money_type(object *op, int value)
     return (int) total;
 }
 
+#if 0
 sint64 remove_money_type(object *who, object *op, sint64 value, sint64 amount)
 {
     object *tmp, *tmp2;
@@ -747,6 +776,62 @@ sint64 remove_money_type(object *who, object *op, sint64 value, sint64 amount)
     }
     return amount;
 }
+#else
+/* FIXME: My god this is a stupid function! I won't enumerate the problems.
+ * Suffice to say it'll be remove entirly soon. ATM only used for bank deposits
+ * anyway.
+ *
+ * -- Smacky 20130125 */
+sint64 remove_money_type(object *who, object *op, sint64 value, sint64 amount)
+{
+    object *this,
+           *next;
+
+    for (this = op->inv; this; this = next)
+    {
+        next = this->below;
+
+        if (!amount &&
+            value != -1)
+        {
+            break;
+        }
+
+        if (this->type == MONEY &&
+            (this->value == value ||
+             value == -1))
+        {
+            if (value == -1)
+            {
+                amount += (this->nrof * this->value);
+                remove_ob(this);
+            }
+            else // don't think thiis calcs properly but this is never used anyway
+            {
+                sint32 preop = this->nrof;
+
+                if ((this = decrease_ob_nr(this, amount)))
+                {
+                    amount -= (preop - this->nrof);
+                }
+                else
+                {
+                    amount = 0;
+                }
+            }
+        }
+        else if (this->type == CONTAINER &&
+                 !this->slaying &&
+                 (!this->race ||
+                  strstr(this->race, "gold"))) // TODO: use shstr
+        {
+            amount = remove_money_type(who, this, value, amount);
+        }
+    }
+
+    return amount;
+}
+#endif
 
 /* add number of money coins to a player */
 void add_money_to_player(object *pl, int c, int s, int g, int m)
@@ -768,10 +853,14 @@ void insert_money_in_player(object *pl, object *money, uint32 nrof)
     tmp = get_object();
     copy_object(money, tmp);
     tmp->nrof = nrof;
+#if 0
     tmp = insert_ob_in_ob(tmp, pl);
     esrv_send_item(pl, tmp);
     esrv_send_item(pl, pl);
     esrv_update_item(UPD_WEIGHT, pl, pl);
+#else
+    (void)insert_ob_in_ob(tmp, pl);
+#endif
 }
 
 /* A simple function to calculate the optimum number of coins of each
