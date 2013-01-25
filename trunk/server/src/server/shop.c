@@ -492,6 +492,7 @@ int get_payment2(object *pl, object *op)
 
             if (pl->type == PLAYER)
             {
+                esrv_update_item(UPD_WEIGHT | UPD_NROF | UPD_FLAGS, pl, op);
                 new_draw_info(NDI_UNIQUE, 0, pl, "You paid %s for %s.",
                                      buf, query_name(op));
             }
