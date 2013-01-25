@@ -225,12 +225,14 @@ echo "${fromtime},${totime},${reason}" > ${dai_home}/${dai_time_data}
             }
 
             echo
-            echo "### Checkout/update and export server."
+            echo "### Checkout/update and export server"
 
             if [ ${dai_gameserver} == "test" ]
             then
+                echo "  # from ${dai_daimonin_repo}/main"
                 svn co ${dai_daimonin_repo}/main/server ${dai_svndir}/daimonin/${dai_gameserver}/server
             else
+                echo "  # from ${dai_daimonin_repo}/${dai_gameserver}"
                 svn co ${dai_daimonin_repo}/${dai_gameserver}/server ${dai_svndir}/daimonin/${dai_gameserver}/server
             fi
 
@@ -238,31 +240,37 @@ echo "${fromtime},${totime},${reason}" > ${dai_home}/${dai_time_data}
 
             if [ ${stream} != "none" ]
             then
+                echo "  # from ${dai_daimonin_repo}/streams/${stream}"
                 svn co ${dai_daimonin_repo}/streams/${stream}/server ${dai_svndir}/daimonin/stream/server
                 svn export --force ${dai_svndir}/daimonin/stream/server ${dai_builddir}/server
             fi
 
             echo
-            echo "### Checkout/update and export arches."
+            echo "### Checkout/update and export arches"
+            echo "  # from ${dai_daimonin_repo}/trunk"
             svn co ${dai_daimonin_repo}/trunk/arch ${dai_svndir}/daimonin/trunk/arch
 
             if [ ${dai_gameserver} != "trunk" ]
             then
+                echo "  # from ${dai_daimonin_repo}/${dai_gameserver}"
                 svn co ${dai_daimonin_repo}/${dai_gameserver}/arch ${dai_svndir}/daimonin/${dai_gameserver}/arch
             fi
 
             if [ -n "${dai_daiserv_repo}" ]
             then
+                echo "  # from ${dai_daiserv_repo}"
                 svn co ${dai_daiserv_repo}/arch ${dai_svndir}/daiserv/arch
             fi
 
             if [ -n "${dai_mapserv_repo}" ]
             then
+                echo "  # from ${dai_mapserv_repo}"
                 svn co ${dai_mapserv_repo}/arch ${dai_svndir}/mapserv/arch
             fi
 
             if [ -n "${dai_use_newarch}" ]
             then
+                echo "  # from ${dai_daimonin_repo}/streams/newarch"
                 svn co ${dai_daimonin_repo}/streams/newarch/arch ${dai_svndir}/daimonin/newarch/arch
             fi
 
@@ -275,6 +283,7 @@ echo "${fromtime},${totime},${reason}" > ${dai_home}/${dai_time_data}
 
             if [ ${stream} != "none" ]
             then
+                echo "  # from ${dai_daimonin_repo}/streams/${stream}"
                 svn co ${dai_daimonin_repo}/streams/${stream}/arch ${dai_svndir}/daimonin/stream/arch
                 svn export --force ${dai_svndir}/daimonin/stream/arch ${dai_builddir}/arch
             fi
@@ -295,26 +304,31 @@ echo "${fromtime},${totime},${reason}" > ${dai_home}/${dai_time_data}
             fi
 
             echo
-            echo "### Checkout/update and export maps."
+            echo "### Checkout/update and export maps"
+            echo "  # from ${dai_daimonin_repo}/trunk"
             svn co ${dai_daimonin_repo}/trunk/maps ${dai_svndir}/daimonin/trunk/maps
 
             if [ ${dai_gameserver} != "trunk" ]
             then
+                echo "  # from ${dai_daimonin_repo}/${dai_gameserver}"
                 svn co ${dai_daimonin_repo}/${dai_gameserver}/maps ${dai_svndir}/daimonin/${dai_gameserver}/maps
             fi
 
             if [ -n "${dai_daiserv_repo}" ]
             then
+                echo "  # from ${dai_daiserv_repo}"
                 svn co ${dai_daiserv_repo}/maps ${dai_svndir}/daiserv/maps
             fi
 
             if [ -n "${dai_mapserv_repo}" ]
             then
+                echo "  # from ${dai_mapserv_repo}"
                 svn co ${dai_mapserv_repo}/maps ${dai_svndir}/mapserv/maps
             fi
 
             if [ -n "${dai_use_newarch}" ]
             then
+                echo "  # from ${dai_daimonin_repo}/streams/newarch"
                 svn co ${dai_daimonin_repo}/streams/newarch/maps ${dai_svndir}/daimonin/newarch/maps
             fi
 
@@ -327,6 +341,7 @@ echo "${fromtime},${totime},${reason}" > ${dai_home}/${dai_time_data}
 
             if [ ${stream} != "none" ]
             then
+                echo "  # from ${dai_daimonin_repo}/streams/${stream}"
                 svn co ${dai_daimonin_repo}/streams/${stream}/maps ${dai_svndir}/daimonin/stream/maps
                 svn export --force ${dai_svndir}/daimonin/stream/maps ${dai_builddir}/maps
             fi
@@ -355,7 +370,8 @@ echo "${fromtime},${totime},${reason}" > ${dai_home}/${dai_time_data}
             if [ -n "${dai_gridarta_repo}" ]
             then
                 echo
-                echo "### Checkout/update, export, build, and run Gridarta to collect arches."
+                echo "### Checkout/update, export, build, and run Gridarta to collect arches"
+                echo "  # from ${dai_gridarta_repo}/${dai_gridarta_ttbs}"
                 svn co ${dai_gridarta_repo}/${dai_gridarta_ttbs} ${dai_svndir}/gridarta
                 svn export ${dai_svndir}/gridarta ${dai_builddir}/gridarta
                 {
