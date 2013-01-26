@@ -2717,28 +2717,27 @@ object * decrease_ob_nr(object *op, uint32 i)
 
         if (i < op->nrof) /* there are still some */
         {
-            if(! QUERY_FLAG(op, FLAG_SYS_OBJECT))
+            if (!QUERY_FLAG(op, FLAG_SYS_OBJECT))
+            {
                 sub_weight(op, i);
+            }
+
             op->nrof -= i;
+
             if (tmp)
             {
-                esrv_send_item(tmp, op);
-                esrv_update_item(UPD_WEIGHT, tmp, tmp);
+                esrv_update_item(UPD_NROF, tmp, op);
             }
         }
         else /* we removed all! */
         {
-            if (tmp)
-            {
-                if (tmp->type != CONTAINER)
-                    esrv_del_item(CONTR(tmp), op->count, op->env);
-                else
-                    esrv_del_item(NULL, op->count, op->env);
-            }
             remove_ob(op);
             op->nrof = 0;
         }
     }
+    /* TODO: Not sure what this is about right now.
+     * 
+     * -- Smacky 20130126 */
     else
     {
         tmp = op->above;
@@ -2749,6 +2748,7 @@ object * decrease_ob_nr(object *op, uint32 i)
             remove_ob(op);
         }
 
+#if 0
         if (op->env)
         {
             for (; tmp; tmp = tmp->above)
@@ -2767,6 +2767,9 @@ object * decrease_ob_nr(object *op, uint32 i)
             }
         }
         else if (op->map)
+#else
+        if (op->map)
+#endif
         {
             check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
             insert_ob_in_map(op, op->map, op, 0);
