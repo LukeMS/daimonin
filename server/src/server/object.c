@@ -662,13 +662,13 @@ object * merge_ob(object *op, object *tmp)
         if (tmp->nrof && can_merge(op, tmp))
         {
 #if DEBUG_MERGE_OB
-            LOG(llevDebug,"DEBUG:: %s/merge_ob(): Merging %s[%d] = %d to %s[%d] = %d!\n",
+            LOG(llevInfo,"INFO:: %s:merge_ob(): Merging %s[%d] = %d to %s[%d] = %d!\n",
                 __FILE__,
                 STRING_OBJ_NAME(tmp), TAG(tmp), tmp->nrof,
                 STRING_OBJ_NAME(op), TAG(op), op->nrof);
 #endif
             op->nrof = op->nrof + tmp->nrof;
-            (void)decrease_ob_nr(tmp, tmp->nrof);
+            remove_ob(tmp);
 
             return op;
         }
@@ -2788,8 +2788,9 @@ object * decrease_ob_nr(object *op, uint32 i)
  * be != op, if items are merged. */
 object *insert_ob_in_ob(object *op, object *where)
 {
-    player *pl = NULL;
-    object *whose = NULL;
+    mapstruct *m;
+    player    *pl = NULL;
+    object    *whose = NULL;
 
     if (!op)
     {
@@ -2837,6 +2838,8 @@ object *insert_ob_in_ob(object *op, object *where)
     }
 
     /* Sort out the revised object chain. */
+    m = op->map;    // if op was removed from a map op->map != NULL
+    op->map = NULL; // op->map must be nulled for merge_ob()
     op->env = where;
     op->above = op->below = NULL;
 #ifdef POSITION_DEBUG
@@ -2857,18 +2860,12 @@ object *insert_ob_in_ob(object *op, object *where)
         op->below->above = where->inv = op;
     }
 
-    /* FIXME: Can this ever be true? remove_ob() sets map to NULL and only
-     * removed objects can get this far.
-     *
-     * --Smacky 20130123 */
     /* See if op moved between maps/containers. */
     if (op->speed &&
-        op->map)
+        m)
     {
         activelist_remove_inline(op);
     }
-
-    op->map = NULL;
 
     /* Recalc the chain of weights. */
     if (!QUERY_FLAG(op, FLAG_SYS_OBJECT))
