@@ -1536,10 +1536,10 @@ static int GameObject_Deposit(lua_State *L)
             + money.silver  * hooks->coins_arch[2]->clone.value
             + money.copper  * hooks->coins_arch[3]->clone.value;
 
-        if(hooks->pay_for_amount(amount, WHO))
+        if(hooks->shop_pay_amount(amount, WHO))
         {
             bank->value += amount;
-            hooks->FIX_PLAYER(WHO, "LUA: deposit - pay for amount");
+//            hooks->FIX_PLAYER(WHO, "LUA: deposit - pay for amount");
         }
         else
         {
@@ -3558,13 +3558,14 @@ static int GameObject_PayForItem(lua_State *L)
 {
     lua_object *self,
                *whatptr;
+    sint64      price;
     int         val;
 
     get_lua_args(L, "OO", &self, &whatptr);
-
-    val = hooks->pay_for_item(WHAT, WHO);
-
+    price = hooks->query_cost(WHAT, WHO, F_BUY);
+    val = hooks->shop_pay_amount(price, WHO);
     lua_pushnumber(L, val);
+
     return 1;
 }
 
@@ -3582,10 +3583,9 @@ static int GameObject_PayAmount(lua_State *L)
     int         val;
 
     get_lua_args(L, "OI", &self, &to_pay);
-
-    val = hooks->pay_for_amount(to_pay, WHO);
-
+    val = hooks->shop_pay_amount(to_pay, WHO);
     lua_pushnumber(L, val);
+
     return 1;
 }
 

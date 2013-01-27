@@ -143,8 +143,6 @@ struct plugin_hooklist  hooklist    =
     /* O */
     out_of_map,
     /* P */
-    pay_for_amount,
-    pay_for_item,
     play_sound_map,
     play_sound_player_only,
     player_save,
@@ -172,6 +170,7 @@ struct plugin_hooklist  hooklist    =
     set_map_darkness,
     set_personal_light,
     set_quest_status,
+    shop_pay_amount,
     signal_connection,
     spring_trap,
     strdup_local,

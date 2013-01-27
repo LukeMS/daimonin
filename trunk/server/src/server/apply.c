@@ -1110,7 +1110,7 @@ static int apply_shop_mat(object *shop_mat, object *op)
         rv = teleport(shop_mat, SHOP_MAT, op);
     }
     /* immediate block below is only used for players */
-    else if (get_payment(op))
+    else if (shop_checkout(op, op->inv))
     {
         rv = teleport(shop_mat, SHOP_MAT, op);
         if (shop_mat->msg)
