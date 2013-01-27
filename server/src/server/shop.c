@@ -25,7 +25,7 @@
 
 #include <global.h>
 
-static sint64 pay_from_container(object *op, object *pouch, sint64 to_pay);
+static sint64 PayFrom(object *op, object *root, sint64 amount);
 
 /* query_cost() will return the real value of an item
  * Thats not always ->value - and in some cases the value 
@@ -212,257 +212,244 @@ char * query_cost_string(object *tmp, object *who, int flag, int mode)
     return cost_string_from_value(query_cost(tmp, who, flag), mode);
 }
 
-
-
-
-/* This function finds out how much money the player is carrying,   *
- * and returns that value                       */
-/* Now includes any coins in active containers -- DAMN          */
-/* or every gold type container (even not applied) */
+/* Returns the total value of coins 'carried' by op. Here carried means
+ * directly in op's inventory or in an active container, or in (not
+ * necessarily active) gold pouches within those two environments. */
 sint64 query_money(object *op)
 {
-    object *tmp;
-    sint64     total   = 0;
+    object *this;
+    sint64  total = 0;
 
-    if (op->type != PLAYER && op->type != CONTAINER)
+    if (!op ||
+        QUERY_FLAG(op, FLAG_SYS_OBJECT))
     {
-        LOG(llevBug, "BUG: Query money called with non player/container.\n");
         return 0;
     }
-    for (tmp = op->inv; tmp; tmp = tmp->below)
+
+    for (this = op->inv; this; this = this->below)
     {
-        if (tmp->type == MONEY)
-            total += tmp->nrof * tmp->value;
-        else if (tmp->type == CONTAINER && ((!tmp->race || strstr(tmp->race, "gold")) || QUERY_FLAG(tmp, FLAG_APPLIED)))
-            total += query_money(tmp);
+        if (this->type == MONEY)
+        {
+            total += this->nrof * this->value;
+        }
+        else if (this->type == CONTAINER &&
+                 (QUERY_FLAG(this, FLAG_APPLIED) ||
+                  (!this->race ||
+                   strstr(this->race, "gold")))) // TODO: use shstr
+        {
+            total += query_money(this);
+        }
     }
+
     return total;
 }
 
-
-/* TCHIZE: This function takes the amount of money from the             *
- * the player inventory and from it's various pouches using the         *
- * pay_from_container function.                                         *
- * returns 0 if not possible. 1 if success                              */
-int pay_for_amount(sint64 to_pay, object *pl)
+/* Tries to pay to_pay if op can afford it. Returns 1 or 0 on success or
+ * failure. */
+uint8 shop_pay_amount(sint64 amount, object *op)
 {
-    if (to_pay == 0)
-        return 1;
-    if (to_pay > query_money(pl))
+    sint64 remain;
+
+    /* Sanity check. */
+    if (!op)
+    {
         return 0;
+    }
 
-    pay_from_container(pl, pl, to_pay);
+    if (amount <= 0)                   // hurray, it's free!
+    {
+        return 1;
+    }
+    else if (amount > query_money(op)) // can't afford it
+    {
+        return 0;
+    }
 
-    FIX_PLAYER(pl ,"pay for amount");
+    if (op->type == PLAYER)
+    {
+        SET_FLAG(op, FLAG_NO_FIX_PLAYER);
+    }
+
+    /* Negative means we're due change. */
+    if ((remain = PayFrom(op, op->inv, amount)) < 0)
+    {
+        uint8  i;
+        sint64 change = ABS(remain);
+
+        for (i = 0; i < NUM_COINS; i++)
+        {
+            if (coins_arch[i]->clone.value <= change)
+            {
+                sint32 nrof = 2;
+
+                while (change >= coins_arch[i]->clone.value * nrof)
+                {
+                    nrof++;
+                }
+
+                nrof--;
+                insert_money_in_player(op, &coins_arch[i]->clone, nrof);
+                change -= coins_arch[i]->clone.value * nrof;
+            }
+
+            if (change <= 0)
+            {
+                break;
+            }
+        }
+
+        if (change < 0)
+        {
+            LOG(llevBug, "BUG:: %s:shop_pay_amount(): Attempt to give %s %d too much change!\n",
+                __FILE__, STRING_OBJ_NAME(op), ABS(change));
+        }
+    }
+
+    if (op->type == PLAYER)
+    {
+        CLEAR_FLAG(op, FLAG_NO_FIX_PLAYER);
+        FIX_PLAYER(op, "pay amount");
+    }
+
     return 1;
 }
 
-/* DAMN: This is now a wrapper for pay_from_container, which is     *
- * called for the player, then for each active container that can hold  *
- * money until op is paid for.  Change will be left wherever the last   *
- * of the price was paid from.                      */
-int pay_for_item(object *op, object *pl)
+/* Takes MONEY in/below root (and then in CONTAINERs) until amount is paid
+ * (it is assumed to be pre-determined that op actually has enough cash).
+ * Returns amount - what was actually paid (should be <= 0, if negative,
+ * change is due). */
+static sint64 PayFrom(object *op, object *root, sint64 amount)
 {
-    sint64     to_pay  = query_cost(op, pl, F_BUY);
+    object *this,
+           *next;
 
-    if (to_pay == 0.0)
-        return 1;
-    if (to_pay > query_money(pl))
-        return 0;
-
-    pay_from_container(pl, pl, to_pay);
-
-    FIX_PLAYER(pl ,"pay for item");
-    return 1;
-}
-
-/* This pays for the item, and takes the proper amount of money off
- * the player.
- * CF 0.91.4 - this function is mostly redone in order to fix a bug
- * with weight not be subtracted properly.  We now remove and
- * insert the coin objects -  this should update the weight
- * appropriately
- */
-/* DAMN: This function is used for the player, then for any active  *
- * containers that can hold money, until the op is paid for.        */
-static sint64 pay_from_container(object *op, object *pouch, sint64 to_pay)
-{
-    sint64        remain;
-    int         count, i;
-    object     *tmp, *coin_objs[NUM_COINS], *next;
-    archetype  *at;
-    object     *who;
-
-    if (pouch->type != PLAYER && pouch->type != CONTAINER)
-        return to_pay;
-
-    remain = to_pay;
-    for (i = 0; i < NUM_COINS; i++)
-        coin_objs[i] = NULL;
+    /* Sanity checks. */
+    if (!op ||
+        !root ||
+        amount <= 0)
+    {
+        return amount;
+    }
 
     /* This hunk should remove all the money objects from the player/container */
-    for (tmp = pouch->inv; tmp; tmp = next)
+    for (this = root; this; this = next)
     {
-        next = tmp->below;
+        next = this->below;
 
-        if (tmp->type == MONEY)
+        if (amount <= 0)
         {
-            for (i = 0; i < NUM_COINS; i++)
-            {
-                if (coins_arch[NUM_COINS - 1 - i]->name  == tmp->arch->name && (tmp->value == tmp->arch->clone.value))
-                {
-                    remove_ob(tmp);
+            break;
+        }
 
-                    /* This should not happen, but if it does, just merge the
-                     * two. */
-                    if (coin_objs[i])
-                    {
-                        LOG(llevBug, "BUG: %s has two money entries of (%s)\n", query_name(pouch),
-                            coins_arch[NUM_COINS - 1 - i]->name);
-                        coin_objs[i]->nrof += tmp->nrof;
-                    }
-                    else
-                    {
-                        coin_objs[i] = tmp;
-                    }
+        /* FIXME: This grabs coins in reverse inventory order. So if root has
+         * a stack of 50c followed by a stack of 2s and buys an item for 50c,
+         * 1s will be taken and 50c chanve given, leaving root with 100c 1s
+         * after the transaction. Technically this is fine but humanly it makes
+         * little sense.
+         *
+         * This could be fixed by adding an extra step to the change-giving
+         * cycle (in shop_pay_amount()) to go back through the purchaser's inv
+         * and change ALL coins for their optimum denominations according to
+         * total value. But this is pretty labour-intensive just to make things
+         * seem 'nicer'.
+         *
+         * Maybe a better fix is to force a server-side ordering of coins so
+         * higher value always goes before lower value. But this is pretty much
+         * as much work as above.
+         *
+         * A third option would be to just REMEMBER all the coins in root and
+         * then actually pay from this memory later on. That was how the old
+         * function worked but it was huge and unwieldy.
+         *
+         * -- Smacky 20130126 */
+        if (this->type == MONEY)
+        {
+            sint32 needed = (amount > this->value)
+                            ? (amount / this->value + (amount % this->value) ? 1 : 0)
+                            : 1,
+                   used = MIN((sint32)this->nrof, needed);
 
-                    break;
-                }
-            }
-            if (i == NUM_COINS)
-                LOG(llevBug, "BUG: in pay_for_item: Did not find string match for %s\n", tmp->arch->name);
+            amount -= this->value * used;
+            (void)decrease_ob_nr(this, used);
         }
     }
 
-	/* ugly, but in this way we ensure the whole root ->inv is searched,
-	 * before we go recursive inside the containers
-	 */
-	for (tmp = pouch->inv; tmp; tmp = next)
-	{
-		next = tmp->below;
-
-		if (tmp->type == CONTAINER && tmp->inv)
-			remain = pay_from_container(op, tmp, remain);
-	}
-
-    /* Fill in any gaps in the coin_objs array - needed to make change. */
-    /* Note that the coin_objs array goes from least value to greatest value */
-    for (i = 0; i < NUM_COINS; i++)
+    /* Ugly, but in this way we ensure the whole root is searched before we go
+     * recursive inside the containers. */
+    for (this = root; this; this = next)
     {
-        if (coin_objs[i] == NULL)
+        next = this->below;
+
+        if (amount <= 0)
         {
-            at = coins_arch[NUM_COINS - 1 - i];
-            if (at == NULL)
-                LOG(llevBug, "BUG: Could not find %s archetype", coins_arch[NUM_COINS - 1 - i]->name);
-            coin_objs[i] = get_object();
-            copy_object(&at->clone, coin_objs[i]);
-            coin_objs[i]->nrof = 0;
+            break;
+        }
+
+        if (this->type == CONTAINER &&
+            this->inv)
+        {
+            amount = PayFrom(op, this->inv, amount);
         }
     }
 
-    for (i = 0; i < NUM_COINS; i++)
-    {
-        sint64 num_coins;
+    return amount;
+}
 
-        if (coin_objs[i]->nrof * coin_objs[i]->value > remain)
+/* Tries to buy every unpaid item in the inv of or below this (which should
+ * originally be op->inv). */
+uint8 shop_checkout(object *op, object *this)
+{
+    uint8 success;
+
+    /* Always report success in these cases even though we are not actually
+     * making a purchase. */
+    if (!this ||
+        QUERY_FLAG(this, FLAG_SYS_OBJECT))
+    {
+        return 1;
+    }
+
+    if (QUERY_FLAG(this, FLAG_UNPAID))
+    {
+        sint64 price = query_cost(this, op, F_BUY);
+
+        if (!(success = shop_pay_amount(price, op)))
         {
-            num_coins = remain / coin_objs[i]->value;
-            if (num_coins * coin_objs[i]->value < remain)
-                num_coins++;
+            CLEAR_FLAG(this, FLAG_UNPAID);
+            new_draw_info(NDI_UNIQUE, 0, op, "You lack the funds to buy %s.",
+                          query_name(this));
+            SET_FLAG(this, FLAG_UNPAID);
         }
         else
         {
-            num_coins = coin_objs[i]->nrof;
-        }
+            CLEAR_FLAG(this, FLAG_UNPAID);
+            CLEAR_FLAG(this, FLAG_STARTEQUIP);
+            (void)merge_ob(this, NULL);
 
-        if(num_coins> ((sint64)1 << 31))
-        {
-            LOG(llevDebug,"shop.c (line: %d): money overflow value->nrof: number of coins>2^32 (type coin %d)\n", __LINE__ , i);
-            num_coins = ((sint64)1 << 31);
-        }
-
-        remain -= num_coins * coin_objs[i]->value;
-        coin_objs[i]->nrof -= (uint32) num_coins;
-
-        /* Now start making change.  Start at the coin value
-         * below the one we just did, and work down to
-         * the lowest value.
-         */
-        count = i - 1;
-        while (remain < 0 && count >= 0)
-        {
-            num_coins = -remain / coin_objs[count]->value;
-            coin_objs[count]->nrof += (uint32)num_coins;
-            remain += num_coins * coin_objs[count]->value;
-            count--;
-        }
-    }
-    for (i = 0; i < NUM_COINS; i++)
-    {
-        if (coin_objs[i]->nrof)
-        {
-            (void)insert_ob_in_ob(coin_objs[i], pouch);
-        }
-    }
-    return(remain);
-}
-
-/* Eneq(@csd.uu.se): Better get_payment, descends containers looking for
-   unpaid items. get_payment is now used as a link. To make it simple
-   we need the player-object here. */
-
-int get_payment2(object *pl, object *op)
-{
-    char    buf[MEDIUM_BUF];
-    int     ret = 1;
-
-    if (op != NULL && op->inv)
-        ret = get_payment2(pl, op->inv);
-
-    if (!ret)
-        return 0;
-
-    if (op != NULL && op->below)
-        ret = get_payment2(pl, op->below);
-
-    if (!ret)
-        return 0;
-
-    if (op != NULL && QUERY_FLAG(op, FLAG_UNPAID))
-    {
-        strncpy(buf, query_cost_string(op, pl, F_BUY, COSTSTRING_SHORT), MEDIUM_BUF);
-        if (!pay_for_item(op, pl))
-        {
-            sint64 i   = query_cost(op, pl, F_BUY) - query_money(pl);
-            CLEAR_FLAG(op, FLAG_UNPAID);
-            new_draw_info(NDI_UNIQUE, 0, pl, "You lack %s to buy %s.", cost_string_from_value(i, COSTSTRING_SHORT), query_name(op));
-            SET_FLAG(op, FLAG_UNPAID);
-            return 0;
-        }
-        else
-        {
-            CLEAR_FLAG(op, FLAG_UNPAID);
-            CLEAR_FLAG(op, FLAG_STARTEQUIP);
-            (void)merge_ob(op, NULL);
-
-            if (pl->type == PLAYER)
+            if (op->type == PLAYER)
             {
-                esrv_update_item(UPD_WEIGHT | UPD_NROF | UPD_FLAGS, pl, op);
-                new_draw_info(NDI_UNIQUE, 0, pl, "You paid %s for %s.",
-                                     buf, query_name(op));
+                esrv_update_item(UPD_WEIGHT | UPD_NROF | UPD_FLAGS, op, this);
+                new_draw_info(NDI_UNIQUE, 0, op, "You paid %s for %s.",
+                              cost_string_from_value(price, COSTSTRING_SHORT),
+                              query_name(this));
             }
         }
     }
-    return 1;
-}
+    else
+    {
+        success = 1;
+    }
 
-int get_payment(object *pl)
-{
-    int ret;
+    /* Recursively go through EVERY item in the inv, no matter how deeply
+     * buried in closed containers. TODO: In future we can modify this function
+     * to perhaps allow a chance for shoplifting. */
+    if (success &&
+        (success = shop_checkout(op, this->inv)))
+    {
+        success = shop_checkout(op, this->below);
+    }
 
-    ret = get_payment2(pl, pl->inv);
-
-    return ret;
+    return success;
 }
 
 /* Modified function to give out platinum coins.  This function is  *

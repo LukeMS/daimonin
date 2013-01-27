@@ -373,8 +373,6 @@ struct plugin_hooklist
     /* O */
     mapstruct *(*out_of_map)(mapstruct *, int *, int *);
     /* P */
-    int (*pay_for_amount)(sint64, object *);
-    int (*pay_for_item)(object *, object *);
     void (*play_sound_map)(mapstruct *, int, int, int, int);
     void (*play_sound_player_only)(player *, int, int, int, int);
     int (*player_save)(object *);
@@ -402,6 +400,7 @@ struct plugin_hooklist
     void (*set_map_darkness)(mapstruct *, int);
     void (*set_personal_light)(player *, int);
     void (*set_quest_status)(struct obj *, int, int);
+    uint8 (*shop_pay_amount)(sint64, object *);
     void (*signal_connection)(object *, object *, object *, mapstruct *);
     void (*spring_trap)(object *, object *);
     char *(*strdup_local)(const char *);
