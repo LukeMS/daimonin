@@ -2726,7 +2726,7 @@ object * decrease_ob_nr(object *op, uint32 i)
 
             if (tmp)
             {
-                esrv_update_item(UPD_NROF, tmp, op);
+                esrv_update_item(UPD_NROF | UPD_WEIGHT, tmp, op);
             }
         }
         else /* we removed all! */
