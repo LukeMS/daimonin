@@ -1637,16 +1637,6 @@ void drop_ob_inv(object *ob)
                     if (ob->env)
                     {
                         insert_ob_in_ob(tmp_op, ob->env);
-
-                        /* this should handle in future insert_ob_in_ob() */
-                        if (ob->env->type == PLAYER)
-                        {
-                            esrv_send_item(ob->env, tmp_op);
-                        }
-                        else if (ob->env->type == CONTAINER)
-                        {
-                            esrv_send_item(ob->env, tmp_op);
-                        }
                     }
                     else
                     {
@@ -1701,16 +1691,6 @@ void drop_ob_inv(object *ob)
             if (ob->env)
             {
                 insert_ob_in_ob(corpse, ob->env);
-
-                /* this should handle in future insert_ob_in_ob() */
-                if (ob->env->type == PLAYER)
-                {
-                    esrv_send_item(ob->env, corpse);
-                }
-                else if (ob->env->type == CONTAINER)
-                {
-                    esrv_send_item(ob->env, corpse);
-                }
             }
             else
             {
@@ -2633,14 +2613,14 @@ object * get_split_ob(object *orig_ob, uint32 nr)
     {
         if (!is_removed)
         {
-            if(orig_ob->env->type == PLAYER) /* update client view */
-                esrv_del_item(CONTR(orig_ob->env), orig_ob->count, orig_ob->env);
             remove_ob(orig_ob);
         }
         check_walk_off(orig_ob, NULL, MOVE_APPLY_VANISHED);
     }
     else if (!is_removed)
     {
+        sint32 flags = UPD_NROF;
+
         if (orig_ob->env != NULL && !QUERY_FLAG(orig_ob, FLAG_SYS_OBJECT))
         {
             /* sub weight will not call fix_player for players - its to low level! */
@@ -2648,7 +2628,12 @@ object * get_split_ob(object *orig_ob, uint32 nr)
             fix_player_weight(is_player_inv(orig_ob->env));
         }
 
-        esrv_update_item(UPD_NROF|UPD_WEIGHT, orig_ob->env, orig_ob);
+        if (!QUERY_FLAG(orig_ob, FLAG_SYS_OBJECT))
+        {
+            flags |= UPD_WEIGHT;
+        }
+
+        esrv_update_item(flags, orig_ob->env, orig_ob);
 
         /* will a stack in a chest where you remove one from the stack trigger
         * a button under the chest because the weight of the chest has changed now?
