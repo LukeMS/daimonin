@@ -1126,7 +1126,6 @@ int write_note(object *pl, object *item, char *msg)
             newBook->nrof = 1;
             FREE_AND_COPY_HASH(newBook->msg, buf);
             newBook = insert_ob_in_ob(newBook, pl);
-            esrv_send_item(pl, newBook);
         }
         else
         {
@@ -1251,7 +1250,6 @@ int write_scroll(object *pl, object *scroll)
 
         /* wait until finished manipulating the scroll before inserting it */
         newScroll = insert_ob_in_ob(newScroll, pl);
-        esrv_send_item(pl, newScroll);
         success = calc_skill_exp(pl, newScroll, 1.0f, -1, NULL);
         if (!confused)
             success *= 2;

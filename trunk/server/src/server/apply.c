@@ -2919,10 +2919,7 @@ int apply_special(object *who, object *op, int aflags)
     }
     if (who->type == PLAYER)
     {
-        /* if multiple objects were applied, update both slots */
-        if (tmp)
-            esrv_send_item(who, tmp);
-        esrv_send_item(who, op);
+        esrv_update_item(UPD_FLAGS, who, op);
     }
     return 0;
 }
@@ -2994,10 +2991,6 @@ void apply_player_light_refill(object *who, object *op)
             filler = get_split_ob(op, 1);
             filler->stats.food -= tmp;
             insert_ob_in_ob(filler, who);
-            if (QUERY_FLAG(op, FLAG_REMOVED))
-                esrv_del_item(CONTR(who), op->count, op->env);
-            else
-                esrv_send_item(who, op);
         }
         else
         {
@@ -3070,7 +3063,6 @@ void turn_on_light(object *op)
         if (tricky_flag)
         {
             op = insert_ob_in_ob(op, op_old->env);
-            esrv_send_item(op->env, op);
         }
         op->glow_radius = (sint8) op->last_sp;
     }
@@ -3097,7 +3089,6 @@ void turn_on_light(object *op)
             else
             {
                 op = insert_ob_in_ob(op, op_old->env);
-                esrv_send_item(op->env, op);
             }
         }
 
@@ -3363,7 +3354,6 @@ void apply_lighter(object *who, object *lighter)
                 oneLighter->stats.food--;
                 esrv_send_item(who, lighter);
                 oneLighter = insert_ob_in_ob(oneLighter, who);
-                esrv_send_item(who, oneLighter);
             }
             else
             {

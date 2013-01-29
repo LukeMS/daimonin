@@ -1371,14 +1371,6 @@ static int GameObject_InsertInside(lua_State *L)
 
     WHO = hooks->insert_ob_in_ob(WHO, WHAT);
 
-    /* TODO: incorporate in insert_ob_in_ob() */
-    hooks->esrv_send_item(hooks->is_player_inv(WHAT), WHO);
-
-    if ((tmp = hooks->is_player_inv(obenv)))
-    {
-        hooks->esrv_send_inventory(tmp, tmp);
-    }
-
     return 0;
 }
 
@@ -2403,7 +2395,6 @@ static int GameObject_CreatePlayerForce(lua_State *L)
     /* setup the force and put it in activator */
     FREE_AND_COPY_HASH(myob->name, txt);
     myob = hooks->insert_ob_in_ob(myob, WHAT);
-    hooks->esrv_send_item(hooks->is_player_inv(WHAT), myob);
 
     return push_object(L, &GameObject, myob);
 }
@@ -2907,7 +2898,6 @@ static int GameObject_CreatePlayerInfo(lua_State *L)
     /* setup the info and put it in activator */
     FREE_AND_COPY_HASH(myob->name, txt);
     myob = hooks->insert_ob_in_ob(myob, WHAT);
-    hooks->esrv_send_item(hooks->is_player_inv(WHAT), myob);
 
     return push_object(L, &GameObject, myob);
 }
@@ -3000,7 +2990,6 @@ static int GameObject_CreateInvisibleInside(lua_State *L)
     /*update_ob_speed(myob); */
     FREE_AND_COPY_HASH(myob->slaying, txt);
     myob = hooks->insert_ob_in_ob(myob, WHAT);
-    hooks->esrv_send_item(hooks->is_player_inv(WHAT), myob);
 
     return push_object(L, &GameObject, myob);
 }
@@ -3009,7 +2998,6 @@ static int GameObject_CreateInvisibleInside(lua_State *L)
 static object *CreateObjectInside_body(lua_State *L, object *where, char *archname, int id, int nrof, int value)
 {
     object *myob;
-    object *retobj;
 
     myob = hooks->arch_to_object(hooks->find_archetype(archname));
 
@@ -3038,9 +3026,7 @@ static object *CreateObjectInside_body(lua_State *L, object *where, char *archna
     if (nrof > 1)
         myob->nrof = nrof;
 
-    retobj = hooks->insert_ob_in_ob(myob, where);
-    hooks->esrv_send_item(where, retobj);
-    return retobj;
+    return hooks->insert_ob_in_ob(myob, where);
 }
 
 /*****************************************************************************/

@@ -1378,8 +1378,6 @@ void dragon_ability_gain(object *who, int atnr, int level)
         tmp = arch_to_object(tr->item);
         new_draw_info(NDI_UNIQUE | NDI_BLUE, 0, who, "You gained %s", query_name(tmp));
         tmp = insert_ob_in_ob(tmp, who);
-        if (who->type == PLAYER)
-            esrv_send_item(who, tmp);
     }
 }
 
