@@ -1231,39 +1231,23 @@ int command_stuck(object *op, char *params)
 
 int command_level(object *op, char *params)
 {
-    char       *name = params;
-    const char *name_hash;
-   	char       *buf;
-    player     *pl;
+    player *pl;
 
-if (!name)
-
-		{
-            new_draw_info(NDI_UNIQUE, 0, op, "You are level ~%u~.",
-                                                op->level);
-            return 0;
-        }
-
-    transform_player_name_string(name);
-
-if (!(name_hash = find_string(name)))
-
+    if (!params)
     {
-        new_draw_info(NDI_UNIQUE, 0, op, "No such player online.");
-        return 0;
+        new_draw_info(NDI_UNIQUE, 0, op, "You are level ~%d~.", op->level);
+    }
+    else if (!(pl = find_player(params)))
+    {
+        new_draw_info(NDI_UNIQUE, 0, op, "No such player.");
+
+        return COMMANDS_RTN_VAL_ERROR;
+    }
+    else
+    {
+        new_draw_info(NDI_UNIQUE, 0, op, "~%s~ is level ~%d~.",
+                      pl->ob->name, pl->ob->level);
     }
 
-    for (pl = first_player; pl != NULL; pl = pl->next)
-    {
-        if (pl->ob->name == name_hash)
-        {
-
-            new_draw_info(NDI_UNIQUE, 0, op, "~%s~ is level ~%u~.",
-                                            query_name(pl->ob), pl->ob->level);
-            return 0;
-        }
-    }
-
-    new_draw_info(NDI_UNIQUE, 0, op, "No such player.");
-    return 0;
+    return COMMANDS_RTN_VAL_OK;
 }
