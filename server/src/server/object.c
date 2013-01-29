@@ -2037,18 +2037,22 @@ static void RemoveFromEnv(object *op)
         {
             whose = (!whose) ? where : NULL;
         }
-        /* When op is being remove from an open container, update every
+        /* When op is being removed from an open container, update every
          * player who is looking. */
         else if (where->type == CONTAINER)
         {
             whose = (!whose) ? where->attacked_by : CONTR(whose)->container_above;
         }
 
-        if ((pl = (whose) ? CONTR(whose) : NULL))
+        if ((pl = (whose) ? CONTR(whose) : NULL)) // we have a client to notify
         {
             /* Update the client (sub_weight() above has already taken care of
              * any weight issues so here just delete the actual removed item). */
-            esrv_del_item(pl, op->count, op);
+            if (QUERY_FLAG(whose, FLAG_WIZ) ||    // either it's a wiz or
+                !QUERY_FLAG(op, FLAG_SYS_OBJECT)) // we're not updating about a sys object
+            {
+                esrv_del_item(pl, op->count, op);
+            }
 
             /* Only call fix_player() when op is directly in pl's inv --
              * fix_player() does not care about nested invs. */
@@ -2726,7 +2730,14 @@ object * decrease_ob_nr(object *op, uint32 i)
 
             if (tmp)
             {
-                esrv_update_item(UPD_NROF | UPD_WEIGHT, tmp, op);
+                sint32 flags = UPD_NROF;
+
+                if (!QUERY_FLAG(op, FLAG_SYS_OBJECT))
+                {
+                    flags |= UPD_WEIGHT;
+                }
+
+                esrv_update_item(flags, tmp, op);
             }
         }
         else /* we removed all! */
@@ -2889,6 +2900,8 @@ object *insert_ob_in_ob(object *op, object *where)
         where->event_flags |= EVENT_FLAG_SPECIAL_QUEST;
     }
 
+    update_ob_speed(op);
+
     /* This loop is so written that it will go through all players looking in a
      * container or just the single player if it is where. */
     do
@@ -2905,11 +2918,15 @@ object *insert_ob_in_ob(object *op, object *where)
             whose = (!whose) ? where->attacked_by : CONTR(whose)->container_above;
         }
 
-        if ((pl = (whose) ? CONTR(whose) : NULL))
+        if ((pl = (whose) ? CONTR(whose) : NULL)) // we have a client to notify
         {
             /* Update the client (add_weight() above has already taken care of
              * any weight issues so here just add the actual inserted item). */
-            esrv_send_item(whose, op);
+            if (QUERY_FLAG(whose, FLAG_WIZ) ||    // either it's a wiz or
+                !QUERY_FLAG(op, FLAG_SYS_OBJECT)) // we're not updating about a sys object
+            {
+                esrv_send_item(whose, op);
+            }
 
             /* Only call fix_player() when op is directly in pl's inv --
              * fix_player() does not care about nested invs. */
@@ -2921,8 +2938,6 @@ object *insert_ob_in_ob(object *op, object *where)
         }
     }
     while (pl);
-
-    update_ob_speed(op);
 
     return op;
 }
