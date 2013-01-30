@@ -671,6 +671,11 @@ object * merge_ob(object *op, object *tmp)
             op->nrof = op->nrof + tmp->nrof;
             remove_ob(tmp);
 
+            if (!QUERY_FLAG(op, FLAG_SYS_OBJECT))
+            {
+                RegrowBurdenTree(op, op->nrof, 1);
+            }
+
             return op;
         }
     }
