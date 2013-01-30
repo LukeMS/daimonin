@@ -29,6 +29,7 @@
 #include <sys/uio.h>
 #endif /* win32 */
 
+static void RegrowBurdenTree(object *op, sint32 nrof, sint8 mode);
 static void RemoveFromEnv(object *op);
 static void RemoveFromMap(object *op);
 
@@ -705,97 +706,70 @@ sint32 sum_weight(object *op)
     return sum;
 }
 
-/*
- * add_weight(object, nrof) adds the specified weight for op * nrof to the ->env of op,
- * and also updates how much the environment(s) is/are carrying.
- * don't call add_weight() for SYS_OBJECTs
- */
-static inline void add_weight(const object *item, const uint32 nrof)
+/* Changes the carrying value of any envs of op by nrof * op->weight. The
+ * direction of change is specified by mode (positive or negative). */
+static void RegrowBurdenTree(object *op, sint32 nrof, sint8 mode)
 {
-    object *op;
-    sint32 weight;
+    object *where,
+           *whose = NULL;
+    sint32  weight;
 
-    if(!(op = item->env))
+    /* If op is not in an env or has no weight, we have nothing to do. */
+    if (!(where = op->env) ||
+        !(weight = (op->type == CONTAINER &&
+                    op->weapon_speed != 1.0)
+                   ? op->damage_round_tag + op->weight // no stacking container, ignore nrof
+                   : WEIGHT_NROF(op, nrof)))
+    {
         return;
+    }
 
-    if(item->type == CONTAINER && item->weapon_speed != 1.0f)
-        weight = item->damage_round_tag + item->weight; /* no stacking container, ignore nrof */
-    else
-        weight = WEIGHT_NROF(item, nrof);
-    if(!weight)
-        return;
+    /* Ensure mode is either 1 or -1 then multiply weight by this. */
+    mode = (mode >= 0) ? 1 : -1;
+    weight *= mode;
 
+    /* Loop through the ancestors (envs) of op, adjusting their carrying and
+     * notifying clients as necessary. */
     do
     {
-        if(QUERY_FLAG(op, FLAG_SYS_OBJECT))
-            return;
-
-        /* we have a magical container modifying the weight by its magic? */
-        if(op->type == CONTAINER)
+        /* A sys object breaks the chain. */
+        if (QUERY_FLAG(where, FLAG_SYS_OBJECT))
         {
-            op->carrying += weight;
-            /* we modify weight to what the magical container has changed it */
-            if(op->weapon_speed != 1.0f)
+            break;
+        }
+
+        if (where->type == CONTAINER)
+        {
+            /* When op is a descendent of an open container, update every
+             * client who is looking. */
+            whose = (!whose)
+                    ? where->attacked_by : CONTR(whose)->container_above;
+            where->carrying += weight;
+
+            /* A magical container modifying the weight by its magic. */
+            if (where->weapon_speed != 1.0)
             {
-                weight = op->damage_round_tag;
-                op->damage_round_tag = (uint32)((float)op->carrying * op->weapon_speed);
-                weight = (op->damage_round_tag - weight); /* modified inventory weight */
+                weight = where->damage_round_tag;
+                where->damage_round_tag = (uint32)((float)where->carrying *
+                                                   where->weapon_speed);
+                weight = (mode < 0)
+                         ? weight - where->damage_round_tag
+                         : where->damage_round_tag - weight;
             }
         }
         else
-            op->carrying += weight;
-
-        /* we have to update the view for clients. If this object is in a player inventory or
-         * an player viewed open container which is INSIDE a player then update the view.
-         */
-        if(op->env && (op->env->type == PLAYER ||
-            (op->env->type == CONTAINER && op->env->attacked_by && op->env->env && op->env->env->type == PLAYER)))
-            esrv_update_item(UPD_WEIGHT, op->env->type == PLAYER?op->env:op->env->env, op);
-    }
-    while((op = op->env));
-}
-
-/*
- * sub_weight() recursively (outwards) subtracts a number from the
- * weight of an object (and what is carried by it's environment(s)).
- */
-static inline void sub_weight(object *item, sint32 nrof)
-{
-    object *op;
-    sint32 weight;
-
-    if(!(op = item->env))
-        return;
-
-    if(item->type == CONTAINER && item->weapon_speed != 1.0f)
-        weight = item->damage_round_tag + item->weight; /* no stacking container, ignore nrof */
-    else
-        weight = WEIGHT_NROF(item, nrof);
-    if(!weight)
-        return;
-
-    do
-    {
-        if(QUERY_FLAG(op, FLAG_SYS_OBJECT))
-            return;
-
-        /* we have a magical container modifying the weight by its magic? */
-        if(op->type == CONTAINER && op->weapon_speed != 1.0f)
         {
-            op->carrying -= weight;
-            /* we modify weight to what the magical container has changed it */
-            weight = op->damage_round_tag;
-            op->damage_round_tag = (uint32)((float)op->carrying * op->weapon_speed);
-            weight -= op->damage_round_tag;
+            whose = NULL;
+            where->carrying += weight;
         }
-        else
-            op->carrying -= weight;
 
-        if(op->env && (op->env->type == PLAYER ||
-            (op->env->type == CONTAINER && op->env->attacked_by && op->env->env && op->env->env->type == PLAYER)))
-            esrv_update_item(UPD_WEIGHT, op->env->type == PLAYER?op->env:op->env->env, op);
+        if (whose &&
+            CONTR(whose)) // we have a client to notify
+        {
+            esrv_update_item(UPD_WEIGHT, whose, where);
+        }
     }
-    while((op = op->env));
+    while ((where = where->env));
 }
 
 /*
@@ -1983,7 +1957,7 @@ static void RemoveFromEnv(object *op)
      * only -- the object has not actually gone yet. */
     if (!QUERY_FLAG(op, FLAG_SYS_OBJECT))
     {
-        sub_weight(op, op->nrof);
+        RegrowBurdenTree(op, op->nrof, -1);
     }
 
     /* Sort out the revised object chain. */
@@ -2026,8 +2000,9 @@ static void RemoveFromEnv(object *op)
 
         if ((pl = (whose) ? CONTR(whose) : NULL)) // we have a client to notify
         {
-            /* Update the client (sub_weight() above has already taken care of
-             * any weight issues so here just delete the actual removed item). */
+            /* Update the client (RegrowBurdenTree() above has already taken
+             * care of any weight issues so here just delete the actual removed
+             * item). */
             if (QUERY_FLAG(whose, FLAG_WIZ) ||    // either it's a wiz or
                 !QUERY_FLAG(op, FLAG_SYS_OBJECT)) // we're not updating about a sys object
             {
@@ -2623,8 +2598,7 @@ object * get_split_ob(object *orig_ob, uint32 nr)
 
         if (orig_ob->env != NULL && !QUERY_FLAG(orig_ob, FLAG_SYS_OBJECT))
         {
-            /* sub weight will not call fix_player for players - its to low level! */
-            sub_weight(orig_ob, nr);
+            RegrowBurdenTree(orig_ob, nr, -1);
             fix_player_weight(is_player_inv(orig_ob->env));
         }
 
@@ -2708,7 +2682,7 @@ object * decrease_ob_nr(object *op, uint32 i)
         {
             if (!QUERY_FLAG(op, FLAG_SYS_OBJECT))
             {
-                sub_weight(op, i);
+                RegrowBurdenTree(op, i, -1);
             }
 
             op->nrof -= i;
@@ -2866,7 +2840,7 @@ object *insert_ob_in_ob(object *op, object *where)
     /* Recalc the chain of weights. */
     if (!QUERY_FLAG(op, FLAG_SYS_OBJECT))
     {
-        add_weight(op, op->nrof);
+        RegrowBurdenTree(op, op->nrof, 1);
     }
 
     /* For event objects set the new env's event flags. */
@@ -2905,8 +2879,9 @@ object *insert_ob_in_ob(object *op, object *where)
 
         if ((pl = (whose) ? CONTR(whose) : NULL)) // we have a client to notify
         {
-            /* Update the client (add_weight() above has already taken care of
-             * any weight issues so here just add the actual inserted item). */
+            /* Update the client (RegrowBurdenTree() above has already taken
+             * care of any weight issues so here just add the actual inserted
+             * item). */
             if (QUERY_FLAG(whose, FLAG_WIZ) ||    // either it's a wiz or
                 !QUERY_FLAG(op, FLAG_SYS_OBJECT)) // we're not updating about a sys object
             {
