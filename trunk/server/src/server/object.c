@@ -2123,21 +2123,24 @@ static void RemoveFromMap(object *op)
     op->env = NULL;
 }
 
-/* delete and remove recursive the inventory of an object.
- */
+/* Recursively remove the inventory of op. */
 void remove_ob_inv(object *op)
 {
-    object *tmp, *tmp2;
+    object *this,
+           *next;
 
-    for (tmp = op->inv; tmp; tmp = tmp2)
+    for (this = op->inv; this; this = next)
     {
-        tmp2 = tmp->below; /* save ptr, gets NULL in remove_ob */
-        if (tmp->inv)
-            remove_ob_inv(tmp);
-        remove_ob(tmp);  /* no map, no check off */
+        next = this->below;
+
+        if (this->inv)
+        {
+            remove_ob_inv(this);
+        }
+
+        remove_ob(this);
     }
 }
-
 
 /*
  * insert_ob_in_map (op, map, originator, flag):
