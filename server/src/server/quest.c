@@ -105,8 +105,7 @@ static inline object *add_quest_item(object *target, object *obj)
     SET_FLAG(q_tmp, FLAG_KNOWN_CURSED);
     SET_FLAG(q_tmp, FLAG_KNOWN_MAGICAL);
     SET_FLAG(q_tmp, FLAG_IDENTIFIED);
-    insert_ob_in_ob(q_tmp, target); /* real object to player */
-    esrv_send_item(target, q_tmp);
+    q_tmp = insert_ob_in_ob(q_tmp, target); /* real object to player */
 
     return q_tmp;
 }
@@ -524,7 +523,7 @@ void check_kill_quest_event(struct obj *pl, struct obj *op)
                         newob = get_object();
                         copy_object(tmp_info->inv, newob);
                         newob->nrof = newob->arch->clone.nrof; /* IMPORTANT: the quest item nrof is used as nrof we need! */
-                        esrv_send_item(pl, insert_ob_in_ob(newob, pl));
+                        (void)insert_ob_in_ob(newob, pl);
                     }
 
                     if(nrof > tmp_info->inv->nrof)

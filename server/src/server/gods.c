@@ -535,8 +535,11 @@ static int god_removes_curse(object *op, int remove_damnation)
             CLEAR_FLAG(tmp, FLAG_DAMNED);
             CLEAR_FLAG(tmp, FLAG_CURSED);
             CLEAR_FLAG(tmp, FLAG_KNOWN_CURSED);
+
             if (op->type == PLAYER)
-                esrv_send_item(op, tmp);
+            {
+                esrv_update_item(UPD_FLAGS, op, tmp);
+            }
         }
     }
 
@@ -668,7 +671,6 @@ static void follower_remove_similar_item(object *op, object *item)
                     new_draw_info(NDI_UNIQUE, 0, op, "The %s crumbles to dust!", query_short_name(tmp, op));
 
                 remove_ob(tmp);    /* remove obj from players inv. */
-                esrv_del_item(CONTR(op), tmp->count, tmp->env); /* notify client */
             }
             if (tmp->inv)
                 follower_remove_similar_item(tmp, item);
@@ -686,8 +688,7 @@ static int god_gives_present(object *op, object *god, treasure *tr)
     tmp = arch_to_object(tr->item);
     new_draw_info(NDI_UNIQUE, 0, op, "%s lets %s appear in your hands.", god->name, query_short_name(tmp, op));
     tmp = insert_ob_in_ob(tmp, op);
-    if (op->type == PLAYER)
-        esrv_send_item(op, tmp);
+
     return 1;
 }
 

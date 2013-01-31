@@ -517,9 +517,6 @@ static int GameObject_setAttribute(lua_State *L, lua_object *obj, struct attribu
     if (attrib->offset == offsetof(object, weight) && pl)
         pl->carrying = hooks->sum_weight(pl);
 
-    /* update player inv when needed */
-    hooks->esrv_send_item(pl, who);
-
     /* Special handling for some player stuff */
     if (who->type == PLAYER)
     {
@@ -560,7 +557,8 @@ static int GameObject_setFlag(lua_State *L, lua_object *obj, uint32 flagno)
     else
         CLEAR_FLAG(obj->data.object, flagno);
 
-    hooks->esrv_send_item(hooks->is_player_inv(obj->data.object), obj->data.object);
+    hooks->esrv_update_item(UPD_FLAGS, hooks->is_player_inv(obj->data.object),
+                            obj->data.object);
 
     /* TODO: if gender changed:
     if()
