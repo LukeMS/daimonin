@@ -365,7 +365,7 @@ static sint64 PayFrom(object *op, object *root, sint64 amount)
         if (this->type == MONEY)
         {
             sint32 needed = (amount > this->value)
-                            ? (amount / this->value + (amount % this->value) ? 1 : 0)
+                            ? (amount / this->value + ((amount % this->value) ? 1 : 0))
                             : 1,
                    used = MIN((sint32)this->nrof, needed);
 
