@@ -1,12 +1,14 @@
 Object fire_cauld.131
-name small cauldron
-face fire_cauld.131
-animation fire_cauld.131
-is_turnable 1
-direction 1
-no_pick 1
+name flaming cauldron
+layer 5
 type 79
-layer 4
+face fire_cauld.131
+animation fire_cauld
+direction 1
+is_turnable 1
+is_animated 1
+anim_speed 4
+speed 1
 end
 
 Object lab_cauld_brk
