@@ -6,6 +6,6 @@ face pool_poison.101
 no_pick 1
 animation pool_poison
 is_animated 1
-anim_speed 5
+anim_speed 8
 speed 1
 end
