@@ -769,8 +769,6 @@ static void RegrowBurdenTree(object *op, sint32 nrof, sint8 mode)
             where->carrying += weight;
         }
 
-if (first_player && first_player->ob == where)
-    new_draw_info(NDI_UNIQUE | NDI_RED, 0, first_player->ob, "%s * %d = %d so c%d", op->name, nrof, weight, first_player->ob->carrying);
         if (whose &&
             CONTR(whose)) // we have a client to notify
         {
