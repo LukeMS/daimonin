@@ -410,6 +410,8 @@ void set_gmaster_mode(player *pl, int mode_id)
                 (!QUERY_FLAG(pl->ob, FLAG_SEE_INVISIBLE) && // if player could not see invis,
                  QUERY_FLAG(ob, FLAG_IS_INVISIBLE)))        // item is not in his inv yet
             {
+                /* TODO: Send recursive invs. The current code cannot sensibly
+                 * do this. viiew_inv.c needs an overhaul. */
                 esrv_send_item(pl->ob, ob);
             }
         }
@@ -496,7 +498,12 @@ void remove_gmaster_mode(player *pl)
                 (!QUERY_FLAG(pl->ob, FLAG_SEE_INVISIBLE) && // if player could not see invis,
                  QUERY_FLAG(ob, FLAG_IS_INVISIBLE)))        // item should not be in his inv
             {
-                esrv_del_item(pl, ob->count, ob);
+                if (ob->inv)
+                {
+                    esrv_del_item_inv(pl, ob->inv);
+                }
+
+                esrv_del_item(pl, ob->count, NULL);
             }
         }
     }

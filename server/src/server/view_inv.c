@@ -990,7 +990,6 @@ void esrv_send_item(object *pl, object *op)
         esrv_send_item_send(tmp, op);
 }
 
-
 static inline void esrv_del_item_send(player *pl, int tag)
 {
     SOCKBUF_REQUEST_BUFFER(&pl->socket, SOCKET_SIZE_SMALL);
@@ -1029,6 +1028,21 @@ void esrv_del_item(player *pl, int tag, object *cont)
     }
 }
 
+/* Recursively deletes op->inv. */
+void esrv_del_item_inv(player *pl, object *op)
+{
+    object *this;
+
+    for (this = op; this; this = this->below)
+    {
+        if (this->inv)
+        {
+            esrv_del_item_inv(pl, this->inv);
+        }
+
+        esrv_del_item(pl, this->count, NULL);
+    }
+}
 
 /*******************************************************************************
  *
