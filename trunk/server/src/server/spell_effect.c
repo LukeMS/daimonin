@@ -1519,9 +1519,6 @@ void animate_bomb(object *op)
         if (env->map == NULL)
             return;
 
-        if (env->type == PLAYER)
-            esrv_del_item(CONTR(env), op->count, op->env);
-
         destruct_ob(op);
         op->x = env->x;
         op->y = env->y;
@@ -1595,7 +1592,7 @@ void cancellation(object *op)
         CLEAR_FLAG(op, FLAG_KNOWN_CURSED);
         if (op->env && op->env->type == PLAYER)
         {
-            esrv_send_item(op->env, op);
+            esrv_update_item(UPD_FLAGS, op->env, op);
         }
     }
 }
@@ -1880,7 +1877,7 @@ int remove_curse(object *op, object *target, int type, SpellTypeFrom src)
                 if (!QUERY_FLAG(tmp, FLAG_PERM_CURSED))
                     CLEAR_FLAG(tmp, FLAG_KNOWN_CURSED);
                 if (target->type == PLAYER)
-                    esrv_send_item(target, tmp);
+                    esrv_update_item(UPD_FLAGS, target, tmp);
             }
             else /* level of the items is to high for this remove curse */
             {
@@ -2044,7 +2041,7 @@ int cast_detection(object *op, object *target, int type)
               {
                   SET_FLAG(tmp, FLAG_KNOWN_MAGICAL);
                   suc = TRUE;
-                  esrv_send_item(target, tmp);
+                  esrv_update_item(UPD_FLAGS, target, tmp);
               }
           }
 
@@ -2086,7 +2083,7 @@ int cast_detection(object *op, object *target, int type)
               {
                   SET_FLAG(tmp, FLAG_KNOWN_CURSED);
                   suc = TRUE;
-                  esrv_send_item(target, tmp);
+                  esrv_update_item(UPD_FLAGS, target, tmp);
               }
           }
           nx = target->x;ny = target->y;
@@ -2245,7 +2242,7 @@ static int cast_detection_old(object *op, object *target,int type) {
             case SP_DETECT_MAGIC:
             if (is_magical(tmp) && !QUERY_FLAG(tmp,FLAG_KNOWN_MAGICAL)) {
                 SET_FLAG(tmp,FLAG_KNOWN_MAGICAL);
-                esrv_send_item (op, tmp);
+                esrv_update_item(UPD_FLAGS, op, tmp);
                 done_one = 1;
             }
             break;
@@ -2255,7 +2252,7 @@ static int cast_detection_old(object *op, object *target,int type) {
             (QUERY_FLAG(tmp, FLAG_CURSED) ||
              QUERY_FLAG(tmp, FLAG_DAMNED))) {
             SET_FLAG(tmp, FLAG_KNOWN_CURSED);
-            esrv_send_item (op, tmp);
+            esrv_update_item(UPD_FLAGS, op, tmp);
             done_one = 1;
             }
             break;
@@ -3419,8 +3416,6 @@ int animate_weapon(object *op, object *caster, int dir, archetype *at, int spell
         }
         remove_ob(weapon);
         insert_ob_in_ob(weapon, tmp);
-        if (op->type == PLAYER)
-            esrv_send_item(op, weapon);
         SET_FLAG(tmp, FLAG_USE_WEAPON);
         if (apply_special(tmp, weapon, AP_APPLY))
             LOG(llevBug, "BUG: animate_weapon(): golem can't apply weapon (%s - %s)!\n", query_name(op),

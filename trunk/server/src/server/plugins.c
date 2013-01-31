@@ -65,8 +65,6 @@ struct plugin_hooklist  hooklist    =
     enter_map,
     enter_map_by_exit,
     enter_map_by_name,
-    esrv_send_inventory,
-    esrv_send_item,
     esrv_update_item,
     /* F */
     find_animation,

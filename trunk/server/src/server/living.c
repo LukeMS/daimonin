@@ -1217,7 +1217,6 @@ void fix_player(object *op)
             {
                 LOG(llevBug,"BUG: fix_player(): found illegal quest container (st: %d) in player %s\n",
                     tmp->sub_type1, query_name(op));
-                esrv_del_item(pl, tmp->count, tmp); // tell client
                 remove_ob(tmp);
             }
             continue;
@@ -1674,7 +1673,7 @@ void fix_player(object *op)
         {
             /* wrong amunition - unapply it on the fly */
             CLEAR_FLAG(pl->equipment[PLAYER_EQUIP_AMUN], FLAG_APPLIED);
-            esrv_send_item(op, pl->equipment[PLAYER_EQUIP_AMUN]);
+            esrv_update_item(UPD_FLAGS, op, pl->equipment[PLAYER_EQUIP_AMUN]);
             pl->equipment[PLAYER_EQUIP_AMUN] = NULL;
         }
 

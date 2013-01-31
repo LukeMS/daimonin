@@ -935,16 +935,20 @@ void change_object(object *op)
                 /* thats special lights like lamp which can be refilled */
                 if (op->other_arch == NULL || (op->other_arch && !(op->other_arch->clone.sub_type1 & 2)))
                 {
+                    sint32 flags;
+
                     op->stats.food = 0;
                     if (op->other_arch && op->other_arch->clone.sub_type1 & 1)
                     {
                         op->animation_id = op->other_arch->clone.animation_id;
                         SET_ANIMATION(op, (NUM_ANIMATIONS(op) / NUM_FACINGS(op)) * op->direction);
+                        flags = UPD_ANIM;
                     }
                     else
                     {
                         CLEAR_FLAG(op, FLAG_ANIMATE);
                         op->face = op->arch->clone.face;
+                        flags = UPD_FACE;
                     }
 
                     if (op->env) /* not on map? */
@@ -953,7 +957,7 @@ void change_object(object *op)
                         {
                             new_draw_info(NDI_UNIQUE, 0, op->env, "The %s burnt out.", query_name(op));
                             op->glow_radius = 0;
-                            esrv_send_item(op->env, op);
+                            esrv_update_item(flags, op->env, op);
                             FIX_PLAYER(op->env ,"change object");
                         }
                         else /* atm, lights inside other inv as players don't set light masks */
@@ -1001,19 +1005,7 @@ void change_object(object *op)
         if (env)
         {
             tmp->x = env->x,tmp->y = env->y;
-            tmp = insert_ob_in_ob(tmp, env);
-
-            /* this should handle in future insert_ob_in_ob() */
-            if (env->type == PLAYER)
-            {
-                esrv_del_item(CONTR(env), op->count, NULL);
-                esrv_send_item(env, tmp);
-            }
-            else if (env->type == CONTAINER)
-            {
-                esrv_del_item(NULL, op->count, env);
-                esrv_send_item(env, tmp);
-            }
+            (void)insert_ob_in_ob(tmp, env);
         }
         else
         {
@@ -1652,29 +1644,11 @@ int process_object(object *op)
                     return 1;
                 }
 
-                if (op->env && op->env->type == CONTAINER)
-                    esrv_del_item(NULL, op->count, op->env);
-                else
-                {
-                    object *pl  = is_player_inv(op);
-                    if (pl)
-                        esrv_del_item(CONTR(pl), op->count, op->env);
-                }
-
                 remove_ob(op);
                 check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
                 return 1;
             }
 
-            /* IF necessary, delete the item from the players inventory */
-            if (op->env && op->env->type == CONTAINER)
-                esrv_del_item(NULL, op->count, op->env);
-            else
-            {
-                object *pl  = is_player_inv(op);
-                if (pl)
-                    esrv_del_item(CONTR(pl), op->count, op->env);
-            }
             destruct_ob(op);
         }
         return 1;

@@ -1355,8 +1355,12 @@ void identify(object *op)
         pl = is_player_inv(op->env);
         if (pl)
             /* A lot of the values can change from an update - might as well send
-             * it all.
-             */
+             * it all. */
+            /* Seems very cavalier with BW -- looks to me like an
+             * esrv_update_item() with one or more of UPD_FLAGS | UPD_FACE |
+             * UPD_NAME would do it.
+             *
+             * -- Smacky 20130131 */
             esrv_send_item(pl, op);
     }
 }

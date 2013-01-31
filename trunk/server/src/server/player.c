@@ -433,8 +433,6 @@ int save_life(object *op)
         {
             play_sound_map(op->map, op->x, op->y, SOUND_OB_EVAPORATE, SOUND_NORMAL);
             new_draw_info(NDI_UNIQUE, 0, op, "Your %s vibrates violently, then evaporates.", query_name(tmp));
-            if (CONTR(op))
-                esrv_del_item(CONTR(op), tmp->count, tmp->env);
             remove_ob(tmp);
             CLEAR_FLAG(op, FLAG_LIFESAVE);
             if (op->stats.hp <= 0)

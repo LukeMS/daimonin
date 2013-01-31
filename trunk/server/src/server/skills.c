@@ -96,8 +96,6 @@ int attempt_steal(object *op, object *who)
             return 0;
         else if (roll < chance)
         {
-            if (op->type == PLAYER)
-                esrv_del_item(CONTR(op), tmp->count, tmp->env);
             pick_up(who, tmp);
             if (can_pick(who, tmp))
             {
@@ -707,12 +705,6 @@ int do_skill_ident2(object *tmp, object *pl, int obj_class)
                     new_draw_info(NDI_UNIQUE, 0, pl, "The item has a story:");
                     new_draw_info(NDI_UNIQUE, 0, pl, "%s", tmp->msg);
                 }
-                /* identify will take care of updating the item if
-                     * it is in the players inventory.  IF on map, do it
-                     * here
-                     */
-                if (tmp->map)
-                    esrv_send_item(pl, tmp);
             }
             success += calc_skill_exp(pl, tmp, 1.0f,-1, NULL);
         }
@@ -1122,7 +1114,6 @@ int write_note(object *pl, object *item, char *msg)
             newBook = get_object();
             copy_object(item, newBook);
             decrease_ob(item);
-            esrv_send_item(pl, item);
             newBook->nrof = 1;
             FREE_AND_COPY_HASH(newBook->msg, buf);
             newBook = insert_ob_in_ob(newBook, pl);
@@ -1130,7 +1121,6 @@ int write_note(object *pl, object *item, char *msg)
         else
         {
             FREE_AND_COPY_HASH(item->msg, buf);
-            esrv_send_item(pl, item);
         }
         new_draw_info(NDI_UNIQUE, 0, pl, "You write in the %s.", query_short_name(item, pl));
         return strlen(msg);

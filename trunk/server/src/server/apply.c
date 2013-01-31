@@ -756,7 +756,6 @@ int check_improve_weapon(object *op, object *tmp)
 
     new_draw_info(NDI_UNIQUE, 0, op, "Applied weapon builder.");
     improve_weapon(op, tmp, otmp);
-    esrv_send_item(op, otmp);
     return 1;
 }
 
@@ -799,7 +798,6 @@ int improve_armour(object *op, object *improver, object *armour)
     armour->magic++;
     if (op->type == PLAYER)
     {
-        esrv_send_item(op, armour);
         if (QUERY_FLAG(armour, FLAG_APPLIED))
             FIX_PLAYER(op ,"improve armour");
     }
@@ -2655,16 +2653,20 @@ int apply_special(object *who, object *op, int aflags)
                 fix_monster(who);
         }
 
-        if (!(aflags & AP_NO_MERGE))
+        tmp = (!(aflags & AP_NO_MERGE)) ? merge_ob(op, NULL) : NULL;
+
+        if (who->type == PLAYER &&
+            CONTR(who))
         {
-            tmp = merge_ob(op, NULL);
+            sint32 flags = UPD_FLAGS;
 
-            if (who->type == PLAYER && tmp)
-                esrv_del_item(pl, tmp->count, tmp->env);
+            if (tmp)
+            {
+                flags |= UPD_NROF | UPD_WEIGHT;
+            }
+
+            esrv_update_item(flags, who, op);
         }
-
-        if (who->type == PLAYER)
-            esrv_send_item(who, op);
 
         return 0;
     }
@@ -3001,10 +3003,8 @@ void apply_player_light_refill(object *who, object *op)
         item->stats.food += tmp;
         new_draw_info(NDI_UNIQUE, 0, who, "You refill the %s with %d units %s.", query_name(item), tmp,
                 query_name(filler));
-
-        esrv_send_item(who, filler);
     }
-    esrv_send_item(who, item);
+
     FIX_PLAYER(who ,"apply light refill");
 }
 
@@ -3281,9 +3281,8 @@ void apply_player_light(object *who, object *op)
                                                  query_name(tmp));
 
                         CLEAR_FLAG(tmp, FLAG_APPLIED);
-
                         turn_off_light(tmp);
-                        esrv_send_item(who, tmp);
+                        esrv_update_item(UPD_FLAGS | UPD_FACE, who, tmp);
                     }
                 }
 
@@ -3318,8 +3317,6 @@ void apply_player_light(object *who, object *op)
             }
         }
     }
-    if (op->env && (op->env->type == PLAYER || op->env->type == CONTAINER))
-        esrv_send_item(op->env, op);
 }
 
 
@@ -3352,7 +3349,6 @@ void apply_lighter(object *who, object *lighter)
                 lighter->nrof -= 1;
                 oneLighter->nrof = 1;
                 oneLighter->stats.food--;
-                esrv_send_item(who, lighter);
                 oneLighter = insert_ob_in_ob(oneLighter, who);
             }
             else

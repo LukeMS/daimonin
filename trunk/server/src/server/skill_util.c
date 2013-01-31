@@ -782,7 +782,6 @@ int learn_skill(object *pl, object *scroll, char *name, int skillnr, int scroll_
         play_sound_player_only(CONTR(pl), SOUND_LEARN_SPELL, SOUND_NORMAL, 0, 0);
         new_draw_info(NDI_UNIQUE, 0, pl, "You have learned the skill %s!", tmp->name);
         send_skilllist_cmd(pl, tmp, SPLIST_MODE_ADD);
-        esrv_send_item(pl, tmp);
     }
 
     return 1;

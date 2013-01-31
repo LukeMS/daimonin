@@ -276,8 +276,6 @@ struct plugin_hooklist
     int (*enter_map_by_exit)(object *, object *);
     mapstruct *(*enter_map_by_name)(object *, const char *, const char *, int,
                                     int, int);
-    void (*esrv_send_inventory)(object *, object *);
-    void (*esrv_send_item)(object *, object *);
     void (*esrv_update_item)(int, object *, object *);
     /* F */
     int (*find_animation)(char *);

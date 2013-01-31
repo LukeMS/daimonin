@@ -625,11 +625,6 @@ void put_object_in_sack(object *const op, object *const sack, object *tmp, const
             new_draw_info(NDI_UNIQUE, 0, op, "%s", errmsg);
             return;
         }
-        /* Tell a client what happened other objects */
-        if (was_destroyed(tmp2, tmp2_tag))
-            esrv_del_item(CONTR(op), tmp2_tag, tmp2_cont);
-        else    /* this can proably be replaced with an update */
-            esrv_send_item(op, tmp2);
     }
     else if (!QUERY_FLAG(tmp, FLAG_UNPAID) || !QUERY_FLAG(tmp, FLAG_NO_PICK))
     {
@@ -657,18 +652,6 @@ void put_object_in_sack(object *const op, object *const sack, object *tmp, const
     tmp_cont = tmp->env;
     tmp2 = insert_ob_in_ob(tmp, sack);
     FIX_PLAYER(op, "put_object_in_sack"); /* This is overkill, fix_player() is called somewhere */
-    /* in object.c */
-
-    /* If an object merged (and thus, different object), we need to
-    * delete the original.
-    */
-    if (tmp2 != tmp)
-        esrv_del_item(CONTR(op), tmp_tag, tmp_cont);
-
-    esrv_send_item(op, tmp2);
-    /* update the sacks and players weight */
-    esrv_update_item(UPD_WEIGHT, op, sack);
-    esrv_update_item(UPD_WEIGHT, op, op);
 }
 
 /*
@@ -715,19 +698,6 @@ void drop_object(object *const op, object *tmp, const uint32 nrof)
             new_draw_info(NDI_UNIQUE, 0, op, "%s", errmsg);
             return;
         }
-        /* Tell a client what happened rest of objects.  tmp2 is now the
-        * original object
-        */
-        if (op->type == PLAYER)
-        {
-            if (was_destroyed(tmp2, tmp2_tag))
-                esrv_del_item(CONTR(op), tmp2_tag, tmp2_cont);
-            else
-                esrv_send_item(op, tmp2);
-            /* Update the container the object was in */
-            if (tmp2->env && tmp2->env != op && tmp2->env != tmp2)
-                esrv_update_item(UPD_WEIGHT, op, tmp2->env);
-        }
     }
     else
     {
@@ -753,7 +723,6 @@ void drop_object(object *const op, object *tmp, const uint32 nrof)
                 new_draw_info(NDI_UNIQUE, 0, op, "The shop magic put it back to the storage.");
             else
                 new_draw_info(NDI_UNIQUE, 0, op, "The ~NO-DROP~ item vanishes to nowhere as you drop it!");
-            esrv_del_item(CONTR(op), tmp->count, tmp->env);
         }
         FIX_PLAYER(op,"drop_object - startequip");
         return;
@@ -769,11 +738,8 @@ void drop_object(object *const op, object *tmp, const uint32 nrof)
             if (op->type == PLAYER)
             {
                 new_draw_info(NDI_UNIQUE, 0, op, "The shop magic put it to the storage.");
-                esrv_del_item(CONTR(op), tmp->count, tmp->env);
+                FIX_PLAYER(op ,"drop_object - unpaid");
             }
-            FIX_PLAYER(op ,"drop_object - unpaid");
-            if (op->type == PLAYER)
-                esrv_send_item(op, op);
 
             return;
         }
@@ -781,22 +747,15 @@ void drop_object(object *const op, object *tmp, const uint32 nrof)
 
     tmp->x = op->x;
     tmp->y = op->y;
-
-    if (op->type == PLAYER)
-        esrv_del_item(CONTR(op), tmp->count, tmp->env);
-
     insert_ob_in_map(tmp, op->map, op, 0);
-
     SET_FLAG(op, FLAG_NO_APPLY);
     remove_ob(op);
     insert_ob_in_map(op, op->map, op, INS_NO_MERGE | INS_NO_WALK_ON);
     CLEAR_FLAG(op, FLAG_NO_APPLY);
 
-    /* Need to update the weight for the player */
     if (op->type == PLAYER)
     {
         FIX_PLAYER(op ,"drop object - end");
-        esrv_send_item(op, op);
     }
 }
 
