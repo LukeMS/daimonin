@@ -778,7 +778,6 @@ static int CreateObject(object *op, char *params, CreateMode_t mode)
             }
 
             head = insert_ob_in_ob(head, op);
-            esrv_send_item(op, head);
         }
     }
 

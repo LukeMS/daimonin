@@ -360,14 +360,6 @@ static void pick_up_object(object *pl, object *op, object *tmp, uint32 nrof)
             new_draw_info(NDI_UNIQUE, 0, pl, "%s", errmsg);
             return;
         }
-        /* Tell a client what happened rest of objects */
-        if (pl->type == PLAYER)
-        {
-            if (was_destroyed(tmp2, tmp2_tag))
-                esrv_del_item(CONTR(pl), tmp2_tag, tmp2_cont);
-            else
-                esrv_send_item(pl, tmp2);
-        }
     }
     else
     {
@@ -378,11 +370,10 @@ static void pick_up_object(object *pl, object *op, object *tmp, uint32 nrof)
         if (!QUERY_FLAG(tmp, FLAG_REMOVED))
         {
             int result;
-            if (tmp->env && pl->type == PLAYER)
-                esrv_del_item(CONTR(pl), tmp->count, tmp->env);
+
+            remove_ob(tmp);
 
             /* walk_off check added 2007-01-23, Gecko */
-            remove_ob(tmp);
             if ((result = check_walk_off(tmp, pl, MOVE_APPLY_VANISHED)) != CHECK_WALK_OK)
             {
                 if(result == CHECK_WALK_DESTROYED)
@@ -401,24 +392,6 @@ static void pick_up_object(object *pl, object *op, object *tmp, uint32 nrof)
     {
         new_draw_info(NDI_UNIQUE, 0, pl, "You put it into %s.", query_name(op));
     }
-
-    /* All the stuff below deals with client/server code, and is only
-    * usable by players
-    */
-    if (pl->type != PLAYER)
-        return;
-
-    esrv_send_item(pl, tmp);
-    /* These are needed to update the weight for the container we
-    * are putting the object in, and the players weight, if different.
-    */
-    esrv_update_item(UPD_WEIGHT, pl, op);
-    if (op != pl)
-        esrv_send_item(pl, pl);
-
-    /* Update the container the object was in */
-    if (env && env != pl && env != op)
-        esrv_update_item(UPD_WEIGHT, pl, env);
 }
 
 
