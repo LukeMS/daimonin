@@ -671,7 +671,8 @@ object * merge_ob(object *op, object *tmp)
             op->nrof = op->nrof + tmp->nrof;
             remove_ob(tmp);
 
-            if (!QUERY_FLAG(op, FLAG_SYS_OBJECT))
+            if (op->env &&
+                !QUERY_FLAG(op, FLAG_SYS_OBJECT))
             {
                 RegrowBurdenTree(op, op->nrof, 1);
             }
@@ -768,6 +769,8 @@ static void RegrowBurdenTree(object *op, sint32 nrof, sint8 mode)
             where->carrying += weight;
         }
 
+if (first_player && first_player->ob == where)
+    new_draw_info(NDI_UNIQUE | NDI_RED, 0, first_player->ob, "%s * %d = %d so c%d", op->name, nrof, weight, first_player->ob->carrying);
         if (whose &&
             CONTR(whose)) // we have a client to notify
         {
@@ -2604,7 +2607,8 @@ object * get_split_ob(object *orig_ob, uint32 nr)
     {
         sint32 flags = UPD_NROF;
 
-        if (orig_ob->env != NULL && !QUERY_FLAG(orig_ob, FLAG_SYS_OBJECT))
+        if (orig_ob->env &&
+            !QUERY_FLAG(orig_ob, FLAG_SYS_OBJECT))
         {
             RegrowBurdenTree(orig_ob, nr, -1);
             fix_player_weight(is_player_inv(orig_ob->env));
@@ -2767,8 +2771,9 @@ object * decrease_ob_nr(object *op, uint32 i)
 object *insert_ob_in_ob(object *op, object *where)
 {
     mapstruct *m;
+    object    *merged,
+              *whose = NULL;
     player    *pl = NULL;
-    object    *whose = NULL;
 
     if (!op)
     {
@@ -2824,7 +2829,12 @@ object *insert_ob_in_ob(object *op, object *where)
     op->ox = 0;
     op->oy = 0;
 #endif
-    (void)merge_ob(op, NULL);
+
+    /* We only care about merged as an indicator of whether it did or not
+     * (whether merged != NULL) so we know whether or not to call
+     * RegrowBurdenTree() below. Eiither way, op is still our real object being
+     * inserted. */
+    merged = merge_ob(op, NULL);
     CLEAR_FLAG(op, FLAG_REMOVED);
     SET_FLAG(op, FLAG_OBJECT_WAS_MOVED);
 
@@ -2846,7 +2856,8 @@ object *insert_ob_in_ob(object *op, object *where)
     }
 
     /* Recalc the chain of weights. */
-    if (!QUERY_FLAG(op, FLAG_SYS_OBJECT))
+    if (!merged &&
+        !QUERY_FLAG(op, FLAG_SYS_OBJECT))
     {
         RegrowBurdenTree(op, op->nrof, 1);
     }
