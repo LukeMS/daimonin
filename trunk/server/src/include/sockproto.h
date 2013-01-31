@@ -91,6 +91,7 @@ void            esrv_send_inventory(object *pl, object *op);
 void            esrv_update_item(int flags, object *pl, object *op);
 void            esrv_send_item(object *pl, object *op);
 void            esrv_del_item(player *pl, int tag, object *cont);
+void            esrv_del_item_inv(player *pl, object *op);
 object         *esrv_get_ob_from_count(object *pl, tag_t count);
 void            esrv_move_object(object *pl, tag_t to, tag_t tag, long nrof);
 /* loop.c */
