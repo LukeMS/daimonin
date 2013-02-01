@@ -1359,7 +1359,7 @@ void cs_cmd_fire(char *params, int len, NewSocket *ns)
         case ALTACT_MODE_THROWING:
             if ((weapon = pl->equipment[PLAYER_EQUIP_BOW]) &&
                 weapon->type == ARROW &&
-                weapon->sub_type1 == ST1_MISSILE_THROW &&
+                (weapon->sub_type1 & ST1_MISSILE_THROW) &&
                 change_skill(op, SK_THROWING))
             {
                 if (check_skill_action_time(op, op->chosen_skill))
