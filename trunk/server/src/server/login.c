@@ -736,19 +736,6 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
             op->stats.hp = 1;
     }
 
-    /* lets check we had saved last time in a gmaster mode.
-     * if so, check the setting is still allowed and if so,
-     * set the player to it.
-     */
-    if (mode_id != GMASTER_MODE_NO)
-    {
-        set_gmaster_mode(pl, mode_id);
-    }
-    else
-    {
-        pl->gmaster_mode = GMASTER_MODE_NO;
-    }
-
     /* This seems to compile without warnings now.  Don't know if it works
      * on SGI's or not, however.
      */
@@ -768,17 +755,19 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
     pl->socket.look_position = 0;
     pl->socket.look_position_container = 0;
     pl->socket.ext_title_flag = 1;
-
-    /* mark socket, player & connection as playing and add charcter to player queue */
     pl->socket.status = Ns_Playing;
     pl->state |= ST_PLAYING;
-
     player_active++;
-    if(player_active_meta < player_active)
+
+    if (player_active_meta < player_active)
+    {
         player_active_meta = player_active;
+    }
 
     if (!last_player)
+    {
         first_player = last_player = pl;
+    }
     else
     {
         last_player->next = pl;
@@ -788,11 +777,11 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
 
     /* This command will tell the client to go in playing mode and wait for server game data */
     esrv_new_player(pl, op->weight + op->carrying);
+    write_socket_buffer(&pl->socket); // ensure we send this cmd immediately
     LOG(llevDebug, "Send new_player(): socket %d\n", ns->fd);
-
-    esrv_send_inventory(op, op);
     send_spelllist_cmd(op, NULL, SPLIST_MODE_ADD); /* send the known spells as list to client */
     send_skilllist_cmd(op, NULL, SPLIST_MODE_ADD);
+    esrv_send_inventory(op, op);
 
     /* we do the login script BEFORE we go to the map */
 #ifdef PLUGINS
@@ -813,22 +802,6 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
     GlobalEvent(&CFP);
 #endif
 
-#ifdef USE_CHANNELS
-    /* channel-system: we check if the playerfile has the channels tag */
-    /* if not, add all the default channels */
-    /* ALSO we check for the BORN flag, if its set the player is freshly
-       created, so we add the default channels as well */
-    if ((!with_channels) || (pl->state & ST_BORN))
-        addDefaultChannels(pl);
-
-    /* defered channeljoin */
-    for (i=1; (i<= channelcount) && (i<256); i++)
-    {
-        sscanf(chantemp[i-1],"%s %c %lu\n",channelname,&shortcut, &mute);
-        loginAddPlayerToChannel(pl, channelname, shortcut, mute);
-    }
-#endif
-
     /* If pl is new, announce the newpl login to all players else if the pl has not requested privacy, announce the login to all players. */
     if (!pl->privacy)
     {
@@ -836,13 +809,43 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
                       query_name(pl->ob), ((pl->state & ST_BORN)) ? "for the first time" : "");
     }
 	
+    /* lets check we had saved last time in a gmaster mode.
+     * if so, check the setting is still allowed and if so,
+     * set the player to it.
+     */
+    if (mode_id != GMASTER_MODE_NO)
+    {
+        set_gmaster_mode(pl, mode_id);
+    }
+    else
+    {
+        pl->gmaster_mode = GMASTER_MODE_NO;
+    }
+
+#ifdef USE_CHANNELS
+    /* channel-system: we check if the playerfile has the channels tag */
+    /* if not, add all the default channels */
+    /* ALSO we check for the BORN flag, if its set the player is freshly
+       created, so we add the default channels as well */
+    if (!with_channels ||
+        (pl->state & ST_BORN))
+    {
+        addDefaultChannels(pl);
+    }
+
+    /* defered channeljoin */
+    for (i = 1; i <= channelcount && i <= 255; i++)
+    {
+        sscanf(chantemp[i - 1], "%s %c %lu\n", channelname, &shortcut, &mute);
+        loginAddPlayerToChannel(pl, channelname, shortcut, mute);
+    }
+#endif
+
     /* if we add more BORN, "first time used / first time loaded" stuff, do it before this line */
     pl->state &= ~ST_BORN;
 
     /* and finally the player appears on the map */
     enter_map_by_name(op, pl->maplevel, pl->orig_map, pl->map_x, pl->map_y, pl->map_status);
-
-
 
     /* Extra info for VOLs, GMs, and SAs (if any are online), but not if pl is
      * a privacy-seeking SA*/
