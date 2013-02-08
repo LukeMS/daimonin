@@ -716,8 +716,7 @@ sint32 sum_weight(object *op)
  * direction of change is specified by mode (positive or negative). */
 static void RegrowBurdenTree(object *op, sint32 nrof, sint8 mode)
 {
-    object *where,
-           *whose = NULL;
+    object *where;
     sint32  weight;
 
     /* If op is not in an env or has no weight, we have nothing to do. */
@@ -746,10 +745,6 @@ static void RegrowBurdenTree(object *op, sint32 nrof, sint8 mode)
 
         if (where->type == CONTAINER)
         {
-            /* When op is a descendent of an open container, update every
-             * client who is looking. */
-            whose = (!whose)
-                    ? where->attacked_by : CONTR(whose)->container_above;
             where->carrying += weight;
 
             /* A magical container modifying the weight by its magic. */
@@ -765,15 +760,10 @@ static void RegrowBurdenTree(object *op, sint32 nrof, sint8 mode)
         }
         else
         {
-            whose = NULL;
             where->carrying += weight;
         }
 
-        if (whose &&
-            CONTR(whose)) // we have a client to notify
-        {
-            esrv_update_item(UPD_WEIGHT, whose, where);
-        }
+        esrv_update_item(UPD_WEIGHT, where);
     }
     while ((where = where->env));
 }
@@ -1948,16 +1938,15 @@ void remove_ob(object *op)
 
 static void RemoveFromEnv(object *op)
 {
-    object *where = op->env,
-           *whose = NULL;
-    player *pl = NULL;
-
     /* When the object being removed is an open container, close it. */
     if (op->type == CONTAINER &&
         op->attacked_by)
     {
         container_unlink(NULL, op);
     }
+
+    /* Notify clients. */
+    esrv_del_item(op);
 
     /* Recalc the chain of weights. Remember that the above is client info
      * only -- the object has not actually gone yet. */
@@ -1985,46 +1974,15 @@ static void RemoveFromEnv(object *op)
     op->ox = op->x;
     op->oy = op->y;
 #endif
+
+    if (op->env->type == PLAYER &&
+        !QUERY_FLAG(op->env, FLAG_NO_FIX_PLAYER))
+    {
+        FIX_PLAYER(op->env, "remove_ob()");
+    }
+
     op->above = op->below = op->env = NULL;
     op->map = NULL;
-
-    /* This loop is so written that it will go through all players looking in a
-     * container or just the single player if it is where. */
-    do
-    {
-        /* When op is being removed directly from a player's inv. */
-        if (where->type == PLAYER)
-        {
-            whose = (!whose) ? where : NULL;
-        }
-        /* When op is being removed from an open container, update every
-         * player who is looking. */
-        else if (where->type == CONTAINER)
-        {
-            whose = (!whose) ? where->attacked_by : CONTR(whose)->container_above;
-        }
-
-        if ((pl = (whose) ? CONTR(whose) : NULL)) // we have a client to notify
-        {
-            /* Update the client (RegrowBurdenTree() above has already taken
-             * care of any weight issues so here just delete the actual removed
-             * item). */
-            if (QUERY_FLAG(whose, FLAG_WIZ) ||    // either it's a wiz or
-                !QUERY_FLAG(op, FLAG_SYS_OBJECT)) // we're not updating about a sys object
-            {
-                esrv_del_item(pl, op->count, op);
-            }
-
-            /* Only call fix_player() when op is directly in pl's inv --
-             * fix_player() does not care about nested invs. */
-            if (whose == where ||
-                !QUERY_FLAG(whose, FLAG_NO_FIX_PLAYER))
-            {
-                FIX_PLAYER(whose, "remove_ob: env remove");
-            }
-        }
-    }
-    while (pl);
 }
 
 static void RemoveFromMap(object *op)
@@ -2603,7 +2561,7 @@ object * get_split_ob(object *orig_ob, uint32 nr)
     }
     else if (!is_removed)
     {
-        sint32 flags = UPD_NROF;
+        uint16 flags = UPD_NROF;
 
         if (orig_ob->env &&
             !QUERY_FLAG(orig_ob, FLAG_SYS_OBJECT))
@@ -2617,7 +2575,7 @@ object * get_split_ob(object *orig_ob, uint32 nr)
             flags |= UPD_WEIGHT;
         }
 
-        esrv_update_item(flags, orig_ob->env, orig_ob);
+        esrv_update_item(flags, orig_ob);
 
         /* will a stack in a chest where you remove one from the stack trigger
         * a button under the chest because the weight of the chest has changed now?
@@ -2690,24 +2648,17 @@ object * decrease_ob_nr(object *op, uint32 i)
 
         if (i < op->nrof) /* there are still some */
         {
+            uint16 flags = 0;
+
             if (!QUERY_FLAG(op, FLAG_SYS_OBJECT))
             {
                 RegrowBurdenTree(op, i, -1);
+                flags |= UPD_WEIGHT;
             }
 
             op->nrof -= i;
-
-            if (tmp)
-            {
-                sint32 flags = UPD_NROF;
-
-                if (!QUERY_FLAG(op, FLAG_SYS_OBJECT))
-                {
-                    flags |= UPD_WEIGHT;
-                }
-
-                esrv_update_item(flags, tmp, op);
-            }
+            flags |= UPD_NROF;
+            esrv_update_item(flags, op);
         }
         else /* we removed all! */
         {
@@ -2731,19 +2682,13 @@ object * decrease_ob_nr(object *op, uint32 i)
 #if 0
         if (op->env)
         {
-            for (; tmp; tmp = tmp->above)
+            if (op->nrof)
             {
-                if (tmp->type == PLAYER)
-                {
-                    if (op->nrof)
-                    {
-                        esrv_send_item(tmp, op);
-                    }
-                    else
-                    {
-                        esrv_del_item(CONTR(tmp), op->count, op->env);
-                    }
-                }
+                esrv_send_item(op);
+            }
+            else
+            {
+                esrv_del_item(op;
             }
         }
         else if (op->map)
@@ -2769,34 +2714,32 @@ object * decrease_ob_nr(object *op, uint32 i)
 object *insert_ob_in_ob(object *op, object *where)
 {
     mapstruct *m;
-    object    *merged,
-              *whose = NULL;
-    player    *pl = NULL;
+    object    *merged;
 
     if (!op)
     {
-        LOG(llevBug, "BUG:: %s:insert_ob_in_ob(): Attempt to insert nnothing!\n",
+        LOG(llevBug, "BUG:: %s:insert_ob_in_ob(): Attempt to insert nothing!\n",
             __FILE__);
 
         return NULL;
     }
     else if (!where)
     {
-        LOG(llevBug, "BUG:: %s:insert_ob_in_ob(): Attempt to insert object %s[%d] in nowhere!\n",
+        LOG(llevBug, "BUG:: %s:insert_ob_in_ob(): Attempt to insert %s[%d] in nowhere!\n",
             __FILE__, STRING_OBJ_NAME(op), TAG(op));
 
         return op;
     }
     if (!QUERY_FLAG(op, FLAG_REMOVED))
     {
-        LOG(llevBug, "BUG:: %s:insert_ob_in_ob(): Attempt to insert non-removed object %s[%d]!\n",
+        LOG(llevBug, "BUG:: %s:insert_ob_in_ob(): Attempt to insert non-removed %s[%d]!\n",
             __FILE__, STRING_OBJ_NAME(op), TAG(op));
 
         return op;
     }
     else if (op->more)
     {
-        LOG(llevBug, "BUG:: %s:insert_ob_in_ob(): Attempt to insert multipart object %s[%d]!\n",
+        LOG(llevBug, "BUG:: %s:insert_ob_in_ob(): Attempt to insert multipart %s[%d]!\n",
             __FILE__, STRING_OBJ_NAME(op), TAG(op));
 
         return op;
@@ -2804,7 +2747,7 @@ object *insert_ob_in_ob(object *op, object *where)
     else if (where->head)
     {
         where = where->head;
-        LOG(llevBug, "BUG:: %s:insert_ob_in_ob(): Attempt to insert object %s[%d] in multipart's body, redirecting to head %s[%d]!\n",
+        LOG(llevBug, "BUG:: %s:insert_ob_in_ob(): Attempt to insert %s[%d] in multipart's body, redirecting to head %s[%d]!\n",
             __FILE__, STRING_OBJ_NAME(op), TAG(op), STRING_OBJ_NAME(where),
             TAG(where));
     }
@@ -2830,7 +2773,7 @@ object *insert_ob_in_ob(object *op, object *where)
 
     /* We only care about merged as an indicator of whether it did or not
      * (whether merged != NULL) so we know whether or not to call
-     * RegrowBurdenTree() below. Eiither way, op is still our real object being
+     * RegrowBurdenTree() below. Either way, op is still our real object being
      * inserted. */
     merged = merge_ob(op, NULL);
     CLEAR_FLAG(op, FLAG_REMOVED);
@@ -2877,44 +2820,13 @@ object *insert_ob_in_ob(object *op, object *where)
     }
 
     update_ob_speed(op);
+    esrv_send_item(op);
 
-    /* This loop is so written that it will go through all players looking in a
-     * container or just the single player if it is where. */
-    do
+    if (op->env->type == PLAYER &&
+        !QUERY_FLAG(op->env, FLAG_NO_FIX_PLAYER))
     {
-        /* When op is being inserted directly into a player's inv. */
-        if (where->type == PLAYER)
-        {
-            whose = (!whose) ? where : NULL;
-        }
-        /* When op is being inserted into an open container, update every
-         * player who is looking. */
-        else if (where->type == CONTAINER)
-        {
-            whose = (!whose) ? where->attacked_by : CONTR(whose)->container_above;
-        }
-
-        if ((pl = (whose) ? CONTR(whose) : NULL)) // we have a client to notify
-        {
-            /* Update the client (RegrowBurdenTree() above has already taken
-             * care of any weight issues so here just add the actual inserted
-             * item). */
-            if (QUERY_FLAG(whose, FLAG_WIZ) ||    // either it's a wiz or
-                !QUERY_FLAG(op, FLAG_SYS_OBJECT)) // we're not updating about a sys object
-            {
-                esrv_send_item(whose, op);
-            }
-
-            /* Only call fix_player() when op is directly in pl's inv --
-             * fix_player() does not care about nested invs. */
-            if (whose == where ||
-                !QUERY_FLAG(whose, FLAG_NO_FIX_PLAYER))
-            {
-                FIX_PLAYER(whose, "insert_ob_in_ob - player inv");
-            }
-        }
+        FIX_PLAYER(op->env, "insert_ob_in_ob()");
     }
-    while (pl);
 
     return op;
 }

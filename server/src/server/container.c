@@ -111,12 +111,12 @@ int container_link(player *const pl, object *const sack)
                 SET_ANIMATION(sack, (NUM_ANIMATIONS(sack) / NUM_FACINGS(sack)) * sack->direction);
             update_object(sack, UP_OBJ_FACE);
         }
-        esrv_update_item(UPD_FLAGS | UPD_FACE, pl->ob, sack);
+        esrv_update_item(UPD_FLAGS | UPD_FACE, sack);
         container_trap(pl->ob, sack);   /* search & explode a rune in the container */
         ret = 1;
     }
 
-    esrv_send_inventory(pl->ob, sack);
+    esrv_send_inventory(pl, sack);
     pl->container_below = NULL; /* we are first element */
     sack->attacked_by = pl->ob;
     sack->attacked_by_count = pl->ob->count;
@@ -153,7 +153,7 @@ int container_unlink(player *const pl, object *sack)
 
         sack = pl->container;
         update_object(sack, UP_OBJ_FACE);
-        esrv_close_container(pl->ob);
+        esrv_send_inventory(pl, NULL);
         /* ok, there is a valid container - unlink the player now */
         if (!pl->container_below && !pl->container_above) /* we are only applier */
         {
@@ -178,7 +178,7 @@ int container_unlink(player *const pl, object *sack)
             }
             sack->attacked_by = NULL;
             sack->attacked_by_count = 0;
-            esrv_update_item(UPD_FLAGS | UPD_FACE, pl->ob, sack);
+            esrv_update_item(UPD_FLAGS | UPD_FACE, sack);
             return 1;
         }
 
@@ -218,6 +218,7 @@ int container_unlink(player *const pl, object *sack)
             SET_ANIMATION(sack, (NUM_ANIMATIONS(sack) / NUM_FACINGS(sack)) * sack->direction);
         update_object(sack, UP_OBJ_FACE);
     }
+    esrv_update_item(UPD_FLAGS | UPD_FACE, sack);
     tmp = sack->attacked_by;
     sack->attacked_by = NULL;
     sack->attacked_by_count = 0;
@@ -237,8 +238,7 @@ int container_unlink(player *const pl, object *sack)
         CONTR(tmp)->container_count = 0;
         CONTR(tmp)->container_below = NULL;
         CONTR(tmp)->container_above = NULL;
-        esrv_update_item(UPD_FLAGS | UPD_FACE, tmp, sack);
-        esrv_close_container(tmp);
+        esrv_send_inventory(CONTR(tmp), NULL);
         tmp = tmp2;
     }
     return 1;
@@ -702,8 +702,8 @@ void drop_object(object *const op, object *tmp, const uint32 nrof)
     else
     {
         remove_ob(tmp);
-        if (tmp->env && tmp->env != op && tmp->env != tmp)
-            esrv_update_item(UPD_WEIGHT, op, tmp->env);
+//        if (tmp->env && tmp->env != op && tmp->env != tmp)
+//            esrv_update_item(UPD_WEIGHT, tmp->env);
     }
 
     tmp_nrof = nrof;

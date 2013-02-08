@@ -1590,10 +1590,7 @@ void cancellation(object *op)
         CLEAR_FLAG(op, FLAG_CURSED);
         CLEAR_FLAG(op, FLAG_KNOWN_MAGICAL);
         CLEAR_FLAG(op, FLAG_KNOWN_CURSED);
-        if (op->env && op->env->type == PLAYER)
-        {
-            esrv_update_item(UPD_FLAGS, op->env, op);
-        }
+        esrv_update_item(UPD_FLAGS, op);
     }
 }
 
@@ -1876,8 +1873,7 @@ int remove_curse(object *op, object *target, int type, SpellTypeFrom src)
                 CLEAR_FLAG(tmp, FLAG_CURSED);
                 if (!QUERY_FLAG(tmp, FLAG_PERM_CURSED))
                     CLEAR_FLAG(tmp, FLAG_KNOWN_CURSED);
-                if (target->type == PLAYER)
-                    esrv_update_item(UPD_FLAGS, target, tmp);
+                esrv_update_item(UPD_FLAGS, tmp);
             }
             else /* level of the items is to high for this remove curse */
             {
@@ -1990,12 +1986,12 @@ int cast_identify(object *op, int level, object *single_ob, int mode)
       {
         identify(tmp);
         if (op->type==PLAYER) {
-    new_draw_info(NDI_UNIQUE, 0,op,
-        "On the ground is %s.", long_desc(tmp, op));
-    if (tmp->msg) {
-      new_draw_info(NDI_UNIQUE, 0,op, "The item has a story:\n%s", tmp->msg);
-    }
-    esrv_send_item(op, tmp);
+            new_draw_info(NDI_UNIQUE, 0,op,
+                "On the ground is %s.", long_desc(tmp, op));
+            if (tmp->msg) {
+              new_draw_info(NDI_UNIQUE, 0,op, "The item has a story:\n%s", tmp->msg);
+            }
+            esrv_send_item(tmp);
         }
       }
     }
@@ -2041,7 +2037,7 @@ int cast_detection(object *op, object *target, int type)
               {
                   SET_FLAG(tmp, FLAG_KNOWN_MAGICAL);
                   suc = TRUE;
-                  esrv_update_item(UPD_FLAGS, target, tmp);
+                  esrv_update_item(UPD_FLAGS, tmp);
               }
           }
 
@@ -2083,7 +2079,7 @@ int cast_detection(object *op, object *target, int type)
               {
                   SET_FLAG(tmp, FLAG_KNOWN_CURSED);
                   suc = TRUE;
-                  esrv_update_item(UPD_FLAGS, target, tmp);
+                  esrv_update_item(UPD_FLAGS, tmp);
               }
           }
           nx = target->x;ny = target->y;
@@ -2242,7 +2238,7 @@ static int cast_detection_old(object *op, object *target,int type) {
             case SP_DETECT_MAGIC:
             if (is_magical(tmp) && !QUERY_FLAG(tmp,FLAG_KNOWN_MAGICAL)) {
                 SET_FLAG(tmp,FLAG_KNOWN_MAGICAL);
-                esrv_update_item(UPD_FLAGS, op, tmp);
+                esrv_update_item(UPD_FLAGS, tmp);
                 done_one = 1;
             }
             break;
@@ -2252,7 +2248,7 @@ static int cast_detection_old(object *op, object *target,int type) {
             (QUERY_FLAG(tmp, FLAG_CURSED) ||
              QUERY_FLAG(tmp, FLAG_DAMNED))) {
             SET_FLAG(tmp, FLAG_KNOWN_CURSED);
-            esrv_update_item(UPD_FLAGS, op, tmp);
+            esrv_update_item(UPD_FLAGS, tmp);
             done_one = 1;
             }
             break;
@@ -3228,8 +3224,7 @@ int cast_consecrate(object *op)
                 FREE_AND_COPY_HASH(tmp->name, buf);
                 tmp->level = SK_level(op);
                 tmp->other_arch = god->arch;
-                if (op->type == PLAYER)
-                    esrv_update_item(UPD_NAME, op, tmp);
+                esrv_update_item(UPD_NAME, tmp);
                 new_draw_info(NDI_UNIQUE, 0, op, "You consecrated the altar to %s!", god->name);
                 return 1;
             }

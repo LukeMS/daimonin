@@ -1352,16 +1352,14 @@ void identify(object *op)
         update_object(op, UP_OBJ_FACE);
     else
     {
-        pl = is_player_inv(op->env);
-        if (pl)
-            /* A lot of the values can change from an update - might as well send
-             * it all. */
-            /* Seems very cavalier with BW -- looks to me like an
-             * esrv_update_item() with one or more of UPD_FLAGS | UPD_FACE |
-             * UPD_NAME would do it.
-             *
-             * -- Smacky 20130131 */
-            esrv_send_item(pl, op);
+        /* A lot of the values can change from an update - might as well send
+         * it all. */
+        /* Seems very cavalier with BW -- looks to me like an
+         * esrv_update_item() with one or more of UPD_FLAGS | UPD_FACE |
+         * UPD_NAME would do it.
+         *
+         * -- Smacky 20130131 */
+        esrv_send_item(op);
     }
 }
 
@@ -1403,8 +1401,7 @@ void set_traped_flag(object *op)
         update_object(op, UP_OBJ_FACE);
     else /* somewhere else - if visible, update */
     {
-        if (op->env->type == PLAYER || op->env->type == CONTAINER)
-            esrv_update_item(UPD_FLAGS, op->env, op);
+        esrv_update_item(UPD_FLAGS, op);
     }
 }
 

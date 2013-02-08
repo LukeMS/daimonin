@@ -815,7 +815,7 @@ static inline int set_player_equipment(player *pl, object *optr, int num)
     if(pl->equipment[num])
     {
         CLEAR_FLAG(optr, FLAG_APPLIED);
-        esrv_update_item(UPD_FLAGS, pl->ob, optr);
+        esrv_update_item(UPD_FLAGS, optr);
         LOG(llevDebug,"FIX_PLAYER BUG: Item %s for player %s on place %d is already set!\n", query_name(optr), query_name(pl->ob), num);
         return FALSE;
     }
@@ -1608,7 +1608,7 @@ void fix_player(object *op)
                 default:
                   LOG(llevDebug, "DEBUG: fix_player(): unexpected applied object %s (%d)(clear flag now!)\n", query_name(tmp), tmp->type);
                   CLEAR_FLAG(tmp, FLAG_APPLIED);
-                  esrv_update_item(UPD_FLAGS, op, tmp);
+                  esrv_update_item(UPD_FLAGS, tmp);
                   continue;
             }/*switch*/
 
@@ -1658,7 +1658,7 @@ void fix_player(object *op)
         {
             if (tmp->flags[i] != tmpflags[i])
             {
-                esrv_update_item(UPD_FLAGS, op, tmp);
+                esrv_update_item(UPD_FLAGS, tmp);
 
                 break;
             }
@@ -1673,7 +1673,7 @@ void fix_player(object *op)
         {
             /* wrong amunition - unapply it on the fly */
             CLEAR_FLAG(pl->equipment[PLAYER_EQUIP_AMUN], FLAG_APPLIED);
-            esrv_update_item(UPD_FLAGS, op, pl->equipment[PLAYER_EQUIP_AMUN]);
+            esrv_update_item(UPD_FLAGS, pl->equipment[PLAYER_EQUIP_AMUN]);
             pl->equipment[PLAYER_EQUIP_AMUN] = NULL;
         }
 
@@ -2147,7 +2147,7 @@ void fix_player(object *op)
     {
         if (op->flags[i] != opflags[i])
         {
-            esrv_update_item(UPD_FLAGS, op, op);
+            esrv_update_item(UPD_FLAGS, op);
 
             break;
         }

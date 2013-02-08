@@ -535,11 +535,7 @@ static int god_removes_curse(object *op, int remove_damnation)
             CLEAR_FLAG(tmp, FLAG_DAMNED);
             CLEAR_FLAG(tmp, FLAG_CURSED);
             CLEAR_FLAG(tmp, FLAG_KNOWN_CURSED);
-
-            if (op->type == PLAYER)
-            {
-                esrv_update_item(UPD_FLAGS, op, tmp);
-            }
+            esrv_update_item(UPD_FLAGS, tmp);
         }
     }
 
@@ -581,8 +577,7 @@ static int god_enchants_weapon(object *op, object *god, object *tr)
     {
         sprintf(buf, "of %s", god->name);
         FREE_AND_COPY_HASH(weapon->title, buf);
-        if (op->type == PLAYER)
-            esrv_update_item(UPD_NAME, op, weapon);
+        esrv_update_item(UPD_NAME, weapon);
         new_draw_info(NDI_UNIQUE, 0, op, "Your weapon quivers as if struck!");
     }
 
@@ -610,8 +605,8 @@ static int god_enchants_weapon(object *op, object *god, object *tr)
     {
         new_draw_info(NDI_UNIQUE, 0, op, "A phosphorescent glow envelops your weapon!");
         weapon->magic++;
-        if (op->type == PLAYER)
-            esrv_update_item(UPD_NAME, op, weapon);
+        esrv_update_item(UPD_NAME, weapon);
+
         return 1;
     }
 

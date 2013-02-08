@@ -28,42 +28,529 @@
  * the logic for what items should be sent.
  */
 
+#include "global.h"
 
-#include <global.h>
+#define FILTER(_PL_, _OP_) \
+    (QUERY_FLAG((_PL_)->ob, FLAG_WIZ) ||             /* WIZ gmasters see all */ \
+     (!QUERY_FLAG((_OP_), FLAG_SYS_OBJECT) &&        /* can't see sys objects */ \
+      (!QUERY_FLAG((_OP_), FLAG_IS_INVISIBLE) ||     /* can't see invisible objects unless */ \
+       QUERY_FLAG((_PL_)->ob, FLAG_SEE_INVISIBLE) || /* player has the ability to do so or */ \
+       (_OP_)->env == (_PL_)->ob)))                  /* they're in his inventory (simulates feel) */
 
+static uint8  AddInventory(sockbuf_struct *sb, _server_client_cmd cmd,
+                           uint8 start, uint8 end, object *first);
+static void   AddFakeObject(sockbuf_struct *sb, _server_client_cmd cmd,
+                            uint32 tag, uint32 face, char *name);
+static uint8  AddName(char *name);
+static void   NotifyClients(_server_client_cmd cmd, uint16 flags, object *op);
+static char  *PrepareData(_server_client_cmd cmd, uint16 flags, player *pl,
+                          object *op, char *data);
+static uint32 ClientFlags(object *op);
 static object  *esrv_get_ob_from_count_DM(object *pl, tag_t count);
 static int      check_container(object *pl, object *con);
 
-/* This is the maximum number of bytes we expect any one item to take up */
-#define MAXITEMLEN  300
-
-/* thats combinded with another strlen() in the item code - its an artifact from cf.
- * we will remove and fix this when we rewrite this module.
- */
-inline void add_stringlen_to_sockbuf(char *buf, sockbuf_struct *sl)
+void esrv_send_below(player *pl)
 {
-    int len;
+    object             *who,
+                       *this;
+    mapstruct          *m;
+    NewSocket          *ns;
+    sockbuf_struct     *sb;
+    uint32              mode;
+    uint8               sendme;
+    _server_client_cmd  cmd = SERVER_CMD_ITEMX;
 
-    len = strlen(buf);
-    if (len > 254)
-        len = 254;
-    SockBuf_AddChar(sl, len+1);
-    SockBuf_AddString(sl, buf, len);
+    /* Sanity checks. */
+    if (!pl ||
+        (pl->state & (ST_DEAD | ST_ZOMBIE)) ||
+        pl->socket.status == Ns_Dead ||
+        !(who = pl->ob) ||
+        QUERY_FLAG(who, FLAG_REMOVED) ||
+        !(m = who->map) ||
+        m->in_memory != MAP_ACTIVE ||
+        OUT_OF_REAL_MAP(m, who->x, who->y))
+    {
+        return;
+    }
+
+    ns = &pl->socket;
+    SOCKBUF_REQUEST_BUFFER(ns, SOCKBUF_DYNAMIC);
+    sb = ACTIVE_SOCKBUF(ns);
+    SockBuf_AddInt(sb, 0);
+    SockBuf_AddInt(sb, 0);
+
+    /* Items already been sent? Send fake 'previous' item. */
+    if (ns->look_position)
+    {
+        AddFakeObject(sb, cmd,
+                      0x80000000 | (ns->look_position - NUM_LOOK_OBJECTS),
+                      prev_item_face->number, "Apply to see previous items");
+        sb = ACTIVE_SOCKBUF(ns);
+    }
+
+    sendme = AddInventory(sb, cmd, 0, 0, GET_MAP_OB_LAST(m, who->x, who->y));
+    sb = ACTIVE_SOCKBUF(ns);
+
+    if (sendme)
+    {
+        SOCKBUF_REQUEST_FINISH(ns, cmd, SOCKBUF_DYNAMIC);
+    }
+    else
+    {
+        SOCKBUF_REQUEST_RESET(ns);
+    }
 }
 
-/*******************************************************************************
- *
- * Functions related to sending object data to the client.
- *
- ******************************************************************************/
-
-/*
- *  This is a similar to query_name, but returns flags
- *  to be sended to client.
- */
-unsigned int query_flags(object *op)
+void esrv_send_inventory(player *pl, object *op)
 {
-    unsigned int flags = 0;
+    NewSocket          *ns;
+    sockbuf_struct     *sb;
+    uint32              mode;
+    uint8               sendme;
+    _server_client_cmd  cmd = SERVER_CMD_ITEMY;
+
+    /* Sanity checks. */
+    if (!pl ||
+        (pl->state & (ST_DEAD | ST_ZOMBIE)) ||
+        pl->socket.status == Ns_Dead)
+    {
+        return;
+    }
+
+    ns = &pl->socket;
+    SOCKBUF_REQUEST_BUFFER(ns, SOCKBUF_DYNAMIC);
+    sb = ACTIVE_SOCKBUF(ns);
+
+    /* Close container. */
+    if (!op)
+    {
+        SockBuf_AddInt(sb, -1);
+        SockBuf_AddInt(sb, -1);
+        sendme = 1;
+    }
+    /* Open container. */
+    else if (pl->container == op)
+    {
+        SockBuf_AddInt(sb, -1);
+        SockBuf_AddInt(sb, op->count);
+        sendme = 1;
+    }
+    /* Default. */
+    else
+    {
+        SockBuf_AddInt(sb, op->count);
+        SockBuf_AddInt(sb, op->count);
+        sendme = 0;
+    }
+
+    if (op)
+    {
+        sendme = AddInventory(sb, cmd, 0, 0, op->inv);
+        sb = ACTIVE_SOCKBUF(ns);
+    }
+
+    if (sendme)
+    {
+        SOCKBUF_REQUEST_FINISH(ns, cmd, SOCKBUF_DYNAMIC);
+    }
+    else
+    {
+        SOCKBUF_REQUEST_RESET(ns);
+    }
+}
+
+void esrv_send_item(object *op)
+{
+    uint16 flags = UPD_FLAGS | UPD_WEIGHT | UPD_FACE | UPD_DIRECTION |
+                   UPD_NAME | UPD_ANIM | UPD_ANIMSPEED | UPD_NROF;
+
+    NotifyClients(SERVER_CMD_ITEMY, flags, op);
+}
+
+void esrv_update_item(uint16 flags, object *op)
+{
+    NotifyClients(SERVER_CMD_UPITEM, flags, op);
+}
+
+void esrv_del_item(object *op)
+{
+    NotifyClients(SERVER_CMD_DELITEM, 0, op);
+}
+
+/* Recursively deletes op->inv. */
+void esrv_del_item_inv(object *op)
+{
+    object *this;
+
+    for (this = op; this; this = this->below)
+    {
+        if (this->inv)
+        {
+            esrv_del_item_inv(this->inv);
+        }
+
+        esrv_del_item(this);
+    }
+}
+
+/* Adds the objects including and below first to sb (inventory cmds are always
+ * sent to a single client in a working buffer). cmd is either SERVER_CMD_ITEMX
+ * for below windoow objects or SERVER_CMD_ITEMY otherwise. start and end are
+ * only used when first and its siblings have no env/are directly on a map and
+ * restrict the amount of data sent in one go to a client. WIZ gmasters also
+ * get sent sys objects and the full inventories of each object (ie, EVERYTHING
+ * below first). */
+static uint8 AddInventory(sockbuf_struct *sb, _server_client_cmd cmd,
+                          uint8 start, uint8 end, object *first)
+{
+    NewSocket *ns = sb->ns;
+    player    *pl = ns->pl;
+    object    *this;
+    uint8      sendme = 0;
+
+    for (this = first; this; this = this->below)
+    {
+        if (this == pl->ob ||           // never see self
+            this->type == SHOP_FLOOR || // TODO: Remove this type/arch
+            !FILTER(pl, this))
+        {
+            continue;
+        }
+        else if (this->env ||
+                 ++start >= ns->look_position) // skip already sent items
+        {
+            sendme = 1;
+
+            /* Too many items? Send fake 'next' item. */
+            if (!this->env &&
+                ++end > NUM_LOOK_OBJECTS)
+            {
+                AddFakeObject(sb, cmd,
+                              0x80000000 | (ns->look_position + NUM_LOOK_OBJECTS),
+                              next_item_face->number, "Apply to see next items");
+                sb = ACTIVE_SOCKBUF(ns);
+
+                break;
+            }
+            else
+            {
+                char    data[MEDIUM_BUF],
+                       *cp = data;
+                uint16  flags = UPD_FLAGS | UPD_WEIGHT | UPD_FACE |
+                                UPD_DIRECTION | UPD_NAME | UPD_ANIM |
+                                UPD_ANIMSPEED | UPD_NROF;
+
+                cp = PrepareData(cmd, flags, pl, this, data);
+                SockBuf_AddStringNonTerminated(sb, data, cp - data);
+
+                if (QUERY_FLAG(pl->ob, FLAG_WIZ) &&
+                    this->inv)
+                {
+                    AddFakeObject(sb, cmd, 0, blank_face->number, "start inventory");
+                    sb = ACTIVE_SOCKBUF(ns);
+                    (void)AddInventory(sb, cmd, start, end, this->inv);
+                    sb = ACTIVE_SOCKBUF(ns);
+                    AddFakeObject(sb, cmd, 0, blank_face->number, "end inventory");
+                    sb = ACTIVE_SOCKBUF(ns);
+                }
+            }
+        }
+    }
+
+    return sendme;
+}
+
+/* Adds a fake object to sb, as defined by the other parameters. */
+static void AddFakeObject(sockbuf_struct *sb, _server_client_cmd cmd,
+                          uint32 tag, uint32 face, char *name)
+{
+        char  buf[SMALL_BUF];
+        uint8 len;
+
+        SockBuf_AddInt(sb, tag);
+        SockBuf_AddInt(sb, 0);
+        SockBuf_AddInt(sb, -1);
+        SockBuf_AddInt(sb, face);
+        SockBuf_AddChar(sb, 0);
+
+        if (cmd == SERVER_CMD_ITEMY)
+        {
+           SockBuf_AddChar(sb, 0);
+           SockBuf_AddChar(sb, 0);
+           SockBuf_AddChar(sb, 0);
+           SockBuf_AddChar(sb, 0);
+           SockBuf_AddChar(sb, 0);
+           SockBuf_AddChar(sb, 0);
+        }
+
+        sprintf(buf, name);
+        len = AddName(buf);
+        SockBuf_AddChar(sb, len + 1);
+        SockBuf_AddString(sb, buf, len);
+        SockBuf_AddShort(sb, 0);
+        SockBuf_AddChar(sb, 0);
+        SockBuf_AddInt(sb, 0);
+}
+
+/* Ensures name is less than 128 characters long and returns its length. */
+static uint8 AddName(char *name)
+{
+    uint8 len = MIN(127, strlen(name));
+
+    *(name + len) = '\0';
+
+    return len;
+}
+
+/* Works its way through the envs of op to find which clients to send cmd/flags
+ * to (which is created only once as a broadcast sockbuf). */
+static void NotifyClients(_server_client_cmd cmd, uint16 flags, object *op)
+{
+    object         *whose = NULL,
+                   *where = op->env;
+    sockbuf_struct *sb = NULL;
+    player         *pl;
+
+    /* When no-one is playing, there's nothing to do. */
+    if (!first_player)
+    {
+        return;
+    }
+
+    /* Loop through the ancestors of op, sendind cmd to each valid client. */
+    while (where &&
+           where->type != TYPE_VOID_CONTAINER)
+    {
+        if (where->type == PLAYER)
+        {
+            whose = where;
+            where = NULL; // players cant have envs
+        }
+        else if (where->type == CONTAINER)
+        {
+            whose = (!whose) ? where->attacked_by : CONTR(whose)->container_above;
+        }
+
+        /* No (more) players? Move on to where's parent. */
+        if (!whose)
+        {
+            where = where->env;
+
+            continue;
+        }
+
+        /* Only send the cmd to a valid client and when filter is passed. */
+        if ((pl = (whose) ? CONTR(whose) : NULL) &&
+            !(pl->state & (ST_DEAD | ST_ZOMBIE)) &&
+            pl->socket.status != Ns_Dead &&
+            FILTER(pl, op))
+        {
+            /* If we've not yet made a sockbuf, make one now. */
+            if (!sb)
+            {
+                char  data[MEDIUM_BUF],
+                     *cp = data;
+
+                /* The first few bytes depend on the cmd. */
+                if (cmd == SERVER_CMD_ITEMX ||
+                    cmd == SERVER_CMD_ITEMY)
+                {
+                    *((uint32 *)cp) = -4;
+                    cp += 4;
+                    *((uint32 *)cp) = (op->env) ? op->env->count : 0;
+                    cp += 4;
+                }
+                else if (cmd == SERVER_CMD_UPITEM)
+                {
+                    *((uint16 *)cp) = flags;
+                    cp += 2;
+                }
+
+                cp = PrepareData(cmd, flags, pl, op, cp);
+                sb = SOCKBUF_COMPOSE(cmd, data, cp - data, 0);
+            }
+
+            SOCKBUF_ADD_TO_SOCKET(&pl->socket, sb);
+        }
+    };
+
+    if (sb)
+    {
+        SOCKBUF_COMPOSE_FREE(sb);
+    }
+}
+
+/* Depending on cmd and flags, puts data about op into the buffer, data (which
+ * must be large enough -- well under 200 bytes), returning a pointer to the
+ * end of the used part of the buffer. If pl != NULL this is used to
+ * personalise certain data (currently only if flags & UPD_NAME and op is a
+ * corpse). The buffer is suitable to be attached to a working or broadcast
+ * sockbuf. */
+static char *PrepareData(_server_client_cmd cmd, uint16 flags, player *pl,
+                         object *op, char *data)
+{
+    char *cp = data;
+
+    *((uint32 *)cp) = op->count;
+    cp += 4;
+
+    /* For DELITEM that's it. For others it depends also on flags. */
+    if (cmd != SERVER_CMD_DELITEM)
+    {
+        object *where = op->env,
+               *head = (op->head) ? op->head : op;
+
+        if ((flags & UPD_LOCATION))
+        {
+            *((uint32 *)cp) = (where) ? where->count : 0;
+            cp += 4;
+        }
+
+        if ((flags & UPD_FLAGS))
+        {
+            *((uint32 *)cp) = ClientFlags(op);
+            cp += 4;
+        }
+
+        if ((flags & UPD_WEIGHT))
+        {
+            if (!where &&
+                QUERY_FLAG(op, FLAG_NO_PICK))
+            {
+                *((uint32 *)cp) = (uint32)-1;
+            }
+            else
+            {
+                *((uint32 *)cp) = (op->type == CONTAINER &&
+                                   op->weapon_speed != 1.0)
+                                  ? op->damage_round_tag + op->weight
+                                  : WEIGHT(op);
+            }
+
+            cp += 4;
+        }
+
+        if ((flags & UPD_FACE))
+        {
+            *((uint32 *)cp) = (where &&
+                               head->inv_face &&
+                               QUERY_FLAG(op, FLAG_IDENTIFIED)) // why?
+                              ? head->inv_face->number
+                              : head->face->number;
+            cp += 4;
+        }
+
+        if ((flags & UPD_DIRECTION))
+        {
+            *((uint8 *)cp++) = op->facing;
+        }
+
+        /* When we're sending an item and it is in an env, add any identified
+         * info .*/
+        /* TODO: Several issues here. */
+        if (//cmd == SERVER_CMD_ITEMX || // ITEMX means below
+            cmd == SERVER_CMD_ITEMY)
+        {
+            /* TODO: type and subtype should always be sent for ITEMX/Y,
+             * regardless of where. However, 0.10.z clients assume the values
+             * are not sent for below items so to do so requires a Y update. */
+            *((uint8 *)cp++) = op->type;
+            *((uint8 *)cp++) = op->sub_type1;
+
+            if (QUERY_FLAG(op, FLAG_IDENTIFIED))
+            {
+                *((uint8 *)cp++) = op->item_quality;
+                *((uint8 *)cp++) = op->item_condition;
+                *((uint8 *)cp++) = op->item_level;
+                *((uint8 *)cp++) = op->item_skill;
+            }
+            else
+            {
+                *((uint32 *)cp) = 0xffffffff;
+                cp += 4;
+            }
+        }
+
+        if ((flags & UPD_NAME))
+        {
+            char    buf[SMALL_BUF];
+            object *who = (pl) ? pl->ob : NULL;
+            uint8   len;
+
+            sprintf(buf, "%s", query_base_name(op, who));
+            len = AddName(buf);
+            *((uint8 *)cp++) = len + 1;
+            sprintf(cp, "%s", buf);
+            cp += len + 1;
+        }
+
+        if ((flags & UPD_ANIM))
+        {
+            *((uint16 *)cp) = (where &&
+                               head->inv_animation_id)
+                              ? head->inv_animation_id
+                              : head->animation_id;
+            cp += 2;
+        }
+
+        if ((flags & UPD_ANIMSPEED))
+        {
+            sint32 animspeed;
+
+            if (QUERY_FLAG(op, FLAG_ANIMATE))
+            {
+                if (op->anim_speed)
+                {
+                    animspeed = op->anim_speed;
+                }
+                else
+                {
+                    float speed = FABS(op->speed);
+
+                    if (speed < 0.001)
+                    {
+                        animspeed = 255;
+                    }
+                    else if (speed >= 1.0)
+                    {
+                        animspeed = 1;
+                    }
+                    else
+                    {
+                        animspeed = (sint32)(1.0 / speed);
+                    }
+                }
+
+                animspeed = MAX(0, MIN(animspeed, 255));
+            }
+            else
+            {
+                animspeed = 0;
+            }
+
+            *((uint8 *)cp++) = (uint8)animspeed;
+        }
+
+        if ((flags & UPD_NROF))
+        {
+            *((uint32 *)cp) = op->nrof;
+            cp += 4;
+        }
+
+        if ((flags & UPD_QUALITY))
+        {
+            *((uint8 *)cp++) = op->item_quality;
+            *((uint8 *)cp++) = op->item_condition;
+        }
+    }
+
+    return cp;
+}
+
+/* Returns client-side flags depending on status of object. */
+static uint32 ClientFlags(object *op)
+{
+    uint32 flags = 0;
 
     if (QUERY_FLAG(op, FLAG_APPLIED))
     {
@@ -73,11 +560,15 @@ unsigned int query_flags(object *op)
             case WAND:
             case ROD:
             case HORN:
-              flags = a_readied;
+              flags |= A_READIED;
+
               break;
+
             case WEAPON:
-              flags = a_wielded;
+              flags |= A_WIELDED;
+
               break;
+
             case SKILL:
             case ARMOUR:
             case HELMET:
@@ -91,964 +582,81 @@ unsigned int query_flags(object *op)
             case GIRDLE:
             case BRACERS:
             case CLOAK:
-              flags = a_worn;
+              flags |= A_WORN;
+
               break;
+
             case CONTAINER:
-              flags = a_active;
+              flags |= A_ACTIVE;
+
               break;
+
             default:
-              flags = a_applied;
-              break;
+              flags |= A_APPLIED;
         }
+
+        flags |= F_APPLIED;
     }
 
-    if (op->type == CONTAINER && (op->attacked_by || (!op->env && QUERY_FLAG(op, FLAG_APPLIED))))
-        flags |= F_OPEN;
+    if (QUERY_FLAG(op, FLAG_IS_ETHEREAL))
+    {
+        flags |= F_ETHEREAL;
+    }
 
-    if (QUERY_FLAG(op, FLAG_IS_TRAPED))
-        flags |= F_TRAPED;
+    if (QUERY_FLAG(op, FLAG_IS_INVISIBLE))
+    {
+        flags |= F_INVISIBLE;
+    }
+
+    if (QUERY_FLAG(op, FLAG_UNPAID))
+    {
+        flags |= F_UNPAID;
+    }
+
+    if (QUERY_FLAG(op, FLAG_KNOWN_MAGICAL) &&
+        is_magical(op))
+    {
+        flags |= F_MAGIC;
+    }
+
     if (QUERY_FLAG(op, FLAG_KNOWN_CURSED))
     {
-        if (QUERY_FLAG(op, FLAG_DAMNED))
-            flags |= F_DAMNED;
-        else if (QUERY_FLAG(op, FLAG_CURSED))
+        if (QUERY_FLAG(op, FLAG_CURSED))
+        {
             flags |= F_CURSED;
+        }
+
+        if (QUERY_FLAG(op, FLAG_DAMNED))
+        {
+            flags |= F_DAMNED;
+        }
     }
-    if (QUERY_FLAG(op, FLAG_KNOWN_MAGICAL) && is_magical(op))
-        flags |= F_MAGIC;
-    if (QUERY_FLAG(op, FLAG_UNPAID))
-        flags |= F_UNPAID;
+
+    if (op->type == CONTAINER &&
+        (op->attacked_by ||
+         (!op->env &&
+          QUERY_FLAG(op, FLAG_APPLIED))))
+    {
+        flags |= F_OPEN;
+    }
+
+    if (QUERY_FLAG(op, FLAG_NO_PICK))
+    {
+        flags |= F_NOPICK;
+    }
+
     if (QUERY_FLAG(op, FLAG_INV_LOCKED))
+    {
         flags |= F_LOCKED;
-    if (QUERY_FLAG(op, FLAG_IS_INVISIBLE))
-        flags |= F_INVISIBLE;
-    if (QUERY_FLAG(op, FLAG_IS_ETHEREAL))
-        flags |= F_ETHEREAL;
+    }
+
+    if (QUERY_FLAG(op, FLAG_IS_TRAPED))
+    {
+        flags |= F_TRAPED;
+    }
+
     return flags;
 }
-
-
-/* draw the look window.  Don't need to do animations here
- * This sends all the faces to the client, not just updates.  This is
- * because object ordering would otherwise be inconsistent
- */
-
-void esrv_draw_look(object *pl)
-{
-    NewSocket  *ns = &CONTR(pl)->socket;
-    sockbuf_struct *sbptr;
-    char       *tmp_sp;
-    object     *head, *tmp, *last;
-    int         len, flags, got_one = 0, anim_speed, start_look = 0, end_look = 0;
-    char        buf[MEDIUM_BUF];
-
-    /* change out_of_map to OUT_OF_REAL_MAP(). we don't even think here about map crossing */
-    if (QUERY_FLAG(pl, FLAG_REMOVED)
-     || pl->map == NULL
-     || pl->map->in_memory != MAP_ACTIVE
-     || OUT_OF_REAL_MAP(pl->map,pl->x,pl->y))
-        return;
-
-    /*LOG(llevNoLog,"send look of: %s\n", query_name(pl));*/
-    /* another layer feature: grap last (top) object without browsing the objects */
-    tmp = GET_MAP_OB_LAST(pl->map, pl->x, pl->y);
-
-    SOCKBUF_REQUEST_BUFFER(ns, SOCKET_SIZE_MEDIUM);
-    sbptr = ACTIVE_SOCKBUF(ns); /* we have *some* to do here, perhaps the compiler can use a native ptr better */
-
-    SockBuf_AddInt(sbptr, 0);
-    SockBuf_AddInt(sbptr, 0);
-
-    if (ns->look_position)
-    {
-        SockBuf_AddInt(sbptr, 0x80000000 | (ns->look_position - NUM_LOOK_OBJECTS));
-        SockBuf_AddInt(sbptr, 0);
-        SockBuf_AddInt(sbptr, -1);
-        SockBuf_AddInt(sbptr, prev_item_face->number);
-        SockBuf_AddChar(sbptr, 0);
-        sprintf(buf, "A'pply (click) to see %d previous items", NUM_LOOK_OBJECTS);
-        add_stringlen_to_sockbuf(buf, sbptr);
-        sbptr = ACTIVE_SOCKBUF(ns);
-        SockBuf_AddShort(sbptr, 0);
-        SockBuf_AddChar(sbptr, 0);
-        SockBuf_AddInt(sbptr, 0);
-    }
-
-    for (last = NULL; tmp != last; tmp = tmp->below)
-    {
-        if (tmp == pl)
-            continue;
-
-        /* Shop floors should not be seen in below window */
-        if (tmp->type == SHOP_FLOOR)
-            continue;
-
-        /* skip map mask, sys_objects and invisible objects when we can't see them */
-        if (tmp->layer <= 0
-         || tmp->layer == 7 // Layer 7 isn't "below" the player, so it shouldn't be in the "below" window.
-         || IS_SYS_INVISIBLE(tmp)
-         || (!QUERY_FLAG(pl, FLAG_SEE_INVISIBLE) && QUERY_FLAG(tmp, FLAG_IS_INVISIBLE)))
-        {
-            /* but only when we are not a active DM */
-            if (!QUERY_FLAG(pl, FLAG_WIZ))
-                continue;
-        }
-
-        /* skip all items we had send before of the 'max shown items of a tile space' */
-        if (++start_look < ns->look_position)
-            continue;
-        /* if we have to much items to send, send a 'next group' object and leave here */
-        if (++end_look > NUM_LOOK_OBJECTS)
-        {
-            SockBuf_AddInt(sbptr, 0x80000000 | (ns->look_position + NUM_LOOK_OBJECTS));
-            SockBuf_AddInt(sbptr, 0);
-            SockBuf_AddInt(sbptr, -1);
-            SockBuf_AddInt(sbptr, next_item_face->number);
-            SockBuf_AddChar(sbptr, 0);
-            sprintf(buf, "A'pply (click) to see next group of items");
-            add_stringlen_to_sockbuf(buf, sbptr);
-            sbptr = ACTIVE_SOCKBUF(ns);
-            SockBuf_AddShort(sbptr, 0);
-            SockBuf_AddChar(sbptr, 0);
-            SockBuf_AddInt(sbptr, 0);
-            break;
-        }
-
-        /* ok, now we start sending this item here */
-        flags = query_flags(tmp);
-        if (QUERY_FLAG(tmp, FLAG_NO_PICK))
-            flags |= F_NOPICK;
-
-        SockBuf_AddInt(sbptr, tmp->count);
-        SockBuf_AddInt(sbptr, flags);
-
-        if(QUERY_FLAG(tmp, FLAG_NO_PICK))
-        {
-            SockBuf_AddInt(sbptr, -1);
-        }
-        else
-        {
-            if(tmp->type == CONTAINER && tmp->weapon_speed != 1.0f) /* magical containers */
-            {
-                SockBuf_AddInt(sbptr, tmp->damage_round_tag + tmp->weight);
-            }
-            else
-            {
-                SockBuf_AddInt(sbptr, WEIGHT(tmp) );
-            }
-        }
-        if (tmp->head)
-        {
-            if (tmp->head->inv_face && QUERY_FLAG(tmp, FLAG_IDENTIFIED))
-            {
-                SockBuf_AddInt(sbptr, tmp->head->inv_face->number);
-            }
-            else
-            {
-                SockBuf_AddInt(sbptr, tmp->head->face->number);
-            }
-        }
-        else
-        {
-            if (tmp->inv_face && QUERY_FLAG(tmp, FLAG_IDENTIFIED))
-            {
-                SockBuf_AddInt(sbptr,tmp->inv_face->number);
-            }
-            else
-            {
-                SockBuf_AddInt(sbptr, tmp->face->number);
-            }
-        }
-        SockBuf_AddChar(sbptr, tmp->facing);
-
-        if (tmp->head)
-            head = tmp->head;
-        else
-            head = tmp;
-
-        len = (int)strlen((tmp_sp = query_base_name(head, pl)))+1;
-        if (len > 128)
-        {
-            len = 128; /* 127 chars + 0 marker */
-            SockBuf_AddChar(sbptr, len);
-            SockBuf_AddString(sbptr, tmp_sp, len-1);
-        }
-        else
-        {
-            SockBuf_AddChar(sbptr, len+1);
-            SockBuf_AddString(sbptr, tmp_sp, len);
-        }
-
-        /* handle animations... this will change 100% when we add client
-             * sided animations.
-             */
-        SockBuf_AddShort(sbptr, tmp->animation_id);
-        anim_speed = 0;
-        if (QUERY_FLAG(tmp, FLAG_ANIMATE))
-        {
-            if (tmp->anim_speed)
-                anim_speed = tmp->anim_speed;
-            else
-            {
-                if (FABS(tmp->speed) < 0.001)
-                    anim_speed = 255;
-                else if (FABS(tmp->speed) >= 1.0)
-                    anim_speed = 1;
-                else
-                    anim_speed = (int) (1.0 / FABS(tmp->speed));
-            }
-            if (anim_speed > 255)
-                anim_speed = 255;
-        }
-        SockBuf_AddChar(sbptr, anim_speed);
-        SockBuf_AddInt(sbptr, tmp->nrof);
-        got_one++;
-
-        /* We do a special for DMs - forcing the
-             * inventory of ALL objects we send here... This is a
-             * wonderful feature for controling & find bugs.
-             */
-        if (QUERY_FLAG(pl, FLAG_WIZ))
-        {
-            if (tmp->inv)
-            {
-               got_one = esrv_draw_DM_inv(pl, tmp);
-               /* 2008-08-28 Alderan:
-                * Fix double mempool-free bug
-                * We MUST re-get the pointer to the buffer, because the function could
-                * (and will in some circumstances) resize the buffer.
-                */
-               sbptr = ACTIVE_SOCKBUF(ns);
-            }
-        }
-    } /* for loop */
-
-    if (got_one || (!got_one && !ns->below_clear))
-    {
-        SOCKBUF_REQUEST_FINISH(ns, SERVER_CMD_ITEMY, SOCKBUF_DYNAMIC);
-        ns->below_clear=0;
-    }
-    else
-        SOCKBUF_REQUEST_RESET(ns);
-}
-
-
-/* used for a active DM - implicit sending the inventory of all
- * items we see in inventory & in below. For controling & debug.
- * Do a examine cmd over the item and you will see a dump.
- */
-int esrv_draw_DM_inv(object *pl, object *op)
-{
-    NewSocket  *ns = &CONTR(pl)->socket;
-    sockbuf_struct *sbptr = ACTIVE_SOCKBUF(ns);
-    char   *tmp_sp, *tmp_in_inv = "in inventory", *tmp_end_inv = "end of inventory";
-    object *tmp, *head;
-    int     got_one = 0, flags, len, anim_speed;
-
-    SockBuf_AddInt(sbptr, 0);
-    SockBuf_AddInt(sbptr, 0);
-    SockBuf_AddInt(sbptr, -1);
-    SockBuf_AddInt(sbptr, blank_face->number);
-    len = strlen(tmp_in_inv);
-    SockBuf_AddChar(sbptr, len+1);
-    add_stringlen_to_sockbuf(tmp_in_inv, sbptr);
-    sbptr = ACTIVE_SOCKBUF(ns);
-    SockBuf_AddShort(sbptr, 0);
-    SockBuf_AddChar(sbptr, 0);
-    SockBuf_AddInt(sbptr, 0);
-
-    for (tmp = op->inv; tmp; tmp = tmp->below)
-    {
-        flags = query_flags(tmp);
-        if (QUERY_FLAG(tmp, FLAG_NO_PICK))
-            flags |= F_NOPICK;
-
-        SockBuf_AddInt(sbptr, tmp->count);
-        SockBuf_AddInt(sbptr, flags);
-
-        if(QUERY_FLAG(tmp, FLAG_NO_PICK))
-        {
-            SockBuf_AddInt(sbptr, -1);
-        }
-        else
-        {
-            if(tmp->type == CONTAINER && tmp->weapon_speed != 1.0f)
-            {
-                SockBuf_AddInt(sbptr, tmp->damage_round_tag + tmp->weight);
-            }
-            else
-            {
-                SockBuf_AddInt(sbptr, WEIGHT(tmp) );
-            }
-        }
-
-        if (tmp->head)
-        {
-            SockBuf_AddInt(sbptr, tmp->head->face->number);
-        }
-        else
-        {
-            SockBuf_AddInt(sbptr, tmp->face->number);
-        }
-        SockBuf_AddChar(sbptr, tmp->facing);
-
-        if (tmp->head)
-            head = tmp->head;
-        else
-            head = tmp;
-
-        len = strlen((tmp_sp = query_base_name(head, pl))) + 1; /* +1 = 0 marker for string end */
-        if (len > 128)
-        {
-            len = 128; /* 127 chars + 0 marker */
-            SockBuf_AddChar(sbptr, len);
-            SockBuf_AddString(sbptr, tmp_sp, len-1);
-        }
-        else
-        {
-            SockBuf_AddChar(sbptr, len+1);
-            SockBuf_AddString(sbptr, tmp_sp, len);
-        }
-
-        /* handle animations... this will change 100% when we add client
-             * sided animations.
-             */
-        SockBuf_AddShort(sbptr, tmp->animation_id);
-        anim_speed = 0;
-        if (QUERY_FLAG(tmp, FLAG_ANIMATE))
-        {
-            if (tmp->anim_speed)
-                anim_speed = tmp->anim_speed;
-            else
-            {
-                if (FABS(tmp->speed) < 0.001)
-                    anim_speed = 255;
-                else if (FABS(tmp->speed) >= 1.0)
-                    anim_speed = 1;
-                else
-                    anim_speed = (int) (1.0 / FABS(tmp->speed));
-            }
-            if (anim_speed > 255)
-                anim_speed = 255;
-        }
-        SockBuf_AddChar(sbptr, anim_speed);
-        SockBuf_AddInt(sbptr, tmp->nrof);
-        got_one++;
-
-        if (tmp->inv) /* oh well... another container to flush */
-        {
-            got_one = esrv_draw_DM_inv(pl, tmp);
-            /* 2008-08-28 Alderan: fix for double mempool-free bug */
-            sbptr = ACTIVE_SOCKBUF(ns);
-        }
-    } /* for loop */
-
-    SockBuf_AddInt(sbptr, 0);
-    SockBuf_AddInt(sbptr, 0);
-    SockBuf_AddInt(sbptr, -1);
-    SockBuf_AddInt(sbptr, blank_face->number);
-    len = strlen(tmp_end_inv);
-    SockBuf_AddChar(sbptr, len+1);
-    add_stringlen_to_sockbuf(tmp_end_inv, sbptr);
-    sbptr = ACTIVE_SOCKBUF(ns);
-    SockBuf_AddShort(sbptr, 0);
-    SockBuf_AddChar(sbptr, 0);
-    SockBuf_AddInt(sbptr, 0);
-    return got_one;
-}
-
-void esrv_close_container(object *op)
-{
-    NewSocket *ns = &CONTR(op)->socket;
-
-    /*LOG(llevNoLog,"close container of: %s\n", query_name(op));*/
-    SOCKBUF_REQUEST_BUFFER(ns, SOCKET_SIZE_SMALL);
-    SockBuf_AddInt(ACTIVE_SOCKBUF(ns), -1); /* container mode flag */
-    SockBuf_AddInt(ACTIVE_SOCKBUF(ns), -1);
-    SOCKBUF_REQUEST_FINISH(ns, SERVER_CMD_ITEMX, SOCKBUF_DYNAMIC);
-}
-
-
-static int esrv_send_inventory_DM(object *pl, object *op)
-{
-    sockbuf_struct *sbptr = ACTIVE_SOCKBUF(&CONTR(pl)->socket);
-    object *tmp;
-    int     flags, got_one = 0, anim_speed, len;
-    char    item_n[MEDIUM_BUF];
-
-    for (tmp = op->inv; tmp; tmp = tmp->below)
-    {
-        flags = query_flags(tmp);
-        if (QUERY_FLAG(tmp, FLAG_NO_PICK))
-            flags |= F_NOPICK;
-
-        SockBuf_AddInt(sbptr, tmp->count);
-        SockBuf_AddInt(sbptr, flags);
-
-        if(QUERY_FLAG(tmp, FLAG_NO_PICK))
-        {
-            SockBuf_AddInt(sbptr, -1);
-        }
-        else
-        {
-            if(tmp->type == CONTAINER && tmp->weapon_speed != 1.0f)
-            {
-                SockBuf_AddInt(sbptr, tmp->damage_round_tag + tmp->weight);
-            }
-            else
-            {
-                SockBuf_AddInt(sbptr, WEIGHT(tmp) );
-            }
-        }
-
-        if (tmp->inv_face && QUERY_FLAG(tmp, FLAG_IDENTIFIED))
-        {
-            SockBuf_AddInt(sbptr, tmp->inv_face->number);
-        }
-        else
-        {
-            SockBuf_AddInt(sbptr, tmp->face->number);
-        }
-
-        SockBuf_AddChar(sbptr, tmp->facing);
-        SockBuf_AddChar(sbptr, tmp->type);
-        SockBuf_AddChar(sbptr, tmp->sub_type1);
-        if (QUERY_FLAG(tmp, FLAG_IDENTIFIED))
-        {
-            SockBuf_AddChar(sbptr, tmp->item_quality);
-            SockBuf_AddChar(sbptr, tmp->item_condition);
-            SockBuf_AddChar(sbptr, tmp->item_level);
-            SockBuf_AddChar(sbptr, tmp->item_skill);
-        }
-        else
-        {
-            SockBuf_AddInt(sbptr, 0xffffffff);
-        }
-        strncpy(item_n, query_base_name(tmp, pl), 127);
-        item_n[127] = 0;
-        len = strlen(item_n);
-        SockBuf_AddChar(sbptr, len+1);
-        SockBuf_AddString(sbptr, item_n, len);
-        if (tmp->inv_animation_id)
-        {
-            SockBuf_AddShort(sbptr, tmp->inv_animation_id);
-        }
-        else
-        {
-            SockBuf_AddShort(sbptr, tmp->animation_id);
-        }
-        /* i use for both the same anim_speed - when we need a different,
-             * i adding inv_anim_speed.
-             */
-        anim_speed = 0;
-        if (QUERY_FLAG(tmp, FLAG_ANIMATE))
-        {
-            if (tmp->anim_speed)
-                anim_speed = tmp->anim_speed;
-            else
-            {
-                if (FABS(tmp->speed) < 0.001)
-                    anim_speed = 255;
-                else if (FABS(tmp->speed) >= 1.0)
-                    anim_speed = 1;
-                else
-                    anim_speed = (int) (1.0 / FABS(tmp->speed));
-            }
-            if (anim_speed > 255)
-                anim_speed = 255;
-        }
-        SockBuf_AddChar(sbptr, anim_speed);
-        SockBuf_AddInt(sbptr, tmp->nrof);
-        got_one++;
-    }
-    return got_one;
-}
-
-/* send_inventory send the inventory for the player BUT also the inventory for
- * items. When the player obens a chest on the ground, this function is called to
- * send the inventory for the chest - and the items are shown in below. The client
- * should take care, that the items in the below windows shown can be changed here
- * too without calling the function for the look window.
- */
-/* we have here no invisible flag - we can "see" invisible when we have it in the inventory.
- * that simulate the effect that we can "feel" the object in our hands.
- * but when we drop it, it rolls out of sight and vanish...
- */
-void esrv_send_inventory(object *pl, object *op)
-{
-    NewSocket  *ns = &CONTR(pl)->socket;
-    sockbuf_struct *sbptr;
-    object     *tmp;
-    int         flags, got_one = 0, anim_speed, len;
-    char        item_n[MEDIUM_BUF];
-
-    /*LOG(llevDebug,"send inventory of: %s\n", query_name(op));*/
-    SOCKBUF_REQUEST_BUFFER(ns, SOCKET_SIZE_MEDIUM);
-    sbptr = ACTIVE_SOCKBUF(ns);
-
-    if (pl != op) /* in this case we send a container inventory! */
-    {
-        SockBuf_AddInt(sbptr, -1); /* container mode flag */
-    }
-    else
-    {
-        SockBuf_AddInt(sbptr, op->count);
-    }
-
-    SockBuf_AddInt(sbptr, op->count);
-
-    for (tmp = op->inv; tmp; tmp = tmp->below)
-    {
-        if (!QUERY_FLAG(pl, FLAG_SEE_INVISIBLE) && QUERY_FLAG(tmp, FLAG_IS_INVISIBLE))
-        {
-            /* skip this for DMs */
-            if (!QUERY_FLAG(pl, FLAG_WIZ))
-                continue;
-        }
-
-        if (LOOK_OBJ(tmp) || QUERY_FLAG(pl, FLAG_WIZ))
-        {
-            flags = query_flags(tmp);
-            if (QUERY_FLAG(tmp, FLAG_NO_PICK))
-                flags |= F_NOPICK;
-
-
-            SockBuf_AddInt(sbptr, tmp->count);
-            SockBuf_AddInt(sbptr, flags);
-
-            if(QUERY_FLAG(tmp, FLAG_NO_PICK))
-            {
-                SockBuf_AddInt(sbptr, -1);
-            }
-            else
-            {
-                if(tmp->type == CONTAINER && tmp->weapon_speed != 1.0f)
-                {
-                    SockBuf_AddInt(sbptr, tmp->damage_round_tag  + tmp->weight);
-                }
-                else
-                {
-                    SockBuf_AddInt(sbptr, WEIGHT(tmp) );
-                }
-            }
-
-            if (tmp->inv_face && QUERY_FLAG(tmp, FLAG_IDENTIFIED))
-            {
-                SockBuf_AddInt(sbptr, tmp->inv_face->number);
-            }
-            else
-            {
-                SockBuf_AddInt(sbptr, tmp->face->number);
-            }
-
-            SockBuf_AddChar(sbptr, tmp->facing);
-            SockBuf_AddChar(sbptr, tmp->type);
-            SockBuf_AddChar(sbptr, tmp->sub_type1);
-            if (QUERY_FLAG(tmp, FLAG_IDENTIFIED))
-            {
-                SockBuf_AddChar(sbptr, tmp->item_quality);
-                SockBuf_AddChar(sbptr, tmp->item_condition);
-                SockBuf_AddChar(sbptr, tmp->item_level);
-                SockBuf_AddChar(sbptr, tmp->item_skill);
-            }
-            else
-            {
-                SockBuf_AddInt(sbptr, 0xffffffff);
-            }
-            strncpy(item_n, query_base_name(tmp, pl), 127);
-            item_n[127] = 0;
-            len = strlen(item_n);
-            SockBuf_AddChar(sbptr, len+1);
-            SockBuf_AddString(sbptr, item_n, len);
-            if (tmp->inv_animation_id)
-            {
-                SockBuf_AddShort(sbptr, tmp->inv_animation_id);
-            }
-            else
-            {
-                SockBuf_AddShort(sbptr, tmp->animation_id);
-            }
-            /* i use for both the same anim_speed - when we need a different,
-                 * i adding inv_anim_speed.
-                 */
-            anim_speed = 0;
-            if (QUERY_FLAG(tmp, FLAG_ANIMATE))
-            {
-                if (tmp->anim_speed)
-                    anim_speed = tmp->anim_speed;
-                else
-                {
-                    if (FABS(tmp->speed) < 0.001)
-                        anim_speed = 255;
-                    else if (FABS(tmp->speed) >= 1.0)
-                        anim_speed = 1;
-                    else
-                        anim_speed = (int) (1.0 / FABS(tmp->speed));
-                }
-                if (anim_speed > 255)
-                    anim_speed = 255;
-            }
-            SockBuf_AddChar(sbptr, anim_speed);
-            SockBuf_AddInt(sbptr, tmp->nrof);
-            got_one++;
-
-            if (QUERY_FLAG(pl, FLAG_WIZ))
-            {
-                if (tmp->inv && tmp->type != CONTAINER)
-                {
-                    got_one = esrv_send_inventory_DM(pl, tmp);
-                    /* 2008-08-28 Alderan: Always re-get the local pointer after a call to a function which puts stuff in the sockbuf! */
-                    sbptr = ACTIVE_SOCKBUF(ns);
-                }
-            }
-        }
-    }
-
-    if (got_one || pl != op) /* container can be empty... */
-        SOCKBUF_REQUEST_FINISH(ns, SERVER_CMD_ITEMY, SOCKBUF_DYNAMIC);
-    else
-        SOCKBUF_REQUEST_RESET(ns);
-}
-
-
-static void esrv_update_item_send(int flags, object *pl, object *op)
-{
-    NewSocket        *ns = &CONTR(pl)->socket;
-    sockbuf_struct    *sbptr;
-
-    /*LOG(llevDebug,"update item: %s\n", query_name(op));*/
-    /* If we have a request to send the player item, skip a few checks. */
-    if (op != pl)
-    {
-        if (!LOOK_OBJ(op) && !QUERY_FLAG(pl, FLAG_WIZ))
-            return;
-    }
-
-    SOCKBUF_REQUEST_BUFFER(ns, SOCKET_SIZE_MEDIUM);
-    sbptr = ACTIVE_SOCKBUF(ns);
-
-    SockBuf_AddShort(sbptr, flags);
-    SockBuf_AddInt(sbptr, op->count);
-
-    if (flags & UPD_LOCATION)
-    {
-        SockBuf_AddInt(sbptr, op->env ? op->env->count : 0);
-    }
-    if (flags & UPD_FLAGS)
-    {
-        SockBuf_AddInt(sbptr, query_flags(op));
-    }
-    if (flags & UPD_WEIGHT)
-    {
-        if(op->type == CONTAINER && op->weapon_speed != 1.0f)
-        {
-            SockBuf_AddInt(sbptr, op->damage_round_tag  + op->weight);
-        }
-        else
-        {
-            SockBuf_AddInt(sbptr, WEIGHT(op));
-        }
-    }
-    if (flags & UPD_FACE)
-    {
-        if (op->inv_face && QUERY_FLAG(op, FLAG_IDENTIFIED))
-        {
-            SockBuf_AddInt(sbptr, op->inv_face->number);
-        }
-        else
-        {
-            SockBuf_AddInt(sbptr, op->face->number);
-        }
-    }
-    if (flags & UPD_DIRECTION)
-    {
-        SockBuf_AddChar(sbptr, op->facing);
-    }
-    if (flags & UPD_NAME)
-    {
-        int     len;
-        char    item_n[MEDIUM_BUF];
-
-        strncpy(item_n, query_base_name(op, pl), 127);
-        item_n[127] = 0;
-        len = strlen(item_n);
-        SockBuf_AddChar(sbptr, len + 1);
-        SockBuf_AddString(sbptr, item_n, len);
-    }
-    if (flags & UPD_ANIM)
-    {
-        if (op->inv_animation_id)
-        {
-            SockBuf_AddShort(sbptr, op->inv_animation_id);
-        }
-        else
-        {
-            SockBuf_AddShort(sbptr, op->animation_id);
-        }
-    }
-    if (flags & UPD_ANIMSPEED)
-    {
-        int anim_speed  = 0;
-        if (QUERY_FLAG(op, FLAG_ANIMATE))
-        {
-            if (op->anim_speed)
-                anim_speed = op->anim_speed;
-            else
-            {
-                if (FABS(op->speed) < 0.001)
-                    anim_speed = 255;
-                else if (FABS(op->speed) >= 1.0)
-                    anim_speed = 1;
-                else
-                    anim_speed = (int) (1.0 / FABS(op->speed));
-            }
-            if (anim_speed > 255)
-                anim_speed = 255;
-        }
-        SockBuf_AddChar(sbptr, anim_speed);
-    }
-    if (flags & UPD_NROF)
-    {
-        SockBuf_AddInt(sbptr, op->nrof);
-    }
-    if (flags & UPD_QUALITY)
-    {
-        SockBuf_AddChar(sbptr, op->item_quality);
-        SockBuf_AddChar(sbptr, op->item_condition);
-    }
-
-    SOCKBUF_REQUEST_FINISH(ns, SERVER_CMD_UPITEM, SOCKBUF_DYNAMIC);
-}
-
-/* Updates object *op for player *pl.  flags is a list of values to update
- * to the client (as defined in newclient.h - might as well use the
- * same value both places.
- */
-void esrv_update_item(int flags, object *pl, object *op)
-{
-    object *tmp;
-
-    /* special case: update something in a container.
-     * we don't care about where the container is,
-     * because always is the container link list valid!
-     */
-    if (op->env && op->env->type == CONTAINER)
-    {
-        for (tmp = op->env->attacked_by; tmp; tmp = CONTR(tmp)->container_above)
-            esrv_update_item_send(flags, tmp, op);
-        return;
-    }
-
-    /* Integrating the is_player_inv() test here saves us many tests in the code.
-     * TODO: remove the "pl" parameter for this function call
-     * Gecko 2007-01-19 */
-    if((tmp = is_player_inv(op)))
-        esrv_update_item_send(flags, tmp, op);
-}
-
-
-static void esrv_send_item_send(object *pl, object *op)
-{
-    NewSocket        *ns = &CONTR(pl)->socket;
-    sockbuf_struct    *sbptr;
-    int                anim_speed, len;
-    char            item_n[MEDIUM_BUF];
-
-
-    if(!pl ||!op)
-        return;
-
-    /* If this is not the player object, do some more checks */
-    if (op != pl)
-    {
-        /* We only send 'visible' objects to the client */
-        if (!LOOK_OBJ(op) &&
-            !QUERY_FLAG(pl, FLAG_WIZ))
-        {
-            return;
-        }
-    }
-
-    /*LOG(llevNoLog,"send item: %s\n", query_name(op));*/
-
-    SOCKBUF_REQUEST_BUFFER(ns, SOCKET_SIZE_MEDIUM);
-    sbptr = ACTIVE_SOCKBUF(ns);
-
-    SockBuf_AddInt(sbptr, -4); /* no delinv */
-    SockBuf_AddInt(sbptr, (op->env ? op->env->count : 0));
-    SockBuf_AddInt(sbptr, op->count);
-    SockBuf_AddInt(sbptr, query_flags(op));
-
-    if(op->type == CONTAINER && op->weapon_speed != 1.0f)
-    {
-        SockBuf_AddInt(sbptr, op->damage_round_tag  + op->weight);
-    }
-    else
-    {
-        SockBuf_AddInt(sbptr, WEIGHT(op));
-    }
-
-    if (op->head)
-    {
-        if (op->head->inv_face && QUERY_FLAG(op, FLAG_IDENTIFIED))
-        {
-            SockBuf_AddInt(sbptr, op->head->inv_face->number);
-        }
-        else
-        {
-            SockBuf_AddInt(sbptr, op->head->face->number);
-        }
-    }
-    else
-    {
-        if (op->inv_face && QUERY_FLAG(op, FLAG_IDENTIFIED))
-        {
-            SockBuf_AddInt(sbptr, op->inv_face->number);
-        }
-        else
-        {
-            SockBuf_AddInt(sbptr, op->face->number);
-        }
-    }
-
-    SockBuf_AddChar(sbptr, op->facing);
-    if (op->env) /* if not below */
-    {
-        SockBuf_AddChar(sbptr, op->type);
-        SockBuf_AddChar(sbptr, op->sub_type1);
-        if (QUERY_FLAG(op, FLAG_IDENTIFIED))
-        {
-            SockBuf_AddChar(sbptr, op->item_quality);
-            SockBuf_AddChar(sbptr, op->item_condition);
-            SockBuf_AddChar(sbptr, op->item_level);
-            SockBuf_AddChar(sbptr, op->item_skill);
-        }
-        else
-        {
-            SockBuf_AddInt(sbptr, 0xffffffff);
-        }
-    }
-    strncpy(item_n, query_base_name(op, pl), 127);
-    item_n[127] = 0;
-    len = strlen(item_n);
-    SockBuf_AddChar(sbptr, len+1);
-    SockBuf_AddString(sbptr, item_n, len);
-
-    if (op->env && op->inv_animation_id)
-    {
-        SockBuf_AddShort(sbptr, op->inv_animation_id);
-    }
-    else
-    {
-        SockBuf_AddShort(sbptr, op->animation_id);
-    }
-    anim_speed = 0;
-    if (QUERY_FLAG(op, FLAG_ANIMATE))
-    {
-        if (op->anim_speed)
-            anim_speed = op->anim_speed;
-        else
-        {
-            if (FABS(op->speed) < 0.001)
-                anim_speed = 255;
-            else if (FABS(op->speed) >= 1.0)
-                anim_speed = 1;
-            else
-                anim_speed = (int) (1.0 / FABS(op->speed));
-        }
-        if (anim_speed > 255)
-            anim_speed = 255;
-    }
-    SockBuf_AddChar(sbptr, anim_speed);
-    SockBuf_AddInt(sbptr, op->nrof);
-
-    SOCKBUF_REQUEST_FINISH(ns, SERVER_CMD_ITEMX, SOCKBUF_DYNAMIC);
-}
-
-void esrv_send_item(object *pl, object *op)
-{
-    object *tmp;
-
-    if(!pl ||!op)
-        return;
-
-    /* special case: update something in a container.
-     * we don't care about where the container is,
-     * because always is the container link list valid!
-     */
-    if (op->env && op->env->type == CONTAINER)
-    {
-        for (tmp = op->env->attacked_by; tmp; tmp = CONTR(tmp)->container_above)
-            esrv_send_item_send(tmp, op);
-        return;
-    }
-
-    /* Integrating the is_player_inv() test here saves us many tests in the code.
-     * TODO: remove the "pl" parameter for this function call
-     * Gecko 2007-01-19 */
-    if((tmp = is_player_inv(op)))
-        esrv_send_item_send(tmp, op);
-}
-
-static inline void esrv_del_item_send(player *pl, int tag)
-{
-    SOCKBUF_REQUEST_BUFFER(&pl->socket, SOCKET_SIZE_SMALL);
-    SockBuf_AddInt(ACTIVE_SOCKBUF(&pl->socket), tag);
-    SOCKBUF_REQUEST_FINISH(&pl->socket, SERVER_CMD_DELITEM, SOCKBUF_DYNAMIC);
-}
-
-/* Tells the client to delete an item.
- * cont is the container - it must be seperated
- * from tag because the "tag" object can be destroyed
- * at this point on the server - we need to notify it
- * to the clients now.
- */
-void esrv_del_item(player *pl, int tag, object *cont)
-{
-    /* FIXME: Do we really need this special handling for open containers here?
-     * 
-     * -- Smacky 20130121 */
-    /* Note that this meahs containers must be deleted client-side BEFORE they
-     * are unlinked (closed). */
-    if (cont &&
-        cont->type == CONTAINER &&
-        cont->attacked_by)
-    {
-        object *whose;
-
-        for (whose = cont->attacked_by; whose;
-             whose = CONTR(whose)->container_above)
-        {
-            esrv_del_item_send(CONTR(whose), tag);
-        }
-    }
-    else if (pl)
-    {
-        esrv_del_item_send(pl, tag);
-    }
-}
-
-/* Recursively deletes op->inv. */
-void esrv_del_item_inv(player *pl, object *op)
-{
-    object *this;
-
-    for (this = op; this; this = this->below)
-    {
-        if (this->inv)
-        {
-            esrv_del_item_inv(pl, this->inv);
-        }
-
-        esrv_del_item(pl, this->count, NULL);
-    }
-}
-
-/*******************************************************************************
- *
- * Client has requested us to do something with an object.
- *
- ******************************************************************************/
 
 /* Takes a player and object count (tag) and returns the actual object
  * pointer, or null if it can't be found.

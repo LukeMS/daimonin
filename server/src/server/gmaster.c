@@ -394,27 +394,12 @@ void set_gmaster_mode(player *pl, int mode_id)
     if ((mode & (GMASTER_MODE_SA | GMASTER_MODE_MM)))
 #endif
     {
-        object *ob;
-
         SET_FLAG(pl->ob, FLAG_WIZ);
         pl->wizpass = 1;
         clear_los(pl->ob);
         pl->socket.update_tile = 0; /* force a draw_look() */
         pl->update_los = 1;
-
-        /* Go through player's inv and send each previously unknown object to
-         * the client. */
-        for (ob = pl->ob->inv; ob; ob = ob->below)
-        {
-            if (!LOOK_OBJ(ob) ||                            // eg, sys objects
-                (!QUERY_FLAG(pl->ob, FLAG_SEE_INVISIBLE) && // if player could not see invis,
-                 QUERY_FLAG(ob, FLAG_IS_INVISIBLE)))        // item is not in his inv yet
-            {
-                /* TODO: Send recursive invs. The current code cannot sensibly
-                 * do this. viiew_inv.c needs an overhaul. */
-                esrv_send_item(pl->ob, ob);
-            }
-        }
+        esrv_send_inventory(pl, pl->ob);
     }
 
     pl->socket.ext_title_flag =1;
@@ -479,8 +464,6 @@ void remove_gmaster_mode(player *pl)
     if ((mode & (GMASTER_MODE_SA | GMASTER_MODE_MM)))
 #endif
     {
-        object *ob;
-
         CLEAR_FLAG(pl->ob, FLAG_WIZ);
         pl->wizpass = 0;
         /* bit of a cheat, but by doing this we avoid a fix when going into wiz
@@ -489,23 +472,7 @@ void remove_gmaster_mode(player *pl)
         FIX_PLAYER(pl->ob, "remove wiz mode");
         pl->socket.update_tile = 0;
         pl->update_los = 1;
-
-        /* Go through player's inv and delete each WIZ-only seeable object from
-         * the client. */
-        for (ob = pl->ob->inv; ob; ob = ob->below)
-        {
-            if (!LOOK_OBJ(ob) ||                            // eg, sys objects
-                (!QUERY_FLAG(pl->ob, FLAG_SEE_INVISIBLE) && // if player could not see invis,
-                 QUERY_FLAG(ob, FLAG_IS_INVISIBLE)))        // item should not be in his inv
-            {
-                if (ob->inv)
-                {
-                    esrv_del_item_inv(pl, ob->inv);
-                }
-
-                esrv_del_item(pl, ob->count, NULL);
-            }
-        }
+        esrv_send_inventory(pl, pl->ob);
     }
 
     pl->socket.ext_title_flag =1;

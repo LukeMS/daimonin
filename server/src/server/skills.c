@@ -656,7 +656,7 @@ int do_skill_detect_curse(object *pl)
         if (!QUERY_FLAG(tmp, FLAG_KNOWN_CURSED) && is_cursed_or_damned(tmp))
         {
             SET_FLAG(tmp, FLAG_KNOWN_CURSED);
-            esrv_update_item(UPD_FLAGS, pl, tmp);
+            esrv_update_item(UPD_FLAGS, tmp);
             success += calc_skill_exp(pl, tmp, 1.0f,-1, NULL);
         }
     return success;
@@ -674,7 +674,7 @@ int do_skill_detect_magic(object *pl)
         if (!QUERY_FLAG(tmp, FLAG_KNOWN_MAGICAL) && (is_magical(tmp)))
         {
             SET_FLAG(tmp, FLAG_KNOWN_MAGICAL);
-            esrv_update_item(UPD_FLAGS, pl, tmp);
+            esrv_update_item(UPD_FLAGS, tmp);
             success += calc_skill_exp(pl, tmp, 1.0f, -1, NULL);
         }
     return success;

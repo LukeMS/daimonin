@@ -1017,14 +1017,14 @@ int esrv_apply_container(object *op, object *sack)
                     CLEAR_FLAG(tmp, FLAG_APPLIED);
                     new_draw_info(NDI_UNIQUE, 0, op, "You unreadied %s.", query_name(tmp));
                     update_object(tmp, UP_OBJ_FACE);
-                    esrv_update_item(UPD_FLAGS, op, tmp);
+                    esrv_update_item(UPD_FLAGS, tmp);
                 }
             }
 
             new_draw_info(NDI_UNIQUE, 0, op, "You readied %s.", query_name(sack));
             SET_FLAG(sack, FLAG_APPLIED);
             update_object(sack, UP_OBJ_FACE);
-            esrv_update_item(UPD_FLAGS, op, sack);
+            esrv_update_item(UPD_FLAGS, sack);
             container_trap(op, sack);   /* search & explode a rune in the container */
         }
     }
@@ -1624,7 +1624,7 @@ static void apply_book(object *op, object *tmp)
             SET_FLAG(tmp, FLAG_IDENTIFIED);
             /* If in a container, update how it looks */
             if (tmp->env)
-                esrv_update_item(UPD_FLAGS | UPD_NAME, op, tmp);
+                esrv_update_item(UPD_FLAGS | UPD_NAME, tmp);
             else
                 CONTR(op)->socket.update_tile = 0;
         }
@@ -1813,7 +1813,7 @@ static void apply_spellbook(object *op, object *tmp)
     {
         identify(tmp);
         if (tmp->env)
-            esrv_update_item(UPD_FLAGS | UPD_NAME, op, tmp);
+            esrv_update_item(UPD_FLAGS | UPD_NAME, tmp);
         else
             CONTR(op)->socket.update_tile = 0;
     }
@@ -2547,6 +2547,8 @@ int apply_special(object *who, object *op, int aflags)
     buf[0] = '\0';      /* Needs to be initialized */
     if (QUERY_FLAG(op, FLAG_APPLIED))
     {
+        uint16 flags = UPD_FLAGS;
+
         /* always apply, so no reason to unapply */
         if (basic_flag == AP_APPLY)
             return 0;
@@ -2653,20 +2655,12 @@ int apply_special(object *who, object *op, int aflags)
                 fix_monster(who);
         }
 
-        tmp = (!(aflags & AP_NO_MERGE)) ? merge_ob(op, NULL) : NULL;
-
-        if (who->type == PLAYER &&
-            CONTR(who))
+        if ((tmp = (!(aflags & AP_NO_MERGE)) ? merge_ob(op, NULL) : NULL))
         {
-            sint32 flags = UPD_FLAGS;
-
-            if (tmp)
-            {
-                flags |= UPD_NROF | UPD_WEIGHT;
-            }
-
-            esrv_update_item(flags, who, op);
+            flags |= UPD_NROF | UPD_WEIGHT;
         }
+
+        esrv_update_item(flags, op);
 
         return 0;
     }
@@ -2919,10 +2913,9 @@ int apply_special(object *who, object *op, int aflags)
             SET_FLAG(op, FLAG_KNOWN_CURSED);
         }
     }
-    if (who->type == PLAYER)
-    {
-        esrv_update_item(UPD_FLAGS, who, op);
-    }
+
+    esrv_update_item(UPD_FLAGS, op);
+
     return 0;
 }
 
@@ -3038,7 +3031,7 @@ void turn_on_light(object *op)
         op->nrof -= 1;
         one->nrof = 1;
         if (op->env)
-            esrv_update_item(UPD_NROF, op->env, op);
+            esrv_update_item(UPD_NROF, op);
         else
             update_object(op, UP_OBJ_FACE);
 
@@ -3282,7 +3275,7 @@ void apply_player_light(object *who, object *op)
 
                         CLEAR_FLAG(tmp, FLAG_APPLIED);
                         turn_off_light(tmp);
-                        esrv_update_item(UPD_FLAGS | UPD_FACE, who, tmp);
+                        esrv_update_item(UPD_FLAGS | UPD_FACE, tmp);
                     }
                 }
 
@@ -3469,8 +3462,7 @@ int apply_power_crystal(object *op, object *crystal)
     crystal->stats.sp += power_grab;
     crystal->speed = (float) crystal->stats.sp / (float) crystal->stats.maxsp;
     update_ob_speed(crystal);
-    if (op->type == PLAYER)
-        esrv_update_item(UPD_ANIMSPEED, op, crystal);
+    esrv_update_item(UPD_ANIMSPEED, crystal);
 
     return 1;
 }

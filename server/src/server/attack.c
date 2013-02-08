@@ -993,8 +993,7 @@ static int HitPlayerAttacktype(object *op, object *hitter, int *flags, int damag
             query_name(hitter), query_name(tmp));
             flag = 1;
             tmp->magic--;
-            if(op->type == PLAYER)
-            esrv_send_item(op, tmp);
+            esrv_send_item(tmp);
             }
             */
             break;

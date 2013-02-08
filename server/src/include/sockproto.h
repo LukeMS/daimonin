@@ -83,15 +83,12 @@ NewSocket		*socket_get_available(void);
 void            close_newsocket(NewSocket *ns);
 void            free_newsocket(NewSocket *ns);
 /* item.c */
-unsigned int    query_flags(object *op);
-void            esrv_draw_look(object *pl);
-int             esrv_draw_DM_inv(object *pl, object *op);
-void            esrv_close_container(object *op);
-void            esrv_send_inventory(object *pl, object *op);
-void            esrv_update_item(int flags, object *pl, object *op);
-void            esrv_send_item(object *pl, object *op);
-void            esrv_del_item(player *pl, int tag, object *cont);
-void            esrv_del_item_inv(player *pl, object *op);
+void            esrv_send_below(player *pl);
+void            esrv_send_inventory(player *pl, object *op);
+void            esrv_send_item(object *op);
+void            esrv_update_item(uint16 flags, object *op);
+void            esrv_del_item_inv(object *op);
+void            esrv_del_item(object *op);
 object         *esrv_get_ob_from_count(object *pl, tag_t count);
 void            esrv_move_object(object *pl, tag_t to, tag_t tag, long nrof);
 /* loop.c */

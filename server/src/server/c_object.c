@@ -133,7 +133,7 @@ int command_egobind ( object *pl, char *params)
 
     new_draw_info(NDI_UNIQUE, 0,pl, "You have bound the %s!", query_name(mark));
     create_ego_item(mark, pl->name, EGO_ITEM_BOUND_PLAYER);
-    esrv_update_item (UPD_NAME, pl, mark);
+    esrv_update_item(UPD_NAME, mark);
     play_sound_player_only (CONTR(pl), SOUND_LEARN_SPELL, SOUND_NORMAL, 0, 0);
 
     return 0;

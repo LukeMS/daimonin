@@ -781,7 +781,6 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
     LOG(llevDebug, "Send new_player(): socket %d\n", ns->fd);
     send_spelllist_cmd(op, NULL, SPLIST_MODE_ADD); /* send the known spells as list to client */
     send_skilllist_cmd(op, NULL, SPLIST_MODE_ADD);
-    esrv_send_inventory(op, op);
 
     /* we do the login script BEFORE we go to the map */
 #ifdef PLUGINS
@@ -820,6 +819,7 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
     else
     {
         pl->gmaster_mode = GMASTER_MODE_NO;
+        esrv_send_inventory(pl, op);
     }
 
 #ifdef USE_CHANNELS
