@@ -39,7 +39,6 @@ void                        alchemy_failure_effect(object *op, object *cauldron,
 void                        remove_contents(object *first_ob, object *save_item);
 int                         calc_alch_danger(object *caster, object *cauldron);
 /* apply.c */
-int                         apply_potion(object *op, object *tmp);
 int                         check_item(object *op, const char *item);
 void                        eat_item(object *op, const char *item);
 int                         check_weapon_power(object *who, int improvs);
@@ -50,11 +49,9 @@ int                         improve_weapon(object *op, object *improver, object 
 int                         check_improve_weapon(object *op, object *tmp);
 int                         improve_armour(object *op, object *improver, object *armour);
 int                         convert_item(object *item, object *converter, object *originator);
-int                         esrv_apply_container(object *op, object *sack);
 void                        move_apply(object *const trap, object *const victim, object *const originator, const int flags);
 void                        do_learn_spell(object *op, int spell, int special_prayer);
 void                        do_forget_spell(object *op, int spell);
-void                        apply_poison(object *op, object *tmp);
 int                         manual_apply(object *op, object *tmp, int aflag);
 int                         player_apply(object *pl, object *op, int aflag, int quiet);
 void                        player_apply_below(object *pl);
@@ -62,11 +59,7 @@ int                         apply_special(object *who, object *op, int aflags);
 int                         monster_apply_special(object *who, object *op, int aflags);
 void                        turn_on_light(object *op);
 void                        turn_off_light(object *op);
-void                        apply_player_light_refill(object *who, object *op);
-void                        apply_player_light(object *who, object *op);
-void                        apply_lighter(object *who, object *lighter);
 void                        scroll_failure(object *op, int failure, int power);
-int                         apply_power_crystal(object *op, object *crystal);
 /* attack.c */
 int                         attack_ob(object *op, object *hitter, object *hit_obj);
 int                         damage_ob(object *op, int dam, object *hitter, int env_attack);
@@ -469,7 +462,6 @@ int                         save_life(object *op);
 void                        remove_unpaid_objects(object *op, object *env);
 void                        do_some_living(object *op);
 int                         kill_player(object *op);
-void                        loot_object(object *op);
 void                        cast_dust(object *op, object *throw_ob, int dir);
 void                        make_visible(object *op);
 int                         is_true_undead(object *op);

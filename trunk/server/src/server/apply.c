@@ -34,29 +34,44 @@ time_t  mktime(struct tm *);
 #endif
 
 static void ApplySavebed(player *pl, object *bed);
+static void ApplyIdAltar(object *money, object *altar, object *pl);
+static void ApplyPotion(object *op, object *tmp);
+static void ApplyContainer(object *op, object *sack);
+static void ApplyAltar(object *altar, object *sacrifice, object *originator);
+static void ApplyShopMat(object *shop_mat, object *op);
+static void ApplySign(object *op, object *sign);
+static void ApplyBook(object *op, object *tmp);
+static void ApplySkillscroll(object *op, object *tmp);
+static void ApplySpellbook(object *op, object *tmp);
+static void ApplyScroll(object *op, object *tmp);
+static void ApplyTreasure(object *op, object *tmp);
+static void ApplyFood(object *op, object *tmp);
+static void ApplyPoison(object *op, object *tmp);
+static void ApplyArmourImprover(object *op, object *tmp);
+static void ApplyLightRefill(object *who, object *op);
+static void ApplyLight(object *who, object *op);
+static void ApplyLighter(object *who, object *lighter);
+static void ApplyPowerCrystal(object *op, object *crystal);
 
-/*
- * Return value: 1 if money was destroyed, 0 if not.
- */
-static int apply_id_altar(object *money, object *altar, object *pl)
+static void ApplyIdAltar(object *money, object *altar, object *pl)
 {
     object *id, *marked;
     int     success = 0;
 
     if (pl == NULL || pl->type != PLAYER)
-        return 0;
+        return;
 
     /* Check for MONEY type is a special hack - it prevents 'nothing needs
      * identifying' from being printed out more than it needs to be.
      */
     if (!check_altar_sacrifice(altar, money) || money->type != MONEY)
-        return 0;
+        return;
 
     /* Event trigger and quick exit */
     if(trigger_object_plugin_event(EVENT_TRIGGER,
                 altar, pl, money,
                 NULL, NULL, NULL, NULL, SCRIPT_FIX_NOTHING))
-        return FALSE;
+        return;
 
     marked = find_marked_object(pl);
     /* if the player has a marked item, identify that if it needs to be
@@ -72,7 +87,7 @@ static int apply_id_altar(object *money, object *altar, object *pl)
             {
                 new_draw_info(NDI_UNIQUE, 0, pl, "The item has a story:\n%s", marked->msg);
             }
-            return money == NULL;
+            return;
         }
     }
 
@@ -102,29 +117,28 @@ static int apply_id_altar(object *money, object *altar, object *pl)
     }
     if (!success)
         new_draw_info(NDI_UNIQUE, 0, pl, "You have nothing that needs identifying");
-    return money == NULL;
 }
 
-int apply_potion(object *op, object *tmp)
+static void ApplyPotion(object *op, object *tmp)
 {
     int i, bonus = 1;
 
     /* some sanity checks */
     if (!op || !tmp)
     {
-        LOG(llevBug, "apply_potion() called with invalid objects! obj: %s -- tmp: %s\n", query_name(op), query_name(tmp));
-        return 0;
+        LOG(llevBug, "ApplyPotion() called with invalid objects! obj: %s -- tmp: %s\n", query_name(op), query_name(tmp));
+        return;
     }
 
     if(trigger_object_plugin_event(EVENT_APPLY, tmp, op, NULL,
                 NULL, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
-        return 0;
+        return;
 
     if (op->type == PLAYER)
     {
         /* set chosen_skill to "magic device" - thats used when we "use" a potion */
         if (!change_skill(op, SK_USE_MAGIC_ITEM))
-            return 0; /* no skill, no potion use (dust & balm too!) */
+            return; /* no skill, no potion use (dust & balm too!) */
 
         if (!QUERY_FLAG(tmp, FLAG_IDENTIFIED))
             identify(tmp);
@@ -136,8 +150,8 @@ int apply_potion(object *op, object *tmp)
 
             if (!force)
             {
-                LOG(llevBug, "apply_potion: can't create force object!?\n");
-                return 0;
+                LOG(llevBug, "ApplyPotion: can't create force object!?\n");
+                return;
             }
 
             force->type = POTION_EFFECT;
@@ -220,7 +234,7 @@ int apply_potion(object *op, object *tmp)
             if (!change_abil(op, force)) /* implicit fix_player() here */
                 new_draw_info(NDI_UNIQUE, 0, op, "Nothing happened.");
             decrease_ob(tmp);
-            return 1;
+            return;
         }
 
         if (tmp->last_eat == 1) /* Potion of minor restoration */
@@ -241,16 +255,16 @@ int apply_potion(object *op, object *tmp)
                     drain_stat(op);
                     drain_stat(op);
                 }
-                FIX_PLAYER(op ,"apply_potion - minor restoration - damned");
+                FIX_PLAYER(op ,"ApplyPotion - minor restoration - damned");
                 decrease_ob(tmp);
                 insert_spell_effect("meffect_purple", op->map, op->x, op->y);
                 play_sound_map(op->map, op->x, op->y, SOUND_DRINK_POISON, SOUND_NORMAL);
-                return 1;
+                return;
             }
             if ((at = find_archetype("drain")) == NULL)
             {
                 LOG(llevBug, "BUG: Could not find archetype depletion");
-                return 0;
+                return;
             }
             depl = present_arch_in_ob(at, op);
             if (depl != NULL)
@@ -261,14 +275,14 @@ int apply_potion(object *op, object *tmp)
                         new_draw_info(NDI_UNIQUE, 0, op, "%s", restore_msg[i]);
                 }
                 remove_ob(depl); /* in inventory of ... */
-                FIX_PLAYER(op ,"apply_potion - minor restoration");
+                FIX_PLAYER(op ,"ApplyPotion - minor restoration");
             }
             else
                 new_draw_info(NDI_UNIQUE, 0, op, "You feel a great loss...");
             decrease_ob(tmp);
             insert_spell_effect("meffect_green", op->map, op->x, op->y);
             play_sound_map(op->map, op->x, op->y, SOUND_MAGIC_DEFAULT, SOUND_SPELL);
-            return 1;
+            return;
         }
         else if (tmp->last_eat == 2)    /* improvement potion */
         {
@@ -385,14 +399,14 @@ int apply_potion(object *op, object *tmp)
             }
             else if (success_flag == 1)
             {
-                FIX_PLAYER(op ,"apply_potion - improvement");
+                FIX_PLAYER(op ,"ApplyPotion - improvement");
                 insert_spell_effect("meffect_yellow", op->map, op->x, op->y);
                 play_sound_map(op->map, op->x, op->y, SOUND_MAGIC_DEFAULT, SOUND_SPELL);
                 new_draw_info(NDI_UNIQUE, 0, op, "You feel a little more perfect!");
             }
             else if (success_flag == 2)
             {
-                FIX_PLAYER(op ,"apply_potion - improvement - cursed");
+                FIX_PLAYER(op ,"ApplyPotion - improvement - cursed");
                 insert_spell_effect("meffect_purple", op->map, op->x, op->y);
                 play_sound_map(op->map, op->x, op->y, SOUND_DRINK_POISON, SOUND_NORMAL);
                 new_draw_info(NDI_UNIQUE, 0, op, "The foul potion burns like fire in you!");
@@ -404,7 +418,7 @@ int apply_potion(object *op, object *tmp)
                 new_draw_info(NDI_UNIQUE, 0, op, "The potion was foul but had no effect on your tortured body.");
             }
             decrease_ob(tmp);
-            return 1;
+            return;
         }
     }
 
@@ -413,7 +427,7 @@ int apply_potion(object *op, object *tmp)
     {
         new_draw_info(NDI_UNIQUE, 0, op, "Nothing happens as you apply it.");
         decrease_ob(tmp);
-        return 0;
+        return;
     }
 
 
@@ -426,8 +440,8 @@ int apply_potion(object *op, object *tmp)
         decrease_ob(tmp);
         /* if youre dead, no point in doing this... */
         if (!QUERY_FLAG(op, FLAG_REMOVED))
-            FIX_PLAYER(op ,"apply_potion - cast something");
-        return 1;
+            FIX_PLAYER(op ,"ApplyPotion - cast something");
+        return;
     }
 
     /* CLEAR_FLAG is so that if the character has other potions
@@ -436,9 +450,8 @@ int apply_potion(object *op, object *tmp)
      * up all the stats.
      */
     CLEAR_FLAG(tmp, FLAG_APPLIED);
-    FIX_PLAYER(op ,"apply_potion - end");
+    FIX_PLAYER(op ,"ApplyPotion - end");
     decrease_ob(tmp);
-    return 1;
 }
 
 /****************************************************************************
@@ -886,38 +899,33 @@ int convert_item(object *item, object *converter, object *originator)
     return 1;
 }
 
-/*
- * Eneq(@csd.uu.se): Handle apply on containers.
+/* Eneq(@csd.uu.se): Handle apply on containers.
  * op is the player, sack is the container the player is opening or closing.
  * return 1 if an object is apllied somehow or another, 0 if error/no apply
  *
  * Reminder - there are three states for any container - closed (non applied),
  * applied (not open, but objects that match get tossed into it), and open
  * (applied flag set, and op->container points to the open container)
- * I added mutiple apply of one container with a player list. MT 07.02.2004
- */
-
-int esrv_apply_container(object *op, object *sack)
+ * I added mutiple apply of one container with a player list. MT 07.02.2004 */
+static void ApplyContainer(object *op, object *sack)
 {
     object *cont, *tmp;
 
-    /*
-     * TODO: add support for cursed containers that can't be unreadied?
-     */
+    /* TODO: add support for cursed containers that can't be unreadied? */
 
     if (op->type != PLAYER)
     {
-        LOG(llevBug, "BUG: esrv_apply_container: called from non player: <%s>!\n", query_name(op));
-        return 0;
+        LOG(llevBug, "BUG: ApplyContainer: called from non player: <%s>!\n", query_name(op));
+        return;
     }
 
     cont = CONTR(op)->container; /* cont is NULL or the container player already has opened */
 
     if (sack == NULL || sack->type != CONTAINER || (cont && cont->type != CONTAINER))
     {
-        LOG(llevBug, "BUG: esrv_apply_container: object *sack = %s is not container (cont:<%s>)!\n", query_name(sack),
+        LOG(llevBug, "BUG: ApplyContainer: object *sack = %s is not container (cont:<%s>)!\n", query_name(sack),
             query_name(cont));
-        return 0;
+        return;
     }
 
 
@@ -926,7 +934,7 @@ int esrv_apply_container(object *op, object *sack)
     {
         if(trigger_object_plugin_event(EVENT_CLOSE, cont, op, NULL,
                 NULL, NULL, NULL, NULL, SCRIPT_FIX_ALL))
-            return 1;
+            return;
 
         if (container_unlink(CONTR(op), cont))
             new_draw_info(NDI_UNIQUE, 0, op, "You close the %s.", query_name(cont));
@@ -935,7 +943,7 @@ int esrv_apply_container(object *op, object *sack)
 
 
         if (cont == sack) /* we closing the one we applied */
-            return 1;
+            return;
     }
 
     /* at this point we ready a container OR we open it! */
@@ -954,7 +962,7 @@ int esrv_apply_container(object *op, object *sack)
             else
             {
                 new_draw_info(NDI_UNIQUE, 0, op, "You don't have the key to unlock %s.", query_name(sack));
-                return 0;
+                return;
             }
         }
         else
@@ -965,12 +973,12 @@ int esrv_apply_container(object *op, object *sack)
                         CONTR(CONTR(op)->group_leader)->group_id != sack->stats.maxhp))
             {
                 new_draw_info(NDI_UNIQUE, 0, op, "Its not your groups bounty.");
-                return 0;
+                return;
             }
             else if (sack->sub_type1 == ST1_CONTAINER_CORPSE_player && sack->slaying != op->name)
             {
                 new_draw_info(NDI_UNIQUE, 0, op, "Its not your bounty.");
-                return 0;
+                return;
             }
         }
     }
@@ -990,7 +998,7 @@ int esrv_apply_container(object *op, object *sack)
         if (sack->env)
         {
             new_draw_info(NDI_UNIQUE, 0, op, "You can't open %s", query_name(sack));
-            return 0;
+            return;
         }
 
         new_draw_info(NDI_UNIQUE, 0, op, "You open %s.", query_name(sack));
@@ -1028,17 +1036,13 @@ int esrv_apply_container(object *op, object *sack)
             container_trap(op, sack);   /* search & explode a rune in the container */
         }
     }
-    return 1;
 }
 
-/*
- * Returns true if sacrifice was accepted.
- */
-static int apply_altar(object *altar, object *sacrifice, object *originator)
+static void ApplyAltar(object *altar, object *sacrifice, object *originator)
 {
     /* Only players can make sacrifices on spell casting altars. */
     if (altar->stats.sp != -1 && (!originator || originator->type != PLAYER))
-        return 0;
+        return;
     if (operate_altar(altar, &sacrifice))
     {
         /* Simple check.
@@ -1061,23 +1065,15 @@ static int apply_altar(object *altar, object *sacrifice, object *originator)
             altar->weight_limit = 1;  /* works only once */
             signal_connection(altar, sacrifice, originator, altar->map);
         }
-        return sacrifice == NULL;
+        return;
     }
     else
     {
-        return 0;
+        return;
     }
 }
 
-
-
-/*
- * Returns 1 if 'op' was destroyed, 0 if not.
- * Largely re-written to not use nearly as many gotos, plus
- * some of this code just looked plain out of date.
- * MSW 2001-08-29
- */
-static int apply_shop_mat(object *shop_mat, object *op)
+static void ApplyShopMat(object *shop_mat, object *op)
 {
     int     rv  = 0;
     object *tmp;
@@ -1086,7 +1082,7 @@ static int apply_shop_mat(object *shop_mat, object *op)
     if(trigger_object_plugin_event(EVENT_TRIGGER,
                 shop_mat, op, NULL,
                 NULL, NULL, NULL, NULL, SCRIPT_FIX_NOTHING))
-        return FALSE;
+        return;
 
     SET_FLAG(op, FLAG_NO_APPLY);   /* prevent loops */
 
@@ -1148,10 +1144,9 @@ static int apply_shop_mat(object *shop_mat, object *op)
     }
 
     CLEAR_FLAG(op, FLAG_NO_APPLY);
-    return rv;
 }
 
-static void apply_sign(object *op, object *sign)
+static void ApplySign(object *op, object *sign)
 {
     int raceval = 0;
 
@@ -1318,7 +1313,7 @@ void move_apply(object *const trap_obj, object *const victim, object *const orig
            */
         case ALTAR:
           /* sacrifice victim on trap */
-          apply_altar(trap, victim, originator);
+          ApplyAltar(trap, victim, originator);
           goto leave;
 
         case CONVERTER:
@@ -1486,18 +1481,18 @@ void move_apply(object *const trap_obj, object *const victim, object *const orig
 
         case SHOP_MAT:
           if (!(flags & MOVE_APPLY_VANISHED))
-              apply_shop_mat(trap, victim);
+              ApplyShopMat(trap, victim);
           goto leave;
 
           /* Drop a certain amount of gold, and have one item identified */
         case IDENTIFY_ALTAR:
           if (!(flags & MOVE_APPLY_VANISHED))
-              apply_id_altar(victim, trap, originator);
+              ApplyIdAltar(victim, trap, originator);
           goto leave;
 
         case SIGN:
           if (victim->type == PLAYER) /* only player should be able read signs */
-              apply_sign(victim, trap);
+              ApplySign(victim, trap);
           goto leave;
 
           /* FIXME: Huh? can containers be WALK_ON??? Gecko 2006-11-14 */
@@ -1506,7 +1501,7 @@ void move_apply(object *const trap_obj, object *const victim, object *const orig
           {
               if(!trigger_object_plugin_event(EVENT_TRIGGER, trap, victim, NULL,
                           NULL, NULL, NULL, NULL, SCRIPT_FIX_NOTHING))
-                  esrv_apply_container(victim, trap);
+                  ApplyContainer(victim, trap);
           }
           goto leave;
 
@@ -1554,7 +1549,7 @@ void move_apply(object *const trap_obj, object *const victim, object *const orig
 }
 
 
-static void apply_book(object *op, object *tmp)
+static void ApplyBook(object *op, object *tmp)
 {
     sockbuf_struct *sptr;
     char    buf[HUGE_BUF];
@@ -1633,8 +1628,7 @@ static void apply_book(object *op, object *tmp)
     }
 }
 
-
-static void apply_skillscroll(object *op, object *tmp)
+static void ApplySkillscroll(object *op, object *tmp)
 {
     if(trigger_object_plugin_event( EVENT_APPLY, tmp, op, NULL,
                 NULL, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
@@ -1765,7 +1759,7 @@ extern void do_forget_spell(object *op, int spell)
     LOG(llevBug, "BUG: do_forget_spell(): couldn't find spell %d\n", spell);
 }
 
-static void apply_spellbook(object *op, object *tmp)
+static void ApplySpellbook(object *op, object *tmp)
 {
     if (QUERY_FLAG(op, FLAG_BLIND) && !QUERY_FLAG(op, FLAG_WIZ))
     {
@@ -1859,8 +1853,7 @@ static void apply_spellbook(object *op, object *tmp)
     decrease_ob(tmp);
 }
 
-
-static void apply_scroll(object *op, object *tmp)
+static void ApplyScroll(object *op, object *tmp)
 {
     /*object *old_skill;*/
     int scroll_spell = tmp->stats.sp;
@@ -1919,7 +1912,7 @@ static void apply_scroll(object *op, object *tmp)
 }
 
 /* op opens treasure chest tmp */
-static void apply_treasure(object *op, object *tmp)
+static void ApplyTreasure(object *op, object *tmp)
 {
     object                 *treas;
     tag_t tmp_tag = tmp->   count, op_tag = op->count;
@@ -1992,8 +1985,100 @@ static void apply_treasure(object *op, object *tmp)
 #endif
 }
 
+/* NOTE: For B4 we removed the old food system. Foods are now a regeneration force over time,
+ * like you quaff a potion or cast a spell and the healing/reg effects comes in ticks for x seconds.
+ * There is the old "dragon player code" still here. I like the idea very much and hopefully we can
+ * add it later again to daimonin.
+ * For that i removed FLESH from the eatable things for player. Only FOOD and DRINK will work like
+ * a force here (honestly... we need drink as own type? ATM is just exactly the same as food)
+ * MT-20.01.2007 */
+static void ApplyFood(object *op, object *tmp)
+{
+    object *force;
 
-void apply_poison(object *op, object *tmp)
+    if (op->type != PLAYER)
+    {
+        /* food applied by non players... lets handle it later when we have a good idea */
+        /*
+        if(trigger_object_plugin_event(
+                    EVENT_APPLY, tmp, op, NULL,
+                    NULL, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
+                    return;
+        */
+    }
+    else
+    {
+        /* check if this is a dragon (player), eating some flesh */
+        if (tmp->type == FLESH && is_dragon_pl(op) && dragon_eat_flesh(op, tmp))
+        {
+        }
+        else
+        {
+            if (tmp->type == FLESH)
+            {
+                new_draw_info(NDI_UNIQUE, 0, op, "You can't consume that!");
+                return;
+            }
+
+            if(trigger_object_plugin_event(
+                        EVENT_APPLY, tmp, op, NULL,
+                        NULL, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
+                return;
+        }
+
+        /* new food code for beta 4... food will now always work as force.
+         * We want 2 things:
+         * first, a regeneration every x ticks of hp and/or sp/grace.
+         * second, AFTER the food is eaten we will perhaps install the food
+         * as a buf force.
+         * For that we copy the arch and do a type transmission to create
+         * a force from sub type food. We search the player inventory,
+         * removing every old food force and kick this new one in.
+         * If the food is also a buf force, then we insert the food in the force
+         * inventory and when the reg force is done, the buf is invoked.
+         * This is a kind "after we have eaten the food complete, we get a STR+5
+         * for 5 min".
+         */
+
+        force   = get_archetype("force");
+        if (!force)
+        {
+            LOG(llevBug, "ApplyFood: can't create force object!?\n");
+            return;
+        }
+
+        force->type = TYPE_FOOD_FORCE;
+        SET_FLAG(force, FLAG_IS_USED_UP); /* or it will auto destroyed with first tick */
+        SET_FLAG(force, FLAG_NO_SAVE);
+        force->stats.food += tmp->last_eat + 1; /* how long this force will stay */
+        force->last_eat = tmp->last_eat + 1;    /* we need that to know the base time */
+        if (force->stats.food <= 0)
+            force->stats.food = 1;
+        force->stats.hp = tmp->stats.hp;
+        force->stats.sp = tmp->stats.sp;
+        force->stats.grace = tmp->stats.grace;
+        force->speed = 0.125f;
+
+        /* applying the food will put as in "rest mode" - but instead of rest regeneration we
+         * will just eat... But eat will get interrupted when hit and such like normal rest too!
+         * So, no eating in combat... perhaps a single tick will come in but on the price of a wasted food
+         */
+
+        CONTR(op)->food_status = -1000;
+        CONTR(op)->rest_mode = 1;
+
+        SET_FLAG(force, FLAG_APPLIED);
+        SET_FLAG(op, FLAG_EATING);
+        force = insert_ob_in_ob(force, op);
+
+        new_draw_info(NDI_UNIQUE| NDI_NAVY, 0, op, "You start consuming the %s",
+                      query_name(tmp));
+
+    }
+    decrease_ob(tmp);
+}
+
+static void ApplyPoison(object *op, object *tmp)
 {
     if(trigger_object_plugin_event(
                 EVENT_APPLY, tmp, op, NULL,
@@ -2030,8 +2115,7 @@ static void ApplySavebed(player *pl, object *bed)
     new_draw_info(NDI_UNIQUE, 0, pl->ob, "In future you will respawn here.");
 }
 
-
-static void apply_armour_improver(object *op, object *tmp)
+static void ApplyArmourImprover(object *op, object *tmp)
 {
     object *armor;
 
@@ -2068,8 +2152,6 @@ static void apply_armour_improver(object *op, object *tmp)
     new_draw_info(NDI_UNIQUE, 0, op, "Applying armour enchantment.");
     improve_armour(op, tmp, armor);
 }
-
-
 
 /* Return value (or bits):
  *   0: player or monster can't apply objects of that type
@@ -2212,7 +2294,7 @@ int manual_apply(object *op, object *tmp, int aflag)
         case GRAVESTONE:
             if (op->type == PLAYER)
             {
-                apply_sign(op, tmp); /* probably should have apply_gravestone() */
+                ApplySign(op, tmp); /* probably should have apply_gravestone() */
                 return 4;
             }
             return 0;
@@ -2220,7 +2302,7 @@ int manual_apply(object *op, object *tmp, int aflag)
         case SIGN:
             if (op->type == PLAYER)
             {
-                apply_sign(op, tmp);
+                ApplySign(op, tmp);
                 return 4;
             }
             return 0;
@@ -2228,7 +2310,7 @@ int manual_apply(object *op, object *tmp, int aflag)
         case BOOK:
           if (op->type == PLAYER)
           {
-              apply_book(op, tmp);
+              ApplyBook(op, tmp);
               return 4;
           }
           return 0;
@@ -2236,7 +2318,7 @@ int manual_apply(object *op, object *tmp, int aflag)
         case SKILLSCROLL:
           if (op->type == PLAYER)
           {
-              apply_skillscroll(op, tmp);
+              ApplySkillscroll(op, tmp);
               return 1;
           }
           return 0;
@@ -2244,13 +2326,13 @@ int manual_apply(object *op, object *tmp, int aflag)
         case SPELLBOOK:
           if (op->type == PLAYER)
           {
-              apply_spellbook(op, tmp);
+              ApplySpellbook(op, tmp);
               return 1;
           }
           return 0;
 
         case SCROLL:
-          apply_scroll(op, tmp);
+          ApplyScroll(op, tmp);
           return 1;
 
         case POTION:
@@ -2258,15 +2340,15 @@ int manual_apply(object *op, object *tmp, int aflag)
                       EVENT_APPLY, tmp, op, NULL,
                       NULL, &aflag, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
               return 1; /* 1 = do not write an error message to the player */
-          (void) apply_potion(op, tmp);
+          ApplyPotion(op, tmp);
           return (1+8);
 
         case TYPE_LIGHT_APPLY:
-          apply_player_light(op, tmp);
+          ApplyLight(op, tmp);
           return 1;
 
         case TYPE_LIGHT_REFILL:
-          apply_player_light_refill(op, tmp);
+          ApplyLightRefill(op, tmp);
           return 1;
 
           /* Eneq(@csd.uu.se): Handle apply on containers. */
@@ -2277,7 +2359,7 @@ int manual_apply(object *op, object *tmp, int aflag)
                           EVENT_APPLY, tmp, op, NULL,
                           NULL, &aflag, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
                   return 1; /* 1 = do not write an error message to the player */
-              (void) esrv_apply_container(op, tmp->env);
+              ApplyContainer(op, tmp->env);
           }
           return 4;
 
@@ -2288,12 +2370,12 @@ int manual_apply(object *op, object *tmp, int aflag)
                           EVENT_APPLY, tmp, op, NULL,
                           NULL, &aflag, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
                   return 1; /* 1 = do not write an error message to the player */
-              (void) esrv_apply_container(op, tmp);
+              ApplyContainer(op, tmp);
           }
           return 4;
 
         case TREASURE:
-          apply_treasure(op, tmp);
+          ApplyTreasure(op, tmp);
           return 1;
 
         case WEAPON:
@@ -2323,11 +2405,11 @@ int manual_apply(object *op, object *tmp, int aflag)
         case DRINK:
         case FOOD:
         case FLESH:
-          apply_food(op, tmp);
+          ApplyFood(op, tmp);
           return (1+8);
 
         case POISON:
-          apply_poison(op, tmp);
+          ApplyPoison(op, tmp);
           return (1+8);
 
         case SAVEBED:
@@ -2342,7 +2424,7 @@ int manual_apply(object *op, object *tmp, int aflag)
         case ARMOUR_IMPROVER:
           if (op->type == PLAYER)
           {
-              apply_armour_improver(op, tmp);
+              ApplyArmourImprover(op, tmp);
               return 1;
           }
           return 0;
@@ -2381,7 +2463,7 @@ int manual_apply(object *op, object *tmp, int aflag)
 
         case POWER_CRYSTAL:
           /* TODO: plugin events */
-          apply_power_crystal(op, tmp);  /*  see egoitem.c */
+          ApplyPowerCrystal(op, tmp);  /*  see egoitem.c */
           return 1;
 
         case LIGHTER:
@@ -2389,7 +2471,7 @@ int manual_apply(object *op, object *tmp, int aflag)
           /* TODO: plugin events */
           if (op->type == PLAYER)
           {
-              apply_lighter(op, tmp);
+              ApplyLighter(op, tmp);
               return 1;
           }
           return 0;
@@ -2919,7 +3001,6 @@ int apply_special(object *who, object *op, int aflags)
     return 0;
 }
 
-
 int monster_apply_special(object *who, object *op, int aflags)
 {
     if (QUERY_FLAG(op, FLAG_UNPAID) && !QUERY_FLAG(op, FLAG_APPLIED))
@@ -2927,15 +3008,10 @@ int monster_apply_special(object *who, object *op, int aflags)
     return apply_special(who, op, aflags);
 }
 
-
-
-
-/* apply_player_light_refill() - refill lamps and all refill type light sources
- * from apply_player_light().
+/* Refill lamps and all refill type light sources
  * The light source must be in the inventory of the player, then he must mark the
- * light source and apply the refill item (lamp oil for example).
- */
-void apply_player_light_refill(object *who, object *op)
+ * light source and apply the refill item (lamp oil for example). */
+static void ApplyLightRefill(object *who, object *op)
 {
     object *item;
     int     tmp;
@@ -3128,15 +3204,13 @@ void turn_off_light(object *op)
     esrv_update_item(UPD_FLAGS | UPD_FACE | UPD_ANIM, op);
 }
 
-/* apply_player_light() - the new player light. old style torches will be
- * removed from arches but still in game. */
 /* Note that op->msg is used for both non-applyable applyable lights (ie, to
  * respond to apply attempts) and for successfully applied applyable lights,
  * and is used both for light and extinguish attempts. Therefore, care should
  * be taken to change the msg if ever no_fix_player is changed (which can only
  * be done in the map file or via a script anyway) and the on/off status cannot
  * be mentioned in the (static) msg -- Smacky 20080905 */
-void apply_player_light(object *who, object *op)
+static void ApplyLight(object *who, object *op) 
 {
     object *tmp;
 
@@ -3145,7 +3219,7 @@ void apply_player_light(object *who, object *op)
     if (QUERY_FLAG(op, FLAG_NO_FIX_PLAYER)) // FLAG_NO_APPLY would be better but there is no arch attribute
     {
         if (!(QUERY_FLAG(op, FLAG_NO_PICK)))
-            LOG(llevBug, "BUG:: %s apply_player_light(): Pickable applyable light source flagged as no_apply!\n",
+            LOG(llevBug, "BUG:: %s:ApplyLight(): Pickable applyable light source flagged as no_apply!\n",
                          __FILE__);
 
         if (op->msg)
@@ -3316,14 +3390,13 @@ void apply_player_light(object *who, object *op)
     }
 }
 
-
-/* apply_lighter() - designed primarily to light torches/lanterns/etc.
+/* ApplyLighter() - designed primarily to light torches/lanterns/etc.
  * Also burns up burnable material too. First object in the inventory is
  * the selected object to "burn". -b.t.
  */
 /* i have this item type not include in daimonin atm - MT-2004 */
 /* Currently doesn not generate APPLY events - Gecko 2005-05-15 */
-void apply_lighter(object *who, object *lighter)
+static void ApplyLighter(object *who, object *lighter)
 {
     object *item;
     tag_t   count;
@@ -3445,10 +3518,8 @@ object *op, object *crystal
 This function handles the application of power crystals.
 Power crystals, when applied, either suck power from the applier,
 if he's at full spellpoints, or gives him power, if it's got
-spellpoins stored.
-
-*/
-int apply_power_crystal(object *op, object *crystal)
+spellpoins stored. */
+static void ApplyPowerCrystal(object *op, object *crystal)
 {
     int available_power;
     int power_space;
@@ -3467,6 +3538,4 @@ int apply_power_crystal(object *op, object *crystal)
     crystal->speed = (float) crystal->stats.sp / (float) crystal->stats.maxsp;
     update_ob_speed(crystal);
     esrv_update_item(UPD_ANIMSPEED, crystal);
-
-    return 1;
 }
