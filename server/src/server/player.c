@@ -897,43 +897,6 @@ int kill_player(object *op)
 #endif
 }
 
-
-void loot_object(object *op)
-{
-    /* Grab and destroy some treasure */
-    object *tmp, *tmp2, *next;
-
-    if (op->type == PLAYER && CONTR(op)->container)
-    {
-        /* close open sack first */
-        esrv_apply_container(op, CONTR(op)->container);
-    }
-
-    for (tmp = op->inv; tmp != NULL; tmp = next)
-    {
-        next = tmp->below;
-        if (tmp->type == EXPERIENCE || IS_SYS_INVISIBLE(tmp))
-            continue;
-        remove_ob(tmp);
-        tmp->x = op->x,tmp->y = op->y;
-        if (tmp->type == CONTAINER)
-        {
-            /* empty container to ground */
-            loot_object(tmp);
-        }
-        if (QUERY_FLAG(tmp, FLAG_STARTEQUIP) || QUERY_FLAG(tmp, FLAG_NO_DROP) || !(RANDOM() % 3))
-        {
-            if (tmp->nrof > 1)
-            {
-                tmp2 = get_split_ob(tmp, 1 + RANDOM() % (tmp->nrof - 1));
-                insert_ob_in_map(tmp, op->map, NULL, 0);
-            }
-        }
-        else
-            insert_ob_in_map(tmp, op->map, NULL, 0);
-    }
-}
-
 /* cast_dust() - handles op throwing objects of type 'DUST' */
 /* WARNING: FUNCTION NEED TO BE REWRITTEN. works for ae spells only now! */
 void cast_dust(object *op, object *throw_ob, int dir)
