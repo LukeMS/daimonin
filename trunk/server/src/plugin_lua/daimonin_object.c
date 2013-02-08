@@ -557,8 +557,7 @@ static int GameObject_setFlag(lua_State *L, lua_object *obj, uint32 flagno)
     else
         CLEAR_FLAG(obj->data.object, flagno);
 
-    hooks->esrv_update_item(UPD_FLAGS, hooks->is_player_inv(obj->data.object),
-                            obj->data.object);
+    hooks->esrv_update_item(UPD_FLAGS, obj->data.object);
 
     /* TODO: if gender changed:
     if()
@@ -1083,13 +1082,12 @@ static int GameObject_Repair(lua_State *L)
     object *tmp;
 
     get_lua_args(L, "O|i", &self, &skill);
-
     hooks->material_repair_item(WHO, skill);
+    hooks->esrv_update_item(UPD_QUALITY, WHO);
 
     if((tmp = hooks->is_player_inv(WHO)))
     {
         SET_FLAG(tmp, FLAG_FIX_PLAYER);
-        hooks->esrv_update_item(UPD_QUALITY, tmp, WHO);
     }
 
     return 0;

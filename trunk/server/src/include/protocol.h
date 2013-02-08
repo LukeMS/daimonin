@@ -322,6 +322,23 @@ enum
 #define UPD_QUALITY         0x200
 #define UPD_ALL             0xffff
 
+#define A_READIED   0x00001
+#define A_WIELDED   0x00002
+#define A_WORN      0x00003
+#define A_ACTIVE    0x00004
+#define A_APPLIED   0x00005
+#define F_APPLIED   0x0000F
+#define F_ETHEREAL  0x00080
+#define F_INVISIBLE 0x00100
+#define F_UNPAID    0x00200
+#define F_MAGIC     0x00400
+#define F_CURSED    0x00800
+#define F_DAMNED    0x01000
+#define F_OPEN      0x02000
+#define F_NOPICK    0x04000
+#define F_LOCKED    0x08000
+#define F_TRAPED    0x10000
+
 /* maximum reachable level */
 #define MAXLEVEL 110
 

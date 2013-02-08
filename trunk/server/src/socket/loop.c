@@ -855,7 +855,7 @@ void doeric_server(int update, struct timeval *timeout)
                         if ( pl->ob->map && (update_below = GET_MAP_UPDATE_COUNTER(pl->ob->map, pl->ob->x, pl->ob->y))
                              != pl->socket.update_tile)
                         {
-                            esrv_draw_look(pl->ob);
+                            esrv_send_below(pl);
                             pl->socket.update_tile = update_below;
                         }
                     }

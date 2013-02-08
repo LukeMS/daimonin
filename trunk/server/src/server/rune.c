@@ -421,13 +421,11 @@ int trap_show(object *trap, object *where)
             update_object(env, UP_OBJ_FACE);
         else /* somewhere else - if visible, update */
         {
-            if (env->env->type == PLAYER || env->env->type == CONTAINER)
-                esrv_update_item(UPD_FLAGS, env->env, env);
+            esrv_update_item(UPD_FLAGS, env);
         }
 
         insert_ob_in_ob(trap, env);
-        if (env->type == PLAYER || env->type == CONTAINER)
-            esrv_update_item(UPD_LOCATION, env, trap);
+//        esrv_update_item(UPD_LOCATION, env, trap);
     }
     else
         insert_ob_in_map(trap, where->map, NULL, 0);

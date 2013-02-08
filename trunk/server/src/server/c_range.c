@@ -60,8 +60,7 @@ float fire_magic_tool(object *op, object *weap, int dir)
                         weap->speed = 0;
                         update_ob_speed(weap);
                     }
-                    if ((tmp = is_player_inv(weap)))
-                        esrv_update_item(UPD_ANIM, tmp, weap);
+                    esrv_update_item(UPD_ANIM, weap);
                 }
             }
         }

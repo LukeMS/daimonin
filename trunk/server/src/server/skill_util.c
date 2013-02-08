@@ -978,11 +978,9 @@ int attack_hth(object *pl, int dir, char *string)
             CLEAR_FLAG(weapon, FLAG_APPLIED);
             CLEAR_FLAG(pl, FLAG_READY_WEAPON);
             FIX_PLAYER(pl ,"attack hth");
-            if (pl->type == PLAYER)
-            {
-                new_draw_info(NDI_UNIQUE, 0, pl, "You unwield your weapon in order to attack.");
-                esrv_update_item(UPD_FLAGS, pl, weapon);
-            }
+            new_draw_info(NDI_UNIQUE, 0, pl, "You unwield your weapon in order to attack.");
+            esrv_update_item(UPD_FLAGS, weapon);
+
             break;
         }
 

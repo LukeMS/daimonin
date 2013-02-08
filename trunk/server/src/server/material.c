@@ -983,7 +983,7 @@ void material_attack_damage(object *op, int num, int chance, int base)
 
         new_draw_info(NDI_UNIQUE, 0, op, "Your %s is damaged.",
                       query_name(item));
-        esrv_update_item(UPD_QUALITY, op, item);
+        esrv_update_item(UPD_QUALITY, item);
         /* broken - unapply it - even its cursed */
         if(!item->item_condition)
             apply_special(op, item, AP_UNAPPLY | AP_IGNORE_CURSE);

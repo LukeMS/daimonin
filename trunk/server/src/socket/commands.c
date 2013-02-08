@@ -1162,7 +1162,7 @@ void cs_cmd_lock(char *data, int len, NewSocket *ns)
     else
         SET_FLAG(op, FLAG_INV_LOCKED);
 
-    esrv_update_item(UPD_FLAGS, pl->ob, op);
+    esrv_update_item(UPD_FLAGS, op);
 }
 
 /* Client wants to apply some object.  Lets do so. */

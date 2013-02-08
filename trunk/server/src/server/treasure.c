@@ -1228,10 +1228,19 @@ static void put_treasure(object *op, object *creator, int flags)
     else
     {
         op = insert_ob_in_ob(op, creator);
-        if ((flags & GT_APPLY) && QUERY_FLAG(creator, FLAG_MONSTER))
+
+        if ((flags & GT_APPLY) &&
+            QUERY_FLAG(creator, FLAG_MONSTER))
+        {
             monster_check_apply(creator, op);
-        if ((flags & GT_UPDATE_INV) && (tmp = is_player_inv(creator)) != NULL)
-            esrv_send_item(tmp, op);
+        }
+#if 0 // handled automatically by insert_ob_in_ob)_
+
+        if ((flags & GT_UPDATE_INV))
+        {
+            esrv_send_item(op);
+        }
+#endif
     }
 }
 

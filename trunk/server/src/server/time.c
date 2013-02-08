@@ -957,16 +957,15 @@ void change_object(object *op)
                         {
                             new_draw_info(NDI_UNIQUE, 0, op->env, "The %s burnt out.", query_name(op));
                             op->glow_radius = 0;
-                            esrv_update_item(flags, op->env, op);
                             FIX_PLAYER(op->env ,"change object");
                         }
                         else /* atm, lights inside other inv as players don't set light masks */
                         {
                             /* but we need to update container which are possible watched by players */
                             op->glow_radius = 0;
-                            if (op->env->type == CONTAINER)
-                                esrv_send_item(NULL, op);
                         }
+
+                        esrv_update_item(flags, op);
                     }
                     else /* object is on map */
                     {
