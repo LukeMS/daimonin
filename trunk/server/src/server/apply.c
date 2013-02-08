@@ -3091,6 +3091,8 @@ void turn_on_light(object *op)
 
         update_object(op, UP_OBJ_FACE);
     }
+
+    esrv_update_item(UPD_FACE | UPD_ANIM, op);
 }
 
 void turn_off_light(object *op)
@@ -3123,6 +3125,7 @@ void turn_off_light(object *op)
      */
     update_object(op, UP_OBJ_FACE);
     op->glow_radius = 0;
+    esrv_update_item(UPD_FLAGS | UPD_FACE | UPD_ANIM, op);
 }
 
 /* apply_player_light() - the new player light. old style torches will be
@@ -3286,6 +3289,7 @@ void apply_player_light(object *who, object *op)
                                          query_name(op));
 
                 SET_FLAG(op, FLAG_APPLIED);
+                esrv_update_item(UPD_FLAGS, op);
                 FIX_PLAYER(who ," apply light - apply light");
                 update_object(who, UP_OBJ_FACE);
             }
