@@ -1282,16 +1282,17 @@ void update_object(object *op, int action)
        }
     */
 
+    msp = GET_MAP_SPACE_PTR(op->map, op->x, op->y);
+
     if (action == UP_OBJ_FACE) /* no need to change anything except the map update counter */
     {
 #ifdef DEBUG_CORE
         LOG(llevDebug, "UO_FACE - %s\n", query_name(op));
 #endif
-        INC_MAP_UPDATE_SQUARE(op->map, op->x, op->y);
+        msp->update_square++;
         return;
     }
 
-    msp = GET_MAP_SPACE_PTR(op->map, op->x, op->y);
     newflags = msp->flags;
     flags = newflags & ~P_NEED_UPDATE;
 
