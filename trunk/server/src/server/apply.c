@@ -1621,7 +1621,7 @@ static void ApplyBook(object *op, object *tmp)
             if (tmp->env)
                 esrv_update_item(UPD_FLAGS | UPD_NAME, tmp);
             else
-                CONTR(op)->socket.update_tile = 0;
+                CONTR(op)->socket.update_square = 0;
         }
         /*add_exp(op,exp_gain,op->chosen_skill->stats.sp);*/
         SET_FLAG(tmp, FLAG_NO_SKILL_IDENT); /* so no more xp gained from this book */
@@ -1809,7 +1809,7 @@ static void ApplySpellbook(object *op, object *tmp)
         if (tmp->env)
             esrv_update_item(UPD_FLAGS | UPD_NAME, tmp);
         else
-            CONTR(op)->socket.update_tile = 0;
+            CONTR(op)->socket.update_square = 0;
     }
 
     if (check_spell_known(op, tmp->stats.sp) && (tmp->stats.Wis || find_special_prayer_mark(op, tmp->stats.sp) == NULL))

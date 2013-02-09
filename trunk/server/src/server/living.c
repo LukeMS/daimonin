@@ -2137,10 +2137,10 @@ void fix_player(object *op)
     if (QUERY_FLAG(op, FLAG_SEE_INVISIBLE))
     {
         if (!inv_see_flag)
-            pl->socket.update_tile = 0;
+            pl->socket.update_square = 0;
     }
     else if (inv_see_flag) /* and !FLAG_SEE_INVISIBLE */
-        pl->socket.update_tile = 0;
+        pl->socket.update_square = 0;
 
     /* Update the client if anything has changed about op. */
     for (i = 0; i < NUM_FLAGS_32; i++)

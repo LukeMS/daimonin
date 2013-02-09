@@ -2931,7 +2931,7 @@ static void UpdateMapTiles(mapstruct *m)
     {
         for (j = 0; j < yl; j++)
         {
-            msp->update_tile++;
+            msp->update_square++;
             update_position(m, msp++, i, j);
         }
     }

@@ -133,9 +133,9 @@
 #define SET_MAP_SPACE_CLID_INV(M_,L_,O_)    ( (M_)->client_mlayer_inv[L_] = (sint8) (O_))
 
 
-#define GET_MAP_UPDATE_COUNTER(M,X,Y)   ( (M)->spaces[(X) + (M)->width * (Y)].update_tile)
+#define GET_MAP_UPDATE_SQUARE(M,X,Y)   ( (M)->spaces[(X) + (M)->width * (Y)].update_square)
 
-#define INC_MAP_UPDATE_COUNTER(M,X,Y)   ((M)->spaces[((X) + (M)->width * (Y))].update_tile++)
+#define INC_MAP_UPDATE_SQUARE(M,X,Y)   ((M)->spaces[((X) + (M)->width * (Y))].update_square++)
 
 #define GET_MAP_MOVE_FLAGS(M,X,Y)       ( (M)->spaces[(X) + (M)->width * (Y)].move_flags )
 #define SET_MAP_MOVE_FLAGS(M,X,Y,C)     ( (M)->spaces[(X) + (M)->width * (Y)].move_flags = C )
@@ -308,7 +308,7 @@ typedef struct MapSpace_s
     struct MapSpace_s  *next_light;
 
     uint32              round_tag;                      /* tag for last_damage */
-    uint32              update_tile;                    /* counter for update tile */
+    uint32              update_square;                  /* counter for update square */
     sint32              light_source;                   /* light source counter - as higher as brighter light source here */
     sint32              light_value;                    /* how much light is in this tile. 0 = total dark
                                                          * 255+ = full daylight.

@@ -2101,7 +2101,7 @@ int cast_detection(object *op, object *target, int type)
     }
 
     if (sucmap) /* we have something changed in this tile */
-        INC_MAP_UPDATE_COUNTER(m, nx, ny);
+        INC_MAP_UPDATE_SQUARE(m, nx, ny);
 
     if (suc)
     {

@@ -1287,7 +1287,7 @@ void update_object(object *op, int action)
 #ifdef DEBUG_CORE
         LOG(llevDebug, "UO_FACE - %s\n", query_name(op));
 #endif
-        INC_MAP_UPDATE_COUNTER(op->map, op->x, op->y);
+        INC_MAP_UPDATE_SQUARE(op->map, op->x, op->y);
         return;
     }
 
@@ -1302,7 +1302,7 @@ void update_object(object *op, int action)
             LOG(llevDebug, "UO_INS - %s\n", query_name(op));
 #endif
             newflags |= P_NEED_UPDATE; /* force layer rebuild */
-            msp->update_tile++;
+            msp->update_square++;
 
             /* handle lightning system */
             if (op->glow_radius)
@@ -1358,7 +1358,7 @@ void update_object(object *op, int action)
             LOG(llevDebug, "UO_REM - %s\n", query_name(op));
 #endif
             newflags |= P_NEED_UPDATE; /* force layer rebuild */
-            msp->update_tile++;
+            msp->update_square++;
 
             /* we don't handle floor tile light/darkness setting here -
              * we assume we don't remove a floor tile ever before dropping
@@ -1402,21 +1402,21 @@ void update_object(object *op, int action)
             LOG(llevDebug, "UO_FLAGFACE - %s\n", query_name(op));
 #endif
             newflags |= P_FLAGS_UPDATE; /* force flags rebuild */
-            msp->update_tile++;
+            msp->update_square++;
             break;
         case UP_OBJ_LAYER:
 #ifdef DEBUG_CORE
             LOG(llevDebug, "UO_LAYER - %s\n", query_name(op));
 #endif
             newflags |= P_NEED_UPDATE; /* rebuild layers - most common when we change visibility of the object */
-            msp->update_tile++;
+            msp->update_square++;
             break;
         case UP_OBJ_ALL:
 #ifdef DEBUG_CORE
             LOG(llevDebug, "UO_ALL - %s\n", query_name(op));
 #endif
             newflags |= (P_FLAGS_UPDATE | P_NEED_UPDATE); /* force full tile update */
-            msp->update_tile++;
+            msp->update_square++;
             break;
         default:
             LOG(llevError, "ERROR: update_object called with invalid action: %d\n", action);
@@ -2400,7 +2400,7 @@ object *insert_ob_in_map(object *const op, mapstruct *m, object *const originato
         }
         else
         {
-            CONTR(op)->socket.update_tile = 0;
+            CONTR(op)->socket.update_square = 0;
             CONTR(op)->update_los = 1; /* thats always true when touching the players map pos. */
 
             if (op->map->player_first)
@@ -2414,7 +2414,7 @@ object *insert_ob_in_map(object *const op, mapstruct *m, object *const originato
 
     if(!(op->map->map_flags & MAP_FLAG_NO_UPDATE))
     {
-        mc->update_tile++; /* we updated something here - mark this tile as changed! */
+        mc->update_square++; /* we updated something here - mark this tile as changed! */
         /* updates flags (blocked, alive, no magic, etc) for this map space */
         update_object(op, UP_OBJ_INSERT);
     }
@@ -2586,7 +2586,7 @@ object * get_split_ob(object *orig_ob, uint32 nr)
         if(orig_ob->map)
         {
             tmp = orig_ob;
-            GET_MAP_SPACE_PTR(tmp->map, tmp->x, tmp->y)->update_tile++;
+            GET_MAP_SPACE_PTR(tmp->map, tmp->x, tmp->y)->update_square++;
         }
         else
         {

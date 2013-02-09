@@ -749,9 +749,7 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
     memcpy(&pl->socket, ns, sizeof(NewSocket));
     ns->pl_account.name = NULL;
     pl->socket.below_clear = 0;
-    pl->socket.update_tile = 0;
-    pl->socket.look_position = 0;
-    pl->socket.update_tile = 0;
+    pl->socket.update_square = 0;
     pl->socket.look_position = 0;
     pl->socket.look_position_container = 0;
     pl->socket.ext_title_flag = 1;
