@@ -243,8 +243,8 @@ typedef struct NewSocket_struct
         int                 mapx_2, mapy_2;     /* same like above but /2 */
         uint32              protocol_version;
         int                 pwd_try;            /* simple password guessing security */
-        uint32              update_tile;        /* marker to see we must update the below windows of the tile the player is */
-        char                ip_host[40];            /* IP as string */
+        uint32              update_square;      /* marker to see we must update the below windows of the square the player is */
+        char                ip_host[40];        /* IP as string */
         enum Sock_Status    status;
         ReadList            readbuf;            /* Raw data read in from the socket  */
         sint16              lx;                 /* geolocation for client locator */
