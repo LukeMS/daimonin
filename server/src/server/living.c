@@ -2134,13 +2134,13 @@ void fix_player(object *op)
     else if (inv_flag) /* and !FLAG_IS_INVISIBLE */
         update_object(op, UP_OBJ_LAYER);
 
-    if (QUERY_FLAG(op, FLAG_SEE_INVISIBLE))
+    if ((QUERY_FLAG(op, FLAG_SEE_INVISIBLE) &&
+         !inv_see_flag) ||
+        (!QUERY_FLAG(op, FLAG_SEE_INVISIBLE) &&
+         inv_see_flag))
     {
-        if (!inv_see_flag)
-            pl->socket.update_square = 0;
+        esrv_send_below(pl);
     }
-    else if (inv_see_flag) /* and !FLAG_SEE_INVISIBLE */
-        pl->socket.update_square = 0;
 
     /* Update the client if anything has changed about op. */
     for (i = 0; i < NUM_FLAGS_32; i++)

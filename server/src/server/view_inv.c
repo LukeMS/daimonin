@@ -31,21 +31,25 @@
 #include "global.h"
 
 #define FILTER(_PL_, _OP_) \
-    (QUERY_FLAG((_PL_)->ob, FLAG_WIZ) ||             /* WIZ gmasters see all */ \
-     (!QUERY_FLAG((_OP_), FLAG_SYS_OBJECT) &&        /* can't see sys objects */ \
-      (!QUERY_FLAG((_OP_), FLAG_IS_INVISIBLE) ||     /* can't see invisible objects unless */ \
-       QUERY_FLAG((_PL_)->ob, FLAG_SEE_INVISIBLE) || /* player has the ability to do so or */ \
-       (_OP_)->env == (_PL_)->ob)))                  /* they're in his inventory (simulates feel) */
+    ((_OP_) != (_PL_)->ob &&                          /* never see self but otherwise */ \
+     (QUERY_FLAG((_PL_)->ob, FLAG_WIZ) ||             /* WIZ gmasters see all */ \
+      (!QUERY_FLAG((_OP_), FLAG_SYS_OBJECT) &&        /* can't see sys objects */ \
+       (!QUERY_FLAG((_OP_), FLAG_IS_INVISIBLE) ||     /* can't see invisible objects unless */ \
+        QUERY_FLAG((_PL_)->ob, FLAG_SEE_INVISIBLE) || /* player has the ability to do so or */ \
+        (_OP_)->env == (_PL_)->ob))))                 /* they're in his inventory (simulates feel) */
 
-static uint8  AddInventory(sockbuf_struct *sb, _server_client_cmd cmd,
-                           uint8 start, uint8 end, object *first);
-static void   AddFakeObject(sockbuf_struct *sb, _server_client_cmd cmd,
-                            uint32 tag, uint32 face, char *name);
-static uint8  AddName(char *name);
-static void   NotifyClients(_server_client_cmd cmd, uint16 flags, object *op);
-static char  *PrepareData(_server_client_cmd cmd, uint16 flags, player *pl,
-                          object *op, char *data);
-static uint32 ClientFlags(object *op);
+static uint8           AddInventory(sockbuf_struct *sb, _server_client_cmd cmd,
+                                    uint8 start, uint8 end, object *first);
+static void            AddFakeObject(sockbuf_struct *sb, _server_client_cmd cmd,
+                                     uint32 tag, uint32 face, char *name);
+static uint8           AddName(char *name);
+static void            NotifyClients(_server_client_cmd cmd, uint16 flags,
+                                     object *op);
+static sockbuf_struct *BroadcastItemCmd(sockbuf_struct *sb, _server_client_cmd cmd,
+                                        uint16 flags, player *pl, object *op);
+static char           *PrepareData(_server_client_cmd cmd, uint16 flags, player *pl,
+                                   object *op, char *data);
+static uint32          ClientFlags(object *op);
 static object  *esrv_get_ob_from_count_DM(object *pl, tag_t count);
 static int      check_container(object *pl, object *con);
 
@@ -161,10 +165,12 @@ void esrv_send_inventory(player *pl, object *op)
 
 void esrv_send_item(object *op)
 {
-    uint16 flags = UPD_FLAGS | UPD_WEIGHT | UPD_FACE | UPD_DIRECTION |
-                   UPD_NAME | UPD_ANIM | UPD_ANIMSPEED | UPD_NROF;
+    _server_client_cmd cmd = (op->map) ? SERVER_CMD_ITEMX : SERVER_CMD_ITEMY;
+    uint16             flags = UPD_FLAGS | UPD_WEIGHT | UPD_FACE |
+                               UPD_DIRECTION | UPD_NAME | UPD_ANIM |
+                               UPD_ANIMSPEED | UPD_NROF;
 
-    NotifyClients(SERVER_CMD_ITEMY, flags, op);
+    NotifyClients(cmd, flags, op);
 }
 
 void esrv_update_item(uint16 flags, object *op)
@@ -194,8 +200,7 @@ static uint8 AddInventory(sockbuf_struct *sb, _server_client_cmd cmd,
 
     for (this = first; this; this = this->below)
     {
-        if (this == pl->ob ||           // never see self
-            this->type == SHOP_FLOOR || // TODO: Remove this type/arch
+        if (this->type == SHOP_FLOOR || // TODO: Remove this type/arch
             !FILTER(pl, this))
         {
             continue;
@@ -286,14 +291,13 @@ static uint8 AddName(char *name)
     return len;
 }
 
-/* Works its way through the envs of op to find which clients to send cmd/flags
- * to (which is created only once as a broadcast sockbuf). */
+/* Finds the clients interested in op (which may be on a map or in an env) and
+ * attaches a broadcast sockbuf to them. */
 static void NotifyClients(_server_client_cmd cmd, uint16 flags, object *op)
 {
     object         *who = NULL,
                    *where = op->env;
     sockbuf_struct *sb = NULL;
-    player         *pl;
 
     /* When no-one is playing, there's nothing to do. */
     if (!first_player)
@@ -301,67 +305,93 @@ static void NotifyClients(_server_client_cmd cmd, uint16 flags, object *op)
         return;
     }
 
-    /* Loop through the ancestors of op, sendind cmd to each valid client. */
-    while (where &&
-           where->type != TYPE_VOID_CONTAINER)
+    if (where)
     {
-        if (where->type == PLAYER)
+        /* Loop through the envs of op, sending cmd to each valid client. */
+        while (where &&
+               where->type != TYPE_VOID_CONTAINER)
         {
-            who = where;
-            where = NULL; // players cant have envs
-        }
-        else if (where->type == CONTAINER)
-        {
-            who = (!who) ? where->attacked_by : CONTR(who)->container_above;
-        }
-
-        /* No (more) players? Move on to where's parent. */
-        if (!who)
-        {
-            where = where->env;
-
-            continue;
-        }
-
-        /* Only send the cmd to a valid client and when filter is passed. */
-        if ((pl = (who) ? CONTR(who) : NULL) &&
-            !(pl->state & (ST_DEAD | ST_ZOMBIE)) &&
-            pl->socket.status != Ns_Dead &&
-            FILTER(pl, op))
-        {
-            /* If we've not yet made a sockbuf, make one now. */
-            if (!sb)
+            if (where->type == PLAYER)
             {
-                char  data[MEDIUM_BUF],
-                     *cp = data;
-
-                /* The first few bytes depend on the cmd. */
-                if (cmd == SERVER_CMD_ITEMX ||
-                    cmd == SERVER_CMD_ITEMY)
-                {
-                    *((uint32 *)cp) = -4;
-                    cp += 4;
-                    *((uint32 *)cp) = (op->env) ? op->env->count : 0;
-                    cp += 4;
-                }
-                else if (cmd == SERVER_CMD_UPITEM)
-                {
-                    *((uint16 *)cp) = flags;
-                    cp += 2;
-                }
-
-                cp = PrepareData(cmd, flags, pl, op, cp);
-                sb = SOCKBUF_COMPOSE(cmd, data, cp - data, 0);
+                who = where;
+                where = NULL; // players cant have envs
+            }
+            else if (where->type == CONTAINER)
+            {
+                who = (!who) ? where->attacked_by : CONTR(who)->container_above;
             }
 
-            SOCKBUF_ADD_TO_SOCKET(&pl->socket, sb);
+            /* No (more) players? Move on to where's parent. */
+            if (!who)
+            {
+                where = where->env;
+            }
+            else
+            {
+                sb = BroadcastItemCmd(sb, cmd, flags, CONTR(who), op);
+            }
+        };
+    }
+    else
+    {
+        /* Send cmd to each valid client on the square. */
+        for (who = GET_MAP_OB(op->map, op->x, op->y); who; who = who->above)
+        {
+            if (who->type != PLAYER)
+            {
+                continue;
+            }
+
+            sb = BroadcastItemCmd(sb, cmd, flags, CONTR(who), op);
         }
-    };
+    }
 
     if (sb)
     {
         SOCKBUF_COMPOSE_FREE(sb);
     }
+}
+
+/* First creates if necessary, then attaches a broadcast sockbuf (sb) of
+ * cmd/flags/op to the client pl. */
+static sockbuf_struct *BroadcastItemCmd(sockbuf_struct *sb, _server_client_cmd cmd,
+                                        uint16 flags, player *pl, object *op)
+{
+    /* Only send the cmd to a valid client and when filter is passed. */
+    if (pl &&
+        !(pl->state & (ST_DEAD | ST_ZOMBIE)) &&
+        pl->socket.status != Ns_Dead &&
+        FILTER(pl, op))
+    {
+        /* If we've not yet made a sockbuf, make one now. */
+        if (!sb)
+        {
+            char  data[MEDIUM_BUF],
+                 *cp = data;
+
+            /* The first few bytes depend on the cmd. */
+            if (cmd == SERVER_CMD_ITEMX ||
+                cmd == SERVER_CMD_ITEMY)
+            {
+                *((uint32 *)cp) = -4;
+                cp += 4;
+                *((uint32 *)cp) = (op->env) ? op->env->count : 0;
+                cp += 4;
+            }
+            else if (cmd == SERVER_CMD_UPITEM)
+            {
+                *((uint16 *)cp) = flags;
+                cp += 2;
+            }
+
+            cp = PrepareData(cmd, flags, pl, op, cp);
+            sb = SOCKBUF_COMPOSE(cmd, data, cp - data, 0);
+        }
+
+        SOCKBUF_ADD_TO_SOCKET(&pl->socket, sb);
+    }
+
+    return sb;
 }
 
 /* Depending on cmd and flags, puts data about op into the buffer, data (which

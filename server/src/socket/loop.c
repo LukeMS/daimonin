@@ -617,7 +617,6 @@ void doeric_server(int update, struct timeval *timeout)
     int     i, pollret;
     int     update_client=update&SOCKET_UPDATE_CLIENT; /* if set we try to poll the socket only */
     int     update_player=update&SOCKET_UPDATE_PLAYER; /* poll socket & do a player turn */
-    uint32  update_below;
 
 #if WIN32 || !HAVE_GETADDRINFO
     struct sockaddr_in      addr;
@@ -842,26 +841,27 @@ void doeric_server(int update, struct timeval *timeout)
                  */
                 if (update_client)
                 {
-                    if (update_player && (pl->state & ST_PLAYING))
+                    if (update_player &&
+                        (pl->state & ST_PLAYING))
                     {
+                        uint32    update_below;
+                        MapSpace *msp;
+
                         esrv_update_stats(pl);
+
                         if (pl->update_skills)
                         {
                             esrv_update_skills(pl);
                             pl->update_skills = 0;
                         }
-                        draw_client_map(pl->ob);
 
-                        if ( pl->ob->map && (update_below = GET_MAP_UPDATE_SQUARE(pl->ob->map, pl->ob->x, pl->ob->y))
-                             != pl->socket.update_square)
-                        {
-                            esrv_send_below(pl);
-                            pl->socket.update_square = update_below;
-                        }
+                        draw_client_map(pl->ob);
                     }
 
                     if (FD_ISSET(pl->socket.fd, &tmp_write))
+                    {
                         write_socket_buffer(&pl->socket);
+                    }
                 }
             }
         }

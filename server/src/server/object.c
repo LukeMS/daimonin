@@ -1289,7 +1289,8 @@ void update_object(object *op, int action)
 #ifdef DEBUG_CORE
         LOG(llevDebug, "UO_FACE - %s\n", query_name(op));
 #endif
-        msp->update_square++;
+        esrv_update_item(UPD_FACE | UPD_ANIM | UPD_ANIMSPEED, op);
+
         return;
     }
 
@@ -1303,7 +1304,7 @@ void update_object(object *op, int action)
             LOG(llevDebug, "UO_INS - %s\n", query_name(op));
 #endif
             newflags |= P_NEED_UPDATE; /* force layer rebuild */
-            msp->update_square++;
+            esrv_send_item(op);
 
             /* handle lightning system */
             if (op->glow_radius)
@@ -1359,7 +1360,7 @@ void update_object(object *op, int action)
             LOG(llevDebug, "UO_REM - %s\n", query_name(op));
 #endif
             newflags |= P_NEED_UPDATE; /* force layer rebuild */
-            msp->update_square++;
+            esrv_del_item(op);
 
             /* we don't handle floor tile light/darkness setting here -
              * we assume we don't remove a floor tile ever before dropping
@@ -1403,21 +1404,21 @@ void update_object(object *op, int action)
             LOG(llevDebug, "UO_FLAGFACE - %s\n", query_name(op));
 #endif
             newflags |= P_FLAGS_UPDATE; /* force flags rebuild */
-            msp->update_square++;
+            esrv_update_item(UPD_FLAGS | UPD_FACE, op);
             break;
         case UP_OBJ_LAYER:
 #ifdef DEBUG_CORE
             LOG(llevDebug, "UO_LAYER - %s\n", query_name(op));
 #endif
             newflags |= P_NEED_UPDATE; /* rebuild layers - most common when we change visibility of the object */
-            msp->update_square++;
+            esrv_send_item(op);
             break;
         case UP_OBJ_ALL:
 #ifdef DEBUG_CORE
             LOG(llevDebug, "UO_ALL - %s\n", query_name(op));
 #endif
             newflags |= (P_FLAGS_UPDATE | P_NEED_UPDATE); /* force full tile update */
-            msp->update_square++;
+            esrv_send_item(op);
             break;
         default:
             LOG(llevError, "ERROR: update_object called with invalid action: %d\n", action);
@@ -1438,8 +1439,6 @@ void update_object(object *op, int action)
     if (op->more != NULL)
         update_object(op->more, action);
 }
-
-
 
 /* Drops the inventory of ob into ob's current environment. */
 /* Makes some decisions whether to actually drop or not, and/or to
@@ -2391,32 +2390,31 @@ object *insert_ob_in_map(object *const op, mapstruct *m, object *const originato
      */
     if (op->type == PLAYER)
     {
+        player *pl = CONTR(op);
+
         /* Bug #000120, Make sure we have a valid player object here */
-        if(!CONTR(op))
+        if(!pl)
         {
-            LOG(llevBug, "BUG: Player object %s without controller in map %s\n",
-                    STRING_OBJ_NAME(op), STRING_MAP_PATH(op->map));
+            LOG(llevBug, "BUG:: %s:insert_ob_in_map(): Player object %s[%d] without controller in map %s\n",
+                __FILE__, STRING_OBJ_NAME(op), TAG(op),
+                STRING_MAP_PATH(op->map));
             CLEAR_FLAG(op, FLAG_IS_PLAYER);
             op->type = MISC_OBJECT;
         }
         else
         {
-            CONTR(op)->socket.update_square = 0;
-            CONTR(op)->update_los = 1; /* thats always true when touching the players map pos. */
-
             if (op->map->player_first)
             {
                 CONTR(op->map->player_first)->map_below = op;
-                CONTR(op)->map_above = op->map->player_first;
+                pl->map_above = op->map->player_first;
             }
+
             op->map->player_first = op;
         }
     }
 
     if(!(op->map->map_flags & MAP_FLAG_NO_UPDATE))
     {
-        mc->update_square++; /* we updated something here - mark this tile as changed! */
-        /* updates flags (blocked, alive, no magic, etc) for this map space */
         update_object(op, UP_OBJ_INSERT);
     }
 
@@ -2577,6 +2575,7 @@ object * get_split_ob(object *orig_ob, uint32 nr)
         }
 
         esrv_update_item(flags, orig_ob);
+#if 0
 
         /* will a stack in a chest where you remove one from the stack trigger
         * a button under the chest because the weight of the chest has changed now?
@@ -2605,6 +2604,7 @@ object * get_split_ob(object *orig_ob, uint32 nr)
             update_object(orig_ob, UP_OBJ_INSERT);
             check_walk_on(orig_ob, tmp, 0);
         }
+#endif
     }
 
     return newob;
