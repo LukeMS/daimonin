@@ -189,24 +189,26 @@ void draw_client_map(object *plobj)
             }
     }
 
-    if(redraw_below) /* redraw below windows? (and backbuffer now position) */
+    draw_client_map2(plobj);
+
+    if (redraw_below) /* redraw below windows? (and backbuffer now position) */
     {
         /* backbuffer position so we can determinate we have moved or not */
         pl->map_tile_x = plobj->x;
         pl->map_tile_y = plobj->y;
         pl->socket.below_clear = 1; /* draw_client_map2() has implicit cleared belowed - don't send a clear again */
-        pl->socket.update_square = 0; /* redraw it */
         pl->socket.look_position = 0; /* reset the "show only x items of all items belows" counter */
+        pl->update_los = 1;
+        esrv_send_below(pl);
     }
 
     /* do LOS after calls to update_position */
-    if (!QUERY_FLAG(plobj, FLAG_WIZ) && pl->update_los)
+    if (!QUERY_FLAG(plobj, FLAG_WIZ) &&
+        pl->update_los)
     {
         update_los(plobj);
         pl->update_los = 0;
     }
-
-    draw_client_map2(plobj);
 }
 
 

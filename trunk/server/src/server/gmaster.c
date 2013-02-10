@@ -397,9 +397,9 @@ void set_gmaster_mode(player *pl, int mode_id)
         SET_FLAG(pl->ob, FLAG_WIZ);
         pl->wizpass = 1;
         clear_los(pl->ob);
-        pl->socket.update_square = 0; /* force a draw_look() */
         pl->update_los = 1;
         esrv_send_inventory(pl, pl->ob);
+        esrv_send_below(pl);
     }
 
     pl->socket.ext_title_flag =1;
@@ -470,9 +470,9 @@ void remove_gmaster_mode(player *pl)
          * mode and slight confusion. */
         pl->dm_invis = 0;
         FIX_PLAYER(pl->ob, "remove wiz mode");
-        pl->socket.update_square = 0;
         pl->update_los = 1;
         esrv_send_inventory(pl, pl->ob);
+        esrv_send_below(pl);
     }
 
     pl->socket.ext_title_flag =1;

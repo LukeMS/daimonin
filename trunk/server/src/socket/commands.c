@@ -1117,7 +1117,8 @@ void cs_cmd_apply(char *buf, int len, NewSocket *ns)
     if (tag & 0x80000000)
     {
         pl->socket.look_position = tag & 0x7fffffff;
-        pl->socket.update_square = 0;
+        esrv_send_below(pl);
+
         return;
     }
 

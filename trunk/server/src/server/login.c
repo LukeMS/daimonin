@@ -749,7 +749,6 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
     memcpy(&pl->socket, ns, sizeof(NewSocket));
     ns->pl_account.name = NULL;
     pl->socket.below_clear = 0;
-    pl->socket.update_square = 0;
     pl->socket.look_position = 0;
     pl->socket.look_position_container = 0;
     pl->socket.ext_title_flag = 1;
@@ -818,6 +817,7 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
     {
         pl->gmaster_mode = GMASTER_MODE_NO;
         esrv_send_inventory(pl, op);
+        esrv_send_below(pl);
     }
 
 #ifdef USE_CHANNELS

@@ -2007,7 +2007,7 @@ int cast_identify(object *op, int level, object *single_ob, int mode)
  */
 int cast_detection(object *op, object *target, int type)
 {
-    int         nx, ny, suc = FALSE, sucmap = FALSE;
+    int         nx, ny, suc = FALSE;
     object     *tmp = NULL;
     mapstruct  *m = NULL;
 
@@ -2036,8 +2036,8 @@ int cast_detection(object *op, object *target, int type)
                && (!QUERY_FLAG(tmp, FLAG_KNOWN_MAGICAL) && is_magical(tmp)))
               {
                   SET_FLAG(tmp, FLAG_KNOWN_MAGICAL);
-                  suc = TRUE;
                   esrv_update_item(UPD_FLAGS, tmp);
+                  suc = TRUE;
               }
           }
 
@@ -2051,8 +2051,8 @@ int cast_detection(object *op, object *target, int type)
                && (!QUERY_FLAG(tmp, FLAG_KNOWN_MAGICAL) && is_magical(tmp)))
               {
                   SET_FLAG(tmp, FLAG_KNOWN_MAGICAL);
+                  esrv_update_item(UPD_FLAGS, tmp);
                   suc = TRUE;
-                  sucmap = TRUE;
               }
           }
           break;
@@ -2078,8 +2078,8 @@ int cast_detection(object *op, object *target, int type)
                && (!QUERY_FLAG(tmp, FLAG_KNOWN_CURSED) && (QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED))))
               {
                   SET_FLAG(tmp, FLAG_KNOWN_CURSED);
-                  suc = TRUE;
                   esrv_update_item(UPD_FLAGS, tmp);
+                  suc = TRUE;
               }
           }
           nx = target->x;ny = target->y;
@@ -2091,17 +2091,14 @@ int cast_detection(object *op, object *target, int type)
               if (!QUERY_FLAG(tmp, FLAG_SYS_OBJECT)
                && (!QUERY_FLAG(tmp, FLAG_KNOWN_CURSED) && (QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED))))
               {
-                  suc = TRUE;
-                  sucmap = TRUE;
                   SET_FLAG(tmp, FLAG_KNOWN_CURSED);
+                  esrv_update_item(UPD_FLAGS, tmp);
+                  suc = TRUE;
               }
           }
 
           break;
     }
-
-    if (sucmap) /* we have something changed in this tile */
-        INC_MAP_UPDATE_SQUARE(m, nx, ny);
 
     if (suc)
     {

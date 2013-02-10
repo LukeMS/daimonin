@@ -562,7 +562,7 @@ int command_dm_invis(object *op, char *params)
             insert_ob_in_ob(op, op->env);
         }
 #endif
-        pl->socket.update_square = 0;
+        esrv_send_below(pl);
     }
 
     return 0;
