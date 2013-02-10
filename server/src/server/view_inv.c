@@ -177,22 +177,6 @@ void esrv_del_item(object *op)
     NotifyClients(SERVER_CMD_DELITEM, 0, op);
 }
 
-/* Recursively deletes op->inv. */
-void esrv_del_item_inv(object *op)
-{
-    object *this;
-
-    for (this = op; this; this = this->below)
-    {
-        if (this->inv)
-        {
-            esrv_del_item_inv(this->inv);
-        }
-
-        esrv_del_item(this);
-    }
-}
-
 /* Adds the objects including and below first to sb (inventory cmds are always
  * sent to a single client in a working buffer). cmd is either SERVER_CMD_ITEMX
  * for below windoow objects or SERVER_CMD_ITEMY otherwise. start and end are
@@ -264,32 +248,32 @@ static uint8 AddInventory(sockbuf_struct *sb, _server_client_cmd cmd,
 static void AddFakeObject(sockbuf_struct *sb, _server_client_cmd cmd,
                           uint32 tag, uint32 face, char *name)
 {
-        char  buf[SMALL_BUF];
-        uint8 len;
+    char  buf[SMALL_BUF];
+    uint8 len;
 
-        SockBuf_AddInt(sb, tag);
-        SockBuf_AddInt(sb, 0);
-        SockBuf_AddInt(sb, -1);
-        SockBuf_AddInt(sb, face);
-        SockBuf_AddChar(sb, 0);
+    SockBuf_AddInt(sb, tag);
+    SockBuf_AddInt(sb, 0);
+    SockBuf_AddInt(sb, -1);
+    SockBuf_AddInt(sb, face);
+    SockBuf_AddChar(sb, 0);
 
-        if (cmd == SERVER_CMD_ITEMY)
-        {
-           SockBuf_AddChar(sb, 0);
-           SockBuf_AddChar(sb, 0);
-           SockBuf_AddChar(sb, 0);
-           SockBuf_AddChar(sb, 0);
-           SockBuf_AddChar(sb, 0);
-           SockBuf_AddChar(sb, 0);
-        }
+    if (cmd == SERVER_CMD_ITEMY)
+    {
+       SockBuf_AddChar(sb, 0);
+       SockBuf_AddChar(sb, 0);
+       SockBuf_AddChar(sb, 0);
+       SockBuf_AddChar(sb, 0);
+       SockBuf_AddChar(sb, 0);
+       SockBuf_AddChar(sb, 0);
+    }
 
-        sprintf(buf, name);
-        len = AddName(buf);
-        SockBuf_AddChar(sb, len + 1);
-        SockBuf_AddString(sb, buf, len);
-        SockBuf_AddShort(sb, 0);
-        SockBuf_AddChar(sb, 0);
-        SockBuf_AddInt(sb, 0);
+    sprintf(buf, name);
+    len = AddName(buf);
+    SockBuf_AddChar(sb, len + 1);
+    SockBuf_AddString(sb, buf, len);
+    SockBuf_AddShort(sb, 0);
+    SockBuf_AddChar(sb, 0);
+    SockBuf_AddInt(sb, 0);
 }
 
 /* Ensures name is less than 128 characters long and returns its length. */
@@ -306,7 +290,7 @@ static uint8 AddName(char *name)
  * to (which is created only once as a broadcast sockbuf). */
 static void NotifyClients(_server_client_cmd cmd, uint16 flags, object *op)
 {
-    object         *whose = NULL,
+    object         *who = NULL,
                    *where = op->env;
     sockbuf_struct *sb = NULL;
     player         *pl;
@@ -323,16 +307,16 @@ static void NotifyClients(_server_client_cmd cmd, uint16 flags, object *op)
     {
         if (where->type == PLAYER)
         {
-            whose = where;
+            who = where;
             where = NULL; // players cant have envs
         }
         else if (where->type == CONTAINER)
         {
-            whose = (!whose) ? where->attacked_by : CONTR(whose)->container_above;
+            who = (!who) ? where->attacked_by : CONTR(who)->container_above;
         }
 
         /* No (more) players? Move on to where's parent. */
-        if (!whose)
+        if (!who)
         {
             where = where->env;
 
@@ -340,7 +324,7 @@ static void NotifyClients(_server_client_cmd cmd, uint16 flags, object *op)
         }
 
         /* Only send the cmd to a valid client and when filter is passed. */
-        if ((pl = (whose) ? CONTR(whose) : NULL) &&
+        if ((pl = (who) ? CONTR(who) : NULL) &&
             !(pl->state & (ST_DEAD | ST_ZOMBIE)) &&
             pl->socket.status != Ns_Dead &&
             FILTER(pl, op))

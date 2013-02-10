@@ -2689,7 +2689,7 @@ object * decrease_ob_nr(object *op, uint32 i)
             }
             else
             {
-                esrv_del_item(op;
+                esrv_del_item(op);
             }
         }
         else if (op->map)
