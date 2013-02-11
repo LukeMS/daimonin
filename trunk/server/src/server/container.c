@@ -116,7 +116,7 @@ int container_link(player *const pl, object *const sack)
         ret = 1;
     }
 
-    esrv_send_inventory(pl, sack);
+    esrv_open_container(pl, sack);
     pl->container_below = NULL; /* we are first element */
     sack->attacked_by = pl->ob;
     sack->attacked_by_count = pl->ob->count;
@@ -153,7 +153,7 @@ int container_unlink(player *const pl, object *sack)
 
         sack = pl->container;
         update_object(sack, UP_OBJ_FACE);
-        esrv_send_inventory(pl, NULL);
+        esrv_close_container(pl);
         /* ok, there is a valid container - unlink the player now */
         if (!pl->container_below && !pl->container_above) /* we are only applier */
         {
@@ -238,7 +238,7 @@ int container_unlink(player *const pl, object *sack)
         CONTR(tmp)->container_count = 0;
         CONTR(tmp)->container_below = NULL;
         CONTR(tmp)->container_above = NULL;
-        esrv_send_inventory(CONTR(tmp), NULL);
+        esrv_close_container(CONTR(tmp));
         tmp = tmp2;
     }
     return 1;
