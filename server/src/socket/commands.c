@@ -1095,40 +1095,51 @@ void cs_cmd_examine(char *buf, int len, NewSocket *ns)
 /* Client wants to apply some object.  Lets do so. */
 void cs_cmd_apply(char *buf, int len, NewSocket *ns)
 {
+    player *pl;
     uint32  tag;
     object *op;
-    player *pl = ns->pl;
 
-    if (!buf || len<PARM_SIZE_INT || !pl || ns->status != Ns_Playing)
+    if (!buf ||
+        len < PARM_SIZE_INT ||
+        !(pl = ns->pl) ||
+        ns->status != Ns_Playing)
     {
         ns->status = Ns_Dead;
+
         return;
     }
-    /* sort of a hack, but if the player saves and the player then manually
-    * applies a savebed (or otherwise tries to do stuff), we run into trouble.
-    */
+
+    /* Sort of a hack, but if the player saves and the player then manually
+     * applies a savebed (or otherwise tries to do stuff), we run into
+     * trouble. */
     if (QUERY_FLAG(pl->ob, FLAG_REMOVED))
+    {
         return;
+    }
 
     tag = GetInt_Buffer(buf);
-    op  = esrv_get_ob_from_count(pl->ob, tag);
 
-    /* If the high bit is set, player applied a pseudo object. */
-    if (tag & 0x80000000)
+    /* If the high bit is set, player applied a fake object. */
+    /* FIXME: Is this safe? This means we assume to never have >0x1fffffff
+     * objects concurrently in play which seems to me to be reasonable. That's
+     * a helluva big number.
+     *
+     * Smacky 20130211 */
+    if ((tag & 0xe0000000) ||    // bits 29-31 = end inv delimeter
+        (tag & 0xc0000000))      // bits 30-31 = start inv delimeter
+    {
+    }
+    else if ((tag & 0x80000000)) // bit 31 = next/prev
     {
         pl->socket.look_position = tag & 0x7fffffff;
         esrv_send_below(pl);
-
-        return;
     }
-
-    if (!op)
+    /* Otherwise this is a real object. Make sure it's something player can
+     * really see. */
+    else if ((op  = esrv_get_ob_from_count(pl->ob, tag)))
     {
-        /*LOG(llevDebug, "Player '%s' tried apply the unknown object (%d)\n",pl->ob->name, tag);*/
-        return;
+        player_apply(pl->ob, op, 0, 0);
     }
-
-    player_apply(pl->ob, op, 0, 0);
 }
 
 /* Client wants to apply some object.  Lets do so. */

@@ -241,11 +241,13 @@ static uint8 AddInventory(sockbuf_struct *sb, _server_client_cmd cmd,
                 if (QUERY_FLAG(pl->ob, FLAG_WIZ) &&
                     this->inv)
                 {
-                    AddFakeObject(sb, cmd, 0, blank_face->number, "start inventory");
+                    AddFakeObject(sb, cmd, 0xc0000000 | this->count,
+                                  blank_face->number, "start inventory");
                     sb = ACTIVE_SOCKBUF(ns);
                     (void)AddInventory(sb, cmd, start, end, this->inv);
                     sb = ACTIVE_SOCKBUF(ns);
-                    AddFakeObject(sb, cmd, 0, blank_face->number, "end inventory");
+                    AddFakeObject(sb, cmd, 0xe0000000 | this->count,
+                                  blank_face->number, "end inventory");
                     sb = ACTIVE_SOCKBUF(ns);
                 }
             }
