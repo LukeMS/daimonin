@@ -1600,11 +1600,11 @@ char *get_online_players_info(player *who, player *diff, uint8 force)
  */
 void increment_pvp_counter(object *op, int counter)
 {
+    object *pvp_force;
+
     // Probably not needed, but usually won't hurt.
     if (!op)
         return;
-
-    object *pvp_force;
 
     if (!(pvp_force = present_arch_in_ob(archetype_global._pvp_stat_force, op)))
         // The PvP stat-tracking force doesn't exist in op's inv, so create it.
@@ -1632,7 +1632,6 @@ int command_pvp_stats(object *op, char *params)
 {
     char       *name = params;
     const char *name_hash;
-    char       *buf;
     player     *pl;
 
     // Query op since no-one else was specified.
@@ -1641,11 +1640,15 @@ int command_pvp_stats(object *op, char *params)
         object *pvp_force = present_arch_in_ob(archetype_global._pvp_stat_force, op);
 
         if (pvp_force)
+        {
             new_draw_info(NDI_UNIQUE, 0, op, "You  have killed ~%u~ player%s in PvP. You have been killed by a player in PvP ~%u~ time%s.",
                                          pvp_force->stats.maxhp, pvp_force->stats.maxhp != 1 ? "s":"",
                                          pvp_force->stats.hp, pvp_force->stats.hp != 1 ? "s":"");
+        }
         else
+        {
             new_draw_info(NDI_UNIQUE, 0, op, "You have not participated in any PvP.");
+        }
 
         return 0;
     }
@@ -1666,10 +1669,14 @@ int command_pvp_stats(object *op, char *params)
             object *pvp_force = present_arch_in_ob(archetype_global._pvp_stat_force, pl->ob);
 
             if (pvp_force)
+            {
                 new_draw_info(NDI_UNIQUE, 0, op, "Player: ~%s~\nTotal PvP kills: ~%u~\nTotal PvP deaths: ~%u~",
                                                   query_name(pl->ob), pvp_force->stats.maxhp, pvp_force->stats.hp);
+            }
             else
+            {
                 new_draw_info(NDI_UNIQUE, 0, op, "That player has not participated in PvP.");
+            }
 
             return 0;
         }

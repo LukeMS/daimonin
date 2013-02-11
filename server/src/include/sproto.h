@@ -550,7 +550,7 @@ uint8                       shop_checkout(object *op, object *this);
 void                        sell_item(object *op, object *pl, sint64 value);
 int                         get_money_from_string(char *text, struct _money_block *money);
 int                         query_money_type(object *op, int value);
-sint64                      remove_money_type(object *who, object *op, sint64 value, sint64 amount);
+uint32                      remove_money_type(object *who, object *op, sint64 value, uint32 amount);
 void                        add_money_to_player(object *pl, int c, int s, int g, int m);
 void                        insert_money_in_player(object *pl, object *money, uint32 nrof);
 int                         enumerate_coins(sint64 value, struct _money_block *money);

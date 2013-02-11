@@ -156,7 +156,7 @@ struct plugin_hooklist *hooks;
 # define MAP_SET_WHEN_RESET(_M_, _T_) \
     if ((_T_) > 0) \
     { \
-        MAP_WHEN_RESET((_M_)) = (ROUND_TAG - ROUND_TAG % (long unsigned int)MAX(1, (*hooks->pticks_second))) / (*hooks->pticks_second) + (_T_); \
+        MAP_WHEN_RESET((_M_)) = (ROUND_TAG - ROUND_TAG % (long unsigned int)MAX(1, (*hooks->pticks_second))) / (int)((*hooks->pticks_second) + (_T_)); \
     } \
     else if ((_T_) == 0) \
     { \
@@ -164,7 +164,7 @@ struct plugin_hooklist *hooks;
     } \
     else \
     { \
-        MAP_WHEN_RESET((_M_)) = (ROUND_TAG - ROUND_TAG % (long unsigned int)MAX(1, (*hooks->pticks_second))) / (*hooks->pticks_second); \
+        MAP_WHEN_RESET((_M_)) = (ROUND_TAG - ROUND_TAG % (long unsigned int)MAX(1, (*hooks->pticks_second))) / (int)(*hooks->pticks_second); \
     }
 #else // maps never reset so ignore _T_
 # define MAP_SET_WHEN_RESET(_M_, _T_) \

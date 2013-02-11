@@ -387,7 +387,7 @@ struct plugin_hooklist
     char *(*re_cmp)(char *, char *);
     mapstruct *(*ready_map_name)(shstr *, shstr *, uint32, shstr *);
     void  (*reload_behaviours)(object *);
-    sint64 (*remove_money_type)(object *, object *, sint64, sint64);
+    uint32 (*remove_money_type)(object *, object *, sint64, uint32);
     void (*remove_ob)(object *);
     int  (*remove_item_buff)(object *, char *, int);
     void (*reset_instance_data)(player *pl);
@@ -427,7 +427,7 @@ struct plugin_hooklist
     long *global_instance_id;
     New_Face **new_faces;
     unsigned long *pticks;
-    float *pticks_second;
+    uint32 *pticks_second;
     Settings *settings;
     struct shstr_constants *shstr_cons;
     spell *spells;

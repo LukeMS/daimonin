@@ -351,7 +351,6 @@ static int give_default_guild_exp(player *pl, int base_exp)
     int e1 = 0;
     int e2 = 0;
     int e3 = 0;
-    int skills_leveled;
 
     if (pl->base_skill_group[0] >= 0 &&
         (skill = pl->highest_skill[pl->base_skill_group[0]]) &&

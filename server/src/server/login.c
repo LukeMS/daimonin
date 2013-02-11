@@ -34,6 +34,7 @@ int player_save(object *op)
     int     tmp, have_file = TRUE, i, wiz = QUERY_FLAG(op, FLAG_WIZ);
     object *force;
     int drain_level = 0;
+    Account *ac;
 
 #ifdef USE_CHANNELS
     struct  player_channel *pl_channel;
@@ -213,9 +214,6 @@ int player_save(object *op)
     if(have_file)
         unlink(backupfile); /* also 100% invalid now */
     chmod(filename, SAVE_MODE);
-
-    // Now, we try to also save the player's account
-    Account *ac;
 
     /* Note - during char creation process account_update will return
      * 0, as char does not yet exist in the account. */

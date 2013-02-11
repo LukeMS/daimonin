@@ -452,8 +452,11 @@ void spawn_point(object *op)
             while (next)
             {
                 next = find_next_object(next, TYPE_BEACON, FNO_MODE_ALL, mob);
+
                 if (next)
+                {
                     remove_ob(next);
+                }
             }
 
             SET_MULTI_FLAG(mob, FLAG_SCRIPT_MOB); /* FINISH: now mark our mob as a script-interrupted spawn */

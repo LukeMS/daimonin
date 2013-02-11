@@ -55,12 +55,10 @@ static int      check_container(object *pl, object *con);
 
 void esrv_send_below(player *pl)
 {
-    object             *who,
-                       *this;
+    object             *who;
     mapstruct          *m;
     NewSocket          *ns;
     sockbuf_struct     *sb;
-    uint32              mode;
     uint8               sendme;
     _server_client_cmd  cmd = SERVER_CMD_ITEMX;
 
@@ -109,7 +107,6 @@ void esrv_send_inventory(player *pl, object *op)
 {
     NewSocket          *ns;
     sockbuf_struct     *sb;
-    uint32              mode;
     uint8               sendme;
     _server_client_cmd  cmd = SERVER_CMD_ITEMY;
 

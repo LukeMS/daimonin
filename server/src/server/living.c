@@ -1169,7 +1169,7 @@ void fix_player(object *op)
             pl->gen_sp += tmp->stats.sp;
             pl->gen_grace += tmp->stats.grace;
             op->weapon_speed -= tmp->weapon_speed;
-            pl->weapon_sp -= tmp->weapon_speed;
+            pl->weapon_sp -= (int)(tmp->weapon_speed * pticks_second);
             op->stats.thac0 -= tmp->stats.thac0;
             op->stats.thacm += tmp->stats.thacm;
             pl->base_skill_group[0] = tmp->last_eat;
@@ -1721,7 +1721,7 @@ void fix_player(object *op)
             if (pl->guild_force &&
                 pl->guild_force->weapon_speed)
             {
-               tmp_time -= pl->guild_force->weapon_speed;
+               tmp_time -= (int)(pl->guild_force->weapon_speed * pticks_second);
             }
 
             /* we don't add op->stats.wc here because its melee.... our wc modifier comes from the skill.

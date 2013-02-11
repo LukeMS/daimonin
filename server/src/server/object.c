@@ -3696,7 +3696,7 @@ object * check_buff_exists(object *item, const char *name)
     if (!item || !name)
     {
         LOG(llevDebug, "check_buff_exists() called without item or name!\n");
-        return;
+        return NULL;
     }
 
     for (inv = item->inv; inv; inv = inv->below)
@@ -3794,17 +3794,19 @@ int remove_item_buff(object *item, char *name, int nrof)
 
     if (!item || !name)
     {
-        return 1;
+        return BUFF_ADD_BAD_PARAMS;
     }
 
     oldbuff = check_buff_exists(item, name);
 
     if (!oldbuff)
     {
-        return 2;
+        return BUFF_ADD_EXISTS;
     }
 
     decrease_ob_nr(oldbuff, nrof);
 
     fix_buff_stats(item);
+
+    return 1;
 }
