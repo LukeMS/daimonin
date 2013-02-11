@@ -147,7 +147,6 @@ static void SendInventory(player *pl, object *op)
 {
     NewSocket          *ns;
     sockbuf_struct     *sb;
-    uint8               sendme;
     _server_client_cmd  cmd = SERVER_CMD_ITEMY;
 
     /* Sanity checks. */
@@ -167,7 +166,6 @@ static void SendInventory(player *pl, object *op)
     {
         SockBuf_AddInt(sb, -1);
         SockBuf_AddInt(sb, -1);
-        sendme = 1;
     }
     else
     {
@@ -176,28 +174,19 @@ static void SendInventory(player *pl, object *op)
         {
             SockBuf_AddInt(sb, -1);
             SockBuf_AddInt(sb, op->count);
-            sendme = 1;
         }
         /* Default. */
         else
         {
             SockBuf_AddInt(sb, op->count);
             SockBuf_AddInt(sb, op->count);
-            sendme = 0;
         }
 
-        sendme = AddInventory(sb, cmd, 0, 0, op->inv);
+        (void)AddInventory(sb, cmd, 0, 0, op->inv);
         sb = ACTIVE_SOCKBUF(ns);
     }
 
-    if (sendme)
-    {
-        SOCKBUF_REQUEST_FINISH(ns, cmd, SOCKBUF_DYNAMIC);
-    }
-    else
-    {
-        SOCKBUF_REQUEST_RESET(ns);
-    }
+    SOCKBUF_REQUEST_FINISH(ns, cmd, SOCKBUF_DYNAMIC);
 }
 
 /* Adds the objects including and below first to sb (inventory cmds are always
