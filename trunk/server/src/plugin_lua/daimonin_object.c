@@ -1354,8 +1354,7 @@ static int GameObject_InsertInside(lua_State *L)
 {
     lua_object *self,
                *whatptr;
-    object     *obenv,
-               *tmp;
+    object     *obenv;
 
     get_lua_args(L, "OO", &self, &whatptr);
     obenv = WHO->env;

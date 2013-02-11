@@ -175,7 +175,7 @@ int attack_ob(object *target, object *hitter, object *hit_obj)
         !mob_can_see_obj(target, owner, MOB_DATA(target)->known_mobs))
     {
         new_draw_info(NDI_ORANGE, 0, owner, "Stealth attack direct hit! (+50%% damage)");
-        hitdam *= 1.5;
+        hitdam = (int)((double)hitdam * 1.5);
 
         goto force_direct_hit;
     }

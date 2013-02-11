@@ -437,7 +437,6 @@ Account *find_account(char *acname)
  */
 Account *find_account_hash(const char *acname)
 {
-    int     i;
     player *pl;
 
     if(acname)

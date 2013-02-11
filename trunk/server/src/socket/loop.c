@@ -844,9 +844,6 @@ void doeric_server(int update, struct timeval *timeout)
                     if (update_player &&
                         (pl->state & ST_PLAYING))
                     {
-                        uint32    update_below;
-                        MapSpace *msp;
-
                         esrv_update_stats(pl);
 
                         if (pl->update_skills)

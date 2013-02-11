@@ -885,7 +885,7 @@ int exp_from_base_skill(player *pl, int base_exp, int sk)
              * exp boost in the skill they used. (250 * (50 / 100 + 1)) = 250 * 1.5.
              */
             percent = (float)pl->base_skill_group_exp[i] / 100 + 1;
-            return base_exp * percent;
+            return (int)(base_exp * percent);
         }
     }
 

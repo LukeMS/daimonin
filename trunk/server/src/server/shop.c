@@ -365,7 +365,7 @@ static sint64 PayFrom(object *op, object *root, sint64 amount)
         if (this->type == MONEY)
         {
             sint32 needed = (amount > this->value)
-                            ? (amount / this->value + ((amount % this->value) ? 1 : 0))
+                            ? (sint32)(amount / this->value + ((amount % this->value) ? 1 : 0))
                             : 1,
                    used = MIN((sint32)this->nrof, needed);
 
@@ -661,7 +661,7 @@ int query_money_type(object *op, int value)
  * anyway.
  *
  * -- Smacky 20130125 */
-sint64 remove_money_type(object *who, object *op, sint64 value, sint64 amount)
+uint32 remove_money_type(object *who, object *op, sint64 value, uint32 amount)
 {
     object *this,
            *next;
@@ -682,7 +682,7 @@ sint64 remove_money_type(object *who, object *op, sint64 value, sint64 amount)
         {
             if (value == -1)
             {
-                amount += (this->nrof * this->value);
+                amount += (uint32)(this->nrof * this->value);
                 remove_ob(this);
             }
             else // don't think thiis calcs properly but this is never used anyway

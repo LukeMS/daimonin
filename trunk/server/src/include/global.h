@@ -933,7 +933,7 @@ EXTERN long                     nroferrors;     /* If it exceeds MAX_ERRORS, cal
 
 EXTERN unsigned long            pticks;                 /* this is the global round counter. Every main loop pticks=pticks+1 */
 EXTERN long                     pticks_ums;             /* how many micro seconds has one pticks */
-EXTERN float                    pticks_second;          /* how many pticks in one second */
+EXTERN uint32                    pticks_second;          /* how many pticks in one second */
 EXTERN uint32                   pticks_socket_idle;     /* 3 idle counter we use for idle sockets in socket/loop.c */
 EXTERN uint32                   pticks_player_idle1;
 EXTERN uint32                   pticks_player_idle2;

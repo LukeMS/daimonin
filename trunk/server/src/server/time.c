@@ -596,7 +596,7 @@ void poison_more(object *op)
     // Someone may have died after damage_ob, so make sure they're still alive.
     if (op && op->env)
     {
-        op->stats.dam *= 1 + (float)op->env->level / (MAXLEVEL * 2);
+        op->stats.dam = (sint16)((float)op->stats.dam * (1 + op->env->level / (MAXLEVEL * 2)));
     }
 }
 

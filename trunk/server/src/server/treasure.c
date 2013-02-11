@@ -1213,8 +1213,6 @@ int create_one_treasure(treasurelist *tl, object *op, int flag, int difficulty, 
 
 static void put_treasure(object *op, object *creator, int flags)
 {
-    object *tmp;
-
     if (flags & GT_ENVIRONMENT)
     {
         op->x = creator->x;

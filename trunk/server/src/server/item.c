@@ -1307,10 +1307,10 @@ int need_identify(const object *const op)
 
 void identify(object *op)
 {
-    object *pl;
-
     if (!op)
+    {
         return;
+    }
 
     SET_FLAG(op, FLAG_IDENTIFIED);
     CLEAR_FLAG(op, FLAG_KNOWN_CURSED);

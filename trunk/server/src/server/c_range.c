@@ -52,7 +52,6 @@ float fire_magic_tool(object *op, object *weap, int dir)
                 SET_FLAG(op, FLAG_BEEN_APPLIED); /* You now know something about it */
                 if (!(--weap->stats.food))
                 {
-                    object   *tmp;
                     if (weap->arch)
                     {
                         CLEAR_FLAG(weap, FLAG_ANIMATE);
