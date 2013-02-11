@@ -85,6 +85,8 @@ void            free_newsocket(NewSocket *ns);
 /* item.c */
 void            esrv_send_below(player *pl);
 void            esrv_send_inventory(player *pl, object *op);
+void            esrv_open_container(player *pl, object *op);
+void            esrv_close_container(player *pl);
 void            esrv_send_item(object *op);
 void            esrv_update_item(uint16 flags, object *op);
 void            esrv_del_item(object *op);

@@ -38,6 +38,7 @@
         QUERY_FLAG((_PL_)->ob, FLAG_SEE_INVISIBLE) || /* player has the ability to do so or */ \
         (_OP_)->env == (_PL_)->ob))))                 /* they're in his inventory (simulates feel) */
 
+static void            SendInventory(player *pl, object *op);
 static uint8           AddInventory(sockbuf_struct *sb, _server_client_cmd cmd,
                                     uint8 start, uint8 end, object *first);
 static void            AddFakeObject(sockbuf_struct *sb, _server_client_cmd cmd,
@@ -105,6 +106,45 @@ void esrv_send_below(player *pl)
 
 void esrv_send_inventory(player *pl, object *op)
 {
+    SendInventory(pl, op);
+}
+
+void esrv_open_container(player *pl, object *op)
+{
+    SendInventory(pl, op);
+}
+
+void esrv_close_container(player *pl)
+{
+    SendInventory(pl, NULL);
+}
+
+void esrv_send_item(object *op)
+{
+    _server_client_cmd cmd = (op->map) ? SERVER_CMD_ITEMX : SERVER_CMD_ITEMY;
+    uint16             flags = UPD_FLAGS | UPD_WEIGHT | UPD_FACE |
+                               UPD_DIRECTION | UPD_NAME | UPD_ANIM |
+                               UPD_ANIMSPEED | UPD_NROF;
+
+    NotifyClients(cmd, flags, op);
+}
+
+void esrv_update_item(uint16 flags, object *op)
+{
+    NotifyClients(SERVER_CMD_UPITEM, flags, op);
+}
+
+void esrv_del_item(object *op)
+{
+    NotifyClients(SERVER_CMD_DELITEM, 0, op);
+}
+
+/* Sends the inventory of op to pl. This function is in fact used in three
+ * circumstances: (1) !op -- the player's container is closed; (2) op ==
+ * pl->container the player's contaiiner is opened (and it's inventory sent);
+ * (3) otherwise -- the inventory of op is sent. */
+static void SendInventory(player *pl, object *op)
+{
     NewSocket          *ns;
     sockbuf_struct     *sb;
     uint8               sendme;
@@ -129,23 +169,23 @@ void esrv_send_inventory(player *pl, object *op)
         SockBuf_AddInt(sb, -1);
         sendme = 1;
     }
-    /* Open container. */
-    else if (pl->container == op)
-    {
-        SockBuf_AddInt(sb, -1);
-        SockBuf_AddInt(sb, op->count);
-        sendme = 1;
-    }
-    /* Default. */
     else
     {
-        SockBuf_AddInt(sb, op->count);
-        SockBuf_AddInt(sb, op->count);
-        sendme = 0;
-    }
+        /* Open container. */
+        if (pl->container == op)
+        {
+            SockBuf_AddInt(sb, -1);
+            SockBuf_AddInt(sb, op->count);
+            sendme = 1;
+        }
+        /* Default. */
+        else
+        {
+            SockBuf_AddInt(sb, op->count);
+            SockBuf_AddInt(sb, op->count);
+            sendme = 0;
+        }
 
-    if (op)
-    {
         sendme = AddInventory(sb, cmd, 0, 0, op->inv);
         sb = ACTIVE_SOCKBUF(ns);
     }
@@ -158,26 +198,6 @@ void esrv_send_inventory(player *pl, object *op)
     {
         SOCKBUF_REQUEST_RESET(ns);
     }
-}
-
-void esrv_send_item(object *op)
-{
-    _server_client_cmd cmd = (op->map) ? SERVER_CMD_ITEMX : SERVER_CMD_ITEMY;
-    uint16             flags = UPD_FLAGS | UPD_WEIGHT | UPD_FACE |
-                               UPD_DIRECTION | UPD_NAME | UPD_ANIM |
-                               UPD_ANIMSPEED | UPD_NROF;
-
-    NotifyClients(cmd, flags, op);
-}
-
-void esrv_update_item(uint16 flags, object *op)
-{
-    NotifyClients(SERVER_CMD_UPITEM, flags, op);
-}
-
-void esrv_del_item(object *op)
-{
-    NotifyClients(SERVER_CMD_DELITEM, 0, op);
 }
 
 /* Adds the objects including and below first to sb (inventory cmds are always
