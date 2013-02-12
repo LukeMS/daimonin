@@ -51,7 +51,7 @@ void new_draw_info(const int flags, const int pri, const object *const op,
 {
     char            buf[HUGE_BUF] = "";
     va_list         ap;
-    sockbuf_struct *sb = (sockbuf_struct *)malloc(sizeof(sockbuf_struct));
+    sockbuf_struct *sb = NULL;
     player         *pl;
 
     /* Don't send empty string. */
@@ -101,7 +101,7 @@ void new_info_map(const int flags, const mapstruct *const map, const int x,
 {
     char            buf[HUGE_BUF] = "";
     va_list         ap;
-    sockbuf_struct *sb = (sockbuf_struct *)malloc(sizeof(sockbuf_struct));
+    sockbuf_struct *sb = NULL;
     object         *tmp;
     int             xt,
                     yt,
@@ -334,7 +334,7 @@ void new_info_map_except(const int flags, const mapstruct *const map,
 {
     char            buf[HUGE_BUF] = "";
     va_list         ap;
-    sockbuf_struct *sb = (sockbuf_struct *)malloc(sizeof(sockbuf_struct));
+    sockbuf_struct *sb = NULL;
     object         *tmp;
     int             xt,
                     yt,
