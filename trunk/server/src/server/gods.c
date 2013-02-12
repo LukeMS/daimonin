@@ -424,73 +424,77 @@ void update_priest_flag(object *god, object *exp_ob, uint32 flag)
     };
 }
 
-
-/* determine_god() - determines if op worships a god. Returns
- * the godname if they do. In the case of an NPC, if they have
- * no god, we give them a random one. -b.t.
- *
- * This function now always returns a shared string, so
- * we can do direct equality tests on it. - Gecko 20050716
- */
-
-const char * determine_god(object *op)
+/* Determines if op worships a god. Returns the godname if they do. In the case
+ * of an NPC, if they have no god, we give them a random one. */
+const char *determine_god(object *op)
 {
-    int godnr   = -1;
-
-    /* spells */
-    if ((op->type == FBULLET || op->type == CONE || op->type == FBALL || op->type == SWARM_SPELL) && op->title)
+    /* Spells. */
+    if ((op->type == FBULLET ||
+         op->type == CONE ||
+         op->type == FBALL ||
+         op->type == SWARM_SPELL) &&
+        op->title)
     {
         if (lookup_god_by_name(op->title) >= 0)
-            return op->title;
-    }
-
-    if (op->type != PLAYER && QUERY_FLAG(op, FLAG_ALIVE))
-    {
-        if (!op->title)
         {
-            godlink    *gl  = first_god;
-
-            godnr = random_roll(1, gl->id);
-            while (gl)
-            {
-                if (gl->id == godnr)
-                    break;
-                gl = gl->next;
-            }
-
-            if (gl)
-            {
-                FREE_AND_COPY_HASH(op->title, gl->name);
-            }
+            return op->title;
         }
-        return op->title;
     }
 
     /* If we are player, lets search a bit harder for the god.  This
      * is a fix for perceive self (before, we just looked at the active
-     * skill.)
-     */
+     * skill). */
     if (op->type == PLAYER)
     {
-        object *tmp;
-        for (tmp = op->inv; tmp != NULL; tmp = tmp->below)
+        object *this;
+
+        for (this = op->inv; this; this = this->below)
         {
             /* Gecko: we should actually only need to check either
-             * tmp->stats.Wiz or tmp->sub_type1, but to avoid future
+             * this->stats.Wis or this->sub_type1, but to avoid future
              * mistakes we check both here. */
-            if (tmp->type == EXPERIENCE && tmp->stats.Wis && tmp->sub_type1 == 5)
+            if (this->type == EXPERIENCE &&
+                this->stats.Wis &&
+                this->sub_type1 == 5) // TODO: meaningful constant?
             {
-                if (tmp->title)
-                    return tmp->title;
+                if (this->title)
+                {
+                    return this->title;
+                }
                 else
+                {
                     return shstr_cons.none;
+                }
             }
         }
+    }
+    else if (QUERY_FLAG(op, FLAG_ALIVE))
+    {
+        if (!op->title)
+        {
+            godlink *gl;
+            int      godnr;
+
+            for (gl = first_god; gl; gl = gl->next)
+            {
+                if (gl == first_god)
+                {
+                    godnr = random_roll(1, gl->id);
+                }
+                else if (gl->id == godnr)
+                {
+                    FREE_AND_COPY_HASH(op->title, gl->name);
+
+                    break;
+                }
+            }
+        }
+
+        return op->title;
     }
 
     return shstr_cons.none;
 }
-
 
 archetype * determine_holy_arch(object *god, const char *type)
 {
