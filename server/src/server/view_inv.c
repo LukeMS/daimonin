@@ -66,7 +66,7 @@ void esrv_send_below(player *pl)
     /* Sanity checks. */
     if (!pl ||
         (pl->state & (ST_DEAD | ST_ZOMBIE)) ||
-        pl->socket.status == Ns_Dead ||
+        pl->socket.status != Ns_Playing ||
         !(who = pl->ob) ||
         QUERY_FLAG(who, FLAG_REMOVED) ||
         !(m = who->map) ||
@@ -152,7 +152,7 @@ static void SendInventory(player *pl, object *op)
     /* Sanity checks. */
     if (!pl ||
         (pl->state & (ST_DEAD | ST_ZOMBIE)) ||
-        pl->socket.status == Ns_Dead)
+        pl->socket.status != Ns_Playing)
     {
         return;
     }
@@ -368,7 +368,7 @@ static sockbuf_struct *BroadcastItemCmd(sockbuf_struct *sb, _server_client_cmd c
     /* Only send the cmd to a valid client and when filter is passed. */
     if (pl &&
         !(pl->state & (ST_DEAD | ST_ZOMBIE)) &&
-        pl->socket.status != Ns_Dead &&
+        pl->socket.status == Ns_Playing &&
         FILTER(pl, op))
     {
         /* If we've not yet made a sockbuf, make one now. */
