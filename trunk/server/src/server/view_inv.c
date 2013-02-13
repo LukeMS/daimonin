@@ -266,7 +266,7 @@ static void AddFakeObject(sockbuf_struct *sb, _server_client_cmd cmd,
 
     SockBuf_AddInt(sb, tag);
     SockBuf_AddInt(sb, 0);
-    SockBuf_AddInt(sb, -1);
+    SockBuf_AddInt(sb, 0);
     SockBuf_AddInt(sb, face);
     SockBuf_AddChar(sb, 0);
 
