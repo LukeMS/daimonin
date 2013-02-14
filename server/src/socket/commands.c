@@ -24,6 +24,8 @@
 #include <global.h>
 #include <ctype.h>
 
+static uint8 IsDroppableContainer(object *who, object *what);
+
 /* binary command tags are defined in the shared protocol.h
  * first value is data tail length:
  * 0 = no data, single command
@@ -1001,23 +1003,113 @@ void cs_cmd_file(char *buf, int len, NewSocket *ns)
 */
 void cs_cmd_moveobj(char *buf, int len, NewSocket *ns)
 {
-    player *pl = ns->pl;
-    tag_t loc, tag;
-    long nrof;
+    player *pl;
+    tag_t   loc,
+            tag;
+    uint32  nrof;
+    object *who,
+           *container,
+           *what,
+           *where;
 
-    if (!buf || len< 3*PARM_SIZE_INT || !pl || ns->status != Ns_Playing)
+    if (!buf ||
+        len < 3 * PARM_SIZE_INT ||
+        !(pl = ns->pl) ||
+        ns->status != Ns_Playing)
     {
         ns->status = Ns_Dead;
+
         return;
     }
 
     loc = (tag_t)GetInt_Buffer(buf);
     tag = (tag_t)GetInt_Buffer(buf);
-    nrof = (long)GetInt_Buffer(buf);
+    nrof = GetInt_Buffer(buf);
+    who = pl->ob;
 
-    esrv_move_object(pl->ob, loc, tag, nrof);
+    /* Lag may mean real circumstances have changed before the cmd is received
+     * by the server so make sure the tag still refers to a visible object. */
+    if (!(what = esrv_get_ob_from_count(who, tag)))
+    {
+        return;
+    }
+    /* Drop to ground. */
+    else if (!loc)
+    {
+        if (!what->map &&
+            what->env &&
+            (what->type != CONTAINER ||
+             IsDroppableContainer(who, what)))
+        {
+            drop_object(who, what, nrof);
+        }
+    }
+    /* Pick up to inventory/container. */
+    else if (loc == who->count ||
+             ((container = pl->container) &&
+              container->env == who &&
+              loc == container->count))
+    {
+        pl->count = nrof;
+        pick_up(who, what);
+    }
+    /* If not dropped or picked up, we are putting it into a sack */
+    /* Lag may mean real circumstances have changed before the cmd is received
+     * by the server so make sure the tag still refers to a visible object. */
+    /* put_object_in_sack() presumes that necessary sanity checking
+     * has already been done, so do that. */
+    else if ((where = esrv_get_ob_from_count(who, loc)) &&
+             where == container &&
+             can_pick(who, what) &&
+             sack_can_hold(who, where, what, nrof))
+    {
+        if (QUERY_FLAG(what, FLAG_STARTEQUIP))
+        {
+            new_draw_info(NDI_UNIQUE, 0, who, "You can't store ~NO-DROP~ items outside your inventory!");
+        }
+        else if (what->type != CONTAINER ||
+                 !what->inv ||
+                 IsDroppableContainer(who, what))
+        {
+            put_object_in_sack(who, where, what, nrof);
+        }
+    }
 }
 
+/* Recursively checks containers for no drops and locked items inside, printing
+ * a message and returning 0 if any are found (container cannot be dropped) or
+ * returning 1 if none are found (container can be dropped. */
+static uint8 IsDroppableContainer(object *who, object *what)
+{
+    object *this;
+
+    for (this = what->inv; this; this = this->below)
+    {
+        if (this->type == CONTAINER &&
+            this->inv)
+        {
+            if (!IsDroppableContainer(who, this))
+            {
+                return 0;
+            }
+        }
+
+        if (QUERY_FLAG(this, FLAG_STARTEQUIP))
+        {
+            new_draw_info(NDI_UNIQUE, 0, who, "First remove all ~NO-DROP~ items from this container!");
+
+            return 0;
+        }
+        else if (QUERY_FLAG(this, FLAG_INV_LOCKED))
+        {
+            new_draw_info(NDI_UNIQUE, 0, who, "You can't drop a container with locked items inside!");
+
+            return 0;
+        }
+    }
+
+    return 1;
+}
 #ifdef SERVER_SEND_FACES
 
 void cs_cmd_face(char *params, int len, NewSocket *ns)

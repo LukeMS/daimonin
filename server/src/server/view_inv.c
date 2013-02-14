@@ -52,7 +52,6 @@ static char           *PrepareData(_server_client_cmd cmd, uint16 flags, player 
                                    object *op, char *data);
 static uint32          ClientFlags(object *op);
 static object  *esrv_get_ob_from_count_DM(object *pl, tag_t count);
-static int      check_container(object *pl, object *con);
 
 void esrv_send_below(player *pl)
 {
@@ -760,96 +759,3 @@ static object * esrv_get_ob_from_count_DM(object *pl, tag_t count)
     }
     return NULL;
 }
-
-/* Move an object to a new lcoation */
-void esrv_move_object(object *pl, tag_t to, tag_t tag, long nrof)
-{
-    object *op, *env;
-    int     tmp;
-
-    /*LOG(llevDebug,"Move item %d (nrof=%d) to %d.\n", tag, nrof,to);*/
-
-    op = esrv_get_ob_from_count(pl, tag);
-    if (!op) /* latency effect - we have moved before we applied this (or below from player changed) */
-        return;
-
-    if (!to) /* drop it to the ground */
-    {
-        if (op->map && !op->env)
-            return;
-
-        /*LOG(llevNoLog,"drop it... (%d)\n",check_container(pl,op));*/
-        CLEAR_FLAG(pl, FLAG_INV_LOCKED); /* funny trickm see check container */
-        if ((tmp = check_container(pl, op)))
-            new_draw_info(NDI_UNIQUE, 0, pl, "Remove first all ~NO-DROP~ items from this container!");
-        else if (QUERY_FLAG(pl, FLAG_INV_LOCKED))
-            new_draw_info(NDI_UNIQUE, 0, pl, "You can't drop a container with locked items inside!");
-        else
-            drop_object(pl, op, nrof);
-        return;
-    }
-    else if (to == pl->count || (to == op->count && !op->env)) /* pick it up to the inventory */
-    {
-        /* return if player has already picked it up */
-        if (op->env == pl)
-            return;
-
-        CONTR(pl)->count = nrof;
-        /*LOG(llevNoLog,"pick up...\n");*/
-        pick_up(pl, op); /* it goes in player inv or readied container */
-        return ;
-    }
-    /* If not dropped or picked up, we are putting it into a sack */
-    env = esrv_get_ob_from_count(pl, to);
-    if (!env)
-        return;
-
-    /* put_object_in_sack presumes that necessary sanity checking
-     * has already been done (eg, it can be picked up and fits in
-     * in a sack, so check for those things.  We should also check
-     * an make sure env is in fact a container for that matter.
-     */
-    /* player have for example a opend container in the inventory */
-    if (env->type == CONTAINER && can_pick(pl, op) && sack_can_hold(pl, env, op, nrof))
-    {
-        /*LOG(llevNoLog,"put in sack...\n");*/
-        CLEAR_FLAG(pl, FLAG_INV_LOCKED); /* funny trickm see check container */
-        tmp = check_container(pl, op);
-        if (QUERY_FLAG(pl, FLAG_INV_LOCKED) && env->env != pl)
-            new_draw_info(NDI_UNIQUE, 0, pl, "You can't drop a container with locked items inside!");
-        else if (tmp && env->env != pl)
-            new_draw_info(NDI_UNIQUE, 0, pl, "Remove first all ~NO-DROP~ items from this container!");
-        else if (QUERY_FLAG(op, FLAG_STARTEQUIP) && env->env != pl)
-            new_draw_info(NDI_UNIQUE, 0, pl, "You can't store ~NO-DROP~ items outside your inventory!");
-        else
-            put_object_in_sack(pl, env, op, nrof);
-        return;
-    }
-}
-
-
-/* thats the safest rule: you can't drop containers which holds
- * a startequip item or a container holding one.
- * return is the number of one drops in this container chain.
- */
-static int check_container(object *pl, object *con)
-{
-    object *current, *next;
-    int     ret = 0;
-
-    if (con->type != CONTAINER) /* only check stuff *inside* a container */
-        return ret;
-
-    for (current = con->inv; current != NULL; current = next)
-    {
-        next = current->below;
-        ret += check_container(pl, current);
-
-        if (QUERY_FLAG(current, FLAG_STARTEQUIP))
-            ret += 1;
-        if (QUERY_FLAG(current, FLAG_INV_LOCKED))
-            SET_FLAG(pl, FLAG_INV_LOCKED);
-    }
-    return ret;
-}
-
