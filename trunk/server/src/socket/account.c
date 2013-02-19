@@ -163,7 +163,7 @@ account_status account_load(Account *ac, char *name, char *pass)
                     add_ban_entry(NULL, ns->ip_host, 8*60, 8*60);
                     Write_String_To_Socket(ns, SERVER_CMD_DRAWINFO,password_warning , strlen(password_warning));
                     player_addme_failed(ns, ADDME_MSG_DISCONNECT);
-                    ns->login_count = ROUND_TAG+(uint32)(10.0f * pticks_second);
+                    ns->login_count = ROUND_TAG + 10 * pticks_second;
                     ns->status = Ns_Zombie;
                     ns->idle_flag = 1;
                 }

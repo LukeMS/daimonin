@@ -687,7 +687,7 @@ void doeric_server(int update, struct timeval *timeout)
                 else if (pl->socket.login_count < ROUND_TAG && !QUERY_FLAG(pl->ob, FLAG_WIZ))
                 {
                     new_draw_info(NDI_UNIQUE | NDI_RED, 0, pl->ob, "Max idle time reached! Server is closing connection.");
-                    pl->socket.login_count = ROUND_TAG+(uint32)(2.0f * pticks_second);
+                    pl->socket.login_count = ROUND_TAG + 2 * pticks_second;
                     pl->socket.status = Ns_Zombie; /* we hold the socket open for a *bit* */
                     pl->socket.idle_flag = 1;
                     pl = pl->next;
