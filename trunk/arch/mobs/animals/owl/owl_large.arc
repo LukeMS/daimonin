@@ -2,7 +2,7 @@ Object owl_snow_large
 name large Snow Owl
 face owl_snow_large.161
 race bird
-randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems loot;wealth_normal&D65;loot_base&D34;loot_misc&d27
 type 80
 layer 6
 identified 1

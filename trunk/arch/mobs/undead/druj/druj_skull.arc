@@ -2,7 +2,7 @@ Object druj_skull
 name Skull Druj
 face druj_skull.151
 race druj
-randomitems spells_demilich;loot;wealth_normal&D65;loot_base&D17;loot_magic&d12;loot_melee&d22
+randomitems spells_demilich;loot;wealth_normal&D65;loot_base&D34;loot_magic&d9;loot_melee&d12
 type 80
 layer 6
 identified 1

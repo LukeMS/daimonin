@@ -2,7 +2,7 @@ Object wizard_white
 name Wizard
 race human
 face wizard.151
-randomitems spells_mage;loot;wealth_normal&D65;loot_base&D17;loot_magic&d11;loot_melee&d37
+randomitems spells_mage;loot;wealth_normal&D65;loot_base&D34;loot_magic&d9;loot_melee&d16
 type 80
 layer 6
 identified 1

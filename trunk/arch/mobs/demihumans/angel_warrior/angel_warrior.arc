@@ -2,7 +2,7 @@ Object angel_warrior
 name Angel Warrior
 face angel_warrior.211
 race angel
-randomitems loot;wealth_normal&D65;loot_base&D17;loot_magic&d18;loot_melee&d22
+randomitems loot;wealth_normal&D65;loot_base&D34;loot_magic&d12;loot_melee&d12
 type 80
 layer 6
 identified 1

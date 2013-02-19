@@ -2,7 +2,7 @@ Object knome
 name Knome
 face knome.331
 race knome
-randomitems loot;wealth_normal&D65;loot_melee&D17;loot_magic&d27;loot_melee&d22
+randomitems loot;wealth_normal&D65;loot_melee&D34;loot_magic&d17;loot_melee&d12
 type 80
 layer 6
 identified 1

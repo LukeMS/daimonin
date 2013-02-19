@@ -2,7 +2,7 @@ Object rat_a
 name Big Rat
 face rat_a.151
 race rat
-randomitems loot;wealth_normal&D65;loot_base&D17;loot_magic&d27;loot_melee&d22
+randomitems loot;wealth_normal&D65;loot_base&D34;loot_magic&d17;loot_melee&d12
 type 80
 layer 6
 identified 1
@@ -52,7 +52,7 @@ Object rat_b
 name Big Rat
 face rat_b.151
 race rat
-randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems loot;wealth_normal&D65;loot_base&D34;loot_misc&d27
 type 80
 layer 6
 identified 1
@@ -102,7 +102,7 @@ Object rat_c
 name Big Rat
 face rat_c.151
 race rat
-randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems loot;wealth_normal&D65;loot_base&D34;loot_misc&d27
 type 80
 layer 6
 identified 1
@@ -152,7 +152,7 @@ Object rat_d
 name Big Rat
 face rat_d.151
 race rat
-randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems loot;wealth_normal&D65;loot_base&D34;loot_misc&d27
 type 80
 layer 6
 identified 1

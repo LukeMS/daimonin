@@ -2,7 +2,7 @@ Object kobold
 name Kobold
 face kobold.151
 race kobold
-randomitems loot;wealth_normal&D65;loot_base&D17;loot_magic&d42;loot_melee&d22
+randomitems loot;wealth_normal&D65;loot_base&D34;loot_magic&d24;loot_melee&d12
 type 80
 layer 6
 identified 1

@@ -2,7 +2,7 @@ Object oarman
 face oarman.131
 name Oarman
 race human
-randomitems skill_bow;loot;wealth_normal&D65;loot_base&D17;loot_magic&d27;loot_melee&d22
+randomitems skill_bow;loot;wealth_normal&D65;loot_base&D34;loot_magic&d17;loot_melee&d12
 type 80
 layer 6
 identified 1

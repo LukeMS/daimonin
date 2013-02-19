@@ -2,7 +2,7 @@ Object troll
 name Troll
 face troll.151
 race troll
-randomitems loot;wealth_normal&D65;loot_base&D17;loot_magic&d27;loot_melee&d22
+randomitems loot;wealth_normal&D65;loot_base&D34;loot_magic&d17;loot_melee&d12
 mpart_id 3
 type 80
 layer 6

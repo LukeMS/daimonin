@@ -2,7 +2,7 @@ Object orc_priest
 name Orc Priest
 face orc_priest.151
 race orc
-randomitems spells_priest;loot;wealth_normal&D65;loot_base&D17;loot_magic&d12;loot_melee&d72
+randomitems spells_priest;loot;wealth_normal&D65;loot_base&D34;loot_magic&d9;loot_melee&d24
 type 80
 layer 6
 identified 1
