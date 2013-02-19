@@ -2,7 +2,7 @@ Object slime_b
 name Slime
 face slime_b.111
 race slime
-randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d28
+randomitems loot;wealth_normal&D65;loot_base&D34;loot_misc&d28
 type 80
 layer 6
 identified 1

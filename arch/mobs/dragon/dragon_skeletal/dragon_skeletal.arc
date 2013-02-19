@@ -2,7 +2,7 @@ Object dragon_skeletal
 name Skeletal Dragon
 face dragon_skeletal.151
 race dragon
-randomitems loot;wealth_normal&D65;loot_base&D17;loot_magic&d22;loot_melee&d22
+randomitems loot;wealth_normal&D65;loot_base&D34;loot_magic&d14;loot_melee&d12
 type 80
 layer 6
 mpart_id 3

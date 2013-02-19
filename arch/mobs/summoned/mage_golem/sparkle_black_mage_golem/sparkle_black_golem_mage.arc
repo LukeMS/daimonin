@@ -2,7 +2,7 @@ Object sparkle_black_golem_mage
 name Black Sparkle Mage Golem
 face sparkle_black_golem_mage.151
 race golem
-randomitems loot;wealth_normal&D65;loot_base&D17;loot_magic&d22;loot_melee&d27
+randomitems loot;wealth_normal&D65;loot_base&D34;loot_magic&d14;loot_melee&d13
 type 80
 layer 6
 identified 1

@@ -2,7 +2,7 @@ Object drow_guard
 name Drow Guard
 face drow_guard.151
 race drow
-randomitems loot;wealth_normal&D65;loot_base&D17;loot_magic&d12;loot_melee&d20
+randomitems loot;wealth_normal&D65;loot_base&D34;loot_magic&d9;loot_melee&d11
 type 80
 layer 6
 identified 1

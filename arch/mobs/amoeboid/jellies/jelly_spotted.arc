@@ -2,7 +2,7 @@ Object jelly_spotted
 name Spotted Jelly
 face spotted_jelly.111
 race slime
-randomitems loot;wealth_normal&D65;loot_base&D17;loot_magic&d64;loot_melee&d18
+randomitems loot;wealth_normal&D65;loot_base&D34;loot_magic&d35;loot_melee&d11
 type 80
 layer 6
 identified 1

@@ -2,7 +2,7 @@ Object drow_sorcerer
 name Drow Sorcerer
 face drow_sorcerer.151
 race drow
-randomitems spells_sorcerer;loot;wealth_normal&D65;loot_base&D17;loot_magic&d10;loot_melee&d53
+randomitems spells_sorcerer;loot;wealth_normal&D65;loot_base&D34;loot_magic&d8;loot_melee&d20
 type 80
 layer 6
 identified 1

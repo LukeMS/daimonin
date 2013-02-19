@@ -2,7 +2,7 @@ Object minotaur
 name Minotaur
 face minotaur.151
 race minotaur
-randomitems loot;wealth_normal&D65;loot_base&D17;loot_magic&d28;loot_melee&d17
+randomitems loot;wealth_normal&D65;loot_base&D34;loot_magic&d17;loot_melee&d11
 type 80
 layer 6
 identified 1
