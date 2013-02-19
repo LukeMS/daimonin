@@ -252,7 +252,7 @@ int command_kick(object *op, char *params)
      * If its a "technical" kick, the 10 sec is a protection.
      * Perhaps we want reset a map or whatever.
      */
-    ticks = (int)(pticks_second * 60.0f);
+    ticks = (int)(pticks_second * 60);
     add_ban_entry(NULL, params, NULL, ticks, ticks); // Note - obviously no need to call remove_ban_entry() here
 
     return COMMANDS_RTN_VAL_OK;
@@ -1371,7 +1371,7 @@ int command_serverspeed(object *op, char *params)
 
     if (!params)
     {
-        new_draw_info(NDI_UNIQUE, 0, op, "Current server speed is %ld ums (%f ticks/second)",
+        new_draw_info(NDI_UNIQUE, 0, op, "Current server speed is %ld ums (%u ticks/second)",
                              pticks_ums, pticks_second);
 
         return COMMANDS_RTN_VAL_OK_SILENT;
@@ -1382,7 +1382,7 @@ int command_serverspeed(object *op, char *params)
 
     set_pticks_time(i);
     GETTIMEOFDAY(&last_time);
-    new_draw_info(NDI_UNIQUE, 0, op, "Set server speed to %ld ums (%f ticks/second)",
+    new_draw_info(NDI_UNIQUE, 0, op, "Set server speed to %ld ums (%u ticks/second)",
                          pticks_ums, pticks_second);
 
     return COMMANDS_RTN_VAL_OK;

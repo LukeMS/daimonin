@@ -898,7 +898,7 @@ void cs_cmd_setup(char *buf, int len, NewSocket *ns)
         LOG(llevInfo, "Daimonin version mismatch client: %u.%u.%u server: %u.%u.%u\n",
             rel, maj, min, DAI_VERSION_RELEASE, DAI_VERSION_MAJOR,
             DAI_VERSION_MINOR);
-        ns->login_count = ROUND_TAG + (uint32)(10.0f * pticks_second);
+        ns->login_count = ROUND_TAG + 10 * pticks_second;
         ns->status = Ns_Zombie; /* we hold the socket open for a *bit* */
         ns->idle_flag = 1;
 
@@ -909,7 +909,7 @@ void cs_cmd_setup(char *buf, int len, NewSocket *ns)
     {
         LOG(llevInfo, "Protocol version mismatch client:(%u) server:(%u)\n",
             ns->protocol_version, PROTOCOL_VERSION);
-        ns->login_count = ROUND_TAG+(uint32)(10.0f * pticks_second);
+        ns->login_count = ROUND_TAG + 10 * pticks_second;
         ns->status = Ns_Zombie; /* we hold the socket open for a *bit* */
         ns->idle_flag = 1;
         return;

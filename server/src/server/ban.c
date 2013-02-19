@@ -352,7 +352,7 @@ static void ban_inform_client(NewSocket *ns, objectlink *ol, ENUM_BAN_TYPE ban_t
         Write_String_To_Socket(ns, SERVER_CMD_DRAWINFO, buf , strlen(buf));
         player_addme_failed(ns, ADDME_MSG_DISCONNECT); /* tell client we failed and kick him away */
 
-        ns->login_count = ROUND_TAG+(uint32)(10.0f * pticks_second);
+        ns->login_count = ROUND_TAG + 10 * pticks_second;
         ns->status = Ns_Zombie; /* we hold the socket open for a *bit* */
         ns->idle_flag = 1;
     }

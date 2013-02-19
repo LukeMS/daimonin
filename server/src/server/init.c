@@ -193,14 +193,14 @@ void set_pticks_time(long t)
 
     if(t)
     {
-        pticks_second = (uint32)(1000000.0f / (float)t);
+        pticks_second = (uint32)(1000000 / t);
     }
 
-    pticks_socket_idle = (uint32)((60.0f * 3.0f) * pticks_second);
-    pticks_player_idle1 = (uint32)((60.0f * 8.0f) * pticks_second);
-    pticks_player_idle2 = (uint32)((60.0f * 2.0f) * pticks_second);
+    pticks_socket_idle = 60 * 3 * pticks_second;
+    pticks_player_idle1 = 60 * 8 *  pticks_second;
+    pticks_player_idle2 = 60 * 2 * pticks_second;
 
-    /* LOG(llevDebug,"set_pticks_time(): t=%d ums:%d pticks_second:%f sock:%d idle1:%d idle2:%d\n",
+    /* LOG(llevDebug,"set_pticks_time(): t=%d ums:%d pticks_second:%u sock:%d idle1:%d idle2:%d\n",
        t, pticks_ums, pticks_second, pticks_socket_idle, pticks_player_idle1, pticks_player_idle2);
      */
 }
@@ -1048,7 +1048,7 @@ void compile_info()
 #else
     LOG(llevInfo, "Maps never reset.");
 #endif
-    LOG(llevInfo, "Max_time:\t%ld (%f)\n", pticks_ums, pticks_second);
+    LOG(llevInfo, "Max_time:\t%ld (%u)\n", pticks_ums, pticks_second);
     LOG(llevInfo, "Tlogfilename:\t%s, Clogfilename:\t%s (llev:%d)\n", settings.tlogfilename, settings.clogfilename, settings.debug);
     LOG(llevInfo, "ObjectSize:\t%lu (living: %lu)\n", sizeof(object), sizeof(living));
     LOG(llevInfo, "MapStructSize:\t%lu\n", sizeof(mapstruct));
