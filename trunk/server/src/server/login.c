@@ -97,9 +97,8 @@ int player_save(object *op)
     if(pl->mute_counter > pticks)
         fprintf(fp, "mute %d\n", (int)(pl->mute_counter-pticks)); /* should be not THAT long */
 
-    fprintf(fp, "stealth %d\nprivacy %d\neavesdropping %d\np_ver %d\nlistening %d\npickup %d\nskill_group %d %d %d\n",
-                 pl->stealth, pl->privacy, pl->eavesdropping, pl->p_ver,
-                 pl->listening, pl->mode,
+    fprintf(fp, "stealth %d\nprivacy %d\np_ver %d\nlistening %d\npickup %d\nskill_group %d %d %d\n",
+                 pl->stealth, pl->privacy, pl->p_ver, pl->listening, pl->mode,
                  pl->base_skill_group[0],pl->base_skill_group[1],pl->base_skill_group[2]);
 
     if (op->map != NULL)
@@ -461,8 +460,6 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
             pl->stealth = value;
         else if (!strcmp(buf, "privacy"))
             pl->privacy = value;
-        else if (!strcmp(buf, "eavesdropping"))
-            pl->eavesdropping = value;
         else if (!strcmp(buf, "p_ver"))
             pl->p_ver = value;
         else if (!strcmp(buf, "listening"))

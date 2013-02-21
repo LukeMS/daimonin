@@ -1168,24 +1168,6 @@ int command_privacy(object *op, char *params)
     return 0;
 }
 
-int command_eavesdrop(object *op, char *params)
-{
-    int new_status = !CONTR(op)->eavesdropping;
-
-    CONTR(op)->eavesdropping = new_status;
-
-    if (new_status)
-    {
-        new_draw_info(NDI_UNIQUE, 0, op, "Eavesdropping enabled.");
-    }
-    else
-    {
-        new_draw_info(NDI_UNIQUE, 0, op, "Eavesdropping disabled.");
-    }
-
-    return 0;
-}
-
 /* get_subdir creates the directory for the player file structure
  * e.g. Zergus -> z/ze
  * '_' is used for non-letters */
