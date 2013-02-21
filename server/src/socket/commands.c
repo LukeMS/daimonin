@@ -194,7 +194,6 @@ CommArray_s CommandsGM[] =
     {"teleport",       command_teleport,       0.0f, 1, NULL},
     {"silence",        command_silence,        0.0f, 1, CHANNEL_NAME_GM},
     {"gmasterfile",    command_gmasterfile,    0.0f, 1, CHANNEL_NAME_GM},
-    {"eavesdrop",      command_eavesdrop,      0.0f, 1, CHANNEL_NAME_GM},
     {"stats",          command_stats,          0.0f, 1, NULL},
 };
 

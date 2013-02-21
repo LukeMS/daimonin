@@ -26,6 +26,15 @@
 
 #include <global.h>
 
+#define OBFUSCATE_MESSAGE(_C_, _M_) \
+    for ((_C_) = (_M_); (_C_) && *(_C_) != '\0'; (_C_)++) \
+    { \
+        if (*(_C_) != ' ') \
+        { \
+            *(_C_) = '*'; \
+        } \
+    }
+
 /* this function does 3 things: controlling we have
  * a legal string - if not, return NULL  - if return string*
  * - remove all whitespace in front (if all are whitespace
@@ -192,70 +201,48 @@ int command_say(object *op, char *params)
 
 int command_gsay(object *op, char *params)
 {
-    char            buf[MEDIUM_BUF];
-    objectlink     *ol;
-    object         *tmp;
+    char            buf[MEDIUM_BUF],
+                   *cp;
+    object         *member;
 #ifdef USE_CHANNELS
-    sockbuf_struct *sockbuf;
+    sockbuf_struct *sb;
 #endif
 
-    if(!check_mute(op, MUTE_MODE_SAY))
+    if (!check_mute(op, MUTE_MODE_SAY))
+    {
         return 0;
-
-    /* message: client sided */
-    if(!(CONTR(op)->group_status & GROUP_STATUS_GROUP))
-        return 1;
-
-    /* this happens when whitespace only string was submited */
-    if (!params || !(params = cleanup_chat_string(params)))
-        return 1;
-
-    /* moved down, cause if whitespace is shouted, then no need to log it */
-    CHATLOG("GSAY:%s >%s<\n", STRING_OBJ_NAME(op), params);
-
-    for (ol = gmaster_list_GM; ol; ol = ol->next)
-    {
-        tmp = ol->objlink.ob;
-
-        if (op != tmp &&
-            CONTR(op)->group_leader != CONTR(tmp)->group_leader &&
-            CONTR(tmp)->eavesdropping)
-        {
-            new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_FLESH, 0, tmp,
-                          "%s gsays: %s", query_name(op), params);
-        }
     }
 
-    for (ol = gmaster_list_SA; ol; ol = ol->next)
+    if (!(CONTR(op)->group_status & GROUP_STATUS_GROUP) ||
+        !params ||
+        !(params = cleanup_chat_string(params)))
     {
-        tmp = ol->objlink.ob;
-
-        if (op != tmp &&
-            CONTR(op)->group_leader != CONTR(tmp)->group_leader &&
-            CONTR(tmp)->eavesdropping)
-        {
-            new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_FLESH, 0, tmp,
-                          "%s gsays: %s", query_name(op), params);
-        }
+        return 1;
     }
 
 #ifdef USE_CHANNELS
-    sprintf(buf, "%c%c%s %s:%s", 2, NDI_YELLOW, "Group", query_name(op),
-            params);
-    sockbuf = SOCKBUF_COMPOSE(SERVER_CMD_CHANNELMSG, buf, strlen(buf + 2) + 2, 0);
-#endif
-    for(tmp=CONTR(op)->group_leader;tmp;tmp=CONTR(tmp)->group_next)
+    sprintf(buf, "%c%c%s %s:%s",
+            2, NDI_YELLOW, "Group", query_name(op), params);
+    sb = SOCKBUF_COMPOSE(SERVER_CMD_CHANNELMSG, buf, strlen(buf + 2) + 2, 0);
+
+    for(member = CONTR(op)->group_leader; member; member = CONTR(member)->group_next)
     {
-#ifdef USE_CHANNELS
-        SOCKBUF_ADD_TO_SOCKET(&CONTR(tmp)->socket, sockbuf);
+        SOCKBUF_ADD_TO_SOCKET(&CONTR(member)->socket, sb);
+    }
+
+    SOCKBUF_COMPOSE_FREE(sb);
 #else
-        new_draw_info(NDI_GSAY | NDI_PLAYER | NDI_UNIQUE | NDI_YELLOW, 0, tmp,
-                      "%s gsays: %s", query_short_name(op, tmp), params);
-#endif
+    sprintf(buf, " gsays: %s", params);
+
+    for(member = CONTR(op)->group_leader; member; member = CONTR(member)->group_next)
+    {
+        new_draw_info(NDI_GSAY | NDI_PLAYER | NDI_UNIQUE | NDI_YELLOW, 0, member,
+                      "%s %s", query_short_name(op, member), buf);
     }
-#ifdef USE_CHANNELS
-    SOCKBUF_COMPOSE_FREE(sockbuf);
 #endif
+
+    OBFUSCATE_MESSAGE(cp, params);
+    CHATLOG("GSAY:%s >%s<\n", STRING_OBJ_NAME(op), params);
 
     return 0;
 }
@@ -361,134 +348,68 @@ int command_describe(object *op, char *params)
 
 int command_tell(object *op, char *params)
 {
-    const char *name_hash;
-    char       *name = NULL,
-               *msg = NULL;
-    player     *pl;
+    char   *msg;
+    player *pl;
 
-    if(!check_mute(op, MUTE_MODE_SHOUT))
-        return 0;
-
-
-    /* this happens when whitespace only string was submited */
-    if (!params || !(params = cleanup_chat_string(params)))
-        return 1;
-
-    CHATLOG("TELL:%s >%s<\n", STRING_OBJ_NAME(op), params);
-    name = params;
-    msg = strchr(name, ' ');
-
-    if (msg)
+    if (!check_mute(op, MUTE_MODE_SHOUT))
     {
-        *(msg++) = 0;
-        if (*msg == 0)
-            msg = NULL;
+        return 0;
+    }
+    else if (!params ||
+             !(params = cleanup_chat_string(params)) ||
+             !(msg = strchr(params, ' ')))
+    {
+        return 1;
     }
 
-    if (!name)
-        return 1;
+    *(msg++) = '\0';
 
-    transform_player_name_string(name); /* we have a name. be sure its "Xxxxx" */
-
-    if (!(name_hash = find_string(name))) /* if its not in the hash table there is 100% no player */
+    if (!(pl = find_player(params)))
     {
         new_draw_info(NDI_UNIQUE, 0, op, "No such player.");
-
-        return 0;
     }
-
-    if (!msg)
-        return 1;
-
-    /* now we can simply compare the name ptr values */
-    if (op->name == name_hash)
+    else if (pl->ob == op)
     {
         new_draw_info(NDI_UNIQUE, 0, op, "You tell yourself the news. Very smart.");
-
-        return 0;
     }
-
-    /* we have a name_hash but still we need to confirm we get the right player.
-     * No problem with the fast hash pointer check
-     */
-    for (pl = first_player; pl != NULL; pl = pl->next)
+    else
     {
-        if (pl->ob->name == name_hash)
+        char *cp;
+
+        /* If pl has requested privacy we send the msg but we don't reveal his
+         * presence, EXCEPT to VOLs, GMs, and SAs, UNLESS he is an SA! */
+        if (pl->privacy)
         {
-            /* GMs and SAs eavesdrop on tells, but not those from
-             * privacy-seeking SAs. Only way to find out/control various abuses
-             * without giving many people access to the server logs (not an
-             * option). */
-            if (!(pl->privacy &&
-                  (pl->gmaster_mode & GMASTER_MODE_SA)) &&
-                (gmaster_list_SA ||
-                 gmaster_list_GM))
+            if ((CONTR(op)->gmaster_mode & GMASTER_MODE_SA) ||
+                (!(pl->gmaster_mode & GMASTER_MODE_SA) &&
+                 (CONTR(op)->gmaster_mode & (GMASTER_MODE_GM | GMASTER_MODE_VOL))))
             {
-                char        buf[LARGE_BUF];
-                objectlink *ol;
-
-                sprintf(buf, "%s tells %s: %s",
-                        query_name(op), query_name(pl->ob), msg);
-
-                for (ol = gmaster_list_SA; ol; ol = ol->next)
-                {
-                    object *tmp = ol->objlink.ob;
-
-                    if (op != tmp &&
-                        pl->ob != tmp &&
-                        CONTR(tmp)->eavesdropping)
-                    {
-                        new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_FLESH, 0,
-                                      tmp, "%s", buf);
-                    }
-                }
-
-                for (ol = gmaster_list_GM; ol; ol = ol->next)
-                {
-                    object *tmp = ol->objlink.ob;
-
-                    if (op != tmp &&
-                        pl->ob != tmp &&
-                        CONTR(tmp)->eavesdropping)
-                    {
-                        new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_FLESH, 0,
-                                      tmp, "%s", buf);
-                    }
-                }
-            }
-
-            /* If pl has requested privacy we send the msg but we don't reveal
-             * his presence, EXCEPT to VOLs, GMs, and SAs, UNLESS he is an SA! */
-            if (pl->privacy)
-            {
-                if (!(pl->gmaster_mode & GMASTER_MODE_SA) &&
-                    (CONTR(op)->gmaster_mode & (GMASTER_MODE_SA | GMASTER_MODE_GM | GMASTER_MODE_VOL)))
-                {
-                    new_draw_info(NDI_PLAYER | NDI_UNIQUE, 0, op, "You tell %s (~privacy mode~): %s",
-                                         query_short_name(pl->ob, op), msg);
-                }
-                else
-                {
-                    new_draw_info(NDI_UNIQUE, 0, op, "No such player.");
-                }
-
-                new_draw_info(NDI_TELL | NDI_PLAYER | NDI_UNIQUE |
-                                     NDI_NAVY, 0, pl->ob, "%s tells you (~privacy mode~): %s",
-                                     query_short_name(op, pl->ob), msg);
+                new_draw_info(NDI_PLAYER | NDI_UNIQUE, 0, op, "You tell %s (~privacy mode~): %s",
+                              query_short_name(pl->ob, op), msg);
             }
             else
             {
-                new_draw_info(NDI_PLAYER | NDI_UNIQUE, 0, op, "You tell %s: %s",
-                                     query_short_name(pl->ob, op), msg);
-                new_draw_info(NDI_TELL | NDI_PLAYER | NDI_UNIQUE |
-                                     NDI_NAVY, 0, pl->ob, "%s tells you: %s",
-                                     query_short_name(op, pl->ob), msg);
+                new_draw_info(NDI_UNIQUE, 0, op, "No such player.");
             }
 
-            return 0;
+            new_draw_info(NDI_TELL | NDI_PLAYER | NDI_UNIQUE | NDI_NAVY, 0,
+                          pl->ob, "%s tells you (~privacy mode~): %s",
+                          query_short_name(op, pl->ob), msg);
         }
+        else
+        {
+            new_draw_info(NDI_PLAYER | NDI_UNIQUE, 0, op, "You tell %s: %s",
+                          query_short_name(pl->ob, op), msg);
+            new_draw_info(NDI_TELL | NDI_PLAYER | NDI_UNIQUE | NDI_NAVY, 0,
+                          pl->ob, "%s tells you: %s",
+                          query_short_name(op, pl->ob), msg);
+        }
+
+        OBFUSCATE_MESSAGE(cp, msg);
+        CHATLOG("TELL:%s >%s %s<\n",
+                STRING_OBJ_NAME(op), STRING_OBJ_NAME(pl->ob), msg);
     }
-    new_draw_info(NDI_UNIQUE, 0, op, "No such player.");
+
     return 0;
 }
 
