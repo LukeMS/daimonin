@@ -302,8 +302,7 @@ static uint8 AddName(char *name)
  * attaches a broadcast sockbuf to them. */
 static void NotifyClients(_server_client_cmd cmd, uint16 flags, object *op)
 {
-    object         *who = NULL,
-                   *where = op->env;
+    object         *who = NULL;
     sockbuf_struct *sb = NULL;
 
     /* When no-one is playing, there's nothing to do. */
@@ -312,8 +311,10 @@ static void NotifyClients(_server_client_cmd cmd, uint16 flags, object *op)
         return;
     }
 
-    if (where)
+    if (op->env)
     {
+        object *where = op->env;
+
         /* Loop through the envs of op, sending cmd to each valid client. */
         while (where &&
                where->type != TYPE_VOID_CONTAINER)
@@ -339,7 +340,7 @@ static void NotifyClients(_server_client_cmd cmd, uint16 flags, object *op)
             }
         };
     }
-    else
+    else if (op->map)
     {
         /* Send cmd to each valid client on the square. */
         for (who = GET_MAP_OB(op->map, op->x, op->y); who; who = who->above)
