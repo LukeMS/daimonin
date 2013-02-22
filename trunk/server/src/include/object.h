@@ -30,8 +30,6 @@
 #pragma pack(push,1)
 #endif
 
-#define decrease_ob(xyz) decrease_ob_nr(xyz,1)
-
 #define WEIGHT(op) ((unsigned int)(((op->nrof > 0) ? op->weight * ((sint32)op->nrof) : op->weight) + op->carrying))
 #define WEIGHT_NROF(op, nrof) ((unsigned int)(((nrof > 0) ? op->weight * ((sint32)nrof) : op->weight) + op->carrying))
 

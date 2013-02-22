@@ -1045,7 +1045,7 @@ void check_inv(object *op, object *trig)
     if (match && trig->last_sp)
     {
         if (trig->last_heal)
-            decrease_ob(match);
+            decrease_ob_nr(match, 1);
         use_trigger(trig, op);
     }
     else if (!match && !trig->last_sp)

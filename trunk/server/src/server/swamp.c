@@ -97,7 +97,7 @@ void move_deep_swamp(object *op)
         else if (!IS_LIVE(above))
         {
             if (random_roll(0, 2) == 0)
-                decrease_ob(above);
+                decrease_ob_nr(above, 1);
         }
         above = nabove;
     }

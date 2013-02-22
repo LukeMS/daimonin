@@ -233,7 +233,7 @@ static void ApplyPotion(object *op, object *tmp)
             SET_FLAG(force, FLAG_APPLIED);
             if (!change_abil(op, force)) /* implicit fix_player() here */
                 new_draw_info(NDI_UNIQUE, 0, op, "Nothing happened.");
-            decrease_ob(tmp);
+            decrease_ob_nr(tmp, 1);
             return;
         }
 
@@ -256,7 +256,7 @@ static void ApplyPotion(object *op, object *tmp)
                     drain_stat(op);
                 }
                 FIX_PLAYER(op ,"ApplyPotion - minor restoration - damned");
-                decrease_ob(tmp);
+                decrease_ob_nr(tmp, 1);
                 insert_spell_effect("meffect_purple", op->map, op->x, op->y);
                 play_sound_map(op->map, op->x, op->y, SOUND_DRINK_POISON, SOUND_NORMAL);
                 return;
@@ -279,7 +279,7 @@ static void ApplyPotion(object *op, object *tmp)
             }
             else
                 new_draw_info(NDI_UNIQUE, 0, op, "You feel a great loss...");
-            decrease_ob(tmp);
+            decrease_ob_nr(tmp, 1);
             insert_spell_effect("meffect_green", op->map, op->x, op->y);
             play_sound_map(op->map, op->x, op->y, SOUND_MAGIC_DEFAULT, SOUND_SPELL);
             return;
@@ -417,7 +417,7 @@ static void ApplyPotion(object *op, object *tmp)
                 play_sound_map(op->map, op->x, op->y, SOUND_DRINK_POISON, SOUND_NORMAL);
                 new_draw_info(NDI_UNIQUE, 0, op, "The potion was foul but had no effect on your tortured body.");
             }
-            decrease_ob(tmp);
+            decrease_ob_nr(tmp, 1);
             return;
         }
     }
@@ -426,7 +426,7 @@ static void ApplyPotion(object *op, object *tmp)
     if (tmp->stats.sp == SP_NO_SPELL)
     {
         new_draw_info(NDI_UNIQUE, 0, op, "Nothing happens as you apply it.");
-        decrease_ob(tmp);
+        decrease_ob_nr(tmp, 1);
         return;
     }
 
@@ -437,7 +437,7 @@ static void ApplyPotion(object *op, object *tmp)
     if (tmp->stats.sp != SP_NO_SPELL)
     {
         cast_spell(op, tmp, 0, tmp->stats.sp, 1, spellPotion, NULL); /* apply potion ALWAYS fire on the spot the applier stands - good for healing - bad for firestorm */
-        decrease_ob(tmp);
+        decrease_ob_nr(tmp, 1);
         /* if youre dead, no point in doing this... */
         if (!QUERY_FLAG(op, FLAG_REMOVED))
             FIX_PLAYER(op ,"ApplyPotion - cast something");
@@ -451,7 +451,7 @@ static void ApplyPotion(object *op, object *tmp)
      */
     CLEAR_FLAG(tmp, FLAG_APPLIED);
     FIX_PLAYER(op ,"ApplyPotion - end");
-    decrease_ob(tmp);
+    decrease_ob_nr(tmp, 1);
 }
 
 /****************************************************************************
@@ -563,7 +563,7 @@ int improve_weapon_stat(object *op, object *improver, object *weapon, signed cha
     *stat += sacrifice_count;
     weapon->last_eat++;
     new_draw_info(NDI_UNIQUE, 0, op, "Weapon's bonus to %s improved by %d", statname, sacrifice_count);
-    decrease_ob(improver);
+    decrease_ob_nr(improver, 1);
 
     /* So it updates the players stats and the window */
     FIX_PLAYER(op ,"improve weapon stat");
@@ -626,7 +626,7 @@ int prepare_weapon(object *op, object *improver, object *weapon)
 
     weapon->nrof = 0;  /*  prevents preparing n weapons in the same
                        slot at once! */
-    decrease_ob(improver);
+    decrease_ob_nr(improver, 1);
     weapon->last_eat = 0;
     return 1;
 }
@@ -671,7 +671,7 @@ int improve_weapon(object *op, object *improver, object *weapon)
         weapon->weight += 5000;     /* 5 KG's */
         new_draw_info(NDI_UNIQUE, 0, op, "Damage has been increased by 5 to %d", weapon->stats.dam);
         weapon->last_eat++;
-        decrease_ob(improver);
+        decrease_ob_nr(improver, 1);
         return 1;
     }
     if (improver->stats.sp == IMPROVE_WEIGHT)
@@ -682,7 +682,7 @@ int improve_weapon(object *op, object *improver, object *weapon)
             weapon->weight = 1;
         new_draw_info(NDI_UNIQUE, 0, op, "Weapon weight reduced to %6.1f kg", (float) weapon->weight / 1000.0);
         weapon->last_eat++;
-        decrease_ob(improver);
+        decrease_ob_nr(improver, 1);
         return 1;
     }
     if (improver->stats.sp == IMPROVE_ENCHANT)
@@ -690,7 +690,7 @@ int improve_weapon(object *op, object *improver, object *weapon)
         weapon->magic++;
         weapon->last_eat++;
         new_draw_info(NDI_UNIQUE, 0, op, "Weapon magic increased to %d", weapon->magic);
-        decrease_ob(improver);
+        decrease_ob_nr(improver, 1);
         return 1;
     }
 
@@ -814,7 +814,7 @@ int improve_armour(object *op, object *improver, object *armour)
         if (QUERY_FLAG(armour, FLAG_APPLIED))
             FIX_PLAYER(op ,"improve armour");
     }
-    decrease_ob(improver);
+    decrease_ob_nr(improver, 1);
     return 1;
 }
 
@@ -1640,12 +1640,12 @@ static void ApplySkillscroll(object *op, object *tmp)
           new_draw_info(NDI_UNIQUE, 0, op, "Type 'bind ready_skill %s", skills[tmp->stats.sp].name);
           new_draw_info(NDI_UNIQUE, 0, op, "to store the skill in a key.");
           FIX_PLAYER(op ,"apply skill scroll");
-          decrease_ob(tmp);
+          decrease_ob_nr(tmp, 1);
           return;
 
         default:
           new_draw_info(NDI_UNIQUE, 0, op, "You fail to learn the knowledge of the %s.\n", query_name(tmp));
-          decrease_ob(tmp);
+          decrease_ob_nr(tmp, 1);
           return;
     }
 }
@@ -1843,7 +1843,7 @@ static void ApplySpellbook(object *op, object *tmp)
         play_sound_player_only(CONTR(op), SOUND_FUMBLE_SPELL, SOUND_NORMAL, 0, 0);
         new_draw_info(NDI_UNIQUE, 0, op, "You fail to learn the spell.\n");
     }
-    decrease_ob(tmp);
+    decrease_ob_nr(tmp, 1);
 }
 
 static void ApplyScroll(object *op, object *tmp)
@@ -1901,7 +1901,7 @@ static void ApplyScroll(object *op, object *tmp)
         */
 
     cast_spell(op, tmp, op->facing ? op->facing : 4, scroll_spell, 0, spellScroll, NULL);
-    decrease_ob(tmp);
+    decrease_ob_nr(tmp, 1);
 }
 
 /* op opens treasure chest tmp */
@@ -1930,7 +1930,7 @@ static void ApplyTreasure(object *op, object *tmp)
     if (treas == NULL)
     {
         new_draw_info(NDI_UNIQUE, 0, op, "The chest was empty.");
-        decrease_ob(tmp);
+        decrease_ob_nr(tmp, 1);
         return;
     }
     do
@@ -1961,7 +1961,7 @@ static void ApplyTreasure(object *op, object *tmp)
     while ((treas = tmp->inv) != NULL);
 
     if (!was_destroyed(tmp, tmp_tag) && tmp->inv == NULL)
-        decrease_ob(tmp);
+        decrease_ob_nr(tmp, 1);
 
 #if 0
     /* Can't rely on insert_ob_in_map to do any restacking,
@@ -2068,7 +2068,7 @@ static void ApplyFood(object *op, object *tmp)
                       query_name(tmp));
 
     }
-    decrease_ob(tmp);
+    decrease_ob_nr(tmp, 1);
 }
 
 static void ApplyPoison(object *op, object *tmp)
@@ -2091,7 +2091,7 @@ static void ApplyPoison(object *op, object *tmp)
         damage_ob(op, tmp->stats.dam, tmp, ENV_ATTACK_CHECK);
     }
     op->stats.food -= op->stats.food / 4;
-    decrease_ob(tmp);
+    decrease_ob_nr(tmp, 1);
 }
 
 static void ApplySavebed(player *pl, object *bed)
@@ -3045,7 +3045,7 @@ static void ApplyLightRefill(object *who, object *op)
         item->stats.food += op->stats.food;
         new_draw_info(NDI_UNIQUE, 0, who, "You refill the %s with %d units %s.", query_name(item),
                 op->stats.food, query_name(op));
-        decrease_ob(op);
+        decrease_ob_nr(op, 1);
     }
     else
     {
