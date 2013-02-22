@@ -286,7 +286,7 @@ int attack_ob(object *target, object *hitter, object *hit_obj)
         {
             if (hitter->stats.sp != SP_NO_SPELL && spells[hitter->stats.sp].flags & SPELL_DESC_DIRECTION)
                 cast_spell(hitter, hitter, hitter->direction, hitter->stats.sp, 1, spellPotion, NULL); /* apply potion ALWAYS fire on the spot the applier stands - good for healing - bad for firestorm */
-            decrease_ob(hitter);
+            decrease_ob_nr(hitter, 1);
 
             if (was_destroyed(hitter, hitter_tag) || was_destroyed(target, op_tag)
                 || AbortAttack(target, hitter, env_attack))

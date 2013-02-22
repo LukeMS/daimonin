@@ -1113,7 +1113,7 @@ int write_note(object *pl, object *item, char *msg)
         {
             newBook = get_object();
             copy_object(item, newBook);
-            decrease_ob(item);
+            decrease_ob_nr(item, 1);
             newBook->nrof = 1;
             FREE_AND_COPY_HASH(newBook->msg, buf);
             newBook = insert_ob_in_ob(newBook, pl);
@@ -1201,7 +1201,7 @@ int write_scroll(object *pl, object *scroll)
     {
         newScroll = get_object();
         copy_object(scroll, newScroll);
-        decrease_ob(scroll);
+        decrease_ob_nr(scroll, 1);
         newScroll->nrof = 1;
 
         if (!confused)
