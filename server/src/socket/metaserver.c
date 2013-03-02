@@ -120,8 +120,8 @@ void metaserver_init()
 
 void metaserver_update(void)
 {
-    static char  buf[MEDIUM_BUF] = "";
-    char        *cp;
+    static char  sbuf[SMALL_BUF] = "";
+    char         nbuf[MEDIUM_BUF];
 
     /* No valid connection. */
     if (metafd == -1)
@@ -129,12 +129,14 @@ void metaserver_update(void)
         return;
     }
 
-    if (buf[0] == '\0')
+    if (sbuf[0] == '\0')
     {
-        sprintf(buf, "%s|%s|%d|%d.%d.%d",
+        char *cp;
+
+        sprintf(sbuf, "%s|%s|%d|%d.%d.%d",
                 settings.meta_name, settings.meta_host, settings.csport,
                 DAI_VERSION_RELEASE, DAI_VERSION_MAJOR, DAI_VERSION_MINOR);
-        cp = strchr(buf, '\0');
+        cp = strchr(sbuf, '\0');
 
         if (DAI_VERSION_INTERIM != "")
         {
@@ -163,18 +165,13 @@ void metaserver_update(void)
 #endif
         }
     }
-    else
-    {
-        cp = strchr(buf, '\0');
-    }
 
-    sprintf(cp, "|%d|%s", player_active_meta, settings.meta_comment);
+    sprintf(nbuf, " %s|%d|%s", sbuf, player_active_meta, settings.meta_comment);
     player_active_meta = player_active;
 
-    if (sendto(metafd, buf, strlen(buf), 0, (struct sockaddr *)&sock, sizeof(sock)) < 0)
+    if (sendto(metafd, nbuf, strlen(nbuf), 0, (struct sockaddr *)&sock, sizeof(sock)) < 0)
     {
         LOG(llevInfo, "INFO:: %s:metaserver_update(): sendto failed, err = %d (%s)!\n",
             __FILE__, errno, strerror_local(errno));
     }
 }
-
