@@ -86,7 +86,8 @@ typedef struct ReadList_struct
 #define SOCKBUF_ADD_TO_SOCKET(_ns_, _sb_) socket_buffer_enqueue((_ns_), (_sb_))
 #define SOCKBUF_COMPOSE_FREE(_sb_) \
     { \
-        if (!(_sb_)->queued && \
+        if ((_sb_) && \
+            !(_sb_)->queued && \
             !((_sb_)->flags & SOCKBUF_FLAG_STATIC)) \
         { \
             return_poolchunk((_sb_), (_sb_)->pool); \
