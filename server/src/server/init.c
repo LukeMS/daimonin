@@ -197,7 +197,7 @@ void set_pticks_time(long t)
     }
 
     pticks_socket_idle = 60 * 3 * pticks_second;
-    pticks_player_idle1 = 60 * 8 *  pticks_second;
+    pticks_player_idle1 = 60 * 8 * pticks_second;
     pticks_player_idle2 = 60 * 2 * pticks_second;
 
     /* LOG(llevDebug,"set_pticks_time(): t=%d ums:%d pticks_second:%u sock:%d idle1:%d idle2:%d\n",

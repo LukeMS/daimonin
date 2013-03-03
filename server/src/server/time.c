@@ -628,8 +628,10 @@ void move_gate(object *op)
     /* Check for crushing when closing the gate */
     if(op->weight_limit == 0 && (int) op->stats.wc >= (NUM_ANIMATIONS(op) / NUM_FACINGS(op)) / 2)
     {
-        object *tmp = op;
-        for(tmp = GET_BOTTOM_MAP_OB(op); tmp != NULL; tmp = tmp->above)
+        MapSpace *msp = GET_MAP_SPACE_PTR(op->map, op->x, op->y);
+        object *tmp;
+
+        for (tmp = GET_MAP_SPACE_FIRST(msp); tmp; tmp = tmp->above)
         {
             if (IS_LIVE(tmp))
             {
@@ -664,7 +666,7 @@ void move_gate(object *op)
         }
 
         /* Still anything blocking? */
-        for(tmp = GET_BOTTOM_MAP_OB(op); tmp != NULL; tmp = tmp->above)
+        for(tmp = GET_MAP_SPACE_FIRST(msp); tmp; tmp = tmp->above)
         {
             if (IS_LIVE(tmp) || !QUERY_FLAG(tmp, FLAG_NO_PICK) || QUERY_FLAG(tmp, FLAG_CAN_ROLL))
             {
@@ -793,11 +795,12 @@ void move_timed_gate(object *op)
 void move_detector(object *op)
 {
     object *tmp;
+    MapSpace *msp = GET_MAP_SPACE_PTR(op->map, op->x, op->y);
     int     last    = op->weight_limit;
     int     detected;
     detected = 0;
 
-    for (tmp = GET_BOTTOM_MAP_OB(op); tmp != NULL && !detected; tmp = tmp->above)
+    for (tmp = GET_MAP_SPACE_FIRST(msp); tmp && !detected; tmp = tmp->above)
     {
         object *tmp2;
         if (op->stats.hp)
@@ -1047,10 +1050,11 @@ void change_object(object *op)
 
 void move_teleporter(object *op)
 {
+    MapSpace *msp = GET_MAP_SPACE_PTR(op->map, op->x, op->y);
     object *tmp, *next;
 
     /* get first object of this map node */
-    for (tmp = GET_BOTTOM_MAP_OB(op); tmp != NULL; tmp = next)
+    for (tmp = GET_MAP_SPACE_FIRST(msp); tmp; tmp = next)
     {
         next = tmp->above;
         if (QUERY_FLAG(tmp, FLAG_NO_TELEPORT))
@@ -1129,6 +1133,7 @@ void move_firechest(object *op)
 */
 void move_player_mover(object *op)
 {
+    MapSpace *msp;
     object     *victim, *nextmover;
     mapstruct  *mt;
     int         xt, yt, dir = op->direction;
@@ -1139,10 +1144,13 @@ void move_player_mover(object *op)
 
     if (!(blocked(NULL, op->map, op->x, op->y, TERRAIN_NOTHING) & (P_IS_ALIVE | P_IS_PLAYER)))
         return;
+
+    msp = GET_MAP_SPACE_PTR(op->map, op->x, op->y);
+
     /* Determine direction now for random movers so we do the right thing */
     if (!dir)
         dir = random_roll(1, 8);
-    for (victim = GET_BOTTOM_MAP_OB(op); victim != NULL; victim = victim->above)
+    for (victim = GET_MAP_SPACE_FIRST(msp); victim; victim = victim->above)
     {
         /* Not convinced this is entirely correct. I think may it should be:
          *   if (op->stats.maxhp && IS_LIVE(victim) && !IS_AIRBORNE(victim))
@@ -1534,9 +1542,10 @@ void move_conn_sensor(object *op)
 
 void move_marker(object *op)
 {
+    MapSpace *msp = GET_MAP_SPACE_PTR(op->map, op->x, op->y);
     object *tmp, *tmp2;
 
-    for (tmp = GET_BOTTOM_MAP_OB(op); tmp != NULL; tmp = tmp->above)
+    for (tmp = GET_MAP_SPACE_FIRST(msp); tmp; tmp = tmp->above)
     {
         if (tmp->type == PLAYER)
         {

@@ -1024,7 +1024,7 @@ EXTERN int                     nroffiles, nrofpixmaps;
  * used throughout the program) backto the standard name.
  */
 EXTERN MapLook                  blank_look;
-EXTERN New_Face                *blank_face, *next_item_face, *prev_item_face;
+EXTERN New_Face                *blank_face, *next_item_face, *prev_item_face, *no_floor_face;
 
 EXTERN NewSocket               *init_sockets;
 

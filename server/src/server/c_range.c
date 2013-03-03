@@ -111,17 +111,11 @@ static int find_spell_byname(object *op, char *params, int options)
     int match = -1, i;
     unsigned int paramlen = 0;
 
-    if (QUERY_FLAG(op, FLAG_WIZ))
-        numknown = NROFREALSPELLS;
-    else
-        numknown = CONTR(op)->nrofknownspells;
+    numknown = (IS_GMASTER_WIZ(op)) ? NROFREALSPELLS : CONTR(op)->nrofknownspells;
 
     for (i = 0; i < numknown; i++)
     {
-        if (QUERY_FLAG(op, FLAG_WIZ))
-            spnum = i;
-        else
-            spnum = CONTR(op)->known_spells[i];
+        spnum = (IS_GMASTER_WIZ(op)) ? i : CONTR(op)->known_spells[i];
 
         if (!options)
             paramlen = strlen(params);
@@ -151,10 +145,8 @@ static void show_matching_spells(object *op, char *params, int cleric)
     int i,spnum,first_match=0;
     char lev[80], cost[80];
 
-    for (i=0; i<(QUERY_FLAG(op, FLAG_WIZ)?NROFREALSPELLS:CONTR(op)->nrofknownspells); i++) {
-    if (QUERY_FLAG(op,FLAG_WIZ)) spnum=i;
-    else spnum = CONTR(op)->known_spells[i];
-
+    for (i = 0; i < (IS_GMASTER_WIZ(op)) ? NROFREALSPELLS : CONTR(op)->nrofknownspells; i++) {
+    spnum = (IS_GMASTER_WIZ(op)) ? i : CONTR(op)->known_spells[i];
     if (spells[spnum].type != (unsigned int) cleric) continue;
     if (params && strncmp(spells[spnum].name,params, strlen(params)))
         continue;
@@ -195,8 +187,8 @@ int command_cast_spell(object *op, char *params)
     int         value;
     float       ticks;
 
-    if (!CONTR(op)->nrofknownspells &&
-        !QUERY_FLAG(op, FLAG_WIZ))
+    if (!IS_GMASTER_WIZ(op) &&
+        !CONTR(op)->nrofknownspells)
     {
         new_draw_info(NDI_UNIQUE, 0, op, "You don't know any spells.");
 
@@ -244,8 +236,10 @@ int command_cast_spell(object *op, char *params)
 
     if (!change_skill(op, (spells[spnum].type == SPELL_TYPE_PRIEST ? SK_PRAYING : SK_SPELL_CASTING)))
     {
-        if (!QUERY_FLAG(op, FLAG_WIZ))
+        if (!IS_GMASTER_WIZ(op))
+        {
             return 0;
+        }
     }
 
     /* we still recover from a casted spell before */

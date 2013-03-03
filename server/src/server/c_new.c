@@ -110,9 +110,12 @@ void send_target_command(player *pl)
          * we HOLD the target - perhaps the guy moved back.
          * this special stuff is handled deeper in attack() functions.
          */
-        if (QUERY_FLAG(pl->target_object, FLAG_SYS_OBJECT)
-         || (QUERY_FLAG(pl->target_object, FLAG_IS_INVISIBLE) && !QUERY_FLAG(pl->ob, FLAG_SEE_INVISIBLE)))
+        if (QUERY_FLAG(pl->target_object, FLAG_SYS_OBJECT) ||
+            IS_GMASTER_INVIS_TO(pl->target_object, pl->ob) ||
+            IS_NORMAL_INVIS_TO(pl->target_object, pl->ob))
+        {
             aim_self_flag = TRUE;
+        }
         else
         {
             if (get_friendship(pl->ob, pl->target_object) >= FRIENDSHIP_HELP)
@@ -170,7 +173,7 @@ void send_target_command(player *pl)
     }
 
     /* some nice extra info for DM's */
-    if (QUERY_FLAG(pl->ob, FLAG_WIZ))
+    if (IS_GMASTER_WIZ(pl->ob))
     {
         char    buf[TINY_BUF];
         sprintf(buf, "(lvl %d)", pl->target_object->level);
@@ -212,16 +215,22 @@ void target_self(object *op)
 static int valid_new_target(object *op, object *candidate)
 {
     /* TODO: how about golems? */
-    if (candidate->type == PLAYER || candidate->type == MONSTER)
+    if (IS_LIVE(candidate))
     {
-        if(candidate == CONTR(op)->target_object
-                || QUERY_FLAG(candidate, FLAG_SYS_OBJECT)
-                || (QUERY_FLAG(candidate, FLAG_IS_INVISIBLE) && !QUERY_FLAG(op, FLAG_SEE_INVISIBLE)))
-            return FALSE;
+        if (candidate == CONTR(op)->target_object ||
+            QUERY_FLAG(candidate, FLAG_SYS_OBJECT) ||
+            IS_GMASTER_INVIS_TO(candidate, op) ||
+            IS_NORMAL_INVIS_TO(candidate, op))
+        {
+            return 0;
+        }
         else
-            return TRUE;
+        {
+            return 1;
+        }
     }
-    return FALSE;
+
+    return 0;
 }
 
 /* enter combat mode and attack the object in front of us - IF we are in combat
@@ -537,15 +546,10 @@ void send_spelllist_cmd(object *op, char *spellname, int mode)
     {
         int i, spnum;
 
-        for (i = 0; i < (QUERY_FLAG(op, FLAG_WIZ) ? NROFREALSPELLS : CONTR(op)->nrofknownspells); i++)
+        for (i = 0; i < (IS_GMASTER_WIZ(op)) ? NROFREALSPELLS : CONTR(op)->nrofknownspells; i++)
         {
-            if (QUERY_FLAG(op, FLAG_WIZ))
-                spnum = i;
-            else
-                spnum = CONTR(op)->known_spells[i];
-
-            strcat(tmp, "/");
-            strcat(tmp, spells[spnum].name);
+            spnum = (IS_GMASTER_WIZ(op)) ? i : CONTR(op)->known_spells[i];
+            sprintf(strchr(tmp, '\0'), "/%s", spells[spnum].name);
         }
     }
     Write_String_To_Socket(&CONTR(op)->socket, SERVER_CMD_SPELL_LIST, tmp, strlen(tmp));
@@ -571,7 +575,7 @@ void send_skilllist_cmd(object *op, object *skillp, int mode)
         sprintf(tmp, "%d ", mode);
         for (tmp2 = op->inv; tmp2; tmp2 = tmp2->below)
         {
-            if (tmp2->type == SKILL && IS_SYS_INVISIBLE(tmp2))
+            if (tmp2->type == SKILL)
             {
                 if (tmp2->last_eat == 1)
                     sprintf(buf, "/%s|%d|%d", tmp2->name, tmp2->level, tmp2->stats.exp);

@@ -90,7 +90,8 @@ void            esrv_close_container(player *pl);
 void            esrv_send_item(object *op);
 void            esrv_update_item(uint16 flags, object *op);
 void            esrv_del_item(object *op);
-object         *esrv_get_ob_from_count(object *pl, tag_t count);
+void            esrv_send_or_del_item(object *op);
+object         *esrv_get_ob_from_count(object *who, tag_t count);
 /* loop.c */
 void            remove_ns_dead_player(player *pl);
 void            doeric_server(int update, struct timeval *timeout);

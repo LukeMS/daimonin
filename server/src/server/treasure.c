@@ -988,7 +988,8 @@ int create_all_treasures(treasure *t, object *op, int flag, int difficulty, int 
         }
         else if (t->item && t->item->name != shstr_cons.none && difficulty >= t->difficulty)
         {
-            if (IS_SYS_INVISIBLE(&t->item->clone) || !(flag & GT_INVISIBLE))
+            if (QUERY_FLAG(&t->item->clone, FLAG_SYS_OBJECT) ||
+                !(flag & GT_INVISIBLE))
             {
                 ret = TRUE; /* we have generated an item! */
                 if (t->item->clone.type != TYPE_WEALTH)
@@ -1152,7 +1153,10 @@ int create_one_treasure(treasurelist *tl, object *op, int flag, int difficulty, 
         return ret;
     }
 
-    if (t->item && t->item->name != shstr_cons.none && (IS_SYS_INVISIBLE(&t->item->clone) || flag != GT_INVISIBLE))
+    if (t->item &&
+        t->item->name != shstr_cons.none &&
+        (QUERY_FLAG(&t->item->clone, FLAG_SYS_OBJECT) ||
+         flag != GT_INVISIBLE))
     {
         ret = TRUE;
         if (t->item->clone.type != TYPE_WEALTH)

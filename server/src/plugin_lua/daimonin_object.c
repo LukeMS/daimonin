@@ -414,7 +414,7 @@ static const char *GameObject_flags[NUM_FLAGS + 1 + 1] =
     "f_only_attack",
 
     /* 70 */
-    "?f_wiz",
+    "?f_no_send",
     "f_stealth",
     NULL,
     "?f_is_linked",
@@ -546,18 +546,31 @@ static int GameObject_setAttribute(lua_State *L, lua_object *obj, struct attribu
 static int GameObject_setFlag(lua_State *L, lua_object *obj, uint32 flagno)
 {
     int     value;
+    object *op = obj->data.object;
 
     if (lua_isnumber(L, -1))
-        value = (int) lua_tonumber(L, -1);
+    {
+        value = (int)lua_tonumber(L, -1);
+    }
     else
+    {
         value = lua_toboolean(L, -1);
+    }
 
-    if (value)
-        SET_FLAG(obj->data.object, flagno);
+    if (flagno == FLAG_IS_INVISIBLE &&
+        op->map)
+    {
+        CLEAR_FLAG(op, flagno);
+        hooks->map_set_slayers(GET_MAP_SPACE_PTR(op->map, op->x, op->y), op,
+                               0);
+        SET_OR_CLEAR_FLAG(op, flagno, value);
+        hooks->update_object(op, UP_OBJ_LAYER);
+    }
     else
-        CLEAR_FLAG(obj->data.object, flagno);
-
-    hooks->esrv_update_item(UPD_FLAGS, obj->data.object);
+    {
+        SET_OR_CLEAR_FLAG(op, flagno, value);
+        hooks->esrv_send_or_del_item(op);
+    }
 
     /* TODO: if gender changed:
     if()

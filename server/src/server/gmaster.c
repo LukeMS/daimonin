@@ -394,11 +394,12 @@ void set_gmaster_mode(player *pl, int mode_id)
     if ((mode & (GMASTER_MODE_SA | GMASTER_MODE_MM)))
 #endif
     {
-        SET_FLAG(pl->ob, FLAG_WIZ);
-        pl->wizpass = 1;
-        clear_los(pl->ob);
+        object *who = pl->ob;
+
+        pl->gmaster_wiz = pl->gmaster_wizpass = 1;
         pl->update_los = 1;
-        esrv_send_inventory(pl, pl->ob);
+        clear_los(who);
+        esrv_send_inventory(pl, who);
         esrv_send_below(pl);
     }
 
@@ -464,14 +465,18 @@ void remove_gmaster_mode(player *pl)
     if ((mode & (GMASTER_MODE_SA | GMASTER_MODE_MM)))
 #endif
     {
-        CLEAR_FLAG(pl->ob, FLAG_WIZ);
-        pl->wizpass = 0;
-        /* bit of a cheat, but by doing this we avoid a fix when going into wiz
-         * mode and slight confusion. */
-        pl->dm_invis = 0;
-        FIX_PLAYER(pl->ob, "remove wiz mode");
+        object *who = pl->ob;
+
+        if (pl->gmaster_invis)
+        {
+            map_set_slayers(GET_MAP_SPACE_PTR(who->map, who->x, who->y), who,
+                            0);
+        }
+
+        pl->gmaster_wiz = pl->gmaster_wizpass = pl->gmaster_matrix = pl->gmaster_stealth = pl->gmaster_invis = 0;
+        update_object(who, UP_OBJ_LAYER);
         pl->update_los = 1;
-        esrv_send_inventory(pl, pl->ob);
+        esrv_send_inventory(pl, who);
         esrv_send_below(pl);
     }
 

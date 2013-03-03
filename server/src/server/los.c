@@ -462,8 +462,10 @@ void update_los(object *op)
 
     clear_los(op);
 
-    if (QUERY_FLAG(op, FLAG_WIZ))
+    if (IS_GMASTER_WIZ(op))
+    {
         return;
+    }
 
     /* For larger maps, this is more efficient than the old way which
      * used the chaining of the block array.  Since many space views could

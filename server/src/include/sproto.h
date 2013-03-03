@@ -164,11 +164,6 @@ int                         command_dumpbelow(object *op, char *params);
 int                         command_dumpallobjects(object *op, char *params);
 int                         command_dumpfriendlyobjects(object *op, char *params);
 int                         command_dumpallarchetypes(object *op, char *params);
-int                         command_dm_dev(object *op, char *params);
-int                         command_dm_invis(object *op, char *params);
-int                         command_stealth(object *op, char *params);
-int                         command_dm_light(object *op, char *params);
-int                         command_dm_password(object *op, char *params);
 int                         command_dumpactivelist(object *op, char *params);
 int                         command_setmaplight(object *op, char *params);
 #if 0
@@ -272,7 +267,6 @@ int                         command_gm(object *op, char *params);
 int                         command_vol(object *op, char *params);
 int                         command_gmasterlist(object *op, char *params);
 int                         command_gmasterfile(object *op, char *params);
-int                         command_invisible(object *op, char *params);
 int                         command_learn_spell(object *op, char *params);
 int                         command_learn_special_prayer(object *op, char *params);
 int                         command_forget_spell(object *op, char *params);
@@ -281,6 +275,12 @@ int                         command_loadplugin(object *op, char *params);
 int                         command_unloadplugin(object *op, char *params);
 int                         command_ip(object *op, char *params);
 int                         command_wizpass(object *op, char *params);
+int                         command_matrix(object *op, char *params);
+int                         command_stealth(object *op, char *params);
+int                         command_invisibility(object *op, char *params);
+int                         command_dm_dev(object *op, char *params);
+int                         command_dm_light(object *op, char *params);
+int                         command_dm_password(object *op, char *params);
 /* commands.c */
 void                        init_commands(void);
 /* container.c */

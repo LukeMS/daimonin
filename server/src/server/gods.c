@@ -268,16 +268,31 @@ void become_follower(object *op, object *new_god)
        }*/
 
     /* give the player any special god-characteristic-items. */
-
     for (ol = new_god->randomitems; ol; ol = ol->next)
     {
         for (tr = ol->objlink.tl->items; tr != NULL; tr = tr->next)
         {
-            if (tr->item
-             && IS_SYS_INVISIBLE(&tr->item->clone)
-             && tr->item->clone.type != SPELLBOOK
-             && tr->item->clone.type != BOOK)
+            /* TODO: The old system seemed to involve gods having their magic
+             * stored in BOOKs and SPELLBOOKs in their invs. These were sys
+             * objects to prevent the god from giving the source of his power
+             * away.
+             *
+             * This system involves several unnecessary checks so is
+             * technically no good.
+             *
+             * I've semi-fixed this so that these types in a god's inv are
+             * always assumed to be his powers and non-giftable. This should do
+             * for now (especially as Dai does not have such god interaction
+             * yet anyway). In future, gods should use randomitems/ABILITYs.
+             *
+             * --Smacky 20130216 */
+            if (tr->item &&
+                !QUERY_FLAG(&tr->item->clone, FLAG_SYS_OBJECT) &&
+                tr->item->clone.type != SPELLBOOK &&
+                tr->item->clone.type != BOOK)
+            {
                 god_gives_present(op, new_god, tr);
+            }
         }
     }
 
@@ -516,8 +531,11 @@ archetype * determine_holy_arch(object *god, const char *type)
                 continue;
             item = &tr->item->clone;
 
-            if (item->type == BOOK && IS_SYS_INVISIBLE(item) && strcmp(item->name, type) == 0)
+            if (item->type == BOOK &&
+                !strcmp(item->name, type))
+            {
                 return item->other_arch;
+            }
         }
     }
     return NULL;
@@ -747,154 +765,120 @@ void god_intervention(object *op, object *god)
                 LOG(llevBug, "BUG: empty entry in %s's treasure list\n", query_name(god));
                 continue;
             }
+
             item = &tr->item->clone;
 
-            // Grace limit
-            if (item->type == BOOK && IS_SYS_INVISIBLE(item) && item->name == shstr_cons.grace_limit)
+            if (QUERY_FLAG(item, FLAG_SYS_OBJECT))
             {
-                if (op->stats.grace < item->stats.grace || op->stats.grace < op->stats.maxgrace)
-                {
-                    // Follower lacks the required grace for the following
-                    // treasure list items.
-                    (void) cast_change_attr(op, op, op, 0, SP_HOLY_POSSESSION);
-                    return;
-                }
                 continue;
             }
-
-            // Restore grace
-            if (item->type == BOOK && IS_SYS_INVISIBLE(item) && item->name == shstr_cons.restore_grace)
+            else if (item->type == BOOK)
             {
-                if (op->stats.grace >= 0)
-                    continue;
-                op->stats.grace = random_roll(0, 9);
-                new_draw_info(NDI_UNIQUE, 0, op, "You are returned to a state of grace.");
-                return;
-            }
-
-            // Heal damage
-            if (item->type == BOOK && IS_SYS_INVISIBLE(item) && item->name == shstr_cons.restore_hitpoints)
-            {
-                if (op->stats.hp >= op->stats.maxhp)
-                    continue;
-                new_draw_info(NDI_UNIQUE, 0, op, "A white light surrounds and heals you!");
-                op->stats.hp = op->stats.maxhp;
-                return;
-            }
-
-            // Restore spellpoints
-            if (item->type == BOOK && IS_SYS_INVISIBLE(item) && item->name == shstr_cons.restore_spellpoints)
-            {
-                int max     = (int) ((float) op->stats.maxsp * ((float) item->stats.maxsp / (float) 100.0));
-                // Restore to 50 .. 100%, if sp < 50%
-                int new_sp  = (int) ((float) random_roll(1000, 1999) / (float) 2000.0 * (float) max);
-                if (op->stats.sp >= max / 2)
-                    continue;
-                new_draw_info(NDI_UNIQUE, 0, op, "A blue lightning strikes " "your head but doesn't hurt you!");
-                op->stats.sp = new_sp;
-            }
-
-            // Various heal spells
-            if (item->type == BOOK && IS_SYS_INVISIBLE(item) && item->name == shstr_cons.heal_spell)
-            {
-                if (cast_heal(op, 1, op, get_spell_number(item)))
-                    return;
-                else
-                    continue;
-            }
-
-            // Remove curse
-            if (item->type == BOOK && IS_SYS_INVISIBLE(item) && item->name == shstr_cons.remove_curse)
-            {
-                if (god_removes_curse(op, 0))
-                    return;
-                else
-                    continue;
-            }
-
-            // Remove damnation
-            if (item->type == BOOK && IS_SYS_INVISIBLE(item) && item->name == shstr_cons.remove_damnation)
-            {
-                if (god_removes_curse(op, 1))
-                    return;
-                else
-                    continue;
-            }
-
-            // Heal depletion
-            if (item->type == BOOK && IS_SYS_INVISIBLE(item) && item->name == shstr_cons.heal_depletion)
-            {
-                object     *depl;
-                archetype  *at;
-                int         i;
-
-                if ((at = find_archetype("depletion")) == NULL)
+                if (item->name == shstr_cons.grace_limit)
                 {
-                    LOG(llevBug, "BUG: Could not find archetype depletion.\n");
+                    if (op->stats.grace < item->stats.grace || op->stats.grace < op->stats.maxgrace)
+                    {
+                        // Follower lacks the required grace for the following
+                        // treasure list items.
+                        (void) cast_change_attr(op, op, op, 0, SP_HOLY_POSSESSION);
+                        return;
+                    }
                     continue;
                 }
-                depl = present_arch_in_ob(at, op);
-                if (depl == NULL)
-                    continue;
-                new_draw_info(NDI_UNIQUE, 0, op, "Shimmering light surrounds and restores you!");
-                for (i = 0; i < NUM_STATS; i++)
-                    if (get_stat_value(&depl->stats, i))
-                        new_draw_info(NDI_UNIQUE, 0, op, "%s", restore_msg[i]);
-                remove_ob(depl);
-                FIX_PLAYER(op ,"god intervention");
-                return;
-            }
-
-
-            // Messages
-            if (item->type == BOOK && IS_SYS_INVISIBLE(item) && item->name == shstr_cons.message)
-            {
-                new_draw_info(NDI_UNIQUE, 0, op, "%s", item->msg);
-                return;
-            }
-
-            // Enchant weapon
-            if (item->type == BOOK && IS_SYS_INVISIBLE(item) && item->name == shstr_cons.enchant_weapon)
-            {
-                if (god_enchants_weapon(op, god, item))
+                else if (item->name == shstr_cons.restore_grace)
+                {
+                    if (op->stats.grace >= 0)
+                        continue;
+                    op->stats.grace = random_roll(0, 9);
+                    new_draw_info(NDI_UNIQUE, 0, op, "You are returned to a state of grace.");
                     return;
-                else
-                    continue;
-            }
+                }
+                else if (item->name == shstr_cons.restore_hitpoints)
+                {
+                    if (op->stats.hp >= op->stats.maxhp)
+                        continue;
+                    new_draw_info(NDI_UNIQUE, 0, op, "A white light surrounds and heals you!");
+                    op->stats.hp = op->stats.maxhp;
+                    return;
+                }
+                else if (item->name == shstr_cons.restore_spellpoints)
+                {
+                    int max     = (int) ((float) op->stats.maxsp * ((float) item->stats.maxsp / (float) 100.0));
+                    // Restore to 50 .. 100%, if sp < 50%
+                    int new_sp  = (int) ((float) random_roll(1000, 1999) / (float) 2000.0 * (float) max);
+                    if (op->stats.sp >= max / 2)
+                        continue;
+                    new_draw_info(NDI_UNIQUE, 0, op, "A blue lightning strikes " "your head but doesn't hurt you!");
+                    op->stats.sp = new_sp;
+                }
+                else if (item->name == shstr_cons.heal_spell)
+                {
+                    if (cast_heal(op, 1, op, get_spell_number(item)))
+                        return;
+                    else
+                        continue;
+                }
+                else if (item->name == shstr_cons.remove_curse)
+                {
+                    if (god_removes_curse(op, 0))
+                        return;
+                    else
+                        continue;
+                }
+                else if (item->name == shstr_cons.remove_damnation)
+                {
+                    if (god_removes_curse(op, 1))
+                        return;
+                    else
+                        continue;
+                }
+                else if (item->name == shstr_cons.heal_depletion)
+                {
+                    object     *depl;
+                    archetype  *at;
+                    int         i;
 
-            // Spellbooks - works correctly only for prayers
-            if (item->type == SPELLBOOK)
+                    if ((at = find_archetype("depletion")) == NULL)
+                    {
+                        LOG(llevBug, "BUG: Could not find archetype depletion.\n");
+                        continue;
+                    }
+                    depl = present_arch_in_ob(at, op);
+                    if (depl == NULL)
+                        continue;
+                    new_draw_info(NDI_UNIQUE, 0, op, "Shimmering light surrounds and restores you!");
+                    for (i = 0; i < NUM_STATS; i++)
+                        if (get_stat_value(&depl->stats, i))
+                            new_draw_info(NDI_UNIQUE, 0, op, "%s", restore_msg[i]);
+                    remove_ob(depl);
+                    FIX_PLAYER(op ,"god intervention");
+                    return;
+                }
+                else if (item->name == shstr_cons.message)
+                {
+                    new_draw_info(NDI_UNIQUE, 0, op, "%s", item->msg);
+                    return;
+                }
+                else if (item->name == shstr_cons.enchant_weapon)
+                {
+                    if (god_enchants_weapon(op, god, item))
+                        return;
+                    else
+                        continue;
+                }
+            }
+            else if (item->type == SPELLBOOK)
             {
                 int spell   = get_spell_number(item);
                 if (check_spell_known(op, spell))
                     continue;
                 if (spells[spell].level > level)
                     continue;
-                if (IS_SYS_INVISIBLE(item))
-                {
-                    new_draw_info(NDI_UNIQUE, 0, op, "%s grants you use of a special prayer!", god->name);
-                    do_learn_spell(op, spell, 1);
-                    return;
-                }
-                if (!QUERY_FLAG(item, FLAG_STARTEQUIP))
-                {
-                    LOG(llevBug, "BUG: visible spellbook in %s's treasure list lacks FLAG_STARTEQUIP\n", query_name(god));
-                    continue;
-                }
-                if (!item->stats.Wis)
-                {
-                    LOG(llevBug, "BUG: visible spellbook in %s's treasure list doesn't contain a special prayer\n",
-                        query_name(god));
-                    continue;
-                }
-                if (god_gives_present(op, god, tr))
-                    return;
-                else
-                    continue;
+                new_draw_info(NDI_UNIQUE, 0, op, "%s grants you use of a special prayer!", god->name);
+                do_learn_spell(op, spell, 1);
+                return;
             }
-
-            // Other gifts
-            if (!IS_SYS_INVISIBLE(item))
+            else
             {
                 if (god_gives_present(op, god, tr))
                     return;

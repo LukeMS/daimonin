@@ -1256,13 +1256,13 @@ void dragon_ability_gain(object *who, int atnr, int level)
     /* grant direct spell */
     if (item->type == SPELLBOOK)
     {
-        int spell   = look_up_spell_name(item->slaying);
-        if (spell < 0 || check_spell_known(who, spell))
-            return;
-        if (IS_SYS_INVISIBLE(item))
+        int spell = look_up_spell_name(item->slaying);
+        if (spell >= 0 &&
+            !check_spell_known(who, spell))
         {
             new_draw_info(NDI_UNIQUE | NDI_BLUE, 0, who, "You gained the ability of %s", spells[spell].name);
             do_learn_spell(who, spell, 0);
+
             return;
         }
     }

@@ -1119,18 +1119,18 @@ int cast_spell(object *op, object *caster, int dir, int type, int ability, Spell
                 return 0;
             }
 
-            if ((pl = CONTR(caster)) &&
+            if (!IS_GMASTER_WIZ(op) &&
+                (pl = CONTR(caster)) &&
                 pl->guild_force &&
                 pl->guild_force->level &&
-                pl->guild_force->level < s->level &&
-                !QUERY_FLAG(op, FLAG_WIZ))
+                pl->guild_force->level < s->level)
             {
                 new_draw_info(NDI_UNIQUE, 0, op, "That spell is too difficult for you to cast.");
 
                 return 0;
             }
 
-            if (!(QUERY_FLAG(op, FLAG_WIZ)))
+            if (!IS_GMASTER_WIZ(op))
             {
                 if (!(spells[type].flags & SPELL_DESC_WIS)
                  && op->stats.sp < (points_used = SP_level_spellpoint_cost(op, caster, type)))
@@ -1160,7 +1160,10 @@ int cast_spell(object *op, object *caster, int dir, int type, int ability, Spell
     }
 
     /* If it is an ability, assume that the designer of the archetype knows what they are doing.*/
-    if (item == spellNormal && !ability && SK_level(caster) < s->level && !QUERY_FLAG(op, FLAG_WIZ))
+    if (!IS_GMASTER_WIZ(op) &&
+        item == spellNormal &&
+        !ability &&
+        SK_level(caster) < s->level)
     {
         if (op->type == PLAYER)
             new_draw_info(NDI_UNIQUE, 0, op, "You lack enough skill to cast that spell.");
@@ -3608,23 +3611,39 @@ int look_up_spell_by_name(object *op, const char *spname)
     int spellen;
     int i;
 
-    if (spname == NULL)
+    if (!spname)
+    {
         return -1;
-    if (op == NULL)
+    }
+
+    if (!op)
+    {
         numknown = NROFREALSPELLS;
-    else if (QUERY_FLAG(op, FLAG_WIZ))
+    }
+    else if (IS_GMASTER_WIZ(op))
+    {
         numknown = NROFREALSPELLS;
+    }
     else
+    {
         numknown = CONTR(op)->nrofknownspells;
+    }
+
     plen = strlen(spname);
     for (i = 0; i < numknown; i++)
     {
-        if (op == NULL)
+        if (!op)
+        {
             spnum = i;
-        else if (QUERY_FLAG(op, FLAG_WIZ))
+        }
+        else if (IS_GMASTER_WIZ(op))
+        {
             spnum = i;
+        }
         else
+        {
             spnum = CONTR(op)->known_spells[i];
+        }
 
         spellen = strlen(spells[spnum].name);
 

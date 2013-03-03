@@ -124,8 +124,11 @@ static inline int adj_attackroll(object *hitter, object *target, int adjust)
     * Add more cases, as the need occurs. */
 
     /* is invisible means, we can't see it - same for blind */
-    if (IS_INVISIBLE(target, attacker) || QUERY_FLAG(attacker, FLAG_BLIND))
-        adjust -= adjust/25; /* - 25% */
+    if (IS_NORMAL_INVIS_TO(target, attacker) ||
+        QUERY_FLAG(attacker, FLAG_BLIND))
+    {
+        adjust -= adjust / 25; /* - 25% */
+    }
 
     if (QUERY_FLAG(target, FLAG_SCARED))
         adjust += adjust/10; /* + 10% */
@@ -351,8 +354,11 @@ int damage_ob(object *op, int dam, object *hitter, int env_attack)
     int     rtn_kill    = 0;
 
     /* if our target has no_damage 1 set or is wiz, we can't hurt him */
-    if (QUERY_FLAG(op, FLAG_WIZ) || QUERY_FLAG(op, FLAG_INVULNERABLE))
+    if (IS_GMASTER_WIZ(op) ||
+        QUERY_FLAG(op, FLAG_INVULNERABLE))
+    {
         return 0;
+    }
 
     if (hitter->head)
         hitter = hitter->head;
@@ -543,7 +549,8 @@ int damage_ob(object *op, int dam, object *hitter, int env_attack)
     op->stats.hp -= maxdam; /* thats the damage the target got */
 
     /* lets kill, kill, kill... */
-    if (op->stats.hp <= 0 && op->type == PLAYER && !QUERY_FLAG(op, FLAG_WIZ))
+    if (op->stats.hp <= 0 &&
+        op->type == PLAYER)
     {
         char buf[SMALL_BUF];
         strcpy(buf, query_name(hitter));

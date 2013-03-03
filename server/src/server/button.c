@@ -290,45 +290,66 @@ void signal_connection(object *op, object *activator, object *originator, mapstr
  * Remove button down checks to separate function
  * (called by update_button)
  */
-int check_button_down(object *tmp)
+int check_button_down(object *what)
 {
-    object     *ab, *head;
-    unsigned int fly, move;
-    int tot;
-    int is_down = 0;
+    uint32    fly,
+              move;
+    MapSpace *msp;
+    object   *this;
 
-    if (tmp->type == BUTTON)
+    if (!what ||
+        !what->map)
     {
-        fly = QUERY_FLAG(tmp, FLAG_FLY_ON);
-        move = QUERY_FLAG(tmp, FLAG_WALK_ON);
-        tot = 0;
-        for (ab = GET_BOTTOM_MAP_OB(tmp); ab != NULL; ab = ab->above)
-        {
-            if (ab != tmp && (IS_AIRBORNE(ab) ? fly : move))
-                tot += ab->weight * (ab->nrof ? ab->nrof : 1) + ab->carrying;
-        }
-        tmp->weight_limit = (tot >= tmp->weight) ? 1 : 0;
-        if (tmp->weight_limit)
-            is_down = 1;
+        return 0;
     }
-    else if (tmp->type == PEDESTAL)
+
+    fly = QUERY_FLAG(what, FLAG_FLY_ON);
+    move = QUERY_FLAG(what, FLAG_WALK_ON);
+    msp = GET_MAP_SPACE_PTR(what->map, what->x, what->y);
+
+    if (what->type == BUTTON)
     {
-        tmp->weight_limit = 0;
-        fly = QUERY_FLAG(tmp, FLAG_FLY_ON);
-        move = QUERY_FLAG(tmp, FLAG_WALK_ON);
-        for (ab = GET_BOTTOM_MAP_OB(tmp); ab != NULL; ab = ab->above)
+        sint32 total_weight = 0;
+
+        for (this = GET_MAP_SPACE_FIRST(msp); this; this = this->above)
         {
-            head = ab->head ? ab->head : ab;
-            if (ab != tmp
-             && (IS_AIRBORNE(ab) ? fly : move)
-             && (head->race == tmp->slaying || (tmp->slaying == shstr_cons.player && head->type == PLAYER)))
-                tmp->weight_limit = 1;
+            object *head = (this->head) ? this->head : this;
+
+            if (this != what &&
+                ((IS_AIRBORNE(head)) ? fly : move))
+            {
+                total_weight += this->weight * ((this->nrof) ? this->nrof : 1) + this->carrying;
+            }
         }
-        if (tmp->weight_limit)
-            is_down = 1;
+
+        what->weight_limit = (total_weight >= what->weight) ? 1 : 0;
+
+        return what->weight_limit;
     }
-    return is_down;
- }
+    else if (what->type == PEDESTAL)
+    {
+        what->weight_limit = 0;
+
+        for (this = GET_MAP_SPACE_FIRST(msp); this; this = this->above)
+        {
+            object *head = (this->head) ? this->head : this;
+
+            if (this != what &&
+                ((IS_AIRBORNE(head)) ? fly : move) &&
+                (head->race == what->slaying ||
+                 (what->slaying == shstr_cons.player &&
+                  head->type == PLAYER)))
+            {
+                what->weight_limit = 1;
+
+                return what->weight_limit;
+            }
+        }
+    }
+
+    return 0;
+}
+
 /*
  * Updates everything connected with the button op.
  * After changing the state of a button, this function must be called
@@ -384,67 +405,74 @@ void update_button(object *op, object *activator, object *originator)
 
 void update_buttons(mapstruct *m)
 {
-    objectlink *ol;
-    oblinkpt   *obp;
-    object     *ab, *tmp;
-    unsigned int fly, move;
+    oblinkpt *obp;
 
     /* Don't trigger plugin events from this function */
     ignore_trigger_events = 1;
 
     for (obp = m->buttons; obp; obp = obp->next)
     {
+        objectlink *ol;
+
         for (ol = obp->objlink.link; ol; ol = ol->next)
         {
-            if (!ol->objlink.ob || ol->objlink.ob->count != ol->id)
+            object *link = ol->objlink.ob;
+            uint8   type;
+
+            if (!link ||
+                link->count != ol->id)
             {
-                LOG(llevBug, "BUG: Internal error in update_button (%s (%dx%d):%d, connected %d ).\n",
-                    ol->objlink.ob ? STRING_SAFE(ol->objlink.ob->name) : "null",
-                    ol->objlink.ob ? ol->objlink.ob->x : -1, ol->objlink.ob ? ol->objlink.ob->y : -1, ol->id, obp->value);
+                LOG(llevBug, "BUG:: %s:update_buttons(): Internal error (%s[%d] (%dx%d):%d, connected %d).\n",
+                    __FILE__, STRING_OBJ_NAME(link), TAG(link),
+                    (link) ? link->x : -1, (link) ? link->y : -1, ol->id,
+                    obp->value);
+
                 continue;
             }
-            switch(ol->objlink.ob->type)
+
+            type = link->type;
+
+            if (type == BUTTON ||
+                type == PEDESTAL)
             {
-                case BUTTON:
-                case PEDESTAL:
-                    update_button(ol->objlink.ob, NULL, NULL);
-                    break;
+                update_button(link, NULL, NULL);
+            }
+            else if (type == CHECK_INV)
+            {
+                uint32    fly = QUERY_FLAG(link, FLAG_FLY_ON),
+                          move = QUERY_FLAG(link, FLAG_WALK_ON);
+                MapSpace *msp = GET_MAP_SPACE_PTR(link->map, link->x, link->y);
+                object   *this;
 
-                case CHECK_INV:
-                    tmp = ol->objlink.ob;
-                    fly = QUERY_FLAG(tmp, FLAG_FLY_ON);
-                    move = QUERY_FLAG(tmp, FLAG_WALK_ON);
-
-                    for (ab = GET_BOTTOM_MAP_OB(tmp); ab != NULL; ab = ab->above)
+                for (this = GET_MAP_SPACE_FIRST(msp); this; this = this->above)
+                {
+                    if (this != link &&
+                        (IS_AIRBORNE(this) ? fly : move))
                     {
-                        if (ab != tmp && (IS_AIRBORNE(ab) ? fly : move))
-                            check_inv(ab, tmp);
+                        check_inv(this, link);
                     }
-                    break;
-
-                case TRIGGER_BUTTON:
-                case TRIGGER_PEDESTAL:
-                case TRIGGER_ALTAR:
-                    /* check_trigger will itself sort out the numbers of
-                     * items above the trigger */
-                    check_trigger(ol->objlink.ob, ol->objlink.ob, NULL);
-                    break;
-
-                case TYPE_CONN_SENSOR:
-                    move_conn_sensor(ol->objlink.ob);
-                    break;
-
-                case TYPE_ENV_SENSOR:
-                    move_environment_sensor(ol->objlink.ob);
-                    break;
-
-                case CF_HANDLE:
-                case TRIGGER:
-                    signal_connection(ol->objlink.ob, NULL, NULL, ol->objlink.ob->map);
-                    break;
-
-                default:
-                    break;
+                }
+            }
+            else if (type == TRIGGER_BUTTON ||
+                     type == TRIGGER_PEDESTAL ||
+                     type == TRIGGER_ALTAR)
+            {
+                /* check_trigger will itself sort out the numbers of
+                 * items above the trigger */
+                check_trigger(link, link, NULL);
+            }
+            else if (type == TYPE_CONN_SENSOR)
+            {
+                move_conn_sensor(link);
+            }
+            else if (type == TYPE_ENV_SENSOR)
+            {
+                move_environment_sensor(link);
+            }
+            else if (type == CF_HANDLE ||
+                     type == TRIGGER)
+            {
+                signal_connection(link, NULL, NULL, link->map);
             }
         }
     }
@@ -596,7 +624,6 @@ void trigger_move(object *op, int state, object *originator) /* 1 down and 0 up 
  */
 int check_trigger(object *op, object *cause, object *originator)
 {
-    object *tmp;
     int     push = 0, tot = 0;
     int     in_movement = op->stats.wc || op->speed;
 
@@ -607,46 +634,90 @@ int check_trigger(object *op, object *cause, object *originator)
           {
               if (cause)
               {
-                  for (tmp = GET_BOTTOM_MAP_OB(op); tmp; tmp = tmp->above)
-                      if (!IS_AIRBORNE(tmp))
-                          tot += tmp->weight * (tmp->nrof ? tmp->nrof : 1) + tmp->carrying;
+                  uint32    fly = QUERY_FLAG(op, FLAG_FLY_ON),
+                            move = QUERY_FLAG(op, FLAG_WALK_ON);
+                  MapSpace *msp = GET_MAP_SPACE_PTR(op->map, op->x, op->y);
+                  object   *this;
+
+                  for (this = GET_MAP_SPACE_FIRST(msp); this; this = this->above)
+                  {
+                       object *head = (this->head) ? this->head : this;
+
+                       if (this != op &&
+                           ((IS_AIRBORNE(head)) ? fly : move))
+                      {
+                          tot += this->weight * (this->nrof ? this->nrof : 1) + this->carrying;
+                      }
+                  }
+
                   if (tot >= op->weight)
+                  {
                       push = 1;
+                  }
+
                   if (op->stats.ac == push)
+                  {
                       return 0;
+                  }
+
                   op->stats.ac = push;
                   SET_ANIMATION(op, (NUM_ANIMATIONS(op) / NUM_FACINGS(op)) * op->direction + push);
                   update_object(op, UP_OBJ_FACE);
-                  if (in_movement || !push)
+
+                  if (in_movement ||
+                      !push)
+                  {
                       return 0;
+                  }
               }
+
               trigger_move(op, push, originator);
           }
+
           return 0;
 
         case TRIGGER_PEDESTAL:
           if (cause)
           {
-              for (tmp = GET_BOTTOM_MAP_OB(op); tmp; tmp = tmp->above)
+              uint32    fly = QUERY_FLAG(op, FLAG_FLY_ON),
+                        move = QUERY_FLAG(op, FLAG_WALK_ON);
+              MapSpace *msp = GET_MAP_SPACE_PTR(op->map, op->x, op->y);
+              object   *this;
+
+              for (this = GET_MAP_SPACE_FIRST(msp); this; this = this->above)
               {
-                  object   *head    = tmp->head ? tmp->head : tmp;
-                  if((!IS_AIRBORNE(head) || QUERY_FLAG(op, FLAG_FLY_ON))
-                   && (head->race == op->slaying || (op->slaying == shstr_cons.player && head->type == PLAYER))
-                   && tmp != op)
+                  object *head = (this->head) ? this->head : this;
+
+                 if (this != op &&
+                     ((IS_AIRBORNE(head)) ? fly : move) &&
+                     (head->race == op->slaying ||
+                      (op->slaying == shstr_cons.player &&
+                       head->type == PLAYER)))
                   {
                       push = 1;
+
                       break;
                   }
               }
+
               if (op->stats.ac == push)
+              {
                   return 0;
+              }
+
               op->stats.ac = push;
               SET_ANIMATION(op, (NUM_ANIMATIONS(op) / NUM_FACINGS(op)) * op->direction + push);
               update_object(op, UP_OBJ_FACE);
-              if (in_movement || !push)
+
+              if (in_movement ||
+                  !push)
+              {
                   return 0;
+              }
           }
+
           trigger_move(op, push, originator);
+
           return 0;
 
         case TRIGGER_ALTAR:

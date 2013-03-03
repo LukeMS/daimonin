@@ -113,7 +113,7 @@ int move_ob(object *op, int dir, object *originator)
     }
 
     /* single arch */
-    if (!(op->type == PLAYER && CONTR(op)->wizpass))
+    if (!IS_GMASTER_WIZPASS(op))
     {
         /* is the spot blocked from something? */
         if ((flags = blocked(op, m, xt, yt, op->terrain_flag)))
@@ -388,31 +388,29 @@ int push_ob(object *who, int dir, object *pusher)
     /* now, lets test stand still we NEVER can push stand_still monsters. */
     if (QUERY_FLAG(who, FLAG_STAND_STILL))
     {
-        new_draw_info(NDI_UNIQUE, 0, pusher, "You can't push %s.",
+       new_draw_info(NDI_UNIQUE, 0, pusher, "You can't push %s.",
                       query_short_name(who, pusher));
         return 0;
     }
 
     /* This block is basically if you are pushing
      * non pet creatures. With move-push attacks removed, we can now
-	 * try to push even aggressive mobs, maybe into a fire pit.
+     * try to push even aggressive mobs, maybe into a fire pit.
      * It basically does a random strength comparision to
      * determine if you can push someone around.  Note that
      * this pushes the other person away - its not a swap.
-	 * As of B4 mobs have no str by default. Mapmakers can add
-	 * str to a mob, usually for scripted pick up. If a mob has
-	 * no str we use 9 + level/10 to give a pseudo str. Also a weight factor
-	 * is added for the object being pushed, a beholder should be harder to push
-	 * than an ant even if they are the same level.
-     */
-
+     * As of B4 mobs have no str by default. Mapmakers can add
+     * str to a mob, usually for scripted pick up. If a mob has
+     * no str we use 9 + level/10 to give a pseudo str. Also a weight factor
+     * is added for the object being pushed, a beholder should be harder to push
+     * than an ant even if they are the same level. */
     str1 = (who->stats.Str > 0 ? who->stats.Str : 9 + who->level / 10);
-	str1 = str1 + who->weight / 50000 - 1;
+    str1 = str1 + who->weight / 50000 - 1;
     str2 = (pusher->stats.Str > 0 ? pusher->stats.Str : 9 + pusher->level / 10);
-    if (QUERY_FLAG(who, FLAG_WIZ)
-     || random_roll(str1, str1 / 2 + str1 * 2)
-     >= random_roll(str2, str2/ 2 + str2 * 2)
-     || !move_ob(who, dir, pusher))
+
+    if (IS_GMASTER_WIZ(who) ||
+        random_roll(str1, str1 / 2 + str1 * 2) >= random_roll(str2, str2 / 2 + str2 * 2) ||
+        !move_ob(who, dir, pusher))
     {
         new_draw_info(NDI_UNIQUE, 0, who, "%s tried to push you.",
                       query_short_name(pusher, who));

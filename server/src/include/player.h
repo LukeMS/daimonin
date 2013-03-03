@@ -118,10 +118,11 @@ typedef struct pl_player
     uint32              rest_mode           : 1;            /* if true, player is going "resting" - resting mode will be interrupted when player moves or get hit */
     uint32              rest_sitting        : 1;            /* if true, player is sitting - sitting + rest mode = regeneration */
 
-    /* some dm flags */
-    uint32              wizpass             : 1;    /* 1= pass through walls, over move apply objects, etc */
-    uint32              dm_invis            : 1;    /* 1= is invisible, see invisible */
-    uint32              stealth             : 1;    /* 1= player undetectable to mobs */
+    uint8               gmaster_wiz         : 1;    // 1= wiz powers, see normal invisible
+    uint8               gmaster_wizpass     : 1;    // 1= pass through walls, over move apply objects, etc
+    uint8               gmaster_matrix      : 1;    // 1= see first system object on square
+    uint8               gmaster_stealth     : 1;    // 1= player undetectable to mobs
+    uint8               gmaster_invis       : 1;    // 1= is invisible, only SAs can see
 
     uint32              personal_light      : 3;   /* must be enough bits to hold MAX_DARKNESS */
     uint32              known_spell         : 1;   /* True if you know the spell of the wand */
