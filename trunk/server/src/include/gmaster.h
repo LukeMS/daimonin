@@ -33,6 +33,33 @@
 #define GMASTER_MODE_MM  (1 << 3)
 #define GMASTER_MODE_SA  (1 << 4)
 
+/* Tests if an *object* (use pl->ob if we already have a player struct --
+ * eventually this should expect a player struct as input but for now many
+ * funcs which are only applicable to players anyway still work with an object
+ * parameter so it is easiest to go with the flow for now) is a gmaster with
+ * wiz powers. These powers are very basically defined and one size fits all
+ * ATM. In future, we will better define them so that for example, MWs only
+ * have certain wiz powers and only on their own maps. */
+#define IS_GMASTER_WIZ(_WHO_) \
+    ((_WHO_)->type == PLAYER && \
+     CONTR((_WHO_)) && \
+     CONTR((_WHO_))->gmaster_wiz)
+
+#define IS_GMASTER_WIZPASS(_WHO_) \
+    ((_WHO_)->type == PLAYER && \
+     CONTR((_WHO_)) && \
+     CONTR((_WHO_))->gmaster_wizpass)
+
+#define IS_GMASTER_STEALTH(_WHO_) \
+    ((_WHO_)->type == PLAYER && \
+     CONTR((_WHO_)) && \
+     CONTR((_WHO_))->gmaster_stealth)
+
+#define IS_GMASTER_INVIS(_WHO_) \
+    ((_WHO_)->type == PLAYER && \
+     CONTR((_WHO_)) && \
+     CONTR((_WHO_))->gmaster_invis)
+
 typedef struct _gmaster_struct
 {
     char                    entry[196]; /* unparsed gmaster_file entry for this node */

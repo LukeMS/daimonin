@@ -93,7 +93,10 @@ static void ApplyIdAltar(object *money, object *altar, object *pl)
 
     for (id = pl->inv; id; id = id->below)
     {
-        if (!QUERY_FLAG(id, FLAG_IDENTIFIED) && !IS_INVISIBLE(id, pl) && need_identify(id))
+        if (!QUERY_FLAG(id, FLAG_IDENTIFIED) &&
+            !QUERY_FLAG(id, FLAG_SYS_OBJECT) &&
+            !IS_NORMAL_INVIS_TO(id, pl) &&
+            need_identify(id))
         {
             if (operate_altar(altar, &money))
             {
@@ -1168,7 +1171,9 @@ static void ApplySign(object *op, object *sign)
      * for FLAG_INVISIBLE instead of FLAG_WALK_ON/FLAG_FLY_ON would fail
      * for magic mouths that have been made visible.
      */
-    if(!QUERY_FLAG(op, FLAG_WIZ) && !QUERY_FLAG(sign, FLAG_WALK_ON) && !QUERY_FLAG(sign,FLAG_FLY_ON))
+    if (!IS_GMASTER_WIZ(op) &&
+        !QUERY_FLAG(sign, FLAG_WALK_ON) &&
+        !QUERY_FLAG(sign, FLAG_FLY_ON))
     {
         if (QUERY_FLAG(op, FLAG_BLIND))
         {
@@ -1248,7 +1253,7 @@ static void ApplySign(object *op, object *sign)
 /* 'victim' moves onto 'trap' (trap has FLAG_WALK_ON or FLAG_FLY_ON set) or
  * 'victim' leaves 'trap' (trap has FLAG_WALK_OFF or FLAG_FLY_OFF) set.
  *
- * if victim is a player with wizpass, don't trigger the 'trap'.
+ * if victim is a player with gmaster_wizpass, don't trigger the 'trap'.
  *
  * originator: Player, monster or other object that caused 'victim' to move
  * onto 'trap'.  Will receive messages caused by this action.  May be NULL.
@@ -1267,8 +1272,10 @@ void move_apply(object *const trap_obj, object *const victim, object *const orig
     object *const trap = trap_obj->head ? trap_obj->head: trap_obj;
     static int  recursion_depth = 0;
 
-    if (victim->type == PLAYER && CONTR(victim)->wizpass)
+    if (IS_GMASTER_WIZPASS(victim))
+    {
         return;
+    }
 
     /* move_apply() is the most likely candidate for causing unwanted and
      * possibly unlimited recursion. */
@@ -1556,15 +1563,15 @@ static void ApplyBook(object *op, object *tmp)
     size_t  len;
     size_t  catlen;
 
-    if (QUERY_FLAG(op, FLAG_BLIND) && !QUERY_FLAG(op, FLAG_WIZ))
+    if (!IS_GMASTER_WIZ(op))
     {
-        new_draw_info(NDI_UNIQUE, 0, op, "You are unable to read while blind.");
-        return;
-    }
+        if (QUERY_FLAG(op, FLAG_BLIND))
+        {
+            new_draw_info(NDI_UNIQUE, 0, op, "You are unable to read while blind.");
+            return;
+        }
 
-    /* you has the right skill & language knowledge to read it? */
-    if (!QUERY_FLAG(op, FLAG_WIZ))
-    {
+        /* you has the right skill & language knowledge to read it? */
         if (!change_skill(op, SK_LITERACY))
         {
             new_draw_info(NDI_UNIQUE, 0, op, "You are unable to decipher the strange symbols.");
@@ -1757,7 +1764,8 @@ extern void do_forget_spell(object *op, int spell)
 
 static void ApplySpellbook(object *op, object *tmp)
 {
-    if (QUERY_FLAG(op, FLAG_BLIND) && !QUERY_FLAG(op, FLAG_WIZ))
+    if (!IS_GMASTER_WIZ(op) &&
+        QUERY_FLAG(op, FLAG_BLIND))
     {
         new_draw_info(NDI_UNIQUE, 0, op, "You are unable to read while blind.");
         return;
@@ -1851,7 +1859,8 @@ static void ApplyScroll(object *op, object *tmp)
     /*object *old_skill;*/
     int scroll_spell = tmp->stats.sp;
 
-    if (QUERY_FLAG(op, FLAG_BLIND) && !QUERY_FLAG(op, FLAG_WIZ))
+    if (!IS_GMASTER_WIZ(op) &&
+        QUERY_FLAG(op, FLAG_BLIND))
     {
         new_draw_info(NDI_UNIQUE, 0, op, "You are unable to read while blind.");
         return;
@@ -2489,9 +2498,11 @@ int player_apply(object *pl, object *op, int aflag, int quiet)
     int tmp;
 
         /* player is flying and applying object not in inventory */
-    if (op->env == NULL &&
-        !QUERY_FLAG(pl, FLAG_WIZ) &&
-        (IS_AIRBORNE(pl) && (!IS_AIRBORNE(op) || !QUERY_FLAG(op, FLAG_FLY_ON))))
+    if (!IS_GMASTER_WIZ(pl) &&
+        !op->env &&
+        (IS_AIRBORNE(pl) &&
+         (!IS_AIRBORNE(op) ||
+          !QUERY_FLAG(op, FLAG_FLY_ON))))
     {
         new_draw_info(NDI_UNIQUE, 0, pl, "But you are floating high above the ground!");
         return 0;
@@ -2562,7 +2573,12 @@ void player_apply_below(object *pl)
             floors++;
         else if (floors > 0)
             return;   /* process only floor (or sys_objects) objects after first floor object */
-        if (!IS_INVISIBLE(tmp, pl) || QUERY_FLAG(tmp, FLAG_WALK_ON) || QUERY_FLAG(tmp, FLAG_FLY_ON))
+
+        if ((!QUERY_FLAG(tmp, FLAG_SYS_OBJECT) &&
+             !IS_GMASTER_INVIS_TO(tmp, pl) ||
+             !IS_NORMAL_INVIS_TO(tmp, pl)) ||
+            QUERY_FLAG(tmp, FLAG_WALK_ON) ||
+            QUERY_FLAG(tmp, FLAG_FLY_ON))
         {
             if (player_apply(pl, tmp, 0, 1) == 1)
                 return;
@@ -2660,7 +2676,7 @@ int apply_special(object *who, object *op, int aflags)
             case SKILL:
                 if (who->type == PLAYER)
                 {
-                    if (!IS_INVISIBLE(op, who))
+                    if (!IS_NORMAL_INVIS_TO(op, who))
                     {
                         /* its a tool, need to unlink it */
                         unlink_skill(op);
@@ -2902,7 +2918,7 @@ int apply_special(object *who, object *op, int aflags)
         case SKILL:
             if (who->type == PLAYER)
             {
-                if (!IS_INVISIBLE(op, who))
+                if (!IS_NORMAL_INVIS_TO(op, who))
                 {
                     /* for tools */
                     if (op->exp_obj)

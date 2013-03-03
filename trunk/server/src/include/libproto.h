@@ -221,6 +221,7 @@ extern void             swap_map(mapstruct *map, int force_flag);
 extern void             map_check_in_memory(mapstruct *m);
 extern int              players_on_map(mapstruct *m);
 /* map_tile.c */
+extern void             map_set_slayers(MapSpace *msp, object *op, uint8 insert);
 extern void             update_position(mapstruct *m, MapSpace *mspace,int x, int y);
 extern int              map_brightness(mapstruct *m, int x, int y);
 extern int              wall(mapstruct *m, int x, int y);

@@ -678,20 +678,25 @@ void doeric_server(int update, struct timeval *timeout)
         {
             if(pl->socket.status != Ns_Zombie)
             {
-                if (!pl->socket.idle_flag && pl->socket.login_count < ROUND_TAG && !QUERY_FLAG(pl->ob, FLAG_WIZ))
+                if (!IS_GMASTER_WIZ(pl->ob))
                 {
-                    pl->socket.login_count = ROUND_TAG + pticks_player_idle2;
-                    pl->socket.idle_flag = 1;
-                    new_draw_info(NDI_UNIQUE | NDI_RED, 0, pl->ob, "8 minutes idle warning! Server will disconnect you in 2 minutes.");
-                }
-                else if (pl->socket.login_count < ROUND_TAG && !QUERY_FLAG(pl->ob, FLAG_WIZ))
-                {
-                    new_draw_info(NDI_UNIQUE | NDI_RED, 0, pl->ob, "Max idle time reached! Server is closing connection.");
-                    pl->socket.login_count = ROUND_TAG + pticks_player_idle1;
-                    pl->socket.status = Ns_Zombie; /* we hold the socket open for a *bit* */
-                    pl->socket.idle_flag = 1;
-                    pl = pl->next;
-                    continue;
+                    if (!pl->socket.idle_flag &&
+                        pl->socket.login_count < ROUND_TAG)
+                    {
+                        pl->socket.login_count = ROUND_TAG + pticks_player_idle2;
+                        pl->socket.idle_flag = 1;
+                        new_draw_info(NDI_UNIQUE | NDI_RED, 0, pl->ob, "8 minutes idle warning! Server will disconnect you in 2 minutes.");
+                    }
+                    else if (pl->socket.login_count < ROUND_TAG)
+                    {
+                        new_draw_info(NDI_UNIQUE | NDI_RED, 0, pl->ob, "Max idle time reached! Server is closing connection.");
+                        pl->socket.login_count = ROUND_TAG + pticks_player_idle1;
+                        pl->socket.status = Ns_Zombie; /* we hold the socket open for a *bit* */
+                        pl->socket.idle_flag = 1;
+                        pl = pl->next;
+
+                        continue;
+                    }
                 }
             }
             else
@@ -702,6 +707,7 @@ void doeric_server(int update, struct timeval *timeout)
                     pl->socket.status = Ns_Dead;
                     remove_ns_dead_player(pl);  /* or player has left game */
                     pl = npl;
+
                     continue;
                 }
             }

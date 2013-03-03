@@ -359,22 +359,24 @@ END_TEST
  */
 START_TEST (buttons_creator_with_mover)
 {
-    shstr *path = add_string("/dev/unit_tests/test_creator");
+    shstr     *path = add_string("/dev/unit_tests/test_creator");
     mapstruct *map = ready_map_name(path, path, MAP_STATUS_MULTI, NULL);
-
-    object *lever = locate_beacon(find_string("lever"))->env;
-    object *beacon = locate_beacon(find_string("beacon_square"));
-
+    object    *lever = locate_beacon(find_string("lever"))->env,
+              *beacon = locate_beacon(find_string("beacon_square")),
+              *mover;
+    MapStruct *msp = GET_MAP_SPACE_PTR(beacon->map, beacon->x, beacon->y);
 
     process_events();
     process_events(); /* Bug 000482 crashes here */
-
     manual_apply(lever, lever, 0);
 
-    object *mover = NULL;
-    for(mover = GET_BOTTOM_MAP_OB(beacon); mover; mover = mover->above)
-        if(mover->type == PLAYERMOVER)
+    for(mover = GET_MAP_SPACE_FIRST(msp); mover; mover = mover->above)
+    {
+        if (mover->type == PLAYERMOVER)
+        {
             break;
+        }
+    }
 
     fail_if(mover == NULL, "No mover created");
 }

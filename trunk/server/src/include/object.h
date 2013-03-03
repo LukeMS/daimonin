@@ -35,6 +35,33 @@
 
 #define TAG(_O_) (((_O_)) ? (_O_)->count : 0)
 
+/* There are technically three possible types of invisibility: system, gmaster,
+ * and normal.
+ *
+ * In fact, system is a very special case. This is tested by
+ * querying FLAG_SYS_OBJECT on the object. System objects are used by the
+ * server to maintain the gameworld. Players *never* interact with them
+ * directly (the exception here is that gmaster_wiz players can see/examine/
+ * drop system objects in their inv/below).
+ *
+ * Gmaster is an invisibility available to GMs and SAs only. *Only* SAs can see
+ * such invisibility.
+ *
+ * Normal is the sort of everyday invisibility you get through magic and so on.
+ * Any object can have this sort of invisibility (it can be combined with
+ * gmaster). Equally anyone can acquire the ability to see through it (and
+ * gmaster_wizs always can). */
+#define IS_GMASTER_INVIS_TO(_WHO_, _WHOM_) \
+    (IS_GMASTER_INVIS((_WHO_)) && \
+     ((_WHOM_)->type != PLAYER || \
+      !CONTR((_WHOM_)) || \
+      !(CONTR((_WHOM_))->gmaster_mode & GMASTER_MODE_SA)))
+
+#define IS_NORMAL_INVIS_TO(_WHAT_, _WHO_) \
+    (!IS_GMASTER_WIZ((_WHO_)) && \
+     QUERY_FLAG((_WHAT_), FLAG_IS_INVISIBLE) && \
+     !QUERY_FLAG((_WHO_), FLAG_SEE_INVISIBLE))
+
 /* move_apply() function call flags */
 #define MOVE_APPLY_DEFAULT  0
 #define MOVE_APPLY_WALK_ON  1
@@ -244,11 +271,6 @@ typedef struct obj
 #endif
 
 #define CONTR(ob) ((player *)((ob)->custom_attrset))
-
-/* This returns TRUE if the object is somethign that
- * should be displayed in the look window
- */
-#define LOOK_OBJ(_ob) (!IS_SYS_INVISIBLE(_ob) && _ob->type!=PLAYER)
 
 /* Used by update_object to know if the object being passed is
  * being added or removed.

@@ -36,10 +36,10 @@
 /* definition flags of the instance - stored in the player normally */
 #define INSTANCE_FLAG_NO_REENTER 1
 
-#define MAX_ARCH_LAYERS 7   /* thats our 7 logical layers.
+#define NROF_SLAYERS 7   /* thats our 7 logical layers.
                                * ! for first and last object, we will use 2 more fake layers!
                                */
-#define MAP_LAYERS      4   /* thats our 4 physical layers we really show */
+#define NROF_CLAYERS      4   /* thats our 4 physical layers we really show */
 
 /* Default values for a few non-zero attributes. */
 #define MAP_DEFAULT_WIDTH      24
@@ -118,44 +118,37 @@
 #define MAP_SAVING      4
 
 /* new macros for map layer system */
-#define GET_MAP_SPACE_PTR(M_,X_,Y_)     (&((M_)->spaces[(X_) + (M_)->width * (Y_)]))
-
-#define GET_MAP_SPACE_FIRST(M_)         ( (M_)->first )
-#define GET_MAP_SPACE_LAST(M_)          ( (M_)->last )
-#define GET_MAP_SPACE_LAYER(M_,L_)      ( (M_)->layer[L_] )
-#define GET_MAP_SPACE_CL(M_,L_)         ( (M_)->client_mlayer[L_]==-1?NULL:(M_)->layer[(M_)->client_mlayer[L_]])
-#define GET_MAP_SPACE_CL_INV(M_,L_)     ( (M_)->client_mlayer_inv[L_]==-1?NULL:(M_)->layer[(M_)->client_mlayer_inv[L_]])
-
-#define SET_MAP_SPACE_FIRST(M_,O_)          ( (M_)->first = (O_ ))
-#define SET_MAP_SPACE_LAST(M_,O_)           ( (M_)->last = (O_))
-#define SET_MAP_SPACE_LAYER(M_,L_,O_)       ( (M_)->layer[L_] = (O_))
-#define SET_MAP_SPACE_CLID(M_,L_,O_)        ( (M_)->client_mlayer[L_] = (sint8) (O_))
-#define SET_MAP_SPACE_CLID_INV(M_,L_,O_)    ( (M_)->client_mlayer_inv[L_] = (sint8) (O_))
-
-#define GET_MAP_MOVE_FLAGS(M,X,Y)       ( (M)->spaces[(X) + (M)->width * (Y)].move_flags )
-#define SET_MAP_MOVE_FLAGS(M,X,Y,C)     ( (M)->spaces[(X) + (M)->width * (Y)].move_flags = C )
-#define GET_MAP_FLAGS(M,X,Y)            ( (M)->spaces[(X) + (M)->width * (Y)].flags )
-#define SET_MAP_FLAGS(M,X,Y,C)          ( (M)->spaces[(X) + (M)->width * (Y)].flags = C )
-#define GET_MAP_LIGHT(M,X,Y)            ( (M)->spaces[(X) + (M)->width * (Y)].light )
-#define SET_MAP_LIGHT(M,X,Y,L)          ( (M)->spaces[(X) + (M)->width * (Y)].light = (sint8) L )
-#define GET_MAP_LIGHT_VALUE(M,X,Y)      ( (M)->spaces[(X) + (M)->width * (Y)].light_value )
-#define SET_MAP_FACE_MASK(M,X,Y,L)      ( (M)->spaces[(X) + (M)->width * (Y)].mask_face = L )
-#define GET_MAP_FLOOR_FLAGS(M,X,Y)      ( (M)->spaces[(X) + (M)->width * (Y)].floor_flags )
-
-#define GET_MAP_OB(M,X,Y)                   ( (M)->spaces[(X) + (M)->width * (Y)].first )
-#define GET_MAP_OB_LAST(M,X,Y)              ( (M)->spaces[(X) + (M)->width * (Y)].last )
-#define GET_MAP_OB_LAYER(_M_,_X_,_Y_,_Z_)   ( (_M_)->spaces[(_X_) + (_M_)->width * (_Y_)].layer[_Z_] )
-#define GET_BOTTOM_MAP_OB(O)             ( (O)->map ? GET_MAP_OB((O)->map, (O)->x, (O)->y) : NULL)
-
-#define SET_MAP_OB(M,X,Y,tmp)                   ( (M)->spaces[(X) + (M)->width * (Y)].first = (tmp) )
-#define SET_MAP_OB_LAST(M,X,Y,tmp)              ( (M)->spaces[(X) + (M)->width * (Y)].last = (tmp) )
-#define SET_MAP_OB_LAYER(_M_,_X_,_Y_,_Z_,tmp)   ( (_M_)->spaces[(_X_) + (_M_)->width * (_Y_)].layer[_Z_] = (tmp) )
-
-#define SET_MAP_DAMAGE(M,X,Y,tmp)       ( (M)->spaces[(X) + (M)->width * (Y)].last_damage = (uint16) (tmp) )
-#define GET_MAP_DAMAGE(M,X,Y)           ( (M)->spaces[(X) + (M)->width * (Y)].last_damage )
-
-#define SET_MAP_RTAG(M,X,Y,tmp)         ( (M)->spaces[(X) + (M)->width * (Y)].round_tag = (uint32) (tmp) )
-#define GET_MAP_RTAG(M,X,Y)             ( (M)->spaces[(X) + (M)->width * (Y)].round_tag )
+#define GET_MAP_SPACE_PTR(_M_, _X_, _Y_)              (&((_M_)->spaces[(_X_) + (_M_)->width * (_Y_)]))
+#define GET_MAP_SPACE_FIRST(_M_)                      ((_M_)->first)
+#define GET_MAP_SPACE_LAST(_M_)                       ((_M_)->last)
+#define SET_MAP_SPACE_FIRST(_M_, _O_)                 ((_M_)->first = (_O_))
+#define SET_MAP_SPACE_LAST(_M_, _O_)                  ((_M_)->last = (_O_))
+#define GET_MAP_SPACE_VISIBLE_SLAYER(_M_, _L_)        ((_M_)->visible_slayer[(_L_)])
+#define GET_MAP_SPACE_INVISIBLE_SLAYER(_M_, _L_)      ((_M_)->invisible_slayer[(_L_)])
+#define GET_MAP_SPACE_GMASTER_SLAYER(_M_, _L_)        ((_M_)->gmaster_slayer[(_L_)])
+#define GET_MAP_SPACE_VISIBLE_CLAYER(_M_, _L_)        ((_M_)->visible_clayer[(_L_)])
+#define GET_MAP_SPACE_INVISIBLE_CLAYER(_M_, _L_)      ((_M_)->invisible_clayer[(_L_)])
+#define GET_MAP_SPACE_GMASTER_CLAYER(_M_, _L_)        ((_M_)->gmaster_clayer[(_L_)])
+#define SET_MAP_SPACE_VISIBLE_SLAYER(_M_, _L_, _O_)   ((_M_)->visible_slayer[(_L_)] = (_O_))
+#define SET_MAP_SPACE_INVISIBLE_SLAYER(_M_, _L_, _O_) ((_M_)->invisible_slayer[(_L_)] = (_O_))
+#define SET_MAP_SPACE_GMASTER_SLAYER(_M_, _L_, _O_)   ((_M_)->gmaster_slayer[(_L_)] = (_O_))
+#define SET_MAP_SPACE_VISIBLE_CLAYER(_M_, _L_, _O_)   ((_M_)->visible_clayer[(_L_)] = (_O_))
+#define SET_MAP_SPACE_INVISIBLE_CLAYER(_M_, _L_, _O_) ((_M_)->invisible_clayer[(_L_)] = (_O_))
+#define SET_MAP_SPACE_GMASTER_CLAYER(_M_, _L_, _O_)   ((_M_)->gmaster_clayer[(_L_)] = (_O_))
+#define GET_MAP_MOVE_FLAGS(_M_, _X_, _Y_)             ((_M_)->spaces[(_X_) + (_M_)->width * (_Y_)].move_flags)
+#define SET_MAP_MOVE_FLAGS(_M_, _X_, _Y_, _V_)        ((_M_)->spaces[(_X_) + (_M_)->width * (_Y_)].move_flags = (_V_))
+#define GET_MAP_FLAGS(_M_, _X_, _Y_)                  ((_M_)->spaces[(_X_) + (_M_)->width * (_Y_)].flags)
+#define SET_MAP_FLAGS(_M_, _X_, _Y_, _V_)             ((_M_)->spaces[(_X_) + (_M_)->width * (_Y_)].flags = (_V_))
+#define GET_MAP_LIGHT(_M_, _X_, _Y_)                  ((_M_)->spaces[(_X_) + (_M_)->width * (_Y_)].light)
+#define SET_MAP_LIGHT(_M_, _X_, _Y_, _V_)             ((_M_)->spaces[(_X_) + (_M_)->width * (_Y_)].light = (sint8)(_V_))
+#define GET_MAP_LIGHT_VALUE(_M_, _X_, _Y_)            ((_M_)->spaces[(_X_) + (_M_)->width * (_Y_)].light_value)
+#define SET_MAP_FACE_MASK(_M_, _X_, _Y_, _V_)         ((_M_)->spaces[(_X_) + (_M_)->width * (_Y_)].mask_face = (_V_))
+#define GET_MAP_FLOOR_FLAGS(_M_, _X_, _Y_)            ((_M_)->spaces[(_X_) + (_M_)->width * (_Y_)].floor_flags)
+#define GET_MAP_OB(_M_, _X_, _Y_)                     ((_M_)->spaces[(_X_) + (_M_)->width * (_Y_)].first)
+#define SET_MAP_DAMAGE(_M_, _X_, _Y_, tmp)            ((_M_)->spaces[(_X_) + (_M_)->width * (_Y_)].last_damage = (uint16)(tmp))
+#define GET_MAP_DAMAGE(_M_, _X_, _Y_)                 ((_M_)->spaces[(_X_) + (_M_)->width * (_Y_)].last_damage)
+#define SET_MAP_RTAG(_M_, _X_, _Y_, tmp)              ((_M_)->spaces[(_X_) + (_M_)->width * (_Y_)].round_tag = (uint32)(tmp))
+#define GET_MAP_RTAG(_M_, _X_, _Y_)                   ((_M_)->spaces[(_X_) + (_M_)->width * (_Y_)].round_tag)
 
 #define MAP_SET_WHEN_SWAP(_M_, _T_) \
     MAP_WHEN_SWAP((_M_)) = (ROUND_TAG - ROUND_TAG % \
@@ -279,10 +272,10 @@
 typedef struct MapCell_struct
 {
     int     count;
-    short   faces[MAP_LAYERS];
-    uint8   fflag[MAP_LAYERS];
-    uint8   ff_probe[MAP_LAYERS];
-    char    quick_pos[MAP_LAYERS];
+    short   faces[NROF_CLAYERS];
+    uint8   fflag[NROF_CLAYERS];
+    uint8   ff_probe[NROF_CLAYERS];
+    char    quick_pos[NROF_CLAYERS];
 } MapCell;
 
 struct Map
@@ -296,11 +289,21 @@ struct Map
 /* This represents a single atomic map tile (aka square, hex etc) */
 typedef struct MapSpace_s
 {
-    object             *first;                          /* start of the objects in this map tile */
-    object             *layer[MAX_ARCH_LAYERS*2];       /* array of visible layer objects + for invisible (*2)*/
-    object             *last;                           /* last object in this list */
-    struct MapSpace_s  *prev_light;                     /* used to create chained light source list.*/
-    struct MapSpace_s  *next_light;
+    struct MapSpace_s  *prev_light;                     // used to create chained light source list
+    struct MapSpace_s  *next_light;                     // used to create chained light source list
+
+    /* XXX: To my mind first and last are backwards. first has ->below = NULL
+     * and last has ->above = NULL.
+     *
+     * -- Smacky 20130225 */
+    object             *first;                          // first object in this square
+    object             *last;                           // last object in this square
+    object             *visible_slayer[NROF_SLAYERS];   // array of visible slayer objects
+    object             *invisible_slayer[NROF_SLAYERS]; // array of invisible slayer objects
+    object             *gmaster_slayer[NROF_SLAYERS];   // array of gmaster slayer objects
+    object             *visible_clayer[NROF_CLAYERS];   // array of visible clayer objects
+    object             *invisible_clayer[NROF_CLAYERS]; // array of invisible clayer objects
+    object             *gmaster_clayer[NROF_CLAYERS];   // array of gmaster clayer objects
 
     uint32              round_tag;                      /* tag for last_damage */
     sint32              light_source;                   /* light source counter - as higher as brighter light source here */
@@ -319,8 +322,6 @@ typedef struct MapSpace_s
     uint16              last_damage;                    /* last_damage tmp backbuffer */
     uint16              move_flags;                     /* terrain type flags (water, underwater,...) */
     sint16              mask;                           /* picture/object ID for the floor mask of this tile */
-    sint8               client_mlayer[MAP_LAYERS];      /* index for layer[] - this will send to player */
-    sint8               client_mlayer_inv[MAP_LAYERS];  /* same for invisible objects */
     uint8               light;                          /* How much light this space provides */
     uint8               floor_flags;                    /* floor data: flags */
 } MapSpace;

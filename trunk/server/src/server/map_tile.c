@@ -26,6 +26,87 @@
 #include <global.h>
 #include <limits.h>
 
+/* Sets the slayers for msp according to various attributes of op. If insert is
+ * non-zero, this means op has been or is being newly (re)inserted so will
+ * become the new head of the relevant slayers. Otherwise, op has been or is
+ * being removed from the square so if it was the head of a slayer that slayer
+ * will be reassigned to the next appropriate object on the square (or NULL).
+ *
+ * Each square has three slayer arrays: visible, invisible, and gmaster.
+ * Visible is for visible objects only. Invisible is for visible and
+ * invisible objects. Gmaster is for visible, invisible, and gmaster_invis
+ * objects. This means gmaster_layer is the true representation of the head of
+ * the list of objects in a square. */
+void map_set_slayers(MapSpace *msp, object *op, uint8 insert)
+{
+    if (!insert)
+    {
+        object *this;
+
+        if (!IS_GMASTER_INVIS(op))
+        {
+            if (!QUERY_FLAG(op, FLAG_IS_INVISIBLE))
+            {
+                if (GET_MAP_SPACE_VISIBLE_SLAYER(msp, op->layer - 1) == op)
+                {
+                    for (this = op->above; this; this = this->above)
+                    {
+                        if (this->layer == op->layer &&
+                            !IS_GMASTER_INVIS(this) &&
+                            !QUERY_FLAG(this, FLAG_IS_INVISIBLE))
+                        {
+                            break;
+                        }
+                    }
+
+                    SET_MAP_SPACE_VISIBLE_SLAYER(msp, op->layer - 1, this);
+                }
+            }
+
+            if (GET_MAP_SPACE_INVISIBLE_SLAYER(msp, op->layer - 1) == op)
+            {
+                for (this = op->above; this; this = this->above)
+                {
+                    if (this->layer == op->layer &&
+                        !IS_GMASTER_INVIS(this))
+                    {
+                        break;
+                    }
+                }
+
+                SET_MAP_SPACE_INVISIBLE_SLAYER(msp, op->layer - 1, this);
+            }
+        }
+
+        if (GET_MAP_SPACE_GMASTER_SLAYER(msp, op->layer - 1) == op)
+        {
+            for (this = op->above; this; this = this->above)
+            {
+                if (this->layer == op->layer &&
+                    !IS_GMASTER_INVIS(this))
+                {
+                    break;
+                }
+            }
+
+            SET_MAP_SPACE_GMASTER_SLAYER(msp, op->layer - 1, this);
+        }
+    }
+    else
+    {
+        if (!IS_GMASTER_INVIS(op))
+        {
+            if (!QUERY_FLAG(op, FLAG_IS_INVISIBLE))
+            {
+                SET_MAP_SPACE_VISIBLE_SLAYER(msp, op->layer - 1, op);
+            }
+
+            SET_MAP_SPACE_INVISIBLE_SLAYER(msp, op->layer - 1, op);
+        }
+
+        SET_MAP_SPACE_GMASTER_SLAYER(msp, op->layer - 1, op);
+    }
+}
 
 /*
 * This function updates various attributes about a specific space
@@ -35,21 +116,22 @@
 */
 void update_position(mapstruct *m, MapSpace *mspace, int x, int y)
 {
-    object     *tmp;
-    MapSpace   *mp;
-    int         i, ii, flags;
-    int         oldflags;
+    object   *tmp;
+    MapSpace *msp;
+    int       flags,
+              oldflags;
+    uint8     i;
 
-    if(mspace)
+    if (mspace)
     {
-        mp = mspace;
+        msp = mspace;
         flags = oldflags = (P_NO_ERROR | P_NEED_UPDATE | P_FLAGS_UPDATE);
     }
     else
     {
         if (!((oldflags = GET_MAP_FLAGS(m, x, y)) & (P_NEED_UPDATE | P_FLAGS_UPDATE)))
             LOG(llevDebug, "DBUG: update_position called with P_NEED_UPDATE|P_FLAGS_UPDATE not set: %s (%d, %d)\n", m->path, x, y);
-        mp = &m->spaces[x + m->width * y];
+        msp = GET_MAP_SPACE_PTR(m, x, y);
         flags = oldflags & P_NEED_UPDATE; /* save our update flag */
     }
 
@@ -63,15 +145,15 @@ void update_position(mapstruct *m, MapSpace *mspace, int x, int y)
         /*LOG(llevDebug,"flags:: %x (%d, %d) %x (NU:%x NE:%x)\n", oldflags, x, y,P_NEED_UPDATE|P_NO_ERROR,P_NEED_UPDATE,P_NO_ERROR);*/
 
         /* This is a key function and highly often called - every saved tick is good. */
-        if(mp->floor_flags & MAP_FLOOR_FLAG_NO_PASS)
+        if(msp->floor_flags & MAP_FLOOR_FLAG_NO_PASS)
             flags |= P_NO_PASS;
-        if(mp->floor_flags & MAP_FLOOR_FLAG_PLAYER_ONLY)
+        if(msp->floor_flags & MAP_FLOOR_FLAG_PLAYER_ONLY)
             flags |= P_PLAYER_ONLY;
 
-        mp->move_flags |= mp->floor_terrain;
-        /*mp->light_value += mp->floor_light;*/
+        msp->move_flags |= msp->floor_terrain;
+        /*msp->light_value += msp->floor_light;*/
 
-        for (tmp =mp->first; tmp; tmp = tmp->above)
+        for (tmp =msp->first; tmp; tmp = tmp->above)
         {
             /* should be floor only? let it in for now ... mt 10.2005 */
             if (QUERY_FLAG(tmp, FLAG_PLAYER_ONLY))
@@ -151,7 +233,7 @@ void update_position(mapstruct *m, MapSpace *mspace, int x, int y)
             LOG(llevDebug, "DBUG: update_position: updated flags do not match old flags: %s (%d,%d) old:%x != %x\n",
             m->path, x, y, (oldflags & ~P_NEED_UPDATE), flags);
 
-        mp->flags = flags;
+        msp->flags = flags;
     } /* end flag update */
 
     /* check we must rebuild the map layers for client view */
@@ -162,76 +244,125 @@ void update_position(mapstruct *m, MapSpace *mspace, int x, int y)
     LOG(llevDebug, "UP - LAYER: %d,%d\n", x, y);
 #endif
 
-    /* NOTE: The whole mlayer system will become outdated with beta 5 (smooth
-    * scrolling). I will install for that client type a dynamic map protocol
-    */
-    mp->client_mlayer[0] = 0; /* ALWAYS is client layer 0 (cl0) a floor. force it */
-    mp->client_mlayer_inv[0] = 0;
-
-    /* disabled my floor/mask node patch
-    if (mp->mask)
+    /* The server knows of 8 layers of objects. For our purposes here we can
+     * discount the first of these (layer 0) as that is a special system object
+     * layer.
+     *
+     * So we are left with 7 which can be described as: floor (1), fmask (2),
+     * item (3 and 4), feature or mob (5), player (6), effect (7).
+     *
+     * Objects in these 7 have already been appointed to one or more of the map
+     * space's *_layer[] (visible, invisible, gmaster) when the object was
+     * placed on the map (see object.c:insert_ob_in_map()). Here we use those
+     * arrays to build the *_clayer[] which contain data sent to the client for
+     * map drawing.
+     *
+     * There are only 4 clayers: floor (0) which takes only the floor layer,
+     * fmask (1) which takes only the fmask layer, thing under (2) which takes
+     * the second object from one of layers 6 to 3 in that order, and thing
+     * over (3) which takes EITHER the effect layer OR the first object from
+     * one of layers 6 to 3 in that order.
+     *
+     * The relationship between thing over and thing under may not be entirely
+     * clear from that. Note then that thing over is always from one or more
+     * layers above thing under and that we calculate thing over FIRST then
+     * thing under from what (if anything) is left. */
+    /* First clear out all 3 * 4 clayers. */
+    for (i = 0; i < NROF_CLAYERS; i++)
     {
-    mp->client_mlayer[1] = 1;
-    mp->client_mlayer_inv[1] = 1;
+        SET_MAP_SPACE_VISIBLE_CLAYER(msp, i, NULL);
+        SET_MAP_SPACE_INVISIBLE_CLAYER(msp, i, NULL);
+        SET_MAP_SPACE_GMASTER_CLAYER(msp, i, NULL);
     }
-    else
-    */
-    mp->client_mlayer_inv[1] = mp->client_mlayer[1] = -1;
 
-    /* and 2 layers for moving stuff */
-    mp->client_mlayer[2] = mp->client_mlayer[3] = -1;
-    mp->client_mlayer_inv[2] = mp->client_mlayer_inv[3] = -1;
-
-    /* THE INV FLAG CHECK IS FIRST IMPLEMENTATION AND REALLY NOT THE FASTEST WAY -
-    * WE CAN AVOID IT COMPLETE BY USING A 2nd INV QUEUE
-    */
-
-    /* now we first look for a object for cl3 */
-    for (i = 6; i > 1; i--)
+    /* If there is a system object on the square, set it as clayer 1. This will
+     * be seen by gmaster_matrix players instead of an fmask. */
+    if ((tmp = GET_MAP_SPACE_FIRST(msp)) &&
+        tmp->layer == 0)
     {
-        if (mp->layer[i])
+        SET_MAP_SPACE_VISIBLE_CLAYER(msp, 1, tmp);
+        SET_MAP_SPACE_INVISIBLE_CLAYER(msp, 1, tmp);
+        SET_MAP_SPACE_GMASTER_CLAYER(msp, 1, tmp);
+    }
+
+    /* Set visible clayer 3. */
+    for (i = NROF_SLAYERS - 1; i >= 3; i--)
+    {
+        if ((tmp = GET_MAP_SPACE_VISIBLE_SLAYER(msp, i)))
         {
-            mp->client_mlayer_inv[3] = mp->client_mlayer[3] = i; /* the last*/
+            SET_MAP_SPACE_VISIBLE_CLAYER(msp, 3, tmp);
             i--;
+
             break;
         }
     }
 
-    /* inv LAYER: perhaps we have something invisible before it*/
-    for (ii = 6 + 7; ii > i + 6; ii--) /* we skip layer 7 - no invisible stuff on layer 7 */
+    /* Set visible clayer 3. */
+    while (i >= 2)
     {
-        if (mp->layer[ii])
+        if ((tmp = GET_MAP_SPACE_VISIBLE_SLAYER(msp, i)))
         {
-            mp->client_mlayer_inv[2] = mp->client_mlayer_inv[3];
-            mp->client_mlayer_inv[3] = ii; /* the last*/
+            SET_MAP_SPACE_VISIBLE_CLAYER(msp, 2, tmp);
+
             break;
         }
+
+        i--;
     }
 
-    /* and a last one for cl2 */
-    for (; i > 1; i--)
+    /* Set invisible clayer 3. */
+    for (i = NROF_SLAYERS - 1; i >= 3; i--)
     {
-        if (mp->layer[i])
+        if ((tmp = GET_MAP_SPACE_INVISIBLE_SLAYER(msp, i)))
         {
-            mp->client_mlayer[2] = mp->client_mlayer_inv[2] = i; /* the last*/
+            SET_MAP_SPACE_INVISIBLE_CLAYER(msp, 3, tmp);
+            i--;
+
             break;
         }
     }
 
-    /* in layer[2] we have now normal layer 3 or normal layer 2
-    * now seek a possible inv. object to substitute normal
-    */
-    for (ii--; ii > 8; ii--)
+    /* Set invisible clayer 2. */
+    while (i >= 2)
     {
-        if (mp->layer[ii])
+        if ((tmp = GET_MAP_SPACE_INVISIBLE_SLAYER(msp, i)))
         {
-            mp->client_mlayer_inv[2] = ii;
+            SET_MAP_SPACE_INVISIBLE_CLAYER(msp, 2, tmp);
+
+            break;
+        }
+
+        i--;
+    }
+
+    /* Set gmaster clayer 3. */
+    for (i = NROF_SLAYERS - 1; i >= 3; i--)
+    {
+        if ((tmp = GET_MAP_SPACE_GMASTER_SLAYER(msp, i)))
+        {
+            SET_MAP_SPACE_GMASTER_CLAYER(msp, 3, tmp);
+            i--;
+
             break;
         }
     }
 
-    /* clear out all need update flags */
-    SET_MAP_FLAGS(m, x, y, GET_MAP_FLAGS(m, x, y) & ~(P_NEED_UPDATE | P_FLAGS_UPDATE));
+    /* Set gmaster clayer 2. */
+    while (i >= 2)
+    {
+        if ((tmp = GET_MAP_SPACE_GMASTER_SLAYER(msp, i)))
+        {
+            SET_MAP_SPACE_GMASTER_CLAYER(msp, 2, tmp);
+
+            break;
+        }
+
+        i--;
+    }
+
+    /* Clear out all need update flags */
+    SET_MAP_FLAGS(m, x, y,
+                  (GET_MAP_FLAGS(m, x, y) & ~(P_NEED_UPDATE | P_FLAGS_UPDATE)));
 }
 
 /*

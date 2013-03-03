@@ -31,7 +31,7 @@ int player_save(object *op)
     FILE   *fp;
     char    filename[MEDIUM_BUF], tmpfilename[MAXPATHLEN], backupfile[MEDIUM_BUF]="";
     player *pl  = CONTR(op);
-    int     tmp, have_file = TRUE, i, wiz = QUERY_FLAG(op, FLAG_WIZ);
+    int     tmp, have_file = TRUE, i;
     object *force;
     int drain_level = 0;
     Account *ac;
@@ -98,7 +98,7 @@ int player_save(object *op)
         fprintf(fp, "mute %d\n", (int)(pl->mute_counter-pticks)); /* should be not THAT long */
 
     fprintf(fp, "stealth %d\nprivacy %d\np_ver %d\nlistening %d\npickup %d\nskill_group %d %d %d\n",
-                 pl->stealth, pl->privacy, pl->p_ver, pl->listening, pl->mode,
+                 pl->gmaster_stealth, pl->privacy, pl->p_ver, pl->listening, pl->mode,
                  pl->base_skill_group[0],pl->base_skill_group[1],pl->base_skill_group[2]);
 
     if (op->map != NULL)
@@ -158,12 +158,7 @@ int player_save(object *op)
     fprintf(fp, "endplst\n");
 
     SET_FLAG(op, FLAG_NO_FIX_PLAYER);
-    CLEAR_FLAG(op, FLAG_WIZ);
-
     save_object(fp, op, 3); /* don't check and don't remove */
-
-    if (wiz)
-        SET_FLAG(op, FLAG_WIZ);
     CLEAR_FLAG(op, FLAG_NO_FIX_PLAYER);
 
     if (fclose(fp) == EOF)
@@ -457,7 +452,7 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
         else if (!strcmp(buf, "state"))
             pl->state = value; /* be sure to do all other state flag settings after this load */
         else if (!strcmp(buf, "stealth"))
-            pl->stealth = value;
+            pl->gmaster_stealth = value;
         else if (!strcmp(buf, "privacy"))
             pl->privacy = value;
         else if (!strcmp(buf, "p_ver"))
@@ -963,7 +958,6 @@ addme_login_msg player_create(NewSocket *ns, player **pl_ret, char *name, int ra
 
     /* some more sanity settings */
     SET_ANIMATION(op, 4 * (NUM_ANIMATIONS(op) / NUM_FACINGS(op))); /* So player faces south */
-    CLEAR_FLAG(op, FLAG_WIZ);
     FREE_AND_CLEAR_HASH2(op->msg);
     op->carrying = sum_weight(op);
 

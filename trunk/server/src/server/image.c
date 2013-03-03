@@ -452,15 +452,13 @@ int ReadBmapNames()
     }
 
     nrofpixmaps++;
-
     qsort(xbm, nrofbmaps, sizeof(struct bmappair), (void *) (int (*) ()) compar);
-
     blank_face = &new_faces[FindFace(BLANK_FACE_NAME, 0)];
     blank_look.face = blank_face;
     blank_look.flags = 0;
-
     next_item_face = &new_faces[FindFace(NEXT_ITEM_FACE_NAME, 0)];
     prev_item_face = &new_faces[FindFace(PREVIOUS_ITEM_FACE_NAME, 0)];
+    no_floor_face = &new_faces[FindFace(NO_FLOOR_FACE_NAME, 0)];
 
     return nrofpixmaps;
 }

@@ -36,8 +36,11 @@ object * find_best_object_match(object *pl, char *params)
 
     for (tmp = pl->inv; tmp; tmp = tmp->below)
     {
-        if (IS_SYS_INVISIBLE(tmp))
+        if (QUERY_FLAG(tmp, FLAG_SYS_OBJECT))
+        {
             continue;
+        }
+
         if ((tmpmatch = item_matched_string(pl, tmp, params)) > match_val)
         {
             match_val = tmpmatch;
@@ -219,7 +222,7 @@ int command_dropall(object *op, char *params)
 /*             && curinv->type != KEY*/
              && curinv->type != SPECIAL_KEY
              && (curinv->type != TYPE_PEARL && curinv->type != GEM && curinv->type != TYPE_JEWEL && curinv->type != TYPE_NUGGET)
-             && !IS_SYS_INVISIBLE(curinv)
+             && !QUERY_FLAG(curinv, FLAG_SYS_OBJECT)
              && (curinv->type != CONTAINER || (op->type == PLAYER && CONTR(op)->container != curinv)))
             {
                 if (QUERY_FLAG(op, FLAG_STARTEQUIP))
@@ -313,8 +316,11 @@ int command_examine(object *op, char *params)
     if (!params)
     {
         while ((tmp = op->below) &&
-               !LOOK_OBJ(tmp))
+               !QUERY_FLAG(tmp, FLAG_SYS_OBJECT) &&
+               !tmp->type != PLAYER)
+       {
             tmp = tmp->below;
+       }
 
         if (tmp)
             examine(op, tmp, TRUE);
@@ -347,8 +353,11 @@ int command_drop(object *op, char *params)
     {
         next = tmp->below;
 
-        if (QUERY_FLAG(tmp, FLAG_NO_DROP) || IS_SYS_INVISIBLE(tmp))
+        if (QUERY_FLAG(tmp, FLAG_NO_DROP) ||
+            QUERY_FLAG(tmp, FLAG_SYS_OBJECT))
+        {
             continue;
+        }
 
         if (item_matched_string(op, tmp, params))
         {
@@ -382,8 +391,11 @@ static object * find_marked_object_rec(object *op, object **marked, uint32 *mark
      */
     for (tmp = op->inv; tmp; tmp = tmp->below)
     {
-        if (IS_SYS_INVISIBLE(tmp))
+        if (QUERY_FLAG(tmp, FLAG_SYS_OBJECT))
+        {
             continue;
+        }
+
         if (tmp == *marked)
         {
             if (tmp->count == *marked_count)
@@ -662,8 +674,12 @@ char *examine(object *op, object *tmp, int flag)
     *buf_out='\0';
     if(op)
     {
-        if(trigger_object_plugin_event(EVENT_EXAMINE,tmp,op,NULL,NULL,0,0,0,0)  && !QUERY_FLAG(op, FLAG_WIZ))
+        if (trigger_object_plugin_event(EVENT_EXAMINE, tmp, op, NULL, NULL, 0,
+                                        0, 0, 0) &&
+             !IS_GMASTER_WIZ(op))
+        {
             return NULL;
+        }
     }
 
     /* Only quetzals can see the resistances on flesh. To realize
@@ -956,8 +972,11 @@ char *examine(object *op, object *tmp, int flag)
         }
         else
         {
+            MapSpace *msp;
             object *floor;
-            dirty_little_jump1 : floor = GET_MAP_OB_LAYER(op->map, op->x, op->y, 0);
+            dirty_little_jump1 :
+            msp = GET_MAP_SPACE_PTR(op->map, op->x, op->y);
+            floor = GET_MAP_SPACE_GMASTER_SLAYER(msp, 0);
             if (floor && floor->type == SHOP_FLOOR && tmp->type != MONEY)
             {/* disabled CHA effect for b4
 				sprintf(buf, "This shop will pay you %s (%0.1f%%).",
@@ -1044,7 +1063,7 @@ char *examine(object *op, object *tmp, int flag)
             tmp->type == GRAVESTONE)
             manual_apply(op, tmp, 0);
 
-        if (QUERY_FLAG(op, FLAG_WIZ))
+        if (IS_GMASTER_WIZ(op))
         {
             dump_object(tmp);
             new_draw_info(NDI_UNIQUE, 0, op, "%s", errmsg);
@@ -1073,9 +1092,16 @@ void inventory(object *op, object *inv)
 
     while (tmp)
     {
-        if ((!IS_SYS_INVISIBLE(tmp) && (inv == NULL || inv->type == CONTAINER || QUERY_FLAG(tmp, FLAG_APPLIED)))
-         || (!op || QUERY_FLAG(op, FLAG_WIZ)))
+        if ((!QUERY_FLAG(tmp, FLAG_SYS_OBJECT) &&
+             (inv == NULL ||
+              inv->type == CONTAINER ||
+              QUERY_FLAG(tmp, FLAG_APPLIED))) ||
+            (!op ||
+             IS_GMASTER_WIZ(op)))
+        {
             items++;
+        }
+
         tmp = tmp->below;
     }
     if (inv == NULL)
@@ -1103,20 +1129,28 @@ void inventory(object *op, object *inv)
             in = "  ";
         }
     }
-    for (tmp = inv ? inv->inv : op->inv; tmp; tmp = tmp->below)
+
+    if (op &&
+        IS_GMASTER_WIZ(op))
     {
-        if ((!op || !QUERY_FLAG(op, FLAG_WIZ))
-         && (IS_SYS_INVISIBLE(tmp) || (inv && inv->type != CONTAINER && !QUERY_FLAG(tmp, FLAG_APPLIED))))
-            continue;
-        if ((!op || QUERY_FLAG(op, FLAG_WIZ)))
-            new_draw_info(NDI_UNIQUE, 0, op, "%s- %-*.*s (%5d) %-8s", in, length, length, query_name(tmp),
-                                 tmp->count, query_weight(tmp));
-        else
-            new_draw_info(NDI_UNIQUE, 0, op, "%s- %-*.*s %-8s", in, length + 8, length + 8, query_name(tmp),
-                                 query_weight(tmp));
-    }
-    if (!inv && op)
-    {
-        new_draw_info(NDI_UNIQUE, 0, op, "%-*s %-8s", 41, "Total weight :", query_weight(op));
+        for (tmp = (inv) ? inv->inv : op->inv; tmp; tmp = tmp->below)
+        {
+            if ((QUERY_FLAG(tmp, FLAG_SYS_OBJECT) ||
+                 (inv &&
+                  inv->type != CONTAINER &&
+                  !QUERY_FLAG(tmp, FLAG_APPLIED))))
+            {
+                continue;
+            }
+
+            new_draw_info(NDI_UNIQUE, 0, op, "%s- %-*.*s (%5d) %-8s",
+                          in, length, length, query_name(tmp), tmp->count,
+                          query_weight(tmp));
+        }
+
+        if (!inv)
+        {
+            new_draw_info(NDI_UNIQUE, 0, op, "%-*s %-8s", 41, "Total weight :", query_weight(op));
+        }
     }
 }

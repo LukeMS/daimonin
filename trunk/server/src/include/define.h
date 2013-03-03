@@ -657,7 +657,7 @@
 #define FLAG_STAND_STILL    67 /* NPC will not (ever) move */
 #define FLAG_RANDOM_MOVE    68 /* NPC will move randomly */
 #define FLAG_ONLY_ATTACK    69 /* NPC will evaporate if there is no enemy */
-#define FLAG_WIZ            70 /* Object has special privilegies */
+#define FLAG_NO_SEND        70 // do not send normal ITEMX/Y or DELITEM cmds about this object to clients
 #define FLAG_STEALTH        71 /* Will wake monsters with less range */
 /* flag 72 is free */
 #define FLAG_IS_LINKED      73 /* The object is linked with other objects */
@@ -776,15 +776,8 @@
 #define FLAG_IS_EGOCLAN         138     /* item is bound to clan (if not set, always to player (not implemented) */
 #define FLAG_IS_EGOLOCK         139     /* the bound is permanent - can't be remove (not implemented) */
 
-/* FREE flag: 59, 109*/
-
-#define NUM_FLAGS       139 /* Should always be equal to the last defined flag */
-#define NUM_FLAGS_32    5   /* the number of uint32 we need to store all flags */
-
-/* macros for invisible test. the first tests only system objects */
-#define IS_SYS_INVISIBLE(__ob_)         QUERY_FLAG(__ob_, FLAG_SYS_OBJECT)
-#define IS_INVISIBLE(__ob_,__player_)   (QUERY_FLAG(__ob_, FLAG_SYS_OBJECT)||(QUERY_FLAG(__ob_, FLAG_IS_INVISIBLE) && !QUERY_FLAG(__player_, FLAG_SEE_INVISIBLE)))
-
+#define NUM_FLAGS    139                    // should always be equal to the last defined flag
+#define NUM_FLAGS_32 ((NUM_FLAGS / 32) + 1) // the number of uint32 we need to store all flags
 
 /* Values can go up to 127 before the size of the flags array in the
  * object structure needs to be enlarged.
@@ -848,9 +841,10 @@
 #define ST_DEAD                 0x80
 
 #ifdef SERVER_SEND_FACES
-#define BLANK_FACE_NAME "blank.111"
-#define NEXT_ITEM_FACE_NAME "next_item.101"
-#define PREVIOUS_ITEM_FACE_NAME "prev_item.101"
+# define BLANK_FACE_NAME         "blank.111"
+# define NEXT_ITEM_FACE_NAME     "next_item.101"
+# define PREVIOUS_ITEM_FACE_NAME "prev_item.101"
+# define NO_FLOOR_FACE_NAME      "no_floor.101"
 #endif
 
 /* Simple function we use below to keep adding to the same string

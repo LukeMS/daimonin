@@ -42,7 +42,10 @@ int attempt_steal(object *op, object *who)
      * they will try to prevent stealing if they can. Only unseen theives will
      * have much chance of success.
      */
-    if (op->type != PLAYER && QUERY_FLAG(op, FLAG_NO_STEAL))
+    if (IS_GMASTER_WIZ(op) ||
+        IS_GMASTER_INVIS_TO(who, op) ||
+        (op->type != PLAYER &&
+         QUERY_FLAG(op, FLAG_NO_STEAL)))
     {
         if (1)
         {
@@ -63,29 +66,21 @@ int attempt_steal(object *op, object *who)
     {
         next = tmp->below;
 
-        /* you can't steal worn items, starting items, wiz stuff,
+        /* you can't steal worn items, starting items,
          * innate abilities, or items w/o a type. Generally
          * speaking, the invisibility flag prevents experience or
          * abilities from being stolen since these types are currently
          * always invisible objects. I was implicit here so as to prevent
          * future possible problems. -b.t.
          * Flesh items generated w/ fix_flesh_item should have FLAG_NO_STEAL
-         * already  -b.t.
-         */
-
-        if (QUERY_FLAG(tmp, FLAG_WIZ)
-         || QUERY_FLAG(tmp, FLAG_APPLIED)
-         || !(tmp->type)
-         || tmp->type
-         == EXPERIENCE
-         || tmp->type
-         == ABILITY
-         || QUERY_FLAG(tmp,
-                       FLAG_STARTEQUIP)
-         || QUERY_FLAG(tmp,
-                       FLAG_NO_STEAL)
-         || IS_SYS_INVISIBLE(tmp))
+         * already  -b.t. */
+        if (QUERY_FLAG(tmp, FLAG_APPLIED) ||
+            QUERY_FLAG(tmp, FLAG_STARTEQUIP) ||
+            QUERY_FLAG(tmp, FLAG_NO_STEAL) ||
+            QUERY_FLAG(tmp, FLAG_SYS_OBJECT))
+        {
             continue;
+        }
 
         /* Okay, try stealing this item. Dependent on dexterity of thief,
          * skill level, see the adj_stealroll fctn for more detail. */
@@ -152,7 +147,8 @@ int attempt_steal(object *op, object *who)
 
             if (!success)
             {
-                if (QUERY_FLAG(who, FLAG_IS_INVISIBLE))
+                if (IS_NORMAL_INVIS_TO(who, op))
+                    
                 {
                     new_draw_info(NDI_UNIQUE, 0, op, "you feel itchy fingers getting at your pack.");
                 }
@@ -186,9 +182,13 @@ int adj_stealchance(object *op, object *victim, int roll)
     /* Easier to steal from sleeping beings, or if the thief is
      * unseen */
     if (QUERY_FLAG(victim, FLAG_SLEEP))
+    {
         roll = roll * 3;
-    else if (QUERY_FLAG(op, FLAG_IS_INVISIBLE))
+    }
+    else if (IS_NORMAL_INVIS_TO(op, victim))
+    {
         roll = roll * 2;
+    }
 
     /* check stealing 'encumberance'. Having this equipment applied makes
      * it quite a bit harder to steal. */
@@ -687,11 +687,11 @@ int do_skill_ident2(object *tmp, object *pl, int obj_class)
     int success = 0, chance;
     int skill_value = SK_level(pl) + get_weighted_skill_stats(pl);
 
-    if (!QUERY_FLAG(tmp, FLAG_IDENTIFIED)
-     && !QUERY_FLAG(tmp, FLAG_NO_SKILL_IDENT)
-     && need_identify(tmp)
-     && !IS_SYS_INVISIBLE(tmp)
-     && tmp->type == obj_class)
+    if (!QUERY_FLAG(tmp, FLAG_IDENTIFIED) &&
+        !QUERY_FLAG(tmp, FLAG_NO_SKILL_IDENT) &&
+        need_identify(tmp) &&
+        !QUERY_FLAG(tmp, FLAG_SYS_OBJECT) &&
+        tmp->type == obj_class)
     {
         chance = random_roll(3, 10) - 3 + random_roll(0, (tmp->magic ? tmp->magic * 5 : 1) - 1);
         if (skill_value >= chance)

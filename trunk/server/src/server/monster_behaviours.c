@@ -71,23 +71,14 @@ int mob_can_see_obj(object *op, object *obj, struct mob_known_obj *known_obj)
         return cached_result;
 
     /* Gmaster with stealth? */
-#ifdef DAI_DEVELOPMENT_CONTENT
-    if (obj->type == PLAYER &&
-        (pl = CONTR(obj)) &&
-        pl->stealth &&
-        (pl->gmaster_mode & (GMASTER_MODE_SA | GMASTER_MODE_MM | GMASTER_MODE_MW)))
-#else
-    if (obj->type == PLAYER &&
-        (pl = CONTR(obj)) &&
-        pl->stealth &&
-        (pl->gmaster_mode & (GMASTER_MODE_SA | GMASTER_MODE_MM)))
-#endif
+    if (IS_GMASTER_STEALTH(obj) ||
+        IS_GMASTER_INVIS(obj))
     {
         return FALSE;
     }
 
     /* Invisibility */
-    if (QUERY_FLAG(obj, FLAG_IS_INVISIBLE) && !QUERY_FLAG(op, FLAG_SEE_INVISIBLE))
+    if (IS_NORMAL_INVIS_TO(obj, op))
         return FALSE;
 
     /* Legal position? */

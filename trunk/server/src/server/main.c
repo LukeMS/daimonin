@@ -202,13 +202,18 @@ void process_players2(mapstruct *map)
         /* look our target is still valid - if not, update client
              * we handle op->enemy for the player here too!
              */
-        if (pl->ob->map
-         && (!pl->target_object
-          || (pl->target_object != pl->ob && pl->target_object_count != pl->target_object->count)
-          || !OBJECT_ACTIVE(pl->target_object)
-          || QUERY_FLAG(pl->target_object, FLAG_SYS_OBJECT) || pl->target_object->level != pl->target_level
-          || (QUERY_FLAG(pl->target_object, FLAG_IS_INVISIBLE) && !QUERY_FLAG(pl->ob, FLAG_SEE_INVISIBLE))))
+        if (pl->ob->map &&
+            (!pl->target_object ||
+             (pl->target_object != pl->ob &&
+              pl->target_object_count != pl->target_object->count) ||
+             !OBJECT_ACTIVE(pl->target_object) ||
+             QUERY_FLAG(pl->target_object, FLAG_SYS_OBJECT) ||
+             pl->target_object->level != pl->target_level ||
+             IS_GMASTER_INVIS_TO(pl->target_object, pl->ob) ||
+             IS_NORMAL_INVIS_TO(pl->target_object, pl->ob)))
+        {
             send_target_command(pl);
+        }
 
         if (pl->ob->weapon_speed_left <= 0)
         {

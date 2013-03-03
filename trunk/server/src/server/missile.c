@@ -337,8 +337,10 @@ void move_missile(object *op)
     /* ok, lets check there is something we can hit */
     if ((flag_tmp = GET_MAP_FLAGS(m, new_x, new_y)) & (P_IS_ALIVE | P_IS_PLAYER))
     {
+        MapSpace *msp = GET_MAP_SPACE_PTR(m, new_x, new_y);
+
         /* search for a vulnerable object */
-        for (tmp = GET_MAP_OB_LAYER(m, new_x, new_y, 5); tmp != NULL; tmp = tmp->above)
+        for (tmp = GET_MAP_SPACE_GMASTER_SLAYER(msp, 5); tmp; tmp = tmp->above)
         {
             /* Can only damage live objects (for now) */
             if (!IS_LIVE(tmp))

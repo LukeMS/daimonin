@@ -195,6 +195,7 @@ CommArray_s CommandsGM[] =
     {"silence",        command_silence,        0.0f, 1, CHANNEL_NAME_GM},
     {"gmasterfile",    command_gmasterfile,    0.0f, 1, CHANNEL_NAME_GM},
     {"stats",          command_stats,          0.0f, 1, NULL},
+    {"invisibility",   command_invisibility,   0.0f, 1, NULL},
 };
 
 CommArray_s CommandsMW[] =
@@ -205,11 +206,12 @@ CommArray_s CommandsMW[] =
     {"setskill",      command_setskill,    0.0f, 1, CHANNEL_NAME_MW},
     {"setstat",       command_setstat,     0.0f, 1, CHANNEL_NAME_MW},
     {"wizpass",       command_wizpass,     0.0f, 1, NULL},
+    {"matrix",        command_matrix,      0.0f, 1, NULL},
+    {"stealth",       command_stealth,     0.0f, 1, NULL},
     {"teleport",      command_teleport,    0.0f, 1, NULL},
     {"resetmap",      command_resetmap,    0.0f, 1, CHANNEL_NAME_MW},
     {"goto",          command_goto,        0.0f, 1, NULL},
     {"reboot",        command_reboot,      0.0f, 1, CHANNEL_NAME_MW},
-    {"dm_invis",      command_dm_invis,    0.0f, 1, NULL},
     {"dm_dev",        command_dm_dev,      0.0f, 1, NULL},
     {"dm_light",      command_dm_light,    0.0f, 1, NULL},
     {"set_map_light", command_setmaplight, 0.0f, 1, NULL},
@@ -225,13 +227,13 @@ CommArray_s CommandsMM[] =
 #ifdef DAI_DEVELOPMENT_CONTENT
     {"serverspeed",   command_serverspeed, 0.0f, 1, CHANNEL_NAME_MM},
 #else
-    {"stealth",       command_stealth,     0.0f, 1, NULL},
     {"wizpass",       command_wizpass,     0.0f, 1, NULL},
+    {"matrix",        command_matrix,      0.0f, 1, NULL},
+    {"stealth",       command_stealth,     0.0f, 1, NULL},
     {"teleport",      command_teleport,    0.0f, 1, NULL},
     {"resetmap",      command_resetmap,    0.0f, 1, CHANNEL_NAME_MM},
     {"goto",          command_goto,        0.0f, 1, NULL},
     {"reboot",        command_reboot,      0.0f, 1, CHANNEL_NAME_MM},
-    {"dm_invis",      command_dm_invis,    0.0f, 1, NULL},
     {"dm_dev",        command_dm_dev,      0.0f, 1, NULL},
     {"dm_light",      command_dm_light,    0.0f, 1, NULL},
     {"set_map_light", command_setmaplight, 0.0f, 1, NULL},
@@ -282,7 +284,6 @@ CommArray_s CommandsSA[] =
     {"fix_me", command_fix_me,   0.0},
     {"forget_spell", command_forget_spell, 0.0},
     {"free", command_free,0.0},
-    {"invisible", command_invisible,0.0},
     {"learn_special_prayer", command_learn_special_prayer, 0.0},
     {"learn_spell", command_learn_spell, 0.0},
     {"logs", command_logs,   0.0},
@@ -1006,6 +1007,7 @@ void cs_cmd_moveobj(char *buf, int len, NewSocket *ns)
     tag_t   loc,
             tag;
     uint32  nrof;
+    uint8   success;
     object *who,
            *container,
            *what,
@@ -1024,6 +1026,7 @@ void cs_cmd_moveobj(char *buf, int len, NewSocket *ns)
     loc = (tag_t)GetInt_Buffer(buf);
     tag = (tag_t)GetInt_Buffer(buf);
     nrof = GetInt_Buffer(buf);
+    success = 0;
     who = pl->ob;
 
     /* Lag may mean real circumstances have changed before the cmd is received
@@ -1032,8 +1035,25 @@ void cs_cmd_moveobj(char *buf, int len, NewSocket *ns)
     {
         return;
     }
+
+    /* This is not as straightforward as I thought, so for now it's disabled.
+     *
+     * -- Smacky 20130228 */
+#if 0
+    /* If we're moving the entire stack we'll just send an UPD_LOCATION to the
+     * client(s) at the end of this function, so disable normal item send/del
+     * cmds (see object.c). But when we split a stack this means the split (and
+     * moved) portion is actually an entirely new object, so do the normal
+     * cmds. */
+    if (!nrof ||
+        nrof >= what->nrof)
+    {
+        SET_FLAG(what, FLAG_NO_SEND);
+    }
+#endif
+
     /* Drop to ground. */
-    else if (!loc)
+    if (!loc)
     {
         if (!what->map &&
             what->env &&
@@ -1041,6 +1061,11 @@ void cs_cmd_moveobj(char *buf, int len, NewSocket *ns)
              IsDroppableContainer(who, what)))
         {
             drop_object(who, what, nrof);
+
+            if (what->map)
+            {
+                success = 1;
+            }
         }
     }
     /* Pick up to inventory/container. */
@@ -1051,6 +1076,12 @@ void cs_cmd_moveobj(char *buf, int len, NewSocket *ns)
     {
         pl->count = nrof;
         pick_up(who, what);
+
+        if (what->env &&
+            what->env->count == loc)
+        {
+            success = 1;
+        }
     }
     /* If not dropped or picked up, we are putting it into a sack */
     /* Lag may mean real circumstances have changed before the cmd is received
@@ -1071,7 +1102,20 @@ void cs_cmd_moveobj(char *buf, int len, NewSocket *ns)
                  IsDroppableContainer(who, what))
         {
             put_object_in_sack(who, where, what, nrof);
+
+            if (what->env == where)
+            {
+                success = 1;
+            }
         }
+    }
+
+    /* what has moved so send an UPD_LOCATION to clients. */
+    if (QUERY_FLAG(what, FLAG_NO_SEND) &&
+        success)
+    {
+        CLEAR_FLAG(what, FLAG_NO_SEND);
+        esrv_update_item(UPD_LOCATION, what);
     }
 }
 

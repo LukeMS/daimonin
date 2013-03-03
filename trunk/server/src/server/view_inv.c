@@ -31,12 +31,14 @@
 #include "global.h"
 
 #define FILTER(_PL_, _OP_) \
-    ((_OP_) != (_PL_)->ob &&                          /* never see self but otherwise */ \
-     (QUERY_FLAG((_PL_)->ob, FLAG_WIZ) ||             /* WIZ gmasters see all */ \
-      (!QUERY_FLAG((_OP_), FLAG_SYS_OBJECT) &&        /* can't see sys objects */ \
-       (!QUERY_FLAG((_OP_), FLAG_IS_INVISIBLE) ||     /* can't see invisible objects unless */ \
-        QUERY_FLAG((_PL_)->ob, FLAG_SEE_INVISIBLE) || /* player has the ability to do so or */ \
-        (_OP_)->env == (_PL_)->ob))))                 /* they're in his inventory (simulates feel) */
+    ((_OP_) != (_PL_)->ob &&                            /* never see self but otherwise */ \
+     (((_PL_)->gmaster_mode & GMASTER_MODE_SA) ||       /* SAs see all but others */ \
+      (!IS_GMASTER_INVIS((_OP_)) &&                     /* can't see gmaster invis */ \
+       ((_PL_)->gmaster_wiz ||                          /* WIZs see all else but others */ \
+        (!QUERY_FLAG((_OP_), FLAG_SYS_OBJECT) &&        /* can't see sys objects */ \
+         (!QUERY_FLAG((_OP_), FLAG_IS_INVISIBLE) ||     /* can't see invisible objects unless */ \
+          QUERY_FLAG((_PL_)->ob, FLAG_SEE_INVISIBLE) || /* player has the ability to do so or */ \
+          (_OP_)->env == (_PL_)->ob))))))               /* they're in his inventory (simulates feel) */
 
 static void            SendInventory(player *pl, object *op);
 static uint8           AddInventory(sockbuf_struct *sb, _server_client_cmd cmd,
@@ -51,7 +53,7 @@ static sockbuf_struct *BroadcastItemCmd(sockbuf_struct *sb, _server_client_cmd c
 static char           *PrepareData(_server_client_cmd cmd, uint16 flags, player *pl,
                                    object *op, char *data);
 static uint32          ClientFlags(object *op);
-static object  *esrv_get_ob_from_count_DM(object *pl, tag_t count);
+static object         *GetObjFromCount(object *what, tag_t count);
 
 void esrv_send_below(player *pl)
 {
@@ -59,6 +61,7 @@ void esrv_send_below(player *pl)
     mapstruct          *m;
     NewSocket          *ns;
     sockbuf_struct     *sb;
+    MapSpace           *msp;
     uint8               sendme;
     _server_client_cmd  cmd = SERVER_CMD_ITEMX;
 
@@ -90,7 +93,8 @@ void esrv_send_below(player *pl)
         sb = ACTIVE_SOCKBUF(ns);
     }
 
-    sendme = AddInventory(sb, cmd, 0, 0, GET_MAP_OB_LAST(m, who->x, who->y));
+    msp = GET_MAP_SPACE_PTR(m, who->x, who->y);
+    sendme = AddInventory(sb, cmd, 0, 0, GET_MAP_SPACE_LAST(msp));
     sb = ACTIVE_SOCKBUF(ns);
 
     if (sendme)
@@ -136,6 +140,14 @@ void esrv_update_item(uint16 flags, object *op)
 void esrv_del_item(object *op)
 {
     NotifyClients(SERVER_CMD_DELITEM, 0, op);
+}
+
+void esrv_send_or_del_item(object *op)
+{
+    uint16 flags = UPD_FLAGS | UPD_WEIGHT | UPD_FACE | UPD_DIRECTION |
+                   UPD_NAME | UPD_ANIM | UPD_ANIMSPEED | UPD_NROF;
+
+    NotifyClients(0, flags, op);
 }
 
 /* Sends the inventory of op to pl. This function is in fact used in three
@@ -237,7 +249,7 @@ static uint8 AddInventory(sockbuf_struct *sb, _server_client_cmd cmd,
                 cp = PrepareData(cmd, flags, pl, this, data);
                 SockBuf_AddStringNonTerminated(sb, data, cp - data);
 
-                if (QUERY_FLAG(pl->ob, FLAG_WIZ) &&
+                if (IS_GMASTER_WIZ(pl->ob) &&
                     this->inv)
                 {
                     AddFakeObject(sb, cmd, 0xc0000000 | this->count,
@@ -354,10 +366,7 @@ static void NotifyClients(_server_client_cmd cmd, uint16 flags, object *op)
         }
     }
 
-    if (sb)
-    {
-        SOCKBUF_COMPOSE_FREE(sb);
-    }
+    SOCKBUF_COMPOSE_FREE(sb);
 }
 
 /* First creates if necessary, then attaches a broadcast sockbuf (sb) of
@@ -368,9 +377,29 @@ static sockbuf_struct *BroadcastItemCmd(sockbuf_struct *sb, _server_client_cmd c
     /* Only send the cmd to a valid client and when filter is passed. */
     if (pl &&
         !(pl->state & (ST_DEAD | ST_ZOMBIE)) &&
-        pl->socket.status == Ns_Playing &&
-        FILTER(pl, op))
+        pl->socket.status == Ns_Playing)
     {
+        /* This really defeats the whole purpose of a broadcast sockbuf (cos it
+         * is rebuilt every time) but as it is only used rarely (when an inv or
+         * below item gains or loses visibiliity), it's not a big deal. */
+        if (!cmd)
+        {
+            SOCKBUF_COMPOSE_FREE(sb);
+
+            if (FILTER(pl, op))
+            {
+                cmd = (op->map) ? SERVER_CMD_ITEMX : SERVER_CMD_ITEMY;
+            }
+            else
+            {
+                cmd = SERVER_CMD_DELITEM;
+            }
+        }
+        else if (!FILTER(pl, op))
+        {
+            return sb;
+        }
+
         /* If we've not yet made a sockbuf, make one now. */
         if (!sb)
         {
@@ -625,7 +654,8 @@ static uint32 ClientFlags(object *op)
         flags |= F_ETHEREAL;
     }
 
-    if (QUERY_FLAG(op, FLAG_IS_INVISIBLE))
+    if (IS_GMASTER_INVIS(op) ||
+        QUERY_FLAG(op, FLAG_IS_INVISIBLE))
     {
         flags |= F_INVISIBLE;
     }
@@ -681,82 +711,169 @@ static uint32 ClientFlags(object *op)
 }
 
 /* Takes a player and object count (tag) and returns the actual object
- * pointer, or null if it can't be found.
- */
-
-object * esrv_get_ob_from_count(object *pl, tag_t count)
+ * pointer, or NULL if it can't be found or it can't be manipulated (that is,
+ * seen) by the player. We account for all forms of invisibility in deciding
+ * what can and cannot be manipulated. */
+object *esrv_get_ob_from_count(object *who, tag_t count)
 {
-    object *op, *tmp;
+    player *pl;
+    object *this,
+           *that;
 
-    if (pl->count == count)
-        return pl;
-
-    /* this is special case... We can examine deep inside every inventory
-     * even from non containers.
-     */
-    if (QUERY_FLAG(pl, FLAG_WIZ))
+    /* Sanity check. */
+    if (!(pl = CONTR(who)))
     {
-        for (op = pl->inv; op; op = op->below)
-        {
-            if (op->count == count)
-                return op;
-            else if (op->inv)
-            {
-                if ((tmp = esrv_get_ob_from_count_DM(op->inv, count)))
-                    return tmp;
-            }
-        }
-        if(pl->map)
-        {
-            for (op = GET_MAP_OB(pl->map, pl->x, pl->y); op; op = op->above)
-            {
-                if (op->count == count)
-                    return op;
-                else if (op->inv)
-                {
-                    if ((tmp = esrv_get_ob_from_count_DM(op->inv, count)))
-                        return tmp;
-                }
-            }
-        }
         return NULL;
     }
 
-    for (op = pl->inv; op; op = op->below)
-        if (op->count == count)
-            return op;
-        else if (op->type == CONTAINER && CONTR(pl)->container == op)
-            for (tmp = op->inv; tmp; tmp = tmp->below)
-                if (tmp->count == count)
-                    return tmp;
-
-    if(pl->map)
+    /* Players can always play with themselves. */
+    if (who->count == count)
     {
-        for (op = GET_MAP_OB(pl->map, pl->x, pl->y); op; op = op->above)
-            if (op->count == count)
-                return op;
-            else if (op->type == CONTAINER && CONTR(pl)->container == op)
-                for (tmp = op->inv; tmp; tmp = tmp->below)
-                    if (tmp->count == count)
-                        return tmp;
+        return who;
     }
+
+    /* this is special case... We can examine deep inside every inventory
+     * even from non containers. */
+    if (pl->gmaster_wiz)
+    {
+        for (this = who->inv; this; this = this->below)
+        {
+            if (this->count == count)
+            {
+                return this;
+            }
+            else if (this->inv)
+            {
+                if ((that = GetObjFromCount(this->inv, count)))
+                {
+                    return that;
+                }
+            }
+        }
+
+        if(who->map)
+        {
+            for (this = GET_MAP_OB(who->map, who->x, who->y); this; this = this->above)
+            {
+                /* Still might not be allowed to manipulate... */
+                if (IS_GMASTER_INVIS(this) &&                // ...invisible gmasters
+                    !(pl->gmaster_mode & GMASTER_MODE_SA))
+                {
+                    continue;
+                }
+
+                if (this->count == count)
+                {
+                    return this;
+                }
+                else if (this->inv)
+                {
+                    if ((that = GetObjFromCount(this->inv, count)))
+                    {
+                        return that;
+                    }
+                }
+            }
+        }
+    }
+    else
+    {
+        for (this = who->inv; this; this = this->below)
+        {
+            /* We know pl->gmaster_wiz == 0 so cannot manipulate... */
+            if (this->layer == 0) // ...system objects
+            {
+                continue;
+            }
+
+            if (this->count == count)
+            {
+                return this;
+            }
+            else if (this->type == CONTAINER &&
+                     pl->container == this)
+            {
+                for (that = this->inv; that; that = that->below)
+                {
+                    /* We know pl->gmaster_wiz == 0 so cannot manipulate... */
+                    if (that->layer == 0) // ...system objects
+                    {
+                        continue;
+                    }
+
+                    if (that->count == count)
+                    {
+                        return that;
+                    }
+                }
+            }
+        }
+
+        if(who->map)
+        {
+            for (this = GET_MAP_OB(who->map, who->x, who->y); this; this = this->above)
+            {
+                /* We know pl->gmaster_wiz == 0 so cannot manipulate... */
+                if (this->layer == 0 ||                        // ...system objects
+                    IS_GMASTER_INVIS(this) ||                  // ...invisible gmasters
+                    (QUERY_FLAG((this), FLAG_IS_INVISIBLE) &&  // ...invisible objects
+                     !QUERY_FLAG((who), FLAG_SEE_INVISIBLE)))
+                    
+                {
+                    continue;
+                }
+
+                if (this->count == count)
+                {
+                    return this;
+                }
+                else if (this->type == CONTAINER &&
+                         pl->container == this)
+                {
+                    for (that = this->inv; that; that = that->below)
+                    {
+                        /* We know pl->gmaster_wiz == 0 so cannot manipulate... */
+                        if (that->layer == 0 ||                        // ...system objects
+                            (QUERY_FLAG((that), FLAG_IS_INVISIBLE) &&  // ...invisible objects
+                             !QUERY_FLAG((who), FLAG_SEE_INVISIBLE)))
+                        {
+                            continue;
+                        }
+
+                        if (that->count == count)
+                        {
+                            return that;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     return NULL;
 }
 
-/* rekursive function for DM access to non container inventories */
-static object * esrv_get_ob_from_count_DM(object *pl, tag_t count)
+/* Recursive function for gmaster_wiz access to non container inventories. */
+static object *GetObjFromCount(object *what, tag_t count)
 {
-    object *tmp, *op;
+    object *this;
 
-    for (op = pl; op; op = op->below)
+    for (this = what; this; this = this->below)
     {
-        if (op->count == count)
-            return op;
-        else if (op->inv)
+        if (this->count == count)
         {
-            if ((tmp = esrv_get_ob_from_count_DM(op->inv, count)))
-                return tmp;
+            return this;
+        }
+        else if (this->inv)
+        {
+            object *that = GetObjFromCount(this->inv, count);
+
+            if (that)
+            {
+                return that;
+            }
         }
     }
+
     return NULL;
 }

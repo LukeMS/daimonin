@@ -241,11 +241,11 @@ void spring_trap(object *trap, object *victim)
     object *env;
     tag_t   trap_tag    = trap->count;
 
-    if(victim->type == PLAYER && QUERY_FLAG(victim, FLAG_WIZ))
+    if (!trap->stats.hp ||      // prevents recursion
+        IS_GMASTER_WIZ(victim))
+    {
         return;
-    /* Prevent recursion */
-    if (trap->stats.hp == 0)
-        return;
+    }
 
     /* get the spell number from the name in the slaying field, and set
      * that as the spell to be cast.
@@ -408,6 +408,12 @@ int trap_show(object *trap, object *where)
      * because level 0 is really a special thing.
      */
     env = trap->env;
+    /* FIXME: Not entirely sure we really need do a full remove/insert any
+     * more, but certainly careful map_set_slayers()/update_ob() OR
+     * esrv_send_item(), depending on if trap->map or trap->env, is needed.
+     *
+     *
+     * -- Smacky 20130228 */
     remove_ob(trap); /* we must remove and reinsert it.. */
     CLEAR_FLAG(trap, FLAG_SYS_OBJECT);
     CLEAR_MULTI_FLAG(trap, FLAG_IS_INVISIBLE);

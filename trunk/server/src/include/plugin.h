@@ -276,6 +276,7 @@ struct plugin_hooklist
     int (*enter_map_by_exit)(object *, object *);
     mapstruct *(*enter_map_by_name)(object *, const char *, const char *, int,
                                     int, int);
+    void (*esrv_send_or_del_item)(object *);
     void (*esrv_update_item)(uint16, object *);
     /* F */
     int (*find_animation)(char *);
@@ -352,6 +353,7 @@ struct plugin_hooklist
     void (*map_player_link)(mapstruct *, sint16, sint16, uint8);
     uint16 (*map_player_unlink)(mapstruct *, shstr *);
     mapstruct *(*map_save)(mapstruct *);
+    void (*map_set_slayers)(MapSpace *, object *, uint8);
     void (*map_transfer_apartment_items)(mapstruct *, mapstruct *, int, int);
     sint64 (*material_repair_cost)(object *, object *);
     void (*material_repair_item)(object *, int);

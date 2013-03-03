@@ -669,6 +669,7 @@ object * merge_ob(object *op, object *tmp)
                 STRING_OBJ_NAME(op), TAG(op), op->nrof);
 #endif
             op->nrof = op->nrof + tmp->nrof;
+            CLEAR_FLAG(tmp, FLAG_NO_SEND);
             remove_ob(tmp);
 
             if (op->env &&
@@ -1304,7 +1305,11 @@ void update_object(object *op, int action)
             LOG(llevDebug, "UO_INS - %s\n", query_name(op));
 #endif
             newflags |= P_NEED_UPDATE; /* force layer rebuild */
-            esrv_send_item(op);
+
+            if (!QUERY_FLAG(op, FLAG_NO_SEND))
+            {
+                esrv_send_item(op);
+            }
 
             /* handle lightning system */
             if (op->glow_radius)
@@ -1360,7 +1365,11 @@ void update_object(object *op, int action)
             LOG(llevDebug, "UO_REM - %s\n", query_name(op));
 #endif
             newflags |= P_NEED_UPDATE; /* force layer rebuild */
-            esrv_del_item(op);
+
+            if (!QUERY_FLAG(op, FLAG_NO_SEND))
+            {
+                esrv_del_item(op);
+            }
 
             /* we don't handle floor tile light/darkness setting here -
              * we assume we don't remove a floor tile ever before dropping
@@ -1404,21 +1413,26 @@ void update_object(object *op, int action)
             LOG(llevDebug, "UO_FLAGFACE - %s\n", query_name(op));
 #endif
             newflags |= P_FLAGS_UPDATE; /* force flags rebuild */
-            esrv_update_item(UPD_FLAGS | UPD_FACE, op);
+            esrv_update_item(UPD_FACE | UPD_ANIM | UPD_ANIMSPEED, op);
             break;
         case UP_OBJ_LAYER:
 #ifdef DEBUG_CORE
             LOG(llevDebug, "UO_LAYER - %s\n", query_name(op));
 #endif
+            map_set_slayers(msp, op, 1); // must have uptodate slayers if we want to rebuild the clayers!
             newflags |= P_NEED_UPDATE; /* rebuild layers - most common when we change visibility of the object */
-            esrv_send_item(op);
+
+            if (!QUERY_FLAG(op, FLAG_NO_SEND))
+            {
+                esrv_send_or_del_item(op);
+            }
+
             break;
         case UP_OBJ_ALL:
 #ifdef DEBUG_CORE
             LOG(llevDebug, "UO_ALL - %s\n", query_name(op));
 #endif
             newflags |= (P_FLAGS_UPDATE | P_NEED_UPDATE); /* force full tile update */
-            esrv_send_item(op);
             break;
         default:
             LOG(llevError, "ERROR: update_object called with invalid action: %d\n", action);
@@ -1946,7 +1960,10 @@ static void RemoveFromEnv(object *op)
     }
 
     /* Notify clients. */
-    esrv_del_item(op);
+    if (!QUERY_FLAG(op, FLAG_NO_SEND))
+    {
+        esrv_del_item(op);
+    }
 
     /* Recalc the chain of weights. Remember that the above is client info
      * only -- the object has not actually gone yet. */
@@ -1989,38 +2006,13 @@ static void RemoveFromMap(object *op)
 {
     MapSpace *msp = GET_MAP_SPACE_PTR(op->map, op->x, op->y);
 
-    /* Sort out map space/layer. */
+    /* Sort out map space slayer. */
     if (op->layer)
     {
-        if (GET_MAP_SPACE_LAYER(msp, op->layer - 1) == op)
-        {
-            /* well, don't kick the inv objects of this layer to normal layer */
-            if (op->above &&
-                op->above->layer == op->layer &&
-                GET_MAP_SPACE_LAYER(msp, op->layer + 6) != op->above)
-            {
-                SET_MAP_SPACE_LAYER(msp, op->layer - 1, op->above);
-            }
-            else
-            {
-                SET_MAP_SPACE_LAYER(msp, op->layer - 1, NULL);
-            }
-        }
-        else if (GET_MAP_SPACE_LAYER(msp, op->layer + 6) == op) // inv layer?
-        {
-            if (op->above &&
-                op->above->layer == op->layer)
-            {
-                SET_MAP_SPACE_LAYER(msp, op->layer + 6, op->above);
-            }
-            else
-            {
-                SET_MAP_SPACE_LAYER(msp, op->layer + 6, NULL);
-            }
-        }
+        map_set_slayers(msp, op, 0);
     }
 
-    /* Sort out object chai. Don't NULL op->map (still needed). */
+    /* Sort out object chain. Don't NULL op->map (still needed). */
     if (op->above)
     {
         op->above->below = op->below;
@@ -2130,7 +2122,7 @@ void remove_ob_inv(object *op)
 object *insert_ob_in_map(object *const op, mapstruct *m, object *const originator, const int flag)
 {
     object*tmp =    NULL, *top;
-    MapSpace       *mc;
+    MapSpace       *msp;
     int             x, y, lt, layer, layer_inv;
     mapstruct      *old_map = op->map;
 
@@ -2230,159 +2222,42 @@ object *insert_ob_in_map(object *const op, mapstruct *m, object *const originato
      * Also, see that we don't need to access in the inserting or sorting the old objects.
      * no FLAG_xx check or something - all can be done by the cpu in cache.
      */
-    mc = GET_MAP_SPACE_PTR(op->map, op->x, op->y); /* for fast access - we will not change the node here */
-    if (op->layer) /* so we have a non system object */
+    msp = GET_MAP_SPACE_PTR(op->map, op->x, op->y); /* for fast access - we will not change the node here */
+    /* Layer 0 (system) objects always go to the first object on the square --
+     * everything else is ->above it -- and are never visible on the client map
+     * (so no SET_MAP_SPACE_SLAYER()) -- except to gmaster_matrix players but 
+     * this is handled specially. */
+    if (op->layer == 0)
     {
-        layer = op->layer - 1;
-        layer_inv = layer + 7;
-        if (!QUERY_FLAG(op, FLAG_IS_INVISIBLE)) /* not invisible? */
+        if ((top = GET_MAP_SPACE_FIRST(msp)))
         {
-            /* have we another object of this layer? */
-            if ((top = GET_MAP_SPACE_LAYER(mc, layer)) == NULL && (top = GET_MAP_SPACE_LAYER(mc, layer_inv)) == NULL)
-            {
-                /* no, we are the first of this layer - lets search something above us we can chain with.*/
-                for (lt = op->layer;
-                     lt < MAX_ARCH_LAYERS
-                  && (top = GET_MAP_SPACE_LAYER(mc, lt)) == NULL
-                  && (top = GET_MAP_SPACE_LAYER(mc, lt + 7)) == NULL;
-                     lt++)
-                    ;
-            }
-
-            /* now, if top != NULL, thats the object BEFORE we want chain. This can be
-             * the base layer, the inv base layer or a object from a upper layer.
-             * If it NULL, we are the only object in this tile OR
-             * ->last holds the object BEFORE ours.
-             */
-            SET_MAP_SPACE_LAYER(mc, layer, op); /* we always go in front */
-            if (top) /* easy - we chain our object before this one */
-            {
-                if (top->below)
-                    top->below->above = op;
-                else /* if no object before ,we are new starting object */
-                    SET_MAP_SPACE_FIRST(mc, op); /* first object */
-                op->below = top->below;
-                top->below = op;
-                op->above = top;
-            }
-            else /* we are first object here or one is before us  - chain to it */
-            {
-                if ((top = GET_MAP_SPACE_LAST(mc)) != NULL)
-                {
-                    top->above = op;
-                    op->below = top;
-                }
-                else /* a virgin! we set first and last object */
-                    SET_MAP_SPACE_FIRST(mc, op); /* first object */
-
-                SET_MAP_SPACE_LAST(mc, op); /* last object */
-            }
-        }
-        else /* invisible object */
-        {
-            int tmp_flag;
-
-            /* check the layers */
-            if ((top = GET_MAP_SPACE_LAYER(mc, layer_inv)) != NULL)
-                tmp_flag = 1;
-            else if ((top = GET_MAP_SPACE_LAYER(mc, layer)) != NULL)
-            {
-                /* in this case, we have 1 or more normal objects in this layer,
-                 * so we must skip all of them. easiest way is to get a upper layer
-                 * valid object.
-                 */
-                for (lt = op->layer;
-                     lt < MAX_ARCH_LAYERS
-                  && (tmp = GET_MAP_SPACE_LAYER(mc, lt)) == NULL
-                  && (tmp = GET_MAP_SPACE_LAYER(mc, lt + 7)) == NULL;
-                     lt++)
-                    ;
-                tmp_flag = 2;
-            }
-            else
-            {
-                /* no, we are the first of this layer - lets search something above us we can chain with.*/
-                for (lt = op->layer;
-                     lt < MAX_ARCH_LAYERS
-                  && (top = GET_MAP_SPACE_LAYER(mc, lt)) == NULL
-                  && (top = GET_MAP_SPACE_LAYER(mc, lt + 7)) == NULL;
-                     lt++)
-                    ;
-                tmp_flag = 3;
-            }
-
-            SET_MAP_SPACE_LAYER(mc, layer_inv, op); /* in all cases, we are the new inv base layer */
-            if (top) /* easy - we chain our object before this one - well perhaps */
-            {
-                /* ok, now the tricky part.
-                 * if top is set, this can be...
-                 * - the inv layer of same layer id (and tmp_flag will be 1)
-                 * - the normal layer of same layer id (tmp_flag == 2)
-                 * - the inv OR normal layer of a upper layer (tmp_flag == 3)
-                 * if tmp_flag = 1, its easy - just we get in front of top and use
-                 * the same links.
-                 * if tmp_flag = 2 AND tmp is set, tmp is the object we chain before.
-                 * is tmp is NULL, we get ->last and chain after it.
-                 * if tmp_flag = 3, we chain all times to top (before).
-                 */
-
-                if (tmp_flag == 2)
-                {
-                    if (tmp)
-                    {
-                        tmp->below->above = op; /* we can't be first, there is always one before us */
-                        op->below = tmp->below;
-                        tmp->below = op; /* and one after us... */
-                        op->above = tmp;
-                    }
-                    else
-                    {
-                        tmp = GET_MAP_SPACE_LAST(mc); /* there is one before us, so this is always valid */
-                        SET_MAP_SPACE_LAST(mc, op); /* new last object */
-                        op->below = tmp;
-                        tmp->above = op;
-                    }
-                }
-                else /* tmp_flag 1 & tmp_flag 3 are done the same way */
-                {
-                    if (top->below)
-                        top->below->above = op;
-                    else /* if no object before ,we are new starting object */
-                        SET_MAP_SPACE_FIRST(mc, op); /* first object */
-                    op->below = top->below;
-                    top->below = op;
-                    op->above = top;
-                }
-            }
-            else /* we are first object here or one is before us  - chain to it */
-            {
-                if ((top = GET_MAP_SPACE_LAST(mc)) != NULL) /* there is something down we don't care what */
-                {
-                    top->above = op; /* just chain to it */
-                    op->below = top;
-                }
-                else /* a virgin! we set first and last object */
-                    SET_MAP_SPACE_FIRST(mc, op); /* first object */
-
-                SET_MAP_SPACE_LAST(mc, op); /* last object */
-            }
-        }
-    }
-    else /* op->layer == 0 - lets just put this object in front of all others */
-    {
-        /* is there some else? */
-        if ((top = GET_MAP_SPACE_FIRST(mc)) != NULL)
-        {
-            /* easy chaining */
             top->below = op;
             op->above = top;
         }
-        else /* no ,we are last object too */
-            SET_MAP_SPACE_LAST(mc, op); /* last object */
+        else
+        {
+            SET_MAP_SPACE_LAST(msp, op);
+        }
 
-        SET_MAP_SPACE_FIRST(mc, op); /* first object */
+        SET_MAP_SPACE_FIRST(msp, op);
     }
+    /* Other layers are non-system objects always go to the last object on the
+     * square -- everything else is ->below it. */
+    else
+    {
+        if ((top = GET_MAP_SPACE_LAST(msp)))
+        {
+            top->above = op;
+            op->below = top;
+        }
+        else
+        {
+            SET_MAP_SPACE_FIRST(msp, op);
+        }
 
+        SET_MAP_SPACE_LAST(msp, op);
+        map_set_slayers(msp, op, 1);
+    }
 
     /* lets set some specials for our players
      * we adjust the ->player map variable and the local
@@ -2441,13 +2316,13 @@ object *insert_ob_in_map(object *const op, mapstruct *m, object *const originato
      * objects - for example when we hit a teleporter trap.
      * Check only for single tiles || or head but ALWAYS for heads.
      */
-    if (!(flag & INS_NO_WALK_ON) && (mc->flags & (P_WALK_ON | P_FLY_ON) || op->more) && !op->head)
+    if (!(flag & INS_NO_WALK_ON) && (msp->flags & (P_WALK_ON | P_FLY_ON) || op->more) && !op->head)
     {
         for (tmp = op; tmp; tmp = tmp->more)
         {
             int event;
 
-            mc = GET_MAP_SPACE_PTR(tmp->map, tmp->x, tmp->y);
+            msp = GET_MAP_SPACE_PTR(tmp->map, tmp->x, tmp->y);
 
             /* tmp is flying/levitating but no fly event here */
             if (IS_AIRBORNE(tmp)) /* Old code queried op only, but as
@@ -2455,13 +2330,13 @@ object *insert_ob_in_map(object *const op, mapstruct *m, object *const originato
                                    * queries it for the flying flags, we must
                                    * do so here too -- Smacky 20080926 */
             {
-                if (!(mc->flags & P_FLY_ON))
+                if (!(msp->flags & P_FLY_ON))
                     continue;
             }
             /* tmp is walkimg but no walk event here */
             else
             {
-                if (!(mc->flags & P_WALK_ON))
+                if (!(msp->flags & P_WALK_ON))
                     continue;
             }
 
@@ -2484,24 +2359,26 @@ object *insert_ob_in_map(object *const op, mapstruct *m, object *const originato
  */
 void replace_insert_ob_in_map(char *arch_string, object *op)
 {
-    object *tmp;
-    object *tmp1;
+    object   *this,
+             *next;
+    MapSpace *msp = GET_MAP_SPACE_PTR(op->map, op->x, op->y);
 
-    /* first search for itself and remove any old instances */
-
-    for (tmp = GET_MAP_OB(op->map, op->x, op->y); tmp != NULL; tmp = tmp->above)
+    /* Search for itself and remove any old instances */
+    for (this = GET_MAP_SPACE_FIRST(msp); this; this = next)
     {
-        if (!strcmp(tmp->arch->name, arch_string)) /* same archetype */
+        next = this->above;
+
+        if (!strcmp(this->arch->name, arch_string)) /* same archetype */
         {
-            remove_ob(tmp); /* no move off here... should be ok, this is a technical function */
+            remove_ob(this); /* no move off here... should be ok, this is a technical function */
         }
     }
 
-    tmp1 = arch_to_object(find_archetype(arch_string));
-
-
-    tmp1->x = op->x; tmp1->y = op->y;
-    insert_ob_in_map(tmp1, op->map, op, 0);
+    /* Insert a replacement. */
+    this = get_archetype(arch_string);
+    this->x = op->x;
+    this->y = op->y;
+    insert_ob_in_map(this, op->map, op, 0);
 }
 
 /*
@@ -2554,8 +2431,10 @@ object * get_split_ob(object *orig_ob, uint32 nr)
     {
         if (!is_removed)
         {
+            CLEAR_FLAG(orig_ob, FLAG_NO_SEND);
             remove_ob(orig_ob);
         }
+
         check_walk_off(orig_ob, NULL, MOVE_APPLY_VANISHED);
     }
     else if (!is_removed)
@@ -2821,7 +2700,11 @@ object *insert_ob_in_ob(object *op, object *where)
     }
 
     update_ob_speed(op);
-    esrv_send_item(op);
+
+    if (!QUERY_FLAG(op, FLAG_NO_SEND))
+    {
+        esrv_send_item(op);
+    }
 
     if (op->env->type == PLAYER &&
         !QUERY_FLAG(op->env, FLAG_NO_FIX_PLAYER))
@@ -2854,47 +2737,63 @@ object *insert_ob_in_ob(object *op, object *where)
 
 int check_walk_on(object *const op, object *const originator, int flags)
 {
-    object     *tmp /*, *head=op->head?op->head:op*/;
-    int         local_walk_semaphore    = FALSE; /* when TRUE, this function is root call for static_walk_semaphore setting */
-    tag_t       tag;
-    int fly;
+    uint8     fly,
+              local_walk_semaphore = 0; // 1= root call for static_walk_semaphore setting
+    tag_t     tag;
+    MapSpace *msp;
+    object   *this;
 
     if (QUERY_FLAG(op, FLAG_NO_APPLY))
+    {
         return 0;
+    }
 
-    if ((fly = IS_AIRBORNE(op)))
-        flags |= MOVE_APPLY_FLY_ON;
-    else
-        flags |= MOVE_APPLY_WALK_ON;
-    tag = op->count;
-
-    /* This flags ensures we notice when a moving event has appeared!
-     * Because the functions who set/clear the flag can be called recursive
-     * from this function and walk_off() we need a static, global semaphor
-     * like flag to ensure we don't clear the flag except in the mother call.
-     */
+    /* This flag ensures we notice when a moving event has appeared! Because
+     * the functions who set/clear the flag can be called recursive from this
+     * function and walk_off() we need a static, global semaphor like flag to
+     * ensure we don't clear the flag except in the mother call. */
     if (!static_walk_semaphore)
     {
-        local_walk_semaphore = TRUE;
-        static_walk_semaphore = TRUE;
+        local_walk_semaphore = 1;
+        static_walk_semaphore = 1;
         CLEAR_FLAG(op, FLAG_OBJECT_WAS_MOVED);
     }
 
-    for (tmp = GET_BOTTOM_MAP_OB(op); tmp != NULL; tmp = tmp->above)
+    if ((fly = IS_AIRBORNE(op)))
     {
-        if (tmp == op)
-            continue;    /* Can't apply yourself */
+        flags |= MOVE_APPLY_FLY_ON;
+    }
+    else
+    {
+        flags |= MOVE_APPLY_WALK_ON;
+    }
 
-        if (fly ? QUERY_FLAG(tmp, FLAG_FLY_ON) : QUERY_FLAG(tmp, FLAG_WALK_ON))
+    tag = op->count;
+    msp = GET_MAP_SPACE_PTR(op->map, op->x, op->y);
+
+    for (this = GET_MAP_SPACE_FIRST(msp); this; this = this->above)
+    {
+        /* Can't apply yourself. */
+        if (this == op)
         {
-            move_apply(tmp, op, originator, flags); /* apply_func must handle multi arch parts....
+            continue;
+        }
+
+        if ((fly)
+            ? QUERY_FLAG(this, FLAG_FLY_ON)
+            : QUERY_FLAG(this, FLAG_WALK_ON))
+        {
+            move_apply(this, op, originator, flags); /* apply_func must handle multi arch parts....
                                                      * NOTE: move_apply() can be heavy recursive and recall
                                                      * this function too.*/
 
-            if (was_destroyed(op, tag)) /* this means we got killed, removed or whatever! */
+            if (was_destroyed(op, tag)) // we got killed, removed or whatever
             {
                 if (local_walk_semaphore)
-                    static_walk_semaphore = FALSE;
+                {
+                    static_walk_semaphore = 0;
+                }
+
                 return CHECK_WALK_DESTROYED;
             }
 
@@ -2902,13 +2801,20 @@ int check_walk_on(object *const op, object *const originator, int flags)
             if (QUERY_FLAG(op, FLAG_OBJECT_WAS_MOVED))
             {
                 if (local_walk_semaphore)
-                    static_walk_semaphore = FALSE;
+                {
+                    static_walk_semaphore = 0;
+                }
+
                 return CHECK_WALK_MOVED;
             }
         }
     }
+
     if (local_walk_semaphore)
-        static_walk_semaphore = FALSE;
+    {
+        static_walk_semaphore = 0;
+    }
+
     return CHECK_WALK_OK;
 }
 
@@ -3110,12 +3016,22 @@ int can_pick(object *who, object *item)
     if (item->weight <= 0)
         return 0;
 
+    /* Layer 0/sys objects can't be picked up (really the one should imply the
+     * other but JIC). TODO: Perhaps be strict about all layers? Really only
+     * layers 3 and 4 should be pickable. */
+    if (!item->layer ||
+        QUERY_FLAG(item, FLAG_SYS_OBJECT))
+    {
+        return 0;
+    }
+
     /* If you can't see it, you can't pick it up. */
     /* Is this sensible?
      * -- Smacky 20090826 */
-    if (IS_INVISIBLE(item, who) &&
-        !QUERY_FLAG(who, FLAG_SEE_INVISIBLE))
+    if (IS_NORMAL_INVIS_TO(item, who))
+    {
         return 0;
+    }
 
     /* Non-players can't pick up objects which weigh more than 1/3 of their
      * body weight. */

@@ -292,7 +292,9 @@ static void pick_up_object(object *pl, object *op, object *tmp, uint32 nrof)
     * (sack, luggage, etc), tmp->env->env then points to the player (nested
     * containers not allowed as of now)
     */
-    if (!QUERY_FLAG(pl, FLAG_WIZ) && is_player_inv(tmp) != pl && IS_AIRBORNE(pl))
+    if (!IS_GMASTER_WIZ(pl) &&
+        is_player_inv(tmp) != pl &&
+        IS_AIRBORNE(pl))
     {
         if(QUERY_FLAG(pl, FLAG_FLYING))
             new_draw_info(NDI_UNIQUE, 0, pl, "You are flying; you can't reach the ground!");
@@ -310,7 +312,8 @@ static void pick_up_object(object *pl, object *op, object *tmp, uint32 nrof)
         nrof = tmp_nrof;
 
     /* Figure out how much weight this object will add to the player */
-    if (!QUERY_FLAG(pl, FLAG_WIZ) && (pl->carrying + (tmp->weight * nrof) + tmp->carrying) > CONTR(pl)->weight_limit)
+    if (!IS_GMASTER_WIZ(pl) &&
+        (pl->carrying + (tmp->weight * nrof) + tmp->carrying) > CONTR(pl)->weight_limit)
     {
         object *tmp_pl = is_player_inv(tmp);
 
@@ -331,6 +334,14 @@ static void pick_up_object(object *pl, object *op, object *tmp, uint32 nrof)
     if (tmp->type == CONTAINER)
         container_unlink(NULL, tmp);
 
+    /* TODO: The 'you pick up...' ndis should be removed -- the client can note
+     * the attempt to get and therefore no further message is confirmation of
+     * success. Explicit confirmation is just BW-wasting spam. Unfortunately
+     * pre-0.10.6 clients do not note the attempt so removing this server-side
+     * confirmation would be confusing. Therefore we should leave it for a Y
+     * update.
+     *
+     * -- Smacky 20130215 */
     if (QUERY_FLAG(tmp, FLAG_UNPAID))
     {
         if (QUERY_FLAG(tmp, FLAG_NO_PICK)) /* this is a clone shop - clone a item for inventory */
@@ -364,9 +375,11 @@ static void pick_up_object(object *pl, object *op, object *tmp, uint32 nrof)
     else
     {
         /* If the object is in a container, send a delete to the client.
-        * - we are moving all the items from the container to elsewhere,
-        * so it needs to be deleted.
-        */
+         * - we are moving all the items from the container to elsewhere,
+         * so it needs to be deleted. */
+        /* The above comment makes no sense.
+         * 
+         * -- Smacky 20130215 */
         if (!QUERY_FLAG(tmp, FLAG_REMOVED))
         {
             int result;
@@ -386,7 +399,7 @@ static void pick_up_object(object *pl, object *op, object *tmp, uint32 nrof)
     }
 
     new_draw_info(NDI_UNIQUE, 0, pl, "%s", buf);
-    tmp = insert_ob_in_ob(tmp, op);
+    (void)insert_ob_in_ob(tmp, op);
 
     if(op->type != PLAYER)
     {
@@ -662,11 +675,12 @@ void put_object_in_sack(object *const op, object *const sack, object *tmp, const
 */
 void drop_object(object *const op, object *tmp, const uint32 nrof)
 {
-//    char    buf[MEDIUM_BUF];
+    MapSpace *msp;
     object *floor;
     uint32 tmp_nrof;
 
-    if (QUERY_FLAG(tmp, FLAG_NO_DROP) && !QUERY_FLAG(op, FLAG_WIZ))
+    if (QUERY_FLAG(tmp, FLAG_NO_DROP) &&
+        !IS_GMASTER_WIZ(op))
     {
 #if 0
         /* Eneq(@csd.uu.se): Objects with NO_DROP defined can't be dropped. */
@@ -728,7 +742,9 @@ void drop_object(object *const op, object *tmp, const uint32 nrof)
         return;
     }
 
-    floor = GET_MAP_OB_LAYER(op->map, op->x, op->y, 0);
+    msp = GET_MAP_SPACE_PTR(op->map, op->x, op->y);
+    floor = GET_MAP_SPACE_GMASTER_SLAYER(msp, 0);
+
     if (floor && floor->type == SHOP_FLOOR && !QUERY_FLAG(tmp, FLAG_UNPAID) && tmp->type != MONEY)
     {
         sell_item(tmp, op, -1);

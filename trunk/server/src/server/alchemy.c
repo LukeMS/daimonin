@@ -103,7 +103,7 @@ void attempt_do_alchemy(object *caster, object *cauldron)
         LOG(llevDebug, "Got alchemy ability lvl = %d\n", ability);
 #endif
 
-        if (QUERY_FLAG(caster, FLAG_WIZ))
+        if (IS_GMASTER_WIZ(caster))
         {
             rp = fl->items;
             while (rp && (formula % rp->index) != 0)

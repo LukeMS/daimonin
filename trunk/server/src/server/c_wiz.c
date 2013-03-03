@@ -90,11 +90,6 @@ int command_dmload(object *op, char *params)
          name[MEDIUM_BUF] = "",
          pwd[MEDIUM_BUF] = "";
 
-    if (!op ||
-        op->type != PLAYER ||
-        !QUERY_FLAG(op,FLAG_WIZ))
-        return 0;
-
     if (!params)
         return 1;
 
@@ -2468,27 +2463,6 @@ int command_gmasterfile(object *op, char *params)
     return COMMANDS_RTN_VAL_OK;
 }
 
-int command_invisible(object *op, char *params)
-{
-    if (!op)
-        return COMMANDS_RTN_VAL_ERROR;
-
-    if (IS_SYS_INVISIBLE(op))
-    {
-        CLEAR_FLAG(op, FLAG_SYS_OBJECT);
-        new_draw_info(NDI_UNIQUE, 0, op, "You turn visible.");
-    }
-    else
-    {
-        SET_FLAG(op, FLAG_SYS_OBJECT);
-        new_draw_info(NDI_UNIQUE, 0, op, "You turn invisible.");
-    }
-
-    update_object(op, UP_OBJ_FACE);
-
-    return COMMANDS_RTN_VAL_OK_SILENT;
-}
-
 static int CommandLearnSpellOrPrayer(object *op, char *params, int special_prayer)
 {
     int spell;
@@ -2609,18 +2583,194 @@ int command_ip(object *op, char *params)
     return COMMANDS_RTN_VAL_OK_SILENT;
 }
 
+int command_dm_dev(object *op, char *params)
+{
+    if (op->type != PLAYER)
+        return 0;
+
+    command_goto(op, "/dev/testmaps/testmap_main 2 2");
+
+    return 0;
+}
+
 /* Toggle wizpass (walk through walls, do not move apply, etc). */
 int command_wizpass(object *op, char *params)
 {
-    uint8 wizpass;
+    player *pl;
 
-    if (!op)
+    if (op->type != PLAYER ||
+        !(pl = CONTR(op)))
+    {
         return COMMANDS_RTN_VAL_ERROR;
+    }
 
-    wizpass = (CONTR(op)->wizpass) ? 0 : 1;
-
-    new_draw_info(NDI_UNIQUE, 0, op, "Wizpass set to %d.", wizpass);
-    CONTR(op)->wizpass = wizpass;
+   pl->gmaster_wizpass = !pl->gmaster_wizpass;
+   new_draw_info(NDI_UNIQUE, 0, op, "Toggled gmaster_wizpass to %u",
+                 pl->gmaster_wizpass);
 
     return COMMANDS_RTN_VAL_OK_SILENT;
 }
+
+/* Toggles whether player sees first system object on square (instead of
+ * fmask). */
+int command_matrix(object *op, char *params)
+{
+    player *pl;
+
+    if (op->type != PLAYER ||
+        !(pl = CONTR(op)))
+    {
+        return COMMANDS_RTN_VAL_ERROR;
+    }
+
+   pl->gmaster_matrix = !pl->gmaster_matrix;
+   new_draw_info(NDI_UNIQUE, 0, op, "Toggled gmaster_matrix to %u",
+                 pl->gmaster_matrix);
+
+    return COMMANDS_RTN_VAL_OK_SILENT;
+}
+
+/* This toggles whether mobs can sense the players presence. */
+int command_stealth(object *op, char *params)
+{
+    player *pl;
+
+    if (op->type != PLAYER ||
+        !(pl = CONTR(op)))
+    {
+        return COMMANDS_RTN_VAL_ERROR;
+    }
+
+   pl->gmaster_stealth = !pl->gmaster_stealth;
+   new_draw_info(NDI_UNIQUE, 0, op, "Toggled gmaster_stealth to %u",
+                 pl->gmaster_stealth);
+
+    return COMMANDS_RTN_VAL_OK_SILENT;
+}
+
+int command_invisibility(object *op, char *params)
+{
+    player *pl;
+
+    if (op->type != PLAYER ||
+        !(pl = CONTR(op)))
+    {
+        return COMMANDS_RTN_VAL_ERROR;
+    }
+
+    map_set_slayers(GET_MAP_SPACE_PTR(op->map, op->x, op->y), op, 0);
+    pl->gmaster_invis = !pl->gmaster_invis;
+    update_object(op, UP_OBJ_LAYER);
+    new_draw_info(NDI_UNIQUE, 0, op, "Toggled gmaster_invis to %u",
+                  pl->gmaster_invis);
+
+    return COMMANDS_RTN_VAL_OK_SILENT;
+}
+
+/* '/dm_light x' switches the map master's personal light to
+ * 1 <= x <= MAX_DARKNESS, or turns it off (x=0).
+ * '/dm_light' toggles personal_light between off (0) and fullbeams
+ * (MAX_DARKNESS). */
+int command_dm_light(object *op, char *params)
+{
+    player *pl;
+    sint32  personal_light;
+
+    if (op->type != PLAYER ||
+        !(pl = CONTR(op)))
+    {
+        return COMMANDS_RTN_VAL_ERROR;
+    }
+
+    personal_light = (!params)
+                     ? ((pl->personal_light) ? 0 : MAX_DARKNESS)
+                     : ABS(atoi(params));
+    set_personal_light(pl, personal_light);
+    new_draw_info(NDI_UNIQUE, 0, op, "Switch personal light to %u.",
+                  pl->personal_light);
+
+    return COMMANDS_RTN_VAL_OK_SILENT;
+}
+
+/* TODO: logic changed with account patch! */
+#if 0
+int command_dm_password (object *op, char *params)
+{
+    player *pl;
+    FILE *fp, *fpout;
+    const char *name_hash;
+    char pfile[MEDIUM_BUF], bufall[MEDIUM_BUF], outfile[MEDIUM_BUF];
+    char name[MEDIUM_BUF]="", pwd[MEDIUM_BUF]="";
+
+    if(params==NULL || !sscanf(params, "%s %s", name, pwd) || name[0] == 0 || pwd[0]== 0)
+        return 1;
+
+    transform_player_name_string(name);
+
+    /* we have now 2 strings - name and password - lets check there is a player file for that name */
+    sprintf(pfile, "%s/%s/%s/%s/%s.pl", settings.localdir, settings.playerdir, get_subdir(name), name, name);
+    if (access(pfile, F_OK)==-1)
+    {
+        new_draw_info(NDI_UNIQUE, 0,op, "dm_pwd: player %s don't exists or has no player file!", name);
+
+        return 0;
+    }
+
+    /* All ok - player exists and player file can be altered - load in the player file */
+    strcpy(outfile, pfile);
+    strcat(outfile, ".tmp");
+
+    /* lets do a safe read/write in a temp. file */
+    if((fp=fopen(pfile,"r"))==NULL)
+    {
+        new_draw_info(NDI_UNIQUE, 0,op, "dm_pwd: error open file %s!", pfile);
+
+        return 0;
+    }
+
+    if((fpout=fopen(outfile,"w"))==NULL)
+    {
+        new_draw_info(NDI_UNIQUE, 0,op, "dm_pwd: error open file %s!", outfile);
+
+        return 0;
+    }
+
+    while (fgets(bufall,MEDIUM_BUF-1,fp) != NULL)
+    {
+        if(!strncmp(bufall,"password ",9))
+            fprintf(fpout,"password %s\n", crypt_string(pwd));
+        else
+            fputs(bufall, fpout);
+    }
+
+    /* now, this is important - perhaps the player is online!
+     * be sure we change the password in the player struct too!
+     */
+/* TODO: we must check accounts here */
+    if((name_hash = find_string(name)))
+    {
+        for(pl=first_player;pl!=NULL;pl=pl->next)
+        {
+            /* we don't care about removed or such - just force to be sure the change
+             * in the player* struct.
+             */
+            if(pl->ob && pl->ob->name == name_hash)
+            {
+        FIXME->  strcpy(pl->socket.account.pwd, crypt_string(pwd));
+                break;
+            }
+        }
+    }
+
+    fclose(fp);
+    fclose(fpout);
+
+    /* delete the original file and move the tmp file */
+    unlink(pfile);
+    rename(outfile, pfile);
+
+    new_draw_info(NDI_UNIQUE, 0,op, "Done. Changed password of %s to %s!", name, pwd);
+
+    return 0;
+}
+#endif

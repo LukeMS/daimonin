@@ -1941,7 +1941,10 @@ int cast_identify(object *op, int level, object *single_ob, int mode)
     for (tmp = op->inv; tmp ; tmp = tmp->below)
     {
         inside_jump1:
-        if (!QUERY_FLAG(tmp, FLAG_IDENTIFIED) && !IS_SYS_INVISIBLE(tmp) && (need_identify(tmp) ||mode ==IDENTIFY_MODE_MARKED))
+        if (!QUERY_FLAG(tmp, FLAG_IDENTIFIED) &&
+            !QUERY_FLAG(tmp, FLAG_SYS_OBJECT) &&
+            (need_identify(tmp) ||
+             mode ==IDENTIFY_MODE_MARKED))
         {
             success2++;
             if (level < tmp->level)
@@ -1981,8 +1984,9 @@ int cast_identify(object *op, int level, object *single_ob, int mode)
     if(IDENTIFY_MODE_ALL)
     {
       for(tmp = GET_MAP_OB(op->map,op->x,op->y);tmp!=NULL;tmp=tmp->above)
-      if (!QUERY_FLAG(tmp, FLAG_IDENTIFIED) && !IS_SYS_INVISIBLE(tmp) &&
-    need_identify(tmp))
+      if (!QUERY_FLAG(tmp, FLAG_IDENTIFIED) &&
+          !QUERY_FLAG(tmp, FLAG_SYS_OBJECT) &&
+          need_identify(tmp))
       {
         identify(tmp);
         if (op->type==PLAYER) {

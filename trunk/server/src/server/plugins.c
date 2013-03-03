@@ -65,6 +65,7 @@ struct plugin_hooklist  hooklist    =
     enter_map,
     enter_map_by_exit,
     enter_map_by_name,
+    esrv_send_or_del_item,
     esrv_update_item,
     /* F */
     find_animation,
@@ -127,6 +128,7 @@ struct plugin_hooklist  hooklist    =
     map_player_link,
     map_player_unlink,
     map_save,
+    map_set_slayers,
     map_transfer_apartment_items,
     material_repair_cost,
     material_repair_item,
