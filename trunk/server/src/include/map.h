@@ -174,22 +174,6 @@
     MAP_WHEN_RESET((_M_)) = 0
 #endif
 
-/* These are the 'face flags' we grap out of the flags object structure 1:1.
- * I user a macro to get them from the object, doing a fast AND to mask the bigger
- * object flags to a uint8. I had to change to object flag order for it, but it
- * increase the server->client protocol ALOT - we don't need to collect anything.
- */
-#define FFLAG_SLEEP     0x01        /* object sleeps */
-#define FFLAG_CONFUSED  0x02        /* object is confused */
-#define FFLAG_PARALYZED 0x04        /* object is paralyzed */
-#define FFLAG_SCARED    0x08        /* object is scared - it will run away */
-#define FFLAG_BLINDED   0x10        /* object is blinded */
-#define FFLAG_INVISIBLE 0x20        /* object is invisible (can seen with "see invisible" on)*/
-#define FFLAG_ETHEREAL  0x40        /* object is etheral */
-
-#define FFLAG_PROBE     0x80        /* object is probed !Flag is set by map2 cmd! */
-
-
 /* You should really know what you are doing before using this - you
  * should almost always be using out_of_map instead, which takes into account
  * map tiling.
