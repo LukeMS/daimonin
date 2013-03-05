@@ -322,22 +322,40 @@ enum
 #define UPD_QUALITY         0x200
 #define UPD_ALL             0xffff
 
-#define A_READIED   0x00001
-#define A_WIELDED   0x00002
-#define A_WORN      0x00003
-#define A_ACTIVE    0x00004
-#define A_APPLIED   0x00005
-#define F_APPLIED   0x0000F
-#define F_ETHEREAL  0x00080
-#define F_INVISIBLE 0x00100
-#define F_UNPAID    0x00200
-#define F_MAGIC     0x00400
-#define F_CURSED    0x00800
-#define F_DAMNED    0x01000
-#define F_OPEN      0x02000
-#define F_NOPICK    0x04000
-#define F_LOCKED    0x08000
-#define F_TRAPED    0x10000
+/* Item apply values -- only set if F_APPLIED */
+#define A_READIED 1
+#define A_WIELDED 2
+#define A_WORN    3
+#define A_ACTIVE  4
+#define A_APPLIED 5
+
+/* Item flags. */
+/* TODO: Why the huge gap between F_APPLIED and F_ETHEREAL? F_ETHEREAL could be
+ * 1<<5 or 1<<6. Then we could fit these flags into a uint16 whereas now we
+ * need uint32.
+ *
+ * -- Smacky 20130305 */
+#define F_APPLIED   ((1 << 4) - 1)
+#define F_ETHEREAL  (1 <<  7)
+#define F_INVISIBLE (1 <<  8)
+#define F_UNPAID    (1 <<  9)
+#define F_MAGIC     (1 << 10)
+#define F_CURSED    (1 << 11)
+#define F_DAMNED    (1 << 12)
+#define F_OPEN      (1 << 13)
+#define F_NOPICK    (1 << 14)
+#define F_LOCKED    (1 << 15)
+#define F_TRAPED    (1 << 16)
+
+/* Map flags for thing over and thing under. */
+#define FFLAG_SLEEP     (1 << 0) // object sleeps
+#define FFLAG_CONFUSED  (1 << 1) // object is confused
+#define FFLAG_PARALYZED (1 << 2) // object is paralyzed
+#define FFLAG_SCARED    (1 << 3) // object is scared - it will run away
+#define FFLAG_BLINDED   (1 << 4) // object is blinded
+#define FFLAG_INVISIBLE (1 << 5) // object is invisible (normal or gmaster)
+#define FFLAG_ETHEREAL  (1 << 6) // object is ethereal
+#define FFLAG_PROBE     (1 << 7) // object is probed !Flag is set by map2 cmd!
 
 /* maximum reachable level */
 #define MAXLEVEL 110

@@ -40,7 +40,7 @@
 #include <sys/time.h>
 #endif
 
-#define GET_CLIENT_FLAGS(_O_)   ((_O_)->flags[0]&0x7f)
+#define GET_CLIENT_FLAGS(_O_) (((_O_)->flags[0] & 0x7f) | (IS_GMASTER_INVIS((_O_))) ? FFLAG_INVISIBLE : 0)
 
 /******************************************************************************
  *
@@ -249,7 +249,7 @@ void draw_client_map2(object *pl)
                                      : 0;
     int             special_vision = ((QUERY_FLAG(pl, FLAG_XRAYS)) ? 1 : 0) |
                                      ((QUERY_FLAG(pl, FLAG_SEE_IN_DARK)) ? 2 : 0);
-    int             flag_tmp, quick_pos_1, quick_pos_2, quick_pos_3;
+    int             quick_pos_1, quick_pos_2, quick_pos_3;
     uint16          face_num0, face_num1, face_num2, face_num3, face_num2m, face_num3m;
 #ifdef DEBUG_CORE_MAP
     int tile_count  = 0;
@@ -297,6 +297,7 @@ void draw_client_map2(object *pl)
         {
             uint16 mask = (ax & 0x1f) << 11 | (ay & 0x1f) << 6;
             int    d = pl_ptr->blocked_los[ax][ay],
+                   flag_tmp = 0,
                    pname_flag = 0,
                    ext_flag = 0,
                    dmg_flag = 0,
