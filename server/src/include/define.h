@@ -561,7 +561,7 @@
 #define FLAG_EATING         4 /* target is eating/resting */
 #define FLAG_IS_INVISIBLE   5 /* only THIS invisible can be seen with seen_invisible */
 #define FLAG_IS_ETHEREAL    6 /* object is etheral  - means transparent and special protected */
-#define FLAG_IS_GOOD        7 /* NOT USED from map2. alignment flag */
+#define FLAG_BLIND          7 /* If set, object cannot see (the map) with eyes */
 
 #define FLAG_NO_PICK        8 /* Object can't be picked up */
 #define FLAG_WALK_ON        9 /* Applied when it's walked upon */
@@ -631,7 +631,7 @@
 #define FLAG_CAN_PASS_THRU  47 /* Can pass thru... */
 
 #define FLAG_FEARED         48 /* player or monster is feared - attacks and acts alot more worse */
-#define FLAG_BLIND          49 /* If set, object cannot see (the map) with eyes */
+#define FLAG_IS_GOOD        49 /* alignment flag */
 #define FLAG_NO_DROP        50 /* Object can't be dropped */
 #define FLAG_FIGHT_HPREG    51 /* monster (player - not implemented): mob can reg hp when fighting! */
 #define FLAG_READY_SPELL    52 /* (Monster) can learn and cast spells */
