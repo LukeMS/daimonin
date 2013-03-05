@@ -348,14 +348,27 @@ enum
 #define F_TRAPED    (1 << 16)
 
 /* Map flags for thing over and thing under. */
-#define FFLAG_SLEEP     (1 << 0) // object sleeps
-#define FFLAG_CONFUSED  (1 << 1) // object is confused
-#define FFLAG_PARALYZED (1 << 2) // object is paralyzed
-#define FFLAG_SCARED    (1 << 3) // object is scared - it will run away
-#define FFLAG_BLINDED   (1 << 4) // object is blinded
-#define FFLAG_INVISIBLE (1 << 5) // object is invisible (normal or gmaster)
-#define FFLAG_ETHEREAL  (1 << 6) // object is ethereal
-#define FFLAG_PROBE     (1 << 7) // object is probed !Flag is set by map2 cmd!
+#define FFLAG_SLEEP     (1 << 0) // sleeping
+#define FFLAG_CONFUSED  (1 << 1) // confused
+#define FFLAG_PARALYZED (1 << 2) // paralyzed
+#define FFLAG_SCARED    (1 << 3) // scared - it will run away
+#define FFLAG_EATING    (1 << 4) // eating 
+#define FFLAG_INVISIBLE (1 << 5) // invisible (normal or gmaster)
+#define FFLAG_ETHEREAL  (1 << 6) // ethereal
+/* TODO: Unfortunately EATING was added in place of BLINDED at some point in
+ * the past. As SERVER_CMD_MAP2 only allows a uint8 here, there is not room to
+ * now readd BLINDED -- so we need to tweak the protocol to send/receive extra
+ * data (probably a whole byte). This requires a Y update. Still, the rest of
+ * the server has been tweaked in this commit (r7297) so it should be a simple
+ * case of removing this #if 0 9and updating the client).
+ *
+ * -- Smacky 20130305 */
+#if 0
+#define FFLAG_BLINDED   (1 << 7) // blinded
+#define FFLAG_PROBE     (1 << 8) // probed !Flag is set by map2 cmd!
+#else
+#define FFLAG_PROBE     (1 << 7) // probed !Flag is set by map2 cmd!
+#endif
 
 /* maximum reachable level */
 #define MAXLEVEL 110

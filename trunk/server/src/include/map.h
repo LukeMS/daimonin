@@ -257,7 +257,7 @@ typedef struct MapCell_struct
 {
     int     count;
     short   faces[NROF_CLAYERS];
-    uint8   fflag[NROF_CLAYERS];
+    uint16  fflag[NROF_CLAYERS];
     uint8   ff_probe[NROF_CLAYERS];
     char    quick_pos[NROF_CLAYERS];
 } MapCell;

@@ -241,7 +241,7 @@ void draw_client_map2(object *pl)
     object         *tmph = NULL, *pname2 = NULL, *pname3 = NULL;
     object         *clayer[NROF_CLAYERS];
     uint8           i;
-    int             x, y, ax, ay, nx, ny, probe_tmp;
+    int             x, y, ax, ay, nx, ny;
     int             x_start;
     int             wdark = darkness_table[world_darkness];
     int             personal_light = (pl_ptr->personal_light)
@@ -298,6 +298,7 @@ void draw_client_map2(object *pl)
             uint16 mask = (ax & 0x1f) << 11 | (ay & 0x1f) << 6;
             int    d = pl_ptr->blocked_los[ax][ay],
                    flag_tmp = 0,
+                   probe_tmp = 0,
                    pname_flag = 0,
                    ext_flag = 0,
                    dmg_flag = 0,
