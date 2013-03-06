@@ -204,7 +204,7 @@ int command_gsay(object *op, char *params)
     char            buf[MEDIUM_BUF],
                    *cp;
     object         *member;
-#ifdef USE_CHANNELS
+#if 0 // def USE_CHANNELS
     sockbuf_struct *sb;
 #endif
 
@@ -220,7 +220,10 @@ int command_gsay(object *op, char *params)
         return 1;
     }
 
-#ifdef USE_CHANNELS
+/* Disabled because 0.10.5 and earlier clients do not log channel chat and it
+ * is necessary that clients keep gsay logs as the server no longer does
+ * (r7282, 0.10.5-y). */
+#if 0 // def USE_CHANNELS
     sprintf(buf, "%c%c%s %s:%s",
             2, NDI_YELLOW, "Group", query_name(op), params);
     sb = SOCKBUF_COMPOSE(SERVER_CMD_CHANNELMSG, buf, strlen(buf + 2) + 2, 0);
