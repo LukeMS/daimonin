@@ -583,8 +583,6 @@ void put_object_in_sack(object *const op, object *const sack, object *tmp, const
     int     ego_mode;
     tag_t   tmp_tag, tmp2_tag;
     object *tmp2, *tmp_cont;
-    /*object *sack2;*/
-//    char    buf[MEDIUM_BUF];
 
     if (op->type != PLAYER)
     {
@@ -664,7 +662,6 @@ void put_object_in_sack(object *const op, object *const sack, object *tmp, const
     tmp_tag = tmp->count;
     tmp_cont = tmp->env;
     tmp2 = insert_ob_in_ob(tmp, sack);
-    FIX_PLAYER(op, "put_object_in_sack"); /* This is overkill, fix_player() is called somewhere */
 }
 
 /*
@@ -716,8 +713,6 @@ void drop_object(object *const op, object *tmp, const uint32 nrof)
     else
     {
         remove_ob(tmp);
-//        if (tmp->env && tmp->env != op && tmp->env != tmp)
-//            esrv_update_item(UPD_WEIGHT, tmp->env);
     }
 
     tmp_nrof = nrof;
@@ -738,7 +733,7 @@ void drop_object(object *const op, object *tmp, const uint32 nrof)
             else
                 new_draw_info(NDI_UNIQUE, 0, op, "The ~NO-DROP~ item vanishes to nowhere as you drop it!");
         }
-        FIX_PLAYER(op,"drop_object - startequip");
+
         return;
     }
 
@@ -754,7 +749,6 @@ void drop_object(object *const op, object *tmp, const uint32 nrof)
             if (op->type == PLAYER)
             {
                 new_draw_info(NDI_UNIQUE, 0, op, "The shop magic put it to the storage.");
-                FIX_PLAYER(op ,"drop_object - unpaid");
             }
 
             return;
@@ -768,11 +762,6 @@ void drop_object(object *const op, object *tmp, const uint32 nrof)
     remove_ob(op);
     insert_ob_in_map(op, op->map, op, INS_NO_MERGE | INS_NO_WALK_ON);
     CLEAR_FLAG(op, FLAG_NO_APPLY);
-
-    if (op->type == PLAYER)
-    {
-        FIX_PLAYER(op ,"drop object - end");
-    }
 }
 
 void drop(object *const op, object *const ori)
