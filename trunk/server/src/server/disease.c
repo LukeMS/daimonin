@@ -201,7 +201,10 @@ int remove_symptoms(object *disease)
     symptom = find_symptom(disease);
     if (symptom != NULL)
     {
+        object *victim  = symptom->env;
         destruct_ob(symptom);
+        if (victim)
+            FIX_PLAYER(victim ,"remove symptoms ");
     }
     return 0;
 }

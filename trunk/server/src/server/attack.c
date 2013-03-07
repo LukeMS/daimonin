@@ -1768,6 +1768,7 @@ void poison_player(object *op, object *hitter, float dam)
                 }
                 tmp = check_obj_stat_buffs(tmp, op);
                 insert_ob_in_ob(tmp, op);
+                FIX_PLAYER(op , "attack - poison");
             }
             else /* its a mob! */
             {

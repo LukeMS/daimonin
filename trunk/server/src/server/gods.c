@@ -851,6 +851,7 @@ void god_intervention(object *op, object *god)
                         if (get_stat_value(&depl->stats, i))
                             new_draw_info(NDI_UNIQUE, 0, op, "%s", restore_msg[i]);
                     remove_ob(depl);
+                    FIX_PLAYER(op ,"god intervention");
                     return;
                 }
                 else if (item->name == shstr_cons.message)
