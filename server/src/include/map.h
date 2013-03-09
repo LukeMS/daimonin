@@ -151,28 +151,34 @@
 #define GET_MAP_RTAG(_M_, _X_, _Y_)                   ((_M_)->spaces[(_X_) + (_M_)->width * (_Y_)].round_tag)
 
 #define MAP_SET_WHEN_SWAP(_M_, _T_) \
-    MAP_WHEN_SWAP((_M_)) = (ROUND_TAG - ROUND_TAG % \
-                            (long unsigned int)MAX(1, pticks_second)) / \
-                           pticks_second + (_T_)
-
-#ifdef MAP_RESET // _T_ > 0, _T_ secs from now, _T_ == 0:  never, _T_ < 0: now
-# define MAP_SET_WHEN_RESET(_M_, _T_) \
-    if ((_T_) > 0) \
+    if ((_T_) != 0) /* delay */ \
     { \
-        MAP_WHEN_RESET((_M_)) = (ROUND_TAG - ROUND_TAG % (long unsigned int)MAX(1, pticks_second)) / pticks_second + (_T_); \
+        MAP_WHEN_SWAP((_M_)) = (ROUND_TAG - ROUND_TAG % \
+                                (long unsigned int)MAX(1, pticks_second)) / \
+                               pticks_second + (_T_); \
     } \
-    else if ((_T_) == 0) \
+    else /* never */ \
+    { \
+        MAP_WHEN_SWAP((_M_)) = 0; \
+    }
+
+#define MAP_SET_WHEN_RESET(_M_, _T_) \
+    if ((_T_) > 0) /* delay */ \
+    { \
+        MAP_WHEN_RESET((_M_)) = (ROUND_TAG - ROUND_TAG % \
+                                 (long unsigned int)MAX(1, pticks_second)) / \
+                                pticks_second + (_T_); \
+    } \
+    else if ((_T_) == 0) /* never */ \
     { \
         MAP_WHEN_RESET((_M_)) = 0; \
     } \
-    else \
+    else /* immediate */\
     { \
-        MAP_WHEN_RESET((_M_)) = (ROUND_TAG - ROUND_TAG % (long unsigned int)MAX(1, pticks_second)) / pticks_second; \
+        MAP_WHEN_RESET((_M_)) = (ROUND_TAG - ROUND_TAG % \
+                                 (long unsigned int)MAX(1, pticks_second)) / \
+                                pticks_second; \
     }
-#else // maps never reset so ignore _T_
-# define MAP_SET_WHEN_RESET(_M_, _T_) \
-    MAP_WHEN_RESET((_M_)) = 0
-#endif
 
 /* You should really know what you are doing before using this - you
  * should almost always be using out_of_map instead, which takes into account
