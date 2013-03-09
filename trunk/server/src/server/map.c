@@ -404,7 +404,6 @@ void dump_map(mapstruct *m, player *pl, int list, char *ref)
                     m->in_memory);
             NDI_LOG(llevSystem, NDI_UNIQUE, 0, ob, "~Swap~: %d (%u)",
                     (sint32)(MAP_WHEN_SWAP(m) - seconds), MAP_SWAP_TIMEOUT(m));
-#ifdef MAP_RESET
 
             if (MAP_WHEN_RESET(m) == 0)
             {
@@ -416,9 +415,6 @@ void dump_map(mapstruct *m, player *pl, int list, char *ref)
                         (sint32)(MAP_WHEN_RESET(m) - seconds), MAP_RESET_TIMEOUT(m));
             }
 
-#else
-            NDI_LOG(llevSystem, NDI_UNIQUE, 0, ob, "~Reset~: Never");
-#endif
             NDI_LOG(llevSystem, NDI_UNIQUE, 0, ob, "~Size~: %dx%d (%d, %d)",
                     MAP_WIDTH(m), MAP_HEIGHT(m), MAP_ENTER_X(m), MAP_ENTER_Y(m));
             NDI_LOG(llevSystem, NDI_UNIQUE, 0, ob, "~Darkness/Light~: %d/%d%s",
@@ -472,7 +468,6 @@ void dump_map(mapstruct *m, player *pl, int list, char *ref)
                 m->in_memory);
         sprintf(strchr(buf, '\0'), ", %d (%u)",
                 (sint32)(MAP_WHEN_SWAP(m) - seconds), MAP_SWAP_TIMEOUT(m));
-#ifdef MAP_RESET
 
         if (MAP_WHEN_RESET(m) == 0)
         {
@@ -484,9 +479,6 @@ void dump_map(mapstruct *m, player *pl, int list, char *ref)
                     (sint32)(MAP_WHEN_RESET(m) - seconds), MAP_RESET_TIMEOUT(m));
         }
 
-#else
-        sprintf(strchr(buf, '\0'), ", x (x)");
-#endif
         sprintf(strchr(buf, '\0'), ", %d", MAP_DIFFICULTY(m));
         sprintf(strchr(buf, '\0'), ", %d/%d/%d",
                 m->tileset_id, m->tileset_x, m->tileset_y);
@@ -1743,7 +1735,7 @@ static mapstruct *LoadMap(shstr *path_sh, shstr *orig_path_sh, uint32 flags, shs
          *orig_path_sh != '/' &&
          *orig_path_sh != '.'))
     {
-        LOG(llevBug, "BUG:: %s/LoadMap(): Filename without start '/' or '.' (>%s<) (>%s<)\n",
+        LOG(llevBug, "BUG:: %s/LoadMap(): Filename without start '/' or '.' >%s< >%s<\n",
             __FILE__, STRING_SAFE(path_sh), STRING_SAFE(orig_path_sh));
 
         return NULL;
@@ -1788,7 +1780,7 @@ static mapstruct *LoadMap(shstr *path_sh, shstr *orig_path_sh, uint32 flags, shs
             if (!(fp = fopen(pathname, "r")))
             {
                 /* ok... NOW we are screwed with an invalid map... because it is not in /maps */
-                LOG(llevBug, "BUG:: %s/LoadMap(): Can't open map file >%s< (>%s<)!\n",
+                LOG(llevBug, "BUG:: %s/LoadMap(): Can't open map file >%s< >%s<!\n",
                     __FILE__, STRING_SAFE(path_sh), STRING_SAFE(orig_path_sh));
 
                 return NULL;
@@ -1796,7 +1788,7 @@ static mapstruct *LoadMap(shstr *path_sh, shstr *orig_path_sh, uint32 flags, shs
         }
         else
         {
-            LOG(llevBug, "BUG:: %s/LoadMap(): Can't open map file >%s< (>%s<)!\n",
+            LOG(llevBug, "BUG:: %s/LoadMap(): Can't open map file >%s< >%s<!\n",
                 __FILE__, STRING_SAFE(path_sh), STRING_SAFE(orig_path_sh));
 
             return NULL;
@@ -2151,9 +2143,9 @@ static int LoadMapHeader(FILE *fp, mapstruct *m, uint32 flags)
         }
         else if (!strcmp(key, "reset_timeout"))
         {
+#ifdef MAP_RESET
             int v = atoi(value);
 
-#ifdef MAP_RESET
             if (v == -1) // never reset
             {
                 v = 0;
@@ -2171,11 +2163,14 @@ static int LoadMapHeader(FILE *fp, mapstruct *m, uint32 flags)
 
                 v = MAP_DEFRESET;
             }
-#endif
             MAP_RESET_TIMEOUT(m) = v;
+#else
+            MAP_RESET_TIMEOUT(m) = 0;
+#endif
         }
         else if (!strcmp(key, "swap_time"))
         {
+#ifndef MAP_SWAP_OBJECT
             int v = atoi(value);
 
             if (v < MAP_MINSWAP ||
@@ -2193,6 +2188,9 @@ static int LoadMapHeader(FILE *fp, mapstruct *m, uint32 flags)
             }
 
             MAP_SWAP_TIMEOUT(m) = v;
+#else
+            MAP_SWAP_TIMEOUT(m) = 0;
+#endif
         }
         /* difficulty is a 'recommended player level' for that map *for a
          * single player*, so follows the same restriction (1 to MAXLEVEL). It
@@ -3667,7 +3665,7 @@ void map_check_in_memory(mapstruct *m)
 {
     mapstruct *this,
               *next;
-#ifdef MAP_MAXOBJECTS
+#ifdef MAP_SWAP_OBJECT
     static uint32 threshold = MAP_MAXOBJECTS;
 #endif
 
@@ -3698,7 +3696,7 @@ void map_check_in_memory(mapstruct *m)
             if (this->in_memory == MAP_ACTIVE ||
                 this->in_memory == MAP_SAVING)
             {
-#ifdef MAP_MAXOBJECTS
+#ifdef MAP_SWAP_OBJECT
                 sint32 objs = (sint32)(pool_object->nrof_allocated[0] - pool_object->nrof_free[0]);
 
                 if (objs <= (sint32)threshold)
@@ -3748,7 +3746,7 @@ void map_check_in_memory(mapstruct *m)
                     /* Now swap the map. */
                     if (!noswap)
                     {
-#ifdef MAP_MAXOBJECTS
+#ifdef MAP_SWAP_OBJECT
 # ifdef DEBUG_MAP
                         LOG(llevDebug, "DEBUG:: %s/map_check_in_memory(): Swapping map >%s< (%u) before its time (%u of %u).\n", 
                             __FILE__, STRING_MAP_PATH(this), this->in_memory, objs,
