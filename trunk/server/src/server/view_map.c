@@ -189,6 +189,14 @@ void draw_client_map(object *plobj)
             }
     }
 
+    /* do LOS after calls to update_position */
+    if (!pl->gmaster_wiz &&
+        pl->update_los)
+    {
+        update_los(plobj);
+        pl->update_los = 0;
+    }
+
     draw_client_map2(plobj);
 
     if (redraw_below) /* redraw below windows? (and backbuffer now position) */
@@ -198,16 +206,7 @@ void draw_client_map(object *plobj)
         pl->map_tile_y = plobj->y;
         pl->socket.below_clear = 1; /* draw_client_map2() has implicit cleared belowed - don't send a clear again */
         pl->socket.look_position = 0; /* reset the "show only x items of all items belows" counter */
-        pl->update_los = 1;
         esrv_send_below(pl);
-    }
-
-    /* do LOS after calls to update_position */
-    if (!IS_GMASTER_WIZ(plobj) &&
-        pl->update_los)
-    {
-        update_los(plobj);
-        pl->update_los = 0;
     }
 }
 

@@ -2285,6 +2285,7 @@ object *insert_ob_in_map(object *const op, mapstruct *m, object *const originato
             }
 
             op->map->player_first = op;
+            pl->update_los = 1;
         }
     }
 
