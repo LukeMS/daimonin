@@ -537,15 +537,15 @@ void check_kill_quest_event(struct obj *pl, struct obj *op)
                             STRING_SAFE(tmp->name),
                             query_short_name(tmp_info->inv, NULL), nrof,
                             (tmp_info->inv->nrof) ? tmp_info->inv->nrof : 1);
+                    update_quest(tmp, NULL, buf);
                 }
                 else if(tmp_info->level < tmp_info->last_sp) /* pure kill quest - alot easier */
                 {
                     sprintf(buf, "Quest %s\n%s: %d/%d",
                             STRING_SAFE(tmp->name), query_name(op),
                             ++tmp_info->level, tmp_info->last_sp);
+                    update_quest(tmp, NULL, buf);
                 }
-
-                update_quest(tmp, NULL, buf);
             }
         }
     }
