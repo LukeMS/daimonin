@@ -76,11 +76,6 @@ static char * cleanup_chat_string(char *ustring)
 }
 
 /* check the player communication commands for a simple time based mute.
- * This will catch for example the annoying spams by key bound shouts,
- * dropped on purpose or accidently. It also will nicely limit the speed
- * of shouts & say commands and avoid emote spams.
- * Of course it don't can handle language or other abuses - for that we have
- * the mute command itself.
  */
 static int check_mute(object *op, int mode)
 {
@@ -115,73 +110,8 @@ static int check_mute(object *op, int mode)
             return FALSE;
         }
     }
-    else /* no old mute - lets check for new*/
-    {
-        if(mode == MUTE_MODE_SHOUT) /* say or shout? */
-        {
-            if(CONTR(op)->mute_freq_shout<=pticks) /* can we do a shout class communication ?*/
-            {
-                /* yes, all fine */
-                CONTR(op)->mute_freq_shout=pticks+MUTE_FREQ_SHOUT;
-                CONTR(op)->mute_flags &= ~(MUTE_FLAG_SHOUT|MUTE_FLAG_SHOUT_WARNING);
-            }
-            else /* nope - don't process the comm. action and tell the player why */
-            {
-                if(!(CONTR(op)->mute_flags & MUTE_FLAG_SHOUT)) /* friendly message not to spam */
-                {
-                    new_draw_info( NDI_UNIQUE, 0, op, "Please wait 2 seconds between shout like commands.");
-                    CONTR(op)->mute_flags |= MUTE_FLAG_SHOUT;
-                    return FALSE;
-                }
-                else if(!(CONTR(op)->mute_flags & MUTE_FLAG_SHOUT_WARNING)) /* first & last warning */
-                {
-                    new_draw_info( NDI_UNIQUE|NDI_ORANGE, 0, op, "Auto-Mute Warning: Please wait 2 seconds!");
-                    CONTR(op)->mute_flags |= MUTE_FLAG_SHOUT_WARNING;
-                    return FALSE;
-                }
-                else /* mute him */
-                {
-                    new_draw_info( NDI_UNIQUE|NDI_RED, 0, op, "Auto-Mute: Don't spam! You are muted for %d seconds!",(int)(MUTE_AUTO_NORMAL/(1000000/MAX_TIME)));
-                    CONTR(op)->mute_counter = pticks+MUTE_AUTO_NORMAL;
-                    return FALSE;
-                }
-            }
-        }
-        else
-        {
-            if(CONTR(op)->mute_freq_say<=pticks) /* can we do a say class command? (say/emote)*/
-            {
-                /* yes, all fine */
-                CONTR(op)->mute_freq_say=pticks+MUTE_FREQ_SAY;
-                CONTR(op)->mute_flags &= ~(MUTE_FLAG_SAY|MUTE_FLAG_SAY_WARNING);
-            }
-            else /* nope - don't process the comm. action and tell the player why */
-            {
-                if(!(CONTR(op)->mute_flags & MUTE_FLAG_SAY)) /* friendly message not to spam */
-                {
-                    new_draw_info( NDI_UNIQUE, 0, op, "Please wait 2 seconds between say like commands.");
-                    CONTR(op)->mute_flags |= MUTE_FLAG_SAY;
-                    return FALSE;
-                }
-                else if(!(CONTR(op)->mute_flags & MUTE_FLAG_SAY_WARNING)) /* first & last warning */
-                {
-                    new_draw_info( NDI_UNIQUE|NDI_ORANGE, 0, op, "Auto-Mute Warning: Please wait 2 seconds!");
-                    CONTR(op)->mute_flags |= MUTE_FLAG_SAY_WARNING;
-                    return FALSE;
-                }
-                else /* mute him */
-                {
-                    new_draw_info( NDI_UNIQUE|NDI_RED, 0, op, "Auto-Mute: Don't spam! You are muted for %d seconds!",(int)(MUTE_AUTO_NORMAL/(1000000/MAX_TIME)));
-                    CONTR(op)->mute_counter = pticks+MUTE_AUTO_NORMAL;
-                    return FALSE;
-                }
-            }
-        }
-    }
-
-    return TRUE;
+	return TRUE;
 }
-
 
 int command_say(object *op, char *params)
 {
