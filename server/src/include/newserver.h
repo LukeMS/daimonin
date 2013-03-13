@@ -249,6 +249,15 @@ typedef struct NewSocket_struct
     sint16              lx;                 /* geolocation for client locator */
     sint16              ly;                 /* geolocation for client locator */
 
+    /* XXX: Please note that the following is intended to log info and stats.
+     * They should NOT be used to clog the server up with legacy code;
+     * continue to obey basic DaiVersion rules.
+     *
+     * -- Smacky 20130313 */
+    uint32              version_rel; // client release version
+    uint32              version_maj; // client major version
+    uint32              version_min; // client minor version
+
     uint32              idle_flag       : 1;        /* idle warning was given and we count for disconnect */
     uint32              addme           : 1;        /* important: when set, a "connect" was initizialised as "player" */
     uint32              sound           : 1;        /* does the client want sound */

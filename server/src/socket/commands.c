@@ -655,6 +655,9 @@ void cs_cmd_setup(char *buf, int len, NewSocket *ns)
                 }
             }
 
+            ns->version_rel = rel;
+            ns->version_maj = maj;
+            ns->version_min = min;
             sprintf(tmpbuf, "%u.%u.%u",
                     DAI_VERSION_RELEASE, DAI_VERSION_MAJOR, DAI_VERSION_MINOR);
             strcat(cmdback, tmpbuf);
@@ -1670,6 +1673,13 @@ void cs_cmd_login(char *buf, int len, NewSocket *ns)
     }
     else /* player is logged in to his account */
     {
+        if (clogfile != tlogfile)
+        {
+            CHATLOG("LOGIN: IP >%s< Account >%s< Client version %u.%u.%u... OK!\n",
+                    ns->ip_host, buf, ns->version_rel, ns->version_maj,
+                    ns->version_min);
+        }
+
         /* only place where we go in account selection and allow newchar and addme */
         ns->status = Ns_Account;
     }
