@@ -113,7 +113,7 @@ typedef struct ReadList_struct
 #define SOCKBUF_DYNAMIC (-1)
 
 /* some flags */
-#define SOCKBUF_FLAG_STATIC		0x01 /* the will be not given back to mempool after dequeueing */
+#define SOCKBUF_FLAG_STATIC 0x01 /* the will be not given back to mempool after dequeueing */
 
 /* Contains the base information we use to make up a packet we want to send. */
 typedef struct _sockbuf_struct
@@ -128,76 +128,76 @@ typedef struct _sockbuf_struct
     int                      bufsize;     // size of buf
     int                      len;         // length of data in buf
     int                      pos;         // start point of unsent data in buf
-    int	                     flags;       // status flags
+    int                      flags;       // status flags
     unsigned char           *buf;         // data
 } sockbuf_struct;
 
 /* help functions to write in requested socket buffers */
 #ifdef SEND_BUFFER_DEBUG
 #define SockBuf_AddChar(_sl_,_c_) \
-	{LOG(llevDebug,"SOCKBUF: Add Char to %p(%d)\n",(_sl_),(_sl_)->len); \
-	if((int)((_sl_)->len+1)>=(_sl_)->bufsize) \
-	(_sl_)=socket_buffer_adjust((_sl_),1); \
-	( *((uint8 *)((_sl_)->buf+(_sl_)->len++)) =(char)(_c_) );}
+    {LOG(llevDebug,"SOCKBUF: Add Char to %p(%d)\n",(_sl_),(_sl_)->len); \
+    if((int)((_sl_)->len+1)>=(_sl_)->bufsize) \
+    (_sl_)=socket_buffer_adjust((_sl_),1); \
+    ( *((uint8 *)((_sl_)->buf+(_sl_)->len++)) =(char)(_c_) );}
 #define SockBuf_AddShort(_sl_,_c_) \
-	{LOG(llevDebug,"SOCKBUF: Add Short to %p(%d)\n",(_sl_),(_sl_)->len); \
-	if((int)((_sl_)->len+2)>=(_sl_)->bufsize) \
-	(_sl_)=socket_buffer_adjust((_sl_),2); \
-	*((uint16 *)((_sl_)->buf+(_sl_)->len))=(uint16)(_c_);(_sl_)->len+=2;}
+    {LOG(llevDebug,"SOCKBUF: Add Short to %p(%d)\n",(_sl_),(_sl_)->len); \
+    if((int)((_sl_)->len+2)>=(_sl_)->bufsize) \
+    (_sl_)=socket_buffer_adjust((_sl_),2); \
+    *((uint16 *)((_sl_)->buf+(_sl_)->len))=(uint16)(_c_);(_sl_)->len+=2;}
 #define SockBuf_AddInt(_sl_,_c_) \
-	{LOG(llevDebug,"SOCKBUF: Add Int to %p(%d)\n",(_sl_),(_sl_)->len); \
-	if((int)((_sl_)->len+4)>=(_sl_)->bufsize) \
-	(_sl_)=socket_buffer_adjust((_sl_),4); \
-	*((uint32 *)((_sl_)->buf+(_sl_)->len))=(uint32)(_c_);(_sl_)->len+=4;}
+    {LOG(llevDebug,"SOCKBUF: Add Int to %p(%d)\n",(_sl_),(_sl_)->len); \
+    if((int)((_sl_)->len+4)>=(_sl_)->bufsize) \
+    (_sl_)=socket_buffer_adjust((_sl_),4); \
+    *((uint32 *)((_sl_)->buf+(_sl_)->len))=(uint32)(_c_);(_sl_)->len+=4;}
 #define SockBuf_AddString(_sl,_data,_len) \
-	{LOG(llevDebug,"SOCKBUF: Add String of length %d to %p(%d)\n",(int)(_len),(_sl),(_sl)->len); \
-	if((int)((_sl)->len+(_len)+1)>=(_sl)->bufsize) \
-	(_sl)=socket_buffer_adjust((_sl),(_len)+1); \
-	memcpy((_sl)->buf+(_sl)->len,(_data),(_len)); \
-	(_sl)->len+=(_len); \
-	(_sl)->buf[(_sl)->len++] = (char) 0;}
+    {LOG(llevDebug,"SOCKBUF: Add String of length %d to %p(%d)\n",(int)(_len),(_sl),(_sl)->len); \
+    if((int)((_sl)->len+(_len)+1)>=(_sl)->bufsize) \
+    (_sl)=socket_buffer_adjust((_sl),(_len)+1); \
+    memcpy((_sl)->buf+(_sl)->len,(_data),(_len)); \
+    (_sl)->len+=(_len); \
+    (_sl)->buf[(_sl)->len++] = (char) 0;}
 #define SockBuf_AddStringNonTerminated(_sl,_data,_len) \
-	{LOG(llevDebug,"SOCKBUF: Add StringNT of length %d to %p(%d)\n",(int)(_len),(_sl),(_sl)->len); \
-	if((int)((_sl)->len+(_len)+1)>=(_sl)->bufsize) \
-	(_sl)=socket_buffer_adjust((_sl),(_len)+1); \
-	memcpy((_sl)->buf+(_sl)->len,(_data),(_len)); \
-	(_sl)->len+=(_len);}
+    {LOG(llevDebug,"SOCKBUF: Add StringNT of length %d to %p(%d)\n",(int)(_len),(_sl),(_sl)->len); \
+    if((int)((_sl)->len+(_len)+1)>=(_sl)->bufsize) \
+    (_sl)=socket_buffer_adjust((_sl),(_len)+1); \
+    memcpy((_sl)->buf+(_sl)->len,(_data),(_len)); \
+    (_sl)->len+=(_len);}
 #else
 #define SockBuf_AddChar(_sl_,_c_) \
-	{if((int)((_sl_)->len+1)>=(_sl_)->bufsize) \
-	(_sl_)=socket_buffer_adjust((_sl_),1); \
-	( *((uint8 *)((_sl_)->buf+(_sl_)->len++)) =(char)(_c_) );}
+    {if((int)((_sl_)->len+1)>=(_sl_)->bufsize) \
+    (_sl_)=socket_buffer_adjust((_sl_),1); \
+    ( *((uint8 *)((_sl_)->buf+(_sl_)->len++)) =(char)(_c_) );}
 #define SockBuf_AddShort(_sl_,_c_) \
-	{if((int)((_sl_)->len+2)>=(_sl_)->bufsize) \
-	(_sl_)=socket_buffer_adjust((_sl_),2); \
-	*((uint16 *)((_sl_)->buf+(_sl_)->len))=(uint16)(_c_);(_sl_)->len+=2;}
+    {if((int)((_sl_)->len+2)>=(_sl_)->bufsize) \
+    (_sl_)=socket_buffer_adjust((_sl_),2); \
+    *((uint16 *)((_sl_)->buf+(_sl_)->len))=(uint16)(_c_);(_sl_)->len+=2;}
 #define SockBuf_AddInt(_sl_,_c_) \
-	{if((int)((_sl_)->len+4)>=(_sl_)->bufsize) \
-	(_sl_)=socket_buffer_adjust((_sl_),4); \
-	*((uint32 *)((_sl_)->buf+(_sl_)->len))=(uint32)(_c_);(_sl_)->len+=4;}
+    {if((int)((_sl_)->len+4)>=(_sl_)->bufsize) \
+    (_sl_)=socket_buffer_adjust((_sl_),4); \
+    *((uint32 *)((_sl_)->buf+(_sl_)->len))=(uint32)(_c_);(_sl_)->len+=4;}
 #define SockBuf_AddString(_sl,_data,_len) \
-	{if((int)((_sl)->len+(_len)+1)>=(_sl)->bufsize) \
-	(_sl)=socket_buffer_adjust((_sl),(_len)+1); \
-	memcpy((_sl)->buf+(_sl)->len,(_data),(_len)); \
-	(_sl)->len+=(_len); \
-	(_sl)->buf[(_sl)->len++] = (char) 0;}
+    {if((int)((_sl)->len+(_len)+1)>=(_sl)->bufsize) \
+    (_sl)=socket_buffer_adjust((_sl),(_len)+1); \
+    memcpy((_sl)->buf+(_sl)->len,(_data),(_len)); \
+    (_sl)->len+=(_len); \
+    (_sl)->buf[(_sl)->len++] = (char) 0;}
 #define SockBuf_AddStringNonTerminated(_sl,_data,_len) \
-	{if((int)((_sl)->len+(_len)+1)>=(_sl)->bufsize) \
-	(_sl)=socket_buffer_adjust((_sl),(_len)+1); \
-	memcpy((_sl)->buf+(_sl)->len,(_data),(_len)); \
-	(_sl)->len+=(_len);}
+    {if((int)((_sl)->len+(_len)+1)>=(_sl)->bufsize) \
+    (_sl)=socket_buffer_adjust((_sl),(_len)+1); \
+    memcpy((_sl)->buf+(_sl)->len,(_data),(_len)); \
+    (_sl)->len+=(_len);}
 #endif
 
 /* helper macro to add a single command to a socket */
 #define Write_Command_To_Socket(_ns_,_cmd_) \
-	{SOCKBUF_REQUEST_BUFFER((_ns_), 0); \
-	SOCKBUF_REQUEST_FINISH((_ns_), (_cmd_), SOCKBUF_DYNAMIC);}
+    {SOCKBUF_REQUEST_BUFFER((_ns_), 0); \
+    SOCKBUF_REQUEST_FINISH((_ns_), (_cmd_), SOCKBUF_DYNAMIC);}
 
 /* helper macro to add a command with string data block */
 #define Write_String_To_Socket(_ns_,_cmd_,_buf_,_len_) \
-	{SOCKBUF_REQUEST_BUFFER((_ns_),(_len_)+1); \
-	SockBuf_AddString(ACTIVE_SOCKBUF(_ns_),(_buf_),(_len_)); \
-	SOCKBUF_REQUEST_FINISH((_ns_), (_cmd_), SOCKBUF_DYNAMIC);}
+    {SOCKBUF_REQUEST_BUFFER((_ns_),(_len_)+1); \
+    SockBuf_AddString(ACTIVE_SOCKBUF(_ns_),(_buf_),(_len_)); \
+    SOCKBUF_REQUEST_FINISH((_ns_), (_cmd_), SOCKBUF_DYNAMIC);}
 
 /* different fixed sized command nodes */
 typedef struct _command_struct
@@ -225,45 +225,44 @@ typedef struct _account
 /* Note: Take care when setting or deleting socket - account_data can hold hash strings references */
 typedef struct NewSocket_struct
 {
-        int                 fd;
-        struct pl_player    *pl;                /* if != NULL this socket is part of a player struct */
-        struct _account     pl_account;            /* every socket is related to an account or waiting for one */
-        command_struct      *cmd_start;         /* pointer to the list of incoming commands in process */
-        command_struct      *cmd_end;
-		sockbuf_struct      *sockbuf_start;		/* pointer to the list of prepared outgoing packages in process */
-		sockbuf_struct      *sockbuf_end;
-		sockbuf_struct      *sockbuf;			/* thats or CURRENT buffer we working on - this can be filled up */
-		int					sockbuf_pos;		/* read pos in sockbuf (needed for multi-enqueued sockbufs */
-		int					sockbuf_len;		/* sic */
+    int                 fd;
+    struct pl_player    *pl;                /* if != NULL this socket is part of a player struct */
+    struct _account     pl_account;            /* every socket is related to an account or waiting for one */
+    command_struct      *cmd_start;         /* pointer to the list of incoming commands in process */
+    command_struct      *cmd_end;
+    sockbuf_struct      *sockbuf_start;        /* pointer to the list of prepared outgoing packages in process */
+    sockbuf_struct      *sockbuf_end;
+    sockbuf_struct      *sockbuf;            /* thats or CURRENT buffer we working on - this can be filled up */
+    int                 sockbuf_pos;        /* read pos in sockbuf (needed for multi-enqueued sockbufs */
+    int                 sockbuf_len;        /* sic */
+    int                 sockbuf_nrof;        /* number of the queued socket buffers */
+    int                 sockbuf_bytes;        /* number of bytes in all queued socket buffers we must transfer */
+    struct Map          lastmap;            /* Thats the VISIBLE map area of the player, used to send to client */
+    uint32              login_count;        /* if someone is to long idle in the login, we kick him here! */
+    int                 mapx, mapy;         /* How large a map the client wants */
+    int                 mapx_2, mapy_2;     /* same like above but /2 */
+    uint32              protocol_version;
+    int                 pwd_try;            /* simple password guessing security */
+    char                ip_host[40];        /* IP as string */
+    enum Sock_Status    status;
+    ReadList            readbuf;            /* Raw data read in from the socket  */
+    sint16              lx;                 /* geolocation for client locator */
+    sint16              ly;                 /* geolocation for client locator */
 
-		int					sockbuf_nrof;		/* number of the queued socket buffers */
-		int					sockbuf_bytes;		/* number of bytes in all queued socket buffers we must transfer */
-		struct Map          lastmap;            /* Thats the VISIBLE map area of the player, used to send to client */
-        uint32              login_count;        /* if someone is to long idle in the login, we kick him here! */
-        int                 mapx, mapy;         /* How large a map the client wants */
-        int                 mapx_2, mapy_2;     /* same like above but /2 */
-        uint32              protocol_version;
-        int                 pwd_try;            /* simple password guessing security */
-        char                ip_host[40];        /* IP as string */
-        enum Sock_Status    status;
-        ReadList            readbuf;            /* Raw data read in from the socket  */
-        sint16              lx;                 /* geolocation for client locator */
-        sint16              ly;                 /* geolocation for client locator */
+    uint32              idle_flag       : 1;        /* idle warning was given and we count for disconnect */
+    uint32              addme           : 1;        /* important: when set, a "connect" was initizialised as "player" */
+    uint32              sound           : 1;        /* does the client want sound */
+    uint32              ext_title_flag  : 1;        /* send ext title to client */
+    uint32              image2          : 1;        /* Client wants image2/face2 commands */
+    uint32              setup           : 1;
+    uint32              rf_settings     : 1;
+    uint32              rf_skills       : 1;
+    uint32              rf_spells       : 1;
+    uint32              rf_anims        : 1;
+    uint32              rf_bmaps        : 1;
 
-        uint32              idle_flag       : 1;        /* idle warning was given and we count for disconnect */
-        uint32              addme           : 1;        /* important: when set, a "connect" was initizialised as "player" */
-        uint32              sound           : 1;        /* does the client want sound */
-        uint32              ext_title_flag  : 1;        /* send ext title to client */
-        uint32              image2          : 1;        /* Client wants image2/face2 commands */
-        uint32              setup           : 1;
-        uint32              rf_settings     : 1;
-        uint32              rf_skills       : 1;
-        uint32              rf_spells       : 1;
-        uint32              rf_anims        : 1;
-        uint32              rf_bmaps        : 1;
-
-        sint16              look_position;  /* start of drawing of look window */
-        sint16              look_position_container;  /* start of drawing of look window for a container */
+    sint16              look_position;  /* start of drawing of look window */
+    sint16              look_position_container;  /* start of drawing of look window for a container */
 } NewSocket;
 
 typedef void (*func_uint8_int_ns) (char *, int, NewSocket *);
@@ -280,7 +279,7 @@ extern _CmdMapping cs_commands[];
 
 typedef struct Socket_Info_struct
 {
-        struct timeval  timeout;    /* Timeout for select */
+    struct timeval  timeout;    /* Timeout for select */
     int             max_filedescriptor; /* max filedescriptor on the system */
     int             nconns;     /* Number of connections */
     int             allocated_sockets;  /* number of allocated in init_sockets */
