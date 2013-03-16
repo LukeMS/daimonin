@@ -1263,11 +1263,12 @@ void cs_cmd_apply(char *buf, int len, NewSocket *ns)
      * a helluva big number.
      *
      * Smacky 20130211 */
-    if ((tag & 0xe0000000) ||    // bits 29-31 = end inv delimeter
-        (tag & 0xc0000000))      // bits 30-31 = start inv delimeter
+    if ((tag & 0xe0000000) == 0xe0000000 || // bits 29-31 = end inv delimeter
+        (tag & 0xc0000000) == 0xc0000000)   // bits 30-31 = start inv delimeter
     {
+        new_draw_info(NDI_UNIQUE, 0, pl->ob, "inv delim!");
     }
-    else if ((tag & 0x80000000)) // bit 31 = next/prev
+    else if ((tag & 0x80000000))            // bit 31 = next/prev
     {
         pl->socket.look_position = tag & 0x7fffffff;
         esrv_send_below(pl);
