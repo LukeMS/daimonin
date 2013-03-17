@@ -204,7 +204,7 @@ void draw_client_map(object *plobj)
         /* backbuffer position so we can determinate we have moved or not */
         pl->map_tile_x = plobj->x;
         pl->map_tile_y = plobj->y;
-        pl->socket.look_position = 0; /* reset the "show only x items of all items belows" counter */
+        pl->socket.look_position = pl->socket.look_flag = 0;
         esrv_send_below(pl);
     }
 }

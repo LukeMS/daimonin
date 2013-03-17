@@ -235,6 +235,7 @@ static uint8 AddInventory(sockbuf_struct *sb, _server_client_cmd cmd,
                               0x80000000 | (ns->look_position + NUM_LOOK_OBJECTS),
                               next_item_face->number, "Apply to see next items");
                 sb = ACTIVE_SOCKBUF(ns);
+                ns->look_flag = 1;
 
                 break;
             }
@@ -357,12 +358,23 @@ static void NotifyClients(_server_client_cmd cmd, uint16 flags, object *op)
         /* Send cmd to each valid client on the square. */
         for (who = GET_MAP_OB(op->map, op->x, op->y); who; who = who->above)
         {
+            player *pl;
+
             if (who->type != PLAYER)
             {
                 continue;
             }
 
-            sb = BroadcastItemCmd(sb, cmd, flags, CONTR(who), op);
+            pl = CONTR(who);
+
+            if (!pl->socket.look_flag)
+            {
+                sb = BroadcastItemCmd(sb, cmd, flags, pl, op);
+            }
+            else
+            {
+                esrv_send_below(pl);
+            }
         }
     }
 

@@ -270,6 +270,7 @@ typedef struct NewSocket_struct
     uint32              rf_anims        : 1;
     uint32              rf_bmaps        : 1;
 
+    uint8               look_flag : 1;
     sint16              look_position;  /* start of drawing of look window */
     sint16              look_position_container;  /* start of drawing of look window for a container */
 } NewSocket;
