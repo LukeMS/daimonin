@@ -246,9 +246,6 @@ a monster into a peaceful being incapable of attack.  */
 #define TYPE_SYMPTOM                 159
                                       /* END TYPE DEFINE */
 
-#define F_ETHEREAL      0x0080
-#define F_INVISIBLE     0x0100
-
                                       /*
                                        *  A few macros to make clear interface
                                        *  These will change (especially update_item and add_new_item)

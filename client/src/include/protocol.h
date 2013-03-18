@@ -322,6 +322,54 @@ enum
 #define UPD_QUALITY         0x200
 #define UPD_ALL             0xffff
 
+/* Item apply values -- only set if F_APPLIED */
+#define A_READIED 1
+#define A_WIELDED 2
+#define A_WORN    3
+#define A_ACTIVE  4
+#define A_APPLIED 5
+
+/* Item flags. */
+/* TODO: Why the huge gap between F_APPLIED and F_ETHEREAL? F_ETHEREAL could be
+ * 1<<5 or 1<<6. Then we could fit these flags into a uint16 whereas now we
+ * need uint32.
+ *
+ * -- Smacky 20130305 */
+#define F_APPLIED   ((1 << 4) - 1)
+#define F_ETHEREAL  (1 <<  7)
+#define F_INVISIBLE (1 <<  8)
+#define F_UNPAID    (1 <<  9)
+#define F_MAGIC     (1 << 10)
+#define F_CURSED    (1 << 11)
+#define F_DAMNED    (1 << 12)
+#define F_OPEN      (1 << 13)
+#define F_NOPICK    (1 << 14)
+#define F_LOCKED    (1 << 15)
+#define F_TRAPED    (1 << 16)
+
+/* Map flags for thing over and thing under. */
+#define FFLAG_SLEEP     (1 << 0) // sleeping
+#define FFLAG_CONFUSED  (1 << 1) // confused
+#define FFLAG_PARALYZED (1 << 2) // paralyzed
+#define FFLAG_SCARED    (1 << 3) // scared - it will run away
+#define FFLAG_EATING    (1 << 4) // eating 
+#define FFLAG_INVISIBLE (1 << 5) // invisible (normal or gmaster)
+#define FFLAG_ETHEREAL  (1 << 6) // ethereal
+/* TODO: Unfortunately EATING was added in place of BLINDED at some point in
+ * the past. As SERVER_CMD_MAP2 only allows a uint8 here, there is not room to
+ * now readd BLINDED -- so we need to tweak the protocol to send/receive extra
+ * data (probably a whole byte). This requires a Y update. Still, the rest of
+ * the server has been tweaked in this commit (r7297) so it should be a simple
+ * case of removing this #if 0 9and updating the client).
+ *
+ * -- Smacky 20130305 */
+#if 0
+#define FFLAG_BLINDED   (1 << 7) // blinded
+#define FFLAG_PROBE     (1 << 8) // probed !Flag is set by map2 cmd!
+#else
+#define FFLAG_PROBE     (1 << 7) // probed !Flag is set by map2 cmd!
+#endif
+
 /* maximum reachable level */
 #define MAXLEVEL 110
 
@@ -334,6 +382,19 @@ typedef enum _gui_npc_mode
     GUI_NPC_MODE_END
 }
 _gui_npc_mode;
+
+typedef enum altact_mode_t
+{
+    ALTACT_MODE_ARCHERY,
+    ALTACT_MODE_SPELL,
+    ALTACT_MODE_SKILL,
+    ALTACT_MODE_PRAYER,
+    ALTACT_MODE_DEVICE,
+    ALTACT_MODE_THROWING,
+
+    ALTACT_NROF // must be last entry
+}
+altact_mode_t;
 
 extern int account_name_valid(char *cp);
 extern int account_char_valid(char c);
