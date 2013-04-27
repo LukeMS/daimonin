@@ -184,7 +184,7 @@ no_pick 1
 end
 Object bridge_wood_01
 name wood bridge
-face bridge_wood_01
+face bridge_wood_01.101
 no_teleport 1
 layer 2
 type 28
@@ -192,7 +192,7 @@ no_pick 1
 end
 Object bridge_wood_02
 name wood bridge
-face bridge_wood_02
+face bridge_wood_02.101
 no_teleport 1
 layer 2
 type 28
@@ -200,7 +200,7 @@ no_pick 1
 end
 Object bridge_wood_03
 name wood bridge
-face bridge_wood_03
+face bridge_wood_03.101
 no_teleport 1
 layer 2
 type 28
@@ -208,7 +208,7 @@ no_pick 1
 end
 Object bridge_wood_04
 name wood bridge
-face bridge_wood_04
+face bridge_wood_04.101
 no_teleport 1
 layer 2
 type 28
@@ -216,7 +216,7 @@ no_pick 1
 end
 Object bridge_wood_05
 name wood bridge
-face bridge_wood_05
+face bridge_wood_05.101
 no_teleport 1
 layer 2
 type 28
@@ -224,7 +224,7 @@ no_pick 1
 end
 Object bridge_wood_06
 name wood bridge
-face bridge_wood_06
+face bridge_wood_06.101
 no_teleport 1
 layer 2
 type 28
@@ -232,7 +232,7 @@ no_pick 1
 end
 Object bridge_wood_07
 name wood bridge
-face bridge_wood_07
+face bridge_wood_07.101
 no_teleport 1
 layer 2
 type 28
