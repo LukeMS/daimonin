@@ -534,7 +534,14 @@ found_target:
 
 void send_spelllist_cmd(object *op, char *spellname, int mode)
 {
+    player *pl;
     char    tmp[1024 * 10]; /* we should careful set a big enough buffer here */
+
+    /* Sanity check. */
+    if (!(pl = CONTR(op)))
+    {
+        return;
+    }
 
     sprintf(tmp, "%d ", mode);
     if (spellname) /* send single name */
@@ -544,15 +551,16 @@ void send_spelllist_cmd(object *op, char *spellname, int mode)
     }
     else
     {
-        int i, spnum;
+        int i, n = (pl->gmaster_wiz) ? NROFREALSPELLS : pl->nrofknownspells;
 
-        for (i = 0; i < (IS_GMASTER_WIZ(op)) ? NROFREALSPELLS : CONTR(op)->nrofknownspells; i++)
+        for (i = 0; i < n; i++)
         {
-            spnum = (IS_GMASTER_WIZ(op)) ? i : CONTR(op)->known_spells[i];
+            int spnum = (pl->gmaster_wiz) ? i : pl->known_spells[i];
+
             sprintf(strchr(tmp, '\0'), "/%s", spells[spnum].name);
         }
     }
-    Write_String_To_Socket(&CONTR(op)->socket, SERVER_CMD_SPELL_LIST, tmp, strlen(tmp));
+    Write_String_To_Socket(&pl->socket, SERVER_CMD_SPELL_LIST, tmp, strlen(tmp));
 }
 
 void send_skilllist_cmd(object *op, object *skillp, int mode)
