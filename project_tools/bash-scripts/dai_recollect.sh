@@ -231,21 +231,18 @@ then
     echo -n "${num} "
 fi
 
-images=`cat ${TMPFILE} | sort`
-bmaps=`echo "${images}" | awk '{print $1}' | nl -n rz -s ' ' -v 1 -w 5`
-echo "`printf "%05d" 0` bug.101" > ${lib}/bmaps
-echo "${bmaps}" >> ${lib}/bmaps
+bug=`cat ${TMPFILE} | grep 'bug.101'`
+nonbug=`cat ${TMPFILE} | grep  -v  'bug.101' | sort`
+images=`echo -e "${bug}\n${nonbug}"`
+bmaps=`echo "${images}" | awk '{print $1}' | nl -n rz -s ' ' -v 0 -w 5`
+echo "${bmaps}" > ${lib}/bmaps
 echo -n "(pass 2)... "
 let num=0
 count=""
-echo "IMAGE 0 321 bug.101" > ${lib}/daimonin.0
-cat ${arch}/dev/editor/bug.101.png >> ${lib}/daimonin.0
 bmaps=`echo "${images}" | awk '{print $1}'`
 
 for  path in `echo "${images}" | awk '{print $2}'`
 do
-    let num=num+1
-
     if [ -z "${dai_suppress_progress}" ]
     then
         print_backspaces ${#count}
@@ -256,6 +253,7 @@ do
     size=`wc -c ${path} | awk '{print $1}'`
     echo "IMAGE ${num} ${size} `basename ${path} '.png'`" >> ${lib}/daimonin.0
     cat ${path} >> ${lib}/daimonin.0
+    let num=num+1
 done
 
 if [ -n "${dai_suppress_progress}" ]
