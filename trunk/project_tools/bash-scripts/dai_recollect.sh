@@ -241,6 +241,11 @@ let num=0
 count=""
 bmaps=`echo "${images}" | awk '{print $1}'`
 
+if [ -f ${lib}/daimonin.0 ]
+then
+    rm ${lib}/daimonin.0
+fi
+
 for  path in `echo "${images}" | awk '{print $2}'`
 do
     if [ -z "${dai_suppress_progress}" ]
