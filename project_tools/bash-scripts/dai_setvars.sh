@@ -18,6 +18,9 @@ export dai_builddir="${dai_home}/build"
 # ${builddir}/server/data/log.
 export dai_logsdir=""
 
+# On refresh time-stamped backups of persistent data files go here.
+export dai_bakdir="${dai_home}/bak"
+
 
 ########
 # File/process names
@@ -44,7 +47,7 @@ export dai_server_exe="daimonin_server"
 # while ${dai_recollect_sh} is a purpose-written BASH scriptt of about 4KB) and
 # speed (Gridarta does the job in seconds -- but you do need to fetch and build
 # it first -- whereas ${dai_recollect_sh} takes a few minutes).
-export dai_daimonin_repo="svn://svn.code.sf.net/p/daimonin/code"
+export dai_daimonin_repo="https://daimonin.svn.sourceforge.net/svnroot/daimonin"
 export dai_gridarta_repo="https://gridarta.svn.sourceforge.net/svnroot/gridarta"
 
 # If not null, these point to repositories containg maps and arches which are
@@ -78,10 +81,11 @@ export dai_use_newarch=""
 # is to be logged.
 export dai_suppress_progress=""
 
-# Any EXTRA_CFLAGS you want to pass to make. For example, use
-# -DDAI_DEVELOPMENT_CODE and/or -DDAI_DEVELOPMENT_CONTENT to compile a
-# development server.
-export dai_cflags="-Wextra -DDAI_DEVELOPMENT_CONTENT -DDAI_DEVELOPMENT_CODE"
+# Any CFLAGS you want to pass to make. Foe example, use -DDAI_DEVELOPMENT_CODE
+# and/or -DDAI_DEVELOPMENT_CONTENT to compile a development server (note that
+# if ${dai_gameserver} == "trunk" both these flags will already be defined by
+# default).
+export dai_cflags=""
 
 # If not null, the server will be run through valgrind, with the valgrind output
 # being logged in the server techlog. If null, valgrind will not be used.
