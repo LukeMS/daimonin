@@ -952,9 +952,8 @@ void quest_list_command(struct obj *pl, char *cmd)
             }
 
             strcat(buf, "\n\">");
-            GET_INV_BOTTOM(quest, update);
 
-            for (; update; update = update->above)
+            for (update = quest->inv; update; update = update->below)
             {
                 if (update->type != TYPE_QUEST_UPDATE)
                 {
