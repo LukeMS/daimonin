@@ -992,6 +992,15 @@ void quest_list_command(struct obj *pl, char *cmd)
                     continue;
                 }
 
+                /* For various reasons we don't want too big an interface
+                 * string. Generally about 2000 characters is a nice limit. */
+                if (strlen(buf) > 2000)
+                {
+                    sprintf(strchr(buf, '\0'), "<ut=\"%s\"b=\"%s\">",
+                            "...","Older updates not shown");
+                    break;
+                }
+
                 sprintf(strchr(buf, '\0'), "<ut=\"%s\"b=\"%s\">",
                         update->title, update->msg);
             }
