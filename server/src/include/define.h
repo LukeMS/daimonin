@@ -394,6 +394,11 @@
 #define ST1_QUEST_TRIGGER_KILL_ITEM   2
 #define ST1_QUEST_TRIGGER_ITEM        3
 
+/* subtypes for TYPE_QUEST_UPDATE */
+#define ST1_QUEST_UPDATE_ARBITRARY 0
+#define ST1_QUEST_UPDATE_KILLITEM  1
+#define ST1_QUEST_UPDATE_KILL      2
+
 /* for guild force */
 #define ST1_GUILD_IN        1
 #define ST1_GUILD_OLD       2

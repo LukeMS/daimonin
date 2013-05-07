@@ -4400,7 +4400,12 @@ static int GameObject_UpdateQuest(lua_State *L)
         lua_pushnil(L);
     /* Update quest, returning true or false to indicate success. */
     else
-        lua_pushboolean(L, hooks->update_quest(quest, text, NULL));
+    {
+        int b = hooks->update_quest(quest, ST1_QUEST_UPDATE_ARBITRARY, NULL,
+                                    text, NULL);
+
+        lua_pushboolean(L, b);
+    }
 
     return 1;
 }
