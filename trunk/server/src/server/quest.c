@@ -220,7 +220,7 @@ void insert_quest_item(struct obj *quest_trigger, struct obj *target)
                 sprintf(strchr(buf, '\0'), "Quest completed!");
             }
 
-            update_quest(quest, NULL, buf);
+            update_quest(quest, ST1_QUEST_UPDATE_ARBITRARY, NULL, NULL, buf);
         }
     }
 }
@@ -430,7 +430,7 @@ void set_quest_status(struct obj *trigger, int q_status, int q_type)
         add_quest_trigger(who, trigger);
 }
 
-int update_quest(struct obj *trigger, char *text, char *vim)
+int update_quest(struct obj *trigger, uint8 subtype, shstr *ref, char *text, char *vim)
 {
     player       *pl;
     object       *ob;
@@ -447,8 +447,40 @@ int update_quest(struct obj *trigger, char *text, char *vim)
         return 0;
     }
 
-    /* Create an empty quest_update. */
+    /* Non-arbitrary updates are simply running totals (x/y) of kills or
+     * killitems (in future perhaps others). Arbitrary updates are anything
+     * else (including those added by script). Arbitraries always produce a new
+     * update. Non-arbitraries overwrite the previous update. */
+    if (subtype != ST1_QUEST_UPDATE_ARBITRARY)
+    {
+        for (ob = trigger->inv; ob; ob = ob->below)
+        {
+            if (ob->type == TYPE_QUEST_UPDATE &&
+                ob->sub_type1 == subtype &&
+                ob->race == ref)
+            {
+                remove_ob(ob);
+
+                break;
+            }
+        }
+    }
+
+    /* Create an empty quest_update of the specified subtype. */
     ob = arch_to_object(archetype_global._quest_update);
+    ob->sub_type1 = subtype;
+
+    /* Set the ref -- this is always NULL for arbitraries and the arch name of
+     * the target (may be NULL) otherwise. As with target arches we put this in
+     * ->race. */
+    if (!ref)
+    {
+        FREE_AND_CLEAR_HASH(ob->race);
+    }
+    else
+    {
+        FREE_AND_ADD_REF_HASH(ob->race, ref);
+    }
 
     /* Give the update a title, write text to it, and insert it in trigger. */
     get_tad(&tad);
@@ -537,14 +569,14 @@ void check_kill_quest_event(struct obj *pl, struct obj *op)
                             STRING_SAFE(tmp->name),
                             query_short_name(tmp_info->inv, NULL), nrof,
                             (tmp_info->inv->nrof) ? tmp_info->inv->nrof : 1);
-                    update_quest(tmp, NULL, buf);
+                    update_quest(tmp, ST1_QUEST_UPDATE_KILLITEM, tmp_info->race, NULL, buf);
                 }
                 else if(tmp_info->level < tmp_info->last_sp) /* pure kill quest - alot easier */
                 {
                     sprintf(buf, "Quest %s\n%s: %d/%d",
                             STRING_SAFE(tmp->name), query_name(op),
                             ++tmp_info->level, tmp_info->last_sp);
-                    update_quest(tmp, NULL, buf);
+                    update_quest(tmp, ST1_QUEST_UPDATE_KILL, tmp_info->race, NULL, buf);
                 }
             }
         }

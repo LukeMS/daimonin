@@ -411,7 +411,7 @@ struct plugin_hooklist
     /* U */
     struct mob_known_obj *(*update_npc_knowledge)(object *, object *, int,
                                                   int);
-    int (*update_quest)(struct obj *, char *, char *);
+    int (*update_quest)(struct obj *, uint8, shstr *, char *, char *);
     void (*update_object)(object *, int);
     /* V */
     /* W */
