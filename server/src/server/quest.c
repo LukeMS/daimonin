@@ -430,11 +430,11 @@ void set_quest_status(struct obj *trigger, int q_status, int q_type)
         add_quest_trigger(who, trigger);
 }
 
-int update_quest(struct obj *trigger, uint8 subtype, shstr *ref, char *text, char *vim)
+int update_quest(struct obj *trigger, uint8 subtype, struct obj *info, char *text, char *vim)
 {
-    player       *pl;
-    object       *ob;
-    timeanddate_t tad;
+    player        *pl;
+    object        *ob;
+    timeanddate_t  tad;
 
     /* The trigger must be in a player's quest container. */
     if (!(ob = is_player_inv(trigger)) ||
@@ -447,17 +447,31 @@ int update_quest(struct obj *trigger, uint8 subtype, shstr *ref, char *text, cha
         return 0;
     }
 
+    if (info &&
+        info->type != TYPE_QUEST_INFO)
+    {
+        LOG(llevBug, "BUG:: %s:update_quest(): Ignoring update, info must be type %u (is %u)!\n",
+            __FILE__, TYPE_QUEST_INFO, info->type);
+
+        return 0;
+    }
+
     /* Non-arbitrary updates are simply running totals (x/y) of kills or
      * killitems (in future perhaps others). Arbitrary updates are anything
      * else (including those added by script). Arbitraries always produce a new
      * update. Non-arbitraries overwrite the previous update. */
     if (subtype != ST1_QUEST_UPDATE_ARBITRARY)
     {
+        /* Remove the first (therefore only) exact match update. */
         for (ob = trigger->inv; ob; ob = ob->below)
         {
             if (ob->type == TYPE_QUEST_UPDATE &&
                 ob->sub_type1 == subtype &&
-                ob->race == ref)
+                ob->race == info->race &&
+                ob->name == info->name &&
+                ob->title == info->title &&
+                ob->slaying == info->slaying &&
+                ob->weight_limit == info->weight_limit)
             {
                 remove_ob(ob);
 
@@ -470,22 +484,60 @@ int update_quest(struct obj *trigger, uint8 subtype, shstr *ref, char *text, cha
     ob = arch_to_object(archetype_global._quest_update);
     ob->sub_type1 = subtype;
 
-    /* Set the ref -- this is always NULL for arbitraries and the arch name of
-     * the target (may be NULL) otherwise. As with target arches we put this in
-     * ->race. */
-    if (!ref)
+    /* Set the info attributes if info != NULL. */
+    if (!info)
     {
         FREE_AND_CLEAR_HASH(ob->race);
+        FREE_AND_CLEAR_HASH(ob->name);
+        FREE_AND_CLEAR_HASH(ob->title);
+        FREE_AND_CLEAR_HASH(ob->slaying);
+        ob->weight_limit = 0;
     }
     else
     {
-        FREE_AND_ADD_REF_HASH(ob->race, ref);
+        if (!info->race)
+        {
+            FREE_AND_CLEAR_HASH(ob->race);
+        }
+        else
+        {
+            FREE_AND_ADD_REF_HASH(ob->race, info->race);
+        }
+
+        if (!info->name)
+        {
+            FREE_AND_CLEAR_HASH(ob->name);
+        }
+        else
+        {
+            FREE_AND_ADD_REF_HASH(ob->name, info->name);
+        }
+
+        if (!info->title)
+        {
+            FREE_AND_CLEAR_HASH(ob->title);
+        }
+        else
+        {
+            FREE_AND_ADD_REF_HASH(ob->title, info->title);
+        }
+
+        if (!info->slaying)
+        {
+            FREE_AND_CLEAR_HASH(ob->slaying);
+        }
+        else
+        {
+            FREE_AND_ADD_REF_HASH(ob->slaying, info->slaying);
+        }
+
+        ob->weight_limit = info->weight_limit;
     }
 
-    /* Give the update a title, write text to it, and insert it in trigger. */
+    /* Give the update a timestamp, write text to it, and insert it in
+     * trigger. */
     get_tad(&tad);
-    FREE_AND_COPY_HASH(ob->title, print_tad(&tad,
-                                            TAD_SHOWTIME | TAD_SHOWDATE));
+    ob->custom_attrset = print_tad(&tad, TAD_SHOWTIME | TAD_SHOWDATE);
     FREE_AND_COPY_HASH(ob->msg, (text) ? text : vim);
     insert_ob_in_ob(ob, trigger);
 
@@ -569,14 +621,14 @@ void check_kill_quest_event(struct obj *pl, struct obj *op)
                             STRING_SAFE(tmp->name),
                             query_short_name(tmp_info->inv, NULL), nrof,
                             (tmp_info->inv->nrof) ? tmp_info->inv->nrof : 1);
-                    update_quest(tmp, ST1_QUEST_UPDATE_KILLITEM, tmp_info->race, NULL, buf);
+                    update_quest(tmp, ST1_QUEST_UPDATE_KILLITEM, tmp_info, NULL, buf);
                 }
                 else if(tmp_info->level < tmp_info->last_sp) /* pure kill quest - alot easier */
                 {
                     sprintf(buf, "Quest %s\n%s: %d/%d",
                             STRING_SAFE(tmp->name), query_name(op),
                             ++tmp_info->level, tmp_info->last_sp);
-                    update_quest(tmp, ST1_QUEST_UPDATE_KILL, tmp_info->race, NULL, buf);
+                    update_quest(tmp, ST1_QUEST_UPDATE_KILL, tmp_info, NULL, buf);
                 }
             }
         }
@@ -1001,8 +1053,12 @@ void quest_list_command(struct obj *pl, char *cmd)
                     break;
                 }
 
+                /* Pre-r7336 the timestamp was held in ->title (as a shstr).
+                 * Now it is in custom_attrset (as a normal string) but we must
+                 * allow for old-style updates too. */
                 sprintf(strchr(buf, '\0'), "<ut=\"%s\"b=\"%s\">",
-                        update->title, update->msg);
+                        (!update->custom_attrset) ? update->title : update->custom_attrset,
+                        update->msg);
             }
 
             gui_npc(pl, GUI_NPC_MODE_QUEST, buf);
