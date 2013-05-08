@@ -33,7 +33,7 @@ extern void insert_quest_item(struct obj *quest_trigger, struct obj *target);
 extern void add_quest_containers(struct obj *op);
 extern void add_quest_trigger(struct obj *who, struct obj *trigger);
 extern void set_quest_status(struct obj *trigger, int q_status, int q_type);
-extern int update_quest(struct obj *trigger, uint8 subtype, shstr *ref, char *text, char *vim);
+extern int update_quest(struct obj *trigger, uint8 subtype, struct obj *info, char *text, char *vim);
 extern void check_kill_quest_event(struct obj *pl, struct obj *op);
 extern void check_cont_quest_event(struct obj *pl, struct obj *op);
 extern uint32 get_nrof_quest_item(const struct obj *target, const char *aname, const char *name, const char *title);
