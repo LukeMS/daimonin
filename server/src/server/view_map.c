@@ -247,7 +247,7 @@ void draw_client_map2(object *pl)
                                      : 0;
     int             special_vision = ((QUERY_FLAG(pl, FLAG_XRAYS)) ? 1 : 0) |
                                      ((QUERY_FLAG(pl, FLAG_SEE_IN_DARK)) ? 2 : 0);
-    int             quick_pos_1, quick_pos_2, quick_pos_3;
+    int             quick_pos_2, quick_pos_3;
     uint16          face_num0, face_num1, face_num2, face_num3, face_num2m, face_num3m;
 #ifdef DEBUG_CORE_MAP
     int tile_count  = 0;
@@ -844,10 +844,6 @@ void draw_client_map2(object *pl)
             if (mask & 0x04)
             {
                 SockBuf_AddShort(sbptr, face_num1);
-                if (ext_flag & 0x4)
-                {
-                    SockBuf_AddChar(sbptr, (char) quick_pos_1);
-                }
             }
             if (mask & 0x02)
             {
