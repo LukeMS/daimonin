@@ -54,21 +54,6 @@ static int CommandLearnSpellOrPrayer(object *op, char *params, int special_praye
 static int CreateObject(object *op, char *params, CreateMode_t mode);
 static int CheckAttributeValue(char *var, char *val, CreateMode_t mode);
 
-#if 0 /* disabled because account patch */
-typedef struct dmload_struct {
-    char    name[32];
-    char    password[32];
-} _dmload_struct;
-
-static struct dmload_struct dmload_value = {"",""};
-
-/* Gecko: we could at least search through the active, friend and player lists here... */
-/* Michtoen: When reworking the DM commands - make this browsing all, why not? its a DM command.
-* browse active list, all players and even all maps - this IS a super special command,
-* don't care about cpu usage. Its important to patch or fix objects online.
-*/
-#endif
-
 /*
  * Helper function get an object somewhere in the game
  * Returns the object which has the count-variable equal to the argument.
@@ -79,57 +64,6 @@ static object * find_object(int i)
     /* i is the count - browse ALL and return the object */
     return NULL;
 }
-
-#if 0 /* disabled because account patch */
-/* This command allows to login as a player without we know the password,
-* but adding a "temporary" new one defined
-*/
-int command_dmload(object *op, char *params)
-{
-    char buf[MEDIUM_BUF],
-         name[MEDIUM_BUF] = "",
-         pwd[MEDIUM_BUF] = "";
-
-    if (!params)
-        return 1;
-
-    sscanf(params, "%s %s", name, pwd);
-
-    strncpy(dmload_value.name, name, 32);
-    dmload_value.name[30] = 0;
-    strncpy(dmload_value.password, pwd, 32);
-    dmload_value.password[30] = 0;
-
-    sprintf(buf,"DM_LOAD name:>%s< pwd:>%s<\n", dmload_value.name, dmload_value.password);
-
-    LOG(llevDebug, "%s", buf);
-    new_draw_info(NDI_UNIQUE, 0, op, "%s", buf);
-
-    return 0;
-}
-
-/* check a dmload struct is set and if, the settings match.
-* returns 0 when not and 1 when we want and can override!
-*/
-int check_dmload(const char*name, const char *pwd)
-{
-
-    /* if a name is not set or they don't match - nothing to do */
-    if(!dmload_value.name[0] || !name || strcasecmp(dmload_value.name, name))
-        return 0;
-
-    if(!dmload_value.password[0] || !pwd || strcmp(dmload_value.password, pwd))
-        return 0;
-
-    /* after we report ONE match, we reset the dmload structure for safety reasons */
-    dmload_value.name[0] = 0;
-    dmload_value.password[0] = 0;
-
-    LOG(llevDebug, "DM_LOAD:: DM_CHECK SUCCESS - >%s< >%s<!\n", name, pwd);
-    return 1;
-}
-
-#endif
 
 /* Sets the god for some objects.  params should contain two values -
  * first the object to change, followed by the god to change it to.
@@ -2692,85 +2626,172 @@ int command_dm_light(object *op, char *params)
     return COMMANDS_RTN_VAL_OK_SILENT;
 }
 
-/* TODO: logic changed with account patch! */
-#if 0
-int command_dm_password (object *op, char *params)
+int command_password(object *op, char *params)
 {
     player *pl;
-    FILE *fp, *fpout;
-    const char *name_hash;
-    char pfile[MEDIUM_BUF], bufall[MEDIUM_BUF], outfile[MEDIUM_BUF];
-    char name[MEDIUM_BUF]="", pwd[MEDIUM_BUF]="";
+    char    name[MEDIUM_BUF],
+            pwd_old[MEDIUM_BUF],
+            pwd_new[MEDIUM_BUF],
+            fname_old[LARGE_BUF],
+            fname_new[LARGE_BUF],
+            buf[MEDIUM_BUF];
+    uint8   wildcard = 0;
+    shstr  *name_sh = NULL;
+    uint16  i;
+    FILE   *fp_old,
+           *fp_new;
 
-    if(params==NULL || !sscanf(params, "%s %s", name, pwd) || name[0] == 0 || pwd[0]== 0)
-        return 1;
-
-    transform_player_name_string(name);
-
-    /* we have now 2 strings - name and password - lets check there is a player file for that name */
-    sprintf(pfile, "%s/%s/%s/%s/%s.pl", settings.localdir, settings.playerdir, get_subdir(name), name, name);
-    if (access(pfile, F_OK)==-1)
+    /* op must be a properly connected player. */
+    if (!op ||
+        op->type != PLAYER ||
+        !(pl = CONTR(op)))
     {
-        new_draw_info(NDI_UNIQUE, 0,op, "dm_pwd: player %s don't exists or has no player file!", name);
-
-        return 0;
+        return COMMANDS_RTN_VAL_ERROR;
     }
 
-    /* All ok - player exists and player file can be altered - load in the player file */
-    strcpy(outfile, pfile);
-    strcat(outfile, ".tmp");
-
-    /* lets do a safe read/write in a temp. file */
-    if((fp=fopen(pfile,"r"))==NULL)
+    /* params must be 3 strings: account name, old password, new password. */
+    if (!params ||
+        sscanf(params, "%s %s %s", name, pwd_old, pwd_new) != 3)
     {
-        new_draw_info(NDI_UNIQUE, 0,op, "dm_pwd: error open file %s!", pfile);
-
-        return 0;
+        return COMMANDS_RTN_VAL_SYNTAX;
     }
 
-    if((fpout=fopen(outfile,"w"))==NULL)
+    /* GMs can change a pwd without needing to know the old one. */
+    if ((pl->gmaster_mode & GMASTER_MODE_GM) &&
+         pwd_old[0] == '*' &&
+         pwd_old[1] == '\0')
     {
-        new_draw_info(NDI_UNIQUE, 0,op, "dm_pwd: error open file %s!", outfile);
-
-        return 0;
+         wildcard = 1;
     }
 
-    while (fgets(bufall,MEDIUM_BUF-1,fp) != NULL)
+    /* Make sure they're all valid. */
+    if (!account_name_valid(name))
     {
-        if(!strncmp(bufall,"password ",9))
-            fprintf(fpout,"password %s\n", crypt_string(pwd));
-        else
-            fputs(bufall, fpout);
+        new_draw_info(NDI_UNIQUE, 0, op, "That account name is not valid!");
+
+        return COMMANDS_RTN_VAL_ERROR;
+    }
+    else if (!wildcard &&
+             !password_valid(pwd_old))
+    {
+        new_draw_info(NDI_UNIQUE, 0, op, "That old password is not valid!");
+
+        return COMMANDS_RTN_VAL_ERROR;
+    }
+    else if (!password_valid(pwd_new))
+    {
+        new_draw_info(NDI_UNIQUE, 0, op, "That new password is not valid!");
+
+        return COMMANDS_RTN_VAL_ERROR;
     }
 
-    /* now, this is important - perhaps the player is online!
-     * be sure we change the password in the player struct too!
-     */
-/* TODO: we must check accounts here */
-    if((name_hash = find_string(name)))
+    /* Check that an account of the specified name exists. */
+    sprintf(fname_old, "%s/%s/%s/%s/%s.acc",
+            settings.localdir, settings.accountdir, get_subdir(name), name,
+            name);
+
+    if (access(fname_old, F_OK) == -1)
     {
-        for(pl=first_player;pl!=NULL;pl=pl->next)
+        new_draw_info(NDI_UNIQUE, 0, op, "No account of that name exists!");
+
+        return COMMANDS_RTN_VAL_ERROR;
+    }
+
+    /* GMs can change any account's pwd, others can only change their own. */
+    FREE_AND_COPY_HASH(name_sh, name);
+
+    if (!(pl->gmaster_mode & GMASTER_MODE_GM) &&
+        pl->account_name != name_sh)
+    {
+        new_draw_info(NDI_UNIQUE, 0, op, "You can only change the password of your own account!");
+        FREE_ONLY_HASH(name_sh);
+
+        return COMMANDS_RTN_VAL_ERROR;
+    }
+
+    /* Open the account file for reading. */
+    if (!(fp_old = fopen(fname_old, "r")))
+    {
+        NDI_LOG(llevBug, NDI_UNIQUE, 0, op, "Could not open account file '%s' for reading!", fname_old);
+        FREE_ONLY_HASH(name_sh);
+
+        return COMMANDS_RTN_VAL_ERROR;
+    }
+
+    /* Open a temp file for writing. */
+    sprintf(fname_new, "%s.tmp", fname_old);
+
+    if (!(fp_new = fopen(fname_new, "w")))
+    {
+        NDI_LOG(llevBug, NDI_UNIQUE, 0, op, "Could not open account file '%s' for writing!", fname_new);
+        FREE_ONLY_HASH(name_sh);
+        fclose(fp_old);
+
+        return COMMANDS_RTN_VAL_ERROR;
+    }
+
+    /* Read the old file line-by-line and write to new, changing the pwd if the
+     * specified old one is correct. */
+    while (fgets(buf, MEDIUM_BUF, fp_old))
+    {
+        if (!strncmp(buf, "pwd ", 4))
         {
-            /* we don't care about removed or such - just force to be sure the change
-             * in the player* struct.
-             */
-            if(pl->ob && pl->ob->name == name_hash)
+            buf[strlen(buf) - 1] = '\0'; // remove newline
+
+            if (!wildcard &&
+                strcmp(buf + 4, pwd_old))
             {
-        FIXME->  strcpy(pl->socket.account.pwd, crypt_string(pwd));
-                break;
+                new_draw_info(NDI_UNIQUE, 0, op, "The old password you specified is incorrect!");
+                FREE_ONLY_HASH(name_sh);
+                fclose(fp_old);
+                fclose(fp_new);
+                remove(fname_new);
+
+                return COMMANDS_RTN_VAL_ERROR;
             }
+            else
+            {
+                fprintf(fp_new, "pwd %s\n", pwd_new);
+            }
+        }
+        else
+        {
+            fprintf(fp_new, "%s", buf);
         }
     }
 
-    fclose(fp);
-    fclose(fpout);
+    /* Close both files. */
+    fclose(fp_old);
+    fclose(fp_new);
 
-    /* delete the original file and move the tmp file */
-    unlink(pfile);
-    rename(outfile, pfile);
+    /* Delete the old file and rename new as old. */
+    remove(fname_old);
+    rename(fname_new, fname_old);
 
-    new_draw_info(NDI_UNIQUE, 0,op, "Done. Changed password of %s to %s!", name, pwd);
+    /* Browse onlne players for the named account, changing the pwd if the
+     * specified old one is correct. */
+    for (pl = first_player; pl; pl = pl->next)
+    {
+        Account *ac = &pl->socket.pl_account;
 
-    return 0;
+        if (ac->name == name_sh &&
+            (wildcard ||
+             !strcmp(ac->pwd, pwd_old)))
+        {
+            sprintf(ac->pwd, "%s", pwd_new);
+        }
+    }
+
+    pl = CONTR(op);
+    FREE_ONLY_HASH(name_sh);
+
+    /* Never log anyone's pwd, but do record who changed it and whether they
+     * used a wildcard. */
+    new_draw_info(NDI_UNIQUE, 0, op, "OK!");
+    LOG(llevSystem, "Password change on account %s by IP >%s< Account >%s< Player >%s<%s!\n",
+        name, pl->socket.ip_host, pl->account_name, STRING_OBJ_NAME(pl->ob),
+        ((pl->gmaster_mode & GMASTER_MODE_GM)) ? " (GM)" : "");
+    sprintf(params, "%s %s ???", name, (wildcard) ? "*" : "???"); // Logged in GM channel
+
+    return COMMANDS_RTN_VAL_OK;
 }
-#endif

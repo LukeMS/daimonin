@@ -232,8 +232,6 @@ float                       fire_magic_tool(object *owner, object *op, int dir);
 int                         command_cast_spell(object *op, char *params);
 /* c_wiz.c */
 int                         command_connections(object *op, char *params);
-int                         command_dmload(object *op, char *params);
-int                         check_dmload(const char*name, const char *pwd);
 int                         command_setgod(object *op, char *params);
 int                         command_kick(object *op, char *params);
 int                         command_reboot(object *op, char *params);
@@ -280,7 +278,7 @@ int                         command_stealth(object *op, char *params);
 int                         command_invisibility(object *op, char *params);
 int                         command_dm_dev(object *op, char *params);
 int                         command_dm_light(object *op, char *params);
-int                         command_dm_password(object *op, char *params);
+int                         command_password(object *op, char *params);
 /* commands.c */
 void                        init_commands(void);
 /* container.c */
