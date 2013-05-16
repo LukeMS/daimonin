@@ -106,6 +106,7 @@ CommArray_s Commands[] =
     {"mm",            command_mm,             0.0f, 1, NULL}, /*enters mm mode*/
     {"sa",            command_sa,             0.0f, 1, NULL}, /*enters sa mode*/
     {"gmasterlist",   command_gmasterlist,    0.0f, 1, NULL}, /*lists accounts on gmasterfile*/
+    {"password",      command_password,       0.0f, 1, CHANNEL_NAME_GM}, /* change pwd */
 };
 
 CommArray_s EmoteCommands[] =
@@ -268,10 +269,6 @@ CommArray_s CommandsSA[] =
 
     /* old, outdated or disabled commands */
     /*
-    TODO: fix password related commands who changed by the account patch
-    {"dm_pwd", command_dm_password,0.0},
-    {"dm_load", command_dmload,0.0}, // disabled because account patch
-
     {"dropall",        command_dropall,        1.0},
     {"listen", command_listen,    0.0}, // our channel system should work different
     {"drop", command_drop,    1.0},
