@@ -2628,18 +2628,18 @@ int command_dm_light(object *op, char *params)
 
 int command_password(object *op, char *params)
 {
-    player *pl;
-    char    name[MEDIUM_BUF],
-            pwd_old[MEDIUM_BUF],
-            pwd_new[MEDIUM_BUF],
-            fname_old[LARGE_BUF],
-            fname_new[LARGE_BUF],
-            buf[MEDIUM_BUF];
-    uint8   wildcard = 0;
-    shstr  *name_sh = NULL;
-    uint16  i;
-    FILE   *fp_old,
-           *fp_new;
+    player          *pl;
+    char             name[MEDIUM_BUF],
+                     pwd_old[MEDIUM_BUF],
+                     pwd_new[MEDIUM_BUF],
+                     fname_old[LARGE_BUF],
+                     fname_new[LARGE_BUF],
+                     buf[MEDIUM_BUF];
+    uint8            wildcard = 0;
+    shstr           *name_sh = NULL;
+    FILE            *fp_old,
+                    *fp_new;
+    struct channels *channel;
 
     /* op must be a properly connected player. */
     if (!op ||
@@ -2784,14 +2784,17 @@ int command_password(object *op, char *params)
 
     pl = CONTR(op);
     FREE_ONLY_HASH(name_sh);
-
-    /* Never log anyone's pwd, but do record who changed it and whether they
-     * used a wildcard. */
     new_draw_info(NDI_UNIQUE, 0, op, "OK!");
-    LOG(llevSystem, "Password change on account %s by IP >%s< Account >%s< Player >%s<%s!\n",
-        name, pl->socket.ip_host, pl->account_name, STRING_OBJ_NAME(pl->ob),
-        ((pl->gmaster_mode & GMASTER_MODE_GM)) ? " (GM)" : "");
-    sprintf(params, "%s %s ???", name, (wildcard) ? "*" : "???"); // Logged in GM channel
+
+    /* Never log anyone's pwd, but do log who changed it to the GM channel. */
+    if ((channel = findGlobalChannelFromName(NULL, CHANNEL_NAME_GM, 1)))
+    {
+        sprintf(buf, "Password change on account %s by IP >%s< Account >%s< Player >%s<%s!\n",
+                name, pl->socket.ip_host, pl->account_name,
+                STRING_OBJ_NAME(pl->ob),
+                ((pl->gmaster_mode & GMASTER_MODE_GM)) ? " (GM)" : "");
+        sendChannelMessage(NULL, channel, buf);
+    }
 
     return COMMANDS_RTN_VAL_OK;
 }
