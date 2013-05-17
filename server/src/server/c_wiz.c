@@ -2774,11 +2774,15 @@ int command_password(object *op, char *params)
     {
         Account *ac = &pl->socket.pl_account;
 
-        if (ac->name == name_sh &&
-            (wildcard ||
-             !strcmp(ac->pwd, pwd_old)))
+        if (ac->name == name_sh)
         {
-            sprintf(ac->pwd, "%s", pwd_new);
+            if (wildcard ||
+                !strcmp(ac->pwd, pwd_old))
+            {
+                sprintf(ac->pwd, "%s", pwd_new);
+            }
+
+            break;
         }
     }
 
