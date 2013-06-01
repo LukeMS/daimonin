@@ -1,0 +1,4 @@
+~Category~: Players/Gmasters
+
+~Syntax~: /invisibility
+~Purpose~: Toggles gmaster invisibility mode. When on, the player is directly invisible to both mobs and other players (except SAs). Unlike normal invisibility, for instance gained by wearing a magic item, there is no way for others to see this type of invisibility. Note that the player is still known to the server so can still be hit by missiles and spells, be affected by scripts, etc. Gmaster invisibility is only available to GMs and SAs 
