@@ -1,0 +1,4 @@
+~Category~: Players/Gmasters
+
+~Syntax~: /matrix
+~Purpose~: Toggles matrix mode. When on, the player sees the first system object on a square or a 'no floor' tile for squares without a floor instead of any fmask.
