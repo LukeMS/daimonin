@@ -391,7 +391,7 @@ struct plugin_hooklist
     void  (*reload_behaviours)(object *);
     uint32 (*remove_money_type)(object *, object *, sint64, uint32);
     void (*remove_ob)(object *);
-    int  (*remove_item_buff)(object *, char *, int);
+    int  (*remove_item_buff)(object *, char *, uint32);
     void (*reset_instance_data)(player *pl);
     void (*return_poolchunk_array_real)(void *, uint32, struct mempool *);
     /* S */

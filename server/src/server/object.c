@@ -1053,35 +1053,35 @@ void initialize_object(object *op)
  * and then copies the contends of the first object into the second
  * object, allocating what needs to be allocated.
  */
-void copy_object(object *op2, object *op)
+void copy_object(object *src, object *dest)
 {
-    int is_removed  = QUERY_FLAG(op, FLAG_REMOVED);
+    int is_removed  = QUERY_FLAG(dest, FLAG_REMOVED);
 
     /* remove because perhaps speed will change when we copy */
-    if(QUERY_FLAG(op, FLAG_IN_ACTIVELIST))
-        activelist_remove_inline(op);
+    if(QUERY_FLAG(dest, FLAG_IN_ACTIVELIST))
+        activelist_remove_inline(dest);
 
-    FREE_ONLY_HASH(op->name);
-    FREE_ONLY_HASH(op->title);
-    FREE_ONLY_HASH(op->race);
-    FREE_ONLY_HASH(op->slaying);
-    FREE_ONLY_HASH(op->msg);
+    FREE_ONLY_HASH(dest->name);
+    FREE_ONLY_HASH(dest->title);
+    FREE_ONLY_HASH(dest->race);
+    FREE_ONLY_HASH(dest->slaying);
+    FREE_ONLY_HASH(dest->msg);
 
     /* unlink old treasurelist if needed */
-    if (op->randomitems)
-        unlink_treasurelists(op->randomitems, 0);
+    if (dest->randomitems)
+        unlink_treasurelists(dest->randomitems, 0);
 
-    (void) memcpy((void *) ((char *) op + offsetof(object, name)), (void *) ((char *) op2 + offsetof(object, name)),
+    (void) memcpy((void *) ((char *) dest + offsetof(object, name)), (void *) ((char *) src + offsetof(object, name)),
                   sizeof(object) - offsetof(object, name));
 
     if (is_removed)
-        SET_FLAG(op, FLAG_REMOVED);
+        SET_FLAG(dest, FLAG_REMOVED);
 
-    ADD_REF_NOT_NULL_HASH(op->name);
-    ADD_REF_NOT_NULL_HASH(op->title);
-    ADD_REF_NOT_NULL_HASH(op->race);
-    ADD_REF_NOT_NULL_HASH(op->slaying);
-    ADD_REF_NOT_NULL_HASH(op->msg);
+    ADD_REF_NOT_NULL_HASH(dest->name);
+    ADD_REF_NOT_NULL_HASH(dest->title);
+    ADD_REF_NOT_NULL_HASH(dest->race);
+    ADD_REF_NOT_NULL_HASH(dest->slaying);
+    ADD_REF_NOT_NULL_HASH(dest->msg);
 
 #if 0
 /* Buggers up merging. These are 3 distinct flags and should be tested for
@@ -1089,34 +1089,34 @@ void copy_object(object *op2, object *op)
  * Especially, in a function whose purpose is to copy an object, we should not
  * then modify the copy so it is no longer identical to the original.
  * -- Smacky 20090312 */
-    if (QUERY_FLAG(op, FLAG_IDENTIFIED))
+    if (QUERY_FLAG(dest, FLAG_IDENTIFIED))
     {
-        if (is_magical(op))
-            SET_FLAG(op, FLAG_KNOWN_MAGICAL);
+        if (is_magical(dest))
+            SET_FLAG(dest, FLAG_KNOWN_MAGICAL);
 
-        if (is_cursed_or_damned(op))
-            SET_FLAG(op, FLAG_KNOWN_CURSED);
+        if (is_cursed_or_damned(dest))
+            SET_FLAG(dest, FLAG_KNOWN_CURSED);
     }
 #endif
 
     /* perhaps we have a custom treasurelist. Then we need to
      * increase the refcount here.
      */
-    if (op->randomitems && (op->randomitems->flags & OBJLNK_FLAG_REF))
-        op->randomitems->ref_count++;
+    if (dest->randomitems && (dest->randomitems->flags & OBJLNK_FLAG_REF))
+        dest->randomitems->ref_count++;
 
     /* We set the custom_attrset pointer to NULL to avoid
      * really bad problems. TODO. this needs to be handled better
      * but it works until its only the player struct.
      */
-    op->custom_attrset = NULL;
+    dest->custom_attrset = NULL;
 
     /* Only alter speed_left when we sure we have not done it before */
-    if (op->speed < 0 && op->speed_left == op->arch->clone.speed_left)
-        op->speed_left += (RANDOM() % 90) / 100.0f;
+    if (dest->speed < 0 && dest->speed_left == dest->arch->clone.speed_left)
+        dest->speed_left += (RANDOM() % 90) / 100.0f;
 
-    CLEAR_FLAG(op, FLAG_IN_ACTIVELIST); /* perhaps our source is on active list - ignore! */
-    update_ob_speed(op);
+    CLEAR_FLAG(dest, FLAG_IN_ACTIVELIST); /* perhaps our source is on active list - ignore! */
+    update_ob_speed(dest);
 }
 
 /* Same as above, but not touching the active list */
@@ -3444,23 +3444,38 @@ object *find_next_object(object *op, uint8 type, uint8 mode, object *root)
     return next;
 }
 
-/* Copy stats from all BUFF_FORCEs in item's inventory to the item. It will also
- * create a duplicate of the original object if one doesn't already exist for
- * easy comparison and to make it easier to have multiple kinds of buffs. This
- * loop may be a bit sub-optimal but this function shouldn't be called very
- * often - only when an item is buffed or debuffed.
- *
- * Kinda wish I'd used the lexer instead of this...
- * Maybe I will someday. I may have missed some stats here -- update if I do. ;)
- * -- _people_ 7/29/12
+/*
+ * Changes an item back to its original/unbuffed state so that it can be saved
+ * or buff effects can be recalculated.
  */
+void revert_buff_stats(object *item)
+{
+    object *original;
 
+    if (item && item->original)
+    {
+        original = item->original;
+
+        // The original version will still have the coordinates from when it was copied.
+        original->x = item->x;
+        original->y = item->y;
+
+        copy_object(item->original, item);
+        item->original = original;
+    }
+}
+
+/* Copy stats from all BUFF_FORCEs in item's inventory to the item. It will also
+ * store the original version of that object in item->original so that it can
+ * easily be reverted or compared.
+ */
 void fix_buff_stats(object *item)
 {
     int i = 0;
     uint32 n = 0;
-    object *orig;
     object *inv;
+	object *below;
+	uint8 buffs = 0; // Only tracks if the object still has *any* buffs
 
     if (!item)
     {
@@ -3468,26 +3483,35 @@ void fix_buff_stats(object *item)
         return;
     }
 
-    orig = present_arch_in_ob(item->arch, item);
+    if (!item->buffed)
+    {
+        return;
+    }
 
     // Try to create a duplicate of the object to make changing stats relative to the original.
-    if (!orig)
+    if (!item->original)
     {
-        orig = get_object();
-        copy_object(item, orig);
+        item->original = get_object();
+        copy_object(item, item->original);
 
-        if (!orig)
+        // Even though the object isn't on a map or inside another, it shouldn't be removed on cleanup.
+        CLEAR_FLAG(item->original, FLAG_REMOVED);
+
+        if (!item->original)
         {
             LOG(llevDebug, "fix_buff_stats() failed - could not copy original object\n");
+            return;
         }
     } else
     {
         // If orig was found, item should be different than orig, so revert item to orig.
-        copy_object(orig, item);
+        revert_buff_stats(item);
     }
 
-    GET_INV_BOTTOM(item, inv)
+	for (inv = item->inv; inv != NULL; inv = below)
     {
+        below = inv->below;
+        buffs++;
 
         if (inv->type != BUFF_FORCE)
         {
@@ -3523,7 +3547,6 @@ void fix_buff_stats(object *item)
         item->stats.Wis += inv->stats.Wis * n;
 
         item->item_condition += inv->item_condition * n;
-        item->item_quality += inv->item_quality * n;
 
         item->item_level += inv->item_level;
         item->item_skill = inv->item_skill;
@@ -3547,6 +3570,18 @@ void fix_buff_stats(object *item)
             item->resist[i] += inv->resist[i] * n;
         }
     }
+
+    // Make sure the player notices the change if they're wearing the item.
+    if (QUERY_FLAG(item, FLAG_APPLIED) && item->env && item->env->type == PLAYER)
+    {
+        // Only items in the root of players' inventories can be applied.
+        fix_player(item->env, "buff applied");
+    }
+
+    if (buffs == 0)
+    {
+        item->buffed = FALSE;
+    }
 }
 
 /*
@@ -3568,6 +3603,7 @@ uint8 check_buff_limit(object *op, int nr)
         return FALSE;
     }
 
+	// Max buffs not specified so use qua/con instead.
     if (op->max_buffs == 0)
     {
         // Items with a higher condition are already powerful enough, so
@@ -3618,7 +3654,7 @@ object * check_buff_exists(object *item, const char *name)
 
     for (inv = item->inv; inv; inv = inv->below)
     {
-        if (inv->type == BUFF_FORCE && inv->name == name)
+        if (inv->type == BUFF_FORCE && strcmp(inv->name, name) == 0)
         {
             return inv;
         }
@@ -3633,6 +3669,8 @@ object * check_buff_exists(object *item, const char *name)
  *          2 = max_buffs exceeded
  *          3 = max of that particular buff exceeded
  *          4 = for whatever reason we can't put the buff in the item
+ *
+ * Multiple flags can be applied to better inform the user of why the buff wasn't applied.
  */
 int add_item_buff(object *item, object *buff, short just_checking)
 {
@@ -3641,14 +3679,14 @@ int add_item_buff(object *item, object *buff, short just_checking)
 
     if (!item || !buff)
     {
-        ret &= BUFF_ADD_BAD_PARAMS;
+		ret = BUFF_ADD_BAD_PARAMS;
         return ret; // No point in going on, only bad things will come.
     }
 
     // Make sure the item won't exceed its numerical buff limit.
     if (!check_buff_limit(item, buff->nrof))
     {
-        ret &= BUFF_ADD_LIMITED;
+        ret |= BUFF_ADD_LIMITED;
         ret &= ~BUFF_ADD_SUCCESS;
     }
 
@@ -3656,23 +3694,25 @@ int add_item_buff(object *item, object *buff, short just_checking)
 
     if (oldbuff)
     {
-        ret &= BUFF_ADD_EXISTS;
+        ret |= BUFF_ADD_EXISTS;
 
         if (oldbuff->nrof + buff->nrof > (uint32) oldbuff->carrying)
         {
-            ret &= BUFF_ADD_MAX_EXCEEDED;
+            ret |= BUFF_ADD_MAX_EXCEEDED;
             ret &= ~BUFF_ADD_SUCCESS;
+
+            return ret;
         }
 
         // If we are actually adding the buff and it's still successful
         // Just increase the nrof since we already have the buff force.
-        if (!just_checking && ret & BUFF_ADD_SUCCESS)
+        if (!just_checking && (ret & BUFF_ADD_SUCCESS))
         {
             oldbuff->nrof += buff->nrof;
         }
     } else
     {
-        if (!just_checking && ret & BUFF_ADD_SUCCESS)
+        if (!just_checking && (ret & BUFF_ADD_SUCCESS))
         {
             buff = insert_ob_in_ob(buff, item);
 
@@ -3680,32 +3720,28 @@ int add_item_buff(object *item, object *buff, short just_checking)
             // return null if it shouldn't happen.
             if (!buff)
             {
-                ret &= BUFF_ADD_NO_INSERT;
+                ret |= BUFF_ADD_NO_INSERT;
+                ret &= ~BUFF_ADD_SUCCESS;
             }
         }
     }
 
-    if (!just_checking)
+    if ((ret & BUFF_ADD_SUCCESS) && !just_checking)
     {
+        SET_FLAG(buff, FLAG_APPLIED);
+        
         /* Copy stat boni from the buff force to the object. This uses buff
          * instead of oldbuff so that we can just merge the changes instead
          * of unmerging all and then remerging all.
          */
+        item->buffed = TRUE;
         fix_buff_stats(item);
-
-        // Apply it in case someday we implement "disabling" buffs.
-        SET_FLAG(buff, FLAG_APPLIED);
-    }
-
-    if (ret == 0 || ret == BUFF_ADD_EXISTS)
-    {
-        ret &= BUFF_ADD_SUCCESS;
     }
 
     return ret;
 }
 
-int remove_item_buff(object *item, char *name, int nrof)
+int remove_item_buff(object *item, char *name, uint32 nrof)
 {
     object *oldbuff;
 
@@ -3721,9 +3757,9 @@ int remove_item_buff(object *item, char *name, int nrof)
         return BUFF_ADD_EXISTS;
     }
 
-    decrease_ob_nr(oldbuff, nrof);
+    decrease_ob_nr(oldbuff, (nrof > 0) ? nrof : oldbuff->nrof);
 
     fix_buff_stats(item);
 
-    return 1;
+    return BUFF_ADD_SUCCESS;
 }
