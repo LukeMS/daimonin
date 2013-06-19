@@ -245,7 +245,8 @@ WS	[ \t]*{NL}?
 				}
 			}
 			/* This is the actual archetype definition then */
-			else {
+			else
+            {
 					op->arch=find_archetype(yval());
 					if (op->arch)
 						copy_object_data(&op->arch->clone,op);
@@ -253,6 +254,10 @@ WS	[ \t]*{NL}?
 						singularity = create_singularity(yval());
 					/* note: speed will handled in load_object() for this */
 				}
+            if (op->buffed && op->inv)
+            {
+                fix_buff_stats(op);
+            }
 		    }
 
 ^object{S}	    {	char *yv=yval();
@@ -386,6 +391,7 @@ op->oz= op->z;
 						SET_OR_CLEAR_FLAG(op, FLAG_CAN_STACK, IVAL);
 					}
 ^max_buffs{S}               op->max_buffs = IVAL;
+^buffed{S}	        		op->buffed = IVAL;
 ^nrof{S}					op->nrof= atol(yval());
 ^level{S}					op->level = IVAL;
 ^direction{S}				op->facing=op->anim_last_facing =op->direction = (IVAL%9);
@@ -1218,6 +1224,8 @@ char *get_ob_diff(const object *op, const object *op2) {
 
   if(op->max_buffs!=op2->max_buffs)
     save_long(buf, "max_buffs", op->max_buffs);
+  if(op->buffed!=op2->buffed)
+    save_long(buf, "buffed", op->buffed);
   if(op->nrof!=op2->nrof)
     save_long(buf, "nrof", op->nrof);
   if(op->level!=op2->level)
@@ -1365,6 +1373,8 @@ void save_object(FILE *fp,object *op, int flag) {
     /* If it is unpaid and we don't want to save those, just return. */
     if(!fp || QUERY_FLAG(op, FLAG_NO_SAVE) || (!(flag&1) && (QUERY_FLAG(op, FLAG_UNPAID))))
 		return;
+
+    revert_buff_stats(op);
 
     if((at=op->arch)==NULL)
 		at=archetype_global._empty_archetype;

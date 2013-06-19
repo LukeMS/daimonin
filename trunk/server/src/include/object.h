@@ -171,6 +171,11 @@ typedef struct obj
                                      * Owner should not be referred to directly
                                      * - get_owner() should be used instead.
                                      */
+
+    struct obj     *original;       /* Used to store the original, unbuffed version of an item. A buffed
+                                     * item will revert to this state when it is saved. */
+    uint8           buffed;         // Whether or not the object should contain any BUFF_FORCEs
+
     /* *map is part of "object head" but this not? hmm */
     sint16          x;              /* X-Position in the map for this object */
     sint16          y;              /* Y-Position in the map for this object */
@@ -336,7 +341,7 @@ typedef struct obj
 
 #define BUFF_ADD_SUCCESS      1  // Nothing went wrong.
 #define BUFF_ADD_EXISTS       2  // The buff exists, but that does not mean it failed.
-#define BUFF_ADD_LIMITED      4  // Too many of the same item.
+#define BUFF_ADD_LIMITED      4  // Too many of the same buff.
 #define BUFF_ADD_MAX_EXCEEDED 8  // item->max_buffs exceeded.
 #define BUFF_ADD_BAD_PARAMS   16 // item or buff == NULL
 #define BUFF_ADD_NO_INSERT    32 // Something went wrong in insert_ob_in_ob

@@ -4523,11 +4523,16 @@ static int GameObject_GetAccountName(lua_State *L)
 /*****************************************************************************/
 /* Name   : GameObject_AddBuff                                               */
 /* Lua    : object:AddBuff(buffname, buffstring)                             */
-/* Info   : Create a force with specified stats that is added to the object. */
-/*          The stats of that force are then added to the object.            */
-/* Returns: Whether or not the buff was successfully added. 0 = success,     */
-/*          1 = that buff already exists, 2 = too many buffs on that object, */
-/*          3 = you didn't make a valid object with that buff string.        */
+/* Info   : Creates a force with specified stats that is added to the object.*/
+/* The stats of that force are then added to the object. buffstring should be*/
+/* an arch definition string, excluding the arch, name, and end attributes.  */
+/* Returns:                                                                  */
+/* BUFF_ADD_SUCCESS - Nothing went wrong.                                    */
+/* BUFF_ADD_EXISTS - The buff exists, but that does not mean it failed.      */
+/* BUFF_ADD_LIMITED - Too many of the same buff.                             */
+/* BUFF_ADD_MAX_EXCEEDED - item->max_buffs exceeded.                         */
+/* BUFF_ADD_BAD_PARAMS - item or buff == NULL                                */
+/* BUFF_ADD_NO_INSERT - Something went wrong in insert_ob_in_ob - unlikely   */
 /* Status : Untested                                                         */
 /*****************************************************************************/
 static int GameObject_AddBuff(lua_State *L)
@@ -4535,11 +4540,12 @@ static int GameObject_AddBuff(lua_State *L)
     lua_object     *self = NULL;
     char           *buff = NULL;
     char            buff_str[LARGE_BUF];
+	char		   *name = NULL;
     object         *obj  = NULL;
 
-    get_lua_args(L, "Os", &self, &buff);
+    get_lua_args(L, "Oss", &self, &name, &buff);
 
-    sprintf(buff_str, "arch buff_force\n%s\nend", buff);
+    sprintf(buff_str, "arch buff_force\nname %s\n%s\nend", name, buff);
     obj = hooks->load_object_str(buff_str);
 
     lua_pushnumber(L, hooks->add_item_buff(WHO, obj, 0));
@@ -4550,16 +4556,16 @@ static int GameObject_AddBuff(lua_State *L)
 /*****************************************************************************/
 /* Name   : GameObject_CheckBuff                                             */
 /* Lua    : object:CheckBuff(buffname)                                       */
-/* Info   : Check to see if the specified buff is already on the item. This  */
-/*          will ensure that the item cannot get more buffs than what is     */
-/*          allowed.                                                         */
-/* Returns: The number of times a buff has been placed on an item. Some buffs*/
-/*          may be placed more than once.                                    */
-/* TODO   : Atm this function only uses a basic check for the buff. If the   */
-/*          buff is anywhere in the string, it will return true. For example,*/
-/*          if the object's buff string is "111example222;" and the function */
-/*          checks for "example", it will return true.                       */
-/* Status : Tested/Stable                                                    */
+/* Info   : Check if this buff can be added. It goes through the same process*/
+/*          as AddBuff but doesn't modify the item at all                    */
+/* Returns:                                                                  */
+/* BUFF_ADD_SUCCESS - Nothing went wrong.                                    */
+/* BUFF_ADD_EXISTS - The buff exists, but that does not mean it failed.      */
+/* BUFF_ADD_LIMITED - Too many of the same buff.                             */
+/* BUFF_ADD_MAX_EXCEEDED - item->max_buffs exceeded.                         */
+/* BUFF_ADD_BAD_PARAMS - item or buff == NULL                                */
+/* BUFF_ADD_NO_INSERT - Something went wrong in insert_ob_in_ob - unlikely   */
+/* Status : Untested                                                         */
 /*****************************************************************************/
 static int GameObject_CheckBuff(lua_State *L)
 {
@@ -4579,24 +4585,20 @@ static int GameObject_CheckBuff(lua_State *L)
 }
 
 /*****************************************************************************/
-/* Name   : GameObject_CheckBuff                                             */
-/* Lua    : object:CheckBuff(buffname)                                       */
-/* Info   : Check to see if the specified buff is already on the item. This  */
-/*          will ensure that the item cannot get more buffs than what is     */
-/*          allowed.                                                         */
-/* Returns: The number of times a buff has been placed on an item. Some buffs*/
-/*          may be placed more than once.                                    */
-/* TODO   : Atm this function only uses a basic check for the buff. If the   */
-/*          buff is anywhere in the string, it will return true. For example,*/
-/*          if the object's buff string is "111example222;" and the function */
-/*          checks for "example", it will return true.                       */
-/* Status : Tested/Stable                                                    */
+/* Name   : GameObject_RemoveBuff                                            */
+/* Lua    : object:RemoveBuff(buffname, nrof)                                */
+/* Info   : Removes the specified amount of a buff. Nrof 0 means remove all. */
+/* Returns:                                                                  */
+/* BUFF_ADD_BAD_PARAMS - Something was null                                  */
+/* BUFF_ADD_EXISTS - That buff doesn't exist (poorly-named)                  */
+/* BUFF_ADD_SUCCESS - Success                                                */
+/* Status : Untested                                                         */
 /*****************************************************************************/
 static int GameObject_RemoveBuff(lua_State *L)
 {
     lua_object     *self = NULL;
     char           *name = NULL;
-    int             nrof = 1;
+    int             nrof = 0;
 
     get_lua_args(L, "Os|i", &self, &name, &nrof);
 
