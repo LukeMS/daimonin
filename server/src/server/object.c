@@ -3684,7 +3684,7 @@ int add_item_buff(object *item, object *buff, short just_checking)
     }
 
     // Make sure the item won't exceed its numerical buff limit.
-    if (!check_buff_limit(item, buff->nrof))
+    if (!check_buff_limit(item, buff->last_sp))
     {
         ret |= BUFF_ADD_LIMITED;
         ret &= ~BUFF_ADD_SUCCESS;
@@ -3696,7 +3696,7 @@ int add_item_buff(object *item, object *buff, short just_checking)
     {
         ret |= BUFF_ADD_EXISTS;
 
-        if (oldbuff->nrof + buff->nrof > (uint32) oldbuff->carrying)
+        if (oldbuff->last_sp + buff->last_sp > (uint32) oldbuff->max_buffs)
         {
             ret |= BUFF_ADD_MAX_EXCEEDED;
             ret &= ~BUFF_ADD_SUCCESS;
@@ -3708,7 +3708,7 @@ int add_item_buff(object *item, object *buff, short just_checking)
         // Just increase the nrof since we already have the buff force.
         if (!just_checking && (ret & BUFF_ADD_SUCCESS))
         {
-            oldbuff->nrof += buff->nrof;
+            oldbuff->last_sp += buff->last_sp;
         }
     } else
     {
@@ -3729,7 +3729,7 @@ int add_item_buff(object *item, object *buff, short just_checking)
     if ((ret & BUFF_ADD_SUCCESS) && !just_checking)
     {
         SET_FLAG(buff, FLAG_APPLIED);
-        
+
         /* Copy stat boni from the buff force to the object. This uses buff
          * instead of oldbuff so that we can just merge the changes instead
          * of unmerging all and then remerging all.
