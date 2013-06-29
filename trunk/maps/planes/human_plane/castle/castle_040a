@@ -270,7 +270,7 @@ direction 5
 x 1
 y 19
 end
-arch shop_floor_normal
+arch floor_ostone15
 x 1
 y 20
 end
@@ -441,7 +441,7 @@ arch floor_ostone10
 x 2
 y 19
 end
-arch shop_floor_normal
+arch floor_ostone15
 x 2
 y 20
 end
@@ -623,7 +623,7 @@ direction 7
 x 3
 y 19
 end
-arch shop_floor_normal
+arch floor_ostone15
 x 3
 y 20
 end
@@ -833,7 +833,7 @@ arch carpet1
 x 4
 y 19
 end
-arch shop_floor_normal
+arch floor_ostone15
 x 4
 y 20
 end
@@ -1051,7 +1051,7 @@ direction 5
 x 5
 y 19
 end
-arch shop_floor_normal
+arch floor_ostone15
 x 5
 y 20
 end
@@ -1252,7 +1252,7 @@ arch carpet1
 x 6
 y 19
 end
-arch shop_floor_normal
+arch floor_ostone15
 x 6
 y 20
 end
@@ -1457,7 +1457,7 @@ arch carpet1
 x 7
 y 19
 end
-arch shop_floor_normal
+arch floor_ostone15
 x 7
 y 20
 end
@@ -1779,7 +1779,7 @@ direction 5
 x 8
 y 19
 end
-arch shop_floor_normal
+arch floor_ostone15
 x 8
 y 20
 end
@@ -1962,7 +1962,7 @@ arch candlelight4.101
 x 9
 y 19
 end
-arch shop_floor_normal
+arch floor_ostone15
 x 9
 y 20
 end
@@ -2080,7 +2080,7 @@ arch wall_stone_1
 x 10
 y 14
 end
-arch shop_floor_normal
+arch floor_ostone15
 x 10
 y 15
 end
@@ -2092,7 +2092,7 @@ arch candlelight4.101
 x 10
 y 15
 end
-arch shop_floor_normal
+arch floor_ostone15
 x 10
 y 16
 end
@@ -2100,7 +2100,7 @@ arch wall_stone_3
 x 10
 y 16
 end
-arch shop_floor_normal
+arch floor_ostone15
 x 10
 y 17
 end
@@ -2122,7 +2122,7 @@ direction 7
 x 10
 y 17
 end
-arch shop_floor_normal
+arch floor_ostone15
 x 10
 y 18
 end
@@ -2130,7 +2130,7 @@ arch wall_stone_3
 x 10
 y 18
 end
-arch shop_floor_normal
+arch floor_ostone15
 x 10
 y 19
 end
@@ -2138,7 +2138,7 @@ arch wall_stone_3
 x 10
 y 19
 end
-arch shop_floor_normal
+arch floor_ostone15
 x 10
 y 20
 end
