@@ -124,3 +124,12 @@ terrain_type 1
 type 71
 no_pick 1
 end
+Object floor_ostone15
+name floor
+face floor_ostone15.101
+no_teleport 1
+layer 1
+terrain_type 1
+type 71
+no_pick 1
+end
