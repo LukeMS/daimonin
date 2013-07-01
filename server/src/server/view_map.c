@@ -497,10 +497,6 @@ void draw_client_map2(object *pl)
                 }
 #endif
             }
-            /* layer 1 (floor) is really free now - we only have here
-             * type 68 SHOP_FLOOR left using layer 1. That special floor
-             * will be removed when we add real shop interfaces.
-             */
             else if ((clayer[0] = GET_MAP_SPACE_VISIBLE_CLAYER(msp, 0)))
             {
                 face_num0 = clayer[0]->face->number;

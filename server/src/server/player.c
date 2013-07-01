@@ -861,13 +861,13 @@ int kill_player(object *op)
      * the player has any unpaid items.  If so, remove them and put them back
      * in the map.
      */
+    GET_MAP_SPACE_SYS_OBJ(GET_MAP_SPACE_PTR(op->map, op->x, op->y), SHOP_FLOOR,
+                          tmp);
 
-    tmp = GET_MAP_OB(op->map, op->x, op->y);
-    if (tmp && tmp->type == SHOP_FLOOR)
+    if (tmp)
     {
         remove_unpaid_objects(op->inv, op);
     }
-
 
     /****************************************/
     /*                                      */

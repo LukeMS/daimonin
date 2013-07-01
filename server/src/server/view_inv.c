@@ -217,8 +217,7 @@ static uint8 AddInventory(sockbuf_struct *sb, _server_client_cmd cmd,
 
     for (this = first; this; this = this->below)
     {
-        if (this->type == SHOP_FLOOR || // TODO: Remove this type/arch
-            !FILTER(pl, this))
+        if (!FILTER(pl, this))
         {
             continue;
         }

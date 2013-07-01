@@ -889,13 +889,15 @@ int convert_item(object *item, object *converter, object *originator)
         item->nrof = CONV_NR(converter);
     if (nr)
         item->nrof *= nr;
-    for (tmp = GET_MAP_OB(converter->map, converter->x, converter->y); tmp != NULL; tmp = tmp->above)
+
+    GET_MAP_SPACE_SYS_OBJ(GET_MAP_SPACE_PTR(converter->map, converter->x, converter->y),
+                          SHOP_FLOOR, tmp);
+
+    if (tmp)
     {
-        if (tmp->type == SHOP_FLOOR)
-            break;
-    }
-    if (tmp != NULL)
         SET_FLAG(item, FLAG_UNPAID);
+    }
+
     item->x = converter->x;
     item->y = converter->y;
     insert_ob_in_map(item, converter->map, converter, 0);
@@ -1078,71 +1080,65 @@ static void ApplyAltar(object *altar, object *sacrifice, object *originator)
 
 static void ApplyShopMat(object *shop_mat, object *op)
 {
-    int     rv  = 0;
-    object *tmp;
-
     /* Event trigger and quick exit */
-    if(trigger_object_plugin_event(EVENT_TRIGGER,
-                shop_mat, op, NULL,
-                NULL, NULL, NULL, NULL, SCRIPT_FIX_NOTHING))
+    if (trigger_object_plugin_event(EVENT_TRIGGER, shop_mat, op, NULL, NULL,
+        NULL, NULL, NULL, SCRIPT_FIX_NOTHING))
+    {
         return;
-
-    SET_FLAG(op, FLAG_NO_APPLY);   /* prevent loops */
-
-    if (op->type != PLAYER)
-    {
-        if (QUERY_FLAG(op, FLAG_UNPAID))
-        {
-            /* Somebody dropped an unpaid item, just move to an adjacent place. */
-            int i   = find_free_spot(op->arch, op, op->map, op->x, op->y, 0, 1, SIZEOFFREE1 + 1);
-            if (i != -1)
-            {
-                rv = enter_map(op, shop_mat, op->map,op->x + freearr_x[i], op->y + freearr_y[i], MAP_STATUS_FIXED_POS, 0);
-            }
-        }
-        /* Removed code that checked for multipart objects - it appears that
-         * the teleport function should be able to handle this just fine.
-         */
-
-        rv = teleport(shop_mat, SHOP_MAT, op);
     }
-    /* immediate block below is only used for players */
-    else if (shop_checkout(op, op->inv))
+
+    SET_FLAG(op, FLAG_NO_APPLY); // prevent loops
+
+    /* Players who can use a shop mat (either entering a shop or leaving with
+     * affordable goods (will be bought by shop_checkout())/nothing). */
+    if (op->type == PLAYER &&
+        shop_checkout(op, op->inv))
     {
-        rv = teleport(shop_mat, SHOP_MAT, op);
-        if (shop_mat->msg)
+        MapSpace *msp = GET_MAP_SPACE_PTR(shop_mat->map, shop_mat->x, shop_mat->y);
+        object   *shop;
+
+        GET_MAP_SPACE_SYS_OBJ(msp, SHOP_FLOOR, shop);
+
+        /* When leaving a shop, print the mat msg if any. */
+        if (shop &&
+            shop_mat->msg)
         {
             new_draw_info(NDI_UNIQUE, 0, op, "%s", shop_mat->msg);
         }
-        /* This check below is a bit simplistic - generally it should be correct,
-            * but there is never a guarantee that the bottom space on the map is
-            * actually the shop floor.
-            */
-        else if (!rv && (tmp = GET_MAP_OB(op->map, op->x, op->y)) != NULL && tmp->type != SHOP_FLOOR)
+
+        /* Non-destructively teleported. */
+        if (!teleport(shop_mat, SHOP_MAT, op))
         {
-            new_draw_info(NDI_UNIQUE, 0, op, "Thank you for visiting our shop.");
+            msp = GET_MAP_SPACE_PTR(op->map, op->x, op->y);
+            GET_MAP_SPACE_SYS_OBJ(msp, SHOP_FLOOR, shop);
+
+            /* When entering a shop, print the floor msg and name if any. */
+            if (shop &&
+                shop->msg)
+            {
+                char buf[LARGE_BUF];
+
+                sprintf(buf, "%s", shop->msg);
+
+                if (shop->name)
+                {
+                    sprintf(strrchr(buf, '\n'), " %s!\n", shop->name);
+                }
+
+                new_draw_info(NDI_UNIQUE, 0, op, "%s", buf);
+            }
         }
     }
+    /* Players who cannot pass though the shop mat and non-players. */
     else
     {
-        /* if we get here, a player tried to leave a shop but was not able
-            * to afford the items he has.  We try to move the player so that
-            * they are not on the mat anymore
-            */
+        int i = find_free_spot(op->arch, op, op->map, op->x, op->y, 0, 1,
+                               SIZEOFFREE1 + 1);
 
-        int i   = find_free_spot(op->arch, op, op->map, op->x, op->y, 0, 1, SIZEOFFREE1 + 1);
-        if (i == -1)
+        if (i != -1)
         {
-            LOG(llevBug, "BUG: Internal shop-mat problem (map:%s object:%s pos: %d,%d).\n", op->map->name, op->name,
-                op->x, op->y);
-        }
-        else
-        {
-            remove_ob(op);
-            check_walk_off(op, NULL, MOVE_APPLY_DEFAULT);
-            op->x += freearr_x[i];
-            op->y += freearr_y[i];
-            rv = (insert_ob_in_map(op, op->map, shop_mat, 0) == NULL);
+            (void)enter_map(op, shop_mat, op->map, op->x + freearr_x[i],
+                            op->y + freearr_y[i], MAP_STATUS_FIXED_POS, 0);
         }
     }
 

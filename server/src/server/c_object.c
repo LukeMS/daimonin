@@ -968,21 +968,26 @@ char *examine(object *op, object *tmp, int flag)
                                      query_cost_string(tmp, op, F_TRUE, COSTSTRING_SHORT));
                 strcat(buf_out, buf);
                 goto dirty_little_jump1;
-			}
+            }
         }
         else
         {
             MapSpace *msp;
-            object *floor;
+            object *shop;
+
             dirty_little_jump1 :
             msp = GET_MAP_SPACE_PTR(op->map, op->x, op->y);
-            floor = GET_MAP_SPACE_GMASTER_SLAYER(msp, 0);
-            if (floor && floor->type == SHOP_FLOOR && tmp->type != MONEY)
+            GET_MAP_SPACE_SYS_OBJ(msp, SHOP_FLOOR, shop);
+
+            if (shop &&
+                tmp->type != MONEY)
             {/* disabled CHA effect for b4
-				sprintf(buf, "This shop will pay you %s (%0.1f%%).",
-					query_cost_string(tmp, op, F_SELL, COSTSTRING_SHORT), 20.0f + 100.0f);
-			  */
-				sprintf(buf, "This shop will pay you %s.", query_cost_string(tmp, op, F_SELL, COSTSTRING_SHORT));
+                sprintf(buf, "This shop will pay you %s (%0.1f%%).",
+                        query_cost_string(tmp, op, F_SELL, COSTSTRING_SHORT), 20.0f + 100.0f);
+              */
+                sprintf(buf, "This item is valued at %s by %s.",
+                        query_cost_string(tmp, op, F_SELL, COSTSTRING_SHORT),
+                        STRING_OBJ_NAME(shop));
                 strcat(buf_out, buf);
             }
         }

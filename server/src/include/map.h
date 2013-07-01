@@ -150,6 +150,25 @@
 #define SET_MAP_RTAG(_M_, _X_, _Y_, tmp)              ((_M_)->spaces[(_X_) + (_M_)->width * (_Y_)].round_tag = (uint32)(tmp))
 #define GET_MAP_RTAG(_M_, _X_, _Y_)                   ((_M_)->spaces[(_X_) + (_M_)->width * (_Y_)].round_tag)
 
+/* Gets the first system object (stored in _O_) on sq uare _M_ that is of type
+ * _T_. Layer 0/sys objs are always stored at the ->first end of a square so we
+ * can loop through them by checking ->above and break out as soon as a
+ * non-zero layer is encountered. If the required type is not found,
+ * _O_ = NULL. */
+#define GET_MAP_SPACE_SYS_OBJ(_M_, _T_, _O_) \
+    for ((_O_) = GET_MAP_SPACE_FIRST((_M_)); (_O_); (_O_) = (_O_)->above) \
+    { \
+        if ((_O_)->layer) \
+        { \
+            (_O_) = NULL; \
+            break; \
+        } \
+        else if ((_O_)->type == (_T_)) \
+        { \
+            break; \
+        } \
+    }
+
 #define MAP_SET_WHEN_SWAP(_M_, _T_) \
     if ((_T_) != 0) /* delay */ \
     { \

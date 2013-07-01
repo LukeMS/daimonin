@@ -743,11 +743,14 @@ void drop_object(object *const op, object *tmp, const uint32 nrof)
     }
 
     msp = GET_MAP_SPACE_PTR(op->map, op->x, op->y);
-    floor = GET_MAP_SPACE_GMASTER_SLAYER(msp, 0);
+    GET_MAP_SPACE_SYS_OBJ(msp, SHOP_FLOOR, floor);
 
-    if (floor && floor->type == SHOP_FLOOR && !QUERY_FLAG(tmp, FLAG_UNPAID) && tmp->type != MONEY)
+    if (floor &&
+        tmp->type != MONEY &&
+        !QUERY_FLAG(tmp, FLAG_UNPAID))
     {
         sell_item(tmp, op, -1);
+
         /* ok, here we insert then the unique shops too, now we have only clone shops */
         if (QUERY_FLAG(tmp, FLAG_UNPAID)) /* ok, we have really selled it - not only droped */
         {
