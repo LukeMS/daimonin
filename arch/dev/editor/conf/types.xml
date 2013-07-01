@@ -5050,10 +5050,12 @@
     <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
-    Shop floor is used for shops. It acts like a combination of the
-    common floor- and the treasure type: When the map is loaded,
-    randomitems (depending on the settings) are generated on it.
-    These items are all flagged as unpaid.
+    Shop floor is used for shops. It is a system object, NOT a floor (so
+    analogous to Spawn Points in this regard). You must also put a normal floor
+    on the square.
+    If generate goods is ticked, when the map is loaded randomitems (depending
+    on the settings) are generated on it. These items are all flagged as
+    unpaid.
     When a player drops an item onto shop floor, the item becomes
     unpaid and the player receives payment according to the item's
     selling-value.
@@ -5067,6 +5069,7 @@
     there is no other exit than the shop mat. ]]>
   </use>
   <attribute arch="no_pick" value="1" type="fixed" />
+  <attribute arch="sys_object" value="1" type="fixed" />
   <attribute arch="no_magic" value="1" type="fixed" />
   <attribute arch="auto_apply" editor="generate goods" type="bool">
     If enabled, items will appear on this square when the map is loaded.
