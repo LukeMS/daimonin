@@ -49,11 +49,17 @@ void map_set_slayers(MapSpace *msp, object *op, uint8 insert)
             {
                 if (GET_MAP_SPACE_VISIBLE_SLAYER(msp, op->layer - 1) == op)
                 {
-                    for (this = op->above; this; this = this->above)
+                    for (this = op->below; this; this = this->below)
                     {
-                        if (this->layer == op->layer &&
-                            !IS_GMASTER_INVIS(this) &&
-                            !QUERY_FLAG(this, FLAG_IS_INVISIBLE))
+                        if (!this->layer)
+                        {
+                            this = NULL;
+
+                            break;
+                        }
+                        else if (this->layer == op->layer &&
+                                 !IS_GMASTER_INVIS(this) &&
+                                 !QUERY_FLAG(this, FLAG_IS_INVISIBLE))
                         {
                             break;
                         }
@@ -65,10 +71,16 @@ void map_set_slayers(MapSpace *msp, object *op, uint8 insert)
 
             if (GET_MAP_SPACE_INVISIBLE_SLAYER(msp, op->layer - 1) == op)
             {
-                for (this = op->above; this; this = this->above)
+                for (this = op->below; this; this = this->below)
                 {
-                    if (this->layer == op->layer &&
-                        !IS_GMASTER_INVIS(this))
+                    if (!this->layer)
+                    {
+                        this = NULL;
+
+                        break;
+                    }
+                    else if (this->layer == op->layer &&
+                             !IS_GMASTER_INVIS(this))
                     {
                         break;
                     }
@@ -80,10 +92,16 @@ void map_set_slayers(MapSpace *msp, object *op, uint8 insert)
 
         if (GET_MAP_SPACE_GMASTER_SLAYER(msp, op->layer - 1) == op)
         {
-            for (this = op->above; this; this = this->above)
+            for (this = op->below; this; this = this->below)
             {
-                if (this->layer == op->layer &&
-                    !IS_GMASTER_INVIS(this))
+                if (!this->layer)
+                {
+                    this = NULL;
+
+                    break;
+                }
+                else if (this->layer == op->layer &&
+                         !IS_GMASTER_INVIS(this))
                 {
                     break;
                 }
