@@ -1009,7 +1009,6 @@ void cs_cmd_moveobj(char *buf, int len, NewSocket *ns)
     uint32  nrof;
     uint8   success;
     object *who,
-           *container,
            *what,
            *where;
 
@@ -1068,11 +1067,8 @@ void cs_cmd_moveobj(char *buf, int len, NewSocket *ns)
             }
         }
     }
-    /* Pick up to inventory/container. */
-    else if (loc == who->count ||
-             ((container = pl->container) &&
-              container->env == who &&
-              loc == container->count))
+    /* Pick up to inventory. */
+    else if (loc == who->count)
     {
         pl->count = nrof;
         pick_up(who, what);
@@ -1083,13 +1079,13 @@ void cs_cmd_moveobj(char *buf, int len, NewSocket *ns)
             success = 1;
         }
     }
-    /* If not dropped or picked up, we are putting it into a sack */
+    /* If not dropped or picked up, we are putting it into a container */
     /* Lag may mean real circumstances have changed before the cmd is received
      * by the server so make sure the tag still refers to a visible object. */
     /* put_object_in_sack() presumes that necessary sanity checking
      * has already been done, so do that. */
     else if ((where = esrv_get_ob_from_count(who, loc)) &&
-             where == container &&
+             where == pl->container &&
              can_pick(who, what) &&
              sack_can_hold(who, where, what, nrof))
     {
