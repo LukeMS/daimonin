@@ -73,6 +73,8 @@ Thanks to Nakron who helped me a lot (and encouraged me), all Daimonin developer
 
 Umm, also, I'm not responsible for any damage done by the script, you are using it on your own risk, you agree with the license and this disclaimer by using the script. ;)
 
+UPDATE: This script is currently maintained by _people_ -- questions should be posted to the daimonin.org forums or e-mailed to _people_@daimonin.org
+
 
 5. CHANGE-LOG
 
@@ -83,6 +85,7 @@ Umm, also, I'm not responsible for any damage done by the script, you are using 
 07.02.2009 v0.6 - Added ability to render wide images (150px), which allows image to extend outside of normal tile width.
                   Recommended to use GIMP crop script developed by Torchwood to crop back to minimum size.
                   See daimex-exec.py for an example of how to use and configure inside Blender.
+07.08.2013 v0.7 - Update to use Blender 2.66 and Python 3.3 -- _people_
 
 6. Tips
 

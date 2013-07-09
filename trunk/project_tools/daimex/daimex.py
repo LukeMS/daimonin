@@ -1,9 +1,9 @@
-  ##########################################################################################
- # DAIMEX - script for Blender, for rendering and formating for use in Daimonin 2d client #
 ##########################################################################################
- # To run the script press ALT+P     #
+# DAIMEX - script for Blender, for rendering and formating for use in Daimonin 2d client #
+##########################################################################################
+# To run the script press ALT+P     #
 #####################################
- # version 0.6 #
+# version 0.6 #
 ###############
 
 # Use CatRoom rendering filter for sharpest results
@@ -36,15 +36,17 @@
     The author can be reached via e-mail to Pro.J@seznam.cz
 """
 
-import Blender, os, math, copy
+import bpy, os, math, copy
+import mathutils
+from math import radians
 
 class Daimex:
     """daimex script settings"""
     
-    scene = Blender.Scene.GetCurrent()
+    scene = bpy.context.scene
     
-      ############
-     # SETTINGS ###################################################################
+    ############
+    # SETTINGS #
     ############
     
     ##########################################################
@@ -59,7 +61,7 @@ class Daimex:
     
     # directory to which save the rendered images; default is directory of the current blend file;
     # to set the outputdir relative to current blend file use: os.path.join(os.path.dirname(Blender.Get("filename")), "subdir")
-    outputdir = os.path.dirname(Blender.Get("filename"))
+    outputdir = "C:\\output"
     
     # number of directions to render
     # starting position of camera is on y axis (under median when looking from top view) 
@@ -87,7 +89,12 @@ class Daimex:
 
     # ( framestep - 1 ) == number of frames to skip in animation
     # If framestep is -1, than there is no animation and just first frame is rendered
+    # NOTE: This MUST be overridden in each instance of Daimex that has animations.
     framestep = -1
+    
+    # Which animation frame to start and end this render at.
+    framestart = 0
+    frameend = 0
     
     # ADVANCED SETTINGS - don't configure unless you know what you are doing
     rsx = 48    # standard image width
@@ -141,7 +148,7 @@ class Daimex:
     spotroty = 10
     spotrotz = -150
 
-    spotshadowsoftness = 12
+    spotshadowsoftness = .12
     spotshadowsamples = 6
 
     wideimage = False
@@ -150,179 +157,197 @@ class Daimex:
     pix2 = (math.pi * 2)
     uhx = pix2 / directions
     
-      #######
-     # RUN #
+    #######
+    # RUN #
     #######
     def run(self):
         """main run function"""
         try:
             #set up renderer
-            render = self.scene.getRenderingContext()
-
-            brsx = render.imageSizeX()
-
+            render = self.scene.render
+            
             if (self.wideimage == False):
-                render.imageSizeX(self.rsx*self.rsmulti)
+                render.resolution_x *= self.rsmulti
             else:
-                render.imageSizeX(self.rsxwide*self.rsmulti)
-
-            brsy = render.imageSizeY()
-            render.imageSizeY(self.rsy*self.rsmulti)
-
-            render.setRenderPath("")
-            render.enableRGBAColor()
-            render.setImageType(Blender.Scene.Render.PNG)
+                render.resolution_x = self.rsxwide * self.rsmulti
+                
+            brsx = render.resolution_x
+            brsy = render.resolution_y
+            render.resolution_y = self.rsy * self.rsmulti
+            render.alpha_mode = "TRANSPARENT"
+            render.image_settings.file_format = "PNG"
         
             if (self.framestep == -1):
-                self.framestep = render.eFrame - render.sFrame + 1
+                self.framestep = bpy.context.scene.frame_end - bpy.context.scene.frame_start + 1
             
-            # create camera
-            cam = Blender.Object.New("Camera" ,"daimex_cam")
-            daimexcam = Blender.Camera.New("ortho")
-            daimexcam.clipEnd = self.camcend
-            daimexcam.clipStart = self.camcstart
-            daimexcam.dofDist = self.camdofdist
-            daimexcam.scale = self.camscale
-            cam.link(daimexcam)
-
-            if (self.wideimage == False):
-                cam.setLocation(self.camlocx, self.camlocy, self.camlocz)
-            else:
-                cam.setLocation(self.camlocx, self.camlocy, self.camloczWide)
-
-            cam.setEuler([((self.camrotx/180.0)*math.pi), ((self.camroty/180.0)*math.pi), ((self.camrotz/180.0)*math.pi)])
-            self.scene.objects.link(cam)
+            cam = self.setup_camera()           
             
             if self.usescriptlamp == 1:
                 remlamps = []
                 for ob in self.scene.objects:
-                    if ob.type == 'Lamp':
+                    if ob.type == 'LAMP':
 
-                        # Lamps with name beginning "daimex_" will NOT be removed from the scene
-                        if ob.name.find("daimex_") <> 0:
-                            remlamps.append(ob.name)
+                         # Lamps with name beginning "daimex_" will NOT be removed from the scene
+                        if ob.name.find("daimex_") == -1:
+                            remlamps.append(ob)
                             self.scene.objects.unlink(ob)
 
-                # create sun
-                suny = Blender.Object.New("Lamp" ,"daimex_sun")
-                daimexsun = Blender.Lamp.New("Sun")
-                daimexsun.setEnergy(self.sunenergy)
-                daimexsun.setDist(self.sundist)
-                suny.link(daimexsun)
-                suny.setLocation(self.sunlocx1, self.sunlocy1, self.sunlocz)
-                suny.setEuler([((self.sunrotx/180.0)*math.pi), ((self.sunroty/180.0)*math.pi), ((self.sunrotz/180.0)*math.pi)])
-                self.scene.objects.link(suny)
-
-                # create sun2
-                suny2 = Blender.Object.New("Lamp" ,"daimex_sun")
-                suny2.link(daimexsun)
-                suny2.setLocation(self.sunlocx2, self.sunlocy2, self.sunlocz)
-                suny2.setEuler([((self.sunrotx/180.0)*math.pi), ((self.sunroty/180.0)*math.pi), ((self.sunrotz2/180.0)*math.pi)])
-                self.scene.objects.link(suny2)
-
-                # create spotlight for shadows
-                spot = Blender.Object.New("Lamp", "daimex_lamp")
-                daimexspot = Blender.Lamp.New("Spot")
-                daimexspot.setEnergy(self.spotenergy)
-                daimexspot.setDist(self.spotdist)
-                daimexspot.setSoftness(self.spotshadowsoftness)
-                daimexspot.setSamples(self.spotshadowsamples)
-                spot.link(daimexspot)
-                spot.setLocation(self.spotlocx, self.spotlocy, self.spotlocz)
-                spot.setEuler([((self.spotrotx/180.0)*math.pi), ((self.spotroty/180.0)*math.pi), ((self.spotrotz/180.0)*math.pi)])
-                self.scene.objects.link(spot)          
+                bpy.ops.object.lamp_add(type="SUN", location=(self.sunlocx1, self.sunlocy1, self.sunlocz), 
+                        rotation = (radians(self.sunrotx), radians(self.sunroty), radians(self.sunrotz)))
+                        
+                suny = bpy.context.active_object
+                        
+                suny.data.energy = self.sunenergy
+                suny.data.distance = self.sundist
+                
+                bpy.ops.object.lamp_add(type="SUN", location=(self.sunlocx2, self.sunlocy2, self.sunlocz), 
+                        rotation = (radians(self.sunrotx), radians(self.sunroty), radians(self.sunrotz)))
+                        
+                suny2 = bpy.context.active_object
+                        
+                suny2.data.energy = self.sunenergy
+                suny2.data.distance = self.sundist
 
                 
-            Blender.Redraw()
+                bpy.ops.object.lamp_add(type="SPOT", location=(self.spotlocx, self.spotlocy, self.spotlocz), 
+                        rotation = (radians(self.spotrotx), radians(self.spotroty), radians(self.spotrotz)))
+                        
+                spot = bpy.context.active_object
+                        
+                spot.data.energy = self.spotenergy
+                spot.data.distance = self.spotdist
+                spot.data.spot_blend = self.spotshadowsoftness
+                spot.data.shadow_buffer_samples = self.spotshadowsamples        
             
             #shooting
             rotsf = copy.copy(self.directions)
             rots = 1
-            self.scene.objects.camera = cam
+            
             while(rotsf >= rots):
                 #rotations
-                oldcampos = cam.getLocation("worldspace")
-                cam.setLocation(oldcampos[0]+self.modelx, oldcampos[1]+self.modely, oldcampos[2]+self.modelz)
+                oldcampos = cam.location
+                cam.location.x = oldcampos[0]+self.modelx
+                cam.location.y = oldcampos[1]+self.modely
+                cam.location.z = oldcampos[2]+self.modelz
 
                 if self.usescriptlamp == 1:
-                    oldsunpos = suny.getLocation("worldspace")
-                    suny.setLocation(oldsunpos[0]+self.modelx, oldsunpos[1]+self.modely, oldsunpos[2]+self.modelz)
+                    oldsunpos = suny.location
+                    suny.location.x += self.modelx
+                    suny.location.y += self.modely
+                    suny.location.z += self.modelz
  
-                    oldsunpos2 = suny2.getLocation("worldspace")
-                    suny2.setLocation(oldsunpos2[0]+self.modelx, oldsunpos2[1]+self.modely, oldsunpos2[2]+self.modelz)
+                    oldsunpos2 = suny2.location
+                    suny2.location.x += self.modelx
+                    suny2.location.y += self.modely
+                    suny2.location.z += self.modelz
  
-                    oldspotpos = spot.getLocation("worldspace")
-                    spot.setLocation(oldspotpos[0]+self.modelx, oldspotpos[1]+self.modely, oldspotpos[2]+self.modelz)
+                    oldspotpos = spot.location
+                    spot.location.x += self.modelx
+                    spot.location.y += self.modely
+                    spot.location.z += self.modelz
 
                 npic = 1
                 x = rots+self.modeldir
                 while x > 8:
                     x = x-8
                 if(self.orframes == False):
-                    for j in range(render.startFrame(), 1 + render.endFrame(), self.framestep):
-                        render.currentFrame(j)
-                        render.render()
-                        render.saveRenderedImage(os.path.join(self.outputdir, self.filename+str(x)+str(npic)))
+                    for j in range(self.framestart, 1 + self.frameend, self.framestep):
+                        self.scene.frame_set(j)
+                        render.filepath = os.path.join(self.outputdir, self.filename+str(x)+str(npic))
+                        bpy.ops.render.render(write_still=True)
                         npic = npic+1
                 else:
                     for j in range(self.framestart, 1 + self.frameend, self.framestep):
-                        render.currentFrame(j)
-                        render.render()
-                        render.saveRenderedImage(os.path.join(self.outputdir, self.filename+str(x)+str(npic)))
+                        self.scene.frame_set(j)
+                        render.filepath = os.path.join(self.outputdir, self.filename+str(x)+str(npic))
+                        bpy.ops.render.render(write_still=True)
                         npic = npic+1
-                cam.setLocation((oldcampos[0]), (oldcampos[1]), (oldcampos[2]))
-                rotateobj(cam.getName())
+                        
+                cam.location.x = oldcampos[0]
+                cam.location.y = oldcampos[1]
+                cam.location.z = oldcampos[2]
+                self.rotateobj(cam.name)
 
                 if self.usescriptlamp == 1:
-                    suny.setLocation((oldsunpos[0]), (oldsunpos[1]), (oldsunpos[2]))
-                    rotateobj(suny.getName())
+                    suny.location.x = oldsunpos.x
+                    suny.location.y = oldsunpos.y
+                    suny.location.z = oldsunpos.z
+                    self.rotateobj(suny.name)
 
-                    suny2.setLocation((oldsunpos2[0]), (oldsunpos2[1]), (oldsunpos2[2]))
-                    rotateobj(suny2.getName())
+                    suny2.location.x = oldsunpos2.x
+                    suny2.location.y = oldsunpos2.y
+                    suny2.location.z = oldsunpos2.z
+                    self.rotateobj(suny2.name)
 
-                    spot.setLocation((oldspotpos[0]), (oldspotpos[1]), (oldspotpos[2]))
-                    rotateobj(spot.getName())
+                    spot.location.x = oldspotpos.x
+                    spot.location.y = oldspotpos.y
+                    spot.location.z = oldspotpos.z
+                    self.rotateobj(spot.name)
 
                 rots = rots + 1
         finally:
             # clean up
-            self.scene = Blender.Scene.GetCurrent()
-            render.imageSizeX(brsx)
-            render.imageSizeY(brsy)
+            self.scene = bpy.context.scene
+            render.resolution_x = brsx
+            render.resolution_y = brsy
             self.scene.objects.unlink(cam)
             if self.usescriptlamp == 1:
                 self.scene.objects.unlink(suny)
                 self.scene.objects.unlink(suny2)
                 self.scene.objects.unlink(spot)
                 for obn in remlamps:
-                    ob = Blender.Object.Get(obn)
-                    self.scene.objects.link(ob)
-            print "finished; output =",self.outputdir
+                    self.scene.objects.link(obn)
+            print("finished; output =",self.outputdir)
         
-    
+    def setup_camera(self):
+        bpy.ops.object.camera_add()
+        cam = bpy.context.active_object
+        cam.name = "daimex_cam"
+        cam.data.name = "daimex_cam_cam" 
+        self.scene.camera = cam
+        cam.data.type = "ORTHO"
+        
+        cam.data.ortho_scale = self.camscale
+        cam.data.clip_end = self.camcend
+        cam.data.clip_start = self.camcstart
+        cam.data.dof_distance = self.camdofdist
+        
+        cam.location.x = self.camlocx
+        cam.location.y = self.camlocy
+        cam.location.z = self.camlocz if self.wideimage == False else self.camloczWide
+        
+        cam.rotation_mode = 'XYZ'
+        cam.rotation_euler = (radians(self.camrotx), radians(self.camroty), radians(self.camrotz))
+        
+        return cam    
 
-def rotateobj(name):
-    kostka = Blender.Object.Get(name)
-    if Daimex.directions == 1:
-        uhel = 0
-    else:
-        uhel = Daimex.uhx
-    #print "\nangle =",uhel,"radians"
-    vectorCA = Blender.Mathutils.Vector(list(kostka.getLocation("worldspace")))
-    matrix = Blender.Mathutils.Matrix([math.cos(uhel), -math.sin(uhel), 0], [math.sin(uhel), math.cos(uhel), 0], [0, 0, 1])
-    target = (matrix * vectorCA)
-    #print "starting coords =",kostka.getLocation("worldspace")
-    #print "target coords =",target
-    kostka.setLocation(target.x, target.y, target.z)
-    kostka.RotZ = kostka.RotZ + Daimex.uhx
-    if (kostka.RotZ >= Daimex.pix2):
-        kostka.RotZ = kostka.RotZ - Daimex.pix2
-    Blender.Redraw()
+    def rotateobj(self, name):
+        ob = bpy.context.scene.objects[name]
+        loc = ob.location
+
+        if self.directions == 1:
+            uhel = 0
+        else:
+            uhel = self.uhx
+        
+        matrix = mathutils.Matrix()
+        matrix[0][0], matrix[0][1], matrix[0][2] = math.cos(uhel), -math.sin(uhel), 0
+        matrix[1][0], matrix[1][1], matrix[1][2] = math.sin(uhel), math.cos(uhel), 0
+        matrix[2][0], matrix[2][1], matrix[2][2] = 0, 0, 1
+        
+        target = matrix * loc
+        ob.location.x = target.x
+        ob.location.y = target.y
+        ob.location.z = target.z
+        
+        ob.rotation_euler.z += self.uhx
+        if (ob.rotation_euler.z >= self.pix2):
+            ob.rotation_euler.z -= self.pix2
         
 ###############################################################################
 
-  #################
- # CONFIGURATION #
+#################
+# CONFIGURATION #
 #################
 
 # This is where you are encouraged to make changes
