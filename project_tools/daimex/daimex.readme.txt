@@ -1,5 +1,5 @@
-  ###########################################################################################
- # DAIMEX - script for Blender, for rendering and formatting for use in Daimonin 2d client #
+###########################################################################################
+# DAIMEX - script for Blender, for rendering and formatting for use in Daimonin 2d client #
 ##########################################################################################
 
 C O N T E N T S
@@ -23,8 +23,8 @@ Note:  For best results, place daimex.py inside the .scripts file under the Blen
 
 3. SETTING UP
 
-3.1 Open Blender from command-line i.e. console (Using Windows and don't know? Generally its start->launch("cmd") ask Microsoft support).
-Its vital that you open Blender from console, so you see eventual errors.
+3.1 Open Blender from command-line i.e. console -- Blender > Window > Toggle System Consoles.
+Its important that you open Blender from console, so you see eventual errors.
 BE SURE TO READ THE SETTING PART OF SCRIPT AND HOW TO MAKE CHANGES TO CONFIGURATION
 
 3.2 Open/make your model. Make sure the model is 1 x 1 x 1.5 tiles large!!! Resize it if it is not!
