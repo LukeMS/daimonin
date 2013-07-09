@@ -2,90 +2,59 @@
 # This file would be placed within the Blend file, and Daimex.py
 # must be copied into the .scripts folder for Blender
 
+#
+# Stolen shamelessly from the human_male blend configuration.
+#
+
 
 # Import the Daimex class
 from daimex import Daimex
 
-#####
-
-# Create an instance of Daimex class with:
+# create an instance of Daimex class with:
+instance0 = Daimex()
 instance1 = Daimex()
 instance2 = Daimex()
 instance3 = Daimex()
 
-#####
+#then change some settings if you like, for example:
+instance0.filename = "human_male.0"
+instance1.filename = "human_male.1"
+instance2.filename = "human_male.2"
+instance3.filename = "human_male.3"
 
-mymodeldir = 3
+instance0.framestart = 20   #2-5, 8-11, 14-17, 20-23
+instance0.frameend = 23
+instance0.framestep = 1
 
-instance1.modeldir = mymodeldir
-instance2.modeldir = mymodeldir
-instance3.modeldir = mymodeldir
+instance1.framestart = 2   #2-5, 8-11, 14-17, 20-23
+instance1.frameend = 5
+instance1.framestep = 1
 
-#####
+instance2.framestart = 8   #2-5, 8-11, 14-17, 20-23
+instance2.frameend = 11
+instance2.framestep = 1
 
-filename_base = "imp_air"
+instance3.framestart = 14   #2-5, 8-11, 14-17, 20-23
+instance3.frameend = 17
+instance3.framestep = 1
 
-instance1.filename = filename_base + ".1"
-instance2.filename = filename_base + ".2"
-instance3.filename = filename_base + ".3"
+mysunengergy = 1.4
 
-#####
+instance0.sunenergy = mysunengergy
+instance1.sunenergy = mysunengergy
+instance2.sunenergy = mysunengergy
+instance3.sunenergy = mysunengergy
 
-myrsmulti = 1
+myoutputdir = "C:\\Output\\human\\male\\v7"
 
-instance1.rsmulti = myrsmulti
-instance2.rsmulti = myrsmulti
-instance3.rsmulti = myrsmulti
-
-#####
-
-myoutputdir = "X:\\Output\\gargoyle\\air\\v10s"
-
+instance0.outputdir = myoutputdir
 instance1.outputdir = myoutputdir
 instance2.outputdir = myoutputdir
 instance3.outputdir = myoutputdir
 
-#####
 
-# Use framestart/end figures
-instance1.orframes = True
-instance2.orframes = True
-instance3.orframes = True
-instance1.framestep = 1
-instance2.framestep = 1
-instance3.framestep = 1
-
-#####
-
-# Adjust shadow intensity
-myspotdist = 10
-
-instance1.spotdist = myspotdist
-instance2.spotdist = myspotdist
-instance3.spotdist = myspotdist
-
-#####
-
-# Set up frame start/end points
-instance1.framestart = 2   #2-5, 8-11, 14-17, 20-23
-instance1.frameend = 5
-
-instance2.framestart = 8   #2-5, 8-11, 14-17, 20-23
-instance2.frameend = 11
-
-instance3.framestart = 14   #2-5, 8-11, 14-17, 20-23
-instance3.frameend = 17
-
-#####
-
-# apply scale of 0.47 to keep same size
-instance1.wideimage = True
-instance2.wideimage = True
-instance3.wideimage = True
-
-#####
-
-# Run the script with:
+# and run the script with:
+instance0.run()
 instance1.run()
 instance2.run()
 instance3.run()
