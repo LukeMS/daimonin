@@ -101,8 +101,6 @@ class Daimex:
     rsxwide = 150 # wide image width
     rsy = 70    # standard image height
     orframes = False    # if to override default time-line/renderer start/end frames
-    framestart = 1
-    frameend = 10
 
     camscale = 8.1  # camera lens scale
     camdofdist = 0.0    # camera lens distance of focus
@@ -167,7 +165,7 @@ class Daimex:
             render = self.scene.render
             
             if (self.wideimage == False):
-                render.resolution_x *= self.rsmulti
+                render.resolution_x = self.rsx * self.rsmulti
             else:
                 render.resolution_x = self.rsxwide * self.rsmulti
                 
