@@ -23,70 +23,54 @@
 
 #include "include.h"
 
-_font font_tiny;
+_font font_tiny_out;
 _font font_small;
+_font font_small_out;
 _font font_medium;
-_font font_large;
-_font font_huge;
-_font font_booknormal;
-_font font_booktitle;
-_font font_npcicon;
-_font font_npcnormal;
-_font font_npctitle;
-_font font_heading;
+_font font_medium_out;
+_font font_large_out;
 
-static void   CreateNewFont(_Sprite *sprite, _font *font);
-static uint32 GetSurfacePixel(SDL_Surface *surface, uint16 x, uint16 y);
+static void CreateNewFont(_Sprite *sprite, _font *font, sint8 xlen, sint8 ylen,
+                          sint8 off, uint8 line);
 
 void font_init(void)
 {
-    CreateNewFont(skin_fonts[SKIN_FONT_TINY], &font_tiny);
-    CreateNewFont(skin_fonts[SKIN_FONT_SMALL], &font_small);
-    CreateNewFont(skin_fonts[SKIN_FONT_MEDIUM], &font_medium);
-    CreateNewFont(skin_fonts[SKIN_FONT_LARGE], &font_large);
-    CreateNewFont(skin_fonts[SKIN_FONT_HUGE], &font_huge);
-    CreateNewFont(skin_fonts[SKIN_FONT_BOOKNORMAL], &font_booknormal);
-    CreateNewFont(skin_fonts[SKIN_FONT_BOOKTITLE], &font_booktitle);
-    CreateNewFont(skin_fonts[SKIN_FONT_NPCICON], &font_npcicon);
-    CreateNewFont(skin_fonts[SKIN_FONT_NPCNORMAL], &font_npcnormal);
-    CreateNewFont(skin_fonts[SKIN_FONT_NPCTITLE], &font_npctitle);
-    CreateNewFont(skin_fonts[SKIN_FONT_HEADING], &font_heading);
+    CreateNewFont(Bitmaps[BITMAP_FONTTINYOUT], &font_tiny_out, 16, 16, -1, 10);
+    CreateNewFont(Bitmaps[BITMAP_FONTSMALL], &font_small, 16, 16, 1, 11);
+    CreateNewFont(Bitmaps[BITMAP_FONTSMALLOUT], &font_small_out, 16, 16, 1, 12);
+    CreateNewFont(Bitmaps[BITMAP_FONTMEDIUM], &font_medium, 16, 16, 1, 15);
+    CreateNewFont(Bitmaps[BITMAP_FONTMEDIUMOUT], &font_medium_out, 16, 16, 0, 16);
+    CreateNewFont(Bitmaps[BITMAP_FONTBIGOUT], &font_large_out, 11, 16, 1, 18);
 }
 
 /* init this font structure with gfx data from sprite bitmap */
-static void CreateNewFont(_Sprite *sprite, _font *font)
+static void CreateNewFont(_Sprite *sprite, _font *font, sint8 xlen, sint8 ylen,
+                          sint8 off, uint8 line)
 {
-    uint16 width = (sprite->bitmap->w - 32 - 1) / 32,
-           height = (sprite->bitmap->h - 8 - 1) / 8,
-           i;
-    uint8  maxh = 0;
+    uint16 i;
 
+    SDL_LockSurface(sprite->bitmap);
     font->sprite = sprite;
-
-    /* Calc bounding boxes for each of the 256 characters. */
-    SDL_LockSurface(font->sprite->bitmap);
 
     for (i = 0; i <= 255; i++)
     {
-        sint8 flag,
-              p;
+        uint8 flag;
 
-        /* Calc the initial bounding box of this character. */
-        font->c[i].x = (i % 32) * (width + 1) + 1;
-        font->c[i].y = (i / 32) * (height + 1) + 1;
-        font->c[i].w = width;
-        font->c[i].h = height;
-
-        /* Find width of this character. */
+        font->c[i].x = (i % 32) * (xlen + 1) + 1;
+        font->c[i].y = (i / 32) * (ylen + 1) + 1;
+        font->c[i].h = ylen;
+        font->c[i].w = xlen;
         flag = 0;
 
-        while (1)
+        while (1) /* better no error in font bitmap... or this will lock up*/
         {
-            for (p = height - 1; p >= 0; p--)
+            sint16 y;
+ 
+            for (y = font->c[i].h - 1; y >= 0; y--)
             {
-                if (GetSurfacePixel(font->sprite->bitmap,
-                                    (uint16)(font->c[i].x + font->c[i].w - 1),
-                                    (uint16)(font->c[i].y + p)))
+                if (GetSurfacePixel(sprite->bitmap,
+                                    font->c[i].x + font->c[i].w - 1,
+                                    font->c[i].y + y))
                 {
                     flag = 1;
 
@@ -101,99 +85,9 @@ static void CreateNewFont(_Sprite *sprite, _font *font)
 
             font->c[i].w--;
         }
-
-        /* Find height of this character. */
-        flag = 0;
-
-        while (1)
-        {
-            for (p = width - 1; p >= 0; p--)
-            {
-                if (GetSurfacePixel(font->sprite->bitmap,
-                                    (uint16)(font->c[i].x + p),
-                                    (uint16)(font->c[i].y + font->c[i].h - 1)))
-                {
-                    flag = 1;
-
-                    break;
-                }
-            }
-
-            if (flag)
-            {
-                break;
-            }
-
-            font->c[i].h--;
-        }
-
-        /* If this is the tallest non-internal, non-whitespace character yet,
-         * remember that height. */
-        if (i > 32 &&
-            font->c[i].h > maxh)
-        {
-            maxh = font->c[i].h;
-        }
     }
 
-    SDL_UnlockSurface(font->sprite->bitmap);
-
-    /* Whitespace width is presumably 0 so set it to one ex. */
-    if (!font->c[' '].w)
-    {
-        font->c[' '].w = font->c['x'].w;
-    }
-
-    /* The horizontal space between characters is the actual width of c[0]
-     * minus half the maximum char width or a default of 1. */
-    font->char_offset = (font->c[0].w)
-                        ? (sint8)(font->c[0].w - width * 0.5)
-                        : 1;
-
-    /* The line height is the height of c[1] or a default of the max height of
-     * the other characters plus 2. */
-    font->line_height = (font->c[1].h) ? (uint8)font->c[1].h : maxh + 2;
-}
-
-static uint32 GetSurfacePixel(SDL_Surface *surface, uint16 x, uint16 y)
-{
-    uint8  bpp = surface->format->BytesPerPixel,
-    /* Here p is the address to the pixel we want to retrieve */
-          *p = (uint8 *)surface->pixels + y * surface->pitch + x * bpp;
-
-    switch (bpp)
-    {
-        case 1:
-            return *p;
-
-        case 2:
-            return *(uint16 *)p;
-
-        case 3:
-#if 0
-        {
-            /* Format/endian independent*/
-            Uint8     r, g, b;
-            r = *((bits) + Surface->format->Rshift / 8);
-            g = *((bits) + Surface->format->Gshift / 8);
-            b = *((bits) + Surface->format->Bshift / 8);
-            return SDL_MapRGB(Surface->format, r, g, b);
-        }
-#else
-            if (SDL_BYTEORDER == SDL_BIG_ENDIAN)
-            {
-                return p[0] << 16 | p[1] << 8 | p[2];
-            }
-            else
-            {
-                return p[0] | p[1] << 8 | p[2] << 16;
-            }
-#endif
-
-        case 4:
-            return *(uint32 *)p;
-
-        default: // shouldn't happen, but avoids warnings
-            return 0;
-    }
+    SDL_UnlockSurface(sprite->bitmap);
+    font->char_offset = off;
+    font->line_height = line;
 }

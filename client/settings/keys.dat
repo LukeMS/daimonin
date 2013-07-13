@@ -23,7 +23,7 @@
 044 0 "," "?M_MCON/tell "
 039 0 "'" "?M_MCON/shout "
 048 0 "0" "?M_MCON/gsay "
-045 0 "-" "?M_MCON/channel "
+045 0 "-" "?M_MCON-"
 
 +"Inventory"
 097 0 "a" "?M_APPLY"

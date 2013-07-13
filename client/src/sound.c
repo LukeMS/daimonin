@@ -49,7 +49,7 @@ static int          special_sounds[SPECIAL_SOUND_INIT];
 
 #ifdef INSTALL_SOUND
 
-_sounds sounds = {0, NULL};
+static _sounds sounds = {0, NULL};
 
 #endif
 
@@ -58,6 +58,142 @@ _sounds sounds = {0, NULL};
 
 static void musicDone(void); /* callback function for background music */
 static void sound_start_music(char *fname, int vol, int fade, int loop);
+
+// Helper string function
+// Duplicate string
+char *str_dup(const char *str)
+{
+    char *ret;
+
+    MALLOC_STRING(ret, str);
+
+    return ret;
+}
+
+void read_sounds(void)
+{
+#ifdef INSTALL_SOUND
+    FILE *stream;
+
+    srv_client_files[SRV_CLIENT_SOUNDS].len = 0;
+    srv_client_files[SRV_CLIENT_SOUNDS].crc = 0;
+    LOG(LOG_DEBUG, "Reading %s....", FILE_CLIENT_SOUNDS);
+
+    if ((stream = fopen_wrapper(FILE_CLIENT_SOUNDS, "rb")) != NULL)
+    {
+        struct stat    statbuf;
+        int            i;
+        unsigned char *temp_buf;
+        size_t         dummy; // purely to avoid GCC's warn_unused_result warning
+
+        /* temp load the file and get the data we need for compare with
+         * server. */
+        fstat(fileno(stream), &statbuf);
+        i = (int) statbuf.st_size;
+        srv_client_files[SRV_CLIENT_SOUNDS].len = i;
+        MALLOC(temp_buf, i);
+        dummy = fread(temp_buf, sizeof(char), i, stream);
+        srv_client_files[SRV_CLIENT_SOUNDS].crc = crc32(1L, temp_buf, i);
+        FREE(temp_buf);
+        fclose(stream);
+        LOG(LOG_DEBUG, " found file!(%d/%x)",
+            srv_client_files[SRV_CLIENT_SOUNDS].len,
+            srv_client_files[SRV_CLIENT_SOUNDS].crc);
+    }
+
+    LOG(LOG_DEBUG, " done.\n");
+#endif
+}
+
+/* Load the sounds file */
+void load_sounds(void)
+{
+#ifdef INSTALL_SOUND
+    char    buf[64];
+    FILE    *stream;
+    int     state = 0;
+    char    name[32];
+    char    file[64];
+    int     type_count  = 0;
+    int     type_index  = -1;
+    int     sound_count = 0;
+    int     sound_index = -1;
+
+    if (!(stream = fopen_wrapper(FILE_CLIENT_SOUNDS, "rb")))
+    {
+        LOG(LOG_ERROR,"ERROR: Can't find file %s.\n", FILE_CLIENT_SOUNDS);
+        return;
+    }
+    while (fgets(buf, sizeof(buf), stream) != NULL)
+    {
+        // Strip trailing newline character(s) (allow for \r\n or \n)
+        buf[strcspn(buf, "\r\n")] = '\0';
+
+        if ((strlen(buf) == 0) || (buf[0] == '#'))
+            continue;
+
+        if (!strcmp(buf, "*end"))
+            break;
+
+        switch (state)
+        {
+        case 0:
+            // Looking for start line
+            if (strncmp(buf, "*start", 6) == 0)
+            {
+                strtok(buf, "|"); // discard *start
+                sscanf(strtok(NULL, "|"), "%d", &type_count); // count of soundtypes
+                sounds.count = type_count;
+
+                // Allocate memory
+                MALLOC(sounds.types, type_count * sizeof(_soundtype));
+
+                state++;
+            }
+            break;
+
+        case 1:
+            // Looking for soundtype introducer
+            if ((type_count > 0) && (buf[0] == '*'))
+            {
+                // New soundtype
+                type_count--;
+                type_index++;
+                sscanf(strtok(buf, "|"), "*%d", &sounds.types[type_index].id);
+                strcpy(name, strtok(NULL, "|"));
+                strtok(NULL, "|");  // discard prefix
+                sscanf(strtok(NULL, "|"), "%d", &sound_count);
+                sounds.types[type_index].count = sound_count;
+                sounds.types[type_index].name = str_dup(name);
+                MALLOC(sounds.types[type_index].sounds, sound_count * sizeof(_sound)); // space for sounds
+                sound_index = -1;
+                state++;
+            }
+            break;
+
+        case 2:
+            // Process sound
+            if ((sound_count > 0) && (buf[0] == '+'))
+            {
+                // Process sound
+                sound_count--;
+                sound_index++;
+                sscanf(strtok(buf, "|"), "+%d", &sounds.types[type_index].sounds[sound_index].id);
+                strcpy(name, strtok(NULL, "|"));
+                strcpy(file, strtok(NULL, "|"));
+                sounds.types[type_index].sounds[sound_index].name = str_dup(name);
+                sounds.types[type_index].sounds[sound_index].file = str_dup(file);
+            }
+
+            if (sound_count == 0)
+                state--;            // Look for next soundtype
+            break;
+        }
+    }
+
+    fclose(stream);
+#endif
+}
 
 void sound_init(void)
 {
@@ -109,14 +245,17 @@ void sound_loadall(void)
     if (SoundSystem != SOUND_SYSTEM_ON)
         return;
 
+    load_sounds();
+
     for (i = 0; i < sounds.count; i++)
     {
         for (j = 0; j < sounds.types[i].count; j++)
         {
+            const char *fname = sounds.types[i].sounds[j].file;
             char        buf[MEDIUM_BUF];
             SDL_RWops  *rw;
 
-            sprintf(buf, "%s/%s", DIR_SOUNDS, sounds.types[i].sounds[j].file);
+            sprintf(buf, "%s%s", GetSfxDirectory(), fname);
 
             if ((rw = PHYSFSRWOPS_openRead(buf)))
             {
@@ -125,7 +264,8 @@ void sound_loadall(void)
 
             if (!sounds.types[i].sounds[j].sound)
             {
-                LOG(LOG_ERROR, "Missing sound file '%s'!\n", buf);
+                LOG(LOG_ERROR, "sound_loadall: missing sound file %s\n",
+                    fname);
             }
         }
     }
@@ -371,7 +511,7 @@ static void sound_start_music(char *fname, int vol, int fade, int loop)
         music.flag = 0;
     }
 
-    sprintf(buf, "%s/%s", DIR_MUSIC, fname);
+    sprintf(buf, "%s%s", GetMediaDirectory(), fname);
 
     /* try to load the music */
     if ((rw = PHYSFSRWOPS_openRead(buf)))
@@ -382,7 +522,7 @@ static void sound_start_music(char *fname, int vol, int fade, int loop)
     if (!music.data)
     {
 #ifdef DAI_DEVELOPMENT
-        textwin_show_string(0, NDI_COLR_LIME, "mix_loadmus() failed (%s).", buf);
+        textwin_showstring(COLOR_GREEN, "mix_loadmus() failed (%s).", buf);
 #endif
         return;
     }

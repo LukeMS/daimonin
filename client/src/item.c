@@ -24,13 +24,11 @@
 #include <include.h>
 #include <ctype.h>      /* needed for isdigit */
 
-#define NROF_ITEMS 50   /* how many items are reserved initially */
-/* for the item spool */
-
 static item    *free_items;        /* the list of free (unused) items */
 static item    *player;
 
-static void SetFlags(item *ip, int flags);
+#define NROF_ITEMS 50   /* how many items are reserved initially */
+/* for the item spool */
 
 /* This should be modified to read the definition from a file */
 void init_item_types()
@@ -152,6 +150,10 @@ static item * new_item()
     item *op;
 
     MALLOC(op, sizeof(item));
+
+    if (!op)
+        exit(0);
+
     op->next = op->prev = NULL;
     copy_name(op->d_name, "");
     copy_name(op->s_name, "");
@@ -198,6 +200,7 @@ static item * alloc_items(int nrof)
 void free_all_items(item *op)
 {
     item   *tmp;
+    void   *tmp_free;
 
     while (op)
     {
@@ -206,7 +209,8 @@ void free_all_items(item *op)
         if (op->anim)
             new_anim_remove_item(op);
         tmp = op->next;
-        FREE(op);
+        tmp_free = &op;
+        FreeMemory(tmp_free);
         op = tmp;
     }
 }
@@ -294,11 +298,7 @@ item * locate_item_from_item(item *op, sint32 tag)
     for (; op != NULL; op = op->next)
     {
         if ((sint32)op->tag == tag)
-        {
-            face_get(op->face);
-
             return op;
-        }
         else if (op->inv)
         {
             if ((tmp = locate_item_from_item(op->inv, tag)))
@@ -314,31 +314,18 @@ item * locate_item_from_item(item *op, sint32 tag)
  */
 item * locate_item(sint32 tag)
 {
-    item   *op = NULL;
+    item   *op;
 
     if (tag == 0)
-    {
-        op = cpl.below;
-        face_get(op->face);
-
+        return cpl.below;
+    if (tag == -1)
+        return cpl.sack;
+    if (cpl.below && (op = locate_item_from_item(cpl.below->inv, tag)) != NULL)
         return op;
-    }
-    else if (tag == -1)
-    {
-        op = cpl.sack;
-        face_get(op->face);
-
+    if (cpl.sack && (op = locate_item_from_item(cpl.sack->inv, tag)) != NULL)
         return op;
-    }
-    else if ((cpl.below &&
-              (op = locate_item_from_item(cpl.below->inv, tag))) ||
-             (cpl.sack &&
-              (op = locate_item_from_item(cpl.sack->inv, tag))) ||
-             (op = locate_item_from_item(player, tag)))
-    {
+    if ((op = locate_item_from_item(player, tag)) != NULL)
         return op;
-    }
-
     return NULL;
 }
 
@@ -483,6 +470,47 @@ static char    *apply_string[]  =
         "", " (readied)", " (wielded)", " (worn)", " (active)", " (applied)"
     };
 
+static void set_flag_string(item *op)
+{
+    op->flags[0] = 0;
+
+    if (op->locked)
+        strcat(op->flags, " *");
+    if (op->apply_type)
+    {
+        if (op->apply_type < sizeof(apply_string) / sizeof(apply_string[0]))
+            strcat(op->flags, apply_string[op->apply_type]);
+        else
+            strcat(op->flags, " (undefined)");
+    }
+    if (op->open)
+        strcat(op->flags, " (open)");
+    if (op->damned)
+        strcat(op->flags, " (damned)");
+    if (op->cursed)
+        strcat(op->flags, " (cursed)");
+    if (op->magical)
+        strcat(op->flags, " (magic)");
+    if (op->unpaid)
+        strcat(op->flags, " (unpaid)");
+}
+
+static void get_flags(item *op, int flags)
+{
+    op->open = flags & F_OPEN ? 1 : 0;
+    op->damned = flags & F_DAMNED ? 1 : 0;
+    op->cursed = flags & F_CURSED ? 1 : 0;
+    op->magical = flags & F_MAGIC ? 1 : 0;
+    op->unpaid = flags & F_UNPAID ? 1 : 0;
+    op->applied = flags & F_APPLIED ? 1 : 0;
+    op->locked = flags & F_LOCKED ? 1 : 0;
+    op->traped = flags & F_TRAPED ? 1 : 0;
+    op->flagsval = flags;
+    op->apply_type = flags & F_APPLIED;
+    set_flag_string(op);
+}
+
+
 /*
  *  get_nrof() functions tries to get number of items from the item name
  */
@@ -531,7 +559,7 @@ void set_item_values(item *op, char *name, sint32 weight, uint16 face, int flags
 {
     if (!op)
     {
-        LOG(LOG_DEBUG, "Error in set_item_values(): item pointer is NULL.\n");
+        LOG(-1, "Error in set_item_values(): item pointer is NULL.\n");
         return;
     }
     if (nrof < 0)
@@ -592,7 +620,7 @@ void set_item_values(item *op, char *name, sint32 weight, uint16 face, int flags
     else /* we don't care here is the item has already an anim, the remove will check */
         new_anim_remove_item(op);
 
-    SetFlags(op, flags);
+    get_flags(op, flags);
     /* We don't sort the map, so lets not do this either */
     if (op->env != cpl.below)
         op->type = get_type_from_name(op->s_name);
@@ -604,7 +632,7 @@ void toggle_locked(item *op)
     if (!op || !op->env || op->env->tag == 0)
         return; /* if item is on the ground, don't lock it */
 
-    client_cmd_lock(op->locked?0:1, op->tag);
+    send_lock_command(op->locked?0:1, op->tag);
 }
 
 void send_mark_obj(item *op)
@@ -612,7 +640,7 @@ void send_mark_obj(item *op)
     if (!op || !op->env || op->env->tag == 0)
         return; /* if item is on the ground, don't mark it */
 
-    client_cmd_mark(op->tag);
+    send_mark_command(op->tag);
 }
 
 
@@ -654,7 +682,7 @@ void update_item(int tag, int loc, char *name, int weight, int face, int flags, 
         player->nrof = get_nrof(name);
         player->weight = weight;
         player->face = face;
-        SetFlags(player, flags);
+        get_flags(player, flags);
         if (player->inv)
             player->inv->inv_updated = 1;
 /* This player as item animation stuff will later with smooth movement remooved when whe have moveing-objects */
@@ -680,114 +708,6 @@ void update_item(int tag, int loc, char *name, int weight, int face, int flags, 
     }
 }
 
-static void SetFlags(item *ip, int flags)
-{
-    ip->flagsval = flags;
-    ip->flags[0] = '\0';
-
-    /* XXX: The separated handling of ranged types might not appears sensible
-     * ATM but this is because the client's fire_mode handling is currently
-     * lacking. */
-    if ((ip->applied = ((flags & F_APPLIED)) ? 1 : 0))
-    {
-        if (ip->itype == TYPE_ARROW)
-        {
-            if (ip->stype >= 128)
-            {
-                fire_mode.ammo = ip->tag;
-                fire_mode.mode = FIRE_MODE_ARCHERY_ID;
-            }
-            else
-            {
-                fire_mode.ammo = ip->tag;
-                fire_mode.mode = FIRE_MODE_ARCHERY_ID;
-            }
-        }
-        else if (ip->itype == TYPE_BOW)
-        {
-            fire_mode.weapon = ip->tag;
-            fire_mode.mode = FIRE_MODE_ARCHERY_ID;
-        }
-        else if (ip->itype == TYPE_WAND ||
-                 ip->itype == TYPE_ROD ||
-                 ip->itype == TYPE_HORN)
-        {
-            fire_mode.ammo = ip->tag;
-            fire_mode.mode = FIRE_MODE_ARCHERY_ID;
-        }
-    }
-    else
-    {
-        if (ip->itype == TYPE_ARROW)
-        {
-            if (ip->stype >= 128 &&
-                fire_mode.ammo == (int)ip->tag)
-            {
-                fire_mode.ammo = FIRE_ITEM_NO;
-            }
-            else if (fire_mode.ammo == (int)ip->tag)
-            {
-                fire_mode.ammo = FIRE_ITEM_NO;
-            }
-        }
-        else if (ip->itype == TYPE_BOW &&
-                 fire_mode.weapon == (int)ip->tag)
-        {
-            fire_mode.weapon = FIRE_ITEM_NO;
-        }
-        else if ((ip->itype == TYPE_WAND ||
-                  ip->itype == TYPE_ROD ||
-                  ip->itype == TYPE_HORN) &&
-                 fire_mode.ammo == (int)ip->tag)
-        {
-            fire_mode.ammo = FIRE_ITEM_NO;
-        }
-    }
-
-    ip->traped = ((flags & F_TRAPED)) ? 1 : 0;
-
-    if ((ip->locked = ((flags & F_LOCKED)) ? 1 : 0))
-    {
-        strcat(ip->flags, " *");
-    }
-
-    if ((ip->apply_type = (flags & F_APPLIED)))
-    {
-        if (ip->apply_type < sizeof(apply_string) / sizeof(apply_string[0]))
-        {
-            strcat(ip->flags, apply_string[ip->apply_type]);
-        }
-        else
-        {
-            strcat(ip->flags, " (undefined)");
-        }
-    }
-
-    if ((ip->open = ((flags & F_OPEN)) ? 1 : 0))
-    {
-        strcat(ip->flags, " (open)");
-    }
-
-    if ((ip->damned = ((flags & F_DAMNED)) ? 1 : 0))
-    {
-        strcat(ip->flags, " (damned)");
-    }
-
-    if ((ip->cursed = ((flags & F_CURSED)) ? 1 : 0))
-    {
-        strcat(ip->flags, " (cursed)");
-    }
-
-    if ((ip->magical = ((flags & F_MAGIC)) ? 1 : 0))
-    {
-        strcat(ip->flags, " (magic)");
-    }
-
-    if ((ip->unpaid = ((flags & F_UNPAID)) ? 1 : 0))
-    {
-        strcat(ip->flags, " (unpaid)");
-    }
-}
 
 /*
  *  Prints players inventory, contain extra information for debugging purposes
@@ -801,14 +721,14 @@ void print_inventory(item *op)
 
     if (l == 0)
     {
-        textwin_show_string(0, NDI_COLR_WHITE, "BB AA %s's inventory (%d): %6.1f kg",
+        textwin_showstring(COLOR_DEFAULT, "BB AA %s's inventory (%d): %6.1f kg",
                            op->d_name, op->tag, (float)op->weight);
     }
 
     l += 2;
     for (tmp = op->inv; tmp; tmp = tmp->next)
     {
-        textwin_show_string(0, NDI_COLR_WHITE, "CC %*s- %d %s%s (%d)",
+        textwin_showstring(COLOR_DEFAULT, "CC %*s- %d %s%s (%d)",
                            l - 2, "", tmp->nrof, tmp->d_name, tmp->flags,
                            tmp->tag);
 

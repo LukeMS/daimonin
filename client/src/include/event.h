@@ -133,6 +133,8 @@ extern int itemExamined;
 
 extern button_status global_buttons;
 
+extern int          KeyScanFlag; /* for debug/alpha , remove later */
+extern int          cursor_type;
 extern _key_macro   defkey_macro[];
 extern const int    DEFAULT_KEYMAP_MACROS;
 extern int  draggingInvItem(int src);
@@ -144,9 +146,8 @@ extern void save_keybind_file(void);
 extern void check_menu_keys(int menu, int value);
 extern void quickslot_key(SDL_KeyboardEvent *key, int slot);
 extern uint8  check_menu_macros(char *text);
-extern int             key_meta_menu(SDLKey key);
-extern void            key_connection_event(SDL_KeyboardEvent *key);
-extern uint8     process_macro_keys(int id, int value);
+
+uint8     process_macro_keys(int id, int value);
 extern void     check_keys(int key);
 
 #endif /* ifndef __EVENT_H */

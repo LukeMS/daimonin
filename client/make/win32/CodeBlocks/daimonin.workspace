@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
-<CodeBlocks_workspace_file>
-	<Workspace title="Daimonin">
-		<Project filename="client/client.cbp" active="1">
-			<Depends filename="updater/updater.cbp" />
-		</Project>
-		<Project filename="updater/updater.cbp" />
-	</Workspace>
-</CodeBlocks_workspace_file>

@@ -1,0 +1,1 @@
+This dir will contain the client.log as well as the chatlogs.

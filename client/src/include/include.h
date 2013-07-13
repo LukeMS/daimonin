@@ -24,20 +24,8 @@
 #ifndef __INCLUDE_H
 #define __INCLUDE_H
 
-/* This is for the DevCpp IDE */
-#ifndef __WIN_32
-#ifdef WIN32
-#define __WIN_32
-#endif
-#endif
-
-#if WIN32
-# include "revision.h"
-# include "win32.h"
-#else // elif LINUX
-# include "define.h"
-# include "cflinux.h"
-#define PATH_BACKBUFFER 256 /* Moved here. For PHYSFS_Init. (DA) */
+#if defined(__LINUX) || defined(__linux__) || defined(__unix__)
+#include "define.h"
 #endif
 
 #include "config.h"
@@ -53,6 +41,13 @@
 #define MIN(x,y) ((x) < (y) ? (x) : (y))
 #endif
 
+/* This is for the DevCpp IDE */
+#ifndef __WIN_32
+#ifdef WIN32
+#define __WIN_32
+#endif
+#endif
+
 typedef unsigned int    uint32;
 typedef signed int      sint32;
 typedef unsigned short  uint16;
@@ -62,57 +57,54 @@ typedef signed char     sint8;
 
 /* ok, here we define for what we want compile */
 /* later this should be insert a makefile */
+
+#include <wrapper.h>
+#ifdef INSTALL_SOUND
+#include <SDL_mixer.h>
+#endif
+
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <limits.h>
 
-#include <curl/curl.h>
+#include <zlib.h>
+#include <item.h>
+
+#include <protocol.h> /* shared header between server & client */
+
+#include <font.h>
+#include <client.h>
+#include <sdlsocket.h>
+#include <chatfilter.h>
+#include <ignore.h>
+#include <buddy.h>
+#include <kerbholz.h>
+#include <commands.h>
+#include <main.h>
+#include <player.h>
+#include <misc.h>
+#include <event.h>
+#include <sound.h>
+#include <map.h>
+#include <anim.h>
+#include <tile_stretcher.h>
+#include <sprite.h>
+#include <interface.h>
+#include <book.h>
+#include <textwin.h>
+#include <inventory.h>
+#include <menu.h>
+#include <dialog.h>
+#include <group.h>
+#include <filewrap.h>
+#include <widget.h>
 #include <physfs.h>
-#include <SDL/SDL.h>
-#include <SDL/SDL_image.h>
-#ifdef INSTALL_SOUND
-#include <SDL/SDL_mixer.h>
+#include <physfsrwops.h>
+
+/* some older physfs libs need that */
+#ifndef PHYSFS_File
+#define PHYSFS_File PHYSFS_file
 #endif
-
-#include "sprig.h"
-
-#include "protocol.h" /* shared header between server & client */
-#include "widget.h"
-#include "wdh.h"
-#include "wrapper.h"
-#include "zlib.h"
-#include "socket.h"
-#include "gameserver.h"
-#include "face.h"
-#include "font.h"
-#include "client_cmd.h"
-#include "server_cmd.h"
-#include "item.h"
-#include "chatfilter.h"
-#include "ignore.h"
-#include "buddy.h"
-#include "kerbholz.h"
-#include "main.h"
-#include "player.h"
-#include "misc.h"
-#include "event.h"
-#include "sound.h"
-#include "sprite.h"
-#include "strout.h"
-#include "map.h"
-#include "anim.h"
-#include "tile_stretcher.h"
-#include "interface.h"
-#include "book.h"
-#include "textwin.h"
-#include "inventory.h"
-#include "menu.h"
-#include "dialog.h"
-#include "group.h"
-#include "physfsrwops.h"
-#include "srvfile.h"
-#include "locator.h"
-#include "skin.h"
 
 #endif /* ifndef __INCLUDE_H */

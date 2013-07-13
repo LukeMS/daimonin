@@ -44,7 +44,7 @@ static void SelectButton(_gui_npc_element *element);
 static void SendCommand(void);
 static uint8 ScrollGUI(sint16 dist);
 
-/* called from server_cmd.c after we got a interface command */
+/* called from commands.c after we got a interface command */
 _gui_npc *gui_npc_create(int mode, char *data, int len, int pos)
 {
     int  flag_start,
@@ -383,30 +383,31 @@ _gui_npc *gui_npc_create(int mode, char *data, int len, int pos)
      */
     if (gui_npc->head)
     {
-        sint32 i = face_find(gui_npc->head->image.name);
+        int i = get_bmap_id(gui_npc->head->image.name);
 
-        /* If the image is not in face_list[], load it from the local icons
+        /* If the image is not in FaceList, load it from the local icons
          * dir. */
         if (i == -1)
         {
-            char buf[SMALL_BUF];
+            char     buf[MEDIUM_BUF];
 
-            sprintf(buf, "%s/%s.png",
-                    DIR_ICONS, gui_npc->head->image.name);
+            sprintf(buf, "%s%s.png",
+                    GetIconDirectory(), gui_npc->head->image.name);
 
              /* Still can't find it? Bug. */
-            if (!(gui_npc->head->image.sprite = sprite_load(buf, NULL)))
+            if (!(gui_npc->head->image.sprite = sprite_load_file(buf,
+                                                                 SURFACE_FLAG_DISPLAYFORMAT)))
             {
                 i = 0;
-                LOG(LOG_ERROR, "Can't find image %s in face_list[] or icons!\n",
+                LOG(LOG_ERROR, "Can't find image '%s' in FacList or akin!\n",
                     gui_npc->head->image.name);
             }
         }
 
         if (i != -1)
         {
-            face_get(i);
-            gui_npc->head->image.sprite = face_list[i].sprite;
+            request_face(i);
+            gui_npc->head->image.sprite = FaceList[i].sprite;
         }
 
         gui_npc->head->image.face = i;
@@ -422,13 +423,13 @@ _gui_npc *gui_npc_create(int mode, char *data, int len, int pos)
 
     if (gui_npc->message)
     {
-        FormatBody(&font_npcnormal, GUI_NPC_WIDTH, GUI_NPC_MESSAGE_MAX_LINE,
+        FormatBody(&font_medium, GUI_NPC_WIDTH, GUI_NPC_MESSAGE_MAX_LINE,
                    gui_npc->message);
     }
 
     if (gui_npc->reward)
     {
-        FormatBody(&font_npcnormal, GUI_NPC_WIDTH, GUI_NPC_REWARD_MAX_LINE,
+        FormatBody(&font_medium, GUI_NPC_WIDTH, GUI_NPC_REWARD_MAX_LINE,
                    gui_npc->reward);
     }
 
@@ -438,42 +439,43 @@ _gui_npc *gui_npc_create(int mode, char *data, int len, int pos)
 
         for (this = gui_npc->icon; this; this = this->next)
         {
-            sint32 i = face_find(this->image.name);
+            int i = get_bmap_id(this->image.name);
 
             /* First split body_text into lines. */
             if (gui_npc->shop)
             {
-                FormatBody(&font_npcicon, GUI_NPC_WIDTH, GUI_NPC_ICON_MAX_LINE,
+                FormatBody(&font_small, GUI_NPC_WIDTH, GUI_NPC_ICON_MAX_LINE,
                            this);
             }
             else
             {
-                FormatBody(&font_npcicon,
+                FormatBody(&font_tiny_out,
                            GUI_NPC_WIDTH - GUI_NPC_ICONSIZE - 5,
                            GUI_NPC_ICON_MAX_LINE, this);
             }
 
-            /* If the image is not in face_list[], load it from the local icons
+            /* If the image is not in FaceList, load it from the local icons
              * dir. */
             if (i == -1)
             {
-                char buf[SMALL_BUF];
+                char buf[MEDIUM_BUF];
 
-                sprintf(buf, "%s/%s.png", DIR_ICONS, this->image.name);
+                sprintf(buf, "%s%s.png", GetIconDirectory(), this->image.name);
 
                 /* Still can't find it? Bug. */
-                if (!(this->image.sprite = sprite_load(buf, NULL)))
+                if (!(this->image.sprite = sprite_load_file(buf,
+                                                            SURFACE_FLAG_DISPLAYFORMAT)))
                 {
                     i = 0;
-                    LOG(LOG_ERROR, "Can't find image '%s' in face_list[] or icons!\n",
+                    LOG(LOG_ERROR, "Can't find image '%s' in FacList or akin!\n",
                         this->image.name);
                 }
             }
 
             if (i != -1)
             {
-                face_get(i);
-                this->image.sprite = face_list[i].sprite;
+                request_face(i);
+                this->image.sprite = FaceList[i].sprite;
             }
 
             this->image.face = i;
@@ -516,7 +518,7 @@ _gui_npc *gui_npc_create(int mode, char *data, int len, int pos)
 
         for (this = gui_npc->update; this; this = this->next)
         {
-            FormatBody(&font_npcnormal, GUI_NPC_WIDTH, GUI_NPC_UPDATE_MAX_LINE,
+            FormatBody(&font_medium, GUI_NPC_WIDTH, GUI_NPC_UPDATE_MAX_LINE,
                        this);
         }
     }
@@ -529,23 +531,21 @@ _gui_npc *gui_npc_create(int mode, char *data, int len, int pos)
         gui_npc->input_flag = 1;
         reset_keys();
         open_input_mode(240);
-        textwin_put_string(gui_npc->textfield->command);
+        textwin_putstring(gui_npc->textfield->command);
         cpl.input_mode = INPUT_MODE_NPCDIALOG;
         HistoryPos = 0;
     }
 
     /* Turn any music playing down to 25% volume (relative). */
-#ifdef INSTALL_SOUND
     if (music.data)
     {
         sound_play_music(music.name, music.vol / 4, music.fade, music.loop, 1,
                          0);
     }
-#endif
 
     gui_npc->height = PrecalcGUI();
     cpl.menustatus = MENU_NPC;
-    gui_npc->startx = (Screensize.x / 2) - (skin_sprites[SKIN_SPRITE_GUI_NPC_TOP]->bitmap->w / 2);
+    gui_npc->startx = (Screensize.x / 2) - (Bitmaps[BITMAP_GUI_NPC_TOP]->bitmap->w / 2);
     gui_npc->starty = (Screensize.y - 600) / 2 + 50;
     mb_clicked = 0;
 
@@ -554,7 +554,7 @@ _gui_npc *gui_npc_create(int mode, char *data, int len, int pos)
 
 static void BadInterfaceString(char *data, uint16 pos)
 {
-    textwin_show_string(0, NDI_COLR_RED, "ERROR: bad interface string (flag start error)");
+    textwin_showstring(COLOR_RED, "ERROR: bad interface string (flag start error)");
     LOG(LOG_ERROR, "ERROR: bad command tag: %s\n", data + pos);
     gui_npc_reset();
 }
@@ -854,7 +854,7 @@ static void FormatBody(_font *font, uint16 width, uint8 lines, _gui_npc_element 
          element->type == GUI_NPC_UPDATE) &&
         element->title)
     {
-        yoff += font_npctitle.line_height + FONT_BLANKLINE;
+        yoff += font_large_out.line_height + FONT_BLANKLINE;
     }
     else if (element->type == GUI_NPC_ICON &&
              gui_npc->shop)
@@ -865,7 +865,7 @@ static void FormatBody(_font *font, uint16 width, uint8 lines, _gui_npc_element 
     /* Loop through body.text char-by-char. */
     for (; lc < sizeof(buf); bc++)
     {
-        sint16 len;
+        int len;
 
         switch (element->body.text[bc])
         {
@@ -1037,7 +1037,7 @@ static void FormatBody(_font *font, uint16 width, uint8 lines, _gui_npc_element 
                 buf[lc] = '\0';
 
                 /* Check if line wants to overflow the specified width. */
-                if (strout_width_offset(font, buf, &len, width))
+                if (string_width_offset(font, buf, &len, width))
                 {
                     int lcc;
 
@@ -1307,7 +1307,7 @@ void gui_npc_reset(void)
 
             if (gui_npc->head->image.sprite)
             {
-                /* Don't free a sprite from face_list! */
+                /* Don't free a sprite from FaceList! */
                 if (gui_npc->head->image.face == -1)
                 {
                     sprite_free_sprite(gui_npc->head->image.sprite);
@@ -1367,7 +1367,7 @@ void gui_npc_reset(void)
 
                 if (this->image.sprite)
                 {
-                    /* Don't free a sprite from face_list! */
+                    /* Don't free a sprite from FaceList! */
                     if (this->image.face == -1)
                     {
                         sprite_free_sprite(this->image.sprite);
@@ -1447,14 +1447,17 @@ void gui_npc_reset(void)
     reset_keys();
     cpl.input_mode = INPUT_MODE_NO;
 
-#ifdef INSTALL_SOUND
+    if (cpl.menustatus == MENU_NPC)
+    {
+        cpl.menustatus = MENU_NO;
+    }
+
     /* Restore any music playing to full volume (according to options). */
     if (music.data)
     {
         sound_play_music(music.name, options.music_volume, music.fade,
                          music.loop, 1, 0);
     }
-#endif
 }
 
 static uint16 PrecalcGUI(void)
@@ -1470,13 +1473,13 @@ static uint16 PrecalcGUI(void)
 
         if (gui_npc->message->title)
         {
-            yoff += font_npctitle.line_height + FONT_BLANKLINE;
+            yoff += font_large_out.line_height + FONT_BLANKLINE;
         }
 
         for (i = 0; i < gui_npc->message->body.line_count; i++)
         {
             yoff += (*gui_npc->message->body.line[i]) ?
-                    font_npcnormal.line_height : FONT_BLANKLINE;
+                    font_medium.line_height : FONT_BLANKLINE;
         }
 
         gui_npc->message->box.w = GUI_NPC_WIDTH;
@@ -1489,12 +1492,12 @@ static uint16 PrecalcGUI(void)
         gui_npc->reward->box.x = 0;
         gui_npc->reward->box.y = yoff;
 
-        yoff += font_npctitle.line_height + FONT_BLANKLINE;
+        yoff += font_large_out.line_height + FONT_BLANKLINE;
 
         for (i = 0; i < gui_npc->reward->body.line_count; i++)
         {
             yoff += (*gui_npc->reward->body.line[i]) ?
-                    font_npcnormal.line_height : FONT_BLANKLINE;
+                    font_medium.line_height : FONT_BLANKLINE;
         }
 
         if (gui_npc->reward->copper ||
@@ -1531,7 +1534,7 @@ static uint16 PrecalcGUI(void)
 
         if (this)
         {
-            yoff += font_npcicon.line_height + FONT_BLANKLINE;
+            yoff += font_tiny_out.line_height + FONT_BLANKLINE;
 
             for (i = 0; this; this = this->next,
                  i += (gui_npc->shop) ? 1 : GUI_NPC_ICONSHOP)
@@ -1555,7 +1558,7 @@ static uint16 PrecalcGUI(void)
                 this->box.h = GUI_NPC_ICONSIZE;
             }
 
-            yoff += font_npcicon.line_height + GUI_NPC_ICONSIZE +
+            yoff += font_tiny_out.line_height + GUI_NPC_ICONSIZE +
                     FONT_BLANKLINE;
         }
 
@@ -1570,10 +1573,10 @@ static uint16 PrecalcGUI(void)
         {
             this->box.x = 0;
             this->box.y = yoff;
-            this->box.w = MIN(GUI_NPC_WIDTH, strout_width(&font_npcnormal,
+            this->box.w = MIN(GUI_NPC_WIDTH, string_width(&font_medium,
                                                          this->title));
-            this->box.h = font_npcnormal.line_height;
-            yoff += font_npcnormal.line_height + FONT_BLANKLINE;
+            this->box.h = font_medium.line_height;
+            yoff += font_medium.line_height + FONT_BLANKLINE;
         }
 
         yoff += FONT_BLANKLINE * 2;
@@ -1590,13 +1593,13 @@ static uint16 PrecalcGUI(void)
 
             if (this->title)
             {
-                yoff += font_npctitle.line_height + FONT_BLANKLINE;
+                yoff += font_large_out.line_height + FONT_BLANKLINE;
             }
 
             for (i = 0; i < this->body.line_count; i++)
             {
                 yoff += (*this->body.line[i]) ?
-                        font_npcnormal.line_height : FONT_BLANKLINE;
+                        font_medium.line_height : FONT_BLANKLINE;
             }
 
             this->box.w = GUI_NPC_WIDTH;
@@ -1619,18 +1622,19 @@ void gui_npc_show(void)
         if (options.keyword_panel == 1) /* left */
         {
             ShowGUIPanel(gui_npc->startx -
-                         skin_sprites[SKIN_SPRITE_GUI_NPC_PANEL]->bitmap->w + 23,
+                         Bitmaps[BITMAP_GUI_NPC_PANEL]->bitmap->w + 23,
                          gui_npc->starty + GUI_NPC_TOPMARGIN - 6);
         }
         else if (options.keyword_panel == 2) /* right */
         {
             ShowGUIPanel(gui_npc->startx +
-                         skin_sprites[SKIN_SPRITE_GUI_NPC_TOP]->bitmap->w - 5,
+                         Bitmaps[BITMAP_GUI_NPC_TOP]->bitmap->w - 5,
                          gui_npc->starty +  GUI_NPC_TOPMARGIN - 6);
         }
     }
 
-    add_close_button(gui_npc->startx - 116, gui_npc->starty + 5, MENU_NPC);
+    add_close_button(gui_npc->startx - 116, gui_npc->starty + 5, MENU_NPC,
+                     skindef.newclosebutton);
 
 
     /* When clicked, the close button obviously closes the GUI which frees the
@@ -1645,16 +1649,16 @@ void gui_npc_show(void)
 
 static void ShowGUIBackground(uint16 x, uint16 y)
 {
-    sprite_blt(skin_sprites[SKIN_SPRITE_GUI_NPC_TOP], x, y, NULL, NULL);
-    y += skin_sprites[SKIN_SPRITE_GUI_NPC_TOP]->bitmap->h;
+    sprite_blt(Bitmaps[BITMAP_GUI_NPC_TOP], x, y, NULL, NULL);
+    y += Bitmaps[BITMAP_GUI_NPC_TOP]->bitmap->h;
 
     if (gui_npc->shop)
     {
-        sprite_blt(skin_sprites[SKIN_SPRITE_GUI_NPC_MIDDLE], x, y, NULL, NULL);
-        y += skin_sprites[SKIN_SPRITE_GUI_NPC_MIDDLE]->bitmap->h;
+        sprite_blt(Bitmaps[BITMAP_GUI_NPC_MIDDLE], x, y, NULL, NULL);
+        y += Bitmaps[BITMAP_GUI_NPC_MIDDLE]->bitmap->h;
     }
 
-    sprite_blt(skin_sprites[SKIN_SPRITE_GUI_NPC_BOTTOM], x, y, NULL, NULL);
+    sprite_blt(Bitmaps[BITMAP_GUI_NPC_BOTTOM], x, y, NULL, NULL);
 }
 
 static void ShowGUIPanel(uint16 x, uint16 y)
@@ -1662,19 +1666,19 @@ static void ShowGUIPanel(uint16 x, uint16 y)
     _gui_npc_element *this = gui_npc->hypertext;
     uint8             i = 0;
 
-    sprite_blt(skin_sprites[SKIN_SPRITE_GUI_NPC_PANEL], x, y, NULL, NULL);
+    sprite_blt(Bitmaps[BITMAP_GUI_NPC_PANEL], x, y, NULL, NULL);
 
     for (; this; this = this->next, i++)
     {
         char   buf[SMALL_BUF];
-        sint16 len;
-        uint16 ch = font_npcnormal.line_height,
+        int    len;
+        uint16 ch = font_medium.line_height,
                cw = 16;
 
         sprintf(buf, "%s", this->keyword);
 
-        if (strout_width_offset(&font_npcnormal, buf, &len,
-            skin_sprites[SKIN_SPRITE_GUI_NPC_PANEL]->bitmap->w - cw))
+        if (string_width_offset(&font_medium, buf, &len,
+            Bitmaps[BITMAP_GUI_NPC_PANEL]->bitmap->w - cw))
         {
             buf[len - 2] = '\0';
             strcat(buf, "...");
@@ -1682,13 +1686,13 @@ static void ShowGUIPanel(uint16 x, uint16 y)
 
         if (gui_npc->keyword_selected == this)
         {
-            strout_blt(ScreenSurface, &font_npcnormal, STROUT_LEFT, buf, x + cw / 2,
-                       y + ch / 2 + ch * i, NDI_COLR_PURPLE, NULL);
+            string_blt(ScreenSurface, &font_medium, buf, x + cw / 2,
+                       y + ch / 2 + ch * i, COLOR_DK_NAVY, NULL, NULL);
         }
         else
         {
-            strout_blt(ScreenSurface, &font_npcnormal, STROUT_LEFT, buf, x + cw / 2,
-                      y + ch / 2 + ch * i, NDI_COLR_AQUA, NULL);
+            string_blt(ScreenSurface, &font_medium, buf, x + cw / 2,
+                      y + ch / 2 + ch * i, COLOR_TURQUOISE, NULL, NULL);
         }
     }
 }
@@ -1697,7 +1701,7 @@ static void ShowGUIFurniture(uint16 x, uint16 y)
 {
     SDL_Rect box;
     char     buf[SMALL_BUF];
-    sint16   len;
+    int      len;
     uint16   xoff,
              yoff;
 
@@ -1707,14 +1711,14 @@ static void ShowGUIFurniture(uint16 x, uint16 y)
         {
             sprintf(buf, "%s", gui_npc->head->title);
 
-            if (strout_width_offset(&font_large, buf, &len, 260))
+            if (string_width_offset(&font_medium, buf, &len, 260))
             {
                 buf[len - 2] = '\0';
                 strcat(buf, "...");
             }
 
-            strout_blt(ScreenSurface, &font_large, STROUT_LEFT, buf, x + 80, y + 45,
-                      NDI_COLR_WHITE, NULL);
+            string_blt(ScreenSurface, &font_medium, buf, x + 80, y + 50,
+                      COLOR_WHITE, NULL, NULL);
         }
 
         if (gui_npc->head->image.sprite)
@@ -1737,19 +1741,19 @@ static void ShowGUIFurniture(uint16 x, uint16 y)
         }
     }
 
-    blt_window_slider(skin_sprites[SKIN_SPRITE_NPC_INT_SLIDER], gui_npc->height,
+    blt_window_slider(Bitmaps[BITMAP_NPC_INT_SLIDER], gui_npc->height,
                       GUI_NPC_HEIGHT, gui_npc->yoff, -1, x + 341, y + 90);
 
     if (gui_npc->lhsbutton)
     {
         xoff = x + GUI_NPC_LEFTMARGIN;
-        yoff = y + skin_sprites[SKIN_SPRITE_GUI_NPC_TOP]->bitmap->h + ((gui_npc->shop) ?
-               skin_sprites[SKIN_SPRITE_GUI_NPC_MIDDLE]->bitmap->h : 0) - 1;
+        yoff = y + Bitmaps[BITMAP_GUI_NPC_TOP]->bitmap->h + ((gui_npc->shop) ?
+               Bitmaps[BITMAP_GUI_NPC_MIDDLE]->bitmap->h : 0) - 1;
 
         /* Button title. */
         sprintf(buf, "%s", gui_npc->lhsbutton->title);
 
-        if (strout_width_offset(&font_small, buf, &len, GUI_NPC_BUTTONTEXT))
+        if (string_width_offset(&font_small, buf, &len, GUI_NPC_BUTTONTEXT))
         {
             buf[len - 2] = '\0';
             strcat(buf, "...");
@@ -1760,19 +1764,19 @@ static void ShowGUIFurniture(uint16 x, uint16 y)
             *gui_npc->lhsbutton->command == '#')
         {
             (void)add_button(xoff + 4, yoff + 4, 0,
-                             SKIN_SPRITE_DIALOG_BUTTON_UP_PREFIX, buf,
+                             BITMAP_DIALOG_BUTTON_UP_PREFIX, buf,
                              gui_npc->lhsbutton->title2);
         }
         else
         {
-            (void)add_button(xoff + 4, yoff + 4, 0, SKIN_SPRITE_DIALOG_BUTTON_UP,
+            (void)add_button(xoff + 4, yoff + 4, 0, BITMAP_DIALOG_BUTTON_UP,
                              buf, gui_npc->lhsbutton->title2);
         }
 
         /* Button fg (frame if selected). */
         if (gui_npc->button_selected == gui_npc->lhsbutton)
         {
-            sprite_blt(skin_sprites[SKIN_SPRITE_DIALOG_BUTTON_SELECTED], xoff, yoff,
+            sprite_blt(Bitmaps[BITMAP_DIALOG_BUTTON_SELECTED], xoff, yoff,
                        NULL, NULL);
         }
     }
@@ -1780,13 +1784,13 @@ static void ShowGUIFurniture(uint16 x, uint16 y)
     if (gui_npc->rhsbutton)
     {
         xoff = x + GUI_NPC_LEFTMARGIN + GUI_NPC_WIDTH - GUI_NPC_BUTTONWIDTH;
-        yoff = y + skin_sprites[SKIN_SPRITE_GUI_NPC_TOP]->bitmap->h + ((gui_npc->shop) ?
-               skin_sprites[SKIN_SPRITE_GUI_NPC_MIDDLE]->bitmap->h : 0) - 1;
+        yoff = y + Bitmaps[BITMAP_GUI_NPC_TOP]->bitmap->h + ((gui_npc->shop) ?
+               Bitmaps[BITMAP_GUI_NPC_MIDDLE]->bitmap->h : 0) - 1;
 
         /* Button title. */
         sprintf(buf, "%s", gui_npc->rhsbutton->title);
 
-        if (strout_width_offset(&font_small, buf, &len, GUI_NPC_BUTTONTEXT))
+        if (string_width_offset(&font_small, buf, &len, GUI_NPC_BUTTONTEXT))
         {
             buf[len - 2] = '\0';
             strcat(buf, "...");
@@ -1797,19 +1801,19 @@ static void ShowGUIFurniture(uint16 x, uint16 y)
             *gui_npc->rhsbutton->command == '#')
         {
             (void)add_button(xoff + 4, yoff + 4, 0,
-                             SKIN_SPRITE_DIALOG_BUTTON_UP_PREFIX, buf,
+                             BITMAP_DIALOG_BUTTON_UP_PREFIX, buf,
                              gui_npc->rhsbutton->title2);
         }
         else
         {
-            (void)add_button(xoff + 4, yoff + 4, 0, SKIN_SPRITE_DIALOG_BUTTON_UP,
+            (void)add_button(xoff + 4, yoff + 4, 0, BITMAP_DIALOG_BUTTON_UP,
                              buf, gui_npc->rhsbutton->title2);
         }
 
         /* Button fg (frame if selected). */
         if (gui_npc->button_selected == gui_npc->rhsbutton)
         {
-            sprite_blt(skin_sprites[SKIN_SPRITE_DIALOG_BUTTON_SELECTED], xoff, yoff,
+            sprite_blt(Bitmaps[BITMAP_DIALOG_BUTTON_SELECTED], xoff, yoff,
                        NULL, NULL);
         }
     }
@@ -1817,8 +1821,8 @@ static void ShowGUIFurniture(uint16 x, uint16 y)
     if (interface_mode != GUI_NPC_MODE_RHETORICAL)
     {
         xoff = x + GUI_NPC_LEFTMARGIN + GUI_NPC_BUTTONWIDTH;
-        yoff = y + skin_sprites[SKIN_SPRITE_GUI_NPC_TOP]->bitmap->h + ((gui_npc->shop) ?
-                   skin_sprites[SKIN_SPRITE_GUI_NPC_MIDDLE]->bitmap->h : 0) - 1;
+        yoff = y + Bitmaps[BITMAP_GUI_NPC_TOP]->bitmap->h + ((gui_npc->shop) ?
+                   Bitmaps[BITMAP_GUI_NPC_MIDDLE]->bitmap->h : 0) - 1;
         box.x = xoff + 4;
         box.y = yoff - 2 + font_small.line_height;
         box.h = font_medium.line_height;
@@ -1827,12 +1831,14 @@ static void ShowGUIFurniture(uint16 x, uint16 y)
         if (gui_npc->input_flag)
         {
             sprintf(buf, "~RETURN~ to send, ~ESCAPE~ to cancel");
-            strout_blt(ScreenSurface, &font_small, STROUT_LEFT, buf,
+            string_blt(ScreenSurface, &font_small, buf,
                       xoff + 4 + (GUI_NPC_TEXTFIELDWIDTH -
-                                  strout_width(&font_small, buf)) / 2,
-                      yoff - 2, NDI_COLR_WHITE, NULL);
+                                  string_width(&font_small, buf)) / 2,
+                      yoff - 2, COLOR_WHITE, NULL, NULL);
             SDL_FillRect(ScreenSurface, &box, 0);
-            strout_input(&font_medium, &box, 0);
+            string_blt(ScreenSurface, &font_medium,
+                      show_input_string(InputString, &font_medium, box.w - 1),
+                      box.x, box.y, COLOR_WHITE, NULL, NULL);
         }
         else if (interface_mode == GUI_NPC_MODE_NPC &&
                  !gui_npc->keyword_selected &&
@@ -1841,28 +1847,28 @@ static void ShowGUIFurniture(uint16 x, uint16 y)
                  !gui_npc->button_selected)
         {
             sprintf(buf, "~BACKSPACE~ to talk");
-            strout_blt(ScreenSurface, &font_small, STROUT_LEFT, buf,
+            string_blt(ScreenSurface, &font_small, buf,
                       xoff + 4 + (GUI_NPC_TEXTFIELDWIDTH -
-                                  strout_width(&font_small, buf)) / 2,
-                      yoff - 2, NDI_COLR_WHITE, NULL);
+                                  string_width(&font_small, buf)) / 2,
+                      yoff - 2, COLOR_WHITE, NULL, NULL);
         }
         else
         {
             if (interface_mode == GUI_NPC_MODE_QUEST)
             {
                 sprintf(buf, "~RETURN~ to send");
-                strout_blt(ScreenSurface, &font_small, STROUT_LEFT, buf,
+                string_blt(ScreenSurface, &font_small, buf,
                           xoff + 4 + (GUI_NPC_TEXTFIELDWIDTH -
-                                      strout_width(&font_small, buf)) / 2,
-                          yoff - 2, NDI_COLR_WHITE, NULL);
+                                      string_width(&font_small, buf)) / 2,
+                          yoff - 2, COLOR_WHITE, NULL, NULL);
             }
             else
             {
                 sprintf(buf, "~RETURN~ to send, ~BACKSPACE~ to overwrite");
-                strout_blt(ScreenSurface, &font_small, STROUT_LEFT, buf,
+                string_blt(ScreenSurface, &font_small, buf,
                           xoff + 4 + (GUI_NPC_TEXTFIELDWIDTH -
-                                      strout_width(&font_small, buf)) / 2,
-                          yoff - 2, NDI_COLR_WHITE, NULL);
+                                      string_width(&font_small, buf)) / 2,
+                          yoff - 2, COLOR_WHITE, NULL, NULL);
             }
 
             /* TODO: the rest of this function is in severe need of tidying! */
@@ -1879,7 +1885,7 @@ static void ShowGUIFurniture(uint16 x, uint16 y)
                     *(buf + c) = tolower(*(buf + c));
                 }
 
-                if (strout_width_offset(&font_npcnormal, buf, &len,
+                if (string_width_offset(&font_medium, buf, &len,
                                       GUI_NPC_TEXTFIELDWIDTH))
                 {
                     char buf_tmp[SMALL_BUF];
@@ -1887,13 +1893,13 @@ static void ShowGUIFurniture(uint16 x, uint16 y)
                     strncpy(buf_tmp, buf, len - 2);
                     buf_tmp[len - 2] = '\0';
                     strcat(buf_tmp, "...");
-                    strout_blt(ScreenSurface, &font_npcnormal, STROUT_LEFT, buf_tmp, box.x,
-                               box.y, NDI_COLR_PURPLE, &box);
+                    string_blt(ScreenSurface, &font_medium, buf_tmp, box.x,
+                               box.y, COLOR_DK_NAVY, &box, NULL);
                 }
                 else
                 {
-                    strout_blt(ScreenSurface, &font_npcnormal, STROUT_LEFT, buf, box.x, box.y,
-                               NDI_COLR_PURPLE, &box);
+                    string_blt(ScreenSurface, &font_medium, buf, box.x, box.y,
+                               COLOR_DK_NAVY, &box, NULL);
                 }
             }
             else
@@ -2100,7 +2106,7 @@ static void ShowGUIFurniture(uint16 x, uint16 y)
                     *(btn + c) = tolower(*(btn + c));
                 }
 
-                if (strout_width_offset(&font_medium, btn, &len,
+                if (string_width_offset(&font_medium, btn, &len,
                                       GUI_NPC_TEXTFIELDWIDTH))
                 {
                     char buf_tmp[SMALL_BUF];
@@ -2112,34 +2118,34 @@ static void ShowGUIFurniture(uint16 x, uint16 y)
                     if (!gui_npc->button_selected &&
                         button)
                     {
-                        strout_blt(ScreenSurface, &font_medium, STROUT_LEFT, buf_tmp, box.x,
-                                  box.y, NDI_COLR_GREY, &box);
+                        string_blt(ScreenSurface, &font_medium, buf_tmp, box.x,
+                                  box.y, COLOR_GREY, &box, NULL);
                     }
                     else if (gui_npc->button_selected ||
                              button)
                     {
-                        strout_blt(ScreenSurface, &font_medium, STROUT_LEFT, buf_tmp, box.x,
-                                  box.y, NDI_COLR_PURPLE, &box);
+                        string_blt(ScreenSurface, &font_medium, buf_tmp, box.x,
+                                  box.y, COLOR_DK_NAVY, &box, NULL);
                     }
                 }
                 else
                 {
                     uint16 xoff2;
 
-                    xoff2 = strout_width(&font_medium, btn) +
-                            strout_width(&font_medium, " ");
+                    xoff2 = string_width(&font_medium, btn) +
+                            string_width(&font_medium, " ");
 
                     if (!gui_npc->button_selected &&
                         button)
                     {
-                        strout_blt(ScreenSurface, &font_medium, STROUT_LEFT, btn, box.x, box.y,
-                                  NDI_COLR_GREY, &box);
+                        string_blt(ScreenSurface, &font_medium, btn, box.x, box.y,
+                                  COLOR_GREY, &box, NULL);
                     }
                     else if (gui_npc->button_selected ||
                              button)
                     {
-                        strout_blt(ScreenSurface, &font_medium, STROUT_LEFT, btn, box.x, box.y,
-                                  NDI_COLR_PURPLE, &box);
+                        string_blt(ScreenSurface, &font_medium, btn, box.x, box.y,
+                                  COLOR_DK_NAVY, &box, NULL);
                     }
 
                     if (cmd[0])
@@ -2151,22 +2157,22 @@ static void ShowGUIFurniture(uint16 x, uint16 y)
                             *(cmd + c) = tolower(*(cmd + c));
                         }
 
-                        if (strout_width_offset(&font_medium, cmd, &len, box.w - xoff2))
+                        if (string_width_offset(&font_medium, cmd, &len, box.w - xoff2))
                         {
                             char buf_tmp[SMALL_BUF];
 
                             strncpy(buf_tmp, cmd, len - 2);
                             buf_tmp[len - 2] = '\0';
                             strcat(buf_tmp, "...");
-                            strout_blt(ScreenSurface, &font_medium, STROUT_LEFT, buf_tmp,
-                                      box.x + xoff2, box.y, NDI_COLR_PURPLE,
-                                      &box);
+                            string_blt(ScreenSurface, &font_medium, buf_tmp,
+                                      box.x + xoff2, box.y, COLOR_DK_NAVY,
+                                      &box, NULL);
                         }
                         else
                         {
-                            strout_blt(ScreenSurface, &font_medium, STROUT_LEFT, cmd,
-                                      box.x + xoff2, box.y, NDI_COLR_PURPLE,
-                                      &box);
+                            string_blt(ScreenSurface, &font_medium, cmd,
+                                      box.x + xoff2, box.y, COLOR_DK_NAVY,
+                                      &box, NULL);
                         }
                     }
                 }
@@ -2183,7 +2189,7 @@ static void ShowGUIContents(uint16 x, uint16 y)
              xoff,
              yoff;
     char     buf[SMALL_BUF];
-    sint16   len;
+    int      len;
 
     box.x = x;
     box.y = y;
@@ -2205,15 +2211,15 @@ static void ShowGUIContents(uint16 x, uint16 y)
             {
                 sprintf(buf, "%s", gui_npc->message->title);
 
-                if (strout_width_offset(&font_npctitle, buf, &len, GUI_NPC_WIDTH))
+                if (string_width_offset(&font_large_out, buf, &len, GUI_NPC_WIDTH))
                 {
                     buf[len - 2] = '\0';
                     strcat(buf, "...");
                 }
 
-                strout_blt(ScreenSurface, &font_npctitle, STROUT_LEFT, buf, xoff, yoff,
-                          NDI_COLR_SILVER, NULL);
-                yoff += font_npctitle.line_height + FONT_BLANKLINE;
+                string_blt(ScreenSurface, &font_large_out, buf, xoff, yoff,
+                          COLOR_HGOLD, NULL, NULL);
+                yoff += font_large_out.line_height + FONT_BLANKLINE;
             }
 
             for (i = 0; i < gui_npc->message->body.line_count; i++)
@@ -2224,10 +2230,10 @@ static void ShowGUIContents(uint16 x, uint16 y)
                 }
                 else
                 {
-                    strout_blt(ScreenSurface, &font_npcnormal, STROUT_LEFT,
+                    string_blt(ScreenSurface, &font_medium,
                               gui_npc->message->body.line[i], xoff, yoff,
-                              NDI_COLR_WHITE, NULL);
-                    yoff += font_npcnormal.line_height;
+                              COLOR_WHITE, NULL, NULL);
+                    yoff += font_medium.line_height;
                 }
             }
         }
@@ -2250,15 +2256,15 @@ static void ShowGUIContents(uint16 x, uint16 y)
                 sprintf(buf, "%s", gui_npc->reward->title);
             }
 
-            if (strout_width_offset(&font_npctitle, buf, &len, GUI_NPC_WIDTH))
+            if (string_width_offset(&font_large_out, buf, &len, GUI_NPC_WIDTH))
             {
                 buf[len - 2] = '\0';
                 strcat(buf, "...");
             }
 
-            strout_blt(ScreenSurface, &font_npctitle, STROUT_LEFT, buf, xoff, yoff,
-                      NDI_COLR_SILVER, NULL);
-            yoff += font_npctitle.line_height + FONT_BLANKLINE;
+            string_blt(ScreenSurface, &font_large_out, buf, xoff, yoff,
+                      COLOR_HGOLD, NULL, NULL);
+            yoff += font_large_out.line_height + FONT_BLANKLINE;
 
             if (gui_npc->reward->body.text)
             {
@@ -2272,10 +2278,10 @@ static void ShowGUIContents(uint16 x, uint16 y)
                     }
                     else
                     {
-                        strout_blt(ScreenSurface, &font_npcnormal, STROUT_LEFT,
+                        string_blt(ScreenSurface, &font_medium,
                                   gui_npc->reward->body.line[i], xoff, yoff,
-                                  NDI_COLR_WHITE, NULL);
-                        yoff += font_npcnormal.line_height;
+                                  COLOR_WHITE, NULL, NULL);
+                        yoff += font_medium.line_height;
                     }
                 }
             }
@@ -2286,30 +2292,70 @@ static void ShowGUIContents(uint16 x, uint16 y)
                 gui_npc->reward->mithril)
             {
                 uint8    i = 0;
-                int      coins[DENOMINATIONS];
-                sint32   id;
+                int      coins[DENOMINATIONS],
+                         id;
                 _Sprite *sprites[DENOMINATIONS];
 
                 coins[i] = gui_npc->reward->copper;
                 sprintf(buf, "coppercoin.101");
-                id = face_find(buf);
-                face_get(id);
-                sprites[i++] = face_list[id].sprite;
+                id = get_bmap_id(buf);
+
+                if (id == -1)
+                {
+                    id = 0;
+                    LOG(LOG_ERROR, "Can't find image '%s'!\n", buf);
+                }
+                else
+                {
+                    request_face(id);
+                }
+
+                sprites[i++] = FaceList[id].sprite;
                 coins[i] = gui_npc->reward->silver;
                 sprintf(buf, "silvercoin.101");
-                id = face_find(buf);
-                face_get(id);
-                sprites[i++] = face_list[id].sprite;
+                id = get_bmap_id(buf);
+
+                if (id == -1)
+                {
+                    id = 0;
+                    LOG(LOG_ERROR, "Can't find image '%s'!\n", buf);
+                }
+                else
+                {
+                    request_face(id);
+                }
+
+                sprites[i++] = FaceList[id].sprite;
                 coins[i] = gui_npc->reward->gold;
                 sprintf(buf, "goldcoin.101");
-                id = face_find(buf);
-                face_get(id);
-                sprites[i++] = face_list[id].sprite;
+                id = get_bmap_id(buf);
+
+                if (id == -1)
+                {
+                    id = 0;
+                    LOG(LOG_ERROR, "Can't find image '%s'!\n", buf);
+                }
+                else
+                {
+                    request_face(id);
+                }
+
+                sprites[i++] = FaceList[id].sprite;
                 coins[i] = gui_npc->reward->mithril;
                 sprintf(buf, "mit_coin.101");
-                id = face_find(buf);
-                face_get(id);
-                sprites[i++] = face_list[id].sprite;
+                id = get_bmap_id(buf);
+
+                if (id == -1)
+                {
+                    id = 0;
+                    LOG(LOG_ERROR, "Can't find image '%s'!\n", buf);
+                }
+                else
+                {
+                    request_face(id);
+                }
+
+                sprites[i++] = FaceList[id].sprite;
 
                 if (gui_npc->reward->body.line_count)
                 {
@@ -2362,19 +2408,19 @@ static void ShowGUIContents(uint16 x, uint16 y)
 
                         if (coins[i] < 0)
                         {
-                            uint16 w = strout_width(&font_small, buf);
+                            uint16 w = string_width(&font_small_out, buf);
 
-                            strout_blt(ScreenSurface, &font_small, STROUT_LEFT, buf,
-                                      xoff + 28 - w / 2, yoff + 18,
-                                      NDI_COLR_RED, NULL);
+                            string_blt(ScreenSurface, &font_small_out, buf,
+                                      xoff + 28 - w / 2, yoff + 18, COLOR_RED, NULL,
+                                      NULL);
                         }
                         else
                         {
-                            uint16 w = strout_width(&font_small, buf);
+                            uint16 w = string_width(&font_small_out, buf);
 
-                            strout_blt(ScreenSurface, &font_small, STROUT_LEFT, buf,
-                                      xoff + 28 - w / 2, yoff + 18,
-                                      NDI_COLR_LIME, NULL);
+                            string_blt(ScreenSurface, &font_small_out, buf,
+                                      xoff + 28 - w / 2, yoff + 18, COLOR_GREEN, NULL,
+                                      NULL);
                         }
                     }
                 }
@@ -2431,11 +2477,11 @@ static void ShowGUIContents(uint16 x, uint16 y)
         if (this)
         {
             sprintf(buf, "--- Select an item below ---");
-            xoff = x + strout_width(&font_tiny, buf);
-            yoff = y + this->box.y - guitop - font_tiny.line_height -
+            xoff = x + string_width(&font_tiny_out, buf);
+            yoff = y + this->box.y - guitop - font_tiny_out.line_height -
                    FONT_BLANKLINE;
-            strout_blt(ScreenSurface, &font_tiny, STROUT_LEFT, buf, xoff, yoff,
-                      NDI_COLR_LIME, NULL);
+            string_blt(ScreenSurface, &font_tiny_out, buf, xoff, yoff,
+                      COLOR_GREEN, NULL, NULL);
 
             for (; this; this = this->next)
             {
@@ -2449,11 +2495,11 @@ static void ShowGUIContents(uint16 x, uint16 y)
             }
 
             sprintf(buf, "--- Select an item above ---");
-            xoff = x + strout_width(&font_tiny, buf);
+            xoff = x + string_width(&font_tiny_out, buf);
             yoff = y + gui_npc->icon->last->box.y - guitop + GUI_NPC_ICONSIZE +
                    FONT_BLANKLINE;
-            strout_blt(ScreenSurface, &font_tiny, STROUT_LEFT, buf, xoff, yoff,
-                      NDI_COLR_LIME, NULL);
+            string_blt(ScreenSurface, &font_tiny_out, buf, xoff, yoff,
+                      COLOR_GREEN, NULL, NULL);
         }
     }
 
@@ -2473,7 +2519,7 @@ static void ShowGUIContents(uint16 x, uint16 y)
             yoff = y + this->box.y - guitop;
             sprintf(buf, "%s", this->title);
 
-            if (strout_width_offset(&font_npcnormal, buf, &len, GUI_NPC_WIDTH))
+            if (string_width_offset(&font_medium, buf, &len, GUI_NPC_WIDTH))
             {
                 buf[len - 2] = '\0';
                 strcat(buf, "...");
@@ -2482,16 +2528,16 @@ static void ShowGUIContents(uint16 x, uint16 y)
             if (gui_npc->link_selected == this &&
                 !gui_npc->keyword_selected)
             {
-                strout_blt(ScreenSurface, &font_npcnormal, STROUT_LEFT, buf, xoff, yoff,
-                          NDI_COLR_PURPLE, NULL);
+                string_blt(ScreenSurface, &font_medium, buf, xoff, yoff,
+                          COLOR_DK_NAVY, NULL, NULL);
             }
             else
             {
-                strout_blt(ScreenSurface, &font_npcnormal, STROUT_LEFT, buf, xoff, yoff,
-                          NDI_COLR_AQUA, NULL);
+                string_blt(ScreenSurface, &font_medium, buf, xoff, yoff,
+                          COLOR_TURQUOISE, NULL, NULL);
             }
 
-            yoff += font_npcnormal.line_height + FONT_BLANKLINE;
+            yoff += font_medium.line_height + FONT_BLANKLINE;
         }
 
         yoff += FONT_BLANKLINE * 2;
@@ -2515,15 +2561,15 @@ static void ShowGUIContents(uint16 x, uint16 y)
             yoff = y + this->box.y - guitop;
             sprintf(buf, "%s", this->title);
 
-            if (strout_width_offset(&font_npctitle, buf, &len, GUI_NPC_WIDTH))
+            if (string_width_offset(&font_large_out, buf, &len, GUI_NPC_WIDTH))
             {
                 buf[len - 2] = '\0';
                 strcat(buf, "...");
             }
 
-            strout_blt(ScreenSurface, &font_npctitle, STROUT_LEFT, buf, xoff, yoff,
-                      NDI_COLR_SILVER, NULL);
-            yoff += font_npctitle.line_height + FONT_BLANKLINE;
+            string_blt(ScreenSurface, &font_large_out, buf, xoff, yoff,
+                      COLOR_HGOLD, NULL, NULL);
+            yoff += font_large_out.line_height + FONT_BLANKLINE;
 
             for (i = 0; i < this->body.line_count; i++)
             {
@@ -2533,9 +2579,9 @@ static void ShowGUIContents(uint16 x, uint16 y)
                 }
                 else
                 {
-                    strout_blt(ScreenSurface, &font_npcnormal, STROUT_LEFT, this->body.line[i],
-                              xoff, yoff, NDI_COLR_WHITE, NULL);
-                    yoff += font_npcnormal.line_height;
+                    string_blt(ScreenSurface, &font_medium, this->body.line[i],
+                              xoff, yoff, COLOR_WHITE, NULL, NULL);
+                    yoff += font_medium.line_height;
                 }
             }
 
@@ -2544,6 +2590,11 @@ static void ShowGUIContents(uint16 x, uint16 y)
     }
 
     SDL_SetClipRect(ScreenSurface, NULL);
+
+//    if (gui_npc->status == GUI_NPC_STATUS_WAIT)
+//    {
+//        return;
+//    }
 } 
 
 static void ShowIcon(_gui_npc_element *this)
@@ -2551,59 +2602,135 @@ static void ShowIcon(_gui_npc_element *this)
     const uint16 xoff = gui_npc->startx + GUI_NPC_LEFTMARGIN + this->box.x,
                  yoff = gui_npc->starty + GUI_NPC_TOPMARGIN + this->box.y -
                         gui_npc->yoff;
-    sprite_icon_type_t type = SPRITE_ICON_TYPE_INACTIVE;
-    uint8              selected = (gui_npc->icon_selected == this &&
-                                   !gui_npc->keyword_selected) ? 1 : 0;
+    char         buf[SMALL_BUF];
+    int          len;
+    uint8        i;
 
-    if (this->mode == 'S' ||
-        this->mode == 'G')
+    /* Icon box bg. */
+    if (this->mode == 's' ||
+        this->mode == 'g')
+    {
+        sprite_blt(Bitmaps[BITMAP_DIALOG_ICON_BG_INACTIVE], xoff + 3, yoff + 3,
+                   NULL, NULL);
+    }
+    else if (this->mode == 'S' ||
+             this->mode == 'G')
     {
         if (this->quantity > 0)
         {
-            type = SPRITE_ICON_TYPE_POSITIVE;
+            sprite_blt(Bitmaps[BITMAP_DIALOG_ICON_BG_POSITIVE], xoff + 3,
+                       yoff + 3, NULL, NULL);
         }
         else if (this->quantity < 0)
         {
-            type = SPRITE_ICON_TYPE_NEGATIVE;
+            sprite_blt(Bitmaps[BITMAP_DIALOG_ICON_BG_NEGATIVE], xoff + 3,
+                       yoff + 3, NULL, NULL);
         }
         else
         {
-            type = SPRITE_ICON_TYPE_ACTIVE;
+            sprite_blt(Bitmaps[BITMAP_DIALOG_ICON_BG_ACTIVE], xoff + 3,
+                       yoff + 3, NULL, NULL);
         }
     }
 
-    sprite_blt_as_icon(this->image.sprite, xoff + 2, yoff + 2, type,
-                       selected, 0, 0, this->quantity, NULL);
+    /* Icon face. */
+    if (this->image.sprite)
+    {
+        SDL_Rect  box;
+        _Sprite  *sprite = this->image.sprite;
+        _BLTFX    bltfx;
+
+        box.x = xoff;
+        box.y = yoff;
+        box.w = GUI_NPC_ICONSIZE;
+        box.h = GUI_NPC_ICONSIZE;
+        memset(&bltfx, 0, sizeof(_BLTFX));
+
+        if (this->mode == 'g' ||
+            this->mode == 's')
+        {
+            bltfx.flags |= BLTFX_FLAG_GREY;
+        }
+
+//        SDL_SetClipRect(ScreenSurface, &box);
+        sprite_blt(sprite, box.x + box.w / 2 - (sprite->bitmap->w -
+                   sprite->border_left) / 2 - sprite->border_left,
+                   box.y + box.h / 2 - (sprite->bitmap->h -
+                   sprite->border_down) / 2, NULL, &bltfx);
+//        SDL_SetClipRect(ScreenSurface, &box);
+    }
+
+    /* Icon box fg. */
+    if (this->mode == 's' ||
+        this->mode == 'g')
+    {
+        sprite_blt(Bitmaps[BITMAP_DIALOG_ICON_FG_INACTIVE], xoff, yoff, NULL,
+                   NULL);
+    }
+    else if (gui_npc->icon_selected == this &&
+             !gui_npc->keyword_selected)
+    {
+        sprite_blt(Bitmaps[BITMAP_DIALOG_ICON_FG_SELECTED], xoff, yoff, NULL,
+                   NULL);
+    }
+    else
+    {
+        sprite_blt(Bitmaps[BITMAP_DIALOG_ICON_FG_ACTIVE], xoff, yoff, NULL,
+                   NULL);
+    }
+
+    /* Icon quantity. */
+    if (this->quantity > 9999 ||
+        this->quantity < -9999)
+    {
+        sprintf(buf, "many");
+    }
+    else
+    {
+        sprintf(buf, "%d", this->quantity);
+    }
+
+    if (this->quantity > 0)
+    {
+        uint8 w = string_width(&font_tiny_out, buf);
+
+        string_blt(ScreenSurface, &font_tiny_out, buf, xoff + 28 - w / 2,
+                  yoff + 18, COLOR_GREEN, NULL, NULL);
+    }
+    else if (this->quantity < 0)
+    {
+        uint8 w = string_width(&font_tiny_out, buf);
+
+        string_blt(ScreenSurface, &font_tiny_out, buf, xoff + 28 - w / 2,
+                  yoff + 18, COLOR_RED, NULL, NULL);
+    }
 
     if (gui_npc->shop)
     {
+        uint16 xoff2 = xoff,
+               yoff2 = gui_npc->starty + Bitmaps[BITMAP_GUI_NPC_TOP]->bitmap->h;
+
         if (gui_npc->icon_selected == this)
         {
-            uint16 xoff2 = xoff,
-                   yoff2 = gui_npc->starty + skin_sprites[SKIN_SPRITE_GUI_NPC_TOP]->bitmap->h;
-            char   buf[SMALL_BUF];
-            sint16 len;
-            uint8  i;
-
             /* Icon title. */
             sprintf(buf, "%s", this->title);
 
-            if (strout_width_offset(&font_npcicon, buf, &len, GUI_NPC_WIDTH))
+            if (string_width_offset(&font_medium, buf, &len, GUI_NPC_WIDTH))
             {
                 buf[len - 2] = '\0';
                 strcat(buf, "...");
             }
 
-            strout_blt(ScreenSurface, &font_npcicon, STROUT_LEFT, buf, xoff2, yoff2,
-                       NDI_COLR_SILVER, NULL);
-            yoff2 += font_npcicon.line_height;
+            string_blt(ScreenSurface, &font_small, buf, xoff2, yoff2, COLOR_HGOLD,
+                      NULL, NULL);
+            yoff2 += font_small.line_height;
 
             /* Icon body text. */
             for (i = 0; i < this->body.line_count; i++)
             {
-                strout_blt(ScreenSurface, &font_npcicon, STROUT_LEFT, this->body.line[i], xoff2,
-                          yoff2, NDI_COLR_WHITE, NULL);
-                yoff2 += font_npcicon.line_height;
+                string_blt(ScreenSurface, &font_small, this->body.line[i], xoff2,
+                          yoff2, COLOR_WHITE, NULL, NULL);
+                yoff2 += font_small.line_height;
             }
         }
     }
@@ -2612,29 +2739,26 @@ static void ShowIcon(_gui_npc_element *this)
         /* Icon title. */
         uint16 xoff2 = xoff + GUI_NPC_ICONSIZE,
                yoff2 = yoff;
-        char   buf[SMALL_BUF];
-        sint16 len;
-        uint8  i;
 
         sprintf(buf, "%s", this->title);
 
-        if (strout_width_offset(&font_npcicon, buf, &len,
+        if (string_width_offset(&font_small, buf, &len,
                               GUI_NPC_WIDTH - GUI_NPC_ICONSIZE - 5))
         {
             buf[len - 2] = '\0';
             strcat(buf, "...");
         }
 
-        strout_blt(ScreenSurface, &font_npcicon, STROUT_LEFT, buf, xoff2, yoff2,
-                   NDI_COLR_SILVER, NULL);
-        yoff2 += font_npcicon.line_height;
+        string_blt(ScreenSurface, &font_small, buf, xoff2, yoff2, COLOR_HGOLD,
+                  NULL, NULL);
+        yoff2 += font_small.line_height;
 
         /* Icon body text. */
         for (i = 0; i < this->body.line_count; i++)
         {
-            strout_blt(ScreenSurface, &font_npcicon, STROUT_LEFT, this->body.line[i], xoff2,
-                      yoff2, NDI_COLR_WHITE, NULL);
-            yoff2 += font_npcicon.line_height;
+            string_blt(ScreenSurface, &font_tiny_out, this->body.line[i], xoff2,
+                      yoff2, COLOR_WHITE, NULL, NULL);
+            yoff2 += font_small.line_height;
         }
     }
 }
@@ -2663,16 +2787,16 @@ static _gui_npc_element *GetElement(int mx, int my)
     {
         _gui_npc_element *this = gui_npc->hypertext;
         uint8 cw = 16,
-              ch = font_npcnormal.line_height;
+              ch = font_medium.line_height;
 
         xoff = (options.keyword_panel == 1) ? /* left */
-               x - skin_sprites[SKIN_SPRITE_GUI_NPC_PANEL]->bitmap->w + 23 +
+               x - Bitmaps[BITMAP_GUI_NPC_PANEL]->bitmap->w + 23 +
                cw / 2 :
-               x + skin_sprites[SKIN_SPRITE_GUI_NPC_TOP]->bitmap->w - 5 + cw / 2;
+               x + Bitmaps[BITMAP_GUI_NPC_TOP]->bitmap->w - 5 + cw / 2;
 
         for (i = 1; this; this = this->next, i++)
         {
-            uint16 kw = strout_width(&font_npcnormal, this->keyword);
+            uint16 kw = string_width(&font_medium, this->keyword);
 
             yoff = y + 73 + ch / 2 + ch * (i - 1);
 
@@ -2688,13 +2812,13 @@ static _gui_npc_element *GetElement(int mx, int my)
 
     /* Buttons. */
     xoff = x + GUI_NPC_LEFTMARGIN;
-    yoff = y + skin_sprites[SKIN_SPRITE_GUI_NPC_TOP]->bitmap->h + ((gui_npc->shop) ?
-           skin_sprites[SKIN_SPRITE_GUI_NPC_MIDDLE]->bitmap->h : 0) - 1;
+    yoff = y + Bitmaps[BITMAP_GUI_NPC_TOP]->bitmap->h + ((gui_npc->shop) ?
+           Bitmaps[BITMAP_GUI_NPC_MIDDLE]->bitmap->h : 0) - 1;
     if (gui_npc->lhsbutton &&
         mx >= xoff &&
         mx <= xoff + GUI_NPC_BUTTONWIDTH &&
         my >= yoff &&
-        my <= yoff + skin_sprites[SKIN_SPRITE_GUI_NPC_BOTTOM]->bitmap->h)
+        my <= yoff + Bitmaps[BITMAP_GUI_NPC_BOTTOM]->bitmap->h)
     {
         return gui_npc->lhsbutton;
     }
@@ -2704,7 +2828,7 @@ static _gui_npc_element *GetElement(int mx, int my)
         mx >= xoff &&
         mx <= xoff + GUI_NPC_BUTTONWIDTH &&
         my >= yoff &&
-        my <= yoff + skin_sprites[SKIN_SPRITE_GUI_NPC_BOTTOM]->bitmap->h)
+        my <= yoff + Bitmaps[BITMAP_GUI_NPC_BOTTOM]->bitmap->h)
     {
         return gui_npc->rhsbutton;
     }
@@ -2719,8 +2843,8 @@ static _gui_npc_element *GetElement(int mx, int my)
         ((!gui_npc->shop &&
           my > yoff + GUI_NPC_HEIGHT) ||
          (gui_npc->shop &&
-          my > y + skin_sprites[SKIN_SPRITE_GUI_NPC_TOP]->bitmap->h +
-          skin_sprites[SKIN_SPRITE_GUI_NPC_MIDDLE]->bitmap->h)))
+          my > y + Bitmaps[BITMAP_GUI_NPC_TOP]->bitmap->h +
+          Bitmaps[BITMAP_GUI_NPC_MIDDLE]->bitmap->h)))
     {
         return NULL;
     }
@@ -3266,11 +3390,15 @@ static void SendCommand(void)
     }
     else
     {
-        client_cmd_guitalk(interface_mode, buf);
-        textwin_add_history(buf);
-        reset_keys();
-        reset_input_mode();
-        cpl.input_mode = INPUT_MODE_NO;
+        if (gui_npc->status != GUI_NPC_STATUS_WAIT)
+        {
+            send_talk_command(interface_mode, buf);
+            textwin_addhistory(buf);
+            reset_keys();
+            reset_input_mode();
+            cpl.input_mode = INPUT_MODE_NO;
+            gui_npc->status = GUI_NPC_STATUS_WAIT;
+        }
     }
 }
 
@@ -3348,11 +3476,11 @@ void gui_npc_mouseclick(SDL_Event *e)
                 gui_npc->link_selected ||
                 gui_npc->button_selected)
             {
-                gui_npc_keypress(SDLK_RETURN);
+                check_menu_keys(MENU_NPC, SDLK_RETURN);
             }
             else
             {
-                gui_npc_keypress(SDLK_BACKSPACE);
+                check_menu_keys(MENU_NPC, SDLK_BACKSPACE);
             }
         }
     }
@@ -3386,6 +3514,11 @@ void gui_npc_mouseclick(SDL_Event *e)
  */
 void gui_npc_keypress(int key)
 {
+    if (gui_npc->status == GUI_NPC_STATUS_WAIT)
+    {
+        return;
+    }
+
     switch (key)
     {
         /* Selecting previous/next keyword. */
@@ -3763,7 +3896,7 @@ void gui_npc_keypress(int key)
                 reset_keys();
                 reset_input_mode();
                 open_input_mode(240);
-                textwin_put_string("");
+                textwin_putstring("");
                 cpl.input_mode = INPUT_MODE_NPCDIALOG;
                 gui_npc->input_flag = 1;
                 HistoryPos = 0;

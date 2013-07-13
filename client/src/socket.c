@@ -23,12 +23,6 @@
 #include <include.h>
 #define SOCKET_TIMEOUT_MS 4000
 
-ClientSocket csocket;
-
-#if WIN32
-static int SocketStatusErrorNr; /* if an socket error, this is it */
-#endif
-
 static SDL_Thread *input_thread;
 static SDL_mutex *input_buffer_mutex;
 static SDL_cond *input_buffer_cond;
@@ -46,8 +40,6 @@ static int abort_thread = 0;
 /* start is the first waiting item in queue, end is the most recent enqueued */
 static command_buffer *input_queue_start = NULL, *input_queue_end = NULL;
 static command_buffer *output_queue_start = NULL, *output_queue_end = NULL;
-
-static void ClearClientSocket(struct ClientSocket *csock);
 
 /*
  * Buffer queue management
@@ -149,9 +141,7 @@ int send_command_binary(int cmd, char *body, int len, int flags)
 
         if(len >(MAX_DATA_TAIL_LENGTH-1))
         {
-#ifdef DEBUG_SOCKET
             LOG(LOG_DEBUG,"BUG: socket buffer MAX_DATA_TAIL_LENGTH > %d: %d\n", MAX_DATA_TAIL_LENGTH, len);
-#endif
             SOCKET_CloseClientSocket(&csocket);
             return -1;
         }
@@ -166,11 +156,9 @@ int send_command_binary(int cmd, char *body, int len, int flags)
 
             if(flags & SEND_CMD_FLAG_FIXED)
             {
-#ifdef DEBUG_SOCKET
                 /* this makes no sense for our current protocol */
                 if(flags & SEND_CMD_FLAG_STRING)
                     LOG(LOG_DEBUG,"BUG WARNING: send_command_binary() _FLAG_STRING & _FLAG_FIXED set for cmd %d (len:%d)\n", cmd, len);
-#endif
                 /* for a fixed len we must readjust the buffer len value */
                 buf->len = len+1; /* pure data block length + cmd tag */
             }
@@ -181,10 +169,8 @@ int send_command_binary(int cmd, char *body, int len, int flags)
                 buf->data[data_offset++] = ((uint32) (len)) & 0xFF;
             }
 
-#ifdef DEBUG_SOCKET
             LOG(LOG_DEBUG,"SEND: cmd:%d len:%d (blen:%d) (%d %d)\n", cmd, len,buf->len,
                 (flags & SEND_CMD_FLAG_FIXED)?-1:buf->data[1], (flags & SEND_CMD_FLAG_FIXED)?-1:buf->data[2]);
-#endif
 
             memcpy(buf->data+data_offset, body, len_copy);
 
@@ -244,9 +230,7 @@ static int reader_thread_loop(void *nix)
     int header_len = 0;
     int cmd_len = -1;
 
-#ifdef DEBUG_SOCKET
     LOG(LOG_DEBUG, "Reader thread started\n");
-#endif
 
     if (!readbuf)
     {
@@ -291,9 +275,7 @@ static int reader_thread_loop(void *nix)
                 FREE(tmp);
             }
 
-#ifdef DEBUG_SOCKET
-            LOG(LOG_DEBUG,"CMD_LEN: toread:%d len:%d (%x)\n", toread, cmd_len, (*((char *)readbuf))&~0x80);
-#endif
+//            LOG(-1,"CMD_LEN: toread:%d len:%d (%x)\n", toread, cmd_len, (*((char *)readbuf))&~0x80);
 
         }
         if(toread)
@@ -303,30 +285,23 @@ static int reader_thread_loop(void *nix)
             if (ret == 0)
             {
                 /* End of file */
-#ifdef DEBUG_SOCKET
                 LOG(LOG_DEBUG, "Reader got EOF trying to read %d bytes\n", toread);
-#endif
-
                 goto out;
             }
             else if (ret == -1)
             {
                 /* IO error */
-#ifdef DEBUG_SOCKET
-# if WIN32
+#ifdef WIN32
                 LOG(LOG_DEBUG, "Reader got error %d\n", WSAGetLastError());
-# else
+#else
                 LOG(LOG_DEBUG, "Reader got error %d (%s)\n", errno, strerror(errno));
-# endif
 #endif
                 goto out;
             }
             else
             {
                 readbuf_len += ret;
-#ifdef DEBUG_SOCKET
-                LOG(LOG_DEBUG, "Reader got some data (%d bytes total)\n", readbuf_len);
-#endif
+/* LOG(LOG_DEBUG, "Reader got some data (%d bytes total)\n", readbuf_len); */
             }
         }
         /* Finished with a command ? */
@@ -334,9 +309,9 @@ static int reader_thread_loop(void *nix)
         {
             command_buffer *buf;
 
-#ifdef DEBUG_SOCKET
-            LOG(LOG_DEBUG," CMD:%x len:%d\n", (*((char *)readbuf))&~0x80,readbuf_len);
-            /*LOG(LOG_DEBUG," CMD-DATA:%s\n", readbuf+3);*/
+#ifdef DAI_DEVELOPMENT
+            LOG(LOG_MSG," CMD:%x len:%d\n", (*((char *)readbuf))&~0x80,readbuf_len);
+            /*LOG(LOG_MSG," CMD-DATA:%s\n", readbuf+3);*/
 #endif
 
             buf = command_buffer_new(readbuf_len, readbuf);
@@ -359,10 +334,7 @@ out:
     SOCKET_CloseClientSocket(&csocket);
     FREE(readbuf);
     readbuf = NULL;
-#ifdef DEBUG_SOCKET
     LOG(LOG_DEBUG, "Reader thread stopped\n");
-#endif
-
     return -1;
 }
 
@@ -374,10 +346,7 @@ out:
 static int writer_thread_loop(void *nix)
 {
     command_buffer *buf = NULL;
-#ifdef DEBUG_SOCKET
     LOG(LOG_DEBUG, "Writer thread started\n");
-#endif
-
     while (! abort_thread)
     {
         int written = 0;
@@ -394,21 +363,16 @@ static int writer_thread_loop(void *nix)
 
             if (ret == 0)
             {
-#ifdef DEBUG_SOCKET
                 LOG(LOG_DEBUG, "Writer got EOF\n");
-#endif
-
                 goto out;
             }
             else if (ret == -1)
             {
                 /* IO error */
-#ifdef DEBUG_SOCKET
-# if WIN32
-                LOG(LOG_DEBUG, "Writer got error %d\n", WSAGetLastError());
-# else
+#ifdef WIN32
+                LOG(LOG_DEBUG, "Reader got error %d\n", WSAGetLastError());
+#else
                 LOG(LOG_DEBUG, "Writer got error %d (%s)\n", errno, strerror(errno));
-# endif
 #endif
                 goto out;
             }
@@ -420,20 +384,14 @@ static int writer_thread_loop(void *nix)
             command_buffer_free(buf);
             buf = NULL;
         }
-
-#ifdef DEBUG_SOCKET
-        LOG(LOG_DEBUG, "Writer wrote a command (%d bytes)\n", written);
-#endif
+        /*        LOG(LOG_DEBUG, "Writer wrote a command (%d bytes)\n", written); */
     }
 
 out:
     if (buf)
         command_buffer_free(buf);
     SOCKET_CloseClientSocket(&csocket);
-#ifdef DEBUG_SOCKET
     LOG(LOG_DEBUG, "Writer thread stopped\n");
-#endif
-
     return 0;
 }
 
@@ -442,9 +400,7 @@ out:
  */
 void socket_thread_start(void)
 {
-#ifdef DEBUG_SOCKET
-    LOG(LOG_DEBUG,"START THREADS\n");
-#endif
+    LOG(-1,"START THREADS\n");
 
     if (input_buffer_cond == NULL)
     {
@@ -470,9 +426,7 @@ void socket_thread_start(void)
  * Closes the socket first, if it hasn't already been done. */
 void socket_thread_stop(void)
 {
-#ifdef DEBUG_SOCKET
-    LOG(LOG_DEBUG,"STOP THREADS\n");
-#endif
+    LOG(-1,"STOP THREADS\n");
 
     SOCKET_CloseClientSocket(&csocket);
 
@@ -500,10 +454,7 @@ int handle_socket_shutdown()
         while (output_queue_start)
             command_buffer_free(command_buffer_dequeue(&output_queue_start, &output_queue_end));
 
-#ifdef DEBUG_SOCKET
         LOG(LOG_DEBUG, "Connection lost\n");
-#endif
-
         return 1;
     }
     return 0;
@@ -549,11 +500,12 @@ uint8 SOCKET_CloseClientSocket(struct ClientSocket *csock)
         return(1);
     }
 
-#ifdef DEBUG_SOCKET
-    LOG(LOG_DEBUG, "CloseClientSocket()\n");
-#endif
+    LOG(-1, "CloseClientSocket()\n");
+
     SOCKET_CloseSocket(csock->fd);
-    ClearClientSocket(csock);
+
+    csock->fd = SOCKET_NO;
+
     abort_thread = 1;
 
     /* Poke anyone waiting at a cond */
@@ -565,6 +517,7 @@ uint8 SOCKET_CloseClientSocket(struct ClientSocket *csock)
     return(1);
 }
 
+
 uint8 SOCKET_InitSocket(void)
 {
 #ifdef WIN32
@@ -572,10 +525,10 @@ uint8 SOCKET_InitSocket(void)
     WORD    wVersionRequested = MAKEWORD( 2, 2 );
     int     error;
 
-    ClearClientSocket(&csocket);
+    csocket.fd = SOCKET_NO;
+
     SocketStatusErrorNr = 0;
     error = WSAStartup(wVersionRequested, &w);
-
     if (error)
     {
         wVersionRequested = MAKEWORD( 2, 0 );
@@ -597,11 +550,6 @@ uint8 SOCKET_InitSocket(void)
     return(1);
 }
 
-static void ClearClientSocket(struct ClientSocket *csock)
-{
-    memset(csock, 0, sizeof(struct ClientSocket));
-    csock->fd = SOCKET_NO;
-}
 
 uint8 SOCKET_DeinitSocket(void)
 {
@@ -628,17 +576,12 @@ uint8 SOCKET_OpenClientSocket(struct ClientSocket *csock, char *host, int port)
         LOG(LOG_ERROR, "ERROR: setsockopt(TCP_NODELAY) failed\n");
     }
 
-    csock->host = host;
-    csock->port = port;
-    csock->ping = SDL_GetTicks();
-
     return 1;
 }
 
 #ifdef __WIN_32
 uint8 SOCKET_OpenSocket(SOCKET *socket_temp, char *host, int port)
 {
-    struct sockaddr_in   insock;
     int             error;
     long            temp;
     struct hostent *hostbn;
@@ -647,10 +590,7 @@ uint8 SOCKET_OpenSocket(SOCKET *socket_temp, char *host, int port)
     uint32          start_timer;
     struct linger   linger_opt;
 
-#ifdef DEBUG_SOCKET
     LOG(LOG_DEBUG, "OpenSocket: %s\n", host);
-#endif
-
     /* The way to make the sockets work on XP Home - The 'unix' style socket
      * seems to fail inder xp home.
      */
@@ -899,9 +839,7 @@ if (*socket_temp == SOCKET_NO)
     {
         if (setsockopt(*socket_temp, SOL_SOCKET, SO_RCVBUF, (char *) &newbufsize, sizeof(&newbufsize)))
         {
-#ifdef DEBUG_SOCKET
             LOG(LOG_DEBUG, "socket: setsockopt unable to set output buf size to %d\n", newbufsize);
-#endif
             setsockopt(*socket_temp, SOL_SOCKET, SO_RCVBUF, (char *) &oldbufsize, sizeof(&oldbufsize));
         }
     }
@@ -910,21 +848,113 @@ if (*socket_temp == SOCKET_NO)
 
 #endif
 
-/* Returns a pointer to the primary IP of <host> (or NULL if <host> is
- * unrecognised). gethostbyname() and inet_ntoa() are deprecated but this should
- * work on all platforms. */
-char *get_ip_from_hostname(char *host)
-{
-    struct hostent     *hostbn = gethostbyname(host);
-    struct sockaddr_in  in;
+/*
+ *  Metaserver related functions
+ */
 
-    if (!hostbn)
+/* we used our core connect routine to connect to metaserver, this is the special
+   read one.*/
+
+#ifdef __WIN_32
+int read_metaserver_data(SOCKET fd)
+{
+    int     stat, temp, ret;
+    char   *ptr, *buf;
+    void   *tmp_free;
+
+    MALLOC(ptr, MAX_METASTRING_BUFFER);
+    MALLOC(buf, MAX_METASTRING_BUFFER);
+    temp = 0;
+
+    for (; ;)
     {
-        return NULL;
+        /* win32 style input */
+
+        stat = recv(fd, ptr, MAX_METASTRING_BUFFER, 0);
+        if ((stat == -1) && WSAGetLastError() != WSAEWOULDBLOCK)
+        {
+            LOG(LOG_ERROR, "Error reading metaserver data!: %d\n", WSAGetLastError());
+            break;
+        }
+        else if (stat > 0)
+        {
+            if (temp + stat >= MAX_METASTRING_BUFFER)
+            {
+                memcpy(buf + temp, ptr, temp + stat - MAX_METASTRING_BUFFER - 1);
+                temp += stat;
+                break;
+            }
+            memcpy(buf + temp, ptr, stat);
+            temp += stat;
+        }
+        else if (stat == 0)
+        {
+            /* connect closed by meta */
+            break;
+        }
+    }
+    buf[temp] = 0;
+    LOG(0, "GET: %s\n", buf);
+    ret = parse_metaserver_data(buf);
+    tmp_free = &buf;
+    FreeMemory(tmp_free);
+    tmp_free = &ptr;
+    FreeMemory(tmp_free);
+
+    return ret;
+}
+
+#elif __LINUX
+
+int read_metaserver_data(SOCKET fd)
+{
+    int     stat, temp, ret;
+    char   *ptr, *buf;
+    void   *tmp_free;
+
+    MALLOC(ptr, MAX_METASTRING_BUFFER);
+    MALLOC(buf, MAX_METASTRING_BUFFER);
+    temp = 0;
+    for (; ;)
+    {
+        do
+        {
+            /* FIXME: should select on fd instead of this never-ending (in case of error) busy-loop */
+            stat = recv(fd, ptr, MAX_METASTRING_BUFFER, 0);
+        }
+        while (stat == -1);
+
+        if (stat == -1)
+        {
+            LOG(LOG_ERROR, "Error reading metaserver data!\n");
+            break;
+        }
+        else if (stat > 0)
+        {
+            if (temp + stat >= MAX_METASTRING_BUFFER)
+            {
+                memcpy(buf + temp, ptr, temp + stat - MAX_METASTRING_BUFFER - 1);
+                temp += stat;
+                break;
+            }
+            memcpy(buf + temp, ptr, stat);
+            temp += stat;
+        }
+        else if (stat == 0)
+        {
+            /* connect closed by meta */
+            break;
+        }
     }
 
-    in.sin_family = AF_INET;
-    memcpy(&in.sin_addr, hostbn->h_addr, hostbn->h_length);
+    buf[temp] = 0;
+    ret = parse_metaserver_data(buf);
+    tmp_free = &buf;
+    FreeMemory(tmp_free);
+    tmp_free = &ptr;
+    FreeMemory(tmp_free);
 
-    return inet_ntoa(in.sin_addr);
+    return ret;
 }
+
+#endif

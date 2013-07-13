@@ -101,36 +101,20 @@ int                 gen                             = 0;
 /******************************************************************
  Option Menue
 ******************************************************************/
-player_groupnames_t opt_tab[] =
-{
-    { "", "Communication" },
-    { "", "Combat" },
-    { "", "Inventory" },
-    { "", "Map" },
-    { "", "Sound" },
-    { "", "Client" },
-    { "", "Fullscreen flags" },
-    { "", "Windowed flags" },
-    { "", "Debug" },
-    { NULL, NULL }
-};
+char               *opt_tab[]                       =
+    {
+        "Communication", "Combat", "Inventory", "Map", "Sound", "Client", "Fullscreen flags", "Windowed flags", "Debug", 0
+    };
 
 _option             opt[]                           =
     {
         /* Chat & Messages */
-        {"Channel format:", "THIS OPTION IS OBSOLETE IN 0.10.6.","PRESERVED ONLY FOR BACKWARDS COMPATIBILITY DURING DEVELOPMENT.","", "Prefixed#Indented",SEL_RANGE,0,1,1,0, &options.channelformat,VAL_INT},
-        {"Enable smileys:", "Whether to show smileys graphically.","","", "",SEL_CHECKBOX,0,1,1,1, &options.textwin_use_smileys,VAL_BOOL},
-#ifdef DAI_DEVELOPMENT
-        {"Logging:", "Whether the textwindows are logged.","~None~ turns off logging, ~Only chat~, ~Only messages~, or ~Both, separately~ logs either or both textwindows to separate files, and ~Both, together~ logs both textwindows to a single file.","", "None#Only chat#Only messages#Both, separately#Both, together",SEL_RANGE,0,4,1,3, &options.textwin_use_logging,VAL_INT},
-#else
-        {"Logging:", "Whether the textwindows are logged.","~None~ turns off logging, ~Only chat~, ~Only messages~, or ~Both, separately~ logs either or both textwindows to separate files, and ~Both, together~ logs both textwindows to a single file.","", "None#Only chat#Only messages#Both, separately#Both, together",SEL_RANGE,0,4,1,1, &options.textwin_use_logging,VAL_INT},
-#endif
-        {"Alpha value:", "Transparency value of textwindows.","","", "Transparent#Light#Medium#Dark#Opaque",SEL_RANGE,0,256,64,128, &options.textwin_alpha,VAL_INT},
-        {"Message font:", "Font to use in the message textwindow.","The font will be resized when you return to the game. Text currently in","the textwindow will not be reformatted.", "Tiny#Small#Medium#Large#Huge",SEL_RANGE,0,4,1,1, &options.textwin_msg_font,VAL_INT},
-        {"Chat font:", "Font to use in the chat textwindow.","The font will be resized when you return to the game. Text currently in","the textwindow will not be reformatted.", "Tiny#Small#Medium#Large#Huge",SEL_RANGE,0,4,1,1, &options.textwin_chat_font,VAL_INT},
-        {"Indentation:", "The number of spaces by which to indent multiple line chat.","","", "",SEL_RANGE,0,8,1,2, &options.textwin_indentation,VAL_INT},
-        {"Scrollback:", "The number of lines of scrollback in ~either~ window.","The higher the value, the more memory is used.","NOTE: You need to restart the client for this option to take effect.", "",SEL_RANGE,100,100000,100,100, &options.textwin_scrollback,VAL_INT},
-        {"Enable chatfilter:", "Whether to filter incoming messages for 'bad' words.","See '/cfilter ?' for more details on this.","", "",SEL_CHECKBOX,0,1,1,0, &options.textwin_use_chatfilter,VAL_BOOL},
+        {"Channel format:", "How the channels are shown.","~Prefixed~ prefixes each line with [channel:player], and","~Indented~ only prefixes the first line, indenting subsequent ones.", "Prefixed#Indented",SEL_RANGE,0,1,1,0, &options.channelformat,VAL_INT},
+        {"Enable smileys:", "Whether to show smileys graphically.","","", "",SEL_CHECKBOX,0,1,1,1, &options.smileys,VAL_BOOL},
+        {"Log messages:", "Whether/which messages are logged.","~None~ turns off logging, ~Only chat~ logs only the chat textwindow, and","~All~ logs everything in both textwindows.", "None#Only chat#All",SEL_RANGE,0,2,1,1, &options.msglog,VAL_INT},
+        {"Textwindows use alpha:", "Whether the textwindows are transparent.","","WARNING: Don't check this if you have a VERY slow computer!", "",SEL_CHECKBOX,0,1,1,1, &options.use_TextwinAlpha,VAL_INT},
+        {"Textwindows alpha value:", "Transparency value of textwindows.","A higher value means a darker textwindow.","Only has meaning if 'Textwindows use alpha' is checked.", "",SEL_RANGE,0,255,5,110, &options.textwin_alpha,VAL_INT},
+        {"Enable chatfilter:", "Whether to filter incoming messages for 'bad' words.","See '/cfilter ?' for more details on this.","", "",SEL_CHECKBOX,0,1,1,0, &options.chatfilter,VAL_BOOL},
         {"NPC GUI keyword panel:", "Whether/where to show a list of clickable keywords.", "", "", "Off#Left#Right", SEL_RANGE, 0, 2, 1, 1, &options.keyword_panel, VAL_INT},
         {"#", "","","", "",0,0,0,0,0, NULL,0},
         /* End of Page */
@@ -141,7 +125,6 @@ _option             opt[]                           =
         {"Kill-Stats:", "Whether to keep a count all kills based on mob name.","","", "",SEL_CHECKBOX,0,1,1,1, &options.kerbholz,VAL_BOOL},
         {"Stat-O-Meter:", "Whether to show the Stat-O-Meter.","It is updated every X seconds, as given here.","Set to ~0~ to disable.", "",SEL_RANGE,0,15,1,5, &options.statsupdate,VAL_INT},
         {"Extended exp display:", "How the exp display is shown.","The format key is: ~4nl~ = For next level; ~tnl~ = Till next level;","~LExp~ = Level exp; ~TExp~ = Total exp;", "Level/LExp#LExp\\%#LExp/LExp 4nl#TExp/TExp 4nl#(LExp\\%) LExp tnl",SEL_RANGE,0,4,1,4, &options.iExpDisplay,VAL_INT},
-        {"Visual attacks:", "Whether to show certain attack types visually.","","", "Never#Every hit#Direct hits only",SEL_RANGE,0,2,1,1, &options.combat_smackvatts,VAL_INT},
         {"#", "","","", "",0,0,0,0,0, NULL,0},
         /* End of Page */
 
@@ -156,14 +139,10 @@ _option             opt[]                           =
 
         /* Map */
         {"Player names:", "Whether/when to show player's names above their heads.","","", "Never#Always#Only others#Only yours",SEL_RANGE,0,3,1,2, &options.player_names,VAL_INT},
-        {"Playfield start X:", "THIS OPTION IS OBSOLETE IN 0.10.6.","PRESERVED ONLY FOR BACKWARDS COMPATIBILITY DURING DEVELOPMENT.","", "",SEL_RANGE,-20,1000,10,-10, &options.mapstart_x,VAL_INT},
-        {"Playfield start Y:", "THIS OPTION IS OBSOLETE IN 0.10.6.","PRESERVED ONLY FOR BACKWARDS COMPATIBILITY DURING DEVELOPMENT.","", "",SEL_RANGE,0,700,10,60, &options.mapstart_y,VAL_INT},
-        {"Playfield zoom:", "THIS OPTION IS OBSOLETE IN 0.10.6.","PRESERVED ONLY FOR BACKWARDS COMPATIBILITY DURING DEVELOPMENT.","", "",SEL_RANGE,50,200,5,100, &options.zoom,VAL_INT},
-        {"Smooth zoom:", "THIS OPTION IS OBSOLETE IN 0.10.6.","PRESERVED ONLY FOR BACKWARDS COMPATIBILITY DURING DEVELOPMENT.","", "",SEL_CHECKBOX,0,1,1,0, &options.smooth,VAL_BOOL},
-        {"Width scaling:", "The percentage scale of the map width.","","", "",SEL_RANGE,5,1000,5,100, &options.map_scalex,VAL_INT},
-        {"Height scaling:", "The percentage scale of the map height.","","", "",SEL_RANGE,5,1000,5,100, &options.map_scaley,VAL_INT},
-        {"Map anti-aliasing:", "Whether to anti-alias the map.",".","", "",SEL_CHECKBOX,0,1,1,0, &options.map_aa,VAL_BOOL},
-        {"Fog of war:", "Whether to show the 'fog of war'.","This is a way to represent the players' short-term memory. Nearby","map features that you have seen before but now can't see are shown.", "",SEL_CHECKBOX,0,1,1,1, &options.map_fogofwar,VAL_BOOL},
+        {"Playfield start X:", "The X-position of the playfield.","","", "",SEL_RANGE,-20,1000,10,-10, &options.mapstart_x,VAL_INT},
+        {"Playfield start Y:", "The Y-position of the playfield.","","", "",SEL_RANGE,0,700,10,60, &options.mapstart_y,VAL_INT},
+        {"Playfield zoom:", "The zoom percentage of the playfield.","EXPERIMENTAL!!!!!","", "",SEL_RANGE,50,200,5,100, &options.zoom,VAL_INT},
+        {"Smooth zoom:", "Whether to use smooth zoom on the playfield.","EXPERIMENTAL!!!!!","WARNING: VERY VERY VERY CPU intensive!", "",SEL_CHECKBOX,0,1,1,0, &options.smooth,VAL_BOOL},
         {"#", "","","", "",0,0,0,0,0, NULL,0},
         /* End of Page */
 
@@ -171,16 +150,11 @@ _option             opt[]                           =
         {"Sound volume:", "The sound volume as a percentage of maximum volume.","Set to ~0~ to disable sound effects.","", "",SEL_RANGE,0,100,5,100, &options.sound_volume,VAL_INT},
         {"Music volume:", "The music volume as a percentage of maximum volume.","Set to ~0~ to disable background music.","", "",SEL_RANGE,0,100,5,80, &options.music_volume,VAL_INT},
         {"Audible heartbeat:", "Whether to hear your heart pumping during combat.","If hitpoints are lower than the given percentage of maximum","you will hear your heartbeat. Set to ~0~ to disable.", "",SEL_RANGE,0,100,5,50, &options.heartbeat,VAL_INT},
-        {"Action timer sound:", "Whether or not to hear a sound when the skill/spell action timer expires.", "", "", "", SEL_CHECKBOX, 0, 0, 1, 1, &options.use_timer_sound, VAL_BOOL},
         {"#", "","","", "",0,0,0,0,0, NULL,0},
         /* End of Page */
 
         /* Client */
-#ifdef DAI_DEVELOPMENT
-        {"Fullscreen:", "Whether to use fullscreen/window mode.","EXPERIMENTAL!!!!!","WARNING: Toggling this checkbox may crash your client!", "",SEL_CHECKBOX,0,1,1,0, &options.fullscreen,VAL_BOOL},
-#else
         {"Fullscreen:", "Whether to use fullscreen/window mode.","EXPERIMENTAL!!!!!","WARNING: Toggling this checkbox may crash your client!", "",SEL_CHECKBOX,0,1,1,1, &options.fullscreen,VAL_BOOL},
-#endif
         {"Resolution:", "The resolution of the screen/window.","If you change to lower resolutions your GUI-windows may be hidden.","WARNING: Some resolutions are NOT for fullscreen!", "800x600#960x600#1024x768#1100x700#1280x720#1280x800#1280x960#1280x1024#1440x900#1400x1050#1600x1200#1680x1050#1920x1080#1920x1200#2048x1536#2560x1600",SEL_RANGE,0,15,1,0, &options.resolution,VAL_INT},
         {"Automatic bpp:", "Whether to use your system's default bits per pixel.","NOTE: You need to restart the client for this option to take effect.","", "",SEL_CHECKBOX,0,1,1,1, &options.auto_bpp_flag,VAL_BOOL},
         {"Colordeep:", "The bpp for fullscreen mode.","This is overruled if 'automatic bpp' is checked.","NOTE: You need to restart the client for this option to take effect.", "8 bpp#16 bpp#32 bpp",SEL_RANGE,0,2,1,2, &options.video_bpp,VAL_INT},
@@ -189,7 +163,7 @@ _option             opt[]                           =
         {"Show tooltips:", "Whether to show tooltips when hovering the mouse pointer over items.","","", "",SEL_CHECKBOX,0,1,1,1, &options.show_tooltips,VAL_BOOL},
         {"Key-info in dialog menus:", "UNUSED.","","", "",SEL_CHECKBOX,0,1,1,1, &options.show_d_key_infos,VAL_BOOL},
         {"SpeedUp:", "Whether/how much to speed up the client.","The (potential) cost is some graphical glitches. A higher value means","a faster the client but more glitches. Set to ~0~ to disable.", "",SEL_RANGE,0,400,10,0, &options.speedup,VAL_INT},
-        {"Menu repeat speed:", "Whether/how fast to repeat a held down key.","This only affects keypresses in menus/the console,","not in gameplay (that rate is fixed).", "Off#Slow#Medium#Fast",SEL_RANGE,0,3,1,1, &options.menu_repeat,VAL_INT},
+        {"Menu repeat speed:", "Whether/how fast to repeat a held down key.","This only affects keypresses in menus/the console,","not in gameplay (that rate is fixed).", "Off#Slow#Medium#Fast",SEL_RANGE,0,3,1,2, &options.menu_repeat,VAL_INT},
 #ifdef WIDGET_SNAP
         {"Widget snap width:", "The distance at which widgets will snap to each other","Set to zero to disable it.","EXPERIMENTAL!", "",SEL_RANGE,0,32,1,0, &options.widget_snap,VAL_INT},
 #endif
@@ -224,11 +198,7 @@ _option             opt[]                           =
         {"#", "","","", "",0,0,0,0,0, NULL,0},
 
         /* Debug */
-#ifdef DAI_DEVELOPMENT
-        {"Show framerate:", "Whether to show the fps and other details under the map name.","","", "",SEL_CHECKBOX,0,1,1,1, &options.show_frame,VAL_BOOL},
-#else
         {"Show framerate:", "Whether to show the fps and other details under the map name.","","", "",SEL_CHECKBOX,0,1,1,0, &options.show_frame,VAL_BOOL},
-#endif
         {"Force redraw:", "Whether to force the system to redraw EVERY frame.","","", "",SEL_CHECKBOX,0,1,1,0, &options.force_redraw,VAL_BOOL},
         {"Use update rect:", "Whether to use update rect.","","", "",SEL_CHECKBOX,0,1,1,0, &options.use_rect,VAL_BOOL},
 		{"Anim Update Time:", "Check anims every x ms.","","", "",SEL_RANGE,50,500,25,50, &options.anim_check_time,VAL_INT},
@@ -238,6 +208,27 @@ _option             opt[]                           =
         {NULL, NULL,NULL,NULL, NULL,0,0,0,0,0, NULL,0},
         /* End of Options */
     };
+
+/******************************************************************
+ Skill Menue
+******************************************************************/
+static char        *skill_tab[]                     =
+    {
+        "Agility", "Mental", "Magic", "Person", "Physique", "Wisdom", "Misc", 0
+    };
+#define SKILL_TAB_SIZE (sizeof(skill_tab)/sizeof(char*))
+
+/******************************************************************
+ Spell Menue
+******************************************************************/
+char        *spell_tab[]                     =
+    {
+        "Life", "Death", "Elemental", "Energy",
+        "Spirit", "Protection", "Light", "Nether",
+        "Nature", "Shadow", "Chaos", "Earth",
+        "Conjuration", "Abjuration", "Transmutation", "Arcane",0
+    };
+#define SPELL_TAB_SIZE (sizeof(spell_tab)/sizeof(char*))
 
 static char        *spell_class[SPELL_LIST_CLASS]   =
     {
@@ -250,20 +241,20 @@ static void ShowInfo(_font *font, SDL_Rect *box, char *text);
  * defined by <box>). A newline forces a line break. */
 static void ShowInfo(_font *font, SDL_Rect *box, char *text)
 {
-    sint16 n,
-           y,
-           c;
+    int  n,
+         y,
+         c;
 
     for (n = 0, y = box->y;
          *(text + n) != '\0' &&
          y + font->line_height < box->y + box->h;
          n += c, y += font->line_height)
     {
-        sint16 i,
-               j;
-        char   buf[MEDIUM_BUF];
+        int  i,
+             j;
+        char buf[MEDIUM_BUF];
 
-        if (strout_width_offset(font, text + n, &c, box->w))
+        if (string_width_offset(font, text + n, &c, box->w))
         {
             while (c >= 1 &&
                    !isspace(*(text + n + c - 1)))
@@ -289,7 +280,7 @@ static void ShowInfo(_font *font, SDL_Rect *box, char *text)
         }
 
         buf[j] = '\0';
-        ENGRAVE(ScreenSurface, font, buf, box->x, y, NDI_COLR_SILVER);
+        ENGRAVE(ScreenSurface, font, buf, box->x, y, COLOR_HGOLD, NULL, NULL);
     }
 }
 
@@ -338,16 +329,31 @@ char * get_value(void *value, int type)
 /******************************************************************
  add the close button and handle mouse events on it.
 ******************************************************************/
-void add_close_button(int x, int y, int menu)
+void add_close_button(int x, int y, int menu, uint8 newstyle)
 {
     int mx, my, mb;
     mb = SDL_GetMouseState(&mx, &my) & SDL_BUTTON(SDL_BUTTON_LEFT);
 
-    if (mx > x + 460 && mx <x + 474 && my> y + 26 && my < y + 40)
+    if (newstyle)
     {
-        sprite_blt(skin_sprites[SKIN_SPRITE_CLOSEBUTTON], x+463, y+28, NULL,NULL);
-        if (mb && mb_clicked)
-            check_menu_keys(menu, SDLK_ESCAPE);
+        if (mx > x + 460 && mx <x + 474 && my> y + 26 && my < y + 40)
+        {
+            sprite_blt(Bitmaps[BITMAP_CLOSEBUTTON], x+463, y+28, NULL,NULL);
+            if (mb && mb_clicked)
+                check_menu_keys(menu, SDLK_ESCAPE);
+        }
+    }
+    else
+    {
+        string_blt(ScreenSurface, &font_small, "X", x + 463, y + 28, COLOR_BLACK, NULL, NULL);
+        if (mx > x + 459 && mx <x + 469 && my> y + 27 && my < y + 39)
+        {
+            string_blt(ScreenSurface, &font_small, "X", x + 462, y + 27, COLOR_HGOLD, NULL, NULL);
+            if (mb && mb_clicked)
+                check_menu_keys(menu, SDLK_ESCAPE);
+        }
+        else
+            string_blt(ScreenSurface, &font_small, "X", x + 462, y + 27, COLOR_WHITE, NULL, NULL);
     }
 }
 
@@ -368,30 +374,33 @@ int add_button(int x, int y, int id, int gfxNr, char *text, char *text_h)
     else
         text_sel = text;
 
-    sprite_blt(skin_sprites[gfxNr], x, y, NULL, NULL);
+    sprite_blt(Bitmaps[gfxNr], x, y, NULL, NULL);
 
     // Label centering in button
-    yoff =  (skin_sprites[gfxNr]->bitmap->h - (font_small.c['W'].h+1)) / 2 + 2;
-    xoff =  (skin_sprites[gfxNr]->bitmap->w - (strout_width(&font_small, text)+1)) / 2 + 1;
+    yoff =  (Bitmaps[gfxNr]->bitmap->h - (font_small.c['W'].h+1)) / 2 + 2;
+    xoff =  (Bitmaps[gfxNr]->bitmap->w - (string_width(&font_small, text)+1)) / 2 + 1;
 
     if (global_buttons.down!=-1 && global_buttons.mx_down > x && global_buttons.my_down > y &&
-            global_buttons.mx_down < x + skin_sprites[gfxNr]->bitmap->w &&
-            global_buttons.my_down < y + skin_sprites[gfxNr]->bitmap->h)
+            global_buttons.mx_down < x + Bitmaps[gfxNr]->bitmap->w &&
+            global_buttons.my_down < y + Bitmaps[gfxNr]->bitmap->h)
     {
-        sprite_blt(skin_sprites[gfxNr + 1], x, y++, NULL, NULL);
-        EMBOSS(ScreenSurface, &font_small, text_sel, x + (xoff-1), y + (yoff-1), NDI_COLR_SILVER);
+        sprite_blt(Bitmaps[gfxNr + 1], x, y++, NULL, NULL);
+        string_blt(ScreenSurface, &font_small, text, x + xoff, y + yoff, COLOR_BLACK, NULL, NULL);
+        string_blt(ScreenSurface, &font_small, text_sel, x + (xoff-1), y + (yoff-1), COLOR_HGOLD, NULL, NULL);
+
     }
     else if ( global_buttons.valid != -1 && global_buttons.click != -1 &&
               global_buttons.mx_up > x && global_buttons.my_up > y &&
-              global_buttons.mx_up < x + skin_sprites[gfxNr]->bitmap->w &&
-              global_buttons.my_up < y + skin_sprites[gfxNr]->bitmap->h)
+              global_buttons.mx_up < x + Bitmaps[gfxNr]->bitmap->w &&
+              global_buttons.my_up < y + Bitmaps[gfxNr]->bitmap->h)
     {
         global_buttons.valid = -1;
         ret = 1;
     }
     else
     {
-        ENGRAVE(ScreenSurface, &font_small, text_sel, x + xoff, y + yoff, NDI_COLR_WHITE);
+        string_blt(ScreenSurface, &font_small, text, x + xoff, y + yoff, COLOR_BLACK, NULL, NULL);
+        string_blt(ScreenSurface, &font_small, text_sel, x + (xoff-1), y + (yoff-1), COLOR_WHITE, NULL, NULL);
     }
     return ret;
 }
@@ -408,7 +417,7 @@ static int add_gfx_button(int x, int y, int id, int gfxNr, int gfx_inner, char *
     char   *text_sel;
     int     ret     = 0;
     int     mx, my, mb;
-    int     color   = NDI_COLR_WHITE;
+    int     color   = COLOR_WHITE;
 
     mb = SDL_GetMouseState(&mx, &my) & SDL_BUTTON(SDL_BUTTON_LEFT);
     if (text_h)
@@ -416,25 +425,25 @@ static int add_gfx_button(int x, int y, int id, int gfxNr, int gfx_inner, char *
     else
         text_sel = text;
 
-    sprite_blt(skin_sprites[gfxNr], x, y, NULL, NULL);
-    sprite_blt(skin_sprites[gfx_inner], x + 5, y + 3, NULL, NULL);
-    if (mx > x && my > y && mx < x + skin_sprites[gfxNr]->bitmap->w && my < y + skin_sprites[gfxNr]->bitmap->h)
+    sprite_blt(Bitmaps[gfxNr], x, y, NULL, NULL);
+    sprite_blt(Bitmaps[gfx_inner], x + 5, y + 3, NULL, NULL);
+    if (mx > x && my > y && mx < x + Bitmaps[gfxNr]->bitmap->w && my < y + Bitmaps[gfxNr]->bitmap->h)
     {
         if (mb && mb_clicked && active_button < 0)
             active_button = id;
         if (active_button == id)
         {
-            sprite_blt(skin_sprites[gfxNr + 1], x, y, NULL, NULL);
-            sprite_blt(skin_sprites[gfx_inner], x + 6, y + 4, NULL, NULL);
+            sprite_blt(Bitmaps[gfxNr + 1], x, y, NULL, NULL);
+            sprite_blt(Bitmaps[gfx_inner], x + 6, y + 4, NULL, NULL);
             if (!mb)
                 ret = 1;
         }
-        color = NDI_COLR_SILVER;
+        color = COLOR_HGOLD;
     }
-    x += skin_sprites[gfxNr]->bitmap->w + 10;
-    y += skin_sprites[gfxNr]->bitmap->h / 2 - 5;
-    EMBOSS(ScreenSurface, &font_small, text_sel, x, y, color);
-
+    x += Bitmaps[gfxNr]->bitmap->w + 10;
+    y += Bitmaps[gfxNr]->bitmap->h / 2 - 5;
+    string_blt(ScreenSurface, &font_small, text, x + 1, y + 1, COLOR_BLACK, NULL, NULL);
+    string_blt(ScreenSurface, &font_small, text_sel, x, y, color, NULL, NULL);
     return ret;
 }
 */
@@ -448,6 +457,7 @@ static int add_gfx_button(int x, int y, int id, int gfxNr, int gfx_inner, char *
 static int add_gr_button(int x, int y, int id, int gfxNr, char *text, char *text_h)
 {
     char   *text_sel;
+    int     ret = 0;
     int     mx, my, mb;
 
     mb = SDL_GetMouseState(&mx, &my) & SDL_BUTTON(SDL_BUTTON_LEFT);
@@ -458,26 +468,20 @@ static int add_gr_button(int x, int y, int id, int gfxNr, char *text, char *text
         text_sel = text;
 
     if (id)
-        sprite_blt(skin_sprites[++gfxNr], x, y++, NULL, NULL);
+        sprite_blt(Bitmaps[++gfxNr], x, y++, NULL, NULL);
     else
-        sprite_blt(skin_sprites[gfxNr], x, y, NULL, NULL);
+        sprite_blt(Bitmaps[gfxNr], x, y, NULL, NULL);
 
-    if (mx > x && my > y && mx < x + skin_sprites[gfxNr]->bitmap->w && my < y + skin_sprites[gfxNr]->bitmap->h)
+    string_blt(ScreenSurface, &font_small, text, x + 11, y + 2, COLOR_BLACK, NULL, NULL);
+    if (mx > x && my > y && mx < x + Bitmaps[gfxNr]->bitmap->w && my < y + Bitmaps[gfxNr]->bitmap->h)
     {
-        EMBOSS(ScreenSurface, &font_small, text_sel, x + 11, y + 2, NDI_COLR_SILVER);
-
-        if (mb &&
-            mb_clicked)
-        {
-            return 1;
-        }
+        if (mb && mb_clicked)
+            ret = 1;
+        string_blt(ScreenSurface, &font_small, text_sel, x + 10, y + 1, COLOR_HGOLD, NULL, NULL);
     }
     else
-    {
-        ENGRAVE(ScreenSurface, &font_small, text_sel, x + 10, y + 1, NDI_COLR_WHITE);
-    }
-
-    return 0;
+        string_blt(ScreenSurface, &font_small, text_sel, x + 10, y + 1, COLOR_WHITE, NULL, NULL);
+    return ret;
 }
 
 /******************************************************************
@@ -489,7 +493,7 @@ int add_rangebox(int x, int y, int id, int text_w, int text_x, char *text, int c
     static int  active  = -1;
     SDL_Rect    box;
     int         mx, my, mb;
-    int         width   = skin_sprites[SKIN_SPRITE_DIALOG_RANGE_OFF]->bitmap->w;
+    int         width   = Bitmaps[BITMAP_DIALOG_RANGE_OFF]->bitmap->w;
 
     mb = SDL_GetMouseState(&mx, &my) & SDL_BUTTON(SDL_BUTTON_LEFT);
     if (text_x)
@@ -503,13 +507,14 @@ int add_rangebox(int x, int y, int id, int text_w, int text_x, char *text, int c
         x += text_w;
     }
     /* draw the range gadget */
-    sprite_blt(skin_sprites[SKIN_SPRITE_DIALOG_RANGE_OFF], x, y, NULL, NULL);
+    sprite_blt(Bitmaps[BITMAP_DIALOG_RANGE_OFF], x, y, NULL, NULL);
     box.x = text_x - 2;
     box.y = y + 1;
     box.w = text_w + 2;
     box.h = 16;
     SDL_FillRect(ScreenSurface, &box, 0);
-    EMBOSS(ScreenSurface, &font_small, text, text_x, y + 2, color);
+    string_blt(ScreenSurface, &font_small, text, text_x + 1, y + 3, COLOR_BLACK, NULL, NULL);
+    string_blt(ScreenSurface, &font_small, text, text_x, y + 2, color, NULL, NULL);
 
     /* check for action */
     if (mx > x && my > y && my < y + 18)
@@ -520,7 +525,7 @@ int add_rangebox(int x, int y, int id, int text_w, int text_x, char *text, int c
                 active = id;
             if (active == id)
             {
-                sprite_blt(skin_sprites[SKIN_SPRITE_DIALOG_RANGE_L], x, y, NULL, NULL);
+                sprite_blt(Bitmaps[BITMAP_DIALOG_RANGE_L], x, y, NULL, NULL);
                 if (!mb)
                 {
                     active = -1;
@@ -534,7 +539,7 @@ int add_rangebox(int x, int y, int id, int text_w, int text_x, char *text, int c
                 active = id + 1; /* a rangebox has 2 buttons */
             if (active == id + 1)
             {
-                sprite_blt(skin_sprites[SKIN_SPRITE_DIALOG_RANGE_R], x + width / 2, y, NULL, NULL);
+                sprite_blt(Bitmaps[BITMAP_DIALOG_RANGE_R], x + width / 2, y, NULL, NULL);
                 if (!mb)
                 {
                     active = -1;
@@ -595,29 +600,30 @@ inline void optwin_draw_options(int x, int y)
     while (opt[++i].name && opt[i].name[0] != '#')
     {
         max++;
-        strout_blt(ScreenSurface, &font_small, STROUT_LEFT, opt[i].name, x + 1, y + 3, NDI_COLR_BLACK, NULL);
+        string_blt(ScreenSurface, &font_small, opt[i].name, x + 1, y + 3, COLOR_BLACK, NULL, NULL);
         switch (opt[i].sel_type)
         {
             case SEL_CHECKBOX:
-                tmp = NDI_COLR_WHITE;
+                tmp = COLOR_WHITE;
                 if (option_list_set.entry_nr == max - 1)
                 {
-                    tmp = NDI_COLR_SILVER;
+                    tmp = COLOR_HGOLD;
                     if (mxy_opt == -1)
                         mxy_opt = i; /* remember this tab for later use */
                 }
                 if (mx > x && mx <x + 280 && my> y && my < y + 20)
                 {
-                    tmp = NDI_COLR_LIME;
+                    tmp = COLOR_GREEN;
                     mxy_opt = i; /* remember this tab for later use */
                 }
 
-                strout_blt(ScreenSurface, &font_small, STROUT_LEFT, opt[i].name, x, y + 2, tmp, NULL);
+                string_blt(ScreenSurface, &font_small, opt[i].name, x, y + 2, tmp, NULL, NULL);
 
-                sprite_blt(skin_sprites[SKIN_SPRITE_DIALOG_CHECKER], x + LEN_NAME, y, NULL, NULL);
+                sprite_blt(Bitmaps[BITMAP_DIALOG_CHECKER], x + LEN_NAME, y, NULL, NULL);
                 if (*((uint8 *) opt[i].value) == 1)
                 {
-                    EMBOSS(ScreenSurface, &font_small, "X", x + LEN_NAME + 7, y + 1, NDI_COLR_WHITE);
+                    string_blt(ScreenSurface, &font_small, "X", x + LEN_NAME + 8, y + 2, COLOR_BLACK, NULL, NULL);
+                    string_blt(ScreenSurface, &font_small, "X", x + LEN_NAME + 7, y + 1, COLOR_WHITE, NULL, NULL);
                 }
                 if ((pos == option_list_set.entry_nr && option_list_set.key_change)
                         || (mb
@@ -644,34 +650,34 @@ inline void optwin_draw_options(int x, int y)
                 box.x = x + LEN_NAME, box.y = y + 1;
                 box.h = 16, box.w = LEN_VALUE;
 
-                tmp = NDI_COLR_WHITE;
+                tmp = COLOR_WHITE;
                 if (option_list_set.entry_nr == max - 1)
                 {
-                    tmp = NDI_COLR_SILVER;
+                    tmp = COLOR_HGOLD;
                     if (mxy_opt == -1)
                         mxy_opt = i; /* remember this tab for later use */
                 }
                 if (mx > x && mx <x + 280 && my> y && my < y + 20)
                 {
-                    tmp = NDI_COLR_LIME;
+                    tmp = COLOR_GREEN;
                     mxy_opt = i; /* remember this tab for later use */
                 }
 
-                strout_blt(ScreenSurface, &font_small, STROUT_LEFT, opt[i].name, x, y + 2, tmp, NULL);
+                string_blt(ScreenSurface, &font_small, opt[i].name, x, y + 2, tmp, NULL, NULL);
                 /*
                           if (option_list_set.entry_nr == max-1 || (mx > x && mx < x+280 && my > y && my < y+20) ){
-                              strout_blt(ScreenSurface, &font_small, STROUT_LEFT, opt[i].name, x, y+2, NDI_COLR_SILVER, NULL);
+                              string_blt(ScreenSurface, &font_small, opt[i].name, x, y+2, COLOR_HGOLD, NULL, NULL);
                               mxy_opt = i;
                           }
                           else
-                              strout_blt(ScreenSurface, &font_small, STROUT_LEFT, opt[i].name, x, y+2, NDI_COLR_WHITE, NULL);
+                              string_blt(ScreenSurface, &font_small, opt[i].name, x, y+2, COLOR_WHITE, NULL, NULL);
                           */
 
                 SDL_FillRect(ScreenSurface, &box, 0);
                 if (*opt[i].val_text == 0)
                 {
-                    strout_blt(ScreenSurface, &font_small, STROUT_LEFT, get_value(opt[i].value, opt[i].value_type), box.x + 2,
-                              y + 2, NDI_COLR_WHITE, NULL);
+                    string_blt(ScreenSurface, &font_small, get_value(opt[i].value, opt[i].value_type), box.x + 2,
+                              y + 2, COLOR_WHITE, NULL, NULL);
                 }
                 else
                 {
@@ -688,10 +694,10 @@ inline void optwin_draw_options(int x, int y)
                         if ((text[q] = opt[i].val_text[p++]) == '#')
                             break;
                     text[q] = 0;
-                    strout_blt(ScreenSurface, &font_small, STROUT_LEFT, text, box.x + 2, y + 2, NDI_COLR_WHITE, NULL);
+                    string_blt(ScreenSurface, &font_small, text, box.x + 2, y + 2, COLOR_WHITE, NULL, NULL);
 #undef MAX_LEN
                 }
-                sprite_blt(skin_sprites[SKIN_SPRITE_DIALOG_RANGE_OFF], x + LEN_NAME + LEN_VALUE, y, NULL, NULL);
+                sprite_blt(Bitmaps[BITMAP_DIALOG_RANGE_OFF], x + LEN_NAME + LEN_VALUE, y, NULL, NULL);
 
 
                 /* keyboard event */
@@ -709,7 +715,7 @@ inline void optwin_draw_options(int x, int y)
                         active_button = id + 1; /* 2 buttons per row */
                     if (active_button == id + 1)
                     {
-                        sprite_blt(skin_sprites[SKIN_SPRITE_DIALOG_RANGE_L], x + LEN_NAME + LEN_VALUE, y, NULL, NULL);
+                        sprite_blt(Bitmaps[BITMAP_DIALOG_RANGE_L], x + LEN_NAME + LEN_VALUE, y, NULL, NULL);
                         if (!mb)
                             add_value(opt[i].value, opt[i].value_type, -opt[i].deltaRange, opt[i].minRange,
                                       opt[i].maxRange);
@@ -724,7 +730,7 @@ inline void optwin_draw_options(int x, int y)
                         active_button = id;
                     if (active_button == id)
                     {
-                        sprite_blt(skin_sprites[SKIN_SPRITE_DIALOG_RANGE_R], x + LEN_NAME + LEN_VALUE + 14, y, NULL, NULL);
+                        sprite_blt(Bitmaps[BITMAP_DIALOG_RANGE_R], x + LEN_NAME + LEN_VALUE + 14, y, NULL, NULL);
                         if (!mb)
                             add_value(opt[i].value, opt[i].value_type, opt[i].deltaRange, opt[i].minRange,
                                       opt[i].maxRange);
@@ -735,7 +741,7 @@ inline void optwin_draw_options(int x, int y)
             break;
 
             case SEL_BUTTON:
-                sprite_blt(skin_sprites[SKIN_SPRITE_DIALOG_BUTTON_UP], x, y, NULL, NULL);
+                sprite_blt(Bitmaps[BITMAP_DIALOG_BUTTON_UP], x, y, NULL, NULL);
                 break;
         }
         y += 20;
@@ -751,9 +757,12 @@ inline void optwin_draw_options(int x, int y)
     {
 //        if (*opt[mxy_opt].info2 == 0)
 //            y2 += 5;
-        ENGRAVE(ScreenSurface, &font_small, opt[mxy_opt].info1, x + 11, y2 + 1, NDI_COLR_WHITE);
-        ENGRAVE(ScreenSurface, &font_small, opt[mxy_opt].info2, x + 11, y2 + 13, NDI_COLR_WHITE);
-        ENGRAVE(ScreenSurface, &font_small, opt[mxy_opt].info3, x + 11, y2 + 25, NDI_COLR_WHITE);
+        string_blt(ScreenSurface, &font_small, opt[mxy_opt].info1, x + 11, y2 + 1, COLOR_BLACK, NULL, NULL);
+        string_blt(ScreenSurface, &font_small, opt[mxy_opt].info1, x + 10, y2, COLOR_WHITE, NULL, NULL);
+        string_blt(ScreenSurface, &font_small, opt[mxy_opt].info2, x + 11, y2 + 13, COLOR_BLACK, NULL, NULL);
+        string_blt(ScreenSurface, &font_small, opt[mxy_opt].info2, x + 10, y2 + 12, COLOR_WHITE, NULL, NULL);
+        string_blt(ScreenSurface, &font_small, opt[mxy_opt].info3, x + 11, y2 + 25, COLOR_BLACK, NULL, NULL);
+        string_blt(ScreenSurface, &font_small, opt[mxy_opt].info3, x + 10, y2 + 24, COLOR_WHITE, NULL, NULL);
     }
 #undef LEN_NAME
 }
@@ -761,48 +770,39 @@ inline void optwin_draw_options(int x, int y)
 /******************************************************************
  draws all tabs on the left side of window.
 ******************************************************************/
-static void draw_tabs(player_groupnames_t tabs[], int *act_tab, char *head_text, int x, int y)
+static void draw_tabs(char *tabs[], int *act_tab, char *head_text, int x, int y)
 {
     int         i       = -1;
     int         mx, my, mb;
     static int  active  = 0;
 
     mb = SDL_GetMouseState(&mx, &my) & SDL_BUTTON(SDL_BUTTON_LEFT);
-    sprite_blt(skin_sprites[SKIN_SPRITE_DIALOG_TAB_START], x, y - 10, NULL, NULL);
-    sprite_blt(skin_sprites[SKIN_SPRITE_DIALOG_TAB], x, y, NULL, NULL);
-    ENGRAVE(ScreenSurface, &font_small, head_text, x + 15, y + 4, NDI_COLR_WHITE);
+    sprite_blt(Bitmaps[BITMAP_DIALOG_TAB_START], x, y - 10, NULL, NULL);
+    sprite_blt(Bitmaps[BITMAP_DIALOG_TAB], x, y, NULL, NULL);
+    string_blt(ScreenSurface, &font_small, head_text, x + 15, y + 4, COLOR_BLACK, NULL, NULL);
+    string_blt(ScreenSurface, &font_small, head_text, x + 14, y + 3, COLOR_WHITE, NULL, NULL);
     y += 17;
-    sprite_blt(skin_sprites[SKIN_SPRITE_DIALOG_TAB], x, y, NULL, NULL);
+    sprite_blt(Bitmaps[BITMAP_DIALOG_TAB], x, y, NULL, NULL);
     y += 17;
-    while (tabs[++i].name)
+    while (tabs[++i])
     {
-        sprite_blt(skin_sprites[SKIN_SPRITE_DIALOG_TAB], x, y, NULL, NULL);
+        sprite_blt(Bitmaps[BITMAP_DIALOG_TAB], x, y, NULL, NULL);
         if (i == *act_tab)
-            sprite_blt(skin_sprites[SKIN_SPRITE_DIALOG_TAB_SEL], x, y, NULL, NULL);
-
+            sprite_blt(Bitmaps[BITMAP_DIALOG_TAB_SEL], x, y, NULL, NULL);
+        string_blt(ScreenSurface, &font_small, tabs[i], x + 25, y + 4, COLOR_BLACK, NULL, NULL);
         if (mx > x && mx <x + 100 && my> y && my < y + 17)
         {
-            EMBOSS(ScreenSurface, &font_small, (char *)tabs[i].name, x + 24, y + 3, NDI_COLR_SILVER);
-
-            if (mb &&
-                mb_clicked)
-            {
+            string_blt(ScreenSurface, &font_small, tabs[i], x + 24, y + 3, COLOR_HGOLD, NULL, NULL);
+            if (mb && mb_clicked)
                 active = 1;
-            }
-
             if (active)
-            {
                 *act_tab = i;
-            }
         }
         else
-        {
-            ENGRAVE(ScreenSurface, &font_small, (char *)tabs[i].name, x + 24, y + 3, NDI_COLR_WHITE);
-        }
-
+            string_blt(ScreenSurface, &font_small, tabs[i], x + 24, y + 3, COLOR_WHITE, NULL, NULL);
         y += 17;
     }
-    sprite_blt(skin_sprites[SKIN_SPRITE_DIALOG_TAB_STOP], x, y, NULL, NULL);
+    sprite_blt(Bitmaps[BITMAP_DIALOG_TAB_STOP], x, y, NULL, NULL);
     if (!mb)
         active = 0;
 }
@@ -821,26 +821,29 @@ void show_skilllist(void)
 
     mb = SDL_GetMouseState(&mx, &my);
     /* background */
-    x = Screensize.x / 2 - skin_sprites[SKIN_SPRITE_DIALOG_BG]->bitmap->w / 2;
-    y = Screensize.y / 2 - skin_sprites[SKIN_SPRITE_DIALOG_BG]->bitmap->h / 2;
-    sprite_blt(skin_sprites[SKIN_SPRITE_DIALOG_BG], x, y, NULL, NULL);
-    box.w = 500;
-    box.h = font_heading.line_height;
-    strout_blt(ScreenSurface, &font_heading, STROUT_CENTER, "Skills", x + 50, y + 25, NDI_COLR_RED, &box);
-    add_close_button(x, y, MENU_SKILL);
+    x = Screensize.x / 2 - Bitmaps[BITMAP_DIALOG_BG]->bitmap->w / 2;
+    y = Screensize.y / 2 - Bitmaps[BITMAP_DIALOG_BG]->bitmap->h / 2;
+    sprite_blt(Bitmaps[BITMAP_DIALOG_BG], x, y, NULL, NULL);
+    sprite_blt(Bitmaps[BITMAP_DIALOG_TITLE_SKILL], x + 250 - Bitmaps[BITMAP_DIALOG_TITLE_SKILL]->bitmap->w / 2, y + 20,
+               NULL, NULL);
+    add_close_button(x, y, MENU_SKILL, skindef.newclosebutton);
 
     /* tabs */
-    draw_tabs(player_skill_group, &skill_list_set.group_nr, "Skill Group", x + 8, y + 70);
+    draw_tabs(skill_tab, &skill_list_set.group_nr, "Skill Group", x + 8, y + 70);
 
     sprintf(buf,
             "~SHIFT~ + ~%c%c~ to select group                  ~%c%c~ to select skill                    ~RETURN~ for use",
-            ECC_ARROWUP, ECC_ARROWDOWN, ECC_ARROWUP, ECC_ARROWDOWN);
-    strout_blt(ScreenSurface, &font_small, STROUT_LEFT, buf, x + 135, y + 410, NDI_COLR_WHITE, NULL);
+            ASCII_UP, ASCII_DOWN, ASCII_UP, ASCII_DOWN);
+    string_blt(ScreenSurface, &font_small, buf, x + 135, y + 410, COLOR_WHITE, NULL, NULL);
 
     /* Headline */
-    ENGRAVE(ScreenSurface, &font_small, "Name", x + TXT_START_NAME, y + TXT_Y_START - 2, NDI_COLR_WHITE);
-    ENGRAVE(ScreenSurface, &font_small, "Level", x + TXT_START_LEVEL, y + TXT_Y_START - 2, NDI_COLR_WHITE);
-    ENGRAVE(ScreenSurface, &font_small, "Experience", x + TXT_START_EXP, y + TXT_Y_START - 2, NDI_COLR_WHITE);
+    string_blt(ScreenSurface, &font_small, "Name", x + TXT_START_NAME + 1, y + TXT_Y_START - 1, COLOR_BLACK, NULL, NULL);
+    string_blt(ScreenSurface, &font_small, "Name", x + TXT_START_NAME, y + TXT_Y_START - 2, COLOR_WHITE, NULL, NULL);
+    string_blt(ScreenSurface, &font_small, "Level", x + TXT_START_LEVEL + 1, y + TXT_Y_START - 1, COLOR_BLACK, NULL, NULL);
+    string_blt(ScreenSurface, &font_small, "Level", x + TXT_START_LEVEL, y + TXT_Y_START - 2, COLOR_WHITE, NULL, NULL);
+    string_blt(ScreenSurface, &font_small, "Experience", x + TXT_START_EXP + 1, y + TXT_Y_START - 1, COLOR_BLACK, NULL,
+              NULL);
+    string_blt(ScreenSurface, &font_small, "Experience", x + TXT_START_EXP, y + TXT_Y_START - 2, COLOR_WHITE, NULL, NULL);
 
     box.x = x + 133;
     box.y = y + TXT_Y_START + 1;
@@ -898,42 +901,23 @@ void show_skilllist(void)
         if (i != skill_list_set.entry_nr)
         {
             if (i & 1)
-            {
-                uint32 colr = SDL_MapRGB(ScreenSurface->format,
-                                         (skin_prefs.dialog_rows0 >> 16) & 0xff,
-                                         (skin_prefs.dialog_rows0 >> 8) & 0xff,
-                                         skin_prefs.dialog_rows0 & 0xff);
-                SDL_FillRect(ScreenSurface, &box, colr);
-            }
+                SDL_FillRect(ScreenSurface, &box, skindef.dialog_rows0);
             else
-            {
-                uint32 colr = SDL_MapRGB(ScreenSurface->format,
-                                         (skin_prefs.dialog_rows1 >> 16) & 0xff,
-                                         (skin_prefs.dialog_rows1 >> 8) & 0xff,
-                                         skin_prefs.dialog_rows1 & 0xff);
-                SDL_FillRect(ScreenSurface, &box, colr);
-            }
+                SDL_FillRect(ScreenSurface, &box, skindef.dialog_rows1);
         }
         else
-        {
-            uint32 colr = SDL_MapRGB(ScreenSurface->format,
-                                     (skin_prefs.dialog_rowsS >> 16) & 0xff,
-                                     (skin_prefs.dialog_rowsS >> 8) & 0xff,
-                                     skin_prefs.dialog_rowsS & 0xff);
-            SDL_FillRect(ScreenSurface, &box, colr);
-        }
+            SDL_FillRect(ScreenSurface, &box, skindef.dialog_rowsS);
 
         if (skill_list[skill_list_set.group_nr].entry[i].flag == LIST_ENTRY_KNOWN)
         {
-            ENGRAVE(ScreenSurface, &font_small, skill_list[skill_list_set.group_nr].entry[i].name, x + TXT_START_NAME,
-                    y + TXT_Y_START, NDI_COLR_WHITE);
-
+            string_blt(ScreenSurface, &font_small, skill_list[skill_list_set.group_nr].entry[i].name, x + TXT_START_NAME,
+                      y + TXT_Y_START, COLOR_WHITE, NULL, NULL);
             if (skill_list[skill_list_set.group_nr].entry[i].exp == -1)
                 strcpy(buf, "**");
             else
                 sprintf(buf, "%d", skill_list[skill_list_set.group_nr].entry[i].exp_level);
 
-            strout_blt(ScreenSurface, &font_small, STROUT_LEFT, buf, x + TXT_START_LEVEL, y + TXT_Y_START, NDI_COLR_WHITE, NULL);
+            string_blt(ScreenSurface, &font_small, buf, x + TXT_START_LEVEL, y + TXT_Y_START, COLOR_WHITE, NULL, NULL);
 
             if (skill_list[skill_list_set.group_nr].entry[i].exp == -1)
                 strcpy(buf, "**");
@@ -941,7 +925,7 @@ void show_skilllist(void)
                 strcpy(buf, "**");
             else
                 sprintf(buf, "%d", skill_list[skill_list_set.group_nr].entry[i].exp);
-            strout_blt(ScreenSurface, &font_small, STROUT_LEFT, buf, x + TXT_START_EXP, y + TXT_Y_START, NDI_COLR_WHITE, NULL);
+            string_blt(ScreenSurface, &font_small, buf, x + TXT_START_EXP, y + TXT_Y_START, COLOR_WHITE, NULL, NULL);
         }
     }
     x += 160; y += 120;
@@ -962,9 +946,12 @@ void show_skilllist(void)
         /* print textblock */
         for (i = 0; i <= 3; i++)
         {
-            ENGRAVE(ScreenSurface, &font_small,
-                    &skill_list[skill_list_set.group_nr].entry[skill_list_set.entry_nr].desc[i][0], x - 3, y,
-                    NDI_COLR_WHITE);
+            string_blt(ScreenSurface, &font_small,
+                      &skill_list[skill_list_set.group_nr].entry[skill_list_set.entry_nr].desc[i][0], x - 2, y + 1,
+                      COLOR_BLACK, NULL, NULL);
+            string_blt(ScreenSurface, &font_small,
+                      &skill_list[skill_list_set.group_nr].entry[skill_list_set.entry_nr].desc[i][0], x - 3, y,
+                      COLOR_WHITE, NULL, NULL);
             y += 13;
         }
     }
@@ -986,35 +973,34 @@ void show_spelllist(void)
 
     mb = SDL_GetMouseState(&mx, &my) & SDL_BUTTON(SDL_BUTTON_LEFT);
     /* background */
-    x = Screensize.x / 2 - skin_sprites[SKIN_SPRITE_DIALOG_BG]->bitmap->w / 2;
-    y = Screensize.y / 2 - skin_sprites[SKIN_SPRITE_DIALOG_BG]->bitmap->h / 2;
-    sprite_blt(skin_sprites[SKIN_SPRITE_DIALOG_BG], x, y, NULL, NULL);
-    box.w = 500;
-    box.h = font_heading.line_height;
-    strout_blt(ScreenSurface, &font_heading, STROUT_CENTER, "Spells", x + 50, y + 25, NDI_COLR_RED, &box);
-    sprite_blt(skin_sprites[SKIN_SPRITE_PENTAGRAM], x + 25, y + 430, NULL, NULL);
-    add_close_button(x, y, MENU_SPELL);
+    x = Screensize.x / 2 - Bitmaps[BITMAP_DIALOG_BG]->bitmap->w / 2;
+    y = Screensize.y / 2 - Bitmaps[BITMAP_DIALOG_BG]->bitmap->h / 2;
+    sprite_blt(Bitmaps[BITMAP_DIALOG_BG], x, y, NULL, NULL);
+    sprite_blt(Bitmaps[BITMAP_DIALOG_TITLE_SPELL], x + 250 - Bitmaps[BITMAP_DIALOG_TITLE_SPELL]->bitmap->w / 2, y + 20,
+               NULL, NULL);
+    sprite_blt(Bitmaps[BITMAP_PENTAGRAM], x + 25, y + 430, NULL, NULL);
+    add_close_button(x, y, MENU_SPELL, skindef.newclosebutton);
 
     /* tabs */
-    draw_tabs(player_spell_group, &spell_list_set.group_nr, "Spell Path", x + 8, y + 70);
+    draw_tabs(spell_tab, &spell_list_set.group_nr, "Spell Path", x + 8, y + 70);
 
     sprintf(buf,
             "~SHIFT~ + ~%c%c~ to select path                   ~%c%c~ to select spell                    ~RETURN~ for use",
-            ECC_ARROWUP, ECC_ARROWDOWN, ECC_ARROWUP, ECC_ARROWDOWN);
-    strout_blt(ScreenSurface, &font_small, STROUT_LEFT, buf, x + 135, y + 410, NDI_COLR_WHITE, NULL);
+            ASCII_UP, ASCII_DOWN, ASCII_UP, ASCII_DOWN);
+    string_blt(ScreenSurface, &font_small, buf, x + 135, y + 410, COLOR_WHITE, NULL, NULL);
 
     /* spellClass buttons */
     for (i = 0; i < SPELL_LIST_CLASS; i++)
     {
-        if (add_gr_button(x + 133 + i * 56, y + 75, (spell_list_set.class_nr == i), SKIN_SPRITE_DIALOG_BUTTON_UP,
+        if (add_gr_button(x + 133 + i * 56, y + 75, (spell_list_set.class_nr == i), BITMAP_DIALOG_BUTTON_UP,
                           spell_class[i], NULL))
             spell_list_set.class_nr = i;
     }
 
     sprintf(buf, "use ~F1-F8~ for spell to quickbar");
-    strout_blt(ScreenSurface, &font_small, STROUT_LEFT, buf, x + 340, y + 69, NDI_COLR_WHITE, NULL);
-    sprintf(buf, "use ~%c%c~ to select spell group", ECC_ARROWRIGHT, ECC_ARROWLEFT);
-    strout_blt(ScreenSurface, &font_small, STROUT_LEFT, buf, x + 340, y + 80, NDI_COLR_WHITE, NULL);
+    string_blt(ScreenSurface, &font_small, buf, x + 340, y + 69, COLOR_WHITE, NULL, NULL);
+    sprintf(buf, "use ~%c%c~ to select spell group", ASCII_RIGHT, ASCII_LEFT);
+    string_blt(ScreenSurface, &font_small, buf, x + 340, y + 80, COLOR_WHITE, NULL, NULL);
 
     box.x = x + 133;
     box.y = y + TXT_Y_START + 1;
@@ -1073,36 +1059,18 @@ void show_spelllist(void)
         if (i != spell_list_set.entry_nr)
         {
             if (i & 1)
-            {
-                uint32 colr = SDL_MapRGB(ScreenSurface->format,
-                                         (skin_prefs.dialog_rows0 >> 16) & 0xff,
-                                         (skin_prefs.dialog_rows0 >> 8) & 0xff,
-                                         skin_prefs.dialog_rows0 & 0xff);
-                SDL_FillRect(ScreenSurface, &box, colr);
-            }
+                SDL_FillRect(ScreenSurface, &box, skindef.dialog_rows0);
             else
-            {
-                uint32 colr = SDL_MapRGB(ScreenSurface->format,
-                                         (skin_prefs.dialog_rows1 >> 16) & 0xff,
-                                         (skin_prefs.dialog_rows1 >> 8) & 0xff,
-                                         skin_prefs.dialog_rows1 & 0xff);
-                SDL_FillRect(ScreenSurface, &box, colr);
-            }
+                SDL_FillRect(ScreenSurface, &box, skindef.dialog_rows1);
         }
         else
-        {
-            uint32 colr = SDL_MapRGB(ScreenSurface->format,
-                                     (skin_prefs.dialog_rowsS >> 16) & 0xff,
-                                     (skin_prefs.dialog_rowsS >> 8) & 0xff,
-                                     skin_prefs.dialog_rowsS & 0xff);
-            SDL_FillRect(ScreenSurface, &box, colr);
-        }
+            SDL_FillRect(ScreenSurface, &box, skindef.dialog_rowsS);
 
         if (spell_list[spell_list_set.group_nr].entry[spell_list_set.class_nr][i].flag == LIST_ENTRY_KNOWN)
         {
-            ENGRAVE(ScreenSurface, &font_small,
-                    spell_list[spell_list_set.group_nr].entry[spell_list_set.class_nr][i].name, x + TXT_START_NAME,
-                    y + TXT_Y_START, NDI_COLR_WHITE);
+            string_blt(ScreenSurface, &font_small,
+                      spell_list[spell_list_set.group_nr].entry[spell_list_set.class_nr][i].name, x + TXT_START_NAME,
+                      y + TXT_Y_START, COLOR_WHITE, NULL, NULL);
         }
     }
 
@@ -1127,9 +1095,14 @@ void show_spelllist(void)
         /* print textblock */
         for (i = 0; i < 4; i++)
         {
-            ENGRAVE(ScreenSurface, &font_small,
-                    &spell_list[spell_list_set.group_nr].entry[spell_list_set.class_nr][spell_list_set.entry_nr].desc[i][0],
-                    x - 3, y, NDI_COLR_WHITE);
+            string_blt(ScreenSurface, &font_small,
+                      &spell_list[spell_list_set.group_nr].entry[spell_list_set.class_nr][spell_list_set.entry_nr].desc[i][0],
+                      x
+                      - 2, y + 1, COLOR_BLACK, NULL, NULL);
+            string_blt(ScreenSurface, &font_small,
+                      &spell_list[spell_list_set.group_nr].entry[spell_list_set.class_nr][spell_list_set.entry_nr].desc[i][0],
+                      x
+                      - 3, y, COLOR_WHITE, NULL, NULL);
             y += 13;
         }
     }
@@ -1142,33 +1115,31 @@ void show_spelllist(void)
 ******************************************************************/
 void show_optwin()
 {
-    SDL_Rect box;
-    char     buf[128];
-    int      x, y;
-    int      mx, my, mb;
-    int      numButton   = 0;
+    char    buf[128];
+    int     x, y;
+    int     mx, my, mb;
+    int     numButton   = 0;
 
     mb = SDL_GetMouseState(&mx, &my) & SDL_BUTTON(SDL_BUTTON_LEFT);
-    x = Screensize.x / 2 - skin_sprites[SKIN_SPRITE_DIALOG_BG]->bitmap->w / 2;
-    y = Screensize.y / 2 - skin_sprites[SKIN_SPRITE_DIALOG_BG]->bitmap->h / 2;
-    sprite_blt(skin_sprites[SKIN_SPRITE_DIALOG_BG], x, y, NULL, NULL);
-    box.w = 500;
-    box.h = font_heading.line_height;
-    strout_blt(ScreenSurface, &font_heading, STROUT_CENTER, "Options", x + 50, y + 25, NDI_COLR_RED, &box);
-    add_close_button(x, y, MENU_OPTION);
+    x = Screensize.x / 2 - Bitmaps[BITMAP_DIALOG_BG]->bitmap->w / 2;
+    y = Screensize.y / 2 - Bitmaps[BITMAP_DIALOG_BG]->bitmap->h / 2;
+    sprite_blt(Bitmaps[BITMAP_DIALOG_BG], x, y, NULL, NULL);
+    sprite_blt(Bitmaps[BITMAP_DIALOG_TITLE_OPTIONS], x + 250 - Bitmaps[BITMAP_DIALOG_TITLE_OPTIONS]->bitmap->w / 2,
+               y + 20, NULL, NULL);
+    add_close_button(x, y, MENU_OPTION, skindef.newclosebutton);
 
     draw_tabs(opt_tab, &option_list_set.group_nr, "Option Group", x + 8, y + 70);
     optwin_draw_options(x + 130, y + 90);
 
     sprintf(buf, "~SHIFT~ + ~%c%c~ to select group            ~%c%c~ to select option          ~%c%c~ to change option",
-            ECC_ARROWUP, ECC_ARROWDOWN, ECC_ARROWUP, ECC_ARROWDOWN, ECC_ARROWRIGHT, ECC_ARROWLEFT);
-    strout_blt(ScreenSurface, &font_small, STROUT_LEFT, buf, x + 135, y + 410, NDI_COLR_WHITE, NULL);
+            ASCII_UP, ASCII_DOWN, ASCII_UP, ASCII_DOWN, ASCII_RIGHT, ASCII_LEFT);
+    string_blt(ScreenSurface, &font_small, buf, x + 135, y + 410, COLOR_WHITE, NULL, NULL);
     /* mark active entry */
-    EMBOSS(ScreenSurface, &font_small, ">", x + TXT_START_NAME - 15,
-           y + 10 + TXT_Y_START + option_list_set.entry_nr * 20, NDI_COLR_SILVER);
+    string_blt(ScreenSurface, &font_small, ">", x + TXT_START_NAME - 15,
+              y + 10 + TXT_Y_START + option_list_set.entry_nr * 20, COLOR_HGOLD, NULL, NULL);
 
     /* save button */
-    if (add_button(x + 25, y + 454, numButton++, SKIN_SPRITE_DIALOG_BUTTON_UP, "Done", "~D~one"))
+    if (add_button(x + 25, y + 454, numButton++, BITMAP_DIALOG_BUTTON_UP, "Done", "~D~one"))
         check_menu_keys(MENU_OPTION, SDLK_d);
 
     if (!mb)
@@ -1188,64 +1159,57 @@ void show_keybind()
 
     mb = SDL_GetMouseState(&mx, &my);
     /* background */
-    x = Screensize.x / 2 - skin_sprites[SKIN_SPRITE_DIALOG_BG]->bitmap->w / 2;
-    y = Screensize.y / 2 - skin_sprites[SKIN_SPRITE_DIALOG_BG]->bitmap->h / 2;
-    sprite_blt(skin_sprites[SKIN_SPRITE_DIALOG_BG], x, y, NULL, NULL);
-    box.w = 500;
-    box.h = font_heading.line_height;
-    strout_blt(ScreenSurface, &font_heading, STROUT_CENTER, "Key bindings", x + 50, y + 25, NDI_COLR_RED, &box);
-    add_close_button(x, y, MENU_KEYBIND);
+    x = Screensize.x / 2 - Bitmaps[BITMAP_DIALOG_BG]->bitmap->w / 2;
+    y = Screensize.y / 2 - Bitmaps[BITMAP_DIALOG_BG]->bitmap->h / 2;
+    sprite_blt(Bitmaps[BITMAP_DIALOG_BG], x, y, NULL, NULL);
+    sprite_blt(Bitmaps[BITMAP_DIALOG_TITLE_KEYBIND], x + 250 - Bitmaps[BITMAP_DIALOG_TITLE_KEYBIND]->bitmap->w / 2,
+               y + 20, NULL, NULL);
+    add_close_button(x, y, MENU_KEYBIND, skindef.newclosebutton);
 
     sprintf(buf, "~SHIFT~ + ~%c%c~ to select group         ~%c%c~ to select macro          ~RETURN~ to change/create",
-            ECC_ARROWUP, ECC_ARROWDOWN, ECC_ARROWUP, ECC_ARROWDOWN);
-    strout_blt(ScreenSurface, &font_small, STROUT_LEFT, buf, x + 125, y + 410, NDI_COLR_WHITE, NULL);
+            ASCII_UP, ASCII_DOWN, ASCII_UP, ASCII_DOWN);
+    string_blt(ScreenSurface, &font_small, buf, x + 125, y + 410, COLOR_WHITE, NULL, NULL);
 
 
     /* draw group tabs */
     i = 0;
     x2 = x + 8; y2 = y + 70;
-    sprite_blt(skin_sprites[SKIN_SPRITE_DIALOG_TAB_START], x2, y2 - 10, NULL, NULL);
-    sprite_blt(skin_sprites[SKIN_SPRITE_DIALOG_TAB], x2, y2, NULL, NULL);
-    ENGRAVE(ScreenSurface, &font_small, "Group", x2 + 14, y2 + 3, NDI_COLR_WHITE);
+    sprite_blt(Bitmaps[BITMAP_DIALOG_TAB_START], x2, y2 - 10, NULL, NULL);
+    sprite_blt(Bitmaps[BITMAP_DIALOG_TAB], x2, y2, NULL, NULL);
+    string_blt(ScreenSurface, &font_small, "Group", x2 + 15, y2 + 4, COLOR_BLACK, NULL, NULL);
+    string_blt(ScreenSurface, &font_small, "Group", x2 + 14, y2 + 3, COLOR_WHITE, NULL, NULL);
     y2 += 17;
-    sprite_blt(skin_sprites[SKIN_SPRITE_DIALOG_TAB], x2, y2, NULL, NULL);
+    sprite_blt(Bitmaps[BITMAP_DIALOG_TAB], x2, y2, NULL, NULL);
     y2 += 17;
     while (i < BINDKEY_LIST_MAX && bindkey_list[i].name[0])
     {
-        sprite_blt(skin_sprites[SKIN_SPRITE_DIALOG_TAB], x2, y2, NULL, NULL);
+        sprite_blt(Bitmaps[BITMAP_DIALOG_TAB], x2, y2, NULL, NULL);
         if (i == bindkey_list_set.group_nr)
-            sprite_blt(skin_sprites[SKIN_SPRITE_DIALOG_TAB_SEL], x2, y2, NULL, NULL);
-
-        if (mx > x2 &&
-            mx < x2 + 100 &&
-            my > y2 &&
-            my < y2 + 17)
+            sprite_blt(Bitmaps[BITMAP_DIALOG_TAB_SEL], x2, y2, NULL, NULL);
+        string_blt(ScreenSurface, &font_small, bindkey_list[i].name, x2 + 25, y2 + 4, COLOR_BLACK, NULL, NULL);
+        if (mx > x2 && mx <x2 + 100 && my> y2 && my < y2 + 17)
         {
-            EMBOSS(ScreenSurface, &font_small, bindkey_list[i].name, x2 + 24, y2 + 3, NDI_COLR_SILVER);
-
-            if (mb &&
-                bindkey_list_set.group_nr != i)
-            {
+            string_blt(ScreenSurface, &font_small, bindkey_list[i].name, x2 + 24, y2 + 3, COLOR_HGOLD, NULL, NULL);
+            if (mb && bindkey_list_set.group_nr != i)
                 bindkey_list_set.group_nr = i;
-            }
         }
         else
-        {
-            ENGRAVE(ScreenSurface, &font_small, bindkey_list[i].name, x2 + 24, y2 + 3, NDI_COLR_WHITE);
-        }
-
+            string_blt(ScreenSurface, &font_small, bindkey_list[i].name, x2 + 24, y2 + 3, COLOR_WHITE, NULL, NULL);
         y2 += 17;
         i++;
     }
-    sprite_blt(skin_sprites[SKIN_SPRITE_DIALOG_TAB_STOP], x2, y2, NULL, NULL);
+    sprite_blt(Bitmaps[BITMAP_DIALOG_TAB_STOP], x2, y2, NULL, NULL);
 
     /* Headline */
-    ENGRAVE(ScreenSurface, &font_small, "Macro", x + X_COL1, y + TXT_Y_START - 2, NDI_COLR_WHITE);
-    ENGRAVE(ScreenSurface, &font_small, "Key", x + X_COL2, y + TXT_Y_START - 2, NDI_COLR_WHITE);
-    ENGRAVE(ScreenSurface, &font_small, "~R~epeat", x + X_COL3, y + TXT_Y_START - 2, NDI_COLR_WHITE);
+    string_blt(ScreenSurface, &font_small, "Macro", x + X_COL1 + 1, y + TXT_Y_START - 1, COLOR_BLACK, NULL, NULL);
+    string_blt(ScreenSurface, &font_small, "Macro", x + X_COL1, y + TXT_Y_START - 2, COLOR_WHITE, NULL, NULL);
+    string_blt(ScreenSurface, &font_small, "Key", x + X_COL2 + 1, y + TXT_Y_START - 1, COLOR_BLACK, NULL, NULL);
+    string_blt(ScreenSurface, &font_small, "Key", x + X_COL2, y + TXT_Y_START - 2, COLOR_WHITE, NULL, NULL);
+    string_blt(ScreenSurface, &font_small, "Repeat", x + X_COL3 + 1, y + TXT_Y_START - 1, COLOR_BLACK, NULL, NULL);
+    string_blt(ScreenSurface, &font_small, "~R~epeat", x + X_COL3, y + TXT_Y_START - 2, COLOR_WHITE, NULL, NULL);
 
     /* save button */
-    if (add_button(x + 25, y + 454, numButton++, SKIN_SPRITE_DIALOG_BUTTON_UP, "Done", "~D~one"))
+    if (add_button(x + 25, y + 454, numButton++, BITMAP_DIALOG_BUTTON_UP, "Done", "~D~one"))
         check_menu_keys(MENU_KEYBIND, SDLK_d);
 
 
@@ -1288,46 +1252,23 @@ void show_keybind()
         if (i != bindkey_list_set.entry_nr)
         {
             if (i & 1)
-            {
-                uint32 colr = SDL_MapRGB(ScreenSurface->format,
-                                         (skin_prefs.dialog_rows0 >> 16) & 0xff,
-                                         (skin_prefs.dialog_rows0 >> 8) & 0xff,
-                                         skin_prefs.dialog_rows0 & 0xff);
-                SDL_FillRect(ScreenSurface, &box, colr);
-            }
+                SDL_FillRect(ScreenSurface, &box, skindef.dialog_rows0);
             else
-            {
-                uint32 colr = SDL_MapRGB(ScreenSurface->format,
-                                         (skin_prefs.dialog_rows1 >> 16) & 0xff,
-                                         (skin_prefs.dialog_rows1 >> 8) & 0xff,
-                                         skin_prefs.dialog_rows1 & 0xff);
-                SDL_FillRect(ScreenSurface, &box, colr);
-            }
+                SDL_FillRect(ScreenSurface, &box, skindef.dialog_rows1);
         }
         else
-        {
-            uint32 colr = SDL_MapRGB(ScreenSurface->format,
-                                     (skin_prefs.dialog_rowsS >> 16) & 0xff,
-                                     (skin_prefs.dialog_rowsS >> 8) & 0xff,
-                                     skin_prefs.dialog_rowsS & 0xff);
-            SDL_FillRect(ScreenSurface, &box, colr);
-        }
+            SDL_FillRect(ScreenSurface, &box, skindef.dialog_rowsS);
 
         if (bindkey_list[bindkey_list_set.group_nr].entry[i].text[0])
         {
-            ENGRAVE(ScreenSurface, &font_small, bindkey_list[bindkey_list_set.group_nr].entry[i].text, x + X_COL1,
-                    y + TXT_Y_START, NDI_COLR_WHITE);
-            ENGRAVE(ScreenSurface, &font_small, bindkey_list[bindkey_list_set.group_nr].entry[i].keyname, x + X_COL2,
-                    y + TXT_Y_START, NDI_COLR_WHITE);
-
+            string_blt(ScreenSurface, &font_small, bindkey_list[bindkey_list_set.group_nr].entry[i].text, x + X_COL1,
+                      y + TXT_Y_START, COLOR_WHITE, NULL, NULL);
+            string_blt(ScreenSurface, &font_small, bindkey_list[bindkey_list_set.group_nr].entry[i].keyname, x + X_COL2,
+                      y + TXT_Y_START, COLOR_WHITE, NULL, NULL);
             if (bindkey_list[bindkey_list_set.group_nr].entry[i].repeatflag)
-            {
-                ENGRAVE(ScreenSurface, &font_small, "on", x + X_COL3, y + TXT_Y_START, NDI_COLR_WHITE);
-            }
+                string_blt(ScreenSurface, &font_small, "on", x + X_COL3, y + TXT_Y_START, COLOR_WHITE, NULL, NULL);
             else
-            {
-                ENGRAVE(ScreenSurface, &font_small, "off", x + X_COL3, y + TXT_Y_START, NDI_COLR_WHITE);
-            }
+                string_blt(ScreenSurface, &font_small, "off", x + X_COL3, y + TXT_Y_START, COLOR_WHITE, NULL, NULL);
         }
     }
 
@@ -1338,14 +1279,15 @@ void show_keybind()
     {
         box.w = X_COL2 - X_COL1;
         SDL_FillRect(ScreenSurface, &box, 0);
-        strout_input(&font_small, &box, 0);
+        string_blt(ScreenSurface, &font_small, show_input_string(InputString, &font_small, box.w), x + X_COL1, y2,
+                  COLOR_WHITE, NULL, NULL);
     }
     else if (keybind_status == KEYBIND_STATUS_EDITKEY)
     {
         box.x += X_COL2 - X_COL1;
         box.w = X_COL3 - X_COL2;
         SDL_FillRect(ScreenSurface, &box, 0);
-        EMBOSS(ScreenSurface, &font_small, "Press a Key!", x + X_COL2, y2, NDI_COLR_WHITE);
+        string_blt(ScreenSurface, &font_small, "Press a Key!", x + X_COL2, y2, COLOR_WHITE, NULL, NULL);
     }
 
     if (!mb)
@@ -1354,13 +1296,13 @@ void show_keybind()
 
 static void blit_face(int id, int x, int y)
 {
-    if (id == -1 || !face_list[id].sprite)
+    if (id == -1 || !FaceList[id].sprite)
         return;
 
-    if (face_list[id].sprite->status != SPRITE_STATUS_LOADED)
+    if (FaceList[id].sprite->status != SPRITE_STATUS_LOADED)
         return;
 
-    sprite_blt(face_list[id].sprite, x, y, NULL, NULL);
+    sprite_blt(FaceList[id].sprite, x, y, NULL, NULL);
 }
 
 #define CREATE_Y0 120
@@ -1376,7 +1318,6 @@ static void blit_face(int id, int x, int y)
  */
 void show_newplayer_server(void)
 {
-    SDL_Rect        box;
     int             id  = 0;
     int             x, y, i;
     char            buf[MEDIUM_BUF];
@@ -1386,54 +1327,65 @@ void show_newplayer_server(void)
 
     mb = SDL_GetMouseState(&mx, &my) & SDL_BUTTON(SDL_BUTTON_LEFT);
     x = 25;
-    /*x= Screensize.x/2-skin_sprites[SKIN_SPRITE_DIALOG_BG]->bitmap->w/2;*/
-    y = Screensize.y / 2 - skin_sprites[SKIN_SPRITE_DIALOG_BG]->bitmap->h / 2;
-    sprite_blt(skin_sprites[SKIN_SPRITE_DIALOG_BG], x, y, NULL, NULL);
-    box.w = 500;
-    box.h = font_heading.line_height;
-    strout_blt(ScreenSurface, &font_heading, STROUT_CENTER, "Character creation", x + 50, y + 25, NDI_COLR_RED, &box);
-    sprite_blt(skin_sprites[SKIN_SPRITE_PENTAGRAM], x + 25, y + 430, NULL, NULL);
-    add_close_button(x, y, MENU_CREATE);
+    /*x= Screensize.x/2-Bitmaps[BITMAP_DIALOG_BG]->bitmap->w/2;*/
+    y = Screensize.y / 2 - Bitmaps[BITMAP_DIALOG_BG]->bitmap->h / 2;
+    sprite_blt(Bitmaps[BITMAP_DIALOG_BG], x, y, NULL, NULL);
+    sprite_blt(Bitmaps[BITMAP_DIALOG_TITLE_CREATION], x + 250 - Bitmaps[BITMAP_DIALOG_TITLE_CREATION]->bitmap->w / 2,
+               y + 20, NULL, NULL);
+    sprite_blt(Bitmaps[BITMAP_PENTAGRAM], x + 25, y + 430, NULL, NULL);
+    add_close_button(x, y, MENU_CREATE, skindef.newclosebutton);
 
     /* print all attributes */
-    ENGRAVE(ScreenSurface, &font_small, "Welcome!", x + 130, y + 63, NDI_COLR_WHITE);
-    sprintf(buf, "Use ~%c%c~ and ~%c%c~ cursor keys to setup your stats.", ECC_ARROWUP, ECC_ARROWDOWN, ECC_ARROWRIGHT, ECC_ARROWLEFT);
-    strout_blt(ScreenSurface, &font_small, STROUT_LEFT, buf, x + 130, y + 75, NDI_COLR_WHITE, NULL);
-    ENGRAVE(ScreenSurface, &font_small, "Press ~N~ to name your new chararcter", x + 130, y + 100, NDI_COLR_WHITE);
+    string_blt(ScreenSurface, &font_small, "Welcome!", x + 131, y + 64, COLOR_BLACK, NULL, NULL);
+    string_blt(ScreenSurface, &font_small, "Welcome!", x + 130, y + 63, COLOR_WHITE, NULL, NULL);
+    sprintf(buf, "Use ~%c%c~ and ~%c%c~ cursor keys to setup your stats.", ASCII_UP, ASCII_DOWN, ASCII_RIGHT, ASCII_LEFT);
+    string_blt(ScreenSurface, &font_small, buf, x + 131, y + 76, COLOR_BLACK, NULL, NULL);
+    string_blt(ScreenSurface, &font_small, buf, x + 130, y + 75, COLOR_WHITE, NULL, NULL);
+
+    string_blt(ScreenSurface, &font_small, "Press ~N~ to name your new chararcter", x + 131, y + 101, COLOR_BLACK, NULL,
+              NULL);
+    string_blt(ScreenSurface, &font_small, "Press ~N~ to name your new chararcter", x + 130, y + 100, COLOR_WHITE,
+              NULL, NULL);
+
 
     /* create button */
     if(GameStatus == GAME_STATUS_ACCOUNT_CHAR_CREATE)
     {
-        if (add_button(x + 30, y + 397, id++, SKIN_SPRITE_DIALOG_BUTTON_UP, "Name", "~N~ame"))
+        if (add_button(x + 30, y + 397, id++, BITMAP_DIALOG_BUTTON_UP, "Name", "~N~ame"))
             check_menu_keys(MENU_CREATE, SDLK_n);
     }
 
     for (i = 0; i < ATT_SUM; i++)
     {
         sprintf(buf, "%s: %d", attribute[i].name, new_character.stats[i]);
-        ENGRAVE(ScreenSurface, &font_small, buf, x + 130, y + CREATE_Y0 + (i + 4) * 17, NDI_COLR_WHITE);
+        string_blt(ScreenSurface, &font_small, buf, x + 130, y + CREATE_Y0 + (i + 4) * 17, COLOR_WHITE, NULL, NULL);
     }
 
 #if 0
 
     if (dialog_new_char_warn == 1)
     {
-        ENGRAVE(ScreenSurface, &font_small, "  ** ASSIGN ALL **", x + 20, y + 367, NDI_COLR_SILVER);
-        ENGRAVE(ScreenSurface, &font_small, "** POINTS FIRST **", x + 20, y + 379, NDI_COLR_SILVER);
+        string_blt(ScreenSurface, &font_small, "  ** ASSIGN ALL **", x + 21, y + 368, COLOR_BLACK, NULL, NULL);
+        string_blt(ScreenSurface, &font_small, "  ** ASSIGN ALL **", x + 20, y + 367, COLOR_HGOLD, NULL, NULL);
+        string_blt(ScreenSurface, &font_small, "** POINTS FIRST **", x + 21, y + 380, COLOR_BLACK, NULL, NULL);
+        string_blt(ScreenSurface, &font_small, "** POINTS FIRST **", x + 20, y + 379, COLOR_HGOLD, NULL, NULL);
     }
     else if (dialog_new_char_warn == 2)
     {
-        ENGRAVE(ScreenSurface, &font_small, "  ** ASSIGN YOUR **", x + 20, y + 367, NDI_COLR_SILVER);
-        ENGRAVE(ScreenSurface, &font_small, "** W-SKILL FIRST **", x + 20, y + 379, NDI_COLR_SILVER);
+        string_blt(ScreenSurface, &font_small, "  ** ASSIGN YOUR **", x + 21, y + 368, COLOR_BLACK, NULL, NULL);
+        string_blt(ScreenSurface, &font_small, "  ** ASSIGN YOUR **", x + 20, y + 367, COLOR_HGOLD, NULL, NULL);
+        string_blt(ScreenSurface, &font_small, "** W-SKILL FIRST **", x + 21, y + 380, COLOR_BLACK, NULL, NULL);
+        string_blt(ScreenSurface, &font_small, "** W-SKILL FIRST **", x + 20, y + 379, COLOR_HGOLD, NULL, NULL);
     }
 
     /* draw attributes */
-    ENGRAVE(ScreenSurface, &font_small, "Points:", x + 130, y + CREATE_Y0 + 3 * 17, NDI_COLR_WHITE);
+    string_blt(ScreenSurface, &font_small, "Points:", x + 130, y + CREATE_Y0 + 3 * 17, COLOR_WHITE, NULL, NULL);
     if (new_character.stat_points)
         sprintf(buf, "%.2d  LEFT", new_character.stat_points);
     else
         sprintf(buf, "%.2d", new_character.stat_points);
-    ENGRAVE(ScreenSurface, &font_small, buf, x + 170, y + CREATE_Y0 + 3 * 17, NDI_COLR_SILVER);
+    string_blt(ScreenSurface, &font_small, buf, x + 171, y + CREATE_Y0 + 3 * 17 + 1, COLOR_BLACK, NULL, NULL);
+    string_blt(ScreenSurface, &font_small, buf, x + 170, y + CREATE_Y0 + 3 * 17, COLOR_HGOLD, NULL, NULL);
 
 //    if (create_list_set.entry_nr > 8)
 //        create_list_set.entry_nr = 8;
@@ -1444,20 +1396,15 @@ void show_newplayer_server(void)
         sprintf(buf, "%s:", attribute[i].name);
 
         if (create_list_set.entry_nr == i + 2)
-        {
-            ENGRAVE(ScreenSurface, &font_small, buf, x + 130, y + CREATE_Y0 + (i + 4) * 17, NDI_COLR_LIME);
-        }
+            string_blt(ScreenSurface, &font_small, buf, x + 130, y + CREATE_Y0 + (i + 4) * 17, COLOR_GREEN, NULL, NULL);
         else
-        {
-            ENGRAVE(ScreenSurface, &font_small, buf, x + 130, y + CREATE_Y0 + (i + 4) * 17, NDI_COLR_WHITE);
-        }
-
+            string_blt(ScreenSurface, &font_small, buf, x + 130, y + CREATE_Y0 + (i + 4) * 17, COLOR_WHITE, NULL, NULL);
         sprintf(buf, "%.2d", new_character.stats[i]);
 
         if (create_list_set.entry_nr == i + 2)
-            delta = add_rangebox(x + 170, y + CREATE_Y0 + (i + 4) * 17, id, 20, 0, buf, NDI_COLR_LIME);
+            delta = add_rangebox(x + 170, y + CREATE_Y0 + (i + 4) * 17, id, 20, 0, buf, COLOR_GREEN);
         else
-            delta = add_rangebox(x + 170, y + CREATE_Y0 + (i + 4) * 17, id, 20, 0, buf, NDI_COLR_WHITE);
+            delta = add_rangebox(x + 170, y + CREATE_Y0 + (i + 4) * 17, id, 20, 0, buf, COLOR_WHITE);
         /* keyboard event */
 
         if (create_list_set.key_change && create_list_set.entry_nr == i + 2)
@@ -1490,19 +1437,15 @@ void show_newplayer_server(void)
     }
 #endif
     if (create_list_set.entry_nr == 0)
-    {
-        ENGRAVE(ScreenSurface, &font_small, "Race:", x + 130, y + CREATE_Y0 + 0 * 17 + 2, NDI_COLR_LIME);
-    }
+        string_blt(ScreenSurface, &font_small, "Race:", x + 130, y + CREATE_Y0 + 0 * 17 + 2, COLOR_GREEN, NULL, NULL);
     else
-    {
-        ENGRAVE(ScreenSurface, &font_small, "Race:", x + 130, y + CREATE_Y0 + 0 * 17 + 2, NDI_COLR_WHITE);
-    }
+        string_blt(ScreenSurface, &font_small, "Race:", x + 130, y + CREATE_Y0 + 0 * 17 + 2, COLOR_WHITE, NULL, NULL);
 
     sprintf(buf,"%s %s", gender[new_character.gender_selected], new_character.name);
     if (create_list_set.entry_nr == 0)
-        delta = add_rangebox(x + 170, y + CREATE_Y0 + 0 * 17, ++id, 80, 0, buf, NDI_COLR_LIME);
+        delta = add_rangebox(x + 170, y + CREATE_Y0 + 0 * 17, ++id, 80, 0, buf, COLOR_GREEN);
     else
-        delta = add_rangebox(x + 170, y + CREATE_Y0 + 0 * 17, ++id, 80, 0, buf, NDI_COLR_WHITE);
+        delta = add_rangebox(x + 170, y + CREATE_Y0 + 0 * 17, ++id, 80, 0, buf, COLOR_WHITE);
     if (create_list_set.key_change && create_list_set.entry_nr == 0)
     {
         delta = create_list_set.key_change;
@@ -1599,18 +1542,14 @@ void show_newplayer_server(void)
     }
 
     if (create_list_set.entry_nr == 1)
-    {
-        ENGRAVE(ScreenSurface, &font_small, "W-Skill:", x + 130, y + CREATE_Y0 + 1 * 17 + 2, NDI_COLR_LIME);
-    }
+        string_blt(ScreenSurface, &font_small, "W-Skill:", x + 130, y + CREATE_Y0 + 1 * 17 + 2, COLOR_GREEN, NULL, NULL);
     else
-    {
-        ENGRAVE(ScreenSurface, &font_small, "W-Skill:", x + 130, y + CREATE_Y0 + 1 * 17 + 2, NDI_COLR_WHITE);
-    }
+        string_blt(ScreenSurface, &font_small, "W-Skill:", x + 130, y + CREATE_Y0 + 1 * 17 + 2, COLOR_WHITE, NULL, NULL);
 
     if (create_list_set.entry_nr == 1)
-        delta = add_rangebox(x + 170, y + CREATE_Y0 + 1 * 17, ++id, 80, 0, weapon_skill[new_character.skill_selected+1], NDI_COLR_LIME);
+        delta = add_rangebox(x + 170, y + CREATE_Y0 + 1 * 17, ++id, 80, 0, weapon_skill[new_character.skill_selected+1], COLOR_GREEN);
     else
-        delta = add_rangebox(x + 170, y + CREATE_Y0 + 1 * 17, ++id, 80, 0, weapon_skill[new_character.skill_selected+1], NDI_COLR_WHITE);
+        delta = add_rangebox(x + 170, y + CREATE_Y0 + 1 * 17, ++id, 80, 0, weapon_skill[new_character.skill_selected+1], COLOR_WHITE);
 
     if (create_list_set.key_change && create_list_set.entry_nr == 1)
     {
@@ -1632,65 +1571,90 @@ void show_newplayer_server(void)
     }
 
     /* draw player image */
-    EMBOSS(ScreenSurface, &font_small, cpl.name, x + 40, y + 85, NDI_COLR_WHITE);
-    blit_face(new_character.face[new_character.gender_selected], x + 35, y + 100);
+    string_blt(ScreenSurface, &font_small, cpl.name, x + 40, y + 85, COLOR_WHITE, NULL, NULL);
+
+    blit_face(new_character.face_id[new_character.gender_selected], x + 35, y + 100);
+
     sprintf(buf, "HP: ~%d~", new_character.bar[0] * 4 + new_character.bar_add[0]);
-    ENGRAVE(ScreenSurface, &font_small, buf, x + 35, y + 145, NDI_COLR_WHITE);
+    string_blt(ScreenSurface, &font_small, buf, x + 36, y + 146, COLOR_BLACK, NULL, NULL);
+    string_blt(ScreenSurface, &font_small, buf, x + 35, y + 145, COLOR_WHITE, NULL, NULL);
     sprintf(buf, "SP: ~%d~", new_character.bar[1] * 2 + new_character.bar_add[1]);
-    ENGRAVE(ScreenSurface, &font_small, buf, x + 35, y + 156, NDI_COLR_WHITE);
+    string_blt(ScreenSurface, &font_small, buf, x + 36, y + 157, COLOR_BLACK, NULL, NULL);
+    string_blt(ScreenSurface, &font_small, buf, x + 35, y + 156, COLOR_WHITE, NULL, NULL);
     sprintf(buf, "GR: ~%d~", new_character.bar[2] * 2 + new_character.bar_add[2]);
-    ENGRAVE(ScreenSurface, &font_small, buf, x + 35, y + 167, NDI_COLR_WHITE);
+    string_blt(ScreenSurface, &font_small, buf, x + 36, y + 168, COLOR_BLACK, NULL, NULL);
+    string_blt(ScreenSurface, &font_small, buf, x + 35, y + 167, COLOR_WHITE, NULL, NULL);
 
     if(GameStatus == GAME_STATUS_ACCOUNT_CHAR_CREATE)
     {
-        ENGRAVE(ScreenSurface, &font_small, "W-Skill is your 'weapon skill' - the kind of weapon you are able to use.", x + 134, y + 323, NDI_COLR_WHITE);
-        ENGRAVE(ScreenSurface, &font_small, "There are 4 base weapon skills:", x + 134, y + 345, NDI_COLR_WHITE);
-        ENGRAVE(ScreenSurface, &font_small, "* SLASH allows use of bladed weapons like swords", x + 134, y + 357, NDI_COLR_WHITE);
-        ENGRAVE(ScreenSurface, &font_small, "* IMPACT is for mace, morningstars, clubs and hammers", x + 134, y + 369, NDI_COLR_WHITE);
-        ENGRAVE(ScreenSurface, &font_small, "* CLEAVE allows use of any sort of axes", x + 134, y + 381, NDI_COLR_WHITE);
-        ENGRAVE(ScreenSurface, &font_small, "* PIERCE is for daggers, degen or rapiers", x + 134, y + 393, NDI_COLR_WHITE);
+        string_blt(ScreenSurface, &font_small, "W-Skill is your 'weapon skill' - the kind of weapon you are able to use." , x + 135, y + 324, COLOR_BLACK, NULL, NULL);
+        string_blt(ScreenSurface, &font_small, "W-Skill is your 'weapon skill' - the kind of weapon you are able to use.", x + 134, y + 323, COLOR_WHITE, NULL, NULL);
+
+        string_blt(ScreenSurface, &font_small, "There are 4 base weapon skills:" , x + 135, y + 346, COLOR_BLACK, NULL, NULL);
+        string_blt(ScreenSurface, &font_small, "There are 4 base weapon skills:", x + 134, y + 345, COLOR_WHITE, NULL, NULL);
+
+        string_blt(ScreenSurface, &font_small, "* SLASH allows use of bladed weapons like swords" , x + 135, y + 358, COLOR_BLACK, NULL, NULL);
+        string_blt(ScreenSurface, &font_small, "* SLASH allows use of bladed weapons like swords", x + 134, y + 357, COLOR_WHITE, NULL, NULL);
+
+        string_blt(ScreenSurface, &font_small, "* IMPACT is for mace, morningstars, clubs and hammers" , x + 135, y + 370, COLOR_BLACK, NULL, NULL);
+        string_blt(ScreenSurface, &font_small, "* IMPACT is for mace, morningstars, clubs and hammers", x + 134, y + 369, COLOR_WHITE, NULL, NULL);
+
+        string_blt(ScreenSurface, &font_small, "* CLEAVE allows use of any sort of axes" , x + 135, y + 382, COLOR_BLACK, NULL, NULL);
+        string_blt(ScreenSurface, &font_small, "* CLEAVE allows use of any sort of axes", x + 134, y + 381, COLOR_WHITE, NULL, NULL);
+
+        string_blt(ScreenSurface, &font_small, "* PIERCE is for daggers, degen or rapiers" , x + 135, y + 394, COLOR_BLACK, NULL, NULL);
+        string_blt(ScreenSurface, &font_small, "* PIERCE is for daggers, degen or rapiers", x + 134, y + 393, COLOR_WHITE, NULL, NULL);
     }
     else
     {
-        SDL_Rect box;
-
-        box.x = x + 136;
-        box.w = skin_sprites[SKIN_SPRITE_LOGIN_INP]->bitmap->w - 4;
-        box.h = font_small.line_height;
-
         if (GameStatus == GAME_STATUS_ACCOUNT_CHAR_NAME)
         {
-            ENGRAVE(ScreenSurface, &font_large, "Try Character Name", x + 134, y + 323, NDI_COLR_WHITE);
-            sprite_blt(skin_sprites[SKIN_SPRITE_LOGIN_INP], x + 132, y + 345, NULL, NULL);
-            box.y = y + 347;
-            strout_input(&font_small, &box, 0);
+            string_blt(ScreenSurface, &font_large_out, "Try Character Name", x + 134, y + 323, COLOR_WHITE, NULL, NULL);
+            sprite_blt(Bitmaps[BITMAP_LOGIN_INP], x + 132, y + 345, NULL, NULL);
+            sprintf(buf, "%s%c", InputString, '_');
+            buf[0] = toupper(buf[0]);
+            string_blt(ScreenSurface, &font_small, buf, x + 138, y + 347, COLOR_WHITE, NULL, NULL);
         }
         else if (GameStatus == GAME_STATUS_ACCOUNT_CHAR_RECLAIM)
         {
-            ENGRAVE(ScreenSurface, &font_large, "Try Character Name", x + 134, y + 323, NDI_COLR_WHITE);
-            sprite_blt(skin_sprites[SKIN_SPRITE_LOGIN_INP], x + 132, y + 345, NULL, NULL);
-            strout_blt(ScreenSurface, &font_small, STROUT_LEFT, cpl.name, x + 138, y + 347, NDI_COLR_WHITE, NULL);
-            ENGRAVE(ScreenSurface, &font_large, "Try Reclaim Password", x + 134, y + 370, NDI_COLR_WHITE);
-            sprite_blt(skin_sprites[SKIN_SPRITE_LOGIN_INP], x + 132, y + 392, NULL, NULL);
-            box.y = y + 394;
-            strout_input(&font_small, &box, '*');
+            string_blt(ScreenSurface, &font_large_out, "Try Character Name", x + 134, y + 323, COLOR_WHITE, NULL, NULL);
+            sprite_blt(Bitmaps[BITMAP_LOGIN_INP], x + 132, y + 345, NULL, NULL);
+            string_blt(ScreenSurface, &font_small, cpl.name, x + 138, y + 347, COLOR_WHITE, NULL, NULL);
+            string_blt(ScreenSurface, &font_large_out, "Try Reclaim Password", x + 134, y + 370, COLOR_WHITE, NULL, NULL);
+            sprite_blt(Bitmaps[BITMAP_LOGIN_INP], x + 132, y + 392, NULL, NULL);
+            sprintf(buf, "%s", InputString);
+            for (i = 0; buf[i]; i++)
+            {
+                buf[i] = '*';
+            }
+            strcat(buf, "_");
+            string_blt(ScreenSurface, &font_small, buf, x + 138, y + 394, COLOR_WHITE, NULL, NULL);
         }
         else
         {
+            SDL_Rect box;
+
             box.x= x+132;
             box.y= y+345;
             box.w= 250;
             box.h= 20;
             SDL_FillRect(ScreenSurface, &box, sdl_gray3);
             sprintf(buf, "*** WAIT: Ask server to create character %s ***", cpl.name);
-            ENGRAVE(ScreenSurface, &font_small, buf, x + 138, y + 347, NDI_COLR_LIME);
+            string_blt(ScreenSurface, &font_small, buf, x + 138, y + 347, COLOR_GREEN, NULL, NULL);
         }
     }
 
-    ENGRAVE(ScreenSurface, &font_small, new_character.desc[0], x + 159, y + 433, NDI_COLR_WHITE);
-    ENGRAVE(ScreenSurface, &font_small, new_character.desc[1], x + 159, y + 445, NDI_COLR_WHITE);
-    ENGRAVE(ScreenSurface, &font_small, new_character.desc[2], x + 159, y + 457, NDI_COLR_WHITE);
-    ENGRAVE(ScreenSurface, &font_small, new_character.desc[3], x + 159, y + 469, NDI_COLR_WHITE);
+    string_blt(ScreenSurface, &font_small, new_character.desc[0], x + 160, y + 434, COLOR_BLACK, NULL, NULL);
+    string_blt(ScreenSurface, &font_small, new_character.desc[0], x + 159, y + 433, COLOR_WHITE, NULL, NULL);
+
+    string_blt(ScreenSurface, &font_small, new_character.desc[1], x + 160, y + 446, COLOR_BLACK, NULL, NULL);
+    string_blt(ScreenSurface, &font_small, new_character.desc[1], x + 159, y + 445, COLOR_WHITE, NULL, NULL);
+
+    string_blt(ScreenSurface, &font_small, new_character.desc[2], x + 160, y + 458, COLOR_BLACK, NULL, NULL);
+    string_blt(ScreenSurface, &font_small, new_character.desc[2], x + 159, y + 457, COLOR_WHITE, NULL, NULL);
+
+    string_blt(ScreenSurface, &font_small, new_character.desc[3], x + 160, y + 470, COLOR_BLACK, NULL, NULL);
+    string_blt(ScreenSurface, &font_small, new_character.desc[3], x + 159, y + 469, COLOR_WHITE, NULL, NULL);
 
     /* draw portrait */
     /*
@@ -1699,8 +1663,8 @@ void show_newplayer_server(void)
     box.w= 100;
     box.h= 100;
     SDL_FillRect(ScreenSurface, &box, sdl_gray1);
-    ENGRAVE(ScreenSurface, &font_small, "Portrait:",  x+350, y+CREATE_Y0-13, NDI_COLR_WHITE);
-    add_rangebox(x+350, y+CREATE_Y0+101, ++id, 70, 1, "todo ;-)", NDI_COLR_LIME);
+    string_blt(ScreenSurface, &font_small, "Portrait:",  x+350, y+CREATE_Y0-13, COLOR_WHITE, NULL, NULL);
+    add_rangebox(x+350, y+CREATE_Y0+101, ++id, 70, 1, "todo ;-)", COLOR_GREEN);
     */
 
     if (!mb)
@@ -1712,202 +1676,192 @@ void show_newplayer_server(void)
 ******************************************************************/
 void show_login_server(void)
 {
-    uint8       i;
-    uint16      x = 25,
-                y = Screensize.y / 2 - skin_sprites[SKIN_SPRITE_DIALOG_BG]->bitmap->h / 2,
-                x2 = 300;
-    char       *request_string[17][3] =
-    {
-        { "Updating '", FILE_SRV_SOUNDS, "'... ", },
-        { "OK!\n", NULL, NULL, },
-        { "Updating '", FILE_SRV_SKILLS, "'... ", },
-        { "OK!\n", NULL, NULL, },
-        { "Updating '", FILE_SRV_SPELLS, "'... ", },
-        { "OK!\n", NULL, NULL, },
-        { "Updating '", FILE_SRV_SETTINGS, "'... ", },
-        { "OK!\n", NULL, NULL, },
-        { "Updating '", FILE_SRV_FACEINFO, "'... ", },
-        { "OK!\n", NULL, NULL, },
-        { "Updating '", FILE_SRV_ANIMS, "'... ", },
-        { "OK!\n", NULL, NULL, },
-        { "Sync files... ", NULL, NULL, },
-        { NULL, NULL, NULL, },
-        { "Wait for it... ", NULL, NULL, },
-        { NULL, NULL, NULL, },
-        { "DONE!", NULL, NULL, },
-    };
     SDL_Rect    box;
-    char        buf[LARGE_BUF];
+    char        buf[MEDIUM_BUF];
+    int         x, y, i;
+    int         mx, my, mb, t;
     int         progress;
 
-    sprite_blt(skin_sprites[SKIN_SPRITE_DIALOG_BG], x, y, NULL, NULL);
-    sprite_blt(skin_sprites[SKIN_SPRITE_LOGO270], x + 20, y + 85, NULL, NULL);
-    box.w = 500;
-    box.h = font_heading.line_height;
-    strout_blt(ScreenSurface, &font_heading, STROUT_CENTER, "Connection", x + 50, y + 25, NDI_COLR_RED, &box);
+    mb = SDL_GetMouseState(&mx, &my);
+    /* background */
+    /*x= Screensize.x/2-Bitmaps[BITMAP_DIALOG_BG]->bitmap->w/2;*/
+    x = 25;
+    y = Screensize.y / 2 - Bitmaps[BITMAP_DIALOG_BG]->bitmap->h / 2;
+    sprite_blt(Bitmaps[BITMAP_DIALOG_BG], x, y, NULL, NULL);
+    sprite_blt(Bitmaps[BITMAP_LOGO270], x + 20, y + 85, NULL, NULL);
+    sprite_blt(Bitmaps[BITMAP_DIALOG_TITLE_LOGIN], x + 250 - Bitmaps[BITMAP_DIALOG_TITLE_LOGIN]->bitmap->w / 2, y + 20,
+               NULL, NULL);
     /*  add_close_button(x, y, MENU_LOGIN); */
+
+    t = x + 275;
     x += 170;
     y += 100;
-    EMBOSS(ScreenSurface, &font_small, "Server", x2 - 21, y - 36,
-           NDI_COLR_WHITE);
-    sprintf(buf, "%s", gameserver_sel->name);
-    x2 -= strout_width(&font_large, buf) / 2;
-    ENGRAVE(ScreenSurface, &font_large, buf, x2, y - 22, NDI_COLR_SILVER);
+    draw_frame(x - 3, y - 3, 211, 168);
     box.x = x - 2;
     box.y = y - 2;
     box.w = 210;
     box.h = 17;
-    SDL_FillRect(ScreenSurface, &box, skin_prefs.dialog_rows0);
+
+    string_blt(ScreenSurface, &font_small, "Server", t + 1 - 21, y - 35, COLOR_BLACK, NULL, NULL);
+    string_blt(ScreenSurface, &font_small, "Server", t - 21, y - 36, COLOR_WHITE, NULL, NULL);
+
+    if (!strcmp(ServerName, "127.0.0.1"))
+        strcpy(buf, "local host");
+    else
+        sprintf(buf, "%s", ServerName);
+
+    t -= string_width(&font_large_out, buf) / 2;
+    string_blt(ScreenSurface, &font_large_out, buf, t + 1, y - 21, COLOR_BLACK, NULL, NULL);
+    string_blt(ScreenSurface, &font_large_out, buf, t, y - 22, COLOR_HGOLD, NULL, NULL);
+
+    SDL_FillRect(ScreenSurface, &box, skindef.dialog_rows0);
     box.y = y + 15;
     box.h = 150;
-    SDL_FillRect(ScreenSurface, &box, skin_prefs.dialog_rows1);
-    draw_frame(x - 3, y - 3, 211, 168);
+    SDL_FillRect(ScreenSurface, &box, skindef.dialog_rows1);
+    string_blt(ScreenSurface, &font_small, "- UPDATING FILES- ", x + 58, y + 1, COLOR_BLACK, NULL, NULL);
+    string_blt(ScreenSurface, &font_small, "- UPDATING FILES -", x + 57, y, COLOR_WHITE, NULL, NULL);
+    if (request_file_chain >= 0)
+        string_blt(ScreenSurface, &font_small, "Updating settings file from server....", x + 2, y + 20, COLOR_WHITE,
+                  NULL, NULL);
+    if (request_file_chain > 1)
+        string_blt(ScreenSurface, &font_small, "Updating sounds file from server....", x + 2, y + 32, COLOR_WHITE, NULL,
+                  NULL);
+    if (request_file_chain > 3)
+        string_blt(ScreenSurface, &font_small, "Updating spells file from server....", x + 2, y + 44, COLOR_WHITE, NULL,
+                  NULL);
+    if (request_file_chain > 5)
+        string_blt(ScreenSurface, &font_small, "Updating skills file from server....", x + 2, y + 56, COLOR_WHITE, NULL,
+                  NULL);
+    if (request_file_chain > 7)
+        string_blt(ScreenSurface, &font_small, "Updating bmaps file from server....", x + 2, y + 68, COLOR_WHITE, NULL,
+                  NULL);
+    if (request_file_chain > 9)
+        string_blt(ScreenSurface, &font_small, "Updating anims file from server....", x + 2, y + 80, COLOR_WHITE, NULL,
+                  NULL);
+    if (request_file_chain > 11)
+        string_blt(ScreenSurface, &font_small, "Sync files...", x + 2, y + 92, COLOR_WHITE, NULL, NULL);
 
-    /* Update the progress. This is essentially eye-candy, but also will calm
-     * impatient players ('it said updating but nothing happened for 30 seconds.
-     * It's broken!'). */
-    sprite_blt(skin_sprites[SKIN_SPRITE_PROGRESS_BACK], x + 4,
-               y + (skin_sprites[SKIN_SPRITE_PROGRESS_BACK]->bitmap->h - 5), NULL, NULL);
-    progress = (float)request_file_chain / 16.0f * 100;
+   /* Update the progress. This is essentially eye-candy, but also will calm
+    * impatient players ('it said updating but nothing happened for 30 seconds.
+    * It's broken!'). */
+    sprite_blt(Bitmaps[BITMAP_PROGRESS_BACK], x + 4,
+               y + (168 - Bitmaps[BITMAP_PROGRESS_BACK]->bitmap->h - 5), NULL,
+               NULL);
+    progress = MIN(100, request_file_chain * 9);
     box.x = 0;
     box.y = 0;
-    box.h = skin_sprites[SKIN_SPRITE_PROGRESS]->bitmap->h;
-    box.w = (int)(skin_sprites[SKIN_SPRITE_PROGRESS]->bitmap->w / 100 * progress);
-    sprite_blt(skin_sprites[SKIN_SPRITE_PROGRESS], x + 4,
-               y + (skin_sprites[SKIN_SPRITE_PROGRESS]->bitmap->h - 5), &box, NULL);
-    ENGRAVE(ScreenSurface, &font_small, "- UPDATING FILES -", x + 57, y,
-            NDI_COLR_WHITE);
-    buf[0] = '\0';
-
-    for (i = 0; i <= request_file_chain; i++)
-    {
-        if (request_string[i][0])
-        {
-            strcat(buf, request_string[i][0]);
-
-            if (request_string[i][1])
-            {
-                strcat(buf, request_string[i][1]);
-
-                if (request_string[i][2])
-                {
-                    strcat(buf, request_string[i][2]);
-                }
-            }
-        }
-    }
-
-    strout_blt(ScreenSurface, &font_small, STROUT_LEFT, buf, x + 2,
-               y + 20 + font_small.line_height, percentage_colr(progress),
+    box.h = Bitmaps[BITMAP_PROGRESS]->bitmap->h;
+    box.w = (int)(Bitmaps[BITMAP_PROGRESS]->bitmap->w / 100 * progress);
+    sprite_blt(Bitmaps[BITMAP_PROGRESS], x + 4,
+               y + (168 - Bitmaps[BITMAP_PROGRESS]->bitmap->h - 5), &box,
                NULL);
 
     /* login user part */
     if (GameStatus == GAME_STATUS_REQUEST_FILES)
         return;
-
+    string_blt(ScreenSurface, &font_small, "done.", x + 2, y + 104, COLOR_WHITE, NULL, NULL);
     y += 180;
     if (GameStatus <= GAME_STATUS_LOGIN_BREAK)
     {
-        ENGRAVE(ScreenSurface, &font_small, "Query for Login. Waiting...", x, y, NDI_COLR_SILVER);
+        string_blt(ScreenSurface, &font_small, "Query for Login. Waiting...", x, y, COLOR_HGOLD, NULL, NULL);
         return;
     }
     else if (GameStatus == GAME_STATUS_LOGIN_WAIT_NAME)
     {
-        ENGRAVE(ScreenSurface, &font_small, "Query for new Account. Waiting...", x, y, NDI_COLR_SILVER);
+        string_blt(ScreenSurface, &font_small, "Query for new Account. Waiting...", x, y, COLOR_HGOLD, NULL, NULL);
         return;
     }
     else if (GameStatus == GAME_STATUS_LOGIN_WAIT)
     {
-        ENGRAVE(ScreenSurface, &font_small, "Query for Account. Waiting...", x, y, NDI_COLR_SILVER);
+        string_blt(ScreenSurface, &font_small, "Query for Account. Waiting...", x, y, COLOR_HGOLD, NULL, NULL);
         return;
     }
     else if (GameStatus == GAME_STATUS_LOGIN_SELECT)
     {
         if (GameStatusSelect == GAME_STATUS_LOGIN_ACCOUNT)
         {
-            EMBOSS(ScreenSurface, &font_large, ">> Login <<", x+49, y+50, NDI_COLR_LIME);
-            ENGRAVE(ScreenSurface, &font_large, "Create Account", x+26, y+30, NDI_COLR_WHITE);
+            string_blt(ScreenSurface, &font_large_out, ">> Login <<", x+51, y+52, COLOR_BLACK, NULL, NULL);
+            string_blt(ScreenSurface, &font_large_out, ">> Login <<", x+49, y+50, COLOR_GREEN, NULL, NULL);
+            string_blt(ScreenSurface, &font_large_out, "Create Account", x+28, y+32, COLOR_BLACK, NULL, NULL);
+            string_blt(ScreenSurface, &font_large_out, "Create Account", x+26, y+30, COLOR_WHITE, NULL, NULL);
         }
         else
         {
-            ENGRAVE(ScreenSurface, &font_large, "Login", x+70, y+50, NDI_COLR_WHITE);
-            EMBOSS(ScreenSurface, &font_large, ">> Create Account <<", x+5, y+30, NDI_COLR_LIME);
+            string_blt(ScreenSurface, &font_large_out, "Login", x+72, y+52, COLOR_BLACK, NULL, NULL);
+            string_blt(ScreenSurface, &font_large_out, "Login", x+70, y+50, COLOR_WHITE, NULL, NULL);
+            string_blt(ScreenSurface, &font_large_out, ">> Create Account <<", x+7, y+32, COLOR_BLACK, NULL, NULL);
+            string_blt(ScreenSurface, &font_large_out, ">> Create Account <<", x+5, y+30, COLOR_GREEN, NULL, NULL);
         }
         y += 160;
-        ENGRAVE(ScreenSurface, &font_small, "Select ~Create Account~ for a new or ~Login~ for a existing account.",
-                x - 11, y, NDI_COLR_WHITE);
+        string_blt(ScreenSurface, &font_small,
+                  "Select ~Create Account~ for a new or ~Login~ for a existing account." ,
+                  x-10, y+1, COLOR_BLACK, NULL, NULL);
+        string_blt(ScreenSurface, &font_small, "Select ~Create Account~ for a new or ~Login~ for a existing account.",
+                  x-11, y  , COLOR_WHITE, NULL, NULL);
         y+=12;
-        sprintf(buf,"Use ~%c,%c~ to select and press then ~Return~", ECC_ARROWUP, ECC_ARROWDOWN);
-        strout_blt(ScreenSurface, &font_small, STROUT_LEFT, buf, x - 11, y, NDI_COLR_WHITE, NULL);
+        sprintf(buf,"Use ~%c,%c~ to select and press then ~Return~", ASCII_UP, ASCII_DOWN);
+        string_blt(ScreenSurface, &font_small, buf ,
+                  x-10, y+1, COLOR_BLACK, NULL, NULL);
+        string_blt(ScreenSurface, &font_small, buf,
+                  x-11  , y  , COLOR_WHITE, NULL, NULL);
 
         return;
     }
 
     if (GameStatusSelect == GAME_STATUS_LOGIN_ACCOUNT)
     {
-        ENGRAVE(ScreenSurface, &font_large, "Login", x+70, y+0, NDI_COLR_WHITE);
+        string_blt(ScreenSurface, &font_large_out, "Login", x+72, y+2, COLOR_BLACK, NULL, NULL);
+        string_blt(ScreenSurface, &font_large_out, "Login", x+70, y+0, COLOR_WHITE, NULL, NULL);
     }
     else
     {
-        ENGRAVE(ScreenSurface, &font_large, "Create Account", x+16, y+0, NDI_COLR_WHITE);
+        string_blt(ScreenSurface, &font_large_out, "Create Account", x+18, y+2, COLOR_BLACK, NULL, NULL);
+        string_blt(ScreenSurface, &font_large_out, "Create Account", x+16, y+0, COLOR_WHITE, NULL, NULL);
     }
 
     if (GameStatusSelect == GAME_STATUS_LOGIN_ACCOUNT)
-    {
-        ENGRAVE(ScreenSurface, &font_small, "Enter your Name", x, y+20, NDI_COLR_SILVER);
-    }
+        string_blt(ScreenSurface, &font_small, "Enter your Name", x, y+20, COLOR_HGOLD, NULL, NULL);
     else
-    {
-        ENGRAVE(ScreenSurface, &font_small, "Select a Name", x, y+20, NDI_COLR_SILVER);
-    }
+        string_blt(ScreenSurface, &font_small, "Select a Name", x, y+20, COLOR_HGOLD, NULL, NULL);
 
-    sprite_blt(skin_sprites[SKIN_SPRITE_LOGIN_INP], x - 2, y + 35, NULL, NULL);
-
-    if ((GameStatus == GAME_STATUS_LOGIN_ACCOUNT ||
-         GameStatus == GAME_STATUS_LOGIN_NEW) &&
-        LoginInputStep == LOGIN_STEP_NAME)
-    {
-        box.x = x + 2;
-        box.y = y + 37;
-        box.w = skin_sprites[SKIN_SPRITE_LOGIN_INP]->bitmap->w - 4;
-        box.h = font_small.line_height;
-        strout_input(&font_small, &box, 0);
-    }
+    sprite_blt(Bitmaps[BITMAP_LOGIN_INP], x - 2, y + 35, NULL, NULL);
+    if ((GameStatus == GAME_STATUS_LOGIN_ACCOUNT || GameStatus == GAME_STATUS_LOGIN_NEW) && LoginInputStep == LOGIN_STEP_NAME)
+        string_blt(ScreenSurface, &font_small,
+                  show_input_string(InputString, &font_small, Bitmaps[BITMAP_LOGIN_INP]->bitmap->w - 16), x + 2, y + 37,
+                  COLOR_WHITE, NULL, NULL);
     else
-    {
-        ENGRAVE(ScreenSurface, &font_small, cpl.acc_name, x + 2, y + 37, NDI_COLR_WHITE);
-    }
+        string_blt(ScreenSurface, &font_small, cpl.acc_name, x + 2, y + 37, COLOR_WHITE, NULL, NULL);
 
     if (LoginInputStep >= LOGIN_STEP_PASS1)
     {
-        ENGRAVE(ScreenSurface, &font_small, "Enter your Password", x + 2, y + 60, NDI_COLR_SILVER);
-        sprite_blt(skin_sprites[SKIN_SPRITE_LOGIN_INP], x - 2, y + 75, NULL, NULL);
+        string_blt(ScreenSurface, &font_small, "Enter your Password", x + 2, y + 60, COLOR_HGOLD, NULL, NULL);
+        sprite_blt(Bitmaps[BITMAP_LOGIN_INP], x - 2, y + 75, NULL, NULL);
 
         if (LoginInputStep == LOGIN_STEP_PASS1)
         {
-            box.x = x + 2;
-            box.y = y + 77;
-            box.w = skin_sprites[SKIN_SPRITE_LOGIN_INP]->bitmap->w - 4;
-            box.h = font_small.line_height;
-            strout_input(&font_small, &box, '*');
+            for (i = 0; i < (int)strlen(InputString); i++)
+                buf[i] = '*';
+            buf[i++] = '_';
+            buf[i] = 0;
+            string_blt(ScreenSurface, &font_small, buf, x + 2, y + 77, COLOR_WHITE, NULL, NULL);
         }
         else if (LoginInputStep == LOGIN_STEP_PASS2)
         {
             for (i = 0; i < (int) strlen(cpl.password); i++)
                 buf[i] = '*';buf[i] = 0;
 
-            EMBOSS(ScreenSurface, &font_small, buf, x + 2, y + 77, NDI_COLR_WHITE);
+            string_blt(ScreenSurface, &font_small, buf, x + 2, y + 77, COLOR_WHITE, NULL, NULL);
         }
 
         if (LoginInputStep == LOGIN_STEP_PASS2)
         {
-            ENGRAVE(ScreenSurface, &font_small, "New Account: Verify Password", x + 2, y + 100, NDI_COLR_SILVER);
-            sprite_blt(skin_sprites[SKIN_SPRITE_LOGIN_INP], x - 2, y + 115, NULL, NULL);
-            box.x = x + 2;
-            box.y = y + 117;
-            box.w = skin_sprites[SKIN_SPRITE_LOGIN_INP]->bitmap->w - 4;
-            box.h = font_small.line_height;
-            strout_input(&font_small, &box, '*');
+            string_blt(ScreenSurface, &font_small, "New Account: Verify Password", x + 2, y + 100, COLOR_HGOLD, NULL, NULL);
+            sprite_blt(Bitmaps[BITMAP_LOGIN_INP], x - 2, y + 115, NULL, NULL);
+            for (i = 0; i < (int)strlen(InputString); i++)
+                buf[i] = '*';
+            buf[i++] = '_';
+            buf[i] = 0;
+            string_blt(ScreenSurface, &font_small, buf, x + 2, y + 117, COLOR_WHITE, NULL, NULL);
         }
     }
 
@@ -1917,102 +1871,110 @@ void show_login_server(void)
             break;
 
         case DIALOG_LOGIN_WARNING_NAME_NO:
-            ENGRAVE(ScreenSurface, &font_small, "There is no character with that name!",
-                    x+2, y+110  , NDI_COLR_ORANGE);
+            string_blt(ScreenSurface, &font_small, "There is no character with that name!",
+                      x+1, y+111  , COLOR_BLACK, NULL, NULL);
+            string_blt(ScreenSurface, &font_small, "There is no character with that name!",
+                      x+2, y+110  , COLOR_ORANGE, NULL, NULL);
             break;
         case DIALOG_LOGIN_WARNING_NAME_BLOCKED:
-            ENGRAVE(ScreenSurface, &font_small, "Name or character is in creating process or blocked!",
-                    x+2, y+110  , NDI_COLR_ORANGE);
+            string_blt(ScreenSurface, &font_small, "Name or character is in creating process or blocked!",
+                      x+1, y+111  , COLOR_BLACK, NULL, NULL);
+            string_blt(ScreenSurface, &font_small, "Name or character is in creating process or blocked!",
+                      x+2, y+110  , COLOR_ORANGE, NULL, NULL);
             break;
         case DIALOG_LOGIN_WARNING_NAME_PLAYING:
-            ENGRAVE(ScreenSurface, &font_small, "Name is taken - choose a different one!",
-                    x+2, y+110  , NDI_COLR_ORANGE);
+            string_blt(ScreenSurface, &font_small, "Name is taken - choose a different one!",
+                      x+1, y+111  , COLOR_BLACK, NULL, NULL);
+            string_blt(ScreenSurface, &font_small, "Name is taken - choose a different one!",
+                      x+2, y+110  , COLOR_ORANGE, NULL, NULL);
             break;
         case DIALOG_LOGIN_WARNING_NAME_TAKEN:
-            ENGRAVE(ScreenSurface, &font_small, "Name is taken - choose a different one!",
-                    x+2, y+110  , NDI_COLR_ORANGE);
+            string_blt(ScreenSurface, &font_small, "Name is taken - choose a different one!",
+                      x+1, y+111  , COLOR_BLACK, NULL, NULL);
+            string_blt(ScreenSurface, &font_small, "Name is taken - choose a different one!",
+                      x+2, y+110  , COLOR_ORANGE, NULL, NULL);
             break;
         case DIALOG_LOGIN_WARNING_NAME_BANNED:
-            ENGRAVE(ScreenSurface, &font_small, "Name is banned - choose a different one!",
-                    x+2, y+110  , NDI_COLR_ORANGE);
+            string_blt(ScreenSurface, &font_small, "Name is banned - choose a different one!",
+                      x+1, y+111  , COLOR_BLACK, NULL, NULL);
+            string_blt(ScreenSurface, &font_small, "Name is banned - choose a different one!",
+                      x+2, y+110  , COLOR_ORANGE, NULL, NULL);
             break;
         case DIALOG_LOGIN_WARNING_NAME_WRONG:
-            ENGRAVE(ScreenSurface, &font_small, "Name is too short - it must be 3 chars or longer!",
-                    x+2, y+110  , NDI_COLR_ORANGE);
+            string_blt(ScreenSurface, &font_small, "Name is too short - it must be 3 chars or longer!",
+                      x+1, y+111  , COLOR_BLACK, NULL, NULL);
+            string_blt(ScreenSurface, &font_small, "Name is too short - it must be 3 chars or longer!",
+                      x+2, y+110  , COLOR_ORANGE, NULL, NULL);
             break;
         case DIALOG_LOGIN_WARNING_ACCOUNT_UNKNOWN:
-            ENGRAVE(ScreenSurface, &font_small, "Account doesn't exist or wrong name - try again!!",
-                    x+2, y+110  , NDI_COLR_ORANGE);
+            string_blt(ScreenSurface, &font_small, "Account doesn't exist or wrong name - try again!",
+                x+1, y+111  , COLOR_BLACK, NULL, NULL);
+            string_blt(ScreenSurface, &font_small, "Account doesn't exist or wrong name - try again!!",
+                x+2, y+110  , COLOR_ORANGE, NULL, NULL);
             break;
         case DIALOG_LOGIN_WARNING_PWD_WRONG:
-            ENGRAVE(ScreenSurface, &font_small, "Password does not match! Try again.",
-                    x+2, y+110  , NDI_COLR_ORANGE);
+            string_blt(ScreenSurface, &font_small, "Password does not match! Try again.",
+                      x+1, y+111  , COLOR_BLACK, NULL, NULL);
+            string_blt(ScreenSurface, &font_small, "Password does not match! Try again.",
+                      x+2, y+110  , COLOR_ORANGE, NULL, NULL);
             break;
         case DIALOG_LOGIN_WARNING_PWD_SHORT:
-            ENGRAVE(ScreenSurface, &font_small, "Password is too short - it must be six chars or longer!",
-                    x+2, y+110  , NDI_COLR_ORANGE);
+            string_blt(ScreenSurface, &font_small, "Password is too short - it must be six chars or longer!",
+                      x+1, y+111  , COLOR_BLACK, NULL, NULL);
+            string_blt(ScreenSurface, &font_small, "Password is too short - it must be six chars or longer!",
+                      x+2, y+110  , COLOR_ORANGE, NULL, NULL);
             break;
         case DIALOG_LOGIN_WARNING_PWD_NAME:
-            ENGRAVE(ScreenSurface, &font_small, "Password can't be same as character name!!!",
-                    x+2, y+110  , NDI_COLR_ORANGE);
+            string_blt(ScreenSurface, &font_small, "Password can't be same as character name!!!",
+                      x+1, y+111  , COLOR_BLACK, NULL, NULL);
+            string_blt(ScreenSurface, &font_small, "Password can't be same as character name!!!",
+                      x+2, y+110  , COLOR_ORANGE, NULL, NULL);
             break;
     }
 
     y += 157;
     if (GameStatusSelect == GAME_STATUS_LOGIN_ACCOUNT) /* Login */
     {
-        ENGRAVE(ScreenSurface, &font_small, "REMEMBER: You must have first ~created an account~ to login!",
-                x - 11, y, NDI_COLR_ORANGE);
-
-        if (LoginInputStep == LOGIN_STEP_NAME)
-        {
-            ENGRAVE(ScreenSurface, &font_small, "Enter the ~name~ of your account. Then press RETURN.",
-                    x - 11, y + 12, NDI_COLR_WHITE);
-        }
-        else
-        {
-            ENGRAVE(ScreenSurface, &font_small, "Enter the ~password~ of your account. Then press RETURN.",
-                    x - 11, y + 12, NDI_COLR_WHITE);
-        }
+        string_blt(ScreenSurface, &font_small, "REMEMBER: You must have first ~created a character~ to login!",
+                  x-10, y+1  , COLOR_BLACK, NULL, NULL);
+        string_blt(ScreenSurface, &font_small, "REMEMBER: You must have first ~created a character~ to login!",
+                  x-11, y  , COLOR_WHITE, NULL, NULL);
+        y+=12;
+        string_blt(ScreenSurface, &font_small, "1.) Enter the ~name~ of your character and press RETURN.",
+                  x-10, y+1  , COLOR_BLACK, NULL, NULL);
+        string_blt(ScreenSurface, &font_small, "1.) Enter the ~name~ of your character and press RETURN.",
+                  x-11, y  , COLOR_WHITE, NULL, NULL);
+        y+=12;
+        string_blt(ScreenSurface, &font_small, "2.) Then enter the ~password~ of your character.",
+                  x-10, y+1  , COLOR_BLACK, NULL, NULL);
+        string_blt(ScreenSurface, &font_small, "2.) Then enter the ~password~ of your character.",
+                  x-11, y  , COLOR_WHITE, NULL, NULL);
     }
-    else /* Create account */
+    else /* Create Char */
     {
-        if (LoginInputStep == LOGIN_STEP_NAME)
-        {
-            sprintf(buf, "Enter a ~name~ (%u to %u characters). Then press RETURN.",
-                    MIN_ACCOUNT_NAME, MAX_ACCOUNT_NAME);
-            ENGRAVE(ScreenSurface, &font_small, buf, x - 11, y + 6,
-                    NDI_COLR_WHITE);
-        }
-        else if (LoginInputStep == LOGIN_STEP_PASS1)
-        {
-            sprintf(buf, "Enter a ~password~ (%u to %u characters). Then press RETURN.",
-                    MIN_ACCOUNT_PASSWORD, MAX_ACCOUNT_PASSWORD);
-            ENGRAVE(ScreenSurface, &font_small, buf, x - 11, y + 6,
-                    NDI_COLR_WHITE);
-        }
-        else
-        {
-            ENGRAVE(ScreenSurface, &font_small, "Enter the ~password~ again to verify it. Then press RETURN." ,
-                      x - 11, y + 6, NDI_COLR_WHITE);
-        }
+        string_blt(ScreenSurface, &font_small, "1.) Enter a ~name~ WITHOUT any numbers and special chars. Press RETURN.",
+                  x-10, y+1  , COLOR_BLACK, NULL, NULL);
+        string_blt(ScreenSurface, &font_small, "1.) Enter a ~name~ WITHOUT any numbers and special chars. Press RETURN.",
+                  x-11, y  , COLOR_WHITE, NULL, NULL);
+        y+=12;
+        string_blt(ScreenSurface, &font_small, "2.) Enter a ~password~ WITH at least one special chars. Press RETURN." ,
+                  x-10  , y+1  , COLOR_BLACK, NULL, NULL);
+        string_blt(ScreenSurface, &font_small, "2.) Enter a ~password~ WITH at least one special chars. Press RETURN." ,
+                  x-11  , y  , COLOR_WHITE, NULL, NULL);
+        y+=12;
+        string_blt(ScreenSurface, &font_small, "3.) Enter the ~password~ again to ~verify~ it. Press RETURN." ,
+                  x-10  , y+1  , COLOR_BLACK, NULL, NULL);
+        string_blt(ScreenSurface, &font_small, "3.) Enter the ~password~ again to ~verify~ it. Press RETURN." ,
+                  x-11  , y  , COLOR_WHITE, NULL, NULL);
     }
 
-    if ((LoginInputStep == LOGIN_STEP_PASS1 ||
-         LoginInputStep == LOGIN_STEP_PASS2) &&
-       (LastTick % 500) > 400 &&
-       (SDL_GetModState() & KMOD_CAPS))
-    {
-        ENGRAVE(ScreenSurface, &font_small, "CAPS LOCK is on!", x + 64, y + 24,
-                NDI_COLR_ORANGE);
-    }
 }
 
 
 /******************************************************************
  show login: select-server part.
 ******************************************************************/
-void show_meta_server(void)
+void show_meta_server(_server *node, int metaserver_start, int metaserver_sel)
 {
     int         x, y, i;
     char        buf[1024];
@@ -2020,18 +1982,16 @@ void show_meta_server(void)
     SDL_Rect    rec_desc;
     SDL_Rect    box;
     int         mx, my, mb;
-    gameserver_t    *node = gameserver_1st;
 
     mb = SDL_GetMouseState(&mx, &my);
     /* background */
-    /*  x= Screensize.x/2-skin_sprites[SKIN_SPRITE_DIALOG_BG]->bitmap->w/2;*/
+    /*  x= Screensize.x/2-Bitmaps[BITMAP_DIALOG_BG]->bitmap->w/2;*/
     x = 25;
-    y = Screensize.y / 2 - skin_sprites[SKIN_SPRITE_DIALOG_BG]->bitmap->h / 2;
-    sprite_blt(skin_sprites[SKIN_SPRITE_DIALOG_BG], x, y, NULL, NULL);
-    sprite_blt(skin_sprites[SKIN_SPRITE_LOGO270], x + 20, y + 85, NULL, NULL);
-    box.w = 500;
-    box.h = font_heading.line_height;
-    strout_blt(ScreenSurface, &font_heading, STROUT_CENTER, "Server selection", x + 50, y + 25, NDI_COLR_RED, &box);
+    y = Screensize.y / 2 - Bitmaps[BITMAP_DIALOG_BG]->bitmap->h / 2;
+    sprite_blt(Bitmaps[BITMAP_DIALOG_BG], x, y, NULL, NULL);
+    sprite_blt(Bitmaps[BITMAP_LOGO270], x + 20, y + 85, NULL, NULL);
+    sprite_blt(Bitmaps[BITMAP_DIALOG_TITLE_LOGIN], x + 250 - Bitmaps[BITMAP_DIALOG_TITLE_LOGIN]->bitmap->w / 2, y + 20,
+               NULL, NULL);
     /*  add_close_button(x, y, MENU_LOGIN); */
 
     rec_name.w = 272;
@@ -2044,140 +2004,54 @@ void show_meta_server(void)
 
     /* frame for selection field */
     draw_frame(box.x - 1, box.y + 11, box.w + 1, 313);
-    ENGRAVE(ScreenSurface, &font_large, "Servers", x + TXT_START_NAME,
-            y + TXT_Y_START - 8, NDI_COLR_SILVER);
-    ENGRAVE(ScreenSurface, &font_medium, "Version", x + 285,
-            y + TXT_Y_START - 4, NDI_COLR_SILVER);
-    ENGRAVE(ScreenSurface, &font_medium, "Players", x + 335,
-            y + TXT_Y_START - 4, NDI_COLR_SILVER);
-    ENGRAVE(ScreenSurface, &font_medium, "Ping", x + 385,
-            y + TXT_Y_START - 4, NDI_COLR_SILVER);
+    ENGRAVE(ScreenSurface, &font_large_out, "Servers", x + TXT_START_NAME,
+            y + TXT_Y_START - 8, COLOR_HGOLD, NULL, NULL);
+    ENGRAVE(ScreenSurface, &font_medium, "Version", x + 365,
+            y + TXT_Y_START - 4, COLOR_HGOLD, NULL, NULL);
+    ENGRAVE(ScreenSurface, &font_medium, "Players", x + 415,
+            y + TXT_Y_START - 4, COLOR_HGOLD, NULL, NULL);
+    sprintf(buf, "use cursors ~%c%c~ to select server                                  press ~RETURN~ to connect",
+            ASCII_UP, ASCII_DOWN);
+    string_blt(ScreenSurface, &font_small, buf, x + 140, y + 410, COLOR_WHITE, NULL, NULL);
 
-    if (add_button(x + 25, y + 454, 0, SKIN_SPRITE_DIALOG_BUTTON_UP, "Refresh", "~R~efresh"))
+    for (i = 0; i < OPTWIN_MAX_OPT; i++)
     {
-        key_meta_menu(SDLK_r);
-    }
-
-    for (i = 0; i < MAXMETAWINDOW; i++)
-    {
-        uint32 colr;
-
-        box.y = y + TXT_Y_START + 13 + i * 12;
-
+        box.y += 12;
         if (i & 1)
-        {
-            colr = SDL_MapRGB(ScreenSurface->format,
-                              (skin_prefs.dialog_rows0 >> 16) & 0xff,
-                              (skin_prefs.dialog_rows0 >> 8) & 0xff,
-                              skin_prefs.dialog_rows0 & 0xff);
-            SDL_FillRect(ScreenSurface, &box, colr);
-        }
+            SDL_FillRect(ScreenSurface, &box, skindef.dialog_rows0);
         else
-        {
-            colr = SDL_MapRGB(ScreenSurface->format,
-                              (skin_prefs.dialog_rows1 >> 16) & 0xff,
-                              (skin_prefs.dialog_rows1 >> 8) & 0xff,
-                              skin_prefs.dialog_rows1 & 0xff);
-            SDL_FillRect(ScreenSurface, &box, colr);
-        }
-
-        if (node)
-        {
-            if (node == gameserver_sel)
-            {
-                SDL_Rect box2;
-
-                colr = SDL_MapRGB(ScreenSurface->format,
-                                  (skin_prefs.dialog_rowsS >> 16) & 0xff,
-                                  (skin_prefs.dialog_rowsS >> 8) & 0xff,
-                                 skin_prefs.dialog_rowsS & 0xff);
-                SDL_FillRect(ScreenSurface, &box, colr);
-                box2.x = x + 160;
-                box2.y = y + 431;
-                box2.w = 300;
-                box2.h = 55;
-                ShowInfo(&font_large, &box2, node->info);
-
-                if (locator.server != node)
-                {
-                    locator.server = node;
-
-                    if (node->players >= 0)
-                    {
-                        locator_focus(node->geoloc.lx, node->geoloc.ly);
-                    }
-                    else
-                    {
-                        locator_focus(locator.client.lx, locator.client.ly);
-                    }
-                }
-            }
-
-            ENGRAVE(ScreenSurface, &font_small, node->name, x + TXT_START_NAME, y + 94 + i * 12, NDI_COLR_WHITE);
-            ENGRAVE(ScreenSurface, &font_small, node->version, x + 286, y + 94 + i * 12, NDI_COLR_WHITE);
-
-            if (node->players < 0 ||
-                node->ping == -1)
-            {
-                sprintf(buf, "??");
-            }
-            else
-            {
-                sprintf(buf, "%d", node->players);
-            }
-
-            ENGRAVE(ScreenSurface, &font_small, buf, x + 336, y + 94 + i * 12, NDI_COLR_WHITE);
-
-            if (node->ping == -2)
-            {
-                sprintf(buf, "SERVER DOWN");
-                colr = NDI_COLR_GREY;
-            }
-            else if (node->ping == -1)
-            {
-                sprintf(buf, "UNKNOWN");
-                colr = NDI_COLR_BLUE;
-            }
-            else
-            {
-                sprintf(buf, "%d", node->ping);
-
-                if (node->ping <= 50)
-                {
-                    colr = NDI_COLR_LIME;
-                }
-                else if (node->ping <= 200)
-                {
-                    colr = NDI_COLR_YELLOW;
-                }
-                else
-                {
-                    colr = NDI_COLR_RED;
-                }
-            }
-
-            ENGRAVE(ScreenSurface, &font_small, buf, x + 386, y + 94 + i * 12, colr);
-
-            node = node->next;
-        }
+            SDL_FillRect(ScreenSurface, &box, skindef.dialog_rows1);
     }
 
-    if (locator.server)
+    for (i = 0; node && i < metaserver_start; i++)
+        node = node->next;
+
+    for (i = 0; node && i < MAXMETAWINDOW; i++)
     {
-        locator_show(x + 132, y + 158);
-        sprintf(buf, "~%c%c~: select server  |**|  ~SHIFT~/~CONTROL~ + ~%c%c%c%c~: scroll map  |**|  ~RETURN~: connect",
-                ECC_ARROWUP, ECC_ARROWDOWN, ECC_ARROWRIGHT, ECC_ARROWUP, ECC_ARROWDOWN,
-                ECC_ARROWLEFT);
-        strout_blt(ScreenSurface, &font_small, STROUT_LEFT, buf, x + 130, y + 408,
-                   NDI_COLR_WHITE, NULL);
+        if (i == metaserver_sel - metaserver_start)
+        {
+            SDL_Rect box2 =
+            {
+                x + 160,
+                y + 431,
+                300,
+                55
+            };
+
+            ShowInfo(&font_large_out, &box2, node->desc1);
+            box.y = y + TXT_Y_START + 13 + i * 12;
+            SDL_FillRect(ScreenSurface, &box, skindef.dialog_rowsS);
+        }
+        string_blt(ScreenSurface, &font_small, node->name, x + 137, y + 94 + i * 12, COLOR_WHITE, NULL, NULL);
+        string_blt(ScreenSurface, &font_small, node->version, x + 366, y + 94 + i * 12, COLOR_WHITE, NULL, NULL);
+        if (node->player >= 0)
+            sprintf(buf, "%d", node->player);
+        else
+            sprintf(buf, "??");
+        string_blt(ScreenSurface, &font_small, buf, x + 416, y + 94 + i * 12, COLOR_WHITE, NULL, NULL);
+        node = node->next;
     }
-    else
-    {
-        sprintf(buf, "~%c%c~: select server  |**|  ~RETURN~: connect",
-                ECC_ARROWUP, ECC_ARROWDOWN);
-        strout_blt(ScreenSurface, &font_small, STROUT_LEFT, buf, x + 200, y + 408,
-                   NDI_COLR_WHITE, NULL);
-    }
+
 }
 
 /******************************************************************
@@ -2193,14 +2067,15 @@ void show_account(void)
     mb = SDL_GetMouseState(&mx, &my);
 
     x = 25;
-    y = Screensize.y / 2 - skin_sprites[SKIN_SPRITE_DIALOG_BG]->bitmap->h / 2;
-    sprite_blt(skin_sprites[SKIN_SPRITE_DIALOG_BG], x, y, NULL, NULL);
-    sprite_blt(skin_sprites[SKIN_SPRITE_LOGO270], x + 20, y + 85, NULL, NULL);
-    box.w = 500;
-    box.h = font_heading.line_height;
-    strout_blt(ScreenSurface, &font_heading, STROUT_CENTER, "Account overview", x + 50, y + 25, NDI_COLR_RED, &box);
-    ENGRAVE(ScreenSurface, &font_large, "Character List", x+120, y+70, NDI_COLR_WHITE);
-    ENGRAVE(ScreenSurface, &font_large, "_____________________________", x+120, y+80, NDI_COLR_WHITE);
+    y = Screensize.y / 2 - Bitmaps[BITMAP_DIALOG_BG]->bitmap->h / 2;
+    sprite_blt(Bitmaps[BITMAP_DIALOG_BG], x, y, NULL, NULL);
+    sprite_blt(Bitmaps[BITMAP_LOGO270], x + 20, y + 85, NULL, NULL);
+
+    string_blt(ScreenSurface, &font_small, "Welcome on Server Daimonin", x+200, y+20, COLOR_WHITE, NULL, NULL);
+    string_blt(ScreenSurface, &font_large_out, "Account Overview", x+180, y+35, COLOR_WHITE, NULL, NULL);
+
+    string_blt(ScreenSurface, &font_large_out, "Character List", x+120, y+70, COLOR_WHITE, NULL, NULL);
+    string_blt(ScreenSurface, &font_large_out, "_____________________________", x+120, y+80, COLOR_WHITE, NULL, NULL);
 
     if(account.count) /* show selected player */
     {
@@ -2213,15 +2088,15 @@ void show_account(void)
             char delbuf[MAX_BUF];
 
             sprintf(delbuf, "Delete Character %s", account.name[account.selected]);
-            ENGRAVE(ScreenSurface, &font_large, delbuf, x+120, y+435, NDI_COLR_SILVER);
+            string_blt(ScreenSurface, &font_large_out, delbuf, x+120, y+435, COLOR_HGOLD, NULL, NULL);
 
             if (GameStatus == GAME_STATUS_ACCOUNT_CHAR_DEL )
             {
-                ENGRAVE(ScreenSurface, &font_large, "Type 'delete':", x+120, y+455, NDI_COLR_SILVER);
-                sprite_blt(skin_sprites[SKIN_SPRITE_LOGIN_INP], x + 250, y + 455, NULL, NULL);
+                string_blt(ScreenSurface, &font_large_out, "Type 'delete':", x+120, y+455, COLOR_HGOLD, NULL, NULL);
+                sprite_blt(Bitmaps[BITMAP_LOGIN_INP], x + 250, y + 455, NULL, NULL);
                 sprintf(delbuf, "%s%c", InputString, '_');
-                EMBOSS(ScreenSurface, &font_small, delbuf, x + 256, y + 457, NDI_COLR_WHITE);
-                ENGRAVE(ScreenSurface, &font_small, "press RETURN or ESC", x + 256, y + 472, NDI_COLR_WHITE);
+                string_blt(ScreenSurface, &font_small, delbuf, x + 256, y + 457, COLOR_WHITE, NULL, NULL);
+                string_blt(ScreenSurface, &font_small, "press RETURN or ESC", x + 256, y + 472, COLOR_WHITE, NULL, NULL);
             }
             else
             {
@@ -2233,15 +2108,15 @@ void show_account(void)
                 box.h= 20;
                 SDL_FillRect(ScreenSurface, &box, sdl_gray3);
                 sprintf(delbuf, "*** WAIT: Ask server to delete character %s ***", account.name[account.selected]);
-                ENGRAVE(ScreenSurface, &font_small, delbuf, x + 125, y + 458, NDI_COLR_LIME);
+                string_blt(ScreenSurface, &font_small, delbuf, x + 125, y + 458, COLOR_GREEN, NULL, NULL);
             }
         }
         else
         {
-            strout_blt(ScreenSurface, &font_large, STROUT_LEFT, "Press ~RETURN~ to play", x+120, y+435, NDI_COLR_SILVER, NULL);
-            strout_blt(ScreenSurface, &font_large, STROUT_LEFT, "Press '~D~' to delete this Character", x+120, y+452, NDI_COLR_SILVER, NULL);
-            sprintf(buf, "Use ~%c%c~ cursor keys for selection", ECC_ARROWUP, ECC_ARROWDOWN);
-            strout_blt(ScreenSurface, &font_small, STROUT_LEFT, buf, x+120, y + 470, NDI_COLR_WHITE, NULL);
+            string_blt(ScreenSurface, &font_large_out, "Press ~RETURN~ to play", x+120, y+435, COLOR_HGOLD, NULL, NULL);
+            string_blt(ScreenSurface, &font_large_out, "Press '~D~' to delete this Character", x+120, y+452, COLOR_HGOLD, NULL, NULL);
+            sprintf(buf, "Use ~%c%c~ cursor keys for selection", ASCII_UP, ASCII_DOWN);
+            string_blt(ScreenSurface, &font_small, buf, x+120, y + 470, COLOR_WHITE, NULL, NULL);
         }
     }
 
@@ -2249,36 +2124,16 @@ void show_account(void)
     {
         if(account.name[i][0])
         {
-            int           j = 0;
-            _server_char *sc = first_server_char;
-            char          race[16];
-
             char_count++;
-
-            while (j < account.race[i] && sc)
-            {
-                 j++;
-                 sc = sc->next;
-            }
-
-            if (sc)
-            {
-                sprintf(race, "%c%s", toupper(*sc->name), sc->name + 1);
-            }
-            else
-            {
-                strcpy(race, "UNKNOWN RACE");
-            }
-
-            EMBOSS(ScreenSurface, &font_large, account.name[i], x+120, y+100+i*50, NDI_COLR_WHITE);
-            sprintf(buf,"%s %s on Level %d", race, account.gender[i]?"Female":"Male", account.level[i]);
-            ENGRAVE(ScreenSurface, &font_small, buf, x+120, y+116+i*50, NDI_COLR_WHITE);
+            string_blt(ScreenSurface, &font_large_out, account.name[i], x+120, y+100+i*50, COLOR_WHITE, NULL, NULL);
+            sprintf(buf,"%s %s on Level %d", account.race[i]?"Elfish":"Human", account.gender[i]?"Female":"Male", account.level[i]);
+            string_blt(ScreenSurface, &font_small, buf, x+120, y+116+i*50, COLOR_WHITE, NULL, NULL);
         }
     }
 
     if(char_count < ACCOUNT_MAX_PLAYER)
     {
-        ENGRAVE(ScreenSurface, &font_large, "Press '~C~' for a new Character", x+120, y+100+char_count*50, NDI_COLR_SILVER);
+        string_blt(ScreenSurface, &font_large_out, "Press '~C~' for a new Character", x+120, y+100+char_count*50, COLOR_HGOLD, NULL, NULL);
     }
 }
 

@@ -24,96 +24,125 @@
 #ifndef __WIDGET_H
 #define __WIDGET_H
 
-/* add the widget id here */
-typedef enum widget_id_t
-{
-    WIDGET_STATS_ID,
-    WIDGET_RESIST_ID,
-    WIDGET_MALVL_ID,
-    WIDGET_SKEXP_ID,
-    WIDGET_REGEN_ID,
-    WIDGET_SKLVL_ID,
-    WIDGET_MENUB_ID,
-    WIDGET_QSLOTS_ID,
-    WIDGET_CHATWIN_ID,
-    WIDGET_MSGWIN_ID,
-    WIDGET_GROUP_ID,
-    WIDGET_PDOLL_ID,
-    WIDGET_BELOW_ID,
-    WIDGET_PINFO_ID,
-    WIDGET_RANGE_ID,
-    WIDGET_TARGET_ID,
-    WIDGET_INV_ID,
-    WIDGET_MAPNAME_ID,
-    WIDGET_CONSOLE_ID,
-    WIDGET_NUMBER_ID,
-    WIDGET_SMETER_ID,
-
-    WIDGET_NROF // must be last element
-}
-widget_id_t;
-
 /* used in the priority list (to order widgets) */
-typedef struct widget_node_t
-{
-    struct widget_node_t *next,
-                         *prev;
-
-    widget_id_t id;
-}
-widget_node_t;
+struct _widget_node {
+    struct _widget_node *next;
+    struct _widget_node *prev;
+	int WidgetID;
+};
+typedef struct _widget_node widget_node;
 
 /* information about a widget - used for current/default list */
-typedef struct widget_data_t
+typedef struct _widgetdata
 {
-    /* These are saved to FILE_WIDGET. */
-    char          *name;     // name
-    uint8          moveable; // draggable?
-    uint8          show;     // active?
-    sint16         x1;       // x screen posiition in pixels
-    sint16         y1;       // y screen posiition in pixels
-    uint16         wd;       // width in pixels
-    uint16         ht;       // height in pixels
+	char *name;				/* what is its name? */
 
-    /* These are not saved. */
-    sint16        bg;                                 // index of skin sprite to use as bg
-    void          (*process)(widget_id_t);            // redraw handler
-    void          (*event)(widget_id_t, SDL_Event *); // mouse event handler
-    SDL_Surface   *surface;                           // backbuffer
-    widget_node_t *priority_index;                    // internal use only
-    uint8          redraw;                            // redraw?
-}
-widget_data_t;
+	/* internal use only */
+	widget_node *priority_index;
+
+	/* position values */
+	int x1;
+	int y1;
+	int wd;
+	int ht;
+
+	uint8 moveable;		/* can you drag it? */
+	uint8 show;           /* hidden and inactive or shown */
+	uint8 redraw;         /* widget must be redrawn */
+
+}_widgetdata;
+
+/* events that are passed to the widget handler */
+typedef enum _proc_type
+{
+    PROCESS,
+    EVENT,
+    KILL,
+} _proc_type;
+
+enum _MEvent
+{
+    MOUSE_UP = 1,
+    MOUSE_DOWN,
+    MOUSE_MOVE,
+};
+
+/* add the widget id here */
+typedef enum _WidgetID
+{
+    STATS_ID,
+    RESIST_ID,
+    MAIN_LVL_ID,
+    SKILL_EXP_ID,
+    REGEN_ID,
+    SKILL_LVL_ID,
+    MENU_B_ID,
+    QUICKSLOT_ID,
+    CHATWIN_ID,
+    MSGWIN_ID,
+    MIXWIN_ID,
+    GROUP_ID,
+    PDOLL_ID,
+    BELOW_INV_ID,
+    PLAYER_INFO_ID,
+    RANGE_ID,
+    TARGET_ID,
+    MAIN_INV_ID,
+    MAPNAME_ID,
+    IN_CONSOLE_ID,
+    IN_NUMBER_ID,
+    STATOMETER_ID,
+
+	TOTAL_WIDGETS, /* Must be last element */
+}_WidgetID;
 
 /* used for mouse button/move events */
-typedef struct widget_event_t
+typedef struct _widgetevent
 {
-    uint8       moving;
-    widget_id_t id;
-    sint16      x;
-    sint16      y;
-    sint16      xoff;
-    sint16      yoff;
-}
-widget_event_t;
+	int owner;
+	int x;
+	int y;
+}_widgetevent;
+
+/* this is used when moving a widget with the mouse */
+typedef struct _widgetmove
+{
+	uint8 active;
+	int id;
+	int xOffset;
+	int yOffset;
+}_widgetmove;
+
+extern SDL_Surface* widgetSF[TOTAL_WIDGETS];
+
+extern _widgetdata  cur_widget[TOTAL_WIDGETS];
+extern _widgetevent widget_mouse_event;
+extern uint8      IsMouseExclusive;
+
+/* init and kill */
+extern void	    init_widgets_fromDefault();
+extern void	    init_widgets_fromCurrent();
+extern uint8  init_widgets_fromFile(char *filename);
+extern void     kill_widgets();
+
+/* file */
+extern void     save_interface_file(void);
+extern uint8  load_interface_file(void);
+
+/* events */
+extern int      widget_event_mousedn(int x,int y, SDL_Event *event);
+extern int      widget_event_mouseup(int x,int y, SDL_Event *event);
+extern int      widget_event_mousemv(int x,int y, SDL_Event *event);
+
+/* misc */
+extern void     process_widgets();
+extern uint32   GetMouseState(int *mx, int *my,int nWidgetID);
+extern uint8  IsWidgetDragging();
+extern void     SetPriorityWidget(int nWidgetID);
+
+extern int      get_widget_owner(int x,int y);
 
 /* helpermakros */
-#define WIDGET_SHOW(_ID_) widget_data[(_ID_)].show
-#define WIDGET_REDRAW(_ID_) widget_data[(_ID_)].redraw
-
-extern widget_data_t   widget_data[WIDGET_NROF];
-extern widget_event_t  widget_mouse_event;
-
-extern void        widget_init(void);
-extern void        widget_deinit(void);
-extern void        widget_load(void);
-extern void        widget_save(void);
-extern int         widget_event_mousedn(int x, int y, SDL_Event *event);
-extern int         widget_event_mouseup(int x, int y, SDL_Event *event);
-extern int         widget_event_mousemv(int x, int y, SDL_Event *event);
-extern uint32      widget_get_mouse_state(int *mx, int *my, widget_id_t id);
-extern void        widget_set_priority(widget_id_t id);
-extern widget_id_t widget_get_owner(int x, int y);
-extern void        widget_process(void);
+#define WIDGET_REDRAW(__a) cur_widget[__a].redraw=1;
 
 #endif /* ifndef __WIDGET_H */

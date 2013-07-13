@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9.00"
+	Version="9,00"
 	Name="client"
 	ProjectGUID="{029B7383-4C4F-4660-BB6E-F471A85986E5}"
 	RootNamespace="client"
@@ -47,13 +47,13 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="../../../,../../../src/include,../../../src/3rdparty/sprig,../../../src/3rdparty/zlib,../include"
-				PreprocessorDefinitions="INSTALL_SOUND,WIN32,_DEBUG,__WIN_32,CURL_STATICLIB,DAI_DEVELOPMENT"
+				AdditionalIncludeDirectories="../../../,../../../src/include,.\sdl_inc,.\sdl_inc\SDL\"
+				PreprocessorDefinitions="WIN32,_DEBUG,__WIN_32"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				UsePrecompiledHeader="0"
 				PrecompiledHeaderThrough="include.h"
-				PrecompiledHeaderFile=".\Debug/client_cmd.pch"
+				PrecompiledHeaderFile=".\Debug/client.pch"
 				AssemblerListingLocation=".\Debug/"
 				ObjectFile=".\Debug/"
 				ProgramDataBaseFileName=".\Debug/"
@@ -148,12 +148,12 @@
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
-				AdditionalIncludeDirectories="../../../,../../../src/include,../../../src/3rdparty/sprig,../../../src/3rdparty/zlib,../include"
-				PreprocessorDefinitions="INSTALL_SOUND,WIN32,NDEBUG,_WINDOWS,__WIN_32,CURL_STATICLIB,DAI_DEVELOPMENT"
+				AdditionalIncludeDirectories="../../../,../../../src/include,.\sdl_inc,.\sdl_inc\SDL\"
+				PreprocessorDefinitions="WIN32,NDEBUG,_WINDOWS,__WIN_32"
 				ExceptionHandling="0"
 				RuntimeLibrary="0"
 				PrecompiledHeaderThrough=""
-				PrecompiledHeaderFile=".\Release/client_cmd.pch"
+				PrecompiledHeaderFile=".\Release/client.pch"
 				AssemblerListingLocation=".\Release/"
 				ObjectFile=".\Release/"
 				ProgramDataBaseFileName=".\Release/"
@@ -180,7 +180,7 @@
 				OutputFile=".\Release/daimonin.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
-				GenerateManifest="false"
+				GenerateManifest="true"
 				IgnoreAllDefaultLibraries="false"
 				IgnoreDefaultLibraryNames=""
 				DelayLoadDLLs="$(NOINHERIT)"
@@ -222,55 +222,7 @@
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 			>
 			<File
-				RelativePath="..\..\..\src\3rdparty\sprig\SPG_extended.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\3rdparty\sprig\SPG_misc.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\3rdparty\sprig\SPG_polygon.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\3rdparty\sprig\SPG_primitives.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\3rdparty\sprig\SPG_rotation.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\3rdparty\sprig\SPG_surface.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\3rdparty\zlib\adler32.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\3rdparty\zlib\crc32.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\3rdparty\zlib\inffast.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\3rdparty\zlib\inflate.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\3rdparty\zlib\inftrees.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\3rdparty\zlib\uncompr.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\3rdparty\zlib\zutil.c"
+				RelativePath="..\..\..\src\adler32.c"
 				>
 			</File>
 			<File
@@ -290,7 +242,23 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\client_cmd.c"
+				RelativePath="..\..\..\src\client.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\commands.c"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WarningLevel="3"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\crc32.c"
 				>
 			</File>
 			<File
@@ -302,15 +270,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\face.c"
+				RelativePath="..\..\..\src\filewrap.c"
 				>
 			</File>
 			<File
 				RelativePath="..\..\..\src\font.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\gameserver.c"
 				>
 			</File>
 			<File
@@ -319,6 +283,18 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\ignore.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\inffast.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\inflate.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\inftrees.c"
 				>
 			</File>
 			<File
@@ -338,10 +314,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\locator.c"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\src\main.c"
 				>
 			</File>
@@ -358,10 +330,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\p_unicode.c"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\src\physfsrwops.c"
 				>
 			</File>
@@ -371,22 +339,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\protocol.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\server_cmd.c"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WarningLevel="3"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\..\src\skin.c"
 				>
 			</File>
 			<File
@@ -402,14 +354,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\srvfile.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\strout.c"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\src\textwin.c"
 				>
 			</File>
@@ -418,7 +362,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\wdh.c"
+				RelativePath="..\..\..\src\uncompr.c"
 				>
 			</File>
 			<File
@@ -429,51 +373,15 @@
 				RelativePath="..\..\..\src\wrapper.c"
 				>
 			</File>
+			<File
+				RelativePath="..\..\..\src\zutil.c"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header-Dateien"
 			Filter="h;hpp;hxx;hm;inl"
 			>
-			<File
-				RelativePath="..\..\..\src\3rdparty\sprig\sprig.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\3rdparty\sprig\sprig_common.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\3rdparty\sprig\sprig_inline.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\3rdparty\zlib\crc32.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\3rdparty\zlib\inffast.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\3rdparty\zlib\inflate.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\3rdparty\zlib\inftrees.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\3rdparty\zlib\zconf.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\3rdparty\zlib\zlib.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\3rdparty\zlib\zutil.h"
-				>
-			</File>
 			<File
 				RelativePath="..\..\..\src\include\anim.h"
 				>
@@ -495,11 +403,19 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\client_cmd.h"
+				RelativePath="..\..\..\src\include\client.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\include\commands.h"
 				>
 			</File>
 			<File
 				RelativePath="..\..\..\src\include\config.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\include\crc32.h"
 				>
 			</File>
 			<File
@@ -511,15 +427,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\face.h"
+				RelativePath="..\..\..\src\include\filewrap.h"
 				>
 			</File>
 			<File
 				RelativePath="..\..\..\src\include\font.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\include\gameserver.h"
 				>
 			</File>
 			<File
@@ -532,6 +444,18 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\include\include.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\include\inffast.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\include\inflate.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\include\inftrees.h"
 				>
 			</File>
 			<File
@@ -551,10 +475,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\locator.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\src\include\main.h"
 				>
 			</File>
@@ -571,7 +491,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\p_unicode.h"
+				RelativePath="..\..\..\src\include\physfs.h"
 				>
 			</File>
 			<File
@@ -587,15 +507,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\server_cmd.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\include\skin.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\include\socket.h"
+				RelativePath="..\..\..\src\include\sdlsocket.h"
 				>
 			</File>
 			<File
@@ -607,23 +519,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\srvfile.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\include\strout.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\src\include\textwin.h"
 				>
 			</File>
 			<File
 				RelativePath="..\..\..\src\include\tile_stretcher.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\include\wdh.h"
 				>
 			</File>
 			<File
@@ -638,13 +538,25 @@
 				RelativePath="..\..\..\src\include\wrapper.h"
 				>
 			</File>
+			<File
+				RelativePath="..\..\..\src\include\zconf.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\include\zlib.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\include\zutil.h"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Ressourcendateien"
 			Filter="ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"
 			>
 			<File
-				RelativePath="..\daimonin.rc"
+				RelativePath=".\client.rc"
 				>
 			</File>
 			<File
@@ -652,32 +564,28 @@
 				>
 			</File>
 			<File
-				RelativePath="..\resource.h"
+				RelativePath=".\resource.h"
 				>
 			</File>
 		</Filter>
 		<File
-			RelativePath="..\lib\static\libcurl.lib"
+			RelativePath=".\sdl_lib\physfs.lib"
 			>
 		</File>
 		<File
-			RelativePath="..\lib\SDLmain.lib"
+			RelativePath=".\sdl_lib\SDL.lib"
 			>
 		</File>
 		<File
-			RelativePath="..\lib\SDL.lib"
+			RelativePath=".\sdl_lib\SDL_image.lib"
 			>
 		</File>
 		<File
-			RelativePath="..\lib\SDL_image.lib"
+			RelativePath=".\sdl_lib\SDL_mixer.lib"
 			>
 		</File>
 		<File
-			RelativePath="..\lib\SDL_mixer.lib"
-			>
-		</File>
-		<File
-			RelativePath="..\lib\physfs.lib"
+			RelativePath=".\sdl_lib\SDLmain.lib"
 			>
 		</File>
 	</Files>

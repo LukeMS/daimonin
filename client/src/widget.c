@@ -22,386 +22,525 @@
     The author can be reached via e-mail to jonsebox28@hotmail.com
 */
 
-/* A widget is like a simple window on your desktop. Each widget displays
- * certain specific data (eg, your stats in WIDGET_STATS_ID, and your resistances in
- * WIDGET_RESIST_ID). The exact layout of the widgets are partly determined through
- * code and partly through the current skin (in future this balance will be
- * tipped further in the direction of the skin).
- *
- * Currently widgets are of fixed dimensions and (with exceptions) are always
- * shown, but greater control is in development.
- *
- * By right-clicking and dragging a widget, the player can move it around the
- * screen.
- *
- * To add a new widget:
- *   1) Add an entry (same index in both cases) to DefaultData[] and
- *      widget_id_t.
- *   2) If applicable, add handler code for widget movement in
- *      widget_event_mousedn().
- *   3) If applicable, add handler code to widget_get_owner().
- *   4) Add handler code to widget_process().
- * -- Smacky 20110603 */
+/************************************************************************/
+/*
+    To add a new widget:
 
-#include "include.h"
+    1) Add an entry (same index in both cases) to "_widgetdata con_widget[]" (widget.c), and "enum _WidgetID" (widget.h)
+    2) If applicable, add handler code for widget movement in widget_event_mousedn()
+    3) If applicable, add handler code to get_widget_owner()
+    4) Add handler/function to 'process_widget(int nID, int proc)'
+*/
+
+#include <include.h>
+
+/* file-scope routines .. */
+static void     process_widget(int nID, int proc);
+static void     init_priority_list();
+static void     kill_priority_list();
+/* ... */
 
 /* Current (working) data-list of all widgets */
-widget_data_t widget_data[WIDGET_NROF];
+_widgetdata cur_widget[TOTAL_WIDGETS];
 
-/* Determines which widget has mouse focus */
-/* This value is determined in the mouse routines for the widgets */
-widget_event_t widget_mouse_event = { 0, 0, 0, 0, 0, 0 };
+/* Current (default) data-list of all widgets */
+_widgetdata def_widget[TOTAL_WIDGETS];
 
 /* Default (default) data-list of all widgets */
-static const widget_data_t DefaultData[WIDGET_NROF] =
+/* {name,priority_index,x1,y1,width,height,moveable?, active?} */
+static const _widgetdata con_widget[TOTAL_WIDGETS] =
 {
-    {
-        "STATS", 1, 1, 227, 0, 172, 102, SKIN_SPRITE_STATS_BG,
-        wdh_process_stats, NULL,
-        NULL, NULL, 1
-    },
-    {
-        "RESIST", 1, 1, 497, 0, 198, 79, SKIN_SPRITE_RESIST_BG,
-        wdh_process_resist, NULL,
-        NULL, NULL, 1
-    },
-    {
-        "MALVL", 1, 1, 399, 39, 98, 62, SKIN_SPRITE_MAIN_LVL_BG,
-        wdh_process_main_lvl, NULL,
-        NULL, NULL, 1
-    },
-    {
-        "SKEXP", 1, 1, 497, 79, 198, 22, SKIN_SPRITE_SKILL_EXP_BG,
-        wdh_process_skill_exp, wdh_event_skill_exp,
-        NULL, NULL, 1
-    },
-    {
-        "REGEN", 1, 1, 399, 0, 98, 39, SKIN_SPRITE_REGEN_BG,
-        wdh_process_regen, NULL,
-        NULL, NULL, 1
-    },
-    {
-        "SKLVL", 1, 1, 695, 0, 52, 101, SKIN_SPRITE_SKILL_LVL_BG,
-        wdh_process_skill_lvl, NULL,
-        NULL, NULL, 1
-    },
-    {
-        "MENUB", 1, 1, 747, 0, 47, 101, -1,
-        wdh_process_menu_b, wdh_event_menu_b,
-        NULL, NULL, 1
-    },
-    {
-        "QSLOTS", 1, 1, 513, 107, 282, 34, -1,
-        wdh_process_quickslots, wdh_event_quickslots,
-        NULL, NULL, 1
-    },
-    {
-        "CHATWIN", 1, 1, 0, 366, 261, 233, -1,
-        wdh_process_chatwin, wdh_event_chatwin,
-        NULL, NULL, 1
-    },
-    {
-        "MSGWIN", 1, 1, 537, 366, 261, 233, -1,
-        wdh_process_msgwin, wdh_event_msgwin,
-        NULL, NULL, 1
-    },
-    {
-        "GROUP", 1, 1, 658, 187, 120, 31, SKIN_SPRITE_GROUP_BG,
-        wdh_process_group, NULL,
-        NULL, NULL, 1
-    },
-    {
-        "PDOLL", 1, 1, 0, 41, 221, 224, SKIN_SPRITE_DOLL_BG,
-        wdh_process_pdoll, wdh_event_pdoll,
-        NULL, NULL, 1
-    },
-    {
-        "BELOW", 1, 1, 262, 545, 274, 55, SKIN_SPRITE_BELOW,
-        wdh_process_below_inv, wdh_event_below_inv,
-        NULL, NULL, 1
-    },
-    {
-        "PINFO", 1, 1, 0, 0, 219, 41, SKIN_SPRITE_PLAYER_INFO,
-        wdh_process_pinfo, wdh_event_pinfo,
-        NULL, NULL, 1
-    },
-    {
-        "RANGE", 1, 1, 6, 100, 94, 60, -1,
-        wdh_process_range, wdh_event_range,
-        NULL, NULL, 1
-    },
-    {
-        "TARGET", 1, 1, 267, 514, 264, 31, SKIN_SPRITE_TARGET_BG,
-        wdh_process_target, wdh_event_target,
-        NULL, NULL, 1
-    },
-    {
-        "INV", 1, 1, 539, 147, 239, 32, SKIN_SPRITE_INV_BG,
-        wdh_process_main_inv, wdh_event_main_inv,
-        NULL, NULL, 1
-    },
-    {
-        "MAPNAME", 1, 1, 228, 106, 36, 12, -1,
-        wdh_process_mapname, NULL,
-        NULL, NULL, 1
-    },
-    {
-        "CONSOLE", 1, 0, 271, 517, 256, 25, -1,
-        wdh_process_console, NULL,
-        NULL, NULL, 1
-    },
-    {
-        "NUMBER", 1, 0, 271, 465, 256, 43, -1,
-        wdh_process_number, wdh_event_number,
-        NULL, NULL, 1
-    },
-    {
-        "SMETER", 1, 1, 8, 50, 160, 40, -1,
-        wdh_process_statometer, NULL,
-        NULL, NULL, 1
-    },
+    {"STATS",NULL,227,0,172,102,        1, 1, 1},
+    {"RESIST",NULL,497,0,198,79,        1, 1, 1},
+    {"MAIN_LVL",NULL,399,39,98,62,      1, 1, 1},
+    {"SKILL_EXP",NULL,497,79,198,22,    1, 1, 1},
+    {"REGEN",NULL,399,0,98,39,          1, 1, 1},
+    {"SKILL_LVL",NULL,695,0,52,101,     1, 1, 1},
+    {"MENUBUTTONS",NULL,747,0,47,101,   1, 1, 1},
+    {"QUICKSLOTS",NULL,513,107,282,34,  1, 1, 1},
+    {"CHATWIN",NULL,0,366,261,233,      1, 1, 1},
+    {"MSGWIN",NULL,537,366,261,233,     1, 1, 1},
+    {"MIXWIN",NULL,539,420,261,233,     1, 0, 1},
+    {"GROUP",NULL,658,187,120,31,       1, 1, 1},
+    {"PLAYERDOLL",NULL,0,41,221,224,    1, 1, 1},
+    {"BELOWINV",NULL,262,545,274,55,    1, 1, 1},
+    {"PLAYERINFO",NULL,0,0,219,41,      1, 1, 1},
+    {"RANGEBOX",NULL,6,100,94,60,       1, 1, 1},
+    {"TARGET",NULL,267,514,264,31,      1, 1, 1},
+    {"MAININV",NULL,539,147,239,32,     1, 1, 1},
+    {"MAPNAME",NULL,228,106,36,12,      1, 1, 1},
+    {"CONSOLE",NULL,271,517,256,25,     1, 0, 1},
+    {"NUMBER",NULL,271,465,256,43,      1, 0, 1},
+    {"STATOMETER",NULL,8,50,160,40,     1, 1, 1},
 };
 
 /* default overall priority list.. will change during runtime */
 /* widget at the head has highest priority */
 /* events go to the head first.. */
 /* displaying goes to the foot first.. */
-static widget_node_t *PriorityListHead,
-                     *PriorityListFoot;
+static widget_node *priority_list_head;
+static widget_node *priority_list_foot;
+
+
+/* Determines which widget has mouse focus */
+/* This value is determined in the mouse routines for the widgets */
+_widgetevent widget_mouse_event =
+{
+    0,
+    0,
+    0
+};
+
+/* this is used when moving a widget with the mouse */
+static _widgetmove widget_event_move =
+{
+    0,
+    0,
+    0,
+    0
+};
+
+
+SDL_Surface*    widgetSF[TOTAL_WIDGETS] = {NULL};
 
 /* a way to steal the mouse, and to prevent widgets from using mouse events */
 /* Ex: prevents widgets from using mouse events during dragging procedure */
-static uint8 IsMouseExclusive = 0;
+uint8 IsMouseExclusive = 0;
 
-/* file-scope routines .. */
-static void InitPriorityList(void);
-static void DeinitPriorityList(void);
-
-/* Initialises the default widget positions and priority list */
-void widget_init(void)
+/* load the defaults and initialize the priority list */
+/* create the interface file, if it doesn't exist */
+void init_widgets_fromDefault()
 {
-    widget_id_t id;
+    int lp;
 
-    for (id = 0; id < WIDGET_NROF; id++)
+//    LOG(LOG_MSG,"Entering init_widgets_fromDefault()..\n");
+
+    /* in all cases should reset */
+    kill_widgets();
+
+    /* exit, if there're no widget ID's */
+    if(!TOTAL_WIDGETS) { return; }
+
+    /* store the constant default widget lookup in the current lookup(s) */
+    for(lp=0; lp<TOTAL_WIDGETS; ++lp)
+        cur_widget[lp] = def_widget[lp] = con_widget[lp];
+
+    /* allocate the priority list now */
+    init_priority_list();
+
+//    LOG(LOG_MSG, "..init_widgets_fromDefault(): Done.\n");
+}
+
+/* try to load the main interface file and initialize the priority list */
+/* on failure, initialize the widgets w/ init_widgets_fromDefault() */
+void init_widgets_fromCurrent()
+{
+//    LOG(LOG_MSG,"Entering init_widgets_fromCurrent()..\n");
+
+    /* in all cases should reset */
+    kill_widgets();
+
+    /* exit, if there're no widgets */
+    if(!TOTAL_WIDGETS) { return; }
+
+    /* if cannot open/load the interface file .. */
+    /* .. load defaults and create file */
+    if(!load_interface_file())
     {
-        widget_data[id] = DefaultData[id];
+        /* inform user.. */
+        LOG(LOG_MSG, "..Can't open/load the interface file. Resetting..\n");
+        /* load the defaults - this also allocates priority list */
+        init_widgets_fromDefault();
+        /* create the interface file.. */
+        save_interface_file();
+    }
+    /* was able to load the interface file .. */
+    else
+    {
+        /* clear the priority list if it already exists */
+        if(priority_list_head) { kill_priority_list(); }
 
-        if (widget_data[id].bg >= 0)
-        {
-            sint16       i = widget_data[id].bg;
-            SDL_Surface *df = SDL_DisplayFormat(skin_sprites[i]->bitmap);
-
-            SDL_FreeSurface(skin_sprites[i]->bitmap);
-            skin_sprites[i]->bitmap = df;
-        }
+        /* allocate the priority list now */
+        init_priority_list();
     }
 
-    InitPriorityList();
+//    LOG(LOG_MSG, "..init_widgets_fromCurrent(): Done.\n");
+}
+
+/* try to load an interface file and initialize the priority list */
+/* on failure, exit without changing anything */
+uint8 init_widgets_fromFile(char *filename)
+{
+//    LOG(LOG_MSG,"Entering init_widgets_fromFile()..\n");
+
+    /* exit, if there're no widgets */
+    if(!TOTAL_WIDGETS) { return 0; }
+
+    /* exit, if cannot open/find file */
+    if(!load_interface_file()) { return 0; }
+
+    /* clear the priority list if it already exists */
+    if(priority_list_head) { kill_priority_list(); }
+
+    /* allocate the priority list now */
+    init_priority_list();
+
+//    LOG(LOG_MSG, "..init_widgets_fromFile(): Done.\n");
+
+    return 1;
+}
+
+/* used in two places atm, so its in a static-scope function.. */
+void init_priority_list()
+{
+    widget_node *node;
+    int lp;
+
+    /* if its already allocated, leave */
+    if(priority_list_head) { return; }
+
+//    LOG(LOG_MSG,"Entering init_priority_list()..\n");
+
+    /* allocate the head of the list */
+    MALLOC(node, sizeof(widget_node));
+    priority_list_head = node;
+    if (!node) { exit(0); }
+    /* set the members and store a 'link' to this pointer */
+    priority_list_head->next = NULL;
+    priority_list_head->prev = NULL;
+    priority_list_head->WidgetID = 0;
+    cur_widget[0].priority_index = priority_list_head;
+
+    for (lp=1; lp<TOTAL_WIDGETS; ++lp)
+    {
+        /* allocate it */
+        MALLOC(node->next, sizeof(widget_node));
+        if (!node->next) { exit(0); }
+        node->next->prev = node;
+        /* set the members and store a 'link' to this pointer */
+        node = node->next;
+        node->next = NULL;
+        node->WidgetID = lp;
+        cur_widget[lp].priority_index = node;
+    }
+
+    /* set the foot of the priority list */
+    priority_list_foot = node;
+
+    /* some helpfull information */
+//    LOG(LOG_MSG, "..Output of node list:\n");
+//    for(lp=0,node=priority_list_head;node;node=node->next,++lp)
+//    {
+//        LOG(LOG_MSG, "..Node #%d: %d\n", lp,node->WidgetID);
+//    }
+//    LOG(LOG_MSG, "..Allocated %d/%d nodes!\n", lp, TOTAL_WIDGETS);
+
+//    LOG(LOG_MSG, "..init_priority_list(): Done.\n");
+}
+
+/* had to make this for the circumstances */
+void kill_priority_list()
+{
+    widget_node *tmp_node;
+    int lp;
+
+    /* leave if its clear already */
+    if(!priority_list_head) { return; }
+
+//    LOG(LOG_MSG,"Entering kill_priority_list()..\n");
+
+//    LOG(LOG_MSG, "..Output of deleted node(s):\n");
+
+    /* walk down the list and free it */
+    for(lp=0;priority_list_head;++lp)
+    {
+//        LOG(LOG_MSG, "..Node #%d: %d\n", lp, priority_list_head->WidgetID);
+
+        tmp_node = priority_list_head->next;
+        FREE(priority_list_head);
+        priority_list_head = tmp_node;
+    }
+
+//    LOG(LOG_MSG, "..De-Allocated %d/%d nodes!\n", lp, TOTAL_WIDGETS);
+
+    priority_list_head = NULL;
+    priority_list_foot = NULL;
+
+//    LOG(LOG_MSG, "..kill_priority_list(): Done.\n");
 }
 
 /* perform de-initialization (system-scope) of the widgets.. */
-void widget_deinit(void)
+void kill_widgets()
 {
-    widget_id_t id;
-
-    for(id = 0; id < WIDGET_NROF; id++)
+    int pos;
+    for(pos=0; pos < TOTAL_WIDGETS; ++pos)
     {
-        if (widget_data[id].surface)
+        if (widgetSF[pos])
         {
-            SDL_FreeSurface(widget_data[id].surface);
-            widget_data[id].surface = NULL;
+            SDL_FreeSurface(widgetSF[pos]);
+            widgetSF[pos]=NULL;
         }
     }
+    kill_priority_list();
 
-    DeinitPriorityList();
 }
 
 /* load the widgets/interface from a file */
 /* do not perform any dynamic allocation! */
-void widget_load(void)
+uint8 load_interface_file(void)
 {
+    int          i = -1,
+                 pos,
+                 found_widget[TOTAL_WIDGETS] = { 0 };
+    _widgetdata  tmp_widget[TOTAL_WIDGETS];
+    char         line[MEDIUM_BUF],
+                 keyword[MEDIUM_BUF],
+                 parameter[MEDIUM_BUF];
     PHYSFS_File *handle;
-    char         buf[TINY_BUF];
-    widget_id_t  id = WIDGET_NROF;
 
-    if (!(handle = load_client_file(FILE_WIDGET)))
+//    LOG(LOG_MSG,"Entering load_interface_file()..\n");
+
+    /* transfer the constant lookup to a temp lookup */
+    /* .. we'll use it here to load the file */
+    for(pos=0; pos < TOTAL_WIDGETS; ++pos)
+        tmp_widget[pos] = con_widget[pos];
+
+    LOG(LOG_MSG, "Trying to load widget postions... ");
+    sprintf(line, "%s/%s", DIR_SETTINGS, FILE_INTERFACE);
+
+    if (!(handle = PHYSFS_openRead(line)))
     {
-        return;
+        LOG(LOG_ERROR, "FAILED: %s!\n", PHYSFS_getLastError());
+
+        return 0;
     }
 
-    /* Read the settings from the file */
-    while (PHYSFS_readString(handle, buf, sizeof(buf)) >= 0)
-    {
-        char *key = buf,
-             *value;
+    LOG(LOG_MSG, "OK!\n");
 
-        /* Skip comments and blank bufs. */
-        if (buf[0]=='#' ||
-            buf[0]=='\0')
+    /* Read the settings from the file */
+    while (PHYSFS_readString(handle, line, sizeof(line)) >= 0)
+    {
+        /* Skip comments and blank lines. */
+        if (line[0]=='#' ||
+            line[0]=='\0')
         {
             continue;
         }
 
-        /* If no : can be found, set value to the end (\0) of buf. */
-        if (!(value = strchr(buf, ':')))
-        {
-            value = &buf[strlen(buf)];
-        }
-        /* Otherwise, replace the : with \0 (terminates key) and set value to
-         * the next character. */
-        else
-        {
-            *value++ = '\0';
+        i=0;
+        while (line[i] && line[i]!= ':') i++;
+        line[++i]=0;
+        strcpy(keyword, line);
+        strcpy(parameter, line + i + 1);
 
-            /* Skip any spaces, so value starts with a real character. */
-            while (*value != '\0' &&
-                   isspace(*value))
-            {
-                value++;
-            }
-        }
-
-        /* Ignore leading '.'s. */
-        while (*key == '.')
+        /* 1) if we find a widget (beginning of block) .. */
+        /* 2) read until "....END" (end of block) ,, */
+        /* beginning of block .. */
+        if(!strcmp(keyword, "Widget:"))
         {
-            key++;
-        }
+            LOG(LOG_MSG, "..Trying to find \"Widget: %s\"", parameter);
 
-        if (id == WIDGET_NROF &&
-            !strcmp(key, "Widget"))
-        {
+            pos = 0;
+
             /* find the index of the widget for reference */
-            for (id = 0; id < WIDGET_NROF; id++)
-            {
-                 if (!strcmp(widget_data[id].name, value))
-                 {
-                     break;
-                 }
-            }
+            while (    pos < TOTAL_WIDGETS &&
+                    (strcmp(tmp_widget[pos].name,parameter)!=0)) { ++pos; }
 
             /* the widget name couldn't be found? */
-            if (id == WIDGET_NROF)
+            if(pos >= TOTAL_WIDGETS)
             {
-                LOG(LOG_ERROR, "Ignoring unrecognised widget >%s<!\n",
-                    value);
+                LOG(LOG_MSG, ".. Widget not found!\n");
+
+                continue;
             }
-        }
+            /* get the block .. */
+            else
+            {
+                /* if we haven't found this widget, mark it .. */
+                if(!found_widget[pos])
+                {
+                    LOG(LOG_MSG, ".. Found! (Index = %d) (%d widgets total)\n", pos, TOTAL_WIDGETS);
+                    found_widget[pos] = 1;
+                }
+                /* if we have found it, skip this block .. */
+                else
+                {
+                    LOG(LOG_MSG, ".. Widget already found! Please remove duplicate(s)!\n");
+                    continue;
+                }
 
-        if (id == WIDGET_NROF)
-        {
-           continue;
-        }
+                while (PHYSFS_readString(handle, line, sizeof(line)) >= 0)
+                {
+                    /* Skip comments and blank lines. */
+                    if (line[0]=='#' ||
+                        line[0]=='\0')
+                    {
+                        continue;
+                    }
 
-        if (!strcmp(key, "Moveable"))
-        {
-            widget_data[id].moveable = (uint8)atoi(value);
-        }
-        else if (!strcmp(key, "Active"))
-        {
-            widget_data[id].show = (uint8)atoi(value);
-        }
-        else if (!strcmp(key, "X1"))
-        {
-            widget_data[id].x1 = (sint16)atoi(value);
-        }
-        else if (!strcmp(key, "Y1"))
-        {
-            widget_data[id].y1 = (sint16)atoi(value);
-        }
-        else if (!strcmp(key, "Wd"))
-        {
-            widget_data[id].wd = (uint16)atoi(value);
-        }
-        else if (!strcmp(key, "Ht"))
-        {
-            widget_data[id].ht = (uint16)atoi(value);
-        }
-        else if (!strcmp(key, "END"))
-        {
-            id = WIDGET_NROF;
+                    if(!strncmp(line, "....END", 7))
+                        break;
+
+                    i=0;
+                    while (line[i] && line[i]!= ':') i++;
+                    line[++i]=0;
+                    strcpy(keyword, line);
+                    strcpy(parameter, line + i + 1);
+
+                    if(!strcmp(keyword, "....X1:"))
+                    {
+                        tmp_widget[pos].x1 = atoi(parameter);
+//                        LOG(LOG_MSG, "..Loading: (%s)\n", keyword);
+                    }
+                    else if(!strcmp(keyword, "....Moveable:"))
+                    {
+                        tmp_widget[pos].moveable = atoi(parameter);
+//                        LOG(LOG_MSG, "..Loading: (%s)\n", keyword);
+                    }
+                    else if(!strcmp(keyword, "....Active:"))
+                    {
+                        tmp_widget[pos].show = atoi(parameter);
+//                        LOG(LOG_MSG, "..Loading: (%s)\n", keyword);
+                    }
+                    else if(!strcmp(keyword, "....Y1:"))
+                    {
+                        tmp_widget[pos].y1 = atoi(parameter);
+//                        LOG(LOG_MSG, "..Loading: (%s)\n", keyword);
+                    }
+                    else if(!strcmp(keyword, "....Wd:"))
+                    {
+                        tmp_widget[pos].wd = atoi(parameter);
+//                        LOG(LOG_MSG, "..Loading: (%s)\n", keyword);
+                    }
+                    else if(!strcmp(keyword, "....Ht:"))
+                    {
+                        tmp_widget[pos].ht = atoi(parameter);
+//                        LOG(LOG_MSG, "..Loading: (%s)\n", keyword);
+                    }
+                }
+            }
         }
     }
 
     PHYSFS_close(handle);
+
+    /* test to see if all widgets were found */
+    for(pos=0; pos < TOTAL_WIDGETS && found_widget[pos]; ++pos) { }
+
+    /* if all were loaded/found, transfer .. */
+    if(pos >= TOTAL_WIDGETS)
+    {
+        for(pos=0; pos < TOTAL_WIDGETS; ++pos)
+            cur_widget[pos] = def_widget[pos] = tmp_widget[pos];
+    }
+    /* some are missing, don't transfer .. */
+    else
+    {
+        LOG(LOG_MSG, "load_interface_file(): Not all widgets included in interface file!\n");
+
+        return 0;
+    }
+
+//    LOG(LOG_MSG, "..load_interface_file(): Done.\n");
+
+    return 1;
 }
 
 /* save the widgets/interface to a file */
-void widget_save(void)
+void save_interface_file(void)
 {
+    char         buf[MEDIUM_BUF];
     PHYSFS_File *handle;
-    widget_id_t  id;
+    int          i = -1;
 
-    if (!(handle = save_client_file(FILE_WIDGET)))
+    LOG(LOG_MSG, "Trying to save  widget positions... ");
+    sprintf(buf, "%s/%s", DIR_SETTINGS, FILE_INTERFACE);
+
+    /* leave, if there's an error opening or creating */
+    if(!(handle = PHYSFS_openWrite(buf)))
     {
+        LOG(LOG_ERROR, "FAILED: %s!\n", PHYSFS_getLastError());
+
         return;
     }
 
-    for (id = 0; id < WIDGET_NROF; id++)
-    {
-        char buf[TINY_BUF];
+    PHYSFS_writeString(handle, "##############################################\n");
+    PHYSFS_writeString(handle, "# This is the daimonin client interface file #\n");
+    PHYSFS_writeString(handle, "##############################################\n");
 
-        sprintf(buf, "\n\nWidget: %s\n", widget_data[id].name);
+    while (++i < TOTAL_WIDGETS)
+    {
+        sprintf(buf, "\nWidget: %s\n", cur_widget[i].name);
         PHYSFS_writeString(handle, buf);
-        sprintf(buf, "Moveable: %u\n", widget_data[id].moveable);
+        sprintf(buf, "....Moveable: %d\n", cur_widget[i].moveable);
         PHYSFS_writeString(handle, buf);
-        sprintf(buf, "Active: %u\n", widget_data[id].show);
+        sprintf(buf, "....Active: %d\n", cur_widget[i].show);
         PHYSFS_writeString(handle, buf);
-        sprintf(buf, "X1: %d\n", widget_data[id].x1);
+        sprintf(buf, "....X1: %d\n", cur_widget[i].x1);
         PHYSFS_writeString(handle, buf);
-        sprintf(buf, "Y1: %d\n", widget_data[id].y1);
+        sprintf(buf, "....Y1: %d\n", cur_widget[i].y1);
         PHYSFS_writeString(handle, buf);
-        sprintf(buf, "Wd: %u\n", widget_data[id].wd);
+        sprintf(buf, "....Wd: %d\n", cur_widget[i].wd);
         PHYSFS_writeString(handle, buf);
-        sprintf(buf, "Ht: %u\n", widget_data[id].ht);
+        sprintf(buf, "....Ht: %d\n", cur_widget[i].ht);
         PHYSFS_writeString(handle, buf);
-        PHYSFS_writeString(handle, "END");
+        PHYSFS_writeString(handle, "....END\n");
     }
 
     PHYSFS_close(handle);
+    LOG(LOG_MSG, "OK!\n");
+}
+
+/* is the widget being moved by the user? if so, let me know! */
+/* ..used a function to protect internals */
+uint8 IsWidgetDragging()
+{
+    return widget_event_move.active;
 }
 
 /************************ MOUSE DOWN **####*****************/
 /* check for owner of mouse focus                            */
 /* setup widget dragging, if enabled                         */
 /* TODO - right-click.. select 'move' to move a widget..     */
-int widget_event_mousedn(int x, int y, SDL_Event *event)
+int widget_event_mousedn(int x,int y, SDL_Event *event)
 {
-    widget_id_t id = widget_get_owner(x,y);
-
-    if (id == WIDGET_NROF)
-    {
-        return 0;
-    }
+    int nID = get_widget_owner(x,y);
 
     /* setup the event structure in response */
-    widget_mouse_event.moving = 0;
-    widget_mouse_event.id = id;
+    widget_mouse_event.owner = nID;
+
+    /* sanity check */
+    if(nID<0) { return 0; }
 
     /* setup the event structure in response */
     widget_mouse_event.x = x;
     widget_mouse_event.y = y;
 
     /* set the priority to this widget */
-    widget_set_priority(id);
+    SetPriorityWidget(nID);
 
     /* if its moveable, start moving it when the conditions warrant it */
-    if (widget_data[id].moveable &&
-        MouseEvent == RB_DN)
+    if(cur_widget[nID].moveable && MouseEvent==RB_DN)
     {
         /* If widget is MOVEABLE, this defines the hotspot areas for activating */
-        switch(id)
+        switch(nID)
         {
+
             default:
                 /* we know this widget owns the mouse.. */
-                widget_mouse_event.moving = 1;
+                widget_event_move.active = 1;
+                break;
         }
-
         /* start the movement procedures */
-        if(widget_mouse_event.moving)
+        if(widget_event_move.active)
         {
-            widget_mouse_event.id = id;
-            widget_mouse_event.xoff = x - widget_data[id].x1;
-            widget_mouse_event.yoff = y - widget_data[id].y1;
+            widget_event_move.id = nID;
+            widget_event_move.xOffset = x - cur_widget[nID].x1;
+            widget_event_move.yOffset = y - cur_widget[nID].y1;
+#ifndef DAI_DEVELOPMENT
+            /* nothing owns the mouse right now */
+            widget_mouse_event.owner = -1; // Why? -- Smacky 20080127
+#endif
             /* enable the custom cursor */
             f_custom_cursor = MSCURSOR_MOVE;
             /* hide the system cursor */
@@ -413,9 +552,46 @@ int widget_event_mousedn(int x, int y, SDL_Event *event)
     /* NORMAL CONDITION - RESPOND TO MOUSEDOWN EVENT */
     else
     {
-        if (widget_data[id].event)
+    /* Place here all the mousedown Handlers */
+        switch (nID)
         {
-            widget_data[id].event(id, event);
+            case SKILL_EXP_ID:
+                /* Handle the mousedown on the exp area */
+                widget_skill_exp_event(x, y, MOUSE_DOWN);
+                break;
+            case MENU_B_ID:
+                /* Handle mousedown on the menu buttons... */
+                widget_menubuttons_event(x, y, MOUSE_DOWN);
+                break;
+            case QUICKSLOT_ID:
+                widget_quickslots_mouse_event(x, y, MOUSE_DOWN);
+                break;
+            case CHATWIN_ID:
+            case MSGWIN_ID:
+            case MIXWIN_ID:
+                textwin_event(TW_CHECK_BUT_DOWN, event, nID);
+                break;
+            case GROUP_ID:
+//                group_event();
+                break;
+            case RANGE_ID:
+                widget_range_event(x,y, *event, MOUSE_DOWN);
+                break;
+            case BELOW_INV_ID:
+                widget_below_window_event(x,y,MOUSE_DOWN);
+                break;
+            case TARGET_ID:
+                widget_event_target(x, y, *event);
+                break;
+            case MAIN_INV_ID:
+                widget_inventory_event(x, y, *event);
+                break;
+            case PLAYER_INFO_ID:
+                widget_player_data_event(x, y);
+                break;
+            case IN_NUMBER_ID:
+                widget_number_event(x, y, *event);
+                break;
         }
 
         return 1;
@@ -425,13 +601,15 @@ int widget_event_mousedn(int x, int y, SDL_Event *event)
 
 /************************ MOUSE UP **************************/
 /* check for owner of mouse focus                           */
-/* stop dragging the widget, if moving                      */
+/* stop dragging the widget, if active                      */
 int widget_event_mouseup(int x, int y, SDL_Event *event)
 {
+
     /* widget moving condition */
-    if (widget_mouse_event.moving)
+    if(widget_event_move.active)
     {
-        widget_mouse_event.moving = 0;
+        widget_event_move.active = 0;
+        widget_mouse_event.owner = widget_event_move.id;
         widget_mouse_event.x = x;
         widget_mouse_event.y = y;
 
@@ -441,35 +619,57 @@ int widget_event_mouseup(int x, int y, SDL_Event *event)
         SDL_ShowCursor(1);
 
         /* the interface has changed, save it! */
-//        if(options.auto_save_interface) { widget_save(); }
+//        if(options.auto_save_interface) { save_interface_file(); }
 
         return 1;
     }
     /* NORMAL CONDITION - RESPOND TO MOUSEUP EVENT */
     else
     {
-        widget_id_t id = widget_get_owner(x,y);
-
-        if (id == WIDGET_NROF)
-        {
-            return 0;
-        }
+        int nID = get_widget_owner(x,y);
 
         /* setup the event structure in response */
-        widget_mouse_event.id = id;
+        widget_mouse_event.owner = nID;
 
         /* handler(s) for miscellanous mouse movement(s) go here */
 
-        /* setup the event structure in response */
-        widget_mouse_event.x = x;
-        widget_mouse_event.y = y;
-
-        /* handler(s) for the widgets go here */
-        if (widget_data[id].event)
+        /* sanity check.. return if mouse is not in a widget */
+        if(nID<0) { return 0; }
+        else
         {
-            widget_data[id].event(id, event);
+            /* setup the event structure in response */
+            widget_mouse_event.x = x;
+            widget_mouse_event.y = y;
         }
+        /* handler(s) for the widgets go here */
 
+        switch (nID)
+        {
+            /* drop to quickslots */
+            case QUICKSLOT_ID:
+                widget_quickslots_mouse_event(x,y,MOUSE_UP);
+                break;
+            case CHATWIN_ID:
+            case MSGWIN_ID:
+            case MIXWIN_ID:
+                textwin_event(TW_CHECK_BUT_UP, event, nID);
+                break;
+            case GROUP_ID:
+//                group_event();
+                break;
+            case PDOLL_ID:
+                widget_show_player_doll_event(x,y, MOUSE_UP);
+                break;
+            case RANGE_ID:
+                widget_range_event(x,y, *event, MOUSE_UP);
+                break;
+            case BELOW_INV_ID:
+                widget_below_window_event(x, y, MOUSE_UP);
+                break;
+            case MAIN_INV_ID:
+                widget_inventory_event(x, y, *event);
+                break;
+        }
         return 1;
     }
 }
@@ -477,87 +677,68 @@ int widget_event_mouseup(int x, int y, SDL_Event *event)
 
 /******************************* MOUSE MOVE **************************/
 /* check for owner of mouse focus                                    */
-/* drag the widget, if moving                                        */
+/* drag the widget, if active                                        */
 int widget_event_mousemv(int x,int y, SDL_Event *event)
 {
+    cursor_type = 0; /* with widgets we have to clear every loop the txtwin cursor */
+
     /* widget moving condition */
-    if (widget_mouse_event.moving)
+    if(widget_event_move.active)
     {
-//        int adjx = x - widget_mouse_event.xoff,
-//            adjy = y - widget_mouse_event.yoff;
+//        int adjx = x - widget_event_move.xOffset,
+//            adjy = y - widget_event_move.yOffset;
 #ifdef WIDGET_SNAP
-#define LEFT(_ID_)   (widget_data[(_ID_)].x1)
-#define RIGHT(_ID_)  (widget_data[(_ID_)].x1 + widget_data[(_ID_)].wd)
-#define TOP(_ID_)    (widget_data[(_ID_)].y1)
-#define BOTTOM(_ID_) (widget_data[(_ID_)].y1 + widget_data[(_ID_)].ht)
+#define LEFT(ID)   (cur_widget[(ID)].x1)
+#define RIGHT(ID)  (cur_widget[(ID)].x1 + cur_widget[(ID)].wd)
+#define TOP(ID)    (cur_widget[(ID)].y1)
+#define BOTTOM(ID) (cur_widget[(ID)].y1 + cur_widget[(ID)].ht)
         if (options.widget_snap>0)
         {
-            if (event->motion.xrel != 0 &&
-                event->motion.yrel != 0)
+            if (event->motion.xrel != 0 && event->motion.yrel != 0)
             {
-                widget_id_t    id_e = widget_mouse_event.id;
-                widget_node_t *node;
-
-                for (node = PriorityListHead; node; node = node->next)
+                int          mID  = widget_event_move.id;
+                widget_node *node;
+                for (node = priority_list_head; node; node = node->next)
                 {
-                    widget_id_t id = node->id;
-                    uint8       done = 0;
-
-                    if (id == id_e ||
-                        !widget_data[id].show)
-                    {
+                    int     nID  = node->WidgetID;
+                    uint8 done = 0;
+                    if (nID == mID || !cur_widget[nID].show)
                         continue;
-                    }
-
-                    if ((TOP(id_e) >= TOP(id) &&
-                         TOP(id_e) <= BOTTOM(id)) ||
-                        (BOTTOM(id_e) >= TOP(id) &&
-                         BOTTOM(id_e) <= BOTTOM(id)))
+                    if ((TOP(mID) >= TOP(nID) && TOP(mID) <= BOTTOM (nID)) || (BOTTOM(mID) >= TOP(nID) && BOTTOM(mID) <= BOTTOM(nID)))
                     {
-                        if (event->motion.xrel < 0 &&
-                            LEFT(id_e) <= RIGHT(id) + options.widget_snap &&
-                            LEFT(id_e) > RIGHT(id))
+                        if (event->motion.xrel < 0 && LEFT(mID) <= RIGHT(nID) + options.widget_snap && LEFT(mID) > RIGHT(nID))
                         {
-    //                        adjx = RIGHT(id);
-                            event->motion.x = RIGHT(id) + widget_mouse_event.xoff;
+    //                        adjx = RIGHT(nID);
+                            event->motion.x = RIGHT(nID) + widget_event_move.xOffset;
                             done = 1;
                         }
-                        else if (event->motion.xrel > 0 &&
-                                 RIGHT(id_e) >= LEFT(id) - options.widget_snap &&
-                                 RIGHT(id_e) < LEFT(id))
+                        else if (event->motion.xrel > 0 && RIGHT(mID) >= LEFT(nID) - options.widget_snap && RIGHT(mID) < LEFT(nID))
                         {
-    //                        adjx = LEFT(id) - widget_data[id_e].wd;
-                            event->motion.x = LEFT(id) - widget_data[id_e].wd + widget_mouse_event.xoff;
+    //                        adjx = LEFT(nID) - cur_widget[mID].wd;
+                            event->motion.x = LEFT(nID) - cur_widget[mID].wd + widget_event_move.xOffset;
                             done = 1;
                         }
                     }
-                    if ((LEFT(id_e) >= LEFT(id) &&
-                         LEFT(id_e) <= RIGHT(id)) ||
-                        (RIGHT(id_e) >= LEFT(id) &&
-                         RIGHT(id_e) <= RIGHT(id)))
+                    if ((LEFT(mID) >= LEFT(nID) && LEFT(mID) <= RIGHT(nID)) || (RIGHT(mID) >= LEFT(nID) && RIGHT(mID) <= RIGHT(nID)))
                     {
-                        if (event->motion.yrel < 0 &&
-                            TOP(id_e) <= BOTTOM(id) + options.widget_snap &&
-                            TOP(id_e) > BOTTOM(id))
+                        if (event->motion.yrel < 0 && TOP(mID) <= BOTTOM(nID) + options.widget_snap && TOP(mID) > BOTTOM(nID))
                         {
-    //                        adjy = BOTTOM(id);
-                            event->motion.y = BOTTOM(id) + widget_mouse_event.yoff;
+    //                        adjy = BOTTOM(nID);
+                            event->motion.y = BOTTOM(nID) + widget_event_move.yOffset;
                             done = 1;
                         }
-                        else if (event->motion.yrel > 0 &&
-                                 BOTTOM(id_e) >= TOP(id) - options.widget_snap &&
-                                 BOTTOM(id_e) < TOP(id))
+                        else if (event->motion.yrel > 0 && BOTTOM(mID) >= TOP(nID) - options.widget_snap && BOTTOM(mID) < TOP(nID))
                         {
-    //                        adjy = TOP(id) - widget_data[id_e].ht;
-                            event->motion.y = TOP(id) - widget_data[id_e].ht + widget_mouse_event.yoff;
+    //                        adjy = TOP(nID) - cur_widget[mID].ht;
+                            event->motion.y = TOP(nID) - cur_widget[mID].ht + widget_event_move.yOffset;
                             done = 1;
                         }
                     }
                     if (done)
                     {
-    //                    textwin_show_string(0, NDI_COLR_RED, "%s l=%d r=%d t=%d b=%d", widget_data[id].name, LEFT(id), RIGHT(id), TOP(id), BOTTOM(id));
+    //                    textwin_showstring(COLOR_RED, "%s l=%d r=%d t=%d b=%d", cur_widget[nID].name, LEFT(nID), RIGHT(nID), TOP(nID), BOTTOM(nID));
                         sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICK, 0, 0, 10);
-                        event->motion.xrel = event->motion.yrel = 0; // acts as a brake, preventing id_e from 'skipping' through a stack of nodes
+                        event->motion.xrel = event->motion.yrel = 0; // acts as a brake, preventing mID from 'skipping' through a stack of nodes
                         SDL_PushEvent(event);
                         break;
                     }
@@ -569,35 +750,54 @@ int widget_event_mousemv(int x,int y, SDL_Event *event)
 #undef TOP
 #undef BOTTOM
 #endif
-        widget_data[widget_mouse_event.id].x1 = x - widget_mouse_event.xoff; // adjx;
-        widget_data[widget_mouse_event.id].y1 = y - widget_mouse_event.yoff; // adjy;
+        cur_widget[widget_event_move.id].x1 = x - widget_event_move.xOffset; // adjx;
+        cur_widget[widget_event_move.id].y1 = y - widget_event_move.yOffset; // adjy;
         map_udate_flag = 2;
         return 1;
     }
     /* NORMAL CONDITION - RESPOND TO MOUSEMOVE EVENT */
     else
     {
-        widget_id_t id = widget_get_owner(x,y);
-
-        if (id == WIDGET_NROF)
-        {
-            return 0;
-        }
+        int nID = get_widget_owner(x,y);
 
         /* setup the event structure in response */
-        widget_mouse_event.moving = 0;
-        widget_mouse_event.id = id;
+        widget_mouse_event.owner = nID;
 
         /* handler(s) for miscellanous mouse movement(s) go here */
 
-        /* setup the event structure in response */
-        widget_mouse_event.x = x;
-        widget_mouse_event.y = y;
+
+        /* textwin special handling */
+        if (txtwin[TW_CHAT].highlight != TW_HL_NONE)
+        {
+            txtwin[TW_CHAT].highlight = TW_HL_NONE;
+            WIDGET_REDRAW(CHATWIN_ID);
+        }
+        if (txtwin[TW_MSG].highlight != TW_HL_NONE)
+        {
+            txtwin[TW_MSG].highlight = TW_HL_NONE;
+            WIDGET_REDRAW(MSGWIN_ID);
+        }
+        /* sanity check.. return if mouse is not in a widget */
+        if(nID<0) { return 0; }
+        else
+        {
+            /* setup the event structure in response */
+            widget_mouse_event.x = x;
+            widget_mouse_event.y = y;
+        }
 
         /* handler(s) for the widgets move go here */
-        if (widget_data[id].event)
+
+        switch (nID)
         {
-            widget_data[id].event(id, event);
+            case CHATWIN_ID:
+            case MSGWIN_ID:
+            case MIXWIN_ID:
+                textwin_event(TW_CHECK_MOVE, event, nID);
+                break;
+            case MAIN_INV_ID:
+                widget_inventory_event(x, y, *event);
+                break;
         }
 
         return 1;
@@ -605,130 +805,172 @@ int widget_event_mousemv(int x,int y, SDL_Event *event)
 }
 
 /* find the widget with mouse focus on a mouse-hit-test basis */
-widget_id_t widget_get_owner(int x, int y)
+int get_widget_owner(int x,int y )
 {
-    textwin_id_t   twid;
-    widget_node_t *node;
-    widget_id_t    id;
+    widget_node *node;
+    int nID;
 
-    for (twid = 0; twid < TEXTWIN_NROF; twid++)
+    /* Priority overide function, we have to have that here for resizing.... */
+    if (textwin_flags & TW_RESIZE)
     {
-        if (textwin[twid].mode)
-        {
-            return textwin[twid].wid;
-        }
+        if (textwin_flags & TW_CHAT)
+            return CHATWIN_ID;
+        else if (textwin_flags & TW_MSG)
+            return MSGWIN_ID;
+        else if (textwin_flags & TW_MIX)
+            return MIXWIN_ID;
     }
-   
-    if (IsMouseExclusive || // mouse cannot be used by widgets
-        !PriorityListHead)  // priority list doesn't exist
+
+    /* mouse cannot be used by widgets */
+    if(IsMouseExclusive)
     {
-        return WIDGET_NROF;
+        return -1;
     }
+
+    /* priority list doesn't exist */
+    if(!priority_list_head) { return -1; }
 
     /* loop through the list & perform custom or default hit-test */
-    for (node = PriorityListHead; node; node = node->next)
+    for(node=priority_list_head;node;node=node->next)
     {
-        id = node->id;
+        nID = node->WidgetID;
 
-        if (!widget_data[id].show)
-        {
-            continue;
-        }
+        if (!cur_widget[nID].show) continue;
 
-        switch (id)
+        switch(nID)
         {
-            case WIDGET_PDOLL_ID: /*Playerdoll widget is NOT a rectangle, handle special... */
-                if (x > widget_data[id].x1 + 111)
+
+            case PDOLL_ID: /*Playerdoll widget is NOT a rectangle, handle special... */
+                if (x>cur_widget[nID].x1+111)
                 {
-                    if (x <= widget_data[id].x1 + widget_data[id].wd &&
-                        y >= widget_data[id].y1 &&
-                        y <= ((x-(widget_data[id].x1 + 111)) / -2) + 215 +
-                              widget_data[id].y1)
-                    {
-                            return id;
-                    }
+                    if (    x <= cur_widget[nID].x1 + cur_widget[nID].wd
+                        &&  y >= cur_widget[nID].y1
+                        &&  y <= ((x-(cur_widget[nID].x1+111))/-2)+215+cur_widget[nID].y1)
+                            return nID;
+                            break;
                 }
                 else
                 {
-                    if (x >= widget_data[id].x1 &&
-                        y >= widget_data[id].y1 &&
-                        y <= ((x - widget_data[id].x1) / 2) + 160 +
-                              widget_data[id].y1)
-                    {
-                            return id;
-                    }
+                    if (    x >= cur_widget[nID].x1
+                        &&  y >= cur_widget[nID].y1
+                        &&  y <= ((x-cur_widget[nID].x1)/2)+160+cur_widget[nID].y1)
+                            return nID;
+                            break;
                 }
-
-                break;
 
             default:
-                if (x >= widget_data[id].x1 &&
-                    x <= (widget_data[id].x1 + widget_data[id].wd) &&
-                    y >= widget_data[id].y1 &&
-                    y <= (widget_data[id].y1 + widget_data[id].ht))
+                if(    x >= cur_widget[nID].x1 &&
+                    x <= (cur_widget[nID].x1 + cur_widget[nID].wd) &&
+                    y >= cur_widget[nID].y1 &&
+                    y <= (cur_widget[nID].y1 + cur_widget[nID].ht) )
                 {
-                    return id;
+                    return nID;
                 }
+                break;
         }
     }
 
-    return WIDGET_NROF;
+    return -1;
+}
+
+/* function list for each widget - calls the widget with the process type */
+void process_widget(int nID, int proc)
+{
+    switch(nID) /* doesn't matter which order the case statements follow */
+    {
+        case STATS_ID:
+                widget_player_stats(cur_widget[nID].x1,cur_widget[nID].y1);
+            break;
+        case RESIST_ID:
+                widget_show_resist(cur_widget[nID].x1,cur_widget[nID].y1);
+            break;
+        case MAIN_LVL_ID:
+                widget_show_main_lvl(cur_widget[nID].x1,cur_widget[nID].y1);
+            break;
+        case SKILL_EXP_ID:
+                widget_show_skill_exp(cur_widget[nID].x1,cur_widget[nID].y1);
+            break;
+        case REGEN_ID:
+                widget_show_regeneration(cur_widget[nID].x1,cur_widget[nID].y1);
+            break;
+        case SKILL_LVL_ID:
+                widget_skillgroups(cur_widget[nID].x1,cur_widget[nID].y1);
+            break;
+        case MENU_B_ID:
+                widget_menubuttons(cur_widget[nID].x1,cur_widget[nID].y1);
+            break;
+        case QUICKSLOT_ID:
+                widget_quickslots(cur_widget[nID].x1,cur_widget[nID].y1);
+            break;
+        case CHATWIN_ID:
+                widget_textwin_show(cur_widget[nID].x1,cur_widget[nID].y1, TW_CHAT);
+            break;
+        case MSGWIN_ID:
+                widget_textwin_show(cur_widget[nID].x1,cur_widget[nID].y1, TW_MSG);
+            break;
+        case MIXWIN_ID:
+                widget_textwin_show(cur_widget[nID].x1,cur_widget[nID].y1, TW_MIX);
+            break;
+        case GROUP_ID:
+                widget_show_group(cur_widget[nID].x1,cur_widget[nID].y1);
+            break;
+        case PDOLL_ID:
+                widget_show_player_doll(cur_widget[nID].x1,cur_widget[nID].y1);
+            break;
+        case BELOW_INV_ID:
+                widget_show_below_window(cpl.below, cur_widget[nID].x1,cur_widget[nID].y1);
+            break;
+        case PLAYER_INFO_ID:
+                widget_show_player_data(cur_widget[nID].x1,cur_widget[nID].y1);
+            break;
+        case RANGE_ID:
+                widget_show_range(cur_widget[nID].x1,cur_widget[nID].y1);
+            break;
+        case TARGET_ID:
+                widget_show_target(cur_widget[nID].x1,cur_widget[nID].y1);
+            break;
+        case MAIN_INV_ID:
+                widget_show_inventory_window(cur_widget[nID].x1,cur_widget[nID].y1);
+            break;
+        case MAPNAME_ID:
+                widget_show_mapname(cur_widget[nID].x1,cur_widget[nID].y1);
+            break;
+        case IN_CONSOLE_ID:
+                widget_show_console(cur_widget[nID].x1,cur_widget[nID].y1);
+            break;
+        case IN_NUMBER_ID:
+                widget_show_number(cur_widget[nID].x1,cur_widget[nID].y1);
+            break;
+        case STATOMETER_ID:
+                widget_show_statometer(cur_widget[nID].x1, cur_widget[nID].y1);
+            break;
+
+    }
 }
 
 /* loop through all the widgets and call the corresponding handlers */
 /* this is called everytime in main.c.. in the main loop */
-void widget_process(void)
+void process_widgets()
 {
-    widget_node_t *node;
-
-    /* sanity checks */
-    if (!PriorityListHead ||
-        !PriorityListFoot)
-    {
-        return;
-    }
-
-    for (node = PriorityListFoot; node; node = node->prev)
-    {
-        widget_id_t    id = node->id;
+    widget_node *node;
+    int nID;
 #ifdef PROFILING_WIDGETS
-        uint32         ts = SDL_GetTicks();
-
-        LOG(LOG_MSG, "[Prof] widget_draw %16s shown: %d, redraw: %d, ms: ",
-            widget_data[id].name, widget_data[id].show,
-            widget_data[id].redraw);
+    Uint32 ts;
 #endif
 
-        if (widget_data[id].show)
-        {
-            if (widget_data[id].bg >= 0)
-            {
-                SDL_Rect box;
+    /* sanity checks */
+    if(!priority_list_head) { return; }
+    if(!priority_list_foot) { return; }
 
-                SDL_SetAlpha(skin_sprites[widget_data[id].bg]->bitmap,
-                             SDL_SRCALPHA | SDL_RLEACCEL, 
-                             MIN(255, options.textwin_alpha));
-                box.x = widget_data[id].x1; 
-                box.y = widget_data[id].y1; 
-                SDL_BlitSurface(skin_sprites[widget_data[id].bg]->bitmap, NULL,
-                                ScreenSurface, &box);
-
-                if (!widget_data[id].surface)
-                {
-                    SDL_Surface *new;
-
-                    new = SDL_CreateRGBSurface(SDL_SWSURFACE,
-                                               widget_data[id].wd, widget_data[id].ht,
-                                               32, 0x00ff0000, 0x0000ff00, 0x000000ff, 0);
-                    SDL_FillRect(new, NULL, NDI_COLR_HOTPINK);
-                    SDL_SetColorKey(new, SDL_SRCCOLORKEY, NDI_COLR_HOTPINK);
-                    widget_data[id].surface = new;
-                }
-            }
-
-            widget_data[id].process(id);
-        }
-
+    for(node=priority_list_foot;node;node=node->prev)
+    {
+        nID = node->WidgetID;
+#ifdef PROFILING_WIDGETS
+        ts = SDL_GetTicks();
+        LOG(LOG_MSG, "[Prof] widget_draw %16s shown: %d, redraw: %d, ms: ",cur_widget[nID].name, cur_widget[nID].show, cur_widget[nID].redraw);
+#endif
+        if (cur_widget[nID].show)
+            process_widget(nID, PROCESS);
 #ifdef PROFILING_WIDGETS
         LOG(LOG_MSG, "%d\n", SDL_GetTicks() - ts);
 #endif
@@ -747,16 +989,17 @@ void widget_process(void)
     MB_UP,
     MB_DN,
 *//* use the variable 'MouseEvent' to determine unique mouse events */
-uint32 widget_get_mouse_state(int *mx, int *my, widget_id_t id)
+uint32 GetMouseState(int *mx, int *my, int widget_id)
 {
-    if (widget_mouse_event.id == id &&
-        !IsMouseExclusive &&
-        (cpl.menustatus != MENU_NO ||
-         esc_menu_flag))
+    if(widget_mouse_event.owner == widget_id && !IsMouseExclusive)
     {
+        /********************************************************
+        * continue only when no menu is active.
+        *********************************************************/
+        if (cpl.menustatus != MENU_NO || esc_menu_flag) return 0;
+
         *mx = widget_mouse_event.x;
         *my = widget_mouse_event.y;
-
         return MouseState;
     }
 
@@ -767,36 +1010,37 @@ uint32 widget_get_mouse_state(int *mx, int *my, widget_id_t id)
 /* 1) Transfer head to a new node below head */
 /* 2) Transfer this widget to the head */
 /* 3) Remove this widget from its previous priority */
-void widget_set_priority(widget_id_t id)
+void SetPriorityWidget(int nWidgetID)
 {
-    widget_node_t *node;
+    widget_node *node;
 
-//    LOG(LOG_MSG,"Entering widget_set_priority(id=%d)..\n",id);
+    LOG(LOG_MSG,"Entering SetPriorityWidget(nWidgetID=%d)..\n",nWidgetID);
+
+    /* sanity check */
+    if(nWidgetID < 0 || nWidgetID >= TOTAL_WIDGETS) { return; }
 
     /* exit, if already highest priority */
-    if (PriorityListHead->id == id)
-    {
-        return;
-    }
+    if(priority_list_head->WidgetID == nWidgetID) { return; }
 
 
     /* move the current highest to second highest priority */
-    MALLOC(node, sizeof(widget_node_t));
-    *node = *PriorityListHead;
-    node->prev = PriorityListHead;
+    MALLOC(node, sizeof(widget_node));
+    if(!node) { exit(0); } /* memory error */
+    *node = *priority_list_head;
+    node->prev = priority_list_head;
     node->next->prev = node;
-    PriorityListHead->next = node;
-    widget_data[node->id].priority_index = node;
+    priority_list_head->next = node;
+    cur_widget[node->WidgetID].priority_index = node;
 
     /* make this widget have highest priority */
-    PriorityListHead->id = id;
+    priority_list_head->WidgetID = nWidgetID;
 
     /* remove it from its previous priority */
-    node = widget_data[id].priority_index;
+    node = cur_widget[nWidgetID].priority_index;
 
-//    LOG(LOG_MSG, "..node: %d\n", node);
-//    LOG(LOG_MSG, "..widget_data[id].priority_index: %d\n", widget_data[id].priority_index);
-//    LOG(LOG_MSG, "..node->prev: %d, node->next: %d\n", node->prev, node->next);
+    LOG(LOG_MSG, "..node: %d\n", node);
+    LOG(LOG_MSG, "..cur_widget[nWidgetID].priority_index: %d\n", cur_widget[nWidgetID].priority_index);
+    LOG(LOG_MSG, "..node->prev: %d, node->next: %d\n", node->prev, node->next);
 
     if(node->next)
     {
@@ -806,91 +1050,15 @@ void widget_set_priority(widget_id_t id)
     else /* foot of list */
     {
         /* update the foot of priority list */
-        PriorityListFoot = node->prev;
+        priority_list_foot = node->prev;
         node->prev->next = NULL;
     }
 
     FREE(node);
 
     /* re-link the widget lookup */
-    widget_data[id].priority_index = PriorityListHead;
+    cur_widget[nWidgetID].priority_index = priority_list_head;
 
-//    LOG(LOG_MSG, "..widget_set_priority(): Done.\n");
+    LOG(LOG_MSG, "..SetPriorityWidget(): Done.\n");
 }
 
-/* used in two places atm, so its in a static-scope function.. */
-static void InitPriorityList(void)
-{
-    widget_node_t *node;
-    widget_id_t    id;
-
-    /* if its already allocated, leave */
-    if(PriorityListHead) { return; }
-
-//    LOG(LOG_MSG,"Entering InitPriorityList()..\n");
-
-    /* allocate the head of the list */
-    MALLOC(node, sizeof(widget_node_t));
-    PriorityListHead = node;
-    /* set the members and store a 'link' to this pointer */
-    PriorityListHead->next = NULL;
-    PriorityListHead->prev = NULL;
-    PriorityListHead->id = 0;
-    widget_data[0].priority_index = PriorityListHead;
-
-    for (id=1; id<WIDGET_NROF; ++id)
-    {
-        /* allocate it */
-        MALLOC(node->next, sizeof(widget_node_t));
-        node->next->prev = node;
-        /* set the members and store a 'link' to this pointer */
-        node = node->next;
-        node->next = NULL;
-        node->id = id;
-        widget_data[id].priority_index = node;
-    }
-
-    /* set the foot of the priority list */
-    PriorityListFoot = node;
-
-    /* some helpfull information */
-//    LOG(LOG_MSG, "..Output of node list:\n");
-//    for(id=0,node=PriorityListHead;node;node=node->next,++id)
-//    {
-//        LOG(LOG_MSG, "..Node #%d: %d\n", id,node->id);
-//    }
-//    LOG(LOG_MSG, "..Allocated %d/%d nodes!\n", id, WIDGET_NROF);
-
-//    LOG(LOG_MSG, "..InitPriorityList(): Done.\n");
-}
-
-/* had to make this for the circumstances */
-static void DeinitPriorityList(void)
-{
-    widget_id_t id;
-
-    /* leave if its clear already */
-    if(!PriorityListHead) { return; }
-
-//    LOG(LOG_MSG,"Entering DeinitPriorityList()..\n");
-
-//    LOG(LOG_MSG, "..Output of deleted node(s):\n");
-
-    /* walk down the list and free it */
-    for(id=0;PriorityListHead;++id)
-    {
-//        LOG(LOG_MSG, "..Node #%d: %d\n", id, PriorityListHead->id);
-
-        widget_node_t *node = PriorityListHead->next;
-
-        FREE(PriorityListHead);
-        PriorityListHead = node;
-    }
-
-//    LOG(LOG_MSG, "..De-Allocated %d/%d nodes!\n", id, WIDGET_NROF);
-
-    PriorityListHead = NULL;
-    PriorityListFoot = NULL;
-
-//    LOG(LOG_MSG, "..DeinitPriorityList(): Done.\n");
-}

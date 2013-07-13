@@ -961,8 +961,6 @@ int download_file(char *url, char *remotefilename, char *destfolder, char *destf
     curl_easy_setopt(curlhandle, CURLOPT_VERBOSE, 0);
     curl_easy_setopt(curlhandle, CURLOPT_NOPROGRESS, 0);
     curl_easy_setopt(curlhandle, CURLOPT_PROGRESSFUNCTION, curl_progresshandler);
-    /* Handle http redirects properly (DA) */
-    curl_easy_setopt(curlhandle, CURLOPT_FOLLOWLOCATION, 1);
 
     res = curl_easy_perform(curlhandle);
 

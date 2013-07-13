@@ -120,20 +120,51 @@ extern int          media_show_update ;
 
 extern void     do_console(int x, int y);
 extern void     do_number(int x, int y);
+extern void     widget_show_number(int x, int y);
+extern void     widget_number_event(int x, int y, SDL_Event event);
+extern void     widget_show_console(int x, int y);
+extern void     widget_show_resist(int x, int y);
 extern void     show_keybind(void);
 extern void     show_status(void);
 extern void     show_spelllist(void);
 extern void     show_skilllist(void);
+
+extern void     widget_show_mapname(int x, int y);
 extern void     show_menu(void);
 extern void     show_media(int x, int y);
+extern void     widget_show_range(int x, int y);
+extern void     widget_range_event(int x, int y, SDL_Event event, int MEvent);
+extern void     blt_inventory_face_from_tag(int tag, int x, int y);
 extern int      blt_window_slider(_Sprite *slider, int max_win, int winlen, int off, int len, int x, int y);
 extern void     do_keybind_input(void);
 extern void     do_npcdialog_input(void);
+
+
+extern int      read_anim_tmp(void);
+extern int      read_bmap_tmp(void);
+extern void     read_anims(void);
+extern void     read_bmaps_p0(void);
+extern void     delete_bmap_tmp(void);
+extern void     read_bmaps(void);
+extern void     delete_server_chars(void);
+extern void     load_settings(void);
+extern void     read_settings(void);
+extern void     read_spells(void);
+extern void     read_skills(void);
 extern uint8  blt_face_centered(int face, int x, int y);
 extern int      get_quickslot(int x, int y);
+extern void     show_quickslots(int x, int y);
+extern void     widget_quickslots(int x, int y);
+extern void     widget_quickslots_mouse_event(int x, int y, int MEvent);
 extern void     update_quickslots(int del_item);
 extern void     load_quickslots_entrys();
 extern void     save_quickslots_entrys();
+
+extern void     widget_event_target(int x, int y, SDL_Event event);
+extern void     widget_show_target(int x, int y);
+extern void     reload_icons(void);
+
+extern int get_bmap_id(char *name);
 extern void reset_menu_status(void);
 
 #endif /* ifndef __MENU_H */

@@ -22,6 +22,115 @@
 */
 #include <include.h>
 
+unsigned long hashbmap(char *str, int tablesize)
+{
+    unsigned long hash = 0;
+    int     i = 0, rot = 0;
+    char   *p;
+
+    for (p = str; i < MAXHASHSTRING && *p; p++, i++)
+    {
+        hash ^= (unsigned long) * p << rot;
+        rot += 2;
+        if (rot >= (int)((sizeof(long) - sizeof(char)) * 8))
+            rot = 0;
+    }
+    return (hash % tablesize);
+}
+
+_bmaptype * find_bmap(char *name)
+{
+    _bmaptype  *at;
+    unsigned long index;
+
+    if (name == NULL)
+        return (_bmaptype *) NULL;
+
+    index = hashbmap(name, BMAPTABLE);
+    for (; ;)
+    {
+        at = bmap_table[index];
+        if (at == NULL) /* not in our bmap list */
+            return NULL;
+        if (!strcmp(at->name, name))
+            return at;
+        if (++index >= BMAPTABLE)
+            index = 0;
+    }
+}
+
+void add_bmap(_bmaptype *at)
+{
+    int index = hashbmap(at->name,  BMAPTABLE),org_index = index;
+
+    for (; ;)
+    {
+        if (bmap_table[index] && !strcmp(bmap_table[index]->name, at->name))
+        {
+            LOG(LOG_ERROR, "ERROR: add_bmap(): double use of bmap name %s\n", at->name);
+        }
+        if (bmap_table[index] == NULL)
+        {
+            bmap_table[index] = at;
+            return;
+        }
+        if (++index == BMAPTABLE)
+            index = 0;
+        if (index == org_index)
+            LOG(LOG_ERROR, "ERROR: add_bmap(): bmaptable too small\n");
+    }
+}
+
+void FreeMemory(void **p)
+{
+    if (p == NULL)
+        return;
+    if (*p != NULL)
+        FREE(*p);
+    *p = NULL;
+}
+
+char * show_input_string(char *text, struct _font *font, int wlen)
+{
+    register int i, j,len;
+
+    static char buf[MAX_INPUT_STR];
+    strcpy(buf, text);
+
+    len = strlen(buf);
+    while (len >= CurrentCursorPos)
+    {
+        buf[len + 1] = buf[len];
+        len--;
+    }
+    buf[CurrentCursorPos] = '_';
+
+    for (len = 25,i = CurrentCursorPos; i >= 0; i--)
+    {
+        if (!buf[i])
+            continue;
+        if (len + font->c[(int) (buf[i])].w + font->char_offset >= wlen)
+        {
+            i--;
+            break;
+        }
+        len += font->c[(int) (buf[i])].w + font->char_offset;
+    }
+
+    len -= 25;
+    for (j = CurrentCursorPos; j <= (int) strlen(buf); j++)
+    {
+        if (len + font->c[(int) (buf[j])].w + font->char_offset >= wlen)
+        {
+            break;
+        }
+        len += font->c[(int) (buf[j])].w + font->char_offset;
+    }
+    buf[j] = 0;
+
+    return(&buf[++i]);
+}
+
 int read_substr_char(char *srcstr, char *desstr, int *sz, char ct)
 {
     register unsigned char c;
@@ -101,7 +210,7 @@ char *get_parameter_string(char *data, int *pos, int maxlen)
     {
 #ifdef DAI_DEVELOPMENT
         if ((int)strlen(buf)>maxlen)
-            textwin_show_string(0, NDI_COLR_RED,"FixMe: Interface parameter string out of bounds!");
+            textwin_showstring(COLOR_RED,"FixMe: Interface parameter string out of bounds!");
 #endif
         buf[maxlen-1]='\0';
     }
@@ -133,6 +242,106 @@ int isqrt(int n)
     return result;
 }
 
+/* We HAVE to replace the smileys codes with the char-value of the smiley,
+ * before ANY stringbreaking, stringwidth-calcs or drawings are done!
+ */
+
+void smiley_convert(char *msg)
+{
+    unsigned char   actChar;
+    int             i, j, move;
+
+
+    for (i = 0; msg[i] != 0; i++)
+    {
+        actChar = 0;
+        move = 1;
+        if (msg[i] == (unsigned char)':')
+        {
+            j = i + 1;
+            if (msg[j] == '\'' && msg[j+1] == '(')
+            {
+                actChar = 138;
+                move=2;
+            }
+            else if (msg[j] == '-')
+            {
+                j++;
+                move++;
+            }
+            switch (msg[j])
+            {
+                case ')': actChar=128; break;  /* we replace it with the 'ASCII'-code of the smiley in systemfont */
+                case '(': actChar=129; break;
+                case 'D': actChar=130; break;
+                case '|': actChar=131; break;
+                case 'o':
+                case 'O':
+                case '0': actChar=132; break;
+                case 'p':
+                case 'P': actChar=133; break;
+
+                case 's':
+                case 'S': actChar=139; break;
+                case 'x':
+                case 'X': actChar=140; break;
+            }
+
+        }
+        else if (msg[i] == (unsigned char)';')
+        {
+            j = i + 1;
+            if (msg[j] == '-')
+            {
+                j++;
+                move++;
+            }
+
+            if (msg[j] == ')') actChar = 134;
+            else if (msg[j] == 'p') actChar = 137;
+            else if (msg[j] == 'P') actChar = 137;
+        }
+        else if (((msg[i] == (unsigned char)'8') || (msg[i] == (unsigned char)'B')) && (msg[i+1] == ')'))
+        {
+            actChar=135;
+        }
+        else if (((msg[i] == (unsigned char)'8') || (msg[i] == (unsigned char)'B')) && (msg[i+2] == ')') && (msg[i+1] == '-'))
+        {
+            actChar=135;
+            move=2;
+        }
+        else if ((msg[i] == (unsigned char)'^' && msg[i+2] == '^') && ((msg[i+1] == '_' ) || (msg[i+1] == '-')))
+        {
+            actChar = 136;
+            move=2;
+        }
+        else if ((msg[i] == (unsigned char)'>') && (msg[i+1] == (unsigned char)':'))
+        {
+            j=i+2;
+            move=2;
+            if (msg[j] == '-')
+            {
+                move++;
+                j++;
+            }
+            if (msg[j]==')')
+                actChar=141;
+            else if (msg[j]=='D')
+                actChar=142;
+        }
+
+        if (actChar!=0)
+        {
+            msg[i]=actChar;
+            memmove(&msg[i+1],&msg[i+1+move],strlen(&msg[i+1+move])+1);
+        }
+    }
+
+}
+
+
+
+
 extern void     markdmbuster()
 {
     int tag=-1;
@@ -148,7 +357,7 @@ extern void     markdmbuster()
     send_mark_obj((it = locate_item(tag)));
     if (it)
     {
-        textwin_show_string(0, NDI_COLR_OLIVE, "%s %s",
+        textwin_showstring(COLOR_DGOLD, "%s %s",
                            (cpl.mark_count == (int)it->tag) ? "unmark" : "mark",
                            it->s_name);
     }
@@ -338,79 +547,4 @@ char * adjust_string(char *buf)
         buf[i] = 0;
     }
     return buf;
-}
-
-PHYSFS_File *load_client_file(const char *fname)
-{
-    PHYSFS_File *handle;
-
-    /* Log what we're doing. */
-    LOG(LOG_SYSTEM, "Loading '%s'... ", fname);
-
-    /* If the file doesn't exist, that's OK. */
-    if (!PHYSFS_exists(fname))
-    {
-        LOG(LOG_SYSTEM, "OK (But file does not exist)!\n");
-
-        return NULL;
-    }
-
-    /* Open the file for reading.*/
-    if (!(handle = PHYSFS_openRead(fname)))
-    {
-        LOG(LOG_ERROR, "FAILED (%s)!\n", PHYSFS_getLastError());
-    }
-    else
-    {
-        LOG(LOG_SYSTEM, "OK!\n");
-    }
-
-    return handle;
-}
-
-PHYSFS_File *save_client_file(const char *fname)
-{
-    PHYSFS_File *handle;
-
-    /* Log what we're doing. */
-    LOG(LOG_SYSTEM, "Saving '%s'... ", fname);
-
-    /* Open the file for writing.*/
-    if (!(handle = PHYSFS_openWrite(fname)))
-    {
-        LOG(LOG_ERROR, "FAILED (%s)!\n", PHYSFS_getLastError());
-    }
-    else
-    {
-#if 0 // TODO: Enable in 0.11.0
-        PHYSFS_writeString(handle, HDR_CLIENT);
-#endif
-        LOG(LOG_SYSTEM, "OK!\n");
-    }
-
-    return handle;
-}
-
-/* Returns a green/yellow/red value depending on the percentage passed (higher
- * is green, lower is red). */
-uint32 percentage_colr(sint8 percentage)
-{
-    uint8 r,
-          g;
-
-    /* constrain percentage to 0-100 */
-    percentage = MAX(0, MIN(percentage, 100));
-
-    if (percentage >= 50)
-    {
-        r = 5.1 * (100 - percentage);
-        g = 255;
-    }
-    else
-    {
-        r = 255;
-        g = 5.1 * percentage;
-    }
-
-    return (r << 16) + (g << 8);
 }
