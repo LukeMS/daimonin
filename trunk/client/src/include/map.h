@@ -24,26 +24,40 @@
 #ifndef __MAP_H
 #define __MAP_H
 
+#define MAP_START_XOFF 390
+#define MAP_START_YOFF 143
+
 #define MAP_TILE_POS_YOFF 23
+#define MAP_TILE_POS_YOFF2 12
 #define MAP_TILE_POS_XOFF 48
+#define MAP_TILE_POS_XOFF2 24
 
 #define MAP_TILE_XOFF 12
 #define MAP_TILE_YOFF 24
 
-#define MAP_START_XOFF (MAP_TILE_POS_XOFF * 8)
-#define MAP_START_YOFF (MAP_TILE_POS_XOFF * 3)
+/* table of pre definded multi arch objects.
+ * mpart_id and mpart_nr in the arches are commited from server
+ * to analyze the exaclty tile position inside a mpart object.
+ *
+ * The way of determinate the starting and shift points is explained
+ * in the dev/multi_arch folder of the arches, where the multi arch templates &
+ * masks are.
+ */
 
-#define MAP_REDRAW_FLAG_NO          0
-#define MAP_REDRAW_FLAG_NORMAL      (1 << 0)
-#define MAP_REDRAW_FLAG_FIRE        (1 << 1)
-#define MAP_REDRAW_FLAG_COLD        (1 << 2)
-#define MAP_REDRAW_FLAG_ELECTRICITY (1 << 3)
-#define MAP_REDRAW_FLAG_LIGHT       (1 << 4)
-#define MAP_REDRAW_FLAG_SHADOW      (1 << 5)
+typedef struct _multi_part_tile
+{
+    int xoff;       /* X-offset */
+    int yoff;       /* Y-offset */
+}
+_multi_part_tile;
 
-extern uint8  map_udate_flag,
-              map_transfer_flag;
-extern uint32 map_redraw_flag;
+typedef struct _multi_part_obj
+{
+    int                 xlen;                   /* natural xlen of the whole multi arch */
+    int                 ylen;                   /* same for ylen */
+    _multi_part_tile    part[16];
+}
+_multi_part_obj;
 
 typedef struct _mapdata
 {
@@ -60,12 +74,12 @@ struct MapCell
 {
     short   faces[MAXFACES];
     short   pos[MAXFACES];
+    uint8 fog_of_war;
     uint8   ext[MAXFACES];
     char    pname[MAXFACES][32];
     uint8   probe[MAXFACES];
     struct anim_list *anim[MAXFACES];
     uint8   darkness;
-    uint8   fogofwar;
     sint16  height;   /* height of this maptile */
     uint32  stretch;  /* how we stretch this is really 8 char for N S E W */
 }
@@ -87,17 +101,10 @@ typedef struct
 MapPos;
 
 extern _mapdata         MapData;
-
-#define MAP_XPOS(_x_, _y_) \
-    ((MAP_START_XOFF * options.mapsx) + \
-    (_x_) * (MAP_TILE_YOFF * options.mapsx) - \
-    (_y_) * (MAP_TILE_YOFF * options.mapsx))
-#define MAP_YPOS(_x_, _y_) \
-    ((MAP_START_YOFF * options.mapsy) + \
-    (_x_) * (MAP_TILE_XOFF * options.mapsy) + \
-    (_y_) * (MAP_TILE_XOFF * options.mapsy))
+extern _multi_part_obj  MultiArchs[16];
 
 extern void             clear_map(void);
+extern void             display_map_clearcell(long x, long y);
 extern void             set_map_darkness(int x, int y, uint8 darkness);
 extern void             set_map_face(int x, int y, int layer, int face, int pos, int ext, char *, sint16 height);
 extern void             set_map_height(int x, int y, sint16 height);
@@ -107,7 +114,9 @@ extern void             InitMapData(int xl, int yl, int px, int py);
 extern void             UpdateMapName(char *name);
 extern void             UpdateMapMusic(char *music);
 extern void             set_map_ext(int x, int y, int layer, int ext, int probe);
-extern void             map_overlay(_Sprite *sprite);
+extern void             map_draw_map_clear(void);
+extern void             load_mapdef_dat(void);
+extern void             adjust_map_cache(int x, int y);
 extern int              get_tile_position(int mx, int my, int *tx, int *ty);
 
 #endif /* ifndef __MAP_H */

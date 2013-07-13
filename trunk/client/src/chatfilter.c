@@ -78,13 +78,13 @@ static void chatfilter_list_show(void)
     struct chatfilter_list *node;
     int i=0;
 
-    textwin_show_string(0, NDI_COLR_WHITE, "\nCHATFILTER LIST");
-    textwin_show_string(0, NDI_COLR_WHITE, "--------------------------");
+    textwin_showstring(COLOR_WHITE, "\nCHATFILTER LIST");
+    textwin_showstring(COLOR_WHITE, "--------------------------");
     for (node = chatfilter_list_start;node;i++, node = node->next)
     {
-        textwin_show_string(0, NDI_COLR_WHITE, "%s", node->word);
+        textwin_showstring(COLOR_WHITE, "%s", node->word);
     }
-    textwin_show_string(0, NDI_COLR_WHITE, "\n%d word(s) ignored\nHELP: see '/cfilter ?'",
+    textwin_showstring(COLOR_WHITE, "\n%d word(s) ignored\nHELP: see '/cfilter ?'",
                        i);
 }
 
@@ -104,61 +104,59 @@ void chatfilter_list_clear(void)
 /* clear the list and load it clean from file */
 void chatfilter_list_load(void)
 {
-    char         buf[SMALL_BUF];
-    PHYSFS_File *handle;
+    int i;
+    char buf[64];
+	char filename[255];
+    FILE   *stream;
 
-    sprintf(buf, "%s/%s.%s", DIR_SETTINGS, cpl.name, FILE_CHATFILTER);
-
-    if (!(handle = load_client_file(buf)))
-    {
-        return;
-    }
+    sprintf(filename,"settings/%s.cfilter.list",cpl.name);
+    LOG(LOG_DEBUG,"Trying to open cfilter file: %s\n",filename);
 
     chatfilter_list_clear();
 
-    PHYSFS_readString(handle, buf, sizeof(buf));
-    replacechar = buf[0];
+    if (!(stream = fopen_wrapper(filename, "r")))
+        return; /* no list - no words - no problem */
 
-    while (PHYSFS_readString(handle, buf, sizeof(buf)) > 0)
+    /* first line is replacementchar */
+    if (fgets(buf, 60, stream) != NULL)
     {
-        if (buf[0] == '#')
-        {
-            continue;
-        }
-
-        /* Strangely, pre-0.10.6 clients would chop multi-word lines off at
-         * the last space -- so 'this is a bad phrase' would be censored to
-         * '************* phrase'. 0.10.6 censors the whole phrase. */
+        replacechar=buf[0];
+    }
+    while (fgets(buf, 60, stream) != NULL)
+    {
+        i = strlen(buf)-1;
+        while (isspace(buf[i--]))
+            buf[i+1]=0;
         chatfilter_entry_add(buf);
     }
 
-    PHYSFS_close(handle);
+    fclose(stream);
 }
 
 /* save the list to the chatfilterlist file. Overwrite it */
 void chatfilter_list_save(void)
 {
-    char                    buf[SMALL_BUF];
-    PHYSFS_File            *handle;
-    struct chatfilter_list *cl;
+    struct chatfilter_list *node;
+    char filename[255];
+    FILE *stream;
 
-    sprintf(buf, "%s/%s.%s", DIR_SETTINGS, cpl.name, FILE_CHATFILTER);
+    sprintf(filename,"settings/%s.cfilter.list",cpl.name);
+    LOG(LOG_DEBUG,"Trying to open cfilter file: %s\n",filename);
 
-    if (!(handle = save_client_file(buf)))
-    {
+    if (!(stream = fopen_wrapper(filename, "w")))
         return;
-    }
 
-    sprintf(buf, "%c # Replacement Char, change if you want.\n", replacechar);
-    PHYSFS_writeString(handle, buf);
+    fputc(replacechar,stream);
+    fputs(" <- Replacement Char, change if you want.\n",stream);
 
-    for (cl = chatfilter_list_start; cl; cl = cl->next)
+    for (node = chatfilter_list_start;node;node = node->next)
     {
-        sprintf(buf, "%s\n", cl->word);
-        PHYSFS_writeString(handle, buf);
+        fputs(node->word, stream);
+        fputs("\n", stream);
     }
 
-    PHYSFS_close(handle);
+    fclose(stream);
+
 }
 
 /* replace all f*words with replacechar
@@ -227,19 +225,19 @@ void chatfilter_command(char *cmd)
         chatfilter_list_show();
     else if (cmd[0]=='+')
     {
-        options.textwin_use_chatfilter  = 1;
-        textwin_show_string(0, NDI_COLR_WHITE, "Chatfilter enabled.");
+        options.chatfilter=1;
+        textwin_showstring(COLOR_WHITE, "Chatfilter enabled.");
         save_options_dat();
     }
     else if (cmd[0]=='-')
     {
-        options.textwin_use_chatfilter = 0;
-        textwin_show_string(0, NDI_COLR_WHITE, "Chatfilter disabled.");
+        options.chatfilter=0;
+        textwin_showstring(COLOR_WHITE, "Chatfilter disabled.");
         save_options_dat();
     }
     else if (cmd[0]=='?')
     {
-        textwin_show_string(0, NDI_COLR_WHITE,
+        textwin_showstring(COLOR_WHITE,
                            "HELP:\n"\
                            "'/cfilter' - shows list of filtered words.\n"\
                            "'/cfilter <word>' - adds word to list, or if its on list remove it from list.\n"\
@@ -249,7 +247,7 @@ void chatfilter_command(char *cmd)
     else if ((cmd[0]=='!') && (cmd[1]!=0))
     {
         replacechar=cmd[1];
-        textwin_show_string(0, NDI_COLR_WHITE,"Replacement character changed to '%c'.",replacechar);
+        textwin_showstring(COLOR_WHITE,"Replacement character changed to '%c'.",replacechar);
         chatfilter_list_save();
     }
     else
@@ -264,12 +262,12 @@ void chatfilter_command(char *cmd)
         if (chatfilter_check(cmd))
         {
             chatfilter_entry_remove(cmd);
-            textwin_show_string(0, NDI_COLR_WHITE, "Removed >%s< from chatfilter list.", cmd);
+            textwin_showstring(COLOR_WHITE, "Removed >%s< from chatfilter list.", cmd);
         }
         else
         {
             chatfilter_entry_add(cmd);
-            textwin_show_string(0, NDI_COLR_WHITE, "Added >%s< to chatfilter list.", cmd);
+            textwin_showstring(COLOR_WHITE, "Added >%s< to chatfilter list.", cmd);
         }
         chatfilter_list_save();
     }

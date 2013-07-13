@@ -178,7 +178,7 @@ int transform_account_name_string(char *name)
 
     while (*tmp != '\0')
     {
-        *tmp++ = tolower(*tmp);
+        *tmp = tolower(*tmp++);
     }
 
     /* Trim the string on the right side */

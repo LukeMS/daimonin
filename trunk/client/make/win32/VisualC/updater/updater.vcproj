@@ -47,8 +47,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="../,../../../../../,../../../src/updater,../../../../src/updater/include,../../include"
-				PreprocessorDefinitions="WIN32,_DEBUG,__WIN_32,_CRT_SECURE_NO_WARNINGS,CURL_STATICLIB, DAI_DEVELOPMENT"
+				AdditionalIncludeDirectories="../,../../../../../,../../../src/updater,../../../../src/updater/include"
+				PreprocessorDefinitions="WIN32,_DEBUG,__WIN_32,_CRT_SECURE_NO_WARNINGS,CURL_STATICLIB"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
 				UsePrecompiledHeader="0"
@@ -147,8 +147,8 @@
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
-				AdditionalIncludeDirectories="../,../../../../../,../../../src/updater,../../../../src/updater/include,../../include"
-				PreprocessorDefinitions="WIN32,NDEBUG,_WINDOWS,__WIN_32,_CRT_SECURE_NO_WARNINGS,CURL_STATICLIB, DAI_DEVELOPMENT"
+				AdditionalIncludeDirectories="../,../../../../../,../../../src/updater,../../../../src/updater/include"
+				PreprocessorDefinitions="WIN32,NDEBUG,_WINDOWS,__WIN_32,_CRT_SECURE_NO_WARNINGS,CURL_STATICLIB"
 				ExceptionHandling="0"
 				RuntimeLibrary="0"
 				PrecompiledHeaderThrough=""
@@ -253,6 +253,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\..\src\updater\include\physfs.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\..\src\updater\include\physfsrwops.h"
 				>
 			</File>
@@ -294,20 +298,20 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\resource.h"
+				RelativePath=".\resource.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\daimonin.rc"
+				RelativePath=".\updater.rc"
 				>
 			</File>
 		</Filter>
 		<File
-			RelativePath="..\..\lib\static\libcurl.lib"
+			RelativePath="..\sdl_lib\static\libcurl.lib"
 			>
 		</File>
 		<File
-			RelativePath="..\..\lib\static\physfs.lib"
+			RelativePath="..\sdl_lib\static\physfs.lib"
 			>
 		</File>
 	</Files>

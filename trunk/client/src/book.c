@@ -287,7 +287,7 @@ _gui_book_struct *load_book_interface(int mode, char *data, int len)
 
             if (!book_line)
             {
-                textwin_show_string(0, NDI_COLR_RED, "~%s~\nERROR in book cmd!", data);
+                textwin_showstring(COLOR_RED, "~%s~\nERROR in book cmd!", data);
                 return NULL;
             }
 
@@ -316,7 +316,7 @@ title_repeat_jump:
 
             if (book_line->mode & BOOK_LINE_TITLE)
             {
-                sint16          l_len;
+                int l_len;
                 _gui_book_line *b_line;
 
                 MALLOC(b_line, sizeof(_gui_book_line));
@@ -327,7 +327,7 @@ title_repeat_jump:
                 plc_logic+=1;
 
                 /* lets check we need to break the title line (because its to big) */
-                if (strout_width_offset(&font_booktitle, b_line->line, &l_len, 186))
+                if (string_width_offset(&font_large_out, b_line->line, &l_len, 186))
                 {
                     int i = l_len;
                     b_line->line[l_len]=0;
@@ -365,14 +365,14 @@ title_repeat_jump:
 
         if (c == '>') /* should never happens */
         {
-            textwin_show_string(0, NDI_COLR_RED, "~%s~\nERROR in book cmd!", data);
+            textwin_showstring(COLOR_RED, "~%s~\nERROR in book cmd!", data);
             return NULL;
         }
 
         /* we have a line */
         if (c== '\0' || c  == 0 || c == 0x0a)
         {
-            sint16          l_len;
+            int l_len;
             _gui_book_line *tmp_line;
 
             force_line = 0;
@@ -401,7 +401,7 @@ force_line_jump:
             }
 
             /* now lets check the last line - if the line is to long, lets adjust it */
-            if (strout_width_offset((tmp_line->mode == BOOK_LINE_TITLE) ?&font_booktitle:&font_booknormal, tmp_line->line, &l_len, 186))
+            if (string_width_offset((tmp_line->mode == BOOK_LINE_TITLE) ?&font_large_out:&font_medium, tmp_line->line, &l_len, 186))
             {
                 int i, wspace_flag = 1;
 
@@ -454,8 +454,8 @@ force_line_jump:
                 lc = strlen(current_book_line.line);
                 if (force_line)
                 {
-                    //if(strout_width_offset((tmp_line->mode == BOOK_LINE_TITLE) ?&font_booktitle:&font_booknormal, STROUT_LEFT, tmp_line->line, &l_len, 186))
-                    if (strout_width((tmp_line->mode == BOOK_LINE_TITLE) ?&font_booktitle:&font_booknormal, current_book_line.line) < 186)
+                    //if(string_width_offset((tmp_line->mode == BOOK_LINE_TITLE) ?&font_large_out:&font_medium, tmp_line->line, &l_len, 186))
+                    if (string_width((tmp_line->mode == BOOK_LINE_TITLE) ?& font_large_out:&font_medium, current_book_line.line) < 186)
                     {
                         goto force_line_jump_out;
                     }
@@ -497,20 +497,20 @@ void show_book(int x, int y)
     int i, ii, yoff;
     _gui_book_page *page1, *page2;
 
-    sprite_blt(skin_sprites[SKIN_SPRITE_JOURNAL], x, y, NULL, NULL);
+    sprite_blt(Bitmaps[BITMAP_JOURNAL], x, y, NULL, NULL);
     global_book_data.x = x;
     global_book_data.y = y;
-    global_book_data.xlen = skin_sprites[SKIN_SPRITE_JOURNAL]->bitmap->w;
-    global_book_data.ylen = skin_sprites[SKIN_SPRITE_JOURNAL]->bitmap->h;
+    global_book_data.xlen = Bitmaps[BITMAP_JOURNAL]->bitmap->w;
+    global_book_data.ylen = Bitmaps[BITMAP_JOURNAL]->bitmap->h;
 
-    add_close_button(x, y, MENU_BOOK);
+    add_close_button(x+27, y+2, MENU_BOOK, 0);
 
     if (!gui_interface_book)
         return;
 
     if (gui_interface_book->name)
-        strout_blt( ScreenSurface, &font_large, STROUT_LEFT, gui_interface_book->name , x+global_book_data.xlen/2-
-                   strout_width(&font_large, gui_interface_book->name)/2,y+9, NDI_COLR_WHITE, NULL);
+        string_blt( ScreenSurface, &font_large_out, gui_interface_book->name , x+global_book_data.xlen/2-
+                   string_width(&font_large_out, gui_interface_book->name)/2,y+9, COLOR_WHITE, NULL, NULL);
 
     box.x=x+47;
     box.y=y+72;
@@ -526,7 +526,7 @@ void show_book(int x, int y)
     if (page1)
     {
         sprintf(buf,"Page %d of %d",gui_interface_book->page_show+1,gui_interface_book->pages);
-        strout_blt(ScreenSurface, &font_tiny, STROUT_LEFT, buf, box.x+70, box.y+295, NDI_COLR_WHITE, NULL);
+        string_blt(ScreenSurface, &font_tiny_out, buf, box.x+70, box.y+295, COLOR_WHITE, NULL, NULL);
 
         SDL_SetClipRect(ScreenSurface, &box);
         /*SDL_FillRect(ScreenSurface, &box, 35325);*/
@@ -536,11 +536,11 @@ void show_book(int x, int y)
                 break;
             if (page1->line[i]->mode == BOOK_LINE_NORMAL)
             {
-                strout_blt(ScreenSurface, &font_booknormal, STROUT_LEFT, page1->line[i]->line , box.x+2, box.y+2+yoff, NDI_COLR_BLACK, NULL);
+                string_blt(ScreenSurface, &font_medium, page1->line[i]->line , box.x+2, box.y+2+yoff, COLOR_BLACK, NULL, NULL);
             }
             else if (page1->line[i]->mode == BOOK_LINE_TITLE)
             {
-                strout_blt(ScreenSurface, &font_booktitle, STROUT_LEFT, page1->line[i]->line, box.x+2, box.y+2+yoff, NDI_COLR_MAROON, NULL);
+                string_blt(ScreenSurface, &font_large_out, page1->line[i]->line, box.x+2, box.y+2+yoff, COLOR_DBROWN, NULL, NULL);
             }
             i++;
         }
@@ -555,14 +555,14 @@ void show_book(int x, int y)
 
     if (gui_interface_book->pages)
     {
-        sprintf(buf,"%c and %c to turn page",ECC_ARROWRIGHT, ECC_ARROWLEFT);
-        strout_blt(ScreenSurface, &font_tiny, STROUT_LEFT, buf, box.x-59, box.y+300, NDI_COLR_LIME, NULL);
+        sprintf(buf,"%c and %c to turn page",ASCII_RIGHT, ASCII_LEFT);
+        string_blt(ScreenSurface, &font_tiny_out, buf, box.x-59, box.y+300, COLOR_GREEN, NULL, NULL);
     }
 
     if (page2)
     {
         sprintf(buf,"Page %d of %d",gui_interface_book->page_show+2,gui_interface_book->pages);
-        strout_blt(ScreenSurface, &font_tiny, STROUT_LEFT, buf, box.x+76, box.y+295, NDI_COLR_WHITE, NULL);
+        string_blt(ScreenSurface, &font_tiny_out, buf, box.x+76, box.y+295, COLOR_WHITE, NULL, NULL);
 
         SDL_SetClipRect(ScreenSurface, &box);
         /*SDL_FillRect(ScreenSurface, &box, 35325);*/
@@ -572,11 +572,11 @@ void show_book(int x, int y)
                 break;
             if (page2->line[i]->mode == BOOK_LINE_NORMAL)
             {
-                strout_blt(ScreenSurface, &font_booknormal, STROUT_LEFT, page2->line[i]->line , box.x+2, box.y+2+yoff, NDI_COLR_BLACK, NULL);
+                string_blt(ScreenSurface, &font_medium, page2->line[i]->line , box.x+2, box.y+2+yoff, COLOR_BLACK, NULL, NULL);
             }
             else if (page2->line[i]->mode == BOOK_LINE_TITLE)
             {
-                strout_blt(ScreenSurface, &font_booktitle, STROUT_LEFT, page2->line[i]->line, box.x+2, box.y+2+yoff, NDI_COLR_MAROON, NULL);
+                string_blt(ScreenSurface, &font_large_out, page2->line[i]->line, box.x+2, box.y+2+yoff, COLOR_DBROWN, NULL, NULL);
             }
             i++;
         }

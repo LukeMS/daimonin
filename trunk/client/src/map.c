@@ -25,10 +25,6 @@
 
 extern _Sprite         *test_sprite;
 
-uint8  map_udate_flag,
-       map_transfer_flag;
-uint32 map_redraw_flag;
-
 struct Map       the_map;
 
 static struct MapCell  *TheMapCache = NULL;
@@ -47,10 +43,95 @@ _map_object_parse;
 
 struct _map_object_parse   *start_map_object_parse  = NULL;
 
+_multi_part_obj             MultiArchs[16];
+
 static void ShowEffects(uint32 flags, uint16 x, uint16 y);
 static uint16 ShowExclusiveEffect(uint16 x, uint16 y, uint16 xoff, uint16 w,
                                   char *text);
-static void ShowPname(char *pname, sint16 x, sint16 y, uint32 colr);
+
+/* TODO: do a real adjust... we just clear here the cache.
+ */
+void adjust_map_cache(int xpos, int ypos)
+{
+    int x, y /*, i*/;
+//    register struct MapCell                    *map;
+    int             xreal=0, yreal=0;
+    anim_list   *al, *al2;
+
+    memset(TheMapCache, 0, 9 * (MapData.xlen * MapData.ylen) * sizeof(struct MapCell));
+
+    /* delete all anims */
+    al = AnimListStart;
+    while (al->next)
+    {
+        al2=al;
+        al=al->next;
+        new_anim_remove(al2);
+    }
+
+
+    for (y = 0; y < MapStatusY; y++)
+    {
+        for (x = 0; x < MapStatusX; x++)
+        {
+            xreal = xpos + (x - (MAP_MAX_SIZE - 1) / 2) + MapData.xlen;
+            yreal = ypos + (y - (MAP_MAX_SIZE - 1) / 2) + MapData.ylen;
+            if (xreal < 0 || yreal < 0 || xreal >= MapData.xlen * 3 || xreal >= MapData.ylen * 3)
+                continue;
+
+            /*
+                        map = TheMapCache + (yreal * MapData.xlen * 3) + xreal;
+
+                        map->fog_of_war = 0;
+                        map->darkness = the_map.cells[x][y].darkness;
+
+                        for (i = 0; i < MAXFACES; i++)
+                        {
+                            map->faces[i] = the_map.cells[x][y].faces[i];
+                            map->ext[i] = the_map.cells[x][y].ext[i];
+                            map->pos[i] = the_map.cells[x][y].pos[i];
+                            map->probe[i] = the_map.cells[x][y].probe[i];
+                        }
+            */
+        }
+    }
+}
+
+
+/* load the multi arch offsets */
+void load_mapdef_dat(void)
+{
+    FILE   *stream;
+    int     i, ii, x, y, d[32];
+    char    line[256];
+
+    if (!(stream = fopen_wrapper(ARCHDEF_FILE, "r")))
+    {
+        LOG(LOG_ERROR, "ERROR: Can't find file %s\n", ARCHDEF_FILE);
+        return;
+    }
+    for (i = 0; i < 16; i++)
+    {
+        if (fgets(line, 255, stream) == NULL)
+            break;
+
+        sscanf(line,
+               "%d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d",
+               &x, &y, &d[0], &d[1], &d[2], &d[3], &d[4], &d[5], &d[6], &d[7], &d[8], &d[9], &d[10], &d[11], &d[12],
+               &d[13], &d[14], &d[15], &d[16], &d[17], &d[18], &d[19], &d[20], &d[21], &d[22], &d[23], &d[24], &d[25],
+               &d[26], &d[27], &d[28], &d[29], &d[30], &d[31]);
+        MultiArchs[i].xlen = x;
+        MultiArchs[i].ylen = y;
+
+        for (ii = 0; ii < 16; ii++)
+        {
+            MultiArchs[i].part[ii].xoff = d[ii * 2];
+            MultiArchs[i].part[ii].yoff = d[ii * 2 + 1];
+        }
+    }
+    fclose(stream);
+}
+
 
 void clear_map(void)
 {
@@ -98,34 +179,17 @@ void display_mapscroll(int dx, int dy)
     }
 }
 
-void map_overlay(_Sprite *sprite)
+void map_draw_map_clear(void)
 {
-    sint16 xoff = 0,
-           yoff = 0;
-    uint8  y;
-
-    /* If the image is wider than a tile, center it
-     * on the tile. */
-    if (sprite->bitmap->w > MAP_TILE_POS_XOFF)
-    {
-        xoff -= (sint16)((sprite->bitmap->w - MAP_TILE_POS_XOFF) *
-                         options.mapsx) >> 1;
-    }
-
-    /* Position the image so it's bottom edge is
-     * flush with the bottom of the tile. */
-    yoff -= (sint16)((sprite->bitmap->h - MAP_TILE_POS_YOFF) * options.mapsy);
+    register int ypos, xpos, x,y;
 
     for (y = 0; y < MapStatusY; y++)
     {
-        uint8 x;
-
         for (x = 0; x < MapStatusX; x++)
         {
-            sint16 xpos = MAP_XPOS(x, y) - xoff,
-                   ypos = MAP_YPOS(x, y) - yoff;
-
-            sprite_blt_map(sprite, xpos, ypos, NULL, NULL, 0);
+            xpos = options.mapstart_x + x * MAP_TILE_YOFF - y * MAP_TILE_YOFF;
+            ypos = options.mapstart_y + x * MAP_TILE_XOFF + y * MAP_TILE_XOFF;
+            sprite_blt_map(Bitmaps[BITMAP_BLACKTILE], xpos, ypos, NULL, NULL, 0);
         }
     }
 }
@@ -135,8 +199,8 @@ void UpdateMapName(char *name)
     if (name == NULL)
         return;
 
-    widget_data[WIDGET_MAPNAME_ID].wd = strout_width(&font_large, name);
-    widget_data[WIDGET_MAPNAME_ID].ht = font_large.c[0].h;
+    cur_widget[MAPNAME_ID].wd = string_width(&font_large_out, name);
+    cur_widget[MAPNAME_ID].ht = font_large_out.c[0].h;
     strcpy(MapData.name, name);
 }
 
@@ -169,6 +233,8 @@ void UpdateMapMusic(char *music)
 
 void InitMapData(int xl, int yl, int px, int py)
 {
+    void   *tmp_free;
+
     if (xl != -1)
         MapData.xlen = xl;
     if (yl != -1)
@@ -181,8 +247,11 @@ void InitMapData(int xl, int yl, int px, int py)
     if (xl > 0)
     {
         clear_map();
-        FREE(TheMapCache);
-
+        if (TheMapCache)
+        {
+            tmp_free = &TheMapCache;
+            FreeMemory(tmp_free);
+        }
         /* we allocate 9 times the map... in tiled maps, we can have 8 connected
         * maps to our map - we want cache a map except its 2 maps aways-
         * WARNING: tiled maps must be of same size... don't attach a 32x32
@@ -195,9 +264,24 @@ void InitMapData(int xl, int yl, int px, int py)
 
 void set_map_ext(int x, int y, int layer, int ext, int probe)
 {
+//    register struct MapCell                    *map;
+    int             xreal, yreal;
+
     the_map.cells[x][y].ext[layer] = ext;
     if (probe != -1)
         the_map.cells[x][y].probe[layer] = probe;
+
+    xreal = MapData.posx + (x - (MAP_MAX_SIZE - 1) / 2) + MapData.xlen;
+    yreal = MapData.posy + (y - (MAP_MAX_SIZE - 1) / 2) + MapData.ylen;
+    if (xreal < 0 || yreal < 0 || xreal >= MapData.xlen * 3 || yreal >= MapData.ylen * 3)
+        return;
+    /*
+        map = TheMapCache + (yreal * MapData.xlen * 3) + xreal;
+
+        map->ext[layer] = ext;
+        if (probe != -1)
+            map->probe[layer] = probe;
+    */
 }
 
 /* tile Stretching */
@@ -315,6 +399,9 @@ void set_map_height(int x, int y, sint16 height)
 
 void set_map_face(int x, int y, int layer, int face, int pos, int ext, char *name, sint16 height)
 {
+//   register struct MapCell                    *map;
+    int             xreal, yreal/*, i*/;
+
     the_map.cells[x][y].faces[layer] = face;
     if (!face)
         ext = 0;
@@ -326,14 +413,97 @@ void set_map_face(int x, int y, int layer, int face, int pos, int ext, char *nam
 
     if (layer==0) /* see if we need to stretch this tile */
     {
-        set_map_height(x, y, height);
+       the_map.cells[x][y].height = height;
+
+       align_tile_stretch(x-1,y-1); /* NW */
+       align_tile_stretch(x  ,y-1); /* N  */
+       align_tile_stretch(x+1,y-1); /* NE */
+       align_tile_stretch(x+1,y  ); /* E  */
+
+       align_tile_stretch(x+1,y+1); /* SE */
+       align_tile_stretch(x  ,y+1); /* S */
+       align_tile_stretch(x-1,y+1); /* SW */
+       align_tile_stretch(x-1,y  ); /* W */
+
+       align_tile_stretch(x  ,y  ); /* HERE */
     }
+
+    xreal = MapData.posx + (x - (MAP_MAX_SIZE - 1) / 2) + MapData.xlen;
+    yreal = MapData.posy + (y - (MAP_MAX_SIZE - 1) / 2) + MapData.ylen;
+    if (xreal < 0 || yreal < 0 || xreal >= MapData.xlen * 3 || yreal >= MapData.ylen * 3)
+        return;
+    /*
+        map = TheMapCache + (yreal * MapData.xlen * 3) + xreal;
+
+        map->fog_of_war = 0;
+        map->darkness = the_map.cells[x][y].darkness;
+
+        for (i = 0; i < MAXFACES; i++)
+        {
+            map->faces[i] = the_map.cells[x][y].faces[i];
+            map->ext[i] = the_map.cells[x][y].ext[i];
+            map->pos[i] = the_map.cells[x][y].pos[i];
+            map->probe[i] = the_map.cells[x][y].probe[i];
+            strcpy(map->pname[i], the_map.cells[x][y].pname[i]);
+        }
+    */
 }
+
+void display_map_clearcell(long x, long y)
+{
+//    register struct MapCell                    *map;
+    int             xreal, yreal, i;
+
+
+    the_map.cells[x][y].darkness = 0;
+    for (i = 0; i < MAXFACES; i++)
+    {
+        the_map.cells[x][y].pname[i][0] = 0;
+        the_map.cells[x][y].faces[i] = 0;
+        the_map.cells[x][y].ext[i] = 0;
+        the_map.cells[x][y].pos[i] = 0;
+        the_map.cells[x][y].probe[i] = 0;
+    }
+
+    xreal = MapData.posx + (x - (MAP_MAX_SIZE - 1) / 2) + MapData.xlen;
+    yreal = MapData.posy + (y - (MAP_MAX_SIZE - 1) / 2) + MapData.ylen;
+    if (xreal < 0 || yreal < 0 || xreal >= MapData.xlen * 3 || yreal >= MapData.ylen * 3)
+        return;
+    /*
+        map = TheMapCache + (yreal * MapData.xlen * 3) + xreal;
+
+        map->fog_of_war = 1;
+        map->darkness = 0;
+        for (i = 0; i < MAXFACES; i++)
+        {
+            if (map->faces[i] & 0x8000)
+                map->faces[i] = 0;
+            map->ext[i] = 0;
+            map->pname[i][0] = 0;
+            map->probe[i] = 0;
+        }
+    */
+}
+
 
 void set_map_darkness(int x, int y, uint8 darkness)
 {
+    //  register struct MapCell                    *map;
+    int             xreal, yreal;
+
     if (darkness != the_map.cells[x][y].darkness)
         the_map.cells[x][y].darkness = darkness;
+
+    xreal = MapData.posx + (x - (MAP_MAX_SIZE - 1) / 2) + MapData.xlen;
+    yreal = MapData.posy + (y - (MAP_MAX_SIZE - 1) / 2) + MapData.ylen;
+    if (xreal < 0 || yreal < 0 || xreal >= MapData.xlen * 3 || yreal >= MapData.ylen * 3)
+        return;
+    /*
+        map = TheMapCache + (yreal * MapData.xlen * 3) + xreal;
+
+        if (darkness != map->darkness)
+            map->darkness = darkness;
+    */
 }
 
 /** Figure out if name is the same as rankandname.
@@ -350,11 +520,12 @@ static int namecmp(const char *name, const char *rankandname)
 void map_draw_map(void)
 {
     register struct MapCell                    *map;
-    register sint16 ypos, xpos;
-    sint16      x, y, k, temp, kk, kt, yt, xt, alpha;
-    sint16      xml, xmpos;
+    _Sprite        *face_sprite;
+    register int ypos, xpos;
+    int         x, y, k, xl, yl, temp, kk, kt, yt, xt, alpha;
+    int         xml, xmpos;
     uint16      index, index_tmp;
-    sint16      xreal, yreal;
+    int         mid, mnr, xreal, yreal;
     _BLTFX      bltfx;
     SDL_Rect    rect;
     sint16      left = 0,
@@ -373,7 +544,7 @@ void map_draw_map(void)
 
     /* we should move this later to a better position, this only for testing here */
     _Sprite     player_dummy;
-    SDL_Surface surf;
+    SDL_Surface bmap;
     int         player_posx, player_posy;
     int         player_pixx, player_pixy;
 
@@ -384,23 +555,22 @@ void map_draw_map(void)
         return;
     player_posx = MapStatusX - (MapStatusX / 2) - 1;
     player_posy = MapStatusY - (MapStatusY / 2) - 1;
-    player_pixx = MAP_XPOS(player_posx, player_posy) + 20;
-    player_pixy = MAP_YPOS(player_posx, player_posy) - 14;
+    player_pixx = MAP_START_XOFF + player_posx * MAP_TILE_YOFF - player_posy * MAP_TILE_YOFF + 20;
+    player_pixy = 0 + player_posx * MAP_TILE_XOFF + player_posy * MAP_TILE_XOFF - 14;
     player_dummy.border_left = -5;
     player_dummy.border_right = 0;
     player_dummy.border_up = 0;
     player_dummy.border_down = -5;
-    player_dummy.bitmap = &surf;
-    surf.h = 33;
-    surf.w = 35;
-    player_pixy = (player_pixy +
-                   (MAP_TILE_POS_YOFF * (sint16)options.mapsy)) - surf.h;
+    player_dummy.bitmap = &bmap;
+    bmap.h = 33;
+    bmap.w = 35;
+    player_pixy = (player_pixy + MAP_TILE_POS_YOFF) - bmap.h;
     bltfx.surface = NULL;
     bltfx.alpha = 128;
 
     player_height_offset = the_map.cells[player_posx][player_posy].height;  // this is the height of the tile where the player is standing
 
-    for (kk = 0; kk < MAXFACES - 1; kk++)
+    for (kk = 0; kk < MAXFACES - 1; kk++)    /* we draw floor & mask as layer wise (layer 0 & 1) */
     {
         for (alpha = 0; alpha < MAP_MAX_SIZE; alpha++)
         {
@@ -418,21 +588,16 @@ void map_draw_map(void)
                     x = alpha;
                 }
 
-                if (kk < 2) // draw layers 0 & 1 (floor & fmask) consecutively
-                {
+                if (kk < 2) /* and we draw layer 2 and 3 at once on a node */
                     kt = kk;
-                }
-                else        // then draw layers 2 & 3 concurrently
-                {
+                else
                     kt = kk + 1;
-                }
-
                 for (k = kk; k <= kt; k++)
                 {
-                    xpos = MAP_XPOS(x, y);
-                    ypos = MAP_YPOS(x, y);
+                    xpos = MAP_START_XOFF + x * MAP_TILE_YOFF - y * MAP_TILE_YOFF;
+                    ypos = 50 + x * MAP_TILE_XOFF + y * MAP_TILE_XOFF;
                  //   if (!k)
-                   //     sprite_blt_map(skin_sprites[SKIN_SPRITE_BLACKTILE], xpos, ypos, NULL, NULL);
+                   //     sprite_blt_map(Bitmaps[BITMAP_BLACKTILE], xpos, ypos, NULL, NULL);
                     if (!debug_layer[k])
                         continue;
 
@@ -441,107 +606,72 @@ void map_draw_map(void)
 
                     if (xreal < 0 || yreal < 0 || xreal >= MapData.xlen * 3 || yreal >= MapData.ylen * 3)
                         continue;
-                    /*LOG(LOG_DEBUG,"MAPCACHE: x:%d y:%d l:%d\n", xreal,yreal,(yreal*MapData.xlen*3)+xreal);*/
+                    /*LOG(-1,"MAPCACHE: x:%d y:%d l:%d\n", xreal,yreal,(yreal*MapData.xlen*3)+xreal);*/
 //                    map = TheMapCache + (yreal * MapData.xlen * 3) + xreal;
 
                     map = &the_map.cells[x][y];
                     if ((index_tmp = map->faces[k]) > 0)
                     {
                         index = index_tmp & ~0x8000;
+                        face_sprite = FaceList[index].sprite;
 
-                        /* If it's got an alternative face and it's not in the
-                         * bottom quadrant, use the alternative. */
-                        if ((face_list[index].flags & FACE_FLAG_ALTERNATIVE))
+                        /* If it's got an alternative image and it's not in the
+                         * bottom quadrant, use the alternative sprite. */
+                        if (FaceList[index].flags & FACE_FLAG_ALTERNATIVE)
                         {
-                            sint32 i;
+                            int i;
 
-                            if (x < (MAP_MAX_SIZE - 1) / 2 ||
-                                y < (MAP_MAX_SIZE - 1) / 2)
+                            if (x < (MAP_MAX_SIZE - 1) / 2 || y < (MAP_MAX_SIZE - 1) / 2)
                             {
-                                i = face_list[index].alt_a;
+                                if ((i = FaceList[index].alt_a) != -1)
+                                    face_sprite = FaceList[i].sprite;
                             }
                             else
                             {
-                                i = face_list[index].alt_b;
-                            }
-
-                            if (i >= 0)
-                            {
-                                index = (uint16)i;
+                                if ((i = FaceList[index].alt_b) != -1)
+                                    face_sprite = FaceList[i].sprite;
                             }
                         }
 
-                        if (!(face_list[index].flags & FACE_FLAG_LOADED))
+                        if (!face_sprite)
                         {
-                            /* Request the face now if it has not already been
-                             * requested. */
-                            if (!(face_list[index].flags & FACE_FLAG_REQUESTED))
-                            {
-                                face_get(index);
-                            }
-
-                            /* Assume SKIN_SPRITE_LOADING is exactly tile
-                             * dimensions. */
-                            sprite_blt_map(skin_sprites[SKIN_SPRITE_LOADING],
-                                           xpos, ypos, NULL, NULL, 0);
+                            index = MAX_FACE_TILES - 1;
+                            face_sprite = FaceList[index].sprite;
                         }
-                        else
+                        if (face_sprite)
                         {
-                            _Sprite *sprite = face_list[index].sprite;
-                            sint16   yl,
-                                     xl;
-
                             if (map->pos[k]) /* we have a set quick_pos = multi tile*/
                             {
-                                uint8 mid = map->pos[k] >> 4,
-                                      mnr = map->pos[k] & 0x0f;
+                                mnr = map->pos[k];
+                                mid = mnr >> 4;
+                                mnr &= 0x0f;
+                                xml = MultiArchs[mid].xlen;
+                                yl = ypos
+                                     - MultiArchs[mid].part[mnr].yoff
+                                     + MultiArchs[mid].ylen
+                                     - face_sprite->bitmap->h;
+                                /* we allow overlapping x borders - we simply center then
+                                 */
+                                xl = 0;
+                                if (face_sprite->bitmap->w > MultiArchs[mid].xlen)
+                                    xl = (MultiArchs[mid].xlen - face_sprite->bitmap->w) >> 1;
+                                xmpos = xpos - MultiArchs[mid].part[mnr].xoff;
+                                xl += xmpos;
 
-                                xml = (sint16)(face_mpart_id[mid].xlen *
-                                               options.mapsx);
-                                xmpos = xl = xpos -
-                                             (sint16)(face_mpart_id[mid].part[mnr].xoff *
-                                                      options.mapsx);
-
-                                /* If the image is wider than the footprint,
-                                 * center it on the footprint. */
-                                if (sprite->bitmap->w > face_mpart_id[mid].xlen)
-                                {
-                                    xl -= (sint16)((sprite->bitmap->w -
-                                                    face_mpart_id[mid].xlen) *
-                                                   options.mapsx) >> 1;
-                                }
-
-                                /* Position the image so it's bottom edge is
-                                 * flush with the bottom of the footprint. */
-                                yl = ypos -
-                                     (sint16)(face_mpart_id[mid].part[mnr].yoff *
-                                              options.mapsy) -
-                                     (sint16)((sprite->bitmap->h -
-                                               face_mpart_id[mid].ylen) *
-                                              options.mapsy);
+//                                textwin_showstring(COLOR_RED, "ID:%d NR:%d yoff:%d yl:%d",
+//                                                   mid, mnr,
+//                                                   MultiArchs[mid].part[mnr].yoff,
+//                                                   yl);
                             }
                             else /* single tile... */
                             {
                                 /* first, we calc the shift positions */
-                                xml = (sint16)(MAP_TILE_POS_XOFF * options.mapsx);
+                                xml = MAP_TILE_POS_XOFF;
+                                yl = (ypos + MAP_TILE_POS_YOFF) - face_sprite->bitmap->h;
                                 xmpos = xl = xpos;
-
-                                /* If the image is wider than a tile, center it
-                                 * on the tile. */
-                                if (sprite->bitmap->w > MAP_TILE_POS_XOFF)
-                                {
-                                    xl -= (sint16)((sprite->bitmap->w -
-                                                    MAP_TILE_POS_XOFF) *
-                                                   options.mapsx) >> 1;
-                                }
-
-                                /* Position the image so it's bottom edge is
-                                 * flush with the bottom of the tile. */
-                                yl = ypos - (sint16)((sprite->bitmap->h -
-                                                      MAP_TILE_POS_YOFF) *
-                                                     options.mapsy);
+                                if (face_sprite->bitmap->w > MAP_TILE_POS_XOFF)
+                                    xl -= (face_sprite->bitmap->w - MAP_TILE_POS_XOFF) / 2;
                             }
-
                             /* blt the face in the darkness level, the tile pos has */
                             temp = map->darkness;
 
@@ -566,47 +696,28 @@ void map_draw_map(void)
                             bltfx.flags = 0;
                             if (k && ((x > player_posx && y >= player_posy) || (x >= player_posx && y > player_posy)))
                             {
-                                if (sprite && sprite->bitmap && k > 1)
+                                if (face_sprite && face_sprite->bitmap && k > 1)
                                 {
-                                    if (sprite_collision(player_pixx, player_pixy, xl, yl, &player_dummy, sprite))
+                                    if (sprite_collision(player_pixx, player_pixy, xl, yl, &player_dummy, face_sprite))
                                         bltfx.flags = BLTFX_FLAG_SRCALPHA;
                                 }
                             }
 
-                            if (map->fogofwar)
-                            {
-                                if (options.map_fogofwar)
-                                {
-                                    bltfx.flags |= BLTFX_FLAG_FOGOFWAR;
-                                }
-                                else
-                                {
-                                    continue;
-                                }
-                            }
-                            else if ((cpl.stats.flags & SF_INFRAVISION) &&
-                                     (index_tmp & 0x8000) &&
-                                     map->darkness < 150)
-                            {
-                                bltfx.flags |= BLTFX_FLAG_INFRAVISION;
-                            }
-                            else if ((cpl.stats.flags & SF_XRAYVISION))
-                            {
-                                bltfx.flags |= BLTFX_FLAG_XRAYVISION;
-                            }
+                            if (map->fog_of_war == 1)
+                                bltfx.flags |= BLTFX_FLAG_FOW;
+                            else if (cpl.stats.flags & SF_INFRAVISION && index_tmp & 0x8000 && map->darkness < 150)
+                                bltfx.flags |= BLTFX_FLAG_RED;
+                            else if (cpl.stats.flags & SF_XRAYS)
+                                bltfx.flags |= BLTFX_FLAG_GREY;
                             else
-                            {
                                 bltfx.flags |= BLTFX_FLAG_DARK;
-                            }
 
-                            if ((map->ext[k] & FFLAG_INVISIBLE) &&
-                                !(bltfx.flags & BLTFX_FLAG_FOGOFWAR))
+                            if (map->ext[k] & FFLAG_INVISIBLE && !(bltfx.flags & BLTFX_FLAG_FOW))
                             {
                                 bltfx.flags &= ~BLTFX_FLAG_DARK;
-                                bltfx.flags |= BLTFX_FLAG_SRCALPHA | BLTFX_FLAG_XRAYVISION;
+                                bltfx.flags |= BLTFX_FLAG_SRCALPHA | BLTFX_FLAG_GREY;
                             }
-                            else if ((map->ext[k] & FFLAG_ETHEREAL) &&
-                                     !(bltfx.flags & BLTFX_FLAG_FOGOFWAR))
+                            else if (map->ext[k] & FFLAG_ETHEREAL && !(bltfx.flags & BLTFX_FLAG_FOW))
                             {
                                 bltfx.flags &= ~BLTFX_FLAG_DARK;
                                 bltfx.flags |= BLTFX_FLAG_SRCALPHA;
@@ -624,38 +735,38 @@ void map_draw_map(void)
 
                             /* These faces have alternative images. This has
                              * already been sorted out above, so just blt it. */
-                            if (face_list[index].flags & FACE_FLAG_ALTERNATIVE)
-                                sprite_blt_map(sprite, xl, yl, NULL, &bltfx, stretch);
+                            if (FaceList[index].flags & FACE_FLAG_ALTERNATIVE)
+                                sprite_blt_map(face_sprite, xl, yl, NULL, &bltfx, stretch);
                             /* Double faces are shown twice, one above the
                              * other, when not lower on the screen than the
                              * player. This simulates high walls without
                              * oscuring the user's view. */
-                            else if (face_list[index].flags & FACE_FLAG_DOUBLE)
+                            else if (FaceList[index].flags & FACE_FLAG_DOUBLE)
                             {
                                 /* Blt face once in normal position. */
-                                sprite_blt_map(sprite, xl, yl, NULL, &bltfx, stretch);
+                                sprite_blt_map(face_sprite, xl, yl, NULL, &bltfx, stretch);
  
                                 /* If it's not in the bottom quadrant of the
                                  * map, blt it again 'higher up' on the same
                                  * square. */
                                 if (x < (MAP_MAX_SIZE - 1) / 2 || y < (MAP_MAX_SIZE - 1) / 2)
-                                    sprite_blt_map(sprite, xl, yl - 22, NULL, &bltfx, 0);
+                                    sprite_blt_map(face_sprite, xl, yl - 22, NULL, &bltfx, 0);
                             }
                             /* These faces are only shown when they are in a
                              * position which would be visible to the player. */
-                            else if (face_list[index].flags & FACE_FLAG_UP)
+                            else if (FaceList[index].flags & FACE_FLAG_UP)
                             {
                                 int bltflag = 0; // prevents drawing the same face twice
  
                                 /* If the face is dir [0124568] and in the top
                                  * or right quadrant or on the central square,
                                  * blt it. */
-                                if (face_list[index].flags & FACE_FLAG_D1)
+                                if (FaceList[index].flags & FACE_FLAG_D1)
                                 {
                                     if (((x <= (MAP_MAX_SIZE - 1) / 2) && (y <= (MAP_MAX_SIZE - 1) / 2))
                                         || ((x > (MAP_MAX_SIZE - 1) / 2) && (y < (MAP_MAX_SIZE - 1) / 2)))
                                     {
-                                        sprite_blt_map(sprite, xl, yl, NULL, &bltfx, 0);
+                                        sprite_blt_map(face_sprite, xl, yl, NULL, &bltfx, 0);
                                         bltflag = 1;
                                     }
                                 }
@@ -663,25 +774,24 @@ void map_draw_map(void)
                                 /* If the face is dir [0234768] and in the top
                                  * or left quadrant or on the central square,
                                  * blt it. */
-                                if (!bltflag && face_list[index].flags & FACE_FLAG_D3)
+                                if (!bltflag && FaceList[index].flags & FACE_FLAG_D3)
                                 {
                                     if (((x <= (MAP_MAX_SIZE - 1) / 2) && (y <= (MAP_MAX_SIZE - 1) / 2))
                                         || ((x < (MAP_MAX_SIZE - 1) / 2) && (y > (MAP_MAX_SIZE - 1) / 2)))
-                                        sprite_blt_map(sprite, xl, yl, NULL, &bltfx, 0);
+                                        sprite_blt_map(face_sprite, xl, yl, NULL, &bltfx, 0);
                                 }
                             }
                             /* Anything else. Just blt it. */
                             else
-                                sprite_blt_map(sprite, xl, yl, NULL, &bltfx, stretch);
+                                sprite_blt_map(face_sprite, xl, yl, NULL, &bltfx, stretch);
 
                             /* perhaps the object has a marked effect, blt it now */
                             if (map->ext[k] ||
                                 map->pname[k][0])
                             {
                                 left = (sint32)(((double)(xml - 10) / 100.0) *
-                                                ((xml == (MAP_TILE_POS_XOFF *
-                                                          (sint16)options.mapsx))
-                                                 ? 25.0 : 20.0));
+                                                ((xml == MAP_TILE_POS_XOFF) ?
+                                                 25.0 : 20.0));
                                 right = MAX(1, MIN((xml + 10) - (left * 2),
                                                    300));
 
@@ -690,14 +800,12 @@ void map_draw_map(void)
                                 {
                                     p = k;
                                     p_xl = xmpos + left + right / 2 - 10;
-                                    p_yl = yl - skin_prefs.effect_height;
+                                    p_yl = yl - skindef.effect_height;
                                     p_flags = map->ext[k];
-                                    cpl.paralyzed = ((p_flags & FFLAG_PARALYZED))
-                                                    ? 1 : 0;
                                 }
                                 else if ((map->ext[k] & FFLAG_PROBE))
                                 {
-                                    if (sprite)
+                                    if (face_sprite)
                                     {
                                         t = k;
                                         t_bar = (sint32)((double)right /
@@ -706,7 +814,7 @@ void map_draw_map(void)
                                         t_left = left + (xmpos - 5);
                                         t_right = right + t_left;
                                         t_xl = xmpos + left + right / 2 - 10;
-                                        t_yl = yl - skin_prefs.effect_height;
+                                        t_yl = yl - skindef.effect_height;
                                         t_flags = map->ext[k];
                                     }
                                 }
@@ -714,45 +822,22 @@ void map_draw_map(void)
                                 {
                                     ShowEffects(map->ext[k],
                                                 xmpos + left + right / 2 - 10,
-                                                yl - skin_prefs.effect_height);
+                                                yl - skindef.effect_height);
 
                                     /* have we a playername? then print it! */
                                     if (map->pname[k][0] &&
                                         (options.player_names == 1 ||
                                          options.player_names == 2))
                                     {
-                                        uint8  i;
-                                        uint32 colr = skin_prefs.pname_other;
-
-                                        for (i = 0; i < GROUP_MAX_MEMBER; i++)
-                                        {
-                                            if (group[i].name[0] != '\0')
-                                            {
-                                                uint8 c;
-
-                                                for (c = 0; c < 32 && map->pname[k][c] != '\0'; c++)
-                                                {
-                                                    if (map->pname[k][c] == '[')
-                                                    {
-                                                        break;
-                                                    }
-                                                }
-
-                                                if (!strncmp(map->pname[k], group[i].name, c))
-                                                {
-                                                    colr = (i == 0)
-                                                            ? skin_prefs.pname_leader
-                                                            : skin_prefs.pname_member;
-
-                                                    break;
-                                                }
-                                            }
-                                        }
-
-                                        ShowPname(map->pname[k],
-                                                  xmpos + left + right / 2 - 10,
-                                                  yl - skin_prefs.effect_height,
-                                                  colr);
+                                        string_blt(ScreenSurfaceMap,
+                                                   &font_small_out,
+                                                   map->pname[k],
+                                                   xmpos + left + right / 2 - 10 -
+                                                   string_width(&font_small_out,
+                                                                map->pname[k]) / 2,
+                                                   yl - skindef.effect_height -
+                                                   font_small_out.line_height - 8,
+                                                   COLOR_WHITE, NULL, NULL);
                                     }
                                 }
                             }
@@ -766,7 +851,15 @@ void map_draw_map(void)
     /* Draw a grid. */
     if (options.grid)
     {
-        map_overlay(skin_sprites[SKIN_SPRITE_GRID]);
+        for (y = 0; y < MapStatusY; y++)
+        {
+            for (x = 0; x < MapStatusX; x++)
+            {
+                xpos = MAP_START_XOFF + x * MAP_TILE_YOFF - y * MAP_TILE_YOFF;
+                ypos = 50 + x * MAP_TILE_XOFF + y * MAP_TILE_XOFF;
+                sprite_blt_map(Bitmaps[BITMAP_GRID], xpos, ypos, NULL, NULL, 0);
+            }
+        }
     }
 
     /* Have we drawn the player above? Should have. Now show the name and
@@ -779,7 +872,10 @@ void map_draw_map(void)
         if (options.player_names == 1 ||
             options.player_names == 3)
         {
-            ShowPname(cpl.rankandname, p_xl, p_yl, skin_prefs.pname_self);
+            string_blt(ScreenSurfaceMap, &font_small_out, cpl.rankandname,
+                       p_xl - string_width(&font_small_out, cpl.rankandname) / 2,
+                       p_yl - font_small_out.line_height - 8, COLOR_HGOLD,
+                       NULL, NULL);
         }
     }
 
@@ -788,42 +884,73 @@ void map_draw_map(void)
      * etc. */
     if (t >= 0)
     {
-        uint32 colr = percentage_colr(cpl.target_hp);
+        uint8   hp_col;
+        uint32  sdl_col;
 
+        if (cpl.target_hp > 90)
+        {
+            hp_col = COLOR_GREEN;
+        }
+        else if (cpl.target_hp > 75)
+        {
+            hp_col = COLOR_DGOLD;
+        }
+        else if (cpl.target_hp > 50)
+        {
+            hp_col = COLOR_HGOLD;
+        }
+        else if (cpl.target_hp > 25)
+        {
+            hp_col = COLOR_ORANGE;
+        }
+        else if (cpl.target_hp > 10)
+        {
+            hp_col = COLOR_YELLOW;
+        }
+        else
+        {
+            hp_col = COLOR_RED;
+        }
+
+        sdl_col = SDL_MapRGB(ScreenSurfaceMap->format,
+                             Bitmaps[BITMAP_PALETTE]->bitmap->format->palette->colors[hp_col].r,
+                             Bitmaps[BITMAP_PALETTE]->bitmap->format->palette->colors[hp_col].g,
+                             Bitmaps[BITMAP_PALETTE]->bitmap->format->palette->colors[hp_col].b);
         ShowEffects(t_flags, t_xl, t_yl);
         // hp% line
         rect.x = t_left;
         rect.y = t_yl - 5;
         rect.w = t_bar;
         rect.h = 1;
-        SDL_FillRect(ScreenSurfaceMap, &rect, colr);
+        SDL_FillRect(ScreenSurfaceMap, &rect, sdl_col);
         // top horizontal line of left bracket
         rect.x = t_left - 2;
         rect.y = t_yl - 7;
         rect.w = 3;
         rect.h = 1;
-        SDL_FillRect(ScreenSurfaceMap, &rect, colr);
+        SDL_FillRect(ScreenSurfaceMap, &rect, sdl_col);
         // bottom horizontal line of left bracket
         rect.y = t_yl - 3;
-        SDL_FillRect(ScreenSurfaceMap, &rect, colr);
+        SDL_FillRect(ScreenSurfaceMap, &rect, sdl_col);
         // bottom horizontal line of right bracket
         rect.x = t_right;
-        SDL_FillRect(ScreenSurfaceMap, &rect, colr);
+        SDL_FillRect(ScreenSurfaceMap, &rect, sdl_col);
         // top horizontal line of right bracket
         rect.y = t_yl - 7;
-        SDL_FillRect(ScreenSurfaceMap, &rect, colr);
+        SDL_FillRect(ScreenSurfaceMap, &rect, sdl_col);
         // vertical line of left bracket
         rect.x = t_left - 2;
         rect.y = t_yl - 7;
         rect.w = 1;
         rect.h = 5;
-        SDL_FillRect(ScreenSurfaceMap, &rect, colr);
+        SDL_FillRect(ScreenSurfaceMap, &rect, sdl_col);
         // vertical line of right bracket
         rect.x = t_right + 2;
-        SDL_FillRect(ScreenSurfaceMap, &rect, colr);
-        strout_blt(ScreenSurfaceMap, &font_small, STROUT_LEFT, cpl.target_name,
-                   t_xl - strout_width(&font_small, cpl.target_name) / 2,
-                   t_yl - font_small.line_height - 8, cpl.target_colr, NULL);
+        SDL_FillRect(ScreenSurfaceMap, &rect, sdl_col);
+        string_blt(ScreenSurfaceMap, &font_small_out, cpl.target_name,
+                   t_xl - string_width(&font_small_out, cpl.target_name) / 2,
+                   t_yl - font_small_out.line_height - 8, cpl.target_color,
+                   NULL, NULL);
     }
 }
 
@@ -857,25 +984,25 @@ static void ShowEffects(uint32 flags, uint16 x, uint16 y)
     {
         if ((flags & FFLAG_SCARED))
         {
-            sprite_blt_map(skin_sprites[SKIN_SPRITE_SCARED], x - skin_prefs.effect_width * (i + 1), y,
+            sprite_blt_map(Bitmaps[BITMAP_SCARED], x - skindef.effect_width * (i + 1), y,
                            NULL, NULL, 0);
             flags &= ~FFLAG_SCARED;
         }
         else if ((flags & FFLAG_PARALYZED))
         {
-            sprite_blt_map(skin_sprites[SKIN_SPRITE_PARALYZE], x - skin_prefs.effect_width * (i + 1), y,
+            sprite_blt_map(Bitmaps[BITMAP_PARALYZE], x - skindef.effect_width * (i + 1), y,
                            NULL, NULL, 0);
             flags &= ~FFLAG_PARALYZED;
         }
         else if ((flags & FFLAG_CONFUSED))
         {
-            sprite_blt_map(skin_sprites[SKIN_SPRITE_CONFUSE], x - skin_prefs.effect_width * (i + 1), y,
+            sprite_blt_map(Bitmaps[BITMAP_CONFUSE], x - skindef.effect_width * (i + 1), y,
                            NULL, NULL, 0);
             flags &= ~FFLAG_CONFUSED;
         }
 //        else if ((flags & FFLAG_BLINDED))
 //        {
-//            sprite_blt_map(skin_sprites[SKIN_SPRITE_BLIND], x - skin_prefs.effect_width * (i + 1), y,
+//            sprite_blt_map(Bitmaps[BITMAP_BLIND], x - skindef.effect_width * (i + 1), y,
 //                           NULL, NULL, 0);
 //            flags &= ~FFLAG_BLINDED;
 //        }
@@ -889,10 +1016,10 @@ static void ShowEffects(uint32 flags, uint16 x, uint16 y)
 
         if (w == 0)
         {
-            w = strout_width(&font_small, skin_prefs.effect_sleeping);
+            w = string_width(&font_small_out, skindef.effect_sleeping);
         }
 
-        xoff = ShowExclusiveEffect(x, y, xoff, w, skin_prefs.effect_sleeping);
+        xoff = ShowExclusiveEffect(x, y, xoff, w, skindef.effect_sleeping);
     }
     else if ((flags & FFLAG_EATING))
     {
@@ -901,10 +1028,10 @@ static void ShowEffects(uint32 flags, uint16 x, uint16 y)
 
         if (w == 0)
         {
-            w = strout_width(&font_small, skin_prefs.effect_eating);
+            w = string_width(&font_small_out, skindef.effect_eating);
         }
 
-        xoff = ShowExclusiveEffect(x, y, xoff, w, skin_prefs.effect_eating);
+        xoff = ShowExclusiveEffect(x, y, xoff, w, skindef.effect_eating);
     }
 }
 
@@ -913,12 +1040,12 @@ static uint16 ShowExclusiveEffect(uint16 x, uint16 y, uint16 xoff, uint16 w,
 {
     SDL_Rect box;
 
-    sprite_blt_map(skin_sprites[SKIN_SPRITE_EXCLUSIVE_EFFECT], x + skin_prefs.effect_width,
+    sprite_blt_map(Bitmaps[BITMAP_EXCLUSIVE_EFFECT], x + skindef.effect_width,
                    y, NULL, NULL, 0);
-    box.x = x + skin_prefs.effect_width + 3;
+    box.x = x + skindef.effect_width + 3;
     box.y = y + 1;
-    box.w = skin_prefs.effect_width * 3;
-    box.h = font_small.line_height;
+    box.w = skindef.effect_width * 3;
+    box.h = font_small_out.line_height;
     SDL_SetClipRect(ScreenSurfaceMap, &box);
 
     if ((xoff += 2) > w)
@@ -926,32 +1053,15 @@ static uint16 ShowExclusiveEffect(uint16 x, uint16 y, uint16 xoff, uint16 w,
         xoff = 0;
     }
 
-    strout_blt(ScreenSurfaceMap, &font_small, STROUT_LEFT, text, box.x - xoff, box.y,
-               NDI_COLR_RED, NULL);
-    strout_blt(ScreenSurfaceMap, &font_small, STROUT_LEFT, text, box.x - xoff + w,
-               box.y, NDI_COLR_RED, NULL);
+    string_blt(ScreenSurfaceMap, &font_small_out, text, box.x - xoff, box.y,
+               COLOR_RED, NULL, NULL);
+    string_blt(ScreenSurfaceMap, &font_small_out, text, box.x - xoff + w,
+               box.y, COLOR_RED, NULL, NULL);
     SDL_SetClipRect(ScreenSurfaceMap, NULL);
 
     return xoff;
 }
 
-static void ShowPname(char *pname, sint16 x, sint16 y, uint32 colr)
-{
-    char  buf[TINY_BUF],
-         *cp;
-
-    sprintf(buf, "%s", pname);
-
-    if ((cp = strchr(buf, '[')))
-    {
-        strout_blt(ScreenSurfaceMap, &font_small, STROUT_LEFT, buf, x - strout_width(&font_small, pname) / 2, y - font_small.line_height - 8, skin_prefs.pname_gmaster, NULL);
-        *cp = '\0';
-    }
-
-    strout_blt(ScreenSurfaceMap, &font_small, STROUT_LEFT, buf,
-               x - strout_width(&font_small, pname) / 2,
-               y - font_small.line_height - 8, colr, NULL);
-}
 
 #define TILE_ISO_XLEN 48
 /* this +1 is the trick to catch the one pixel line between
@@ -965,39 +1075,37 @@ static void ShowPname(char *pname, sint16 x, sint16 y, uint32 colr)
 ******************************************************************/
 int get_tile_position(int x, int y, int *tx, int *ty)
 {
-    if (x < /*options.mapstart_x + */(MAP_START_XOFF * (sint16)options.mapsx))
-    {
-        x -= (int)(MAP_TILE_POS_XOFF * (sint16)options.mapsx);
-    }
+//    x +=2*MAP_TILE_POS_XOFF;
+//    y +=142+options.mapstart_y;
 
-    x -= /*options.mapstart_x + */(MAP_START_XOFF * (sint16)options.mapsx);
-    y -= /*options.mapstart_y + */(MAP_START_YOFF * (sint16)options.mapsy);
-    *tx = x / (MAP_TILE_POS_XOFF * (sint16)options.mapsx) +
-          y / (MAP_TILE_YOFF * (sint16)options.mapsx);
-    *ty = y / (MAP_TILE_YOFF * (sint16)options.mapsy) -
-          x / (MAP_TILE_POS_XOFF * (sint16)options.mapsy);
+    if (x < (int)((options.mapstart_x+384)*(options.zoom/100.0)))
+        x -= (int)(MAP_TILE_POS_XOFF*(options.zoom/100.0));
+    x -= (int)((options.mapstart_x+384)*(options.zoom/100.0));
+    y -= (int)((options.mapstart_y+50)*(options.zoom/100.0));
+    *tx = x / (int)(MAP_TILE_POS_XOFF*(options.zoom/100.0)) + y / (int)(MAP_TILE_YOFF*(options.zoom/100.0));
+    *ty = y / (int)(MAP_TILE_YOFF*(options.zoom/100.0)) - x / (int)(MAP_TILE_POS_XOFF*(options.zoom/100.0));
 
     if (x < 0)
     {
-        x += (((int)(MAP_TILE_POS_XOFF * (sint16)options.mapsx)) << 3) - 1;
+        x += ((int)(MAP_TILE_POS_XOFF*(options.zoom/100.0)) << 3) - 1;
     }
 
-    x %= (int)(MAP_TILE_POS_XOFF * (sint16)options.mapsx);
-    y %= (int)(MAP_TILE_YOFF * (sint16)options.mapsy);
+    x %= (int)(MAP_TILE_POS_XOFF*(options.zoom/100.0));
+    y %= (int)(MAP_TILE_YOFF*(options.zoom/100.0));
 
-    if (x < (MAP_TILE_YOFF * (sint16)options.mapsx))
+    if (x < (int)(MAP_TILE_POS_XOFF2*(options.zoom/100.0)))
     {
-        if (x + y + y < (MAP_TILE_YOFF * (sint16)options.mapsx))
+        if (x + y + y < (int)(MAP_TILE_POS_XOFF2*(options.zoom/100.0)))
             --(*tx);
         else if (y - x > 0)
             ++(*ty);
     }
     else
     {
-        x -= (MAP_TILE_YOFF * (sint16)options.mapsx);
+        x -= (int)(MAP_TILE_POS_XOFF2*(options.zoom/100.0));
         if (x - y - y > 0)
             --(*ty);
-        else if (x + y + y > (MAP_TILE_POS_XOFF * (sint16)options.mapsx))
+        else if (x + y + y > (int)(MAP_TILE_POS_XOFF*(options.zoom/100.0)))
             ++(*tx);
     }
 

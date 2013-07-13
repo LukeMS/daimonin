@@ -26,17 +26,20 @@
 
 #define MAX_INPUT_STR 256
 
-extern int          read_substr_char(char *srcstr, char *desstr, int *sz, char ct);
-extern char        *get_parameter_string(char *data, int *pos, int maxlen);
-extern int          isqrt(int n);
-extern void         markdmbuster();
-extern char        *normalize_string(const char *string);
-extern int          setup_endian_sync(const char *const buf);
-extern uint32       adjust_endian_int32(const uint32 buf);
-extern uint16       adjust_endian_int16(const uint16 buf);
-extern char        *adjust_string(char *buf);
-extern PHYSFS_File *load_client_file(const char *fname);
-extern PHYSFS_File *save_client_file(const char *fname);
-extern uint32       percentage_colr(sint8 percentage);
+void                    FreeMemory(void **p);
+char                    *show_input_string(char *text, _font *font, int wlen);
+int                     read_substr_char(char *srcstr, char *desstr, int *sz, char ct);
+char                    *get_parameter_string(char *data, int *pos, int maxlen);
+int                     isqrt(int n);
+void                    smiley_convert(char *msg);
+extern unsigned long    hasharch(char *str, int tablesize);
+extern _bmaptype        *find_bmap(char *name);
+extern void             add_bmap(_bmaptype *at);
+extern void             markdmbuster();
+extern char             *normalize_string(const char *string);
+extern int              setup_endian_sync(const char *const buf);
+extern uint32           adjust_endian_int32(const uint32 buf);
+extern uint16           adjust_endian_int16(const uint16 buf);
+extern char             *adjust_string(char *buf);
 
 #endif /* ifndef __MISC_H */

@@ -71,14 +71,14 @@ static void buddy_list_show(void)
 	struct buddy_list *node;
 	int i=0;
 
-	textwin_show_string(0, NDI_COLR_WHITE, "\nBUDDY LIST");
-	textwin_show_string(0, NDI_COLR_WHITE, "--------------------------");
+	textwin_showstring(COLOR_WHITE, "\nBUDDY LIST");
+	textwin_showstring(COLOR_WHITE, "--------------------------");
 	for(node = buddy_list_start;node;i++, node = node->next)
 	{
-		textwin_show_string(0, NDI_COLR_WHITE, "%s", node->name);
+		textwin_showstring(COLOR_WHITE, "%s", node->name);
 	}
 
-	textwin_show_string(0, NDI_COLR_WHITE, "\n%d name(s) on your list.", i);
+	textwin_showstring(COLOR_WHITE, "\n%d name(s) on your list.", i);
 }
 
 /* clear the list, free all memory */
@@ -97,59 +97,54 @@ void buddy_list_clear(void)
 /* clear the list and load it clean from file */
 void buddy_list_load(void)
 {
-    char         buf[SMALL_BUF];
-    PHYSFS_File *handle;
+	int i;
+	char buf[64];
+	char filename[255];
+	FILE   *stream;
 
-    sprintf(buf, "%s/%s.%s", DIR_SETTINGS, cpl.name, FILE_BUDDY);
+    sprintf(filename,"settings/%s.buddy.list",cpl.name);
+    LOG(LOG_DEBUG,"Trying to open buddy file: %s\n",filename);
 
-    if (!(handle = load_client_file(buf)))
-    {
-        return;
-    }
+	buddy_list_clear();
 
-    buddy_list_clear();
+	if (!(stream = fopen_wrapper(filename, "r")))
+		return; /* no list - no buddys - no problem */
 
-    while (PHYSFS_readString(handle, buf, sizeof(buf)) > 0)
-    {
-        if (buf[0] == '#')
-        {
-            continue;
-        }
-        else if (!player_name_valid(buf))
-        {
-            LOG(LOG_ERROR, "Ignoring malformed line >%s<!\n", buf);
+	while (fgets(buf, 60, stream) != NULL)
+	{
+		i = strlen(buf)-1;
+		while (isspace(buf[i--]))
+			buf[i+1]=0;
+		buddy_entry_add(buf);
+	}
 
-            continue;
-        }
-
-        buddy_entry_add(buf);
-    }
-
-    PHYSFS_close(handle);
+	fclose(stream);
 }
 
 /* save the list to the buddy file. Overwrite it */
 void buddy_list_save(void)
 {
-    char                buf[SMALL_BUF];
-    PHYSFS_File        *handle;
-    struct buddy_list  *bl;
+	struct buddy_list *node;
+	char filename[255];
 
-    sprintf(buf, "%s/%s.%s", DIR_SETTINGS, cpl.name, FILE_BUDDY);
+	FILE *stream;
 
-    if (!(handle = save_client_file(buf)))
-    {
-        return;
-    }
+    sprintf(filename,"settings/%s.buddy.list",cpl.name);
+    LOG(LOG_DEBUG,"Trying to open buddy file: %s\n",filename);
 
-    for (bl = buddy_list_start; bl; bl = bl->next)
-    {
-        sprintf(buf, "%s\n", bl->name);
-        PHYSFS_writeString(handle, buf);
-    }
+	if (!(stream = fopen_wrapper(filename, "w")))
+		return;
 
-    PHYSFS_close(handle);
+	for(node = buddy_list_start;node;node = node->next)
+	{
+		fputs(node->name, stream);
+		fputs("\n", stream);
+	}
+
+	fclose(stream);
+
 }
+
 
 /* check player <name> is on the buddy list.
  * return 1: player is on the buddy list
@@ -160,7 +155,7 @@ int buddy_check(char *name)
 
 	for(node = buddy_list_start;node;node = node->next)
 	{
-		/*textwin_show_string(0, NDI_COLR_WHITE, "compare >%s< with >%s<", name, node->name);*/
+		/*textwin_showstring(COLOR_WHITE, "compare >%s< with >%s<", name, node->name);*/
 		if(!stricmp(name, node->name))
 			return 1;
 	}
@@ -193,12 +188,12 @@ void buddy_command(char *cmd)
 		if(buddy_check(cmd) )
 		{
 			buddy_entry_remove(cmd);
-			textwin_show_string(0, NDI_COLR_WHITE, "removed %s from buddy list.", cmd);
+			textwin_showstring(COLOR_WHITE, "removed %s from buddy list.", cmd);
 		}
 		else
 		{
 			buddy_entry_add(cmd);
-			textwin_show_string(0, NDI_COLR_WHITE, "added %s to buddy list.", cmd);
+			textwin_showstring(COLOR_WHITE, "added %s to buddy list.", cmd);
 		}
 
 		buddy_list_save();

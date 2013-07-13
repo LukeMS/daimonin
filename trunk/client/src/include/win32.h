@@ -26,10 +26,7 @@
 
 #ifdef __WIN_32
 
-#ifndef STRICT
-# define STRICT
-#endif
-
+#define STRICT
 #define _CRT_SECURE_NO_DEPRECATE
 
 #if _MSC_VER > 1000
@@ -62,8 +59,6 @@
 #include <SDL/SDL_image.h>
 #include <SDL/SDL_thread.h>
 #include <SDL/SDL_mutex.h>
-
-#include <p_unicode.h> /* For unicode-ready functions (DA) */
 
 /* Many defines to redirect unix functions or fake standard unix values */
 #define inline __inline
@@ -111,14 +106,9 @@
 /* Installation prefix */
 #define PREFIX "../../../client-0.10.0"
 
-/* Redirects for msvc/mingw only functions (DA) */
-
-#ifdef _MSC_VER
-        #define snprintf _snprintf
-        #define swprintf swprintf_s
-#elif defined(MINGW) /* ISO Compatible */
-        #define swprintf _snwprintf
-#endif
+/* Use the SDL_mixer sound system. Remove when you have no sound card or slow
+   computer */
+#define INSTALL_SOUND
 
 #endif
 

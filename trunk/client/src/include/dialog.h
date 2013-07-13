@@ -53,7 +53,7 @@ extern enum
         VAL_U32
     }
     value_type;
-extern player_groupnames_t opt_tab[10];
+extern char    *opt_tab[];
 extern int      dialog_new_char_warn;
 extern int dialog_login_warning_level;
 extern char        *spell_tab[];
@@ -73,14 +73,13 @@ enum
     DIALOG_LOGIN_WARNING_ACCOUNT_UNKNOWN
 };
 
-extern void add_close_button(int x, int y, int menu);
-extern int  add_button(int x, int y, int id, int gfxNr, char *text, char *text_h);
-extern int  add_rangebox(int x, int y, int id, int text_w, int text_x, char *text, int color);
-extern void draw_frame(int x, int y, int w, int h);
+void add_close_button(int x, int y, int menu, uint8 newstyle);
+int add_button(int x, int y, int id, int gfxNr, char *text, char *text_h);
+int add_rangebox(int x, int y, int id, int text_w, int text_x, char *text, int color);
 extern void show_optwin(void);
 extern void show_newplayer_server(void);
 extern void show_login_server(void);
-extern void show_meta_server(void);
+extern void show_meta_server(_server *node, int metaserver_start, int metaserver_sel);
 extern void show_account(void);
 
 #endif /* ifndef __DIALOG_H */

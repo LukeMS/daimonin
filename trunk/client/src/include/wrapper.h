@@ -24,6 +24,15 @@
 #ifndef __WRAPPER_H
 #define __WRAPPER_H
 
+#include <physfs.h>
+
+/* include here the hardware depend headers */
+#ifdef __WIN_32
+#include "win32.h"
+#elif __LINUX
+#include <cflinux.h>
+#endif
+
 #if !defined(HAVE_STRICMP)
 #include <strings.h>
 #define stricmp(_s1_,_s2_) strcasecmp(_s1_,_s2_)
@@ -39,13 +48,13 @@
 #if 0 // Seems Visual C++ cannot handle this style.
 #define MALLOC(_P_, _S_) \
 ((!((_P_) = malloc((_S_)))) ? \
-LOG(LOG_FATAL, "%s %d: Out of memory!\n", __FILE__, __LINE__) : \
+LOG(LOG_DEBUG, "%s %d: Out of memory!\n", __FILE__, __LINE__) : \
 memset((_P_), 0, (_S_)))
 #else
 #define MALLOC(_P_, _S_) \
 if (!((_P_) = malloc((_S_)))) \
 { \
-    LOG(LOG_FATAL, "%s %d: Out of memory!\n", __FILE__, __LINE__); \
+    LOG(LOG_DEBUG, "%s %d: Out of memory!\n", __FILE__, __LINE__); \
 } \
 else \
 { \
@@ -59,13 +68,13 @@ else \
 #if 0 // Seems Visual C++ cannot handle this style.
 #define MALLOC_STRING(_P_, _S_) \
 ((!((_P_) = malloc(strlen((_S_)) + 1))) ? \
-LOG(LOG_FATAL, "%s %d: Out of memory!\n", __FILE__, __LINE__) : \
+LOG(LOG_DEBUG, "%s %d: Out of memory!\n", __FILE__, __LINE__) : \
 sprintf((_P_), "%s", (_S_)))
 #else
 #define MALLOC_STRING(_P_, _S_) \
 if (!((_P_) = malloc(strlen((_S_)) + 1))) \
 { \
-    LOG(LOG_FATAL, "%s %d: Out of memory!\n", __FILE__, __LINE__); \
+    LOG(LOG_DEBUG, "%s %d: Out of memory!\n", __FILE__, __LINE__); \
 } \
 else \
 { \
@@ -83,21 +92,34 @@ do \
 } \
 while (0)
 
+#define MAX_METASTRING_BUFFER 128*2013
+
 typedef enum _LOGLEVEL
 {
-    LOG_FATAL,  // always logged regardless of LOGLEVEL
-    LOG_SYSTEM, // always logged regardless of LOGLEVEL
-    LOG_ERROR,
     LOG_MSG,
+    LOG_ERROR,
     LOG_DEBUG
 }    _LOGLEVEL;
-/* Define LOGLEVEL as highest level required */
-#define LOGLEVEL LOG_MSG
+#define LOGLEVEL LOG_DEBUG
+extern void     LOG(int logLevel, char *format, ...);
+extern void     MSGLOG(char *msg);
 
-extern void     LOG(int loglevel, char *format, ...);
-extern void     SYSTEM_Start(void);
-extern void     SYSTEM_End(void);
+extern char    *GetCacheDirectory(void);
+extern char    *GetGfxUserDirectory(void);
+extern char    *GetBitmapDirectory(void);
+extern char    *GetSfxDirectory(void);
+extern char    *GetMediaDirectory(void);
+extern char    *GetIconDirectory(void);
+
+extern uint8  SYSTEM_Start(void);
+extern uint8  SYSTEM_End(void);
+extern int      attempt_fullscreen_toggle(SDL_Surface **surface, uint32 *flags);
 extern uint32   get_video_flags(void);
+extern int      parse_metaserver_data(char *info);
+
+#if defined( __WIN_32)  || defined(__LINUX)
+	FILE *msglog;
+#endif
 
 #if defined(HAVE_STRNICMP)
 #else

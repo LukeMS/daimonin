@@ -76,26 +76,6 @@ typedef enum _attacks
     NROFATTACKS /* index (= 32 ATM) */
 }_attacks;
 
-typedef struct player_attackredraw_t
-{
-    const char *abbr;
-    const char *name;
-    uint32      flag;
-}
-player_attackredraw_t;
-
-extern player_attackredraw_t player_attackredraw[NROFATTACKS];
-
-typedef struct player_groupnames_t
-{
-    const char *abbr;
-    const char *name;
-}
-player_groupnames_t;
-
-player_groupnames_t player_skill_group[8];
-player_groupnames_t player_spell_group[17];
-
 typedef struct Stat_struct
 {
     int   Str, Dex, Con, Wis, Cha, Int, Pow;
@@ -133,11 +113,11 @@ typedef struct Stat_struct
 }
 Stats;
 
-typedef enum inventory_win_t
+typedef enum _inventory_win
 {
     IWIN_BELOW,
     IWIN_INV
-}   inventory_win_t;
+}   _inventory_win;
 
 typedef struct Account_Struct
 {
@@ -166,8 +146,8 @@ typedef struct Player_Struct
     uint32                  count;      /* Repeat count on command */
     int                     target_mode;
     int                     target_code;
-    uint32                  target_colr;
-    inventory_win_t         inventory_win;  /* inventory windows */
+    int                     target_color;
+    int                     inventory_win;  /* inventory windows */
     int                     menustatus;
     int      mark_count;
     int                     loc;
@@ -199,9 +179,8 @@ typedef struct Player_Struct
     float                   gen_sp;
     float                   gen_grace;
 
-    float                   action_time_max; /* skill cooldown time */
-    float                   action_timer;    /* skill cooldown time */
-    uint8                   paralyzed           : 1; // if 1, action_timer will not count down
+    float                   action_timer; /* skill cooldown time */
+
     uint32                  no_echo             : 1;    /* If 1, don't echo keystrokes */
     uint32                  fire_on             : 1;    /* True if fire key is pressed = action key (ALT;CTRL)*/
     uint32                  run_on              : 1;    /* True if run key is on = action key (ALT;CTRL)*/
@@ -222,8 +201,7 @@ typedef struct Player_Struct
 
     uint8                 warn_statdown;
     uint8                 warn_statup;
-    uint8                   warn_exp_down;
-    uint8                   warn_drained;  // 2=sound warning,1=no sound
+    uint8                 warn_drain;
     Stats                   stats;      /* Player stats */
     rangetype               shoottype;  /* What type of range attack player has */
 
@@ -258,7 +236,7 @@ typedef struct Player_Struct
     char                    alignment[MAX_BUF]; /* alignment */
     char                    gender[MAX_BUF];    /* Gender */
     char                    range[MAX_BUF]; /* Range attack chosen */
-    char                    reply[MAX_PLAYER_NAME + 1];
+    char     player_reply[64];
 }
 Client_Player;
 
@@ -278,7 +256,22 @@ extern void     show_help(void);
 extern void     extended_command(const char *ocommand);
 extern char    *complete_command(char *command);
 void            init_player_data(void);
+void            widget_show_player_doll(int x, int y);
+void            widget_show_player_doll_event(int x, int y, int MEvent);
+void            widget_player_data_event(int x, int y);
+void            widget_show_player_data(int x, int y);
 void            set_weight_limit(uint32 wlim);
 void            clear_player(void);
+
+void        widget_player_stats(int x, int y);
+void        widget_show_main_lvl(int x, int y);
+void        widget_show_skill_exp(int x, int y);
+void        widget_show_regeneration(int x, int y);
+void        widget_skillgroups(int x, int y);
+void        widget_menubuttons(int x, int y);
+void        widget_menubuttons_event(int x, int y, int MEvent);
+void        widget_skill_exp_event(int x, int y, int MEvent);
+
+void        widget_show_statometer(int x, int y);
 
 #endif /* ifndef __PLAYER_H */

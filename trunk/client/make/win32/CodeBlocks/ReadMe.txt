@@ -2,6 +2,9 @@
 // Client as Code::Blocks project HOWTO
 //===================================================
 
-1) Double-click make\win32\Setup.bat (the directory above this one)
-2) Double-click on make\win32\CodeBlocks\daimonin.workspace
-3) Build
+1) Install Code::Blocks (with MinGW compiler)
+   The RC2 build won't work / can't open the project files
+   you need a nighly build version of Code::Blocks
+2) Start the Setup.bat
+3) Dblclk on the Code::Blocks workspace file
+4) Build workspace

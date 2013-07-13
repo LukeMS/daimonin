@@ -34,72 +34,21 @@
 		</Build>
 		<Compiler>
 			<Add option="-W" />
-			<Add option="-funsigned-char" />
-			<Add option="-DDAI_DEVELOPMENT" />
 			<Add directory="/usr/include/SDL" />
 			<Add directory="../CodeBlocks" />
 			<Add directory="../../../src" />
 			<Add directory="../../../src/include" />
-			<Add directory="../../../src/3rdparty/sprig" />
-			<Add directory="../../../src/3rdparty/zlib" />
 		</Compiler>
 		<Linker>
-			<Add library="/usr/lib/libcurl.so" />
 			<Add library="/usr/lib/libSDL.so" />
 			<Add library="/usr/lib/libSDL_image.so" />
 			<Add library="/usr/lib/libSDL_mixer.so" />
 			<Add library="/usr/lib/libphysfs.so" />
 		</Linker>
 		<Unit filename="define.h" />
-		<Unit filename="../../../src/3rdparty/sprig/sprig.h" />
-		<Unit filename="../../../src/3rdparty/sprig/sprig_common.h" />
-		<Unit filename="../../../src/3rdparty/sprig/sprig_inline.h" />
-		<Unit filename="../../../src/3rdparty/sprig/SPG_extended.c">
+		<Unit filename="../../../src/adler32.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="../../../src/3rdparty/sprig/SPG_misc.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="../../../src/3rdparty/sprig/SPG_polygon.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="../../../src/3rdparty/sprig/SPG_primitives.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="../../../src/3rdparty/sprig/SPG_rotation.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="../../../src/3rdparty/sprig/SPG_surface.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="../../../src/3rdparty/zlib/adler32.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="../../../src/3rdparty/zlib/crc32.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="../../../src/3rdparty/zlib/crc32.h" />
-		<Unit filename="../../../src/3rdparty/zlib/inffast.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="../../../src/3rdparty/zlib/inffast.h" />
-		<Unit filename="../../../src/3rdparty/zlib/inflate.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="../../../src/3rdparty/zlib/inflate.h" />
-		<Unit filename="../../../src/3rdparty/zlib/inftrees.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="../../../src/3rdparty/zlib/inftrees.h" />
-		<Unit filename="../../../src/3rdparty/zlib/uncompr.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="../../../src/3rdparty/zlib/zconf.h" />
-		<Unit filename="../../../src/3rdparty/zlib/zlib.h" />
-		<Unit filename="../../../src/3rdparty/zlib/zutil.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="../../../src/3rdparty/zlib/zutil.h" />
 		<Unit filename="../../../src/anim.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -112,7 +61,13 @@
 		<Unit filename="../../../src/chatfilter.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="../../../src/client_cmd.c">
+		<Unit filename="../../../src/client.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/commands.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/crc32.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../../../src/dialog.c">
@@ -121,13 +76,10 @@
 		<Unit filename="../../../src/event.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="../../../src/face.c">
+		<Unit filename="../../../src/filewrap.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../../../src/font.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="../../../src/gameserver.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../../../src/group.c">
@@ -141,22 +93,25 @@
 		<Unit filename="../../../src/include/buddy.h" />
 		<Unit filename="../../../src/include/cflinux.h" />
 		<Unit filename="../../../src/include/chatfilter.h" />
-		<Unit filename="../../../src/include/client_cmd.h" />
+		<Unit filename="../../../src/include/client.h" />
+		<Unit filename="../../../src/include/commands.h" />
 		<Unit filename="../../../src/include/config.h" />
+		<Unit filename="../../../src/include/crc32.h" />
 		<Unit filename="../../../src/include/define.h.in" />
 		<Unit filename="../../../src/include/dialog.h" />
 		<Unit filename="../../../src/include/event.h" />
-		<Unit filename="../../../src/include/face.h" />
+		<Unit filename="../../../src/include/filewrap.h" />
 		<Unit filename="../../../src/include/font.h" />
-		<Unit filename="../../../src/include/gameserver.h" />
 		<Unit filename="../../../src/include/group.h" />
 		<Unit filename="../../../src/include/ignore.h" />
 		<Unit filename="../../../src/include/include.h" />
+		<Unit filename="../../../src/include/inffast.h" />
+		<Unit filename="../../../src/include/inflate.h" />
+		<Unit filename="../../../src/include/inftrees.h" />
 		<Unit filename="../../../src/include/interface.h" />
 		<Unit filename="../../../src/include/inventory.h" />
 		<Unit filename="../../../src/include/item.h" />
 		<Unit filename="../../../src/include/kerbholz.h" />
-		<Unit filename="../../../src/include/locator.h" />
 		<Unit filename="../../../src/include/main.h" />
 		<Unit filename="../../../src/include/map.h" />
 		<Unit filename="../../../src/include/menu.h" />
@@ -165,19 +120,26 @@
 		<Unit filename="../../../src/include/physfsrwops.h" />
 		<Unit filename="../../../src/include/player.h" />
 		<Unit filename="../../../src/include/protocol.h" />
-		<Unit filename="../../../src/include/server_cmd.h" />
-		<Unit filename="../../../src/include/skin.h" />
-		<Unit filename="../../../src/include/socket.h" />
+		<Unit filename="../../../src/include/sdlsocket.h" />
 		<Unit filename="../../../src/include/sound.h" />
 		<Unit filename="../../../src/include/sprite.h" />
-		<Unit filename="../../../src/include/srvfile.h" />
-		<Unit filename="../../../src/include/strout.h" />
 		<Unit filename="../../../src/include/textwin.h" />
 		<Unit filename="../../../src/include/tile_stretcher.h" />
-		<Unit filename="../../../src/include/wdh.h" />
 		<Unit filename="../../../src/include/widget.h" />
 		<Unit filename="../../../src/include/win32.h" />
 		<Unit filename="../../../src/include/wrapper.h" />
+		<Unit filename="../../../src/include/zconf.h" />
+		<Unit filename="../../../src/include/zlib.h" />
+		<Unit filename="../../../src/include/zutil.h" />
+		<Unit filename="../../../src/inffast.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/inflate.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/inftrees.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="../../../src/interface.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -188,9 +150,6 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../../../src/kerbholz.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="../../../src/locator.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../../../src/main.c">
@@ -214,12 +173,6 @@
 		<Unit filename="../../../src/protocol.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="../../../src/server_cmd.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="../../../src/skin.c">
-			<Option compilerVar="CC" />
-		</Unit>
 		<Unit filename="../../../src/socket.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -229,25 +182,22 @@
 		<Unit filename="../../../src/sprite.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="../../../src/srvfile.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="../../../src/strout.c">
-			<Option compilerVar="CC" />
-		</Unit>
 		<Unit filename="../../../src/textwin.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../../../src/tile_stretcher.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="../../../src/wdh.c">
+		<Unit filename="../../../src/uncompr.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../../../src/widget.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../../../src/wrapper.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/zutil.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Extensions>

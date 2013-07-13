@@ -76,11 +76,11 @@ static void ignore_list_show(void)
     struct ignore_list *node;
     int i=0;
 
-    textwin_show_string(0, NDI_COLR_WHITE, "\nIGNORE LIST");
-    textwin_show_string(0, NDI_COLR_WHITE, "--------------------------");
+    textwin_showstring(COLOR_WHITE, "\nIGNORE LIST");
+    textwin_showstring(COLOR_WHITE, "--------------------------");
     for (node = ignore_list_start;node;i++, node = node->next)
     {
-        textwin_show_string(0, NDI_COLR_WHITE, "%s.%s", (node->type) ? node->type : "*", node->name);
+        textwin_showstring(COLOR_WHITE, "%s.%s", (node->type) ? node->type : "*", node->name);
     }
 }
 
@@ -100,62 +100,66 @@ void ignore_list_clear(void)
 /* clear the list and load it clean from file */
 void ignore_list_load(void)
 {
-    char         buf[SMALL_BUF];
-    PHYSFS_File *handle;
+    char buf[128];
+    char name[64];
+    char type[64];
+	char filename[255];
+	FILE   *stream;
 
-    sprintf(buf, "%s/%s.%s", DIR_SETTINGS, cpl.name, FILE_IGNORE);
+    sprintf(filename,"settings/%s.ignore.list",cpl.name);
+    LOG(LOG_DEBUG,"Trying to open ignore file: %s\n",filename);
 
-    if (!(handle = load_client_file(buf)))
-    {
-        return;
-    }
+    name[0]='\0';
+    type[0]='\0';
 
     ignore_list_clear();
 
-    while (PHYSFS_readString(handle, buf, sizeof(buf)) > 0)
+    if (!(stream = fopen_wrapper(filename, "r")))
+        return; /* no list - no ignores - no problem */
+
+    while (fgets(buf, 128, stream) != NULL)
     {
-        char *cp;
-
-        if (buf[0] == '#')
+        if (sscanf(buf,"%s %s\n",name, type)!=EOF)
         {
-            continue;
+            if (type[0]=='*')
+                type[0]='\0';
+            ignore_entry_add(name, type);
         }
-        else if (!(cp = strchr(buf, ' ')))
-        {
-            LOG(LOG_ERROR, "Ignoring malformed line >%s<!\n", buf);
-
-            continue;
-        }
-
-        *cp++ = '\0';
-        ignore_entry_add(buf, (*cp == '*') ? "" : cp);
+        name[0]='\0';
+        type[0]='\0';
     }
 
-    PHYSFS_close(handle);
+    fclose(stream);
 }
 
 /* save the list to the ignore file. Overwrite it */
 void ignore_list_save(void)
 {
-    char                buf[SMALL_BUF];
-    PHYSFS_File        *handle;
-    struct ignore_list *il;
+    struct ignore_list *node;
+	char filename[255];
+	FILE   *stream;
 
-    sprintf(buf, "%s/%s.%s", DIR_SETTINGS, cpl.name, FILE_IGNORE);
+    sprintf(filename,"settings/%s.ignore.list",cpl.name);
+    LOG(LOG_DEBUG,"Trying to open ignore file: %s\n",filename);
 
-    if (!(handle = save_client_file(buf)))
-    {
+    if (!(stream = fopen_wrapper(filename, "w")))
         return;
-    }
 
-    for (il = ignore_list_start; il; il = il->next)
+    for (node = ignore_list_start;node;node = node->next)
     {
-        sprintf(buf, "%s %s\n", il->name, (!il->type[0]) ? "*" : il->type);
-        PHYSFS_writeString(handle, buf);
+        fputs(node->name, stream);
+        fputs(" ",stream);
+        if (!node->type[0])
+            fputs("*",stream);
+        else
+            fputs(node->type,stream);
+        fputs("\n", stream);
     }
 
-    PHYSFS_close(handle);
+    fclose(stream);
+
 }
+
 
 /* check player <name> is on the ignore list.
  * return 1: player is on the ignore list
@@ -166,7 +170,7 @@ int ignore_check(char *name, char *type)
 
     for (node = ignore_list_start;node;node = node->next)
     {
-//        textwin_show_string(0, NDI_COLR_WHITE, "compare >%s< with >%s< (%s with %s)", name, node->name,type, node->type);
+//        textwin_showstring(COLOR_WHITE, "compare >%s< with >%s< (%s with %s)", name, node->name,type, node->type);
         if (!stricmp(name, node->name) && ((!stricmp(type,node->type)) || (!node->type[0])))
             return 1;
     }
@@ -201,15 +205,15 @@ void ignore_command(char *cmd)
          */
         if (sscanf(cmd,"%s %s",name, type)==EOF)
         {
-            textwin_show_string(0, NDI_COLR_WHITE,"Syntax: /ignore <name> <'channel'>");
-            textwin_show_string(0, NDI_COLR_WHITE,"Syntax: /ignore <name> *  for all 'channels'");
-            textwin_show_string(0, NDI_COLR_WHITE,"channel can be somthing like: 'say', 'shout', 'tell', 'emote'");
+            textwin_showstring(COLOR_WHITE,"Syntax: /ignore <name> <'channel'>");
+            textwin_showstring(COLOR_WHITE,"Syntax: /ignore <name> *  for all 'channels'");
+            textwin_showstring(COLOR_WHITE,"channel can be somthing like: 'say', 'shout', 'tell', 'emote'");
         }
         else if ((name[0]=='\0') || (type[0]=='\0'))
         {
-            textwin_show_string(0, NDI_COLR_WHITE,"Syntax: /ignore <name> <'channel'>");
-            textwin_show_string(0, NDI_COLR_WHITE,"Syntax: /ignore <name> *  for all 'channels'");
-            textwin_show_string(0, NDI_COLR_WHITE,"channel can be somthing like: 'say', 'shout', 'tell', 'emote'");
+            textwin_showstring(COLOR_WHITE,"Syntax: /ignore <name> <'channel'>");
+            textwin_showstring(COLOR_WHITE,"Syntax: /ignore <name> *  for all 'channels'");
+            textwin_showstring(COLOR_WHITE,"channel can be somthing like: 'say', 'shout', 'tell', 'emote'");
 
         }
         else
@@ -233,12 +237,12 @@ void ignore_command(char *cmd)
             if (ignore_check(name, type) )
             {
                 ignore_entry_remove(name, type);
-                textwin_show_string(0, NDI_COLR_WHITE, "removed %s (%s) from ignore list.", name, type);
+                textwin_showstring(COLOR_WHITE, "removed %s (%s) from ignore list.", name, type);
             }
             else
             {
                 ignore_entry_add(name, type);
-                textwin_show_string(0, NDI_COLR_WHITE, "added %s (%s) to ignore list.", name, type);
+                textwin_showstring(COLOR_WHITE, "added %s (%s) to ignore list.", name, type);
             }
 
             ignore_list_save();

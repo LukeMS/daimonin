@@ -28,25 +28,19 @@
 
 typedef struct _font
 {
-    struct _Sprite *sprite;       // the sprite
-    SDL_Rect        c[256];       // adjusted box for each character in pixels
-    uint32          colr[256];    // last colr of each character
-    sint8           char_offset;  // distance between characters in pixels
-    uint8           line_height;  // height of a line in pixels
+    struct _Sprite *sprite; /* don't free this, we link here a Bitmaps[x] ptr*/
+    SDL_Rect        c[256];
+    sint8           char_offset; /* space in pixel between 2 chars in a word */
+    uint8           line_height;
 }
 _font;
 
-extern _font font_tiny;
+extern _font font_tiny_out;
 extern _font font_small;
+extern _font font_small_out;
 extern _font font_medium;
-extern _font font_large;
-extern _font font_huge;
-extern _font font_booknormal;
-extern _font font_booktitle;
-extern _font font_npcicon;
-extern _font font_npcnormal;
-extern _font font_npctitle;
-extern _font font_heading;
+extern _font font_medium_out;
+extern _font font_large_out;
 
 extern void font_init(void);
 
