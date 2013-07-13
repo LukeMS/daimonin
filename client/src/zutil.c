@@ -3,7 +3,7 @@
  * For conditions of distribution and use, see copyright notice in zlib.h
  */
 
-/* @(#) $Id: zutil.c 5668 2010-07-14 14:25:29Z polyveg $ */
+/* @(#) $Id$ */
 
 #include "zutil.h"
 

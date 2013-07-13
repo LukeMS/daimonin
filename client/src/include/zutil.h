@@ -8,7 +8,7 @@
    subject to change. Applications should only use zlib.h.
  */
 
-/* @(#) $Id: zutil.h 5668 2010-07-14 14:25:29Z polyveg $ */
+/* @(#) $Id$ */
 
 #ifndef ZUTIL_H
 #define ZUTIL_H
