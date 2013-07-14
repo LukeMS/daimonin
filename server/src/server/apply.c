@@ -49,7 +49,6 @@ static void ApplyFood(object *op, object *tmp);
 static void ApplyPoison(object *op, object *tmp);
 static void ApplyArmourImprover(object *op, object *tmp);
 static void ApplyLightRefill(object *who, object *op);
-static void ApplyLight(object *who, object *op);
 static void ApplyLighter(object *who, object *lighter);
 static void ApplyPowerCrystal(object *op, object *crystal);
 
@@ -2342,7 +2341,16 @@ int manual_apply(object *op, object *tmp, int aflag)
           return (1+8);
 
         case TYPE_LIGHT_APPLY:
-          ApplyLight(op, tmp);
+          /* Lights cannot be applied unless directly in a player/monster inv
+           * or on a map. */
+          if (tmp->env &&
+              tmp->env->type != PLAYER &&
+              tmp->env->type != MONSTER)
+          {
+              return 2;
+          }
+
+          apply_light(op, tmp);
           return 1;
 
         case TYPE_LIGHT_REFILL:
@@ -3215,7 +3223,7 @@ void turn_off_light(object *op)
  * be taken to change the msg if ever no_fix_player is changed (which can only
  * be done in the map file or via a script anyway) and the on/off status cannot
  * be mentioned in the (static) msg -- Smacky 20080905 */
-static void ApplyLight(object *who, object *op) 
+void apply_light(object *who, object *op) 
 {
     object *tmp;
 
@@ -3224,7 +3232,7 @@ static void ApplyLight(object *who, object *op)
     if (QUERY_FLAG(op, FLAG_NO_FIX_PLAYER)) // FLAG_NO_APPLY would be better but there is no arch attribute
     {
         if (!(QUERY_FLAG(op, FLAG_NO_PICK)))
-            LOG(llevBug, "BUG:: %s:ApplyLight(): Pickable applyable light source flagged as no_apply!\n",
+            LOG(llevBug, "BUG:: %s:apply_light(): Pickable applyable light source flagged as no_apply!\n",
                          __FILE__);
 
         if (op->msg)

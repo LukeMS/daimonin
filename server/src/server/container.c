@@ -619,7 +619,16 @@ void put_object_in_sack(object *const op, object *const sack, object *tmp, const
     if (!sack_can_hold(op, sack, tmp, (nrof ? nrof : tmp->nrof)))
         return;
 
-    if (QUERY_FLAG(tmp, FLAG_APPLIED))
+    /* If an applyable light is lit (has glow_radius) force it to be
+     * FLAG_APPLIED so we can unapply it below. This prevents players storing
+     * lit torches in bags. */
+    if (tmp->type == TYPE_LIGHT_APPLY &&
+        tmp->glow_radius)
+    {
+        SET_FLAG(tmp, FLAG_APPLIED);
+        apply_light(op, tmp);
+    }
+    else if (QUERY_FLAG(tmp, FLAG_APPLIED))
     {
         if (apply_special(op, tmp, AP_UNAPPLY | AP_NO_MERGE))
             return;
