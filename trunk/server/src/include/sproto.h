@@ -59,6 +59,7 @@ int                         apply_special(object *who, object *op, int aflags);
 int                         monster_apply_special(object *who, object *op, int aflags);
 void                        turn_on_light(object *op);
 void                        turn_off_light(object *op);
+void                        apply_light(object *who, object *op);
 void                        scroll_failure(object *op, int failure, int power);
 /* attack.c */
 int                         attack_ob(object *op, object *hitter, object *hit_obj);
