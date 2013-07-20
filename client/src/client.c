@@ -20,7 +20,7 @@
     The author can be reached via e-mail to info@daimonin.org
 */
 
-/* This file deals with higher level functions for sending informations 
+/* This file deals with higher level functions for sending informations
  * and commands to the server. Most low level functions are in socket.c
  */
 
@@ -53,8 +53,15 @@ static inline void SockList_AddBuffer(SockList *const sl, const char *const buf,
 {
     if(sl->buf)
         memcpy(sl->buf+sl->len,buf,len);
-    else
-        memcpy(sl->defbuf+sl->len,buf,len);
+    else {
+
+        /*  Properly check if array bounds are respected, else truncate. (DA) */
+        memcpy(sl->defbuf+sl->len,buf,(len + sl->len) > MAX_DATA_TAIL_LENGTH ? MAX_DATA_TAIL_LENGTH - sl->len : len);
+
+        if ((len + sl->len) > MAX_DATA_TAIL_LENGTH)
+            sl->defbuf[MAX_DATA_TAIL_LENGTH - 1] ='\0';
+
+        }
     sl->len+=len;
 }
 
@@ -684,7 +691,7 @@ static uint8 CommandCheck(char *cmd, char *params)
     {
         PHYSFS_File *handle;
         char         buf[TINY_BUF];
- 
+
         sprintf(buf, "update/version");
         LOG(LOG_MSG, "Trying to read %s... ", buf);
 
@@ -698,7 +705,7 @@ static uint8 CommandCheck(char *cmd, char *params)
             LOG(LOG_ERROR, "FAILED: Empty file?!\n");
             sprintf(buf, "UNKNOWN!");
         }
-            
+
         textwin_showstring(COLOR_WHITE, "~Client version~: %u.%u.%u / %u (%s)",
                            DAI_VERSION_RELEASE, DAI_VERSION_MAJOR,
                            DAI_VERSION_MINOR, PROTOCOL_VERSION, buf);
@@ -715,8 +722,8 @@ static uint8 CommandCheck(char *cmd, char *params)
 }
 
 /* send_game_command() will send a higher level game command like /tell, /say or
- * other "slash" text commants. Usually, this kind of commands are typed in 
- * console or are bound to macros. 
+ * other "slash" text commants. Usually, this kind of commands are typed in
+ * console or are bound to macros.
  * The underlaying protocol command is CLIENT_CMD_GENERIC, which means
  * its a command holding another command.
  * For realtime or system commands, commands with binary params and such,
@@ -788,12 +795,28 @@ void send_game_command(const char *command)
         {
             char     tmpbuf[LARGE_BUF];
             SockList sl;
+            int      len;
 
             sprintf(tmpbuf, "%s%s%s", cmd + 1, (*params) ? " " : "", params);
-            SockList_INIT(&sl, NULL);
-            SockList_COMMAND(&sl, CLIENT_CMD_GENERIC, SEND_CMD_FLAG_STRING);
-            SockList_AddBuffer(&sl, tmpbuf, strlen(tmpbuf));
-            send_socklist_binary(&sl);
+
+            len = strlen(tmpbuf);
+
+            if (len < 210) { /* Same bug of trunk. Same comment. Based on server.c
+                                If I truncate a server message within the ADDBUFFER_REAL
+                                the server disconnects me anyway if the message fills the
+                                whole buffer. This is a workaround until a proper decision
+                                on how to handle that is taken. Crashes should happen no more
+                                on /reply, /tell (DA)*/
+
+                SockList_INIT(&sl, NULL);
+                SockList_COMMAND(&sl, CLIENT_CMD_GENERIC, SEND_CMD_FLAG_STRING);
+                SockList_AddBuffer(&sl, tmpbuf, len);
+                send_socklist_binary(&sl);
+            } else
+                textwin_showstring(COLOR_WHITE, "Message too long!"); /*    Warns the player that he wrote too much.
+                                                                            Perhaps that could be handled by the server
+                                                                            like it was done with /shout? (DA)*/
+
         }
     }
 }
@@ -969,7 +992,7 @@ void finish_face_cmd(int pnum, uint32 checksum, char *face)
         newsum = 0;
 
         /* something is wrong... now unlink the file and let it reload then possible and needed */
-        if (len <= 0) 
+        if (len <= 0)
             checksum = 1; /* mark as wrong */
         else /* lets go for the checksum check*/
             newsum = crc32(1L, data, len);
@@ -1130,8 +1153,8 @@ int request_face(int pnum)
 /* send the setup command to the server
  * This is the handshake command after the client connects
  * and the first data which are send between server & client
- * NOTE: Because this is the first command, the data part is 
- * String only. With the response from the server we get 
+ * NOTE: Because this is the first command, the data part is
+ * String only. With the response from the server we get
  * endian info which enables us to send binary data (without
  * fixed shifting)
  */
@@ -1161,7 +1184,7 @@ void SendSetupCmd(void)
 
 /* Request a so called "server file" from the server.
  * Which includes a list of skills the server knows,
- * spells and such, and how they are described and 
+ * spells and such, and how they are described and
  * visualized
  */
 void RequestFile(ClientSocket csock, int index)
@@ -1191,7 +1214,7 @@ void SendAddMe(char *name)
     send_socklist_binary(&sl);
 }
 
-/* the server also parsed client_settings. 
+/* the server also parsed client_settings.
  * We only tell him our name, password (for reclaiming B4
  * characters), the selected default arch (as gender_selected)
  * and the weapon skill
@@ -1248,7 +1271,7 @@ void client_send_apply(int tag)
 void send_move_command(int dir, int mode)
 {
     SockList    sl;
-    // remapped to: "idle", "/sw", "/s", "/se", "/w", "/stay", "/e", "/nw", "/n", "/ne" 
+    // remapped to: "idle", "/sw", "/s", "/se", "/w", "/stay", "/e", "/nw", "/n", "/ne"
 
     SockList_INIT(&sl, NULL);
     SockList_COMMAND(&sl, CLIENT_CMD_MOVE, SEND_CMD_FLAG_FIXED);

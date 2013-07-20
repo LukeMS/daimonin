@@ -261,7 +261,7 @@ void SetupCmd(char *buf, int len)
         else if (!strcmp(cmd, "pv"))
         {
             uint32 pv = (uint32)strtoul(param, NULL, 10);
- 
+
             options.server_protocol = pv;
 
             if (pv != PROTOCOL_VERSION)
@@ -2191,7 +2191,7 @@ void DataCmd(char *data, int len)
 static inline void break_string(char *text, char *prefix, uint8 one_prefix, char *result)
 {
     char buf[200];
-    char pref[50];
+    char pref[100]; /* Crashes if #USE_CHANNELS is defined, temporary fix with larger bounds. (DA)*/
     int  i, a, len;
     int winlen=244;
     int preflen, restlen;
