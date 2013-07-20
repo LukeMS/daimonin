@@ -2182,10 +2182,11 @@ void widget_show_target(int x, int y)
             /* Either draw HP remaining percent and description... */
             if (hp_tmp)
             {
-                char hp_text[9];
+                char hp_text[11]; /*    Had several complaint of stack corrupted
+                                        this should solve that (DA) */
                 int hp_color;
                 int xhpoffset=0;
-                sprintf((char *)hp_text, "HP: %d%%", hp_tmp);
+                sprintf(hp_text, "HP: %d%%", hp_tmp); /* what was that cast for ?!? (DA)*/
                      if (hp_tmp > 90) hp_color = COLOR_GREEN;
                 else if (hp_tmp > 75) hp_color = COLOR_DGOLD;
                 else if (hp_tmp > 50) hp_color = COLOR_HGOLD;
