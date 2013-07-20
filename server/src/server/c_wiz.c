@@ -493,9 +493,9 @@ static int CreateObject(object *op, char *params, CreateMode_t mode)
                i, pos = 0,
                allow_nrof_set = FALSE;
     char      *str,
-               var[SMALL_BUF] = "",
-               val[SMALL_BUF] = "",
-               buf[MEDIUM_BUF];
+               var[LARGE_BUF] = "",
+               val[LARGE_BUF] = "",
+               buf[LARGE_BUF];
     object    *tmp = NULL;
     archetype *at;
     artifact  *art = NULL;
