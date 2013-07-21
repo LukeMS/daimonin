@@ -2,7 +2,7 @@ Object raas
 name Raas
 face raas.151
 race demon
-randomitems spells_wizard;loot;wealth_normal&D65;loot_base&D34;loot_magic&d9;loot_melee&d12;gt3_boots&d110
+randomitems spells_wizard;loot;wealth_normal&D65;loot_base&D34;loot_magic&d9;loot_melee&d12;gt3_boots&d50
 type 80
 layer 6
 identified 1
