@@ -3696,7 +3696,7 @@ int add_item_buff(object *item, object *buff, short just_checking)
     {
         ret |= BUFF_ADD_EXISTS;
 
-        if (oldbuff->last_sp + buff->last_sp > (uint32) oldbuff->max_buffs)
+        if (oldbuff->last_sp + buff->last_sp > oldbuff->max_buffs)
         {
             ret |= BUFF_ADD_MAX_EXCEEDED;
             ret &= ~BUFF_ADD_SUCCESS;
