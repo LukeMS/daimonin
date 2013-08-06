@@ -892,7 +892,7 @@ int kill_player(object *op)
      */
     /*STATS_EVENT(STATS_EVENT_PLAYER_DEATH, op->name);*/
     new_draw_info(NDI_UNIQUE, 0, op, "YOU HAVE DIED.");
-    player_save(op);
+
     return 1;
 #endif
 }
@@ -1400,12 +1400,7 @@ void kick_player(player *pl)
             tmp == pl)
         {
             /* Save the player. */
-            if (player_save(tmp->ob))
-                LOG(llevInfo, "Saving player %s: Success!\n",
-                    query_name(tmp->ob));
-            else
-                LOG(llevInfo, "Saving player %s: FAILED!\n",
-                    query_name(tmp->ob));
+            PLAYER_SAVE(tmp);
 
             /* Kick the player. */
             activelist_remove(tmp->ob);
@@ -1414,8 +1409,8 @@ void kick_player(player *pl)
             tmp->ob->direction = 0;
             LOG(llevInfo, "%s is kicked out of the game.\n",
                 query_name(tmp->ob));
-            container_unlink(CONTR(tmp->ob), NULL);
-            CONTR(tmp->ob)->socket.status = Ns_Dead;
+            container_unlink(tmp, NULL);
+            tmp->socket.status = Ns_Dead;
 
             /* Just one player to kick? Leave now that it's done. */
             if (pl)

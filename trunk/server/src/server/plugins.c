@@ -145,7 +145,6 @@ struct plugin_hooklist  hooklist    =
     /* P */
     play_sound_map,
     play_sound_player_only,
-    player_save,
     print_tad,
     /* Q */
     query_base_name,

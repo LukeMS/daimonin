@@ -164,24 +164,11 @@ void process_players1(mapstruct *map)
         if(--pl->reg_timer <= 0)
             do_some_living(pl->ob);
 
-#ifdef AUTOSAVE
-        /* check for ST_PLAYING state so that we don't try to save off when
-           * the player is logging in.
-           */
-        if ((pl->last_save_tick + AUTOSAVE) < ROUND_TAG && (pl->state & ST_PLAYING))
+        if ((pl->last_save_tick + AUTOSAVE) < ROUND_TAG &&
+            (pl->state & ST_PLAYING)) // don't save when player is logging in
         {
-            /* we must change this unholy ground thing */
-            if (blocks_cleric(pl->ob->map, pl->ob->x, pl->ob->y))
-            {
-                pl->last_save_tick += 100;
-            }
-            else
-            {
-                player_save(pl->ob);
-                pl->last_save_tick = ROUND_TAG;
-            }
+            PLAYER_SAVE(pl);
         }
-#endif
     }
 }
 

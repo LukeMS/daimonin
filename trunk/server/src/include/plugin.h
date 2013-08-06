@@ -375,7 +375,6 @@ struct plugin_hooklist
     /* P */
     void (*play_sound_map)(mapstruct *, int, int, int, int);
     void (*play_sound_player_only)(player *, int, int, int, int);
-    int (*player_save)(object *);
     char *(*print_tad)(timeanddate_t *, int);
     /* Q */
     char *(*query_base_name)(object *, object *);
