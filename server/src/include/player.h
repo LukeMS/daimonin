@@ -83,6 +83,17 @@ enum
 #define PLAYER_FILE_VERSION_DEFAULT 0
 #define PLAYER_FILE_VERSION_BETA4   2
 
+/* Macro to save the player file and the instance or unique map he is on. This
+ * goes some way to preventing item duping. */
+#define PLAYER_SAVE(_PL_) \
+    (void)player_save((_PL_)->ob); \
+    if ((_PL_)->ob->map && \
+        MAP_INSTANCE((_PL_)->ob->map) || \
+        MAP_UNIQUE((_PL_)->ob->map)) \
+    { \
+        (void)map_save((_PL_)->ob->map); \
+    }
+
 #ifdef WIN32
 #pragma pack(push,1)
 #endif
@@ -333,10 +344,7 @@ typedef struct pl_player
     long                last_weight;
     unsigned char       last_level;        /* client data: level player */
 
-
-#ifdef AUTOSAVE
     uint32              last_save_tick;
-#endif
 
 #ifdef USE_CHANNELS
     struct player_channel  *channels;      /*channels player is 'on' */

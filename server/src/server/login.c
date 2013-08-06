@@ -44,6 +44,7 @@ int player_save(object *op)
     if (op->type != PLAYER || pl == NULL)
         return 0;
 
+    pl->last_save_tick = ROUND_TAG;
     sprintf(filename, "%s/%s/%s/%s/%s.pl", settings.localdir, settings.playerdir, get_subdir(op->name), op->name, op->name);
 
     /* if the file already is there, we don't must create the dirs but do backups */
@@ -280,11 +281,7 @@ static player *get_player_struct(void)
 
     /* ... but init some more stuff with non zero values or macros */
     p->group_id = GROUP_NO;
-
-#ifdef AUTOSAVE
     p->last_save_tick = 9999999;
-#endif
-
     p->gmaster_mode = GMASTER_MODE_NO;
     p->target_hp = -1;
     p->target_hp_p = -1;
@@ -713,11 +710,7 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
 
     CLEAR_FLAG(op, FLAG_NO_FIX_PLAYER);
     FIX_PLAYER(op ,"check login - first fix");
-
-#ifdef AUTOSAVE
     pl->last_save_tick = ROUND_TAG;
-#endif
-
 
     /* we hook in here perm dead later - ATM we don't allow a player loaded which was dead */
     if (op->stats.hp <= 0)
@@ -930,10 +923,7 @@ addme_login_msg player_create(NewSocket *ns, player **pl_ret, char *name, int ra
     op->type = PLAYER;
     pl->state |= ST_BORN;
     *pl_ret = pl;
-
-#ifdef AUTOSAVE
     pl->last_save_tick = ROUND_TAG;
-#endif
 
     /* now we add our custom settings for this new character */
     FREE_AND_ADD_REF_HASH(pl->account_name, ns->pl_account.name);

@@ -82,7 +82,6 @@ CommArray_s Commands[] =
     {"motd",          command_motd,           0.0f, 0, NULL}, /* displays message of the day*/
     {"time",          command_time,           1.0f, 0, NULL}, /* displays in game time*/
     {"help",          command_help,           0.0f, 0, NULL}, /* displays help topics*/
-    {"save",          command_save,           0.0f, 1, NULL}, /* saves player state*/
     {"use_skill",     command_uskill,         0.1f, 1, NULL}, /* uses a specified skill*/
     {"ready_skill",   command_rskill,         0.1f, 1, NULL}, /* readies a specified skill*/
     {"privacy",       command_privacy,        0.0f, 1, NULL}, /* enters player in privacy mode*/

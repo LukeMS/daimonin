@@ -504,6 +504,15 @@ uint8 leave_map(player *pl, mapstruct *newmap)
     if (oldmap &&
         oldmap != newmap)
     {
+        /* This is an anti-duping measure: when a player leaves an instance or
+         * unique map, save the player file. The map is then also saved below,
+         * meaning that the two object list should not get out of sync. */
+        if (MAP_INSTANCE(oldmap) ||
+            MAP_UNIQUE(oldmap))
+        {
+            (void)player_save(pl->ob);
+        }
+
         if (MAP_MULTI(oldmap) ||
             map_save(oldmap))
         {

@@ -931,32 +931,6 @@ int command_help(object *op, char *params)
     return 0;
 }
 
-int command_save(object *op, char *params)
-{
-    if (blocks_cleric(op->map, op->x, op->y))
-    {
-        new_draw_info(NDI_UNIQUE, 0, op, "You can not save on unholy ground");
-    }
-    else
-    {
-        if (player_save(op))
-            new_draw_info(NDI_UNIQUE, 0, op, "You have been saved.");
-        else
-            new_draw_info(NDI_UNIQUE, 0, op, "SAVE FAILED!");
-
-        /* Finally save the unique map (ie, apt) or instance the player is
-         * on. */
-        if (op->map &&
-            MAP_INSTANCE(op->map) ||
-            MAP_UNIQUE(op->map))
-        {
-            (void)map_save(op->map);
-        }
-    }
-
-    return 0;
-}
-
 int command_privacy(object *op, char *params)
 {
     int new_status = !CONTR(op)->privacy;

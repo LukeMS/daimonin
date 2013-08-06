@@ -632,18 +632,15 @@
  */
 #define SAVE_MODE   0660
 
-/*
- * AUTOSAVE saves the player every AUTOSAVE ticks.  A value of
- * 5000 with MAX_TIME set at 120,000 means that the player will be
- * saved every 10 minutes.  Some effort should probably be made to
- * spread out these saves, but that might be more effort than it is
- * worth (Depending on the spacing, if enough players log on, the spacing
- * may not be large enough to save all of them.)  As it is now, it will
- * just set the base tick of when they log on, which should keep the
- * saves pretty well spread out (in a fairly random fashion.)
- */
+/* AUTOSAVE saves the player every AUTOSAVE ticks.  Some effort should probably
+ * be made to spread out these saves, but that might be more effort than it is
+ * worth (Depending on the spacing, if enough players log on, the spacing may
+ * not be large enough to save all of them.)  As it is now, it will just set
+ * the base tick of when they log on, which should keep the saves pretty well
+ * spread out (in a fairly random fashion.) */
 
-#define AUTOSAVE 5000
+/* Must be a positive integer. */
+#define AUTOSAVE 4800 // 10 mins at standard tick rate (8/sec)
 
 /* RESET_LOCATION_TIME is the number of seconds that must elapse before
  * we fill return the player to his savebed location.  If this is zero,

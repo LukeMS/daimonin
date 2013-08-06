@@ -180,7 +180,6 @@ int                         command_logs(object *op, char *params);
 int                         command_resistances(object *op, char *params);
 int                         command_resting(object *op, char *params);
 int                         command_help(object *op, char *params);
-int                         command_save(object *op, char *params);
 int                         command_privacy(object *op, char *params);
 char                        *get_subdir(const char *name);
 int                         command_stuck(object *op, char *params);
