@@ -642,18 +642,6 @@
 /* Must be a positive integer. */
 #define AUTOSAVE 4800 // 10 mins at standard tick rate (8/sec)
 
-/* RESET_LOCATION_TIME is the number of seconds that must elapse before
- * we fill return the player to his savebed location.  If this is zero,
- * this feature is disabled (player will resume where ever he was
- * when he last logged off).  If this is set to less than two hours,
- * it will prevent players from camping out in treasure rooms.
- * Do not comment this out - it must be set to something - if you
- * comment this out, the program will not compile.
- * TODO: rework this setting
- */
-
-#define RESET_LOCATION_TIME 0
-
 /* Use the shipped version of inet_pton.  You can turn this off if you know
  * your local system will work with the inet_pton it has.
  */
