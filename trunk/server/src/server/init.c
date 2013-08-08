@@ -56,7 +56,6 @@ struct Settings settings    =
     STATS_DIR,              /* Directory for active logs of statistical events */
     STATS_ARCHIVE_DIR,      /* Directory for logs, ready for further processing */
     STAT_LOSS,              /* If not 0, players lose random stats on death. */
-    RESET_LOCATION_TIME,    /* Number of seconds to put player back at home */
     0,                      /* True if we should send updates */
     "",                     /* Hostname/ip addr of the metaserver */
     "",                        /* name of the server */

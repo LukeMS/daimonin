@@ -826,7 +826,6 @@ typedef struct Settings
     char                           *statsdir;           /* Directory for active logs of statistical events */
     char                           *statsarchivedir;    /* Directory for logs, ready for further processing */
     sint8                           stat_loss;          /* If not 0, players lose random stats when they die. */
-    int                             reset_loc_time;     /* Number of seconds to put player back at home */
 
     /* The meta_ is information for the metaserver.  These are set in
      * the lib/settings file.
