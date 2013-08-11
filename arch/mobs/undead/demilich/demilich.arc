@@ -2,7 +2,7 @@ Object demilich
 name Demilich
 face demilich.151
 race lich
-randomitems spells_demilich;loot;wealth_normal&D65;loot_base&D34;loot_magic&d9;loot_melee&d12
+randomitems spells_demilich;loot;wealth_normal&D65;loot_base&D34;loot_magic&d9;loot_melee&d12;treasure_ring&d100
 type 80
 layer 6
 identified 1

@@ -2,7 +2,7 @@ Object vampire_lord
 name Vampire Lord
 face vampire_lord.151
 race undead
-randomitems loot;wealth_normal&D65;loot_base&D34;loot_magic&d17;loot_melee&d12
+randomitems loot;wealth_normal&D65;loot_base&D34;loot_magic&d17;loot_melee&d12;treasure_ring&d100
 type 80
 layer 6
 identified 1

@@ -2,7 +2,7 @@ Object demon_sfire
 name Shadow Fire Demon
 face demon_sfire.151
 race demon
-randomitems spells_wizard;loot;wealth_normal&D65;loot_base&D34;loot_magic&d9;loot_melee&d12
+randomitems spells_wizard;loot;wealth_normal&D65;loot_base&D34;loot_magic&d9;loot_melee&d12;treasure_ring&d100
 type 80
 layer 6
 identified 1
