@@ -2,7 +2,7 @@ Object barrow_wight
 name Barrow Wight
 face barrow_wight.151
 race lich
-randomitems loot;wealth_normal&D65;loot_base&D34;loot_magic&d17;loot_melee&d12;treasure_ring&d100
+randomitems loot;wealth_normal&D65;loot_base&D34;loot_magic&d17;loot_melee&d12;treasure_ring&d200
 type 80
 layer 6
 identified 1
