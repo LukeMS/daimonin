@@ -2,7 +2,7 @@ Object ghoul
 name Ghoul
 face ghoul.151
 race ghoul
-randomitems loot;wealth_normal&D65;loot_base&D34;loot_magic&d17;loot_melee&d12
+randomitems loot;wealth_normal&D65;loot_base&D34;loot_magic&d17;loot_melee&d12;treasure_ring&d100
 type 80
 layer 6
 identified 1

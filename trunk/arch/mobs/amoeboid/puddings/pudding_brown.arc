@@ -2,7 +2,7 @@ Object pudding_brown
 name Brown Pudding
 face pudding_brown.111
 race slime
-randomitems loot;wealth_normal&D65;loot_base&D34;loot_magic&d35;loot_melee&d11
+randomitems loot;wealth_normal&D65;loot_base&D34;loot_magic&d35;loot_melee&d11;treasure_ring&d100
 type 80
 layer 6
 identified 1

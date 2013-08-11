@@ -2,7 +2,7 @@ Object skel_mage
 name Skeleton Mage
 face skel_mage.151
 race skeleton
-randomitems spells_wizard;loot;wealth_normal&D65;loot_base&D34;loot_magic&d7;loot_melee&d25
+randomitems spells_wizard;loot;wealth_normal&D65;loot_base&D34;loot_magic&d7;loot_melee&d25;treasure_ring&d100
 type 80
 layer 6
 identified 1
