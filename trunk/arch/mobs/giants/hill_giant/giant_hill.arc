@@ -2,7 +2,7 @@ Object giant_hill
 name Hill Giant
 face giant_hill.151
 race giant
-randomitems loot;wealth_normal&D65;loot_base&D34;loot_magic&d17;loot_melee&d12
+randomitems loot;wealth_normal&D65;loot_base&D34;loot_magic&d17;loot_melee&d12;treasure_ring_mage&d200
 type 80
 layer 6
 identified 1
