@@ -5,6 +5,10 @@
 -- which should not be read as an excuse to write bad talk/say scripts --
 -- use SENTInce ;)).
 -------------------------------------------------------------------------------
+if TopicList ~= nil then
+    return
+end
+
 TopicList = { }
 
 ---------------------------------------
