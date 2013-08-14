@@ -9,6 +9,10 @@
 -- a higher number quest without first completing each lower number quest,
 -- and it is impossible to have more than one quest active at a time.
 -------------------------------------------------------------------------------
+if QuestBuilder ~= nil then
+    return
+end
+
 QuestBuilder = { }
 
 if not QuestManager then

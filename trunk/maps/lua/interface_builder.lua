@@ -5,6 +5,10 @@
 -- which should not be read as an excuse to write bad talk scripts --
 -- use SENTInce ;)).
 -------------------------------------------------------------------------------
+if InterfaceBuilder ~= nil then
+    return
+end
+
 InterfaceBuilder = {}
 
 ---------------------------------------

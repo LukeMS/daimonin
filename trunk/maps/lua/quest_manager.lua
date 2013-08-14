@@ -3,6 +3,10 @@
 --
 -- Deprecated for direct use, use quest_builder.lua.
 -------------------------------------------------------------------------------
+if QuestManager ~= nil then
+    return
+end
+
 QuestManager = { }
 
 if not QuestBuilder then
