@@ -503,14 +503,8 @@ void remove_ns_dead_player(player *pl)
             activelist_remove(pl->ob);
             (void)leave_map(pl, NULL);
         }
-        /* A removed player by definition is not on a map so only need to save
-         * the player file (leave_map() above saves both player file and map
-         * file as necessary). */
-        else
-        {
-            player_save(pl->ob);
-        }
 
+        player_save(pl->ob);
         LOG(llevDebug, "remove_ns_dead_player(): %s leaving\n", STRING_OBJ_NAME(pl->ob));
         leave(pl, 1);
     }
