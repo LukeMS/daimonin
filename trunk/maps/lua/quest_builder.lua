@@ -156,12 +156,12 @@ function QuestBuilder:GetQuestNr(name)
     local nr
 
     if type(name) == "string" then
-        assert(self.total >= 1, "No quests in qb table!")
         assert(self.current ~= false, "Quest table not built, call qb:Build()!")
+        assert(self.total >= 1, "No quests in qb table!")
 
         for i, v in ipairs(self) do
-            if game:MatchString(self[i].name, name) then
-                if self:GetStatus(i) == game.QSTAT_DISALLOW then
+            if game:MatchString(v.name, name) then
+                if v.qm:GetStatus() == game.QSTAT_DISALLOW then
                     nr = 0 - i
                 else
                     nr = i
@@ -171,7 +171,7 @@ function QuestBuilder:GetQuestNr(name)
             end
         end
     elseif name == false or
-       name == nil then
+           name == nil then
         nr = self.total
     else
         assert(self.current ~= false, "Quest table not built, call qb:Build()!")
