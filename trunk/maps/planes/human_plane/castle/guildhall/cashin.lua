@@ -25,7 +25,7 @@ local player = event.activator
 ---------------------------------------
 ---------------------------------------
 if not module_guildsLOADED then
-    require("modules/guilds")
+    require("module/guilds")
 end
 
 -------------------

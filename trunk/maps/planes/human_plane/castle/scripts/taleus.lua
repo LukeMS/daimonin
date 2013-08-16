@@ -11,7 +11,7 @@ local pl        = event.activator
 local me        = event.me
 local ib        = InterfaceBuilder()
 if not module_guildsLOADED then
-    require("modules/guilds")
+    require("module/guilds")
 end
 local gstat = module_guildsGetStatus("Mercenary", pl)
 
