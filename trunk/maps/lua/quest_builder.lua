@@ -26,7 +26,7 @@ end
 -- qb:New() constructs a new, blank qb table (the return value).
 -------------------
 function QuestBuilder:New()
-    local qb = { }
+    local qb = { total = 0, current = false }
 
     setmetatable(qb, { __metatable = QuestBuilder,
                        __index = QuestBuilder })
@@ -88,16 +88,12 @@ function QuestBuilder:AddQuest(quest, mode, level, skill, required, finalstep, r
         repeats = 0
     end
 
-    table.insert(self, { ["name"] = quest,
-                         ["mode"] = mode,
-                         ["level"] = level,
-                         ["skill"] = skill,
-                         ["required"] = required,
-                         ["finalstep"] = finalstep,
-                         ["repeats"] = repeats,
-                         ["goal"] = goal,
-                         ["reward"] = reward, 
-                         ["silent"] = silent}) -- Silent quests are not displayed to the player.
+    self.total = self.total + 1
+
+    table.insert(self, self.total, { ["name"] = quest, ["mode"] = mode,
+                 ["level"] = level, ["skill"] = skill, ["required"] = required,
+                 ["finalstep"] = finalstep, ["repeats"] = repeats,
+                 ["goal"] = goal, ["reward"] = reward, ["silent"] = silent })
 end
 
 -------------------
@@ -114,9 +110,9 @@ function QuestBuilder:Build(player)
     assert(type(player) == "GameObject" and
            player.type == game.TYPE_PLAYER,
            "Arg #1 must be player GameObject!")
-    assert(table.getn(self) >= 1, "No quests in qb table!")
+    assert(self.total >= 1, "No quests in qb table!")
 
-    local questnr = 0
+    local nr = 0
 
     for i, v in ipairs(self) do
         table.insert(v, 1, player)
@@ -124,56 +120,65 @@ function QuestBuilder:Build(player)
         v.qm = QuestManager(v.player, v.name, v.level, v.skill, v.repeats)
 
         if type(v.required) == "table" then
-            for j, w in ipairs(v.required) do
+            for _, w in ipairs(v.required) do
                 v.qm:AddRequiredQuest(w)
             end
         end
 
         local qstat = v.qm:GetStatus()
 
-        if questnr == 0 and
+        if nr == 0 and
            qstat ~= game.QSTAT_DONE then
             if qstat == game.QSTAT_DISALLOW then
-                questnr = 0 - i
+                nr = 0 - i
             else
-                questnr = i
+                nr = i
             end
         end
     end
 
-    return questnr
+    self.current = nr
+
+    return nr
 end
 
 -------------------
--- qb:GetQuestNr() returns the questnr of the named quest (negative if
--- the quest is disallowed), or the total number of quests in qb if no name is
--- given, or 0 if the name given does not exist in the qb.
+-- qb:GetQuestNr() returns the nr of the named quest (negative if the quest is
+-- disallowed) or 0 if the name given does not exist in the qb, or the total
+-- number of quests in qb if name is nil or false, or the current quest nr if
+-- name is true.
 -------------------
 function QuestBuilder:GetQuestNr(name)
     assert(type(name) == "string" or
-           name == nil, "Arg #1 must be string or nil!")
+           type(name) == "boolean" or
+           name == nil, "Arg #1 must be string, boolean, or nil!")
 
-    local questnr = table.getn(self)
+    local nr
 
-    assert(questnr >= 1, "No quests in qb table!")
+    if type(name) == "string" then
+        assert(self.total >= 1, "No quests in qb table!")
+        assert(self.current ~= false, "Quest table not built, call qb:Build()!")
 
-    if name == nil then
-        return questnr
-    end
+        for i, v in ipairs(self) do
+            if game:MatchString(self[i].name, name) then
+                if self:GetStatus(i) == game.QSTAT_DISALLOW then
+                    nr = 0 - i
+                else
+                    nr = i
+                end
 
-    for i = questnr, 0, -1 do
-        if questnr >= 1 and
-           game:MatchString(self[questnr].name, name) then
-            break
+                break
+            end
         end
+    elseif name == false or
+       name == nil then
+        nr = self.total
+    else
+        assert(self.current ~= false, "Quest table not built, call qb:Build()!")
+        nr = self.current
     end
 
-    if questnr >= 1 and
-       self:GetStatus(questnr) == game.QSTAT_DISALLOW then
-        return 0 - questnr
-    else
-        return questnr
-    end
+    return nr
 end
 
 -------------------
@@ -181,9 +186,10 @@ end
 -------------------
 function QuestBuilder:GetName(nr)
     assert(type(nr) == "number", "Arg #1 must be number!")
+    assert(self.current ~= false, "Quest table not built, call qb:Build()!")
     nr = math.abs(nr)
-    assert(nr > 0 and
-           nr <= table.getn(self), "Not enough entries in qb table!")
+    assert(nr >= 1 and
+           nr <= self.total, "Not enough entries in qb table!")
 
     return self[nr].name
 end
@@ -193,9 +199,10 @@ end
 -------------------
 function QuestBuilder:GetMode(nr)
     assert(type(nr) == "number", "Arg #1 must be number!")
+    assert(self.current ~= false, "Quest table not built, call qb:Build()!")
     nr = math.abs(nr)
-    assert(nr > 0 and
-           nr <= table.getn(self), "Not enough entries in qb table!")
+    assert(nr >= 1 and
+           nr <= self.total, "Not enough entries in qb table!")
 
     return self[nr].mode
 end
@@ -205,9 +212,10 @@ end
 -------------------
 function QuestBuilder:GetStatus(nr)
     assert(type(nr) == "number", "Arg #1 must be number!")
+    assert(self.current ~= false, "Quest table not built, call qb:Build()!")
     nr = math.abs(nr)
-    assert(nr > 0 and
-           nr <= table.getn(self), "Not enough entries in qb table!")
+    assert(nr >= 1 and
+           nr <= self.total, "Not enough entries in qb table!")
 
     return self[nr].qm:GetStatus()
 end
@@ -225,9 +233,10 @@ function QuestBuilder:RegisterQuest(nr, npc, ib)
     assert(type(npc) == "GameObject", "Arg #2 must be GameObject!")
     assert(getmetatable(ib) == InterfaceBuilder,
            "Arg #3 must be InterfaceBuilder!")
+    assert(self.current ~= false, "Quest table not built, call qb:Build()!")
     nr = math.abs(nr)
-    assert(nr > 0 and
-           nr <= table.getn(self), "Not enough entries in qb table!")
+    assert(nr >= 1 and
+           nr <= self.total, "Not enough entries in qb table!")
 
     local myib = InterfaceBuilder()
 
@@ -277,9 +286,10 @@ function QuestBuilder:IsRegistered(nr, ib)
     assert(type(nr) == "number", "Arg #1 must be number!")
     assert(getmetatable(ib) == InterfaceBuilder or
            ib == nil, "Arg #2 must be InterfaceBuilder or nil!")
+    assert(self.current ~= false, "Quest table not built, call qb:Build()!")
     nr = math.abs(nr)
-    assert(nr > 0 and
-           nr <= table.getn(self), "Not enough entries in qb table!")
+    assert(nr >= 1 and
+           nr <= self.total, "Not enough entries in qb table!")
 
     local quest = self[nr].qm.trigger
 
@@ -305,9 +315,10 @@ function QuestBuilder:AddItemList(nr, ib)
     assert(type(nr) == "number", "Arg #1 must be number!")
     assert(getmetatable(ib) == InterfaceBuilder or
            ib == nil, "Arg #2 must be InterfaceBuilder or nil!")
+    assert(self.current ~= false, "Quest table not built, call qb:Build()!")
     nr = math.abs(nr)
-    assert(nr > 0 and
-           nr <= table.getn(self), "Not enough entries in qb table!")
+    assert(nr >= 1 and
+           nr <= self.total, "Not enough entries in qb table!")
 
     return self[nr].qm:AddItemList(ib)
 end
@@ -335,9 +346,10 @@ function QuestBuilder:AddQuestTarget(nr, chance, nrof, arch, name, race, title, 
         level = 0
     end
 
+    assert(self.current ~= false, "Quest table not built, call qb:Build()!")
     nr = math.abs(nr)
-    assert(nr > 0 and
-           nr <= table.getn(self), "Not enough entries in qb table!")
+    assert(nr >= 1 and
+           nr <= self.total, "Not enough entries in qb table!")
 
     local t = {
         [1] = chance,
@@ -365,9 +377,10 @@ function QuestBuilder:AddQuestItem(nr, nrof, arch, face, name, title)
            name == nil, "Arg #5 must be string or nil!")
     assert(type(title) == "string" or
            title == nil, "Arg #6 must be string or nil!")
+    assert(self.current ~= false, "Quest table not built, call qb:Build()!")
     nr = math.abs(nr)
-    assert(nr > 0 and
-           nr <= table.getn(self), "Not enough entries in qb table!")
+    assert(nr >= 1 and
+           nr <= self.total, "Not enough entries in qb table!")
 
     local t = {
         [1] = nrof,
@@ -387,9 +400,10 @@ function QuestBuilder:Finish(nr, reward)
     assert(type(nr) == "number", "Arg #1 must be number!")
     assert(type(reward) == "string" or
            reward == nil, "Arg #2 must be string or nil!")
+    assert(self.current ~= false, "Quest table not built, call qb:Build()!")
     nr = math.abs(nr)
-    assert(nr > 0 and
-           nr <= table.getn(self), "Not enough entries in qb table!")
+    assert(nr >= 1 and
+           nr <= self.total, "Not enough entries in qb table!")
 
     local player = self[nr].player
 
