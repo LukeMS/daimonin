@@ -9,7 +9,7 @@ require("topic_list")
 require("quest_builder")
 require("interface_builder")
 if not module_guildsLOADED then
-    require("modules/guilds")
+    require("module/guilds")
 end
 
 local pl        = event.activator
