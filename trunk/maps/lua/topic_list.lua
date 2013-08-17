@@ -184,8 +184,8 @@ function TopicList:AddTopics(trigger, ...)
         end
     end 
 
-    table.insert(self.topics, { triggers = trigger,
-                                actions = action })
+    table.insert(self.topics, 1, { triggers = trigger,
+                                   actions = action })
 end
 
 -------------------
