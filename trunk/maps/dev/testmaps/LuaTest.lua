@@ -33,13 +33,7 @@ elseif msg == 'division' then
     
 -- Test some of the security features
 elseif msg == 'security1' then
-    if activator.f_wiz then
-        me:SayTo(activator, "You are DM, trying to remove it (should fail).")
-        activator.f_wiz = false;
-    else
-        me:SayTo(activator, "You aren't DM, trying to elevate you (should fail).")
-        activator.f_wiz = true;
-    end
+    me:SayTo(activator, "~TODO~ This test tries to change gmaster_mode and needs rewriting or is irrelevant nowadays.")
 elseif msg == 'security2' then
     me:SayTo(activator, "Trying to open /etc/passwd (should fail).")
     f = io.open("/etc/passwd", "r")
