@@ -149,9 +149,16 @@ function _error(msg)
     msg = debug.traceback(msg)
 
     local function msg_wiz_obj(obj)
-        if obj and game:IsValid(obj) and obj.f_wiz then
-            obj:Write("LUA: "..tostring(msg))
-            return true
+        if obj and
+            game:IsValid(obj) and
+            obj.type == game.TYPE_PLAYER then
+            local mode = obj:GetGmasterMode()
+            if mode == game.GMASTER_MODE_SA or
+                mode == game.GMASTER_MODE_MM or
+                mode == game.GMASTER_MODE_MW then
+                obj:Write("LUA: "..tostring(msg))
+                return true
+            end
         end
         return false
     end
