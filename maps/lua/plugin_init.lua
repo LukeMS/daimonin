@@ -142,34 +142,94 @@ function absolute_path(prefix, suffix)
     return prefix .. suffix
 end
 
--- Magic errorhandler, sends script errors to involved DM:s
--- TODO: possibility to turn on/off either via a script or custom commands
--- TODO: possibility to register DM's that should get messages even if not involved
-function _error(msg)
-    msg = debug.traceback(msg)
+---------------------------------------
+-- Magic errorhandler, sends script errors to MWs/MMs/SAs (either globally via
+-- the MW channel or individually to any such gmasters directly involved in the
+-- script's running, depending on the availabilitt of the channel or method).
+---------------------------------------
+function _error(prefix)
+    -------------------
+    -- Prefix. The error prefix tends to contain '`' chars which are
+    -- interpreted by Dai as 'toggle underline'. We don't want this so change
+    -- them to '''.
+    -------------------
+    prefix = string.gsub(prefix, "`", "'")
+    local message = prefix .. "\n"
 
-    local function msg_wiz_obj(obj)
-        if obj and
-            game:IsValid(obj) and
-            obj.type == game.TYPE_PLAYER then
-            local mode = obj:GetGmasterMode()
-            if mode == game.GMASTER_MODE_SA or
-                mode == game.GMASTER_MODE_MM or
-                mode == game.GMASTER_MODE_MW then
-                obj:Write("LUA: "..tostring(msg))
-                return true
+    -------------------
+    -- Affix all the event data.
+    -------------------
+    local ev = {
+        [1] = { k = "me" },
+        [2] = { k = "activator" },
+        [3] = { k = "other" },
+        [4] = { k = "message" },
+        [5] = { k = "options" } } 
+    for _, v in ipairs(ev) do 
+        local val = event[v.k]
+        local typ = type(val)
+        if typ == "GameObject" or typ == "Map" then
+            if game:IsValid(val) == false then
+               val = nil
+               typ = "nil"
             end
         end
-        return false
+        v.v = val
+        v.t = typ
+        message = message .. v.k .. "="
+        if v.t == "string" then
+            message = message .. "~\"" .. tostring(v.v) .. "\"~\n"
+        elseif v.v ~= nil then
+            message = message .. "~" .. tostring(v.v) .. "~\n"
+        else
+            message = message .. "nil\n"
+        end
     end
 
-    if event and game:IsValid(event) then
-        msg_wiz_obj(event.activator)
-        msg_wiz_obj(event.me)
-        msg_wiz_obj(event.other)
+    -------------------
+    -- Finally suffix with a traceback.
+    -------------------
+    message = message .. debug.traceback()
+
+    -------------------
+    -- Try to post the error report to the MW channel. I think event.me should
+    -- always be a non-player object.
+    -------------------
+    local name = event.me.name
+    event.me.name = "|Lua|"
+    local done = event.me:ChannelMsg("MW", message)
+    event.me.name = name
+
+    -------------------
+    -- In 0.10.5 object:ChannelMsg() is disabled: it exists but does nothing
+    -- and returns nil. In 0.10.6 and later it returns true or false according
+    -- to success. So if it returned false or nil, report the error the
+    -- old-fashioned way.
+    -------------------
+    if not done then
+       for _, v in ipairs(ev) do
+           if v.t == "GameObject" and
+               v.v.type == game.TYPE_PLAYER then
+               local mode = v.v:GetGmasterMode()
+               if mode == game.GMASTER_MODE_SA or
+                   mode == game.GMASTER_MODE_MM or
+                   mode == game.GMASTER_MODE_MW then
+                   v.v:Write(message)
+               end
+           end
+       end
+    -------------------
+    -- Otherwise, we just want to rturn the prefix (which is the basic error)
+    -- and a quick note as the detail is already logged in the chat logs.
+    -------------------
+    else
+        message = prefix .. "\n(See chat logs for details.)"
     end
 
-    return msg
+    -------------------
+    -- Return message. The server logs this in the tech logs.
+    -------------------
+    return message
 end
 
 -- Shutdown hook called when server unloads the plugin
