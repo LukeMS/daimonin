@@ -43,9 +43,7 @@ static int  GameObject_AddOneDropQuest(lua_State *L);
 static int  GameObject_AdjustLightSource(lua_State *L);
 static int  GameObject_Apply(lua_State *L);
 static int  GameObject_CastSpell(lua_State *L);
-#ifdef USE_CHANNELS
 static int  GameObject_ChannelMsg(lua_State *L);
-#endif
 static int  GameObject_CheckBuff(lua_State *L);
 static int  GameObject_CheckGuild(lua_State *L);
 static int  GameObject_CheckInstance(lua_State *L);

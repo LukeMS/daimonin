@@ -1036,15 +1036,17 @@ void channel_privacy(player *pl, int privacy)
  * @param name name of sender/mob
  * @param message message to send
  * @param mode 0=normal, 1=emote
+ * @return zero=success, non-zero=failure
  */
-void lua_channel_message(char *channelname,  const char *name, char *message, int mode)
+int lua_channel_message(char *channelname,  const char *name, char *message, int mode)
 {
     struct channels *channel;
+    int              r;
+
     for (channel=channel_list_start;channel;channel=channel->next)
     {
         if (!strcasecmp(channel->name,channelname)) /* lua: exact name */
         {
-
             struct player_channel *cpl=NULL;
             sockbuf_struct *sockbuf;
             char buf[HUGE_BUF];
@@ -1063,13 +1065,18 @@ void lua_channel_message(char *channelname,  const char *name, char *message, in
                     SOCKBUF_ADD_TO_SOCKET(&(cpl->pl->socket), sockbuf);
 
             SOCKBUF_COMPOSE_FREE(sockbuf);
-            return;
+            r = 0; // success
+            break;
         }
     }
-    if (!channel)
-        LOG(llevDebug,"LUA: channelMsg: no channel with that name: %s\n",channelname);
-    return;
 
+    if (!channel)
+    {
+        LOG(llevDebug,"LUA: channelMsg: no channel with that name: %s\n",channelname);
+        r = 1; // failure
+    }
+
+    return r;
 }
 
 /* save the defined channels

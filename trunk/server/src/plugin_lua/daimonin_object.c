@@ -42,9 +42,7 @@ static struct method_decl GameObject_methods[] =
     {"AdjustLightSource",      (lua_CFunction) GameObject_AdjustLightSource},
     {"Apply",                  (lua_CFunction) GameObject_Apply},
     {"CastSpell",              (lua_CFunction) GameObject_CastSpell},
-#ifdef USE_CHANNELS
     {"ChannelMsg",             (lua_CFunction) GameObject_ChannelMsg},
-#endif
     {"CheckBuff",              (lua_CFunction) GameObject_CheckBuff},
     {"CheckGuild",             (lua_CFunction) GameObject_CheckGuild},
     {"CheckInstance",          (lua_CFunction) GameObject_CheckInstance},
@@ -1750,7 +1748,6 @@ static int GameObject_SayTo(lua_State *L)
     return 0;
 }
 
-#ifdef USE_CHANNELS
 /*****************************************************************************/
 /* Name   : GameObject_ChannelMsg                                            */
 /* Lua    : object:ChannelMsg(channel, message, mode)                        */
@@ -1768,17 +1765,60 @@ static int GameObject_ChannelMsg(lua_State *L)
 
     get_lua_args(L, "Oss|i", &self, &channel, &message, &mode);
 
-//    /* No point mucking about with an empty message. */
-//    if (*message)
-//    {
-//        hooks->lua_channel_message(channel, STRING_OBJ_NAME(WHO), message,
-//                                   mode);
-//    }
+#ifdef USE_CHANNELS
+    /* No point mucking about with an empty message. */
+    if (*message)
+    {
+        char  buf[MEDIUM_BUF];
+        uint8 i = 0;
+
+        /* Underline the name to indicate this is chat from a script. */
+        buf[i++] = ECC_UNDERLINE;
+
+        if (!WHO->name)
+        {
+            buf[i++] = '?';
+        }
+        else
+        {
+            char  c;
+            uint8 j = 0;
+
+            while ((c = *(WHO->name + j)) != '\0')
+            {
+                if (c != ECC_UNDERLINE)
+                {
+                    buf[i++] = c;
+                }
+
+                j++;
+            }
+        }
+
+        buf[i++] = ECC_UNDERLINE;
+        buf[i] = '\0';
+
+        if (hooks->lua_channel_message(channel, buf, message, mode) == 0)
+        {
+            lua_pushboolean(L, 1);
+        }
+        else
+        {
+            lua_pushboolean(L, 0);
+        }
+    }
+    else
+    {
+        lua_pushboolean(L, 0);
+    }
+
+    return 1;
+#else
 
     return 0;
+#endif
 }
 
-#endif
 /*****************************************************************************/
 /* Name   : GameObject_Write                                                 */
 /* Lua    : object:Write(message, color)                                     */

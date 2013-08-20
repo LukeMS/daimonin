@@ -344,7 +344,7 @@ struct plugin_hooklist
     int (*look_up_spell_name)(const char *);
     int (*lookup_skill_by_name)(char *);
 #ifdef USE_CHANNELS
-    void (*lua_channel_message)(char *, const char *, char *, int);
+    int (*lua_channel_message)(char *, const char *, char *, int);
 #endif
     /* M */
     int (*map_brightness)(mapstruct *, int, int);

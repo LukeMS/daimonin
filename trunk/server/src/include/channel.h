@@ -127,7 +127,7 @@ void    modify_channel_params(struct player_channel *cpl, char *params);
 void    forceAddPlayerToChannel(struct player_channel *cpl, char *params);
 void    kickPlayerFromChannel(struct player_channel *cpl, char *params);
 
-void    lua_channel_message(char *channelname, const char *name, char *message, int mode);
+int     lua_channel_message(char *channelname, const char *name, char *message, int mode);
 
 
 void sendVirtualChannelMsg(player *sender, char *channelname, player *target, char* msg, int color);
