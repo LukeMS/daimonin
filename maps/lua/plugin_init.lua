@@ -77,6 +77,23 @@ function string.split(s, sep)
     return t
 end
 
+---------
+-- string.match is a useful addition the the Lua 5.1 library so emulate it.
+---------
+if not string.match then
+    function string.match(s, pattern, init)
+        local t = { string.find(s, pattern, init) }
+        if t[1] ~= nil then
+            if t[3] == nil then
+                return s
+            else
+                return unpack(t, 3)
+            end
+        end
+        return nil
+    end
+end
+
 --
 -- Very useful and elegant iterator functions for for loops
 -- for obj in obj_inventory(object) loops through the inventory of object
