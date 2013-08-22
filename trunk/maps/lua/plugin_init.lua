@@ -41,27 +41,25 @@ gender_possessive = { [game.NEUTER] = "its",    [game.MALE] = "his",  [game.FEMA
 --
 
 function string.capitalize(s, b_keep)
-    local t = {}
+    local t
     if type(s) == "table" then
         t = s
     else
-        table.insert(t, s)
+        t = { [1] = s }
     end
-    local words = table.getn(t)
-    for i= 1, words do
-        if type(t[i]) == "string" and t[i] ~= "" then
-            local s1, s2 = string.sub(t[i],1,1), string.sub(t[i],2)
-            if s2 then
-                if not b_keep then
-                    s2 = string.lower(s2)
-                end
-                t[i] = string.upper(s1) .. s2
-            else
-                t[i] = string.upper(s1)
+    for i, v in ipairs(t) do
+        if type(v) == "string" then
+            local leading, first, rest = string.match(v, "^(%s*)(%l?)(.*)")
+            if first and first ~= "" then
+                first = string.upper(first)
             end
+            if rest and rest ~= "" and not b_keep then
+                rest = string.lower(rest)
+            end
+            t[i] = leading .. first .. rest
         end
     end
-    return table.concat(t," ")
+    return table.concat(t, " ")
 end
 
 -- string.split() function
