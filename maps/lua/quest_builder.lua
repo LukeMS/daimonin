@@ -174,8 +174,11 @@ function QuestBuilder:GetQuestNr(name)
            name == nil then
         nr = self.total
     else
-        assert(self.current ~= false, "Quest table not built, call qb:Build()!")
-        nr = self.current
+        if self.current == false then
+            nr = 0
+        else
+            nr = self.current
+        end
     end
 
     return nr
