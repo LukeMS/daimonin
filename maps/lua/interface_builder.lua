@@ -646,12 +646,14 @@ end
 -------------------
 -- ib:SetHeader() sets the face and title of the head block.
 -------------------
-function InterfaceBuilder:SetHeader(face, title)
+function InterfaceBuilder:SetHeader(face, title, prefix)
     assert(type(face) == "GameObject" or
            type(face) == "string", "Arg #1 must be GameObject or string!")
     assert(type(title) == "GameObject" or
            type(title) == "string" or
            title == nil, "Arg #2 must be GameObject or string or nil!")
+    assert(type(prefix) == "string" or
+           prefix == nil, "Arg #3 must be string or nil!")
 
     if title == nil then
         title = face
@@ -663,6 +665,10 @@ function InterfaceBuilder:SetHeader(face, title)
 
     if type(title) == "GameObject" then
         title = title:GetName()
+    end
+
+    if prefix ~= nil then
+        title = prefix .. " " .. title
     end
 
     if type(self.head) ~= "table" then
