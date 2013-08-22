@@ -87,7 +87,9 @@ if not string.match then
             if t[3] == nil then
                 return s
             else
-                return unpack(t, 3)
+                table.remove(t, 1)
+                table.remove(t, 1)
+                return unpack(t)
             end
         end
         return nil
