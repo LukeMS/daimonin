@@ -49,7 +49,7 @@ function string.capitalize(s, b_keep)
     end
     for i, v in ipairs(t) do
         if type(v) == "string" then
-            local leading, first, rest = string.match(v, "^(%s*)(%l?)(.*)")
+            local leading, first, rest = string.match(v, "^(%s*)(%a?)(.*)")
             if first and first ~= "" then
                 first = string.upper(first)
             end
