@@ -395,23 +395,46 @@ end
 -------------------
 -- qm:AddQuestTarget() is a wrapper for object:AddQuestTarget().
 -------------------
-function QuestManager:AddQuestTarget(...)
+function QuestManager:AddQuestTarget(chance, nrof, arch, name, race, title, level)
+    assert(type(chance) == "number", "Arg #1 must be number!")
+    assert(type(nrof) == "number", "Arg #2 must be number!")
+    assert(type(arch) == "string" or
+           arch == nil, "Arg #3 must be string or nil!")
+    assert(type(name) == "string" or
+           name == nil, "Arg #4 must be string or nil!")
+    assert(type(race) == "string" or
+           race == nil, "Arg #5 must be string or nil!")
+    assert(type(title) == "string" or
+           title == nil, "Arg #6 must be string or nil!")
+    assert(type(level) == "number" or
+           level == nil, "Arg #7 must be number or nil!")
     assert(self.trigger, "Quest not registered!")
+
+    if level == nil then
+        level = 0
+    end
 
     self.status = nil -- clear cache
 
-    return self.trigger:AddQuestTarget(unpack(arg))
+    return self.trigger:AddQuestTarget(chance, nrof, arch, name, race, title, level)
 end
 
 -------------------
 -- qm:AddQuestItem() is a wrapper for object:AddQuestItem().
 -------------------
-function QuestManager:AddQuestItem(...)
+function QuestManager:AddQuestItem(nrof, arch, face, name, title)
+    assert(type(nrof) == "number", "Arg #1 must be number!")
+    assert(type(arch) == "string", "Arg #2 must be string!")
+    assert(type(face) == "string", "Arg #3 must be string!")
+    assert(type(name) == "string" or
+           name == nil, "Arg #4 must be string or nil!")
+    assert(type(title) == "string" or
+           title == nil, "Arg #5 must be string or nil!")
     assert(self.trigger, "Quest not registered!")
 
     self.status = nil -- clear cache
 
-    return self.trigger:AddQuestItem(unpack(arg))
+    return self.trigger:AddQuestItem(nrof, arch, face, name, title)
 end
 
 -------------------

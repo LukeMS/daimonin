@@ -327,8 +327,7 @@ function QuestBuilder:AddItemList(nr, ib)
 end
 
 -------------------
--- qb:AddQuestTarget() is a wrapper qm:AddQuestTarget() which is itself
--- a wrapper for object:AddQuestTarget()!
+-- qb:AddQuestTarget() is a wrapper for object:AddQuestTarget().
 -------------------
 function QuestBuilder:AddQuestTarget(nr, chance, nrof, arch, name, race, title, level)
     assert(type(nr) == "number", "Arg #1 must be number!")
@@ -344,32 +343,23 @@ function QuestBuilder:AddQuestTarget(nr, chance, nrof, arch, name, race, title, 
            title == nil, "Arg #7 must be string or nil!")
     assert(type(level) == "number" or
            level == nil, "Arg #8 must be number or nil!")
+    assert(self.current ~= false, "Quest table not built, call qb:Build()!")
+    nr = math.abs(nr)
+    assert(nr >= 1 and
+           nr <= self.total, "Not enough entries in qb table!")
+    assert(self[nr].qm.trigger, "Quest not registered!")
 
     if level == nil then
         level = 0
     end
 
-    assert(self.current ~= false, "Quest table not built, call qb:Build()!")
-    nr = math.abs(nr)
-    assert(nr >= 1 and
-           nr <= self.total, "Not enough entries in qb table!")
+    self[nr].qm.status = nil -- clear cache
 
-    local t = {
-        [1] = chance,
-        [2] = nrof,
-        [3] = arch,
-        [4] = name,
-        [5] = race,
-        [6] = title,
-        [7] = level
-    }
-
-    return self[nr].qm:AddQuestTarget(unpack(t))
+    return self[nr].qm.trigger:AddQuestTarget(chance, nrof, arch, name, race, title, level)
 end
 
 -------------------
--- qb:AddQuestItem() is a wrapper for qm:AddQuestTarget() which is itself
--- a wrapper for object:AddQuestItem()!
+-- qb:AddQuestItem() is a wrapper for object:AddQuestTarget().
 -------------------
 function QuestBuilder:AddQuestItem(nr, nrof, arch, face, name, title)
     assert(type(nr) == "number", "Arg #1 must be number!")
@@ -384,16 +374,11 @@ function QuestBuilder:AddQuestItem(nr, nrof, arch, face, name, title)
     nr = math.abs(nr)
     assert(nr >= 1 and
            nr <= self.total, "Not enough entries in qb table!")
+    assert(self[nr].qm.trigger, "Quest not registered!")
 
-    local t = {
-        [1] = nrof,
-        [2] = arch,
-        [3] = face,
-        [4] = name,
-        [5] = title
-    }
+    self[nr].qm.status = nil -- clear cache
 
-    return self[nr].qm:AddQuestItem(unpack(t))
+    return self[nr].qm.trigger:AddQuestItem(nrof, arch, face, name, title)
 end
 
 -------------------
