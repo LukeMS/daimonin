@@ -571,7 +571,7 @@ void check_kill_quest_event(struct obj *pl, struct obj *op)
         for(tmp_info=tmp->inv;tmp_info;tmp_info=tmp_info->below)
         {
             if ((!tmp_info->race || tmp_info->race == op->arch->name) &&
-                (!tmp_info->name || tmp_info->name == op->name) &&
+                (!tmp_info->name || tmp_info->name == tmp_info->arch->name || tmp_info->name == op->name) &&
                 (!tmp_info->title || tmp_info->title == op->title) &&
                 (!tmp_info->slaying || tmp_info->slaying == op->race) &&
                 (!tmp_info->weight_limit || tmp_info->weight_limit <= op->level))
