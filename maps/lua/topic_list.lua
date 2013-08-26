@@ -224,6 +224,8 @@ function TopicList:AddBackground(trigger, ...)
     end
 
     table.insert(trigger, "background")
+    table.insert(trigger, "you")
+    table.insert(trigger, "yourself")
     self:AddTopics(trigger, action)
 end
 
