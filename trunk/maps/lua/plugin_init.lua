@@ -25,12 +25,18 @@ require("security")
 require("data_store")
 
 -------------------
--- If ../maps/lua/localities.lua exists, require it. This file is only
+-- If ../maps/lua/locality/init.lua exists, require it. This file is only
 -- available with the official maps. It sets up the Locality structure (for
--- rumours, etc).
+-- rumours, etc). If it does not exist, provide some stubs so everything still
+-- works.
 -------------------
 if io.exists("../maps/lua/locality/init.lua") then
     require("locality/init")
+else
+    Locality = {}
+    function Locality.SpreadRumour()
+        return "|[THIS SPACE INTENTIONALLY LEFT BLANK]|"
+    end
 end
 
 --
