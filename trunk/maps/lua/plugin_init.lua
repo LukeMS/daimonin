@@ -24,6 +24,15 @@ end
 require("security")
 require("data_store")
 
+-------------------
+-- If ../maps/lua/localities.lua exists, require it. This file is only
+-- available with the official maps. It sets up the Locality structure (for
+-- rumours, etc).
+-------------------
+if io.exists("../maps/lua/locality/init.lua") then
+    require("locality/init")
+end
+
 --
 -- Tables of gender-specific nouns and pronouns.
 -- Use eg, "blah " .. gender_possessive[obj:GetGender()] .. " item." for "blah his item."
