@@ -24,21 +24,6 @@ end
 require("security")
 require("data_store")
 
--------------------
--- If ../maps/lua/locality/init.lua exists, require it. This file is only
--- available with the official maps. It sets up the Locality structure (for
--- rumours, etc). If it does not exist, provide some stubs so everything still
--- works.
--------------------
-if io.exists("../maps/lua/locality/init.lua") then
-    require("locality/init")
-else
-    Locality = {}
-    function Locality.SpreadRumour()
-        return "|[THIS SPACE INTENTIONALLY LEFT BLANK]|"
-    end
-end
-
 --
 -- Tables of gender-specific nouns and pronouns.
 -- Use eg, "blah " .. gender_possessive[obj:GetGender()] .. " item." for "blah his item."
@@ -281,5 +266,20 @@ function print(...)
     game:Log(game.LOG_INFO, text)
 end
 
+-------------------
+-- If ../maps/lua/locality/init.lua exists, require it. This file is only
+-- available with the official maps. It sets up the Locality structure (for
+-- rumours, etc). If it does not exist, provide some stubs so everything still
+-- works.
+-------------------
+if io.exists("../maps/lua/locality/init.lua") then
+    require("locality/init")
+else
+    Locality = {}
+    function Locality.SpreadRumour()
+        return "|[THIS SPACE INTENTIONALLY LEFT BLANK]|"
+    end
+end
+
 -- Finished with the initialization
-print "    plugin_init.lua loaded successfully"
+print("plugin_init.lua loaded successfully!")
