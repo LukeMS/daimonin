@@ -449,7 +449,7 @@ void new_anim_animate(uint32 curTick)
     Uint32 ts = SDL_GetTicks();
 #endif
     uint8 got_map  = 0;
-    uint8 got_item = 0;
+//    uint8 got_item = 0;
 #ifdef ANIM_FRAMESKIP
     uint32             lasttime;
     uint8 new_face = 0;
@@ -490,7 +490,7 @@ void new_anim_animate(uint32 curTick)
                 case ATYPE_ITEM:
                     ((item *)node->obj)->face =
                         animation[node->animnum].aSeq[node->sequence]->dirs[node->dir].faces[node->current_frame];
-                    got_item = 1;
+//                    got_item = 1;
                 break;
             }
         }
@@ -521,7 +521,7 @@ void new_anim_animate(uint32 curTick)
                 case ATYPE_ITEM:
                     ((item *)node->obj)->face =
                         animation[node->animnum].aSeq[node->sequence]->dirs[node->dir].faces[node->current_frame];
-                    got_item = 1;
+//                    got_item = 1;
                 break;
 
             }
@@ -897,11 +897,11 @@ void NewAnimCmd(unsigned char *data, int len)
     uint8 dir;
     int pos=0, i;
     AnimSeq *as=NULL;
-    int   seqmap[MAX_SEQUENCES];
+//    int   seqmap[MAX_SEQUENCES];
     int   dirmap[9];
 
-    for (i=0;i<MAX_SEQUENCES;i++)
-        seqmap[i]=-1;
+//    for (i=0;i<MAX_SEQUENCES;i++)
+//        seqmap[i]=-1;
 
     memset(dirmap, -1, sizeof(dirmap));
 
@@ -950,7 +950,7 @@ void NewAnimCmd(unsigned char *data, int len)
             }
 
             /* to map forward we need the pointer, which we get later, so lets save for now in a temp array */
-            seqmap[sequence]=mapseq;
+//            seqmap[sequence]=mapseq;
             /* thats all for this sequence */
             continue;
         }
