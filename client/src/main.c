@@ -753,13 +753,13 @@ uint8 game_status_chain(void)
 
             if(!meta_ret)
             {
-                add_metaserver_data("Main", "daimonin.game-server.cc",
+                add_metaserver_data("Main", "188.40.40.149",
                                     DEFAULT_SERVER_PORT, -1, "UNKNOWN",
                                     "Best for simply playing the game");
                 add_metaserver_data("Test", "62.75.168.180",
                                     DEFAULT_SERVER_PORT, -1, "UNKNOWN",
                                     "Best for testing new content (maps), both official and unofficial");
-                add_metaserver_data("Dev", "www.daimonin.org",
+                add_metaserver_data("Dev", "62.75.248.130",
                                     DEFAULT_SERVER_PORT, -1, "UNKNOWN",
                                     "Best for testing new code (features)");
             }
@@ -795,7 +795,7 @@ uint8 game_status_chain(void)
                     break;
 
                 case 1: /* Main */
-                    strcpy(ServerName,"daimonin.game-server.cc");
+                    strcpy(ServerName,"188.40.40.149");
                     ServerPort = argServerPort;
                     GameStatus = GAME_STATUS_STARTCONNECT;
 
@@ -809,7 +809,7 @@ uint8 game_status_chain(void)
                     break;
 
                 case 3: /* Dev */
-                    strcpy(ServerName,"www.daimonin.org");
+                    strcpy(ServerName,"62.75.248.130");
                     ServerPort = argServerPort;
                     GameStatus = GAME_STATUS_STARTCONNECT;
 
