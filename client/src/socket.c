@@ -480,9 +480,9 @@ uint8 SOCKET_CloseSocket(SOCKET fd)
 
 #ifdef __LINUX
     if (shutdown(fd, SHUT_RDWR))
-        perror("shutdown");
+        LOG(LOG_ERROR, "shutdown: %s\n", strerror(errno));
     if (close(fd))
-        perror("close");
+        LOG(LOG_ERROR, "close: %s\n", strerror(errno));
 #else
     shutdown(fd, 2);
     closesocket(fd);
@@ -696,19 +696,19 @@ uint8 SOCKET_OpenSocket(SOCKET *socket_temp, char *host, int port)
     struct protoent *protox;
     struct sockaddr_in  insock;
 
-    printf("Opening to %s %i\n", host, port);
+    LOG(LOG_MSG, "Opening to %s %i\n", host, port);
     protox = getprotobyname("tcp");
 
     if (protox == (struct protoent *) NULL)
     {
-        fprintf(stderr, "Error getting protobyname (tcp)\n");
+        LOG(LOG_ERROR, "Error getting protobyname (tcp)\n");
         return 0;
     }
     *socket_temp = socket(PF_INET, SOCK_STREAM, protox->p_proto);
 
     if (*socket_temp == -1)
     {
-        perror("init_connection:  Error on socket command.\n");
+        LOG(LOG_ERROR, "init_connection: Error on socket command.: %s\n", strerror(errno));
         *socket_temp = SOCKET_NO;
         return 0;
     }
@@ -722,7 +722,7 @@ uint8 SOCKET_OpenSocket(SOCKET *socket_temp, char *host, int port)
         struct hostent *hostbn  = gethostbyname(host);
         if (hostbn == (struct hostent *) NULL)
         {
-            fprintf(stderr, "Unknown host: %s\n", host);
+            LOG(LOG_ERROR, "Unknown host: %s\n", host);
             return 0;
         }
         memcpy(&insock.sin_addr, hostbn->h_addr, hostbn->h_length);
@@ -744,7 +744,7 @@ uint8 SOCKET_OpenSocket(SOCKET *socket_temp, char *host, int port)
         /* timeout.... without connect will REALLY hang a long time */
         if (start_timer + SOCKET_TIMEOUT_MS < SDL_GetTicks())
         {
-            perror("Can't connect to server");
+            LOG(LOG_ERROR, "Can't connect to server: %s\n", strerror(errno));
             *socket_temp = SOCKET_NO;
             return(0);
         }
@@ -761,7 +761,7 @@ struct addrinfo hints;
 struct addrinfo *res = NULL, *ai;
 char port_str[6], hostaddr[40];
 
-printf("Opening to %s %i\n", host, port);
+LOG(LOG_MSG, "Opening to %s %i\n", host, port);
 
 snprintf(port_str, sizeof(port_str), "%d", port);
 
@@ -778,7 +778,7 @@ if (getaddrinfo(host, port_str, &hints, &res) != 0)
 for (ai = res; ai != NULL; ai = ai->ai_next)
 {
     getnameinfo(ai->ai_addr, ai->ai_addrlen, hostaddr, sizeof(hostaddr), NULL, 0, NI_NUMERICHOST);
-    printf("  trying %s\n", hostaddr);
+    LOG(LOG_MSG, "  trying %s\n", hostaddr);
 
     *socket_temp = socket(ai->ai_family, ai->ai_socktype, ai->ai_protocol);
     if (*socket_temp == -1)
@@ -822,7 +822,7 @@ next_try:
 freeaddrinfo(res);
 if (*socket_temp == SOCKET_NO)
 {
-    perror("Can't connect to server");
+    LOG(LOG_ERROR, "Can't connect to server: %s\n", strerror(errno));
     return 0;
 }
 #endif
