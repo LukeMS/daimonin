@@ -1085,17 +1085,29 @@ MODULEAPI void init_Daimonin_Lua()
             /* See if we got an error handler? */
             lua_pushliteral(global_state, "_error");
             lua_rawget(global_state, LUA_GLOBALSINDEX);
+
             if(lua_isfunction(global_state, -1))
+            {
                 error_handler_ref = luaL_ref(global_state, LUA_REGISTRYINDEX);
+            }
             else
+            {
                 lua_pop(global_state, 1);
-        } else
-            lua_pop(global_state, 1);
+            }
+
+            LOG(llevSystem, "    Plugin init... OK!\n");
+        }
     }
-    else
+
+    if (res != 0)
     {
-        if (lua_tostring(global_state, -1))
-            LOG(llevDebug, "LUA - %s\n", lua_tostring(global_state, -1));
+        const char *cp = lua_tostring(global_state, -1);
+
+        if (cp)
+        {
+            LOG(llevSystem, "    Plugin init... FAILED (%s)!\n", cp);
+        }
+
         lua_pop(global_state, 1);
     }
 
