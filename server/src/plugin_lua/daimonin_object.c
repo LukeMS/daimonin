@@ -1847,28 +1847,72 @@ static int GameObject_Write(lua_State *L)
 /*****************************************************************************/
 /* Name   : GameObject_GetGender                                             */
 /* Lua    : object:GetGender()                                               */
-/* Info   : Gets the gender of object. Returns game.NEUTER, game.MALE,       */
-/*          game.FEMALE, or game.HERMAPHRODITE.                              */
+/* Info   : Gets the gender of object. Returns five values: an integer and   */
+/*          and four strings (the noun, objective pronoun, subjective pronoun*/
+/*          and possessive pronoun for that gender). So the possibilities are*/
+/*              game.NEUTER, "neuter", "it", "it", "its"                     */
+/*              game.MALE, "male", "he", "him", "his"                        */
+/*              game.FEMALE, "female", "she", "her", "her"                   */
+/*              game.HERMAPHRODITE, "hermaphrodite", "they", "them, "their"  */
 /* Status : Tested/Stable                                                    */
 /*****************************************************************************/
 static int GameObject_GetGender(lua_State *L)
 {
-    int         gender;
-    lua_object *self;
+    lua_object  *self;
+    int          gender;
+    static char *noun,
+                *obje,
+                *subj,
+                *poss;
 
     get_lua_args(L, "O", &self);
 
-    if (!QUERY_FLAG(WHO, FLAG_IS_MALE) && !QUERY_FLAG(WHO, FLAG_IS_FEMALE))
-        gender = 0; // neuter
-    else if (QUERY_FLAG(WHO, FLAG_IS_MALE) && !QUERY_FLAG(WHO, FLAG_IS_FEMALE))
-        gender = 1; // male
-    else if (!QUERY_FLAG(WHO, FLAG_IS_MALE) && QUERY_FLAG(WHO, FLAG_IS_FEMALE))
-        gender = 2; // female
-    else // if (QUERY_FLAG(WHO, FLAG_IS_MALE) && QUERY_FLAG(WHO, FLAG_IS_FEMALE))
-        gender = 3; // hermaphrodite
+    if (!QUERY_FLAG(WHO, FLAG_IS_FEMALE))
+    {
+        if (!QUERY_FLAG(WHO, FLAG_IS_MALE))
+        {
+            gender = 0;
+            noun = "neuter";
+            obje = "it";
+            subj = "it";
+            poss = "its";
+        }
+        else
+        {
+            gender = 1;
+            noun = "male";
+            obje = "he";
+            subj = "him";
+            poss = "his";
+        }
+    }
+    else
+    {
+         if (!QUERY_FLAG(WHO, FLAG_IS_MALE))
+        {
+            gender = 2;
+            noun = "female";
+            obje = "she";
+            subj = "her";
+            poss = "her";
+        }
+        else
+        {
+            gender = 3;
+            noun = "hermaphrodite";
+            obje = "they";
+            subj = "them";
+            poss = "their";
+        }
+    }
 
     lua_pushnumber(L, gender);
-    return 1;
+    lua_pushstring(L, noun);
+    lua_pushstring(L, obje);
+    lua_pushstring(L, subj);
+    lua_pushstring(L, poss);
+
+    return 5;
 }
 
 /*****************************************************************************/
