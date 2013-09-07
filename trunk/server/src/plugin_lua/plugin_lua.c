@@ -540,7 +540,7 @@ MODULEAPI int HandleGlobalEvent(CFParm *PParm)
 
         case EVENT_LOGOUT:
             memcpy(&parm, PParm, sizeof(parm));
-            parm.Value[9] = "/lua/event_logout.lua";
+            parm.Value[9] = "/lua/plugin/event_logout.lua";
             HandleEvent(&parm);
             break;
 
