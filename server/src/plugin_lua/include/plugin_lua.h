@@ -59,7 +59,7 @@
 #define PLUGIN_VERSION "Daimonin Lua Plugin 0.1"
 
 #define LUA_PATH "/lua"
-#define LUA_INITSCRIPT "/lua/plugin_init.lua"
+#define LUA_INITSCRIPT "/lua/plugin/init.lua"
 
 /* The plugin properties and hook functions. A hook function is a pointer to */
 /* a CF function wrapper. Basically, most CF functions that could be of any  */
