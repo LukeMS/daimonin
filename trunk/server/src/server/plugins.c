@@ -950,10 +950,12 @@ CFParm * CFWUpdateSpeed(CFParm *PParm)
 /* 0 - object to increase experience of.                                     */
 /* 1 - amount of experience to add.                                          */
 /* 2 - Skill number to add xp in                                             */
+/* 3 - impose server capv or not                                             */
 /*****************************************************************************/
 CFParm * CFWAddExp(CFParm *PParm)
 {
-    add_exp((object *) (PParm->Value[0]), *(int *) (PParm->Value[1]), *(int *) (PParm->Value[2]));
+    add_exp((object *) (PParm->Value[0]), *(int *) (PParm->Value[1]),
+             *(int *) (PParm->Value[2]), *(int *) (PParm->Value[3]));
     return(PParm);
 }
 

@@ -358,12 +358,11 @@ void init_new_exp_system()
  * add_exp() and adjust_exp(). Its now much faster, easier and more accurate. MT
  * exp lose by dead is handled from apply_death_exp_penalty().
  */
-sint32 add_exp(object *op, int exp, int skill_nr)
+sint32 add_exp(object *op, int exp, int skill_nr, int cap)
 {
     object *exp_ob      = NULL;    /* the exp. object into which experience will go */
     object *exp_skill   = NULL; /* the real skill object */
     /*    int del_exp=0; */
-    int     limit       = 0;
 
     /*LOG(llevBug,"ADD: add_exp() called for $d!\n", exp); */
     /* safety */
@@ -410,10 +409,12 @@ sint32 add_exp(object *op, int exp, int skill_nr)
     }
 
     /* General adjustments for playbalance */
-    /* I set limit to 1/4 of a level - thats enormous much */
-    limit = (new_levels[exp_skill->level + 1] - new_levels[exp_skill->level]) / 4;
-    if (exp > limit)
-        exp = limit;
+    if (cap)
+    {
+        /* I set limit to 1/4 of a level - thats enormous much */
+        exp  = MIN(exp,
+                   (new_levels[exp_skill->level + 1] - new_levels[exp_skill->level]) / 4);
+    }
 
     exp = adjust_exp(op, exp_skill, exp);   /* first we see what we can add to our skill */
 

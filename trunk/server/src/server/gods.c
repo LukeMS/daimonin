@@ -1039,6 +1039,6 @@ void lose_priest_exp(object *pl, int loss)
         return;
       }
       if((loss = check_dm_add_exp_to_obj(pl->chosen_skill->exp_obj,loss)))
-        add_exp(pl,-loss,pl->chosen_skill->stats.sp);
+        add_exp(pl,-loss,pl->chosen_skill->stats.sp, 1);
     */
 }

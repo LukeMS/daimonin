@@ -1621,7 +1621,7 @@ static void ApplyBook(object *op, object *tmp)
             SET_FLAG(tmp, FLAG_IDENTIFIED);
             esrv_update_item(UPD_FLAGS | UPD_NAME, tmp);
         }
-        /*add_exp(op,exp_gain,op->chosen_skill->stats.sp);*/
+        /*add_exp(op,exp_gain,op->chosen_skill->stats.sp, 1);*/
         SET_FLAG(tmp, FLAG_NO_SKILL_IDENT); /* so no more xp gained from this book */
     }
 }
@@ -1839,7 +1839,7 @@ static void ApplySpellbook(object *op, object *tmp)
 
         /* xp gain to literacy for spell learning */
         if (!QUERY_FLAG(tmp, FLAG_STARTEQUIP))
-            add_exp(op, calc_skill_exp(op, tmp, 1.0f,-1, NULL), op->chosen_skill->stats.sp);
+            add_exp(op, calc_skill_exp(op, tmp, 1.0f,-1, NULL), op->chosen_skill->stats.sp, 1);
     }
     else
     {

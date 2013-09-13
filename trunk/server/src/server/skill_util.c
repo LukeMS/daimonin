@@ -359,7 +359,7 @@ int do_skill(object *op, int dir, char *string)
      */
 
     if (success && skills[skill].category < NROFSKILLGROUPS_ACTIVE)
-        add_exp(op, success, op->chosen_skill->stats.sp);
+        add_exp(op, success, op->chosen_skill->stats.sp, 1);
 
     return success;
 }
