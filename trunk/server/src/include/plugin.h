@@ -243,6 +243,7 @@ struct plugin_hooklist
 {
     /* FUNCTIONS */
     /* A */
+    sint32 (*add_exp)(object *, int, int, int);
     int (*add_item_buff)(object *, object *, short);
     void (*add_money_to_player)(object *, int, int, int, int);
     int (*add_pet)(object *, object *, int);
@@ -427,6 +428,7 @@ struct plugin_hooklist
     int *global_darkness_table;
     long *global_instance_id;
     New_Face **new_faces;
+    sint32 *new_levels;
     unsigned long *pticks;
     uint32 *pticks_second;
     Settings *settings;

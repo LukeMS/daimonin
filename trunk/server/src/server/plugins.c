@@ -36,6 +36,7 @@ struct plugin_hooklist  hooklist    =
 {
     /* FUNCTIONS */
     /* A */
+    add_exp,
     add_item_buff,
     add_money_to_player,
     add_pet,
@@ -196,6 +197,7 @@ struct plugin_hooklist  hooklist    =
     global_darkness_table,
     &global_instance_id,
     &new_faces,
+    new_levels,
     &pticks,
     &pticks_second,
     &settings,
