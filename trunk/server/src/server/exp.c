@@ -440,6 +440,15 @@ sint32 add_exp(object *op, int exp, int skill_nr, int cap)
         op->exp_obj = NULL;
 
     FIX_PLAYER(op, "add_exp" );
+
+     /* If ->level < ->last_heal, this means sufficient exp loos to cause
+      * level loss has occurred so give the player a break and reset
+      * ->last_heal, meaning he can gain script experience again. */
+    if (exp_skill->level < exp_skill->last_heal)
+    {
+        exp_skill->last_heal = 0;
+    }
+
     return (sint32) exp; /* thats the real exp we have added to our skill */
 }
 
