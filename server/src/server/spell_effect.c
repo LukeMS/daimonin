@@ -3841,7 +3841,7 @@ void move_peacemaker(object *op)
         {
             /* make this sucker peaceful. */
             victim->stats.dam = 0;
-            add_exp(op->owner, victim->stats.exp, op->chosen_skill->stats.sp);
+            add_exp(op->owner, victim->stats.exp, op->chosen_skill->stats.sp, 1);
             victim->stats.exp = 0;
             victim->stats.sp = 0;
             victim->stats.grace = 0;

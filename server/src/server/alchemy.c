@@ -167,7 +167,7 @@ void attempt_do_alchemy(object *caster, object *cauldron)
                     {
                         /* more exp is given for higher ingred number recipes */
                         int amount  = numb *numb *calc_skill_exp(caster, item, 1.0f, -1, NULL);
-                        add_exp(caster, amount, SK_ALCHEMY);
+                        add_exp(caster, amount, SK_ALCHEMY, 1);
                         item->stats.exp = 0; /* so when skill id this item, less xp is awarded */
 #ifdef EXTREME_ALCHEMY_DEBUG
                         LOG(llevDebug, "%s gains %d experience points.\n", caster->name, amount);
