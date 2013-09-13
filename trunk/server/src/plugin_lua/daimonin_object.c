@@ -1222,8 +1222,25 @@ static int GameObject_GetSkill(lua_State *L)
 /*          different level. This means player's cannot exploit scripts to   */
 /*          constantly gain experience; scripts augment normal grinding.     */
 /*                                                                           */
-/*          Three values are returned: the skill object; the level gain/loss;*/
-/*          the exp gain/loss.                                               */
+/*          Various major problems with the arguments generate Lua errors    */
+/*          (such as if object is not a player or nr is negative).           */
+/*                                                                           */
+/*          Otherwise, four values are returned: a number representing       */
+/*          success or failure (see below); the skill object or nil; a number*/
+/*          (the level gain/loss; a number (the exp gain/loss).              */
+/*                                                                           */
+/*          This first return is one of:                                     */
+/*              0 - success;                                                 */
+/*              1 - failure (nr is greater than the available                */
+/*                  skill(group)s on this server);                           */
+/*              2 - failure (the player has no such skill);                  */
+/*              3 - failure (the skill is non-levelling);                    */
+/*              4 - failure (the skill is indirect and has already gained    */
+/*                  experience via this method this level).                  */
+/*                                                                           */
+/*          On any failure, level and exp return as 0. On success they are   */
+/*          the actual amounts gained/lost (so may be different than the     */
+/*          arguments going in).                                             */
 /* Status : Untested/Stable                                                  */
 /*****************************************************************************/
 static int GameObject_SetSkill(lua_State *L)
@@ -1235,6 +1252,7 @@ static int GameObject_SetSkill(lua_State *L)
                 exp;
     player     *pl;
     object     *skill;
+    int         failure = 0;
 
     if (lua_isnumber(L, 2))
     {
@@ -1253,35 +1271,46 @@ static int GameObject_SetSkill(lua_State *L)
         !(pl = CONTR(WHO)))
     {
         luaL_error(L, "object:SetSkill(): Can only be called on a player!");
-
         return 0;
     }
 
     switch (type)
     {
         case SKILL:
-            if (nr >= 0 &&
-                nr <= NROFSKILLS)
+            if (nr < 0)
+            {
+                luaL_error(L, "object:SetSkill(): nr must be >= 0!");
+                return 0;
+            }
+            else if (nr <= NROFSKILLS)
             {
                 skill = pl->skill_ptr[nr];
             }
+            /* If the nr is higher than the max on this server, return 1, nil,
+             * 0, 0. */
             else
             {
-                luaL_error(L, "object:SetSkill(): No such skill!");
-                return 0;
+                failure = 1;
+                level = exp = 0;
             }
             break;
 
         case EXPERIENCE:
-            if (nr >= 0 &&
-                nr <= NROFSKILLGROUPS)
+            if (nr < 0)
+            {
+                luaL_error(L, "object:SetSkill(): nr must be >= 0!");
+                return 0;
+            }
+            else if (nr <= NROFSKILLGROUPS)
             {
                 skill = pl->highest_skill[nr];
             }
+            /* If the nr is higher than the max on this server, return 1, nil,
+             * 0, 0. */
             else
             {
-                luaL_error(L, "object:SetSkill(): No such skill group!");
-                return 0;
+                failure = 1;
+                level = exp = 0;
             }
             break;
 
@@ -1290,9 +1319,10 @@ static int GameObject_SetSkill(lua_State *L)
             return 0;
     }
 
-    /* If the player does not even have this skill, return nil, 0, 0. */
+    /* If the player does not even have this skill, return 2, nil, 0, 0. */
     if (!skill)
     {
+        failure = 2;
         level = exp = 0;
     }
     else
@@ -1301,9 +1331,10 @@ static int GameObject_SetSkill(lua_State *L)
         level = MAX(-1, MIN(level, 1));
 
         /* If a SKILL object has ->last_eat == 0, it cannot be levelled; it is
-         * boolean. */
+         * boolean. Return 3, skill, 0, 0. */
         if (skill->last_eat == 0)
         {
+            failure = 3;
             level = exp = 0;
         }
         /* If ->last_eat == 1, it is levelled indirectly (accumulates
@@ -1315,10 +1346,11 @@ static int GameObject_SetSkill(lua_State *L)
              * experience via a script this level so the player will have to go
              * back to normal grinding for experience until next level. This
              * prevents scripts being exploited too much to gain
-             * mega-levels. */
+             * mega-levels. Return 4, skill, 0, 0. */
             if (skill->last_heal == skill->level &&
                 (level > 0 || (level == 0 && exp > 0)))
             {
+                failure = 4;
                 level = exp = 0;
             }
             else
@@ -1376,10 +1408,11 @@ static int GameObject_SetSkill(lua_State *L)
         }
     }
 
+    lua_pushnumber(L, failure);
     push_object(L, &GameObject, skill);
     lua_pushnumber(L, level);
     lua_pushnumber(L, exp);
-    return 3;
+    return 4;
 }
 
 /*****************************************************************************/
