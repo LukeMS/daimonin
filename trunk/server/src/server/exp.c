@@ -384,6 +384,14 @@ sint32 add_exp(object *op, int exp, int skill_nr, int cap)
             query_name(op), exp);
         return 0;
     }
+    else if (skill_nr < 0 ||
+             skill_nr >= NROFSKILLS)
+    {
+        LOG(llevInfo, "INFO:: %s/add_exp(): called for %s[%d] with exp %d. No such skill (%d)!\n",
+           __FILE__, STRING_OBJ_NAME(op), TAG(op), exp, skill_nr);
+        return 0;
+    }
+
 
     /* now we grap the skill exp. object from the player shortcut ptr array */
     exp_skill = CONTR(op)->skill_ptr[skill_nr];
