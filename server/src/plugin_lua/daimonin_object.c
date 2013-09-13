@@ -1191,65 +1191,195 @@ static int GameObject_GetSkill(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : GameObject_SetSkill                                              */
-/* Lua    : object:SetSkill(type, skillid, level, value)                     */
-/* Info   : Sets objects's experience in the skill skillid as close to value */
-/*          as permitted. There is currently a limit of 1/4 of a level.      */
-/*          There's no limit on exp reduction.                               */
-/*          FIXME overall experience is not changed (should it be?)          */
-/*          FIXME need updated documentation                                 */
-/* Status : Tested/Stable                                                    */
+/* Lua    : object:SetSkill(type, nr, level, exp)                            */
+/*          object:SetSkill(name, level, exp)                                */
+/* Info   : Tries to change a skill's experience and/or level.               */
+/*                                                                           */
+/*          The type argument must be either game.TYPE_SKILL for a particular*/
+/*          skill or game.TYPE_EXPERIENCE for a skill group. nr must be a    */
+/*          legal value accordingly. If type is EXPERIENCE this translates to*/
+/*          the player's best skill in that skill group.                     */
+/*                                                                           */
+/*          For particular skiils, the second form of call may be used where */
+/*          the string name is internally translated into a skill number.    */
+/*                                                                           */
+/*          The level and exp are arguments are what you'd expect. Note that */
+/*          these (a) are relative (so X means the skill *gains* X, (b) may  */
+/*          be negative (loss is a possible as gain, and (c) limited (a skill*/
+/*          may gain to no more than the threshold of the next level or lose */
+/*          to no more than 1 exp under the threshold of the current level or*/
+/*          gain/lose no more than 1 level).                                 */
+/*                                                                           */
+/*          There are 3 varieties of skill: non-leveling skills do not       */
+/*          gain/lose levels or exp (you either have them or you don't, eg,  */
+/*          common literacy); direct skills gain/lose levels directly (eg,   */
+/*          find traps); indirect skills accumulate exp which means the skill*/
+/*          gains/loses levels as the total crosses certain thresholds (eg,  */
+/*          punching).                                                       */
+/*                                                                           */
+/*          When an indirect skill gains any amount of exp via this method,  */
+/*          cannot subsequently gain more exp via a script until it reaches a*/
+/*          different level. This means player's cannot exploit scripts to   */
+/*          constantly gain experience; scripts augment normal grinding.     */
+/*                                                                           */
+/*          Three values are returned: the skill object; the level gain/loss;*/
+/*          the exp gain/loss.                                               */
+/* Status : Untested/Stable                                                  */
 /*****************************************************************************/
 static int GameObject_SetSkill(lua_State *L)
 {
-    object     *tmp;
-    int         type, skill, value, level, currentxp;
     lua_object *self;
+    int         type,
+                nr,
+                level,
+                exp;
+    player     *pl;
+    object     *skill;
 
-    get_lua_args(L, "Oiiii", &self, &type, &skill, &level, &value);
-
-    /* atm we don't set anything in exp_obj types */
-    if (type != SKILL)
-        return 0;
-
-    SET_FLAG(WHO, FLAG_FIX_PLAYER);
-    /* Browse the inventory of object to find a matching skill. */
-    for (tmp = WHO->inv; tmp; tmp = tmp->below)
+    if (lua_isnumber(L, 2))
     {
-        if (tmp->type == type && tmp->stats.sp == skill)
-        {
-            /* this is a bit tricky: some skills are marked with exp
-                     * -1 or -2 as special used skills (level but no exp):
-                     * if we have here a level > 0, we set level but NEVER
-                     * exp ... if we have level == 0, we only set exp - the
-                     * addexp
-                     */
-            /*LOG(-1,"LEVEL1 %d (->%d) :: %s (exp %d)\n",tmp->level,level,STRING_OBJ_NAME(tmp), tmp->stats.exp);*/
-            if (level > 0)
+        get_lua_args(L, "Oiiii", &self, &type, &nr, &level, &exp);
+    }
+    else
+    {
+        char *name;
+
+        get_lua_args(L, "Osii", &self, name, &level, &exp);
+        type = SKILL;
+        nr = hooks->lookup_skill_by_name(name);
+    }
+
+    if (WHO->type != PLAYER ||
+        !(pl = CONTR(WHO)))
+    {
+        luaL_error(L, "object:SetSkill(): Can only be called on a player!");
+
+        return 0;
+    }
+
+    switch (type)
+    {
+        case SKILL:
+            if (nr >= 0 &&
+                nr <= NROFSKILLS)
             {
-                tmp->level = level;
+                skill = pl->skill_ptr[nr];
             }
             else
             {
-                /* Gecko: Changed to use actual skill experience */
-                CFParm CFP;
-                currentxp = tmp->stats.exp;
-                value = value - currentxp;
-
-                CFP.Value[0] = (void *) (WHO);
-                CFP.Value[1] = (void *) (&value);
-                CFP.Value[2] = (void *) (&skill);
-                (PlugHooks[HOOK_ADDEXP]) (&CFP);
+                luaL_error(L, "object:SetSkill(): No such skill!");
+                return 0;
             }
-            /*LOG(-1,"LEVEL2 %d (->%d) :: %s (exp %d)\n",tmp->level,level,STRING_OBJ_NAME(tmp), tmp->stats.exp);*/
-            if (WHO->type == PLAYER && CONTR(WHO))
-                CONTR(WHO)->update_skills = 1; /* we will sure change skill exp, mark for update */
+            break;
 
+        case EXPERIENCE:
+            if (nr >= 0 &&
+                nr <= NROFSKILLGROUPS)
+            {
+                skill = pl->highest_skill[nr];
+            }
+            else
+            {
+                luaL_error(L, "object:SetSkill(): No such skill group!");
+                return 0;
+            }
+            break;
+
+        default:
+            luaL_error(L, "object:SetSkill(): Wrong type!!");
+            return 0;
+    }
+
+    /* If the player does not even have this skill, return nil, 0, 0. */
+    if (!skill)
+    {
+        level = exp = 0;
+    }
+    else
+    {
+        /* Scripts can change a max of 1 level, up or down. */
+        level = MAX(-1, MIN(level, 1));
+
+        /* If a SKILL object has ->last_eat == 0, it cannot be levelled; it is
+         * boolean. */
+        if (skill->last_eat == 0)
+        {
+            level = exp = 0;
+        }
+        /* If ->last_eat == 1, it is levelled indirectly (accumulates
+         * experience which causes level gain/loss when it crosses certain
+         * thresholds). */
+        else if (skill->last_eat == 1)
+        {
+            /* If ->last_heal == ->level, this means it has already gained some
+             * experience via a script this level so the player will have to go
+             * back to normal grinding for experience until next level. This
+             * prevents scripts being exploited too much to gain
+             * mega-levels. */
+            if (skill->last_heal == skill->level &&
+                (level > 0 || (level == 0 && exp > 0)))
+            {
+                level = exp = 0;
+            }
+            else
+            {
+                /* Exp loss is limited to 1 point below the threshold for the current
+                 * level, and gain to the threshold for the next level. */
+                int lo = (hooks->new_levels[skill->level] - 1) - skill->stats.exp,
+                    hi = hooks->new_levels[skill->level + 1] - skill->stats.exp;
+
+                if (level > 0)
+                {
+                    exp = hi;
+                }
+                else if (level < 0)
+                {
+                    exp = lo;
+                }
+                else
+                {
+                    exp = MAX(lo, MIN(exp, hi));
+                }
+
+                level = skill->level;
+                exp = hooks->add_exp(WHO, exp, nr, 0);
+                level = skill->level - level;
+
+                if (exp >= 1)
+                {
+                    skill->last_heal = skill->level;
+                }
+            }
+        }
+        /* If ->last_eat == 2, it is levelled directly (does not accumulate
+         * experience in the normal way but gaisn/loses levels directly). */
+        else if (skill->last_eat == 2)
+        {
+            /* Level == 0? As this is a direct skill we must translate exp into
+             * levels. */
+            if (!level)
+            {
+                level = MAX(-1, MIN(exp, 1));
+            }
+
+            exp = 0;
+            skill->level += level;
+            pl->update_skills = 1;
+            SET_FLAG(WHO, FLAG_FIX_PLAYER);
+        }
+        else
+        {
+            LOG(llevDebug, "DEBUG:: Skill (%d) with unhandled last_eat (%d)!\n",
+                nr, skill->last_eat);
+            luaL_error(L, "object:SetSkill(): Bad skill!");
             return 0;
         }
     }
 
-    luaL_error(L, "Unknown skill");
-    return 0;
+    push_object(L, &GameObject, skill);
+    lua_pushnumber(L, level);
+    lua_pushnumber(L, exp);
+    return 3;
 }
 
 /*****************************************************************************/
