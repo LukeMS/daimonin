@@ -1186,40 +1186,7 @@ int command_setskill(object *op, char *params)
         return COMMANDS_RTN_VAL_OK;
     }
 
-    if (!exp_skill) /* safety check */
-    {
-        /* our player don't have this skill?
-         * This can happens when group exp is devided.
-         * We must get a useful sub or we skip the exp.
-         */
-        new_draw_info(NDI_UNIQUE, 0, op, "No such skill!");
-        LOG(llevDebug, "TODO: command_setskill(): called for %s with skill nr %d / %d level - object has not this skill.\n",
-            query_name(op), snr, level);
-
-        return COMMANDS_RTN_VAL_ERROR; /* TODO: groups comes later  - now we skip all times */
-    }
-
-    pl->update_skills = 1; /* we will sure change skill exp, mark for update */
-    exp_ob = exp_skill->exp_obj;
-
-    if (!exp_ob)
-    {
-        LOG(llevBug, "BUG: add_exp() skill:%s - no exp_op found!!\n",
-            query_name(exp_skill));
-
-        return COMMANDS_RTN_VAL_ERROR;
-    }
-
-    exp_skill->level = level;
-    exp_skill->stats.exp =  new_levels[level] - 1;
-
-    /* adjust_exp has adjust the skill and all exp_obj and player exp */
-    /* now lets check for level up in all categories */
-    adjust_exp(op, exp_skill, 1); /* we add one more so we get a clean call here */
-    player_lvl_adj(op, exp_skill, TRUE);
-    player_lvl_adj(op, exp_ob, TRUE);
-    player_lvl_adj(op, NULL, TRUE);
-    FIX_PLAYER(op, "setskill");
+    (void)add_exp(op, new_levels[level] - exp_skill->stats.exp, snr, 0);
 
     return COMMANDS_RTN_VAL_OK;
 }
@@ -1259,36 +1226,8 @@ int command_addexp(object *op, char *params)
         return COMMANDS_RTN_VAL_ERROR;
     }
 
-    if (!(exp_skill = pl->skill_ptr[snr])) /* safety check */
-    {
-        /* our player don't have this skill?
-         * This can happens when group exp is devided.
-         * We must get a useful sub or we skip the exp.
-         */
-        LOG(llevDebug, "TODO: add_exp(): called for %s with skill nr %d / %d exp - object has not this skill.\n",
-            query_name(pl->ob), snr, exp);
+    (void)add_exp(op, exp, snr, 0);
 
-        return COMMANDS_RTN_VAL_ERROR; /* TODO: groups comes later  - now we skip all times */
-    }
-
-    pl->update_skills = 1; /* we will sure change skill exp, mark for update */
-
-    if (!(exp_ob = exp_skill->exp_obj))
-    {
-        LOG(llevBug, "BUG: add_exp() skill:%s - no exp_op found!!\n",
-            query_name(exp_skill));
-
-        return COMMANDS_RTN_VAL_ERROR;
-    }
-
-    exp = adjust_exp(pl->ob, exp_skill, exp);   /* first we see what we can add to our skill */
-
-    /* adjust_exp has adjust the skill and all exp_obj and player exp */
-    /* now lets check for level up in all categories */
-    player_lvl_adj(pl->ob, exp_skill, TRUE);
-    player_lvl_adj(pl->ob, exp_ob, TRUE);
-    player_lvl_adj(pl->ob, NULL, TRUE);
-    FIX_PLAYER(pl->ob, "addexp");
     return COMMANDS_RTN_VAL_OK;
 }
 
