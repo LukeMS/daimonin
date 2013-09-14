@@ -503,37 +503,38 @@ static int GameObject_setAttribute(lua_State *L, lua_object *obj, struct attribu
     object *who = obj->data.object;
     object *pl = hooks->is_player_inv(who);
 
-    /* Pre-setting hook -- is this necessary? */
+    /* Pre-setting hook */
     if (before)
     {
-        ;
     }
-
-    /* recalculate carrying when a script changes an inventory object's
-     * weight */
-    if (attrib->offset == offsetof(object, weight) && pl)
-        pl->carrying = hooks->sum_weight(pl);
-
-    /* Special handling for some player stuff */
-    if (who->type == PLAYER)
+    else
     {
-        if (attrib->offset == offsetof(object, stats.Int))
-            CONTR(who)->orig_stats.Int = (sint8) lua_tonumber(L, -1);
-        else if (attrib->offset == offsetof(object, stats.Str))
-            CONTR(who)->orig_stats.Str = (sint8) lua_tonumber(L, -1);
-        else if (attrib->offset == offsetof(object, stats.Cha))
-            CONTR(who)->orig_stats.Cha = (sint8) lua_tonumber(L, -1);
-        else if (attrib->offset == offsetof(object, stats.Wis))
-            CONTR(who)->orig_stats.Wis = (sint8) lua_tonumber(L, -1);
-        else if (attrib->offset == offsetof(object, stats.Dex))
-            CONTR(who)->orig_stats.Dex = (sint8) lua_tonumber(L, -1);
-        else if (attrib->offset == offsetof(object, stats.Con))
-            CONTR(who)->orig_stats.Con = (sint8) lua_tonumber(L, -1);
-        else if (attrib->offset == offsetof(object, stats.Pow))
-            CONTR(who)->orig_stats.Pow = (sint8) lua_tonumber(L, -1);
+        /* recalculate carrying when a script changes an inventory object's
+         * weight */
+        if (attrib->offset == offsetof(object, weight) && pl)
+            pl->carrying = hooks->sum_weight(pl);
 
-        if (attrib->flags & FIELDFLAG_PLAYER_FIX)
-            hooks->FIX_PLAYER(who, "LUA - set attribute");
+        /* Special handling for some player stuff */
+        if (who->type == PLAYER)
+        {
+            if (attrib->offset == offsetof(object, stats.Int))
+                CONTR(who)->orig_stats.Int = (sint8) lua_tonumber(L, -1);
+            else if (attrib->offset == offsetof(object, stats.Str))
+                CONTR(who)->orig_stats.Str = (sint8) lua_tonumber(L, -1);
+            else if (attrib->offset == offsetof(object, stats.Cha))
+                CONTR(who)->orig_stats.Cha = (sint8) lua_tonumber(L, -1);
+            else if (attrib->offset == offsetof(object, stats.Wis))
+                CONTR(who)->orig_stats.Wis = (sint8) lua_tonumber(L, -1);
+            else if (attrib->offset == offsetof(object, stats.Dex))
+                CONTR(who)->orig_stats.Dex = (sint8) lua_tonumber(L, -1);
+            else if (attrib->offset == offsetof(object, stats.Con))
+                CONTR(who)->orig_stats.Con = (sint8) lua_tonumber(L, -1);
+            else if (attrib->offset == offsetof(object, stats.Pow))
+                CONTR(who)->orig_stats.Pow = (sint8) lua_tonumber(L, -1);
+
+            if (attrib->flags & FIELDFLAG_PLAYER_FIX)
+                hooks->FIX_PLAYER(who, "LUA - set attribute");
+        }
     }
 
     return 0;

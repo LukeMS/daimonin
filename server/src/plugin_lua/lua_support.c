@@ -316,7 +316,12 @@ static int set_attribute(lua_State *L, lua_object *obj, struct attribute_decl *a
 
     /* Call any class hooks */
     if (obj->class->setAttribute_Hook)
-        obj->class->setAttribute_Hook(L, obj, attrib, 1);
+    {
+        if (obj->class->setAttribute_Hook(L, obj, attrib, 1))
+        {
+            return 1;
+        }
+    }
 
     /* First check type */
     switch (attrib->type)
