@@ -1263,7 +1263,7 @@ static int GameObject_SetSkill(lua_State *L)
     {
         char *name;
 
-        get_lua_args(L, "Osii", &self, name, &level, &exp);
+        get_lua_args(L, "Osii", &self, &name, &level, &exp);
         type = SKILL;
         nr = hooks->lookup_skill_by_name(name);
     }
