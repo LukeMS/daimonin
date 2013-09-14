@@ -509,6 +509,7 @@ static int GameObject_setAttribute(lua_State *L, lua_object *obj, struct attribu
         if (who->type == EXPERIENCE ||
             who->type == SKILL)
         {
+            luaL_error(L, "Attributes on EXPERIENCE and SKILL objects are read only!");
             return 1;
         }
     }
