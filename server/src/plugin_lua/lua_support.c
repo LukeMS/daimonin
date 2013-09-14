@@ -201,8 +201,10 @@ static int setObjectMember(lua_State *L)
 
                 switch (member->class->type)
                 {
-                    case LUATYPE_ATTRIBUTE:
-                      if (!(member->data.attribute->flags & FIELDFLAG_READONLY))
+                      if (!(member->data.attribute->flags & FIELDFLAG_READONLY) &&
+                          (!obj->data.object ||
+                           obj->data.object->type != PLAYER ||
+                           !(member->data.attribute->flags & FIELDFLAG_PLAYER_READONLY)))
                       {
                           lua_pop(L, 2); /* get rid of class table and member*/
                           set_attribute(L, obj, member->data.attribute);
