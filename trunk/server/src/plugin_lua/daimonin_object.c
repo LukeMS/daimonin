@@ -547,38 +547,39 @@ static int GameObject_setAttribute(lua_State *L, lua_object *obj, struct attribu
 }
 
 /* value is on top of stack */
-static int GameObject_setFlag(lua_State *L, lua_object *obj, uint32 flagno)
+static int GameObject_setFlag(lua_State *L, lua_object *obj, uint32 flagno, int before)
 {
-    int     value;
+    int value = lua_toboolean(L, -1);
     object *op = obj->data.object;
 
-    if (lua_isnumber(L, -1))
+    if (before)
     {
-        value = (int)lua_tonumber(L, -1);
-    }
-    else
-    {
-        value = lua_toboolean(L, -1);
-    }
-
-    if (flagno == FLAG_IS_INVISIBLE &&
-        op->map)
-    {
-        CLEAR_FLAG(op, flagno);
-        hooks->map_set_slayers(GET_MAP_SPACE_PTR(op->map, op->x, op->y), op,
-                               0);
-        SET_OR_CLEAR_FLAG(op, flagno, value);
-        hooks->update_object(op, UP_OBJ_LAYER);
+        if (op->type == EXPERIENCE ||
+            op->type == SKILL)
+        {
+            luaL_error(L, "Flags on EXPERIENCE and SKILL objects are read only!");
+            return 1;
+        }
+        if (flagno == FLAG_IS_INVISIBLE &&
+            op->map)
+        {
+            CLEAR_FLAG(op, flagno);
+            hooks->map_set_slayers(GET_MAP_SPACE_PTR(op->map, op->x, op->y), op,
+                                   0);
+            SET_OR_CLEAR_FLAG(op, flagno, value);
+            hooks->update_object(op, UP_OBJ_LAYER);
+            return 1;
+        }
     }
     else
     {
         SET_OR_CLEAR_FLAG(op, flagno, value);
         hooks->esrv_send_or_del_item(op);
-    }
 
-    /* TODO: if gender changed:
-    if()
-       CONTR(WHO)->socket.ext_title_flag = 1; * demand update to client */
+        /* TODO: if gender changed:
+        if()
+           CONTR(WHO)->socket.ext_title_flag = 1; * demand update to client */
+    }
 
     return 0;
 }

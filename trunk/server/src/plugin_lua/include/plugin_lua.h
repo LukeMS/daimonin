@@ -256,7 +256,7 @@ typedef struct lua_class_s
     const char             **flags;
 
     int (*getFlag)(lua_State *, struct lua_object_s *, uint32);
-    int (*setFlag)(lua_State *, struct lua_object_s *, uint32);
+    int (*setFlag)(lua_State *, struct lua_object_s *, uint32, int);
     int (*setAttribute_Hook)(lua_State *, struct lua_object_s *, struct attribute_decl *, int);
     int (*isValid)(struct lua_object_s *);
 
