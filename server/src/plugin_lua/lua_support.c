@@ -178,15 +178,22 @@ static int getObjectMember(lua_State *L)
 /* luaCFunction for the "newindex" metamethod of our object model */
 static int setObjectMember(lua_State *L)
 {
-    int nargs   = lua_gettop(L);
-
-    if (nargs == 3)
+    if (lua_gettop(L) != 3)
     {
-        lua_object *obj  = lua_touserdata(L, 1);
-        const char *key     = lua_tostring(L, 2);
+        luaL_error(L, "BUG: wrong number of parameters");
+    }
+    else
+    {
+        lua_object *obj = lua_touserdata(L, 1);
+        const char *key = lua_tostring(L, 2);
         /* stack: object, key, value */
 
-        if (obj && key)
+        if (!obj ||
+            !key)
+        {
+            luaL_error(L, "BUG: wrong parameter types");
+        }
+        else
         {
             lua_object *member;
 
@@ -195,53 +202,53 @@ static int setObjectMember(lua_State *L)
             lua_rawget(L, -2); /* Get the member */
             /* stack: object, key, value, class table, class member */
 
-            if ((member = lua_touserdata(L, -1)))
-            {
-                if(! obj->class->isValid(obj))
-                    luaL_error(L, "Invalid %s object", obj->class->name);
-
-                switch (member->class->type)
-                {
-                    case LUATYPE_ATTRIBUTE:
-                      if (!(member->data.attribute->flags & FIELDFLAG_READONLY) &&
-                          (!obj->data.object ||
-                           obj->data.object->type != PLAYER ||
-                           !(member->data.attribute->flags & FIELDFLAG_PLAYER_READONLY)))
-                      {
-                          lua_pop(L, 2); /* get rid of class table and member*/
-                          set_attribute(L, obj, member->data.attribute);
-                          return 0;
-                      } /* else: fall trough... */
-                    case LUATYPE_METHOD:
-                    case LUATYPE_CONSTANT:
-                      luaL_error(L, "Readonly member %s.%s", obj->class->name, key);
-
-                    case LUATYPE_FLAG:
-                      lua_pop(L, 2); /* get rid of class table and member*/
-                      if (!member->data.flag.readonly)
-                      {
-                          set_flag(L, obj, member->data.flag.index);
-                      }
-                      else
-                      {
-                          luaL_error(L, "Readonly flag %s.%s", obj->class->name, key);
-                      }
-
-                    default:
-                      /* Do nothing */
-                      break;
-                }
-            }
-            else
+            if (!(member = lua_touserdata(L, -1)))
             {
                 luaL_error(L, "No such class member: %s.%s", obj->class->name, key);
             }
+            else if (!obj->class->isValid(obj))
+            {
+                luaL_error(L, "Invalid %s object", obj->class->name);
+            }
+            else
+            {
+                switch (member->class->type)
+                {
+                    case LUATYPE_ATTRIBUTE:
+                    if ((member->data.attribute->flags & FIELDFLAG_READONLY) ||
+                        (obj->data.object &&
+                         obj->data.object->type == PLAYER &&
+                         (member->data.attribute->flags & FIELDFLAG_PLAYER_READONLY)))
+                    {
+                        luaL_error(L, "Readonly attribute %s.%s", obj->class->name, key);
+                    }
+                    else
+                    {
+                        lua_pop(L, 2); /* get rid of class table and member*/
+                        set_attribute(L, obj, member->data.attribute);
+                    }
+                    break;
+
+                    case LUATYPE_METHOD:
+                    case LUATYPE_CONSTANT:
+                    luaL_error(L, "Readonly member %s.%s", obj->class->name, key);
+                    break;
+
+                    case LUATYPE_FLAG:
+                    if (member->data.flag.readonly)
+                    {
+                        luaL_error(L, "Readonly flag %s.%s", obj->class->name, key);
+                    }
+                    else
+                    {
+                        lua_pop(L, 2); /* get rid of class table and member*/
+                        set_flag(L, obj, member->data.flag.index);
+                    }
+                    break;
+                }
+            }
         }
-        else
-            luaL_error(L, "BUG: wrong parameter types");
     }
-    else
-        luaL_error(L, "BUG: wrong number of parameters");
 
     return 0;
 }
