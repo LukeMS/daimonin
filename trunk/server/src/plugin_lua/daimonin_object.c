@@ -506,6 +506,11 @@ static int GameObject_setAttribute(lua_State *L, lua_object *obj, struct attribu
     /* Pre-setting hook */
     if (before)
     {
+        if (who->type == EXPERIENCE ||
+            who->type == SKILL)
+        {
+            return 1;
+        }
     }
     else
     {
