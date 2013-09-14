@@ -226,7 +226,10 @@ static int setObjectMember(lua_State *L)
                       break;
                 }
             }
-            luaL_error(L, "No such class member: %s.%s", obj->class->name, key);
+            else
+            {
+                luaL_error(L, "No such class member: %s.%s", obj->class->name, key);
+            }
         }
         else
             luaL_error(L, "BUG: wrong parameter types");
