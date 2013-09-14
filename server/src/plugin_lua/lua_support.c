@@ -201,6 +201,7 @@ static int setObjectMember(lua_State *L)
 
                 switch (member->class->type)
                 {
+                    case LUATYPE_ATTRIBUTE:
                       if (!(member->data.attribute->flags & FIELDFLAG_READONLY) &&
                           (!obj->data.object ||
                            obj->data.object->type != PLAYER ||
