@@ -91,19 +91,25 @@ static int Map_getFlag(lua_State *L, lua_object *obj, uint32 flagno)
 }
 
 /* pushes flag value on top of stack */
-static int Map_setFlag(lua_State *L, lua_object *obj, uint32 flagno)
+static int Map_setFlag(lua_State *L, lua_object *obj, uint32 flagno, int before)
 {
-    int     value;
+    int value = lua_toboolean(L, -1);
+    mapstruct *m = obj->data.map;
 
-    if (lua_isnumber(L, -1))
-        value = (int) lua_tonumber(L, -1);
+    if (before)
+    {
+    }
     else
-        value = lua_toboolean(L, -1);
-
-    if(value)
-        obj->data.map->map_flags |= (1 << flagno);
-    else
-        obj->data.map->map_flags &= ~(1 << flagno);
+    {
+        if (value)
+        {
+            m->map_flags |= (1 << flagno);
+        }
+        else
+        {
+            m->map_flags &= ~(1 << flagno);
+        }
+    }
 
     return 0;
 }

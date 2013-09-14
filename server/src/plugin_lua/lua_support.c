@@ -36,7 +36,8 @@
 int                 cache_ref   = LUA_NOREF;
 
 static int  get_attribute(lua_State *L, lua_object *obj, struct attribute_decl *attrib);
-static int  set_attribute(lua_State *L, lua_object *obj, struct attribute_decl *attrib);
+static void set_attribute(lua_State *L, lua_object *obj, struct attribute_decl *attrib);
+static void set_flag(lua_State *L, lua_object *obj, uint16 flagno);
 
 /* Internally used pseudo-classes, not accessible from scripts */
 static lua_class    Attribute   =
@@ -217,9 +218,14 @@ static int setObjectMember(lua_State *L)
 
                     case LUATYPE_FLAG:
                       lua_pop(L, 2); /* get rid of class table and member*/
-                      if (obj->class->setFlag && !member->data.flag.readonly)
-                          return obj->class->setFlag(L, obj, member->data.flag.index);
-                      luaL_error(L, "Readonly flag %s.%s", obj->class->name, key);
+                      if (!member->data.flag.readonly)
+                      {
+                          set_flag(L, obj, member->data.flag.index);
+                      }
+                      else
+                      {
+                          luaL_error(L, "Readonly flag %s.%s", obj->class->name, key);
+                      }
 
                     default:
                       /* Do nothing */
@@ -315,7 +321,7 @@ static int get_attribute(lua_State *L, lua_object *obj, struct attribute_decl *a
 }
 
 /* value is on top of stack */
-static int set_attribute(lua_State *L, lua_object *obj, struct attribute_decl *attrib)
+static void set_attribute(lua_State *L, lua_object *obj, struct attribute_decl *attrib)
 {
     void       *field_ptr   = (void *) ((char *) obj->data.anything + attrib->offset);
     const char *str;
@@ -325,7 +331,7 @@ static int set_attribute(lua_State *L, lua_object *obj, struct attribute_decl *a
     {
         if (obj->class->setAttribute_Hook(L, obj, attrib, 1))
         {
-            return 1;
+            return;
         }
     }
 
@@ -397,8 +403,23 @@ static int set_attribute(lua_State *L, lua_object *obj, struct attribute_decl *a
 
     /* pop value */
     lua_pop(L, 1);
+}
 
-    return 0;
+static void set_flag(lua_State *L, lua_object *obj, uint16 flagno)
+{
+    if (obj->class->setFlag)
+    {
+        if (obj->class->setFlag(L, obj, flagno, 1))
+        {
+            return;
+        }
+    }
+
+    /* Call any class hooks */
+    if (obj->class->setFlag)
+    {
+        obj->class->setFlag(L, obj, flagno, 0);
+    }
 }
 
 /* Extended variant of luaL_typerror that is aware of our object model */
