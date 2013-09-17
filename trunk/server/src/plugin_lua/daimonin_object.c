@@ -1350,12 +1350,12 @@ static int GameObject_SetSkill(lua_State *L)
          * thresholds). */
         else if (skill->last_eat == 1)
         {
-            /* If ->last_heal == ->level, this means it has already gained some
+            /* If ->item_level == ->level, this means it has already gained some
              * experience via a script this level so the player will have to go
              * back to normal grinding for experience until next level. This
              * prevents scripts being exploited too much to gain
              * mega-levels. Return 4, skill, 0, 0. */
-            if (skill->last_heal == skill->level &&
+            if (skill->item_level == skill->level &&
                 (level > 0 || (level == 0 && exp > 0)))
             {
                 failure = 4;
@@ -1387,7 +1387,7 @@ static int GameObject_SetSkill(lua_State *L)
 
                 if (exp >= 1)
                 {
-                    skill->last_heal = skill->level;
+                    skill->item_level = skill->level;
                 }
             }
         }
