@@ -322,24 +322,6 @@ _level_color level_color[MAXMOBLEVEL + 1] =
 #endif
 };
 
-/* init_new_exp_system() - called in init(). This function will reconfigure
- * the properties of skills array and experience categories, and links
- * each skill to the appropriate experience category
- * -b.t. thomas@astro.psu.edu
- */
-
-void init_new_exp_system()
-{
-    static int  init_new_exp_done   = 0;
-
-    if (init_new_exp_done)
-        return;
-    init_new_exp_done = 1;
-
-    read_skill_params(); /* overide skills[] w/ values from skill_params */
-}
-
-
 /* add_exp() new algorithm. Revamped experience gain/loss routine.
  * Based on the old add_exp() function - but tailored to add experience
  * to experience objects. The way this works-- the code checks the
@@ -624,7 +606,7 @@ int adjust_exp(object *pl, object *op, int exp)
     }
 
     /* now we collect the exp of all skills which are in the same exp. object category */
-    sk_nr = skills[op->stats.sp].category;
+    sk_nr = op->magic;
     sk_exp = 0;
     /* this is the old collection system  - all skills of a exp group add
      * we changed that to "best skill count"
@@ -632,7 +614,7 @@ int adjust_exp(object *pl, object *op, int exp)
     /*
        for(tmp=pl->inv;tmp;tmp=tmp->below)
        {
-           if(tmp->type==SKILL && skills[tmp->stats.sp].category == sk_nr)
+           if(tmp->type==SKILL && tmp->magic == sk_nr)
            {
                if((sk_exp += tmp->stats.exp) > (sint32)MAX_EXPERIENCE)
                    sk_exp = MAX_EXPERIENCE;
@@ -641,7 +623,7 @@ int adjust_exp(object *pl, object *op, int exp)
     */
     for (tmp = pl->inv; tmp; tmp = tmp->below)
     {
-        if (tmp->type == SKILL && skills[tmp->stats.sp].category == sk_nr)
+        if (tmp->type == SKILL && tmp->magic == sk_nr)
         {
             if (tmp->stats.exp > sk_exp)
                 sk_exp = tmp->stats.exp;
@@ -897,7 +879,7 @@ int exp_from_base_skill(player *pl, int base_exp, int sk)
 
     for (i = 0; i <= 2; i++)
     {
-        if (pl->base_skill_group[i] == skills[sk].category)
+        if (pl->base_skill_group[i] == skills[sk]->clone.magic)
         {
             /* Let's say a mob gives 250 exp. And the player's guild gives them a 50%
              * exp boost in the skill they used. (250 * (50 / 100 + 1)) = 250 * 1.5.

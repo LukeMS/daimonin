@@ -168,21 +168,8 @@ enum skillnrs
     NROFSKILLS,
     /* always last index! */
 };
-typedef struct skill_struct
-{
-    char           *name;       /* how to describe it to the player */
-    archetype      *at;    /* pointer to the skill archetype in the archlist */
-    short           category;   /* the experience category to which this skill belongs */
-    short           time;       /* base number of ticks it takes to use the skill */
-    long            bexp;        /* base exp gain for this skill */
-    float           lexp;       /* level multiplier of exp gain for using this skill */
-    short           stat1;      /* primary stat effecting use of this skill */
-    short           stat2;      /* secondary stat for this skill */
-    short           stat3;      /* tertiary stat for this skill */
-} skill;
 
-
-extern skill    skills[];
+extern archetype *skills[];
 
 /* yet more convenience macros. */
 

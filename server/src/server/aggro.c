@@ -151,10 +151,10 @@ struct obj *aggro_update_info(struct obj *target, struct obj *hitter, struct obj
     /* debug...
     if(hitter && hitter->chosen_skill)
         new_draw_info( NDI_UNIQUE, 0, hitter->type!=PLAYER?hitter_owner:hitter, "SKILL-hitter: %s (%d)",
-        skills[hitter->chosen_skill->stats.sp].name,hitter->chosen_skill->stats.sp);
+        hitter->chosen_skill->name, hitter->chosen_skill->stats.sp);
     if(hitter_owner && hitter_owner->chosen_skill)
         new_draw_info( NDI_UNIQUE, 0, hitter->type!=PLAYER?hitter_owner:hitter, "SKILL-howner: %s (%d)",
-        skills[hitter_owner->chosen_skill->stats.sp].name,hitter_owner->chosen_skill->stats.sp);
+        hitter_owner->chosen_skill->name, hitter_owner->chosen_skill->stats.sp);
     */
 
     if(hitter_owner && (hitter_owner==hitter || !IS_LIVE(hitter_owner)))
@@ -322,27 +322,29 @@ static inline int add_aggro_exp(object *hitter, int exp, int skillnr)
 {
     if (exp)
     {
-        if(CONTR(hitter)->exp_bonus)
+        player *pl = CONTR(hitter);
+        int     bonus = (pl->exp_bonus) ? (((double)exp / 100.0) * pl->exp_bonus) : 0;
+        char    buf[TINY_BUF];
+
+        if (bonus)
         {
-            int exp_bonus = (int)(((double)exp/100.0)*(double)CONTR(hitter)->exp_bonus);
-            new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, hitter, "You got %d (+%d bonus) exp in %s.",
-                                 add_exp(hitter, exp+exp_bonus, skillnr, 1),
-                                 exp_bonus, skills[skillnr].name);
+            sprintf(buf, " (+%d bonus) ", bonus);
         }
         else
         {
-            new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, hitter, "You got %d exp in %s.",
-                                 add_exp(hitter, exp, skillnr, 1),
-                                 skills[skillnr].name);
+            buf[0] = '\0';
         }
-        return TRUE;
+
+        new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, hitter, "You got ~%d%s exp~ in ~%s~.",
+            add_exp(hitter, exp + bonus, skillnr, 1), buf, skills[skillnr]->clone.name);
+        return 1;
     }
     /*
      * that message was now given one time and only when no skill has >0 exp gain
     else
         new_draw_info( NDI_UNIQUE, 0, hitter, "Your enemy was to low for exp.");
     */
-    return FALSE;
+    return 0;
 }
 
 static int give_default_guild_exp(player *pl, int base_exp)

@@ -1086,7 +1086,8 @@ int write_note(object *pl, object *item, char *msg)
     if (!msg)
     {
         new_draw_info(NDI_UNIQUE, 0, pl, "No message to write!");
-        new_draw_info(NDI_UNIQUE, 0, pl, "Usage: use_skill %s <message>", skills[SK_INSCRIPTION].name);
+        new_draw_info(NDI_UNIQUE, 0, pl, "Usage: use_skill %s <message>",
+            skills[SK_INSCRIPTION]->clone.name);
         return 0;
     }
     if (strstr(msg, "endmsg"))
