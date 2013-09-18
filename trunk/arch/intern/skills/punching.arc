@@ -1,5 +1,14 @@
 Object skill_punching
-name punching
+name Punching
+food 11
+run_away 0
+speed 1.0
+object_int1 0
+object_int2 1
+object_int3 99
+msg
+is a skill.
+endmsg
 weapon_speed 4.0
 face skill.101
 attack_impact 100

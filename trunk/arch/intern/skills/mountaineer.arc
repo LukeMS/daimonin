@@ -1,5 +1,14 @@
 Object skill_climbing
-name mountaineer
+name Mountaineer
+food 11
+run_away 0
+speed 0.0
+object_int1 99
+object_int2 99
+object_int3 99
+msg
+is a skill.
+endmsg
 type 43
 sub_type 2
 sys_object 1

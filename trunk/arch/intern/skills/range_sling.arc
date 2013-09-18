@@ -1,5 +1,14 @@
 Object skill_sling_archery
-name sling archery
+name Sling Archery
+food 11
+run_away 0
+speed 1.0
+object_int1 1
+object_int2 0
+object_int3 99
+msg
+is a skill.
+endmsg
 type 43
 face skill.101
 # last_grace = action timer adjustment

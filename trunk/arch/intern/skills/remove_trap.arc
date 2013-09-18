@@ -1,5 +1,14 @@
 Object skill_remove_trap
-name remove traps
+name Remove Traps
+food 11
+run_away 1
+speed 0.5
+object_int1 1
+object_int2 3
+object_int3 99
+msg
+is a skill.
+endmsg
 type 43
 sub_type 1
 face skill.101

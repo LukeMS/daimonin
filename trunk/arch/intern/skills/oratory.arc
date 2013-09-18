@@ -1,5 +1,14 @@
 Object skill_oratory
-name oratory
+name Oratory
+food 11
+run_away 1
+speed 2.0
+object_int1 6
+object_int2 3
+object_int3 99
+msg
+is a skill.
+endmsg
 type 43
 sub_type 1
 item_quality 100

@@ -1,5 +1,14 @@
 Object skill_find_traps
-name find traps
+name Find Traps
+food 11
+run_away 0
+speed 0.0
+object_int1 1
+object_int2 99
+object_int3 99
+msg
+is a skill.
+endmsg
 type 43
 item_quality 100
 item_condition 100

@@ -1,5 +1,14 @@
 Object skill_identify
-name identify items
+name Identify Items
+food 11
+run_away 1
+speed 1.0
+object_int1 3
+object_int2 1
+object_int3 4
+msg
+is a skill.
+endmsg
 type 43
 sub_type 1
 face skill.101

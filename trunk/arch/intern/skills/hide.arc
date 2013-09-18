@@ -1,5 +1,14 @@
 Object skill_hide
-name hide in shadows
+name Hide In Shadows
+food 11
+run_away 10
+speed 2.5
+object_int1 1
+object_int2 6
+object_int3 99
+msg
+is a skill.
+endmsg
 type 43
 sub_type 1
 face skill.101
