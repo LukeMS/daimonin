@@ -603,9 +603,9 @@ void send_skilllist_cmd(object *op, object *skillp, int mode)
  * a stack overflow. Doing here some more intelligent is needed. I do this here
  * with sprintf() only for fast beta implementation */
 
-void send_ready_skill(object *op, char *skillname)
+void send_ready_skill(player *pl, shstr *name)
 {
-    Write_String_To_Socket(&CONTR(op)->socket, SERVER_CMD_SKILLRDY, skillname, strlen(skillname));
+    Write_String_To_Socket(&pl->socket, SERVER_CMD_SKILLRDY, name, strlen(name));
 }
 
 /* send to the client the golem face & name. Note, that this is only cosmetical

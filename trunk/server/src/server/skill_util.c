@@ -27,92 +27,14 @@
 
 #include <global.h>
 
-/* This is the order of the skills structure:
- *  char *name;
- *  short category;  - the associated experience category
- *  short time;      - the base number of ticks it takes to execute skill
- *  long  bexp;      - base exp gain for use of this skill
- *  float lexp;      - level multiplier for experience gain
- *  short stat1;     - primary stat, for linking to exp cat.
- *  short stat2;     - secondary stat ...
- *  short stat3;     - tertiary stat ...
- *
- * About time - this  number is the base for the use of the skill. Level
- * and associated stats can modify the amound of time to use the skill.
- * Time to use the skill is only used when 1) op is a player and
- * 2) the skill is called through do_skill().
- * It is strongly recogmended that many skills *not* have a time value.
- *
- * About 'stats' and skill.category - a primary use for stats is determining
- * the associated experience category.
- * Note that the ordering of the stats is important. Stat1 is the 'primary'
- * stat, stat2 the 'secondary' stat, etc. In this scheme the primary stat
- * is most important for determining the associated experience category.
- * If a skill has the primary stat set to NO_STAT_VAL then it defaults to a
- * 'miscellaneous skill'.
- */
-
-/* Don't change the order here w/o changing the skills.h file */
-
-/* The default skills array, values can be overwritten by init_skills()
- * in skill_util.c
- */
-
-/* TODO: The caregory of some skills have been left as "SKILLGROUP_MISC". So as these skills become available,
- * their skillgroup should be updated. */
-skill   skills[NROFSKILLS]  =
+archetype *skills[NROFSKILLS]  =
 {
-    /* 0 */
-    { "stealing",           NULL, SKILLGROUP_MISC, 11, 0, 0.1f,      DEX,     INTELLIGENCE, NO_STAT_VAL },
-    { "pick locks",         NULL, SKILLGROUP_MISC, 11, 50, 1.5f,   DEX,     INTELLIGENCE, NO_STAT_VAL },
-    { "hide in shadows",    NULL, SKILLGROUP_MISC, 11, 10, 2.5f,   DEX,     CHA, NO_STAT_VAL },
-    { "smithery lore",      NULL, 2, 10, 0, 0.0f,     NO_STAT_VAL,   NO_STAT_VAL, NO_STAT_VAL },
-    { "bowyer lore",        NULL, 2, 10, 0, 0.0f,     NO_STAT_VAL,   NO_STAT_VAL, NO_STAT_VAL },
-    /* 5 */
-    { "jeweler lore",       NULL, 2, 10, 0, 0.0f,    NO_STAT_VAL,     NO_STAT_VAL,     NO_STAT_VAL },
-    { "alchemy",            NULL, SKILLGROUP_MISC, 11, 1, 1.0f,    INTELLIGENCE,    WIS,     DEX },
-    { "magic lore",         NULL, 2, 11, 0, 0.0f,    NO_STAT_VAL,     NO_STAT_VAL,     NO_STAT_VAL },
-    { "common literacy",    NULL, SKILLGROUP_MENTAL, 11, 1, 1.0f,    INTELLIGENCE,    WIS, NO_STAT_VAL },
-    { "bargaining",         NULL, SKILLGROUP_MISC, 11, 0, 0.0f,  NO_STAT_VAL, NO_STAT_VAL, NO_STAT_VAL },
-    /* 10 */
-    { "jumping",            NULL, SKILLGROUP_AGILITY, 11, 5, 2.5f,      NO_STAT_VAL,     NO_STAT_VAL, NO_STAT_VAL },
-    { "sense magic",        NULL, SKILLGROUP_MENTAL, 11, 10, 1.0f,   POW,     INTELLIGENCE, NO_STAT_VAL },
-    { "oratory",            NULL, SKILLGROUP_PERSONAL, 11, 1, 2.0f,      CHA,     INTELLIGENCE, NO_STAT_VAL },
-    { "singing",            NULL, SKILLGROUP_PERSONAL, 11, 1, 2.0f,      CHA,     INTELLIGENCE, NO_STAT_VAL },
-    { "sense curse",        NULL, SKILLGROUP_MENTAL, 11, 10, 1.0f,   WIS,     POW, NO_STAT_VAL },
-    /* 15 */
-    { "find traps",         NULL, SKILLGROUP_AGILITY, 11, 0, 0.0f,  DEX, NO_STAT_VAL, NO_STAT_VAL },
-    { "meditation",         NULL, SKILLGROUP_MISC, 11, 0, 0.0f, WIS,      POW,     INTELLIGENCE },
-    { "punching",           NULL, SKILLGROUP_PHYSIQUE, 11, 0, 1.0f,      STR,      DEX, NO_STAT_VAL },
-    { "flame touch",        NULL, SKILLGROUP_MISC, 11, 0, 1.0f,      STR,      DEX,     INTELLIGENCE },
-    { "karate",             NULL, SKILLGROUP_PHYSIQUE, 11, 0, 1.0f,      STR,      DEX, NO_STAT_VAL },
-    /* 20 */
-    { "mountaineer",        NULL, SKILLGROUP_PHYSIQUE, 11, 0, 0.0f,  NO_STAT_VAL, NO_STAT_VAL, NO_STAT_VAL },
-    { "ranger lore",        NULL, 6, 11, 0, 0.0f,    NO_STAT_VAL,     NO_STAT_VAL, NO_STAT_VAL },
-    { "inscription",        NULL, SKILLGROUP_MISC, 11, 1, 5.0f,      POW,      INTELLIGENCE,  NO_STAT_VAL },
-    { "impact weapons",     NULL, SKILLGROUP_PHYSIQUE, 11, 0, 1.0f,      STR,      DEX, NO_STAT_VAL },
-    { "bow archery",        NULL, SKILLGROUP_AGILITY, 11, 0, 1.0f,     DEX,      STR, NO_STAT_VAL },
-    /* 25 */
-    { "throwing",           NULL, SKILLGROUP_AGILITY, 11, 0, 1.0f,      DEX,      DEX, NO_STAT_VAL },
-    { "wizardry spells",    NULL, SKILLGROUP_MAGIC, 11, 0, 0.0f,      POW,      INTELLIGENCE,       WIS },
-    { "remove traps",       NULL, SKILLGROUP_AGILITY, 11, 1, 0.5f,    DEX,      INTELLIGENCE, NO_STAT_VAL },
-    { "set traps",          NULL, SKILLGROUP_AGILITY, 11, 1, 0.5f,    INTELLIGENCE,      DEX, NO_STAT_VAL },
-    { "magic devices",      NULL, SKILLGROUP_MAGIC, 11, 0, 1.0f,   POW, DEX, NO_STAT_VAL },
-    /* 30 */
-    { "divine prayers",     NULL, SKILLGROUP_WISDOM, 11, 0, 0.0f,      WIS,      POW,     INTELLIGENCE },
-    { "clawing",            NULL, SKILLGROUP_PHYSIQUE, 11, 0, 0.0f,      STR,      DEX, NO_STAT_VAL },
-    { "levitation",         NULL, SKILLGROUP_MISC, 11, 0, 0.0f, NO_STAT_VAL, NO_STAT_VAL, NO_STAT_VAL },
-    { "disarm traps",       NULL, SKILLGROUP_AGILITY, 11, 1, 0.5f,      DEX,      INTELLIGENCE,     INTELLIGENCE },
-    { "crossbow archery",   NULL, SKILLGROUP_AGILITY, 11, 0, 1.0f,     DEX,      STR, NO_STAT_VAL },
-    /* 35 */
-    { "sling archery",      NULL, SKILLGROUP_AGILITY, 11, 0, 1.0f,     DEX,      STR, NO_STAT_VAL },
-    { "identify items",     NULL, SKILLGROUP_MENTAL, 11, 1, 1.0f,      INTELLIGENCE,      DEX,     WIS },
-    { "slash weapons",      NULL, SKILLGROUP_PHYSIQUE, 11, 0, 1.0f,      STR,      DEX, NO_STAT_VAL },
-    { "cleave weapons",     NULL, SKILLGROUP_PHYSIQUE, 11, 0, 1.0f,      STR,      DEX, NO_STAT_VAL },
-    { "pierce weapons",     NULL, SKILLGROUP_PHYSIQUE, 11, 0, 1.0f,      STR,      DEX, NO_STAT_VAL },
-    /* 40 */
-    { "two-hand mastery",   NULL, SKILLGROUP_PHYSIQUE, 11, 0, 0.0f,      STR,      DEX, NO_STAT_VAL },
-    { "polearm mastery",    NULL, SKILLGROUP_PHYSIQUE, 11, 0, 0.0f,      STR,      DEX, NO_STAT_VAL }
+    NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+    NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+    NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+    NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+    NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+    NULL, NULL, NULL, NULL, NULL, NULL, NULL,
 };
 
 static char *exp_group_arch_name[NROFSKILLGROUPS] = {
@@ -124,6 +46,20 @@ static char *exp_group_arch_name[NROFSKILLGROUPS] = {
     "experience_wis",
     "experience_misc"
 };
+
+/* Link the skill archetype ptr to skill list for fast access. */
+void init_skills(void)
+{
+    int i;
+
+    for (i = 0; i < NROFSKILLS; i++)
+    {
+        if (!(skills[i] = get_skill_archetype(i)))
+        {
+            LOG(llevError, "ERROR:: Skill #%d not found in archlist!\n", i);
+        }
+    }
+}
 
 /* link_player_skills() - linking skills with experience objects
  * and creating a linked list of skills for later fast access.
@@ -162,7 +98,7 @@ void link_player_skills(object *op)
     {
         if(!pl->exp_obj_ptr[i])
         {
-            /*LOG(llevDebug,"link_player_skills(): adding %s to player %s\n",exp_group_arch_name[i],query_name(tmp));*/
+            LOG(llevDebug,"link_player_skills(): adding %s to player %s\n",exp_group_arch_name[i],query_name(tmp));
             pl->exp_obj_ptr[i] = insert_ob_in_ob(arch_to_object(find_archetype(exp_group_arch_name[i])), op);
         }
         CLEAR_FLAG(pl->exp_obj_ptr[i], FLAG_APPLIED);
@@ -183,11 +119,11 @@ void link_player_skills(object *op)
     for (i = 0; i < NROFSKILLS; i++)
     {
         object *this = pl->skill_ptr[i];
-
+ 
         if (this)
         {
             object *best = pl->highest_skill[this->magic];
-
+ 
             if (link_player_skill(pl->ob, this) &&
                 (!best ||
                  this->stats.exp > best->stats.exp))
@@ -351,7 +287,7 @@ int do_skill(object *op, int dir, char *string)
 
     if (op->type == PLAYER)
     {
-        ticks = (float) (skills[skill].time) * RANGED_DELAY_TIME;
+        ticks = (float) (skills[skill]->clone.stats.food) * RANGED_DELAY_TIME;
         LOG(llevDebug, "AC-skills(%d): %2.2f\n", skill, ticks);
         set_action_time(op, ticks);
     }
@@ -361,7 +297,7 @@ int do_skill(object *op, int dir, char *string)
      * gain problems.
      */
 
-    if (success && skills[skill].category < NROFSKILLGROUPS_ACTIVE)
+    if (success && skills[skill]->clone.magic < NROFSKILLGROUPS_ACTIVE)
         add_exp(op, success, op->chosen_skill->stats.sp, 1);
 
     return success;
@@ -379,22 +315,22 @@ int get_weighted_skill_stat_sum(object *who, int sk)
     float   sum;
     int     number  = 1;
 
-    if (skills[sk].stat1 == NO_STAT_VAL)
+    if (skills[sk]->clone.enemy_count == NO_STAT_VAL)
     {
         return 0;
     }
     else
-        sum = get_stat_value(&(who->stats), skills[sk].stat1);
+        sum = get_stat_value(&(who->stats), skills[sk]->clone.enemy_count);
 
-    if (skills[sk].stat2 != NO_STAT_VAL)
+    if (skills[sk]->clone.attacked_by_count != NO_STAT_VAL)
     {
-        sum += get_stat_value(&(who->stats), skills[sk].stat2);
+        sum += get_stat_value(&(who->stats), skills[sk]->clone.attacked_by_count);
         number++;
     }
 
-    if (skills[sk].stat3 != NO_STAT_VAL)
+    if (skills[sk]->clone.owner_count != NO_STAT_VAL)
     {
-        sum += get_stat_value(&(who->stats), skills[sk].stat3);
+        sum += get_stat_value(&(who->stats), skills[sk]->clone.owner_count);
         number++;
     }
 
@@ -423,80 +359,19 @@ void dump_skills()
     LOG(llevInfo, buf);
     for (i = 0; i < NROFSKILLS; i++)
     {
-        sprintf(buf, "%2d-%17s  %12s  %4d %4ld %4g  %5s %5s %5s\n", i, skills[i].name,
-                exp_cat[skills[i].category] != NULL ? exp_cat[skills[i].category]->name : "NONE", skills[i].time,
-                skills[i].bexp, skills[i].lexp,
-                skills[i].stat1 != NO_STAT_VAL ? short_stat_name[skills[i].stat1] : "---",
-                skills[i].stat2 != NO_STAT_VAL ? short_stat_name[skills[i].stat2] : "---",
-                skills[i].stat3 != NO_STAT_VAL ? short_stat_name[skills[i].stat3] : "---");
+        sprintf(buf, "%2d-%17s  %12s  %4d %4ld %4g  %3s %3s %3s\n", i,
+                skills[i]->clone.name,
+                exp_cat[skills[i]->clone.magic]->name,
+                skills[i]->clone.stats.food,
+                skills[i]->clone.run_away,
+                skills[i]->clone.speed,
+                skills[i]->clone.enemy_count,
+                skills[i]->clone.attacked_by_count,
+                skills[i]->clone.owner_count);
         LOG(llevInfo, buf);
     }
     */
 }
-
-/* read_skill_params() - based on init_spell_params(). This
- * function should read a file 'skill_params' in the /lib
- * directory.  -b.t.
- *
- *  format of the file 'skill_params' is:
- *  name
- *      EXP_CAT, bexp, lexp, stat1, stat2, stat3
- *
- *  see the values in lib/skill_params for more inspiration/direction
- */
-
-void read_skill_params()
-{
-    FILE   *skill_params;
-    char    fname[MEDIUM_BUF];
-    char    skill_name[256];
-    char    skill_attrib[256];
-    int     i, cat, bexp, time, stat1, stat2, stat3, skillindex;
-    float   lexp;
-
-    sprintf(fname, "%s/%s", settings.datadir, "skill_params");
-    LOG(llevDebug, "Reading skill_params from %s...", fname);
-    if (!(skill_params = fopen(fname, "r")))
-    {
-        LOG(llevError, "ERROR: read_skill_params(): error fopen(%s)\n", fname);
-        return;
-    }
-
-    while (!feof(skill_params))
-    {
-        char *dummy; // purely to suppress GCC's warn_unused_result warning
-
-        /* Large buf, so that long comments don't kill it. */
-        dummy = fgets(skill_name, 255, skill_params);
-        if (*skill_name == '#' || *skill_name == '\n' || *skill_name == '\r')
-            continue;
-        skillindex = lookup_skill_by_name(skill_name);
-        if (skillindex == -1)
-            LOG(llevError, "ERROR: skill_params has unrecognized skill: %s", skill_name);
-        dummy = fgets(skill_attrib, 255, skill_params);
-        sscanf(skill_attrib, "%d %d %d %f %d %d %d", &cat, &time, &bexp, &lexp, &stat1, &stat2, &stat3);
-        skills[skillindex].category = cat;
-        skills[skillindex].time = time;
-        skills[skillindex].bexp = bexp;
-        skills[skillindex].lexp = lexp;
-        skills[skillindex].stat1 = stat1;
-        skills[skillindex].stat2 = stat2;
-        skills[skillindex].stat3 = stat3;
-    }
-    fclose(skill_params);
-
-    for (i = 0; i < NROFSKILLS; i++)
-    {
-        /* link the skill archetype ptr to skill list for fast access.
-        * now we can access the skill archetype by skill number or skill name.
-        */
-        if (!(skills[i].at = get_skill_archetype(i)))
-            LOG(llevError, "ERROR: Aborting! Skill #%d (%s) not found in archlist!\n", i, skills[i].name);
-    }
-
-    LOG(llevDebug, "done.\n");
-}
-
 
 /* lookup_skill_by_name() - based on look_up_spell_by_name - b.t.
  * Given name, we return the index of skill 'string' in the skill
@@ -505,21 +380,21 @@ void read_skill_params()
 
 int lookup_skill_by_name(char *string)
 {
-    int     skillnr = 0, nmlen;
-    char    name[MEDIUM_BUF];
+    int    i;
+    shstr *name_sh = NULL;
 
-    if (!string)
-        return -1;
+    FREE_AND_COPY_HASH(name_sh, string);
 
-    strcpy(name, string);
-    nmlen = strlen(name);
-
-    for (skillnr = 0; skillnr < NROFSKILLS; skillnr++)
+    for (i = 0; i < NROFSKILLS; i++)
     {
-        if (strlen(name) >= strlen(skills[skillnr].name)) /* GROS - This is to prevent strings like "hi" to be matched as "hiding" */
-            if (!strncmp(name, skills[skillnr].name, MIN((int) strlen(skills[skillnr].name), nmlen)))
-                return skillnr;
+        if (skills[i]->clone.name == name_sh)
+        {
+            FREE_ONLY_HASH(name_sh);
+            return i;
+        }
     }
+
+    FREE_ONLY_HASH(name_sh);
     return -1;
 }
 
@@ -665,7 +540,7 @@ int check_skill_to_apply(object *who, object *item)
     {
         if (!change_skill(who, add_skill))
         {
-            /*new_draw_info(NDI_UNIQUE, 0,who,"You don't have the needed skill '%s'!", skills[add_skill].name);*/
+            /*new_draw_info(NDI_UNIQUE, 0,who,"You don't have the needed skill '%s'!", skills[add_skill]->clone.name);*/
             return 0;
         }
         change_skill(who, NO_SKILL_READY);
@@ -677,7 +552,7 @@ int check_skill_to_apply(object *who, object *item)
     {
         if (!change_skill(who, skill))
         {
-            /*new_draw_info(NDI_UNIQUE, 0,who,"You don't have the needed skill '%s'!", skills[skill].name);*/
+            /*new_draw_info(NDI_UNIQUE, 0,who,"You don't have the needed skill '%s'!", skills[skill]->clone.name);*/
             return 0;
         }
     }
@@ -741,7 +616,7 @@ int learn_skill(object *pl, object *scroll, char *name, int skillnr, int scroll_
 
     p = CONTR(pl);
     if(skillnr!= -1)
-        skill = skills[skillnr].at;
+        skill = skills[skillnr];
     else if (scroll)
         skill = find_archetype(scroll->slaying);
     else if (name)
@@ -814,7 +689,7 @@ int use_skill(object *op, char *string)
             return 0;
         }
 
-        len = strlen(skills[sknum].name);
+        len = strlen(skills[sknum]->clone.name);
 
         /* All this logic goes and skips over the skill name to find any
          * options given to the skill.
@@ -839,7 +714,7 @@ int use_skill(object *op, char *string)
     }
 
 #ifdef SKILL_UTIL_DEBUG
-    LOG(llevDebug, "use_skill() got skill: %s\n", sknum > -1 ? skills[sknum].name : "none");
+    LOG(llevDebug, "use_skill() got skill: %s\n", sknum > -1 ? skills[sknum]->clone.name : "none");
 #endif
 
     /* Change to the new skill, then execute it. */
@@ -877,7 +752,7 @@ int change_skill(object *who, int sk_index)
         return 1;
 
     LOG(llevDebug, "APPLYcs: %s change %s to %s.\n", query_name(who), query_name(who->chosen_skill),
-                                                                sk_index>=0?skills[sk_index].name:"INVALID");
+                                                                sk_index>=0?skills[sk_index]->clone.name:"INVALID");
 
     if (sk_index >= 0 && sk_index < NROFSKILLS && (tmp = find_skill(who, sk_index)) != NULL)
     {
@@ -897,7 +772,7 @@ int change_skill(object *who, int sk_index)
         FIX_PLAYER(who, "change_skill AP_UNAPPLY");
     }
     else if (sk_index >= 0)
-        new_draw_info(NDI_UNIQUE, 0, who, "You have no knowledge of %s.", skills[sk_index].name);
+        new_draw_info(NDI_UNIQUE, 0, who, "You have no knowledge of %s.", skills[sk_index]->clone.name);
     return 0;
     }
 
@@ -1185,7 +1060,7 @@ int get_skill_stat1(object *op)
 {
     int stat_value = 0, stat = NO_STAT_VAL;
 
-    if ((op->chosen_skill) && ((stat = skills[op->chosen_skill->stats.sp].stat1) != NO_STAT_VAL))
+    if ((op->chosen_skill) && ((stat = op->chosen_skill->enemy_count) != NO_STAT_VAL))
         stat_value = get_stat_value(&(op->stats), stat);
 
     return stat_value;
@@ -1199,7 +1074,7 @@ int get_skill_stat2(object *op)
 {
     int stat_value = 0, stat = NO_STAT_VAL;
 
-    if ((op->chosen_skill) && ((stat = skills[op->chosen_skill->stats.sp].stat2) != NO_STAT_VAL))
+    if ((op->chosen_skill) && ((stat = op->chosen_skill->attacked_by_count) != NO_STAT_VAL))
         stat_value = get_stat_value(&(op->stats), stat);
 
     return stat_value;
@@ -1213,7 +1088,7 @@ int get_skill_stat3(object *op)
 {
     int stat_value = 0, stat = NO_STAT_VAL;
 
-    if ((op->chosen_skill) && ((stat = skills[op->chosen_skill->stats.sp].stat3) != NO_STAT_VAL))
+    if ((op->chosen_skill) && ((stat = op->chosen_skill->owner_count) != NO_STAT_VAL))
         stat_value = get_stat_value(&(op->stats), stat);
 
     return stat_value;

@@ -1212,7 +1212,7 @@ static void init_beforeplay()
 #ifdef ALCHEMY
     init_formulae();    /* If not called before, reads formulae from file */
 #endif
-    init_new_exp_system();    /* If not called before, inits experience system */
+    init_skills();
 
 #ifdef DUMP_SWITCHES
     if (settings.dumpvalues)

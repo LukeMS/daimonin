@@ -1638,8 +1638,8 @@ static void ApplySkillscroll(object *op, object *tmp)
           return;
 
         case 1:
-          new_draw_info(NDI_UNIQUE, 0, op, "You succeed in learning %s", skills[tmp->stats.sp].name);
-          new_draw_info(NDI_UNIQUE, 0, op, "Type 'bind ready_skill %s", skills[tmp->stats.sp].name);
+          new_draw_info(NDI_UNIQUE, 0, op, "You succeed in learning %s", tmp->name);
+          new_draw_info(NDI_UNIQUE, 0, op, "Type 'bind ready_skill %s", tmp->name);
           new_draw_info(NDI_UNIQUE, 0, op, "to store the skill in a key.");
           FIX_PLAYER(op ,"apply skill scroll");
           decrease_ob_nr(tmp, 1);
@@ -2686,7 +2686,7 @@ int apply_special(object *who, object *op, int aflags)
                         unlink_skill(op);
                         new_draw_info(NDI_UNIQUE, 0, who, "You stop using the %s.", query_name(op));
                         new_draw_info(NDI_UNIQUE, 0, who, "You can no longer use the skill: %s.",
-                                skills[op->stats.sp].name);
+                                op->name);
                     }
                 }
                 /* i disabled here change_abil - because skill changing is somewhat often called
@@ -2937,16 +2937,16 @@ int apply_special(object *who, object *op, int aflags)
                     else
                         link_player_skill(who, op);
                     new_draw_info(NDI_UNIQUE, 0, who, "You ready the %s.", query_name(op));
-                    new_draw_info(NDI_UNIQUE, 0, who, "You can now use the skill: %s.", skills[op->stats.sp].name);
+                    new_draw_info(NDI_UNIQUE, 0, who, "You can now use the skill: %s.", op->name);
                 }
                 else
-                    send_ready_skill(who, skills[op->stats.sp].name);
+                    send_ready_skill(pl, op->name);
 #else
                 /* At least one of these lines is unnecessary: confirmation or
                  * just spam? I vote to get rid of the ndi() -- srs() uses less
                  * resources and allows the client more control. */
                 new_draw_info(NDI_UNIQUE, 0, who, "You ready the skill ~%s~.", query_name(op));
-                send_ready_skill(who, skills[op->stats.sp].name);
+                send_ready_skill(pl, op->name);
 #endif
             }
 

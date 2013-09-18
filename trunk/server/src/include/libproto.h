@@ -88,7 +88,6 @@ extern int              adjust_exp(object *pl, object *op, int exp);
 extern void             apply_death_exp_penalty(object *op);
 extern float            calc_level_difference(int who_lvl, int op_lvl);
 extern int              calc_skill_exp(object *who, object *op, float mod, int level, int *real);
-extern void             init_new_exp_system(void);
 /* food.c */
 extern void             remove_food_force(object *op);
 extern void             food_force_reg(object *op);

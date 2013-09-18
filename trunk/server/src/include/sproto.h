@@ -196,7 +196,7 @@ int                         command_target(object *op, char *params);
 void                        command_face_request(char *params, int len, NewSocket *ns);
 void                        send_spelllist_cmd(object *op, char *spellname, int mode);
 void                        send_skilllist_cmd(object *op, object *skillp, int mode);
-void                        send_ready_skill(object *op, char *skillname);
+void                        send_ready_skill(player *pl, shstr *name);
 void                        send_golem_control(object *golem, int mode);
 void                        generate_ext_title(player *pl);
 /* c_object.c */
@@ -574,12 +574,12 @@ int                         write_note(object *pl, object *item, char *msg);
 int                         write_scroll(object *pl, object *scroll);
 int                         remove_trap(object *op, int dir, int level);
 /* skill_util.c */
+void                        init_skills(void);
 void                        link_player_skills(object *pl);
 object                     *find_skill(object *op, int skillnr);
 int                         do_skill(object *op, int dir, char *string);
 int                         get_weighted_skill_stat_sum(object *who, int sk);
 void                        dump_skills(void);
-void                        read_skill_params(void);
 int                         lookup_skill_by_name(char *string);
 int                         check_skill_to_apply(object *who, object *item);
 void                        unlink_skill(object *skillop);
