@@ -2922,6 +2922,13 @@ int apply_special(object *who, object *op, int aflags)
         case SKILL:
             if (who->type == PLAYER)
             {
+/* Not sure I understand this. Of course op->exp_obj != NULL as op is a skill.
+ * OTOH I have no idea what 'skill-tools' are/were -- perhaps like punching
+ * where the skill itself represents the tool that administers it (your fist)?
+ * Anyway, although this was broken in r7295, I think because that revision
+ * removed the concept of skills doubling as tangible items.
+ * -- Smacky 20130918 */
+#if 0
                 if (!IS_NORMAL_INVIS_TO(op, who))
                 {
                     /* for tools */
@@ -2934,7 +2941,15 @@ int apply_special(object *who, object *op, int aflags)
                 }
                 else
                     send_ready_skill(who, skills[op->stats.sp].name);
+#else
+                /* At least one of these lines is unnecessary: confirmation or
+                 * just spam? I vote to get rid of the ndi() -- srs() uses less
+                 * resources and allows the client more control. */
+                new_draw_info(NDI_UNIQUE, 0, who, "You ready the skill ~%s~.", query_name(op));
+                send_ready_skill(who, skills[op->stats.sp].name);
+#endif
             }
+
             SET_FLAG(op, FLAG_APPLIED);
             /* change_abil(who, op); */
             /*LOG(llevDebug, "APPLY SKILL: %s change %s to %s\n", query_name(who), query_name(who->chosen_skill), query_name(op) );*/
