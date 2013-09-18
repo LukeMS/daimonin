@@ -1,5 +1,14 @@
 Object skill_impact_weapon
-name impact weapons
+name Impact Weapons
+food 11
+run_away 0
+speed 1.0
+object_int1 0
+object_int2 1
+object_int3 99
+msg
+is a skill.
+endmsg
 type 43
 sub_type 0
 face skill.101

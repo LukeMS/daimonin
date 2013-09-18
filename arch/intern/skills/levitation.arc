@@ -1,5 +1,14 @@
 Object skill_levitate
-name levitation
+name Levitation
+food 11
+run_away 0
+speed 0.0
+object_int1 99
+object_int2 99
+object_int3 99
+msg
+is a skill.
+endmsg
 type 43
 face skill.101
 sub_type 1

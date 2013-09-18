@@ -1,5 +1,14 @@
 Object skill_literacy
-name common literacy
+name Common Literacy
+food 11
+run_away 1
+speed 1.0
+object_int1 3
+object_int2 4
+object_int3 99
+msg
+is a skill.
+endmsg
 type 43
 sub_type 2
 face skill.101

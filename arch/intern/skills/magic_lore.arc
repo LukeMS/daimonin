@@ -1,5 +1,14 @@
 Object skill_thaumaturgy
-name magic lore
+name Magic Lore
+food 11
+run_away 0
+speed 0.0
+object_int1 99
+object_int2 99
+object_int3 99
+msg
+is a skill.
+endmsg
 type 43
 sub_type 2
 face skill.101

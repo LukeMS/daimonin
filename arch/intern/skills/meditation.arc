@@ -1,5 +1,14 @@
 Object skill_meditation
-name meditation
+name Meditation
+food 11
+run_away 0
+speed 0.0
+object_int1 4
+object_int2 5
+object_int3 3
+msg
+is a skill.
+endmsg
 type 43
 sub_type 1
 face skill.101

@@ -1,5 +1,14 @@
 Object skill_jumping
-name jumping
+name Jumping
+food 11
+run_away 5
+speed 2.5
+object_int1 99
+object_int2 99
+object_int3 99
+msg
+is a skill.
+endmsg
 type 43
 sub_type 1
 face skill.101

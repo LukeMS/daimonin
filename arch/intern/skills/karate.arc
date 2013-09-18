@@ -1,5 +1,14 @@
 Object skill_karate
-name karate
+name Karate
+food 11
+run_away 0
+speed 1.0
+object_int1 0
+object_int2 1
+object_int3 99
+msg
+is a skill.
+endmsg
 weapon_speed 3.0
 attack_impact 100
 face skill.101

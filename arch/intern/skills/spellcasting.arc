@@ -1,5 +1,14 @@
 Object skill_spellcasting
-name wizardry spells
+name Wizardry Spells
+food 11
+run_away 0
+speed 0.0
+object_int1 5
+object_int2 3
+object_int3 4
+msg
+is a skill.
+endmsg
 type 43
 sub_type 0
 face skill.101

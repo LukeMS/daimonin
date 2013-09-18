@@ -1,5 +1,14 @@
 Object skill_inscription
-name inscription
+name Inscription
+food 11
+run_away 1
+speed 5.0
+object_int1 5
+object_int2 3
+object_int3 99
+msg
+is a skill.
+endmsg
 type 43
 sub_type 2
 face skill.101
