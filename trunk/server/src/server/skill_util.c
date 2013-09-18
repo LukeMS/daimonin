@@ -180,18 +180,21 @@ void link_player_skills(object *op)
     }
 
     /* now loop the found skills and link them to exp group objects */
-    for(i=0;i<NROFSKILLS;i++)
+    for (i = 0; i < NROFSKILLS; i++)
     {
-        if(pl->skill_ptr[i])
+        object *this = pl->skill_ptr[i];
+
+        if (this)
         {
-            pl->skill_ptr[i]->exp_obj = pl->exp_obj_ptr[pl->skill_ptr[i]->magic];
+            object *best = pl->highest_skill[this->magic];
 
-            if( !pl->highest_skill[pl->skill_ptr[i]->magic] ||
-                 pl->skill_ptr[i]->stats.exp > pl->highest_skill[pl->skill_ptr[i]->magic]->stats.exp)
-                pl->highest_skill[pl->skill_ptr[i]->magic] = pl->skill_ptr[i];
+            if (link_player_skill(pl->ob, this) &&
+                (!best ||
+                 this->stats.exp > best->stats.exp))
+            {
+                pl->highest_skill[this->magic] = this;
+            }
         }
-
-
     }
 }
 
