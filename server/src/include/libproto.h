@@ -34,7 +34,6 @@ extern void             animate_object(object *op, int count);
 /* arch.c */
 extern archetype       *find_archetype_by_object_name(const char *name);
 extern object          *get_archetype_by_object_name(const char *name);
-extern archetype       *get_skill_archetype(int skillnr);
 extern int              item_matched_string(object *pl, object *op, const char *name);
 extern void             init_archetypes(void);
 extern void             arch_info(object *op);

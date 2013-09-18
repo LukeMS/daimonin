@@ -50,14 +50,50 @@ static char *exp_group_arch_name[NROFSKILLGROUPS] = {
 /* Link the skill archetype ptr to skill list for fast access. */
 void init_skills(void)
 {
-    int i;
+    archetype *at;
+    int        i,
+               failure = 0;
+
+    LOG(llevSystem, "SYSTEM:: Initializing skills...\n");
+
+    for (at = first_archetype; at; at = at->next)
+    {
+        if (at->clone.type == SKILL)
+        {
+            i = at->clone.stats.sp;
+
+            if (i < 0 ||
+                i >= NROFSKILLS)
+            {
+                LOG(llevInfo, "  Skill %s out of range (is: %d, must be: 0-%d!\n",
+                    STRING_ARCH_NAME(at), i, NROFSKILLS - 1);
+                failure = 1;
+            }
+            else if (skills[i])
+            {
+                LOG(llevInfo, "  Duplicate skill #%d found (original: %s, duplicate: %s!\n",
+                    i, STRING_ARCH_NAME(skills[i]), STRING_ARCH_NAME(at));
+                failure = 1;
+            }
+            else
+            {
+                skills[i] = at;
+            }
+        }
+    }
 
     for (i = 0; i < NROFSKILLS; i++)
     {
-        if (!(skills[i] = get_skill_archetype(i)))
+        if (!skills[i])
         {
-            LOG(llevError, "ERROR:: Skill #%d not found in archlist!\n", i);
+            LOG(llevInfo, "  Skill #%d not found!\n", i);
+            failure = 1;
         }
+    }
+
+    if (failure)
+    {
+        LOG(llevError, "ERROR:: Fix the skill arches!\n");
     }
 }
 

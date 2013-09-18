@@ -86,22 +86,6 @@ object * get_archetype_by_object_name(const char *name)
     return create_singularity(name);
 }
 
-/* get the skill object of skill nr. x.
- * i don't have included artifacts file search here -
- * if ever skills are defined in artifacts file, add it here.
- */
-archetype * get_skill_archetype(int skillnr)
-{
-    archetype  *at;
-
-    for (at = first_archetype; at != NULL; at = at->next)
-    {
-        if (at->clone.type == SKILL && at->clone.stats.sp == skillnr)
-            return at;
-    };
-    return NULL;
-}
-
 /* This is a subset of the parse_id command.  Basically, name can be
  * a string seperated lists of things to match, with certain keywords.
  * pl is the player (only needed to set count properly)
