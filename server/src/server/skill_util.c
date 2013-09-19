@@ -175,17 +175,6 @@ void link_player_skills(object *op)
             pl->exp_obj_ptr[i] = insert_ob_in_ob(arch_to_object(skillgroups[i]), op);
         }
         CLEAR_FLAG(pl->exp_obj_ptr[i], FLAG_APPLIED);
-
-        /* we should not need that exp adjustment
-        */
-        /*
-        if (pl->stats.exp < pl->exp_obj_ptr[i]->stats.exp)
-        {
-            pl->stats.exp = pl->exp_obj_ptr[i]->stats.exp;
-            pl->level = pl->exp_obj_ptr[i]->level;
-        }
-        player_lvl_adj(NULL, pl->exp_obj_ptr[i]);
-        */
     }
 
     /* now loop the found skills and link them to exp group objects */

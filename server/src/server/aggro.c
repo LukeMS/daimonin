@@ -317,36 +317,6 @@ static inline void calc_active_skill_dmg(object *op, int *skill1, int *skill2, i
     }
 }
 
-/* add aggro and tell the player about it */
-static inline int add_aggro_exp(object *hitter, int exp, int skillnr)
-{
-    if (exp)
-    {
-        player *pl = CONTR(hitter);
-        int     bonus = (pl->exp_bonus) ? (((double)exp / 100.0) * pl->exp_bonus) : 0;
-        char    buf[TINY_BUF];
-
-        if (bonus)
-        {
-            sprintf(buf, " (+%d bonus) ", bonus);
-        }
-        else
-        {
-            buf[0] = '\0';
-        }
-
-        new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, hitter, "You got ~%d%s exp~ in ~%s~.",
-            add_exp(hitter, exp + bonus, skillnr, 1), buf, skills[skillnr]->clone.name);
-        return 1;
-    }
-    /*
-     * that message was now given one time and only when no skill has >0 exp gain
-    else
-        new_draw_info( NDI_UNIQUE, 0, hitter, "Your enemy was to low for exp.");
-    */
-    return 0;
-}
-
 static int give_default_guild_exp(player *pl, int base_exp)
 {
     object *skill;
@@ -360,7 +330,7 @@ static int give_default_guild_exp(player *pl, int base_exp)
     {
         e1 = (int) ((float) base_exp * 0.55f);
         e1 = exp_from_base_skill(pl, e1, skill->stats.sp);
-        add_aggro_exp(pl->ob, e1, skill->stats.sp);
+        add_exp(pl->ob, e1, skill->stats.sp, 1);
     }
 
     if (pl->base_skill_group[1] >= 0 &&
@@ -369,7 +339,7 @@ static int give_default_guild_exp(player *pl, int base_exp)
     {
         e2 = (int) ((float) base_exp * 0.30f);
         e2 = exp_from_base_skill(pl, e2, skill->stats.sp);
-        add_aggro_exp(pl->ob, e2, skill->stats.sp);
+        add_exp(pl->ob, e2, skill->stats.sp, 1);
     }
 
     if (pl->base_skill_group[2] >= 0 &&
@@ -378,7 +348,7 @@ static int give_default_guild_exp(player *pl, int base_exp)
     {
         e3 = (int) ((float) base_exp * 0.15f);
         e3 = exp_from_base_skill(pl, e3, skill->stats.sp);
-        add_aggro_exp(pl->ob, e3, skill->stats.sp);
+        add_exp(pl->ob, e3, skill->stats.sp, 1);
     }
 
     if (e1 > 0 || e2 > 0 || e3 > 0)
@@ -423,7 +393,7 @@ static inline int aggro_exp_single(object *victim, object *aggro, int base)
         e1 = calc_skill_exp(hitter, victim, 1.0f, pl->skill_ptr[s1]->level, &exp);
         e1 = exp_from_base_skill(pl, e1, s1);
 
-        ret |= add_aggro_exp(hitter, e1, s1);
+        ret |= add_exp(hitter, e1, s1, 1);
 #ifdef DEBUG_AGGRO
         LOG(llevNoLog,".. 100%% to skill %s (%d)\n", STRING_SAFE(pl->skill_ptr[s1]->name), e1);
 #endif
@@ -436,8 +406,8 @@ static inline int aggro_exp_single(object *victim, object *aggro, int base)
         e2 = calc_skill_exp(hitter, victim, 0.35f, pl->skill_ptr[s2]->level, &exp);
         e2 = exp_from_base_skill(pl, e2, s2);
 
-        ret |= add_aggro_exp(hitter, e1, s1);
-        ret |= add_aggro_exp(hitter, e2, s2);
+        ret |= add_exp(hitter, e1, s1, 1);
+        ret |= add_exp(hitter, e2, s2, 1);
 
 #ifdef DEBUG_AGGRO
         LOG(llevNoLog,".. 65%% to skill %s (%d), 35%% to %s (%d)\n",
@@ -457,9 +427,9 @@ static inline int aggro_exp_single(object *victim, object *aggro, int base)
         e3 = calc_skill_exp(hitter, victim, 0.30f, pl->skill_ptr[s3]->level, &exp);
         e3 = exp_from_base_skill(pl, e3, s3);
 
-        ret |= add_aggro_exp(hitter, e1, s1);
-        ret |= add_aggro_exp(hitter, e2, s2);
-        ret |= add_aggro_exp(hitter, e3, s3);
+        ret |= add_exp(hitter, e1, s1, 1);
+        ret |= add_exp(hitter, e2, s2, 1);
+        ret |= add_exp(hitter, e3, s3, 1);
 
 #ifdef DEBUG_AGGRO
         LOG(llevNoLog,".. 50%% to skill %s (%d), 30%% to %s (%d), 20%% to %s (%d)\n",

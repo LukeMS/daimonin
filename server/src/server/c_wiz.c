@@ -1176,11 +1176,9 @@ int command_setskill(object *op, char *params)
     }
     else if(!level)/* if level is 0 we unlearn the skill! */
     {
-        new_draw_info(NDI_UNIQUE, 0, op, "removed skill!");
-        exp_ob = exp_skill->exp_obj;
+        add_exp(op, -exp_skill->stats.exp, snr, 0);
         remove_ob(exp_skill);
-        player_lvl_adj(op, exp_ob, TRUE);
-        player_lvl_adj(op, NULL, TRUE);
+        new_draw_info(NDI_UNIQUE, 0, op, "removed skill!");
         FIX_PLAYER(op, "setskill");
 
         return COMMANDS_RTN_VAL_OK;
