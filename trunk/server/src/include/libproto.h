@@ -82,8 +82,6 @@ extern void             check_inv(object *op, object *trig);
 extern void             verify_button_links(mapstruct *map);
 /* exp.c */
 extern sint32           add_exp(object *op, int exp, int skill_nr, int cap);
-extern void             player_lvl_adj(object *who, object *op, int flag);
-extern int              adjust_exp(object *pl, object *op, int exp);
 extern void             apply_death_exp_penalty(object *op);
 extern float            calc_level_difference(int who_lvl, int op_lvl);
 extern int              calc_skill_exp(object *who, object *op, float mod, int level, int *real);
