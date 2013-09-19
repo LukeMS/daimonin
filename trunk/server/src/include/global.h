@@ -642,26 +642,11 @@ typedef enum
 
 typedef enum
 {
-    SKILLGROUP_AGILITY,
-    SKILLGROUP_PERSONAL,
-    SKILLGROUP_MENTAL,
-    SKILLGROUP_PHYSIQUE,
-    SKILLGROUP_MAGIC,
-    SKILLGROUP_WISDOM,
-    SKILLGROUP_MISC,
-    NROFSKILLGROUPS
-} ENUM_SKILL_GROUPS;
-
-typedef enum
-{
     BANTYPE_PLAYER,
     BANTYPE_ACCOUNT,
     BANTYPE_CHAR,
     BANTYPE_IP
 } ENUM_BAN_TYPE;
-
-/* have a marker to all exp groups which define the real player level */
-#define NROFSKILLGROUPS_ACTIVE SKILLGROUP_MISC
 
 #define MONEYSTRING_NOTHING  0
 #define MONEYSTRING_AMOUNT   1
