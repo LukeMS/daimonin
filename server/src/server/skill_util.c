@@ -27,6 +27,11 @@
 
 #include <global.h>
 
+archetype *skillgroups[NROFSKILLGROUPS] =
+{
+    NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+};
+
 archetype *skills[NROFSKILLS]  =
 {
     NULL, NULL, NULL, NULL, NULL, NULL, NULL,
@@ -37,17 +42,9 @@ archetype *skills[NROFSKILLS]  =
     NULL, NULL, NULL, NULL, NULL, NULL, NULL,
 };
 
-static char *exp_group_arch_name[NROFSKILLGROUPS] = {
-    "experience_agility",
-    "experience_charisma",
-    "experience_mental",
-    "experience_physical",
-    "experience_power",
-    "experience_wis",
-    "experience_misc"
-};
-
-/* Link the skill archetype ptr to skill list for fast access. */
+/* Link the skillgroups and skills archetypes to the skillgroups and skills
+ * arrays for fast access. Also do some basic sanity checking of those arches
+ * here and halt the server at any sign of trouble. */
 void init_skills(void)
 {
     archetype *at;
@@ -58,7 +55,29 @@ void init_skills(void)
 
     for (at = first_archetype; at; at = at->next)
     {
-        if (at->clone.type == SKILL)
+        if (at->clone.type == EXPERIENCE)
+        {
+            i = at->clone.sub_type1;
+
+            if (i < 0 ||
+                i >= NROFSKILLGROUPS)
+            {
+                LOG(llevInfo, "  Skillgroup %s out of range (is: %d, must be: 0-%d!\n",
+                    STRING_ARCH_NAME(at), i, NROFSKILLGROUPS - 1);
+                failure = 1;
+            }
+            else if (skillgroups[i])
+            {
+                LOG(llevInfo, "  Duplicate skillgroup #%d found (original: %s, duplicate: %s!\n",
+                    i, STRING_ARCH_NAME(skillgroups[i]), STRING_ARCH_NAME(at));
+                failure = 1;
+            }
+            else
+            {
+                skillgroups[i] = at;
+            }
+        }
+        else if (at->clone.type == SKILL)
         {
             i = at->clone.stats.sp;
 
@@ -82,11 +101,28 @@ void init_skills(void)
         }
     }
 
+    for (i = 0; i < NROFSKILLGROUPS; i++)
+    {
+        if (!skillgroups[i])
+        {
+            LOG(llevInfo, "  Skillgroup #%d not found!\n", i);
+            failure = 1;
+        }
+    }
+
     for (i = 0; i < NROFSKILLS; i++)
     {
         if (!skills[i])
         {
             LOG(llevInfo, "  Skill #%d not found!\n", i);
+            failure = 1;
+        }
+        else if (skills[i]->clone.magic < 0 ||
+                 skills[i]->clone.magic >= NROFSKILLGROUPS)
+        {
+            LOG(llevInfo, "  Skill %s does not belong to a valid skillgroup (is: %d, must be: 0-%d!\n",
+                STRING_ARCH_NAME(skills[i]), skills[i]->clone.magic,
+                NROFSKILLGROUPS - 1);
             failure = 1;
         }
     }
@@ -130,12 +166,13 @@ void link_player_skills(object *op)
      * This was given to player in the past with the treasure list,
      * but we have to control it here so or so.
      */
-    for(i=0;i<NROFSKILLGROUPS;i++)
+    for (i = 0; i < NROFSKILLGROUPS; i++)
     {
-        if(!pl->exp_obj_ptr[i])
+        if (!pl->exp_obj_ptr[i])
         {
-            LOG(llevDebug,"link_player_skills(): adding %s to player %s\n",exp_group_arch_name[i],query_name(tmp));
-            pl->exp_obj_ptr[i] = insert_ob_in_ob(arch_to_object(find_archetype(exp_group_arch_name[i])), op);
+            LOG(llevDebug, "DEBUG:: %s:link_player_skills(): Adding %s to player %s!\n",
+                __FILE__, STRING_ARCH_NAME(skillgroups[i]), STRING_OBJ_NAME(op));
+            pl->exp_obj_ptr[i] = insert_ob_in_ob(arch_to_object(skillgroups[i]), op);
         }
         CLEAR_FLAG(pl->exp_obj_ptr[i], FLAG_APPLIED);
 

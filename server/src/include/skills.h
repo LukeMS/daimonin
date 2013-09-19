@@ -79,6 +79,21 @@
 
 #define NO_SKILL_READY -1
 
+typedef enum
+{
+    SKILLGROUP_AGILITY,
+    SKILLGROUP_PERSONAL,
+    SKILLGROUP_MENTAL,
+    SKILLGROUP_PHYSIQUE,
+    SKILLGROUP_MAGIC,
+    SKILLGROUP_WISDOM,
+    SKILLGROUP_MISC,
+    NROFSKILLGROUPS
+} ENUM_SKILL_GROUPS;
+
+/* have a marker to all exp groups which define the real player level */
+#define NROFSKILLGROUPS_ACTIVE SKILLGROUP_MISC
+
 enum skillnrs
 {
     /* 0 */
@@ -170,6 +185,7 @@ enum skillnrs
 };
 
 extern archetype *skills[];
+extern archetype *skillgroups[];
 
 /* yet more convenience macros. */
 
