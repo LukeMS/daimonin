@@ -1244,9 +1244,9 @@ static int GameObject_GetSkill(lua_State *L)
 /*                                                                           */
 /*          This first return is one of:                                     */
 /*              0 - success;                                                 */
-/*              2 - failure (the player has no such skill);                  */
-/*              3 - failure (the skill is non-levelling);                    */
-/*              4 - failure (the skill is indirect and has already gained    */
+/*              1 - failure (the player has no such skill);                  */
+/*              2 - failure (the skill is non-levelling);                    */
+/*              3 - failure (the skill is indirect and has already gained    */
 /*                  experience via this method this level).                  */
 /*                                                                           */
 /*          On any failure, level and exp return as 0. On success they are   */
@@ -1332,10 +1332,10 @@ static int GameObject_SetSkill(lua_State *L)
             return 0;
     }
 
-    /* If the player does not even have this skill, return 2, nil, 0, 0. */
+    /* If the player does not even have this skill, return 1, nil, 0, 0. */
     if (!skill)
     {
-        failure = 2;
+        failure = 1;
         level = exp = 0;
     }
     else
@@ -1344,10 +1344,10 @@ static int GameObject_SetSkill(lua_State *L)
         level = MAX(-1, MIN(level, 1));
 
         /* If a TYPE_SKILL object has ->last_eat == 0, it cannot be levelled; it is
-         * boolean. Return 3, skill, 0, 0. */
+         * boolean. Return 2, skill, 0, 0. */
         if (skill->last_eat == 0)
         {
-            failure = 3;
+            failure = 2;
             level = exp = 0;
         }
         /* If ->last_eat == 1, it is levelled indirectly (accumulates
@@ -1359,11 +1359,11 @@ static int GameObject_SetSkill(lua_State *L)
              * experience via a script this level so the player will have to go
              * back to normal grinding for experience until next level. This
              * prevents scripts being exploited too much to gain
-             * mega-levels. Return 4, skill, 0, 0. */
+             * mega-levels. Return 3, skill, 0, 0. */
             if (skill->item_level == skill->level &&
                 (level > 0 || (level == 0 && exp > 0)))
             {
-                failure = 4;
+                failure = 3;
                 level = exp = 0;
             }
             else
