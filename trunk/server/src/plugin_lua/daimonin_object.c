@@ -1239,8 +1239,6 @@ static int GameObject_GetSkill(lua_State *L)
 /*                                                                           */
 /*          This first return is one of:                                     */
 /*              0 - success;                                                 */
-/*              1 - failure (nr is greater than the available                */
-/*                  skill(group)s on this server);                           */
 /*              2 - failure (the player has no such skill);                  */
 /*              3 - failure (the skill is non-levelling);                    */
 /*              4 - failure (the skill is indirect and has already gained    */
@@ -1285,41 +1283,27 @@ static int GameObject_SetSkill(lua_State *L)
     switch (type)
     {
         case TYPE_SKILL:
-            if (nr < 0)
+            if (nr < 0 ||
+                nr >= NROFSKILLS)
             {
-                luaL_error(L, "object:SetSkill(): nr must be >= 0!");
+                luaL_error(L, "object:SetSkill(): Skill nr out of range (is: %d, must be: 0-%d)!",
+                    nr, NROFSKILLS);
                 return 0;
             }
-            else if (nr <= NROFSKILLS)
-            {
-                skill = pl->skill_ptr[nr];
-            }
-            /* If the nr is higher than the max on this server, return 1, nil,
-             * 0, 0. */
-            else
-            {
-                failure = 1;
-                level = exp = 0;
-            }
+
+            skill = pl->skill_ptr[nr];
             break;
 
         case TYPE_SKILLGROUP:
-            if (nr < 0)
+            if (nr < 0 ||
+                nr >= NROFSKILLGROUPS)
             {
-                luaL_error(L, "object:SetSkill(): nr must be >= 0!");
+                luaL_error(L, "object:SetSkill(): Skillgroup nr out of range (is: %d, must be: 0-%d)!",
+                    nr, NROFSKILLGROUPS);
                 return 0;
             }
-            else if (nr <= NROFSKILLGROUPS)
-            {
-                skill = pl->highest_skill[nr];
-            }
-            /* If the nr is higher than the max on this server, return 1, nil,
-             * 0, 0. */
-            else
-            {
-                failure = 1;
-                level = exp = 0;
-            }
+
+            skill = pl->highest_skill[nr];
             break;
 
         default:
