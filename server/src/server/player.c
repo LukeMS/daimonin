@@ -952,7 +952,7 @@ int is_true_undead(object *op)
 
       if(op->type==PLAYER)
         for(tmp=op->inv;tmp;tmp=tmp->below)
-           if(tmp->type==EXPERIENCE && tmp->stats.Wis)
+           if(tmp->type==TYPE_SKILLGROUP && tmp->stats.Wis)
           if(QUERY_FLAG(tmp,FLAG_UNDEAD)) return 1;
     */
     return 0;
@@ -1266,14 +1266,14 @@ void dragon_ability_gain(object *who, int atnr, int level)
             return;
         }
     }
-    else if (item->type == SKILL)
+    else if (item->type == TYPE_SKILL)
     {
         if (item->title == shstr_cons.clawing && change_skill(who, SK_CLAWING))
         {
             /* adding new attacktypes to the clawing skill */
             tmp = who->chosen_skill; /* clawing skill object */
 
-            if (tmp->type == SKILL && tmp->name == shstr_cons.clawing /*&& !(tmp->attacktype & item->attacktype)*/)
+            if (tmp->type == TYPE_SKILL && tmp->name == shstr_cons.clawing /*&& !(tmp->attacktype & item->attacktype)*/)
             {
                 /* always add physical if there's none */
                 /*

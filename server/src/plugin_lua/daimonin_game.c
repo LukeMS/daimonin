@@ -250,8 +250,9 @@ static struct constant_decl preset_game_constants[] =
     {"TYPE_PLAYERMOVER",      PLAYERMOVER},
     {"TYPE_TELEPORTER",       TELEPORTER},
     {"TYPE_CREATOR",          CREATOR},
-    {"TYPE_SKILL",            SKILL},
-    {"TYPE_EXPERIENCE",       EXPERIENCE},
+    {"TYPE_SKILL",            TYPE_SKILL},
+    {"TYPE_EXPERIENCE",       TYPE_SKILLGROUP}, // deprecated
+    {"TYPE_SKILLGROUP",       TYPE_SKILLGROUP},
     {"TYPE_EARTHWALL",        EARTHWALL},
     {"TYPE_GOLEM",            GOLEM},
     {"TYPE_BOMB",             BOMB},

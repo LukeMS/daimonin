@@ -447,7 +447,7 @@ static int AdjustExp(object *pl, object *op, int exp, int cap)
 
 
     /* be sure this is a skill object from a active player */
-    if (op->type != SKILL || !pl || pl->type != PLAYER)
+    if (op->type != TYPE_SKILL || !pl || pl->type != PLAYER)
     {
         LOG(llevBug, "BUG: AdjustExp() - called for non player or non skill: skill: %s -> player: %s\n",
             query_name(op), query_name(pl));
@@ -513,7 +513,7 @@ static int AdjustExp(object *pl, object *op, int exp, int cap)
     /*
        for(tmp=pl->inv;tmp;tmp=tmp->below)
        {
-           if(tmp->type==SKILL && tmp->magic == sk_nr)
+           if(tmp->type==TYPE_SKILL && tmp->magic == sk_nr)
            {
                if((sk_exp += tmp->stats.exp) > (sint32)MAX_EXPERIENCE)
                    sk_exp = MAX_EXPERIENCE;
@@ -522,7 +522,7 @@ static int AdjustExp(object *pl, object *op, int exp, int cap)
     */
     for (tmp = pl->inv; tmp; tmp = tmp->below)
     {
-        if (tmp->type == SKILL && tmp->magic == sk_nr)
+        if (tmp->type == TYPE_SKILL && tmp->magic == sk_nr)
         {
             if (tmp->stats.exp > sk_exp)
                 sk_exp = tmp->stats.exp;
@@ -559,7 +559,7 @@ static void AdjustLevel(object *who, object *op, int flag_msg)
     if (!op)        /* when rolling stats */
         op = who;
 
-    if (op->type == SKILL && !op->last_eat) /* no exp gain for indirect skills */
+    if (op->type == TYPE_SKILL && !op->last_eat) /* no exp gain for indirect skills */
     {
         LOG(llevBug, "BUG: AdjustLevel() called for indirect skill %s (who: %s)\n", query_name(op), query_name(who));
         CLEAR_FLAG(who, FLAG_NO_FIX_PLAYER);
@@ -574,7 +574,7 @@ static void AdjustLevel(object *who, object *op, int flag_msg)
         op->level++;
 
         /* show the player some effects... */
-        if (op->type == SKILL && who && who->type == PLAYER && who->map)
+        if (op->type == TYPE_SKILL && who && who->type == PLAYER && who->map)
         {
             object *effect_ob;
 
@@ -601,7 +601,7 @@ static void AdjustLevel(object *who, object *op, int flag_msg)
             dragon_level_gain(who);
 
 
-        if (who && who->type == PLAYER && op->type != EXPERIENCE && op->type != SKILL && who->level > 1)
+        if (who && who->type == PLAYER && op->type != TYPE_SKILLGROUP && op->type != TYPE_SKILL && who->level > 1)
         {
             if (who->level + drain_level > 4)
                 CONTR(who)->levhp[who->level + drain_level] = (char) ((RANDOM() % who->arch->clone.stats.maxhp) + 1);
@@ -611,7 +611,7 @@ static void AdjustLevel(object *who, object *op, int flag_msg)
             else
                 CONTR(who)->levhp[who->level + drain_level] = (char) who->arch->clone.stats.maxhp;
         }
-        if (op->level > 1 && op->type == EXPERIENCE)
+        if (op->level > 1 && op->type == TYPE_SKILLGROUP)
         {
             if (who && who->type == PLAYER)
             {
@@ -636,7 +636,7 @@ static void AdjustLevel(object *who, object *op, int flag_msg)
                               op->level, op->name);
             }
         }
-        else if (flag_msg && op->level > 1 && op->type == SKILL)
+        else if (flag_msg && op->level > 1 && op->type == TYPE_SKILL)
         {
             new_draw_info(NDI_UNIQUE | NDI_RED, 0, who, "You are now level %d in the skill %s.",
                            op->level, op->name);
@@ -655,12 +655,12 @@ static void AdjustLevel(object *who, object *op, int flag_msg)
 
         if(flag_msg)
         {
-            if (op->type == EXPERIENCE)
+            if (op->type == TYPE_SKILLGROUP)
             {
                 new_draw_info(NDI_UNIQUE | NDI_RED, 0, who, "-You are now level %d in %s based skills.",
                               op->level, op->name);
             }
-            else if (op->type == SKILL)
+            else if (op->type == TYPE_SKILL)
             {
                 new_draw_info(NDI_UNIQUE | NDI_RED, 0, who, "-You are now level %d in the skill %s.",
                               op->level, op->name);
@@ -697,7 +697,7 @@ void apply_death_exp_penalty(object *op)
     for (tmp = op->inv; tmp; tmp = tmp->below)
     {
         /* only adjust skills with level and a positive exp value - negative exp has special meaning */
-        if (tmp->type == SKILL && tmp->level && tmp->last_eat == 1)
+        if (tmp->type == TYPE_SKILL && tmp->level && tmp->last_eat == 1)
         {
             /* first, lets check there are exp we can drain. */
             level_exp = tmp->stats.exp - new_levels[tmp->level];
@@ -738,7 +738,7 @@ void apply_death_exp_penalty(object *op)
 
     for (tmp = op->inv; tmp; tmp = tmp->below)
     {
-        if (tmp->type == EXPERIENCE && tmp->stats.exp)
+        if (tmp->type == TYPE_SKILLGROUP && tmp->stats.exp)
             AdjustLevel(op, tmp, FALSE); /* adjust exp objects levels */
     }
     AdjustLevel(op, NULL, FALSE);        /* and at last adjust the player level */

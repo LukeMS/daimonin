@@ -117,10 +117,8 @@
 #define PLAYERMOVER             40
 #define TELEPORTER              41
 #define CREATOR                 42
-#define SKILL                   43  /* Skills are similar to abilites, but
-                                     * not related to spells.  by njw@cs.city.ac.u */
-#define EXPERIENCE              44  /* An experience 'object'. Needed for multi-exp/skills
-                                     * hack. -b.t. thomas@astro.psu.edu */
+#define TYPE_SKILL              43
+#define TYPE_SKILLGROUP         44
 #define EARTHWALL               45
 #define GOLEM                   46
 #define BOMB                    47

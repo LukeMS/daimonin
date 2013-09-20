@@ -55,7 +55,7 @@ void init_skills(void)
 
     for (at = first_archetype; at; at = at->next)
     {
-        if (at->clone.type == EXPERIENCE)
+        if (at->clone.type == TYPE_SKILLGROUP)
         {
             i = at->clone.sub_type1;
 
@@ -77,7 +77,7 @@ void init_skills(void)
                 skillgroups[i] = at;
             }
         }
-        else if (at->clone.type == SKILL)
+        else if (at->clone.type == TYPE_SKILL)
         {
             i = at->clone.stats.sp;
 
@@ -143,15 +143,15 @@ void link_player_skills(object *op)
     object *tmp;
     player *pl = CONTR(op);
 
-    /* browse the player inv and put all EXPERIENCE and SKILL
+    /* browse the player inv and put all TYPE_SKILLGROUP and TYPE_SKILL
      * objects in the player pointer shutcut arrays.
      * These speeds up the whole skill system alot. MT-2005
      */
     for (tmp = op->inv; tmp != NULL; tmp = tmp->below)
     {
-        if(tmp->type == EXPERIENCE)
+        if(tmp->type == TYPE_SKILLGROUP)
             pl->exp_obj_ptr[tmp->sub_type1] = tmp;
-        else if (tmp->type == SKILL)
+        else if (tmp->type == TYPE_SKILL)
         {
             /* important: we need to have all skill unapplied = unused.
              * or the server will fail at runtime to setup the enviroment of a new loaded obj

@@ -506,10 +506,10 @@ static int GameObject_setAttribute(lua_State *L, lua_object *obj, struct attribu
     /* Pre-setting hook */
     if (before)
     {
-        if (who->type == EXPERIENCE ||
-            who->type == SKILL)
+        if (who->type == TYPE_SKILLGROUP ||
+            who->type == TYPE_SKILL)
         {
-            luaL_error(L, "Attributes on EXPERIENCE and SKILL objects are read only!");
+            luaL_error(L, "Attributes on TYPE_SKILLGROUP and TYPE_SKILL objects are read only!");
             return 1;
         }
     }
@@ -554,10 +554,10 @@ static int GameObject_setFlag(lua_State *L, lua_object *obj, uint32 flagno, int 
 
     if (before)
     {
-        if (op->type == EXPERIENCE ||
-            op->type == SKILL)
+        if (op->type == TYPE_SKILLGROUP ||
+            op->type == TYPE_SKILL)
         {
-            luaL_error(L, "Flags on EXPERIENCE and SKILL objects are read only!");
+            luaL_error(L, "Flags on TYPE_SKILLGROUP and TYPE_SKILL objects are read only!");
             return 1;
         }
         if (flagno == FLAG_IS_INVISIBLE &&
@@ -1181,12 +1181,12 @@ static int GameObject_GetSkill(lua_State *L)
     {
         if (tmp->type == type)
         {
-            if (tmp->type == SKILL)
+            if (tmp->type == TYPE_SKILL)
             {
                 if (tmp->stats.sp == id)
                     return push_object(L, &GameObject, tmp);
             }
-            else if (tmp->type == EXPERIENCE)
+            else if (tmp->type == TYPE_SKILLGROUP)
             {
                 if (tmp->sub_type1 == id)
                     return push_object(L, &GameObject, tmp);
@@ -1204,8 +1204,8 @@ static int GameObject_GetSkill(lua_State *L)
 /* Info   : Tries to change a skill's experience and/or level.               */
 /*                                                                           */
 /*          The type argument must be either game.TYPE_SKILL for a particular*/
-/*          skill or game.TYPE_EXPERIENCE for a skill group. nr must be a    */
-/*          legal value accordingly. If type is EXPERIENCE this translates to*/
+/*          skill or game.TYPE_TYPE_SKILLGROUP for a skill group. nr must be a    */
+/*          legal value accordingly. If type is TYPE_SKILLGROUP this translates to*/
 /*          the player's best skill in that skill group.                     */
 /*                                                                           */
 /*          For particular skiils, the second form of call may be used where */
@@ -1271,7 +1271,7 @@ static int GameObject_SetSkill(lua_State *L)
         char *name;
 
         get_lua_args(L, "Osii", &self, &name, &level, &exp);
-        type = SKILL;
+        type = TYPE_SKILL;
         nr = hooks->lookup_skill_by_name(name);
     }
 
@@ -1284,7 +1284,7 @@ static int GameObject_SetSkill(lua_State *L)
 
     switch (type)
     {
-        case SKILL:
+        case TYPE_SKILL:
             if (nr < 0)
             {
                 luaL_error(L, "object:SetSkill(): nr must be >= 0!");
@@ -1303,7 +1303,7 @@ static int GameObject_SetSkill(lua_State *L)
             }
             break;
 
-        case EXPERIENCE:
+        case TYPE_SKILLGROUP:
             if (nr < 0)
             {
                 luaL_error(L, "object:SetSkill(): nr must be >= 0!");
@@ -1338,7 +1338,7 @@ static int GameObject_SetSkill(lua_State *L)
         /* Scripts can change a max of 1 level, up or down. */
         level = MAX(-1, MIN(level, 1));
 
-        /* If a SKILL object has ->last_eat == 0, it cannot be levelled; it is
+        /* If a TYPE_SKILL object has ->last_eat == 0, it cannot be levelled; it is
          * boolean. Return 3, skill, 0, 0. */
         if (skill->last_eat == 0)
         {

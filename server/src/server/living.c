@@ -615,7 +615,7 @@ int change_abil(object *op, object *tmp)
                 new_draw_info(NDI_UNIQUE | NDI_GREY, 0, op, "You feel much less healthy!");
         }
 
-        if ((tmp->stats.sp || tmp->stats.maxsp) && tmp->type != SKILL)
+        if ((tmp->stats.sp || tmp->stats.maxsp) && tmp->type != TYPE_SKILL)
         {
             success = 1;
             if (applied * tmp->stats.sp > 0 || applied * tmp->stats.maxsp > 0)
@@ -653,7 +653,7 @@ int change_abil(object *op, object *tmp)
         }
     }
 
-    if (tmp->type != EXPERIENCE && !potion_max)
+    if (tmp->type != TYPE_SKILLGROUP && !potion_max)
     {
         for (j = 0; j < NUM_STATS; j++)
         {
@@ -1122,7 +1122,7 @@ void fix_player(object *op)
          * add here more types we can and must skip.
          */
         if (tmp->type == SCROLL
-             || tmp->type == EXPERIENCE
+             || tmp->type == TYPE_SKILLGROUP
              || tmp->type == POTION
              || tmp->type == CONTAINER
              || tmp->type == CLOSE_CON
@@ -1202,7 +1202,7 @@ void fix_player(object *op)
             continue;
         }
         /* all skills, not only the applied ones */
-       else  if (tmp->type == SKILL)
+       else  if (tmp->type == TYPE_SKILL)
         {
             /* create list of highest skills */
             if(!pl->highest_skill[tmp->magic] || tmp->stats.exp > pl->highest_skill[tmp->magic]->stats.exp)
@@ -1345,7 +1345,7 @@ void fix_player(object *op)
                         light = tmp->glow_radius;
                     break;
 
-                case SKILL:
+                case TYPE_SKILL:
                     applied_skill = tmp;
                     break;
 
