@@ -583,7 +583,7 @@ void send_skilllist_cmd(object *op, object *skillp, int mode)
         sprintf(tmp, "%d ", mode);
         for (tmp2 = op->inv; tmp2; tmp2 = tmp2->below)
         {
-            if (tmp2->type == SKILL)
+            if (tmp2->type == TYPE_SKILL)
             {
                 if (tmp2->last_eat == 1)
                     sprintf(buf, "/%s|%d|%d", tmp2->name, tmp2->level, tmp2->stats.exp);

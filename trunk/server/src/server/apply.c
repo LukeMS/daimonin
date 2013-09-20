@@ -526,7 +526,7 @@ int check_weapon_power(object *who, int improvs)
         object *wc_obj  = NULL;
 
         for (wc_obj = who->inv; wc_obj; wc_obj = wc_obj->below)
-            if (wc_obj->type == EXPERIENCE && wc_obj->stats.Str)
+            if (wc_obj->type == TYPE_SKILLGROUP && wc_obj->stats.Str)
                 break;
         if (!wc_obj)
             LOG(llevBug, "BUG: Player: %s lacks wc experience object\n", who->name);
@@ -2400,7 +2400,7 @@ int manual_apply(object *op, object *tmp, int aflag)
         case WAND:
         case ROD:
         case HORN:
-        case SKILL:
+        case TYPE_SKILL:
         case BOW:
         case ARROW:
           if (tmp->env != op)
@@ -2677,7 +2677,7 @@ int apply_special(object *who, object *op, int aflags)
                     sprintf(buf, "You no longer wield the %s.", query_name(op));
                 break;
 
-            case SKILL:
+            case TYPE_SKILL:
                 if (who->type == PLAYER)
                 {
                     if (!IS_NORMAL_INVIS_TO(op, who))
@@ -2871,7 +2871,7 @@ int apply_special(object *who, object *op, int aflags)
             break;
 
             /* this part is needed for skill-tools */
-        case SKILL:
+        case TYPE_SKILL:
             if (who->chosen_skill)
             {
                 LOG(llevBug, "BUG: apply_special(): can't apply two skills\n");
@@ -2919,7 +2919,7 @@ int apply_special(object *who, object *op, int aflags)
             break;
 
             /* this part is needed for skill-tools */
-        case SKILL:
+        case TYPE_SKILL:
             if (who->type == PLAYER)
             {
 /* Not sure I understand this. Of course op->exp_obj != NULL as op is a skill.

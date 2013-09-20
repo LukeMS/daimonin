@@ -373,7 +373,7 @@ int damage_ob(object *op, int dam, object *hitter, int env_attack)
 
     /* TODO:i must fix here a bit for scrolls, rods, wands and other fix level stuff! */
     /* the trick: we get for the TARGET the real level - even for player.
-     * but for hitter, we always use the SKILL LEVEL if player!
+     * but for hitter, we always use the TYPE_SKILL LEVEL if player!
      */
     if (!(hit_obj = get_owner(hitter)))
         hit_obj = hitter;

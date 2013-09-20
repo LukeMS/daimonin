@@ -631,7 +631,7 @@ static uint32 ClientFlags(object *op)
 
               break;
 
-            case SKILL:
+            case TYPE_SKILL:
             case ARMOUR:
             case HELMET:
             case SHOULDER:

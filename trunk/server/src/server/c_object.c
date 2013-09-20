@@ -608,7 +608,7 @@ char * long_desc(object *tmp, object *caller)
     switch (tmp->type)
     {
         case RING:
-        case SKILL:
+        case TYPE_SKILL:
         case WEAPON:
         case ARMOUR:
         case BRACERS:

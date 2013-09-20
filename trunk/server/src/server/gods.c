@@ -260,7 +260,7 @@ void become_follower(object *op, object *new_god)
     /*
        for(item=op->inv;item!=NULL;item=item->below) {
            if(QUERY_FLAG(item,FLAG_STARTEQUIP)) {
-        if(item->type==SKILL || item->type==EXPERIENCE ||
+        if(item->type==TYPE_SKILL || item->type==TYPE_SKILLGROUP ||
            item->type==FORCE) continue;
         remove_ob(item);
         item=op->inv;
@@ -468,7 +468,7 @@ const char *determine_god(object *op)
             /* Gecko: we should actually only need to check either
              * this->stats.Wis or this->sub_type1, but to avoid future
              * mistakes we check both here. */
-            if (this->type == EXPERIENCE &&
+            if (this->type == TYPE_SKILLGROUP &&
                 this->stats.Wis &&
                 this->sub_type1 == 5) // TODO: meaningful constant?
             {

@@ -359,7 +359,7 @@ char * query_short_name(const object *const op, const object *const caller)
           }
           break;
 
-        case SKILL:
+        case TYPE_SKILL:
         case AMULET:
         case RING:
           if (QUERY_FLAG(op, FLAG_IDENTIFIED))
@@ -492,7 +492,7 @@ char  *query_name_full(const object *op, const object *caller)
             case CONTAINER:
               safe_strcat(buf[use_buf], " (active)", &len, HUGE_BUF);
               break;
-            case SKILL:
+            case TYPE_SKILL:
             default:
               safe_strcat(buf[use_buf], " (applied)", &len, HUGE_BUF);
         }
@@ -644,7 +644,7 @@ char *query_base_name(object *op, object *caller)
           }
           break;
 
-        case SKILL:
+        case TYPE_SKILL:
         case AMULET:
         case RING:
           if (QUERY_FLAG(op, FLAG_IDENTIFIED))
@@ -1215,7 +1215,7 @@ char * describe_item(const object *const op)
         /*
             if (is_dragon_pl(op)) {
             object *tmp;
-                for (tmp=op->inv; tmp!=NULL && !(tmp->type == SKILL &&
+                for (tmp=op->inv; tmp!=NULL && !(tmp->type == TYPE_SKILL &&
                 strcmp(tmp->name, "clawing")==0); tmp=tmp->below);
             */
 
@@ -1261,7 +1261,7 @@ int need_identify(const object *const op)
         case ROD:
         case HORN:
         case SCROLL:
-        case SKILL:
+        case TYPE_SKILL:
         case SKILLSCROLL:
         case SPELLBOOK:
         case FOOD:
