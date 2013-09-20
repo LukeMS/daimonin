@@ -1201,15 +1201,20 @@ static int GameObject_GetSkill(lua_State *L)
 /* Name   : GameObject_SetSkill                                              */
 /* Lua    : object:SetSkill(type, nr, level, exp)                            */
 /*          object:SetSkill(name, level, exp)                                */
+/*          object:SetSkill(object, level, exp)                              */
 /* Info   : Tries to change a skill's experience and/or level.               */
 /*                                                                           */
 /*          The type argument must be either game.TYPE_SKILL for a particular*/
-/*          skill or game.TYPE_TYPE_SKILLGROUP for a skill group. nr must be a    */
-/*          legal value accordingly. If type is TYPE_SKILLGROUP this translates to*/
-/*          the player's best skill in that skill group.                     */
+/*          skill or game.TYPE_TYPE_SKILLGROUP for a skill group. nr must be */
+/*          a legal value accordingly. If type is TYPE_SKILLGROUP this       */
+/*          translates to the player's best skill in that skill group.       */
 /*                                                                           */
-/*          For particular skiils, the second form of call may be used where */
+/*          For particular skills, the second form of call may be used where */
 /*          the string name is internally translated into a skill number.    */
+/*                                                                           */
+/*          For both skills and skillgroups, the third form of call may be   */
+/*          used. Again, all necessary translations and validations are      */
+/*          done internally.                                                 */
 /*                                                                           */
 /*          The level and exp are arguments are what you'd expect. Note that */
 /*          these (a) are relative (so X means the skill *gains* X, (b) may  */
@@ -1264,13 +1269,29 @@ static int GameObject_SetSkill(lua_State *L)
     {
         get_lua_args(L, "Oiiii", &self, &type, &nr, &level, &exp);
     }
-    else
+    else if (lua_isstring(L, 2))
     {
         char *name;
 
         get_lua_args(L, "Osii", &self, &name, &level, &exp);
         type = TYPE_SKILL;
         nr = hooks->lookup_skill_by_name(name);
+    }
+    else
+    {
+        lua_object *whatptr;
+
+        get_lua_args(L, "OOii", &self, &whatptr, &level, &exp);
+        type = WHAT->type;
+
+        if (type == TYPE_SKILL)
+        {
+            nr = WHAT->stats.sp;
+        }
+        else if (type == TYPE_SKILLGROUP)
+        {
+            nr = WHAT->sub_type1;
+        }
     }
 
     if (WHO->type != PLAYER ||
