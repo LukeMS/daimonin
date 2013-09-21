@@ -580,7 +580,7 @@ object                     *find_skill(object *op, int skillnr);
 int                         do_skill(object *op, int dir, char *string);
 int                         get_weighted_skill_stat_sum(object *who, int sk);
 void                        dump_skills(void);
-int                         lookup_skill_by_name(char *string);
+int                         lookup_skill_by_name(char *name);
 int                         check_skill_to_apply(object *who, object *item);
 void                        unlink_skill(object *skillop);
 int                         link_player_skill(object *pl, object *skillop);
