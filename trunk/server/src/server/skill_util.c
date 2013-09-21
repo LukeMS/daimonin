@@ -435,28 +435,22 @@ void dump_skills()
     */
 }
 
-/* lookup_skill_by_name() - based on look_up_spell_by_name - b.t.
- * Given name, we return the index of skill 'string' in the skill
- * array, -1 if no skill is found.
- */
-
-int lookup_skill_by_name(char *string)
+/* Returns the index of the named skill in the skills array or -1 if it doesn't
+ * exist. */
+int lookup_skill_by_name(char *name)
 {
-    int    i;
-    shstr *name_sh = NULL;
-
-    FREE_AND_COPY_HASH(name_sh, string);
+    int i;
 
     for (i = 0; i < NROFSKILLS; i++)
     {
-        if (skills[i]->clone.name == name_sh)
+        /* Unfortunately we need to be case insensitive here, so no hash
+         * lookup. */
+        if (!strcasecmp(skills[i]->clone.name, name))
         {
-            FREE_ONLY_HASH(name_sh);
             return i;
         }
     }
 
-    FREE_ONLY_HASH(name_sh);
     return -1;
 }
 

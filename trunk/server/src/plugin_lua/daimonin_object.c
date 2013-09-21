@@ -1164,37 +1164,118 @@ static int GameObject_Interface(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : GameObject_GetSkill                                              */
-/* Lua    : object:GetSkill(type, id)                                        */
-/* Info   : This function will fetch a skill or exp_skill object             */
+/* Lua    : object:GetSkill(type, nr)                                        */
+/*          object:GetSkill(name)                                            */
+/* Info   : Gets a skill or skillgroup GameObject if object has that skill.  */
+/*                                                                           */
+/*          The type argument must be either game.TYPE_SKILL for a particular*/
+/*          skill or game.TYPE_SKILLGROUP for a skill group. nr must be a    */
+/*          legal value accordingly.                                         */
+/*                                                                           */
+/*          For particular skills, the second form of call may be used where */
+/*          the string name is internally translated into a skill number.    */
+/*                                                                           */
+/*          Various major problems with the arguments generate Lua errors    */
+/*          (such as if object is not a player or nr is negative).           */
+/*                                                                           */
+/*          There are 3 varieties of skill: non-leveling skills do not       */
+/*          gain/lose levels or exp (you either have them or you don't, eg,  */
+/*          common literacy); direct skills gain/lose levels directly (eg,   */
+/*          find traps); indirect skills accumulate exp which means the skill*/
+/*          gains/loses levels as the total crosses certain thresholds (eg,  */
+/*          punching).                                                       */
+/*                                                                           */
+/*          Two values are returned: the GameObject (or nil); one of nil     */
+/*          (if the previous return was nil, or type was TYPE_SKILLGROUP, or */
+/*          the skill has already reached maximum level, or the skill is     */
+/*          non-levelling, false (if the skill is leveled indirectly), or    */
+/*          true (the skill is leveled directly).                            */
 /* Status : Tested/Stable                                                    */
 /*****************************************************************************/
 static int GameObject_GetSkill(lua_State *L)
 {
-    object     *tmp;
-    int         type, id;
     lua_object *self;
+    int         type,
+                nr;
+    player     *pl;
+    object     *skill;
+    int         direct;
 
-    get_lua_args(L, "Oii", &self, &type, &id);
-
-    /* Browse the inventory of object to find a matching skill or exp_obj. */
-    for (tmp = WHO->inv; tmp; tmp = tmp->below)
+    if (lua_isnumber(L, 2))
     {
-        if (tmp->type == type)
-        {
-            if (tmp->type == TYPE_SKILL)
-            {
-                if (tmp->stats.sp == id)
-                    return push_object(L, &GameObject, tmp);
-            }
-            else if (tmp->type == TYPE_SKILLGROUP)
-            {
-                if (tmp->sub_type1 == id)
-                    return push_object(L, &GameObject, tmp);
-            }
-        }
+        get_lua_args(L, "Oii", &self, &type, &nr);
+    }
+    else
+    {
+        char *name;
+
+        get_lua_args(L, "Os", &self, &name);
+        type = TYPE_SKILL;
+        nr = hooks->lookup_skill_by_name(name);
     }
 
-    return 0;
+    if (WHO->type != PLAYER ||
+        !(pl = CONTR(WHO)))
+    {
+        luaL_error(L, "object:GetSkill(): Can only be called on a player!");
+        return 0;
+    }
+
+    switch (type)
+    {
+        case TYPE_SKILL:
+            if (nr < 0 ||
+                nr >= NROFSKILLS)
+            {
+                luaL_error(L, "object:GetSkill(): Skill nr out of range (is: %d, must be: 0-%d)!",
+                    nr, NROFSKILLS);
+                return 0;
+            }
+
+            skill = pl->skill_ptr[nr];
+            break;
+
+        case TYPE_SKILLGROUP:
+            if (nr < 0 ||
+                nr >= NROFSKILLGROUPS)
+            {
+                luaL_error(L, "object:GetSkill(): Skillgroup nr out of range (is: %d, must be: 0-%d)!",
+                    nr, NROFSKILLGROUPS);
+                return 0;
+            }
+
+            skill = pl->exp_obj_ptr[nr];
+            break;
+
+        default:
+            luaL_error(L, "object:GetSkill(): Wrong type!");
+            return 0;
+    }
+
+    /* skill is now the object or NULL. 1st return GameObject or nil. */
+    push_object(L, &GameObject, skill);
+
+    /* If !skill OR type == TYPE_SKILLGROUP OR ->level == MAXLEVEL OR
+     * ->last_eat == 0, it cannot be levelled. 2nd return nil. */
+    if (!skill ||
+        type == TYPE_SKILLGROUP ||
+        skill->level == MAXLEVEL ||
+        skill->last_eat == 0)
+    {
+        lua_pushnil(L);
+    }
+    /* If ->last_eat == 1, it is levelled indirectly (accumulates
+     * experience which causes level gain/loss when it crosses certain
+     * thresholds). 2nd return false. */
+    /* If ->last_eat == 2, it is levelled directly (does not accumulate
+     * experience in the normal way but gaisn/loses levels directly). 2nd
+     * return true. */
+    else
+    {
+        lua_pushboolean(L, skill->last_eat - 1);
+    }
+
+    return 2;
 }
 
 /*****************************************************************************/
@@ -1205,8 +1286,8 @@ static int GameObject_GetSkill(lua_State *L)
 /* Info   : Tries to change a skill's experience and/or level.               */
 /*                                                                           */
 /*          The type argument must be either game.TYPE_SKILL for a particular*/
-/*          skill or game.TYPE_TYPE_SKILLGROUP for a skill group. nr must be */
-/*          a legal value accordingly. If type is TYPE_SKILLGROUP this       */
+/*          skill or game.TYPE_SKILLGROUP for a skill group. nr must be a    */
+/*          legal value accordingly. If type is TYPE_SKILLGROUP this         */
 /*          translates to the player's best skill in that skill group.       */
 /*                                                                           */
 /*          For particular skills, the second form of call may be used where */
@@ -1230,29 +1311,31 @@ static int GameObject_GetSkill(lua_State *L)
 /*          gains/loses levels as the total crosses certain thresholds (eg,  */
 /*          punching).                                                       */
 /*                                                                           */
+/*          Various major problems with the arguments generate Lua errors    */
+/*          (such as if object is not a player or nr is negative).           */
+/*                                                                           */
 /*          When an indirect skill gains any amount of exp via this method,  */
 /*          cannot subsequently gain more exp via a script until it reaches a*/
 /*          different level. This means player's cannot exploit scripts to   */
 /*          constantly gain experience; scripts augment normal grinding.     */
 /*                                                                           */
-/*          Various major problems with the arguments generate Lua errors    */
-/*          (such as if object is not a player or nr is negative).           */
-/*                                                                           */
-/*          Otherwise, four values are returned: a number representing       */
-/*          success or failure (see below); the skill object or nil; a number*/
-/*          (the level gain/loss; a number (the exp gain/loss).              */
+/*          Four values are returned: a number representing success or       */
+/*          failure (see below); the skill object or nil; a number (the level*/
+/*          gain/loss; a number (the exp gain/loss).                         */
 /*                                                                           */
 /*          This first return is one of:                                     */
 /*              0 - success;                                                 */
 /*              1 - failure (the player has no such skill);                  */
 /*              2 - failure (the skill is non-levelling);                    */
-/*              3 - failure (the skill is indirect and has already gained    */
+/*              3 - failure (the skill is direct or indirect but has already */
+/*                  reached maximum level.                                   */
+/*              4 - failure (the skill is indirect and has already gained    */
 /*                  experience via this method this level).                  */
 /*                                                                           */
 /*          On any failure, level and exp return as 0. On success they are   */
 /*          the actual amounts gained/lost (so may be different than the     */
 /*          arguments going in).                                             */
-/* Status : Untested/Stable                                                  */
+/* Status : Tested/Stable                                                    */
 /*****************************************************************************/
 static int GameObject_SetSkill(lua_State *L)
 {
@@ -1355,15 +1438,20 @@ static int GameObject_SetSkill(lua_State *L)
          * thresholds). */
         else if (skill->last_eat == 1)
         {
+            if (skill->level == MAXLEVEL)
+            {
+                failure = 3;
+                level = exp = 0;
+            }
             /* If ->item_level == ->level, this means it has already gained some
              * experience via a script this level so the player will have to go
              * back to normal grinding for experience until next level. This
              * prevents scripts being exploited too much to gain
-             * mega-levels. Return 3, skill, 0, 0. */
-            if (skill->item_level == skill->level &&
-                (level > 0 || (level == 0 && exp > 0)))
+             * mega-levels. Return 4, skill, 0, 0. */
+            else if (skill->item_level == skill->level &&
+                     (level > 0 || (level == 0 && exp > 0)))
             {
-                failure = 3;
+                failure = 4;
                 level = exp = 0;
             }
             else
@@ -1400,9 +1488,14 @@ static int GameObject_SetSkill(lua_State *L)
          * experience in the normal way but gaisn/loses levels directly). */
         else if (skill->last_eat == 2)
         {
+            if (skill->level == MAXLEVEL)
+            {
+                failure = 3;
+                level = exp = 0;
+            }
             /* Level == 0? As this is a direct skill we must translate exp into
              * levels. */
-            if (!level)
+            else if (!level)
             {
                 level = MAX(-1, MIN(exp, 1));
             }
