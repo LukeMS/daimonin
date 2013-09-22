@@ -449,7 +449,7 @@ sint32 add_exp(object *op, int exp, int skill_nr, int cap)
 static int AdjustExp(object *pl, object *op, int exp, int cap)
 {
     object *tmp;
-    int     i, sk_nr;
+    int     i;
     sint32  sk_exp, pl_exp;
 
 
@@ -512,29 +512,20 @@ static int AdjustExp(object *pl, object *op, int exp, int cap)
     }
 
     /* now we collect the exp of all skills which are in the same exp. object category */
-    sk_nr = op->magic;
     sk_exp = 0;
-    /* this is the old collection system  - all skills of a exp group add
-     * we changed that to "best skill count"
-     */
-    /*
-       for(tmp=pl->inv;tmp;tmp=tmp->below)
-       {
-           if(tmp->type==TYPE_SKILL && tmp->magic == sk_nr)
-           {
-               if((sk_exp += tmp->stats.exp) > (sint32)MAX_EXPERIENCE)
-                   sk_exp = MAX_EXPERIENCE;
-           }
-       }
-    */
-    for (tmp = pl->inv; tmp; tmp = tmp->below)
+
+    for (i = 0; i < NROFSKILLS; i++)
     {
-        if (tmp->type == TYPE_SKILL && tmp->magic == sk_nr)
+        object *skill = CONTR(pl)->skill_ptr[i];
+
+        if (skill &&
+            skill->magic == op->magic &&
+            skill->stats.exp > sk_exp)
         {
-            if (tmp->stats.exp > sk_exp)
-                sk_exp = tmp->stats.exp;
+            sk_exp = skill->stats.exp;
         }
     }
+
     /* set the exp of the exp. object to our best skill of this group */
     op->skillgroup->stats.exp = sk_exp;
 
