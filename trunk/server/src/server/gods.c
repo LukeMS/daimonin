@@ -148,13 +148,13 @@ void pray_at_altar(object *pl, object *altar)
         /* whether we will be successfull in defecting or not -
          * we lose experience from the clerical experience obj */
 
-        loss = (int) ((float) 0.1 * (float) pl->chosen_skill->exp_obj->stats.exp);
+        loss = (int) ((float) 0.1 * (float) pl->chosen_skill->skillgroup->stats.exp);
         if (loss)
             lose_priest_exp(pl, random_roll(0, loss * angry - 1));
 
         /* May switch Gods, but its random chance based on our current level
          * note it gets harder to swap gods the higher we get */
-        if ((angry == 1) && !(random_roll(0, pl->chosen_skill->exp_obj->level)))
+        if ((angry == 1) && !(random_roll(0, pl->chosen_skill->skillgroup->level)))
         {
             become_follower(pl, &altar->other_arch->clone);
         } /* If angry... switching gods */
@@ -238,7 +238,7 @@ static void check_special_prayers(object *op, object *god)
 void become_follower(object *op, object *new_god)
 {
     objectlink *ol;
-    object     *exp_obj = op->chosen_skill->exp_obj; /* obj. containing god data */
+    object     *skillgroup = op->chosen_skill->skillgroup; /* obj. containing god data */
     object     *old_god = NULL;                      /* old god */
     treasure   *tr;
     /*    object *item ;*/
@@ -246,8 +246,8 @@ void become_follower(object *op, object *new_god)
 
     CONTR(op)->socket.ext_title_flag = 1;
     /* get old god */
-    if (exp_obj->title)
-        old_god = find_god(exp_obj->title);
+    if (skillgroup->title)
+        old_god = find_god(skillgroup->title);
 
     /* bad & buggy code! first, we must include here a "is_godgiven" flag..
     * second, when you manipulate the player inv with non sys items, be sure
@@ -309,43 +309,43 @@ void become_follower(object *op, object *new_god)
 
     new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, op, "You become a follower of %s!", new_god->name);
 
-    if (exp_obj->title)
+    if (skillgroup->title)
     {
         /* get rid of old god */
-        new_draw_info(NDI_UNIQUE, 0, op, "%s's blessing is withdrawn from you.", exp_obj->title);
-        CLEAR_FLAG(exp_obj, FLAG_APPLIED);
-        change_abil(op, exp_obj);
-        FREE_AND_CLEAR_HASH2(exp_obj->title);
+        new_draw_info(NDI_UNIQUE, 0, op, "%s's blessing is withdrawn from you.", skillgroup->title);
+        CLEAR_FLAG(skillgroup, FLAG_APPLIED);
+        change_abil(op, skillgroup);
+        FREE_AND_CLEAR_HASH2(skillgroup->title);
     }
 
-    /* now change to the new gods attributes to exp_obj */
-    FREE_AND_COPY_HASH(exp_obj->title, new_god->name);
-    exp_obj->path_attuned = new_god->path_attuned;
-    exp_obj->path_repelled = new_god->path_repelled;
-    exp_obj->path_denied = new_god->path_denied;
+    /* now change to the new gods attributes to skillgroup */
+    FREE_AND_COPY_HASH(skillgroup->title, new_god->name);
+    skillgroup->path_attuned = new_god->path_attuned;
+    skillgroup->path_repelled = new_god->path_repelled;
+    skillgroup->path_denied = new_god->path_denied;
     /* copy god's resistances */
-    memcpy(exp_obj->resist, new_god->resist, sizeof(new_god->resist));
+    memcpy(skillgroup->resist, new_god->resist, sizeof(new_god->resist));
 
     /* make sure that certain immunities do NOT get passed
      * to the follower! */
     for (i = 0; i < NROFATTACKS; i++)
-        if (exp_obj->resist[i] > 30 && (i == ATNR_FIRE || i == ATNR_COLD || i == ATNR_ELECTRICITY || i == ATNR_POISON))
-            exp_obj->resist[i] = 30;
+        if (skillgroup->resist[i] > 30 && (i == ATNR_FIRE || i == ATNR_COLD || i == ATNR_ELECTRICITY || i == ATNR_POISON))
+            skillgroup->resist[i] = 30;
 
 #ifdef MORE_PRIEST_GIFTS
-    exp_obj->stats.hp = (sint16) new_god->last_heal;
-    exp_obj->stats.sp = (sint16) new_god->last_sp;
-    exp_obj->stats.grace = (sint16) new_god->last_grace;
-    exp_obj->stats.food = (sint16) new_god->last_eat;
+    skillgroup->stats.hp = (sint16) new_god->last_heal;
+    skillgroup->stats.sp = (sint16) new_god->last_sp;
+    skillgroup->stats.grace = (sint16) new_god->last_grace;
+    skillgroup->stats.food = (sint16) new_god->last_eat;
     /* gods may pass on certain flag properties */
-    update_priest_flag(new_god, exp_obj, FLAG_SEE_IN_DARK);
-    update_priest_flag(new_god, exp_obj, FLAG_CAN_REFL_SPELL);
-    update_priest_flag(new_god, exp_obj, FLAG_CAN_REFL_MISSILE);
-    update_priest_flag(new_god, exp_obj, FLAG_STEALTH);
-    update_priest_flag(new_god, exp_obj, FLAG_SEE_INVISIBLE);
-    update_priest_flag(new_god, exp_obj, FLAG_UNDEAD);
-    update_priest_flag(new_god, exp_obj, FLAG_BLIND);
-    update_priest_flag(new_god, exp_obj, FLAG_XRAYS); /* better have this if blind! */
+    update_priest_flag(new_god, skillgroup, FLAG_SEE_IN_DARK);
+    update_priest_flag(new_god, skillgroup, FLAG_CAN_REFL_SPELL);
+    update_priest_flag(new_god, skillgroup, FLAG_CAN_REFL_MISSILE);
+    update_priest_flag(new_god, skillgroup, FLAG_STEALTH);
+    update_priest_flag(new_god, skillgroup, FLAG_SEE_INVISIBLE);
+    update_priest_flag(new_god, skillgroup, FLAG_UNDEAD);
+    update_priest_flag(new_god, skillgroup, FLAG_BLIND);
+    update_priest_flag(new_god, skillgroup, FLAG_XRAYS); /* better have this if blind! */
 #endif
 
     new_draw_info(NDI_UNIQUE, 0, op, "You are bathed in %s's aura.", new_god->name);
@@ -354,13 +354,13 @@ void become_follower(object *op, object *new_god)
     /* Weapon/armour use are special...handle flag toggles here as this can
      * only happen when gods are worshipped and if the new priest could
      * have used armour/weapons in the first place */
-    update_priest_flag(new_god, exp_obj, FLAG_USE_WEAPON);
-    update_priest_flag(new_god, exp_obj, FLAG_USE_ARMOUR);
+    update_priest_flag(new_god, skillgroup, FLAG_USE_WEAPON);
+    update_priest_flag(new_god, skillgroup, FLAG_USE_ARMOUR);
 
-    if (worship_forbids_use(op, exp_obj, FLAG_USE_WEAPON, "weapons"))
+    if (worship_forbids_use(op, skillgroup, FLAG_USE_WEAPON, "weapons"))
         stop_using_item(op, WEAPON, 2);
 
-    if (worship_forbids_use(op, exp_obj, FLAG_USE_ARMOUR, "armour"))
+    if (worship_forbids_use(op, skillgroup, FLAG_USE_ARMOUR, "armour"))
     {
         stop_using_item(op, ARMOUR, 1);
         stop_using_item(op, HELMET, 1);
@@ -372,24 +372,24 @@ void become_follower(object *op, object *new_god)
     }
 #endif
 
-    SET_FLAG(exp_obj, FLAG_APPLIED);
-    change_abil(op, exp_obj);
+    SET_FLAG(skillgroup, FLAG_APPLIED);
+    change_abil(op, skillgroup);
 
     check_special_prayers(op, new_god);
 }
 
 /* op is the player.
- * exp_obj is the widsom experience.
+ * skillgroup is the widsom experience.
  * flag is the flag to check against.
  * string is the string to print out.
  */
 
-int worship_forbids_use(object *op, object *exp_obj, uint32 flag, char *string)
+int worship_forbids_use(object *op, object *skillgroup, uint32 flag, char *string)
 {
     if (QUERY_FLAG(&op->arch->clone, flag))
-        if (QUERY_FLAG(op, flag) != QUERY_FLAG(exp_obj, flag))
+        if (QUERY_FLAG(op, flag) != QUERY_FLAG(skillgroup, flag))
         {
-            update_priest_flag(exp_obj, op, flag);
+            update_priest_flag(skillgroup, op, flag);
             if (QUERY_FLAG(op, flag))
                 new_draw_info(NDI_UNIQUE, 0, op, "You may use %s again.", string);
             else
@@ -419,13 +419,13 @@ void stop_using_item(object *op, int type, int number)
  * already exist. For players only!
  */
 
-void update_priest_flag(object *god, object *exp_ob, uint32 flag)
+void update_priest_flag(object *god, object *skillgroup, uint32 flag)
 {
-    if (QUERY_FLAG(god, flag) && !QUERY_FLAG(exp_ob, flag))
-        SET_FLAG(exp_ob, flag);
-    else if (QUERY_FLAG(exp_ob, flag) && !QUERY_FLAG(god, flag))
+    if (QUERY_FLAG(god, flag) && !QUERY_FLAG(skillgroup, flag))
+        SET_FLAG(skillgroup, flag);
+    else if (QUERY_FLAG(skillgroup, flag) && !QUERY_FLAG(god, flag))
     {
-        /*  When this is called with the exp_ob set to the player,
+        /*  When this is called with the skillgroup set to the player,
          * this check is broken, because most all players arch
          * allow use of weapons.  I'm not actually sure why this
          * check is here - I guess if you had a case where the
@@ -434,8 +434,8 @@ void update_priest_flag(object *god, object *exp_ob, uint32 flag)
          * there is any case like that.
          */
 
-        /*        if (!(QUERY_FLAG(&(exp_ob->arch->clone),flag)))*/
-        CLEAR_FLAG(exp_ob, flag);
+        /*        if (!(QUERY_FLAG(&(skillgroup->arch->clone),flag)))*/
+        CLEAR_FLAG(skillgroup, flag);
     };
 }
 
@@ -911,8 +911,8 @@ int god_examines_priest(object *op, object *god)
     {
         int     loss    = 10000000;
         int     angry   = abs(reaction);
-        if (op->chosen_skill->exp_obj)
-            loss = (int) ((float) 0.05 * (float) op->chosen_skill->exp_obj->stats.exp);
+        if (op->chosen_skill->skillgroup)
+            loss = (int) ((float) 0.05 * (float) op->chosen_skill->skillgroup->stats.exp);
         lose_priest_exp(op, random_roll(0, loss * angry - 1));
         if (random_roll(0, angry))
             cast_mana_storm(op, SK_level(op) + (angry * 3));
@@ -1033,12 +1033,12 @@ void lose_priest_exp(object *pl, int loss)
 {
     /*
       if(!pl||pl->type!=PLAYER||!pl->chosen_skill
-         ||!pl->chosen_skill->exp_obj)
+         ||!pl->chosen_skill->skillgroup)
       {
         LOG(llevBug,"BUG: Bad call to lose_priest_exp() \n");
         return;
       }
-      if((loss = check_dm_add_exp_to_obj(pl->chosen_skill->exp_obj,loss)))
+      if((loss = check_dm_add_exp_to_obj(pl->chosen_skill->skillgroup,loss)))
         add_exp(pl,-loss,pl->chosen_skill->stats.sp, 1);
     */
 }

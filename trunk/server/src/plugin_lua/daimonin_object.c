@@ -1244,7 +1244,7 @@ static int GameObject_GetSkill(lua_State *L)
                 return 0;
             }
 
-            skill = pl->exp_obj_ptr[nr];
+            skill = pl->skillgroup_ptr[nr];
             break;
 
         default:
@@ -2870,7 +2870,7 @@ static int GameObject_CheckQuestLevel(lua_State *L)
     /* Note: the ITEM_SKILL_XXX lua constants corresponds to SKILLGROUP_XXX + 1 */
     /* player is high enough for this quest? */
     if (item_skill_group)
-        tmp_lev = pl->exp_obj_ptr[item_skill_group-1]->level; /* use player struct shortcut ptrs */
+        tmp_lev = pl->skillgroup_ptr[item_skill_group-1]->level; /* use player struct shortcut ptrs */
     else
         tmp_lev = WHO->level;
 

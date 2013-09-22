@@ -1131,7 +1131,7 @@ int command_setskill(object *op, char *params)
 {
     char    buf[MEDIUM_BUF];
     int     level, snr;
-    object *exp_skill, *exp_ob;
+    object *skill, *skillgroup;
     player *pl;
 
     if (!params ||
@@ -1168,23 +1168,23 @@ int command_setskill(object *op, char *params)
     /* Constrain level to sensible values. */
     level = MAX(0, MIN(level, MAXLEVEL));
 
-    if (!(exp_skill = pl->skill_ptr[snr])) /* we don't have the skill - learn it*/
+    if (!(skill = pl->skill_ptr[snr])) /* we don't have the skill - learn it*/
     {
         learn_skill(op, NULL, NULL, snr, 0);
-        exp_skill = pl->skill_ptr[snr];
+        skill = pl->skill_ptr[snr];
         FIX_PLAYER(op, "setskill");
     }
     else if(!level)/* if level is 0 we unlearn the skill! */
     {
-        add_exp(op, -exp_skill->stats.exp, snr, 0);
-        remove_ob(exp_skill);
+        add_exp(op, -skill->stats.exp, snr, 0);
+        remove_ob(skill);
         new_draw_info(NDI_UNIQUE, 0, op, "removed skill!");
         FIX_PLAYER(op, "setskill");
 
         return COMMANDS_RTN_VAL_OK;
     }
 
-    (void)add_exp(op, new_levels[level] - exp_skill->stats.exp, snr, 0);
+    (void)add_exp(op, new_levels[level] - skill->stats.exp, snr, 0);
 
     return COMMANDS_RTN_VAL_OK;
 }
@@ -1193,7 +1193,7 @@ int command_addexp(object *op, char *params)
 {
     char    buf[MEDIUM_BUF];
     int     exp, snr;
-    object *exp_skill, *exp_ob;
+    object *skill, *skillgroup;
     player *pl;
 
     if (!params || sscanf(params, "%s %d %d", buf, &snr, &exp) != 3)

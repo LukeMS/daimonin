@@ -3675,8 +3675,8 @@ int cast_cause_disease(object *op, object *caster, int dir, archetype *disease_a
                 disease->level = op->level;
 
                 /* Try to get the experience into the correct category */
-                if (op->chosen_skill && op->chosen_skill->exp_obj)
-                    disease->exp_obj = op->chosen_skill->exp_obj;
+                if (op->chosen_skill && op->chosen_skill->skillgroup)
+                    disease->skillgroup = op->chosen_skill->skillgroup;
 
                 /*do level adjustments */
                 if (disease->stats.wc)

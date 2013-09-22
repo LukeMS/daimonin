@@ -145,12 +145,12 @@ int player_save(object *op)
         fprintf(fp, "%d\n", pl->levhp[i]);
 
     /* save sp table */
-    fprintf(fp, "lev_sp %d\n", pl->exp_obj_ptr[SKILLGROUP_MAGIC]->level);
-    for (i = 1; i <= pl->exp_obj_ptr[SKILLGROUP_MAGIC]->level; i++)
+    fprintf(fp, "lev_sp %d\n", pl->skillgroup_ptr[SKILLGROUP_MAGIC]->level);
+    for (i = 1; i <= pl->skillgroup_ptr[SKILLGROUP_MAGIC]->level; i++)
         fprintf(fp, "%d\n", pl->levsp[i]);
 
-    fprintf(fp, "lev_grace %d\n", pl->exp_obj_ptr[SKILLGROUP_WISDOM]->level);
-    for (i = 1; i <= pl->exp_obj_ptr[SKILLGROUP_WISDOM]->level; i++)
+    fprintf(fp, "lev_grace %d\n", pl->skillgroup_ptr[SKILLGROUP_WISDOM]->level);
+    for (i = 1; i <= pl->skillgroup_ptr[SKILLGROUP_WISDOM]->level; i++)
         fprintf(fp, "%d\n", pl->levgrace[i]);
 
 
@@ -303,9 +303,9 @@ static player *get_player_struct(void)
     */
     for (i = 0; i < NROFSKILLGROUPS; i++)
     {
-        p->exp_obj_ptr[i] = NULL;
-        p->last_exp_obj_exp[i] = -1;
-        p->last_exp_obj_level[i] = -1;
+        p->skillgroup_ptr[i] = NULL;
+        p->last_skillgroup_exp[i] = -1;
+        p->last_skillgroup_level[i] = -1;
     }
 
     p->set_skill_weapon = NO_SKILL_READY; /* quick skill reminder for select hand weapon */

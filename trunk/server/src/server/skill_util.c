@@ -150,7 +150,7 @@ void link_player_skills(object *op)
     for (tmp = op->inv; tmp != NULL; tmp = tmp->below)
     {
         if(tmp->type == TYPE_SKILLGROUP)
-            pl->exp_obj_ptr[tmp->sub_type1] = tmp;
+            pl->skillgroup_ptr[tmp->sub_type1] = tmp;
         else if (tmp->type == TYPE_SKILL)
         {
             /* important: we need to have all skill unapplied = unused.
@@ -168,13 +168,13 @@ void link_player_skills(object *op)
      */
     for (i = 0; i < NROFSKILLGROUPS; i++)
     {
-        if (!pl->exp_obj_ptr[i])
+        if (!pl->skillgroup_ptr[i])
         {
             LOG(llevDebug, "DEBUG:: %s:link_player_skills(): Adding %s to player %s!\n",
                 __FILE__, STRING_ARCH_NAME(skillgroups[i]), STRING_OBJ_NAME(op));
-            pl->exp_obj_ptr[i] = insert_ob_in_ob(arch_to_object(skillgroups[i]), op);
+            pl->skillgroup_ptr[i] = insert_ob_in_ob(arch_to_object(skillgroups[i]), op);
         }
-        CLEAR_FLAG(pl->exp_obj_ptr[i], FLAG_APPLIED);
+        CLEAR_FLAG(pl->skillgroup_ptr[i], FLAG_APPLIED);
     }
 
     /* now loop the found skills and link them to exp group objects */
@@ -629,7 +629,7 @@ void unlink_skill(object *skillop)
         return;
     }
     send_skilllist_cmd(op, skillop, SPLIST_MODE_REMOVE);
-    skillop->exp_obj = NULL;
+    skillop->skillgroup = NULL;
 }
 
 
@@ -640,9 +640,9 @@ void unlink_skill(object *skillop)
 
 int link_player_skill(object *pl, object *skillop)
 {
-    skillop->exp_obj = CONTR(pl)->exp_obj_ptr[skillop->magic];
+    skillop->skillgroup = CONTR(pl)->skillgroup_ptr[skillop->magic];
 
-    if(!skillop->exp_obj)
+    if(!skillop->skillgroup)
     {
         LOG(llevDebug," link_player_skill(): player %s has for skill obj %s has no valid exp obj\n",
                         query_name(pl), query_name(skillop));

@@ -139,12 +139,12 @@ typedef struct obj
     struct archt   *arch;           /* Pointer to archetype */
     struct oblnk   *randomitems;    /* thats now a linked list of treasurelist */
 
-    /* we can remove chosen_skill & exp_obj by drop here a uint8 with a list of skill
+    /* we can remove chosen_skill & skillgroup by drop here a uint8 with a list of skill
      * numbers. Mobs has no skill and player can grap it from player struct. For exp,
      * i will use skill numbers in golems/ammo and spell objects. So, this can be removed.
      */
     struct obj     *chosen_skill;   /* the skill chosen to use */
-    struct obj     *exp_obj;        /* the exp. obj (category) assoc. w/ this object */
+    struct obj     *skillgroup;        /* the exp. obj (category) assoc. w/ this object */
 
     /* now "real" object releated data */
     struct archt   *other_arch;     /* Pointer used for various things */
