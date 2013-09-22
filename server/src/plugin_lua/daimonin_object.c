@@ -1185,11 +1185,18 @@ static int GameObject_Interface(lua_State *L)
 /*          gains/loses levels as the total crosses certain thresholds (eg,  */
 /*          punching).                                                       */
 /*                                                                           */
-/*          Two values are returned: the GameObject (or nil); one of nil     */
-/*          (if the previous return was nil, or type was TYPE_SKILLGROUP, or */
-/*          the skill has already reached maximum level, or the skill is     */
-/*          non-levelling, false (if the skill is leveled indirectly), or    */
-/*          true (the skill is leveled directly).                            */
+/*          Two values are returned: the GameObject (or nil); a number       */
+/*          representing whether/how the skill may be leveled.               */
+/*                                                                           */
+/*          This number is one of:                                           */
+/*               0 - if the previous return was nil, or type was             */
+/*                   TYPE_SKILLGROUP, or the skill has already reached       */
+/*                   maximum level, or the skill is non-levelling;           */
+/*               1 - if the skill is leveled indirectly and may gain exp via */
+/*                   a script this level;                                    */
+/*              -1 - if the skill is leveled indirectly and may not gain exp */
+/*                   via a script this level;                                */
+/*               2 - if the skill is leveled directly.                       */
 /* Status : Tested/Stable                                                    */
 /*****************************************************************************/
 static int GameObject_GetSkill(lua_State *L)
@@ -1256,23 +1263,26 @@ static int GameObject_GetSkill(lua_State *L)
     push_object(L, &GameObject, skill);
 
     /* If !skill OR type == TYPE_SKILLGROUP OR ->level == MAXLEVEL OR
-     * ->last_eat == 0, it cannot be levelled. 2nd return nil. */
+     * ->last_eat == 0, it cannot be levelled. 2nd return 0. */
     if (!skill ||
         type == TYPE_SKILLGROUP ||
         skill->level == MAXLEVEL ||
         skill->last_eat == 0)
     {
-        lua_pushnil(L);
+        lua_pushnumber(L, 0);
     }
     /* If ->last_eat == 1, it is levelled indirectly (accumulates
      * experience which causes level gain/loss when it crosses certain
-     * thresholds). 2nd return false. */
+     * thresholds). 2nd return 1 or -1. */
     /* If ->last_eat == 2, it is levelled directly (does not accumulate
      * experience in the normal way but gaisn/loses levels directly). 2nd
-     * return true. */
+     * return 2. */
     else
     {
-        lua_pushboolean(L, skill->last_eat - 1);
+        int mode = (skill->last_eat == 1 &&
+                    skill->item_level == skill->level) ? -1 : skill->last_eat;
+
+        lua_pushnumber(L, mode);
     }
 
     return 2;
