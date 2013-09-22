@@ -454,52 +454,71 @@ static int AdjustExp(object *pl, object *op, int exp, int cap)
 
     if (exp)
     {
-        int  bonus = (exp > 0 && CONTR(pl)->exp_bonus) ? (((double)exp / 100.0) * CONTR(pl)->exp_bonus) : 0,
-             total = exp + bonus;
-        char buf[TINY_BUF];
+        if (op->last_eat == 2) // Direct leveling (no exp)
+        {
+            /* add or sub the exp and cap it. it must be >=0 and <= MAX_EXPERIENCE */
+            op->stats.exp += exp;
 
-        /* General adjustments for playbalance */
-        if (cap)
-        {
-            /* I set limit to 1/4 of a level - thats enormous much */
-            total = MIN(total, (new_levels[op->level + 1] - new_levels[op->level]) / 4);
-        }
-
-        /* add or sub the exp and cap it. it must be >=0 and <= MAX_EXPERIENCE */
-        op->stats.exp += total;
-
-        if (op->stats.exp < 0)
-        {
-            total -= op->stats.exp;
-            op->stats.exp = 0;
-        }
-        else if (op->stats.exp > (sint32)MAX_EXPERIENCE)
-        {
-            total -= (op->stats.exp - MAX_EXPERIENCE);
-            op->stats.exp = MAX_EXPERIENCE;
-        }
-
-        if (total < 0)
-        {
-            sprintf(buf, "You lose ~%d", 0 - total);
-        }
-        else
-        {
-            if (bonus)
+            if (op->stats.exp < 0)
             {
-                bonus = MAX(1, (exp + bonus) - total);
-                total -= bonus;
-                sprintf(buf, "You gain ~%d (+%d bonus)", total, bonus);
+                exp -= op->stats.exp;
+                op->stats.exp = 0;
+            }
+            else if (op->stats.exp > (sint32)MAX_EXPERIENCE)
+            {
+                exp -= (op->stats.exp - MAX_EXPERIENCE);
+                op->stats.exp = MAX_EXPERIENCE;
+            }
+        }
+        else // Indirect leveling
+        {
+            int  bonus = (exp > 0 && CONTR(pl)->exp_bonus) ? (((double)exp / 100.0) * CONTR(pl)->exp_bonus) : 0,
+                 total = exp + bonus;
+            char buf[TINY_BUF];
+
+            /* General adjustments for playbalance */
+            if (cap)
+            {
+                /* I set limit to 1/4 of a level - thats enormous much */
+                total = MIN(total, (new_levels[op->level + 1] - new_levels[op->level]) / 4);
+            }
+
+            /* add or sub the exp and cap it. it must be >=0 and <= MAX_EXPERIENCE */
+            op->stats.exp += total;
+
+            if (op->stats.exp < 0)
+            {
+                total -= op->stats.exp;
+                op->stats.exp = 0;
+            }
+            else if (op->stats.exp > (sint32)MAX_EXPERIENCE)
+            {
+                total -= (op->stats.exp - MAX_EXPERIENCE);
+                op->stats.exp = MAX_EXPERIENCE;
+            }
+
+            if (total < 0)
+            {
+                sprintf(buf, "You lose ~%d", 0 - total);
             }
             else
             {
-                sprintf(buf, "You gain ~%d", total);
+                if (bonus)
+                {
+                    bonus = MAX(1, (exp + bonus) - total);
+                    total -= bonus;
+                    sprintf(buf, "You gain ~%d (+%d bonus)", total, bonus);
+                }
+                else
+                {
+                    sprintf(buf, "You gain ~%d", total);
+                }
             }
-        }
 
-        new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, pl, "%s exp~ in ~%s~!",
-            buf, STRING_OBJ_NAME(op));
-        exp = total;
+            new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, pl, "%s exp~ in ~%s~!",
+                buf, STRING_OBJ_NAME(op));
+            exp = total;
+        }
     }
 
     /* now we collect the exp of all skills which are in the same exp. object category */

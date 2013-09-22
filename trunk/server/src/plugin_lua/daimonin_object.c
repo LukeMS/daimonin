@@ -1433,84 +1433,95 @@ static int GameObject_SetSkill(lua_State *L)
             failure = 2;
             level = exp = 0;
         }
-        /* If ->last_eat == 1, it is levelled indirectly (accumulates
-         * experience which causes level gain/loss when it crosses certain
-         * thresholds). */
-        else if (skill->last_eat == 1)
+        else
         {
+            /* Already at maximum level? Return 3. skill, 0, 0. */
             if (skill->level == MAXLEVEL)
             {
                 failure = 3;
                 level = exp = 0;
             }
-            /* If ->item_level == ->level, this means it has already gained some
-             * experience via a script this level so the player will have to go
-             * back to normal grinding for experience until next level. This
-             * prevents scripts being exploited too much to gain
-             * mega-levels. Return 4, skill, 0, 0. */
-            else if (skill->item_level == skill->level &&
-                     (level > 0 || (level == 0 && exp > 0)))
-            {
-                failure = 4;
-                level = exp = 0;
-            }
-            else
-            {
-                /* Exp loss is limited to 1 point below the threshold for the current
-                 * level, and gain to the threshold for the next level. */
-                int lo = (hooks->new_levels[skill->level] - 1) - skill->stats.exp,
-                    hi = hooks->new_levels[skill->level + 1] - skill->stats.exp;
 
-                if (level > 0)
+            /* If ->last_eat == 1, it is levelled indirectly (accumulates
+             * experience which causes level gain/loss when it crosses certain
+             * thresholds). */
+            if (skill->last_eat == 1)
+            {
+                /* If ->item_level == ->level, this means it has already gained
+                 * some experience via a script this level so the player will
+                 * have to go back to normal grinding for experience until next
+                 * level. This prevents scripts being exploited too much to
+                 * gain mega-levels. Return 4, skill, 0, 0. */
+                if (skill->item_level == skill->level &&
+                    (level > 0 || (level == 0 && exp > 0)))
                 {
-                    exp = hi;
-                }
-                else if (level < 0)
-                {
-                    exp = lo;
+                    failure = 4;
+                    level = exp = 0;
                 }
                 else
                 {
-                    exp = MAX(lo, MIN(exp, hi));
+                    /* Exp loss is limited to 1 point below the threshold for
+                     * the current level, and gain to the threshold for the
+                     * next level. */
+                    int lo = (hooks->new_levels[skill->level] - 1) - skill->stats.exp,
+                        hi = hooks->new_levels[skill->level + 1] - skill->stats.exp;
+
+                    if (level > 0)
+                    {
+                        exp = hi;
+                    }
+                    else if (level < 0)
+                    {
+                        exp = lo;
+                    }
+                    else
+                    {
+                        exp = MAX(lo, MIN(exp, hi));
+                    }
+
+                    level = skill->level;
+                    exp = hooks->add_exp(WHO, exp, nr, 0);
+                    level = skill->level - level;
+
+                    if (exp >= 1)
+                    {
+                        skill->item_level = skill->level;
+                    }
+                }
+            }
+            /* If ->last_eat == 2, it is levelled directly (does not accumulate
+             * experience in the normal way but gains/loses levels
+             * directly). */
+            else if (skill->last_eat == 2)
+            {
+                /* Exp loss is forced to the threshold for the previous level,
+                 * and gain to the threshold for the next level. */
+                int lo = skill->stats.exp - hooks->new_levels[skill->level - 1],
+                    hi = hooks->new_levels[skill->level + 1] - skill->stats.exp;
+
+                if (level > 0 ||
+                    exp > 0)
+                {
+                    exp = hi;
+                }
+                else if (level < 0 ||
+                         exp < 0)
+                {
+                    exp = lo;
                 }
 
                 level = skill->level;
-                exp = hooks->add_exp(WHO, exp, nr, 0);
+                (void)hooks->add_exp(WHO, exp, nr, 0);
                 level = skill->level - level;
-
-                if (exp >= 1)
-                {
-                    skill->item_level = skill->level;
-                }
+                exp = 0;
             }
-        }
-        /* If ->last_eat == 2, it is levelled directly (does not accumulate
-         * experience in the normal way but gaisn/loses levels directly). */
-        else if (skill->last_eat == 2)
-        {
-            if (skill->level == MAXLEVEL)
+            else
             {
-                failure = 3;
-                level = exp = 0;
+                LOG(llevDebug, "DEBUG:: Skill (%d) with unhandled last_eat (%d)!\n",
+                    nr, skill->last_eat);
+                luaL_error(L, "object:SetSkill(): Bad skill!");
+                return 0;
             }
-            /* Level == 0? As this is a direct skill we must translate exp into
-             * levels. */
-            else if (!level)
-            {
-                level = MAX(-1, MIN(exp, 1));
-            }
-
-            exp = 0;
-            skill->level += level;
-            pl->update_skills = 1;
-            SET_FLAG(WHO, FLAG_FIX_PLAYER);
-        }
-        else
-        {
-            LOG(llevDebug, "DEBUG:: Skill (%d) with unhandled last_eat (%d)!\n",
-                nr, skill->last_eat);
-            luaL_error(L, "object:SetSkill(): Bad skill!");
-            return 0;
         }
     }
 
