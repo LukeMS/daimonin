@@ -169,9 +169,9 @@ typedef struct pl_player
     object             *guild_force;
     object             *highest_skill[NROFSKILLGROUPS]; /* highest skill of every skill group */
 
-    object             *exp_obj_ptr[NROFSKILLGROUPS];       /* skill exp groups ptr (agility, mental,..) */
-    int                 last_exp_obj_exp[NROFSKILLGROUPS];   /* shadow variables for client updating */
-    int                 last_exp_obj_level[NROFSKILLGROUPS]; /* sic */
+    object             *skillgroup_ptr[NROFSKILLGROUPS];       /* skill exp groups ptr (agility, mental,..) */
+    int                 last_skillgroup_exp[NROFSKILLGROUPS];   /* shadow variables for client updating */
+    int                 last_skillgroup_level[NROFSKILLGROUPS]; /* sic */
 
     object             *mark;       /* marked object */
     object             *age_force;  /* quick jump to our age force */

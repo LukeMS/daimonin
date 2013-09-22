@@ -2203,7 +2203,7 @@ void cone_drop(object *op)
     if (op->chosen_skill)
     {
         new_ob->chosen_skill = op->chosen_skill;
-        new_ob->exp_obj = op->chosen_skill->exp_obj;
+        new_ob->skillgroup = op->chosen_skill->skillgroup;
     }
     insert_ob_in_map(new_ob, op->map, op, 0);
 }
@@ -2584,7 +2584,7 @@ void move_golem(object *op)
      */
     if (--op->stats.hp < 0)
     {
-        if (op->exp_obj && op->exp_obj->stats.Wis)
+        if (op->skillgroup && op->skillgroup->stats.Wis)
         {
             if (op->inv)
                 new_draw_info(NDI_UNIQUE, 0, op->owner, "Your staff stops slithering around and lies still.");
@@ -2649,7 +2649,7 @@ void move_golem(object *op)
                 if (op->owner)
                     new_draw_info(NDI_UNIQUE, 0, op->owner, "%s avoids damaging %s.", op->name, victim->name);
             }
-            else if (op->exp_obj && victim == op->owner)
+            else if (op->skillgroup && victim == op->owner)
             {
                 if (op->owner)
                     new_draw_info(NDI_UNIQUE, 0, op->owner, "%s avoids damaging you.", op->name);
@@ -3590,7 +3590,7 @@ int create_aura(object *op, object *caster, archetype *aura_arch, int spell_type
     {
         new_aura->chosen_skill = op->chosen_skill;
         if (new_aura->chosen_skill)
-            new_aura->exp_obj = op->chosen_skill->exp_obj;
+            new_aura->skillgroup = op->chosen_skill->skillgroup;
     }
     new_aura->level = SK_level(caster);
     insert_ob_in_ob(new_aura, op);

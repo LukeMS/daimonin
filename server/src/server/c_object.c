@@ -735,7 +735,7 @@ char *examine(object *op, object *tmp, int flag)
             if (tmp->item_skill)
             {
                 sprintf(buf, "It needs a level of %d in %s to use.\n", tmp->item_level,
-                    STRING_SAFE(CONTR(op)->exp_obj_ptr[tmp->item_skill-1]->name));
+                    STRING_SAFE(CONTR(op)->skillgroup_ptr[tmp->item_skill-1]->name));
                 strcat(buf_out, buf);
             }
             else

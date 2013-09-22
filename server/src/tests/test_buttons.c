@@ -104,8 +104,8 @@ START_TEST (buttons_move_apply_check_inv)
     cont1->type = PLAYER;
     cont1->arch->clone.terrain_flag = 127;
     cont1->custom_attrset = fake_contr;
-    CONTR(cont1)->exp_obj_ptr[SKILLGROUP_MAGIC] = cont1;
-    CONTR(cont1)->exp_obj_ptr[SKILLGROUP_WISDOM] = cont1;
+    CONTR(cont1)->skillgroup_ptr[SKILLGROUP_MAGIC] = cont1;
+    CONTR(cont1)->skillgroup_ptr[SKILLGROUP_WISDOM] = cont1;
     insert_ob_in_ob(arch_to_object(find_archetype("skill_punching")), cont1);
 
     remove_ob(sword);    

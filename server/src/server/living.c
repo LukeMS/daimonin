@@ -1022,8 +1022,8 @@ void fix_player(object *op)
     op->terrain_flag = op->arch->clone.terrain_flag;        /* reset terrain moving abilities */
 
     /* only adjust skills which has no own level/exp values */
-    if (op->chosen_skill && !op->chosen_skill->last_eat && op->chosen_skill->exp_obj)
-        op->chosen_skill->level = op->chosen_skill->exp_obj->level;
+    if (op->chosen_skill && !op->chosen_skill->last_eat && op->chosen_skill->skillgroup)
+        op->chosen_skill->level = op->chosen_skill->skillgroup->level;
 
     pl->gen_sp = pl->gen_grace = pl->gen_hp = 20;
 
@@ -1949,13 +1949,13 @@ void fix_player(object *op)
     for (i = 1; i <= op->level; i++)
         op->stats.maxhp += pl->levhp[i];
 
-    skill_level_drain = pl->exp_obj_ptr[SKILLGROUP_MAGIC]->level;
+    skill_level_drain = pl->skillgroup_ptr[SKILLGROUP_MAGIC]->level;
     if(skill_level_drain > skill_level_max)
         skill_level_drain = skill_level_max;
     for (i = 1; i <= skill_level_drain; i++)
         op->stats.maxsp += pl->levsp[i];
 
-    skill_level_drain = pl->exp_obj_ptr[SKILLGROUP_WISDOM]->level;
+    skill_level_drain = pl->skillgroup_ptr[SKILLGROUP_WISDOM]->level;
     if(skill_level_drain > skill_level_max)
         skill_level_drain = skill_level_max;
     for (i = 1; i <= skill_level_drain; i++)

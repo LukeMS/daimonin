@@ -176,8 +176,8 @@ void esrv_update_stats(player *pl)
 
     for (i = 0; i < NROFSKILLGROUPS_ACTIVE; i++)
     {
-        AddIfInt(pl->last_exp_obj_exp[i], pl->exp_obj_ptr[i]->stats.exp, cs_stat_skillexp[i]);
-        AddIfChar(pl->last_exp_obj_level[i], pl->exp_obj_ptr[i]->level, cs_stat_skillexp[i]+1);
+        AddIfInt(pl->last_skillgroup_exp[i], pl->skillgroup_ptr[i]->stats.exp, cs_stat_skillexp[i]);
+        AddIfChar(pl->last_skillgroup_level[i], pl->skillgroup_ptr[i]->level, cs_stat_skillexp[i]+1);
     }
 
     flags = 0;

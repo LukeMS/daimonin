@@ -984,7 +984,7 @@ void set_owner(object * const op, object * const owner)
     if (owner->type == PLAYER && owner->chosen_skill)
     {
         op->chosen_skill = owner->chosen_skill;
-        op->exp_obj = owner->chosen_skill->exp_obj;
+        op->skillgroup = owner->chosen_skill->skillgroup;
     }
 }
 
@@ -1016,7 +1016,7 @@ void copy_owner(object *op, object *clone)
     if (clone->chosen_skill)
     {
         op->chosen_skill = clone->chosen_skill;
-        op->exp_obj = clone->exp_obj;
+        op->skillgroup = clone->skillgroup;
     }
 }
 

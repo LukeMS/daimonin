@@ -1466,7 +1466,7 @@ int kill_object(object *op, int dam, object *hitter, int typeX)
                 sprintf(buf, "%s killed %s with %s%s.", hitter->owner->name, query_name(op), query_name(hitter),
                     battleg ? " (duel)" : "");
                 old_hitter = hitter;
-                owner->exp_obj = hitter->exp_obj;
+                owner->skillgroup = hitter->skillgroup;
                 hitter = hitter->owner;
             }*/
             buf_ptr = buf2;
@@ -1484,7 +1484,7 @@ int kill_object(object *op, int dam, object *hitter, int typeX)
                 }
 
                 old_hitter = hitter;
-                owner->exp_obj = hitter->exp_obj;
+                owner->skillgroup = hitter->skillgroup;
             }
             else
             {

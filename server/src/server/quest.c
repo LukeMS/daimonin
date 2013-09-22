@@ -162,7 +162,7 @@ void insert_quest_item(struct obj *quest_trigger, struct obj *target)
         int tmp_lev = 0;
 
         if (quest_trigger->item_skill)
-            tmp_lev = CONTR(target)->exp_obj_ptr[quest_trigger->item_skill-1]->level; /* use player struct shortcut ptrs */
+            tmp_lev = CONTR(target)->skillgroup_ptr[quest_trigger->item_skill-1]->level; /* use player struct shortcut ptrs */
         else
             tmp_lev = target->level;
 

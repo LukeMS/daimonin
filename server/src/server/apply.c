@@ -316,7 +316,7 @@ static void ApplyPotion(object *op, object *tmp)
                     }
                     sp_jump:
                     sp_flag = 1; /* mark we have checked sp chain */
-                    for (i = 2; i <= CONTR(op)->exp_obj_ptr[SKILLGROUP_MAGIC]->level; i++)
+                    for (i = 2; i <= CONTR(op)->skillgroup_ptr[SKILLGROUP_MAGIC]->level; i++)
                     {
                         /* move one value to max */
                         if (CONTR(op)->levsp[i] != 1)
@@ -328,7 +328,7 @@ static void ApplyPotion(object *op, object *tmp)
                     }
                     grace_jump:
                     grace_flag = 1; /* mark we have checked grace chain */
-                    for (i = 2; i <= CONTR(op)->exp_obj_ptr[SKILLGROUP_WISDOM]->level; i++)
+                    for (i = 2; i <= CONTR(op)->skillgroup_ptr[SKILLGROUP_WISDOM]->level; i++)
                     {
                         /* move one value to max */
                         if (CONTR(op)->levgrace[i] != 1)
@@ -367,7 +367,7 @@ static void ApplyPotion(object *op, object *tmp)
                     }
                     sp_jump2:
                     sp_flag = 1; /* mark we have checked sp chain */
-                    for (i = 2; i <= CONTR(op)->exp_obj_ptr[SKILLGROUP_MAGIC]->level; i++)
+                    for (i = 2; i <= CONTR(op)->skillgroup_ptr[SKILLGROUP_MAGIC]->level; i++)
                     {
                         /* move one value to max */
                         if (CONTR(op)->levsp[i] != (char) op->arch->clone.stats.maxsp)
@@ -379,7 +379,7 @@ static void ApplyPotion(object *op, object *tmp)
                     }
                     grace_jump2:
                     grace_flag = 1; /* mark we have checked grace chain */
-                    for (i = 2; i <= CONTR(op)->exp_obj_ptr[SKILLGROUP_WISDOM]->level; i++)
+                    for (i = 2; i <= CONTR(op)->skillgroup_ptr[SKILLGROUP_WISDOM]->level; i++)
                     {
                         /* move one value to max */
                         if (CONTR(op)->levgrace[i] != (char) op->arch->clone.stats.maxgrace)
@@ -2208,7 +2208,7 @@ int manual_apply(object *op, object *tmp, int aflag)
         int tmp_lev;
 
         if (tmp->item_skill)
-            tmp_lev = CONTR(op)->exp_obj_ptr[tmp->item_skill-1]->level; /* use player struct shortcut ptrs */
+            tmp_lev = CONTR(op)->skillgroup_ptr[tmp->item_skill-1]->level; /* use player struct shortcut ptrs */
         else
             tmp_lev = op->level;
 
@@ -2922,7 +2922,7 @@ int apply_special(object *who, object *op, int aflags)
         case TYPE_SKILL:
             if (who->type == PLAYER)
             {
-/* Not sure I understand this. Of course op->exp_obj != NULL as op is a skill.
+/* Not sure I understand this. Of course op->skillgroup != NULL as op is a skill.
  * OTOH I have no idea what 'skill-tools' are/were -- perhaps like punching
  * where the skill itself represents the tool that administers it (your fist)?
  * Anyway, although this was broken in r7295, I think because that revision
@@ -2932,7 +2932,7 @@ int apply_special(object *who, object *op, int aflags)
                 if (!IS_NORMAL_INVIS_TO(op, who))
                 {
                     /* for tools */
-                    if (op->exp_obj)
+                    if (op->skillgroup)
                         LOG(llevBug, "BUG: apply_special(SKILL): found unapplied tool with experience object\n");
                     else
                         link_player_skill(who, op);

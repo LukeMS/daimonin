@@ -326,7 +326,7 @@ int command_describe(object *op, char *params)
         if (targetob->item_skill)
         {
             sprintf(levelstring, "(req. level %d in %s)", targetob->item_level,
-                STRING_SAFE(CONTR(op)->exp_obj_ptr[targetob->item_skill-1]->name));
+                STRING_SAFE(CONTR(op)->skillgroup_ptr[targetob->item_skill-1]->name));
         }
         else
         {

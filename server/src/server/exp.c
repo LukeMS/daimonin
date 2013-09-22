@@ -345,8 +345,8 @@ static void AdjustLevel(object *who, object *op, int flag_msg);
  */
 sint32 add_exp(object *op, int exp, int skill_nr, int cap)
 {
-    object *exp_ob      = NULL;    /* the exp. object into which experience will go */
-    object *exp_skill   = NULL; /* the real skill object */
+    object *skillgroup      = NULL;    /* the exp. object into which experience will go */
+    object *skill   = NULL; /* the real skill object */
     /*    int del_exp=0; */
 
     /*LOG(llevBug,"ADD: add_exp() called for $d!\n", exp); */
@@ -379,9 +379,9 @@ sint32 add_exp(object *op, int exp, int skill_nr, int cap)
 
 
     /* now we grap the skill exp. object from the player shortcut ptr array */
-    exp_skill = CONTR(op)->skill_ptr[skill_nr];
+    skill = CONTR(op)->skill_ptr[skill_nr];
 
-    if (!exp_skill) /* safety check */
+    if (!skill) /* safety check */
     {
         LOG(llevDebug, "DEBUG: add_exp(): called for %s with skill nr %d / %d exp - object has not this skill.\n",
             query_name(op), skill_nr, exp);
@@ -389,41 +389,41 @@ sint32 add_exp(object *op, int exp, int skill_nr, int cap)
     }
 
     /* if we are full in this skill, then nothing is to do */
-    if (exp_skill->level >= MAXLEVEL)
+    if (skill->level >= MAXLEVEL)
         return 0;
 
     CONTR(op)->update_skills = 1; /* we will sure change skill exp, mark for update */
-    exp_ob = exp_skill->exp_obj;
+    skillgroup = skill->skillgroup;
 
-    if (!exp_ob)
+    if (!skillgroup)
     {
-        LOG(llevBug, "BUG: add_exp() skill:%s - no exp_op found!!\n", query_name(exp_skill));
+        LOG(llevBug, "BUG: add_exp() skill:%s - no exp_op found!!\n", query_name(skill));
         return 0;
     }
 
-    exp = AdjustExp(op, exp_skill, exp, cap);   /* first we see what we can add to our skill */
+    exp = AdjustExp(op, skill, exp, cap);   /* first we see what we can add to our skill */
 
-    /* AdjustExp has adjust the skill and all exp_obj and player exp */
+    /* AdjustExp has adjust the skill and all skillgroup and player exp */
     /* now lets check for level up in all categories */
-    AdjustLevel(op, exp_skill, TRUE);
-    AdjustLevel(op, exp_ob, TRUE);
+    AdjustLevel(op, skill, TRUE);
+    AdjustLevel(op, skillgroup, TRUE);
     AdjustLevel(op, NULL, TRUE);
 
-    /* reset the player exp_obj to NULL */
+    /* reset the player skillgroup to NULL */
     /* I let this in but because we use single skill exp and skill nr now,
-     * this broken exp_obj concept can be removed
+     * this broken skillgroup concept can be removed
      */
-    if (op->exp_obj)
-        op->exp_obj = NULL;
+    if (op->skillgroup)
+        op->skillgroup = NULL;
 
     FIX_PLAYER(op, "add_exp" );
 
      /* If ->level < ->item_level, this means sufficient exp loos to cause
       * level loss has occurred so give the player a break and reset
       * ->item_level, meaning he can gain script experience again. */
-    if (exp_skill->level < exp_skill->item_level)
+    if (skill->level < skill->item_level)
     {
-        exp_skill->item_level = 0;
+        skill->item_level = 0;
     }
 
     return (sint32) exp; /* thats the real exp we have added to our skill */
@@ -529,15 +529,15 @@ static int AdjustExp(object *pl, object *op, int exp, int cap)
         }
     }
     /* set the exp of the exp. object to our best skill of this group */
-    op->exp_obj->stats.exp = sk_exp;
+    op->skillgroup->stats.exp = sk_exp;
 
     /* now we collect all exp. objects exp */
     pl_exp = 0;
 
     for (i = 0; i < NROFSKILLGROUPS_ACTIVE; i++)
     {
-        if (CONTR(pl)->exp_obj_ptr[i]->stats.exp > pl_exp)
-            pl_exp = CONTR(pl)->exp_obj_ptr[i]->stats.exp;
+        if (CONTR(pl)->skillgroup_ptr[i]->stats.exp > pl_exp)
+            pl_exp = CONTR(pl)->skillgroup_ptr[i]->stats.exp;
     }
 
     /* last action: set our player exp to highest group */
