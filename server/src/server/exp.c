@@ -452,15 +452,6 @@ static int AdjustExp(object *pl, object *op, int exp, int cap)
     int     i;
     sint32  sk_exp, pl_exp;
 
-
-    /* be sure this is a skill object from a active player */
-    if (op->type != TYPE_SKILL || !pl || pl->type != PLAYER)
-    {
-        LOG(llevBug, "BUG: AdjustExp() - called for non player or non skill: skill: %s -> player: %s\n",
-            query_name(op), query_name(pl));
-        return 0;
-    }
-
     if (exp)
     {
         int  bonus = (exp > 0 && CONTR(pl)->exp_bonus) ? (((double)exp / 100.0) * CONTR(pl)->exp_bonus) : 0,
@@ -565,7 +556,7 @@ static void AdjustLevel(object *who, object *op, int flag_msg)
         op->level++;
 
         /* show the player some effects... */
-        if (op->type == TYPE_SKILL && who && who->type == PLAYER && who->map)
+        if (op->type == TYPE_SKILL && who && who->map)
         {
             object *effect_ob;
 
@@ -592,7 +583,7 @@ static void AdjustLevel(object *who, object *op, int flag_msg)
             dragon_level_gain(who);
 
 
-        if (who && who->type == PLAYER && op->type != TYPE_SKILLGROUP && op->type != TYPE_SKILL && who->level > 1)
+        if (op->type != TYPE_SKILLGROUP && op->type != TYPE_SKILL && who->level > 1)
         {
             if (who->level + drain_level > 4)
                 CONTR(who)->levhp[who->level + drain_level] = (char) ((RANDOM() % who->arch->clone.stats.maxhp) + 1);
@@ -604,23 +595,21 @@ static void AdjustLevel(object *who, object *op, int flag_msg)
         }
         if (op->level > 1 && op->type == TYPE_SKILLGROUP)
         {
-            if (who && who->type == PLAYER)
+            if (op->stats.Pow) /* mana */
             {
-                if (op->stats.Pow) /* mana */
-                {
-                    if (op->level > 4)
-                        CONTR(who)->levsp[op->level] = (char) ((RANDOM() % who->arch->clone.stats.maxsp) + 1);
-                    else
-                        CONTR(who)->levsp[op->level] = (char) who->arch->clone.stats.maxsp;
-                }
-                else if (op->stats.Wis) /* grace */
-                {
-                    if (op->level > 4)
-                        CONTR(who)->levgrace[op->level] = (char) ((RANDOM() % who->arch->clone.stats.maxgrace) + 1);
-                    else
-                        CONTR(who)->levgrace[op->level] = (char) who->arch->clone.stats.maxgrace;
-                }
+                if (op->level > 4)
+                    CONTR(who)->levsp[op->level] = (char) ((RANDOM() % who->arch->clone.stats.maxsp) + 1);
+                else
+                    CONTR(who)->levsp[op->level] = (char) who->arch->clone.stats.maxsp;
             }
+            else if (op->stats.Wis) /* grace */
+            {
+                if (op->level > 4)
+                    CONTR(who)->levgrace[op->level] = (char) ((RANDOM() % who->arch->clone.stats.maxgrace) + 1);
+                else
+                    CONTR(who)->levgrace[op->level] = (char) who->arch->clone.stats.maxgrace;
+            }
+
             if(flag_msg)
             {
                 new_draw_info(NDI_UNIQUE | NDI_RED, 0, who, "You are now level %d in %s based skills.",
