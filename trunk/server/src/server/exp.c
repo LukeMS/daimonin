@@ -387,6 +387,13 @@ sint32 add_exp(object *op, int exp, int skill_nr, int cap)
             query_name(op), skill_nr, exp);
         return 0;
     }
+    else if (skill->last_eat == 0)
+    {
+        LOG(llevBug, "BUG:: %s/add_exp(): %s (%d) is a non-levelling skill!\n",
+            __FILE__, STRING_OBJ_NAME(skill), skill_nr);
+        return 0;
+    }
+
 
     /* if we are full in this skill, then nothing is to do */
     if (skill->level >= MAXLEVEL)
@@ -558,13 +565,6 @@ static void AdjustLevel(object *who, object *op, int flag_msg)
     SET_FLAG(who, FLAG_NO_FIX_PLAYER);
     if (!op)        /* when rolling stats */
         op = who;
-
-    if (op->type == TYPE_SKILL && !op->last_eat) /* no exp gain for indirect skills */
-    {
-        LOG(llevBug, "BUG: AdjustLevel() called for indirect skill %s (who: %s)\n", query_name(op), query_name(who));
-        CLEAR_FLAG(who, FLAG_NO_FIX_PLAYER);
-        return;
-    }
 
     if ((force = present_arch_in_ob(archetype_global._drain, op)))
         drain_level = force->level;
