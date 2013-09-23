@@ -387,7 +387,7 @@ sint32 add_exp(object *op, int exp, int skill_nr, int cap)
             query_name(op), skill_nr, exp);
         return 0;
     }
-    else if (skill->last_eat == 0)
+    else if (skill->last_eat == NONLEVELING)
     {
         LOG(llevBug, "BUG:: %s/add_exp(): %s (%d) is a non-levelling skill!\n",
             __FILE__, STRING_OBJ_NAME(skill), skill_nr);
@@ -454,7 +454,7 @@ static int AdjustExp(object *pl, object *op, int exp, int cap)
 
     if (exp)
     {
-        if (op->last_eat == 2) // Direct leveling (no exp)
+        if (op->last_eat == DIRECT)
         {
             /* add or sub the exp and cap it. it must be >=0 and <= MAX_EXPERIENCE */
             op->stats.exp += exp;
@@ -696,7 +696,7 @@ void apply_death_exp_penalty(object *op)
     for (tmp = op->inv; tmp; tmp = tmp->below)
     {
         /* only adjust skills with level and a positive exp value - negative exp has special meaning */
-        if (tmp->type == TYPE_SKILL && tmp->level && tmp->last_eat == 1)
+        if (tmp->type == TYPE_SKILL && tmp->level && tmp->last_eat == INDIRECT)
         {
             /* first, lets check there are exp we can drain. */
             level_exp = tmp->stats.exp - new_levels[tmp->level];

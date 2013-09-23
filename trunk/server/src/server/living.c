@@ -1022,8 +1022,12 @@ void fix_player(object *op)
     op->terrain_flag = op->arch->clone.terrain_flag;        /* reset terrain moving abilities */
 
     /* only adjust skills which has no own level/exp values */
-    if (op->chosen_skill && !op->chosen_skill->last_eat && op->chosen_skill->skillgroup)
+    if (op->chosen_skill &&
+        op->chosen_skill->last_eat == NONLEVELING &&
+        op->chosen_skill->skillgroup)
+    {
         op->chosen_skill->level = op->chosen_skill->skillgroup->level;
+    }
 
     pl->gen_sp = pl->gen_grace = pl->gen_hp = 20;
 

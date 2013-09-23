@@ -177,6 +177,16 @@ enum skillnrs
     /* always last index! */
 };
 
+/* Skill leveling modes (->last_eat). There are 3 modes:
+ *    NONLEVELING - cannot be leveled; the player either has it or he does not;
+ *    INDIRECT - leveled indirectly (accumulates experience which causes level
+ *    gain/loss when it crosses certain thresholds);
+ *    DIRECT - leveled directly (does not accumulate experience in the normal
+ *    way but gains/loses levels directly). */
+#define NONLEVELING 0
+#define INDIRECT    1
+#define DIRECT      2
+
 extern archetype *skills[];
 extern archetype *skillgroups[];
 

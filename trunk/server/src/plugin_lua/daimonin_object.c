@@ -1263,23 +1263,23 @@ static int GameObject_GetSkill(lua_State *L)
     push_object(L, &GameObject, skill);
 
     /* If !skill OR type == TYPE_SKILLGROUP OR ->level == MAXLEVEL OR
-     * ->last_eat == 0, it cannot be levelled. 2nd return 0. */
+     * ->last_eat == NONLEVELING, it cannot be levelled. 2nd return 0. */
     if (!skill ||
         type == TYPE_SKILLGROUP ||
         skill->level == MAXLEVEL ||
-        skill->last_eat == 0)
+        skill->last_eat == NONLEVELING)
     {
         lua_pushnumber(L, 0);
     }
-    /* If ->last_eat == 1, it is levelled indirectly (accumulates
+    /* If ->last_eat == INDIRECT, it is levelled indirectly (accumulates
      * experience which causes level gain/loss when it crosses certain
      * thresholds). 2nd return 1 or -1. */
-    /* If ->last_eat == 2, it is levelled directly (does not accumulate
+    /* If ->last_eat == DIRECT, it is levelled directly (does not accumulate
      * experience in the normal way but gaisn/loses levels directly). 2nd
      * return 2. */
     else
     {
-        int mode = (skill->last_eat == 1 &&
+        int mode = (skill->last_eat == INDIRECT &&
                     skill->item_level == skill->level) ? -1 : skill->last_eat;
 
         lua_pushnumber(L, mode);
@@ -1436,9 +1436,10 @@ static int GameObject_SetSkill(lua_State *L)
         /* Scripts can change a max of 1 level, up or down. */
         level = MAX(-1, MIN(level, 1));
 
-        /* If a TYPE_SKILL object has ->last_eat == 0, it cannot be levelled; it is
-         * boolean. Return 2, skill, 0, 0. */
-        if (skill->last_eat == 0)
+        /* If a TYPE_SKILL object has ->last_eat == NONLEVELING, it cannot be
+         * levelled; the player either has it or he does not. Return 2, skill,
+         * 0, 0. */
+        if (skill->last_eat == NONLEVELING)
         {
             failure = 2;
             level = exp = 0;
@@ -1452,10 +1453,10 @@ static int GameObject_SetSkill(lua_State *L)
                 level = exp = 0;
             }
 
-            /* If ->last_eat == 1, it is levelled indirectly (accumulates
-             * experience which causes level gain/loss when it crosses certain
-             * thresholds). */
-            if (skill->last_eat == 1)
+            /* If ->last_eat == INDIRECT, it is levelled indirectly
+             * (accumulates experience which causes level gain/loss when it
+             * crosses certain thresholds). */
+            if (skill->last_eat == INDIRECT)
             {
                 /* If ->item_level == ->level, this means it has already gained
                  * some experience via a script this level so the player will
@@ -1499,10 +1500,10 @@ static int GameObject_SetSkill(lua_State *L)
                     }
                 }
             }
-            /* If ->last_eat == 2, it is levelled directly (does not accumulate
-             * experience in the normal way but gains/loses levels
+            /* If ->last_eat == DIRECT, it is levelled directly (does not
+             * accumulate experience in the normal way but gains/loses levels
              * directly). */
-            else if (skill->last_eat == 2)
+            else if (skill->last_eat == DIRECT)
             {
                 /* Exp loss is forced to the threshold for the previous level,
                  * and gain to the threshold for the next level. */
