@@ -90,6 +90,13 @@ void esrv_update_skills(player *pl)
                     sprintf(buf, "/%s|%d|-2", tmp2->name, tmp2->level);
                 /* FIXME: Can this ever be reached anyway as ->last_eat = 0
                  * is precluded by the first grandparent if statement. */
+                /* There is some confusion here. fix_player() assigns the level
+                 * of its skillgrop to a 'non-levelling' skill while the client
+                 * truly expects such skills never to have a level. This seems
+                 * to have the intention of furthering the fix_player()
+                 * behaviour but actually, because of the grandparent if,
+                 * enforces the client use.
+                 * -- Smacky 20130923 */
                 else // if (tmp2->last_eat == NONLEVELING)
                     sprintf(buf, "/%s|%d|-1", tmp2->name, tmp2->level);
                 strcat(tmp, buf);
@@ -176,6 +183,12 @@ void esrv_update_stats(player *pl)
         AddIfCharFlag(pl->last_level, pl->ob->level, group_update, GROUP_UPDATE_LEVEL, CS_STAT_LEVEL);
     }
 
+    /* TODO: (a) Might this make more sense as part of esrv_update_skills()
+     * above; (b) is it necessary at all?The only way a skillgroup can change
+     * level/exp is when a skill does. The skill change is sent to the client
+     * so can't the client then work out the skillgroup level/exp (which is
+     * just the highest of that group's skills)?
+     * -- Smacky    20130923 */
     for (i = 0; i < NROFSKILLGROUPS_ACTIVE; i++)
     {
         AddIfInt(pl->last_skillgroup_exp[i], pl->skillgroup_ptr[i]->stats.exp, cs_stat_skillexp[i]);
