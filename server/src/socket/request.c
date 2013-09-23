@@ -84,11 +84,13 @@ void esrv_update_skills(player *pl)
             /* send only when really something has changed */
             if (tmp2->stats.exp != pl->skill_exp[i] || tmp2->level != pl->skill_level[i])
             {
-                if (tmp2->last_eat == 1)
+                if (tmp2->last_eat == INDIRECT)
                     sprintf(buf, "/%s|%d|%d", tmp2->name, tmp2->level, tmp2->stats.exp);
-                else if (tmp2->last_eat == 2)
+                else if (tmp2->last_eat == DIRECT)
                     sprintf(buf, "/%s|%d|-2", tmp2->name, tmp2->level);
-                else
+                /* FIXME: Can this ever be reached anyway as ->last_eat = 0
+                 * is precluded by the first grandparent if statement. */
+                else // if (tmp2->last_eat == NONLEVELING)
                     sprintf(buf, "/%s|%d|-1", tmp2->name, tmp2->level);
                 strcat(tmp, buf);
                 pl->skill_exp[i] = tmp2->stats.exp;

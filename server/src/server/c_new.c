@@ -571,11 +571,11 @@ void send_skilllist_cmd(object *op, object *skillp, int mode)
 
     if (skillp)
     {
-        if (skillp->last_eat == 1) /* normal skills */
+        if (skillp->last_eat == INDIRECT)
             sprintf(tmp, "%d /%s|%d|%d", mode, skillp->name, skillp->level, skillp->stats.exp);
-        else if (skillp->last_eat == 2) /* "buy level" skills */
+        else if (skillp->last_eat == DIRECT)
             sprintf(tmp, "%d /%s|%d|-2", mode, skillp->name, skillp->level);
-        else /* no level skills */
+        else // if (skillp->last_eat == NONLEVELING)`
             sprintf(tmp, "%d /%s|%d|-1", mode, skillp->name, skillp->level);
     }
     else
@@ -585,11 +585,11 @@ void send_skilllist_cmd(object *op, object *skillp, int mode)
         {
             if (tmp2->type == TYPE_SKILL)
             {
-                if (tmp2->last_eat == 1)
+                if (tmp2->last_eat == INDIRECT)
                     sprintf(buf, "/%s|%d|%d", tmp2->name, tmp2->level, tmp2->stats.exp);
-                else if (tmp2->last_eat == 2)
+                else if (tmp2->last_eat == DIRECT) 
                     sprintf(buf, "/%s|%d|-2", tmp2->name, tmp2->level);
-                else
+                else // if (tmp2->last_eat == NONLEVELING)`
                     sprintf(buf, "/%s|%d|-1", tmp2->name, tmp2->level);
 
                 strcat(tmp, buf);
