@@ -70,13 +70,6 @@
 #ifndef __SKILLS_H
 #define __SKILLS_H
 
-/* define this if you want to have player skills stored for
- * faster access from a linked list. If skill tools are heavily used
- * calls to malloc from this code can actually make performance worse.
- * -b.t. */
-
-/* #define LINKED_SKILL_LIST */
-
 #define NO_SKILL_READY -1
 
 typedef enum
