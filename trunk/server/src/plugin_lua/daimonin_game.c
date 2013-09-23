@@ -52,6 +52,20 @@ static struct constant_decl *Game_constants = NULL;
 
 static struct constant_decl preset_game_constants[] =
 {
+    /* general success/failure (constants not defined by server)
+     * These are to provide meaningful constants for core methods which return
+     * a number to indicate success or failue. 0 is always success and positive
+     * numbers are always failure. Stick to these two outcomes if at all
+     * possible, but if you must, negative can be used for partial or qualified
+     * success, or semi-failure, or etc). */
+    {"SUCCESS",             0},
+    {"FAILURE",             1},
+    /* Failures for object:SetSkill() */
+    {"FAILURE_NOSKILL",     1},
+    {"FAILURE_NONLEVELING", 2},
+    {"FAILURE_MAXLEVEL",    3},
+    {"FAILURE_INDIRECT_NO", 4},
+
     /* Embedded character codes (protocol.h) */
     {"ECC_STRONG",    ECC_STRONG},
     {"ECC_EMPHASIS",  ECC_EMPHASIS},
@@ -403,7 +417,13 @@ static struct constant_decl preset_game_constants[] =
     {"SPELL_TYPE_WIZARD",  SPELL_TYPE_WIZARD},
     {"SPELL_TYPE_PRIEST",  SPELL_TYPE_PRIEST},
 
-    /* skillgroups (global.h) */
+    /* skill leveling modes (skill.h) */
+    {"INDIRECT_NO", -INDIRECT},
+    {"NONLEVELING", NONLEVELING},
+    {"INDIRECT",    INDIRECT},
+    {"DIRECT",      DIRECT},
+
+    /* skillgroups (skill.h) */
     {"SKILLGROUP_AGILITY",     SKILLGROUP_AGILITY},
     {"SKILLGROUP_PERSONALITY", SKILLGROUP_PERSONAL},
     {"SKILLGROUP_MENTAL",      SKILLGROUP_MENTAL},

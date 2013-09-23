@@ -1185,18 +1185,18 @@ static int GameObject_Interface(lua_State *L)
 /*          gains/loses levels as the total crosses certain thresholds (eg,  */
 /*          punching).                                                       */
 /*                                                                           */
-/*          Two values are returned: the GameObject (or nil); a number       */
-/*          representing whether/how the skill may be leveled.               */
+/*          Two values are returned: the GameObject (or nil); a game constant*/
+/*          number representing whether/how the skill may be leveled.        */
 /*                                                                           */
 /*          This number is one of:                                           */
-/*               0 - if the previous return was nil, or type was             */
-/*                   TYPE_SKILLGROUP, or the skill has already reached       */
-/*                   maximum level, or the skill is non-levelling;           */
-/*               1 - if the skill is leveled indirectly and may gain exp via */
-/*                   a script this level;                                    */
-/*              -1 - if the skill is leveled indirectly and may not gain exp */
-/*                   via a script this level;                                */
-/*               2 - if the skill is leveled directly.                       */
+/*              game.NONLEVELING - if the previous return was nil, or type   */
+/*                  was TYPE_SKILLGROUP, or the skill has already reached    */
+/*                  maximum level, or the skill is truly non-leveling;       */
+/*              game.INDIRECT - if the skill is leveled indirectly and may   */
+/*                  gain exp via a script this level;                        */
+/*              game.INDIRECT_NO - if the skill is leveled indirectly and may*/
+/*                  not gain exp via a script this level;                    */
+/*              game.DIRECT - if the skill is leveled directly.              */
 /* Status : Tested/Stable                                                    */
 /*****************************************************************************/
 static int GameObject_GetSkill(lua_State *L)
@@ -1329,18 +1329,21 @@ static int GameObject_GetSkill(lua_State *L)
 /*          different level. This means player's cannot exploit scripts to   */
 /*          constantly gain experience; scripts augment normal grinding.     */
 /*                                                                           */
-/*          Four values are returned: a number representing success or       */
-/*          failure (see below); the skill object or nil; a number (the level*/
-/*          gain/loss; a number (the exp gain/loss).                         */
+/*          Four values are returned: a game constant number representing    */
+/*          success or failure (see below); the skill object or nil; a number*/
+/*          (the level gain/loss; a number (the exp gain/loss).              */
 /*                                                                           */
 /*          This first return is one of:                                     */
-/*              0 - success;                                                 */
-/*              1 - failure (the player has no such skill);                  */
-/*              2 - failure (the skill is non-levelling);                    */
-/*              3 - failure (the skill is direct or indirect but has already */
-/*                  reached maximum level.                                   */
-/*              4 - failure (the skill is indirect and has already gained    */
-/*                  experience via this method this level).                  */
+/*              game.SUCCESS - success;                                      */
+/*              game.FAILURE_NOSKILL - failure (the player has no such       */
+/*                  skill);                                                  */
+/*              game.FAILURE_NONLEVELING - failure (the skill is             */
+/*                  non-leveling);                                           */
+/*              game.FAILURE_MAXLEVEL - failure (the skill is direct or      */
+/*                  indirect but has already reached maximum level);         */
+/*              game.FAILURE_INDIRECT_NO - failure (the skill is indirect and*/
+/*                  has already gained experience via this method this       */
+/*                  level).                                                  */
 /*                                                                           */
 /*          On any failure, level and exp return as 0. On success they are   */
 /*          the actual amounts gained/lost (so may be different than the     */
