@@ -580,10 +580,15 @@ void send_skilllist_cmd(object *op, object *skillp, int mode)
     }
     else
     {
+        int i;
+
         sprintf(tmp, "%d ", mode);
-        for (tmp2 = op->inv; tmp2; tmp2 = tmp2->below)
+
+        for (i = 0; i < NROFSKILLS; i++)
         {
-            if (tmp2->type == TYPE_SKILL)
+            tmp2 = CONTR(op)->skill_ptr[i];
+
+            if (tmp2)
             {
                 if (tmp2->last_eat == INDIRECT)
                     sprintf(buf, "/%s|%d|%d", tmp2->name, tmp2->level, tmp2->stats.exp);
