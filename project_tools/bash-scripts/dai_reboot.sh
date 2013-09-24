@@ -278,7 +278,7 @@ echo "${fromtime},${totime},${reason}" > ${dai_home}/${dai_time_data}
 
             if [ ${dai_gameserver} != "trunk" ]
             then
-                svn export ${dai_svndir}/daimonin/${dai_gameserver}/arch ${dai_builddir}/arch
+                svn export --force ${dai_svndir}/daimonin/${dai_gameserver}/arch ${dai_builddir}/arch
             fi
 
             if [ ${stream} != "none" ]
@@ -336,7 +336,7 @@ echo "${fromtime},${totime},${reason}" > ${dai_home}/${dai_time_data}
 
             if [ ${dai_gameserver} != "trunk" ]
             then
-                svn export ${dai_svndir}/daimonin/${dai_gameserver}/maps ${dai_builddir}/maps
+                svn export --force ${dai_svndir}/daimonin/${dai_gameserver}/maps ${dai_builddir}/maps
              fi
 
             if [ ${stream} != "none" ]
