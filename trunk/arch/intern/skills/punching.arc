@@ -7,10 +7,12 @@ object_int1 0
 object_int2 1
 object_int3 99
 msg
-is a skill.
+is the basic 'bare-handed attack' skill.
+This skill is auto-used when attacking without a weapon.
 endmsg
 weapon_speed 4.0
 face skill.101
+inv_face sk_022.101
 attack_impact 100
 dam 38
 item_quality 100

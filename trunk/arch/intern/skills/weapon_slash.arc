@@ -7,11 +7,14 @@ object_int1 0
 object_int2 1
 object_int3 99
 msg
-is a skill.
+allows the use of swords and all other slashing weapons.
+Weapons of this type doing 'slash damage'.
+This skill is auto-used when the right weapon is applied.
 endmsg
 type 43
 sub_type 0
 face skill.101
+inv_face sk_027.101
 sys_object 1
 item_quality 100
 item_condition 100

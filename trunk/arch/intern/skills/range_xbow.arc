@@ -7,11 +7,14 @@ object_int1 1
 object_int2 0
 object_int3 99
 msg
-is a skill.
+allows the use of crossbows as range weapons.
+Crossbows use bolts as ammunition.
+This skill is auto-used when a crossbow is used.
 endmsg
 type 43
 sub_type 0
 face skill.101
+inv_face sk_008.101
 # last_grace = action timer adjustment
 last_grace 0
 wc 0

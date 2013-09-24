@@ -7,12 +7,15 @@ object_int1 0
 object_int2 1
 object_int3 99
 msg
-is a skill.
+allows the use of daggers, rapiers or other piercing weapons.
+Weapons of this type doing 'pierce damage'.
+This skill is auto-used when the right weapon is applied.
 endmsg
 type 43
 sub_type 0
 sys_object 1
 face skill.101
+inv_face sk_029.101
 magic 3
 item_quality 100
 item_condition 100

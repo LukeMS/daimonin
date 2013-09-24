@@ -7,11 +7,14 @@ object_int1 0
 object_int2 1
 object_int3 99
 msg
-is a skill.
+allows the use of axes and all other cleaving weapons.
+Weapons of this type doing 'cleave damage'.
+This skill is auto-used when the right weapon is applied.
 endmsg
 type 43
 sub_type 0
 face skill.101
+inv_face sk_028.101
 item_quality 100
 item_condition 100
 nrof 1

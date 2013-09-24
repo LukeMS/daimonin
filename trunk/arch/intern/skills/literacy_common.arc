@@ -7,11 +7,14 @@ object_int1 3
 object_int2 4
 object_int3 99
 msg
-is a skill.
+is base literacy.
+It allows you to read and write the common language.
+This skill is auto-used when you read or write something.
 endmsg
 type 43
 sub_type 2
 face skill.101
+inv_face sk_013.101
 magic 2
 item_quality 100
 item_condition 100
