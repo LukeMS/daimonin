@@ -7,7 +7,9 @@ object_int1 4
 object_int2 5
 object_int3 3
 msg
-is a skill.
+allows praying to a deity and invoking prayers using grace.
+The kind and numbers of prayers depend on the players deity.
+This skill is auto-used when casting the spell.
 endmsg
 type 43
 sub_type 2
@@ -18,6 +20,7 @@ identified 1
 known_magical 1
 known_cursed 1
 face skill.101
+inv_face sk_035.101
 sys_object 1
 no_drop 1
 magic 5

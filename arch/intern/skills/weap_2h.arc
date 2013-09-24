@@ -7,11 +7,13 @@ object_int1 0
 object_int2 1
 object_int3 99
 msg
-is a skill.
+allows the use of two-hand weapons.
+This skill is auto-used from other skills.
 endmsg
 type 43
 sub_type 2
 face skill.101
+inv_face sk_030.101
 sys_object 1
 item_quality 100
 item_condition 100

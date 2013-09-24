@@ -7,11 +7,13 @@ object_int1 5
 object_int2 3
 object_int3 4
 msg
-is a skill.
+allows casting wizardry based spells using mana.
+This skill is auto-used when casting the spell.
 endmsg
 type 43
 sub_type 0
 face skill.101
+inv_face sk_032.101
 sys_object 1
 item_quality 100
 item_condition 100

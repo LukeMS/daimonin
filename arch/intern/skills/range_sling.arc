@@ -7,10 +7,13 @@ object_int1 1
 object_int2 0
 object_int3 99
 msg
-is a skill.
+allows the use of slings as range weapons.
+Slings use sling stones as ammunition.
+This skill is auto-used when a sling is used.
 endmsg
 type 43
 face skill.101
+inv_face sk_009.101
 # last_grace = action timer adjustment
 last_grace 0
 wc 0

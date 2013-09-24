@@ -7,7 +7,8 @@ object_int1 0
 object_int2 1
 object_int3 99
 msg
-is a skill.
+allows the use of pole weapons.
+This skill is auto-used from other skills.
 endmsg
 type 43
 sub_type 2
@@ -20,6 +21,7 @@ known_cursed 1
 sys_object 1
 no_drop 1
 face skill.101
+inv_face sk_031.101
 magic 3
 sp 41
 level 1

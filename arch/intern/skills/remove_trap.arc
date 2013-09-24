@@ -7,11 +7,14 @@ object_int1 1
 object_int2 3
 object_int3 99
 msg
-is a skill.
+removes a trap after it has been revealed.
+The success of removal depends on the skill level and the trap level.
+If the level of the trap is to high the trap can backfire.
 endmsg
 type 43
 sub_type 1
 face skill.101
+inv_face sk_003.101
 item_quality 100
 item_condition 100
 nrof 1
