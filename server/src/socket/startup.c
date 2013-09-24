@@ -29,7 +29,7 @@ player_arch_template        player_arch_list[MAX_PLAYER_ARCH];
 /* as long the server don't have a autoupdate/login server
  * as frontend we must serve our depending client files self.
  */
-static void load_srv_files(char *fname, int id, int cmd)
+static void LoadSrvFile(char *fname, int id, int cmd)
 {
     FILE   *fp;
     unsigned char *file_tmp, *comp_tmp;
@@ -54,7 +54,7 @@ static void load_srv_files(char *fname, int id, int cmd)
 
 
     if (numread>(0xFFFFFFFF))
-        LOG(llevError, "\nERROR: Size of compressed file %s exceeds size of uint32\nload_srv_files in startup.c needs update!\n", fname);
+        LOG(llevError, "\nERROR: Size of compressed file %s exceeds size of uint32\nLoadSrvFile in startup.c needs update!\n", fname);
 
     /* we prepare the files with the right commands - so we can flush
      * then direct from this buffer to the client.
@@ -82,17 +82,115 @@ static void load_srv_files(char *fname, int id, int cmd)
     fclose(fp);
 }
 
+/* Create the /data/client_skills file from the arches. */
+/* TODO: This purposely recreates/adheres to the format of the old
+ * arch/client_skills file for backwards compatibility. In a Y update we should
+ * change this format to something better. */
+static void CreateClientSkills(void)
+{
+    char  buf[MEDIUM_BUF];
+    FILE *file;
+    int   i;
+    char  position[NROFSKILLGROUPS] = { 'a', 'a', 'a', 'a', 'a', 'a', 'a' };
+
+    sprintf(buf, "%s/client_skills", settings.localdir);
+
+    if (!(file = fopen(buf, "w")))
+    {
+        LOG(llevError, "ERROR:: Could not open '%s' for writing!\n",
+            buf);
+    }
+
+    for (i = 0; i < NROFSKILLS; i++)
+    {
+        object *skill = &skills[i]->clone;
+        char   *start = (char *)skill->msg;
+        int j;
+
+        fprintf(file, "\"%s\"\n", skill->name);
+
+        if (!skill->inv_face)
+        {
+            sprintf(buf, "%s", "sk_001");
+        }
+        else
+        {
+            size_t p = strcspn(skill->inv_face->name, ".");
+
+            strncpy(buf, skill->inv_face->name, p);
+            buf[p] = '\0';
+        }
+
+        fprintf(file, "%d %c %s.png\n",
+            skill->magic, position[skill->magic], buf);
+        position[skill->magic]++;
+
+        for (j = 0; j <= 2; j++)
+        {
+            buf[0] = '\0';
+
+            if (start)
+            {
+                char *end = start;
+
+                while (*end)
+                {
+                    if (*end != '\n')
+                    {
+                        sprintf(strchr(buf, '\0'), "%c", *end);
+                    }
+
+                    if (*end == '.')
+                    {
+                        start = end + 1;
+                        break;
+                    }
+                    else
+                    {
+                        end++;
+                    }
+                }
+            }
+
+            if (j == 0)
+            {
+                fprintf(file, "\"~%s~ %s\"\n",
+                    skill->name, (buf[0] == '\0') ? " " : buf);
+            }
+            else
+            {
+                fprintf(file, "\"%s\"\n", (buf[0] == '\0') ? " " : buf);
+            }
+        }
+
+        if (skill->last_eat == NONLEVELING)
+        {
+            fprintf(file, "\"|Does not level; you either have it or you do not.|\"\n");
+        }
+        else if (skill->last_eat == INDIRECT)
+        {
+            fprintf(file, "\"|Accumulates exp which, when you have enough, increases level.|\"\n");
+        }
+        else if (skill->last_eat == DIRECT)
+        {
+            fprintf(file, "\"|Increases level directly; you have to acquire training.|\"\n");
+        }
+    }
+
+    fclose(file);
+}
+
 /* get the /lib/settings default file and create the
  * /data/client_settings with it.
  */
-static void create_client_settings(void)
+static void CreateClientSettings(void)
 {
     archetype   *p_arch;
     char        buf[LARGE_BUF], arch_name[TINY_BUF];
     int         i, line=0, id, race=0, gender = 0;
     FILE        *fset_default, *fset_create;
 
-    LOG(llevDebug, "Creating %s/client_settings...\n", settings.localdir);
+    LOG(llevSystem, "Creating %s/client_settings...\n", settings.localdir);
 
     /* used by create_player() as default template */
     memset(player_arch_list, 0 , sizeof(player_arch_template));
@@ -196,22 +294,23 @@ void init_srv_files(void)
     memset(&SrvClientFiles, 0, sizeof(SrvClientFiles));
 
     sprintf(buf, "%s/animations", settings.datadir);
-    load_srv_files(buf, SRV_CLIENT_ANIMS, DATA_CMD_ANIM_LIST);
+    LoadSrvFile(buf, SRV_CLIENT_ANIMS, DATA_CMD_ANIM_LIST);
 
     sprintf(buf, "%s/client_bmaps", settings.localdir);
-    load_srv_files(buf, SRV_CLIENT_BMAPS, DATA_CMD_BMAP_LIST);
+    LoadSrvFile(buf, SRV_CLIENT_BMAPS, DATA_CMD_BMAP_LIST);
 
     sprintf(buf, "%s/client_sounds", settings.datadir);
-    load_srv_files(buf, SRV_CLIENT_SOUNDS, DATA_CMD_SOUND_LIST);
+    LoadSrvFile(buf, SRV_CLIENT_SOUNDS, DATA_CMD_SOUND_LIST);
 
-    sprintf(buf, "%s/client_skills", settings.datadir);
-    load_srv_files(buf, SRV_CLIENT_SKILLS, DATA_CMD_SKILL_LIST);
+    CreateClientSkills();
+    sprintf(buf, "%s/client_skills", settings.localdir);
+    LoadSrvFile(buf, SRV_CLIENT_SKILLS, DATA_CMD_SKILL_LIST);
 
     sprintf(buf, "%s/client_spells", settings.datadir);
-    load_srv_files(buf, SRV_CLIENT_SPELLS, DATA_CMD_SPELL_LIST);
+    LoadSrvFile(buf, SRV_CLIENT_SPELLS, DATA_CMD_SPELL_LIST);
 
-    create_client_settings();
+    CreateClientSettings();
     sprintf(buf, "%s/client_settings", settings.localdir);
-    load_srv_files(buf, SRV_CLIENT_SETTINGS, DATA_CMD_SETTINGS_LIST);
+    LoadSrvFile(buf, SRV_CLIENT_SETTINGS, DATA_CMD_SETTINGS_LIST);
 }
 
