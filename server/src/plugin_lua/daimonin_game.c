@@ -125,14 +125,6 @@ static struct constant_decl preset_game_constants[] =
     {"CLONE_WITH_INVENTORY",    0},
     {"CLONE_WITHOUT_INVENTORY", 1},
 
-    /* experience categories (deprecate in favour of SKILLGROUP_*?) */
-    {"EXP_AGILITY",  0},
-    {"EXP_PERSONAL", 1},
-    {"EXP_MENTAL",   2},
-    {"EXP_PHYSICAL", 3},
-    {"EXP_MAGICAL",  4},
-    {"EXP_WISDOM",   5},
-
     /* colours (newclient.h) */
     {"COLOR_WHITE",   NDI_WHITE},
     {"COLOR_ORANGE",  NDI_ORANGE},
@@ -169,17 +161,6 @@ static struct constant_decl preset_game_constants[] =
     {"EQUIP_BOW",      PLAYER_EQUIP_BOW},
     {"EQUIP_AMUN",     PLAYER_EQUIP_AMUN},
     {"EQUIP_MAX",      PLAYER_EQUIP_MAX},
-
-    /* skill groups used by quests (constants not define by server) */
-    /* why not just use game.SKILLGROUP_* and add 1 in the relevant functions? */
-    /* this would be invisible to scripters and reduce the number of constants used */
-    {"ITEM_SKILL_NO",          0},
-    {"ITEM_SKILL_AGILITY",     1},
-    {"ITEM_SKILL_PERSONALITY", 2},
-    {"ITEM_SKILL_MENTAL",      3},
-    {"ITEM_SKILL_PHYSICAL",    4},
-    {"ITEM_SKILL_MAGIC",       5},
-    {"ITEM_SKILL_WISDOM",      6},
 
     /* map loading modes (plugin_lua/include/plugin_lua.h) */
     {"MAP_CHECK", PLUGIN_MAP_CHECK},
@@ -422,6 +403,17 @@ static struct constant_decl preset_game_constants[] =
     {"NONLEVELING", NONLEVELING},
     {"INDIRECT",    INDIRECT},
     {"DIRECT",      DIRECT},
+
+    /* skill groups used by quests (constants not define by server) */
+    /* why not just use game.SKILLGROUP_* and add 1 in the relevant functions? */
+    /* this would be invisible to scripters and reduce the number of constants used */
+    {"ITEM_SKILL_NO",          0},
+    {"ITEM_SKILL_AGILITY",     SKILLGROUP_AGILITY + 1},
+    {"ITEM_SKILL_PERSONALITY", SKILLGROUP_PERSONAL + 1},
+    {"ITEM_SKILL_MENTAL",      SKILLGROUP_MENTAL + 1},
+    {"ITEM_SKILL_PHYSICAL",    SKILLGROUP_PHYSIQUE + 1},
+    {"ITEM_SKILL_MAGIC",       SKILLGROUP_MAGIC + 1},
+    {"ITEM_SKILL_WISDOM",      SKILLGROUP_WISDOM + 1},
 
     /* skillgroups (skill.h) */
     {"SKILLGROUP_AGILITY",     SKILLGROUP_AGILITY},
