@@ -895,7 +895,7 @@ addme_login_msg player_create(NewSocket *ns, player **pl_ret, char *name, int ra
     player          *pl = NULL;
     object          *op = NULL;
     archetype       *p_arch;
-    int             skillnr[]       = {SK_SLASH_WEAP, SK_MELEE_WEAPON, SK_CLEAVE_WEAP, SK_PIERCE_WEAP};
+    int             skillnr[]       = {SK_MELEE_BASIC_SLASH, SK_MELEE_BASIC_IMPACT, SK_MELEE_BASIC_CLEAVE, SK_MELEE_BASIC_PIERCE};
 /*    char            *skillitem[]     = {"shortsword", "mstar_small", "axe_small", "dagger_large"}; */ /* unused */
 
     /* do some sanity checks. *ns, *pl and the name are checked by caller */

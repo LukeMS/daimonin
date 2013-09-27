@@ -23,7 +23,7 @@ dam 2
 last_sp 4
 magic 4
 no_drop 1
-sp 18
+sp -1
 last_eat 1
 level 1
 exp 0

@@ -552,26 +552,12 @@ void                        add_money_to_player(object *pl, int c, int s, int g,
 void                        insert_money_in_player(object *pl, object *money, uint32 nrof);
 int                         enumerate_coins(sint64 value, struct _money_block *money);
 /* skills.c */
-int                         attempt_steal(object *op, object *who);
-int                         adj_stealchance(object *op, object *victim, int roll);
-int                         steal(object *op, int dir);
-int                         pick_lock(object *pl, int dir);
-int                         attempt_pick_lock(object *door, object *pl);
-int                         hide(object *op);
-int                         attempt_hide(object *op);
-int                         jump(object *pl, int dir);
-int                         skill_ident(object *pl);
-int                         do_skill_detect_curse(object *pl);
-int                         do_skill_detect_magic(object *pl);
-int                         do_skill_ident2(object *tmp, object *pl, int obj_class);
-int                         do_skill_ident(object *pl, int obj_class);
-int                         use_oratory(object *pl, int dir);
-int                         singing(object *pl, int dir);
+int                         attack_melee_weapon(object *op, int dir, char *string);
+int                         attack_hth(object *pl, int dir, char *string);
+int                         skill_attack(object *tmp, object *pl, int dir, char *string);
+int                         do_skill_attack(object *tmp, object *op, char *string);
+int                         SK_level(object *op);
 int                         find_traps(object *pl, int level);
-void                        meditate(object *pl);
-int                         write_on_item(object *pl, char *params);
-int                         write_note(object *pl, object *item, char *msg);
-int                         write_scroll(object *pl, object *scroll);
 int                         remove_trap(object *op, int dir, int level);
 /* skill_util.c */
 void                        init_skills(void);
@@ -588,11 +574,6 @@ int                         learn_skill(object *pl, object *scroll, char *name, 
 int                         use_skill(object *op, char *string);
 int                         change_skill(object *who, int sk_index);
 int                         change_skill_to_skill(object *who, object *skl);
-int                         attack_melee_weapon(object *op, int dir, char *string);
-int                         attack_hth(object *pl, int dir, char *string);
-int                         skill_attack(object *tmp, object *pl, int dir, char *string);
-int                         do_skill_attack(object *tmp, object *op, char *string);
-int                         SK_level(object *op);
 void                        set_action_time(object *op, float ticks);
 int                         check_skill_action_time(object *op, object *skill);
 int                         get_skill_stat1(object *op);

@@ -1268,11 +1268,11 @@ void fix_player(object *op)
                         continue;
 
                     if (tmp->sub_type1 == RANGE_WEAP_BOW)
-                        pl->set_skill_archery = SK_MISSILE_WEAPON;
+                        pl->set_skill_archery = SK_RANGE_BOW;
                     else if (tmp->sub_type1 == RANGE_WEAP_XBOWS)
-                        pl->set_skill_archery = SK_XBOW_WEAP;
+                        pl->set_skill_archery = SK_RANGE_XBOW;
                     else
-                        pl->set_skill_archery = SK_SLING_WEAP;
+                        pl->set_skill_archery = SK_RANGE_SLING;
 
                     for (i = 0; i < NUM_STATS; i++)
                         change_stat_value(&(op->stats), i, get_stat_value(&(tmp->stats), i));
@@ -1306,19 +1306,19 @@ void fix_player(object *op)
 
                       if ((i = tmp->sub_type1 % 4) == WEAP_1H_IMPACT)
                       {
-                          pl->set_skill_weapon = SK_MELEE_WEAPON;
+                          pl->set_skill_weapon = SK_MELEE_BASIC_IMPACT;
                       }
                       else if (i == WEAP_1H_SLASH)
                       {
-                          pl->set_skill_weapon = SK_SLASH_WEAP;
+                          pl->set_skill_weapon = SK_MELEE_BASIC_SLASH;
                       }
                       else if (i == WEAP_1H_CLEAVE)
                       {
-                          pl->set_skill_weapon = SK_CLEAVE_WEAP;
+                          pl->set_skill_weapon = SK_MELEE_BASIC_CLEAVE;
                       }
                       else
                       {
-                          pl->set_skill_weapon = SK_PIERCE_WEAP;
+                          pl->set_skill_weapon = SK_MELEE_BASIC_PIERCE;
                       }
 
                       /* wc and damage of a melee weapon only count for melee! */
@@ -1680,11 +1680,11 @@ void fix_player(object *op)
             else /* its a bow.. calc the arrow in */
             {
                 if (tmp->sub_type1 == RANGE_WEAP_BOW)
-                    skill_ptr = pl->skill_ptr[SK_MISSILE_WEAPON];
+                    skill_ptr = pl->skill_ptr[SK_RANGE_BOW];
                 else if (tmp->sub_type1 == RANGE_WEAP_XBOWS)
-                    skill_ptr = pl->skill_ptr[SK_XBOW_WEAP];
+                    skill_ptr = pl->skill_ptr[SK_RANGE_XBOW];
                 else
-                    skill_ptr = pl->skill_ptr[SK_SLING_WEAP];
+                    skill_ptr = pl->skill_ptr[SK_RANGE_SLING];
 
                 tmp_dam = tmp->stats.dam + tmp->magic;
                 tmp_wc = tmp->stats.wc + tmp->magic;

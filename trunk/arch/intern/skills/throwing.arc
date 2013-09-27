@@ -25,7 +25,7 @@ face skill.101
 inv_face sk_001.101
 sys_object 1
 no_drop 1
-sp 25
+sp 16
 last_heal 25
 last_eat 1
 level 1

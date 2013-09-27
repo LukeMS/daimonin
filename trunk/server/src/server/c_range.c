@@ -234,7 +234,7 @@ int command_cast_spell(object *op, char *params)
     }
 
 
-    if (!change_skill(op, (spells[spnum].type == SPELL_TYPE_PRIEST ? SK_PRAYING : SK_SPELL_CASTING)))
+    if (!change_skill(op, (spells[spnum].type == SPELL_TYPE_PRIEST ? SK_DIVINE_PRAYERS : SK_WIZARDRY_SPELLS)))
     {
         if (!IS_GMASTER_WIZ(op))
         {

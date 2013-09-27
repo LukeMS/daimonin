@@ -139,7 +139,7 @@ static void ApplyPotion(object *op, object *tmp)
     if (op->type == PLAYER)
     {
         /* set chosen_skill to "magic device" - thats used when we "use" a potion */
-        if (!change_skill(op, SK_USE_MAGIC_ITEM))
+        if (!change_skill(op, SK_MAGIC_DEVICES))
             return; /* no skill, no potion use (dust & balm too!) */
 
         if (!QUERY_FLAG(tmp, FLAG_IDENTIFIED))
@@ -1885,7 +1885,7 @@ static void ApplyScroll(object *op, object *tmp)
              * right spellcasting spell. Reason: the exp goes then in that
              * skill. This makes scroll different from wands or potions.
              */
-        if (!change_skill(op, (spells[scroll_spell].type == SPELL_TYPE_PRIEST ? SK_PRAYING : SK_SPELL_CASTING)))
+        if (!change_skill(op, (spells[scroll_spell].type == SPELL_TYPE_PRIEST ? SK_DIVINE_PRAYERS : SK_WIZARDRY_SPELLS)))
         {
             new_draw_info(NDI_UNIQUE, 0, op, "You can read the scroll but you don't understand it.");
             /* op->chosen_skill=old_skill;*/
@@ -2227,7 +2227,7 @@ int manual_apply(object *op, object *tmp, int aflag)
     {
         case HOLY_ALTAR:
             new_draw_info(NDI_UNIQUE, 0, op, "You touch the %s.", tmp->name);
-            if (change_skill(op, SK_PRAYING))
+            if (change_skill(op, SK_DIVINE_PRAYERS))
             {
                 if(trigger_object_plugin_event(EVENT_APPLY, tmp, op, NULL,
                             NULL, &aflag, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
