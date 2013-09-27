@@ -146,7 +146,7 @@ void init_skills(void)
 void link_player_skills(object *op)
 {
     int i;
-    object *tmp;
+    object *this;
     player *pl;
 
     if (op->type != PLAYER ||
@@ -165,30 +165,30 @@ void link_player_skills(object *op)
      * sure the object mirrors the arch -- except exp and level -- and put the
      * object in the player pointer shorttcut arrays. If it is not, throw it
      * away. */
-    for (tmp = op->inv; tmp; tmp = tmp->below)
+    for (this = op->inv; this; this = this->below)
     {
-        if (tmp->type == TYPE_SKILLGROUP)
+        if (this->type == TYPE_SKILLGROUP)
         {
 #ifdef DEBUG_SKILL_UTIL
             LOG(llevInfo, "  Found skillgroup %s with exp=%d, level=%d: ",
-                STRING_OBJ_NAME(tmp), tmp->stats.exp, tmp->level);
+                STRING_OBJ_NAME(this), this->stats.exp, this->level);
 #endif
 
             for (i = 0; i < NROFSKILLGROUPS; i++)
             {
-                if (skillgroups[i] == tmp->arch)
+                if (skillgroups[i] == this->arch)
                 {
-                    int exp = tmp->stats.exp,
-                        level = tmp->level;
+                    int exp = this->stats.exp,
+                        level = this->level;
 
-                    copy_object(&skillgroups[i]->clone, tmp);
-                    tmp->stats.exp = exp;
-                    tmp->level = level;
-                    CLEAR_FLAG(tmp, FLAG_APPLIED);
+                    copy_object(&skillgroups[i]->clone, this);
+                    this->stats.exp = exp;
+                    this->level = level;
+                    CLEAR_FLAG(this, FLAG_APPLIED);
 #ifdef DEBUG_SKILL_UTIL
                     LOG(llevInfo, "OK!\n");
 #endif
-                    pl->skillgroup_ptr[i] = tmp;
+                    pl->skillgroup_ptr[i] = this;
                     break;
                 }
             }
@@ -198,33 +198,33 @@ void link_player_skills(object *op)
 #ifdef DEBUG_SKILL_UTIL
                 LOG(llevInfo, "REMOVED (not in server list)!\n");
 #endif
-                remove_ob(tmp);
+                remove_ob(this);
             }
         }
-        else if (tmp->type == TYPE_SKILL)
+        else if (this->type == TYPE_SKILL)
         {
 #ifdef DEBUG_SKILL_UTIL
             LOG(llevInfo, "  Found skill %s with exp=%d, level=%d: ",
-                STRING_OBJ_NAME(tmp), tmp->stats.exp, tmp->level);
+                STRING_OBJ_NAME(this), this->stats.exp, this->level);
 #endif
 
             for (i = 0; i < NROFSKILLS; i++)
             {
-                if (skills[i] == tmp->arch)
+                if (skills[i] == this->arch)
                 {
-                    int exp = tmp->stats.exp,
-                        level = tmp->level,
-                        item_level = tmp->item_level;
+                    int exp = this->stats.exp,
+                        level = this->level,
+                        item_level = this->item_level;
 
-                    copy_object(&skills[i]->clone, tmp);
-                    tmp->stats.exp = exp;
-                    tmp->level = level;
-                    tmp->item_level = item_level;
-                    CLEAR_FLAG(tmp, FLAG_APPLIED);
+                    copy_object(&skills[i]->clone, this);
+                    this->stats.exp = exp;
+                    this->level = level;
+                    this->item_level = item_level;
+                    CLEAR_FLAG(this, FLAG_APPLIED);
 #ifdef DEBUG_SKILL_UTIL
                     LOG(llevInfo, "OK!\n");
 #endif
-                    pl->skill_ptr[i] = tmp;
+                    pl->skill_ptr[i] = this;
                     break;
                 }
             }
@@ -234,41 +234,96 @@ void link_player_skills(object *op)
 #ifdef DEBUG_SKILL_UTIL
                 LOG(llevInfo, "REMOVED (not in server list)!\n");
 #endif
-                remove_ob(tmp);
+                remove_ob(this);
             }
         }
     }
 
+    validate_skills(op);
+}
+
+/* Ensures the player has all the required skillgroup objects and that the
+ * shortcut pointers point to objects actually in his inv. Also calculates the
+ * best skill/skillgroup. */
+void validate_skills(object *op)
+{
+    player *pl;
+    int     i,
+            chosen_skill = 0;
+
+    if (!op ||
+        !(pl = CONTR(op)))
+    {
+        return;
+    }
+
+    SET_FLAG(op, FLAG_NO_FIX_PLAYER);
+
+#ifdef DEBUG_SKILL_UTIL
+    LOG(llevInfo, "Validating skills and skillgroups for player %s...\n",
+        STRING_OBJ_NAME(op));
+#endif
+
     for (i = 0; i < NROFSKILLGROUPS; i++)
     {
-        if (!pl->skillgroup_ptr[i])
+        object *this = pl->skillgroup_ptr[i];
+
+        if (!this ||
+            this->env != op)
         {
+            object *new;
+
 #ifdef DEBUG_SKILL_UTIL
             LOG(llevInfo, "  Adding default skillgroup %s!\n",
                 STRING_OBJ_NAME(&skillgroups[i]->clone));
 #endif
-            pl->skillgroup_ptr[i] = insert_ob_in_ob(arch_to_object(skillgroups[i]), op);
+            new = arch_to_object(skillgroups[i]);
+            pl->skillgroup_ptr[i] = insert_ob_in_ob(new, op);
         }
     }
 
-    /* Loop the found skills to find the best one in each skillgroup. */
     for (i = 0; i < NROFSKILLS; i++)
     {
         object *this = pl->skill_ptr[i];
  
         if (this)
         {
-            object *best = pl->highest_skill[this->magic];
- 
-            if (link_player_skill(pl->ob, this) &&
-                (!best ||
-                 this->stats.exp > best->stats.exp))
+            if (this->env != op)
             {
-                pl->highest_skill[this->magic] = this;
+#ifdef DEBUG_SKILL_UTIL
+            LOG(llevInfo, "  Nulling pointer to skill %s!\n",
+                STRING_OBJ_NAME(&skills[i]->clone));
+#endif
+                pl->skill_ptr[i] = NULL;
+            }
+            else
+            {
+                object *best = pl->highest_skill[this->magic];
+ 
+                if ((this->skillgroup = pl->skillgroup_ptr[this->magic]) &&
+                    (!best ||
+                     this->stats.exp > best->stats.exp))
+                {
+                    pl->highest_skill[this->magic] = this;
+                }
+
+                if (op->chosen_skill == this)
+                {
+                    chosen_skill = 1;
+                }
             }
         }
     }
+
+    if (!chosen_skill)
+    {
+        op->chosen_skill = NULL;
+    }
+
 #ifdef DEBUG_SKILL_UTIL
+
+    LOG(llevInfo, "Finding best skills of player %s...\n",
+        STRING_OBJ_NAME(op));
 
     for (i = 0; i < NROFSKILLGROUPS; i++)
     {
@@ -276,12 +331,14 @@ void link_player_skills(object *op)
 
         if (best)
         {
-            LOG(llevInfo, "  Best skill in skillgroup %s is %s with exp=%d, level=%d!\n",
+            LOG(llevInfo, "  In skillgroup %s is %s with exp=%d, level=%d!\n",
                 STRING_OBJ_NAME(&skillgroups[i]->clone), STRING_OBJ_NAME(best),
                 best->stats.exp, best->level);
         }
     }
 #endif
+
+    CLEAR_FLAG(op, FLAG_NO_FIX_PLAYER);
 }
 
 /* find_skill()
@@ -632,43 +689,6 @@ int check_skill_to_apply(object *who, object *item)
     return 1;
 }
 
-
-/* unlink_skill() - removes skill from a player skill list and
- * unlinks the pointer to the exp object */
-
-void unlink_skill(object *skillop)
-{
-    object *op  = skillop ? skillop->env : NULL;
-
-    if (!op || op->type != PLAYER)
-    {
-        LOG(llevBug, "BUG: unlink_skill() called for non-player %s!\n", query_name(op));
-        return;
-    }
-    send_skilllist_cmd(op, skillop, SPLIST_MODE_REMOVE);
-    skillop->skillgroup = NULL;
-}
-
-
-/* link_player_skill() - links a  skill to exp object when applied or learned by
- * a player. Returns true if can link. Returns false if got misc
- * skill - bt.
- */
-
-int link_player_skill(object *pl, object *skillop)
-{
-    skillop->skillgroup = CONTR(pl)->skillgroup_ptr[skillop->magic];
-
-    if(!skillop->skillgroup)
-    {
-        LOG(llevDebug," link_player_skill(): player %s has for skill obj %s has no valid exp obj\n",
-                        query_name(pl), query_name(skillop));
-        return 0;
-    }
-
-    return 1;
-}
-
 /* Learn skill. This inserts the requested skill in the player's
  * inventory. The 'slaying' field of the scroll should have the
  * exact name of the requested archetype (there should be a better way!?)
@@ -726,7 +746,7 @@ int learn_skill(object *pl, object *scroll, char *name, int skillnr, int scroll_
     /* Everything is cool. Give'em the skill */
     insert_ob_in_ob(tmp, pl);
     CONTR(pl)->skill_ptr[tmp->stats.sp] = tmp;
-    link_player_skill(pl, tmp);
+    validate_skills(pl);
 
     if(p && (p->state & ST_PLAYING))
     {

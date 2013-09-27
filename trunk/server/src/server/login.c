@@ -943,7 +943,6 @@ addme_login_msg player_create(NewSocket *ns, player **pl_ret, char *name, int ra
     op->y = pl->map_y;
 
     /* setup the base object structure, which are usually invisible objects in the inventory */
-    link_player_skills(op);
     learn_skill(op, NULL, NULL, skillnr[skill_nr], 0);
 
     /* and here the initial stuff depending the treasure list of the player arch */

@@ -1952,6 +1952,8 @@ void remove_ob(object *op)
 
 static void RemoveFromEnv(object *op)
 {
+    object *env = op->env;
+
     /* When the object being removed is an open container, close it. */
     if (op->type == CONTAINER &&
         op->attacked_by)
@@ -1992,14 +1994,14 @@ static void RemoveFromEnv(object *op)
     op->oy = op->y;
 #endif
 
-    if (op->env->type == PLAYER &&
-        !QUERY_FLAG(op->env, FLAG_NO_FIX_PLAYER))
-    {
-        FIX_PLAYER(op->env, "remove_ob()");
-    }
-
     op->above = op->below = op->env = NULL;
     op->map = NULL;
+
+    if (env->type == PLAYER &&
+        !QUERY_FLAG(env, FLAG_NO_FIX_PLAYER))
+    {
+        FIX_PLAYER(env, "remove_ob()");
+    }
 }
 
 static void RemoveFromMap(object *op)
