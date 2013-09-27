@@ -2678,17 +2678,6 @@ int apply_special(object *who, object *op, int aflags)
                 break;
 
             case TYPE_SKILL:
-                if (who->type == PLAYER)
-                {
-                    if (!IS_NORMAL_INVIS_TO(op, who))
-                    {
-                        /* its a tool, need to unlink it */
-                        unlink_skill(op);
-                        new_draw_info(NDI_UNIQUE, 0, who, "You stop using the %s.", query_name(op));
-                        new_draw_info(NDI_UNIQUE, 0, who, "You can no longer use the skill: %s.",
-                                op->name);
-                    }
-                }
                 /* i disabled here change_abil - because skill changing is somewhat often called
                  * AND automatically done. We simply don't give out change_abil() messages here
                  * and safe alot cpu (include a fix_player() inside change_abil())
@@ -2918,36 +2907,14 @@ int apply_special(object *who, object *op, int aflags)
             new_draw_info(NDI_UNIQUE, 0, who, "You put on the %s.", query_name(op));
             break;
 
-            /* this part is needed for skill-tools */
         case TYPE_SKILL:
             if (who->type == PLAYER)
             {
-/* Not sure I understand this. Of course op->skillgroup != NULL as op is a skill.
- * OTOH I have no idea what 'skill-tools' are/were -- perhaps like punching
- * where the skill itself represents the tool that administers it (your fist)?
- * Anyway, although this was broken in r7295, I think because that revision
- * removed the concept of skills doubling as tangible items.
- * -- Smacky 20130918 */
-#if 0
-                if (!IS_NORMAL_INVIS_TO(op, who))
-                {
-                    /* for tools */
-                    if (op->skillgroup)
-                        LOG(llevBug, "BUG: apply_special(SKILL): found unapplied tool with experience object\n");
-                    else
-                        link_player_skill(who, op);
-                    new_draw_info(NDI_UNIQUE, 0, who, "You ready the %s.", query_name(op));
-                    new_draw_info(NDI_UNIQUE, 0, who, "You can now use the skill: %s.", op->name);
-                }
-                else
-                    send_ready_skill(pl, op->name);
-#else
                 /* At least one of these lines is unnecessary: confirmation or
                  * just spam? I vote to get rid of the ndi() -- srs() uses less
                  * resources and allows the client more control. */
                 new_draw_info(NDI_UNIQUE, 0, who, "You ready the skill ~%s~.", query_name(op));
                 send_ready_skill(pl, op->name);
-#endif
             }
 
             SET_FLAG(op, FLAG_APPLIED);
