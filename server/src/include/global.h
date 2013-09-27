@@ -174,6 +174,8 @@
 
 /*#define DEBUG_IPCOMPARE*/
 
+#define DEBUG_SKILL_UTIL
+
 #endif /* ifdef DAI_DEVELOPMENT_CODE */
 
 #ifdef DEBUG_FIX_PLAYER

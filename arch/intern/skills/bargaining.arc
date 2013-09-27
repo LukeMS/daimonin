@@ -23,5 +23,5 @@ no_drop 1
 magic 6
 level 1
 exp 0
-sp 9
+sp -1
 end

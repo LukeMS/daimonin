@@ -1460,13 +1460,13 @@ void cs_cmd_fire(char *params, int len, NewSocket *ns)
                 ammo->type == ARROW &&
                 ((weapon->sub_type1 == RANGE_WEAP_BOW &&
                   ammo->sub_type1 == ST1_MISSILE_BOW &&
-                  change_skill(op, SK_MISSILE_WEAPON)) ||
+                  change_skill(op, SK_RANGE_BOW)) ||
                  (weapon->sub_type1 == RANGE_WEAP_XBOWS &&
                   ammo->sub_type1 == ST1_MISSILE_CBOW &&
-                  change_skill(op, SK_XBOW_WEAP)) ||
+                  change_skill(op, SK_RANGE_XBOW)) ||
                  (weapon->sub_type1 == RANGE_WEAP_SLINGS &&
                   ammo->sub_type1 == ST1_MISSILE_SSTONE &&
-                  change_skill(op, SK_SLING_WEAP))))
+                  change_skill(op, SK_RANGE_SLING))))
             {
                 if (check_skill_action_time(op, op->chosen_skill))
                 {
@@ -1489,7 +1489,7 @@ void cs_cmd_fire(char *params, int len, NewSocket *ns)
         case ALTACT_MODE_DEVICE:
             if ((weapon = pl->equipment[PLAYER_EQUIP_BOW]) &&
                 IS_DEVICE(weapon) &&
-                change_skill(op, SK_USE_MAGIC_ITEM))
+                change_skill(op, SK_MAGIC_DEVICES))
             {
                 if (check_skill_action_time(op, op->chosen_skill))
                 {

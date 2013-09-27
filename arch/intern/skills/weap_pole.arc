@@ -23,7 +23,7 @@ no_drop 1
 face skill.101
 inv_face sk_031.101
 magic 3
-sp 41
+sp 10
 level 1
 exp 0
 end

@@ -7,7 +7,7 @@ object_int1 1
 object_int2 99
 object_int3 99
 msg
-, when successful, will reveal a nearby traps.
+reveals nearby traps.
 It is used in a direction but has a range effect.
 The tile under the player and all around are searched.
 endmsg
@@ -24,7 +24,7 @@ inv_face sk_014.101
 sys_object 1
 last_eat 2
 no_drop 1
-sp 15
+sp 2
 level 1
 exp 0
 end

@@ -23,7 +23,7 @@ inv_face sk_033.101
 sys_object 1
 no_drop 1
 magic 4
-sp 29
+sp 4
 last_eat 1
 level 1
 exp 0

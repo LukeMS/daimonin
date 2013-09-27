@@ -21,7 +21,7 @@ known_cursed 1
 sys_object 1
 magic 1
 no_drop 1
-sp 13
+sp -1
 last_eat 1
 level 1
 exp 0

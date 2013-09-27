@@ -26,5 +26,5 @@ no_drop 1
 last_eat 1
 level 1
 exp 0
-sp 31
+sp -1
 end

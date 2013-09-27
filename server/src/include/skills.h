@@ -81,101 +81,32 @@ typedef enum
     SKILLGROUP_MAGIC,
     SKILLGROUP_WISDOM,
     SKILLGROUP_MISC,
+
     NROFSKILLGROUPS
 } ENUM_SKILL_GROUPS;
 
 /* have a marker to all exp groups which define the real player level */
 #define NROFSKILLGROUPS_ACTIVE SKILLGROUP_MISC
 
-enum skillnrs
-{
-    /* 0 */
-    SK_STEALING,
-    /* DISABLED: steal from other players/NPCs */
-    SK_LOCKPICKING,
-    /* open doors without having to bash them */
-    SK_HIDING,
-    /* player can hide from monsters */
-    SK_SMITH,
-    /* can auto-ident arms/armour */
-    SK_BOWYER,
-    /* can auto-ident bows/x-bow/arrows/bolts */
-    /* 5 */
-    SK_JEWELER,
-    /* can auto-identify gems */
-    SK_ALCHEMY,
-    /* can auto-identify potions/amulets/containers */
-    SK_THAUMATURGY,
-    /* can auto-identify staffs/rods/wands */
-    SK_LITERACY,
-    /* can auto-identify scrolls/books */
-    SK_BARGAINING,
-    /* sells equip at Cha + level-based bonus (30 max) */
-    /* 10 */
-    SK_JUMPING,
-    /* player may 'hop' over 1-2 spaces */
-    SK_DET_MAGIC,
-    /* player may sense magic in handled items */
-    SK_ORATORY,
-    /* player may charm unaggressive monsters */
-    SK_MUSIC,
-    /* Player may pacify hostile monsters once */
-    SK_DET_CURSE,
-    /* player may sense cursed items in inventory */
-    /* 15 */
-    SK_FIND_TRAPS,
-    /* player can find traps better */
-    SK_MEDITATION,
-    /* player can regain sp/hp at a faster rate */
-    SK_BOXING,
-    /* can attack hand-to-hand, see attack_hth() */
-    SK_FLAME_TOUCH,
-    /* player attack for fireborn characters */
-    SK_KARATE,
-    /* can attack hand-to-hand, see attack_hth() */
-    /* 20 */
-    SK_CLIMBING,
-    /* player moves quickly over hills/mountains  */
-    SK_WOODSMAN,
-    /* player moves quickly through jungle/forest */
-    SK_INSCRIPTION,
-    /* player may write spell scrolls */
-    SK_MELEE_WEAPON,
-    /* player can attack with melee weapons */
-    SK_MISSILE_WEAPON,
-    /* player can attack with missile weapons */
-    /* 25 */
-    SK_THROWING,
-    /* player can throw items */
-    SK_SPELL_CASTING,
-    /* player can cast magic spells */
-    SK_REMOVE_TRAP,
-    /* player can remove traps */
-    SK_SET_TRAP,
-    /* player can set traps - not implemented */
-    SK_USE_MAGIC_ITEM,
-    /* player use wands/horns/rods */
-    /* 30 */
-    SK_PRAYING,
-    /* player can cast cleric spells, regen grace points */
-    SK_CLAWING,
-    /* player attack for troll, dragon characters */
-    SK_LEVITATION,
-    /* skill for players who can fly. */
-
-    SK_DISARM_TRAPS,
-    /* disarm removes traps and graps sometimes trap items for set traps */
-    SK_XBOW_WEAP,
-    SK_SLING_WEAP,
-    SK_IDENTIFY,
-    SK_SLASH_WEAP,
-    SK_CLEAVE_WEAP,
-    SK_PIERCE_WEAP,
-    SK_TWOHANDS,
-    SK_POLEARMS,
-    NROFSKILLS,
-    /* always last index! */
-};
+#define SK_ALCHEMY             0
+#define SK_DIVINE_PRAYERS      1
+#define SK_FIND_TRAPS          2
+#define SK_LITERACY            3
+#define SK_MAGIC_DEVICES       4
+#define SK_MELEE_BASIC_CLEAVE  5
+#define SK_MELEE_BASIC_IMPACT  6
+#define SK_MELEE_BASIC_PIERCE  7
+#define SK_MELEE_BASIC_SLASH   8
+#define SK_MELEE_MASTERY_2H    9
+#define SK_MELEE_MASTERY_POLE 10
+#define SK_PUNCHING           11
+#define SK_RANGE_BOW          12
+#define SK_RANGE_SLING        13
+#define SK_RANGE_XBOW         14
+#define SK_REMOVE_TRAP        15
+#define SK_THROWING           16
+#define SK_WIZARDRY_SPELLS    17
+#define NROFSKILLS            18
 
 /* Skill leveling modes (->last_eat). There are 3 modes:
  *    NONLEVELING - cannot be leveled; the player either has it or he does not;
@@ -187,8 +118,8 @@ enum skillnrs
 #define INDIRECT    1
 #define DIRECT      2
 
-extern archetype *skills[];
-extern archetype *skillgroups[];
+extern archetype *skillgroups[NROFSKILLGROUPS];
+extern archetype *skills[NROFSKILLS];
 
 /* yet more convenience macros. */
 

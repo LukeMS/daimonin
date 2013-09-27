@@ -23,7 +23,7 @@ known_cursed 1
 flying 1
 magic 2
 no_drop 1
-sp 32
+sp -1
 level 1
 exp 0
 end

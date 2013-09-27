@@ -24,5 +24,5 @@ no_drop 1
 dam 5
 last_sp 1
 exp 0
-sp 10
+sp -1
 end

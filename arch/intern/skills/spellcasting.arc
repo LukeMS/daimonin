@@ -23,7 +23,7 @@ known_magical 1
 known_cursed 1
 no_drop 1
 magic 4
-sp 26
+sp 17
 last_eat 1
 level 1
 exp 0

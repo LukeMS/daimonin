@@ -913,7 +913,7 @@ void cast_dust(object *op, object *throw_ob, int dir)
         arch = find_archetype(spells[throw_ob->stats.sp].archname);
 
     /* casting POTION 'dusts' is really a use_magic_item skill */
-    if (op->type == PLAYER && throw_ob->type == POTION && !change_skill(op, SK_USE_MAGIC_ITEM))
+    if (op->type == PLAYER && throw_ob->type == POTION && !change_skill(op, SK_MAGIC_DEVICES))
         return; /* no skill, no dust throwing */
 
 
@@ -1264,29 +1264,6 @@ void dragon_ability_gain(object *who, int atnr, int level)
             do_learn_spell(who, spell, 0);
 
             return;
-        }
-    }
-    else if (item->type == TYPE_SKILL)
-    {
-        if (item->title == shstr_cons.clawing && change_skill(who, SK_CLAWING))
-        {
-            /* adding new attacktypes to the clawing skill */
-            tmp = who->chosen_skill; /* clawing skill object */
-
-            if (tmp->type == TYPE_SKILL && tmp->name == shstr_cons.clawing /*&& !(tmp->attacktype & item->attacktype)*/)
-            {
-                /* always add physical if there's none */
-                /*
-                if (tmp->attacktype == 0)
-                    tmp->attacktype = AT_PHYSICAL;
-                */
-
-                /* we add the new attacktype to the clawing ability */
-                /* tmp->attacktype += item->attacktype; */
-
-                if (item->msg != NULL)
-                    new_draw_info(NDI_UNIQUE | NDI_BLUE, 0, who, "%s", item->msg);
-            }
         }
     }
     else if (item->type == FORCE)

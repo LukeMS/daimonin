@@ -20,7 +20,7 @@ known_cursed 1
 no_drop 1
 face skill.101
 magic 1
-sp 12
+sp -1
 sys_object 1
 last_eat 1
 level 1

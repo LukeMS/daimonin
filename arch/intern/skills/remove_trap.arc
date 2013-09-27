@@ -1,5 +1,5 @@
 Object skill_remove_trap
-name Remove Traps
+name Remove Trap
 food 11
 run_away 1
 speed 0.5
@@ -23,7 +23,7 @@ known_magical 1
 known_cursed 1
 sys_object 1
 no_drop 1
-sp 27
+sp 15
 last_eat 2
 level 1
 exp 0

@@ -74,7 +74,7 @@ void move_deep_swamp(object *op)
                   if (random_roll(0, 4) == 0)
                   {
                       /* player is ready to drown - only woodsman skill can save him */
-                      if (random_roll(0, 4) == 0 || !change_skill(above, SK_WOODSMAN))
+                      if (random_roll(0, 4) == 0)
                       {
                           op->stats.food = 0;
                           new_draw_info(NDI_UNIQUE | NDI_ALL, 1, NULL, "%s disappeared into a swamp.",

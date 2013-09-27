@@ -26,7 +26,7 @@ nrof 1
 identified 1
 known_magical 1
 known_cursed 1
-sp 35
+sp 13
 last_heal 25
 last_sp 0
 last_eat 1
