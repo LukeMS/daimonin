@@ -238,8 +238,6 @@ void link_player_skills(object *op)
             }
         }
     }
-
-    validate_skills(op);
 }
 
 /* Ensures the player has all the required skillgroup objects and that the
@@ -256,8 +254,6 @@ void validate_skills(object *op)
     {
         return;
     }
-
-    SET_FLAG(op, FLAG_NO_FIX_PLAYER);
 
 #ifdef DEBUG_SKILL_UTIL
     LOG(llevInfo, "Validating skills and skillgroups for player %s...\n",
@@ -337,8 +333,6 @@ void validate_skills(object *op)
         }
     }
 #endif
-
-    CLEAR_FLAG(op, FLAG_NO_FIX_PLAYER);
 }
 
 /* find_skill()
@@ -746,7 +740,6 @@ int learn_skill(object *pl, object *scroll, char *name, int skillnr, int scroll_
     /* Everything is cool. Give'em the skill */
     insert_ob_in_ob(tmp, pl);
     CONTR(pl)->skill_ptr[tmp->stats.sp] = tmp;
-    validate_skills(pl);
 
     if(p && (p->state & ST_PLAYING))
     {

@@ -919,6 +919,7 @@ void fix_player(object *op)
 #endif
         return;
     }
+
     /* ok, in crossfire, fix_player is called for objects not for players
      * we redirect mobs to fix_monster() and let only player pass
      */
@@ -959,6 +960,12 @@ void fix_player(object *op)
     {
         opflags[i] = op->flags[i];
     }
+
+    /* This avoids looping this function if, for example, we need to insert or
+     * remove objects during the fix. Of course that should be avoided anyway,
+     * but sometimes may be necessary for a real fix (eg, validate_skills()).
+     * This flag is cleared again at the end of the function. */
+    SET_FLAG(op, FLAG_NO_FIX_PLAYER);
 
     pl = CONTR(op);
     inv_flag = inv_see_flag = ac = 0;
@@ -2130,6 +2137,8 @@ void fix_player(object *op)
     {
         esrv_send_below(pl);
     }
+
+    CLEAR_FLAG(op, FLAG_NO_FIX_PLAYER);
 
     /* Update the client if anything has changed about op. */
     for (i = 0; i < NUM_FLAGS_32; i++)

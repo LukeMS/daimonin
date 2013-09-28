@@ -944,6 +944,7 @@ addme_login_msg player_create(NewSocket *ns, player **pl_ret, char *name, int ra
 
     /* setup the base object structure, which are usually invisible objects in the inventory */
     learn_skill(op, NULL, NULL, skillnr[skill_nr], 0);
+    validate_skills(op);
 
     /* and here the initial stuff depending the treasure list of the player arch */
     give_initial_items(op, op->randomitems);
