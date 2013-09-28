@@ -118,7 +118,7 @@
 /* #define DEBUG_CORE */
 /* #define DEBUG_CORE_MAP*/
 
-/*#define SKILL_UTIL_DEBUG*/
+#define DEBUG_SKILL_UTIL
 
 /* debug the fix_xxxxxx flow */
 #define DEBUG_FIX_PLAYER
@@ -173,8 +173,6 @@
 /*#define DEBUG_CALENDAR*/
 
 /*#define DEBUG_IPCOMPARE*/
-
-#define DEBUG_SKILL_UTIL
 
 #endif /* ifdef DAI_DEVELOPMENT_CODE */
 
