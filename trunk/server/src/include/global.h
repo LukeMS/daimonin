@@ -97,6 +97,8 @@
  * debugflags get enabled/disabled by commenting then out or not.
  */
 
+#define DEBUG_SKILL_UTIL
+
 #ifdef DAI_DEVELOPMENT_CODE
 
 //#define SEND_BUFFER_DEBUG
@@ -117,8 +119,6 @@
 /* very have debugging of the whole core server loop - mainly how map data ia send & stored */
 /* #define DEBUG_CORE */
 /* #define DEBUG_CORE_MAP*/
-
-#define DEBUG_SKILL_UTIL
 
 /* debug the fix_xxxxxx flow */
 #define DEBUG_FIX_PLAYER
