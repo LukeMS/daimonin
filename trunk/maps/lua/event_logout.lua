@@ -1,6 +1,8 @@
+-------------------------------------------------------------------------------
 -- Handler for the global logout event
 --
--- Its main purpose is to save player datastores to disk
+-- Its main purpose is to save player datastores to disk.
+-------------------------------------------------------------------------------
 
 local pl = event.activator
 

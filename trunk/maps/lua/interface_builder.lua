@@ -1,44 +1,44 @@
 -------------------------------------------------------------------------------
--- interface_builder.lua
--- 
--- Simplified API for SENTInce-compliant GUIs (fully backwards-compatible --
--- which should not be read as an excuse to write bad talk scripts --
--- use SENTInce ;)).
+-- interface_builder.lua | Utility
+--
+-- The interface builder is for scripts which open an interface.
 -------------------------------------------------------------------------------
+---------------------------------------
+-- If InterfaceBuilder already exists then check it is the correct addon type.
+-- If it is not, this is an error. If it is, we (presumably) have already
+-- required this chunk so no need to do it again.
+---------------------------------------
 if InterfaceBuilder ~= nil then
+    local a, b, c = type(InterfaceBuilder)
+    assert(a == "addon" and
+        b == "utility" and
+        c == "ib",
+        "Global InterfaceBuilder exists but is not an addon utility ib!")
     return
 end
 
+---------------------------------------
+-- Assign the global InterfaceBuilder table. Give it a metatable. The __call
+-- metamethod means that calling InterfaceBuilder() returns a new instance of
+-- the addon (as specified by the __metatable metamethod).
+---------------------------------------
 InterfaceBuilder = {}
-
----------------------------------------
--- Meet... da management!
----------------------------------------
--------------------
--- ib:New() constructs a new, blank ib table (the return value).
--------------------
-function InterfaceBuilder:New()
-    local ib = {
-        head,
-        message,
-        description,
-        icons,
-        activeicons,
-        links,
-        lhsbutton,
-        rhsbutton,
-        textfield,
-        hidden
-    }
-
-    setmetatable(ib, { __metatable = InterfaceBuilder,
-                       __index = InterfaceBuilder,
-                       __tostring = InterfaceBuilder.Build })
-
-    return ib
-end
-
-setmetatable(InterfaceBuilder, { __call = InterfaceBuilder.New })
+setmetatable(InterfaceBuilder, {
+    __call = function()
+        ---------
+        -- t is just a table so we give it a metatable. The __index event means
+        -- that when we index t we treat it like InterfaceBuilder.
+        ---------
+        local t = {}
+        setmetatable(t, {
+            __index = InterfaceBuilder,
+            __metatable = function() return "addon", "utility", "ib" end,
+            __tostring = InterfaceBuilder.Build
+        })
+        return t
+    end,
+    __metatable = function() return "addon", "utility", "ib" end
+})
 
 -------------------
 -- ib:Build() generates a string based on the ib table which is built up with
@@ -738,23 +738,18 @@ end
 -- ib:AddQuestChecklist() writes a quest status list to the message block.
 -------------------
 function InterfaceBuilder:AddQuestChecklist(qb, nr)
-    if not QuestBuilder then
-        require("quest_builder")
+    local a, b, c = type(qb)
+    if a == "addon" and
+        b == "utility" then
+        if c == "qb" then
+            assert(type(nr) == "number", "Arg #2 must be number!")
+            return qb:AddItemList(nr, self)
+        elseif c == "qm" then
+            return qb:AddItemList(self) -- qb is really a qm
+        end
     end
 
-    assert(getmetatable(qb) == QuestBuilder or
-           getmetatable(qb) == QuestManager,
-           "Arg #1 must be QuestBuilder or QuestManager!")
-
-    if getmetatable(qb) == QuestBuilder then
-        assert(type(nr) == "number", "Arg #2 must be number!")
-    end
-
-    if getmetatable(qb) == QuestBuilder then
-        return qb:AddItemList(nr, self)
-    else
-        return qb:AddItemList(self) -- qb is really a qm
-    end
+    error( "Arg #1 must be addon utility qb or addon utility qm!")
 end
 
 ---------------------------------------

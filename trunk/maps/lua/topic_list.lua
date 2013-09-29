@@ -1,35 +1,43 @@
 -------------------------------------------------------------------------------
--- topic_list.lua
+-- topic_list.lua | Utility
 -- 
--- API for SENTInce-aware talk and say scripts (fully backwards compatible --
--- which should not be read as an excuse to write bad talk/say scripts --
--- use SENTInce ;)).
+-- The topic list is for TALK Event scripts.
 -------------------------------------------------------------------------------
+---------------------------------------
+-- If TopicList already exists then check it is the correct addon type.
+-- If it is not, this is an error. If it is, we (presumably) have already
+-- required this chunk so no need to do it again.
+---------------------------------------
 if TopicList ~= nil then
+    local a, b, c = type(TopicList)
+    assert(a == "addon" and
+        b == "utility" and
+        c == "tl",
+        "Global TopicList exists but is not an addon utility tl!")
     return
 end
 
-TopicList = { }
-
 ---------------------------------------
--- Meet... da management!
+-- Assign the global TopicList table. Give it a metatable. The __call
+-- metamethod means that calling TopicList() returns a new instance of
+-- the addon (as specified by the __metatable metamethod).
 ---------------------------------------
--------------------
--- tl:New() constructs a new, blank tl table (the return value).
--------------------
-function TopicList:New()
-    local tl = {
-        default,
-        topics = { }
-    }
-
-    setmetatable(tl, { __metatable = TopicList,
-                       __index = TopicList })
-
-    return tl
-end
-
-setmetatable(TopicList, { __call = TopicList.New })
+TopicList = { topics = {} }
+setmetatable(TopicList, {
+    __call = function()
+        ---------
+        -- t is just a table so we give it a metatable. The __index event means
+        -- that when we index t we treat it like TopicList.
+        ---------
+        local t = {}
+        setmetatable(t, {
+            __index = TopicList,
+            __metatable = function() return "addon", "utility", "tl" end,
+        })
+        return t
+    end,
+    __metatable = function() return "addon", "utility", "tl" end
+})
 
 -------------------
 -- tl:CheckMessage() compares what was typed by the player to all triggers.
