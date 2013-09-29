@@ -1,14 +1,49 @@
---[[
--- This script loads and executes when the plugin is loaded,
--- it is meant to load libraries, extend system libraries and
--- other fancy things.
+-------------------------------------------------------------------------------
+-- This script loads and executes when the plugin is loaded, it is meant to
+-- load libraries, extend system libraries and other fancy things.
 --
 -- Please use local variables for anything done in here...
 --
--- Also note that this script is _only_ loaded at server startup
---]]
-
-if game == nil then require "plugin_emulate" end
+-- Also note that this script is _only_ loaded at server startup.
+-------------------------------------------------------------------------------
+-------------------
+-- Extend type() to recognize addon tables.
+--
+-- These are tables which encapsulate addon data and provide methods for the
+-- manipulation of that data. Addon tables have a metatable with a
+-- __metatable metamethod which is a function returning 3 strings: "addon";
+-- "<secondary>"; "<tertiary>". -- type(v) returns these three strings or just
+-- one string as normal for other types.
+-- 
+-- So the three strings act as a 'fingerprint' for an addon: "addon" identifies
+-- this as a special addon table and guarantees that there are two more
+-- strings;  "<secondary>" identifies the subtype addon and may be "module" or
+-- "utility"; "<tertiary>" identifies the subsubtype addon and depends on what
+-- <secondary> was -- by convention utilities have a two-letter identifier and
+-- modules have a three or more-letter identifier. All strings are lower case
+-- letters only.
+-------------------
+function wrap_type()
+    local orig_type = type
+    return function(v)
+        local t = orig_type(v)
+        if t ~= "table" then
+            return t
+        end
+        local mt = getmetatable(v)
+        if type(mt) ~= "function" then
+            return t
+        end
+        local a, b, c = mt()
+        if a ~= "addon" or
+            type(b) ~= "string" or
+            type(c) ~= "string" then
+            return t
+        end
+        return a, b, c
+    end
+end
+type = wrap_type()
 
 -- Functions that need to be declared before we load the security system:
 local orig_io_open = io.open
@@ -21,7 +56,8 @@ io.exists = function(filename)
     return false
 end
 
-require("security")
+require("plugin/security")
+require("plugin/emulate")
 require("data_store")
 
 --
@@ -272,14 +308,11 @@ end
 -- rumours, etc). If it does not exist, provide some stubs so everything still
 -- works.
 -------------------
-if io.exists("../maps/lua/locality/init.lua") then
-    require("locality/init")
-else
+--if io.exists("../maps/lua/locality/init.lua") then
+--    require("locality/init")
+--else
     Locality = {}
     function Locality.SpreadRumour()
         return "|[THIS SPACE INTENTIONALLY LEFT BLANK]|"
     end
-end
-
--- Finished with the initialization
-print("plugin_init.lua loaded successfully!")
+--end

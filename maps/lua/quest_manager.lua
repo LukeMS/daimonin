@@ -1,80 +1,89 @@
 -------------------------------------------------------------------------------
--- quest_manager.lua
+-- quest_manager.lua | Utility
 --
 -- Deprecated for direct use, use quest_builder.lua.
 -------------------------------------------------------------------------------
+if QuestBuilder == nil then
+    print("WARNING: quest_manager.lua is deprecated for direct use, use " ..
+        "quest_builder.lua!")
+end
+
+---------------------------------------
+-- If QuestManager already exists then check it is the correct addon type.
+-- If it is not, this is an error. If it is, we (presumably) have already
+-- required this chunk so no need to do it again.
+---------------------------------------
 if QuestManager ~= nil then
+    local a, b, c = type(QuestManager)
+    assert(a == "addon" and
+        b == "utility" and
+        c == "qm",
+        "Global QuestManager exists but is not an addon utility qm!")
     return
 end
 
-QuestManager = { }
-
-if not QuestBuilder then
-    game:Log(game.LOG_INFO, "WARNING: quest_manager.lua is deprecated for " ..
-             "direct use, use quest_builder.lua!")
-end
-
 ---------------------------------------
--- Meet... da management!
+-- Assign the global QuestManager table. Give it a metatable. The __call
+-- metamethod means that calling QuestManager() returns a new instance of
+-- the addon (as specified by the __metatable metamethod).
 ---------------------------------------
--------------------
--- qm:New() constructs a new, blank qm table (the return value).
--------------------
-function QuestManager:New(player, quest, level, skill, repeats)
-    assert(type(player) == "GameObject" and
-           player.type == game.TYPE_PLAYER,
-           "Arg #1 must be player GameObject!")
-    assert(type(quest) == "string" or
-           (type(quest) == "GameObject" and
-            quest.type == game.TYPE_QUEST_TRIGGER),
-           "Arg #2 must be string or quest trigger object!")
-    assert(type(level) == "number" or
-           level == nil, "Arg #3 must be number or nil!")
-    assert(type(skill) == "number" or
-           skill == nil, "Arg #4 must be number or nil!")
-    assert(type(repeats) == "number" or
-           repeats == nil, "Arg #5 must be number or nil!")
+QuestManager = { total = 0, current = false }
+setmetatable(QuestManager, {
+    __call = function(self, player, quest, level, skill, repeats)
+        assert(type(player) == "GameObject" and
+               player.type == game.TYPE_PLAYER,
+               "Arg #1 must be player GameObject!")
+        assert(type(quest) == "string" or
+               (type(quest) == "GameObject" and
+                quest.type == game.TYPE_QUEST_TRIGGER),
+               "Arg #2 must be string or quest trigger GameObject!")
+        assert(type(level) == "number" or
+               level == nil, "Arg #3 must be number or nil!")
+        assert(type(skill) == "number" or
+               skill == nil, "Arg #4 must be number or nil!")
+        assert(type(repeats) == "number" or
+               repeats == nil, "Arg #5 must be number or nil!")
+        if level == nil then
+            level = 1
+        end
+        if skill == nil then
+            skill = game.ITEM_SKILL_NO
+        end
+        if repeats == nil then
+            repeats = 0
+        end
 
-    if level == nil then
-        level = 1
-    end
-
-    if skill == nil then
-        skill = game.ITEM_SKILL_NO
-    end
-
-    if repeats == nil then
-        repeats = 0
-    end
-
-    local qm = {
-        player = player,
-        name,
-        trigger,
-        required = { },
-        status,
-        step = 0,
-        end_step = 1,
-        level = level,
-        skill = skill,
-        repeats = repeats
-    }
-
-    if type(quest) == "string" then
-        qm.name = quest
-        qm.trigger = player:GetQuest(quest)
-    elseif type(quest) == "GameObject" then
-        qm.name = quest.name
-        qm.trigger = quest
-    end
-
-    setmetatable(qm, { __metatable = QuestManager,
-                       __index = QuestManager })
-
-    return qm
-end
-
-setmetatable(QuestManager, { __call = QuestManager.New })
+        ---------
+        -- t is just a table so we give it a metatable. The __index event means
+        -- that when we index t we treat it like QuestManager.
+        ---------
+        local t = {
+            player = player,
+            name,
+            trigger,
+            required = { },
+            status,
+            step = 0,
+            end_step = 1,
+            level = level,
+            skill = skill,
+            repeats = repeats
+        }
+        if type(quest) == "string" then
+            t.name = quest
+            t.trigger = player:GetQuest(quest)
+        elseif type(quest) == "GameObject" then
+            t.name = quest.name
+            t.trigger = quest
+        end
+        setmetatable(t, {
+            __index = QuestManager,
+            __metatable = function() return "addon", "utility", "qm" end,
+        })
+        return t
+    end,
+    __metatable = function() return "addon", "utility", "qm" end
+})
 
 ---------------------------------------
 -- Methods
@@ -176,11 +185,11 @@ end
 -- can be.
 -------------------
 function QuestManager:AddRequiredQuest(quest)
-    assert(type(quest) == "string" or
-           getmetatable(quest) == QuestManager or
-           (type(quest) == "GameObject" and
-            quest.type == game.TYPE_QUEST_TRIGGER),
-           "Arg #1 must be string, QuestManager, or quest object!")
+    local a, b, c = type(quest)
+    assert(a == "string" or
+           (a == "addon" and b == "utility" and c =="qm") or
+           (a == "GameObject" and quest.type == game.TYPE_QUEST_TRIGGER),
+           "Arg #1 must be string, addon utility qm, or quest object!")
 
     if type(quest) == "string" then
         self.required[quest] = true
@@ -197,8 +206,10 @@ end
 -------------------
 function QuestManager:RegisterQuest(qtype, ib)
     assert(type(qtype) == "number", "Arg #1 must be number!")
-    assert(getmetatable(ib) == InterfaceBuilder,
-           "Arg #2 must be InterfaceBuilder!")
+    local a, b, c = type(ib)
+    assert(a == "addon" and
+        b == "utility" and
+        c == "ib", "Arg #2 must be addon utility ib!")
     assert(self.trigger == nil, "Quest already registered!")
     assert(type(self.name) == "string", "Quest doesn't have a name!")
 
@@ -303,8 +314,9 @@ end
 -- a string of the list. If ib is nil it will just return the string.
 -------------------
 function QuestManager:AddItemList(ib)
-    assert(getmetatable(ib) == InterfaceBuilder or
-           ib == nil, "Arg #1 must be InterfaceBuilder or nil!")
+    local a, b, c = type(ib)
+    assert((a == "addon" and b == "utility" and c == "ib") or
+        ib == nil, "Arg #1 must be addon utility ib or nil!")
 
     local title, body = "|Quest Status:| ", ""
     local flag = true

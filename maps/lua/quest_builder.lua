@@ -1,40 +1,53 @@
 -------------------------------------------------------------------------------
--- quest_builder.lua
+-- quest_builder.lua | Utility
 -- 
--- High-level API for building quests.
--- Questbuilder (qb) is a sort of layer on top of questmanager (qm) and
--- must be used with qm (although the reverse is not true).
--- qb contains a sequential list of quests, 1-x.
--- The quests *must* be completed in order. There is no way to access
--- a higher number quest without first completing each lower number quest,
--- and it is impossible to have more than one quest active at a time.
+-- The quest builder is for building quests..
+--
+-- Qb is a sort of layer on top of the quest manager and must be used with qm
+-- (although the reverse is not true). Qb loads qm if necessary internally.
+--
+-- Qb contains a sequential list of quests, 1-x. The quests *must* be completed
+-- in order. There is no way to access a higher number quest without first
+-- completing each lower number quest, and it is impossible to have more than
+-- one quest active at a time.
 -------------------------------------------------------------------------------
+---------------------------------------
+-- If QuestBuilder already exists then check it is the correct addon type.
+-- If it is not, this is an error. If it is, we (presumably) have already
+-- required this chunk so no need to do it again.
+---------------------------------------
 if QuestBuilder ~= nil then
+    local a, b, c = type(QuestBuilder)
+    assert(a == "addon" and
+        b == "utility" and
+        c == "qb",
+        "Global QuestBuilder exists but is not an addon utility qb!")
     return
 end
 
-QuestBuilder = { }
-
-if not QuestManager then
-    require("quest_manager")
-end
-
 ---------------------------------------
--- Meet... da management!
+-- Assign the global QuestBuilder table. Give it a metatable. The __call
+-- metamethod means that calling QuestBuilder() returns a new instance of
+-- the addon (as specified by the __metatable metamethod).
 ---------------------------------------
--------------------
--- qb:New() constructs a new, blank qb table (the return value).
--------------------
-function QuestBuilder:New()
-    local qb = { total = 0, current = false }
+QuestBuilder = { total = 0, current = false }
+setmetatable(QuestBuilder, {
+    __call = function()
+        ---------
+        -- t is just a table so we give it a metatable. The __index event means
+        -- that when we index t we treat it like QuestBuilder.
+        ---------
+        local t = {}
+        setmetatable(t, {
+            __index = QuestBuilder,
+            __metatable = function() return "addon", "utility", "qb" end,
+        })
+        return t
+    end,
+    __metatable = function() return "addon", "utility", "qb" end
+})
 
-    setmetatable(qb, { __metatable = QuestBuilder,
-                       __index = QuestBuilder })
-
-    return qb
-end
-
-setmetatable(QuestBuilder, { __call = QuestBuilder.New })
+require("quest_manager")
 
 -------------------
 -- qb:AddQuest() adds an entry to qb.
@@ -49,7 +62,8 @@ function QuestBuilder:AddQuest(quest, mode, level, skill, required, finalstep, r
            skill == nil, "Arg #4 must be number or nil!")
     assert(type(required) == "string" or
            type(required) == "table" or
-           required == nil, "Arg #5 must be string or table or nil!")
+           type(required) == "function" or
+           required == nil, "Arg #5 must be string, table, function, or nil!")
     assert(type(finalstep) == "number" or
            finalstep == nil, "Arg #6 must be number or nil!")
     assert(type(repeats) == "number" or
@@ -69,15 +83,13 @@ function QuestBuilder:AddQuest(quest, mode, level, skill, required, finalstep, r
         skill = game.ITEM_SKILL_NO
     end
 
-    if required ~= nil then
-        if type(required) ~= "table" then
-            required = { required }
-        end
-
+    if type(required) == "table" then
         for i, v in ipairs(required) do
             assert(type(v) == "string",
                    "Arg #5, if a table, must be table of strings!")
         end
+    elseif type(required) == "string" then
+        required = { required }
     end
 
     if finalstep == nil then
@@ -127,12 +139,20 @@ function QuestBuilder:Build(player)
 
         local qstat = v.qm:GetStatus()
 
-        if nr == 0 and
-           qstat ~= game.QSTAT_DONE then
-            if qstat == game.QSTAT_DISALLOW then
-                nr = 0 - i
-            else
+        if qstat == game.QSTAT_ACTIVE or
+            qstat == game.QSTAT_SOLVED then
+            nr = i
+        elseif nr == 0 and
+            qstat ~= game.QSTAT_DONE then
+            if type(v.required) == "function" then
+                if qstat == game.QSTAT_NO and
+                    v.required(i) == true then
+                   nr = i
+                end 
+            elseif qstat == game.QSTAT_NO then
                 nr = i
+            elseif qstat == game.QSTAT_DISALLOW then
+                nr = 0 - i
             end
         end
     end
@@ -228,14 +248,12 @@ end
 -- be nil), generating an error if registration fails.
 -------------------
 function QuestBuilder:RegisterQuest(nr, npc, ib)
-    if not InterfaceBuilder then
-        require("interface_builder")
-    end
-
     assert(type(nr) == "number", "Arg #1 must be number!")
     assert(type(npc) == "GameObject", "Arg #2 must be GameObject!")
-    assert(getmetatable(ib) == InterfaceBuilder,
-           "Arg #3 must be InterfaceBuilder!")
+    local a, b, c = type(ib)
+    assert(a == "addon" and
+        b == "utility" and
+        c == "ib", "Arg #3 must be addon utility ib!")
     assert(self.current ~= false, "Quest table not built, call qb:Build()!")
     nr = math.abs(nr)
     assert(nr >= 1 and
@@ -282,13 +300,10 @@ end
 -- data*.
 -------------------
 function QuestBuilder:IsRegistered(nr, ib)
-    if not InterfaceBuilder then
-        require("interface_builder")
-    end
-
     assert(type(nr) == "number", "Arg #1 must be number!")
-    assert(getmetatable(ib) == InterfaceBuilder or
-           ib == nil, "Arg #2 must be InterfaceBuilder or nil!")
+    local a, b, c = type(ib)
+    assert((a == "addon" and b == "utility" and c == "ib") or
+        ib == nil, "Arg #2 must be addon utility ib or nil!")
     assert(self.current ~= false, "Quest table not built, call qb:Build()!")
     nr = math.abs(nr)
     assert(nr >= 1 and
@@ -311,13 +326,10 @@ end
 -- of the list. If ib is nil it will just return the string.
 -------------------
 function QuestBuilder:AddItemList(nr, ib)
-    if not InterfaceBuilder then
-        require("interface_builder")
-    end
-
     assert(type(nr) == "number", "Arg #1 must be number!")
-    assert(getmetatable(ib) == InterfaceBuilder or
-           ib == nil, "Arg #2 must be InterfaceBuilder or nil!")
+    local a, b, c = type(ib)
+    assert((a == "addon" and b == "utility" and c == "ib") or
+        ib == nil, "Arg #2 must be addon utility ib or nil!")
     assert(self.current ~= false, "Quest table not built, call qb:Build()!")
     nr = math.abs(nr)
     assert(nr >= 1 and

@@ -1,3 +1,24 @@
+-------------------------------------------------------------------------------
+-- data_store.lua | Utility
+--
+-- The data store is for manipulating and optionally permanently storing to
+-- disk (on by default) arbitrary data, either globally or about a specific
+-- player.
+-------------------------------------------------------------------------------
+---------------------------------------
+-- If DataStore already exists then check it is the correct addon type.
+-- If it is not, this is an error. If it is, we (presumably) have already
+-- required this chunk so no need to do it again.
+---------------------------------------
+if DataStore ~= nil then
+    local a, b, c = type(DataStore)
+    assert(a == "addon" and
+        b == "utility" and
+        c == "ds",
+        "Global DataStore exists but is not an addon utility ds!")
+    return
+end
+
 _data_store = { _global = {}, _players = {}, _special = {}}
 
 function _data_store._object(objtype, id)
@@ -194,7 +215,56 @@ function _data_store.save(b_force)
     return everything_ok
 end
 
+---------------------------------------
+-- Assign the global DataStore table. Give it a metatable. The __call
+-- metamethod means that calling DataStore() returns a new instance of
+-- the addon (as specified by the __metatable metamethod).
+---------------------------------------
 DataStore = {}
+setmetatable(DataStore, {
+    __call = function(self, id, player)
+        assert(type(id) == "string", "Arg #1 must be string!")
+        assert(type(player) == "string" or
+               (type(player) == "GameObject" and player.type == game.TYPE_PLAYER) or
+               player == nil,
+               "Arg #2 must be string or player GameObject or nil!")
+        local t
+        if player == nil then
+            t = _data_store._global
+        else
+            if type(player) == "GameObject" then
+                player = player.name
+            end
+            player = string.capitalize(player)
+            local players = _data_store._players
+            t = players[player]
+            if t == nil then
+                players[player] = {n = 0}
+                t = players[player]
+            end
+        end
+        local obj = t[id]
+        if obj == nil then
+            if not _data_store._load(id, player) then
+                obj = {_changed = 0, _persist = true, _data = {}}
+                setmetatable(obj._data, _DataStore_mt)
+                setmetatable(obj, { __index = obj._data, __newindex = obj._data })
+                t[id] = obj
+                t.n = table.getn(_data_store) + 1
+            else
+                obj = t[id]
+            end
+        end
+        return obj
+    end,
+    __metatable = function() return "addon", "utility", "ds" end
+})
+
+_DataStore_mt = {
+    __index = DataStore,
+    __metatable = function() return "addon", "utility", "ds" end,
+    __newindex = function() error("Use Set() to add/change values") end
+}
 
 -- Static function to dump a serialization string
 -- (Only a wrapper around the private _data_store function)
@@ -248,38 +318,3 @@ end
 function DataStore:GetPersistence()
     return rawget(self, "_persist")
 end
-
-_DataStore_mt = {__index = DataStore, __newindex = function() error("Use Set() to add/change values") end}
-
-function DataStore:New(id, player)
-    local t
-    if player == nil then
-        t = _data_store._global
-    else
-        if type(player) == "GameObject" then
-            player = player.name
-        end
-        player = string.capitalize(player)
-        local players = _data_store._players
-        t = players[player]
-        if t == nil then
-            players[player] = {n = 0}
-            t = players[player]
-        end
-    end
-    local obj = t[id]
-    if obj == nil then
-        if not _data_store._load(id, player) then
-            obj = {_changed = 0, _persist = true, _data = {}}
-            setmetatable(obj._data, _DataStore_mt)
-            setmetatable(obj, { __index = obj._data, __newindex = obj._data })
-            t[id] = obj
-            t.n = table.getn(_data_store) + 1
-        else
-            obj = t[id]
-        end
-    end
-    return obj
-end
-
-setmetatable(DataStore, {__call = DataStore.New})

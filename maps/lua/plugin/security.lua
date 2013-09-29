@@ -1,9 +1,10 @@
---
+-------------------------------------------------------------------------------
 -- Disable insecure (IO) functions. If you _really_ need to use any of these,
 -- please contact the Daimonin development team.
---
-
--- security wrappers
+-------------------------------------------------------------------------------
+---------------------------------------
+-- Security wrappers.
+---------------------------------------
 function wrap_loadfile()
     local orig_loadfile = loadfile
     return function(filename)
@@ -32,7 +33,9 @@ function wrap_io_open()
     end
 end
 
--- Potentially dangerous functions in the base lib:
+---------------------------------------
+-- Potentially dangerous functions in the base lib.
+---------------------------------------
 dofile = nil
 loadlib = nil
 loadfile = wrap_loadfile()
