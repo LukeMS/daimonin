@@ -1770,6 +1770,9 @@ void free_object_data(object *ob, int free_static_data)
               }
               break;
 
+            case TYPE_QUEST_UPDATE: // since r7336 a string, so avoid default
+            break;
+
             default:
               LOG(llevBug, "BUG: destroy_object() custom attrset found in unsupported object %s (type %d)\n",
                   STRING_OBJ_NAME(ob), ob->type);
