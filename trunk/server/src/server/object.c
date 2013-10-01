@@ -1748,23 +1748,24 @@ void free_object_data(object *ob, int free_static_data)
 
 #ifdef DEBUG_BEACONS
                   /* the original object name is stored in custom_attrset */
-                  LOG(llevDebug, "DEBUG:: %s/free_object_data(): Removing beacon (%s): ",
-                      (char *)ob->custom_attrset);
-#endif
+                  LOG(llevInfo, "Removing beacon (%s): ", (char *)ob->custom_attrset);
 
                   if (registered != ob)
                   {
-#ifdef DEBUG_BEACONS
-                      LOG(llevDebug, "another beacon has replaced it. Not deregistering!\n");
-#endif
+                      LOG(llevInfo, "another beacon has replaced it. Not deregistering!\n");
                   }
                   else
                   {
-#ifdef DEBUG_BEACONS
-                      LOG(llevDebug, "deregistering!\n");
-#endif
+                      LOG(llevInfo, "deregistering!\n");
                       hashtable_erase(beacon_table, ob->custom_attrset);
                   }
+#else
+                  if (registered == ob)
+                  {
+                      hashtable_erase(beacon_table, ob->custom_attrset);
+                  }
+#endif
+
                   FREE_ONLY_HASH(ob->custom_attrset);
               }
               break;
