@@ -2,7 +2,7 @@ Object demon_armour
 name Armoured Demon
 face demon_armour.151
 race demon
-randomitems spells_wizard;loot;wealth_normal&D65;loot_base&D34;loot_magic&d9;loot_melee&d12;treasure_ring&d100
+randomitems spells_wizard;loot;wealth_normal&D65;loot_base&D34;loot_magic&d9;loot_melee&d12
 type 80
 layer 6
 identified 1

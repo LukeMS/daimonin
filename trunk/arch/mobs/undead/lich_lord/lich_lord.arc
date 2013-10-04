@@ -2,7 +2,7 @@ Object lich_lord
 name Lich Lord
 face lich_lord.151
 race lich
-randomitems spells_wizard;loot;wealth_normal&D65;loot_base&D34;loot_magic&d9;loot_melee&d16;treasure_ring&d100
+randomitems spells_wizard;loot;wealth_normal&D65;loot_base&D34;loot_magic&d9;loot_melee&d16
 type 80
 layer 6
 identified 1

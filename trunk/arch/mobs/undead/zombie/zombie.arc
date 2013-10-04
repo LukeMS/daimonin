@@ -2,7 +2,7 @@ Object zombie
 name Zombie
 face zombie.151
 race zombie
-randomitems loot;wealth_normal&D65;loot_base&D34;loot_magic&d17;loot_melee&d12;treasure_ring&d100
+randomitems loot;wealth_normal&D65;loot_base&D34;loot_magic&d17;loot_melee&d12
 type 80
 layer 6
 identified 1
