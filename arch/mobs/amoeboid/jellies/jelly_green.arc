@@ -2,7 +2,7 @@ Object jelly_green
 name Green Jelly
 face green_jelly.111
 race slime
-randomitems loot;wealth_normal&D65;loot_base&D34;loot_magic&d35;loot_melee&d11;treasure_ring&d100
+randomitems loot;wealth_normal&D65;loot_base&D34;loot_magic&d35;loot_melee&d11
 type 80
 layer 6
 identified 1

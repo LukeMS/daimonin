@@ -2,7 +2,7 @@ Object cyclops
 name Cyclops
 face cyclops.151
 race giant
-randomitems loot;wealth_normal&D65;loot_base&D34;loot_magic&d17;loot_melee&d11;treasure_ring_mage&d200
+randomitems loot;wealth_normal&D65;loot_base&D34;loot_magic&d17;loot_melee&d11
 type 80
 layer 6
 identified 1

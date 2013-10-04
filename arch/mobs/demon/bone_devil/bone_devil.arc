@@ -2,7 +2,7 @@ Object bone_devil
 name Bone Devil
 face bone_devil.151
 race demon
-randomitems spells_demilich;loot;wealth_normal&D65;loot_base&D34;loot_magic&d9;loot_melee&d12;treasure_ring&d200
+randomitems spells_demilich;loot;wealth_normal&D65;loot_base&D34;loot_magic&d9;loot_melee&d12
 type 80
 layer 6
 identified 1
