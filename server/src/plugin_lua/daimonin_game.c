@@ -189,12 +189,13 @@ static struct constant_decl preset_game_constants[] =
     {"QUEST_KILLITEM", ST1_QUEST_TRIGGER_KILL_ITEM},
     {"QUEST_ITEM",     ST1_QUEST_TRIGGER_ITEM},
 
-    /* quest steps (constants not defined by server) */
-    {"QSTAT_NO",       1},
-    {"QSTAT_ACTIVE",   2},
-    {"QSTAT_SOLVED",   3},
-    {"QSTAT_DONE",     4},
-    {"QSTAT_DISALLOW", 5},
+    /* quest steps (quest.h) */
+    {"QSTAT_UNKNOWN",  QSTAT_UNKNOWN},
+    {"QSTAT_NO",       QSTAT_NO},
+    {"QSTAT_ACTIVE",   QSTAT_ACTIVE},
+    {"QSTAT_SOLVED",   QSTAT_SOLVED},
+    {"QSTAT_DONE",     QSTAT_DONE},
+    {"QSTAT_DISALLOW", QSTAT_DISALLOW},
 
     /* guild force sub types (define.h) */
     {"GUILD_NO",  0},
