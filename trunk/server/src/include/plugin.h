@@ -385,6 +385,7 @@ struct plugin_hooklist
     char *(*query_short_name)(const object *const, const object *const);
     int (*quest_count_pending)(const struct obj *);
     struct obj *(*quest_find_name)(const struct obj *, const char *);
+    int (*quest_get_active_status)(player *, object *);
     /* R */
     char *(*re_cmp)(char *, char *);
     mapstruct *(*ready_map_name)(shstr *, shstr *, uint32, shstr *);

@@ -430,6 +430,129 @@ void set_quest_status(struct obj *trigger, int q_status, int q_type)
         add_quest_trigger(who, trigger);
 }
 
+/* Checks the active status of trigger for pl, returning the appropriate
+ * QSTAT_* code. Note that active status is not the same as status.
+ *
+ * Status includes whether or not a player is eligible for the quest (QSTAT_NO
+ * or QSTAT_DISALLOW) and therefore cannot be QSTAT_UNKNOWN. Status can only be
+ * ascertained with a script (because the eligibility criteria rely on certain
+ * checks and lists defined only within the script).
+ *
+ * Active status therefore cannot check eligiblity. Hence QSTAT_UNKNOW says
+ * nothing of eligibility, it just means the player is not doing/has not done
+ * this quest (and that includes because the quest -- or player -- does not
+ * exist or duff values have been passed to this function).
+ *
+ * Additionally, where a quest has been done but is still repeatable, QSTAT_NO
+ * is returned. Again, this does not imply actual eligibility, it just
+ * differentiates the return from QSTAT_DONE. */
+int quest_get_active_status(player *pl, object *trigger)
+{
+    object *this;
+
+    /* (1) Check that the quest is known to the player at all (that means he is
+     * doing or has done it). */
+    /* (1a) If either pl or trigger is NULL or the wrong type then obviously
+     * the quest is effectively unknown. */
+    if (!trigger ||
+        trigger->type != TYPE_QUEST_TRIGGER ||
+        !pl)
+    {
+        return QSTAT_UNKNOWN;
+    }
+    /* (1b) Unless the trigger is in one of the player's quest containers it
+     * must be unkown. */
+    else
+    {
+        /* If there are missing quest containers, add them. */
+        if (!pl->quests_done ||
+            !pl->quests_type_normal ||
+            !pl->quests_type_kill)
+        {
+            add_quest_containers(pl->ob);
+        }
+
+        if (pl->quests_done != trigger->env &&
+            pl->quests_type_normal != trigger->env &&
+            pl->quests_type_kill != trigger->env)
+        {
+            return QSTAT_UNKNOWN;
+        }
+    }
+
+    /* (2) If it's in the done container, check if it's repeatable. The number
+     * of repeats left in this quest are held in ->stats.food. When this
+     * reaches -1, the quest is really done. */
+    if (pl->quests_done == trigger->env)
+    {
+        if (trigger->stats.food == -1)
+        {
+            return QSTAT_DONE;
+        }
+        else
+        {
+            return QSTAT_NO;
+        }
+    }
+
+    /* (3) So now we know it is known and not yet done. */
+    /* (3a) Depending on it's subtype, check if it is still active (ie, the
+     * player still has tasks to complete). */
+    switch (trigger->sub_type1)
+    {
+        /* (3ai) Normal quests have 1 or more steps (the current number is in
+         * ->magic, the total is in ->state). */
+        case ST1_QUEST_TRIGGER_NORMAL:
+        if (trigger->magic < trigger->state)
+        {
+            return QSTAT_ACTIVE;
+        }
+
+        break;
+
+        /* (3aii) Kill quests require the player to kill 1 or more defined
+         * targets (the current number is in ->level, the total is in
+         * ->last_sp). */
+        case ST1_QUEST_TRIGGER_KILL:
+        for (this = trigger->inv; this; this = this->below)
+        {
+            if (this->type != TYPE_QUEST_UPDATE &&
+                this->level < this->last_sp)
+            {
+                return QSTAT_ACTIVE;
+            }
+        }
+
+        break;
+
+        /* (3aiii) Item quests require the player to collect 1 or more items,
+         * and killitem quests require this too but the player is rewarded with
+         * 1 such item per kill. In both cases count the number of items in his
+         * inv compared to the required number. */
+        case ST1_QUEST_TRIGGER_KILL_ITEM:
+        case ST1_QUEST_TRIGGER_ITEM:
+        for (this = trigger->inv; this; this = this->below)
+        {
+            object *item = (trigger->sub_type1 == ST1_QUEST_TRIGGER_KILL_ITEM) ?
+                this->inv : this;
+
+            if (this->type != TYPE_QUEST_UPDATE &&
+                item &&
+                get_nrof_quest_item(pl->ob, item->arch->name, item->name, item->title) < item->nrof)
+            {
+                return QSTAT_ACTIVE;
+            }
+        }
+
+        break;
+    }
+
+    /* (3b) If the quest was not found to be active above, it must be solved
+     * (meaning the player has completed all the tasks, now he just needs to
+     * report back to the quest giver. */
+    return QSTAT_SOLVED;
+}
+
 int update_quest(struct obj *trigger, uint8 subtype, struct obj *info, char *text, char *vim)
 {
     player        *pl;
@@ -671,79 +794,8 @@ uint32 get_nrof_quest_item(const struct obj *target, const char *aname, const ch
     return nrof;
 }
 
-
-static inline int check_quest_complete(struct obj *target, struct obj *quest)
-{
-    object *tmp;
-
-    /* FIXME: Is this test really correct? The following seems more correct:
-     * if(!quest || quest->magic < quest->state || quest->stats.food == -1)
-     * (state stores the "finish" step for "normal" quests, quest->magic is the counter)
-     * Gecko 2006-11-15 */
-    if(!quest || quest->magic < quest->last_heal || quest->stats.food == -1)
-        return FALSE;
-
-    /* quest is complete when... */
-    if(quest->sub_type1 == ST1_QUEST_TRIGGER_KILL)
-    {
-        /* ... we have killed the defined number of all target objects */
-        for (tmp = quest->inv; tmp; tmp = tmp->below)
-        {
-            if (tmp->type == TYPE_QUEST_UPDATE)
-            {
-                continue;
-            }
-
-            if(tmp->last_sp > tmp->level)
-                return FALSE;
-        }
-        return TRUE;
-    }
-    /* ... we have the defined number of items in our inventory */
-    else if(quest->sub_type1 == ST1_QUEST_TRIGGER_KILL_ITEM)
-    {
-        for (tmp = quest->inv; tmp; tmp = tmp->below)
-        {
-            if (tmp->type == TYPE_QUEST_UPDATE)
-            {
-                continue;
-            }
-
-            if(!tmp->inv)
-                continue;
-            if(get_nrof_quest_item(target, tmp->inv->arch->name, tmp->inv->name, tmp->inv->title) < tmp->inv->nrof)
-                return FALSE;
-        }
-        return TRUE;
-
-    }
-    else if(quest->sub_type1 == ST1_QUEST_TRIGGER_ITEM)
-    {
-        for (tmp = quest->inv; tmp; tmp = tmp->below)
-        {
-            if (tmp->type == TYPE_QUEST_UPDATE)
-            {
-                continue;
-            }
-
-            if(get_nrof_quest_item(target, tmp->arch->name, tmp->name, tmp->title) < tmp->nrof)
-                return FALSE;
-        }
-        return TRUE;
-
-    }
-    else /* normal */
-    {
-        if(quest->state == quest->magic)
-            return TRUE;
-    }
-
-    return FALSE;
-}
-
-
 /* lets find a quest with name */
-extern struct obj *quest_find_name(const struct obj *pl, const char *name)
+struct obj *quest_find_name(const struct obj *pl, const char *name)
 {
     struct obj *tmp;
     const char *namehash = find_string(name);
@@ -834,7 +886,8 @@ void send_quest_list(struct obj *pl)
                     (QUERY_FLAG(tmp, FLAG_BLIND)) ? "+ " : "",
                     STRING_SAFE(tmp->name), tmp_buf,
                     skill_group_name[tmp->item_skill], tmp->item_level,
-                    (check_quest_complete(pl, tmp)) ? " (complete)" : "", ++count);
+                    (quest_get_active_status(CONTR(pl), tmp) == QSTAT_SOLVED) ? " (complete)" : "",
+                    ++count);
         }
     }
 
@@ -859,7 +912,8 @@ void send_quest_list(struct obj *pl)
                     (QUERY_FLAG(tmp, FLAG_BLIND)) ? "+ " : "",
                     STRING_SAFE(tmp->name), tmp_buf,
                     skill_group_name[tmp->item_skill], tmp->item_level,
-                    (check_quest_complete(pl, tmp)) ? " (complete)" : "", ++count);
+                    (quest_get_active_status(CONTR(pl), tmp) == QSTAT_SOLVED) ? " (complete)" : "",
+                    ++count);
         }
     }
 
@@ -952,7 +1006,8 @@ void quest_list_command(struct obj *pl, char *cmd)
 
                 object *tmp;
                 sprintf(strchr(buf, '\0'), "b=\"|Quest status:| %s\n",
-                        (check_quest_complete(pl, quest)) ? "|Complete!|" : "Incomplete");
+                        (quest_get_active_status(CONTR(pl), quest) == QSTAT_SOLVED) ?
+                        "|Complete!|" : "Incomplete");
 
                 for (tmp = quest->inv; tmp; tmp = tmp->below)
                 {
@@ -978,7 +1033,8 @@ void quest_list_command(struct obj *pl, char *cmd)
                 object *tmp;
 
                 sprintf(strchr(buf, '\0'), "b=\"|Quest status:| %s\n",
-                        (check_quest_complete(pl, quest)) ? "|Complete!|" : "Incomplete");
+                        (quest_get_active_status(CONTR(pl), quest) == QSTAT_SOLVED) ?
+                        "|Complete!|" : "Incomplete");
 
                 for (tmp = quest->inv; tmp; tmp = tmp->below)
                 {
@@ -1005,7 +1061,8 @@ void quest_list_command(struct obj *pl, char *cmd)
                 object *tmp;
 
                 sprintf(strchr(buf, '\0'), "b=\"|Quest status:| %s\n",
-                        (check_quest_complete(pl, quest)) ? "|Complete!|" : "Incomplete");
+                        (quest_get_active_status(CONTR(pl), quest) == QSTAT_SOLVED) ?
+                        "|Complete!|" : "Incomplete");
 
                 for (tmp = quest->inv; tmp; tmp = tmp->below)
                 {
@@ -1032,7 +1089,8 @@ void quest_list_command(struct obj *pl, char *cmd)
             else /* normal */
             {
                 sprintf(strchr(buf, '\0'), "b=\"|Quest status:| %s",
-                        (check_quest_complete(pl, quest)) ? "|Complete!|" : "Incomplete");
+                        (quest_get_active_status(CONTR(pl), quest) == QSTAT_SOLVED) ?
+                        "|Complete!|" : "Incomplete");
             }
 
             strcat(buf, "\n\">");

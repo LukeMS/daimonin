@@ -2849,19 +2849,66 @@ static int GameObject_AddQuest(lua_State *L)
 /*****************************************************************************/
 /* Name   : GameObject_GetQuest                                              */
 /* Lua    : object:GetQuest(name)                                            */
-/* Info   : Browses all quest containers in the object for a quest trigger   */
-/*          with the name specified. If such a trigger is found its object is*/
-/*          returned.                                                        */
+/* Info   : Checks if object (which must be a player) knows about the named  */
+/*          quest (means it has been or is being done), and its active       */
+/*          status.  Note that active status is not the same as status.      */
+/*                                                                           */
+/*          Status includes whether or not a player is eligible for the quest*/
+/*          (QSTAT_NO or QSTAT_DISALLOW) and therefore cannot be             */
+/*          QSTAT_UNKNOWN. Status can only be ascertained with a script      */
+/*          (because the eligibility criteria rely on certain checks and     */
+/*          lists defined only within the script).                           */
+/*                                                                           */
+/*          Active status therefore cannot check eligiblity. Hence           */
+/*          QSTAT_UNKNOWN says nothing of eligibility, it just means the     */
+/*          player is not doing/has not done this quest (and that includes   */
+/*          because the quest -- or player -- does not exist).               */
+/*                                                                           */
+/*          Additionally, where a quest has been done but is still           */
+/*          repeatable, QSTAT_NO is returned. Again, this does not imply     */
+/*          actual eligibility, it just differentiates the return from       */
+/*          QSTAT_DONE.                                                      */
+/*                                                                           */
+/*          So two values are returned: a GameObject, which is the quest     */
+/*          itself, if it is known, or nil otherwise; a number to indicate   */
+/*          its active status.                                               */
+/*                                                                           */
+/*          This number is one of:                                           */
+/*              game.QSTAT_UNKNOWN - no quest of that name is currently or   */
+/*                  has ever been undertaken by the player.                  */
+/*              game.QSTAT_NO - the named quest has previously been done by  */
+/*                  the player but is repeatable.                            */
+/*              game.QSTAT_DONE - the named quest has previously been done by*/
+/*                  the player and is not repeatable.                        */
+/*              game.QSTAT_ACTIVE -- the named quest is one the player has   */
+/*                  accepted and is still actively working on.               */
+/*              game.QSTAT_SOLVED -- the named quest is one the player has   */
+/*                  accepted and has completed all tasks on; he has only to  */
+/*                  report back to the quest giver to pick up a reward.      */
 /* Status : Tested/Stable                                                    */
 /*****************************************************************************/
 static int GameObject_GetQuest(lua_State *L)
 {
-    char       *name;
     lua_object *self;
+    char       *name;
+    player     *pl;
+    object     *quest;
+    int         qstat;
 
     get_lua_args(L, "Os", &self, &name);
 
-    return push_object(L, &GameObject, hooks->quest_find_name(WHO, name));
+    if (WHO->type != PLAYER ||
+        !(pl = CONTR(WHO)))
+    {
+        luaL_error(L, "object:GetQuest(): Can only be called on a player!");
+        return 0;
+    }
+
+    quest = hooks->quest_find_name(WHO, name);
+    qstat = hooks->quest_get_active_status(pl, quest);
+    push_object(L, &GameObject, quest);
+    lua_pushnumber(L, qstat);
+    return 2;
 }
 
 /*****************************************************************************/

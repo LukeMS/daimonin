@@ -155,6 +155,7 @@ struct plugin_hooklist  hooklist    =
     query_short_name,
     quest_count_pending,
     quest_find_name,
+    quest_get_active_status,
     /* R */
     re_cmp,
     ready_map_name,
