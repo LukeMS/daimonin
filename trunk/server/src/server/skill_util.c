@@ -178,12 +178,14 @@ void link_player_skills(object *op)
             {
                 if (skillgroups[i] == this->arch)
                 {
+#if 0
                     int exp = this->stats.exp,
                         level = this->level;
 
                     copy_object(&skillgroups[i]->clone, this);
                     this->stats.exp = exp;
                     this->level = level;
+#endif
                     CLEAR_FLAG(this, FLAG_APPLIED);
 #ifdef DEBUG_SKILL_UTIL
                     LOG(llevInfo, "OK!\n");
@@ -212,6 +214,7 @@ void link_player_skills(object *op)
             {
                 if (skills[i] == this->arch)
                 {
+#if 0
                     int exp = this->stats.exp,
                         level = this->level,
                         item_level = this->item_level;
@@ -220,6 +223,7 @@ void link_player_skills(object *op)
                     this->stats.exp = exp;
                     this->level = level;
                     this->item_level = item_level;
+#endif
                     CLEAR_FLAG(this, FLAG_APPLIED);
 #ifdef DEBUG_SKILL_UTIL
                     LOG(llevInfo, "OK!\n");
