@@ -1063,7 +1063,7 @@ static int Game_GetTimeAndDate(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : GameObject_GlobalMessage                                         */
-/* Lua    : object:Write(message, color)                                     */
+/* Lua    : game:GlobalMessage(message, color)                               */
 /* Info   : Writes a message to every online player.                         */
 /*          color should be one of the game.COLOR_xxx constants.             */
 /*          default color is red.                                            */
