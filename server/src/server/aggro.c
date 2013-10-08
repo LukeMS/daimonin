@@ -365,7 +365,7 @@ static inline int aggro_exp_single(object *victim, object *aggro, int base)
 {
     object *hitter = aggro->enemy;
     player *pl = CONTR(hitter);
-    int s1=-1,s2,s3, e1, e2, e3, ret=FALSE, exp=0;
+    int s1=-1,s2,s3, e1 = 0, e2, e3, exp=0;
 
     /* calc active dmg */
     calc_active_skill_dmg(aggro, &s1, &s2, &s3);
@@ -386,14 +386,13 @@ static inline int aggro_exp_single(object *victim, object *aggro, int base)
 #endif
     if(s1 == -1) /* we have not found any skill dmg - assign exp to guild base skills */
     {
-        give_default_guild_exp(pl, exp);
+        e1 = give_default_guild_exp(pl, exp);
     }
     else if(s2 == -1) /* 100% exp in skill s1 */
     {
         e1 = calc_skill_exp(hitter, victim, 1.0f, pl->skill_ptr[s1]->level, &exp);
         e1 = exp_from_base_skill(pl, e1, s1);
-
-        ret |= add_exp(hitter, e1, s1, 1);
+        (void)add_exp(hitter, e1, s1, 1);
 #ifdef DEBUG_AGGRO
         LOG(llevNoLog,".. 100%% to skill %s (%d)\n", STRING_SAFE(pl->skill_ptr[s1]->name), e1);
 #endif
@@ -402,12 +401,10 @@ static inline int aggro_exp_single(object *victim, object *aggro, int base)
     {
         e1 = calc_skill_exp(hitter, victim, 0.65f, pl->skill_ptr[s1]->level, &exp);
         e1 = exp_from_base_skill(pl, e1, s1);
-
         e2 = calc_skill_exp(hitter, victim, 0.35f, pl->skill_ptr[s2]->level, &exp);
         e2 = exp_from_base_skill(pl, e2, s2);
-
-        ret |= add_exp(hitter, e1, s1, 1);
-        ret |= add_exp(hitter, e2, s2, 1);
+        (void)add_exp(hitter, e1, s1, 1);
+        (void)add_exp(hitter, e2, s2, 1);
 
 #ifdef DEBUG_AGGRO
         LOG(llevNoLog,".. 65%% to skill %s (%d), 35%% to %s (%d)\n",
@@ -420,16 +417,13 @@ static inline int aggro_exp_single(object *victim, object *aggro, int base)
 
         e1 = calc_skill_exp(hitter, victim, 0.55f, pl->skill_ptr[s1]->level, &exp);
         e1 = exp_from_base_skill(pl, e1, s1);
-
         e2 = calc_skill_exp(hitter, victim, 0.30f, pl->skill_ptr[s2]->level, &exp);
         e2 = exp_from_base_skill(pl, e2, s2);
-
         e3 = calc_skill_exp(hitter, victim, 0.30f, pl->skill_ptr[s3]->level, &exp);
         e3 = exp_from_base_skill(pl, e3, s3);
-
-        ret |= add_exp(hitter, e1, s1, 1);
-        ret |= add_exp(hitter, e2, s2, 1);
-        ret |= add_exp(hitter, e3, s3, 1);
+        (void)add_exp(hitter, e1, s1, 1);
+        (void)add_exp(hitter, e2, s2, 1);
+        (void)add_exp(hitter, e3, s3, 1);
 
 #ifdef DEBUG_AGGRO
         LOG(llevNoLog,".. 50%% to skill %s (%d), 30%% to %s (%d), 20%% to %s (%d)\n",
@@ -440,10 +434,12 @@ static inline int aggro_exp_single(object *victim, object *aggro, int base)
     }
 
     /* if *all* possible skill exp has been zero because mob was to low - drop a message */
-    if(ret == FALSE)
+    if (!e1)
+    {
         new_draw_info(NDI_UNIQUE | NDI_GREY, 0, hitter, "Your enemy was too low for exp.");
+    }
 
-    return ret;
+    return e1;
 }
 
 
