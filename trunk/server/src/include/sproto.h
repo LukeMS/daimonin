@@ -569,7 +569,7 @@ int                         get_weighted_skill_stat_sum(object *who, int sk);
 void                        dump_skills(void);
 int                         lookup_skill_by_name(char *name);
 int                         check_skill_to_apply(object *who, object *item);
-int                         learn_skill(object *pl, object *scroll, char *name, int skillnr, int scroll_flag);
+int                         learn_skill(object *pl, int skillnr);
 int                         use_skill(object *op, char *string);
 int                         change_skill(object *who, int sk_index);
 int                         change_skill_to_skill(object *who, object *skl);

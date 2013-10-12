@@ -930,7 +930,7 @@ CFParm * CFWDoLearnSkill(CFParm *PParm)
     }
     else
     {
-        learn_skill((object *) (PParm->Value[0]), NULL, NULL, *(int *) (PParm->Value[1]), 0);
+        learn_skill((object *) (PParm->Value[0]), *(int *) (PParm->Value[1]));
     }
     return NULL;
 }

@@ -1170,7 +1170,7 @@ int command_setskill(object *op, char *params)
 
     if (!(skill = pl->skill_ptr[snr])) /* we don't have the skill - learn it*/
     {
-        learn_skill(op, NULL, NULL, snr, 0);
+        learn_skill(op, snr);
         skill = pl->skill_ptr[snr];
         FIX_PLAYER(op, "setskill");
     }
