@@ -854,7 +854,7 @@ void doeric_server(int update, struct timeval *timeout)
 
                         if (pl->update_skills)
                         {
-                            esrv_update_skills(pl);
+                            send_skilllist_cmd(pl, NULL, SPLIST_MODE_UPDATE);
                             pl->update_skills = 0;
                         }
 

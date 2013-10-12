@@ -66,49 +66,6 @@ static int  cs_stat_skillexp[]    =
  *
  ******************************************************************************/
 
-void esrv_update_skills(player *pl)
-{
-    object *tmp2;
-    int     i;
-    char    buf[256];
-    char    tmp[2048]; /* we should careful set a big enough buffer here */
-
-    sprintf(tmp, "%d ", SPLIST_MODE_UPDATE);
-
-    for (i = 0; i < NROFSKILLS; i++)
-    {
-        /* update exp skill we have only */
-        if (pl->skill_ptr[i] && pl->skill_ptr[i]->last_eat)
-        {
-            tmp2 = pl->skill_ptr[i];
-            /* send only when really something has changed */
-            if (tmp2->stats.exp != pl->skill_exp[i] || tmp2->level != pl->skill_level[i])
-            {
-                if (tmp2->last_eat == INDIRECT)
-                    sprintf(buf, "/%s|%d|%d", tmp2->name, tmp2->level, tmp2->stats.exp);
-                else if (tmp2->last_eat == DIRECT)
-                    sprintf(buf, "/%s|%d|-2", tmp2->name, tmp2->level);
-                /* FIXME: Can this ever be reached anyway as ->last_eat = 0
-                 * is precluded by the first grandparent if statement. */
-                /* There is some confusion here. fix_player() assigns the level
-                 * of its skillgrop to a 'non-levelling' skill while the client
-                 * truly expects such skills never to have a level. This seems
-                 * to have the intention of furthering the fix_player()
-                 * behaviour but actually, because of the grandparent if,
-                 * enforces the client use.
-                 * -- Smacky 20130923 */
-                else // if (tmp2->last_eat == NONLEVELING)
-                    sprintf(buf, "/%s|%d|-1", tmp2->name, tmp2->level);
-                strcat(tmp, buf);
-                pl->skill_exp[i] = tmp2->stats.exp;
-                pl->skill_level[i] = tmp2->level;
-            }
-        }
-    }
-
-    Write_String_To_Socket(&pl->socket, SERVER_CMD_SKILL_LIST, tmp, strlen(tmp));
-}
-
 /*
  * esrv_update_stats sends a statistics update.  We look at the old values,
  * and only send what has changed.  Stat mapping values are in newclient.h

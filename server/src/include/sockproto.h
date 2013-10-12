@@ -113,7 +113,6 @@ void            initialize_command_buffer256(command_struct *cmdbuf);
 void            initialize_command_buffer1024(command_struct *cmdbuf);
 void            initialize_command_buffer4096(command_struct *cmdbuf);
 /* request.c */
-void            esrv_update_skills(player *pl);
 void            esrv_update_stats(player *pl);
 void            esrv_new_player(player *pl, uint32 weight);
 /* startup.c */

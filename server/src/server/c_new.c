@@ -563,45 +563,67 @@ void send_spelllist_cmd(object *op, char *spellname, int mode)
     Write_String_To_Socket(&pl->socket, SERVER_CMD_SPELL_LIST, tmp, strlen(tmp));
 }
 
-void send_skilllist_cmd(object *op, object *skillp, int mode)
+static char *MakeListString(object *skill)
 {
-    object *tmp2;
-    char    buf[256];
-    char    tmp[1024 * 5]; /* we should careful set a big enough buffer here */
+    static char buf[SMALL_BUF];
+    int         exp;
 
-    if (skillp)
+    if (skill->last_eat == INDIRECT)
     {
-        if (skillp->last_eat == INDIRECT)
-            sprintf(tmp, "%d /%s|%d|%d", mode, skillp->name, skillp->level, skillp->stats.exp);
-        else if (skillp->last_eat == DIRECT)
-            sprintf(tmp, "%d /%s|%d|-2", mode, skillp->name, skillp->level);
-        else // if (skillp->last_eat == NONLEVELING)`
-            sprintf(tmp, "%d /%s|%d|-1", mode, skillp->name, skillp->level);
+        exp = skill->stats.exp;
+    }
+    else if (skill->last_eat == DIRECT)
+    {
+        exp = -2;
+    }
+    else // if (skill->last_eat == NONLEVELING)
+    {
+        exp = -1;
+    }
+
+    sprintf(buf, "/%s|%d|%d", skill->name, skill->level, exp);
+
+    return buf;
+}
+
+void send_skilllist_cmd(player *pl, object *skill, int mode)
+{
+    char buf[LARGE_BUF] = "";
+
+    if (skill)
+    {
+        sprintf(buf, "%d %s", mode, MakeListString(skill));
     }
     else
     {
         int i;
 
-        sprintf(tmp, "%d ", mode);
-
         for (i = 0; i < NROFSKILLS; i++)
         {
-            tmp2 = CONTR(op)->skill_ptr[i];
+           skill = pl->skill_ptr[i];
 
-            if (tmp2)
+            if (skill &&
+                (skill->stats.exp != pl->skill_exp[i] ||
+                 skill->level != pl->skill_level[i]))
             {
-                if (tmp2->last_eat == INDIRECT)
-                    sprintf(buf, "/%s|%d|%d", tmp2->name, tmp2->level, tmp2->stats.exp);
-                else if (tmp2->last_eat == DIRECT) 
-                    sprintf(buf, "/%s|%d|-2", tmp2->name, tmp2->level);
-                else // if (tmp2->last_eat == NONLEVELING)`
-                    sprintf(buf, "/%s|%d|-1", tmp2->name, tmp2->level);
+                /* Got one so start the update string. */
+                if (buf[0] == '\0')
+                {
+                    sprintf(buf, "%d ", mode);
+                }
 
-                strcat(tmp, buf);
+                sprintf(strchr(buf, '\0'), "%s", MakeListString(skill));
+                pl->skill_exp[i] = skill->stats.exp;
+                pl->skill_level[i] = skill->level;
             }
         }
     }
-    Write_String_To_Socket(&CONTR(op)->socket, SERVER_CMD_SKILL_LIST, tmp, strlen(tmp));
+
+    if (buf[0] != '\0')
+    {
+        Write_String_To_Socket(&pl->socket, SERVER_CMD_SKILL_LIST, buf,
+            strlen(buf));
+    }
 }
 
 /* all this functions are not really bulletproof. filling tmp[] can be easily produce
