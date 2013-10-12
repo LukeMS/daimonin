@@ -687,69 +687,43 @@ int check_skill_to_apply(object *who, object *item)
     return 1;
 }
 
-/* Learn skill. This inserts the requested skill in the player's
- * inventory. The 'slaying' field of the scroll should have the
- * exact name of the requested archetype (there should be a better way!?)
- * added skillnr - direct access to archetype in skills[].
- * -bt. thomas@nomad.astro.psu.edu
- */
-
-int learn_skill(object *pl, object *scroll, char *name, int skillnr, int scroll_flag)
+int learn_skill(object *pl, int skillnr)
 {
-    player      *p;
-    object     *tmp;
-    archetype  *skill           = NULL;
-    int         has_meditation  = 0;
+    player *p;
+    object *skill = NULL;
 
 
     if(pl->type != PLAYER)
         return 2;
 
     p = CONTR(pl);
-    if(skillnr!= -1)
-        skill = skills[skillnr];
-    else if (scroll)
-        skill = find_archetype(scroll->slaying);
-    else if (name)
-        skill = find_archetype(name);
+
+    if (skillnr >= 0 &&
+        skillnr < NROFSKILLS)
+    {
+        skill = arch_to_object(skills[skillnr]);
+    }
 
     if (!skill)
         return 2;
 
-    skillnr = skill->clone.stats.sp;
     if(find_skill(pl,skillnr))
     {
         if(p && (p->state & ST_PLAYING))
-            new_draw_info(NDI_UNIQUE, 0, pl, "You already know the skill '%s'!", query_name(&skill->clone));
+            new_draw_info(NDI_UNIQUE, 0, pl, "You already know the skill '%s'!", skill->name);
         return 0;
     }
 
-    tmp = arch_to_object(skill);
-    if (!tmp)
-        return 2;
-
-    /* Special check - if the player has meditation (monk), they can not
-     * learn melee weapons.  Prevents monk from getting this
-     * skill.
-     */
-    /* disabled the meditation check for now - MT-2005 */
-    if (tmp->stats.sp == SK_MELEE_BASIC_IMPACT && has_meditation)
-    {
-        if(p && (p->state & ST_PLAYING))
-            new_draw_info(NDI_UNIQUE, 0, pl, "Your knowledge of inner peace prevents you from learning about melee weapons.");
-        return 2;
-    }
-    /* now a random change to learn, based on player Int */
-
     /* Everything is cool. Give'em the skill */
-    insert_ob_in_ob(tmp, pl);
-    CONTR(pl)->skill_ptr[tmp->stats.sp] = tmp;
+    insert_ob_in_ob(skill, pl);
+    CONTR(pl)->skill_ptr[skillnr] = skill;
 
     if(p && (p->state & ST_PLAYING))
     {
         play_sound_player_only(CONTR(pl), SOUND_LEARN_SPELL, SOUND_NORMAL, 0, 0);
-        new_draw_info(NDI_UNIQUE, 0, pl, "You have learned the skill %s!", tmp->name);
-        send_skilllist_cmd(pl, tmp, SPLIST_MODE_ADD);
+        new_draw_info(NDI_UNIQUE, 0, pl, "You have learned the skill %s!",
+            skill->name);
+        send_skilllist_cmd(pl, skill, SPLIST_MODE_ADD);
     }
 
     return 1;
