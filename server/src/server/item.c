@@ -1262,7 +1262,6 @@ int need_identify(const object *const op)
         case HORN:
         case SCROLL:
         case TYPE_SKILL:
-        case SKILLSCROLL:
         case SPELLBOOK:
         case FOOD:
         case POTION:
