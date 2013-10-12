@@ -41,7 +41,6 @@ static void ApplyAltar(object *altar, object *sacrifice, object *originator);
 static void ApplyShopMat(object *shop_mat, object *op);
 static void ApplySign(object *op, object *sign);
 static void ApplyBook(object *op, object *tmp);
-static void ApplySkillscroll(object *op, object *tmp);
 static void ApplySpellbook(object *op, object *tmp);
 static void ApplyScroll(object *op, object *tmp);
 static void ApplyTreasure(object *op, object *tmp);
@@ -1626,33 +1625,6 @@ static void ApplyBook(object *op, object *tmp)
     }
 }
 
-static void ApplySkillscroll(object *op, object *tmp)
-{
-    if(trigger_object_plugin_event( EVENT_APPLY, tmp, op, NULL,
-                NULL, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
-        return;
-    switch ((int) learn_skill(op, tmp, NULL, -1, 1))
-    {
-        case 0:
-          new_draw_info(NDI_UNIQUE, 0, op, "You already possess the knowledge held within the %s.\n", query_name(tmp));
-          return;
-
-        case 1:
-          new_draw_info(NDI_UNIQUE, 0, op, "You succeed in learning %s", tmp->name);
-          new_draw_info(NDI_UNIQUE, 0, op, "Type 'bind ready_skill %s", tmp->name);
-          new_draw_info(NDI_UNIQUE, 0, op, "to store the skill in a key.");
-          FIX_PLAYER(op ,"apply skill scroll");
-          decrease_ob_nr(tmp, 1);
-          return;
-
-        default:
-          new_draw_info(NDI_UNIQUE, 0, op, "You fail to learn the knowledge of the %s.\n", query_name(tmp));
-          decrease_ob_nr(tmp, 1);
-          return;
-    }
-}
-
-
 /* Special prayers are granted by gods and lost when the follower decides
  * to pray to a different gods.  'Force' objects keep track of which
  * prayers are special.
@@ -2309,14 +2281,6 @@ int manual_apply(object *op, object *tmp, int aflag)
           {
               ApplyBook(op, tmp);
               return 4;
-          }
-          return 0;
-
-        case SKILLSCROLL:
-          if (op->type == PLAYER)
-          {
-              ApplySkillscroll(op, tmp);
-              return 1;
           }
           return 0;
 

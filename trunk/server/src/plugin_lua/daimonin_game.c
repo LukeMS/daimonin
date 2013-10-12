@@ -332,7 +332,6 @@ static struct constant_decl preset_game_constants[] =
     {"TYPE_AI",               TYPE_AI},
     {"TYPE_AGGRO_HISTORY",    TYPE_AGGRO_HISTORY},
     {"TYPE_DAMAGE_INFO",      TYPE_DAMAGE_INFO},
-    {"TYPE_SKILLSCROLL",      SKILLSCROLL},
     {"TYPE_TIMER",            TYPE_TIMER},
     {"TYPE_ENV_SENSOR",       TYPE_ENV_SENSOR},
     {"TYPE_CONN_SENSOR",      TYPE_CONN_SENSOR},
