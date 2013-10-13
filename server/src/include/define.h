@@ -45,6 +45,8 @@
 #define IDENTIFY_MODE_MARKED 2
 
 /* spell list commands for client spell list */
+/* TODO: Rename as such lists may be skills, spells, or prayers, and move to
+ * protocol.h */
 #define SPLIST_MODE_ADD    0
 #define SPLIST_MODE_REMOVE 1
 #define SPLIST_MODE_UPDATE 2

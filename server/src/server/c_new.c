@@ -586,36 +586,56 @@ static char *MakeListString(object *skill)
     return buf;
 }
 
-void send_skilllist_cmd(player *pl, object *skill, int mode)
+void send_skilllist_cmd(player *pl, int snr, int mode)
 {
+    int  i = MAX(0, MIN(snr, NROFSKILLS - 1));
     char buf[LARGE_BUF] = "";
 
-    if (skill)
+    while (i < NROFSKILLS)
     {
-        sprintf(buf, "%d %s", mode, MakeListString(skill));
-    }
-    else
-    {
-        int i;
+        object *skill;
 
-        for (i = 0; i < NROFSKILLS; i++)
+        switch (mode)
         {
-           skill = pl->skill_ptr[i];
+            case SPLIST_MODE_ADD:
+            case SPLIST_MODE_UPDATE:
+            skill = pl->skill_ptr[i];
+            break;
 
-            if (skill &&
-                (skill->stats.exp != pl->skill_exp[i] ||
-                 skill->level != pl->skill_level[i]))
+            case SPLIST_MODE_REMOVE:
+            skill = &skills[i]->clone;
+            break;
+
+            default:
+            LOG(llevBug, "BUG:: send_skilllist_cmd(): Unknown mode (%d)!\n",
+                mode);
+            return;
+        }
+
+        if (skill &&
+            (mode != SPLIST_MODE_UPDATE ||
+             skill->stats.exp != pl->skill_exp[i] ||
+             skill->level != pl->skill_level[i]))
+        {
+            /* Got one so start the update string. */
+            if (buf[0] == '\0')
             {
-                /* Got one so start the update string. */
-                if (buf[0] == '\0')
-                {
-                    sprintf(buf, "%d ", mode);
-                }
-
-                sprintf(strchr(buf, '\0'), "%s", MakeListString(skill));
-                pl->skill_exp[i] = skill->stats.exp;
-                pl->skill_level[i] = skill->level;
+                sprintf(buf, "%d ", mode);
             }
+
+            sprintf(strchr(buf, '\0'), "%s", MakeListString(skill));
+            pl->skill_exp[i] = skill->stats.exp;
+            pl->skill_level[i] = skill->level;
+        }
+
+        if (snr >= 0 &&
+            snr < NROFSKILLS)
+        {
+            i = NROFSKILLS;
+        }
+        else
+        {
+            i++;
         }
     }
 
