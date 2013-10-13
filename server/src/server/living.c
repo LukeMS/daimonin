@@ -980,7 +980,7 @@ void fix_player(object *op)
     op->stats.Wis = pl->orig_stats.Wis;
     op->stats.Pow = pl->orig_stats.Pow;
     op->stats.Cha = pl->orig_stats.Cha;
-    validate_skills(op);
+    validate_skills(pl);
     pl->guild_force = pl->selected_weapon = pl->skill_weapon = NULL;
     pl->quest_one_drop = pl->quests_done = pl->quests_type_kill = pl->quests_type_normal = NULL;
     pl->wc_bonus = pl->dam_bonus = pl->spell_fumble = pl->exp_bonus = pl->encumbrance = 0;

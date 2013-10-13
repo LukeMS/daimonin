@@ -666,7 +666,7 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
 
     op->carrying = sum_weight(op); /* sanity calc for inventory weight of loaded players */
 
-     link_player_skills(op); /* link all exp group & skill objects to the player */
+    link_player_skills(pl); /* link all exp group & skill objects to the player */
 
      /*
     if (is_dragon_pl(op) && op->inv != NULL)
@@ -944,7 +944,7 @@ addme_login_msg player_create(NewSocket *ns, player **pl_ret, char *name, int ra
 
     /* setup the base object structure, which are usually invisible objects in the inventory */
     learn_skill(op, skillnr[skill_nr]);
-    validate_skills(op);
+    validate_skills(pl);
 
     /* and here the initial stuff depending the treasure list of the player arch */
     give_initial_items(op, op->randomitems);

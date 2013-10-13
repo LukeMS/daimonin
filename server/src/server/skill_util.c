@@ -143,21 +143,14 @@ void init_skills(void)
  * and creating a linked list of skills for later fast access.
  * adjusting exp when needed.
  */
-void link_player_skills(object *op)
+void link_player_skills(player *pl)
 {
-    int i;
     object *this;
-    player *pl;
-
-    if (op->type != PLAYER ||
-        !(pl = CONTR(op)))
-    {
-        return;
-    }
+    int     i;
 
 #ifdef DEBUG_SKILL_UTIL
     LOG(llevInfo, "Linking skills and skillgroups to player %s...\n",
-        STRING_OBJ_NAME(op));
+        STRING_OBJ_NAME(pl->ob));
 #endif
 
     /* Browse the player inv and for all TYPE_SKILLGROUP and TYPE_SKILL
@@ -165,7 +158,7 @@ void link_player_skills(object *op)
      * sure the object mirrors the arch -- except exp and level -- and put the
      * object in the player pointer shorttcut arrays. If it is not, throw it
      * away. */
-    for (this = op->inv; this; this = this->below)
+    for (this = pl->ob->inv; this; this = this->below)
     {
         if (this->type == TYPE_SKILLGROUP)
         {
@@ -255,17 +248,18 @@ void link_player_skills(object *op)
 /* Ensures the player has all the required skillgroup objects and that the
  * shortcut pointers point to objects actually in his inv. Also calculates the
  * best skill/skillgroup. */
-void validate_skills(object *op)
+void validate_skills(player *pl)
 {
-    player *pl;
+    object *op;
     int     i,
             chosen_skill = 0;
 
-    if (!op ||
-        !(pl = CONTR(op)))
+    if (!pl)
     {
         return;
     }
+
+    op = pl->ob;
 
 #ifdef DEBUG_SKILL_UTIL
     LOG(llevInfo, "Validating skills and skillgroups for player %s...\n",
