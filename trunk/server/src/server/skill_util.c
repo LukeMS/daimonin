@@ -725,7 +725,7 @@ int learn_skill(object *pl, int skillnr)
         play_sound_player_only(CONTR(pl), SOUND_LEARN_SPELL, SOUND_NORMAL, 0, 0);
         new_draw_info(NDI_UNIQUE, 0, pl, "You have learned the skill %s!",
             skill->name);
-        send_skilllist_cmd(p, skill, SPLIST_MODE_ADD);
+        send_skilllist_cmd(p, skillnr, SPLIST_MODE_ADD);
     }
 
     return 1;
