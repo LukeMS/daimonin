@@ -561,8 +561,8 @@ int                         find_traps(object *pl, int level);
 int                         remove_trap(object *op, int dir, int level);
 /* skill_util.c */
 void                        init_skills(void);
-void                        link_player_skills(object *op);
-void                        validate_skills(object *op);
+void                        link_player_skills(player *pl);
+void                        validate_skills(player *pl);
 object                     *find_skill(object *op, int skillnr);
 int                         do_skill(object *op, int dir, char *string);
 int                         get_weighted_skill_stat_sum(object *who, int sk);
