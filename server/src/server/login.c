@@ -759,12 +759,6 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
     write_socket_buffer(&pl->socket); // ensure we send this cmd immediately
     LOG(llevDebug, "Send new_player(): socket %d\n", ns->fd);
     send_spelllist_cmd(op, NULL, SPLIST_MODE_ADD); /* send the known spells as list to client */
-
-    for (i = 0; i < NROFSKILLS; i++)
-    {
-        pl->skill_level[i] = pl->skill_exp[i] = 0;
-    }
-
     send_skilllist_cmd(pl, NULL, SPLIST_MODE_ADD);
 
     /* we do the login script BEFORE we go to the map */

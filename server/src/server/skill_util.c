@@ -242,6 +242,14 @@ void link_player_skills(object *op)
             }
         }
     }
+
+    /* These values control when the client is notified of a skill change (see
+     * send_skilllist_cmd()). Set to 0 now so that the first subsequent change
+     * (because level starts at 1) will notify the client. */
+    for (i = 0; i < NROFSKILLS; i++)
+    {
+        pl->skill_level[i] = pl->skill_exp[i] = 0;
+    }
 }
 
 /* Ensures the player has all the required skillgroup objects and that the
