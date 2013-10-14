@@ -190,14 +190,9 @@ int                         command_turn_left (object *op, char *params);
 /* c_new.c */
 int                         command_run(object *op, char *params);
 int                         command_run_stop(object *op, char *params);
-void                        send_target_command(player *pl);
 int                         command_combat(object *op, char *params);
 int                         command_target(object *op, char *params);
 void                        command_face_request(char *params, int len, NewSocket *ns);
-void                        send_spelllist_cmd(object *op, char *spellname, int mode);
-void                        send_skilllist_cmd(player *pl, int snr, int mode);
-void                        send_ready_skill(player *pl, shstr *name);
-void                        send_golem_control(object *golem, int mode);
 void                        generate_ext_title(player *pl);
 /* c_object.c */
 object                     *find_best_object_match(object *pl, char *params);
