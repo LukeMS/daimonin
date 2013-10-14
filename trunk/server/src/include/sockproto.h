@@ -113,6 +113,11 @@ void            initialize_command_buffer256(command_struct *cmdbuf);
 void            initialize_command_buffer1024(command_struct *cmdbuf);
 void            initialize_command_buffer4096(command_struct *cmdbuf);
 /* request.c */
+void            send_target_command(player *pl);
+void            send_spelllist_cmd(object *op, char *spellname, int mode);
+void            send_skilllist_cmd(player *pl, int snr, int mode);
+void            send_ready_skill(player *pl, shstr *name);
+void            send_golem_control(object *golem, int mode);
 void            esrv_update_stats(player *pl);
 void            esrv_new_player(player *pl, uint32 weight);
 /* startup.c */
