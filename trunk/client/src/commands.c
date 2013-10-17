@@ -1944,22 +1944,29 @@ void SkilllistCmd(char *data, int len)
         {
             for (i = 0; i < DIALOG_LIST_ENTRY; i++)
             {
-                /* we have a list entry */
-                if (skill_list[ii].entry[i].flag != LIST_ENTRY_UNUSED)
+                _skill_list_entry *entry = &skill_list[ii].entry[i];
+
+                if (entry->flag != LIST_ENTRY_UNUSED &&
+                    !strcmp(entry->name, name))
                 {
-                    /* and it is the one we searched for? */
-                    if (!strcmp(skill_list[ii].entry[i].name, name))
+                    if (mode == SPLIST_MODE_REMOVE) /* remove? */
                     {
-                        /*LOG(-1,"skill found (%d): >%s< %d | %d\n", mode, name, l, e);*/
-                        if (mode == SPLIST_MODE_REMOVE) /* remove? */
-                            skill_list[ii].entry[i].flag = LIST_ENTRY_USED;
-                        else
+                        entry->flag = LIST_ENTRY_USED;
+                    }
+                    else
+                    {
+                        entry->flag = LIST_ENTRY_KNOWN;
+
+                        /* Indirect skills affect the statometer. */
+                        if (e > 0 &&
+                            entry->exp > 0) // but not the 1st time
                         {
-                            skill_list[ii].entry[i].flag = LIST_ENTRY_KNOWN;
-                            skill_list[ii].entry[i].exp = e;
-                            skill_list[ii].entry[i].exp_level = l;
-                            WIDGET_REDRAW(SKILL_EXP_ID);
+                            statometer.exp += (e - entry->exp);
                         }
+
+                        entry->exp = e;
+                        entry->exp_level = l;
+                        WIDGET_REDRAW(SKILL_EXP_ID);
                     }
                 }
             }
