@@ -192,26 +192,10 @@ void textwin_showstring(int flags, char *format, ...)
     char        enemy2[MEDIUM_BUF];
     int         newkill=0;
     struct kills_list *node=NULL;
-    int tempexp;
-    int tempexp2;
 
     va_start(ap, format);
     vsprintf(buf, format, ap);
     va_end(ap);
-
-    if (options.statsupdate)
-    {
-        tempexp=0;
-        tempexp2=0;
-        if (sscanf(buf,"You got %d exp in skill",&tempexp)!=EOF)
-        {
-            statometer.exp+=tempexp;
-        }
-        else if (sscanf(buf,"You got %d (+%d) exp in skill",&tempexp, &tempexp2)!=EOF)
-        {
-            statometer.exp+=tempexp;
-        }
-    }
 
     if (options.statsupdate && !strncmp(buf,"You killed ",11))
         statometer.kills++;
