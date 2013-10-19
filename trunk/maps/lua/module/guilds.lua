@@ -129,6 +129,7 @@ _guilds = {
             path_attuned = 4,
         },
         flags = Byte(8, {F_NO_2H, F_NO_POLEARM, F_NO_PRAYER, F_NO_ARCHERY}),
+        spell_max_difficulty = 2,
     },
     [3] = {
         name = "Priest",
