@@ -1008,9 +1008,10 @@ int cast_spell(object *op, object *caster, int dir, int type, int ability, Spell
 {
     spell          *s       = find_spell(type);
     const char     *godname = NULL;
-    object*target = NULL, *cast_op;
+    object         *target = NULL, *cast_op, *guild;
     int             success = 0, duration, points_used = 0;
     rv_vector       rv;
+    player         *pl = NULL;
 
     if (s == NULL)
     {
@@ -1021,7 +1022,15 @@ int cast_spell(object *op, object *caster, int dir, int type, int ability, Spell
     duration = spells[type].bdur;  /*  get the base duration */
 
     if (!op)
+    {
         op = caster;
+    }
+
+    if (op->type == PLAYER)
+    {
+        pl = CONTR(op);
+        guild = pl->guild_force;
+    }
 
     /* script NPC can ALWAYS cast - even in no spell areas! */
     if (item == spellNPC)
@@ -1075,24 +1084,22 @@ int cast_spell(object *op, object *caster, int dir, int type, int ability, Spell
 
     if (op->type == PLAYER)
     {
-        player *pl = CONTR(op);
 
         if (!pl)
         {
             return 0;
         }
 
-        if (pl->guild_force &&
-            !item)
+        if (guild && !item)
         {
-            if ((pl->guild_force->weight_limit & GUILD_NO_MAGIC) &&
+            if ((guild->weight_limit & GUILD_NO_MAGIC) &&
                 !(spells[type].flags & SPELL_DESC_WIS))
             {
                 new_draw_info(NDI_UNIQUE, 0, op, "Your Guild membership prevents casting spells!");
 
                 return 0;
             }
-            else if ((pl->guild_force->weight_limit & GUILD_NO_PRAYER) &&
+            else if ((guild->weight_limit & GUILD_NO_PRAYER) &&
                      (spells[type].flags & SPELL_DESC_WIS))
             {
                 new_draw_info(NDI_UNIQUE, 0, op, "Your Guild membership prevents casting prayers!");
@@ -1106,9 +1113,7 @@ int cast_spell(object *op, object *caster, int dir, int type, int ability, Spell
     /* ok... its item == spellNPC then op is the target of this spell  */
     if (op->type == PLAYER)
     {
-        player *pl;
-
-        CONTR(op)->rest_mode = 0;
+        pl->rest_mode = 0;
 
         /* cancel player spells which are denied - only real spells (not potion, wands, ...) */
         if (item == spellNormal)
@@ -1120,12 +1125,11 @@ int cast_spell(object *op, object *caster, int dir, int type, int ability, Spell
             }
 
             if (!IS_GMASTER_WIZ(op) &&
-                (pl = CONTR(caster)) &&
-                pl->guild_force &&
-                pl->guild_force->level &&
-                pl->guild_force->level < s->level)
+                pl && guild &&
+                ((guild->level) ? guild->level < s->level : s->level > 0))
             {
-                new_draw_info(NDI_UNIQUE, 0, op, "That spell is too difficult for you to cast.");
+                new_draw_info(NDI_UNIQUE, 0, op, "That spell is too difficult for you to cast. %d %d",
+                               (guild->level) ? guild->level : 255, s->level);
 
                 return 0;
             }
