@@ -1170,21 +1170,21 @@ int command_setskill(object *op, char *params)
 
     if (!(skill = pl->skill_ptr[snr])) /* we don't have the skill - learn it*/
     {
-        learn_skill(op, snr);
+        learn_skill(pl->ob, snr);
         skill = pl->skill_ptr[snr];
-        FIX_PLAYER(op, "setskill");
+        FIX_PLAYER(pl->ob, "setskill");
     }
     else if(!level)/* if level is 0 we unlearn the skill! */
     {
-        add_exp(op, -skill->stats.exp, snr, 0);
+        add_exp(pl->ob, -skill->stats.exp, snr, 0);
         remove_ob(skill);
         new_draw_info(NDI_UNIQUE, 0, op, "removed skill!");
-        FIX_PLAYER(op, "setskill");
+        FIX_PLAYER(pl->ob, "setskill");
 
         return COMMANDS_RTN_VAL_OK;
     }
 
-    (void)add_exp(op, new_levels[level] - skill->stats.exp, snr, 0);
+    (void)add_exp(pl->ob, new_levels[level] - skill->stats.exp, snr, 0);
 
     return COMMANDS_RTN_VAL_OK;
 }
@@ -1224,7 +1224,7 @@ int command_addexp(object *op, char *params)
         return COMMANDS_RTN_VAL_ERROR;
     }
 
-    (void)add_exp(op, exp, snr, 0);
+    (void)add_exp(pl->ob, exp, snr, 0);
 
     return COMMANDS_RTN_VAL_OK;
 }
