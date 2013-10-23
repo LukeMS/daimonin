@@ -1123,110 +1123,102 @@ int command_free(object *op, char *params)
     return COMMANDS_RTN_VAL_OK;
 }
 
+static int AddExp(object *op, char *params, const char *command)
+{
+    int     n;
+    char    name[MEDIUM_BUF];
+    int     snr,
+            exp;
+    player *pl;
+    object *skill, *skillgroup;
+
+    if (!params ||
+        (n = sscanf(params, "%s %d %d", name, &snr, &exp)) == 0)
+    {
+        new_draw_info(NDI_UNIQUE, 0, op, "Usage: %s <name> <skill> <%s>",
+            command, (*command == 'a') ? "exp" : "level");
+
+        return COMMANDS_RTN_VAL_OK_SILENT;
+    }
+
+    if (!(pl = find_player(name)))
+    {
+        new_draw_info(NDI_UNIQUE, 0, op, "No such player.");
+
+        return COMMANDS_RTN_VAL_ERROR;
+    }
+
+    if (n <= 2) // name only or illegal snr
+    {
+        int  i;
+
+        if (n == 2 &&
+            (snr < 0 ||
+             snr >= NROFSKILLS))
+        {
+            new_draw_info(NDI_UNIQUE, 0, op, "No such skill.");
+        }
+
+        for (i = 0; i < NROFSKILLS; i++)
+        {
+            if (pl->skill_ptr[i])
+            {
+                new_draw_info(NDI_UNIQUE | NDI_GREEN, 0, op, "%d\t%s (%d/%d)",
+                    i, skills[i]->clone.name, pl->skill_ptr[i]->stats.exp,
+                    pl->skill_ptr[i]->level);
+            }
+            else
+            {
+                new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, op, "%d\t%s",
+                    i, skills[i]->clone.name);
+            }
+        }
+
+        return COMMANDS_RTN_VAL_OK_SILENT;
+    }
+
+    if (*command == 's')
+    {
+        int level = MAX(0, MIN(exp, MAXLEVEL));
+        object *skill = pl->skill_ptr[snr];
+
+        if (!skill) /* we don't have the skill - learn it*/
+        {
+            learn_skill(pl->ob, snr);
+            skill = pl->skill_ptr[snr];
+            FIX_PLAYER(pl->ob, "setskill");
+        }
+        else if (!level)/* if level is 0 we unlearn the skill! */
+        {
+            (void)add_exp(pl->ob, -skill->stats.exp, snr, 0);
+            pl->skill_ptr[skill->stats.sp] = NULL;
+            remove_ob(skill);
+            new_draw_info(NDI_UNIQUE, 0, op, "Removed skill!");
+            FIX_PLAYER(pl->ob, "setskill");
+
+            return COMMANDS_RTN_VAL_OK;
+        }
+
+        exp = new_levels[level] - skill->stats.exp;
+    }
+
+    (void)add_exp(pl->ob, exp, snr, 0);
+
+    return COMMANDS_RTN_VAL_OK;
+}
+
 /* Similar to addexp, but we set here the skill level explicit
  * If the player doesn't have the skill, we add it.
  * if level is 0 we remove the skill (careful!!)
 */
 int command_setskill(object *op, char *params)
 {
-    char    buf[MEDIUM_BUF];
-    int     level, snr;
-    object *skill, *skillgroup;
-    player *pl;
-
-    if (!params ||
-        sscanf(params, "%s %d %d", buf, &snr, &level) != 3)
-    {
-        int i;
-        char buf[HUGE_BUF];
-
-        sprintf(buf, "Usage: setskill [who] [skill nr] [level]\nSkills/Nr: ");
-
-        for(i=0;i<NROFSKILLS;i++)
-            sprintf(strchr(buf, '\0'), ",%s(%d)", skills[i]->clone.name, i);
-
-        new_draw_info(NDI_UNIQUE, 0, op, "%s", buf);
-        return COMMANDS_RTN_VAL_OK_SILENT;
-    }
-
-    if (!(pl = find_player(buf)))
-    {
-        new_draw_info(NDI_UNIQUE, 0, op, "No such player.");
-
-        return COMMANDS_RTN_VAL_ERROR;
-    }
-
-    /* Bug 0000100: /addexp Cher 101 100000 crashes server */
-    /* Safety check */
-    if (snr < 0 || snr >= NROFSKILLS)
-    {
-        new_draw_info(NDI_UNIQUE, 0, op, "No such skill.");
-
-        return COMMANDS_RTN_VAL_ERROR;
-    }
-
-    /* Constrain level to sensible values. */
-    level = MAX(0, MIN(level, MAXLEVEL));
-
-    if (!(skill = pl->skill_ptr[snr])) /* we don't have the skill - learn it*/
-    {
-        learn_skill(pl->ob, snr);
-        skill = pl->skill_ptr[snr];
-        FIX_PLAYER(pl->ob, "setskill");
-    }
-    else if(!level)/* if level is 0 we unlearn the skill! */
-    {
-        add_exp(pl->ob, -skill->stats.exp, snr, 0);
-        remove_ob(skill);
-        new_draw_info(NDI_UNIQUE, 0, op, "removed skill!");
-        FIX_PLAYER(pl->ob, "setskill");
-
-        return COMMANDS_RTN_VAL_OK;
-    }
-
-    (void)add_exp(pl->ob, new_levels[level] - skill->stats.exp, snr, 0);
-
-    return COMMANDS_RTN_VAL_OK;
+    return AddExp(op, params, "setskill");
 }
 
 int command_addexp(object *op, char *params)
 {
-    char    buf[MEDIUM_BUF];
-    int     exp, snr;
-    object *skill, *skillgroup;
-    player *pl;
-
-    if (!params || sscanf(params, "%s %d %d", buf, &snr, &exp) != 3)
-    {
-        int i;
-        char buf[HUGE_BUF];
-
-        sprintf(buf, "Usage: addexp [who] [skill nr] [exp]\nSkills/Nr: ");
-        for(i=0;i<NROFSKILLS;i++)
-            sprintf(strchr(buf, '\0'), "%s(%d), ", skills[i]->clone.name, i);
-        new_draw_info(NDI_UNIQUE, 0, op, "%s", buf);
-        return COMMANDS_RTN_VAL_OK_SILENT;
-    }
-
-    if (!(pl = find_player(buf)))
-    {
-        new_draw_info(NDI_UNIQUE, 0, op, "No such player.");
-
-        return COMMANDS_RTN_VAL_ERROR;
-    }
-
-    /* Bug 0000100: /addexp Cher 101 100000 crashes server */
-    /* Safety check */
-    if (snr < 0 || snr >= NROFSKILLS)
-    {
-        new_draw_info(NDI_UNIQUE, 0, op, "No such skill.");
-
-        return COMMANDS_RTN_VAL_ERROR;
-    }
-
-    (void)add_exp(pl->ob, exp, snr, 0);
-
-    return COMMANDS_RTN_VAL_OK;
+    return AddExp(op, params, "addexp");
 }
 
 /* '/serverspeed' reports the current server speed.
