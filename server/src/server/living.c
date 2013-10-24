@@ -1811,8 +1811,12 @@ void fix_player(object *op)
         f = (float) (pl->equipment[PLAYER_EQUIP_WEAPON1]->item_condition) / 100.0f;
         /* ouch - weapon without the skill applied... */
         if (!pl->skill_ptr[pl->set_skill_weapon])
-            LOG(llevBug, "BUG: fix_player(): player %s has weapon selected but not the skill #%d!!!\n", op->name,
-            pl->set_skill_weapon);
+        {
+            LOG(llevBug, "BUG: fix_player(): player %s has weapon selected but not the skill #%d!!!\n",
+                STRING_OBJ_NAME(op),   pl->set_skill_weapon);
+               (void)apply_special(op, tmp, AP_UNAPPLY | AP_IGNORE_CURSE);
+               pl->equipment[PLAYER_EQUIP_WEAPON1] = NULL;
+        }
         else
         {
 
