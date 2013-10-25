@@ -1814,8 +1814,9 @@ void fix_player(object *op)
         {
             LOG(llevBug, "BUG: fix_player(): player %s has weapon selected but not the skill #%d!!!\n",
                 STRING_OBJ_NAME(op),   pl->set_skill_weapon);
-               (void)apply_special(op, tmp, AP_UNAPPLY | AP_IGNORE_CURSE);
-               pl->equipment[PLAYER_EQUIP_WEAPON1] = NULL;
+           (void)apply_special(op, pl->equipment[PLAYER_EQUIP_WEAPON1],
+               AP_UNAPPLY | AP_IGNORE_CURSE);
+           pl->equipment[PLAYER_EQUIP_WEAPON1] = NULL;
         }
         else
         {
