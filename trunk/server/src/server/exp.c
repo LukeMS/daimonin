@@ -383,13 +383,13 @@ sint32 add_exp(object *op, int exp, int skill_nr, int cap)
 
     if (!skill) /* safety check */
     {
-        LOG(llevDebug, "DEBUG: add_exp(): called for %s with skill nr %d / %d exp - object has not this skill.\n",
-            query_name(op), skill_nr, exp);
+        LOG(llevInfo, "INFO:: %s:add_exp(): Player %s does not have skill %s (%d)!\n",
+            __FILE__, STRING_OBJ_NAME(op), STRING_OBJ_NAME(skill), skill_nr);
         return 0;
     }
     else if (skill->last_eat == NONLEVELING)
     {
-        LOG(llevBug, "BUG:: %s/add_exp(): %s (%d) is a non-levelling skill!\n",
+        LOG(llevInfo, "INFO:: %s/add_exp(): %s (%d) is a non-leveling skill!\n",
             __FILE__, STRING_OBJ_NAME(skill), skill_nr);
         return 0;
     }
