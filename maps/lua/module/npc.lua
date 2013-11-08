@@ -315,31 +315,30 @@ function m.topic.Quest()
         end
         ib:SetHeader("st_003", npc, prefix)
         local qnr = qb:GetQuestNr(true)
-        if qnr < 0 then
-            ib:SetMsg("I have nothing for you at the moment.")
-        else
-            local handler = m.quest.Offer, r
-            if type(handler) == "function" then
-                r = handler(qnr)
+        local handler = m.quest.Offer, r
+        if type(handler) == "function" then
+            r = handler(qnr)
+        end
+        if r == nil then
+            if qnr == 0 then
+                ib:SetMsg("Sorry, I have no quests to offer you.")
+            elseif qnr < 0 then
+                ib:SetMsg("I have nothing for you at the moment.")
+            else
+                ib:SetMsg("~TODO~")
             end
-            if r == nil then
-                if qnr == 0 then
-                    ib:SetMsg("Sorry, I have no quests to offer you.")
-                else
-                    ib:SetMsg("~TODO~")
-                end
+        end
+        if qnr ~= 0 then
+            ib:SetTitle(qb:GetName(qnr))
+            if qb:GetStatus(qnr) == game.QSTAT_NO then
+                ib:SetAccept("Accept", "accept quest")
+            else
+                ib:AddMsg("\n\nHow's progress?")
+                ib:AddLink("I've done what you asked.", "quest complete")
+                ib:AddLink("Slow. But I'm working on it.",
+                    "quest incomplete")
             end
-            if qnr ~= 0 then
-                ib:SetTitle(qb:GetName(qnr))
-                if qb:GetStatus(qnr) == game.QSTAT_NO then
-                    ib:SetAccept("Accept", "accept quest")
-                else
-                    ib:AddMsg("\n\nHow's progress?")
-                    ib:AddLink("I've done what you asked.", "quest complete")
-                    ib:AddLink("Slow. But I'm working on it.",
-                        "quest incomplete")
-                end
-            end
+        end
         end
     end
     local extend = m.extend.Quest
