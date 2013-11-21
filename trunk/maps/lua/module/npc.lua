@@ -339,7 +339,6 @@ function m.topic.Quest()
                     "quest incomplete")
             end
         end
-        end
     end
     local extend = m.extend.Quest
     if type(extend) == "function" then
