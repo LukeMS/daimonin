@@ -53,7 +53,7 @@ void                        move_apply(object *const trap, object *const victim,
 void                        do_learn_spell(object *op, int spell, int special_prayer);
 void                        do_forget_spell(object *op, int spell);
 int                         manual_apply(object *op, object *tmp, int aflag);
-int                         player_apply(object *pl, object *op, int aflag, int quiet);
+int                         player_apply(object *pl, object *op, int aflag);
 void                        player_apply_below(object *pl);
 int                         apply_special(object *who, object *op, int aflags);
 int                         monster_apply_special(object *who, object *op, int aflags);
