@@ -1268,12 +1268,17 @@ void ItemXYCmd(char *data, int len, int bflag)
     loc = GetSINT32_String(data + pos);
 
     if (dmode >= 0)
+    {
         remove_item_inventory(locate_item(loc));
+    }
 
     if (dmode == -4) /* send item flag */
     {
         if (loc == cpl.container_tag)
+	{
             loc = -1; /* and redirect it to our invisible sack */
+	}
+	bflag = 0;
     }
     else if (dmode == -1)   /* container flag! */
     {
