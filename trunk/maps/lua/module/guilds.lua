@@ -576,6 +576,7 @@ function module_guildsLeave(guild, player)
     _RemoveGuildStats(_guilds[nr].name, player)
     player:LeaveGuild() --_guilds[nr].name)
     player:Write("You leave the " .. _guilds[nr].name .. " Guild!")
+	player:RemoveGuildRestrictedItems()
     player:Fix()
     return true
 end
@@ -628,6 +629,7 @@ function module_guildsJoin(guild, player)
     player:Write("You join the " .. _guilds[nr].name .. " Guild!")
     
     _AddGuildStats(_guilds[nr].name, player)
+	player:RemoveGuildRestrictedItems()
     player:Fix()
 
     return true
