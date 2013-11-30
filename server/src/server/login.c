@@ -783,10 +783,10 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
     /* If pl is new, announce the newpl login to all players else if the pl has not requested privacy, announce the login to all players. */
     if (!pl->privacy)
     {
-        new_draw_info(NDI_UNIQUE | NDI_ALL, 0, NULL, "~%s~ has entered the game %s.",
-                      query_name(pl->ob), ((pl->state & ST_BORN)) ? "for the first time" : "");
+        new_draw_info(NDI_UNIQUE | NDI_ALL, 0, NULL, "~%s~ has entered the game%s.",
+                      query_name(pl->ob), ((pl->state & ST_BORN)) ? " for the first time" : "");
     }
-	
+
     /* lets check we had saved last time in a gmaster mode.
      * if so, check the setting is still allowed and if so,
      * set the player to it.
