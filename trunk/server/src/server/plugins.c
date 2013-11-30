@@ -94,6 +94,7 @@ struct plugin_hooklist  hooklist    =
     guild_get,
     guild_join,
     guild_leave,
+    guild_remove_restricted_items,
     gui_npc,
     /* H */
     hashtable_clear,

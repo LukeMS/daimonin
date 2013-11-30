@@ -92,6 +92,7 @@ extern void             create_food_buf_force(object *who, object *food, object 
 extern int              dragon_eat_flesh(object *op, object *meal);
 /* guild.c */
 extern object          *guild_get(player *pl, char *name);
+extern void             guild_remove_restricted_items(player *pl);
 extern object          *guild_join(player *pl, char *name, int s1_group, int s1_value, int s2_group, int s2_value, int s3_group, int s3_value);
 extern void             guild_leave(player *pl);
 /* holy.c */

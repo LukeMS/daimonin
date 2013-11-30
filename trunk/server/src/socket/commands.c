@@ -1269,7 +1269,7 @@ void cs_cmd_apply(char *buf, int len, NewSocket *ns)
      * really see. */
     else if ((op  = esrv_get_ob_from_count(pl->ob, tag)))
     {
-        player_apply(pl->ob, op, 0, 0);
+        player_apply(pl->ob, op, 0);
     }
 }
 

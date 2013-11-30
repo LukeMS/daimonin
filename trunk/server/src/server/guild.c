@@ -48,18 +48,60 @@ object *guild_get(player *pl, char *name)
     return walk;
 }
 
+void guild_remove_restricted_items(player *pl)
+{
+    object *guild = NULL;
+    object *item = NULL;
+
+    if(!pl->ob || !pl->guild_force)
+    {
+        return;
+    }
+
+    guild = pl->guild_force;
+
+    // Don't call FIX_PLAYER because we'll just call it later anyway.
+    SET_FLAG(pl->ob, FLAG_NO_FIX_PLAYER);
+
+    if ((item = pl->equipment[PLAYER_EQUIP_WEAPON1]))
+    {
+        if (item->sub_type1 >= WEAP_POLE_IMPACT && (guild->weight_limit & GUILD_NO_POLEARM))
+        {
+            player_apply(pl->ob, item, AP_QUIET | AP_UNAPPLY);
+        }
+        if (item->sub_type1 >= WEAP_2H_IMPACT && item->sub_type1 <= WEAP_2H_CLEAVE &&
+             (guild->weight_limit & GUILD_NO_2H))
+        {
+            player_apply(pl->ob, item, AP_QUIET | AP_UNAPPLY);
+        }
+    }
+    if ((item = pl->equipment[PLAYER_EQUIP_BOW]))
+    {
+        if (guild->weight_limit & GUILD_NO_ARCHERY)
+        {
+            player_apply(pl->ob, item, AP_QUIET | AP_UNAPPLY);
+        }
+    }
+
+    CLEAR_FLAG(pl->ob, FLAG_NO_FIX_PLAYER);
+}
+
 /* join a guild and return the new and/or updated guild object */
 object *guild_join(player *pl, char *name, int s1_group, int s1_value, int s2_group, int s2_value, int s3_group, int s3_value)
 {
     object *guild;
 
     if(!pl->ob)
+    {
         return NULL;
+    }
 
     if(pl->guild_force && pl->guild_force->slaying) /* some sanity checks */
     {
-        if(!strcmp(pl->guild_force->slaying, name) ) /* double join?? */
+        if(!strcmp(pl->guild_force->slaying, name)) /* double join?? */
+        {
             return pl->guild_force;
+        }
 
         guild_leave(pl); /* force a guild leave of previous guild */
     }
@@ -109,21 +151,29 @@ object *guild_join(player *pl, char *name, int s1_group, int s1_value, int s2_gr
     return guild;
 }
 
-/* leave your current guild, move the guild info in the guild object inventory and neutralize the force */
+/* Leave the current guild, move the guild info in the guild
+ * object inventory and neutralize the force.
+ */
 void guild_leave(player *pl)
 {
-    object *old, *walk= pl->guild_force;
+    object *old, *walk = pl->guild_force;
 
     if(!pl->ob)
+    {
         return;
+    }
 
     if(!walk || !walk->slaying) /* we can't leave where we are not in */
+    {
         return;
+    }
 
     for (old = walk->inv; old != NULL; old = old->below)
     {
         if (old->slaying == walk->slaying) /* thats the old guild info */
+        {
             break;
+        }
     }
 
     if(!old)

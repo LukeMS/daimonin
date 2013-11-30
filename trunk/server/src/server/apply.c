@@ -2461,7 +2461,7 @@ int manual_apply(object *op, object *tmp, int aflag)
  *
  * Same return value as apply() function.
  */
-int player_apply(object *pl, object *op, int aflag, int quiet)
+int player_apply(object *pl, object *op, int aflag)
 {
     int tmp;
 
@@ -2483,18 +2483,29 @@ int player_apply(object *pl, object *op, int aflag, int quiet)
 
     /* we have applied something which makes us standing up */
     if(CONTR(pl) && CONTR(pl)->rest_sitting && !(tmp & 8))
+    {
         /* But anyone can read when sitting... */
         if (op->type != BOOK)
+        {
             CONTR(pl)->rest_sitting = CONTR(pl)->rest_mode = 0;
-    if(tmp & 1)
-        FIX_PLAYER(pl ,"player apply ");
+        }
+    }
 
-    if (!quiet)
+    if(tmp & 1)
+    {
+        FIX_PLAYER(pl ,"player apply ");
+    }
+
+    if (!(aflag & AP_QUIET))
     {
         if (tmp == 0)
+        {
             new_draw_info(NDI_UNIQUE, 0, pl, "I don't know how to apply the %s.", query_name(op));
+        }
         else if (tmp == 2)
+        {
             new_draw_info(NDI_UNIQUE, 0, pl, "You must get it first!\n");
+        }
     }
     return tmp;
 }
@@ -2538,9 +2549,13 @@ void player_apply_below(object *pl)
          * object is the first sys_object
          */
         if (QUERY_FLAG(tmp, FLAG_SYS_OBJECT))
+        {
             floors++;
+        }
         else if (floors > 0)
+        {
             return;   /* process only floor (or sys_objects) objects after first floor object */
+        }
 
         if ((!QUERY_FLAG(tmp, FLAG_SYS_OBJECT) &&
              !IS_GMASTER_INVIS_TO(tmp, pl) ||
@@ -2548,11 +2563,15 @@ void player_apply_below(object *pl)
             QUERY_FLAG(tmp, FLAG_WALK_ON) ||
             QUERY_FLAG(tmp, FLAG_FLY_ON))
         {
-            if (player_apply(pl, tmp, 0, 1) == 1)
+            if (player_apply(pl, tmp, 0) == 1)
+            {
                 return;
+            }
         }
         if (floors >= 2)
+        {
             return;   /* process at most two floor objects */
+        }
     }
 }
 
@@ -2595,10 +2614,19 @@ int apply_special(object *who, object *op, int aflags)
         if(op->type == PLAYER)
         {
             if(ego_mode == EGO_ITEM_BOUND_UNBOUND)
-                new_draw_info (NDI_UNIQUE, 0, op, "This is an ego item!\nType \"/egobind\" for more info about applying it!");
+            {
+                if (!(aflags & AP_QUIET))
+                {
+                    new_draw_info(NDI_UNIQUE, 0, op, "This is an ego item!\nType \"/egobind\" for more info about applying it!");
+                }
+            }
             else if(ego_mode == EGO_ITEM_BOUND_PLAYER)
-
-                new_draw_info (NDI_UNIQUE, 0, op, "This is not your ego item!");
+            {
+                if (!(aflags & AP_QUIET))
+                {
+                    new_draw_info(NDI_UNIQUE, 0, op, "This is not your ego item!");
+                }
+            }
         }
         return 1;
     }
@@ -2613,7 +2641,10 @@ int apply_special(object *who, object *op, int aflags)
             return 0;
         if (op->item_condition && !(aflags & AP_IGNORE_CURSE) && (is_cursed_or_damned(op)))
         {
-            new_draw_info(NDI_UNIQUE, 0, who, "No matter how hard you try, you just can't remove it!");
+            if (!(aflags & AP_QUIET))
+            {
+                new_draw_info(NDI_UNIQUE, 0, who, "No matter how hard you try, you just can't remove it!");
+            }
             return 1;
         }
 
@@ -2636,9 +2667,19 @@ int apply_special(object *who, object *op, int aflags)
                 change_abil(who, op);
                 CLEAR_FLAG(who, FLAG_READY_WEAPON);
                 if(!op->item_condition)
-                    sprintf(buf, "Your %s is broken!", query_name(op));
+                {
+                    if (!(aflags & AP_QUIET))
+                    {
+                        sprintf(buf, "Your %s is broken!", query_name(op));
+                    }
+                }
                 else
-                    sprintf(buf, "You no longer wield the %s.", query_name(op));
+                {
+                    if (!(aflags & AP_QUIET))
+                    {
+                        sprintf(buf, "You no longer wield the %s.", query_name(op));
+                    }
+                }
                 break;
 
             case TYPE_SKILL:
@@ -2661,14 +2702,23 @@ int apply_special(object *who, object *op, int aflags)
             case BOOTS:
             case GLOVES:
             case AMULET:
-            case GIRDLE:
-            case BRACERS:
             case CLOAK:
                 change_abil(who, op);
+
                 if(!op->item_condition)
-                    sprintf(buf, "Your %s is broken!", query_name(op));
+                {
+                    if (!(aflags & AP_QUIET))
+                    {
+                        sprintf(buf, "Your %s is broken!", query_name(op));
+                    }
+                }
                 else
-                    sprintf(buf, "You take off the %s.", query_name(op));
+                {
+                    if (!(aflags & AP_QUIET))
+                    {
+                        sprintf(buf, "You take off the %s.", query_name(op));
+                    }
+                }
                 break;
 
             case ARROW:
@@ -2677,9 +2727,19 @@ int apply_special(object *who, object *op, int aflags)
             case ROD:
             case HORN:
                 if(!op->item_condition)
-                    sprintf(buf, "Your %s is broken!", query_name(op));
+                {
+                    if (!(aflags & AP_QUIET))
+                    {
+                        sprintf(buf, "Your %s is broken!", query_name(op));
+                    }
+                }
                 else
-                    sprintf(buf, "You unready the %s.", query_name(op));
+                {
+                    if (!(aflags & AP_QUIET))
+                    {
+                        sprintf(buf, "You unready the %s.", query_name(op));
+                    }
+                }
                 if(op->type != ARROW || op->sub_type1 > 127)
                 {
                     if (who->type != PLAYER)
@@ -2689,7 +2749,10 @@ int apply_special(object *who, object *op, int aflags)
                 }
                 break;
             default:
-                sprintf(buf, "You unapply the %s.", query_name(op));
+                if (!(aflags & AP_QUIET))
+                {
+                    sprintf(buf, "You unapply the %s.", query_name(op));
+                }
                 break;
         }
         if (buf[0] != '\0') /* urgh... what use of buf */
@@ -2745,31 +2808,46 @@ int apply_special(object *who, object *op, int aflags)
         case ARROW:
             if(!op->item_condition)
             {
-                new_draw_info(NDI_UNIQUE, 0, who, "The %s is broken and can't be applied.", query_name(op));
+                if (!(aflags & AP_QUIET))
+                {
+                    new_draw_info(NDI_UNIQUE, 0, who, "The %s is broken and can't be applied.", query_name(op));
+                }
                 return 1;
             }
             break;
         case WEAPON:
             if(!op->item_condition)
             {
-                new_draw_info(NDI_UNIQUE, 0, who, "The %s is broken and can't be applied.", query_name(op));
+                if (!(aflags & AP_QUIET))
+                {
+                    new_draw_info(NDI_UNIQUE, 0, who, "The %s is broken and can't be applied.", query_name(op));
+                }
                 return 1;
             }
             if (!QUERY_FLAG(who, FLAG_USE_WEAPON))
             {
-                new_draw_info(NDI_UNIQUE, 0, who, "You can't use %s.", query_name(op));
+                if (!(aflags & AP_QUIET))
+                {
+                    new_draw_info(NDI_UNIQUE, 0, who, "You can't use %s.", query_name(op));
+                }
                 return 1;
             }
             if (!check_weapon_power(who, op->last_eat))
             {
-                new_draw_info(NDI_UNIQUE, 0, who, "That weapon is too powerful for you to use. It would consume your soul!.");
+                if (!(aflags & AP_QUIET))
+                {
+                    new_draw_info(NDI_UNIQUE, 0, who, "That weapon is too powerful for you to use. It would consume your soul!.");
+                }
                 return 1;
             }
             if (op->level && (strncmp(op->name, who->name, strlen(who->name))))
             {
                 /* if the weapon does not have the name as the character, can't use it. */
                 /*        (Ragnarok's sword attempted to be used by Foo: won't work) */
-                new_draw_info(NDI_UNIQUE, 0, who, "The weapon does not recognize you as its owner.");
+                if (!(aflags & AP_QUIET))
+                {
+                    new_draw_info(NDI_UNIQUE, 0, who, "The weapon does not recognize you as its owner.");
+                }
                 return 1;
             }
 
@@ -2779,25 +2857,36 @@ int apply_special(object *who, object *op, int aflags)
                     && pl
                     && pl->equipment[PLAYER_EQUIP_SHIELD])
             {
-                new_draw_info(NDI_UNIQUE, 0, who, "You can't wield this weapon and a shield.");
+                if (!(aflags & AP_QUIET))
+                {
+                    new_draw_info(NDI_UNIQUE, 0, who, "You can't wield this weapon and a shield.");
+                }
                 return 1;
             }
 
             if (!check_skill_to_apply(who, op))
+            {
                 return 1;
+            }
             break;
         case SHIELD:
             /* don't allow of polearm or 2hand weapon with a shield */
             if(!op->item_condition)
             {
-                new_draw_info(NDI_UNIQUE, 0, who, "The %s is broken and can't be applied.", query_name(op));
+                if (!(aflags & AP_QUIET))
+                {
+                    new_draw_info(NDI_UNIQUE, 0, who, "The %s is broken and can't be applied.", query_name(op));
+                }
                 return 1;
             }
             if ((who->type == PLAYER && pl && pl->equipment[PLAYER_EQUIP_WEAPON1])
                     && (pl->equipment[PLAYER_EQUIP_WEAPON1]->sub_type1 >= WEAP_POLE_IMPACT
                         || pl->equipment[PLAYER_EQUIP_WEAPON1]->sub_type1 >= WEAP_2H_IMPACT))
             {
-                new_draw_info(NDI_UNIQUE, 0, who, "You can't wield this shield and a weapon.");
+                if (!(aflags & AP_QUIET))
+                {
+                    new_draw_info(NDI_UNIQUE, 0, who, "You can't wield this shield and a weapon.");
+                }
                 return 1;
             }
             /* Fall through to next test... */
@@ -2813,12 +2902,18 @@ int apply_special(object *who, object *op, int aflags)
         case CLOAK:
             if(!op->item_condition)
             {
-                new_draw_info(NDI_UNIQUE, 0, who, "The %s is broken and can't be applied.", query_name(op));
+                if (!(aflags & AP_QUIET))
+                {
+                    new_draw_info(NDI_UNIQUE, 0, who, "The %s is broken and can't be applied.", query_name(op));
+                }
                 return 1;
             }
             if (!QUERY_FLAG(who, FLAG_USE_ARMOUR))
             {
-                new_draw_info(NDI_UNIQUE, 0, who, "You can't use %s.", query_name(op));
+                if (!(aflags & AP_QUIET))
+                {
+                    new_draw_info(NDI_UNIQUE, 0, who, "You can't use %s.", query_name(op));
+                }
                 return 1;
             }
             break;
@@ -2851,7 +2946,10 @@ int apply_special(object *who, object *op, int aflags)
             SET_FLAG(op, FLAG_APPLIED);
             SET_FLAG(who, FLAG_READY_WEAPON);
             change_abil(who, op);
-            new_draw_info(NDI_UNIQUE, 0, who, "You wield the %s.", query_name(op));
+            if (!(aflags & AP_QUIET))
+            {
+                new_draw_info(NDI_UNIQUE, 0, who, "You wield the %s.", query_name(op));
+            }
             break;
 
         case SHIELD:
@@ -2868,7 +2966,10 @@ int apply_special(object *who, object *op, int aflags)
         case AMULET:
             SET_FLAG(op, FLAG_APPLIED);
             change_abil(who, op);
-            new_draw_info(NDI_UNIQUE, 0, who, "You put on the %s.", query_name(op));
+            if (!(aflags & AP_QUIET))
+            {
+                new_draw_info(NDI_UNIQUE, 0, who, "You put on the %s.", query_name(op));
+            }
             break;
 
         case TYPE_SKILL:
@@ -2877,7 +2978,10 @@ int apply_special(object *who, object *op, int aflags)
                 /* At least one of these lines is unnecessary: confirmation or
                  * just spam? I vote to get rid of the ndi() -- srs() uses less
                  * resources and allows the client more control. */
-                new_draw_info(NDI_UNIQUE, 0, who, "You ready the skill ~%s~.", query_name(op));
+                if (!(aflags & AP_QUIET))
+                {
+                    new_draw_info(NDI_UNIQUE, 0, who, "You ready the skill ~%s~.", query_name(op));
+                }
                 send_ready_skill(pl, op->name);
             }
 
@@ -2898,7 +3002,10 @@ int apply_special(object *who, object *op, int aflags)
                 if(!pl->equipment[PLAYER_EQUIP_BOW] || pl->equipment[PLAYER_EQUIP_BOW]->type != BOW
                                         || pl->equipment[PLAYER_EQUIP_BOW]->sub_type1 != op->sub_type1)
                 {
-                    new_draw_info(NDI_UNIQUE, 0, who, "You can't use %s with applied range weapon.", query_short_name(op, NULL));
+                    if (!(aflags & AP_QUIET))
+                    {
+                        new_draw_info(NDI_UNIQUE, 0, who, "You can't use %s with applied range weapon.", query_short_name(op, NULL));
+                    }
                     return 1;
                 }
             }
@@ -2911,12 +3018,20 @@ int apply_special(object *who, object *op, int aflags)
 
             if((op->type == ROD || op->type == HORN) && who->chosen_skill->level < op->level)
             {
-                new_draw_info(NDI_UNIQUE, 0, who, "Your %s skill level is to low!", query_short_name(who->chosen_skill, who));
+                if (!(aflags & AP_QUIET))
+                {
+                    new_draw_info(NDI_UNIQUE, 0, who, "Your %s skill level is to low!", query_short_name(who->chosen_skill, who));
+                }
                 return 1;
             }
 
             SET_FLAG(op, FLAG_APPLIED);
-            new_draw_info(NDI_UNIQUE, 0, who, "You ready the %s.", query_name(op));
+
+            if (!(aflags & AP_QUIET))
+            {
+                new_draw_info(NDI_UNIQUE, 0, who, "You ready the %s.", query_name(op));
+            }
+
             if (who->type == PLAYER)
             {
                 if (op->type != BOW)
@@ -2931,7 +3046,10 @@ int apply_special(object *who, object *op, int aflags)
             break;
 
         default:
-            new_draw_info(NDI_UNIQUE, 0, who, "You apply the %s.", query_name(op));
+            if (!(aflags & AP_QUIET))
+            {
+                new_draw_info(NDI_UNIQUE, 0, who, "You apply the %s.", query_name(op));
+            }
     }
     if (!QUERY_FLAG(op, FLAG_APPLIED))
         SET_FLAG(op, FLAG_APPLIED);
@@ -2950,7 +3068,10 @@ int apply_special(object *who, object *op, int aflags)
     {
         if (who->type == PLAYER)
         {
-            new_draw_info(NDI_UNIQUE, 0, who, "Oops, it feels deadly cold!");
+            if (!(aflags & AP_QUIET))
+            {
+                new_draw_info(NDI_UNIQUE, 0, who, "Oops, it feels deadly cold!");
+            }
             SET_FLAG(op, FLAG_KNOWN_CURSED);
         }
     }
@@ -3169,7 +3290,7 @@ void turn_off_light(object *op)
  * be taken to change the msg if ever no_fix_player is changed (which can only
  * be done in the map file or via a script anyway) and the on/off status cannot
  * be mentioned in the (static) msg -- Smacky 20080905 */
-void apply_light(object *who, object *op) 
+void apply_light(object *who, object *op)
 {
     object *tmp;
 

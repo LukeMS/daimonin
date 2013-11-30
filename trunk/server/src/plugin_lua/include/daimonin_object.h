@@ -115,6 +115,7 @@ static int  GameObject_PickUp(lua_State *L);
 static int  GameObject_ReadyUniqueMap(lua_State *L);
 static int  GameObject_Remove(lua_State *L);
 static int  GameObject_RemoveBuff(lua_State *L);
+static int  GameObject_RemoveGuildRestrictedItems(lua_State *L);
 static int  GameObject_RemoveQuestItem(lua_State *L);
 static int  GameObject_Repair(lua_State *L);
 static int  GameObject_Save(lua_State *L);

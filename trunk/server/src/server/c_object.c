@@ -62,9 +62,9 @@ int command_uskill(object *pl, char *params)
     if (!use_skill(pl, params))
     {
         return COMMANDS_RTN_VAL_ERROR;
-    }                      
-    else                   
-    {                      
+    }
+    else
+    {
         return COMMANDS_RTN_VAL_OK;
     }
 }
@@ -89,9 +89,9 @@ int command_rskill(object *pl, char *params)
     if (!change_skill(pl, skillno))
     {
         return COMMANDS_RTN_VAL_ERROR;
-    }                          
-    else                       
-    {                          
+    }
+    else
+    {
         return COMMANDS_RTN_VAL_OK;
     }
 }
@@ -177,7 +177,7 @@ int command_apply(object *op, char *params)
         params++;
 
     if ((inv = find_best_object_match(op, params)))
-        player_apply(op, inv, aflag, 0);
+        player_apply(op, inv, aflag);
     else
         new_draw_info(NDI_UNIQUE, 0, op, "Could not find any match to the %s.",
                              params);
