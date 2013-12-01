@@ -4282,6 +4282,7 @@ static int GameObject_SetFace(lua_State *L)
         luaL_error(L, "no such face exists: %s", STRING_SAFE(face));
 
     WHO->face = &(*hooks->new_faces)[id];
+    hooks->update_object(WHO, UP_OBJ_FACE);
 
     return 0;
 }
@@ -4308,6 +4309,7 @@ static int GameObject_SetInvFace(lua_State *L)
         luaL_error(L, "no such face exists: %s", STRING_SAFE(face));
 
     WHO->inv_face = &(*hooks->new_faces)[id];
+    hooks->update_object(WHO, UPD_FACE);
 
     return 0;
 }
