@@ -1271,8 +1271,20 @@ void update_object(object *op, int action)
         return;
     }
 
-    if (op->env != NULL || !op->map || op->map->in_memory == MAP_SAVING)
+    if (op->env != NULL)
+    {
+        // Send the player the new inventory information if needed.
+        if (op->env->type == PLAYER)
+        {
+            esrv_update_item(UPD_FACE | UPD_ANIM | UPD_ANIMSPEED, op);
+        }
         return;
+    }
+
+    if (!op->map || op->map->in_memory == MAP_SAVING)
+    {
+        return;
+    }
 
     /* make sure the object is within map boundaries */
     /*
@@ -2231,7 +2243,7 @@ object *insert_ob_in_map(object *const op, mapstruct *m, object *const originato
     msp = GET_MAP_SPACE_PTR(op->map, op->x, op->y); /* for fast access - we will not change the node here */
     /* Layer 0 (system) objects always go to the first object on the square --
      * everything else is ->above it -- and are never visible on the client map
-     * (so no SET_MAP_SPACE_SLAYER()) -- except to gmaster_matrix players but 
+     * (so no SET_MAP_SPACE_SLAYER()) -- except to gmaster_matrix players but
      * this is handled specially. */
     if (op->layer == 0)
     {
@@ -2554,7 +2566,7 @@ object * decrease_ob_nr(object *op, uint32 i)
         }
     }
     /* TODO: Not sure what this is about right now.
-     * 
+     *
      * -- Smacky 20130126 */
     else
     {
