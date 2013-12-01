@@ -559,7 +559,7 @@ int blocked(object *op, mapstruct *m, int x, int y, int terrain)
         * a.) op == NULL (because we can't check for op==PLAYER then)
         * b.) P_IS_PVP or MAP_FLAG_PVP
         */
-        if (!op 
+        if (!op
 #ifdef USE_PVP
             || flags & P_IS_PVP || m->map_flags & MAP_FLAG_PVP
 #endif
@@ -578,7 +578,7 @@ int blocked(object *op, mapstruct *m, int x, int y, int terrain)
         /* for now, the easiest way - if op is no player (it is a monster or somewhat
         * else "solid" object) - then no pass
         */
-        if (op->type != PLAYER)
+        if (op->type != PLAYER && op->type != GRAVESTONE)
             return (flags & (P_DOOR_CLOSED | P_IS_PLAYER | P_CHECK_INV));
     }
 
@@ -1383,7 +1383,7 @@ int get_rangevector_full(
         {
             retval->distance_x += map2->tileset_x - map1->tileset_x;
             retval->distance_y += map2->tileset_y - map1->tileset_y;
-        } 
+        }
         else
             return fail_rangevector(retval);
     }
