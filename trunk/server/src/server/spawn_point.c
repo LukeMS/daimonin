@@ -59,6 +59,7 @@ static object *spawn_monster(object *mob, object *spawn)
     while (at)
     {
         object *part = get_object();
+        int     x, y;
 
         if (!head) /* copy single/head from spawn inventory */
         {
@@ -72,9 +73,19 @@ static object *spawn_monster(object *mob, object *spawn)
             copy_object(&at->clone, part);
         }
 
-        part->map = spawn->map;
-        part->x = spawn->x + freearr_x[i] + at->clone.x;
-        part->y = spawn->y + freearr_y[i] + at->clone.y;
+        /* out_of_map() will check and adjust map,x,y so that spawn points on
+         * or near the edge of a map will spawn a mob with the correct values
+         * on a tiled map (ie, the point is at map_0000 5 0 and the mob spawns
+         * on the northeast square -- this is map_0001 6 23, not map_0000 6 -1)
+         * The check_insertion_allowed() call above should, AFAICS, catch any
+         * problems with multiparts that are too big to fit on a map, but I
+         * have not tested this specifically.
+         * -- Smacky 20131205 */
+        x = spawn->x + freearr_x[i] + at->clone.x;
+        y = spawn->y + freearr_y[i] + at->clone.y;
+        part->map = out_of_map(spawn->map, &x, &y);
+        part->x = x;
+        part->y = y;
 
         if (head)
         {
