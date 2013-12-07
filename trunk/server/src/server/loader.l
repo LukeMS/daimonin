@@ -145,7 +145,10 @@ WS	[ \t]*{NL}?
 			    if (tmp->arch)
 					copy_object_data(&tmp->arch->clone,tmp);
 				else
+				{
 				    tmp2 = create_singularity(yval());
+				    LOG(llevInfo, "SINGULARITY:: %s, %s\n", STRING_SAFE(op->name), PTR_STRING_SAFE(tmp_art, name));
+				}
 
 			    strcpy(msgbuf, "");
 				old_sleft = tmp->speed_left;

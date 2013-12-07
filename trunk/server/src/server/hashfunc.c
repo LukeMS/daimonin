@@ -302,6 +302,11 @@ int string_key_equals(const hashtable_const_key_t key1, const hashtable_const_ke
     // Fast strcmp() implementation adapted from Linux kernel source (sys/lib/string.c)
     // Copyright (C) 1991, 1992  Linus Torvalds
 
+    if (!k1 || !k2)
+    {
+        LOG(llevBug, ">>string_key_equals(): k1 is %s, k2 is %s", STRING_SAFE(k1), STRING_SAFE(k2));
+    }
+
     while (1) {
         if (!(__res = (*k1 == *k2++)) || !*k1++)
             break;
