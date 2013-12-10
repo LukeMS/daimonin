@@ -72,7 +72,7 @@ sint64 query_cost(object *tmp, object *who, int flag)
         {
             if (flag == F_BUY)
             {
-                LOG(llevBug, "BUG: Asking for buy-value of unidentified object %s.\n", query_name(tmp));
+                LOG(llevMapbug, "MAPBUG:: Asking for buy-value of unidentified object %s.\n", query_name(tmp));
                 val = tmp->arch->clone.value * number;
             }
             else    /* Trying to sell something, or get true value */
