@@ -300,8 +300,16 @@ uint8 shop_pay_amount(sint64 amount, object *op)
 
         if (change < 0)
         {
-            LOG(llevBug, "BUG:: %s:shop_pay_amount(): Attempt to give %s %d too much change!\n",
+#ifdef WIN32
+            LOG(llevBug, "BUG:: %s:shop_pay_amount(): Attempt to give %s %I64d too much change!\n",
                 __FILE__, STRING_OBJ_NAME(op), ABS(change));
+#elif SIZEOF_LONG == 8
+            LOG(llevBug, "BUG:: %s:shop_pay_amount(): Attempt to give %s %ld too much change!\n",
+                __FILE__, STRING_OBJ_NAME(op), ABS(change));
+#else
+            LOG(llevBug, "BUG:: %s:shop_pay_amount(): Attempt to give %s %lld too much change!\n",
+                __FILE__, STRING_OBJ_NAME(op), ABS(change));
+#endif
         }
     }
 
