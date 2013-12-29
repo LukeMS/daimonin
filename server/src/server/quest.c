@@ -1115,7 +1115,7 @@ void quest_list_command(struct obj *pl, char *cmd)
                  * Now it is in custom_attrset (as a normal string) but we must
                  * allow for old-style updates too. */
                 sprintf(strchr(buf, '\0'), "<ut=\"%s\"b=\"%s\">",
-                        (!update->custom_attrset) ? update->title : update->custom_attrset,
+                        (!update->custom_attrset) ? update->title : (char *)update->custom_attrset,
                         update->msg);
             }
 
