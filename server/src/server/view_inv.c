@@ -291,7 +291,7 @@ static void AddFakeObject(sockbuf_struct *sb, _server_client_cmd cmd,
        SockBuf_AddChar(sb, 0);
     }
 
-    sprintf(buf, name);
+    sprintf(buf, "%s", name);
     len = AddName(buf);
     SockBuf_AddChar(sb, len + 1);
     SockBuf_AddString(sb, buf, len);
