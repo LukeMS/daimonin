@@ -3593,7 +3593,7 @@ void fix_buff_stats(object *item)
     if (QUERY_FLAG(item, FLAG_APPLIED) && item->env && item->env->type == PLAYER)
     {
         // Only items in the root of players' inventories can be applied.
-        fix_player(item->env, "buff applied");
+        FIX_PLAYER(item->env, "buff applied");
     }
 
     if (buffs == 0)
