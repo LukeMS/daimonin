@@ -5676,7 +5676,7 @@ mina
 anim dwarf_male
 facings 25
 dwarf.041
-dwarf.041
+dwarf.042
 dwarf.041
 dwarf.111
 dwarf.112
@@ -6412,17 +6412,26 @@ anim figpud2
 figpud2.101
 figpud2.102
 mina
-anim fire_cauld.131
+anim fire_cauld
 facings 9
 dummy.111
+dummy.111
 fire_cauld.131
+fire_cauld.132
 fire_cauld.131
+fire_cauld.132
 fire_cauld.131
+fire_cauld.132
 fire_cauld.151
+fire_cauld.152
 fire_cauld.151
+fire_cauld.152
 fire_cauld.151
+fire_cauld.152
 fire_cauld.151
+fire_cauld.152
 fire_cauld.131
+fire_cauld.132
 mina
 anim fire_trail
 burnout.101
@@ -14310,6 +14319,10 @@ pedestal.132
 pedestal.131
 pedestal.132
 mina
+anim pendant_demon_lord
+pendant_demon_lord.101
+pendant_demon_lord.102
+mina
 anim penguin
 facings 25
 dummy.111
@@ -14932,6 +14945,12 @@ plant2_wall.131
 plant2_wall.131
 plant2_wall.151
 mina
+anim pool_poison
+pool_poison.101
+pool_poison.102
+pool_poison.103
+pool_poison.104
+mina
 anim portal_azure
 portal_azure.101
 portal_azure.102
@@ -15316,6 +15335,30 @@ pot_wall.u.131
 pot_wall.u.131
 pot_wall.u.131
 pot_wall.u.151
+mina
+anim potion_magic
+potion_magic.101
+potion_magic.102
+potion_magic.103
+potion_magic.104
+mina
+anim potioncol
+potioncol.101
+potioncol.102
+potioncol.103
+potioncol.104
+mina
+anim potionfir
+potionfir.101
+potionfir.102
+potionfir.103
+potionfir.104
+mina
+anim potionimp
+potionimp.101
+potionimp.102
+potionimp.103
+potionimp.104
 mina
 anim power_crystal
 power_crystal.101
