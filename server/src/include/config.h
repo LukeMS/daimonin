@@ -316,11 +316,8 @@
 
 /*
  * With USE_PVP defined, players can attack each other on maps with 'pvp 1' in their header.
- * ATM PvP is still very untested and likely buggy, so we only want it on code dev servers.
  */
-#ifdef DAI_DEVELOPMENT_CODE
-  #define USE_PVP
-#endif
+#define USE_PVP
 
 /***********************************************************************
  * SECTION 2 - Machine/Compiler specific stuff.
