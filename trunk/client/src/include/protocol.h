@@ -51,32 +51,57 @@
  * the server logs. */
 #define RECLAIM_NOPASS "NOPASS" // must be >= 6 characters
 
-/* The embedded character codes used to markup text, mainly in the textwindows
- * and GUIs (but theoretically anywhere).
+/* The embedded character codes are used to markup text, mainly in the textwindows
+ * and GUIs. */
+/* 0x00-0x1f are internal. Some are genuine remaps, some are simply meaningful
+ * names for a number, and some are both. */
+#define ECC_CHAROFFSET    0x00
+#define ECC_LINEHEIGHT    0x01
+#define ECC_NEWCOLR       0x02
+#define ECC_DEFCOLR       0x03
+#define ECC_TAB           0x09
+#define ECC_NEWLINE       0x0a
+#define ECC_ARROWUP       0x1c
+#define ECC_ARROWDOWN     0x1d
+#define ECC_ARROWLEFT     0x1e
+#define ECC_ARROWRIGHT    0x1f
+/* 0x80-0x95 are smileys. */
+#define ECC_SMILE         0x80
+#define ECC_FROWN         0x81
+#define ECC_GRIN          0x82
+#define ECC_POKERFACE     0x83
+#define ECC_OOH           0x84
+#define ECC_RASPBERRY     0x85
+#define ECC_WINK          0x86
+#define ECC_COOL          0x87
+/* No idea what 0x88 is meant to be and it's unused anyway. */
+#define ECC_WINKRASPBERRY 0x89
+#define ECC_CRY           0x8a
+#define ECC_PERPLEXITY    0x8b
+#define ECC_SUCKALEMON    0x8c
+#define ECC_NAUGHTY       0x8d
+#define ECC_WICKED        0x8e
+/* The rest are 'normal'. These are easily typeable, but seldom used,
+ * characters so players/scripters can use them.
  *
  * Underline has extra meaning in the NPC GUI (and eventually also the book
  * GUI). Here it will render a so-called intertitle, basically a sub-title.
  *
- * Hypertext is only available in the NPC GUI (and eventually probably thr book
+ * Hypertext is only available in the NPC GUI (and eventually probably the book
  * GUI too). Otherwise it will just print the character.
  *
  * Emphasis, strong, and underline can be combined to apply any combination of
- * two or three markups to the text (TODO: not sure if this works 100% in
- * current SVN). Hypertext negates any existing strong, emphasis, or underline.
- *
- * NOTE: While the client still uses bitmaps and not real fonts, bold and
- * italics are not available so strong and emphasis are shown by changing the
- * text  colour (by default to yellow and green). As such, it is not currently
- * possible to display both markups at the same time. */
-#define ECC_STRONG    '|'
-#define ECC_EMPHASIS  '~'
-#define ECC_UNDERLINE '`'
-#define ECC_HYPERTEXT '^'
+ * two or three markups to the text. Hypertext negates any existing strong,
+ * emphasis, or underline. */
+#define ECC_STRONG              '|'
+#define ECC_EMPHASIS            '~'
+#define ECC_UNDERLINE           '`'
+#define ECC_HYPERTEXT           '^'
 
 /* List of client to server (cs) binary command tags */
 typedef enum client_cmd {
     /* start of pre-processed cmds */
-    CLIENT_CMD_PING, /* unused */
+    CLIENT_CMD_PING,
     /* Ns_Login mode only commands */
     CLIENT_CMD_SETUP,
     CLIENT_CMD_REQUESTFILE,
@@ -115,37 +140,37 @@ typedef enum client_cmd {
 
 /* List of server to client (sc) binary command tags */
 typedef enum server_client_cmd {
-    BINARY_CMD_PING, /* unused */
-    BINARY_CMD_DRAWINFO,
-    BINARY_CMD_ADDME_FAIL,
-    BINARY_CMD_MAP2,
-    BINARY_CMD_DRAWINFO2,
-    BINARY_CMD_ITEMX,
-    BINARY_CMD_SOUND,
-    BINARY_CMD_TARGET,
-    BINARY_CMD_UPITEM,
-    BINARY_CMD_DELITEM,
-    BINARY_CMD_STATS,
-    BINARY_CMD_IMAGE,
-    BINARY_CMD_FACE1,
-    BINARY_CMD_SKILLRDY,
-    BINARY_CMD_PLAYER,
-    BINARY_CMD_SPELL_LIST,
-    BINARY_CMD_SKILL_LIST,
-    BINARY_CMD_GOLEMCMD,
-    BINARY_CMD_ACCNAME_SUC,
-    BINARY_CMD_SETUP,
-    BINARY_CMD_DATA,
-    BINARY_CMD_ITEMY,
-    BINARY_CMD_GROUP,
-    BINARY_CMD_INVITE,
-    BINARY_CMD_GROUP_UPDATE,
-    BINARY_CMD_INTERFACE,
-    BINARY_CMD_BOOK,
-    BINARY_CMD_MARK,
-    BINARY_CMD_ACCOUNT,
+    SERVER_CMD_PING,
+    SERVER_CMD_DRAWINFO,
+    SERVER_CMD_ADDME_FAIL,
+    SERVER_CMD_MAP2,
+    SERVER_CMD_DRAWINFO2,
+    SERVER_CMD_ITEMX,
+    SERVER_CMD_SOUND,
+    SERVER_CMD_TARGET,
+    SERVER_CMD_UPITEM,
+    SERVER_CMD_DELITEM,
+    SERVER_CMD_STATS,
+    SERVER_CMD_IMAGE,
+    SERVER_CMD_FACE1,
+    SERVER_CMD_SKILLRDY,
+    SERVER_CMD_PLAYER,
+    SERVER_CMD_SPELL_LIST,
+    SERVER_CMD_SKILL_LIST,
+    SERVER_CMD_GOLEMCMD,
+    SERVER_CMD_ACCNAME_SUC,
+    SERVER_CMD_SETUP,
+    SERVER_CMD_DATA,
+    SERVER_CMD_ITEMY,
+    SERVER_CMD_GROUP,
+    SERVER_CMD_INVITE,
+    SERVER_CMD_GROUP_UPDATE,
+    SERVER_CMD_INTERFACE,
+    SERVER_CMD_BOOK,
+    SERVER_CMD_MARK,
+    SERVER_CMD_ACCOUNT,
 #ifdef USE_CHANNELS
-    BINARY_CMD_CHANNELMSG,
+    SERVER_CMD_CHANNELMSG,
 #endif
 
     BINAR_CMD /* last entry */
@@ -297,6 +322,54 @@ enum
 #define UPD_QUALITY         0x200
 #define UPD_ALL             0xffff
 
+/* Item apply values -- only set if F_APPLIED */
+#define A_READIED 1
+#define A_WIELDED 2
+#define A_WORN    3
+#define A_ACTIVE  4
+#define A_APPLIED 5
+
+/* Item flags. */
+/* TODO: Why the huge gap between F_APPLIED and F_ETHEREAL? F_ETHEREAL could be
+ * 1<<5 or 1<<6. Then we could fit these flags into a uint16 whereas now we
+ * need uint32.
+ *
+ * -- Smacky 20130305 */
+#define F_APPLIED   ((1 << 4) - 1)
+#define F_ETHEREAL  (1 <<  7)
+#define F_INVISIBLE (1 <<  8)
+#define F_UNPAID    (1 <<  9)
+#define F_MAGIC     (1 << 10)
+#define F_CURSED    (1 << 11)
+#define F_DAMNED    (1 << 12)
+#define F_OPEN      (1 << 13)
+#define F_NOPICK    (1 << 14)
+#define F_LOCKED    (1 << 15)
+#define F_TRAPED    (1 << 16)
+
+/* Map flags for thing over and thing under. */
+#define FFLAG_SLEEP     (1 << 0) // sleeping
+#define FFLAG_CONFUSED  (1 << 1) // confused
+#define FFLAG_PARALYZED (1 << 2) // paralyzed
+#define FFLAG_SCARED    (1 << 3) // scared - it will run away
+#define FFLAG_EATING    (1 << 4) // eating 
+#define FFLAG_INVISIBLE (1 << 5) // invisible (normal or gmaster)
+#define FFLAG_ETHEREAL  (1 << 6) // ethereal
+/* TODO: Unfortunately EATING was added in place of BLINDED at some point in
+ * the past. As SERVER_CMD_MAP2 only allows a uint8 here, there is not room to
+ * now readd BLINDED -- so we need to tweak the protocol to send/receive extra
+ * data (probably a whole byte). This requires a Y update. Still, the rest of
+ * the server has been tweaked in this commit (r7297) so it should be a simple
+ * case of removing this #if 0 9and updating the client).
+ *
+ * -- Smacky 20130305 */
+#if 0
+#define FFLAG_BLINDED   (1 << 7) // blinded
+#define FFLAG_PROBE     (1 << 8) // probed !Flag is set by map2 cmd!
+#else
+#define FFLAG_PROBE     (1 << 7) // probed !Flag is set by map2 cmd!
+#endif
+
 /* maximum reachable level */
 #define MAXLEVEL 110
 
@@ -309,6 +382,19 @@ typedef enum _gui_npc_mode
     GUI_NPC_MODE_END
 }
 _gui_npc_mode;
+
+typedef enum altact_mode_t
+{
+    ALTACT_MODE_ARCHERY,
+    ALTACT_MODE_SPELL,
+    ALTACT_MODE_SKILL,
+    ALTACT_MODE_PRAYER,
+    ALTACT_MODE_DEVICE,
+    ALTACT_MODE_THROWING,
+
+    ALTACT_NROF // must be last entry
+}
+altact_mode_t;
 
 extern int account_name_valid(char *cp);
 extern int account_char_valid(char c);
