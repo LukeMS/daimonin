@@ -37,16 +37,6 @@
  */
 #define MAX_SKILL   6
 
-/* defines for the ext map command */
-#define FFLAG_SLEEP     0x01        /* object sleeps */
-#define FFLAG_CONFUSED  0x02        /* object is confused */
-#define FFLAG_PARALYZED 0x04        /* object is paralyzed */
-#define FFLAG_SCARED    0x08        /* object is scared    */
-#define FFLAG_EATING    0x10        /* object is eating */
-#define FFLAG_INVISIBLE 0x20        /* object is invisible (but when send, player can see it) */
-#define FFLAG_ETHEREAL  0x40        /* object is etheral - but when send, object can be seen */
-#define FFLAG_PROBE     0x80        /* object is target of player */
-
 #define INPUT_MODE_NO      0
 #define INPUT_MODE_CONSOLE 1
 #define INPUT_MODE_NUMBER  4
@@ -142,27 +132,6 @@ typedef enum rangetype
 
 #define NDI_UNIQUE  0x10000 /* Print this out immediately, don't buffer */
 #define NDI_ALL     0x20000 /* Inform all players of this message */
-
-/* Flags for the item command */
-enum
-{
-    a_none,
-    a_readied,
-    a_wielded,
-    a_worn,
-    a_active,
-    a_applied
-};
-#define F_APPLIED       0x000F
-#define F_LOCATION      0x00F0
-#define F_UNPAID        0x0200
-#define F_MAGIC         0x0400
-#define F_CURSED        0x0800
-#define F_DAMNED        0x1000
-#define F_OPEN          0x2000
-#define F_NOPICK        0x4000
-#define F_LOCKED        0x8000
-#define F_TRAPED        0x10000
 
 #define SOUND_NORMAL    0
 #define SOUND_SPELL 1
