@@ -681,37 +681,43 @@ int read_anim_tmp(void)
     return load_anim_tmp(); /* all fine - load file */
 }
 
+/* Load FILE_CLIENT_ANIMS and get the data we need to compare with server. */
 void read_anims(void)
 {
-    FILE *stream;
+    FILE          *stream;
+    struct stat    statbuf;
+    int            len;
+    unsigned char *buf;
 
-    LOG(LOG_DEBUG, "Loading %s....", FILE_CLIENT_ANIMS);
+    LOG(LOG_MSG, "Reading file '%s'... ", FILE_CLIENT_ANIMS);
     srv_client_files[SRV_CLIENT_ANIMS].len = 0;
     srv_client_files[SRV_CLIENT_ANIMS].crc = 0;
 
-    if ((stream = fopen_wrapper(FILE_CLIENT_ANIMS, "rb")) != NULL)
+    if (!(stream = fopen_wrapper(FILE_CLIENT_ANIMS, "rb")))
     {
-        struct stat    statbuf;
-        int            i;
-        unsigned char *temp_buf;
-        size_t         dummy; // purely to suppress GCC's warn_unused_result warning
-
-        /* temp load the file and get the data we need for compare with
-         * server */
-        fstat(fileno(stream), &statbuf);
-        i = (int)statbuf.st_size;
-        srv_client_files[SRV_CLIENT_ANIMS].len = i;
-        MALLOC(temp_buf, i);
-        dummy = fread(temp_buf, sizeof(char), i, stream);
-        srv_client_files[SRV_CLIENT_ANIMS].crc = crc32(1L, temp_buf, i);
-        fclose(stream);
-        FREE(temp_buf);
-        LOG(LOG_DEBUG, " found file!(%d/%x)",
-            srv_client_files[SRV_CLIENT_ANIMS].len,
-            srv_client_files[SRV_CLIENT_ANIMS].crc);
+        LOG(LOG_ERROR, "FAILED (couldn't find file)!\n");
+        return;
     }
 
-    LOG(LOG_DEBUG, " done.\n");
+    fstat(fileno(stream), &statbuf);
+    len = (int)statbuf.st_size;
+    MALLOC(buf, len);
+
+    if (fread(buf, sizeof(char), len, stream) <= 0)
+    {
+        LOG(LOG_ERROR, "FAILED (couldn't read any data)!\n");
+    }
+    else
+    {
+        int crc = crc32(1L, buf, len);
+
+        LOG(LOG_MSG, "OK (length=%d, crc=%x)!\n", len, crc);
+        srv_client_files[SRV_CLIENT_ANIMS].len = len;
+        srv_client_files[SRV_CLIENT_ANIMS].crc = crc;
+    }
+
+    FREE(buf);
+    fclose(stream);
 }
 
 /* after we tested and/or created bmaps.p0 - load the data from it */
@@ -786,8 +792,6 @@ void read_bmaps_p0(void)
 
     while (fgets(buf, LARGE_BUF - 1, fpic) != NULL)
     {
-        size_t dummy; // purely to suppress GCC's warn_unused_result warning
-
         if (strncmp(buf, "IMAGE ", 6) != 0)
         {
             LOG(LOG_ERROR, "read_client_images:Bad image line - not IMAGE, instead\n%s", buf);
@@ -824,14 +828,18 @@ void read_bmaps_p0(void)
             MALLOC(temp_buf, bufsize);
         }
 
-        dummy = fread(temp_buf, 1, len, fpic);
+        if (fread(temp_buf, 1, len, fpic) <= 0)
+        {
+            LOG(LOG_ERROR, "Couldn't read data from file '%s'!", FILE_DAIMONIN_P0);
+            break;
+        }
+
         crc = crc32(1L, temp_buf, len);
         /* now we got all we needed! */
         sprintf(line_buf, "%d %d %x %s", num, pos, crc, cp);
         fputs(line_buf, fbmap);
         /*      LOG(LOG_DEBUG,"FOUND: %s\n", temp_buf);       */
     }
-
 
     FREE(temp_buf);
     fclose(fbmap);
@@ -965,42 +973,44 @@ create_bmap_tmp:
     return load_bmap_tmp(); /* all fine */
 }
 
-
+/* Load FILE_CLIENT_BMAPS and get the data we need to compare with server. */
 void read_bmaps(void)
 {
-    FILE *stream;
+    FILE          *stream;
+    struct stat    statbuf;
+    int            len;
+    unsigned char *buf;
 
+    LOG(LOG_MSG, "Reading file '%s'... ", FILE_CLIENT_BMAPS);
     srv_client_files[SRV_CLIENT_BMAPS].len = 0;
     srv_client_files[SRV_CLIENT_BMAPS].crc = 0;
-    LOG(LOG_DEBUG, "Reading %s....", FILE_CLIENT_BMAPS);
 
-    if ((stream = fopen_wrapper(FILE_CLIENT_BMAPS, "rb")) != NULL)
+    if (!(stream = fopen_wrapper(FILE_CLIENT_BMAPS, "rb")))
     {
-        struct stat    statbuf;
-        int            i;
-        unsigned char *temp_buf;
-        size_t         dummy; // purely to suppress GCC's warn_unused_result warning
+        LOG(LOG_ERROR, "FAILED (couldn't find file)!\n");
+        unlink(FILE_BMAPS_TMP);
+        return;
+    }
 
-        /* temp load the file and get the data we need for compare with
-         * server. */
-        fstat(fileno(stream), &statbuf);
-        i = (int)statbuf.st_size;
-        srv_client_files[SRV_CLIENT_BMAPS].len = i;
-        MALLOC(temp_buf, i);
-        dummy = fread(temp_buf, sizeof(char), i, stream);
-        srv_client_files[SRV_CLIENT_BMAPS].crc = crc32(1L, temp_buf, i);
-        fclose(stream);
-        FREE(temp_buf);
-        LOG(LOG_DEBUG, " found file!(%d/%x)",
-            srv_client_files[SRV_CLIENT_BMAPS].len,
-            srv_client_files[SRV_CLIENT_BMAPS].crc);
+    fstat(fileno(stream), &statbuf);
+    len = (int)statbuf.st_size;
+    MALLOC(buf, len);
+
+    if (fread(buf, sizeof(char), len, stream) <= 0)
+    {
+        LOG(LOG_ERROR, "FAILED (couldn't read any data)!\n");
     }
     else
     {
-        unlink(FILE_BMAPS_TMP);
+        int crc = crc32(1L, buf, len);
+
+        LOG(LOG_MSG, "OK (length=%d, crc=%x)!\n", len, crc);
+        srv_client_files[SRV_CLIENT_BMAPS].len = len;
+        srv_client_files[SRV_CLIENT_BMAPS].crc = crc;
     }
 
-    LOG(LOG_DEBUG, " done.\n");
+    FREE(buf);
+    fclose(stream);
 }
 
 /* in the setting files we have a list of chars templates
@@ -1224,46 +1234,52 @@ void load_settings(void)
     }
 }
 
+/* Load FILE_CLIENT_SETTINGS and get the data we need to compare with server. */
 void read_settings(void)
 {
-    FILE *stream;
+    FILE          *stream;
+    struct stat    statbuf;
+    int            len;
+    unsigned char *buf;
 
-    LOG(LOG_DEBUG, "Loading %s....", FILE_CLIENT_SETTINGS);
+    LOG(LOG_MSG, "Reading file '%s'... ", FILE_CLIENT_SETTINGS);
     srv_client_files[SRV_CLIENT_SETTINGS].len = 0;
     srv_client_files[SRV_CLIENT_SETTINGS].crc = 0;
 
-    if ((stream = fopen_wrapper(FILE_CLIENT_SETTINGS, "rb")) != NULL)
+    if (!(stream = fopen_wrapper(FILE_CLIENT_SETTINGS, "rb")))
     {
-        struct stat    statbuf;
-        int            i;
-        unsigned char *temp_buf;
-        size_t         dummy; // purely to suppress GCC's warn_unused_result warning
-
-        /* temp load the file and get the data we need for compare with
-         * server */
-        fstat(fileno(stream), &statbuf);
-        i = (int)statbuf.st_size;
-        srv_client_files[SRV_CLIENT_SETTINGS].len = i;
-        MALLOC(temp_buf, i);
-        dummy = fread(temp_buf, sizeof(char), i, stream);
-        srv_client_files[SRV_CLIENT_SETTINGS].crc = crc32(1L, temp_buf, i);
-        fclose(stream);
-        FREE(temp_buf);
-        LOG(LOG_DEBUG, " found file!(%d/%x)",
-            srv_client_files[SRV_CLIENT_SETTINGS].len,
-            srv_client_files[SRV_CLIENT_SETTINGS].crc);
+        LOG(LOG_ERROR, "FAILED (couldn't find file)!\n");
+        return;
     }
 
-    LOG(LOG_DEBUG, " done.\n");
+    fstat(fileno(stream), &statbuf);
+    len = (int)statbuf.st_size;
+    MALLOC(buf, len);
+
+    if (fread(buf, sizeof(char), len, stream) <= 0)
+    {
+        LOG(LOG_ERROR, "FAILED (couldn't read any data)!\n");
+    }
+    else
+    {
+        int crc = crc32(1L, buf, len);
+
+        LOG(LOG_MSG, "OK (length=%d, crc=%x)!\n", len, crc);
+        srv_client_files[SRV_CLIENT_SETTINGS].len = len;
+        srv_client_files[SRV_CLIENT_SETTINGS].crc = crc;
+    }
+
+    FREE(buf);
+    fclose(stream);
 }
 
 void read_spells(void)
 {
-    int         i, ii, panel;
+    int         i, ii, panel, len;
     char        type, nchar, *tmp, *tmp2;
     struct stat statbuf;
     FILE       *stream;
-    unsigned char *temp_buf;
+    unsigned char *buf;
     char        spath[255],line[255], name[255], d1[255], d2[255], d3[255], d4[255], icon[128];
 
     for (i = 0; i < SPELL_LIST_MAX; i++)
@@ -1280,114 +1296,123 @@ void read_spells(void)
     spell_list_set.entry_nr = 0;
     spell_list_set.group_nr = 0;
 
+    LOG(LOG_MSG, "Reading '%s'... ", FILE_CLIENT_SPELLS);
     srv_client_files[SRV_CLIENT_SPELLS].len = 0;
     srv_client_files[SRV_CLIENT_SPELLS].crc = 0;
-    LOG(LOG_DEBUG, "Reading %s.... ", FILE_CLIENT_SPELLS);
-    if ((stream = fopen_wrapper(FILE_CLIENT_SPELLS, "rb")) != NULL)
+
+    if (!(stream = fopen_wrapper(FILE_CLIENT_SPELLS, "rb")))
     {
-        size_t dummy; // purely to suppress GCC's warn_unused_result warning
-
-        /* temp load the file and get the data we need for compare with
-         * server */
-        fstat(fileno(stream), &statbuf);
-        i = (int) statbuf.st_size;
-        srv_client_files[SRV_CLIENT_SPELLS].len = i;
-        MALLOC(temp_buf, i);
-        dummy = fread(temp_buf, sizeof(char), i, stream);
-        srv_client_files[SRV_CLIENT_SPELLS].crc = crc32(1L, temp_buf, i);
-        FREE(temp_buf);
-        rewind(stream);
-
-        for (i = 0; ; i++)
-        {
-            if (fgets(line, 255, stream) == NULL)
-                break;
-            line[250] = 0;
-            tmp = strchr(line, '"');
-            tmp2 = strchr(tmp + 1, '"');
-            *tmp2 = 0;
-            strcpy(name, tmp + 1);
-            if (fgets(line, 255, stream) == NULL)
-                break;
-            sscanf(line, "%c %c %s %s", &type, &nchar, spath, icon);
-            /*LOG(-1,"STRING:(%s) >%s< >%s<\n",line,  spath, icon);*/
-            if (isdigit(spath[0]))
-            {
-                panel = atoi(spath)-1;
-                if (panel >=SPELL_LIST_MAX)
-                {
-                    LOG(LOG_DEBUG,"BUG: spell path out of range (%d) for line %s\n", panel, line);
-                    panel = 0;
-                }
-            }
-            else
-            {
-                int a;
-
-                panel = -1;
-                for (a=0;a<SPELL_LIST_MAX;a++)
-                {
-                    if (!strcmp(spell_tab[a], spath))
-                    {
-                        panel = a;
-                    }
-                }
-                if (panel == -1)
-                {
-                    LOG(LOG_DEBUG,"BUG: spell path out of range/wrong name (%s) for line %s\n", spath, line);
-                    panel = 0;
-                }
-            }
-            if (fgets(line, 255, stream) == NULL)
-                break;
-            line[250] = 0;
-            tmp = strchr(line, '"');
-            tmp2 = strchr(tmp + 1, '"');
-            *tmp2 = 0;
-            strcpy(d1, tmp + 1);
-            if (fgets(line, 255, stream) == NULL)
-                break;
-            line[250] = 0;
-            tmp = strchr(line, '"');
-            tmp2 = strchr(tmp + 1, '"');
-            *tmp2 = 0;
-            strcpy(d2, tmp + 1);
-            if (fgets(line, 255, stream) == NULL)
-                break;
-            line[250] = 0;
-            tmp = strchr(line, '"');
-            tmp2 = strchr(tmp + 1, '"');
-            *tmp2 = 0;
-            strcpy(d3, tmp + 1);
-            if (fgets(line, 255, stream) == NULL)
-                break;
-            line[250] = 0;
-            tmp = strchr(line, '"');
-            tmp2 = strchr(tmp + 1, '"');
-            *tmp2 = 0;
-            strcpy(d4, tmp + 1);
-            spell_list[panel].entry[type == 'w' ? 0 : 1][nchar - 'a'].flag = LIST_ENTRY_USED;
-            strcpy(spell_list[panel].entry[type == 'w' ? 0 : 1][nchar - 'a'].icon_name, icon);
-            sprintf(line, "%s%s", GetIconDirectory(), icon);
-            spell_list[panel].entry[type == 'w' ? 0 : 1][nchar - 'a'].icon = sprite_load_file(line, SURFACE_FLAG_DISPLAYFORMAT);
-
-            strcpy(spell_list[panel].entry[type == 'w' ? 0 : 1][nchar - 'a'].name, name);
-            strcpy(spell_list[panel].entry[type == 'w' ? 0 : 1][nchar - 'a'].desc[0], d1);
-            strcpy(spell_list[panel].entry[type == 'w' ? 0 : 1][nchar - 'a'].desc[1], d2);
-            strcpy(spell_list[panel].entry[type == 'w' ? 0 : 1][nchar - 'a'].desc[2], d3);
-            strcpy(spell_list[panel].entry[type == 'w' ? 0 : 1][nchar - 'a'].desc[3], d4);
-        }
-        fclose(stream);
-        LOG(LOG_DEBUG, " found file!(%d/%x)", srv_client_files[SRV_CLIENT_SPELLS].len,
-            srv_client_files[SRV_CLIENT_SPELLS].crc);
+        LOG(LOG_ERROR, "FAILED (couldn't read file)!\n");
+        return;
     }
-    LOG(LOG_DEBUG, "done.\n");
+
+    fstat(fileno(stream), &statbuf);
+    len = (int)statbuf.st_size;
+    MALLOC(buf, len);
+
+    if (fread(buf, sizeof(char), len, stream) <= 0)
+    {
+        LOG(LOG_ERROR, "FAILED (couldn't read any data)!\n");
+        FREE(buf);
+        fclose(stream);
+        return;
+    }
+
+    srv_client_files[SRV_CLIENT_SPELLS].len = len;
+    srv_client_files[SRV_CLIENT_SPELLS].crc = crc32(1L, buf, len);
+    FREE(buf);
+    rewind(stream);
+
+    for (i = 0; ; i++)
+    {
+        if (fgets(line, 255, stream) == NULL)
+            break;
+        line[250] = 0;
+        tmp = strchr(line, '"');
+        tmp2 = strchr(tmp + 1, '"');
+        *tmp2 = 0;
+        strcpy(name, tmp + 1);
+        if (fgets(line, 255, stream) == NULL)
+            break;
+        sscanf(line, "%c %c %s %s", &type, &nchar, spath, icon);
+        /*LOG(-1,"STRING:(%s) >%s< >%s<\n",line,  spath, icon);*/
+        if (isdigit(spath[0]))
+        {
+            panel = atoi(spath)-1;
+            if (panel >=SPELL_LIST_MAX)
+            {
+                LOG(LOG_DEBUG,"BUG: spell path out of range (%d) for line %s\n", panel, line);
+                panel = 0;
+            }
+        }
+        else
+        {
+            int a;
+
+            panel = -1;
+            for (a=0;a<SPELL_LIST_MAX;a++)
+            {
+                if (!strcmp(spell_tab[a], spath))
+                {
+                    panel = a;
+                }
+            }
+            if (panel == -1)
+            {
+                LOG(LOG_DEBUG,"BUG: spell path out of range/wrong name (%s) for line %s\n", spath, line);
+                panel = 0;
+            }
+        }
+        if (fgets(line, 255, stream) == NULL)
+            break;
+        line[250] = 0;
+        tmp = strchr(line, '"');
+        tmp2 = strchr(tmp + 1, '"');
+        *tmp2 = 0;
+        strcpy(d1, tmp + 1);
+        if (fgets(line, 255, stream) == NULL)
+            break;
+        line[250] = 0;
+        tmp = strchr(line, '"');
+        tmp2 = strchr(tmp + 1, '"');
+        *tmp2 = 0;
+        strcpy(d2, tmp + 1);
+        if (fgets(line, 255, stream) == NULL)
+            break;
+        line[250] = 0;
+        tmp = strchr(line, '"');
+        tmp2 = strchr(tmp + 1, '"');
+        *tmp2 = 0;
+        strcpy(d3, tmp + 1);
+        if (fgets(line, 255, stream) == NULL)
+            break;
+        line[250] = 0;
+        tmp = strchr(line, '"');
+        tmp2 = strchr(tmp + 1, '"');
+        *tmp2 = 0;
+        strcpy(d4, tmp + 1);
+        spell_list[panel].entry[type == 'w' ? 0 : 1][nchar - 'a'].flag = LIST_ENTRY_USED;
+        strcpy(spell_list[panel].entry[type == 'w' ? 0 : 1][nchar - 'a'].icon_name, icon);
+        sprintf(line, "%s%s", GetIconDirectory(), icon);
+        spell_list[panel].entry[type == 'w' ? 0 : 1][nchar - 'a'].icon = sprite_load_file(line, SURFACE_FLAG_DISPLAYFORMAT);
+
+        strcpy(spell_list[panel].entry[type == 'w' ? 0 : 1][nchar - 'a'].name, name);
+        strcpy(spell_list[panel].entry[type == 'w' ? 0 : 1][nchar - 'a'].desc[0], d1);
+        strcpy(spell_list[panel].entry[type == 'w' ? 0 : 1][nchar - 'a'].desc[1], d2);
+        strcpy(spell_list[panel].entry[type == 'w' ? 0 : 1][nchar - 'a'].desc[2], d3);
+        strcpy(spell_list[panel].entry[type == 'w' ? 0 : 1][nchar - 'a'].desc[3], d4);
+    }
+
+    fclose(stream);
+    LOG(LOG_MSG, "OK (length=%d, crc=%x)!\n",
+        srv_client_files[SRV_CLIENT_SPELLS].len,
+        srv_client_files[SRV_CLIENT_SPELLS].crc);
 }
 
 void read_skills(void)
 {
-    int         i, ii, panel;
-    unsigned char *temp_buf;
+    int         i, ii, panel, len;
+    unsigned char *buf;
     char        nchar, *tmp, *tmp2;
     struct stat statbuf;
     FILE       *stream;
@@ -1405,85 +1430,93 @@ void read_skills(void)
     skill_list_set.group_nr = 0;
     skill_list_set.entry_nr = 0;
 
+    LOG(LOG_MSG, "Reading '%s'... ", FILE_CLIENT_SKILLS);
     srv_client_files[SRV_CLIENT_SKILLS].len = 0;
     srv_client_files[SRV_CLIENT_SKILLS].crc = 0;
 
-    LOG(LOG_DEBUG, "Reading %s....", FILE_CLIENT_SKILLS);
-    if ((stream = fopen_wrapper(FILE_CLIENT_SKILLS, "rb")) != NULL)
+    if (!(stream = fopen_wrapper(FILE_CLIENT_SKILLS, "rb")))
     {
-        size_t dummy; // purely to suppress GCC's warn_unused_result warning
-
-        /* temp load the file and get the data we need for compare with
-         * server */
-        fstat(fileno(stream), &statbuf);
-        i = (int) statbuf.st_size;
-        srv_client_files[SRV_CLIENT_SKILLS].len = i;
-        MALLOC(temp_buf, i);
-        dummy = fread(temp_buf, sizeof(char), i, stream);
-        srv_client_files[SRV_CLIENT_SKILLS].crc = crc32(1L, temp_buf, i);
-        FREE(temp_buf);
-        rewind(stream);
-
-        for (i = 0; ; i++)
-        {
-            if (fgets(line, 255, stream) == NULL)
-                break;
-            line[250] = 0;
-            tmp = strchr(line, '"');
-            tmp2 = strchr(tmp + 1, '"');
-            *tmp2 = 0;
-            strcpy(name, tmp + 1);
-            if (fgets(line, 255, stream) == NULL)
-                break;
-            sscanf(line, "%d %c %s", &panel, &nchar, icon);
-            if (fgets(line, 255, stream) == NULL)
-                break;
-            line[250] = 0;
-            tmp = strchr(line, '"');
-            tmp2 = strchr(tmp + 1, '"');
-            *tmp2 = 0;
-            strcpy(d1, tmp + 1);
-            if (fgets(line, 255, stream) == NULL)
-                break;
-            line[250] = 0;
-            tmp = strchr(line, '"');
-            tmp2 = strchr(tmp + 1, '"');
-            *tmp2 = 0;
-            strcpy(d2, tmp + 1);
-            if (fgets(line, 255, stream) == NULL)
-                break;
-            line[250] = 0;
-            tmp = strchr(line, '"');
-            tmp2 = strchr(tmp + 1, '"');
-            *tmp2 = 0;
-            strcpy(d3, tmp + 1);
-            if (fgets(line, 255, stream) == NULL)
-                break;
-            line[250] = 0;
-            tmp = strchr(line, '"');
-            tmp2 = strchr(tmp + 1, '"');
-            *tmp2 = 0;
-            strcpy(d4, tmp + 1);
-
-            skill_list[panel].entry[nchar - 'a'].flag = LIST_ENTRY_USED;
-            skill_list[panel].entry[nchar - 'a'].exp = 0;
-            skill_list[panel].entry[nchar - 'a'].exp_level = 0;
-
-            strcpy(skill_list[panel].entry[nchar - 'a'].icon_name, icon);
-            sprintf(line, "%s%s", GetIconDirectory(), icon);
-            skill_list[panel].entry[nchar - 'a'].icon = sprite_load_file(line, SURFACE_FLAG_DISPLAYFORMAT);
-
-            strcpy(skill_list[panel].entry[nchar - 'a'].name, name);
-            strcpy(skill_list[panel].entry[nchar - 'a'].desc[0], d1);
-            strcpy(skill_list[panel].entry[nchar - 'a'].desc[1], d2);
-            strcpy(skill_list[panel].entry[nchar - 'a'].desc[2], d3);
-            strcpy(skill_list[panel].entry[nchar - 'a'].desc[3], d4);
-        }
-        fclose(stream);
-        LOG(LOG_DEBUG, " found file!(%d/%x)", srv_client_files[SRV_CLIENT_SKILLS].len,
-            srv_client_files[SRV_CLIENT_SKILLS].crc);
+        LOG(LOG_ERROR, "FAILED (couldn't read file)!\n");
+        return;
     }
-    LOG(LOG_DEBUG, "done.\n");
+
+    fstat(fileno(stream), &statbuf);
+    len = (int)statbuf.st_size;
+    MALLOC(buf, len);
+
+    if (fread(buf, sizeof(char), len, stream) <= 0)
+    {
+        LOG(LOG_ERROR, "FAILED (couldn't read any data)!\n");
+        FREE(buf);
+        fclose(stream);
+        return;
+    }
+
+    srv_client_files[SRV_CLIENT_SKILLS].len = len;
+    srv_client_files[SRV_CLIENT_SKILLS].crc = crc32(1L, buf, len);
+    FREE(buf);
+    rewind(stream);
+
+    for (i = 0; ; i++)
+    {
+        if (fgets(line, 255, stream) == NULL)
+            break;
+        line[250] = 0;
+        tmp = strchr(line, '"');
+        tmp2 = strchr(tmp + 1, '"');
+        *tmp2 = 0;
+        strcpy(name, tmp + 1);
+        if (fgets(line, 255, stream) == NULL)
+            break;
+        sscanf(line, "%d %c %s", &panel, &nchar, icon);
+        if (fgets(line, 255, stream) == NULL)
+            break;
+        line[250] = 0;
+        tmp = strchr(line, '"');
+        tmp2 = strchr(tmp + 1, '"');
+        *tmp2 = 0;
+        strcpy(d1, tmp + 1);
+        if (fgets(line, 255, stream) == NULL)
+            break;
+        line[250] = 0;
+        tmp = strchr(line, '"');
+        tmp2 = strchr(tmp + 1, '"');
+        *tmp2 = 0;
+        strcpy(d2, tmp + 1);
+        if (fgets(line, 255, stream) == NULL)
+            break;
+        line[250] = 0;
+        tmp = strchr(line, '"');
+        tmp2 = strchr(tmp + 1, '"');
+        *tmp2 = 0;
+        strcpy(d3, tmp + 1);
+        if (fgets(line, 255, stream) == NULL)
+            break;
+        line[250] = 0;
+        tmp = strchr(line, '"');
+        tmp2 = strchr(tmp + 1, '"');
+        *tmp2 = 0;
+        strcpy(d4, tmp + 1);
+
+        skill_list[panel].entry[nchar - 'a'].flag = LIST_ENTRY_USED;
+        skill_list[panel].entry[nchar - 'a'].exp = 0;
+        skill_list[panel].entry[nchar - 'a'].exp_level = 0;
+
+        strcpy(skill_list[panel].entry[nchar - 'a'].icon_name, icon);
+        sprintf(line, "%s%s", GetIconDirectory(), icon);
+        skill_list[panel].entry[nchar - 'a'].icon = sprite_load_file(line, SURFACE_FLAG_DISPLAYFORMAT);
+
+        strcpy(skill_list[panel].entry[nchar - 'a'].name, name);
+        strcpy(skill_list[panel].entry[nchar - 'a'].desc[0], d1);
+        strcpy(skill_list[panel].entry[nchar - 'a'].desc[1], d2);
+        strcpy(skill_list[panel].entry[nchar - 'a'].desc[2], d3);
+        strcpy(skill_list[panel].entry[nchar - 'a'].desc[3], d4);
+    }
+
+    fclose(stream);
+    LOG(LOG_MSG, "OK (length=%d, crc=%x)!\n",
+        srv_client_files[SRV_CLIENT_SKILLS].len,
+        srv_client_files[SRV_CLIENT_SKILLS].crc);
 }
 
 
@@ -1873,17 +1906,18 @@ void load_quickslots_entrys()
     char        name[40], server[2048];
     _quickslot  quickslots[MAX_QUICK_SLOTS];
     FILE       *stream;
-    size_t      dummy; // purely to suppress GCC's warn_unused_result warning
 
     if (!(stream = fopen_wrapper(QUICKSLOT_FILE, "rb")))
         return;
-    dummy = fread(&header, sizeof(header), 1, stream);
-    if (header != QUICKSLOT_FILE_HEADER)
+
+    if (fread(&header, sizeof(header), 1, stream) <= 0 ||
+        header != QUICKSLOT_FILE_HEADER)
     {
         fclose(stream);
         remove(file_path(QUICKSLOT_FILE, ""));
         return;
     }
+
     while (readNextQuickSlots(stream, server, &port, name, quickslots))
     {
         if (!strcmp(ServerName, server) && ServerPort == port)
@@ -2015,7 +2049,6 @@ void save_quickslots_entrys()
             {
                 char  *buf;
                 long   pos = ftell(stream);
-                size_t dummy; // purely to suppress GCC's warn_unused_result warning
 
                 if (!(freopen(file_path(QUICKSLOT_FILE, "rb+"),"rb+",stream)))
                     return;
@@ -2024,7 +2057,15 @@ void save_quickslots_entrys()
                 w = ftell(stream) - pos;
                 MALLOC(buf, w);
                 fseek(stream, pos, SEEK_SET);
-                dummy = fread(buf, 1, w, stream);
+
+                if (fread(buf, 1, w, stream) <= 0)
+                {
+                    LOG(LOG_ERROR, "Failed to read data from file '%s'!\n", QUICKSLOT_FILE);
+                    fclose(stream);
+                    freeQuickSlots(quick_slots, MAX_QUICK_SLOTS);
+                    return;
+                }
+
                 fseek(stream, pos + n, SEEK_SET);
                 fwrite(buf, 1, w, stream);
                 if (n < 0)
@@ -2032,7 +2073,14 @@ void save_quickslots_entrys()
                     w = ftell(stream);
                     rewind(stream);
                     buf = (char *)realloc(buf, w);
-                    dummy = fread(buf, 1, w, stream);
+
+                    if (fread(buf, 1, w, stream) <= 0)
+                    {
+                        LOG(LOG_ERROR, "Failed to read data from file '%s'!\n", QUICKSLOT_FILE);
+                        fclose(stream);
+                        freeQuickSlots(quick_slots, MAX_QUICK_SLOTS);
+                        return;
+                    }
 
                     if (!(freopen(file_path(QUICKSLOT_FILE, "wb+"), "wb+", stream)))
                         return;

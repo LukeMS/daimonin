@@ -143,7 +143,6 @@ int main(int argc, char *argv[])
     int version_nr, version_def_nr, patched=0;
     char version[256], buf[256], *string_pos;
     char file_name[256], md5[64];
-    char *dummy; // purely to avoid GCC's warn_unused_result warning
     int i;
 
 #ifndef WIN32
@@ -236,7 +235,12 @@ int main(int argc, char *argv[])
         exit(-2);
     }
 
-    dummy = fgets(version, 128 - 1, version_handle);
+    if (fgets(version, 128 - 1, version_handle) <= 0)
+    {
+        fclose(version_handle);
+        updater_error("\nCan't find version info.\nRun file check.\nPRESS RETURN\n");
+    }
+
     /* we don't close the version file here because we need to hold the lock of it */
 
     adjust_string(version);

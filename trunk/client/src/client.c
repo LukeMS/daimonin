@@ -1027,21 +1027,31 @@ static int load_picture_from_pack(int num)
 {
     FILE       *stream;
     char       *pbuf;
-    size_t      dummy; // purely to avoid GCC's warn_unused_result warning
-    SDL_RWops  *rwop;
 
-    if ((stream = fopen_wrapper(FILE_DAIMONIN_P0, "rb")) == NULL)
+    if (!(stream = fopen_wrapper(FILE_DAIMONIN_P0, "rb")))
+    {
         return 1;
+    }
 
     lseek(fileno(stream), bmaptype_table[num].pos, SEEK_SET);
-
     MALLOC(pbuf, bmaptype_table[num].len);
-    dummy = fread(pbuf, bmaptype_table[num].len, 1, stream);
-    rwop = SDL_RWFromMem(pbuf, bmaptype_table[num].len);
-    FaceList[num].sprite = sprite_tryload_file(NULL, 0, rwop);
 
-    if (FaceList[num].sprite)
-        face_flag_extension(num, FaceList[num].name);
+    if (fread(pbuf, bmaptype_table[num].len, 1, stream) <= 0)
+    {
+        LOG(LOG_ERROR, "Could not read data from facepack file '%s'!\n",
+            FILE_DAIMONIN_P0);
+    }
+    else
+    {
+        SDL_RWops  *rwop = SDL_RWFromMem(pbuf, bmaptype_table[num].len);
+
+        FaceList[num].sprite = sprite_tryload_file(NULL, 0, rwop);
+
+        if (FaceList[num].sprite)
+        {
+            face_flag_extension(num, FaceList[num].name);
+        }
+    }
 
     fclose(stream);
     FREE(pbuf);
