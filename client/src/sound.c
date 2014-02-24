@@ -70,38 +70,44 @@ char *str_dup(const char *str)
     return ret;
 }
 
+/* Load FILE_CLIENT_SOUNDS and get the data we need to compare with server. */
 void read_sounds(void)
 {
 #ifdef INSTALL_SOUND
-    FILE *stream;
+    FILE          *stream;
+    struct stat    statbuf;
+    int            len;
+    unsigned char *buf;
 
+    LOG(LOG_MSG, "Reading file '%s'... ", FILE_CLIENT_SOUNDS);
     srv_client_files[SRV_CLIENT_SOUNDS].len = 0;
     srv_client_files[SRV_CLIENT_SOUNDS].crc = 0;
-    LOG(LOG_DEBUG, "Reading %s....", FILE_CLIENT_SOUNDS);
 
-    if ((stream = fopen_wrapper(FILE_CLIENT_SOUNDS, "rb")) != NULL)
+    if (!(stream = fopen_wrapper(FILE_CLIENT_SOUNDS, "rb")))
     {
-        struct stat    statbuf;
-        int            i;
-        unsigned char *temp_buf;
-        size_t         dummy; // purely to avoid GCC's warn_unused_result warning
-
-        /* temp load the file and get the data we need for compare with
-         * server. */
-        fstat(fileno(stream), &statbuf);
-        i = (int) statbuf.st_size;
-        srv_client_files[SRV_CLIENT_SOUNDS].len = i;
-        MALLOC(temp_buf, i);
-        dummy = fread(temp_buf, sizeof(char), i, stream);
-        srv_client_files[SRV_CLIENT_SOUNDS].crc = crc32(1L, temp_buf, i);
-        FREE(temp_buf);
-        fclose(stream);
-        LOG(LOG_DEBUG, " found file!(%d/%x)",
-            srv_client_files[SRV_CLIENT_SOUNDS].len,
-            srv_client_files[SRV_CLIENT_SOUNDS].crc);
+        LOG(LOG_ERROR, "FAILED (couldn't find file)!\n");
+        return;
     }
 
-    LOG(LOG_DEBUG, " done.\n");
+    fstat(fileno(stream), &statbuf);
+    len = (int)statbuf.st_size;
+    MALLOC(buf, len);
+
+    if (fread(buf, sizeof(char), len, stream) <= 0)
+    {
+        LOG(LOG_ERROR, "FAILED (couldn't read any data)!\n");
+    }
+    else
+    {
+        int crc = crc32(1L, buf, len);
+
+        LOG(LOG_MSG, "OK (length=%d, crc=%x)!", len, crc);
+        srv_client_files[SRV_CLIENT_SOUNDS].len = len;
+        srv_client_files[SRV_CLIENT_SOUNDS].crc = crc;
+    }
+
+    FREE(buf);
+    fclose(stream);
 #endif
 }
 
