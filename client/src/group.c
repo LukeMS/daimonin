@@ -39,7 +39,7 @@ static int              group_pos[GROUP_MAX_MEMBER][2]      =
  */
 void widget_show_group(int x, int y)
 {
-    int         s, len, mb, mx, my;
+    int         s, len;
     SDL_Rect    box;
     char        buf[256];
 
@@ -67,8 +67,6 @@ void widget_show_group(int x, int y)
         return;
     }
 
-
-    mb = SDL_GetMouseState(&mx, &my);
     if (global_group_status == GROUP_INVITE || global_group_status == GROUP_WAIT)
     {
         sprite_blt(Bitmaps[BITMAP_GROUP_INVITE], x + 10, y +32, NULL, NULL);
@@ -181,7 +179,7 @@ void widget_show_group(int x, int y)
  */
 void show_group(int x, int y)
 {
-    int         s, len, mb, mx, my;
+    int         s, len;
     SDL_Rect    box;
     char        buf[256];
 
@@ -201,8 +199,6 @@ void show_group(int x, int y)
         return;
     }
 
-
-    mb = SDL_GetMouseState(&mx, &my);
     if (global_group_status == GROUP_INVITE || global_group_status == GROUP_WAIT)
     {
         sprite_blt(Bitmaps[BITMAP_GROUP_INVITE], x + group_pos[0][0] + 2, y + group_pos[0][1] + 1, NULL, NULL);

@@ -2060,7 +2060,7 @@ static void ShowGUIFurniture(uint16 x, uint16 y)
                                   1 : 0;
                     }
 
-                    sprintf(cmd, "%s", gui_npc->link_selected->command);
+                    sprintf(cmd, "%s", gui_npc->link_selected->command + off); // off might not be needed
                 }
 
                 /* Check for a selected button. */
@@ -3328,7 +3328,7 @@ static void SendCommand(void)
 
             if (link->command)
             {
-                sprintf(cmd, "%s", link->command);
+                sprintf(cmd, "%s", link->command + off); // off might not be needed
             }
         }
 

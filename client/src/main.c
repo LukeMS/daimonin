@@ -1792,12 +1792,12 @@ int main(int argc, char *argv[])
 #if (1) /* unused. Toggle is still buggy in SDL */
         if (ToggleScreenFlag)
         {
-            uint32  flags, tf;
+            uint32  flags;
             if (options.fullscreen)
                 options.fullscreen = 0;
             else
                 options.fullscreen = 1;
-            tf = flags = get_video_flags();
+            flags = get_video_flags();
             attempt_fullscreen_toggle(&ScreenSurface, &flags);
             ToggleScreenFlag = 0;
         }
