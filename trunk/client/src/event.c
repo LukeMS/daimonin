@@ -2163,7 +2163,9 @@ void quickslot_key(SDL_KeyboardEvent *key, int slot)
 
 static void move_keys(int num)
 {
+#ifdef DEBUG_TEXT
     char buf[MEDIUM_BUF];
+#endif
 
     if (cpl.menustatus != MENU_NO)
         reset_menu_status();
@@ -2188,7 +2190,6 @@ static void move_keys(int num)
     /* thats the range menu - we handle it messages unique */
     else if (cpl.firekey_on || cpl.fire_on)
     {
-        int itemid = -1;
         char *tmp_name = NULL;
 
         if (RangeFireMode == FIRE_MODE_SKILL)
@@ -2218,7 +2219,6 @@ static void move_keys(int num)
         }
         else
         {
-            itemid = fire_mode_tab[RangeFireMode].item;
 
 /*            sprintf(buf, "/%s %d %d %d", directionsfire[num], RangeFireMode, fire_mode_tab[RangeFireMode].item,
                     fire_mode_tab[RangeFireMode].amun);
@@ -2251,10 +2251,12 @@ static void move_keys(int num)
     else
     {
         send_move_command(num, 0);
+#ifdef DEBUG_TEXT
         buf[0] = '\0';
     }
-#ifdef DEBUG_TEXT
     textwin_showstring(COLOR_DGOLD, "%s", directions_name[num]);
+#else
+    }
 #endif
 }
 

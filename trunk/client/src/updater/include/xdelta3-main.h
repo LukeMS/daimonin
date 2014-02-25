@@ -2706,7 +2706,7 @@ main_set_source (xd3_stream *stream, int cmd,
 
 static void
 main_set_winsize (main_file *ifile) {
-  xoff_t file_size;
+  xoff_t file_size = 0;
 
   if (main_file_stat (ifile, &file_size, 0) == 0)
     {
@@ -3595,7 +3595,6 @@ xdelta_main (int argc, char **argv)
       s = strchr (flags, ret);
       if (s && s[1] && s[1] == ':')
 	{
-	  int eqcase = 0;
 	  int option = s[2] && s[2] == ':';
 
 	  /* Case 1, set optarg to the remaining characters. */
@@ -3632,7 +3631,6 @@ xdelta_main (int argc, char **argv)
 	    {
 	      /* Remove the = in all cases. */
 	      my_optarg += 1;
-	      eqcase = 1;
 
 	      if (option && *my_optarg == 0)
 		{

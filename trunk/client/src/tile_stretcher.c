@@ -177,9 +177,12 @@ Uint32 TS_GetPixel(SDL_Surface *screen, int x, int y)
 
 int add_color_to_surface(SDL_Surface *dest,Uint8 red,Uint8 green,Uint8 blue)
 {
-    int i; int r_code;
-
     Uint8 ncol = dest->format->palette->ncolors;
+/* What is this function trying to do? This code does nothing useful. Perhaps
+ * colors[] should be written to dest->format->palette->colors[] at the end?
+ * -- Smacky 20140225 */
+#if 0
+    int i;
     SDL_Color colors[256];
     for (i = 0; i < ncol; i++)
     {
@@ -191,10 +194,9 @@ int add_color_to_surface(SDL_Surface *dest,Uint8 red,Uint8 green,Uint8 blue)
     colors[ncol].r = red;
     colors[ncol].g = green;
     colors[ncol].b = blue;
+#endif
     ncol++;
 
-    r_code = SDL_SetColors(dest, colors, 0 , ncol);
-    //printf("return code=%d",r_code);
     dest->format->palette->ncolors=ncol;  /* only I could get it to work... */
     return 0;
 }
@@ -371,14 +373,12 @@ SDL_Surface *tile_stretch(SDL_Surface *src, int n, int e, int s, int w)
     int dest_ey;
     float dest_slope;
 
-    int dest_sx_2;
     int dest_sy_2;
-    int dest_ex_2;
     int dest_ey_2;
     float dest_slope_2;
 
     int dest_x_inc;   int dest_y_inc;   float kicker;
-    int dest_x_inc_2; int dest_y_inc_2; float kicker_2;
+    int dest_y_inc_2; float kicker_2;
 
     int x1; int y1; int y2;
     int at_least_one;
@@ -460,17 +460,13 @@ SDL_Surface *tile_stretch(SDL_Surface *src, int n, int e, int s, int w)
 
         if ( (ln_num==0)||(ln_num==2) )
         {
-            dest_sx_2    = dest_lines[ln_num+1].sx;
             dest_sy_2    = dest_lines[ln_num+1].sy;
-            dest_ex_2    = dest_lines[ln_num+1].end_x;
             dest_ey_2    = dest_lines[ln_num+1].end_y;
             dest_slope_2 = dest_lines[ln_num+1].slope;
         }
         else
         {
-            dest_sx_2    = dest_lines[ln_num].sx;
             dest_sy_2    = dest_lines[ln_num].sy;
-            dest_ex_2    = dest_lines[ln_num].end_x;
             dest_ey_2    = dest_lines[ln_num].end_y;
             dest_slope_2 = dest_lines[ln_num].slope;
         }
@@ -478,7 +474,6 @@ SDL_Surface *tile_stretch(SDL_Surface *src, int n, int e, int s, int w)
         if (dest_sy>dest_ey) dest_y_inc = -1 ;  else dest_y_inc = 1;
         if (dest_sx>dest_ex) dest_x_inc = -1 ;  else dest_x_inc = 1;
         if (dest_sy_2>dest_ey_2) dest_y_inc_2 = -1 ;  else dest_y_inc_2 = 1;
-        if (dest_sx_2>dest_ex_2) dest_x_inc_2 = -1 ;  else dest_x_inc_2 = 1;
 
         x1=dest_sx; y1=dest_sy; kicker = 0.0;
 
@@ -487,7 +482,7 @@ SDL_Surface *tile_stretch(SDL_Surface *src, int n, int e, int s, int w)
         at_least_one = 0;
 
         //printf("x1=%d,y1=%d, dest_ex=%d, dest_ey=%d dest_slope=%f\n",x1,y1,dest_ex,dest_ey,dest_slope);
-        //printf("x1=%d,y1=%d, dest_ex_2=%d, dest_ey_2=%d dest_slope_2=%f\n",x1,y1,dest_ex_2,dest_ey_2,dest_slope_2);
+        //printf("x1=%d,y1=%d,  dest_ey_2=%d dest_slope_2=%f\n",x1,y1,dest_ey_2,dest_slope_2);
 
         while ( ( ( dest_slope != 0.0)&&(x1!=dest_ex)&&(y1!=dest_ey)) ||
               ( ( at_least_one==0)&&(dest_slope==0.0) ) )
@@ -554,6 +549,7 @@ SDL_Surface *tile_stretch(SDL_Surface *src, int n, int e, int s, int w)
 /******************future************/
 SDL_Surface *convert_to_8bit(SDL_Surface *src)
 {
+#if 0
    int x,y;
    SDL_Color ckey;
    Uint32 color_key;
@@ -577,6 +573,7 @@ SDL_Surface *convert_to_8bit(SDL_Surface *src)
            //tmp_color = GetPixel(src,x,y);
        }
    }
+#endif
    return 0;
 }
 

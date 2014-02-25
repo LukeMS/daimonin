@@ -1678,11 +1678,9 @@ void show_login_server(void)
 {
     SDL_Rect    box;
     char        buf[MEDIUM_BUF];
-    int         x, y, i;
-    int         mx, my, mb, t;
+    int         x, y, i, t;
     int         progress;
 
-    mb = SDL_GetMouseState(&mx, &my);
     /* background */
     /*x= Screensize.x/2-Bitmaps[BITMAP_DIALOG_BG]->bitmap->w/2;*/
     x = 25;
@@ -1978,12 +1976,8 @@ void show_meta_server(_server *node, int metaserver_start, int metaserver_sel)
 {
     int         x, y, i;
     char        buf[1024];
-    SDL_Rect    rec_name;
-    SDL_Rect    rec_desc;
     SDL_Rect    box;
-    int         mx, my, mb;
 
-    mb = SDL_GetMouseState(&mx, &my);
     /* background */
     /*  x= Screensize.x/2-Bitmaps[BITMAP_DIALOG_BG]->bitmap->w/2;*/
     x = 25;
@@ -1993,9 +1987,6 @@ void show_meta_server(_server *node, int metaserver_start, int metaserver_sel)
     sprite_blt(Bitmaps[BITMAP_DIALOG_TITLE_LOGIN], x + 250 - Bitmaps[BITMAP_DIALOG_TITLE_LOGIN]->bitmap->w / 2, y + 20,
                NULL, NULL);
     /*  add_close_button(x, y, MENU_LOGIN); */
-
-    rec_name.w = 272;
-    rec_desc.w = 325;
 
     box.x = x + 133;
     box.y = y + TXT_Y_START + 1;
@@ -2061,10 +2052,7 @@ void show_account(void)
 {
     SDL_Rect    box;
     int         x, y, i, char_count = 0;
-    int         mx, my, mb;
     char buf[MAX_BUF];
-
-    mb = SDL_GetMouseState(&mx, &my);
 
     x = 25;
     y = Screensize.y / 2 - Bitmaps[BITMAP_DIALOG_BG]->bitmap->h / 2;
