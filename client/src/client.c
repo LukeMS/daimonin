@@ -38,7 +38,7 @@ static inline void SockList_AddShort(SockList *const sl, const uint16 data)
     if(sl->buf)
     	*((uint16 *)(sl->buf+sl->len)) = adjust_endian_int16(data);
     else
-        sl->defbuf[sl->len] = adjust_endian_int16(data);
+        *((uint16 *)(sl->defbuf+sl->len)) = adjust_endian_int16(data);
 	sl->len+=2;
 }
 static inline void SockList_AddInt(SockList *const sl, const uint32 data)
@@ -46,7 +46,7 @@ static inline void SockList_AddInt(SockList *const sl, const uint32 data)
     if(sl->buf)
     	*((uint32 *)(sl->buf+sl->len)) = adjust_endian_int32(data);
     else
-        sl->defbuf[sl->len] = adjust_endian_int32(data);
+        *((uint32 *)(sl->defbuf+sl->len)) = adjust_endian_int32(data);
 	sl->len+=4;
 }
 static inline void SockList_AddBuffer(SockList *const sl, const char *const buf, const int len)
