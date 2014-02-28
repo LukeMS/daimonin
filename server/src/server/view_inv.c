@@ -541,6 +541,7 @@ static char *PrepareData(_server_client_cmd cmd, uint16 flags, player *pl,
 
             sprintf(buf, "%s", query_base_name(op, who));
             len = AddName(buf);
+LOG(llevInfo, ">>>>>>>>%s< >%s< %u %p\n", query_base_name(op, who), buf, len, cp);
             *((uint8 *)cp++) = len + 1;
             sprintf(cp, "%s", buf);
             cp += len + 1;
