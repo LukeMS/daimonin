@@ -45,7 +45,6 @@ static uint8           AddInventory(sockbuf_struct *sb, _server_client_cmd cmd,
                                     uint8 start, uint8 end, object *first);
 static void            AddFakeObject(sockbuf_struct *sb, _server_client_cmd cmd,
                                      uint32 tag, uint32 face, char *name);
-static uint8           AddName(char *name);
 static void            NotifyClients(_server_client_cmd cmd, uint16 flags,
                                      object *op);
 static sockbuf_struct *BroadcastItemCmd(sockbuf_struct *sb, _server_client_cmd cmd,
@@ -292,22 +291,13 @@ static void AddFakeObject(sockbuf_struct *sb, _server_client_cmd cmd,
     }
 
     sprintf(buf, "%s", name);
-    len = AddName(buf);
+    buf[127] = '\0';
+    len = (uint8)strlen(buf);
     SockBuf_AddChar(sb, len + 1);
     SockBuf_AddString(sb, buf, len);
     SockBuf_AddShort(sb, 0);
     SockBuf_AddChar(sb, 0);
     SockBuf_AddInt(sb, 0);
-}
-
-/* Ensures name is less than 128 characters long and returns its length. */
-static uint8 AddName(char *name)
-{
-    uint8 len = MIN(127, strlen(name));
-
-    *(name + len) = '\0';
-
-    return len;
 }
 
 /* Finds the clients interested in op (which may be on a map or in an env) and
@@ -535,13 +525,13 @@ static char *PrepareData(_server_client_cmd cmd, uint16 flags, player *pl,
 
         if ((flags & UPD_NAME))
         {
-            char    buf[MEDIUM_BUF];
+            char    buf[SMALL_BUF];
             object *who = (pl) ? pl->ob : NULL;
             uint8   len;
 
             sprintf(buf, "%s", query_base_name(op, who));
-            len = AddName(buf);
-LOG(llevInfo, ">>>>>>>>%s< >%s< %u\n", query_base_name(op, who), buf, len);
+            buf[127] = '\0';
+            len = (uint8)strlen(buf);
             *((uint8 *)cp++) = len + 1;
             sprintf(cp, "%s", buf);
             cp += len + 1;
