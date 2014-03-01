@@ -303,7 +303,7 @@ static void AddFakeObject(sockbuf_struct *sb, _server_client_cmd cmd,
 /* Ensures name is less than 128 characters long and returns its length. */
 static uint8 AddName(char *name)
 {
-    uint8 len = MIN(127, strlen(name));
+    uint8 len = MIN(126, strlen(name));
 
     *(name + len) = '\0';
 
@@ -541,7 +541,7 @@ static char *PrepareData(_server_client_cmd cmd, uint16 flags, player *pl,
 
             sprintf(buf, "%s", query_base_name(op, who));
             len = AddName(buf);
-LOG(llevInfo, ">>>>>>>>%s< >%s< %u %p\n", query_base_name(op, who), buf, len, cp);
+LOG(llevInfo, ">>>>>>>>%s< >%s< %u\n", query_base_name(op, who), buf, len);
             *((uint8 *)cp++) = len + 1;
             sprintf(cp, "%s", buf);
             cp += len + 1;
