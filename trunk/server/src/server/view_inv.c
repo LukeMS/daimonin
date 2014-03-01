@@ -291,7 +291,6 @@ static void AddFakeObject(sockbuf_struct *sb, _server_client_cmd cmd,
     }
 
     sprintf(buf, "%s", name);
-    buf[127] = '\0';
     len = (uint8)strlen(buf);
     SockBuf_AddChar(sb, len + 1);
     SockBuf_AddString(sb, buf, len);
@@ -525,15 +524,23 @@ static char *PrepareData(_server_client_cmd cmd, uint16 flags, player *pl,
 
         if ((flags & UPD_NAME))
         {
-            char    buf[SMALL_BUF];
+            char   *name;
             object *who = (pl) ? pl->ob : NULL;
             uint8   len;
 
-            sprintf(buf, "%s", query_base_name(op, who));
-            buf[127] = '\0';
-            len = (uint8)strlen(buf);
+            name = query_base_name(op, who);
+
+            for (len = 0; len <= 127; len++)
+            {
+                if (*(name + len) == '\0')
+                {
+                    break;
+                }
+            }
+
+            *(name + len) = '\0'; 
             *((uint8 *)cp++) = len + 1;
-            sprintf(cp, "%s", buf);
+            sprintf(cp, "%s", name);
             cp += len + 1;
         }
 
