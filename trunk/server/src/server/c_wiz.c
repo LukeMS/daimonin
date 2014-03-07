@@ -1148,16 +1148,18 @@ static int AddExp(object *op, char *params, const char *command)
         return COMMANDS_RTN_VAL_ERROR;
     }
 
-    if (n <= 2) // name only or illegal snr
+    if (n >= 2 &&
+        (snr < 0 ||
+         snr >= NROFSKILLS))
+    {
+        new_draw_info(NDI_UNIQUE, 0, op, "No such skill.");
+
+        return COMMANDS_RTN_VAL_ERROR;
+    }
+
+    if (n <= 2)
     {
         int  i;
-
-        if (n == 2 &&
-            (snr < 0 ||
-             snr >= NROFSKILLS))
-        {
-            new_draw_info(NDI_UNIQUE, 0, op, "No such skill.");
-        }
 
         for (i = 0; i < NROFSKILLS; i++)
         {
