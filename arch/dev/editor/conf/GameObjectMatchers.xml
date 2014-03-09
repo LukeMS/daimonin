@@ -177,7 +177,7 @@
          matching this matcher are connection sources. -->
     <GameObjectMatcher id="system_connection_source" system="true">
         <title xml:lang="en">Connected objects being a source</title>
-        <title xml:lang="en">Verbundene Objekte (Quellen)</title>
+        <title xml:lang="de">Verbundene Objekte (Quellen)</title>
         <TypeNrs numbers="17 18 27 30 31 32 51 64 92 93 132 133 134" />
     </GameObjectMatcher>
 
@@ -185,7 +185,7 @@
          matching this matcher are connection sinks. -->
     <GameObjectMatcher id="system_connection_sink" system="true">
         <title xml:lang="en">Connected objects being a sink</title>
-        <title xml:lang="en">Verbundene Objekte (Senken)</title>
+        <title xml:lang="de">Verbundene Objekte (Senken)</title>
         <Or>
             <TypeNrs numbers="26 41 42 55 62 65 74 78 81 91 94 98 112 132" />
         </Or>
@@ -197,7 +197,7 @@
          into &lt;Or&gt;. -->
     <GameObjectMatcher id="system_connection_sink2" system="true">
         <title xml:lang="en">Connected objects being a sink</title>
-        <title xml:lang="en">Verbundene Objekte (Senken)</title>
+        <title xml:lang="de">Verbundene Objekte (Senken)</title>
         <Env/>
         <TypeNrs numbers="-666" />
     </GameObjectMatcher>
