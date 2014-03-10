@@ -2411,12 +2411,9 @@ object * get_split_ob(object *orig_ob, uint32 nr)
 {
     object *newob;
     object *tmp, *event;
-    int     is_removed;
 
     if(!orig_ob)
         return NULL;
-
-    is_removed  = (QUERY_FLAG(orig_ob, FLAG_REMOVED) != 0);
 
     if (orig_ob->nrof < nr)
     {
@@ -2443,67 +2440,9 @@ object * get_split_ob(object *orig_ob, uint32 nr)
             insert_ob_in_ob(event, newob);
         }
     }
-    orig_ob->nrof -= nr;
+
     newob->nrof = nr;
-
-    if (orig_ob->nrof < 1)
-    {
-        if (!is_removed)
-        {
-            CLEAR_FLAG(orig_ob, FLAG_NO_SEND);
-            remove_ob(orig_ob);
-        }
-
-        check_walk_off(orig_ob, NULL, MOVE_APPLY_VANISHED);
-    }
-    else if (!is_removed)
-    {
-        uint16 flags = UPD_NROF;
-
-        if (orig_ob->env &&
-            !QUERY_FLAG(orig_ob, FLAG_SYS_OBJECT))
-        {
-            RegrowBurdenTree(orig_ob, nr, -1);
-            fix_player_weight(is_player_inv(orig_ob->env));
-        }
-
-        if (!QUERY_FLAG(orig_ob, FLAG_SYS_OBJECT))
-        {
-            flags |= UPD_WEIGHT;
-        }
-
-        esrv_update_item(flags, orig_ob);
-#if 0
-
-        /* will a stack in a chest where you remove one from the stack trigger
-        * a button under the chest because the weight of the chest has changed now?
-        * we have to check it!
-        * Doing a ->env loop will work.. but is there no more clever way?
-        * Also ensure the below view is updated right.
-        */
-        if(orig_ob->map)
-        {
-            tmp = orig_ob;
-            GET_MAP_SPACE_PTR(tmp->map, tmp->x, tmp->y)->update_square++;
-        }
-        else
-        {
-            for(tmp = orig_ob->env;tmp;tmp = tmp->env)
-            {
-                if(tmp->map && tmp->map->in_memory == MAP_ACTIVE) /* we are on a map */
-                    break;
-            }
-        }
-
-        /* force an update of the map spot facking a insertation */
-        if(tmp)
-        {
-            /* force a weight check for buttons */
-            update_object(orig_ob, UP_OBJ_INSERT);
-            check_walk_on(orig_ob, tmp, 0);
-        }
-#endif
-    }
+    (void)decrease_ob_nr(orig_ob, nr);
 
     return newob;
 }
@@ -2518,92 +2457,73 @@ object * get_split_ob(object *orig_ob, uint32 nr)
 
 object * decrease_ob_nr(object *op, uint32 i)
 {
-    object *tmp;
-
-    if (i == 0)   /* objects with op->nrof require this check */
+    if (i == 0) // objects with op->nrof require this check
+    {
         return op;
-
-    if (i > op->nrof)
+    }
+    else if (i > op->nrof) // can't decrease by more than there are
+    {
         i = op->nrof;
-
-    if (QUERY_FLAG(op, FLAG_REMOVED))
-    {
-        op->nrof -= i;
     }
-    else if (op->env && OBJECT_ACTIVE(op->env))
+
+    /* If object is already removed everything is already handled elsewhere. */
+    if (!QUERY_FLAG(op, FLAG_REMOVED))
     {
-        /* is this object in the players inventory? */
-        if (!(tmp = is_player_inv(op->env)))
-        {
-            /* No... But perhaps tmp is in a container viewed by a player?
-             * Lets check the container is linked to a player.
-             */
-            if (op->env->type == CONTAINER
-             && op->env->attacked_by
-             && CONTR(op->env->attacked_by)
-             && CONTR(op->env->attacked_by)->container == op->env)
-                tmp = op->env->attacked_by;
-        }
-
-        if (i < op->nrof) /* there are still some */
-        {
-            uint16 flags = 0;
-
-            if (!QUERY_FLAG(op, FLAG_SYS_OBJECT))
-            {
-                RegrowBurdenTree(op, i, -1);
-                flags |= UPD_WEIGHT;
-            }
-
-            op->nrof -= i;
-            flags |= UPD_NROF;
-            esrv_update_item(flags, op);
-        }
-        else /* we removed all! */
-        {
-            remove_ob(op);
-            op->nrof = 0;
-        }
-    }
-    /* TODO: Not sure what this is about right now.
-     *
-     * -- Smacky 20130126 */
-    else
-    {
-        tmp = op->above;
-
-        if (!(op->nrof = (i < op->nrof) ? op->nrof - i : 0) ||
-            op->map)
-        {
-            remove_ob(op);
-        }
-
-#if 0
         if (op->env)
         {
-            if (op->nrof)
+            /* There are still some left. */
+            if (i < op->nrof)
             {
+                uint16 flags = UPD_NROF;
+
+                op->nrof -= i;
+
+                if (!QUERY_FLAG(op, FLAG_SYS_OBJECT))
+                {
+                    RegrowBurdenTree(op, i, -1);
+                    fix_player_weight(is_player_inv(op->env));
+                    flags |= UPD_WEIGHT;
+                }
+
+/* An update would be ideal as it only sends a few bytes of data to each
+ * client (the changed nrof and weights) whereas the alternative sends the
+ * entire client-side object. However, due to some buggy code in at least
+ * 0.10.6 and earlier clients the former causes the item to appear in the
+ * below window whereas the latter works.
+ * -- Smacky 20140311 */
+//                esrv_update_item(flags, op);
                 esrv_send_item(op);
             }
+            /* We removed all! */
             else
             {
+                remove_ob(op);
+                op->nrof = 0; // after remove_ob() so RegrowBurdenTree() works
                 esrv_del_item(op);
             }
         }
-        else if (op->map)
-#else
-        if (op->map)
-#endif
+        else // if (op->map)
         {
+            op->nrof -= i;
+            remove_ob(op);
             check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
-            insert_ob_in_map(op, op->map, op, 0);
+
+            /* Anything left? Reinsert it at head of inv. */
+            if (op->nrof)
+            {
+                insert_ob_in_map(op, op->map, op, 0);
+            }
         }
     }
 
     if (op->nrof)
+    {
         return op;
+    }
     else
+    {
         return NULL;
+    }
 }
 
 /* Inserts op in the linked list inside where.
