@@ -133,7 +133,23 @@ void esrv_send_item(object *op)
 
 void esrv_update_item(uint16 flags, object *op)
 {
-    NotifyClients(SERVER_CMD_UPITEM, flags, op);
+    /* Due to some buggy code in at least 0.10.6 and earlier clients updates
+     * for items in non-player inventories cause the item to appear in the
+     * below window so we must resend the full item details (which implicitly
+     * deletes the old instance client-side).
+     *
+     * -- Smacky 20140311 */
+    if (op->env &&
+        op->env->type != PLAYER)
+    {
+        NotifyClients(SERVER_CMD_ITEMY, UPD_FLAGS | UPD_WEIGHT | UPD_FACE |
+            UPD_DIRECTION | UPD_NAME | UPD_ANIM | UPD_ANIMSPEED | UPD_NROF,
+            op);
+    }
+    else
+    {
+        NotifyClients(SERVER_CMD_UPITEM, flags, op);
+    }
 }
 
 void esrv_del_item(object *op)

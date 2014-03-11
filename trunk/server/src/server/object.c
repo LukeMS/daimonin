@@ -2485,14 +2485,7 @@ object * decrease_ob_nr(object *op, uint32 i)
                     flags |= UPD_WEIGHT;
                 }
 
-/* An update would be ideal as it only sends a few bytes of data to each
- * client (the changed nrof and weights) whereas the alternative sends the
- * entire client-side object. However, due to some buggy code in at least
- * 0.10.6 and earlier clients the former causes the item to appear in the
- * below window whereas the latter works.
- * -- Smacky 20140311 */
-//                esrv_update_item(flags, op);
-                esrv_send_item(op);
+                esrv_update_item(flags, op);
             }
             /* We removed all! */
             else
