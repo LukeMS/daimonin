@@ -1505,7 +1505,7 @@ int kill_object(object *op, int dam, object *hitter, int typeX)
 
             /* destruct_ob() will remove the killed mob/object from the game.
              * It will also trigger the drop of a corpse & with the loot (inv of that object).
-             * FLAG_STARTEQUIP will avoid to drop the standard loot for example when
+             * FLAG_NO_DROP will avoid to drop the standard loot for example when
              * a npc killed another npc.
              */
             if(corpse_owner)
@@ -1520,14 +1520,14 @@ int kill_object(object *op, int dam, object *hitter, int typeX)
                 {
                     op->enemy = NULL;
                     SET_FLAG(op, FLAG_CORPSE_FORCED);
-                    SET_FLAG(op, FLAG_STARTEQUIP);
+                    SET_FLAG(op, FLAG_NO_DROP);
                 }
             }
             else /* aggroless kill (eg, script mob:Kill()) -- force empty corpse */
             {
                 op->enemy = NULL;
                 SET_FLAG(op, FLAG_CORPSE_FORCED);
-                SET_FLAG(op, FLAG_STARTEQUIP);
+                SET_FLAG(op, FLAG_NO_DROP);
             }
 
             /* here "remove" the killed object, drop the items inside and add

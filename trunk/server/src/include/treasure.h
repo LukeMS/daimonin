@@ -46,7 +46,7 @@ enum
 {
     GT_ENVIRONMENT                                                                          = 0x0001,
     GT_INVISIBLE                                                                            = 0x0002,
-    GT_STARTEQUIP                                                                           = 0x0004,
+    GT_NO_DROP                                                                           = 0x0004,
     GT_APPLY                                                                                = 0x0008,
     /* treasure gets applied when inserted in mob! (food eaten, skill applied...) */
     GT_ONLY_GOOD                                                                            = 0x0010,

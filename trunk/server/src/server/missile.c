@@ -630,7 +630,7 @@ int do_throw(object *thrower, object *toss_item, int dir)
             new_draw_info(NDI_UNIQUE, 0, thrower, "You have nothing to throw.");
         return 0;
     }
-    if (QUERY_FLAG(throw_ob, FLAG_STARTEQUIP))
+    if (QUERY_FLAG(throw_ob, FLAG_NO_DROP))
     {
         if (thrower->type == PLAYER)
             new_draw_info(NDI_UNIQUE, 0, thrower, "The gods won't let you throw that.");

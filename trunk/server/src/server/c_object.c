@@ -185,127 +185,6 @@ int command_apply(object *op, char *params)
     return 0;
 }
 
-/* Command will drop all items that have not been locked */
-int command_dropall(object *op, char *params)
-{
-    object *curinv, *nextinv;
-
-    if (op->inv == NULL)
-    {
-        new_draw_info(NDI_UNIQUE, 0, op, "Nothing to drop!");
-
-        return 0;
-    }
-
-    curinv = op->inv;
-
-    /*
-      This is the default.  Drops everything not locked or considered
-      not something that should be dropped.
-    */
-    /*
-      Care must be taken that the next item pointer is not to money as
-      the drop() routine will do unknown things to it when dropping
-      in a shop. --Tero.Pelander@utu.fi
-    */
-
-    if (params == NULL)
-    {
-        while (curinv != NULL)
-        {
-            nextinv = curinv->below;
-            while (nextinv && nextinv->type == MONEY)
-                nextinv = nextinv->below;
-            if (!QUERY_FLAG(curinv, FLAG_INV_LOCKED)
-             && curinv->type != MONEY
-             && curinv->type != FOOD
-/*             && curinv->type != KEY*/
-             && curinv->type != SPECIAL_KEY
-             && (curinv->type != TYPE_PEARL && curinv->type != GEM && curinv->type != TYPE_JEWEL && curinv->type != TYPE_NUGGET)
-             && !QUERY_FLAG(curinv, FLAG_SYS_OBJECT)
-             && (curinv->type != CONTAINER || (op->type == PLAYER && CONTR(op)->container != curinv)))
-            {
-                if (QUERY_FLAG(op, FLAG_STARTEQUIP))
-                    drop(op, curinv);
-            }
-            curinv = nextinv;
-        }
-    }
-    else if (strcmp(params, "weapons") == 0)
-    {
-        while (curinv != NULL)
-        {
-            nextinv = curinv->below;
-            while (nextinv && nextinv->type == MONEY)
-                nextinv = nextinv->below;
-            if (!QUERY_FLAG(curinv, FLAG_INV_LOCKED)
-             && ((curinv->type == WEAPON) || (curinv->type == BOW) || (curinv->type == ARROW)))
-            {
-                if (QUERY_FLAG(op, FLAG_STARTEQUIP))
-                    drop(op, curinv);
-            }
-            curinv = nextinv;
-        }
-    }
-    else if (strcmp(params, "armor") == 0 || strcmp(params, "armour") == 0)
-    {
-        while (curinv != NULL)
-        {
-            nextinv = curinv->below;
-            while (nextinv && nextinv->type == MONEY)
-                nextinv = nextinv->below;
-            if (!QUERY_FLAG(curinv, FLAG_INV_LOCKED)
-             && ((curinv->type == ARMOUR) || curinv->type == SHIELD || curinv->type == HELMET))
-            {
-                if (QUERY_FLAG(op, FLAG_STARTEQUIP))
-                    drop(op, curinv);
-            }
-            curinv = nextinv;
-        }
-    }
-    else if (strcmp(params, "misc") == 0)
-    {
-        while (curinv != NULL)
-        {
-            nextinv = curinv->below;
-            while (nextinv && nextinv->type == MONEY)
-                nextinv = nextinv->below;
-            if (!QUERY_FLAG(curinv, FLAG_INV_LOCKED) && !QUERY_FLAG(curinv, FLAG_APPLIED))
-            {
-                switch (curinv->type)
-                {
-                    case HORN:
-                    case BOOK:
-                    case SPELLBOOK:
-                    case GIRDLE:
-                    case AMULET:
-                    case RING:
-                    case CLOAK:
-                    case BOOTS:
-                    case GLOVES:
-                    case BRACERS:
-                    case SCROLL:
-                    case ARMOUR_IMPROVER:
-                    case WEAPON_IMPROVER:
-                    case WAND:
-                    case ROD:
-                    case POTION:
-                      if (QUERY_FLAG(op, FLAG_STARTEQUIP))
-                          drop(op, curinv);
-                      curinv = nextinv;
-                      break;
-                    default:
-                      curinv = nextinv;
-                      break;
-                }
-            }
-            curinv = nextinv;
-        }
-    }
-
-    return 0;
-}
-
 int command_examine(object *op, char *params)
 {
     object *tmp;
@@ -336,44 +215,6 @@ int command_examine(object *op, char *params)
     return 0;
 }
 #endif
-
-/* Object op wants to drop object(s) params.  params can be a
- * comma seperated list.
- */
-
-int command_drop(object *op, char *params)
-{
-    object *tmp, *next;
-    int     did_one = 0;
-
-    if (!params)
-        return 1;
-
-    for (tmp = op->inv; tmp; tmp = next)
-    {
-        next = tmp->below;
-
-        if (QUERY_FLAG(tmp, FLAG_NO_DROP) ||
-            QUERY_FLAG(tmp, FLAG_SYS_OBJECT))
-        {
-            continue;
-        }
-
-        if (item_matched_string(op, tmp, params))
-        {
-            drop(op, tmp);
-            did_one = 1;
-        }
-    }
-
-    if (!did_one)
-        new_draw_info(NDI_UNIQUE, 0, op, "Nothing to drop.");
-
-    if (op->type == PLAYER)
-        CONTR(op)->count = 0;
-
-    return 0;
-}
 
 /* Gecko: added a recursive part to search so that we also search in containers */
 static object * find_marked_object_rec(object *op, object **marked, uint32 *marked_count)
@@ -930,77 +771,48 @@ char *examine(object *op, object *tmp, int flag)
         strcat(buf_out, buf);
     }
 
-    if (QUERY_FLAG(tmp, FLAG_STARTEQUIP))
+    if (QUERY_FLAG(tmp, FLAG_NO_DROP))
     {
-        if (QUERY_FLAG(tmp, FLAG_UNPAID)) /* thats a unpaid clone shop item */
-        {
-            sprintf(buf, "%s would cost you %s.\n", tmp->nrof > 1 ? "They" : "It", query_cost_string(tmp, op, F_BUY, COSTSTRING_SHORT));
-            strcat(buf_out, buf);
-        }
-        else /* it is a real one drop item */
-        {
-            sprintf(buf, "** ~NO-DROP item%s~ **\n", tmp->nrof > 1 ? "s" : "");
-            strcat(buf_out, buf);
-            if (QUERY_FLAG(tmp, FLAG_IDENTIFIED))
-            {
-                if (tmp->value)
-                    sprintf(buf, "But %s worth %s.\n", tmp->nrof > 1 ? "they are" : "it is",
-                                         query_cost_string(tmp, op, F_TRUE, COSTSTRING_SHORT));
-                else
-                    sprintf(buf, "%s worthless.\n", tmp->nrof > 1 ? "They are" : "It is");
-                strcat(buf_out, buf);
-            }
-        }
+        sprintf(buf, "** ~NO-DROP item%s~ **\n", tmp->nrof > 1 ? "s" : "");
+        strcat(buf_out, buf);
     }
-    else if (tmp->value && !IS_LIVE(tmp))
+
+    if (!IS_LIVE(tmp))
     {
         if (QUERY_FLAG(tmp, FLAG_IDENTIFIED))
         {
-            if (QUERY_FLAG(tmp, FLAG_UNPAID))
-            {
-                sprintf(buf, "%s would cost you %s.\n", tmp->nrof > 1 ? "They" : "It",
-                                     query_cost_string(tmp, op, F_BUY, COSTSTRING_SHORT));
-                strcat(buf_out, buf);
-            }
-            else
-            {
-                sprintf(buf, "%s worth %s.\n", tmp->nrof > 1 ? "They are" : "It is",
-                                     query_cost_string(tmp, op, F_TRUE, COSTSTRING_SHORT));
-                strcat(buf_out, buf);
-                goto dirty_little_jump1;
-            }
+            sprintf(buf, "You value %s at %s.\n",
+                (tmp->nrof > 1) ? "them" : "it",
+                (tmp->value) ? query_cost_string(tmp, op, F_TRUE, COSTSTRING_SHORT) : "nothing");
+            strcat(buf_out, buf);
         }
-        else
+
+        if (tmp->type != MONEY)
         {
-            MapSpace *msp;
+            MapSpace *msp = GET_MAP_SPACE_PTR(op->map, op->x, op->y);
             object *shop;
 
-            dirty_little_jump1 :
-            msp = GET_MAP_SPACE_PTR(op->map, op->x, op->y);
             GET_MAP_SPACE_SYS_OBJ(msp, SHOP_FLOOR, shop);
 
-            if (shop &&
-                tmp->type != MONEY)
-            {/* disabled CHA effect for b4
-                sprintf(buf, "This shop will pay you %s (%0.1f%%).",
-                        query_cost_string(tmp, op, F_SELL, COSTSTRING_SHORT), 20.0f + 100.0f);
-              */
-                sprintf(buf, "This item is valued at %s by %s.",
+            if (shop)
+            {
+                if (QUERY_FLAG(tmp, FLAG_UNPAID))
+                {
+                    sprintf(buf, "You can buy %s for %s from %s.\n",
+                        (tmp->nrof) > 1 ? "them" : "it",
+                        query_cost_string(tmp, op, F_BUY, COSTSTRING_SHORT),
+                        query_name(shop));
+                }
+                else
+                {
+                    sprintf(buf, "You can sell %s for %s to %s.\n",
+                        (tmp->nrof) > 1 ? "them" : "it",
                         query_cost_string(tmp, op, F_SELL, COSTSTRING_SHORT),
-                        STRING_OBJ_NAME(shop));
+                        query_name(shop));
+                }
+
                 strcat(buf_out, buf);
             }
-        }
-    }
-    else if (!IS_LIVE(tmp))
-    {
-        if (QUERY_FLAG(tmp, FLAG_IDENTIFIED))
-        {
-            if (QUERY_FLAG(tmp, FLAG_UNPAID))
-                sprintf(buf, "%s would cost nothing.\n", tmp->nrof > 1 ? "They" : "It");
-            else
-                sprintf(buf, "%s worthless.\n", tmp->nrof > 1 ? "They are" : "It is");
-            strcat(buf_out, buf);
         }
     }
 

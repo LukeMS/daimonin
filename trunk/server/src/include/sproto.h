@@ -201,10 +201,8 @@ int                         command_rskill(object *pl, char *params);
 int                         command_egobind ( object *pl, char *params);
 #if 0
 int                         command_apply(object *op, char *params);
-int                         command_dropall(object *op, char *params);
 int                         command_examine(object *op, char *params);
 #endif
-int                         command_drop(object *op, char *params);
 object                     *find_marked_object(object *op);
 char                       *examine_monster(object *op, object *tmp, char *buf, int flag);
 char                       *long_desc(object *tmp, object *caller);
@@ -283,8 +281,7 @@ int                         container_trap(object *const op, object *const conta
 int                         sack_can_hold(const object *const pl, const object *const sack, const object *const op, const uint32 nrof);
 void                        pick_up(object *const op, object *const ori);
 void                        put_object_in_sack(object *const op, object *const sack, object *tmp, const uint32 nrof);
-void                        drop_object(object *const op, object *tmp, const uint32 nrof);
-void                        drop(object *const op, object *const ori);
+void                        drop_to_floor(object *op, object *tmp, uint32 nrof);
 /* disease.c */
 int                         move_disease(object *disease);
 int                         remove_symptoms(object *disease);

@@ -259,7 +259,7 @@ void become_follower(object *op, object *new_god)
          not skill, exp or force */
     /*
        for(item=op->inv;item!=NULL;item=item->below) {
-           if(QUERY_FLAG(item,FLAG_STARTEQUIP)) {
+           if(QUERY_FLAG(item,FLAG_NO_DROP)) {
         if(item->type==TYPE_SKILL || item->type==TYPE_SKILLGROUP ||
            item->type==FORCE) continue;
         remove_ob(item);
@@ -755,7 +755,7 @@ void god_intervention(object *op, object *god)
                 new_draw_info(NDI_UNIQUE, 0, op,
                               "Something appears before your "
                               "eyes.  You catch it before it falls to the ground.");
-                create_treasure(tl, op, GT_STARTEQUIP | GT_ONLY_GOOD | GT_UPDATE_INV, level, T_STYLE_UNSET,
+                create_treasure(tl, op, GT_NO_DROP | GT_ONLY_GOOD | GT_UPDATE_INV, level, T_STYLE_UNSET,
                                 ART_CHANCE_UNSET, T_MAGIC_UNSET, T_MAGIC_CHANCE_UNSET, 0, NULL);
                 return;
             }

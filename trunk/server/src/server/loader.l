@@ -468,7 +468,7 @@ op->oz= op->z;
 ^changing{S} 	    SET_OR_CLEAR_FLAG(op, FLAG_CHANGING, IVAL);
 ^splitting{S}	    SET_OR_CLEAR_FLAG(op, FLAG_SPLITTING, IVAL);
 ^hitback{S}  	    SET_OR_CLEAR_FLAG(op, FLAG_HITBACK, IVAL);
-^startequip{S}	    SET_OR_CLEAR_FLAG(op, FLAG_STARTEQUIP, IVAL);
+^startequip{S}	    SET_OR_CLEAR_FLAG(op, FLAG_NO_DROP, IVAL); // deprecated -- use ^no_drop(S)
 ^blocksview{S}	    SET_OR_CLEAR_FLAG(op, FLAG_BLOCKSVIEW, IVAL);
 ^undead{S}  	    SET_OR_CLEAR_FLAG(op, FLAG_UNDEAD, IVAL);
 ^scared{S}  	    SET_OR_CLEAR_FLAG(op, FLAG_SCARED, IVAL);
@@ -924,7 +924,7 @@ static const char *flag_names[NUM_FLAGS+1] = {
 NULL /*is_removed*/,"been_applied", NULL /* internal flag: HAS_MOVED */, "treasure", "is_neutral",	/* 20 */
 "see_invisible", "can_roll", "generator", "is_turnable", "walk_off",
 "fly_on", "fly_off", "is_used_up", "identified", "reflecting",	/* 30 */
-"changing", "splitting", "hitback", "startequip",
+"changing", "splitting", "hitback", "startequip", // deprecated -- use no_drop
 "blocksview", "undead", NULL /*fix_player*/, "unaggressive",
 "reflect_missile", "reflect_spell",				/* 40 */
 "no_magic", "no_fix_player", "is_evil", "tear_down", "run_away",

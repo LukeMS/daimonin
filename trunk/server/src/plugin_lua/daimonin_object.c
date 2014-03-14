@@ -368,7 +368,7 @@ static const char *GameObject_flags[NUM_FLAGS + 1 + 1] =
     "f_changing",
     "f_splitting",
     "f_hitback",
-    "f_startequip",
+    "f_startequip", // deprecated -- use f_no_drop
     "f_blocksview",
     "f_undead",
     "f_fix_player",
@@ -1738,20 +1738,27 @@ static int GameObject_PickUp(lua_State *L)
 /*          "all", "unpaid", "cursed", "unlocked" or a count + object name : */
 /*          "<nnn> <object name>", or a base name, or a short name...)       */
 /* Status : Tested/Stable                                                    */
+/* TODO   : The info is and always was nonsense. We now take a GameObject    */
+/*          instead of the string name. An optional nrof specifies the nrof  */
+/*          from a stack to drop (the default is the entire stack). This will*/
+/*          only drop items to the floor.                                    */
 /*****************************************************************************/
 
 static int GameObject_Drop(lua_State *L)
 {
-    char       *name;
-    CFParm     *CFR, CFP;
-    lua_object *self;
+    lua_object *self,
+               *whatptr;
+    int         nrof = 0;
 
-    get_lua_args(L, "Os", &self, &name);
+    get_lua_args(L, "OO|i", &self, &whatptr, &nrof);
 
-    CFP.Value[0] = (void *) (WHO);
-    CFP.Value[1] = (void *) (name);
-    CFR = (PlugHooks[HOOK_CMDDROP]) (&CFP);
-    free(CFR);
+    if (nrof <= 0 ||
+        nrof > WHAT->nrof)
+    {
+        nrof = WHAT->nrof;
+    }
+
+    hooks->drop_to_floor(WHO, WHAT, nrof);
 
     return 0;
 }

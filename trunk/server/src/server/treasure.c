@@ -1865,8 +1865,8 @@ static int get_random_spell(int level, int flags)
  * ! (flags & GT_ENVIRONMENT):
  *     Automatically calls fix_flesh_item().
  *
- * flags & FLAG_STARTEQUIP:
- *     Sets FLAG_STARTEQIUP on item if appropriate, or clears the item's
+ * flags & GT_NO_DROP:
+ *     Sets FLAG_NO_DROP on item if appropriate, or clears the item's
  *     value.
  */
 int fix_generated_item(object **op_ptr, object *creator, int difficulty, int a_chance, int t_style, int max_magic,
@@ -2164,10 +2164,10 @@ int fix_generated_item(object **op_ptr, object *creator, int difficulty, int a_c
     if (flags & GT_NO_VALUE && op->type != MONEY)
         op->value = 0;
 
-    if (flags & GT_STARTEQUIP)
+    if (flags & GT_NO_DROP)
     {
         if (op->nrof < 2 && op->type != CONTAINER && op->type != MONEY && !QUERY_FLAG(op, FLAG_IS_THROWN))
-            SET_FLAG(op, FLAG_STARTEQUIP);
+            SET_FLAG(op, FLAG_NO_DROP);
         else if (op->type != MONEY)
             op->value = 0;
     }

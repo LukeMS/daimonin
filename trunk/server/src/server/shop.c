@@ -434,7 +434,6 @@ uint8 shop_checkout(object *op, object *this)
                           cost_string_from_value(price, COSTSTRING_SHORT),
                           query_name(this));
             CLEAR_FLAG(this, FLAG_UNPAID);
-            CLEAR_FLAG(this, FLAG_STARTEQUIP);
             (void)merge_ob(this, NULL);
             esrv_update_item(UPD_WEIGHT | UPD_NROF | UPD_FLAGS, this);
         }

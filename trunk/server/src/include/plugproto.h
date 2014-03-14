@@ -38,7 +38,6 @@ f_plugin HookList[NR_OF_HOOKS] =
     CFWCommunicate,
     CFWFindPlayer,
     CFWManualApply,
-    CFWCmdDrop,
     CFWCmdTake,
     CFWFindMarkedObject,
     CFWDoLearnSpell,

@@ -614,7 +614,7 @@
 /* Start of values in flags[1] */
 #define FLAG_SPLITTING      32 /* Object splits into stats.food other objs */
 #define FLAG_HITBACK        33 /* Object will hit back when hit */
-#define FLAG_STARTEQUIP     34 /* Object was given to player at start */
+/* flag 34 is free */
 #define FLAG_BLOCKSVIEW     35 /* Object blocks view */
 #define FLAG_UNDEAD         36 /* Monster is undead */
 #define FLAG_FIX_PLAYER     37 /* fix_player() WILL be called one time (use it dynamically in scripts!) */
