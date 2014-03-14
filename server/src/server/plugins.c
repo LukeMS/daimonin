@@ -62,6 +62,7 @@ struct plugin_hooklist  hooklist    =
     /* D */
     decrease_ob_nr,
     destruct_ob,
+    drop_to_floor,
     /* E */
     enter_map,
     enter_map_by_exit,
@@ -837,22 +838,6 @@ CFParm * CFWManualApply(CFParm *PParm)
     static int  val;
     CFP = (CFParm *) (malloc(sizeof(CFParm)));
     val = manual_apply((object *) (PParm->Value[0]), (object *) (PParm->Value[1]), *(int *) (PParm->Value[2]));
-    CFP->Value[0] = &val;
-    return CFP;
-}
-
-/*****************************************************************************/
-/* command_drop wrapper.                                                     */
-/*****************************************************************************/
-/* 0 - player;                                                               */
-/* 1 - parameters string.                                                    */
-/*****************************************************************************/
-CFParm * CFWCmdDrop(CFParm *PParm)
-{
-    CFParm     *CFP;
-    static int  val;
-    CFP = (CFParm *) (malloc(sizeof(CFParm)));
-    val = command_drop((object *) (PParm->Value[0]), (char *) (PParm->Value[1]));
     CFP->Value[0] = &val;
     return CFP;
 }

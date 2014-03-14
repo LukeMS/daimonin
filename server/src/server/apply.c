@@ -1804,13 +1804,13 @@ static void ApplySpellbook(object *op, object *tmp)
         /* this needs to be a - number [garbled] */
         scroll_failure(op, 0 - random_roll(0, spells[tmp->stats.sp].level), spells[tmp->stats.sp].sp);
     }
-    else if (QUERY_FLAG(tmp, FLAG_STARTEQUIP))
+    else if (QUERY_FLAG(tmp, FLAG_NO_DROP))
     {
         new_draw_info(NDI_UNIQUE, 0, op, "You succeed in learning the spell!");
         do_learn_spell(op, tmp->stats.sp, 0);
 
         /* xp gain to literacy for spell learning */
-        if (!QUERY_FLAG(tmp, FLAG_STARTEQUIP))
+        if (!QUERY_FLAG(tmp, FLAG_NO_DROP))
             add_exp(op, calc_skill_exp(op, tmp, 1.0f,-1, NULL), op->chosen_skill->stats.sp, 1);
     }
     else

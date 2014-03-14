@@ -1505,7 +1505,7 @@ void drop_ob_inv(object *ob)
 
     /* create corpse and/or drop stuff to floor */
     if ((QUERY_FLAG(ob, FLAG_CORPSE) &&
-         !QUERY_FLAG(ob, FLAG_STARTEQUIP)) ||
+         !QUERY_FLAG(ob, FLAG_NO_DROP)) ||
         QUERY_FLAG(ob, FLAG_CORPSE_FORCED))
     {
         char buf[MEDIUM_BUF];
@@ -1542,13 +1542,6 @@ void drop_ob_inv(object *ob)
         tmp = tmp_op->below;
         remove_ob(tmp_op); /* Inv-no check off / This will be destroyed in next loop of object_gc() */
 
-        /* if we recall spawn mobs, we don't want drop their items as free.
-         * So, marking the mob itself with "FLAG_STARTEQUIP" will kill
-         * all inventory and not dropping it on the map.
-         * This also happens when a player slays a to low mob/non exp mob.
-         * Don't drop any sys_object in inventory... I can't think about
-         * any use... when we do it, a disease needle for example
-         * is dropping his disease force and so on. */
         if(tmp_op->type == TYPE_QUEST_TRIGGER)
         {
             /* legal, non freed enemy */
@@ -1571,10 +1564,16 @@ void drop_ob_inv(object *ob)
                 }
             }
         }
-        else if (!(QUERY_FLAG(ob, FLAG_STARTEQUIP) ||
+        /* if we recall spawn mobs, we don't want drop their items as free.
+         * So, marking the mob itself with "FLAG_NO_DROP" will kill
+         * all inventory and not dropping it on the map.
+         * This also happens when a player slays a to low mob/non exp mob.
+         * Don't drop any sys_object in inventory... I can't think about
+         * any use... when we do it, a disease needle for example
+         * is dropping his disease force and so on. */
+        else if (!(QUERY_FLAG(ob, FLAG_NO_DROP) ||
                    (tmp_op->type != RUNE &&
                     (QUERY_FLAG(tmp_op, FLAG_SYS_OBJECT) ||
-                     QUERY_FLAG(tmp_op, FLAG_STARTEQUIP) ||
                      QUERY_FLAG(tmp_op, FLAG_NO_DROP)))))
         {
             tmp_op->x = ob->x;

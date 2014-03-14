@@ -163,7 +163,6 @@ enum
     HOOK_COMMUNICATE,
     HOOK_FINDPLAYER,
     HOOK_MANUALAPPLY,
-    HOOK_CMDDROP,
     HOOK_CMDTAKE,
     HOOK_FINDMARKEDOBJECT,
     HOOK_LEARNSPELL,
@@ -272,6 +271,7 @@ struct plugin_hooklist
     /* D */
     object *(*decrease_ob_nr)(object *, uint32);
     void (*destruct_ob)(object *);
+    void (*drop_to_floor)(object *, object *, uint32);
     /* E */
     int (*enter_map)(object *, object *, mapstruct *, int, int, int, int);
     int (*enter_map_by_exit)(object *, object *);

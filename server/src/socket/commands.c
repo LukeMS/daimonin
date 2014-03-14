@@ -268,9 +268,7 @@ CommArray_s CommandsSA[] =
 
     /* old, outdated or disabled commands */
     /*
-    {"dropall",        command_dropall,        1.0},
     {"listen", command_listen,    0.0}, // our channel system should work different
-    {"drop", command_drop,    1.0},
     {"get", command_take,     1.0},
     {"apply",         command_apply,          1.0f, 1}, // should be variable
     {"examine", command_examine,  0.5}, // should work in direction
@@ -1050,7 +1048,7 @@ void cs_cmd_moveobj(char *buf, int len, NewSocket *ns)
     }
 #endif
 
-    /* Drop to ground. */
+    /* Drop to floor. */
     if (!loc)
     {
         if (!what->map &&
@@ -1058,7 +1056,7 @@ void cs_cmd_moveobj(char *buf, int len, NewSocket *ns)
             (what->type != CONTAINER ||
              IsDroppableContainer(who, what)))
         {
-            drop_object(who, what, nrof);
+            drop_to_floor(who, what, nrof);
 
             if (what->map)
             {
@@ -1088,13 +1086,9 @@ void cs_cmd_moveobj(char *buf, int len, NewSocket *ns)
              can_pick(who, what) &&
              sack_can_hold(who, where, what, nrof))
     {
-        if (QUERY_FLAG(what, FLAG_STARTEQUIP))
-        {
-            new_draw_info(NDI_UNIQUE, 0, who, "You can't store ~NO-DROP~ items outside your inventory!");
-        }
-        else if (what->type != CONTAINER ||
-                 !what->inv ||
-                 IsDroppableContainer(who, what))
+        if (what->type != CONTAINER ||
+            !what->inv ||
+            IsDroppableContainer(who, what))
         {
             put_object_in_sack(who, where, what, nrof);
 
@@ -1132,7 +1126,7 @@ static uint8 IsDroppableContainer(object *who, object *what)
             }
         }
 
-        if (QUERY_FLAG(this, FLAG_STARTEQUIP))
+        if (QUERY_FLAG(this, FLAG_NO_DROP))
         {
             new_draw_info(NDI_UNIQUE, 0, who, "First remove all ~NO-DROP~ items from this container!");
 

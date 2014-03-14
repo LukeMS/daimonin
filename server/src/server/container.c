@@ -302,8 +302,6 @@ static void pick_up_object(object *pl, object *op, object *tmp, uint32 nrof)
             new_draw_info(NDI_UNIQUE, 0, pl, "You are levitating; you can't reach the ground!");
         return;
     }
-    if (QUERY_FLAG(tmp, FLAG_NO_DROP))
-        return;
 
     /* If the user requests more than is in the stack and isn't in a shop (stackable items can be bought in any size),
      * or they want 0 or far too many of the object, pick up the default stack size.
@@ -348,7 +346,6 @@ static void pick_up_object(object *pl, object *op, object *tmp, uint32 nrof)
         {
             tmp = ObjectCreateClone(tmp);
             CLEAR_FLAG(tmp, FLAG_NO_PICK);
-            SET_FLAG(tmp, FLAG_STARTEQUIP);
             tmp->nrof = nrof;
             tmp_nrof = nrof;
             sprintf(buf, "You pick up the %s for %s from the storage.", query_name(tmp), query_cost_string(tmp, pl, F_BUY, COSTSTRING_SHORT));
@@ -556,13 +553,6 @@ void pick_up(object *const op, object *const ori)
         printf("Pick_up(): %s picks %s and inserts it %s.\n", op->name, tmp->name, alt->name);
 #endif
 
-    /* startequip items are not allowed to be put into containers: */
-    if (op->type == PLAYER && alt->type == CONTAINER && QUERY_FLAG(tmp, FLAG_STARTEQUIP))
-    {
-        new_draw_info(NDI_UNIQUE, 0, op, "This object cannot be put into containers!");
-        goto leave;
-    }
-
     tag = tmp->count;
     pick_up_object(op, alt, tmp, count);
     if (op->type == PLAYER)
@@ -662,7 +652,6 @@ void put_object_in_sack(object *const op, object *const sack, object *tmp, const
         if (QUERY_FLAG(tmp, FLAG_NO_PICK)) /* this is a clone shop - clone a item for inventory */
         {
             CLEAR_FLAG(tmp, FLAG_NO_PICK);
-            SET_FLAG(tmp, FLAG_STARTEQUIP);
             new_draw_info(NDI_UNIQUE, 0, op, "You pick up %s for %s from the storage.", query_name(tmp), query_cost_string(tmp, op, F_BUY, COSTSTRING_SHORT));
         }
         else /* this is a unique shop item */
@@ -677,147 +666,118 @@ void put_object_in_sack(object *const op, object *const sack, object *tmp, const
 }
 
 /*
-*  This function was part of drop, now is own function.
 *  Player 'op' tries to drop object 'tmp', if tmp is non zero, then
 *  nrof objects is tried to dropped.
 * This is used when dropping objects onto the floor.
 */
-void drop_object(object *const op, object *tmp, const uint32 nrof)
+void drop_to_floor(object *op, object *tmp, uint32 nrof)
 {
     MapSpace *msp;
-    object *floor;
-    uint32 tmp_nrof;
+    object   *shop;
+    int       reinsert = 1;
 
-    if (QUERY_FLAG(tmp, FLAG_NO_DROP) &&
-        !IS_GMASTER_WIZ(op))
+    if (!op ||
+        !tmp)
     {
-#if 0
-        /* Eneq(@csd.uu.se): Objects with NO_DROP defined can't be dropped. */
-        new_draw_info(NDI_UNIQUE, 0,op, "This item can't be dropped.");
-#endif
         return;
     }
 
-    if (op->type == PLAYER)
-        CONTR(op)->rest_mode = 0;
+    /* Determine if we're in a shop. */
+    msp = GET_MAP_SPACE_PTR(op->map, op->x, op->y);
+    GET_MAP_SPACE_SYS_OBJ(msp, SHOP_FLOOR, shop);
 
-    if (QUERY_FLAG(tmp, FLAG_APPLIED))
+    if (op->type == PLAYER)
     {
-        if (apply_special(op, tmp, AP_UNAPPLY | AP_NO_MERGE))
-            return;     /* can't unapply it */
+        player *pl = CONTR(op);
+
+        if (!pl)
+        {
+            return;
+        }
+
+        pl->rest_mode = 0;
+
+        if (QUERY_FLAG(tmp, FLAG_INV_LOCKED))
+        {
+            new_draw_info(NDI_UNIQUE, 0, op, "The %s %s locked!",
+                query_name(tmp), (nrof >1) ? "are" : "is");
+            return;
+        }
+        else if (shop &&
+                 tmp->type == CONTAINER &&
+                 tmp->inv)
+        {
+            new_draw_info(NDI_UNIQUE, 0, op, "Oops! Take everything out of the %s first!",
+                query_name(tmp));
+            return;
+        }
+    }
+    else if (QUERY_FLAG(tmp, FLAG_NO_DROP))
+    {
+        return;
+    }
+
+    /* Handles cursed items? */
+    if (QUERY_FLAG(tmp, FLAG_APPLIED) &&
+        apply_special(op, tmp, AP_UNAPPLY | AP_NO_MERGE))
+    {
+        return;
     }
 
     if (tmp->type == CONTAINER)
-        container_unlink(NULL, tmp);
-
-    /* We are only dropping some of the items.  We split the current object */
-    if (nrof && tmp->nrof != nrof)
     {
-        object*tmp2 =   tmp, *tmp2_cont = tmp->env;
-        tag_t           tmp2_tag    = tmp2->count;
+        container_unlink(NULL, tmp);
+    }
+
+    /* Remove the dropped object (splitting a stack removes the split part). */
+    if (nrof &&
+        tmp->nrof != nrof)
+    {
         tmp = get_split_ob(tmp, nrof);
-        if (!tmp)
-        {
-            new_draw_info(NDI_UNIQUE, 0, op, "%s", errmsg);
-            return;
-        }
     }
     else
     {
         remove_ob(tmp);
-//        if (tmp->env && tmp->env != op && tmp->env != tmp)
-//            esrv_update_item(UPD_WEIGHT, tmp->env);
     }
 
-    tmp_nrof = nrof;
-    if(trigger_object_plugin_event(EVENT_DROP, tmp, op, NULL, NULL, (int *)&tmp_nrof, NULL, NULL, SCRIPT_FIX_ALL))
+    if (trigger_object_plugin_event(EVENT_DROP, tmp, op, NULL, NULL,
+        (int *)&nrof, NULL, NULL, SCRIPT_FIX_ALL))
     {
         /* TODO: handle cases where we might want to reinsert the object */
         return;
     }
 
-    if (QUERY_FLAG(tmp, FLAG_STARTEQUIP))
+    if (QUERY_FLAG(tmp, FLAG_NO_DROP))
     {
-        if (op->type == PLAYER)
-        {
-            new_draw_info(NDI_UNIQUE, 0, op, "You drop the %s.", query_name(tmp));
-
-            if (QUERY_FLAG(tmp, FLAG_UNPAID))
-                new_draw_info(NDI_UNIQUE, 0, op, "The shop magic put it back to the storage.");
-            else
-                new_draw_info(NDI_UNIQUE, 0, op, "The ~NO-DROP~ item vanishes to nowhere as you drop it!");
-        }
-        FIX_PLAYER(op,"drop_object - startequip");
-        return;
+        new_draw_info(NDI_UNIQUE, 0, op, "~NO-DROP~: the %s vanishes to nowhere!",
+            query_name(tmp));
+        reinsert = 0;
     }
-
-    msp = GET_MAP_SPACE_PTR(op->map, op->x, op->y);
-    GET_MAP_SPACE_SYS_OBJ(msp, SHOP_FLOOR, floor);
-
-    if (floor &&
-        tmp->type != MONEY &&
-        !QUERY_FLAG(tmp, FLAG_UNPAID))
+    else if (shop)
     {
-        sell_item(tmp, op, -1);
-
-        /* ok, here we insert then the unique shops too, now we have only clone shops */
-        if (QUERY_FLAG(tmp, FLAG_UNPAID)) /* ok, we have really selled it - not only droped */
+        if (QUERY_FLAG(tmp, FLAG_UNPAID))
         {
-            if (op->type == PLAYER)
-            {
-                new_draw_info(NDI_UNIQUE, 0, op, "The shop magic put it to the storage.");
-                FIX_PLAYER(op ,"drop_object - unpaid");
-            }
-
-            return;
+            new_draw_info(NDI_UNIQUE, 0, op, "The shop magic puts the %s back in storage.",
+                query_name(tmp));
+            reinsert = 0;
+        }
+        else if (tmp->type != MONEY)
+        {
+            sell_item(tmp, op, -1);
+            reinsert = 0;
         }
     }
 
-    tmp->x = op->x;
-    tmp->y = op->y;
-    insert_ob_in_map(tmp, op->map, op, 0);
-    SET_FLAG(op, FLAG_NO_APPLY);
-    remove_ob(op);
-    insert_ob_in_map(op, op->map, op, INS_NO_MERGE | INS_NO_WALK_ON);
-    CLEAR_FLAG(op, FLAG_NO_APPLY);
-
-    if (op->type == PLAYER)
+    if (reinsert)
     {
-        FIX_PLAYER(op ,"drop object - end");
+        tmp->x = op->x;
+        tmp->y = op->y;
+        insert_ob_in_map(tmp, op->map, op, 0);
+        SET_FLAG(op, FLAG_NO_APPLY);
+        remove_ob(op);
+        insert_ob_in_map(op, op->map, op, INS_NO_MERGE | INS_NO_WALK_ON);
+        CLEAR_FLAG(op, FLAG_NO_APPLY);
     }
+
+    FIX_PLAYER(op, "drop_to_floor");
 }
-
-void drop(object *const op, object *const ori)
-{
-    if (ori == NULL)
-    {
-        new_draw_info(NDI_UNIQUE, 0, op, "You don't have anything to drop.");
-        return;
-    }
-    if (QUERY_FLAG(ori, FLAG_INV_LOCKED))
-    {
-        new_draw_info(NDI_UNIQUE, 0, op, "This item is locked");
-        return;
-    }
-    if (QUERY_FLAG(ori, FLAG_NO_DROP))
-    {
-#if 0
-        /* Eneq(@csd.uu.se): Objects with NO_DROP defined can't be dropped. */
-        new_draw_info(NDI_UNIQUE, 0,op, "This item can't be dropped.");
-#endif
-        return;
-    }
-
-
-    if (op->type == PLAYER)
-    {
-        if (CONTR(op)->container)
-            put_object_in_sack(op, CONTR(op)->container, ori, CONTR(op)->count);
-        else
-            drop_object(op, ori, CONTR(op)->count);
-        CONTR(op)->count = 0;
-    }
-    else
-        drop_object(op, ori, 0);
-}
-
