@@ -30,8 +30,16 @@
 #pragma pack(push,1)
 #endif
 
-#define WEIGHT(op) ((unsigned int)(((op->nrof > 0) ? op->weight * ((sint32)op->nrof) : op->weight) + op->carrying))
-#define WEIGHT_NROF(op, nrof) ((unsigned int)(((nrof > 0) ? op->weight * ((sint32)nrof) : op->weight) + op->carrying))
+/* Calculates the weight of _WHAT_ including any contents.
+ *
+ * _WHAT_ may be a container of holding (containers do not stack) or any other
+ * object (which may or may not be stacked). */
+#define WEIGHT_OVERALL(_WHAT_) \
+    ((_WHAT_)->type == CONTAINER && \
+     (_WHAT_)->weapon_speed != 1.0) ? \
+    ((_WHAT_)->damage_round_tag + (_WHAT_)->weight) : \
+    (((_WHAT_)->weight * (((_WHAT_)->nrof > 0) ? (_WHAT_)->nrof : 1)) + \
+     (_WHAT_)->carrying)
 
 #define TAG(_O_) (((_O_)) ? (_O_)->count : 0)
 
@@ -346,5 +354,7 @@ typedef struct obj
 #define BUFF_ADD_BAD_PARAMS   16 // item or buff == NULL
 #define BUFF_ADD_NO_INSERT    32 // Something went wrong in insert_ob_in_ob
 
+#define CLONE_WITH_INVENTORY    0
+#define CLONE_WITHOUT_INVENTORY 1
 
 #endif /* ifndef __OBJECT_H */

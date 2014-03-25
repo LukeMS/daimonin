@@ -1655,9 +1655,9 @@ int cast_create_missile(object *op, object *caster, int dir, char *stringarg)
     {
         tmp = get_owner(op);
         if (!tmp)
-            pick_up(op, missile);
+            pick_up(op, missile, NULL, 0);
         else
-            pick_up(tmp, missile);
+            pick_up(tmp, missile, NULL, 0);
     }
     return 1;
 }

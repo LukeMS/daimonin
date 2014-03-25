@@ -140,7 +140,6 @@ static struct method_decl GameObject_methods[] =
     {"ShowCost",               (lua_CFunction) GameObject_ShowCost},
     {"Sound",                  (lua_CFunction) GameObject_Sound},
     {"StartNewInstance",       (lua_CFunction) GameObject_StartNewInstance},
-    {"Take",                   (lua_CFunction) GameObject_Take},
     {"UpdateQuest",            (lua_CFunction) GameObject_UpdateQuest},
     {"Withdraw",               (lua_CFunction) GameObject_Withdraw},
     {"Write",                  (lua_CFunction) GameObject_Write},
@@ -1712,36 +1711,59 @@ static int GameObject_Apply(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : GameObject_PickUp                                                */
-/* Lua    : object:PickUp(what)                                              */
-/* Status : Tested/Stable                                                    */
+/* Lua    : object:PickUp(what, where, nrof)                                 */
+/* Info   : Only works for players and monster objects. Other types generate */
+/*          an error.                                                        */
+/*          Causes object to pick up what if possible (according to standard */
+/*          rules).                                                          */
+/*          where is optional but if specified must be a container and causes*/
+/*          a pick up to container. Otherwise a pick up to inventory is      */
+/*          attempted.                                                       */
+/*          nrof is optional and specifies the nrof from a stack (the default*/
+/*          is the entire stack).                                            */
+/* Status : Untested/Stable                                                  */
 /*****************************************************************************/
 
 static int GameObject_PickUp(lua_State *L)
 {
-    lua_object *whatptr, *self;
-    CFParm CFP;
+    lua_object *self,
+               *whatptr,
+               *where = NULL;
+    int         nrof = 0;
+    object     *pickedup;
 
-    get_lua_args(L, "OO", &self, &whatptr);
+    get_lua_args(L, "OO|Oi", &self, &whatptr, &where, &nrof);
 
-    CFP.Value[0] = (void *) (WHO);
-    CFP.Value[1] = (void *) (WHAT);
-    (PlugHooks[HOOK_PICKUP]) (&CFP);
+    if ((WHO->type != PLAYER ||
+         !CONTR(WHO)) &&
+        WHO->type != MONSTER)
+    {
+        return luaL_error(L, "object:PickUp() can only be called on a player or monster!");
+    }
 
-    return 0;
+    if (where &&
+        where->data.object->type != CONTAINER)
+    {
+        return luaL_error(L, "object:PickUp(): Arg #2 must be a container GameObject or nil!");
+    }
+
+    pickedup = hooks->pick_up(WHO, WHAT, (where) ? where->data.object : NULL, nrof);
+    push_object(L, &GameObject, pickedup);
+    return 1;
 }
 
 
 /*****************************************************************************/
 /* Name   : GameObject_Drop                                                  */
-/* Lua    : object:Drop(what)                                                */
-/* Info   : Equivalent to the player command "drop" (name is an object name, */
-/*          "all", "unpaid", "cursed", "unlocked" or a count + object name : */
-/*          "<nnn> <object name>", or a base name, or a short name...)       */
-/* Status : Tested/Stable                                                    */
-/* TODO   : The info is and always was nonsense. We now take a GameObject    */
-/*          instead of the string name. An optional nrof specifies the nrof  */
-/*          from a stack to drop (the default is the entire stack). This will*/
-/*          only drop items to the floor.                                    */
+/* Lua    : object:Drop(what, nrof)                                          */
+/* Info   : Only works for players and monster objects. Other types generate */
+/*          an error.                                                        */
+/*          Causes object to drop what if possible (according to standard    */
+/*          rules such as players cannot drop locked items and mobs cannot   */
+/*          drop no drops).                                                  */
+/*          nrof is optional and specifies the nrof from a stack (the default*/
+/*          is the entire stack).                                            */
+/* Status : Untested/Stable                                                  */
 /*****************************************************************************/
 
 static int GameObject_Drop(lua_State *L)
@@ -1749,42 +1771,21 @@ static int GameObject_Drop(lua_State *L)
     lua_object *self,
                *whatptr;
     int         nrof = 0;
+    object     *dropped;
 
     get_lua_args(L, "OO|i", &self, &whatptr, &nrof);
 
-    if (nrof <= 0 ||
-        nrof > WHAT->nrof)
+    if ((WHO->type != PLAYER ||
+         !CONTR(WHO)) &&
+        WHO->type != MONSTER)
     {
-        nrof = WHAT->nrof;
+        return luaL_error(L, "object:Drop() can only be called on a player or monster!");
     }
 
-    hooks->drop_to_floor(WHO, WHAT, nrof);
-
-    return 0;
+    dropped = hooks->drop_to_floor(WHO, WHAT, nrof);
+    push_object(L, &GameObject, dropped);
+    return 1;
 }
-
-/*****************************************************************************/
-/* Name   : GameObject_Take                                                  */
-/* Lua    : object:Take(name)                                                */
-/* Status : Temporary disabled (see commands.c)                              */
-/*****************************************************************************/
-
-static int GameObject_Take(lua_State *L)
-{
-    char       *name;
-    CFParm     *CFR, CFP;
-    lua_object *self;
-
-    get_lua_args(L, "Os", &self, &name);
-
-    CFP.Value[0] = (void *) (WHO);
-    CFP.Value[1] = (void *) (name);
-    CFR = (PlugHooks[HOOK_CMDTAKE]) (&CFP);
-    free(CFR);
-
-    return 0;
-}
-
 
 /*****************************************************************************/
 /* Name   : GameObject_Deposit                                               */
@@ -1892,9 +1893,39 @@ static int GameObject_Withdraw(lua_State *L)
     }
     else if (money.mode == MONEYSTRING_ALL)
     {
-        hooks->sell_item(NULL, WHO, bank->value);
-        bank->value = 0;
-        hooks->FIX_PLAYER(WHO, "LUA: withdraw - sell item");
+        uint8 i;
+
+        val = bank->value;
+
+        /* TODO: This results in each coin type being picked up separately (so 4g,
+         * 8s, and 6c means 3 pick ups). We need a 'cash' object into which the
+         * coins can be inserted here. Then after this loop that object is inserted
+         * to the map and picked up, with pick_up() knowing to extract its contents
+         * and remove the empty husk within (a container in) who's inv. */
+        for (i = 0; hooks->coins_arch[i]; i++)
+        {
+            archetype *at = hooks->coins_arch[i];
+            uint32     nrof;
+
+            if (bank->value <= 0)
+            {
+                break;
+            }
+
+            nrof = bank->value / at->clone.value;
+
+            if (nrof > 0)
+            {
+                 object *new = hooks->clone_object(&at->clone, CLONE_WITHOUT_INVENTORY);
+
+                 new->nrof = nrof;
+                 new->x = WHO->x;
+                 new->y = WHO->y;
+                 (void)hooks->insert_ob_in_map(new, WHO->map, NULL, INS_NO_MERGE | INS_NO_WALK_ON);
+                 (void)hooks->pick_up(WHO, new, NULL, new->nrof);
+                 bank->value -= (nrof * at->clone.value);
+            }
+        }
     }
     else
     {
@@ -4072,25 +4103,11 @@ static int GameObject_SendCustomCommand(lua_State *L)
 static int GameObject_Clone(lua_State *L)
 {
     lua_object *self;
-    CFParm     *CFR, CFP;
-    int         mode    = 0;
+    int         mode = 0;
     object     *clone;
 
     get_lua_args(L, "O|i", &self, &mode);
-
-    CFP.Value[0] = (void *) (WHO);
-    CFP.Value[1] = (void *) (&mode);
-
-    CFR = (PlugHooks[HOOK_CLONEOBJECT]) (&CFP);
-
-    clone = (object *) (CFR->Value[0]);
-    free(CFR);
-
-    if (clone->type == PLAYER || QUERY_FLAG(clone, FLAG_IS_PLAYER))
-    {
-        clone->type = MONSTER;
-        CLEAR_FLAG(clone, FLAG_IS_PLAYER);
-    }
+    clone = hooks->clone_object(WHO, mode);
 
     return push_object(L, &GameObject, clone);
 }

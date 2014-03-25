@@ -158,17 +158,14 @@ enum
     HOOK_OUTOFMAP,
     HOOK_CMDRSKILL,
     HOOK_BECOMEFOLLOWER,
-    HOOK_PICKUP,
     HOOK_GETMAPOBJECT,
     HOOK_COMMUNICATE,
     HOOK_FINDPLAYER,
     HOOK_MANUALAPPLY,
-    HOOK_CMDTAKE,
     HOOK_FINDMARKEDOBJECT,
     HOOK_LEARNSPELL,
     HOOK_IDENTIFYOBJECT,
     HOOK_CHECKFORSPELL,
-    HOOK_CLONEOBJECT,
     HOOK_LOADOBJECT,
     HOOK_UPDATESPEED,
     HOOK_LEARNSKILL,
@@ -258,6 +255,7 @@ struct plugin_hooklist
                       char *);
     sint8 (*check_path)(const char *, uint8);
     void (*clear_mob_knowns)(object *, struct mob_known_obj **, hashtable *);
+    object *(*clone_object)(object *, uint8);
     int (*command_combat)(object *, char *);
     int (*command_target)(object *, char *);
     char *(*cost_string_from_value)(sint64, int);
@@ -271,7 +269,7 @@ struct plugin_hooklist
     /* D */
     object *(*decrease_ob_nr)(object *, uint32);
     void (*destruct_ob)(object *);
-    void (*drop_to_floor)(object *, object *, uint32);
+    object *(*drop_to_floor)(object *, object *, uint32);
     /* E */
     int (*enter_map)(object *, object *, mapstruct *, int, int, int, int);
     int (*enter_map_by_exit)(object *, object *);
@@ -375,6 +373,7 @@ struct plugin_hooklist
     /* O */
     mapstruct *(*out_of_map)(mapstruct *, int *, int *);
     /* P */
+    object *(*pick_up)(object *, object *, object *, uint32);
     void (*play_sound_map)(mapstruct *, int, int, int, int);
     void (*play_sound_player_only)(player *, int, int, int, int);
     char *(*print_tad)(timeanddate_t *, int);
@@ -398,7 +397,6 @@ struct plugin_hooklist
     void (*return_poolchunk_array_real)(void *, uint32, struct mempool *);
     /* S */
     int (*save_life)(object *);
-    void (*sell_item)(object *, object *, sint64);
     void (*set_map_darkness)(mapstruct *, int);
     void (*set_personal_light)(player *, int);
     void (*set_quest_status)(struct obj *, int, int);
