@@ -488,10 +488,7 @@ static char *PrepareData(_server_client_cmd cmd, uint16 flags, player *pl,
             }
             else
             {
-                *((uint32 *)cp) = (op->type == CONTAINER &&
-                                   op->weapon_speed != 1.0)
-                                  ? op->damage_round_tag + op->weight
-                                  : WEIGHT(op);
+                *((uint32 *)cp) = WEIGHT_OVERALL(op);
             }
 
             cp += 4;

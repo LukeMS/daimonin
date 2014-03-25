@@ -51,6 +51,7 @@ struct plugin_hooklist  hooklist    =
     cast_spell,
     check_path,
     clear_mob_knowns,
+    clone_object,
     command_combat,
     command_target,
     cost_string_from_value,
@@ -146,6 +147,7 @@ struct plugin_hooklist  hooklist    =
     /* O */
     out_of_map,
     /* P */
+    pick_up,
     play_sound_map,
     play_sound_player_only,
     print_tad,
@@ -169,7 +171,6 @@ struct plugin_hooklist  hooklist    =
     return_poolchunk_array_real,
     /* S */
     save_life,
-    sell_item,
     set_map_darkness,
     set_personal_light,
     set_quest_status,
@@ -758,18 +759,6 @@ CFParm * CFWBecomeFollower(CFParm *PParm)
 /* 0 - picker object;                                                        */
 /* 1 - picked object.                                                        */
 /*****************************************************************************/
-CFParm * CFWPickup(CFParm *PParm)
-{
-    pick_up((object *) (PParm->Value[0]), (object *) (PParm->Value[1]));
-    return NULL;
-}
-
-/*****************************************************************************/
-/* pick_up wrapper.                                                          */
-/*****************************************************************************/
-/* 0 - picker object;                                                        */
-/* 1 - picked object.                                                        */
-/*****************************************************************************/
 CFParm * CFWGetMapObject(CFParm *PParm)
 {
     object         *val = NULL;
@@ -838,22 +827,6 @@ CFParm * CFWManualApply(CFParm *PParm)
     static int  val;
     CFP = (CFParm *) (malloc(sizeof(CFParm)));
     val = manual_apply((object *) (PParm->Value[0]), (object *) (PParm->Value[1]), *(int *) (PParm->Value[2]));
-    CFP->Value[0] = &val;
-    return CFP;
-}
-
-/*****************************************************************************/
-/* command_take wrapper.                                                     */
-/*****************************************************************************/
-/* 0 - player;                                                               */
-/* 1 - parameters string.                                                    */
-/*****************************************************************************/
-CFParm * CFWCmdTake(CFParm *PParm)
-{
-    CFParm     *CFP;
-    static int  val;
-    CFP = (CFParm *) (malloc(sizeof(CFParm)));
-    /*val = command_take((object *)(PParm->Value[0]),(char *)(PParm->Value[1]));*/
     CFP->Value[0] = &val;
     return CFP;
 }
@@ -1080,28 +1053,6 @@ CFParm * CFWIdentifyObject(CFParm *PParm)
         play_sound_map(target->map, target->x, target->y, spells[SP_IDENTIFY].sound, SOUND_SPELL);
 
     return NULL;
-}
-
-/*****************************************************************************/
-/* ObjectCreateClone object_copy wrapper.                                    */
-/*****************************************************************************/
-/* 0 - object                                                                */
-/* 1 - type 0 = clone with inventory                                         */
-/*          1 = only duplicate the object without it's content and op->more  */
-/*****************************************************************************/
-CFParm * CFWObjectCreateClone(CFParm *PParm)
-{
-    CFParm *CFP = (CFParm *) calloc(1, sizeof(CFParm));
-    if (*(int *) PParm->Value[1] == 0)
-        CFP->Value[0] = ObjectCreateClone((object *) PParm->Value[0]);
-    else if (*(int *) PParm->Value[1] == 1)
-    {
-        object *tmp;
-        tmp = get_object();
-        copy_object((object *) PParm->Value[0], tmp);
-        CFP->Value[0] = tmp;
-    }
-    return CFP;
 }
 
 /*****************************************************************************/

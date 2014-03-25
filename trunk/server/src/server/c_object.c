@@ -781,7 +781,7 @@ char *examine(object *op, object *tmp, int flag)
     {
         if (QUERY_FLAG(tmp, FLAG_IDENTIFIED))
         {
-            sprintf(buf, "You value %s at %s.\n",
+            sprintf(buf, "You value %s at ~%s~.\n",
                 (tmp->nrof > 1) ? "them" : "it",
                 (tmp->value) ? query_cost_string(tmp, op, F_TRUE, COSTSTRING_SHORT) : "nothing");
             strcat(buf_out, buf);
@@ -798,15 +798,15 @@ char *examine(object *op, object *tmp, int flag)
             {
                 if (QUERY_FLAG(tmp, FLAG_UNPAID))
                 {
-                    sprintf(buf, "You can buy %s for %s from %s.\n",
-                        (tmp->nrof) > 1 ? "them" : "it",
+                    sprintf(buf, "You can buy %s for ~%s~ from %s.\n",
+                        (tmp->nrof > 1) ? "them" : "it",
                         query_cost_string(tmp, op, F_BUY, COSTSTRING_SHORT),
                         query_name(shop));
                 }
                 else
                 {
-                    sprintf(buf, "You can sell %s for %s to %s.\n",
-                        (tmp->nrof) > 1 ? "them" : "it",
+                    sprintf(buf, "You can sell %s for ~%s~ to %s.\n",
+                        (tmp->nrof > 1) ? "them" : "it",
                         query_cost_string(tmp, op, F_SELL, COSTSTRING_SHORT),
                         query_name(shop));
                 }

@@ -1440,7 +1440,7 @@ void move_apply(object *const trap_obj, object *const victim, object *const orig
                   sint32    tot;
                   for (ab = trap->above,tot = 0; ab != NULL; ab = ab->above)
                       if (!IS_AIRBORNE(ab))
-                          tot += WEIGHT(ab);
+                          tot += WEIGHT_OVERALL(ab);
                   if (!(trap->weight_limit = (tot > trap->weight) ? 1 : 0))
                       goto leave;
                   SET_ANIMATION(trap, (NUM_ANIMATIONS(trap) / NUM_FACINGS(trap)) * trap->direction + trap->weight_limit);

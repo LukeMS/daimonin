@@ -24,8 +24,6 @@
 #include <global.h>
 #include <ctype.h>
 
-static uint8 IsDroppableContainer(object *who, object *what);
-
 /* binary command tags are defined in the shared protocol.h
  * first value is data tail length:
  * 0 = no data, single command
@@ -1004,10 +1002,8 @@ void cs_cmd_moveobj(char *buf, int len, NewSocket *ns)
     tag_t   loc,
             tag;
     uint32  nrof;
-    uint8   success;
     object *who,
-           *what,
-           *where;
+           *what;
 
     if (!buf ||
         len < 3 * PARM_SIZE_INT ||
@@ -1022,7 +1018,6 @@ void cs_cmd_moveobj(char *buf, int len, NewSocket *ns)
     loc = (tag_t)GetInt_Buffer(buf);
     tag = (tag_t)GetInt_Buffer(buf);
     nrof = GetInt_Buffer(buf);
-    success = 0;
     who = pl->ob;
 
     /* Lag may mean real circumstances have changed before the cmd is received
@@ -1049,99 +1044,40 @@ void cs_cmd_moveobj(char *buf, int len, NewSocket *ns)
 #endif
 
     /* Drop to floor. */
-    if (!loc)
+    if (!loc &&
+        (!pl->container ||
+         !pl->container->map))
     {
-        if (!what->map &&
-            what->env &&
-            (what->type != CONTAINER ||
-             IsDroppableContainer(who, what)))
-        {
-            drop_to_floor(who, what, nrof);
-
-            if (what->map)
-            {
-                success = 1;
-            }
-        }
+        what = drop_to_floor(who, what, nrof);
     }
-    /* Pick up to inventory. */
-    else if (loc == who->count)
+    /* Pick up. */
+    else
     {
-        pl->count = nrof;
-        pick_up(who, what);
+        object *where = esrv_get_ob_from_count(who, loc);
 
-        if (what->env &&
-            what->env->count == loc)
+        /* Pick up to inventory. */
+        if (where == who ||
+            (what == pl->container &&
+             where == what))
         {
-            success = 1;
+            what = pick_up(who, what, NULL, nrof);
         }
-    }
-    /* If not dropped or picked up, we are putting it into a container */
-    /* Lag may mean real circumstances have changed before the cmd is received
-     * by the server so make sure the tag still refers to a visible object. */
-    /* put_object_in_sack() presumes that necessary sanity checking
-     * has already been done, so do that. */
-    else if ((where = esrv_get_ob_from_count(who, loc)) &&
-             where == pl->container &&
-             can_pick(who, what) &&
-             sack_can_hold(who, where, what, nrof))
-    {
-        if (what->type != CONTAINER ||
-            !what->inv ||
-            IsDroppableContainer(who, what))
+        /* Pick up to container. */
+        else
         {
-            put_object_in_sack(who, where, what, nrof);
-
-            if (what->env == where)
-            {
-                success = 1;
-            }
+            what = pick_up(who, what, where, nrof);
         }
     }
 
     /* what has moved so send an UPD_LOCATION to clients. */
-    if (QUERY_FLAG(what, FLAG_NO_SEND) &&
-        success)
+    if (what &&
+        QUERY_FLAG(what, FLAG_NO_SEND))
     {
         CLEAR_FLAG(what, FLAG_NO_SEND);
         esrv_update_item(UPD_LOCATION, what);
     }
 }
 
-/* Recursively checks containers for no drops and locked items inside, printing
- * a message and returning 0 if any are found (container cannot be dropped) or
- * returning 1 if none are found (container can be dropped. */
-static uint8 IsDroppableContainer(object *who, object *what)
-{
-    object *this;
-
-    for (this = what->inv; this; this = this->below)
-    {
-        if (this->type == CONTAINER &&
-            this->inv)
-        {
-            if (!IsDroppableContainer(who, this))
-            {
-                return 0;
-            }
-        }
-
-        if (QUERY_FLAG(this, FLAG_NO_DROP))
-        {
-            new_draw_info(NDI_UNIQUE, 0, who, "First remove all ~NO-DROP~ items from this container!");
-
-            return 0;
-        }
-        else if (QUERY_FLAG(this, FLAG_INV_LOCKED))
-        {
-            new_draw_info(NDI_UNIQUE, 0, who, "You can't drop a container with locked items inside!");
-
-            return 0;
-        }
-    }
-
-    return 1;
-}
 #ifdef SERVER_SEND_FACES
 
 void cs_cmd_face(char *params, int len, NewSocket *ns)

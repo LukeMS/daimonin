@@ -32,6 +32,7 @@
 static void RegrowBurdenTree(object *op, sint32 nrof, sint8 mode);
 static void RemoveFromEnv(object *op);
 static void RemoveFromMap(object *op);
+static void Copy(object *from, object *to);
 
 static int static_walk_semaphore = FALSE; /* see walk_off/walk_on functions  */
 
@@ -700,10 +701,7 @@ sint32 sum_weight(object *op)
         if (QUERY_FLAG(inv, FLAG_SYS_OBJECT))
             continue;
 
-        if(inv->type == CONTAINER && inv->weapon_speed != 1.0f)
-            sum += inv->damage_round_tag + inv->weight; /* thats the precalculated, modified weight + container weight */
-        else
-            sum += WEIGHT(inv);
+        sum += WEIGHT_OVERALL(inv);
     }
 
     /* we have a magical container? then precalculate the modified weight */
@@ -717,15 +715,20 @@ sint32 sum_weight(object *op)
  * direction of change is specified by mode (positive or negative). */
 static void RegrowBurdenTree(object *op, sint32 nrof, sint8 mode)
 {
+    sint32  tmp_nrof,
+            weight;
     object *where;
-    sint32  weight;
+
+    /* This bit of ugliness is because WEIGHT_OVERALL() assumes op->nrof is the
+     * real nrof. */
+    tmp_nrof = op->nrof;
+    op->nrof = nrof;
+    weight = WEIGHT_OVERALL(op);
+    op->nrof = tmp_nrof;
 
     /* If op is not in an env or has no weight, we have nothing to do. */
     if (!(where = op->env) ||
-        !(weight = (op->type == CONTAINER &&
-                    op->weapon_speed != 1.0)
-                   ? op->damage_round_tag + op->weight // no stacking container, ignore nrof
-                   : WEIGHT_NROF(op, nrof)))
+        !(weight))
     {
         return;
     }
@@ -1048,40 +1051,136 @@ void initialize_object(object *op)
     op->count_debug=op->count;
 }
 
-/*
- * copy object first frees everything allocated by the second object,
- * and then copies the contends of the first object into the second
- * object, allocating what needs to be allocated.
- */
-void copy_object(object *src, object *dest)
+/* clone_object() clones original (multiparts are correctly handled). If mode
+ * is zero it also clones any inventory. The return is the clone. */
+object *clone_object(object *original, uint8 mode)
 {
-    int is_removed  = QUERY_FLAG(dest, FLAG_REMOVED);
+    object *clone = NULL,
+           *prev = NULL,
+           *this;
 
+    /* Sanity check: No original = nothing to do. */
+    if (!original)
+    {
+        return NULL;
+    }
+
+    /* If original is multipart, point to its head. */
+    if (original->head)
+    {
+        original = original->head;
+    }
+
+    /* Clone original to clone, being sure to correctly clone all parts of a
+     * multipart. */
+    for (this = original; this; this = this->more)
+    {
+        object *that;
+
+        that = get_object();
+        copy_object(this, that);
+        that->x -= original->x;
+        that->y -= original->y;
+
+        if (!this->head)
+        {
+            clone = that;
+            that->head = NULL;
+        }
+        else
+        {
+            that->head = clone;
+        }
+
+        that->more = NULL;
+
+        if (prev)
+        {
+            prev->more = that;
+        }
+
+        prev = that;
+    }
+
+    /*** copy inventory ***/
+    if (!mode)
+    {
+        for (this = original->inv; this; this = this->below)
+        {
+            object *that = clone_object(this, 0);
+
+            (void)insert_ob_in_ob(that, clone);
+        }
+    }
+
+    /* Cloned players become monsters. */
+    if (clone->type == PLAYER ||
+        QUERY_FLAG(clone, FLAG_IS_PLAYER))
+    {
+        clone->type = MONSTER;
+        CLEAR_FLAG(clone, FLAG_IS_PLAYER);
+    }
+
+    return clone;
+}
+
+/* copy_object first frees everything allocated to to and then copies the
+ * contents of from into it, allocating what needs to be allocated. */
+void copy_object(object *from, object *to)
+{
     /* remove because perhaps speed will change when we copy */
-    if(QUERY_FLAG(dest, FLAG_IN_ACTIVELIST))
-        activelist_remove_inline(dest);
+    if (QUERY_FLAG(to, FLAG_IN_ACTIVELIST))
+    {
+        activelist_remove_inline(to);
+    }
 
-    FREE_ONLY_HASH(dest->name);
-    FREE_ONLY_HASH(dest->title);
-    FREE_ONLY_HASH(dest->race);
-    FREE_ONLY_HASH(dest->slaying);
-    FREE_ONLY_HASH(dest->msg);
+    Copy(from, to);
+
+    /* Only alter speed_left when we sure we have not done it before */
+    if (to->speed < 0 &&
+        to->speed_left == to->arch->clone.speed_left)
+    {
+        to->speed_left += (RANDOM() % 90) / 100.0;
+    }
+
+    CLEAR_FLAG(to, FLAG_IN_ACTIVELIST); // perhaps our source is on active list - ignore!
+    update_ob_speed(to);
+}
+
+/* Same as above, but not touching the active list. */
+void copy_object_data(object *from, object *to)
+{
+    Copy(from, to);
+}
+
+static void Copy(object *from, object *to)
+{
+    int is_removed  = QUERY_FLAG(to, FLAG_REMOVED);
 
     /* unlink old treasurelist if needed */
-    if (dest->randomitems)
-        unlink_treasurelists(dest->randomitems, 0);
+    if (to->randomitems)
+    {
+        unlink_treasurelists(to->randomitems, 0);
+    }
 
-    (void) memcpy((void *) ((char *) dest + offsetof(object, name)), (void *) ((char *) src + offsetof(object, name)),
-                  sizeof(object) - offsetof(object, name));
+    FREE_ONLY_HASH(to->name);
+    FREE_ONLY_HASH(to->title);
+    FREE_ONLY_HASH(to->race);
+    FREE_ONLY_HASH(to->slaying);
+    FREE_ONLY_HASH(to->msg);
+    (void)memcpy((void *)((char *)to + offsetof(object, name)),
+        (void *)((char *)from + offsetof(object, name)),
+        sizeof(object) - offsetof(object, name));
+    ADD_REF_NOT_NULL_HASH(to->name);
+    ADD_REF_NOT_NULL_HASH(to->title);
+    ADD_REF_NOT_NULL_HASH(to->race);
+    ADD_REF_NOT_NULL_HASH(to->slaying);
+    ADD_REF_NOT_NULL_HASH(to->msg);
 
     if (is_removed)
-        SET_FLAG(dest, FLAG_REMOVED);
-
-    ADD_REF_NOT_NULL_HASH(dest->name);
-    ADD_REF_NOT_NULL_HASH(dest->title);
-    ADD_REF_NOT_NULL_HASH(dest->race);
-    ADD_REF_NOT_NULL_HASH(dest->slaying);
-    ADD_REF_NOT_NULL_HASH(dest->msg);
+    {
+        SET_FLAG(to, FLAG_REMOVED);
+    }
 
 #if 0
 /* Buggers up merging. These are 3 distinct flags and should be tested for
@@ -1089,88 +1188,28 @@ void copy_object(object *src, object *dest)
  * Especially, in a function whose purpose is to copy an object, we should not
  * then modify the copy so it is no longer identical to the original.
  * -- Smacky 20090312 */
-    if (QUERY_FLAG(dest, FLAG_IDENTIFIED))
+    if (QUERY_FLAG(to, FLAG_IDENTIFIED))
     {
-        if (is_magical(dest))
-            SET_FLAG(dest, FLAG_KNOWN_MAGICAL);
+        if (is_magical(to))
+            SET_FLAG(to, FLAG_KNOWN_MAGICAL);
 
-        if (is_cursed_or_damned(dest))
-            SET_FLAG(dest, FLAG_KNOWN_CURSED);
+        if (is_cursed_or_damned(to))
+            SET_FLAG(to, FLAG_KNOWN_CURSED);
     }
 #endif
 
     /* perhaps we have a custom treasurelist. Then we need to
-     * increase the refcount here.
-     */
-    if (dest->randomitems && (dest->randomitems->flags & OBJLNK_FLAG_REF))
-        dest->randomitems->ref_count++;
+     * increase the refcount here. */
+    if (to->randomitems &&
+        (to->randomitems->flags & OBJLNK_FLAG_REF))
+    {
+        to->randomitems->ref_count++;
+    }
 
     /* We set the custom_attrset pointer to NULL to avoid
      * really bad problems. TODO. this needs to be handled better
-     * but it works until its only the player struct.
-     */
-    dest->custom_attrset = NULL;
-
-    /* Only alter speed_left when we sure we have not done it before */
-    if (dest->speed < 0 && dest->speed_left == dest->arch->clone.speed_left)
-        dest->speed_left += (RANDOM() % 90) / 100.0f;
-
-    CLEAR_FLAG(dest, FLAG_IN_ACTIVELIST); /* perhaps our source is on active list - ignore! */
-    update_ob_speed(dest);
-}
-
-/* Same as above, but not touching the active list */
-void copy_object_data(object *op2, object *op)
-{
-    int is_removed  = QUERY_FLAG(op, FLAG_REMOVED);
-
-    FREE_ONLY_HASH(op->name);
-    FREE_ONLY_HASH(op->title);
-    FREE_ONLY_HASH(op->race);
-    FREE_ONLY_HASH(op->slaying);
-    FREE_ONLY_HASH(op->msg);
-
-    /* unlink old treasurelist if needed */
-    if (op->randomitems)
-        unlink_treasurelists(op->randomitems, 0);
-
-    (void) memcpy((void *) ((char *) op + offsetof(object, name)), (void *) ((char *) op2 + offsetof(object, name)),
-                  sizeof(object) - offsetof(object, name));
-
-    if (is_removed)
-        SET_FLAG(op, FLAG_REMOVED);
-
-    ADD_REF_NOT_NULL_HASH(op->name);
-    ADD_REF_NOT_NULL_HASH(op->title);
-    ADD_REF_NOT_NULL_HASH(op->race);
-    ADD_REF_NOT_NULL_HASH(op->slaying);
-    ADD_REF_NOT_NULL_HASH(op->msg);
-
-#if 0
-/* Buggers up merging. These are 3 distinct flags and should be tested for
- * separately. As such, IDENTIFIED should not set the other two in any case.
- * Especially, in a function whose purpose is to copy an object, we should not
- * then modify the copy so it is no longer identical to the original.
- * -- Smacky 20090312 */
-    if (QUERY_FLAG(op, FLAG_IDENTIFIED))
-    {
-        if (is_magical(op))
-            SET_FLAG(op, FLAG_KNOWN_MAGICAL);
-
-        if (is_cursed_or_damned(op))
-            SET_FLAG(op, FLAG_KNOWN_CURSED);
-    }
-#endif
-
-    /* perhaps we have a custom treasurelist. Then we need to
-     * increase the refcount here.
-     */
-    if (op->randomitems && (op->randomitems->flags & OBJLNK_FLAG_REF))
-        op->randomitems->ref_count++;
-
-    /* We set the custom_attrset pointer to NULL to avoid
-     * really bad problems. TODO. this needs to be handled better */
-    op->custom_attrset = NULL;
+     * but it works until its only the player struct. */
+    to->custom_attrset = NULL;
 }
 
 /*
@@ -2920,116 +2959,6 @@ object *present_arch_in_ob_temp(archetype *at, object *op)
         if (tmp->arch == at && QUERY_FLAG(tmp,FLAG_IS_USED_UP))
             return tmp;
     return NULL;
-}
-
-/*
- * can_pick(picker, item): finds out if an object is possible to be
- * picked up by the picker.  Returnes 1 if it can be
- * picked up, otherwise 0.
- *
- * Cf 0.91.3 - don't let WIZ's pick up anything - will likely cause
- * core dumps if they do.
- *
- * Add a check so we can't pick up invisible objects (0.93.8)
- */
-/* Prevent multiparts being picked up.
- * Make function readable.
- * -- Smacky 20090826 */
-
-int can_pick(object *who, object *item)
-{
-    /* Multiparts can never be picked up. */
-    if (item->more || item->head)
-        return 0;
-
-    /* Weightless objects currently can't be picked up. */
-    /* I am not sure about that weight >0... */
-    if (item->weight <= 0)
-        return 0;
-
-    /* Layer 0/sys objects can't be picked up (really the one should imply the
-     * other but JIC). TODO: Perhaps be strict about all layers? Really only
-     * layers 3 and 4 should be pickable. */
-    if (!item->layer ||
-        QUERY_FLAG(item, FLAG_SYS_OBJECT))
-    {
-        return 0;
-    }
-
-    /* If you can't see it, you can't pick it up. */
-    /* Is this sensible?
-     * -- Smacky 20090826 */
-    if (IS_NORMAL_INVIS_TO(item, who))
-    {
-        return 0;
-    }
-
-    /* Non-players can't pick up objects which weigh more than 1/3 of their
-     * body weight. */
-    /* Nice idea, but shouldn't Str be involved?
-     * -- Smacky 20090826 */
-    /* I misinterpreted this. I had it only applying to players. The original
-     * code only applies it to non-players, so I have changed it back. But this
-     * seems illogical and I see no gameplay benefit either -- a hill giant
-     * can't pick up heavy stuff but a player can?
-     * -- Smacky 20090829 */
-    if (who->type != PLAYER &&
-        item->weight >= who->weight / 3)
-        return 0;
-
-    /* Normally no_picks can't be picked up, but unpaid no_picks can. */
-    /* This seems dodgy to me.
-     * -- Smacky 20090826 */
-    if (QUERY_FLAG(item, FLAG_NO_PICK) &&
-        !(who->type == PLAYER &&
-          QUERY_FLAG(item, FLAG_UNPAID)))
-        return 0;
-
-    return 1;
-}
-
-
-/*
- * create clone from object to another
- */
-object * ObjectCreateClone(object *asrc)
-{
-    object*dst =    NULL, *tmp, *src, *part, *prev, *item;
-
-    if (!asrc)
-        return NULL;
-    src = asrc;
-    if (src->head)
-        src = src->head;
-
-    prev = NULL;
-    for (part = src; part; part = part->more)
-    {
-        tmp = get_object();
-        copy_object(part, tmp);
-        tmp->x -= src->x;
-        tmp->y -= src->y;
-        if (!part->head)
-        {
-            dst = tmp;
-            tmp->head = NULL;
-        }
-        else
-        {
-            tmp->head = dst;
-        }
-        tmp->more = NULL;
-        if (prev)
-            prev->more = tmp;
-        prev = tmp;
-    }
-    /*** copy inventory ***/
-    for (item = src->inv; item; item = item->below)
-    {
-        (void) insert_ob_in_ob(ObjectCreateClone(item), dst);
-    }
-
-    return dst;
 }
 
 int was_destroyed(const object *const op, const tag_t old_tag)

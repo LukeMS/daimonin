@@ -121,9 +121,9 @@ static struct constant_decl preset_game_constants[] =
     {"IDENTIFY_ALL",    IDENTIFY_MODE_ALL},
     {"IDENTIFY_MARKED", IDENTIFY_MODE_MARKED},
 
-    /* cloning modes (constants not defined by server) */
-    {"CLONE_WITH_INVENTORY",    0},
-    {"CLONE_WITHOUT_INVENTORY", 1},
+    /* cloning modes (object.h) */
+    {"CLONE_WITH_INVENTORY",    CLONE_WITH_INVENTORY},
+    {"CLONE_WITHOUT_INVENTORY", CLONE_WITHOUT_INVENTORY},
 
     /* colours (newclient.h) */
     {"COLOR_WHITE",   NDI_WHITE},
