@@ -42,7 +42,7 @@ function topicDepositDialog()
     ib:SetTitle("Deposit money")
     ib:SetMsg(getBalance(pl))
     if onhand > 0 then
-        ib:AddMsg("You have on hand " .. pl:ShowCost(onhand) .. ".\n\n")
+        ib:AddMsg("You have on hand ~" .. pl:ShowCost(onhand) .. "~.\n\n")
         ib:AddMsg(
 [[
 Enter the amount of money you want to deposit.
@@ -67,23 +67,43 @@ function topicDeposit(what)
     end
     local oldbalance = pinfo.value
     local dpose = pl:Deposit(pinfo, what)
-    
-    -- Did  pl deposit 2m or more? If so, log it.
-    if pinfo.value - oldbalance >= 2 * 100 * 100 * 1000 then
-        game:Log(game.LOG_INFO, "BANKINFO: player >" .. pl:GetName() .. "< deposited an amount of " .. oldbalance - pinfo.value ..
-                    ", which leaves: " .. pinfo.value .. " in account.")
-    end
-    
-    if dpose == 1 and pinfo.value ~= 0 then
-        ib:SetMsg( "You " .. what .. ".\n\n" )
-        ib:AddMsg("Your new balance is " .. pl:ShowCost(pinfo.value) .. ".\n\n")
-        ib:SetButton("Ok", "hi")
+    if type(dpose) == "number" then
+        -- Did  pl deposit 2m or more? If so, log it.
+        if pinfo.value - oldbalance >= 2 * 100 * 100 * 1000 then
+            game:Log(game.LOG_INFO, "BANKINFO: player >" .. pl:GetName() .. "< deposited an amount of " .. oldbalance - pinfo.value ..
+                        ", which leaves: " .. pinfo.value .. " in account.")
+        end
+        if dpose == 1 and pinfo.value ~= 0 then
+            ib:SetMsg( "You deposit ~" .. what .. "~.\n\n" )
+            ib:AddMsg("Your new balance is ~" .. pl:ShowCost(pinfo.value) .. "~.\n\n")
+            ib:SetButton("Ok", "hi")
+        else
+            ib:SetMsg( "You try to deposit ~" .. what .. "~.\n\n" )
+            ib:AddMsg("But you don't have that much money!\n\n")
+            ib:SetButton("Back", "deposit")
+        end
     else
-        ib:SetMsg( "You try to " .. what .. ".\n\n" )
-        ib:AddMsg("But you don't have that much money!\n\n")
-        ib:SetButton("Back", "deposit")
+        if dpose == nil then
+            ib:SetMsg("|[Specify an amount like 'deposit 3 gold, 2 silver' " ..
+                "or 'deposit all'.]|\n\n")
+            ib:SetButton("Back", "deposit")
+        elseif dpose == true then
+            -- Did  pl deposit 2m or more? If so, log it.
+            if pinfo.value - oldbalance >= 2 * 100 * 100 * 1000 then
+                game:Log(game.LOG_INFO, "BANKINFO: player >" .. pl:GetName() ..
+                    "< deposited an amount of " .. oldbalance - pinfo.value ..
+                    ", which leaves: " .. pinfo.value .. " in account.")
+            end
+            ib:SetMsg( "You deposit ~" .. what .. "~.\n\n" )
+            ib:AddMsg("Your new balance is ~" .. pl:ShowCost(pinfo.value) .. "~.\n\n")
+            ib:SetButton("Ok", "hi")
+        elseif dpose == false then
+            ib:SetMsg( "You try to deposit ~" .. what .. "~.\n\n" )
+            ib:AddMsg("But you don't have that much money!\n\n")
+            ib:SetButton("Back", "deposit")
+        end
     end
-    ib:AddMsg("You have on hand " .. pl:ShowCost(pl:GetMoney()) .. ".\n")
+    ib:AddMsg("You have on hand ~" .. pl:ShowCost(pl:GetMoney()) .. "~.\n")
 end
 
 function topicWithdrawDialog()
@@ -92,7 +112,7 @@ function topicWithdrawDialog()
     local bmsg, balance = getBalance(pl)
     ib:SetTitle("Withdraw money")
     ib:SetMsg(bmsg)
-    ib:AddMsg("You have on hand " .. pl:ShowCost(pl:GetMoney()) .. ".\n\n")
+    ib:AddMsg("You have on hand ~" .. pl:ShowCost(pl:GetMoney()) .. "~.\n\n")
     if balance > 0 then
         ib:AddMsg(
 [[
@@ -120,24 +140,47 @@ function topicWithdraw(what)
     else
         oldbalance = pinfo.value
         local wdraw = pl:Withdraw(pinfo, what)
-        if wdraw == 1 then
-            ib:SetMsg( "You " .. what .. ".\n\n" )
-            ib:AddMsg("Your new balance is " .. pl:ShowCost(pinfo.value) .. ".\n\n")
-            ib:SetButton("Ok", "hi")
-          
-            -- Did  pl withdraw 2m or more? If so, log it.
-            if oldbalance - pinfo.value >= 2 * 100 * 100 * 1000 then
-                game:Log(game.LOG_INFO, "BANKINFO: player >" .. pl:GetName() .. "< withdrew an amount of " .. oldbalance - pinfo.value ..
-                            ", which leaves: " .. pinfo.value .. " left.")
+        if type(wdraw) == "number" then
+            if wdraw == 1 then
+                ib:SetMsg( "You withdraw ~" .. what .. "~.\n\n" )
+                ib:AddMsg("Your new balance is ~~" .. pl:ShowCost(pinfo.value) .. "~.\n\n")
+                ib:SetButton("Ok", "hi")
+              
+                -- Did  pl withdraw 2m or more? If so, log it.
+                if oldbalance - pinfo.value >= 2 * 100 * 100 * 1000 then
+                    game:Log(game.LOG_INFO, "BANKINFO: player >" .. pl:GetName() .. "< withdrew an amount of " .. oldbalance - pinfo.value ..
+                                ", which leaves: " .. pinfo.value .. " left.")
+                end
+            else
+                ib:SetMsg( "You try to withdraw ~" .. what .. "~.\n\n" )
+                ib:AddMsg("You can't withdraw that amount of money.\n\n")
+                ib:AddMsg("Your balance is ~" .. pl:ShowCost(pinfo.value) .. "~.\n\n")
+                ib:SetButton("Back", "withdrawal")
             end
         else
-            ib:SetMsg( "You try to " .. what .. ".\n\n" )
-            ib:AddMsg("You can't withdraw that amount of money.\n\n")
-            ib:AddMsg("Your balance is " .. pl:ShowCost(pinfo.value) .. ".\n\n")
-            ib:SetButton("Back", "withdrawal")
+            if wdraw == nil then
+                ib:SetMsg("|[Specify an amount like 'withdraw 3 gold, 2 silver' " ..
+                    "or 'withdraw all'.]|\n\n")
+                ib:SetButton("Back", "withdraw")
+            elseif wdraw == true then
+                -- Did  pl deposit 2m or more? If so, log it.
+                if pinfo.value - oldbalance >= 2 * 100 * 100 * 1000 then
+                    game:Log(game.LOG_INFO, "BANKINFO: player >" .. pl:GetName() ..
+                        "< withdrew an amount of " .. oldbalance - pinfo.value ..
+                        ", which leaves: " .. pinfo.value .. " in account.")
+                end
+                ib:SetMsg( "You withdraw ~" .. what .. "~.\n\n" )
+                ib:AddMsg("Your new balance is ~" .. pl:ShowCost(pinfo.value) .. "~.\n\n")
+                ib:SetButton("Ok", "hi")
+            elseif wdraw == false then
+                ib:SetMsg( "You try to withdraw ~" .. what .. "~.\n\n" )
+                ib:AddMsg("But you can't withdraw that much money!\n\n")
+                ib:AddMsg("Your balance is ~" .. pl:ShowCost(pinfo.value) .. "~.\n\n")
+                ib:SetButton("Back", "withdrawal")
+            end
         end
     end
-    ib:AddMsg("You have on hand " .. pl:ShowCost(pl:GetMoney()) .. ".\n")
+    ib:AddMsg("You have on hand ~" .. pl:ShowCost(pl:GetMoney()) .. "~.\n")
 end
 
 tl = TopicList()
@@ -145,6 +188,6 @@ tl:AddGreeting(nil, topicDefault)
 tl:SetDefault(topicDefault)
 tl:AddTopics("deposit", topicDepositDialog)
 tl:AddTopics("withdrawal", topicWithdrawDialog)
-tl:AddTopics("(deposit .*)", topicDeposit)
-tl:AddTopics("(withdraw .*)", topicWithdraw)
+tl:AddTopics("deposit (.*)", topicDeposit)
+tl:AddTopics("withdraw (.*)", topicWithdraw)
 ib:ShowSENTInce(game.GUI_NPC_MODE_NPC, tl:CheckMessage(event, true))
