@@ -648,9 +648,9 @@ typedef enum
     BANTYPE_IP
 } ENUM_BAN_TYPE;
 
-#define MONEYSTRING_NOTHING  0
-#define MONEYSTRING_AMOUNT   1
-#define MONEYSTRING_ALL     -1
+#define MONEY_MODE_NOTHING 0
+#define MONEY_MODE_AMOUNT  1
+#define MONEY_MODE_ALL     2
 
 #define COSTSTRING_SHORT  0
 #define COSTSTRING_FULL   1
@@ -763,12 +763,11 @@ typedef struct linked_char
 
 typedef struct _money_block
 {
-    /** 0, 1, or -1: see get_money_from_string() */
-    int     mode;
-    sint64   mithril;
-    sint64   gold;
-    sint64   silver;
-    sint64   copper;
+    uint8  mode;
+    uint32 mithril;
+    uint32 gold;
+    uint32 silver;
+    uint32 copper;
 }_money_block;
 
 /** ban node - see ban.c */

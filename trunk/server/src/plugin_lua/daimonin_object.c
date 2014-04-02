@@ -1721,9 +1721,8 @@ static int GameObject_Apply(lua_State *L)
 /*          attempted.                                                       */
 /*          nrof is optional and specifies the nrof from a stack (the default*/
 /*          is the entire stack).                                            */
-/* Status : Untested/Stable                                                  */
+/* Status : Tested/Stable                                                    */
 /*****************************************************************************/
-
 static int GameObject_PickUp(lua_State *L)
 {
     lua_object *self,
@@ -1752,7 +1751,6 @@ static int GameObject_PickUp(lua_State *L)
     return 1;
 }
 
-
 /*****************************************************************************/
 /* Name   : GameObject_Drop                                                  */
 /* Lua    : object:Drop(what, nrof)                                          */
@@ -1763,9 +1761,8 @@ static int GameObject_PickUp(lua_State *L)
 /*          drop no drops).                                                  */
 /*          nrof is optional and specifies the nrof from a stack (the default*/
 /*          is the entire stack).                                            */
-/* Status : Untested/Stable                                                  */
+/* Status : Tested/Stable                                                    */
 /*****************************************************************************/
-
 static int GameObject_Drop(lua_State *L)
 {
     lua_object *self,
@@ -1789,178 +1786,139 @@ static int GameObject_Drop(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : GameObject_Deposit                                               */
-/* Lua    : object:Deposit(deposit_object, string)                           */
-/* Info   : deposit value or string money from object in deposit_object.     */
-/*          Control first object has that amount of money, then remove it    */
-/*          from object and add it in ->value of deposit_object.             */
-/* Returns : -1 if there was a syntax error, 0 if there wasn't enough money  */
-/*           and 1 if it succeeded                                           */
+/* Lua    : object:Deposit(what, string)                                     */
+/* Info   : Only works for players and monster objects. Other types generate */
+/*          an error.                                                        */
+/*          Deposits an amount of money (as described by string) to what (a  */
+/*          bank force) from object's inventory.                             */
+/* Return : nil if there was a syntax error in string; false if the object   */
+/*          did not have sufficient money; true if the deposit succeeded (and*/
+/*          what->value is updated).                                         */
 /* Status : Tested/Stable                                                    */
 /*****************************************************************************/
 static int GameObject_Deposit(lua_State *L)
 {
-    lua_object *obptr;
-    char       *text;
-    object     *bank;
-    int         val=1, pos=0;
-    lua_object *self;
+    lua_object  *self,
+                *whatptr;
+    char        *text;
     _money_block money;
 
-    get_lua_args(L, "OOs", &self, &obptr, &text);
+    get_lua_args(L, "OOs", &self, &whatptr, &text);
 
-    bank = obptr->data.object;
+    if ((WHO->type != PLAYER ||
+         !CONTR(WHO)) &&
+        WHO->type != MONSTER)
+    {
+        return luaL_error(L, "object:Deposit() can only be called on a player or monster!");
+    }
 
-    hooks->get_word_from_string(text, &pos);
-    hooks->get_money_from_string(text + pos, &money);
+//    if (WHAT->type != MISC_OBJECT || // TODO: BASE_INFO or FORCE?
+//        WHAT->name != "BANK GENERAL")
+//    {
+//        return luaL_error(L, "object:Deposit(): Arg #2 must be a bank account GameObject!");
+//    }
+
+    (void)hooks->get_money_from_string(text, &money);
 
     if (!money.mode)
     {
-        val = -1;
-        hooks->new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, WHO, "deposit what?\nUse 'deposit all' or 'deposit 40 gold, 20 silver...'");
-    }
-    else if (money.mode == MONEYSTRING_ALL)
-    {
-        bank->value += hooks->remove_money_type(WHO, WHO, -1, 0);
-        hooks->FIX_PLAYER(WHO, "LUA: deposit - remove money");
+        lua_pushnil(L);
     }
     else
     {
-        /* Changed deposition code to use the standard
-         * payment calls. This means you can deposit
-         * 10 copper even if you don't have any copper.
-         * To make change, its still possible to withdraw
-         * lots of copper, for example
-         * /Gecko 2005-10-08 */
-        sint64 amount = money.mithril * hooks->coins_arch[0]->clone.value
-            + money.gold    * hooks->coins_arch[1]->clone.value
-            + money.silver  * hooks->coins_arch[2]->clone.value
-            + money.copper  * hooks->coins_arch[3]->clone.value;
+        sint64 total = (money.mode == MONEY_MODE_ALL) ?
+            hooks->query_money(WHO, NULL) : // TODO: also called in shop_pay_amount()
+            money.mithril * hooks->coins_arch[0]->clone.value +
+            money.gold * hooks->coins_arch[1]->clone.value +
+            money.silver * hooks->coins_arch[2]->clone.value +
+            money.copper * hooks->coins_arch[3]->clone.value;
 
-        if(hooks->shop_pay_amount(amount, WHO))
+        if (total <= 0 ||
+            !hooks->shop_pay_amount(total, WHO))
         {
-            bank->value += amount;
-//            hooks->FIX_PLAYER(WHO, "LUA: deposit - pay for amount");
+            lua_pushboolean(L, 0);
         }
         else
         {
-            hooks->new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, WHO, "You don't have that much money.");
-            val = 0;
+            WHAT->value += total;
+            lua_pushboolean(L, 1);
         }
     }
 
-    lua_pushnumber(L, val);
     return 1;
 }
 
 /*****************************************************************************/
 /* Name   : GameObject_Withdraw                                              */
-/* Lua    : object:Withdraw(deposit_object, string)                          */
-/* Info   : withdraw value or string money from object in deposit_object.    */
-/*          Control first object has that amount of money, then remove it    */
-/*          from object and add it in ->value of deposit_object.             */
-/*          FIXME Needs updated documentation                                */
+/* Lua    : object:Withdraw(what, string)                                    */
+/* Info   : Only works for players and monster objects. Other types generate */
+/*          an error.                                                        */
+/*          Withdraws an amount of money (as described by string) from what  */
+/*          (a bank force) to object's inventory.                            */
+/* Return : nil if there was a syntax error in string; false if there was not*/
+/*          sufficient money in what; true if the withdrawal succeeded (and  */
+/*          what->value is updated).                                         */
 /* Status : Tested/Stable                                                    */
 /*****************************************************************************/
 static int GameObject_Withdraw(lua_State *L)
 {
-    lua_object *obptr, *self;
-    object     *bank;
-    char       *text;
-    int         val=1;
+    lua_object  *self,
+                *whatptr;
+    char        *text;
     _money_block money;
-    int          pos     = 0;
-    sint64       big_value;
 
-    get_lua_args(L, "OOs", &self, &obptr, &text);
-    bank = obptr->data.object;
+    get_lua_args(L, "OOs", &self, &whatptr, &text);
 
-/*
-    static CFParm                       CFP;
-    static int                          val;
-    int                                 pos     = 0;
-    sint64                              big_value;
-    char                               *text    = (char *) (PParm->Value[2]);
-    object*who = (object*) (PParm->Value[0]), *bank = (object *) (PParm->Value[1]);
-*/
+    if ((WHO->type != PLAYER ||
+         !CONTR(WHO)) &&
+        WHO->type != MONSTER)
+    {
+        return luaL_error(L, "object:Withdraw() can only be called on a player or monster!");
+    }
 
-    hooks->get_word_from_string(text, &pos);
-    hooks->get_money_from_string(text + pos, &money);
+//    if (WHAT->type != MISC_OBJECT || // TODO: BASE_INFO or FORCE?
+//        WHAT->name != "BANK GENERAL")
+//    {
+//        return luaL_error(L, "object:Withdraw(): Arg #2 must be a bank account GameObject!");
+//    }
+
+    (void)hooks->get_money_from_string(text, &money);
 
     if (!money.mode)
     {
-        val = -1;
-        hooks->new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, WHO, "withdraw what?\nUse 'withdraw all' or 'withdraw 30 gold, 20 silver....'");
-    }
-    else if (money.mode == MONEYSTRING_ALL)
-    {
-        uint8 i;
-
-        val = bank->value;
-
-        /* TODO: This results in each coin type being picked up separately (so 4g,
-         * 8s, and 6c means 3 pick ups). We need a 'cash' object into which the
-         * coins can be inserted here. Then after this loop that object is inserted
-         * to the map and picked up, with pick_up() knowing to extract its contents
-         * and remove the empty husk within (a container in) who's inv. */
-        for (i = 0; hooks->coins_arch[i]; i++)
-        {
-            archetype *at = hooks->coins_arch[i];
-            uint32     nrof;
-
-            if (bank->value <= 0)
-            {
-                break;
-            }
-
-            nrof = bank->value / at->clone.value;
-
-            if (nrof > 0)
-            {
-                 object *new = hooks->clone_object(&at->clone, CLONE_WITHOUT_INVENTORY);
-
-                 new->nrof = nrof;
-                 new->x = WHO->x;
-                 new->y = WHO->y;
-                 (void)hooks->insert_ob_in_map(new, WHO->map, NULL, INS_NO_MERGE | INS_NO_WALK_ON);
-                 (void)hooks->pick_up(WHO, new, NULL, new->nrof);
-                 bank->value -= (nrof * at->clone.value);
-            }
-        }
+        lua_pushnil(L);
     }
     else
     {
-        /* just to set a border.... */
-        if (money.mithril > 100000 || money.gold > 100000 || money.silver > 1000000 || money.copper > 1000000)
-            hooks->new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, WHO, "withdraw values to high.");
+        sint64 total = (money.mode == MONEY_MODE_ALL) ?
+            WHAT->value :
+            money.mithril * hooks->coins_arch[0]->clone.value +
+            money.gold * hooks->coins_arch[1]->clone.value +
+            money.silver * hooks->coins_arch[2]->clone.value +
+            money.copper * hooks->coins_arch[3]->clone.value;
+
+        if (total <= 0 ||
+            total > WHAT->value)
+        {
+            lua_pushboolean(L, 0);
+        }
         else
         {
-            big_value = money.mithril * hooks->coins_arch[0]->clone.value
-                        + money.gold * hooks->coins_arch[1]->clone.value
-                        + money.silver * hooks->coins_arch[2]->clone.value
-                        + money.copper * hooks->coins_arch[3]->clone.value;
+            object *loot;
 
-            if (big_value > bank->value)
-                val = 0;
-            else
+            if (money.mode == MONEY_MODE_ALL)
             {
-				// we have here "physical" money we insert in the player,
-				// so the cast from int64 to unint32 will be ok - be sure we test it always
-                if (money.mithril)
-                    hooks->insert_money_in_player(WHO, &hooks->coins_arch[0]->clone, (uint32)money.mithril);
-                if (money.gold)
-                    hooks->insert_money_in_player(WHO, &hooks->coins_arch[1]->clone, (uint32)money.gold);
-                if (money.silver)
-                    hooks->insert_money_in_player(WHO, &hooks->coins_arch[2]->clone, (uint32)money.silver);
-                if (money.copper)
-                    hooks->insert_money_in_player(WHO, &hooks->coins_arch[3]->clone, (uint32)money.copper);
-
-                bank->value -= big_value;
-                hooks->FIX_PLAYER(WHO, "LUA: withdraw - insert money");
+                (void)hooks->enumerate_coins(WHAT->value, &money);
             }
+
+            loot = hooks->create_financial_loot(&money, WHO, MODE_NO_INVENTORY);
+            FREE_AND_COPY_HASH(loot->name, "your withdrawal");
+            (void)hooks->pick_up(WHO, loot, NULL, 1);
+            WHAT->value -= total;
+            lua_pushboolean(L, 1);
         }
     }
 
-    lua_pushnumber(L, val);
     return 1;
 }
 
@@ -3952,15 +3910,22 @@ static int GameObject_GetItemCost(lua_State *L)
 /* Info   : adds to inventory of caller coin object = money                  */
 /* Status : Tested                                                           */
 /*****************************************************************************/
-
 static int GameObject_AddMoney(lua_State *L)
 {
-    lua_object *self;
-    int            c, s, g, m;
+    lua_object   *self;
+    int           c, s, g, m;
+    _money_block  money;
+    object       *loot;
 
     get_lua_args(L, "Oiiii", &self, &c, &s, &g, &m);
-
-    hooks->add_money_to_player(WHO, c, s, g, m);
+    money.mode = MONEY_MODE_AMOUNT;
+    money.mithril = m;
+    money.gold = g;
+    money.silver = s;
+    money.copper = c;
+    loot = hooks->create_financial_loot(&money, WHO, MODE_NO_INVENTORY);
+    FREE_AND_COPY_HASH(loot->name, "the coins");
+    (void)hooks->pick_up(WHO, loot, NULL, 1);
 
     return 0;
 }
@@ -3972,18 +3937,25 @@ static int GameObject_AddMoney(lua_State *L)
 /* Info   : Same as AddMoney but with message to player how much he got      */
 /* Status : Tested                                                           */
 /*****************************************************************************/
-
 static int GameObject_AddMoneyEx(lua_State *L)
 {
-    lua_object *self;
-    char        buf[MEDIUM_BUF];
-    int         c, s, g, m, flag=FALSE;
+    lua_object   *self;
+    char          buf[MEDIUM_BUF];
+    int           c, s, g, m, flag=FALSE;
+    _money_block  money;
+    object       *loot;
 
     get_lua_args(L, "Oiiii", &self, &c, &s, &g, &m);
-
-    hooks->add_money_to_player(WHO, c, s, g, m);
-
+    money.mode = MONEY_MODE_AMOUNT;
+    money.mithril = m;
+    money.gold = g;
+    money.silver = s;
+    money.copper = c;
+    loot = hooks->create_financial_loot(&money, WHO, MODE_NO_INVENTORY);
+    FREE_AND_COPY_HASH(loot->name, "the coins");
+    (void)hooks->pick_up(WHO, loot, NULL, 1);
     strcpy(buf, "You got");
+
     if(m)
     {
         sprintf(strchr(buf, '\0'), " %d %s", m, "mithril");
@@ -4023,7 +3995,7 @@ static int GameObject_GetMoney(lua_State *L)
 
     get_lua_args(L, "O", &self);
 
-    amount = hooks->query_money(WHO);
+    amount = hooks->query_money(WHO, NULL);
 
     /* possible data loss from 64bit integer to double! */
     lua_pushnumber(L, (double)amount);
@@ -4094,8 +4066,8 @@ static int GameObject_SendCustomCommand(lua_State *L)
 /*****************************************************************************/
 /* Name   : GameObject_Clone                                                 */
 /* Lua    : object:Clone(mode)                                               */
-/* Info   : mode = game.CLONE_WITH_INVENTORY (default) or                    */
-/*          game.CLONE_WITHOUT_INVENTORY                                     */
+/* Info   : mode = game.MODE_INVENTORY (default) or                    */
+/*          game.MODE_NO_INVENTORY                                     */
 /*          You should do something with the clone.                          */
 /*          SetPosition() and InsertInside() are useful functions for this.  */
 /* Status : Tested/Stable                                                    */

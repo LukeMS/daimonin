@@ -1102,12 +1102,11 @@ object *clone_object(object *original, uint8 mode)
         prev = that;
     }
 
-    /*** copy inventory ***/
-    if (!mode)
+    if (mode == MODE_INVENTORY)
     {
         for (this = original->inv; this; this = this->below)
         {
-            object *that = clone_object(this, 0);
+            object *that = clone_object(this, MODE_INVENTORY);
 
             (void)insert_ob_in_ob(that, clone);
         }

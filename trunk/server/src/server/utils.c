@@ -95,76 +95,75 @@ char * cleanup_string(char *ustring)
     return ustring;
 }
 
-
-/* returns a single word from a string, free from left & right whitespaces.
- * return NULL means that there is no word left in str.
- */
-char * get_word_from_string(char *str, int *pos)
+/* get_token() extracts the first 'token' from string, writing this to token
+ * and returning a pointer to the suffix of string.
+ *
+ * A 'token' is defined as a sequence of characters between two delimeters.
+ * By default ' ' is the delimeter. If qflag is non-zero then '"' is the
+ * delimeter. Leading whitespace is always skipped.
+ *
+ * token should point to an array large enough to hold any possible 'token'.
+ *
+ * The return is the rest of string after token or NULL if the end of string
+ * has been reached (or it was NULL to begin with. */
+char *get_token(char *string, char *token, uint8 qflag)
 {
-    static char buf[HUGE_BUF]; /* this is used for controled input which never should bigger as this */
-    int         i   = 0;
+    uint16 i;
 
-    buf[0] = '\0';
+    /* Blank the token. */
+    *token = '\0';
 
-    while (*(str + (*pos)) != '\0' && (!isalnum(*(str + (*pos))) && !isalpha(*(str + (*pos)))))
-        (*pos)++;
+    if (string)
+    {
+        /* Skip leading whitespace. */
+        for (i = 0; *(string + i) != '\0'; i++)
+        {
+            if (!isspace(*(string + i)))
+            {
+                break;
+            }
+        }
 
-    if (*(str + (*pos)) == '\0') /* nothing left! */
+        /* Something left. */
+        if (*(string + i) != '\0')
+        {
+            uint16 j = 0;
+            char   delimeter = ' ';
+
+            /* We're looking for a quoted string and find an (opening) '"''. */
+            if (qflag &&
+                *(string + i) == '"')
+            {
+                delimeter = '"';
+                i++;
+            }
+
+            /* Copy string to token until end of string or delimeter is reached. */
+            while (*(string + i) != '\0')
+            {
+                if (*(string + i) == delimeter)
+                {
+                    i++;
+                    break;
+                }
+
+                *(token + j++) = *(string + i++);
+            }
+
+            *(token + j) = '\0';
+        }
+    }
+
+    /* If string is NULL or we reached the end, return NULL. */
+    if (!string ||
+        *(string + i) == '\0')
+    {
         return NULL;
+    }
 
-    /* copy until end of string nor whitespace */
-    while (*(str + (*pos)) != '\0' && (isalnum(*(str + (*pos))) || isalpha(*(str + (*pos)))))
-        buf[i++] = *(str + (*pos)++);
-
-    buf[i] = '\0';
-    return buf;
+    /* Return suffix of string. */
+    return (string + i);
 }
-
-
-/* returns a single parameter from a string, free from left & right whitespaces.
- * return NULL means that there is no word left in str.
- * a parameter may be multiple words limited by quote marks
- * parameter may contain special chars like _
- * TODO - could this replace the above get_word function?  Torchwood
- */
-char * get_param_from_string(char *str, int *pos)
-{
-    static char  buf[HUGE_BUF]; /* this is used for controled input which never should bigger as this */
-    int   i   = 0;
-    int   gq  = 0;  // got quote
-
-    buf[0] = '\0';
-
-    if (!str)
-    {
-        return NULL;
-    }
-
-    while ((*(str + (*pos)) != '\0') && (*(str + (*pos)) == ' '))
-        (*pos)++;
-
-    if (*(str + (*pos)) == '\0') /* nothing left! */
-        return NULL;
-
-    if (*(str + (*pos)) == '"') /* found a quote */
-    {
-        gq = 1;
-        (*pos)++;
-    }
-
-    /* copy until end of string or whitespace / quote */
-    while (*(str + (*pos)) != '\0' && (gq ? *(str + (*pos)) != '"' : *(str + (*pos)) != ' '))
-        buf[i++] = *(str + (*pos)++);
-
-    if (*(str + (*pos)) == '"') /* found a quote */
-    {
-        (*pos)++;
-    }
-
-    buf[i] = '\0';
-    return buf;
-}
-
 
 /* buf_overflow() - we don't want to exceed the buffer size of
  * buf1 by adding on buf2! Returns true if overflow will occur.
