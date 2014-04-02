@@ -113,7 +113,7 @@
 #define HELMET                  34
 #define HORN                    35
 #define MONEY                   36
-#define CLASS                   37  /* object for applying character class modifications to someone */
+#define LOOT                    37
 #define GRAVESTONE              38
 #define AMULET                  39
 #define PLAYERMOVER             40

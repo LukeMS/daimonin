@@ -25,7 +25,8 @@
 
 #include <global.h>
 
-static sint64 PayFrom(object *op, object *root, sint64 amount);
+static sint64 PayFrom(object *where, sint64 amount);
+static void   InsertCoin(uint8 cointype, uint32 nrof, object *into);
 
 /* query_cost() will return the real value of an item
  * Thats not always ->value - and in some cases the value 
@@ -72,7 +73,7 @@ sint64 query_cost(object *tmp, object *who, int flag)
         {
             if (flag == F_BUY)
             {
-                LOG(llevMapbug, "MAPBUG:: Asking for buy-value of unidentified object %s.\n", query_name(tmp));
+                LOG(llevMapbug, "MAPBUG:: Asking for buy-value of unidentified object %s.\n", STRING_OBJ_NAME(tmp));
                 val = tmp->arch->clone.value * number;
             }
             else    /* Trying to sell something, or get true value */
@@ -93,7 +94,7 @@ sint64 query_cost(object *tmp, object *who, int flag)
         else
         {
             /* No archetype with this object - we generate some dummy values to avoid server break */
-            LOG(llevBug, "BUG: In sell item: Have object with no archetype: %s\n", query_name(tmp));
+            LOG(llevBug, "BUG: In sell item: Have object with no archetype: %s\n", STRING_OBJ_NAME(tmp));
             if (flag == F_BUY)
             {
                 LOG(llevBug, "BUG: Asking for buy-value of unidentified object without arch.\n");
@@ -212,32 +213,61 @@ char * query_cost_string(object *tmp, object *who, int flag, int mode)
     return cost_string_from_value(query_cost(tmp, who, flag), mode);
 }
 
-/* Returns the total value of coins 'carried' by op. Here carried means
- * directly in op's inventory or in an active container, or in (not
- * necessarily active) gold pouches within those two environments. */
-sint64 query_money(object *op)
+/* query_money() calculates the total value of coins in (including containers
+ * in) where's inventory.
+ *
+ * If money is non-NULL, the exact nrof coin denominations is recorded here.
+ *
+ * The return is the total value. */
+sint64 query_money(object *where, _money_block *money)
 {
     object *this;
     sint64  total = 0;
 
-    if (!op ||
-        QUERY_FLAG(op, FLAG_SYS_OBJECT))
+    if (!where)
     {
         return 0;
     }
 
-    for (this = op->inv; this; this = this->below)
+    for (this = where->inv; this; this = this->below)
     {
+        if (this->type == CONTAINER)
+        {
+            total += query_money(this, money);
+            continue;
+        }
+
         if (this->type == MONEY)
         {
             total += this->nrof * this->value;
-        }
-        else if (this->type == CONTAINER &&
-                 (QUERY_FLAG(this, FLAG_APPLIED) ||
-                  (!this->race ||
-                   strstr(this->race, "gold")))) // TODO: use shstr
-        {
-            total += query_money(this);
+
+            if (money)
+            {
+                uint32 *cointype = NULL;
+
+                if (this->value == coins_arch[0]->clone.value)
+                {
+                    cointype = &money->mithril;
+                }
+                else if (this->value == coins_arch[1]->clone.value)
+                {
+                    cointype = &money->gold;
+                }
+                else if (this->value == coins_arch[2]->clone.value)
+                {
+                    cointype = &money->silver;
+                }
+                else if (this->value == coins_arch[3]->clone.value)
+                {
+                    cointype = &money->copper;
+                }
+
+                if (cointype)
+                {
+                    money->mode == MONEY_MODE_AMOUNT;
+                    *cointype += (this->nrof * this->value);
+                }
+            }
         }
     }
 
@@ -248,8 +278,6 @@ sint64 query_money(object *op)
  * failure. */
 uint8 shop_pay_amount(sint64 amount, object *op)
 {
-    sint64 remain;
-
     /* Sanity check. */
     if (!op)
     {
@@ -260,7 +288,7 @@ uint8 shop_pay_amount(sint64 amount, object *op)
     {
         return 1;
     }
-    else if (amount > query_money(op)) // can't afford it
+    else if (amount > query_money(op, NULL)) // can't afford it
     {
         return 0;
     }
@@ -270,134 +298,64 @@ uint8 shop_pay_amount(sint64 amount, object *op)
         SET_FLAG(op, FLAG_NO_FIX_PLAYER);
     }
 
-    /* Negative means we're due change. */
-    if ((remain = PayFrom(op, op->inv, amount)) < 0)
+    if ((amount = PayFrom(op, amount)) > 0)
     {
-        uint8  i;
-        sint64 change = ABS(remain);
+        object *this;
 
-        for (i = 0; i < NUM_COINS; i++)
+        for (this = op->inv; this; this = this->below)
         {
-            if (coins_arch[i]->clone.value <= change)
-            {
-                sint32 nrof = 2;
-
-                while (change >= coins_arch[i]->clone.value * nrof)
-                {
-                    nrof++;
-                }
-
-                nrof--;
-                insert_money_in_player(op, &coins_arch[i]->clone, nrof);
-                change -= coins_arch[i]->clone.value * nrof;
-            }
-
-            if (change <= 0)
+            if (this->type == CONTAINER &&
+                (amount = PayFrom(this, amount)) <= 0)
             {
                 break;
             }
         }
-
-        if (change < 0)
-        {
-#ifdef WIN32
-            LOG(llevBug, "BUG:: %s:shop_pay_amount(): Attempt to give %s %I64d too much change!\n",
-                __FILE__, STRING_OBJ_NAME(op), ABS(change));
-#elif SIZEOF_LONG == 8
-            LOG(llevBug, "BUG:: %s:shop_pay_amount(): Attempt to give %s %ld too much change!\n",
-                __FILE__, STRING_OBJ_NAME(op), ABS(change));
-#else
-            LOG(llevBug, "BUG:: %s:shop_pay_amount(): Attempt to give %s %lld too much change!\n",
-                __FILE__, STRING_OBJ_NAME(op), ABS(change));
-#endif
-        }
     }
 
-    if (op->type == PLAYER)
+    /* Negative means we're due change. */
+    if (amount < 0)
     {
-        CLEAR_FLAG(op, FLAG_NO_FIX_PLAYER);
-        FIX_PLAYER(op, "pay amount");
+        _money_block  money;
+        object       *loot;
+
+        (void)enumerate_coins(ABS(amount), &money);
+        loot = create_financial_loot(&money, op, MODE_NO_INVENTORY);
+        FREE_AND_COPY_HASH(loot->name, "your change");
+        (void)pick_up(op, loot, NULL, 1);
     }
 
     return 1;
 }
 
-/* Takes MONEY in/below root (and then in CONTAINERs) until amount is paid
- * (it is assumed to be pre-determined that op actually has enough cash).
- * Returns amount - what was actually paid (should be <= 0, if negative,
- * change is due). */
-static sint64 PayFrom(object *op, object *root, sint64 amount)
+static sint64 PayFrom(object *where, sint64 amount)
 {
-    object *this,
-           *next;
+    object *this;
 
     /* Sanity checks. */
-    if (!op ||
-        !root ||
+    if (!where ||
         amount <= 0)
     {
         return amount;
     }
 
-    /* This hunk should remove all the money objects from the player/container */
-    for (this = root; this; this = next)
+    this = where->inv;
+
+    while (this)
     {
-        next = this->below;
+        object *next = this->below;
 
         if (amount <= 0)
         {
             break;
         }
 
-        /* FIXME: This grabs coins in reverse inventory order. So if root has
-         * a stack of 50c followed by a stack of 2s and buys an item for 50c,
-         * 1s will be taken and 50c chanve given, leaving root with 100c 1s
-         * after the transaction. Technically this is fine but humanly it makes
-         * little sense.
-         *
-         * This could be fixed by adding an extra step to the change-giving
-         * cycle (in shop_pay_amount()) to go back through the purchaser's inv
-         * and change ALL coins for their optimum denominations according to
-         * total value. But this is pretty labour-intensive just to make things
-         * seem 'nicer'.
-         *
-         * Maybe a better fix is to force a server-side ordering of coins so
-         * higher value always goes before lower value. But this is pretty much
-         * as much work as above.
-         *
-         * A third option would be to just REMEMBER all the coins in root and
-         * then actually pay from this memory later on. That was how the old
-         * function worked but it was huge and unwieldy.
-         *
-         * -- Smacky 20130126 */
         if (this->type == MONEY)
         {
-            sint32 needed = (amount > this->value)
-                            ? (sint32)(amount / this->value + ((amount % this->value) ? 1 : 0))
-                            : 1,
-                   used = MIN((sint32)this->nrof, needed);
-
-            amount -= this->value * used;
-            (void)decrease_ob_nr(this, used);
-        }
-    }
-
-    /* Ugly, but in this way we ensure the whole root is searched before we go
-     * recursive inside the containers. */
-    for (this = root; this; this = next)
-    {
-        next = this->below;
-
-        if (amount <= 0)
-        {
-            break;
+            amount -= (this->nrof * this->value);
+            remove_ob(this);
         }
 
-        if (this->type == CONTAINER &&
-            this->inv)
-        {
-            amount = PayFrom(op, this->inv, amount);
-        }
+        this = next;
     }
 
     return amount;
@@ -425,14 +383,14 @@ uint8 shop_checkout(object *op, object *this)
         {
             CLEAR_FLAG(this, FLAG_UNPAID);
             new_draw_info(NDI_UNIQUE, 0, op, "You lack the funds to buy %s.",
-                          query_name(this));
+                          query_short_name(this, op));
             SET_FLAG(this, FLAG_UNPAID);
         }
         else
         {
             new_draw_info(NDI_UNIQUE, 0, op, "You paid %s for %s.",
                           cost_string_from_value(price, COSTSTRING_SHORT),
-                          query_name(this));
+                          query_short_name(this, op));
             CLEAR_FLAG(this, FLAG_UNPAID);
             (void)merge_ob(this, NULL);
             esrv_update_item(UPD_WEIGHT | UPD_NROF | UPD_FLAGS, this);
@@ -455,84 +413,76 @@ uint8 shop_checkout(object *op, object *this)
     return success;
 }
 
-/* return 0 = we have nothing found.
- * return 1 = we have some money.
- * return -1 = we have keyword "all"
- */
-int get_money_from_string(char *text, struct _money_block *money)
+/* get_money_from_string() parses string to money.
+ *
+ * string should include a sequence of tokens of the basic form '# cointype'.
+ * The space is optional and cointype is case insensitive and cointype may be
+ * any abbreviation of the full word. For example: '1g', '1gold' '1GoL', '1 g',
+ * '1g, 2 silver and 3CoP' are all valid. Alternatively string may be the
+ * keyword 'all'.
+ *
+ * The return is money-> mode (so MONEY_MODE_NOTHING, MONEY_MODE_AMOUNT, or
+ * MONEY_MODE_ALL depending on string).  */
+int get_money_from_string(char *string, struct _money_block *money)
 {
-    int     pos = 0;
-    char   *word;
+    char *cp = string,
+          buf[MEDIUM_BUF];
 
     memset(money, 0, sizeof(struct _money_block));
+    (void)get_token(string, buf, 0);
 
-    /* kill all whitespace */
-    while (*text != '\0' && isspace(*text))
-        text++;
-
-    /* easy, special case: all money */
-    if (!strncasecmp(text, "all", 3))
+    if (!strncasecmp(buf, "all", 3))
     {
-        money->mode = MONEYSTRING_ALL;
+        money->mode = MONEY_MODE_ALL;
         return money->mode;
     }
 
-    /* parse that sucker. we simply look for a word
-     * which is a number and then we test the next
-     * word is like "mithril", "gold", "silver" or "copper".
-     * is not, we go on.
-     */
-    money->mode = MONEYSTRING_NOTHING;
-
-    while ((word = get_word_from_string(text, &pos)))
+    do
     {
-        int i = 0, flag = *word;
+        sint64  value;
+        char   *endp;
 
+        cp = get_token(cp, buf, 0);
 
-        while (*(word + i) != '\0')
+        if (buf[0] != '\0' &&
+            (value = strtol(buf, &endp, 10)))
         {
-            if (*(word + i) < '0' || *(word + i) > '9')
-                flag = 0;
-            i++;
-        }
-
-        if (flag) /* if still set, we have a valid number in the word string */
-        {
-            int value   = atoi(word);
-
-            if (value > 0 && value < 1000000) /* a valid number - now lets look we have a valid money keyword */
+            if (*endp == '\0')
             {
-                if ((word = get_word_from_string(text, &pos)) && *word != '\0')
+                cp = get_token(cp, buf, 0);
+                endp = buf;
+            }
+
+            if (*endp != '\0')
+            {
+                size_t len = strspn(endp, "cdeghilmoiprstvCDEGHILMOPRSTV");
+
+                /* There is no way to test the coin arches directly for the
+                 * name -- they get the "silver", "gold" part from material. */
+                if (!strncasecmp("mithril", endp, len))
                 {
-                    int len = strlen(word);
-                    /* there is no way to test the coin arches direct for
-                                 * the name - they get the "silver", "gold" part from
-                                 * material...
-                                 */
-                    if (!strncasecmp("mithril", word, len))
-                    {
-                        money->mode = MONEYSTRING_AMOUNT;
-                        money->mithril += value;
-                    }
-                    else if (!strncasecmp("gold", word, len))
-                    {
-                        money->mode = MONEYSTRING_AMOUNT;
-                        money->gold += value;
-                    }
-                    else if (!strncasecmp("silver", word, len))
-                    {
-                        money->mode = MONEYSTRING_AMOUNT;
-                        money->silver += value;
-                    }
-                    else if (!strncasecmp("copper", word, len))
-                    {
-                        money->mode = MONEYSTRING_AMOUNT;
-                        money->copper += value;
-                    }
+                    money->mode = MONEY_MODE_AMOUNT;
+                    money->mithril += value;
+                }
+                else if (!strncasecmp("gold", endp, len))
+                {
+                    money->mode = MONEY_MODE_AMOUNT;
+                    money->gold += value;
+                }
+                else if (!strncasecmp("silver", endp, len))
+                {
+                    money->mode = MONEY_MODE_AMOUNT;
+                    money->silver += value;
+                }
+                else if (!strncasecmp("copper", endp, len))
+                {
+                    money->mode = MONEY_MODE_AMOUNT;
+                    money->copper += value;
                 }
             }
         }
     }
+    while (cp);
 
     return money->mode;
 }
@@ -546,7 +496,7 @@ int query_money_type(object *op, int value)
     {
         if (tmp->type == MONEY && tmp->value == value)
             total += tmp->nrof;
-        else if (tmp->type == CONTAINER && !tmp->slaying && ((!tmp->race || strstr(tmp->race, "gold"))))
+        else if (tmp->type == CONTAINER && !tmp->slaying)
             total += query_money_type(tmp, value);
 
         if(total >= (sint64) value)
@@ -555,108 +505,109 @@ int query_money_type(object *op, int value)
     return (int) total;
 }
 
-/* FIXME: My god this is a stupid function! I won't enumerate the problems.
- * Suffice to say it'll be remove entirly soon. ATM only used for bank deposits
- * anyway.
- *
- * -- Smacky 20130125 */
-uint32 remove_money_type(object *who, object *op, sint64 value, uint32 amount)
-{
-    object *this,
-           *next;
-
-    for (this = op->inv; this; this = next)
-    {
-        next = this->below;
-
-        if (!amount &&
-            value != -1)
-        {
-            break;
-        }
-
-        if (this->type == MONEY &&
-            (this->value == value ||
-             value == -1))
-        {
-            if (value == -1)
-            {
-                amount += (uint32)(this->nrof * this->value);
-                remove_ob(this);
-            }
-            else // don't think thiis calcs properly but this is never used anyway
-            {
-                sint32 preop = this->nrof;
-
-                if ((this = decrease_ob_nr(this, amount)))
-                {
-                    amount -= (preop - this->nrof);
-                }
-                else
-                {
-                    amount = 0;
-                }
-            }
-        }
-        else if (this->type == CONTAINER &&
-                 !this->slaying &&
-                 (!this->race ||
-                  strstr(this->race, "gold"))) // TODO: use shstr
-        {
-            amount = remove_money_type(who, this, value, amount);
-        }
-    }
-
-    return amount;
-}
-
-/* add number of money coins to a player */
-void add_money_to_player(object *pl, int c, int s, int g, int m)
-{
-    /* we don't handle decrease/remove of coins (<0) atm */
-    if(m>0)
-        insert_money_in_player(pl, &coins_arch[0]->clone, m);
-    if(g>0)
-        insert_money_in_player(pl, &coins_arch[1]->clone, g);
-    if(s>0)
-        insert_money_in_player(pl, &coins_arch[2]->clone, s);
-    if(c>0)
-        insert_money_in_player(pl, &coins_arch[3]->clone, c);
-}
-
-void insert_money_in_player(object *pl, object *money, uint32 nrof)
-{
-    object *tmp;
-    tmp = get_object();
-    copy_object(money, tmp);
-    tmp->nrof = nrof;
-    (void)insert_ob_in_ob(tmp, pl);
-}
-
 /* A simple function to calculate the optimum number of coins of each
  * denomination for a given value. */
 int enumerate_coins(sint64 value, struct _money_block *money)
 {
     memset(money, 0, sizeof(struct _money_block));
-    money->mode = MONEYSTRING_NOTHING;
+    money->mode = MONEY_MODE_NOTHING;
 
     if ((money->mithril = value / 10000000))
     {
-        money->mode = MONEYSTRING_AMOUNT;
+        money->mode = MONEY_MODE_AMOUNT;
         value -= money->mithril * 10000000;
     }
     if ((money->gold = value / 10000))
     {
-        money->mode = MONEYSTRING_AMOUNT;
+        money->mode = MONEY_MODE_AMOUNT;
         value -= money->gold * 10000;
     }
     if ((money->silver = value / 100))
     {
-        money->mode = MONEYSTRING_AMOUNT;
+        money->mode = MONEY_MODE_AMOUNT;
         value -= money->silver * 100;
     }
     if ((money->copper = value))
-        money->mode = MONEYSTRING_AMOUNT;
+        money->mode = MONEY_MODE_AMOUNT;
 
     return money->mode;
+}
+
+/* create_financial_loot() creates a loot_container and fills it with coins
+ * according to money.
+ *
+ * The precise distribution of coins depends on money->mode. If this is
+ * MONEY_MODE_AMOUNT, the exact amount of coins of each cointype specified in
+ * money will be used. If MONEY_MODE_ALL, the optimum number of coins for the
+ * total value of money will be used. If any other value (in theory this should
+ * only be MONEY_MODE_NOTHING) or if money is NULL, the function does nothing
+ * and returns NULL.
+ *
+ * If who is non-NULL and mode is MODE_NO_INVENTORY, the loot will be inserted
+ * at who->map, who->x, who->y (or the map of the environment of who). If mode
+ * is MODE_INVENTORY, the loot will be inderted in the inventory of who.
+ *
+ * The return is this loot object. Remember that the loot_container arch is a
+ * sys object and is not detectable to normal players, so neither are it's
+ * contents. IOW something should be done with it immediately following this
+ * function to extract those contents. */
+/* TODO: This can form the basis of the business end of a pickpocket skill. */
+object *create_financial_loot(_money_block *money, object *who, uint8 mode)
+{
+    object *loot;
+
+    if (money &&
+        money->mode == MONEY_MODE_ALL)
+    {
+        sint64 total = 0;
+
+        total += (money->mithril * 10000000); 
+        total += (money->gold * 10000); 
+        total += (money->silver * 100); 
+        total += (money->copper * 1); 
+        (void)enumerate_coins(total, money); // resets money->mode
+    }
+    else if (!money ||
+             money->mode != MONEY_MODE_AMOUNT)
+    {
+        return NULL;
+    }
+
+    loot = arch_to_object(archetype_global._loot_container);
+    InsertCoin(0, money->mithril, loot);
+    InsertCoin(1, money->gold, loot);
+    InsertCoin(2, money->silver, loot);
+    InsertCoin(3, money->copper, loot);
+
+    if (who)
+    {
+        if (mode == MODE_NO_INVENTORY)
+        {
+            object *this;
+
+            for (this = who; this->env; this = this->env)
+            {
+                ;
+            }
+
+            loot->x = this->x;
+            loot->y = this->y;
+            (void)insert_ob_in_map(loot, this->map, NULL, INS_NO_MERGE | INS_NO_WALK_ON);
+        }
+        else
+        {
+            (void)insert_ob_in_ob(loot, who);
+        }
+    }
+
+    return loot;
+}
+
+/* InsertCoin() inserts nrof * coins of cointype into into. */
+static void InsertCoin(uint8 cointype, uint32 nrof, object *into)
+{
+     object *coin = clone_object(&coins_arch[cointype]->clone, MODE_NO_INVENTORY);
+
+     coin->nrof = nrof;
+     (void)insert_ob_in_ob(coin, into);
 }

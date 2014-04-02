@@ -25,32 +25,10 @@
 
 #include <global.h>
 
-static char     numbers[21][20]         =
-{
-    "no", "", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen",
-    "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen", "twenty"
-};
-
-static char     numbers_10[10][20]      =
-{
-    "zero", "ten", "twenty", "thirty", "fourty", "fifty", "sixty", "seventy", "eighty", "ninety"
-};
-
-static char     levelnumbers[21][20]    =
-{
-    "zeroth", "first", "second", "third", "fourth", "fifth", "sixth", "seventh", "eighth", "ninth", "tenth", "eleventh",
-    "twelfth", "thirteenth", "fourteenth", "fifteenth", "sixteenth", "seventeenth", "eighteen", "nineteen", "twentieth"
-};
-
-static char     levelnumbers_10[11][20] =
-{
-    "zeroth", "tenth", "twentieth", "thirtieth", "fortieth", "fiftieth", "sixtieth", "seventieth", "eightieth",
-    "ninetieth"
-};
-
 static object *CanReach(object *who, object *what);
-static object *CanPickUp(object *who, object *what, object *where, uint32 nrof);
+static object *PickUp(object *who, object *what, object *where, uint32 nrof, object *from, object *to);
 static void    FixAsNeeded(object *who, object *to, object *from, object *what);
+static object *CanPickUp(object *who, object *what, object *where, uint32 nrof);
 static object *CanDiscard(object *who, object *what);
 static object *NoDiscardContainer(object *who, object *what);
 
@@ -162,17 +140,26 @@ char * query_weight(object *op)
 char * get_levelnumber(int i)
 {
     static char buf[MEDIUM_BUF];
-    if (i > 99)
+    int         mod = (i >= 20) ? i % 10 : i;
+
+    switch (mod)
     {
-        sprintf(buf, "%d.", i);
-        return buf;
+        case 1:
+        sprintf(buf, "%dst", i);
+        break;
+
+        case 2:
+        sprintf(buf, "%dnd", i);
+        break;
+
+        case 3:
+        sprintf(buf, "%drd", i);
+        break;
+
+        default:
+        sprintf(buf, "%dth", i);
     }
-    if (i < 21)
-        return levelnumbers[i];
-    if (!(i % 10))
-        return levelnumbers_10[i / 10];
-    strcpy(buf, numbers_10[i / 10]);
-    strcat(buf, levelnumbers[i % 10]);
+
     return buf;
 }
 
@@ -186,14 +173,10 @@ char * get_levelnumber(int i)
 
 char * get_number(int i)
 {
-    if (i <= 20)
-        return numbers[i];
-    else
-    {
-        static char buf[MEDIUM_BUF];
-        sprintf(buf, "%d", i);
-        return buf;
-    }
+    static char buf[MEDIUM_BUF];
+
+    sprintf(buf, "%d", i);
+    return buf;
 }
 
 /*
@@ -210,59 +193,40 @@ char * query_short_name(const object *const op, const object *const caller)
     if (!op || !op->name)
         return buf;
 
-    /* To speed things up (or make things slower?)
-       if(!op->nrof && !op->weight && !op->title && !is_magical(op))
-    return op->name;
-    */
-    if (op->nrof)
+    if (op->nrof > 1)
     {
         safe_strcat(buf, get_number(op->nrof), &len, sizeof(buf));
-
-        if (op->nrof != 1)
-            safe_strcat(buf, " ", &len, sizeof(buf));
-
-        if(!QUERY_FLAG(op, FLAG_IS_NAMED)) /* named items has no prefix */
-        {
-            if (!IS_LIVE(op) && op->type != TYPE_BASE_INFO)
-                safe_strcat(buf, item_race_table[op->item_race].name, &len, sizeof(buf));
-
-            if (op->material_real>0 && QUERY_FLAG(op, FLAG_IDENTIFIED))
-                safe_strcat(buf, material_real[op->material_real].name, &len, sizeof(buf));
-        }
-        safe_strcat(buf, op->name, &len, sizeof(buf));
-        if (op->nrof != 1)
-        {
-            char   *buf3    = strstr(buf, " of ");
-            if (buf3 != NULL)
-            {
-                strcpy(buf2, buf3);
-                *buf3 = '\0';   /* also changes value in buf */
-            }
-            len = strlen(buf);
-
-            /* If buf3 is set, then this was a string that contained
-                    * something of something (potion of dexterity.)  The part before
-                    * the of gets made plural, so now we need to copy the rest
-                    * (after and including the " of "), to the buffer string.
-                    */
-            if (buf3)
-                safe_strcat(buf, buf2, &len, sizeof(buf));
-        }
+        safe_strcat(buf, " ", &len, sizeof(buf));
     }
-    else
+
+    if(!QUERY_FLAG(op, FLAG_IS_NAMED)) /* named items has no prefix */
     {
-        /* if nrof is 0, the object is not mergable, and thus, op->name
-            should contain the name to be used. */
+        if (!IS_LIVE(op) && op->type != TYPE_BASE_INFO)
+            safe_strcat(buf, item_race_table[op->item_race].name, &len, sizeof(buf));
 
-        if(!QUERY_FLAG(op, FLAG_IS_NAMED)) /* named items has no prefix */
+        if (op->material_real>0 && QUERY_FLAG(op, FLAG_IDENTIFIED))
+            safe_strcat(buf, material_real[op->material_real].name, &len, sizeof(buf));
+    }
+
+    safe_strcat(buf, op->name, &len, sizeof(buf));
+
+    if (op->nrof > 1)
+    {
+        char   *buf3    = strstr(buf, " of ");
+        if (buf3 != NULL)
         {
-            if (!IS_LIVE(op) && op->type != TYPE_BASE_INFO)
-                safe_strcat(buf, item_race_table[op->item_race].name, &len, sizeof(buf));
-
-            if (op->material_real>0 && QUERY_FLAG(op, FLAG_IDENTIFIED))
-                safe_strcat(buf, material_real[op->material_real].name, &len, sizeof(buf));
+            strcpy(buf2, buf3);
+            *buf3 = '\0';   /* also changes value in buf */
         }
-        safe_strcat(buf, op->name, &len, sizeof(buf));
+        len = strlen(buf);
+
+        /* If buf3 is set, then this was a string that contained
+                * something of something (potion of dexterity.)  The part before
+                * the of gets made plural, so now we need to copy the rest
+                * (after and including the " of "), to the buffer string.
+                */
+        if (buf3)
+            safe_strcat(buf, buf2, &len, sizeof(buf));
     }
 
     switch (op->type)
@@ -1437,6 +1401,12 @@ int check_magical_container(const object *op, const object *env)
  * non-NULL it is a container into which what will be put (pick up to
  * container) otherwise what is moved into who's inv (pick up to inventory).
  *
+ * As a special case, when what is of type LOOT we loop through the inventory
+ * of what, picking up each of those objects. The empty loot object is then
+ * removed (but if who is a player he is messaged that he picked up the loot
+ * object, not each of its contents). In this way we can pick up many items
+ * with one call.
+ *
  * The return is what (but possibly with a different ->nrof, certainly with a
  * different ->env, etc than before the function) if what was picked up or NULL
  * if it wasn't. */
@@ -1447,9 +1417,7 @@ object *pick_up(object *who, object *what, object *where, uint32 nrof)
              *to = who,
              *outof;
     MapSpace *msp;
-    object   *shop;
 
-    /* STEP 1: Check that the parameters are sensible. */
     /* Sanity checks: must be a who and only players and monsters can pick
      * things up; must be a what; if there is a where, it must be a
      * container (and for non-gmaster wiz players, it must be their linked
@@ -1479,8 +1447,6 @@ object *pick_up(object *who, object *what, object *where, uint32 nrof)
     }
 
     outof = what->env;
-    msp = GET_MAP_SPACE_PTR(who->map, who->x, who->y);
-    GET_MAP_SPACE_SYS_OBJ(msp, SHOP_FLOOR, shop);
 
     /* Ensure nrof is a sensible value. */
     nrof = MAX(1, MIN(nrof, MAX_OBJ_NROF));
@@ -1489,7 +1455,7 @@ object *pick_up(object *who, object *what, object *where, uint32 nrof)
     {
         /* In shops any number of unpaid items can be picked up off the floor,
          * regardless of stack size. */
-        if (!shop ||
+        if (!(msp = GET_MAP_SPACE_PTR(who->map, who->x, who->y)) ||
             !what->map ||
             !QUERY_FLAG(what, FLAG_UNPAID))
         {
@@ -1497,186 +1463,115 @@ object *pick_up(object *who, object *what, object *where, uint32 nrof)
         }
     }
 
-    /* STEP 2: Check that who actually can pick up nrof * what. */
-    /* There are several reasons why what can't be picked up -- see
-     * CanPickUp(). */
-    if (!CanPickUp(who, what, where, nrof))
+    /* When what is loot we go through a special process. */
+    if (what->type == LOOT)
     {
-        return NULL;
-    }
+        object *looted;
 
-    /* STEP 3: Sort out special cases of where. */
-    /* For a pick up to inv (ie, where is NULL), who might have an appropriate
-     * readied container in his inventory, so check that. */
-    if (!where &&
-        from != who)
-    {
-        object *this;
-
-        for (this = who->inv; this; this = this->below)
+        /* If the loot is empty, throw it away and return. But first message
+         * who, if a player, just to let him know, and log a MAPBUG as this is
+         * surely unintentional. */
+        if (!(looted = what->inv))
         {
-            /* The container must be applied (ready/open). */
-            if (this->type == CONTAINER &&
-                QUERY_FLAG(this, FLAG_APPLIED))
+            if (!QUERY_FLAG(what, FLAG_REMOVED))
             {
-                /* It must have enough space for what. */
-                if (this->weight_limit == 0 ||
-                    (this->weight_limit > 0 &&
-                     this->weight_limit > this->carrying + WEIGHT_OVERALL(what)))
-                {
-                    /* Some containers can only hold specific classes of item
-                     * (eg, pouches for coins) while others can hold anything.
-                     * If we find a specific container that matches the item
-                     * class being picked up, use that. Otherwise, use the
-                     * first generic one found. */
-                    /* TODO: Improve and expand these specific containers. */
-                    if (!where &&
-                        !this->race)
-                    {
-                        where = this;
-                    }
-                    else if (this->race == what->race)
-                    {
-                        where = this;
-                        break;
-                    }
-                }
+                remove_ob(what);
             }
-        }
-    }
 
-    /* STEP 4: At this point we've determined that its theoretically OK for who
-     * to pick up nrof * what. Now we need to determine the type of pick up (to
-     * inv or to container), either of which involves further side
-     * effects/checks. */
-    /* If where is (still) NULL (see above) we're trying to pick up what to
-     * who's inv. */
-    if (!where)
-    {
-        /* If what is a container be sure to unlink (close) it for all players
-         * viewing it. */
-        if (what->type == CONTAINER)
-        {
-            container_unlink(NULL, what);
-        }
-    }
-    /* When where is non-NULL we're trying to put what in it. */
-    else
-    {
-        /* Containers can't be put in other containers. */
-        if (what->type == CONTAINER)
-        {
             if (pl)
             {
-                new_draw_info(NDI_UNIQUE, 0, who, "Containers can't be put in other containers!");
+                new_draw_info(NDI_UNIQUE, 0, who, "You feel a little swindled as %s contains nothing!",
+                    query_short_name(what, who));
             }
 
-            return NULL;
+            LOG(llevMapbug, "MAPBUG:: Empty loot container [%s %d %d]!\n",
+                STRING_MAP_PATH(what->map), what->x, what->y);
+            return what;
         }
-        /* where may be a container which cannot hold what. */
-        else if ((where->sub_type1 & 1) != ST1_CONTAINER_CORPSE &&
-                 where->race &&
-                 where->race != what->race)
-        {
-            if (pl)
-            {
-                new_draw_info(NDI_UNIQUE, 0, who, "Only %s can be put into %s!",
-                    where->race, query_name(where));
-            }
-
-            return NULL;
-        }
-
-        /* If an applyable light is lit (has glow_radius) force it to be
-         * FLAG_APPLIED so we can unapply it below. This prevents players storing
-         * lit torches in bags. */
-        if (what->type == TYPE_LIGHT_APPLY &&
-            what->glow_radius)
-        {
-            SET_FLAG(what, FLAG_APPLIED);
-            apply_light(who, what);
-        }
-
-        /* Picking up to a container not in who's inventory is similar to
-         * dropping in some respects so do the necessary checks -- see
-         * CanDiscard(). */
-        if (to != who &&
-            !CanDiscard(who, what))
-        {
-            return NULL;
-        }
-    }
-
-    /* STEP 5: Now we've determined the pick up is possible, so lets do it! */
-    /* what can have a PICKUP script on it which, if it returns true, aborts
-     * the actual pick up. */
-    if (trigger_object_plugin_event(EVENT_PICKUP, what, who, where, NULL,
-            (int *)&nrof, NULL, NULL, SCRIPT_FIX_ALL))
-    {
-        return NULL;
-    }
-
-    /* where can also have a PICKUP script on it which, if it returns true,
-     * aborts the actual pick up. */
-    if (where &&
-        trigger_object_plugin_event(EVENT_PICKUP, where, who, what, NULL,
-            (int *)&nrof, NULL, NULL, SCRIPT_FIX_ALL))
-    {
-        return NULL;
-    }
-
-    /* Picking things up from or to outside of who's inventory interrupts
-     * resting. */
-    if ((from != who ||
-         to != who) &&
-        pl)
-    {
-        pl->rest_mode = 0;
-    }
-
-    /* Below here is the actual code to move what to a new environment (either
-     * where or who). Also we send some appropriate messages to the client. */
-    /* Picking up unpaid items from a shop floor is preliminary to buying
-     * them. */
-    if (shop &&
-        what->map &&
-        QUERY_FLAG(what, FLAG_UNPAID) &&
-        !QUERY_FLAG(what, FLAG_SYS_OBJECT) &&
-        what->layer)
-    {
-        what = clone_object(what, CLONE_WITHOUT_INVENTORY);
-        what->nrof = nrof;
 
         if (pl)
         {
-            new_draw_info(NDI_UNIQUE, 0, who, "You can buy %s for ~%s~ from %s.\n",
-                query_name(what),
-                query_cost_string(what, who, F_BUY, COSTSTRING_SHORT),
-                query_name(shop));
+            SET_FLAG(who, FLAG_NO_FIX_PLAYER);
         }
-    }
-    else
-    {
-        if (nrof != what->nrof)
-        {
-            what = get_split_ob(what, nrof);
-        }
-        else if (!QUERY_FLAG(what, FLAG_REMOVED))
-        {
-            if (what->map)
-            {
-                remove_ob(what);
 
-                if (check_walk_off(what, NULL, MOVE_APPLY_VANISHED) != CHECK_WALK_OK)
-                {
-                    return NULL;
-                }
+        /* Loop through each of the contents of the loot. */
+        while (looted)
+        {
+            object *next = looted->below;
+            uint32  nr;
+
+            /* Nested loots will be thrown away. */
+            while (looted &&
+                   looted->type == LOOT)
+            {
+                next = looted->below;
+                remove_ob(looted);
+                looted = next;
             }
+
+            nr = MAX(1, MIN(looted->nrof, MAX_OBJ_NROF));
+
+            /* Each content is individually picked up -- see PickUp(). If this
+             * pick up fails (if who is a player, he is messaged as to why the
+             * failure happened)...*/
+            if (!PickUp(who, looted, where, nr, from, to))
+            {
+                /* If who is a player, keep him uptodate with what is going on
+                 * (he already knows why).  */
+                if (pl)
+                {
+                    pl = NULL; // prevents futher 'you pick up...' messages
+                    new_draw_info(NDI_UNIQUE, 0, who, "You take what you can of %s and leave the rest.",
+                        query_short_name(what, who));
+                }
+
+                /* Insert all the remaining contents of the loot in wherever
+                 * the loot itself is. */
+                while (looted)
+                {
+                    next = looted->below;
+                    remove_ob(looted);
+
+                    if (what->map)
+                    {
+                        looted->x = what->x;
+                        looted->y = what->y;
+                        (void)insert_ob_in_map(looted, what->map, NULL, INS_NO_WALK_ON);
+                    }
+                    else if (what->env)
+                    {
+                        (void)insert_ob_in_ob(looted, what->env);
+                    }
+
+                    looted = next;
+                }
+
+                /* Reinsert who at the top of the object list (only really necessary if
+                 * we had loot who couldn't pick up AND it was reinserted on who's
+                 * map). */
+                SET_FLAG(who, FLAG_NO_APPLY);
+                remove_ob(who);
+                (void)insert_ob_in_map(who, who->map, who, INS_NO_MERGE | INS_NO_WALK_ON);
+                CLEAR_FLAG(who, FLAG_NO_APPLY);
+            }
+            /* If the pick up succeeds, we just carry on with the loop. */
             else
             {
-                remove_ob(what);
+                looted = next;
             }
         }
+
+        /* Remove the empty loot. */
+        if (!(QUERY_FLAG(what, FLAG_REMOVED)))
+        {
+            remove_ob(what);
+        }
+    }
+    /* When what is not loot, try to pick it up -- see PickUp(). If this fails,
+     * just return NULL. */
+    else if (!(what = PickUp(who, what, where, nrof, from, to)))
+    {
+        return NULL;
     }
 
     /* Give players an appropriate message to tell them what they've done. */
@@ -1687,13 +1582,15 @@ object *pick_up(object *who, object *what, object *where, uint32 nrof)
      * cmd. */
     if (pl)
     {
-        char buf[LARGE_BUF];
+        char    buf[LARGE_BUF];
+        object *into = (what->env &&
+            what->env->type == CONTAINER) ? what->env : where;
 
         if (outof &&
             outof != who)
         {
             sprintf(buf, "Taking %s out of %s, you ",
-                (nrof > 1) ? "them" : "it", query_name(outof));
+                (nrof > 1) ? "them" : "it", query_short_name(outof, who));
         }
         else
         {
@@ -1703,28 +1600,26 @@ object *pick_up(object *who, object *what, object *where, uint32 nrof)
         if (from == who)
         {
             sprintf(strchr(buf, '\0'), "%s %s into %s",
-                (to == who) ? "transfer" : "put", query_name(what),
-                (where) ? query_name(where) : "your inventory");
+                (to == who) ? "transfer" : "put", query_short_name(what, who),
+                (into) ? query_short_name(into, who) : "your inventory");
         }
         else
         {
-            sprintf(strchr(buf, '\0'), "pick up %s", query_name(what));
+            sprintf(strchr(buf, '\0'), "pick up %s",
+                query_short_name(what, who));
 
-            if (where)
+            if (into)
             {
-                sprintf(strchr(buf, '\0'), " and put %s in %s",
-                    (nrof > 1) ? "them" : "it", query_name(where));
+                sprintf(strchr(buf, '\0'), " and put %s into %s",
+                    (nrof > 1) ? "them" : "it", query_short_name(into, who));
             }
         }
 
         new_draw_info(NDI_UNIQUE, 0, who, "%s.", buf);
     }
 
-    /* Yay! we're finally done. So insert what into its new environment. */
-    what = insert_ob_in_ob(what, (where) ? where : who);
-
+    /* Fix any involved players/monsters who need it -- see FixAsNeeded(). */
     FixAsNeeded(who, to, from, what);
-
     return what;
 }
 
@@ -1766,7 +1661,7 @@ static object *CanReach(object *who, object *what)
         if (who->type == PLAYER)
         {
             new_draw_info(NDI_UNIQUE, 0, who, "%s is floating out of your reach!",
-                query_name(what));
+                query_short_name(what, who));
         }
 
         return NULL;
@@ -1817,10 +1712,231 @@ static object *CanReach(object *who, object *what)
         who->type == PLAYER)
     {
         new_draw_info(NDI_UNIQUE, 0, who, "%s is out of your reach!",
-            query_name(what));
+            query_short_name(what, who));
     }
 
     return this;
+}
+
+/* PickUp() is the business end of picking up an object -- see pick_up(). */
+static object *PickUp(object *who, object *what, object *where, uint32 nrof, object *from, object *to)
+{
+    player   *pl = (who->type == PLAYER) ? CONTR(who) : NULL;
+    MapSpace *msp;
+
+    /* For a pick up to inv (ie, where is NULL), who might have an appropriate
+     * readied container in his inventory, so check that. */
+    if (!where &&
+        from != who)
+    {
+        object *this;
+        sint32  extra_weight = WEIGHT_OVERALL(what);
+
+        for (this = who->inv; this; this = this->below)
+        {
+            /* The container must be applied (ready/open). */
+            if (this->type == CONTAINER &&
+                QUERY_FLAG(this, FLAG_APPLIED))
+            {
+                /* It must have enough space for what. */
+                if (this->weight_limit >= this->carrying + extra_weight)
+                {
+                    /* Some containers can only hold specific classes of item
+                     * (eg, pouches for valuables) while others can hold any.
+                     * If we find a specific container that matches the item
+                     * class being picked up, use that. Otherwise, use the
+                     * first generic one found. */
+                    /* TODO: Improve and expand these specific containers. */
+                    if (!where &&
+                        !this->race)
+                    {
+                        where = this;
+                    }
+                    else if (this->race == what->race)
+                    {
+                        where = this;
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    /* Check that who actually can pick up nrof * what. There are several
+     * reasons why what can't be picked up -- see CanPickUp(). */
+    if (!CanPickUp(who, what, where, nrof))
+    {
+        return NULL;
+    }
+
+    /* At this point we've determined that its theoretically OK for who to pick
+     * up nrof * what. Now we need to determine the type of pick up (to
+     * inventory or to container), either of which involves further side
+     * effects/checks. */
+    /* If where is (still) NULL (see above) we're trying to pick up what to
+     * who's inv. */
+    if (!where)
+    {
+        /* If what is a container be sure to unlink (close) it for all players
+         * viewing it. */
+        if (what->type == CONTAINER)
+        {
+            container_unlink(NULL, what);
+        }
+    }
+    /* When where is non-NULL we're trying to put what in it. */
+    else
+    {
+        /* Containers can't be put in other containers. */
+        if (what->type == CONTAINER)
+        {
+            if (pl)
+            {
+                new_draw_info(NDI_UNIQUE, 0, who, "Containers can't be put in other containers!");
+            }
+
+            return NULL;
+        }
+        /* where may be a container which cannot hold what. */
+        else if ((where->sub_type1 & 1) != ST1_CONTAINER_CORPSE &&
+                 where->race &&
+                 where->race != what->race)
+        {
+            if (pl)
+            {
+                new_draw_info(NDI_UNIQUE, 0, who, "Only %s can be put into %s!",
+                    where->race, query_short_name(where, who));
+            }
+
+            return NULL;
+        }
+        /* Check that where has enough space for what. */
+        /* TODO: If nrof > 1 perhaps split what to fit? */
+        else if (where->weight_limit < where->carrying + (WEIGHT_OVERALL(what)))
+        {
+            if (pl)
+            {
+                new_draw_info(NDI_UNIQUE, 0, who, "%s %s too heavy to fit in %s!",
+                   query_short_name(what, who),
+                   (what->nrof > 1) ? "are" : "is",
+                   query_short_name(where, who));
+            }
+
+            return NULL;
+        }
+
+        /* If an applyable light is lit (has glow_radius) force it to be
+         * FLAG_APPLIED so we can unapply it below. This prevents players storing
+         * lit torches in bags. */
+        if (what->type == TYPE_LIGHT_APPLY &&
+            what->glow_radius)
+        {
+            SET_FLAG(what, FLAG_APPLIED);
+            apply_light(who, what);
+        }
+
+        /* Picking up to a container not in who's inventory is similar to
+         * dropping in some respects so do the necessary checks -- see
+         * CanDiscard(). */
+        if (to != who &&
+            !CanDiscard(who, what))
+        {
+            return NULL;
+        }
+    }
+
+    /* Now we've determined the pick up is possible, so lets do it! */
+    /* what can have a PICKUP script on it which, if it returns true, aborts
+     * the actual pick up. */
+    if (trigger_object_plugin_event(EVENT_PICKUP, what, who, where, NULL,
+            (int *)&nrof, NULL, NULL, SCRIPT_FIX_ALL))
+    {
+        return NULL;
+    }
+
+    /* where can also have a PICKUP script on it which, if it returns true,
+     * aborts the actual pick up. */
+    if (where &&
+        trigger_object_plugin_event(EVENT_PICKUP, where, who, what, NULL,
+            (int *)&nrof, NULL, NULL, SCRIPT_FIX_ALL))
+    {
+        return NULL;
+    }
+
+    /* Picking things up from or to outside of who's inventory interrupts
+     * resting. */
+    if ((from != who ||
+         to != who) &&
+        pl)
+    {
+        pl->rest_mode = 0;
+    }
+
+    /* Below here is the actual code to move what to a new environment (either
+     * where or who). Also we send some appropriate messages to the client. */
+    /* Picking up unpaid items from a shop floor is preliminary to buying
+     * them. */
+    if ((msp = GET_MAP_SPACE_PTR(who->map, who->x, who->y)) &&
+        what->map &&
+        QUERY_FLAG(what, FLAG_UNPAID) &&
+        !QUERY_FLAG(what, FLAG_SYS_OBJECT) &&
+        what->layer)
+    {
+        what = clone_object(what, MODE_NO_INVENTORY);
+        what->nrof = nrof;
+
+        if (pl)
+        {
+            object *shop;
+
+            GET_MAP_SPACE_SYS_OBJ(msp, SHOP_FLOOR, shop);
+            new_draw_info(NDI_UNIQUE, 0, who, "You can buy %s for ~%s~ from %s.\n",
+                query_short_name(what, who),
+                query_cost_string(what, who, F_BUY, COSTSTRING_SHORT),
+                query_short_name(shop, who));
+        }
+    }
+    else
+    {
+        if (nrof < what->nrof)
+        {
+            if (pl)
+            {
+                SET_FLAG(who, FLAG_NO_FIX_PLAYER);
+            }
+
+            what = get_split_ob(what, nrof);
+        }
+        else if (!QUERY_FLAG(what, FLAG_REMOVED))
+        {
+            if (what->map)
+            {
+                remove_ob(what);
+
+                if (check_walk_off(what, NULL, MOVE_APPLY_VANISHED) != CHECK_WALK_OK)
+                {
+                    return NULL;
+                }
+            }
+            else
+            {
+                if (pl)
+                {
+                    SET_FLAG(who, FLAG_NO_FIX_PLAYER);
+                }
+
+                remove_ob(what);
+            }
+        }
+    }
+
+    /* As long as what is not LOOT, insert it into its new environment. */
+    if (what->type != LOOT)
+    {
+        what = insert_ob_in_ob(what, (where) ? where : who);
+    }
+
+    return what;
 }
 
 /* CanPickUp() determines if who can pick up (if appropriate, nrof *) what
@@ -1841,8 +1957,9 @@ static object *CanPickUp(object *who, object *what, object *where, uint32 nrof)
     {
         if (who->type == PLAYER)
         {
-            new_draw_info(NDI_UNIQUE, 0, who, "%s is too large for you to pick up!",
-                query_name(what));
+            new_draw_info(NDI_UNIQUE, 0, who, "%s %s too large for you to pick up!",
+                query_short_name(what, who),
+                (what->nrof > 1) ? "are" : "is");
         }
 
         return NULL;
@@ -1853,7 +1970,7 @@ static object *CanPickUp(object *who, object *what, object *where, uint32 nrof)
     if (!IS_GMASTER_WIZ(who))
     {
         int     ego_mode;
-        object *this;
+        object *from;
 
         /* If what is somebody else's ego item then who can't pick it up. */
         if ((ego_mode = check_ego_item(who, what)) &&
@@ -1861,62 +1978,49 @@ static object *CanPickUp(object *who, object *what, object *where, uint32 nrof)
         {
             if (who->type == PLAYER)
             {
-                new_draw_info (NDI_UNIQUE, 0, who, "%s is not your ego item!",
-                    query_name(what));
+                new_draw_info (NDI_UNIQUE, 0, who, "%s %s not your ego item!",
+                    query_short_name(what, who),
+                    (what->nrof > 1) ? "are" : "is");
             }
 
             return NULL;
         }
 
-        /* Layer 0/sys objects can't be picked up (really the one should imply the
-         * other but JIC). TODO: Perhaps be strict about all layers? Really only
-         * layers 3 and 4 should be pickable. */
-        if (what->layer == 0 ||
-            QUERY_FLAG(what, FLAG_SYS_OBJECT) ||
         /* No_picks can't be picked up. */
-            QUERY_FLAG(what, FLAG_NO_PICK) ||
+        if (QUERY_FLAG(what, FLAG_NO_PICK) ||
         /* If you can't see it, you can't pick it up. */
             IS_NORMAL_INVIS_TO(what, who))
         {
             if (who->type == PLAYER)
             {
-                new_draw_info(NDI_UNIQUE, 0, who, "%s is not something you can pick up!",
-                   query_name(what));
+                new_draw_info(NDI_UNIQUE, 0, who, "%s %s not something you can pick up!",
+                    query_short_name(what, who),
+                    (what->nrof > 1) ? "are" : "is");
             }
 
             return NULL;
         }
 
-        for (this = what; this->env; this = this->env)
+        for (from = what; from->env; from = from->env)
         {
             ;
         }
 
-        /* When */
-        if (this != who)
+        /* When what is not already in (a container in) who's inv, check who
+         * can lift it. */
+        if (from != who)
         {
-            uint32 limit = (who->type == PLAYER) ?
+            uint32 who_limit = (who->type == PLAYER) ?
                 CONTR(who)->weight_limit :
                 ((who->weight_limit > 0) ? who->weight_limit : 20000);
-            sint32 extra_weight = WEIGHT_OVERALL(what);
 
-            if (limit < who->carrying + extra_weight)
+            if (who_limit < who->carrying + (WEIGHT_OVERALL(what)))
             {
                 if (who->type == PLAYER)
                 {
-                    new_draw_info(NDI_UNIQUE, 0, who, "%s is too heavy to pick up!",
-                        query_name(what));
-                }
-
-                return NULL;
-            }
-            else if (where &&
-                     where->weight_limit < where->carrying + extra_weight)
-            {
-                if (who->type == PLAYER)
-                {
-                    new_draw_info(NDI_UNIQUE, 0, who, "%s is too heavy to fit in %s!",
-                       query_name(what), query_name(where));
+                    new_draw_info(NDI_UNIQUE, 0, who, "%s %s too heavy to pick up!",
+                        query_short_name(what, who),
+                        (what->nrof > 1) ? "are" : "is");
                 }
 
                 return NULL;
@@ -1927,7 +2031,7 @@ static object *CanPickUp(object *who, object *what, object *where, uint32 nrof)
     return what;
 }
 
-/* FixAsNeeded() carries out any nnecessary fixing post-pick up/drop. */
+/* FixAsNeeded() carries out any necessary fixing post-pick up/drop. */
 /* TODO: While I think this works well enough, ALL fixing needs
  * reworking/making more efficient. But that is a separate job. */
 /* TODO: Currently monster encumbrance probably isn't handled. */
@@ -1962,6 +2066,11 @@ static void FixAsNeeded(object *who, object *to, object *from, object *what)
             return;
         }
 
+        if (this->type == PLAYER)
+        {
+            CLEAR_FLAG(this, FLAG_NO_FIX_PLAYER);
+        }
+
         if (is_sys_object)
         {
             FIX_PLAYER(this, "pick up/drop"); // also fixes monsters
@@ -1987,7 +2096,6 @@ object *drop_to_floor(object *who, object *what, uint32 nrof)
              *outof;
     int       reinsert = 1;
 
-    /* STEP 1: Check that the parameters are sensible. */
     /* Sanity checks: must be a who and only players and monsters can drop
      * things; must be a what. */
     if (!who ||
@@ -2014,7 +2122,6 @@ object *drop_to_floor(object *who, object *what, uint32 nrof)
     msp = GET_MAP_SPACE_PTR(who->map, who->x, who->y);
     GET_MAP_SPACE_SYS_OBJ(msp, SHOP_FLOOR, shop);
 
-    /* STEP 2: Check that who can actually drop what. */
     /* In a shop a container that is not empty cannot be dropped. */
     if (shop &&
         what->type == CONTAINER &&
@@ -2023,7 +2130,7 @@ object *drop_to_floor(object *who, object *what, uint32 nrof)
         if (pl)
         {
             new_draw_info(NDI_UNIQUE, 0, who, "First take everything out of %s!",
-                query_name(what));
+                query_short_name(what, who));
         }
 
         return NULL;
@@ -2035,7 +2142,7 @@ object *drop_to_floor(object *who, object *what, uint32 nrof)
         return NULL;
     }
 
-    /* STEP 3: Now we've determined the drop is possible, so lets do it! */
+    /* Now we've determined the drop is possible, so lets do it! */
     /* If what is a container be sure to unlink (close) it for all players
      * viewing it. */
     if (what->type == CONTAINER)
@@ -2084,7 +2191,7 @@ object *drop_to_floor(object *who, object *what, uint32 nrof)
             outof != who)
         {
             sprintf(buf, "Taking %s out of %s, you",
-                (nrof > 1) ? "them" : "it", query_name(outof));
+                (nrof > 1) ? "them" : "it", query_short_name(outof, who));
         }
         else
         {
@@ -2092,7 +2199,7 @@ object *drop_to_floor(object *who, object *what, uint32 nrof)
         }
 
         new_draw_info(NDI_UNIQUE, 0, who, "%s drop %s.",
-            buf, query_name(what));
+            buf, query_short_name(what, who));
     }
 
     /* No drops vanish for non-gmaster wiz players. */
@@ -2101,7 +2208,7 @@ object *drop_to_floor(object *who, object *what, uint32 nrof)
         QUERY_FLAG(what, FLAG_NO_DROP))
     {
         new_draw_info(NDI_UNIQUE, 0, who, "~NO-DROP~: %s vanishes to nowhere!",
-            query_name(what));
+            query_short_name(what, who));
         reinsert = 0;
     }
     /* In a shop there are special rules. */
@@ -2117,7 +2224,7 @@ object *drop_to_floor(object *who, object *what, uint32 nrof)
             if (pl)
             {
                 new_draw_info(NDI_UNIQUE, 0, who, "The shop magic puts %s back in storage.",
-                    query_name(what));
+                    query_short_name(what, who));
             }
 
             reinsert = 0;
@@ -2127,49 +2234,26 @@ object *drop_to_floor(object *who, object *what, uint32 nrof)
         else if (what->type != MONEY &&
                  (price = query_cost(what, who, F_SELL)) > 0)
         {
-            uint8 i;
+            _money_block  money;
+            object       *loot;
 
-            /* TODO: This results in each coin type being picked up separately (so 4g,
-             * 8s, and 6c means 3 pick ups). We need a 'cash' object into which the
-             * coins can be inserted here. Then after this loop that object is inserted
-             * to the map and picked up, with pick_up() knowing to extract its contents
-             * and remove the empty husk within (a container in) who's inv. */
-            for (i = 0; coins_arch[i]; i++)
-            {
-                archetype *at = coins_arch[i];
-                uint32     nr;
-
-                if (price <= 0)
-                {
-                    break;
-                }
-
-                if ((nr = price / at->clone.value) > 0)
-                {
-                     object *new = clone_object(&at->clone, CLONE_WITHOUT_INVENTORY);
-
-                     new->nrof = nr;
-                     new->x = who->x;
-                     new->y = who->y;
-                     (void)insert_ob_in_map(new, who->map, NULL, INS_NO_MERGE | INS_NO_WALK_ON);
-                     (void)pick_up(who, new, NULL, nr);
-                     price -= (nr * at->clone.value);
-                }
-            }
+            (void)enumerate_coins(price, &money);
+            loot = create_financial_loot(&money, who, MODE_NO_INVENTORY);
 
             if (pl)
             {
-                new_draw_info(NDI_UNIQUE, 0, who, "You receive ~%s~ for %s.",
-                    query_cost_string(what, who, F_SELL, COSTSTRING_FULL),
-                    query_name(what));
+                new_draw_info(NDI_UNIQUE, 0, who, "You sell %s for ~%s~.",
+                    query_short_name(what, who),
+                    query_cost_string(what, who, F_SELL, COSTSTRING_FULL));
             }
 
+            FREE_AND_COPY_HASH(loot->name, "your fee");
+            (void)pick_up(who, loot, NULL, 1);
             reinsert = 0;
         }
     }
 
-    /* Yay! we're finally done. So insert what into its new environment if
-     * necessary. */
+    /* Yay! we're finally done. Insert what into its new map if necessary. */
     if (reinsert)
     {
         what->x = who->x;
@@ -2183,6 +2267,7 @@ object *drop_to_floor(object *who, object *what, uint32 nrof)
         CLEAR_FLAG(who, FLAG_NO_APPLY);
     }
 
+    /* Fix any involved players/monsters who need it -- see FixAsNeeded(). */
     FixAsNeeded(who, NULL, NULL, what);
 
     return what;
@@ -2203,7 +2288,8 @@ static object *CanDiscard(object *who, object *what)
         if (QUERY_FLAG(what, FLAG_INV_LOCKED))
         {
             new_draw_info(NDI_UNIQUE, 0, who, "%s %s locked!",
-                query_name(what), (what->nrof > 1) ? "are" : "is");
+                query_short_name(what, who),
+                (what->nrof > 1) ? "are" : "is");
             return NULL;
         }
 
@@ -2271,13 +2357,13 @@ static object *NoDiscardContainer(object *who, object *what)
         if (QUERY_FLAG(this, FLAG_NO_DROP))
         {
             new_draw_info(NDI_UNIQUE, 0, who, "First remove all ~NO-DROP~ items from %s!",
-               query_name(what));
+               query_short_name(what, who));
             return this;
         }
         else if (QUERY_FLAG(this, FLAG_INV_LOCKED))
         {
             new_draw_info(NDI_UNIQUE, 0, who, "First remove all locked items from %s!",
-               query_name(what));
+               query_short_name(what, who));
             return this;
         }
     }

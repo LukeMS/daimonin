@@ -38,7 +38,6 @@ struct plugin_hooklist  hooklist    =
     /* A */
     add_exp,
     add_item_buff,
-    add_money_to_player,
     add_pet,
     add_quest_containers,
     add_quest_trigger,
@@ -55,6 +54,7 @@ struct plugin_hooklist  hooklist    =
     command_combat,
     command_target,
     cost_string_from_value,
+    create_financial_loot,
     create_instance_path_sh,
     create_mapdir_pathname,
     create_mempool,
@@ -68,6 +68,7 @@ struct plugin_hooklist  hooklist    =
     enter_map,
     enter_map_by_exit,
     enter_map_by_name,
+    enumerate_coins,
     esrv_send_or_del_item,
     esrv_update_item,
     /* F */
@@ -91,7 +92,6 @@ struct plugin_hooklist  hooklist    =
     get_rangevector,
     get_rangevector_from_mapcoords,
     get_tad,
-    get_word_from_string,
     give_artifact_abilities,
     guild_get,
     guild_join,
@@ -108,7 +108,6 @@ struct plugin_hooklist  hooklist    =
     hashtable_iterator_next,
     hashtable_new,
     /* I */
-    insert_money_in_player,
     insert_ob_in_map,
     insert_ob_in_ob,
     is_player_inv,
@@ -164,7 +163,6 @@ struct plugin_hooklist  hooklist    =
     re_cmp,
     ready_map_name,
     reload_behaviours,
-    remove_money_type,
     remove_ob,
     remove_item_buff,
     reset_instance_data,

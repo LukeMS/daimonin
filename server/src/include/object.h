@@ -354,7 +354,7 @@ typedef struct obj
 #define BUFF_ADD_BAD_PARAMS   16 // item or buff == NULL
 #define BUFF_ADD_NO_INSERT    32 // Something went wrong in insert_ob_in_ob
 
-#define CLONE_WITH_INVENTORY    0
-#define CLONE_WITHOUT_INVENTORY 1
+#define MODE_INVENTORY    0
+#define MODE_NO_INVENTORY 1
 
 #endif /* ifndef __OBJECT_H */

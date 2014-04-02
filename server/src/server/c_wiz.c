@@ -486,13 +486,16 @@ int command_spawn(object *op, char *params)
     return CreateObject(op, params, SPAWN);
 }
 
+/* TODO: Tidy. */
 static int CreateObject(object *op, char *params, CreateMode_t mode)
 {
     int        nrof = 1,
                magic = 0, set_magic = 0,
-               i, pos = 0,
+               i,
                allow_nrof_set = FALSE;
-    char      *str,
+    char      *cp = params,
+               str[MEDIUM_BUF],
+              *start,
                var[LARGE_BUF] = "",
                val[LARGE_BUF] = "",
                buf[LARGE_BUF];
@@ -503,13 +506,11 @@ static int CreateObject(object *op, char *params, CreateMode_t mode)
     if (!op || op->type != PLAYER)
         return COMMANDS_RTN_VAL_ERROR;
 
-    if (!params)
+    if (!(cp = get_token(cp, str, 0)) &&
+        str[0] == '\0')
         return COMMANDS_RTN_VAL_SYNTAX;
 
     // First parameter must be quantity, or blank
-    if (!(str = get_param_from_string(params, &pos)))
-        return COMMANDS_RTN_VAL_SYNTAX;
-
     if (sscanf(str, "%d", &nrof))
     {
         /* Constrain nrof to sensible values. */
@@ -519,8 +520,7 @@ static int CreateObject(object *op, char *params, CreateMode_t mode)
             nrof = MAX(1, MIN(nrof, 100));
 
         // Second parameter may be magic bonus (only if quantity was specified), or blank
-        if (!(str = get_param_from_string(params, &pos)))
-            return COMMANDS_RTN_VAL_SYNTAX;
+        cp = get_token(cp, str, 0);
 
         if (sscanf(str, "%d", &magic))
         {
@@ -533,7 +533,9 @@ static int CreateObject(object *op, char *params, CreateMode_t mode)
                 magic = MAX(-10, MIN(magic, 10));
 
             // Next parameter *must* be arch name
-            if (!(str = get_param_from_string(params, &pos)))
+            cp = get_token(cp, str, 0);
+
+            if (str[0] == '\0')
                 return COMMANDS_RTN_VAL_SYNTAX;
         }
     }
@@ -579,7 +581,7 @@ static int CreateObject(object *op, char *params, CreateMode_t mode)
      * If the base arch definition allows direct set of nrof, we only run
      * the loop once and create an item stack; else we run it nrof times
      * and create individual objects */
-    for (i = 0 ; i < (allow_nrof_set ? 1 : nrof); i++)
+    for (i = 0, start = cp; i < (allow_nrof_set ? 1 : nrof); i++, cp = start)
     {
         archetype      *atmp;
         object*prev =   NULL, *head = NULL;
@@ -602,12 +604,18 @@ static int CreateObject(object *op, char *params, CreateMode_t mode)
                 set_abs_magic(tmp, magic);
 
             // Read the remaining attribute / value pairs
-            while ((str = get_param_from_string(params, &pos)))
+            do
             {
+	        cp = get_token(cp, str, 0);
+
+                if (str[0] == '\0')
+                    break;
                 // amask is handled differently to other attributes
-                if (!strcmp(str, "amask"))
+                else if (!strcmp(str, "amask"))
                 {
-                    if (!(str = get_param_from_string(params, &pos)))
+                    cp = get_token(cp, str, 0);
+
+                    if (str[0] == '\0')
                         return COMMANDS_RTN_VAL_SYNTAX;
 
                     // Does this arch actually have any artifacts?
@@ -648,8 +656,9 @@ static int CreateObject(object *op, char *params, CreateMode_t mode)
                 else
                 {  // any other parameter
                     strcpy(var, str);  // Save the variable name
+                    cp = get_token(cp, str, 1);
 
-                    if (!(str = get_param_from_string(params, &pos))) // read value for this variable
+                    if (str[0] == '\0')
                         return COMMANDS_RTN_VAL_SYNTAX;
 
                     strcpy(val, str);  // Save the value
@@ -670,6 +679,7 @@ static int CreateObject(object *op, char *params, CreateMode_t mode)
                         new_draw_info(NDI_UNIQUE, 0, op, "Not allowed to set variable '%s'", var);
                 }
             }  // end of reading parameter string
+            while (cp);
 
             if (need_identify(tmp))
             {
@@ -1528,10 +1538,12 @@ int command_silence(object *op, char *params)
  *    /ban <+/-> <pl / ac / ch / ip> <str> <time>
  *    Note:  /ban pl will ban account, character and IP. Player must be online.
  *    Note:  <seconds> = -1 means permanent ban (GMs and SAs only) */
+/* TODO: Tidy. */
 int command_ban(object *op, char *params)
 {
     int            pos = 0, s = 60;  // Default ban is 1 minute
-    char          *str,
+    char          *cp = params,
+                   str[MEDIUM_BUF],
                    b_mode[MEDIUM_BUF] = "",
                    b_type[MEDIUM_BUF] = "",
                    b_str[MEDIUM_BUF] = "", // ban mode, ban type, etc.
@@ -1541,8 +1553,10 @@ int command_ban(object *op, char *params)
     if (!op)
         return COMMANDS_RTN_VAL_ERROR;
 
-    if (!(str = get_param_from_string(params, &pos)))
+    if (!(cp = get_token(cp, str, 0)) ||
+        str[0] == '\0')
         return COMMANDS_RTN_VAL_SYNTAX;
+
     strcpy(b_mode, str);
 
     if (!strcmp(b_mode, "list"))
@@ -1561,8 +1575,11 @@ int command_ban(object *op, char *params)
     if (strcmp(b_mode, "+") && strcmp(b_mode, "-"))
         return COMMANDS_RTN_VAL_SYNTAX;
 
-    if (!(str = get_param_from_string(params, &pos)))
+    cp = get_token(cp, str, 0);
+
+    if (str[0] == '\0')
         return COMMANDS_RTN_VAL_SYNTAX;
+
     strcpy(b_type, str);
 
     // type must be pl, ac, ch, ip
@@ -1579,17 +1596,20 @@ int command_ban(object *op, char *params)
         return COMMANDS_RTN_VAL_SYNTAX;
 
     // now get the player name
-    if (!(str = get_param_from_string(params, &pos)))
+    cp = get_token(cp, str, 0);
+
+    if (str[0] == '\0')
         return COMMANDS_RTN_VAL_SYNTAX;
+
     strcpy(b_str, str);
 
     if (!strcmp(b_mode, "+"))
     {
         // Get time if specified
-        if ((str = get_param_from_string(params, &pos)))
-        {
-            sscanf(str, "%d%s", &s, t_mod);
+        cp = get_token(cp, str, 0);
 
+        if (sscanf(str, "%d%s", &s, t_mod))
+        {
             if (!strcmp(t_mod, "d"))
                 s *= 24*60*60;
             else if (!strcmp(t_mod, "h"))

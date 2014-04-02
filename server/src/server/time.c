@@ -1293,7 +1293,7 @@ void move_creator(object *op)
             if(QUERY_FLAG(op, FLAG_SPLITTING) && --cloneindex >= 0)
                 continue;
 
-            tmp = clone_object(source, CLONE_WITH_INVENTORY);
+            tmp = clone_object(source, MODE_INVENTORY);
             tmp->x = op->x;
             tmp->y = op->y;
 

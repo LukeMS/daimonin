@@ -527,15 +527,13 @@ void                        trap_adjust(object *trap, int difficulty);
 sint64                      query_cost(object *tmp, object *who, int flag);
 char                       *cost_string_from_value(sint64 cost, int mode);
 char                       *query_cost_string(object *tmp, object *who, int flag, int mode);
-sint64                      query_money(object *op);
+sint64                      query_money(object *where, _money_block *money);
 uint8                       shop_pay_amount(sint64 amount, object *op);
 uint8                       shop_checkout(object *op, object *this);
 int                         get_money_from_string(char *text, struct _money_block *money);
 int                         query_money_type(object *op, int value);
-uint32                      remove_money_type(object *who, object *op, sint64 value, uint32 amount);
-void                        add_money_to_player(object *pl, int c, int s, int g, int m);
-void                        insert_money_in_player(object *pl, object *money, uint32 nrof);
 int                         enumerate_coins(sint64 value, struct _money_block *money);
+object                     *create_financial_loot(_money_block *money, object *who, uint8 mode);
 /* skills.c */
 int                         attack_melee_weapon(object *op, int dir, char *string);
 int                         attack_hth(object *pl, int dir, char *string);

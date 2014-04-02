@@ -241,7 +241,6 @@ struct plugin_hooklist
     /* A */
     sint32 (*add_exp)(object *, int, int, int);
     int (*add_item_buff)(object *, object *, short);
-    void (*add_money_to_player)(object *, int, int, int, int);
     int (*add_pet)(object *, object *, int);
     void (*add_quest_containers)(object *);
     void (*add_quest_trigger)(object *, object *);
@@ -259,6 +258,7 @@ struct plugin_hooklist
     int (*command_combat)(object *, char *);
     int (*command_target)(object *, char *);
     char *(*cost_string_from_value)(sint64, int);
+    object *(*create_financial_loot)(_money_block *, object *, uint8);
     shstr *(*create_instance_path_sh)(player *, shstr *, uint32);
     char *(*create_mapdir_pathname)(const char *);
     struct mempool *(*create_mempool)(const char *, uint32, uint32,
@@ -275,6 +275,7 @@ struct plugin_hooklist
     int (*enter_map_by_exit)(object *, object *);
     mapstruct *(*enter_map_by_name)(object *, const char *, const char *, int,
                                     int, int);
+    int (*enumerate_coins)(sint64, struct _money_block *);
     void (*esrv_send_or_del_item)(object *);
     void (*esrv_update_item)(uint16, object *);
     /* F */
@@ -304,7 +305,6 @@ struct plugin_hooklist
     int (*get_rangevector_from_mapcoords)(mapstruct *, int, int, mapstruct *,
                                           int, int, rv_vector *, int);
     void (*get_tad)(timeanddate_t *);
-    char *(*get_word_from_string)(char *, int *);
     void (*give_artifact_abilities)(object *, artifact *);
     object *(*guild_get)(player *, char *);
     object *(*guild_join)(player *, char *, int, int, int, int, int, int);
@@ -328,7 +328,6 @@ struct plugin_hooklist
                                 hashtable_const_key_t, hashtable_const_key_t,
                                 hashtable_size_t);
     /* I */
-    void (*insert_money_in_player)(object *, object *, uint32);
     object *(*insert_ob_in_map)(object * const, mapstruct *, object *const,
                                 const int);
     object *(*insert_ob_in_ob)(object *, object *);
@@ -380,7 +379,7 @@ struct plugin_hooklist
     /* Q */
     char *(*query_base_name)(object *, object *);
     sint64 (*query_cost)(object *, object *, int);
-    sint64 (*query_money)(object *);
+    sint64 (*query_money)(object *, _money_block *);
     int (*query_money_type)(object *, int);
     char *(*query_short_name)(const object *const, const object *const);
     int (*quest_count_pending)(const struct obj *);
@@ -390,7 +389,6 @@ struct plugin_hooklist
     char *(*re_cmp)(char *, char *);
     mapstruct *(*ready_map_name)(shstr *, shstr *, uint32, shstr *);
     void  (*reload_behaviours)(object *);
-    uint32 (*remove_money_type)(object *, object *, sint64, uint32);
     void (*remove_ob)(object *);
     int  (*remove_item_buff)(object *, char *, uint32);
     void (*reset_instance_data)(player *pl);
