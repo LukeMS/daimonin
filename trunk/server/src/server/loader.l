@@ -125,7 +125,7 @@ WS	[ \t]*{NL}?
 
 %}
 
-^arch{S}         {	/* If op->arch has been set, then this new object
+^arch{S}         {	 /* If op->arch has been set, then this new object
 			 * must be part of the inventory.  So process
 			 * appropriately.
 			 */
@@ -135,28 +135,29 @@ WS	[ \t]*{NL}?
 			  */
 			if (op->arch) {
 				artifact *tmp_art;
-			    object *tmp = NULL, *tmp2 = NULL;
+			    object *tmp = NULL;
 				float old_sleft,old_speed;
+				char *yv = yval();
 
 			    tmp=get_object();
 				tmp_art = amask_art;
 				amask_art = NULL;
-			    tmp->arch = find_archetype(yval());
-			    if (tmp->arch)
+
+				if ((tmp->arch = find_archetype(yv)))
+				{
 					copy_object_data(&tmp->arch->clone,tmp);
+				    	strcpy(msgbuf, "");
+				}
 				else
 				{
-				    tmp2 = create_singularity(yval());
-				    LOG(llevInfo, "SINGULARITY:: %s, %s\n", STRING_SAFE(op->name), PTR_STRING_SAFE(tmp_art, name));
+					tmp = create_singularity(yv);
+					sprintf(msgbuf, ">>>>%s<<<<\n", yytext);
+					FREE_AND_COPY_HASH(tmp->msg, msgbuf); // possibly done twice
 				}
 
-			    strcpy(msgbuf, "");
 				old_sleft = tmp->speed_left;
 				old_speed = tmp->speed;
-
 				lex_load(tmp, map_flags);
-			    if (!tmp->arch)
-				    tmp = tmp2;
 
 				/* we set here AND in load_object the material real values.
 				   * we do: If item_quality == 0 AND material defines a base
@@ -275,7 +276,7 @@ WS	[ \t]*{NL}?
 			object_load_flag = 1; /* ok - now we know the pre speed values are valid */
 		    }
 
-^msg{WS}	    {	BEGIN( MESSAGE ); msgbuf[0]='\0'; msg_flag=0;}
+^msg{WS}	    {	BEGIN( MESSAGE ); /*msgbuf[0]='\0';*/ msg_flag=0;}
 <MESSAGE>^endmsg{WS} {	BEGIN( INITIAL );
     			if (strlen(msgbuf) > HUGE_BUF-16 )
 	    		    LOG(llevMapbug, "\n\tMAPBUG: SKIPPED msg/endmsg -> buffer overflow!! (obj: %s) %d (max allowed=%d)\n",
