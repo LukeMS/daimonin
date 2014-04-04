@@ -590,17 +590,12 @@ object * arch_to_object(archetype *at)
 
 object * create_singularity(const char *name)
 {
-    object *op;
+    object *op = arch_to_object(archetype_global._empty_archetype);
 
-    LOG(llevDebug, "created Singularity: %s\n", name);
-    op = arch_to_object(archetype_global._empty_archetype);
     FREE_AND_COPY_HASH(op->name, name);
-    FREE_AND_COPY_HASH(op->title, " (removed object)");
-    SET_FLAG(op, FLAG_IDENTIFIED);
-    SET_FLAG(op, FLAG_SYS_OBJECT);
-    SET_FLAG(op, FLAG_NO_SAVE); /* remove them automatically - good for player inventory */
-     op->layer = 0;
-    /*op->face = &new_faces[FindFace("dummy.111", 0)];*/
+    FREE_AND_COPY_HASH(op->title, " (singularity)");
+//    SET_FLAG(op, FLAG_NO_SAVE); /* remove them automatically - good for player inventory */
+    LOG(llevInfo, "INFO:: Created singularity: %s\n", STRING_OBJ_NAME(op));
     return op;
 }
 
