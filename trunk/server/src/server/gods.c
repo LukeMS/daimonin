@@ -949,7 +949,7 @@ int god_examines_item(object *god, object *item)
         {
             if (item->env)
             {
-                new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, item->env, "Heretic! You are using %s!", query_name(item));
+                new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, item->env, "Heretic! You are using %s!", query_name_full(item, NULL));
             }
             return -1;
         }

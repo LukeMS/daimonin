@@ -640,8 +640,8 @@ void move_gate(object *op)
                 dam = dam * 3 + (tmp->level - dam) + 1;
                 damage_ob(tmp, dam, op, ENV_ATTACK_CHECK);
                 if (tmp->type == PLAYER)
-                    new_draw_info(NDI_UNIQUE, 0, tmp, "You are crushed by the %s!",
-                                  query_name(op));
+                    new_draw_info(NDI_UNIQUE, 0, tmp, "You are crushed by %s!",
+                        query_name_full(op, tmp));
             }
 
             /* If the object is alive, or the object either can
@@ -958,7 +958,7 @@ void change_object(object *op)
                     {
                         if (op->env->type == PLAYER) /* inside player char? */
                         {
-                            new_draw_info(NDI_UNIQUE, 0, op->env, "The %s burnt out.", query_name(op));
+                            new_draw_info(NDI_UNIQUE, 0, op->env, "%s burnt out.", query_name_full(op, op->env));
                             op->glow_radius = 0;
                             FIX_PLAYER(op->env ,"change object");
                         }
@@ -983,7 +983,7 @@ void change_object(object *op)
                 {
                     /* but give the player a note about it too */
                     if (op->env && op->env->type == PLAYER)
-                        new_draw_info(NDI_UNIQUE, 0, op->env, "The %s burnt out.", query_name(op));
+                        new_draw_info(NDI_UNIQUE, 0, op->env, "%s burnt out.", query_name_full(op, op->env));
                 }
             }
         }

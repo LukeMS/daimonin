@@ -234,11 +234,11 @@ void recursive_roll(object *op, int dir, object *pusher)
 {
     if (!roll_ob(op, dir, pusher))
     {
-        new_draw_info(NDI_UNIQUE, 0, pusher, "You fail to push the %s.", query_name(op));
+        new_draw_info(NDI_UNIQUE, 0, pusher, "You fail to push %s.", query_name_full(op, pusher));
         return;
     }
     (void) move_ob(pusher, dir, pusher);
-    new_draw_info(NDI_WHITE, 0, pusher, "You roll the %s.", query_name(op));
+    new_draw_info(NDI_WHITE, 0, pusher, "You roll %s.", query_name_full(op, pusher));
     return;
 }
 
@@ -702,7 +702,7 @@ int enter_map_by_exit(object *op, object *exit_ob)
 
     if(! EXIT_PATH(exit_ob))
     {
-        new_draw_info(NDI_UNIQUE, 0, op, "The %s is closed.", query_name(exit_ob));
+        new_draw_info(NDI_UNIQUE, 0, op, "%s is closed.", query_name_full(exit_ob, op));
         return FALSE;
     }
 
@@ -751,7 +751,7 @@ int enter_map_by_exit(object *op, object *exit_ob)
      * -- Smacky 20101231 */
     if (check_path(exit_ob->race, 1) == -1)
     {
-        new_draw_info(NDI_UNIQUE, 0, op, "The %s is temporarily closed.", query_name(exit_ob));
+        new_draw_info(NDI_UNIQUE, 0, op, "%s is temporarily closed.", query_name_full(exit_ob, op));
 
         return FALSE;
     }
@@ -845,7 +845,7 @@ int enter_map_by_exit(object *op, object *exit_ob)
 
     if (!newmap)
     {
-        new_draw_info(NDI_UNIQUE, 0, op, "The %s is closed.", query_name(exit_ob));
+        new_draw_info(NDI_UNIQUE, 0, op, "%s is closed.", query_name_full(exit_ob, op));
         return FALSE;
     }
 

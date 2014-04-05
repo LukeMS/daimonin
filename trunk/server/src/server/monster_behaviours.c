@@ -2294,7 +2294,8 @@ void ai_choose_enemy(object *op, struct mob_behaviour_param *params)
 
             /* Notify player about target */
             if(op->type == MONSTER && OBJECT_VALID(op->owner, op->owner_count) && op->owner->type == PLAYER)
-                new_draw_info(NDI_UNIQUE, 0, op->owner, "Your %s is attacking %s", query_name(op), query_name(op->enemy));
+                new_draw_info(NDI_UNIQUE, 0, op->owner, "%s is attacking %s.",
+                    query_name_full(op, op->owner), query_name_full(op->enemy, op->owner));
 
             /* The unaggressives look after themselves 8) */
             /* TODO: Make a separate behaviour... */

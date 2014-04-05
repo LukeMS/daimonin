@@ -114,14 +114,14 @@ int command_egobind ( object *pl, char *params)
     /* kein egoitem or previous bound */
     if(!QUERY_FLAG(mark, FLAG_IS_EGOITEM) || QUERY_FLAG(mark, FLAG_IS_EGOBOUND))
     {
-        new_draw_info(NDI_UNIQUE, 0,pl, "Your marked item %s is not an unbound ego item!", query_name(mark));
+        new_draw_info(NDI_UNIQUE, 0,pl, "Your marked item %s is not an unbound ego item!", query_name_full(mark, NULL));
 
         return 0;
     }
 
     if(!params)
     {
-        new_draw_info(NDI_UNIQUE, 0,pl, "To bind the %s type: /egobind %d", query_name(mark), mark->count);
+        new_draw_info(NDI_UNIQUE, 0,pl, "To bind %s type: /egobind %d", query_name_full(mark, pl), mark->count);
 
         return 0;
     }
@@ -129,12 +129,12 @@ int command_egobind ( object *pl, char *params)
     /* be sure we REALLY bind the marked and previous announced item! */
     if(mark->count != (uint32) strtoul(params, NULL, 10))
     {
-        new_draw_info(NDI_UNIQUE, 0,pl, "The numbers don't match!\nTo bind the %s type: /egobind %d", query_name(mark), mark->count);
+        new_draw_info(NDI_UNIQUE, 0,pl, "The numbers don't match!\nTo bind %s type: /egobind %d", query_name_full(mark, pl), mark->count);
 
         return 0;
     }
 
-    new_draw_info(NDI_UNIQUE, 0,pl, "You have bound the %s!", query_name(mark));
+    new_draw_info(NDI_UNIQUE, 0,pl, "You have bound %s!", query_name_full(mark, pl));
     create_ego_item(mark, pl->name, EGO_ITEM_BOUND_PLAYER);
     esrv_update_item(UPD_NAME, mark);
     play_sound_player_only (CONTR(pl), SOUND_LEARN_SPELL, SOUND_NORMAL, 0, 0);
@@ -476,7 +476,7 @@ char * long_desc(object *tmp, object *caller)
           {
               int   len;
 
-              strncat(buf, query_name(tmp), LARGE_BUF - 1);
+              strncat(buf, query_name_full(tmp, caller), LARGE_BUF - 1);
 
               buf[LARGE_BUF - 1] = 0;
               len = strlen(buf);
@@ -801,14 +801,14 @@ char *examine(object *op, object *tmp, int flag)
                     sprintf(buf, "You can buy %s for ~%s~ from %s.\n",
                         (tmp->nrof > 1) ? "them" : "it",
                         query_cost_string(tmp, op, F_BUY, COSTSTRING_SHORT),
-                        query_name(shop));
+                        query_name_full(shop, NULL));
                 }
                 else
                 {
                     sprintf(buf, "You can sell %s for ~%s~ to %s.\n",
                         (tmp->nrof > 1) ? "them" : "it",
                         query_cost_string(tmp, op, F_SELL, COSTSTRING_SHORT),
-                        query_name(shop));
+                        query_name_full(shop, NULL));
                 }
 
                 strcat(buf_out, buf);
@@ -961,7 +961,7 @@ void inventory(object *op, object *inv)
             }
 
             new_draw_info(NDI_UNIQUE, 0, op, "%s- %-*.*s (%5d) %-8s",
-                          in, length, length, query_name(tmp), tmp->count,
+                          in, length, length, query_name_full(tmp, op), tmp->count,
                           query_weight(tmp));
         }
 

@@ -476,8 +476,6 @@ enum
 /* the last_grace attribute is based on ticks instead of real time, so this converts it here */
 #define RANGED_DELAY_TIME (0.125f)
 
-#define query_name(_op_) query_name_full(_op_, NULL)
-
 #define ARTIFACTS_FIRST_PASS 1
 #define ARTIFACTS_SECOND_PASS 2
 

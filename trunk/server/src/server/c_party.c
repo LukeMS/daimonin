@@ -175,7 +175,7 @@ int command_party_invite(object *pl, char *params)
     if(target->group_status & GROUP_STATUS_INVITE)
     {
         /* we want avoid /invite spaming - so we don't give much information here */
-        new_draw_info(NDI_UNIQUE, 0,pl, "/invite: %s has pending invite request.", query_name(target->ob));
+        new_draw_info(NDI_UNIQUE, 0,pl, "/invite: %s has pending invite request.", query_name_full(target->ob, NULL));
 
         return 0;
     }
@@ -183,7 +183,7 @@ int command_party_invite(object *pl, char *params)
     /* target can be invited? */
     if(target->group_id != GROUP_NO) /* player has a group - GROUP_STATUS_GROUP should work to*/
     {
-        new_draw_info(NDI_UNIQUE, 0,pl, "/invite: %s is in another group.", query_name(target->ob));
+        new_draw_info(NDI_UNIQUE, 0,pl, "/invite: %s is in another group.", query_name_full(target->ob, NULL));
 
         return 0;
     }
@@ -192,7 +192,7 @@ int command_party_invite(object *pl, char *params)
     if(target->group_mode == GROUP_MODE_DENY ||
             (target->group_mode == GROUP_MODE_INVITE && pl->name != target->group_invite_name))
     {
-        new_draw_info(NDI_UNIQUE, 0,pl, "/invite: %s don't allow invite.", query_name(target->ob));
+        new_draw_info(NDI_UNIQUE, 0,pl, "/invite: %s don't allow invite.", query_name_full(target->ob, NULL));
 
         return 0;
     }
@@ -207,7 +207,7 @@ int command_party_invite(object *pl, char *params)
 
     /* send the /invite to our player */
     Write_String_To_Socket(&target->socket, SERVER_CMD_INVITE, pl->name, strlen(pl->name));
-    new_draw_info(NDI_YELLOW, 0,pl, "You invited %s to join the group.", query_name(target->ob));
+    new_draw_info(NDI_YELLOW, 0,pl, "You invited %s to join the group.", query_name_full(target->ob, NULL));
 
     return 0;
 }
@@ -246,7 +246,7 @@ int command_party_join(object *pl, char *params)
      */
     if(target->group_status & GROUP_STATUS_GROUP && target->group_leader != target->ob)
     {
-        new_draw_info(NDI_YELLOW, 0,pl, "/join: %s joined another group.", query_name(target->ob));
+        new_draw_info(NDI_YELLOW, 0,pl, "/join: %s joined another group.", query_name_full(target->ob, NULL));
         party_client_group_kill(pl);
         party_clear_links(activator);
 
@@ -295,7 +295,7 @@ int command_party_leave(object *pl, char *params)
     if(!(activator->group_status & GROUP_STATUS_GROUP))
         return 0;
 
-    party_message(0,NDI_YELLOW, 0, activator->group_leader, pl, "%s left the group.", query_name(pl));
+    party_message(0,NDI_YELLOW, 0, activator->group_leader, pl, "%s left the group.", query_name_full(pl, NULL));
     new_draw_info(NDI_YELLOW, 0,pl, "You left the group.");
     party_remove_member(CONTR(pl), FALSE);
 
@@ -335,7 +335,7 @@ int command_party_remove(object *pl, char *params)
         return 0;
     }
     party_message(0, NDI_YELLOW, 0, pl, target->ob, "%s was removed from the group.",
-                  query_name(target->ob));
+                  query_name_full(target->ob, NULL));
     new_draw_info(NDI_YELLOW, 0, target->ob, "You were removed from the group.");
     party_remove_member(target, FALSE);
 
@@ -408,7 +408,7 @@ void party_add_member(player *leader, player *member)
     party_dump(member->ob);
 #endif
 
-    party_message(0,NDI_YELLOW, 0,leader->ob, member->ob, "%s joined the group.", query_name(member->ob));
+    party_message(0,NDI_YELLOW, 0,leader->ob, member->ob, "%s joined the group.", query_name_full(member->ob, NULL));
     if( leader->group_nrof == 2)
         new_draw_info(NDI_YELLOW, 0, leader->ob, "Use /gsay for group speak or /help group for help.");
     new_draw_info(NDI_YELLOW, 0, member->ob, "You joined the group.");
@@ -444,7 +444,7 @@ void party_remove_member(player *member, int flag)
 
     if(flag)
     {
-        party_message(0,NDI_YELLOW, 0, member->group_leader , member->ob, "%s left the group.", query_name(member->ob));
+        party_message(0,NDI_YELLOW, 0, member->group_leader , member->ob, "%s left the group.", query_name_full(member->ob, NULL));
         new_draw_info(NDI_YELLOW, 0, member->ob, "You left the group.");
     }
 

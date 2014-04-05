@@ -749,7 +749,7 @@ void check_kill_quest_event(struct obj *pl, struct obj *op)
                 else if(tmp_info->level < tmp_info->last_sp) /* pure kill quest - alot easier */
                 {
                     sprintf(buf, "Quest %s\n%s: %d/%d",
-                            STRING_SAFE(tmp->name), query_name(op),
+                            STRING_SAFE(tmp->name), query_name_full(op, NULL),
                             ++tmp_info->level, tmp_info->last_sp);
                     update_quest(tmp, ST1_QUEST_UPDATE_KILL, tmp_info, NULL, buf);
                 }

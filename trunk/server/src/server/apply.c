@@ -940,9 +940,9 @@ static void ApplyContainer(object *op, object *sack)
             return;
 
         if (container_unlink(CONTR(op), cont))
-            new_draw_info(NDI_UNIQUE, 0, op, "You close the %s.", query_name(cont));
+            new_draw_info(NDI_UNIQUE, 0, op, "You close %s.", query_name_full(cont, op));
         else
-            new_draw_info(NDI_UNIQUE, 0, op, "You leave the %s.", query_name(cont));
+            new_draw_info(NDI_UNIQUE, 0, op, "You leave %s.", query_name_full(cont, op));
 
 
         if (cont == sack) /* we closing the one we applied */
@@ -959,12 +959,15 @@ static void ApplyContainer(object *op, object *sack)
     {
         if (sack->sub_type1 == ST1_CONTAINER_NORMAL)
         {
-            tmp = find_key(op, sack);
-            if (tmp)
-                new_draw_info(NDI_UNIQUE, 0, op, "You unlock %s with %s.", query_name(sack), query_name(tmp));
+            if ((tmp = find_key(op, sack)))
+            {
+                new_draw_info(NDI_UNIQUE, 0, op, "You unlock %s with %s.",
+                    query_name_full(sack, op), query_name_full(tmp, op));
+            }
             else
             {
-                new_draw_info(NDI_UNIQUE, 0, op, "You don't have the key to unlock %s.", query_name(sack));
+                new_draw_info(NDI_UNIQUE, 0, op, "You don't have a key to unlock %s.",
+                    query_name_full(sack, op));
                 return;
             }
         }
@@ -1000,11 +1003,13 @@ static void ApplyContainer(object *op, object *sack)
         /* this is not possible - opening a container inside another container or a another player */
         if (sack->env)
         {
-            new_draw_info(NDI_UNIQUE, 0, op, "You can't open %s", query_name(sack));
+            new_draw_info(NDI_UNIQUE, 0, op, "You can't open %s.",
+                query_name_full(sack, op));
             return;
         }
 
-        new_draw_info(NDI_UNIQUE, 0, op, "You open %s.", query_name(sack));
+        new_draw_info(NDI_UNIQUE, 0, op, "You open %s.",
+            query_name_full(sack, op));
         SET_FLAG(sack, FLAG_BEEN_APPLIED);
         container_link(CONTR(op), sack);
     }
@@ -1012,7 +1017,8 @@ static void ApplyContainer(object *op, object *sack)
     {
         if (QUERY_FLAG(sack, FLAG_APPLIED)) /* readied sack becoming open */
         {
-            new_draw_info(NDI_UNIQUE, 0, op, "You open %s.", query_name(sack));
+            new_draw_info(NDI_UNIQUE, 0, op, "You open %s.",
+                query_name_full(sack, op));
             SET_FLAG(sack, FLAG_BEEN_APPLIED);
             container_link(CONTR(op), sack);
         }
@@ -1026,13 +1032,15 @@ static void ApplyContainer(object *op, object *sack)
                         tmp->race == sack->race && tmp != sack)
                 {
                     CLEAR_FLAG(tmp, FLAG_APPLIED);
-                    new_draw_info(NDI_UNIQUE, 0, op, "You unreadied %s.", query_name(tmp));
+                    new_draw_info(NDI_UNIQUE, 0, op, "You unreadied %s.",
+                        query_name_full(tmp, op));
                     update_object(tmp, UP_OBJ_FACE);
                     esrv_update_item(UPD_FLAGS, tmp);
                 }
             }
 
-            new_draw_info(NDI_UNIQUE, 0, op, "You readied %s.", query_name(sack));
+            new_draw_info(NDI_UNIQUE, 0, op, "You readied %s.",
+                query_name_full(sack, op));
             SET_FLAG(sack, FLAG_APPLIED);
             update_object(sack, UP_OBJ_FACE);
             esrv_update_item(UPD_FLAGS, sack);
@@ -1185,8 +1193,8 @@ static void ApplySign(object *op, object *sign)
             }
             else if((op->chosen_skill->weight_limit & sign->weight_limit) != sign->weight_limit)
             {
-                new_draw_info(NDI_UNIQUE, 0, op, "You are unable to decipher the %s.\nIt is written in %s.",
-                                     query_name(sign), get_language(sign->weight_limit));
+                new_draw_info(NDI_UNIQUE, 0, op, "You are unable to decipher %s.\nIt is written in %s.",
+                    query_name_full(sign, op), get_language(sign->weight_limit));
                 return;
             }
         }
@@ -1209,12 +1217,12 @@ static void ApplySign(object *op, object *sign)
     if (!QUERY_FLAG(sign, FLAG_SYS_OBJECT))
     {
         if (!sign->msg)
-            new_draw_info(NDI_UNIQUE, 0, op, "Nothing is written on the %s.",
-                                 query_name(sign));
+            new_draw_info(NDI_UNIQUE, 0, op, "Nothing is written on %s.",
+                query_name_full(sign, op));
         else
         {
-            new_draw_info(NDI_UNIQUE, 0, op, "The %s is written in %s.\nYou start reading it.",
-                                 query_name(sign), get_language(sign->weight_limit));
+            new_draw_info(NDI_UNIQUE, 0, op, "%s is written in %s.\nYou start reading it.",
+                query_name_full(sign, op), get_language(sign->weight_limit));
             new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, op, "%s", sign->msg);
         }
     }
@@ -1573,13 +1581,14 @@ static void ApplyBook(object *op, object *tmp)
         }
         else if((op->chosen_skill->weight_limit & tmp->weight_limit)!=tmp->weight_limit)
         {
-            new_draw_info(NDI_UNIQUE, 0, op, "You are unable to decipher the %s.\nIts written in %s.",
-                                 query_name(tmp), get_language(tmp->weight_limit));
+            new_draw_info(NDI_UNIQUE, 0, op, "You are unable to decipher %s.\nIts written in %s.",
+                query_name_full(tmp, op), get_language(tmp->weight_limit));
             return;
         }
     }
 
-    new_draw_info(NDI_UNIQUE, 0, op, "You open the %s and start reading.", query_name(tmp));
+    new_draw_info(NDI_UNIQUE, 0, op, "You open %s and start reading.",
+        query_name_full(tmp, op));
 
     /* Non-zero return value from script means stop here */
     if(trigger_object_plugin_event(
@@ -1589,7 +1598,8 @@ static void ApplyBook(object *op, object *tmp)
 
     if (tmp->msg == NULL)
     {
-        new_draw_info(NDI_UNIQUE, 0, op, "You open the %s and find it empty.", query_name(tmp));
+        new_draw_info(NDI_UNIQUE, 0, op, "You open %s and find it empty.",
+            query_name_full(tmp, op));
         return;
     }
 
@@ -1914,7 +1924,7 @@ static void ApplyTreasure(object *op, object *tmp)
         remove_ob(treas);
         check_walk_off(treas, NULL, MOVE_APPLY_VANISHED);
         new_draw_info(NDI_UNIQUE, 0, op, "You find %s in the chest.",
-                             query_name(treas));
+            query_name_full(treas, op));
         treas->x = op->x,treas->y = op->y;
         if (treas->type == MONSTER)
         {
@@ -2040,8 +2050,8 @@ static void ApplyFood(object *op, object *tmp)
         SET_FLAG(op, FLAG_EATING);
         force = insert_ob_in_ob(force, op);
 
-        new_draw_info(NDI_UNIQUE| NDI_NAVY, 0, op, "You start consuming the %s",
-                      query_name(tmp));
+        new_draw_info(NDI_UNIQUE| NDI_NAVY, 0, op, "You start consuming %s",
+            query_name_full(tmp, op));
 
     }
     decrease_ob_nr(tmp, 1);
@@ -2500,7 +2510,8 @@ int player_apply(object *pl, object *op, int aflag)
     {
         if (tmp == 0)
         {
-            new_draw_info(NDI_UNIQUE, 0, pl, "I don't know how to apply the %s.", query_name(op));
+            new_draw_info(NDI_UNIQUE, 0, pl, "You don't know how to apply %s.",
+                query_name_full(op, pl));
         }
         else if (tmp == 2)
         {
@@ -2670,14 +2681,14 @@ int apply_special(object *who, object *op, int aflags)
                 {
                     if (!(aflags & AP_QUIET))
                     {
-                        sprintf(buf, "Your %s is broken!", query_name(op));
+                        sprintf(buf, "%s is broken!", query_name_full(op, who));
                     }
                 }
                 else
                 {
                     if (!(aflags & AP_QUIET))
                     {
-                        sprintf(buf, "You no longer wield the %s.", query_name(op));
+                        sprintf(buf, "You no longer wield %s.", query_name_full(op, who));
                     }
                 }
                 break;
@@ -2709,14 +2720,14 @@ int apply_special(object *who, object *op, int aflags)
                 {
                     if (!(aflags & AP_QUIET))
                     {
-                        sprintf(buf, "Your %s is broken!", query_name(op));
+                        sprintf(buf, "%s is broken!", query_name_full(op, who));
                     }
                 }
                 else
                 {
                     if (!(aflags & AP_QUIET))
                     {
-                        sprintf(buf, "You take off the %s.", query_name(op));
+                        sprintf(buf, "You take off %s.", query_name_full(op, who));
                     }
                 }
                 break;
@@ -2730,14 +2741,14 @@ int apply_special(object *who, object *op, int aflags)
                 {
                     if (!(aflags & AP_QUIET))
                     {
-                        sprintf(buf, "Your %s is broken!", query_name(op));
+                        sprintf(buf, "%s is broken!", query_name_full(op, who));
                     }
                 }
                 else
                 {
                     if (!(aflags & AP_QUIET))
                     {
-                        sprintf(buf, "You unready the %s.", query_name(op));
+                        sprintf(buf, "You unready %s.", query_name_full(op, who));
                     }
                 }
                 if(op->type != ARROW || op->sub_type1 > 127)
@@ -2751,7 +2762,7 @@ int apply_special(object *who, object *op, int aflags)
             default:
                 if (!(aflags & AP_QUIET))
                 {
-                    sprintf(buf, "You unapply the %s.", query_name(op));
+                    sprintf(buf, "You unapply %s.", query_name_full(op, who));
                 }
                 break;
         }
@@ -2810,7 +2821,8 @@ int apply_special(object *who, object *op, int aflags)
             {
                 if (!(aflags & AP_QUIET))
                 {
-                    new_draw_info(NDI_UNIQUE, 0, who, "The %s is broken and can't be applied.", query_name(op));
+                    new_draw_info(NDI_UNIQUE, 0, who, "%s is broken and can't be applied.",
+                        query_name_full(op, who));
                 }
                 return 1;
             }
@@ -2820,7 +2832,8 @@ int apply_special(object *who, object *op, int aflags)
             {
                 if (!(aflags & AP_QUIET))
                 {
-                    new_draw_info(NDI_UNIQUE, 0, who, "The %s is broken and can't be applied.", query_name(op));
+                    new_draw_info(NDI_UNIQUE, 0, who, "%s is broken and can't be applied.",
+                        query_name_full(op, who));
                 }
                 return 1;
             }
@@ -2828,7 +2841,8 @@ int apply_special(object *who, object *op, int aflags)
             {
                 if (!(aflags & AP_QUIET))
                 {
-                    new_draw_info(NDI_UNIQUE, 0, who, "You can't use %s.", query_name(op));
+                    new_draw_info(NDI_UNIQUE, 0, who, "You can't use %s.",
+                        query_name_full(op, who));
                 }
                 return 1;
             }
@@ -2875,7 +2889,8 @@ int apply_special(object *who, object *op, int aflags)
             {
                 if (!(aflags & AP_QUIET))
                 {
-                    new_draw_info(NDI_UNIQUE, 0, who, "The %s is broken and can't be applied.", query_name(op));
+                    new_draw_info(NDI_UNIQUE, 0, who, "%s is broken and can't be applied.",
+                        query_name_full(op, who));
                 }
                 return 1;
             }
@@ -2904,7 +2919,8 @@ int apply_special(object *who, object *op, int aflags)
             {
                 if (!(aflags & AP_QUIET))
                 {
-                    new_draw_info(NDI_UNIQUE, 0, who, "The %s is broken and can't be applied.", query_name(op));
+                    new_draw_info(NDI_UNIQUE, 0, who, "%s is broken and can't be applied.",
+                        query_name_full(op, who));
                 }
                 return 1;
             }
@@ -2912,7 +2928,8 @@ int apply_special(object *who, object *op, int aflags)
             {
                 if (!(aflags & AP_QUIET))
                 {
-                    new_draw_info(NDI_UNIQUE, 0, who, "You can't use %s.", query_name(op));
+                    new_draw_info(NDI_UNIQUE, 0, who, "You can't use %s.",
+                        query_name_full(op, who));
                 }
                 return 1;
             }
@@ -2948,7 +2965,8 @@ int apply_special(object *who, object *op, int aflags)
             change_abil(who, op);
             if (!(aflags & AP_QUIET))
             {
-                new_draw_info(NDI_UNIQUE, 0, who, "You wield the %s.", query_name(op));
+                new_draw_info(NDI_UNIQUE, 0, who, "You wield %s.",
+                    query_name_full(op, who));
             }
             break;
 
@@ -2968,7 +2986,8 @@ int apply_special(object *who, object *op, int aflags)
             change_abil(who, op);
             if (!(aflags & AP_QUIET))
             {
-                new_draw_info(NDI_UNIQUE, 0, who, "You put on the %s.", query_name(op));
+                new_draw_info(NDI_UNIQUE, 0, who, "You put on %s.",
+                    query_name_full(op, who));
             }
             break;
 
@@ -2980,8 +2999,10 @@ int apply_special(object *who, object *op, int aflags)
                  * resources and allows the client more control. */
                 if (!(aflags & AP_QUIET))
                 {
-                    new_draw_info(NDI_UNIQUE, 0, who, "You ready the skill ~%s~.", query_name(op));
+                    new_draw_info(NDI_UNIQUE, 0, who, "You ready the skill ~%s~.",
+                        query_name_full(op, who));
                 }
+
                 send_ready_skill(pl, op->name);
             }
 
@@ -3029,7 +3050,8 @@ int apply_special(object *who, object *op, int aflags)
 
             if (!(aflags & AP_QUIET))
             {
-                new_draw_info(NDI_UNIQUE, 0, who, "You ready the %s.", query_name(op));
+                new_draw_info(NDI_UNIQUE, 0, who, "You ready %s.",
+                    query_name_full(op, who));
             }
 
             if (who->type == PLAYER)
@@ -3048,7 +3070,8 @@ int apply_special(object *who, object *op, int aflags)
         default:
             if (!(aflags & AP_QUIET))
             {
-                new_draw_info(NDI_UNIQUE, 0, who, "You apply the %s.", query_name(op));
+                new_draw_info(NDI_UNIQUE, 0, who, "You apply %s.",
+                    query_name_full(op, who));
             }
     }
     if (!QUERY_FLAG(op, FLAG_APPLIED))
@@ -3104,10 +3127,12 @@ static void ApplyLightRefill(object *who, object *op)
     }
 
 
-    if (item->type != TYPE_LIGHT_APPLY || !item->race || !strstr(item->race, op->race))
+    if (item->type != TYPE_LIGHT_APPLY ||
+        !item->race ||
+        item->race != op->race)
     {
-        new_draw_info(NDI_UNIQUE, 0, who, "You can't refill the %s with the %s.", query_name(item),
-                query_name(op));
+        new_draw_info(NDI_UNIQUE, 0, who, "You can't refill %s with %s.",
+            query_name_full(item, who), query_name_full(op, who));
         return;
     }
 
@@ -3123,15 +3148,16 @@ static void ApplyLightRefill(object *who, object *op)
     tmp = (int) item->stats.maxhp - item->stats.food;
     if (!tmp)
     {
-        new_draw_info(NDI_UNIQUE, 0, who, "The %s is full and can't be refilled.", query_name(item));
+        new_draw_info(NDI_UNIQUE, 0, who, "%s is full and can't be refilled.",
+            query_name_full(item, who));
         return;
     }
 
     if (op->stats.food <= tmp)
     {
         item->stats.food += op->stats.food;
-        new_draw_info(NDI_UNIQUE, 0, who, "You refill the %s with %d units %s.", query_name(item),
-                op->stats.food, query_name(op));
+        new_draw_info(NDI_UNIQUE, 0, who, "You refill %s with %d units from %s.",
+            query_name_full(item, who), op->stats.food, query_name_full(op, who));
         decrease_ob_nr(op, 1);
     }
     else
@@ -3150,8 +3176,8 @@ static void ApplyLightRefill(object *who, object *op)
         }
 
         item->stats.food += tmp;
-        new_draw_info(NDI_UNIQUE, 0, who, "You refill the %s with %d units %s.", query_name(item), tmp,
-                query_name(filler));
+        new_draw_info(NDI_UNIQUE, 0, who, "You refill %s with %d units from %s.",
+            query_name_full(item, who), tmp, query_name_full(filler, who));
     }
 
     FIX_PLAYER(who ,"apply light refill");
@@ -3304,10 +3330,10 @@ void apply_light(object *who, object *op)
 
         if (op->msg)
             new_draw_info(NDI_UNIQUE, 0, who, "%s", op->msg);
-        else if (!op->glow_radius)
-            new_draw_info(NDI_UNIQUE, 0, who, "You cannot light the %s.", query_name(op));
         else
-            new_draw_info(NDI_UNIQUE, 0, who, "You cannot extinguish the %s.", query_name(op));
+            new_draw_info(NDI_UNIQUE, 0, who, "You cannot %s %s.",
+                (!op->glow_radius) ? "light" : "extinguish",
+                query_name_full(op, who));
 
         return;
     }
@@ -3331,8 +3357,8 @@ void apply_light(object *who, object *op)
         if (op->msg)
             new_draw_info(NDI_UNIQUE, 0, who, "%s", op->msg);
         else
-            new_draw_info(NDI_UNIQUE, 0, who, "You extinguish the %s.",
-                                 query_name(op));
+            new_draw_info(NDI_UNIQUE, 0, who, "You extinguish %s.",
+                query_name_full(op, who));
 
         turn_off_light(op);
 
@@ -3353,7 +3379,8 @@ void apply_light(object *who, object *op)
          */
         if (!op->last_sp)
         {
-            new_draw_info(NDI_UNIQUE, 0, who, "The %s can't be lit.", query_name(op));
+            new_draw_info(NDI_UNIQUE, 0, who, "%s can't be lit.",
+                query_name_full(op, who));
             return;
         }
 
@@ -3373,7 +3400,8 @@ void apply_light(object *who, object *op)
                      * are non rechargable lights - like torches.
                      * they destroy
                      */
-                    new_draw_info(NDI_UNIQUE, 0, who, "You must first refill or recharge the %s.", query_name(op));
+                    new_draw_info(NDI_UNIQUE, 0, who, "You must first refill or recharge %s.",
+                        query_name_full(op, who));
                     return;
                 }
             }
@@ -3384,8 +3412,8 @@ void apply_light(object *who, object *op)
 
             if (op->env && op->env->type == PLAYER)
             {
-                new_draw_info(NDI_UNIQUE, 0, who, "You prepare the %s to be your light source.",
-                                     query_name(op));
+                new_draw_info(NDI_UNIQUE, 0, who, "You prepare %s to be your light source.",
+                    query_name_full(op, who));
                 turn_on_light(op);
                 FIX_PLAYER(who ,"apply light - turn on light");
             }
@@ -3394,8 +3422,8 @@ void apply_light(object *who, object *op)
                 if (op->msg)
                     new_draw_info(NDI_UNIQUE, 0, who, "%s", op->msg);
                 else
-                    new_draw_info(NDI_UNIQUE, 0, who, "You light the %s.",
-                                         query_name(op));
+                    new_draw_info(NDI_UNIQUE, 0, who, "You light %s.",
+                        query_name_full(op, who));
 
                 turn_on_light(op);
             }
@@ -3427,8 +3455,8 @@ void apply_light(object *who, object *op)
                         if (tmp->msg)
                             new_draw_info(NDI_UNIQUE, 0, who, "%s", tmp->msg);
                         else
-                            new_draw_info(NDI_UNIQUE, 0, who, "You extinguish the %s.",
-                                                 query_name(tmp));
+                            new_draw_info(NDI_UNIQUE, 0, who, "You extinguish %s.",
+                                query_name_full(tmp, who));
 
                         CLEAR_FLAG(tmp, FLAG_APPLIED);
                         turn_off_light(tmp);
@@ -3439,8 +3467,8 @@ void apply_light(object *who, object *op)
                 if (op->msg)
                     new_draw_info(NDI_UNIQUE, 0, who, "%s", op->msg);
                 else
-                    new_draw_info(NDI_UNIQUE, 0, who, "You apply the %s as your light source.",
-                                         query_name(op));
+                    new_draw_info(NDI_UNIQUE, 0, who, "You apply %s as your light source.",
+                        query_name_full(op, who));
 
                 SET_FLAG(op, FLAG_APPLIED);
                 esrv_update_item(UPD_FLAGS, op);
@@ -3461,8 +3489,8 @@ void apply_light(object *who, object *op)
                 if (op->msg)
                     new_draw_info(NDI_UNIQUE, 0, who, "%s", op->msg);
                 else
-                    new_draw_info(NDI_UNIQUE, 0, who, "You extinguish the %s.",
-                                         query_name(op));
+                    new_draw_info(NDI_UNIQUE, 0, who, "You extinguish %s.",
+                        query_name_full(op, who));
 
                 turn_off_light(op);
             }

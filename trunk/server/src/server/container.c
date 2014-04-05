@@ -54,7 +54,7 @@ static void free_container_monster(object *monster, object *op)
     }
     fix_monster(monster);
     if (insert_ob_in_map(monster, op->map, monster, 0))
-        new_draw_info(NDI_UNIQUE, 0, op, "A %s jumps out of the %s.", query_name(monster), query_name(container));
+        new_draw_info(NDI_UNIQUE, 0, op, "%s jumps out of %s.", query_name_full(monster, NULL), query_name_full(container, op));
 }
 
 
