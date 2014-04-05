@@ -463,15 +463,15 @@ void check_use_object_list(void)
         {
             object *tmp2, *tmp = MEM_USERDATA(chunk);
 
-            /*LOG(llevDebug,"DEBUG_OBJ:: object >%s< (%d)\n",  query_name(tmp), chunk->id);*/
+            /*LOG(llevDebug,"DEBUG_OBJ:: object >%s< (%d)\n",  STRING_OBJ_NAME(tmp), chunk->id);*/
 
             if (QUERY_FLAG(tmp, FLAG_REMOVED))
-                LOG(llevDebug, "VOID:DEBUG_OBJ:: object >%s< (%d) has removed flag set!\n", query_name(tmp), chunk->id);
+                LOG(llevDebug, "VOID:DEBUG_OBJ:: object >%s< (%d) has removed flag set!\n", STRING_OBJ_NAME(tmp), chunk->id);
 
             if (tmp->map) /* we are on a map */
             {
                 if (tmp->map->in_memory != MAP_ACTIVE)
-                    LOG(llevDebug, "BUG:DEBUG_OBJ:: object >%s< (%d) has invalid map! >%d<!\n", query_name(tmp),
+                    LOG(llevDebug, "BUG:DEBUG_OBJ:: object >%s< (%d) has invalid map! >%d<!\n", STRING_OBJ_NAME(tmp),
                         tmp->map->name ? tmp->map->name : "NONE", chunk->id);
                 else
                 {
@@ -481,7 +481,7 @@ void check_use_object_list(void)
                             goto goto_object_found;
                     }
 
-                    LOG(llevDebug, "BUG:DEBUG_OBJ:: object >%s< (%d) has invalid map! >%d<!\n", query_name(tmp),
+                    LOG(llevDebug, "BUG:DEBUG_OBJ:: object >%s< (%d) has invalid map! >%d<!\n", STRING_OBJ_NAME(tmp),
                         tmp->map->name ? tmp->map->name : "NONE", chunk->id);
                 }
             }
@@ -494,19 +494,19 @@ void check_use_object_list(void)
                         goto goto_object_found;
                 }
 
-                LOG(llevDebug, "BUG:DEBUG_OBJ:: object >%s< (%d) has invalid env >%d<!\n", query_name(tmp),
-                    query_name(tmp->env), chunk->id);
+                LOG(llevDebug, "BUG:DEBUG_OBJ:: object >%s< (%d) has invalid env >%d<!\n", STRING_OBJ_NAME(tmp),
+                    STRING_OBJ_NAME(tmp->env), chunk->id);
             }
             else /* where we are ? */
             {
-                LOG(llevDebug, "BUG:DEBUG_OBJ:: object >%s< (%d) has no env/map\n", query_name(tmp), chunk->id);
+                LOG(llevDebug, "BUG:DEBUG_OBJ:: object >%s< (%d) has no env/map\n", STRING_OBJ_NAME(tmp), chunk->id);
             }
         }
         else if (chunk->pool == pool_player)
         {
             player *tmp = MEM_USERDATA(chunk);
 
-            /*LOG(llevDebug,"DEBUG_OBJ:: player >%s< (%d)\n",  tmp->ob?query_name(tmp->ob):"NONE", chunk->id);*/
+            /*LOG(llevDebug,"DEBUG_OBJ:: player >%s< (%d)\n",  tmp->ob?STRING_OBJ_NAME(tmp->ob):"NONE", chunk->id);*/
         }
         else
         {

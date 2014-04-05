@@ -352,7 +352,7 @@ void set_quest_status(struct obj *trigger, int q_status, int q_type)
 
     if(!who)
     {
-        LOG(llevBug, "set_quest_status(): trigger not in player/container\n", query_name(trigger->env));
+        LOG(llevBug, "set_quest_status(): trigger not in player/container\n", STRING_OBJ_NAME(trigger->env));
         return;
     }
 
@@ -714,7 +714,7 @@ void check_kill_quest_event(struct obj *pl, struct obj *op)
                     if(!tmp_info->inv)
                     {
                         LOG(llevBug,"BUG: check_kill_quest_event:: tmp_info has no inventory item (quest %s)\n",
-                                query_name(tmp));
+                                STRING_OBJ_NAME(tmp));
                         continue;
                     }
                     else
@@ -948,7 +948,7 @@ static inline struct obj * find_quest_nr(struct obj *pl, int tag, char *cmd)
         }
     }
 
-    LOG(llevNoLog,"QLIST-CMD: unknown quest tag from player %s: %s\n", query_name(pl),cmd);
+    LOG(llevNoLog,"QLIST-CMD: unknown quest tag from player %s: %s\n", STRING_OBJ_NAME(pl),cmd);
     return NULL;
 }
 

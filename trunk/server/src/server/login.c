@@ -626,7 +626,7 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
 
     if (!QUERY_FLAG(op, FLAG_FRIENDLY)) /* ensure we are on friendly list */
     {
-        LOG(llevBug, "BUG: Player %s was loaded without friendly flag!", query_name(op));
+        LOG(llevBug, "BUG: Player %s was loaded without friendly flag!", STRING_OBJ_NAME(op));
         SET_FLAG(op, FLAG_FRIENDLY);
     }
 

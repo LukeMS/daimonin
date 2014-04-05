@@ -462,9 +462,9 @@ int command_dumpbelow(object *op, char *params)
         if (tmp == op) /* exclude the DM player object */
             continue;
 
-        new_draw_info(NDI_UNIQUE, 0, op, "#%d  >%s<  >%s<  >%s<", i, query_name(tmp),
-                tmp->arch ? (tmp->arch->name ? tmp->arch->name : "no arch name") : "NO ARCH",
-                tmp->env ? query_name(tmp->env) : "");
+        new_draw_info(NDI_UNIQUE, 0, op, "#%d  >%s<  >%s<  >%s<",
+            i, STRING_OBJ_NAME(tmp), STRING_OBJ_ARCH_NAME(tmp),
+            STRING_OBJ_NAME(tmp->env));
     }
 
     new_draw_info(NDI_UNIQUE, 0, op, "------------------");

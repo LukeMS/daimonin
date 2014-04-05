@@ -198,7 +198,7 @@ static void check_special_prayers(object *op, object *god)
 
         if (god->randomitems == NULL)
         {
-            LOG(llevBug, "BUG: check_special_prayers(): %s without randomitems\n", query_name(god));
+            LOG(llevBug, "BUG: check_special_prayers(): %s without randomitems\n", STRING_OBJ_NAME(god));
             do_forget_spell(op, spell);
             continue;
         }
@@ -724,8 +724,8 @@ void god_intervention(object *op, object *god)
 
     if (!god || !god->randomitems)
     {
-        LOG(llevBug, "BUG: god_intervention(): (p:%s) no god %s or god without randomitems\n", query_name(op),
-            query_name(god));
+        LOG(llevBug, "BUG: god_intervention(): (p:%s) no god %s or god without randomitems\n", STRING_OBJ_NAME(op),
+            STRING_OBJ_NAME(god));
         return;
     }
 
@@ -762,7 +762,7 @@ void god_intervention(object *op, object *god)
 
             if (!tr->item)
             {
-                LOG(llevBug, "BUG: empty entry in %s's treasure list\n", query_name(god));
+                LOG(llevBug, "BUG: empty entry in %s's treasure list\n", STRING_OBJ_NAME(god));
                 continue;
             }
 

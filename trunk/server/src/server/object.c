@@ -1338,7 +1338,7 @@ void update_object(object *op, int action)
     if (action == UP_OBJ_FACE) /* no need to change anything except the map update counter */
     {
 #ifdef DEBUG_CORE
-        LOG(llevDebug, "UO_FACE - %s\n", query_name(op));
+        LOG(llevDebug, "UO_FACE - %s\n", STRING_OBJ_NAME(op));
 #endif
         esrv_update_item(UPD_FACE | UPD_ANIM | UPD_ANIMSPEED, op);
 
@@ -1352,7 +1352,7 @@ void update_object(object *op, int action)
     {
         case UP_OBJ_INSERT: /* always resort layer - but not always flags */
 #ifdef DEBUG_CORE
-            LOG(llevDebug, "UO_INS - %s\n", query_name(op));
+            LOG(llevDebug, "UO_INS - %s\n", STRING_OBJ_NAME(op));
 #endif
             newflags |= P_NEED_UPDATE; /* force layer rebuild */
 
@@ -1412,7 +1412,7 @@ void update_object(object *op, int action)
             break;
         case UP_OBJ_REMOVE:
 #ifdef DEBUG_CORE
-            LOG(llevDebug, "UO_REM - %s\n", query_name(op));
+            LOG(llevDebug, "UO_REM - %s\n", STRING_OBJ_NAME(op));
 #endif
             newflags |= P_NEED_UPDATE; /* force layer rebuild */
 
@@ -1454,20 +1454,20 @@ void update_object(object *op, int action)
             break;
         case UP_OBJ_FLAGS:
 #ifdef DEBUG_CORE
-            LOG(llevDebug, "UO_FLAGS - %s\n", query_name(op));
+            LOG(llevDebug, "UO_FLAGS - %s\n", STRING_OBJ_NAME(op));
 #endif
             newflags |= P_FLAGS_UPDATE; /* force flags rebuild but no tile counter*/
             break;
         case UP_OBJ_FLAGFACE:
 #ifdef DEBUG_CORE
-            LOG(llevDebug, "UO_FLAGFACE - %s\n", query_name(op));
+            LOG(llevDebug, "UO_FLAGFACE - %s\n", STRING_OBJ_NAME(op));
 #endif
             newflags |= P_FLAGS_UPDATE; /* force flags rebuild */
             esrv_update_item(UPD_FACE | UPD_ANIM | UPD_ANIMSPEED, op);
             break;
         case UP_OBJ_LAYER:
 #ifdef DEBUG_CORE
-            LOG(llevDebug, "UO_LAYER - %s\n", query_name(op));
+            LOG(llevDebug, "UO_LAYER - %s\n", STRING_OBJ_NAME(op));
 #endif
             map_set_slayers(msp, op, 1); // must have uptodate slayers if we want to rebuild the clayers!
             newflags |= P_NEED_UPDATE; /* rebuild layers - most common when we change visibility of the object */
@@ -1480,7 +1480,7 @@ void update_object(object *op, int action)
             break;
         case UP_OBJ_ALL:
 #ifdef DEBUG_CORE
-            LOG(llevDebug, "UO_ALL - %s\n", query_name(op));
+            LOG(llevDebug, "UO_ALL - %s\n", STRING_OBJ_NAME(op));
 #endif
             newflags |= (P_FLAGS_UPDATE | P_NEED_UPDATE); /* force full tile update */
             break;
@@ -2187,21 +2187,21 @@ object *insert_ob_in_map(object *const op, mapstruct *m, object *const originato
     if (OBJECT_FREE(op))
     {
         dump_object(op);
-        LOG(llevBug, "BUG: insert_ob_in_map(): Trying to insert freed object %s in map %s!\n:%s\n", query_name(op),
+        LOG(llevBug, "BUG: insert_ob_in_map(): Trying to insert freed object %s in map %s!\n:%s\n", STRING_OBJ_NAME(op),
             m->name, errmsg);
         return NULL;
     }
     if (m == NULL)
     {
         dump_object(op);
-        LOG(llevBug, "BUG: insert_ob_in_map(): Trying to insert object %s in null-map!\n%s\n", query_name(op), errmsg);
+        LOG(llevBug, "BUG: insert_ob_in_map(): Trying to insert object %s in null-map!\n%s\n", STRING_OBJ_NAME(op), errmsg);
         return NULL;
     }
 
     if (!QUERY_FLAG(op, FLAG_REMOVED))
     {
         dump_object(op);
-        LOG(llevBug, "BUG: insert_ob_in_map(): Trying to insert non removed object %s in map %s.\n%s\n", query_name(op),
+        LOG(llevBug, "BUG: insert_ob_in_map(): Trying to insert non removed object %s in map %s.\n%s\n", STRING_OBJ_NAME(op),
             m->name, errmsg);
         return NULL;
     }
@@ -2211,7 +2211,7 @@ object *insert_ob_in_map(object *const op, mapstruct *m, object *const originato
     {
         LOG(llevBug,
             "BUG: insert_ob_in_map(): inserting op->more WITHOUT INS_TAIL_MARKER! OB:%s (ARCH: %s) (MAP: %s (%d,%d))\n",
-            query_name(op), op->arch->name, m->path, op->x, op->y);
+            STRING_OBJ_NAME(op), op->arch->name, m->path, op->x, op->y);
         return NULL;
     }
 
@@ -2220,7 +2220,7 @@ object *insert_ob_in_map(object *const op, mapstruct *m, object *const originato
         if (insert_ob_in_map(op->more, op->more->map, originator, flag | INS_TAIL_MARKER) == NULL)
         {
             if (!op->head)
-                LOG(llevBug, "BUG: insert_ob_in_map(): inserting op->more killed op %s in map %s\n", query_name(op),
+                LOG(llevBug, "BUG: insert_ob_in_map(): inserting op->more killed op %s in map %s\n", STRING_OBJ_NAME(op),
                     m->name);
             return NULL;
         }
@@ -2247,7 +2247,7 @@ object *insert_ob_in_map(object *const op, mapstruct *m, object *const originato
     if (!(m = out_of_map(m, &x, &y)))
     {
         LOG(llevBug, "BUG: insert_ob_in_map(): Trying to insert object %s outside the map %s (%d,%d).\n\n",
-            query_name(op), op->map->path, op->x, op->y);
+            STRING_OBJ_NAME(op), op->map->path, op->x, op->y);
         return NULL;
     }
 
@@ -2454,7 +2454,7 @@ object * get_split_ob(object *orig_ob, uint32 nr)
 
     if (orig_ob->nrof < nr)
     {
-        LOG(llevDebug, "get_split_ob(): There are only %d %ss.", orig_ob->nrof ? orig_ob->nrof : 1, query_name(orig_ob));
+        LOG(llevDebug, "get_split_ob(): There are only %d %ss.", orig_ob->nrof ? orig_ob->nrof : 1, STRING_OBJ_NAME(orig_ob));
         return NULL;
     }
 
@@ -2806,7 +2806,7 @@ int check_walk_off(object *op, object *originator, int flags)
 
     if (!QUERY_FLAG(op, FLAG_REMOVED))
     {
-        LOG(llevBug, "BUG: check_walk_off: object %s is not removed when called\n", query_name(op));
+        LOG(llevBug, "BUG: check_walk_off: object %s is not removed when called\n", STRING_OBJ_NAME(op));
         return CHECK_WALK_OK;
     }
 

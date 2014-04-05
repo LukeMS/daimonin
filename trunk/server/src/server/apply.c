@@ -127,7 +127,7 @@ static void ApplyPotion(object *op, object *tmp)
     /* some sanity checks */
     if (!op || !tmp)
     {
-        LOG(llevBug, "ApplyPotion() called with invalid objects! obj: %s -- tmp: %s\n", query_name(op), query_name(tmp));
+        LOG(llevBug, "ApplyPotion() called with invalid objects! obj: %s -- tmp: %s\n", STRING_OBJ_NAME(op), STRING_OBJ_NAME(tmp));
         return;
     }
 
@@ -918,7 +918,7 @@ static void ApplyContainer(object *op, object *sack)
 
     if (op->type != PLAYER)
     {
-        LOG(llevBug, "BUG: ApplyContainer: called from non player: <%s>!\n", query_name(op));
+        LOG(llevBug, "BUG: ApplyContainer: called from non player: <%s>!\n", STRING_OBJ_NAME(op));
         return;
     }
 
@@ -926,8 +926,8 @@ static void ApplyContainer(object *op, object *sack)
 
     if (sack == NULL || sack->type != CONTAINER || (cont && cont->type != CONTAINER))
     {
-        LOG(llevBug, "BUG: ApplyContainer: object *sack = %s is not container (cont:<%s>)!\n", query_name(sack),
-            query_name(cont));
+        LOG(llevBug, "BUG: ApplyContainer: object *sack = %s is not container (cont:<%s>)!\n", STRING_OBJ_NAME(sack),
+            STRING_OBJ_NAME(cont));
         return;
     }
 
@@ -1701,7 +1701,7 @@ extern void do_forget_spell(object *op, int spell)
 
     if (op->type != PLAYER)
     {
-        LOG(llevBug, "BUG: do_forget_spell(): not a player: %s (%d)\n", query_name(op), spell);
+        LOG(llevBug, "BUG: do_forget_spell(): not a player: %s (%d)\n", STRING_OBJ_NAME(op), spell);
         return;
     }
     if (!check_spell_known(op, spell))
@@ -2522,7 +2522,7 @@ void player_apply_below(object *pl)
 
     if (pl->type != PLAYER)
     {
-        LOG(llevBug, "BUG: player_apply_below() called for non player object >%s<\n", query_name(pl));
+        LOG(llevBug, "BUG: player_apply_below() called for non player object >%s<\n", STRING_OBJ_NAME(pl));
         return;
     }
     /* If using a container, set the starting item to be the top
@@ -2688,7 +2688,7 @@ int apply_special(object *who, object *op, int aflags)
                  * and safe alot cpu (include a fix_player() inside change_abil())
                  */
                 /*change_abil(who, op);*/
-                /*LOG(llevDebug, "UNAPPLY SKILL: %s change %s (%s) to NULL\n", query_name(who), query_name(op), query_name(who->chosen_skill) );*/
+                /*LOG(llevDebug, "UNAPPLY SKILL: %s change %s (%s) to NULL\n", STRING_OBJ_NAME(who), STRING_OBJ_NAME(op), STRING_OBJ_NAME(who->chosen_skill) );*/
                 who->chosen_skill = NULL;
                 buf[0] = '\0';
                 break;
@@ -2987,7 +2987,7 @@ int apply_special(object *who, object *op, int aflags)
 
             SET_FLAG(op, FLAG_APPLIED);
             /* change_abil(who, op); */
-            /*LOG(llevDebug, "APPLY SKILL: %s change %s to %s\n", query_name(who), query_name(who->chosen_skill), query_name(op) );*/
+            /*LOG(llevDebug, "APPLY SKILL: %s change %s to %s\n", STRING_OBJ_NAME(who), STRING_OBJ_NAME(who->chosen_skill), STRING_OBJ_NAME(op) );*/
             who->chosen_skill = op;
             break;
 

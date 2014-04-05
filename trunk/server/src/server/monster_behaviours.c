@@ -2027,7 +2027,7 @@ void ai_look_for_other_mobs(object *op, struct mob_behaviour_param *params)
     {
         /* Removed the BUG info and object removal. This isn't a bug - Gecko
         LOG(llevDebug,"BUG:: ai_look_for_other_mobs(): Mob %s without map - deleting it (%d,%d)\n",
-            query_name(op), op->env?op->env->x:-1, op->env?op->env->y:-1);
+            STRING_OBJ_NAME(op), op->env?op->env->x:-1, op->env?op->env->y:-1);
         remove_ob(op);
         */
         return;
@@ -2204,7 +2204,7 @@ void ai_choose_enemy(object *op, struct mob_behaviour_param *params)
 
         /* crashed on testserver - give log mesg */
         if(!base)
-            LOG(llevDebug, "BUG: ai_choose_enemy(%s)> no base info object!\n", query_name(op));
+            LOG(llevDebug, "BUG: ai_choose_enemy(%s)> no base info object!\n", STRING_OBJ_NAME(op));
         else
         {
             if(base->slaying)
@@ -2246,7 +2246,7 @@ void ai_choose_enemy(object *op, struct mob_behaviour_param *params)
                             {
 #ifdef DEBUG_AI_ALL
                                 LOG(llevDebug, "ai_choose_enemy() '%s' ignoring '%s' - too far from home\n",
-                                        query_name(op), query_name(tmp->obj));
+                                        STRING_OBJ_NAME(op), STRING_OBJ_NAME(tmp->obj));
 #endif
                                 continue;
                             }

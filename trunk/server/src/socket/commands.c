@@ -1306,7 +1306,7 @@ void cs_cmd_talk(char *data, int len, NewSocket *ns)
 
         default:
             LOG(llevBug, "BUG:: %s/cs_cmd_talk(): Unknown mode (%d) from player %s: >%s<!\n",
-                __FILE__, mode, query_name(pl->ob), data);
+                __FILE__, mode, STRING_OBJ_NAME(pl->ob), data);
     }
 }
 

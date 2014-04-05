@@ -131,7 +131,7 @@ int open_door(object *op, mapstruct *m, int x, int y, int mode)
      */
     LOG(llevSystem,
         "BUG: open_door() - door on wrong layer or misplaced P_DOOR_CLOSED flag - map:%s (%d,%d) (op: %s)\n", m->path,
-        x, y, query_name(op));
+        x, y, STRING_OBJ_NAME(op));
     return 0;
 }
 
@@ -253,14 +253,14 @@ void remove_door3(object *op)
 {
     if (!op->last_eat) /* thats a bug - active speed but not marked as active */
     {
-        LOG(llevBug, "BUG: door has speed but is not marked as active. (%s - map:%s (%d,%d))\n", query_name(op),
+        LOG(llevBug, "BUG: door has speed but is not marked as active. (%s - map:%s (%d,%d))\n", STRING_OBJ_NAME(op),
             op->map ? op->map->name : "(no map name!)", op->x, op->y);
         op->last_eat = 0; /* thats not a real fix ... */
         return;
     }
     if (!op->map) /* ouch */
     {
-        LOG(llevBug, "BUG: door with speed but no map?! killing object...done. (%s - (%d,%d))\n", query_name(op), op->x,
+        LOG(llevBug, "BUG: door with speed but no map?! killing object...done. (%s - (%d,%d))\n", STRING_OBJ_NAME(op), op->x,
             op->y);
         remove_ob(op);
         check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
@@ -314,7 +314,7 @@ void generate_monster(object *gen)
         return;
     if (gen->other_arch == NULL)
     {
-        LOG(llevBug, "BUG: Generator without other_arch: %s\n", query_name(gen));
+        LOG(llevBug, "BUG: Generator without other_arch: %s\n", STRING_OBJ_NAME(gen));
         return;
     }
     i = find_free_spot(at, NULL, gen->map, gen->x, gen->y, 0, 1, SIZEOFFREE1 + 1);

@@ -102,7 +102,7 @@ void display_motd(object *op)
 void free_player(player *pl)
 {
     /* first, we removing the player from map or whatever */
-	LOG(llevDebug, "FREE_PLAYER(%s): state:%d g_status:%x\n", query_name(pl->ob), pl->state, pl->group_status);
+	LOG(llevDebug, "FREE_PLAYER(%s): state:%d g_status:%x\n", STRING_OBJ_NAME(pl->ob), pl->state, pl->group_status);
     if (pl->ob)
     {
         SET_FLAG(pl->ob, FLAG_NO_FIX_PLAYER);
@@ -144,7 +144,7 @@ void free_player(player *pl)
     {
         pl->state &= ~ST_PLAYING;
         pl->state |= ST_DEAD;
-		LOG(llevDebug, "FREE_PLAYER(%s) --> ST_DEAD\n", query_name(pl->ob));
+		LOG(llevDebug, "FREE_PLAYER(%s) --> ST_DEAD\n", STRING_OBJ_NAME(pl->ob));
         FREE_AND_COPY_HASH(pl->ob->name, "noname"); /* we neutralize the name - we don't want find this player anymore */
         insert_ob_in_ob(pl->ob, &void_container); /* Avoid gc of the player object */
         return;
@@ -905,7 +905,7 @@ void cast_dust(object *op, object *throw_ob, int dir)
 
     if (!(spells[throw_ob->stats.sp].flags & SPELL_DESC_DIRECTION))
     {
-        LOG(llevBug, "DEBUG: Warning, dust %s is not a ae spell!!\n", query_name(throw_ob));
+        LOG(llevBug, "DEBUG: Warning, dust %s is not a ae spell!!\n", STRING_OBJ_NAME(throw_ob));
         return;
     }
 
@@ -1385,7 +1385,7 @@ void kick_player(player *pl)
             check_walk_off(tmp->ob, NULL, MOVE_APPLY_VANISHED);
             tmp->ob->direction = 0;
             LOG(llevInfo, "%s is kicked out of the game.\n",
-                query_name(tmp->ob));
+                STRING_OBJ_NAME(tmp->ob));
             container_unlink(tmp, NULL);
             tmp->socket.status = Ns_Dead;
 

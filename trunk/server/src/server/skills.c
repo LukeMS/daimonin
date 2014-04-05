@@ -150,13 +150,13 @@ int do_skill_attack(object *tmp, object *op, char *string)
             {
                 if (change_skill_to_skill(op, CONTR(op)->skill_weapon))
                 {
-                    LOG(llevBug, "BUG: do_skill_attack() could'nt give new hth skill to %s\n", query_name(op));
+                    LOG(llevBug, "BUG: do_skill_attack() could'nt give new hth skill to %s\n", STRING_OBJ_NAME(op));
                     return 0;
                 }
             }
             else
             {
-                LOG(llevBug, "BUG: do_skill_attack(): no hth skill in player %s\n", query_name(op));
+                LOG(llevBug, "BUG: do_skill_attack(): no hth skill in player %s\n", STRING_OBJ_NAME(op));
                 return 0;
             }
         }
@@ -216,7 +216,7 @@ int SK_level(object *op)
 
     if (level <= 0)
     {
-        LOG(llevBug, "BUG: SK_level(arch %s, name %s): level <= 0\n", op->arch->name, query_name(op));
+        LOG(llevBug, "BUG: SK_level(arch %s, name %s): level <= 0\n", op->arch->name, STRING_OBJ_NAME(op));
         level = 1;   /* safety */
     }
 

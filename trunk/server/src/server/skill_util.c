@@ -349,7 +349,7 @@ object * find_skill(object *op, int skillnr)
     /* we do some sanity checks - this is called from scripts for example */
     if(op->type != PLAYER || !CONTR(op))
     {
-        LOG(llevDebug, "BUG: find_skill() called for non player/no CONTR() object %s (%d)\n", query_name(op), skillnr);
+        LOG(llevDebug, "BUG: find_skill() called for non player/no CONTR() object %s (%d)\n", STRING_OBJ_NAME(op), skillnr);
         return NULL;
     }
 
@@ -411,7 +411,7 @@ int do_skill(object *op, int dir, char *string)
           /*success = pray(op);*/
           break;
         default:
-          LOG(llevDebug, "%s attempted to use unknown skill: %d\n", query_name(op), op->chosen_skill->stats.sp);
+          LOG(llevDebug, "%s attempted to use unknown skill: %d\n", STRING_OBJ_NAME(op), op->chosen_skill->stats.sp);
           return success;
           break;
     }
@@ -656,14 +656,14 @@ int check_skill_to_apply(object *who, object *item)
           break;
         default:
           LOG(llevDebug, "Warning: bad call of check_skill_to_apply()\n");
-          LOG(llevDebug, "No skill exists for item: %s\n", query_name(item));
+          LOG(llevDebug, "No skill exists for item: %s\n", STRING_OBJ_NAME(item));
           return 0;
     }
 
     /* this should not happen */
     if (skill == NO_SKILL_READY)
         LOG(llevBug, "BUG: check_skill_to_apply() called for %s and item %s with skill NO_SKILL_READY\n",
-            query_name(who), query_name(item));
+            STRING_OBJ_NAME(who), STRING_OBJ_NAME(item));
 
     /* lets check the additional skill if there is one */
     if (add_skill != NO_SKILL_READY)
@@ -817,7 +817,7 @@ int change_skill(object *who, int sk_index)
     if (who->chosen_skill && who->chosen_skill->stats.sp == sk_index)
         return 1;
 
-    LOG(llevDebug, "APPLYcs: %s change %s to %s.\n", query_name(who), query_name(who->chosen_skill),
+    LOG(llevDebug, "APPLYcs: %s change %s to %s.\n", STRING_OBJ_NAME(who), STRING_OBJ_NAME(who->chosen_skill),
                                                                 sk_index>=0?skills[sk_index]->clone.name:"INVALID");
 
     if (sk_index >= 0 && sk_index < NROFSKILLS && (tmp = find_skill(who, sk_index)) != NULL)
@@ -865,17 +865,17 @@ int change_skill_to_skill(object *who, object *skl)
     if (who->chosen_skill == skl)
         return 0;
 
-    /*LOG(llevDebug, "APPLYcsts: %s change %s to %s.\n", query_name(who), query_name(who->chosen_skill), query_name(skl));*/
+    /*LOG(llevDebug, "APPLYcsts: %s change %s to %s.\n", STRING_OBJ_NAME(who), STRING_OBJ_NAME(who->chosen_skill), STRING_OBJ_NAME(skl));*/
 
     if (skl->env != who)
     {
-        /*LOG(llevDebug, "BUG: change_skill_to_skill: skill is not in players inventory (%s - %s)\n", query_name(who), query_name(skl));*/
+        /*LOG(llevDebug, "BUG: change_skill_to_skill: skill is not in players inventory (%s - %s)\n", STRING_OBJ_NAME(who), STRING_OBJ_NAME(skl));*/
         return 1;
     }
 
     if (apply_special(who, skl, AP_APPLY))
     {
-        LOG(llevBug, "BUG: change_skill(): can't apply new skill (%s - %s)\n", query_name(who), query_name(skl));
+        LOG(llevBug, "BUG: change_skill(): can't apply new skill (%s - %s)\n", STRING_OBJ_NAME(who), STRING_OBJ_NAME(skl));
         return 1;
     }
     return 0;

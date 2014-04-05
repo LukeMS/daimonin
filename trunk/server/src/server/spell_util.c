@@ -1015,7 +1015,7 @@ int cast_spell(object *op, object *caster, int dir, int type, int ability, Spell
 
     if (s == NULL)
     {
-        LOG(llevBug, "BUG: unknown spell: %d from: %s (%s)\n", type, query_name(op), query_name(caster));
+        LOG(llevBug, "BUG: unknown spell: %d from: %s (%s)\n", type, STRING_OBJ_NAME(op), STRING_OBJ_NAME(caster));
         return 0;
     }
 
@@ -2221,7 +2221,7 @@ void move_cone(object *op)
     /* if no map then hit_map will crash so just ignore object */
     if (!op->map)
     {
-        LOG(llevBug, "BUG: Tried to move_cone object %s without a map.\n", query_name(op));
+        LOG(llevBug, "BUG: Tried to move_cone object %s without a map.\n", STRING_OBJ_NAME(op));
         remove_ob(op);
         check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
         return;
@@ -2752,7 +2752,7 @@ void explode_object(object *op)
     play_sound_map(op->map, op->x, op->y, SOUND_OB_EXPLODE, SOUND_NORMAL);
     if (op->other_arch == NULL)
     {
-        LOG(llevBug, "BUG: explode_object(): op %s without other_arch\n", query_name(op));
+        LOG(llevBug, "BUG: explode_object(): op %s without other_arch\n", STRING_OBJ_NAME(op));
         remove_ob(op);
         check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
         return;
@@ -2767,7 +2767,7 @@ void explode_object(object *op)
         yt = env->y;
         if (!(m = out_of_map(env->map, &xt, &yt)))
         {
-            LOG(llevBug, "BUG: explode_object(): env out of map (%s)\n", query_name(op));
+            LOG(llevBug, "BUG: explode_object(): env out of map (%s)\n", STRING_OBJ_NAME(op));
             remove_ob(op);
             check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
             return;

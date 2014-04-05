@@ -397,8 +397,8 @@ rv_vector * get_known_obj_rv(object *op, struct mob_known_obj *known_obj, int ma
     /* hotfix for this bug. part should here NOT be NULL */
     if (!known_obj->rv.part)
     {
-        LOG(llevNoLog, "CRASHBUG: rv->part == NULL for %s on map %s with enemy %s and map %s\n", query_name(op),
-            op->map ? STRING_SAFE(op->map->orig_path) : "NULL", query_name(known_obj->obj),
+        LOG(llevNoLog, "CRASHBUG: rv->part == NULL for %s on map %s with enemy %s and map %s\n", STRING_OBJ_NAME(op),
+            op->map ? STRING_SAFE(op->map->orig_path) : "NULL", STRING_OBJ_NAME(known_obj->obj),
             known_obj->obj ? STRING_SAFE(known_obj->obj->map ? STRING_SAFE(known_obj->obj->map->orig_path) : "NULL") : "NULL");
         return NULL;
     }
