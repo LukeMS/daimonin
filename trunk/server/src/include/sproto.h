@@ -195,14 +195,9 @@ int                         command_target(object *op, char *params);
 void                        command_face_request(char *params, int len, NewSocket *ns);
 void                        generate_ext_title(player *pl);
 /* c_object.c */
-object                     *find_best_object_match(object *pl, char *params);
 int                         command_uskill(object *pl, char *params);
 int                         command_rskill(object *pl, char *params);
 int                         command_egobind ( object *pl, char *params);
-#if 0
-int                         command_apply(object *op, char *params);
-int                         command_examine(object *op, char *params);
-#endif
 object                     *find_marked_object(object *op);
 char                       *examine_monster(object *op, object *tmp, char *buf, int flag);
 char                       *long_desc(object *tmp, object *caller);

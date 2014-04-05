@@ -25,32 +25,6 @@
 
 #include <global.h>
 
-/* Search the inventory of 'pl' for what matches best with params.
- * we use item_matched_string above - this gives us consistent behaviour
- * between many commands.  Return the best match, or NULL if no match.
- */
-object * find_best_object_match(object *pl, char *params)
-{
-    object *tmp, *best = NULL;
-    int     match_val = 0, tmpmatch;
-
-    for (tmp = pl->inv; tmp; tmp = tmp->below)
-    {
-        if (QUERY_FLAG(tmp, FLAG_SYS_OBJECT))
-        {
-            continue;
-        }
-
-        if ((tmpmatch = item_matched_string(pl, tmp, params)) > match_val)
-        {
-            match_val = tmpmatch;
-            best = tmp;
-        }
-    }
-    return best;
-}
-
-
 int command_uskill(object *pl, char *params)
 {
     if (!params)
@@ -141,80 +115,6 @@ int command_egobind ( object *pl, char *params)
 
     return 0;
 }
-
-#if 0
-int command_apply(object *op, char *params)
-{
-        enum apply_flag aflag   = 0;
-        object         *inv;
-
-    if (op->type == PLAYER)
-        CONTR(op)->rest_mode = 0;
-
-    if (!params)
-    {
-        player_apply_below(op);
-
-        return 0;
-    }
-
-    while (*params == ' ')
-        params++;
-
-    if (!strncmp(params, "-a ", 3))
-    {
-        aflag = AP_APPLY;
-        params += 3;
-    }
-
-    if (!strncmp(params, "-u ", 3))
-    {
-        aflag = AP_UNAPPLY;
-        params += 3;
-    }
-
-    while (*params == ' ')
-        params++;
-
-    if ((inv = find_best_object_match(op, params)))
-        player_apply(op, inv, aflag);
-    else
-        new_draw_info(NDI_UNIQUE, 0, op, "Could not find any match to the %s.",
-                             params);
-
-    return 0;
-}
-
-int command_examine(object *op, char *params)
-{
-    object *tmp;
-
-    if (op->type == PLAYER)
-        CONTR(op)->rest_mode = 0;
-
-    if (!params)
-    {
-        while ((tmp = op->below) &&
-               !QUERY_FLAG(tmp, FLAG_SYS_OBJECT) &&
-               !tmp->type != PLAYER)
-       {
-            tmp = tmp->below;
-       }
-
-        if (tmp)
-            examine(op, tmp, TRUE);
-    }
-    else
-    {
-        if ((tmp = find_best_object_match(op, params)))
-            examine(op, tmp, TRUE);
-        else
-            new_draw_info(NDI_UNIQUE, 0, op, "Could not find an object that matches %s", params);
-    }
-
-    return 0;
-}
-#endif
 
 /* Gecko: added a recursive part to search so that we also search in containers */
 static object * find_marked_object_rec(object *op, object **marked, uint32 *marked_count)
