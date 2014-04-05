@@ -1266,30 +1266,12 @@ int cast_spell(object *op, object *caster, int dir, int type, int ability, Spell
 
     if (op == caster) // means cast spell/prayer not wand, etc.
     {
-#if 0 // This should be unnecessary as commands are already messaged back to players.
-        if (op->type == PLAYER)
-        {
-            char buf[MEDIUM_BUF] = "";
-
-            if (target)
-            {
-                sprintf(buf, " on %s", query_base_name(target, op));
-            }
-
-            new_draw_info(NDI_UNIQUE, 0, op, "You %s the %s ~%s~%s.",
-                                 (spells[type].type == SPELL_TYPE_PRIEST) ?
-                                 "invoke" : "cast",
-                                 (spells[type].type == SPELL_TYPE_PRIEST) ?
-                                 "prayer" : "spell", spells[type].name, buf);
-        }
-
-#endif
         if (target &&
             op != target &&
             target->type == PLAYER)
         {
             new_draw_info(NDI_UNIQUE, 0, target, "%s %ss the %s ~%s~ on you.",
-                                 query_base_name(op, target),
+                                 query_short_name(op, target),
                                  (spells[type].type == SPELL_TYPE_PRIEST) ?
                                  "invoke" : "cast",
                                  (spells[type].type == SPELL_TYPE_PRIEST) ?

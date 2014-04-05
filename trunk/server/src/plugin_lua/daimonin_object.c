@@ -3529,11 +3529,10 @@ static int GameObject_CreateObjectInsideEx(lua_State *L)
 
     myob = CreateObjectInside_body(L, WHO, txt, id, nrof, value);
 
-    pl = hooks->is_player_inv(myob);
-    if(pl)
+    if ((pl = hooks->is_player_inv(myob)))
     {
-        hooks->new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, pl, "you got %d %s",
-                nrof?nrof:1, hooks->query_base_name(myob, NULL));
+        hooks->new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, pl, "You got %d %s",
+            (nrof) ? nrof : 1, hooks->query_base_name(myob, NULL));
     }
 
     return push_object(L, &GameObject, myob);
