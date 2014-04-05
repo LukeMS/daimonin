@@ -61,7 +61,7 @@ int add_pet(object *owner, object *pet, int force)
 
     if(pet->owner == owner || (OBJECT_VALID(pet->owner, pet->owner_count) && !force))
     {
-        new_draw_info(NDI_UNIQUE, 0, owner, "%s is already taken", query_name(pet));
+        new_draw_info(NDI_UNIQUE, 0, owner, "%s is already taken", query_name_full(pet, owner));
         return -1;
     }
 
@@ -81,7 +81,7 @@ int add_pet(object *owner, object *pet, int force)
 
     if((nrof_pets >= MAX_PETS || nrof_permapets >= MAX_PERMAPETS) && !force)
     {
-        new_draw_info(NDI_UNIQUE, 0, owner, "You have too many pets to handle %s", query_name(pet));
+        new_draw_info(NDI_UNIQUE, 0, owner, "You have too many pets to handle %s", query_name_full(pet, owner));
         return -1;
     }
 
@@ -154,7 +154,7 @@ void save_pet(object *pet)
         remove_ob(pet);
         if (check_walk_off(pet, NULL, MOVE_APPLY_VANISHED) != CHECK_WALK_OK)
         {
-            new_draw_info(NDI_UNIQUE, 0, pet->owner, "Your %s has disappeared.", query_name(pet));
+            new_draw_info(NDI_UNIQUE, 0, pet->owner, "Your %s has disappeared.", query_name_full(pet, pet->owner));
             return;
         }
     }
@@ -177,7 +177,7 @@ void pet_follow_owner(object *pet)
         remove_ob(pet);
         if (check_walk_off(pet, NULL, MOVE_APPLY_VANISHED) != CHECK_WALK_OK)
         {
-            new_draw_info(NDI_UNIQUE, 0, pet->owner, "Your %s has disappeared.", query_name(pet));
+            new_draw_info(NDI_UNIQUE, 0, pet->owner, "Your %s has disappeared.", query_name_full(pet, pet->owner));
             return;
         }
     }
@@ -196,7 +196,7 @@ void pet_follow_owner(object *pet)
 
     if (pet->owner->map == NULL || QUERY_FLAG(pet->owner, FLAG_REMOVED))
     {
-//        new_draw_info(NDI_UNIQUE, 0, pet->owner, "Your %s has disappeared (no map).", query_name(pet));
+//        new_draw_info(NDI_UNIQUE, 0, pet->owner, "%s has disappeared (no map).", query_name_full(pet, pet->owner));
 //        LOG(llevBug, "BUG: Can't follow owner: no map.\n");
         save_pet(pet);
         return;
@@ -204,7 +204,7 @@ void pet_follow_owner(object *pet)
 
     if (pet->owner->map->in_memory != MAP_ACTIVE)
     {
-//        new_draw_info(NDI_UNIQUE, 0, pet->owner, "Your %s has disappeared (map not loaded).", query_name(pet));
+//        new_draw_info(NDI_UNIQUE, 0, pet->owner, "%s has disappeared (map not loaded).", query_name_full(pet, pet->owner));
 //        LOG(llevBug, "BUG: Owner of the pet not on a map in memory!?\n");
         save_pet(pet);
         return;
@@ -213,7 +213,7 @@ void pet_follow_owner(object *pet)
     dir = find_free_spot(pet->arch, pet, pet->owner->map, pet->owner->x, pet->owner->y, INS_WITHIN_LOS, 1, SIZEOFFREE);
     if (dir == -1)
     {
-//        new_draw_info(NDI_UNIQUE, 0, pet->owner, "Your %s has disappeared (no space).", query_name(pet));
+//        new_draw_info(NDI_UNIQUE, 0, pet->owner, "%s has disappeared (no space).", query_name_full(pet, pet->owner));
 //        LOG(llevBug, "BUG: No space for pet to follow, freeing %s.\n", STRING_OBJ_NAME(pet));
         save_pet(pet);
         return; /* Will be freed since it's removed */
@@ -228,9 +228,9 @@ void pet_follow_owner(object *pet)
     CLEAR_FLAG(pet, FLAG_SYS_OBJECT);
 
     if (!insert_ob_in_map(pet, pet->owner->map, NULL, 0))
-        new_draw_info(NDI_UNIQUE, 0, pet->owner, "Your %s has disappeared.", query_name(pet));
+        new_draw_info(NDI_UNIQUE, 0, pet->owner, "%s has disappeared.", query_name_full(pet, pet->owner));
     else
-        new_draw_info(NDI_UNIQUE, 0, pet->owner, "Your %s appears next to you", query_name(pet));
+        new_draw_info(NDI_UNIQUE, 0, pet->owner, "%s appears next to you", query_name_full(pet, pet->owner));
 }
 
 /* Warp owner's distant pets towards him */

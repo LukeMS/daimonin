@@ -553,7 +553,7 @@ int damage_ob(object *op, int dam, object *hitter, int env_attack)
         op->type == PLAYER)
     {
         char buf[SMALL_BUF];
-        strcpy(buf, query_name(hitter));
+        strcpy(buf, query_name_full(hitter, NULL));
         FREE_AND_COPY_HASH(CONTR(op)->killer, buf);
 
         // TODO: Add some more checks here to ensure that the player isn't trying to cheat the system (killing alts).
@@ -996,8 +996,8 @@ static int HitPlayerAttacktype(object *op, object *hitter, int *flags, int damag
             random_roll(0, 39)+2*tmp->magic) {
             if(op->type == PLAYER)
             new_draw_info(NDI_UNIQUE|NDI_RED,0, op,
-            "The %s's acid corrodes your %s!",
-            query_name(hitter), query_name(tmp));
+            "%s's acid corrodes %s!",
+            query_name_full(hitter, NULL), query_name_full(tmp, op));
             flag = 1;
             tmp->magic--;
             esrv_send_item(tmp);
@@ -1463,7 +1463,7 @@ int kill_object(object *op, int dam, object *hitter, int typeX)
             /* old pet code */
             /* if (owner != NULL)
             {
-                sprintf(buf, "%s killed %s with %s%s.", hitter->owner->name, query_name(op), query_name(hitter),
+                sprintf(buf, "%s killed %s with %s%s.", hitter->owner->name, query_name_full(op, NULL), query_name_full(hitter, NULL),
                     battleg ? " (duel)" : "");
                 old_hitter = hitter;
                 owner->skillgroup = hitter->skillgroup;
@@ -1474,13 +1474,13 @@ int kill_object(object *op, int dam, object *hitter, int typeX)
             {
                 if(hitter->type == MONSTER && OBJECT_VALID(hitter->owner, hitter->owner_count))
                 {
-                    sprintf(buf, "Your %s killed %s.", query_name(hitter), query_name(op));
-                    sprintf(buf2, "%s's %s killed %s.", query_name(owner), query_name(hitter), query_name(op));
+                    sprintf(buf, "Your %s killed %s.", query_name_full(hitter, NULL), query_name_full(op, NULL));
+                    sprintf(buf2, "%s's %s killed %s.", query_name_full(owner, NULL), query_name_full(hitter, NULL), query_name_full(op, NULL));
                 }
                 else
                 {
-                    sprintf(buf, "You killed %s with %s.", query_name(op), query_name(hitter));
-                    sprintf(buf2, "%s killed %s with %s.", query_name(owner), query_name(op), query_name(hitter));
+                    sprintf(buf, "You killed %s with %s.", query_name_full(op, NULL), query_name_full(hitter, NULL));
+                    sprintf(buf2, "%s killed %s with %s.", query_name_full(owner, NULL), query_name_full(op, NULL), query_name_full(hitter, NULL));
                 }
 
                 old_hitter = hitter;
@@ -1488,8 +1488,8 @@ int kill_object(object *op, int dam, object *hitter, int typeX)
             }
             else
             {
-                sprintf(buf2, "%s killed %s.",  query_name(owner), query_name(op));
-                sprintf(buf, "You killed %s.", query_name(op));
+                sprintf(buf2, "%s killed %s.",  query_name_full(owner, NULL), query_name_full(op, NULL));
+                sprintf(buf, "You killed %s.", query_name_full(op, NULL));
             }
             new_draw_info(NDI_WHITE, 0, owner, "%s", buf);
         }
@@ -1764,7 +1764,7 @@ void poison_player(object *op, object *hitter, float dam)
                         tmp->stats.Wis = (sint8) (hitter->level / 10 + RANDOM() % (hitter->level * 8) / 100.0f + 2.0f);
                         tmp->stats.Wis *= -1;
                     }
-                    new_draw_info(NDI_UNIQUE, 0, op, "%s has poisoned you!", query_name(hitter));
+                    new_draw_info(NDI_UNIQUE, 0, op, "%s has poisoned you!", query_name_full(hitter, NULL));
                 }
                 tmp = check_obj_stat_buffs(tmp, op);
                 insert_ob_in_ob(tmp, op);
@@ -1782,10 +1782,10 @@ void poison_player(object *op, object *hitter, float dam)
                     SET_FLAG(tmp, FLAG_APPLIED);
                     fix_monster(op);
                     if (hitter->type == PLAYER)
-                        new_draw_info(NDI_UNIQUE, 0, hitter, "You poisoned %s!", query_name(op));
+                        new_draw_info(NDI_UNIQUE, 0, hitter, "You poisoned %s!", query_name_full(op, NULL));
                     else if (get_owner(hitter) && hitter->owner->type == PLAYER)
-                        new_draw_info(NDI_UNIQUE, 0, hitter->owner, "%s poisoned %s!", query_name(hitter),
-                                             query_name(op));
+                        new_draw_info(NDI_UNIQUE, 0, hitter->owner, "%s poisoned %s!", query_name_full(hitter, NULL),
+                                             query_name_full(op, NULL));
                 }
             }
         }

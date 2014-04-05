@@ -575,7 +575,7 @@ static inline int aggro_exp_group(object *victim, object *aggro, char *kill_msg)
     if(!exp)
     {
         party_message(0, NDI_UNIQUE | NDI_GREY, 0, leader, NULL, "%s has too high level for exp.",
-                      query_name(high));
+            query_name_full(high, NULL));
 
         /* No exp don't means no quests... So, we check it here - and we fake
          * a in_group_exp_range() check, so we set NOEXP right for the quest trigger

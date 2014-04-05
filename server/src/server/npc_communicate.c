@@ -136,7 +136,7 @@ void communicate(object *op, char *txt)
         flags |= (NDI_SAY | NDI_PLAYER);
 
     new_info_map(flags, op->map, op->x, op->y, MAP_INFO_NORMAL, "%s says: %s",
-                 query_name(op), txt);
+        query_name_full(op, NULL), txt);
 }
 
 /* Handle a player attempting to /talk.

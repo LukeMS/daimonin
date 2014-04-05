@@ -225,7 +225,7 @@ int command_gsay(object *op, char *params)
  * (r7282, 0.10.5-y). */
 #if 0 // def USE_CHANNELS
     sprintf(buf, "%c%c%s %s:%s",
-            2, NDI_YELLOW, "Group", query_name(op), params);
+            2, NDI_YELLOW, "Group", query_name_full(op, NULL), params);
     sb = SOCKBUF_COMPOSE(SERVER_CMD_CHANNELMSG, buf, strlen(buf + 2) + 2, 0);
 
     for(member = CONTR(op)->group_leader; member; member = CONTR(member)->group_next)
@@ -269,7 +269,7 @@ int command_shout(object *op, char *params)
     CHATLOG("SHOUT:%s >%s<\n", STRING_OBJ_NAME(op), params);
 
     new_draw_info(NDI_SHOUT | NDI_PLAYER | NDI_UNIQUE | NDI_ALL | NDI_ORANGE,
-                  1, NULL, "%s shouts: %s", query_name(op), params);
+                  1, NULL, "%s shouts: %s", query_name_full(op, NULL), params);
 
 #ifdef PLUGINS
     /* GROS : Here we handle the SHOUT global event */
@@ -343,7 +343,7 @@ int command_describe(object *op, char *params)
                cost_string_from_value(targetob->value, COSTSTRING_SHORT));
 
     new_draw_info(NDI_SHOUT | NDI_PLAYER | NDI_UNIQUE | NDI_ALL | NDI_ORANGE,
-                  1, NULL, "%s describes: %s", query_name(op), buf);
+                  1, NULL, "%s describes: %s", query_name_full(op, NULL), buf);
 
     return 0;
 }
@@ -1037,7 +1037,7 @@ static int basic_emote(object *op, char *params, int emotion)
         {
             CHATLOG("EMOTE:%s >%s<\n", STRING_OBJ_NAME(op), params);
             new_info_map(NDI_EMOTE | NDI_PLAYER | NDI_YELLOW, op->map, op->x,
-                         op->y, MAP_INFO_NORMAL, "%s %s", query_name(op),
+                         op->y, MAP_INFO_NORMAL, "%s %s", query_name_full(op, NULL),
                          params);
 
             return 0;

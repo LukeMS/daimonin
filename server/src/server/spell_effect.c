@@ -179,12 +179,12 @@ int recharge(object *op)
         return 0;
     if (!(random_roll(0, 3)))
     {
-        new_draw_info(NDI_UNIQUE, 0, op, "The %s vibrates violently, then explodes!", query_name(wand));
+        new_draw_info(NDI_UNIQUE, 0, op, "%s vibrates violently, then explodes!", query_name_full(wand, op));
         play_sound_map(op->map, op->x, op->y, SOUND_OB_EXPLODE, SOUND_NORMAL);
         destruct_ob(wand);
         return 1;
     }
-    new_draw_info(NDI_UNIQUE, 0, op, "The %s glows with power.", query_name(wand));
+    new_draw_info(NDI_UNIQUE, 0, op, "%s glows with power.", query_name_full(wand, op));
 
     wand->stats.food += random_roll(1, spells[wand->stats.sp].charges);
     if (wand->arch && QUERY_FLAG(&wand->arch->clone, FLAG_ANIMATE))
@@ -780,7 +780,7 @@ int cast_heal(object *op, int level, object *target, int spell_type)
           {
               if (heal > 0)
                   new_draw_info(NDI_UNIQUE, 0, op, "The prayer heals %s for %d hp!",
-                                       op == target ? "you" : query_name(target), heal);
+                                       op == target ? "you" : query_name_full(target, op), heal);
               else
                   new_draw_info(NDI_UNIQUE, 0, op, "The healing prayer fails!");
           }
@@ -788,10 +788,10 @@ int cast_heal(object *op, int level, object *target, int spell_type)
           if (op != target && target->type == PLAYER)
           {
               if (heal > 0)
-                  new_draw_info(NDI_UNIQUE, 0, target, "%s casts minor healing on you healing %d hp!", op->name,
+                  new_draw_info(NDI_UNIQUE, 0, target, "%s casts minor healing on you healing %d hp!", query_name_full(op, target),
                                        heal);
               else
-                  new_draw_info(NDI_UNIQUE, 0, target, "%s casts minor healing on you but it fails!", op->name);
+                  new_draw_info(NDI_UNIQUE, 0, target, "%s casts minor healing on you but it fails!", query_name_full(op, target));
           }
 
           break;
@@ -3270,7 +3270,7 @@ int finger_of_death(object *op, object *caster, int dir)
         }
         else
         {
-            new_draw_info(NDI_UNIQUE, 0, op, "The %s looks stronger!", query_name(target));
+            new_draw_info(NDI_UNIQUE, 0, op, "%s looks stronger!", query_name_full(target, op));
             target->stats.hp = target->stats.maxhp * 2;
             return 0;
         }

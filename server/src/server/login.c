@@ -784,7 +784,7 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
     if (!pl->privacy)
     {
         new_draw_info(NDI_UNIQUE | NDI_ALL, 0, NULL, "~%s~ has entered the game%s.",
-                      query_name(pl->ob), ((pl->state & ST_BORN)) ? " for the first time" : "");
+                      query_name_full(pl->ob, NULL), ((pl->state & ST_BORN)) ? " for the first time" : "");
     }
 
     /* lets check we had saved last time in a gmaster mode.
@@ -848,7 +848,7 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
         if (pl->privacy)
         {
             sprintf(buf, "~%s~ has entered the game (~privacy mode~).\n",
-                    query_name(pl->ob));
+                    query_name_full(pl->ob, NULL));
         }
 
         sprintf(strchr(buf, '\0'), "  ~IP~: %s.\n", pl->socket.ip_host);

@@ -432,7 +432,7 @@ int save_life(object *op)
         if (QUERY_FLAG(tmp, FLAG_APPLIED) && QUERY_FLAG(tmp, FLAG_LIFESAVE))
         {
             play_sound_map(op->map, op->x, op->y, SOUND_OB_EVAPORATE, SOUND_NORMAL);
-            new_draw_info(NDI_UNIQUE, 0, op, "Your %s vibrates violently, then evaporates.", query_name(tmp));
+            new_draw_info(NDI_UNIQUE, 0, op, "%s vibrates violently, then evaporates.", query_name_full(tmp, op));
             remove_ob(tmp);
             CLEAR_FLAG(op, FLAG_LIFESAVE);
             if (op->stats.hp <= 0)
@@ -619,7 +619,7 @@ static const char *CreateGravestone(object *op, mapstruct *m, int x, int y)
     sprintf(buf, "%s's gravestone", STRING_OBJ_NAME(op));
     FREE_AND_COPY_HASH(gravestone->name, buf);
     /* name */
-    sprintf(buf, "R.I.P.\n\n%s", query_name(op));
+    sprintf(buf, "R.I.P.\n\n%s", query_name_full(op, NULL));
     /* race, level */
     sprintf(strchr(buf, '\0'), " the %s\nwho was level %d\nwhen ",
             STRING_OBJ_RACE(op), (int)op->level);
@@ -928,7 +928,7 @@ void cast_dust(object *op, object *throw_ob, int dir)
         LOG(llevBug, "BUG: cast_dust() can't find an archetype to use!\n");
 
     if (op->type == PLAYER && arch)
-        new_draw_info(NDI_UNIQUE, 0, op, "You cast %s.", query_name(throw_ob));
+        new_draw_info(NDI_UNIQUE, 0, op, "You cast %s.", query_name_full(throw_ob, op));
     if (!QUERY_FLAG(throw_ob, FLAG_REMOVED))
         destruct_ob(throw_ob);
 }
@@ -1314,7 +1314,8 @@ void dragon_ability_gain(object *who, int atnr, int level)
     {
         /* generate misc. treasure */
         tmp = arch_to_object(tr->item);
-        new_draw_info(NDI_UNIQUE | NDI_BLUE, 0, who, "You gained %s", query_name(tmp));
+        new_draw_info(NDI_UNIQUE | NDI_BLUE, 0, who, "You gained %s",
+            query_name_full(tmp, who));
         tmp = insert_ob_in_ob(tmp, who);
     }
 }
@@ -1643,7 +1644,7 @@ int command_pvp_stats(object *op, char *params)
             if (pvp_force)
             {
                 new_draw_info(NDI_UNIQUE, 0, op, "Player: ~%s~\nTotal PvP kills: ~%u~\nTotal PvP deaths: ~%u~",
-                                                  query_name(pl->ob), pvp_force->stats.maxhp, pvp_force->stats.hp);
+                                                  query_name_full(pl->ob, NULL), pvp_force->stats.maxhp, pvp_force->stats.hp);
             }
             else
             {

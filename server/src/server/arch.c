@@ -161,7 +161,7 @@ int item_matched_string(object *pl, object *op, const char *name)
                 return 6;
             }
         }
-        if (!strcasecmp(cp, query_name(op)))
+        if (!strcasecmp(cp, query_name_full(op, NULL)))
             retval = 20;
         else if (!strcasecmp(cp, query_short_name(op, NULL)))
             retval = 18;
