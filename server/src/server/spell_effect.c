@@ -1852,11 +1852,17 @@ int remove_curse(object *op, object *target, int type, SpellTypeFrom src)
     if (op != target)
     {
         if (op->type == PLAYER)
+        {
             new_draw_info(NDI_UNIQUE, 0, op, "You cast remove %s on %s.",
-                                 type == SP_REMOVE_CURSE ? "curse" : "damnation", query_base_name(target, op));
+                (type == SP_REMOVE_CURSE) ? "curse" : "damnation",
+                query_short_name(target, op));
+        }
         else if (target->type == PLAYER)
-            new_draw_info(NDI_UNIQUE, 0, target, "%s cast remove %s on you.", query_base_name(op, target),
-                                 type == SP_REMOVE_CURSE ? "curse" : "damnation");
+        {
+            new_draw_info(NDI_UNIQUE, 0, target, "%s casts remove %s on you.",
+                query_short_name(op, target),
+                (type == SP_REMOVE_CURSE) ? "curse" : "damnation");
+        }
     }
 
     /* Player remove xx only removes applied stuff, npc remove clears ALL */
@@ -1878,11 +1884,16 @@ int remove_curse(object *op, object *target, int type, SpellTypeFrom src)
             else /* level of the items is to high for this remove curse */
             {
                 if (target->type == PLAYER)
-                    new_draw_info(NDI_UNIQUE, 0, target, "The %s curse is stronger as the prayer!",
-                                         query_base_name(tmp, target));
-                else if (op != target && op->type == PLAYER)
-                    new_draw_info(NDI_UNIQUE, 0, op, "The %s curse of %s is stronger as your prayer!",
-                                         query_base_name(tmp, op), query_base_name(target, op));
+                {
+                    new_draw_info(NDI_UNIQUE, 0, target, "The %s curse is stronger than the prayer!",
+                        query_base_name(tmp, target));
+                }
+                else if (op != target &&
+                         op->type == PLAYER)
+                {
+                    new_draw_info(NDI_UNIQUE, 0, op, "The %s curse of %s is stronger than your prayer!",
+                        query_base_name(tmp, op), query_base_name(target, op));
+                }
             }
         }
     }
@@ -1890,9 +1901,14 @@ int remove_curse(object *op, object *target, int type, SpellTypeFrom src)
     if (op != target && op->type == PLAYER)
     {
         if (success)
+        {
             new_draw_info(NDI_UNIQUE, 0, op, "Your prayer removes some curses.");
+        }
         else
-            new_draw_info(NDI_UNIQUE, 0, op, "%s items seems uncursed.", query_base_name(target, op));
+        {
+            new_draw_info(NDI_UNIQUE, 0, op, "%s items seems uncursed.",
+                query_short_name(target, op));
+        }
     }
 
     if (target->type == PLAYER)
@@ -1950,8 +1966,10 @@ int cast_identify(object *op, int level, object *single_ob, int mode)
             if (level < tmp->level)
             {
                 if (op->type == PLAYER)
-                    new_draw_info(NDI_UNIQUE, 0, op, "The %s is too powerful for this identify!",
-                                         query_base_name(tmp, op));
+                {
+                    new_draw_info(NDI_UNIQUE, 0, op, "%s %s too powerful for this identify!",
+                        query_short_name(tmp, op), (tmp->nrof > 1) ? "are" : "is");
+                }
             }
             else
             {
