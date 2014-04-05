@@ -57,7 +57,7 @@ int move_ob(object *op, int dir, object *originator)
      */
     if (op->head)
     {
-        LOG(llevDebug, "move_ob() called with non head object: %s %s (%d,%d)\n", query_name(op->head),
+        LOG(llevDebug, "move_ob() called with non head object: %s %s (%d,%d)\n", STRING_OBJ_NAME(op->head),
             op->map->path ? op->map->path : "<no map>", op->x, op->y);
         op = op->head;
     }
@@ -615,7 +615,7 @@ mapstruct *enter_map_by_name(object *op, const char *path, const char *src_path,
         /* for player we first try to the bind point (aka savebed) */
         if(op->type == PLAYER && CONTR(op))
         {
-            LOG( llevBug, "BUG: enter_map_by_name(): pathname to map does not exist! player: %s (%s)\n", query_name(op), STRING_SAFE(src_path));
+            LOG( llevBug, "BUG: enter_map_by_name(): pathname to map does not exist! player: %s (%s)\n", STRING_OBJ_NAME(op), STRING_SAFE(src_path));
             newmap = ready_map_name(CONTR(op)->savebed_map, CONTR(op)->orig_savebed_map, CONTR(op)->bed_status, reference);
             x = CONTR(op)->bed_x;
             y = CONTR(op)->bed_y;
@@ -628,7 +628,7 @@ mapstruct *enter_map_by_name(object *op, const char *path, const char *src_path,
 
                 /* If we can't load the emergency map, something is probably really screwed up, so bail out now. */
                 if (!newmap)
-                    LOG(llevError, "ERROR: enter_map_by_name(): could not load emergency map? Fatal error! (player: %s)\n", query_name(op));
+                    LOG(llevError, "ERROR: enter_map_by_name(): could not load emergency map? Fatal error! (player: %s)\n", STRING_OBJ_NAME(op));
             }
         }
         else /* we NEVER use the emergency map for mobs */
@@ -690,7 +690,7 @@ int enter_map_by_exit(object *op, object *exit_ob)
 
     if (!exit_ob)
     {
-        LOG(llevBug, "BUG: enter_map_by_exit(): called with object %s but without exit ob!\n", query_name(op));
+        LOG(llevBug, "BUG: enter_map_by_exit(): called with object %s but without exit ob!\n", STRING_OBJ_NAME(op));
         return FALSE;
     }
 

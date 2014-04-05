@@ -598,7 +598,7 @@ static int check_ip_ban(NewSocket *sock, char *ip)
             if (count > (settings.max_cons_from_one_ip - 1))
             {
                 LOG(llevDebug, "check_ip_ban(): connection flood: mark player %s Ns_Dead (IP %s)\n",
-                    query_name(pl->ob), ptmp->socket.ip_host);
+                    STRING_OBJ_NAME(pl->ob), ptmp->socket.ip_host);
             ptmp->socket.status = Ns_Dead;
             }
         }
@@ -828,7 +828,7 @@ void doeric_server(int update, struct timeval *timeout)
             {
                 if (read_socket_buffer(&pl->socket) < 0)
                 {
-                    LOG(llevDebug, "Drop ConnectionB: %s (%s)\n", query_name(pl->ob), pl->socket.ip_host);
+                    LOG(llevDebug, "Drop ConnectionB: %s (%s)\n", STRING_OBJ_NAME(pl->ob), pl->socket.ip_host);
                     pl->socket.status = Ns_Dead;
                 }
                 else

@@ -199,7 +199,7 @@ struct obj *aggro_update_info(struct obj *target, struct obj *hitter, struct obj
          *  In any case, we use the owner.
          */
         if(hitter && hitter_owner)
-            LOG(llevDebug,"TODO: hitter %s and owner %s passed aggro_update_check. Pet aggro handling not finished...\n", query_name(hitter), query_name(hitter_owner));
+            LOG(llevDebug,"TODO: hitter %s and owner %s passed aggro_update_check. Pet aggro handling not finished...\n", STRING_OBJ_NAME(hitter), STRING_OBJ_NAME(hitter_owner));
         if(hitter_owner)
             hitter=hitter_owner; /* TODO: change when we do pet/owner handling */
 
@@ -459,17 +459,17 @@ static inline int in_group_exp_range(object *victim, object *hitter, object *mem
     /* some sanity checks... */
     if(QUERY_FLAG(victim,FLAG_REMOVED) )
     {
-        LOG(llevDebug,"in_group_exp_range(): victim %s is removed!\n", query_name(victim));
+        LOG(llevDebug,"in_group_exp_range(): victim %s is removed!\n", STRING_OBJ_NAME(victim));
         return FALSE;
     }
     if(hitter && QUERY_FLAG(hitter,FLAG_REMOVED) ) /* secure... */
     {
-        LOG(llevDebug,"in_group_exp_range(): hitter %s is removed!\n", query_name(hitter));
+        LOG(llevDebug,"in_group_exp_range(): hitter %s is removed!\n", STRING_OBJ_NAME(hitter));
         return FALSE;
     }
     if(QUERY_FLAG(member,FLAG_REMOVED) ) /* secure... */
     {
-        LOG(llevDebug,"in_group_exp_range(): member %s is removed!\n", query_name(member));
+        LOG(llevDebug,"in_group_exp_range(): member %s is removed!\n", STRING_OBJ_NAME(member));
         return FALSE;
     }
 
@@ -477,7 +477,7 @@ static inline int in_group_exp_range(object *victim, object *hitter, object *mem
     if (map == victim->map || (hitter && map == hitter->map))
     {
 #ifdef DEBUG_AGGRO
-        LOG(llevNoLog,"->%s on same map as victim/hitter!\n", query_name(member));
+        LOG(llevNoLog,"->%s on same map as victim/hitter!\n", STRING_OBJ_NAME(member));
 #endif
         return TRUE;
     }
@@ -488,7 +488,7 @@ static inline int in_group_exp_range(object *victim, object *hitter, object *mem
         if (tmp_map->tile_map[i] == map)
         {
 #ifdef DEBUG_AGGRO
-            LOG(llevNoLog,"->%s on attached map from victim!\n", query_name(member));
+            LOG(llevNoLog,"->%s on attached map from victim!\n", STRING_OBJ_NAME(member));
 #endif
             return TRUE;
         }
@@ -501,7 +501,7 @@ static inline int in_group_exp_range(object *victim, object *hitter, object *mem
             if (tmp_map->tile_map[i] == map)
             {
 #ifdef DEBUG_AGGRO
-                    LOG(llevNoLog,"->%s on attached map from hitter!\n", query_name(member));
+                    LOG(llevNoLog,"->%s on attached map from hitter!\n", STRING_OBJ_NAME(member));
 #endif
                     return TRUE;
             }
@@ -509,7 +509,7 @@ static inline int in_group_exp_range(object *victim, object *hitter, object *mem
     }
 
 #ifdef DEBUG_AGGRO
-    LOG(llevNoLog,"->%s is out of range!\n", query_name(member));
+    LOG(llevNoLog,"->%s is out of range!\n", STRING_OBJ_NAME(member));
 #endif
 
     /* don't give this group member quest items from victim */
@@ -568,7 +568,7 @@ static inline int aggro_exp_group(object *victim, object *aggro, char *kill_msg)
     /* adjust exp for nrof group members */
     exp = (int)((float)exp*(0.9f+(0.1f*(float) CONTR(leader)->group_nrof)));
 #ifdef DEBUG_AGGRO
-    LOG(llevNoLog," high member: %s (level %d)\n--> exp: %d (%d) --> member exp: %d\n", query_name(high), high->level + high_drain_level, exp, t ,exp/CONTR(leader)->group_nrof);
+    LOG(llevNoLog," high member: %s (level %d)\n--> exp: %d (%d) --> member exp: %d\n", STRING_OBJ_NAME(high), high->level + high_drain_level, exp, t ,exp/CONTR(leader)->group_nrof);
 #endif
 
     /* exp is 0 - one member used a to high skill to kill */
@@ -611,7 +611,7 @@ static inline int aggro_exp_group(object *victim, object *aggro, char *kill_msg)
          * from the quest item function (= no quest item for leecher)
          */
 #ifdef DEBUG_AGGRO
-        LOG(llevNoLog,"GROUP_MEMBER: %s (%p)\n", query_name(tmp), pl);
+        LOG(llevNoLog,"GROUP_MEMBER: %s (%p)\n", STRING_OBJ_NAME(tmp), pl);
 #endif
         if(!in_group_exp_range(victim, aggro->enemy == tmp?NULL:aggro->enemy, tmp))
         {
@@ -695,7 +695,7 @@ object *aggro_calculate_exp(struct obj *victim, struct obj *slayer, char *kill_m
             total_dmg += tmp->stats.hp;
     }
 #ifdef DEBUG_AGGRO
-    LOG(llevNoLog,"%s (%d) KILLED (%d). All dmg: %d  - player dmg: %d \n", query_name(victim), victim->count, history->stats.hp, total_dmg_all, total_dmg);
+    LOG(llevNoLog,"%s (%d) KILLED (%d). All dmg: %d  - player dmg: %d \n", STRING_OBJ_NAME(victim), victim->count, history->stats.hp, total_dmg_all, total_dmg);
 #endif
     highest_dmg = -1;
     /* now run through the dmg left and give all their share of the exp */
@@ -703,7 +703,7 @@ object *aggro_calculate_exp(struct obj *victim, struct obj *slayer, char *kill_m
     {
         tmp = history->inv;
 #ifdef DEBUG_AGGRO
-        LOG(llevNoLog,"--> %s [%s] (%x)--> dmg done: %d\n", query_name(tmp->enemy),tmp->last_sp == PLAYER?"player":"non player",tmp->enemy->count, tmp->stats.hp );
+        LOG(llevNoLog,"--> %s [%s] (%x)--> dmg done: %d\n", STRING_OBJ_NAME(tmp->enemy),tmp->last_sp == PLAYER?"player":"non player",tmp->enemy->count, tmp->stats.hp );
 #endif
         if(tmp->enemy && tmp->enemy->type == PLAYER) /* player? */
         {
@@ -762,7 +762,7 @@ object *aggro_calculate_exp(struct obj *victim, struct obj *slayer, char *kill_m
         return NULL;
 
 #ifdef DEBUG_AGGRO
-    LOG(llevNoLog," -> highest_hitter: %s ", query_name(highest_hitter->enemy));
+    LOG(llevNoLog," -> highest_hitter: %s ", STRING_OBJ_NAME(highest_hitter->enemy));
 #endif
 
     /* we have a winner... highest_hitter is now a non player, single player or a group */

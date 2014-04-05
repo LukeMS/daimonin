@@ -333,7 +333,7 @@ int cast_wor(object *op, object *caster)
     dummy = get_archetype("force");
     if (dummy == NULL)
     {
-        LOG(llevBug, "BUG: cast_wor(): get_object failed (%s - %s)!\n", query_name(op), query_name(caster));
+        LOG(llevBug, "BUG: cast_wor(): get_object failed (%s - %s)!\n", STRING_OBJ_NAME(op), STRING_OBJ_NAME(caster));
         return 0;
     }
     if (op->owner)
@@ -641,7 +641,7 @@ int cast_light(object *op, object *caster, int dir)
     tmp = get_archetype("light");
     if (!tmp)
     {
-        LOG(llevBug, "BUG: spell arch for cast_light() missing (%s).\n", query_name(caster));
+        LOG(llevBug, "BUG: spell arch for cast_light() missing (%s).\n", STRING_OBJ_NAME(caster));
         return 0;
     }
 
@@ -763,7 +763,7 @@ int cast_heal(object *op, int level, object *target, int spell_type)
 
     if (!op || !target)
     {
-        LOG(llevBug, "BUG: cast_heal(): target or caster NULL (op: %s target: %s)\n", query_name(op), query_name(target));
+        LOG(llevBug, "BUG: cast_heal(): target or caster NULL (op: %s target: %s)\n", STRING_OBJ_NAME(op), STRING_OBJ_NAME(target));
         return 0;
     }
 
@@ -893,8 +893,8 @@ int cast_heal(object *op, int level, object *target, int spell_type)
     }
 
     if (insert_spell_effect(spells[spell_type].archname, target->map, target->x, target->y))
-        LOG(llevDebug, "insert_spell_effect() failed: spell:%d, obj:%s target:%s\n", spell_type, query_name(op),
-            query_name(target));
+        LOG(llevDebug, "insert_spell_effect() failed: spell:%d, obj:%s target:%s\n", spell_type, STRING_OBJ_NAME(op),
+            STRING_OBJ_NAME(target));
     return success;
 }
 
@@ -982,7 +982,7 @@ int cast_change_attr(object *op, object *caster, object *target, int dir, int sp
 
           if (insert_spell_effect(spells[SP_STRENGTH].archname, target->map, target->x, target->y))
               LOG(llevDebug, "insert_spell_effect() failed: spell:%d, obj:%s caster:%s target:%s\n", spell_type,
-                  query_name(op), query_name(caster), query_name(target));
+                  STRING_OBJ_NAME(op), STRING_OBJ_NAME(caster), STRING_OBJ_NAME(target));
 
           break;
 
@@ -1389,7 +1389,7 @@ int summon_pet(object *op, int dir, SpellTypeFrom item)
     at = find_archetype(monster);
     if (at == NULL)
     {
-        LOG(llevBug, "BUG: Unknown archetype in summon pet: %s (%s)\n", monster, query_name(op));
+        LOG(llevBug, "BUG: Unknown archetype in summon pet: %s (%s)\n", monster, STRING_OBJ_NAME(op));
         return 0;
     }
     if (!dir)
@@ -2120,8 +2120,8 @@ int cast_detection(object *op, object *target, int type)
     }
 
     if (insert_spell_effect(spells[type].archname, target->map, target->x, target->y))
-        LOG(llevDebug, "insert_spell_effect() failed: spell:%d, obj:%s target:%s\n", type, query_name(op),
-            query_name(target));
+        LOG(llevDebug, "insert_spell_effect() failed: spell:%d, obj:%s target:%s\n", type, STRING_OBJ_NAME(op),
+            STRING_OBJ_NAME(target));
 
     return 1;
 }
@@ -2141,7 +2141,7 @@ static int cast_detection_old(object *op, object *target,int type) {
     detect_arch = find_archetype("detect_magic");
     if (detect_arch == (archetype *) NULL)
     {
-        LOG(llevBug, "BUG: Couldn't find archetype detect_magic (%s).\n", query_name(op));
+        LOG(llevBug, "BUG: Couldn't find archetype detect_magic (%s).\n", STRING_OBJ_NAME(op));
         return 0;
     }
 
@@ -3304,7 +3304,7 @@ int animate_weapon(object *op, object *caster, int dir, archetype *at, int spell
 
     if (!at)
     {
-        LOG(llevBug, "BUG: animate_weapon failed: missing archetype (%s - %s)!\n", query_name(op), query_name(caster));
+        LOG(llevBug, "BUG: animate_weapon failed: missing archetype (%s - %s)!\n", STRING_OBJ_NAME(op), STRING_OBJ_NAME(caster));
         return 0;
     }
     /* if player already has a golem, abort */
@@ -3335,8 +3335,8 @@ int animate_weapon(object *op, object *caster, int dir, archetype *at, int spell
         }
         else
         {
-            LOG(llevBug, "BUG: animate_weapon failed: missing archetype! (%s - %s)!\n", query_name(op),
-                query_name(caster));
+            LOG(llevBug, "BUG: animate_weapon failed: missing archetype! (%s - %s)!\n", STRING_OBJ_NAME(op),
+                STRING_OBJ_NAME(caster));
             return 0;
         }
     }
@@ -3407,15 +3407,15 @@ int animate_weapon(object *op, object *caster, int dir, archetype *at, int spell
     {
         if (apply_special(op, weapon, AP_UNAPPLY | AP_IGNORE_CURSE | AP_NO_MERGE))
         {
-            LOG(llevBug, "BUG: animate_weapon(): can't unapply weapon (%s - %s)!\n", query_name(op), query_name(caster));
+            LOG(llevBug, "BUG: animate_weapon(): can't unapply weapon (%s - %s)!\n", STRING_OBJ_NAME(op), STRING_OBJ_NAME(caster));
             return 0;
         }
         remove_ob(weapon);
         insert_ob_in_ob(weapon, tmp);
         SET_FLAG(tmp, FLAG_USE_WEAPON);
         if (apply_special(tmp, weapon, AP_APPLY))
-            LOG(llevBug, "BUG: animate_weapon(): golem can't apply weapon (%s - %s)!\n", query_name(op),
-                query_name(caster));
+            LOG(llevBug, "BUG: animate_weapon(): golem can't apply weapon (%s - %s)!\n", STRING_OBJ_NAME(op),
+                STRING_OBJ_NAME(caster));
     }
 
     /* modify weapon's animated wc */
@@ -3638,7 +3638,7 @@ int make_object_glow(object *op, int radius, int time)
 
     if (!tmp->env || op != tmp->env)
     {
-        LOG(llevBug, "BUG: make_object_glow() failed to insert glowing force in %s\n", query_name(op));
+        LOG(llevBug, "BUG: make_object_glow() failed to insert glowing force in %s\n", STRING_OBJ_NAME(op));
         return 0;
     }
     return 1;

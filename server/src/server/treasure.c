@@ -2078,7 +2078,7 @@ int fix_generated_item(object **op_ptr, object *creator, int difficulty, int a_c
               break;
 
             case SPELLBOOK:
-              LOG(llevDebug, "DEBUG: fix_generated_system() called for disabled object SPELLBOOK (%s)\n", query_name(op));
+              LOG(llevDebug, "DEBUG: fix_generated_system() called for disabled object SPELLBOOK (%s)\n", STRING_OBJ_NAME(op));
               break;
 
             case WAND:

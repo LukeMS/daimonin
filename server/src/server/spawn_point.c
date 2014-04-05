@@ -301,7 +301,7 @@ static void insert_spawn_mob_loot(object *op, object *mob, object *tmp)
                     if (tmp2->type == TYPE_RANDOM_DROP)
                         LOG(llevDebug,
                             "DEBUG:: Spawn:: RANDOM_DROP (102) not allowed inside RANDOM_DROP.mob:>%s< map:%s (%d,%d)\n",
-                            query_name(mob), op->map
+                            STRING_OBJ_NAME(mob), op->map
                           ? op->map->path
                           : "BUG: S-Point without map!", op->x, op->y);
                     else

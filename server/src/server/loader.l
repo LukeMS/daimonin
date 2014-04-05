@@ -280,7 +280,7 @@ WS	[ \t]*{NL}?
 <MESSAGE>^endmsg{WS} {	BEGIN( INITIAL );
     			if (strlen(msgbuf) > HUGE_BUF-16 )
 	    		    LOG(llevMapbug, "\n\tMAPBUG: SKIPPED msg/endmsg -> buffer overflow!! (obj: %s) %d (max allowed=%d)\n",
-                                query_name(op), (int)strlen(msgbuf), HUGE_BUF - 16);
+                                STRING_OBJ_NAME(op), (int)strlen(msgbuf), HUGE_BUF - 16);
                 else
     		    	FREE_AND_COPY_HASH(op->msg, msgbuf);
                 }

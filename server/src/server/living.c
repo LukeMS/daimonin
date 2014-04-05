@@ -800,7 +800,7 @@ static inline int set_player_equipment(player *pl, object *optr, int num)
     {
         CLEAR_FLAG(optr, FLAG_APPLIED);
         esrv_update_item(UPD_FLAGS, optr);
-        LOG(llevDebug,"FIX_PLAYER BUG: Item %s for player %s on place %d is already set!\n", query_name(optr), query_name(pl->ob), num);
+        LOG(llevDebug,"FIX_PLAYER BUG: Item %s for player %s on place %d is already set!\n", STRING_OBJ_NAME(optr), STRING_OBJ_NAME(pl->ob), num);
         return FALSE;
     }
 
@@ -852,7 +852,7 @@ static inline void set_speed_encumbrance(object *op, player *pl)
     /* now we have ->speed filled with our base speed and speed_enc with % of speed we are allowed */
     op->speed = op->arch->clone.speed * (((float)pl->speed_enc) / 1000.0f);
 
-    /*LOG(llevDebug, "SPEED - FIX_PLAYER(%s): enc=%d%% speed = %f\n", query_name(op), pl->speed_enc, op->speed);*/
+    /*LOG(llevDebug, "SPEED - FIX_PLAYER(%s): enc=%d%% speed = %f\n", STRING_OBJ_NAME(op), pl->speed_enc, op->speed);*/
 
     /* lets have a fair min. speed.
     * When we have added smooth scrolling, the whole
@@ -910,12 +910,12 @@ void fix_player(object *op)
     float               f;
     uint32              opflags[NUM_FLAGS_32];
 
-    /*LOG(llevDebug,"FIX_PLAYER called (%s} %s\n", query_name(op), QUERY_FLAG(op, FLAG_NO_FIX_PLAYER)?"IGNORED":"");*/
+    /*LOG(llevDebug,"FIX_PLAYER called (%s} %s\n", STRING_OBJ_NAME(op), QUERY_FLAG(op, FLAG_NO_FIX_PLAYER)?"IGNORED":"");*/
     if (QUERY_FLAG(op, FLAG_NO_FIX_PLAYER))
     {
         /* we are calling fix_player with this flag for example when manually applying an item */
 #ifdef DEBUG_FIX_PLAYER_SKIPPED
-        LOG(llevDebug, "FIX_PLAYER(%s [%x]): >> *SKIP*\n", query_name(op), op->count);
+        LOG(llevDebug, "FIX_PLAYER(%s [%x]): >> *SKIP*\n", STRING_OBJ_NAME(op), op->count);
 #endif
         return;
     }
@@ -927,10 +927,10 @@ void fix_player(object *op)
     {
 #ifdef DEBUG_FIX_PLAYER
         LOG(llevDebug, "fix_player(%s [%x]): >> non player - redirect to fix_monster (%s)\n",
-            query_name(op),op->count, debug_msg);
+            STRING_OBJ_NAME(op),op->count, debug_msg);
 #else
         LOG(llevDebug, "fix_player(%s [%x]): >> non player - redirect to fix_monster\n",
-            query_name(op),op->count);
+            STRING_OBJ_NAME(op),op->count);
 #endif
         fix_monster(op);
         return;
@@ -941,16 +941,16 @@ void fix_player(object *op)
     {
 #ifdef DEBUG_FIX_PLAYER
         LOG(llevDebug, "fix_player(): called from non Player/Mob object: %s [%x] (type %d) (%s)\n",
-                query_name(op), op->count, op->type, debug_msg);
+                STRING_OBJ_NAME(op), op->count, op->type, debug_msg);
 #else
         LOG(llevDebug, "fix_player(): called from non Player/Mob object: %s [%x] (type %d)\n",
-            query_name(op), op->count, op->type);
+            STRING_OBJ_NAME(op), op->count, op->type);
 #endif
         return;
     }
 
 #ifdef DEBUG_FIX_PLAYER
-    LOG(llevDebug, "FIX_PLAYER(%s [%x]): >> %s\n", query_name(op), op->count, debug_msg);
+    LOG(llevDebug, "FIX_PLAYER(%s [%x]): >> %s\n", STRING_OBJ_NAME(op), op->count, debug_msg);
 #endif
 
     /* Remember op->flags. They PROBABLY won't be changed here but various
@@ -1207,7 +1207,7 @@ void fix_player(object *op)
             else /* this really should not happens... */
             {
                 LOG(llevBug,"BUG: fix_player(): found illegal quest container (st: %d) in player %s\n",
-                    tmp->sub_type1, query_name(op));
+                    tmp->sub_type1, STRING_OBJ_NAME(op));
                 remove_ob(tmp);
             }
             continue;
@@ -1597,7 +1597,7 @@ void fix_player(object *op)
                          * or we forgot to catch them here!
                          */
                 default:
-                  LOG(llevDebug, "DEBUG: fix_player(): unexpected applied object %s (%d)(clear flag now!)\n", query_name(tmp), tmp->type);
+                  LOG(llevDebug, "DEBUG: fix_player(): unexpected applied object %s (%d)(clear flag now!)\n", STRING_OBJ_NAME(tmp), tmp->type);
                   CLEAR_FLAG(tmp, FLAG_APPLIED);
                   esrv_update_item(UPD_FLAGS, tmp);
                   continue;
@@ -2000,7 +2000,7 @@ void fix_player(object *op)
     if(pl->reg_grace_num < 1)
         pl->reg_grace_num = 1;
 
-    // LOG(llevDebug, "fix_player: REG(%s): hp:%d sp:%d grace:%d\n", query_name(op),pl->reg_hp_num,pl->reg_sp_num,pl->reg_grace_num);
+    // LOG(llevDebug, "fix_player: REG(%s): hp:%d sp:%d grace:%d\n", STRING_OBJ_NAME(op),pl->reg_hp_num,pl->reg_sp_num,pl->reg_grace_num);
 
     /* when this is set, this object comes fresh in game.
      * we must adjust now hp,sp and grace with the max values.
@@ -2285,7 +2285,7 @@ void fix_monster(object *op)
         return;
 
 #ifdef DEBUG_FIX_MONSTER
-    LOG(llevDebug, "FIX_MONSTER(%s [%x]): called\n", query_name(op), op->count);
+    LOG(llevDebug, "FIX_MONSTER(%s [%x]): called\n", STRING_OBJ_NAME(op), op->count);
 #endif
 
     base = insert_base_info_object(op); /* will insert or/and return base info */
@@ -2523,7 +2523,7 @@ object * insert_base_info_object(object *op)
 
     if (op->type == PLAYER)
     {
-        LOG(llevBug, "insert_base_info_object() Try to inserting base_info in player %s!\n", query_name(head));
+        LOG(llevBug, "insert_base_info_object() Try to inserting base_info in player %s!\n", STRING_OBJ_NAME(head));
         return NULL;
     }
 
@@ -2568,7 +2568,7 @@ object * insert_base_info_object(object *op)
     else
     {
         FREE_AND_CLEAR_HASH(tmp->slaying);
-        LOG(llevDebug, "insert_base_info_object(): Can't set up home location for '%s' - not even close to a map.\n", query_name(head));
+        LOG(llevDebug, "insert_base_info_object(): Can't set up home location for '%s' - not even close to a map.\n", STRING_OBJ_NAME(head));
     }
 
     return tmp;
@@ -2632,7 +2632,7 @@ void set_mobile_speed(object *op, int factor)
 
     op->speed = base->speed_left * CLAMP(actual_factor, 1, 5);
 
-     //LOG(llevNoLog,"SET SPEED: %s ->%f (=%d*%f) o:%f\n", query_name(op), op->speed, actual_factor, base->speed_left, old_speed);
+     //LOG(llevNoLog,"SET SPEED: %s ->%f (=%d*%f) o:%f\n", STRING_OBJ_NAME(op), op->speed, actual_factor, base->speed_left, old_speed);
     /* update speed if needed */
     if ((old_speed && !op->speed) || (!old_speed && op->speed))
         update_ob_speed(op);

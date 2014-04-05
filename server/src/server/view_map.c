@@ -331,7 +331,7 @@ void draw_client_map2(object *pl)
                 if (!pl_ptr->gmaster_wiz)
                { 
                     LOG(llevDebug, "BUG: draw_client_map2() out_of_map for player <%s> map:%s (%d,%d)\n",
-                        query_name(pl), pl->map->path ? pl->map->path : "<no path?>", x, y);
+                        STRING_OBJ_NAME(pl), pl->map->path ? pl->map->path : "<no path?>", x, y);
                }
 
                 if (pl_ptr->socket.lastmap.cells[ax][ay].count != -1)
@@ -351,7 +351,7 @@ void draw_client_map2(object *pl)
             if (msp->flags & P_NEED_UPDATE)
             {
 #ifdef DEBUG_CORE
-                LOG(llevDebug, "P_NEED_UPDATE (%s) pos:(%d,%d)\n", query_name(pl), nx, ny);
+                LOG(llevDebug, "P_NEED_UPDATE (%s) pos:(%d,%d)\n", STRING_OBJ_NAME(pl), nx, ny);
 #endif
                 msp->flags &= ~P_FLAGS_ONLY;
                 update_position(m, NULL, nx, ny);

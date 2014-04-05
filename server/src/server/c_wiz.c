@@ -150,8 +150,8 @@ int command_kick(object *op, char *params)
 #endif
 
     /* Remember the names before we get kickhappy. */
-    kicker_name = query_name(op);
-    kickee_name = query_name(pl->ob);
+    kicker_name = STRING_OBJ_NAME(op);
+    kickee_name = STRING_OBJ_NAME(pl->ob);
 
     /* Get kickhappy. */
     kick_player(pl);
@@ -1469,7 +1469,7 @@ int command_check_fd(object *op, char *params)
 
             LOG(llevSystem, "FH %d ::(%s) (%s) size: %ld\n",
                 fh, (name1) ? name1 : "><",
-                (pp) ? ((pp->ob) ? query_name(pp->ob) : ">player<") : "",
+                (pp) ? ((pp->ob) ? STRING_OBJ_NAME(pp->ob) : ">player<") : "",
                 buf.st_size);
 #endif
         }

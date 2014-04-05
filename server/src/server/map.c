@@ -3147,7 +3147,7 @@ static void SaveObjects(mapstruct *m, FILE *fp)
                             LOG(llevBug, "BUG:: %s:SaveObjects(): Spawn mob %s %s [%d] without SPAWN INFO %s or MOB_DATA %p.\n",
                                 __FILE__, STRING_OBJ_ARCH_NAME(head),
                                 STRING_OBJ_NAME(head), TAG(head),
-                                (MOB_DATA(head)) ? query_name(MOB_DATA(head)->spawn_info) : ">NULL<",
+                                (MOB_DATA(head)) ? STRING_OBJ_NAME(MOB_DATA(head)->spawn_info) : ">NULL<",
                                 (MOB_DATA(head)) ? MOB_DATA(head) : NULL);
                         }
                         else

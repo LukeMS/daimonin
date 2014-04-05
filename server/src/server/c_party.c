@@ -432,7 +432,7 @@ void party_remove_member(player *member, int flag)
     /* hm, that should not happen ! */
     if(CONTR(member->group_leader)->group_nrof <= 1)
     {
-        LOG(llevBug,"BUG: party_remove_member() called for group_nrof <=1 (%s) (%d)\n", query_name(member->ob), member->group_nrof);
+        LOG(llevBug,"BUG: party_remove_member() called for group_nrof <=1 (%s) (%d)\n", STRING_OBJ_NAME(member->ob), member->group_nrof);
         party_clear_links(member);
         return;
     }
@@ -582,7 +582,7 @@ void party_client_group_update(object *member, int flag)
 
     plm = CONTR(member);
 #ifdef DEBUG_GROUP_UPDATE
-    LOG(llevNoLog,"GROUP UPDATE: %s (id:%d nr:%d)\n", query_name(member), plm->group_id, plm->group_nr);
+    LOG(llevNoLog,"GROUP UPDATE: %s (id:%d nr:%d)\n", STRING_OBJ_NAME(member), plm->group_id, plm->group_nr);
     party_dump(member);
 #endif
     sprintf(buf2,"|%d %d %d %d %d %d %d %d\n",plm->group_nr,
@@ -598,7 +598,7 @@ void party_client_group_update(object *member, int flag)
         if((pl = CONTR(tmp))->update_ticker != ROUND_TAG)
         {
 #ifdef DEBUG_GROUP_UPDATE
-            LOG(llevNoLog,"GROUP UPDATE (tag): %s (id:%d nr:%d)\n", query_name(tmp), CONTR(tmp)->group_id, CONTR(tmp)->group_nr);
+            LOG(llevNoLog,"GROUP UPDATE (tag): %s (id:%d nr:%d)\n", STRING_OBJ_NAME(tmp), CONTR(tmp)->group_id, CONTR(tmp)->group_nr);
 #endif
             /* TODO: use GROUP_UPDATE_xxx for a binary cmd which really holds
              * only the different data!

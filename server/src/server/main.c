@@ -282,19 +282,19 @@ static void process_map_events(mapstruct *map)
         {
             /*
                 LOG(llevDebug, "PROBLEM: process_events(): Removed object on active list  %s (%s, type:%d count:%d)\n",
-                                      op->arch->name,query_name(op),op->type, op->count);
+                                      op->arch->name,STRING_OBJ_NAME(op),op->type, op->count);
                 */
             op->speed = 0;
             update_ob_speed(op);
             continue;
         }
 
-        /*LOG(llevNoLog,"POBJ: %s (%s) s:%f sl:%f (%f)\n",query_name(op),op->arch->clone.name, op->speed,op->speed_left,op->arch->clone.speed_left);*/
+        /*LOG(llevNoLog,"POBJ: %s (%s) s:%f sl:%f (%f)\n",STRING_OBJ_NAME(op),op->arch->clone.name, op->speed,op->speed_left,op->arch->clone.speed_left);*/
         if (!op->speed)
         {
             LOG(llevBug,
                 "BUG: process_events(): Object %s (%s, type:%d count:%d) has no speed, but is on active list\n",
-                op->arch->name, query_name(op), op->type, op->count);
+                op->arch->name, STRING_OBJ_NAME(op), op->type, op->count);
             update_ob_speed(op);
             continue;
         }
@@ -305,7 +305,7 @@ static void process_map_events(mapstruct *map)
             if (op->type == PLAYER && !(CONTR(op)->state & ST_PLAYING))
                 continue;
             LOG(llevBug, "BUG: process_events(): Object without map or inventory is on active list: %s (%d)\n",
-                query_name(op), op->count);
+                STRING_OBJ_NAME(op), op->count);
             op->speed = 0;
             update_ob_speed(op);
             continue;
@@ -316,7 +316,7 @@ static void process_map_events(mapstruct *map)
         if (op->map != map)
         {
             LOG(llevDebug, "WARNING: process_events(): object not on processed map: %s is on %s, not %s\n",
-                query_name(op), STRING_MAP_PATH(op->map), STRING_MAP_PATH(map));
+                STRING_OBJ_NAME(op), STRING_MAP_PATH(op->map), STRING_MAP_PATH(map));
             activelist_remove(op);
             activelist_insert(op);
         }
@@ -429,7 +429,7 @@ void process_events()
             if(obj->env && obj->map) /* object is in inventory! */
             {
                 LOG( llevDebug, "ACTIVEBUG: object with env and map - set map to NULL! obj %s in %s\n",
-                     query_name(obj), query_name(obj->env) );
+                     STRING_OBJ_NAME(obj), STRING_OBJ_NAME(obj->env) );
                 obj->map = NULL;
             }
             if(obj->map)
@@ -441,7 +441,7 @@ void process_events()
                 {
                     /* FIXME: for now we'll just see if this happens */
                     LOG( llevDebug, "ACTIVEBUG: object on map not in memory! obj %s in %s\n",
-                            query_name(obj), STRING_MAP_PATH(obj->map) );
+                            STRING_OBJ_NAME(obj), STRING_MAP_PATH(obj->map) );
                 }
                 /* Always insert after the sentinel */
                 obj->active_next = obj->map->active_objects->active_next;
@@ -586,7 +586,7 @@ void leave(player *pl, int draw_exit)
 
         pl->socket.status = Ns_Dead;
         sprintf(buf, "LOGOUT: IP >%s< Account >%s< Player >%s<!\n",
-                pl->socket.ip_host, pl->account_name, query_name(pl->ob));
+                pl->socket.ip_host, pl->account_name, STRING_OBJ_NAME(pl->ob));
         LOG(llevInfo, "%s", buf);
 
         if (clogfile != tlogfile)
@@ -725,7 +725,7 @@ void shutdown_agent(int timer, int ret, player *pl, char *reason)
         {
             sprintf(buf, "SERVER %s STOPPED by %s",
                     (status == SERVER_EXIT_RESTART) ? "RESTART" : "SHUTDOWN",
-                    query_name(pl->ob));
+                    STRING_OBJ_NAME(pl->ob));
             LOG(llevSystem, "%s", buf);
             new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_ALL | NDI_GREEN, 5,
                           NULL, "[Server]: ** %s **", buf);
@@ -754,7 +754,7 @@ void shutdown_agent(int timer, int ret, player *pl, char *reason)
            countdown is done. */
         if (pl)
         {
-            sprintf(name, "%s", query_name(pl->ob));
+            sprintf(name, "%s", STRING_OBJ_NAME(pl->ob));
         }
 
         if (reason)

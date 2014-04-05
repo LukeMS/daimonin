@@ -192,7 +192,7 @@ int command_say(object *op, char *params)
     if (!params || !(params = cleanup_chat_string(params)))
         return 1;
 
-    CHATLOG("SAY:%s >%s<\n", query_name(op), params);
+    CHATLOG("SAY:%s >%s<\n", STRING_OBJ_NAME(op), params);
     communicate(op, params);
 
     return 0;
@@ -758,9 +758,9 @@ static int basic_emote(object *op, char *params, int emotion)
     if(!check_mute(op, MUTE_MODE_SAY))
         return 0;
 
-    LOG(llevDebug, "EMOTE: %p (%s) (params: >%s<) (t: %s) %d\n", op, query_name(op), STRING_SAFE(params),
+    LOG(llevDebug, "EMOTE: %p (%s) (params: >%s<) (t: %s) %d\n", op, STRING_OBJ_NAME(op), STRING_SAFE(params),
         (op->type == PLAYER && CONTR(op) && OBJECT_VALID(CONTR(op)->target_object, CONTR(op)->target_object_count))
-      ? query_name(CONTR(op)->target_object)
+      ? STRING_OBJ_NAME(CONTR(op)->target_object)
       : "NO CTRL!!",
         emotion);
 

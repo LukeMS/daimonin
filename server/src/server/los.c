@@ -457,7 +457,7 @@ void update_los(object *op)
         return;
 
 #ifdef DEBUG_CORE
-    LOG(llevDebug, "LOS - %s\n", query_name(op));
+    LOG(llevDebug, "LOS - %s\n", STRING_OBJ_NAME(op));
 #endif
 
     clear_los(op);

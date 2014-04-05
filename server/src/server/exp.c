@@ -366,7 +366,7 @@ sint32 add_exp(object *op, int exp, int skill_nr, int cap)
     {
         /* TODO: select skill */
         LOG(llevDebug, "TODO: add_exp(): called for %s with exp %d. CHOSEN_SKILL_NO set. TODO: select skill.\n",
-            query_name(op), exp);
+            STRING_OBJ_NAME(op), exp);
         return 0;
     }
     else if (skill_nr < 0 ||
@@ -404,7 +404,7 @@ sint32 add_exp(object *op, int exp, int skill_nr, int cap)
 
     if (!skillgroup)
     {
-        LOG(llevBug, "BUG: add_exp() skill:%s - no exp_op found!!\n", query_name(skill));
+        LOG(llevBug, "BUG: add_exp() skill:%s - no exp_op found!!\n", STRING_OBJ_NAME(skill));
         return 0;
     }
 
@@ -701,8 +701,8 @@ void apply_death_exp_penalty(object *op)
             /* first, lets check there are exp we can drain. */
             level_exp = tmp->stats.exp - new_levels[tmp->level];
             if (level_exp < 0) /* just a sanity check */
-                LOG(llevBug, " DEATH_EXP: Skill %s (%d %d) for player %s -> less exp as level need!\n", query_name(tmp),
-                    tmp->level, tmp->stats.exp, query_name(op));
+                LOG(llevBug, " DEATH_EXP: Skill %s (%d %d) for player %s -> less exp as level need!\n", STRING_OBJ_NAME(tmp),
+                    tmp->level, tmp->stats.exp, STRING_OBJ_NAME(op));
             if (!level_exp)
                 continue;
 
@@ -836,8 +836,8 @@ int calc_skill_exp(object *who, object *op, float mod, int level, int *real)
 
     if (!who || who->type != PLAYER) /* no exp for non players... its senseless to do */
     {
-        LOG(llevDebug, "DEBUG: calc_skill_exp() called with who != PLAYER or NULL (%s (%s)- %s)\n", query_name(who),
-            !who ? "NULL" : "", query_name(op));
+        LOG(llevDebug, "DEBUG: calc_skill_exp() called with who != PLAYER or NULL (%s (%s)- %s)\n", STRING_OBJ_NAME(who),
+            !who ? "NULL" : "", STRING_OBJ_NAME(op));
         return 0;
     }
 
@@ -846,7 +846,7 @@ int calc_skill_exp(object *who, object *op, float mod, int level, int *real)
 
     if (!op) /* hm.... */
     {
-        LOG(llevBug, "BUG: calc_skill_exp() called with op == NULL (%s - %s)\n", query_name(who), query_name(op));
+        LOG(llevBug, "BUG: calc_skill_exp() called with op == NULL (%s - %s)\n", STRING_OBJ_NAME(who), STRING_OBJ_NAME(op));
         op_lvl = who->map->difficulty < 1 ? 1 : who->map->difficulty;
         op_exp = 0;
     }

@@ -72,7 +72,7 @@ int container_link(player *const pl, object *const sack)
             || !CONTR(sack->attacked_by)
             || CONTR(sack->attacked_by)->container != sack)
         {
-            LOG(llevBug, "BUG: container_link() - invalid player linked: <%s>\n", query_name(sack->attacked_by));
+            LOG(llevBug, "BUG: container_link() - invalid player linked: <%s>\n", STRING_OBJ_NAME(sack->attacked_by));
             sack->attacked_by = NULL;
         }
     }
@@ -85,7 +85,7 @@ int container_link(player *const pl, object *const sack)
     if (pl->container)
     {
         LOG(llevBug, "BUG: container_link() - called from player with open container!: <%s> sack:<%s>\n",
-            query_name(sack->attacked_by), query_name(sack));
+            STRING_OBJ_NAME(sack->attacked_by), STRING_OBJ_NAME(sack));
         container_unlink(pl, sack);
     }
 
@@ -163,7 +163,7 @@ int container_unlink(player *const pl, object *sack)
             if (pl->container->attacked_by != pl->ob) /* we should be that object... */
             {
                 LOG(llevBug, "BUG: container_unlink() - container link don't match player!: <%s> sack:<%s> (%s)\n",
-                    query_name(pl->ob), query_name(sack->attacked_by), query_name(sack));
+                    STRING_OBJ_NAME(pl->ob), STRING_OBJ_NAME(sack->attacked_by), STRING_OBJ_NAME(sack));
                 return 0;
             }
 
@@ -232,7 +232,7 @@ int container_unlink(player *const pl, object *sack)
         if (!CONTR(tmp) || CONTR(tmp)->container != sack) /* valid player in list? */
         {
             LOG(llevBug, "BUG: container_unlink() - container link list mismatch!: player?:<%s> sack:<%s> (%s)\n",
-                query_name(tmp), query_name(sack), query_name(sack->attacked_by));
+                STRING_OBJ_NAME(tmp), STRING_OBJ_NAME(sack), STRING_OBJ_NAME(sack->attacked_by));
             return 1;
         }
 

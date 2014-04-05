@@ -490,7 +490,7 @@ void load_artifacts(int mode)
             for (art = al->items; art != NULL; art = art->next)
             {
                 /*add_arch();
-                  LOG(llevDebug,"art: %s (%s %s)\n", art->name, art->def_at.name, query_name(&art->def_at.clone));*/
+                  LOG(llevDebug,"art: %s (%s %s)\n", art->name, art->def_at.name, STRING_OBJ_NAME(&art->def_at.clone));*/
 
                 if (al->type == -1) /* we don't use our unique artifacts as pick table */
                     continue;

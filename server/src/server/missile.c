@@ -58,7 +58,7 @@ float do_throw(object *op, int dir)
     }
 
     /* used action time - hotfix for possible action timer bug */
-    LOG(llevDebug, "AC-TICKS: item %s ->%d for skill %s ->%d.\n", query_name(throw_arrow),throw_arrow->last_grace,query_name(op->chosen_skill),op->chosen_skill->last_grace);
+    LOG(llevDebug, "AC-TICKS: item %s ->%d for skill %s ->%d.\n", STRING_OBJ_NAME(throw_arrow),throw_arrow->last_grace,STRING_OBJ_NAME(op->chosen_skill),op->chosen_skill->last_grace);
     ticks = (float) (throw_arrow->last_grace + op->chosen_skill->last_grace) * RANGED_DELAY_TIME;
     if(!ticks)
     {
@@ -116,8 +116,8 @@ float fire_bow(object *op, int dir)
 
     /* used action time */
     LOG(llevDebug, "AC-TICKS: bow %s ->%2.2f arrow %s ->%2.2f for skill %s ->%2.2f.\n", 
-        query_name(bow),(float) (bow->last_grace) * RANGED_DELAY_TIME,query_name(arrow),(float) (arrow->last_grace) * RANGED_DELAY_TIME,
-        query_name(op->chosen_skill),(float) (op->chosen_skill->last_grace) * RANGED_DELAY_TIME);
+        STRING_OBJ_NAME(bow),(float) (bow->last_grace) * RANGED_DELAY_TIME,STRING_OBJ_NAME(arrow),(float) (arrow->last_grace) * RANGED_DELAY_TIME,
+        STRING_OBJ_NAME(op->chosen_skill),(float) (op->chosen_skill->last_grace) * RANGED_DELAY_TIME);
     ticks = (float) (arrow->last_grace + bow->last_grace + op->chosen_skill->last_grace) * RANGED_DELAY_TIME;
     if(!ticks)
     {
@@ -177,7 +177,7 @@ object *create_missile(object * const owner, const object * const bow, object * 
     {
         if(!owner->chosen_skill) /* sanity check */
         {
-            LOG(llevNoLog, "create_missle: No chosen_skill for player %s\n", query_name(owner));
+            LOG(llevNoLog, "create_missle: No chosen_skill for player %s\n", STRING_OBJ_NAME(owner));
             return NULL;
         }
 
@@ -268,7 +268,7 @@ void move_missile(object *op)
 
     if (op->map == NULL)
     {
-        LOG(llevBug, "BUG: Arrow %s had no map.\n", query_name(op));
+        LOG(llevBug, "BUG: Arrow %s had no map.\n", STRING_OBJ_NAME(op));
         remove_ob(op);
         check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
         return;
