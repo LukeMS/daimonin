@@ -171,6 +171,11 @@ struct plugin_hooklist *hooks;
     MAP_WHEN_RESET((_M_)) = 0
 #endif
 
+#undef QUERY_SHORT_NAME
+#define QUERY_SHORT_NAME(_WHAT_, _WHO_) \
+    hooks->query_name((_WHAT_), (_WHO_), \
+        ((_WHAT_)->nrof > 1 || IS_LIVE((_WHAT_))) ? ARTICLE_DEFINITE : ARTICLE_INDEFINITE, 0)
+
 extern tag_t lua_context_tag_counter;
 
 struct lua_context

@@ -109,12 +109,6 @@ extern void             free_all_images(void);
 /* item.c */
 extern char            *describe_resistance(const object *const op, int newline);
 extern char            *describe_attack(const object *const op, int newline);
-extern char            *query_weight(object *op);
-extern char            *get_levelnumber(int i);
-extern char            *get_number(int i);
-extern char            *query_short_name(const object *const op, const object *const caller);
-extern char            *query_name_full(const object *op, const object *caller);
-extern char            *query_base_name(object *op, object *caller);
 extern char            *describe_item(const object *const op);
 extern int              need_identify(const object *const op);
 extern void             identify(object *op);
@@ -326,7 +320,7 @@ extern void             fix_buff_stats(object *item);
 extern object          *check_buff_exists(object *item, const char *name);
 extern int              add_item_buff(object *item, object *buff, short just_checking);
 extern int              remove_item_buff(object *item, char *name, uint32 nrof);
-
+extern char            *query_name(object *what, object *who, uint32 nrof, uint8 mode);
 /* re-cmp.c */
 extern char            *re_cmp(char *str, char *regexp);
 /* readable.c */

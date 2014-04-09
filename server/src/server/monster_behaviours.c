@@ -2134,7 +2134,8 @@ void ai_friendship(object *op, struct mob_behaviour_param *params)
 /** Update attraction/fear level of each known mob */
 void ai_attraction(object *op, struct mob_behaviour_param *params)
 {
-    struct mob_known_obj   *tmp;
+    struct mob_known_obj *tmp;
+    object               *owner;
 
     for (tmp = MOB_DATA(op)->known_mobs; tmp; tmp = tmp->next)
     {
@@ -2145,8 +2146,11 @@ void ai_attraction(object *op, struct mob_behaviour_param *params)
             continue;
 
         /* pets are attracted to owners */
-        if(op->owner == tmp->obj && op->owner_count == tmp->obj->count)
+        if ((owner = get_owner(op)) &&
+            owner == tmp->obj)
+        {
             tmp->tmp_attraction += ATTRACTION_HOME;
+        }
 
         /* Attraction/fear for other mobs is calculated from the
          * perceived relative combad strength */
@@ -2289,13 +2293,20 @@ void ai_choose_enemy(object *op, struct mob_behaviour_param *params)
 
         if (op->enemy)
         {
+            object *owner;
+
             if (!QUERY_FLAG(op, FLAG_FRIENDLY) && op->map)
                 play_sound_map(op->map, op->x, op->y, SOUND_GROWL, SOUND_NORMAL);
 
             /* Notify player about target */
-            if(op->type == MONSTER && OBJECT_VALID(op->owner, op->owner_count) && op->owner->type == PLAYER)
-                new_draw_info(NDI_UNIQUE, 0, op->owner, "%s is attacking %s.",
-                    query_name_full(op, op->owner), query_name_full(op->enemy, op->owner));
+            if (op->type == MONSTER &&
+                (owner = get_owner(op)) &&
+                owner->type == PLAYER)
+            {
+                new_draw_info(NDI_UNIQUE, 0, owner, "%s is attacking %s.",
+                    query_name(op, owner, ARTICLE_POSSESSIVE, 0),
+                    QUERY_SHORT_NAME(op->enemy, owner));
+            }
 
             /* The unaggressives look after themselves 8) */
             /* TODO: Make a separate behaviour... */

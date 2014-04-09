@@ -783,8 +783,9 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
     /* If pl is new, announce the newpl login to all players else if the pl has not requested privacy, announce the login to all players. */
     if (!pl->privacy)
     {
-        new_draw_info(NDI_UNIQUE | NDI_ALL, 0, NULL, "~%s~ has entered the game%s.",
-                      query_name_full(pl->ob, NULL), ((pl->state & ST_BORN)) ? " for the first time" : "");
+        new_draw_info(NDI_UNIQUE | NDI_ALL, 0, NULL, "%s has entered the game%s.",
+            QUERY_SHORT_NAME(pl->ob, NULL),
+            ((pl->state & ST_BORN)) ? " for the first time" : "");
     }
 
     /* lets check we had saved last time in a gmaster mode.
@@ -847,8 +848,8 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
         /* There is no privacy from VOLs, GMs, and SA */
         if (pl->privacy)
         {
-            sprintf(buf, "~%s~ has entered the game (~privacy mode~).\n",
-                    query_name_full(pl->ob, NULL));
+            sprintf(buf, "|%s| has entered the game (~privacy mode~).\n",
+                pl->quick_name);
         }
 
         sprintf(strchr(buf, '\0'), "  ~IP~: %s.\n", pl->socket.ip_host);

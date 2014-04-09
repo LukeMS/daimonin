@@ -151,11 +151,10 @@ struct plugin_hooklist  hooklist    =
     play_sound_player_only,
     print_tad,
     /* Q */
-    query_base_name,
     query_cost,
     query_money,
     query_money_type,
-    query_short_name,
+    query_name,
     quest_count_pending,
     quest_find_name,
     quest_get_active_status,

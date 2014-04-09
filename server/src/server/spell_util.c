@@ -1271,11 +1271,10 @@ int cast_spell(object *op, object *caster, int dir, int type, int ability, Spell
             target->type == PLAYER)
         {
             new_draw_info(NDI_UNIQUE, 0, target, "%s %ss the %s ~%s~ on you.",
-                                 query_short_name(op, target),
-                                 (spells[type].type == SPELL_TYPE_PRIEST) ?
-                                 "invoke" : "cast",
-                                 (spells[type].type == SPELL_TYPE_PRIEST) ?
-                                 "prayer" : "spell", spells[type].name);
+                QUERY_SHORT_NAME(op, target),
+                (spells[type].type == SPELL_TYPE_PRIEST) ? "invoke" : "cast",
+                (spells[type].type == SPELL_TYPE_PRIEST) ? "prayer" : "spell",
+                spells[type].name);
         }
     }
 

@@ -178,13 +178,11 @@ void insert_quest_item(struct obj *quest_trigger, struct obj *target)
 
                     if (qt)
                     {
-                        new_draw_info(NDI_UNIQUE | NDI_NAVY | NDI_VIM,
-                                             0, target, "You found the %s drop %s!",
-                                             (QUERY_FLAG(qt, FLAG_ONE_DROP)) ?
-                                             "one" : "special",
-                                             query_short_name(qt, target));
+                        new_draw_info(NDI_UNIQUE | NDI_NAVY | NDI_VIM, 0, target, "You found the %s drop %s!",
+                            (QUERY_FLAG(qt, FLAG_ONE_DROP)) ? "one" : "special",
+                            query_name(qt, target, ARTICLE_NONE, 0));
                         play_sound_player_only(CONTR(target), SOUND_LEVEL_UP,
-                                               SOUND_NORMAL, 0, 0);
+                            SOUND_NORMAL, 0, 0);
                     }
                 }
             }
@@ -211,7 +209,7 @@ void insert_quest_item(struct obj *quest_trigger, struct obj *target)
                 {
                     add_quest_item(target, tmp);
                     sprintf(buf, "You found the quest item %s!\n",
-                            query_short_name(tmp, target));
+                        query_name(tmp, target, ARTICLE_NONE, 0));
                 }
             }
             
@@ -741,15 +739,15 @@ void check_kill_quest_event(struct obj *pl, struct obj *op)
                     }
 
                     sprintf(buf, "Quest %s\n%s: %d/%d",
-                            STRING_SAFE(tmp->name),
-                            query_short_name(tmp_info->inv, NULL), nrof,
-                            (tmp_info->inv->nrof) ? tmp_info->inv->nrof : 1);
+                        STRING_OBJ_NAME(tmp),
+                        query_name(tmp_info->inv, NULL, ARTICLE_NONE, 0), nrof,
+                        (tmp_info->inv->nrof) ? tmp_info->inv->nrof : 1);
                     update_quest(tmp, ST1_QUEST_UPDATE_KILLITEM, tmp_info, NULL, buf);
                 }
                 else if(tmp_info->level < tmp_info->last_sp) /* pure kill quest - alot easier */
                 {
                     sprintf(buf, "Quest %s\n%s: %d/%d",
-                            STRING_SAFE(tmp->name), query_name_full(op, NULL),
+                            STRING_OBJ_NAME(tmp), query_name(op, NULL, ARTICLE_NONE, 0),
                             ++tmp_info->level, tmp_info->last_sp);
                     update_quest(tmp, ST1_QUEST_UPDATE_KILL, tmp_info, NULL, buf);
                 }

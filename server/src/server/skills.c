@@ -139,7 +139,6 @@ int skill_attack(object *tmp, object *pl, int dir, char *string)
 int do_skill_attack(object *tmp, object *op, char *string)
 {
     int     success;
-    char    buf[MEDIUM_BUF];
     float   ticks = 0.0f;
 
     if (op->type == PLAYER)
@@ -174,14 +173,19 @@ int do_skill_attack(object *tmp, object *op, char *string)
     success = attack_ob(tmp, op, NULL);
 
     /* print appropriate  messages to the player */
-
-    if (success && string != NULL)
+    if (success &&
+        string)
     {
-        sprintf(buf, "%s", string);
         if (op->type == PLAYER)
-            new_draw_info(NDI_UNIQUE, 0, op, "You %s %s!", buf, query_name_full(tmp, NULL));
+         {
+            new_draw_info(NDI_UNIQUE, 0, op, "You %s %s!",
+                string, QUERY_SHORT_NAME(tmp, op));
+        }
         else if (tmp->type == PLAYER)
-            new_draw_info(NDI_UNIQUE, 0, tmp, "%s %s you!", query_name_full(op, NULL), buf);
+        {          
+            new_draw_info(NDI_UNIQUE, 0, tmp, "%s %s you!",
+                QUERY_SHORT_NAME(op, tmp), string);
+        }
     }
 
     /* set the skill delay from the attack so we can't use other skills during the cooldown time */

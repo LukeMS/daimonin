@@ -469,6 +469,7 @@ void remove_ns_dead_player(player *pl)
         if(pl->group_status & GROUP_STATUS_GROUP)
             party_remove_member(pl, TRUE);
 
+        /* TODO: Use channels. */
         if (gmaster_list_VOL ||
             gmaster_list_GM ||
             gmaster_list_SA)
@@ -477,7 +478,7 @@ void remove_ns_dead_player(player *pl)
             char        buf[SMALL_BUF];
 
             sprintf(buf, "%s leaves the game (%d still playing).",
-                    query_name_full(pl->ob, NULL), player_active - 1);
+                QUERY_SHORT_NAME(pl->ob, NULL), player_active - 1);
 
             for (ol = gmaster_list_VOL; ol; ol = ol->next)
             {

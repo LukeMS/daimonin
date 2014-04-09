@@ -136,7 +136,7 @@ void communicate(object *op, char *txt)
         flags |= (NDI_SAY | NDI_PLAYER);
 
     new_info_map(flags, op->map, op->x, op->y, MAP_INFO_NORMAL, "%s says: %s",
-        query_name_full(op, NULL), txt);
+        QUERY_SHORT_NAME(op, NULL), txt);
 }
 
 /* Handle a player attempting to /talk.
@@ -237,7 +237,7 @@ void talk_to_npc(player *pl, char *topic)
                         {
                             new_draw_info(NDI_NAVY | NDI_UNIQUE, 0,
                                                  pl->ob, "%s has nothing to say.",
-                                                 query_short_name(t_obj, pl->ob));
+                                                 QUERY_SHORT_NAME(t_obj, pl->ob));
                         }
                     }
 

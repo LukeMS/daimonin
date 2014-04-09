@@ -381,8 +381,8 @@ int command_goto(object *op, char *params)
 
         if (!walk)
         {
-            new_draw_info(NDI_UNIQUE, 0, op, "~%s~ has no apartment so you're not going there!",
-                          other->ob->name);
+            new_draw_info(NDI_UNIQUE, 0, op, "|%s| has no apartment so you're not going there!",
+                other->quick_name);
 
             return COMMANDS_RTN_VAL_OK_SILENT;
         }

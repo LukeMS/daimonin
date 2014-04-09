@@ -377,11 +377,10 @@ struct plugin_hooklist
     void (*play_sound_player_only)(player *, int, int, int, int);
     char *(*print_tad)(timeanddate_t *, int);
     /* Q */
-    char *(*query_base_name)(object *, object *);
     sint64 (*query_cost)(object *, object *, int);
     sint64 (*query_money)(object *, _money_block *);
     int (*query_money_type)(object *, int);
-    char *(*query_short_name)(const object *const, const object *const);
+    char *(*query_name)(object *, object *, uint32, uint8);
     int (*quest_count_pending)(const struct obj *);
     struct obj *(*quest_find_name)(const struct obj *, const char *);
     int (*quest_get_active_status)(player *, object *);

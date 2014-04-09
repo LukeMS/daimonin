@@ -513,8 +513,9 @@ int command_dumpactivelist(object *op, char *params)
     for (tmp = active_objects->active_next; tmp; tmp = tmp->active_next)
     {
         count++;
-        sprintf(buf, "%08d %03d %f %s (%s)", tmp->count, tmp->type, tmp->speed, query_short_name(tmp, NULL),
-                tmp->arch->name ? tmp->arch->name : "<NA>");
+        sprintf(buf, "%s[%d] (%s) %d %f",
+            STRING_OBJ_NAME(tmp), TAG(tmp), STRING_OBJ_ARCH_NAME(tmp),
+            tmp->type, tmp->speed);
         /*new_draw_info(NDI_UNIQUE, 0,op, "%s", buf); It will overflow the send buffer with many player online */
         LOG(llevSystem, "%s\n", buf);
     }
@@ -1010,8 +1011,8 @@ int command_level(object *op, char *params)
     }
     else
     {
-        new_draw_info(NDI_UNIQUE, 0, op, "~%s~ is level ~%d~.",
-                      pl->ob->name, pl->ob->level);
+        new_draw_info(NDI_UNIQUE, 0, op, "|%s| is level ~%d~.",
+            pl->quick_name, pl->ob->level);
     }
 
     return COMMANDS_RTN_VAL_OK;

@@ -112,580 +112,6 @@ char * describe_attack(const object *const op, int newline)
     return buf;
 }
 
-/*
- * query_weight(object) returns a character pointer to a static buffer
- * containing the text-representation of the weight of the given object.
- * The buffer will be overwritten by the next call to query_weight().
- */
-
-char * query_weight(object *op)
-{
-    static char buf[10];
-    unsigned int i = op->nrof ? op->nrof *op->weight : (unsigned int) (op->weight + op->carrying);
-
-    if (op->weight < 0)
-        return "      ";
-    if (i % 1000)
-        sprintf(buf, "%6.1f", (float) i / 1000.0f);
-    else
-        sprintf(buf, "%4d  ", i / 1000);
-    return buf;
-}
-
-/*
- * Returns the pointer to a static buffer containing
- * the number requested (of the form first, second, third...)
- */
-
-char * get_levelnumber(int i)
-{
-    static char buf[MEDIUM_BUF];
-    int         mod = (i >= 20) ? i % 10 : i;
-
-    switch (mod)
-    {
-        case 1:
-        sprintf(buf, "%dst", i);
-        break;
-
-        case 2:
-        sprintf(buf, "%dnd", i);
-        break;
-
-        case 3:
-        sprintf(buf, "%drd", i);
-        break;
-
-        default:
-        sprintf(buf, "%dth", i);
-    }
-
-    return buf;
-}
-
-
-/*
- * get_number(integer) returns the text-representation of the given number
- * in a static buffer.  The buffer might be overwritten at the next
- * call to get_number().
- * It is currently only used by the query_name() function.
- */
-
-char * get_number(int i)
-{
-    static char buf[MEDIUM_BUF];
-
-    sprintf(buf, "%d", i);
-    return buf;
-}
-
-/*
- * query_short_name(object) is similar to query_name, but doesn't
- * contain any information about object status (worn/cursed/etc.)
- */
-char * query_short_name(const object *const op, const object *const caller)
-{
-    static char buf[HUGE_BUF];
-    char        buf2[HUGE_BUF];
-    int         len = 0;
-
-    buf[0] = 0;
-    if (!op || !op->name)
-        return buf;
-
-    if (op->nrof > 1)
-    {
-        safe_strcat(buf, get_number(op->nrof), &len, sizeof(buf));
-        safe_strcat(buf, " ", &len, sizeof(buf));
-    }
-
-    if(!QUERY_FLAG(op, FLAG_IS_NAMED)) /* named items has no prefix */
-    {
-        if (!IS_LIVE(op) && op->type != TYPE_BASE_INFO)
-            safe_strcat(buf, item_race_table[op->item_race].name, &len, sizeof(buf));
-
-        if (op->material_real>0 && QUERY_FLAG(op, FLAG_IDENTIFIED))
-            safe_strcat(buf, material_real[op->material_real].name, &len, sizeof(buf));
-    }
-
-    safe_strcat(buf, op->name, &len, sizeof(buf));
-
-    if (op->nrof > 1)
-    {
-        char   *buf3    = strstr(buf, " of ");
-        if (buf3 != NULL)
-        {
-            strcpy(buf2, buf3);
-            *buf3 = '\0';   /* also changes value in buf */
-        }
-        len = strlen(buf);
-
-        /* If buf3 is set, then this was a string that contained
-                * something of something (potion of dexterity.)  The part before
-                * the of gets made plural, so now we need to copy the rest
-                * (after and including the " of "), to the buffer string.
-                */
-        if (buf3)
-            safe_strcat(buf, buf2, &len, sizeof(buf));
-    }
-
-    switch (op->type)
-    {
-        case CONTAINER:
-          if (QUERY_FLAG(op, FLAG_IDENTIFIED))
-          {
-              if (op->title)
-              {
-                  safe_strcat(buf, " ", &len, sizeof(buf));
-                  safe_strcat(buf, op->title, &len, sizeof(buf));
-              }
-          }
-
-          if (op->sub_type1 >= ST1_CONTAINER_NORMAL_group)
-          {
-              if (op->sub_type1 == ST1_CONTAINER_CORPSE_group)
-              {
-                  if(!caller)
-                      safe_strcat(buf, " (bounty of a group)", &len, sizeof(buf));
-                  else if(CONTR(caller)->group_status & GROUP_STATUS_GROUP &&
-                              CONTR(CONTR(caller)->group_leader)->group_id == op->stats.maxhp)
-                  {
-                      safe_strcat(buf, " (bounty of your group", &len, sizeof(buf));
-                      if (QUERY_FLAG(op, FLAG_BEEN_APPLIED))
-                          safe_strcat(buf, ", SEARCHED", &len, sizeof(buf));
-                      safe_strcat(buf, ")", &len, sizeof(buf));
-                  }
-                  else /* its a different group */
-                      safe_strcat(buf, " (bounty of another group)", &len, sizeof(buf));
-              }
-          }
-          else if (op->sub_type1 >= ST1_CONTAINER_NORMAL_player)
-          {
-              if (op->sub_type1 == ST1_CONTAINER_CORPSE_player)
-              {
-                  if (op->slaying)
-                  {
-                      safe_strcat(buf, " (bounty of ", &len, sizeof(buf));
-                      safe_strcat(buf, op->slaying, &len, sizeof(buf));
-                      if ((caller && caller->name == op->slaying) &&
-                          QUERY_FLAG(op, FLAG_BEEN_APPLIED))
-                          safe_strcat(buf, ", SEARCHED", &len, sizeof(buf));
-                      safe_strcat(buf, ")", &len, sizeof(buf));
-                  }
-                  else if (QUERY_FLAG(op, FLAG_BEEN_APPLIED))
-                      safe_strcat(buf, " (SEARCHED)", &len, sizeof(buf));
-              }
-          }
-          break;
-
-        case SPELLBOOK:
-          if (QUERY_FLAG(op, FLAG_IDENTIFIED) || QUERY_FLAG(op, FLAG_BEEN_APPLIED))
-          {
-              if (!op->title)
-              {
-                  safe_strcat(buf, " of ", &len, sizeof(buf));
-                  if (op->slaying)
-                      safe_strcat(buf, op->slaying, &len, sizeof(buf));
-                  else
-                  {
-                      if (op->stats.sp == SP_NO_SPELL)
-                          safe_strcat(buf, "nothing", &len, sizeof(buf));
-                      else
-                          safe_strcat(buf, spells[op->stats.sp].name, &len, sizeof(buf));
-                  }
-              }
-              else
-              {
-                  safe_strcat(buf, " ", &len, sizeof(buf));
-                  safe_strcat(buf, op->title, &len, sizeof(buf));
-              }
-          }
-          break;
-
-        case SCROLL:
-        case WAND:
-        case ROD:
-        case HORN:
-        case POTION:
-          if (QUERY_FLAG(op, FLAG_IDENTIFIED) || QUERY_FLAG(op, FLAG_BEEN_APPLIED))
-          {
-              if (!op->title)
-              {
-                  if (op->stats.sp != SP_NO_SPELL)
-                  {
-                      safe_strcat(buf, " of ", &len, sizeof(buf));
-                      safe_strcat(buf, spells[op->stats.sp].name, &len, sizeof(buf));
-                  }
-                  else
-                      safe_strcat(buf, " of nothing", &len, sizeof(buf));
-              }
-              else
-              {
-                  safe_strcat(buf, " ", &len, sizeof(buf));
-                  safe_strcat(buf, op->title, &len, sizeof(buf));
-              }
-              sprintf(buf2, " (lvl %d)", op->level);
-              safe_strcat(buf, buf2, &len, sizeof(buf));
-          }
-          break;
-
-        case TYPE_SKILL:
-        case AMULET:
-        case RING:
-          if (QUERY_FLAG(op, FLAG_IDENTIFIED))
-          {
- 
-              if (!op->title)
-              {
-                  /* If ring has a title or is specially named, full description isn't so useful */
-
-                  char     *s   = describe_item(op);
-                  if (s[0])
-                  {
-                      safe_strcat(buf, " ", &len, sizeof(buf));
-                      safe_strcat(buf, s, &len, sizeof(buf));
-                  }
-              }
-              else
-              {
-                  safe_strcat(buf, " ", &len, sizeof(buf));
-                  safe_strcat(buf, op->title, &len, sizeof(buf));
-              }
-          }
-          break;
-
-        default:
-          if (op->magic && (!need_identify(op) || QUERY_FLAG(op, FLAG_BEEN_APPLIED) || QUERY_FLAG(op, FLAG_IDENTIFIED)))
-          {
-              if (!IS_LIVE(op) && op->type != TYPE_BASE_INFO)
-              {
-                  sprintf(buf2, " %+d", op->magic);
-                  safe_strcat(buf, buf2, &len, sizeof(buf));
-              }
-          }
-          if (op->title && QUERY_FLAG(op, FLAG_IDENTIFIED))
-          {
-              safe_strcat(buf, " ", &len, sizeof(buf));
-              safe_strcat(buf, op->title, &len, sizeof(buf));
-          }
-          if (op->type == ARROW && op->slaying)
-          {
-              safe_strcat(buf, " ", &len, sizeof(buf));
-              safe_strcat(buf, op->slaying, &len, sizeof(buf));
-          }
-    }
-    return buf;
-}
-
-/*
- * query_name(object) returns a character pointer pointing to a static
- * buffer which contains a verbose textual representation of the name
- * of the given object.
- * cf 0.92.6:  Put in 5 buffers that it will cycle through.  In this way,
- * you can make several calls to query_name before the bufs start getting
- * overwritten.  This may be a bad thing (it may be easier to assume the value
- * returned is good forever.)  However, it makes printing statements that
- * use several names much easier (don't need to store them to temp variables.)
- *
- */
-char  *query_name_full(const object *op, const object *caller)
-{
-    static char buf[5][HUGE_BUF];
-    static int  use_buf = 0;
-    int         len     = 0;
-
-    use_buf++;
-    use_buf %= 5;
-
-    if (!op || !op->name)
-    {
-        buf[use_buf][0] = 0;
-        return buf[use_buf];
-    }
-    safe_strcat(buf[use_buf], query_short_name(op, caller), &len, HUGE_BUF);
-
-    if (QUERY_FLAG(op, FLAG_ONE_DROP))
-        safe_strcat(buf[use_buf], " (~one-drop~)", &len, HUGE_BUF);
-    else if (QUERY_FLAG(op, FLAG_QUEST_ITEM))
-        safe_strcat(buf[use_buf], " (~quest~)", &len, HUGE_BUF);
-
-    if (QUERY_FLAG(op, FLAG_INV_LOCKED))
-        safe_strcat(buf[use_buf], " *", &len, HUGE_BUF);
-    if (op->type == CONTAINER && QUERY_FLAG(op, FLAG_APPLIED))
-    {
-        if (op->attacked_by && op->attacked_by->type == PLAYER)
-            safe_strcat(buf[use_buf], " (open)", &len, HUGE_BUF);
-        else
-            safe_strcat(buf[use_buf], " (ready)", &len, HUGE_BUF);
-    }
-    if (QUERY_FLAG(op, FLAG_KNOWN_CURSED))
-    {
-        if (QUERY_FLAG(op, FLAG_PERM_DAMNED))
-            safe_strcat(buf[use_buf], " (perm. damned)", &len, HUGE_BUF);
-        else if (QUERY_FLAG(op, FLAG_DAMNED))
-            safe_strcat(buf[use_buf], " (damned)", &len, HUGE_BUF);
-        else if (QUERY_FLAG(op, FLAG_PERM_CURSED))
-            safe_strcat(buf[use_buf], " (perm. cursed)", &len, HUGE_BUF);
-        else if (QUERY_FLAG(op, FLAG_CURSED))
-            safe_strcat(buf[use_buf], " (cursed)", &len, HUGE_BUF);
-    }
-
-    if (QUERY_FLAG(op, FLAG_KNOWN_MAGICAL) && is_magical(op))
-        safe_strcat(buf[use_buf], " (magical)", &len, HUGE_BUF);
-    if (QUERY_FLAG(op, FLAG_APPLIED))
-    {
-        switch (op->type)
-        {
-            case BOW:
-            case WAND:
-            case ROD:
-            case HORN:
-              safe_strcat(buf[use_buf], " (readied)", &len, HUGE_BUF);
-              break;
-            case WEAPON:
-              safe_strcat(buf[use_buf], " (wielded)", &len, HUGE_BUF);
-              break;
-            case ARMOUR:
-            case SHOULDER:
-            case LEGS:
-            case HELMET:
-            case SHIELD:
-            case RING:
-            case BOOTS:
-            case GLOVES:
-            case AMULET:
-            case GIRDLE:
-            case BRACERS:
-            case CLOAK:
-              safe_strcat(buf[use_buf], " (worn)", &len, HUGE_BUF);
-              break;
-            case CONTAINER:
-              safe_strcat(buf[use_buf], " (active)", &len, HUGE_BUF);
-              break;
-            case TYPE_SKILL:
-            default:
-              safe_strcat(buf[use_buf], " (applied)", &len, HUGE_BUF);
-        }
-    }
-    if (QUERY_FLAG(op, FLAG_UNPAID))
-        safe_strcat(buf[use_buf], " (unpaid)", &len, HUGE_BUF);
-
-    return buf[use_buf];
-}
-
-/*
- * query_base_name(object) returns a character pointer pointing to a static
- * buffer which contains a verbose textual representation of the name
- * of the given object.  The buffer will be overwritten at the next
- * call to query_base_name().   This is a lot like query_name, but we
- * don't include the item count or item status.  Used for inventory sorting
- * and sending to client.
- */
-char *query_base_name(object *op, object *caller)
-{
-    static char buf[MEDIUM_BUF];
-    char        buf2[32];
-    int         len;
-
-    buf[0] = '\0';
-    if (op->name == NULL)
-        return "(null)";
-
-    if(op->sub_type1 == ARROW && op->type == MISC_OBJECT) /* special neutralized arrow! */
-        strcat(buf, "broken ");
-
-    if(!QUERY_FLAG(op, FLAG_IS_NAMED)) /* named items has no prefix */
-    {
-        /* add the item race name */
-        if (!IS_LIVE(op) && op->type != TYPE_BASE_INFO)
-            strcat(buf, item_race_table[op->item_race].name);
-        /* we add the real material name as prefix. Because real_material == 0 is
-         * "" (clear string) we don't must check item types for adding something here
-         * or not (artifacts for example has normally no material prefix)
-         */
-        if (op->material_real>0 && QUERY_FLAG(op, FLAG_IDENTIFIED))
-            strcat(buf, material_real[op->material_real].name);
-    }
-
-    strcat(buf, op->name);
-
-    if (!op->weight && !op->title && !is_magical(op))
-        return buf; /* To speed things up (or make things slower?) */
-
-    len = strlen(buf);
-
-    switch (op->type)
-    {
-        case CONTAINER:
-          if (QUERY_FLAG(op, FLAG_IDENTIFIED))
-          {
-              if (op->title)
-              {
-                  safe_strcat(buf, " ", &len, sizeof(buf));
-                  safe_strcat(buf, op->title, &len, sizeof(buf));
-              }
-          }
-
-          if (op->sub_type1 >= ST1_CONTAINER_NORMAL_group)
-          {
-              if (op->sub_type1 == ST1_CONTAINER_CORPSE_group)
-              {
-                  if(!caller)
-                      safe_strcat(buf, " (bounty of a group)", &len, sizeof(buf));
-                  else if(CONTR(caller)->group_status & GROUP_STATUS_GROUP &&
-                              CONTR(CONTR(caller)->group_leader)->group_id == op->stats.maxhp)
-                  {
-                      safe_strcat(buf, " (bounty of your group", &len, sizeof(buf));
-                      if (QUERY_FLAG(op, FLAG_BEEN_APPLIED))
-                          safe_strcat(buf, ", SEARCHED", &len, sizeof(buf));
-                      safe_strcat(buf, ")", &len, sizeof(buf));
-                  }
-                  else /* its a different group */
-                      safe_strcat(buf, " (bounty of another group)", &len, sizeof(buf));
-              }
-          }
-          else if (op->sub_type1 >= ST1_CONTAINER_NORMAL_player)
-          {
-              if (op->sub_type1 == ST1_CONTAINER_CORPSE_player)
-              {
-                  if (op->slaying)
-                  {
-                      safe_strcat(buf, " (bounty of ", &len, sizeof(buf));
-                      safe_strcat(buf, op->slaying, &len, sizeof(buf));
-                      if ((caller && caller->name == op->slaying) &&
-                          QUERY_FLAG(op, FLAG_BEEN_APPLIED))
-                          safe_strcat(buf, ", SEARCHED", &len, sizeof(buf));
-                      safe_strcat(buf, ")", &len, sizeof(buf));
-                  }
-                  else if (QUERY_FLAG(op, FLAG_BEEN_APPLIED))
-                      safe_strcat(buf, " (SEARCHED)", &len, sizeof(buf));
-              }
-          }
-          break;
-
-        case SPELLBOOK:
-          if (QUERY_FLAG(op, FLAG_IDENTIFIED))
-          {
-              if (!op->title)
-              {
-                  safe_strcat(buf, " of ", &len, sizeof(buf));
-                  if (op->slaying)
-                      safe_strcat(buf, op->slaying, &len, sizeof(buf));
-                  else
-                  {
-                      if (op->stats.sp == SP_NO_SPELL)
-                          safe_strcat(buf, "nothing", &len, sizeof(buf));
-                      else
-                          safe_strcat(buf, spells[op->stats.sp].name, &len, sizeof(buf));
-                  }
-              }
-              else
-              {
-                  safe_strcat(buf, " ", &len, sizeof(buf));
-                  safe_strcat(buf, op->title, &len, sizeof(buf));
-              }
-          }
-          break;
-
-        case SCROLL:
-        case WAND:
-        case ROD:
-        case HORN:
-        case POTION:
-          if (QUERY_FLAG(op, FLAG_IDENTIFIED))
-          {
-              if (!op->title)
-              {
-                  if (op->stats.sp != SP_NO_SPELL)
-                  {
-                      safe_strcat(buf, " of ", &len, sizeof(buf));
-                      safe_strcat(buf, spells[op->stats.sp].name, &len, sizeof(buf));
-                  }
-                  else
-                      safe_strcat(buf, " of nothing", &len, sizeof(buf));
-              }
-              else
-              {
-                  safe_strcat(buf, " ", &len, sizeof(buf));
-                  safe_strcat(buf, op->title, &len, sizeof(buf));
-              }
-              sprintf(buf2, " (lvl %d)", op->level);
-              safe_strcat(buf, buf2, &len, sizeof(buf));
-          }
-          break;
-
-        case TYPE_SKILL:
-        case AMULET:
-        case RING:
-          if (QUERY_FLAG(op, FLAG_IDENTIFIED))
-          {
-              if (!op->title )
-              {
-                  /* If ring has a title or is specially named, full description isn't so useful */
-                  char     *s   = describe_item(op);
-                  if (s[0])
-                  {
-                      safe_strcat(buf, " ", &len, sizeof(buf));
-                      safe_strcat(buf, s, &len, sizeof(buf));
-                  }
-              }
-              else
-              {
-                  safe_strcat(buf, " ", &len, sizeof(buf));
-                  safe_strcat(buf, op->title, &len, sizeof(buf));
-              }
-          }
-          break;
-            case MISC_OBJECT:
-            if(op->sub_type1 == ARROW) /* special neutralized arrow! */
-            {
-                if(QUERY_FLAG(op, FLAG_IDENTIFIED))
-                {
-                    if (op->magic)
-                    {
-                        sprintf(buf2, " %+d", op->magic);
-                        safe_strcat(buf, buf2, &len, sizeof(buf));
-                    }
-                    if (op->title)
-                    {
-                        safe_strcat(buf, " ", &len, sizeof(buf));
-                        safe_strcat(buf, op->title, &len, sizeof(buf));
-                    }
-                    if (op->slaying)
-                    {
-                        safe_strcat(buf, " ", &len, sizeof(buf));
-                        safe_strcat(buf, op->slaying, &len, sizeof(buf));
-                    }
-                }
-                return buf;
-            }
-
-        default:
-          if (op->magic && (!need_identify(op) || QUERY_FLAG(op, FLAG_BEEN_APPLIED) || QUERY_FLAG(op, FLAG_IDENTIFIED)))
-          {
-              if (!IS_LIVE(op) && op->type != TYPE_BASE_INFO)
-              {
-                  sprintf(buf2, " %+d", op->magic);
-                  safe_strcat(buf, buf2, &len, sizeof(buf));
-              }
-          }
-
-          if (op->title && (need_identify(op) && QUERY_FLAG(op, FLAG_IDENTIFIED)))
-          {
-              safe_strcat(buf, " ", &len, sizeof(buf));
-              safe_strcat(buf, op->title, &len, sizeof(buf));
-          }
-          if (op->type == ARROW && op->slaying)
-          {
-              safe_strcat(buf, " ", &len, sizeof(buf));
-              safe_strcat(buf, op->slaying, &len, sizeof(buf));
-          }
-    } /* switch */
-
-    return buf;
-}
-
-
 /* describe terrain flags
  * we use strcat only - prepare the retbuf before call.
  */
@@ -1481,7 +907,7 @@ object *pick_up(object *who, object *what, object *where, uint32 nrof)
             if (pl)
             {
                 new_draw_info(NDI_UNIQUE, 0, who, "You feel a little swindled as %s contains nothing!",
-                    query_short_name(what, who));
+                    query_name(what, who, ARTICLE_DEFINITE, 0));
             }
 
             LOG(llevMapbug, "MAPBUG:: Empty loot container [%s %d %d]!\n",
@@ -1522,7 +948,7 @@ object *pick_up(object *who, object *what, object *where, uint32 nrof)
                 {
                     pl = NULL; // prevents futher 'you pick up...' messages
                     new_draw_info(NDI_UNIQUE, 0, who, "You take what you can of %s and leave the rest.",
-                        query_short_name(what, who));
+                        query_name(what, who, ARTICLE_DEFINITE, 0));
                 }
 
                 /* Insert all the remaining contents of the loot in wherever
@@ -1590,7 +1016,7 @@ object *pick_up(object *who, object *what, object *where, uint32 nrof)
             outof != who)
         {
             sprintf(buf, "Taking %s out of %s, you ",
-                (nrof > 1) ? "them" : "it", query_short_name(outof, who));
+                (nrof > 1) ? "them" : "it", query_name(outof, who, ARTICLE_DEFINITE, 0));
         }
         else
         {
@@ -1600,18 +1026,18 @@ object *pick_up(object *who, object *what, object *where, uint32 nrof)
         if (from == who)
         {
             sprintf(strchr(buf, '\0'), "%s %s into %s",
-                (to == who) ? "transfer" : "put", query_short_name(what, who),
-                (into) ? query_short_name(into, who) : "your inventory");
+                (to == who) ? "transfer" : "put", query_name(what, who, ARTICLE_DEFINITE, 0),
+                (into) ? query_name(into, who, ARTICLE_DEFINITE, 0) : "your inventory");
         }
         else
         {
             sprintf(strchr(buf, '\0'), "pick up %s",
-                query_short_name(what, who));
+                query_name(what, who, ARTICLE_DEFINITE, 0));
 
             if (into)
             {
                 sprintf(strchr(buf, '\0'), " and put %s into %s",
-                    (nrof > 1) ? "them" : "it", query_short_name(into, who));
+                    (nrof > 1) ? "them" : "it", query_name(into, who, ARTICLE_DEFINITE, 0));
             }
         }
 
@@ -1661,7 +1087,7 @@ static object *CanReach(object *who, object *what)
         if (who->type == PLAYER)
         {
             new_draw_info(NDI_UNIQUE, 0, who, "%s is floating out of your reach!",
-                query_short_name(what, who));
+                query_name(what, who, ARTICLE_DEFINITE, 0));
         }
 
         return NULL;
@@ -1712,7 +1138,7 @@ static object *CanReach(object *who, object *what)
         who->type == PLAYER)
     {
         new_draw_info(NDI_UNIQUE, 0, who, "%s is out of your reach!",
-            query_short_name(what, who));
+            query_name(what, who, ARTICLE_DEFINITE, 0));
     }
 
     return this;
@@ -1805,7 +1231,7 @@ static object *PickUp(object *who, object *what, object *where, uint32 nrof, obj
             if (pl)
             {
                 new_draw_info(NDI_UNIQUE, 0, who, "Only %s can be put into %s!",
-                    where->race, query_short_name(where, who));
+                    where->race, query_name(where, who, ARTICLE_DEFINITE, 0));
             }
 
             return NULL;
@@ -1817,9 +1243,9 @@ static object *PickUp(object *who, object *what, object *where, uint32 nrof, obj
             if (pl)
             {
                 new_draw_info(NDI_UNIQUE, 0, who, "%s %s too heavy to fit in %s!",
-                   query_short_name(what, who),
+                   query_name(what, who, ARTICLE_DEFINITE, 0),
                    (what->nrof > 1) ? "are" : "is",
-                   query_short_name(where, who));
+                   query_name(where, who, ARTICLE_DEFINITE, 0));
             }
 
             return NULL;
@@ -1891,9 +1317,9 @@ static object *PickUp(object *who, object *what, object *where, uint32 nrof, obj
 
             GET_MAP_SPACE_SYS_OBJ(msp, SHOP_FLOOR, shop);
             new_draw_info(NDI_UNIQUE, 0, who, "You can buy %s for ~%s~ from %s.\n",
-                query_short_name(what, who),
+                query_name(what, who, ARTICLE_DEFINITE, 0),
                 query_cost_string(what, who, F_BUY, COSTSTRING_SHORT),
-                query_short_name(shop, who));
+                query_name(shop, who, ARTICLE_DEFINITE, 0));
         }
     }
     else
@@ -1958,7 +1384,7 @@ static object *CanPickUp(object *who, object *what, object *where, uint32 nrof)
         if (who->type == PLAYER)
         {
             new_draw_info(NDI_UNIQUE, 0, who, "%s %s too large for you to pick up!",
-                query_short_name(what, who),
+                query_name(what, who, ARTICLE_DEFINITE, 0),
                 (what->nrof > 1) ? "are" : "is");
         }
 
@@ -1979,7 +1405,7 @@ static object *CanPickUp(object *who, object *what, object *where, uint32 nrof)
             if (who->type == PLAYER)
             {
                 new_draw_info (NDI_UNIQUE, 0, who, "%s %s not your ego item!",
-                    query_short_name(what, who),
+                    query_name(what, who, ARTICLE_DEFINITE, 0),
                     (what->nrof > 1) ? "are" : "is");
             }
 
@@ -1994,7 +1420,7 @@ static object *CanPickUp(object *who, object *what, object *where, uint32 nrof)
             if (who->type == PLAYER)
             {
                 new_draw_info(NDI_UNIQUE, 0, who, "%s %s not something you can pick up!",
-                    query_short_name(what, who),
+                    query_name(what, who, ARTICLE_DEFINITE, 0),
                     (what->nrof > 1) ? "are" : "is");
             }
 
@@ -2019,7 +1445,7 @@ static object *CanPickUp(object *who, object *what, object *where, uint32 nrof)
                 if (who->type == PLAYER)
                 {
                     new_draw_info(NDI_UNIQUE, 0, who, "%s %s too heavy to pick up!",
-                        query_short_name(what, who),
+                        query_name(what, who, ARTICLE_DEFINITE, 0),
                         (what->nrof > 1) ? "are" : "is");
                 }
 
@@ -2130,7 +1556,7 @@ object *drop_to_floor(object *who, object *what, uint32 nrof)
         if (pl)
         {
             new_draw_info(NDI_UNIQUE, 0, who, "First take everything out of %s!",
-                query_short_name(what, who));
+                query_name(what, who, ARTICLE_DEFINITE, 0));
         }
 
         return NULL;
@@ -2191,7 +1617,7 @@ object *drop_to_floor(object *who, object *what, uint32 nrof)
             outof != who)
         {
             sprintf(buf, "Taking %s out of %s, you",
-                (nrof > 1) ? "them" : "it", query_short_name(outof, who));
+                (nrof > 1) ? "them" : "it", query_name(outof, who, ARTICLE_DEFINITE, 0));
         }
         else
         {
@@ -2199,7 +1625,7 @@ object *drop_to_floor(object *who, object *what, uint32 nrof)
         }
 
         new_draw_info(NDI_UNIQUE, 0, who, "%s drop %s.",
-            buf, query_short_name(what, who));
+            buf, query_name(what, who, ARTICLE_DEFINITE, 0));
     }
 
     /* No drops vanish for non-gmaster wiz players. */
@@ -2208,7 +1634,7 @@ object *drop_to_floor(object *who, object *what, uint32 nrof)
         QUERY_FLAG(what, FLAG_NO_DROP))
     {
         new_draw_info(NDI_UNIQUE, 0, who, "~NO-DROP~: %s vanishes to nowhere!",
-            query_short_name(what, who));
+            query_name(what, who, ARTICLE_DEFINITE, 0));
         reinsert = 0;
     }
     /* In a shop there are special rules. */
@@ -2224,7 +1650,7 @@ object *drop_to_floor(object *who, object *what, uint32 nrof)
             if (pl)
             {
                 new_draw_info(NDI_UNIQUE, 0, who, "The shop magic puts %s back in storage.",
-                    query_short_name(what, who));
+                    query_name(what, who, ARTICLE_DEFINITE, 0));
             }
 
             reinsert = 0;
@@ -2243,7 +1669,7 @@ object *drop_to_floor(object *who, object *what, uint32 nrof)
             if (pl)
             {
                 new_draw_info(NDI_UNIQUE, 0, who, "You sell %s for ~%s~.",
-                    query_short_name(what, who),
+                    query_name(what, who, ARTICLE_DEFINITE, 0),
                     query_cost_string(what, who, F_SELL, COSTSTRING_FULL));
             }
 
@@ -2288,7 +1714,7 @@ static object *CanDiscard(object *who, object *what)
         if (QUERY_FLAG(what, FLAG_INV_LOCKED))
         {
             new_draw_info(NDI_UNIQUE, 0, who, "%s %s locked!",
-                query_short_name(what, who),
+                query_name(what, who, ARTICLE_DEFINITE, 0),
                 (what->nrof > 1) ? "are" : "is");
             return NULL;
         }
@@ -2357,13 +1783,13 @@ static object *NoDiscardContainer(object *who, object *what)
         if (QUERY_FLAG(this, FLAG_NO_DROP))
         {
             new_draw_info(NDI_UNIQUE, 0, who, "First remove all ~NO-DROP~ items from %s!",
-               query_short_name(what, who));
+               query_name(what, who, ARTICLE_DEFINITE, 0));
             return this;
         }
         else if (QUERY_FLAG(this, FLAG_INV_LOCKED))
         {
             new_draw_info(NDI_UNIQUE, 0, who, "First remove all locked items from %s!",
-               query_short_name(what, who));
+               query_name(what, who, ARTICLE_DEFINITE, 0));
             return this;
         }
     }
