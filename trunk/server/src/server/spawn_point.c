@@ -26,6 +26,7 @@
 #include <global.h>
 
 static object *spawn_monster(object *mob, object *spawn);
+static void RemoveStuff(object *where);
 static inline int spawn_point_darkness(object *spoint, int darkness);
 static void insert_spawn_mob_loot(object *op, object *mob, object *tmp);
 static inline objectlink *get_linked_spawn(object *spawn);
@@ -457,21 +458,7 @@ void spawn_point(object *op)
         {
             mob->last_eat = 0;
             insert_spawn_mob_loot(op, mob, loot->inv);
-
-            /* remove any beacons in the newly spawned mob's inv */
-            next = mob;
-            while (next)
-            {
-                next = find_next_object(next, TYPE_BEACON, FNO_MODE_ALL, mob);
-
-                if (next)
-                {
-                    remove_ob(next);
-                }
-            }
-
-            SET_MULTI_FLAG(mob, FLAG_SCRIPT_MOB); /* FINISH: now mark our mob as a script-interrupted spawn */
-            fix_monster(mob); /* fix all the values and add in possible abilities or forces ... */
+            make_mob_script_spawn(mob);
         }
 
         if (OBJECT_ACTIVE(loot)) /* make sure loot is removed */
@@ -552,6 +539,50 @@ void spawn_point(object *op)
         }
     }
 #endif
+}
+
+/* make_mob_script_spawn() turns mob (which is basically already spawned) into
+ * a 'script-spawned mob' (ie, not chained to a spawn point). */
+void make_mob_script_spawn(object *mob)
+{
+    RemoveStuff(mob);
+    CLEAR_MULTI_FLAG(mob, FLAG_SPAWN_MOB);
+    SET_MULTI_FLAG(mob, FLAG_SCRIPT_MOB);
+    fix_monster(mob);
+}
+
+/* RemoveStuff() is a recursive function to remove all 'dangerous' objects from
+ * where. */
+static void RemoveStuff(object *where)
+{
+    object *this,
+           *next;
+
+    for (this = where->inv; this; this = next)
+    {
+        next = this->below;
+
+        if (this->type == TYPE_BEACON)
+        {
+            remove_ob(this);
+        }
+        else if (this->type == SPAWN_POINT_INFO)
+        {
+            object *owner = get_owner(this);
+
+            if (owner)
+            {
+                owner->enemy = NULL;
+                owner->enemy_count = 0;
+            }
+
+            remove_ob(this);
+        }
+        else if (this->inv)
+        {
+            RemoveStuff(this);
+        }
+    }
 }
 
 /*
