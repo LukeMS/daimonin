@@ -1272,6 +1272,12 @@ static object *PickUp(object *who, object *what, object *where, uint32 nrof, obj
     }
 
     /* Now we've determined the pick up is possible, so lets do it! */
+    /* When a monster is picked up, it becomes a script-spawned mob. */
+    if (what->type == MONSTER)
+    {
+        make_mob_script_spawn(what);
+    }
+
     /* what can have a PICKUP script on it which, if it returns true, aborts
      * the actual pick up. */
     if (trigger_object_plugin_event(EVENT_PICKUP, what, who, where, NULL,
@@ -1374,6 +1380,18 @@ static object *PickUp(object *who, object *what, object *where, uint32 nrof, obj
  * up. */
 static object *CanPickUp(object *who, object *what, object *where, uint32 nrof)
 {
+    /* Picking up players would cause mayhem so it's not allowed. */
+    if (what->type == PLAYER)
+    {
+        if (who->type == PLAYER)
+        {
+            new_draw_info(NDI_UNIQUE, 0, who, "%s really would not like being picked up!",
+                QUERY_SHORT_NAME(what, who));
+        }
+
+        return NULL;
+    }
+
     /* Multiparts are absolute no-nos because the server cannot cope with such
      * objects having an environment. Also it would be logically ridiculous to
      * have such physically large objects being pocketed. */
