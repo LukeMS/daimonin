@@ -308,13 +308,15 @@ int command_channel(object *ob, char *params)
 
         if (targetob->item_level)
         {
-            sprintf(buf, "%s -- %s%s(examine worth: %s)", query_name_full(targetob, ob), describe_item(targetob),
-                   levelstring, cost_string_from_value(targetob->value * targetob->nrof, COSTSTRING_SHORT));
+            sprintf(buf, "%s -- %s%s(examine worth: %s)",
+                QUERY_SHORT_NAME(targetob, ob), describe_item(targetob),
+                levelstring, cost_string_from_value(targetob->value * targetob->nrof, COSTSTRING_SHORT));
         }
         else
         {
-            sprintf(buf, "%s -- %s(examine worth: %s)", query_name_full(targetob, ob), describe_item(targetob),
-                   cost_string_from_value(targetob->value * targetob->nrof, COSTSTRING_SHORT));
+            sprintf(buf, "%s -- %s(examine worth: %s)",
+                QUERY_SHORT_NAME(targetob, ob), describe_item(targetob),
+                cost_string_from_value(targetob->value * targetob->nrof, COSTSTRING_SHORT));
         }
 
         if (check_channel_mute(pl_channel))

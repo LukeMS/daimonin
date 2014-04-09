@@ -224,8 +224,8 @@ int command_gsay(object *op, char *params)
  * is necessary that clients keep gsay logs as the server no longer does
  * (r7282, 0.10.5-y). */
 #if 0 // def USE_CHANNELS
-    sprintf(buf, "%c%c%s %s:%s",
-            2, NDI_YELLOW, "Group", query_name_full(op, NULL), params);
+    sprintf(buf, "%c%cGroup %s:%s",
+            2, NDI_YELLOW, QUERY_SHORT_NAME(op, NULL), params);
     sb = SOCKBUF_COMPOSE(SERVER_CMD_CHANNELMSG, buf, strlen(buf + 2) + 2, 0);
 
     for(member = CONTR(op)->group_leader; member; member = CONTR(member)->group_next)
@@ -239,8 +239,8 @@ int command_gsay(object *op, char *params)
 
     for(member = CONTR(op)->group_leader; member; member = CONTR(member)->group_next)
     {
-        new_draw_info(NDI_GSAY | NDI_PLAYER | NDI_UNIQUE | NDI_YELLOW, 0, member,
-                      "%s %s", query_short_name(op, member), buf);
+        new_draw_info(NDI_GSAY | NDI_PLAYER | NDI_UNIQUE | NDI_YELLOW, 0, member, "%s %s",
+            QUERY_SHORT_NAME(op, member), buf);
     }
 #endif
 
@@ -268,8 +268,8 @@ int command_shout(object *op, char *params)
     /* moved down, cause if whitespace is shouted, then no need to log it */
     CHATLOG("SHOUT:%s >%s<\n", STRING_OBJ_NAME(op), params);
 
-    new_draw_info(NDI_SHOUT | NDI_PLAYER | NDI_UNIQUE | NDI_ALL | NDI_ORANGE,
-                  1, NULL, "%s shouts: %s", query_name_full(op, NULL), params);
+    new_draw_info(NDI_SHOUT | NDI_PLAYER | NDI_UNIQUE | NDI_ALL | NDI_ORANGE, 1, NULL, "%s shouts: %s",
+        QUERY_SHORT_NAME(op, NULL), params);
 
 #ifdef PLUGINS
     /* GROS : Here we handle the SHOUT global event */
@@ -310,7 +310,6 @@ int command_describe(object *op, char *params)
     /* TODO: Make this support channels, like "/describe tell XYZ", "/describe auction".
      * ATM shout is all that's supported.
      */
-    char buf[HUGE_BUF];
     char levelstring[SMALL_BUF];
 
     if(!check_mute(op, MUTE_MODE_SHOUT))
@@ -334,16 +333,12 @@ int command_describe(object *op, char *params)
         }
     }
 
-    if (targetob->item_level)
-        sprintf(buf, "~%s~ -- %s%s(examine worth: %s)", query_name_full(targetob, op), describe_item(targetob),
-               levelstring, cost_string_from_value(targetob->value, COSTSTRING_SHORT));
-    else
-
-        sprintf(buf, "~%s~ -- %s(examine worth: %s)", query_name_full(targetob, op), describe_item(targetob),
-               cost_string_from_value(targetob->value, COSTSTRING_SHORT));
-
-    new_draw_info(NDI_SHOUT | NDI_PLAYER | NDI_UNIQUE | NDI_ALL | NDI_ORANGE,
-                  1, NULL, "%s describes: %s", query_name_full(op, NULL), buf);
+    new_draw_info(NDI_SHOUT | NDI_PLAYER | NDI_UNIQUE | NDI_ALL | NDI_ORANGE, 1, NULL, "%s describes: ~%s~ -- %s%s(examine worth: %s)",
+        QUERY_SHORT_NAME(op, NULL),
+        QUERY_SHORT_NAME(targetob, op),
+        describe_item(targetob),
+        (targetob->item_level) ? levelstring : "",
+        cost_string_from_value(targetob->value, COSTSTRING_SHORT));
 
     return 0;
 }
@@ -387,25 +382,23 @@ int command_tell(object *op, char *params)
                 (!(pl->gmaster_mode & GMASTER_MODE_SA) &&
                  (CONTR(op)->gmaster_mode & (GMASTER_MODE_GM | GMASTER_MODE_VOL))))
             {
-                new_draw_info(NDI_PLAYER | NDI_UNIQUE, 0, op, "You tell %s (~privacy mode~): %s",
-                              query_short_name(pl->ob, op), msg);
+                new_draw_info(NDI_PLAYER | NDI_UNIQUE, 0, op, "You tell |%s| (~privacy mode~): %s",
+                    pl->quick_name, msg);
             }
             else
             {
                 new_draw_info(NDI_UNIQUE, 0, op, "No such player.");
             }
 
-            new_draw_info(NDI_TELL | NDI_PLAYER | NDI_UNIQUE | NDI_NAVY, 0,
-                          pl->ob, "%s tells you (~privacy mode~): %s",
-                          query_short_name(op, pl->ob), msg);
+            new_draw_info(NDI_TELL | NDI_PLAYER | NDI_UNIQUE | NDI_NAVY, 0, pl->ob, "%s tells you (~privacy mode~): %s",
+                QUERY_SHORT_NAME(op, pl->ob), msg);
         }
         else
         {
-            new_draw_info(NDI_PLAYER | NDI_UNIQUE, 0, op, "You tell %s: %s",
-                          query_short_name(pl->ob, op), msg);
-            new_draw_info(NDI_TELL | NDI_PLAYER | NDI_UNIQUE | NDI_NAVY, 0,
-                          pl->ob, "%s tells you: %s",
-                          query_short_name(op, pl->ob), msg);
+            new_draw_info(NDI_PLAYER | NDI_UNIQUE, 0, op, "You tell |%s|: %s",
+                pl->quick_name, msg);
+            new_draw_info(NDI_TELL | NDI_PLAYER | NDI_UNIQUE | NDI_NAVY, 0, pl->ob, "%s tells you: %s",
+                QUERY_SHORT_NAME(op, pl->ob), msg);
         }
 
         OBFUSCATE_MESSAGE(cp, msg);
@@ -1036,9 +1029,8 @@ static int basic_emote(object *op, char *params, int emotion)
         if (emotion == EMOTE_ME)        /* catch special case emote /me */
         {
             CHATLOG("EMOTE:%s >%s<\n", STRING_OBJ_NAME(op), params);
-            new_info_map(NDI_EMOTE | NDI_PLAYER | NDI_YELLOW, op->map, op->x,
-                         op->y, MAP_INFO_NORMAL, "%s %s", query_name_full(op, NULL),
-                         params);
+            new_info_map(NDI_EMOTE | NDI_PLAYER | NDI_YELLOW, op->map, op->x, op->y, MAP_INFO_NORMAL, "%s %s",
+                QUERY_SHORT_NAME(op, NULL), params);
 
             return 0;
         }

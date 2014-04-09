@@ -1026,7 +1026,7 @@ static int GameObject_CreateArtifact(lua_State *L)
 /*****************************************************************************/
 /* Name   : GameObject_GetName                                               */
 /* Lua    : object:GetName(owner)                                            */
-/* Info   : same as query_short_name()                                       */
+/* Info   : same as QUERY_SHORT_NAME()                                       */
 /* Status : Tested/Stable                                                    */
 /*****************************************************************************/
 static int GameObject_GetName(lua_State *L)
@@ -1042,7 +1042,7 @@ static int GameObject_GetName(lua_State *L)
     else
         obj = self->data.object;
 
-    result = hooks->query_short_name(WHO, obj);
+    result = QUERY_SHORT_NAME(WHO, obj);
 
     lua_pushstring(L, result);
     return 1;
@@ -2016,22 +2016,20 @@ static int GameObject_SayTo(lua_State *L)
         if (mode == 1)
         {
             hooks->new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, target, "%s",
-                                 message);
+                message);
         }
         else /* thats default */
         {
             if (mode == 2)
             {
                 snprintf(buf, sizeof(buf), "%s talks to %s.",
-                         hooks->query_short_name(WHO, NULL),
-                         hooks->query_short_name(target, NULL));
+                    QUERY_SHORT_NAME(WHO, NULL), QUERY_SHORT_NAME(target, NULL));
                 hooks->new_info_map_except(NDI_UNIQUE | NDI_WHITE, WHO->map,
-                                           WHO->x, WHO->y, range, WHO, target,
-                                           "%s", buf);
+                    WHO->x, WHO->y, range, WHO, target, "%s", buf);
             }
 
             snprintf(buf, sizeof(buf), "%s says: %s",
-                     hooks->query_short_name(WHO, target), message);
+                QUERY_SHORT_NAME(WHO, target), message);
             hooks->new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, target, "%s", buf);
         }
     }
@@ -3226,8 +3224,8 @@ static int GameObject_RemoveQuestItem(lua_State *L)
         if(nrof == -1) /* if we don't have an explicit number, use number from kill target */
             nrof = myob->nrof;
 
-        hooks->new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, pl, "%s is removed from your inventory.",
-                hooks->query_short_name(myob, NULL));
+        hooks->new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, pl, "%s %s removed from your inventory.",
+            QUERY_SHORT_NAME(myob, NULL), (nrof > 1) ? "are" : "is");
         remove_quest_items(pl->inv, myob, nrof);
     }
 
@@ -3531,8 +3529,8 @@ static int GameObject_CreateObjectInsideEx(lua_State *L)
 
     if ((pl = hooks->is_player_inv(myob)))
     {
-        hooks->new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, pl, "You got %d %s",
-            (nrof) ? nrof : 1, hooks->query_base_name(myob, NULL));
+        hooks->new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, pl, "You got %d %s.",
+            (nrof) ? nrof : 1, hooks->query_name(myob, NULL, ARTICLE_NONE, 0));
     }
 
     return push_object(L, &GameObject, myob);

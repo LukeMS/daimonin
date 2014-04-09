@@ -234,11 +234,13 @@ void recursive_roll(object *op, int dir, object *pusher)
 {
     if (!roll_ob(op, dir, pusher))
     {
-        new_draw_info(NDI_UNIQUE, 0, pusher, "You fail to push %s.", query_name_full(op, pusher));
+        new_draw_info(NDI_UNIQUE, 0, pusher, "You fail to push %s.",
+            QUERY_SHORT_NAME(op, pusher));
         return;
     }
     (void) move_ob(pusher, dir, pusher);
-    new_draw_info(NDI_WHITE, 0, pusher, "You roll %s.", query_name_full(op, pusher));
+    new_draw_info(NDI_WHITE, 0, pusher, "You roll %s.",
+        QUERY_SHORT_NAME(op, pusher));
     return;
 }
 
@@ -370,26 +372,30 @@ int push_ob(object *who, int dir, object *pusher)
     /* funny: was they set to unaggressive 0 (= not so nice) they don't attack */
 
     /* i disabled run/push attacks
-       if(owner != pusher &&  pusher->type == PLAYER && who->type != PLAYER &&
-                                                    !QUERY_FLAG(who,FLAG_FRIENDLY)) {
-    if(CONTR(pusher)->run_on) {
-        new_draw_info(NDI_UNIQUE, 0, pusher,
-                 "You start to attack %s !!", query_short_name(who, pusher));
-           update_npc_knowledge(who, pusher, FRIENDSHIP_PUSH, 0);
-           return 1;
-    }
-    else
+    if (owner != pusher &&
+        pusher->type == PLAYER &&
+        who->type != PLAYER &&
+        !QUERY_FLAG(who,FLAG_FRIENDLY))
     {
-        new_draw_info(NDI_UNIQUE, 0, pusher,
-                 "You avoid attacking %s.", query_short_name(who, pusher));
-    }
-       }*/
+        if (CONTR(pusher)->run_on)
+        {
+            new_draw_info(NDI_UNIQUE, 0, pusher, "You start to attack %s !!",
+                QUERY_SHORT_NAME(who, pusher));
+            update_npc_knowledge(who, pusher, FRIENDSHIP_PUSH, 0);
+            return 1;
+        }
+        else
+        {
+            new_draw_info(NDI_UNIQUE, 0, pusher, "You avoid attacking %s.",
+                QUERY_SHORT_NAME(who, pusher));
+        }
+    }*/
 
     /* now, lets test stand still we NEVER can push stand_still monsters. */
     if (QUERY_FLAG(who, FLAG_STAND_STILL))
     {
        new_draw_info(NDI_UNIQUE, 0, pusher, "You can't push %s.",
-                      query_short_name(who, pusher));
+           QUERY_SHORT_NAME(who, pusher));
         return 0;
     }
 
@@ -413,7 +419,7 @@ int push_ob(object *who, int dir, object *pusher)
         !move_ob(who, dir, pusher))
     {
         new_draw_info(NDI_UNIQUE, 0, who, "%s tried to push you.",
-                      query_short_name(pusher, who));
+            QUERY_SHORT_NAME(pusher, who));
         return 0;
     }
 
@@ -424,9 +430,9 @@ int push_ob(object *who, int dir, object *pusher)
      */
     (void) move_ob(pusher, dir, pusher);
     new_draw_info(NDI_UNIQUE, 0, who, "%s pushed you.",
-                  query_short_name(pusher, who));
+        QUERY_SHORT_NAME(pusher, who));
     new_draw_info(NDI_UNIQUE, 0, pusher, "You pushed %s back.",
-                  query_short_name(who, pusher));
+        QUERY_SHORT_NAME(who, pusher));
 
     return 1;
 }
@@ -702,7 +708,8 @@ int enter_map_by_exit(object *op, object *exit_ob)
 
     if(! EXIT_PATH(exit_ob))
     {
-        new_draw_info(NDI_UNIQUE, 0, op, "%s is closed.", query_name_full(exit_ob, op));
+        new_draw_info(NDI_UNIQUE, 0, op, "%s is closed.",
+            QUERY_SHORT_NAME(exit_ob, op));
         return FALSE;
     }
 
@@ -751,8 +758,8 @@ int enter_map_by_exit(object *op, object *exit_ob)
      * -- Smacky 20101231 */
     if (check_path(exit_ob->race, 1) == -1)
     {
-        new_draw_info(NDI_UNIQUE, 0, op, "%s is temporarily closed.", query_name_full(exit_ob, op));
-
+        new_draw_info(NDI_UNIQUE, 0, op, "%s is temporarily closed.",
+            QUERY_SHORT_NAME(exit_ob, op));
         return FALSE;
     }
 
@@ -845,7 +852,8 @@ int enter_map_by_exit(object *op, object *exit_ob)
 
     if (!newmap)
     {
-        new_draw_info(NDI_UNIQUE, 0, op, "%s is closed.", query_name_full(exit_ob, op));
+        new_draw_info(NDI_UNIQUE, 0, op, "%s is closed.",
+            QUERY_SHORT_NAME(exit_ob, op));
         return FALSE;
     }
 

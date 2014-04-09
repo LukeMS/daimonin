@@ -381,17 +381,15 @@ uint8 shop_checkout(object *op, object *this)
 
         if (!(success = shop_pay_amount(price, op)))
         {
-            CLEAR_FLAG(this, FLAG_UNPAID);
             new_draw_info(NDI_UNIQUE, 0, op, "You lack the funds to buy %s.",
-                          query_short_name(this, op));
-            SET_FLAG(this, FLAG_UNPAID);
+                          QUERY_SHORT_NAME(this, op));
         }
         else
         {
+            CLEAR_FLAG(this, FLAG_UNPAID);
             new_draw_info(NDI_UNIQUE, 0, op, "You paid %s for %s.",
                           cost_string_from_value(price, COSTSTRING_SHORT),
-                          query_short_name(this, op));
-            CLEAR_FLAG(this, FLAG_UNPAID);
+                          QUERY_SHORT_NAME(this, op));
             (void)merge_ob(this, NULL);
             esrv_update_item(UPD_WEIGHT | UPD_NROF | UPD_FLAGS, this);
         }

@@ -1948,14 +1948,21 @@ int count_used() {
  * dropping any inventory on the floor */
 void destruct_ob(object *op)
 {
+    object *owner;
+
     drop_ob_inv(op);
     remove_ob(op);
     check_walk_off(op, NULL, MOVE_APPLY_DEFAULT);
 
     /* Notify player that a pet has died */
     /* TODO: maybe this should be in kill_object() */
-    if(op->type == MONSTER && OBJECT_VALID(op->owner, op->owner_count) && op->owner->type == PLAYER)
-        new_draw_info(NDI_UNIQUE, 0, op->owner, "Your %s was killed", query_name_full(op, op->owner));
+    if (op->type == MONSTER &&
+        (owner = get_owner(op)) &&
+        owner->type == PLAYER)
+    {
+        new_draw_info(NDI_UNIQUE, 0, owner, "%s was killed!",
+            query_name(op, owner, ARTICLE_POSSESSIVE, 0));
+    }
 }
 
 /* remove_ob(op):
@@ -3620,4 +3627,351 @@ int remove_item_buff(object *item, char *name, uint32 nrof)
     fix_buff_stats(item);
 
     return BUFF_ADD_SUCCESS;
+}
+
+/* query_name() returns a pointer to a string which is the qualified name of
+ * what.
+ *
+ * Qualified name means (often) much more than just what->name.
+ *
+ * If who is non-NULL thennn what will be named from who's perspective, where
+ * appropriate.
+ *
+ * The article of the name has a somewhat broader, and narrower at the same
+ * time, meaning than usual. article determines if we prefix the name both with
+ * an article and what->nrof if this is > 1:
+ *   ARTICLE_NONE means no article and no nrof.
+ *   ARTICLE_INDEFINITE means the indefinite article ("a") and nrof.
+ *   ARTICLE_DEFINITE means the definite article ("the") and nrof.
+ *   ARTICLE_POSSESSIVE means the possessive article ("your") and nrof.
+ *
+ * While ARTICLE_NONE and ARTICLE_POSSESSIVE force the above, both
+ * ARTICLE_INDEFINITE and ARTICLE_DEFINITE can be overidden if who is specified
+ * and what is an applied item in who's inventory or who is the owner of what.
+ *
+ * Furthermore, the last three are overridden if what is named, in which case
+ * no article but yes nrof.
+ *
+ * TODO: status will probably be removed and handled client-side in future.
+ * 
+ * NOTE: Capitalisation, pluralisation and other string mungeing will be
+ * handled client-side. */
+char *query_name(object *what, object *who, uint32 article, uint8 status)
+{
+    static char   buf[5][MEDIUM_BUF];
+    static uint8  n = 0;
+    char         *cp;
+
+    if (!what)
+    {
+        return ">NONAME<";
+    }
+
+    /* We use 5 alternating static buffers to hold the qualified name. This
+     * means  we can have up to 5 query_name()s in the same format string
+     * (which should be ample; I think the most currently used is 3). */
+    *(cp = buf[(n = (n + 1) % 5)]) = '\0';
+
+    if (article != ARTICLE_NONE)
+    {
+        /* Named objects override the article but we still check for quantity. */
+        if (!QUERY_FLAG(what, FLAG_IS_NAMED))
+        {
+            /* Possessive. */
+            if (article == ARTICLE_POSSESSIVE ||
+                who &&
+                (what->env == who &&
+                 QUERY_FLAG(what, FLAG_APPLIED) ||
+                 get_owner(what) == who))
+            {
+                sprintf(cp, "your ");
+            }
+            /* Indefinite. */
+            else if (article == ARTICLE_INDEFINITE)
+            {
+                sprintf(cp, "a ");
+            }
+            /* Definite. */
+            else // if (article == ARTICLE_DEFINITE)
+            {
+                sprintf(cp, "the ");
+            }
+        }
+
+        /* Quantity if > 1 (ie, don't call with article = 1 if what->nrof > 1). */
+        if (what->nrof > 1)
+        {
+            sprintf(strchr(cp, '\0'), "%u ", what->nrof);
+        }
+    }
+
+    if (what->sub_type1 == ARROW &&
+        what->type == MISC_OBJECT) /* special neutralized arrow! */
+    {
+        sprintf(strchr(cp, '\0'), "broken ");
+    }
+
+    if(!QUERY_FLAG(what, FLAG_IS_NAMED)) /* named items has no prefix */
+    {
+        const char *prefix;
+
+        /* add the item race name */
+        if (!IS_LIVE(what) &&
+            what->type != TYPE_BASE_INFO &&
+            (prefix = item_race_table[what->item_race].name) != "")
+        {
+            sprintf(strchr(cp, '\0'), "%s", prefix);
+        }
+
+        /* we add the real material name as prefix. Because real_material == 0 is
+         * "" (clear string) we don't must check item types for adding something here
+         * or not (artifacts for example has normally no material prefix) */
+        if (what->material_real > 0 &&
+            QUERY_FLAG(what, FLAG_IDENTIFIED) &&
+            (prefix = material_real[what->material_real].name) != "")
+        {
+            sprintf(strchr(cp, '\0'), "%s", prefix);
+        }
+    }
+
+    if (what->type == PLAYER)
+    {
+        sprintf(strchr(cp, '\0'), "|%s|", STRING_OBJ_NAME(what));
+    }
+    else
+    {
+        sprintf(strchr(cp, '\0'), "%s", STRING_OBJ_NAME(what));
+    }
+
+    if (QUERY_FLAG(what, FLAG_IDENTIFIED) ||
+        !need_identify(what))
+    {
+        switch (what->type)
+        {
+            case CONTAINER:
+            if (what->title)
+            {
+                sprintf(strchr(cp, '\0'), " %s", what->title);
+            }
+            break;
+
+            case SPELLBOOK:
+            if (!what->title)
+            {
+                if (what->slaying)
+                {
+                    sprintf(strchr(cp, '\0'), " of %s", what->slaying);
+                }
+                else
+                {
+                    sprintf(strchr(cp, '\0'), " of %s",
+                        (what->stats.sp == SP_NO_SPELL) ? "nothing" : spells[what->stats.sp].name);
+                }
+            }
+            else
+            {
+                sprintf(strchr(cp, '\0'), " %s", what->title);
+            }
+            break;
+
+            case SCROLL:
+            case WAND:
+            case ROD:
+            case HORN:
+            case POTION:
+            if (!what->title)
+            {
+                sprintf(strchr(cp, '\0'), " of %s",
+                    (what->stats.sp == SP_NO_SPELL) ? "nothing" : spells[what->stats.sp].name);
+            }
+            else
+            {
+                sprintf(strchr(cp, '\0'), " %s", what->title);
+            }
+
+            sprintf(strchr(cp, '\0'), " (lvl %d)", what->level);
+            break;
+
+            case TYPE_SKILL:
+            case AMULET:
+            case RING:
+            if (!what->title )
+            {
+                sprintf(strchr(cp, '\0'), " %s", describe_item(what));
+            }
+            else
+            {
+                sprintf(strchr(cp, '\0'), " %s", what->title);
+            }
+            break;
+
+            default:
+            if (what->magic)
+            {
+                if (!IS_LIVE(what) &&
+                    what->type != TYPE_BASE_INFO)
+                {
+                    sprintf(strchr(cp, '\0'), " %+d", what->magic);
+                }
+            }
+
+            if (what->title)
+            {
+                sprintf(strchr(cp, '\0'), " %s", what->title);
+            }
+
+            if ((what->type == ARROW ||
+                 (what->type == MISC_OBJECT &&
+                  what->sub_type1 == ARROW)) && // special neutralized arrow
+                what->slaying)
+            {
+                sprintf(strchr(cp, '\0'), " %s", what->slaying);
+            }
+        }
+    }
+
+    if (what->type == CONTAINER)
+    {
+        if (what->sub_type1 >= ST1_CONTAINER_NORMAL_group)
+        {
+            if (what->sub_type1 == ST1_CONTAINER_CORPSE_group)
+            {
+                if (!who)
+                {
+                    sprintf(strchr(cp, '\0'), " (bounty of a group)");
+                }
+                else if ((CONTR(who)->group_status & GROUP_STATUS_GROUP) &&
+                    CONTR(CONTR(who)->group_leader)->group_id == what->stats.maxhp)
+                {
+                    sprintf(strchr(cp, '\0'), " (bounty of your group%s)", 
+                        (QUERY_FLAG(what, FLAG_BEEN_APPLIED)) ? ", SEARCHED" : "");
+                }
+                else
+                {
+                    sprintf(strchr(cp, '\0'), " (bounty of another group)");
+                }
+            }
+        }
+        else if (what->sub_type1 >= ST1_CONTAINER_NORMAL_player)
+        {
+            if (what->sub_type1 == ST1_CONTAINER_CORPSE_player)
+            {
+                if (what->slaying)
+                {
+                    sprintf(strchr(cp, '\0'), " (bounty of %s%s)",
+                        what->slaying,
+                        ((who &&
+                          who->name == what->slaying) &&
+                          QUERY_FLAG(what, FLAG_BEEN_APPLIED)) ? ", SEARCHED" : "");
+                }
+                else if (QUERY_FLAG(what, FLAG_BEEN_APPLIED))
+                {
+                    sprintf(strchr(cp, '\0'), " (SEARCHED)");
+                }
+            }
+        }
+    }
+
+    if (!QUERY_FLAG(what, FLAG_NO_PICK))
+    {
+        if (QUERY_FLAG(what, FLAG_UNPAID))
+        {
+            sprintf(strchr(cp, '\0'), " |U|");
+        }
+
+        if (QUERY_FLAG(what, FLAG_INV_LOCKED))
+        {
+            sprintf(strchr(cp, '\0'), " |*|");
+        }
+
+        if (QUERY_FLAG(what, FLAG_NO_DROP))
+        {
+            sprintf(strchr(cp, '\0'), " (~no-drop~)");
+        }
+
+        if (QUERY_FLAG(what, FLAG_ONE_DROP))
+        {
+            sprintf(strchr(cp, '\0'), " (~one-drop~)");
+        }
+        else if (QUERY_FLAG(what, FLAG_QUEST_ITEM))
+        {
+            sprintf(strchr(cp, '\0'), " (~quest~)");
+        }
+
+        if (QUERY_FLAG(what, FLAG_KNOWN_CURSED))
+        {
+            if (QUERY_FLAG(what, FLAG_PERM_DAMNED))
+            {
+                sprintf(strchr(cp, '\0'), " (perm. damned)");
+            }
+            else if (QUERY_FLAG(what, FLAG_DAMNED))
+            {
+                sprintf(strchr(cp, '\0'), " (damned)");
+            }
+            else if (QUERY_FLAG(what, FLAG_PERM_CURSED))
+            {
+                sprintf(strchr(cp, '\0'), " (perm. cursed)");
+            }
+            else if (QUERY_FLAG(what, FLAG_CURSED))
+            {
+                sprintf(strchr(cp, '\0'), " (cursed)");
+            }
+        }
+    }
+
+    /* No status so we're done. */
+    if (!status)
+    {
+        return cp;
+    }
+
+    /* TODO: I believe this is only of interest if (who && what->env == who).
+     * This means that this info is better added client-side.
+     *
+     * -- Smacky 20140407 */
+    if (QUERY_FLAG(what, FLAG_APPLIED))
+    {
+        switch (what->type)
+        {
+            case BOW:
+            case WAND:
+            case ROD:
+            case HORN:
+            sprintf(strchr(cp, '\0'), " (readied)");
+            break;
+            case WEAPON:
+            sprintf(strchr(cp, '\0'), " (wielded)");
+            break;
+            case ARMOUR:
+            case SHOULDER:
+            case LEGS:
+            case HELMET:
+            case SHIELD:
+            case RING:
+            case BOOTS:
+            case GLOVES:
+            case AMULET:
+            case GIRDLE:
+            case BRACERS:
+            case CLOAK:
+            sprintf(strchr(cp, '\0'), " (worn)");
+            break;
+            case CONTAINER:
+            if (what->attacked_by &&
+                what->attacked_by->type == PLAYER)
+            {
+                sprintf(strchr(cp, '\0'), " (open)");
+            }
+            else
+            {
+                sprintf(strchr(cp, '\0'), " (ready)");
+            }
+            break;
+            case TYPE_SKILL:
+            default:
+            sprintf(strchr(cp, '\0'), " (applied)");
+        }
+    }
+
+    return cp;
 }

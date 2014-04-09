@@ -52,11 +52,16 @@ static void free_container_monster(object *monster, object *op)
         monster->x += freearr_x[i];
         monster->y += freearr_y[i];
     }
-    fix_monster(monster);
-    if (insert_ob_in_map(monster, op->map, monster, 0))
-        new_draw_info(NDI_UNIQUE, 0, op, "%s jumps out of %s.", query_name_full(monster, NULL), query_name_full(container, op));
-}
 
+    fix_monster(monster);
+
+    if (insert_ob_in_map(monster, op->map, monster, 0))
+    {
+        new_draw_info(NDI_UNIQUE, 0, op, "%s jumps out of %s!",
+           QUERY_SHORT_NAME(monster, op),
+           QUERY_SHORT_NAME(container, op));
+    }
+}
 
 /* a player has opened a container - link him to the
 * list of player which have (perhaps) it opened too.

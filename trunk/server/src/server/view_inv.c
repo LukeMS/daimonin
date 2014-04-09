@@ -541,7 +541,7 @@ static char *PrepareData(_server_client_cmd cmd, uint16 flags, player *pl,
             object *who = (pl) ? pl->ob : NULL;
             uint8   len;
 
-            name = query_base_name(op, who);
+            name = query_name(op, who, ARTICLE_NONE, 0);
 
             for (len = 0; len <= 127; len++)
             {

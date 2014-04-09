@@ -111,8 +111,8 @@ int open_door(object *op, mapstruct *m, int x, int y, int mode)
                 if (op->type == PLAYER)
                 {
                     if (key)
-                        new_draw_info(NDI_UNIQUE, NDI_BROWN, op, "You open the door with the %s.",
-                                             query_short_name(key, op));
+                        new_draw_info(NDI_UNIQUE, NDI_BROWN, op, "You open the door with %s.",
+                            QUERY_SHORT_NAME(key, op));
 
                     /* Remove force message - it's usually inappropriate to say anything
                      * when opening with a hidden marker (one-way doors for example) */
@@ -356,6 +356,11 @@ void regenerate_rod(object *rod)
     }
 }
 
+/* TODO: This needs work to make it more efficient. Rather than calculating and
+ * sending messages for each removed force when it is removed, we should do all
+ * the removals then calc/send any messages in one.
+ *
+ * -- Smacy 20140408 */
 void remove_force(object *op)
 {
     object *env = op->env;
@@ -376,10 +381,8 @@ void remove_force(object *op)
         switch (op->sub_type1)
         {
             case ST1_FORCE_DEPLETE:
-                new_info_map_except(NDI_UNIQUE | NDI_GREY, env->map, env->x,
-                                    env->y, MAP_INFO_NORMAL, env, env,
-                                    "%s recovers depleted stats.",
-                                    query_short_name(env, NULL));
+                new_info_map_except(NDI_UNIQUE | NDI_GREY, env->map, env->x, env->y, MAP_INFO_NORMAL, env, env, "%s recovers depleted stats.",
+                    QUERY_SHORT_NAME(env, NULL));
 
                 if (env->type == PLAYER)
                 {
@@ -389,10 +392,8 @@ void remove_force(object *op)
                 break;
 
             case ST1_FORCE_DRAIN:
-                new_info_map_except(NDI_UNIQUE | NDI_GREY, env->map, env->x,
-                                    env->y, MAP_INFO_NORMAL, env, env,
-                                    "%s recovers drained levels.",
-                                    query_short_name(env, NULL));
+                new_info_map_except(NDI_UNIQUE | NDI_GREY, env->map, env->x, env->y, MAP_INFO_NORMAL, env, env, "%s recovers drained levels.",
+                    QUERY_SHORT_NAME(env, NULL));
 
                 if (env->type == PLAYER)
                 {
@@ -402,10 +403,8 @@ void remove_force(object *op)
                 break;
 
             case ST1_FORCE_SLOWED:
-                new_info_map_except(NDI_UNIQUE | NDI_GREY, env->map, env->x,
-                                    env->y, MAP_INFO_NORMAL, env, env,
-                                    "%s suddenly moves faster.",
-                                    query_short_name(env, NULL));
+                new_info_map_except(NDI_UNIQUE | NDI_GREY, env->map, env->x, env->y, MAP_INFO_NORMAL, env, env, "%s suddenly moves faster.",
+                    QUERY_SHORT_NAME(env, NULL));
 
                 if (env->type == PLAYER)
                 {
@@ -415,10 +414,8 @@ void remove_force(object *op)
                 break;
 
             case ST1_FORCE_FEAR:
-                new_info_map_except(NDI_UNIQUE | NDI_GREY, env->map, env->x,
-                                    env->y, MAP_INFO_NORMAL, env, env,
-                                    "%s suddenly looks braver.",
-                                    query_short_name(env, NULL));
+                new_info_map_except(NDI_UNIQUE | NDI_GREY, env->map, env->x, env->y, MAP_INFO_NORMAL, env, env, "%s suddenly looks braver.",
+                    QUERY_SHORT_NAME(env, NULL));
 
                 if (env->type == PLAYER)
                 {
@@ -428,10 +425,8 @@ void remove_force(object *op)
                 break;
 
             case ST1_FORCE_SNARE:
-                new_info_map_except(NDI_UNIQUE | NDI_GREY, env->map, env->x,
-                                    env->y, MAP_INFO_NORMAL, env, env,
-                                    "%s suddenly walks faster.",
-                                    query_short_name(env, NULL));
+                new_info_map_except(NDI_UNIQUE | NDI_GREY, env->map, env->x, env->y, MAP_INFO_NORMAL, env, env, "%s suddenly walks faster.",
+                    QUERY_SHORT_NAME(env, NULL));
 
                 if (env->type == PLAYER)
                 {
@@ -441,10 +436,8 @@ void remove_force(object *op)
                 break;
 
             case ST1_FORCE_PARALYZE:
-                new_info_map_except(NDI_UNIQUE | NDI_GREY, env->map, env->x,
-                                    env->y, MAP_INFO_NORMAL, env, env,
-                                    "%s suddenly moves again.",
-                                    query_short_name(env, NULL));
+                new_info_map_except(NDI_UNIQUE | NDI_GREY, env->map, env->x, env->y, MAP_INFO_NORMAL, env, env, "%s suddenly moves again.",
+                    QUERY_SHORT_NAME(env, NULL));
 
                 if (env->type == PLAYER)
                 {
@@ -454,10 +447,8 @@ void remove_force(object *op)
                 break;
 
             case ST1_FORCE_CONFUSED:
-                new_info_map_except(NDI_UNIQUE | NDI_GREY, env->map, env->x,
-                                    env->y, MAP_INFO_NORMAL, env, env,
-                                    "%s suddenly regain his senses.",
-                                    query_short_name(env, NULL));
+                new_info_map_except(NDI_UNIQUE | NDI_GREY, env->map, env->x, env->y, MAP_INFO_NORMAL, env, env, "%s suddenly regain his senses.",
+                    QUERY_SHORT_NAME(env, NULL));
 
                 if (env->type == PLAYER)
                 {
@@ -467,10 +458,8 @@ void remove_force(object *op)
                 break;
 
             case ST1_FORCE_BLIND:
-                new_info_map_except(NDI_UNIQUE | NDI_GREY, env->map, env->x,
-                                    env->y, MAP_INFO_NORMAL, env, env,
-                                    "%s suddenly can see again.",
-                                    query_short_name(env, NULL));
+                new_info_map_except(NDI_UNIQUE | NDI_GREY, env->map, env->x, env->y, MAP_INFO_NORMAL, env, env, "%s suddenly can see again.",
+                    QUERY_SHORT_NAME(env, NULL));
 
                 if (env->type == PLAYER)
                 {
@@ -480,10 +469,8 @@ void remove_force(object *op)
                 break;
 
             case ST1_FORCE_POISON:
-                new_info_map_except(NDI_UNIQUE | NDI_GREY, env->map, env->x,
-                                    env->y, MAP_INFO_NORMAL, env, env,
-                                    "%s's body seems cleansed.",
-                                    query_short_name(env, NULL));
+                new_info_map_except(NDI_UNIQUE | NDI_GREY, env->map, env->x, env->y, MAP_INFO_NORMAL, env, env, "%s's body seems cleansed.",
+                    QUERY_SHORT_NAME(env, NULL));
 
                 if (env->type == PLAYER)
                 {
@@ -493,10 +480,8 @@ void remove_force(object *op)
                 break;
 
             case ST1_FORCE_DEATHSICK:
-                new_info_map_except(NDI_UNIQUE | NDI_GREY, env->map, env->x,
-                                    env->y, MAP_INFO_NORMAL, env, env,
-                                    "%s seems to no longer suffer from death sickness.",
-                                    query_short_name(env, NULL));
+                new_info_map_except(NDI_UNIQUE | NDI_GREY, env->map, env->x, env->y, MAP_INFO_NORMAL, env, env, "%s seems to no longer suffer from death sickness.",
+                    QUERY_SHORT_NAME(env, NULL));
 
                 if (env->type == PLAYER)
                 {
@@ -504,13 +489,6 @@ void remove_force(object *op)
                 }
 
                 break;
-#if 0
-            default:
-                new_info_map_except(NDI_UNIQUE | NDI_GREY, env->map, env->x,
-                                    env->y, MAP_INFO_NORMAL, env, env,
-                                    "%s loses some effects.",
-                                    query_short_name(env, NULL));
-#endif
         }
     }
 
@@ -641,7 +619,7 @@ void move_gate(object *op)
                 damage_ob(tmp, dam, op, ENV_ATTACK_CHECK);
                 if (tmp->type == PLAYER)
                     new_draw_info(NDI_UNIQUE, 0, tmp, "You are crushed by %s!",
-                        query_name_full(op, tmp));
+                        query_name(op, tmp, ARTICLE_DEFINITE, 0));
             }
 
             /* If the object is alive, or the object either can
@@ -958,7 +936,8 @@ void change_object(object *op)
                     {
                         if (op->env->type == PLAYER) /* inside player char? */
                         {
-                            new_draw_info(NDI_UNIQUE, 0, op->env, "%s burnt out.", query_name_full(op, op->env));
+                            new_draw_info(NDI_UNIQUE, 0, op->env, "%s burnt out.",
+                                query_name(op, op->env, ARTICLE_DEFINITE, 0));
                             op->glow_radius = 0;
                             FIX_PLAYER(op->env ,"change object");
                         }
@@ -983,7 +962,8 @@ void change_object(object *op)
                 {
                     /* but give the player a note about it too */
                     if (op->env && op->env->type == PLAYER)
-                        new_draw_info(NDI_UNIQUE, 0, op->env, "%s burnt out.", query_name_full(op, op->env));
+                        new_draw_info(NDI_UNIQUE, 0, op->env, "%s burnt out.",
+                            query_name(op, op->env, ARTICLE_DEFINITE, 0));
                 }
             }
         }

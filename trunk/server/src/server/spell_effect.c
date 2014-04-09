@@ -172,28 +172,38 @@ int recharge(object *op)
 {
     object *wand;
 
-    for (wand = op->inv; wand != NULL; wand = wand->below)
-        if (wand->type == WAND && QUERY_FLAG(wand, FLAG_APPLIED))
-            break;
-    if (wand == NULL)
-        return 0;
-    if (!(random_roll(0, 3)))
+    for (wand = op->inv; wand; wand = wand->below)
     {
-        new_draw_info(NDI_UNIQUE, 0, op, "%s vibrates violently, then explodes!", query_name_full(wand, op));
-        play_sound_map(op->map, op->x, op->y, SOUND_OB_EXPLODE, SOUND_NORMAL);
-        destruct_ob(wand);
-        return 1;
-    }
-    new_draw_info(NDI_UNIQUE, 0, op, "%s glows with power.", query_name_full(wand, op));
+        if (wand->type == WAND &&
+            QUERY_FLAG(wand, FLAG_APPLIED))
+        {
+            if (!(random_roll(0, 3)))
+            {
+                new_draw_info(NDI_UNIQUE, 0, op, "%s vibrates violently, then explodes!",
+                    QUERY_SHORT_NAME(wand, op));
+                play_sound_map(op->map, op->x, op->y, SOUND_OB_EXPLODE, SOUND_NORMAL);
+                destruct_ob(wand);
+            }
+            else
+            {
+                new_draw_info(NDI_UNIQUE, 0, op, "%s glows with power.",
+                    QUERY_SHORT_NAME(wand, op));
+                wand->stats.food += random_roll(1, spells[wand->stats.sp].charges);
 
-    wand->stats.food += random_roll(1, spells[wand->stats.sp].charges);
-    if (wand->arch && QUERY_FLAG(&wand->arch->clone, FLAG_ANIMATE))
-    {
-        SET_FLAG(wand, FLAG_ANIMATE);
-        wand->speed = wand->arch->clone.speed;
-        update_ob_speed(wand);
+                if (wand->arch &&
+                    QUERY_FLAG(&wand->arch->clone, FLAG_ANIMATE))
+                {
+                    SET_FLAG(wand, FLAG_ANIMATE);
+                    wand->speed = wand->arch->clone.speed;
+                    update_ob_speed(wand);
+                }
+            }
+
+            return 1;
+        }
     }
-    return 1;
+
+    return 0;
 }
 
 
@@ -232,28 +242,31 @@ int cast_speedball(object *op, int dir, int type)
 
 int probe(object *op)
 {
-    object *tmp;
+    object *this,
+           *owner;
 
-    for (tmp = GET_MAP_OB(op->map, op->x, op->y); tmp != NULL; tmp = tmp->above)
+    for (this = GET_MAP_OB(op->map, op->x, op->y); this; this = this->above)
     {
-        if (IS_LIVE(tmp))
+        if (IS_LIVE(this) &&
+            (owner = get_owner(op)) &&
+            owner->type == PLAYER)
         {
-            if (op->owner && op->owner->type == PLAYER)
-            {
 #ifdef DEBUG_PROBE_IS_CHARM
-                /* Temporarily made probe into charm to test pet code */
-                if(add_pet(op->owner, tmp, 0) == 0)
-                    new_draw_info(NDI_UNIQUE, 0, op->owner, "Your probe charms %s.", tmp->name);
-#else
-                new_draw_info(NDI_UNIQUE, 0, op->owner, "Your probe analyse %s.", tmp->name);
-                if (tmp->head != NULL)
-                    tmp = tmp->head;
-                examine(op->owner, tmp, TRUE);
-#endif
-                return 1;
+            /* Temporarily made probe into charm to test pet code */
+            if (add_pet(owner, this, 0) == 0)
+            {
+                new_draw_info(NDI_UNIQUE, 0, owner, "Your probe charms %s.",
+                    QUERY_SHORT_NAME(this, owner));
             }
+#else
+            new_draw_info(NDI_UNIQUE, 0, owner, "Your probe analyse %s.",
+                QUERY_SHORT_NAME(this, owner));
+            examine(owner, (this->head) ? this->head : this, 1);
+#endif
+            return 1;
         }
     }
+
     return 0;
 }
 
@@ -780,7 +793,7 @@ int cast_heal(object *op, int level, object *target, int spell_type)
           {
               if (heal > 0)
                   new_draw_info(NDI_UNIQUE, 0, op, "The prayer heals %s for %d hp!",
-                                       op == target ? "you" : query_name_full(target, op), heal);
+                      (op == target) ? "you" : QUERY_SHORT_NAME(target, op), heal);
               else
                   new_draw_info(NDI_UNIQUE, 0, op, "The healing prayer fails!");
           }
@@ -788,10 +801,11 @@ int cast_heal(object *op, int level, object *target, int spell_type)
           if (op != target && target->type == PLAYER)
           {
               if (heal > 0)
-                  new_draw_info(NDI_UNIQUE, 0, target, "%s casts minor healing on you healing %d hp!", query_name_full(op, target),
-                                       heal);
+                  new_draw_info(NDI_UNIQUE, 0, target, "%s casts minor healing on you healing %d hp!",
+                      QUERY_SHORT_NAME(target, op), heal);
               else
-                  new_draw_info(NDI_UNIQUE, 0, target, "%s casts minor healing on you but it fails!", query_name_full(op, target));
+                  new_draw_info(NDI_UNIQUE, 0, target, "%s casts minor healing on you but it fails!",
+                      QUERY_SHORT_NAME(target, op));
           }
 
           break;
@@ -1855,12 +1869,12 @@ int remove_curse(object *op, object *target, int type, SpellTypeFrom src)
         {
             new_draw_info(NDI_UNIQUE, 0, op, "You cast remove %s on %s.",
                 (type == SP_REMOVE_CURSE) ? "curse" : "damnation",
-                query_short_name(target, op));
+                QUERY_SHORT_NAME(target, op));
         }
         else if (target->type == PLAYER)
         {
             new_draw_info(NDI_UNIQUE, 0, target, "%s casts remove %s on you.",
-                query_short_name(op, target),
+                QUERY_SHORT_NAME(op, target),
                 (type == SP_REMOVE_CURSE) ? "curse" : "damnation");
         }
     }
@@ -1885,14 +1899,15 @@ int remove_curse(object *op, object *target, int type, SpellTypeFrom src)
             {
                 if (target->type == PLAYER)
                 {
-                    new_draw_info(NDI_UNIQUE, 0, target, "The %s curse is stronger than the prayer!",
-                        query_base_name(tmp, target));
+                    new_draw_info(NDI_UNIQUE, 0, target, "The %s's curse is stronger than the prayer!",
+                        query_name(tmp, target, ARTICLE_NONE, 0));
                 }
                 else if (op != target &&
                          op->type == PLAYER)
                 {
-                    new_draw_info(NDI_UNIQUE, 0, op, "The %s curse of %s is stronger than your prayer!",
-                        query_base_name(tmp, op), query_base_name(target, op));
+                    new_draw_info(NDI_UNIQUE, 0, op, "The %s's curse of %s is stronger than your prayer!",
+                        query_name(tmp, op, ARTICLE_NONE, 0),
+                        QUERY_SHORT_NAME(target, op));
                 }
             }
         }
@@ -1906,8 +1921,8 @@ int remove_curse(object *op, object *target, int type, SpellTypeFrom src)
         }
         else
         {
-            new_draw_info(NDI_UNIQUE, 0, op, "%s items seems uncursed.",
-                query_short_name(target, op));
+            new_draw_info(NDI_UNIQUE, 0, op, "%s's items seem uncursed.",
+                QUERY_SHORT_NAME(target, op));
         }
     }
 
@@ -1968,7 +1983,7 @@ int cast_identify(object *op, int level, object *single_ob, int mode)
                 if (op->type == PLAYER)
                 {
                     new_draw_info(NDI_UNIQUE, 0, op, "%s %s too powerful for this identify!",
-                        query_short_name(tmp, op), (tmp->nrof > 1) ? "are" : "is");
+                        QUERY_SHORT_NAME(tmp, op), (tmp->nrof > 1) ? "are" : "is");
                 }
             }
             else
@@ -3288,7 +3303,8 @@ int finger_of_death(object *op, object *caster, int dir)
         }
         else
         {
-            new_draw_info(NDI_UNIQUE, 0, op, "%s looks stronger!", query_name_full(target, op));
+            new_draw_info(NDI_UNIQUE, 0, op, "%s looks stronger!",
+                QUERY_SHORT_NAME(target, op));
             target->stats.hp = target->stats.maxhp * 2;
             return 0;
         }
@@ -3919,7 +3935,7 @@ int cast_cause_conflict(object *op, object *caster, archetype *spellarch, int ty
                 if (tmp->name)
                 {
                     new_draw_info(NDI_RED, 0, op, "You've clouded %s's mind. He turns on his friends!",
-                                  query_short_name(tmp, op));
+                        QUERY_SHORT_NAME(tmp, op));
                 }
             }
         }

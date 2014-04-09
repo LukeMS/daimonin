@@ -96,9 +96,34 @@
  * and faster - but this depends on compiler & system too.
  */
 
-// This prevents object stacks from being "too big". When an object stack is larger than this it will cause some problems.
-// TODO: Over time, add code to check against this (i.e. prevent /create-ing stacks larger)
-#define MAX_OBJ_NROF 2147483647
+/* This prevents object stacks from being "too big". When an object stack is
+ * larger than this it will cause some problems. */
+/* TODO: Over time, add code to check against this (i.e. prevent /create-ing
+ * stacks larger). */
+// #define MAX_OBJ_NROF 2147483647
+/* This is MAX_LONG which bears little resemblence to object.nrof (currently a
+ * uint32). In any case it is vastly larger than ever needed (eg, even turning
+ * a stack of mith into copper only yields 10000000 copper per mith so we'd
+ * need 215 mith to exceed this limit in this highly contrived scenario.
+ *
+ * So, the max value for uint32 is (2^32-1=)4294967295, an outrageously huge
+ * number. It is useful to have some leeway so lets round it down (and still
+ * have nearly double the old value) to: */
+#define MAX_OBJ_NROF 4290000000
+
+/* Values for the article parameter of query_name() -- see that function for
+ * further explanation. */
+#define ARTICLE_NONE       0
+#define ARTICLE_INDEFINITE 1
+#define ARTICLE_DEFINITE   2
+#define ARTICLE_POSSESSIVE (MAX_OBJ_NROF + 1)
+
+/* QUERY_SHORT_NAME() does query_name() with the appropriate article and no
+ * status. It's just a quick'n'easy macro. But note that it's not always
+ * appropriate, depending on context. */
+#define QUERY_SHORT_NAME(_WHAT_, _WHO_) \
+    query_name((_WHAT_), (_WHO_), \
+        ((_WHAT_)->nrof > 1 || IS_LIVE((_WHAT_))) ? ARTICLE_DEFINITE : ARTICLE_INDEFINITE, 0)
 
 typedef struct obj
 {

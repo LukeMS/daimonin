@@ -681,12 +681,8 @@ static void follower_remove_similar_item(object *op, object *item)
              && tmp->msg == item->msg
              && tmp->slaying == item->slaying)
             {
-                /* message */
-                if (tmp->nrof > 1)
-                    new_draw_info(NDI_UNIQUE, 0, op, "The %s crumble to dust!", query_short_name(tmp, op));
-                else
-                    new_draw_info(NDI_UNIQUE, 0, op, "The %s crumbles to dust!", query_short_name(tmp, op));
-
+                new_draw_info(NDI_UNIQUE, 0, op, "The %s %s to dust!",
+                    QUERY_SHORT_NAME(tmp, op), (tmp->nrof > 1) ? "crumble" : "crumbles");
                 remove_ob(tmp);    /* remove obj from players inv. */
             }
             if (tmp->inv)
@@ -703,7 +699,8 @@ static int god_gives_present(object *op, object *god, treasure *tr)
         return 0;
 
     tmp = arch_to_object(tr->item);
-    new_draw_info(NDI_UNIQUE, 0, op, "%s lets %s appear in your hands.", god->name, query_short_name(tmp, op));
+    new_draw_info(NDI_UNIQUE, 0, op, "%s lets %s appear in your hands.",
+        god->name, QUERY_SHORT_NAME(tmp, op));
     tmp = insert_ob_in_ob(tmp, op);
 
     return 1;
@@ -947,9 +944,11 @@ int god_examines_item(object *god, object *item)
         sprintf(buf, "of %s", god->title);
         if (!strcmp(item->title, buf))
         {
-            if (item->env)
+            if (item->env &&
+                item->env->type == PLAYER)
             {
-                new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, item->env, "Heretic! You are using %s!", query_name_full(item, NULL));
+                new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, item->env, "Heretic! You are using %s!",
+                    QUERY_SHORT_NAME(item, item->env));
             }
             return -1;
         }

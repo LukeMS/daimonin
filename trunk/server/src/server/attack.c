@@ -553,7 +553,7 @@ int damage_ob(object *op, int dam, object *hitter, int env_attack)
         op->type == PLAYER)
     {
         char buf[SMALL_BUF];
-        strcpy(buf, query_name_full(hitter, NULL));
+        strcpy(buf, QUERY_SHORT_NAME(hitter, NULL));
         FREE_AND_COPY_HASH(CONTR(op)->killer, buf);
 
         // TODO: Add some more checks here to ensure that the player isn't trying to cheat the system (killing alts).
@@ -992,15 +992,18 @@ static int HitPlayerAttacktype(object *op, object *hitter, int *flags, int damag
                 dam = 1.0;
             SendAttackMsg(op, hitter, attacknum, (int) dam, damage);
             /*
-            if(random_roll(0, (int)dam+4) >
-            random_roll(0, 39)+2*tmp->magic) {
-            if(op->type == PLAYER)
-            new_draw_info(NDI_UNIQUE|NDI_RED,0, op,
-            "%s's acid corrodes %s!",
-            query_name_full(hitter, NULL), query_name_full(tmp, op));
-            flag = 1;
-            tmp->magic--;
-            esrv_send_item(tmp);
+            if (random_roll(0, (int)dam + 4) > random_roll(0, 39) + 2 * tmp->magic)
+            {
+                if (op->type == PLAYER)
+                {
+                    new_draw_info(NDI_UNIQUE | NDI_RED, 0, op, "%s's acid corrodes %s!",
+                        QUERY_SHORT_NAME(hitter, NULL),
+                        QUERY_SHORT_NAME(tmp, op));
+                }
+
+                flag = 1;
+                tmp->magic--;
+                esrv_send_item(tmp);
             }
             */
             break;
@@ -1379,7 +1382,7 @@ int kill_object(object *op, int dam, object *hitter, int typeX)
     int         maxdam              = 0;
     int         battleg             = 0;    /* true if op standing on battleground */
     mapstruct  *map;
-    char        *buf_ptr, buf2[MEDIUM_BUF];
+    char        group_buf[MEDIUM_BUF] = "";
 
     /* Object has been killed.  Lets clean it up */
     if (op->stats.hp <= 0)
@@ -1453,34 +1456,30 @@ int kill_object(object *op, int dam, object *hitter, int typeX)
             owner = hitter;
         battleg = op_on_battleground(op, NULL, NULL);
 
-        buf_ptr = NULL;
-
         /* Create kill message */
         if (owner->type == PLAYER)
         {
-            char        buf[MEDIUM_BUF];
-
-            /* old pet code */
-            /* if (owner != NULL)
-            {
-                sprintf(buf, "%s killed %s with %s%s.", hitter->owner->name, query_name_full(op, NULL), query_name_full(hitter, NULL),
-                    battleg ? " (duel)" : "");
-                old_hitter = hitter;
-                owner->skillgroup = hitter->skillgroup;
-                hitter = hitter->owner;
-            }*/
-            buf_ptr = buf2;
             if (owner != hitter)
             {
-                if(hitter->type == MONSTER && OBJECT_VALID(hitter->owner, hitter->owner_count))
+                if (hitter->type == MONSTER)
                 {
-                    sprintf(buf, "Your %s killed %s.", query_name_full(hitter, NULL), query_name_full(op, NULL));
-                    sprintf(buf2, "%s's %s killed %s.", query_name_full(owner, NULL), query_name_full(hitter, NULL), query_name_full(op, NULL));
+                    new_draw_info(NDI_WHITE, 0, owner, "%s killed %s!",
+                        query_name(hitter, NULL, ARTICLE_POSSESSIVE, 1),
+                        QUERY_SHORT_NAME(op, NULL));
+                    sprintf(group_buf, "%s's %s killed %s.",
+                        QUERY_SHORT_NAME(owner, NULL),
+                        query_name(hitter, NULL, ARTICLE_NONE, 1),
+                        QUERY_SHORT_NAME(op, NULL));
                 }
                 else
                 {
-                    sprintf(buf, "You killed %s with %s.", query_name_full(op, NULL), query_name_full(hitter, NULL));
-                    sprintf(buf2, "%s killed %s with %s.", query_name_full(owner, NULL), query_name_full(op, NULL), query_name_full(hitter, NULL));
+                    new_draw_info(NDI_WHITE, 0, owner, "You killed %s with %s!",
+                        QUERY_SHORT_NAME(op, NULL),
+                        query_name(hitter, NULL, ARTICLE_NONE, 1));
+                    sprintf(group_buf, "%s killed %s with %s.",
+                        QUERY_SHORT_NAME(owner, NULL),
+                        QUERY_SHORT_NAME(op, NULL),
+                        query_name(hitter, NULL, ARTICLE_NONE, 1));
                 }
 
                 old_hitter = hitter;
@@ -1488,17 +1487,19 @@ int kill_object(object *op, int dam, object *hitter, int typeX)
             }
             else
             {
-                sprintf(buf2, "%s killed %s.",  query_name_full(owner, NULL), query_name_full(op, NULL));
-                sprintf(buf, "You killed %s.", query_name_full(op, NULL));
+                new_draw_info(NDI_WHITE, 0, owner, "You killed %s!",
+                    QUERY_SHORT_NAME(op, NULL));
+                sprintf(group_buf, "%s killed %s.",
+                    QUERY_SHORT_NAME(owner, NULL),
+                    QUERY_SHORT_NAME(op, NULL));
             }
-            new_draw_info(NDI_WHITE, 0, owner, "%s", buf);
         }
 
         /* Give exp and create the corpse. Decide we get a loot or not */
         if (op->type != PLAYER)
         {
             if (!battleg)
-                corpse_owner = aggro_calculate_exp(op, owner, buf_ptr);
+                corpse_owner = aggro_calculate_exp(op, owner, (group_buf[0] != '\0') ? group_buf : NULL);
 
             op->speed = 0;
             update_ob_speed(op); /* remove from active list (if on) */
@@ -1764,7 +1765,9 @@ void poison_player(object *op, object *hitter, float dam)
                         tmp->stats.Wis = (sint8) (hitter->level / 10 + RANDOM() % (hitter->level * 8) / 100.0f + 2.0f);
                         tmp->stats.Wis *= -1;
                     }
-                    new_draw_info(NDI_UNIQUE, 0, op, "%s has poisoned you!", query_name_full(hitter, NULL));
+
+                    new_draw_info(NDI_UNIQUE, 0, op, "%s has poisoned you!",
+                        QUERY_SHORT_NAME(hitter, NULL));
                 }
                 tmp = check_obj_stat_buffs(tmp, op);
                 insert_ob_in_ob(tmp, op);
@@ -1782,10 +1785,12 @@ void poison_player(object *op, object *hitter, float dam)
                     SET_FLAG(tmp, FLAG_APPLIED);
                     fix_monster(op);
                     if (hitter->type == PLAYER)
-                        new_draw_info(NDI_UNIQUE, 0, hitter, "You poisoned %s!", query_name_full(op, NULL));
+                        new_draw_info(NDI_UNIQUE, 0, hitter, "You poisoned %s!",
+                            QUERY_SHORT_NAME(op, NULL));
                     else if (get_owner(hitter) && hitter->owner->type == PLAYER)
-                        new_draw_info(NDI_UNIQUE, 0, hitter->owner, "%s poisoned %s!", query_name_full(hitter, NULL),
-                                             query_name_full(op, NULL));
+                        new_draw_info(NDI_UNIQUE, 0, hitter->owner, "%s poisoned %s!",
+                            QUERY_SHORT_NAME(hitter, NULL),
+                            QUERY_SHORT_NAME(op, NULL));
                 }
             }
         }

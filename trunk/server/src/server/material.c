@@ -976,12 +976,13 @@ void material_attack_damage(object *op, int num, int chance, int base)
         mnaterial_dmg_jmp:
         /* we have an item, we can damage it - do it */
 
-        /*new_draw_info(NDI_UNIQUE, 0, op, "DAMAGE ITEM:: %s (%d)", query_name_full(item, NULL), item->item_condition);*/
+        /*new_draw_info(NDI_UNIQUE, 0, op, "DAMAGE ITEM:: %s (%d)", STRING_OBJ_NAME(item), item->item_condition);*/
         /* sanity check */
         if(item->item_condition > 0)
             item->item_condition--;
 
-        new_draw_info(NDI_UNIQUE, 0, op, "%s is damaged.", query_name_full(item, op));
+        new_draw_info(NDI_UNIQUE, 0, op, "%s is damaged.",
+            QUERY_SHORT_NAME(item, op));
         esrv_update_item(UPD_QUALITY, item);
         /* broken - unapply it - even its cursed */
         if(!item->item_condition)
