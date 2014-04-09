@@ -33,4 +33,5 @@ can_use_weapon 1
 is_player 1
 weight 85000
 food 750
+is_named 1
 end
