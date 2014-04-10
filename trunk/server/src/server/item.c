@@ -159,22 +159,8 @@ char * describe_item(const object *const op)
         player *pl = CONTR(op);
 
         describe_terrain(op, retbuf);
-
-        if (pl->gen_grace)
-        {
-            sprintf(buf, "(grace gain%+d%%)", pl->gen_grace);
-            strcat(retbuf, buf);
-        }
-        if (pl->gen_sp)
-        {
-            sprintf(buf, "(mana gain%+d%%)", pl->gen_sp);
-            strcat(retbuf, buf);
-        }
-        if (pl->gen_hp)
-        {
-            sprintf(buf, "(regeneration%+d%%)", pl->gen_hp);
-            strcat(retbuf, buf);
-        }
+        sprintf(strchr(retbuf, '\0'), "(regen: hp %+d, mana %+d, grace %+d)",
+            pl->gen_hp, pl->gen_sp, pl->gen_grace); 
     }
     else if (QUERY_FLAG(op, FLAG_MONSTER))
     {
@@ -234,30 +220,30 @@ char * describe_item(const object *const op)
             switch ((int) ((FABS(op->speed)) * 15))
             {
                 case 0:
-                  strcat(retbuf, "(very slow movement)");
+                  strcat(retbuf, "(very slow)");
                   break;
                 case 1:
-                  strcat(retbuf, "(slow movement)");
+                  strcat(retbuf, "(slow)");
                   break;
                 case 2:
-                  strcat(retbuf, "(normal movement)");
+                  strcat(retbuf, "(normal speed)");
                   break;
                 case 3:
                 case 4:
-                  strcat(retbuf, "(fast movement)");
+                  strcat(retbuf, "(fast)");
                   break;
                 case 5:
                 case 6:
-                  strcat(retbuf, "(very fast movement)");
+                  strcat(retbuf, "(very fast)");
                   break;
                 case 7:
                 case 8:
                 case 9:
                 case 10:
-                  strcat(retbuf, "(extremely fast movement)");
+                  strcat(retbuf, "(extremely fast)");
                   break;
                 default:
-                  strcat(retbuf, "(lightning fast movement)");
+                  strcat(retbuf, "(lightning fast)");
                   break;
             }
         }
@@ -447,57 +433,12 @@ char * describe_item(const object *const op)
 
                   if (op->last_eat <= 0)
                   {
-                      strcat(retbuf, "\nIt has no restorative qualities.");
+                      strcat(retbuf, "(no restorative qualities)");
                   }
                   else
                   {
-                      strcat(retbuf, "\nIf consumed it will ");
-
-                      if (op->stats.hp > 0)
-                      {
-                          sprintf(strchr(retbuf, '\0'), "restore %d hp%s",
-                                  op->last_eat * op->stats.hp,
-                                  (op->stats.sp > 0 && op->stats.grace > 0) ? "," : "");
-                      }
-
-                      if (op->stats.sp > 0)
-                      {
-                          sprintf(strchr(retbuf, '\0'), "%s%d mana%s",
-                                  (op->stats.hp > 0) ? " and " : "restore ",
-                                  op->last_eat * op->stats.sp,
-                                  (op->stats.hp > 0 && op->stats.grace > 0) ? "," : "");
-                      }
-
-                      if (op->stats.grace > 0)
-                      {
-                          sprintf(strchr(retbuf, '\0'), "%s%d grace",
-                                  (op->stats.hp > 0 || op->stats.sp > 0) ? " and " : "restore ",
-                                  op->last_eat * op->stats.grace);
-                      }
-
-                      if (op->stats.hp < 0)
-                      {
-                          sprintf(strchr(retbuf, '\0'), " but reduce %d hp%s",
-                                  ABS(op->last_eat * op->stats.hp),
-                                  (op->stats.sp < 0 && op->stats.grace < 0) ? "," : "");
-                      }
-
-                      if (op->stats.sp < 0)
-                      {
-                          sprintf(strchr(retbuf, '\0'), "%s%d mana%s",
-                                  (op->stats.hp < 0) ? " and " : " but reduce ",
-                                  ABS(op->last_eat * op->stats.sp),
-                                  (op->stats.hp < 0 && op->stats.grace < 0) ? "," : "");
-                      }
-
-                      if (op->stats.grace < 0)
-                      {
-                          sprintf(strchr(retbuf, '\0'), "%s%d grace",
-                                  (op->stats.hp < 0 || op->stats.sp < 0) ? " and " : " but reduce ",
-                                  ABS(op->last_eat * op->stats.grace));
-                      }
-
-                      sprintf(strchr(retbuf, '\0'), " over %d seconds.", op->last_eat);
+                      sprintf(strchr(retbuf, '\0'), "(health per second for %d seconds: hp %+d, mana %+d, grace %+d)",
+                          op->last_eat, op->stats.hp, op->stats.sp, op->stats.grace); 
                   }
               }
               break;
@@ -550,21 +491,8 @@ char * describe_item(const object *const op)
     /* some special info for some kind of identified items */
     if (id_true && more_info)
     {
-        if (op->stats.sp)
-        {
-            sprintf(buf, "(mana gain%+d%%)", op->stats.sp);
-            strcat(retbuf, buf);
-        }
-        if (op->stats.grace)
-        {
-            sprintf(buf, "(grace gain%+d%%)", op->stats.grace);
-            strcat(retbuf, buf);
-        }
-        if (op->stats.hp)
-        {
-            sprintf(buf, "(regeneration%+d%%)", op->stats.hp);
-            strcat(retbuf, buf);
-        }
+        sprintf(strchr(retbuf, '\0'), "(regen: hp %+d, mana %+d, grace %+d)",
+            op->stats.hp, op->stats.sp, op->stats.grace); 
     }
 
     /* here we deal with all the special flags */
@@ -623,22 +551,9 @@ char * describe_item(const object *const op)
         DESCRIBE_PATH(retbuf, op->path_attuned, "Attuned");
         DESCRIBE_PATH(retbuf, op->path_repelled, "Repelled");
         DESCRIBE_PATH(retbuf, op->path_denied, "Denied");
-
-        if (op->stats.maxhp && (op->type != HORN && op->type != ROD && op->type != WAND))
-        {
-            sprintf(buf, "(hp%+d)", op->stats.maxhp);
-            strcat(retbuf, buf);
-        }
-        if (op->stats.maxsp)
-        {
-            sprintf(buf, "(mana%+d)", op->stats.maxsp);
-            strcat(retbuf, buf);
-        }
-        if (op->stats.maxgrace)
-        {
-            sprintf(buf, "(grace%+d)", op->stats.maxgrace);
-            strcat(retbuf, buf);
-        }
+        sprintf(strchr(retbuf, '\0'), "(health: hp %+d, mana %+d, grace %+d)",
+            (op->type == HORN || op->type == ROD || op->type == WAND) ? 0 : op->stats.maxhp,
+            op->stats.maxsp, op->stats.maxgrace); 
     }
     return retbuf;
 }
