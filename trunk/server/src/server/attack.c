@@ -37,17 +37,42 @@
 #define ATTACK_RESIST_DAMAGE(_op, _anum)    dam=dam*((double)(100-_op->resist[_anum])*(double)0.01)
 
 /* resist use the same names as attacks - they map 1:1 to it */
-char *attack_name[NROFATTACKS] =
+attack_name_t attack_name[NROFATTACKS] =
 {
-    "impact", "slash", "cleave", "pierce",
-    "fire", "cold", "electricity", "poison", "acid", "sonic",
-    "channelling", "corruption", "psionic", "light", "shadow", "lifesteal",
-    "aether", "nether", "chaos", "death",
-    "weaponmagic", "godpower",
-    "drain", "depletion", "countermagic", "cancellation", "confusion", "fear", "slow", "paralyze", "snare",
-    "internal"
-};
-
+    { "IM", "impact" },
+    { "SL", "slash" },
+    { "CL", "cleave" },
+    { "PI", "pierce" },
+    { "FI", "fire" },
+    { "CO", "cold" },
+    { "EL", "electricity" },
+    { "PO", "poison" },
+    { "AC", "acid" },
+    { "SO", "sonic" },
+    { "CH", "channelling" },
+    { "CO", "corruption" },
+    { "PS", "psionic" },
+    { "LI", "light" },
+    { "SH", "shadow" },
+    { "LS", "lifesteal" },
+    { "AE", "aether" },
+    { "NE", "nether" },
+    { "CH", "chaos" },
+    { "DE", "death" },
+    { "WM", "weaponmagic" },
+    { "GO", "godpower" },
+    { "DR", "drain" },
+    { "DP", "depletion" },
+    { "CM", "countermagic" },
+    { "CA", "cancellation" },
+    { "CF", "confusion" },
+    { "FE", "fear" },
+    { "SL", "slow" },
+    { "PA", "paralyze" },
+    { "SN", "snare" },
+    { "??", "internal" },
+};    
+      
 /* If you want to weight things so certain resistances show up more often than
  * others, just add more entries in the table for the protections you want to
  * show up. */
@@ -765,12 +790,12 @@ static inline void send_resist_msg(object *op, object *hitter, int attacknum)
 {
     if (op->type == PLAYER)
     {
-        new_draw_info(NDI_GREY, 0, op, "You resist the %s attack!", attack_name[attacknum]);
+        new_draw_info(NDI_GREY, 0, op, "You resist the %s attack!", attack_name[attacknum].name);
     }
     /* i love C... ;) */
     if (hitter->type == PLAYER || ((hitter = get_owner(hitter)) && hitter->type == PLAYER))
     {
-        new_draw_info(NDI_GREY, 0, hitter, "%s resists the %s attack!", op->name, attack_name[attacknum]);
+        new_draw_info(NDI_GREY, 0, hitter, "%s resists the %s attack!", op->name, attack_name[attacknum].name);
     }
 }
 
@@ -1354,7 +1379,7 @@ static void SendAttackMsg(object *op, object *hitter, int attacknum, int dam,
     {
         new_draw_info(NDI_PURPLE, 0, op, "%s hits you for %d (%+d) damage with %s.",
                       hitter->name, (int)dam, ((int)dam) - damage,
-                      attack_name[attacknum]);
+                      attack_name[attacknum].name);
     }
 
     if (hitter->type == PLAYER ||
@@ -1363,7 +1388,7 @@ static void SendAttackMsg(object *op, object *hitter, int attacknum, int dam,
     {
         new_draw_info(NDI_ORANGE, 0, hitter, "You hit %s for %d (%+d) damage with %s.",
                       op->name, (int)dam, ((int)dam) - damage,
-                      attack_name[attacknum]);
+                      attack_name[attacknum].name);
     }
 }
 

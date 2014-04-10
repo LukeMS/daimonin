@@ -643,12 +643,12 @@ int change_abil(object *op, object *tmp)
             if (op->resist[i] > refop.resist[i])
             {
                 new_draw_info(NDI_UNIQUE | NDI_GREEN, 0, op, "Your resistance to %s rises to %d%%.",
-                              attack_name[i], op->resist[i]);
+                              attack_name[i].name, op->resist[i]);
             }
             else
             {
                 new_draw_info(NDI_UNIQUE | NDI_BLUE, 0, op, "Your resistance to %s drops to %d%%.",
-                              attack_name[i], op->resist[i]);
+                              attack_name[i].name, op->resist[i]);
             }
         }
     }
@@ -2258,7 +2258,7 @@ void dragon_level_gain(object *who)
         {
             /* apply new ability focus */
             new_draw_info(NDI_UNIQUE | NDI_BLUE, 0, who, "Your metabolism now focuses on %s!",
-                          attack_name[abil->last_eat]);
+                          attack_name[abil->last_eat].name);
 
             abil->stats.exp = abil->last_eat;
             abil->last_eat = 0;
@@ -2746,6 +2746,6 @@ void leech_hind(object *leecher, object *leechee, uint8 attack, sint16 plose,
     {
         new_draw_info(NDI_ORANGE, 0, leecher, "You hit %s for %d (%d) %s with %s. It is a leech attack!",
                       leechee->name, (int)plose, ((int)plose) - pmod, buf,
-                      attack_name[attack]);
+                      attack_name[attack].name);
     }
 }
