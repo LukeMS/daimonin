@@ -3748,13 +3748,6 @@ char *query_name(object *what, object *who, uint32 article, uint8 status)
     {
         switch (what->type)
         {
-            case CONTAINER:
-            if (what->title)
-            {
-                sprintf(strchr(cp, '\0'), " %s", what->title);
-            }
-            break;
-
             case SPELLBOOK:
             if (!what->title)
             {
@@ -3792,9 +3785,25 @@ char *query_name(object *what, object *who, uint32 article, uint8 status)
             sprintf(strchr(cp, '\0'), " (lvl %d)", what->level);
             break;
 
-            case TYPE_SKILL:
-            case AMULET:
             case RING:
+            case WEAPON:
+            case ARMOUR:
+            case BRACERS:
+            case HELMET:
+            case SHOULDER:
+            case LEGS:
+            case SHIELD:
+            case BOOTS:
+            case GLOVES:
+            case AMULET:
+            case GIRDLE:
+            case BOW:
+            case ARROW:
+            case CLOAK:
+            case FOOD:
+            case DRINK:
+            case FLESH:
+            case CONTAINER:
             if (!what->title )
             {
                 sprintf(strchr(cp, '\0'), " %s", describe_item(what));

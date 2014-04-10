@@ -200,7 +200,6 @@ int                         command_rskill(object *pl, char *params);
 int                         command_egobind ( object *pl, char *params);
 object                     *find_marked_object(object *op);
 char                       *examine_monster(object *op, object *tmp, char *buf, int flag);
-char                       *long_desc(object *tmp, object *caller);
 char                       *examine(object *op, object *tmp, int flag);
 void                        inventory(object *op, object *inv);
 /* c_party.c */
