@@ -93,10 +93,16 @@ typedef enum _attacks
 /* defines the last real damage attack in array above */
 #define LAST_ATNR_ATTACK (ATNR_GODPOWER)
 
+typedef struct attack_name_t
+{
+    char *abbr;
+    char *name;
+} attack_name_t;
+
 /* only the damage dealing attacks are covered by armour protections.
  * all attacks in the second part are effects and only covered from
  * resistance. */
-extern char *attack_name[NROFATTACKS];
+extern attack_name_t attack_name[NROFATTACKS];
 extern int   resist_table[];
 
 #define num_resist_table 58

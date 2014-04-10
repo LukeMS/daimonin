@@ -672,7 +672,7 @@ int command_resistances(object *op, char *params)
             continue;
 
         new_draw_info(NDI_UNIQUE, 0, op, "%-20s %+5d",
-                             attack_name[i], op->resist[i]);
+            attack_name[i].name, op->resist[i]);
     }
 
     return 0;

@@ -1669,7 +1669,7 @@ char * god_info_msg(int level, int booksize)
                 if (god->resist[tmpvar] == 100)
                 {
                     has_effect = 1;
-                    sprintf(tmpbuf + strlen(tmpbuf), "Immunity to %s", attack_name[tmpvar]);
+                    sprintf(tmpbuf + strlen(tmpbuf), "Immunity to %s", attack_name[tmpvar].name);
                 }
             }
             if (has_effect)

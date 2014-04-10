@@ -1241,14 +1241,14 @@ char *get_ob_diff(const object *op, const object *op2) {
 
   for (tmp=0; tmp < NROFATTACKS; tmp++) {
    if (op->resist[tmp] != op2->resist[tmp]) {
-	sprintf(buf2,"resist_%s %d\n",attack_name[tmp], op->resist[tmp]);
+	sprintf(buf2,"resist_%s %d\n",attack_name[tmp].name, op->resist[tmp]);
 	strcat(buf,buf2);
     }
   }
   /* resist_save[] holds the attack form also for attack_xx */
   for (tmp=0; tmp < NROFATTACKS; tmp++) {
    if (op->attack[tmp] != op2->attack[tmp]) {
-	sprintf(buf2,"attack_%s %d\n",attack_name[tmp], op->attack[tmp]);
+	sprintf(buf2,"attack_%s %d\n",attack_name[tmp].name, op->attack[tmp]);
 	strcat(buf,buf2);
     }
   }

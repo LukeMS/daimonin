@@ -55,14 +55,16 @@ char * describe_resistance(const object *const op, int newline)
                 if (!newline)
                     strcat(buf, "(resists: ");
             }
-            if (!newline)
-            {
-                if (!flag)
-                    strcat(buf, ", ");
-                sprintf(buf1, "%s %+d%%", attack_name[tmpvar], op->resist[tmpvar]);
-            }
             else
-                sprintf(buf1, "%s %d%%\n", attack_name[tmpvar], op->resist[tmpvar]);
+            {
+                if (!newline)
+                    strcat(buf, ", ");
+            }
+
+            sprintf(buf1, "%s%+d%%%c",
+                attack_name[tmpvar].abbr, op->resist[tmpvar],
+                (newline) ? '\n' :'\0');
+
             flag = 0;
             strcat(buf, buf1);
         }
@@ -95,14 +97,16 @@ char * describe_attack(const object *const op, int newline)
                 if (!newline)
                     strcat(buf, "(Attacks: ");
             }
-            if (!newline)
-            {
-                if (!flag)
-                    strcat(buf, ", ");
-                sprintf(buf1, "%s %+d%%", attack_name[tmpvar], op->attack[tmpvar]);
-            }
             else
-                sprintf(buf1, "%s %+d%%\n", attack_name[tmpvar], op->attack[tmpvar]);
+            {
+                if (!newline)
+                    strcat(buf, ", ");
+            }
+
+            sprintf(buf1, "%s%+d%%%c",
+                attack_name[tmpvar].abbr, op->attack[tmpvar],
+                (newline) ? '\n' :'\0');
+
             flag = 0;
             strcat(buf, buf1);
         }
@@ -418,7 +422,7 @@ char * describe_item(const object *const op)
               {
                   if (op->type == FLESH && op->last_eat > 0 && atnr_is_dragon_enabled(op->last_eat))
                   {
-                      sprintf(strchr(retbuf, '\0'), "(%s metabolism)", attack_name[op->last_eat]);
+                      sprintf(strchr(retbuf, '\0'), "(%s metabolism)", attack_name[op->last_eat].name);
                   }
 
                   if (op->stats.thac0)

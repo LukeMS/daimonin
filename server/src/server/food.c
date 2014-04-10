@@ -311,7 +311,7 @@ int dragon_eat_flesh(object *op, object *meal)
         skin->resist[i]++;
         FIX_PLAYER(op ,"dragon eat flesh - resist");
 
-        new_draw_info(NDI_UNIQUE | NDI_RED, 0, op, "Your skin is now more resistant to %s!", attack_name[i]);
+        new_draw_info(NDI_UNIQUE | NDI_RED, 0, op, "Your skin is now more resistant to %s!", attack_name[i].name);
     }
 
     /* if this flesh contains a new ability focus, we mark it
@@ -322,12 +322,12 @@ int dragon_eat_flesh(object *op, object *meal)
 
         if (meal->last_eat != abil->stats.exp)
         {
-            new_draw_info(NDI_UNIQUE, 0, op, "Your metabolism prepares to focus on %s!", attack_name[meal->last_eat]);
+            new_draw_info(NDI_UNIQUE, 0, op, "Your metabolism prepares to focus on %s!", attack_name[meal->last_eat].name);
             new_draw_info(NDI_UNIQUE, 0, op, "The change will happen at level %d", abil->level + 1);
         }
         else
         {
-            new_draw_info(NDI_UNIQUE, 0, op, "Your metabolism will continue to focus on %s.", attack_name[meal->last_eat]);
+            new_draw_info(NDI_UNIQUE, 0, op, "Your metabolism will continue to focus on %s.", attack_name[meal->last_eat].name);
             abil->last_eat = 0;
         }
     }
