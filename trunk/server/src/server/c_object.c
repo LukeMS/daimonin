@@ -337,71 +337,6 @@ char *examine_monster(object *op, object *tmp, char *buf, int flag)
     return buf;
 }
 
-char * long_desc(object *tmp, object *caller)
-{
-    static char buf[LARGE_BUF];
-    char       *cp;
-
-    if (tmp == NULL)
-        return "";
-    buf[0] = '\0';
-
-    switch (tmp->type)
-    {
-        case RING:
-        case TYPE_SKILL:
-        case WEAPON:
-        case ARMOUR:
-        case BRACERS:
-        case HELMET:
-        case SHOULDER:
-        case LEGS:
-        case SHIELD:
-        case BOOTS:
-        case GLOVES:
-        case AMULET:
-        case GIRDLE:
-        case POTION:
-        case BOW:
-        case ARROW:
-        case CLOAK:
-        case FOOD:
-        case DRINK:
-        case HORN:
-        case WAND:
-        case ROD:
-        case FLESH:
-        case CONTAINER:
-          if (*(cp = describe_item(tmp)) != '\0')
-          {
-              int   len;
-
-              strncat(buf, QUERY_SHORT_NAME(tmp, caller), LARGE_BUF - 1);
-
-              buf[LARGE_BUF - 1] = 0;
-              len = strlen(buf);
-              if (len < LARGE_BUF - 5 && ((tmp->type != AMULET && tmp->type != RING) || tmp->title))
-              {
-                  /* Since we know the length, we save a few cpu cycles by using
-                            * it instead of calling strcat */
-                  strcpy(buf + len, " ");
-                  len++;
-                  strncpy(buf + len, cp, LARGE_BUF - len - 1);
-                  buf[LARGE_BUF - 1] = 0;
-              }
-          }
-          break;
-    }
-
-    if (buf[0] == '\0')
-    {
-        strncat(buf, QUERY_SHORT_NAME(tmp, caller), LARGE_BUF - 1);
-        buf[LARGE_BUF - 1] = 0;
-    }
-
-    return buf;
-}
-
 char *examine(object *op, object *tmp, int flag)
 {
     char    *buf_out = global_string_buf4096;
@@ -431,7 +366,9 @@ char *examine(object *op, object *tmp, int flag)
     *buf='\0';
     if(flag)
     {
-        sprintf(buf, "That is %s", long_desc(tmp, op));
+        sprintf(buf, "%s %s",
+            (tmp->nrof > 1) ? "Those are" : "That is",
+            QUERY_SHORT_NAME(tmp, op));
     }
 
     if (op && op->type == PLAYER && tmp->type == FLESH)

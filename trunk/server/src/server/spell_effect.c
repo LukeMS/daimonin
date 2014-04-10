@@ -1991,7 +1991,9 @@ int cast_identify(object *op, int level, object *single_ob, int mode)
                 identify(tmp);
                 if (op->type == PLAYER)
                 {
-                    new_draw_info(NDI_UNIQUE, 0, op, "You have %s.", long_desc(tmp, op));
+                    new_draw_info(NDI_UNIQUE, 0, op, "You have %s.",
+                        QUERY_SHORT_NAME(tmp, op));
+
                     if (tmp->msg)
                     {
                         new_draw_info(NDI_UNIQUE, 0, op, "The item has a story:\n%s", tmp->msg);
@@ -2016,21 +2018,27 @@ int cast_identify(object *op, int level, object *single_ob, int mode)
      *
     if(IDENTIFY_MODE_ALL)
     {
-      for(tmp = GET_MAP_OB(op->map,op->x,op->y);tmp!=NULL;tmp=tmp->above)
-      if (!QUERY_FLAG(tmp, FLAG_IDENTIFIED) &&
-          !QUERY_FLAG(tmp, FLAG_SYS_OBJECT) &&
-          need_identify(tmp))
-      {
-        identify(tmp);
-        if (op->type==PLAYER) {
-            new_draw_info(NDI_UNIQUE, 0,op,
-                "On the ground is %s.", long_desc(tmp, op));
-            if (tmp->msg) {
-              new_draw_info(NDI_UNIQUE, 0,op, "The item has a story:\n%s", tmp->msg);
+        for (tmp = GET_MAP_OB(op->map, op->x, op->y); tmp; tmp = tmp->above)
+        if (!QUERY_FLAG(tmp, FLAG_IDENTIFIED) &&
+            !QUERY_FLAG(tmp, FLAG_SYS_OBJECT) &&
+            need_identify(tmp))
+        {
+            identify(tmp);
+
+            if (op->type == PLAYER)
+            {
+                new_draw_info(NDI_UNIQUE, 0, op, "On the ground %s %s.",
+                    (tmp->nrof > 1) ? "are" : "is", QUERY_SHORT_NAME(tmp, op));
+
+                if (tmp->msg)
+                {
+                    new_draw_info(NDI_UNIQUE, 0, op, "The item has a story:\n%s",
+                        tmp->msg);
+                }
+
+                esrv_send_item(tmp);
             }
-            esrv_send_item(tmp);
         }
-      }
     }
     */
     if (op->type == PLAYER && (!success && !success2))

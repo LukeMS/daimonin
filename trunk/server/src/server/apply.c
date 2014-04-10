@@ -80,7 +80,8 @@ static void ApplyIdAltar(object *money, object *altar, object *pl)
         if (operate_altar(altar, &money))
         {
             identify(marked);
-            new_draw_info(NDI_UNIQUE, 0, pl, "You have %s.", long_desc(marked, pl));
+            new_draw_info(NDI_UNIQUE, 0, pl, "You have %s.",
+                QUERY_SHORT_NAME(marked, pl));
             if (marked->msg)
             {
                 new_draw_info(NDI_UNIQUE, 0, pl, "The item has a story:\n%s", marked->msg);
@@ -99,7 +100,8 @@ static void ApplyIdAltar(object *money, object *altar, object *pl)
             if (operate_altar(altar, &money))
             {
                 identify(id);
-                new_draw_info(NDI_UNIQUE, 0, pl, "You have %s.", long_desc(id, pl));
+                new_draw_info(NDI_UNIQUE, 0, pl, "You have %s.",
+                    QUERY_SHORT_NAME(id, pl));
                 if (id->msg)
                 {
                     new_draw_info(NDI_UNIQUE, 0, pl, "The item has a story:\n%s", id->msg);
