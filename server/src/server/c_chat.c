@@ -310,7 +310,6 @@ int command_describe(object *op, char *params)
     /* TODO: Make this support channels, like "/describe tell XYZ", "/describe auction".
      * ATM shout is all that's supported.
      */
-    char levelstring[SMALL_BUF];
 
     if(!check_mute(op, MUTE_MODE_SHOUT))
         return 0;
@@ -320,24 +319,9 @@ int command_describe(object *op, char *params)
     if (!targetob) // Don't do anything if there is no marked item.
         return 0;
 
-    if (targetob->item_level)
-    {
-        if (targetob->item_skill)
-        {
-            sprintf(levelstring, "(req. level %d in %s)", targetob->item_level,
-                STRING_SAFE(CONTR(op)->skillgroup_ptr[targetob->item_skill-1]->name));
-        }
-        else
-        {
-            sprintf(levelstring, "(req. level %d)", targetob->item_level);
-        }
-    }
-
-    new_draw_info(NDI_SHOUT | NDI_PLAYER | NDI_UNIQUE | NDI_ALL | NDI_ORANGE, 1, NULL, "%s describes: ~%s~ -- %s%s(examine worth: %s)",
+    new_draw_info(NDI_SHOUT | NDI_PLAYER | NDI_UNIQUE | NDI_ALL | NDI_ORANGE, 1, NULL, "%s describes: %s (examine worth: %s)",
         QUERY_SHORT_NAME(op, NULL),
-        QUERY_SHORT_NAME(targetob, op),
-        describe_item(targetob),
-        (targetob->item_level) ? levelstring : "",
+        query_name(targetob, op, targetob->nrof, 1),
         cost_string_from_value(targetob->value, COSTSTRING_SHORT));
 
     return 0;
