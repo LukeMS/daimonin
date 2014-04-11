@@ -35,8 +35,9 @@
 
 /* Tests any object for gmaster_mode. */
 #define GET_GMASTER_MODE(_WHO_) \
-    (((_WHO_)->type == PLAYER && \
-     CONTR((_WHO_))) ? CONTR((_WHO_))->gmaster_wizpass : GMASTER_MODE_NO)
+    (!(_WHO_) || \
+     (_WHO_)->type != PLAYER || \
+     !CONTR((_WHO_))) ? GMASTER_MODE_NO : CONTR((_WHO_))->gmaster_mode
 
 /* Tests if an *object* (use pl->ob if we already have a player struct --
  * eventually this should expect a player struct as input but for now many
