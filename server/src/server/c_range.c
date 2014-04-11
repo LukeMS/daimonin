@@ -92,87 +92,6 @@ float fire_magic_tool(object *op, object *weap, int dir)
     return ticks;
 }
 
-
-/* object *op is the caster, params is the spell name.  We return the index
- * value of the spell in the spells array for a match, -1 if there is no
- * match, -2 if there are multiple matches.  Note that 0 is a valid entry, so
- * we can't use that as failure.
- *
- * Modified 03/24/98 - extra parameter 'options' specifies if the search is
- * done with the length of the input spell name, or the length of the stored
- * spell name.  This allows you to find out if the spell name entered had
- * extra optional parameters at the end (ie: marking rune <text>)
- *
- */
-static int find_spell_byname(object *op, char *params, int options)
-{
-    int numknown; /* number of spells known by op */
-    int spnum;  /* number of spell that is being cast */
-    int match = -1, i;
-    unsigned int paramlen = 0;
-
-    numknown = (IS_GMASTER_WIZ(op)) ? NROFREALSPELLS : CONTR(op)->nrofknownspells;
-
-    for (i = 0; i < numknown; i++)
-    {
-        spnum = (IS_GMASTER_WIZ(op)) ? i : CONTR(op)->known_spells[i];
-
-        if (!options)
-            paramlen = strlen(params);
-
-        if (!strncmp(params, spells[spnum].name, options ? strlen(spells[spnum].name) : paramlen))
-        {
-            /* We already found a match previously - thus params is not
-               * not unique, so return -2 stating this.
-               */
-            if (match >= 0)
-                return -2;
-            else
-                match = spnum;
-        }
-    }
-    return match;
-}
-
-
-/* Shows all spells that op knows.  If params is supplied, the must match
- * that.  If cleric is 1, show cleric spells, if not set, show mage
- * spells.
- */
-/* disabled - we have now spell list in client
-static void show_matching_spells(object *op, char *params, int cleric)
-{
-    int i,spnum,first_match=0;
-    char lev[80], cost[80];
-
-    for (i = 0; i < (IS_GMASTER_WIZ(op)) ? NROFREALSPELLS : CONTR(op)->nrofknownspells; i++) {
-    spnum = (IS_GMASTER_WIZ(op)) ? i : CONTR(op)->known_spells[i];
-    if (spells[spnum].type != (unsigned int) cleric) continue;
-    if (params && strncmp(spells[spnum].name,params, strlen(params)))
-        continue;
-    if (!first_match) {
-        first_match=1;
-        if (!cleric)
-        new_draw_info(NDI_UNIQUE, 0, op, "Mage spells");
-        else
-        new_draw_info(NDI_UNIQUE, 0, op, "Priest spells");
-        new_draw_info(NDI_UNIQUE, 0,op,"[ sp] [lev] spell name");
-    }
-    if (spells[spnum].path & op->path_denied) {
-        strcpy(lev,"den");
-            strcpy(cost,"den");
-    } else {
-        sprintf(lev,"%3d",spells[spnum].level);
-            sprintf(cost,"%3d",SP_level_spellpoint_cost(op,op,spnum));
-        }
-
-    new_draw_info(NDI_UNIQUE,0,op,"[%s] [%s] %s",
-        cost, lev, spells[spnum].name);
-    }
-}
-
-*/
-
 /* sets up to cast a spell.  op is the caster, params is the spell name,
  * This function use the name of a spell following the /cast command
  * to invoke a spell (cast_spell() does the rest).
@@ -182,16 +101,13 @@ static void show_matching_spells(object *op, char *params, int cleric)
 
 int command_cast_spell(object *op, char *params)
 {
-    char       *cp              = NULL;
-    int         spnum = -1, spnum2 = -1;  /* number of spell that is being cast */
-    int         value;
-    float       ticks;
+    player *pl;
+    int     spnum;
+    int     value;
 
-    if (!IS_GMASTER_WIZ(op) &&
-        !CONTR(op)->nrofknownspells)
+    if (!op ||
+        !(pl = CONTR(op)))
     {
-        new_draw_info(NDI_UNIQUE, 0, op, "You don't know any spells.");
-
         return 0;
     }
 
@@ -199,11 +115,11 @@ int command_cast_spell(object *op, char *params)
         return 1;
 
     /* When we control a golem we can't cast again - if we do, it breaks control */
-    if (CONTR(op)->golem != NULL)
+    if (pl->golem)
     {
-        send_golem_control(CONTR(op)->golem, GOLEM_CTR_RELEASE);
-        destruct_ob(CONTR(op)->golem);
-        CONTR(op)->golem = NULL;
+        send_golem_control(pl->golem, GOLEM_CTR_RELEASE);
+        destruct_ob(pl->golem);
+        pl->golem = NULL;
     }
 
     /* This assumes simply that if the name of
@@ -217,40 +133,29 @@ int command_cast_spell(object *op, char *params)
      * anything after the length of the actual spell name is extra options
      * typed in by the player (ie: marking rune Hello there)
      */
-    if (((spnum2 = spnum = find_spell_byname(op, params, 0)) < 0) && ((spnum = find_spell_byname(op, params, 1)) >= 0))
-    {
-        params[strlen(spells[spnum].name)] = '\0';
-        cp = &params[strlen(spells[spnum].name) + 1];
-        if (strncmp(cp, "of ", 3) == 0)
-            cp += 3;
-    }
-
     /* we don't know this spell name */
-    if (spnum == -1)
+    if ((spnum = look_up_spell_by_name(op, params)) == -1)
     {
         new_draw_info(NDI_UNIQUE, 0, op, "You don't know the spell %s.", params);
-
         return 0;
     }
 
-
-    if (!change_skill(op, (spells[spnum].type == SPELL_TYPE_PRIEST ? SK_DIVINE_PRAYERS : SK_WIZARDRY_SPELLS)))
+    if (!change_skill(op, (spells[spnum].type == SPELL_TYPE_PRIEST ? SK_DIVINE_PRAYERS : SK_WIZARDRY_SPELLS)) &&
+        !(pl->gmaster_mode & GMASTER_MODE_SA))
     {
-        if (!IS_GMASTER_WIZ(op))
-        {
-            return 0;
-        }
+        return 0;
     }
 
     /* we still recover from a casted spell before */
     if (!check_skill_action_time(op, op->chosen_skill))
         return 0;
 
-    value = cast_spell(op, op, op->facing, spnum, 0, spellNormal, cp);
+    value = cast_spell(op, op, op->facing, spnum, 0, spellNormal, NULL);
 
     if (value)
     {
-        ticks = (float) (spells[spnum].time) * RANGED_DELAY_TIME;
+        float ticks = (float) (spells[spnum].time) * RANGED_DELAY_TIME;
+
         LOG(llevDebug, "AC-spells(%d): %2.2f\n", spnum, ticks);
         set_action_time(op, ticks);
 

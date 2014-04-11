@@ -1028,7 +1028,11 @@ int cast_spell(object *op, object *caster, int dir, int type, int ability, Spell
 
     if (op->type == PLAYER)
     {
-        pl = CONTR(op);
+        if (!(pl = CONTR(op)))
+        {
+            return 0;
+        }
+
         guild = pl->guild_force;
     }
 
@@ -1082,14 +1086,9 @@ int cast_spell(object *op, object *caster, int dir, int type, int ability, Spell
         return 0;
     }
 
-    if (op->type == PLAYER)
+    if (pl &&
+        !(pl->gmaster_mode & GMASTER_MODE_SA))
     {
-
-        if (!pl)
-        {
-            return 0;
-        }
-
         if (guild && !item)
         {
             if ((guild->weight_limit & GUILD_NO_MAGIC) &&
@@ -1107,12 +1106,8 @@ int cast_spell(object *op, object *caster, int dir, int type, int ability, Spell
                 return 0;
             }
         }
-    }
 
-
-    /* ok... its item == spellNPC then op is the target of this spell  */
-    if (op->type == PLAYER)
-    {
+        /* ok... its item == spellNPC then op is the target of this spell  */
         pl->rest_mode = 0;
 
         /* cancel player spells which are denied - only real spells (not potion, wands, ...) */
@@ -1124,54 +1119,48 @@ int cast_spell(object *op, object *caster, int dir, int type, int ability, Spell
                 return 0;
             }
 
-            if (!IS_GMASTER_WIZ(op) &&
-                pl && guild &&
+            if (guild &&
                 ((guild->level) ? guild->level < s->level : s->level > 0))
             {
                 new_draw_info(NDI_UNIQUE, 0, op, "That spell is too difficult for you to cast. %d %d",
-                               (guild->level) ? guild->level : 255, s->level);
-
+                    (guild->level) ? guild->level : 255, s->level);
                 return 0;
             }
 
-            if (!IS_GMASTER_WIZ(op))
+            if (!(spells[type].flags & SPELL_DESC_WIS))
             {
-                if (!(spells[type].flags & SPELL_DESC_WIS)
-                 && op->stats.sp < (points_used = SP_level_spellpoint_cost(op, caster, type)))
+                if (op->stats.sp < (points_used = SP_level_spellpoint_cost(op, caster, type)))
                 {
                     new_draw_info(NDI_UNIQUE, 0, op, "You don't have enough mana.");
                     return 0;
                 }
-
-                if ((spells[type].flags & SPELL_DESC_WIS)
-                 && op->stats.grace < (points_used = SP_level_spellpoint_cost(op, caster, type)))
+            }
+            else
+            {
+                if (op->stats.grace < (points_used = SP_level_spellpoint_cost(op, caster, type)))
                 {
                     new_draw_info(NDI_UNIQUE, 0, op, "You don't have enough grace.");
                     return 0;
                 }
             }
-        }
 
-        /* if it a prayer, grab the players god - if we have non, we can't cast - except potions */
-        if (spells[type].flags & SPELL_DESC_WIS && item != spellPotion)
-        {
-            if ((godname = determine_god(op)) == shstr_cons.none)
+            /* If it is an ability, assume that the designer of the archetype knows what they are doing.*/
+            if (!ability &&
+                SK_level(caster) < s->level)
             {
-                new_draw_info(NDI_UNIQUE, 0, op, "You need a deity to cast a prayer!");
+                new_draw_info(NDI_UNIQUE, 0, op, "You lack enough skill to cast that spell.");
                 return 0;
             }
         }
-    }
 
-    /* If it is an ability, assume that the designer of the archetype knows what they are doing.*/
-    if (!IS_GMASTER_WIZ(op) &&
-        item == spellNormal &&
-        !ability &&
-        SK_level(caster) < s->level)
-    {
-        if (op->type == PLAYER)
-            new_draw_info(NDI_UNIQUE, 0, op, "You lack enough skill to cast that spell.");
-        return 0;
+        /* if it a prayer, grab the players god - if we have non, we can't cast - except potions */
+        if ((spells[type].flags & SPELL_DESC_WIS) &&
+            item != spellPotion &&
+            (godname = determine_god(op)) == shstr_cons.none)
+        {
+            new_draw_info(NDI_UNIQUE, 0, op, "You need a deity to cast a prayer!");
+            return 0;
+        }
     }
 
     /* ok.... now we are sure we are able to cast.
@@ -3590,6 +3579,7 @@ int create_aura(object *op, object *caster, archetype *aura_arch, int spell_type
 
 int look_up_spell_by_name(object *op, const char *spname)
 {
+    int gmaster_mode = GET_GMASTER_MODE(op);
     int numknown;
     int spnum;
     int plen;
@@ -3601,35 +3591,12 @@ int look_up_spell_by_name(object *op, const char *spname)
         return -1;
     }
 
-    if (!op)
-    {
-        numknown = NROFREALSPELLS;
-    }
-    else if (IS_GMASTER_WIZ(op))
-    {
-        numknown = NROFREALSPELLS;
-    }
-    else
-    {
-        numknown = CONTR(op)->nrofknownspells;
-    }
-
+    numknown = ((gmaster_mode & GMASTER_MODE_SA)) ? NROFREALSPELLS : CONTR(op)->nrofknownspells;
     plen = strlen(spname);
+
     for (i = 0; i < numknown; i++)
     {
-        if (!op)
-        {
-            spnum = i;
-        }
-        else if (IS_GMASTER_WIZ(op))
-        {
-            spnum = i;
-        }
-        else
-        {
-            spnum = CONTR(op)->known_spells[i];
-        }
-
+        spnum = ((gmaster_mode & GMASTER_MODE_SA)) ? i : CONTR(op)->known_spells[i];
         spellen = strlen(spells[spnum].name);
 
         if (strncmp(spname, spells[spnum].name, MIN(spellen, plen)) == 0)
