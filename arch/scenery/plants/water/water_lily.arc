@@ -3,6 +3,7 @@ name water lily
 layer 4
 face water_lily1.101
 no_pick 1
+weight 100
 no_teleport 1
 type 79
 end
@@ -11,6 +12,7 @@ name water lily
 layer 4
 face water_lily2.101
 no_pick 1
+weight 100
 no_teleport 1
 type 79
 end
@@ -19,6 +21,7 @@ name water lily
 layer 4
 face water_lily3.101
 no_pick 1
+weight 100
 no_teleport 1
 type 79
 end

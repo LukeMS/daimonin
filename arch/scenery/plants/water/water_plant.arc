@@ -3,6 +3,7 @@ name water plant
 layer 4
 face water_plant1.101
 no_pick 1
+weight 100
 no_teleport 1
 type 79
 end
@@ -11,6 +12,7 @@ name water plant
 layer 4
 face water_plant2.101
 no_pick 1
+weight 100
 no_teleport 1
 type 79
 end
@@ -19,6 +21,7 @@ name water plant
 layer 4
 face water_plant3.101
 no_pick 1
+weight 100
 no_teleport 1
 type 79
 end
@@ -27,6 +30,7 @@ name water plant
 layer 4
 face water_plant4.101
 no_pick 1
+weight 100
 no_teleport 1
 type 79
 end
@@ -35,6 +39,7 @@ name water plant
 layer 4
 face water_plant5.101
 no_pick 1
+weight 100
 no_teleport 1
 type 79
 end
@@ -43,6 +48,7 @@ name water plant
 layer 4
 face water_plant6.101
 no_pick 1
+weight 100
 no_teleport 1
 type 79
 end

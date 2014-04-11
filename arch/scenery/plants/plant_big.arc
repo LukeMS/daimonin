@@ -6,6 +6,7 @@ type 79
 mpart_id 1
 layer 5
 no_pick 1
+weight 200
 end
 More
 Object plant_big1b

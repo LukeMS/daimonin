@@ -7,5 +7,6 @@ is_animated 1
 anim_speed 4
 speed 1
 no_pick 1
+weight 200
 type 79
 end
