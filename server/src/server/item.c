@@ -320,7 +320,12 @@ char * describe_item(const object *const op)
             case RING:
             case AMULET:
             case FORCE:
-              more_info = 1;
+             if (op->stats.hp ||
+                 op->stats.sp ||
+                 op->stats.grace)
+             {
+                 more_info = 1;
+             }
 
             case BOW:
             case ARROW:
@@ -570,9 +575,17 @@ char * describe_item(const object *const op)
         DESCRIBE_PATH(retbuf, op->path_attuned, "Attuned");
         DESCRIBE_PATH(retbuf, op->path_repelled, "Repelled");
         DESCRIBE_PATH(retbuf, op->path_denied, "Denied");
-        sprintf(strchr(retbuf, '\0'), "(health: hp %+d, mana %+d, grace %+d)",
-            (op->type == HORN || op->type == ROD || op->type == WAND) ? 0 : op->stats.maxhp,
-            op->stats.maxsp, op->stats.maxgrace); 
+
+        if ((op->type != HORN &&
+             op->type != ROD &&
+             op->type != WAND) &&
+            (op->stats.maxhp ||
+             op->stats.maxsp ||
+             op->stats.maxgrace))
+        {
+            sprintf(strchr(retbuf, '\0'), "(health: hp %+d, mana %+d, grace %+d)",
+                op->stats.maxhp, op->stats.maxsp, op->stats.maxgrace); 
+        }
     }
     return retbuf;
 }
