@@ -368,7 +368,7 @@ char *examine(object *op, object *tmp, int flag)
     {
         sprintf(buf, "%s %s",
             (tmp->nrof > 1) ? "Those are" : "That is",
-            QUERY_SHORT_NAME(tmp, op));
+            query_name(tmp, op, tmp->nrof, 1));
     }
 
     if (op && op->type == PLAYER && tmp->type == FLESH)

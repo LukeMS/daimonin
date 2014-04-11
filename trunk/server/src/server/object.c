@@ -3785,30 +3785,10 @@ char *query_name(object *what, object *who, uint32 article, uint8 status)
             sprintf(strchr(cp, '\0'), " (lvl %d)", what->level);
             break;
 
-            case RING:
-            case WEAPON:
-            case ARMOUR:
-            case BRACERS:
-            case HELMET:
-            case SHOULDER:
-            case LEGS:
-            case SHIELD:
-            case BOOTS:
-            case GLOVES:
-            case AMULET:
-            case GIRDLE:
-            case BOW:
-            case ARROW:
-            case CLOAK:
-            case FOOD:
-            case DRINK:
-            case FLESH:
-            case CONTAINER:
-            if (!what->title )
-            {
-                sprintf(strchr(cp, '\0'), " %s", describe_item(what));
-            }
-            else
+            case PLAYER:
+            case MONSTER:
+            case TYPE_BASE_INFO:
+            if (what->title)
             {
                 sprintf(strchr(cp, '\0'), " %s", what->title);
             }
@@ -3817,11 +3797,7 @@ char *query_name(object *what, object *who, uint32 article, uint8 status)
             default:
             if (what->magic)
             {
-                if (!IS_LIVE(what) &&
-                    what->type != TYPE_BASE_INFO)
-                {
-                    sprintf(strchr(cp, '\0'), " %+d", what->magic);
-                }
+                sprintf(strchr(cp, '\0'), " %+d", what->magic);
             }
 
             if (what->title)
@@ -3932,6 +3908,35 @@ char *query_name(object *what, object *who, uint32 article, uint8 status)
     if (!status)
     {
         return cp;
+    }
+
+    /* TODO: This will be handled differently in future. */
+    switch (what->type)
+    {
+        case RING:
+        case WEAPON:
+        case ARMOUR:
+        case BRACERS:
+        case HELMET:
+        case SHOULDER:
+        case LEGS:
+        case SHIELD:
+        case BOOTS:
+        case GLOVES:
+        case AMULET:
+        case GIRDLE:
+        case BOW:
+        case ARROW:
+        case CLOAK:
+        case FOOD:
+        case DRINK:
+        case FLESH:
+        case CONTAINER:
+        if (!what->title)
+        {
+            sprintf(strchr(cp, '\0'), " %s", describe_item(what));
+        }
+        break;
     }
 
     /* TODO: I believe this is only of interest if (who && what->env == who).

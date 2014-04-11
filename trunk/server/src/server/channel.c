@@ -277,7 +277,6 @@ int command_channel(object *ob, char *params)
     else if (mode == '$')
     {
         char buf[HUGE_BUF];
-        char levelstring[SMALL_BUF];
 
         object *targetob = CONTR(ob)->mark;
 
@@ -293,31 +292,9 @@ int command_channel(object *ob, char *params)
             return 0;
         }
 
-        if (targetob->item_level)
-        {
-            if (targetob->item_skill)
-            {
-                sprintf(levelstring, "(req. level %d in %s)", targetob->item_level,
-                    STRING_SAFE(CONTR(ob)->skillgroup_ptr[targetob->item_skill-1]->name));
-            }
-            else
-            {
-                sprintf(levelstring, "(req. level %d)", targetob->item_level);
-            }
-        }
-
-        if (targetob->item_level)
-        {
-            sprintf(buf, "%s -- %s%s(examine worth: %s)",
-                QUERY_SHORT_NAME(targetob, ob), describe_item(targetob),
-                levelstring, cost_string_from_value(targetob->value * targetob->nrof, COSTSTRING_SHORT));
-        }
-        else
-        {
-            sprintf(buf, "%s -- %s(examine worth: %s)",
-                QUERY_SHORT_NAME(targetob, ob), describe_item(targetob),
-                cost_string_from_value(targetob->value * targetob->nrof, COSTSTRING_SHORT));
-        }
+        sprintf(buf, "%s (examine worth: %s)",
+            query_name(targetob, ob, targetob->nrof, 1),
+            cost_string_from_value(targetob->value * targetob->nrof, COSTSTRING_SHORT));
 
         if (check_channel_mute(pl_channel))
         {

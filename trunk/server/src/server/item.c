@@ -257,6 +257,21 @@ char * describe_item(const object *const op)
         if (QUERY_FLAG(op, FLAG_IDENTIFIED) || QUERY_FLAG(op, FLAG_BEEN_APPLIED) || !need_identify(op))
             id_true = TRUE; /* we only need calculate this one time */
 
+        if (op->item_level)
+        {
+            if (op->item_skill)
+            {
+                sprintf(strchr(retbuf, '\0'), "(req. level %d in %s)",
+                    op->item_level,
+                    STRING_OBJ_NAME(skillgroups[op->item_skill - 1]));
+            }
+            else
+            {
+                sprintf(strchr(retbuf, '\0'), "(req. level %d)",
+                    op->item_level);
+            }
+        }
+
         /* terrain flags have no double use... if valid, show them */
         if (id_true && op->terrain_type)
             describe_terrain(op, retbuf);
