@@ -801,7 +801,7 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
         pl->gmaster_mode = GMASTER_MODE_NO;
     }
 
-    if (!pl->gmaster_wiz)
+    if (!(pl->gmaster_mode & GMASTER_MODE_SA))
     {
         esrv_send_inventory(pl, op);
         esrv_send_below(pl);

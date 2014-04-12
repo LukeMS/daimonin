@@ -442,8 +442,7 @@ void draw_client_map2(object *pl)
                     clayer[i] = GET_MAP_SPACE_GMASTER_CLAYER(msp, i);
                 }
             }
-            else if (pl_ptr->gmaster_wiz ||
-                     QUERY_FLAG(pl, FLAG_SEE_INVISIBLE))
+            else if (QUERY_FLAG(pl, FLAG_SEE_INVISIBLE))
             {
                 for (i = 0; i < NROF_CLAYERS; i++)
                 {

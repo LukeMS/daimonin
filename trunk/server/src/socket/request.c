@@ -154,8 +154,8 @@ void send_target_command(player *pl)
             tmp[1] = NDI_YELLOW;
     }
 
-    /* some nice extra info for DM's */
-    if (IS_GMASTER_WIZ(pl->ob))
+    /* some nice extra info for SA/MMs. */
+    if ((pl->gmaster_mode & (GMASTER_MODE_SA | GMASTER_MODE_MM)))
     {
         char    buf[TINY_BUF];
         sprintf(buf, "(lvl %d)", pl->target_object->level);
@@ -184,11 +184,11 @@ void send_spelllist_cmd(object *op, char *spellname, int mode)
     }
     else
     {
-        int i, n = (pl->gmaster_wiz) ? NROFREALSPELLS : pl->nrofknownspells;
+        int i, n = ((pl->gmaster_mode & GMASTER_MODE_SA)) ? NROFREALSPELLS : pl->nrofknownspells;
 
         for (i = 0; i < n; i++)
         {
-            int spnum = (pl->gmaster_wiz) ? i : pl->known_spells[i];
+            int spnum = ((pl->gmaster_mode & GMASTER_MODE_SA)) ? i : pl->known_spells[i];
 
             sprintf(strchr(tmp, '\0'), "/%s", spells[spnum].name);
         }
