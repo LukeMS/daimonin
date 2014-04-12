@@ -554,8 +554,7 @@ int change_abil(object *op, object *tmp)
     {
         success = 1;
 
-        if (applied &&
-            !IS_GMASTER_WIZ(op))
+        if (applied)
         {
             new_draw_info(NDI_UNIQUE | NDI_GREY, 0, op, "You are blinded.");
             SET_FLAG(op, FLAG_BLIND);
@@ -588,8 +587,7 @@ int change_abil(object *op, object *tmp)
     {
         success = 1;
 
-        if (applied &&
-            !IS_GMASTER_WIZ(op))
+        if (applied)
         {
             new_draw_info(NDI_UNIQUE | NDI_GREY, 0, op, "Everything becomes transparent.");
             if (op->type == PLAYER)
