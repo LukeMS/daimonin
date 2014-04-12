@@ -3,6 +3,7 @@ name burned tree
 layer 5
 face tree_burned1.101
 no_pick 1
+weight 500
 type 79
 no_pass 1
 is_wooded 1
@@ -12,6 +13,7 @@ name burned tree
 layer 5
 face tree_burned2.101
 no_pick 1
+weight 500
 type 79
 no_pass 1
 is_wooded 1
@@ -21,6 +23,7 @@ name burned tree
 layer 5
 face tree_burned2_winter.101
 no_pick 1
+weight 500
 type 79
 no_pass 1
 blocksview 1
@@ -31,6 +34,7 @@ name burned tree
 layer 5
 face tree_burned3.101
 no_pick 1
+weight 500
 type 79
 no_pass 1
 is_wooded 1
@@ -40,6 +44,7 @@ name burned tree
 layer 5
 face tree_burned4.101
 no_pick 1
+weight 500
 type 79
 no_pass 1
 is_wooded 1

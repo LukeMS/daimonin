@@ -3,6 +3,7 @@ name tree
 layer 5
 face tree_b.101
 no_pick 1
+weight 500
 type 79
 no_pass 1
 is_wooded 1
@@ -13,6 +14,7 @@ name tree
 type 79
 face tree_c.101
 no_pick 1
+weight 500
 is_wooded 1
 end
 Object tree_big
@@ -21,6 +23,7 @@ name tree
 type 79
 face tree_big.101
 no_pick 1
+weight 500
 no_pass 1
 is_wooded 1
 end
@@ -31,6 +34,7 @@ name tree
 face tree_big2.101
 no_pick 1
 no_pass 1
+weight 500
 is_wooded 1
 end
 Object tree_big3
@@ -40,6 +44,7 @@ name tree
 face tree_big3.101
 no_pick 1
 no_pass 1
+weight 500
 is_wooded 1
 end
 Object tree_big4
@@ -49,6 +54,7 @@ face tree_big4.101
 type 79
 no_pick 1
 no_pass 1
+weight 500
 is_wooded 1
 end
 Object tree_big5
@@ -58,6 +64,7 @@ type 79
 face tree_big5.101
 no_pick 1
 no_pass 1
+weight 500
 is_wooded 1
 end
 Object tree_big4b
@@ -67,6 +74,7 @@ type 79
 face tree_big4b.101
 no_pick 1
 no_pass 1
+weight 500
 is_wooded 1
 end
 Object tree_big5b
@@ -76,5 +84,6 @@ face tree_big5b.101
 type 79
 no_pick 1
 no_pass 1
+weight 500
 is_wooded 1
 end
