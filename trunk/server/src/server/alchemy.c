@@ -75,14 +75,18 @@ char * cauldron_sound(void)
 
 void attempt_do_alchemy(object *caster, object *cauldron)
 {
+    player     *pl;
     recipelist *fl;
     recipe     *rp      = NULL;
     float       success_chance;
     int         numb, ability = 1;
     int         formula = 0;
 
-    if (caster->type != PLAYER)
+    if (caster->type != PLAYER ||
+        !(pl = CONTR(caster)))
+    {
         return; /* only players for now */
+    }
 
     /* if no ingredients, no formula! lets forget it */
     if (!(formula = content_recipe_value(cauldron)))
@@ -103,7 +107,7 @@ void attempt_do_alchemy(object *caster, object *cauldron)
         LOG(llevDebug, "Got alchemy ability lvl = %d\n", ability);
 #endif
 
-        if (IS_GMASTER_WIZ(caster))
+        if ((pl->gmaster_mode & GMASTER_MODE_SA))
         {
             rp = fl->items;
             while (rp && (formula % rp->index) != 0)
