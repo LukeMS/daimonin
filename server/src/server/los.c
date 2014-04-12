@@ -462,7 +462,7 @@ void update_los(object *op)
 
     clear_los(op);
 
-    if (IS_GMASTER_WIZ(op))
+    if (IS_GMASTER_WIZPASS(op))
     {
         return;
     }

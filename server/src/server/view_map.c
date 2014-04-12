@@ -190,7 +190,7 @@ void draw_client_map(object *plobj)
     }
 
     /* do LOS after calls to update_position */
-    if (!pl->gmaster_wiz &&
+    if (!pl->gmaster_wizpass &&
         pl->update_los)
     {
         update_los(plobj);
@@ -328,7 +328,7 @@ void draw_client_map2(object *pl)
                 /* this should be catched in LOS function... so its a glitch,
                          * except we are in DM mode - there we skip all this LOS stuff.
                          */
-                if (!pl_ptr->gmaster_wiz)
+                if (!pl_ptr->gmaster_wizpass)
                { 
                     LOG(llevDebug, "BUG: draw_client_map2() out_of_map for player <%s> map:%s (%d,%d)\n",
                         STRING_OBJ_NAME(pl), pl->map->path ? pl->map->path : "<no path?>", x, y);

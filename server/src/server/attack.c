@@ -378,9 +378,9 @@ int damage_ob(object *op, int dam, object *hitter, int env_attack)
     tag_t   op_tag, hitter_tag;
     int     rtn_kill    = 0;
 
-    /* if our target has no_damage 1 set or is wiz, we can't hurt him */
-    if (IS_GMASTER_WIZ(op) ||
-        QUERY_FLAG(op, FLAG_INVULNERABLE))
+    /* if our target is invulnerable or is an SA, we can't hurt him. */
+    if (QUERY_FLAG(op, FLAG_INVULNERABLE) ||
+        (GET_GMASTER_MODE(op) & GMASTER_MODE_SA))
     {
         return 0;
     }

@@ -129,7 +129,6 @@ typedef struct pl_player
     uint32              rest_mode           : 1;            /* if true, player is going "resting" - resting mode will be interrupted when player moves or get hit */
     uint32              rest_sitting        : 1;            /* if true, player is sitting - sitting + rest mode = regeneration */
 
-    uint8               gmaster_wiz         : 1;    // 1= wiz powers, see normal invisible
     uint8               gmaster_wizpass     : 1;    // 1= pass through walls, over move apply objects, etc
     uint8               gmaster_matrix      : 1;    // 1= see first system object on square
     uint8               gmaster_stealth     : 1;    // 1= player undetectable to mobs
