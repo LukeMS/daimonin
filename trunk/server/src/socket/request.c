@@ -155,7 +155,11 @@ void send_target_command(player *pl)
     }
 
     /* some nice extra info for SA/MMs. */
+#ifdef DAI_DEVELOPMENT_CONTENT
+    if ((pl->gmaster_mode & (GMASTER_MODE_SA | GMASTER_MODE_MM | GMASTER_MODE_MW)))
+#else
     if ((pl->gmaster_mode & (GMASTER_MODE_SA | GMASTER_MODE_MM)))
+#endif
     {
         char    buf[TINY_BUF];
         sprintf(buf, "(lvl %d)", pl->target_object->level);

@@ -1356,7 +1356,11 @@ static object *CanPickUp(object *who, object *what, object *where, uint32 nrof)
     }
 
     /* Normal players and mobs cannot pick up these items but MW/MM/SAs can. */
+#ifdef DAI_DEVELOPMENT_CONTENT
     if (!(GET_GMASTER_MODE(who) & (GMASTER_MODE_MW | GMASTER_MODE_MM | GMASTER_MODE_SA)))
+#else
+    if (!(GET_GMASTER_MODE(who) & (GMASTER_MODE_MM | GMASTER_MODE_SA)))
+#endif
     {
         int     ego_mode;
         object *from;

@@ -715,95 +715,15 @@ char *examine(object *op, object *tmp, int flag)
             tmp->type == GRAVESTONE)
             manual_apply(op, tmp, 0);
 
-        if (IS_GMASTER_WIZ(op))
+#ifdef DAI_DEVELOPMENT_CONTENT
+        if ((GET_GMASTER_MODE(op) & (GMASTER_MODE_MW | GMASTER_MODE_MM | GMASTER_MODE_SA)))
+#else
+        if ((GET_GMASTER_MODE(op) & (GMASTER_MODE_MM | GMASTER_MODE_SA)))
+#endif
         {
             dump_object(tmp);
             new_draw_info(NDI_UNIQUE, 0, op, "%s", errmsg);
         }
     }
     return buf_out;
-}
-
-/*
- * inventory prints object's inventory. If inv==NULL then print player's
- * inventory.
- * [ Only items which are applied are showed. Tero.Haatanen@lut.fi ]
- */
-void inventory(object *op, object *inv)
-{
-    object *tmp;
-    char   *in;
-    int     items = 0, length;
-
-    if (inv == NULL && op == NULL)
-    {
-        new_draw_info(NDI_UNIQUE, 0, op, "Inventory of what object?");
-        return;
-    }
-    tmp = inv ? inv->inv : op->inv;
-
-    while (tmp)
-    {
-        if ((!QUERY_FLAG(tmp, FLAG_SYS_OBJECT) &&
-             (inv == NULL ||
-              inv->type == CONTAINER ||
-              QUERY_FLAG(tmp, FLAG_APPLIED))) ||
-            (!op ||
-             IS_GMASTER_WIZ(op)))
-        {
-            items++;
-        }
-
-        tmp = tmp->below;
-    }
-    if (inv == NULL)
-    {
-        /* player's inventory */
-        if (items == 0)
-        {
-            new_draw_info(NDI_UNIQUE, 0, op, "You carry nothing.");
-            return;
-        }
-        else
-        {
-            length = 28;
-            in = "";
-            new_draw_info(NDI_UNIQUE, 0, op, "Inventory:");
-        }
-    }
-    else
-    {
-        if (items == 0)
-            return;
-        else
-        {
-            length = 28;
-            in = "  ";
-        }
-    }
-
-    if (op &&
-        IS_GMASTER_WIZ(op))
-    {
-        for (tmp = (inv) ? inv->inv : op->inv; tmp; tmp = tmp->below)
-        {
-            if ((QUERY_FLAG(tmp, FLAG_SYS_OBJECT) ||
-                 (inv &&
-                  inv->type != CONTAINER &&
-                  !QUERY_FLAG(tmp, FLAG_APPLIED))))
-            {
-                continue;
-            }
-
-            new_draw_info(NDI_UNIQUE, 0, op, "%s- %s[%d] %6.1f",
-                in, query_name(tmp, op, ARTICLE_NONE, 1), TAG(tmp),
-                (float)WEIGHT_OVERALL(tmp) / 1000.0);
-        }
-
-        if (!inv)
-        {
-            new_draw_info(NDI_UNIQUE, 0, op, "Total weight: %6.1f",
-                (float)WEIGHT_OVERALL(tmp) / 1000.0);
-        }
-    }
 }

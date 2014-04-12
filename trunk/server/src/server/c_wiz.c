@@ -1013,27 +1013,92 @@ int command_teleport(object *op, char *params)
     return COMMANDS_RTN_VAL_OK_SILENT;
 }
 
+/* FIXME: Badly written and broken. */
 int command_inventory(object *op, char *params)
 {
-    object *tmp;
+    object *inv = NULL;
     int     i;
+    object *tmp;
+    char   *in;
+    int     items = 0, length;
 
     if (!op)
         return COMMANDS_RTN_VAL_ERROR;
 
-    if (!params)
-    {
-        inventory(op, NULL);
-
-        return COMMANDS_RTN_VAL_OK_SILENT;
-    }
-
     // TODO - find_object() is not yet implemented, so will always return NULL
     // Manual file only shows /inventory, no mention of parameters, until this is done
-    if (!sscanf(params, "%d", &i) || (tmp = find_object(i)) == NULL)
+    /* TODO: Should scan params for a player name and do find_player() -- the
+     * whole point of this function. */
+    if (params &&
+        (!sscanf(params, "%d", &i) ||
+         !(inv = find_object(i))))
+    {
         return COMMANDS_RTN_VAL_SYNTAX;
+    }
 
-    inventory(op, tmp);
+    tmp = inv ? inv->inv : op->inv;
+
+    while (tmp)
+    {
+        if ((!QUERY_FLAG(tmp, FLAG_SYS_OBJECT) &&
+             (inv == NULL ||
+              inv->type == CONTAINER ||
+              QUERY_FLAG(tmp, FLAG_APPLIED))))
+        {
+            items++;
+        }
+
+        tmp = tmp->below;
+    }
+    if (inv == NULL)
+    {
+        /* player's inventory */
+        if (items == 0)
+        {
+            new_draw_info(NDI_UNIQUE, 0, op, "You carry nothing.");
+            return;
+        }
+        else
+        {
+            length = 28;
+            in = "";
+            new_draw_info(NDI_UNIQUE, 0, op, "Inventory:");
+        }
+    }
+    else
+    {
+        if (items == 0)
+            return;
+        else
+        {
+            length = 28;
+            in = "  ";
+        }
+    }
+
+    if (op)
+    {
+        for (tmp = (inv) ? inv->inv : op->inv; tmp; tmp = tmp->below)
+        {
+            if ((QUERY_FLAG(tmp, FLAG_SYS_OBJECT) ||
+                 (inv &&
+                  inv->type != CONTAINER &&
+                  !QUERY_FLAG(tmp, FLAG_APPLIED))))
+            {
+                continue;
+            }
+
+            new_draw_info(NDI_UNIQUE, 0, op, "%s- %s[%d] %6.1f",
+                in, query_name(tmp, op, ARTICLE_NONE, 1), TAG(tmp),
+                (float)WEIGHT_OVERALL(tmp) / 1000.0);
+        }
+
+        if (!inv)
+        {
+            new_draw_info(NDI_UNIQUE, 0, op, "Total weight: %6.1f",
+                (float)WEIGHT_OVERALL(tmp) / 1000.0);
+        }
+    }
 
     return COMMANDS_RTN_VAL_OK_SILENT;
 }

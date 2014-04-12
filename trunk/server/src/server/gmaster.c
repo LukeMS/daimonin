@@ -389,24 +389,22 @@ void set_gmaster_mode(player *pl, int mode_id)
 #endif
 
 #ifdef DAI_DEVELOPMENT_CONTENT
-    if ((mode & (GMASTER_MODE_SA | GMASTER_MODE_MM | GMASTER_MODE_MW)))
+    if ((mode & (GMASTER_MODE_MW | GMASTER_MODE_MM | GMASTER_MODE_SA)))
 #else
-    if ((mode & (GMASTER_MODE_SA | GMASTER_MODE_MM)))
+    if ((mode & (GMASTER_MODE_MM | GMASTER_MODE_SA)))
 #endif
     {
-        object *who = pl->ob;
-
-        pl->gmaster_wiz = pl->gmaster_wizpass = 1;
+        pl->gmaster_wizpass = 1;
         pl->update_los = 1;
-        clear_los(who);
-        esrv_send_inventory(pl, who);
-        esrv_send_below(pl);
+        clear_los(pl->ob);
     }
 
     pl->socket.ext_title_flag =1;
 
     if ((mode & GMASTER_MODE_SA))
     {
+        esrv_send_inventory(pl, pl->ob);
+        esrv_send_below(pl);
         new_draw_info(NDI_UNIQUE, 0, pl->ob, "SA mode activated.");
     }
     else if ((mode & GMASTER_MODE_MM))
@@ -473,11 +471,15 @@ void remove_gmaster_mode(player *pl)
                             0);
         }
 
-        pl->gmaster_wiz = pl->gmaster_wizpass = pl->gmaster_matrix = pl->gmaster_stealth = pl->gmaster_invis = 0;
+        pl->gmaster_wizpass = pl->gmaster_matrix = pl->gmaster_stealth = pl->gmaster_invis = 0;
         update_object(who, UP_OBJ_LAYER);
         pl->update_los = 1;
-        esrv_send_inventory(pl, who);
-        esrv_send_below(pl);
+
+        if ((mode & GMASTER_MODE_SA))
+        {
+            esrv_send_inventory(pl, who);
+            esrv_send_below(pl);
+        }
     }
 
     pl->socket.ext_title_flag =1;

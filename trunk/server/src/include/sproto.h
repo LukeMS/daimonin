@@ -201,7 +201,6 @@ int                         command_egobind ( object *pl, char *params);
 object                     *find_marked_object(object *op);
 char                       *examine_monster(object *op, object *tmp, char *buf, int flag);
 char                       *examine(object *op, object *tmp, int flag);
-void                        inventory(object *op, object *inv);
 /* c_party.c */
 int                         command_party_invite ( object *pl, char *params);
 int                         command_party_join ( object *pl, char *params);

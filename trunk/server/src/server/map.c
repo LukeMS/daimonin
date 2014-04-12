@@ -393,8 +393,13 @@ void dump_map(mapstruct *m, player *pl, int list, char *ref)
         NDI_LOG(llevSystem, NDI_UNIQUE, 0, ob, "~Orig Path~: %s",
                 STRING_MAP_ORIG_PATH(m));
 
+#ifdef DAI_DEVELOPMENT_CONTENT
         if (!pl ||
             (pl->gmaster_mode & (GMASTER_MODE_MW | GMASTER_MODE_MM | GMASTER_MODE_SA)))
+#else
+        if (!pl ||
+            (pl->gmaster_mode & (GMASTER_MODE_MM | GMASTER_MODE_SA)))
+#endif
         {
             NDI_LOG(llevSystem, NDI_UNIQUE, 0, ob, "~Status~: %s%s%s (%u)",
                     ((MAP_MULTI(m)) ? "Multiplayer" :

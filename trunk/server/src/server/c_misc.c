@@ -268,7 +268,11 @@ int command_mapinfo(object *op, char *params)
     if (params)
     {
         /* Only MWs/MMs/SAs can use the fancy commands. */
+#ifdef DAI_DEVELOPMENT_CONTENT
         if (!(pl->gmaster_mode & (GMASTER_MODE_SA | GMASTER_MODE_MM | GMASTER_MODE_MW)))
+#else
+        if (!(pl->gmaster_mode & (GMASTER_MODE_SA | GMASTER_MODE_MM)))
+#endif
             return 1;
 
         /* List all the loaded maps. */

@@ -242,7 +242,7 @@ void spring_trap(object *trap, object *victim)
     tag_t   trap_tag    = trap->count;
 
     if (!trap->stats.hp ||      // prevents recursion
-        IS_GMASTER_WIZ(victim))
+        (GET_GMASTER_MODE(victim) & GMASTER_MODE_SA))
     {
         return;
     }
