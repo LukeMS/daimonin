@@ -5,4 +5,5 @@ type 79
 face tree_stone1.101
 no_pass 1
 no_pick 1
+weight 500
 end
