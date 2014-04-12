@@ -679,7 +679,7 @@ void doeric_server(int update, struct timeval *timeout)
         {
             if(pl->socket.status != Ns_Zombie)
             {
-                if (!IS_GMASTER_WIZ(pl->ob))
+                if (!(pl->gmaster_mode & GMASTER_MODE_SA))
                 {
                     if (!pl->socket.idle_flag &&
                         pl->socket.login_count < ROUND_TAG)

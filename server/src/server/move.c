@@ -414,8 +414,7 @@ int push_ob(object *who, int dir, object *pusher)
     str1 = str1 + who->weight / 50000 - 1;
     str2 = (pusher->stats.Str > 0 ? pusher->stats.Str : 9 + pusher->level / 10);
 
-    if (IS_GMASTER_WIZ(who) ||
-        random_roll(str1, str1 / 2 + str1 * 2) >= random_roll(str2, str2 / 2 + str2 * 2) ||
+    if (random_roll(str1, str1 / 2 + str1 * 2) >= random_roll(str2, str2 / 2 + str2 * 2) ||
         !move_ob(who, dir, pusher))
     {
         new_draw_info(NDI_UNIQUE, 0, who, "%s tried to push you.",

@@ -350,9 +350,7 @@ char *examine(object *op, object *tmp, int flag)
     *buf_out='\0';
     if(op)
     {
-        if (trigger_object_plugin_event(EVENT_EXAMINE, tmp, op, NULL, NULL, 0,
-                                        0, 0, 0) &&
-             !IS_GMASTER_WIZ(op))
+        if (trigger_object_plugin_event(EVENT_EXAMINE, tmp, op, NULL, NULL, 0, 0, 0, 0))
         {
             return NULL;
         }

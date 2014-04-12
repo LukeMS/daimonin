@@ -1173,8 +1173,7 @@ static void ApplySign(object *op, object *sign)
      * for FLAG_INVISIBLE instead of FLAG_WALK_ON/FLAG_FLY_ON would fail
      * for magic mouths that have been made visible.
      */
-    if (!IS_GMASTER_WIZ(op) &&
-        !QUERY_FLAG(sign, FLAG_WALK_ON) &&
+    if (!QUERY_FLAG(sign, FLAG_WALK_ON) &&
         !QUERY_FLAG(sign, FLAG_FLY_ON))
     {
         if (QUERY_FLAG(op, FLAG_BLIND))
@@ -1565,26 +1564,23 @@ static void ApplyBook(object *op, object *tmp)
     size_t  len;
     size_t  catlen;
 
-    if (!IS_GMASTER_WIZ(op))
+    if (QUERY_FLAG(op, FLAG_BLIND))
     {
-        if (QUERY_FLAG(op, FLAG_BLIND))
-        {
-            new_draw_info(NDI_UNIQUE, 0, op, "You are unable to read while blind.");
-            return;
-        }
+        new_draw_info(NDI_UNIQUE, 0, op, "You are unable to read while blind.");
+        return;
+    }
 
-        /* you has the right skill & language knowledge to read it? */
-        if (!change_skill(op, SK_LITERACY))
-        {
-            new_draw_info(NDI_UNIQUE, 0, op, "You are unable to decipher the strange symbols.");
-            return;
-        }
-        else if((op->chosen_skill->weight_limit & tmp->weight_limit)!=tmp->weight_limit)
-        {
-            new_draw_info(NDI_UNIQUE, 0, op, "You are unable to decipher %s.\nIts written in %s.",
-                query_name(tmp, op, ARTICLE_DEFINITE, 0), get_language(tmp->weight_limit));
-            return;
-        }
+    /* you has the right skill & language knowledge to read it? */
+    if (!change_skill(op, SK_LITERACY))
+    {
+        new_draw_info(NDI_UNIQUE, 0, op, "You are unable to decipher the strange symbols.");
+        return;
+    }
+    else if((op->chosen_skill->weight_limit & tmp->weight_limit)!=tmp->weight_limit)
+    {
+        new_draw_info(NDI_UNIQUE, 0, op, "You are unable to decipher %s.\nIts written in %s.",
+            query_name(tmp, op, ARTICLE_DEFINITE, 0), get_language(tmp->weight_limit));
+        return;
     }
 
     new_draw_info(NDI_UNIQUE, 0, op, "You open %s and start reading.",
@@ -1741,8 +1737,7 @@ extern void do_forget_spell(object *op, int spell)
 
 static void ApplySpellbook(object *op, object *tmp)
 {
-    if (!IS_GMASTER_WIZ(op) &&
-        QUERY_FLAG(op, FLAG_BLIND))
+    if (QUERY_FLAG(op, FLAG_BLIND))
     {
         new_draw_info(NDI_UNIQUE, 0, op, "You are unable to read while blind.");
         return;
@@ -1837,8 +1832,7 @@ static void ApplyScroll(object *op, object *tmp)
     /*object *old_skill;*/
     int scroll_spell = tmp->stats.sp;
 
-    if (!IS_GMASTER_WIZ(op) &&
-        QUERY_FLAG(op, FLAG_BLIND))
+    if (QUERY_FLAG(op, FLAG_BLIND))
     {
         new_draw_info(NDI_UNIQUE, 0, op, "You are unable to read while blind.");
         return;
@@ -2477,8 +2471,7 @@ int player_apply(object *pl, object *op, int aflag)
     int tmp;
 
         /* player is flying and applying object not in inventory */
-    if (!IS_GMASTER_WIZ(pl) &&
-        !op->env &&
+    if (!op->env &&
         (IS_AIRBORNE(pl) &&
          (!IS_AIRBORNE(op) ||
           !QUERY_FLAG(op, FLAG_FLY_ON))))

@@ -31,14 +31,13 @@
 #include "global.h"
 
 #define FILTER(_PL_, _OP_) \
-    ((_OP_) != (_PL_)->ob &&                            /* never see self but otherwise */ \
-     (((_PL_)->gmaster_mode & GMASTER_MODE_SA) ||       /* SAs see all but others */ \
-      (!IS_GMASTER_INVIS((_OP_)) &&                     /* can't see gmaster invis */ \
-       ((_PL_)->gmaster_wiz ||                          /* WIZs see all else but others */ \
-        (!QUERY_FLAG((_OP_), FLAG_SYS_OBJECT) &&        /* can't see sys objects */ \
-         (!QUERY_FLAG((_OP_), FLAG_IS_INVISIBLE) ||     /* can't see invisible objects unless */ \
-          QUERY_FLAG((_PL_)->ob, FLAG_SEE_INVISIBLE) || /* player has the ability to do so or */ \
-          (_OP_)->env == (_PL_)->ob))))))               /* they're in his inventory (simulates feel) */
+    ((_OP_) != (_PL_)->ob &&                          /* never see self but otherwise */ \
+     (((_PL_)->gmaster_mode & GMASTER_MODE_SA) ||      /* SAs see all but others */ \
+      (!QUERY_FLAG((_OP_), FLAG_SYS_OBJECT) &&          /* can't see sys objects */ \
+       !IS_GMASTER_INVIS((_OP_)) &&                     /* can't see gmaster invis */ \
+       (!QUERY_FLAG((_OP_), FLAG_IS_INVISIBLE) ||       /* can't see invisible objects unless */ \
+        QUERY_FLAG((_PL_)->ob, FLAG_SEE_INVISIBLE) ||    /* player has the ability to do so or */ \
+        (_OP_)->env == (_PL_)->ob))))                    /* they're in his inventory (simulates feel) */
 
 static void            SendInventory(player *pl, object *op);
 static uint8           AddInventory(sockbuf_struct *sb, _server_client_cmd cmd,
@@ -264,7 +263,7 @@ static uint8 AddInventory(sockbuf_struct *sb, _server_client_cmd cmd,
                 cp = PrepareData(cmd, flags, pl, this, data);
                 SockBuf_AddStringNonTerminated(sb, data, cp - data);
 
-                if (IS_GMASTER_WIZ(pl->ob) &&
+                if ((pl->gmaster_mode & GMASTER_MODE_SA) &&
                     this->inv)
                 {
                     AddFakeObject(sb, cmd, 0xc0000000 | this->count,
@@ -676,8 +675,7 @@ static uint32 ClientFlags(object *op)
         flags |= F_ETHEREAL;
     }
 
-    if (IS_GMASTER_INVIS(op) ||
-        QUERY_FLAG(op, FLAG_IS_INVISIBLE))
+    if (QUERY_FLAG(op, FLAG_IS_INVISIBLE))
     {
         flags |= F_INVISIBLE;
     }
@@ -756,7 +754,7 @@ object *esrv_get_ob_from_count(object *who, tag_t count)
 
     /* this is special case... We can examine deep inside every inventory
      * even from non containers. */
-    if (pl->gmaster_wiz)
+    if ((pl->gmaster_mode & GMASTER_MODE_SA))
     {
         for (this = who->inv; this; this = this->below)
         {
@@ -777,13 +775,6 @@ object *esrv_get_ob_from_count(object *who, tag_t count)
         {
             for (this = GET_MAP_OB(who->map, who->x, who->y); this; this = this->above)
             {
-                /* Still might not be allowed to manipulate... */
-                if (IS_GMASTER_INVIS(this) &&                // ...invisible gmasters
-                    !(pl->gmaster_mode & GMASTER_MODE_SA))
-                {
-                    continue;
-                }
-
                 if (this->count == count)
                 {
                     return this;
@@ -802,8 +793,8 @@ object *esrv_get_ob_from_count(object *who, tag_t count)
     {
         for (this = who->inv; this; this = this->below)
         {
-            /* We know pl->gmaster_wiz == 0 so cannot manipulate... */
-            if (this->layer == 0) // ...system objects
+            /* We know pl is not an SA so cannot manipulate... */
+            if (QUERY_FLAG(this, FLAG_SYS_OBJECT))
             {
                 continue;
             }
@@ -817,8 +808,8 @@ object *esrv_get_ob_from_count(object *who, tag_t count)
             {
                 for (that = this->inv; that; that = that->below)
                 {
-                    /* We know pl->gmaster_wiz == 0 so cannot manipulate... */
-                    if (that->layer == 0) // ...system objects
+                    /* We know pl is not an SA so cannot manipulate... */
+                    if (QUERY_FLAG(that, FLAG_SYS_OBJECT))
                     {
                         continue;
                     }
@@ -835,10 +826,10 @@ object *esrv_get_ob_from_count(object *who, tag_t count)
         {
             for (this = GET_MAP_OB(who->map, who->x, who->y); this; this = this->above)
             {
-                /* We know pl->gmaster_wiz == 0 so cannot manipulate... */
-                if (this->layer == 0 ||                        // ...system objects
-                    IS_GMASTER_INVIS(this) ||                  // ...invisible gmasters
-                    (QUERY_FLAG((this), FLAG_IS_INVISIBLE) &&  // ...invisible objects
+                /* We know pl is not an SA so cannot manipulate... */
+                if (QUERY_FLAG(this, FLAG_SYS_OBJECT) ||
+                    IS_GMASTER_INVIS(this) ||
+                    (QUERY_FLAG((this), FLAG_IS_INVISIBLE) &&
                      !QUERY_FLAG((who), FLAG_SEE_INVISIBLE)))
                     
                 {
@@ -854,9 +845,9 @@ object *esrv_get_ob_from_count(object *who, tag_t count)
                 {
                     for (that = this->inv; that; that = that->below)
                     {
-                        /* We know pl->gmaster_wiz == 0 so cannot manipulate... */
-                        if (that->layer == 0 ||                        // ...system objects
-                            (QUERY_FLAG((that), FLAG_IS_INVISIBLE) &&  // ...invisible objects
+                        /* We know pl is not an SA so cannot manipulate... */
+                        if (QUERY_FLAG(that, FLAG_SYS_OBJECT) ||
+                            (QUERY_FLAG((that), FLAG_IS_INVISIBLE) &&
                              !QUERY_FLAG((who), FLAG_SEE_INVISIBLE)))
                         {
                             continue;
@@ -875,7 +866,7 @@ object *esrv_get_ob_from_count(object *who, tag_t count)
     return NULL;
 }
 
-/* Recursive function for gmaster_wiz access to non container inventories. */
+/* Recursive function for SA access to non container inventories. */
 static object *GetObjFromCount(object *what, tag_t count)
 {
     object *this;

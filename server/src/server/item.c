@@ -802,7 +802,7 @@ object *pick_up(object *who, object *what, object *where, uint32 nrof)
         !what ||
         (where &&
          (((!pl ||
-            pl->gmaster_wiz) &&
+            (pl->gmaster_mode & GMASTER_MODE_SA)) &&
            where->type != CONTAINER) ||
           (pl &&
            where != pl->container))))
@@ -1040,28 +1040,27 @@ static object *CanReach(object *who, object *what)
         return NULL;
     }
 
-    /* Gmaster wiz players can reach things in other creature's invs
-     * (including in containers in those invs). All others can only fiddle with
-     * themselves. */
+    /* SAs can reach things in other creature's invs (including in containers
+     * in those invs). All others can only fiddle with themselves. */
     if (this->type == PLAYER ||
-        this->type == MONSTER)
+        (this != what &&
+         this->type == MONSTER))
     {
         if (this != who &&
             (who->type == MONSTER ||
              !CONTR(who) ||
-             !CONTR(who)->gmaster_wiz))
+             !(CONTR(who)->gmaster_mode & GMASTER_MODE_SA)))
         {
             this = NULL;
         }
     }
-    /* Gmaster wiz players can reach things in any container (open or closed).
-     * For convenience so can monsters. Other players are limited to their
-     * linked container. */
+    /* SAs can reach things in any container (open or closed). For convenience
+     * so can monsters. Other players are limited to their linked container. */
     else if (this != what &&
              this->type == CONTAINER)
     {
         if (who->type == PLAYER &&
-            !CONTR(who)->gmaster_wiz &&
+            !(CONTR(who)->gmaster_mode & GMASTER_MODE_SA) &&
             this != CONTR(who)->container)
         {
             this = NULL;
@@ -1356,9 +1355,8 @@ static object *CanPickUp(object *who, object *what, object *where, uint32 nrof)
         return NULL;
     }
 
-    /* Normal players and mobs cannot pick up any of these items but gmaster
-     * wiz's can. */
-    if (!IS_GMASTER_WIZ(who))
+    /* Normal players and mobs cannot pick up these items but MW/MM/SAs can. */
+    if (!(GET_GMASTER_MODE(who) & (GMASTER_MODE_MW | GMASTER_MODE_MM | GMASTER_MODE_SA)))
     {
         int     ego_mode;
         object *from;
@@ -1593,9 +1591,9 @@ object *drop_to_floor(object *who, object *what, uint32 nrof)
             buf, query_name(what, who, ARTICLE_DEFINITE, 0));
     }
 
-    /* No drops vanish for non-gmaster wiz players. */
+    /* No drops vanish for non-SAs. */
     if (pl &&
-        !pl->gmaster_wiz &&
+        !(pl->gmaster_mode & GMASTER_MODE_SA) &&
         QUERY_FLAG(what, FLAG_NO_DROP))
     {
         new_draw_info(NDI_UNIQUE, 0, who, "~NO-DROP~: %s vanishes to nowhere!",
