@@ -68,16 +68,19 @@ function topicDeposit(what)
     local oldbalance = pinfo.value
     local dpose = pl:Deposit(pinfo, what)
     if type(dpose) == "number" then
+        if dpose == -1 then
+            dpose = pl:Deposit(pinfo, "deposit " .. what)
+        end
         -- Did  pl deposit 2m or more? If so, log it.
         if pinfo.value - oldbalance >= 2 * 100 * 100 * 1000 then
             game:Log(game.LOG_INFO, "BANKINFO: player >" .. pl:GetName() .. "< deposited an amount of " .. oldbalance - pinfo.value ..
                         ", which leaves: " .. pinfo.value .. " in account.")
         end
-        if dpose == 1 and pinfo.value ~= 0 then
+        if dpose == 1 then
             ib:SetMsg( "You deposit ~" .. what .. "~.\n\n" )
             ib:AddMsg("Your new balance is ~" .. pl:ShowCost(pinfo.value) .. "~.\n\n")
             ib:SetButton("Ok", "hi")
-        else
+        elseif dpose == 0 then
             ib:SetMsg( "You try to deposit ~" .. what .. "~.\n\n" )
             ib:AddMsg("But you don't have that much money!\n\n")
             ib:SetButton("Back", "deposit")
@@ -141,6 +144,9 @@ function topicWithdraw(what)
         oldbalance = pinfo.value
         local wdraw = pl:Withdraw(pinfo, what)
         if type(wdraw) == "number" then
+            if wdraw == -1 then
+                wdraw = pl:Withdraw(pinfo, "withdraw " .. what)
+            end
             if wdraw == 1 then
                 ib:SetMsg( "You withdraw ~" .. what .. "~.\n\n" )
                 ib:AddMsg("Your new balance is ~~" .. pl:ShowCost(pinfo.value) .. "~.\n\n")
@@ -151,7 +157,7 @@ function topicWithdraw(what)
                     game:Log(game.LOG_INFO, "BANKINFO: player >" .. pl:GetName() .. "< withdrew an amount of " .. oldbalance - pinfo.value ..
                                 ", which leaves: " .. pinfo.value .. " left.")
                 end
-            else
+            elseif wdraw == 0 then
                 ib:SetMsg( "You try to withdraw ~" .. what .. "~.\n\n" )
                 ib:AddMsg("You can't withdraw that amount of money.\n\n")
                 ib:AddMsg("Your balance is ~" .. pl:ShowCost(pinfo.value) .. "~.\n\n")
