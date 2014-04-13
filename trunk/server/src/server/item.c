@@ -867,7 +867,7 @@ object *pick_up(object *who, object *what, object *where, uint32 nrof)
             SET_FLAG(who, FLAG_NO_FIX_PLAYER);
         }
 
-        /* Loop through each of the contents of the loot. */
+        /* Attempt to pick up each of the contents of the loot. */
         while (looted)
         {
             object *next = looted->below;
@@ -883,53 +883,41 @@ object *pick_up(object *who, object *what, object *where, uint32 nrof)
             }
 
             nr = MAX(1, MIN(looted->nrof, MAX_OBJ_NROF));
+            (void)PickUp(who, looted, where, nr, from, to);
+            looted = next;
+        }
 
-            /* Each content is individually picked up -- see PickUp(). If this
-             * pick up fails (if who is a player, he is messaged as to why the
-             * failure happened)...*/
-            if (!PickUp(who, looted, where, nr, from, to))
+        /* If there is still loot we couldn't pick up... */
+        if (looted)
+        {
+            /* If who is a player, keep him uptodate with what is going on
+             * (he already knows why).  */
+            if (pl)
             {
-                /* If who is a player, keep him uptodate with what is going on
-                 * (he already knows why).  */
-                if (pl)
-                {
-                    pl = NULL; // prevents futher 'you pick up...' messages
-                    new_draw_info(NDI_UNIQUE, 0, who, "You take what you can of %s and leave the rest.",
-                        query_name(what, who, ARTICLE_DEFINITE, 0));
-                }
-
-                /* Insert all the remaining contents of the loot in wherever
-                 * the loot itself is. */
-                while (looted)
-                {
-                    next = looted->below;
-                    remove_ob(looted);
-
-                    if (what->map)
-                    {
-                        looted->x = what->x;
-                        looted->y = what->y;
-                        (void)insert_ob_in_map(looted, what->map, NULL, INS_NO_WALK_ON);
-                    }
-                    else if (what->env)
-                    {
-                        (void)insert_ob_in_ob(looted, what->env);
-                    }
-
-                    looted = next;
-                }
-
-                /* Reinsert who at the top of the object list (only really necessary if
-                 * we had loot who couldn't pick up AND it was reinserted on who's
-                 * map). */
-                SET_FLAG(who, FLAG_NO_APPLY);
-                remove_ob(who);
-                (void)insert_ob_in_map(who, who->map, who, INS_NO_MERGE | INS_NO_WALK_ON);
-                CLEAR_FLAG(who, FLAG_NO_APPLY);
+                pl = NULL; // prevents futher 'you pick up...' messages
+                new_draw_info(NDI_UNIQUE, 0, who, "You take what you can of %s and leave the rest.",
+                    query_name(what, who, ARTICLE_DEFINITE, 0));
             }
-            /* If the pick up succeeds, we just carry on with the loop. */
-            else
+
+            /* Insert all the remaining contents of the loot in wherever the
+             * loot itself is. */
+            while (looted)
             {
+                object *next = looted->below;
+
+                remove_ob(looted);
+
+                if (what->map)
+                {
+                    looted->x = what->x;
+                    looted->y = what->y;
+                    (void)insert_ob_in_map(looted, what->map, NULL, INS_NO_WALK_ON);
+                }
+                else if (what->env)
+                {
+                    (void)insert_ob_in_ob(looted, what->env);
+                }
+
                 looted = next;
             }
         }
