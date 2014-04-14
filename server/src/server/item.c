@@ -1172,7 +1172,7 @@ static object *PickUp(object *who, object *what, object *where, uint32 nrof, obj
         }
         /* Check that where has enough space for what. */
         /* TODO: If nrof > 1 perhaps split what to fit? */
-        else if (where->weight_limit < where->carrying + (WEIGHT_OVERALL(what)))
+        else if (where->weight_limit < where->carrying + (sint32)(WEIGHT_OVERALL(what)))
         {
             if (pl)
             {
@@ -1391,11 +1391,11 @@ static object *CanPickUp(object *who, object *what, object *where, uint32 nrof)
          * can lift it. */
         if (from != who)
         {
-            uint32 who_limit = (who->type == PLAYER) ?
+            sint32 who_limit = (who->type == PLAYER) ?
                 CONTR(who)->weight_limit :
                 ((who->weight_limit > 0) ? who->weight_limit : 20000);
 
-            if (who_limit < who->carrying + (WEIGHT_OVERALL(what)))
+            if (who_limit < who->carrying + (sint32)(WEIGHT_OVERALL(what)))
             {
                 if (who->type == PLAYER)
                 {
