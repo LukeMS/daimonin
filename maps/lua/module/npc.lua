@@ -175,13 +175,12 @@ end
 -- topics which the player /talks to him.
 --
 -- Each function in m.topic first checks if a same name function
--- exists in m.replace. If so, this function is called. If not,
--- default behaviour for topic is done (often just invoking a few ib methods to
--- build a simple interface, but it can be much more complicated).
+-- exists in m.replace. If so, this function is called.
 --
--- Then -- whether a replace was called or the default was run -- there is a
--- check for a same name function in m.extend. If so, this function is
--- called.
+-- If not, default behaviour for topic is started (often just invoking a few ib
+-- methods to build a simple interface, but it can be much more complicated).
+-- Then there is a check for a same name function in m.extend. If so, this
+-- function is called. If not, a default message is printed.
 --
 -- SENTInce specifies 5 so-called standard topics. These are topics to which
 -- *all* NPCs should have a response; the response needn't be detailed -- it
@@ -216,29 +215,32 @@ function m.topic.Greeting()
             prefix = string.capitalize(prefix)
         end
         ib:SetHeader("st_001", npc, prefix)
-        ib:SetMsg("Hello! My name is " .. npc:GetName() .. ".")
-        if profession ~= nil then
-            local article = "a"
-            if string.match(profession, "^[aeiouAEIOU]") ~= nil then
-                article = "an"
-            end
-            ib:AddMsg(" I am " .. article .. " " .. profession .. ".")
-        end
         local qnr = qb:GetQuestNr(true)
         if qnr > 0 then
-            if qb:GetStatus(qnr) == game.QSTAT_NO then
-                ib:AddMsg("\n\nI have a ^quest^ you may be interested in.")
-            else
-                ib:AddMsg("\n\nHow's progress on that ^quest^?")
-                ib:AddLink("I've done what you asked.", "quest complete")
-                ib:AddLink("Slow. But I'm working on it.", "quest incomplete")
-            end
             ib:SetLHSButton("Quest")
         end
-    end
-    local extend = m.extend.Greeting
-    if type(extend) == "function" then
-        extend()
+        local extend = m.extend.Greeting
+        if type(extend) == "function" then
+            extend()
+        else
+            ib:SetMsg("Hello! My name is " .. npc:GetName() .. ".\n\n")
+            if profession ~= nil then
+                local article = "a"
+                if string.match(profession, "^[aeiouAEIOU]") ~= nil then
+                    article = "an"
+                end
+                ib:AddMsg(" I am " .. article .. " " .. profession .. ".\n\n")
+            end
+            if qnr > 0 then
+                if qb:GetStatus(qnr) == game.QSTAT_NO then
+                    ib:AddMsg("I have a ^quest^ you may be interested in.")
+                else
+                    ib:AddMsg("How's progress on that ^quest^?")
+                    ib:AddLink("I've done what you asked.", "quest complete")
+                    ib:AddLink("Slow. But I'm working on it.", "quest incomplete")
+                end
+            end
+        end
     end
 end
 
@@ -262,6 +264,9 @@ function m.topic.Background(subject)
             prefix = string.capitalize(prefix)
         end
         ib:SetHeader("st_002", npc, prefix)
+        if qb:GetQuestNr(true) > 0 then
+            ib:SetLHSButton("Quest")
+        end
         local handler = m.background.Topic, r
         if type(handler) == "function" then
             r = handler(subject)
@@ -273,15 +278,13 @@ function m.topic.Background(subject)
             end
         end
         if r == nil then
-            ib:SetMsg("What you see is what you get with me.")
+            local extend = m.extend.Background
+            if type(extend) == "function" then
+                extend(subject)
+            else
+                ib:SetMsg("What you see is what you get with me.")
+            end
         end
-        if qb:GetQuestNr(true) > 0 then
-            ib:SetLHSButton("Quest")
-        end
-    end
-    local extend = m.extend.Background
-    if type(extend) == "function" then
-        extend(subject)
     end
 end
 
@@ -315,34 +318,36 @@ function m.topic.Quest()
         end
         ib:SetHeader("st_003", npc, prefix)
         local qnr = qb:GetQuestNr(true)
+        if qnr > 0 then
+            ib:SetTitle(qb:GetName(qnr))
+            if qb:GetStatus(qnr) == game.QSTAT_NO then
+                ib:SetAccept("Accept", "accept quest")
+            else
+                ib:SetLHSButton("Quest")
+            end
+        end
         local handler = m.quest.Offer, r
         if type(handler) == "function" then
             r = handler(qnr)
         end
         if r == nil then
-            if qnr == 0 then
-                ib:SetMsg("Sorry, I have no quests to offer you.")
-            elseif qnr < 0 then
-                ib:SetMsg("I have nothing for you at the moment.")
+            local extend = m.extend.Quest
+            if type(extend) == "function" then
+                extend()
             else
-                ib:SetMsg("~TODO~")
+                if qnr == 0 then
+                    ib:SetMsg("Sorry, I have no quests to offer you.")
+                elseif qnr < 0 then
+                    ib:SetMsg("I have nothing for you at the moment.")
+                elseif qb:GetStatus(qnr) == game.QSTAT_NO then
+                    ib:SetMsg("How's progress?")
+                    ib:AddLink("I've done what you asked.", "quest complete")
+                    ib:AddLink("Slow. But I'm working on it.", "quest incomplete")
+                else
+                    ib:SetMsg("~TODO~")
+                end
             end
         end
-        if qnr ~= 0 then
-            ib:SetTitle(qb:GetName(qnr))
-            if qb:GetStatus(qnr) == game.QSTAT_NO then
-                ib:SetAccept("Accept", "accept quest")
-            else
-                ib:AddMsg("\n\nHow's progress?")
-                ib:AddLink("I've done what you asked.", "quest complete")
-                ib:AddLink("Slow. But I'm working on it.",
-                    "quest incomplete")
-            end
-        end
-    end
-    local extend = m.extend.Quest
-    if type(extend) == "function" then
-        extend()
     end
 end
 
@@ -360,39 +365,44 @@ function m.topic.QuestAccept()
     if type(replace) == "function" then
         replace()
     else
-        local prefix = m.rank
-        if prefix == nil then
-            prefix = m.profession
-        end
-        if type(prefix) == "string" then
-            prefix = string.capitalize(prefix)
-        end
-        ib:SetHeader("st_003", npc, prefix)
         local qnr = qb:GetQuestNr(true)
         if qnr <= 0 then
             return m.topic.Quest()
         else
-            if qb:GetStatus(qnr) ~= game.QSTAT_NO then
-                ib:SetMsg("Whoah! Slow down there. You haven't even told me " ..
-                    "how you got on with the current ^quest^.")
-            else
-                local handler = m.quest.Accept, r
-                if type(handler) == "function" then
-                    r = handler(qnr)
+            local prefix = m.rank
+            if prefix == nil then
+                prefix = m.profession
+            end
+            if type(prefix) == "string" then
+                prefix = string.capitalize(prefix)
+            end
+            ib:SetHeader("st_003", npc, prefix)
+            ib:SetTitle(qb:GetName(qnr))
+            ib:SetLHSButton("Quest")
+            local handler = m.quest.Accept, r
+            if type(handler) == "function" then
+                r = handler(qnr)
+            end
+            if r == nil then
+                local extend = m.extend.QuestAccept
+                if type(extend) == "function" then
+                    extend()
+                else
+                    if qb:GetStatus(qnr) ~= game.QSTAT_NO then
+                        ib:SetMsg("Whoah! Slow down there. You haven't " ..
+                            "even told me how you got on with the current " ..
+                            "^quest^.")
+                        ib:AddMsg("|[Quests can be skipped via the Quest " ..
+                            "Log (press ~Q~ when not talking to an NPC).]|")
+                    else
+                        ib:SetMsg("~TODO~")
+                    end
                 end
-                if r == nil then
-                    ib:SetMsg("~TODO~")
-                end
-                ib:SetTitle(qb:GetName(qnr))
-                if qb:IsRegistered(qnr) == false then
-                    qb:RegisterQuest(qnr, npc, ib)
-               end
+            end
+            if qb:IsRegistered(qnr) == false then
+                qb:RegisterQuest(qnr, npc, ib)
             end
         end
-    end
-    local extend = m.extend.QuestAccept
-    if type(extend) == "function" then
-        extend()
     end
 end
 
@@ -410,37 +420,40 @@ function m.topic.QuestDecline()
     if type(replace) == "function" then
         replace()
     else
-        local prefix = m.rank
-        if prefix == nil then
-            prefix = m.profession
-        end
-        if type(prefix) == "string" then
-            prefix = string.capitalize(prefix)
-        end
-        ib:SetHeader("st_003", npc, prefix)
         local qnr = qb:GetQuestNr(true)
         if qnr <= 0 then
             return m.topic.Quest()
         else
-            if qb:GetStatus(qnr) ~= game.QSTAT_NO then
-                ib:SetMsg("Whoah! Slow down there. You haven't even told me " ..
-                    "how you got on with the current ^quest^.\n\n")
-                ib:AddMsg("|[Quests can be skipped via the Quest Log " ..
-                    "(press ~Q~ when not talking to an NPC).]|")
-            else
-                local handler = m.quest.Decline, r
-                if type(handler) == "function" then
-                    r = handler(qnr)
-                end
-                if r == nil then
-                    ib:SetMsg("That's a shame. Oh well, your choice.")
+            local prefix = m.rank
+            if prefix == nil then
+                prefix = m.profession
+            end
+            if type(prefix) == "string" then
+                prefix = string.capitalize(prefix)
+            end
+            ib:SetHeader("st_003", npc, prefix)
+            ib:SetLHSButton("Quest")
+            local handler = m.quest.Decline, r
+            if type(handler) == "function" then
+                r = handler(qnr)
+            end
+            if r == nil then
+                local extend = m.extend.QuestDecline
+                if type(extend) == "function" then
+                    extend()
+                else
+                    if qb:GetStatus(qnr) ~= game.QSTAT_NO then
+                        ib:SetMsg("Whoah! Slow down there. You haven't " ..
+                            "even told me how you got on with the current " ..
+                            "^quest^.")
+                        ib:AddMsg("|[Quests can be skipped via the Quest " ..
+                            "Log (press ~Q~ when not talking to an NPC).]|")
+                    else
+                        ib:SetMsg("That's a shame. Oh well, your choice.")
+                    end
                 end
             end
         end
-    end
-    local extend = m.extend.QuestDecline
-    if type(extend) == "function" then
-        extend()
     end
 end
 
@@ -456,52 +469,51 @@ function m.topic.QuestComplete(reward)
     if type(replace) == "function" then
         replace(reward)
     else
-        local prefix = m.rank
-        if prefix == nil then
-            prefix = m.profession
-        end
-        if type(prefix) == "string" then
-            prefix = string.capitalize(prefix)
-        end
-        ib:SetHeader("st_003", npc, prefix)
         local qnr = qb:GetQuestNr(true)
         if qnr <= 0 then
             return m.topic.Quest()
-        end
-        if qb:GetStatus(qnr) ~= game.QSTAT_SOLVED then
-            ib:SetMsg("|** " .. npc:GetName() .. " looks you up and " ..
-                "down **|\n\n") 
-            if qb:GetStatus(qnr) == game.QSTAT_NO then
-                ib:AddMsg("I fail to see how you've managed that as I have " ..
-                    "yet to give you the ^quest^.")
-            elseif qb:GetStatus(qnr) == game.QSTAT_ACTIVE then
-                qb:AddItemList(qnr, ib)
-                ib:AddMsg("\n\n")
-                ib:AddMsg("No, you have yet to do everything I asked of " ..
-                    "you.")
-            end
         else
-            local handler = m.quest.Complete, r
-            if type(handler) == "function" then
-                r = handler(qnr, reward)
+            local prefix = m.rank
+            if prefix == nil then
+                prefix = m.profession
             end
+            if type(prefix) == "string" then
+                prefix = string.capitalize(prefix)
+            end
+            ib:SetHeader("st_003", npc, prefix)
             ib:SetTitle(qb:GetName(qnr))
-            if r ~= false then
-                if r == nil then
-                    ib:SetMsg("~TODO~")
-                elseif type(r) ~= "string" then
-                    r = nil
+            ib:SetLHSButton("Quest")
+            local qstat = qb:GetStatus(qnr)
+            if qstat ~= game.QSTAT_SOLVED then
+                ib:SetMsg("|** " .. npc:GetName() .. " looks you up and " ..
+                    "down **|\n\n") 
+                if qstat == game.QSTAT_NO then
+                    ib:AddMsg("I fail to see how you've managed that as I " ..
+                        "have yet to give you the ^quest^.")
+                elseif qstat == game.QSTAT_ACTIVE then
+                    qb:AddItemList(qnr, ib)
+                    ib:AddMsg("\n\n")
+                    ib:AddMsg("No, you have yet to do everything I asked " ..
+                        "of you.")
                 end
-                qb:Finish(qnr, r)
-                if qb:GetQuestNr(false) > qnr then
-                    ib:SetLHSButton("Quest")
+            else
+                local handler = m.quest.Complete, r
+                if type(handler) == "function" then
+                    r = handler(qnr, reward)
+                end
+                if r == nil then
+                    local extend = m.extend.QuestComplete
+                    if type(extend) == "function" then
+                        extend(reward)
+                    end
+                end
+                if type(r) == "string" then
+                    qb:Finish(qnr, r)
+                else
+                    qb:Finish(qnr, nil)
                 end
             end
         end
-    end
-    local extend = m.extend.QuestComplete
-    if type(extend) == "function" then
-        extend(reward)
     end
 end
 
@@ -518,44 +530,48 @@ function m.topic.QuestIncomplete()
     if type(replace) == "function" then
         replace()
     else
-        local prefix = m.rank
-        if prefix == nil then
-            prefix = m.profession
-        end
-        if type(prefix) == "string" then
-            prefix = string.capitalize(prefix)
-        end
-        ib:SetHeader("st_003", npc, prefix)
         local qnr = qb:GetQuestNr(true)
         if qnr <= 0 then
             return m.topic.Quest()
-        end
-        if qb:GetStatus(qnr) ~= game.QSTAT_ACTIVE then
-            ib:SetMsg("|** " .. npc.name .. " looks at you quizzically " ..
-                "**|\n\n")
-            if qb:GetStatus(qnr) == game.QSTAT_NO then
-                ib:AddMsg("I fail to see how you've managed that as I have " ..
-                    "yet to give you the ^quest^.")
-            elseif qb:GetStatus(qnr) == game.QSTAT_SOLVED then
-                ib:SetTitle(qb:GetName(qnr))
-                qb:AddItemList(qnr, ib)
-                ib:AddMsg("\n\n")
-                ib:AddMsg("Um, you might want to rethink your answer...")
-            end
         else
-            local handler = m.quest.Incomplete, r
-            if type(handler) == "function" then
-                r = handler(qnr)
+            local prefix = m.rank
+            if prefix == nil then
+                prefix = m.profession
             end
+            if type(prefix) == "string" then
+                prefix = string.capitalize(prefix)
+            end
+            ib:SetHeader("st_003", npc, prefix)
             ib:SetTitle(qb:GetName(qnr))
-            if r == nil then
-                ib:SetMsg("Never mind, I am patient.")
+            ib:SetLHSButton("Quest")
+            local qstat = qb:GetStatus(qnr)
+            if qstat ~= game.QSTAT_ACTIVE then
+                ib:SetMsg("|** " .. npc:GetName() .. " looks you up and " ..
+                    "down **|\n\n") 
+                if qstat == game.QSTAT_NO then
+                    ib:AddMsg("I fail to see how you've managed that as I " ..
+                        "have yet to give you the ^quest^.")
+                elseif qstat == game.QSTAT_SOLVED then
+                    ib:SetTitle(qb:GetName(qnr))
+                    qb:AddItemList(qnr, ib)
+                    ib:AddMsg("\n\n")
+                    ib:AddMsg("Um, you might want to rethink your answer...")
+                end
+            else
+                local handler = m.quest.Incomplete, r
+                if type(handler) == "function" then
+                    r = handler(qnr)
+                end
+                if r == nil then
+                    local extend = m.extend.QuestIncomplete
+                    if type(extend) == "function" then
+                        extend()
+                    else
+                        ib:SetMsg("Never mind, I am patient.")
+                    end
+                end
             end
         end
-    end
-    local extend = m.extend.QuestIncomplete
-    if type(extend) == "function" then
-        extend()
     end
 end
 
@@ -588,6 +604,9 @@ function m.topic.Rumours(subject)
             prefix = string.capitalize(prefix)
         end
         ib:SetHeader("st_004", npc, prefix)
+        if qb:GetQuestNr(true) > 0 then
+            ib:SetLHSButton("Quest")
+        end
         local handler = m.rumours.Topic, r
         if type(handler) == "function" then
             r = handler(subject)
@@ -599,15 +618,13 @@ function m.topic.Rumours(subject)
             end
         end
         if r == nil then
-            ib:SetMsg(Locality.SpreadRumour(Module))
+            local extend = m.extend.Rumours
+            if type(extend) == "function" then
+                extend()
+            else
+                ib:SetMsg(Locality.SpreadRumour(Module))
+            end
         end
-        if qb:GetQuestNr(true) > 0 then
-            ib:SetLHSButton("Quest")
-        end
-    end
-    local extend = m.extend.Rumours
-    if type(extend) == "function" then
-        extend()
     end
 end
 
@@ -636,14 +653,15 @@ function m.topic.Services()
             prefix = string.capitalize(prefix)
         end
         ib:SetHeader("st_005", npc, prefix)
-        ib:SetMsg("Sorry, I have no services to offer you.")
         if qb:GetQuestNr(true) > 0 then
             ib:SetLHSButton("Quest")
         end
-    end
-    local extend = m.extend.Services
-    if type(extend) == "function" then
-        extend()
+        local extend = m.extend.Services
+        if type(extend) == "function" then
+            extend()
+        else
+            ib:SetMsg("Sorry, I have no services to offer you.")
+        end
     end
 end
 
@@ -669,17 +687,21 @@ function m.topic.Default()
             prefix = string.capitalize(prefix)
         end
         ib:SetHeader(npc, npc, prefix)
-        ib:SetMsg("I'm sorry. I didn't understand.\n\n")
-        ib:AddMsg("|[The interface's parsing is extremely limited, so keep " ..
-            "your input simple. Usually type only a noun (name of " ..
+        if qb:GetQuestNr(true) > 0 then
+            ib:SetLHSButton("Quest")
+        end
+        local extend = m.extend.Default
+        if type(extend) == "function" then
+            extend()
+        else
+            ib:SetMsg("I'm sorry. I didn't understand.\n\n")
+            ib:AddMsg("|[The interface's parsing is extremely limited, so " ..
+            "keep your input simple. Usually type only a noun (name of " ..
             "something), such as 'quest', or sometimes a verb (an action " ..
             "to do) and a noun, such as 'repair sword', to talk about a " ..
             "subject. But it may also be that this particular NPC simply " ..
             "does not know anything about that topic.]|")
-    end
-    local extend = m.extend.Default
-    if type(extend) == "function" then
-        extend()
+        end
     end
 end
 
