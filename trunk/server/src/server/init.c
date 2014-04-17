@@ -523,7 +523,7 @@ static void init_clocks()
         has_been_done = 1;
 
     sprintf(filename, "%s/clockdata", settings.localdir);
-    LOG(llevDebug, "Reading clockdata from %s...", filename);
+    LOG(llevSystem, "Reading clockdata from %s...", filename);
 
     if ((fp = fopen(filename, "r")) == NULL)
     {
@@ -534,15 +534,37 @@ static void init_clocks()
         return;
     }
 
-    if (fscanf(fp, "%lu", &tadtick) != 1)
+#ifdef WIN32
+    if (fscanf(fp, "%I64u", &tadtick) != 1)
     {
         tadtick = 0;
-        LOG(llevDebug, "failed! tadtick defaults to %lu\n", tadtick);
+        LOG(llevSystem, "failed! tadtick defaults to %I64u\n", tadtick);
     }
     else
     {
-        LOG(llevDebug, "tadtick=%lu\n", tadtick);
+        LOG(llevSystem, "tadtick=%I64u\n", tadtick);
     }
+#elif SIZEOF_LONG == 8
+    if (fscanf(fp, "%lu", &tadtick) != 1)
+    {
+        tadtick = 0;
+        LOG(llevSystem, "failed! tadtick defaults to %lu\n", tadtick);
+    }
+    else
+    {
+        LOG(llevSystem, "tadtick=%lu\n", tadtick);
+    }
+#elif SIZEOF_LONG_LONG == 8
+    if (fscanf(fp, "%llu", &tadtick) != 1)
+    {
+        tadtick = 0;
+        LOG(llevSystem, "failed! tadtick defaults to %llu\n", tadtick);
+    }
+    else
+    {
+        LOG(llevSystem, "tadtick=%llu\n", tadtick);
+    }
+#endif
 
     fclose(fp);
 }

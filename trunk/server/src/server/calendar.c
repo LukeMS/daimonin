@@ -248,8 +248,8 @@ static const hourofday_t season_timechange[] =
     {{2,2,2,2,2,2,2,3,4,6,7,7,7,7,7,7,7,6,5,4,3,2,2,2}}, {{2,2,2,2,2,2,2,3,4,6,7,7,7,7,7,7,7,6,5,4,3,2,2,2}},
 };
 
-unsigned long tadtick; /* time of the day tick counter */
-int           world_darkness; /* daylight value. 0= totally dark. 7= daylight */
+uint64 tadtick; /* time of the day tick counter */
+int    world_darkness; /* daylight value. 0= totally dark. 7= daylight */
 
 /* Updates tad with the current time and date. */
 void get_tad(timeanddate_t *tad)
@@ -403,6 +403,12 @@ void write_tadclock(void)
         return;
     }
 
+#ifdef WIN32
+    fprintf(fp, "%I64u", tadtick);
+#elif SIZEOF_LONG == 8
     fprintf(fp, "%lu", tadtick);
+#elif SIZEOF_LONG_LONG == 8
+    fprintf(fp, "%llu", tadtick);
+#endif
     fclose(fp);
 }
