@@ -107,7 +107,7 @@ typedef struct _timeanddate
     const char *extraholiday_name;
 } timeanddate_t;
 
-extern unsigned long tadtick; /* time of the year tick counter: 1 tick = 1 game hour */
-extern int           world_darkness; /* daylight value. 0= totally dark. 7= daylight */
+extern uint64 tadtick; /* time of the year tick counter: 1 tick = 1 game hour */
+extern int    world_darkness; /* daylight value. 0= totally dark. 7= daylight */
 
 #endif /* ifndef __CALENDAR_H */
