@@ -939,36 +939,50 @@ static int Game_LocateBeacon(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : Game_GetTimeAndDate                                              */
-/* Lua    : game:GetTimeAndDate()                                            */
-/* Info   : Return a table with values on the current game time.             */
-/*          The table will have the following fields:                        */
-/*          hour - hour in day as number                                     */
-/*          minute - minute in hour as number                                */
-/*          year - year as number                                            */
-/*          season - season in year as number                                */
-/*          month - month in season as number                                */
-/*          week - week in month as number                                   */
-/*          parweek - parweek in week as number                              */
-/*          day - day in parweek as number                                   */
-/*          intraholiday - intraholiday number TODO                          */
-/*          extraholiday - extraholiday in year as number                    */
-/*          season_name - season name as string                              */
-/*          month_name - month name as string                                */
-/*          parweek_name - parweek name as string                            */
-/*          day_name - day name as string                                    */
-/*          intraholiday_name - intraholiday name as string                  */
-/*          extraholiday_name - extraholiday name as string                  */
+/* Lua    : game:GetTimeAndDate(offset)                                      */
+/* Info   : Returns a table with values on the game time.                    */
+/*          offset is optional. If specified it may be a number which is the */
+/*          number of hours in the future or the past which the return       */
+/*          represents, or a string which is parsed to arrive at a similar   */
+/*          result (eg, "11 parweeks, 2 days, and 17 hours").                */
+/* Return : a table with the following fields:                               */
+/*            hour - hour in day as number                                   */
+/*            minute - minute in hour as number                              */
+/*            year - year as number                                          */
+/*            season - season in year as number                              */
+/*            month - month in season as number                              */
+/*            week - week in month as number                                 */
+/*            parweek - parweek in week as number                            */
+/*            day - day in parweek as number                                 */
+/*            intraholiday - intraholiday number TODO                        */
+/*            extraholiday - extraholiday in year as number                  */
+/*            season_name - season name as string                            */
+/*            month_name - month name as string                              */
+/*            parweek_name - parweek name as string                          */
+/*            day_name - day name as string                                  */
+/*            intraholiday_name - intraholiday name as string                */
+/*            extraholiday_name - extraholiday name as string                */
 /* Status : Tested/Stable                                                    */
 /*****************************************************************************/
 static int Game_GetTimeAndDate(lua_State *L)
 {
     lua_object    *self;
+    sint32         offset = 0;
     timeanddate_t  tad;
 
-    get_lua_args(L, "G", &self);
+    if (lua_isstring(L, 2))
+    {
+        const char *string;
 
-    hooks->get_tad(&tad, 0);
+        get_lua_args(L, "Gs", &self, &string);
+        offset = hooks->get_tad_offset_from_string(string);
+    }
+    else
+    {
+        get_lua_args(L, "G|i", &self, &offset);
+    }
 
+    hooks->get_tad(&tad, offset);
     lua_newtable(L);
 
     /* Time (numbers) */
@@ -1155,32 +1169,46 @@ static int Game_EnumerateCoins(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : Game_PrintTimeAndDate                                            */
-/* Lua    : game:PrintTimeAndDate(flags, tad)                                */
+/* Lua    : game:PrintTimeAndDate(flags, offset)                             */
 /* Info   : Returns the Arkhe time and/or date as a string, according to     */
-/*          flags.                                                           */
+/*          flags and offset.                                                */
 /*          flags is optional. If specified, it should be some combination   */
 /*          of:                                                              */
 /*            game.TAD_SHOWTIME, game.TAD_SHOWDATE, game.TAD_SHOWSEASON, and */
 /*            game.TAD_LONGFORM.                                             */
 /*          If not specified, it defaults to all of them.                    */
-/*          tad is optional. Specifying tad allows you to print a time that  */
-/*          is not right now. UNIMPLEMENTED!                                 */
-/* Status : Untested/Stable                                                  */
-/* TODO   : Implement the tad argument.                                      */
+/*          offset is optional. If specified it may be a number which is the */
+/*          number of hours in the future or the past which the return       */
+/*          represents, or a string which is parsed to arrive at a similar   */
+/*          result (eg, "11 parweeks, 2 days, and 17 hours").                */
+/* Return : string.                                                          */
+/* Status : Tested/Stable                                                    */
 /*****************************************************************************/
 static int Game_PrintTimeAndDate(lua_State *L)
 {
     lua_object    *self;
-    int            flags;
+    int            flags = 0;
+    sint32         offset = 0;
     timeanddate_t  tad;
 
-    flags = 0;
-    get_lua_args(L, "G|i", &self, &flags);
+    if (lua_isstring(L, 3))
+    {
+        const char *string;
+
+        get_lua_args(L, "Gis", &self, &flags, &string);
+        offset = hooks->get_tad_offset_from_string(string);
+    }
+    else
+    {
+        get_lua_args(L, "G|ii", &self, &flags, &offset);
+    }
 
     if (flags <= 0)
+    {
         flags = TAD_SHOWTIME | TAD_SHOWDATE | TAD_SHOWSEASON | TAD_LONGFORM;
+    }
 
-    hooks->get_tad(&tad, 0);
+    hooks->get_tad(&tad, offset);
     lua_pushstring(L, hooks->print_tad(&tad, flags));
 
     return 1;
