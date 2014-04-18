@@ -305,6 +305,7 @@ struct plugin_hooklist
     int (*get_rangevector_from_mapcoords)(mapstruct *, int, int, mapstruct *,
                                           int, int, rv_vector *, int);
     void (*get_tad)(timeanddate_t *, sint32);
+    sint32 (*get_tad_offset_from_string)(const char *);
     void (*give_artifact_abilities)(object *, artifact *);
     object *(*guild_get)(player *, char *);
     object *(*guild_join)(player *, char *, int, int, int, int, int, int);

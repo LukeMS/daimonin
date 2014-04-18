@@ -92,6 +92,7 @@ struct plugin_hooklist  hooklist    =
     get_rangevector,
     get_rangevector_from_mapcoords,
     get_tad,
+    get_tad_offset_from_string,
     give_artifact_abilities,
     guild_get,
     guild_join,

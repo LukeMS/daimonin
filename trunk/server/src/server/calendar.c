@@ -287,6 +287,69 @@ void get_tad(timeanddate_t *tad, sint32 offset)
                              extraholiday_name[tad->extraholiday] : "";
 }
 
+/* get_tad_offset_from_string() parses a string for the offset parameter of
+ * get_tad().
+ *
+ * This should only be used from a plugin as parsing a string is quite a lot of
+ * work. */
+sint32 get_tad_offset_from_string(const char *string)
+{
+    char   *cp = (char *)string;
+    sint32  offset = 0;
+
+    do
+    {
+        char    buf[MEDIUM_BUF];
+        sint64  value;
+        char   *endp;
+
+        cp = get_token(cp, buf, 0);
+
+        if (buf[0] != '\0' &&
+            (value = strtol(buf, &endp, 10)))
+        {
+            if (*endp == '\0')
+            {
+                cp = get_token(cp, buf, 0);
+                endp = buf;
+            }
+
+            if (*endp != '\0')
+            {
+                size_t len = strlen(endp);
+
+                if (!strncasecmp("hours", endp, len))
+                {
+                    offset += value;
+                }
+                else if (!strncasecmp("days", endp, len))
+                {
+                    offset += value * ARKHE_HRS_PER_DY;
+                }
+                else if (!strncasecmp("parweeks", endp, len))
+                {
+                    offset += value * ARKHE_HRS_PER_PK;
+                }
+                else if (!strncasecmp("weeks", endp, len))
+                {
+                    offset += value * ARKHE_HRS_PER_WK;
+                }
+                else if (!strncasecmp("months", endp, len))
+                {
+                    offset += value * ARKHE_HRS_PER_MH;
+                }
+                else if (!strncasecmp("seasons", endp, len))
+                {
+                    offset += value * ARKHE_HRS_PER_SN;
+                }
+            }
+        }
+    }
+    while (cp);
+
+    return offset;
+}
+
 /* Writes tad to errmsg according to flags.
  * flags are:
  *   TAD_SHOWTIME: show the time
