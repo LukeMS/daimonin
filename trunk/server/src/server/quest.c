@@ -657,7 +657,7 @@ int update_quest(struct obj *trigger, uint8 subtype, struct obj *info, char *tex
 
     /* Give the update a timestamp, write text to it, and insert it in
      * trigger. */
-    get_tad(&tad);
+    get_tad(&tad, 0);
     ob->custom_attrset = print_tad(&tad, TAD_SHOWTIME | TAD_SHOWDATE);
     FREE_AND_COPY_HASH(ob->msg, (text) ? text : vim);
     insert_ob_in_ob(ob, trigger);

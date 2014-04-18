@@ -60,8 +60,12 @@ typedef struct _subcommand
     shstr *cancel;
     shstr *list;
     shstr *remove;
+    shstr *verbose;
     shstr *restart;
     shstr *shutdown;
+    shstr *showtime;
+    shstr *showdate;
+    shstr *showseason;
 }
 _subcommand;
 

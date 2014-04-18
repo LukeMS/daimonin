@@ -1,4 +1,11 @@
 ~Category~: Calendar/Time
 
-~Syntax~: /time[ showtime][ showdate][ showseason][ longform]
-~Purpose~: Show the in-game date and time. The parmeters, which may be given in any order and combination, alter the format in which the time is given. They are for testing only.
+~Syntax~: /time[ <offset>][ list][ showtime][ showdate][ showseason][ verbose]
+~Purpose~: Show the in-game date and time.
+~Parameters~:
+  <offset> is the number of hours from now (if you want to know what time, or more usefully what date, it will be or was so many hours in the future or in the past).
+  list gives a breakdown of the components of the date and time.
+  showtime shows the time in the output.
+  showdate shows the date in the output.
+  showseason shows the season in the output.
+  verbose shows the output in a fuller format. It implies showtime showdate showseason.

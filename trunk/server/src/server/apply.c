@@ -2418,7 +2418,7 @@ int manual_apply(object *op, object *tmp, int aflag)
                           NULL, &aflag, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
                   return 4; /* 1 = do not write an error message to the player */
 
-              get_tad(&tad);
+              get_tad(&tad, 0);
               new_draw_info(NDI_UNIQUE, 0, op, "It is %s.",
                                    print_tad(&tad, TAD_SHOWTIME));
               return 4;

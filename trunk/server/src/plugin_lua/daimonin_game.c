@@ -967,7 +967,7 @@ static int Game_GetTimeAndDate(lua_State *L)
 
     get_lua_args(L, "G", &self);
 
-    hooks->get_tad(&tad);
+    hooks->get_tad(&tad, 0);
 
     lua_newtable(L);
 
@@ -1180,7 +1180,7 @@ static int Game_PrintTimeAndDate(lua_State *L)
     if (flags <= 0)
         flags = TAD_SHOWTIME | TAD_SHOWDATE | TAD_SHOWSEASON | TAD_LONGFORM;
 
-    hooks->get_tad(&tad);
+    hooks->get_tad(&tad, 0);
     lua_pushstring(L, hooks->print_tad(&tad, flags));
 
     return 1;

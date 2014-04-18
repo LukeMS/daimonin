@@ -366,38 +366,110 @@ int command_sstable(object *op, char *params)
 int command_time(object *op, char *params)
 {
     timeanddate_t  tad;
-    char         *pp;
-    int           flags;
+    char          *cp = params;
+    sint32         offset = 0;
+    int            flags = 0;
 
-    if (!op || op->type != PLAYER || !CONTR(op))
-        return 0;
-
-    get_tad(&tad);
-
-    /* This is only for testing. */
-    for (pp = params, flags = 0; pp && *pp; pp++)
+    if (!op ||
+        op->type != PLAYER ||
+        !CONTR(op))
     {
-        if (!strncmp(pp, "showtime", 8))
-            flags |= TAD_SHOWTIME;
-        else if (!strncmp(pp, "showdate", 8))
-            flags |= TAD_SHOWDATE;
-        else if (!strncmp(pp, "showseason", 10))
-            flags |= TAD_SHOWSEASON;
-        else if (!strncmp(pp, "longform", 8))
-            flags |= TAD_LONGFORM;
-
-        if (!(pp = strchr(pp, ' ')))
-            break;
+        return COMMANDS_RTN_VAL_ERROR;
     }
 
-    if (!flags)
-        flags = TAD_SHOWTIME | TAD_SHOWDATE | TAD_SHOWSEASON | TAD_LONGFORM;
+    do
+    {
+        char buf[MEDIUM_BUF];
 
-    /* Send the tad string to the player. */
-    new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, op, "It is %s.",
-                         print_tad(&tad, flags));
+        cp = get_token(cp, buf, 0);
 
-    return 0;
+        if (buf[0] != '\0')
+       {
+           int i;
+
+            if ((i = atoi(buf)))
+            {
+                offset = i;
+            }
+            else
+            {
+                shstr *token_sh = NULL;
+
+                FREE_AND_COPY_HASH(token_sh, buf);
+
+                if (token_sh == subcommands.list)
+                {
+                    new_draw_info(NDI_UNIQUE, 0, op,
+                        "%u minutes per hour\n"
+                        "%u hours per day\n"
+                        "%u days per parweek\n"
+                        "%u parweeks per week\n"
+                        "%u weeks per month\n"
+                        "%u months per season\n"
+                        "%u seasons per year",
+                        ARKHE_MES_PER_HR,
+                        ARKHE_HRS_PER_DY,
+                        ARKHE_DYS_PER_PK,
+                        ARKHE_PKS_PER_WK,
+                        ARKHE_WKS_PER_MH,
+                        ARKHE_MHS_PER_SN,
+                        ARKHE_SNS_PER_YR);
+                }
+                else if (token_sh == subcommands.verbose)
+                {
+                    flags |= TAD_SHOWTIME | TAD_SHOWDATE | TAD_SHOWSEASON |
+                        TAD_LONGFORM;
+                }
+                else if (token_sh == subcommands.showtime)
+                {
+                    flags |= TAD_SHOWTIME;
+                }
+                else if (token_sh == subcommands.showdate)
+                {
+                    flags |= TAD_SHOWDATE;
+                }
+                else if (token_sh == subcommands.showseason)
+                {
+                    flags |= TAD_SHOWSEASON;
+                }
+                else
+                {
+                    new_draw_info(NDI_UNIQUE, 0, op, "%s is not a valid parameter!",
+                        token_sh);
+                    FREE_ONLY_HASH(token_sh);
+                    return COMMANDS_RTN_VAL_SYNTAX;
+                }
+
+                FREE_ONLY_HASH(token_sh);
+            }
+        }
+    }
+    while (cp);
+
+    get_tad(&tad, offset);
+
+    if (flags == 0)
+    {
+        flags = TAD_SHOWTIME | TAD_SHOWDATE | TAD_SHOWSEASON;
+    }
+
+    if (offset > 0)
+    {
+        new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, op, "In %d hours from now it will be %s.",
+            offset, print_tad(&tad, flags));
+    }
+    else if (offset < 0)
+    {
+        new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, op, "%d hours ago it was %s.",
+            ABS(offset), print_tad(&tad, flags));
+    }
+    else
+    {
+        new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, op, "It is %s.",
+            print_tad(&tad, flags));
+    }
+
+    return COMMANDS_RTN_VAL_OK;
 }
 
 int command_archs(object *op, char *params)
