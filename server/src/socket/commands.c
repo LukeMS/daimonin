@@ -319,8 +319,12 @@ void init_commands()
     subcommands.cancel = add_string("cancel");
     subcommands.list = add_string("list");
     subcommands.remove = add_string("remove");
+    subcommands.verbose = add_string("verbose");
     subcommands.restart = add_string("restart");
     subcommands.shutdown = add_string("shutdown");
+    subcommands.showtime = add_string("showtime");
+    subcommands.showdate = add_string("showdate");
+    subcommands.showseason = add_string("showseason");
 }
 
 /* Finds cmd if it exists for pl (determined by gmaster_mode).

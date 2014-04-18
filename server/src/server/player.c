@@ -633,7 +633,7 @@ static const char *CreateGravestone(object *op, mapstruct *m, int x, int y)
     sprintf(strchr(buf, '\0'), " killed by %s.\n\n",
             (CONTR(op)->killer) ? CONTR(op)->killer : "bad luck");
     /* date */
-    get_tad(&tad);
+    get_tad(&tad, 0);
     sprintf(strchr(buf, '\0'), "On %s\n",
             print_tad(&tad, TAD_SHOWDATE | TAD_LONGFORM));
     FREE_AND_COPY_HASH(gravestone->msg, buf);

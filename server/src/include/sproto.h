@@ -712,7 +712,7 @@ int                         find_neighbours(path_node *node, path_node **open_li
                                             path_node *start, path_node *goal, object *op, uint32 id);
 path_node                  *find_path(object *op, mapstruct *map1, int x1, int y1, mapstruct *map2, int x2, int y2);
 /* calendar.c */
-void                        get_tad(timeanddate_t *tad);
+void                        get_tad(timeanddate_t *tad, sint32 offset);
 char                       *print_tad(timeanddate_t *tad, int flags);
 void                        tick_tadclock(void);
 void                        write_tadclock(void);

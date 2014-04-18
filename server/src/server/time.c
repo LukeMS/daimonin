@@ -1321,8 +1321,11 @@ void move_environment_sensor(object *op)
     int trig_tad = 0, trig_dow = 0, trig_bright = 0;
     timeanddate_t tad;
 
-    if(op->slaying || op->last_heal)
-        get_tad(&tad);
+    if (op->slaying ||
+        op->last_heal)
+    {
+        get_tad(&tad, 0);
+    }
 
     /* Time of day triggered? */
     if(op->slaying == NULL)

@@ -252,19 +252,20 @@ uint64 tadtick; /* time of the day tick counter */
 int    world_darkness; /* daylight value. 0= totally dark. 7= daylight */
 
 /* Updates tad with the current time and date. */
-void get_tad(timeanddate_t *tad)
+void get_tad(timeanddate_t *tad, sint32 offset)
 {
+    uint64 hour = tadtick + offset;
     uint16 day;
 
     memset(tad, 0, sizeof(timeanddate_t));
 
     /* Time (numbers) */
-    tad->hour = tadtick % ARKHE_HRS_PER_DY;
+    tad->hour = hour % ARKHE_HRS_PER_DY;
     tad->minute = (uint8)((ROUND_TAG % PTICKS_PER_ARKHE_HOUR) /
                   (PTICKS_PER_ARKHE_HOUR / (ARKHE_MES_PER_HR - 1)));
 
     /* Date (numbers) */
-    day = (tadtick % ARKHE_HRS_PER_YR) / ARKHE_HRS_PER_DY;
+    day = (hour % ARKHE_HRS_PER_YR) / ARKHE_HRS_PER_DY;
     tad->year = ARKHE_YR; /* constant for now */
     tad->season = calendar[day].season;
     tad->month = calendar[day].month;
