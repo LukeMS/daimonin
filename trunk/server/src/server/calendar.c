@@ -314,7 +314,11 @@ sint32 get_tad_offset_from_string(const char *string)
                 endp = buf;
             }
 
-            if (*endp != '\0')
+            if (*endp == '\0')
+            {
+                offset += value;
+            }
+            else
             {
                 size_t len = strlen(endp);
 

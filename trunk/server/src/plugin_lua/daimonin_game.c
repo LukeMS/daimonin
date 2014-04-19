@@ -967,21 +967,12 @@ static int Game_LocateBeacon(lua_State *L)
 static int Game_GetTimeAndDate(lua_State *L)
 {
     lua_object    *self;
-    sint32         offset = 0;
+    const char    *string = NULL;
+    sint32         offset;
     timeanddate_t  tad;
 
-    if (lua_isstring(L, 2))
-    {
-        const char *string;
-
-        get_lua_args(L, "Gs", &self, &string);
-        offset = hooks->get_tad_offset_from_string(string);
-    }
-    else
-    {
-        get_lua_args(L, "G|i", &self, &offset);
-    }
-
+    get_lua_args(L, "G|s", &self, &string);
+    offset = hooks->get_tad_offset_from_string(string);
     hooks->get_tad(&tad, offset);
     lua_newtable(L);
 
@@ -1188,29 +1179,21 @@ static int Game_PrintTimeAndDate(lua_State *L)
 {
     lua_object    *self;
     int            flags = 0;
-    sint32         offset = 0;
+    const char    *string = NULL;
+    sint32         offset;
     timeanddate_t  tad;
 
-    if (lua_isstring(L, 3))
-    {
-        const char *string;
+    get_lua_args(L, "G|is", &self, &flags, &string);
+    offset = hooks->get_tad_offset_from_string(string);
+    hooks->get_tad(&tad, offset);
 
-        get_lua_args(L, "Gis", &self, &flags, &string);
-        offset = hooks->get_tad_offset_from_string(string);
-    }
-    else
-    {
-        get_lua_args(L, "G|ii", &self, &flags, &offset);
-    }
-
-    if (flags <= 0)
+    if (flags <= 0 ||
+        flags == TAD_LONGFORM)
     {
         flags = TAD_SHOWTIME | TAD_SHOWDATE | TAD_SHOWSEASON | TAD_LONGFORM;
     }
 
-    hooks->get_tad(&tad, offset);
     lua_pushstring(L, hooks->print_tad(&tad, flags));
-
     return 1;
 }
 
