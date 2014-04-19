@@ -475,6 +475,15 @@ static struct constant_decl preset_game_constants[] =
     {"PERSONAL_LIGHT_MIN", 1},
     {"PERSONAL_LIGHT_MAX", MAX_DARKNESS},
 
+    /* Basic TAD components (calendar.h) */
+    {"ARKHE_MES_PER_HR", ARKHE_MES_PER_HR},
+    {"ARKHE_HRS_PER_DY", ARKHE_HRS_PER_DY},
+    {"ARKHE_DYS_PER_PK", ARKHE_DYS_PER_PK},
+    {"ARKHE_PKS_PER_WK", ARKHE_PKS_PER_WK},
+    {"ARKHE_WKS_PER_MH", ARKHE_WKS_PER_MH},
+    {"ARKHE_MHS_PER_SN", ARKHE_MHS_PER_SN},
+    {"ARKHE_SNS_PER_YR", ARKHE_SNS_PER_YR},
+
     /* game:PrintTimeAndDate flags (calendar.h) */
     {"TAD_SHOWTIME",   TAD_SHOWTIME},
     {"TAD_SHOWDATE",   TAD_SHOWDATE},
