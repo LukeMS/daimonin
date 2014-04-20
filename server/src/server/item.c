@@ -839,28 +839,7 @@ object *pick_up(object *who, object *what, object *where, uint32 nrof)
     /* When what is loot we go through a special process. */
     if (what->type == LOOT)
     {
-        object *looted;
-
-        /* If the loot is empty, throw it away and return. But first message
-         * who, if a player, just to let him know, and log a MAPBUG as this is
-         * surely unintentional. */
-        if (!(looted = what->inv))
-        {
-            if (!QUERY_FLAG(what, FLAG_REMOVED))
-            {
-                remove_ob(what);
-            }
-
-            if (pl)
-            {
-                new_draw_info(NDI_UNIQUE, 0, who, "You feel a little swindled as %s contains nothing!",
-                    query_name(what, who, ARTICLE_DEFINITE, 0));
-            }
-
-            LOG(llevMapbug, "MAPBUG:: Empty loot container [%s %d %d]!\n",
-                STRING_MAP_PATH(what->map), what->x, what->y);
-            return what;
-        }
+        object *looted = what->inv;
 
         if (pl)
         {
@@ -890,42 +869,60 @@ object *pick_up(object *who, object *what, object *where, uint32 nrof)
         /* If there is still loot we couldn't pick up... */
         if (looted)
         {
-            /* If who is a player, keep him uptodate with what is going on
-             * (he already knows why).  */
-            if (pl)
+            /* When the loot is being given we want to give the script a chance
+             * to deal with anything left over. */
+            if (QUERY_FLAG(from, FLAG_IS_GIVING))
             {
-                pl = NULL; // prevents futher 'you pick up...' messages
-                new_draw_info(NDI_UNIQUE, 0, who, "You take what you can of %s and leave the rest.",
-                    query_name(what, who, ARTICLE_DEFINITE, 0));
+                /* If who is a player, keep him uptodate with what is going on
+                 * (he already knows why).  */
+                if (pl)
+                {
+                    pl = NULL; // prevents futher 'you pick up...' messages
+                    new_draw_info(NDI_UNIQUE, 0, who, "You receive as much of %s as you can.",
+                        query_name(what, who, ARTICLE_DEFINITE, 0));
+                }
             }
-
-            /* Insert all the remaining contents of the loot in wherever the
-             * loot itself is. */
-            while (looted)
+            /* Otherwise... */
+            else
             {
-                object *next = looted->below;
-
-                remove_ob(looted);
-
-                if (what->map)
+                /* If who is a player, keep him uptodate with what is going on
+                 * (he already knows why).  */
+                if (pl)
                 {
-                    looted->x = what->x;
-                    looted->y = what->y;
-                    (void)insert_ob_in_map(looted, what->map, NULL, INS_NO_WALK_ON);
-                }
-                else if (what->env)
-                {
-                    (void)insert_ob_in_ob(looted, what->env);
+                    pl = NULL; // prevents futher 'you pick up...' messages
+                    new_draw_info(NDI_UNIQUE, 0, who, "You take what you can of %s and leave the rest.",
+                        query_name(what, who, ARTICLE_DEFINITE, 0));
                 }
 
-                looted = next;
+                /* Insert all the remaining contents of the loot in wherever the
+                 * loot itself is. */
+                while (looted)
+                {
+                    object *next = looted->below;
+
+                    remove_ob(looted);
+
+                    if (what->map)
+                    {
+                        looted->x = what->x;
+                        looted->y = what->y;
+                        (void)insert_ob_in_map(looted, what->map, NULL, INS_NO_WALK_ON);
+                    }
+                    else if (what->env)
+                    {
+                        (void)insert_ob_in_ob(looted, what->env);
+                    }
+
+                    looted = next;
+                }
             }
         }
 
-        /* Remove the empty loot. */
+        /* Mark the loot for removal (so can be dealt with by a script before
+         * gc). */
         if (!(QUERY_FLAG(what, FLAG_REMOVED)))
         {
-            remove_ob(what);
+            mark_object_removed(what);
         }
     }
     /* When what is not loot, try to pick it up -- see PickUp(). If this fails,
@@ -947,32 +944,53 @@ object *pick_up(object *who, object *what, object *where, uint32 nrof)
         object *into = (what->env &&
             what->env->type == CONTAINER) ? what->env : where;
 
-        if (outof &&
-            outof != who)
+        if (from != who &&
+            QUERY_FLAG(from, FLAG_IS_GIVING))
         {
-            sprintf(buf, "Taking %s out of %s, you ",
-                (nrof > 1) ? "them" : "it", query_name(outof, who, ARTICLE_DEFINITE, 0));
-        }
-        else
-        {
-            sprintf(buf, "You ");
-        }
-
-        if (from == who)
-        {
-            sprintf(strchr(buf, '\0'), "%s %s into %s",
-                (to == who) ? "transfer" : "put", query_name(what, who, ARTICLE_DEFINITE, 0),
-                (into) ? query_name(into, who, ARTICLE_DEFINITE, 0) : "your inventory");
-        }
-        else
-        {
-            sprintf(strchr(buf, '\0'), "pick up %s",
+            sprintf(buf, "%s %s you %s",
+                QUERY_SHORT_NAME(from, who),
+                (from->nrof > 1) ? "give" : "gives",
                 query_name(what, who, ARTICLE_DEFINITE, 0));
 
             if (into)
             {
-                sprintf(strchr(buf, '\0'), " and put %s into %s",
-                    (nrof > 1) ? "them" : "it", query_name(into, who, ARTICLE_DEFINITE, 0));
+                sprintf(strchr(buf, '\0'), " and you put %s into %s",
+                    (nrof > 1) ? "them" : "it",
+                    query_name(into, who, ARTICLE_DEFINITE, 0));
+            }
+        }
+        else
+        {
+            if (outof &&
+                outof != who)
+            {
+                sprintf(buf, "Taking %s out of %s, you ",
+                    (nrof > 1) ? "them" : "it",
+                    query_name(outof, who, ARTICLE_DEFINITE, 0));
+            }
+            else
+            {
+                sprintf(buf, "You ");
+            }
+
+            if (from == who)
+            {
+                sprintf(strchr(buf, '\0'), "%s %s into %s",
+                    (to == who) ? "transfer" : "put",
+                    query_name(what, who, ARTICLE_DEFINITE, 0),
+                    (into) ? query_name(into, who, ARTICLE_DEFINITE, 0) : "your inventory");
+            }
+            else
+            {
+                sprintf(strchr(buf, '\0'), "pick up %s",
+                    query_name(what, who, ARTICLE_DEFINITE, 0));
+
+                if (into)
+                {
+                    sprintf(strchr(buf, '\0'), " and put %s into %s",
+                        (nrof > 1) ? "them" : "it",
+                        query_name(into, who, ARTICLE_DEFINITE, 0));
+                }
             }
         }
 
@@ -1029,15 +1047,15 @@ static object *CanReach(object *who, object *what)
     }
 
     /* SAs can reach things in other creature's invs (including in containers
-     * in those invs). All others can only fiddle with themselves. */
+     * in those invs). All others can only fiddle with themselves, unless this
+     * is actively giving. */
     if (this->type == PLAYER ||
         (this != what &&
          this->type == MONSTER))
     {
         if (this != who &&
-            (who->type == MONSTER ||
-             !CONTR(who) ||
-             !(CONTR(who)->gmaster_mode & GMASTER_MODE_SA)))
+            !QUERY_FLAG(this, FLAG_IS_GIVING) &&
+            !(GET_GMASTER_MODE(who) & GMASTER_MODE_SA))
         {
             this = NULL;
         }
@@ -1055,10 +1073,11 @@ static object *CanReach(object *who, object *what)
         }
     }
 
-    /* If this does not point to who it must be directly on a map so check that
-     * it occupies the same space as who. */
+    /* If this does not point to who and is not giving, it must be directly on
+     * a map so check that it occupies the same space as who. */
     if (this &&
-        this != who)
+        this != who &&
+        !QUERY_FLAG(this, FLAG_IS_GIVING))
     {
         if (this->map != who->map ||
             this->x != who->x ||
@@ -1392,7 +1411,7 @@ static object *CanPickUp(object *who, object *what, object *where, uint32 nrof)
         if (from != who)
         {
             sint32 who_limit = (who->type == PLAYER) ?
-                CONTR(who)->weight_limit :
+                (sint32)CONTR(who)->weight_limit :
                 ((who->weight_limit > 0) ? who->weight_limit : 20000);
 
             if (who_limit < who->carrying + (sint32)(WEIGHT_OVERALL(what)))
