@@ -100,6 +100,7 @@ static struct method_decl GameObject_methods[] =
     {"GetTarget",              (lua_CFunction) GameObject_GetTarget},
 /*  {"GetUnmodifiedAttribute", (lua_CFunction) GameObject_GetUnmodifiedAttribute}, */
     {"GetVector",              (lua_CFunction) GameObject_GetVector},
+    {"Give",                   (lua_CFunction) GameObject_Give},
     {"IdentifyItem",           (lua_CFunction) GameObject_IdentifyItem},
     {"InsertInside",           (lua_CFunction) GameObject_InsertInside},
     {"Interface",              (lua_CFunction) GameObject_Interface},
@@ -413,7 +414,7 @@ static const char *GameObject_flags[NUM_FLAGS + 1 + 1] =
     /* 70 */
     "?f_no_send",
     "f_stealth",
-    NULL,
+    "?f_is_giving",
     "?f_is_linked",
     "f_cursed",
     "f_damned",
@@ -1781,6 +1782,62 @@ static int GameObject_Drop(lua_State *L)
 
     dropped = hooks->drop_to_floor(WHO, WHAT, nrof);
     push_object(L, &GameObject, dropped);
+    return 1;
+}
+
+/*****************************************************************************/
+/* Name   : GameObject_Give                                                  */
+/* Lua    : object:Give(what, whom, nrof)                                    */
+/* Info   : Only works for monster objects. Other types generate an error.   */
+/*          Causes object to give what to whom if possible (or technically   */
+/*          whom to pick up what which happens to be in object's inventory). */
+/*          nrof is optional and specifies the nrof from a stack (the default*/
+/*          is the entire stack).                                            */
+/*          This method does not check the distance between the object and   */
+/*          whom. So things can be given from A to B no matter how far they  */
+/*          are from one another, whether they are separated by a wall or a  */
+/*          lake of fire, or even on distant maps, etc.                      */
+/*          Giving has a very communist definition so ALL object's property  */
+/*          is open to ANYONE (though this method does limit this to object's*/
+/*          direct inventory -- ie, not things in containers though those    */
+/*          containers may themselves be given). Fortunately this sŧate only */
+/*          lasts for the split second this method is actually running.      */
+/* Return : A boolean to indicate whether the attempt succeeded or not       */
+/*          (failure can only mean that whom was not able to pick up what for*/
+/*          some reason -- ie, too heavy, etc).                              */
+/* Status : Tested/Stable                                                    */
+/*****************************************************************************/
+static int GameObject_Give(lua_State *L)
+{
+    lua_object *self,
+               *whatptr,
+               *whom;
+    int         nrof = 0;
+    object     *given;
+
+    get_lua_args(L, "OOO|i", &self, &whatptr, &whom, &nrof);
+
+    if (WHO->type != MONSTER)
+    {
+        return luaL_error(L, "object:Give() can only be called on a monster!");
+    }
+
+    if (WHAT->env != WHO)
+    {
+        return luaL_error(L, "object:Give(): Arg #1 must be in the possession of self!");
+    }
+
+    if ((whom->data.object->type != PLAYER ||
+         !CONTR(whom->data.object)) &&
+        whom->data.object->type != MONSTER)
+    {
+        return luaL_error(L, "object:Give(): Arg #2 must be player or monster GameObject!");
+    }
+
+    SET_FLAG(WHO, FLAG_IS_GIVING);
+    given = hooks->pick_up(whom->data.object, WHAT, NULL, nrof);
+    CLEAR_FLAG(WHO, FLAG_IS_GIVING);
+    lua_pushboolean(L, (given) ? 1 : 0);
     return 1;
 }
 

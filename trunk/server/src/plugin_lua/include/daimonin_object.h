@@ -100,6 +100,7 @@ static int  GameObject_GetRepairCost(lua_State *L);
 static int  GameObject_GetSkill(lua_State *L);
 static int  GameObject_GetTarget(lua_State *L);
 static int  GameObject_GetVector(lua_State *L);
+static int  GameObject_Give(lua_State *L);
 static int  GameObject_IdentifyItem(lua_State *L);
 static int  GameObject_InsertInside(lua_State *L);
 static int  GameObject_Interface(lua_State *L);

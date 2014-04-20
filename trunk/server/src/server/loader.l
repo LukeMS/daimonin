@@ -935,7 +935,7 @@ NULL /*is_removed*/,"been_applied", NULL /* internal flag: HAS_MOVED */, "treasu
 "can_use_ring", NULL /* in_activlist*/, "has_ready_bow",		/* 60 */
 "xrays", NULL /*no_apply*/, "can_stack", "lifesave", "is_magical", "alive",
 "stand_still", "random_move", "only_attack", "no_send",	/* 70 */
- "stealth", NULL /* free */, NULL /*linked*/, "cursed", "damned",
+ "stealth", NULL /*is_giving*/, NULL /*linked*/, "cursed", "damned",
 "see_anywhere", "known_magical", "known_cursed", "can_open_door", "is_thrown",				/* 80 */
 NULL /*free*/, NULL /*free*/, "is_male",
 "is_female", "applied",  "inv_locked", "is_wooded",
