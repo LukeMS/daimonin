@@ -534,8 +534,10 @@
      op->type == BRACERS || op->type == GIRDLE || \
      op->type == SHOULDER || op->type == LEGS)
 
-#define IS_LIVE(__op__) ( (__op__)->type == PLAYER || QUERY_FLAG((__op__),FLAG_MONSTER) || \
-                         (QUERY_FLAG((__op__), FLAG_ALIVE) && !QUERY_FLAG((__op__), FLAG_GENERATOR)))
+#define IS_LIVE(_O_) \
+    ((_O_)->type == PLAYER || \
+     QUERY_FLAG((_O_),FLAG_MONSTER) || \
+     QUERY_FLAG((_O_), FLAG_ALIVE))
 
 #define IS_ARROW(op) \
     (op->type==ARROW || op->type==MMISSILE || op->type==BULLET)
@@ -593,7 +595,7 @@
 #define FLAG_IS_NEUTRAL     20 /* alignment of this object: we need the explicit neutral setting for items */
 #define FLAG_SEE_INVISIBLE  21 /* Will see invisible player */
 #define FLAG_CAN_ROLL       22 /* Object can be rolled */
-#define FLAG_GENERATOR      23 /* Will generate type ob->stats.food */
+/* flag 23 is free */
 
 #define FLAG_IS_TURNABLE    24 /* Object can change face with direction */
 #define FLAG_WALK_OFF       25 /* Object is applied when left */

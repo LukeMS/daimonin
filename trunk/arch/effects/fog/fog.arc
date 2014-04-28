@@ -13,7 +13,6 @@ is_used_up 1
 invulnerable 1
 material 1
 changing 1
-generator 1
 speed -0.003
 speed_left -1.0
 blocksview 1
@@ -35,7 +34,6 @@ is_used_up 1
 invulnerable 1
 material 1
 changing 1
-generator 1
 speed -0.003
 speed_left -1.0
 blocksview 0
@@ -57,7 +55,6 @@ is_used_up 1
 invulnerable 1
 material 1
 changing 1
-generator 1
 speed -0.003
 speed_left -1.0
 blocksview 0

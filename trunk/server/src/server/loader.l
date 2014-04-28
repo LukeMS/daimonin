@@ -427,7 +427,6 @@ op->oz= op->z;
 ^is_player{S}				SET_OR_CLEAR_FLAG(op, FLAG_IS_PLAYER, IVAL);
 ^is_aged{S}					SET_OR_CLEAR_FLAG(op, FLAG_IS_AGED, IVAL);
 ^sys_object{S}				SET_OR_CLEAR_FLAG(op, FLAG_SYS_OBJECT, IVAL);
-^generator{S}				SET_OR_CLEAR_FLAG(op, FLAG_GENERATOR, IVAL);
 ^is_thrown{S}				SET_OR_CLEAR_FLAG(op, FLAG_IS_THROWN, IVAL);
 ^auto_apply{S}				SET_OR_CLEAR_FLAG(op, FLAG_AUTO_APPLY, IVAL);
 ^treasure{S}				SET_OR_CLEAR_FLAG(op, FLAG_TREASURE, IVAL);
@@ -923,7 +922,7 @@ static const char *flag_names[NUM_FLAGS+1] = {
 "is_good", "no_pick", "walk_on", "no_pass",		/* 10 */
 "is_animated", NULL /*free*/, "flying", "monster", "friendly",
 NULL /*is_removed*/,"been_applied", NULL /* internal flag: HAS_MOVED */, "treasure", "is_neutral",	/* 20 */
-"see_invisible", "can_roll", "generator", "is_turnable", "walk_off",
+"see_invisible", "can_roll", NULL, "is_turnable", "walk_off",
 "fly_on", "fly_off", "is_used_up", "identified", "reflecting",	/* 30 */
 "changing", "splitting", "hitback", "startequip", // deprecated -- use no_drop
 "blocksview", "undead", NULL /*fix_player*/, "unaggressive",
