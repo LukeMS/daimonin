@@ -3222,8 +3222,6 @@ object * fix_summon_pet(archetype *at, object *op, int dir, int type)
         CLEAR_FLAG(head, FLAG_CHANGING);
     if (QUERY_FLAG(head, FLAG_STAND_STILL))
         CLEAR_FLAG(head, FLAG_STAND_STILL);
-    if (QUERY_FLAG(head, FLAG_GENERATOR))
-        CLEAR_FLAG(head, FLAG_GENERATOR);
     if (QUERY_FLAG(head, FLAG_SPLITTING))
         CLEAR_FLAG(head, FLAG_SPLITTING);
 

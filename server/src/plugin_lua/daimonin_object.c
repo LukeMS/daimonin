@@ -355,7 +355,7 @@ static const char *GameObject_flags[NUM_FLAGS + 1 + 1] =
     "f_is_neutral",
     "f_see_invisible",
     "f_can_roll",
-    "f_generator",
+    NULL,
     "f_is_turnable",
     "f_walk_off",
     "f_fly_on",

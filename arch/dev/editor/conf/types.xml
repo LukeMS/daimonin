@@ -3235,15 +3235,10 @@
     for generated objects of same type thats they act totally synchronously.
   </attribute>
   <attribute arch="other_arch" editor="breed monster" type="string">
-    This only takes effect if &lt;multiply&gt; or &lt;splits&gt; is enabled.
+    This only takes effect if &lt;splits&gt; is enabled.
     The monster will create a &lt;breed monster&gt; every once in a while.
     &lt;breed monster&gt; can be set to any valid arch-name of a monster.
     Multipart monster should not be used.
-  </attribute>
-  <attribute arch="generator" editor="multiply" type="bool">
-    Monsters with &lt;multiply&gt; enabled will create a &lt;breed monster&gt;
-    every once in a while. Mice are a good example for this effect.
-    If enabled, you must also set &lt;breed monster&gt;.
   </attribute>
   <attribute arch="food" editor="split number" type="int">
     This is the number of new monsters generated when this monster

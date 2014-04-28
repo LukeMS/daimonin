@@ -3313,7 +3313,7 @@ int can_see_monsterP(mapstruct *m, int x, int y, int dir)
  * live objects.
  * It will not consider the object given as exlude (= caster) among possible
  * live objects. If the caster is a player, the spell will go after
- * monsters/generators only. If not, the spell will hunt players only.
+ * monsters only. If not, the spell will hunt players only.
  * It returns the direction toward the first/closest live object if it finds
  * any, otherwise -1.
  */
@@ -3339,7 +3339,7 @@ int spell_find_dir(mapstruct *m, int x, int y, object *exclude)
             tmp = GET_MAP_OB(m, nx, ny);
             while (tmp
                 != NULL
-                && (((owner_type == PLAYER && !QUERY_FLAG(tmp, FLAG_MONSTER) && !QUERY_FLAG(tmp, FLAG_GENERATOR))
+                && (((owner_type == PLAYER && !QUERY_FLAG(tmp, FLAG_MONSTER))
                   || (owner_type != PLAYER && tmp->type != PLAYER))
                  || (tmp == exclude || (tmp->head && tmp->head == exclude))))
                 tmp = tmp->above;
