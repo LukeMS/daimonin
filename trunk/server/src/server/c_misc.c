@@ -189,7 +189,7 @@ void malloc_info(object *op)
     sum_alloc += i; sum_used += i;
     NDI_LOG(llevSystem, NDI_UNIQUE, 0, op, "%4ld artifacts strngs %8d", nrofallowedstr, i = (nrofallowedstr * sizeof(linked_char)));
     sum_alloc += i;sum_used += i;
-    NDI_LOG(llevSystem, NDI_UNIQUE, 0, op, "%s\n", "%4d artifactlists    %8d", alnr, i = (alnr * sizeof(artifactlist)));
+    NDI_LOG(llevSystem, NDI_UNIQUE, 0, op, "%4d artifactlists    %8d", alnr, i = (alnr * sizeof(artifactlist)));
     sum_alloc += i; sum_used += i;
 
     NDI_LOG(llevSystem, NDI_UNIQUE, 0, op, "Total space allocated:%8d", sum_alloc);

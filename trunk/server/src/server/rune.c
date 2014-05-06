@@ -152,7 +152,6 @@ int write_rune(object *op, int dir, int inspell, int level, char *runename)
         {
             if (strstr(runename, "endmsg"))
             {
-                new_draw_info(NDI_UNIQUE, 0, op, "Trying to cheat are we?", runename);
                 LOG(llevInfo, "write_rune: player %s tried to write bogus rune\n",
                     STRING_OBJ_NAME(op));
                 return 0;
