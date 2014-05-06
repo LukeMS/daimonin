@@ -1137,7 +1137,7 @@ int command_channel_create(object *ob, char *params)
         }
         final_addChannel(channelname,defaultshortcut,channelcolor, channelpostlevel, channelenterlevel, channelgmastermode);
         new_draw_info(NDI_UNIQUE, 0, ob, "Channel %s is created.",channelname);
-        CHATLOG("Create:>%s<: %s, %d, %d\n", ob->name, channelname, channelpostlevel, channelenterlevel, channelgmastermode);
+        CHATLOG("Create:>%s<: %s, %d, %d, %d\n", ob->name, channelname, channelpostlevel, channelenterlevel, channelgmastermode);
         save_channels();
     }
 

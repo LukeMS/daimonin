@@ -33,8 +33,8 @@ static void party_dump(object *pobj)
 
     if (!CONTR(pobj))
     {
-        LOG(llevDebug, "PARTY_DUMP: object %s without controller!",
-            STRING_OBJ_NAME(pobj), pobj->count);
+        LOG(llevDebug, "PARTY_DUMP: object %s[%d] without controller!",
+            STRING_OBJ_NAME(pobj), TAG(pobj));
 
         return;
     }

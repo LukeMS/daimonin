@@ -350,7 +350,8 @@ void set_quest_status(struct obj *trigger, int q_status, int q_type)
 
     if(!who)
     {
-        LOG(llevBug, "set_quest_status(): trigger not in player/container\n", STRING_OBJ_NAME(trigger->env));
+        LOG(llevBug, "set_quest_status(): trigger not in player/container (env is %s)!\n",
+            STRING_OBJ_NAME(trigger->env));
         return;
     }
 
