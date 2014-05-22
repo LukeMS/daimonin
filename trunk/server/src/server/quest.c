@@ -606,11 +606,12 @@ int update_quest(struct obj *trigger, uint8 subtype, struct obj *info, char *tex
     ob = arch_to_object(archetype_global._quest_update);
     ob->sub_type1 = subtype;
 
-    /* Set the info attributes if info != NULL. */
+    /* Set the info attributes if info != NULL. Note that ->name should never
+     * be NULL for any object. The server will cope (from 0.10.6 to 0.10.6-d it
+     * would crash) but it's bad practice. */
     if (!info)
     {
         FREE_AND_CLEAR_HASH(ob->race);
-        FREE_AND_CLEAR_HASH(ob->name);
         FREE_AND_CLEAR_HASH(ob->title);
         FREE_AND_CLEAR_HASH(ob->slaying);
         ob->weight_limit = 0;
@@ -626,11 +627,7 @@ int update_quest(struct obj *trigger, uint8 subtype, struct obj *info, char *tex
             FREE_AND_ADD_REF_HASH(ob->race, info->race);
         }
 
-        if (!info->name)
-        {
-            FREE_AND_CLEAR_HASH(ob->name);
-        }
-        else
+        if (info->name)
         {
             FREE_AND_ADD_REF_HASH(ob->name, info->name);
         }
