@@ -536,21 +536,13 @@ static char *PrepareData(_server_client_cmd cmd, uint16 flags, player *pl,
 
         if ((flags & UPD_NAME))
         {
-            char   *name;
+            char    name[SMALL_BUF];
             object *who = (pl) ? pl->ob : NULL;
-            uint8   len;
+            size_t  len;
 
-            name = query_name(op, who, ARTICLE_NONE, 0);
-
-            for (len = 0; len <= 127; len++)
-            {
-                if (*(name + len) == '\0')
-                {
-                    break;
-                }
-            }
-
-            *(name + len) = '\0'; 
+            sprintf(name, "%s", query_name(op, who, ARTICLE_NONE, 0));
+            name[127] = '\0'; // max 127
+            len = strlen(name);
             *((uint8 *)cp++) = len + 1;
             sprintf(cp, "%s", name);
             cp += len + 1;
