@@ -536,7 +536,7 @@ static char *PrepareData(_server_client_cmd cmd, uint16 flags, player *pl,
 
         if ((flags & UPD_NAME))
         {
-            char    name[SMALL_BUF];
+            char    name[MEDIUM_BUF];
             object *who = (pl) ? pl->ob : NULL;
             size_t  len;
 
