@@ -341,7 +341,6 @@ char *examine(object *op, object *tmp, int flag)
 {
     char    *buf_out = global_string_buf4096;
     char    buf[LARGE_BUF];
-    char    tmp_buf[TINY_BUF];
     int     i;
 
     if (tmp == NULL || tmp->type == CLOSE_CON)
@@ -465,14 +464,14 @@ char *examine(object *op, object *tmp, int flag)
                     {
                         if (ft)
                             strcat(buf, ", ");
-                        strcat(tmp_buf, "magical");
+                        strcat(buf, "magical");
                         ft = 1;
                     }
                     if (QUERY_FLAG(tmp, FLAG_PROOF_SPHERICAL))
                     {
                         if (ft)
                             strcat(buf, ", ");
-                        strcat(tmp_buf, "spherical");
+                        strcat(buf, "spherical");
                         ft = 1;
                     }
                     strcat(buf, " proof");
