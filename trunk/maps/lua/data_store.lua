@@ -126,6 +126,7 @@ function _data_store._load(id, player)
                 local t = f:read("*all")
                 f:close()
                 SA:ChannelMsg('SA', t, 0)
+                return nil
             end
         end
         t[id] = {_changed = 0, _persist = true, _data = data}
