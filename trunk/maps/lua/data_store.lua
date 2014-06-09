@@ -116,7 +116,17 @@ function _data_store._load(id, player)
         local data = f()
         if data == nil then
             print("DataStore: corrupt datastore file: "..path)
-            return nil
+            local SA = game:FindPlayer('_person_')
+            if SA == nil then
+                return nil
+            else
+                -- Do a hard read on the file. loadfile compiles a Lua script file
+                -- so it returns nil if there's only half a file.
+                local f = assert(io.open(path, "r"))
+                local t = f:read("*all")
+                f:close()
+                SA:ChannelMsg('SA', t, 0)
+            end
         end
         t[id] = {_changed = 0, _persist = true, _data = data}
         setmetatable(t[id]._data, _DataStore_mt)
