@@ -3332,7 +3332,7 @@ void revert_buff_stats(object *item)
         copy_object(original, item);
 
         // Get rid of the original object.
-        SET_FLAG(original, FLAG_REMOVED);
+        remove_ob(original);
     }
 }
 
@@ -3658,7 +3658,7 @@ int remove_item_buff(object *item, char *name, uint32 nrof)
  * no article but yes nrof.
  *
  * TODO: status will probably be removed and handled client-side in future.
- * 
+ *
  * NOTE: Capitalisation, pluralisation and other string mungeing will be
  * handled client-side. */
 char *query_name(object *what, object *who, uint32 article, uint8 status)
@@ -3833,7 +3833,7 @@ char *query_name(object *what, object *who, uint32 article, uint8 status)
                 else if ((CONTR(who)->group_status & GROUP_STATUS_GROUP) &&
                     CONTR(CONTR(who)->group_leader)->group_id == what->stats.maxhp)
                 {
-                    sprintf(strchr(cp, '\0'), " (bounty of your group%s)", 
+                    sprintf(strchr(cp, '\0'), " (bounty of your group%s)",
                         (QUERY_FLAG(what, FLAG_BEEN_APPLIED)) ? ", SEARCHED" : "");
                 }
                 else
