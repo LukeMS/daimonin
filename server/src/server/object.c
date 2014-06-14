@@ -3325,8 +3325,14 @@ void revert_buff_stats(object *item)
         original->x = item->x;
         original->y = item->y;
 
-        copy_object(item->original, item);
-        item->original = original;
+        // Null the item's "original" so it's not copied in copy_object.
+        item->original = NULL;
+
+        // Copy the original over the real item
+        copy_object(original, item);
+
+        // Get rid of the original object.
+        SET_FLAG(original, FLAG_REMOVED);
     }
 }
 
@@ -3339,8 +3345,8 @@ void fix_buff_stats(object *item)
     int i = 0;
     uint32 n = 0;
     object *inv;
-	object *below;
-	uint8 buffs = 0; // Only tracks if the object still has *any* buffs
+    object *below;
+    uint8 buffs = 0; // Only tracks if the object still has *any* buffs
 
     if (!item)
     {
@@ -3353,27 +3359,26 @@ void fix_buff_stats(object *item)
         return;
     }
 
-    // Try to create a duplicate of the object to make changing stats relative to the original.
-    if (!item->original)
-    {
-        item->original = get_object();
-        copy_object(item, item->original);
-
-        // Even though the object isn't on a map or inside another, it shouldn't be removed on cleanup.
-        CLEAR_FLAG(item->original, FLAG_REMOVED);
-
-        if (!item->original)
-        {
-            LOG(llevDebug, "fix_buff_stats() failed - could not copy original object\n");
-            return;
-        }
-    } else
+    if (item->original)
     {
         // If orig was found, item should be different than orig, so revert item to orig.
         revert_buff_stats(item);
     }
 
-	for (inv = item->inv; inv != NULL; inv = below)
+    // Try to create a duplicate of the object to make changing stats relative to the original.
+    item->original = get_object();
+    copy_object(item, item->original);
+
+    // Even though the object isn't on a map or inside another, it shouldn't be removed on cleanup.
+    CLEAR_FLAG(item->original, FLAG_REMOVED);
+
+    if (!item->original)
+    {
+        LOG(llevDebug, "fix_buff_stats() failed - could not copy original object\n");
+        return;
+    }
+
+    for (inv = item->inv; inv != NULL; inv = below)
     {
         below = inv->below;
         buffs++;
@@ -3468,7 +3473,7 @@ uint8 check_buff_limit(object *op, int nr)
         return FALSE;
     }
 
-	// Max buffs not specified so use qua/con instead.
+    // Max buffs not specified so use qua/con instead.
     if (op->max_buffs == 0)
     {
         // Items with a higher condition are already powerful enough, so
@@ -3544,7 +3549,7 @@ int add_item_buff(object *item, object *buff, short just_checking)
 
     if (!item || !buff)
     {
-		ret = BUFF_ADD_BAD_PARAMS;
+        ret = BUFF_ADD_BAD_PARAMS;
         return ret; // No point in going on, only bad things will come.
     }
 
