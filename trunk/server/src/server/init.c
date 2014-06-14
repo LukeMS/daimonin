@@ -1031,7 +1031,8 @@ void init_races()
             {
                 // Previous index matched this race but this one doesn't, so the
                 // previous was the last index.
-                if (find_racelink(race_start_locations[prev_index].race) == list)
+                if (prev_index >= 0 && race_start_locations[prev_index].name != NULL &&
+                    find_racelink(race_start_locations[prev_index].race) == list)
                 {
                     list->last_start_location = prev_index;
                     break;
