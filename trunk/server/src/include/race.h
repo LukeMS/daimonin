@@ -30,13 +30,17 @@
 typedef struct ralnk
 {
     /* Used to link the race lists together */
-    const char                 *name;       /* name of this race entry */
-    int                         nrof;       /* nrof things belonging to this race */
-    struct archt               *corpse; /* thats the default corpse of this race */
-    struct oblnk               *member; /* linked object list of things belonging to this race */
-    struct ralnk               *next;
+    const char                       *name;       /* name of this race entry */
+    int                               nrof;       /* nrof things belonging to this race */
+    struct archt                     *corpse; /* thats the default corpse of this race */
+    struct oblnk                     *member; /* linked object list of things belonging to this race */
+    struct ralnk                     *next;
+    struct mob_behaviourset          *ai; /* That is the default ai for this race */
 
-    struct mob_behaviourset    *ai; /* That is the default ai for this race */
+    // The first and last indices of the start_locations array in map.c
+    // that match up to this race. Used to pick a random location.
+    sint8                             first_start_location;
+    sint8                             last_start_location;
 } racelink;
 
 #define RACE_TYPE_NONE 0
@@ -67,6 +71,18 @@ typedef struct _races
     char                   *name;               /* prefix name for this race */
     uint32                  usable;        /* race can use (wear, wield, apply...) items from this races */
 }_races;
+
+typedef struct _race_map_start_location
+{
+    const char *race;
+    const char *map;
+    sint16      x;
+    sint16      y;
+    sint16      status;
+} _race_start_location;
+
+#define NUM_START_LOCATIONS 1
+extern _race_start_location race_start_locations[NUM_START_LOCATIONS];
 
 extern struct _races    item_race_table[RACE_NAME_INIT];
 

@@ -152,7 +152,7 @@ static void init_strings()
     shstr_cons.drowning = add_string("drowning in a swamp");
 
     shstr_cons.emergency_mappath = add_string(EMERGENCY_MAPPATH);
-    shstr_cons.start_mappath = add_string(START_MAP_MAPPATH);
+    shstr_cons.start_mappath = add_string(FALLBACK_START_MAP_PATH);
     shstr_cons.bind_mappath = add_string(BIND_MAP_MAPPATH);
 
     shstr_cons.nopass = add_string(RECLAIM_NOPASS);
@@ -883,6 +883,8 @@ static racelink * get_racelist()
     list->member = get_objectlink(OBJLNK_FLAG_OB);
     list->next = NULL;
     list->ai = NULL;
+    list->first_start_location = -1;
+    list->last_start_location = -1;
 
     return list;
 }
@@ -961,6 +963,7 @@ void init_races()
     archetype  *at;
     racelink   *list;
     static int  init_done   = 0;
+    int i, prev_index;
 
     if (init_done)
         return;
@@ -975,33 +978,67 @@ void init_races()
         {
             add_to_racelist(at->clone.race, &at->clone);
         }
-    };
-
-    /* now search for ai objects and add them to the race list */
-    LOG(llevDebug, " default AIs: ");
-    for (at = first_archetype; at != NULL; at = at->next)
-    {
-        if (at->clone.type == TYPE_AI)
+        else if (at->clone.type == TYPE_AI)
         {
             add_ai_to_racelist(at->clone.race, at);
         }
-    };
-
-    /* now search for corpses and add them to the race list */
-    for (at = first_archetype; at != NULL; at = at->next)
-    {
-        if (at->clone.type == CONTAINER && at->clone.sub_type1 == ST1_CONTAINER_CORPSE)
+        else if (at->clone.type == CONTAINER && at->clone.sub_type1 == ST1_CONTAINER_CORPSE)
         {
             add_corpse_to_racelist(at->clone.race, at);
         }
     };
 
-    /* last action: for all races without a special defined corpse
-     * add our corpse_default arch to it. */
     for (list = first_race; list; list = list->next)
     {
+        /* For all races without a special defined corpse
+         * add our corpse_default arch to it. */
         if (!list->corpse)
+        {
             list->corpse = archetype_global._corpse_default;
+        }
+
+        prev_index = -1;
+        // Loop through the start_locations array.
+        for (i = 0; i < NUM_START_LOCATIONS; i++)
+        {
+            if (find_racelink(race_start_locations[i].race) == list)
+            {
+                // If we're at the beginning of the array and the names match
+                // this is definitely the first index.
+                if (prev_index == -1)
+                {
+                    list->first_start_location = i;
+                    list->last_start_location = i;
+                }
+                else
+                {
+                    // Previous index was not a match but this one is, so this one
+                    // is the first.
+                    if (find_racelink(race_start_locations[prev_index].race) != list)
+                    {
+                        list->first_start_location = i;
+
+                        // also set the last in case there is only 1 index
+                        list->last_start_location = i;
+                    }
+                    else
+                    {
+                        list->last_start_location = i;
+                    }
+                }
+            }
+            else
+            {
+                // Previous index matched this race but this one doesn't, so the
+                // previous was the last index.
+                if (find_racelink(race_start_locations[prev_index].race) == list)
+                {
+                    list->last_start_location = prev_index;
+                    break;
+                }
+            }
+            prev_index++;
+        }
     }
 
 #ifdef DEBUG

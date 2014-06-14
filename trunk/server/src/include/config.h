@@ -569,10 +569,10 @@
 #define EMERGENCY_MAPPATH "/emergency"
 /* emergency is always MULTI and will be called with fixed login */
 
-#define START_MAP_MAPPATH   "/planes/human_plane/castle/castle_030a"
-#define START_MAP_STATUS    (MAP_STATUS_MULTI)
-#define START_MAP_X         (18)
-#define START_MAP_Y         (1)
+#define FALLBACK_START_MAP_PATH   "/planes/human_plane/castle/castle_030a"
+#define FALLBACK_START_MAP_STATUS    (MAP_STATUS_MULTI)
+#define FALLBACK_START_MAP_X         (18)
+#define FALLBACK_START_MAP_Y         (1)
 
 #define BIND_MAP_MAPPATH   "/planes/human_plane/castle/castle_040a"
 #define BIND_MAP_STATUS    (MAP_STATUS_MULTI)

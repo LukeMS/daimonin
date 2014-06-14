@@ -25,6 +25,17 @@
 
 #include <global.h>
 
+/* A list of starter locations sorted by race. If a race is not
+ * mentioned on this list, the server will fall back to a default.
+ * NOTE: locations for each race MUST be grouped together
+ * or they will be ignored. I.e. all the elf starter locations
+ * must be next to each other on this list.
+ */
+_race_start_location race_start_locations[NUM_START_LOCATIONS] =
+{
+    {"human", "/planes/human_plane/castle/castle_030a", 18, 1, MAP_STATUS_MULTI}
+};
+
 int global_darkness_table[MAX_DARKNESS + 1] =
 {
     0,
@@ -1635,7 +1646,7 @@ mapstruct *ready_inherited_map(mapstruct *orig_map, shstr *new_map_path)
  *
  * If a map with a matching path is already loaded into memory, there is nothing to do; it is already ready so return it.
  *
- * 
+ *
  * it will return a map pointer to the map path_sh/orig_path_sh.
  * If the map was not loaded before, the map will be loaded now.
  * orig_path_sh is ALWAYS a path to /maps = the original map path.
@@ -1944,7 +1955,7 @@ static mapstruct *LoadTemporaryMap(mapstruct *m)
 #endif
         clean_tmp_map(m);
         m->in_memory = MAP_ACTIVE;
-     
+
 #ifdef DEBUG_MAP
         /* In case other objects press some buttons down. We handle here all
          * kinds of "triggers" which are triggered permanent by objects like
@@ -1960,7 +1971,7 @@ static mapstruct *LoadTemporaryMap(mapstruct *m)
     {
         fclose(fp);
     }
-     
+
     return m;
 }
 
@@ -2586,9 +2597,9 @@ void set_mappath_by_default(player *pl)
 {
     FREE_AND_ADD_REF_HASH(pl->maplevel, shstr_cons.start_mappath);
     FREE_AND_ADD_REF_HASH(pl->orig_map, shstr_cons.start_mappath);
-    pl->map_status = START_MAP_STATUS;
-    pl->map_x = START_MAP_X;
-    pl->map_y = START_MAP_Y;
+    pl->map_status = FALLBACK_START_MAP_STATUS;
+    pl->map_x = FALLBACK_START_MAP_X;
+    pl->map_y = FALLBACK_START_MAP_Y;
 }
 
 void set_mappath_by_map(object* op)
@@ -3753,7 +3764,7 @@ void map_check_in_memory(mapstruct *m)
                     {
 #ifdef MAP_SWAP_OBJECT
 # ifdef DEBUG_MAP
-                        LOG(llevDebug, "DEBUG:: %s/map_check_in_memory(): Swapping map >%s< (%u) before its time (%u of %u).\n", 
+                        LOG(llevDebug, "DEBUG:: %s/map_check_in_memory(): Swapping map >%s< (%u) before its time (%u of %u).\n",
                             __FILE__, STRING_MAP_PATH(this), this->in_memory, objs,
                             threshold);
 # endif
