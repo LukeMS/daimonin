@@ -33,6 +33,8 @@ function _data_store._serialize(value)
     local function serialize(path, value, depth)
         local t = type(value)
 
+        print("Datastore serialize1:: " .. t .. "\n")
+
         if t == 'string' then
             return string.format("%q", value)
         elseif t == 'function' then
@@ -45,6 +47,8 @@ function _data_store._serialize(value)
                 table.insert(tables[value]["refs"], path)
                 return "{}"
             elseif getmetatable(value) == _data_store._special then
+                print("Datastore serialize2:: " .. value.type .. "\n")
+                print("Datastore serialize3:: " .. value.type_id .. "\n")
                 -- Probably a player or normal object
                 if value.type == game.TYPE_PLAYER and value.type_id then
                     return '_data_store._object(game.TYPE_PLAYER, ' .. string.format("%q", value.type_id) .. ')'
