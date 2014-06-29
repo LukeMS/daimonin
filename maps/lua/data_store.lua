@@ -33,22 +33,18 @@ function _data_store._serialize(value)
     local function serialize(path, value, depth)
         local t = type(value)
 
-        print("Datastore serialize1:: " .. t .. "\n")
-
         if t == 'string' then
             return string.format("%q", value)
         elseif t == 'function' then
             return 'loadstring('.. string.format("%q", string.dump(value)) ..')'
         elseif t == 'number' or t == 'boolean' then
             return tostring(value)
-        elseif t == 'table' then
+        elseif t == 'table' or t == 'addon' or t == 'utility' or t == 'ds' then
             if tables[value] ~= nil then
                 -- We have seen this table referenced before
                 table.insert(tables[value]["refs"], path)
                 return "{}"
             elseif getmetatable(value) == _data_store._special then
-                print("Datastore serialize2:: " .. value.type .. "\n")
-                print("Datastore serialize3:: " .. value.type_id .. "\n")
                 -- Probably a player or normal object
                 if value.type == game.TYPE_PLAYER and value.type_id then
                     return '_data_store._object(game.TYPE_PLAYER, ' .. string.format("%q", value.type_id) .. ')'
@@ -120,18 +116,8 @@ function _data_store._load(id, player)
         local data = f()
         if data == nil then
             print("DataStore: corrupt datastore file: "..path)
-            local SA = game:FindPlayer('_person_')
-            if SA == nil then
-                return nil
-            else
-                -- Do a hard read on the file. loadfile compiles a Lua script file
-                -- so it returns nil if there's only half a file.
-                local f = assert(io.open(path, "r"))
-                local t = f:read("*all")
-                f:close()
-                SA:ChannelMsg('SA', t, 0)
-                return nil
-            end
+            os.remove(path) -- delete it so we can hopefully resume normal operations
+            return false
         end
         t[id] = {_changed = 0, _persist = true, _data = data}
         setmetatable(t[id]._data, _DataStore_mt)
@@ -190,7 +176,7 @@ function _data_store._save(time, player, b_force)
                     if not f then
                         print("DataStore: Couldn't open " .. filename .. " for writing")
                         everything_ok = false
-                    else                    
+                    else                
                         -- print("DataStore: saving stored data for player "..player.." in "..filename)
                         f:write(_data_store._serialize(v._data))
                         f:close()
