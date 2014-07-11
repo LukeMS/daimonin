@@ -3066,16 +3066,12 @@ static int GameObject_AddQuestTarget(lua_State *L)
     }
     else
     {
-        FREE_ONLY_HASH(myob->race);
+        FREE_AND_CLEAR_HASH2(myob->race);
     }
 
     if(name && *name!='\0')
     {
         FREE_AND_COPY_HASH(myob->name, name);
-    }
-    else
-    {
-        FREE_ONLY_HASH(myob->name);
     }
 
     if(race && *race!='\0')
@@ -3084,7 +3080,7 @@ static int GameObject_AddQuestTarget(lua_State *L)
     }
     else
     {
-        FREE_ONLY_HASH(myob->slaying);
+        FREE_AND_CLEAR_HASH2(myob->slaying);
     }
 
     if(title && *&title!='\0')
@@ -3093,7 +3089,7 @@ static int GameObject_AddQuestTarget(lua_State *L)
     }
     else
     {
-        FREE_ONLY_HASH(myob->title);
+        FREE_AND_CLEAR_HASH2(myob->title);
     }
 
     /* Only mobs >= level count as targets. This is a useful final check to
@@ -3155,10 +3151,10 @@ static int GameObject_AddQuestItem(lua_State *L)
         {
             FREE_AND_COPY_HASH(myob->name, i_name);
         }
-        else
-        {
-            FREE_ONLY_HASH(myob->name);
-        }
+//        else
+//        {
+//            FREE_AND_CLEAR_HASH2(myob->name);
+//        }
     }
 
     if(i_title)
@@ -3169,7 +3165,7 @@ static int GameObject_AddQuestItem(lua_State *L)
         }
         else
         {
-            FREE_ONLY_HASH(myob->title);
+            FREE_AND_CLEAR_HASH2(myob->title);
         }
     }
 
