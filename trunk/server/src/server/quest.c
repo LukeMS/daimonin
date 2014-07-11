@@ -620,21 +620,26 @@ int update_quest(struct obj *trigger, uint8 subtype, struct obj *info, char *tex
     {
         if (!info->race)
         {
-            FREE_AND_CLEAR_HASH(ob->race);
+            FREE_AND_CLEAR_HASH2(ob->race);
         }
         else
         {
             FREE_AND_ADD_REF_HASH(ob->race, info->race);
         }
 
-        if (info->name)
+        if (!info->name)
+        {
+            LOG(llevBug, "BUG:: update_quest(): info with no name for update to trigger %s!\n",
+                STRING_OBJ_NAME(trigger));
+        }
+        else
         {
             FREE_AND_ADD_REF_HASH(ob->name, info->name);
         }
 
         if (!info->title)
         {
-            FREE_AND_CLEAR_HASH(ob->title);
+            FREE_AND_CLEAR_HASH2(ob->title);
         }
         else
         {
@@ -643,7 +648,7 @@ int update_quest(struct obj *trigger, uint8 subtype, struct obj *info, char *tex
 
         if (!info->slaying)
         {
-            FREE_AND_CLEAR_HASH(ob->slaying);
+            FREE_AND_CLEAR_HASH2(ob->slaying);
         }
         else
         {

@@ -1162,11 +1162,11 @@ static void Copy(object *from, object *to)
         unlink_treasurelists(to->randomitems, 0);
     }
 
-    FREE_ONLY_HASH(to->name);
-    FREE_ONLY_HASH(to->title);
-    FREE_ONLY_HASH(to->race);
-    FREE_ONLY_HASH(to->slaying);
-    FREE_ONLY_HASH(to->msg);
+    FREE_AND_CLEAR_HASH2(to->name);
+    FREE_AND_CLEAR_HASH2(to->title);
+    FREE_AND_CLEAR_HASH2(to->race);
+    FREE_AND_CLEAR_HASH2(to->slaying);
+    FREE_AND_CLEAR_HASH2(to->msg);
     (void)memcpy((void *)((char *)to + offsetof(object, name)),
         (void *)((char *)from + offsetof(object, name)),
         sizeof(object) - offsetof(object, name));
