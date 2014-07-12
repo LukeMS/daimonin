@@ -33,6 +33,19 @@ function wrap_io_open()
     end
 end
 
+function wrap_os_remove()
+    local orig_os_remove = os.remove
+    return function(filename)
+        -- Don't allow null chars in filename
+        assert(not string.find(filename, "%z"), "Filename contains null char")
+
+        -- only allow deletion of datastore lua files:
+        assert(string.find(filename, "\.dsl$"), "Can only delete datastore files")
+
+        -- Call the original loadfile
+        return orig_os_remove(filename)
+    end
+end
 ---------------------------------------
 -- Potentially dangerous functions in the base lib.
 ---------------------------------------
@@ -47,7 +60,7 @@ io.input = nil
 io.output = nil
 -- Many functions in the OS library are dangerous:
 os.execute = nil
-os.remove = nil
+os.remove = wrap_os_remove()
 os.rename = nil
 os.exit = nil
 os.setlocale = nil
