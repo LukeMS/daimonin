@@ -96,11 +96,13 @@ extern int              cache_ref;
 #undef FREE_AND_CLEAR_HASH
 #undef FREE_ONLY_HASH
 #undef ADD_REF_NOT_NULL_HASH
+#undef FREE_AND_CLEAR_HASH2
 
 #define FREE_AND_COPY_HASH(_sv_,_nv_) { if (_sv_) hooks->free_string_shared(_sv_); _sv_=hooks->add_string(_nv_); }
 #define FREE_AND_ADD_REF_HASH(_sv_,_nv_) { if (_sv_) hooks->free_string_shared(_sv_); _sv_=hooks->add_refcount(_nv_); }
 #define FREE_AND_CLEAR_HASH(_nv_) {if(_nv_){hooks->free_string_shared(_nv_);_nv_ =NULL;}}
 #define FREE_ONLY_HASH(_nv_) {if(_nv_)hooks->free_string_shared(_nv_);}
+#define FREE_AND_CLEAR_HASH2(_nv_) if(_nv_){hooks->free_string_shared(_nv_);_nv_ =NULL;}
 
 #define ADD_REF_NOT_NULL(_nv_) {if(_nv_!=NULL)add_refcount(_nv_);}
 
