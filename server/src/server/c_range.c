@@ -154,15 +154,12 @@ int command_cast_spell(object *op, char *params)
 
     if (value)
     {
-        float ticks = (float) (spells[spnum].time) * RANGED_DELAY_TIME;
+        float   ticks = (float)(spells[spnum].time) * RANGED_DELAY_TIME;
+        sint16 *stat = ((spells[spnum].flags & SPELL_DESC_WIS)) ? &op->stats.grace : &op->stats.sp;
 
         LOG(llevDebug, "AC-spells(%d): %2.2f\n", spnum, ticks);
         set_action_time(op, ticks);
-
-        if (spells[spnum].flags & SPELL_DESC_WIS)
-            op->stats.grace -= value;
-        else
-            op->stats.sp -= value;
+        *stat = MAX(0, *stat - value);
     }
 
     return 0;
